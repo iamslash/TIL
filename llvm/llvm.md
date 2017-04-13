@@ -11,6 +11,8 @@
 int main() { printf("hello world\n"); }
 ```
 
+- compile
+
 ```bash
 clang --help
 clang file.c -fsyntax-only (check for correctness)
