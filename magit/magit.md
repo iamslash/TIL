@@ -4,7 +4,14 @@
 
 # magit usage
 
+- run magit
+
+```M-x magit-status
 ```
+
+- magit mode
+```
+? help
 s to stage files
 c c to commit (type the message then C-c C-c to actually commit)
 b b to switch to another branch
