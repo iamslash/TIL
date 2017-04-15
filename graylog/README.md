@@ -12,7 +12,63 @@
 
 # graylog usage
 
-- 
+- run
+
+  - prepare directories
+
+```bash
+mkdir ~/my/docker/graylog/config
+mkdir ~/my/docker/graylog/data/mongo
+mkdir ~/my/docker/graylog/data/elasticsearch
+mkdir ~/my/docker/graylog/data/journal
+
+```
+
+  - download config files
+
+```bash
+mkdir ~/my/docker/graylog/config
+cd ~/my/docker//graylog/config
+wget https://raw.githubusercontent.com/Graylog2/graylog2-images/2.1/docker/config/graylog.conf
+wget https://raw.githubusercontent.com/Graylog2/graylog2-images/2.1/docker/config/log4j2.xml
+```
+  
+  - vim ~/my/docker/graylog/docker-compose.yml
+
+```
+version: '2'
+services:                      
+  some-mongo:                  
+    image: "mongo:3"
+    volumes:                   
+      - /Users/iamslash/my/docker/graylog/data/mongo:/data/db
+  some-elasticsearch:          
+    image: "elasticsearch:2"   
+    command: "elasticsearch -Des.cluster.name='graylog'"
+    volumes:
+      - /Users/iamslash/my/docker/graylog/data/elasticsearch:/usr/share/elasticsearch/data
+  graylog:                     
+    image: graylog2/server:2.1.1-1  
+    volumes:
+      - /Users/iamslash/my/docker/graylog/data/journal:/usr/share/graylog/data/journal
+      - /Users/iamslash/my/docker/graylog/config:/usr/share/graylog/data/config
+    environment:
+      GRAYLOG_PASSWORD_SECRET: somepasswordpepper
+      GRAYLOG_ROOT_PASSWORD_SHA2: 8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918
+      GRAYLOG_WEB_ENDPOINT_URI: http://127.0.0.1:9000/api
+    links:
+      - some-mongo:mongo
+      - some-elasticsearch:elasticsearch
+    ports:
+      - "9000:9000"
+      - "12201/udp:12201/udp"
+      - "1514/udp:1514/udp"
+```
+  
+  - cd ~/my/docker/graylog/
+  - docker-compose up
+
+- stream
 
 # conclusion
 
