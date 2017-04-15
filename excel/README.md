@@ -1,5 +1,7 @@
 
-# excel shortcut
+# usage
+
+- shortcut
 
 | Category | shortcut | DESC |
 | :------- | :------- | :--- |
@@ -16,6 +18,17 @@
 | 기타 | CTRL + z | 되돌리기 |
 | | CTRL + s | 저장하기 |
 
-# excel reference
+- 참조
+  - 상대참조 : C1
+  - 절대참조 : $C$1
+
+- 주요함수
+  - SUM, COUNTA, AVERAGE, MAX, MIN, RANK
+  - SUMIF
+    - SUMIF(B1:B5, "기술팀", C1:C5)
+  - SUMIFS
+    - SUMIFS(D1:D5, B1:B5, "기술팀", C1:C5, ">20000")
+
+# reference
 
 - [빅데이터의 통찰력을 키워주는 엑셀 Quick Start](https://www.inflearn.com/course/%EC%97%91%EC%85%80-%EA%B0%95%EC%A2%8C/)
