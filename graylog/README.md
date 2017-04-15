@@ -68,7 +68,19 @@ services:
   - cd ~/my/docker/graylog/
   - docker-compose up
 
-- stream
+- syslog 수집하기
+  - graylog의 input에 syslog UDP를 제작하자. port는 1514로 하자.
+  - mac의 /etc/syslog.conf를 수정하자.
+```
+# Note that flat file logs are now configured in /etc/asl.conf
+
+install.*						@127.0.0.1:32376
+*.*						@127.0.0.1:1514
+```
+  - mac의 syslogd를 다시 실행하자.
+    - sudo launchctl unload /System/Library/LaunchDaemons/com.apple.syslogd.plist
+    - sudo launchctl load /System/Library/LaunchDaemons/com.apple.syslogd.plist
+  - 잘 안된다. 왜지???
 
 # conclusion
 
