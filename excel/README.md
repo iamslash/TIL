@@ -29,6 +29,9 @@
   - SUMIFS
     - SUMIFS(D1:D5, B1:B5, "기술팀", C1:C5, ">20000")
 
+- 필터
+  - CTRL + SHIFT + L
+
 # reference
 
 - [빅데이터의 통찰력을 키워주는 엑셀 Quick Start](https://www.inflearn.com/course/%EC%97%91%EC%85%80-%EA%B0%95%EC%A2%8C/)
