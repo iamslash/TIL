@@ -82,6 +82,44 @@ install.*						@127.0.0.1:32376
     - sudo launchctl load /System/Library/LaunchDaemons/com.apple.syslogd.plist
   - 잘 안된다. 왜지???
 
+- GELF udp 수집하기
+  - graylog의 input에 GELF UDP를 제작하자. port는 12201로 하자.
+  - pip install gelfclient
+  - vim ~/my/docker/graylog/client/a.py
+  
+```py
+from gelfclient import UdpClient
+
+gelf_server = 'localhost'
+
+# Using mandatory arguments
+gelf = UdpClient(gelf_server)
+
+# Using all arguments
+gelf = UdpClient(gelf_server, port=12201, mtu=8000, source='macbook.local')
+
+# Bare minimum is to send a string, which will map to gelf['short_message']
+gelf.log('server is DOWN')
+
+# 'source' and 'host' are the same. Defaults to socket.gethostname() but can be overridden
+gelf.log('server is DOWN', source='hostchecker')
+
+# Set extra fields
+gelf.log('status change', _state='DOWN', _server='macbook')
+
+# Set severity level
+import syslog
+gelf.log('unexpected error', level=syslog.LOG_CRIT)
+
+# You can also prepare all data into a dictionary and give that to .log
+data = {}
+data['short_message'] = 'warning from python'
+data['host'] = 'hostchecker'
+data['level'] = syslog.LOG_WARNING
+gelf.log(data)
+```
+  - 잘되는 걸
+  
 # conclusion
 
 - 
