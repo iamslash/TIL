@@ -15,3 +15,4 @@
 # Reference Course
 
 - [빅데이터의 통찰력을 키워주는 엑셀 Quick Start](https://www.inflearn.com/course/%EC%97%91%EC%85%80-%EA%B0%95%EC%A2%8C/)
+- [빅데이터강좌 in dbguide](http://cyber.dbguide.net/lecture.php?code=AA017)
