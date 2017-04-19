@@ -60,6 +60,8 @@
 
 # usage
 
+## fixed function shader
+
 - 빨간 색으로 칠하자.
 
 ```
@@ -276,6 +278,8 @@ Shader "Custom/A"
 }
 ```
 
+## vertex, fragment shader
+
 - vertex, fragment shader를 이용하여 한가지 색으로 칠해보자.
 
 ```
@@ -410,6 +414,14 @@ Shader "Unlit/SkyReflection"
         }
     }
 }
+```
+
+## surface shader
+
+# tip
+
+- 왜곡효과주기
+```
 ```
 
 # reference
