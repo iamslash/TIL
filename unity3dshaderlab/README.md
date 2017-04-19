@@ -209,7 +209,10 @@ Shader "Custom/A"{
 ```
 
 - cg를 이용해서 simple unlit을 만들어 보자.
-
+  - Light와 상관없이 텍스처를 보여주자.
+  - : POSITION, : TEXCOORD0, : SV_Target 등은 semantic이라고 한다.
+    - cg에게 해당 변수를 어떤 용도로 사용하겠다는 의도를 표현한다.
+    - [이곳](https://docs.unity3d.com/Manual/SL-ShaderSemantics.html)에 자세한 설명이 있다.
 
 ```cg
 Shader "Custom/A"
@@ -273,11 +276,141 @@ Shader "Custom/A"
 }
 ```
 
-- 왜곡 효과를 주자.
+- vertex, fragment shader를 이용하여 한가지 색으로 칠해보자.
 
 ```
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "Unlit/SingleColor"
+{
+    Properties
+    {
+        // Color property for material inspector, default to white
+        _Color ("Main Color", Color) = (1,1,1,1)
+    }
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            // vertex shader
+            // this time instead of using "appdata" struct, just spell inputs manually,
+            // and instead of returning v2f struct, also just return a single output
+            // float4 clip position
+            float4 vert (float4 vertex : POSITION) : SV_POSITION
+            {
+                return UnityObjectToClipPos(vertex);
+            }
+            
+            // color from the material
+            fixed4 _Color;
+
+            // pixel shader, no inputs needed
+            fixed4 frag () : SV_Target
+            {
+                return _Color; // just return it
+            }
+            ENDCG
+        }
+    }
+}
+
 ```
 
+- normal맵을 적용해보자.
+
+```
+Shader "Unlit/WorldSpaceNormals"
+{
+    // no Properties block this time!
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+
+            struct v2f {
+                half3 worldNormal : TEXCOORD0;
+                float4 pos : SV_POSITION;
+            };
+
+            v2f vert (float4 vertex : POSITION, float3 normal : NORMAL)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(vertex);
+                o.worldNormal = UnityObjectToWorldNormal(normal);
+                return o;
+            }
+            
+            fixed4 frag (v2f i) : SV_Target
+            {
+                fixed4 c = 0;
+                c.rgb = i.worldNormal*0.5+0.5;
+                return c;
+            }
+            ENDCG
+        }
+    }
+}
+
+```
+
+- skymap을 reflect해보자.
+
+```
+Shader "Unlit/SkyReflection"
+{
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+
+            struct v2f {
+                half3 worldRefl : TEXCOORD0;
+                float4 pos : SV_POSITION;
+            };
+
+            v2f vert (float4 vertex : POSITION, float3 normal : NORMAL)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(vertex);
+                // compute world space position of the vertex
+                float3 worldPos = mul(_Object2World, vertex).xyz;
+                // compute world space view direction
+                float3 worldViewDir = normalize(UnityWorldSpaceViewDir(worldPos));
+                // world space normal
+                float3 worldNormal = UnityObjectToWorldNormal(normal);
+                // world space reflection vector
+                o.worldRefl = reflect(-worldViewDir, worldNormal);
+                return o;
+            }
+        
+            fixed4 frag (v2f i) : SV_Target
+            {
+                // sample the default reflection cubemap, using the reflection vector
+                half4 skyData = UNITY_SAMPLE_TEXCUBE(unity_SpecCube0, i.worldRefl);
+                // decode cubemap data into actual color
+                half3 skyColor = DecodeHDR (skyData, unity_SpecCube0_HDR);
+                // output it!
+                fixed4 c = 0;
+                c.rgb = skyColor;
+                return c;
+            }
+            ENDCG
+        }
+    }
+}
+```
 
 # reference
 
