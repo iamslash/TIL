@@ -366,7 +366,10 @@ Shader "Unlit/WorldSpaceNormals"
 ```
 
 - skymap을 reflect해보자.
-
+  - worldViewDir는 특정 정점에서 카메라를 바라보는 vector이다.
+  - refelct는 builtin cg function이다. I와 N을 입력받아 반사된 벡터 R을 리턴한다.
+    - [reflect in cg](http://http.developer.nvidia.com/Cg/reflect.html)
+    
 ```
 Shader "Unlit/SkyReflection"
 {
@@ -416,11 +419,631 @@ Shader "Unlit/SkyReflection"
 }
 ```
 
+- skymap을 normal map과 함께 reflect해보자.
+  - tangent space는 3차원의 물체를 2차원으로 만들때 다시 3차원으로
+    복원하기 위해 2차원의 각 vertex마다 저장해 두는 정보이다. 3차원에
+    복원에 사용되는 정보이다. 자세한 설명은 [이곳](http://rapapa.net/?p=2419) 참고
+  
+```
+Shader "Unlit/SkyReflection Per Pixel"
+{
+    Properties {
+        // normal map texture on the material,
+        // default to dummy "flat surface" normalmap
+        _BumpMap("Normal Map", 2D) = "bump" {}
+    }
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+
+            struct v2f {
+                float3 worldPos : TEXCOORD0;
+                // these three vectors will hold a 3x3 rotation matrix
+                // that transforms from tangent to world space
+                half3 tspace0 : TEXCOORD1; // tangent.x, bitangent.x, normal.x
+                half3 tspace1 : TEXCOORD2; // tangent.y, bitangent.y, normal.y
+                half3 tspace2 : TEXCOORD3; // tangent.z, bitangent.z, normal.z
+                // texture coordinate for the normal map
+                float2 uv : TEXCOORD4;
+                float4 pos : SV_POSITION;
+            };
+
+            // vertex shader now also needs a per-vertex tangent vector.
+            // in Unity tangents are 4D vectors, with the .w component used to
+            // indicate direction of the bitangent vector.
+            // we also need the texture coordinate.
+            v2f vert (float4 vertex : POSITION, float3 normal : NORMAL, float4 tangent : TANGENT, float2 uv : TEXCOORD0)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(vertex);
+                o.worldPos = mul(_Object2World, vertex).xyz;
+                half3 wNormal = UnityObjectToWorldNormal(normal);
+                half3 wTangent = UnityObjectToWorldDir(tangent.xyz);
+                // compute bitangent from cross product of normal and tangent
+                half tangentSign = tangent.w * unity_WorldTransformParams.w;
+                half3 wBitangent = cross(wNormal, wTangent) * tangentSign;
+                // output the tangent space matrix
+                o.tspace0 = half3(wTangent.x, wBitangent.x, wNormal.x);
+                o.tspace1 = half3(wTangent.y, wBitangent.y, wNormal.y);
+                o.tspace2 = half3(wTangent.z, wBitangent.z, wNormal.z);
+                o.uv = uv;
+                return o;
+            }
+
+            // normal map texture from shader properties
+            sampler2D _BumpMap;
+        
+            fixed4 frag (v2f i) : SV_Target
+            {
+                // sample the normal map, and decode from the Unity encoding
+                half3 tnormal = UnpackNormal(tex2D(_BumpMap, i.uv));
+                // transform normal from tangent to world space
+                half3 worldNormal;
+                worldNormal.x = dot(i.tspace0, tnormal);
+                worldNormal.y = dot(i.tspace1, tnormal);
+                worldNormal.z = dot(i.tspace2, tnormal);
+
+                // rest the same as in previous shader
+                half3 worldViewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
+                half3 worldRefl = reflect(-worldViewDir, worldNormal);
+                half4 skyData = UNITY_SAMPLE_TEXCUBE(unity_SpecCube0, worldRefl);
+                half3 skyColor = DecodeHDR (skyData, unity_SpecCube0_HDR);
+                fixed4 c = 0;
+                c.rgb = skyColor;
+                return c;
+            }
+            ENDCG
+        }
+    }
+}
+```
+ 
+- skymap을 reflect하면서 normal map과 occlusion map을 적용해보자.
+
+```
+Shader "Unlit/More Textures"
+{
+    Properties {
+        // three textures we'll use in the material
+        _MainTex("Base texture", 2D) = "white" {}
+        _OcclusionMap("Occlusion", 2D) = "white" {}
+        _BumpMap("Normal Map", 2D) = "bump" {}
+    }
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+
+            // exactly the same as in previous shader
+            struct v2f {
+                float3 worldPos : TEXCOORD0;
+                half3 tspace0 : TEXCOORD1;
+                half3 tspace1 : TEXCOORD2;
+                half3 tspace2 : TEXCOORD3;
+                float2 uv : TEXCOORD4;
+                float4 pos : SV_POSITION;
+            };
+            v2f vert (float4 vertex : POSITION, float3 normal : NORMAL, float4 tangent : TANGENT, float2 uv : TEXCOORD0)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(vertex);
+                o.worldPos = mul(_Object2World, vertex).xyz;
+                half3 wNormal = UnityObjectToWorldNormal(normal);
+                half3 wTangent = UnityObjectToWorldDir(tangent.xyz);
+                half tangentSign = tangent.w * unity_WorldTransformParams.w;
+                half3 wBitangent = cross(wNormal, wTangent) * tangentSign;
+                o.tspace0 = half3(wTangent.x, wBitangent.x, wNormal.x);
+                o.tspace1 = half3(wTangent.y, wBitangent.y, wNormal.y);
+                o.tspace2 = half3(wTangent.z, wBitangent.z, wNormal.z);
+                o.uv = uv;
+                return o;
+            }
+
+            // textures from shader properties
+            sampler2D _MainTex;
+            sampler2D _OcclusionMap;
+            sampler2D _BumpMap;
+        
+            fixed4 frag (v2f i) : SV_Target
+            {
+                // same as from previous shader...
+                half3 tnormal = UnpackNormal(tex2D(_BumpMap, i.uv));
+                half3 worldNormal;
+                worldNormal.x = dot(i.tspace0, tnormal);
+                worldNormal.y = dot(i.tspace1, tnormal);
+                worldNormal.z = dot(i.tspace2, tnormal);
+                half3 worldViewDir = normalize(UnityWorldSpaceViewDir(i.worldPos));
+                half3 worldRefl = reflect(-worldViewDir, worldNormal);
+                half4 skyData = UNITY_SAMPLE_TEXCUBE(unity_SpecCube0, worldRefl);
+                half3 skyColor = DecodeHDR (skyData, unity_SpecCube0_HDR);                
+                fixed4 c = 0;
+                c.rgb = skyColor;
+
+                // modulate sky color with the base texture, and the occlusion map
+                fixed3 baseColor = tex2D(_MainTex, i.uv).rgb;
+                fixed occlusion = tex2D(_OcclusionMap, i.uv).r;
+                c.rgb *= baseColor;
+                c.rgb *= occlusion;
+
+                return c;
+            }
+            ENDCG
+        }
+    }
+}
+```
+
+- 체커보드 패턴으로 텍스처링 해보자.
+  - frag()는 0(black) 아니면 1(white)을 리턴한다.
+  - frac()는 0 아니면 0.5를 리턴한다.
+
+```
+Shader "Unlit/Checkerboard"
+{
+    Properties
+    {
+        _Density ("Density", Range(2,50)) = 30
+    }
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+
+            struct v2f
+            {
+                float2 uv : TEXCOORD0;
+                float4 vertex : SV_POSITION;
+            };
+
+            float _Density;
+
+            v2f vert (float4 pos : POSITION, float2 uv : TEXCOORD0)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(pos);
+                o.uv = uv * _Density;
+                return o;
+            }
+            
+            fixed4 frag (v2f i) : SV_Target
+            {
+                float2 c = i.uv;
+                c = floor(c) / 2;
+                float checker = frac(c.x + c.y) * 2;
+                return checker;
+            }
+            ENDCG
+        }
+    }
+}
+```
+
+- tri-planar texturing해보자.
+  - 터레인(Height Field)에서 텍스쳐 매핑을 할 경우, 높이를 조절하면서
+    텍스쳐가 늘어나는 현상을 방지하기 위해서, 축에 따라서 텍스쳐 uv를
+    적용해주는 기술을 "Tri-Planar Texture Mapping" 이라고 한다.
+
+```
+Shader "Unlit/Triplanar"
+{
+    Properties
+    {
+        _MainTex ("Texture", 2D) = "white" {}
+        _Tiling ("Tiling", Float) = 1.0
+        _OcclusionMap("Occlusion", 2D) = "white" {}
+    }
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+
+            struct v2f
+            {
+                half3 objNormal : TEXCOORD0;
+                float3 coords : TEXCOORD1;
+                float2 uv : TEXCOORD2;
+                float4 pos : SV_POSITION;
+            };
+
+            float _Tiling;
+
+            v2f vert (float4 pos : POSITION, float3 normal : NORMAL, float2 uv : TEXCOORD0)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(pos);
+                o.coords = pos.xyz * _Tiling;
+                o.objNormal = normal;
+                o.uv = uv;
+                return o;
+            }
+
+            sampler2D _MainTex;
+            sampler2D _OcclusionMap;
+            
+            fixed4 frag (v2f i) : SV_Target
+            {
+                // use absolute value of normal as texture weights
+                half3 blend = abs(i.objNormal);
+                // make sure the weights sum up to 1 (divide by sum of x+y+z)
+                blend /= dot(blend,1.0);
+                // read the three texture projections, for x,y,z axes
+                fixed4 cx = tex2D(_MainTex, i.coords.yz);
+                fixed4 cy = tex2D(_MainTex, i.coords.xz);
+                fixed4 cz = tex2D(_MainTex, i.coords.xy);
+                // blend the textures based on weights
+                fixed4 c = cx * blend.x + cy * blend.y + cz * blend.z;
+                // modulate by regular occlusion map
+                c *= tex2D(_OcclusionMap, i.uv);
+                return c;
+            }
+            ENDCG
+        }
+    }
+}
+```
+
+- 간단한 diffuse lighting을 적용해보자.
+  - Tags를 이용해서 forward rendering pipeline을 이용하고 있다.
+
+```
+Shader "Lit/Simple Diffuse"
+{
+    Properties
+    {
+        [NoScaleOffset] _MainTex ("Texture", 2D) = "white" {}
+    }
+    SubShader
+    {
+        Pass
+        {
+            // indicate that our pass is the "base" pass in forward
+            // rendering pipeline. It gets ambient and main directional
+            // light data set up; light direction in _WorldSpaceLightPos0
+            // and color in _LightColor0
+            Tags {"LightMode"="ForwardBase"}
+        
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc" // for UnityObjectToWorldNormal
+            #include "UnityLightingCommon.cginc" // for _LightColor0
+
+            struct v2f
+            {
+                float2 uv : TEXCOORD0;
+                fixed4 diff : COLOR0; // diffuse lighting color
+                float4 vertex : SV_POSITION;
+            };
+
+            v2f vert (appdata_base v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = v.texcoord;
+                // get vertex normal in world space
+                half3 worldNormal = UnityObjectToWorldNormal(v.normal);
+                // dot product between normal and light direction for
+                // standard diffuse (Lambert) lighting
+                half nl = max(0, dot(worldNormal, _WorldSpaceLightPos0.xyz));
+                // factor in the light color
+                o.diff = nl * _LightColor0;
+                return o;
+            }
+            
+            sampler2D _MainTex;
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                // sample texture
+                fixed4 col = tex2D(_MainTex, i.uv);
+                // multiply by lighting
+                col *= i.diff;
+                return col;
+            }
+            ENDCG
+        }
+    }
+}
+```
+
+- diffuse lighting에 ambient lighting과 light probe를 적용해보자.
+  - ambient와 light probe 데이터는 Spherical Harmonics form으로
+    제공된다. UnityCG.cginc의 ShadeSH9함수는 world space normal 이
+    주어지면 언급한 데이터를 계산해 낸다.
+    
+```
+Shader "Lit/Diffuse With Ambient"
+{
+    Properties
+    {
+        [NoScaleOffset] _MainTex ("Texture", 2D) = "white" {}
+    }
+    SubShader
+    {
+        Pass
+        {
+            Tags {"LightMode"="ForwardBase"}
+        
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            #include "UnityLightingCommon.cginc"
+
+            struct v2f
+            {
+                float2 uv : TEXCOORD0;
+                fixed4 diff : COLOR0;
+                float4 vertex : SV_POSITION;
+            };
+
+            v2f vert (appdata_base v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                o.uv = v.texcoord;
+                half3 worldNormal = UnityObjectToWorldNormal(v.normal);
+                half nl = max(0, dot(worldNormal, _WorldSpaceLightPos0.xyz));
+                o.diff = nl * _LightColor0;
+
+                // the only difference from previous shader:
+                // in addition to the diffuse lighting from the main light,
+                // add illumination from ambient or light probes
+                // ShadeSH9 function from UnityCG.cginc evaluates it,
+                // using world space normal
+                o.diff.rgb += ShadeSH9(half4(worldNormal,1));
+                return o;
+            }
+            
+            sampler2D _MainTex;
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                fixed4 col = tex2D(_MainTex, i.uv);
+                col *= i.diff;
+                return col;
+            }
+            ENDCG
+        }
+    }
+}
+```
+
+- builtin pass를 이용하여 그림자를 만들어 보자.
+
+```
+Pass
+{
+    // regular lighting pass
+}
+// pull in shadow caster from VertexLit built-in shader
+UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
+```
+
+- builtin pass사용하지 않고 그림자를 만들어 보자.
+
+```
+Shader "Lit/Shadow Casting"
+{
+    SubShader
+    {
+        // very simple lighting pass, that only does non-textured ambient
+        Pass
+        {
+            Tags {"LightMode"="ForwardBase"}
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            struct v2f
+            {
+                fixed4 diff : COLOR0;
+                float4 vertex : SV_POSITION;
+            };
+            v2f vert (appdata_base v)
+            {
+                v2f o;
+                o.vertex = UnityObjectToClipPos(v.vertex);
+                half3 worldNormal = UnityObjectToWorldNormal(v.normal);
+                // only evaluate ambient
+                o.diff.rgb = ShadeSH9(half4(worldNormal,1));
+                o.diff.a = 1;
+                return o;
+            }
+            fixed4 frag (v2f i) : SV_Target
+            {
+                return i.diff;
+            }
+            ENDCG
+        }
+
+        // shadow caster rendering pass, implemented manually
+        // using macros from UnityCG.cginc
+        Pass
+        {
+            Tags {"LightMode"="ShadowCaster"}
+
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #pragma multi_compile_shadowcaster
+            #include "UnityCG.cginc"
+
+            struct v2f { 
+                V2F_SHADOW_CASTER;
+            };
+
+            v2f vert(appdata_base v)
+            {
+                v2f o;
+                TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+                return o;
+            }
+
+            float4 frag(v2f i) : SV_Target
+            {
+                SHADOW_CASTER_FRAGMENT(i)
+            }
+            ENDCG
+        }
+    }
+}
+```
+
+- 그림자를 드리워 보자.
+
+```
+Shader "Lit/Diffuse With Shadows"
+{
+    Properties
+    {
+        [NoScaleOffset] _MainTex ("Texture", 2D) = "white" {}
+    }
+    SubShader
+    {
+        Pass
+        {
+            Tags {"LightMode"="ForwardBase"}
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            #include "UnityCG.cginc"
+            #include "Lighting.cginc"
+
+            // compile shader into multiple variants, with and without shadows
+            // (we don't care about any lightmaps yet, so skip these variants)
+            #pragma multi_compile_fwdbase nolightmap nodirlightmap nodynlightmap novertexlight
+            // shadow helper functions and macros
+            #include "AutoLight.cginc"
+
+            struct v2f
+            {
+                float2 uv : TEXCOORD0;
+                SHADOW_COORDS(1) // put shadows data into TEXCOORD1
+                fixed3 diff : COLOR0;
+                fixed3 ambient : COLOR1;
+                float4 pos : SV_POSITION;
+            };
+            v2f vert (appdata_base v)
+            {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                o.uv = v.texcoord;
+                half3 worldNormal = UnityObjectToWorldNormal(v.normal);
+                half nl = max(0, dot(worldNormal, _WorldSpaceLightPos0.xyz));
+                o.diff = nl * _LightColor0.rgb;
+                o.ambient = ShadeSH9(half4(worldNormal,1));
+                // compute shadows data
+                TRANSFER_SHADOW(o)
+                return o;
+            }
+
+            sampler2D _MainTex;
+
+            fixed4 frag (v2f i) : SV_Target
+            {
+                fixed4 col = tex2D(_MainTex, i.uv);
+                // compute shadow attenuation (1.0 = fully lit, 0.0 = fully shadowed)
+                fixed shadow = SHADOW_ATTENUATION(i);
+                // darken light's illumination with shadow, keep ambient intact
+                fixed3 lighting = i.diff * shadow + i.ambient;
+                col.rgb *= lighting;
+                return col;
+            }
+            ENDCG
+        }
+
+        // shadow casting support
+        UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
+    }
+}
+```
+
+- 안개효과
+
+```
+Shader "Custom/TextureCoordinates/Fog" {
+    SubShader {
+        Pass {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            
+            //Needed for fog variation to be compiled.
+            #pragma multi_compile_fog
+
+            #include "UnityCG.cginc"
+
+            struct vertexInput {
+                float4 vertex : POSITION;
+                float4 texcoord0 : TEXCOORD0;
+            };
+
+            struct fragmentInput{
+                float4 position : SV_POSITION;
+                float4 texcoord0 : TEXCOORD0;
+                
+                //Used to pass fog amount around number should be a free texcoord.
+                UNITY_FOG_COORDS(1)
+            };
+
+            fragmentInput vert(vertexInput i){
+                fragmentInput o;
+                o.position = UnityObjectToClipPos(i.vertex);
+                o.texcoord0 = i.texcoord0;
+                
+                //Compute fog amount from clip space position.
+                UNITY_TRANSFER_FOG(o,o.position);
+                return o;
+            }
+
+            fixed4 frag(fragmentInput i) : SV_Target {
+                fixed4 color = fixed4(i.texcoord0.xy,0,0);
+                
+                //Apply fog (additive pass are automatically handled)
+                UNITY_APPLY_FOG(i.fogCoord, color); 
+                
+                //to handle custom fog color another option would have been 
+                //#ifdef UNITY_PASS_FORWARDADD
+                //  UNITY_APPLY_FOG_COLOR(i.fogCoord, color, float4(0,0,0,0));
+                //#else
+                //  fixed4 myCustomColor = fixed4(0,0,1,0);
+                //  UNITY_APPLY_FOG_COLOR(i.fogCoord, color, myCustomColor);
+                //#endif
+                
+                return color;
+            }
+            ENDCG
+        }
+    }
+}
+```
+
 ## surface shader
+
+- 업데이트중...
 
 # tip
 
 - 왜곡효과주기
+
 ```
 ```
 
@@ -428,6 +1051,8 @@ Shader "Unlit/SkyReflection"
 
 - [Unity3d Shader Reference](https://docs.unity3d.com/Manual/SL-Reference.html)
 - [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
+- [unity cg programming](https://en.wikibooks.org/wiki/Cg_Programming/Unity)
+  - 여러가지 예제들과 이론들이 풍부하다.
 - [Resources for Writing Shaders in Unity](https://github.com/VoxelBoy/Resources-for-Writing-Shaders-in-Unity)
 - [a gentle introduction to shaders in unity3d](http://www.alanzucconi.com/2015/06/10/a-gentle-introduction-to-shaders-in-unity3d/)
 - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false)
