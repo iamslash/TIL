@@ -2,15 +2,16 @@
 
 - shader를 이해하기 전에 rendering pipeline을 이해해야한다. [1.2.3 The Graphics Hardware Pipeline](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)을
   참고하자. 꼭 읽어본다.
-  - pixel과 fragment의 차이는 뭘까???
-  - culling은 Primitive Assembly and Rasterization단계에서 수행된다.
-  - depth testing, blengding, stencil-based shadowing은 Raster Operatios단계에서 수행된다.
 - unity3d는 shader lab이라는 language로 shader를 표현한다.
 - unity3d shader lab은 fixed function과 programmable pipeline으로 표현할 수 있다.
 - programmable pipeline에는 vertex, fragment, surface shader가 있다.
 - shader lab은 여러개의 subshader로 구성되어 있다. subshader는
   여러개의 pass로 구성될 수 있다. subshader는 하드웨어의 성능이 열악한 순서대로 기록한다.
-- shader lab은 중간에 cg를 사용할 것을 추천한다.  
+- shader lab은 중간에 cg를 사용할 것을 추천한다.
+  - cg는 nvidia가 microsoft와 함께 개발한 shading
+    language이다. directx, opengl을 지원한다. 그래서 unity3d shader
+    lab이 cg사용을 권고하는 것 같다. 하지만 2012년 이후 개발이
+    중단됬다. directx의 hlsl, opengl의 glsl은 사용할 일이 없을까???
 - vertex shader는 vertex를 기준으로 연산한다. fragment shader는
   pixel을 기준으로 연산한다. fragment shader가 vertext shader보다 더
   많이 호출된다.
@@ -25,11 +26,33 @@
 
 # The Graphics Hardware Pipeline
 
+- Vertex Transformation
+  - vertex의 screen position을 만들어낸다.
+  - vertex의 텍스처 좌표를 만들어낸다.
+  - vertex의 라이팅 정보를 만들어낸다.
+- Primitive Assembly and Rasterization
+  - 이전 단계에서 전달된 vertex들은 geometric primitive들로 조립된다.
+  - 조립된 primitive들은 view frustum clipping, back face culling된다. 
+  - clipping, culling에서 살아남은 polygon들은 rasterize되어 fragment들을 만들어낸다.
+  - fragment는 번데기 pixel은 나비와 같다. fragment는 여러 처리를
+    거쳐서 framebuffer의 pixel로 전환된다. 그래서 potential
+    pixel이라고 한다.
+    - A fragment has an associated pixel location, a depth value, and a
+    set of interpolated parameters such as a color, a secondary
+    (specular) color, and one or more texture coordinate sets.
+- Interpolation, Texturing, and Coloring
+  - fragment의 parameter들을 interpolate하고 fragment의 final color를 결정한다.
+- Raster Operations
+  - fragment마다 실행된다. depth testing, blending, sencil test가 수행된다.
+  - 결국 frame buffer는 최종 처리된 컬러값을 쓴다.
+
 ![The Graphics Hardware Pipeline](http://http.developer.nvidia.com/CgTutorial/elementLinks/fig1_3.jpg)
 ![Types of Geometric Primitives](http://http.developer.nvidia.com/CgTutorial/elementLinks/fig1_4.jpg)
 ![Standard OpenGL and Direct3D Raster Operations](http://http.developer.nvidia.com/CgTutorial/elementLinks/fig1_5.jpg)
+![Visualizing the Graphics Pipeline](http://http.developer.nvidia.com/CgTutorial/elementLinks/fig1_6.jpg)
+![The Programmable Graphics Pipeline](http://http.developer.nvidia.com/CgTutorial/elementLinks/fig1_7.jpg)
 
-# tutorial
+# tutorial reference
 
 - [fixed function shader tutorial](https://docs.unity3d.com/Manual/ShaderTut1.html)
 - [vertex, fragment shader tutorial](https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html)
@@ -40,12 +63,213 @@
 - 빨간 색으로 칠하자.
 
 ```
-Shader "Custom/SolidShader" {
+Shader "Custom/A" {
     SubShader { 
         Pass {
             Color (1,0,0,1)
         } 
     } 
+}
+```
+
+- Direct Light를 배치하고 Cube의 표면에 Diffuse, Ambient를 적용하자. 
+  - Direct Light를 활성화 비활성화 해보면 차이를 알 수 있다.
+  - Lighting On은 Material이 없으면 작동하지 않는다.
+
+```
+Shader "Custom/A"{ 
+    SubShader { 
+        Pass { 
+            Material { 
+                Diffuse (1,1,1,1) 
+                Ambient (1,1,1,1) 
+            } 
+            Lighting On 
+        } 
+    } 
+}
+```
+
+- Properties를 이용하여 Diffuse, Ambient를 조정할 수 있게 해보자.
+
+```
+Shader "Custom/A"{ 
+    Properties { 
+        _MyColor ("Main Color", COLOR) = (0,0,1,1) 
+    } 
+    SubShader { 
+        Pass { 
+            Material { 
+                Diffuse [_MyColor] 
+                Ambient [_MyColor] 
+            } 
+            Lighting On 
+        } 
+    } 
+} 
+```
+
+- Properties를 이용하여 texture를 지정해 보자.
+
+```
+Shader "Custom/A" { 
+    Properties { 
+        _MyColor ("Main Color", COLOR) = (1,1,1,1) 
+        _MainTex ("Base Texture", 2D) = "white" {} 
+    } 
+    SubShader { 
+        Pass { 
+            Material { 
+                Diffuse [_MyColor] 
+                Ambient [_MyColor] 
+            } 
+            Lighting On 
+
+            SetTexture [_MainTex]  
+        } 
+    } 
+} 
+```
+
+- texture는 color와 blending되고 light적용도 받게 해보자.
+
+```
+Shader "Custom/A"{ 
+    Properties { 
+        _MyColor ("Main Color", COLOR) = (0,0,1,1) 
+        _MainTex ("Base Texture", 2D) = "white" {} 
+    } 
+    SubShader { 
+        Pass { 
+            Material { 
+                Diffuse [_MyColor] 
+                Ambient [_MyColor] 
+            } 
+            Lighting On 
+
+            SetTexture [_MainTex] { 
+                    Combine texture * primary DOUBLE 
+            } 
+        } 
+    } 
+} 
+```
+
+- 두장의 텍스처를 섞어 보자.
+  - A lerp(B) C 의 의미는 다음과 같다.
+    - B의 alpha값을 확인해서 A와 B값을 보간하여 사용한다.
+    - B의 alpha값이 1이면 A를 사용하고 0이면 B를 사용한다.
+
+```
+Shader "Custom/A"{ 
+    Properties { 
+         _MainTex("Texture", 2D) = "white" {} 
+         _SubTex("Texture", 2D) = "white" {} 
+    } 
+    SubShader { 
+           Pass { 
+               SetTexture [_MainTex] { 
+                 Combine texture
+               } 
+                                                 
+               SetTexture [_SubTex] { 
+                 Combine texture lerp(texture) previous 
+               } 
+           } 
+    } 
+}
+```
+
+- 반 투명한 물체를 만들어 보자.
+  - _Color의 alpha값을 조정해보니 투명해진다. 하지만 가려진 물체는 안그려진다. 왜지???
+  
+
+```
+Shader "Custom/A"{ 
+    Properties { 
+        _Color ("Main Color", COLOR) = (1,1,1,1) 
+        _MainTex("Texture", 2D) = "white" {} 
+        _SubTex("Texture", 2D) = "white" {} 
+    } 
+    SubShader { 
+        Pass { 
+                 Blend SrcAlpha OneMinusSrcAlpha 
+                
+                 SetTexture [_MainTex] { 
+                          Combine texture 
+                 } 
+                                                                       
+                 SetTexture [_SubTex] { 
+                          ConstantColor[_Color] 
+                          Combine texture lerp(texture) previous, constant 
+                 }
+        } 
+    } 
+} 
+```
+
+- cg를 이용해서 simple unlit을 만들어 보자.
+
+
+```cg
+Shader "Custom/A"
+{
+    Properties
+    {
+        // we have removed support for texture tiling/offset,
+        // so make them not be displayed in material inspector
+        [NoScaleOffset] _MainTex ("Texture", 2D) = "white" {}
+    }
+    SubShader
+    {
+        Pass
+        {
+            CGPROGRAM
+            // use "vert" function as the vertex shader
+            #pragma vertex vert
+            // use "frag" function as the pixel (fragment) shader
+            #pragma fragment frag
+
+            // vertex shader inputs
+            struct appdata
+            {
+                float4 vertex : POSITION; // vertex position
+                float2 uv : TEXCOORD0; // texture coordinate
+            };
+
+            // vertex shader outputs ("vertex to fragment")
+            struct v2f
+            {
+                float2 uv : TEXCOORD0; // texture coordinate
+                float4 vertex : SV_POSITION; // clip space position
+            };
+
+            // vertex shader
+            v2f vert (appdata v)
+            {
+                v2f o;
+                // transform position to clip space
+                // (multiply with model*view*projection matrix)
+                o.vertex = mul(UNITY_MATRIX_MVP, v.vertex);
+                // just pass the texture coordinate
+                o.uv = v.uv;
+                return o;
+            }
+            
+            // texture we will sample
+            sampler2D _MainTex;
+
+            // pixel shader; returns low precision ("fixed4" type)
+            // color ("SV_Target" semantic)
+            fixed4 frag (v2f i) : SV_Target
+            {
+                // sample texture and return it
+                fixed4 col = tex2D(_MainTex, i.uv);
+                return col;
+            }
+            ENDCG
+        }
+    }
 }
 ```
 
