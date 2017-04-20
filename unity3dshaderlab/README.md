@@ -278,6 +278,128 @@ Shader "Custom/A"
 }
 ```
 
+- culling을 적용해 보자.
+  - front를 culling하자 backface만 rendering된다.
+  - 자세한 설명은 [이곳](https://docs.unity3d.com/Manual/SL-CullAndDepth.html)을 참고하자.
+  
+```
+Shader "Show Insides" {
+    SubShader {
+        Pass {
+            Material {
+                Diffuse (1,1,1,1)
+            }
+            Lighting On
+            Cull Front
+        }
+    }
+}
+```
+
+- depth testing을 적용해 보자.
+  - 특정 fragment는 depth testing을 통과할때 frame buffer에 쓰자.
+  - 자세한 설명은 [이곳](https://docs.unity3d.com/Manual/SL-CullAndDepth.html)을 참고하자.
+  
+```
+Shader "Transparent/Diffuse ZWrite" {
+Properties {
+    _Color ("Main Color", Color) = (1,1,1,1)
+    _MainTex ("Base (RGB) Trans (A)", 2D) = "white" {}
+}
+SubShader {
+    Tags {"Queue"="Transparent" "IgnoreProjector"="True" "RenderType"="Transparent"}
+    LOD 200
+
+    // extra pass that renders to depth buffer only
+    Pass {
+        ZWrite On
+        ColorMask 0
+    }
+
+    // paste in forward rendering passes from Transparent/Diffuse
+    UsePass "Transparent/Diffuse/FORWARD"
+}
+Fallback "Transparent/VertexLit"
+}
+```
+
+- stencil testing을 적용해 보자.
+  - 특정 fragment는 stencil testing을 통과할때 framebuffer에 쓰자.
+  - 자세한 설명은 [이곳](https://docs.unity3d.com/Manual/SL-Stencil.html)을 참고하자.
+  - 연두색 물체는 빨강색 물체보다 앞에 있지만 stencil testing을 통과한 fragment들만 렌더링 된다.
+  - stencil buffer는 기본적으로 0값을 가지고 있다.
+  - Editor를 통해서 값을 변경해 가면서 이해하자.
+  
+```
+Shader "Red" {
+    SubShader {
+        Tags { "RenderType"="Opaque" "Queue"="Geometry"}
+        Pass {
+            Stencil {
+                Ref 2
+                Comp always
+                Pass replace
+            }
+        
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            struct appdata {
+                float4 vertex : POSITION;
+            };
+            struct v2f {
+                float4 pos : SV_POSITION;
+            };
+            v2f vert(appdata v) {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                return o;
+            }
+            half4 frag(v2f i) : SV_Target {
+                return half4(1,0,0,1);
+            }
+            ENDCG
+        }
+    } 
+}
+```
+
+```
+Shader "Green" {
+    SubShader {
+        Tags { "RenderType"="Opaque" "Queue"="Geometry+1"}
+        Pass {
+            Stencil {
+                Ref 2
+                Comp equal
+                Pass keep 
+                ZFail decrWrap
+            }
+        
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            struct appdata {
+                float4 vertex : POSITION;
+            };
+            struct v2f {
+                float4 pos : SV_POSITION;
+            };
+            v2f vert(appdata v) {
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                return o;
+            }
+            half4 frag(v2f i) : SV_Target {
+                return half4(0,1,0,1);
+            }
+            ENDCG
+        }
+    } 
+}
+```
+
+
 ## vertex, fragment shader
 
 - vertex, fragment shader를 이용하여 한가지 색으로 칠해보자.
