@@ -1164,10 +1164,7 @@ Shader "Custom/TextureCoordinates/Fog" {
 
 # tip
 
-- 왜곡효과주기
-
-```
-```
+- 업데이트중...
 
 # reference
 
@@ -1186,3 +1183,5 @@ Shader "Custom/TextureCoordinates/Fog" {
   - 여러가지 예제들과 이론들이 풍부하다.
 - [Resources for Writing Shaders in Unity](https://github.com/VoxelBoy/Resources-for-Writing-Shaders-in-Unity)
   - 다양한 링크 모음
+- [scratchapixel](http://www.scratchapixel.com/)
+  - 밑바닥부터 설명하는 computer graphics
