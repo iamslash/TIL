@@ -399,6 +399,28 @@ Shader "Green" {
 }
 ```
 
+- blending 을 적용해보자.
+  - Blend의 [문법](https://docs.unity3d.com/460/Documentation/Manual/SL-Blend.html)을 먼저 이해해야 한다.
+  - blend의 문법은 다음과 같다. Blend SrcFactor DstFactor
+    - src는 현재 fragment의 color이다. dst는 framebuffer에 이미 존재하는 color이다.
+    - srcFactor를 src의 color에 곱하고 dstFactor를 dst의 color에 곱한후 두가지를 더한다.
+    - 물론 더하기 말고 다양한 blend operation들을 적용할 수 있다.
+  
+```
+Shader "Simple Additive" {
+    Properties {
+        _MainTex ("Texture to blend", 2D) = "black" {}
+    }
+    SubShader {
+        Tags { "Queue" = "Transparent" }
+        Pass {
+            Blend One One
+            SetTexture [_MainTex] { combine texture }
+        }
+    }
+}
+```
+
 
 ## vertex, fragment shader
 
