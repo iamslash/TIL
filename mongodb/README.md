@@ -72,14 +72,23 @@
 
 ## transaction (two phase commit) 
 
+## aggregation
+
+### aggregation pipeline
+
+### map-reduce function
+
+### single purpose aggregation methods
+
+## replication
+
 ## sharding
 
-## Replica
 
-## MapReduce
-
-## transaction
 
 ## Memory Mapping
 
 # Reference
+
+- [mongodb manual](https://docs.mongodb.com/manual/)
+  - 최고의 문서는 메뉴얼!!! 목차 내용은 필수
