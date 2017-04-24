@@ -9,7 +9,7 @@
 # terms and definition
 
 | mongodb    |      RDBMS    | 
-|:----------:|:-------------:|
+|----------:|-------------:|
 | _ID Field  |  Primary Key |
 | BSON Field | Column |
 | Collection | Table |
