@@ -9,7 +9,7 @@
 # terms and definition
 
 | mongodb    |      RDBMS    | 
-|----------:|-------------:|
+|:----------|-------------|
 | _ID Field  |  Primary Key |
 | BSON Field | Column |
 | Collection | Table |
@@ -43,7 +43,7 @@
 ## SQL vs mongo query
 
 | SQL    |      mongo query    | 
-|:----------:|:-------------:|
+|:----------|:-------------|
 | CREATE TABLE emp (empno Number, ename Number)  | db.createCollection("emp") |
 | INSERT INTO emp VALUES(3, 5) | db.emp.insert({empno: 3, ename: 5}) |
 | SELECT * FROM emp | db.emp.find() |
