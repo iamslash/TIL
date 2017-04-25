@@ -65,3 +65,5 @@ SELECT * FROM Customers a LEFT JOIN Orders b ON (a.Id = b.Id AND b.CustomerId = 
 
 - [sqlzoo](http://sqlzoo.net/)
 - [sql snippet](https://en.wikibooks.org/wiki/Structured_Query_Language/Snippets)
+- [sakila](https://dev.mysql.com/doc/sakila/en/sakila-preface.html)
+  - 비디오 대여점을 모델링한 example db이다. sql을 참고해서 공부하자.
