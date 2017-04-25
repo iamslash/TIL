@@ -99,6 +99,12 @@
   다른 document를 내부에서 소유하는 것이고 normlized data model은 다른
   document의 _id만 소유하는 것이다.
 
+## indexes
+
+- text를 위해 text index가 있다.
+- geospatial query를 위해 2dsphere index가 있다.
+
+
 ## Storage
 
 - WiredTiger, MMAPv1, In-Memory Storage Engine이 있다.
