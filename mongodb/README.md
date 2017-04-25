@@ -1,10 +1,19 @@
 # intro
 
+- 3.4를 기준으로 정리한다. 메뉴얼이 정말 잘 되어 있다. 서비스에 이요한다면 꼭 필독하자.
 - NoSql db중 document type의 db이다.
+- single-document transaction은 지원하지만 multi-document
+  transaction은 지원하지 않는다. two phase commit을 이용해
+  multi-document transaction을 구현할 수 있다.
+- muli-granularity locking을 사용하여 global, database, collection level의 lock을 한다.
+  - storage engine 별로 collection 미만 level의 lock을 한다.
+  - WiredTiger는 document level lock을 한다.
+  - granularity locking은 [이곳](http://www.mysqlkorea.com/sub.html?mcode=manual&scode=01&m_no=21879&cat1=14&cat2=422&cat3=444&lang=k) 을 참고해서 이해하자.
 
 # install
 
 - brew install mongodb
+- 
 
 # terms and definition
 
@@ -15,6 +24,7 @@
 | Collection | Table |
 | BSON Document | Row |
 | Embedded & Linking | Relation Ship |
+
 
 # usage
 
@@ -70,25 +80,34 @@
 | UPDATE emp SET ename = 'test' WHERE empno = 1 | db.emp.update({empno: 1}, {$set: {ename: 'test'}}) |
 | DELETE FROM emp WHERE deptno = 10 | db.emp.remove({deptno: 10}) |
 
-## transaction (two phase commit) 
-
 ## aggregation
 
-### aggregation pipeline
+- 다양한 document들을 그룹화 하고 그룹화 한것을 하나의 결과로 리턴하는 기능
+- aggregation pipeline, map-reduce function, single purpose
+  aggregation methods 와 같이 총 3가지를 지원한다.
 
-### map-reduce function
+## Text Search
 
-### single purpose aggregation methods
+- text index와 $text operator를 이용하여 효율적으로 문자열 검색을 할 수 있다.
 
-## replication
+## Data Models
 
-## sharding
+- mongodb는 기본적으로 schemaless하다. 하지만 validator를 이용해서
+  document의 schema를 검사 할 수 있다.
+- mongodb는 기본적으로 embedded data model과 normalized data model등
+  두가지 data model을 갖는다. embedded ddata model은 특정 document에서
+  다른 document를 내부에서 소유하는 것이고 normlized data model은 다른
+  document의 _id만 소유하는 것이다.
 
+## Storage
 
-
-## Memory Mapping
+- WiredTiger, MMAPv1, In-Memory Storage Engine이 있다.
+- journal은 monbodb의 장애상황이 복구할 정보가 담겨 있는 로그이다.
+- 하나의 docuemtn는 16MB를 초과 할 수 없다. 그런 경우에는 GridFS를
+  사용해야 한다.
 
 # Reference
 
 - [mongodb manual](https://docs.mongodb.com/manual/)
   - 최고의 문서는 메뉴얼!!! 목차 내용은 필수
+
