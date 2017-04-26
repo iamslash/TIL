@@ -10,7 +10,9 @@
 - [빅데이터의 통찰력을 키워주는 엑셀 Quick Start](https://www.inflearn.com/course/%EC%97%91%EC%85%80-%EA%B0%95%EC%A2%8C/)
   - 엑셀을 이용해서 기초통계분석과 시각화를 할 수 있다.
 - [빅데이터강좌 in dbguide](http://cyber.dbguide.net/lecture.php?code=AA017)
-  - 한글 무료 강좌가 가득하다. 좀 오래된 내용이 단점이다.
+  - 한글 무료 강좌가 가득하다. 좀 오래된 내용이 단점이다. 재미가 없다. 하지만 방향을 위해 본다.
+- [intro to data science](https://classroom.udacity.com/courses/ud359)
+  - beginner에게 어울리는 강좌이다.
 - [Data Science at Scale Specialization](https://www.coursera.org/specializations/data-science)
   - 워싱턴대학교 데이터과학 입문
 - [Statistics One](https://www.youtube.com/watch?v=VJlpQs4a5LI&list=PLgIPpm6tJZoTlY4A-xikgjXmlscqduP5k)
