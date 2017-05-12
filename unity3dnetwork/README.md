@@ -8,8 +8,9 @@
 |:---:|:---:|:---:|:---:|
 | Cloud Service  | o  | o  | X  |
 | Price  |   |   |   |
-| Custom Server |   |   |   |
-| Client Integration | NetworkManager, NetworkTransform |   |   |
+| Custom Server | X | O | O |
+| Server Platform | ? | Windows | Windows, Linux |
+| Client Integration | NetworkIdentity, NetworkTransform | PhotonView, PhotonTransformView  |   |
 
 # Conclustion
 
