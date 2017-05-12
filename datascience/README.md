@@ -1,5 +1,7 @@
 # intro
 
+![data science venn diagram](https://static1.squarespace.com/static/5150aec6e4b0e340ec52710a/t/51525c33e4b0b3e0d10f77ab/1364352052403/Data_Science_VD.png?format=1500w)
+
 - 데이터 과학을 이해하려면 다음과 같은 주제들을 공부해야한다.
   - 데이터시각화, 선형대수, 통계, 확률, 가설과 추론, 경사 하강법, 기계학습
   - k-근접이웃, 나이브 베이즈, 단순 선형회귀, 다중 선형회귀, 로지스틱 회귀
