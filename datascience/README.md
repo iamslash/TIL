@@ -8,6 +8,13 @@
 
 # learning material
 
+- [openintro](https://www.openintro.org/stat/videos.php)
+  - 통계학을 쉽게 알려주는 비디오 강좌
+- [Thinks Stats](https://www.amazon.com/Think-Stats-Allen-B-Downey/dp/1449307116)
+  - [code](https://github.com/AllenDowney/ThinkStats2)
+  - python 프로그래머를 위한 통계학
+- [21세기 통계학을 배우는 방법](http://statkclee.github.io/window-of-statistics/)
+  - 매우 설득력 있는 통계 로드맵.
 - [빅데이터의 통찰력을 키워주는 엑셀 Quick Start](https://www.inflearn.com/course/%EC%97%91%EC%85%80-%EA%B0%95%EC%A2%8C/)
   - 엑셀을 이용해서 기초통계분석과 시각화를 할 수 있다.
 - [헬로 데이터 과학](http://www.kangcom.com/sub/view.asp?sku=201602122364)
@@ -15,7 +22,8 @@
 - [빅데이터강좌 in dbguide](http://cyber.dbguide.net/lecture.php?code=AA017)
   - 한글 무료 강좌가 가득하다. 좀 오래된 내용이 단점이다. 재미가 없다. 하지만 방향을 위해 본다.
 - [밑바닥부터 시작하는 데이터 과학](http://www.kangcom.com/sub/view.asp?sku=201605307751)
-  - [examples](https://github.com/Insight-book/data-science-from-scratch?files=1)
+  - 넓고 얕게 다룬다. 공부의 방향을 정할 수 있다.
+  - [code](https://github.com/Insight-book/data-science-from-scratch?files=1)
 - [앞으로 데이터 분석을 시작하려는 사람을 위한 책](http://www.aladin.co.kr/shop/wproduct.aspx?ItemId=40672590&ttbkey=ttbcloud092006002&COPYPaper=1)
   - 일본인이 쓴 책이다. 공부의 방향을 정할 수 있다.
 - [intro to data science](https://classroom.udacity.com/courses/ud359)
