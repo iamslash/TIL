@@ -10,7 +10,7 @@
 | Price  |   |   |   |
 | Custom Server | X | O | O |
 | Server Platform | ? | Windows | Windows, Linux |
-| Client Integration | NetworkIdentity, NetworkTransform | PhotonView, PhotonTransformView  |   |
+| Client Integration | NetworkIdentity, NetworkTransform, SyncVars, Command, ClientRpc | PhotonView, PhotonTransformView  |   |
 
 # Conclustion
 
