@@ -54,11 +54,33 @@ bool IsHeadless() {
   [Tanks!!! Reference Project](https://www.assetstore.unity3d.com/kr/#!/content/80165),
   [Tanks Multiplayer](https://www.assetstore.unity3d.com/kr/#!/content/69172) 
   를 분석해보자. 
+- Object 를 Spawn하고 싶다면 NetworkManager 혹은 ClientScene.RegisterPrefab를
+  이용해서 prefab을 미리 등록해야 한다. 이때 prefab의 root에 
+  NetworkIdentify, NetworkBehaviour component가 attatch되어 있어야 한다.
+- ClientScene.RegisterSpawnHandler 를 spawn handler를 등록할 수 있다. 
+  custom poolmgr를 이용
+- Player Object는 특별하다. 나의 Player Object는 isLocalPlayer가 true이다. 
+  시작시 OnStartLocalPlayer가 호출된다.
+- non-player object들에 대해 NetworkServer.SpawnWithClientAuthority, 
+  NetworkIdentity.AssignClientAuthority를 이용해 authority를 부여할 수 있다.
+  authority가 부여되면 NetworkBehaviour의 OnStartAuthority() 가 호출되고 
+  hasAuthority가 true로 전환된다. authority를 부여받은 non-player object는 
+  command를 보낼 수 있다. command는 server에서 실행된다. authority를 부여받을
+  non-player objects는 NetworkIdentify의 LocalPlayerAuthority가 check되어야 한다.
+- NetworkBehaviour class는 다음과 같은 중요한 properties를 가지고 있다.
+  - isServer - true if the object is on a server (or host) and has been spawned.
+  - isClient - true if the object is on a client, and was created by the server.
+  - isLocalPlayer - true if the object is a player object for this client.
+  - hasAuthority - true if the object is owned by the local process
 
 ## Cloud
 
 - Unity에서 machmaking, relay server등을 cloud service한다. 
   relay server는 대한민국에서 느리다는 평가가 있다.
+
+# Proudnet
+
+# PUN
 
 # Conclustion
 
