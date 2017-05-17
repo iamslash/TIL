@@ -80,7 +80,32 @@ bool IsHeadless() {
 
 # Proudnet
 
+## Server
+
+- c++, c#으로 구현할 수 있다. 당연히 c++ server가 성능이 좋을 것이다. 
+- c++으로 제작한다면 windows, linux에서 실행할 수 있다.
+- c++ server의 경우 unity3d api를 이용할 수 없다.
+- c# server의 경우 mono에서 실행한다면 UnityEngine.Dll을 이용할 수 있겠지?
+- mono binary는 적당히 수정하면 compact framework에서 실행 가능하다.
+  - [Can I use Mono to build applications for the Compact Framework?](http://www.mono-project.com/docs/faq/technical/)
+- 프로토콜전송을 위해 S2C, C2S, C2C형태의 IDL파일을 제작후 PIDL을 이용해서 구현체를 만들어낸다.
+- 기본적으로 Client는 Server에 접속하는 형태이고 P2PGroup을 이용해서 C2C통신한다.
+  - 중요한 것은 C2S 덜 중요한 것은 C2C 로 처리한다.
+- punch through, relay server, dead reckoning, delayed packet queueing
+
+## Client
+
+- Dead recokining을 위한 CPositionFollower, CAngleFollower등은 c++만 지원한다. 
+  Unity3D에서 사용할 수 없다.
+- Unity3D HLAPI같은 것은 없을까???
+
 # PUN
+
+## Server
+
+## Client
+
+## Cloud
 
 # Conclustion
 
