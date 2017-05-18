@@ -72,6 +72,9 @@ bool IsHeadless() {
   - isClient - true if the object is on a client, and was created by the server.
   - isLocalPlayer - true if the object is a player object for this client.
   - hasAuthority - true if the object is owned by the local process
+- 유저의 입력을 받아 움직일때, 총을 쏠때 처리방법
+  - 
+
 
 ## Cloud
 
