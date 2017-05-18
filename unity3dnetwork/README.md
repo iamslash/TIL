@@ -75,7 +75,6 @@ bool IsHeadless() {
 - 유저의 입력을 받아 움직일때, 총을 쏠때 처리방법
   - 
 
-
 ## Cloud
 
 - Unity에서 machmaking, relay server등을 cloud service한다. 
