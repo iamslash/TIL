@@ -88,11 +88,12 @@ bool IsHeadless() {
 - c++으로 제작한다면 windows, linux에서 실행할 수 있다.
 - c++ server의 경우 unity3d api를 이용할 수 없다.
 - c# server의 경우 mono에서 실행한다면 UnityEngine.Dll을 이용할 수 있겠지?
-- mono binary는 적당히 수정하면 compact framework에서 실행 가능하다.
+- mono binary는 적당히 수정하면 dotnet core framework에서 실행 가능하다.
   - [Can I use Mono to build applications for the Compact Framework?](http://www.mono-project.com/docs/faq/technical/)
 - 프로토콜전송을 위해 S2C, C2S, C2C형태의 IDL파일을 제작후 PIDL을 이용해서 구현체를 만들어낸다.
 - 기본적으로 Client는 Server에 접속하는 형태이고 P2PGroup을 이용해서 C2C통신한다.
   - 중요한 것은 C2S 덜 중요한 것은 C2C 로 처리한다.
+  - P2PGroup은 server에서 수행한다. client는 C2C proxy의 함수들을 이용할 뿐이다.
 - punch through, relay server, dead reckoning, delayed packet queueing
 
 ## Client
@@ -100,6 +101,8 @@ bool IsHeadless() {
 - Dead recokining을 위한 CPositionFollower, CAngleFollower등은 c++만 지원한다. 
   Unity3D에서 사용할 수 없다.
 - Unity3D HLAPI같은 것은 없을까???
+- c#의 경우 native library를 사용하는 managed dll을 이용하는 방식이다. 
+  core는 c++로 제작됨. c++ api의 상당부분이 managed dll에 없다. 왜일까? 구현중인가???
 
 # PUN
 
