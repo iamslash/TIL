@@ -98,11 +98,9 @@ bool IsHeadless() {
 
 ## Client
 
-- Dead recokining을 위한 CPositionFollower, CAngleFollower등은 c++만 지원한다. 
-  Unity3D에서 사용할 수 없다.
-- Unity3D HLAPI같은 것은 없을까???
 - c#의 경우 native library를 사용하는 managed dll을 이용하는 방식이다. 
   core는 c++로 제작됨. c++ api의 상당부분이 managed dll에 없다. 왜일까? 구현중인가???
+- PositionFollower의 경우 문서에는 내용이 없지만 ProudDotNetClient.dll에 들어 있다.
 
 # PUN
 
@@ -112,6 +110,7 @@ bool IsHeadless() {
 
 ## Cloud
 
-# Conclustion
+# Reference
 
-- 
+- []()
+  - unity3d UNET을 활용한 예제
