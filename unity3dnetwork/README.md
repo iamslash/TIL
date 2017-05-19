@@ -112,5 +112,3 @@ bool IsHeadless() {
 
 # Reference
 
-- []()
-  - unity3d UNET을 활용한 예제
