@@ -8,7 +8,7 @@
 
 # Updating...
 
-- [unity3dnetwork](doc/unity3dnetwork/README.md)
-- [WebRTC](doc/webrtc/README.md)
-- [nc](doc/nc/README.md)
-- [hping3](doc/hping3/README.md)
+- [unity3dnetwork](unity3dnetwork/README.md)
+- [WebRTC](webrtc/README.md)
+- [nc](nc/README.md)
+- [hping3](hping3/README.md)
