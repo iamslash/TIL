@@ -6,6 +6,19 @@
 
 # usage
 
+## UDP hole punching
+
+- [udp hole punching at youtube](https://www.youtube.com/watch?v=s_-UCmuiYW8)
+  - nc, hping3를 이용해서 udp hole punching을 하는 방법
+  - local computer(l.l.l.l)에서 nc를 이용해서 수신된 udp패킷을 출력하자.
+    - nc -u -l -p 12001
+  - hping3를 이용해서 udp hole을 만들자.
+    - hping3 -c 1 -2 -s 12001 -p 12003 r.r.r.r
+    - r.r.r.r의 NAT의 port 12003 
+  - nc를 이용해서 remote computer에서 udp 패킷을 송신하자.
+    - echo "udp hole" | nc -p 12003 -u l.l.l.l
+  - 한번 만들어진 udp hole은 패킷왕래가 일어나지 않으면 닫혀진다.
+
 ## STUN
 ## TUN
 ## ICE
