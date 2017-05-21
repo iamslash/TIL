@@ -6,6 +6,21 @@
 
 # usage
 
+## NAT
+
+- network address translation 을 의미한다.
+- private side, public side 두 열의 정보를 이용하여 인터넷 주소를 변환한다.
+- ipv4에서 192.168.x.x, 10.x.x.x는 private 주소로 예약되어 있다.
+- 예를 들어서 A(192.168.1.3:42301)에서 N(192.168.1.1, 12.13.14.15)을 거쳐
+  B(40.30.20.10:80)으로 패킷을 보내자.
+- NAT forwarding table에 다음과 같은 정보가 저장된다.
+
+| Private side  | Public side |
+|:---:|:--:|
+| 192.168.1.3:42301 | 12.13.14.15:24604 |
+
+- N은 A혹은 B에서 패킷을 수신할때마다 주소를 변환하여 전달한다.
+
 ## UDP hole punching
 
 - [udp hole punching at youtube](https://www.youtube.com/watch?v=s_-UCmuiYW8)
