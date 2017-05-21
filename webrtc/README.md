@@ -35,6 +35,44 @@
     - echo "udp hole" | nc -p 12003 -u l.l.l.l
   - 한번 만들어진 udp hole은 패킷왕래가 일어나지 않으면 닫혀진다.
 
+## WebRtc
+
+- [Real-time communication with WebRTC: Google I/O 2013](https://www.youtube.com/watch?v=p2HzZkd2A40)을 열심히 보자.
+- Three main JavaScript APIs.
+  - MediaStream(getUserMedia), RTCPeerConnection, RTCDataChannel
+- [ascii-camera](https://idevelop.ro/ascii-camera/)는 camera의 데이터를 ascii데이터로 렌더링해서 보여준다.
+- MediaStream(getUserMedia)
+
+```javascript
+var constrains = {video: true};
+
+function successCallback(stream) {
+    var video = document.querySelector("video");
+    video.src = window.URL.createObjectURL(stream);
+}
+
+function errorCallback(error) {
+    console.log("navigator.getUserMedia error: ", error);
+}
+navigator.getUserMedia(constrains, successCallback, errorCallback);
+```
+
+- Constraints
+
+```javascript
+video : {
+  mandatory: {
+    minWidth: 640,
+    minHeight: 360
+  },
+  optional [{
+    minWidgth: 1280,
+    minHeight: 720
+  }]
+}
+```
+
+
 ## STUN
 
 - 
