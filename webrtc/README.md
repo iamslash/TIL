@@ -123,7 +123,7 @@ document.querySelect("button#send").onclick = function() {
 
 ## STUN
 
-- Session Tracersal Utilities for NAT
+- Session Traversal Utilities for NAT
 - local computer 에서 NAT바깥의 STUN server에게 자신의 public ip를 얻어 내고 
   p2p session이 가능한지 확인한다.
 
