@@ -23,6 +23,22 @@
 
 ## UDP hole punching
 
+- NAT는 크게 Cone NAT와 Symmetric NAT로 분류할 수 있다.
+- Cone NAT는 Full Cone, Restricted Cone, Port Restricted Cone으로 분류할 수 있다.
+- udp, tcp 패킷을 하나 NAT를 통해 remote machine에 보내면 NAT forwarding table에 
+  남는 정보를 이용해서 network hole을 만들어 낼 수 있다. network hole은 NAT종류에 따라
+  유지되는 시간이 다양하다.
+- N1 NAT에 속한 C1과 N2 NAT에 속한 C2가 있다고 가정하자. 둘다 S에 udp 패킷을 하나 보내면
+  N1, N2의 forwarding table에 S와의 관계가 기록된다. S는 C1, C2의 public ip를
+  알아낼 수 있다. C1이 S의 정보를 이용하여 
+C1 이 N1 NAT를 거쳐 S 에 udp packet을 하나 보내자. udp hole은 만들어진다. 
+  이때 C1의 public ip는 x.x.x.c1 이라고 하자. S입장에서 C1 의 remote address를 
+  얻어오면 c1이 속한 N1 NAT의 public side정보를 얻어 올 수 있다. 이것을 x.x.n1.c1:12003
+  이라고 하자. N2 NAT에 속한 C2가 C1 에 udp packet를 보내려면 N1의 NAT forwarding table에 
+  C2의 public ip가 등록되어 있어야한다. C2의 public ip를 x.x.n2.c2라고 하자.
+  S machine을 통해
+  C1이 속한 N1 NAT의 public side정보를 이용하여 x.x.n1.c1:12003으로 패킷을 보내야한다.
+  그러면 C1은 C2가 보낸 데이터를 수신할 수 있다.
 - [udp hole punching at youtube](https://www.youtube.com/watch?v=s_-UCmuiYW8)
   - nc, hping3를 이용해서 udp hole punching을 하는 방법을 설명한다.
   - local computer의 public ip(l.l.l.l)를 얻어오자.
