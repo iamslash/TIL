@@ -25,20 +25,21 @@
 
 - NAT는 크게 Cone NAT와 Symmetric NAT로 분류할 수 있다.
 - Cone NAT는 Full Cone, Restricted Cone, Port Restricted Cone으로 분류할 수 있다.
-- udp, tcp 패킷을 하나 NAT를 통해 remote machine에 보내면 NAT forwarding table에 
-  남는 정보를 이용해서 network hole을 만들어 낼 수 있다. network hole은 NAT종류에 따라
-  유지되는 시간이 다양하다.
-- N1 NAT에 속한 C1과 N2 NAT에 속한 C2가 있다고 가정하자. 둘다 S에 udp 패킷을 하나 보내면
-  N1, N2의 forwarding table에 S와의 관계가 기록된다. S는 C1, C2의 public ip를
-  알아낼 수 있다. C1이 S의 정보를 이용하여 
-C1 이 N1 NAT를 거쳐 S 에 udp packet을 하나 보내자. udp hole은 만들어진다. 
-  이때 C1의 public ip는 x.x.x.c1 이라고 하자. S입장에서 C1 의 remote address를 
-  얻어오면 c1이 속한 N1 NAT의 public side정보를 얻어 올 수 있다. 이것을 x.x.n1.c1:12003
-  이라고 하자. N2 NAT에 속한 C2가 C1 에 udp packet를 보내려면 N1의 NAT forwarding table에 
-  C2의 public ip가 등록되어 있어야한다. C2의 public ip를 x.x.n2.c2라고 하자.
-  S machine을 통해
-  C1이 속한 N1 NAT의 public side정보를 이용하여 x.x.n1.c1:12003으로 패킷을 보내야한다.
-  그러면 C1은 C2가 보낸 데이터를 수신할 수 있다.
+- 특정 port를 bind(192.168.1.3:42301)하여 소켓을 제작한 후에 udp
+  패킷을 하나 NAT를 통해 remote machine에 보내면 NAT forwarding
+  table에 항목이 추가되며 udp hole이 만들어진다. 추가된 내용중 public
+  side(12.13.14.15:24604)로 NAT외부에서 udp packet을 보내면 앞서
+  bind한 socket으로 패킷을 수신 할 수 있다. NAT에 기록된 udp hole은
+  NAT종류에 따라 유지되는 시간이 다양하다.
+- N1 NAT에 속한 C1과 N2 NAT에 속한 C2가 있다고 가정하자. 둘다 S에 udp
+  패킷을 하나 보내면 N1, N2의 forwarding table에 S와의 관계가
+  기록되면서 udp hole이 만들어 진다.  이것은 N1, N2가 S와 패킷을 주고
+  받을 수 있는 hole이다. 아직 N1는 C2와 udp hole이 없기 때문에 C1은
+  C2와 패킷을 주고 받을 수 없다.
+- C1이 C2에 udp packet을 하나 보내면 N1의 forwarding table에 N2와의
+  관계가 기록되면서 udp hole이 만들어 진다. C2는 N2를 통해 C1으로 udp
+  packet을 보낼 수 있다.  C2역시 비슷한 과정을 통해서 C1에 N2의 udp
+  hole을 이용하여 udp packet을 보낼 수 있다.
 - [udp hole punching at youtube](https://www.youtube.com/watch?v=s_-UCmuiYW8)
   - nc, hping3를 이용해서 udp hole punching을 하는 방법을 설명한다.
   - local computer의 public ip(l.l.l.l)를 얻어오자.
@@ -48,6 +49,7 @@ C1 이 N1 NAT를 거쳐 S 에 udp packet을 하나 보내자. udp hole은 만들
   - local computer에서 hping3를 이용해서 udp hole을 만들자.
     - hping3 -c 1 -2 -s 12001 -p 12003 r.r.r.r
   - remote computer에서 nc를 이용해서 udp 패킷을 송신하자.
+    - local computer의 포트가 12003이란 것은 어떻게 알아내지???
     - echo "udp hole" | nc -p 12003 -u l.l.l.l
   - 한번 만들어진 udp hole은 패킷왕래가 일어나지 않으면 닫혀진다.
 
