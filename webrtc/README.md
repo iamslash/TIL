@@ -26,6 +26,10 @@
 - NAT는 크게 Cone NAT와 Symmetric NAT로 분류할 수 있다.
 - Cone NAT는 Full Cone, Restricted Cone, Port Restricted Cone으로
   분류할 수 있다.
+- 다음은 NAT를 분류하는 알고리즘이다. [RFC5389(STUN)](https://en.wikipedia.org/wiki/STUN)
+
+![](https://en.wikipedia.org/wiki/STUN#/media/File:STUN_Algorithm3.svg)
+
 - 특정 port를 bind(192.168.1.3:42301)하여 소켓을 제작한 후에 udp
   패킷을 하나 NAT를 통해 remote machine에 보내면 NAT forwarding
   table에 항목이 추가되며 udp hole이 만들어진다. 추가된 내용중 public
@@ -144,18 +148,25 @@ document.querySelect("button#send").onclick = function() {
 ## STUN
 
 - Session Traversal Utilities for NAT
-- local computer 에서 NAT바깥의 STUN server에게 자신의 public ip를 얻어 내고 
-  p2p session이 가능한지 확인한다.
+- [RFC5389](https://tools.ietf.org/html/rfc5389)
+- NAT를 활용하는 다른 프로토콜(ex. ICE)을 위한 도구로 사용될 수 있는 애플리케이션 프로토콜이다.
+- RFC3489는 STUN을 NAT를 경유하는 통신을 위한 독립적인 해결책으로 기술하였지만
+  폐기되었다. STUN은 일종의 helper이다.
 
 ## TURN
 
 - Traversal Using Relays around NAT
-- STUN server를 통해서 얻은 public ip를 이용하여 p2p session을 획득하는데 실패 했다면
-  TURN server를 통해서 packet을 relay하자.
+- [RFC5766](https://tools.ietf.org/html/rfc5766)
+- packet을 relay하는 방법에 관한 애플리케이션 프로토콜이다.
 
 ## ICE
 
-- STUN, TURN framework
+- Interactive Connectivity Establishment 
+- [RFC5245](https://tools.ietf.org/html/rfc5245)
+- NAT를 이용한 호출 응답 형태의 통신을 위한 애플리케이션
+  프로토콜. STUN과 TURN을 활용한다.
+- RFC5245는 udp 기반이다. [RFC6544](https://tools.ietf.org/html/rfc6544)는 tcp,
+  udp를 위한 spec이다.
 
 # reference
 
