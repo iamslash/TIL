@@ -11,3 +11,4 @@
 - [WebRTC](webrtc/README.md)
 - [unity3dnetwork](unity3dnetwork/README.md)
 - [unite2016](unite2016/README.md)
+- [machinelearning](machinelearning/README.md)
