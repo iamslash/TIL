@@ -29,8 +29,7 @@
 - 머신러닝이란 다량의 데이터를 이용하여 기계를 학습 시키고 임의의 데이터를 이용하여 예측값을 얻어내는 행위이다. 
   예를 들어서 학생들의 등교시간과 성적에 관한 데이터를 이용하여 기계를 학습 시킨다. 그리고 새로 전학온 학생의
   등교시간을 입력하면 성적을 예상 할 수 있다.
-- 다음과 같은 용어들을 중심으로 공부한다. 
-  supervised learning, unsupervised learning, reinforcement learning, 
+- supervised learning, unsupervised learning, reinforcement learning, 
   linear regression with one variable, hypothesis function, weight, bias, feature
   loss, gradiant decent algorithm, cost function, MSE (mean squared error), derivative, 
   linear regression with multiple variables, 
