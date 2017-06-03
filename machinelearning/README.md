@@ -33,16 +33,16 @@
   - andrew Ng교수의 machine learning강좌
   - 영문이지만 기초를 공부할 수 있다.
 - [machine learning note](http://www.holehouse.org/mlclass/)
- - andrew Ng교수의 machine learning강좌 노트
+  - andrew Ng교수의 machine learning강좌 노트
 - [deep learning tutorial](http://deeplearning.stanford.edu/tutorial/)
- - standford 대학의 tutorial이다. 코드와 텍스트가 가득하다.
+  - standford 대학의 tutorial이다. 코드와 텍스트가 가득하다.
 - [c++로 배우는 딥러닝](http://blog.naver.com/atelierjpro/220697890605)
- - 동국대학교 홍정모교수의 한글 딥러닝 강의
+  - 동국대학교 홍정모교수의 한글 딥러닝 강의
 - [Andrej Karpathy's Youtube channel](https://www.youtube.com/channel/UCPk8m_r6fkUSYmvgCBwq-sw)
 - [CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/syllabus.html)
- - 화상인싱을 위한 CNN
+  - 화상인싱을 위한 CNN
 - [CS224d: Deep Learning for Natural Language Processing]()
- - 자연어처리를 위한 Deep Learning
+  - 자연어처리를 위한 Deep Learning
 - [tensorflow](https://www.tensorflow.org)
 - [TensorFlow Tutorials (Simple Examples)](https://github.com/nlintz/TensorFlow-Tutorials)
 - [Another TensorFlow Tutorials](https://github.com/pkmital/tensorflow_tutorials)
