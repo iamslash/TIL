@@ -10,6 +10,10 @@
 
 # learning material
 
+- [기초통계학 at youtube](https://www.youtube.com/playlist?list=PLsri7w6p16vs-vfUgweXPjEEhwXjjPSHq)
+  - 노경섭의 제대로 시작하는 기초통계학 동영상 강좌
+- [논문통계분석 at youtube](https://www.youtube.com/watch?v=8PT4AKrKjFo&list=PLsri7w6p16vuIphjhykx6UwOb6ICK0HVi)
+  - 노경섭의 제대로 알고쓰는 논문 통계분석 동영상 강좌
 - [openintro](https://www.openintro.org/stat/videos.php)
   - 통계학을 쉽게 알려주는 비디오 강좌
 - [Thinks Stats](https://www.amazon.com/Think-Stats-Allen-B-Downey/dp/1449307116)
