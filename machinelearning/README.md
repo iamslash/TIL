@@ -21,7 +21,7 @@
   linear regression with multiple variables, 
   logistic regression, regularization,
   softmax regression (multinomial regression), 
-  overfitting, NN (Neural Networks), drop out, activation function,
+  overfitting, cross entropy, NN (Neural Networks), drop out, activation function,
   sigmoid, ReLU, learning rate, forward propagation, back propagation,
   CNN (Convolutional Neural Networks), RNN (Recurrent Neural Networks)
 
@@ -91,6 +91,10 @@
 
 ## linear regression with one variable
 
+- hypothesis function
+
+- cost function
+
 ## linear regression with multiple variables
 
 ## logistic regression
@@ -128,7 +132,17 @@
 
 ## NN (neural networks)
 
-- 
+- XOR을 3개의 unit으로 표현해보자. 3개의 unit은 하나의 neural network를 구성한다.
+
+![](xor3units.png)
+
+- chain rule
+
+![](chainrule.png)
+
+- back propagation는 chain rule을 이용하여 구할 수 있다.
+
+![](backpropagation.png)
 
 ## CNN (convolutional networks)
 
