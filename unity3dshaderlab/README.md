@@ -1,7 +1,8 @@
 # intro
 
 - shader를 이해하기 전에 rendering pipeline을 이해해야한다. [1.2.3 The Graphics Hardware Pipeline](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)을
-  참고하자. 꼭 읽어본다.
+  참고하자. 꼭 읽어본다. [rendering pipeline at youtube](https://www.youtube.com/watch?v=qHpKfrkpt4c)
+  를 꼭 시청하자.
 - unity3d는 shader lab이라는 language로 shader를 표현한다.
 - unity3d shader lab은 fixed function과 programmable pipeline으로 표현할 수 있다.
 - programmable pipeline에는 vertex, fragment, surface shader가 있다.
