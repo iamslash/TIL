@@ -181,6 +181,67 @@ W = np.random.randn(fan_in, fan_out)/np.sqrt(fan_in/2)
 
 ![](backpropagation.png)
 
+- tensorflow의 wrapper인 [prettytensor](https://github.com/google/prettytensor)의 
+  xavier_init을 참고하자
+
+```python
+def xavier_init(n_inputs, n_outputs, uniform=True):
+  """Set the parameter initialization using the method described.
+  This method is designed to keep the scale of the gradients roughly the same
+  in all layers.
+  Xavier Glorot and Yoshua Bengio (2010):
+           Understanding the difficulty of training deep feedforward neural
+           networks. International conference on artificial intelligence and
+           statistics.
+  Args:
+    n_inputs: The number of input nodes into each output.
+    n_outputs: The number of output nodes for each input.
+    uniform: If true use a uniform distribution, otherwise use a normal.
+  Returns:
+    An initializer.
+  """
+  if uniform:
+    # 6 was used in the paper.
+    init_range = math.sqrt(6.0 / (n_inputs + n_outputs))
+    return tf.random_uniform_initializer(-init_range, init_range)
+  else:
+    # 3 gives us approximately the same limits as above since this repicks
+    # values greater than 2 standard deviations from the mean.
+    stddev = math.sqrt(3.0 / (n_inputs + n_outputs))
+    return tf.truncated_normal_initializer(stddev=stddev)
+```
+
+- overfitting이란 neural networks가 training data의 정확도는 높지만
+  predicting data의 정확도는 낮은 현상을 말한다. 이것을 해결하기 위한 방법으로
+  regularization등이 있다.
+  
+- regularization
+
+- dropout이란 neural networks의 노드중 임의의 것들을 제거하여 overfitting
+  현상을 해결하는 것이다.
+
+```python
+dropout_rate = tf.placeholder("float")
+_L1 = tf.nn.relu(tf.add(tf.matmul(X, W1), B1))
+L1 = tf.nn.dropout(_L1, dropout_rate)
+
+# TRAIN:
+sess.run(optimizer, feed_dict={X: batch_xs, Y: batch_ys,
+dropout_rate: 0.7})
+
+# EVALUATION:
+print "Accuracy:", accuracy.eval({X: mnist.test.images, Y:
+mnist.test.labels, dropout_rate: 1})
+```
+
+- ensemble
+
+- fast forward
+
+- split & merge
+
+- recurrent network
+
 ## CNN (convolutional networks)
 
 ## RNN (recurrent networks)
