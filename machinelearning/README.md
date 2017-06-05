@@ -128,11 +128,23 @@
 - imagenet 이라는 대회에서 2010년에 26.2%였던 오류는 2012년 15.3%로 감소하였다.
   이것을 통해 neural networks은 관심을 얻는데 성공한다. 2015년 deep learning을
   이용한 시스템이 오류를 3%까지 감소시킨다.
+- Geoffery Hinton교수는 왜 그동안 deep learning이 잘 동작 안했는지 다음과
+  같이 4지로 요약했다.
+  - Our labeled datasets were thousands of times too small.
+  - Our computers were millions of times too slow.
+  - We initialized the weights in a stupid way.
+    - RBM보다 Xavier방법이 더욱 좋다.
+  - We used the wrong type of non-linearity.
+    - sigmoid보다 ReLu를 사용하자.
 - 이후 알파고를 통해 deep learning은 핫한 기술로 부상한다.
 
 ## NN (neural networks)
 
-- XOR을 3개의 unit으로 표현해보자. 3개의 unit은 하나의 neural network를 구성한다.
+- marvin minsky의 perceptrons라는 책의 발간 이후 상당 기간동안
+  XOR problem은 해결되지 못하고 있었다. 그러나 1986년 Hinton교수를
+  통해 해결 방법이 모색되고 neural networks는 다시 관심을 얻게 된다.
+
+- XOR 을 3개의 unit으로 표현해보자. 3개의 unit은 하나의 neural network를 구성한다.
 
 ![](xor3units.png)
 
@@ -141,6 +153,30 @@
 ![](chainrule.png)
 
 - back propagation는 chain rule을 이용하여 구할 수 있다.
+
+- back propagation에 activation function으로 sigmoid를 사용하면
+  vanishing gradient가 발생한다. vanishing gradient란
+  output layer에서 hidden layer를 거쳐 input layer로 갈수록 입력값의 
+  영향을 덜 받게 되는 현상이다. sigmoid보다 ReLU (Rectified Linear Unit)
+  을 사용하면 vanishing gradient를 해결 할 수 있다. sigmoid, ReLU를 제외하고도
+  tanh, Leaky ReLU, Maxout, ELU등등 Activation Function들이 있다.
+
+- RBM (Restricted Boatman Macine)을 이용하여 weight값을 초기화 하면
+  deep learning을 효율적으로 할 수 있다. 그러나 RBM은 너무 복잡하다.
+  Xavier initialization 혹은 He's initialization과 같이 간단한
+  방법이 더욱 효율적이다.
+  
+- weight 초기값을 어떻게 설정하느냐는 지금도 활발한 연구 분야이다.
+
+```python
+# Xavier initialization
+# Glorot et al. 2010
+W = np.random.randn(fan_in, fan_out)/np.sqrt(fan_in)
+
+# He et al. 2015
+W = np.random.randn(fan_in, fan_out)/np.sqrt(fan_in/2)
+
+```
 
 ![](backpropagation.png)
 
