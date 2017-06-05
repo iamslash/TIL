@@ -31,6 +31,7 @@
   - 한글로 제일 쉽게 설명하는 자료이다. 
 - [Hands-On Machine Learning with Scikit-Learn and TensorFlow](https://www.amazon.com/gp/product/1491962291/ref=oh_aui_detailpage_o00_s00)
 - [밑바닥부터 시작하는 딥러닝](http://www.yes24.com/24/Goods/34970929?Acode=101)
+  - [예제](https://github.com/WegraLee/deep-learning-from-scratch)
 - [machine learning at coursera](https://www.coursera.org/learn/machine-learning)
   - andrew Ng교수의 machine learning강좌
   - 영문이지만 기초를 공부할 수 있다.
