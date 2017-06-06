@@ -4,6 +4,9 @@
 
 # learning material
 
+- [banshee engine](https://github.com/BearishSun/BansheeEngine)
+  - c++14로 제작되고 있는 game engine
+  - 이제 시작된 것 같아서 참고해 본다.
 - [game engine development at youtube](https://www.youtube.com/playlist?list=PLRwVmtr-pp04XomGtm-abzb-2M1xszjFx)
   - visual studio를 이용한 게임 엔진 개발
 - [learn opengl](https://learnopengl.com/)
