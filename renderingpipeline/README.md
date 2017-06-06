@@ -2,6 +2,18 @@
 
 - [The Cg Tutorial, Chapter 1: Introduction](http://download.nvidia.com/developer/cg/Cg_Tutorial/Chapter_1.pdf)를 
   읽고 정리한다.
+  
+- The Programmable Graphics Pipeline
+
+![](the_programmable_graphics_pipeline.png)
+
+- programmable vertex processor flow chart
+
+![](programmable_vertex_processor_flow_chart.png)
+
+- programmable fragment processor flow chart
+
+![](programmable_fragment_processor_flow_chart.png)
 
 # unity3d rendering pipeline
 

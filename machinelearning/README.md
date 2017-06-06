@@ -242,7 +242,16 @@ mnist.test.labels, dropout_rate: 1})
 
 - recurrent network
 
+- mnist
+  - softmax regression : 90%
+  - neural networks : 94.5%
+  - Xavier initialization : 97.8%
+  - batch normalization : ???%
+  - CNN : 99%
+
 ## CNN (convolutional networks)
+
+
 
 ## RNN (recurrent networks)
 
