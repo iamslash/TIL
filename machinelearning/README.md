@@ -287,6 +287,16 @@ mnist.test.labels, dropout_rate: 1})
 
 ## RNN (recurrent networks)
 
+- 
+
+## RL (reinforcement learning)
+
+- ...
+
+## NLP (natural language processing)
+
+- ...
+
 # reference
 
 - [itex2img](http://www.sciweavers.org/free-online-latex-equation-editor)
