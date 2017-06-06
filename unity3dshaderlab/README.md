@@ -26,6 +26,26 @@
 - fixed function shader로 작성하면 내부적으로 shader import time에
   vertex, fragment shader로 변환된다.
 
+# learning material
+
+- [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
+  - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
+- [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false)
+  - unity3d shader를 가장 잘 설명한 책이다. 
+- [a gentle introduction to shaders in unity3d](http://www.alanzucconi.com/2015/06/10/a-gentle-introduction-to-shaders-in-unity3d/)
+  - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false) 저자 블로그이다.
+  - PBR을 쉽게 이해할 수 있었다. PBR은 Lambertian처럼 lighting model중
+    하나이다. unity3d에서 Standard라는 이름으로 사용된다. Metalic,
+    Specular두가지가 중요하다.
+- [Unity3d Shader Reference](https://docs.unity3d.com/Manual/SL-Reference.html)
+  - RTFM
+- [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
+  - unity3d shader lab은 cg를 권고 하고 있다. cg에 대해 알아둘 필요가 있다.
+- [unity cg programming](https://en.wikibooks.org/wiki/Cg_Programming/Unity)
+  - 여러가지 예제들과 이론들이 풍부하다.
+- [scratchapixel](http://www.scratchapixel.com/)
+  - 밑바닥부터 설명하는 computer graphics
+
 # The Graphics Hardware Pipeline
 
 - Vertex Transformation
@@ -1198,22 +1218,5 @@ Shader "Custom/TextureCoordinates/Fog" {
 
 # reference
 
-- [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
-  - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
-- [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false)
-  - unity3d shader를 가장 잘 설명한 책이다. 
-- [a gentle introduction to shaders in unity3d](http://www.alanzucconi.com/2015/06/10/a-gentle-introduction-to-shaders-in-unity3d/)
-  - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false) 저자 블로그이다.
-  - PBR을 쉽게 이해할 수 있었다. PBR은 Lambertian처럼 lighting model중
-    하나이다. unity3d에서 Standard라는 이름으로 사용된다. Metalic,
-    Specular두가지가 중요하다.
-- [Unity3d Shader Reference](https://docs.unity3d.com/Manual/SL-Reference.html)
-  - RTFM
-- [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
-  - unity3d shader lab은 cg를 권고 하고 있다. cg에 대해 알아둘 필요가 있다.
-- [unity cg programming](https://en.wikibooks.org/wiki/Cg_Programming/Unity)
-  - 여러가지 예제들과 이론들이 풍부하다.
 - [Resources for Writing Shaders in Unity](https://github.com/VoxelBoy/Resources-for-Writing-Shaders-in-Unity)
   - 다양한 링크 모음
-- [scratchapixel](http://www.scratchapixel.com/)
-  - 밑바닥부터 설명하는 computer graphics

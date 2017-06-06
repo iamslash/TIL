@@ -1,7 +1,11 @@
-# The Graphics Hardware Pipeline
+# learning material
 
 - [The Cg Tutorial, Chapter 1: Introduction](http://download.nvidia.com/developer/cg/Cg_Tutorial/Chapter_1.pdf)를 
   읽고 정리한다. 다음의 그림들을 보면서 rendering pipeline을 overview해보자.
+- [scratchapixel](http://www.scratchapixel.com/)
+  - 밑바닥부터 설명하는 computer graphics
+
+# The Graphics Hardware Pipeline
   
 - The Programmable Graphics Pipeline
 

@@ -8,6 +8,7 @@
 
 # Updating...
 
+- [gameengine](gameengine)
 - [machinelearning](machinelearning/README.md)
 - [trading](trading/)
 - [WebRTC](webrtc/README.md)
