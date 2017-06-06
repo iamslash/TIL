@@ -5,6 +5,15 @@
 
 # usage
 
+- [Optimizing graphics rendering in Unity games](https://unity3d.com/kr/learn/tutorials/temas/performance-optimization/optimizing-graphics-rendering-unity-games?playlist=44069)
+  - rendering pipeline, profile window, frame debugger, 
+    multithreaded rendering, graphics jobs, draw call, setpass call
+    , batch, batching, frustum culling, layer cull distances, occlusion culling,
+    shadow distance, reflection probe, static batching, dynamic batching,
+    gpu instancing, texture atlasing, combined mesh, shared material,
+    skinned mesh renderer, bake mesh, fill rate, overdraw,
+    texture compression, mipmap, normap mapping, level of detail 등등의
+    내용을 자세히 기술한다.
 - player settings옵션을 꼼꼼하게 확인해 본다.
   - release빌드할때 script optimization등등을 신경쓴다.
 - Resources 폴더의 내용은 runtime memory를 잡아 먹는다.

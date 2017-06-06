@@ -22,4 +22,10 @@
   10개이기 때문에 batch는 20개이다. 
 - 만약 10개의 오브젝트를 rendering하기 위해 1개의 batch에 command들을 
   잘 구성할 수 있다면 10개의 batch보다 효율적이다. 이러한 행위를 batching이라고 한다.
+- GPU가 CPU로 부터 넘겨받은 batch의 command가 SetPass Call이라면 GPU는 
+  renderstate을 갱신하고 Draw Call이라면 설정된 shader에 의해 mesh를
+  rendering한다.
+- CPU입장에서 GPU에게 command들을 전송할 때 가장 비용이 큰 command는
+  SetPass call이다. 따라서 CPU bound인 경우 SetPass call command를
+  줄이는 것은 성능향상의 가장 좋은 방법이다.
   
