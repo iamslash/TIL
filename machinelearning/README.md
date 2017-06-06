@@ -251,6 +251,38 @@ mnist.test.labels, dropout_rate: 1})
 
 ## CNN (convolutional networks)
 
+![](CNN.png)
+
+- convolutional layer, ReLU, Pool를 반복하다가 
+  마지막에 fully connected neural networks를 적용한 방법
+- 7X7 image가 있다고 해보자. 3X3 filter를 이용하여 convolution layer를 제작해보자.
+  3X3 filter가 7X7 image를 움직이는 칸수를 stride라고 한다. filtering하고 난 후
+  image는 5X5가 된다. (N-F)/stride + 1 => (7-3)/1+1 = 5
+- 만약 filter를 6개 적용했다면 convolutional layer는 5X5X6이 된다.
+- pooling은 sampling과 유사하다. 4X4크기의 image를 2X2크기의 filter로 stride는 2크기로
+  필터링 하자. 결과는 2X2 크기의 image이다. (N-F)/stride + 1 => (4-2)/2+1 = 2. 
+  이때 최종 pixel은 가장 큰 값을 선택한다. 그래서 max pooling이라고 한다.
+- [이곳](http://cs.stanford.edu/people/karpathy/convnetjs/demo/cifar10.html)을
+  참고하면 CIFAR-10 dataset을 이용한 CNN의 과정을 시각화하여 구경할 수 있다.
+- LeCun 교수의 mnist문제는 32X32 image를 CNN한다.
+- AlexNet는 227X227 image를 CNN한다.
+  - first use of ReLU
+  - used Norm Layers (지금은 잘 사용하지 않는다.)
+  - heavy data augmentation
+  - dropout 0.5
+  - batch size 128
+  - SGD Momentum 0.9
+  - Learning rate 1e-2, reduced by 10
+    manually when val accuracy plateaus
+  - L2 weight decay 5e-4
+  - 7 CNN ensemble: 18.2% -> 15.4%
+- GoogLeNet는 [ILSVRC (ImageNet Large Scale Visual Recognition Challenge)](http://www.image-net.org/)에서 2014년에 우승했다.
+- ResNet는 [ILSVRC (ImageNet Large Scale Visual Recognition Challenge)](http://www.image-net.org/)에서 2015년에 우승했다. 224X224X3
+  image를 fast forward를 이용하여 CNN하였다. fast forward가 왜 잘되는지는
+  아직 명확하게 밝혀 지지 않았다.
+- 2014년 Yoon Kim은 Convolutional Neural Networks for Sentence Classification을 
+  발표한다.
+- DeepMind의 AlphaGo역시 CNN을 이용하였다.
 
 
 ## RNN (recurrent networks)
