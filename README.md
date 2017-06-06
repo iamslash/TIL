@@ -8,7 +8,6 @@
 
 # Updating...
 
-- [renderingpipeline](renderingpipeline)
 - [trading](trading/)
 - [WebRTC](webrtc/README.md)
 - [unity3dnetwork](unity3dnetwork/README.md)
