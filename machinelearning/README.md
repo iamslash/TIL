@@ -287,7 +287,7 @@ mnist.test.labels, dropout_rate: 1})
 
 ## RNN (recurrent networks)
 
-- 
+- ...
 
 ## RL (reinforcement learning)
 
@@ -300,5 +300,8 @@ mnist.test.labels, dropout_rate: 1})
 # reference
 
 - [itex2img](http://www.sciweavers.org/free-online-latex-equation-editor)
- - github markdown에서 수식을 입력할때 사용하자.
-  
+  - github markdown에서 수식을 입력할때 사용하자.
+- [tflearn](https://github.com/tflearn/tflearn)
+  - tensorflow wrapper
+- [prettytensor](https://github.com/google/prettytensor)
+  - tensorflow wrapper
