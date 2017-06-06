@@ -28,4 +28,3 @@
 - CPU입장에서 GPU에게 command들을 전송할 때 가장 비용이 큰 command는
   SetPass call이다. 따라서 CPU bound인 경우 SetPass call command를
   줄이는 것은 성능향상의 가장 좋은 방법이다.
-  
