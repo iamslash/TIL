@@ -50,15 +50,15 @@
 
 - The Programmable Graphics Pipeline
 
-![](the_programmable_graphics_pipeline.png)
+![](../renderingpipeline/the_programmable_graphics_pipeline.png)
 
 - programmable vertex processor flow chart
 
-![](programmable_vertex_processor_flow_chart.png)
+![](../renderingpipeline/programmable_vertex_processor_flow_chart.png)
 
 - programmable fragment processor flow chart
 
-![](programmable_fragment_processor_flow_chart.png)
+![](../renderingpipeline/programmable_fragment_processor_flow_chart.png)
 
 # tutorial reference
 
@@ -1190,14 +1190,16 @@ Shader "Custom/TextureCoordinates/Fog" {
 
 ## surface shader
 
-- 업데이트중...
+- ...
 
-# tip
+# snippets
 
-- 업데이트중...
+- ...
 
 # reference
 
+- [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
+  - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
 - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false)
   - unity3d shader를 가장 잘 설명한 책이다. 
 - [a gentle introduction to shaders in unity3d](http://www.alanzucconi.com/2015/06/10/a-gentle-introduction-to-shaders-in-unity3d/)
