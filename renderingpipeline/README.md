@@ -1,7 +1,7 @@
 # The Graphics Hardware Pipeline
 
 - [The Cg Tutorial, Chapter 1: Introduction](http://download.nvidia.com/developer/cg/Cg_Tutorial/Chapter_1.pdf)를 
-  읽고 정리한다.
+  읽고 정리한다. 다음의 그림들을 보면서 rendering pipeline을 overview해보자.
   
 - The Programmable Graphics Pipeline
 
@@ -14,6 +14,10 @@
 - programmable fragment processor flow chart
 
 ![](programmable_fragment_processor_flow_chart.png)
+
+- standard opengl and direct3d raster operations
+
+![](standard_opengl_and_direct3d_raster_operations.png)
 
 # unity3d rendering pipeline
 

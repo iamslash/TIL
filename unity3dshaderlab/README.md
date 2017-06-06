@@ -48,11 +48,17 @@
   - fragment마다 실행된다. depth testing, blending, sencil test가 수행된다.
   - 결국 frame buffer는 최종 처리된 컬러값을 쓴다.
 
-![The Graphics Hardware Pipeline](http://http.developer.nvidia.com/CgTutorial/elementLinks/fig1_3.jpg)
-![Types of Geometric Primitives](http://http.developer.nvidia.com/CgTutorial/elementLinks/fig1_4.jpg)
-![Standard OpenGL and Direct3D Raster Operations](http://http.developer.nvidia.com/CgTutorial/elementLinks/fig1_5.jpg)
-![Visualizing the Graphics Pipeline](http://http.developer.nvidia.com/CgTutorial/elementLinks/fig1_6.jpg)
-![The Programmable Graphics Pipeline](http://http.developer.nvidia.com/CgTutorial/elementLinks/fig1_7.jpg)
+- The Programmable Graphics Pipeline
+
+![](the_programmable_graphics_pipeline.png)
+
+- programmable vertex processor flow chart
+
+![](programmable_vertex_processor_flow_chart.png)
+
+- programmable fragment processor flow chart
+
+![](programmable_fragment_processor_flow_chart.png)
 
 # tutorial reference
 
