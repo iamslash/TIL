@@ -8,6 +8,7 @@
 
 # Updating...
 
+- [daemon](daemon)
 - [gameengine](gameengine)
 - [machinelearning](machinelearning/README.md)
 - [trading](trading/)
