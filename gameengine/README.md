@@ -18,3 +18,15 @@
   - opensource engine중 최고
 - [scratchapixel 2.0](http://www.scratchapixel.com/)
   - computer graphics를 알기쉽게 설명한다.
+- [intel developer zone game dev code samples](https://software.intel.com/en-us/gamedev/code-samples)
+- [amd developer central tools & sdks](http://developer.amd.com/tools-and-sdks/graphics-development/)
+- [nvidia gameworks](https://developer.nvidia.com/what-is-gameworks)
+  - vulkan, opengl, directx sample
+- [microsoft directx graphics samples](https://github.com/Microsoft/DirectX-Graphics-Samples)
+  - 뭐지 이건
+
+# directx
+
+# opengl
+
+# vulkan
