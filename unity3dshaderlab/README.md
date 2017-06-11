@@ -86,7 +86,7 @@
 - [vertex, fragment shader tutorial](https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html)
 - [surface shader tutorial](https://docs.unity3d.com/Manual/SL-SurfaceShaderExamples.html)
 
-# usage
+# tutorial
 
 ## fixed function shader
 
@@ -1211,6 +1211,64 @@ Shader "Custom/TextureCoordinates/Fog" {
 ## surface shader
 
 - ...
+
+# usage
+
+- unity3d 에서 shader는 unity3d shader lab과 cg를 이용해서 제작한다.
+  shader lab에서 cg를 이용하는 방식이다. cg는 nvidia가 주도로 제작한
+  shading language이다. directx와 opengl이 지원한다.
+- shader lab은 properties, sub-shader, pass, vertex shader input,
+  vertex shader, vertex shader output, fragment shader등으로 구성된다.
+- shader lab의 기본 구조는 다음과 같다. 아럐 코드에서 POSITION,
+  SV_POSITION, COLOR과 같은 것을 shader semantics라고 한다.  shader
+  semantics는 shader가 처리되는 단계들 사이에 전달되는 parameter가
+  어떤 의도로 사용될 것인지를 정의하는
+  것이다. [이곳](https://docs.unity3d.com/Manual/SL-ShaderSemantics.html)을
+  참고해서 여러가지 semantics에 대해 파악해 두자.
+
+```cg
+Shader "Custom/skeleton"
+{
+    Properties
+    {
+        _Color ("Main Color", Color) = (1, 1, 1, 1)
+    }
+    
+    Subshader
+    {
+        Pass
+        {
+            CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+            
+            struct vertexInput
+            {
+                float4 vertex : POSITION;
+            };
+            
+            struct vertexOutput
+            {
+                float4 pos : SV_POSITION;
+            };
+            
+            vertexOutput vert(vertexInput v) 
+            {
+                vertexOutput o;
+                o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+                return o;
+            }
+            
+            half4 frag(vertexOutput i) : COLOR
+            {
+            }
+        }
+    }
+}
+```
+
+- 
+  
 
 # snippets
 
