@@ -1274,7 +1274,8 @@ Shader "Custom/skeleton"
 - cartesian coordinate system, homogeneous coordinate system
 - render queue
 - sub-shader tags, pass tags
-  
+- normal, tangent line, tangent space
+- TBD matrix
 
 # snippets
 
