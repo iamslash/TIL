@@ -80,6 +80,10 @@
 
 ![](../renderingpipeline/programmable_fragment_processor_flow_chart.png)
 
+- standard opengl and direct3d raster operations
+
+![](standard_opengl_and_direct3d_raster_operations.png)
+
 # tutorial reference
 
 - [fixed function shader tutorial](https://docs.unity3d.com/Manual/ShaderTut1.html)
@@ -1267,7 +1271,9 @@ Shader "Custom/skeleton"
 }
 ```
 
-- 
+- cartesian coordinate system, homogeneous coordinate system
+- render queue
+- sub-shader tags, pass tags
   
 
 # snippets
