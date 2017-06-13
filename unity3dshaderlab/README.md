@@ -1276,6 +1276,15 @@ Shader "Custom/skeleton"
 - sub-shader tags, pass tags
 - normal, tangent line, tangent space
 - TBD matrix
+- normalmap shader
+- outline shader
+- multi variant shader
+- color = BEADS (emission + ambient + diffuse + specular)
+- foward rendering path
+- legacy deferred (deferred lighting) path
+- deferred shading path
+- legacy vertex lit path
+- 
 
 # snippets
 
