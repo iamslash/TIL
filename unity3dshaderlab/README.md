@@ -82,7 +82,7 @@
 
 - standard opengl and direct3d raster operations
 
-![](standard_opengl_and_direct3d_raster_operations.png)
+![](../standard_opengl_and_direct3d_raster_operations.png)
 
 # tutorial reference
 
