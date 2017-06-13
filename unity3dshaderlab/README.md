@@ -1291,7 +1291,7 @@ Shader "Custom/skeleton"
 - image based fresnel
 - coordinate spaces
 - shadow mapping
-- BRDF
+- BRDF (bidirectional reflectance distribution function)
 - anisotropic BRDF
 
 # snippets
