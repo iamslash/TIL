@@ -1,19 +1,15 @@
 # intro
 
-- 다음과 같은 것들을 읽어 보고 정리하자.
-  - [1.2.3 The Graphics Hardware Pipeline](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
-  - [unity3d rendering pipeline at youtube](https://www.youtube.com/watch?v=qHpKfrkpt4c)
-  - [unity3d shader at youtube](https://www.youtube.com/playlist?list=PL09X4HXJpa8kfw8cZjyYZel8WlOT5B1_k)
+- untity3d의 shader에 대해 정리해본다.
 - unity3d는 shader lab이라는 language로 shader를 표현한다.
 - unity3d shader lab은 fixed function과 programmable pipeline으로 표현할 수 있다.
 - programmable pipeline에는 vertex, fragment, surface shader가 있다.
 - shader lab은 여러개의 subshader로 구성되어 있다. subshader는
   여러개의 pass로 구성될 수 있다. subshader는 하드웨어의 성능이 열악한 순서대로 기록한다.
-- shader lab은 중간에 cg를 사용할 것을 추천한다.
-  - cg는 nvidia가 microsoft와 함께 개발한 shading
-    language이다. directx, opengl을 지원한다. 그래서 unity3d shader
-    lab이 cg사용을 권고하는 것 같다. 하지만 2012년 이후 개발이
-    중단됬다. directx의 hlsl, opengl의 glsl은 사용할 일이 없을까???
+- shader lab은 중간에 cg를 사용할 것을 추천한다. cg는 nvidia가 microsoft와 
+  함께 개발한 shading language이다. directx, opengl을 지원한다. 그래서 unity3d shader
+  lab이 cg사용을 권고하는 것 같다. 하지만 2012년 이후 개발이
+  중단됬다. directx의 hlsl, opengl의 glsl은 사용할 일이 없을까???
 - vertex shader는 vertex를 기준으로 연산한다. fragment shader는
   pixel을 기준으로 연산한다. fragment shader가 vertext shader보다 더
   많이 호출된다.
@@ -28,6 +24,10 @@
 
 # learning material
 
+- [1.2.3 The Graphics Hardware Pipeline](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
+  - shader를 잘 작성하기 위해 rendering pipeline을 잘 이해해야한다.
+- [unity3d rendering pipeline at youtube](https://www.youtube.com/watch?v=qHpKfrkpt4c)
+- [unity3d shader at youtube](https://www.youtube.com/playlist?list=PL09X4HXJpa8kfw8cZjyYZel8WlOT5B1_k)
 - [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
   - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
 - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false)
@@ -1284,7 +1284,15 @@ Shader "Custom/skeleton"
 - legacy deferred (deferred lighting) path
 - deferred shading path
 - legacy vertex lit path
-- 
+- IBL (image based lighting)
+- Irradiance Map
+- image based relection
+- image based refraction
+- image based fresnel
+- coordinate spaces
+- shadow mapping
+- BRDF
+- anisotropic BRDF
 
 # snippets
 
