@@ -1224,10 +1224,9 @@ Shader "Custom/TextureCoordinates/Fog" {
 - shader lab은 properties, sub-shader, pass, vertex shader input,
   vertex shader, vertex shader output, fragment shader등으로 구성된다.
 - shader lab의 기본 구조는 다음과 같다. 아럐 코드에서 POSITION,
-  SV_POSITION, COLOR과 같은 것을 shader semantics라고 한다.  shader
+  SV_POSITION, COLOR과 같은 것들을 shader semantics라고 한다.  shader
   semantics는 shader가 처리되는 단계들 사이에 전달되는 parameter가
-  어떤 의도로 사용될 것인지를 정의하는
-  것이다. [이곳](https://docs.unity3d.com/Manual/SL-ShaderSemantics.html)을
+  어떤 의도로 사용될 것인지 정의하는 것이다. [이곳](https://docs.unity3d.com/Manual/SL-ShaderSemantics.html)을
   참고해서 여러가지 semantics에 대해 파악해 두자.
 
 ```cg
@@ -1279,7 +1278,7 @@ Shader "Custom/skeleton"
 - normalmap shader
 - outline shader
 - multi variant shader
-- color = BEADS (emission + ambient + diffuse + specular)
+- surface color = BEADS (emission + ambient + diffuse + specular)
 - foward rendering path
 - legacy deferred (deferred lighting) path
 - deferred shading path
