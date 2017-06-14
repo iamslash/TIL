@@ -1,6 +1,6 @@
-# intro
+# abstract
 
-- game graphics 공부에 대해 정리한다. learning material에 기재된 순서대로 공부한다.
+- game graphics 에 대해 이론 위주로 정리한다. learning material에 기재된 순서대로 공부한다.
 
 # learning material
 
@@ -19,7 +19,12 @@
 - [OpenGL Superbible: Comprehensive Tutorial and Reference]()
   - opengl blue book
   - [src](https://github.com/openglsuperbible/sb7code)
-- [GPU gems](https://www.amazon.com/Game-Programming-Gems-Adam-Lake/dp/1584507020)
+- [GPG gems](http://www.satori.org/game-programming-gems/)
+  - Game Programming Gems, 줄여서 GPG는 Nintendo of America의 수석 소프트웨어 엔지니어인 
+    Mark Deloura가 시작한 게임 프로그래밍 서적 시리즈이다. 업계와 학계의 여러 저자들이 쓴 글들을 
+    모은 일종의 앤솔로지 형태이다.
+- [GPU gems](https://developer.nvidia.com/gpugems/GPUGems/gpugems_pref01.html)
+  - nvidia 에서 발간하는 graphics 책
 - [ShaderX](https://www.amazon.com/ShaderX7-Rendering-Techniques-Wolfgang-Engel/dp/1584505982)
 - [Physically Based Rendering](https://www.amazon.com/Physically-Based-Rendering-Second-Implementation/dp/0123750792)
 - [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)
@@ -44,3 +49,26 @@
   - vulkan, opengl, directx sample
 - [microsoft directx graphics samples](https://github.com/Microsoft/DirectX-Graphics-Samples)
   - 뭐지 이건
+- [realtimerendering graphics books page](http://www.realtimerendering.com/books.html)
+  - 아주 많은 책들이 정리되어 있다. 언제 다 보지?
+
+# theory
+
+## rendering pipeline
+## model view projection matrix
+## depth sorting
+## bleding
+## normals
+## basic lighting model
+## diffuse reflection
+## specular reflection
+## ambient reflection
+## hemispherical lighting model
+## image based lighting
+## irradiance environment map
+## image based reflection
+## image based refaction
+## image based fresnel
+## coordinate spaces
+## shadow mapping
+## BRDF
