@@ -55,9 +55,9 @@
 # theory
 
 ## rendering pipeline
-## model view projection matrix
-## depth sorting
-## bleding
+## model, view, projection matrix
+## depth sorting / Z-sorting
+## blending
 ## normals
 ## basic lighting model
 ## diffuse reflection
