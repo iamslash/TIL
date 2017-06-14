@@ -25,7 +25,7 @@
     모은 일종의 앤솔로지 형태이다.
 - [GPU gems](https://developer.nvidia.com/gpugems/GPUGems/gpugems_pref01.html)
   - nvidia 에서 발간하는 graphics 책
-- [ShaderX](https://www.amazon.com/ShaderX7-Rendering-Techniques-Wolfgang-Engel/dp/1584505982)
+- [ShaderX7](https://www.amazon.com/ShaderX7-Rendering-Techniques-Wolfgang-Engel/dp/1584505982)
 - [Physically Based Rendering](https://www.amazon.com/Physically-Based-Rendering-Second-Implementation/dp/0123750792)
 - [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)
 - [modern opengl tutorial](http://ogldev.atspace.co.uk/)
@@ -72,3 +72,4 @@
 ## coordinate spaces
 ## shadow mapping
 ## BRDF
+## collision detection
