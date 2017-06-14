@@ -1,4 +1,4 @@
-# intro
+# abstract
 
 - untity3d의 shader에 대해 정리해본다.
 - unity3d는 shader lab이라는 language로 shader를 표현한다.
@@ -24,12 +24,10 @@
 
 # learning material
 
-- [1.2.3 The Graphics Hardware Pipeline](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
-  - shader를 잘 작성하기 위해 rendering pipeline을 잘 이해해야한다.
-- [unity3d rendering pipeline at youtube](https://www.youtube.com/watch?v=qHpKfrkpt4c)
-- [unity3d shader at youtube](https://www.youtube.com/playlist?list=PL09X4HXJpa8kfw8cZjyYZel8WlOT5B1_k)
 - [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
   - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
+- [1.2.3 The Graphics Hardware Pipeline](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
+  - shader를 잘 작성하기 위해 rendering pipeline을 잘 이해해야한다.
 - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false)
   - unity3d shader를 가장 잘 설명한 책이다. 
 - [a gentle introduction to shaders in unity3d](http://www.alanzucconi.com/2015/06/10/a-gentle-introduction-to-shaders-in-unity3d/)
