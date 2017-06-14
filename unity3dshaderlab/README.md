@@ -1268,6 +1268,12 @@ Shader "Custom/skeleton"
 }
 ```
 
+- 두가지 coordinate system을 주목하자. cartesian coordinate system과 
+  homogeneous coordinate system이다. 네가지 coordinate space를 주목하자.
+  object coordinate space, world coordinate space, camera coordinate space,
+  projection coordinate space이다. 특정한 object를 projection coordinate space로
+  표현해야 rasterizer를 통해 fragment shader로 보낼 수 있다. 특정한 object의 
+- model, view, projection matrix
 - cartesian coordinate system, homogeneous coordinate system
 - render queue
 - sub-shader tags, pass tags
