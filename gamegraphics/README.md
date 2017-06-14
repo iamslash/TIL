@@ -1,9 +1,15 @@
 # intro
 
-- game engine개발에 대해 정리해본다.
+- game graphics 공부에 대해 정리한다. learning material에 기재된 순서대로 공부한다.
 
 # learning material
 
+- [unity3d manual](https://docs.unity3d.com/Manual/index.html) [unity3d tutorial](https://unity3d.com/kr/learn/tutorials)
+  - unity3d manual과 tutorial이야 말로 잘 만들어진 엔진을 이용하여 computer graphcis로 입문
+    할 수 있는 좋은 교재이다. unity3d에서 제공하는 기능들을 위주로 학습한다.
+- [unrealengine manual](https://docs.unrealengine.com/latest/KOR/index.html)
+  - unrealengine manual역시 잘 만들어진 엔진을 이용하여 computer graphcis로 입문 할 수 있는
+    좋은 교재이다.
 - [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
   - frank luna의 명저
   - [src](https://github.com/d3dcoder/d3d12book)
@@ -13,6 +19,10 @@
 - [OpenGL Superbible: Comprehensive Tutorial and Reference]()
   - opengl blue book
   - [src](https://github.com/openglsuperbible/sb7code)
+- [GPU gems](https://www.amazon.com/Game-Programming-Gems-Adam-Lake/dp/1584507020)
+- [ShaderX](https://www.amazon.com/ShaderX7-Rendering-Techniques-Wolfgang-Engel/dp/1584505982)
+- [Physically Based Rendering](https://www.amazon.com/Physically-Based-Rendering-Second-Implementation/dp/0123750792)
+- [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)
 - [modern opengl tutorial](http://ogldev.atspace.co.uk/)
   - 40여개의 튜토리얼이 단계별로 잘 설명되어 있다.
   - [src](http://ogldev.atspace.co.uk/ogldev-source.zip)
