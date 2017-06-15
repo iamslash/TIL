@@ -1279,8 +1279,54 @@ Shader "Custom/skeleton"
   이것을 view matrix와 곱하면 camera coordinate space에서의 position을 얻을 수 있다.
   앞서 얻은 결과를 projection matrix와 곱하면 projection coordinate space에서의
   position을 얻을 수 있다.
-- render queue
-- sub-shader tags, pass tags
+- unity3d는 render queue그리고 depth sorting을 통해 화면에 순서대로 그려진다.
+  render queue값이 작은 순서 대로 그려지고 render queue값이 같다면 
+  카메라에서 멀리 떨어진 순서 즉 depth값이 큰 순서대로 그려진다.
+  이때 color buffer와 똑같은 픽셀수의 depth buffer에 depth값이 기록된다.
+  depth buffer는 shader lab에서 접근하여 다양하게 활용할 수 있다.
+- sub-shader 와 pass는 tags를 가질 수 있다. tags는 key, value의 짝이 모여있는 형태이다.
+  구분자는 공백이라는 점이 특이하다. tags는 선언한 위치에 따라 scope이 적용된다.
+  pass tags는 선언된 pass에서만 유효하고 subshader tags는 선언된
+  subshader에서만 유효하다. Queue 는 render queue를 설정할 수 있고
+  IgnoreProjector는 Projector component의 적용 여부를 설정할 수 있고
+  RenderType는 Camera.RenderWithShader 혹은 Camera.SetReplacementShader
+  의 적용 여부를 설정 할 수 있다.
+- shader lab은 Blend command를 통해 blending할 수 있다. src prefix는 지금
+  그릴 오브젝트의 픽셀을 나타내고 dst prefix는 이미 그려진 color buffer의 픽셀을
+  의미한다.
+- 3d max와 같은 프로그램에서 제작된 *.fbx는 특정 오브젝트의 vertex position,
+  vertex normal, vertex color, uv position등을 포함한다. unity3d는 *.fbx
+  를 import하면 fragment shader단계에서 보간된 uv position을 이용하여 
+  color buffer에 기록한다.
+
+```
+            // pixel shader; returns low precision ("fixed4" type)
+            // color ("SV_Target" semantic)
+            fixed4 frag (v2f i) : SV_Target
+            {
+                // sample texture and return it
+                fixed4 col = tex2D(_MainTex, i.uv);
+                return col;
+            }
+```
+
+- texture의 wrap mode를 repeat으로 하고 shader lab의 verex shader를 다음과 같이 
+  수정하면 tiling값을 조절하여 texture를 tiling할 수 있다. _MainTex_ST.xy는 tiling
+  의 x, y를 _MainTex_ST.zw는 offset의 x, y를 의미한다.
+
+```
+			uniform sampler2D _MainTex;
+			uniform float4 _MainTex_ST;
+...
+			vertexOutput vert(vertexInput v)
+			{
+				vertexOutput o; UNITY_INITIALIZE_OUTPUT(vertexOutput, o); // d3d11 requires initialization
+				o.pos = mul(UNITY_MATRIX_MVP , v.vertex);
+				o.texcoord.xy = (v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw);
+				return o;
+			}
+```
+
 - normal, tangent line, tangent space
 - TBD matrix
 - normalmap shader
