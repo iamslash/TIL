@@ -58,7 +58,8 @@
 ## model, view, projection matrix
 ## depth sorting / Z-sorting
 ## blending
-## normals
+## texture mapping
+## normal mapping
 ## basic lighting model
 ## diffuse reflection
 ## specular reflection

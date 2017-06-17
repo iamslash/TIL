@@ -1326,7 +1326,15 @@ Shader "Custom/skeleton"
 				return o;
 			}
 ```
-
+- normal map은 object space normal map, tagent space normal map과 같이
+  두가지 방법이 있다. object space normal map은 object의 pivot을
+  기준으로 vertex의 단위 normal vector를 texture에 저장한 것이다.
+  단위 vector는 크기가 1이므로 x,y,z중 두가지만 저장해도 나머지는
+  계산에 의해서 구할 수 있다.이것은 skin animation을 적용할 때 normal
+  vector의 기준 좌표가 object의 pivot이기 때문에 곤란하다.  tangent
+  space normal map은 vertex의 단위 normal, tangent, binormal vector 를
+  texture에 저장한 것이다. tangent space normal map은 skin animation
+  적용이 가능하다.
 - normal, tangent line, tangent space
 - TBD matrix
 - normalmap shader
