@@ -1341,6 +1341,68 @@ Shader "Custom/skeleton"
   final normal vector는 object space normal vector가 되고 N이 world
   space normal vector 라면 final normal vector는 world space normal
   vector가 된다.
+
+```
+			struct vertexInput
+			{
+				float4 vertex : POSITION;
+				float4 normal : NORMAL;
+				float4 tangent : TANGENT;
+				float4 texcoord : TEXCOORD0;
+			};
+			
+			struct vertexOutput
+			{
+				float4 pos : SV_POSITION;
+				float4 texcoord : TEXCOORD0;
+				
+				float4 normalWorld : TEXCOORD1;
+				float4 tangentWorld : TEXCOORD2;
+				float3 binormalWorld : TEXCOORD3;
+				float4 normalTexCoord : TEXCOORD4;
+			};
+			
+			float3 normalFromColor (float4 colorVal)
+			{
+				#if defined(UNITY_NO_DXT5nm)
+					return colorVal.xyz * 2 - 1;
+				#else
+					float3 normalVal;
+					normalVal = float3 (colorVal.a * 2.0 - 1.0,
+										colorVal.g * 2.0 - 1.0,
+										0.0);
+					normalVal.z = sqrt(1.0 - dot(normalVal, normalVal));
+					return normalVal;
+				#endif
+			}
+			
+			
+			vertexOutput vert(vertexInput v)
+			{
+				vertexOutput o; UNITY_INITIALIZE_OUTPUT(vertexOutput, o); // d3d11 requires initialization
+				o.pos = mul(UNITY_MATRIX_MVP , v.vertex);
+				o.texcoord.xy = (v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw);
+				o.normalTexCoord.xy = (v.texcoord.xy * _NormalMap_ST.xy + _NormalMap_ST.zw);
+
+                o.normalWorld = normalize(mul(v.normal, unity_WorldToObject));
+				o.tangentWorld = normalize(mul(v.tangent,unity_ObjectToWorld));
+				o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w);
+
+				return o;
+			}
+			
+			half4 frag(vertexOutput i) : COLOR
+			{
+				float4 colorAtPixel = tex2D(_NormalMap, i.normalTexCoord);			
+				float3 normalAtPixel = normalFromColor(colorAtPixel);
+				
+				float3x3 TBNWorld = float3x3(i.tangentWorld.xyz, i.binormalWorld.xyz, i.normalWorld.xyz);
+				float3 worldNormalAtPixel = normalize(mul(normalAtPixel, TBNWorld));
+				
+				return float4(worldNormalAtPixel,1);
+			}
+```
+
 - outline shader
 - multi variant shader
 - surface color = BEADS (emission + ambient + diffuse + specular)
