@@ -1341,6 +1341,10 @@ Shader "Custom/skeleton"
   final normal vector는 object space normal vector가 되고 N이 world
   space normal vector 라면 final normal vector는 world space normal
   vector가 된다.
+- world normal vector를 구하기 위해 vertex normal vector에
+  model matrix를 곱하지 않고 inverse of model matrix를 곱한다???
+  skewing problem with normal when object is non-uniformly scaled
+  because normal is orthogonal to mesh-surface.
 
 ```
 			struct vertexInput
