@@ -1441,9 +1441,13 @@ Shader "Custom/skeleton"
   
 ```
 ```
-
-- legacy deferred (deferred lighting) path
-- deferred shading path
+- legacy deferred path는 3가지 단계로 진행된다. 첫째 geometry buffer에
+ depth, normal, specular power등의 정보를 rendering한다.
+ 둘째 각 light에 영향 받는 pixe들을 모아서 geometry buffer에서 데이터를
+ 읽어 들인다. 그리고 light vlaue를 기록하고 light-accumulation buffer에
+ 다시 저장한다. 셋째 accumulated light value와 mesh color를 이용하여
+ 다시 scene을 렌더링한다. 두번 렌더링하게 된다. 
+- deferred shading path는 2가지 단계로 진행된다.
 - legacy vertex lit path
 - IBL (image based lighting)
 - Irradiance Map
