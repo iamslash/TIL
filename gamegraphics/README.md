@@ -4,6 +4,8 @@
 
 # learning material
 
+- [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
+  - 예전에 공짜였지만 지금은 아니다. 기반 설명이 충실히 기술되어 있다.
 - [unity3d manual](https://docs.unity3d.com/Manual/index.html) [unity3d tutorial](https://unity3d.com/kr/learn/tutorials)
   - unity3d manual과 tutorial이야 말로 잘 만들어진 엔진을 이용하여 computer graphcis로 입문
     할 수 있는 좋은 교재이다. unity3d에서 제공하는 기능들을 위주로 학습한다.

@@ -26,8 +26,9 @@
 
 - [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
   - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
-- [1.2.3 The Graphics Hardware Pipeline](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
-  - shader를 잘 작성하기 위해 rendering pipeline을 잘 이해해야한다.
+- [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
+  - unity3d shader lab은 cg를 권고 하고 있다. 
+  - rendering pipeline, transformation, lighting등등이 자세히 기술되어 있다.
 - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false)
   - unity3d shader를 가장 잘 설명한 책이다. 
 - [a gentle introduction to shaders in unity3d](http://www.alanzucconi.com/2015/06/10/a-gentle-introduction-to-shaders-in-unity3d/)
@@ -37,8 +38,6 @@
     Specular두가지가 중요하다.
 - [Unity3d Shader Reference](https://docs.unity3d.com/Manual/SL-Reference.html)
   - RTFM
-- [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
-  - unity3d shader lab은 cg를 권고 하고 있다. cg에 대해 알아둘 필요가 있다.
 - [unity cg programming](https://en.wikibooks.org/wiki/Cg_Programming/Unity)
   - 여러가지 예제들과 이론들이 풍부하다.
 - [scratchapixel](http://www.scratchapixel.com/)
