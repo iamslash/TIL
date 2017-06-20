@@ -37,6 +37,8 @@
   - [src](https://github.com/wolfgangfengel/GPUZen)
 - [ShaderX7](https://www.amazon.com/ShaderX7-Rendering-Techniques-Wolfgang-Engel/dp/1584505982)
 - [Physically Based Rendering](https://www.amazon.com/Physically-Based-Rendering-Second-Implementation/dp/0123750792)
+- [realtimerendering graphics books page](http://www.realtimerendering.com/books.html)
+  - 아주 많은 책들이 정리되어 있다. 언제 다 보지?
 - [modern opengl tutorial](http://ogldev.atspace.co.uk/)
   - 40여개의 튜토리얼이 단계별로 잘 설명되어 있다.
   - [src](http://ogldev.atspace.co.uk/ogldev-source.zip)
@@ -58,8 +60,6 @@
   - vulkan, opengl, directx sample
 - [microsoft directx graphics samples](https://github.com/Microsoft/DirectX-Graphics-Samples)
   - 뭐지 이건
-- [realtimerendering graphics books page](http://www.realtimerendering.com/books.html)
-  - 아주 많은 책들이 정리되어 있다. 언제 다 보지?
 
 # theory
 
