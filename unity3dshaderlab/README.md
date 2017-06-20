@@ -1434,10 +1434,11 @@ Shader "Custom/skeleton"
 - unity3d의 rendering path는 foward, legacy deferred,
   deferred shading, legacy vertex lit등 이 있다.
 - forward path는 다시 forward base, forward additional로 나누어 진다.
-  forward base는 가장 밝은 directional light를 반영해서 rendering한다.
-  forward additional은 forward base에서 처리되지 않은 light를 rendering한다.
-  LightMode tag를 이용해서 shader의 forward base, forward additional
-  pass를 설정할 수 있다.
+  forward base는 가장 밝은 directional light를 반영해서 SH (spherical
+  harmonic) lighting (light probe, GI, sky ambient)과 함께
+  rendering한다.  forward additional은 forward base에서 처리되지 않은
+  light를 rendering한다.  LightMode tag를 이용해서 shader의 forward
+  base, forward additional pass를 설정할 수 있다.
   
 ```
 Tags { "LightMode" = "ForwardBase" 
@@ -1455,7 +1456,14 @@ Tags { "LightMode" = "ForwardBase"
   light-accumulation buffer에 기록한다. accumulated-light value와
   diffuse color, specular, emission등을 결합해서 color를 완성한다.
   legacy deferred lighting path와 다르게 한번만 렌더링하게 된다.
-- legacy vertex lit path
+- object의 appearance는 lighting과 object's material
+  properties(albedo, alpha, emissive, gloss, etc...)로 결정된다.
+  lighting model은 lighting과 object가 어떻게 상호작용하는지 기술하는
+  것이다. 예를 들어 lighting model은 phong ,anisotropic ,fresnel
+  lighting ,Blinn lighting model이 있다. directX와 opengl은 동일하게
+  fixed function lighting model 을 제공한다. nvidia 문서는 이것을 좀 더
+  단순화 시켜 Basic Model이라고 이름지었다. Basic lighting Model은
+  directX와 opengl처럼 classic phong model을 수정하고 확장한 것이다.
 - IBL (image based lighting)
 - Irradiance Map
 - image based relection
