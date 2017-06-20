@@ -1407,10 +1407,41 @@ Shader "Custom/skeleton"
 			}
 ```
 
-- outline shader
-- multi variant shader
-- surface color = BEADS (emission + ambient + diffuse + specular)
-- foward rendering path
+- outline shader는 특정 object의 scale를 늘리고 
+  ZWrite Off, Cull Front 를 통해 구현한다.
+- multi variant shader는 properties의 KeywordEnum과 
+  #pragma multi_compile 혹은 #pragma shader_feature directive 
+  에 의해 이루어진다. multi_compile은 모든 variant가 만들어지지만 
+  shader_feature는 특정 variant만 만들어진다.
+  
+```
+	Properties 
+	{
+		_Color ("Main Color", Color) = (1,1,1,1)
+		_MainTex("Main Texture", 2D) = "white" {}
+		_NormalMap("Normal map", 2D) = "white" {}
+		[KeywordEnum(Off,On)] _UseNormal("Use Normal", Float) = 0
+	}
+    ...
+    			#pragma vertex vert
+			#pragma fragment frag
+			#pragma shader_feature _USENORMAL_OFF _USENORMAL_ON
+```
+
+- basic lighting model에서 surface color는 다음과 같이 얻어낸다.
+  surface color = emission + ambient + diffuse + specular
+  이것을 BEADS로 기억하자.
+- unity3d의 rendering path는 foward, legacy deferred,
+  deferred shading, legacy vertex lit등 이 있다.
+- forward path는 다시 forward base, forward additional로 나누어 진다.
+  forward base는 가장 밝은 directional light를 반영해서 rendering한다.
+  forward additional은 forward base에서 처리되지 않은 light를 rendering한다.
+  LightMode tag를 이용해서 shader의 forward base, forward additional
+  pass를 설정할 수 있다.
+  
+```
+```
+
 - legacy deferred (deferred lighting) path
 - deferred shading path
 - legacy vertex lit path
