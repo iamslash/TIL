@@ -5,7 +5,8 @@
 # learning material
 
 - [interactive 3D Graphics](https://classroom.udacity.com/courses/cs291)
-  - computer graphics의 기반이론을 잘 설명한 동영상 강좌
+  - computer graphics의 기반이론을 잘 설명한 동영상 강좌. 너무 빠르다. 검색 기능을 활용해서 이해가
+    가지 않는 것 위주로 살펴본다.
   - [download](https://www.udacity.com/wiki/cs291/downloads)
 - [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
   - 예전에 공짜였지만 지금은 아니다. 기반 설명이 충실히 기술되어 있다.
