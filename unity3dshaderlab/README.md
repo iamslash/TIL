@@ -1467,7 +1467,12 @@ Tags { "LightMode" = "ForwardBase"
   DiffuseLambert함수를 참고하자. BEADS의 D를 
   lightColor * diffuseFactor * attenuation * max(0, dot(normalVal,lightDir)
   를 이용하여 구할 수 있다.
-  
+
+```latex
+```
+
+![](diffuse_lighting_equation.png)
+
 ```
 float3 DiffuseLambert(float3 normalVal, float3 lightDir, float3 lightColor, float diffuseFactor, float attenuation)
 {
@@ -1488,6 +1493,123 @@ float3 DiffuseLambert(float3 normalVal, float3 lightDir, float3 lightColor, floa
 					float3 lightColor = _LightColor0.xyz;
 					float attenuation = 1;
 					return float4(DiffuseLambert(worldNormalAtPixel, lightDir, lightColor, _Diffuse, attenuation),1);
+				#elif _LIGHTING_VERT
+					return i.surfaceColor;
+				#else
+					return float4(worldNormalAtPixel,1);
+				#endif
+			}
+```
+
+- specular reflection은 blinn-phong model을 이용하여 구현할 수 있다.
+  Phong이 제안한 model은 N (normal vector of surface) 과 V (view vector of camera)
+  를 이용했지만 나중에 blinn과 phong에 의해 제안된 model은 N 과 H 를 이용해서 최적화 했다.
+
+```latex
+s = \sum_{i=0}^{n}\text{intensity}_\text{light i} \times 
+\begin{matrix}
+  \text{specular} \\
+  \text{property} \\
+  \text{of} \\
+  \text{material} \\
+ \end{matrix}
+\times \text{attenuation} \times \max\left(0, ({N} \cdot {H}) \right)^\text{specular power}
+```
+
+![](specular_lighting_equation.png)
+
+```
+float3 SpecularBlinnPhong(float3 normalDir, float3 lightDir, float3 worldSpaceViewDir, float3 specularColor, float specularFactor, float attenuation, float specularPower)
+{
+	float3 halfwayDir = normalize(lightDir + worldSpaceViewDir);
+	return specularColor * specularFactor * attenuation * pow(max(0,dot(normalDir,halfwayDir)),specularPower);
+}
+...
+			half4 frag(vertexOutput i) : COLOR
+			{
+				#if _USENORMAL_ON
+					float3 worldNormalAtPixel = WorldNormalFromNormalMap(_NormalMap, i.normalTexCoord.xy, i.tangentWorld.xyz, i.binormalWorld.xyz, i.normalWorld.xyz);
+					//return tex2D(_MainTex, i.texcoord) * _Color;
+				#else
+					float3 worldNormalAtPixel = i.normalWorld.xyz;
+				#endif
+				
+				#if _LIGHTING_FRAG
+					float3 lightDir  = normalize(_WorldSpaceLightPos0.xyz);
+					float3 lightColor = _LightColor0.xyz;
+					float attenuation = 1;
+					float3 diffuseCol =  DiffuseLambert(worldNormalAtPixel, lightDir, lightColor, _Diffuse, attenuation);
+					
+					float4 specularMap = tex2D(_SpecularMap, i.texcoord.xy);
+					
+					float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
+					float3 specularCol = SpecularBlinnPhong(worldNormalAtPixel, lightDir, worldSpaceViewDir, specularMap.rgb , _SpecularFactor, attenuation, _SpecularPower);
+					return float4(diffuseCol + specularCol,1);
+					
+				#elif _LIGHTING_VERT
+					return i.surfaceColor;
+				#else
+					return float4(worldNormalAtPixel,1);
+				#endif
+			}
+```
+
+- ambient reflection은 다음과 같은 식을 이용하여 구현 할 수 있다.
+
+```
+```latex
+a = \begin{matrix}
+  \text{ambient} \\
+  \text{property} \\
+  \text{of} \\
+  \text{material} \\
+\end{matrix} 
+\times
+\begin{matrix} 
+  \text{global} \\
+  \text{ambient} \\
+  \text{value} \\
+\end{matrix}
+```
+
+```
+
+![](ambient_lighting_equation.png)
+
+```
+	Properties 
+	{
+        ...
+		_AmbientFactor ("Ambient %", Range(0,1)) = 1
+	}
+    ...
+			half4 frag(vertexOutput i) : COLOR
+			{
+				#if _USENORMAL_ON
+					float3 worldNormalAtPixel = WorldNormalFromNormalMap(_NormalMap, i.normalTexCoord.xy, i.tangentWorld.xyz, i.binormalWorld.xyz, i.normalWorld.xyz);
+					//return tex2D(_MainTex, i.texcoord) * _Color;
+				#else
+					float3 worldNormalAtPixel = i.normalWorld.xyz;
+				#endif
+				
+				#if _LIGHTING_FRAG
+					float3 lightDir  = normalize(_WorldSpaceLightPos0.xyz);
+					float3 lightColor = _LightColor0.xyz;
+					float attenuation = 1;
+					float3 diffuseCol =  DiffuseLambert(worldNormalAtPixel, lightDir, lightColor, _Diffuse, attenuation);
+					
+					float4 specularMap = tex2D(_SpecularMap, i.texcoord.xy);
+					
+					float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
+					float3 specularCol = SpecularBlinnPhong(worldNormalAtPixel, lightDir, worldSpaceViewDir, specularMap.rgb , _SpecularFactor, attenuation, _SpecularPower);
+					
+					#if _AMBIENTMODE_ON
+						float3 ambientColor = _AmbientFactor * UNITY_LIGHTMODEL_AMBIENT;
+						return float4(diffuseCol + specularCol + ambientColor,1);
+					#else
+						return float4(diffuseCol + specularCol,1);
+					#endif
+
 				#elif _LIGHTING_VERT
 					return i.surfaceColor;
 				#else
