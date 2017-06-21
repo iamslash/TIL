@@ -4,6 +4,8 @@
 
 # learning material
 
+- [interactive 3D Graphics](https://classroom.udacity.com/courses/cs291)
+  - computer graphics의 기반이론을 잘 설명한 동영상 강좌
 - [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
   - 예전에 공짜였지만 지금은 아니다. 기반 설명이 충실히 기술되어 있다.
 - [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
