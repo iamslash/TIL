@@ -1556,7 +1556,6 @@ float3 SpecularBlinnPhong(float3 normalDir, float3 lightDir, float3 worldSpaceVi
 
 - ambient reflection은 다음과 같은 식을 이용하여 구현 할 수 있다.
 
-```
 ```latex
 a = \begin{matrix}
   \text{ambient} \\
@@ -1570,8 +1569,6 @@ a = \begin{matrix}
   \text{ambient} \\
   \text{value} \\
 \end{matrix}
-```
-
 ```
 
 ![](ambient_lighting_equation.png)
