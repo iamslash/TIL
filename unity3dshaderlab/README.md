@@ -1463,6 +1463,39 @@ Tags { "LightMode" = "ForwardBase"
   fixed function lighting model 을 제공한다. nvidia 문서는 이것을 좀 더
   단순화 시켜 Basic Model이라고 이름지었다. Basic lighting Model은
   directX와 opengl처럼 classic phong model을 수정하고 확장한 것이다.
+- diffuse reflection은 Lambertian reflectance을 이용하여 구현할 수 있다.
+  DiffuseLambert함수를 참고하자. BEADS의 D를 
+  lightColor * diffuseFactor * attenuation * max(0, dot(normalVal,lightDir)
+  를 이용하여 구할 수 있다.
+  
+```
+float3 DiffuseLambert(float3 normalVal, float3 lightDir, float3 lightColor, float diffuseFactor, float attenuation)
+{
+	return lightColor * diffuseFactor * attenuation * max(0, dot(normalVal,lightDir));
+}
+...
+			half4 frag(vertexOutput i) : COLOR
+			{
+				#if _USENORMAL_ON
+					float3 worldNormalAtPixel = WorldNormalFromNormalMap(_NormalMap, i.normalTexCoord.xy, i.tangentWorld.xyz, i.binormalWorld.xyz, i.normalWorld.xyz);
+					//return tex2D(_MainTex, i.texcoord) * _Color;
+				#else
+					float3 worldNormalAtPixel = i.normalWorld.xyz;
+				#endif
+				
+				#if _LIGHTING_FRAG
+					float3 lightDir  = normalize(_WorldSpaceLightPos0.xyz);
+					float3 lightColor = _LightColor0.xyz;
+					float attenuation = 1;
+					return float4(DiffuseLambert(worldNormalAtPixel, lightDir, lightColor, _Diffuse, attenuation),1);
+				#elif _LIGHTING_VERT
+					return i.surfaceColor;
+				#else
+					return float4(worldNormalAtPixel,1);
+				#endif
+			}
+```
+
 - IBL (image based lighting)
 - Irradiance Map
 - image based relection
