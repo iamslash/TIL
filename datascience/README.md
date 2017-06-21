@@ -10,15 +10,17 @@
 
 # learning material
 
+
 - [기초통계학 at youtube](https://www.youtube.com/playlist?list=PLsri7w6p16vs-vfUgweXPjEEhwXjjPSHq)
   - 노경섭의 제대로 시작하는 기초통계학 동영상 강좌
 - [논문통계분석 at youtube](https://www.youtube.com/watch?v=8PT4AKrKjFo&list=PLsri7w6p16vuIphjhykx6UwOb6ICK0HVi)
   - 노경섭의 제대로 알고쓰는 논문 통계분석 동영상 강좌
 - [openintro](https://www.openintro.org/stat/videos.php)
   - 통계학을 쉽게 알려주는 비디오 강좌
-- [Thinks Stats](https://www.amazon.com/Think-Stats-Allen-B-Downey/dp/1449307116)
+- [Thinks Stats](http://greenteapress.com/thinkstats/)
   - [code](https://github.com/AllenDowney/ThinkStats2)
-  - python 프로그래머를 위한 통계학
+  - [한글](http://fliphtml5.com/dvlr/gyzu/basic)
+  - python 프로그래머를 위한 통계학. 공짜.
 - [21세기 통계학을 배우는 방법](http://statkclee.github.io/window-of-statistics/)
   - 매우 설득력 있는 통계 로드맵.
 - [빅데이터의 통찰력을 키워주는 엑셀 Quick Start](https://www.inflearn.com/course/%EC%97%91%EC%85%80-%EA%B0%95%EC%A2%8C/)
