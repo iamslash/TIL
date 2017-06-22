@@ -68,7 +68,8 @@
 # theory
 
 ## rendering pipeline
-## model, view, projection matrix
+## coordinate spaces
+## transforming coordinate spaces
 ## depth sorting / Z-sorting
 ## blending
 ## texture mapping
@@ -83,7 +84,6 @@
 ## image based reflection
 ## image based refaction
 ## image based fresnel
-## coordinate spaces
 ## shadow mapping
 ## BRDF
 ## collision detection
