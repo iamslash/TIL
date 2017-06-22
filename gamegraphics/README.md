@@ -85,6 +85,9 @@
 ## irradiance environment map
 ## image based reflection
 ## image based refaction
+
+- snell's law
+
 ## image based fresnel
 ## shadow mapping
 ## BRDF
