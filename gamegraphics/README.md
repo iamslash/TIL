@@ -74,6 +74,7 @@
 ## depth sorting / Z-sorting
 ## blending
 ## texture mapping
+## displacement mapping
 ## normal mapping
 ## basic lighting model
 ## diffuse reflection
