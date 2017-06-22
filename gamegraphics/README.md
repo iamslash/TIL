@@ -5,10 +5,9 @@
 # learning material
 
 - [interactive 3D Graphics](https://classroom.udacity.com/courses/cs291)
-  - computer graphics의 기반이론을 잘 설명한 동영상 강좌. 검색 기능을 활용해서 이해가
-    가지 않는 것 위주로 살펴본다. 보충자료가 볼만하다.
-  - [보충자료](https://www.udacity.com/wiki/cs291#!#code-download-developing-javascript-locally)
-  - [video download](https://www.udacity.com/wiki/cs291/downloads)
+  - computer graphics의 기반이론을 잘 설명한 동영상 강좌. real time rendering의 저자중 한명임.
+  - [syllabus](https://www.udacity.com/wiki/cs291/syllabus)
+  - [wiki](https://www.udacity.com/wiki/cs291)
 - [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
   - 예전에 공짜였지만 지금은 아니다. 기반 설명이 충실히 기술되어 있다.
 - [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
