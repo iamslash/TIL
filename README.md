@@ -6,9 +6,8 @@
 
 - I use emacs with markdown mode. I can preview a markdown file using 'C-c C-c p'. And I can search with github search in this repository.
 - [latex image generator](https://www.codecogs.com/latex/eqneditor.php)
+- [LaTeX examples](https://ko.wikipedia.org/wiki/%EC%9C%84%ED%82%A4%EB%B0%B1%EA%B3%BC:TeX_%EB%AC%B8%EB%B2%95)
 - [LaTeX math symbols](http://web.ift.uib.no/Teori/KURS/WRK/TeX/symALL.html)
-- [LaTeX examples](https://en.wikibooks.org/wiki/LaTeX/Mathematics)
-
 
 # Updating...
 
