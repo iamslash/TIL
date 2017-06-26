@@ -69,30 +69,56 @@
 # theory
 
 ## rendering pipeline
-## coordinate spaces
+
 ## transformation
 
-- [transformation overview using three.js](http://www.realtimerendering.com/udacity/transforms.html)
-- [src](https://github.com/erich666/cs291)
+model point는 다음을 통해 window coordinate까지 진행된다. 
+
+```
+world-space point = model matrix * model point
+view-space point = view matrix * world point
+w-divide for NDC <= clip coords = projection matrix * view point
+window coords = windows(screen) matrix * NDC
+```
+
+[이것](http://www.realtimerendering.com/udacity/transforms.html)은 object space
+cartesian coordinate 이 (4,5,3)인 큐브를 예로 three.js와 함께 설명 했다.
+src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pipeline.js)을 참고하자.
 
 ## depth sorting / Z-sorting
+
 ## blending
+
 ## texture mapping
+
 ## displacement mapping
+
 ## normal mapping
+
 ## basic lighting model
+
 ## diffuse reflection
+
 ## specular reflection
+
 ## ambient reflection
+
 ## hemispherical lighting model
+
 ## image based lighting
+
 ## irradiance environment map
+
 ## image based reflection
+
 ## image based refaction
 
 - snell's law
 
 ## image based fresnel
+
 ## shadow mapping
+
 ## BRDF
+
 ## collision detection
