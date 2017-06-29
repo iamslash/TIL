@@ -5,10 +5,11 @@
 # learning material
 
 - [interactive 3D Graphics](https://classroom.udacity.com/courses/cs291)
-  - computer graphics의 기반이론을 three.js와 함께 설명한 동영상 강좌.
+  - computer graphics의 기반이론을 three.js와 함께 설명한 동영상 강좌. 자세한 설명은 [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)으로 만족하자.
   - [syllabus](https://www.udacity.com/wiki/cs291/syllabus)
   - [comments](https://www.udacity.com/wiki/cs291/instructor-comments)
   - [wiki](https://www.udacity.com/wiki/cs291)
+  - [three.js tutorial](http://stemkoski.github.io/Three.js/)
 - [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
   - 예전에 공짜였지만 지금은 아니다. 기반 설명이 충실히 기술되어 있다.
 - [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
