@@ -4,6 +4,9 @@
 
 # learning material
 
+- [opengl at songho](http://www.songho.ca/opengl/)
+  - computer graphics의 이론들이 잘 정리되어 있다.
+  - 특히 [OpenGL Normal Vector Transformation](http://www.songho.ca/opengl/gl_normaltransform.html)의 설명이 너무 좋았다.
 - [Mathematics for 3D Game Programming and Computer Graphics, Third Edition](http://www.mathfor3dgameprogramming.com/)
   - 3D computer graphics를 위한 수학
 - [interactive 3D Graphics](https://classroom.udacity.com/courses/cs291)
