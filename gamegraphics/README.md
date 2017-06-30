@@ -4,6 +4,8 @@
 
 # learning material
 
+- [Mathematics for 3D Game Programming and Computer Graphics, Third Edition](http://www.mathfor3dgameprogramming.com/)
+  - 3D computer graphics를 위한 수학
 - [interactive 3D Graphics](https://classroom.udacity.com/courses/cs291)
   - computer graphics의 기반이론을 three.js와 함께 설명한 동영상 강좌. 자세한 설명은 [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)으로 만족하자.
   - [syllabus](https://www.udacity.com/wiki/cs291/syllabus)
