@@ -69,6 +69,36 @@
 
 # theory
 
+## math prerequisites
+
+- affine space
+
+vector space에서는 vector가 어디에 위치해 있던지 크기와 방향만 같다면
+같은 vector로 생각한다. vector space에서 크기와 방향은 같지만 위치가
+다른 vector를 구분할 필요가 있다. 그래서 affine space를 만들어냈다.
+affine space에서는 position을 추가하여 vector의 위치를 표현한다.
+
+- affince space operation
+
+vector와 vector의 +, - 는 vector이다. scala와 vector의 *, /는
+vector이다. vector와 point의 +, -는 point이다. point와 point의
+-는 vector이다. point와 point의 +는 허용되지 않는다. (단 계수의 합이
+1인 경우는 허용된다.)
+
+
+
+- homogeneous coordinates (동차좌표)
+
+vector와 point를 구분하기 위해 n-tuple에 하나의 차원을 증가시킨 좌표체계이다.
+예를 들어서 v = (v1, v2)가 있다고 하자. v의 homogeneous coordinates 
+v' = (v1, v2, p)이고 p가 0이면 vector를 p가 0이 아니면 point를 
+의미한다.
+따라서 다음과 같은 position들은 모두 같다.
+(5, 1, 1) = (10, 2, 2) = (15, 3, 3) = (20, 4, 4)
+
+- tangent space
+
+
 ## rendering pipeline
 
 ## transformation
