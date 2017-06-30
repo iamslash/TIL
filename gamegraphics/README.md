@@ -85,7 +85,18 @@ vector이다. vector와 point의 +, -는 point이다. point와 point의
 -는 vector이다. point와 point의 +는 허용되지 않는다. (단 계수의 합이
 1인 경우는 허용된다.)
 
+![](affine_space_op.png)
 
+affine space에서 point A는 point O에서 point A로 가는 vector로 
+생각 할 수 있다. 따라서 C = A + 0.5 * (B - A) 이다.
+point A와 vector B - A의 합은 point임을 알 수 있다.
+
+이때 0.5대신 k를 도입하여 다음과 같이 표기할 수 있다.
+C = A + k(B - A) (0 <= k <= 1)
+C = (1 - k)A + kB
+
+k가 1이면 C = B이고 k 가 0이면 C = A이다. 이처럼 계수의 합이 1인 경우는
+point와 point의 덧셈 연산이 가능하고 이런 경우를 affine sum이라고 한다.
 
 - homogeneous coordinates (동차좌표)
 
