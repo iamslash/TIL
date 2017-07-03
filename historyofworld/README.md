@@ -20,6 +20,7 @@
 
 ## video
 
+- [세계사 연표](https://www.youtube.com/watch?v=mL57FhHtmV0)
 - [history of the world](https://www.youtube.com/watch?v=ymI5Uv5cGU4)
   - 시간이 흐름에 따라 세계지도가 어떻게 바뀌는지 보여주는 동영상
 - [World History of Khan Academy at youtube](https://www.youtube.com/playlist?list=PLSQl0a2vh4HB9UeibLURBlcdR4XzputM9)
