@@ -4,8 +4,9 @@
 
 # usage
 
-- [history of world](https://cdn.knightlab.com/libs/timeline3/latest/embed/index.html?source=1DFQimkpl3oEFB8QrhOyM70sPEfU9gD0A00C0GCGf150&font=Default&lang=ko&initial_zoom=2&height=650)
-  - [history of world google spreadsheet](https://docs.google.com/spreadsheets/d/1DFQimkpl3oEFB8QrhOyM70sPEfU9gD0A00C0GCGf150/pubhtml)
+- [history of world time line](https://cdn.knightlab.com/libs/timeline3/latest/embed/index.html?source=1DFQimkpl3oEFB8QrhOyM70sPEfU9gD0A00C0GCGf150&font=Default&lang=ko&initial_zoom=2&height=650)
+  - 구글 스프레드 쉬트에서 작업한 [것](https://docs.google.com/spreadsheets/d/1DFQimkpl3oEFB8QrhOyM70sPEfU9gD0A00C0GCGf150/pubhtml)을
+    기반으로 [Timeline](https://timeline.knightlab.com/)을 이용하여 시각화 한 것이다.
 
 17750419-17830903 미국독립전쟁
 1861-1897 미국남북전쟁
@@ -13,8 +14,6 @@
 1929 대공황
 1939-1945 제2차세계대전
 19971121 대한민국 IMF에 구제금융 신청
-200809 세계금융위기
-
 
 # reference 
 
