@@ -9,6 +9,7 @@
     그래픽스에 대한 이론적인 기초가 부족한 게임 개발자 역시 이 책의
     주요 독자층이 될 것이다.
 - [digital lighting & rendering: third edition](http://www.3drender.com/light/)
+  - 3D 라이팅과 렌더링 기법의 표준을 제시한 바이블을 만난다! 
 - [opengl at songho](http://www.songho.ca/opengl/)
   - computer graphics의 이론들이 잘 정리되어 있다.
   - 특히 [OpenGL Normal Vector Transformation](http://www.songho.ca/opengl/gl_normaltransform.html)의 설명이 너무 좋았다.
