@@ -4,6 +4,8 @@
 
 # learning material
 
+- [3차원 그래픽스(게임 프로그래밍을위한)](http://www.hongpub.co.kr/sub.php?goPage=view_product&Code=20110808092547)
+- [digital lighting & rendering: third edition](http://www.3drender.com/light/)
 - [opengl at songho](http://www.songho.ca/opengl/)
   - computer graphics의 이론들이 잘 정리되어 있다.
   - 특히 [OpenGL Normal Vector Transformation](http://www.songho.ca/opengl/gl_normaltransform.html)의 설명이 너무 좋았다.
