@@ -5,6 +5,9 @@
 # learning material
 
 - [3차원 그래픽스(게임 프로그래밍을위한)](http://www.hongpub.co.kr/sub.php?goPage=view_product&Code=20110808092547)
+  - 그래픽스 API 및 쉐이더 프로그래밍 경험을 가지고 있지만 3차원
+    그래픽스에 대한 이론적인 기초가 부족한 게임 개발자 역시 이 책의
+    주요 독자층이 될 것이다.
 - [digital lighting & rendering: third edition](http://www.3drender.com/light/)
 - [opengl at songho](http://www.songho.ca/opengl/)
   - computer graphics의 이론들이 잘 정리되어 있다.
