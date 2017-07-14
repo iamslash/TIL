@@ -164,6 +164,25 @@ mysqld_multi --defaults-file=/Users/iamslash/etc/mysql_multi.cnf report
 
 ## XA
 
+- distributed transaction을 위해 제공되는 기능이다. 예를 들어서 mysql
+  server A, B가 있을때 A와 B에 걸쳐 transaction을 해야 하는 경우를
+  생각해 보자. A, B를 묶어서 생각한 transaction을 global
+  transaction이라고 하고 A, B각각 에서 이루어 지는 transaction을 local
+  transaction 이라고 하자.
+- A local transaction, B local transaction이 모두 성공하면 global
+  transaction 을 commit하고 둘중 하나라도 성공하지 못했다면 global
+  transaction을 rollback한다. 이때 A local transaction이 XA PREPARE를
+  통해 PREPARED상태로 변하는 것을 one phase라고 하고 A local transaction이
+  XA COMMIT를 통해 COMMITTED상태로 변하는 것을 two phase라고 하자.
+  
+![](Xa-diag-768x576.jpg)
+
+- 보다 자세한 내용은 [이곳](http://mysqlserverteam.com/improvements-to-xa-support-in-mysql-5-7)을 참고하자.
+  [이곳](https://www.percona.com/live/mysql-conference-2013/sites/default/files/slides/XA_final.pdf)은 distributed transaction이 성능이 좋지 않으니 최대한 피하자는 내용의 문서이다.
+  혹시나 해서 [pdf](XA_final.pdf)으로 저장
+  
+- 다음은 XA문법이다.
+
 ```
 mysql -h localhost -u iamslash -p
 > XA START 'xa1';
@@ -173,4 +192,9 @@ mysql -h localhost -u iamslash -p
 > XA PREPARE 'xa1';
 > XA RECOVER;
 > XA ROLLBACK 'xa1'; //XA COMMIT
+```
+
+- 다음은 python으로 XA를 이용해서 distributed transaction을 구현해보았다.
+
+```
 ```
