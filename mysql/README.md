@@ -1,6 +1,12 @@
 # abstract
 
 - mysqld에 대해 적어보자.
+- msyql 의 HELP를 주로 사용하자.
+
+# learning materials
+
+- [이곳](https://www.percona.com/resources/videos)에
+  쓸만한 webinar동영상들이 있다.
 
 # tip
 
