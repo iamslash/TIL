@@ -168,12 +168,18 @@ mysqld_multi --defaults-file=/Users/iamslash/etc/mysql_multi.cnf report
   server A, B가 있을때 A와 B에 걸쳐 transaction을 해야 하는 경우를
   생각해 보자. A, B를 묶어서 생각한 transaction을 global
   transaction이라고 하고 A, B각각 에서 이루어 지는 transaction을 local
-  transaction 이라고 하자.
+  transaction 이라고 하자. A local transaction과 B local transaction이 
 - A local transaction, B local transaction이 모두 성공하면 global
   transaction 을 commit하고 둘중 하나라도 성공하지 못했다면 global
   transaction을 rollback한다. 이때 A local transaction이 XA PREPARE를
   통해 PREPARED상태로 변하는 것을 one phase라고 하고 A local transaction이
   XA COMMIT를 통해 COMMITTED상태로 변하는 것을 two phase라고 하자.
+- XA trnasaction id는 gtrid (global transaction id), bqual (branch
+  qualifier), formatID로 구성된다. bqual과 formatID는 option이다. 같은
+  global transaction에 속한 local transaction의 XA transaction id는
+  gtrid는 같아야하고 bqual은 달라야한다. XA RECOVER를 이용하면
+  PREPARED상태에 있는 local transaction의 XA transaction id를 얻어 올
+  수 있다. 이것을 기반으로 local transaction성공여부를 판단하자.
   
 ![](Xa-diag-768x576.jpg)
 
@@ -195,6 +201,8 @@ mysql -h localhost -u iamslash -p
 ```
 
 - 다음은 python으로 XA를 이용해서 distributed transaction을 구현해보았다.
+  local transaction이 성공했는지는 어떻게 알수 있을까???
 
-```
+```python
+
 ```
