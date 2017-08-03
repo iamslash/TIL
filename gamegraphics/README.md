@@ -82,6 +82,14 @@
 
 ## math prerequisites
 
+- affine transform
+
+world transform, view transform은 scaling, rotation, translation등과
+같이 기본적인 변환들을 조합하여 만들어진다. 한편 scaling, rotation은
+linear transform(선형변환) 의 범주에 속한다. translation(이동)은
+linear transform에 속하지 않는다. 대신 linear transform과 함께 affine
+transform의 범주를 형성한다.
+
 - affine space
 
 vector space에서는 vector가 어디에 위치해 있던지 크기와 방향만 같다면
