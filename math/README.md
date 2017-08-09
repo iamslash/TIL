@@ -10,3 +10,8 @@
   수학을 주제별로 분류해 놓았다.
 - [khan academy math by subject](https://www.khanacademy.org/math)는
   좋은 강좌들을 담고 있다.
+- [고려대학교 수학과 교과과정](https://math.korea.ac.kr/math/grad/normal.do)을
+  통해서 수학의 과목별 설명을 확인 할 수 있다. 영문이 함께 표기되서
+  좋다.
+- [서울대학교 수학과 교과과정](http://www.math.snu.ac.kr/board/b5_5)을 통해서
+  수학의 과목별 설명을 확인 할 수 있다.
