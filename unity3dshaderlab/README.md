@@ -1211,7 +1211,7 @@ Shader "Custom/TextureCoordinates/Fog" {
 
 ## surface shader
 
-- ...
+- updaing...
 
 # usage
 
@@ -1627,7 +1627,7 @@ a = \begin{matrix}
 
 # snippets
 
-- ...
+- updating...
 
 # reference
 

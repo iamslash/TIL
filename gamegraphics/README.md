@@ -82,6 +82,14 @@
 
 ## math prerequisites
 
+- affine transform
+
+world transform, view transform은 scaling, rotation, translation등과
+같이 기본적인 변환들을 조합하여 만들어진다. 한편 scaling, rotation은
+linear transform(선형변환) 의 범주에 속한다. translation(이동)은
+linear transform에 속하지 않는다. 대신 linear transform과 함께 affine
+transform의 범주를 형성한다.
+
 - affine space
 
 vector space에서는 vector가 어디에 위치해 있던지 크기와 방향만 같다면
@@ -111,12 +119,11 @@ point와 point의 덧셈 연산이 가능하고 이런 경우를 affine sum이�
 
 - homogeneous coordinates (동차좌표)
 
-vector와 point를 구분하기 위해 n-tuple에 하나의 차원을 증가시킨 좌표체계이다.
-예를 들어서 v = (v1, v2)가 있다고 하자. v의 homogeneous coordinates 
-v' = (v1, v2, p)이고 p가 0이면 vector를 p가 0이 아니면 point를 
-의미한다.
-따라서 다음과 같은 position들은 모두 같다.
-(5, 1, 1) = (10, 2, 2) = (15, 3, 3) = (20, 4, 4)
+vector와 point를 구분하기 위해 n-tuple에 하나의 차원을 증가시킨
+좌표체계이다.  예를 들어서 v = (v1, v2)가 있다고 하자. v의 homogeneous
+coordinates v' = (v1, v2, p)이고 p가 0이면 vector를 p가 0이 아니면
+point를 의미한다.  따라서 다음과 같은 position들은 모두 같다.  (5, 1,
+1) = (10, 2, 2) = (15, 3, 3) = (20, 4, 4)
 
 - tangent space
 
@@ -152,8 +159,6 @@ src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pi
 ## displacement mapping
 
 ## normal mapping
-
-
 
 ## basic lighting model
 
