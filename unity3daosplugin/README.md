@@ -8,7 +8,7 @@
 - Android Studio를 통해 New Project선택한후 empty activity를 하나 만들자.
 - New Module를 통해 Module을 추가한다.
 - Module에 a.java를 추가하고 Build Module하자.
-- intermediate/bundles/debug의 classes.jar와 AndroidManifest.xml을 copy하자.
+- intermediate/bundles/debug의 classes.jar와 AndroidManifest.xml을 Assets/Plugins/Android/libs/에 copy하자.
 
 # References
 
