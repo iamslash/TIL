@@ -38,7 +38,7 @@
   해당하는 SAT를 다항시간에 해결할 수 있다면 그 외 모든 NP문제들을
   빠짐 없이 SAT로 reduction하여 다항시간에 해결 할 수 있다는 의미에서
   NP-complete 문제 라고 한다. 역시 Cook-Levin theorem의 논문을
-  봐야 겠다.
+  봐야 겠다. [Cook-Levin Proof @ youtube](https://www.youtube.com/watch?v=dKS4iDWQVnI&index=1&list=PLS4py2LeEJNDzezHTc0G3EsttsoKWQhGz)
   
 # NP-hard class problems
 
@@ -47,9 +47,11 @@
 # Question
 
 - 어떤 문제가 주어졌을때 이것이 NP-compelete 인지 어떻게 알 수 있을까?
-  - NP ≠ P 라면 대부분의 경우 다항시간을 초과한 알고리즘이 존재하지만
-    운이 좋으면 다항시간에 해결 할 수 있는 알고리즘이 존재하는 문제인
-    것을 파악한다. SAT로 reduction이 된다면 이것은 NP-complete문제이다.
+  - NP ≠ P 라면 그 문제에 대해서 대부분의 경우 다항시간을 초과한
+    알고리즘이 존재하지만 운이 좋으면 다항시간에 해결 할 수 있는
+    알고리즘이 존재하하는 것을 파악한다. 즉 그 문제는
+    NP문제이다. SAT로 reduction해보자. 그렇다면 그 문제는
+    NP-complete문제이다.
 
 # references
 
@@ -59,3 +61,4 @@
 - [SNUON_컴퓨터과학이 여는 세계_11.1 건너풀기의 개념과 어려운 문제 판별법_이광근](https://www.youtube.com/watch?v=OBcg0gg1rW8&index=37&list=PL0Nf1KJu6Ui7yoc9RQ2TiiYL9Z0MKoggH)
 - [SNUON_컴퓨터과학이 여는 세계_11.2 어려운 문제 현실적으로 풀기: 통밥과 무작위_이광근](https://www.youtube.com/watch?v=Fi8C0Y_FWEQ&index=38&list=PL0Nf1KJu6Ui7yoc9RQ2TiiYL9Z0MKoggH)
 - [SNUON_컴퓨터과학이 여는 세계_11.3 어려운 문제의 적당한 해결법_이광근](https://www.youtube.com/watch?v=ZllOMcRSXFA&list=PL0Nf1KJu6Ui7yoc9RQ2TiiYL9Z0MKoggH&index=39)
+
