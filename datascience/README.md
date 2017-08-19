@@ -1,4 +1,4 @@
-# intro
+# Abstract
 
 ![data science venn diagram](https://static1.squarespace.com/static/5150aec6e4b0e340ec52710a/t/51525c33e4b0b3e0d10f77ab/1364352052403/Data_Science_VD.png?format=1500w)
 
@@ -8,9 +8,10 @@
   - 의사결정나무, 신경망, 군집화, 자연어처리, 추천시스템
 - learning material 위주로 공부 해본다.
 
-# learning material
+# Learning Materials
 
-
+- [따라하며 배우는 데이터 과학 : 실리콘벨리 데이터 과학자가 알려주는](http://www.yes24.com/24/Goods/44184320?Acode=101)
+  - 완전 입문서이다. 통계학을 공부해야 하는 동기부여가 된다.
 - [기초통계학 at youtube](https://www.youtube.com/playlist?list=PLsri7w6p16vs-vfUgweXPjEEhwXjjPSHq)
   - 노경섭의 제대로 시작하는 기초통계학 동영상 강좌
 - [논문통계분석 at youtube](https://www.youtube.com/watch?v=8PT4AKrKjFo&list=PLsri7w6p16vuIphjhykx6UwOb6ICK0HVi)
