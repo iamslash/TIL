@@ -10,6 +10,8 @@
 
 # Learning Materials
 
+- [데이터 사이언스 스쿨 (파이썬 버전)](https://datascienceschool.net/view-notebook/661128713b654edc928ecb455a826b1d/)
+  - 오프라인강좌의 커리큘럼의 일부이다. numpy, pandas, scikit-learn등 한글 설명이 좋다.
 - [따라하며 배우는 데이터 과학 : 실리콘벨리 데이터 과학자가 알려주는](http://www.yes24.com/24/Goods/44184320?Acode=101)
   - 완전 입문서이다. 통계학을 공부해야 하는 동기부여가 된다.
 - [기초통계학 at youtube](https://www.youtube.com/playlist?list=PLsri7w6p16vs-vfUgweXPjEEhwXjjPSHq)
@@ -50,3 +52,7 @@
   - 전국 신규 민간 아파트 분양가격 동향
 - [kaggle](https://www.kaggle.com/)
   - 유용한 데이터들과 함께 문제들이 제공된다.
+
+# numpy
+# pandas
+# scikit-learn
