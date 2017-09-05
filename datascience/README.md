@@ -56,3 +56,27 @@
 # numpy
 # pandas
 # scikit-learn
+# probability
+
+- joint probability 결합확률
+  - 사건 A와 B가 동시에 발생할 확률 
+  - `P(A∩B) or P(A,B)`
+  
+- conditional probability 조건부확률
+  - 사건 B가 사실일 경우 사건 A에 대한 확률 
+  - `P(A|B) = P(A,B) / P(B)`
+
+- independent event 독립사건
+  - 사건 A와 사건 B의 교집합이 공집합인 경우 A와 B는 서로 독립이라고 한다. 
+  - `P(A,B) = P(A)P(B)`
+  - `P(A|B) = P(A,B) / P(B) = P(A)P(B) / P(B) = P(A)`
+  
+- Bayes' theorem 베이즈 정리
+  - `P(A|B) = P(B|A)P(A) / P(B)`
+  - 증명
+```
+P(A,B) = P(A|B)P(B)
+P(A,B) = P(B|A)P(A)
+P(A|B)P(B) = P(B|A)P(A)
+P(A|B) = P(B|A)P(A) / P(B)
+```
