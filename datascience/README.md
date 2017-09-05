@@ -80,3 +80,26 @@ P(A,B) = P(B|A)P(A)
 P(A|B)P(B) = P(B|A)P(A)
 P(A|B) = P(B|A)P(A) / P(B)
 ```
+
+- random variable 확률변수
+  - 확률이라는 규칙을 가지면서 변하는 수치를 표현한다. 
+  - 보통 대문자 로 표현한다.
+  - 확률변수가 가질 수 있는 값의 형태에 따라 discrete random
+    variable(이산형 확률변수), continuous variable(연속 확률변수)로
+    구분한다.
+
+```
+예) 동전던지기에서 앞면이 나타나는 경우의 수로 정의되는 확률변수 X
+    X = 동전전지기에서 나타나는 앞면의 수
+    X = 0, 1 (동전던지기에서 앞면은 1번 또는 0번 나타남을 표현하는 것임)
+```
+
+- CDF(cumulative distribution function) 누적분포함수
+  - `F(x) = P({X < x}) = P(X < x)`
+
+- PDF(probability density function) 확률밀도함수
+  - CDF는 분포의 형상을 직관적으로 이해하기 힘들다. 어떤 확률 변수
+    값이 더 자주 나오는지에 대한 정보를 알기 위해 상대적인 확률 분포
+    형태만을 보기위한 것
+
+- PMF(probability mass function) 확률질량함수
