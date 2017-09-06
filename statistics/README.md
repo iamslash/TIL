@@ -1,6 +1,6 @@
 # Abstract
 
-- 개발자가 알아야할 통계지식에 대해 적는다.
+- 개발자가 알아야할 확률 통계지식에 대해 적는다.
 
 # Material
 
@@ -8,6 +8,10 @@
   - [code](https://github.com/AllenDowney/ThinkStats2)
 - [무료수학인강](https://www.youtube.com/channel/UCJDRAlbClO9hdcCjegL1HBw/playlists)
   - 고교 수학을 정리한 동영상
+- [45분 만에 정리하는 확률과 통계 개념 강의](https://www.youtube.com/watch?v=IF-YLQ_-SAI)
+  - 짧은 시간에 확률과 통계의 개념을 정리했다.
+- [생각의질서 확률과통계](http://www.mimacstudy.com/tcher/lctr/lctrDetail.ds?pid=PL00030103)
+  - 한석원선생의강좌
 
 # Terms
 
@@ -15,6 +19,70 @@
   - 공개되지 않고, 일반적으로 개인적 데이터에 바탕을 둔 보고
 
 ## 응답자그룹 cohort
+
+
+## joint probability 결합확률
+  - 사건 A와 B가 동시에 발생할 확률 
+  - `P(A∩B) or P(A,B)`
+  
+## conditional probability 조건부확률
+  - 사건 B가 사실일 경우 사건 A에 대한 확률 
+  - `P(A|B) = P(A,B) / P(B)`
+
+## independent event 독립사건
+  - 사건 A와 사건 B의 교집합이 공집합인 경우 A와 B는 서로 독립이라고 한다. 
+  - `P(A,B) = P(A)P(B)`
+  - `P(A|B) = P(A,B) / P(B) = P(A)P(B) / P(B) = P(A)`
+  
+## Bayes' theorem 베이즈 정리
+  - `P(A|B) = P(B|A)P(A) / P(B)`
+  - 증명
+```
+P(A,B) = P(A|B)P(B)
+P(A,B) = P(B|A)P(A)
+P(A|B)P(B) = P(B|A)P(A)
+P(A|B) = P(B|A)P(A) / P(B)
+```
+
+## random variable 확률변수
+   - 표본공간을 수치화 하기위한 변수
+   - 보통 대문자로 표현한다.
+   
+```
+예) 두개의 동전을 던져서 나타나는 앞면의 개수를 기록해보자.
+    
+    X       0,    1,    2,  합계
+    확률  0.25,  0.5, 0.25,    1
+
+    위와 같은 표를 확률분포표라고 한다.
+
+    동전의 앞면을 H, 동전의 뒷면을 T라고 하자. 표본 공간은
+    다음과 같이 정의된다.
+    {HH, HT, TH, TT}
+
+    확률변수 X를 정의하기 위해서는 먼저 규칙(두개의 동전을 던져서
+    나타나는 앞면의 개수)이 있어야 하고 규칙에 해당하는 값들이
+    확률변수 X의 후보들이다.
+
+    특정 확률변수에 대한 확률은 P(X = x_i)혹은 P(x_i)로 표현한다.
+    P(X)를 함수로 표현할 수 있다면 그것을 확률질량함수라고 한다.
+
+    위의 경우 확률변수의 개수는 3개다. 확률변수의 개수가 유한하다면
+    이산확률분포라고 하고무한하다면 연속확률분포라고 한다.
+```
+
+- PMF(probability mass function) 확률질량함수
+  - 확률변수를 인자로 하고 그 확률변수의 확률을 리턴값으로 표현할 수 있는 함수
+
+- CDF(cumulative distribution function) 누적분포함수
+  - `F(x) = P({X < x}) = P(X < x)`
+
+- PDF(probability density function) 확률밀도함수
+  - CDF는 분포의 형상을 직관적으로 이해하기 힘들다. 어떤 확률 변수
+    값이 더 자주 나오는지에 대한 정보를 알기 위해 상대적인 확률 분포
+    형태만을 보기위한 것
+
+
 
 ## 확률질량함수 Probability Mass Function, PMF
   - 정규화된 히스토그램
@@ -28,6 +96,8 @@ for x, freq in hist.items():
 ```
 
 ## mean 평균
+
+- 기대값이라고도 한다. 자료의 우수성을 의미한다.
 
 ```latex
 \mu = \sum_{i} p_{i} x_{i}
@@ -43,7 +113,8 @@ x_{i} - \mu
 ```
 
 ## variance 분산
-  - 편차의 제곱의 평균
+  - 편차의 제곱의 평균. 자료의 흩어진 정도를 의미한다.
+  - 자료가 멀리 멀리 떨어져 있을 수록 분산의 값은 크다.
 
 ```latex
 \sigma^{2} = \sum_{i} p_{i} (x_{i} - \mu)^{2} 
