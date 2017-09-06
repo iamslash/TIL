@@ -6,7 +6,7 @@
   성적을 예상 할 수 있다.
 - machine learning은 회귀분석, 다변량분석, 군집분석, 확률분포 추정,
   마르코프, 은닉마르토크 모델, 서포트 벡터 머신, 베이즈의법칙, 베이즈 확률론,
-  베이지언 통계등등 통계학에서 많은 부분들이 인용되었다. 
+  베이지언 통계등등 통계학에서 많은 부분들이 인용되었다. 
 - machine learning의 종류는 크게 supervised learning, unsupervised learning
   semisupervised learning, reinforcement learning으로 분류할 수 있다.
   다음은 위키피디아가 분류한 것들이다. supervised learning, clustering,
