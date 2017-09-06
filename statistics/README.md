@@ -16,27 +16,32 @@
 # Terms
 
 ## 일화적증거 anecdotal evidence
-  - 공개되지 않고, 일반적으로 개인적 데이터에 바탕을 둔 보고
+
+- 공개되지 않고, 일반적으로 개인적 데이터에 바탕을 둔 보고
 
 ## 응답자그룹 cohort
 
-
 ## joint probability 결합확률
-  - 사건 A와 B가 동시에 발생할 확률 
-  - `P(A∩B) or P(A,B)`
+
+- 사건 A와 B가 동시에 발생할 확률 
+- `P(A∩B) or P(A,B)`
   
 ## conditional probability 조건부확률
-  - 사건 B가 사실일 경우 사건 A에 대한 확률 
-  - `P(A|B) = P(A,B) / P(B)`
+
+- 사건 B가 사실일 경우 사건 A에 대한 확률 
+- `P(A|B) = P(A,B) / P(B)`
 
 ## independent event 독립사건
-  - 사건 A와 사건 B의 교집합이 공집합인 경우 A와 B는 서로 독립이라고 한다. 
-  - `P(A,B) = P(A)P(B)`
-  - `P(A|B) = P(A,B) / P(B) = P(A)P(B) / P(B) = P(A)`
+
+- 사건 A와 사건 B의 교집합이 공집합인 경우 A와 B는 서로 독립이라고 한다. 
+- `P(A,B) = P(A)P(B)`
+- `P(A|B) = P(A,B) / P(B) = P(A)P(B) / P(B) = P(A)`
   
 ## Bayes' theorem 베이즈 정리
-  - `P(A|B) = P(B|A)P(A) / P(B)`
-  - 증명
+
+- `P(A|B) = P(B|A)P(A) / P(B)`
+- 증명
+
 ```
 P(A,B) = P(A|B)P(B)
 P(A,B) = P(B|A)P(A)
@@ -45,8 +50,9 @@ P(A|B) = P(B|A)P(A) / P(B)
 ```
 
 ## random variable 확률변수
-   - 표본공간을 수치화 하기위한 변수
-   - 보통 대문자로 표현한다.
+
+- 표본공간을 수치화 하기위한 변수
+- 보통 대문자로 표현한다.
    
 ```
 예) 두개의 동전을 던져서 나타나는 앞면의 개수를 기록해보자.
@@ -71,22 +77,9 @@ P(A|B) = P(B|A)P(A) / P(B)
     이산확률분포라고 하고무한하다면 연속확률분포라고 한다.
 ```
 
-- PMF(probability mass function) 확률질량함수
-  - 확률변수를 인자로 하고 그 확률변수의 확률을 리턴값으로 표현할 수 있는 함수
-
-- CDF(cumulative distribution function) 누적분포함수
-  - `F(x) = P({X < x}) = P(X < x)`
-
-- PDF(probability density function) 확률밀도함수
-  - CDF는 분포의 형상을 직관적으로 이해하기 힘들다. 어떤 확률 변수
-    값이 더 자주 나오는지에 대한 정보를 알기 위해 상대적인 확률 분포
-    형태만을 보기위한 것
-
-
-
 ## 확률질량함수 Probability Mass Function, PMF
-  - 정규화된 히스토그램
-  - 각 값들을 확률로 변환하는 함수를 의미한다.
+
+- 확률변수를 인자로 하고 그 확률변수의 확률을 리턴값으로 표현할 수 있는 함수
 
 ```python
 n = float(len(t))
@@ -106,15 +99,17 @@ for x, freq in hist.items():
 ![](pmf_mean.png)
 
 ## deviation 편차
-  - 확률변수의 값에서 평균을 뺀 것
+
+- 확률변수의 값에서 평균을 뺀 것
   
 ```latex
 x_{i} - \mu
 ```
 
 ## variance 분산
-  - 편차의 제곱의 평균. 자료의 흩어진 정도를 의미한다.
-  - 자료가 멀리 멀리 떨어져 있을 수록 분산의 값은 크다.
+
+- 편차의 제곱의 평균. 자료의 흩어진 정도를 의미한다.
+- 자료가 멀리 멀리 떨어져 있을 수록 분산의 값은 크다.
 
 ```latex
 \sigma^{2} = \sum_{i} p_{i} (x_{i} - \mu)^{2} 
@@ -124,23 +119,29 @@ x_{i} - \mu
 ![](pmf_var.png)
 
 ## standard deviation 표준편차
-  - 분산의 제곱근
+
+- 분산의 제곱근
+
 ```latex
 \sigma = \sqrt{\sigma^{2}}
 ```
 
 ## 극단값 Outlier
-  - 중심경향에서 멀리 떨어져있는 이상값, 특이값
+  
+- 중심경향에서 멀리 떨어져있는 이상값, 특이값
 
 ## 상대위험도 ralative risk
-  - 두 분포의 차이를 측정할때 쓰는 두 확률의 비율
-  - 첫 아이가 출산 예정일 보다 일찍 태어날 확률은 18.2%이다. 첫아이
-    외에 다른 아이가 일찍 태어날 확률은 16.8%이다. 이때 상대 위험도는
-    1.08이다. 이 것은 첫아이가 출산 예정일보다 일찍 태어날 확률이
-    8% 이상된다는 의미이다.
+
+- 두 분포의 차이를 측정할때 쓰는 두 확률의 비율
+
+- 첫 아이가 출산 예정일 보다 일찍 태어날 확률은 18.2%이다. 첫아이 외에
+  다른 아이가 일찍 태어날 확률은 16.8%이다. 이때 상대 위험도는
+  1.08이다. 이 것은 첫아이가 출산 예정일보다 일찍 태어날 확률이 8%
+  이상된다는 의미이다.
 
 ## 최빈값 mode
-  - 표본에서 빈도수가 가장 높은 값
+
+- 표본에서 빈도수가 가장 높은 값
 
 ## 백분위수 percentile
 
@@ -161,7 +162,10 @@ def Percentile(scores, percentile_rank):
 ```
 
 ## 누적분포함수 Cumulative Distribution Function, CDF
-  - 분포 내 각 값들을 분포내의 백분위 순위로 매핑시키는 함수이다.
+
+- 확률변수를 인자로 하고 음의 무한대로부터 특정 확률변수까지의
+    누적된 확률값을 리턴하는 함수
+- `F(x) = P({X < x}) = P(X < x)`
 
 ```python
 def Cdf(t, x):
@@ -172,3 +176,37 @@ def Cdf(t, x):
   prob = count / len(t)
   return prob
 ```
+
+## PDF(probability density function) 확률밀도함수
+
+- 확률변수를 인자로 하고 특정 확률변수에 대해 누적분포함수값의
+  기울기를 리턴하는 함수
+- 확률 밀도 함수는 특정 확률 변수 구간의 확률이 다른 구간에 비해
+  상대적으로 얼마나 높은가를 나타내는 것이며 그 값 자체가 확률은
+  아니다라는 점을 명심해야 한다.
+- F(x)를 CDF라고 하고 f(x)를 PDF라고 하자.
+
+```latex
+\frac{\mathrm{d} F(x)}{\mathrm{d} x} = f(x)
+```
+
+![](pdf.png)
+
+```latex
+F(x) = \int_{-\infty}^{x} f(u) du
+```
+
+![](pdf2.png)
+
+```latex
+\int_{-\infty}^{+\infty} f(u) du = 1
+```
+
+![](pdf3.png)
+
+```latex
+f(x) \geq 0
+```
+
+![](pdf4.png)
+
