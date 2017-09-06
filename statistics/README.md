@@ -12,6 +12,8 @@
   - 짧은 시간에 확률과 통계의 개념을 정리했다.
 - [생각의질서 확률과통계](http://www.mimacstudy.com/tcher/lctr/lctrDetail.ds?pid=PL00030103)
   - 한석원선생의강좌
+- [권세혁](http://wolfpack.hnu.ac.kr/)
+  - 권세혁교수의 자료들
 
 # Terms
 
