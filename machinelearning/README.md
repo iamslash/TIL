@@ -96,9 +96,71 @@
 
 ## linear regression with one variable
 
-- hypothesis function
+- 한개의 독립변수(x)와 한개의 종속변수(y)를 이용하여 데이터를 분석하고
+  예측하는 것. 이때 통계적 가설에 해당하는 데이터의 일정한 패턴은
+  일차함수로 표현할 수 있다. 일차함수이기 때문에 선형회귀라고 한다.
+- linear regression의 hypothesis function은 일차 함수이기 때문에
+  다음과 같이 표현 가능 하다.
 
-- cost function
+```
+H(x) = Wx + b
+```
+
+- 여러가지 H(x)가 존재할 수 있다. 여러가지 가설이 존재할 수 있다는
+  말이다.  데이터의 x에 대한 y를 H(x)와 비교해서 분산이 가장 작은
+  H(x)가 훌륭한 H(x)라고 할만 하다. 이때 분산을 cost function이라고
+  한다.  cost function은 W(weight)와 b(bias)를 인자로 갖는 함수라고 할
+  수 있다. 곧 linear regression은 W와 b를 어떻게 정해서 cost(W, b)의
+  값을 최소로하는 H(x)를 구하는 행위이다.
+
+```latex
+cost(W, b) = \frac{1}{m} \sum_{m}^{i=1} (H(x_{i})-y_{i})^{2}
+```
+
+![](cost.png)
+
+- cost(W, b)를 최소로 하는 W, b를 찾기 위해 gradient descent
+  algorithm을 사용한다. gradient descent algorithm은 여러가지 W, b를
+  대입해 보고 가장 최소의 cost(W, b)를 갖는 W, b를 찾는다.
+- 계산의 편의를 위해 b를 생략한 cost(W)를 고민해보자. 이것은 W를
+  x축으로 하고 포물선을 그리는 이차함수이다.  가장 볼록한 부분의 W값이
+  cost(W)를 최소화 할 것이다. cost(W)를 W에 관하여 미분하고 기울기가
+  가장 적은 cost(W)를 찾으면 된다. 
+  
+- tensorflow를 이용해서 구현해보자.
+
+```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+
+def main():
+    tf.set_random_seed(777)
+    x_train = [1, 2, 3]
+    y_train = [1, 2, 3]
+
+    # W, b, Hypothesis, cost
+    W = tf.Variable(tf.random_normal([1]), name='weight')
+    b = tf.Variable(tf.random_normal([1]), name='bias')
+    hypothesis = x_train * W + b
+    cost = tf.reduce_mean(tf.square(hypothesis - y_train))
+    
+    # minimize cost
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
+    train = optimizer.minimize(cost)
+    
+    # launch it
+    sess = tf.Session()
+    sess.run(tf.global_variables_initializer())
+
+    # fit the line
+    for step in range(2001):
+        sess.run(train)
+        if step % 20 == 0:
+            print(step, sess.run(cost), sess.run(W), sess.run(b))
+            
+if __name__ == "__main__":
+    main()
+```
 
 ## linear regression with multiple variables
 
@@ -300,6 +362,8 @@ mnist.test.labels, dropout_rate: 1})
 ## NLP (natural language processing)
 
 - ...
+
+## GAN (generative adversarial network)
 
 # reference
 
