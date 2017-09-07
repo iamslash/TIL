@@ -59,4 +59,32 @@
 
 # scikit-learn
 
+# [linear algebra](../linearalgebra/README.md)
+
 # [probability and statistics](../statistics/README.md)
+
+# k-nearest neighbors
+
+# naive bayes
+
+# simple linear regression
+
+# multiple regression
+
+# logistic regression
+
+# decision trees
+
+# neural networks
+
+# clustering
+
+# natural language processing
+
+# network analysis
+
+# recommend systems
+
+# [sql](../sql/README.md)
+
+# mapreduce
