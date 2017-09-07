@@ -19,29 +19,46 @@
 
 # Terms
 
-## 일화적증거 anecdotal evidence
+## 모집단 (population)과 표본 (sample)
+
+- 전국의 성인남자가 2500만명이라고 하자. 이때 성인남자의 평균키를 알고
+  싶다. 2500만명을 모두 조사하기에는 시간과 비용이 부족하다. 그래서
+  100명만 뽑아서 조사하고 2500만명을 추정해보자. 이때 2500명과 같이
+  조사하고자 하는 대상 전체를 모집단이라고 하고 100명과 같이 조사를 위해
+  뽑은 대상을 표본 혹은 표본 집단이라고 한다.
+- 모집단의 평균, 분산, 비율과 표본집단의 평균, 분산, 비율은 다음과
+  같이 구분해서 표현한다.
+
+```latex
+\mu, \sigma^{2}, p \\
+\bar{x}, s^{2}, \hat{p}
+```
+
+![](population.png)
+
+## 일화적증거 (anecdotal evidence)
 
 - 공개되지 않고, 일반적으로 개인적 데이터에 바탕을 둔 보고
 
-## 응답자그룹 cohort
+## 응답자그룹 (cohort)
 
-## joint probability 결합확률
+## 결합확률 (joint probability)
 
 - 사건 A와 B가 동시에 발생할 확률 
 - `P(A∩B) or P(A,B)`
   
-## conditional probability 조건부확률
+## 조건부확률 (conditional probability)
 
 - 사건 B가 사실일 경우 사건 A에 대한 확률 
 - `P(A|B) = P(A,B) / P(B)`
 
-## independent event 독립사건
+## 독립사건 (independent event)
 
 - 사건 A와 사건 B의 교집합이 공집합인 경우 A와 B는 서로 독립이라고 한다. 
 - `P(A,B) = P(A)P(B)`
 - `P(A|B) = P(A,B) / P(B) = P(A)P(B) / P(B) = P(A)`
   
-## Bayes' theorem 베이즈 정리
+## 베이즈 정리 (Bayes' theorem)
 
 - `P(A|B) = P(B|A)P(A) / P(B)`
 - 증명
@@ -53,7 +70,7 @@ P(A|B)P(B) = P(B|A)P(A)
 P(A|B) = P(B|A)P(A) / P(B)
 ```
 
-## random variable 확률변수
+## 확률변수 (random variable)
 
 - 표본공간을 수치화 하기위한 변수
 - 보통 대문자로 표현한다.
@@ -81,7 +98,7 @@ P(A|B) = P(B|A)P(A) / P(B)
     이산확률분포라고 하고무한하다면 연속확률분포라고 한다.
 ```
 
-## 확률질량함수 Probability Mass Function, PMF
+## 확률질량함수 (PMF, Probability Mass Function)
 
 - 확률변수를 인자로 하고 그 확률변수의 확률을 리턴값으로 표현할 수 있는 함수
 
@@ -92,7 +109,7 @@ for x, freq in hist.items():
   pmf[x] = freq / n
 ```
 
-## mean 평균
+## 평균 (mean)
 
 - 기대값이라고도 한다. 자료의 우수성을 의미한다.
 
@@ -102,7 +119,7 @@ for x, freq in hist.items():
 
 ![](pmf_mean.png)
 
-## deviation 편차
+## 편차 (deviation)
 
 - 확률변수의 값에서 평균을 뺀 것
   
@@ -110,7 +127,7 @@ for x, freq in hist.items():
 x_{i} - \mu
 ```
 
-## variance 분산
+## 분산 (variance)
 
 - 편차의 제곱의 평균. 자료의 흩어진 정도를 의미한다.
 - 자료가 멀리 멀리 떨어져 있을 수록 분산의 값은 크다.
@@ -122,7 +139,7 @@ x_{i} - \mu
 
 ![](pmf_var.png)
 
-## standard deviation 표준편차
+## 표준편차 (standard deviation)
 
 - 분산의 제곱근
 
@@ -130,11 +147,11 @@ x_{i} - \mu
 \sigma = \sqrt{\sigma^{2}}
 ```
 
-## 극단값 Outlier
+## 극단값 (Outlier)
   
 - 중심경향에서 멀리 떨어져있는 이상값, 특이값
 
-## 상대위험도 ralative risk
+## 상대위험도 (ralative risk)
 
 - 두 분포의 차이를 측정할때 쓰는 두 확률의 비율
 
@@ -143,11 +160,11 @@ x_{i} - \mu
   1.08이다. 이 것은 첫아이가 출산 예정일보다 일찍 태어날 확률이 8%
   이상된다는 의미이다.
 
-## 최빈값 mode
+## 최빈값 (mode)
 
 - 표본에서 빈도수가 가장 높은 값
 
-## 백분위수 percentile
+## 백분위수 (percentile)
 
 ```python
 def PercentileRank(scores, your_score):
@@ -165,7 +182,7 @@ def Percentile(scores, percentile_rank):
       return score
 ```
 
-## 누적분포함수 Cumulative Distribution Function, CDF
+## 누적분포함수 (CDF, Cumulative Distribution Function)
 
 - 확률변수를 인자로 하고 음의 무한대로부터 특정 확률변수까지의
     누적된 확률값을 리턴하는 함수
@@ -181,7 +198,7 @@ def Cdf(t, x):
   return prob
 ```
 
-## PDF(probability density function) 확률밀도함수
+## 확률밀도함수 (PDF, probability density function) 
 
 - 확률변수를 인자로 하고 특정 확률변수에 대해 누적분포함수값의
   기울기를 리턴하는 함수
@@ -214,14 +231,14 @@ f(x) \geq 0
 
 ![](pdf4.png)
 
-## 통계적 가설검정
+## 통계적 가설검정 (statistical hypothesis testing)
 
 - 모집단에서 표본을 추출하여 표본 통계량을 이용해서 "모집단은 이럴
   것이다."라는 가설을 검정하는 것이다. 
 - 하나의 가설이 만들어 지면 그것의 불완전성 때문에 새로운 가설이
   만들어 질 수 있고 현재의 가설은 새로운 가설에 의해 대체되기도 한다.
 
-## 귀무가설(null hypothesis)과 대립가설
+## 귀무가설 (null hypothesis)과 대립가설 (antagonistic hypothesis)
 
 - 귀무가설은 모집단을 검정하기 위해 만들어낸 현재의 가설이다.
 - 대립가설은 귀무가설을 대체할 수 있는 새로운 가설이다.
@@ -240,25 +257,25 @@ H_{1} : \mu \neq 80
 
 ~[](null_hypothesis.png)
 
-## 검정통계량
+## 검정통계량 (test statistic)
 
-- "모집단의 모수가 이럴 것이다."라는 가설을 다루기 위해 모수인 평균,
+- "모집단의 모수가 이럴 것이다."라는 가설을 다루기 위해 모수(popluation parameter)인 평균,
   분산, 비율을 이용하여 귀무가설과 대립가설을 설정한다. 하지만 모수를
   사용할 수 없다. 워낙에 모집단이 크기 때문에 시간과 비용이 너무 많이
   소모된다. 그래서 통계에서는 표본을 뽑아 표본통계량으로 계산을
   한다. 이 표본통계량을 가설검정에서는 검정통계량이라고 부른다.
   
-![](모두.png)
+![](population_parameter.png)
 
 - 검정통계량(표본통계량)은 정규분포, t분포, x^2분포, F분포를 활용한다.
 
-## 기각역
+## 기각역 (critical region)과 채택역 (acceptance region)
 
 - 귀무가설, 대립가설과 같이 두개의 가설이 있을때 귀무가설이 탈락하면 대립가설이
   채택되는 것이다. 귀무가설이 더 옳은데도 귀무가설을 탈락시키는 확률을
-  보통 α라고 한다. 유의수준이라고도 한다. 1 - α는 채택역이라고 한다.
+  보통 α라고 한다. 유의수준이라고도 한다. 1 - α는 채택역(acceptance region)이라고 한다.
 
-## 상관분석
+## 상관분석 (correlation analysis)
 
 - 두개의 변수 x, y가 있다고 해보자. 두 변수가 어떠한 관계에 있는지
   파악하는 분석이 상관분석이다. 예를 들면 키(x)가 클루록 몸무게(y)가
@@ -266,7 +283,7 @@ H_{1} : \mu \neq 80
 - 두 확률변수가 양의 상관 관계, 음의 상관 관계 혹은 상관 관계가 없을
   수 있다.
 
-## 회귀분석
+## 회귀분석 (regression)
 
 - 표본의 데이터들이 일정한 패턴을 이루고 있다면 이 패턴을 활용해서
   무엇인가를 예측하는 분석이 회귀분석이다. "학생이 소유한 책이 x권이면
