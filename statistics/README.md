@@ -4,7 +4,9 @@
 
 # Material
 
-- [Think Stats 프로그래머를 위한 통계 및 데이터 분석 방법]()
+- [나부랭이의 수학블로그-통계](http://math7.tistory.com/category/%ED%86%B5%EA%B3%84)
+  - 통계를 아주 찰지게 정리한 블로그
+- Think Stats 프로그래머를 위한 통계 및 데이터 분석 방법
   - [code](https://github.com/AllenDowney/ThinkStats2)
 - [무료수학인강](https://www.youtube.com/channel/UCJDRAlbClO9hdcCjegL1HBw/playlists)
   - 고교 수학을 정리한 동영상
@@ -212,3 +214,13 @@ f(x) \geq 0
 
 ![](pdf4.png)
 
+## 통계적 가설검정
+
+- 
+
+## 귀무가설(null hypothesis)과 대립가설
+
+- 귀무가설은 모집단을 검정하기 위해 만들어낸 현재의 가설이다.
+- 대립가설은 귀무가설을 대체할 수 있는 새로운 가설이다.
+- 귀무가설과 대립가설은 중복됨이 없이 정반대여야 하다.
+- 예) 
