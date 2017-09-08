@@ -373,6 +373,20 @@ if __name__ == "__main__":
 
 ## linear regression with multiple variables
 
+- 만약 feature가 x1, x2, x3와 같이 세가지 일때 hypothesis와
+  cost(W, b)는 다음과 같다.
+  
+```latex
+\begin{align*}
+H(x_{1}, x_{2}, x_{3}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + b \\
+cost(W, b) &= \frac{1}{m} \sum_{m}^{i=1} (H(x_{1}, x_{2}, x_{3}) - y_{i})^{2} \\
+H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ... + w_{n}x_{n} + b \\
+\end{align*}
+```
+
+![](multiple_linear_regression_hypothesis_cost.png)
+
+
 ## logistic regression
 
 ## softmax regression 
