@@ -233,7 +233,142 @@ if __name__ == "__main__":
 \end{align*}
 ```
 
-![](gradient_partial.png)
+![](gradient_descent.png)
+
+- 앞서 언급한 것 처럼 x축을 W, y축을 cost(W)로 하는 그래프를 그려 보자.
+
+```python
+# -*- coding: utf-8 -*-
+
+import tensorflow as tf
+import matplotlib.pyplot as plt
+tf.set_random_seed(777)
+
+def main():
+    # set node
+    X = [1, 2, 3]
+    Y = [1, 2, 3]
+    W = tf.placeholder(tf.float32)
+    hypothesis = W * X
+    cost = tf.reduce_mean(tf.square(hypothesis - Y))
+    
+    # launch node
+    sess = tf.Session()
+    W_history = []
+    cost_history = []
+    for i in range(-30, 50):
+        cur_W = i * 0.1 # learning rate
+        cur_cost = sess.run(cost, feed_dict={W: cur_W})
+        W_history.append(cur_W)
+        cost_history.append(cur_cost)
+    plt.plot(W_history, cost_history)
+    plt.show()
+
+if __name__ == "__main__":
+    main()
+```
+
+- gradient descent algorithm을 직접 구현해서 cost(W)를 최소화 하는
+  W를 찾아 보자.
+
+```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+tf.set_random_seed(777)
+
+def main():
+    # set nodes
+    x_data = [1, 2, 3]
+    y_data = [1, 2, 3]
+    W = tf.Variable(tf.random_normal([1]), name='weight')
+    X = tf.placeholder(tf.float32)
+    Y = tf.placeholder(tf.float32)
+    hypothesis = W * X
+    cost = tf.reduce_mean(tf.square(hypothesis - Y))
+    
+    # set gradient descent applied W node
+    learning_rate = 0.1
+    gradient = tf.reduce_mean((W * X - Y) * X)
+    descent = W - learning_rate * gradient
+    update = W.assign(descent)
+    
+    # launch node
+    sess = tf.Session()
+    sess.run(tf.global_variables_initializer())
+    for step in range(21):
+         sess.run(update, feed_dict = {X: x_data, Y: y_data})
+         print(step, sess.run(cost, feed_dict = {X: x_data, Y: y_data}), sess.run(W))
+
+if __name__ == "__main__":
+    main()
+```
+
+- gradient descent algorithm을 GradientDescentOptimizer를 활용하여
+  쉽게 구현할 수 있다.
+  
+```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+tf.set_random_seed(777)
+
+def main():
+    # set nodes
+    X = [1, 2, 3]
+    Y = [1, 2, 3]
+    W = tf.Variable(5.0)
+    hypothesis = W * X
+    cost = tf.reduce_mean(tf.square(hypothesis - Y))
+    
+    # set cost function node
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1)
+    train = optimizer.minimize(cost)
+    
+    # launch node
+    sess = tf.Session()
+    sess.run(tf.global_variables_initializer())
+    for step in range(100):
+        print(step, sess.run(W))
+        sess.run(train)
+        
+if __name__ == "__main__":
+    main()
+```
+
+- gradient descent algorithm을 직접 구현한 것과 GradientDescentOptimizer를 활용한 것의
+  결과는 동일하다. gvs를 보정하면 custom gradient descent값을 이용 할 수 있다.
+  
+```python
+# -*- coding: utf-8 -*-
+
+
+def main():
+    import tensorflow as tf
+    tf.set_random_seed(777)
+
+    # set nodes
+    X = [1, 2, 3]
+    Y = [1, 2, 3]
+    W = tf.Variable(5.)
+    hypothesis = W * X
+    gradient = tf.reduce_mean((W * X - Y) * X) * 2
+    cost = tf.reduce_mean(tf.square(hypothesis - Y))
+
+    # set cost function node
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1)
+    train = optimizer.minimize(cost)
+    gvs = optimizer.compute_gradients(cost, [W])
+    apply_gradients = optimizer.apply_gradients(gvs)
+
+    # launch nodes
+    sess = tf.Session()
+    sess.run(tf.global_variables_initializer())
+    for step in range(100):
+        print(step, sess.run([gradient, W, gvs]))
+        sess.run(apply_gradients)
+
+if __name__ == "__main__":
+    main()
+```
 
 
 ## linear regression with multiple variables
