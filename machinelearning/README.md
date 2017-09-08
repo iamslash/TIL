@@ -106,12 +106,15 @@
 H(x) = Wx + b
 ```
 
+![](hypothesis.png)
+
 - 여러가지 H(x)가 존재할 수 있다. 여러가지 가설이 존재할 수 있다는
-  말이다.  데이터의 x에 대한 y를 H(x)와 비교해서 분산이 가장 작은
-  H(x)가 훌륭한 H(x)라고 할만 하다. 이때 분산을 cost function이라고
-  한다.  cost function은 W(weight)와 b(bias)를 인자로 갖는 함수라고 할
-  수 있다. 곧 linear regression은 W와 b를 어떻게 정해서 cost(W, b)의
-  값을 최소로하는 H(x)를 구하는 행위이다.
+  말이다.  데이터의 x에 대한 y를 H(x)와 비교해서 흩어짐의 정도가 가장
+  작은 H(x)가 훌륭한 H(x)라고 할만 하다. 이때 흩어짐의 정도를 측정하는
+  함수를 cost function이라고 한다.  cost function은 W(weight)와
+  b(bias)를 인자로 갖는 함수라고 할 수 있다. 곧 linear regression은
+  W와 b를 어떻게 정해서 cost(W, b)의 값을 최소로하는 H(x)를 구하는
+  행위이다.
 
 ```latex
 cost(W, b) = \frac{1}{m} \sum_{m}^{i=1} (H(x_{i})-y_{i})^{2}
@@ -121,13 +124,18 @@ cost(W, b) = \frac{1}{m} \sum_{m}^{i=1} (H(x_{i})-y_{i})^{2}
 
 - cost(W, b)를 최소로 하는 W, b를 찾기 위해 gradient descent
   algorithm을 사용한다. gradient descent algorithm은 여러가지 W, b를
-  대입해 보고 가장 최소의 cost(W, b)를 갖는 W, b를 찾는다.
+  설정해 보고 training data를 이용하여 가장 최소의 cost(W, b)를 갖는
+  W, b를 찾는다.
+
 - 계산의 편의를 위해 b를 생략한 cost(W)를 고민해보자. 이것은 W를
   x축으로 하고 포물선을 그리는 이차함수이다.  가장 볼록한 부분의 W값이
   cost(W)를 최소화 할 것이다. cost(W)를 W에 관하여 미분하고 기울기가
   가장 적은 cost(W)를 찾으면 된다. 
   
-- tensorflow를 이용해서 구현해보자.
+- 기본적인 linear regression을 tensorflow를 이용하여 구현해보자.  W,
+  b, hypothesis, train은 모두 node이다. sess.run의 run은 eval과 같다.
+  인자로 넘겨진 node를 eval해달라는 의미이다. sess.run(cost)는 cost node를
+  eval한 결과를 리턴한다.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -162,11 +170,75 @@ if __name__ == "__main__":
     main()
 ```
 
+- place holder와 train data를 이용해서 구현해보자. place holder는
+  자리만 예약하고 나중에 값을 대입하겠다는 약속을 한 node이다. 나중에 제공할
+  값은 sess.run의 feed_dict인자로 넘겨준다.
+
+```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+tf.set_random_seed(777)
+
+def main():
+    # set nodes 
+    W = tf.Variable(tf.random_normal([1]), name='weight')
+    b = tf.Variable(tf.random_normal([1]), name='bias')
+    X = tf.placeholder(tf.float32, shape=[None])
+    Y = tf.placeholder(tf.float32, shape=[None])
+    hypothesis = X * W + b
+    cost = tf.reduce_mean(tf.square(hypothesis - Y))
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
+    train = optimizer.minimize(cost)
+
+    # train nodes
+    sess = tf.Session()
+    sess.run(tf.global_variables_initializer())
+    for step in range(2001):
+        cost_val, W_val, b_val, _ = sess.run([cost, W, b, train],
+                                             feed_dict={X: [1, 2, 3],
+                                                        Y: [1, 2, 3]})
+        if step % 20 == 0:
+            print(step, cost_val, W_val, b_val)
+
+    # test nodes
+    print(sess.run(hypothesis, feed_dict={X: [5]}))
+    print(sess.run(hypothesis, feed_dict={X: [2.5]}))
+    print(sess.run(hypothesis, feed_dict={X: [1.5, 3.5]}))
+
+if __name__ == "__main__":
+    main()
+```
+
+- gradient descent algorithm은 어떻게 해서 최소의 W, b를 찾아내는지
+  살펴보자. 먼저 H(x)와 cost(W) 다음과 같이 정의하자.
+  
+![](hypothesis.png)
+![](cost.png)
+
+- cost(W)를 최소화될때까지 W를 갱신해야한다. 다음과 같이 새로운 W는
+  현재의 W에서 α(learning rate)와 cost(W)를 W에 관하여 미분한 것을
+  곱한 값을 빼서 얻는다. cost(W)는 미분을 쉽게 하기 위해 다음과 같이
+  1/2를 곱한다. 원래의 것을 미분하는 것이나 1/2를 곱하고 미분하는 것이나
+  동일하다.
+
+```latex
+\begin{align*}
+& cost(W, b) = \frac{1}{2m} \sum_{m}^{i=1} (H(x_{i})-y_{i})^{2} \\
+& W := W - \alpha \frac{\partial}{\partial W} cost(W) \\
+& W := W - \alpha \frac{\partial}{\partial W} \frac{1}{2m} \sum_{m}^{i=1} (Wx_{i}-y_{i})^{2} \\
+& W := W - \alpha \frac{1}{2m} \sum_{m}^{i=1} 2(Wx_{i}-y_{i})x_{i} \\
+& W := W - \alpha \frac{1}{m} \sum_{m}^{i=1} (Wx_{i}-y_{i})x_{i} \\
+\end{align*}
+```
+
+![](gradient_partial.png)
+
+
 ## linear regression with multiple variables
 
 ## logistic regression
 
-## softmax regression
+## softmax regression 
 
 ## history of deep learning 
 
