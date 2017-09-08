@@ -386,6 +386,143 @@ H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ...
 
 ![](multiple_linear_regression_hypothesis_cost.png)
 
+- feature가 여러개인 경우 matrix를 이용하여 계산 할 수 있다. matrix를
+  이용한다는 것은 여러개의 데이터를 pararrel하게 처리할 수 있다는
+  의미이다. 위와 같이 feature가 x1, x2, x3인 경우 다음과 같은 형태의
+  행렬 연산을 이용하여 hypothesis를 구할 수 있다. 이때 X행렬의 형태는
+  data instance x feature count, W행렬의 형태는 feature count x output
+  count이고 H(X)의 행렬은 data instance x output count이다. 예를
+  들어서 feature가 x1, x2, x3이고 output이 y인 경우 X행렬의 형태는 1 x
+  3, W행렬의 형태는 3 x 1이고 H(X)행렬의 형태는 1 x 1이다.  만약
+  데이터의 개수가 5개라면 X행렬의 형태는 5 x 3, W행렬의 형태는 3 x
+  1이고 H(X)행렬의 형태는 5 x 1이다. 데이터의 개수가 5개, feature가
+  x1, x2, x3와 같이 세개이고 output이 y1, y2와 같이 두개라고
+  해보자. 이때 X의 행렬의 형태는 5 x 3, W행렬의 형태는 3 x 2,
+  H(X)행렬의 형태는 5 x 2가 된다.
+
+```
+\begin{pmatrix}
+  x_1&x_2&x_3
+\end{pmatrix}
+\cdot
+\begin{pmatrix}
+  w_1\\
+  w_2\\
+  w_3\
+end{pmatrix}
+=
+\begin{pmatrix}
+  x_1w_1+x_2w_2+x_3w_3
+\end{pmatrix} \\
+H(X) = X W
+```
+
+- feature가 여러개일때 linear regression을 구현해보자.
+
+```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+tf.set_random_seed(777)
+
+def main():
+    # set nodes
+    x1_data = [73., 93., 89., 96., 73.]
+    x2_data = [80., 88., 91., 98., 66.]
+    x3_data = [75., 93., 90., 100., 70.]
+    y_data = [152., 185., 180., 196., 142.]
+    x1 = tf.placeholder(tf.float32)
+    x2 = tf.placeholder(tf.float32)
+    x3 = tf.placeholder(tf.float32)
+    Y = tf.placeholder(tf.float32)
+    w1 = tf.Variable(tf.random_normal([1]), name='weight1')
+    w2 = tf.Variable(tf.random_normal([1]), name='weight2')
+    w3 = tf.Variable(tf.random_normal([1]), name='weight3')
+    b = tf.Variable(tf.random_normal([1]), name='bias')
+    hypothesis = x1 * w1 + x2 * w2 + x3 * w3 + b
+    print(hypothesis)
+
+    # set train node
+    cost = tf.reduce_mean(tf.square(hypothesis - Y))
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
+    train = optimizer.minimize(cost)
+
+    # train nodes
+    sess = tf.Session()
+    sess.run(tf.global_variables_initializer())
+    for step in range(2001):
+        cost_val, hy_val, _ = sess.run([cost, hypothesis, train],
+                                       feed_dict={x1: x1_data, x2: x2_data, x3: x3_data, Y: y_data})
+        if step % 10 == 0:
+            print(step, "Cost: ", cost_val, "\nPrediction:\n", hy_val)
+
+
+if __name__ == "__main__":
+    main()
+```
+
+- feature가 여러개일때 행렬 연산을 이용하여 linear regression을 구현해보자.
+  행렬을 이용하면 코드가 조금 더 깔끔해 진다.
+
+```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+tf.set_random_seed(777)
+
+def main():
+    # set data
+
+    x_data = [[73., 80., 75.],
+              [93., 88., 93.],
+              [89., 91., 90.],
+              [96., 98., 100.],
+              [73., 66., 70.]]
+    y_data = [[152.],
+              [185.],
+              [180.],
+              [196.],
+              [142.]]
+    # set nodes
+    X = tf.placeholder(tf.float32, shape=[None, 3])
+    Y = tf.placeholder(tf.float32, shape=[None, 1])
+    W = tf.Variable(tf.random_normal([3, 1]), name='weight')
+    b = tf.Variable(tf.random_normal([1]), name='bias')
+    hypothesis = tf.matmul(X, W) + b
+    cost = tf.reduce_mean(tf.square(hypothesis - Y))
+
+    # set train node
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
+    train = optimizer.minimize(cost)
+
+    # train node
+    sess = tf.Session()
+    sess.run(tf.global_variables_initializer())
+    for step in range(2001):
+        cost_val, hy_val, _ = sess.run(
+            [cost, hypothesis, train], feed_dict={X: x_data, Y: y_data})
+        if step % 10 == 0:
+            print(step, "Cost: ", cost_val, "\nPrediction:\n", hy_val)
+
+if __name__ == "__main__":
+    main()
+```
+
+- feature가 여러개일때 행렬 연산과 파일입출력을 이용하여 linear regression을 구현해보자.
+  현실세계에서 데이터는 주로 파일을 통해 제공된다.
+
+```python
+```
+
+- 데이터의 개수가 많다면 메모리의 제한때문에 파일의 모든 내용을 한번에
+  가져올 수 없다. tensorflow는 다음의 그림과 같이 x, y의 데이터들을
+  일정한 크기(배치)씩 가져올 수 있는 기능을 제공한다.
+
+![](AnimatedFileQueues.gif)
+
+- feature가 여러개일때 행렬 연산과 tf.TextLineReader를 이용하여 linear
+  regression을 구현해보자.
+
+```python
+```
 
 ## logistic regression
 
