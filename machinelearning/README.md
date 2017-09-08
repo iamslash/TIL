@@ -510,6 +510,48 @@ if __name__ == "__main__":
   현실세계에서 데이터는 주로 파일을 통해 제공된다.
 
 ```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+import numpy as np
+tf.set_random_seed(777)
+
+def main():
+    # set data
+    xy = np.loadtxt('data-01-test-score.csv', delimiter=',', dtype=np.float32)
+    x_data = xy[:, 0:-1]
+    y_data = xy[:, [-1]]
+    print(x_data.shape, x_data, len(x_data))
+    print(y_data.shape, y_data)
+    
+    # set nodes
+    X = tf.placeholder(tf.float32, shape=[None, 3])
+    Y = tf.placeholder(tf.float32, shape=[None, 1])
+    W = tf.Variable(tf.random_normal([3, 1]), name='weight')
+    b = tf.Variable(tf.random_normal([1]), name='bias')
+    hypothesis = tf.matmul(X, W) + b
+    cost = tf.reduce_mean(tf.square(hypothesis - Y))
+
+    # set train node
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
+    train = optimizer.minimize(cost)
+
+    # train nodes
+    sess = tf.Session()
+    sess.run(tf.global_variables_initializer())
+    for step in range(2001):
+        cost_val, hy_val, _ = sess.run(
+            [cost, hypothesis, train], feed_dict={X:x_data, Y:y_data})
+        if step % 10 == 0:
+            print(step, "Cost: ", cost_val, "\nPrediction:\n", hy_val)
+
+    # Ask my score
+    print("Your score will be ", sess.run(
+        hypothesis, feed_dict={X: [[100, 70, 101]]}))
+    print("Other scores will be ", sess.run(hypothesis,
+                                            feed_dict={X: [[60, 70, 110], [90, 100, 80]]}))
+
+if __name__ == "__main__":
+    main()
 ```
 
 - 데이터의 개수가 많다면 메모리의 제한때문에 파일의 모든 내용을 한번에
@@ -522,6 +564,58 @@ if __name__ == "__main__":
   regression을 구현해보자.
 
 ```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+tf.set_random_seed(777)
+
+def main():
+    # set data batch
+    filename_queue = tf.train.string_input_producer(
+        ['data-01-test-score.csv'], shuffle=False, name='filename_queue')
+    reader = tf.TextLineReader()
+    key, value = reader.read(filename_queue)
+    record_defaults = [[0.], [0.], [0.], [0.]]
+    xy = tf.decode_csv(value, record_defaults=record_defaults)
+    train_x_batch, train_y_batch = tf.train.batch(
+        [xy[0:-1], xy[-1:]], batch_size=10)
+
+    # set nodes
+    X = tf.placeholder(tf.float32, shape=[None, 3])
+    Y = tf.placeholder(tf.float32, shape=[None, 1])
+    W = tf.Variable(tf.random_normal([3, 1]), name='weight')
+    b = tf.Variable(tf.random_normal([1]), name='bias')
+    hypothesis = tf.matmul(X, W) + b
+    cost = tf.reduce_mean(tf.square(hypothesis - Y))
+
+    # set train node
+    optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
+    train = optimizer.minimize(cost)
+
+    # train nodes
+    sess = tf.Session()
+    sess.run(tf.global_variables_initializer())
+    # set threads
+    coord = tf.train.Coordinator()
+    threads = tf.train.start_queue_runners(sess=sess, coord=coord)
+
+    for step in range(2001):
+        x_batch, y_batch = sess.run([train_x_batch, train_y_batch])
+        cost_val, hy_val, _ = sess.run(
+            [cost, hypothesis, train], feed_dict={X: x_batch, Y: y_batch})
+        if step % 10 == 0:
+            print(step, "Cost: ", cost_val, "\nPrediction:\n", hy_val)
+    # join threads
+    coord.request_stop()
+    coord.join(threads)
+
+    # Ask my score
+    print("Your score will be ",
+          sess.run(hypothesis, feed_dict={X: [[100, 70, 101]]}))
+    print("Other scores will be ",
+          sess.run(hypothesis, feed_dict={X: [[60, 70, 110], [90, 100, 80]]}))
+    
+if __name__ == "__main__":
+    main()
 ```
 
 ## logistic regression
