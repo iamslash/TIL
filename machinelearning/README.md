@@ -618,9 +618,13 @@ if __name__ == "__main__":
     main()
 ```
 
-## logistic regression
+## logistic regression (binary classification)
 
-## softmax regression 
+- output이 0혹은 1과 같이 두개만 존재하는 경우의 회귀분석이다.
+
+## softmax regression (multinomial classification)
+
+- output이 A, B, C와 같이 세개 이상인 경우의 회귀분석이다.
 
 ## machine learning tips
 
