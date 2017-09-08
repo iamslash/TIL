@@ -622,6 +622,8 @@ if __name__ == "__main__":
 
 ## softmax regression 
 
+## machine learning tips
+
 ## history of deep learning 
 
 - marvin minsky는 1969년 Perceptrons라는 책에서 
