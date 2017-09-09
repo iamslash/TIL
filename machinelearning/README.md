@@ -620,7 +620,66 @@ if __name__ == "__main__":
 
 ## logistic regression (binary classification)
 
-- output이 0혹은 1과 같이 두개만 존재하는 경우의 회귀분석이다.
+- output이 0혹은 1과 같이 두개만 존재하는 경우의 회귀분석이다. 예를
+  들어서 학생이 시험을 통과하기 위해 공부한 시간을 x1, 공부한 책의
+  숫자를 x2, 시험통과여부를 y라고 하자. 이때 y값의 후보는 0, 1이고
+  logistic regression이라고 할 수 있다. 이 밖에도 스팸인지 햄인지
+  구별하는 경우, 페이스북 친구의 타임라인을 보여줄 것인지 말 것인지,
+  신용카드 이용 패턴을 분석해서 내가 사용한 것인지 다른 사람이
+  도용해서 사용한것인지, 주식투자에서 특정 종목에 대해서 투자를 할
+  것인지 말 것인지 등등이 해당된다.
+
+- hypothesis function 를 linear regression처럼 일차 함수로 적용하면
+  문제가 발생한다. 예를 들어서 앞서 언급한 학생의 시험 통과 결정의
+  예를 생각해보자.  training data가 x1이 1일때 y는 0, x1이 2일때 y는
+  1, x1이 3일때 y는 2이라고 하자. 이때 y가 0.5보다 크거나 같은
+  경우는 통과 0.5보다 작은 경우는 실패하고 할 수 있다. 이 경우 `H(x) =
+  x - 1`이다. 하지만 training data에 x1이 4일때 y가 1이라는
+  데이터가 추가되었다고 해보자. 그렇다면 `H(x) = x/2 - 1`이 될테고
+  test data의 x1이 2일 경우 y는 0이므로 training data와 달리 y는
+  실패가 되어 버린다. 이 것은 accuracy가 떨어진다고 할 수
+  있다. 일차함수로 표현하면 문제가 될 수 있다.
+
+![]()logistic_regression_linear_hypothesis_1.png)
+![]()logistic_regression_linear_hypothesis_2.png)
+
+- logistic regression은 일차함수가 아닌 새로운 형태의 hypothesis
+  function이 필요하다. 이것은 0보다 작은 값이 인자로 주어지면 0.5보다
+  작은 값인데 아래로 쏠린 값을 0보다 크거나 같은 값이 인자로 주어지면
+  0.5보다 큰 값인데 위로 쏠린 값을 리턴하는 함수가 필요하다. 이러한 용도로
+  발견된 함수를 logistic function혹은 sigmoid function이라고 한다.
+  그래서 logistic regression이라는 말이 만들어 졌다.
+
+```latex
+g(z) = \frac{1}{1 + e^{-z}}
+```
+![](sigmoid_equation.png)  
+![](sigmoid_graph.png)
+
+- logistic regression의 sigmoid를 활용한 H(X), cost(W, b)는 다음과
+  같다. cost(W, b)의 경우 sigmoid를 활용한 H(X)를 사용할 경우 기울기가
+  0인 지점이 여러군데서 발생하기 때문에 새로운 형태의 cost(W, b)가
+  필요하다.  즉 기울기가 0인 지점이 한 곳만 존재하는 수식이
+  필요하다. 그래서 다음과 같은 cost(W, b)가 발견되었다. linear
+  regression과 마찬가지로 gradient descent algorithm을 이용하여
+  cost(W, b)가 최소가 되는 W를 발견할 수 있다.
+
+```latex
+\begin{align*}
+g(z) &= \frac{1}{1 + e^{-z}} \\
+H(X) &= g(H(X)) = \frac{1}{1 + e^{-H(X)}} = \frac{1}{1 + e^{-WX}} \\
+cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} c(H(x), y) \\
+c(H(x), y) &=\left\{\begin{matrix}
+-\log (H(x)) &: y = 1\\ 
+-\log (1 - H(x)) &: y = 0
+\end{matrix}\right. \\
+c(H(x), y) &= -y \log(H(x)) - (1-y) \log(1 - H(x)) \\
+cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} \left ( -y \log(H(x)) - (1-y) \log(1 - H(x)) \right ) \\
+W &:= W - \alpha \frac{\partial}{\partial W} cost(W, b) \\
+\end{align*}
+```
+
+![](logistic_regression_hypothesis_cost.png)
 
 ## softmax regression (multinomial classification)
 
