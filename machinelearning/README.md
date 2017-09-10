@@ -855,7 +855,7 @@ S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
 D(S, L) = -\sum_{i=1}^{k}L_{i}\log(S_{i})
 ```
 
-![](softmax_regression_cost_function.png)
+![](softmax_regression_cross.png)
 
 - cost function이 제대로 동작하는지 예를 들어서 살펴보자. 앞서 언급한
   cost function은 다음과 같이 전개 할 수 있고 -log(x)함수의 모양을
@@ -870,19 +870,43 @@ D(S, L) &= -\sum_{i=1}^{k}L_{i}\log(S_{i}) \\
 \end{align*}
 ```
 
-![](softmax_regression_cost_function_ex.png)
+![](softmax_regression_cross_ex.png)
 
-- `L_{i}`가 [0, 1], `\bar{y}_{i}`가 [0, 1]이라고 해보자.
-  cost는 `0 x `가 되어 0이 된다. `\bar{y}_{i}`가 [1, 0]이라고 해보자.
-  cost는 ``가 되어 무한대가 된다.
-  앞서 언급한 cost function의 전개식과 -log(x)를 이용하여 보면
-  데이터값과 예측값이 동일할때 cost function의 리턴값이 0에 가깝고
-  그렇지 않으면 무한대에 가까워진다. 이것으로 cost function이 제대로
-  동작한다고 말 할 수 있다.
+- `L_{i}`가 [0, 1], `\bar{y}_{i}`가 [0, 1]이라고 해보자.  cost는 `0 x
+  ∞ + 1 x 0`가 되어 0이 된다. `\bar{y}_{i}`가 [1, 0]이라고 해보자.
+  cost는 `0 x 0 + 1 x ∞`가 되어 무한대가 된다.  앞서 언급한 cost
+  function의 전개식과 -log(x)를 이용하여 보면 데이터값과 예측값이
+  동일할때 cost function의 리턴값이 0에 가깝고 그렇지 않으면 무한대에
+  가까워진다. 이것으로 cost function이 제대로 동작한다고 말 할 수
+  있다.
 
 ![](minus_log_graph.png)
 
+- logistic regression의 logistic cost function과 softmax regression의
+  cross entropy function은 사실상 같다. H(x), S는 예측 값을 의미하고
+  y, L은 데이터 값을 의미한다.
 
+```latex
+\begin{align*} 
+c(H(x), y) &= -y \log(H(x)) - (1-y) \log(1 - H(x)) \\
+D(S, L) &= -\sum_{i=1}^{k}L_{i}\log(S_{i}) \\
+\end{align*}
+```
+
+![](softmax_regression_vs_logistic_regression_cost.png)
+
+- softmax regression의 cost function은 다음과 같다. 이 것을
+  최소화 하는 W, b를 찾는 것이 softmax regression의 목적이다.
+
+```latex
+\begin{align*} 
+cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S_{i}, L_{i}) \\
+                  &= \frac{1}{m} \sum_{i=1}^{m} D(S(WX_{i}+b)), L_{i}) \\
+W &:= W - \alpha \frac{\partial}{\partial W} cost(W, b) \\
+\end{align*}
+```
+
+![](softmax_regression_cost.png)
 
 ## machine learning tips
 
