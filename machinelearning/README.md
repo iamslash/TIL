@@ -640,8 +640,8 @@ if __name__ == "__main__":
   되어 버린다. 이 것은 accuracy가 떨어진다고 할 수 있다. 따라서
   일차함수로 표현하면 문제가 될 수 있다.
 
-![]()logistic_regression_linear_hypothesis_1.png)
-![]()logistic_regression_linear_hypothesis_2.png)
+![](logistic_regression_linear_hypothesis_1.png)
+![](logistic_regression_linear_hypothesis_2.png)
 
 - logistic regression은 일차함수가 아닌 새로운 형태의 hypothesis
   function이 필요하다. 이것은 일차함수 `WX+b`의 값을 인자로 받아 그
