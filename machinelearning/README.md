@@ -779,7 +779,110 @@ if __name__ == "__main__":
 
 ## softmax regression (multinomial classification)
 
-- 출력이 A, B, C와 같이 세개 이상인 경우의 회귀분석이다.
+- 출력이 A, B, C와 같이 세개 이상인 경우의 회귀분석이다. 공부한 시간,
+  출석 횟수를 입력으로 성적을 출력으로 갖는 경우를 생각해보자. 이때
+  성적은 A, B, C중 하나이다. 이것은 multinomial
+  classification문제이다. 입력 x1, x2에 대해 출력 Y가 A이냐 아니냐에
+  대한 logistic regression을 할 수 있다. 마찬 가지로 Y가 B, C인 경우
+  각각 logistic regression을 할 수 있다. 그렇다면 logistic
+  regression을 수행할 hypothesis function은 3가지이다. 이것은
+  행렬연산을 활용하여 다음과 같이 한 번에 수행할 수 있다. 이와 같이
+  multinomial classification 은 binary classification을 여러개
+  이용해서 해결한다.
+
+```latex
+\begin{bmatrix}
+w_{A1} & w_{A2} & w_{A3}\\ 
+w_{B1} & w_{B2} & w_{B3}\\ 
+w_{C1} & w_{C2} & w_{C3}\\ 
+\end{bmatrix}
+
+\begin{bmatrix}
+ x_{1} \\ 
+ x_{2} \\ 
+ x_{3} \\ 
+\end{bmatrix}
+
+=
+
+\begin{bmatrix}
+ w_{A1}x_{1} +  w_{A2}x_{2} + w_{A3}x_{3} \\ 
+ w_{B1}x_{1} +  w_{B2}x_{2} + w_{B3}x_{3} \\ 
+ w_{C1}x_{1} +  w_{C2}x_{2} + w_{C3}x_{3} \\ 
+\end{bmatrix}
+
+=
+
+\begin{bmatrix}
+H_{A}(X) \\
+H_{B}(X) \\
+H_{C}(X) \\
+\end{bmatrix}
+
+=
+
+\begin{bmatrix}
+\bar{y}_{A} \\
+\bar{y}_{B} \\
+\bar{y}_{C} \\
+\end{bmatrix}
+```
+![](softmax_regression_hypothesis_matrix.png)
+
+- 출력값들이 각각 2.0, 1.0, 0.1이라고 하자. 그렇다면 이것은 A등급에 속한다.
+  하지만 출력값들의 형태를 각각의 등급에 대해 [0, 1]의 확률값으로 표현하고 싶다.
+  그래서 softmax function 이 발견되었다. softmax function을 이용하면
+  0.7, 0.2, 0.1의 형태로 출력값이 변경된다. 모두 더하면 1이다. 0.7의 확률로
+  A등급에 속한다.
+
+```latex
+S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
+```
+
+![](softmax_regression_softmax_function.png)
+
+- 출력값들이 각각 0.7, 0.2, 0.1이라고 하자. 한번 더 처리하여 1.0, 0.,
+  0.과 같이 명쾌하게 A등급에 속한다고 결론내고 싶다. 그래서 one hot
+  encoding 이 발견되었다. 최종 출력값은 1, 0, 0 이다.
+
+- 0.7, 0.2, 0.1의 출력값은 S(Y)라고 표기하자. Y는 예측값이다.  1, 0,
+  0과 같은 출력값은 L이라고 표기하자. 이것은 학습데이터의 값이다.
+  이때 예측값과 데이터값의 차이를 cross-entropy function으로 다음과
+  같이 정의 할 수 있다. 이것은 cost function이다. cross-entropy function을
+  최소화 할 수 있는 W를 찾는 것이 softmax regression의 목적이다.
+
+```latex
+D(S, L) = -\sum_{i=1}^{k}L_{i}\log(S_{i})
+```
+
+![](softmax_regression_cost_function.png)
+
+- cost function이 제대로 동작하는지 예를 들어서 살펴보자. 앞서 언급한
+  cost function은 다음과 같이 전개 할 수 있고 -log(x)함수의 모양을
+  눈여겨 볼 필요가 있다. `L_{i}`는 학습데이터값이고 `\bar{y}_{i}`는
+  예측값이다.
+
+```latex
+\begin{align*} 
+D(S, L) &= -\sum_{i=1}^{k}L_{i}\log(S_{i}) \\
+&= -\sum_{i=1}^{k}L_{i}\log(\bar{y}_{i}) \\
+&= \sum_{i=1}^{k}L_{i} \cdot -\log(\bar{y}_{i}) \\
+\end{align*}
+```
+
+![](softmax_regression_cost_function_ex.png)
+
+- 다음과 같이 `L_{i}`와 `\bar{y}_{i}`가 설정되었다고 가정해보자.
+  앞서 언급한 cost function의 전개식과 -log(x)를 이용하여 보면
+  데이터값과 예측값이 동일할때 cost function의 리턴값이 0에 가깝고
+  그렇지 않으면 무한대에 가까워진다. 이것으로 cost function이 제대로
+  동작한다고 말 할 수 있다.
+
+```
+```
+
+![](softmax_regression_cost_function_2.png)
+![](minus_log_graph.png
 
 ## machine learning tips
 
