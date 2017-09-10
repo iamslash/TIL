@@ -109,13 +109,13 @@ H(x) = Wx + b
 ![](hypothesis.png)
 
 - 여러가지 H(x)가 존재할 수 있다. 여러가지 가설이 존재할 수 있다는
-  말이다.  데이터의 x에 대한 y를 H(x)와 비교해서 흩어짐의 정도가 가장
+  말이다.  데이터값 y와 예측값 H(x)를 비교해서 흩어짐의 정도가 가장
   작은 H(x)가 훌륭한 H(x)라고 할만 하다. 이때 흩어짐의 정도를 측정하는
   함수를 cost function이라고 한다.  cost function은 W(weight)와
   b(bias)를 인자로 갖는 함수라고 할 수 있다. 곧 linear regression은
   W와 b를 어떻게 정해서 cost(W, b)의 값을 최소로하는 H(x)를 구하는
   행위이다.
-
+  
 ```latex
 cost(W, b) = \frac{1}{m} \sum_{m}^{i=1} (H(x_{i})-y_{i})^{2}
 ```
@@ -896,8 +896,11 @@ D(S, L) &= -\sum_{i=1}^{k}L_{i}\log(S_{i}) \\
 
 ![](softmax_regression_vs_logistic_regression_cost.png)
 
-- softmax regression의 cost function은 다음과 같다. 이 것을
-  최소화 하는 W, b를 찾는 것이 softmax regression의 목적이다.
+- softmax regression의 cost function은 다음과 같다.  실제로 그래프로
+  그려보면 logistic regression의 cost function처럼 아래가 볼록한
+  모양이다. 기울기가 0인 지점은 한 곳이다. gradient descent
+  algorithm을 이용해서 cost function이 최소인 W, b를 찾아 낼 수
+  있다. 미분 방정식은 복잡해서 생략한다.
 
 ```latex
 \begin{align*} 
