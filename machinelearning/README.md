@@ -872,17 +872,17 @@ D(S, L) &= -\sum_{i=1}^{k}L_{i}\log(S_{i}) \\
 
 ![](softmax_regression_cost_function_ex.png)
 
-- 다음과 같이 `L_{i}`와 `\bar{y}_{i}`가 설정되었다고 가정해보자.
+- `L_{i}`가 [0, 1], `\bar{y}_{i}`가 [0, 1]이라고 해보자.
+  cost는 `0 x `가 되어 0이 된다. `\bar{y}_{i}`가 [1, 0]이라고 해보자.
+  cost는 ``가 되어 무한대가 된다.
   앞서 언급한 cost function의 전개식과 -log(x)를 이용하여 보면
   데이터값과 예측값이 동일할때 cost function의 리턴값이 0에 가깝고
   그렇지 않으면 무한대에 가까워진다. 이것으로 cost function이 제대로
   동작한다고 말 할 수 있다.
 
-```
-```
+![](minus_log_graph.png)
 
-![](softmax_regression_cost_function_2.png)
-![](minus_log_graph.png
+
 
 ## machine learning tips
 
