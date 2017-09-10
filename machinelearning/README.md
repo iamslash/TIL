@@ -783,6 +783,14 @@ if __name__ == "__main__":
 
 ## machine learning tips
 
+- learning rate
+
+- standardization
+
+- overfitting
+
+- regularization
+
 ## history of deep learning 
 
 - marvin minsky는 1969년 Perceptrons라는 책에서 
@@ -790,26 +798,33 @@ if __name__ == "__main__":
   이라고 주장했다. XOR을 multi layer perceptron으로 표현은 가능하지만
   학습시키는 불가능하다는 얘기다. 이로써 artificial intelligence분야는
   당분간 사람들의 관심을 떠나게 된다.
+
 - 1974년 1982년 Paul Werbos는 앞서 언급한 marvin minsky의 주장을
   반증 할 수 있는 backpropagation을 발표했지만 사람들의 반응은 냉랭했다.
   심지어는 marvin minsky를 만나서 직접 얘기했지만 marvin minsky의 관심을
   얻지 못했다. 그러나 1986년 Hinton이 발표한 backpropagation은 그렇지 않았다.
   발명보다는 재발견에 해당되지만 전세계 적으로 많은 호응을 얻었다.
-- 1995년 LeCun교수는 "Comparison of Learning Algorithms For Handwritten Digit
-  Recognition"에서 hidden layer가 많을때 backpropagation과 같이 복잡한
-  알고리즘은 문제해결에 효과적이지 못하고 오히려 SVM, RandomForest같은 단순한 
-  알로리즘이 효과적이라고 주장한다. neural networks은 다시 침체기로 접어든다.
-- 1987년 CIFAR (Canadian Institute for Advanced Research)는 
-  deep learning의 침체기 분위기 속에 Hinton교수를 적극 지원했다.
-  당시에는 neural networks이라는 키워드가 포함된 논문들은 대부분
-  reject되었다.
+
+- 1995년 LeCun교수는 "Comparison of Learning Algorithms For
+  Handwritten Digit Recognition"에서 hidden layer가 많을때
+  backpropagation과 같이 복잡한 알고리즘은 문제해결에 효과적이지
+  못하고 오히려 SVM, RandomForest같은 단순한 알로리즘이 효과적이라고
+  주장한다. neural networks은 다시 침체기로 접어든다.
+
+- 1987년 CIFAR (Canadian Institute for Advanced Research)는 deep
+  learning의 침체기 분위기 속에 Hinton교수를 적극 지원했다.  당시에는
+  neural networks이라는 키워드가 포함된 논문들은 대부분 reject되었다.
+  
 - 2006년 Hinton교수와 Yoshua Bengio교수는 neural network의 weight를
   잘 초기화 해주면 backpropagation이 가능하다는 논문을 발표한 후 많은
   호응을 얻었다. 그리고 neural networks를 deep learning이라는 새로운
   용어로 재탄생 시켰다.
-- imagenet 이라는 대회에서 2010년에 26.2%였던 오류는 2012년 15.3%로 감소하였다.
-  이것을 통해 neural networks은 관심을 얻는데 성공한다. 2015년 deep learning을
-  이용한 시스템이 오류를 3%까지 감소시킨다.
+  
+- imagenet 이라는 대회에서 2010년에 26.2%였던 오류는 2012년 15.3%로
+  감소하였다.  이것을 통해 neural networks은 관심을 얻는데
+  성공한다. 2015년 deep learning을 이용한 시스템이 오류를 3%까지
+  감소시킨다.
+
 - Geoffery Hinton교수는 왜 그동안 deep learning이 잘 동작 안했는지 다음과
   같이 4지로 요약했다.
   - Our labeled datasets were thousands of times too small.
@@ -818,6 +833,7 @@ if __name__ == "__main__":
     - RBM보다 Xavier방법이 더욱 좋다.
   - We used the wrong type of non-linearity.
     - sigmoid보다 ReLu를 사용하자.
+
 - 이후 알파고를 통해 deep learning은 핫한 기술로 부상한다.
 
 ## NN (neural networks)
