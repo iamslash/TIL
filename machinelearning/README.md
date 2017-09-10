@@ -845,11 +845,12 @@ S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
   0.과 같이 명쾌하게 A등급에 속한다고 결론내고 싶다. 그래서 one hot
   encoding 이 발견되었다. 최종 출력값은 1, 0, 0 이다.
 
-- 0.7, 0.2, 0.1의 출력값은 S(Y)라고 표기하자. Y는 예측값이다.  1, 0,
-  0과 같은 출력값은 L이라고 표기하자. 이것은 학습데이터의 값이다.
-  이때 예측값과 데이터값의 차이를 cross-entropy function으로 다음과
-  같이 정의 할 수 있다. 이것은 cost function이다. cross-entropy function을
-  최소화 할 수 있는 W를 찾는 것이 softmax regression의 목적이다.
+- 0.7, 0.2, 0.1의 출력값은 `S(\bar{Y})`라고 표기하자. `\bar{Y}`는
+  예측값을 의미한다.  1, 0, 0과 같은 출력값은 L이라고 표기하자. 이것은
+  학습데이터의 값이다.  cost function을 제작하기 위해 인자로 예측값과
+  데이터값을 하고 예측값과 데이터값이 같으면 0에 가까운 값을 다르면
+  무한대의 값을 리턴하는 함수가 필요하다. 그래서 cross-entropy
+  function이 발견되었고 다음과 같이 정의가 가능하다.
 
 ```latex
 D(S, L) = -\sum_{i=1}^{k}L_{i}\log(S_{i})
@@ -857,10 +858,10 @@ D(S, L) = -\sum_{i=1}^{k}L_{i}\log(S_{i})
 
 ![](softmax_regression_cross.png)
 
-- cost function이 제대로 동작하는지 예를 들어서 살펴보자. 앞서 언급한
-  cost function은 다음과 같이 전개 할 수 있고 -log(x)함수의 모양을
-  눈여겨 볼 필요가 있다. `L_{i}`는 학습데이터값이고 `\bar{y}_{i}`는
-  예측값이다.
+- cross entropy function이 제대로 동작하는지 예를 들어서
+  살펴보자. 앞서 언급한 cross entropy function은 다음과 같이 전개 할
+  수 있고 -log(x)함수의 모양을 눈여겨 볼 필요가 있다. `L_{i}`는
+  학습데이터값이고 `\bar{y}_{i}`는 예측값이다.
 
 ```latex
 \begin{align*} 
@@ -874,11 +875,11 @@ D(S, L) &= -\sum_{i=1}^{k}L_{i}\log(S_{i}) \\
 
 - `L_{i}`가 [0, 1], `\bar{y}_{i}`가 [0, 1]이라고 해보자.  cost는 `0 x
   ∞ + 1 x 0`가 되어 0이 된다. `\bar{y}_{i}`가 [1, 0]이라고 해보자.
-  cost는 `0 x 0 + 1 x ∞`가 되어 무한대가 된다.  앞서 언급한 cost
-  function의 전개식과 -log(x)를 이용하여 보면 데이터값과 예측값이
-  동일할때 cost function의 리턴값이 0에 가깝고 그렇지 않으면 무한대에
-  가까워진다. 이것으로 cost function이 제대로 동작한다고 말 할 수
-  있다.
+  cost는 `0 x 0 + 1 x ∞`가 되어 무한대가 된다.  앞서 언급한 cross
+  entropy function의 전개식과 -log(x)를 이용하여 보면 데이터값과
+  예측값이 동일할때 cost function의 리턴값이 0에 가깝고 그렇지 않으면
+  무한대에 가까워진다. 이것으로 cross entropy function이 제대로
+  동작한다고 말 할 수 있다.
 
 ![](minus_log_graph.png)
 
