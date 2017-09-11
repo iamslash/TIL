@@ -1055,15 +1055,57 @@ if __name__ == "__main__":
 
 ## machine learning tips
 
-- learning rate
-  - big learning rate, overshooting
-  - small learning rate
+- ML으로 문제를 해결할때 다음과 같은 사항들을 주의 깊게 고민할 필요가 있다.
+  - learning rate를 잘 설정해서 cost(W, b)를 최소화 하는 W, b를 빨리 찾기
+  - data를 잘 전처리 해서 cost(W, b)를 최소화 하는 W, b를 빨리 찾기
+  - overfitting을 잘 해결해서 cost(W, b)를 최소화 하는 W, b를 빨리 찾기
 
-- preprocessing data
-  - standardization
+- learning rate을 너무 크게 설정하면 어떠한 현상이 발생하는지
+  생각해보자.  cost(W, b)는 아래로 볼록한 모양의 그래프이다. gradient
+  descent algorithm을 위한 step값은 아래 방정식의 우변의 두번째
+  항이다.  새로운 W는 현재의 W에 step값을 빼서 구한다. step은 learning
+  rate와 cost(W, b)를 미분한 값을 곱한 것이다. learning rate이 너무
+  크면 step값 역시 너무 커질 테고 새로운 W를 현재의 W와 차이가 커지게
+  된다.  cost(W, b)를 미분한 값은 0보다 큰 값으로 수렴할 수 있고
+  cost(W, b)를 최소화 하는 W, b는 찾기 어려워 질 것이다. 이러한 현상을
+  overshooting이라고 한다.
 
-- overfitting
-  - regularization
+```latex
+& W := W - \alpha \frac{\partial}{\partial W} cost(W) 
+```
+
+- learning rate이 너무 작게 설정하면 어떻게 될까? 앞서 언급한 상황에서
+  step값은 매우 작아질테고 새로운 W와 현재의 W는 거의 차이가 없을 것이다.
+  따라서 cost(W, b)를 최소화 하는 W, b를 찾기 위해 매우 많은 반복을
+  수행해야 할 것이다. 즉 시간이 너무 많이 걸린다. 현실 세계에서 0.01은
+  적당하다고 한다. 
+
+- feature가 x1, x2로 두개인 경우를 생각해 보자. x1은 [1, 2, 4, 6,
+  9]이고 x2는 [9000, -5000, -2000, 8000, 9000]이라고
+  가정하자. feature가 두개이기 때문에 w1, w2가 존재한다. x1의 각
+  값들의 차이와 x2의 각 값들의 차이는 스케일이 다르다. feature들의
+  스케일이 차이가 나면 cost(W, b)를 최소화 하는 W, b를 찾는데 시간이
+  오래걸린다.  feature들의 스케일이 비슷하게 보정(normalize)할 필요가
+  있다. x2를 보정한다고 할때 다음과 같은 공식으로 normlize하자. 이것을
+  standardization이라고 한다.
+
+  ```latex
+{x}'_{j} = \frac{x_{j} - \mu _{j}}{\sigma _j{}}
+  ```
+
+  ![](standardization.png)
+
+- training data set에 대해서 너무 훈련이 되있다면 test data set에 대한
+  정확도가 낮을 수 있다. 이러한 현상을 overfitting이라고 한다. 다음과
+  같은 방법으로 해결해 보자. 첫째 더욱 많은 training data set을
+  확보해서 학습시켜보자.  둘째 feature가 너무 많은 경우 줄여서
+  학습시켜 보자. 셋째 gradient descent algorithm에 사용할 step값을
+  다른 방법으로 구해보자. 이것을 regularization이라고 한다.
+  
+  ```latex
+  ```
+  
+  ![](regularization.pn)
 
 ## [Example: Digit Recoggnizer](https://www.kaggle.com/c/digit-recognizer)
 
