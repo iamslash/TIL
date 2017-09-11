@@ -1071,8 +1071,10 @@ if __name__ == "__main__":
   overshooting이라고 한다.
 
 ```latex
-& W := W - \alpha \frac{\partial}{\partial W} cost(W) 
+W := W - \alpha \frac{\partial}{\partial W} cost(W, b) 
 ```
+
+![](gradient_descent_algorithm.png)
 
 - learning rate이 너무 작게 설정하면 어떻게 될까? 앞서 언급한 상황에서
   step값은 매우 작아질테고 새로운 W와 현재의 W는 거의 차이가 없을 것이다.
