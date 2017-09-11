@@ -1359,7 +1359,7 @@ if __name__ == "__main__":
 
 ## [Example: Digit Recoggnizer](https://www.kaggle.com/c/digit-recognizer)
 
-## history of deep learning 
+## deep learning fundamentals
 
 - marvin minsky는 1969년 Perceptrons라는 책에서 
   "No one on earth had found a viable way to train"
@@ -1372,6 +1372,14 @@ if __name__ == "__main__":
   심지어는 marvin minsky를 만나서 직접 얘기했지만 marvin minsky의 관심을
   얻지 못했다. 그러나 1986년 Hinton이 발표한 backpropagation은 그렇지 않았다.
   발명보다는 재발견에 해당되지만 전세계 적으로 많은 호응을 얻었다.
+
+- 고양이
+
+- CNN
+
+- 자율주행
+
+- 터미네이터
 
 - 1995년 LeCun교수는 "Comparison of Learning Algorithms For
   Handwritten Digit Recognition"에서 hidden layer가 많을때
@@ -1403,6 +1411,11 @@ if __name__ == "__main__":
     - sigmoid보다 ReLu를 사용하자.
 
 - 이후 알파고를 통해 deep learning은 핫한 기술로 부상한다.
+
+- 다음은 tensor flow의 유용한 함수들을 사용한 예제이다. 잘 학습해 놓자.
+
+```python
+```
 
 ## NN (neural networks)
 
