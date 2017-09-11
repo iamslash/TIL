@@ -1089,9 +1089,9 @@ if __name__ == "__main__":
   있다. x2를 보정한다고 할때 다음과 같은 공식으로 normlize하자. 이것을
   standardization이라고 한다.
 
-  ```latex
+```latex
 {x}'_{j} = \frac{x_{j} - \mu _{j}}{\sigma _j{}}
-  ```
+```
 
   ![](standardization.png)
 
@@ -1102,8 +1102,8 @@ if __name__ == "__main__":
   학습시켜 보자. 셋째 gradient descent algorithm에 사용할 step값을
   다른 방법으로 구해보자. 이것을 regularization이라고 한다.
   
-  ```latex
-  ```
+```latex
+```
   
   ![](regularization.pn)
 
