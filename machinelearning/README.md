@@ -834,8 +834,8 @@ H_{C}(X) \\
 - 출력값들이 각각 2.0, 1.0, 0.1이라고 하자. 그렇다면 이것은 A등급에 속한다.
   하지만 출력값들의 형태를 각각의 등급에 대해 [0, 1]의 확률값으로 표현하고 싶다.
   그래서 softmax function 이 발견되었다. softmax function을 이용하면
-  0.7, 0.2, 0.1의 형태로 출력값이 변경된다. 모두 더하면 1이다. 0.7의 확률로
-  A등급에 속한다.
+  0.7, 0.2, 0.1의 형태로 출력값이 변경된다. 결과적으로 0.7의 확률로
+  A등급에 속한다는 의미이다. 확률이기 때문에 모두 더하면 1이다. 
 
 ```latex
 S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
@@ -845,7 +845,8 @@ S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
 
 - 출력값들이 각각 0.7, 0.2, 0.1이라고 하자. 한번 더 처리하여 1.0, 0.,
   0.과 같이 명쾌하게 A등급에 속한다고 결론내고 싶다. 그래서 one hot
-  encoding 이 발견되었다. 최종 출력값은 1, 0, 0 이다.
+  encoding 이 발견되었다. 최종 출력값은 1, 0, 0 이다. one hot
+  encoding은 tf.arg_max를 사용했다.
 
 - 0.7, 0.2, 0.1의 출력값은 `S(\bar{Y})`라고 표기하자. `\bar{Y}`는
   예측값을 의미한다.  1, 0, 0과 같은 출력값은 L이라고 표기하자. 이것은
@@ -855,28 +856,28 @@ S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
   function이 발견되었고 다음과 같이 정의가 가능하다.
 
 ```latex
-D(S, L) = -\sum_{i=1}^{k}L_{i}\log(S_{i})
+D(S, L) = -\sum_{j=1}^{k}L_{j}\log(S_{j})
 ```
 
 ![](softmax_regression_cross.png)
 
 - cross entropy function이 제대로 동작하는지 예를 들어서
   살펴보자. 앞서 언급한 cross entropy function은 다음과 같이 전개 할
-  수 있고 -log(x)함수의 모양을 눈여겨 볼 필요가 있다. `L_{i}`는
-  학습데이터값이고 `\bar{y}_{i}`는 예측값이다.
+  수 있고 -log(x)함수의 모양을 눈여겨 볼 필요가 있다. `L_{j}`는
+  학습데이터값이고 `\bar{y}_{j}`는 예측값이다.
 
 ```latex
 \begin{align*} 
-D(S, L) &= -\sum_{i=1}^{k}L_{i}\log(S_{i}) \\
-&= -\sum_{i=1}^{k}L_{i}\log(\bar{y}_{i}) \\
-&= \sum_{i=1}^{k}L_{i} \cdot -\log(\bar{y}_{i}) \\
+D(S, L) &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
+        &= -\sum_{j=1}^{k}L_{j}\log(\bar{y}_{j}) \\
+        &= \sum_{j=1}^{k}L_{j} \cdot -\log(\bar{y}_{j}) \\
 \end{align*}
 ```
 
 ![](softmax_regression_cross_ex.png)
 
-- `L_{i}`가 [0, 1], `\bar{y}_{i}`가 [0, 1]이라고 해보자.  cost는 `0 x
-  ∞ + 1 x 0`가 되어 0이 된다. `\bar{y}_{i}`가 [1, 0]이라고 해보자.
+- `L_{j}`가 [0, 1], `\bar{y}_{j}`가 [0, 1]이라고 해보자.  cost는 `0 x
+  ∞ + 1 x 0`가 되어 0이 된다. `\bar{y}_{j}`가 [1, 0]이라고 해보자.
   cost는 `0 x 0 + 1 x ∞`가 되어 무한대가 된다.  앞서 언급한 cross
   entropy function의 전개식과 -log(x)를 이용하여 보면 데이터값과
   예측값이 동일할때 cost function의 리턴값이 0에 가깝고 그렇지 않으면
@@ -892,23 +893,25 @@ D(S, L) &= -\sum_{i=1}^{k}L_{i}\log(S_{i}) \\
 ```latex
 \begin{align*} 
 c(H(x), y) &= -y \log(H(x)) - (1-y) \log(1 - H(x)) \\
-D(S, L) &= -\sum_{i=1}^{k}L_{i}\log(S_{i}) \\
+D(S, L)    &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
 \end{align*}
 ```
 
 ![](softmax_regression_vs_logistic_regression_cost.png)
 
-- softmax regression의 cost function은 다음과 같다.  실제로 그래프로
+- softmax regression의 cost function은 다음과 같다.  실제 그래프로
   그려보면 logistic regression의 cost function처럼 아래가 볼록한
   모양이다. 기울기가 0인 지점은 한 곳이다. gradient descent
   algorithm을 이용해서 cost function이 최소인 W, b를 찾아 낼 수
-  있다. 미분 방정식은 복잡해서 생략한다.
+  있다. grade descent algorithm을 적용하기 위한 미분 방정식은 복잡해서
+  생략한다.
 
 ```latex
 \begin{align*} 
-cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S_{i}, L_{i}) \\
-                  &= \frac{1}{m} \sum_{i=1}^{m} D(S(WX_{i}+b)), L_{i}) \\
-W &:= W - \alpha \frac{\partial}{\partial W} cost(W, b) \\
+D(S, L)    &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
+cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S, L) \\
+           &= \frac{1}{m} \sum_{i=1}^{m} (-\sum_{j=1}^{k}L_{j}\log(S_{j})) \\
+           &= -\frac{1}{m} \sum_{i=1}^{m} \sum_{j=1}^{k}L_{j}\log(S_{j}) \\
 \end{align*}
 ```
 
