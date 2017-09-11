@@ -777,6 +777,8 @@ if __name__ == "__main__":
     main()
 ```
 
+## [Example: Titanic](https://www.kaggle.com/c/titanic)
+
 ## softmax regression (multinomial classification)
 
 - 출력이 A, B, C와 같이 세개 이상인 경우의 회귀분석이다. 공부한 시간,
@@ -1051,12 +1053,16 @@ if __name__ == "__main__":
 ## machine learning tips
 
 - learning rate
+  - big learning rate, overshooting
+  - small learning rate
 
-- standardization
+- preprocessing data
+  - standardization
 
 - overfitting
+  - regularization
 
-- regularization
+## [Example: Digit Recoggnizer](https://www.kaggle.com/c/digit-recognizer)
 
 ## history of deep learning 
 
