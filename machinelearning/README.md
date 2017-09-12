@@ -1594,8 +1594,8 @@ pp.pprint(sess.run(t))
   backpropagation을 이용한 해결 방법이 모색되고 neural networks는 다시
   관심을 얻게 된다.
 
-- XOR을 logistic regression으로 구현해 보자. accuraccy는 0.5이기 때문에
-  제대로 동작하지 않는다. 다른 방법이 필요하다.
+- XOR을 하나의 logistic regression unit으로 구현해 보자. 정확도가 0.5이기 때문에
+  제대로 동작하지 않는다. 뭔가 다른 방법이 필요하다.
   
 ```python
 # -*- coding: utf-8 -*-
@@ -1648,9 +1648,120 @@ if __name__ == "__main__":
     main()
 ```
 
-- XOR 을 3개의 unit으로 표현해보자. 3개의 unit은 하나의 neural network를 구성한다.
+- XOR문제를 해결하기 위해 3개의 logistic regression unit으로
+  표현해보자.  x1, x2에 [0, 0], [0, 1], [1, 0], [1, 1]을 입력해서
+  연산해서 ``bar{y}`값을 확인 해 보면 정상 동작함을 알 수 있다.
 
-![](img/xor3units.png)
+![](img/xor3units_1.png)
+
+![](img/xor3units_2.png)
+
+![](img/xor3units_3.png)
+
+- 위의 그림을 바탕으로 다음과 같이 out layer에 해당하는 예측값을 표현
+  할 수 있다.
+
+```latex
+\begin{align*} 
+K(X)    &= sigmoid(XW_{1} + B_{1}) \\
+\bar{Y} &= sigmoid(K(X)W_{2} + B_{2}) \\
+\end{align*}
+```
+
+![](img/xor3equation.png)
+
+- 다음은 위의 수식을 tensorflow를 이용하여 구현한 것이다.
+
+```python
+K = tf.sigmoid(tf.matmul(X, W1) + b1)
+hypothesis = tf.sigmoid(tf.matmul(K, W2) + b2)
+```
+
+- 3개의 logistic regression unit을 이용해서 구현해 보자. 3개의
+  logistic regression unit은 hidden layer가 하나 추가되었다고 볼 수
+  있다. layer를 2개 이상으로 계속 늘려나가면 연산량은 많아지지만
+  hypothesis값은 점점 0에 가까워지거나 1에 가까워져간다. 예측값이 점점
+  정확하다고 생각 할 수 있다.
+  
+```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+import numpy as np
+
+def main():
+    # set var
+    tf.set_random_seed(777)
+    learning_rate = 0.1
+
+    # set data
+    x_data = [[0, 0],
+              [0, 1],
+              [1, 0],
+              [1, 1]]
+    y_data = [[0],
+              [1],
+              [1],
+              [0]]
+    x_data = np.array(x_data, dtype=np.float32)
+    y_data = np.array(y_data, dtype=np.float32)
+
+    # set in layer 
+    X = tf.placeholder(tf.float32, [None, 2]) # ? x 2
+    Y = tf.placeholder(tf.float32, [None, 1]) # ? x 1
+
+    # set hidden layer
+    W1 = tf.Variable(tf.random_normal([2, 2]), name='weight1')
+    b1 = tf.Variable(tf.random_normal([2]), name='bias1')
+    layer1 = tf.sigmoid(tf.matmul(X, W1) + b1)
+
+    # set out layer
+    W2 = tf.Variable(tf.random_normal([2, 1]), name='weight2')
+    b2 = tf.Variable(tf.random_normal([1]), name='bias2')
+    hypothesis = tf.sigmoid(tf.matmul(layer1, W2) + b2)
+
+    # set train
+    cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) * tf.log(1 - hypothesis))
+    train = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
+
+    # set accuracy
+    predicted = tf.cast(hypothesis > 0.5, dtype=tf.float32)
+    accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
+
+    # Launch nodes
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+
+        for step in range(10001):
+            sess.run(train, feed_dict={X: x_data, Y: y_data})
+            if step % 100 == 0:
+                print(step, sess.run(cost, feed_dict={
+                    X: x_data, Y: y_data}), sess.run([W1, W2]))
+
+        h, c, a = sess.run([hypothesis, predicted, accuracy],
+                           feed_dict={X: x_data, Y: y_data})
+        print("\nHypothesis: ", h, "\nCorrect: ", c, "\nAccuracy: ", a)
+
+if __name__ == "__main__":
+    main()
+```
+
+- 앞서 구현한 것보다 hidden layer를 더욱 넓고 깊게 구현해 보자. 예측값은
+  점점 정확하다고 할 수 있다.
+  
+```python
+```
+
+- tensorflow는 tensorboard라는 것을 이용해서 노드의 상태를 그림으로
+  확인 할 수 있다.
+  
+```python
+```
+
+
+
+
+
+
 
 
 
