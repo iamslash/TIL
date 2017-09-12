@@ -1901,27 +1901,26 @@ if __name__ == "__main__":
     main()
 ```
 
-
-
-- chain rule
+- back propagation는 chain rule을 이용하여 구현할 수 있다.
 
 ![](img/chainrule.png)
 
-- back propagation는 chain rule을 이용하여 구할 수 있다.
-
-- back propagation에 activation function으로 sigmoid를 사용하면
-  vanishing gradient가 발생한다. vanishing gradient란
-  output layer에서 hidden layer를 거쳐 input layer로 갈수록 입력값의 
-  영향을 덜 받게 되는 현상이다. sigmoid보다 ReLU (Rectified Linear Unit)
-  을 사용하면 vanishing gradient를 해결 할 수 있다. sigmoid, ReLU를 제외하고도
+- XOR문제를 해결하기 위해 hidden layer를 9개 설정해 보자. 정확도는
+  0.5가 나온다. hidden layer를 깊게 설정했는데도 왜 이런 현상이
+  발생할까?  activation function으로 sigmoid를 사용하면
+  backpropagation할 때 vanishing gradient현상이 발생하기
+  때문이다. vanishing gradient란 output layer에서 hidden layer를 거쳐
+  input layer로 갈수록 입력값의 영향을 덜 받게 되는
+  현상이다. sigmoid보다 ReLU (Rectified Linear Unit) 을 사용하면
+  vanishing gradient를 해결 할 수 있다. sigmoid, ReLU를 제외하고도
   tanh, Leaky ReLU, Maxout, ELU등등 Activation Function들이 있다.
 
-- RBM (Restricted Boatman Macine)을 이용하여 weight값을 초기화 하면
-  deep learning을 효율적으로 할 수 있다. 그러나 RBM은 너무 복잡하다.
-  Xavier initialization 혹은 He's initialization과 같이 간단한
-  방법이 더욱 효율적이다.
-  
-- weight 초기값을 어떻게 설정하느냐는 지금도 활발한 연구 분야이다.
+- 사람들은 weight값을 어떻게 초기화하면 좋을지 고민했다. 2006년
+  Hinton교수는 RBM (Restricted Boatman Macine)을 이용하여 weight값을
+  초기화 하면 deep learning을 효율적으로 할 수 있다고 했다. 그러나
+  RBM은 너무 복잡하다.  Xavier initialization 혹은 He's
+  initialization과 같이 간단한 방법이 더욱 효율적이다. weight 초기값을
+  어떻게 설정하느냐는 지금도 활발한 연구 분야이다.
 
 ```python
 # Xavier initialization
@@ -1930,7 +1929,6 @@ W = np.random.randn(fan_in, fan_out)/np.sqrt(fan_in)
 
 # He et al. 2015
 W = np.random.randn(fan_in, fan_out)/np.sqrt(fan_in/2)
-
 ```
 
 ![](img/backpropagation.png)
@@ -1967,12 +1965,26 @@ def xavier_init(n_inputs, n_outputs, uniform=True):
 
 - overfitting이란 neural networks가 training data의 정확도는 높지만
   predicting data의 정확도는 낮은 현상을 말한다. 이것을 해결하기 위한 방법으로
-  regularization등이 있다.
+  regularization, dropout등이 있다.
   
-- regularization
+- regularization은 다음과 같이 새로운 항을 cost(W, b)구할때
+  더한다. `\lambda`는 0.001로 하자.
+
+```python
+l2reg = 0.001 * tf.reduce_sum(tf.square(W))
+```
+
+```latex
+\begin{align*} 
+cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S_{i}, L_{i}) \\
+           &= \frac{1}{m} \sum_{i=1}^{m} D(S(WX_{i}+b), L_{i}) + \lambda \sum_{i=1}^{m} W^{2}\\
+\end{align*}
+```
+  
+![](img/regularization.png)
 
 - dropout이란 neural networks의 노드중 임의의 것들을 제거하여 overfitting
-  현상을 해결하는 것이다.
+  현상을 해결하는 것이다. tensorflow로 간단히 구현할 수 있다.
 
 ```python
 dropout_rate = tf.placeholder("float")
@@ -1987,7 +1999,6 @@ dropout_rate: 0.7})
 print "Accuracy:", accuracy.eval({X: mnist.test.images, Y:
 mnist.test.labels, dropout_rate: 1})
 ```
-
 - ensemble
 
 - fast forward
