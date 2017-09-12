@@ -106,7 +106,7 @@
 H(x) = Wx + b
 ```
 
-![](hypothesis.png)
+![](img/hypothesis.png)
 
 - 여러가지 H(x)가 존재할 수 있다. 여러가지 가설이 존재할 수 있다는
   말이다.  데이터값 y와 예측값 H(x)를 비교해서 흩어짐의 정도가 가장
@@ -120,7 +120,7 @@ H(x) = Wx + b
 cost(W, b) = \frac{1}{m} \sum_{m}^{i=1} (H(x_{i})-y_{i})^{2}
 ```
 
-![](cost.png)
+![](img/cost.png)
 
 - cost(W, b)를 최소로 하는 W, b를 찾기 위해 gradient descent
   algorithm을 사용한다. gradient descent algorithm은 여러가지 W, b를
@@ -212,8 +212,8 @@ if __name__ == "__main__":
 - gradient descent algorithm은 어떻게 해서 최소의 W, b를 찾아내는지
   살펴보자. 먼저 H(x)와 cost(W) 다음과 같이 정의하자.
   
-![](hypothesis.png)
-![](cost.png)
+![](img/hypothesis.png)
+![](img/cost.png)
 
 - cost(W)를 최소화될때까지 W를 갱신해야한다. 다음과 같이 새로운 W는
   현재의 W에서 α(learning rate)와 cost(W)를 W에 관하여 미분한 것을
@@ -233,7 +233,7 @@ if __name__ == "__main__":
 \end{align*}
 ```
 
-![](gradient_descent.png)
+![](img/gradient_descent.png)
 
 - 앞서 언급한 것 처럼 x축을 W, y축을 cost(W)로 하는 그래프를 그려 보자.
 
@@ -384,7 +384,7 @@ H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ...
 \end{align*}
 ```
 
-![](multiple_linear_regression_hypothesis_cost.png)
+![](img/multiple_linear_regression_hypothesis_cost.png)
 
 - feature가 여러개인 경우 matrix를 이용하여 계산 할 수 있다. matrix를
   이용한다는 것은 여러개의 데이터를 pararrel하게 처리할 수 있다는
@@ -558,7 +558,7 @@ if __name__ == "__main__":
   가져올 수 없다. tensorflow는 다음의 그림과 같이 x, y의 데이터들을
   일정한 크기(배치)씩 가져올 수 있는 기능을 제공한다.
 
-![](AnimatedFileQueues.gif)
+![](img/AnimatedFileQueues.gif)
 
 - feature가 여러개일때 행렬 연산과 tf.TextLineReader를 이용하여 linear
   regression을 구현해보자.
@@ -640,8 +640,8 @@ if __name__ == "__main__":
   되어 버린다. 이 것은 accuracy가 떨어진다고 할 수 있다. 따라서
   일차함수로 표현하면 문제가 될 수 있다.
 
-![](logistic_regression_linear_hypothesis_1.png)
-![](logistic_regression_linear_hypothesis_2.png)
+![](img/logistic_regression_linear_hypothesis_1.png)
+![](img/logistic_regression_linear_hypothesis_2.png)
 
 - logistic regression은 일차함수가 아닌 새로운 형태의 hypothesis
   function이 필요하다. 이것은 일차함수 `WX+b`의 값을 인자로 받아 그
@@ -654,8 +654,8 @@ if __name__ == "__main__":
 ```latex
 g(z) = \frac{1}{1 + e^{-z}}
 ```
-![](sigmoid_equation.png)  
-![](sigmoid_graph.png)
+![](img/sigmoid_equation.png)  
+![](img/sigmoid_graph.png)
 
 - logistic regression의 sigmoid를 활용한 H(X), cost(W, b)는 다음과
   같다. cost(W, b)의 경우 sigmoid를 활용한 H(X)를 사용할 경우 기울기가
@@ -680,7 +680,7 @@ W &:= W - \alpha \frac{\partial}{\partial W} cost(W, b) \\
 \end{align*}
 ```
 
-![](logistic_regression_hypothesis_cost.png)
+![](img/logistic_regression_hypothesis_cost.png)
 
 - 두개의 x와 한개의 y를 갖는 경우 logistic regression을 구현해보자.
 
@@ -829,7 +829,7 @@ H_{C}(X) \\
 \bar{y}_{C} \\
 \end{bmatrix}
 ```
-![](softmax_regression_hypothesis_matrix.png)
+![](img/softmax_regression_hypothesis_matrix.png)
 
 - 출력값들이 각각 2.0, 1.0, 0.1이라고 하자. 그렇다면 이것은 A등급에 속한다.
   하지만 출력값들의 형태를 각각의 등급에 대해 [0, 1]의 확률값으로 표현하고 싶다.
@@ -841,7 +841,7 @@ H_{C}(X) \\
 S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
 ```
 
-![](softmax_regression_softmax_function.png)
+![](img/softmax_regression_softmax_function.png)
 
 - 출력값들이 각각 0.7, 0.2, 0.1이라고 하자. 한번 더 처리하여 1.0, 0.,
   0.과 같이 명쾌하게 A등급에 속한다고 결론내고 싶다. 그래서 one hot
@@ -859,7 +859,7 @@ S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
 D(S, L) = -\sum_{j=1}^{k}L_{j}\log(S_{j})
 ```
 
-![](softmax_regression_cross.png)
+![](img/softmax_regression_cross.png)
 
 - cross entropy function이 제대로 동작하는지 예를 들어서
   살펴보자. 앞서 언급한 cross entropy function은 다음과 같이 전개 할
@@ -874,7 +874,7 @@ D(S, L) &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
 \end{align*}
 ```
 
-![](softmax_regression_cross_ex.png)
+![](img/softmax_regression_cross_ex.png)
 
 - `L_{j}`가 [0, 1], `\bar{y}_{j}`가 [0, 1]이라고 해보자.  cost는 `0 x
   ∞ + 1 x 0`가 되어 0이 된다. `\bar{y}_{j}`가 [1, 0]이라고 해보자.
@@ -884,7 +884,7 @@ D(S, L) &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
   무한대에 가까워진다. 이것으로 cross entropy function이 제대로
   동작한다고 말 할 수 있다.
 
-![](minus_log_graph.png)
+![](img/minus_log_graph.png)
 
 - logistic regression의 logistic cost function과 softmax regression의
   cross entropy function은 사실상 같다. H(x), S는 예측 값을 의미하고
@@ -897,7 +897,7 @@ D(S, L)    &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
 \end{align*}
 ```
 
-![](softmax_regression_vs_logistic_regression_cost.png)
+![](img/softmax_regression_vs_logistic_regression_cost.png)
 
 - softmax regression의 cost function은 다음과 같다.  실제 그래프로
   그려보면 logistic regression의 cost function처럼 아래가 볼록한
@@ -915,7 +915,7 @@ cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S, L) \\
 \end{align*}
 ```
 
-![](softmax_regression_cost.png)
+![](img/softmax_regression_cost.png)
 
 - x가 4개이고 y가 3개인 데이터를 이용하여 softmax regression을 구현해 보자.
   one hot encoding을 위해 tf.arg_max를 사용했다.
@@ -1074,7 +1074,7 @@ if __name__ == "__main__":
 W := W - \alpha \frac{\partial}{\partial W} cost(W, b) 
 ```
 
-![](gradient_descent_algorithm.png)
+![](img/gradient_descent_algorithm.png)
 
 - learning rate이 너무 작게 설정하면 어떻게 될까? 앞서 언급한 상황에서
   step값은 매우 작아질테고 새로운 W와 현재의 W는 거의 차이가 없을 것이다.
@@ -1095,7 +1095,7 @@ W := W - \alpha \frac{\partial}{\partial W} cost(W, b)
 {x}'_{j} = \frac{x_{j} - \mu _{j}}{\sigma _j{}}
 ```
 
-  ![](standardization.png)
+  ![](img/standardization.png)
 
 - training data set에 대해서 너무 훈련이 되있다면 test data set에 대한
   정확도가 낮을 수 있다. 이러한 현상을 overfitting이라고 한다. 다음과
@@ -1111,7 +1111,7 @@ cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S_{i}, L_{i}) \\
 \end{align*}
 ```
   
-![](regularization.png)
+![](img/regularization.png)
 
 - 다음은 learning rate다양하게 했을때를 구현한 것이다. learning rate이
   1.5와 같이 너무 클때 cost는 inf가 되고 learning rate이 1e-10과 같이
@@ -1361,6 +1361,16 @@ if __name__ == "__main__":
 
 ## deep learning fundamentals
 
+- machine llearning한계는 인간의 뇌를 구성하는 뉴런을 연구해왔다.
+  그리고 뉴런의 동작 과정을 모델링해서 기계학습을 구현했다. 다음은
+  뉴런을 모델링한 그림이다. activation function은 입력되는 값들에 따라
+  출력되는 값들을 0(비활성) 혹은 1(활성)로 설정한다. 이것은 logistic
+  regression과 같다. 이러한 뉴런들이 여러개 모여서 기계 학습이
+  구현된다. 실제로(1957) 뉴런들을 하드웨어로 구현했고 사람들의 관심을 얻었다. 
+  하지만 AND와 OR는 해결가능했지만 XOR은 해결 불가능 했다.
+  
+![](img/img/deeplearning_fundamentals_activation_function.jpeg)
+
 - marvin minsky는 1969년 Perceptrons라는 책에서 
   "No one on earth had found a viable way to train"
   이라고 주장했다. XOR을 multi layer perceptron으로 표현은 가능하지만
@@ -1373,13 +1383,10 @@ if __name__ == "__main__":
   얻지 못했다. 그러나 1986년 Hinton이 발표한 backpropagation은 그렇지 않았다.
   발명보다는 재발견에 해당되지만 전세계 적으로 많은 호응을 얻었다.
 
-- 고양이
+- 1980년 LeCun 교수는 고양이가 그림을 볼때 어떤 뉴런은 활성화 되는데
+  어떤 뉴런은 비활성화되는 것에서 아이디어를 얻어 CNN을 발명하였다.
 
-- CNN
-
-- 자율주행
-
-- 터미네이터
+- 1984년 부터 1994년 CMU에서 자율주행연구를 진행하였다.
 
 - 1995년 LeCun교수는 "Comparison of Learning Algorithms For
   Handwritten Digit Recognition"에서 hidden layer가 많을때
@@ -1415,21 +1422,185 @@ if __name__ == "__main__":
 - 다음은 tensor flow의 유용한 함수들을 사용한 예제이다. 잘 학습해 놓자.
 
 ```python
+# https://www.tensorflow.org/api_guides/python/array_ops
+import tensorflow as tf
+import numpy as np
+import pprint
+tf.set_random_seed(777)  # for reproducibility
+
+pp = pprint.PrettyPrinter(indent=4)
+sess = tf.InteractiveSession()
+
+# Simple Array
+t = np.array([0., 1., 2., 3., 4., 5., 6.])
+pp.pprint(t)
+print(t.ndim) # rank
+print(t.shape) # shape
+print(t[0], t[1], t[-1])
+print(t[2:5], t[4:-1])
+print(t[:2], t[3:])
+
+# 2D Array
+t = np.array([[1., 2., 3.], [4., 5., 6.], [7., 8., 9.], [10., 11., 12.]])
+pp.pprint(t)
+print(t.ndim) # rank
+print(t.shape) # shape
+
+# Shape, Rank, Axis
+t = tf.constant([1,2,3,4])
+tf.shape(t).eval()
+
+t = tf.constant([[1,2],
+                 [3,4]])
+tf.shape(t).eval()
+
+t = tf.constant([[[[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12]],[[13, 14, 15, 16], [17, 18, 19, 20], [21, 22, 23, 24]]]])
+tf.shape(t).eval()
+
+[
+    [
+        [
+            [1,2,3,4], 
+            [5,6,7,8],
+            [9,10,11,12]
+        ],
+        [
+            [13,14,15,16],
+            [17,18,19,20], 
+            [21,22,23,24]
+        ]
+    ]
+]
+
+# matmul vs multiply
+matrix1 = tf.constant([[3., 3.]])
+matrix2 = tf.constant([[2.],[2.]])
+tf.matmul(matrix1, matrix2).eval()
+
+(matrix1*matrix2).eval()
+
+# Watch out broadcasting
+matrix1 = tf.constant([[3., 3.]])
+matrix2 = tf.constant([[2.],[2.]])
+(matrix1+matrix2).eval()
+
+matrix1 = tf.constant([[3., 3.]])
+matrix2 = tf.constant([[2., 2.]])
+(matrix1+matrix2).eval()
+
+# Random values for variable initializations 
+tf.random_normal([3]).eval()
+tf.random_uniform([2]).eval()
+tf.random_uniform([2, 3]).eval()
+
+# Reduce Mean/Sum
+tf.reduce_mean([1, 2], axis=0).eval()
+x = [[1., 2.],
+     [3., 4.]]
+tf.reduce_mean(x).eval()
+tf.reduce_mean(x, axis=0).eval()
+tf.reduce_mean(x, axis=1).eval()
+tf.reduce_mean(x, axis=-1).eval()
+tf.reduce_sum(x).eval()
+tf.reduce_sum(x, axis=0).eval()
+tf.reduce_sum(x, axis=-1).eval()
+tf.reduce_mean(tf.reduce_sum(x, axis=-1)).eval()
+
+# Argmax with axis
+x = [[0, 1, 2],
+     [2, 1, 0]]
+tf.argmax(x, axis=0).eval()
+tf.argmax(x, axis=1).eval()
+tf.argmax(x, axis=-1).eval()
+
+# Reshape, squeeze, expand_dims
+t = np.array([[[0, 1, 2], 
+               [3, 4, 5]],
+              
+              [[6, 7, 8], 
+               [9, 10, 11]]])
+t.shape
+
+tf.reshape(t, shape=[-1, 3]).eval()
+
+tf.reshape(t, shape=[-1, 1, 3]).eval()
+
+tf.squeeze([[0], [1], [2]]).eval()
+
+tf.expand_dims([0, 1, 2], 1).eval()
+
+# one hot
+tf.one_hot([[0], [1], [2], [0]], depth=3).eval()
+
+t = tf.one_hot([[0], [1], [2], [0]], depth=3)
+tf.reshape(t, shape=[-1, 3]).eval()
+
+# casting
+tf.cast([1.8, 2.2, 3.3, 4.9], tf.int32).eval()
+
+tf.cast([True, False, 1 == 1, 0 == 1], tf.int32).eval()
+
+# stack
+x = [1, 4]
+y = [2, 5]
+z = [3, 6]
+
+# Pack along first dim.
+tf.stack([x, y, z]).eval()
+
+tf.stack([x, y, z], axis=1).eval()
+
+# ones like and zeros like
+x = [[0, 1, 2],
+     [2, 1, 0]]
+
+tf.ones_like(x).eval()
+
+tf.zeros_like(x).eval()
+
+# zip
+for x, y in zip([1, 2, 3], [4, 5, 6]):
+    print(x, y)
+    
+for x, y, z in zip([1, 2, 3], [4, 5, 6], [7, 8, 9]):
+    print(x, y, z)
+    
+# transpose
+t = np.array([[[0, 1, 2], [3, 4, 5]], [[6, 7, 8], [9, 10, 11]]])
+pp.pprint(t.shape)
+pp.pprint(t)
+
+t1 = tf.transpose(t, [1, 0, 2])
+pp.pprint(sess.run(t1).shape)
+pp.pprint(sess.run(t1))
+
+t = tf.transpose(t1, [1, 0, 2])
+pp.pprint(sess.run(t).shape)
+pp.pprint(sess.run(t))
+
+t2 = tf.transpose(t, [1, 2, 0])
+pp.pprint(sess.run(t2).shape)
+pp.pprint(sess.run(t2))
+
+t = tf.transpose(t2, [2, 0, 1])
+pp.pprint(sess.run(t).shape)
+pp.pprint(sess.run(t))
 ```
 
 ## NN (neural networks)
 
-- marvin minsky의 perceptrons라는 책의 발간 이후 상당 기간동안
-  XOR problem은 해결되지 못하고 있었다. 그러나 1986년 Hinton교수를
-  통해 해결 방법이 모색되고 neural networks는 다시 관심을 얻게 된다.
+- marvin minsky의 perceptrons라는 책의 발간 이후 상당 기간동안 XOR
+  problem은 해결되지 못하고 있었다. 그러나 1986년 Hinton교수를 통해
+  backpropagation을 이용한 해결 방법이 모색되고 neural networks는 다시
+  관심을 얻게 된다.
 
 - XOR 을 3개의 unit으로 표현해보자. 3개의 unit은 하나의 neural network를 구성한다.
 
-![](xor3units.png)
+![](img/xor3units.png)
 
 - chain rule
 
-![](chainrule.png)
+![](img/chainrule.png)
 
 - back propagation는 chain rule을 이용하여 구할 수 있다.
 
@@ -1457,7 +1628,7 @@ W = np.random.randn(fan_in, fan_out)/np.sqrt(fan_in/2)
 
 ```
 
-![](backpropagation.png)
+![](img/backpropagation.png)
 
 - tensorflow의 wrapper인 [prettytensor](https://github.com/google/prettytensor)의 
   xavier_init을 참고하자
@@ -1529,7 +1700,7 @@ mnist.test.labels, dropout_rate: 1})
 
 ## CNN (convolutional networks)
 
-![](CNN.png)
+![](img/CNN.png)
 
 - convolutional layer, ReLU, Pool를 반복하다가 
   마지막에 fully connected neural networks를 적용한 방법
