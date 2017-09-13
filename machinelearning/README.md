@@ -1901,9 +1901,29 @@ if __name__ == "__main__":
     main()
 ```
 
-- back propagation는 chain rule을 이용하여 구현할 수 있다.
+- chain rule은 두 함수를 합성한 합성 함수의 도함수에 관한 공식이다.
+
+```latex
+\begin{align*}
+(f \circ g)^{'}(x) &= (f(g(x)))' = f^{'}(g(x))g^{'}(x) \\
+\frac {\partial{f}}{\partial{x}} &= \frac {\partial{f}}{\partial{g}} \cdot \frac {\partial{g}}{\partial{x}} \\
+ \end{align*}
+```
 
 ![](img/chainrule.png)
+
+- back propagation는 output layer부터 input layer방향으로 cost(W, b)를
+  를 최소화 하기 위해 W, b를 갱신하는
+  과정이다. [이곳](https://docs.google.com/presentation/d/1_ZmtfEjLmhbuM_PqbDYMXXLAqeWN0HwuhcSKnUQZ6MM/edit#slide=id.p6) 를
+  참고해서 이해해 보자. chain rule을 이용해서 구현할 수 있다.
+  
+![](img/backpropagation_1.png)
+
+![](img/backpropagation_2.png)
+
+![](img/backpropagation_3.png)
+
+![](img/backpropagation_4.png)
 
 - XOR문제를 해결하기 위해 hidden layer를 9개 설정해 보자. 정확도는
   0.5가 나온다. hidden layer를 깊게 설정했는데도 왜 이런 현상이
