@@ -27,6 +27,8 @@
 
 # learning material
 
+- [deep learning by Ian goodfellow](http://www.deeplearningbook.org/)
+  - 기초수학부터 차근차근 deep learning에 대해 설명한다. 공짜
 - [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
   - 한글로 제일 쉽게 설명하는 자료이다. 
 - [(기계학습, 인공지능, 머신러닝) 한국어 기계 학습 강좌](https://www.youtube.com/playlist?list=PLbhbGI_ppZISMV4tAWHlytBqNq1-lb8bz)
@@ -34,8 +36,6 @@
 - [(기계학습,인공지능,머신러닝) 한국어 기계 학습 강좌 심화 1](https://www.youtube.com/playlist?list=PLbhbGI_ppZIRPeAjprW9u9A46IJlGFdLn)
   - 카이스트 산업공학과 문일철 교수 강의
 - [Hands-On Machine Learning with Scikit-Learn and TensorFlow](https://www.amazon.com/gp/product/1491962291/ref=oh_aui_detailpage_o00_s00)
-- [밑바닥부터 시작하는 딥러닝](http://www.yes24.com/24/Goods/34970929?Acode=101)
-  - [예제](https://github.com/WegraLee/deep-learning-from-scratch)
 - [machine learning at coursera](https://www.coursera.org/learn/machine-learning)
   - andrew Ng교수의 machine learning강좌
   - 영문이지만 기초를 공부할 수 있다.
@@ -43,11 +43,9 @@
   - andrew Ng교수의 machine learning강좌 노트
 - [deep learning tutorial](http://deeplearning.stanford.edu/tutorial/)
   - standford 대학의 tutorial이다. 코드와 텍스트가 가득하다.
-- [c++로 배우는 딥러닝](http://blog.naver.com/atelierjpro/220697890605)
-  - 동국대학교 홍정모교수의 한글 딥러닝 강의
 - [Andrej Karpathy's Youtube channel](https://www.youtube.com/channel/UCPk8m_r6fkUSYmvgCBwq-sw)
 - [CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/syllabus.html)
-  - 화상인싱을 위한 CNN
+  - 화상인식을 위한 CNN
 - [CS224d: Deep Learning for Natural Language Processing]()
   - 자연어처리를 위한 Deep Learning
 - [tensorflow](https://www.tensorflow.org)
@@ -1936,12 +1934,14 @@ if __name__ == "__main__":
 
 ![](img/backpropagation_4.png)
 
-- 다음은 linear regression를 single layer를 이용하여 backpropagation을 구현한 것이다.
+- 다음은 linear regression를 한개의 입력과 함께 backpropagation을
+  이용하여 구현한 것이다.
 
 ```python
 ```
 
-- 다음은 linear regression을 multi layer를 사용하여 backpropagation을 구현한 것이다.
+- 다음은 linear regression을 세개의 입력과 함께 backpropagation을 
+  이용하여 구현한 것이다.
 
 ```python
 ```
