@@ -1914,16 +1914,47 @@ if __name__ == "__main__":
 
 - back propagation는 output layer부터 input layer방향으로 cost(W, b)를
   를 최소화 하기 위해 W, b를 갱신하는
-  과정이다. [이곳](https://docs.google.com/presentation/d/1_ZmtfEjLmhbuM_PqbDYMXXLAqeWN0HwuhcSKnUQZ6MM/edit#slide=id.p6) 를
-  참고해서 이해해 보자. chain rule을 이용해서 구현할 수 있다.
+  과정이다. chain rule을 이용해서 구현할 수 있다.
+  아래의 그림들은 [이곳](https://docs.google.com/presentation/d/1_ZmtfEjLmhbuM_PqbDYMXXLAqeWN0HwuhcSKnUQZ6MM/edit#slide=id.p6)에서 
+  가져왔다. softmax regression을 어떻게 backpropagation하는지 수식으로 이해 할 수 있다.
+  중간에 사용된 전치 행렬은 곱셈 결과 행렬의 행과 열을 뒤집어 주기 위한 방법이다.
+  
+- 다음은 한개의 레이어를 backpropagation하는 과정이다.
   
 ![](img/backpropagation_1.png)
 
+- 다음은 두개 이상의 레이어를 backpropagation하는 과정이다. 한개의
+  레이어를 backpropagation하는 것과 거의 유사하다.
+
 ![](img/backpropagation_2.png)
+
+- 다음은 X, W, b가 행렬일때 backpropagation하는 과정이다.
 
 ![](img/backpropagation_3.png)
 
+- 다음은 tensorflow로 backpropagation을 구현하는 코드중 일부이다.
+
 ![](img/backpropagation_4.png)
+
+- 다음은 linear regression를 single layer를 이용하여 backpropagation을 구현한 것이다.
+
+```python
+```
+
+- 다음은 linear regression을 multi layer를 사용하여 backpropagation을 구현한 것이다.
+
+```python
+```
+
+- 다음은 동물분류 문제를 backpropagation을 이용하여 구현한 것이다.
+
+```python
+```
+
+- 다음은 XOR 문제를 backpropagation을 이용하여 구현한 것이다.
+
+```python
+```
 
 - XOR문제를 해결하기 위해 hidden layer를 9개 설정해 보자. 정확도는
   0.5가 나온다. hidden layer를 깊게 설정했는데도 왜 이런 현상이
@@ -1931,16 +1962,21 @@ if __name__ == "__main__":
   backpropagation할 때 vanishing gradient현상이 발생하기
   때문이다. vanishing gradient란 output layer에서 hidden layer를 거쳐
   input layer로 갈수록 입력값의 영향을 덜 받게 되는
-  현상이다. sigmoid보다 ReLU (Rectified Linear Unit) 을 사용하면
-  vanishing gradient를 해결 할 수 있다. sigmoid, ReLU를 제외하고도
-  tanh, Leaky ReLU, Maxout, ELU등등 Activation Function들이 있다.
+  현상이다. sigmoid와 달리 입력값이 0이하일때 출력값이 0이되는 또 다른
+  activate function이 필요하다. sigmoid보다 ReLU (Rectified Linear
+  Unit) 을 사용하면 vanishing gradient를 해결 할 수 있다. sigmoid,
+  ReLU를 제외하고도 tanh, Leaky ReLU, Maxout, ELU등등 Activation
+  Function들이 있다.
 
-- 사람들은 weight값을 어떻게 초기화하면 좋을지 고민했다. 2006년
-  Hinton교수는 RBM (Restricted Boatman Macine)을 이용하여 weight값을
-  초기화 하면 deep learning을 효율적으로 할 수 있다고 했다. 그러나
-  RBM은 너무 복잡하다.  Xavier initialization 혹은 He's
-  initialization과 같이 간단한 방법이 더욱 효율적이다. weight 초기값을
-  어떻게 설정하느냐는 지금도 활발한 연구 분야이다.
+![](sigmoid_vs_relu.png)
+
+- ML학계의 사람들은 weight값을 잘 정해서 더욱 정확하게 ML할 수 있는
+  방법을 연구했다. 2006년 Hinton교수는 RBM (Restricted Boatman
+  Macine)을 이용하여 weight값을 초기화 하면 deep learning을 효율적으로
+  할 수 있다고 했다. 그러나 RBM은 너무 복잡하다.  Xavier
+  initialization 혹은 He's initialization과 같이 간단한 방법이 더욱
+  효율적이다. weight 초기값을 어떻게 설정하느냐는 지금도 활발한 연구
+  분야이다.
 
 ```python
 # Xavier initialization
@@ -2027,12 +2063,46 @@ mnist.test.labels, dropout_rate: 1})
 
 - recurrent network
 
-- mnist
+- MNIST문제를 다양한 방법으로 이용해서 정확도를 향상 시킬 수 있다.
   - softmax regression : 90%
   - neural networks : 94.5%
   - Xavier initialization : 97.8%
   - batch normalization : ???%
   - CNN : 99%
+  
+- 다음은 MNIST를 softmax regression을 이용하여 구현한 것이다. 정확도는
+  약 90%이다. 
+
+```python
+```
+
+- 다음은 MNIST를 softmax regression, multi layer를 이용하여 구현한
+  것이다. 정확도는 약 94%이다.
+
+```python
+```
+
+- 다음은 MNIST를 softmax regression, multi layer, xavier init을
+  이용하여 구현한 것이다. 정확도는 약 97%이다.
+
+```python
+```
+
+- 다음은 MNIST를 softmax regression, deep layer, savier init을
+  이용하여 구현한 것이다. 정확도는 약 97%이다. layer가 더욱 깊어졌지만
+  정확도는 향상되지 않았다. 뭔가 다른 방법이 필요하다.
+
+```python
+```
+
+- 다음은 MNIST를 softmax regression, deep layer, savier init, drop
+  out을 이용하여 구현한 것이다. 정확도는 약 98%이다.
+  
+```python
+```
+
+- MNIST를 CNN을 이용하여 구현하면 정확도를 약 99%로 만들 수
+  있다. CNN은 도대체 무엇일까?
 
 ## CNN (convolutional networks)
 
