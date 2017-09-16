@@ -1938,22 +1938,333 @@ if __name__ == "__main__":
   이용하여 구현한 것이다.
 
 ```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+tf.set_random_seed(777)
+
+# Network
+#          p      l1 (y_pred)
+# X -> (*) -> (+) -> (E)
+#       ^      ^ 
+#       |      | 
+#       W      b
+#
+# ∂E/∂b =
+
+def main():
+    # set data
+    x_data = [[1.],
+              [2.],
+              [3.]]
+    y_data = [[1.],
+              [2.],
+              [3.]]
+    # set placeholder
+    X = tf.placeholder(tf.float32, shape=[None, 1])
+    Y = tf.placeholder(tf.float32, shape=[None, 1])
+    # set nodes
+    W = tf.Variable(tf.truncated_normal([1, 1]))
+    b = tf.Variable(5.)
+    hypothesis = tf.matmul(X, W) + b
+    # set diff
+    diff = (hypothesis - Y)
+    # set back prop
+    d_l1 = diff
+    d_b = d_l1
+    d_w = tf.matmul(tf.transpose(X), d_l1)
+    # update network
+    learning_rate = 0.1
+    step = [
+        tf.assign(W, W - learning_rate * d_w),
+        tf.assign(b, b - learning_rate * tf.reduce_mean(d_b))                  
+    ]
+    RMSE = tf.reduce_mean(tf.square(Y - hypothesis))
+    # launch nodes
+    sess = tf.InteractiveSession()
+    sess.run(tf.global_variables_initializer())
+    for i in range(1000):
+        print(i, sess.run([step, RMSE],
+                              feed_dict={X: x_data, Y:y_data}))
+    print(sess.run(hypothesis, feed_dict={X: x_data}))
+
+if __name__ == "__main__":
+    main()
 ```
 
 - 다음은 linear regression을 세개의 입력과 함께 backpropagation을 
   이용하여 구현한 것이다.
 
 ```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+tf.set_random_seed(777)
+
+# Network
+#          p      l1 (y_pred)
+# X -> (*) -> (+) -> (E)
+#       ^      ^ 
+#       |      | 
+#       W      b
+#
+# ∂E/∂b =
+
+def main():
+    # set data
+    x_data = [[73., 80., 75.],
+              [93., 88., 93.],
+              [89., 91., 90.],
+              [96., 98., 100.],
+              [73., 66., 70.]]
+    y_data = [[152.],
+              [185.],
+              [180.],
+              [196.],
+              [142.]]
+    # set placeholder
+    X = tf.placeholder(tf.float32, shape=[None, 3])
+    Y = tf.placeholder(tf.float32, shape=[None, 1])
+    # set nodes
+    W = tf.Variable(tf.truncated_normal([3, 1]))
+    b = tf.Variable(5.)
+    hypothesis = tf.matmul(X, W) + b
+    # set diff
+    diff = (hypothesis - Y)
+    # set back prop
+    d_l1 = diff
+    d_b = d_l1
+    d_w = tf.matmul(tf.transpose(X), d_l1)
+    # update network
+    learning_rate = 1e-6
+    step = [
+        tf.assign(W, W - learning_rate * d_w),
+        tf.assign(b, b - learning_rate * tf.reduce_mean(d_b))                  
+    ]
+    RMSE = tf.reduce_mean(tf.square(Y - hypothesis))
+    # launch nodes
+    sess = tf.InteractiveSession()
+    sess.run(tf.global_variables_initializer())
+    for i in range(1000):
+        print(i, sess.run([step, RMSE],
+                              feed_dict={X: x_data, Y:y_data}))
+    print(sess.run(hypothesis, feed_dict={X: x_data}))
+
+if __name__ == "__main__":
+    main()
 ```
 
 - 다음은 동물분류 문제를 backpropagation을 이용하여 구현한 것이다.
 
 ```python
+# -*- coding: utf-8 -*-
+
+# Input: x
+# Layer1: x * W + b
+# Output layer = σ(Layer1)
+#
+# Loss_i = - y * log(σ(Layer1)) - (1 - y) * log(1 - σ(Layer1))
+# Loss = tf.reduce_sum(Loss_i)
+#
+# We want to compute that
+#
+# dLoss/dW = ???
+# dLoss/db = ???
+#
+# Network
+#          p1     a1           l1 (y_pred)
+# X -> (*) -> (+) -> (sigmoid) -> (loss)
+#       ^      ^                 
+#       |      |                 
+#       W1     b1                
+
+
+import tensorflow as tf
+import numpy as np
+tf.set_random_seed(777)  # for reproducibility
+
+def sigma(x):
+    # sigmoid function
+    # σ(x) = 1 / (1 + exp(-x))
+    return 1. / (1. + tf.exp(-x))
+
+def sigma_prime(x):
+    # derivative of the sigmoid function
+    # σ'(x) = σ(x) * (1 - σ(x))
+    return sigma(x) * (1. - sigma(x))  
+
+def main():
+    # set data
+    xy = np.loadtxt('data-04-zoo.csv', delimiter=',', dtype=np.float32)
+    X_data = xy[:, :-1]
+    N = X_data.shape[0]
+    y_data = xy[:, [-1]]
+    # print("y has one of the following values")
+    # print(np.unique(y_data))
+    # print("Shape of X data: ", X_data.shape)
+    # print("Shape of y data: ", y_data.shape)
+    nb_classes = 7  # 0 ~ 6
+    # set place holders
+    X = tf.placeholder(tf.float32, [None, 16])
+    y = tf.placeholder(tf.int32, [None, 1])  # 0 ~ 6
+    # set nodes
+    target = tf.one_hot(y, nb_classes)  # one hot
+    target = tf.reshape(target, [-1, nb_classes])
+    target = tf.cast(target, tf.float32)
+    W = tf.Variable(tf.random_normal([16, nb_classes]), name='weight')
+    b = tf.Variable(tf.random_normal([nb_classes]), name='bias')
+    # set cost/loss node
+    l1 = tf.matmul(X, W) + b
+    y_pred = sigma(l1)
+    loss_i = - target * tf.log(y_pred) - (1. - target) * tf.log(1. - y_pred)
+    loss = tf.reduce_sum(loss_i)
+    # set back prop
+    d_loss = (y_pred - target) / (y_pred * (1. - y_pred) + 1e-7)
+    d_sigma = sigma_prime(l1)
+    d_l1 = d_loss * d_sigma
+    d_b = d_l1
+    d_W = tf.matmul(tf.transpose(X), d_l1)
+    # update network
+    learning_rate = 0.01
+    train = [
+        tf.assign(W, W - learning_rate * d_W),
+        tf.assign(b, b - learning_rate * tf.reduce_sum(d_b)),
+    ]
+    # set accuracy node
+    prediction = tf.argmax(y_pred, 1)
+    acct_mat = tf.equal(tf.argmax(y_pred, 1), tf.argmax(target, 1))
+    acct_res = tf.reduce_mean(tf.cast(acct_mat, tf.float32))
+
+    # Launch graph
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+
+        for step in range(500):
+            sess.run(train, feed_dict={X: X_data, y: y_data})
+
+            if step % 10 == 0:
+                # Within 300 steps, you should see an accuracy of 100%
+                step_loss, acc = sess.run([loss, acct_res], feed_dict={
+                    X: X_data, y: y_data})
+                print("Step: {:5}\t Loss: {:10.5f}\t Acc: {:.2%}" .format(
+                    step, step_loss, acc))
+
+        # Let's see if we can predict
+        pred = sess.run(prediction, feed_dict={X: X_data})
+        for p, y in zip(pred, y_data):
+            msg = "[{}]\t Prediction: {:d}\t True y: {:d}"
+            print(msg.format(p == int(y[0]), p, int(y[0])))    
+
+if __name__ == "__main__":
+    main()
 ```
 
 - 다음은 XOR 문제를 backpropagation을 이용하여 구현한 것이다.
 
 ```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+import numpy as np
+import pprint as pp
+
+# Network
+#          p1     a1           l1     p2     a2           l2 (y_pred)
+# X -> (*) -> (+) -> (sigmoid) -> (*) -> (+) -> (sigmoid) -> (loss)
+#       ^      ^                   ^      ^
+#       |      |                   |      |
+#       W1     b1                  W2     b2
+
+def main():
+    # set var
+    tf.set_random_seed(777)  # for reproducibility
+    learning_rate = 0.1
+
+    # set data
+    x_data = [[0, 0],
+              [0, 1],
+              [1, 0],
+              [1, 1]]
+    y_data = [[0],
+              [1],
+              [1],
+              [0]]
+    x_data = np.array(x_data, dtype=np.float32)
+    y_data = np.array(y_data, dtype=np.float32)
+
+    # set place holders
+    X = tf.placeholder(tf.float32, [None, 2])
+    Y = tf.placeholder(tf.float32, [None, 1])
+
+    # set nodes
+    W1 = tf.Variable(tf.random_normal([2, 2]), name='weight1')
+    b1 = tf.Variable(tf.random_normal([2]), name='bias1')
+    l1 = tf.sigmoid(tf.matmul(X, W1) + b1)
+    
+    W2 = tf.Variable(tf.random_normal([2, 1]), name='weight2')
+    b2 = tf.Variable(tf.random_normal([1]), name='bias2')
+    Y_pred = tf.sigmoid(tf.matmul(l1, W2) + b2)
+
+    # set cost/loss node
+    cost = -tf.reduce_mean(Y * tf.log(Y_pred) + (1 - Y) *
+                           tf.log(1 - Y_pred))
+    # set backprop nodes
+    d_Y_pred = (Y_pred - Y) / (Y_pred * (1.0 - Y_pred) + 1e-7)
+
+    # Layer 2
+    d_sigma2 = Y_pred * (1 - Y_pred)
+    d_a2 = d_Y_pred * d_sigma2
+    d_p2 = d_a2
+    d_b2 = d_a2
+    d_W2 = tf.matmul(tf.transpose(l1), d_p2)
+
+    # Mean
+    d_b2_mean = tf.reduce_mean(d_b2, axis=[0])
+    d_W2_mean = d_W2 / tf.cast(tf.shape(l1)[0], dtype=tf.float32)
+
+    # Layer 1
+    d_l1 = tf.matmul(d_p2, tf.transpose(W2))
+    d_sigma1 = l1 * (1 - l1)
+    d_a1 = d_l1 * d_sigma1
+    d_b1 = d_a1
+    d_p1 = d_a1
+    d_W1 = tf.matmul(tf.transpose(X), d_a1)
+
+    # Mean
+    d_W1_mean = d_W1 / tf.cast(tf.shape(X)[0], dtype=tf.float32)
+    d_b1_mean = tf.reduce_mean(d_b1, axis=[0])
+
+    # set step node
+    step = [
+        tf.assign(W2, W2 - learning_rate * d_W2_mean),
+        tf.assign(b2, b2 - learning_rate * d_b2_mean),
+        tf.assign(W1, W1 - learning_rate * d_W1_mean),
+        tf.assign(b1, b1 - learning_rate * d_b1_mean)
+    ]
+
+    # set accuracy node
+    predicted = tf.cast(Y_pred > 0.5, dtype=tf.float32)
+    accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
+
+    # Launch graph
+    with tf.Session() as sess:
+        # Initialize TensorFlow variables
+        sess.run(tf.global_variables_initializer())
+
+        print("shape", sess.run(tf.shape(X)[0], feed_dict={X: x_data}))
+
+        for i in range(10001):
+            sess.run([step, cost], feed_dict={X: x_data, Y: y_data})
+            if i % 1000 == 0:
+                # print(i, sess.run([cost, d_W1], feed_dict={
+                #     X: x_data, Y: y_data}), sess.run([W1, W2]))
+                print(i, sess.run([cost], feed_dict={X: x_data, Y: y_data}),
+                                  sess.run([W1, W2]))
+                # print(i, sess.run([cost], feed_dict={X: x_data, Y: y_data}))
+        # Accuracy report
+        h, c, a = sess.run([Y_pred, predicted, accuracy],
+                           feed_dict={X: x_data, Y: y_data})
+        print("\nHypothesis: ", h, "\nCorrect: ", c, "\nAccuracy: ", a)
+    
+if __name__ == "__main__":
+    main()
 ```
 
 - XOR문제를 해결하기 위해 hidden layer를 9개 설정해 보자. 정확도는
@@ -2283,7 +2594,7 @@ if __name__ == "__main__":
     main()
 ```
 
-- 다음은 MNIST를 softmax regression, deep layer, savier init을
+- 다음은 MNIST를 softmax regression, deep layer, xavier init을
   이용하여 구현한 것이다. 정확도는 약 97%이다. layer가 더욱 깊어지고 수행시간은
   더욱 늘어났지만 정확도는 향상되지 않았다. 뭔가 다른 방법이 필요하다.
 
@@ -2369,10 +2680,96 @@ if __name__ == "__main__":
     main()
 ```
 
-- 다음은 MNIST를 softmax regression, deep layer, savier init, drop
-  out을 이용하여 구현한 것이다. 정확도는 약 98%이다.
+- 다음은 MNIST를 softmax regression, deep layer, xavier init, drop
+  out을 이용하여 구현한 것이다. keep_prob은 dropout의 정도를
+  의미한다. 학습할때는 node가 듬성 듬성 배치되는 것이 좋기 때문에
+  0.7정도가 적당하고 검증할때는 모든 노드가 배치되어야 하므로 1이 되야
+  한다. 정확도는 약 98%이다.
   
 ```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+import random
+from tensorflow.examples.tutorials.mnist import input_data
+tf.set_random_seed(777)  # reproducibility
+
+def main():
+    # set data
+    mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+
+    # set variables
+    learning_rate = 1e-3
+    training_epocs = 15
+    batch_size = 100
+
+    # set place holders
+    X = tf.placeholder(tf.float32, [None, 784])
+    Y = tf.placeholder(tf.float32, [None, 10])
+    keep_prob = tf.placeholder(tf.float32)
+
+    # set nodes
+    W1 = tf.get_variable("W1", shape=[784, 512],
+                         initializer=tf.contrib.layers.xavier_initializer())
+    b1 = tf.Variable(tf.random_normal([512]))
+    L1 = tf.nn.relu(tf.matmul(X, W1) + b1)
+    L1 = tf.nn.dropout(L1, keep_prob=keep_prob)
+
+    W2 = tf.get_variable("W2", shape=[512, 512],
+                         initializer=tf.contrib.layers.xavier_initializer())
+    b2 = tf.Variable(tf.random_normal([512]))
+    L2 = tf.nn.relu(tf.matmul(L1, W2) + b2)
+    L2 = tf.nn.dropout(L2, keep_prob=keep_prob)
+
+    W3 = tf.get_variable("W3", shape=[512, 512],
+                         initializer=tf.contrib.layers.xavier_initializer())
+    b3 = tf.Variable(tf.random_normal([512]))
+    L3 = tf.nn.relu(tf.matmul(L2, W3) + b3)
+    L3 = tf.nn.dropout(L3, keep_prob=keep_prob)
+
+    W4 = tf.get_variable("W4", shape=[512, 512],
+                         initializer=tf.contrib.layers.xavier_initializer())
+    b4 = tf.Variable(tf.random_normal([512]))
+    L4 = tf.nn.relu(tf.matmul(L3, W4) + b4)
+    L4 = tf.nn.dropout(L4, keep_prob=keep_prob)
+
+    W5 = tf.get_variable("W5", shape=[512, 10],
+                     initializer=tf.contrib.layers.xavier_initializer())
+    b5 = tf.Variable(tf.random_normal([10]))
+    hypothesis = tf.matmul(L4, W5) + b5
+
+    # set train node
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
+        logits=hypothesis, labels=Y))
+    train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+
+    # launch nodes
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for epoch in range(training_epocs):
+            avg_cost = 0
+            total_batch = int(mnist.train.num_examples / batch_size)
+            for i in range(total_batch):
+                batch_xs, batch_ys = mnist.train.next_batch(batch_size)
+                c, _ = sess.run([cost, train], feed_dict={X: batch_xs, Y: batch_ys, keep_prob: 0.7})
+                avg_cost += c / total_batch
+
+            print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))
+        print('Learning Finished')
+
+        # check accuracy
+        correct_prediction = tf.equal(tf.argmax(hypothesis, 1), tf.argmax(Y, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        print('Accuracy:', sess.run(accuracy, feed_dict={
+            X: mnist.test.images, Y: mnist.test.labels, keep_prob:1}))
+
+        # Get one and predict
+        r = random.randint(0, mnist.test.num_examples - 1)
+        print("Label: ", sess.run(tf.argmax(mnist.test.labels[r:r + 1], 1)))
+        print("Prediction: ", sess.run(
+            tf.argmax(hypothesis, 1), feed_dict={X: mnist.test.images[r:r + 1], keep_prob:1}))
+
+if __name__ == "__main__":
+    main()
 ```
 
 - MNIST를 CNN을 이용하여 구현하면 정확도를 약 99%로 만들 수

@@ -61,7 +61,7 @@ def main():
             total_batch = int(mnist.train.num_examples / batch_size)
             for i in range(total_batch):
                 batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-                c, _ = sess.run([cost, train], feed_dict={X: batch_xs, Y: batch_ys, keep_prop: 0.7})
+                c, _ = sess.run([cost, train], feed_dict={X: batch_xs, Y: batch_ys, keep_prob: 0.7})
                 avg_cost += c / total_batch
 
             print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))
@@ -71,13 +71,13 @@ def main():
         correct_prediction = tf.equal(tf.argmax(hypothesis, 1), tf.argmax(Y, 1))
         accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
         print('Accuracy:', sess.run(accuracy, feed_dict={
-            X: mnist.test.images, Y: mnist.test.labels, keep_prop:1}))
+            X: mnist.test.images, Y: mnist.test.labels, keep_prob:1}))
 
         # Get one and predict
         r = random.randint(0, mnist.test.num_examples - 1)
         print("Label: ", sess.run(tf.argmax(mnist.test.labels[r:r + 1], 1)))
         print("Prediction: ", sess.run(
-            tf.argmax(hypothesis, 1), feed_dict={X: mnist.test.images[r:r + 1], keep_prop:1}))
+            tf.argmax(hypothesis, 1), feed_dict={X: mnist.test.images[r:r + 1], keep_prob:1}))
 
 
 if __name__ == "__main__":
