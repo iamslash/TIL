@@ -2279,7 +2279,7 @@ if __name__ == "__main__":
   ReLU를 제외하고도 tanh, Leaky ReLU, Maxout, ELU등등 Activation
   Function들이 있다.
 
-![](sigmoid_vs_relu.png)
+![](img/sigmoid_vs_relu.png)
 
 - ML학계의 사람들은 weight값을 잘 정해서 더욱 정확하게 ML할 수 있는
   방법을 연구했다. 2006년 Hinton교수는 RBM (Restricted Boatman
