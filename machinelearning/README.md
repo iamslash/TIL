@@ -1,4 +1,4 @@
-# intro
+# Intro
 
 - machine learning이란 다량의 데이터를 이용하여 학습하고 예측하는 것에 대한 학문이다.
   예를 들어서 machine learning을 이용하면 다음과 같은 것을 할 수 있다.
@@ -25,7 +25,24 @@
   sigmoid, ReLU, learning rate, forward propagation, back propagation,
   CNN (Convolutional Neural Networks), RNN (Recurrent Neural Networks)
 
-# learning material
+# Contents
+
+* [Learning Materials](#learning-material)
+* [Supervised Learning](#supervised-learning)
+* [Unsupervised Learning](#unsupervised-learning)
+* [Semisupervised Learning](#semisupervised-learning)
+* [Reinforcement Learning](#reinforcement-learning)
+* [Linear Regression with one variable](#linear-regression-with-one-variable)
+* [Linear Regression with multiple variable](#linear-regression-with-multiple-variables)
+* [Logistic Regression (binary classification)](logistic-regression-binary-classification)
+* [Example: Titanic](example-titanic)
+* [Softmax Regression (multinomial classification)](softmax-regression-multinomial-classification)
+* [Machine Learning Tips](machine-learning-tips)
+* [Example: Digit Recognizer](example-digit-recognizer)
+* [Deep Learning Fundamentals](deep-learning-fundamentals)
+* [NN (neural networks)](nn-neural-networks)
+
+# Learning material
 
 - [deep learning by Ian goodfellow](http://www.deeplearningbook.org/)
   - 기초수학부터 차근차근 deep learning에 대해 설명한다. 공짜
@@ -1355,9 +1372,9 @@ if __name__ == "__main__":
     main()
 ```
 
-## [Example: Digit Recoggnizer](https://www.kaggle.com/c/digit-recognizer)
+## [Example: Digit Recognizer](https://www.kaggle.com/c/digit-recognizer)
 
-## deep learning fundamentals
+## Deep Learning Fundamentals
 
 - machine llearning한계는 인간의 뇌를 구성하는 뉴런을 연구해왔다.
   그리고 뉴런의 동작 과정을 모델링해서 기계학습을 구현했다. 다음은
@@ -2773,7 +2790,7 @@ if __name__ == "__main__":
 - MNIST를 CNN을 이용하여 구현하면 정확도를 약 99%로 만들 수
   있다. CNN은 도대체 무엇일까?
 
-## CNN (convolutional networks)
+## CNN (convolutional neural networks)
 
 ![](img/CNN.png)
 
