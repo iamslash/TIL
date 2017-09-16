@@ -2065,8 +2065,8 @@ mnist.test.labels, dropout_rate: 1})
 
 - MNIST문제를 다양한 방법으로 이용해서 정확도를 향상 시킬 수 있다.
   - softmax regression : 90%
-  - neural networks : 94.5%
-  - Xavier initialization : 97.8%
+  - softmax regression neural networks : 94.5%
+  - softmax regression Xavier initialization : 97.8%
   - batch normalization : ???%
   - CNN : 99%
   
@@ -2074,25 +2074,299 @@ mnist.test.labels, dropout_rate: 1})
   약 90%이다. 
 
 ```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+import random
+from tensorflow.examples.tutorials.mnist import input_data
+tf.set_random_seed(777)  # reproducibility
+
+def main():
+    # set data
+    mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+
+    # set variables
+    learning_rate = 1e-3
+    training_epocs = 15
+    batch_size = 100
+
+    # set place holders
+    X = tf.placeholder(tf.float32, [None, 784])
+    Y = tf.placeholder(tf.float32, [None, 10])
+
+    # set nodes
+    W = tf.Variable(tf.random_normal([784, 10]))
+    b = tf.Variable(tf.random_normal([10]))
+    hypothesis = tf.matmul(X, W) + b
+
+    # set train node
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
+        logits=hypothesis, labels=Y))
+    train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+
+    # launch nodes
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for epoch in range(training_epocs):
+            avg_cost = 0
+            total_batch = int(mnist.train.num_examples / batch_size)
+            for i in range(total_batch):
+                batch_xs, batch_ys = mnist.train.next_batch(batch_size)
+                c, _ = sess.run([cost, train], feed_dict={X: batch_xs, Y: batch_ys})
+                avg_cost += c / total_batch
+
+            print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))
+        print('Learning Finished')
+
+        # check accuracy
+        correct_prediction = tf.equal(tf.argmax(hypothesis, 1), tf.argmax(Y, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        print('Accuracy:', sess.run(accuracy, feed_dict={
+            X: mnist.test.images, Y: mnist.test.labels}))
+
+        # Get one and predict
+        r = random.randint(0, mnist.test.num_examples - 1)
+        print("Label: ", sess.run(tf.argmax(mnist.test.labels[r:r + 1], 1)))
+        print("Prediction: ", sess.run(
+            tf.argmax(hypothesis, 1), feed_dict={X: mnist.test.images[r:r + 1]}))
+
+
+if __name__ == "__main__":
+    main()
 ```
 
-- 다음은 MNIST를 softmax regression, multi layer를 이용하여 구현한
-  것이다. 정확도는 약 94%이다.
+- 다음은 MNIST를 softmax regression, neural networks 를 이용하여
+  구현한 것이다. layer가 늘어났기 때문에 앞서 구현한 것보다
+  느려진다. 그러나 정확도는 약 94%이다.
 
 ```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+import random
+from tensorflow.examples.tutorials.mnist import input_data
+tf.set_random_seed(777)  # reproducibility
+
+def main():
+    # set data
+    mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+
+    # set variables
+    learning_rate = 1e-3
+    training_epocs = 15
+    batch_size = 100
+
+    # set place holders
+    X = tf.placeholder(tf.float32, [None, 784])
+    Y = tf.placeholder(tf.float32, [None, 10])
+
+    # set nodes
+    W1 = tf.Variable(tf.random_normal([784, 256]))
+    b1 = tf.Variable(tf.random_normal([256]))
+    L1 = tf.nn.relu(tf.matmul(X, W1) + b1)
+
+    W2 = tf.Variable(tf.random_normal([256, 256]))
+    b2 = tf.Variable(tf.random_normal([256]))
+    L2 = tf.nn.relu(tf.matmul(L1, W2) + b2)
+
+    W3 = tf.Variable(tf.random_normal([256, 10]))
+    b3 = tf.Variable(tf.random_normal([10]))
+    hypothesis = tf.matmul(L2, W3) + b3
+
+    # set train node
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
+        logits=hypothesis, labels=Y))
+    train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+
+    # launch nodes
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for epoch in range(training_epocs):
+            avg_cost = 0
+            total_batch = int(mnist.train.num_examples / batch_size)
+            for i in range(total_batch):
+                batch_xs, batch_ys = mnist.train.next_batch(batch_size)
+                c, _ = sess.run([cost, train], feed_dict={X: batch_xs, Y: batch_ys})
+                avg_cost += c / total_batch
+
+            print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))
+        print('Learning Finished')
+
+        # check accuracy
+        correct_prediction = tf.equal(tf.argmax(hypothesis, 1), tf.argmax(Y, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        print('Accuracy:', sess.run(accuracy, feed_dict={
+            X: mnist.test.images, Y: mnist.test.labels}))
+
+        # Get one and predict
+        r = random.randint(0, mnist.test.num_examples - 1)
+        print("Label: ", sess.run(tf.argmax(mnist.test.labels[r:r + 1], 1)))
+        print("Prediction: ", sess.run(
+            tf.argmax(hypothesis, 1), feed_dict={X: mnist.test.images[r:r + 1]}))
+
+
+if __name__ == "__main__":
+    main()
 ```
 
 - 다음은 MNIST를 softmax regression, multi layer, xavier init을
-  이용하여 구현한 것이다. 정확도는 약 97%이다.
+  이용하여 구현한 것이다. W만 잘 초기화 해도 이렇게 향상되다니 놀랍다. W를 초기화하는
+  것은 아직도 활발한 연구 주제라고 한다. 정확도는 약 97%이다.
 
 ```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+import random
+from tensorflow.examples.tutorials.mnist import input_data
+tf.set_random_seed(777)  # reproducibility
+
+def main():
+    # set data
+    mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+
+    # set variables
+    learning_rate = 1e-3
+    training_epocs = 15
+    batch_size = 100
+
+    # set place holders
+    X = tf.placeholder(tf.float32, [None, 784])
+    Y = tf.placeholder(tf.float32, [None, 10])
+
+    # set nodes
+    W1 = tf.get_variable("W1", shape=[784, 256],
+                         initializer=tf.contrib.layers.xavier_initializer())
+    b1 = tf.Variable(tf.random_normal([256]))
+    L1 = tf.nn.relu(tf.matmul(X, W1) + b1)
+
+    W2 = tf.get_variable("W2", shape=[256, 256],
+                         initializer=tf.contrib.layers.xavier_initializer())
+    b2 = tf.Variable(tf.random_normal([256]))
+    L2 = tf.nn.relu(tf.matmul(L1, W2) + b2)
+
+    W3 = tf.get_variable("W3", shape=[256, 10],
+                     initializer=tf.contrib.layers.xavier_initializer())
+    b3 = tf.Variable(tf.random_normal([10]))
+    hypothesis = tf.matmul(L2, W3) + b3
+
+    # set train node
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
+        logits=hypothesis, labels=Y))
+    train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+
+    # launch nodes
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for epoch in range(training_epocs):
+            avg_cost = 0
+            total_batch = int(mnist.train.num_examples / batch_size)
+            for i in range(total_batch):
+                batch_xs, batch_ys = mnist.train.next_batch(batch_size)
+                c, _ = sess.run([cost, train], feed_dict={X: batch_xs, Y: batch_ys})
+                avg_cost += c / total_batch
+
+            print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))
+        print('Learning Finished')
+
+        # check accuracy
+        correct_prediction = tf.equal(tf.argmax(hypothesis, 1), tf.argmax(Y, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        print('Accuracy:', sess.run(accuracy, feed_dict={
+            X: mnist.test.images, Y: mnist.test.labels}))
+
+        # Get one and predict
+        r = random.randint(0, mnist.test.num_examples - 1)
+        print("Label: ", sess.run(tf.argmax(mnist.test.labels[r:r + 1], 1)))
+        print("Prediction: ", sess.run(
+            tf.argmax(hypothesis, 1), feed_dict={X: mnist.test.images[r:r + 1]}))
+
+
+if __name__ == "__main__":
+    main()
 ```
 
 - 다음은 MNIST를 softmax regression, deep layer, savier init을
-  이용하여 구현한 것이다. 정확도는 약 97%이다. layer가 더욱 깊어졌지만
-  정확도는 향상되지 않았다. 뭔가 다른 방법이 필요하다.
+  이용하여 구현한 것이다. 정확도는 약 97%이다. layer가 더욱 깊어지고 수행시간은
+  더욱 늘어났지만 정확도는 향상되지 않았다. 뭔가 다른 방법이 필요하다.
 
 ```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+import random
+from tensorflow.examples.tutorials.mnist import input_data
+tf.set_random_seed(777)  # reproducibility
+
+def main():
+    # set data
+    mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
+
+    # set variables
+    learning_rate = 1e-3
+    training_epocs = 15
+    batch_size = 100
+
+    # set place holders
+    X = tf.placeholder(tf.float32, [None, 784])
+    Y = tf.placeholder(tf.float32, [None, 10])
+
+    # set nodes
+    W1 = tf.get_variable("W1", shape=[784, 512],
+                         initializer=tf.contrib.layers.xavier_initializer())
+    b1 = tf.Variable(tf.random_normal([512]))
+    L1 = tf.nn.relu(tf.matmul(X, W1) + b1)
+
+    W2 = tf.get_variable("W2", shape=[512, 512],
+                         initializer=tf.contrib.layers.xavier_initializer())
+    b2 = tf.Variable(tf.random_normal([512]))
+    L2 = tf.nn.relu(tf.matmul(L1, W2) + b2)
+
+    W3 = tf.get_variable("W3", shape=[512, 512],
+                         initializer=tf.contrib.layers.xavier_initializer())
+    b3 = tf.Variable(tf.random_normal([512]))
+    L3 = tf.nn.relu(tf.matmul(L2, W3) + b3)
+
+    W4 = tf.get_variable("W4", shape=[512, 512],
+                         initializer=tf.contrib.layers.xavier_initializer())
+    b4 = tf.Variable(tf.random_normal([512]))
+    L4 = tf.nn.relu(tf.matmul(L3, W4) + b4)
+
+    W5 = tf.get_variable("W5", shape=[512, 10],
+                         initializer=tf.contrib.layers.xavier_initializer())
+    b5 = tf.Variable(tf.random_normal([10]))
+    hypothesis = tf.matmul(L4, W5) + b5
+
+    # set train node
+    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
+        logits=hypothesis, labels=Y))
+    train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+
+    # launch nodes
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for epoch in range(training_epocs):
+            avg_cost = 0
+            total_batch = int(mnist.train.num_examples / batch_size)
+            for i in range(total_batch):
+                batch_xs, batch_ys = mnist.train.next_batch(batch_size)
+                c, _ = sess.run([cost, train], feed_dict={X: batch_xs, Y: batch_ys})
+                avg_cost += c / total_batch
+
+            print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))
+        print('Learning Finished')
+
+        # check accuracy
+        correct_prediction = tf.equal(tf.argmax(hypothesis, 1), tf.argmax(Y, 1))
+        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        print('Accuracy:', sess.run(accuracy, feed_dict={
+            X: mnist.test.images, Y: mnist.test.labels}))
+
+        # Get one and predict
+        r = random.randint(0, mnist.test.num_examples - 1)
+        print("Label: ", sess.run(tf.argmax(mnist.test.labels[r:r + 1], 1)))
+        print("Prediction: ", sess.run(
+            tf.argmax(hypothesis, 1), feed_dict={X: mnist.test.images[r:r + 1]}))
+
+
+if __name__ == "__main__":
+    main()
 ```
 
 - 다음은 MNIST를 softmax regression, deep layer, savier init, drop
