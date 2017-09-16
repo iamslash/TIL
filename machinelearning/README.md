@@ -2298,8 +2298,6 @@ W = np.random.randn(fan_in, fan_out)/np.sqrt(fan_in)
 W = np.random.randn(fan_in, fan_out)/np.sqrt(fan_in/2)
 ```
 
-![](img/backpropagation.png)
-
 - tensorflow의 wrapper인 [prettytensor](https://github.com/google/prettytensor)의 
   xavier_init을 참고하자
 
