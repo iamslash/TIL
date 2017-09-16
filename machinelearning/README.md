@@ -44,6 +44,9 @@
 
 # Learning material
 
+- [artificial intelligence: a modern approach by stuart russel, peter norvig](https://www.amazon.com/Artificial-Intelligence-Approach-Stuart-Russell/dp/1292024208/ref=mt_paperback?_encoding=UTF8&me=)
+  - AI에 대한 전반적인 통찰을 담은 책이다. problem-solving부터 시작해서 machine learning,
+    natural language processing등까지 폭넓게 기술한다.
 - [deep learning by Ian goodfellow](http://www.deeplearningbook.org/)
   - 기초수학부터 차근차근 deep learning에 대해 설명한다. 공짜
 - [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
