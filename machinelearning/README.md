@@ -2805,7 +2805,7 @@ if __name__ == "__main__":
   convolutional layer, ReLU, Pool를 반복하다가 마지막에 softmax
   regression과 함께 fully connected neural networks를 적용한다.
   
-![](img/cnnprocess.png)
+[](img/cnnprocess.png)
 
 - convolutional layer의 결과는 어떠한 형태일까? 예를 들어서 7x7
   image가 있다고 해보자. 3x3 filter를 이용하여 convolution layer를
@@ -2833,7 +2833,7 @@ if __name__ == "__main__":
   출력의 형태는 2x2가 된다. filter의 결과값은 2x2의 값들중 가장 큰 값을
   선택한다. 그래서 max pooling이라고 한다.
 
-![](img/maxpooling.png)
+[](img/maxpooling.png)
   
 - [이곳](http://cs.stanford.edu/people/karpathy/convnetjs/demo/cifar10.html)을
   참고하면 CIFAR-10 dataset을 이용한 CNN의 과정을 시각화하여 구경할 수 있다.
@@ -2841,7 +2841,7 @@ if __name__ == "__main__":
 - 1998년 LeCun 교수의 mnist문제는 32X32 image를 CNN한다. 다음 그림을 참고해서
   image size, filter size, stride value등을 중심으로 이해해 보자.
 
-![](ing/cnnlecun.png)
+[](ing/cnnlecun.png)
 
 - AlexNet는 227X227 image를 CNN하며 2012년에 ImageNet에서 우승했다.
   - first use of ReLU
@@ -2868,6 +2868,37 @@ if __name__ == "__main__":
   Classification을 발표한다.
   
 - DeepMind의 AlphaGo역시 CNN을 이용하였다.
+
+- 다음은 MNIST를 CNN를 사용하여 구현한 것이다.
+
+```python
+```
+
+- 다음은 MNIST를 CNN과 함께 좀 더 깊은 레이어를 구성하여 구현한 것이다.
+
+```python
+```
+
+- 다음은 MNIST를 CNN과 함께 CLASS를 사용하여 구현한 것이다. CLASS를 사용하면
+  재사용이 용이하다.
+
+```python
+```
+
+-
+
+```python
+```
+
+-
+
+```python
+```
+
+-
+
+```python
+```
 
 ## RNN (recurrent networks)
 
