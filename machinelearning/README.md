@@ -2795,6 +2795,8 @@ if __name__ == "__main__":
 
 ## CNN (convolutional neural networks)
 
+![](img/CNN.png)
+
 - CNN은 고양이 실험에서 아이디어를 얻어왔다. 그 실험의 내용은
   이렇다. 고양이가 어떠한 그림을 볼때 그 그림의 각 부분 별로 뉴런들이
   활성화되는 정도가 다르다는 결론을 얻었다. 즉 CNN은 어떠한 image가
@@ -2803,7 +2805,7 @@ if __name__ == "__main__":
   convolutional layer, ReLU, Pool를 반복하다가 마지막에 softmax
   regression과 함께 fully connected neural networks를 적용한다.
   
-![](img/CNN.png)
+![](img/cnnprocess.png)
 
 - convolutional layer의 결과는 어떠한 형태일까? 예를 들어서 7x7
   image가 있다고 해보자. 3x3 filter를 이용하여 convolution layer를
@@ -2826,16 +2828,22 @@ if __name__ == "__main__":
   conv layer의 출력의 형태는 5x5x6이 된다.
 
 - pooling은 conv layer의 image한장을 분리하여 작게 만드는 행위이다.
+  작게 만드는 것은 일종의 sampling이다. 예를 들어서 다음과 같이 4x4의
+  image, 2x2의 filter, 2 stride의 경우 `(N-F)/stride + 1`에 의해
+  출력의 형태는 2x2가 된다. filter의 결과값은 2x2의 값들중 가장 큰 값을
+  선택한다. 그래서 max pooling이라고 한다.
 
-- 예를 들어서 앞의 경우 conv layer의 출력 형태는 5x5x6이었다. 이중
-  5x5x1을 하나씩 분리하여 resize하고 다시 쌓으면 출력 형태는 ?x?x6이 된다.
+![](img/maxpooling.png)
   
 - [이곳](http://cs.stanford.edu/people/karpathy/convnetjs/demo/cifar10.html)을
   참고하면 CIFAR-10 dataset을 이용한 CNN의 과정을 시각화하여 구경할 수 있다.
 
-- LeCun 교수의 mnist문제는 32X32 image를 CNN한다.
+- 1998년 LeCun 교수의 mnist문제는 32X32 image를 CNN한다. 다음 그림을 참고해서
+  image size, filter size, stride value등을 중심으로 이해해 보자.
 
-- AlexNet는 227X227 image를 CNN한다.
+![](ing/cnnlecun.png)
+
+- AlexNet는 227X227 image를 CNN하며 2012년에 ImageNet에서 우승했다.
   - first use of ReLU
   - used Norm Layers (지금은 잘 사용하지 않는다.)
   - heavy data augmentation
@@ -2846,14 +2854,20 @@ if __name__ == "__main__":
     manually when val accuracy plateaus
   - L2 weight decay 5e-4
   - 7 CNN ensemble: 18.2% -> 15.4%
-- GoogLeNet는 [ILSVRC (ImageNet Large Scale Visual Recognition Challenge)](http://www.image-net.org/)에서 2014년에 우승했다.
-- ResNet는 [ILSVRC (ImageNet Large Scale Visual Recognition Challenge)](http://www.image-net.org/)에서 2015년에 우승했다. 224X224X3
-  image를 fast forward를 이용하여 CNN하였다. fast forward가 왜 잘되는지는
-  아직 명확하게 밝혀 지지 않았다.
-- 2014년 Yoon Kim은 Convolutional Neural Networks for Sentence Classification을 
-  발표한다.
-- DeepMind의 AlphaGo역시 CNN을 이용하였다.
 
+- GoogLeNet는 [ILSVRC (ImageNet Large Scale Visual Recognition
+  Challenge)](http://www.image-net.org/)에서 2014년에 우승했다.
+
+- ResNet는 [ILSVRC (ImageNet Large Scale Visual Recognition
+  Challenge)](http://www.image-net.org/)에서 에러율을 약 3.6%로 낮추고
+  2015년에 우승했다. 224x224x3 image를 fast forward를 이용하여
+  CNN하였다. fast forward가 왜 잘되는지는 아직 명확하게 밝혀 지지
+  않았다.
+
+- 2014년 Yoon Kim은 Convolutional Neural Networks for Sentence
+  Classification을 발표한다.
+  
+- DeepMind의 AlphaGo역시 CNN을 이용하였다.
 
 ## RNN (recurrent networks)
 
