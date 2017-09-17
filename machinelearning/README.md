@@ -2795,20 +2795,46 @@ if __name__ == "__main__":
 
 ## CNN (convolutional neural networks)
 
+- CNN은 고양이 실험에서 아이디어를 얻어왔다. 그 실험의 내용은
+  이렇다. 고양이가 어떠한 그림을 볼때 그 그림의 각 부분 별로 뉴런들이
+  활성화되는 정도가 다르다는 결론을 얻었다. 즉 CNN은 어떠한 image가
+  있을때 고 녀석을 일정한 크기로 조각 조각 내서 neural network layer로
+  전송한다.  이 layer를 convolutinal layer라고 한다. CNN은
+  convolutional layer, ReLU, Pool를 반복하다가 마지막에 softmax
+  regression과 함께 fully connected neural networks를 적용한다.
+  
 ![](img/CNN.png)
 
-- convolutional layer, ReLU, Pool를 반복하다가 
-  마지막에 fully connected neural networks를 적용한 방법
-- 7X7 image가 있다고 해보자. 3X3 filter를 이용하여 convolution layer를 제작해보자.
-  3X3 filter가 7X7 image를 움직이는 칸수를 stride라고 한다. filtering하고 난 후
-  image는 5X5가 된다. (N-F)/stride + 1 => (7-3)/1+1 = 5
-- 만약 filter를 6개 적용했다면 convolutional layer는 5X5X6이 된다.
-- pooling은 sampling과 유사하다. 4X4크기의 image를 2X2크기의 filter로 stride는 2크기로
-  필터링 하자. 결과는 2X2 크기의 image이다. (N-F)/stride + 1 => (4-2)/2+1 = 2. 
-  이때 최종 pixel은 가장 큰 값을 선택한다. 그래서 max pooling이라고 한다.
+- convolutional layer의 결과는 어떠한 형태일까? 예를 들어서 7x7
+  image가 있다고 해보자. 3x3 filter를 이용하여 convolution layer를
+  제작해보자. filter에 사용되는 수식은 WX+b이다. filter의 결과는 하나의 값이다.
+
+- N은 image의 가로크기 F는 filter의 가로크기라고 하자. 3x3 filter가
+  7x7 image를 움직이는 칸수를 stride라고 한다. 그러면 다음과 같은
+  공식을 얻을 수 있다. `(N-F)/stride + 1`. 따라서 `(7-3)/1+1 = 5` 이기
+  때문에 stride가 1일때 filtering하고 난 후 출력의 크기는 5X5가 된다.
+
+- 일반적으로 conv layer를 제작할때 0을 padding한다. 7x7 image, 3x3
+  filter, 1 stride 에서 0을 padding하면 image는 9x9가 되고
+  `(N-F)/stride + 1`에 의해 출력의 형태는 `9-3/1+1=7`이 된다.
+  결국 출력의 형태는 입력 image의 형태와 같다.
+
+- 하나의 7x7 image를 3x3 filter와 1 stride로 padding없이 conv layer를
+  제작하면 출력의 형태는 5x5가 된다. filter의 함수를 WX+b라고 할때
+  하나의 filter는 wegith에 해당하는 W행렬 하나를 갖는다. 만약 7x7
+  image를 6개의 filter를 사용한다면 W행렬의 개수는 6개가 된다. 따라서
+  conv layer의 출력의 형태는 5x5x6이 된다.
+
+- pooling은 conv layer의 image한장을 분리하여 작게 만드는 행위이다.
+
+- 예를 들어서 앞의 경우 conv layer의 출력 형태는 5x5x6이었다. 이중
+  5x5x1을 하나씩 분리하여 resize하고 다시 쌓으면 출력 형태는 ?x?x6이 된다.
+  
 - [이곳](http://cs.stanford.edu/people/karpathy/convnetjs/demo/cifar10.html)을
   참고하면 CIFAR-10 dataset을 이용한 CNN의 과정을 시각화하여 구경할 수 있다.
+
 - LeCun 교수의 mnist문제는 32X32 image를 CNN한다.
+
 - AlexNet는 227X227 image를 CNN한다.
   - first use of ReLU
   - used Norm Layers (지금은 잘 사용하지 않는다.)
