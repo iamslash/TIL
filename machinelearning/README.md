@@ -2805,7 +2805,7 @@ if __name__ == "__main__":
   convolutional layer, ReLU, Pool를 반복하다가 마지막에 softmax
   regression과 함께 fully connected neural networks를 적용한다.
   
-[](img/cnnprocess.png)
+![](img/cnnprocess.png)
 
 - convolutional layer의 결과는 어떠한 형태일까? 예를 들어서 7x7
   image가 있다고 해보자. 3x3 filter를 이용하여 convolution layer를
@@ -2833,7 +2833,7 @@ if __name__ == "__main__":
   출력의 형태는 2x2가 된다. filter의 결과값은 2x2의 값들중 가장 큰 값을
   선택한다. 그래서 max pooling이라고 한다.
 
-[](img/maxpooling.png)
+![](img/maxpooling.png)
   
 - [이곳](http://cs.stanford.edu/people/karpathy/convnetjs/demo/cifar10.html)을
   참고하면 CIFAR-10 dataset을 이용한 CNN의 과정을 시각화하여 구경할 수 있다.
