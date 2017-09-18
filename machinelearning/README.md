@@ -34,13 +34,15 @@
 * [Reinforcement Learning](#reinforcement-learning)
 * [Linear Regression with one variable](#linear-regression-with-one-variable)
 * [Linear Regression with multiple variable](#linear-regression-with-multiple-variables)
-* [Logistic Regression (binary classification)](logistic-regression-binary-classification)
-* [Example: Titanic](example-titanic)
-* [Softmax Regression (multinomial classification)](softmax-regression-multinomial-classification)
-* [Machine Learning Tips](machine-learning-tips)
-* [Example: Digit Recognizer](example-digit-recognizer)
-* [Deep Learning Fundamentals](deep-learning-fundamentals)
-* [NN (neural networks)](nn-neural-networks)
+* [Logistic Regression (binary classification)](#logistic-regression-binary-classification)
+* [Example: Titanic](#example-titanic)
+* [Softmax Regression (multinomial classification)](#softmax-regression-multinomial-classification)
+* [Machine Learning Tips](#machine-learning-tips)
+* [Example: Digit Recognizer](#example-digit-recognizer)
+* [Deep Learning Fundamentals](#deep-learning-fundamentals)
+* [NN (neural networks)](#nn-neural-networks)
+* [CNN (convolutional neural networks)](#cnn-convolutional-neural-networks)
+* [RNN (recurrent neural networks)](#rnn-recurrent-neural-networks)
 
 # Learning material
 
