@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import tensorflow as tf
+import numpy as np
 from tensorflow.examples.tutorials.mnist import input_data
 
 class Model:
@@ -83,26 +84,45 @@ def main():
     mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
     # set hyper parameters
-    training_epochs = 15
+    training_epochs = 20
     batch_size = 100
 
     # launch nodes
     with tf.Session() as sess:
-        m1 = Model(sess, "m1")
+        # models
+        models = []
+        num_models = 2
+        for m in range(num_models):
+            models.append(Model(sess, "mode" + str(m)))        
         sess.run(tf.global_variables_initializer())
         print('Learning started!!!')
+        
         for epoch in range(training_epochs):
-            avg_cost = 0
+            avg_cost_list = np.zeros(len(models))
             total_batch = int(mnist.train.num_examples / batch_size)
             for i in range(total_batch):
                 batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-                c, _ = m1.train(batch_xs, batch_ys)
-                avg_cost += c / total_batch
+                for m_idx, m in enumerate(models):
+                    c, _ = m.train(batch_xs, batch_ys)
+                    avg_cost_list[m_idx] += c / total_batch
                 if i % 10 == 0:
-                    print("  ", i, "avg_cost: ", avg_cost)
-            print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))                    
+                    print("  ", i, "cost: ", avg_cost_list)
+            print('Epoch:', '%04d' % (epoch + 1), 'cost =', avg_cost_list)
         print('Learning ended!!!')
-        print('Accuracy:', m1.get_accuracy(mnist.test.images, mnist.test.labels))
+
+        # test model and check accuracy
+        test_size = len(mnist.test.lables)
+        predictions = np.zeros(test_size * 10).reshape(test_size, 10)
+        for m_idx, m in enumerate(modesl):
+            print(m_idx, 'Accuracy:', m.get_accuracy(
+                mnist.test.images, mnist.test.labels))
+            p = m.predict(mnist.test.images)
+            predictions += p
+        ensemble_correct_prediction = tf.equal(
+            tf.argmax(predictions, 1), tf.argmax(mnist.test.labels, 1))
+        ensemble_accuracy = tf.reduce_mean(
+            tf.cast(ensemble_correct_prediction, tf.float32))
+        print('Ensemble accuracy', sess.run(ensemble_accuracy))
     
 if __name__ == "__main__":
     main()
