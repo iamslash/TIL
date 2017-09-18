@@ -3431,7 +3431,7 @@ def main():
         print('Learning ended!!!')
 
         # test model and check accuracy
-        test_size = len(mnist.test.lables)
+        test_size = len(mnist.test.labels)
         predictions = np.zeros(test_size * 10).reshape(test_size, 10)
         for m_idx, m in enumerate(modesl):
             print(m_idx, 'Accuracy:', m.get_accuracy(
