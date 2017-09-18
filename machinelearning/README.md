@@ -46,6 +46,12 @@
 
 # Learning material
 
+- [PyTorch로 시작하는 딥러닝 입문 CAMP @ github](https://github.com/GunhoChoi/PyTorch-FastCampus)
+  - fastcampus 유료 강좌의 강의 자료
+- [awesome deep learning papers @ github](https://github.com/terryum/awesome-deep-learning-papers)
+  - 테리의 딥러닝 논문 추천
+- [PR12 딥러닝 논문읽기 모임 @ youtube](https://www.youtube.com/playlist?list=PLlMkM4tgfjnJhhd4wn5aj8fVTYJwIpWkS)
+  - 딥러닝 논문읽기 모임 동영상
 - [artificial intelligence: a modern approach by stuart russel, peter norvig](https://www.amazon.com/Artificial-Intelligence-Approach-Stuart-Russell/dp/1292024208/ref=mt_paperback?_encoding=UTF8&me=)
   - AI에 대한 전반적인 통찰을 담은 책이다. problem-solving부터 시작해서 machine learning,
     natural language processing등까지 폭넓게 기술한다.
