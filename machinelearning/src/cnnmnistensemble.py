@@ -113,7 +113,7 @@ def main():
         # test model and check accuracy
         test_size = len(mnist.test.labels)
         predictions = np.zeros(test_size * 10).reshape(test_size, 10)
-        for m_idx, m in enumerate(modesl):
+        for m_idx, m in enumerate(models):
             print(m_idx, 'Accuracy:', m.get_accuracy(
                 mnist.test.images, mnist.test.labels))
             p = m.predict(mnist.test.images)
