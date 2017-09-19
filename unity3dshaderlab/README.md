@@ -1,4 +1,4 @@
-# abstract
+# Abstract
 
 - untity3d의 shader에 대해 정리해본다.
 - unity3d는 shader lab이라는 language로 shader를 표현한다.
@@ -22,13 +22,15 @@
 - fixed function shader로 작성하면 내부적으로 shader import time에
   vertex, fragment shader로 변환된다.
 
-# learning material
+# Learning material
 
+- [fixed function shader tutorial](https://docs.unity3d.com/Manual/ShaderTut1.html)
+- [vertex, fragment shader tutorial](https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html)
+- [surface shader tutorial](https://docs.unity3d.com/Manual/SL-SurfaceShaderExamples.html)
 - [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
   - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
 - [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
-  - unity3d shader lab은 cg를 권고 하고 있다. 
-  - rendering pipeline, transformation, lighting등등이 자세히 기술되어 있다.
+  - computer graphics 기반 지식들이 잘 정리되어 있다.
 - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false)
   - unity3d shader를 가장 잘 설명한 책이다. 
 - [a gentle introduction to shaders in unity3d](http://www.alanzucconi.com/2015/06/10/a-gentle-introduction-to-shaders-in-unity3d/)
@@ -42,6 +44,16 @@
   - 여러가지 예제들과 이론들이 풍부하다.
 - [scratchapixel](http://www.scratchapixel.com/)
   - 밑바닥부터 설명하는 computer graphics
+
+# Contents
+
+* [The Graphics Hardware Pipeline](#the-graphics-hardware-pipeline)
+* [Fixed function shader tutorial](#fixed-function-shader-tutorial)
+* [Vertex, fragment shader tutorial](#vertex-fragment-shader-tutorial)
+* [Surface shader tutorial](#surface-shader-tutorial)
+* [Usage](#usage)
+* [Tips](#tips)
+* [References](#references)
 
 # The Graphics Hardware Pipeline
 
@@ -81,15 +93,7 @@
 
 ![](../renderingpipeline/standard_opengl_and_direct3d_raster_operations.png)
 
-# tutorial reference
-
-- [fixed function shader tutorial](https://docs.unity3d.com/Manual/ShaderTut1.html)
-- [vertex, fragment shader tutorial](https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html)
-- [surface shader tutorial](https://docs.unity3d.com/Manual/SL-SurfaceShaderExamples.html)
-
-# tutorial
-
-## fixed function shader
+# Fixed function shader tutorial
 
 - 빨간 색으로 칠하자.
 
@@ -451,7 +455,7 @@ Shader "Simple Additive" {
 ```
 
 
-## vertex, fragment shader
+# Vertex, fragment shader tutorial
 
 - vertex, fragment shader를 이용하여 한가지 색으로 칠해보자.
 
@@ -1209,11 +1213,11 @@ Shader "Custom/TextureCoordinates/Fog" {
 }
 ```
 
-## surface shader
+# Surface shader tutorial
 
 - updaing...
 
-# usage
+# Usage
 
 - unity3d 에서 shader는 unity3d shader lab과 cg를 이용해서 제작한다.
   shader lab에서 cg를 이용하는 방식이다. cg는 nvidia가 주도로 제작한
@@ -1625,11 +1629,9 @@ a = \begin{matrix}
 - BRDF (bidirectional reflectance distribution function)
 - anisotropic BRDF
 
-# snippets
+# Tips
 
-- updating...
-
-# reference
+# References
 
 - [Resources for Writing Shaders in Unity](https://github.com/VoxelBoy/Resources-for-Writing-Shaders-in-Unity)
   - 다양한 링크 모음

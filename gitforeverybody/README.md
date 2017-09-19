@@ -37,6 +37,7 @@
 ## PULL (FETCH, MERGE)
 ## FETCH (머나먼 저장소에서 내려받아 가까운 저장소에 저장하기)
 ## MERGE (가까운 저장소에서 작업 장소에 합치기)
+## CHECKOUT (변신하기)
 ## BRANCH (작업 흐름)
 ## CONFLICT (충돌)
 
@@ -50,6 +51,8 @@
 
 # PULL, FETCH, MERGE
 
-# CONFLICT
-
 # BRANCH
+
+# CHECKOUT
+
+# CONFLICT, MERGE
