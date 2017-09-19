@@ -1,4 +1,4 @@
-# abstract
+# Abstract
 
 - 수학에 대해 적어보자.
 - MSC (mathematics subject classification)은 수학을 분류해 놓은
@@ -15,3 +15,19 @@
   좋다.
 - [서울대학교 수학과 교과과정](http://www.math.snu.ac.kr/board/b5_5)을 통해서
   수학의 과목별 설명을 확인 할 수 있다.
+
+# 대수학
+
+# 기하학
+
+# 해석학
+
+# 수리 논리학
+
+# 이산수학
+
+# 수치해석
+
+# 통계학
+
+# 확률론
