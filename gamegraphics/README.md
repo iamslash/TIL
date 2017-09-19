@@ -1,8 +1,12 @@
-# abstract
+# Abstract
 
 - game graphics 에 대해 이론 위주로 정리한다. learning material에 기재된 순서대로 공부한다.
 
-# learning material
+# Contents
+
+* [Math Prerequisites](#math-prerequisites)
+
+# Learning material
 
 - [Ke-Sen Huang's Home Page](http://kesen.realtimerendering.com/)
   - 컴퓨터그래픽스 컨퍼런스 자료 및 논문 모음
@@ -82,9 +86,7 @@
 - [microsoft directx graphics samples](https://github.com/Microsoft/DirectX-Graphics-Samples)
   - 뭐지 이건
 
-# theory
-
-## math prerequisites
+# math prerequisites
 
 - affine transform
 
@@ -137,9 +139,9 @@ vertex의 normal값을 기준으로 tangent space를 표현하는 TBN
 행렬을 구할 수 있고 normal map에 저장된 단위 tangent space normal
 vector와 연산하여 최종 normal vector를 구할 수 있다.
 
-## rendering pipeline
+# [rendering pipeline](../renderingpipeline/README.md)
 
-## transformation
+# transformation
 
 model point는 다음을 통해 window coordinate까지 진행된다. 
 
@@ -154,40 +156,41 @@ window coords = windows(screen) matrix * NDC
 cartesian coordinate 이 (4,5,3)인 큐브를 예로 three.js와 함께 설명 했다.
 src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pipeline.js)을 참고하자.
 
-## depth sorting / Z-sorting
+# depth sorting / Z-sorting
 
-## blending
+# blending
 
-## texture mapping
+# texture mapping
 
-## displacement mapping
+# displacement mapping
 
-## normal mapping
+# normal mapping
 
-## basic lighting model
+# basic lighting model
 
-## diffuse reflection
+# diffuse reflection
 
-## specular reflection
+# specular reflection
 
-## ambient reflection
+# ambient reflection
 
-## hemispherical lighting model
+# hemispherical lighting model
 
-## image based lighting
+# image based lighting
 
-## irradiance environment map
+# irradiance environment map
 
-## image based reflection
+# image based reflection
 
-## image based refaction
+# image based refaction
 
 - snell's law
 
-## image based fresnel
+# image based fresnel
 
-## shadow mapping
+# shadow mapping
 
-## BRDF
+# BRDF
 
-## collision detection
+# collision detection
+# [PBR (physically based rendering)](../pbr/README.md)
