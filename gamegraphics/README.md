@@ -5,6 +5,7 @@
 # Contents
 
 * [Math Prerequisites](#math-prerequisites)
+* [Rendering Pipeline](#rendering-pipeline)
 
 # Learning material
 
@@ -139,9 +140,9 @@ vertex의 normal값을 기준으로 tangent space를 표현하는 TBN
 행렬을 구할 수 있고 normal map에 저장된 단위 tangent space normal
 vector와 연산하여 최종 normal vector를 구할 수 있다.
 
-# [rendering pipeline](../renderingpipeline/README.md)
+# [Rendering Pipeline](../renderingpipeline/README.md)
 
-# transformation
+# Transformation
 
 model point는 다음을 통해 window coordinate까지 진행된다. 
 
@@ -192,5 +193,8 @@ src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pi
 
 # BRDF
 
-# collision detection
+# Collision Detection
+
 # [PBR (physically based rendering)](../pbr/README.md)
+
+# Animation
