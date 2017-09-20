@@ -1619,15 +1619,21 @@ a = \begin{matrix}
 			}
 ```
 
-- IBL (image based lighting)
-- Irradiance Map
-- image based relection
-- image based refraction
-- image based fresnel
-- coordinate spaces
-- shadow mapping
-- BRDF (bidirectional reflectance distribution function)
-- anisotropic BRDF
+## IBL (image based lighting)
+
+## Irradiance Map
+
+## Image based Relection
+
+## Image based Refraction
+
+## Image based Fresnel
+
+## shadow mapping
+
+## BRDF (bidirectional reflectance distribution function)
+
+## BRDF Anisotropy
 
 # Tips
 
