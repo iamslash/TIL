@@ -1,3 +1,7 @@
+# Comments
+
+- RNN의 실습 코드를 갱신중이다.
+
 # Intro
 
 - machine learning이란 다량의 데이터를 이용하여 학습하고 예측하는 것에 대한 학문이다.
@@ -3456,17 +3460,151 @@ if __name__ == "__main__":
 
 ## RNN (recurrent networks)
 
-- ...
+- node의 출력이 바로 옆 node의 입력으로 적용되는 형태의 neural
+  networks를 recurrent neural networks라고 한다.
+- 다음과 같은 Vanilla RNN을 살펴보자. 현재 노드의
+  hypothesis 인 `h_{t}`는 현재 노드의 입력값 `x_{t}`와 이전 노드의
+  hypothesis 인 `h_{t-1}`에 의해 결정된다. `W_{hh}`는 이전 노드에서
+  넘어오는 weight이다.  `W_{xh}`는 inputlayer에서 넘어오는
+  weightdlek. activation function으로 tanh를 사용하였다.
+  
+![](img/vanillarnn.png)
+
+- "hell"라는 문자열을 vanilla RNN에 입력 데이터로 넣어 보자. 전체 문자는 "hel"
+  세 종류이기 때문에 hidden layer의 값은 [3,1]형태 이다. 마지막 출력을 위해서
+  fully connected layer를 사용했다.
+
+![](img/vanillarnn_hello_0.png)
+
+![](img/vanillarnn_hello_1.png)
+
+![](img/vanillarnn_hello_2.png)
+
+![](img/vanillarnn_hello_3.png)
+
+![](img/vanillarnn_hello_4.png)
+
+![](img/vanillarnn_hello_5.png)
+
+![](img/vanillarnn_hello_6.png)
+
+- RNN은 시간이 흐름에 따라 현재의 출력이 과거의 입력에 영향을 받는 문제를 
+  해결할 만 하다.
+  - Language Modeling
+  - Speech Recognition
+  - Machine Translation
+  - Conversation Modeling/Question Answering
+  - Image/Video Captioning
+  - Image/Music/Dance Generation
+  
+- 다음은 캐릭터를 입력및 출력으로 하는 문제를 RNN으로 구현한 것이다.
+  "hihell"을 입력하고 "ihello"를 출력한다. 입력의 형식은 one hot을
+  사용한다.
+  
+```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+import numpy as np
+tf.set_random_seed(777)
+
+def main():
+    # set data
+    idx2char = ['h', 'i', 'e', 'l', 'o']
+    x_data = [[0, 1, 0, 2, 3, 4]]   # hihell
+    x_one_hot = [[[1, 0, 0, 0, 0],  # h 0
+                  [0, 1, 0, 0, 0],  # i 1
+                  [1, 0, 0, 0, 0],  # h 0
+                  [0, 0, 1, 0, 0],  # e 2
+                  [0, 0, 0, 1, 0],  # l 3
+                  [0, 0, 0, 1, 0]]] # l 3
+    y_data = [[1, 0, 2, 3, 3, 4]]   # ihello
+
+    # set variables
+    num_classes     = 5
+    input_dim       = 5  # input data is one hot
+    hidden_size     = 5  # output from the LSTM. 5 to one-hot
+    batch_size      = 1
+    sequence_length = 6
+    learning_rate   = 0.1
+
+    # set placeholder
+    X = tf.placeholder(
+        tf.float32, [None, sequence_length, input_dim])
+    Y = tf.placeholder(
+        tf.int32, [None, sequence_length])
+
+    # set RNN
+    cell = tf.contrib.rnn.BasicLSTMCell(num_units=hidden_size,
+                                        state_is_tuple=True)
+    initial_state = cell.zero_state(batch_size, tf.float32)
+    outputs, _state = tf.nn.dynamic_rnn(
+        cell, X, initial_state=initial_state, dtype=tf.float32)
+
+    # set FCNN
+    x_for_fc = tf.reshape(outputs, [-1, hidden_size])
+    # fc_w = tf.get_variable("fc_w", [hidden_size, num_classes])
+    # fc_b = tf.get_variable("fc_b", [num_classes])
+    # outputs = tf.matmul(X_for_fc, fc_w) + fc_b
+    outputs = tf.contrib.layers.fully_connected(
+        inputs=x_for_fc, num_outputs=num_classes, activation_fn=None)
+    # reshape out for sequence_loss
+    outputs = tf.reshape(outputs, [batch_size, sequence_length, num_classes])
+
+    # set nodes
+    weights = tf.ones([batch_size, sequence_length])
+    sequence_loss = tf.contrib.seq2seq.sequence_loss(
+        logits=outputs, targets=Y, weights=weights)
+    loss = tf.reduce_mean(sequence_loss)
+    train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(loss)
+    prediction = tf.argmax(outputs, axis=2)
+
+    # launch nodes
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for i in range(50):
+            l, _ = sess.run([loss, train], feed_dict={X: x_one_hot, Y: y_data})
+            result = sess.run(prediction, feed_dict={X: x_one_hot})
+            print(i, "loss: ", l, "pred: ", result, "true Y", y_data)
+            #
+            result_str = [idx2char[c] for c in np.squeeze(result)]
+            print("\tpred str: ", ''.join(result_str))
+
+if __name__ == "__main__":
+    main()
+```
+
+- 다음은 앞서 구현한 것을 임의의 문자열을 입력 할 수 있도록 수정했다.
+
+```python
+```
+
+- 다음은 문자열 입력 및 출력 문제를 softmax regression을 이용하여 구현했다.
+  정확도가 좋지 않다.
+  
+```python
+```
+
+- 다음은 매우 긴 문자열 입력 및 출력 문제를 RNN을 이용하여 구현했다.
+
+```python
+```
+
+- 다음은 주식을 살것이냐 팔것이냐를 RNN을 이용하여 구현했다.
+
+```python
+```
 
 ## RL (reinforcement learning)
 
 - ...
 
+## GAN (generative adversarial network)
+
+
 ## NLP (natural language processing)
 
 - ...
 
-## GAN (generative adversarial network)
 
 # reference
 
