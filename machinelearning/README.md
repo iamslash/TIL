@@ -1,6 +1,6 @@
 # Comments
 
-- RNN의 실습 코드를 갱신중이다.
+- RNN어렴 풋이 이해했다. RL로 넘어가자
 
 # Intro
 
@@ -3705,14 +3705,208 @@ if __name__ == "__main__":
     main()
 ```
 
-- 다음은 매우 긴 문자열 입력 및 출력 문제를 RNN을 이용하여 구현했다.
+- 다음은 매우 긴 문자열 입력 및 출력 문제를 RNN을 이용하여 구현했다. 
+  굉장히 잘된다.
 
 ```python
+# -*- coding: utf-8 -*-
+from __future__ import print_function
+import tensorflow as tf
+import numpy as np
+from tensorflow.contrib import rnn
+
+tf.set_random_seed(777)
+
+def make_lstm_cell(hidden_size):
+    return rnn.BasicLSTMCell(hidden_size, state_is_tuple=True)
+
+def main():
+    # set characters
+    sentence = ("if you want to build a ship, don't drum up people together to "
+                "collect wood and don't assign them tasks and work, but rather "
+                "teach them to long for the endless immensity of the sea.")
+    char_set = list(set(sentence))
+    char_dic = {w: i for i, w in enumerate(char_set)}
+
+    # set hyper params
+    data_dim = len(char_set)
+    hidden_size = len(char_set)
+    num_classes = len(char_set)
+    sequence_length = 10
+    learning_rate = 0.1
+
+    # set data
+    dataX = []
+    dataY = []
+    for i in range(0, len(sentence) - sequence_length):
+        x_str = sentence[i: i + sequence_length]
+        y_str = sentence[i+1: i + sequence_length + 1]
+        # print(i, x_str, '->', y_str)
+        x = [char_dic[c] for c in x_str]
+        y = [char_dic[c] for c in y_str]
+        dataX.append(x)
+        dataY.append(y)
+    batch_size = len(dataX)
+
+    # set placeholder
+    X = tf.placeholder(tf.int32, [None, sequence_length])
+    Y = tf.placeholder(tf.int32, [None, sequence_length])
+    X_one_hot = tf.one_hot(X, num_classes)
+    # print(X_one_hot)
+
+    # set rnn
+    multi_cells = rnn.MultiRNNCell([make_lstm_cell(hidden_size) for _ in range(2)], state_is_tuple=True)
+    outputs, _states = tf.nn.dynamic_rnn(multi_cells, X_one_hot, dtype=tf.float32)
+
+    # set FC layer
+    X_for_fc = tf.reshape(outputs, [-1, hidden_size])
+    outputs = tf.contrib.layers.fully_connected(X_for_fc, num_classes, activation_fn=None)
+    outputs = tf.reshape(outputs, [batch_size, sequence_length, num_classes])
+    weights = tf.ones([batch_size, sequence_length])
+    sequence_loss = tf.contrib.seq2seq.sequence_loss(
+        logits=outputs, targets=Y, weights=weights)
+    loss = tf.reduce_mean(sequence_loss)
+    train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(loss)
+
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for i in range(500):
+            _, l, results = sess.run(
+                [train, loss, outputs], feed_dict={X: dataX, Y: dataY})
+            for j, result in enumerate(results):
+                index = np.argmax(result, axis=1)
+                print(i, j, ''.join([char_set[t] for t in index]), l)
+
+        results = sess.run(outputs, feed_dict={X: dataX})
+        for j, result in enumerate(results):
+            index = np.argmax(result, axis=1)
+            if j is 0:
+                print(''.join([char_set[t] for t in index]), end='')
+            else:
+                print(char_set[index[-1]], end='')
+
+if __name__ == "__main__":
+    main()
 ```
 
 - 다음은 주식을 살것이냐 팔것이냐를 RNN을 이용하여 구현했다.
+  제공되는 데이터의 70%를 트레이닝 데이터로 사용하고 30%를
+  검증 데이터로 사용하자. 
+  
 
 ```python
+# -*- coding: utf-8 -*-
+import tensorflow as tf
+import numpy as np
+import matplotlib
+import os
+tf.set_random_seed(777)
+if "DISPlAY" not in os.environ:
+    matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
+def MinMaxScaler(data):
+    ''' Min Max Normalization
+
+    Parameters
+    ----------
+    data : numpy.ndarray
+        input data to be normalized
+        shape: [Batch size, dimension]
+
+    Returns
+    ----------
+    data : numpy.ndarry
+        normalized data
+        shape: [Batch size, dimension]
+
+    References
+    ----------
+    .. [1] http://sebastianraschka.com/Articles/2014_about_feature_scaling.html
+
+    '''
+    numerator = data - np.min(data, 0)
+    denominator = np.max(data, 0) - np.min(data, 0)
+    # noise term prevents the zero division
+    return numerator / (denominator + 1e-7)    
+    
+def main():
+    # set hyper params
+    seq_length = 7
+    data_dim = 5
+    hidden_dim = 10
+    output_dim = 1
+    learning_rate = 0.01
+    iterations = 500
+
+    # set data
+    # Open, High, Low, Volume, Close
+    xy = np.loadtxt('data-02-stock_daily.csv', delimiter=',')
+    xy = xy[::-1]  # reverse order (chronically ordered)
+    xy = MinMaxScaler(xy)
+    x = xy
+    y = xy[:, [-1]]  # Close as label
+
+    # build a dataset
+    dataX = []
+    dataY = []
+    for i in range(0, len(y) - seq_length):
+        _x = x[i:i + seq_length]
+        _y = y[i + seq_length]  # Next close price
+        # print(_x, "->", _y)
+        dataX.append(_x)
+        dataY.append(_y)
+
+    # set train/test split data
+    train_size = int(len(dataY) * 0.7)
+    test_size = len(dataY) - train_size
+    trainX, testX = np.array(dataX[0:train_size]), np.array(
+        dataX[train_size:len(dataX)])
+    trainY, testY = np.array(dataY[0:train_size]), np.array(
+        dataY[train_size:len(dataY)])
+
+    # set place holder
+    X = tf.placeholder(tf.float32, [None, seq_length, data_dim])
+    Y = tf.placeholder(tf.float32, [None, 1])
+
+    # set LSTM rnn
+    cell = tf.contrib.rnn.BasicLSTMCell(
+        num_units=hidden_dim, state_is_tuple=True, activation=tf.tanh)
+    outputs, _states = tf.nn.dynamic_rnn(cell, X, dtype=tf.float32)
+    Y_pred = tf.contrib.layers.fully_connected(
+        outputs[:, -1], output_dim, activation_fn=None)
+
+    # set loss
+    loss = tf.reduce_sum(tf.square(Y_pred - Y))
+    train = tf.train.AdamOptimizer(learning_rate).minimize(loss)
+
+    # set RMSE
+    targets = tf.placeholder(tf.float32, [None, 1])
+    predictions = tf.placeholder(tf.float32, [None, 1])
+    rmse = tf.sqrt(tf.reduce_mean(tf.square(targets - predictions)))
+
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for i in range(iterations):
+            _, step_loss = sess.run([train, loss], feed_dict={
+                X: trainX, Y: trainY})
+            print("[step: {}] loss: {}".format(i, step_loss))
+        
+        # Test step
+        test_predict = sess.run(Y_pred, feed_dict={X: testX})
+        rmse_val = sess.run(rmse, feed_dict={
+            targets: testY, predictions: test_predict})
+        print("RMSE: {}".format(rmse_val))
+
+        # Plot predictions
+        plt.plot(testY)
+        plt.plot(test_predict)
+        plt.xlabel("Time Period")
+        plt.ylabel("Stock Price")
+        plt.show()
+
+if __name__ == "__main__":
+    main()
 ```
 
 ## RL (reinforcement learning)
@@ -3721,6 +3915,7 @@ if __name__ == "__main__":
 
 ## GAN (generative adversarial network)
 
+- ...
 
 ## NLP (natural language processing)
 
