@@ -9,6 +9,8 @@
 
 # Learning material
 
+- [유니티로 배우는 게임 수학](http://www.yes24.com/24/goods/30119802?scode=032&OzSrank=1)
+  - 일본인 답게 꼼꼼한 정리가 아주 좋다.
 - [Ke-Sen Huang's Home Page](http://kesen.realtimerendering.com/)
   - 컴퓨터그래픽스 컨퍼런스 자료 및 논문 모음
 - [awesome graphics @ github](https://github.com/ericjang/awesome-graphics)
@@ -89,6 +91,33 @@
 
 # math prerequisites
 
+- Law Of Cosines
+
+![](img/Triangle_with_notations_2.svg.png)
+
+```latex
+c^{2} = a^{2} + b^{2} - 2ab\cos(\gamma)
+```
+
+![](img/cosinelaw.png)
+
+- Trigonometric Addtion formulas
+
+[참고](http://mathworld.wolfram.com/TrigonometricAdditionFormulas.html)
+
+- Half-Angle Formulas
+
+[참고](http://mathworld.wolfram.com/Half-AngleFormulas.html)
+
+
+- Dot Product
+
+[참고](http://mathworld.wolfram.com/DotProduct.html)
+
+- Cross Product
+
+[참고](http://mathworld.wolfram.com/CrossProduct.html)
+
 - affine transform
 
 world transform, view transform은 scaling, rotation, translation등과
@@ -103,6 +132,9 @@ vector space에서는 vector가 어디에 위치해 있던지 크기와 방향�
 같은 vector로 생각한다. vector space에서 크기와 방향은 같지만 위치가
 다른 vector를 구분할 필요가 있다. 그래서 affine space를 만들어냈다.
 affine space에서는 position을 추가하여 vector의 위치를 표현한다.
+
+vector space는 affine space에 포함되고 affine space는 projection
+space에 포함된다.
 
 - affince space operation
 
@@ -132,6 +164,11 @@ coordinates v' = (v1, v2, p)이고 p가 0이면 vector를 p가 0이 아니면
 point를 의미한다.  따라서 다음과 같은 position들은 모두 같다.  (5, 1,
 1) = (10, 2, 2) = (15, 3, 3) = (20, 4, 4)
 
+3차원 좌표의 경우 normalized device coordiates를 window space
+coordiates로 변환할때 사용하기 위해 한가지 성분을 추가한다. 이것을
+w라고 하면 viewport transform후에 w는 필요 없게 된다. 그 전까지 변환의
+행렬 연산을 위해 w는 필요하다.
+
 - tangent space
 
 특정한 point의 normal, tangent, binormal
@@ -144,7 +181,19 @@ vector와 연산하여 최종 normal vector를 구할 수 있다.
 
 # Transformation
 
-model point는 다음을 통해 window coordinate까지 진행된다. 
+- model transform
+  - local space coordinates를 world space coordinates로 변환
+
+- view transform
+  - world space coordinates를 camera space coordinates로 변환
+
+- projection transform
+  - view space coordinates를 clip coordinates로 변환
+  - clip coordinates를 Normalized device coordinates로
+    변환. 이것을 perspective projection(원근투영)이라고 한다.
+
+- viewport transform
+  - normalized device coordinates를 window space coordinates로 변환
 
 ```
 world-space point = model matrix * model point
@@ -157,6 +206,14 @@ window coords = windows(screen) matrix * NDC
 cartesian coordinate 이 (4,5,3)인 큐브를 예로 three.js와 함께 설명 했다.
 src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pipeline.js)을 참고하자.
 
+# Quaternion
+
+# Curve
+
+# Lighting
+
+# [PBR (physically based rendering)](../pbr/README.md)
+
 # depth sorting / Z-sorting
 
 # blending
@@ -166,8 +223,6 @@ src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pi
 # displacement mapping
 
 # normal mapping
-
-# basic lighting model
 
 # diffuse reflection
 
@@ -194,7 +249,5 @@ src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pi
 # BRDF
 
 # Collision Detection
-
-# [PBR (physically based rendering)](../pbr/README.md)
 
 # Animation
