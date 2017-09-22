@@ -3912,7 +3912,7 @@ if __name__ == "__main__":
 
 ## RL (reinforcement learning)
 
-- ...
+- 학습을 시켜보고 잘했으면 보상을 주자
 
 ## GAN (generative adversarial network)
 
