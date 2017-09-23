@@ -56,6 +56,7 @@
   - 테리의 딥러닝 논문 추천
 - [PR12 딥러닝 논문읽기 모임 @ youtube](https://www.youtube.com/playlist?list=PLlMkM4tgfjnJhhd4wn5aj8fVTYJwIpWkS)
   - 딥러닝 논문읽기 모임 동영상
+  - [PR12 딥러닝 논문읽기 @ github](https://kkweon.github.io/pr12-web-app-elm/)
 - [artificial intelligence: a modern approach by stuart russel, peter norvig](https://www.amazon.com/Artificial-Intelligence-Approach-Stuart-Russell/dp/1292024208/ref=mt_paperback?_encoding=UTF8&me=)
   - AI에 대한 전반적인 통찰을 담은 책이다. problem-solving부터 시작해서 machine learning,
     natural language processing등까지 폭넓게 기술한다.
