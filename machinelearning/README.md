@@ -52,6 +52,10 @@
 
 - [PyTorch로 시작하는 딥러닝 입문 CAMP @ github](https://github.com/GunhoChoi/PyTorch-FastCampus)
   - fastcampus 유료 강좌의 강의 자료
+- [google ai experiments](https://experiments.withgoogle.com/ai)
+  - 구글의 AI실험
+- [deep learning papers @ github](https://github.com/sbrugman/deep-learning-papers)
+  - 딥러닝 논문들을 task와 date별로 정리
 - [awesome deep learning papers @ github](https://github.com/terryum/awesome-deep-learning-papers)
   - 테리의 딥러닝 논문 추천
 - [PR12 딥러닝 논문읽기 모임 @ youtube](https://www.youtube.com/playlist?list=PLlMkM4tgfjnJhhd4wn5aj8fVTYJwIpWkS)
