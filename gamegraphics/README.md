@@ -4,10 +4,12 @@
 
 # Contents
 
+* [Learning Materials](#learning-materials)
+* [Snippets](#snippets)
 * [Math Prerequisites](#math-prerequisites)
 * [Rendering Pipeline](#rendering-pipeline)
 
-# Learning material
+# Learning Materials
 
 - [유니티로 배우는 게임 수학](http://www.yes24.com/24/goods/30119802?scode=032&OzSrank=1)
   - 일본인 답게 꼼꼼한 정리가 아주 좋다.
@@ -89,7 +91,13 @@
 - [microsoft directx graphics samples](https://github.com/Microsoft/DirectX-Graphics-Samples)
   - 뭐지 이건
 
-# math prerequisites
+# Snippets
+
+- [Introduction to 3D Game Programming with Direct3D src](https://github.com/d3dcoder/d3d12book)
+- [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3 src](https://github.com/openglredbook/examples)
+- [OpenGL Superbible: Comprehensive Tutorial and Reference](https://github.com/openglsuperbible/sb7code)
+
+# Math Prerequisites
 
 - Law Of Cosines
 
