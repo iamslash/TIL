@@ -18,9 +18,7 @@
 - [awesome graphics @ github](https://github.com/ericjang/awesome-graphics)
   - 컴퓨터그래픽스 논문등등 모음
 - [3차원 그래픽스(게임 프로그래밍을위한)](http://www.hongpub.co.kr/sub.php?goPage=view_product&Code=20110808092547)
-  - 그래픽스 API 및 쉐이더 프로그래밍 경험을 가지고 있지만 3차원
-    그래픽스에 대한 이론적인 기초가 부족한 게임 개발자 역시 이 책의
-    주요 독자층이 될 것이다.
+  - 3차원 그래픽스 기반이론을 매우 자세히 풀어썼다.
 - [digital lighting & rendering: third edition](http://www.3drender.com/light/)
   - 3D 라이팅과 렌더링 기법의 표준을 제시한 바이블을 만난다! 
 - [opengl at songho](http://www.songho.ca/opengl/)
