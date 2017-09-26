@@ -1,5 +1,13 @@
-# learning material
+# Abstract
 
+- 렌더링 파이프라인에대해 정리한다.
+
+# Learning Material
+
+- [3차원 그래픽스(게임 프로그래밍을위한)](http://media.korea.ac.kr/book/)
+  - 3차원 그래픽스 기반이론을 매우 자세히 풀어썼다. 저자의
+    홈페이지에서 제공하는 슬라이드는 각종 그림과 수식을 가득 포함하고 있다.
+  - [3D Graphics for Game Programming lecture notes](3dgraphics_for_game_programming_lecture_notes/)
 - [The Cg Tutorial, Chapter 1: Introduction](http://download.nvidia.com/developer/cg/Cg_Tutorial/Chapter_1.pdf)를 
   읽고 정리한다. 다음의 그림들을 보면서 rendering pipeline을 overview해보자.
 - [scratchapixel](http://www.scratchapixel.com/)
