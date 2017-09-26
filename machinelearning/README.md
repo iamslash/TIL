@@ -50,8 +50,18 @@
 
 # Learning material
 
+- [(기계학습, 인공지능, 머신러닝) 한국어 기계 학습 강좌](https://www.youtube.com/playlist?list=PLbhbGI_ppZISMV4tAWHlytBqNq1-lb8bz)
+  - 카이스트 산업공학과 문일철 교수 강의
+- [(기계학습,인공지능,머신러닝) 한국어 기계 학습 강좌 심화 1](https://www.youtube.com/playlist?list=PLbhbGI_ppZIRPeAjprW9u9A46IJlGFdLn)
+  - 카이스트 산업공학과 문일철 교수 강의
+- [인공지능 - 이건명](http://www.kocw.net/home/search/kemView.do?kemId=1170523)
+  - 인공지능의 기본 개념을 살펴보고, 탐색과 최적화 기법, 지식표현의
+    다양한 방법과 추론 기법, 딥러닝을 비롯한 기계학습 방법, 계획수립
+    방법을 다룬다.
 - [2013 2학기 선형대수 - 이상화](https://www.youtube.com/playlist?list=PLSN_PltQeOyjDGSghAf92VhdMBeaLZWR3)
 - [확률및통계 - 이상화](http://www.kocw.net/home/search/kemView.do?kemId=1056974)
+- [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
+  - 한글로 제일 쉽게 설명하는 자료이다. 
 - [PyTorch로 시작하는 딥러닝 입문 CAMP @ github](https://github.com/GunhoChoi/PyTorch-FastCampus)
   - fastcampus 유료 강좌의 강의 자료
 - [google ai experiments](https://experiments.withgoogle.com/ai)
@@ -68,12 +78,6 @@
     natural language processing등까지 폭넓게 기술한다.
 - [deep learning by Ian goodfellow](http://www.deeplearningbook.org/)
   - 기초수학부터 차근차근 deep learning에 대해 설명한다. 공짜
-- [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
-  - 한글로 제일 쉽게 설명하는 자료이다. 
-- [(기계학습, 인공지능, 머신러닝) 한국어 기계 학습 강좌](https://www.youtube.com/playlist?list=PLbhbGI_ppZISMV4tAWHlytBqNq1-lb8bz)
-  - 카이스트 산업공학과 문일철 교수 강의
-- [(기계학습,인공지능,머신러닝) 한국어 기계 학습 강좌 심화 1](https://www.youtube.com/playlist?list=PLbhbGI_ppZIRPeAjprW9u9A46IJlGFdLn)
-  - 카이스트 산업공학과 문일철 교수 강의
 - [Hands-On Machine Learning with Scikit-Learn and TensorFlow](https://www.amazon.com/gp/product/1491962291/ref=oh_aui_detailpage_o00_s00)
 - [machine learning at coursera](https://www.coursera.org/learn/machine-learning)
   - andrew Ng교수의 machine learning강좌
