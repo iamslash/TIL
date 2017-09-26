@@ -2,7 +2,7 @@
 
 - RNN어렴 풋이 이해했다. RL로 넘어가자
 
-# Intro
+# Abstract
 
 - machine learning이란 다량의 데이터를 이용하여 학습하고 예측하는 것에 대한 학문이다.
   예를 들어서 machine learning을 이용하면 다음과 같은 것을 할 수 있다.
@@ -73,7 +73,7 @@
 - [PR12 딥러닝 논문읽기 모임 @ youtube](https://www.youtube.com/playlist?list=PLlMkM4tgfjnJhhd4wn5aj8fVTYJwIpWkS)
   - 딥러닝 논문읽기 모임 동영상
   - [PR12 딥러닝 논문읽기 @ github](https://kkweon.github.io/pr12-web-app-elm/)
-- [artificial intelligence: a modern approach by stuart russel, peter norvig](https://www.amazon.com/Artificial-Intelligence-Approach-Stuart-Russell/dp/1292024208/ref=mt_paperback?_encoding=UTF8&me=)
+- [artificial intelligence: a modern approach by stuart russel, peter norvig](http://aima.cs.berkeley.edu/)
   - AI에 대한 전반적인 통찰을 담은 책이다. problem-solving부터 시작해서 machine learning,
     natural language processing등까지 폭넓게 기술한다.
 - [deep learning by Ian goodfellow](http://www.deeplearningbook.org/)
