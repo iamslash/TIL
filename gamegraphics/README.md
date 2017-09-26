@@ -10,6 +10,8 @@
 * [Snippets](#snippets)
 * [Math Prerequisites](#math-prerequisites)
 * [Rendering Pipeline](#rendering-pipeline)
+* [Polygon Mesh](#polygon-mesh)
+* [Vertex Processing](#vertex-processing)
 
 # Learning Materials
 
@@ -197,7 +199,9 @@ vector와 연산하여 최종 normal vector를 구할 수 있다.
 
 # [Rendering Pipeline](../renderingpipeline/README.md)
 
-# Transformation
+# Polygon Mesh
+
+# Vertex Processing
 
 - model transform
   - local space coordinates를 world space coordinates로 변환
@@ -230,6 +234,12 @@ window coords = windows(screen) matrix * NDC
 [이것](http://www.realtimerendering.com/udacity/transforms.html)은 object space
 cartesian coordinate 이 (4,5,3)인 큐브를 예로 three.js와 함께 설명 했다.
 src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pipeline.js)을 참고하자.
+
+# Rasterization
+
+# Fragment Processing
+
+# Raster Operation
 
 # Quaternion
 
