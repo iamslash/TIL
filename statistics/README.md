@@ -4,6 +4,8 @@
 
 # Material
 
+- [확률 및 통계 - 이상화](http://www.kocw.net/home/search/kemView.do?kemId=1056974)
+  - 확률 및 통계 동영상 강좌
 - [나부랭이의 수학블로그-통계](http://math7.tistory.com/category/%ED%86%B5%EA%B3%84)
   - 통계를 아주 찰지게 정리한 블로그
 - Think Stats 프로그래머를 위한 통계 및 데이터 분석 방법

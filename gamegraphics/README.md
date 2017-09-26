@@ -5,6 +5,7 @@
 # Contents
 
 * [Learning Materials](#learning-materials)
+* [References](#references)
 * [Snippets](#snippets)
 * [Math Prerequisites](#math-prerequisites)
 * [Rendering Pipeline](#rendering-pipeline)
@@ -17,8 +18,6 @@
   - 컴퓨터그래픽스 컨퍼런스 자료 및 논문 모음
 - [awesome graphics @ github](https://github.com/ericjang/awesome-graphics)
   - 컴퓨터그래픽스 논문등등 모음
-- [3차원 그래픽스(게임 프로그래밍을위한)](http://www.hongpub.co.kr/sub.php?goPage=view_product&Code=20110808092547)
-  - 3차원 그래픽스 기반이론을 매우 자세히 풀어썼다.
 - [digital lighting & rendering: third edition](http://www.3drender.com/light/)
   - 3D 라이팅과 렌더링 기법의 표준을 제시한 바이블을 만난다! 
 - [opengl at songho](http://www.songho.ca/opengl/)
@@ -88,12 +87,19 @@
   - vulkan, opengl, directx sample
 - [microsoft directx graphics samples](https://github.com/Microsoft/DirectX-Graphics-Samples)
   - 뭐지 이건
+  
+# References
+
+- [3차원 그래픽스(게임 프로그래밍을위한)](http://www.hongpub.co.kr/sub.php?goPage=view_product&Code=20110808092547)
+  - 3차원 그래픽스 기반이론을 매우 자세히 풀어썼다. 저자의
+    홈페이지에서 제공하는 슬라이드는 각종 그림과 수식을 가득 포함하고 있다.
+  - [3D Graphics for Game Programming lecture notes](3dgraphics_for_game_programming_lecture_notes/)
 
 # Snippets
 
 - [Introduction to 3D Game Programming with Direct3D src](https://github.com/d3dcoder/d3d12book)
 - [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3 src](https://github.com/openglredbook/examples)
-- [OpenGL Superbible: Comprehensive Tutorial and Reference](https://github.com/openglsuperbible/sb7code)
+- [OpenGL Superbible: Comprehensive Tutorial and Reference src](https://github.com/openglsuperbible/sb7code)
 
 # Math Prerequisites
 

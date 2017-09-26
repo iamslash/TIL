@@ -50,6 +50,8 @@
 
 # Learning material
 
+- [2013 2학기 선형대수 - 이상화](https://www.youtube.com/playlist?list=PLSN_PltQeOyjDGSghAf92VhdMBeaLZWR3)
+- [확률및통계 - 이상화](http://www.kocw.net/home/search/kemView.do?kemId=1056974)
 - [PyTorch로 시작하는 딥러닝 입문 CAMP @ github](https://github.com/GunhoChoi/PyTorch-FastCampus)
   - fastcampus 유료 강좌의 강의 자료
 - [google ai experiments](https://experiments.withgoogle.com/ai)
