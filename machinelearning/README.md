@@ -62,6 +62,12 @@
 - [확률및통계 - 이상화](http://www.kocw.net/home/search/kemView.do?kemId=1056974)
 - [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
   - 한글로 제일 쉽게 설명하는 자료이다. 
+- [artificial intelligence: a modern approach by stuart russel, peter norvig](http://aima.cs.berkeley.edu/)
+  - peter norvig의 교과서.
+  - [한글](http://www.aladin.co.kr/shop/wproduct.aspx?ItemId=76161975)책도
+    있다. 류광이 번역했기 때문에 읽어보자.
+- [deep learning by Ian goodfellow](http://www.deeplearningbook.org/)
+  - 기초수학부터 차근차근 deep learning에 대해 설명한다. 공짜
 - [PyTorch로 시작하는 딥러닝 입문 CAMP @ github](https://github.com/GunhoChoi/PyTorch-FastCampus)
   - fastcampus 유료 강좌의 강의 자료
 - [google ai experiments](https://experiments.withgoogle.com/ai)
@@ -73,11 +79,6 @@
 - [PR12 딥러닝 논문읽기 모임 @ youtube](https://www.youtube.com/playlist?list=PLlMkM4tgfjnJhhd4wn5aj8fVTYJwIpWkS)
   - 딥러닝 논문읽기 모임 동영상
   - [PR12 딥러닝 논문읽기 @ github](https://kkweon.github.io/pr12-web-app-elm/)
-- [artificial intelligence: a modern approach by stuart russel, peter norvig](http://aima.cs.berkeley.edu/)
-  - AI에 대한 전반적인 통찰을 담은 책이다. problem-solving부터 시작해서 machine learning,
-    natural language processing등까지 폭넓게 기술한다.
-- [deep learning by Ian goodfellow](http://www.deeplearningbook.org/)
-  - 기초수학부터 차근차근 deep learning에 대해 설명한다. 공짜
 - [Hands-On Machine Learning with Scikit-Learn and TensorFlow](https://www.amazon.com/gp/product/1491962291/ref=oh_aui_detailpage_o00_s00)
 - [machine learning at coursera](https://www.coursera.org/learn/machine-learning)
   - andrew Ng교수의 machine learning강좌
