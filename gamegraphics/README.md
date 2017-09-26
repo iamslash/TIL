@@ -201,11 +201,13 @@ vector와 연산하여 최종 normal vector를 구할 수 있다.
 
 - projection transform
   - view space coordinates를 clip coordinates로 변환
-  - clip coordinates를 Normalized device coordinates로
-    변환. 이것을 perspective projection(원근투영)이라고 한다.
-    원근투영은 좌측의 fustumn을 우측의 canonical view volume으로
-    찌그러트리는 것이다. canonical view volume은 정육면체 형태이기
-    때문에 far plane의 object들은 크기가 작아질 것이다.
+  - clip coordinates를 Normalized device coordinates로 변환. 이것을
+    perspective projection(원근투영)이라고 한다.  원근투영은 좌측의
+    fustumn을 우측의 canonical view volume으로 찌그러트리는
+    것이다. canonical view volume은 정육면체 형태(2, 2, 2)이기 때문에
+    near plane의 object들은 상대적으로 크기가 커질 것이고 far plane의
+    object들은 상대적으로 크기가 작아질 것이다. directx의 경우
+    canonical view volume은 직육면체(2, 2, 1) 이다.
 
 ![](img/view_volume.png)
 
