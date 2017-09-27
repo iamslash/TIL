@@ -10,6 +10,7 @@
 * [Snippets](#snippets)
 * [Math Prerequisites](#math-prerequisites)
 * [Rendering Pipeline](#rendering-pipeline)
+* [Lighting](#lighting)
 
 # Learning Materials
 
@@ -235,9 +236,9 @@ src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pi
 
 # Curve
 
-# Lighting
+# [Lighting](../lighting/README.md)
 
-# [PBR (physically based rendering)](../pbr/README.md)
+## [PBR (physically based rendering)](../pbr/README.md)
 
 # depth sorting / Z-sorting
 
