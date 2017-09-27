@@ -35,6 +35,7 @@
 빛은 여러가지 전자기파들로 구성되어 있기 때문에 프리즘을 사용해서 각각을 분리할 수 있다.
 빨간색 파장의 길이가 가장 길고 보라색 파장의 길이가 가장 짧다.
 
+* [PBR 이란 무엇인가 - 1. 인간과 빛 @ tistory](http://lifeisforu.tistory.com/366)
 * [Physically based rendering @ wikipedia](https://en.wikipedia.org/wiki/Physically_based_rendering)
 * [BASIC THEORY OF PHYSICALLY-BASED RENDERING](https://www.marmoset.co/posts/basic-theory-of-physically-based-rendering/)
 * [빛이란 무엇인가? - Barry R. Masters](http://e-ico.org/sites/default/files/pdfs/whatIsLightKorean.pdf)
@@ -57,6 +58,7 @@ red cone, green cone)와 간상세포(rod)가 있다. 원추세포(cone cell)는
 민감하다. 새의 눈은 인간 보다 많은 감광 색소를 가지고 있어서 자외선
 까지 볼 수 있다고 한다.
 
+* [PBR 이란 무엇인가 - 1. 인간과 빛 @ tistory](http://lifeisforu.tistory.com/366)
 * [Color Vision in Birds](http://www.webexhibits.org/causesofcolor/17B.html)
 * [원추세포 @ 위키피디아](https://ko.wikipedia.org/wiki/%EC%9B%90%EC%B6%94%EC%84%B8%ED%8F%AC)
 
