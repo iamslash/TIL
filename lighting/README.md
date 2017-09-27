@@ -30,16 +30,16 @@
 에너지이다. 파동의 형태로 발산되는 에너지라고 할 수 있다. 빛은 파장이 다른 여러 가지 
 전자기파로 구성되어 있다.
 
-![](img/Light_dispersion_conceptual_waves350px)
+![](img/Light_dispersion_conceptual_waves350px.gif)
 
 빛은 여러가지 전자기파들로 구성되어 있기 때문에 프리즘을 사용해서 각각을 분리할 수 있다.
 빨간색 파장의 길이가 가장 길고 보라색 파장의 길이가 가장 짧다.
 
-[Physically based rendering @ wikipedia](https://en.wikipedia.org/wiki/Physically_based_rendering)
-[BASIC THEORY OF PHYSICALLY-BASED RENDERING](https://www.marmoset.co/posts/basic-theory-of-physically-based-rendering/)
-[빛이란 무엇인가? - Barry R. Masters](http://e-ico.org/sites/default/files/pdfs/whatIsLightKorean.pdf)
-[Light @ wikipedia](https://en.wikipedia.org/wiki/Light)
-[파동의표시](http://lovescience.pe.kr/ms/chapter12/12_1_study2.htm)
+* [Physically based rendering @ wikipedia](https://en.wikipedia.org/wiki/Physically_based_rendering)
+* [BASIC THEORY OF PHYSICALLY-BASED RENDERING](https://www.marmoset.co/posts/basic-theory-of-physically-based-rendering/)
+* [빛이란 무엇인가? - Barry R. Masters](http://e-ico.org/sites/default/files/pdfs/whatIsLightKorean.pdf)
+* [Light @ wikipedia](https://en.wikipedia.org/wiki/Light)
+* [파동의표시](http://lovescience.pe.kr/ms/chapter12/12_1_study2.htm)
 
 ## Eye
 
@@ -57,8 +57,8 @@ red cone, green cone)와 간상세포(rod)가 있다. 원추세포(cone cell)는
 민감하다. 새의 눈은 인간 보다 많은 감광 색소를 가지고 있어서 자외선
 까지 볼 수 있다고 한다.
 
-[Color Vision in Birds](http://www.webexhibits.org/causesofcolor/17B.html)
-[원추세포 @ 위키피디아](https://ko.wikipedia.org/wiki/%EC%9B%90%EC%B6%94%EC%84%B8%ED%8F%AC)
+* [Color Vision in Birds](http://www.webexhibits.org/causesofcolor/17B.html)
+* [원추세포 @ 위키피디아](https://ko.wikipedia.org/wiki/%EC%9B%90%EC%B6%94%EC%84%B8%ED%8F%AC)
 
 ## 조도와 휘도 (illuminance & luminance)
 
