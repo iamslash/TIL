@@ -93,9 +93,9 @@ squre)단위로 에너지를 측정한다. 전자는 파워(power)를 의미하�
 광원(light source)에서 빛이 나오는 양을 조도라고 하고 광원(light source)에서
 나온 빛이 특정 오브젝트에 반사되어 나오는 빛의 양을 휘도라고 한다.
 
-방사측정(radiometry)의 경우 조도를 radiance라고 하고 휘도를
-irradiance라고 한다.  광도측정(photometry)의 경우 조도를 luminance라고
-하고 휘도를 illuminance라고 한다.
+방사측정(radiometry)의 경우 조도를 irradiance라고 하고 휘도를
+radiance라고 한다.  광도측정(photometry)의 경우 조도를 illuminance라고
+하고 휘도를 luminance라고 한다.
 
 ![](light-reflected-transmitted-absorbed.png)
 
@@ -110,7 +110,78 @@ irradiance라고 한다.  광도측정(photometry)의 경우 조도를 luminance
 
 ## 빛의 감쇠 (attenuation)
 
-## 광원의 밝기 - 광속 (luminous flux)
+빛은 다양한 파장의 전자기파들의 조합 이지만 때로는 입자 처럼 보일때가
+있다. 이것을 빛이 파동성과 입자성을 가지고 있다고 한다. 입자 처럼
+보일때 빛을 광자(photon)라고 한다.
+
+![](img/inverse-square-law.jpg)
+
+위의 그림은 거리 r의 배수에 따라 단위면적당 광자의 개수를 표시한 것이다.
+광자의 개수가 줄어들면 빛의 세기는 어두워 진다. 빛의 세기는 거리의 제곱에
+반비례한다.
+
+![](img/attenutation_eq.png)
+
+```latex
+Intensity = frac{1}{Distance^{2}}
+```
+
+![](img/433px-Steradian_svg)
+
+반지름이 r이고 구의 면적이 r^2일때 원뿔형의 각을 1스테라디안(steradian, sr)
+이라고 한다. 이러한 각도를 입체각(solid angle)이라고 정의 한다.
+
+반지름이 r인 구에서 입체각 a인 원뿔형의 겉면적이 ar^2이고 광자의
+개수는 4라고 하자. 반지름이 2r이면 겉면적은 a(2r)^2이고 광자의 개수는
+단위 면적당 1이다. 거리가 두배 늘어나면 겉면적의 넓이는 거리의 제곱배 만큼
+늘어나고 단위면적당 광자의 개수는 거리의 제곱에 반비례한다.
+
+* [PBR 이란 무엇인가 - 3. 빛의 감쇠](http://lifeisforu.tistory.com/368)
+* [라이팅 기초 @ unrealengine](https://docs.unrealengine.com/latest/KOR/Engine/Rendering/LightingAndShadows/Basics/index.html)
+* [Light attenuation](http://brabl.com/light-attenuation/)
+* [Radian @ wikipedia](https://en.wikipedia.org/wiki/Radian)
+* [Solid Angle @ wikipedia](https://en.wikipedia.org/wiki/Solid_angle)
+
+## 광원의 밝기 - 광속 (luminous flux, luminous power)
+
+광선속(光線束) 혹은 광속(光束)이라는 것은 속도를 의미하는 것이
+아니다. 빛 광(光)과 묶을 속(束)이다. 빛의 다발이다. 다발이 많으면
+더욱 밝을 것이다. 광속의 단위는 lumen, lm이다.
+
+광도(luminous intenty)는 점 광원에서 특정 방향으로 단위 입체각(1
+steradian, sr)당 방출되는 광속(luminous flux, luminous
+power)이다. 단위는 candela, cd이다.
+
+![](img/candela_eq.png)
+
+```latex
+1 \  cd = \frac{1 \  lm}{1 \  sr}
+```
+
+![](img/luman_eq.png)
+
+```latex
+1 \  lm = 1 \  cd \cdot \ sr = \frac{1 \  lm}{ 1 \ sr} \cdot sr = 1 \ lm
+```
+
+촛불의 광속을 계산해 보자. 
+
+![](img\luminous_flux_of_a_candle.png)
+
+```latex
+\begin{align*}
+\text{luminous flux of a candle} &= 1 [cd] \times  4 \pi [sr] \\
+                                 &=  1 [cd] \times (4 \times 3.1415926) [sr] \\
+                                 &= 12.5663704 [lm] \\
+                                 &\approx 12.57 [lm] \\ 
+\end{align*}
+```
+
+
+
+* [PBR 이란 무엇인가 - 4. 광원의 밝기, 광속](http://lifeisforu.tistory.com/369)
+* [luminous flux @ wikipedia](https://en.wikipedia.org/wiki/Luminous_flux)
+* [candela @ wikipedia](https://en.wikipedia.org/wiki/Candela)
 
 ## 조도 측정
 
