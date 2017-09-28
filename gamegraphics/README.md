@@ -258,31 +258,7 @@ src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pi
 
 # displacement mapping
 
-# normal mapping
-
-# diffuse reflection
-
-# specular reflection
-
-# ambient reflection
-
-# hemispherical lighting model
-
-# image based lighting
-
-# irradiance environment map
-
-# image based reflection
-
-# image based refaction
-
-- snell's law
-
-# image based fresnel
-
-# shadow mapping
-
-# BRDF
+# [normal mapping](../normalmapping/README.md)
 
 # Collision Detection
 

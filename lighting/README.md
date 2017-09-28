@@ -1,3 +1,15 @@
+# Comments
+
+다음의 용어들을 정리해본다.
+
+hemispherical lighting model
+image based lighting
+irradiance environment map
+image based reflection
+image based refaction
+image based fresnel
+BRDF
+
 # Abstract
 
 - 3d그래픽의 라이팅에 대해 기술한다.
@@ -400,7 +412,164 @@ Shader "Custom/Phong" {
 
 # Rim Lighting
 
+빛에 의해 오브젝트의 외곽이 빛나는 현상. N과 L의 사이각이 0일때 가장
+약하고 90일때 가장 강하다.
+
+다음은 phong shading과 rim lighting을 unity3d shader lab으로 구현한 것이다.
+[참고](https://github.com/ryukbk/mobile_game_math_unity)
+
+```cpp
+Shader "Custom/Rim" {
+	Properties {
+		_Color ("Diffuse Color", Color) = (1,1,1,1)
+		_SpecularColor ("Specular Color", Color) = (1,1,1,1)
+		_SpecularExponent ("Specular Exponent", Float) = 3
+		_RimColor ("Rim Color", Color) = (0,1,0,1)
+	}
+	SubShader {
+		Pass {
+			Tags { "LightMode" = "ForwardBase" }
+			
+			GLSLPROGRAM
+	        #include "UnityCG.glslinc"
+	        #if !defined _Object2World
+	        #define _Object2World unity_ObjectToWorld
+	        #endif
+
+	        uniform vec4 _LightColor0;
+
+	        uniform vec4 _Color;
+	        uniform vec4 _SpecularColor;
+	        uniform float _SpecularExponent;
+	        uniform vec4 _RimColor;
+
+	        #ifdef VERTEX
+	        out vec4 glVertexWorld;
+	        out vec3 surfaceNormal;
+
+	        void main() {	            
+	            surfaceNormal = normalize((_Object2World * vec4(gl_Normal, 0.0)).xyz);
+	            glVertexWorld = _Object2World * gl_Vertex;
+
+	            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	        }
+	        #endif
+
+	        #ifdef FRAGMENT
+	        in vec4 glVertexWorld;
+	        in vec3 surfaceNormal;
+
+	        void main() {
+	        	vec3 ambientLight = gl_LightModel.ambient.xyz * vec3(_Color);
+	        
+				vec3 lightDirectionNormal = normalize(_WorldSpaceLightPos0.xyz);
+	            vec3 diffuseReflection = _LightColor0.xyz * _Color.xyz * max(0.0, dot(surfaceNormal, lightDirectionNormal));
+
+                vec3 viewDirectionNormal = normalize((vec4(_WorldSpaceCameraPos, 1.0) - glVertexWorld).xyz);
+				vec3 specularReflection = _LightColor0.xyz * _SpecularColor.xyz
+					* pow(max(0.0, dot(reflect(-lightDirectionNormal, surfaceNormal), viewDirectionNormal)), _SpecularExponent);                      
+
+	        	float rim = 1.0 - saturate(dot(viewDirectionNormal, surfaceNormal));        
+	        	gl_FragColor.xyz = ambientLight + diffuseReflection + specularReflection + vec3(smoothstep(0.5, 1.0, rim)) * _RimColor.xyz;
+	        	gl_FragColor.w = 1.0;
+	        }
+	        #endif
+
+	        ENDGLSL
+         }
+	} 
+	//FallBack "Diffuse"
+}
+```
+
+
 # Cook-Torrance Model
+
+다음은 cook-torrance model을 unity3d shader lab으로 구현한 것이다.
+[참고](https://github.com/ryukbk/mobile_game_math_unity)
+
+```cpp
+Shader "Custom/CookTorrance" {
+	Properties {
+		_Color ("Diffuse Color", Color) = (1,1,1,1)
+		_Roughness ("Roughness", Float) = 0.5
+		_FresnelReflectance ("Fresnel Reflectance", Float) = 0.5
+	}
+	SubShader {
+		Pass {
+			Tags { "LightMode" = "ForwardBase" }
+			
+			GLSLPROGRAM
+	        #include "UnityCG.glslinc"
+	        #if !defined _Object2World
+	        #define _Object2World unity_ObjectToWorld
+	        #endif
+
+	        uniform vec4 _LightColor0;
+
+	        uniform vec4 _Color;
+	        uniform float _Roughness;
+	        uniform float _FresnelReflectance;
+
+	        #ifdef VERTEX
+	        out vec4 glVertexWorld;
+	        out vec3 surfaceNormal;
+
+	        void main() {	            
+	            surfaceNormal = normalize((_Object2World * vec4(gl_Normal, 0.0)).xyz);
+	            glVertexWorld = _Object2World * gl_Vertex;
+
+	            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	        }
+	        #endif
+
+	        #ifdef FRAGMENT
+	        in vec4 glVertexWorld;
+	        in vec3 surfaceNormal;
+
+	        void main() {
+	        	vec3 ambientLight = gl_LightModel.ambient.xyz * vec3(_Color);
+	        
+				vec3 lightDirectionNormal = normalize(_WorldSpaceLightPos0.xyz);
+				float NdotL = saturate(dot(surfaceNormal, lightDirectionNormal));
+
+			   	vec3 viewDirectionNormal = normalize((vec4(_WorldSpaceCameraPos, 1.0) - glVertexWorld).xyz);
+			   	float NdotV = saturate(dot(surfaceNormal, viewDirectionNormal));
+
+			    vec3 halfVector = normalize(lightDirectionNormal + viewDirectionNormal);
+			    float NdotH = saturate(dot(surfaceNormal, halfVector));
+			    float VdotH = saturate(dot(viewDirectionNormal, halfVector));
+
+				float roughness = saturate(_Roughness);
+			    float alpha = roughness * roughness;
+			    float alpha2 = alpha * alpha;
+				float t = ((NdotH * NdotH) * (alpha2 - 1.0) + 1.0);
+				float PI = 3.1415926535897;
+				float D = alpha2 / (PI * t * t);
+
+			    float F0 = saturate(_FresnelReflectance);
+			    float F = pow(1.0 - VdotH, 5.0);
+			    F *= (1.0 - F0);
+			    F += F0;
+
+			    float NH2 = 2.0 * NdotH;
+			    float g1 = (NH2 * NdotV) / VdotH;
+			    float g2 = (NH2 * NdotL) / VdotH;
+			    float G = min(1.0, min(g1, g2));
+
+			    float specularReflection = (D * F * G) / (4.0 * NdotV * NdotL + 0.000001);
+				vec3 diffuseReflection = _LightColor0.xyz * _Color.xyz * NdotL;
+
+			    gl_FragColor = vec4(ambientLight + diffuseReflection + specularReflection, 1.0);
+	        }
+	        #endif
+
+	        ENDGLSL
+         }
+	} 
+	//FallBack "Diffuse"
+}
+```
 
 # Oren-Nayar Model
 
@@ -409,4 +578,3 @@ Shader "Custom/Phong" {
 # Ray Traciing
 
 # Radiosity
-
