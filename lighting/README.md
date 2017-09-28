@@ -75,9 +75,38 @@ red cone, green cone)와 간상세포(rod)가 있다. 원추세포(cone cell)는
 
 ## 조도와 휘도 (illuminance & luminance)
 
-* []()
-* []()
-* []()
+![](img/EM_spectrum.png)
+
+빛은 다양한 전자기파로 구성되어 있다. 가시광선(visible spectrum)을
+포함한 전체 파장 영역의 전자기파들로 구성된 빛을
+방사선(radiation)이라고 한다. 전체 파장 영역의 빛을 다루기 위해
+에너지를 측정하는 것은 방사측정(radiometry)라 하고 가시 영역(visible
+spectrum)의 빛을 다루기 위해 에너지를 측정하는 것을
+광도측정(photometry)라고 한다.
+
+방사측정(radiometry)는 제곱미터당 일률(watt per squre meter)의 단위로
+에너지를 측정하고 광도측정(photometry)는 제곱미터당 루멘(lumens per
+squre)단위로 에너지를 측정한다. 전자는 파워(power)를 의미하고 후자는
+밝기(brightness)를 의미한다.
+
+조도의 "조(照)"는 "비출 조" 이고 휘도의 "휘(輝)"는 "빛날 휘"다.
+광원(light source)에서 빛이 나오는 양을 조도라고 하고 광원(light source)에서
+나온 빛이 특정 오브젝트에 반사되어 나오는 빛의 양을 휘도라고 한다.
+
+방사측정(radiometry)의 경우 조도를 radiance라고 하고 휘도를
+irradiance라고 한다.  광도측정(photometry)의 경우 조도를 luminance라고
+하고 휘도를 illuminance라고 한다.
+
+![](light-reflected-transmitted-absorbed.png)
+
+특정 표면(surface)에 도달한 빛이 모두 우리 눈으로 들어 오는 것은 아니다. 표면의
+재질에 따라 흡수(absorbed), 투과(transmitted), 반사(reflected), 방출(emitted)
+된다. 우리 눈은 반사(reflected)된 빛만 인지 할 수 있다.
+
+* [PBR 이란 무엇인가 - 2. 조도와 휘도](http://lifeisforu.tistory.com/367)
+* [radiation](https://en.wikipedia.org/wiki/Radiation)
+* [radiometry](https://en.wikipedia.org/wiki/Radiometry)
+* [photometry](https://en.wikipedia.org/wiki/Photometry_(optics))
 
 ## 빛의 감쇠 (attenuation)
 
