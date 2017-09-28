@@ -17,6 +17,13 @@ BRDF
 # Contents
 
 * [Fundamentals](#fundamentals)
+** light
+** eye
+** 조도와 휘도
+** 빛의 감쇠
+** 광원의 밝기
+** 조도 측정
+** 휘도 측정
 
 # Learning Materials
 
@@ -185,7 +192,43 @@ power)이다. 단위는 candela, cd이다.
 
 ## 조도 측정
 
+조도(illuminance)는 단위 면적(1 m^2)당 광속(luminous flux)이다. 이
+것은 입사광이 표면을 얼마만큼 비추고 있는지를 의미하는
+것이다. 1m^2내에 들어 온 빛의 양이 1 lm일때 1 럭스(lux)라고 한다.
+
+![](img/lux_eq.png)
+
+```latex
+1 \ lux = 1 \frac{lm}{m^{2}} = 1 \frac{cd \cdot sr}{m^{2}}
+```
+
+* [PBR 이란 무엇인가 - 5. 조도 측정](http://lifeisforu.tistory.com/370)
+* [illuminance @ wikipedia](https://en.wikipedia.org/wiki/Illuminance)
+
 ## 휘도 측정
+
+![](img/illuminance_luminance.png)
+
+휘도는 특정 방향으로 이동하는 단위 면적당 광도(luminous intensity)를 측정한 것이다.
+그것은 특정 영역에서 방출되거나 반사되어 주어진 입체각 안에 들어 온 빛의 양을 의미한다.
+휘도의 국제 단위는 제곱미터당 칸델라 (cd/m^2) 이다.
+
+![](img/illuminance_luminance3.png)
+
+계산의 편의를 위해 illuminance에 해당하는 표면의 면적과 
+luminance에 해당하는 눈의 면적은 점이라고 가정하자.
+
+![](img/BSDF05_800.png)
+
+표면(surface)에 들어온 빛(조도, illuminance)는 전부 눈(휘도, luminance)으로
+들어오지 않는다. 표면(surface)이 빛을 흡수, 반사, 투과 시키기 때문이다. 우리눈은
+반사, 투과된 빛들만 볼 수 있다. 얼만큼의 빛이 반사되었는지 결정하는 함수가 BRDF이고
+얼만큼의 빛이 투과되었는지 결정하는 함수가 BTDF이다.
+
+* [PBR 이란 무엇인가 - 6. 휘도 측정](http://lifeisforu.tistory.com/371)
+* [luminance @ wikipedia](https://en.wikipedia.org/wiki/Luminance)
+* [Microfacet Modles for Refraction through Roufh Surfaces](http://lifeisforu.tistory.com/352)
+* [Bidirectional scattering distribution function @ wikipedia](https://en.wikipedia.org/wiki/Bidirectional_scattering_distribution_function)
 
 # Lambert's cosine law
 
