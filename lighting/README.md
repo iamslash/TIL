@@ -4,8 +4,7 @@
 
 # Contents
 
-* [Terms](#terms)
-* [PBR](#pbr)
+* [Fundamentals](#fundamentals)
 
 # Learning Materials
 
@@ -64,6 +63,10 @@ red cone, green cone)와 간상세포(rod)가 있다. 원추세포(cone cell)는
 
 ## 조도와 휘도 (illuminance & luminance)
 
+* []()
+* []()
+* []()
+
 ## 빛의 감쇠 (attenuation)
 
 ## 광원의 밝기 - 광속 (luminous flux)
@@ -72,11 +75,328 @@ red cone, green cone)와 간상세포(rod)가 있다. 원추세포(cone cell)는
 
 ## 휘도 측정
 
+# Lambert's cosine law
+
+확산반사(diffuse reflectance)가 일어나는 표면의 한 점에서의
+복사강도(radiant intensity)I는, 입사광의 단위벡터 L과 표면의 법선
+벡터인 면법선 (surface normal)N이 이루는 각도 θ의 코사인에 비례한다.
+
 # Lambertian Reflectance Model
+
+(Johann Heinrich Lambert)[https://en.wikipedia.org/wiki/Johann_Heinrich_Lambert]가 
+1760년에 그의 저서 [Photometria](https://en.wikipedia.org/wiki/Photometria)에서 제안한
+lighting model이다. lambert's cosine law를 기본으로 하며 diffuse relection을 구하는 방법은
+다음과 같다.
+
+![](img/lambert_reflectance_model.png)
+
+![](img/lambert_reflectance_model_eq.png)
+
+```latex
+\begin{align*}
+I_{D} &= \text{diffuse reflectance} \\
+L     &= \text{normalized light direction vector} \\
+N     &= \text{surface's normal vector} \\
+C     &= \text{color} \\
+I_{L} &= \text{intenciry of the incomming light} \\
+\vspace{5mm}
+I_{D} = L \cdot N C I_{L} \\
+\end{align*}
+```
+
+다음은 lambertian reflectance model을 unity3d shader lab으로 구현한 것이다.
+[참고](https://github.com/ryukbk/mobile_game_math_unity)
+
+```cpp
+Shader "Custom/Diffuse" {
+	Properties {
+		_Color ("Color", Color) = (1,1,1,1)
+	}
+	SubShader {
+		Pass {
+			Tags { "LightMode" = "ForwardBase" }
+			
+			GLSLPROGRAM
+	        #include "UnityCG.glslinc"
+	        #if !defined _Object2World
+	        #define _Object2World unity_ObjectToWorld
+	        #endif
+
+	        uniform vec4 _LightColor0;
+
+	        uniform vec4 _Color;
+	         
+	        #ifdef VERTEX
+			out vec4 color;
+
+	        void main() {	            
+	            vec3 surfaceNormal = normalize(vec3(_Object2World * vec4(gl_Normal, 0.0)));
+	            vec3 lightDirectionNormal = normalize(vec3(_WorldSpaceLightPos0));
+	            vec3 diffuseReflection = vec3(_LightColor0) * vec3(_Color) * max(0.0, dot(surfaceNormal, lightDirectionNormal));
+	            color = vec4(diffuseReflection, 1.0);
+	            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	        }
+	        #endif
+
+	        #ifdef FRAGMENT
+			in vec4 color;
+
+	        void main() {
+	           gl_FragColor = color;
+	        }
+	        #endif
+
+	        ENDGLSL
+         }
+	} 
+	//FallBack "Diffuse"
+}
+```
 
 # Half Lambert Diffuse
 
+[Half lambert](https://developer.valvesoftware.com/wiki/Half_Lambert)
+는 half-life라는 게임에서 처음 등장한 기술이다. 앞서 살펴 본
+lambertian reflectance model은 어두운 부분이 너무 어둡기 때문에 이것을
+보완 하고자 N과 L의 내적값을 [-1,1]에서 [0,1]로 조정한 것이다.
+
+![](File-Alyx_lambert_half_lambert.jpg)
+
+![](img/File-Lambert_vs_halflambert.png)
+
+
+다음은 half lambert diffuse를 unity3d shaderlab으로 구현한 것이다.
+[참고](https://github.com/ryukbk/mobile_game_math_unity)
+
+```cpp
+Shader "Custom/Half Lambert" {
+	Properties {
+		_Color ("Color", Color) = (1,1,1,1)
+	}
+	SubShader {
+		Pass {
+			Tags { "LightMode" = "ForwardBase" }
+			
+			GLSLPROGRAM
+	        #include "UnityCG.glslinc"
+	        #if !defined _Object2World
+	        #define _Object2World unity_ObjectToWorld
+	        #endif
+
+	        uniform vec4 _LightColor0;
+
+	        uniform vec4 _Color;
+	         
+	        #ifdef VERTEX
+	        out vec4 color;
+
+	        void main() {	            
+	            vec3 surfaceNormal = normalize(vec3(_Object2World * vec4(gl_Normal, 0.0)));
+	            vec3 lightDirectionNormal = normalize(vec3(_WorldSpaceLightPos0));
+	            float halfLambert = max(0.0, dot(surfaceNormal, lightDirectionNormal)) * 0.5 + 0.5;
+	            vec3 diffuseReflection = vec3(_LightColor0) * vec3(_Color) * halfLambert * halfLambert;
+	            color = vec4(diffuseReflection, 1.0);
+	            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	        }
+	        #endif
+
+	        #ifdef FRAGMENT
+	        in vec4 color;
+
+	        void main() {
+	           gl_FragColor = color;
+	        }
+	        #endif
+
+	        ENDGLSL
+         }
+	} 
+	//FallBack "Diffuse"
+}
+```
+
 # Phong Reflectance  Model
+
+[Bui Tuong Phone](https://en.wikipedia.org/wiki/Bui_Tuong_Phong)
+이 1975년에 제안한 lighting model이다.
+
+phong reflection은 ambient, diffuse, specular term의 합으로 구한다.
+
+![](img/Phong_components_version_4.png)
+
+![](img/phong_reflectance_model.png)
+
+![](img/phong_reflectance_model_eq.png)
+
+```latex
+\begin{align*}
+I_{P} &= \text{phong reflectance} \\
+I_{A} &= \text{ambient term} \\
+I_{D} &= \text{diffuse term} \\
+I_{S} &= \text{specular term} \\
+\vspace{5mm}
+L     &= \text{normalized light direction vector} \\
+N     &= \text{surface's normal vector} \\
+C     &= \text{color} \\
+I_{L} &= \text{intenciry of the incomming light} \\
+R     &= \text{reflected ray of light} \\
+V     &= \text{normalized vector toward the viewpoint} \\
+H     &= \text{normlized vector that is halfway between V and L} \\
+P     &= \text{vecotr obtained by orthogonal projection of R to N} \\
+A     &= \text{ambient light} \\
+α     &= \text{shiness} \\
+\vspace{5mm}
+P     &= N(L \cdot N)
+R - P &= P - L
+R     &= 2P - L
+      &= 2N(L \cdot N) - L
+\vspace{5mm}
+I_{A} &= A C\\
+I_{D} &= L \cdot N C I_{L} \\
+I_{S} &= I_{L}C(max(0, R \cdot V))^{α}\\
+\end{align*}
+```
+
+위의 식에서 R을 구하는데 내적연산을 사용한다. 내적은 계산 비용이 많기 때문에
+R대신 H를 이용해서 같은 효과를 얻을 수 있다. 이것을 Blinn-Phong reflection model
+이라고 한다.
+
+```latex
+H = \frace{L + V}{|L+V|}
+```
+
+![](img\File-Blinn_phong_comparison.png)
+
+# Gouraud shading
+
+phong reflectance model을 vertex shader에 적용한 것
+
+다음은 gouraud shading을 unity3d shader lab으로 구현한 것이다.
+[참고](https://github.com/ryukbk/mobile_game_math_unity)
+
+```cpp
+Shader "Custom/Gouraud" {
+	Properties {
+		_Color ("Diffuse Color", Color) = (1,1,1,1)
+		_SpecularColor ("Specular Color", Color) = (1,1,1,1)
+		_SpecularExponent ("Specular Exponent", Float) = 3
+	}
+	SubShader {
+		Pass {
+			Tags { "LightMode" = "ForwardBase" }
+			
+			GLSLPROGRAM
+	        #include "UnityCG.glslinc"
+	        #if !defined _Object2World
+	        #define _Object2World unity_ObjectToWorld
+	        #endif
+
+	        uniform vec4 _LightColor0;
+
+	        uniform vec4 _Color;
+	        uniform vec4 _SpecularColor;
+	        uniform float _SpecularExponent;
+
+	        #ifdef VERTEX
+			out vec4 color;
+
+	        void main() {
+	            vec3 ambientLight = gl_LightModel.ambient.xyz * vec3(_Color);
+
+	            vec3 surfaceNormal = normalize((_Object2World * vec4(gl_Normal, 0.0)).xyz);
+	            vec3 lightDirectionNormal = normalize(_WorldSpaceLightPos0.xyz);
+	            vec3 diffuseReflection = _LightColor0.xyz * _Color.xyz * max(0.0, dot(surfaceNormal, lightDirectionNormal));
+
+                vec3 viewDirectionNormal = normalize((vec4(_WorldSpaceCameraPos, 1.0) - _Object2World * gl_Vertex).xyz);
+				vec3 specularReflection = _LightColor0.xyz * _SpecularColor.xyz
+					* pow(max(0.0, dot(reflect(-lightDirectionNormal, surfaceNormal), viewDirectionNormal)), _SpecularExponent);              
+
+	            color = vec4(ambientLight + diffuseReflection + specularReflection, 1.0);
+	            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	        }
+	        #endif
+
+	        #ifdef FRAGMENT
+	        in vec4 color;
+
+	        void main() {
+	           gl_FragColor = color;
+	        }
+	        #endif
+
+	        ENDGLSL
+         }
+	} 
+	//FallBack "Diffuse"
+}
+```
+
+# Phong Shading
+
+phong reflectance model을 fragment shader에 적용한 것
+
+다음은 phong shading을 unity3d shader lab으로 구현한 것이다.
+[참고](https://github.com/ryukbk/mobile_game_math_unity)
+
+```cpp
+Shader "Custom/Phong" {
+	Properties {
+		_Color ("Diffuse Color", Color) = (1,1,1,1)
+		_SpecularColor ("Specular Color", Color) = (1,1,1,1)
+		_SpecularExponent ("Specular Exponent", Float) = 3
+	}
+	SubShader {
+		Pass {
+			Tags { "LightMode" = "ForwardBase" }
+			
+			GLSLPROGRAM
+	        #include "UnityCG.glslinc"
+	        #if !defined _Object2World
+	        #define _Object2World unity_ObjectToWorld
+	        #endif
+
+	        uniform vec4 _LightColor0;
+
+	        uniform vec4 _Color;
+	        uniform vec4 _SpecularColor;
+	        uniform float _SpecularExponent;
+
+	        #ifdef VERTEX
+			out vec4 glVertexWorld;
+			out vec3 surfaceNormal;
+
+	        void main() {	            
+	            surfaceNormal = normalize((_Object2World * vec4(gl_Normal, 0.0)).xyz);
+	            glVertexWorld = _Object2World * gl_Vertex;
+
+	            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+	        }
+	        #endif
+
+	        #ifdef FRAGMENT
+			in vec4 glVertexWorld;
+			in vec3 surfaceNormal;
+
+	        void main() {
+	        	vec3 ambientLight = gl_LightModel.ambient.xyz * vec3(_Color);
+	        
+				vec3 lightDirectionNormal = normalize(_WorldSpaceLightPos0.xyz);
+	            vec3 diffuseReflection = _LightColor0.xyz * _Color.xyz * max(0.0, dot(surfaceNormal, lightDirectionNormal));
+
+                vec3 viewDirectionNormal = normalize((vec4(_WorldSpaceCameraPos, 1.0) - glVertexWorld).xyz);
+				vec3 specularReflection = _LightColor0.xyz * _SpecularColor.xyz
+					* pow(max(0.0, dot(reflect(-lightDirectionNormal, surfaceNormal), viewDirectionNormal)), _SpecularExponent);                      
+	        
+	        	gl_FragColor = vec4(ambientLight + diffuseReflection + specularReflection, 1.0);
+	        }
+	        #endif
+
+	        ENDGLSL
+         }
+	} 
+	//FallBack "Diffuse"
+}
+```
 
 # Rim Lighting
 
