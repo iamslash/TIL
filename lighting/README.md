@@ -222,14 +222,12 @@ cd이다. 1 cd는 촛불의 단위 입체각당 광속이다.
 
 ## 휘도
 
-![](img/illuminance_luminance.png)
+![](img/measuring_light_alm2.jpg)
 
 휘도(luminance)는 광원에서 방출된 빛이 지표면을 비추고 반사되어
 우리눈에 들어올때 단위면적(m^2)당 광도(luminous intensity, cd)이다.
 
 ## BRDF, BTDF
-
-![](img/illuminance_luminance.png)
 
 컴퓨터 그래픽에서는 계산의 편의를 위해 illuminance에 해당하는 표면의
 면적과 luminance에 해당하는 눈의 면적은 점이라고 가정하자.
@@ -246,8 +244,37 @@ cd이다. 1 cd는 촛불의 단위 입체각당 광속이다.
 * [Microfacet Modles for Refraction through Roufh Surfaces](http://lifeisforu.tistory.com/352)
 * [Bidirectional scattering distribution function @ wikipedia](https://en.wikipedia.org/wiki/Bidirectional_scattering_distribution_function)
 
-## Frenel
 ## Local Illumination & Global Illumination
+
+![](img/Local_illumination.jpg)
+
+현실 세계의 오브젝트들은 직접광과 간접광의 영향을 받는다.  만약
+간접광이 없다면 직접광이 비추어지지 않는 곳은 굉장히 어두울 것이다.
+간접광을 잘 계산해야 현실세계와 비슷한 장면을 연출 할 수 있다.  그러나
+간접광의 현실적 계산은 비용이 많이 들기 때문에 간략히 계산하기 위해
+ambient light를 만들어 모든 오브젝트에 동일한 밝기를 적용한다. ambient
+light는 global ambient와 material ambient로 분류된다.  직접광과
+ambient light을 이용하여 조명 연출하는 것을 local illumination이라고
+한다.
+
+![](img/Global_illumination.jpg)
+
+local illumination은 현실세계와 거리가 멀다. 표면에 들어온
+빛(직접광,간접광)은 반사, 흡수, 투과 된다. 이때 반사 및 투과되는 빛은
+새로운 광원(간접광)으로 작용한다.  간접광을 잘 계산하여 조명 연출하는
+것을 global illumination이라고 한다.
+
+간접광을 실시간으로 근사계산 하기 위해 LPV(Light Propagation Volume),
+SVOGI(Sparse Voxel Octree Global Illumination)등이 있다.
+간접광을 실시간으로 계산하는 것은 어렵기 때문에 미리 계산한 것을
+이용하는 방법도 있다. 이것을 Image Based Lighting이라고 한다.
+
+* [PBR 이란 무엇인가 - 9. Global Illumination & Indirect Lighting](http://lifeisforu.tistory.com/374)
+* [Global Illumination @ wikipedia](https://en.wikipedia.org/wiki/Global_illumination)
+* [PRACTICAL REAL-TIME VOXEL-BASED GLOBAL ILLUMINATION FOR CURRENT GPUS, Alexey Panteleev, NVIDIA.]()
+* [Real-time Global Illumination Using Voxel Cone Tracing, Fredrik Prantare.](https://prantare.files.wordpress.com/2016/12/frepr183_voxel_cone_tracing.pdf)
+
+## Frenel
 # Lambert's cosine law
 
 확산반사(diffuse reflectance)가 일어나는 표면의 한 점에서의
@@ -739,3 +766,5 @@ Shader "Custom/CookTorrance" {
 # Ray Traciing
 
 # Radiosity
+# LPV (Light Propagation Volume)
+# SVOGI (Sparse Voxel Octree Global Illumination)
