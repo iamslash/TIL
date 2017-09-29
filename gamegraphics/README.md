@@ -248,18 +248,9 @@ src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pi
 
 # [Lighting](../lighting/README.md)
 
-## [PBR (physically based rendering)](../pbr/README.md)
-
-# depth sorting / Z-sorting
-
-# blending
-
-# texture mapping
-
-# displacement mapping
-
 # [normal mapping](../normalmapping/README.md)
+
+# Animation
 
 # Collision Detection
 
-# Animation
