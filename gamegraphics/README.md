@@ -250,6 +250,32 @@ src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pi
 
 # [normal mapping](../normalmapping/README.md)
 
+# Shader Models
+
+opengl과 direct3D는 shader 용어들이 다르다.
+
+| opengl | directx |
+|:------:|:-------:|
+|Vertex Shader|Vertex Shader|
+|Tessellation Control Shader|Hull Shader|
+|Tessellation Evaluation Shader|Domain Shader|
+|Geometry Shader|Geometry Shader|
+|Fragment Shader|Pixel Shader|
+|Compute Shader|Compute Shader|
+
+shader model은 directX에서 사용하는 shader 버저닝 방법이다.
+opengl은 어떻게 하지???
+
+다음은 shader model 4의 특징이다. 
+geometry shader, stream output이 추가되었다.
+
+![](img/shader_model_4.png)
+
+다음은 shader model 5의 특징이다.
+hull shader, tessellator, domain shader가 추가되었다.
+
+![](img/shader_model_5.png)
+
 # Animation
 
 # Collision Detection
