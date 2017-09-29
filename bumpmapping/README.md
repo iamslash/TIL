@@ -1,8 +1,11 @@
 # Abstract
 
-- 노멀 매핑에 대해 정리 해보자.
+- 범프 매핑은 표면을 울퉁불퉁하게 표현하는 방법이다. height field,
+  normal mapping, parallax mapping, displacement mapping등이 있다.
 
-# Implementation
+# normal mapping
+
+
 
 다음은 normal mapping을 unity3d shader lab으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)

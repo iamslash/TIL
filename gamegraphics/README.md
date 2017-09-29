@@ -248,7 +248,7 @@ src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pi
 
 # [Lighting](../lighting/README.md)
 
-# [normal mapping](../normalmapping/README.md)
+# [Bump Mapping](../bumpmapping/README.md)
 
 # Shader Models
 
