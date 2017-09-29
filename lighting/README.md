@@ -3,12 +3,6 @@
 다음의 용어들을 정리해본다.
 
 hemispherical lighting model
-image based lighting
-irradiance environment map
-image based reflection
-image based refaction
-image based fresnel
-BRDF
 
 # Abstract
 
@@ -19,11 +13,16 @@ BRDF
 * [Fundamentals](#fundamentals)
   * light
   * eye
-  * 조도와 휘도
   * 빛의 감쇠
-  * 광원의 밝기
-  * 조도 측정
-  * 휘도 측정
+  * 광속
+  * 광도
+  * 조도
+  * 휘도
+  * BRDF, BTDF
+  * local illumination & global illumination
+  * 굴절률(Refractive index)
+  * Snell's law
+  * Fresnel Equation
 
 # Learning Materials
 
@@ -37,6 +36,8 @@ BRDF
 - [Microfacet Models for Refraction through Rough Surfaces](https://www.cs.cornell.edu/~srm/publications/EGSR07-btdf.pdf)  
   - [번역](http://lifeisforu.tistory.com/352)
 - [PBR 이란 무엇인가 @ tistory](http://lifeisforu.tistory.com/366)
+- [Everything is Shiny](http://filmicworlds.com/blog/everything-is-shiny/)
+- [Everything has Fresnel](http://filmicworlds.com/blog/everything-has-fresnel/)
 
 # Fundamentals
 
@@ -274,7 +275,88 @@ SVOGI(Sparse Voxel Octree Global Illumination)등이 있다.
 * [PRACTICAL REAL-TIME VOXEL-BASED GLOBAL ILLUMINATION FOR CURRENT GPUS, Alexey Panteleev, NVIDIA.]()
 * [Real-time Global Illumination Using Voxel Cone Tracing, Fredrik Prantare.](https://prantare.files.wordpress.com/2016/12/frepr183_voxel_cone_tracing.pdf)
 
-## Frenel
+## 굴절률(Refractive index)
+
+굴절률(refractive index)는 빛이 진공에서 특정 매질로 이동할 때 속도가
+얼마나 느려지는지 그 비율을 측정한 것이다. IOR (Index of refraction)이라고도
+한다. 속도가 느려지면 전진하는 방향도 달라진다.
+
+![](img/20170917_133753.jpg)
+
+포장도로를 달리다가 모래위를 달리는 수레바퀴를 생각해보자. 좌측 바퀴가
+먼저 모래를 밟을 것이고 우측 바퀴는 여전히 같은 속도로 움직이기 때문에
+방향은 틀어질 것이다. 바퀴가 크면 적게 틀어질 것이고 바퀴가 작으면 많이
+틀어질 것이다. 
+
+![](img/Light_dispersion_conceptual_waves350px.gif)
+
+위의 그림에서 빛이 프리즘을 통과하면 빛이 지나는 매질이 변화되어
+굴절률이 달라진다. 바퀴의 크기는 파장과 같다. 파장이 짧은 보라색 빛은
+많이 꺾이는 것을 알 수 있다.
+
+## Snell's law
+
+![](img/357px-Snells_law2_svg.png)
+
+서로 다른 굴절률을 가진 매질에서 빛이 얼마나 꺾이는 지에 대한
+법칙이다.  붉은색 라인은 빛의 경로를 의미한다. 매질의
+경계(interface)에서 빛이 굴절한다. θ 는 normal과 굴절광(refracted
+light)의 각도, v 는 속도(velocity), n은 굴절률(IOR), λ 는
+파장(wavelength)을 의미할때 다음과 같은 수식이 성립한다.
+
+![](img/snell_law_eq.png)
+
+```latex
+\frac{sin \theta_{1}}{sin \theta_{2}} = \frac{v_{1}}{v_{2}} = \frac{\lambda_{1}}{\lambda_{2}} = \frac{n_{1}}{n_{2}}
+```
+
+![](1920px-RefractionReflextion_svg.png)
+
+빛이 서로 다른 매질을 만날때 특정 각도에서는 굴절을 하지 않고 완전히
+반사하는 경우가 있다. 각도가 critical angle보다 커지면 전반사가
+일어난다. critical angle 은 다음과 같은 수식을 통해서 구한다.
+
+![](img/critical_angle_eq.png)
+
+```latex
+\theta_{c} = arcsin( \frac{n_{2}}{n_{1}} )
+```
+
+## Fresnel Equation
+
+fresnel equation은 빛이 서로다른 매질을 통과할때 관찰자가 어느
+방향으로 보는지에 따라 얼만큼의 빛이 반사되는지를 얻을 수 있는
+공식이다. [law of reflection](https://en.wikipedia.org/wiki/Specular_reflection) 등을
+통해서 유도된다. 편광도 고려해야 해서 매우 복잡하다. 컴퓨터
+그래픽에서는 근사 계산한 공식을 이용한다. 다음은 Christophe Schlick이
+만든 Schilick's approximation이다.
+
+```latex
+\begin{align*}
+R(\theta} &= R_{0} + (1 - R_{0}) (1 - cos \theta)^{5} \\
+R_{0}     &= ( \frac{n_{1} - n_{2}}{n_{1} + n_{2}} )^{2} \\
+\end{align*}
+```
+
+![](img/fihms.jpg)
+
+위 그림은 Fresnel equation을 나타내는 그래프이다. 여러가지 매질에 대해
+각도에 따라 반사율(R(θ))을 알 수 있다. 가로축이 눈과 노멀의 각도이고
+세로축이 반사율(R(θ))이다. 눈과 노멀의 각도가 90에 가까울 수록 반사가 
+많이 된다.
+
+* [PBR 이란 무엇인가- 17.Fresnel이란? @ tistory](http://lifeisforu.tistory.com/384)
+* [Fresnel equation @ Wikipedia](https://en.wikipedia.org/wiki/Fresnel_equations)
+* [Auguistin-Jean Fresnel @ Wikipedia](https://en.wikipedia.org/wiki/Augustin-Jean_Fresnel)
+* [Light](https://en.wikipedia.org/wiki/Light)
+* [Refractive index](https://en.wikipedia.org/wiki/Refractive_index)
+* [빛이란 무엇인가?](https://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&ejkGb=KOR&barcode=9788955378061&orderClick=JAj)
+* [Snell's law](https://en.wikipedia.org/wiki/Snell%27s_law)
+* [Refraction](https://en.wikipedia.org/wiki/Refraction)
+* [Schilick's approzimation](https://en.wikipedia.org/wiki/Schlick%27s_approximation)
+* [Real Shading in Unreal Engine 4](http://lifeisforu.tistory.com/348)
+* [머터리얼에 프레넬 사용하기 @ unrealengine](https://docs.unrealengine.com/latest/KOR/Engine/Rendering/Materials/HowTo/Fresnel/index.html)
+
 # Lambert's cosine law
 
 확산반사(diffuse reflectance)가 일어나는 표면의 한 점에서의
@@ -673,8 +755,50 @@ Shader "Custom/Rim" {
 
 # Cook-Torrance Model
 
+다음은 쿡토런스(cook-torrance) 모델을 표현하는 공식이다.
+L은 입사광 벡터, V는 시선벡터, H는 L과 V의 하프벡터이다.
+D(H)는 법선분포함수(normal distribution function, NDF)이다.
+하이라이트 형태로 반영된다. NDF를 사용하면 거칠기(roughness)라는
+매개변수로 머터리얼의 성질을 나타낼 수 있다.
+F(V,H)는 Fresnel effect를 표현한다. 하이라이트 색에 영향을 미친다.
+G(L,V,H)는 기하감쇠(geometric attenuation)이다. 미세면의
+요철이 시선/입사광/반사광 벡터를 도중에 가려서 생기는 그림자의 영향을
+나타내는 항이다.
+
+![](img/cook_torrance_eq.png)
+
+```latex
+I_{s} = \frac {D(H)F(V, H)G(L, V, H)} {4(N \cdot L)(N \cdot V)}
+```
+
 다음은 cook-torrance model을 unity3d shader lab으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
+
+D(H)는 다음과 같이 GGX(trowbridge-Reitz) 알고리즘을 NDF로 이용했다.
+NDF는 그밖에도 블린퐁이나 베크만(Beckmann)을 이용하기도 한다.
+
+```latex
+\begin{align*}
+\alpha     &= (roughness)^{2} \\
+D_{ggx}(H) &= \frac {\alpha^{2}} {\pi((N \cdot H)^{2}(\alpha^{2}-1)+1)^{2}} \\
+\end{align*}
+```
+
+F(V,H)는 다음과 같이 Schilick's approximation을 이용했다.
+
+```latex
+F_{schilick}(V,H) = F_{0} + (1 - F_{0})(1 - V \cdot H)^{5}
+
+```
+
+G(L,V,H)는 다음과 같이 cook-torrance가 1982년에 발표한 논문에 실린
+식을 이용했다.
+
+```latex
+G_{cook_torrance}(L,V,H) = min(1, \frac {2 (N \cdot H)(N \cdot V)} {V \cdot H}, \frac {2(N \cdot H)(N \cdot L)} {V \cdot H})
+```
+
+마지막에 0.000001을 더해서 0으로 나누기를 방지하자.
 
 ```cpp
 Shader "Custom/CookTorrance" {
