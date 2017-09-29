@@ -17,13 +17,13 @@ BRDF
 # Contents
 
 * [Fundamentals](#fundamentals)
-** light
-** eye
-** 조도와 휘도
-** 빛의 감쇠
-** 광원의 밝기
-** 조도 측정
-** 휘도 측정
+  * light
+  * eye
+  * 조도와 휘도
+  * 빛의 감쇠
+  * 광원의 밝기
+  * 조도 측정
+  * 휘도 측정
 
 # Learning Materials
 
@@ -40,7 +40,7 @@ BRDF
 
 # Fundamentals
 
-## light
+## Light
 
 ![전자기파의 스펙트럼](img/EM_spectrum.png)
 
@@ -108,7 +108,7 @@ radiance라고 한다.  광도측정(photometry)의 경우 조도를 illuminance
 
 특정 표면(surface)에 도달한 빛이 모두 우리 눈으로 들어 오는 것은 아니다. 표면의
 재질에 따라 흡수(absorbed), 투과(transmitted), 반사(reflected), 방출(emitted)
-된다. 우리 눈은 반사(reflected)된 빛만 인지 할 수 있다.
+된다. 우리 눈은 반사(reflected), 투과(transmitted), 방출(emitted)된 빛만 인지 할 수 있다.
 
 * [PBR 이란 무엇인가 - 2. 조도와 휘도](http://lifeisforu.tistory.com/367)
 * [radiation](https://en.wikipedia.org/wiki/Radiation)
@@ -123,25 +123,31 @@ radiance라고 한다.  광도측정(photometry)의 경우 조도를 illuminance
 
 ![](img/inverse-square-law.jpg)
 
-위의 그림은 거리 r의 배수에 따라 단위면적당 광자의 개수를 표시한 것이다.
-광자의 개수가 줄어들면 빛의 세기는 어두워 진다. 빛의 세기는 거리의 제곱에
+위의 그림은 거리 r의 배수에 따라 단위면적당 광자의 개수를 표시한
+것이다.  거리 r이 늘어나면 단위면적당 광자의 개수는 줄어들고 광자의
+개수가 줄어들면 빛의 세기는 어두워 진다. 빛의 세기는 거리의 제곱에
 반비례한다.
 
 ![](img/attenutation_eq.png)
 
 ```latex
-Intensity = frac{1}{Distance^{2}}
+Intensity = \frac{1}{Distance^{2}}
 ```
 
-![](img/433px-Steradian_svg)
+![](img/433px-Steradian_svg.png)
 
-반지름이 r이고 구의 면적이 r^2일때 원뿔형의 각을 1스테라디안(steradian, sr)
-이라고 한다. 이러한 각도를 입체각(solid angle)이라고 정의 한다.
+반지름이 r이고 구의 면적이 r^2일때 만들어지는 원뿔의 각을
+1스테라디안(steradian, sr) 이라고 한다. 원뿔의 꼭지점으로 부터
+만들어지는 가로 사이각과 세로 사이각의 합이다. 이러한 각도를
+입체각(solid angle)이라고 정의 한다. 만약 구의 면적이 구 전체에
+해당된다면 입체각은 4π (2π + 2π)이다.
 
-반지름이 r인 구에서 입체각 a인 원뿔형의 겉면적이 ar^2이고 광자의
-개수는 4라고 하자. 반지름이 2r이면 겉면적은 a(2r)^2이고 광자의 개수는
-단위 면적당 1이다. 거리가 두배 늘어나면 겉면적의 넓이는 거리의 제곱배 만큼
-늘어나고 단위면적당 광자의 개수는 거리의 제곱에 반비례한다.
+반지름이 r인 구의 면적은 4πr^2이고 반지름이 r인 구에서 입체각이
+a(radian)인 원뿔의 겉면적은 ar^2이고 이것을 단위 면적이라고 하자. 이때
+광자의 개수는 4라고 하자. 반지름이 2r이면 겉면적은 a(2r)^2이고 광자의
+개수는 단위 면적당 1이다. 거리가 두배 늘어나면 겉면적의 넓이는 거리의
+제곱배 만큼 늘어나고 단위면적당 광자의 개수는 거리의 제곱에
+반비례한다는 결론을 얻을 수 있다
 
 * [PBR 이란 무엇인가 - 3. 빛의 감쇠](http://lifeisforu.tistory.com/368)
 * [라이팅 기초 @ unrealengine](https://docs.unrealengine.com/latest/KOR/Engine/Rendering/LightingAndShadows/Basics/index.html)
@@ -149,20 +155,28 @@ Intensity = frac{1}{Distance^{2}}
 * [Radian @ wikipedia](https://en.wikipedia.org/wiki/Radian)
 * [Solid Angle @ wikipedia](https://en.wikipedia.org/wiki/Solid_angle)
 
-## 광원의 밝기 - 광속 (luminous flux, luminous power)
+## 광속
 
-광선속(光線束) 혹은 광속(光束)이라는 것은 속도를 의미하는 것이
+![](img/measuring_light_alm2.jpg)
+
+광속(luminous flux, luminous power)은 광원의 밝기이고 단위는 lumen,
+lm이다. 광선속(光線束) 혹은 광속(光束)이라는 것은 속도를 의미하는 것이
 아니다. 빛 광(光)과 묶을 속(束)이다. 빛의 다발이다. 다발이 많으면
-더욱 밝을 것이다. 광속의 단위는 lumen, lm이다.
+더욱 밝을 것이다.
 
-광도(luminous intenty)는 점 광원에서 특정 방향으로 단위 입체각(1
-steradian, sr)당 방출되는 광속(luminous flux, luminous
-power)이다. 단위는 candela, cd이다.
+## 광도
+
+![](img/measuring_light_alm2.jpg)
+
+광도(luminous intensity)는 광원에서 방출된 빛이 사방으로 뻗어갈 때
+만들어지는 단위 입체각(1 sr)당 광속(lumen)이다. 단위는 candelas,
+cd이다. 1 cd는 촛불의 단위 입체각당 광속이다.
+
 
 ![](img/candela_eq.png)
 
 ```latex
-1 \  cd = \frac{1 \  lm}{1 \  sr}
+1 \ cd = \frac{1 \ lm}{1 \ sr}
 ```
 
 ![](img/luman_eq.png)
@@ -171,30 +185,31 @@ power)이다. 단위는 candela, cd이다.
 1 \  lm = 1 \  cd \cdot \ sr = \frac{1 \  lm}{ 1 \ sr} \cdot sr = 1 \ lm
 ```
 
-촛불의 광속을 계산해 보자. 
+촛불의 광속(lumen)을 계산해 보자. 촛불의 광도(luminous intensity)는
+1 cd이고 반지름이 1일때 촛불의 구의 겉면적은 4π이므로 다음과 같이 계산한다.
 
 ![](img\luminous_flux_of_a_candle.png)
 
 ```latex
 \begin{align*}
 \text{luminous flux of a candle} &= 1 [cd] \times  4 \pi [sr] \\
-                                 &=  1 [cd] \times (4 \times 3.1415926) [sr] \\
+                                 &= 1 [cd] \times (4 \times 3.1415926) [sr] \\
                                  &= 12.5663704 [lm] \\
                                  &\approx 12.57 [lm] \\ 
 \end{align*}
 ```
 
-
-
 * [PBR 이란 무엇인가 - 4. 광원의 밝기, 광속](http://lifeisforu.tistory.com/369)
 * [luminous flux @ wikipedia](https://en.wikipedia.org/wiki/Luminous_flux)
 * [candela @ wikipedia](https://en.wikipedia.org/wiki/Candela)
 
-## 조도 측정
+## 조도
 
-조도(illuminance)는 단위 면적(1 m^2)당 광속(luminous flux)이다. 이
-것은 입사광이 표면을 얼마만큼 비추고 있는지를 의미하는
-것이다. 1m^2내에 들어 온 빛의 양이 1 lm일때 1 럭스(lux)라고 한다.
+![](img/measuring_light_alm2.jpg)
+
+조도(illuminance)는 빛이 비춰지는 표면의 단위 면적(1 m^2)당
+광속(lumen)이고 단위는 lux이다. 1m^2내에 들어 온 빛의 양이 1 lm일때 1
+럭스(lux)라고 한다.
 
 ![](img/lux_eq.png)
 
@@ -205,18 +220,19 @@ power)이다. 단위는 candela, cd이다.
 * [PBR 이란 무엇인가 - 5. 조도 측정](http://lifeisforu.tistory.com/370)
 * [illuminance @ wikipedia](https://en.wikipedia.org/wiki/Illuminance)
 
-## 휘도 측정
+## 휘도
 
 ![](img/illuminance_luminance.png)
 
-휘도는 특정 방향으로 이동하는 단위 면적당 광도(luminous intensity)를 측정한 것이다.
-그것은 특정 영역에서 방출되거나 반사되어 주어진 입체각 안에 들어 온 빛의 양을 의미한다.
-휘도의 국제 단위는 제곱미터당 칸델라 (cd/m^2) 이다.
+휘도(luminance)는 광원에서 방출된 빛이 지표면을 비추고 반사되어
+우리눈에 들어올때 단위면적(m^2)당 광도(luminous intensity, cd)이다.
 
-![](img/illuminance_luminance3.png)
+## BRDF, BTDF
 
-계산의 편의를 위해 illuminance에 해당하는 표면의 면적과 
-luminance에 해당하는 눈의 면적은 점이라고 가정하자.
+![](img/illuminance_luminance.png)
+
+컴퓨터 그래픽에서는 계산의 편의를 위해 illuminance에 해당하는 표면의
+면적과 luminance에 해당하는 눈의 면적은 점이라고 가정하자.
 
 ![](img/BSDF05_800.png)
 
@@ -230,6 +246,8 @@ luminance에 해당하는 눈의 면적은 점이라고 가정하자.
 * [Microfacet Modles for Refraction through Roufh Surfaces](http://lifeisforu.tistory.com/352)
 * [Bidirectional scattering distribution function @ wikipedia](https://en.wikipedia.org/wiki/Bidirectional_scattering_distribution_function)
 
+## Frenel
+## Local Illumination & Global Illumination
 # Lambert's cosine law
 
 확산반사(diffuse reflectance)가 일어나는 표면의 한 점에서의
