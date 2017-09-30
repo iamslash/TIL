@@ -29,12 +29,6 @@
   - 특히 [OpenGL Normal Vector Transformation](http://www.songho.ca/opengl/gl_normaltransform.html)의 설명이 너무 좋았다.
 - [Mathematics for 3D Game Programming and Computer Graphics, Third Edition](http://www.mathfor3dgameprogramming.com/)
   - 3D computer graphics를 위한 수학
-- [interactive 3D Graphics](https://classroom.udacity.com/courses/cs291)
-  - computer graphics의 기반이론을 three.js와 함께 설명한 동영상 강좌. 자세한 설명은 [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)으로 만족하자.
-  - [syllabus](https://www.udacity.com/wiki/cs291/syllabus)
-  - [comments](https://www.udacity.com/wiki/cs291/instructor-comments)
-  - [wiki](https://www.udacity.com/wiki/cs291)
-  - [three.js tutorial](http://stemkoski.github.io/Three.js/)
 - [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
   - 예전에 공짜였지만 지금은 아니다. 기반 설명이 충실히 기술되어 있다.
 - [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3 ]()
@@ -90,6 +84,12 @@
   - [3D Graphics for Game Programming lecture notes](3dgraphics_for_game_programming_lecture_notes/)
 - [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)
   - 기반이론이 1000페이지 넘게 잘 정리된 책이다.
+- [interactive 3D Graphics](https://classroom.udacity.com/courses/cs291)
+  - [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)의 동영상 강좌
+  - [syllabus](https://www.udacity.com/wiki/cs291/syllabus)
+  - [comments](https://www.udacity.com/wiki/cs291/instructor-comments)
+  - [wiki](https://www.udacity.com/wiki/cs291)
+  - [three.js tutorial](http://stemkoski.github.io/Three.js/)
 - [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
   - frank luna의 명저
   - [src](https://github.com/d3dcoder/d3d12book)
@@ -201,6 +201,62 @@ vector와 연산하여 최종 normal vector를 구할 수 있다.
 # [Rendering Pipeline](../renderingpipeline/README.md)
 
 # Polygon Mesh
+
+![](img/vertex_index_buffer.png)
+
+위의 그림은 vertex buffer와 index buffer를 표현한 것이다.  polygon
+t1을 주목하자. index buffer에 vertex buffer의 index가 CCW(counter
+clock wise, 반시계방향)으로 3개 저장되어 있다.
+
+![](img/surface_normal_ccw.png)
+
+![](img/surface_normal_ccw_eq.png)
+
+surface normal은 중요하다. 위의 그림처럼 polygon을 구성하는 vertex p1, p2, p3에 
+대해서 vector v1, v2를 외적하고 정규화해서 surface normal을 구한다.
+반드시 p1, p2, p3는 CCW로 index buffer에 저장되어 있어야 한다.
+
+![](img/surface_normal_ccw.png)
+
+![](img/surface_normal_ccw_eq.png)
+
+만약 p1, p2, p3가 CW로 index buffer에 저장되어 있다면 surface normal은
+반대 방향으로 만들어 진다.
+
+![](img/vertex_normal.png)
+
+![](img/vertex_normal_eq.png)
+
+vertex normal은 surface normal보다 더 중요하다.
+vertex normal과 인접한 polygon들의 surface normal을 이용하여
+구할 수 있다.
+
+![](img/RHS_LHS.png)
+
+![](img/RHS_LHS_normal.png)
+
+좌표계는 오른손 좌표계와 왼손 좌표계가 있다. opengl은 RHS를
+directx3D는 LHS를 사용한다. surface normal이 구의 바깥쪽으로
+만들어질려면 RHS의 경우 index buffer에 polygon을 구성하는 vertex 들의
+index가 CCW로 저장되어야 하고 LHS의 경우 CW로 저장되어야 한다.
+
+![](img/RHS_to_LHS_a.png)
+
+![](img/RHS_to_LHS_b.png)
+
+![](img/RHS_to_LHS_c.png)
+
+RHS에서 LHS로 좌표계를 포팅하는 것은 두가지 주요 작업을 포함한다.
+첫째는 polygon을 구성하는 index buffer의 내용이 CCW에서 CW로
+재정렬되어야 한다. 둘째는 오브젝트 pos의 z값과 camera z axis방향이
+반전되어야 한다. 위의 첫번째 그림은 RHS의 상황이고 두번째 그림은
+별다른 작업없이 좌표계를 LHS로 전환했을때 벌어지는 현상이다. 거울에 비처진 것처럼
+반대로 화면에 그려졌다. 세번째 그림은 포팅작업을 통해 RHS에서의 화면과
+LHS에서의 화면이 같다.
+
+앞서 언급한 포팅 작업중 첫째 작업은 필요 없을 수 있다.
+DirectX의 경우 기본 컬링 모드는 D3DCULL_CCW이다. 이것을
+D3DCULL_CW로 바꾸면 재정렬 작업은 필요 없게된다.
 
 # Vertex Processing
 
