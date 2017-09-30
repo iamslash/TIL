@@ -37,17 +37,12 @@
   - [three.js tutorial](http://stemkoski.github.io/Three.js/)
 - [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
   - 예전에 공짜였지만 지금은 아니다. 기반 설명이 충실히 기술되어 있다.
-- [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
-  - frank luna의 명저
-  - [src](https://github.com/d3dcoder/d3d12book)
 - [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3 ]()
   - opengl red book
   - [src](https://github.com/openglredbook/examples)
 - [OpenGL Superbible: Comprehensive Tutorial and Reference]()
   - opengl blue book
   - [src](https://github.com/openglsuperbible/sb7code)
-- [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)
-  - 기반이론이 1000페이지 넘게 잘 정리된 책이다.
 - [unity3d manual](https://docs.unity3d.com/Manual/index.html) [unity3d tutorial](https://unity3d.com/kr/learn/tutorials)
   - unity3d manual과 tutorial이야 말로 잘 만들어진 엔진을 이용하여 computer graphcis로 입문
     할 수 있는 좋은 교재이다. unity3d에서 제공하는 기능들을 위주로 학습한다.
@@ -93,6 +88,17 @@
   - 3차원 그래픽스 기반이론을 매우 자세히 풀어썼다. 저자의
     홈페이지에서 제공하는 슬라이드는 각종 그림과 수식을 가득 포함하고 있다.
   - [3D Graphics for Game Programming lecture notes](3dgraphics_for_game_programming_lecture_notes/)
+- [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)
+  - 기반이론이 1000페이지 넘게 잘 정리된 책이다.
+- [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
+  - frank luna의 명저
+  - [src](https://github.com/d3dcoder/d3d12book)
+
+# Snippets
+
+- [Introduction to 3D Game Programming with Direct3D src](https://github.com/d3dcoder/d3d12book)
+- [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3 src](https://github.com/openglredbook/examples)
+- [OpenGL Superbible: Comprehensive Tutorial and Reference src](https://github.com/openglsuperbible/sb7code)
 
 # Opensource Engines
 
@@ -103,12 +109,6 @@
 - [banshee engine](https://github.com/BearishSun/BansheeEngine)
   - c++14로 제작되고 있는 game engine
   - 이제 시작된 것 같아서 참고해 본다.
-
-# Snippets
-
-- [Introduction to 3D Game Programming with Direct3D src](https://github.com/d3dcoder/d3d12book)
-- [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3 src](https://github.com/openglredbook/examples)
-- [OpenGL Superbible: Comprehensive Tutorial and Reference src](https://github.com/openglsuperbible/sb7code)
 
 # Math Prerequisites
 
