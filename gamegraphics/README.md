@@ -294,6 +294,11 @@ src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pi
 
 # Rasterization
 
+Rasterization은 hard wired하다. 클리핑(clipping),
+원근 나눗셈(perspective division), 뒷면 제거(back-face culling),
+뷰포트 변환(view-port transformation), 스캔 변환(scan conversion)등의
+요소로 구성된다.
+
 # Fragment Processing
 
 # Raster Operation
