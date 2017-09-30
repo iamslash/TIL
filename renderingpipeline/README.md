@@ -13,7 +13,20 @@
 - [scratchapixel](http://www.scratchapixel.com/)
   - 밑바닥부터 설명하는 computer graphics
 
+# Simple Rendering Pipeline
+
+![](simple_rendering_pipeline.png)
+
+rendering pipeline을 간단히 4단계로 생각해 볼 수 있다.  vertex
+processing은 transformation, animation, lighting을 처리하고
+programmable하다.  rasterization은 fragment를 만들어
+낸다. programmable하지 못하고 hardwired하다.  fragment processing은
+lighting, texturing을 처리하고 programmable하다.  output merging은
+z-buffering, alpha blending, z-culling등 이 수행되고 hardwired하다.
+
 # The Graphics Hardware Pipeline
+  
+다음은 nvidia cg tutorial에 나와 있는 rendering pipeline들이다.  
   
 - The Programmable Graphics Pipeline
 
