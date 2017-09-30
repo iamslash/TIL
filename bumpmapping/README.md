@@ -51,6 +51,9 @@ fragment processing단계에서 컬러 값을 얻어 내려면 light vector와
 해야 한다. 아래 구현은 tangent normal vector를 world space로 기저변환
 하였다. 기저변환을 위해 다음과 같은 TBN 행렬을 사용한다.
 
+기저변환은 world space에서 view space로 transformation할때
+이미 사용되었다.
+
 ![](img/tbn.png)
 
 normal mapping은 다음그림의 sphere와 toruso와 같이 테두리 부분이
