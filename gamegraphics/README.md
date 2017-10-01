@@ -16,8 +16,6 @@
 
 # Learning Materials
 
-- [유니티로 배우는 게임 수학](http://www.yes24.com/24/goods/30119802?scode=032&OzSrank=1)
-  - 일본인 답게 꼼꼼한 정리가 아주 좋다.
 - [Ke-Sen Huang's Home Page](http://kesen.realtimerendering.com/)
   - 컴퓨터그래픽스 컨퍼런스 자료 및 논문 모음
 - [awesome graphics @ github](https://github.com/ericjang/awesome-graphics)
@@ -93,6 +91,11 @@
 - [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
   - frank luna의 명저
   - [src](https://github.com/d3dcoder/d3d12book)
+- [유니티로 배우는 게임 수학](http://www.yes24.com/24/goods/30119802?scode=032&OzSrank=1)
+  - 요약 설명이 많아서 초보자 보기에는 불편한 설명이다. 하지만 기반
+    내용을 정리하는 용도로 좋다. 짐벌락, PBR에 대한 간략한 설명은 특히
+    괜찮았다.
+  - [src](https://github.com/ryukbk/mobile_game_math_unity)
 
 # Snippets
 
@@ -260,26 +263,36 @@ D3DCULL_CW로 바꾸면 재정렬 작업은 필요 없게된다.
 
 # Vertex Processing
 
-- model transform
-  - local space coordinates를 world space coordinates로 변환
+확대축소(scaling), 회전(rotation)은 선형변환(linear transformation)이다.
+선형변환(linear transformation)에 이동(translation)까지 포함되면
+affine transformation이다.
 
-- view transform
-  - world space coordinates를 camera space coordinates로 변환
+![](img/transform.png)
 
-- projection transform
-  - view space coordinates를 clip coordinates로 변환
-  - clip coordinates를 Normalized device coordinates로 변환. 이것을
-    perspective projection(원근투영)이라고 한다.  원근투영은 좌측의
-    fustumn을 우측의 canonical view volume으로 찌그러트리는
-    것이다. canonical view volume은 정육면체 형태(2, 2, 2)이기 때문에
-    near plane의 object들은 상대적으로 크기가 커질 것이고 far plane의
-    object들은 상대적으로 크기가 작아질 것이다. directx의 경우
-    canonical view volume은 직육면체(2, 2, 1) 이다.
+object(local) space coordinates를 world space coordinates
+로 변환하는 것을 world transform이라고 한다.
+world space coordinates를 camera space coordinates로 변환하는 것을
+view transform이라고 한다.
+view space coordinates를 clip space coordinates로 변환하는 것을
+투영변환(projection transform)이라고 한다. 
+clip space coordinates는 normalized device coordinates로 변환된다.
+normalized device coordinates를 window space coordinates로 변환하는
+것을 viewport transform이라고 한다. clip space coordinates부터 시작되는
+변환은 rasterization 단계에서 이루어지는 것일까? viewport transform은
+rasterization 단계에서 실행되는 것은 확실하다.
 
-![](img/view_volume.png)
+![](img/projection_transform.png)
 
-- viewport transform
-  - normalized device coordinates를 window space coordinates로 변환
+projection transform은 좌측의 view fustumn을 우측의 canonical view
+volume으로 찌그러트리는 것이다. canonical view volume은 directx의 경우
+직육면체 형태(2, 2, 1)이기 때문에 near plane의 object들은 상대적으로
+크기가 커질 것이고 far plane의 object들은 상대적으로 크기가 작아질
+것이다. opengl의 경우 정육면체 형태(2, 2, 2)이다.
+
+![](img/RHS_to_LHS_on_rasterization.png)
+
+rasterization 단계는 LHS를 사용한다. 이전 단계에서 오른손좌표계(RHS)를
+사용했다면 z좌표를 반전시켜야 한다.
 
 ```
 world-space point = model matrix * model point
@@ -289,17 +302,55 @@ window coords = windows(screen) matrix * NDC
 ```
 
 [이것](http://www.realtimerendering.com/udacity/transforms.html)은 object space
-cartesian coordinate 이 (4,5,3)인 큐브를 예로 three.js와 함께 설명 했다.
+cartesian coordinate 가 (4,5,3)인 큐브를 예로 three.js와 함께 설명 했다.
 src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pipeline.js)을 참고하자.
+
+![](img/normal_transform.png)
+
+normal vector를 변환하는 것은 vertex를 변환하는 것과 다르게 처리되어야
+한다. vertex를 변환 할 때와 똑같은 방법으로 변환행렬 M과 surface
+normal vector를 곱하면 변환후 표면에 수직이 되지 못한다.  `M`대신
+`(M^{-1})^{T}`를 곱해야 한다. 다음은 surface normal n과 변환행렬
+`(M^{-1})^{T}`을 곱한 것과 `(r^{'}-p^{'})`이 수직임을 보여준다.
+`((r^{'}-p^{'})^{T}`는 행렬 곱셉을 위해 transpose한 것이다.
+
+![](img/normal_transform_eq.png)
 
 # Rasterization
 
-Rasterization은 hard wired하다. 클리핑(clipping),
-원근 나눗셈(perspective division), 뒷면 제거(back-face culling),
-뷰포트 변환(view-port transformation), 스캔 변환(scan conversion)등의
-요소로 구성된다.
+Rasterization은 hard wired하다. 클리핑(clipping), 원근
+나눗셈(perspective division), 뒷면 제거(back-face culling), 뷰포트
+변환(view-port transform), 스캔 변환(scan conversion)등의 요소로
+구성된다.
+
+클리핑(clipping)은 canonical view volume의 바깥쪽에 포함된 폴리곤을
+잘라내는 과정이다.
+
+원근 나눗셈(perspective division)은 지금까지 사용했던
+동차좌표계(homogenious coordinates system)를 데카르트좌표계(cartesian
+coordinate system)으로 변환하는 과정이다. 예를 들어 동차좌표가 (x, y,
+z, w)라면 데카르트좌표는 (x/w, y/w, z/w)가 된다.
+
+![](img/viewport_transform.png)
+
+normalized device coordinates를 screen space coordinates로 변환하는
+것을 viewport transform이라고 한다. screen space는 RHS를 이용한다.
+canonical view volume의 z값은 추후 z-buffering을 위해 사용된다.
+
+![](img/scan_conversion_1.png)
+![](img/scan_conversion_2.png)
+
+viewport transform후에 각각의 polygon은 screen space에서 내부가 특정한
+색깔로 채워져 보이게 된다. 이때 채워지는 색깔은 fragment라는 것의
+color속성을 읽어온 것이다. polygon의 내부를 채우는 pixel수 만큼
+fragment들이 존재한다.  이와 같은 fragment들을 생성하는 것을
+스캔변환(scan conversion)이라고 한다.  polygon을 구성하는 vertex 3개를
+보간(interpolation)해서 fragment들을 생성한다.  fragment는 pixel에
+해당하는 normal, texture coordinates, color, depth등을 가지고 있다.
 
 # Fragment Processing
+
+
 
 # Raster Operation
 
