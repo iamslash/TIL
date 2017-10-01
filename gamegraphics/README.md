@@ -320,8 +320,8 @@ normal vector를 곱하면 변환후 표면에 수직이 되지 못한다.  `M`�
 
 Rasterization은 hard wired하다. 클리핑(clipping), 원근
 나눗셈(perspective division), 뒷면 제거(back-face culling), 뷰포트
-변환(view-port transform), 스캔 변환(scan conversion)등의 요소로
-구성된다.
+변환(view-port transform), 스캔 변환(scan conversion), z-culling등의
+요소로 구성된다.
 
 클리핑(clipping)은 canonical view volume의 바깥쪽에 포함된 폴리곤을
 잘라내는 과정이다.
@@ -348,15 +348,18 @@ fragment들이 존재한다.  이와 같은 fragment들을 생성하는 것을
 보간(interpolation)해서 fragment들을 생성한다.  fragment는 pixel에
 해당하는 normal, texture coordinates, color, depth등을 가지고 있다.
 
+output merging단계에서 z-buffering을 이용해서 깊이검사를 하는 것보다 
+rasterization단계에서 z-culling을 한다면 훨 씬 효율적이다.
+z-culling을 최대한 활용하고자 하는 목적으로 이른바 pre-z pass algorithm이
+제안되었다.
+
 # Fragment Processing
 
+lighting 및 texturing 을 수행한다.
 
+# Output Merging
 
-# Raster Operation
-
-# Quaternion
-
-# Curve
+z-buffering, alpha blending을 수행한다.
 
 # [Lighting](../lighting/README.md)
 
@@ -387,6 +390,10 @@ geometry shader, stream output이 추가되었다.
 hull shader, tessellator, domain shader가 추가되었다.
 
 ![](img/shader_model_5.png)
+
+# Quaternion
+
+# Curve
 
 # Animation
 
