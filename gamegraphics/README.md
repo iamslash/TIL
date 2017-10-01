@@ -1,6 +1,7 @@
 # Comments
 
-radiosity, curve, animation, collision
+radiosity, curve, Environment Mapping, Light Mapping, Shadow Mapping,
+Ambient Occlusion Mapping, Deferred Shading, animation, collision
 detection
 
 # Abstract

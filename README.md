@@ -16,7 +16,6 @@
 
 - [systemdesign](systemdeisgn)
 - [statistics](statistics)
-- [gamegraphics](gamegraphics)
 - [unity3dshaderlab](unity3dshaderlab)
 - [daemon](daemon)
 - [machinelearning](machinelearning/README.md)
