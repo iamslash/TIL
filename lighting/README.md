@@ -26,6 +26,8 @@ hemispherical lighting model
 
 # Learning Materials
 
+- [Advanced Global Illumination, Second Edition](https://www.amazon.com/Advanced-Global-Illumination-Second-Philip/dp/1568813074)
+- [Physically Based Rendering](http://www.pbrt.org/)
 - [Real Shading in Unreal Engine 4](https://cdn2.unrealengine.com/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf)
   - 2013 SIGRAPH paper
   - [번역](http://lifeisforu.tistory.com/348)
@@ -885,10 +887,43 @@ Shader "Custom/CookTorrance" {
 
 # Oren-Nayar Model
 
+...
+
 # [PBR](../pbr/README.md)
 
-# Ray Traciing
+# Ray Tracing
+
+![](img/ray_tracing_1.png)
+
+![](img/ray_tracing_2.png)
+
+view frustumn은 camera에 수렴하는 투영선(projection line)의 집합이다.
+투영선의 개수는 스크린 공간의 뷰포트 해상도와 같다. 투영선 하나가 픽셀
+하나의 색상을 결정한다.
+
+1차 광선(primary ray)가 투영선을 타고 카메라로 부터 오브젝트로
+발사된다.  이후 오브젝트와 충돌하면 2차 광선(secondary ray)에 해당하는
+그림자 광선(shadow ray), 반사 광선(reflection ray), 굴절
+광선(refraction ray)가 발사된다.
+
+충돌점을 p1이라고 하자 그림자 광선 s1은 광원으로 날아간다. 
+가는 도중 다른 오브젝트와 충돌하면 p1은 광원의 직접적인 영향권에 있지
+않고 그림자 영역에 있다는 의미이다. 만약 s1이 광원에 도달하면
+이 광원에서 p1에 입사하는 빛을 이용하여 p1의 직접 조명 색상을 결정한다.
+
+굴절광선은 p1이 불투명하지 않을때 생성된다. 
+
+반사광선과 굴절광선은 간접 조명을 계산하는 목적으로 발사된다.  광선
+추적법(ray tracing)은 재귀적인 알고리즘이다. r1, t1은 발사되고 나서
+1차 광선(primary ray)처럼 취급된다. 예를 들어 r1이 불투명한 물체의
+p2와 충돌한다면 반사광선r2와 그림자광선 s2가 만들어지고 t1이 반투명한
+물체의 p3와 충돌한다면 반사광선 r3, 그림자광선 s3, 굴절광선 t3가
+만들어 진다.
 
 # Radiosity
+
+...
+
+
 # LPV (Light Propagation Volume)
 # SVOGI (Sparse Voxel Octree Global Illumination)

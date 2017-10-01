@@ -1,6 +1,11 @@
+# Comments
+
+radiosity, curve, animation, collision
+detection
+
 # Abstract
 
-- game graphics 에 대해 이론 위주로 정리한다. learning material에 기재된 순서대로 공부한다.
+- game graphics 기반 이론
 
 # Contents
 
@@ -16,6 +21,12 @@
 
 # Learning Materials
 
+- [Shadow algorithms for computer graphics](https://dl.acm.org/citation.cfm?id=563901)
+  - shadow volume
+- [casting curved shadows on curved surfaces](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.162.196&rep=rep1&type=pdf)
+  - shadow mapping
+- [Advanced Global Illumination, Second Edition](https://www.amazon.com/Advanced-Global-Illumination-Second-Philip/dp/1568813074)
+- [Physically Based Rendering](http://www.pbrt.org/)
 - [Ke-Sen Huang's Home Page](http://kesen.realtimerendering.com/)
   - 컴퓨터그래픽스 컨퍼런스 자료 및 논문 모음
 - [awesome graphics @ github](https://github.com/ericjang/awesome-graphics)
@@ -363,8 +374,6 @@ z-buffering, alpha blending을 수행한다.
 
 # [Lighting](../lighting/README.md)
 
-# [Bump Mapping](../bumpmapping/README.md)
-
 # Shader Models
 
 opengl과 direct3D는 shader 용어들이 다르다.
@@ -391,11 +400,26 @@ hull shader, tessellator, domain shader가 추가되었다.
 
 ![](img/shader_model_5.png)
 
-# Quaternion
-
 # Curve
+
+Bezier Curve
+
+Hermite Curve
+
+Catmull-Rom Spline
+
+# [Bump Mapping](../bumpmapping/README.md)
+
+# Environment Mapping
+
+# Light Mapping
+
+# Shadow Mapping
+
+# Ambient Occlusion Mapping
+
+# Deferred Shading
 
 # Animation
 
 # Collision Detection
-
