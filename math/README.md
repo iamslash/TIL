@@ -99,9 +99,9 @@
 
 # [기하학](../geometry/)
 
-# [해석학](../analystics/
+# [해석학](../analystics/)
 
-# 수리 논리학
+# [수리 논리학](../mathlogic/)
 
 # [이산수학](../discretemath/)
 
