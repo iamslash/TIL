@@ -93,20 +93,32 @@
 |1994년	        | 와일스, 페르마의 마지막 정리 증명 |
 |2002년	        | 페렐만, 푸앵카레 추측 증명 |
 
-# [대수학](../algebra/)
+# [이산수학](../discretemath/)
 
 # [선형대수학](../linearalgebra/)
 
-# [기하학](../geometry/)
+# 미분방정식
 
 # [해석학](../analystics/)
 
-# [수리 논리학](../mathlogic/)
+# 집합론
 
-# [이산수학](../discretemath/)
+# 정수론
+
+# 미분기하학
+
+# 복소해석학
+
+# 위상수학
+
+# 현대대수학
+
+# [기하학](../geometry/)
+
+# [수리논리학](../mathlogic/)
 
 # [수치해석](../numericalanal/)
 
-# [통계학](../statistics/)
+# [확률통계학](../statistics/)
 
-# [확률론](../statistics/)
+# 공업수학
