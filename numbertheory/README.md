@@ -86,6 +86,15 @@ gcd(1020, 790) = -24a + 31b이다.
 
 # 페르마의 소정리 (Ferma's little theorem)
 
+```
+theorem)
+p가 소수이고 a가 p가 서로소인 정수일때
+a^{p-1} ≡ 1 (mod p)
+
+ex)
+8^{41-1} ≡ 1 (mod 41)
+```
+
 # 중국인 나머지 정리 (Chinese Remainder's theorem)
 
 # 뤼카의 정리 (lucas' theorem)
