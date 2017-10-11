@@ -54,7 +54,7 @@ gcd(30, 10)         30 = 3 x 10 + 0
 동시에 0이 아닌 두 정수 a, b에 대하여 ax + by = gcd(a, b)를 만족하는
 정수 x, y가 존재한다.
 
-# 확장 유클리드 호제법
+# 확장 유클리드 알고리즘 (extended euclidean algorithm)
 
 베주의 정의 (bezout's identity) ax + by = gcd(a, b)의 해 (x, y)
 를 구하는 방법이다.
@@ -84,12 +84,12 @@ gcd(1020, 790) = -24a + 31b이다.
 따라서 x = -24, y = 31이다.
 ```
 
-# 디오판틴 방정식
-
-# 윌슨의 정리
-
 # 페르마의 소정리 (Ferma's little theorem)
 
 # 중국인 나머지 정리 (Chinese Remainder's theorem)
 
-# 2차 잉여
+# 뤼카의 정리 (lucas' theorem)
+
+# 디오판틴 방정식
+
+# 윌슨의 정리
