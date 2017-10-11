@@ -88,7 +88,7 @@ gcd(1020, 790) = -24a + 31b이다.
 
 ```
 theorem)
-p가 소수이고 a가 p가 서로소인 정수일때
+p가 소수이고 a와 p가 서로소(gcd(a, p) = 1)인 정수일때
 a^{p-1} ≡ 1 (mod p)
 
 ex)
@@ -97,7 +97,41 @@ ex)
 
 # 중국인 나머지 정리 (Chinese Remainder's theorem)
 
+```
+theorem)
+두 양의 정수 m1, m2이 서로소 일때
+임의의 두 정수 c1, c2에 대해 연립일차합동방정식
+x ≡ c1 (mod m1)
+x ≡ c2 (mod m2)
+는 법 m1, m2에 관하여 단 한개의 해
+x ≡ u (mod m1m2)를 갖는다.
+```
+
 # 뤼카의 정리 (lucas' theorem)
+
+[참고](http://bowbowbow.tistory.com/2)
+
+1878년 에두아르 뤼카가 논문에 제시하였다.
+음이 아닌 정수 n, k, 소수 p에 대해서
+다음과 같이 n과 k를 p진법 전개식으로 나타냈을 때
+
+![](img/lucas_theorem_eq_1.png)
+
+다음 합동식이 성립하는 것이다.
+
+![](img/lucas_theorem_eq.png)
+
+예를 들어서 다음을 구해보자.
+
+![](img/lucas_ex_1.png)
+
+![](img/lucas_ex_2.png)
+
+![](img/lucas_ex_3.png)
+
+n < m 이면 nCm은 0으로 취급하자.
+
+따라서 답은 0이다.
 
 # 디오판틴 방정식
 
