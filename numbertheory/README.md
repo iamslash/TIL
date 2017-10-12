@@ -7,6 +7,80 @@
 * [KMO BIBLE 한국수학올림피아드 바이블 프리미엄 1 정수론](http://www.yes24.com/24/Goods/12554932?Acode=101)
 * [정수론 @ qstudy](http://www.qstudy.kr/?m=234)
 
+# 서로소 (coprime)
+
+```
+theorem)
+공약수가 1뿐인 두정수의 관계이다.
+gcd(a, b) = 1일때 a, b는 서로소이다.
+
+ex)
+gcd(2, 3) = 1 이므로 2, 3은 서로소이다.
+```
+
+# 합동과 법 (congruence and modular)
+
+[합동식 @ 나무위키](https://namu.wiki/w/%ED%95%A9%EB%8F%99%EC%8B%9D)
+
+```
+theorem)
+정수 a, b, m에 대하여 m | (a - b)일때 a는 법 m에 대하여 b와 합동이다.
+a is congruent to b modulo m
+기호로 a ≡ b(mod m)라고 표현한다.
+
+ex)
+7 ≡ 1 (mod 3)
+7 ≡ -2 (mod 3)
+```
+
+# 오일러의 Φ 함수 (Euler's Φ function)
+
+```
+theorem)
+φ(n) 는 1부터 n까지의 정수중 n과 서로소인 정수의 개수
+
+ex)
+φ(2) = 1
+  1,2중에 2와 서로소인 수는 1 모두 1개이다.
+φ(6) = 2
+  1,2,3,4,5,6중에 6과 서로소인 수는 1,5 모두 2개이다.
+φ(7) = 6
+  1,2,3,4,5,6,7중에 7과 서로소인 수는 1,2,3,4,5,6 모두 6개이다.
+  
+lema)
+p가 소수일때 φ(p) = p - 1이다.
+```
+
+# 오일러의 정리 (Euler's theorem)
+
+대표적인 공개키 암호화 방식중 하나인 RSA의 가장 중요한 이론이 되는
+정리로써 페르마의 소정리를 일반화 한 것이다.
+
+```
+theorem)
+a와 n이 서로소인 양의 정수 일때
+a^{φ(n)} ≡ 1 (mod n)
+
+ex)
+7^{2016}의 마지막 세자리수를 구하라
+
+φ(1000) = 400
+7^{400} ≡ 1 (mod 1000)
+7^{2016} ≡ (7^{400})^{5} x 7^{16} (mod 1000)
+7^{16}을 1000으로 나눈 나머지가 답이다.
+```
+
+# 페르마의 소정리 (Ferma's little theorem)
+
+```
+theorem)
+p가 소수이고 a와 p가 서로소(gcd(a, p) = 1)인 정수일때
+a^{p-1} ≡ 1 (mod p)
+
+ex)
+8^{41-1} ≡ 1 (mod 41)
+```
+
 # 유클리드 알고리즘 (euclidean algorithm)
 
 ```
@@ -51,8 +125,11 @@ gcd(30, 10)         30 = 3 x 10 + 0
 
 # 베주의 정의 (Bezout's identity)
 
+```
+theorem)
 동시에 0이 아닌 두 정수 a, b에 대하여 ax + by = gcd(a, b)를 만족하는
 정수 x, y가 존재한다.
+```
 
 # 확장 유클리드 알고리즘 (extended euclidean algorithm)
 
@@ -82,17 +159,6 @@ gcd(100, 30)       100 = 3 x 30 + 10
 10 = gcd(1020, 790)이므로
 gcd(1020, 790) = -24a + 31b이다.
 따라서 x = -24, y = 31이다.
-```
-
-# 페르마의 소정리 (Ferma's little theorem)
-
-```
-theorem)
-p가 소수이고 a와 p가 서로소(gcd(a, p) = 1)인 정수일때
-a^{p-1} ≡ 1 (mod p)
-
-ex)
-8^{41-1} ≡ 1 (mod 41)
 ```
 
 # 중국인 나머지 정리 (Chinese Remainder's theorem)
