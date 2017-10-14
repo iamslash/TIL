@@ -279,6 +279,8 @@ n < m 이면 nCm은 0으로 취급하자.
 
 # 나머지 곱셈의 역원 (modular multiplicative inverse)
 
+[참고 @ 지식인](http://kin.naver.com/qna/detail.nhn?d1id=11&dirId=1113&docId=121560135)
+
 먼저 곱셈에 대한 항등원과 역원을 구해보자.
 
 ```
