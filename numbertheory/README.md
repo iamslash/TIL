@@ -52,6 +52,10 @@ p와 q의 최대 공약수는 q와 r의 최대 공약수와 같다.
 
 # 최대공약수와 유클리드 호제법 (GCD and Eclidean algorithm)
 
+알고리즘 구현은 다음을 참고하자.
+
+[유클리드 알고리즘 @ TIL](https://github.com/iamslash/learntocode/blob/master/doc/number_euclidean.md)
+
 ## 정의
 
 호제법은 번갈아가면 제거하는 방법을 의미한다. 유클리드 호제법은
@@ -195,6 +199,10 @@ a^{p-1} ≡ 1 (mod p)
 
 # 확장 유클리드 알고리즘 (extended euclidean algorithm)
 
+알고리즘 구현은 다음을 참고하자.
+
+[확장 유클리드 알고리즘 @ TIL](https://github.com/iamslash/learntocode/blob/master/doc/number_ex_euclidean.md)
+
 ## 정의
 
 베주의 정의 (bezout's identity) ax + by = gcd(a, b)의 해 (x, y)
@@ -238,6 +246,10 @@ gcd(?, 0) = ? * 1 + 0 * 0 이라고 할 수 있다.
 
 # 중국인 나머지 정리 (Chinese Remainder's theorem)
 
+알고리즘 구현은 다음을 참고하자.
+
+[중국인 나머지 정리 @ TIL](https://github.com/iamslash/learntocode/blob/master/doc/number_chinese_remainder.md)
+
 ## 정의
 
 ```
@@ -260,6 +272,10 @@ u는 하나 이지만 x는 여러개다.
 ```
 
 # 뤼카의 정리 (lucas' theorem)
+
+알고리즘 구현은 다음을 참고하자.
+
+[뤼카의 정리 @ TIL](https://github.com/iamslash/learntocode/blob/master/doc/number_lucas.md)
 
 ## 정의
 
@@ -340,3 +356,8 @@ n % 11 * y % 11 = 1 % 11
 나머지 곱셈의 역원은 페르마의 작은 정리 (Ferma's little theorem), 확장
 유클리디안 알고리즘 (extend euclidean algorithm)등을 이용해서 구할 수
 있다.
+
+
+나머지 곱셈의 역원을 구하는 알고리즘 구현은 다음을 참고하자.
+
+[modular arithmatic @ TIL](https://github.com/iamslash/learntocode/blob/master/doc/number_modular.md#div)
