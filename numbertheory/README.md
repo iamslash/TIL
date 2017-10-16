@@ -360,4 +360,4 @@ n % 11 * y % 11 = 1 % 11
 
 나머지 곱셈의 역원을 구하는 알고리즘 구현은 다음을 참고하자.
 
-[modular arithmatic @ TIL](https://github.com/iamslash/learntocode/blob/master/doc/number_modular.md#div)
+[modular arithmetic @ learntocode](https://github.com/iamslash/learntocode/blob/master/doc/number_modular.md#div)
