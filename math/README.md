@@ -27,6 +27,7 @@
 
 - [수학의 파노라나 @ 교보문고](http://www.kyobobook.co.kr/product/detailViewKor.laf?barcode=9788983716903)
   - 수학의 역사적 토픽 250가지를 시대별로 잘정리 했다.
+  - [이곳](http://sprott.physics.wisc.edu/pickover/math-book.html)은 저자가 정리한 참고문헌들이다.
 - [KMO BIBLE 한국수학올림피아드 바이블 프리미엄](http://www.yes24.com/24/goods/12554932?scode=032&OzSrank=2)
   - 한국수학올림피아드를 대비하기 위한 책이다. 정수론, 대수, 기하, 조합 과 같이 4권으로 구성되어 있다.
   - 무엇보다 커리큘럼이 잘 정리 되어 있어 봐둘 만 하다.

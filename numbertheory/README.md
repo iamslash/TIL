@@ -25,6 +25,10 @@
 * [KMO BIBLE 한국수학올림피아드 바이블 프리미엄 1 정수론](http://www.yes24.com/24/Goods/12554932?Acode=101)
 * [정수론 @ qstudy](http://www.qstudy.kr/?m=234)
 
+# References
+
+* [An Introduction to the Theory of Numbers @ amazon](https://www.amazon.com/Introduction-Theory-Numbers-Ivan-Niven/dp/0471625469)
+
 # 서로소 (coprime)
 
 ## 정의
