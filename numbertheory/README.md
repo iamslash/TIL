@@ -18,7 +18,7 @@
 * [확장 유클리드 알고리즘](#확장-유클리드-알고리즘-extended-euclidean-algorithm)
 * [중국인의 나머지 정리](#중국인-나머지-정리-chinese-remainders-theorem)
 * [뤼카의 정리](#뤼카의-정리-lucas-theorem)
-* [나머지 연산에 대한 곱셈의 엮원](나머지-곱셈의-역원-modular-multiplicative-inverse)
+* [나머지 연산에 대한 곱셈의 엮원](#나머지-곱셈의-역원-modular-multiplicative-inverse)
 
 # Learning Materials
 
