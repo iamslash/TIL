@@ -2,6 +2,24 @@
 
 정수론에 대해 정리해본다.
 
+# Contents
+
+* [Learning Materials](#learning-materials)
+* [서로소](#서로소-coprime)
+* [유클리드 알고리즘](#유클리드-알고리즘-euclidean-algorithm)
+* [최대공약수와 유클리드 호제법](#최대공약수와-유클리드-호제법-gcd-and-eclidean-algorithm)
+* [디오판틴 방정식](#디오판틴-방정식-diophantine-equation)
+* [합동과 법](#합동과-법-congruence-and-modular)
+* [오일러의 Φ 함수](#오일러의-Φ-함수-eulers-Φ-function)
+* [오일러의 정리](#오일러의-정리-eulers-theorem)
+* [윌슨의 정리](#윌슨의-정리-wilsons-theorem)
+* [페르마의 소정리](#페르마의-소정리-fermas-little-theorem)
+* [베주의 정의](#베주의-정의-bezouts-identity)
+* [확장 유클리드 알고리즘](#확장-유클리드-알고리즘-extended-euclidean-algorithm)
+* [중국인의 나머지 정리](#중국인-나머지-정리-chinese-remainders-theorem)
+* [뤼카의 정리](#뤼카의-정리-lucas-theorem)
+* [나머지 연산에 대한 곱셈의 엮원](나머지-곱셈의-역원-modular-multiplicative-inverse)
+
 # Learning Materials
 
 * [KMO BIBLE 한국수학올림피아드 바이블 프리미엄 1 정수론](http://www.yes24.com/24/Goods/12554932?Acode=101)
@@ -293,15 +311,17 @@ u는 하나 이지만 x는 여러개다.
 
 ## 예
 
-![](img/lucas_ex_1.png)
+```
+예를 들어 1000 C 900 % 13 의 경우를 살펴보자.
 
-![](img/lucas_ex_2.png)
-
-![](img/lucas_ex_3.png)
-
-n < m 이면 nCm은 0으로 취급하자.
-
-따라서 답은 0이다.
+1000 = 5 * 13^{2} + 11 * 13^{2} + 12 * 13^{0}
+900  = 5 * 13^{2} +  4 * 13^{2} +  3 * 13^{0}
+1000 C 900 % 13 = 5C5 * 11C4 * 12C3 % 13
+                = 8
+python을 이용해서 1000 C 900 % 13을 구해보았다.
+>>> factorial(11) / factorial(7) * factorial(4) * factorial(12) / factorial(9) * factorial(3) % 13
+8
+```
 
 # 나머지 곱셈의 역원 (modular multiplicative inverse)
 

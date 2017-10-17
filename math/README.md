@@ -15,15 +15,24 @@
   좋다.
 - [서울대학교 수학과 교과과정](http://www.math.snu.ac.kr/board/b5_5)을 통해서
   수학의 과목별 설명을 확인 할 수 있다.
+- [수학올림피아드 학습용 추천도서](http://xn--9g3b2pk7jl8x.kr/board/bbs/board.php?bo_table=olympiad01&wr_id=8)는
+  중,고등생 수학 올림피아드 대비용 추천도서가 제시되어 있다.
 
 # Learning Materials
 
-- [KMO BIBLE 한국수학올림피아드 바이블 프리미엄](http://www.yes24.com/24/goods/12554932?scode=032&OzSrank=2)
-  - 한국수학올림피아드를 대비하기 위한 책이다. 정수론, 대수, 기하, 조합 과 같이 4권으로 구성되어 있다.
-  - 무엇보다 커리큘럼이 잘 정리 되어 있어 봐둘 만 하다.
 - [큐스터디](http://www.qstudy.kr/)
   - 대학 수학 유료 동영상 강좌
   
+# References
+
+- [수학의 파노라나 @ 교보문고](http://www.kyobobook.co.kr/product/detailViewKor.laf?barcode=9788983716903)
+  - 수학의 역사적 토픽 250가지를 시대별로 잘정리 했다.
+- [KMO BIBLE 한국수학올림피아드 바이블 프리미엄](http://www.yes24.com/24/goods/12554932?scode=032&OzSrank=2)
+  - 한국수학올림피아드를 대비하기 위한 책이다. 정수론, 대수, 기하, 조합 과 같이 4권으로 구성되어 있다.
+  - 무엇보다 커리큘럼이 잘 정리 되어 있어 봐둘 만 하다.
+- [문제해결전략 @ yes24](http://www.yes24.com/24/goods/3085601?scode=032&OzSrank=2)
+  - 763쪽의 방대한 교과서
+
 # 수학사연표
 
 | Fiscal        | Event                |
@@ -93,7 +102,7 @@
 |1994년	        | 와일스, 페르마의 마지막 정리 증명 |
 |2002년	        | 페렐만, 푸앵카레 추측 증명 |
 
-# 미적분학
+# [미적분학](../calaculus/)
 
 # [이산수학](../discretemath/)
 
