@@ -7,6 +7,9 @@
 * [전산학의 고전 탑 25 @ 김창준](http://agile.egloos.com/1677740)
 * [논문/형식 @ 나무위키](https://namu.wiki/w/%EB%85%BC%EB%AC%B8/%ED%98%95%EC%8B%9D)
 * [인용/스타일 @ 나무위키](https://namu.wiki/w/%EC%9D%B8%EC%9A%A9/%EC%8A%A4%ED%83%80%EC%9D%BC)
+* [SCIgen - An Automatic CS Paper Generator](https://pdos.csail.mit.edu/archive/scigen/)
+
+  저자를 입력하면 CS 논문을 만들어 준다.
 
 # Papers
 
