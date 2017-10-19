@@ -22,6 +22,8 @@ detection
 
 # Learning Materials
 
+- [GPU how to work](http://pixeljetstream.blogspot.kr/2015/02/life-of-triangle-nvidias-logical.html)
+  - GPU가 어떻게 작동하는 가를 렌더링 파이플 라인과 함께 설명함
 - [Shadow algorithms for computer graphics](https://dl.acm.org/citation.cfm?id=563901)
   - shadow volume
 - [casting curved shadows on curved surfaces](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.162.196&rep=rep1&type=pdf)

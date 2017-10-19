@@ -4,6 +4,8 @@
 
 # Learning Material
 
+- [GPU how to work](http://pixeljetstream.blogspot.kr/2015/02/life-of-triangle-nvidias-logical.html)
+  - GPU가 어떻게 작동하는 가를 렌더링 파이플 라인과 함께 설명함
 - [3차원 그래픽스(게임 프로그래밍을위한)](http://media.korea.ac.kr/book/)
   - 3차원 그래픽스 기반이론을 매우 자세히 풀어썼다. 저자의
     홈페이지에서 제공하는 슬라이드는 각종 그림과 수식을 가득 포함하고 있다.
