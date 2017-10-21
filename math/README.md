@@ -25,6 +25,8 @@
   
 # References
 
+- [천재학습백과](http://koc.chunjae.co.kr/Dic/dicMain.do)
+  - 고등수학을 가장 잘 정리한 곳
 - [수학의 파노라나 @ 교보문고](http://www.kyobobook.co.kr/product/detailViewKor.laf?barcode=9788983716903)
   - 수학의 역사적 토픽 250가지를 시대별로 잘정리 했다.
   - [이곳](http://sprott.physics.wisc.edu/pickover/math-book.html)은 저자가 정리한 참고문헌들이다.
