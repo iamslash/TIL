@@ -4,6 +4,8 @@
 
 # Learning Materials
 
+- [THE COMPREHENSIVE PBR GUIDE](https://www.allegorithmic.com/pbr-guide)
+  - 아티스트 입장에서 이해
 - [Physically Based Rendering Algorithms: A Comprehensive Study In Unity3D](http://www.jordanstevenstechart.com/physically-based-rendering)
 - [BASIC THEORY OF PHYSICALLY-BASED RENDERING](https://www.marmoset.co/posts/basic-theory-of-physically-based-rendering/)
 - [PBR이란무엇인가 @ tistory](http://lifeisforu.tistory.com/366)
