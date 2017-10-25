@@ -28,6 +28,12 @@ c++에 대해 정리한다.
 
 # vector vs deque vs list
 
+|     | vector | deque | list |
+|:---:|:---:|:---:|:---:|
+| 인덱스접근 | o | o | x |
+| 확장방법 | 전체재할당 | chunk 추가할당 | 불필요 |
+| 중간삽입 | O(n) | O(n) | O(1)|
+
 ## vector
 
 ### pros
