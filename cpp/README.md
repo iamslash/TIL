@@ -4,6 +4,7 @@ c++에 대해 정리한다.
 
 # Contents
 
+* vector vs deque vs list
 * How to choose a container
 * C++11 Tips
   * [auto](#auto)
@@ -24,6 +25,45 @@ c++에 대해 정리한다.
   * [thread](#thread)
   * [to_string](#to_string)
   * [convert string](#convert-string)
+
+# vector vs deque vs list
+
+## vector
+
+### pros
+
+- 동적으로 확장 및 축소가 가능하다. dynamic array로 구현되어 있다.
+  재할당 방식이다. 메모리가 연속으로 할당되어 있어 포인터 연산이 가능하다.
+- index로 접근 가능하다. O(1)
+
+### cons
+
+- 끝이 아닌 위치에 삽입 및 제거시 성능이 떨어진다.
+- 동적으로 확장 및 축소할때 전체를 재할당 하므로 비용이 크다.
+
+## deque (double ended queue)
+
+### pros
+
+- index로 접근 가능하다. O(1)
+- 끝이 아닌 위치에 삽입 및 제거시 성능이 좋다. O(1)
+- 동적으로 확장 될때 일정한 크기만큼 chuck가 하나 더 할당되는 방식이다.
+  저장 원소가 많거나 원소의 크기가 클때 즉 메모리 할당이 큰 경우 
+  vector에 비해 확장 비용이 적다.
+
+### cons
+
+- 메모리가 연속으로 할당되어 있지 않아 vector와 달리 포인터 연산이 불가능하다.
+
+## list
+
+### pros
+
+- vector, deque와 달리 임의의 위치에 삽입 및 제거시 성능이 좋다. O(1)
+
+### cons
+
+- index로 접근 불가능하다. 
 
 # How to choose a container
 
