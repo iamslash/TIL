@@ -6,6 +6,8 @@
 
 * [Concept](#concept)
 * [Contingency](#contingency)
+* [Public Key, Private Key](#public-key-private-key)
+* [Prerequisites](#prerequisites)
 
 # Concept
 
