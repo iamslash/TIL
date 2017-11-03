@@ -24,7 +24,7 @@ detection
 
 - [game engine development by Jamie King @ youtube](https://www.youtube.com/playlist?list=PLRwVmtr-pp04XomGtm-abzb-2M1xszjFx)
   - visual studio를 이용한 게임 엔진 개발
-  - 코드는 어디있냐
+  - [src](https://github.com/1kingja/game-engine)
 - [game engine development by Bennybox](https://www.youtube.com/watch?v=ss3AnSxJ2X8&list=PLEETnX-uPtBXP_B2yupUKlflXBznWIlL5)
   - java를 이용한 게임 엔진 개발
   - [src](https://github.com/BennyQBD/3DGameEngine)
