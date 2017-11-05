@@ -235,7 +235,7 @@ gcd(a, b)   = gcd(b, a%b)
 
 gcd(a, b)   = ax + by 
 
-gcd(b, a%b) = b * x_{1} + a%b * y_{1}
+gcd(b, a%b) = b * x_{1} + a%b * y_{1}  (a % b = a - qb, q = a / b)
             = b * x_{1} + (a - a/b*b) * y_{1}
             = a * y_{1} + b (x_{1} - a/b*b*Y_{1})
             
