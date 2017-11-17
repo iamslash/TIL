@@ -22,6 +22,12 @@ detection
 
 # Learning Materials
 
+- [game engine development by Jamie King @ youtube](https://www.youtube.com/playlist?list=PLRwVmtr-pp04XomGtm-abzb-2M1xszjFx)
+  - visual studio를 이용한 게임 엔진 개발
+  - [src](https://github.com/1kingja/game-engine)
+- [game engine development by Bennybox](https://www.youtube.com/watch?v=ss3AnSxJ2X8&list=PLEETnX-uPtBXP_B2yupUKlflXBznWIlL5)
+  - java를 이용한 게임 엔진 개발
+  - [src](https://github.com/BennyQBD/3DGameEngine)
 - [GPU how to work](http://pixeljetstream.blogspot.kr/2015/02/life-of-triangle-nvidias-logical.html)
   - GPU가 어떻게 작동하는 가를 렌더링 파이플 라인과 함께 설명함
 - [Shadow algorithms for computer graphics](https://dl.acm.org/citation.cfm?id=563901)
@@ -77,8 +83,6 @@ detection
 - [learn opengl](https://learnopengl.com/)
   - [src](https://github.com/JoeyDeVries/LearnOpenGL)
   - opengl 튜토리얼중 최고
-- [game engine development at youtube](https://www.youtube.com/playlist?list=PLRwVmtr-pp04XomGtm-abzb-2M1xszjFx)
-  - visual studio를 이용한 게임 엔진 개발
 - [scratchapixel 2.0](http://www.scratchapixel.com/)
   - computer graphics를 알기쉽게 설명한다.
 - [intel developer zone game dev code samples](https://software.intel.com/en-us/gamedev/code-samples)
@@ -121,11 +125,6 @@ detection
 
 - [unrealengine 4 src](https://github.com/EpicGames/UnrealEngine)
   - opensource engine중 최고
-- [godot engine](https://github.com/godotengine/godot)
-  - android, ios를 포함한 다양한 플래폼을 지원하는 엔진
-- [banshee engine](https://github.com/BearishSun/BansheeEngine)
-  - c++14로 제작되고 있는 game engine
-  - 이제 시작된 것 같아서 참고해 본다.
 
 # Math Prerequisites
 
