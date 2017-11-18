@@ -5,11 +5,11 @@
 # Materials
 
 * [패턴으로 가는길, 손영수](http://www.devpia.com/MAEUL/Contents/Detail.aspx?BoardID=70&MAEULNO=28&no=187&page=1)
-** 패턴 공부 로드맵
+  *  패턴 공부 로드맵
 * [GOF pattern]()
 * [POSA]()
 * [PLoPD, pattern language of program design](http://wiki.c2.com/?PatternLanguagesOfProgramDesign)
-** 패턴에 관련된 컨퍼런스인 PLoP의 논문들을 정리한 책
+  * 패턴에 관련된 컨퍼런스인 PLoP의 논문들을 정리한 책
 * [Pattern-Oriented Analysis and Design: Composing Patterns to Design Software Systems](http://www.kangcom.com/sub/view.asp?sku=200309010011)
 * [Remoting Patterns: Foundations of Enterprise, Internet and Realtime Distributed Object Middleware](http://www.kangcom.com/sub/view.asp?sku=200410040309)
 * [Xunit Test Patterns: Refactoring Test Code](http://www.kangcom.com/sub/view.asp?sku=200612280010)
