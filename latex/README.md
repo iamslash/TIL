@@ -29,6 +29,6 @@
 ```
 
 * TikZ를 이용하여 image표현하기
-
-** [TikZ and PGF examples](http://www.texample.net/tikz/examples/all/)
+  * [TikZ package](https://ko.sharelatex.com/learn/TikZ_package)
+  * [TikZ and PGF examples](http://www.texample.net/tikz/examples/all/)
 
