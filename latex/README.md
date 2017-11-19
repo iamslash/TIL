@@ -31,6 +31,8 @@
 * TikZ를 이용하여 image표현하기
   * [TikZ package](https://ko.sharelatex.com/learn/TikZ_package)
   * [TikZ and PGF examples](http://www.texample.net/tikz/examples/all/)
+  * [A very minimal introduction to TikZ](http://cremeronline.com/LaTeX/minimaltikz.pdf)
   * [Generating TikZ Code from GeoGebra for LaTeX Documents and Beamer Presentations](https://www.sharelatex.com/blog/2013/08/28/tikz-series-pt2.html)
     * GeoGebra라는 프로그램으로 TikZ code를 만들어 낼 수 있다.
+  * [TikZ @ wikibooks](https://en.wikibooks.org/wiki/LaTeX/PGF/TikZ)
 
