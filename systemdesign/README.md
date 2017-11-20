@@ -7,6 +7,10 @@
 
 - [system deisgn primer](https://github.com/donnemartin/system-design-primer#federation)
   - 킹왕짱 내가 다시 정리할 필요성을 못 느낀다.
+- [Azure Cloud Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
+  - [infographic](https://azure.microsoft.com/en-us/resources/infographics/cloud-design-patterns/)
+- [AWS Architect](https://aws.amazon.com/ko/architecture/)
+- [GCP Solutions](https://cloud.google.com/solutions/)
 
 # prerequisites
 
