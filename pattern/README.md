@@ -20,8 +20,9 @@
 * [Refactoring to Patterns](http://www.kangcom.com/sub/view.asp?sku=200406140003)
 * [Architecting Enterprise Solutions: Patterns for High-Capability Internet-Based Systems](http://www.kangcom.com/sub/view.asp?sku=200410040307)
 * [PLoP papers](http://www.hillside.net/index.php/past-plop-conferences)
-* [Cloud Design Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
-* [aws architecture](https://aws.amazon.com/ko/architecture/)
+* [Azure Cloud Design Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
+  * [Azure Cloud Design Patterns Infographic](https://azure.microsoft.com/en-us/resources/infographics/cloud-design-patterns/)
+* [AWS architecture](https://aws.amazon.com/ko/architecture/)
 * [클로저 디자인 패턴](http://clojure.or.kr/docs/clojure-and-gof-design-patterns.html)
   * java로 표현한 디자인 패턴은 clojure로 이렇게 간단히 된다.
 
@@ -63,7 +64,7 @@
   - Template (Method	Defer the exact steps of an algorithm to a subclass)
   - Visitor	(Defines a new operation to a class without change)
     
----  
+---
 
 # [Game Programming Pattern](http://gameprogrammingpatterns.com/contents.html)
 
@@ -86,6 +87,14 @@
   - Spatial Partition
 
 ---
+
+# [Design patterns implemented in Java](http://java-design-patterns.com/)
+
+- 
+
+# [Azure Cloud Design Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
+
+- 
 
 # POSA
 
