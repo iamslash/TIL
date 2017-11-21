@@ -87,7 +87,12 @@
 
 # [Design patterns implemented in Java](http://java-design-patterns.com/)
 
-- 
+- Event Sourcing
+  - 사용자의 행위에 해당하는 이벤트를 모두 저장한다.
+  - [eventsourcing & cqrs demo project for springcamp 2017](https://github.com/jaceshim/springcamp2017)
+
+- CQRS
+  - 읽는 이벤트와 쓰는 이벤트를 분리한다.
 
 ---
 
