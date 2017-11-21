@@ -87,12 +87,17 @@
 
 # [Design patterns implemented in Java](http://java-design-patterns.com/)
 
+- API Gateway
+  - 마이크로 서비스에 대한 모든 요청들을 한 곳 으로 모아 놓는다.
+  - 앞서 언급한 한 곳이 바로 Gateway이다. Gateway는 요청들의 성격에 따라 관련된 마이크로 서비스들에게 라우팅 하자.
+
 - Event Sourcing
-  - 사용자의 행위에 해당하는 이벤트를 모두 저장한다.
+  - 사용자의 행위에 해당하는 이벤트를 모두 저장한다. 
+  - 사용자의 최종 상태를 알려면 저장된 모든 이벤트를 재생해야 한다. 이벤트가 많아지면 수행속도가 늦을 수 있으니 이벤트가 일정 개수마다 쌓이면 스냅샷을 저장하자.
   - [eventsourcing & cqrs demo project for springcamp 2017](https://github.com/jaceshim/springcamp2017)
 
 - CQRS
-  - 읽는 이벤트와 쓰는 이벤트를 분리한다.
+  - 읽는 행위와 쓰는 행위를 분리하자. 
 
 ---
 
