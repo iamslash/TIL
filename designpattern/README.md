@@ -120,9 +120,13 @@
 
 - Service Layer
 
+## Behavioral
+
 ## Business Tier
 
 ## Concurrency
+
+## Creational
 
 ## Integration
 
@@ -130,11 +134,16 @@
 
 ## Presentation Tier
 
+## Structural
+
 ## Testing
 
 - Page Object
-  - HTML 을 테스트 하기 위해 HTML page를 추상화 한 것 
-
+  - Page Object encapsulates the UI, hiding the underlying UI widgetry
+    of an application (commonly a web application) and providing an
+    application-specific API to allow the manipulation of UI
+    components required for tests.
+  
 ## Other
 
 ---
