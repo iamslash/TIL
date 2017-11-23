@@ -7,8 +7,11 @@ clojure에 대해 정리한다.
 * [repl.it](https://repl.it/)
   * repl on the web
 * [초보자를 위한 클로저](https://eunmin.gitbooks.io/clojure-for-beginners/content/)
+* [clojure doc](https://clojuredocs.org/)
+* [clojure design pattern](http://clojure.or.kr/docs/clojure-and-gof-design-patterns.html)
+  * GOF design pattern을 clojure에서 이렇게 쉽게 할 수 있다.
 
-# environment
+# Environment
 
 ## Windows10
 
@@ -22,4 +25,7 @@ lein.bat self-install
 * intelliJ
   * install Cursive plugin
 
-# Fundamental
+# Usage
+
+## macro
+

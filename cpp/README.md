@@ -26,7 +26,9 @@ c++에 대해 정리한다.
   * [to_string](#to_string)
   * [convert string](#convert-string)
 
-# vector vs deque vs list
+# Usage
+
+## vector vs deque vs list
 
 |     | vector | deque | list |
 |:---:|:---:|:---:|:---:|
