@@ -108,27 +108,60 @@
 ## Architectural
 
 - API Gateway
-  - 마이크로 서비스들에 대한 모든 요청들을 모두 Gateway에서 처리하자.
-  - Gateway는 요청들의 성격에 따라 관련된 마이크로 서비스들에게 전달하자.
+  - Aggregate calls to microservices in a single location: the API
+    Gateway. The user makes a single call to the API Gateway, and the
+    API Gateway then calls each relevant microservice.
+  - similar to Aggregator Microservices
 
 - Aggregator Microservices
+  - The user makes a single call to the Aggregator, and the aggregator
+    then calls each relevant microservice and collects the data, apply
+    business logic to it, and further publish is as a REST
+    Endpoint. More variations of the aggregator are: - Proxy
+    Microservice Design Pattern: A different microservice is called
+    upon the business need. - Chained Microservice Design Pattern: In
+    this case each microservice is dependent/ chained to a series of
+    other microservices.
+  - similar to APIGateway
 
-- CQRS
-  - 읽는 행위와 쓰는 행위를 분리하자.
+- CQRS (command query responsibility segregation
+  - CQRS Command Query Responsibility Segregation - Separate the query
+    side from the command side.
 
 - Data Bus
+  - Allows send of messages/events between components of an
+    application without them needing to know about each other. They
+    only need to know about the type of the message/event being sent.
+  - similar to mediator, observer, publish/subscribe pattern
 
 - Data Transfer Object
 
+  - Pass data with multiple attributes in one shot from client to
+    server, to avoid multiple calls to remote server.
+
 - Event Driven Architecture
 
+  - Send and notify state changes of your objects to other
+    applications using an Event-driven Architecture.
+
 - Event Sourcing
-  - 사용자의 행위에 해당하는 이벤트들을 모두 저장한다.
-  - 예를 들어 장바구니에 품목을 담았을때를 저장하고 품목을 제거했을때를 저장하자.
-  - 장바구니의 최종 상태를 알려면 저장된 모든 이벤트를 재생해야 한다. 이벤트가 많아지면 수행속도가 늦을 수 있으니 이벤트가 일정 개수마다 쌓이면 스냅샷을 저장하자.
+
+  - Instead of storing just the current state of the data in a domain,
+    use an append-only store to record the full series of actions
+    taken on that data. The store acts as the system of record and can
+    be used to materialize the domain objects. This can simplify tasks
+    in complex domains, by avoiding the need to synchronize the data
+    model and the business domain, while improving performance,
+    scalability, and responsiveness. It can also provide consistency
+    for transactional data, and maintain full audit trails and history
+    that can enable compensating actions.
   - [eventsourcing & cqrs demo project for springcamp 2017](https://github.com/jaceshim/springcamp2017)
 
 - Hexagonal Architecture
+
+  - Allow an application to equally be driven by users, programs,
+    automated test or batch scripts, and to be developed and tested in
+    isolation from its eventual run-time devices and databases.
 
 - Layers
 
