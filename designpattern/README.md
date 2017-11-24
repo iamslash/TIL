@@ -34,32 +34,50 @@
   
 - Creational Pattern
   - Abstract Factory	(Creates an instance of several families of classes)
+    - strategy of related creating object
   - Builder	(Separates object construction from its representation)
+    - selective arguments
   - Factory Method	(Creates an instance of several derived classes)
+    - strategy of creating object
   - Prototype	(A fully initialized instance to be copied or cloned)
   - Singleton	(A class of which only a single instance can exist)    
 
 - Structural Pattern
   - Adapter	(Match interfaces of different classes)
+    - wrapper, various type, same feature
   - Bridge	(Separates an object’s interface from its implementation)
   - Composite	(A tree structure of simple and composite objects)
+    - tree
   - Decorator	(Add responsibilities to objects dynamically)
+    - wrapper with same type, new feature
   - Facade	(A single class that represents an entire subsystem)
   - Flyweight	(A fine-grained instance used for efficient sharing)
+    - cache
   - Proxy	(An object representing another object)
+    - wrapper, composition of function
 
 - Behaviorial Pattern
   - Chain of Resp.	(A way of passing a request between a chain of objects)
+    - composition of function
   - Command	(Encapsulate a command request as an object)
+    - function
   - Interpreter	(A way to include language elements in a program)
+    - functions which process tree
   - Iterator	(Sequentially access the elements of a collection)
+    - sequence
   - Mediator	(Defines simplified communication between classes)
   - Memento	(Capture and restore an object's internal state)
+    - save and restore
   - Observer	(A way of notifying change to a number of classes)
+    - a function which is called after other function is called
   - State	(Alter an object's behavior when its state changes)
+    - Strategy pattern which depends on states
   - Strategy	(Encapsulates an algorithm inside a class)
+    - a function which receives arguments
   - Template (Method	Defer the exact steps of an algorithm to a subclass)
+    - Stategy pattern which includes default values
   - Visitor	(Defines a new operation to a class without change)
+    - multi dispath
     
 ---
 
