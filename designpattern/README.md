@@ -395,6 +395,7 @@
 
   - Apply a "Separation of Concerns" principle in a way that allows
     developers to build and test user interfaces.
+  - [안드로이드의 MVC, MVP, MVVM 종합 안내서](https://academy.realm.io/kr/posts/eric-maxwell-mvc-mvp-and-mvvm-on-android/)
 
 ## [Structural](#gof-pattern)
 
