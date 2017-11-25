@@ -15,6 +15,8 @@ clojure에 대해 정리한다.
 * [clojure examples](https://kimh.github.io/clojure-by-example)
 * [clojure cheatsheet](https://clojure.org/api/cheatsheet)
 * [clojure for java developer](https://github.com/mbonaci/clojure)
+* [Web Development with Clojure](Web Development with Clojure)
+* [brave clojure](https://www.braveclojure.com/clojure-for-the-brave-and-true/)
 
 # Environment
 
@@ -29,6 +31,14 @@ lein.bat self-install
 
 * intelliJ
   * install Cursive plugin
+  
+## macosx
+
+* leiningen
+
+```
+brew install leiningen
+```
 
 # Usage
 
