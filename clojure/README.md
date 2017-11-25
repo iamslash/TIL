@@ -13,7 +13,6 @@ clojure에 대해 정리한다.
   * clojure를 문제를 풀면서 학습해보자.
 * [clojure examples](https://kimh.github.io/clojure-by-example)
 * [clojure for java developer](https://github.com/mbonaci/clojure)
-* [Web Development with Clojure](Web Development with Clojure)
 * [brave clojure](https://www.braveclojure.com/clojure-for-the-brave-and-true/)
 
 # References
