@@ -4,8 +4,7 @@ clojure에 대해 정리한다.
 
 # Material
 
-* [repl.it](https://repl.it/)
-  * repl on the web
+* [clojure in y minutes](https://learnxinyminutes.com/docs/ko-kr/clojure-kr/)
 * [초보자를 위한 클로저](https://eunmin.gitbooks.io/clojure-for-beginners/content/)
 * [clojure doc](https://clojuredocs.org/)
 * [clojure design pattern](http://clojure.or.kr/docs/clojure-and-gof-design-patterns.html)
@@ -13,10 +12,15 @@ clojure에 대해 정리한다.
 * [4clojure](http://clojure.or.kr/docs/clojure-and-gof-design-patterns.html#mediator)
   * clojure를 문제를 풀면서 학습해보자.
 * [clojure examples](https://kimh.github.io/clojure-by-example)
-* [clojure cheatsheet](https://clojure.org/api/cheatsheet)
 * [clojure for java developer](https://github.com/mbonaci/clojure)
 * [Web Development with Clojure](Web Development with Clojure)
 * [brave clojure](https://www.braveclojure.com/clojure-for-the-brave-and-true/)
+
+# References
+
+* [repl.it](https://repl.it/language/clojure)
+  * clojure repl on the web
+* [clojure cheatsheet](https://clojure.org/api/cheatsheet)
 
 # Environment
 
