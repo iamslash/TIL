@@ -9,3 +9,4 @@ database 를 만들어 보자.
   * [src](https://github.com/uchicago-cs/chidb)
 * [cubrid @ github](https://github.com/CUBRID/cubrid)
   * 국산 opensource rdbms
+* [sqlite @ github](https://github.com/smparkes/sqlite)
