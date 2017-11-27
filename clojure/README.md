@@ -16,6 +16,9 @@ clojure에 대해 정리한다.
 * [Clojure for Java Programmers Part 2 - Rich Hickey @ youtube](https://www.youtube.com/watch?v=hb3rurFxrZ8)
 * [Clojure Koans](https://github.com/functional-koans/clojure-koans)
   * interactive learning clojure
+* [datomic tutorial](https://github.com/Datomic/day-of-datomic/tree/master/tutorial)
+  * datamic 은 clojure 로 만든 database 이다.
+* [datomic doc](http://docs.datomic.com/)
 
 # References
 
