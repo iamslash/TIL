@@ -14,6 +14,8 @@ clojure에 대해 정리한다.
 * [clojure for java developer](https://github.com/mbonaci/clojure)
 * [brave clojure](https://www.braveclojure.com/clojure-for-the-brave-and-true/)
 * [Clojure for Java Programmers Part 2 - Rich Hickey @ youtube](https://www.youtube.com/watch?v=hb3rurFxrZ8)
+* [Clojure Koans](https://github.com/functional-koans/clojure-koans)
+  * interactive learning clojure
 
 # References
 
