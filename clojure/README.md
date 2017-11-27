@@ -19,6 +19,7 @@ clojure에 대해 정리한다.
 * [datomic tutorial](https://github.com/Datomic/day-of-datomic/tree/master/tutorial)
   * datamic 은 clojure 로 만든 database 이다.
 * [datomic doc](http://docs.datomic.com/)
+* [datomic intro @ github](https://github.com/philoskim/datomic-intro)
 
 # References
 
