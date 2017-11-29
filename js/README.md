@@ -10,6 +10,8 @@ java script에 대해 정리한다.
   * [src](https://github.com/indongyoo/functional-javascript)
 * [john resig blog](https://johnresig.com/apps/learn/)
 * [실행 컨텍스트](https://www.zerocho.com/category/Javascript/post/5741d96d094da4986bc950a0)
+* [Underscore.js](http://underscorejs.org/)
+  * functional programming helper
 
 # Tips
 
