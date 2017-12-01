@@ -6,3 +6,9 @@ html, css, js에 대해 정리한다.
 
 * [learn query](https://github.com/infinum/learnQuery)
   * let's make jQuery from scratch
+  
+# References
+
+* [jQuery api documentation](http://api.jquery.com/category/selectors/)
+
+
