@@ -51,6 +51,10 @@ lein.bat self-install
 brew install leiningen
 ```
 
+* intelliJ
+  * install Cursive plugin
+
+
 # Usage
 
 ## macro
