@@ -4,6 +4,12 @@ clojure에 대해 정리한다.
 
 # Material
 
+* [reagent](https://reagent-project.github.io/)
+  * minimal interface between clojurescript and react
+* [reframe](https://github.com/Day8/re-frame)
+  * a framework for writing SPAs in clojurescript
+* [debux](https://github.com/philoskim/debux)
+  * clojure, clojurescript 디버깅 툴
 * [클로저 Ring으로 하는 웹개발](https://hatemogi.gitbooks.io/ring/content/%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0.html)
 * [clojure in y minutes](https://learnxinyminutes.com/docs/ko-kr/clojure-kr/)
 * [초보자를 위한 클로저](https://eunmin.gitbooks.io/clojure-for-beginners/content/)
@@ -24,6 +30,8 @@ clojure에 대해 정리한다.
 
 # References
 
+* [cursive userguide](https://cursive-ide.com/userguide/)
+  * jetbrain의 cursive plugin
 * [repl.it](https://repl.it/language/clojure)
   * clojure repl on the web
 * [clojure doc](https://clojuredocs.org/)
