@@ -65,5 +65,25 @@ brew install leiningen
 
 # Usage
 
+## Destructuring
+
+Sequential destructuring
+
+```clj
+(let [[f s] [1 2]] f) ;; 1
+(let [[f s t] [1 2 3]] [f t]) ;; [1 3]
+(let [[f] [1 2]] f) ;; 1
+(let [[f s t] [1 2]] t) ;; nil
+(let [[f & t] [1 2]] t) ;; (2)
+(let [[f & t] [1 2 3]] t) ;; (2 3)
+(let [[f & [_ t]] [1 2 3]] [f t]) ;; [1 3]
+```
+
+Associative destructuring
+
+```clj
+[let 
+```
+
 ## macro
 
