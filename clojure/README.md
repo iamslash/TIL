@@ -82,7 +82,12 @@ Sequential destructuring
 Associative destructuring
 
 ```clj
-[let 
+(let [{a-value :a c-value :c} {:a 5 :b 6 :c 7}] a-value) ;; 5
+(let [{a-value :a c-value :c} {:a 5 :b 6 :c 7}] c-value) ;; 7
+(let [{:keys [a c]} {:a 5 :b 6 :c 7}] c) ;; 7
+(let [{:syms [a c]} {'a 5 :b 6 'c 7}] c) ;; 7
+(let [{:strs [a c]} {:a 5 :b 6 :c 7 "a" 9}] [a c]) ;; [9 nil]
+(let [{:strs [a c] :or {c 42}} {:a 5 :b 6 :c 7 "a" 9}] [a c]) ;; [9 42]
 ```
 
 ## macro
