@@ -89,6 +89,28 @@ Associative destructuring
 (let [{:strs [a c]} {:a 5 :b 6 :c 7 "a" 9}] [a c]) ;; [9 nil]
 (let [{:strs [a c] :or {c 42}} {:a 5 :b 6 :c 7 "a" 9}] [a c]) ;; [9 42]
 ```
+## Collections
 
-## macro
+clojure의 collection은 크게 sequential, associative, counted와 같이
+세가지 분류로 구분 할 수 있다. set은 sorted set, hash set으로 map은
+sorted map, hash map으로 구성된다.
 
+![](collection-properties-venn.pn)
+
+## Concurrency
+
+future
+
+promise
+
+atom
+
+ref
+
+agent
+
+## Macro
+
+defmacro
+
+macroexpand-1
