@@ -212,28 +212,46 @@ list
 (1 2 3 4 5)
 ```
 
-sorted map
-
-```clojure
-{:foo 5 :bar "a"}
-```
-
 hash map
 
 ```clojure
-
+{:one 1 :two 2}
+(hash-map :one 1 :two 2)
 ```
 
-sorted set
+sorted map
 
 ```clojure
-#{1 2 3 4 5}
+(sorted-map :one 1 :two 2) ;; {:one 1, :two 2)
+(sorted-map-by > 1 :one 5 :five 3 :three) ;; {5 :five, 3 :three, 1 :one}
 ```
 
 hash set
 
 ```clojure
+#{1 2 3 4 5}
+```
 
+sorted set
+
+```clojure
+(doseq [x (->> (sorted-set :b :c :d)
+               (map name))]
+    (println x))
+;; b
+;; c
+;; d
+```
+
+union, difference, and intersection
+
+```clojure
+(def a #{:a :b :c :d :e})
+(def b #{:a :d :h :i :j :k})
+(require '[clojure.set :as s])
+(s/union a b) ;; #{:e :k :c :j :h :b :d :i :a}
+(s/difference a b) ;; #{:e :c :b}
+(s/intersection a b) ;; #{:d :a}
 ```
 
 ## Polymorphism
@@ -241,13 +259,40 @@ hash set
 multimethod
 
 ```clojure
-
+(defn avg [& coll]
+  (/ (apply + coll) (count coll)))
+(defn get-race [& ages]
+  (if (> (apply avg ages) 120)
+    :timelord
+    :human))
+(defmulti travel get-race)
+(defmethod travel :timelord [& ages]
+  (str (count ages) " timelords travelling by tardis"))
+(defmethod travel :human [& ages]
+  (str (count ages) " human travelling by car"))
+(travel 2000 1000 100 200)
+;; "4 timelords travelling by tardis"
+(travel 70 20 100 40)
+;; "4 humans travelling by car
 ```
 
 protocol
 
 ```clojure
+(defprotocol Shape
+  "This is a protocol for shapes"
+  (perimeter [this] "Calculate the perimeter of this shape")
+  (area [this] "Calculate the area of this shape"))
+```
 
+record
+
+```clojure
+(defrecord Square [side]
+  Shape
+  (perimeter [{:keys [side]}] (* 4 side))
+  (area [{:keys [side]}] (* side side)))
+(Square. 5)
 ```
 
 ## Concurrency
