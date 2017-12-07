@@ -55,7 +55,7 @@ lein.bat self-install
 
 * leiningen
 
-```
+```bash
 brew install leiningen
 ```
 
@@ -65,11 +65,92 @@ brew install leiningen
 
 # Usage
 
+## data types
+
+String
+
+```cojure
+"Hello world"
+```
+
+Boolean
+
+```clojure
+true
+false
+```
+
+Character
+
+```clojure
+\c
+\u0045 ;; unicode char 45 E
+```
+
+Keywords
+
+```clojure
+:foo
+:bar
+```
+
+Number
+
+```clojure
+11N ;; BigInteger
+11  ;; long
+0.1M ;; BigDecimal
+```
+
+Ratio
+
+```clojure
+11/7
+```
+
+Symbol
+
+```clojure
+foo-bar
+```
+
+nil
+
+```clojure
+nil
+```
+
+Regular expressions
+
+```clojure
+#"\d"
+```
+
+## Packages
+
+:import
+
+```clojure
+(:import java.util.List)
+(:import [java.util ArrayList HashMap])
+(ns a.foo
+  (:import [java.util Date])
+```
+
+:require
+
+```clojure
+(:require [a.b :refere [:all]])
+(:require [a.b :as c))
+(c/a-function 5)
+(:require [a.b :as c :refer [d-funcion]])
+```
+
 ## Destructuring
 
 Sequential destructuring
 
-```clj
+```clojure
 (let [[f s] [1 2]] f) ;; 1
 (let [[f s t] [1 2 3]] [f t]) ;; [1 3]
 (let [[f] [1 2]] f) ;; 1
@@ -81,7 +162,7 @@ Sequential destructuring
 
 Associative destructuring
 
-```clj
+```clojure
 (let [{a-value :a c-value :c} {:a 5 :b 6 :c 7}] a-value) ;; 5
 (let [{a-value :a c-value :c} {:a 5 :b 6 :c 7}] c-value) ;; 7
 (let [{:keys [a c]} {:a 5 :b 6 :c 7}] c) ;; 7
@@ -89,28 +170,143 @@ Associative destructuring
 (let [{:strs [a c]} {:a 5 :b 6 :c 7 "a" 9}] [a c]) ;; [9 nil]
 (let [{:strs [a c] :or {c 42}} {:a 5 :b 6 :c 7 "a" 9}] [a c]) ;; [9 42]
 ```
+## implementing interfaces and protocols
+
+```clojure
+(import '(javax.swing JFrame Jlabel JTextField JButton)
+        '(java.awt.event ActionListener)
+        '(java.awt GridLayout))
+(defn sample []
+  (let [frame (JFrame. "Hello")
+      sample-button (JButton. "Hello")]
+    (.addActionListener
+      sample-button
+      (reify ActionListener
+          (actionPerformed
+           [_ evt]
+           (println "Hello World"))))
+    (doto frame
+      (.add sample-button)
+      (.setSize 100 40)
+      (.setVisible true))))
+```
+
+
 ## Collections
 
 clojure의 collection은 크게 sequential, associative, counted와 같이
 세가지 분류로 구분 할 수 있다. set은 sorted set, hash set으로 map은
 sorted map, hash map으로 구성된다.
 
-![](collection-properties-venn.pn)
+![](img/collection-properties-venn.png)
+
+vector
+
+```clojure
+[1 2 3 4 5]
+```
+
+list
+
+```clojure
+(1 2 3 4 5)
+```
+
+sorted map
+
+```clojure
+{:foo 5 :bar "a"}
+```
+
+hash map
+
+```clojure
+
+```
+
+sorted set
+
+```clojure
+#{1 2 3 4 5}
+```
+
+hash set
+
+```clojure
+
+```
+
+## Polymorphism
+
+multimethod
+
+```clojure
+
+```
+
+protocol
+
+```clojure
+
+```
 
 ## Concurrency
 
-future
+identity and state
 
 promise
 
+```clojure
+
+```
+
+future
+
+```clojure
+
+```
+
+STM (software transaction memory) and ref
+
+```clojure
+
+```
+
 atom
 
-ref
+```clojure
+
+```
 
 agent
+
+```clojure
+
+```
+
+validator
+
+```clojure
+
+```
+
+watcher
+
+```clojure
+
+```
 
 ## Macro
 
 defmacro
 
+```clojure
+
+```
+
 macroexpand-1
+
+```clojure
+
+```
+
