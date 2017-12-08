@@ -4,6 +4,8 @@ java script에 대해 정리한다.
 
 # Materials
 
+* [The modern javascript tutorial](https://javascript.info/)
+  * 가장 자세한 tutorial
 * [Secrets of the JavaScript Ninja - John Resig and Bear Bibeault](https://www.manning.com/books/secrets-of-the-javascript-ninja)
 * [함수형 자바스크립트 프로그래밍 - 유인동](http://www.yes24.com/24/Goods/56885507?Acode=101)
   * 비함수형 언어인 자바스크립트를 이용하여 함수형 프로그래밍을 시도한다.
