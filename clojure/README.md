@@ -2,8 +2,26 @@
 
 clojure에 대해 정리한다.
 
+# Contents
+
+* [Material](#material)
+* [References](#references)
+* [Environments](#environment)
+* [Usage](#usage)
+  * [Data Types](#data-types)
+  * [Packages](#packages)
+  * [Destructuring](#destructuring)
+  * [Implementing Interfaces and Protocols](#implementing-interfaces-and-protocols)
+  * [Collections](#collections)
+  * [Polymorphism](#polymorphism)
+  * [Concurrency](#concurrency)
+  * [Macro](#macro)
+  
 # Material
 
+* [Clojure 병행성 @ github](https://github.com/eunmin/clojure-study/wiki/%5B%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D-%ED%81%B4%EB%A1%9C%EC%A0%80%5D-6%EC%9E%A5-%EB%B3%91%ED%96%89%EC%84%B1)
+* [Clojure Programming](www.clojurebook.com/)
+  * Clojure의 internal을 가장 잘 설명한 책이다.
 * [reagent](https://reagent-project.github.io/)
   * minimal interface between clojurescript and react
 * [reframe](https://github.com/Day8/re-frame)
@@ -299,46 +317,85 @@ record
 
 identity and state
 
+identity는 state를 가리키고 있다. state는 항상 변할 수 있다. state가
+변할때 마다 그때 그때의 state는 별도의 존재들이다.
+
 promise
 
-```clojure
+이미 값이 채워졌다면 역참조할때 바로 값을 얻어올 수 있다. 그러나 값이
+채워져있지 않다면 값이 채워질때까지 블록되어 기다린다. promise는
+캐싱된다. 값은 dliver를 이용하여 채운다.
 
+```clojure
+(in-ns 'clojure-concurrency.core)
+(def p (promise))
+(start-thread
+  #(do
+    (deref p)
+    (println "Hello World")))
+(deliver p 5)
 ```
 
 future
 
-```clojure
+promise와 비슷하지만 항상 다른 thread에서 동작한다는 큰 차이가 있다.
+thread pool에서 가용 thread하나를 선택하여 실행한다. 만약 가용
+thread가 없다면 기다릴 수 있기 때문에 주의가 필요하다.
 
+```clojure
+(def f (future 
+          (Thread/sleep 20000) "Hello World"))
+(println @f)
 ```
 
 STM (software transaction memory) and ref
 
-```clojure
+ref-set을 이용해 ref를 변경 할 수 있다. 이때 dosync를 반드시 이용하여
+transaction을 만들어 내야 한다. 그렇지 않으면
+java.lang.IllegalStateException 가 발생한다.
 
+STM은 DATABASE의 transaction과 비슷하게 다음과 같은 특성을 갖는다.
+
+* atomicity(원자성) : 하나의 트랜잭션에서 여러개의 ref를 갱신하는 경우 동시에 갱신되는 것이 보장된다.
+* consistency(일관성) : ref는 validation function(유효성 확인 함수)를 가질 수 있는데 이 함수중 하나가 실패해도 rollback된다.
+* isolation(고립성) : 실행중인 트랜잭션의 부분적 내용은 다른 트랜잭션에서 접근 할 수 없다.
+* no durability(영구성) : DB는 disk에 저장가능하지만 clojure는 그렇지 않다.
+
+```clojure
+(def account (ref 20000))
+(dosync (ref-set account 10))
+(deref account)
+
+(defn test []
+  (dotimes [n 5]
+    (println n @account)
+    (Thread/sleep 2000))
+  (ref-set account 90))
+  
+(future (dosync (test)))
+(Thread/sleep 1000)
+(dosync (ref-set account 5))
 ```
 
 atom
 
-```clojure
+ref와 비슷하게 동기화를 보장하지만 transaction은 발생하지 않기 때문에
+훨씬 가볍다.
 
+```clojure
+(def a (atom "Foo, Bar, Baz"))
+(deref a)
 ```
 
 agent
 
-```clojure
-
-```
-
-validator
+ref, atom과 비슷하게 동기화를 보장하지만 thread pool의 가용 thread에서
+별도로 동작한다. 일을 시키고 잃어버리고 싶을때 사용한다. 즉 비동기
+태스크에 적당하다.
 
 ```clojure
-
-```
-
-watcher
-
-```clojure
-
+(def counter (agent 0))
+(send counter inc)
 ```
 
 ## Macro
@@ -346,12 +403,24 @@ watcher
 defmacro
 
 ```clojure
-
+(def a 150)
+(defmacro my-if [tset positive negative]
+  '(if test positive negative))
+(my-if (> a 200)
+  (println "Bigger than 200")
+  (println "Smaller than 200"))
 ```
 
 macroexpand-1
 
 ```clojure
-
+(def a 150)
+(defmacro my-if [test positive negative]
+  '(if test positive negative))
+(macroexpand-1
+  '(my-if (> a 200)
+     (println "Bigger than 200")
+     (println "Smaller than 200")))
+;; (if test positive negative)
 ```
 
