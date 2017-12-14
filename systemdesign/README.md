@@ -145,14 +145,14 @@ cache.put(k, v)
 
 | Question | |
 |---|---|
-| Design Pastebin.com (or Bit.ly) | [Solution](https://github.com/donnemartin/system-design-primer/solutions/system_design/pastebin/README.md) |
-| Design the Twitter timeline (or Facebook feed)<br/>Design Twitter search (or Facebook search) | [Solution](https://github.com/donnemartin/system-design-primer/solutions/system_design/twitter/README.md) |
-| Design a web crawler | [Solution](https://github.com/donnemartin/system-design-primer/solutions/system_design/web_crawler/README.md) |
-| Design Mint.com | [Solution](https://github.com/donnemartin/system-design-primer/solutions/system_design/mint/README.md) |
-| Design the data structures for a social network | [Solution](https://github.com/donnemartin/system-design-primer/solutions/system_design/social_graph/README.md) |
-| Design a key-value store for a search engine | [Solution](https://github.com/donnemartin/system-design-primer/solutions/system_design/query_cache/README.md) |
-| Design Amazon's sales ranking by category feature | [Solution](https://github.com/donnemartin/system-design-primer/solutions/system_design/sales_rank/README.md) |
-| Design a system that scales to millions of users on AWS | [Solution](https://github.com/donnemartin/system-design-primer/solutions/system_design/scaling_aws/README.md) |
+| Design Pastebin.com (or Bit.ly) | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md) |
+| Design the Twitter timeline (or Facebook feed)<br/>Design Twitter search (or Facebook search) | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/twitter/README.md) |
+| Design a web crawler | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/web_crawler/README.md) |
+| Design Mint.com | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/mint/README.md) |
+| Design the data structures for a social network | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/social_graph/README.md) |
+| Design a key-value store for a search engine | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/query_cache/README.md) |
+| Design Amazon's sales ranking by category feature | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/sales_rank/README.md) |
+| Design a system that scales to millions of users on AWS | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/scaling_aws/README.md) |
 
 # Additional System Design Interview Questions
 
