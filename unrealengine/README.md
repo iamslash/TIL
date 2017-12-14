@@ -5,6 +5,7 @@
 # Material
 
 * [꼭 알아두어야 할 언리얼 엔진 4 모바일 기능 A-Z](https://www.youtube.com/watch?v=h_ybx2Bg8a4&feature=youtu.be)
+* [언리얼 엔진 4 셰이더, 더 깊이 이해하기](https://www.youtube.com/watch?v=V1-cEJiE01Q)
 
 # References
 
