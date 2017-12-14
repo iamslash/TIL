@@ -104,7 +104,36 @@ Notes
 
 ## database
 
-## cache
+## Cache
+
+* Cache Usage Pattern
+  * Cache-Aside
+    * 응용프로그램이 직접 cache를 제어한다.
+
+```
+# reading values
+v = cache.get(k)
+if (v == null) {
+  v = sor.get(k)
+  cache.put(k, v)
+}
+
+# writing values
+v = newV
+sor.put(k, v)
+cache.put(k, v)
+```
+  * Read-through
+    * cache에 읽기 요청하면 cache가 판단해서 자신이 가지고 있는 값 혹은
+      SOR(system of record)로 부터 읽어들인 값을 응답으로 전달한다.
+  
+  * Write-through
+    * cache에 쓰기 요청하면 cache가 판단해서 SOR(system of record)에
+      쓰고 자신을 갱신한다.
+
+  * Write-behind
+    * cache에 쓰기 요청하면 일단 자신을 갱신하고 요청에 응답한후
+      SOR을 갱신한다. SOR갱신이 완료되기 전에 요청에 빠르게 응답한다.
 
 ## asynchronism
 
