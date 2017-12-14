@@ -77,6 +77,17 @@ Notes
 
 ## availability vs consistency
 
+* [CAP Theorem, 오해와 진실](http://eincs.com/2013/07/misleading-and-truth-of-cap-theorem/)
+  * CAP이론은 논란이 많다. CAP보다 PACELC를 이용하자.
+  * Partition(장애)상활일때 A(Availability) 혹은 C(Consistency)가
+    중요하냐 Else(정상)상황일때 L(Latency) 혹은 C(Consistency)가
+    중요하냐
+  * HBase는 PC/EC이다. 장애 상황일때 C를 위해 A를 희생한다. 정상
+    상황일때 C를 위해 L를 희생한다.
+  * Cassandra는 PA/EL이다. 장애 상황일때 A를 위해 C를 희생한다. 즉
+    Eventual Consistency의 특성을 갖는다. 정상 상황일때 L을 위해 C를
+    희생한다. 즉 모든 노드에 데이터를 반영하지는 않는다.
+
 ## consistency patterns
 
 ## Availability patterns
