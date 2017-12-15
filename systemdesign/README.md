@@ -100,9 +100,28 @@ Notes
 
 ## reverse proxy
 
-## application layer
+## Application layer
 
-## database
+## Database
+
+* RDBMS
+  * ACID - set of properties of relational database transactions
+    * Atomicity(원자성) - Each transaction is all or nothing
+    * Consistency(일관성) - Any transaction will bring the database from one valid state to another
+    * Isolation(고립성) - Executing transactions concurrently has the same results as if the transactions were executed serially
+    * Durability(영속성) - Once a transaction has been committed, it will remain so.
+  * Master-slave replication
+  * Master-Master replication
+* Federation
+* Sharding
+  * consistent hashing
+* Denormalization
+* SQL Tuning
+* NoSQL
+  * Key-value store
+  * Document store
+  * Wide solumn store
+  * Graph database
 
 ## Cache
 

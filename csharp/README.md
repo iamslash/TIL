@@ -36,6 +36,38 @@ DateTimpe과 같이 rimary type이 아닌 경우 const를 이용하여 상수를
 private const DateTime classCreation = new DateTime(2000, 1, 1, 0, 0, 0);
 ```
 
+## 캐스트보다 is, as가 더 좋다.
+
+다음과 같은 경우 as를 사용했기 때문에 캐스팅 실패시
+InvalidCastException 대신 t에 null이 저장된다.
+
+```cs
+object o = Factory.GetObject();
+MyType t = o as MyType;
+if (t != null) {
+  // use t
+} else {
+  // error
+}
+```
+
+다음과 같이 형변환의 대상이 value type인 경우 as는 사용할 수 없다.
+
+```cs
+object o = Factory.GetObject();
+int i = o as int; // compile error
+```
+
+위의 코드를 다음과 같이 nullable value type을 사용하면 compile
+가능하다.
+
+```cs
+object o = Factory.GetObject();
+int i = o as int ?;
+if (i != null)
+  Console.WriteLine(i.Value);
+```
+
 ## IEnumerable<T>와 IQueryable<T>를 구분해서 사용하자.
 
 IEnumerable<T>를 이용한 경우 해당 테이블의 데이터를 모두 받아온 후
