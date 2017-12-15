@@ -61,7 +61,7 @@ Notes
 
 # Principles
 
-## scalability
+## Scalability
 
 - vertical scaling
 - horizontal scaling
@@ -71,11 +71,11 @@ Notes
 - database partitioning
 - asynchronism
 
-## performance vs scalability
+## Performance vs scalability
 
-## latency vs throughput
+## Latency vs throughput
 
-## availability vs consistency
+## Availability vs consistency
 
 * [CAP Theorem, 오해와 진실](http://eincs.com/2013/07/misleading-and-truth-of-cap-theorem/)
   * CAP이론은 논란이 많다. CAP보다 PACELC를 이용하자.
@@ -88,7 +88,7 @@ Notes
     Eventual Consistency의 특성을 갖는다. 정상 상황일때 L을 위해 C를
     희생한다. 즉 모든 노드에 데이터를 반영하지는 않는다.
 
-## consistency patterns
+## Consistency patterns
 
 ## Availability patterns
 
@@ -96,9 +96,9 @@ Notes
 
 ## Content delivery network
 
-## load balancer
+## Load balancer
 
-## reverse proxy
+## Reverse proxy
 
 ## Application layer
 
@@ -154,11 +154,11 @@ cache.put(k, v)
     * cache에 쓰기 요청하면 일단 자신을 갱신하고 요청에 응답한후
       SOR을 갱신한다. SOR갱신이 완료되기 전에 요청에 빠르게 응답한다.
 
-## asynchronism
+## Asynchronism
 
-## communication
+## Communication
 
-## security
+## Security
 
 # Practices
 
