@@ -61,6 +61,13 @@ Notes
 
 # Principles
 
+## How to approach a system design interview question
+
+* Outline use cases, constraints, and assumptions
+* Create a high level design
+* Design core components
+* Scale the design
+
 ## Scalability
 
 - vertical scaling
@@ -90,17 +97,38 @@ Notes
 
 ## Consistency patterns
 
+* Weak consistency
+* Eventual consistency
+* Strong consistency
+
 ## Availability patterns
+
+* Fail-over
+* Replication
 
 ## Domain name system
 
 ## Content delivery network
 
+* Push CDNs
+* Pull CDNs
+
 ## Load balancer
+
+* Active-passive
+* Active-active
+* Layer 4 load balancing
+* Layer 7 load balancing
+* Horizontal scaling
 
 ## Reverse proxy
 
+* Load balancer vs reverse proxy
+
 ## Application layer
+
+* Microservices
+* Service discovery
 
 ## Database
 
@@ -125,7 +153,14 @@ Notes
 
 ## Cache
 
-* Cache Usage Pattern
+* Client caching
+* CDN caching
+* Web server caching
+* Database caching
+* Application caching
+* Caching at the database query level
+* CAching at the object level
+* When to update the cache
   * Cache-Aside
     * 응용프로그램이 직접 cache를 제어한다.
 
@@ -156,7 +191,16 @@ cache.put(k, v)
 
 ## Asynchronism
 
+* Message Queues
+* Task Queues
+* Back pressure
+
 ## Communication
+
+* TCP
+* UDP
+* RPC
+* REST
 
 ## Security
 
