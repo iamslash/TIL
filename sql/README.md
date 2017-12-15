@@ -1,8 +1,12 @@
-# intro
+# Intro
 
 - 주로 사용하는 phrase들을 정리해보자.
 
-# usage
+# Material
+
+* [use the idex luke](http://use-the-index-luke.com/)
+
+# Usage
 
 ## JOIN Basic
 
@@ -61,7 +65,7 @@ SELECT * FROM Customers a LEFT JOIN Orders b ON (a.Id = b.Id) WHERE b.CustomerId
 SELECT * FROM Customers a LEFT JOIN Orders b ON (a.Id = b.Id AND b.CustomerId = 1
 ```
 
-# reference
+# References
 
 - [sqlzoo](http://sqlzoo.net/)
 - [sql snippet](https://en.wikibooks.org/wiki/Structured_Query_Language/Snippets)
