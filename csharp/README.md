@@ -68,6 +68,10 @@ if (i != null)
   Console.WriteLine(i.Value);
 ```
 
+## [c#6.0] string.Format()을 보간 문자열로 대체하자. 
+
+
+
 ## IEnumerable<T>와 IQueryable<T>를 구분해서 사용하자.
 
 IEnumerable<T>를 이용한 경우 해당 테이블의 데이터를 모두 받아온 후
