@@ -64,71 +64,191 @@ SELECT * FROM Customers
 ## Order By
 
 ```sql
+SELECT * FROM Customers
+  ORDER BY Country;
+SELECT * FROM Customers
+  ORDER BY Country DESC;
+SELECT * FROM Customers
+  ORDER BY Country, CustomerName;
+SELECT * FROM Customers
+  ORDER BY Country ASC, CustomerName DESC;
 ```
 
 ## Insert Into
 
 ```sql
+INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
+  VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
+INSERT INTO Customers (CustomerName, City, Country)
+  VALUES ('Cardinal', 'Stavanger', 'Norway');
 ```
 
 ## Null Values
 
 ```sql
+SELECT LastName, FirstName, Address FROM Persons
+  WHERE Address IS NULL;
+SELECT LastName, FirstName, Address FROM Persons
+  WHERE Address IS NOT NULL;
 ```
 
 ## Update
 
 ```sql
+UPDATE Customers
+  SET ContactName = 'Alfred Schmidt', City= 'Frankfurt'
+  WHERE CustomerID = 1;
+UPDATE Customers
+  SET ContactName='Juan'
+  WHERE Country='Mexico';
+UPDATE Customers
+  SET ContactName='Juan';
 ```
 
 ## Delete
 
 ```sql
+DELETE FROM Customers
+  WHERE CustomerName='Alfreds Futterkiste';
+DELETE FROM Customers;
+DELETE * FROM Customers;
 ```
 
 ## Select Top
 
 ```sql
+SELECT TOP 3 * FROM Customers;
+SELECT * FROM Customers
+  LIMIT 3;
+SELECT * FROM Customers
+  WHERE ROWNUM <= 3;
+SELECT TOP 50 PERCENT * FROM Customers;
+SELECT TOP 3 * FROM Customers
+  WHERE Country='Germany';
+SELECT * FROM Customers
+  WHERE Country='Germany'
+  LIMIT 3;
+SELECT * FROM Customers
+  WHERE Country='Germany' AND ROWNUM <= 3;
 ```
 
 ## Min, Max
 
 ```sql
+SELECT MIN(Price) AS SmallestPrice
+  FROM Products;
+SELECT MAX(Price) AS LargestPrice
+  FROM Products;
 ```
 
 ## Count, Avg, Sum
 
 ```sql
+SELECT COUNT(ProductID)
+  FROM Products;
+SELECT AVG(Price)
+  FROM Products;
+SELECT SUM(Quantity)
+  FROM OrderDetails;
 ```
 
 ## Like
 
+* Mysql
+  * % - The percent sign represents zero, one, or multiple characters
+  * _ - The underscore represents a single character
+
+
 ```sql
+SELECT * FROM Customers
+  WHERE CustomerName LIKE 'a%';
+SELECT * FROM Customers
+  WHERE CustomerName LIKE '%a';
+SELECT * FROM Customers
+  WHERE CustomerName LIKE '%or%';
+SELECT * FROM Customers
+  WHERE CustomerName LIKE '_r%';
+SELECT * FROM Customers
+  WHERE CustomerName LIKE 'a_%_%';
+SELECT * FROM Customers
+  WHERE ContactName LIKE 'a%o';
+SELECT * FROM Customers
+  WHERE CustomerName NOT LIKE 'a%';
 ```
 
 ## Wildcards
 
+* Ms Access, Sql Server
+  * [charlist] - Defines sets and ranges of characters to match
+  * [^charlist] or [!charlist] - Defines sets and ranges of characters NOT to match
+
 ```sql
+SELECT * FROM Customers
+  WHERE City LIKE '[bsp]%';
+SELECT * FROM Customers
+  WHERE City LIKE '[a-c]%';
+SELECT * FROM Customers
+  WHERE City LIKE '[!bsp]%';
+SELECT * FROM Customers
+  WHERE City NOT LIKE '[bsp]%';
 ```
 
 ## In
 
 ```sql
+SELECT * FROM Customers
+  WHERE Country IN ('Germany', 'France', 'UK');
+SELECT * FROM Customers
+  WHERE Country NOT IN ('Germany', 'France', 'UK');
+SELECT * FROM Customers
+  WHERE Country IN (SELECT Country FROM Suppliers);
 ```
 
 ## Between
 
 ```sql
+SELECT * FROM Products
+  WHERE Price BETWEEN 10 AND 20;
+SELECT * FROM Products
+  WHERE Price NOT BETWEEN 10 AND 20;
+SELECT * FROM Products
+  WHERE (Price BETWEEN 10 AND 20)
+  AND NOT CategoryID IN (1,2,3);
+SELECT * FROM Products
+  WHERE ProductName BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'  
+  ORDER BY ProductName;
+SELECT * FROM Products
+  WHERE ProductName NOT BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'
+  ORDER BY ProductName;  
+SELECT * FROM Orders
+  WHERE OrderDate BETWEEN #07/04/1996# AND #07/09/1996#;
 ```
 
 ## Aliases
 
 ```sql
+SELECT CustomerID as ID, CustomerName AS Customer
+  FROM Customers;
+SELECT CustomerName AS Customer, ContactName AS [Contact Person]
+  FROM Customers;
+SELECT CustomerName, Address + ', ' + PostalCode + ' ' + City + ', ' + Country AS Address
+  FROM Customers;
+SELECT CustomerName, CONCAT(Address,', ',PostalCode,', ',City,', ',Country) AS Address
+  FROM Customers;
+SELECT o.OrderID, o.OrderDate, c.CustomerName
+  FROM Customers AS c, Orders AS o
+  WHERE c.CustomerName="Around the Horn" AND c.CustomerID=o.CustomerID;
+SELECT Orders.OrderID, Orders.OrderDate, Customers.CustomerName
+  FROM Customers, Orders
+  WHERE Customers.CustomerName="Around the Horn" AND Customers.CustomerID=Orders.CustomerID;
 ```
 
 ## JOIN Basic
 
 ```sql
+SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate
+  FROM Orders
+  INNER JOIN Customers ON Orders.CustomerID=Customers.CustomerID;
 ```
 
 ![](img/Visual_SQL_JOINS_V2.png)
@@ -191,156 +311,511 @@ SELECT * FROM Customers a LEFT JOIN Orders b ON (a.Id = b.Id AND b.CustomerId = 
 ## Inner Join
 
 ```sql
+SELECT Orders.OrderID, Customers.CustomerName
+  FROM Orders
+  INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID;
+SELECT Orders.OrderID, Customers.CustomerName, Shippers.ShipperName
+  FROM ((Orders
+           INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID)
+         INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID);
 ```
 
 ## Left Join
 
 ```sql
+SELECT Customers.CustomerName, Orders.OrderID
+  FROM Customers
+  LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID
+  ORDER BY Customers.CustomerName;
 ```
 
 ## Right Join
 
 ```sql
+SELECT Orders.OrderID, Employees.LastName, Employees.FirstName
+  FROM Orders
+  RIGHT JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+  ORDER BY Orders.OrderID;
 ```
 
 ## FUll Join
 
 ```sql
+SELECT Customers.CustomerName, Orders.OrderID
+  FROM Customers
+  FULL OUTER JOIN Orders ON Customers.CustomerID=Orders.CustomerID
+  ORDER BY Customers.CustomerName;
 ```
 
 ## Self Join
 
 ```sql
+SELECT A.CustomerName AS CustomerName1, B.CustomerName AS CustomerName2, A.City
+  FROM Customers A, Customers B
+  WHERE A.CustomerID <> B.CustomerID
+  AND A.City = B.City 
+  ORDER BY A.City;
 ```
 
 ## Union
 
 ```sql
+SELECT City FROM Customers
+  UNION
+  SELECT City FROM Suppliers
+  ORDER BY City;
+SELECT City FROM Customers
+  UNION ALL
+  SELECT City FROM Suppliers
+  ORDER BY City;
+SELECT City, Country FROM Customers
+  WHERE Country='Germany'
+  UNION
+  SELECT City, Country FROM Suppliers
+  WHERE Country='Germany'
+  ORDER BY City;
+SELECT City, Country FROM Customers
+  WHERE Country='Germany'
+  UNION ALL
+  SELECT City, Country FROM Suppliers
+  WHERE Country='Germany'
+  ORDER BY City;  
+SELECT 'Customer' As Type, ContactName, City, Country
+  FROM Customers
+  UNION
+  SELECT 'Supplier', ContactName, City, Country
+  FROM Suppliers;  
 ```
 
 ## Group By
 
 ```sql
+SELECT COUNT(CustomerID), Country
+  FROM Customers
+  GROUP BY Country;
+SELECT COUNT(CustomerID), Country
+  FROM Customers
+  GROUP BY Country
+  ORDER BY COUNT(CustomerID) DESC;
+SELECT Shippers.ShipperName, COUNT(Orders.OrderID) AS NumberOfOrders FROM Orders
+  LEFT JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID
+  GROUP BY ShipperName;
 ```
 
 ## Having
 
+* The HAVING clause was added to SQL because the WHERE keyword could
+  not be used with aggregate functions.
+
 ```sql
+SELECT COUNT(CustomerID), Country
+  FROM Customers
+  GROUP BY Country
+  HAVING COUNT(CustomerID) > 5;
+SELECT COUNT(CustomerID), Country
+  FROM Customers
+  GROUP BY Country
+  HAVING COUNT(CustomerID) > 5;  
+SELECT COUNT(CustomerID), Country
+  FROM Customers
+  GROUP BY Country
+  HAVING COUNT(CustomerID) > 5
+  ORDER BY COUNT(CustomerID) DESC;
+SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+  FROM (Orders
+  INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID)
+  GROUP BY LastName
+  HAVING COUNT(Orders.OrderID) > 10;
+SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+  FROM Orders
+  INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+  WHERE LastName = 'Davolio' OR LastName = 'Fuller'
+  GROUP BY LastName
+  HAVING COUNT(Orders.OrderID) > 25;
 ```
 
 ## Exists
 
 ```sql
+SELECT SupplierName
+  FROM Suppliers
+  WHERE EXISTS (SELECT ProductName FROM Products WHERE SupplierId = Suppliers.supplierId AND Price < 20);
+SELECT SupplierName
+  FROM Suppliers
+  WHERE EXISTS (SELECT ProductName FROM Products WHERE SupplierId = Suppliers.supplierId AND Price = 22);
 ```
 
 ## Any, All
 
 ```sql
+SELECT ProductName
+  FROM Products
+  WHERE ProductID = ANY (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
+SELECT ProductName
+  FROM Products
+  WHERE ProductID = ANY (SELECT ProductID FROM OrderDetails WHERE Quantity > 99);
+SELECT ProductName
+  FROM Products
+  WHERE ProductID = ALL (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
 ```
 
 ## SElect Into
 
 ```sql
+SELECT * INTO CustomersBackup2017
+  FROM Customers;
+SELECT * INTO CustomersBackup2017 IN 'Backup.mdb'
+  FROM Customers;
+SELECT CustomerName, ContactName INTO CustomersBackup2017
+  FROM Customers;
+SELECT * INTO CustomersGermany
+  FROM Customers
+  WHERE Country = 'Germany';
+SELECT Customers.CustomerName, Orders.OrderID
+  INTO CustomersOrderBackup2017
+  FROM Customers
+  LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID;
+SELECT * INTO newtable
+  FROM oldtable
+  WHERE 1 = 0;
 ```
 
 ## Insert Into Select
 
 ```sql
+INSERT INTO Customers (CustomerName, City, Country)
+  SELECT SupplierName, City, Country FROM Suppliers;
+INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
+  SELECT SupplierName, ContactName, Address, City, PostalCode, Country FROM Suppliers;
+INSERT INTO Customers (CustomerName, City, Country)
+  SELECT SupplierName, City, Country FROM Suppliers
+  WHERE Country='Germany';
 ```
 
 ## Null Functions
 
 ```sql
+SELECT ProductName, UnitPrice * (UnitsInStock + IFNULL(UnitsOnOrder, 0))
+  FROM Products
+SELECT ProductName, UnitPrice * (UnitsInStock + COALESCE(UnitsOnOrder, 0))
+  FROM Products
 ```
 
 ## Comments
 
 ```sql
+--Select all:
+SELECT * FROM Customers;
+
+SELECT * FROM Customers -- WHERE City='Berlin';
+
+--SELECT * FROM Customers;
+SELECT * FROM Products;
+
+/*Select all the columns
+of all the records
+in the Customers table:*/
+SELECT * FROM Customers;
+
+/*SELECT * FROM Customers;
+SELECT * FROM Products;
+SELECT * FROM Orders;
+SELECT * FROM Categories;*/
+SELECT * FROM Suppliers;
+
+SELECT CustomerName, /*City,*/ Country FROM Customers;
+
+SELECT * FROM Customers WHERE (CustomerName LIKE 'L%'
+OR CustomerName LIKE 'R%' /*OR CustomerName LIKE 'S%'
+OR CustomerName LIKE 'T%'*/ OR CustomerName LIKE 'W%')
+AND Country='USA'
+ORDER BY CustomerName;
 ```
 
 ## Create DB
 
 ```sql
+CREATE DATABASE testDB;
 ```
 
 ## Drop DB
 
 ```sql
+DROP DATABASE testDB;
 ```
 
 ## Create Table
 
 ```sql
+CREATE TABLE Persons (
+    PersonID int,
+    LastName varchar(255),
+    FirstName varchar(255),
+    Address varchar(255),
+    City varchar(255) 
+);
 ```
 
 ## Drop Table
 
 ```sql
+DROP TABLE Shippers;
+
+TRUNCATE TABLE table_name;
 ```
 
 ## Alter Table
 
 ```sql
+ALTER TABLE Persons
+  ADD DateOfBirth date;
+
+ALTER TABLE Persons
+  ALTER COLUMN DateOfBirth year;
+
+ALTER TABLE Persons
+  DROP COLUMN DateOfBirth;
 ```
 
 ## Constraints
 
+* NOT NULL - Ensures that a column cannot have a NULL value
+* UNIQUE - Ensures that all values in a column are different
+* PRIMARY KEY - A combination of a NOT NULL and UNIQUE. Uniquely identifies each row in a table
+* FOREIGN KEY - Uniquely identifies a row/record in another table
+* CHECK - Ensures that all values in a column satisfies a specific condition
+* DEFAULT - Sets a default value for a column when no value is specified
+* INDEX - Used to create and retrieve data from the database very quickly
+
 ```sql
+CREATE TABLE table_name (
+    column1 datatype constraint,
+    column2 datatype constraint,
+    column3 datatype constraint,
+    ....
+);
 ```
 
 ## Not Null
 
 ```sql
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255) NOT NULL,
+    Age int
+);
 ```
 
 ## Unique
 
 ```sql
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    UNIQUE (ID)
+);
+
+ALTER TABLE Persons
+  ADD UNIQUE (ID);
+
+ALTER TABLE Persons
+  ADD CONSTRAINT UC_Person UNIQUE (ID,LastName);
+
+ALTER TABLE Persons
+  DROP INDEX UC_Person;
 ```
 
 ## Primary Key
 
 ```sql
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    PRIMARY KEY (ID)
+);
+
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CONSTRAINT PK_Person PRIMARY KEY (ID,LastName)
+);
+
+ALTER TABLE Persons
+  ADD PRIMARY KEY (ID);
+
+ALTER TABLE Persons
+  ADD CONSTRAINT PK_Person PRIMARY KEY (ID,LastName);
+
+ALTER TABLE Persons
+  DROP PRIMARY KEY;
 ```
 
 ## Foreign Key
 
 ```sql
+CREATE TABLE Orders (
+    OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    FOREIGN KEY (PersonID) REFERENCES Persons(PersonID)
+);
+
+CREATE TABLE Orders (
+    OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    CONSTRAINT FK_PersonOrder FOREIGN KEY (PersonID)
+    REFERENCES Persons(PersonID)
+);
+
+ALTER TABLE Orders
+  ADD FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
+
+ALTER TABLE Orders
+  ADD CONSTRAINT FK_PersonOrder
+  FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
+
+ALTER TABLE Orders
+  DROP FOREIGN KEY FK_PersonOrder;
 ```
 
 ## Check
 
 ```sql
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CHECK (Age>=18)
+);
+
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    City varchar(255),
+    CONSTRAINT CHK_Person CHECK (Age>=18 AND City='Sandnes')
+);
+
+ALTER TABLE Persons
+  ADD CHECK (Age>=18);
+
+ALTER TABLE Persons
+  ADD CONSTRAINT CHK_PersonAge CHECK (Age>=18 AND City='Sandnes');
+
+ALTER TABLE Persons
+  DROP CHECK CHK_PersonAge;
 ```
 
 ## Default
 
 ```sql
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    City varchar(255) DEFAULT 'Sandnes'
+);
+
+CREATE TABLE Orders (
+    ID int NOT NULL,
+    OrderNumber int NOT NULL,
+    OrderDate date DEFAULT GETDATE()
+);
+
+ALTER TABLE Persons
+  ALTER City SET DEFAULT 'Sandnes';
+
+ALTER TABLE Persons
+  ALTER City DROP DEFAULT;
 ```
 
 ## Index
 
 ```sql
+CREATE INDEX idx_lastname
+  ON Persons (LastName);
+
+CREATE INDEX idx_pname
+  ON Persons (LastName, FirstName);
+
+ALTER TABLE table_name
+  DROP INDEX index_name;
 ```
 
 ## Auto Increment
 
 ```sql
+CREATE TABLE Persons (
+    ID int NOT NULL AUTO_INCREMENT,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    PRIMARY KEY (ID)
+);
+
+ALTER TABLE Persons AUTO_INCREMENT=100;
+
+INSERT INTO Persons (FirstName,LastName)
+VALUES ('Lars','Monsen');
 ```
 
 ## Dates
 
+* DATE - format YYYY-MM-DD
+* DATETIME - format: YYYY-MM-DD HH:MI:SS
+* TIMESTAMP - format: YYYY-MM-DD HH:MI:SS
+* YEAR - format YYYY or YY
+
 ```sql
+SELECT * FROM Orders WHERE OrderDate='2008-11-11'
 ```
 
 ## Views
 
 ```sql
-```
+CREATE VIEW [Current Product List] AS
+SELECT ProductID, ProductName
+FROM Products
+WHERE Discontinued = No;
 
-## Injection
+SELECT * FROM [Current Product List];
 
-```sql
+CREATE VIEW [Products Above Average Price] AS
+SELECT ProductName, UnitPrice
+FROM Products
+WHERE UnitPrice > (SELECT AVG(UnitPrice) FROM Products);
+
+SELECT * FROM [Products Above Average Price];
+
+CREATE VIEW [Category Sales For 1997] AS
+SELECT DISTINCT CategoryName, Sum(ProductSales) AS CategorySales
+FROM [Product Sales for 1997]
+GROUP BY CategoryName;
+
+SELECT * FROM [Category Sales For 1997];
+
+SELECT * FROM [Category Sales For 1997]
+  WHERE CategoryName = 'Beverages';
+
+CREATE OR REPLACE VIEW [Current Product List] AS
+SELECT ProductID, ProductName, Category
+FROM Products
+WHERE Discontinued = No;
+
+DROP VIEW view_name;
 ```
 
 ## Functions (MySQL)
