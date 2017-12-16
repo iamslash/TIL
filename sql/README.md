@@ -11,39 +11,125 @@
 
 ## Select
 
+```sql
+SELECT CustomerName, City FROM Customers;
+SELECT * FROM Customers;
+```
+
 ## Select Distinct
+
+```sql
+SELECT DISTINCT Country FROM Customers;
+SELECT COUNT(DISTINCT Country) FROM Customers;
+SELECT Count(*) AS DistinctCountries
+  FROM (SELECT DISTINCT Country FROM Customers);
+```
 
 ## Where
 
+```sql
+SELECT * FROM Customers
+  WHERE Country='Mexico';
+SELECT * FROM Customers
+  WHERE CustomerID=1;
+```
+
+| Operator | Description                                      |
+|:--------:|:------------------------------------------------:|
+| =        | Equal                                            |
+| <>       | Not Equal                                        |
+| >        | Greater than                                     |
+| <        | Less than                                        |
+| >=       | Greater than or equal                            |
+| <=       | Less than or equal                               |
+| BETWEEN  | Between an inclusive range                       |
+| LIKE     | Search for a pattern                             |
+| IN       | To specify multiple possible values for a column |
+
 ## And, Or, Not
+
+```sql
+SELECT * FROM Customers
+  WHERE Country='Germany' AND City='Berlin';
+SELECT * FROM Customers
+  WHERE City='Berlin' OR City='München';
+SELECT * FROM Customers
+  WHERE NOT Country='Germany';
+SELECT * FROM Customers
+  WHERE Country='Germany' AND (City='Berlin' OR City='München');
+SELECT * FROM Customers
+  WHERE NOT Country='Germany' AND NOT Country='USA';
+```
 
 ## Order By
 
+```sql
+```
+
 ## Insert Into
+
+```sql
+```
 
 ## Null Values
 
+```sql
+```
+
 ## Update
+
+```sql
+```
 
 ## Delete
 
+```sql
+```
+
 ## Select Top
+
+```sql
+```
 
 ## Min, Max
 
+```sql
+```
+
 ## Count, Avg, Sum
+
+```sql
+```
 
 ## Like
 
+```sql
+```
+
 ## Wildcards
+
+```sql
+```
 
 ## In
 
+```sql
+```
+
 ## Between
+
+```sql
+```
 
 ## Aliases
 
+```sql
+```
+
 ## JOIN Basic
+
+```sql
+```
 
 ![](img/Visual_SQL_JOINS_V2.png)
 
@@ -104,69 +190,168 @@ SELECT * FROM Customers a LEFT JOIN Orders b ON (a.Id = b.Id AND b.CustomerId = 
 
 ## Inner Join
 
+```sql
+```
+
 ## Left Join
+
+```sql
+```
 
 ## Right Join
 
+```sql
+```
+
 ## FUll Join
+
+```sql
+```
 
 ## Self Join
 
+```sql
+```
+
 ## Union
+
+```sql
+```
 
 ## Group By
 
+```sql
+```
+
 ## Having
+
+```sql
+```
 
 ## Exists
 
+```sql
+```
+
 ## Any, All
+
+```sql
+```
 
 ## SElect Into
 
+```sql
+```
+
 ## Insert Into Select
+
+```sql
+```
 
 ## Null Functions
 
+```sql
+```
+
 ## Comments
+
+```sql
+```
 
 ## Create DB
 
+```sql
+```
+
 ## Drop DB
+
+```sql
+```
 
 ## Create Table
 
+```sql
+```
+
 ## Drop Table
+
+```sql
+```
 
 ## Alter Table
 
+```sql
+```
+
 ## Constraints
+
+```sql
+```
 
 ## Not Null
 
+```sql
+```
+
 ## Unique
+
+```sql
+```
 
 ## Primary Key
 
+```sql
+```
+
 ## Foreign Key
+
+```sql
+```
 
 ## Check
 
+```sql
+```
+
 ## Default
+
+```sql
+```
 
 ## Index
 
+```sql
+```
+
 ## Auto Increment
+
+```sql
+```
 
 ## Dates
 
+```sql
+```
+
 ## Views
+
+```sql
+```
 
 ## Injection
 
+```sql
+```
+
 ## Functions (MySQL)
 
+```sql
+```
+
 ## Operators
+
+```sql
+```
 
 ## Data Types (MySQL)
 
