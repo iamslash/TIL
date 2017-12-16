@@ -9,7 +9,43 @@
 
 # Usage
 
+## Select
+
+## Select Distinct
+
+## Where
+
+## And, Or, Not
+
+## Order By
+
+## Insert Into
+
+## Null Values
+
+## Update
+
+## Delete
+
+## Select Top
+
+## Min, Max
+
+## Count, Avg, Sum
+
+## Like
+
+## Wildcards
+
+## In
+
+## Between
+
+## Aliases
+
 ## JOIN Basic
+
+![](img/Visual_SQL_JOINS_V2.png)
 
 - mysql workbench를 이용하여 다음과 같이 Customers, Order 테이블을 생성한 후 몇가지 SQL을 통해 INNER JOIN과 OUTER JOIN의 개념을 기억하자.
 Customers, Orders 는 다음과 같다.
@@ -66,7 +102,73 @@ SELECT * FROM Customers a LEFT JOIN Orders b ON (a.Id = b.Id) WHERE b.CustomerId
 SELECT * FROM Customers a LEFT JOIN Orders b ON (a.Id = b.Id AND b.CustomerId = 1
 ```
 
-## SQL Data Types (MySQL)
+## Inner Join
+
+## Left Join
+
+## Right Join
+
+## FUll Join
+
+## Self Join
+
+## Union
+
+## Group By
+
+## Having
+
+## Exists
+
+## Any, All
+
+## SElect Into
+
+## Insert Into Select
+
+## Null Functions
+
+## Comments
+
+## Create DB
+
+## Drop DB
+
+## Create Table
+
+## Drop Table
+
+## Alter Table
+
+## Constraints
+
+## Not Null
+
+## Unique
+
+## Primary Key
+
+## Foreign Key
+
+## Check
+
+## Default
+
+## Index
+
+## Auto Increment
+
+## Dates
+
+## Views
+
+## Injection
+
+## Functions (MySQL)
+
+## Operators
+
+## Data Types (MySQL)
 
 보통 text, number, date 로 구분한다. 
 
