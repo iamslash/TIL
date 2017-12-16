@@ -820,13 +820,92 @@ DROP VIEW view_name;
 
 ## Functions (MySQL)
 
-```sql
-```
+* String
+
+| Function | Description                                                    |
+|:--------:|:--------------------------------------------------------------:|
+| ASCII    | Returns the number code that represents the specific character |
+|          |                                                                |
+
+* Numeric
+
+| Function | Description                            |
+|:--------:|:--------------------------------------:|
+| ABS      | Returns the absolute value of a number |
+|          |                                        |
+
+* Date 
+
+| Function | Description                                                      |
+|:--------:|:----------------------------------------------------------------:|
+| ADDDATE  | Returns a date after a certain time/date interval has been added |
+|          |                                                                  |
+
+* Advanced
+
+| Function | Description                                  |
+|:--------:|:--------------------------------------------:|
+| BIN      | Converts a decimal number to a binary number |
+|          |                                              |
 
 ## Operators
 
-```sql
-```
+* Arithmetic
+
+| Operator | Description |
+|:--------:|:-----------:|
+| +        | Add         |
+| -        | Sub         |
+| *        | Mul         |
+| /        | Div         |
+| %        | Modulo      |
+
+* Bitwise
+
+| Operator | Description |
+|:--------:|:-----------:|
+| &        | AND         |
+|          | OR          |
+| ^        | XOR         |
+
+* Comparison
+
+| Operator | Description           |
+|:--------:|:---------------------:|
+| =        | Equal                 |
+| <>       | Not Equal             |
+| >        | Greater than          |
+| <        | Less than             |
+| >=       | Greater than or equal |
+| <=       | Less than or equal    |
+
+* Compound
+
+| Operator | Description    |
+|:--------:|:--------------:|
+| +=       | Add equals     |
+| -=       | Sub equals     |
+| *=       | multiply equal |
+| /=       | div equal      |
+| %=       | modulo equal   |
+| &=       | AND equal      |
+| ^-=      | XOR equal      |
+|          | OR equal       |
+
+* Logical
+
+| Operator | Description                                                  |
+|:--------:|:------------------------------------------------------------:|
+| ALL      | TRUE if all of the subquery values meet the condition        |
+| AND      | TRUE if all the conditions separated by AND is TRUE          |
+| ANY      | TRUE if any of the subquery values meet the condition        |
+| BETWEEN  | TRUE if the operand is within the range of comparisons       |
+| EXISTS   | TRUE if the subquery returns one or more records             |
+| IN       | TRUE if the operand is equal to one of a list of expressions |
+| LIKE     | TRUE if the operand matches a pattern                        |
+| NOT      | Displays a record if the condition(s) is NOT TRUE            |
+| OR       | TRUE if any of the conditions separated by OR is TRUE        |
+| SOME     | TRUE if any of the subquery values meet the condition        |
 
 ## Data Types (MySQL)
 
