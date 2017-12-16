@@ -5,6 +5,7 @@
 # Material
 
 * [use the idex luke](http://use-the-index-luke.com/)
+* [sql @ w3schools](https://www.w3schools.com/sql/default.asp)
 
 # Usage
 
