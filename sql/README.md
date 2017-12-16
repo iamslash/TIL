@@ -66,6 +66,30 @@ SELECT * FROM Customers a LEFT JOIN Orders b ON (a.Id = b.Id) WHERE b.CustomerId
 SELECT * FROM Customers a LEFT JOIN Orders b ON (a.Id = b.Id AND b.CustomerId = 1
 ```
 
+## SQL Data Types (MySQL)
+
+보통 text, number, date 로 구분한다. 
+
+### Text
+
+| Data type  | Description  |
+|:----------:|:------------:|
+| CHAR(size)    | up to 255 characters |
+| VARCHAR(size) | up to 255 characters, in case of greater value than 255 it will be converted to a TEXT type  |
+| TINYTEXT      |   |
+| TEXT      |   |
+| BLOB      |   |
+| MEDIUMTEXT      |   |
+| MEDIUMBLOB | |
+| LONGTEXT | |
+| LONGBLOB| |
+| ENUM(x,y,z,etc...) | |
+| SET | |
+
+### Number
+
+### Date
+
 # References
 
 - [sqlzoo](http://sqlzoo.net/)
