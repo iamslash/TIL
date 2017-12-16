@@ -822,31 +822,160 @@ DROP VIEW view_name;
 
 * String
 
-| Function | Description                                                    |
-|:--------:|:--------------------------------------------------------------:|
-| ASCII    | Returns the number code that represents the specific character |
-|          |                                                                |
+```
+ASCII	Returns the number code that represents the specific character
+CHAR_LENGTH	Returns the length of the specified string (in characters)
+CHARACTER_LENGTH	Returns the length of the specified string (in characters)
+CONCAT	Concatenates two or more expressions together
+CONCAT_WS	Concatenates two or more expressions together and adds a separator between them
+FIELD	Returns the position of a value in a list of values
+FIND_IN_SET	Returns the position of a string in a string list
+FORMAT	Formats a number as a format of "#,###.##", rounding it to a certain number of decimal places
+INSERT	Inserts a substring into a string at a specified position for a certain number of characters
+INSTR	Returns the position of the first occurrence of a string in another string
+LCASE	Converts a string to lower-case
+LEFT	Extracts a substring from a string (starting from left)
+LENGTH	Returns the length of the specified string (in bytes)
+LOCATE	Returns the position of the first occurrence of a substring in a string
+LOWER	Converts a string to lower-case
+LPAD	Returns a string that is left-padded with a specified string to a certain length
+LTRIM	Removes leading spaces from a string
+MID	Extracts a substring from a string (starting at any position)
+POSITION	Returns the position of the first occurrence of a substring in a string
+REPEAT	Repeats a string a specified number of times
+REPLACE	Replaces all occurrences of a specified string
+REVERSE	Reverses a string and returns the result
+RIGHT	Extracts a substring from a string (starting from right)
+RPAD	Returns a string that is right-padded with a specified string to a certain length
+RTRIM	Removes trailing spaces from a string
+SPACE	Returns a string with a specified number of spaces
+STRCMP	Tests whether two strings are the same
+SUBSTR	Extracts a substring from a string (starting at any position)
+SUBSTRING	Extracts a substring from a string (starting at any position)
+SUBSTRING_INDEX	Returns the substring of string before number of occurrences of delimiter
+TRIM	Removes leading and trailing spaces from a string
+UCASE	Converts a string to upper-case
+UPPER	Converts a string to upper-case
+```
 
 * Numeric
 
-| Function | Description                            |
-|:--------:|:--------------------------------------:|
-| ABS      | Returns the absolute value of a number |
-|          |                                        |
-
+```
+ABS	Returns the absolute value of a number
+ACOS	Returns the arc cosine of a number
+ASIN	Returns the arc sine of a number
+ATAN	Returns the arc tangent of a number or the arc tangent of n and m
+ATAN2	Returns the arc tangent of n and m
+AVG	Returns the average value of an expression
+CEIL	Returns the smallest integer value that is greater than or equal to a number
+CEILING	Returns the smallest integer value that is greater than or equal to a number
+COS	Returns the cosine of a number
+COT	Returns the cotangent of a number
+COUNT	Returns the number of records in a select query
+DEGREES	Converts a radian value into degrees
+DIV	Used for integer division
+EXP	Returns e raised to the power of number
+FLOOR	Returns the largest integer value that is less than or equal to a number
+GREATEST	Returns the greatest value in a list of expressions
+LEAST	Returns the smallest value in a list of expressions
+LN	Returns the natural logarithm of a number
+LOG	Returns the natural logarithm of a number or the logarithm of a number to a specified base
+LOG10	Returns the base-10 logarithm of a number
+LOG2	Returns the base-2 logarithm of a number
+MAX	Returns the maximum value of an expression
+MIN	Returns the minimum value of an expression
+MOD	Returns the remainder of n divided by m
+PI	Returns the value of PI displayed with 6 decimal places
+POW	Returns m raised to the nth power
+POWER	Returns m raised to the nth power
+RADIANS	Converts a value in degrees to radians
+RAND	Returns a random number or a random number within a range
+ROUND	Returns a number rounded to a certain number of decimal places
+SIGN	Returns a value indicating the sign of a number
+SIN	Returns the sine of a number
+SQRT	Returns the square root of a number
+SUM	Returns the summed value of an expression
+TAN	Returns the tangent of a number
+TRUNCATE	Returns a number truncated to a certain number of decimal places
+```
 * Date 
 
-| Function | Description                                                      |
-|:--------:|:----------------------------------------------------------------:|
-| ADDDATE  | Returns a date after a certain time/date interval has been added |
-|          |                                                                  |
+```
+ADDDATE	Returns a date after a certain time/date interval has been added
+ADDTIME	Returns a time/datetime after a certain time interval has been added
+CURDATE	Returns the current date
+CURRENT_DATE	Returns the current date
+CURRENT_TIME	Returns the current time
+CURRENT_TIMESTAMP	Returns the current date and time
+CURTIME	Returns the current time
+DATE	Extracts the date value from a date or datetime expression
+DATEDIFF	Returns the difference in days between two date values
+DATE_ADD	Returns a date after a certain time/date interval has been added
+DATE_FORMAT	Formats a date as specified by a format mask
+DATE_SUB	Returns a date after a certain time/date interval has been subtracted
+DAY	Returns the day portion of a date value
+DAYNAME	Returns the weekday name for a date
+DAYOFMONTH	Returns the day portion of a date value
+DAYOFWEEK	Returns the weekday index for a date value
+DAYOFYEAR	Returns the day of the year for a date value
+EXTRACT	Extracts parts from a date
+FROM_DAYS	Returns a date value from a numeric representation of the day
+HOUR	Returns the hour portion of a date value
+LAST_DAY	Returns the last day of the month for a given date
+LOCALTIME	Returns the current date and time
+LOCALTIMESTAMP	Returns the current date and time
+MAKEDATE	Returns the date for a certain year and day-of-year value
+MAKETIME	Returns the time for a certain hour, minute, second combination
+MICROSECOND	Returns the microsecond portion of a date value
+MINUTE	Returns the minute portion of a date value
+MONTH	Returns the month portion of a date value
+MONTHNAME	Returns the full month name for a date
+NOW	Returns the current date and time
+PERIOD_ADD	Takes a period and adds a specified number of months to it
+PERIOD_DIFF	Returns the difference in months between two periods
+QUARTER	Returns the quarter portion of a date value
+SECOND	Returns the second portion of a date value
+SEC_TO_TIME	Converts numeric seconds into a time value
+STR_TO_DATE	Takes a string and returns a date specified by a format mask
+SUBDATE	Returns a date after which a certain time/date interval has been subtracted
+SUBTIME	Returns a time/datetime value after a certain time interval has been subtracted
+SYSDATE	Returns the current date and time
+TIME	Extracts the time value from a time/datetime expression
+TIME_FORMAT	Formats a time as specified by a format mask
+TIME_TO_SEC	Converts a time value into numeric seconds
+TIMEDIFF	Returns the difference between two time/datetime values
+TIMESTAMP	Converts an expression to a datetime value and if specified adds an optional time interval to the value
+TO_DAYS	Converts a date into numeric days
+WEEK	Returns the week portion of a date value
+WEEKDAY	Returns the weekday index for a date value
+WEEKOFYEAR	Returns the week of the year for a date value
+YEAR	Returns the year portion of a date value
+YEARWEEK	Returns the year and week for a date value
+```
 
 * Advanced
 
-| Function | Description                                  |
-|:--------:|:--------------------------------------------:|
-| BIN      | Converts a decimal number to a binary number |
-|          |                                              |
+```
+BIN	Converts a decimal number to a binary number
+BINARY	Converts a value to a binary string
+CASE	Lets you evaluate conditions and return a value when the first condition is met
+CAST	Converts a value from one datatype to another datatype
+COALESCE	Returns the first non-null expression in a list
+CONNECTION_ID	Returns the unique connection ID for the current connection
+CONV	Converts a number from one number base to another
+CONVERT	Converts a value from one datatype to another, or one character set to another
+CURRENT_USER	Returns the user name and host name for the MySQL account used by the server to authenticate the current client
+DATABASE	Returns the name of the default database
+IF	Returns one value if a condition is TRUE, or another value if a condition is FALSE
+IFNULL	Lets you to return an alternate value if an expression is NULL
+ISNULL	Tests whether an expression is NULL
+LAST_INSERT_ID	Returns the first AUTO_INCREMENT value that was set by the most recent INSERT or UPDATE statement
+NULLIF	Compares two expressions
+SESSION_USER	Returns the user name and host name for the current MySQL user
+SYSTEM_USER	Returns the user name and host name for the current MySQL user
+USER	Returns the user name and host name for the current MySQL user
+VERSION	Returns the version of the MySQL database
+```
 
 ## Operators
 
