@@ -9,6 +9,9 @@ c#에 대해 정리한다.
 
 # References
 
+* [coreclr @ github](https://github.com/dotnet/coreclr)
+* [mono @ github](https://github.com/mono/mono)
+
 # Uaage
 
 ## var를 잘 사용하자.
