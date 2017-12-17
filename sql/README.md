@@ -858,6 +858,23 @@ UCASE	Converts a string to upper-case
 UPPER	Converts a string to upper-case
 ```
 
+```sql
+SELECT ASCII('2'); 
+-- 2
+SELECT CHAR_LENGTH('hello world'); 
+-- 11
+SELECT CONCAT('My', 'S', 'QL'); 
+-- 'MySQL'
+SELECT CONCAT('My', NULL, 'QL'); 
+-- NULL
+SELECT CONCAT(14.3); 
+-- '14.3'
+SELECT CONCAT_WS(',','First name','Second name','Last Name');
+-- 'First name,Second name,Last Name'
+SELECT CONCAT_WS(',','First name',NULL,'Last Name');
+-- 'First name,Last Name'
+```
+
 * Numeric
 
 ```
