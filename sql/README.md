@@ -861,18 +861,71 @@ UPPER	Converts a string to upper-case
 ```sql
 SELECT ASCII('2'); 
 -- 2
+
 SELECT CHAR_LENGTH('hello world'); 
 -- 11
+
 SELECT CONCAT('My', 'S', 'QL'); 
 -- 'MySQL'
 SELECT CONCAT('My', NULL, 'QL'); 
 -- NULL
 SELECT CONCAT(14.3); 
 -- '14.3'
+
 SELECT CONCAT_WS(',','First name','Second name','Last Name');
 -- 'First name,Second name,Last Name'
+
 SELECT CONCAT_WS(',','First name',NULL,'Last Name');
 -- 'First name,Last Name'
+
+SELECT FIELD('ej', 'Hej', 'ej', 'Heja', 'hej', 'foo');
+-- 2
+SELECT FIELD('fo', 'Hej', 'ej', 'Heja', 'hej', 'foo');
+-- 0
+
+SELECT FIND_IN_SET('b','a,b,c,d');
+-- 2
+
+SELECT FORMAT(12332.123456, 4);
+-- '12,332.1235'
+SELECT FORMAT(12332.1,4);
+-- '12,332.1000'
+SELECT FORMAT(12332.2,0);
+-- '12,332'
+SELECT FORMAT(12332.2,2,'de_DE');
+-- '12.332,20'
+
+SELECT INSERT('Quadratic', 3, 4, 'What');
+-- 'QuWhattic'
+SELECT INSERT('Quadratic', -1, 4, 'What');
+-- 'Quadratic'
+SELECT INSERT('Quadratic', 3, 100, 'What');
+-- 'QuWhat'
+
+SELECT INSTR('foobarbar', 'bar');
+-- 4
+SELECT INSTR('xbar', 'foobar');
+-- 0
+
+-- use LOWER instead of LCASE
+SELECT LOWER('QUADRATICALLY');
+        -> 'quadratically'
+-- LOWER() (and UPPER()) are ineffective when applied to 
+-- binary strings (BINARY, VARBINARY, BLOB). 
+-- To perform lettercase conversion, 
+-- convert the string to a nonbinary string:
+SET @str = BINARY 'New York';
+mysql> SELECT LOWER(@str), LOWER(CONVERT(@str USING latin1));
++-------------+-----------------------------------+
+| LOWER(@str) | LOWER(CONVERT(@str USING latin1)) |
++-------------+-----------------------------------+
+| New York    | new york                          |
++-------------+-----------------------------------+
+
+SELECT LEFT('foobarbar', 5);
+-- 'fooba'
+
+
 ```
 
 * Numeric
