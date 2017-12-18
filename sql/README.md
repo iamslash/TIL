@@ -925,6 +925,27 @@ mysql> SELECT LOWER(@str), LOWER(CONVERT(@str USING latin1));
 SELECT LEFT('foobarbar', 5);
 -- 'fooba'
 
+SELECT LENGTH('text');
+-- 4
+
+SELECT LOCATE('bar', 'foobarbar');
+-- 4
+SELECT LOCATE('xbar', 'foobar');
+-- 0
+SELECT LOCATE('bar', 'foobarbar', 5);
+-- 7
+
+SELECT LPAD('hi',4,'??');
+-- '??hi'
+SELECT LPAD('hi',1,'??');
+-- 'h'
+
+SELECT LTRIM('  barbar');
+-- 'barbar'
+
+
+
+
 
 ```
 
