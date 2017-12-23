@@ -943,10 +943,66 @@ SELECT LPAD('hi',1,'??');
 SELECT LTRIM('  barbar');
 -- 'barbar'
 
+-- MID(str,pos,len) is a synonym for SUBSTRING(str,pos,len).
 
+-- POSITION(substr IN str) is a synonym for LOCATE(substr,str).
 
+SELECT REPEAT('MySQL', 3);
+-- 'MySQLMySQLMySQL'
 
+SELECT REPLACE('www.mysql.com', 'w', 'Ww');
+-- 'WwWwWw.mysql.com'
 
+SELECT REVERSE('abc');
+-- 'cba'
+
+SELECT RIGHT('foobarbar', 4);
+-- 'rbar'
+
+SELECT RPAD('hi',5,'?');
+-- 'hi???'
+SELECT RPAD('hi',1,'?');
+-- 'h'
+
+SELECT RTRIM('barbar   ');
+-- 'barbar'
+
+SELECT SPACE(6);
+-- '      '
+
+-- SUBSTR() is a synonym for SUBSTRING().
+
+SELECT SUBSTRING('Quadratically',5);
+-- 'ratically'
+SELECT SUBSTRING('foobarbar' FROM 4);
+-- 'barbar'
+SELECT SUBSTRING('Quadratically',5,6);
+-- 'ratica'
+SELECT SUBSTRING('Sakila', -3);
+-- 'ila'
+SELECT SUBSTRING('Sakila', -5, 3);
+-- 'aki'
+SELECT SUBSTRING('Sakila' FROM -4 FOR 2);
+-- 'ki'
+
+SELECT SUBSTRING_INDEX('www.mysql.com', '.', 2);
+-- 'www.mysql'
+SELECT SUBSTRING_INDEX('www.mysql.com', '.', -2);
+-- 'mysql.com'
+
+SELECT TRIM('  bar   ');
+-- 'bar'
+SELECT TRIM(LEADING 'x' FROM 'xxxbarxxx');
+-- 'barxxx'
+SELECT TRIM(BOTH 'x' FROM 'xxxbarxxx');
+-- 'bar'
+SELECT TRIM(TRAILING 'xyz' FROM 'barxxyz');
+-- 'barx'
+
+-- UCASE() is a synonym for UPPER().
+
+SELECT UPPER('Hej');
+-- 'HEJ'
 ```
 
 * Numeric
@@ -989,6 +1045,228 @@ SUM	Returns the summed value of an expression
 TAN	Returns the tangent of a number
 TRUNCATE	Returns a number truncated to a certain number of decimal places
 ```
+
+```sql
+SELECT ABS(2);
+-- 2
+SELECT ABS(-32);
+-- 32
+
+SELECT ACOS(1);
+-- 0
+SELECT ACOS(1.0001);
+-- NULL
+SELECT ACOS(0);
+-- 1.5707963267949
+
+SELECT ASIN(0.2);
+-- 0.20135792079033
+SELECT ASIN('foo');
+
++-------------+
+| ASIN('foo') |
++-------------+
+|           0 |
++-------------+
+1 row in set, 1 warning (0.00 sec)
+
+SHOW WARNINGS;
++---------+------+-----------------------------------------+
+| Level   | Code | Message                                 |
++---------+------+-----------------------------------------+
+| Warning | 1292 | Truncated incorrect DOUBLE value: 'foo' |
++---------+------+-----------------------------------------+
+
+SELECT ATAN(-2,2);
+-- -0.78539816339745
+SELECT ATAN2(PI(),0);
+-- 1.5707963267949
+
+-- CEIL() is a synonym for CEILING().
+
+SELECT CEILING(1.23);
+-- 2
+SELECT CEILING(-1.23);
+-- -1
+
+SELECT COS(PI());
+-- -1
+
+SELECT COT(12);
+-- -1.5726734063977
+SELECT COT(0);
+-- out-of-range error
+
+SELECT DEGREES(PI());
+-- 180
+SELECT DEGREES(PI() / 2);
+-- 90
+
+SELECT EXP(2);
+-- 7.3890560989307
+SELECT EXP(-2);
+-- 0.13533528323661
+SELECT EXP(0);
+-- 1
+
+SELECT FLOOR(1.23), FLOOR(-1.23);
+-- 1, -2
+
+SELECT LOG(2);
+-- 0.69314718055995
+SELECT LOG(-2);
+-- NULL
+
+SELECT LOG2(65536);
+-- 16
+SELECT LOG2(-100);
+-- NULL
+
+SELECT LOG10(2);
+-- 0.30102999566398
+SELECT LOG10(100);
+-- 2
+SELECT LOG10(-100);
+-- NULL
+
+SELECT MOD(234, 10);
+-- 4
+SELECT 253 % 7;
+-- 1
+SELECT MOD(29,9);
+-- 2
+SELECT 29 MOD 9;
+-- 2
+SELECT MOD(34.5,3);
+-- 1.5
+
+SELECT PI();
+-- 3.141593
+SELECT PI()+0.000000000000000000;
+-- 3.141592653589793116
+
+SELECT POW(2,2);
+-- 4
+SELECT POW(2,-2);
+-- 0.25
+
+-- POWER() is a synonym for POW().
+
+SELECT RADIANS(90);
+-- 1.5707963267949
+
+SELECT FLOOR(7 + (RAND() * 5));
+
+mysql> CREATE TABLE t (i INT);
+Query OK, 0 rows affected (0.42 sec)
+
+mysql> INSERT INTO t VALUES(1),(2),(3);
+Query OK, 3 rows affected (0.00 sec)
+Records: 3  Duplicates: 0  Warnings: 0
+
+mysql> SELECT i, RAND() FROM t;
++------+------------------+
+| i    | RAND()           |
++------+------------------+
+|    1 | 0.61914388706828 |
+|    2 | 0.93845168309142 |
+|    3 | 0.83482678498591 |
++------+------------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT i, RAND(3) FROM t;
++------+------------------+
+| i    | RAND(3)          |
++------+------------------+
+|    1 | 0.90576975597606 |
+|    2 | 0.37307905813035 |
+|    3 | 0.14808605345719 |
++------+------------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT i, RAND() FROM t;
++------+------------------+
+| i    | RAND()           |
++------+------------------+
+|    1 | 0.35877890638893 |
+|    2 | 0.28941420772058 |
+|    3 | 0.37073435016976 |
++------+------------------+
+3 rows in set (0.00 sec)
+
+mysql> SELECT i, RAND(3) FROM t;
++------+------------------+
+| i    | RAND(3)          |
++------+------------------+
+|    1 | 0.90576975597606 |
+|    2 | 0.37307905813035 |
+|    3 | 0.14808605345719 |
++------+------------------+
+3 rows in set (0.01 sec)
+
+mysql> SELECT ROUND(-1.23);
+        -> -1
+mysql> SELECT ROUND(-1.58);
+        -> -2
+mysql> SELECT ROUND(1.58);
+        -> 2
+mysql> SELECT ROUND(1.298, 1);
+        -> 1.3
+mysql> SELECT ROUND(1.298, 0);
+        -> 1
+mysql> SELECT ROUND(23.298, -1);
+        -> 20
+mysql> SELECT ROUND(150.000,2), ROUND(150,2);
++------------------+--------------+
+| ROUND(150.000,2) | ROUND(150,2) |
++------------------+--------------+
+|           150.00 |          150 |
++------------------+--------------+        
+mysql> SELECT ROUND(2.5), ROUND(25E-1);
++------------+--------------+
+| ROUND(2.5) | ROUND(25E-1) |
++------------+--------------+
+| 3          |            2 |
++------------+--------------+        
+        
+mysql> SELECT SIGN(-32);
+        -> -1
+mysql> SELECT SIGN(0);
+        -> 0
+mysql> SELECT SIGN(234);
+        -> 1
+        
+mysql> SELECT SIN(PI());
+        -> 1.2246063538224e-16
+mysql> SELECT ROUND(SIN(PI()));
+        -> 0
+        
+mysql> SELECT SQRT(4);
+        -> 2
+mysql> SELECT SQRT(20);
+        -> 4.4721359549996
+mysql> SELECT SQRT(-16);
+        -> NULL
+        
+mysql> SELECT TAN(PI());
+        -> -1.2246063538224e-16
+mysql> SELECT TAN(PI()+1);
+        -> 1.5574077246549        
+
+mysql> SELECT TRUNCATE(1.223,1);
+        -> 1.2
+mysql> SELECT TRUNCATE(1.999,1);
+        -> 1.9
+mysql> SELECT TRUNCATE(1.999,0);
+        -> 1
+mysql> SELECT TRUNCATE(-1.999,1);
+        -> -1.9
+mysql> SELECT TRUNCATE(122,-2);
+       -> 100
+mysql> SELECT TRUNCATE(10.28*100,0);
+       -> 1028
+```
+
 * Date 
 
 ```

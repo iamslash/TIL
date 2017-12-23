@@ -50,6 +50,36 @@
 
 # Learning material
 
+- 김훈 링크
+
+  1. 뽀로로QA와 심층 임베딩 메모리망, 김경민, 서울대 박사과정, http://tv.naver.com/v/2231323
+  2. Multimodal Sequential Learning for Video QA, 김은솔, 서울대 박사과정, http://tv.naver.com/v/2218642
+  3. Finding connections among images using CycleGAN, 박태성, UC Berkeley 박사과정, http://tv.naver.com/v/2203900
+  4. Learning to reason by reading text and answering questions, 서민준, Washington Univ. 박사과정, http://tv.naver.com/v/2083653
+  5. 조음 Goodness-Of-Pronunciation 자질을 이용한 영어 학습자의 조음 오류 진단, 류혁수, 서울대 박사과정, http://tv.naver.com/v/2152689
+  6. 1시간만에 GAN(Generative Adversarial Network) 완전 정복하기, 최윤제, 고려대 석사과정, http://tv.naver.com/v/1947034
+  7. Introduction of Deep Reinforcement Learning, 곽동현, (서울대 박사과정, Now Naver), http://tv.naver.com/v/2024376
+  8. Deep Learning, Where are you going?, 조경현, NYU 교수, http://tv.naver.com/v/1967400
+  9. Deepmind StarCraft II AI, 송호연(Kakao), http://tv.naver.com/v/2451300
+  10. 블록과 함께하는 케라스와 태양에서 세포까지 활용사, 김태영(인스페이스 CTO), http://tv.naver.com/v/2440383
+  11. 2017 R-Biz Challange 터틀봇3 오토레이스, 길기종(동아대학교 석사과정), http://tv.naver.com/v/2404922
+  12. Speeding Up Distributed Machine Learning Using Codes, 이강욱 (KAIST 박사 후 연구원), http://tv.naver.com/v/2389070
+  13. Recommender system for education, 서창호 (KAIST 교수), http://tv.naver.com/v/2345343
+  14. 기계학습을 이용하여 정적 분석기의 안전성을 선별적으로 조절하는 방법, 허기홍 (서울대 박사과정), http://tv.naver.com/v/2345246
+  15. 사람 뽑는 기계 만들기, 송호원(OnboardIQ), http://tv.naver.com/v/2343656
+  16. The Personal Home Service Robot that Won the RoboCup@Home League, 이범진(서울대 박사과정), http://tv.naver.com/v/2317076
+  17. 그림 그리는 AI, 이활석 (Naver Clova), http://tv.naver.com/v/2417457
+  18. Learning to Perceive the 3D World, 최봉수(Stanford University 박사 과정) http://tv.naver.com/v/2316860
+  19. Variational Autoencoded Regression of Visual Data with Generative Advers, 유영준 (서울대 박사 후 연구원, Now Naver), http://tv.naver.com/v/2290853
+  20. Learning where and how to look for weakly-supervised visual recognition, 이용재 (Yong Jae Lee, UC Davis), http://tv.naver.com/v/2261079
+  21. Contour-Constrained Superpixels for Image and Video Processing, 이세호(고려대 박사과정), http://tv.naver.com/v/2260981
+  22. Online video object segmentation via convolutional trident network, 장원동 (고려대 박사과정), http://tv.naver.com/v/2257232
+  23. Video Object Segmentation in Videos, 고영준 (고려대 박사과정), http://tv.naver.com/v/2237808
+  24. Step-by-step approach to question answering, 민세원 (서울대 학부 4학년), http://tv.naver.com/v/2152722
+  25. 알아두면 쓸 데있는 신기한 강화학습, 김태훈 (데브시스터즈), http://tv.naver.com/v/2051482
+  26. RLCode와 A3C 쉽고 깊게 이해하기, 이웅원(RLCode 리더), http://tv.naver.com/v/2022271
+  27. Deepmind StarCraft II AI, 송호연(Kakao, now Naver), http://tv.naver.com/v/2451300
+
 - [최신 논문으로 시작하는 딥러닝](http://www.edwith.org/deeplearningchoi/joinLectures/10979)
   - 최성준님의 강좌. 모두를 위한 머신러닝을 클리어 하고 학습하면 좋다.
   - [src](https://github.com/sjchoi86/dl_tutorials_10weeks)
