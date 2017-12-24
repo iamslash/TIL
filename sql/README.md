@@ -1322,6 +1322,373 @@ YEAR	Returns the year portion of a date value
 YEARWEEK	Returns the year and week for a date value
 ```
 
+```sql
+mysql> SELECT DATE_ADD('2008-01-02', INTERVAL 31 DAY);
+        -> '2008-02-02'
+mysql> SELECT ADDDATE('2008-01-02', INTERVAL 31 DAY);
+        -> '2008-02-02'
+mysql> SELECT ADDDATE('2008-01-02', 31);
+        -> '2008-02-02'
+        
+mysql> SELECT ADDTIME('2007-12-31 23:59:59.999999', '1 1:1:1.000002');
+        -> '2008-01-02 01:01:01.000001'
+mysql> SELECT ADDTIME('01:00:00.999999', '02:00:00.999998');
+        -> '03:00:01.999997'
+        
+mysql> SELECT CURDATE();
+        -> '2008-06-13'
+mysql> SELECT CURDATE() + 0;
+        -> 20080613        
+
+-- CURRENT_DATE and CURRENT_DATE() are synonyms for CURDATE().
+-- CURRENT_TIME and CURRENT_TIME() are synonyms for CURTIME().        
+-- CURRENT_TIMESTAMP and CURRENT_TIMESTAMP() are synonyms for NOW().
+
+mysql> SELECT CURTIME();
+        -> '23:50:26'
+mysql> SELECT CURTIME() + 0;
+        -> 235026.000000
+
+mysql> SELECT DATE('2003-12-31 01:02:03');
+        -> '2003-12-31'
+
+mysql> SELECT DATEDIFF('2007-12-31 23:59:59','2007-12-30');
+        -> 1
+mysql> SELECT DATEDIFF('2010-11-30 23:59:59','2010-12-31');
+        -> -31
+
+mysql> SELECT '2008-12-31 23:59:59' + INTERVAL 1 SECOND;
+        -> '2009-01-01 00:00:00'
+mysql> SELECT INTERVAL 1 DAY + '2008-12-31';
+        -> '2009-01-01'
+mysql> SELECT '2005-01-01' - INTERVAL 1 SECOND;
+        -> '2004-12-31 23:59:59'
+mysql> SELECT DATE_ADD('2000-12-31 23:59:59',
+    ->                 INTERVAL 1 SECOND);
+        -> '2001-01-01 00:00:00'
+mysql> SELECT DATE_ADD('2010-12-31 23:59:59',
+    ->                 INTERVAL 1 DAY);
+        -> '2011-01-01 23:59:59'
+mysql> SELECT DATE_ADD('2100-12-31 23:59:59',
+    ->                 INTERVAL '1:1' MINUTE_SECOND);
+        -> '2101-01-01 00:01:00'
+mysql> SELECT DATE_SUB('2005-01-01 00:00:00',
+    ->                 INTERVAL '1 1:1:1' DAY_SECOND);
+        -> '2004-12-30 22:58:59'
+mysql> SELECT DATE_ADD('1900-01-01 00:00:00',
+    ->                 INTERVAL '-1 10' DAY_HOUR);
+        -> '1899-12-30 14:00:00'
+mysql> SELECT DATE_SUB('1998-01-02', INTERVAL 31 DAY);
+        -> '1997-12-02'
+mysql> SELECT DATE_ADD('1992-12-31 23:59:59.000002',
+    ->            INTERVAL '1.999999' SECOND_MICROSECOND);
+        -> '1993-01-01 00:00:01.000001'
+        
+mysql> SELECT 6/4;
+        -> 1.5000
+mysql> SELECT DATE_ADD('2009-01-01', INTERVAL 6/4 HOUR_MINUTE);
+        -> '2009-01-04 12:20:00'
+        
+mysql> SELECT CAST(6/4 AS DECIMAL(3,1));
+        -> 1.5
+mysql> SELECT DATE_ADD('1970-01-01 12:00:00',
+    ->                 INTERVAL CAST(6/4 AS DECIMAL(3,1)) HOUR_MINUTE);
+        -> '1970-01-01 13:05:00'
+        
+mysql> SELECT DATE_ADD('2013-01-01', INTERVAL 1 DAY);
+        -> '2013-01-02'
+mysql> SELECT DATE_ADD('2013-01-01', INTERVAL 1 HOUR);
+        -> '2013-01-01 01:00:00'
+        
+mysql> SELECT DATE_ADD('2009-01-30', INTERVAL 1 MONTH);
+        -> '2009-02-28'
+
+mysql> SELECT DATE_ADD('2006-07-00', INTERVAL 1 DAY);
+        -> NULL
+mysql> SELECT '2005-03-32' + INTERVAL 1 MONTH;
+        -> NULL
+        
+mysql> SELECT DATE_FORMAT('2009-10-04 22:23:00', '%W %M %Y');
+        -> 'Sunday October 2009'
+mysql> SELECT DATE_FORMAT('2007-10-04 22:23:00', '%H:%i:%s');
+        -> '22:23:00'
+mysql> SELECT DATE_FORMAT('1900-10-04 22:23:00',
+    ->                 '%D %y %a %d %m %b %j');
+        -> '4th 00 Thu 04 10 Oct 277'
+mysql> SELECT DATE_FORMAT('1997-10-04 22:23:00',
+    ->                 '%H %k %I %r %T %S %w');
+        -> '22 22 10 10:23:00 PM 22:23:00 00 6'
+mysql> SELECT DATE_FORMAT('1999-01-01', '%X %V');
+        -> '1998 52'
+mysql> SELECT DATE_FORMAT('2006-06-00', '%d');
+        -> '00'
+
+-- DAY() is a synonym for DAYOFMONTH().
+
+mysql> SELECT DAYNAME('2007-02-03');
+        -> 'Saturday'
+
+mysql> SELECT DAYOFMONTH('2007-02-03');
+        -> 3
+    
+mysql> SELECT DAYOFWEEK('2007-02-03');
+        -> 7
+        
+mysql> SELECT DAYOFYEAR('2007-02-03');
+        -> 34
+        
+mysql> SELECT EXTRACT(YEAR FROM '2009-07-02');
+       -> 2009
+mysql> SELECT EXTRACT(YEAR_MONTH FROM '2009-07-02 01:02:03');
+       -> 200907
+mysql> SELECT EXTRACT(DAY_MINUTE FROM '2009-07-02 01:02:03');
+       -> 20102
+mysql> SELECT EXTRACT(MICROSECOND
+    ->                FROM '2003-01-02 10:30:00.000123');
+        -> 123
+
+mysql> SELECT FROM_DAYS(730669);
+        -> '2000-07-03'
+
+mysql> SELECT HOUR('10:05:03');
+        -> 10
+mysql> SELECT HOUR('272:59:59');
+        -> 272
+        
+mysql> SELECT LAST_DAY('2003-02-05');
+        -> '2003-02-28'
+mysql> SELECT LAST_DAY('2004-02-05');
+        -> '2004-02-29'
+mysql> SELECT LAST_DAY('2004-01-01 01:01:01');
+        -> '2004-01-31'
+mysql> SELECT LAST_DAY('2003-03-32');
+        -> NULL
+        
+-- LOCALTIME and LOCALTIME() are synonyms for NOW().
+-- LOCALTIMESTAMP and LOCALTIMESTAMP() are synonyms for NOW().
+
+mysql> SELECT MAKEDATE(2011,31), MAKEDATE(2011,32);
+        -> '2011-01-31', '2011-02-01'
+mysql> SELECT MAKEDATE(2011,365), MAKEDATE(2014,365);
+        -> '2011-12-31', '2014-12-31'
+mysql> SELECT MAKEDATE(2011,0);
+        -> NULL
+        
+mysql> SELECT MAKETIME(12,15,30);
+        -> '12:15:30'
+
+mysql> SELECT MICROSECOND('12:00:00.123456');
+        -> 123456
+mysql> SELECT MICROSECOND('2009-12-31 23:59:59.000010');
+        -> 10
+
+mysql> SELECT MINUTE('2008-02-03 10:05:03');
+        -> 5
+
+mysql> SELECT MONTH('2008-02-03');
+        -> 2
+        
+mysql> SELECT MONTHNAME('2008-02-03');
+        -> 'February'
+        
+mysql> SELECT NOW();
+        -> '2007-12-15 23:50:26'
+mysql> SELECT NOW() + 0;
+        -> 20071215235026.000000
+        
+mysql> SELECT NOW(), SLEEP(2), NOW();
++---------------------+----------+---------------------+
+| NOW()               | SLEEP(2) | NOW()               |
++---------------------+----------+---------------------+
+| 2006-04-12 13:47:36 |        0 | 2006-04-12 13:47:36 |
++---------------------+----------+---------------------+
+
+mysql> SELECT SYSDATE(), SLEEP(2), SYSDATE();
++---------------------+----------+---------------------+
+| SYSDATE()           | SLEEP(2) | SYSDATE()           |
++---------------------+----------+---------------------+
+| 2006-04-12 13:47:44 |        0 | 2006-04-12 13:47:46 |
++---------------------+----------+---------------------+
+
+mysql> SELECT PERIOD_ADD(200801,2);
+        -> 200803
+        
+mysql> SELECT PERIOD_DIFF(200802,200703);
+        -> 11
+        
+mysql> SELECT QUARTER('2008-04-01');
+        -> 2
+        
+mysql> SELECT SECOND('10:05:03');
+        -> 3
+       
+mysql> SELECT SEC_TO_TIME(2378);
+        -> '00:39:38'
+mysql> SELECT SEC_TO_TIME(2378) + 0;
+        -> 3938
+        
+mysql> SELECT STR_TO_DATE('01,5,2013','%d,%m,%Y');
+        -> '2013-05-01'
+mysql> SELECT STR_TO_DATE('May 1, 2013','%M %d,%Y');
+        -> '2013-05-01'
+        
+mysql> SELECT STR_TO_DATE('a09:30:17','a%h:%i:%s');
+        -> '09:30:17'
+mysql> SELECT STR_TO_DATE('a09:30:17','%h:%i:%s');
+        -> NULL
+mysql> SELECT STR_TO_DATE('09:30:17a','%h:%i:%s');
+        -> '09:30:17'
+
+mysql> SELECT STR_TO_DATE('abc','abc');
+        -> '0000-00-00'
+mysql> SELECT STR_TO_DATE('9','%m');
+        -> '0000-09-00'
+mysql> SELECT STR_TO_DATE('9','%s');
+        -> '00:00:09'
+        
+mysql> SELECT STR_TO_DATE('00/00/0000', '%m/%d/%Y');
+        -> '0000-00-00'
+mysql> SELECT STR_TO_DATE('04/31/2004', '%m/%d/%Y');
+        -> '2004-04-31'
+        
+mysql> SET sql_mode = '';
+mysql> SELECT STR_TO_DATE('15:35:00', '%H:%i:%s');
++-------------------------------------+
+| STR_TO_DATE('15:35:00', '%H:%i:%s') |
++-------------------------------------+
+| 15:35:00                            |
++-------------------------------------+
+mysql> SET sql_mode = 'NO_ZERO_IN_DATE';
+mysql> SELECT STR_TO_DATE('15:35:00', '%h:%i:%s');
++-------------------------------------+
+| STR_TO_DATE('15:35:00', '%h:%i:%s') |
++-------------------------------------+
+| NULL                                |
++-------------------------------------+
+mysql> SHOW WARNINGS\G
+*************************** 1. row ***************************
+  Level: Warning
+   Code: 1411
+Message: Incorrect datetime value: '15:35:00' for function str_to_date
+
+mysql> SELECT DATE_SUB('2008-01-02', INTERVAL 31 DAY);
+        -> '2007-12-02'
+mysql> SELECT SUBDATE('2008-01-02', INTERVAL 31 DAY);
+        -> '2007-12-02'
+
+mysql> SELECT SUBDATE('2008-01-02 12:00:00', 31);
+        -> '2007-12-02 12:00:00'
+
+mysql> SELECT SUBTIME('2007-12-31 23:59:59.999999','1 1:1:1.000002');
+        -> '2007-12-30 22:58:58.999997'
+mysql> SELECT SUBTIME('01:00:00.999999', '02:00:00.999998');
+        -> '-00:59:59.999999'
+        
+mysql> SELECT NOW(), SLEEP(2), NOW();
++---------------------+----------+---------------------+
+| NOW()               | SLEEP(2) | NOW()               |
++---------------------+----------+---------------------+
+| 2006-04-12 13:47:36 |        0 | 2006-04-12 13:47:36 |
++---------------------+----------+---------------------+
+
+mysql> SELECT SYSDATE(), SLEEP(2), SYSDATE();
++---------------------+----------+---------------------+
+| SYSDATE()           | SLEEP(2) | SYSDATE()           |
++---------------------+----------+---------------------+
+| 2006-04-12 13:47:44 |        0 | 2006-04-12 13:47:46 |
++---------------------+----------+---------------------+
+
+mysql> SELECT TIME('2003-12-31 01:02:03');
+        -> '01:02:03'
+mysql> SELECT TIME('2003-12-31 01:02:03.000123');
+        -> '01:02:03.000123'
+
+mysql> SELECT TIMEDIFF('2000:01:01 00:00:00',
+    ->                 '2000:01:01 00:00:00.000001');
+        -> '-00:00:00.000001'
+mysql> SELECT TIMEDIFF('2008-12-31 23:59:59.000001',
+    ->                 '2008-12-30 01:01:01.000002');
+        -> '46:58:57.999999'
+        
+mysql> SELECT TIMESTAMP('2003-12-31');
+        -> '2003-12-31 00:00:00'
+mysql> SELECT TIMESTAMP('2003-12-31 12:00:00','12:00:00');
+        -> '2004-01-01 00:00:00'
+        
+mysql> SELECT TO_DAYS(950501);
+        -> 728779
+mysql> SELECT TO_DAYS('2007-10-07');
+        -> 733321
+        
+mysql> SELECT TO_DAYS('2008-10-07'), TO_DAYS('08-10-07');
+        -> 733687, 733687
+        
+mysql> SELECT TO_DAYS('0000-00-00');
++-----------------------+
+| to_days('0000-00-00') |
++-----------------------+
+|                  NULL |
++-----------------------+
+1 row in set, 1 warning (0.00 sec)
+
+mysql> SHOW WARNINGS;
++---------+------+----------------------------------------+
+| Level   | Code | Message                                |
++---------+------+----------------------------------------+
+| Warning | 1292 | Incorrect datetime value: '0000-00-00' |
++---------+------+----------------------------------------+
+1 row in set (0.00 sec)
+
+
+mysql> SELECT TO_DAYS('0000-01-01');
++-----------------------+
+| to_days('0000-01-01') |
++-----------------------+
+|                     1 |
++-----------------------+
+1 row in set (0.00 sec)
+
+mysql> SELECT WEEK('2008-02-20');
+        -> 7
+mysql> SELECT WEEK('2008-02-20',0);
+        -> 7
+mysql> SELECT WEEK('2008-02-20',1);
+        -> 8
+mysql> SELECT WEEK('2008-12-31',1);
+        -> 53
+        
+mysql> SELECT YEAR('2000-01-01'), WEEK('2000-01-01',0);
+        -> 2000, 0
+
+mysql> SELECT WEEK('2000-01-01',2);
+        -> 52
+
+mysql> SELECT YEAR('2000-01-01'), WEEK('2000-01-01',0);
+        -> 2000, 0
+        
+mysql> SELECT WEEK('2000-01-01',2);
+        -> 52
+        
+mysql> SELECT YEARWEEK('2000-01-01');
+        -> 199952
+mysql> SELECT MID(YEARWEEK('2000-01-01'),5,2);
+        -> '52'
+        
+mysql> SELECT WEEKDAY('2008-02-03 22:23:00');
+        -> 6
+mysql> SELECT WEEKDAY('2007-11-06');
+        -> 1
+        
+mysql> SELECT WEEKOFYEAR('2008-02-20');
+        -> 8
+        
+mysql> SELECT YEAR('1987-01-01');
+        -> 1987
+        
+mysql> SELECT YEARWEEK('1987-01-01');
+        -> 198652
+```
+
 * Advanced
 
 ```
@@ -1344,6 +1711,135 @@ SESSION_USER	Returns the user name and host name for the current MySQL user
 SYSTEM_USER	Returns the user name and host name for the current MySQL user
 USER	Returns the user name and host name for the current MySQL user
 VERSION	Returns the version of the MySQL database
+```
+
+```sql
+mysql> SELECT BIN(12);
+        -> '1100'
+
+mysql> SELECT 'a' = 'A';
+        -> 1
+mysql> SELECT BINARY 'a' = 'A';
+        -> 0
+mysql> SELECT 'a' = 'a ';
+        -> 1
+mysql> SELECT BINARY 'a' = 'a ';
+        -> 0
+
+-- The CAST() function takes an expression of any type and produces a result value of the specified type, similar to CONVERT(). 
+
+mysql> SELECT CASE 1 WHEN 1 THEN 'one'
+    ->     WHEN 2 THEN 'two' ELSE 'more' END;
+        -> 'one'
+mysql> SELECT CASE WHEN 1>0 THEN 'true' ELSE 'false' END;
+        -> 'true'
+mysql> SELECT CASE BINARY 'B'
+    ->     WHEN 'a' THEN 1 WHEN 'b' THEN 2 END;
+        -> NULL
+        
+mysql> SELECT COALESCE(NULL,1);
+        -> 1
+mysql> SELECT COALESCE(NULL,NULL,NULL);
+        -> NULL
+
+mysql> SELECT CONNECTION_ID();
+        -> 23786
+        
+mysql> SELECT CONV('a',16,2);
+        -> '1010'
+mysql> SELECT CONV('6E',18,8);
+        -> '172'
+mysql> SELECT CONV(-17,10,-18);
+        -> '-H'
+mysql> SELECT CONV(10+'10'+'10'+X'0a',10,10);
+        -> '40'
+
+SELECT CONVERT('abc' USING utf8);
+
+mysql> SELECT USER();
+        -> 'davida@localhost'
+mysql> SELECT * FROM mysql.user;
+ERROR 1044: Access denied for user ''@'localhost' to
+database 'mysql'
+mysql> SELECT CURRENT_USER();
+        -> '@localhost'
+        
+mysql> SELECT DATABASE();
+        -> 'test'
+        
+mysql> SELECT LAST_INSERT_ID();
+        -> 195
+        
+mysql> USE test;
+
+mysql> CREATE TABLE t (
+       id INT AUTO_INCREMENT NOT NULL PRIMARY KEY,
+       name VARCHAR(10) NOT NULL
+       );
+
+mysql> INSERT INTO t VALUES (NULL, 'Bob');
+
+mysql> SELECT * FROM t;
++----+------+
+| id | name |
++----+------+
+|  1 | Bob  |
++----+------+
+
+mysql> SELECT LAST_INSERT_ID();
++------------------+
+| LAST_INSERT_ID() |
++------------------+
+|                1 |
++------------------+
+
+mysql> INSERT INTO t VALUES
+       (NULL, 'Mary'), (NULL, 'Jane'), (NULL, 'Lisa');
+
+mysql> SELECT * FROM t;
++----+------+
+| id | name |
++----+------+
+|  1 | Bob  |
+|  2 | Mary |
+|  3 | Jane |
+|  4 | Lisa |
++----+------+
+
+mysql> SELECT LAST_INSERT_ID();
++------------------+
+| LAST_INSERT_ID() |
++------------------+
+|                2 |
++------------------+
+
+mysql> SELECT IF(1>2,2,3);
+        -> 3
+mysql> SELECT IF(1<2,'yes','no');
+        -> 'yes'
+mysql> SELECT IF(STRCMP('test','test1'),'no','yes');
+        -> 'no'
+        
+mysql> SELECT IFNULL(1,0);
+        -> 1
+mysql> SELECT IFNULL(NULL,10);
+        -> 10
+mysql> SELECT IFNULL(1/0,10);
+        -> 10
+mysql> SELECT IFNULL(1/0,'yes');
+        -> 'yes'
+        
+mysql> SELECT 1 IS NULL, 0 IS NULL, NULL IS NULL;
+        -> 0, 0, 1
+        
+-- SESSION_USER() is a synonym for USER().
+-- SYSTEM_USER() is a synonym for USER().
+
+mysql> SELECT USER();
+        -> 'davida@localhost'
+
+mysql> SELECT VERSION();
+        -> '5.7.22-standard'
 ```
 
 ## Operators
