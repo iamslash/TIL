@@ -12,7 +12,13 @@ c#에 대해 정리한다.
 * [coreclr @ github](https://github.com/dotnet/coreclr)
 * [mono @ github](https://github.com/mono/mono)
 
-# Uaage
+# Usage
+
+## volatile을 사용하자.
+
+volatile을 사용하지 않으면 CACHE에서 읽어올 수 있다. multi thread
+programming의 경우 A thread가 특정 변수를 수정했을때 B thread가 반드시
+언급한 변수의 값을 메모리에서 읽어 오게 하고 싶을때 사용한다.
 
 ## var를 잘 사용하자.
 
