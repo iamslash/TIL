@@ -11,6 +11,8 @@
 
 # References
 
+* [introduction to LaTeX](https://tobi.oetiker.ch/lshort/lshort.pdf)
+  * 약 200페이지의 레퍼런스
 * [detexify](http://detexify.kirelabs.org/classify.html)
   * 원하는 심볼을 그리면 코드를 알려준다.
 * [LaTeX symbols](http://artofproblemsolving.com/wiki/index.php/LaTeX:Symbols)
