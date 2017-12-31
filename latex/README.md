@@ -4,11 +4,16 @@
 
 # Materials
 
+* [LaTeX tutorial](https://www.maths.tcd.ie/~dwilkins/LaTeXPrimer/)
+  * 킹왕짱 튜토리얼
 * [Learn LaTeX in 30 minutes](https://ko.sharelatex.com/learn/Learn_LaTeX_in_30_minutes)
 * [beginngers tutorial](https://ko.sharelatex.com/blog/latex-guides/beginners-tutorial.html)
 
 # References
 
+* [detexify](http://detexify.kirelabs.org/classify.html)
+  * 원하는 심볼을 그리면 코드를 알려준다.
+* [LaTeX symbols](http://artofproblemsolving.com/wiki/index.php/LaTeX:Symbols)
 * [sharelatex](https://ko.sharelatex.com)
 * [overleaf](https://www.overleaf.com/)
 
