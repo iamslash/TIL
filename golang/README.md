@@ -4,39 +4,39 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 # Contents
 
-1. [Hello World](#hello-world)
-2. [Operators](#operators)
+* [Hello World](#hello-world)
+* [Operators](#operators)
   * [Arithmetic](#arithmetic)
   * [Comparison](#comparison)
   * [Logical](#logical)
   * [Other](#other)
-3. [Declarations](#declarations)
-4. [Functions](#functions)
+* [Declarations](#declarations)
+* [Functions](#functions)
   * [Functions as values and closures](#functions-as-values-and-closures)
   * [Variadic Functions](#variadic-functions)
-5. [Built-in Types](#built-in-types)
-6. [Type Conversions](#type-conversions)
-7. [Packages](#packages)
-8. [Control structures](#control-structures)
+* [Built-in Types](#built-in-types)
+* [Type Conversions](#type-conversions)
+* [Packages](#packages)
+* [Control structures](#control-structures)
   * [If](#if)
   * [Loops](#loops)
   * [Switch](#switch)
-9. [Arrays, Slices, Ranges](#arrays-slices-ranges)
+* [Arrays, Slices, Ranges](#arrays-slices-ranges)
   * [Arrays](#arrays)
   * [Slices](#slices)
   * [Operations on Arrays and Slices](#operations-on-arrays-and-slices)
-10. [Maps](#maps)
-11. [Structs](#structs)
-12. [Pointers](#pointers)
-13. [Interfaces](#interfaces)
-14. [Embedding](#embedding)
-15. [Errors](#errors)
-16. [Concurrency](#concurrency)
+* [Maps](#maps)
+* [Structs](#structs)
+* [Pointers](#pointers)
+* [Interfaces](#interfaces)
+* [Embedding](#embedding)
+* [Errors](#errors)
+* [Concurrency](#concurrency)
   * [Goroutines](#goroutines)
   * [Channels](#channels)
   * [Channel Axioms](#channel-axioms)
-17. [Printing](#printing)
-18. [Snippets](#snippets)
+* [Printing](#printing)
+* [Snippets](#snippets)
   * [Http-Server](#http-server)
 
 # Materials
@@ -614,8 +614,6 @@ func main() {
     }
 }
 ```
-
-# Concurrency
 
 ## Goroutines
 Goroutines are lightweight threads (managed by Go, not OS threads). `go f(a, b)` starts a new goroutine which runs `f` (given `f` is a function).
