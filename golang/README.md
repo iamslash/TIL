@@ -4,16 +4,47 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 # Materials
 
-* [Go Tooling in Action](https://www.youtube.com/watch?v=uBjoTxosSys)
-  * go run, go build, go install, go test, go list, go doc, go-wrk,
-    go-torch, debugging등등을 다루는 킹왕짱 동영상
 * [1ambda golang](https://github.com/1ambda/golang)
   * 유용한 go links
+* [effective go](https://golang.org/doc/effective_go.html)  
+
+## Language
+
 * [golang cheatsheet](https://github.com/a8m/go-lang-cheat-sheet)
   * 최고의 요약
 * [A Tour of Go video](https://research.swtch.com/gotour)
   * interface, concurrency 에 관한 screencast
-* [effective go](https://golang.org/doc/effective_go.html)  
+
+## Tools
+
+* [Go Tooling in Action](https://www.youtube.com/watch?v=uBjoTxosSys)
+  * go run, go build, go install, go test, go list, go doc, go-wrk,
+    go-torch, debugging등등을 다루는 킹왕짱 동영상
+
+## Best Practices
+
+* [Go best practices, six years in @ infoq](https://www.infoq.com/presentations/go-patterns)
+  * [article](https://peter.bourgon.org/go-best-practices-2016/)
+* [Twelve Go Best Practices @ youtube](https://www.youtube.com/watch?v=8D3Vmm1BGoY)
+  * [slide](https://talks.golang.org/2013/bestpractices.slide#1)
+* [Go Proverbs - Rob Pike](https://go-proverbs.github.io/)
+  * rob pike가 전하는 golang철학
+
+## Concurrency
+
+## Error Handling
+
+## Interface
+
+## Struct
+
+## Pointer
+
+## Map, Slice
+
+## Logging
+
+## Encoding, JSON
   
 # References
 
@@ -74,7 +105,7 @@ go test-bench
 
 go-torch
 
-# Tips
+# Examples
 
 ## Building a simple web server
 
