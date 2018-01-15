@@ -1,6 +1,6 @@
 # Abstract
 
-make에 대해 적느다.
+make에 대해 정리한다.
 
 # Intro
 
@@ -18,25 +18,25 @@ target … : prerequisites …
 * [GNU Make 강좌](https://wiki.kldp.org/KoreanDoc/html/GNU-Make/GNU-Make.html#toc3)
   * 오래되긴 하였지만 한글 이다.
 * [GNU Make @ kgnu](http://korea.gnu.org/manual/release/make/make-sjp/make-ko_toc.html)  
-  * 한글
+  * 오래되긴 하였지만 한글 이다.
 * [make manual @ gnu](https://www.gnu.org/software/make/manual/make.html#Automatic-Variables)
 
 # make Usages
 
-* --dry-run
+## `--dry-run`
 
 해당 target을 실행하지는 않고 recipe를 출력한다.
-Makefile을 옳바로 작성했는지 검사할때 유용하다.
+Makefile을 옳바로 작성했는지 검사할 때 유용하다.
 
 ```
 make --dry-run proto
 ```
 
-# Makefule Usages
+# Makefile Usages
 
 ## Special Built-in Target Names
 
-* .PHONY
+### `.PHONY`
 
 .PHONY의 prerequisites에 등록된 target들은 해당 target이름과 같은
 file이 존재해도 동작 한다.
@@ -48,7 +48,7 @@ clean :
 .PHONY : clean
 ```
 
-* .SUFFIXES
+### `.SUFFIXES`
 
 .SUFFIXES의 prerequisites에 등록된
  확장자들은
@@ -105,7 +105,7 @@ endif
 implicit rule이 적용되었 을 때 특별한 의미와 함께 recipe에 사용할 수
 있는 변수 들이다. 주로 `$`로 시작한다.
 
-* `$*`
+### `$*` ###
 
 확장자가 없는 현재의 target
 
@@ -116,7 +116,7 @@ gcc -c $*.c
 
 위의 예제를 살펴보자. `$*`는 `main`과 같다.
 
-* `$@`
+### `$@` ###
 
 현재의 target
 
@@ -127,7 +127,7 @@ gcc -o $@ $*.c
 
 위의 예제를 살펴보자. `$@`는 test와 같다.
 
-* `$<`, `<$?`
+### `$<`, `<$?` ###
 
 현재의 target보다 더 최근에 갱신된 파일 이름. `.o` 파일보다 더 최근에
 갱신된 .c 파일은 자동적으로 컴파일이 된다. 가령 main.o를 만들고 난
@@ -136,13 +136,13 @@ gcc -o $@ $*.c
 
 ## Functions for Transforming Text
 
-* shell
+### shell ###
 
 ```make
 contents := $(shell cat foo)
 ```
 
-* patsubst
+### patsubst ###
 
 pattern substitution이다. 아래의 결과는 `x.c.o bar.o`이다.
 
@@ -150,7 +150,7 @@ pattern substitution이다. 아래의 결과는 `x.c.o bar.o`이다.
 $(patsubst %.c,%.o,x.c.c bar.c)
 ```
 
-* notdir
+### notdir ###
 
 디렉토리를 제거한 파일이름을 얻어온다. 다음의 결과는
 `foo.c hacks`이다.
@@ -159,7 +159,7 @@ $(patsubst %.c,%.o,x.c.c bar.c)
 $(notdir src/foo.c hacks)
 ```
 
-* wildcard
+### wildcard ###
 
 파일들의 목록을 얻어온다.
 
@@ -167,7 +167,7 @@ $(notdir src/foo.c hacks)
 objects := $(wildcard *.o)
 ```
 
-* abspath
+### abspath ###
 
 절대 경로를 얻어온다.
 
@@ -199,7 +199,7 @@ vpath %.h ../headers
 
 * Lazy Set
 
-VARIABLE이 사용될때 마다 evaluation된다
+VARIABLE이 사용될 때 마다 evaluation된다
 
 ```
 VARIABLE = value
@@ -207,7 +207,7 @@ VARIABLE = value
 
 * Immediate Set
 
-VARIABLE이 선언될때 evaluation된다.
+VARIABLE이 선언될 때 evaluation된다.
 
 ```
 VARIABLE := value
