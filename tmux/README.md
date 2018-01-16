@@ -1,8 +1,4 @@
-# Abstract
-
-유용한 프로그램들들 정리한다.
-
-# tmux
+# Usages
 
 terminal multiplexer
 
