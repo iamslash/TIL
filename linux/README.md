@@ -7,6 +7,8 @@ unix 계열 os는 모두 해당된다. 예제들은 macosx에서 실험했다. u
 # References
 
 * [Most Important Penetration Testing commands Cheat Sheet for Linux Machine](https://techincidents.com/important-penetration-testing-cheat-sheet/)
+* [command line reference](https://ss64.com/)
+  * bash, macOS, cmd, powershell 등등의 command line reference
 
 # Permissions
 
@@ -118,17 +120,53 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 ## 메뉴얼
 
 * `man`
+  * 메뉴얼 좀 보여줘봐
+  * `man ls`
 * `apropos`
-  * `man -k`
+  * 잘은 모르겠고 이런거 비슷한 거 찾아줘봐라
+  * `man -k`와 같다.
+  * `apropos brew`
 * `info`
+  * 메뉴얼 좀 보여줘봐. 단축키는 emacs와 비슷한데?
+  * `info ls`
 
 ## 자주 사용
 
 * `history`
-* `ls, cd, pwd`
+  * 최근에 사용한 command line보여줘봐라
+* `ls`
+  * 디렉토리들과 파일들을 보여줘라.
+  * `ls -al`
+* `cd`
+  * 작업디렉토리를 바꿔보자.
+  * `cd /usr/bin`
+* `pwd`
+  * 작업디렉토리는 무엇이냐
 * `pushd, popd`
-* `ln, cp, mv, rm`
-* `cat, more, less`
+  * 디렉토리를 스택에 넣고 빼자.
+  * `pushd /usr/bin` `cd` `cd popd`
+* `ln`
+  * 심볼릭 링크좀 만들자
+  * `ln -s /Users/iamslash/demo /Users/iamslash/mylink`
+* `cp`
+  * 복사 좀 하자
+  * `cp -r a b`
+* `mv`
+  * 파일을 옮기거나 파일 이름 바꾸자
+  * `mv a b`
+* `rm`
+  * 좀 지워 볼까?
+  * `rm -rf *`
+* `cat`
+  * 파일을 이어 붙이거나 출력하자
+  * `cat a.txt`
+  * `cat a.txt b.txt > c. txt`
+* `more`
+  * 한번에 한화면씩 출력한다.
+  * `man ls | more`
+* `less`
+  * `more`보다 기능이 확장 된 것
+  * `man ls | less`
 * `echo`
 * `touch`
 * `diff`
@@ -173,15 +211,15 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
  
 ## 유저 관리
 
-* useradd
-* passwd
-* deluser
+* `useradd`
+* `passwd`
+* `deluser`
 
 ## 파일 권한
 
-* chmod
-* chown
-* chgrp
+* `chmod`
+* `chown`
+* `chgrp`
 
 ## 시스템 모니터링
 
