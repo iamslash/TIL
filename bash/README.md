@@ -184,4 +184,108 @@ sed -i "s/foo/bar/g" a.txt
 
 # Shell Parameters
 
+## Positional Parameters
+
+`${N}`처럼 표기한다. N는 paramter의 서수이다.
+
+```bash
+```
+
+## Special Parameters
+
+* `$*`
+  * 모든 parameter들
+  * a.sh `echo $*` `bash a.sh 1 2 3 4 5`
+    * 결과는 `1 2 3 4 5`
+
+* `$@`
+  * `$*`와 같다.
+
+* `$#`
+  * 마지막 parameter
+  * a.sh `echo $#` `bash a.sh 1 2 3 4 5`
+    * 결과는 `5`
+
+* `$?`
+  * 마지막 실행된 foreground pipeline의 exit status
+  * a.sh `echo $?` `bash a.sh 1 2 3 4 5`
+    * 결과는 `0`
+
+* `$-`
+  * ???
+  
+* `$$`
+  * 실행 프로세스 ID
+  * a.sh `echo $$` `bash a.sh 1 2 3 4 5`
+    * 결과는 `3`
+
+* `$!`
+  * 가장 최근에 실행된 background 프로세스 ID
+  * a.sh `echo $!` `bash a.sh 1 2 3 4 5`
+    * 결과는 ``
+
+* `$0`
+  * shell or shell script
+
+* `$_`
+  * shell 혹은 shell script의 절대경로
+  * a.sh `echo $_` `bash a.sh 1 2 3 4 5`
+    * 결과는 `/bin/bash`
+
 # Shell Expansions
+
+command line은 tokens로 나눠진 후 다음과 같은 순서 대로 expansion처리
+된다. brace expansion, tilde expansion, parameter and variable
+expansion, command expansion, arithmetic expansion, word splitting,
+filename expansion.
+
+## brace expansion
+
+### string lists
+
+`{string1, string2,..., stringN}`과 같이 사용한다.
+
+```bash
+$ echo X{apple, banana, orage, melon}Y
+X{apple, banana, orange, melon}Y
+```
+
+### ranges
+
+### combining and nesting
+
+## tilde expansion
+
+현재 디렉토리로 확장된다.
+
+```
+$ echo ~
+/Users/iamslash
+
+$ echo ~iamslash # iamslash 유저 디렉토리를 출력하라.
+/Users/iamslash
+```
+
+## parameter and variable expansion
+
+## command expansion
+
+## arithmetic expansion
+
+산술연산을 계산한다.
+
+
+```bash
+$ cat > a.sh
+echo $(( 3 + 7 ))
+# bash a.sh
+10
+```
+
+## process substitution
+
+## word splitting
+
+## filename expansion
+
+## quote removal

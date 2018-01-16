@@ -4,6 +4,10 @@ linux를 활용할 때 필요한 지식들을 정리한다. macosx, sunos, hp-ux
 unix 계열 os는 모두 해당된다. 예제들은 macosx에서 실험했다. ubuntu와
 다를 수도 있다.
 
+# References
+
+* [Most Important Penetration Testing commands Cheat Sheet for Linux Machine](https://techincidents.com/important-penetration-testing-cheat-sheet/)
+
 # Permissions
 
 ## mode
