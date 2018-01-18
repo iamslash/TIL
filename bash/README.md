@@ -444,6 +444,13 @@ $ echo {{A..Z},{a..z}}
 A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s 
 ```
 
+{ } 안에서 , 로 분리하여 nesting 을 할 수 있다.
+
+```bash
+$ echo {{A..Z},{a..z}}
+A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s t u v w x y z
+```
+
 ### ranges with variables
 
 ```bash
@@ -521,25 +528,623 @@ $ echo ${#BB[@]}     # array BB 의 전체 원소 개수
 
 ### substring removal
 
+```bash
+${PARAMETER#PATTERN}
+${PARAMETER##PATTERN}
+${PARAMETER%PATTERN}
+${PARAMETER%%PATTERN}
+```
+
+`#`는 앞에서 부터 `%`는 뒤에서 부터를 의미한다. 두개가 사용된 것은
+greedy match를 의미한다.
+
+```bash
+AA="this.is.a.inventory.tar.gz"
+
+$ echo ${AA#*.}               # 앞에서 부터 shortest match
+is.a.inventory.tar.gz
+
+$ echo ${AA##*.}              # 앞에서 부터 longest match
+gz
+
+$ echo ${AA%.*}               # 뒤에서 부터 shortest match
+this.is.a.inventory.tar
+
+$ echo ${AA%%.*}              # 뒤에서 부터 longest match
+this
+
+# 디렉토리를 포함한 파일명에서 디렉토리와 파일명을 분리하기
+AA="/home/bash/bash_hackers.txt"
+
+$ echo ${AA%/*}               # 디렉토리 부분 구하기
+/home/bash
+
+$ echo ${AA##*/}              # 파일명 부분 구하기
+bash_hackers.txt
+```
+
 ### use a default value
+
+`-`는 4.3 BSD와 같이 예전 SHELL에서 `:-`를 처리하지 못하기 때문에 필요하다.
+
+```bash
+${PARAMETER:-WORD}
+${PARAMETER-WORD}
+```
+
+```bash
+$ AA=ubuntu
+
+$ echo ${AA:-fedora}        # AA 에 값이 있으면 AA 값을 사용한다
+ubuntu
+$ echo ${AA-fedora}
+ubuntu
+
+$ unset AA
+
+$ echo ${AA:-fedora}        # AA 가 unset 되어 없는 상태이므로  
+fedora                      # 값은 fedora 가 된다.
+$ echo ${AA-fedora}
+fedora
+
+$ AA=""
+
+$ echo ${AA:-fedora}       # ':-' 는 null 은 값이 없는것으로 보고 fedora 를 사용한다.
+fedora
+$ echo ${AA-fedora}        # '-' 는 null 도 값으로 취급하기 때문에
+                           # 아무것도 표시되지 않는다.
+
+
+# $TMPDIR 변수값이 없으면 /tmp 디렉토리에서 myfile_* 을 삭제 
+$ rm -f ${TMPDIR:-/tmp}/myfile_*
+
+# WORD 부분에도 명령치환을 사용할 수 있다.
+$ AA=${AA:-$(date +%Y)}
+
+# FCEDIT 변수값이 없으면 EDITOR 변수값을 사용하고 EDITOR 변수값도 없으면 vi 를 사용
+$ AA=${FCEDIT:-${EDITOR:-vi}}
+```
+
+array
+
+```bash
+$ AA=( 11 22 33 )
+
+$ echo ${AA[@]:-44 55 66}    # AA 에 값이 있으면 AA 값을 사용한다
+11 22 33
+$ echo ${AA[@]-44 55 66}
+11 22 33
+
+$ AA=()                      # 또는 unset -v AA
+
+$ echo ${AA[@]:-44 55 66}    # AA 가 unset 되어 존재하지 않는 상태이므로
+44 55 66                     # 값은 44 55 66 이 된다.
+$ echo ${AA[@]-44 55 66}
+44 55 66
+
+$ AA=("")
+
+$ echo ${AA[@]:-44 55 66}    # ':-' 는 null 은 값이 없는것으로 보고 44 55 66 을 사용한다
+44 55 66
+$ echo ${AA[@]-44 55 66}     # '-' 는 null 도 값으로 취급하기 때문에
+                             # 아무것도 표시되지 않는다.
+
+$ AA=("" 77 88)
+
+$ echo ${AA[@]:-44 55 66}
+77 88
+$ echo ${AA[@]-44 55 66}
+77 88
+```
 
 ### assign a default value
 
+```bash
+${PARAMETER:=WORD}
+${PARAMETER=WORD}
+```
+
+값을 읽어오면서 대입도 하자.
+
+```bash
+AA=""
+
+$ echo ${AA:-linux}
+linux
+$ echo $AA             # ':-' 는 AA 변수에 값을 대입하지 않는다.
+
+$ echo ${AA:=linux}
+linux
+$ echo $AA             # ':=' 는 AA 변수에 값을 대입한다.
+linux
+
+
+# $TMPDIR 값이 없으면 /tmp 를 사용하고 TMPDIR 변수에 대입
+$ cp myfile ${TMPDIR:=/tmp}
+
+# $TMPDIR 변수가 설정된 상태이므로 cd 할 수 있다.
+$ cd $TMPDIR
+```
+
+Array[@] 값은 대입되지 않는다.
+
+```bash
+$ AA=()
+
+$ echo ${AA[@]:=11 22 33}
+bash: AA[@]: bad array subscript
+11 22 33
+```
+
 ### use an alternate value
+
+값이 있다면 대체 값을 사용하자.
+
+```bash
+${PARAMETER:+WORD}
+${PARAMETER+WORD}
+```
+
+```bash
+$ AA=hello
+
+$ echo ${AA:+linux}       # AA 에 값이 있으므로 대체값 linux 를 사용한다.
+linux
+$ echo ${AA+linux}
+linux
+
+$ AA=""
+
+$ echo ${AA:+linux}       # ':+' 는 null 은 값으로 취급하지 않기 때문에 null 을 리턴한다.
+
+$ echo ${AA+linux}        # '+' 는 null 도 값으로 취급하기 때문에 대체값 linux 를 사용한다.
+linux
+
+$ unset AA
+
+$ echo ${AA:+linux}       # 변수가 존재하지 않으므로 null 을 리턴한다.
+
+$ echo ${AA+linux}
+
+
+# 함수이름을 갖는 FUNCNAME 변수가 있을 경우 뒤에 '()' 를 붙여서 프린트 하고 싶다면
+echo ${FUNCNAME:+${FUNCNAME}()}
+```
 
 ### display error if null or unset
 
+```bash
+${PARAMETER:?[error message]}
+${PARAMETER?[error message]}
+```
+
+값이 있다면 에러 메시지 내보내고 종료하자. 종료코드는 1(bash) 혹은 2(sh)이다.
+
+```bash
+$ AA=hello
+
+$ echo ${AA:?null or not set}      # AA 에 값이 있으므로 AA 값을 사용한다
+hello
+$ echo ${AA?not set}
+hello
+
+$ AA=""
+
+$ echo ${AA:?null or not set}       # ':?' 는 null 은 값으로 취급하지 않기 때문에
+bash: AA: null or not set           # error message 를 출력하고 $? 값으로 1 을 리턴한다 
+$ echo $?
+1
+$ echo ${AA?not set}                # '?' 는 null 도 값으로 취급하기 때문에 
+                                    # 아무것도 표시되지 않는다.
+
+$ unset AA
+
+$ echo ${AA:?null or not set}       # 변수가 존재하지 않는 상태이므로 
+bash: AA: null or not set           # 모두 error message 를 출력 후 종료한다.
+$ echo $?
+1
+$ echo ${AA?not set}
+bash: AA: not set
+$ echo $?
+1
+$ echo ${AA?}                        # error message 는 생략할 수 있다.
+bash: AA: parameter null or not set
+
+
+# 예제
+case ${AA:?"missing pattern; try '$0 --help' for help"} in
+    (abc) ... ;;
+    (*) ... ;;
+esac
+```
+
 ### substring expansion
+
+```bash
+${PARAMETER:OFFSET}
+${PARAMETER:OFFSET:LENGTH}
+```
+
+```bash
+AA="Ubuntu Linux"
+
+$ echo "${AA:2}"
+untu Linux
+$ echo "${AA:2:4}"
+untu
+$ echo "${AA:(-5)}"
+Linux
+$ echo "${AA:(-5):2}"
+Li
+$ echo "${AA:(-5):-1}"
+Linu
+
+# 변수 AA 값이 %foobar% 일경우 % 문자 제거하기
+$ echo "${AA:1:-1}"
+foobar
+```
+
+array
+
+```bash
+$ ARR=(11 22 33 44 55)
+
+$ echo ${ARR[@]:2}
+33 44 55
+
+$ echo ${ARR[@]:1:2}
+22 33
+```
+
+positional parameters는 idx가 1부터 시작
+
+```bash
+$ set -- 11 22 33 44 55
+
+$ echo ${@:3}
+33 44 55
+
+$ echo ${@:2:2}
+22 33
+```
 
 ### search and replace
 
+```bash
+${PARAMETER/PATTERN/STRING}
+${PARAMETER//PATTERN/STRING}
+${PARAMETER/PATTERN}
+${PARAMETER//PATTERN}
+```
+
+```bash
+$ AA="Arch Linux Ubuntu Linux Fedora Linux"
+
+$ echo ${AA/Linux/Unix}               # Arch Linux 만 바뀌였다.
+Arch Unix Ubuntu Linux Fedora Linux
+
+$ echo ${AA//Linux/Unix}              # Linux 가 모두 Unix 로 바뀌였다
+Arch Unix Ubuntu Unix Fedora Unix
+
+$ echo ${AA/Linux}                    # 바꾸는 스트링을 주지 않으면 매칭되는 부분이 삭제된다.
+Arch Ubuntu Linux Fedora Linux
+
+$ echo ${AA//Linux}                  
+Arch Ubuntu Fedora
+
+-----------------------------------------
+$ AA="Linux Ubuntu Linux Fedora Linux"
+
+$ echo ${AA/#Linux/XXX}               # '#Linux' 는 맨 앞 단어를 의미
+XXX Ubuntu Linux Fedora Linux
+
+$ echo ${AA/%Linux/XXX}               # '%Linux' 는 맨 뒤 단어를 의미
+Linux Ubuntu Linux Fedora XXX
+
+$ AA=12345
+
+$ echo ${AA/#/X}
+X12345
+
+$ echo ${AA/%/X}
+12345X
+
+$ AA=X12345X
+
+$ echo ${AA/#?/}
+12345X
+
+$ echo ${AA/%?/}
+X12345
+```
+
+`array[@]`는 원소별로 적용
+
+```bash
+$ AA=( "Arch Linux" "Ubuntu Linux" "Fedora Linux" )
+
+$ echo ${AA[@]/u/X}                   # Ubuntu Linux 는 첫번째 'u' 만 바뀌었다
+Arch LinXx UbXntu Linux Fedora LinXx
+
+$ echo ${AA[@]//u/X}                  # 이제 모두 바뀌였다
+Arch LinXx UbXntX LinXx Fedora LinXx
+```
+
 ### case modification
+
+```bash
+${PARAMETER^}  # 단어의 첫 문자를 대문자로
+${PARAMETER^^} # 단어의 모든 문자를 대문자로
+${PARAMETER,}  # 단어의 첫 문자를 소문자로
+${PARAMETER,,} # 단어의 모든 문자를 소문자로
+```
+
+```bash
+$ AA=( "ubuntu" "fedora" "suse" )
+
+$ echo ${AA[@]^}
+Ubuntu Fedora Suse
+
+$ echo ${AA[@]^^}
+UBUNTU FEDORA SUSE
+
+$ AA=( "UBUNTU" "FEDORA" "SUSE" )
+
+$ echo ${AA[@],}
+uBUNTU fEDORA sUSE
+
+$ echo ${AA[@],,}
+ubuntu fedora suse
+```
 
 ### indirection
 
-## command expansion
+```bash
+${!PARAMETER}
+```
+
+스크립트 실행중에 스트링으로 변수 이름을 만들어서 사용
+
+```bash
+$ hello=123
+
+$ linux=hello
+
+$ echo ${linux}
+hello
+
+$ echo ${!linux}    # '!linux' 부분이 'hello' 로 바뀐다고 생각하면 됩니다. 
+123
+```
+
+sh의 경우 eval을 이용하여 indirection구현
+
+```sh
+$ hello=123
+
+$ linux=hello
+
+$ eval echo '$'$linux
+123
+----------------------
+
+if test "$hello" -eq  "$(eval echo '$'$linux)"; then
+...
+fi
+```
+
+함수에 전달된 인수를 표시
+
+```bash
+---------- args.sh ------------
+#!/bin/bash
+
+for (( i = 0; i <= $#; i++ )) 
+do
+    echo \$$i : ${!i}              # ${$i} 이렇게 하면 안됩니다.
+done
+
+-------------------------------
+
+$ args.sh 11 22 33
+$0 : ./args.sh
+$1 : 11                    
+$2 : 22
+$3 : 33
+```
+
+함수에 array 인자를 전달 할 때도 사용
+
+```bash
+#!/bin/bash
+
+foo() {
+    echo "$1"
+
+    local ARR=( "${!2}" )      # '!2' 부분이 'AA[@]' 로 바뀐다.
+
+    for v in "${ARR[@]}"; do
+        echo "$v"
+    done
+
+    echo "$3"
+}
+
+AA=(22 33 44)
+foo 11 'AA[@]' 55
+
+################ output ###############
+
+11
+22
+33
+44
+55
+```
+
+## command substitution
+
+```bash
+$( <COMMANDS> )
+`<COMMANDS>`
+```
+
+command substitution은 subshell에서 실행된다. 실행결과에 해당하는 stdout
+값이 pipe를 통해 전달된다. 일종의 IPC이다.
+
+```bash
+$ AA=$( pgrep -d, -x ibus )
+$ echo $AA
+17516,17529,17530,17538,17541
+
+$ AA=`pgrep -d, -x ibus`
+$ echo $AA
+17516,17529,17530,17538,17541
+
+$ cat /proc/`pgrep -x awk`/maps
+
+$ cd /lib/modules/`uname -r`
+```
+
+backtick은 escape sequence가 다르게 처리된다.
+
+```bash
+# 원본 명령
+$ grep -lr --include='*.md' ' \\t\\n'
+filename_expansion.md
+word_splitting.md
+
+# 괄호형은 원본 명령 그대로 사용할 수 있다.
+$ echo $( grep -lr --include='*.md' ' \\t\\n' )
+filename_expansion.md word_splitting.md
+--------------------------------------------------
+
+# backtick 은 escape sequence 가 다르게 처리되어 값이 출력되지 않는다.
+$ echo `grep -lr --include='*.md' ' \\t\\n'`
+$
+$ echo `grep -lr --include='*.md' ' \\\\t\\\\n'`
+filename_expansion.md word_splitting.md
+```
+
+parent 프로세스의 변수값을 변경할 수 없다.
+
+```bash
+#!/bin/bash
+
+index=30
+
+change_index() {
+  index=40
+}
+
+result=$(change_index; echo $index)
+
+echo $result
+echo $index
+
+######### output ########
+
+40
+30
+```
+
+quotes가 중첩되도 좋다.
+
+```bash
+# 명령치환을 quote 하지 않은 경우
+$ echo $( echo "
+> I
+> like
+> winter     and     snow" )
+
+I like winter and snow
+
+# 명령치환을 quote 하여 공백과 라인개행이 유지되었다.
+$ echo "$( echo "
+> I
+> like
+> winter     and     snow" )"
+
+I
+like
+winter     and     snow
+
+---------------------------------
+
+# quotes 이 여러번 중첩되어도 상관없다.
+
+$ echo "$(echo "$(echo "$(date)")")"       
+Thu Jul 23 18:34:33 KST 2015
+```
+
+null문자를 보낼 수 없다.
+
+```bash
+$ ls          # a, b, c  3개의 파일이 존재
+a  b  c
+
+# 파이프는 null 값이 정상적으로 전달된다.
+$ find . -print0 | od -a
+0000000   . nul   .   /   a nul   .   /   b nul   .   /   c nul
+
+# 명령치환은 null 값이 모두 제거되었다.
+$ echo -n "$(find . -print0)" | od -a
+0000000   .   .   /   a   .   /   b   .   /   c
+```
+
+변수에 값을 대입할 때 마지막 newline들은 제거된다.
+
+```bash
+$ AA=$'hello\n\n\n'
+$ echo -n "$AA" | od -a
+0000000   h   e   l   l   o  nl  nl  nl    # 정상적으로 newline 이 표시된다.
+
+$ AA=$(echo -en "hello\n\n\n")
+$ echo -n "$AA" | od -a
+0000000   h   e   l   l   o                # 명령치환은 newline 이 모두 제거된다.
+
+---------------------------------------
+
+$ cat file         # 파일의 마지막에 4 개의 newline 이 존재.
+111
+222
+
+
+
+$ cat file | od -a
+0000000   1   1   1  nl   2   2   2  nl  nl  nl  nl
+0000013
+
+$ AA=$(cat file)
+
+$ echo -n "$AA" | od -a                   # 파일의 마지막 newline 이 모두 제거 되었다.
+0000000   1   1   1  nl   2   2   2
+0000007
+```
+
+`$( < filename )` 은 `$( cat filename )`과 같다.
+
+```bash
+$ cat file
+11
+44
+55
+
+$ echo $( < file )
+11 44 55
+
+$ echo $( cat file )
+11 44 55
+```
 
 ## arithmetic expansion
+
+보통 다음과 같이 사용한다.
+
+```bash
+#(( arithmetic-expr ))
+(( arithmetic-expr ))
+```
 
 산술연산을 계산한다.
 
@@ -551,6 +1156,8 @@ echo $(( 3 + 7 ))
 ```
 
 ## process substitution
+
+
 
 ## word splitting
 
