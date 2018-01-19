@@ -1,8 +1,7 @@
 # Abstract
 
 linux를 활용할 때 필요한 지식들을 정리한다. macosx, sunos, hp-ux 등등
-unix 계열 os는 모두 해당된다. 예제들은 macosx에서 실험했다. ubuntu와
-다를 수도 있다.
+unix 계열 os는 모두 해당된다.
 
 # References
 
@@ -109,8 +108,8 @@ linux는 파일의 sticky bit를 무시한다. 디렉토리에 sticky bit가 설
 application commands와 bash builtin commands등이 있다.  상황별로
 유용한 commands를 정리한다. bash builtin commands의 경우 `/usr/bin/`
 에 application commands으로 존재한다. 다음은 macosx에서
-`/usr/bin/ulimit`의 내용이다. `${0##*/}` 과 `${1+"$@"}`는 parameter
-expansion을 의미한다.
+`/usr/bin/ulimit`의 내용이다. 단지 bash builtin으로 command와
+argument들을 전달 하고 있다.
 
 
 ```bash
