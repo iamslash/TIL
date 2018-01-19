@@ -322,12 +322,43 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `find`
   * `find . -name "*.log" | xargs cat`
 * `tail`
+  * `tail -n 5 a.txt`
+  * `tail -f /var/log/messages`
+  * `tail -f /tmp/a.log --pid=2575` 2575프로세스 죽을때까지
+  * `tail -f /tmp/debug.log --retry`
 * `head`
+  * `head -n 5 a.txt`
+  * `head -4 a.txt`
+  * `head -n -5 a.txt`
+  * `ls | head`
 * `awk`
+  * [awk](../awk/README.md)
 * `uniq`
+  * `uniq a.txt`
+  * `uniq -c a.txt`
+  * `uniq -d a.txt` 중복된 녀석들은 제거해라.
+  * `uniq -D a.txt` 중복된 녀석들은 제거하지마라
+  * `uniq -u a.txt` 중복되지 않은 행들은?
+  * `uniq -c -w 8 a.txt` 처음 8바이트만 중복되지 않은 녀석들을 보여다오
+  * `uniq -D -w 8 a.txt` 처음 8바이트만 중복된 녀석들을 보여다오
+  * `uniq -D -s 2 a.txt` 2바이트는 건너띄고 중복된 녀석들을 보여다오
+  * `uniq -D -f 2 a.txt` 2필드는 건너띄고 중복된 녀석들을 보여다오
 * `sort`
+  * `sort a.txt > b.txt`
+  * `sort -r a.txt > b.txt`
+  * `sort -nk2 a.txt` 2열을 기준으로 정렬해라.
+  * `sort -k9 a.txt`
+  * `ls -l /home/$USER | sort -nk5`
+  * `sort -u a.txt` 정렬하고 중복된 거 지워라
+  * `sort a.txt b.txt`
+  * `sort -u a.txt b.txt`
+  * `ls -l /home/$USER | sort -t "," -nk2,5 -k9` 숫자인 2, 5열, 문자인 9열을 기준으로 정렬해라.x
 * `wc`
-  * `wc -l`
+  * `wc a.txt` 줄개수, 단어수, 바이트 표시해조
+  * `wc -l a.txt` 줄개수 보여줘
+  * `wc -w a.txt` 단어수 보여줘
+  * `wc -c a.txt` `wc -m a.txt` 바이트수 보여도
+  * `wc -L a.txt` 가장 길이가 긴 행의 문자개수는?
 
 ## 텍스트
 
