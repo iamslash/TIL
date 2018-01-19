@@ -343,15 +343,70 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 * `gdb`
 * `ldd`
-  * dependency walker
+  * shared library 의존성을 알려다오
+  * `ldd execv`
+  * `ldd a.so`
+  * `ldd -v a.so`
+  * `ldd -u func` unused direct dependencies
+  * `ldd /bin/ls` ldd wants absolute path
 * `nm`
+  * symbol table을 알려다오
+  * `nm  -A ./*.o | grep func` func를 포함한 심볼들을 알려주라
+  * `nm -u a.out` 사용하지 않거나 실행시간에 share libary에 연결되는 심볼들을 알려주라
+  * `nm -n a.out` 모든 심볼들을 알려주라
+  * `nm -S a.out | grep abc` abc를 포함한 심볼을 크기와 함께 알려다오
+  * `nm -D a.out` dynamic 심볼좀 알려주라
+  * `nm -u -f posix a.out` bsd형식 말고 posix형식으로 알려다오
+  * `nm -g a.out` external 심볼만 알려다오
+  * `nm -g --size-sort a.out` 실볼을 크기 정렬해서 알려다오
 * `strace`
+  * system call과 signal을 모니터링 해주라. 소스는 없는데 디버깅 하고 싶을때 유용하다
+  * `strace ls`
+  * `strace -e open ls` system call중 open만 보여주라
+  * `strace -e trace-open,read ls /home` system call중 open, read보여주라
+  * `strace -o a.txt ls` `cat a.txt`
+  * `ps -C firefox-bin` `sudo strace -p 1725 -o firefox_trace.txt` `tail -f firefox_trace.txt`
+  * `strace -p 1725 -o output.txt`
+  * `strace -t -e open ls /home` 절대 시간으로 보여다오
+  * `strace -r ls` 상대 시간으로 보여다오
+  * `strace -c ls /home` 테이블 형태로 보여다오
 * `ltrace`
+  * library call좀 보여다오
+  * `ltrace ls`
+  * `ltrace -p 1275`
 * `pstack`
+  * process의 callstack을 thread별로 보여다오
+  * `pstack 1275` 
 * `pmap`
+  * process의 memory map좀 보여다오
+  * `pmap 1275`
+  * `pmap -x 1275`
+  * `pmap -d 1275`
+  * `pmap -q 1275` header와 footer는 보여주지 말아라
+  * 
 * `valgrind`
+  * 메모리 누수를 검사하자.
+  * `valgrind --leak-check=yes myprog arg1 arg2`
 * `od`
+  * octal numbers(8진수)로 보여다오
+  * `od -b a.txt`
+  * `od -c a.txt` 캐릭터로 보여줄래?
+  * `od -Ax -c a.txt` byte offset을 hexadecimal형식으로 보여다오
+  * `od -An -c a.txt` byte offset제외 하고 보여다오
+  * `od -j9 -c a.txt` 9bytes  건너뛰고 보여다오
+  * `od -N9 -c a.txt` 9bytes만 보여다오
+  * `od -i a.txt` decimal 형식으로 보여다오
+  * `od -x a.txt` hexadecimal 2 byte단위로 보여다오
+  * `od -o a.txt` octal 2 byte단위로 보여다오
+  * `od -w1 -c -Ad a.txt`
+  * `od -w1 -v -c -Ad a.txt` 중복된 것도 보여줘
 * `strings`
+  * 최소한 4byte보다 크거나 같은 문자열을 보여다오
+  * `strings a.out`
+  * `strings a.out | grep hello`
+  * `strings -n 2 welcome | grep ls`
+  * `strings -o a.out` offset도 알려줘
+  * `strings -f /bin/* | grep Copy` 여러개의 파일들의 스트링을 알려줘
 
 ## 압축
 
@@ -374,12 +429,39 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `gzip -d a.txt.gz`
   * `gunzip a.txt.gz`
   * `gunzip -c a.txt.gz > a.txt` a.txt.gz를 지우지 않는다.
+  * `zcat a.txt.gz`
+  * `zgrep exa a.txt.gz`
 * `bzip2`
+  * gzip보다 압축률이 좋다.
+  * `bzip2 a.txt`
+  * `bzip2 a.txt b.txt c.txt`
+  * `bzip2 -c a.txt > a.txt.bz2` a.txt를 지우지 않는다.
+  * `bzip2 -d a.txt.bz2`
+  * `bunzip2 -c a.txt.bz2 > a.txt`
+  * `time bzip2 -v -1 a.tar` `time bzip2 -v -9 a.tar`
+  * `bzip2 -tv a.tar.bz2`
+  * `bzip2 -c a.txt > a.bz2` `bzip2 -c b.txt >> a.bz2`
+  * `bzcat a.txt.bz2`
+  * `bzgrep exa a.txt.bz2`
 * `xz`
+  * gzip, bzip2보다 압축률이 더욱 좋다.
+  * `xz a.txt`
+  * `xz a.txt b.txt c.txt`
+  * `xz -k a.txt` `xz -c a.txt > a.txt.xz`
+  * `xz -d a.txt.xz`
+  * `unxz a.txt.xz` `unxz -k a.txt.xz`
+  * `xz -l a.tar.xz`
+  * `time xz -v a.tar`
+  * `time xz -0v a.tar` `time xz -9v a.tar` `time xz -0ve a.tar`
+  * `time xz -6ve --threads=0 a.tar` 
+  * `tar cJvf a.tar.xz /etc/`
+  * `xz -tv a.tar.xz` `xz -t a.tar.xz` `xz -lvv a.tar.xz`
+  * `xzip -c a.txt > a.xz` `xzip -c b.txt >> a.xz`
+  * `xzcat a.txt.xz` `xzgrep exa a.txt.xz`
 * `zless`
+  * `zless a.txt.gz`
 * `bzless`
-* `zcat`
-* `bzcat`
+  * `bzless a.txt.bz2`
 
 ## 에디터
 
