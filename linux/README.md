@@ -133,14 +133,16 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 * `history`
   * 최근에 사용한 command line보여줘봐라
+  * `history` `!ssh` `!!` `!14`
 * `ls`
   * 디렉토리들과 파일들을 보여줘라.
   * `ls -al`
 * `cd`
   * 작업디렉토리를 바꿔보자.
   * `cd /usr/bin`
+  * `cd ~`
 * `pwd`
-  * 작업디렉토리는 무엇이냐
+  * 현재 작업디렉토리는 무엇이냐
 * `pushd, popd`
   * 디렉토리를 스택에 넣고 빼자.
   * `pushd /usr/bin` `cd` `cd popd`
@@ -167,27 +169,68 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `more`보다 기능이 확장 된 것
   * `man ls | less`
 * `echo`
+  * 화면에 한줄 출력하자
+  * `echo hello` `echo $A`
 * `touch`
+  * 파일의 최종 수정 날짜를 바꾸자
+  * `touch a.txt`
 * `diff`
+  * 두개의 파일들을 줄 단위로 비교하자.
+  * `diff a.txt b.txt`
 * `which`
+  * command위치는 어디있어?
+  * `which ls`
 * `file`
+  * 이 파일의 종류는 무엇이지?
+  * `file a.out`
 * `ps`
+  * 현재 실행되고 있는 프로세스들의 스냅샷을 보여다오
   * `ps aux`
+    * BSD syntax로 보여다오
+  * `ps axjf`
+    * 트리형태로 보여다오
+  * `ps axms`
+    * 쓰레드들 보여다오
 * `kill`
+  * 번호를 이용하여 특정 프로세스에게 시글널을 보내자.
+  * `kill -l`
+    * 가능한 시글널 목록을 보여다오
+  * `kill -9 123`
+    * 123 프로세스에게 SIGKILL보내다오
 * `killall`
-* `pkill, pgrep`
+  * 이름을 이용하여 특정 프로세스에게 시그널을 보내자.
+  * `killall -9 a.sh`
+* `pgrep`
+  * 프로세스 번호를 프로세스 이름을 grep하여 찾아다오
+  * `pgrep -u root aaa`
+    * root가 소유하고 aaa라는 이름의 프로세스 번호를 찾아다오 
+* `pkill`
+  * 이름에 해당하는 프로세스에게 시그널을 보내자.
+  * `pkill -HUP syslogd`
 * `pstree`
+  * 프로세스의 트리를 보여다오
+  * `pstree -a`
 * `telnet`
+  * TELNET protocol client
 * `nc`
   * 방화벽이 실행되고 있는지 확인하기 위해 특정 포트에 리슨해 보자.
   * `nc -l 1234`
     * 1234포트에 리슨해보자.
   * `nc 127.0.0.1 1234`
-    * 1234포트로 접속해보자.  
+    * 1234포트로 접속해보자.
 * `ssh`
+  * OpenSSH SSH client
+  * `ssh iamslash@a.b.com`
+  * `ssh iamslash@a.b.com ls /tmp/doc`
 * `sftp`
+  * secure file transfer program
+  * `sftp iamslash@a.b.com` `cd a` `lcd a` `put a.txt` 
 * `scp`
+  * secure remote copy program
+  * `scp iamslash@a.b.com:a.txt ~/tmp`
+  * `scp a.txt iamslash@a.b.com:/home/iamslash/tmp`
 * `ftp`
+  * file transfer program
 * `screen, tmux`
   * [tmux](../tmux/)
   * terminal multiplexer
@@ -198,27 +241,57 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * ip를 주고 domain을 확인하자.
   * `dig -x 216.58.200.3`
 * `curl`
+  * URL을 활용하여 data전송하는 program. HTTP, HTTPS, RTMP등등을 지원한다.
+  * `curl "http://a.b.com/a?a=1"`
+  * `curl --data "a=1&b=%20OK%20" http://a.b.com/a`
+  * `curl --data-urlencode "a=I am david" http://a.b.com/a`
 * `wget`
+  * web에서 파일좀 내려받아다오
+  * `wget ftp://a.b.com/a.msg`
 * `traceroute`
+  * 네트워크 호스트까지 경로를 추적하자. 특정 라우터 까지 어떤 라우터들을 거쳐 가는가?
+  * `traceroute www.google.com`
 * `locate, updatedb`
+  * 파일이름에 해당하는 걸 찾아다오
 * `sudo`
+  * 다른 유저로 command를 실행하자.
+  * `sudo find / -name "aaa"`
 * `su`
+  * EUID, EGID를 수정하여 SHELL을 실행하자.
+  * `su - root`
 * `bc`
+  * 계산기 언어
+  * `echo "56.8 + 77.7" | bc` 
+  * `echo "scale=6; 60/7.02" | bc`
 * `reset`
+  * 터미널을 초기화 한다. 지저분 해졌을때 사용하면 좋음
 * `tee`
+  * stdin으로 입력 받고 stdout과 파일로 출력하자.
+  * `ls | tee a.txt`
+    * `ls > file`은 stdout말고 파일로만 출력한다.
+  * `ls | tee -a a.txt`
+  * `ls | tee a.txt b.txt c.txt`
 * `script`
+  * 갈무리
+  * `script a.txt` `exit`
  
 ## 유저 관리
 
 * `useradd`
+  * `useradd iamslash`
 * `passwd`
+  * `passwd iamslash`
 * `deluser`
+  * `deluser iamslash`
 
 ## 파일 권한
 
 * `chmod`
+  * `chomod -R 777 tmp`
 * `chown`
+  * `chown -R iamslash tmp`
 * `chgrp`
+  * `chgrp -R staff tmp`
 
 ## 시스템 모니터링
 
