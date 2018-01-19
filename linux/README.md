@@ -356,8 +356,24 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 ## 압축
 
 * `tar`
+  * `tar -cvf a.tar /home/iamslash/tmp`
+  * `tar -cvzf a.tar.gz /home/iamslash/tmp`
+  * `tar -cvjf a.tar.gz2 /home/iamslash/tmp`
+  * `tar -xvf a.tar`
+  * `tar -xvf a.tar.gz`
+  * `tar -xvf a.tar.gz2`
 * `compress`
+  * Lempel-Ziv 코딩으로 압축한다.
+  * `compress a.txt`
+  * `uncompress a.txt.Z`
 * `gzip`
+  * `gzip a.txt`
+  * `gzip a.txt b.txt c.txt`
+  * `gzip -c a.txt > a.txt.gz` a.txt를 지우지 않는다.
+  * `gzip -r *`
+  * `gzip -d a.txt.gz`
+  * `gunzip a.txt.gz`
+  * `gunzip -c a.txt.gz > a.txt` a.txt.gz를 지우지 않는다.
 * `bzip2`
 * `xz`
 * `zless`
