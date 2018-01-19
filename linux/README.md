@@ -332,12 +332,50 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 ## 텍스트
 
 * `paste`
+  * 파일의 특정 행들을 머지해줘
+  * `paste a.txt`
+  * `paste -s a.txt` 모든 행을 join해도
+  * `paste -d, -s a.txt` comma를 구분자로 모든 행을 join해도
+  * `paste - - < a.txt` 2열로 merge해라.
+  * `paste -d':' - - < a.txt` 구분자는 `:`로 하고 2열로 merge해라.
+  * `paste -d ':,' - - - < a.txt` 구분자는 `:` `,` 로 하고 3열로 merge해라.
+  * `paste a.txt b.txt` 파일 두개 2열로 merge하라.
+  * `paste -d, a.txt b.txt` 구분자는 `,` 으로 파일 두개 2열로 merge해라.
+  * `cat b.txt | paste -d, a.txt -`
+  * `cat a.txt | paste -d, - b.txt`
+  * `cat a.txt b.txt | paste -d, - -`
+  * `paste -d'\n' a.txt b.txt`
 * [sed](../sed/)
 * `tr`
+  * 문자열 번역해줘
+  * `echo HELLO | tr [A-Z] [a-z]`
+  * `tr '{}' '()' < a.txt > b.txt`
+  * `echo "the geek stuff" | tr -d 't'` t문자 지워줘
+  * `echo "my username is 432234 | tr -d [:digit:]` 숫자 지워줘
+  * `echo "my username is 432234 | tr -cd [:digit:]` 숫자 빼고 지워줘
+  * `tr -cd [:print:] < a.txt` non printable 문자들을 지워다오
+  * `tr -s '\n' ' ' < a.txt` 모든 행을 join하자.
 * `printf`
+  * format string을 출력해줘
+  * `printf "%s\n" "hello printf"`
+  * `printf "%s\n" "hllo printf" "in" "bash script"` 각 문자열에 적용해서 출력해라.
 * `nl`
+  * 줄번호 보여줘라
+  * `nl a.txt`
+  * `nl a.txt > nla.txt`
+  * `nl -i5 a.txt` 줄번호는 5씩 더해서 보여다오
+  * `nl -w1 a.txt` 줄번호 열위치를 다르게 해서 보여다오
+  * `nl -bpA a.txt` A로 시작하는 문자열만 줄번호 적용해라
+  * `nl -nln a.txt` `nl -nrn a.txt` `nl -nrz a.txt`
 * `seq`
+  * sequence number 출력해 다오
+  * `seq 10`
+  * `seq 35 45`
+  * `seq -f "%02g/03/2016" 31`
+  * `seq 10 -1 1` 거꾸로 보여줘 
 * `sha1sum`
+  * SHA-1 message digest알려줄래?
+  * `sha1sum a.txt`
 
 ## 디버깅
 
