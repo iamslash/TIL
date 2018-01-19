@@ -1157,7 +1157,169 @@ echo $(( 3 + 7 ))
 
 ## process substitution
 
+```bash
+<( <COMMANDS> )
+>( <COMMANDS> )
+```
 
+`command1 > >( command2 )` 명령의 경우 command1 의 stdout 이 command2 의
+stdin 과 연결되며 `command1 < <( command2 )` 명령의 경우는 command2 의
+stdout 이 command1 의 stdin 과 연결됩니다.  현재 shell pid 를 나타내는
+$$ 변수는 subshell 에서도 동일한 값을 가지므로 >( ) 표현식 내에서의 FD
+상태를 보기 위해서는 $BASHPID 변수를 이용해야 합니다.
+
+
+```bash
+# '>( )' 표현식 내의 명령은 subshell 에서 실행되므로 '$$' 값이 같게나온다.
+
+$ { echo '$$' : $$ >&2 ;} > >( echo '$$' : $$ )
+$$ : 504
+$$ : 504
+
+# 하지만 '$BASHPID' 는 다르게 나온다.
+
+$ { echo '$BASHPID' : $BASHPID >&2 ;} > >( echo '$BASHPID' : $BASHPID )
+$BASHPID : 504
+$BASHPID : 22037
+
+
+---------------------------------------------------------------------------
+
+$ ls -l <( : ) 
+lr-x------ 1 mug896 mug896 64 02.07.2015 22:29 /dev/fd/63 -> pipe:[681827]
+
+$ [ -f <( : ) ]; echo $?  # 일반 파일인지 테스트
+1
+$ [ -p <( : ) ]; echo $?  # pipe 인지 테스트
+0
+```
+
+임시 파일을 만들지 않고 ulimit의 내용을 비교 해보자.
+
+```bash
+$ ulimit -Sa > ulimit.Sa.out
+
+$ ulimit -Ha > ulimit.Ha.out
+
+$ diff ulimit.Sa.out ulimit.Ha.out
+```
+
+```bash
+# 임시파일을 만들 필요가 없다
+
+$ diff <( ulimit -Sa ) <( ulimit -Ha )   
+1c1
+< core file size          (blocks, -c) 0
+---
+> core file size          (blocks, -c) unlimited
+8c8
+< open files                      (-n) 1024
+---
+> open files                      (-n) 65536
+12c12
+< stack size              (kbytes, -s) 8192
+---
+> stack size              (kbytes, -s) unlimited
+```
+
+```bash
+$ echo hello > >( wc )
+      1       1       6
+
+$ wc < <( echo hello )
+      1       1       6
+
+------------------------
+
+# 입력과 출력용 프로세스 치환을 동시에 사용
+$ f1() {
+    cat "$1" > "$2"
+}
+
+$ f1 <( echo 'hi there' ) >( tr a-z A-Z )
+HI THERE
+
+------------------------------------------------------
+
+# --log-file 옵션 값으로 입력 프로세스 치환이 사용됨
+$ rsync -avH --log-file=>(grep -Fv .tmp > log.txt) src/ host::dst/
+
+-----------------------------------------------------------------
+
+# tee 명령을 이용해 결과를 4개의 입력 프로세스 치환으로 전달하여 처리
+$ ps -ef | tee >(grep tom > toms-procs.txt) \
+               >(grep root > roots-procs.txt) \
+               >(grep -v httpd > not-apache-procs.txt) \
+               >(sed 1d | awk '{print $2}' > pids-only.txt)
+
+-----------------------------------------------------------------
+
+# dd 명령에서 입력 파일로 사용
+dd if=<( cat /dev/urandom | tr -dc A-Z ) of=outfile bs=4096 count=1
+```
+
+```bash
+i=0
+sort list.txt | while read -r line; do
+  (( i++ ))
+  ...
+done
+
+echo "$i lines processed"  
+
+# 파이프로 인해 parent 변수 i 에 값을 설정할수 없어 항상 0 이 표시된다.
+0 lines processed
+
+------------------------------------
+i=0
+while read -r line; do
+  (( i++ ))
+  ...
+done < <(sort list.txt)
+
+echo "$i lines processed"   
+
+# 프로세스 치환을 이용해 while 문이 현재 shell 에서 실행되어 i 값을 설정할수 있다.
+12 lines processed
+```
+
+명령 실행 결과중 stderr만 전달하고 싶을때
+
+```bash
+$ command1 2> >( command2 ... )
+
+# 파이프를 이용할 경우
+$ command1 2>&1 > /dev/null | command2 ...
+```
+
+process substitution은 background로 실행된다.
+parent process가 child process를 기다리는 방법을
+소개한다.
+
+```bash
+#!/bin/bash
+
+sync1=`mktemp`
+sync2=`mktemp`
+
+# 여기서 subshell ( ) 을 사용한것은  >( while read -r line ... ) 명령이 child process 가 되어 
+# 종료되지 않고 계속해서 read 대기상태가 되는 것을 방지하기 위해서입니다.
+( while read -r line; do
+    case $line in
+        aaa* ) echo "$line" >& $fd1 ;;
+        bbb* ) echo "$line" >& $fd2 ;;
+    esac
+done ) \
+    {fd1}> >( while read -r line; do echo "$line" | sed -e 's/x/y/g'; sleep 1; done; \
+            rm "$sync1" ) \
+    {fd2}> >( while read -r line; do echo "$line" | sed -e 's/x/z/g'; sleep 2; done; \
+            rm "$sync2" ) \
+    < <( for ((i=0; i<4; i++)); do echo aaaxxx; echo bbbxxx; done; echo ooops );
+
+echo --- end 1 ---
+while [ -e "$sync1" -o -e "$sync2" ]; do sleep 1; done
+echo --- end 2 ---
+```
 
 ## word splitting
 
@@ -1191,6 +1353,259 @@ $ ( IFS=:; for v in $PATH; do echo "$v"; done )
 . . . .
 ```
 
+IFS의 기본값은 space, tab, newline이다. IFS가 unset일때 역시 기본값과
+마찬가지다. IFS가 null이면 word splitting은 없다.
+
+```bash
+$ echo -n "$IFS" | od -a
+0000000  sp  ht  nl
+
+# space, tab, newline 이 모두 space 로 변경되어 표시됩니다.
+$ echo $( echo -e "11 22\t33\n44" )
+11 22 33 44
+
+# quote 을 하면 단어 분리가 발생하지 않습니다.
+$ echo "$( echo -e "11 22\t33\n44" )"
+11 22   33
+44
+```
+
+IFS설정
+
+```bash
+# bash 의 경우
+bash$ IFS=$'\n'              # newline 으로 설정
+bash$ IFS=$' \t\n'           # 기본값 으로 설정
+
+# sh 의 경우
+sh$ IFS='                    # newline 설정
+'
+sh$ IFS=$(echo " \n\t")      # 기본값 설정
+                             # 여기서 \t 을 \n 뒤로 둔것은 $( ) 을 이용해 변수에 값을 대입할때는
+                             # 마지막 newline 들이 제거되기 때문입니다.
+                             # 첫번째 문자는 "$*" 값을 표시할때 구분자로 사용되므로 
+                             # 위치가 바뀌면 안되겠습니다.
+
+# 다음과 같이 할 수도 있습니다.
+# IFS 값을 변경하기 전에 백업하고 복구하기
+sh$ oIFS=$IFS                # 기존 IFS 값 백업
+sh$ IFS='                    # IFS 을 newline 으로 설정하여 사용
+'
+...
+...
+sh$ IFS=$oIFS                # 기존 IFS 값 복구
+```
+
+word splitting 이 발생하는 예
+
+```bash
+$ dirname="쉘 스크립트 강좌"
+
+# $dirname 변수에서 단어분리가 일어나 마지막 단어인 '강좌' 가 디렉토리 명이 되었다.
+$ cp *.txt $dirname                     
+cp: target '강좌' is not a directory
+
+# $dirname 변수를 quote 하여 정상적으로 실행됨.
+$ cp *.txt "$dirname"
+OK
+
+--------------------------------------------------------------
+
+$ AA="one two three"
+
+# $AA 하나의 변수값이지만 단어분리에 의해 3개의 인수가 되었다.
+$ args.sh $AA
+$1 : one
+$2 : two
+$3 : three
+
+# $AA 하나의 변수값이지만 단어분리에 의해 ARR 원소 개수가 3개가 되었다.
+$ ARR=( $AA )      
+$ echo ${#ARR[@]}
+3
+
+# $AA 하나의 변수값이지만 단어분리에 의해 3개의 값이 출력되었다.
+$ for num in $AA; do 
+>    echo "$num"
+>done
+one
+two
+three
+```
+
+quote는 word splitting이 발생 하지 않게 한다.
+
+```bash
+AA="echo hello world"
+
+# 단어분리가 일어나 echo 는 명령 hello world 는 인수가 됩니다.
+$ $AA                 
+hello world
+
+# quote 을 하면 단어분리가 일어나지 않으므로 'echo hello world' 전체가 하나의 명령이 됩니다.
+$ "$AA"               
+echo hello world: command not found
+```
+
+word splitting은 variable expansion, command substitution과 함께
+발생하기 때문에 옳바르게 word splitting이 되지 않는 경우가 있다.
+
+```bash
+$ set -f; IFS=:
+$ ARR=(Arch Linux:Ubuntu Linux:Suse Linux:Fedora Linux)
+$ set +f; IFS=$' \t\n'
+
+$ echo ${#ARR[@]}    # 올바르게 분리 되지 않는다.   
+5
+$ echo ${ARR[1]}    
+Linux:Ubuntu
+```
+
+`$AA` 은 word spltting이 옳바르게 된다.
+
+```bash
+$ AA="Arch Linux:Ubuntu Linux:Suse Linux:Fedora Linux"
+
+$ set -f; IFS=:               
+$ ARR=( $AA )
+$ set +f; IFS=$' \t\n'
+
+$ echo ${#ARR[@]}    # 올바르게 분리 되었다.
+4
+$ echo ${ARR[1]}       
+Ubuntu Linux
+```
+
+IFS값을 `Q`로 바꾸었지만 space를 기준으로 wordsplitting이 발생
+
+```bash
+f1() {
+    echo \$1 : "$1"
+    echo \$2 : "$2"
+}
+
+IFS=Q          # IFS 값을 'Q' 로 설정
+
+f1 11Q22
+f1 33 44
+====== output ========
+
+$1 : 11Q22     # 'Q' 에 의해 인수가 분리되지 않는다.
+$2 :
+$1 : 33        # 그대로 공백에 의해 인수가 분리된다.
+$2 : 44
+```
+
+IFS값을 `Q`로 바꾸고 variable expansion이 발생하면 
+`Q`를 기준으로 wordsplitting이 발생.
+
+```bash
+IFS=Q     
+AA="11Q22"
+BB="33 44"
+f1 $AA
+f1 $BB
+====== output ========
+
+$1 : 11        # 'Q' 에 의해 인수가 분리된다.
+$2 : 22
+$1 : 33 44     # 공백 에서는 분리되지 않는다.
+$2 :
+```
+
+IFS값이 white space (space, tab, newline)일 경우와 아닐 경우의 차이
+
+```bash
+$ AA="11          22"
+$ IFS=' '              # IFS 값이 공백문자일 경우
+$ echo $AA 
+11 22                  # 연이어진 공백문자는 하나로 줄어든다.
+
+# IFS 값이 기본값일 경우
+$ echo $( echo -e "11       22\t\t\t\t33\n\n\n\n44" )
+11 22 33 44
+
+$ AA="11::::::::::22"
+$ IFS=':'              # IFS 값이 공백문자가 아닐 경우
+$ echo $AA         
+11          22         # 줄어들지 않고 모두 공백으로 표시된다.
+---------------------------
+
+$ AA="Arch:Ubuntu:::Mint"
+
+$ IFS=:                 # 공백이 아닌 문자를 사용하는 경우
+
+$ ARR=( $AA )
+
+$ echo ${#ARR[@]}       # 원소 개수가 빈 항목을 포함하여 5 개로 나온다.
+5
+
+$ echo ${ARR[1]}
+Ubuntu
+$ echo ${ARR[2]}
+
+$ echo ${ARR[3]}
+
+-----------------------------------
+
+AA="Arch Ubuntu        Mint"
+
+$ IFS=' '               # 공백문자를 사용하는 경우
+
+$ ARR=( $AA )
+
+$ echo ${#ARR[@]}       # IFS 값이 공백문자일 경우 연이어진 공백문자들은 하나로 취급됩니다.
+3                       # 그러므로 원소 개수가 3 개로 나온다
+
+$ echo ${ARR[1]}
+Ubuntu
+$ echo ${ARR[2]}
+Mint
+```
+
+파일 이름에 space가 포함되어 있는 경우 word splitting때문에 파일
+이름이 분리 될 수 있다. IFS값을 newline으로 변경하면 해결 가능하다.
+
+```bash
+$ ls
+2013-03-19 154412.csv  ReadObject.java       WriteObject.class
+ReadObject.class       쉘 스크립트 테스팅.txt    WriteObject.java
+
+
+$ for file in $(find .)
+do
+        echo "$file"
+done
+.
+./WriteObject.java
+./WriteObject.class
+./ReadObject.java
+./2013-03-19            # 파일이름이 2개로 분리
+154412.csv
+./ReadObject.class
+./쉘                    # 파일이름이 3개로 분리
+스크립트
+테스팅.txt
+
+-----------------------------------------------
+
+$ set -f; IFS=$'\n'           # IFS 값을 newline 으로 변경
+                              # set -f 는 globbing 방지를 위한 옵션 설정
+$ for file in $(find .)
+do
+        echo "$file"
+done
+.
+./WriteObject.java
+./WriteObject.class
+./ReadObject.java
+./2013-03-19 154412.csv
+./ReadObject.class
+./쉘 스크립트 테스팅.txt
+
+$ set +f; IFS=$' \t\n'
+```
+
 ## filename expansion
 
 파일 이름을 다룰때 `*`, `?`, `[]`는 패턴 매칭과 동일하게 확장된다.
@@ -1199,23 +1614,224 @@ globbing이라고 한다.
 
 ```bash
 $ ls
-a.a a.b a.c a.h
+address.c      address.h     readObject.c      readObject.h     WriteObject.class
+Address.class  Address.java  ReadObject.class  ReadObject.java  WriteObject.java
 
 $ ls *.[ch]
-a.c a.h
+address.c  address.h  readObject.c  readObject.h
 
 $ ls "*.[ch]"         # quote 을 하면 globbing 이 일어나지 않는다
 ls: cannot access *.[ch]: No such file or directory
 
 $ echo *.?
-a.a a.b a.c a.h
+address.c address.h readObject.c readObject.h
 
 $ for file in *.[ch]; do
       echo "$file"
 done
 
-a.c
-a.h
+address.c
+address.h
+readObject.c
+readObject.h
+```
+
+bash전용 옵션인 globstar를 이용하여 recursive matching을 수행
+
+```bash
+# globstar 옵션은 기본적으로 off 상태 이므로 on 으로 설정해 줍니다.
+$ shopt -s globstar
+
+# 현재 디렉토리 이하 에서 모든 디렉토리, 파일 select
+$ for dirfile in **; do
+      echo "$dirfile"
+done
+
+# 현재 디렉토리 이하 에서 모든 디렉토리 select
+$ for dir in **/; do
+      echo "$dir"
+done
+
+# 현재 디렉토리 이하 에서 확장자가 java 인 파일 select
+$ for javafile in **/*.java; do
+      echo "$javafile"
+done
+
+# $HOME/tmp 디렉토리 이하 에서 확장가 java 인 파일 select
+$ for javafile in ~/tmp/**/*.java; do
+      echo "$javafile"
+done
+
+# $HOME/tmp 디렉토리 이하 에서 디렉토리 이름에 log 가 포함될 경우 select
+$ for dir in ~/tmp/**/*log*/; do
+      echo "$dir"
+done
+
+# brace 확장과 함께 사용
+$ for imgfile in ~/tmp/**/*.{png,jpg,gif}; do
+      echo "$imgfile"
+done
+
+
+$ awk 'BEGINFILE { print FILENAME; nextfile }' **/*.txt
+....
+....
+```
+
+globbing으로 부족하여 find를 이용하는 경우
+
+```bash
+for file in $(find . -type f) ...  # Wrong!
+for file in `find . -type f` ...   # Wrong!
+
+arr=( $(find . -type f) ) ...      # Wrong!
+
+-------------------------------------------
+# 파일명에 공백이나 glob 문자가 사용되지 않는다면 위와 같이 해도 됩니다.
+# 하지만 그렇지 않을 경우 단어분리, globbing 에대한 처리를 해주어야 합니다.
+
+set -f; IFS=$'\n'
+for file in $(find . -type f) ...  
+set +f; IFS=$' \t\n'
+
+# subshell 을 이용
+( set -f; IFS=$'\n'
+for file in $(find . -type f) ...  )
+
+set -f; IFS=$'\n'
+arr=( $(find . -type f) ) ...  
+set +f; IFS=$' \t\n'
+```
+
+find는 파일 이름을 출력할때 newline을 구분자로 이용한다. 그러나
+`-print0`옵션을 사용하면 `NUL`을 구분자로 이용하여 출력 할 수 있다.
+
+```bash
+# find 명령에서 -print0 을 이용해 출력했으므로 read 명령의 -d 옵션 값을 null 로 설정
+find . -type f -print0 | while read -r -d '' file
+do
+    echo "$file"
+done
+
+# 프로세스 치환을 이용
+while read -r -d '' file; do
+    echo "$file"
+done < <( find . -type f -print0 )
+
+# 명령치환은 NUL 문자를 전달하지 못하므로 -print0 옵션과 함께 사용할 수 없습니다.
+```
+
+bash와 달리 sh는 globstar옵션을 사용 할 수 없다. `read -d` 역시 마찬가지 이다.
+그러나 find와 for를 이용하여 word splitting, globbing, newline을
+문제 없이 처리 할 수 있다.
+
+```sh
+# 다음과 같이 실행할 경우 select 된 파일이 3개라면 각각 3 번의 sh -c 명령이 실행되는 것과 같습니다.
+sh$ find -type f -exec sh -c 'mv "$0" "${0%.*}.py"' {} \;
+# 1. sh -c '...' "file1"
+# 2. sh -c '...' "file2"
+# 3. sh -c '...' "file3"
+
+# for 문에서 in words 부분을 생략하면 in "$@" 와 같게 되고 "$1" "$2" "$3" ... 차례로 입력됩니다. 
+# sh -c 'command ...' 11 22 33 형식으로 명령을 실행하면 command 의 첫번째 인수에 해당하는 11 이 
+# "$0" 에 할당되어 for 문에서 사용할 수 없게 되므로 임의의 문자 X 를 사용하여 
+# select 된 파일명이 "$1" 자리에 오게 하였습니다.
+# 좀 더 효율적으로 명령을 실행하기 위해 find 명령의 마지막에 + 기호를 사용함으로써
+# 한번의 sh -c 명령으로 실행을 완료할 수 있습니다.
+sh$ find -type f -exec \
+    sh -c 'for file; do mv "$file" "${file%.*}.py"; done' X {} +
+# 1. sh -c '...'  X "file1" "file2" "file3"
+```
+
+xargs를 활용하는 방법
+
+```sh
+# find 명령에서 -print0 을 이용하여 출력하였으므로 xargs 에서 -0 옵션을 사용하였습니다.
+# xargs 명령에서 사용된 {} 와 X 의 의미는 위 예제와 같고 {} 는 select 된 파일명을 나타냅니다.
+sh$ find -type f -print0 | 
+    xargs -0i sh -c 'mv "$0" "${0%.*}".py' {}
+# 1. sh -c '...' "file1"
+# 2. sh -c '...' "file2"
+# 3. sh -c '...' "file3"
+
+sh$ find -type f -print0 | 
+    xargs -0 sh -c 'for file; do mv "$file" "${file%.*}".py; done' X
+# 1. sh -c '...'  X "file1" "file2" "file3"
+```
+
+unset의 인수로 사용된 array[12]가 globbing에 의해 파일 array1
+과 매칭이 되어 unset이 되지 않고 있다.
+
+```bash
+$ array=( [10]=100 [11]=200 [12]=300 )
+$ echo ${array[12]}
+300
+
+$ touch array1               # 현재 디렉토리에 임의로 array1 파일생성
+
+# unset 을 실행하였으나 globbing 에의해 array[12] 이 array1 파일과 매칭이되어 
+# 값이 그대로 남아있음
+$ unset -v array[12]         
+$ echo ${array[12]}         
+300                       
+
+$ unset -v 'array[12]'       # globbing 을 disable 하기위해 quote.
+$ echo ${array[12]}          # 이제 정상적으로 unset 이됨
+
+-----------------------------------------
+
+# tr 명령을 이용해 non printable 문자를 삭제하려고 하지만
+# [:graph:] 가 파일 a 와 매칭이 되어 실질적으로 'tr -dc a' 와 같은 명령이 되었습니다.
+
+$ touch a
+
+$ head -c100 /dev/urandom | tr -dc [:graph:]
+
+# 다음과 같이 quote 합니다.
+$ head -c100 /dev/urandom | tr -dc '[:graph:]'
+```
+
+array에 입력되는 원소 값에 glob문자가 포함됨
+
+```bash
+$ AA="Arch Linux:*:Suse Linux:Fedora Linux"
+
+$ IFS=:
+$ ARR=($AA)
+$ IFS=$' \t\n'
+
+$ echo "${ARR[@]}"
+Arch Linux 2013-03-19 154412.csv Address.java address.ser 
+ReadObject.class ReadObject.java 쉘 스크립트 테스팅.txt 
+WriteObject.class WriteObject.java Suse Linux Fedora Linux
+
+-----------------------------------------------------------
+
+$ set -f; IFS=:          # globbing 을 disable
+$ ARR=($AA)
+$ set +f; IFS=$' \t\n'
+
+$ echo "${ARR[@]}"
+Arch Linux * Suse Linux Fedora Linux
+```
+
+현재 디렉토리 이하에서 확장자가 .c인 파일을 모두 찾으려고 하지만
+glob문자에 의해 aaa.c파일과 매칭이 되어서 `find -name aaa.c`
+와 같이 되었다.
+
+```bash
+$ touch aaa.c
+
+$ find -name *.c
+aaa.c
+
+# 다음과 같이 quote 합니다.
+$ find -name '*.c'
+./aaa.c
+./fork/fork.c
+./write/write.c
+./read/read.c
+...
 ```
 
 ## quote removal
@@ -1233,3 +1849,4 @@ a.h
 * IFS
   * 파라미터 구분자
   * `echo $IFS`
+
