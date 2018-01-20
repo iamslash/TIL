@@ -300,11 +300,22 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `ss`
   * socket statistics
 * `vmstat`
+* `free`
+* `sar`
+* `top` `htop` `atop`
 * `ifconfig`
-* `top`
-* `htop`
-* `atop`
+  * network interface parameter설정하기
+  * `ifconfig eth0`
+  * `ifconfig -a` disable된 network interface까지 몽땅 보여다오
+  * `ifconfig eth0 down` `ifconfig eth0 up`
+  * `ifconfig eth0 192.168.2.2` eth0 에 ip할당
+  * `ifconfig eth0 netmask 255.255.255.0` eth0에 subnet mask 할당
+  * `ifconfig eth0 broadcast 192.168.2.255` eth0의 broadcast address교체
+  * `ifconfig eth0 192.168.2.2 netmask 255.255.255.0 broadcast 192.168.2.255`
+  * `ifconfig eth0 mtu XX` eth0의 maximum transmission unit교체. 기본값은 1500
+  * `ifconfig eth0 promisc`
 * `lsof`
+  * 열린 파일들을 보여도
   * `lsof -i` 접속된 연결을 보여다오
 * `lshw`
 * `who`
