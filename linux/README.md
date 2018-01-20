@@ -318,18 +318,69 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 ## 로그
 
 * `grep`
-  *
+  * 파일 패턴 검색기
+  * `grep "this" a.txt`
+  * `grep "this" a.*`
+  * `grep -i "the" a.txt` case insensitive
+  * `grep "lines.*empty" a.txt` regular expression
+  * `grep -i "is" a.txt`
+  * `grep -iw "is" a.txt` 검색의 대상은 단어이다.
+  * `grep -A 3 -i "example" a.txt` 검색된 줄 이후 3줄 더 보여줘라
+  * `grep -B 2 "single WORD" a.txt` 검색된 줄 이전 2줄 더 보여줘라
+  * `grep -C 2 "example" a.txt` 검색된 줄 이전 이후 2줄 더 보여줘라
+  * `export GREP_OPTIONS='--color=auto' GREP_COLOR='100;8'` `grep this a.txt`
+  * `grep -r "this" *`
+  * `grep -v "go" a.txt` 검색 대상이 안된 줄을 보여줘라
+  * `grep -c "go" a.txt` 검색된 수를 보여다오
+  * `grep -l this a.*` 검색된 파일들을 보여다오
+  * `grep -o "is.*line" a.txt` 검색된 문자열들만 보여다오
+  * `grep -o -b "3" a.txt` 검색된 위치를 보여다오
+  * `grep -n "go" a.txt` 검색된 줄번호도 보여다오
 * `xargs`
-  * argument list를 구성하고 command한개에 argument하나씩 대응해서 실행하자
+  * 구분자 `\n`을 이요해서 argument list를 구성하고 command 한개에 argument 하나씩 대응해서 실행하자
   * xargs 가 실행할 command가 없다면 `/bin/echo`를 사용한다.
   * `echo a b c d e f | xargs`
   * `echo a b c d e f | xargs -n 3` argument는 3개씩 한조가 되라
   * `echo a b c d e f | xargs -p -n 3` prompt 등장
   * `find . -name "*.c" | xargs rm -rf`
-  * `find . -name "*.c" -print0 | xargs -0 rm -rf` 파일 이름에 공백있으면 지워조
-  * `find . -name `*.c` | xargs grep 'stdlib.h'`
+  * `find . -name "*.c" -print0 | xargs -0 rm -rf`
+  * `find . -name '*.c' | xargs grep 'stdlib.h'`
 * `find`
   * `find . -name "*.log" | xargs cat`
+  * `find . -name a.txt`
+  * `find /home -name a.txt`
+  * `find /home -iname a.txt` case insensitive
+  * `find / -type d -name a`
+  * `find . -type f -name a.php`
+  * `find . -type f -name "*.php"`
+  * `find . -type f -perm 0777 -print`
+  * `find / -type f ! -perm 777` without permission 777
+  * `find / -perm 2644` sgid bit with 644
+  * `find / -perm 1551` stcky bit with 551
+  * `find / -perm /u=s` suid
+  * `find / -perm /g=s` sguid
+  * `find / -perm /u=r` read only
+  * `find / -perm /a=x` executable
+  * `find / -type f -perm 0777 -print -exec chmod 644 {} \;`
+  * `find / -type d -perm 777 -print -exec chmod 755 {} \;`
+  * `find . -type f -name "a.txt" -exec rm -f {} \;`
+  * `find . -type f -name "*.txt" -exec rm -f {} \;`
+  * `find /tmp -type f -empty`
+  * `find /tmp -type d -empty`
+  * `find /tmp -type f -name ".*"`
+  * `find / -user root -name a.txt`
+  * `find /home -user iamslash`
+  * `find /home -group staff`
+  * `find /home -user iamslash -name "*.txt"`
+  * `find / -mtime 50` 수정시간이 50일이내인 것
+  * `find / -mtime +50 -mtime -100` 수정시간이 50일 이상 100일 이하인 것
+  * `find / -cmin -60` 작성 시간이 60분 이내인 것
+  * `find / -mmin -60` 수정 시간이 60분 이내인 것
+  * `find / -amin -60` 접근 시간이 60분 이내인 것
+  * `find / -size 50M`
+  * `find / -size +50M -size -100M`
+  * `find / -size +100M -exec rm -rf {} \;`
+  * `find / -type f -name *.mp3 -size +10M -exec rm {} \;`
 * `tail`
   * `tail -n 5 a.txt`
   * `tail -f /var/log/messages`
