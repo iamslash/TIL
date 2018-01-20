@@ -103,6 +103,7 @@ linux는 파일의 sticky bit를 무시한다. 디렉토리에 sticky bit가 설
 ## apt-get
 ## brew
 ## yum
+
 # Commands
 
 application commands와 bash builtin commands등이 있다.  상황별로
@@ -606,3 +607,18 @@ setuid가 설정되어 있으면 실행 되었을 때 EUID가 root로 변경된�
 ```bash
 find / -user root -perm 4000 -print
 ```
+# System Monitoring
+
+주로 CPU, Memory, I/O, Network, File 등등을 모니터링 한다.
+
+* CPU
+  * top, ps, uptime, vmstat, pstree, iostat, sar
+* Memory
+  * free, vmstat, sar
+* Disk I/O
+  * df, du, quota, iostat, sar
+* Network
+  * ping, netstat, traceroute, tcpdump, nmap, netcat, ntop
+* File
+  * lsof
+
