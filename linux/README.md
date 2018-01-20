@@ -302,6 +302,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `htop`
 * `atop`
 * `lsof`
+  * `lsof` 접속된 연결을 보여다오
 * `lshw`
 * `vmstat`
 * `who`
@@ -310,6 +311,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `time`
 * `du`
 * `df`
+  * `df -h .` free space를 읽기쉬운 형식으로 보여줘
 * `uname`
 * `hostname`
 * `last`
