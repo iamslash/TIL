@@ -318,7 +318,16 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 ## 로그
 
 * `grep`
+  *
 * `xargs`
+  * argument list를 구성하고 command한개에 argument하나씩 대응해서 실행하자
+  * xargs 가 실행할 command가 없다면 `/bin/echo`를 사용한다.
+  * `echo a b c d e f | xargs`
+  * `echo a b c d e f | xargs -n 3` argument는 3개씩 한조가 되라
+  * `echo a b c d e f | xargs -p -n 3` prompt 등장
+  * `find . -name "*.c" | xargs rm -rf`
+  * `find . -name "*.c" -print0 | xargs -0 rm -rf` 파일 이름에 공백있으면 지워조
+  * `find . -name `*.c` | xargs grep 'stdlib.h'`
 * `find`
   * `find . -name "*.log" | xargs cat`
 * `tail`
