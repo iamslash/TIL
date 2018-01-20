@@ -298,25 +298,63 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 * `netstat`
 * `ss`
+  * socket statistics
+* `vmstat`
+* `ifconfig`
 * `top`
 * `htop`
 * `atop`
 * `lsof`
-  * `lsof` 접속된 연결을 보여다오
+  * `lsof -i` 접속된 연결을 보여다오
 * `lshw`
-* `vmstat`
 * `who`
-* `ifconfig`
+  * 로그인한 녀석들 보여다오
 * `date`
+  * 날짜 시간을 datetime 형식으로 출력해다오
+  * `date --date="12/2/2014"`
+  * `date --date="next mon"`
+  * `date --date=@5` UTC 이후로 5초 지났다.
+  * `date --date='3 seconds ago'`
+  * `date +%<format-option>`
 * `time`
+  * command 실행하고 소요시간 출력해다오
+  * `time a.out`
 * `du`
+  * `du -h /home/iamslash`
+  * `du -sh /home/iamslash` 요약해서 알려줘
+  * `du -ah /home/iamslash` 모든 파일과 디렉토리 알려줘
+  * `du -hk /home/iamslash`
+  * `du -hm /home/iamslash`
+  * `du -hc /home/iamslash` 마지막에 total보여줘
+  * `du -ah --exclude="*.txt /home/iamslash"`
+  * `du -ah --time /home/iamslash`
 * `df`
-  * `df -h .` free space를 읽기쉬운 형식으로 보여줘
+  * `df -h` free space를 읽기쉬운 형식으로 보여줘
+  * `df -ah` 모든 파일 시스템에 대한 free space를 읽기쉬운 형식으로 알려다오
+  * `df -ih` i-node정보좀 털어봐라
+  * `df -Th` 파일 시스템 타입좀
+  * `df -th ext3` ext3포함해서 알려줘
+  * `df -xh ext3` ext3빼고 알려줘
 * `uname`
+  * 운영체제이름 알려다오
+  * `uname -a`
 * `hostname`
+  * 호스트이름 알려다오
 * `last`
+  * 마지막에 로그인했던 user, tty, host알려다오
 * `uptime`
+  * 시스템이 실행된지 얼마나 지났니?
 * `ping`
+  * ICMP ECHO_REQUEST packet를 보낸다.
+  * `ping -i 5 127.0.0.1` 패킷 보내기 전에 5초 쉬어
+  * `ping 0` `ping localhost` `ping 127.0.0.1` localhost살아있니?
+  * `ping -c 5 www.google.com` 패킷 5개만 보내자
+  * `ping -f localhost` 몇초만에 400,000개 이상의 패킷들을 보낸다.
+  * `ping -a www.google.com` peer가 살아 있다면 소리 발생
+  * `ping -c 1 google.com` 도메인 이름으로 아이피좀 알자
+  * `ping -c 5 -q 127.0.0.1` ping summary
+  * `ping -s 100 localhost` packet size를 56에서 100으로 변경
+  * `ping -w 5 localhost` 5초동안만 보내자.
 
 ## 로그
 
