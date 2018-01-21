@@ -297,12 +297,82 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 ## 시스템 모니터링
 
 * `netstat`
+  * 네트워크 상태좀 알려다오
+  * `netstat -a | more` TCP, UDP 포트 모두 보여줘
+  * `netstat -at` TCP 포트만 보여줘
+  * `netstat -au` UDP 포트만 보여줘
+  * `netstat -l` listening 포트 보여줘
+  * `netstat -lt` TCP listening 포트 보여줘
+  * `netstat -lu` UDP listening 포트 보여줘
+  * `netstat -lx` UNIX domain socket listening 포트 보여줘
+  * `netstat -s` 프로토콜(TCP, UDP, ICMP, IP)별로 통계를 보여줘
+  * `netstat -st` `netstat -su`
+  * `netstat -tp` TCP 사용하는 녀석들을 PID/programname 형태로 보여줘
+  * `netstat -ac 5 | grep tcp` 5초마다 갱신하면서 promiscuous mode인 녀석들 보여줘
+  * `netstat -r` routing table보여줘
+  * `netstat -i` network interface별로 MTU등등을 보여줘
+  * `netstat -ie` kernal interface table 보여줘 ifconfig와 유사
+  * `netstat -g` multicast group membership information을 보여줘
+  * `netstat -c` 몇초마다 갱신하면서 보여줘
+  * `netstat --verbose`
+  * `netstat -ap | grep http`
+  * `netstat --statistics --raw` 아주 심한 통계를 보여달라
 * `ss`
-  * socket statistics
+  * socket statistics. netstat과 옵션의 의미가 유사하다.
+  * `ss | less` 모든 연결을 보여다오
+  * `ss -t` TCP `ss-u` UDP `ss-x` UNIX
+  * `ss -nt` hostname얻어 오지 말고 숫자로만 보여줘
+  * `ss -ltn` TCP listening socket보여줘
+  * `ss -ltp` TCP listening socket들을 PID/name와 함께 보여줘
+  * `ss -s` 통계 보여줘
+  * `ss -tn -o` timer 정보도 함께 보여줘
+  * `ss -tl -f inet` `ss -tl -4` IPv4 연결만 보여줘
+  * `ss -tl -f inet6` `ss -tl -6` IPv6 연결만 보여줘
+  * `ss -t4 state established` `ss -t4 state time-wait`
+  * `ss -at '( dport = :ssh or sport = :ssh )'` source, destination 이 ssh인 것만 보여줘
+  * `ss -nt '( dst :443 or dst :80 )'`
+  * `ss -nt dst 74.125.236.178` `ss -nt dst 74.125.236.178/16` `ss -nt dst 74.125.236.178:80`
+  * `ss -nt dport = :80` `ss -nt src 127.0.0.1 sport gt :5000`
+  * `sudo ss -ntlp sport eq :smtp` `sudo ss -nt sport gt :1024`
+  * `sudo ss -nt dport \< :100` `sudo ss -nt state connected dport = :80`
 * `vmstat`
+  * virtual memory 통계 보여조
+| 범주   | 필드 이름 | 설명                                                                                              |
+|--------|-----------|---------------------------------------------------------------------------------------------------|
+| procs  | r         | 전달 대기열의 커널 스레드 수                                                                      |
+|        | b         | 리소스를 대기 중인 차단된 커널 스레드 수                                                          |
+|        | w         | 처리 중인 리소스 완료를 대기 중인 스왑 아웃된 LWP 수                                              |
+| memory |           | 실제 메모리 및 가상 메모리의 사용에 대해 보고합니다.                                              |
+|        |           |                                                                                                   |
+|        | swap      | 사용 가능한 스왑 공간                                                                             |
+|        | free      | 해제 목록의 크기                                                                                  |
+| page   |           | 페이지 폴트 및 페이지 작업을 초 단위로 보고합니다.                                                |
+|        | re        | 재확보된 페이지                                                                                   |
+|        | mf        | 작은 결함 및 큰 결함                                                                              |
+|        | pi        | 페이징인(킬로바이트)                                                                              |
+|        | po        | 페이징아웃(킬로바이트)                                                                            |
+|        | fr        | 해제됨(킬로바이트)                                                                                |
+|        | de        | 최근 스왑 인된 프로세스에서 필요한 예상 메모리                                                    |
+|        | sr        | 현재 사용되고 있지 않은 page 데몬으로 스캔된 페이지. sr이 0이 아니면 page 데몬이 실행된 것입니다. |
+| disk   |           | 최대 4개 디스크의 데이터에 대한 초당 디스크 작업 수를 보고합니다.                                 |
+| faults |           | 초당 트랩/인터럽트 비율을 보고합니다.                                                             |
+|        | in        | 초당 인터럽트                                                                                     |
+|        | sy        | 초당 시스템 호출                                                                                  |
+|        | cs        | CPU 컨텍스트 전환 비율                                                                            |
+| cpu    |           | CPU 시간 사용을 보고합니다.                                                                       |
+|        | us        | 사용자 시간                                                                                       |
+|        | sy        | 시스템 시간                                                                                       |
+|        | id        | 유휴 시간                                                                                         |
+  * `vmstat 1`
+  * `vmstat -s` 부트이후 통계
+  * `vmstat -S` 스와핑 통계
+  * `vmstat -i` 장치당 인터럽트
 * `free`
+  * 
 * `sar`
+  * 
 * `top` `htop` `atop`
+  * 
 * `ifconfig`
   * network interface parameter설정하기
   * `ifconfig eth0`
@@ -316,8 +386,30 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `ifconfig eth0 promisc`
 * `lsof`
   * 열린 파일들을 보여도
+  * `lsof /var/log/syslog`
+  * `lsof +D /var/log/` 특정 디렉토리 이하를 재귀적으로 보여다오 
+  * `lsof +d /var/log/` 특정 디렉토리만 보여다오
+  * `lsof -c ssh -c init` ssh 혹은 init으로 시작하는 command들만 보여다오 
+  * `lsof -u iamslash` iamslash 유저만 보여다오
+  * `lsof -u ^iamslash`
+  * `lsof -p 1753` PID가 1753인 것만 보여다오
+  * `lsof -t -u iamslash` user가 iamslash인 녀석들의 PID들을 보여다오
+  * `kill -9 'lsof -t -u iamslash'` user가 iamslash인 녀석들에게 SIGKILL을 보내다오 
+  * `lsof -u iamslash -c ssh` `lsof -u iamslash -c ssh -a` -a는 ssh시작하는을 의미
+  * `lsof -u iamslash -c ssh -a -r5` 5초마다 갱신해서 보여다오
   * `lsof -i` 접속된 연결을 보여다오
+  * `lsof -i -a -c ssh`
+  * `lsof -i :25` 25번 포트에 접속한 연결을 보여다오
+  * `lsof -i tcp` `lsof -i udp`
+  * `lsof -N -u iamslash -a` NFS보여다오
 * `lshw`
+  * 하드웨어 정보들을 알려다오
+  * `sudo lshw`
+  * `sudo lshw -short` 짧게 부탁해
+  * `sudo lshw -short -class memory` 메모리분야만 부탁해
+  * `sudo lshw -class processor` `sudo lshw -short -class disk` `sudo lshw -class network`
+  * `sudo lshw -businfo` pci, usb, scsi, ide자치들의 주소를 부탁해
+  * `sudo lshw -html > hardware.html` `sudo lshw -xml > hardware.xml`
 * `who`
   * 로그인한 녀석들 보여다오
 * `date`
