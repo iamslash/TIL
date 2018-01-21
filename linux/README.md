@@ -369,11 +369,27 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 |        | id        | 유휴 시간                                                                                         |
 
 * `free`
-  * 
+  * physical memory와 swap memory의 상태를 알려다오
+  * `free -b` `free -k` `free -m` `free -g`
+  * `free -t` total 추가해조
+  * `free -o` buffer adjusted line은 빼고 보여다오
+  * `free -s 5` 5초마다 갱신해서 보여줘
+  * `free -l` low, high size 통계보여줘
+  * [free example](http://www.golinuxhub.com/2015/02/what-is-bufferscache-in-free-command-in.html)
+    * physical memory = 2048
+      * 2048 = 1869 + 152 (부팅때문에 커널에 의해 예약된 공간)
+    * free가 471이지만 buffer/adjust line을 통해 895까지 확장 될 수 있음을 알 수 있다.
+
+```
+# free -m
+             total       used       free     shared    buffers     cached
+Mem:          1869       1398        471          0         24        400
+-/+ buffers/cache:        974        895
+Swap:         3999          0       3999
+```
+
 * `sar`
-  * 
 * `top` `htop` `atop`
-  * 
 * `ifconfig`
   * network interface parameter설정하기
   * `ifconfig eth0`
