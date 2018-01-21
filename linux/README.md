@@ -393,6 +393,26 @@ Swap:         3999          0       3999
 
 * `sar`
 * `top` `htop` `atop`
+  * `top -n 10` 10번만 갱신해
+  * `top -n 1 -b > a.txt` export
+  * `top -u iamslash` 특정 유저 소유의 프로세스들만 보여줘
+  * `z` running 프로세스들은 색깔표시해조
+  * `c` 절대 경로 
+  * `d` 갱신 시간 조정
+  * `k` 프로세스에게 SIGKILL전송
+  * `r` 프로세스의 nice를 변경하여 우선순위를 조정한다.
+  * `SHIFT + m` 메모리 사용량이 큰 순서대로 정렬
+  * `SHIFT + p` cpu 사용량이 큰 순서대로 정렬
+  * `SHIFT + t` 실행시간이 큰 순서대로 정렬
+
+| class        | 이름 | 설명                                                                                                     |
+|--------------|------|:--------------------------------------------------------------------------------------------------------:|
+| load average |      | 1분, 5분, 15분동안 run queue에 저장된 job의 평균개수이다. 1이면 여유 5이면 버겁고 10이상이면 과부하이다. |
+| cpu          | us   | user 용 processor 활용 비율                                                                              |
+|              | sy   | system 용 processor 활용 비율                                                                            |
+|              | id   | idle 용 processor 활용 비율                                                                                                     |
+|              |      |                                                                                                          |
+
 * `ifconfig`
   * network interface parameter설정하기
   * `ifconfig eth0`
