@@ -223,6 +223,9 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * OpenSSH SSH client
   * `ssh iamslash@a.b.com`
   * `ssh iamslash@a.b.com ls /tmp/doc`
+* `ssh-add`
+  * 인증 에이전트에게 비밀키를 추가해 놓자.
+  * `ssh-add -K ~/.ssh/id_rsa` 암호 입력을 매번 하지 않기 위해 키체인에 등록하자
 * `sftp`
   * secure file transfer program
   * `sftp iamslash@a.b.com` `cd a` `lcd a` `put a.txt` 
@@ -757,6 +760,31 @@ Swap:         3999          0       3999
 
 * `vi, vim, emacs, nano, ed`
 
+## 데몬 관리
+
+* cron
+  * 반복 예약 작업 등록
+  * `crontab -l` 등록된 목록을 보여줘
+  * `crontab -l -u iamslash` iamslash USER의 목록 보여줘
+  * `crontab -e` 크론탭 수정해볼까
+    * `* * * * * /tmp/a.sh` 매 1분 마다 실행해 
+    * `15,45 * * * * /tmp/a.sh` 매시 15, 45분 마다 실행해 
+    * `*/10 * * * * /tmp/a.sh` 10분 마다 실행해 
+    * `0 2 * * * /tmp/a.sh` 매일 02:00에 마다 실행해 
+    * `30 */6 * * * /tmp/a.sh` 매 6시간 마다(00:30, 06:30, 12:30, 18:30) 실행해 
+    * `30 1-23/6 * * * /tmp/a.sh` 1tlqnxj 매 6시간 마다(01:30, 07:30, 13:30, 19:30) 실행해 
+    * `0 8 * * 1-5 /tmp/a.sh` 평일(월-금) 08:00 
+    * `0 8 * * 0,6 /tmp/a.sh` 주말(일,토) 08:00
+  * `crontab -r` 모두 삭제
+
+* systemd
+  * `systemctl` 현재 작동하고 있는 서비스들 보여줘
+  * `systemctl list-unit-files` 작동하지 않아도 좋으니 모든 서비스들 보여줘
+  * `systemctl enable vsftpd` 리눅스 부팅할때 vsftpd 시작해줘
+    * `disable` `start` `stop` `restart` `reload` 
+  * `systemctl is-enabled vsftpd` `systemctl is-active vsftpd`
+  
+
 # Security
 
 ## root 소유의 setuid, setgid파일 검색 후 퍼미션 조정하기
@@ -781,7 +809,3 @@ find / -user root -perm 4000 -print
   * ping, netstat, traceroute, tcpdump, nmap, netcat, ntop
 * File
   * lsof
-
-# Cron
-
-# Systemd
