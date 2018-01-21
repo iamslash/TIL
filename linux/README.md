@@ -863,15 +863,19 @@ find / -user root -perm 4000 -print
 ```
 # System Monitoring
 
-주로 CPU, Memory, I/O, Network, File 등등을 모니터링 한다.
+## swapin, swapout
 
-* CPU
-  * top, ps, uptime, vmstat, pstree, iostat, sar
-* Memory
-  * free, vmstat, sar
-* Disk I/O
-  * df, du, quota, iostat, sar
-* Network
-  * ping, netstat, traceroute, tcpdump, nmap, netcat, ntop
-* File
-  * lsof
+process의 virtual memory는 page(4KB)단위로 잘게 나뉘 어져
+있다. page들은 물리 메모리에 옮겨질때 꼭 연속적이지 않아도
+된다. pagetable에 의해 logical address가 physical address로 잘
+변환되기 때문이다. [참고](https://www.slideshare.net/sunnykwak90/ss-43933481)
+
+물리 메모리에 적재된 프로세스의 메모리 공간 전체를 디스크의 스왑
+영역에 일시적으로 내려 놓는 것을 swapping이라고 한다. 덜 중요한
+프로세스는 더 중요한 프로세스를 위해 물리메모리에서 swapspace로
+swapping되야 한다. 디스크에서 물리메모리로 프로세스를 옮기는 작업을
+swap-in이라고 한다. 물리 메모리에서 디스크로 프로세스를 옮기는 작업을
+swap-out이라고 한다.
+
+swap-in(page-in), swap-out(page-out)이 많다면 물리 메모리가 모자르다는
+의미이다.
