@@ -391,7 +391,31 @@ Mem:          1869       1398        471          0         24        400
 Swap:         3999          0       3999
 ```
 
-* `sar`
+* `sysstat` `sar` `sadc`
+  * 시스템 통계를 위한 툴들의 모임이다.
+    * **sar** collects and displays ALL system activities statistics.
+    * **sadc** stands for “system activity data collector”. This is the sar backend tool that does the data collection.
+    * **sa1** stores system activities in binary data file. sa1 depends on sadc for this purpose. sa1 runs from cron.
+    * **sa2** creates daily summary of the collected statistics. sa2 runs from cron.
+    * **sadf** can generate sar report in CSV, XML, and various other formats. Use this to integrate sar data with other tools.
+    * **iostat** generates CPU, I/O statistics
+    * **mpstat** displays CPU statistics.
+    * **pidstat** reports statistics based on the process id (PID)
+    * **nfsiostat** displays NFS I/O statistics.
+    * **cifsiostat** generates CIFS statistics.
+  * `sudo vi /etc/default/sysstat` `ENABLED="true"` 매 10분마다 데이터 수집을 위한 sadc활성화
+    * `sudo vi /etc/cron.d/sysstat` `* * * * * root command -v debian-sa1 > /dev/null && debian-sa1 1 1` 매분마다 해볼까
+  * `sar -u 1 3` 모든 CPU를 1초마다 갱신해서 3번 보여조
+  * `sar -r 1 3` 메모리 보여줘
+  * `sar -S` 스왑공간 보여줘
+  * `sar -b 1 3` I/O 활동 보여줘
+  * `sar -d 1 1` block device 별로 보여줘
+  * `sar -p -d 1 1` 예쁘게 보여줘 pretty print
+  * `sar -w 1 3` context switch 보여줘
+  * `sar -q 1 3` load average 보여줘
+  * `sar -n DEV 1 1` eth0, eth1보여줘
+  * `sar -q -f /var/log/sa/sa23 -s 10:00:01` 10:00:01부터 통계만들어서 보여줘
+  * `sar -q -f /var/log/sa/sa23 -s 10:00:01 | head -n 10` 10:00:01부터 통계 만들어서 10개만 보여줘
 * `top` `htop` `atop`
   * `top -n 10` 10번만 갱신해
   * `top -n 1 -b > a.txt` export
@@ -405,13 +429,13 @@ Swap:         3999          0       3999
   * `SHIFT + p` cpu 사용량이 큰 순서대로 정렬
   * `SHIFT + t` 실행시간이 큰 순서대로 정렬
 
-| class        | 이름 | 설명                                                                                                     |
-|--------------|------|:--------------------------------------------------------------------------------------------------------:|
-| load average |      | 1분, 5분, 15분동안 run queue에 저장된 job의 평균개수이다. 1이면 여유 5이면 버겁고 10이상이면 과부하이다. |
-| cpu          | us   | user 용 processor 활용 비율                                                                              |
-|              | sy   | system 용 processor 활용 비율                                                                            |
-|              | id   | idle 용 processor 활용 비율                                                                                                     |
-|              |      |                                                                                                          |
+| class        | 이름  | 설명                                                                                                     |
+|--------------|-------|:--------------------------------------------------------------------------------------------------------:|
+| load average |       | 1분, 5분, 15분동안 run queue에 저장된 job의 평균개수이다. 1이면 여유 5이면 버겁고 10이상이면 과부하이다. |
+| cpu          | us    | user 용 processor 활용 비율                                                                              |
+|              | sy    | system 용 processor 활용 비율                                                                            |
+|              | id    | idle 용 processor 활용 비율                                                                              |
+| PhysysMem    | wired | non-paged pool???                                                                                        |
 
 * `ifconfig`
   * network interface parameter설정하기
