@@ -337,6 +337,10 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `sudo ss -nt dport \< :100` `sudo ss -nt state connected dport = :80`
 * `vmstat`
   * virtual memory 통계 보여조
+  * `vmstat 1`
+  * `vmstat -s` 부트이후 통계
+  * `vmstat -S` 스와핑 통계
+  * `vmstat -i` 장치당 인터럽트
 
 | 범주   | 필드 이름 | 설명                                                                                              |
 |--------|-----------|---------------------------------------------------------------------------------------------------|
@@ -365,10 +369,6 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 |        | sy        | 시스템 시간                                                                                       |
 |        | id        | 유휴 시간                                                                                         |
 
-  * `vmstat 1`
-  * `vmstat -s` 부트이후 통계
-  * `vmstat -S` 스와핑 통계
-  * `vmstat -i` 장치당 인터럽트
 * `free`
   * 
 * `sar`
