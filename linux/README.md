@@ -378,7 +378,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * [free example](http://www.golinuxhub.com/2015/02/what-is-bufferscache-in-free-command-in.html)
     * physical memory = 2048
       * 2048 = 1869 + 152 (부팅때문에 커널에 의해 예약된 공간)
-    * free가 471이지만 buffer/adjust line을 통해 895까지 확장 될 수 있음을 알 수 있다.
+    * free가 471이지만 buffer/cache adjust line을 통해 895까지 확장 될 수 있음을 알 수 있다.
 
 ```
 # free -m
