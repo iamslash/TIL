@@ -6,6 +6,9 @@ python3에 대해 정리한다.
 
 ## container
 
+* dict, list, set, tuple
+* namedtuple, deque, ChainMap, Counter, OrderedDict, defaultdict
+
 ```python
 >>> from collections import deque
 >>> d = deque('abc')
