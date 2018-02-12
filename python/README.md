@@ -114,16 +114,45 @@ if __name__ == "__main__":
 ```
 
 * [profiling](https://github.com/what-studio/profiling)
-  * 왓스튜디오에서 제작한 text ui 기반의 profiler
+  * 왓스튜디오에서 제작한 text ui 기반의 profiler이다. 콜스택, 샘플링,
+    실시간, 대화형 TUI, 원격 등의 기능을 지원한다.
+  
   
 ## memory optimization
 
-
-
-
 ## memory leak
 
+## dependencies
 
+* setup.py 로 대부분 가능하다.
+
+```
+from setuptools import setup
+setup(
+    name='foobar',
+    install_requires=[
+        'profiling',
+        'trueskill',
+        'tossi==0.0.1',
+    ],
+)
+```
+
+* 조금 더 복잡한 의존성 해결을 위해 requirements.txt도 고민해 보자.
+  requirements.txt는 `pip install` 명령어에 넘길 인자를 기록한
+  파일이다.
+
+```
+profiling
+trueskill
+tossi==0.0.1
+-r lib/baz/requirements.txt
+-e git+https://github.com/sublee/hangulize
+```
+
+```
+> pip install -r requirements.txt
+```
 
 # Library
 
@@ -196,3 +225,5 @@ def test_answer():
   * 듀랑고를 제작한 왓스튜디오의 이흥섭 PT
 * [awesome-python](https://awesome-python.com/)
   * A curated list of awesome python things
+* [python package index](https://pypi.python.org/pypi)
+  * library검색이 용이하다.
