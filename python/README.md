@@ -35,10 +35,67 @@ python3에 대해 정리한다.
 
 # Usage
 
-## container
+## collections
 
-* dict, list, set, tuple
-* namedtuple, deque, ChainMap, Counter, OrderedDict, defaultdict
+* list
+
+```python
+>>> a = []
+>>> a = [1, True, "Hello"]
+>>> x = a[1]
+>>> a[1] = False
+>>> y = a[-1]
+>>> y
+'Hello'
+>>> a = [1, 3, 5, 7, 9]
+>>> x = a[1:3]
+>>> x = a[:2]
+>>> x = a[3:]
+>>> x
+[7, 9]
+>>> a.append(11)
+>>> a[1] = 33
+>>> a
+[1, 33, 5, 7, 9, 11]
+>>> del a[2]
+>>> a
+[1, 33, 7, 9, 11]
+>>> b = [21, 23]
+>>> c = a + b
+>>> c
+[1, 33, 7, 9, 11, 21, 23]
+>>> d = c * 3
+>>> c
+[1, 33, 7, 9, 11, 21, 23]
+>>> d
+[1, 33, 7, 9, 11, 21, 23, 1, 33, 7, 9, 11, 21, 23, 1, 33, 7, 9, 11, 21, 23]
+>>> a.index(1)
+0
+>>> a.count(3)
+0
+>>> a.count(33)
+1
+>>> [n ** 2 for n in range(10) if n % 3 == 0]
+[0, 9, 36, 81]
+```
+
+* tuple
+
+* dict
+
+* set
+
+* namedtuple
+
+* deque
+
+* ChainMap
+
+* Counter
+
+* OrderedDict
+
+* defaultdict
 
 ```python
 >>> from collections import deque
@@ -159,7 +216,34 @@ runtime에 추가될 일이 없다면 __slots__를 이용하자.
 
 ## __metaclass__
 
-* type를 이용하면 class를 runtime에 정의할 수 있다.
+* class는 class instance의 type이고 metaclass는 class의
+  type이다. 
+  
+```python
+>>> class Foo(object): pass
+...
+>>> f = Foo()
+>>> type(f)
+<class '__main__.Foo'>
+>>> type(Foo)
+<class 'type'>
+```
+
+* [type](https://docs.python.org/3/library/functions.html#type)
+  은 name, bases, dict를 인자로 받아 runtime에 class를 정의할 수 있다.
+  
+```python
+>>> X = type('X', (object,), dict(a=1))
+>>> class X(object): a = 1
+...
+>>> x = X()
+>>> x.a
+1
+>>> X = type('X', (object,), dict(a=1))
+>>> x = X()
+>>> x.a
+1
+```
 
 ```python
 >>> a = 1
@@ -182,13 +266,85 @@ runtime에 추가될 일이 없다면 __slots__를 이용하자.
 <class 'type'>
 ```
 
+* metaclass를 정의 하면 metaclass를 소유한 class를 새롭게 정의할 수 있다.
 
+```python
+>>> def MyMetaClass(name, bases, attrs):
+...     print('MyMetaClass is called.')
+...     return type(name, bases, attrs)
+...
+>>> class Foo(metaclass=MyMetaClass): pass
+...
+MyMetaClass is called.
+>>> f = Foo()
+```
 
 ## weakref
 
+다음과 같이 class `Foo`를 정의하여 reference count가 0이 될 때
+`__del__`이 호출 되는 것을 확인하자.
 
+```python
+>>> class Foo:
+...   def __init__(self):
+...     self.v = 1
+...     self.friend = None
+...   def __del__(self):
+...     self.friend = None
+...     print('{0:x} is destroyed'.format(id(self)))
+...
+>>> a, b = Foo(), Foo()
+>>> a.friend = b
+>>> b = None
+>>> a = None
+7f18548fe710 is destroyed
+7f18548fe6a0 is destroyed
+```
+
+다음과 같은 경우 a, b, c는 순환 참조 되고 있어서
+`__del__` 이 호출되지 않는다.
+
+```python
+>>> a, b, c = Foo(), Foo(), Foo()
+>>> a.friend = b
+>>> b.friend = a
+>>> b = None
+>>> a = None
+>>> c.friend = c
+>>> c = None
+```
+
+weakref는 약하게 참조한다는 의미로 reference count를 증가하지 않는
+참조다. 순환 참조를 막기 위해 과감히 사용하자.
+
+```python
+>>> a = Foo(); b = Foo();
+>>> a.friend = weakref.ref(b)
+>>> b.friend = weakref.ref(a)
+>>> b = None
+7f1850f0c2b0 is destroyed
+>>> a.friend
+<weakref at 0x7f1850f06a48; dead>
+>>> a = None
+7f1850f0c358 is destroyed
+>>> c = Foo()
+>>> c.friend
+>>> c.friend()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'NoneType' object is not callable
+>>> c.friend = weakref.ref(c)
+>>> c.friend
+<weakref at 0x7f185499aa98; to 'Foo' at 0x7f1850f0c358>
+>>> c = None
+7f1850f0c358 is destroyed
+```
 
 ## memory leak
+
+gc가 순환 참조들을 수거하긴 하지만 많은 비용이 필요한 작업이다.
+reference count를 잘 관리해서 gc의 도움 없이 메모리 누수를 방지하도록
+하자.
 
 * with, finally 를 이용하여 리소스를 꼭 정리해주자.
 
@@ -223,7 +379,7 @@ def love_with_foo(self):
 
 cpython은 gc와 reference counting이 둘 다 사용되지만
 PyPy는 gc만 사용된다. gc.collect를 수행하면 순환참조를
-탐색하여 쓰레기를 수집한다.
+수거할 수 있지만 많은 비용이 필요하다.
 
 ```
 >>> import gc
