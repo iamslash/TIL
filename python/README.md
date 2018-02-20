@@ -3,13 +3,13 @@
 
 - [Abstract](#abstract)
 - [Usage](#usage)
-    - [container](#container)
+    - [collections](#collections)
     - [generator](#generator)
     - [pdb](#pdb)
     - [async, await](#async-await)
     - [performance check](#performance-check)
-    - [__slots__](#slots)
-    - [__metaclass__](#metaclass)
+    - [`__slots__`](#slots)
+    - [`__metaclass__`](#metaclass)
     - [weakref](#weakref)
     - [memory leak](#memory-leak)
     - [gc](#gc)
@@ -81,37 +81,262 @@ python3에 대해 정리한다.
 
 * tuple
 
+tuple은 list와 비슷하지만 원소를 추가, 갱신, 삭제가 불가한 immutable
+type이다.
+
+```python
+>>> t = ("A", 1, False)
+>>> t
+('A', 1, False)
+>>> type(t)
+<class 'tuple'>
+>>> t[1]
+1
+>>> t[-1]
+False
+>>> t[1:2]
+(1,)
+>>> t[1:]
+(1, False)
+>>> a = (1, 2)
+>>> b = (3, 4, 5)
+>>> c = a + b
+>>> c
+(1, 2, 3, 4, 5)
+>>> d = a * 3
+>>> c[0] = 0
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'tuple' object does not support item assignment
+>>> f, l = ("John", "Kim")
+>>> f
+'John'
+>>> l
+'Kim'
+```
+
 * dict
+
+```python
+>>> s = {"a": 1, "b": 2, "c": 3}
+>>> type(s)
+<class 'dict'>
+>>> s["a"] = 100
+>>> s
+{'a': 100, 'b': 2, 'c': 3}
+>>> dict([('a', 2), ('b', 4), ('c', 5)])
+{'a': 2, 'b': 4, 'c': 5}
+>>> dict(a=2, b=4, c=5)
+{'a': 2, 'b': 4, 'c': 5}
+>>> for key in s:
+...     s[key]
+...
+100
+2
+3
+>>> s.update({'a':-1, 'b':-1})
+>>> s
+{'a': -1, 'b': -1, 'c': 3}
+```
 
 * set
 
+```python
+>>> s = {1, 1, 1, 1, 2}
+>>> s
+{1, 2}
+>>> s = set([1, 1, 1, 1, 2])
+>>> s
+{1, 2}
+>>> s.add(7)
+>>> s
+{1, 2, 7}
+>>> s.update({4, 2, 10})
+>>> s
+{1, 2, 4, 7, 10}
+>>> s.remove(1)
+>>> s
+{2, 4, 7, 10}
+>>> s.clear()
+>>> s
+set()
+>>> a = {1, 2, 3}
+>>> b = {3, 5, 6}
+>>> a & b
+{3}
+>>> a | b
+{1, 2, 3, 5, 6}
+>>> a - b
+{1, 2}
+```
+
 * namedtuple
+
+tuple의 subclass이다. tuple은 index로만 접근 가능하지만
+namedtuple은 index, name으로 접근 가능하다.
+
+```python
+>>> import collections
+>>> p = collections.namedtuple('Vector', ['x', 'y'])
+>>> issubclass(p, tuple)
+True
+>>> Vector =  collections.namedtuple('Vector', ['x', 'y'])
+>>> v = Vector(11, y=22)
+>>> v
+Vector(x=11, y=22)
+>>> print(v[0], v[1])
+11 22
+>>> print(v.x, v.y)
+11 22
+```
 
 * deque
 
-* ChainMap
-
-* Counter
-
-* OrderedDict
-
-* defaultdict
+list와 유사하다. 왼쪽 오른쪽으로 원소를 추가 삭제할 수 있다.
 
 ```python
 >>> from collections import deque
->>> d = deque('abc')
->> d.appendleft('1')
->>> for elem in d:
-...   print(elem.upper())
+>>> dq = deque('ghi')
+>>> for elem in d: print(elem.upper())
+...
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'd' is not defined
+>>> for elem in dq: print(elem.upper())
+...
+G
+H
+I
+>>> dq.append('j')
+>>> dq.appendleft('f')
+>>> dq
+deque(['f', 'g', 'h', 'i', 'j'])
+>>> dq.pop()
+'j'
+>>> dq.popleft()
+'f'
+>>> list(dq)
+['g', 'h', 'i']
+>>> dq[0]
+'g'
+>>> dq[-1]
+'i'
+>>> list(reversed(dq))
+['i', 'h', 'g']
+>>> 'h' in dq
+True
+>>> dq.extend('jkl')
+>>> dq
+deque(['g', 'h', 'i', 'j', 'k', 'l'])
+>>> dq.rotate()
+>>> dq.rotate(1)
+>>> dq
+deque(['k', 'l', 'g', 'h', 'i', 'j'])
+>>> dq.clear()
+>>> dq.pop()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+IndexError: pop from an empty deque
+>>> dq.extendleft('abc')
+>>> dq
+deque(['c', 'b', 'a'])
+```
+
+* ChainMap
+
+dict의 subclass이다. 여러 개의 dict를 모아서 하나의 dict처럼 사용한다.
+여러개의 dict를 이용하여 하나의 dict를 생성하거나 update를 사용하는
+것보다 훨씬 효율적이다.
+
+```python
+>>> from collections import ChainMap
+>>> c1 = {'a': 1}
+>>> c2 = {'b': 2}
+>>> c = ChainMap(c1, c2)
+>>> c
+ChainMap({'a': 1}, {'b': 2})
+>>> c['a']
 1
-a
-b
-c
->>> sub = OrderedDict([('S', 1), ('U', 2), ('B', 3)])
->>> sub['S']
-1
->>> sub.keys()
-['S', 'U', 'B']
+>>> c['b']
+2
+>>> c['c'] = 3
+>>> c
+ChainMap({'a': 1, 'c': 3}, {'b': 2})
+>>> c.clear()
+>>> c
+ChainMap({}, {'b': 2})
+>>> c['b']
+2
+```
+
+* Counter
+
+dict의 subclass이다. 리스트 입력 데이터로 부터 값과 출현횟수를 각각
+key와 value로 하는 dict이다.
+
+```python
+>>> from collections import Counter
+>>> a = Counter([1,2,3,1,2,1,2,1])
+>>> a
+Counter({1: 4, 2: 3, 3: 1})
+>>> b = Counter([1,2,3,2,2,2,2])
+>>> b
+Counter({2: 5, 1: 1, 3: 1})
+>>> a + b
+Counter({2: 8, 1: 5, 3: 2})
+>>> a - b
+Counter({1: 3})
+>>> a & b
+Counter({2: 3, 1: 1, 3: 1})
+>>> a | b
+Counter({2: 5, 1: 4, 3: 1})
+```
+
+* OrderedDict
+
+dict의 subclass이다. 순서가 보장되는 dict이다.
+
+```python
+>>> from collections import OrderedDict
+>>> d = OrderedDict.fromkeys('abcde')
+>>> d
+OrderedDict([('a', None), ('b', None), ('c', None), ('d', None), ('e', None)])
+>>> d.move_to_end('b')
+>>> d.keys()
+odict_keys(['a', 'c', 'd', 'e', 'b'])
+>>> d.move_to_end('b', last=False)
+>>> d
+OrderedDict([('b', None), ('a', None), ('c', None), ('d', None), ('e', None)])
+```
+
+* defaultdict
+
+dict의 subclass이다. 기본값을 지정할 수 있는 dict이다.  기본값은
+callable하거나 None이어야 한다.
+
+```python
+>>> from collections import defaultdict
+>>> d = defaultdict("default-value", a=10)
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: first argument must be callable or None
+>>> d = defaultdict(lambda:"default-value", a=10)
+>>> d
+defaultdict(<function <lambda> at 0x0000025C0DA03E18>, {'a': 10})
+>>>
+>>> d[a]
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+NameError: name 'a' is not defined
+>>> d['a']
+10
+>>> d['b']
+'default-value'
+>>> d
+defaultdict(<function <lambda> at 0x0000025C0DA03E18>, {'a': 10, 'b': 'default-value'})
+>>> d['c'] = 3
+>>> d
+defaultdict(<function <lambda> at 0x0000025C0DA03E18>, {'a': 10, 'b': 'default-value', 'c': 3})
 ```
 
 ## generator
@@ -206,7 +431,7 @@ if __name__ == "__main__":
     실시간, 대화형 TUI, 원격 등의 기능을 지원한다.
   
   
-## __slots__
+## `__slots__`
 
 임의의 class는 attributes를 dict를 이용하여 저장한다. dict는 메모리를
 많이 소모한다.  __slots__를 이용하면 dict를 사용하지 않고 attributes를
@@ -214,7 +439,7 @@ if __name__ == "__main__":
 정의 할 수 없다. 특정 class의 attributes는 생성과 동시에 정해지고
 runtime에 추가될 일이 없다면 __slots__를 이용하자.
 
-## __metaclass__
+## `__metaclass__`
 
 * class는 class instance의 type이고 metaclass는 class의
   type이다. 
