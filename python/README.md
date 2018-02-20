@@ -1,3 +1,34 @@
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [Abstract](#abstract)
+- [Usage](#usage)
+    - [container](#container)
+    - [generator](#generator)
+    - [pdb](#pdb)
+    - [async, await](#async-await)
+    - [performance check](#performance-check)
+    - [__slots__](#slots)
+    - [__metaclass__](#metaclass)
+    - [weakref](#weakref)
+    - [memory leak](#memory-leak)
+    - [gc](#gc)
+    - [dependencies](#dependencies)
+- [Library](#library)
+    - [regex](#regex)
+    - [numpy](#numpy)
+    - [pandas](#pandas)
+    - [click](#click)
+    - [pytest](#pytest)
+    - [urwid](#urwid)
+    - [fabric](#fabric)
+    - [flake8](#flake8)
+    - [objgraph](#objgraph)
+- [References](#references)
+
+<!-- markdown-toc end -->
+
+
 # Abstract
 
 python3에 대해 정리한다.
@@ -118,9 +149,91 @@ if __name__ == "__main__":
     실시간, 대화형 TUI, 원격 등의 기능을 지원한다.
   
   
-## memory optimization
+## __slots__
+
+임의의 class는 attributes를 dict를 이용하여 저장한다. dict는 메모리를
+많이 소모한다.  __slots__를 이용하면 dict를 사용하지 않고 attributes를
+저장할 수 있기에 메모리를 적게 사용한다. 그러나 동적으로 attributes를
+정의 할 수 없다. 특정 class의 attributes는 생성과 동시에 정해지고
+runtime에 추가될 일이 없다면 __slots__를 이용하자.
+
+## __metaclass__
+
+* type를 이용하면 class를 runtime에 정의할 수 있다.
+
+```python
+>>> a = 1
+>>> a.__class__
+<class 'int'>
+>>> b = 'foo'
+>>> b.__class__
+<class 'str'>
+>>> def foo(): pass
+...
+>>> foo.__class__
+<class 'function'>
+>>> class Foo(object): pass
+...
+>>> f = Foo()
+>>> f.__class__
+<class '__main__.Foo'>
+>>> b = type('Bar', (), {})
+>>> b.__class__
+<class 'type'>
+```
+
+
+
+## weakref
+
+
 
 ## memory leak
+
+* with, finally 를 이용하여 리소스를 꼭 정리해주자.
+
+```python
+def love_with_foo(self):
+  self.target = load_foo()
+  try:
+    self.love()
+  finally:
+    del self.target
+```
+
+```python
+@contextmanager
+def foo_target(self):
+  self.target = load_foo()
+  try:
+    yield
+  finally:
+    del self.target
+
+def love_with_foo(self):
+  with self.foo_target()
+    self.love()
+```
+
+* weakref를 사용하여 순환참조를 막는다.
+
+* objgraph를 이용하여 디버깅하자.
+
+## gc
+
+cpython은 gc와 reference counting이 둘 다 사용되지만
+PyPy는 gc만 사용된다. gc.collect를 수행하면 순환참조를
+탐색하여 쓰레기를 수집한다.
+
+```
+>>> import gc
+>>> len(gc.get_objects())
+4671
+>>> gc.collect()
+0
+>>> len(gc.get_objects())
+4598
+```
 
 ## dependencies
 
@@ -211,6 +324,7 @@ def test_answer():
 
 [urwid](http://urwid.org/)는 text gui 라이브러이다.
 
+
 ## fabric
 
 [fabric](https://github.com/mathiasertl/fabric/)은 응용프로그램 배포툴이다.
@@ -218,6 +332,49 @@ def test_answer():
 ## flake8
 
 [flake8](http://flake8.pycqa.org/en/latest/)는 파이썬 코딩 스타일 가이드 체크 프로그램이다.
+
+## objgraph
+
+[objgraph](https://mg.pov.lt/objgraph/)는 메모리누수를 발견할 수 있는 라이브러리이다.
+
+* forward references
+
+```python
+>>> x = []
+>>> y = [x, [x], dict(x=x)]
+>>> import objgraph
+>>> objgraph.show_refs([y], filename='sample-graph.png')
+Graph written to ....dot (... nodes)
+Image generated as sample-graph.png
+```
+
+* backward references
+
+```python
+>>> objgraph.show_backrefs([x], filename='sample-backref-graph.png')
+... 
+Graph written to ....dot (8 nodes)
+Image generated as sample-backref-graph.png
+```
+
+* show stats
+
+```python
+>>> objgraph.show_most_common_types() 
+tuple                      5224
+function                   1329
+wrapper_descriptor         967
+dict                       790
+builtin_function_or_method 658
+method_descriptor          340
+weakref                    322
+list                       168
+member_descriptor          167
+type                       163
+>>> xs = objgraph.by_type('Foo')
+>>> len(xs)
+99
+```
 
 # References
 
