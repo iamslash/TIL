@@ -1,3 +1,42 @@
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Prerequisites](#prerequisites)
+- [Principles](#principles)
+    - [How to approach a system design interview question](#how-to-approach-a-system-design-interview-question)
+    - [Scalability](#scalability)
+    - [Performance vs scalability](#performance-vs-scalability)
+    - [Latency vs throughput](#latency-vs-throughput)
+    - [Availability vs consistency](#availability-vs-consistency)
+    - [Consistency patterns](#consistency-patterns)
+    - [Availability patterns](#availability-patterns)
+    - [Domain name system](#domain-name-system)
+    - [Content delivery network](#content-delivery-network)
+    - [Load balancer](#load-balancer)
+    - [Reverse proxy](#reverse-proxy)
+    - [Application layer](#application-layer)
+    - [Database](#database)
+    - [Cache](#cache)
+- [reading values](#reading-values)
+- [writing values](#writing-values)
+    - [Asynchronism](#asynchronism)
+    - [Communication](#communication)
+    - [Security](#security)
+- [Practices](#practices)
+- [Additional System Design Interview Questions](#additional-system-design-interview-questions)
+- [Real World Architecture](#real-world-architecture)
+- [Company Architectures](#company-architectures)
+- [company engineering blog](#company-engineering-blog)
+- [System Design Pattern](#system-design-pattern)
+    - [aws cloud design pattern](#aws-cloud-design-pattern)
+    - [azure cloud design pattern](#azure-cloud-design-pattern)
+    - [google cloud design pattern](#google-cloud-design-pattern)
+
+<!-- markdown-toc end -->
+
+
 # Abstract
 
 - 시스템 디자인에 대해 적어본다. [system deisgn primer](https://github.com/donnemartin/system-design-primer#federation)
