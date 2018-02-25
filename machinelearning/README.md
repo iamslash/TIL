@@ -3961,7 +3961,13 @@ if __name__ == "__main__":
 
 ## GAN (generative adversarial network)
 
-- ...
+- discriminator는 이미지데이터를 입력받아 진짜인지 가짜인지 출력한다.
+- generator는 임의의 데이터를 입력받아 이미지데이터를 출력한다. 출력된 이미지데이터는 다시 discriminator의
+  입력데이터로 사용되어 generator가 생성한 이미지가 진짜인지 가짜인지 구별한다. discriminator가 진짜라고
+  결론낼 수 있게 generator를 학습시켜야 한다.
+- [1시간만에 GAN(Generative Adversarial Network) 완전 정복하기](http://tv.naver.com/v/1947034)
+  - pytorch를 이용한 설명
+  - [src](https://github.com/yunjey/pytorch-tutorial/tree/master/tutorials/03-advanced/deep_convolutional_gan)
 
 ## NLP (natural language processing)
 
