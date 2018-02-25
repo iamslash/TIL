@@ -4,6 +4,8 @@ stream editor에 대해 적는다.
 
 # References
 
+* [Sed 가이드](https://mug896.gitbooks.io/sed-script/content/)
+  * 친절한 한글
 * [Sed - An Introduction and Tutorial by Bruce Barnett](http://www.grymoire.com/Unix/Sed.html#uh-0)
 * [sed @ gnu](https://www.gnu.org/software/sed/manual/sed.html)
 * [부록 B. Sed 와 Awk 에 대한 간단한 입문서](https://wiki.kldp.org/HOWTO/html/Adv-Bash-Scr-HOWTO/sedawk.html)

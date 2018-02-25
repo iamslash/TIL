@@ -13,6 +13,9 @@ awk 'program' input-file1 input-file2 ...
 
 # References
 
+* [awk 스크립트 가이드](https://mug896.gitbooks.io/awk-script/content/)
+  * 친절한 한글
+
 * [awk manual @ gnu](https://www.gnu.org/software/gawk/manual/gawk.html#Getting-Started)
 * [부록 B. Sed 와 Awk 에 대한 간단한 입문서](https://wiki.kldp.org/HOWTO/html/Adv-Bash-Scr-HOWTO/sedawk.html)
 

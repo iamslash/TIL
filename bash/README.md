@@ -4,6 +4,7 @@
 - [Abstract](#abstract)
 - [References](#references)
 - [Basic Usages](#basic-usages)
+- [Shell Operation](#shell-operation)
 - [Shell Parameters](#shell-parameters)
     - [Positional Parameters](#positional-parameters)
     - [Special Parameters](#special-parameters)
@@ -33,7 +34,22 @@
     - [word splitting](#word-splitting)
     - [filename expansion](#filename-expansion)
     - [quote removal](#quote-removal)
+- [Shell Builtin Commands](#shell-builtin-commands)
+    - [Bourne Shell Builtins](#bourne-shell-builtins)
+    - [Bash Builtins](#bash-builtins)
 - [Shell Variables](#shell-variables)
+    - [Bourne Shell Variables](#bourne-shell-variables)
+    - [Bash Variables](#bash-variables)
+- [Bash Features](#bash-features)
+    - [Bash Startup Files](#bash-startup-files)
+        - [login shell](#login-shell)
+        - [non-login shell](#non-login-shell)
+    - [Bash Conditional Expressions](#bash-conditional-expressions)
+    - [Shell Arithmetic](#shell-arithmetic)
+    - [Arrays](#arrays)
+    - [Controlling the Prompt](#controlling-the-prompt)
+- [Job Control](#job-control)
+    - [Job Control Builtins](#job-control-builtins)
 
 <!-- markdown-toc end -->
 
@@ -53,6 +69,9 @@ bash에 대해 정리한다.
 # Basic Usages
 
 ```bash
+# file name can be anything except NUL, / on linux
+echo "hello world" > [[]].txt
+
 # > 
 # redirect the stdout of a command to a file. 
 # Overwrite the file if it already exists.
@@ -103,9 +122,10 @@ echo `date`
 # The alternative form of command substitution
 echo $(date)
 
-# &&
+# &&, ||
 # execute several commands
 make && make install
+echo "hello" || echo "world"
 
 # ;
 # execute several commands on a line
@@ -164,15 +184,19 @@ echo {1..10}
 #
 cp {foo.txt,bar.txt} a/
 
-# if
-#
-# comparison of numbers
-# -eq, -ne, -gt, -ge, -lt, -le
-# comparison of strings
-# =(==), !=, -z(null), -n(not null)
-if [ $a -eq $b ]; then
-    echo $a
-fi
+# looping constructs
+# until, while, for, break, continue
+until test-commands; do consequent-commands; done
+while test-commands; do consequent-commands; done
+for name [ [in [words …] ] ; ] do commands; done
+for (( expr1 ; expr2 ; expr3 )) ; do commands ; done
+
+# while
+while :
+do
+    echo "foo";
+    sleep 1;
+done
 
 # for
 for i in $(l)
@@ -191,12 +215,29 @@ do
     echo $i
 done
 
-# while
-while :
-do
-    echo "foo";
-    sleep 1;
-done
+# conditional consructs :
+#   if, case, select, ((...)), [[...]]
+
+# if
+# comparison of numbers
+# -eq, -ne, -gt, -ge, -lt, -le
+# comparison of strings
+# =(==), !=, -z(null), -n(not null)
+if [ $a -eq $b ]; then
+    echo $a
+fi
+
+# grouping commands : (), {}
+# (command list) : command list는 subshell환경에서 실행된다.
+( while true; do echo "hello"; sleep 1; done )
+# {command list} : command list는 같은 shell환경에서 실행된다.
+{ while true; do echo "hello"; sleep 1; done }
+
+# function은 command들을 그룹화 하는 방법이다. 그룹의 이름을 사용하면 그룹안의 commands를 실행할 수 있다.
+# name () compound-command [ redirections ]
+H() { echo "hello"; }; H; echo "world";
+# function name [()] compound-command [ redirections ]
+function H() { echo "hello"; }; H; echo "world";
 
 # <<<
 # redirect a string to stdin of a command
@@ -223,13 +264,28 @@ sed -i "s/foo/bar/g" a.txt
 
 ```
 
+# Shell Operation
+
+shell이 command를 읽고 실행하는 과정은 다음과 같다.
+
+* commands 및 arguments를 읽어 들인다.
+* 읽어 들인 commands를 Quoting과 동시에 words와 operators로 쪼갠다. 쪼개진 토큰들은 metacharaters를 구분자로 한다. 이때 alias expansion이 수행된다.
+* 토큰들을 읽어서 simple, compound commands를 구성한다.
+* 다양한 shell expansion이 수행되고 expanded tokens는 파일이름, 커맨드, 인자로 구성된다.
+* redirection을 수행하고 redirection operators와 operands를 argument list에서 제거한다.
+* command를 실행한다.
+* 필요한 경우 command가 실행 완료될 때까지 기다리고 exit status를 수집한다.
+
 # Shell Parameters
 
 ## Positional Parameters
 
 `${N}`처럼 표기한다. N는 paramter의 서수이다.
 
+a.sh `echo ${0}, ${1}, ${2}`
+
 ```bash
+echo a.sh "hello" "world" "foo"
 ```
 
 ## Special Parameters
@@ -253,7 +309,9 @@ sed -i "s/foo/bar/g" a.txt
     * 결과는 `0`
 
 * `$-`
-  * ???
+  * 현재 설정된 option flags
+  * a.sh `echo $-` `bash a.sh 1 2 3 4 5` 
+    * 결과는 `hB`
   
 * `$$`
   * 실행 프로세스 ID
@@ -267,6 +325,8 @@ sed -i "s/foo/bar/g" a.txt
 
 * `$0`
   * shell or shell script
+  * a.sh `echo $!` `bash a.sh 1 2 3 4 5`
+    * 결과는 `a.sh`
 
 * `$_`
   * shell 혹은 shell script의 절대경로
@@ -1877,17 +1937,333 @@ $ find -name '*.c'
 
 ## quote removal
 
+지금까지 expansion에 포함되지 않고 quote되지 않은 `\`, `'`, `"` 캐릭터는 제거된다.
+
+```bash
+echo "hello" \ \
+```
+
+# Shell Builtin Commands
+
+## Bourne Shell Builtins
+
+`:`, `.`, `break`, `cd`, `continue`, `eval`, `exec`, `exit`, `export`, `getopts`, `hash`, `pwd`, `readonly`, `return`, `shift`, `shift`, `test`, `times`, `trap`, `umask`, `unset`
+
+## Bash Builtins
+
+`alias`, `bind`, `builtin`, `caller`, `command`, `declare`, `echo`, `enable`, `help`, `let`, `local`, `logout`, `mapfile`, `printf`, `read`, `readarray`, `source`, `type`, `typeset`, `ulimit`, `unalias`
+
 # Shell Variables
 
-사전에 예약된 변수들을 정리한다.
+## Bourne Shell Variables
 
-* CDPATH
+* `CDPATH`
   * 현재 작업디렉토리
   * `echo $CDPATH` 
-* HOME
+* `HOME`
   * 사용자의 집디렉토리
   * `echo $HOME`
-* IFS
+* `IFS`
   * 파라미터 구분자
   * `echo $IFS`
+* `MAIL`
+* `MAILPATH`
+* `OPTARG`
+* `OPTIND`
+* `PATH`
+* `PS1`
+* `PS2`
 
+## Bash Variables
+
+* `BASH`
+* `BASHOPTS`
+
+# Bash Features
+
+## Bash Startup Files
+
+ssh, telnet등으로 접속하여 login한 다음 얻은 shell을 login shell이라고 한다. 윈도우 매니저에서 메뉴를 통해 얻은 shell을 non-login shell이라고 한다.
+
+### login shell
+
+시작시 `/etc/profile`, `~/.bash_profile`, `~/.bash_login`, `~/.profile`을 실행한다. 보통 `/etc/profile` 에서 `source /etc/bash.bashrc` 하고 `~/.profile` 에서 `source ~/.bashrc` 한다.
+
+로그아웃시 `~/.bash_logout`을 실행한다.
+
+`shopt -s huponexit` 옵션 설정을 통해 로그아웃시 background job들에게 HUP 시그널을 보낸다.
+
+### non-login shell
+
+시작시 `/etc/bash.bashrc`, `~/.bashrc` 를 실행한다. `rc`는 `run commands`의 약어이다. [참고](http://www.catb.org/jargon/html/R/rc-file.html)
+
+`su - userid` 혹은 `bash -l` 을 이용하여 login shell을 만들 수 있다.
+
+## Bash Conditional Expressions
+
+conditional expressions는 `[[` compound command 그리고 `test`, `[` builtin command 에 의해 사용된다.
+
+```
+-a file
+True if file exists.
+
+-b file
+True if file exists and is a block special file.
+
+-c file
+True if file exists and is a character special file.
+
+-d file
+True if file exists and is a directory.
+
+-e file
+True if file exists.
+
+-f file
+True if file exists and is a regular file.
+
+-g file
+True if file exists and its set-group-id bit is set.
+
+-h file
+True if file exists and is a symbolic link.
+
+-k file
+True if file exists and its "sticky" bit is set.
+
+-p file
+True if file exists and is a named pipe (FIFO).
+
+-r file
+True if file exists and is readable.
+
+-s file
+True if file exists and has a size greater than zero.
+
+-t fd
+True if file descriptor fd is open and refers to a terminal.
+
+-u file
+True if file exists and its set-user-id bit is set.
+
+-w file
+True if file exists and is writable.
+
+-x file
+True if file exists and is executable.
+
+-G file
+True if file exists and is owned by the effective group id.
+
+-L file
+True if file exists and is a symbolic link.
+
+-N file
+True if file exists and has been modified since it was last read.
+
+-O file
+True if file exists and is owned by the effective user id.
+
+-S file
+True if file exists and is a socket.
+
+file1 -ef file2
+True if file1 and file2 refer to the same device and inode numbers.
+
+file1 -nt file2
+True if file1 is newer (according to modification date) than file2, or if file1 exists and file2 does not.
+
+file1 -ot file2
+True if file1 is older than file2, or if file2 exists and file1 does not.
+
+-o optname
+True if the shell option optname is enabled. The list of options appears in the description of the -o option to the set builtin (see The Set Builtin).
+
+-v varname
+True if the shell variable varname is set (has been assigned a value).
+
+-R varname
+True if the shell variable varname is set and is a name reference.
+
+-z string
+True if the length of string is zero.
+
+-n string
+string
+True if the length of string is non-zero.
+
+string1 == string2
+string1 = string2
+True if the strings are equal. When used with the [[ command, this performs pattern matching as described above (see Conditional Constructs).
+
+‘=’ should be used with the test command for POSIX conformance.
+
+string1 != string2
+True if the strings are not equal.
+
+string1 < string2
+True if string1 sorts before string2 lexicographically.
+
+string1 > string2
+True if string1 sorts after string2 lexicographically.
+
+arg1 OP arg2
+OP is one of ‘-eq’, ‘-ne’, ‘-lt’, ‘-le’, ‘-gt’, or ‘-ge’. These arithmetic binary operators return true if arg1 is equal to, not equal to, less than, less than or equal to, greater than, or greater than or equal to arg2, respectively. Arg1 and arg2 may be positive or negative integers.
+```
+
+## Shell Arithmetic
+
+shell arithmetic expressions 는 `((` compound command, `let` builtin command 혹은 `-i` 옵션의 `declare` builtin command 에서 사용된다.
+
+```
+id++ id--
+variable post-increment and post-decrement
+
+++id --id
+variable pre-increment and pre-decrement
+
+- +
+unary minus and plus
+
+! ~
+logical and bitwise negation
+
+**
+exponentiation
+
+* / %
+multiplication, division, remainder
+
++ -
+addition, subtraction
+
+<< >>
+left and right bitwise shifts
+
+<= >= < >
+comparison
+
+== !=
+equality and inequality
+
+&
+bitwise AND
+
+^
+bitwise exclusive OR
+
+|
+bitwise OR
+
+&&
+logical AND
+
+||
+logical OR
+
+expr ? expr : expr
+conditional operator
+
+= *= /= %= += -= <<= >>= &= ^= |=
+assignment
+
+expr1 , expr2
+comma
+```
+
+## Arrays
+
+## Controlling the Prompt
+
+다음은 prompt variable 에 해당하는 `PS1` 부터 `PS4` 에 등장하는 special characters이다.
+
+```
+\a
+A bell character.
+
+\d
+The date, in "Weekday Month Date" format (e.g., "Tue May 26").
+
+\D{format}
+The format is passed to strftime(3) and the result is inserted into the prompt string; an empty format results in a locale-specific time representation. The braces are required.
+
+\e
+An escape character.
+
+\h
+The hostname, up to the first ‘.’.
+
+\H
+The hostname.
+
+\j
+The number of jobs currently managed by the shell.
+
+\l
+The basename of the shell’s terminal device name.
+
+\n
+A newline.
+
+\r
+A carriage return.
+
+\s
+The name of the shell, the basename of $0 (the portion following the final slash).
+
+\t
+The time, in 24-hour HH:MM:SS format.
+
+\T
+The time, in 12-hour HH:MM:SS format.
+
+\@
+The time, in 12-hour am/pm format.
+
+\A
+The time, in 24-hour HH:MM format.
+
+\u
+The username of the current user.
+
+\v
+The version of Bash (e.g., 2.00)
+
+\V
+The release of Bash, version + patchlevel (e.g., 2.00.0)
+
+\w
+The current working directory, with $HOME abbreviated with a tilde (uses the $PROMPT_DIRTRIM variable).
+
+\W
+The basename of $PWD, with $HOME abbreviated with a tilde.
+
+\!
+The history number of this command.
+
+\#
+The command number of this command.
+
+\$
+If the effective uid is 0, #, otherwise $.
+
+\nnn
+The character whose ASCII code is the octal value nnn.
+
+\\
+A backslash.
+
+\[
+Begin a sequence of non-printing characters. This could be used to embed a terminal control sequence into the prompt.
+
+\]
+End a sequence of non-printing characters.
+```
+
+# Job Control
+
+## Job Control Builtins
+
+```bash
+bg, fg, jobs, kill, wait, disown, suspend
+```

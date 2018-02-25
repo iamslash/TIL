@@ -3968,13 +3968,17 @@ if __name__ == "__main__":
   generator가 생성한 이미지가 진짜가 될 수 있도록 ganerator를
   학습시킨다.
 - [1시간만에 GAN(Generative Adversarial Network) 완전 정복하기](http://tv.naver.com/v/1947034)
-  - pytorch를 이용한 설명
   - [src](https://github.com/yunjey/pytorch-tutorial/tree/master/tutorials/03-advanced/deep_convolutional_gan)
+  - [ppt](https://www.slideshare.net/NaverEngineering/1-gangenerative-adversarial-network)
+  - pytorch를 이용한 설명
+- DCGAN (Deep Convolutional GAN), LSGAN (Least Squares GAN), SGAN
+  (Semi-Supervised GAN), ACGAN (Auxiliary Classifier GAN), NLP
+  (natural language processing)
+- CycleGAN, StackGAN
 
-## NLP (natural language processing)
+## NLP (Naturla Language Processing)
 
 - ...
-
 
 # reference
 

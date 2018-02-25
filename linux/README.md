@@ -1,3 +1,36 @@
+- [Abstract](#abstract)
+- [References](#references)
+- [Permissions](#permissions)
+  - [mode](#mode)
+    - [setuid](#setuid)
+    - [setgid](#setgid)
+    - [sticky bit](#sticky-bit)
+- [Special Directories](#special-directories)
+- [Special Files](#special-files)
+- [Package Managers](#package-managers)
+  - [apt-get](#apt-get)
+  - [brew](#brew)
+  - [yum](#yum)
+- [Commands](#commands)
+  - [메뉴얼](#%EB%A9%94%EB%89%B4%EC%96%BC)
+  - [자주 사용](#%EC%9E%90%EC%A3%BC-%EC%82%AC%EC%9A%A9)
+  - [유저 관리](#%EC%9C%A0%EC%A0%80-%EA%B4%80%EB%A6%AC)
+  - [파일 권한](#%ED%8C%8C%EC%9D%BC-%EA%B6%8C%ED%95%9C)
+  - [시스템 모니터링](#%EC%8B%9C%EC%8A%A4%ED%85%9C-%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81)
+  - [로그](#%EB%A1%9C%EA%B7%B8)
+  - [텍스트](#%ED%85%8D%EC%8A%A4%ED%8A%B8)
+  - [디버깅](#%EB%94%94%EB%B2%84%EA%B9%85)
+  - [압축](#%EC%95%95%EC%B6%95)
+  - [에디터](#%EC%97%90%EB%94%94%ED%84%B0)
+  - [데몬 관리](#%EB%8D%B0%EB%AA%AC-%EA%B4%80%EB%A6%AC)
+- [Security](#security)
+  - [root 소유의 setuid, setgid파일 검색 후 퍼미션 조정하기](#root-%EC%86%8C%EC%9C%A0%EC%9D%98-setuid-setgid%ED%8C%8C%EC%9D%BC-%EA%B2%80%EC%83%89-%ED%9B%84-%ED%8D%BC%EB%AF%B8%EC%85%98-%EC%A1%B0%EC%A0%95%ED%95%98%EA%B8%B0)
+- [System Monitoring](#system-monitoring)
+  - [swapin, swapout](#swapin-swapout)
+
+
+-----
+
 # Abstract
 
 linux를 활용할 때 필요한 지식들을 정리한다. macosx, sunos, hp-ux 등등
