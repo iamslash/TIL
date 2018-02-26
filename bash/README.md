@@ -2385,6 +2385,186 @@ $ echo ${ARR[1]}
 ubuntu linux
 ```
 
+array의 원소를 ` ${array[@]:offset:length}`를 이용하여 추출할 수 있다.
+
+```bash
+$ AA=( Arch Ubuntu Fedora Suse Mint );
+
+$ echo "${AA[@]:2}"
+Fedora Suse Mint
+
+$ echo "${AA[@]:0:2}"
+Arch Ubuntu
+
+$ echo "${AA[@]:1:3}"
+Ubuntu Fedora Suse
+```
+
+array에 원소를 추가해보자.
+
+```bash
+$ AA=( "Arch Linux" Ubuntu Fedora);
+
+$ AA=( "${AA[@]}" AIX HP-UX);
+
+$ echo "${AA[@]}"
+Arch Linux Ubuntu Fedora AIX HP-UX
+
+$ BB=( 11 22 33 )
+$ echo ${#BB[@]}
+3
+
+$ BB+=( 44 )
+$ echo ${#BB[@]}
+4
+
+$ declare -A AA=( [aa]=11 [bb]=22 [cc]=33 )
+$ echo ${#AA[@]}
+3
+
+$ AA+=( [dd]=44 )
+$ echo ${#AA[@]}
+4
+```
+
+array에 패턴을 적용하여 치환해 보자.
+
+```bash
+$ AA=( "Arch Linux" "Ubuntu Linux" "Suse Linux" "Fedora Linux" )
+
+# change first character u to X
+$ echo "${AA[@]/u/X}"
+Arch LinXx UbXntu Linux SXse Linux Fedora LinXx
+
+# change all characters u to X
+$ echo "${AA[@]//u/X}"
+Arch LinXx UbXntX LinXx SXse LinXx Fedora LinXx
+
+# Su로 시작하는 word를 공백으로 치환
+$ echo "${AA[@]/Su*/}"
+Arch Linux Ubuntu Linux Fedora Linux
+
+$ AA=( "${AA[@]/Su*/}" )
+
+$ echo ${#AA[@]}                    # 원소개수가 4 개로 그대로다.
+4
+
+$ for v in "${AA[@]}"; do echo "$v"; done
+Arch Linux
+Ubuntu Linux
+                                   # index 2 는 공백으로 나온다.
+Fedora Linux
+```
+
+array에 패턴을 적용하여 삭제해 보자.
+
+```bash
+$ AA=( "Arch Linux" "Ubuntu Linux" "Suse Linux" "Fedora Linux" )
+
+# "${AA[*]}" 는 "elem1Xelem2Xelem3X..." 와 같습니다.
+# 그러므로 IFS 값을 '\n' 바꾸고 echo 한것을 명령치환 값으로 보내면 
+# '\n' 에의해 원소들이 분리되어 array 에 저장되게 됩니다.
+
+$ set -f; IFS=$'\n'
+$ AA=( $(echo "${AA[*]/Su*/}") )
+$ set +f; IFS=$' \t\n'            # array 입력이 완료되었으므로 IFS 값 복구
+
+$ echo ${#AA[@]}                  # 삭제가 반영되어 원소개수가 3 개로 나온다
+3
+
+$ echo "${AA[1]} ${AA[2]}"        # index 도 정렬되었다.
+Ubuntu Linux Fedora Linux
+```
+
+문자열에서 특정 문자를 구분자로 하여 필드 구분하기
+
+```bash
+$ AA="Arch Linux:Ubuntu Linux:Suse Linux:Fedora Linux"
+
+$ IFS=: read -ra ARR <<< "$AA"
+$ echo ${#ARR[@]}
+4
+$ echo "${ARR[1]}"
+Ubuntu Linux
+
+# 입력되는 원소값에 glob 문자가 있을경우 globbing 이 발생할수 있으므로 noglob 옵션 설정
+$ set -f; IFS=:             # IFS 값을 ':' 로 설정
+$ ARR=( $AA )
+$ set +f; IFS=$' \t\n'      # array 입력이 완료되었으므로 IFS 값 복구
+
+$ echo ${#ARR[@]}
+4
+$ echo "${ARR[1]}"
+Ubuntu Linux
+
+# array 를 사용할 수 없는 sh 에서는 다음과 같이 할 수 있습니다.
+$ set -f; IFS=:                   # globbing 을 disable
+$ set -- $AA                      # IFS 값에 따라 원소들을 분리하여 
+$ set +f; IFS=$' \t\n'            # positional parameters 에 할당
+
+$ echo $#
+4
+$ echo "$2"
+Ubuntu Linux
+```
+
+파일을 읽어서 array에 저장하기
+
+```bash
+$ cat a.txt 
+100  Emma    Thomas
+200  Alex    Jason
+300  Madison Randy
+
+$ mapfile -t arr < a.txt 
+
+$ echo "${arr[0]}"
+100  Emma    Thomas
+
+$ echo "${arr[1]}"
+200  Alex    Jason
+```
+
+array index에서 arithmatic expression을 해보자.
+
+```bash
+$ AA=(1 2 3 4 5)
+$ idx=2
+$ echo "${AA[ idx == 2 ? 3 : 4 ]}"
+4
+```
+
+array index의 `[]`와 globbing의 `[]`는 같다. 다음과 같은 문제가 발생할 수 있다.
+
+```bash
+$ array=( [10]=100 [11]=200 [12]=300 )
+$ echo ${array[12]}
+300
+
+$ touch array1               # 현재 디렉토리에 임의로 array1 파일생성
+
+# unset 을 실행하였으나 globbing 에의해 array[12] 이 array1 파일과 매칭이되어 
+# 실제적으로 unset -v array1 명령과 같게되어 unset 이 되지 않고 있습니다.
+$ unset -v array[12]         
+$ echo ${array[12]}         
+300                       
+
+$ unset -v 'array[12]'       # globbing 을 disable 하기위해 quote.
+$ echo ${array[12]}          # 이제 정상적으로 unset 이됨
+```
+
+assignment operator는 globbing 이전에 처리된다.
+
+```bash
+$ touch array2
+
+# 대입연산은 globbing 이전에 처리되므로 정상적으로 대입된다.
+$ array[12]=100
+
+$ echo ${array[12]}
+100
+```
+
 ## Controlling the Prompt
 
 다음은 prompt variable 에 해당하는 `PS1` 부터 `PS4` 에 등장하는 special characters이다.
