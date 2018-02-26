@@ -3,6 +3,7 @@
 
 - [Abstract](#abstract)
 - [References](#references)
+- [Shell Metachars](#shell-metachars)
 - [Basic Usages](#basic-usages)
 - [Shell Operation](#shell-operation)
 - [Shell Parameters](#shell-parameters)
@@ -66,11 +67,29 @@ bash에 대해 정리한다.
 * [bash reference manual @ gnu](https://www.gnu.org/software/bash/manual/bash.html)
 * [Advanced Bash-Scripting Guide](http://www.tldp.org/LDP/abs/html/index.html)
 
+# Shell Metachars
+
+```
+ ( )   `   |   &   ;               # command substitution
+ &&  ||                            # AND, OR 
+ <   >   >>                        # redirection 
+ *   ?   [ ]                       # glob 
+ "   '                             # quote 
+ \   $      
+ =   +=                            
+```
+
 # Basic Usages
 
 ```bash
 # file name can be anything except NUL, / on linux
 echo "hello world" > [[]].txt
+
+# '-' can be stdin for input
+echo hello world | cat -
+# '-' can be stdout for output
+edcho hello world | cat a.txt -
+seq 10 | paste - - -
 
 # > 
 # redirect the stdout of a command to a file. 
@@ -233,11 +252,37 @@ fi
 # {command list} : command list는 같은 shell환경에서 실행된다.
 { while true; do echo "hello"; sleep 1; done }
 
+# variable은 unset, null, not-null과 같이 3가지 상태를 갖는다.
+# unset state
+declare A
+local A
+# null state
+A=
+A=""
+A=''
+# not-null state
+A=" "
+A="hello"
+A=123
+
 # function은 command들을 그룹화 하는 방법이다. 그룹의 이름을 사용하면 그룹안의 commands를 실행할 수 있다.
 # name () compound-command [ redirections ]
 H() { echo "hello"; }; H; echo "world";
 # function name [()] compound-command [ redirections ]
 function H() { echo "hello"; }; H; echo "world";
+
+# '*', '?', '[]' 과 같은 glob characters 을 이용하여 filename, case, parameter expansion, [[]] expression 등에서 pattern matching이 가능하다.
+# filename
+ls *.[ch]
+# [[]] expression
+[[ $A = *.tar.gz ]]; echo $?
+[[ $A = *dog\ cat* ]]; echo $?
+
+# shell file의 첫줄에서 스크립트를 실행할 command line을 shabang line이라고 한다. 옵션은 하나로 제한된다.
+#! /bin/bash
+#! /bin/sed -f
+#! /usr/bin/awk -f
+#! /usr/bin/perl -T
 
 # <<<
 # redirect a string to stdin of a command
@@ -2172,6 +2217,52 @@ comma
 ```
 
 ## Arrays
+
+array를 만들어 보자.
+
+```bash
+A=( 11 "hello world" 22 )
+
+A=( [0]=11 [1]="hello world" [2]=22)
+
+A[0]=11
+A[1]="hello world"
+A[2]=22
+```
+
+associative array를 만들어 보자.
+
+```bash
+declare -A A
+A=( [ab]=11 [cd]="hello world" [ef]=22 )
+
+A[ab]=11
+A[cd]="hello world"
+A[ef]=22
+```
+
+array를 조회해 보자.
+
+```bash
+A=(foo bar baz)
+declare -p A
+```
+
+현재 shell env에 정의된 array 보기
+
+```bash
+compgen -A arrayvar
+```
+
+array를 사용할때 paramater expansion을 이용해야 한다.
+
+```bash
+AA=(11 22 33)
+# '112' 라는 파일이 있다면 globbing이 발생한다.
+echo $AA[2]
+# 반드시 다음과 같이 paramater expansion을 이용하자.
+echo ${AA[2]}
+```
 
 ## Controlling the Prompt
 
