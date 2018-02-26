@@ -2254,7 +2254,7 @@ declare -p A
 compgen -A arrayvar
 ```
 
-array를 사용할때 paramater expansion을 이용해야 한다.
+array를 사용할때 paramater expansion을 이용해야 한다. 그렇지 않으면 다음과 같이 side effect가 발생할 수 있다.
 
 ```bash
 AA=(11 22 33)
@@ -2262,6 +2262,127 @@ AA=(11 22 33)
 echo $AA[2]
 # 반드시 다음과 같이 paramater expansion을 이용하자.
 echo ${AA[2]}
+```
+
+`${AA[@]}`, `${AA[*]}` 는 double quote 하지 않으면 차이가 없다. `"${AA[@]}"` 는 `"${AA[0]}" "${AA[1]}" "${AA[2]}" ...`과 같다. `"${AA[*]}"` 는 `"${AA[0]}X${AA[1]}X${AA[2]}...`과 같다. `X`는 IFS의 첫번째 캐릭터이다.
+
+```bash
+# quote 하지 않은 경우
+$ AA=( "hello   world" "foo   bar" baz )
+$ echo ${#AA[@]}
+3
+$ echo ${AA[@]}
+hello world foo bar baz
+$ echo ${AA[*]}
+hello world foo bar baz
+$ for v in ${AA[@]}; do echo "$v"; done
+hello 
+world 
+foo   
+bar   
+baz   
+$ for v in ${AA[*]}; do echo "$v"; done
+hello 
+world 
+foo   
+bar   
+baz   
+# quote한 경우
+$ echo "${AA[@]}"
+$ echo "${AA[*]}"
+# 배열의 원래 개수를 유지한다.
+$ for v in "${AA[@]}"; do echo "$v"; done
+hello   world 
+foo   bar     
+baz           
+# 배열의 원소들이 하나로 합쳐진다.
+$ for v in "${AA[*]}"; do echo "$v"; done
+hello   world foo   bar baz
+```
+
+array의 특수표현을 살펴보자.
+
+| expression | meaning |
+|------------|---------|
+| `${#array[@]}` `${#array[*]}` | array 전체 원소의 개수 |
+| `${#array[N]}` `${#array[string]}` | indexed array 에서 N 번째 원소의 문자 수를 나타냄 associative array 에서 index 가 string 인 원소의 문자 수를 나타냄 |
+| `${array[@]}` `${array[*]}` | array 전체 원소 |
+| `${!array[@]}` `${!array[*]}` | array 전체 인덱스 |
+| `${!name@}` `${!name*}` | name 으로 시작하는 이름을 갖는 모든 변수를 나타냄 |
+
+array를 순회하자.
+
+```bash
+# indexed array
+AA=(11 22 33)
+for idx in ${!AA[@]}; do echo index : $idx, value : "${AA[idx]}";done
+# associative array
+declare -A AA
+AA=( [ab]=11 [cd]="hello world" [ef]=22 )
+for idx in "${!AA[@]}"; do echo index : "$idx", value : "${AA[idx]}"; done
+```
+
+array를 복사해보자. 항상 `()`를 사용하자.
+
+```bash
+$ AA=( 11 22 33 )
+$ BB=${AA[@]}
+$ echo "${BB[1]}" # 비정상
+$ echo "$BB"
+11 22 33
+$ echo "${BB[0]}"
+11 22 33
+$ BB=( "${AA[@]}" )
+$ echo "${BB[1]}"
+22
+```
+
+array를 삭제해 보자.
+
+| command | meaning |
+|---------|---------|
+| `array=()` `unset -v array` `unset -v "array[@]"` | array 삭제 |
+| `unset -v "array[N]"` | indexed array에서 N번째 원소 삭제 |
+| `unset -v "array[string]"` | associative array에서 index가 string인 원소 삭제 |
+
+```bash
+$ AA=(11 22 33 44 55)
+$ unset -v "AA[2]"
+$ echo "${AA[@]}"
+11 22 44 55
+$ for v in "${AA[@]}"; do echo "$v"; done  
+11
+22
+44         
+55
+# AA[2]가 비어있다.
+$ echo ${AA[1]} : ${AA[2]} : ${AA[3]}
+22 : : 44
+$ AA=( "${AA[@]}" )
+$ echo ${AA[1]} : ${AA[2]} : ${AA[3]}
+22 : 44 : 55
+```
+
+null 값을 가지고 있는 원소를 삭제해 보자.
+
+```bash
+$ AA=":arch linux:::ubuntu linux::::fedora linux::"
+$ IFS=: read -ra ARR <<<  "$AA"
+$ echo ${#ARR[@]}
+10
+$ echo ${ARR[0]}
+
+$ echo ${ARR[1]}
+arch linux
+$ set -f; IFS=''
+$ ARR=( ${ARR[@]} ) 
+$ set +f; IFS=$' \n\t'
+$ echo ${#ARR[@]}
+3
+$ echo ${ARR[0]}
+arch linux
+$ echo ${ARR[1]}
+ubuntu linux
 ```
 
 ## Controlling the Prompt
