@@ -2810,7 +2810,90 @@ $ [[ -n "$AA" ]]; echo $?
 
 # Special Expressions
 
-`$(( ))`, `(( ))`
+`$(( ))`, `(( ))`는 arithmatic expression을 처리할 수 있다. `[[ ]]`는 text expression을 처리할 수 있다. command와 달리 excape, quote가 필요 없다. command의 경우 참은 0이고 거짓은 1이다. 그러나 arithmatic expression의 경우 참은 1이고 거짓은 0이다. 
+
+```bash
+$ A=10
+$ (( A = $A + A))
+$ echo $A
+20
+$ A=(5 6 7)
+$ (( A[0] = A[1] + ${#A[@]} ))
+$ echo ${A[0]}
+9
+
+$ (( 1 < 2 )); echo $?
+0
+$ (( 1 > 2 )); echo $?
+1
+$ (( 0 )); echo $?
+1
+$ (( 1 )); echo $?
+0
+$ (( var = 0, res = (var ? 3 : 4) ))
+$ echo $res
+4
+$ (( var = 1, res = (var ? 3 : 4) ))
+$ echo $res
+3
+$ A=10
+$ while (( A > 5 )); do
+  echo $A
+  (( A-- ))
+done
+```
+
+`$(( ))`는 `$()` command substitution과 같이 연산의 결과를 저장할 수 있다. `:` builtin command는 arguments expanding및 redirection을 제외하고 아무것도 하지 않는다.
+
+```bash
+$ A=$(( 1 + 2 )); echo $A
+3
+$ expr 100 + $(( A + 2 ))
+105
+$ $(( 1 + 2 ))
+3: command not found
+# ':' command 를 사용하면 실행가능하다.
+$ : $(( A+= 1 ))
+$ echo $A
+4
+```
+
+`for`와 함께 사용할 수 있다.
+
+```bash
+for (( i = 0; i < 10; i++ ))
+do
+  echo $i
+done
+
+for (( i = 0; i < 10; i++ )) {
+    echo $i
+}
+```
+
+`$(( ))`, `(( ))`는 간단한 식을 작성하기에 번거롭다. 그래서 `let`이 등장했다.
+
+```bash
+(( i++ ))
+let i++
+res=$(( var + 1 ))
+let res=var+1
+```
+
+`let`은 arithmatic하나당 operator하나를 갖는다. 공백에 유의하자. quote를 하면 공백과 함께 사용할 수도 있다.
+
+```
+$ let var = 1 + 2
+error
+$ let var += 1
+error
+$ let var=1+3
+$ let "var++" "res = (var == 5 ? 10 : 20)"; echo $res
+200
+$ let "2 < 1"; echo $?
+1
+$ help let
+```
 
 # Job Control
 
