@@ -2987,8 +2987,14 @@ $ echo -n "$IFS" | od -a
 0000000  sp  ht  nl
 $ ( IFS=:; echo -n "$IFS" | od -a )
 0000000   :
-0000001
-
+$ echo -n "$IFS" | od -a
+0000000  sp  ht  nl
+$ [ -o noglob ]; echo $?
+1
+$ ( set -o noglob; [ -o noglob ]; echo $? )
+0
+# subshell이 종료후 이전 상태로 복귀
+$ [ -o noglob ]; echo $?
 ```
 
 # Job Control
