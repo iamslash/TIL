@@ -2916,7 +2916,80 @@ child process가 parent process로 부터 다음과 같은 것들을 물려 받�
 * 현재 설정되어 있는 file descriptor (STDIN(1), STDOUT(2), STDERR(3))
 * ignore된 신호 ( trap " INT)
 
+```bash
+$ echo "PID : $$, PPID : $PPID"
+PID : 24362, PPID : 24309
+$ pwd
+/root
+$ foo=100 bar=200
+$ export foo
+$ f1() { echo "I am exported function" ;}
+$ f2() { echo "I am not exported function" ;}
+$ export -f f1
+$ trap '' SIGINT
+$ trap 'rm -f /tmp/tmpfile' SIGTERM
+$ tty
+/dev/pts/0
+```
 
+* a.sh
+
+```bash
+#!/bin/bash
+echo "PID : $$, PPID : $PPID"
+pwd
+echo "foo : $foo"
+echo "bar : $bar"
+f1
+f2
+trap
+ls -l /proc/$$/fd
+```
+
+```bash
+$ ./test.sh
+PID : 24434, PPID : 24362
+/tmp
+foo : 100
+bar :
+I am exported function
+a.sh: line 7: f2: command not found
+trap -- '' SIGINT
+total 0
+lrwx------ 1 root root 64 Feb 28 11:55 0 -> /dev/pts/0
+lrwx------ 1 root root 64 Feb 28 11:55 1 -> /dev/pts/0
+lrwx------ 1 root root 64 Feb 28 11:55 2 -> /dev/pts/0
+lr-x------ 1 root root 64 Feb 28 11:55 255 -> /tmp/a.sh
+```
+
+parent process에서 설정한 변수, 함수는 export해야 child process에서 사용할 수 있다. 그러나 subshell에서는 export하지 않아도 사용할 수가 있다.
+
+```bash
+$ A=100
+$ ( echo A value = "$A" )
+A value = 100
+```
+
+현재 shell에서 사용중인 변수를 subshell에서 변경해봐야 현재 shell에서 적용되지 않는다.
+
+```bash
+$ A=100
+$ ( A=200; echo A value = "$A" )
+A value = 200
+$ echo "$A"
+100
+```
+
+subshell을 생성하여 사용한 변수, 환경 설정 변경은 subshell이 종료되면 사라진다.
+
+```bash
+$ echo -n "$IFS" | od -a
+0000000  sp  ht  nl
+$ ( IFS=:; echo -n "$IFS" | od -a )
+0000000   :
+0000001
+
+```
 
 # Job Control
 
