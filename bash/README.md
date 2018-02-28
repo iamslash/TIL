@@ -49,6 +49,9 @@
     - [Shell Arithmetic](#shell-arithmetic)
     - [Arrays](#arrays)
     - [Controlling the Prompt](#controlling-the-prompt)
+- [Test](#test)
+- [Special Expressions](#special-expressions)
+- [Sub Shell](#sub-shell)
 - [Job Control](#job-control)
     - [Job Control Builtins](#job-control-builtins)
 
@@ -2894,6 +2897,26 @@ $ let "2 < 1"; echo $?
 1
 $ help let
 ```
+
+# Sub Shell
+
+`( )`, `$( )`, ` `, `|`, `&` 으로 command 실행하면 만들어지는 shell을 subshell이라고 한다.
+
+```
+$ ( sleep 10; echo )
+$ `sleep 10; echo`
+$ echo | { sleep 10; echo;}
+$ command &
+```
+
+child process가 parent process로 부터 다음과 같은 것들을 물려 받는다.
+
+* 현재 디렉토리
+* export된 환경 변수, 함수
+* 현재 설정되어 있는 file descriptor (STDIN(1), STDOUT(2), STDERR(3))
+* ignore된 신호 ( trap " INT)
+
+
 
 # Job Control
 
