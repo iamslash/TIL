@@ -2749,6 +2749,69 @@ foo
 $
 ```
 
+숫자를 연산할 때 string operator를 사용하면 안된다.
+
+```bash
+$ [ 100 \> 2]; echo $?
+1
+$ [ 100 -gt 2 ]; echo $?
+0
+```
+
+test expression의 경우 `-a`, `o`대신 `&&`, `||` 를 사용할 수도 있다. `{ ;}`를 함께 사용하여 연산자 우선순위를 조절할 수도 있다.
+
+```bash
+$ if [ ... ] && [ ... ]; then ...
+$ if [ ... ] || [ ... ]; then ...
+$ if [ ... ] || { [ ... ] && [ ... ] ;} then ...
+$ if [ ... -a ... ]; then ...
+$ if [ ... -o ... ]; then ...
+# 우선순위 조절을 위해 사용한 ()는 escape이 필요하다.
+$ if [ ... -a \( ... -o ... \) ]; then ...
+$ if [ ! ... ]; then ...
+$ if ! [ ... ]; then ...
+```
+
+quote하지 않을 경우 `$[arr[@]]`와 `$[arr[*]]`가 같다. quote할 경우 `"$[arr[@]]"`는 원소들을 `" "`를 구분자로 나열하고 `"$[arr[*]]"`는 원소들을 `" "`안에 삽입한다. 따라서 array를 비교할 경우 `"$[arr[*]]"`를 사용한다.
+
+```bash
+$ A=(11 22 33)
+$ B=(11 22 33)
+$ [ "${A[*]}" = "${B[*]}" ]; echo $?
+0
+$ [ "${A[@]}" = "${B[@]}" ]; echo $?
+error
+```
+
+test expression은 `{;}`, `()`, `;`, `|`을 이용하여 다수의 command 가 존재할 수 있다. 가장 마지막에 실행되는 command의 결과값이 test expression의 결과값이 된다.
+
+```bash
+until read -r line
+  line=$(tr -d `\r\n` <<< "$line")
+  test -z "$line"
+do
+  ...
+done
+```
+
+`[[ ]]`는 `[ ]`의 확장이다. `[ ]`는 command이고 `[[ ]]`는 keyword이다. keyword는 command처럼 escape하거나 quote할 필요가 없다.
+
+```bash
+$ [[ a < b ]]; echo $?
+0
+$ [[ a > b ]]; echo $?
+1
+$ A=""
+$ [[ -n $AA ]]; echo $?
+1
+$ [[ -n "$AA" ]]; echo $?
+1
+```
+
+# Special Expressions
+
+`$(( ))`, `(( ))`
+
 # Job Control
 
 ## Job Control Builtins
