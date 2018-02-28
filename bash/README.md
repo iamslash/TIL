@@ -2651,6 +2651,103 @@ Begin a sequence of non-printing characters. This could be used to embed a termi
 \]
 End a sequence of non-printing characters.
 ```
+# Test
+
+commandline 에 사용된 arguments는 모두 문자열이다.
+
+```bash
+# "77"과 77은 둘다 문자열로 취급된다.
+$ printf "%d, %s\n" "77" 77
+
+# 문자를 만들어서 expr에 전달한다.
+$ expr "-16" + 10
+-6
+
+# '*' glob character이기 때문에 escape이 필요하다.
+$ echo "10" + 2 \* 5 | bc
+20
+
+# 25를 사용하거나 "25"를 사용해도 결과는 같다.
+$ [ "150" -gt 25 ]; echo $?
+0
+$ [ "150" -gt "25" ]; echo $?
+0
+
+$ AA=123
+$ case $AA in (123) echo Y ;; esac
+Y
+$ case $AA in ("123") echo Y ;; esac
+Y
+```
+
+bash는 데이터타입이 없다. operator중 숫자를 취급하는 녀석과 문자열을 취급하는 녀석이 별도로 있다. 다음은 문자열을 취급하는 operator이다.
+
+```bash
+-z, -n, =, !=, < >
+```
+
+다음은 숫자를 취급하는 operator이다.
+
+```bash
+  -eq, -ne, -lt, -le, -gt, or -ge.
+```
+
+test expression은 `test`와 `[` command를 이용한다. `]`는 `[`의
+argument이다.
+
+```bash
+$ test -d /home/iamslash/tmp; echo $?
+$ [ -d /home/iamslash/tmp ]; echo $?
+```
+
+`[` command 에서 operator를 사용하지 않을 경우 비어있거나 null인 경우는 false이고 나머지는 true이다.
+
+```bash
+# false
+$ [ ]; echo $?
+$ [ "" ]; echo $?
+$ [ $foo ]; echo $?
+$ A=""
+$ [ $A ]; echo $?
+# true
+$ [ 0 ]; echo $?
+$ [ 1 ]; echo $?
+$ [ a ]; echo $?
+$ [ -n ]; echo$?
+```
+
+bash에서 `true`, `false`는 builtin command이다. `true`는 0을 리턴하고 `false`는 1을 리턴한다.
+
+```bash
+$ [ true ]; echo $?
+0
+$ [ false ]; echo $?
+0
+$ if false; then echo true; else echo false; fi
+false
+$ foo=true
+$ if $foo; then echo true; else echo false; fi
+true
+```
+
+test expression에서 사용되는 변수는 주로 quote해서 사용해야 오류를 방지할 수 있다.
+
+```bash
+# A는 null이다.
+$ A=""
+$ [ -n $A ]; echo $? # $A가 null인데 true이다. 비정상.
+0
+$ [ -n "$A" ]; echo $? # $A가 null이므로 false이다. 정상
+1
+
+$ A="foo bar"
+$ if [ -n $A ]; then echo "$A"; fi
+-bash: [: foo: binary operator expected
+$ A="foo"
+$ if [ -n $A ]; then echo "$A"; fi
+foo
+$
+```
 
 # Job Control
 
