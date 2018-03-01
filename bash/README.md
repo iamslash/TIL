@@ -35,9 +35,19 @@
     - [word splitting](#word-splitting)
     - [filename expansion](#filename-expansion)
     - [quote removal](#quote-removal)
-- [Shell Builtin Commands](#shell-builtin-commands)
-    - [Bourne Shell Builtins](#bourne-shell-builtins)
-    - [Bash Builtins](#bash-builtins)
+- [Shell Commands](#shell-commands)
+    - [Shell Builtin Commands](#shell-builtin-commands)
+        - [Bourne Shell Builtins](#bourne-shell-builtins)
+        - [Bash Builtins](#bash-builtins)
+    - [Shell Functions](#shell-functions)
+    - [Shell Keywords](#shell-keywords)
+    - [Pipelines](#pipelines)
+    - [List of Commands](#list-of-commands)
+    - [Compound Commands](#compound-commands)
+        - [Looping Constructs](#looping-constructs)
+        - [Conditional Constructs](#conditional-constructs)
+        - [Grouping Commands](#grouping-commands)
+    - [Tips](#tips)
 - [Shell Variables](#shell-variables)
     - [Bourne Shell Variables](#bourne-shell-variables)
     - [Bash Variables](#bash-variables)
@@ -1991,15 +2001,147 @@ $ find -name '*.c'
 echo "hello" \ \
 ```
 
-# Shell Builtin Commands
+# Shell Commands
 
-## Bourne Shell Builtins
+## Shell Builtin Commands
+
+```bash
+$ compgen -b | column
+.               compopt         fg              pushd           trap
+:               continue        getopts         pwd             true
+[               declare         hash            read            type
+alias           dirs            help            readarray       typeset
+bg              disown          history         readonly        ulimit
+bind            echo            jobs            return          umask
+break           enable          kill            set             unalias
+builtin         eval            let             shift           unset
+caller          exec            local           shopt           wait
+cd              exit            logout          source
+command         export          mapfile         suspend
+compgen         false           popd            test
+complete        fc              printf          times
+```
+
+### Bourne Shell Builtins
 
 `:`, `.`, `break`, `cd`, `continue`, `eval`, `exec`, `exit`, `export`, `getopts`, `hash`, `pwd`, `readonly`, `return`, `shift`, `shift`, `test`, `times`, `trap`, `umask`, `unset`
 
-## Bash Builtins
+### Bash Builtins
 
 `alias`, `bind`, `builtin`, `caller`, `command`, `declare`, `echo`, `enable`, `help`, `let`, `local`, `logout`, `mapfile`, `printf`, `read`, `readarray`, `source`, `type`, `typeset`, `ulimit`, `unalias`
+
+## Shell Functions
+
+```bash
+$ declare -F
+```
+
+## Shell Keywords
+
+```bash
+$ compgen -k | column
+if              case            until           time            ]]
+then            esac            do              {               coproc
+else            for             done            }
+elif            select          in              !
+fi              while           function        [[
+```
+
+## Pipelines
+
+```
+$ echo hello world | cat -
+```
+
+## List of Commands
+
+```
+$ echo hello; echo world;
+$ make && make install
+$ echo "hello" || echo "world"
+```
+
+## Compound Commands
+
+### Looping Constructs
+
+```bash
+until test-commands; do consequent-commands; done
+while test-commands; do consequent-commands; done
+for name [ [in [words …] ] ; ] do commands; done
+for (( expr1 ; expr2 ; expr3 )) ; do commands ; done
+
+$ read -p "Enter Hostname: " hostname
+$ until ping -c 1 "$hostname" > /dev/null; do sleep 60; done; curl -O "$hostname"
+
+$ while read -r line < a.text; do echo "$line"; done
+
+$ set -f; IFS=$'\n'
+$ for file in $(find -type f); do echo "$file"; done;
+
+$ for (( i = 0; i <= 5; i++ )) { echo $i; }
+```
+### Conditional Constructs
+
+```bash
+if, case, select, ((...)), [[...]]
+```
+
+```bash
+
+```
+
+### Grouping Commands
+
+`;`, `&`, `&&`, `||` 를 활용한 command
+
+```bash
+# (command list) : command list는 subshell환경에서 실행된다.
+( while true; do echo "hello"; sleep 1; done )
+# {command list} : command list는 같은 shell환경에서 실행된다.
+{ while true; do echo "hello"; sleep 1; done }
+```
+
+## Tips
+
+이름은 같고 의미가 다른 command를 조사하고 싶을때는 `type`을 이용하자.
+
+```bash
+$ type -a kill
+kill is a shell builtin
+kill is /bin/kill
+$ type -a time
+time is a shell keyword
+time is /usr/bin/time
+$ type -a [
+[ is a shell builtin
+[ is /usr/bin/[
+```
+
+command의 help를 보는 방법은 다음과 같다.
+
+```bash
+$ man -f printf
+printf (1)           - format and print data
+$ man 1 printf
+# regex search
+$ man -k print? 
+$ info printf
+```
+
+다음은 man의 secion에 대한 내용이다.
+
+| section |	desc |	example
+|------|-------|------|  
+| 1 |	User Commands	| |
+| 2 |	System Calls	| man 2 write |
+| 3 |	C Library Functions	man 3 printf | |
+| 4 |	Devices and Special Files (usually found in /dev) |	man 4 tty |
+| 5 |	File formats and conventions e.g /etc/passwd, /etc/crontab |	man 5 proc |
+| 6 |	Games	| |
+| 7 |	Miscellaneous (including macro packages and conventions)	| man 7 signal, man 7 hier |
+| 8 |	System Administration tools and Deamons (usually only for root)	 | |
+
 
 # Shell Variables
 
@@ -2995,6 +3137,39 @@ $ ( set -o noglob; [ -o noglob ]; echo $? )
 0
 # subshell이 종료후 이전 상태로 복귀
 $ [ -o noglob ]; echo $?
+
+$ set -- 11 22 33
+$ echo "$@"
+11 22 33
+$ ( set -- 44 55 66; echo "$@" )
+44 55 66
+$ echo "$@"
+11 22 33
+
+$ ulimit -c
+0
+$ ( ulimit -c unlimited; ulimit -c; ... )
+unlimited
+$ ulimit -c
+0
+
+$ ( export LANG=ko_KR.UTF-8 join -j 1 -a 1 <(sort a.txt) <(sort b.txt) )
+
+$ pwd
+$ ( cd ~/tmp2; pwd; ... )
+$ pwd
+
+$ ( echo hello; exit 3; echo world )
+hello
+$ echo $?
+3
+
+# $$는 현재 shell의 PID이다. subshell에서는 #BASHPID를 사용하자.
+$ echo $$ $BASHPID
+1111 1111
+$ ( echo $$ $BASHPID )
+1122 2211
+
 ```
 
 # Job Control
