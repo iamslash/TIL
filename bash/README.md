@@ -48,9 +48,15 @@
         - [Conditional Constructs](#conditional-constructs)
         - [Grouping Commands](#grouping-commands)
     - [Tips](#tips)
+- [Shell Options](#shell-options)
+    - [set](#set)
+    - [shopt](#shopt)
 - [Shell Variables](#shell-variables)
     - [Bourne Shell Variables](#bourne-shell-variables)
     - [Bash Variables](#bash-variables)
+- [Shell Parameters](#shell-parameters)
+    - [Positional Parameters](#positional-parameters)
+    - [Special Parameters](#special-parameters)
 - [Bash Features](#bash-features)
     - [Bash Startup Files](#bash-startup-files)
         - [login shell](#login-shell)
@@ -2170,6 +2176,25 @@ $ info printf
 | 7 |	Miscellaneous (including macro packages and conventions)	| man 7 signal, man 7 hier |
 | 8 |	System Administration tools and Deamons (usually only for root)	 | |
 
+# Shell Options
+
+shell의 옵션은 `set`과 `shopt`를 이용하여 설정할 수 있다. `shopt`는 bash 전용이다. 옵션의 설정값은 sh의 경우 `SHELLOPTS`에 bash의 경우 `BASHOPTS`에 저장된다.
+
+## set
+
+`--`는 현재 설정되어있는 positional parameters를 삭제한다.
+
+```bash
+$ set 11 22 33
+$ echo "$@"
+11 22 33
+$ set --
+$ echo "$@"
+```
+
+## shopt
+
+설정한 옵션값은 `shopt` 혹은 `shopt -p` 으로 확인할 수 있다. 옵션값을 enable 할때는 `shopt -s 옵션이름` , disable 할때는 `shopt -u 옵션이름` 을 사용한다.
 
 # Shell Variables
 
@@ -2196,6 +2221,60 @@ $ info printf
 
 * `BASH`
 * `BASHOPTS`
+
+# Shell Parameters
+
+## Positional Parameters
+
+* `$0`
+  * script name이다.
+* `$1, $2, $3 ...`
+  * arguments이다.
+* `$#`
+  * arguments의 길이
+* `$@, $*`
+  * arguments list
+* `set`
+  * 주로 option설정할 때 이용되지만 positional parameter설정 할 수도 있다.
+
+```bash
+$ set 11 22 33
+$ set - 11 22 33
+$ set -- 11 22 33
+$ echo $1 $2 $3
+11 22 33
+$ set --
+$ echo $1 $2 $3
+```
+
+* `shift`
+  * positional parameters를 좌측으로 n만큼 이동한다.
+
+```bash
+$ set -- 11 22 33 44 55
+$ echo $@
+11 22 33 44 55
+$ shift 2
+$ echo $@
+33 44 55
+```
+
+## Special Parameters
+
+* `$?`
+  * 바로 이전에 실행된 명령의 exit status
+* `$$`
+  * 자신의 PID
+* `$!`
+  * `&`를 이용하여 가장 최근에 실행한 background process id
+* `$_`
+  * 바로 이전에 실행된 명령의 마지막 argument
+  * argument가 없으면 마지막 command
+* `$-`
+  * `set`에 의해 현재 shell에 enable되어 있는 option flags
+
+
+
 
 # Bash Features
 
@@ -3300,3 +3379,4 @@ process가 정상종료될 때 handler를 등록하려면 `HUP, INT, QUIT, TERM`
 $ trap 'myhandler' HUP INT QUIT TERM
 $ myhandler() { ...;}
 ```
+
