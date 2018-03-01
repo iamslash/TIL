@@ -82,6 +82,8 @@ bash에 대해 정리한다.
 
 # Shell Metachars
 
+metachars는 command와 다르게 처리되기 때문에 command line에 포함하는 경우 escape하거나 quote해서 사용해야 한다.
+
 ```
  ( )   `   |   &   ;               # command substitution
  &&  ||                            # AND, OR 
@@ -2088,7 +2090,29 @@ if, case, select, ((...)), [[...]]
 ```
 
 ```bash
+$ if grep -q 'hello world' a.txt; then echo "found it"; fi
 
+read -p "Enter the name of an animal: " ANIMAL
+echo -n "The $ANIMAL has "
+case $ANIMAL in
+    horse | dog | cat) 
+        echo -n 4
+        ;;
+    man | kangaroo) 
+        echo -n 2
+        ;;
+    *) 
+        echo -n "an unknown number of"
+        ;;
+esac
+echo " legs."
+
+##### select
+$ A=( "foo" "bar" "baz" )
+$ PS3="Enter number: "
+$ select KEY in "${A[@]}"; do echo "$KEY"; done
+
+##### 
 ```
 
 ### Grouping Commands
