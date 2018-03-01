@@ -64,6 +64,10 @@
 - [Sub Shell](#sub-shell)
 - [Job Control](#job-control)
     - [Job Control Builtins](#job-control-builtins)
+- [Signals](#signals)
+    - [signal list](#signal-list)
+    - [kill](#kill)
+    - [trap](#trap)
 
 <!-- markdown-toc end -->
 
@@ -3202,4 +3206,97 @@ $ ( echo $$ $BASHPID )
 
 ```bash
 bg, fg, jobs, kill, wait, disown, suspend
+```
+# Signals
+
+## signal list
+
+```bash
+$ kill -l
+ 1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL       5) SIGTRAP
+ 6) SIGABRT      7) SIGBUS       8) SIGFPE       9) SIGKILL     10) SIGUSR1
+11) SIGSEGV     12) SIGUSR2     13) SIGPIPE     14) SIGALRM     15) SIGTERM
+16) SIGSTKFLT   17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP
+21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU     25) SIGXFSZ
+26) SIGVTALRM   27) SIGPROF     28) SIGWINCH    29) SIGIO       30) SIGPWR
+31) SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3
+38) SIGRTMIN+4  39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8
+43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13
+48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13 52) SIGRTMAX-12
+53) SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7
+58) SIGRTMAX-6  59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2
+63) SIGRTMAX-1  64) SIGRTMAX
+```
+
+## kill
+
+다음은 `kill`을 이용하여 `SIGTERM`을 보내는 방법이다.
+
+```bash
+$ kill -TERM 1111
+$ kill -SIGTERM 1111
+$ kill -s TERM 1111
+$ kill -s SIGTERM 1111
+$ kill -15 1111
+$ kill -n 15 1111
+$ kill 1111
+```
+
+`-`를 이용하면 process groupd에 signal을 보낼 수 있다.
+
+```bash
+$ kill -TERM -1111
+$ kill -- -1111
+```
+
+`kill -0`은 process가 살아있고 signal을 보낼 수 있는지 검사한다.
+
+```bash
+# 1111 프로세스는 존재할 때
+$ kill -0 1111; echo $?
+0
+# 1111 프로세스는 존재하지 않을때
+$ kill -0 1111; echo $?
+1
+# 0 process에게 signal을 보낼 권한이 없다.
+$ kill -9 1; echo $?
+1
+```
+
+자신의 그룹에 속한 모든 프로세스를 종료해보자.
+
+```bash
+$ kill -TERM 0
+$ kill 0
+$ kill -INT 0
+```
+
+## trap
+
+signal handler를 등록하자.
+
+```bash
+$ trap 'myhandler' INT
+$ myhandler() { ...;}
+# default handler로 reset하자.
+$ trap INT
+$ trap - INT
+# signal을 ignore하자.
+$ trap '' INT
+```
+
+`SIGKILL`, `SIGSTOP`, `SIGCONT`는 trap으로 handler를 등록할 수 없다. default handler만 사용 가능하다.
+
+process가 정상종료될 때 handler를 등록하려면 `HUP, INT, QUIT, TERM`등의 signal을 trap해야 한다. 그러나 `EXIT`라는 pseudo signal을 하나만 등록해도 동일한 기능을 한다. 다음은 pseudo signal의 목록이다.
+
+| Signal | Description |
+|-----|-----|
+| EXIT | shell 이 exit 할때 발생. ( subshell 에도 적용 가능 ) |
+| ERR |	명령이 0 이 아닌 값을 리턴할 경우 발생. |
+| DEBUG |	명령 실행전에 매번 발생. |
+| RETURN |	함수에서 리턴할때, source 한 파일에서 리턴할때 발생. |
+
+```bash 
+$ trap 'myhandler' HUP INT QUIT TERM
+$ myhandler() { ...;}
 ```
