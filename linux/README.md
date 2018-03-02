@@ -28,13 +28,13 @@
 - [System Monitoring](#system-monitoring)
   - [swapin, swapout](#swapin-swapout)
 
-
------
+-------------------------------------------------------------------------------
 
 # Abstract
 
 linux를 활용할 때 필요한 지식들을 정리한다. macosx, sunos, hp-ux 등등
-unix 계열 os는 모두 해당된다.
+unix 계열 os는 모두 해당된다. linux와 함께 [bash](/bash/),
+[awk](/awk/), [sed](/sed/) 역시 학습이 필요하다.
 
 # References
 
