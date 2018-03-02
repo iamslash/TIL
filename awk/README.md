@@ -9,6 +9,7 @@
 
 <!-- markdown-toc end -->
 
+-------------------------------------------------------------------------------
 
 # Abstract
 
@@ -32,6 +33,229 @@ $ df -h | sed -rn '2s/(\S+\s+){3}(\S+).*/\2/p'
 # NR==2 는 2번째 record, $4는 4번째 column을 의미한다.
 $ df -h | awk 'NR==2{ print $4 }'
 ```
+
+`a.txt`를 읽어서 6번째 컬럼에 10을 더해서 출력한다.
+
+```bash
+$ awk '{ $6 += 10 }1' a.txt
+```
+
+`sed`는 기본적으로 출력하지만 `awk`는 그렇지 않다.
+
+```bash
+$ seq 3 | sed '' | column
+1 2 3
+# -n 옵션을 이용하여 출력모드를 조절할 수 있다.
+$ seq 3 | sed -n ''
+$
+$ seq 3 | awk ''
+```
+
+`awk`는 표현식이 참일 경우 `$0`값이 출력된다.
+
+```bash
+$ seq 5 | awk 0
+$
+$ seq 5 | awk 1 | column
+1 2 3 4 5
+# 표현식이 참이면 무엇이든 사용할 수 있다.
+$ seq 5 | awk 'NR==3'
+3
+$ seq 5 | awk '$1 > 2'
+3
+4
+5
+$ seq 5 | awk '/2/'
+2
+# '1' 은 사실상 '{print}' 와 같다.
+$ seq 3 | awk '{ gsub(/.*/,"__&__") } 1'
+__1__
+__2__
+__3__
+```
+
+다음은 표현식이 거짓인 경우이다.
+
+```bash
+# foo는 unset이다.
+$ awk 'BEGIN{ if (foo) { print 111 } }'
+# foo는 null이다.
+$ awk 'BEGIN{ foo = ''; if (foo) { print 111 } }'
+$ seq 3 | awk '""'
+$ seq 3 | awk 'a = ""'
+# 0은 거짓이다.
+$ awk 'BEGIN{ if (0) {print 111 } }'
+$ awk 'BEGIN{ v = 2; if (v - 2) { print 111 } }'
+```
+
+다음은 표현식이 참인 경우이다.
+
+```bash
+$ awk 'BEGIN{ if (2) { print 111 } }'
+111
+$ awk 'BEGIN{ if (-1) { print 111 } }'
+111
+$ awk 'BEGIN{ if (0.00001} { print 111 } }'
+111
+$ awk 'BEGIN{ if ("abc") { print 111 } }'
+111
+$ awk "BEGIN{ if ("0") { print 111 } }'
+111
+$ awk "BEGIN( if (" ") { print 111 } }'
+111
+$ seq 2 | awk '" "'
+1
+2
+$ seq 2 | awk 'a = " "'
+1
+2
+$ awk 'BEGINFILE{ if (ERRNO) { ... } }'
+$ echo foobar | awk '{ if (/oba/) print 111 }'
+111
+```
+
+공백라인은 NF가 0이기 때문에 출력되지 않는다.
+
+```
+$ awk 'NF' a.txt
+```
+
+shell command line은 참일 경우 0을 반환하기 때문에 다음과 같이 0과
+비교한다.
+
+```bash
+$ awk 'BEGIN { if (system("test -f foo -a -x foo") == 0) { ... } }'
+```
+
+logical not은 `!=`, `!~`, `!`을 사용한다.
+
+```bash
+$ seq 3 | awk 'NR == 2'
+2
+$ seq 3 | awk 'NR != 2'
+1
+2
+$ seq 3 | awk '!(NR == 2)'
+1
+3
+$ seq 3 | awk '/2/'
+2
+# /2/ 는 $0 ~ /2/ 와 같으므로 !/2/ 는 결과적으로 !($0 ~ /2/) 와 같은 식이다.
+$ seq 3 | awk '!/2/'
+1
+3
+$ seq 3 | awk '!($0 ~ /2/)'
+1
+3
+$ seq 3 | awk '$0 !~ /2/'
+1
+3
+```
+
+`sed`와 같이 `awk`에서도 `,`를 이용한 range를 사용할 수 있다.
+
+```bash
+$ seq 10 | awk 'NR == 3, NR ==3'
+3
+4
+5
+# BEGIN이 포함되는 라인부터 END가 포함되는 라인까지 출력
+$ awk '/BEGIN/, /END/' a.txt
+# BEGIN이 포함되는 라인부터, 공백 라인까지 출력
+$ awk '/BEGIN/,/^$/' a.txt
+# BEGIN이 포함되는 라인부터 끝까지 출력
+$ awk '/BEGIN/,0' a.txt
+$ awk '$1 ~ /BEGIN/, $2 ~ /END/' a.txt
+$ awk 'NR == 5, /END/' a.txt
+```
+
+`&&`, `||` 와 같은 logical operator를 사용할 수 있다. 
+
+```bash
+$ cat file
+111
+222 foo
+333
+444
+555
+666
+777
+888 foo
+999
+$ awk '(NR < 4) || (NR > 6) && /foo/' a.txt
+111
+222 foo
+333
+888 foo
+$ awk '((NR < 4) || (NR > 6)) && /foo/' a.txt
+222 foo
+888 foo
+```
+
+`print`, `printf`는 function이 아니고 statement이다. 따라서
+`()`를 사용하지 않아도 된다.
+
+```bash
+$ cat a.txt
+Amelia     555-5553
+Anthony    555-3412
+Becky      555-7685
+$ awk '{ printf "%-10s %s\n", $1, $2 } a.txt
+Amelia     555-5553
+Anthony    555-3412
+Becky      555-7685
+$ awk 'BEGIN { format = "%-10s %s\n"
+               printf format, "Name", "Phone"
+               printf format, "-----", "------" }
+             { printf format, $1, $2}' a.txt
+Name       Phone
+-----      ------
+Amelia     555-5553
+Anthony    555-3412
+Becky      555-7685
+$ awk 'BEGIN { var = "bar"; printf "foo" var "\n" }'
+```
+
+`print` statement는 OFS (output field seperator), ORS (output record
+seperator)를 사용한다. 기본적인 OFS는 space이고 ORS는 newline이다.
+
+```bash
+$ cat a.txt
+AAA,BBB,CCC,III
+XXX,YYY,MMM,OOO
+ZZZ,CCC,DDD,KKK
+$ awk '{ print $1 $2 $3 }' FS=, a.txt
+AAABBBCCC
+XXXYYYMMM
+ZZZCCCDDD
+$ awk '{ print $1, $2, $3 }' FS=, a.txt
+AAA BBB CCC
+XXX YYY MMM
+ZZZ CCC DDD
+$ awk '{ print $1, $2, $3 }' FS=, OFS=: a.txt
+AAA:BBB:CCC
+XXX:YYY:MMM
+ZZZ:CCC:DDD
+$ awk '{ print $1, $2, $3 }' FS=, OFS=: ORS=@ a.txt
+AAA:BBB:CCC@XXX:YYY:MMM@ZZZ:CCC:DDD@
+# print statement에 parameter가 없다면 $0 값이 출력된다.
+$ awk '{ print }' a.txt
+AAA,BBB,CCC,III
+XXX,YYY,MMM,OOO
+ZZZ,CCC,DDD,KKK
+```
+
+`exit`를 이용하면 실행을 종료할 수 있다. END블록이 있으면 실행된다.
+
+```bash
+$ awk 'BEGIN { exit 1 } END { print "END..." }'
+END...
+$ echo $?
+1
+$ awk 'BEGIN { exit }'; echo $?
+0
+```
+
 
 # Builtin Variables
 
