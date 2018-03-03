@@ -1,6 +1,108 @@
+
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [Abstract](#abstract)
+- [Basics](#basics)
+- [Addresses](#addresses)
+- [AND, OR](#and-or)
+- [Commands](#commands)
+- [Branch](#branch)
+- [Multiple lines](#multiple-lines)
+- [Execute](#execute)
+- [Command line options](#command-line-options)
+- [Debugging](#debugging)
+- [References](#references)
+- [Tips](#tips)
+    - [두개의 패턴 사이의 내용을 지우자.](#두개의-패턴-사이의-내용을-지우자)
+
+<!-- markdown-toc end -->
+
+-------------------------------------------------------------------------------
+
 # Abstract
 
-stream editor에 대해 적는다.
+unix 가 만들어 졌을때 적은 메모리에도 동작할 수 있는 라인 에디터가
+필요해서 `/bin/ed`가 탄생했다. ed는 이후 sed, ex, vi, grep 등의 기반이
+된다. `sed`는 `ed`의 stream 버전이다. 명령어 사용법이 같다.
+
+`ex`는 `ed`의 확장버전이다. `vi`에서 `:`를 이용한 command mode로 사용된다.
+`ex`의 visual mode version 이 `vi`이다.
+
+# Basics
+
+sed command line은 보통 다음과 같은 형식을 같는다.
+
+```bash
+sed SCRIPT INPUTFILE...
+```
+
+sed는 pattern space와 hold space라는 두가지 버퍼가 존재한다.  하나의
+줄을 읽으면 pattern space에 저장하고 필요할 때마다 hold space에 저장해
+둔다. hold space에 저장해두면 명령어에 적용되지 않는다. 아무런 옵션이 없다면
+pattern space에 저장된 줄을 출력한다.
+
+```bash
+$ seq 111 111 555 | sed ''
+111
+222
+333
+444
+555
+# 2번째 줄을 삭제한다.
+$ seq 111 111 555 | sed '2d'
+111
+333
+444
+555
+# 3번째 줄만 출력한다. 나머지는 삭제한다.
+$ seq 111 111 555 | sed '1d; 2d; 4d; 5d'
+333
+# -n 옵션은 출력을 허용하지 않는다. p명령으로 출력한다.
+$ seq 111 111 555 | sed -n '3p'
+333
+```
+
+`{}`를 이용하여 command group을 만들자. `;`를 이용하여 command list를
+만들자. `{}`뒤에 `;`를 붙여야 한다.
+
+```bash
+# 해당 address 에 여러 개의 명령을 사용하려면 { } 를 사용합니다.
+$ seq 5 | sed -n '2p; 4{p;p}; $p'
+2
+4
+4
+5
+
+# 명령들이 각 라인별로 위치할 경우는 `;` 를 붙이지 않아도 된다.
+$ sed -f - <<\EOF datafile
+    /"crosshair"/ {
+        :X                          # branch 명령을 위한 label
+        N
+        /}/ {                       # { } 명령 그룹의 사용
+            /sprites\/crosshairs/d
+            b                       # 명령 사이클의 END 로 branch
+        }
+        bX                          # label :X 로 branch
+    }
+EOF
+```
+
+# Addresses
+
+# AND, OR
+
+# Commands
+
+# Branch
+
+# Multiple lines
+
+# Execute
+
+# Command line options
+
+# Debugging
 
 # References
 
@@ -9,14 +111,6 @@ stream editor에 대해 적는다.
 * [Sed - An Introduction and Tutorial by Bruce Barnett](http://www.grymoire.com/Unix/Sed.html#uh-0)
 * [sed @ gnu](https://www.gnu.org/software/sed/manual/sed.html)
 * [부록 B. Sed 와 Awk 에 대한 간단한 입문서](https://wiki.kldp.org/HOWTO/html/Adv-Bash-Scr-HOWTO/sedawk.html)
-
-# Intro
-
-sed command line은 보통 다음과 같은 형식을 같는다.
-
-```bash
-sed SCRIPT INPUTFILE...
-```
 
 # Tips
 
