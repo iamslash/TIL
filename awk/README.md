@@ -409,6 +409,76 @@ $ echo "1.23456789" | awk '{
 
 # Variables
 
+파일별로 변수를 넘겨 보자.
+
+```bash
+$ awk '{ print AA, $0 }' AA=111 a.txt AA=222 b.txt
+111 file1 record ...
+111 file1 record ...
+111 file1 record ...
+222 file2 record ...
+222 file2 record ...
+222 file2 record ...
+$ awk '{ ... }' RS='#' FS=',' a.txt RS='@' FS=':' b.txt
+```
+
+`BEGIN` 블록은 레코드를 읽어들여 명령 사이클을 시작하기 전에 실행되기
+때문에 `BEGIN` 블록에 변수를 적용하려면 `-v` 옵션을 사용하자.
+
+```bash
+$ awk 'BEGIN{ print AA, BB }' AA=11 B=22
+$
+$ awk -v AA=11 -v BB=22 'BEGIN{ print AA, BB }'
+11 22
+```
+
+`FS` 변수는 `-F`옵션을 이용해도 된다.
+
+```bash
+$ awk -F, 'BEGIN{ print "FS is: " FS }'
+FS is: ,
+% awk -F ',|:' 'BEGIN{ print "FS is: " FS }'
+FS is: ,|:
+```
+
+`awk`에 shell variable을 전달할 때 공백을 포함하는 경우 double
+quotes를 사용해야 한다.
+
+```bash
+$ MYVAR="foo bar"
+$ awk -v AA=$MYVAR 'BEGIN{ ... }' # error
+$ awk -v AA="$MYVAR" 'BEGIN{ ... }'
+$ awk -v "AA=$MYVAR" 'BEGIN{ ... ";
+```
+
+심볼 테이블은 `SYMTAB`을 이용하여 접근하자.
+
+```bash
+$ awk '
+BEGIN {
+    foo = 100
+    SYMTAB["foo"] = 200
+    print foo
+
+    bar[2] = 300
+    SYMTAB["bar"][2] = 400
+    print bar[2]
+}'
+200
+400
+
+$ awk '
+BEGIN {
+    answer = 10.5
+    multiply("answer", 4)
+    print "The answer is", answer
+}
+function multiply(var, amount) {
+    return SYMTAB[var] *= amount
+}'
+The answer is 42
+```
+
 # Builtin Variables
 
 # References
