@@ -5,7 +5,35 @@
 - [Basic](#basic)
 - [Data Types](#data-types)
 - [Variables](#variables)
+- [Regexp](#regexp)
+- [Functions](#functions)
+- [BEGIN, END](#begin-end)
 - [Builtin Variables](#builtin-variables)
+    - [RECORD](#record)
+    - [FIELD](#field)
+    - [FORMAT](#format)
+    - [MATCHING](#matching)
+    - [ARGUMENT](#argument)
+    - [ARRAY](#array)
+    - [ETC](#etc)
+- [Record seperation](#record-seperation)
+- [Field seperation](#field-seperation)
+- [`$0=$0, $1=$1`](#00-11)
+- [Redirection](#redirection)
+- [getline](#getline)
+- [Arrays](#arrays)
+- [Control statements](#control-statements)
+- [Operators](#operators)
+- [Builtin Functions](#builtin-functions)
+    - [Numeric Functions](#numeric-functions)
+    - [String Functions](#string-functions)
+    - [I/O Functions](#io-functions)
+    - [Time Functions](#time-functions)
+    - [Bitweise Functions](#bitweise-functions)
+    - [Type Functions](#type-functions)
+    - [I18N Functions](#i18n-functions)
+- [TCP/IP](#tcpip)
+- [Debugging](#debugging)
 - [References](#references)
 - [Tips](#tips)
     - [필드 출력하기](#필드-출력하기)
@@ -717,6 +745,15 @@ END{ print "===========\nNR : " NR}
 ===========
 NR : 3
 ```
+# Field seperation
+
+# `$0=$0, $1=$1`
+
+# Redirection
+
+# getline
+
+# Arrays
 
 # Control statements
 
@@ -804,6 +841,7 @@ Error
 * break
 * continue
 * exit
+
 
 # Operators
 
