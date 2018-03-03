@@ -479,11 +479,524 @@ function multiply(var, amount) {
 The answer is 42
 ```
 
+# Regexp
+
+`/`와 `/`에 regexp를 표현할 때 이것을 regexp contstant라고 한다.
+
+```bash
+$ printf '111\t222:333\t444' | awk -F: '$1 ~ /11\t22/ { print $1 }'
+111    222
+# '~' 이 없으면 '$0' 와 매칭한다.
+# awk '$0 ~ /^foobar$/ ...'
+$ echo 'foobar' | awk '/^foobar$/ { print }'
+foobar
+$ echo 'foobar' | awk '{ if ( /^foobar$/ ) print }'
+foobar
+$ echo 'foobar' | awk '{ AA = /^foobar$/;  print AA }'
+1
+$ echo 'foobar' | awk '{ AA = ( $0 ~ /^foobar$/ );  print AA }'
+1
+$ echo 'foobar' | awk '{ AA = /^fooxxx$/;  print AA }'
+0
+```
+
+문자열로 regexp를 이용할때 `~`는 생략할 수 없다.
+
+```bash
+$ echo 'foobar' | awk '{ var = "ob"; if ( $0 ~ "^fo" var "ar$" ) print }'
+foobar
+$ echo 'foobar' | awk '{ regex = "^foobar$"; if ( $0 ~ regex ) print }'
+foobar
+# regexp constant
+$ printf %s '"111\222":"333\444"' | awk -F: '$1 ~ /"111\\222"/ { print $1 }'
+"111\222"
+# regexp string
+$ printf %s '"111\222":"333\444"' | awk -F: '$1 ~ "\"111\\\\222\"" { print $1 }'
+"111\222"
+```
+
+`awk`에서 주로 사용하는 regexp extension은 다음과 같다.
+
+| regexp    | extension           |
+| ------    | ---------           |
+| `\s`      | `[[:space:]]`       |
+| `\S`      | `[^[:space:]]`      |
+| `\w`      | `[[:alnum:]_]`      |
+| `\W`      | `[^[:alnum:]_]`     |
+| `\y` `\B` | word boundary       |
+| `\<`      | word boundary start |
+| `\>`      | word boundary end   |
+
+```bash
+$ echo 'abc %-= def.' | awk '{ gsub(/\y/,"X") }1'
+XabcX %-= XdefX.
+$ echo 'abc %-= def.' | awk '{ gsub(/\B/,"X") }1'
+aXbXc X%X-X=X dXeXf.X
+$ echo 'abc %-= def.' | awk '{ gsub(/\</,"X") }1'
+Xabc %-= Xdef.
+$ echo 'abc %-= def.' | awk '{ gsub(/\>/,"X") }1'
+abcX %-= defX.
+```
+
+대소문자 구분없이 매칭하는 방법은 다음과 같다.
+
+```bash
+$1 ~ /[Ff]oo/ { ... }
+tolower($1) ~ /foo/ { ... }
+x = "aB"
+if (x ~ /ab/) ...   # fail
+IGNORECASE = 1
+if (x ~ /ab/) ...   # success
+```
+
+# Functions
+
+`awk`의 함수에서 scalar argument는 pass by value이고 array argument는
+pass by reference이다.
+
+```bash
+$ awk 'BEGIN { v = 100; f(v); print v } function f(p) { p = 200 }'
+100
+$ awk 'BEGIN { v[1] = 100; f(v); print v[1] } function f(p) { p[1] = 200 }'
+200
+```
+
+function은 `BEGIN`, `END`, `{}` 블록에서 정의할 수 없다. function
+name은 반드시 `(`와 붙어있어야 한다.
+
+```bash
+BEGIN {
+  FS = "\t";
+}
+{
+  log_level = $2;
+}
+(log_level == "ERROR") {
+  print red($0)
+}
+(log_level == "WARN") {
+  print yellow($0)
+}
+END {
+}
+function red(str) {
+  return "\033[1;31m" str "\033[0m"
+}
+function yellow(s) {
+  return "\033[1;33m" str "\033[0m"
+}
+```
+
+function에서 사용할 local variable은 특이하게 function argument에
+추가합니다.
+
+```bash
+function name(a)
+function name(  i)
+function name(a,    i)
+function name(a, b, c
+                 i, j, k)
+```
+
+`@`를 사용하면 indirection call할 수 있다.
+
+```bash
+$ awk 'BEGIN { 
+    AA = "foo"; @AA(11) 
+    AA = "bar"; @AA(22,33)
+} 
+function foo(n1)     { print "Im foo :", n1 }
+function bar(n1, n2) { print "Im bar :", n1 ,n2 }
+' 
+Im foo : 11
+Im bar : 22 33
+```
+
+# BEGIN, END
+
+`BEGIN`, `BEGINFILE`, `ENDFILE`, `END` block은 다음과 같은 순서로
+실행된다.
+
+```bash
+$ awk '
+BEGIN { print "BEGIN " FILENAME } 
+    BEGINFILE { print "BEGINFILE " FILENAME } 
+        { print $0 " .............FNR: " FNR ", NR: " NR }
+    ENDFILE { print "ENDFILE " FILENAME } 
+END { print "END " FILENAME }
+' a.txt b.txt c.txt
+
+BEGIN            # FILENAME is empty.
+BEGINFILE a.txt
+111 .............FNR: 1, NR: 1      # 111, 222, 333 은 파일 내용이다.
+222 .............FNR: 2, NR: 2
+333 .............FNR: 3, NR: 3
+ENDFILE a.txt
+BEGINFILE b.txt
+444 .............FNR: 1, NR: 4
+555 .............FNR: 2, NR: 5
+666 .............FNR: 3, NR: 6
+ENDFILE b.txt
+BEGINFILE c.txt
+777 .............FNR: 1, NR: 7
+888 .............FNR: 2, NR: 8
+999 .............FNR: 3, NR: 9
+ENDFILE c.txt
+END c.txt
+```
+
 # Builtin Variables
+
+## RECORD
+
+* `NR`
+* `FNR`
+* `RS`
+* `ORS`
+* RT
+  * Record Terminator
+
+## FIELD
+
+* NF
+  * Number of fields
+* FS
+  * Input field separator
+* OFS
+* FIELDWIDTHS
+* FPAT
+
+## FORMAT
+
+* CONVFMT
+* OFMT
+* PREC
+* ROUNDMODE
+
+## MATCHING
+
+* IGNORECASE
+* RSTART
+* RLENGTH
+
+## ARGUMENT
+
+* ARGC
+* ARGV
+* ARGIND
+
+## ARRAY
+
+* SUBSEP
+
+## ETC
+
+* BINMODE
+* ENVIRON
+* ERRNO
+* FILENAME
+* FUNCTAB
+* PROCINFO
+* TEXTDOMAIN
+
+# Record seperation
+
+RS (Record seperator)와 RT(Record terminator)를 이용하여 분리하자.
+
+```bash
+$ echo '11 X 22 XX 33 XXX 44 X+ 55 XX 66 XXX 77 Y* 88 XX 99' |
+awk '
+{ printf "(%s) RT : \"%s\"\n", $0, RT } 
+END{ print "===========\nNR : " NR}
+' RS='XXX'      
+
+(11 X 22 XX 33 ) RT : "XXX"
+( 44 X+ 55 XX 66 ) RT : "XXX"
+( 77 Y* 88 XX 99
+) RT : ""
+===========
+NR : 3
+```
+
+# Control statements
+
+* next
+
+* nextfile
+
+* if-else
+
+```bash
+if (x % 2 == 0)
+    print "x is even"
+else
+    print "x is odd"
+```
+
+* while
+
+```bash
+i = 1
+while (i <= 10) {
+    print $i
+    i++
+}
+```
+
+* do-while
+
+```bash
+i = 1
+do {
+    print $i
+    i++
+} while (i <= 10)
+```
+
+* for
+
+```bash
+for (i = 1; i <= 10; i++)
+    print $i
+........................
+
+for (idx in arr) {
+    printf "index: %s, value: %s\n" ,idx ,arr[idx]
+}
+```
+
+* switch
+
+```bash
+$ awk '{ 
+    switch ($2) {
+        case "+" :
+            r = $1 + $3
+            break
+        case "-" :
+            r = $1 - $3
+            break
+        case "*" :
+            r = $1 * $3
+            break
+        case "/" :
+            r = $1 / $3
+            break
+        default :
+            print "Error"
+            next
+    }
+    print r
+}'
+
+1 + 2
+3
+2 * 3
+6
+5 -2
+Error
+5 - 2
+3
+12 / 3
+4
+```
+
+* break
+* continue
+* exit
+
+# Operators
+
+| Operators              | Description                                  |
+| ----------             | ------------                                 |
+| `++ --`                | Increment and decrement (prefix and postfix) |
+| `^`                    | Power                                        |
+| `* / %`                | Multiply, divide and modulus (remainder)     |
+| `+ -`                  | Add and subtract                             |
+| `nothing`              | String concatenation                         |
+| `> >= < <= == != ~ !~` | Relational operators                         |
+| `!`                    | Negate expression                            |
+| `&& ||`                | Logical AND OR                               |
+| `= += -= *= /= %= ^=`  | Assignment                                   |
+
+# Builtin Functions
+
+## Numeric Functions
+## String Functions
+## I/O Functions
+## Time Functions
+## Bitweise Functions
+## Type Functions
+## I18N Functions
+
+# TCP/IP
+
+다음은 웹서버를 구현한 것이다. webserver.awk와 cat.jpg를 복사하고
+`awk -f webserver.awk`를 실행하자.
+
+```bash
+@load "filefuncs"
+@load "readfile"
+BEGIN {
+    RS = ORS = "\r\n"
+    datefmt = "Date: %a, %d %b %Y %H:%M:%S %Z"
+    socket = "/inet/tcp/8080/0/0"
+    while ((socket |& getline) > 0) {
+        if ( $1 == "GET" ) { 
+            print "GET : ", $2 
+            $2 = substr($2,2)
+            switch ($2) {
+                case /\.(jpg|gif|png)$/ :
+                    sendImage($2)
+                    break
+                default :
+                    sendHtml()
+            }
+        }
+    }
+}
+function sendHtml(    a, arr) {
+    arr["type"] = "text/html"
+    arr["content"] = "\
+     <HTML>\n\
+     <HEAD><TITLE>Out Of Service</TITLE></HEAD>\n\
+     <BODY>\n\
+           <H1>This site is temporarily out of service.</H1>\n\
+           <P><img src=cat.jpg></P>\n\
+     </BODY>\n\
+     </HTML>\n\
+     "
+    arr["length"] = length(arr["content"])
+    arr["date"] = strftime(datefmt, systime(), 1)
+
+    send(arr)
+}
+function sendImage(file,     c, a, arr, type) {
+    RS="\n"
+    c = "file -b --mime-type '" file "'"
+    c | getline type; close(c)
+    RS="\r\n"
+    arr["type"] = type
+    stat(file, a)
+    arr["length"] = a["size"]
+    arr["content"] = readfile(file)
+    arr["date"] = strftime(datefmt, systime(), 1)
+
+    send(arr)
+}
+function send(arr) {
+    print "HTTP/1.0 200 OK"                    |& socket
+    print arr["date"]                          |& socket
+    print "Server: AWK"                        |& socket
+    print "Content-Length: " arr["length"]     |& socket
+    print "Content-Type: " arr["type"]         |& socket
+    print ""                                   |& socket
+    print arr["content"]                       |& socket
+
+    print "close socket"
+    close(socket)
+}
+```
+
+다음은 chatting server를 구현한 것이다.
+
+```bash
+$ awk '
+@load "fork"
+BEGIN{
+    socket = "/inet/tcp/8080/0/0"
+    socket |& getline
+    if (( pid = fork() ) == 0 ) {
+        while ((getline msg < "/dev/stdin") > 0 )   # child
+            print msg |& socket
+    } else {
+        while ((socket |& getline msg) > 0 )        # parent
+            print msg
+        system("kill " pid)
+    }
+}'
+```
+
+다음은 chatting client를 구현한 것이다.
+
+```bash
+$ awk '
+@load "fork"
+BEGIN{
+    socket = "/inet/tcp/0/some.host.com/8080"
+    print "" |& socket
+    if (( pid = fork() ) == 0 ) {
+        while ((getline msg < "/dev/stdin") > 0 )   # child
+            print msg |& socket
+    } else {
+        while ((socket |& getline msg) > 0 )        # parent
+            print msg
+        system("kill " pid)
+    }
+}'
+```
+
+
+
+
+# Debugging
+
+다음과 같이 `getline`, `print`에 오타가 있는 경우도 문제 없이 실행된다.
+
+```bash
+$ awk 'BEGIN { getine var < "file1"; prit var }' 
+```
+
+`--lint`옵션을 사용하면 warning message를 볼 수 있다.
+
+```bash
+$ awk --lint 'BEGIN { getine var < "file1"; prit var}' 
+awk: cmd. line:1: warning: statement may have no effect
+awk: warning: statement may have no effect
+awk: cmd. line:1: warning: reference to uninitialized variable 'getine'
+awk: cmd. line:1: warning: reference to uninitialized variable 'var'
+awk: cmd. line:1: warning: reference to uninitialized variable 'prit'
+awk: cmd. line:1: warning: reference to uninitialized variable 'var'
+```
+
+`awk`는 실행파일이 1M도 안되지만 debugger가 내장되어 있다. debugger를
+사용하려면 `-D`옵션을 이용해야 한다. 그리고 별도의 파일만 debugging이
+가능하다.
+
+```bash
+$ cat transpose.awk 
+{
+    for(i=1; i<=NF; i++)
+        r[i]=r[i] sep $i
+    sep=FS
+} 
+END {
+    for(i=1; i<=NF; i++) 
+        print r[i]
+}
+..................................
+$ cat matrix 
+a1;a2;a3;a4;a5
+b1;b2;b3;b4;b5
+c1;c2;c3;c4;c5
+d1;d2;d3;d4;d5
+..................................
+$ awk -F\; -f transpose.awk matrix
+a1;b1;c1;d1
+a2;b2;c2;d2
+a3;b3;c3;d3
+a4;b4;c4;d4
+a5;b5;c5;d5
+..................................
+# '-D' 를 사용하면 디버깅을 할 수 있다.
+$ awk -D -F\; -f transpose.awk matrix
+gawk> ....
+```
 
 # References
 
-* [awk 스크립트 가이드](https://mug896.gitbooks.io/awk-script/content/)
+* [awk 스크립트
+  가이드](https://mug896.gitbooks.io/awk-script/content/)
   * 친절한 한글
 * [awk manual @ gnu](https://www.gnu.org/software/gawk/manual/gawk.html#Getting-Started)
 * [부록 B. Sed 와 Awk 에 대한 간단한 입문서](https://wiki.kldp.org/HOWTO/html/Adv-Bash-Scr-HOWTO/sedawk.html)
