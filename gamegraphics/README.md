@@ -27,6 +27,7 @@
 
 <!-- markdown-toc end -->
 
+-------------------------------------------------------------------------------
 
 # Comments
 
@@ -36,6 +37,10 @@ detection
 
 # Materials
 
+- [awesome gamedev](https://github.com/ellisonleao/magictools)
+- [awesome graphics resources](https://github.com/mattdesl/graphics-resources)
+- [awesome computer vision](https://github.com/jbhuang0604/awesome-computer-vision)
+- [awesome opengl](https://github.com/eug/awesome-opengl)
 - [directx11 tutorials](http://www.rastertek.com/tutdx11.html)
   - 약 50여 개의 directx11 튜토리얼 
 - [game engine development by Jamie King @ youtube](https://www.youtube.com/playlist?list=PLRwVmtr-pp04XomGtm-abzb-2M1xszjFx)
