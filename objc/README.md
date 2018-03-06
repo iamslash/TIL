@@ -142,7 +142,7 @@ public class Document : IPrintable
 
 objc는 함수를 호출하는 형식이 특이하다. 메시지를 전달한다는 의미이기
 때문에 c#과 달리 `[nil print]`를 허용한다. 인자가 여러개인 경우
-두번째 인자부터 named parameter형식을 사용한다.
+두번째 인자부터 label을 사용한다. label은 생략할 수도 있다.
 
 ```csharp
 Document document = new Document();
