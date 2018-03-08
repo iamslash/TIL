@@ -28,24 +28,27 @@ android studio 에 대해 정리한다.
 
 ## Androidmanifest.xml
 
-app이 설치될때 android os가 알아야할 정보들 
+app이 설치될때 android os가 알아야할 정보들이 저장된 xml.
 
 ## Activity
 
-화면을 표현하는 모듈
+화면을 표현하는 class.
 
 ## Intent
 
-모듈간 통신할 수 있는 메시지
+Activity, Service등이 서로 통신할 수 있는 수단. 일종의 메시지이다.
 
 ## Service
 
-화면은 없고 로직을 표현하는 모듈. android os가 항상 실행될 수 있도록
-관리한다.
+화면은 없고 로직을 표현하는 class. android os가 특별 관리 해주기
+때문에 종료하면 다시 실행된다.
 
 ## Broadcast receiver
 
-android os로 부터 global event를 수신할 수 있다. 역시 UI는 없다.
+android os로 부터 global event를 수신할 수 있는 클래스. 역시 UI는
+없다.
 
-## 위험권한
+## Dangerous permissions
 
+normal permission보다 위험하여 유저의 허가가 필요한 권한이다. 
+[리스트](https://developer.android.com/guide/topics/permissions/overview.html#permission-groups)
