@@ -34,6 +34,10 @@ app이 설치될때 android os가 알아야할 정보들이 저장된 xml.
 
 화면을 표현하는 class.
 
+## Fragment
+
+Activity보다 작은 단위의 class.
+
 ## Intent
 
 Activity, Service등이 서로 통신할 수 있는 수단. 일종의 메시지이다.
