@@ -21,6 +21,7 @@ android studio 에 대해 정리한다.
 
 * [doit 안드로이드](https://www.youtube.com/playlist?list=PLG7te9eYUi7sq701GghpoSKe-jbkx9NIF)
   * 킹왕짱 한글 동영상
+  * [src](http://147.46.109.80:9090/board/board-list.do?boardId=doitandroid)
 
 # Concepts
 
