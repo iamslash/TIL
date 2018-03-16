@@ -18,6 +18,7 @@ swift에 대해 정리한다.
 # Materials
 
 * [Introduction to Swift (for C#.NET developers)](https://www.jbssolutions.com/introduction-swift-c-net-developers/)
+* [swift basic](http://minsone.github.io/mac/ios/swift-the-basic-summary)
 
 # Basic
 
