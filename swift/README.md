@@ -78,3 +78,24 @@ public class HelloWorld {
 var a : HelloWorld
 var b = HelloWorld(message: "hello")
 ```
+
+# Type
+
+* Int
+* Double, Float
+* Boolean
+* String
+* Array, Dictionary
+* Tuple
+
+# Constants
+
+```swift
+let a = 10
+```
+
+# Variables
+
+```swift
+var a = 10
+```
