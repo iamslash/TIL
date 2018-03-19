@@ -9,7 +9,9 @@ bitcoin에 대해 정리한다.
 * [Bitcoin: A Peer-to-Peer Electronic Cash System - Satoshi Nakamoto](https://bitcoin.org/bitcoin.pdf)
 * [Mastering Bitcoin](https://github.com/bitcoinbook/bitcoinbook/blob/develop/book.asciidoc)
   * 최고의 책
-
+* [bitcoin developer guide](https://bitcoin.org/en/developer-guide#p2p-network)
+  * 최고의 메뉴얼
+  
 # Fundamentals
 
 ## Digital Signatures
@@ -31,7 +33,20 @@ True인지 확인한다.
 Verify(message, signature, public key) = True / False
 ```
 
-## Protocols
+## Peer Discovery
+
+bitcoin node들의 리스트는 DNS seed에게서 얻는다. DNS seed는 bitcoin
+core에 hard code되어 있다.
+
+[CConnman::ThreadDNSAddressSeed](https://github.com/bitcoin/bitcoin/blob/master/src/net.cpp#L1592)
+
+```cpp
+void CConnman::ThreadDNSAddressSeed()
+{
+...
+}
+```
+
 
 # References
 
