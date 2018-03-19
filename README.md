@@ -1,7 +1,7 @@
 # Intro
 
 - I write down Today I learned. thanks for [milloy](https://github.com/milooy/TIL)
-- [donate](PayPal.Me/iamslash/1)
+- [donate](https://www.paypal.me/iamslash/1)
 
 # Usage
 
