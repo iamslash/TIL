@@ -2,6 +2,8 @@
 
 - I write down Today I learned. thanks for [milloy](https://github.com/milooy/TIL)
 - [donate](https://www.paypal.me/iamslash/1)
+- [![](PayPal-Donate-Button-Download-PNG.png)](https://www.paypal.me/iamslash/1)
+
 
 # Usage
 
