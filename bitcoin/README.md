@@ -9,8 +9,10 @@ bitcoin에 대해 정리한다.
 * [Bitcoin: A Peer-to-Peer Electronic Cash System - Satoshi Nakamoto](https://bitcoin.org/bitcoin.pdf)
 * [Mastering Bitcoin](https://github.com/bitcoinbook/bitcoinbook/blob/develop/book.asciidoc)
   * 최고의 책
-* [bitcoin developer guide](https://bitcoin.org/en/developer-guide#p2p-network)
-  * 최고의 메뉴얼
+* [bitcoin guide](https://bitcoin.org/en/developer-guide#p2p-network)
+  * 최고의 가이드 메뉴얼
+* [gitcoin reference](https://bitcoin.org/en/developer-reference)
+  * 최고의 레퍼런스 메뉴얼
   
 # Fundamentals
 
