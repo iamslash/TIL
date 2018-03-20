@@ -1,3 +1,21 @@
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Fundamentals](#fundamentals)
+    - [Digital Signatures](#digital-signatures)
+    - [Peer Discovery](#peer-discovery)
+    - [Consensus algorithm](#consensus-algorithm)
+    - [Simplified payment verification](#simplified-payment-verification)
+    - [vulnerability](#vulnerability)
+        - [51% attack](#51-attack)
+- [References](#references)
+
+<!-- markdown-toc end -->
+
+-------------------------------------------------------------------------------
+
 # Abstract
 
 bitcoin에 대해 정리한다.
@@ -51,8 +69,8 @@ void CConnman::ThreadDNSAddressSeed()
 
 ## Consensus algorithm
 
-길이가 제일 긴 블록체인을 따라 블록을 추가하는 것은 모든 노드들의 51%
-동의를 얻는 것과 같은 의미 일까?
+길이가 제일 긴 블록체인을 따라 새로운 블록을 추가하는 것은 모든
+노드들의 51% 동의를 얻는 것과 같은 의미 일까?
 
 ## Simplified payment verification
 
