@@ -49,6 +49,22 @@ void CConnman::ThreadDNSAddressSeed()
 }
 ```
 
+## Consensus algorithm
+
+길이가 제일 긴 블록체인을 따라 블록을 추가하는 것은 모든 노드들의 51%
+동의를 얻는 것과 같은 의미 일까?
+
+## Simplified payment verification
+
+커피숍에서 커피를 한잔 먹고 BTC로 결제하면 그 결제 트랜잭션은 어떤 방법으로
+보장될까?
+
+## vulnerability
+
+### 51% attack
+
+51%에 해당하는 노드들이 합의 한다면???
+
 
 # References
 
