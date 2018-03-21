@@ -388,10 +388,11 @@ R_{0}     &= ( \frac{n_{1} - n_{2}}{n_{1} + n_{2}} )^{2} \\
 
 # Lambertian Reflectance Model
 
-(Johann Heinrich Lambert)[https://en.wikipedia.org/wiki/Johann_Heinrich_Lambert]가 
-1760년에 그의 저서 [Photometria](https://en.wikipedia.org/wiki/Photometria)에서 제안한
-lighting model이다. lambert's cosine law를 기본으로 하며 diffuse relection을 구하는 방법은
-다음과 같다.
+[Johann Heinrich Lambert](https://en.wikipedia.org/wiki/Johann_Heinrich_Lambert)가
+1760년에 그의
+저서 [Photometria](https://en.wikipedia.org/wiki/Photometria)에서
+제안한 lighting model이다. lambert's cosine law를 기본으로 하며
+diffuse relection을 구하는 방법은 다음과 같다.
 
 ![](img/lambert_reflectance_model.png)
 
