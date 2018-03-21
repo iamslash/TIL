@@ -523,7 +523,7 @@ Shader "Custom/Half Lambert" {
 
 # Phong Reflectance  Model
 
-[Bui Tuong Phone](https://en.wikipedia.org/wiki/Bui_Tuong_Phong)
+[Bui Tuong Phong](https://en.wikipedia.org/wiki/Bui_Tuong_Phong)
 이 1975년에 제안한 lighting model이다.
 
 phong reflection은 ambient, diffuse, specular term의 합으로 구한다.
