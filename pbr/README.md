@@ -1,4 +1,15 @@
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
 
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Key Elements](#key-elements)
+- [Light Rays](#light-rays)
+- [Implementation](#implementation)
+    - [Unity3d](#unity3d)
+    - [Unrealengine](#unrealengine)
+
+<!-- markdown-toc end -->
 
 -------------------------------------------------------------------------------
 
@@ -20,14 +31,17 @@
 
 PBR은 다음과 같은 주요 요소들로 실현 된다.
 
-- GI(Global Illumination, 전역조명) : IBL(Image Based Lighting, 이미지기반라이팅)
-- Energy Conservation (에너지 보존법칙)
-- Reflectivity (반사도) : Diffuse & Specular (디퓨즈 및 스펙큘러)
-- Microsurface (미세면) : Roughness (러프니스)
-- Frenel's Law (프레넬의법칙)
-- Metalicity (금속성)
+* Light Rays
+* Absorption and Scattering - Transparency and Translucency
+* Diffuse and Specular Reflection - Microfacet Theory
+* Color
+* BRDF
+* Energy Conservation (에너지 보존법칙)
+* Fresnel Effect - F0 (Fresnel Reflectance at 0 Degrees)
+* Conductors and Insulators - Metals and Non Metal
+* Linear Space Rendering
 
-# PBR Rendering Equation
+# Light Rays
 
 ```latex
 ```
