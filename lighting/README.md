@@ -1,28 +1,49 @@
-# Comments
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
 
-다음의 용어들을 정리해본다.
+- [Abstract](#abstract)
+- [Comments](#comments)
+- [Learning Materials](#learning-materials)
+- [Fundamentals](#fundamentals)
+    - [Light](#light)
+    - [Eye](#eye)
+    - [조도와 휘도 (illuminance & luminance)](#조도와-휘도-illuminance--luminance)
+    - [빛의 감쇠 (attenuation)](#빛의-감쇠-attenuation)
+    - [광속](#광속)
+    - [광도](#광도)
+    - [조도](#조도)
+    - [휘도](#휘도)
+    - [BRDF, BTDF](#brdf-btdf)
+    - [Local Illumination & Global Illumination](#local-illumination--global-illumination)
+    - [굴절률(Refractive index)](#굴절률refractive-index)
+    - [Snell's law](#snells-law)
+    - [Fresnel Equation](#fresnel-equation)
+- [Lambert's cosine law](#lamberts-cosine-law)
+- [Lambertian Reflectance Model](#lambertian-reflectance-model)
+- [Half Lambert Diffuse](#half-lambert-diffuse)
+- [Phong Reflectance  Model](#phong-reflectance--model)
+- [Gouraud shading](#gouraud-shading)
+- [Phong Shading](#phong-shading)
+- [Rim Lighting](#rim-lighting)
+- [Cook-Torrance Model](#cook-torrance-model)
+- [Oren-Nayar Model](#oren-nayar-model)
+- [Physically Based Rendering](#physically-based-rendering)
+- [Ray Tracing](#ray-tracing)
+- [Radiosity](#radiosity)
+- [LPV (Light Propagation Volume)](#lpv-light-propagation-volume)
+- [SVOGI (Sparse Voxel Octree Global Illumination)](#svogi-sparse-voxel-octree-global-illumination)
 
-hemispherical lighting model
+<!-- markdown-toc end -->
+
+-------------------------------------------------------------------------------
 
 # Abstract
 
-- 3d그래픽의 라이팅에 대해 기술한다.
+3d그래픽의 라이팅에 대해 기술한다.
 
-# Contents
+# Comments
 
-* [Fundamentals](#fundamentals)
-  * light
-  * eye
-  * 빛의 감쇠
-  * 광속
-  * 광도
-  * 조도
-  * 휘도
-  * BRDF, BTDF
-  * local illumination & global illumination
-  * 굴절률(Refractive index)
-  * Snell's law
-  * Fresnel Equation
+updating... hemispherical lighting model
 
 # Learning Materials
 
@@ -889,7 +910,9 @@ Shader "Custom/CookTorrance" {
 
 ...
 
-# [PBR](../pbr/README.md)
+# Physically Based Rendering
+
+[PBR](../pbr/README.md)
 
 # Ray Tracing
 
@@ -924,6 +947,10 @@ p2와 충돌한다면 반사광선r2와 그림자광선 s2가 만들어지고 t1
 
 ...
 
-
 # LPV (Light Propagation Volume)
+
+...
+
 # SVOGI (Sparse Voxel Octree Global Illumination)
+
+...
