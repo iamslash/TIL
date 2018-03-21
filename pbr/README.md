@@ -5,6 +5,14 @@
 - [Materials](#materials)
 - [Key Elements](#key-elements)
 - [Light Rays](#light-rays)
+- [Absorption and Scattering - Transparency and Translucency](#absorption-and-scattering---transparency-and-translucency)
+- [Diffuse and Specular Reflection - Microfacet Theory](#diffuse-and-specular-reflection---microfacet-theory)
+- [Color](#color)
+- [BRDF](#brdf)
+- [Energy Conservation (에너지 보존법칙)](#energy-conservation-에너지-보존법칙)
+- [Fresnel Effect - F0 (Fresnel Reflectance at 0 Degrees)](#fresnel-effect---f0-fresnel-reflectance-at-0-degrees)
+- [Conductors and Insulators - Metals and Non Metal](#conductors-and-insulators---metals-and-non-metal)
+- [Linear Space Rendering](#linear-space-rendering)
 - [Implementation](#implementation)
     - [Unity3d](#unity3d)
     - [Unrealengine](#unrealengine)
@@ -15,7 +23,8 @@
 
 # Abstract
 
-- Physically based rendering에 대해 적는다.
+Physically based rendering에 대해 적는다. PBR을 이해하려면
+먼저 [lighting](/lighting/README.md)에 대해 알아야 한다.
 
 # Materials
 
@@ -43,8 +52,21 @@ PBR은 다음과 같은 주요 요소들로 실현 된다.
 
 # Light Rays
 
-```latex
-```
+# Absorption and Scattering - Transparency and Translucency
+
+# Diffuse and Specular Reflection - Microfacet Theory
+
+# Color
+
+# BRDF
+
+# Energy Conservation (에너지 보존법칙)
+
+# Fresnel Effect - F0 (Fresnel Reflectance at 0 Degrees)
+
+# Conductors and Insulators - Metals and Non Metal
+
+# Linear Space Rendering
 
 # Implementation
 
@@ -63,4 +85,3 @@ Standard Shader는 PBR을 지원한다.  UnityStandardBRDF.cginc에서 다양한
 
 ## Unrealengine
 
-...
