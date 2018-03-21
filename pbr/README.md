@@ -1,14 +1,20 @@
+
+
+-------------------------------------------------------------------------------
+
 # Abstract
 
 - Physically based rendering에 대해 적는다.
 
-# Learning Materials
+# Materials
 
-- [THE COMPREHENSIVE PBR GUIDE](https://www.allegorithmic.com/pbr-guide)
-  - 아티스트 입장에서 이해
-- [Physically Based Rendering Algorithms: A Comprehensive Study In Unity3D](http://www.jordanstevenstechart.com/physically-based-rendering)
-- [BASIC THEORY OF PHYSICALLY-BASED RENDERING](https://www.marmoset.co/posts/basic-theory-of-physically-based-rendering/)
-- [PBR이란무엇인가 @ tistory](http://lifeisforu.tistory.com/366)
+* [VOLUME 1: THE THEORY OF PHYSICALLY BASED RENDERING AND SHADING](https://academy.allegorithmic.com/courses/b6377358ad36c444f45e2deaa0626e65)
+  * 개발자 입장에서 본 PBR 요약
+* [VOLUME 2: PRACTICAL GUIDELINES FOR CREATING PBR TEXTURES](https://academy.allegorithmic.com/courses/05171e19aa8dc19421385fd9bb9e016e)
+  * 디자이너 입장에서 본 PBR 요약
+* [Physically Based Rendering Algorithms: A Comprehensive Study In Unity3D](http://www.jordanstevenstechart.com/physically-based-rendering)
+* [BASIC THEORY OF PHYSICALLY-BASED RENDERING](https://www.marmoset.co/posts/basic-theory-of-physically-based-rendering/)
+* [PBR이란무엇인가 @ tistory](http://lifeisforu.tistory.com/366)
 
 # Key Elements
 
