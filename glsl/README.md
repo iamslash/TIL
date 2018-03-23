@@ -25,6 +25,8 @@ glsl에 대해 정리한다.
 # Material
 
 * [opengl shading language wiki](https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language)
+* [WebGL Shaders and GLSL](https://webglfundamentals.org/webgl/lessons/webgl-shaders-and-glsl.html)
+  * glsl은 간편하게 webgl에서 학습하자.
 
 # Basic
 
