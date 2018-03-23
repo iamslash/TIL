@@ -34,11 +34,20 @@ glsl에 대해 정리한다.
 
 * uniform
 
-application에서 값을 전달 받고 rendering pipeline에서 변하지 않는 값이다.
+application에서 값을 전달 받고 rendering pipeline에서 변하지 않는
+값이다. vertex, fragment shader에서 사용할 수 있고 읽기전용이다.
 
 * attribute
 
+application에서 값을 전달 받고 rendering pipeline에서 변하지 않는
+값이다. vertex shader에서 사용할 수 있고 읽기전용이다. vertex별로
+값이 다를 수 있다.
+
 * varying
+
+vertex shader에서 fragment shader로 값을 전달 하는 경우 사용한다.
+vertex shader에서 읽기 쓰기 가능하다. fragment shader에서는
+interpolate된 값이 넘어온다.
 
 ## Type qualifiers
 
