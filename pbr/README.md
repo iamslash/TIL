@@ -32,6 +32,7 @@ Physically based rendering에 대해 적는다. PBR을 이해하려면
   * 개발자 입장에서 본 PBR 요약
 * [VOLUME 2: PRACTICAL GUIDELINES FOR CREATING PBR TEXTURES](https://academy.allegorithmic.com/courses/05171e19aa8dc19421385fd9bb9e016e)
   * 디자이너 입장에서 본 PBR 요약
+* [Real Shading in Unreal Engine 4](http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf)
 * [Physically Based Rendering Algorithms: A Comprehensive Study In Unity3D](http://www.jordanstevenstechart.com/physically-based-rendering)
 * [BASIC THEORY OF PHYSICALLY-BASED RENDERING](https://www.marmoset.co/posts/basic-theory-of-physically-based-rendering/)
 * [PBR이란무엇인가 @ tistory](http://lifeisforu.tistory.com/366)

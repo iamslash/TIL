@@ -27,6 +27,8 @@ glsl에 대해 정리한다.
   * glsl은 간편하게 webgl에서 학습하자.
 * [Interactive 3D Graphics @ udacity](https://www.udacity.com/course/interactive-3d-graphics--cs291)
   * webgl을 이용한 3d graphics의 이론
+* [Physically-Based Rendering in glTF 2.0 using WebGL](https://github.com/KhronosGroup/glTF-WebGL-PBR)
+  * [PBR](/pbr/) on WebGL
 
 # Basic
 
