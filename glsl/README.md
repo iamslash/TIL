@@ -27,6 +27,8 @@ glsl에 대해 정리한다.
 * [opengl shading language wiki](https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language)
 * [WebGL Shaders and GLSL](https://webglfundamentals.org/webgl/lessons/webgl-shaders-and-glsl.html)
   * glsl은 간편하게 webgl에서 학습하자.
+* [Interactive 3D Graphics @ udacity](https://www.udacity.com/course/interactive-3d-graphics--cs291)
+  * webgl을 이용한 3d graphics의 이론
 
 # Basic
 
@@ -59,41 +61,8 @@ interpolate된 값이 넘어온다.
 
 # Tutorial
 
-## color with normal value
-
-```glsl
-precision highp float;
-attribute vec3 position;
-attribute vec3 normal;
-uniform mat3 normalMatrix;
-uniform mat4 modelViewMatrix;
-uniform mat4 projectionMatrix;
-varying vec3 fNormal;
-varying vec3 fPosition;
-
-void main()
-{
-  fNormal = normalize(normalMatrix * normal);
-  vec4 pos = modelViewMatrix * vec4(position, 1.0);
-  fPosition = pos.xyz;
-  gl_Position = projectionMatrix * pos;
-}
-```
-
-```glsl
-precision highp float;
-uniform float time;
-uniform vec2 resolution;
-varying vec3 fPosition;
-varying vec3 fNormal;
-
-void main()
-{
-  gl_FragColor = vec4(fNormal, 1.0);
-}
-```
-
-## bar
+* [simple twgl](https://raw.githubusercontent.com/iamslash/TIL/master/glsl/ex/a.html)
+  * [src](ex/a.html)
 
 # References
 
