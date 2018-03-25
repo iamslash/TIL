@@ -24,8 +24,10 @@
 
 # Abstract
 
-Physically based rendering에 대해 적는다. PBR을 이해하려면
-먼저 [lighting](/lighting/README.md)에 대해 알아야 한다.
+Physically based rendering에 대해 적는다. PBR은 빛이 사물과
+상호작용하는 것을 현실셰계와 유사하게 표현하는 방법이다. PBR을
+이해하려면 먼저 [lighting](/lighting/README.md)에 대해 먼저 이해해야
+한다.
 
 # Materials
 
