@@ -3,6 +3,7 @@
 
 - [Abstract](#abstract)
 - [Materials](#materials)
+- [Workflow](#workflow)
 - [Key Elements](#key-elements)
 - [Light Rays](#light-rays)
 - [Absorption and Scattering - Transparency and Translucency](#absorption-and-scattering---transparency-and-translucency)
@@ -37,6 +38,19 @@ Physically based rendering에 대해 적는다. PBR을 이해하려면
 * [BASIC THEORY OF PHYSICALLY-BASED RENDERING](https://www.marmoset.co/posts/basic-theory-of-physically-based-rendering/)
 * [PBR이란무엇인가 @ tistory](http://lifeisforu.tistory.com/366)
 
+# Workflow
+
+* Metal / Roughness 와 Specualr / Glossniess와 같이 두가지 작업방식이
+  존재한다.
+* Metal / Roughness 는 다음과 같이 6가지 texture를 이용한다.
+  * Base Color, Roughness, Metralic
+  * Ambient Occlusion, Normal, Height
+* Specular / Glossiness는 다음과 같이 6가지 texture를 이용한다.
+  * Diffuse(Albedo), Glossiness, Specular
+  * Ambient Occlusion, Normal, Height
+* Metal / Roughness 와 Specular / Glossiness 는 각각 작업방식도
+  다르지만 PBR을 구현하는 방식도 다르다.
+
 # Key Elements
 
 PBR은 다음과 같은 주요 요소들로 실현 된다.
@@ -53,7 +67,11 @@ PBR은 다음과 같은 주요 요소들로 실현 된다.
 
 # Light Rays
 
+
+
 # Absorption and Scattering - Transparency and Translucency
+
+
 
 # Diffuse and Specular Reflection - Microfacet Theory
 
@@ -64,6 +82,15 @@ PBR은 다음과 같은 주요 요소들로 실현 된다.
 # Energy Conservation (에너지 보존법칙)
 
 # Fresnel Effect - F0 (Fresnel Reflectance at 0 Degrees)
+
+빛이 피사체를 비출 때 그 피사체의 반사된 빛의 양은 그 피사체를
+바라보는 각도에 따라 다른 현상을 프레넬 효과라고 한다. 
+
+예를 들어 빛이 호수를 비추는 경우를 생각해 보자. 호수를 바라보는
+각도와 물의 표면이 이루는 각이 수직일 때 호수의 바닥을 볼 수 있지만
+호수를 바라보는 각도와 물의 표면이 이루는 각이 10도 미만일 때 즉
+비스듬히 바라볼 때 호수의 바닥은 볼 수 없고 호수에 반사된 풍경이
+보인다. 비스듬히 바라볼 때 반사된 빛의 양이 더욱 많다.
 
 # Conductors and Insulators - Metals and Non Metal
 
