@@ -1,9 +1,47 @@
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [Abstract](#abstract)
+- [Material](#material)
+- [Terms](#terms)
+    - [모집단 (population)과 표본 (sample)](#모집단-population과-표본-sample)
+    - [일화적증거 (anecdotal evidence)](#일화적증거-anecdotal-evidence)
+    - [응답자그룹 (cohort)](#응답자그룹-cohort)
+    - [결합확률 (joint probability)](#결합확률-joint-probability)
+    - [조건부확률 (conditional probability)](#조건부확률-conditional-probability)
+    - [독립사건 (independent event)](#독립사건-independent-event)
+    - [베이즈 정리 (Bayes' theorem)](#베이즈-정리-bayes-theorem)
+    - [확률변수 (random variable)](#확률변수-random-variable)
+    - [확률질량함수 (PMF, Probability Mass Function)](#확률질량함수-pmf-probability-mass-function)
+    - [평균 (mean)](#평균-mean)
+    - [편차 (deviation)](#편차-deviation)
+    - [분산 (variance)](#분산-variance)
+    - [표준편차 (standard deviation)](#표준편차-standard-deviation)
+    - [극단값 (Outlier)](#극단값-outlier)
+    - [상대위험도 (ralative risk)](#상대위험도-ralative-risk)
+    - [최빈값 (mode)](#최빈값-mode)
+    - [백분위수 (percentile)](#백분위수-percentile)
+    - [누적분포함수 (CDF, Cumulative Distribution Function)](#누적분포함수-cdf-cumulative-distribution-function)
+    - [확률밀도함수 (PDF, probability density function)](#확률밀도함수-pdf-probability-density-function)
+    - [통계적 가설검정 (statistical hypothesis testing)](#통계적-가설검정-statistical-hypothesis-testing)
+    - [귀무가설 (null hypothesis)과 대립가설 (antagonistic hypothesis)](#귀무가설-null-hypothesis과-대립가설-antagonistic-hypothesis)
+    - [검정통계량 (test statistic)](#검정통계량-test-statistic)
+    - [기각역 (critical region)과 채택역 (acceptance region)](#기각역-critical-region과-채택역-acceptance-region)
+    - [상관분석 (correlation analysis)](#상관분석-correlation-analysis)
+    - [회귀분석 (regression)](#회귀분석-regression)
+
+<!-- markdown-toc end -->
+
+-------------------------------------------------------------------------------
+
 # Abstract
 
 - 개발자가 알아야할 확률 통계지식에 대해 적는다.
 
 # Material
 
+- [seeing theory](http://students.brown.edu/seeing-theory/)
+  - 브라운 대학교에서 만든 인터랙티브 통계 강좌
 - [확률 및 통계 - 이상화](http://www.kocw.net/home/search/kemView.do?kemId=1056974)
   - 확률 및 통계 동영상 강좌
 - [나부랭이의 수학블로그-통계](http://math7.tistory.com/category/%ED%86%B5%EA%B3%84)
@@ -26,17 +64,17 @@
 - 전국의 성인남자가 2500만명이라고 하자. 이때 성인남자의 평균키를 알고
   싶다. 2500만명을 모두 조사하기에는 시간과 비용이 부족하다. 그래서
   100명만 뽑아서 조사하고 2500만명을 추정해보자. 이때 2500명과 같이
-  조사하고자 하는 대상 전체를 모집단이라고 하고 100명과 같이 조사를 위해
-  뽑은 대상을 표본 혹은 표본 집단이라고 한다.
+  조사하고자 하는 대상 전체를 모집단이라고 하고 100명과 같이 조사를
+  위해 뽑은 대상을 표본 혹은 표본 집단이라고 한다.
 - 모집단의 평균, 분산, 비율과 표본집단의 평균, 분산, 비율은 다음과
   같이 구분해서 표현한다.
+
+![](population.png)
 
 ```latex
 \mu, \sigma^{2}, p \\
 \bar{x}, s^{2}, \hat{p}
 ```
-
-![](population.png)
 
 ## 일화적증거 (anecdotal evidence)
 
@@ -97,7 +135,7 @@ P(A|B) = P(B|A)P(A) / P(B)
     P(X)를 함수로 표현할 수 있다면 그것을 확률질량함수라고 한다.
 
     위의 경우 확률변수의 개수는 3개다. 확률변수의 개수가 유한하다면
-    이산확률분포라고 하고무한하다면 연속확률분포라고 한다.
+    이산확률분포라고 하고 무한하다면 연속확률분포라고 한다.
 ```
 
 ## 확률질량함수 (PMF, Probability Mass Function)
@@ -115,11 +153,11 @@ for x, freq in hist.items():
 
 - 기대값이라고도 한다. 자료의 우수성을 의미한다.
 
+![](pmf_mean.png)
+
 ```latex
 \mu = \sum_{i} p_{i} x_{i}
 ```
-
-![](pmf_mean.png)
 
 ## 편차 (deviation)
 
@@ -134,12 +172,11 @@ x_{i} - \mu
 - 편차의 제곱의 평균. 자료의 흩어진 정도를 의미한다.
 - 자료가 멀리 멀리 떨어져 있을 수록 분산의 값은 크다.
 
+![](pmf_var.png)
+
 ```latex
 \sigma^{2} = \sum_{i} p_{i} (x_{i} - \mu)^{2} 
-
 ```
-
-![](pmf_var.png)
 
 ## 표준편차 (standard deviation)
 
@@ -156,7 +193,6 @@ x_{i} - \mu
 ## 상대위험도 (ralative risk)
 
 - 두 분포의 차이를 측정할때 쓰는 두 확률의 비율
-
 - 첫 아이가 출산 예정일 보다 일찍 태어날 확률은 18.2%이다. 첫아이 외에
   다른 아이가 일찍 태어날 확률은 16.8%이다. 이때 상대 위험도는
   1.08이다. 이 것은 첫아이가 출산 예정일보다 일찍 태어날 확률이 8%
@@ -209,29 +245,29 @@ def Cdf(t, x):
   아니다라는 점을 명심해야 한다.
 - F(x)를 CDF라고 하고 f(x)를 PDF라고 하자.
 
-```latex
-\frac{\mathrm{d} F(x)}{\mathrm{d} x} = f(x)
-```
-
 ![](pdf.png)
 
 ```latex
-F(x) = \int_{-\infty}^{x} f(u) du
+\frac{\mathrm{d} F(x)}{\mathrm{d} x} = f(x)
 ```
 
 ![](pdf2.png)
 
 ```latex
-\int_{-\infty}^{+\infty} f(u) du = 1
+F(x) = \int_{-\infty}^{x} f(u) du
 ```
 
 ![](pdf3.png)
 
 ```latex
-f(x) \geq 0
+\int_{-\infty}^{+\infty} f(u) du = 1
 ```
 
 ![](pdf4.png)
+
+```latex
+f(x) \geq 0
+```
 
 ## 통계적 가설검정 (statistical hypothesis testing)
 
@@ -252,20 +288,21 @@ f(x) \geq 0
   "인간의 평균수명은 80년이 아니다."이다. 그리고 기호를 통해서 다음과
   같이 표현한다.
 
+![](null_hypothesis.png)
+
 ```latex
 H_{0} : \mu = 80 \\
 H_{1} : \mu \neq 80
 ```
 
-~[](null_hypothesis.png)
-
 ## 검정통계량 (test statistic)
 
-- "모집단의 모수가 이럴 것이다."라는 가설을 다루기 위해 모수(popluation parameter)인 평균,
-  분산, 비율을 이용하여 귀무가설과 대립가설을 설정한다. 하지만 모수를
-  사용할 수 없다. 워낙에 모집단이 크기 때문에 시간과 비용이 너무 많이
-  소모된다. 그래서 통계에서는 표본을 뽑아 표본통계량으로 계산을
-  한다. 이 표본통계량을 가설검정에서는 검정통계량이라고 부른다.
+- "모집단의 모수가 이럴 것이다."라는 가설을 다루기 위해
+  모수(popluation parameter)인 평균, 분산, 비율을 이용하여 귀무가설과
+  대립가설을 설정한다. 하지만 모수를 사용할 수 없다. 워낙에 모집단이
+  크기 때문에 시간과 비용이 너무 많이 소모된다. 그래서 통계에서는
+  표본을 뽑아 표본통계량으로 계산을 한다. 이 표본통계량을
+  가설검정에서는 검정통계량이라고 부른다.
   
 ![](population_parameter.png)
 
@@ -273,9 +310,10 @@ H_{1} : \mu \neq 80
 
 ## 기각역 (critical region)과 채택역 (acceptance region)
 
-- 귀무가설, 대립가설과 같이 두개의 가설이 있을때 귀무가설이 탈락하면 대립가설이
-  채택되는 것이다. 귀무가설이 더 옳은데도 귀무가설을 탈락시키는 확률을
-  보통 α라고 한다. 유의수준이라고도 한다. 1 - α는 채택역(acceptance region)이라고 한다.
+- 귀무가설, 대립가설과 같이 두개의 가설이 있을때 귀무가설이 탈락하면
+  대립가설이 채택되는 것이다. 귀무가설이 더 옳은데도 귀무가설을
+  탈락시키는 확률을 보통 α라고 한다. 유의수준이라고도 한다. 1 - α는
+  채택역(acceptance region)이라고 한다.
 
 ## 상관분석 (correlation analysis)
 
