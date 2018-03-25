@@ -10,8 +10,6 @@
     - [Interface blocks](#interface-blocks)
     - [Predefined variables](#predefined-variables)
 - [Tutorial](#tutorial)
-    - [color with normal value](#color-with-normal-value)
-    - [bar](#bar)
 - [References](#references)
 
 <!-- markdown-toc end -->
@@ -61,7 +59,7 @@ interpolate된 값이 넘어온다.
 
 # Tutorial
 
-* [simple twgl](https://raw.githubusercontent.com/iamslash/TIL/master/glsl/ex/a.html)
+* [simple twgl](https://rawgit.com/iamslash/TIL/master/glsl/ex/a.html)
   * [src](ex/a.html)
 
 # References
