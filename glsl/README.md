@@ -22,6 +22,12 @@ glsl에 대해 정리한다.
 
 # Material
 
+* [shader school](https://github.com/stackgl/shader-school)
+  * glsl 연습문제
+* [fragment foundry](http://hughsk.io/fragment-foundry/chapters/01-hello-world.html)
+  * fragment shader 연습문제
+* [webgl workshop](https://github.com/stackgl/webgl-workshop)
+  * webgl 연습문제
 * [opengl shading language wiki](https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language)
 * [WebGL Shaders and GLSL](https://webglfundamentals.org/webgl/lessons/webgl-shaders-and-glsl.html)
   * glsl은 간편하게 webgl에서 학습하자.
