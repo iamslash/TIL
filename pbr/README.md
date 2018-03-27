@@ -26,8 +26,12 @@
 
 Physically based rendering에 대해 적는다. PBR은 빛이 사물과
 상호작용하는 것을 현실셰계와 유사하게 표현하는 방법이다. PBR을
-이해하려면 먼저 [lighting](/lighting/README.md)에 대해 먼저 이해해야
+이해하려면 먼저 [lighting](/lighting/README.md)에 대해 이해해야
 한다.
+
+PBR을 구현하는 방법은 다양하다. 성능을 고려하기 위해 최적화도 해야 하고
+아티스트 입장에서 원하는 효과가 다르기 때문에 사용된 수식도 다를 수 있다.
+PBR을 추상적으로 먼저 이해하고 엔진 별로 구현한 예를 살펴보자.
 
 # Materials
 
@@ -35,23 +39,18 @@ Physically based rendering에 대해 적는다. PBR은 빛이 사물과
   * 개발자 입장에서 본 PBR 요약
 * [VOLUME 2: PRACTICAL GUIDELINES FOR CREATING PBR TEXTURES](https://academy.allegorithmic.com/courses/05171e19aa8dc19421385fd9bb9e016e)
   * 디자이너 입장에서 본 PBR 요약
-* [Real Shading in Unreal Engine 4](http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf)
+* [Real Shading in Unreal Engine 4](https://cdn2.unrealengine.com/Resources/files/2013SiggraphPresentationsNotes-26915738.pdf)
+  * 2013 SIGRAPH paper
+  * [번역](http://lifeisforu.tistory.com/348)
 * [Physically Based Rendering Algorithms: A Comprehensive Study In Unity3D](http://www.jordanstevenstechart.com/physically-based-rendering)
+  * unity3d를 이용하여 PBR을 자세히 설명했다.
 * [BASIC THEORY OF PHYSICALLY-BASED RENDERING](https://www.marmoset.co/posts/basic-theory-of-physically-based-rendering/)
 * [PBR이란무엇인가 @ tistory](http://lifeisforu.tistory.com/366)
 
 # Workflow
 
-* Metal / Roughness 와 Specualr / Glossniess와 같이 두가지 작업방식이
-  존재한다.
-* Metal / Roughness 는 다음과 같이 6가지 texture를 이용한다.
-  * Base Color, Roughness, Metralic
-  * Ambient Occlusion, Normal, Height
-* Specular / Glossiness는 다음과 같이 6가지 texture를 이용한다.
-  * Diffuse(Albedo), Glossiness, Specular
-  * Ambient Occlusion, Normal, Height
-* Metal / Roughness 와 Specular / Glossiness 는 각각 작업방식도
-  다르지만 PBR을 구현하는 방식도 다르다.
+`Metal / Roughness` 와 `Specualr / Glossniess`와 같이 두가지 작업방식이 존재한다.
+`Metal / Roughness` 는 `Base Color, Roughness, Metallic, Ambient Occlusion, Normal, Height`과 같이 6가지 texture를 이용한다. `Specular / Glossiness`는 `Diffuse(Albedo), Glossiness, Specular, Ambient Occlusion, Normal, Height`와 같이 6가지 texture를 이용한다. `Metal / Roughness` 와 `Specular / Glossiness`는 각각 작업방식과 구현하는 방식이 다를 뿐 결과물은 유사하다.
 
 # Key Elements
 
@@ -106,6 +105,11 @@ PBR은 다음과 같은 주요 요소들로 실현 된다.
 
 # Implementation
 
+## WegGL
+
+khronos group에서 제작한 wegl예제를 참고하자.
+[demo](http://github.khronos.org/glTF-WebGL-PBR/) [src](https://github.com/KhronosGroup/glTF-WebGL-PBR)
+
 ## Unity3d
 
 Standard Shader는 PBR을 지원한다.  UnityStandardBRDF.cginc에서 다양한
@@ -119,5 +123,9 @@ Standard Shader는 PBR을 지원한다.  UnityStandardBRDF.cginc에서 다양한
 - opengles 2.0 : 정규화 블린퐁 반사 농도 함수 (reflection density function, RDF)와
   사전 계산 결과 텍스처 참조(lookup texture, LUT)
 
-## Unrealengine
+[이곳](http://www.jordanstevenstechart.com/physically-based-rendering)은 unity3d를
+이용하여 pbr을 자세히 풀어쓴 글이다.
 
+## Unreal Engine 4
+
+...
