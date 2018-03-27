@@ -1,29 +1,64 @@
+<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+**Table of Contents**
+
+- [Abstract](#abstract)
+- [Learning material](#learning-material)
+- [Contents](#contents)
+- [The Graphics Hardware Pipeline](#the-graphics-hardware-pipeline)
+- [Fixed function shader tutorial](#fixed-function-shader-tutorial)
+- [Vertex, fragment shader tutorial](#vertex-fragment-shader-tutorial)
+- [Surface shader tutorial](#surface-shader-tutorial)
+- [Usage](#usage)
+    - [IBL (image based lighting)](#ibl-image-based-lighting)
+    - [Irradiance Map](#irradiance-map)
+    - [Image based Relection](#image-based-relection)
+    - [Image based Refraction](#image-based-refraction)
+    - [Image based Fresnel](#image-based-fresnel)
+    - [shadow mapping](#shadow-mapping)
+    - [BRDF (bidirectional reflectance distribution function)](#brdf-bidirectional-reflectance-distribution-function)
+    - [BRDF Anisotropy](#brdf-anisotropy)
+- [Tips](#tips)
+- [References](#references)
+
+<!-- markdown-toc end -->
+
+-------------------------------------------------------------------------------
+
 # Abstract
 
-- untity3d의 shader에 대해 정리해본다.
-- unity3d는 shader lab이라는 language로 shader를 표현한다.
-- unity3d shader lab은 fixed function과 programmable pipeline으로 표현할 수 있다.
-- programmable pipeline에는 vertex, fragment, surface shader가 있다.
-- shader lab은 여러개의 subshader로 구성되어 있다. subshader는
-  여러개의 pass로 구성될 수 있다. subshader는 하드웨어의 성능이 열악한 순서대로 기록한다.
-- shader lab은 중간에 cg를 사용할 것을 추천한다. cg는 nvidia가 microsoft와 
-  함께 개발한 shading language이다. directx, opengl을 지원한다. 그래서 unity3d shader
-  lab이 cg사용을 권고하는 것 같다. 하지만 2012년 이후 개발이
-  중단됬다. directx의 hlsl, opengl의 glsl은 사용할 일이 없을까???
-- vertex shader는 vertex를 기준으로 연산한다. fragment shader는
-  pixel을 기준으로 연산한다. fragment shader가 vertext shader보다 더
-  많이 호출된다.
-  - [cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter10.html)에
-  다음과 같은 언급이 있다.  A fragment program executes for each
-  fragment that is generated, so fragment programs typically run
-  several million times per frame. On the other hand, vertex programs
-  normally run only tens of thousands of times per frame
-- suface shader로 작성하면 vertex, fragment shader로 코드가 변환되고 컴파일된다.
-- fixed function shader로 작성하면 내부적으로 shader import time에
-  vertex, fragment shader로 변환된다.
+unity3d는 shader lab이라는 language로 shader를 표현한다. unity3d
+shader lab은 fixed function과 programmable pipeline으로 표현할 수
+있다.
+
+programmable pipeline에는 vertex, fragment, surface shader가 있다.
+shader lab은 여러개의 subshader로 구성되어 있다. subshader는 여러개의
+pass로 구성될 수 있다. subshader는 하드웨어의 성능이 열악한 순서대로
+기록한다. 
+
+shader lab은 중간에 cg를 사용할 것을 추천한다. cg는 nvidia가
+microsoft와 함께 개발한 shading language이다. directx, opengl을
+지원한다. 그래서 unity3d shader lab이 cg사용을 권고하는 것
+같다. 하지만 2012년 이후 개발이 중단됬다. directx의 hlsl, opengl의
+glsl은 사용할 일이 없을까???
+
+vertex shader는 vertex를 기준으로 연산한다. fragment shader는 pixel을
+기준으로 연산한다. fragment shader가 vertext shader보다 더 많이
+호출된다.
+
+[cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter10.html)에
+다음과 같은 언급이 있다.  A fragment program executes for each
+fragment that is generated, so fragment programs typically run several
+million times per frame. On the other hand, vertex programs normally
+run only tens of thousands of times per frame
+
+suface shader로 작성하면 vertex, fragment shader로 코드가 변환되고
+컴파일된다.  fixed function shader로 작성하면 내부적으로 shader import
+time에 vertex, fragment shader로 변환된다.
 
 # Learning material
 
+- [writing shaders in unity](http://www.jordanstevenstechart.com/writing-shaders-in-unity)
+  - unity3d shaderlab의 기본기를 잘 정리한 블로그이다.
 - [fixed function shader tutorial](https://docs.unity3d.com/Manual/ShaderTut1.html)
 - [vertex, fragment shader tutorial](https://docs.unity3d.com/Manual/SL-VertexFragmentShaderExamples.html)
 - [surface shader tutorial](https://docs.unity3d.com/Manual/SL-SurfaceShaderExamples.html)
@@ -36,24 +71,13 @@
 - [a gentle introduction to shaders in unity3d](http://www.alanzucconi.com/2015/06/10/a-gentle-introduction-to-shaders-in-unity3d/)
   - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false) 저자 블로그이다.
   - PBR을 쉽게 이해할 수 있었다. PBR은 Lambertian처럼 lighting model중
-    하나이다. unity3d에서 Standard라는 이름으로 사용된다. Metalic,
-    Specular두가지가 중요하다.
+    하나이다. 
 - [Unity3d Shader Reference](https://docs.unity3d.com/Manual/SL-Reference.html)
   - RTFM
 - [unity cg programming](https://en.wikibooks.org/wiki/Cg_Programming/Unity)
   - 여러가지 예제들과 이론들이 풍부하다.
 - [scratchapixel](http://www.scratchapixel.com/)
   - 밑바닥부터 설명하는 computer graphics
-
-# Contents
-
-* [The Graphics Hardware Pipeline](#the-graphics-hardware-pipeline)
-* [Fixed function shader tutorial](#fixed-function-shader-tutorial)
-* [Vertex, fragment shader tutorial](#vertex-fragment-shader-tutorial)
-* [Surface shader tutorial](#surface-shader-tutorial)
-* [Usage](#usage)
-* [Tips](#tips)
-* [References](#references)
 
 # The Graphics Hardware Pipeline
 
@@ -1635,9 +1659,9 @@ a = \begin{matrix}
 
 ## BRDF Anisotropy
 
-# Tips
 
 # References
 
 - [Resources for Writing Shaders in Unity](https://github.com/VoxelBoy/Resources-for-Writing-Shaders-in-Unity)
   - 다양한 링크 모음
+  

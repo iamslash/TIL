@@ -960,7 +960,7 @@ Michael Oren 과 Shree K. Nayar 이 개발한 lighting model이다. 표면의 �
 
 아래의 구현은 [이곳](http://www.jordanstevenstechart.com/lighting-models)에서 가져왔다.
 
-```glsl
+```cg
      float roughness = _Roughness;
      float roughnessSqr = roughness * roughness;
      float3 o_n_fraction = roughnessSqr / (roughnessSqr 
@@ -980,6 +980,118 @@ step(oren_nayar_s, 0));
 + diffuseColor * oren_nayar.y + oren_nayar.z * oren_nayar_s);
      float3 attenColor = attenuation * _LightColor0.rgb;
      float4 finalDiffuse = float4(lightingModel * attenColor,1);
+```
+
+```cg
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+Shader "Custom/OrenNayar" {
+  Properties{
+    _Color("Main Color", Color) = (1,1,1,1)
+    _Roughness("Roughness", Float) = 0.5 
+    _MainTex("Base (RGB)", 2D) = "white" {}
+    _NormalMap("Normal Map", 2D) = "bump" {}
+  }
+  SubShader{
+    Tags{"RenderType" = "Opaque"  "Queue" = "Geometry"}
+    Pass{
+      Name "FORWARD"
+      Tags{"LightMode" = "ForwardBase"}
+		
+      CGPROGRAM
+      #pragma vertex vert
+      #pragma fragment frag
+      #define UNITY_PASS_FORWARDBASE
+      #include "UnityCG.cginc"
+      #include "AutoLight.cginc"
+      #include "Lighting.cginc"
+      #pragma multi_compile_fwdbase_fullshadows
+      #pragma multi_compile_fog
+      #pragma target 3.0
+
+      float4 _Color;
+      float  _Roughness;
+      sampler2D _MainTex;
+      float4 _MainTex_ST;
+      sampler2D _NormalMap;
+      float4 _NormalMap_ST;
+
+      struct VertexInput {
+        float4 vertex : POSITION;       //local vertex position
+        float3 normal : NORMAL;         //normal direction
+        float4 tangent : TANGENT;       //tangent direction    
+        float2 texcoord0 : TEXCOORD0;   //uv coordinates
+        float2 texcoord1 : TEXCOORD1;   //lightmap uv coordinates
+      };
+      struct VertexOutput {
+        float4 pos : SV_POSITION;              //screen clip space position and depth
+        float2 uv0 : TEXCOORD0;                //uv coordinates
+        float2 uv1 : TEXCOORD1;                //lightmap uv coordinates
+        //below we create our own variables with the texcoord semantic. 
+        float4 posWorld : TEXCOORD3;           //world position of the vertex
+        float3 normalDir : TEXCOORD4;          //normal direction   
+        float3 tangentDir : TEXCOORD5;         //tangent direction 
+        float3 bitangentDir : TEXCOORD6;       //bitangent direction 
+        float3 viewDir : TEXCOORD10;
+        LIGHTING_COORDS(7,8)                   //this initializes the unity lighting and shadow
+        UNITY_FOG_COORDS(9)                    //this initializes the unity fog
+      };
+      VertexOutput vert(VertexInput v) {
+        VertexOutput o = (VertexOutput)0;
+        o.uv0 = v.texcoord0;
+        o.uv1 = v.texcoord1;
+        o.normalDir = UnityObjectToWorldNormal(v.normal);
+        o.tangentDir = normalize(mul(unity_ObjectToWorld, half4(v.tangent.xyz, 0.0)).xyz);
+        o.bitangentDir = normalize(cross(o.normalDir, o.tangentDir) * v.tangent.w);
+        o.posWorld = mul(unity_ObjectToWorld, v.vertex);
+        o.pos = UnityObjectToClipPos(v.vertex);
+        o.viewDir = o.posWorld - _WorldSpaceCameraPos;
+        UNITY_TRANSFER_FOG(o,o.pos);
+        TRANSFER_VERTEX_TO_FRAGMENT(o)
+        return o;
+      }
+      
+      float4 frag(VertexOutput i) : COLOR{
+        //normal direction calculations
+        i.normalDir = normalize(i.normalDir);
+        float3x3 tangentTransform = float3x3(i.tangentDir, i.bitangentDir, i.normalDir);
+        float3 normalMap = UnpackNormal(tex2D(_NormalMap,TRANSFORM_TEX(i.uv0, _NormalMap)));
+        float3 normalDirection = normalize(mul(normalMap.rgb, tangentTransform));
+        //diffuse color calculations
+        float3 mainTexColor = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
+        float3 diffuseColor = _Color.rgb * mainTexColor.rgb;
+        //light calculations
+        float3 lightDirection = normalize(lerp(_WorldSpaceLightPos0.xyz, _WorldSpaceLightPos0.xyz - i.posWorld.xyz,_WorldSpaceLightPos0.w));
+        float3 viewDirection = i.viewDir;
+        
+        float roughness = _Roughness;
+        float roughnessSqr = roughness * roughness;
+        float3 o_n_fraction = roughnessSqr / (roughnessSqr
+                                              + float3(0.33, 0.13, 0.09));
+        float3 oren_nayar = float3(1, 0, 0) + float3(-0.5, 0.17, 0.45)
+          * o_n_fraction;
+        float cos_ndotl = saturate(dot(normalDirection, lightDirection));
+        float cos_ndotv = saturate(dot(normalDirection, viewDirection));
+        float oren_nayar_s = saturate(dot(lightDirection, viewDirection))
+          - cos_ndotl * cos_ndotv;
+        oren_nayar_s /= lerp(max(cos_ndotl, cos_ndotv), 1,
+                             step(oren_nayar_s, 0));
+        
+        //lighting and final diffuse
+        float attenuation = LIGHT_ATTENUATION(i);
+        float3 lightingModel = diffuseColor * cos_ndotl * (oren_nayar.x
+          + diffuseColor * oren_nayar.y + oren_nayar.z * oren_nayar_s);
+        float3 attenColor = attenuation * _LightColor0.rgb;
+        float4 finalDiffuse = float4(lightingModel * attenColor, 1);
+        UNITY_APPLY_FOG(i.fogCoord, finalDiffuse);
+
+        return finalDiffuse;
+      }
+      ENDCG
+    }
+  }
+	//FallBack "Legacy Shaders/Diffuse"
+}
 ```
 
 # Physically Based Rendering
