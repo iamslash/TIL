@@ -13,7 +13,9 @@
 - [BRDF](#brdf)
 - [Energy Conservation (에너지 보존법칙)](#energy-conservation-%EC%97%90%EB%84%88%EC%A7%80-%EB%B3%B4%EC%A1%B4%EB%B2%95%EC%B9%99)
 - [Fresnel Effect - F0 (Fresnel Reflectance at 0 Degrees)](#fresnel-effect---f0-fresnel-reflectance-at-0-degrees)
-- [Conductors and Insulators - Metals and Non Metal](#conductors-and-insulators---metals-and-non-metal)
+- [Conductors and Insulators](#conductors-and-insulators)
+  - [Metals](#metals)
+  - [Non Metal](#non-metal)
 - [Linear Space Rendering](#linear-space-rendering)
 - [Implementation](#implementation)
   - [WegGL](#weggl)
@@ -102,9 +104,24 @@ Lambertian model은 diffuse reflection을 다룰 때 표면의 거칠기를 무�
 
 # Microfacet Theory
 
+빛은 피사체의 표면에 부딛힐때 일부는 반사된다. 반사되는 빛은 표면의 거칠기에 따라 정반사(specular reflection)와 난반사(diffuse reflection)로 나눠진다. 표면의 거칠기는 PBR 작업방식에 따라 roughness, smoothness, glossiness, micro-surface등으로 달리 부른다. 표면의 거칠기는 특별한 texture(roughness map)에 저장할 수 있다.
+
+![](https://academy-api.allegorithmic.com/static/files/upload_fb11389333d92208ae926fed2260f4ad.png)
+
+피사체의 표면은 작은 표면들이 서로 다른 각도를 이루고 모여 있다고 할 수 있다. 이것을 microfacet theory라고 한다. PBR의 BRDF는 microfacet theory에 기반을 두고 있다.
+
 # Color
 
+빛이 사과를 향해 나아간다고 해보자. 사과의 표면에 빛이 부딛히면 일부는 흡수되고 일부는 반사되어 우리 눈으로 들어온다. 앞서 언급한 것처럼 반사는 정반사와 난반사로 나눠진다. 빨간 파장의 난반사(diffuse refelction) 광선이 눈으로 들어오면 우리는 사과가 빨갛다고 생각할 수 있다. 이처럼 피사체의 색은 피사체의 표면이 난반사한 빛의 파장에 따라 결정된다.
+
+정반사(specular refelction) 빛의 색은 난반사(diffuse reflection) 빛의 색처럼 빨갛지 않고
+하얗다. 즉 광원의 색상과 같다. 이것은 사과의 표면이 부도체 (dieletrics)이기 때문이다. 도체(conductors)와 부도체(insulators)의 설명은 [Conductors and Insulators](#conductors-and-insulators---metals-and-non-metal)에서 자세히 설명한다.
+
 # BRDF
+
+![](/lighting/img/BSDF05_800.png)
+
+**BRDF (bidirectional reflectance distribution function)**는 빛이 피사체의 표면을 비추고 반사가 발생할 때 얼만큼의 빛이 반사되는지 결정하는 함수이다.
 
 # Energy Conservation (에너지 보존법칙)
 
@@ -124,7 +141,30 @@ Lambertian model은 diffuse reflection을 다룰 때 표면의 거칠기를 무�
 비스듬히 바라볼 때 호수의 바닥은 볼 수 없고 호수에 반사된 풍경이
 보인다. 비스듬히 바라볼 때 반사된 빛의 양이 더욱 많기 때문이다.
 
-# Conductors and Insulators - Metals and Non Metal
+# Conductors and Insulators
+
+![](https://academy-api.allegorithmic.com/static/files/upload_9afdc087660fe5a8285834228fc524d1.png)
+
+위의 그림과 같이 피사체가 금속성에 가까운지 비금속성에 가까운지에 따라 F0 (Frenel zero)는 다르다. 
+
+## Metals 
+
+빛이 금속 피사체의 표면에 부딛히면 우리는 반짝임을 인식한다. 빛이 반짝인다는 것은 specular reflection은 많고 diffuse reflection은 적다는 것을 의미한다.
+
+![](https://academy-api.allegorithmic.com/static/files/upload_5137b461e5e67647eb725bafb7ef6062.png)
+
+보통 금속의 경우 incident ray의 60-70%는 반사되고 나머지는 흡수된다.
+
+
+ 
+## Non Metal
+
+빛이 비금속 피사체의 표면에 부딛히면 우리는 덜 반짝임을 인식한다. 빛이 덜 반짝인다는 것은
+specular reflection은 적고 diffuse reflection은 많다는 것을 의미한다. diffuse reflection의 색은 피사체의 albedo color와 같다.
+
+![](https://academy-api.allegorithmic.com/static/files/upload_066e6d3a1b7b16e89e097c22ddd07fb4.png)
+
+일반적인 비금속의 F0는 2-5%이고 linear color space 값은 0.017-0.067 (40-75 sRGB)이다. 보석을 제외하고 보통의 비금속들은 F0가 4%를 넘지는 않을 것이다.
 
 # Linear Space Rendering
 
