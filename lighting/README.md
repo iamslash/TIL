@@ -950,11 +950,36 @@ Shader "Custom/CookTorrance" {
 
 # Oren-Nayar Model
 
+Michael Oren 과 Shree K. Nayar 이 개발한 lighting model이다. 표면의 거칠기(roughness)가 반영된 diffuse reflection을 표현한다.
+
+[oren-nayar @ wikipedia](https://en.wikipedia.org/wiki/Oren%E2%80%93Nayar_reflectance_model)
+
 ## WebGL
 
 ## unity3d shader lab
 
+아래의 구현은 [이곳](http://www.jordanstevenstechart.com/lighting-models)에서 가져왔다.
+
 ```glsl
+     float roughness = _Roughness;
+     float roughnessSqr = roughness * roughness;
+     float3 o_n_fraction = roughnessSqr / (roughnessSqr 
++ float3(0.33, 0.13, 0.09));
+     float3 oren_nayar = float3(1, 0, 0) + float3(-0.5, 0.17, 0.45) 
+* o_n_fraction;
+     float cos_ndotl = saturate(dot(normalDirection, lightDirection));
+     float cos_ndotv = saturate(dot(normalDirection, viewDirection));
+     float oren_nayar_s = saturate(dot(lightDirection, viewDirection)) 
+- cos_ndotl * cos_ndotv;
+     oren_nayar_s /= lerp(max(cos_ndotl, cos_ndotv), 1, 
+step(oren_nayar_s, 0));
+
+     //lighting and final diffuse
+     float attenuation = LIGHT_ATTENUATION(i);
+     float3 lightingModel = diffuseColor * cos_ndotl * (oren_nayar.x 
++ diffuseColor * oren_nayar.y + oren_nayar.z * oren_nayar_s);
+     float3 attenColor = attenuation * _LightColor0.rgb;
+     float4 finalDiffuse = float4(lightingModel * attenColor,1);
 ```
 
 # Physically Based Rendering
