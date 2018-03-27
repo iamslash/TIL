@@ -7,16 +7,19 @@
 - [Key Elements](#key-elements)
 - [Light Rays](#light-rays)
 - [Absorption and Scattering - Transparency and Translucency](#absorption-and-scattering---transparency-and-translucency)
-- [Diffuse and Specular Reflection - Microfacet Theory](#diffuse-and-specular-reflection---microfacet-theory)
+- [Diffuse and Specular Reflection](#diffuse-and-specular-reflection)
+- [Microfacet Theory](#microfacet-theory)
 - [Color](#color)
 - [BRDF](#brdf)
-- [Energy Conservation (에너지 보존법칙)](#energy-conservation-에너지-보존법칙)
+- [Energy Conservation (에너지 보존법칙)](#energy-conservation-%EC%97%90%EB%84%88%EC%A7%80-%EB%B3%B4%EC%A1%B4%EB%B2%95%EC%B9%99)
 - [Fresnel Effect - F0 (Fresnel Reflectance at 0 Degrees)](#fresnel-effect---f0-fresnel-reflectance-at-0-degrees)
 - [Conductors and Insulators - Metals and Non Metal](#conductors-and-insulators---metals-and-non-metal)
 - [Linear Space Rendering](#linear-space-rendering)
 - [Implementation](#implementation)
-    - [Unity3d](#unity3d)
-    - [Unrealengine](#unrealengine)
+  - [WegGL](#weggl)
+  - [Unity3d](#unity3d)
+    - [Unity3d builtin](#unity3d-builtin)
+  - [Unreal Engine 4](#unreal-engine-4)
 
 <!-- markdown-toc end -->
 
@@ -68,13 +71,36 @@ PBR은 다음과 같은 주요 요소들로 실현 된다.
 
 # Light Rays
 
+![](https://academy-api.allegorithmic.com/static/files/upload_98dd4cd91fda92cca2c9d90c3fee7b58.png)
 
+PBR을 구현하려면 가장 먼저 빛의 성질에 대해 이해해야 한다. 빛은 광원을 떠나서 피사체의 표면에 부딛힌다. 표면으로 들어오는 빛은 **입사광선(incident ray)**, 표면에서 반사되어
+나가는 빛은 **반사광선(reflected ray)**, 표면을 통과하여 나가는 광선은 **굴절광선(refracted ray)**라고 한다. 이때 일부 광선은 표면에서 **흡수(absorbed)** 되거나 **산란(scattered)** 되기도 한다.
 
 # Absorption and Scattering - Transparency and Translucency
 
+빛이 피사체의 표면에 부딛히면 일부 광선은 표면에서 **흡수(absorbed)** 되거나 **산란(scattered)** 되기도 한다. 
 
+흡수된 빛은 밝기가 줄어들고 줄어든 만큼의 빛은 열 에너지로 바뀐다. 흡수되고 남은 빛은 파장에 따라 색깔이 변화하지만 방향이 변하지는 않는다.
 
-# Diffuse and Specular Reflection - Microfacet Theory
+산란된 빛은 밝기가 줄어들지 않지만 방향이 랜덤하게 바뀐다. 방향이 바뀌는 정도는 피사체 표면의 재질에 따라 다르다.
+
+만약 빛이 피사체의 표면에 부딛힐 때 흡수도 안되고 산란도 없다면 대부분의 빛은 투과될 것이다.
+예를 들면 깨끗한 물의 수영장 속에서 눈을 떴을 때 사물들은 그대로 보인다. 그러나 더러운 물의 수영장 속에서 눈을 뜨면 그렇지 않다.
+
+빛의 흡수 및 산란은 피사체의 두깨와 관련이 깊다. 만약 피사체의 두깨가 얼마인지 정보를 texture(thickness map)에 저장한다면 흡수 및 산란의 정도를 조절할 수도 있다.
+
+# Diffuse and Specular Reflection
+
+![](https://academy-api.allegorithmic.com/static/files/upload_7d80803c4adc83eed2261a932accca7e.png)
+
+빛이 피사체의 표면에 부딛힐 때 일부광선은 반사된다고 언급했다. 반사된 빛은 정반사(specular reflection)와 난반사(diffuse reflection)로 나눌 수 있다.
+피사체 표면이 균일 하면 정반사가 주로 발생되서 하이라이트가 작고 또렷하다. 피사체 표면이 균일 하지 않으면 때문에 정반사보다 난반사가 주로 발생되서 하이라이트가 넓고 흐리다.
+
+Lambertian model은 diffuse reflection을 다룰 때 표면의 거칠기를 무시한다. 그러나 Oren-Nayar model은 diffuse reflection을 다룰 때 표면의 거칠기를 고려한다.
+
+빛은 서로다른 매질을 지나갈 때 굴절된다. 이때 빛이 굴절되는 정도를 굴절률(Index of refraction)이라고 하고 매질에 따라 값이 다르다.
+
+# Microfacet Theory
 
 # Color
 
@@ -98,10 +124,40 @@ PBR은 다음과 같은 주요 요소들로 실현 된다.
 비스듬히 바라볼 때 호수의 바닥은 볼 수 없고 호수에 반사된 풍경이
 보인다. 비스듬히 바라볼 때 반사된 빛의 양이 더욱 많기 때문이다.
 
-
 # Conductors and Insulators - Metals and Non Metal
 
 # Linear Space Rendering
+
+인간의 눈은 밝은 것보다 어두운 것에 민감하다. RGB정보를 24bit에 저장한다고 해보자. 어두운 정보를 저장할 때 많은 bit를 사용하고 밝은 정보를 저장할 때 적은 bit를 사용한다면 bit를 효율적으로 이용할 수 있다. 이렇게 부화하는 것을 gamma encoding이라고 하고 이때의 색공간을 gamma color space라고 한다. 관련된 표준으로 [sRGB](https://namu.wiki/w/sRGB)가 있다. 이미지를 저장할 때 주로 sRGB로 저장한다. 모니터는 sRGB이미지를 gamma decoding하여 보여준다.
+
+색은 linear color space에서 계산하는 것이 gamma color space에서 게산하는 것보다 정확하다.
+shader에서 sRGB(gamma color space)로 저장된 이미지는 계산하기 전에 linear color space로
+변환해야 한다.
+
+다음은 [glTF-WebGL-PBR/shaders/pbr-frag.glsl](https://github.com/KhronosGroup/glTF-WebGL-PBR/blob/master/shaders/pbr-frag.glsl) 에서 sRBG를 linear color space로 바꾸는 함수를 발췌한 것이다.
+
+```glsl
+vec4 SRGBtoLINEAR(vec4 srgbIn)
+{
+#ifdef MANUAL_SRGB
+
+  #ifdef SRGB_FAST_APPROXIMATION
+    vec3 linOut = pow(srgbIn.xyz, vec3(2.2));
+
+  #else //SRGB_FAST_APPROXIMATION
+    vec3 bLess = step(vec3(0.04045), srgbIn.xyz);
+    vec3 linOut = mix(srgbIn.xyz/vec3(12.92), 
+      pow((srgbIn.xyz+vec3(0.055))/vec3(1.055),vec3(2.4)), bLess );
+
+  #endif //SRGB_FAST_APPROXIMATION
+    return vec4(linOut,srgbIn.w);;
+
+#else //MANUAL_SRGB
+    return srgbIn;
+
+#endif //MANUAL_SRGB
+}
+```
 
 # Implementation
 
@@ -112,11 +168,11 @@ khronos group에서 제작한 wegl예제를 참고하자.
 
 ## Unity3d
 
-Standard Shader는 PBR을 지원한다.  UnityStandardBRDF.cginc에서 다양한
-근사와 조정이 이루어진 BRDF를 확인할 수
-있다. UnityStandardCore.cginc와 UnityGlobalIllumination.cginc에서
-이용법을 확인 할 수 있다. Standard Shader는 다음과 같이 플래폼별로
-구현이 나뉘어져 있다.
+### Unity3d builtin 
+
+
+unity의 Standard Shader는 PBR을 지원한다.  UnityStandardBRDF.cginc에서 다양한
+근사와 조정이 이루어진 BRDF를 확인할 수 있다. UnityStandardCore.cginc와 UnityGlobalIllumination.cginc에서 이용법을 확인 할 수 있다. Standard Shader는 다음과 같이 플래폼별로 구현이 나뉘어져 있다.
 
 - PC/console : 디즈니의 토런스 스패로(Torrance-Sparrow)반사 모델
 - opengles 3.0이상 : 간략화된 쿡 토렌스 모델, 정점 조명을 이용한 확산/환경광
