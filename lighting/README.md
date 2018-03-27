@@ -2,31 +2,44 @@
 **Table of Contents**
 
 - [Abstract](#abstract)
-- [Comments](#comments)
 - [Learning Materials](#learning-materials)
 - [Fundamentals](#fundamentals)
-    - [Light](#light)
-    - [Eye](#eye)
-    - [조도와 휘도 (illuminance & luminance)](#조도와-휘도-illuminance--luminance)
-    - [빛의 감쇠 (attenuation)](#빛의-감쇠-attenuation)
-    - [광속](#광속)
-    - [광도](#광도)
-    - [조도](#조도)
-    - [휘도](#휘도)
-    - [BRDF, BTDF](#brdf-btdf)
-    - [Local Illumination & Global Illumination](#local-illumination--global-illumination)
-    - [굴절률(Refractive index)](#굴절률refractive-index)
-    - [Snell's law](#snells-law)
-    - [Fresnel Equation](#fresnel-equation)
+	- [Light](#light)
+	- [Eye](#eye)
+	- [조도와 휘도 (illuminance & luminance)](#%EC%A1%B0%EB%8F%84%EC%99%80-%ED%9C%98%EB%8F%84-illuminance-luminance)
+	- [빛의 감쇠 (attenuation)](#%EB%B9%9B%EC%9D%98-%EA%B0%90%EC%87%A0-attenuation)
+	- [광속](#%EA%B4%91%EC%86%8D)
+	- [광도](#%EA%B4%91%EB%8F%84)
+	- [조도](#%EC%A1%B0%EB%8F%84)
+	- [휘도](#%ED%9C%98%EB%8F%84)
+	- [BRDF, BTDF](#brdf-btdf)
+	- [Local Illumination & Global Illumination](#local-illumination-global-illumination)
+	- [굴절률(Refractive index)](#%EA%B5%B4%EC%A0%88%EB%A5%A0refractive-index)
+	- [Snell's law](#snells-law)
+	- [Fresnel Equation](#fresnel-equation)
 - [Lambert's cosine law](#lamberts-cosine-law)
 - [Lambertian Reflectance Model](#lambertian-reflectance-model)
+	- [WebGL](#webgl)
+	- [Unity3d shaderlab](#unity3d-shaderlab)
 - [Half Lambert Diffuse](#half-lambert-diffuse)
-- [Phong Reflectance  Model](#phong-reflectance--model)
+	- [WebGL](#webgl)
+	- [Unity3d shaderlab](#unity3d-shaderlab)
+- [Phong Reflectance  Model](#phong-reflectance-model)
 - [Gouraud shading](#gouraud-shading)
+	- [WebGL](#webgl)
+	- [Unity3d shaderlab](#unity3d-shaderlab)
 - [Phong Shading](#phong-shading)
+	- [WebGL](#webgl)
+	- [unity3d shaderlab](#unity3d-shaderlab)
 - [Rim Lighting](#rim-lighting)
+	- [WebGL](#webgl)
+	- [unity3d shaderlab](#unity3d-shaderlab)
 - [Cook-Torrance Model](#cook-torrance-model)
+	- [WebGL](#webgl)
+	- [unity3d shader lab](#unity3d-shader-lab)
 - [Oren-Nayar Model](#oren-nayar-model)
+	- [WebGL](#webgl)
+	- [unity3d shader lab](#unity3d-shader-lab)
 - [Physically Based Rendering](#physically-based-rendering)
 - [Ray Tracing](#ray-tracing)
 - [Radiosity](#radiosity)
@@ -40,10 +53,6 @@
 # Abstract
 
 3d그래픽의 라이팅에 대해 기술한다.
-
-# Comments
-
-updating... hemispherical lighting model
 
 # Learning Materials
 
@@ -115,20 +124,21 @@ red cone, green cone)와 간상세포(rod)가 있다. 원추세포(cone cell)는
 spectrum)의 빛을 다루기 위해 에너지를 측정하는 것을
 광도측정(photometry)라고 한다.
 
-방사측정(radiometry)는 제곱미터당 일률(watt per squre meter)의 단위로
+방사측정(radiometry)는 제곱미터당 일률(watt per sqaure meter)의 단위로
 에너지를 측정하고 광도측정(photometry)는 제곱미터당 루멘(lumens per
-squre)단위로 에너지를 측정한다. 전자는 파워(power)를 의미하고 후자는
+square meter)단위로 에너지를 측정한다. 전자는 파워(power)를 의미하고 후자는
 밝기(brightness)를 의미한다.
 
 조도의 "조(照)"는 "비출 조" 이고 휘도의 "휘(輝)"는 "빛날 휘"다.
 광원(light source)에서 빛이 나오는 양을 조도라고 하고 광원(light source)에서
 나온 빛이 특정 오브젝트에 반사되어 나오는 빛의 양을 휘도라고 한다.
+조도는 빛이 비추는 정도이고 휘도는 빛이 빛나는 정도라고 기억하면 쉽다.
 
 방사측정(radiometry)의 경우 조도를 irradiance라고 하고 휘도를
 radiance라고 한다.  광도측정(photometry)의 경우 조도를 illuminance라고
 하고 휘도를 luminance라고 한다.
 
-![](light-reflected-transmitted-absorbed.png)
+![](img/light-reflected-transmitted-absorbed.png)
 
 특정 표면(surface)에 도달한 빛이 모두 우리 눈으로 들어 오는 것은 아니다. 표면의
 재질에 따라 흡수(absorbed), 투과(transmitted), 반사(reflected), 방출(emitted)
@@ -166,7 +176,7 @@ Intensity = \frac{1}{Distance^{2}}
 입체각(solid angle)이라고 정의 한다. 만약 구의 면적이 구 전체에
 해당된다면 입체각은 4π (2π + 2π)이다.
 
-반지름이 r인 구의 면적은 4πr^2이고 반지름이 r인 구에서 입체각이
+반지름이 r인 구의 면적은 `4πr^2`이고 반지름이 r인 구에서 입체각이
 a(radian)인 원뿔의 겉면적은 ar^2이고 이것을 단위 면적이라고 하자. 이때
 광자의 개수는 4라고 하자. 반지름이 2r이면 겉면적은 a(2r)^2이고 광자의
 개수는 단위 면적당 1이다. 거리가 두배 늘어나면 겉면적의 넓이는 거리의
@@ -333,7 +343,7 @@ light)의 각도, v 는 속도(velocity), n은 굴절률(IOR), λ 는
 \frac{sin \theta_{1}}{sin \theta_{2}} = \frac{v_{1}}{v_{2}} = \frac{\lambda_{1}}{\lambda_{2}} = \frac{n_{1}}{n_{2}}
 ```
 
-![](1920px-RefractionReflextion_svg.png)
+![](img/1920px-RefractionReflextion_svg.png)
 
 빛이 서로 다른 매질을 만날때 특정 각도에서는 굴절을 하지 않고 완전히
 반사하는 경우가 있다. 각도가 critical angle보다 커지면 전반사가
@@ -354,9 +364,11 @@ fresnel equation은 빛이 서로다른 매질을 통과할때 관찰자가 어�
 그래픽에서는 근사 계산한 공식을 이용한다. 다음은 Christophe Schlick이
 만든 Schilick's approximation이다.
 
+![](img/schilick_approximation_eq.png)
+
 ```latex
 \begin{align*}
-R(\theta} &= R_{0} + (1 - R_{0}) (1 - cos \theta)^{5} \\
+R(\theta) &= R_{0} + (1 - R_{0}) (1 - cos \theta)^{5} \\
 R_{0}     &= ( \frac{n_{1} - n_{2}}{n_{1} + n_{2}} )^{2} \\
 \end{align*}
 ```
@@ -410,52 +422,57 @@ I_{D} = L \cdot N C I_{L} \\
 \end{align*}
 ```
 
+## WebGL
+
+```glsl
+```
+
+## Unity3d shaderlab
+
 다음은 lambertian reflectance model을 unity3d shader lab으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
 
-```cpp
+```glsl
 Shader "Custom/Diffuse" {
-	Properties {
-		_Color ("Color", Color) = (1,1,1,1)
-	}
-	SubShader {
-		Pass {
-			Tags { "LightMode" = "ForwardBase" }
+  Properties {
+    _Color ("Color", Color) = (1,1,1,1)
+  }
+  SubShader {
+    Pass {
+      Tags { "LightMode" = "ForwardBase" }
 			
-			GLSLPROGRAM
-	        #include "UnityCG.glslinc"
-	        #if !defined _Object2World
-	        #define _Object2World unity_ObjectToWorld
-	        #endif
+      GLSLPROGRAM
+      #include "UnityCG.glslinc"
+      #if !defined _Object2World
+        #define _Object2World unity_ObjectToWorld
+      #endif
 
-	        uniform vec4 _LightColor0;
-
-	        uniform vec4 _Color;
+      uniform vec4 _LightColor0;
+      uniform vec4 _Color;
 	         
-	        #ifdef VERTEX
-			out vec4 color;
+      #ifdef VERTEX
+        out vec4 color;
 
-	        void main() {	            
-	            vec3 surfaceNormal = normalize(vec3(_Object2World * vec4(gl_Normal, 0.0)));
-	            vec3 lightDirectionNormal = normalize(vec3(_WorldSpaceLightPos0));
-	            vec3 diffuseReflection = vec3(_LightColor0) * vec3(_Color) * max(0.0, dot(surfaceNormal, lightDirectionNormal));
-	            color = vec4(diffuseReflection, 1.0);
-	            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-	        }
-	        #endif
+        void main() {	            
+          vec3 surfaceNormal = normalize(vec3(_Object2World * vec4(gl_Normal, 0.0)));
+          vec3 lightDirectionNormal = normalize(vec3(_WorldSpaceLightPos0));
+          vec3 diffuseReflection = vec3(_LightColor0) * vec3(_Color) * max(0.0, dot(surfaceNormal, lightDirectionNormal));
+          color = vec4(diffuseReflection, 1.0);
+          gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+        }
+      #endif
 
-	        #ifdef FRAGMENT
-			in vec4 color;
+      #ifdef FRAGMENT
+        in vec4 color;
 
-	        void main() {
-	           gl_FragColor = color;
-	        }
-	        #endif
-
-	        ENDGLSL
-         }
-	} 
-	//FallBack "Diffuse"
+        void main() {
+          gl_FragColor = color;
+        }
+      #endif
+      ENDGLSL
+    }
+  } 
+  //FallBack "Diffuse"
 }
 ```
 
@@ -466,57 +483,63 @@ Shader "Custom/Diffuse" {
 lambertian reflectance model은 어두운 부분이 너무 어둡기 때문에 이것을
 보완 하고자 N과 L의 내적값을 [-1,1]에서 [0,1]로 조정한 것이다.
 
-![](File-Alyx_lambert_half_lambert.jpg)
+![](img/200px-Alyx_lambert_half_lambert.jpg)
 
-![](img/File-Lambert_vs_halflambert.png)
+![](img/200px-Lambert_vs_halflambert.png)
 
+
+## WebGL
+
+```glsl
+```
+
+## Unity3d shaderlab
 
 다음은 half lambert diffuse를 unity3d shaderlab으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
 
-```cpp
+```glsl
 Shader "Custom/Half Lambert" {
-	Properties {
-		_Color ("Color", Color) = (1,1,1,1)
-	}
-	SubShader {
-		Pass {
-			Tags { "LightMode" = "ForwardBase" }
+  Properties {
+    _Color ("Color", Color) = (1,1,1,1)
+  }
+  SubShader {
+    Pass {
+      Tags { "LightMode" = "ForwardBase" }
 			
-			GLSLPROGRAM
-	        #include "UnityCG.glslinc"
-	        #if !defined _Object2World
-	        #define _Object2World unity_ObjectToWorld
-	        #endif
+      GLSLPROGRAM
+      #include "UnityCG.glslinc"
+      #if !defined _Object2World
+        #define _Object2World unity_ObjectToWorld
+      #endif
 
-	        uniform vec4 _LightColor0;
-
-	        uniform vec4 _Color;
+      uniform vec4 _LightColor0;
+      uniform vec4 _Color;
 	         
-	        #ifdef VERTEX
-	        out vec4 color;
+      #ifdef VERTEX
+        out vec4 color;
 
-	        void main() {	            
-	            vec3 surfaceNormal = normalize(vec3(_Object2World * vec4(gl_Normal, 0.0)));
-	            vec3 lightDirectionNormal = normalize(vec3(_WorldSpaceLightPos0));
-	            float halfLambert = max(0.0, dot(surfaceNormal, lightDirectionNormal)) * 0.5 + 0.5;
-	            vec3 diffuseReflection = vec3(_LightColor0) * vec3(_Color) * halfLambert * halfLambert;
-	            color = vec4(diffuseReflection, 1.0);
-	            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-	        }
-	        #endif
+        void main() {	            
+          vec3 surfaceNormal = normalize(vec3(_Object2World * vec4(gl_Normal, 0.0)));
+          vec3 lightDirectionNormal = normalize(vec3(_WorldSpaceLightPos0));
+          float halfLambert = max(0.0, dot(surfaceNormal, lightDirectionNormal)) * 0.5 + 0.5;
+          vec3 diffuseReflection = vec3(_LightColor0) * vec3(_Color) * halfLambert * halfLambert;
+          color = vec4(diffuseReflection, 1.0);
+          gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+        }
+      #endif
 
-	        #ifdef FRAGMENT
-	        in vec4 color;
+      #ifdef FRAGMENT
+        in vec4 color;
 
-	        void main() {
-	           gl_FragColor = color;
-	        }
-	        #endif
+        void main() {
+          gl_FragColor = color;
+        }
+      #endif
 
-	        ENDGLSL
-         }
-	} 
+      ENDGLSL
+    }
+  } 
 	//FallBack "Diffuse"
 }
 ```
@@ -532,7 +555,9 @@ phong reflection은 ambient, diffuse, specular term의 합으로 구한다.
 
 ![](img/phong_reflectance_model.png)
 
-![](img/phong_reflectance_model_eq.png)
+![](img/phong_reflectance_model_eq_1.png)
+
+![](img/phong_reflectance_model_eq_2.png)
 
 ```latex
 \begin{align*}
@@ -550,16 +575,16 @@ V     &= \text{normalized vector toward the viewpoint} \\
 H     &= \text{normlized vector that is halfway between V and L} \\
 P     &= \text{vecotr obtained by orthogonal projection of R to N} \\
 A     &= \text{ambient light} \\
-α     &= \text{shiness} \\
+\alpha &= \text{shiness} \\
 \vspace{5mm}
-P     &= N(L \cdot N)
-R - P &= P - L
-R     &= 2P - L
-      &= 2N(L \cdot N) - L
+P     &= N(L \cdot N) \\
+R - P &= P - L \\
+R     &= 2P - L \\
+      &= 2N(L \cdot N) - L \\
 \vspace{5mm}
 I_{A} &= A C\\
 I_{D} &= L \cdot N C I_{L} \\
-I_{S} &= I_{L}C(max(0, R \cdot V))^{α}\\
+I_{S} &= I_{L}C(max(0, R \cdot V))^{\alpha}\\
 \end{align*}
 ```
 
@@ -567,72 +592,78 @@ I_{S} &= I_{L}C(max(0, R \cdot V))^{α}\\
 R대신 H를 이용해서 같은 효과를 얻을 수 있다. 이것을 Blinn-Phong reflection model
 이라고 한다.
 
+![](img/blinn_phong_reflectance_model_eq.png)
+
 ```latex
 H = \frace{L + V}{|L+V|}
 ```
 
-![](img\File-Blinn_phong_comparison.png)
+![](img\File-Blinn_phong_comparison.jpg)
 
 # Gouraud shading
 
 phong reflectance model을 vertex shader에 적용한 것
 
+## WebGL
+
+```glsl
+```
+
+## Unity3d shaderlab
+
 다음은 gouraud shading을 unity3d shader lab으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
 
-```cpp
+```glsl
 Shader "Custom/Gouraud" {
-	Properties {
-		_Color ("Diffuse Color", Color) = (1,1,1,1)
-		_SpecularColor ("Specular Color", Color) = (1,1,1,1)
-		_SpecularExponent ("Specular Exponent", Float) = 3
-	}
-	SubShader {
-		Pass {
-			Tags { "LightMode" = "ForwardBase" }
+  Properties {
+    _Color ("Diffuse Color", Color) = (1,1,1,1)
+        _SpecularColor ("Specular Color", Color) = (1,1,1,1)
+        _SpecularExponent ("Specular Exponent", Float) = 3
+  }
+  SubShader {
+    Pass {
+      Tags { "LightMode" = "ForwardBase" }
 			
-			GLSLPROGRAM
-	        #include "UnityCG.glslinc"
-	        #if !defined _Object2World
-	        #define _Object2World unity_ObjectToWorld
-	        #endif
+      GLSLPROGRAM
+      #include "UnityCG.glslinc"
+      #if !defined _Object2World
+        #define _Object2World unity_ObjectToWorld
+      #endif
 
-	        uniform vec4 _LightColor0;
+      uniform vec4 _LightColor0;
+      uniform vec4 _Color;
+      uniform vec4 _SpecularColor;
+      uniform float _SpecularExponent;
 
-	        uniform vec4 _Color;
-	        uniform vec4 _SpecularColor;
-	        uniform float _SpecularExponent;
+      #ifdef VERTEX
+        out vec4 color;
 
-	        #ifdef VERTEX
-			out vec4 color;
+        void main() {
+          vec3 ambientLight = gl_LightModel.ambient.xyz * vec3(_Color);
+          vec3 surfaceNormal = normalize((_Object2World * vec4(gl_Normal, 0.0)).xyz);
+          vec3 lightDirectionNormal = normalize(_WorldSpaceLightPos0.xyz);
+          vec3 diffuseReflection = _LightColor0.xyz * _Color.xyz * max(0.0, dot(surfaceNormal, lightDirectionNormal));
+          vec3 viewDirectionNormal = normalize((vec4(_WorldSpaceCameraPos, 1.0) - _Object2World * gl_Vertex).xyz);
+          vec3 specularReflection = _LightColor0.xyz * _SpecularColor.xyz
+              * pow(max(0.0, dot(reflect(-lightDirectionNormal, surfaceNormal), viewDirectionNormal)), _SpecularExponent);              
 
-	        void main() {
-	            vec3 ambientLight = gl_LightModel.ambient.xyz * vec3(_Color);
+          color = vec4(ambientLight + diffuseReflection + specularReflection, 1.0);
+          gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+        }
+      #endif
 
-	            vec3 surfaceNormal = normalize((_Object2World * vec4(gl_Normal, 0.0)).xyz);
-	            vec3 lightDirectionNormal = normalize(_WorldSpaceLightPos0.xyz);
-	            vec3 diffuseReflection = _LightColor0.xyz * _Color.xyz * max(0.0, dot(surfaceNormal, lightDirectionNormal));
+      #ifdef FRAGMENT
+        in vec4 color;
 
-                vec3 viewDirectionNormal = normalize((vec4(_WorldSpaceCameraPos, 1.0) - _Object2World * gl_Vertex).xyz);
-				vec3 specularReflection = _LightColor0.xyz * _SpecularColor.xyz
-					* pow(max(0.0, dot(reflect(-lightDirectionNormal, surfaceNormal), viewDirectionNormal)), _SpecularExponent);              
+        void main() {
+          gl_FragColor = color;
+        }
+      #endif
 
-	            color = vec4(ambientLight + diffuseReflection + specularReflection, 1.0);
-	            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-	        }
-	        #endif
-
-	        #ifdef FRAGMENT
-	        in vec4 color;
-
-	        void main() {
-	           gl_FragColor = color;
-	        }
-	        #endif
-
-	        ENDGLSL
-         }
-	} 
+      ENDGLSL
+    }
+  } 
 	//FallBack "Diffuse"
 }
 ```
@@ -641,65 +672,69 @@ Shader "Custom/Gouraud" {
 
 phong reflectance model을 fragment shader에 적용한 것
 
+## WebGL
+
+```glsl
+```
+
+## unity3d shaderlab
+
 다음은 phong shading을 unity3d shader lab으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
 
-```cpp
+```glsl
 Shader "Custom/Phong" {
-	Properties {
-		_Color ("Diffuse Color", Color) = (1,1,1,1)
-		_SpecularColor ("Specular Color", Color) = (1,1,1,1)
-		_SpecularExponent ("Specular Exponent", Float) = 3
-	}
-	SubShader {
-		Pass {
-			Tags { "LightMode" = "ForwardBase" }
+  Properties {
+    _Color ("Diffuse Color", Color) = (1,1,1,1)
+        _SpecularColor ("Specular Color", Color) = (1,1,1,1)
+        _SpecularExponent ("Specular Exponent", Float) = 3
+  }
+  SubShader {
+    Pass {
+      Tags { "LightMode" = "ForwardBase" }
 			
-			GLSLPROGRAM
-	        #include "UnityCG.glslinc"
-	        #if !defined _Object2World
-	        #define _Object2World unity_ObjectToWorld
-	        #endif
+      GLSLPROGRAM
+      #include "UnityCG.glslinc"
+      #if !defined _Object2World
+        #define _Object2World unity_ObjectToWorld
+      #endif
 
-	        uniform vec4 _LightColor0;
+      uniform vec4 _LightColor0;
+      uniform vec4 _Color;
+      uniform vec4 _SpecularColor;
+      uniform float _SpecularExponent;
 
-	        uniform vec4 _Color;
-	        uniform vec4 _SpecularColor;
-	        uniform float _SpecularExponent;
+      #ifdef VERTEX
+        out vec4 glVertexWorld;
+        out vec3 surfaceNormal;
 
-	        #ifdef VERTEX
-			out vec4 glVertexWorld;
-			out vec3 surfaceNormal;
+        void main() {	            
+          surfaceNormal = normalize((_Object2World * vec4(gl_Normal, 0.0)).xyz);
+          glVertexWorld = _Object2World * gl_Vertex;
 
-	        void main() {	            
-	            surfaceNormal = normalize((_Object2World * vec4(gl_Normal, 0.0)).xyz);
-	            glVertexWorld = _Object2World * gl_Vertex;
+          gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+        }
+      #endif
 
-	            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-	        }
-	        #endif
+      #ifdef FRAGMENT
+        in vec4 glVertexWorld;
+        in vec3 surfaceNormal;
 
-	        #ifdef FRAGMENT
-			in vec4 glVertexWorld;
-			in vec3 surfaceNormal;
-
-	        void main() {
-	        	vec3 ambientLight = gl_LightModel.ambient.xyz * vec3(_Color);
+        void main() {
+          vec3 ambientLight = gl_LightModel.ambient.xyz * vec3(_Color);
 	        
-				vec3 lightDirectionNormal = normalize(_WorldSpaceLightPos0.xyz);
-	            vec3 diffuseReflection = _LightColor0.xyz * _Color.xyz * max(0.0, dot(surfaceNormal, lightDirectionNormal));
-
-                vec3 viewDirectionNormal = normalize((vec4(_WorldSpaceCameraPos, 1.0) - glVertexWorld).xyz);
-				vec3 specularReflection = _LightColor0.xyz * _SpecularColor.xyz
-					* pow(max(0.0, dot(reflect(-lightDirectionNormal, surfaceNormal), viewDirectionNormal)), _SpecularExponent);                      
+          vec3 lightDirectionNormal = normalize(_WorldSpaceLightPos0.xyz);
+          vec3 diffuseReflection = _LightColor0.xyz * _Color.xyz * max(0.0, dot(surfaceNormal, lightDirectionNormal));          
+          vec3 viewDirectionNormal = normalize((vec4(_WorldSpaceCameraPos, 1.0) - glVertexWorld).xyz);
+          vec3 specularReflection = _LightColor0.xyz * _SpecularColor.xyz
+              * pow(max(0.0, dot(reflect(-lightDirectionNormal, surfaceNormal), viewDirectionNormal)), _SpecularExponent);                      
 	        
-	        	gl_FragColor = vec4(ambientLight + diffuseReflection + specularReflection, 1.0);
-	        }
-	        #endif
-
-	        ENDGLSL
-         }
-	} 
+          gl_FragColor = vec4(ambientLight + diffuseReflection + specularReflection, 1.0);
+        }
+      #endif
+      ENDGLSL
+    }
+  } 
 	//FallBack "Diffuse"
 }
 ```
@@ -709,69 +744,69 @@ Shader "Custom/Phong" {
 빛에 의해 오브젝트의 외곽이 빛나는 현상. N과 L의 사이각이 0일때 가장
 약하고 90일때 가장 강하다.
 
+## WebGL
+
+## unity3d shaderlab
+
 다음은 phong shading과 rim lighting을 unity3d shader lab으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
 
-```cpp
+```glsl
 Shader "Custom/Rim" {
-	Properties {
-		_Color ("Diffuse Color", Color) = (1,1,1,1)
-		_SpecularColor ("Specular Color", Color) = (1,1,1,1)
-		_SpecularExponent ("Specular Exponent", Float) = 3
-		_RimColor ("Rim Color", Color) = (0,1,0,1)
-	}
-	SubShader {
-		Pass {
-			Tags { "LightMode" = "ForwardBase" }
+  Properties {
+    _Color ("Diffuse Color", Color) = (1,1,1,1)
+    _SpecularColor ("Specular Color", Color) = (1,1,1,1)
+    _SpecularExponent ("Specular Exponent", Float) = 3
+    _RimColor ("Rim Color", Color) = (0,1,0,1)
+  }
+  SubShader {
+    Pass {
+      Tags { "LightMode" = "ForwardBase" }
 			
-			GLSLPROGRAM
-	        #include "UnityCG.glslinc"
-	        #if !defined _Object2World
-	        #define _Object2World unity_ObjectToWorld
-	        #endif
+      GLSLPROGRAM
+      #include "UnityCG.glslinc"
+      #if !defined _Object2World
+        #define _Object2World unity_ObjectToWorld
+      #endif
 
-	        uniform vec4 _LightColor0;
+      uniform vec4 _LightColor0;
+      uniform vec4 _Color;
+      uniform vec4 _SpecularColor;
+      uniform float _SpecularExponent;
+      uniform vec4 _RimColor;
 
-	        uniform vec4 _Color;
-	        uniform vec4 _SpecularColor;
-	        uniform float _SpecularExponent;
-	        uniform vec4 _RimColor;
+      #ifdef VERTEX
+      out vec4 glVertexWorld;
+      out vec3 surfaceNormal;
 
-	        #ifdef VERTEX
-	        out vec4 glVertexWorld;
-	        out vec3 surfaceNormal;
+      void main() {	            
+        surfaceNormal = normalize((_Object2World * vec4(gl_Normal, 0.0)).xyz);
+        glVertexWorld = _Object2World * gl_Vertex;
+        gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+      }
+      #endif
 
-	        void main() {	            
-	            surfaceNormal = normalize((_Object2World * vec4(gl_Normal, 0.0)).xyz);
-	            glVertexWorld = _Object2World * gl_Vertex;
+      #ifdef FRAGMENT
+      in vec4 glVertexWorld;
+      in vec3 surfaceNormal;
 
-	            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-	        }
-	        #endif
+      void main() {
+        vec3 ambientLight = gl_LightModel.ambient.xyz * vec3(_Color);	
+        vec3 lightDirectionNormal = normalize(_WorldSpaceLightPos0.xyz);
+        vec3 diffuseReflection = _LightColor0.xyz * _Color.xyz * max(0.0, dot(surfaceNormal, lightDirectionNormal));
+        vec3 viewDirectionNormal = normalize((vec4(_WorldSpaceCameraPos, 1.0) - glVertexWorld).xyz);
+        vec3 specularReflection = _LightColor0.xyz * _SpecularColor.xyz
+            * pow(max(0.0, dot(reflect(-lightDirectionNormal, surfaceNormal), viewDirectionNormal)), _SpecularExponent);                      
 
-	        #ifdef FRAGMENT
-	        in vec4 glVertexWorld;
-	        in vec3 surfaceNormal;
+        float rim = 1.0 - saturate(dot(viewDirectionNormal, surfaceNormal));        
+        gl_FragColor.xyz = ambientLight + diffuseReflection + specularReflection + vec3(smoothstep(0.5, 1.0, rim)) * _RimColor.xyz;
+        gl_FragColor.w = 1.0;
+      }
+      #endif
 
-	        void main() {
-	        	vec3 ambientLight = gl_LightModel.ambient.xyz * vec3(_Color);
-	        
-				vec3 lightDirectionNormal = normalize(_WorldSpaceLightPos0.xyz);
-	            vec3 diffuseReflection = _LightColor0.xyz * _Color.xyz * max(0.0, dot(surfaceNormal, lightDirectionNormal));
-
-                vec3 viewDirectionNormal = normalize((vec4(_WorldSpaceCameraPos, 1.0) - glVertexWorld).xyz);
-				vec3 specularReflection = _LightColor0.xyz * _SpecularColor.xyz
-					* pow(max(0.0, dot(reflect(-lightDirectionNormal, surfaceNormal), viewDirectionNormal)), _SpecularExponent);                      
-
-	        	float rim = 1.0 - saturate(dot(viewDirectionNormal, surfaceNormal));        
-	        	gl_FragColor.xyz = ambientLight + diffuseReflection + specularReflection + vec3(smoothstep(0.5, 1.0, rim)) * _RimColor.xyz;
-	        	gl_FragColor.w = 1.0;
-	        }
-	        #endif
-
-	        ENDGLSL
-         }
-	} 
+      ENDGLSL
+    }
+  } 
 	//FallBack "Diffuse"
 }
 ```
@@ -795,11 +830,10 @@ G(L,V,H)는 기하감쇠(geometric attenuation)이다. 미세면의
 I_{s} = \frac {D(H)F(V, H)G(L, V, H)} {4(N \cdot L)(N \cdot V)}
 ```
 
-다음은 cook-torrance model을 unity3d shader lab으로 구현한 것이다.
-[참고](https://github.com/ryukbk/mobile_game_math_unity)
-
 D(H)는 다음과 같이 GGX(trowbridge-Reitz) 알고리즘을 NDF로 이용했다.
 NDF는 그밖에도 블린퐁이나 베크만(Beckmann)을 이용하기도 한다.
+
+![](img/cook_torrance_ggx_eq.png)
 
 ```latex
 \begin{align*}
@@ -808,118 +842,128 @@ D_{ggx}(H) &= \frac {\alpha^{2}} {\pi((N \cdot H)^{2}(\alpha^{2}-1)+1)^{2}} \\
 \end{align*}
 ```
 
-F(V,H)는 다음과 같이 Schilick's approximation을 이용했다.
+F(V,H)는 다음과 같이 Schlick's approximation을 이용했다.
+
+![](img/cook_torrance_schlick_eq.png)
 
 ```latex
 F_{schilick}(V,H) = F_{0} + (1 - F_{0})(1 - V \cdot H)^{5}
-
 ```
 
 G(L,V,H)는 다음과 같이 cook-torrance가 1982년에 발표한 논문에 실린
 식을 이용했다.
 
+
+![](img/cook_torrance_geometry_att_eq.png)
+
 ```latex
-G_{cook_torrance}(L,V,H) = min(1, \frac {2 (N \cdot H)(N \cdot V)} {V \cdot H}, \frac {2(N \cdot H)(N \cdot L)} {V \cdot H})
+G_{cook-torrance}(L,V,H) = min(1, \frac {2 (N \cdot H)(N \cdot V)} {V \cdot H}, \frac {2(N \cdot H)(N \cdot L)} {V \cdot H})
 ```
 
 마지막에 0.000001을 더해서 0으로 나누기를 방지하자.
 
-```cpp
+## WebGL
+
+## unity3d shader lab
+
+다음은 cook-torrance model을 unity3d shader lab으로 구현한 것이다.
+[참고](https://github.com/ryukbk/mobile_game_math_unity)
+
+```glsl
 Shader "Custom/CookTorrance" {
-	Properties {
-		_Color ("Diffuse Color", Color) = (1,1,1,1)
-		_Roughness ("Roughness", Float) = 0.5
-		_FresnelReflectance ("Fresnel Reflectance", Float) = 0.5
-	}
-	SubShader {
-		Pass {
-			Tags { "LightMode" = "ForwardBase" }
+  Properties {
+    _Color ("Diffuse Color", Color) = (1,1,1,1)
+    _Roughness ("Roughness", Float) = 0.5
+    _FresnelReflectance ("Fresnel Reflectance", Float) = 0.5
+  }
+  SubShader {
+    Pass {
+      Tags { "LightMode" = "ForwardBase" }
 			
-			GLSLPROGRAM
-	        #include "UnityCG.glslinc"
-	        #if !defined _Object2World
-	        #define _Object2World unity_ObjectToWorld
-	        #endif
+      GLSLPROGRAM
+      #include "UnityCG.glslinc"
+      #if !defined _Object2World
+        #define _Object2World unity_ObjectToWorld
+      #endif
 
-	        uniform vec4 _LightColor0;
+      uniform vec4 _LightColor0;
+      uniform vec4 _Color;
+      uniform float _Roughness;
+      uniform float _FresnelReflectance;
 
-	        uniform vec4 _Color;
-	        uniform float _Roughness;
-	        uniform float _FresnelReflectance;
+      #ifdef VERTEX
+      out vec4 glVertexWorld;
+      out vec3 surfaceNormal;
 
-	        #ifdef VERTEX
-	        out vec4 glVertexWorld;
-	        out vec3 surfaceNormal;
+      void main() {	            
+        surfaceNormal = normalize((_Object2World * vec4(gl_Normal, 0.0)).xyz);
+        glVertexWorld = _Object2World * gl_Vertex;
+        gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
+      }
+      #endif
 
-	        void main() {	            
-	            surfaceNormal = normalize((_Object2World * vec4(gl_Normal, 0.0)).xyz);
-	            glVertexWorld = _Object2World * gl_Vertex;
+      #ifdef FRAGMENT
+      in vec4 glVertexWorld;
+      in vec3 surfaceNormal;
 
-	            gl_Position = gl_ModelViewProjectionMatrix * gl_Vertex;
-	        }
-	        #endif
-
-	        #ifdef FRAGMENT
-	        in vec4 glVertexWorld;
-	        in vec3 surfaceNormal;
-
-	        void main() {
-	        	vec3 ambientLight = gl_LightModel.ambient.xyz * vec3(_Color);
+      void main() {
+        vec3 ambientLight = gl_LightModel.ambient.xyz * vec3(_Color);
 	        
-				vec3 lightDirectionNormal = normalize(_WorldSpaceLightPos0.xyz);
-				float NdotL = saturate(dot(surfaceNormal, lightDirectionNormal));
+        vec3 lightDirectionNormal = normalize(_WorldSpaceLightPos0.xyz);
+        float NdotL = saturate(dot(surfaceNormal, lightDirectionNormal));
+        vec3 viewDirectionNormal = normalize((vec4(_WorldSpaceCameraPos, 1.0) - glVertexWorld).xyz);
+        float NdotV = saturate(dot(surfaceNormal, viewDirectionNormal));
+        vec3 halfVector = normalize(lightDirectionNormal + viewDirectionNormal);
+        float NdotH = saturate(dot(surfaceNormal, halfVector));
+        float VdotH = saturate(dot(viewDirectionNormal, halfVector));
 
-			   	vec3 viewDirectionNormal = normalize((vec4(_WorldSpaceCameraPos, 1.0) - glVertexWorld).xyz);
-			   	float NdotV = saturate(dot(surfaceNormal, viewDirectionNormal));
+        float roughness = saturate(_Roughness);
+        float alpha = roughness * roughness;
+        float alpha2 = alpha * alpha;
+        float t = ((NdotH * NdotH) * (alpha2 - 1.0) + 1.0);
+        float PI = 3.1415926535897;
+        float D = alpha2 / (PI * t * t);
 
-			    vec3 halfVector = normalize(lightDirectionNormal + viewDirectionNormal);
-			    float NdotH = saturate(dot(surfaceNormal, halfVector));
-			    float VdotH = saturate(dot(viewDirectionNormal, halfVector));
+        float F0 = saturate(_FresnelReflectance);
+        float F = pow(1.0 - VdotH, 5.0);
+        F *= (1.0 - F0);
+        F += F0;
 
-				float roughness = saturate(_Roughness);
-			    float alpha = roughness * roughness;
-			    float alpha2 = alpha * alpha;
-				float t = ((NdotH * NdotH) * (alpha2 - 1.0) + 1.0);
-				float PI = 3.1415926535897;
-				float D = alpha2 / (PI * t * t);
+        float NH2 = 2.0 * NdotH;
+        float g1 = (NH2 * NdotV) / VdotH;
+        float g2 = (NH2 * NdotL) / VdotH;
+        float G = min(1.0, min(g1, g2));
 
-			    float F0 = saturate(_FresnelReflectance);
-			    float F = pow(1.0 - VdotH, 5.0);
-			    F *= (1.0 - F0);
-			    F += F0;
+        float specularReflection = (D * F * G) / (4.0 * NdotV * NdotL + 0.000001);
+        vec3 diffuseReflection = _LightColor0.xyz * _Color.xyz * NdotL;
 
-			    float NH2 = 2.0 * NdotH;
-			    float g1 = (NH2 * NdotV) / VdotH;
-			    float g2 = (NH2 * NdotL) / VdotH;
-			    float G = min(1.0, min(g1, g2));
+        gl_FragColor = vec4(ambientLight + diffuseReflection + specularReflection, 1.0);
+      }
+      #endif
 
-			    float specularReflection = (D * F * G) / (4.0 * NdotV * NdotL + 0.000001);
-				vec3 diffuseReflection = _LightColor0.xyz * _Color.xyz * NdotL;
-
-			    gl_FragColor = vec4(ambientLight + diffuseReflection + specularReflection, 1.0);
-	        }
-	        #endif
-
-	        ENDGLSL
-         }
-	} 
+      ENDGLSL
+    }
+  } 
 	//FallBack "Diffuse"
 }
 ```
 
 # Oren-Nayar Model
 
-...
+## WebGL
+
+## unity3d shader lab
+
+```glsl
+```
 
 # Physically Based Rendering
 
-[PBR](../pbr/README.md)
+[PBR](/pbr/README.md)
 
 # Ray Tracing
 
 ![](img/ray_tracing_1.png)
-
-![](img/ray_tracing_2.png)
 
 view frustumn은 camera에 수렴하는 투영선(projection line)의 집합이다.
 투영선의 개수는 스크린 공간의 뷰포트 해상도와 같다. 투영선 하나가 픽셀
@@ -929,6 +973,8 @@ view frustumn은 camera에 수렴하는 투영선(projection line)의 집합이�
 발사된다.  이후 오브젝트와 충돌하면 2차 광선(secondary ray)에 해당하는
 그림자 광선(shadow ray), 반사 광선(reflection ray), 굴절
 광선(refraction ray)가 발사된다.
+
+![](img/ray_tracing_2.png)
 
 충돌점을 p1이라고 하자 그림자 광선 s1은 광원으로 날아간다. 
 가는 도중 다른 오브젝트와 충돌하면 p1은 광원의 직접적인 영향권에 있지

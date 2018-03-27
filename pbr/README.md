@@ -203,13 +203,14 @@ vec4 SRGBtoLINEAR(vec4 srgbIn)
 
 ## WegGL
 
-khronos group에서 제작한 wegl예제를 참고하자.
-[demo](http://github.khronos.org/glTF-WebGL-PBR/) [src](https://github.com/KhronosGroup/glTF-WebGL-PBR)
+khronos group에서 제작한 wegl예제를 참고하자. [src](https://github.com/KhronosGroup/glTF-WebGL-PBR/blob/master/shaders/pbr-frag.glsl) 를 살펴보면 어떤 식을 사용해서 구현했는지 알 수 있다.
+
+* [demo](http://github.khronos.org/glTF-WebGL-PBR/) 
+* [src](https://github.com/KhronosGroup/glTF-WebGL-PBR)
 
 ## Unity3d
 
 ### Unity3d builtin 
-
 
 unity의 Standard Shader는 PBR을 지원한다.  UnityStandardBRDF.cginc에서 다양한
 근사와 조정이 이루어진 BRDF를 확인할 수 있다. UnityStandardCore.cginc와 UnityGlobalIllumination.cginc에서 이용법을 확인 할 수 있다. Standard Shader는 다음과 같이 플래폼별로 구현이 나뉘어져 있다.
@@ -220,7 +221,7 @@ unity의 Standard Shader는 PBR을 지원한다.  UnityStandardBRDF.cginc에서 
   사전 계산 결과 텍스처 참조(lookup texture, LUT)
 
 [이곳](http://www.jordanstevenstechart.com/physically-based-rendering)은 unity3d를
-이용하여 pbr을 자세히 풀어쓴 글이다.
+이용하여 pbr 구현 과정을 자세히 풀어쓴 글이다.
 
 ## Unreal Engine 4
 
