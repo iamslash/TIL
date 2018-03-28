@@ -4,11 +4,11 @@
 - [Abstract](#abstract)
 - [Material](#material)
 - [Basic](#basic)
-    - [Standard library](#standard-library)
-    - [Variable types](#variable-types)
-    - [Type qualifiers](#type-qualifiers)
-    - [Interface blocks](#interface-blocks)
-    - [Predefined variables](#predefined-variables)
+  - [Standard library](#standard-library)
+  - [Variable types](#variable-types)
+  - [Type qualifiers](#type-qualifiers)
+  - [Interface blocks](#interface-blocks)
+  - [Predefined variables](#predefined-variables)
 - [Tutorial](#tutorial)
 - [References](#references)
 
@@ -22,14 +22,14 @@ glsl에 대해 정리한다.
 
 # Material
 
+* [webgl workshop](https://github.com/stackgl/webgl-workshop)
+  * webgl 연습문제
 * [shader school](https://github.com/stackgl/shader-school)
   * glsl 연습문제
 * [fragment foundry](http://hughsk.io/fragment-foundry/chapters/01-hello-world.html)
   * fragment shader 연습문제
-* [webgl workshop](https://github.com/stackgl/webgl-workshop)
-  * webgl 연습문제
 * [opengl shading language wiki](https://www.khronos.org/opengl/wiki/OpenGL_Shading_Language)
-* [WebGL Shaders and GLSL](https://webglfundamentals.org/webgl/lessons/webgl-shaders-and-glsl.html)
+* [WebGL Shaders and GLSL @ webglfundamentals](https://webglfundamentals.org/webgl/lessons/webgl-shaders-and-glsl.html)
   * glsl은 간편하게 webgl에서 학습하자.
 * [Interactive 3D Graphics @ udacity](https://www.udacity.com/course/interactive-3d-graphics--cs291)
   * webgl을 이용한 3d graphics의 이론
@@ -67,7 +67,8 @@ interpolate된 값이 넘어온다.
 
 # Tutorial
 
-* [simple twgl](https://rawgit.com/iamslash/TIL/master/glsl/ex/a.html)
+* simple twgl
+  * [demo](https://rawgit.com/iamslash/TIL/master/glsl/ex/a.html)
   * [src](ex/a.html)
 
 # References
