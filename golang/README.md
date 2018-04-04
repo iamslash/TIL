@@ -75,6 +75,8 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 ## Tutorial
 
+* [예제로배우는GO](http://golang.site/)
+  * 최고의 한글 튜토리얼
 * [golang cheatsheet](https://github.com/a8m/go-lang-cheat-sheet)
   * 최고의 요약
 * [A Tour of Go video](https://research.swtch.com/gotour)

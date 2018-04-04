@@ -15,6 +15,7 @@
 - [Output Merging](#output-merging)
 - [[Lighting](../lighting/README.md)](#lightinglightingreadmemd)
 - [Shader Models](#shader-models)
+- [Shader Language](#shader-language)
 - [Curve](#curve)
 - [[Bump Mapping](../bumpmapping/README.md)](#bump-mappingbumpmappingreadmemd)
 - [Environment Mapping](#environment-mapping)
@@ -422,6 +423,12 @@ geometry shader, stream output이 추가되었다.
 hull shader, tessellator, domain shader가 추가되었다.
 
 ![](img/shader_model_5.png)
+
+# Shader Language
+
+* [cg](/cg/README.md)
+* [hlsl](/hlsl/README.md)
+* [glsl](/glsl/README.md)
 
 # Curve
 
