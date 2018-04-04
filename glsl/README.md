@@ -22,6 +22,10 @@ glsl에 대해 정리한다.
 
 # Material
 
+* [webgl 1.0 api quick reference card](https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf)
+  * glsl 포함 킹왕짱 요약 카드
+* [openGL 4.5 API Reference Card](https://www.khronos.org/files/opengl45-quick-reference-card.pdf) 
+  * glsl 포함 킹왕짱 요약 카드
 * [webgl workshop](https://github.com/stackgl/webgl-workshop)
   * webgl 연습문제
 * [shader school](https://github.com/stackgl/shader-school)

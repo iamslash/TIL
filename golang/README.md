@@ -1,4 +1,4 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
+﻿<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
 - [Abstract](#abstract)
@@ -75,8 +75,10 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 ## Tutorial
 
-* [예제로배우는GO](http://golang.site/)
-  * 최고의 한글 튜토리얼
+* [예제로 배우는 GO프로그래밍](http://golang.site/)
+  * 최고의 한글 예제들
+* [go by example](https://gobyexample.com/)
+  * 최고의 예제들
 * [golang cheatsheet](https://github.com/a8m/go-lang-cheat-sheet)
   * 최고의 요약
 * [A Tour of Go video](https://research.swtch.com/gotour)
