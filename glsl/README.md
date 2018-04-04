@@ -22,6 +22,8 @@ glsl에 대해 정리한다.
 
 # Material
 
+* [The OpenGL ES Shading Language](https://www.khronos.org/files/opengles_shading_language.pdf)
+  * glsl 1.0 manual
 * [webgl 1.0 api quick reference card](https://www.khronos.org/files/webgl/webgl-reference-card-1_0.pdf)
   * glsl 포함 킹왕짱 요약 카드
 * [openGL 4.5 API Reference Card](https://www.khronos.org/files/opengl45-quick-reference-card.pdf) 
