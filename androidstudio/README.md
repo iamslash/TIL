@@ -57,3 +57,19 @@ android os로 부터 global event를 수신할 수 있는 클래스. 역시 UI�
 
 normal permission보다 위험하여 유저의 허가가 필요한 권한이다. 
 [리스트](https://developer.android.com/guide/topics/permissions/overview.html#permission-groups)
+
+# Tools
+
+## jarsigner
+
+* a.apk signing하기
+
+```
+jarsigner -verbose -keystore dma.keystore -storepass xxxxxx -keypass xxxxxx a.apk iamslash
+```
+
+* a.apk가 signining되었는지 확인하기
+
+```
+jarsigner -verify -verbose -certs a.apk
+```
