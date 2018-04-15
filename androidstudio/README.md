@@ -4,10 +4,16 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Concepts](#concepts)
+    - [Overview](#overview)
+    - [Androidmanifest.xml](#androidmanifestxml)
     - [Activity](#activity)
+    - [Fragment](#fragment)
     - [Intent](#intent)
     - [Service](#service)
-    - [Androidmanifest.xml](#androidmanifestxml)
+    - [Broadcast receiver](#broadcast-receiver)
+    - [Dangerous permissions](#dangerous-permissions)
+- [Tools](#tools)
+    - [jarsigner](#jarsigner)
 
 <!-- markdown-toc end -->
 
@@ -72,4 +78,23 @@ jarsigner -verbose -keystore dma.keystore -storepass xxxxxx -keypass xxxxxx a.ap
 
 ```
 jarsigner -verify -verbose -certs a.apk
+```
+
+* a.apk를 재서명 하기
+
+```
+zip d a.apk META-INF/\*
+jarsigner -verbose -keystore dma.keystore -storepass xxxxxx -keypass xxxxxx a.apk iamslash
+```
+
+* a.keystore의 fingerprint출력하기
+
+```
+keytool -list -v -keystore a.keystore -alias iamslash -storepass xxxxx -keypass xxxxx
+```
+
+* zip algin하기
+
+```
+zipalign -v 4 a.apk a.apk
 ```
