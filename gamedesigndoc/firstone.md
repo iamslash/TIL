@@ -5,9 +5,11 @@
 
 # Overview
 
-황양의 무법자들을 헤치우는 정말 재밌는 게임. 
+숲속에서 핵앤슬래시 하는 게임
 
-# Character Stats
+# Story
+
+# Characters
 
 **[^1]캐릭터의 스탯은 성장 스탯과 전투 스탯으로 나누어 진다.** 성장 스탯은
 얼만큼 성장 했는지를 표현해준다. 예를 들어 level, grade, rarity, star
@@ -19,3 +21,43 @@
 같다.
 
 [^1]: 
+
+# Items
+
+# Skills
+
+# Controlls
+
+# Assets
+
+## App icon
+
+## Promotions
+
+## 2D GUI
+
+## 2D Characters
+
+## 2D Environments
+
+## 3D Character Models
+
+## 3D Character Textures
+
+## 3D Character Animations
+
+## 3D Environment Models
+
+## 3D Environment Textures
+
+## 3D Environment Animations
+
+## 3D Effect Particles
+
+## 3D Projectiles
+
+## Sound
+
+## Video
+
+# Schedules
