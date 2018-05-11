@@ -50,6 +50,8 @@
 
 # Learning material
 
+- [Google AI course](https://ai.google/education)
+  - 구글의 AI 코스웨어
 - 김훈 링크
 
   1. 뽀로로QA와 심층 임베딩 메모리망, 김경민, 서울대 박사과정, http://tv.naver.com/v/2231323
