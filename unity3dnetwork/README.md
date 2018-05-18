@@ -1,8 +1,33 @@
-# intro
+- [Intro](#intro)
+- [Materials](#materials)
+- [UNET vs PUN vs Proud](#unet-vs-pun-vs-proud)
+- [unity3d](#unity3d)
+  - [Server](#server)
+  - [Client](#client)
+  - [Cloud](#cloud)
+- [Proudnet](#proudnet)
+  - [Server](#server)
+  - [Client](#client)
+- [PUN](#pun)
+  - [Server](#server)
+  - [Client](#client)
+  - [Cloud](#cloud)
+- [Reference](#reference)
+
+----
+
+# Intro
 
 - unity3d로 network를 구현하는 방법에 대해 정리해본다.
 
-# Library
+# Materials
+
+* [barebones-masterserver](https://github.com/alvyxaz/barebones-masterserver)
+  * opensource masterserver
+* [Forge](https://github.com/BeardedManStudios/ForgeNetworkingRemastered)
+  * opensource unity3d network framework
+
+# UNET vs PUN vs Proud
 
 |  | UNET  | PUN  | Proud  |
 |:---:|:---:|:---:|:---:|
@@ -74,7 +99,6 @@ bool IsHeadless() {
   - isLocalPlayer - true if the object is a player object for this client.
   - hasAuthority - true if the object is owned by the local process
 - 유저의 입력을 받아 움직일때, 총을 쏠때 처리방법
-  - 
 
 ## Cloud
 
