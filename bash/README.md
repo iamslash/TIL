@@ -1,6 +1,3 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
 - [References](#references)
 - [Shell Metachars](#shell-metachars)
@@ -74,8 +71,6 @@
     - [signal list](#signal-list)
     - [kill](#kill)
     - [trap](#trap)
-
-<!-- markdown-toc end -->
 
 -------------------------------------------------------------------------------
 
@@ -1333,11 +1328,7 @@ echo $(( 3 + 7 ))
 >( <COMMANDS> )
 ```
 
-`command1 > >( command2 )` 명령의 경우 command1 의 stdout 이 command2 의
-stdin 과 연결되며 `command1 < <( command2 )` 명령의 경우는 command2 의
-stdout 이 command1 의 stdin 과 연결됩니다.  현재 shell pid 를 나타내는
-$$ 변수는 subshell 에서도 동일한 값을 가지므로 >( ) 표현식 내에서의 FD
-상태를 보기 위해서는 $BASHPID 변수를 이용해야 합니다.
+`command1 > >( command2 )` 명령의 경우 command1 의 stdout 이 command2 의 stdin 과 연결되며 `command1 < <( command2 )` 명령의 경우는 command2 의 stdout 이 command1 의 stdin 과 연결됩니다.  현재 shell pid 를 나타내는 $$ 변수는 subshell 에서도 동일한 값을 가지므로 >( ) 표현식 내에서의 FD 상태를 보기 위해서는 $BASHPID 변수를 이용해야 합니다.
 
 
 ```bash
