@@ -134,7 +134,7 @@ echo "foo" 2>> a.txt
 
 # &>
 # redirect stdout, stderr of a command to a file
-echo "foo" 2>> a.txt
+echo "foo" &> a.txt
 
 # 1>&2
 # redirect stdout of a command to stderr

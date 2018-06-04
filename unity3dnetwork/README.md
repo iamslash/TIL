@@ -29,15 +29,15 @@
 
 # UNET vs PUN vs Proud
 
-|  | UNET  | PUN  | Proud  |
-|:---:|:---:|:---:|:---:|
-| Cloud Service  | o  | o  | X  |
-| Price  |   |   |   |
-| Custom Server | X | O | O |
-| Server Platform | ? | Windows | Windows, Linux |
-| Client Integration | NetworkIdentity, NetworkTransform, SyncVars, Command, ClientRpc | PhotonView, PhotonTransformView  |   |
+|  | UNET  | PUN  | Proud | Forge |
+|:---:|:---:|:---:|:---:|:---:|
+| Cloud Service  | o  | o  | X  | X |
+| Price  |   |   |   | Free |
+| Custom Server | X | O | O | O |
+| Server Platform | ? | Windows | Windows, Linux | Win, Linux, Mac |
+| Client Integration | NetworkIdentity, NetworkTransform, SyncVars, Command, ClientRpc | PhotonView, PhotonTransformView  |   |  |
 
-# unity3d
+# UNET
 
 ## Server
 - NetworkManager 혹은 HLAPI로 구현하는 방법과 LLAPI로 구현하는 방법이 있다.
@@ -104,6 +104,10 @@ bool IsHeadless() {
 
 - Unity에서 machmaking, relay server등을 cloud service한다. 
   relay server는 대한민국에서 느리다는 평가가 있다.
+
+# Forge
+
+Forge remastered 라는 이름으로 opensource 되었다. 아주 유용해 보인다.
 
 # Proudnet
 
