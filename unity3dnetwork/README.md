@@ -26,6 +26,7 @@
   * opensource masterserver
 * [Forge](https://github.com/BeardedManStudios/ForgeNetworkingRemastered)
   * opensource unity3d network framework
+  * [doc](http://docs.forgepowered.com/)
 
 # UNET vs PUN vs Proud
 
@@ -104,7 +105,7 @@ bool IsHeadless() {
 
 # Forge
 
-Forge remastered 라는 이름으로 opensource 되었다. 아주 유용해 보인다. NCW (Network Component Wizard) 를 이용하여 `ABehaviour, ANetworkObject` 를 생성한다. `ANetworkObject` instance 는 `ABehaviour` 의 member로 접근가능하다. `A` 는 `ABehaviour` 를 상속받는다. 다음과 같이 `IsServer` 를 이용하여 `A` 가 server 에서 실행되는지 client 에서 실행되는지에 따라 logic 을 달리한다.
+Forge remastered 라는 이름으로 opensource 되었다. 아주 유용해 보인다. NCW (Network Contract Wizard) 를 이용하여 네트워크를 통해서 공유할 field, rpc method 를 적당히 추가한 후에 `ABehaviour, ANetworkObject` 스크립트를 생성한다. `ANetworkObject` instance 는 `ABehaviour` 의 member로 접근가능하다. `A` 는 `ABehaviour` 를 상속받는다. 다음과 같이 `IsServer` 를 이용하여 `A` 가 server 에서 실행되는지 client 에서 실행되는지에 따라 logic 을 달리한다.
 
 ```cs
 using UnityEngine;
@@ -123,6 +124,22 @@ public class A : ABehaviour {
 
 }
 ```
+
+forge framework 를 활용하면 멀티세션 서버를 구현할 수 있을 것 같다. [이곳](http://docs.forgepowered.com/working-with-multiple-sockets/)을 참고해서 추론해본다. dedicated server 는 다음과 같이 port 별 server instance 를 생성하여 구현한다.
+
+```cs
+UDPServer server1 = new UDPServer(32); // Only allowing 32 connections to this UDP server
+server1.Connect();
+
+ushort myPort = 15959;
+TCPServer server2 = new TCPServer(364); // Only allowing 64 connections to this TCP server
+server2.Connect(myPort);
+
+UDPServer server3 = new UDPServer(1024); // Only allowing 1024 connections to this UDP server
+server3.Connect(myPort + 1);
+```
+
+client 가 특정 dedicated server 의 특정 port에 접속하기 위해서는 gate server 가 필요하다. gate server 는 특정 port 를 listen  하다가 client 가 접속하면 client 가 게임하기 위해 필요한 dedicated server ip, port 를 알려준다. 이후 client 가 dedicated server 에 접속하여 플레이 한다.
 
 # Proudnet
 
