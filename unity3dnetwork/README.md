@@ -1,17 +1,14 @@
 - [Intro](#intro)
 - [Materials](#materials)
-- [UNET vs PUN vs Proud](#unet-vs-pun-vs-proud)
-- [unity3d](#unity3d)
+- [Network Framewrk Benchmark](#network-framewrk-benchmark)
+- [UNET](#unet)
   - [Server](#server)
   - [Client](#client)
   - [Cloud](#cloud)
+- [Forge](#forge)
 - [Proudnet](#proudnet)
   - [Server](#server)
   - [Client](#client)
-- [PUN](#pun)
-  - [Server](#server)
-  - [Client](#client)
-  - [Cloud](#cloud)
 - [Reference](#reference)
 
 ----
@@ -28,27 +25,28 @@
   * opensource unity3d network framework
   * [doc](http://docs.forgepowered.com/)
 
-# UNET vs PUN vs Proud
+# Network Framewrk Benchmark
 
-|  | UNET  | PUN  | Proud | Forge |
-|:---:|:---:|:---:|:---:|:---:|
-| Cloud Service  | o  | o  | X  | X |
-| Price  |   |   |   | Free |
-| Custom Server | X | O | O | O |
-| Server Platform | ? | Windows | Windows, Linux | Win, Linux, Mac |
-| Client Integration | NetworkIdentity, NetworkTransform, SyncVars, Command, ClientRpc | PhotonView, PhotonTransformView  |   |  |
+|  | UNET  | PUN  | Proud | Forge | Nakama |
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| Cloud Service  | o  | o  | X  | X | O |
+| Price  | Paid | Paid | Paid | Free | Free |
+| Custom Server | X | O | O | O | O |
+| Server Platform | ? | Windows | Windows, Linux | Win, Linux, Mac | Windows, Linux, Mac |
+| Client Integration | NetworkIdentity, NetworkTransform, SyncVars, Command, ClientRpc | PhotonView, PhotonTransformView  | ...  | ABehaviour, ANetworkObject | ... |
 
 # UNET
 
 ## Server
 - NetworkManager 혹은 HLAPI로 구현하는 방법과 LLAPI로 구현하는 방법이 있다.
-- LLAPI를 이용해서 dedicated server를 구현할 수 있다. Build Settings 에서 
-  Target platform을 Linux로 하고 Headless mode로 빌드한다면 Linux에서 
+- 하나의 프로세스에서 하나의 룸을 처리한다면 HLAPI 를 이용하여 dedicated server 구현이         가능하다. 하나의 프로세스에서 여러개의 룸을 처리할 수도 있지 않을까???
+- Target platform을 Linux로 하고 Headless mode로 빌드한다면 Linux에서 
   command line으로 실행가능하다. 현재(20170516) Headless Mode는 linux만 지원한다.
   ubuntu linux에서 잘 작동한다고 하니 참고하자. mono는 안정성과 수행성능면에서 적당할까???
 - [UNET Server Hosting Tutorial](https://noobtuts.com/unity/unet-server-hosting)을 읽어보자. 
   Linux환경에서 headless server 를 실행하는 과정이 담겨 있다. [Detect Headless Mode in Unity](https://noobtuts.com/unity/detect-headless-mode)
   를 읽어보자. 다음과 같은 코드를 이용해서 현재 headless모드인지 알수 있다.
+
 ```c#
 void Awake() {
     if (IsHeadless()) {
@@ -57,6 +55,7 @@ void Awake() {
     }
 }
 ```
+
 ```c#
 using UnityEngine.Rendering;
 
@@ -65,8 +64,8 @@ bool IsHeadless() {
     return SystemInfo.graphicsDeviceType == GraphicsDeviceType.Null;
 }
 ```
-- [Master Server Kit](https://www.assetstore.unity3d.com/kr/#!/content/71604)을 
-  이용하면 Dedicated server를 쉽게 제작할 수 있다. 
+
+- [Master Server Kit](https://www.assetstore.unity3d.com/kr/#!/content/71604)을 이용하면 UNET 을 이용하여 Dedicated server를 쉽게 제작할 수 있다. 그러나 유료이다.
 
 ## Client
 
@@ -139,7 +138,7 @@ UDPServer server3 = new UDPServer(1024); // Only allowing 1024 connections to th
 server3.Connect(myPort + 1);
 ```
 
-client 가 특정 dedicated server 의 특정 port에 접속하기 위해서는 gate server 가 필요하다. gate server 는 특정 port 를 listen  하다가 client 가 접속하면 client 가 게임하기 위해 필요한 dedicated server ip, port 를 알려준다. 이후 client 가 dedicated server 에 접속하여 플레이 한다.
+client 가 특정 dedicated server 의 특정 port에 접속하기 위해서는 master server 가 필요하다. master server 는 특정 port 를 listen  하다가 client 가 접속하면 client 가 게임하기 위해 필요한 dedicated server ip, port 를 알려준다. 이후 client 가 dedicated server 에 접속하여 플레이 한다.
 
 # Proudnet
 
@@ -162,14 +161,6 @@ client 가 특정 dedicated server 의 특정 port에 접속하기 위해서는 
 - c#의 경우 native library를 사용하는 managed dll을 이용하는 방식이다. 
   core는 c++로 제작됨. c++ api의 상당부분이 managed dll에 없다. 왜일까? 구현중인가???
 - PositionFollower의 경우 문서에는 내용이 없지만 ProudDotNetClient.dll에 들어 있다.
-
-# PUN
-
-## Server
-
-## Client
-
-## Cloud
 
 # Reference
 
