@@ -21,9 +21,13 @@
 
 * [barebones-masterserver](https://github.com/alvyxaz/barebones-masterserver)
   * opensource masterserver
+* [Master Server Kit](https://assetstore.unity.com/packages/tools/network/master-server-kit-71604?aid=1100l3nzZ&utm_source=aff)
+  * 유료이지만 master server, zone server, game server 등을 UNET 을 이용하여 잘 구현했다. digital ocean 에서 잘 운영된다고 한다.
 * [Forge](https://github.com/BeardedManStudios/ForgeNetworkingRemastered)
   * opensource unity3d network framework
   * [doc](http://docs.forgepowered.com/)
+* [Nakama](https://assetstore.unity.com/packages/tools/network/nakama-81338)
+  * go 로 구현된 opensource server framework 이다. unity3d client library 도 제공한다. 그러나 websocket 을 이용하여야 한다.  
 
 # Network Framewrk Benchmark
 
