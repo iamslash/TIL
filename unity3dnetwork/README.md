@@ -66,9 +66,6 @@ bool IsHeadless() {
 ```
 - [Master Server Kit](https://www.assetstore.unity3d.com/kr/#!/content/71604)을 
   이용하면 Dedicated server를 쉽게 제작할 수 있다. 
-- [Forge Networking Headless Linux Server](https://www.youtube.com/watch?v=qxm-071uLuE)을 시청하자.
-  Forge Networking library를 이용하여 linux에서 headless server를 실행할 수 있다. 
-  Forge Networking library는 유료다.
 
 ## Client
 
@@ -107,7 +104,25 @@ bool IsHeadless() {
 
 # Forge
 
-Forge remastered 라는 이름으로 opensource 되었다. 아주 유용해 보인다.
+Forge remastered 라는 이름으로 opensource 되었다. 아주 유용해 보인다. NCW (Network Component Wizard) 를 이용하여 `ABehaviour, ANetworkObject` 를 생성한다. `ANetworkObject` instance 는 `ABehaviour` 의 member로 접근가능하다. `A` 는 `ABehaviour` 를 상속받는다. 다음과 같이 `IsServer` 를 이용하여 `A` 가 server 에서 실행되는지 client 에서 실행되는지에 따라 logic 을 달리한다.
+
+```cs
+using UnityEngine;
+using BeardedManStudios.Forge.Networking.Generated;
+
+public class A : ABehaviour {
+  private void Update() {
+    if (!networkObject.IsServer) {
+      transform.position = networkObject.position;
+      return;
+    }
+    transform.position += new Vector3(Input.GetAxis("Horizontal"),
+    Input.GetAxis("Vertical"), 0) * Time.deltaTime * 5.0f;
+    networkObject.position = transform.position;
+  }
+
+}
+```
 
 # Proudnet
 
