@@ -28,6 +28,80 @@ c++에 대해 정리한다.
 
 # Usage
 
+## virtual function
+
+![](img/virtualfunction.png)
+
+virtual function 은 vptr, vtable 에 의해 구현된다. 다음과 같이 `Instrument, Wind, Percussion, Stringed, Brass` 를 정의해 보자.
+
+```cpp
+class Instrument {
+public:
+  virtual void play() {
+
+  }
+  virtual void what() {
+
+  }
+  virtual void adjust() {
+
+  }
+};
+
+class Wind : public Instrument {
+public:
+  virtual void play() {
+
+  }
+  virtual void what() {
+
+  }
+  virtual void adjust() {
+
+  }
+}
+
+class Percussion : public Instrument {
+public:
+  virtual void play() {
+
+  }
+  virtual void what() {
+
+  }
+  virtual void adjust() {
+
+  }
+}
+class Stringed : public Instrument {
+public:
+  virtual void play() {
+
+  }
+  virtual void what() {
+
+  }
+  virtual void adjust() {
+
+  }
+}
+
+class Brass : public Instrument {
+public:
+  virtual void play() {
+
+  }
+  virtual void what() {
+
+  }
+  virtual void adjust() {
+
+  }
+}
+```
+
+각각의 child class 들의 object 들은 `vptr, vtable` 을 갖는다.
+
 ## vector vs deque vs list
 
 |     | vector | deque | list |
