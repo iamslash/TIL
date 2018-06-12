@@ -102,6 +102,33 @@ metachars는 command와 다르게 처리되기 때문에 command line에 포함�
 # Basic Usages
 
 ```bash
+# help command
+help echo
+
+# type command
+$ type ssh
+ssh is /usr/bin/ssh
+$ type caller
+caller is a shell builtin
+$ type time
+time is a shell keyword
+
+# list keywords
+$ compgen -k | column
+if              elif            esac            while           done            time            !               coproc
+then            fi              for             until           in              {               [[
+else            case            select          do              function        }               ]]
+# list builtins
+$ compgen -b | column
+.               caller          dirs            false           kill            pwd             source          ulimit
+:               cd              disown          fc              let             read            suspend         umask
+[               command         echo            fg              local           readarray       test            unalias
+alias           compgen         enable          getopts         logout          readonly        times           unset
+bg              complete        eval            hash            mapfile         return          trap            wait
+bind            compopt         exec            help            popd            set             true
+break           continue        exit            history         printf          shift           type
+builtin         declare         export          jobs            pushd           shopt           typeset
+
 # file name can be anything except NUL, / on linux
 echo "hello world" > [[]].txt
 
@@ -267,9 +294,9 @@ if [ $a -eq $b ]; then
 fi
 
 # grouping commands : (), {}
-# (command list) : command list는 subshell환경에서 실행된다.
+# (command line) : command line은 subshell환경에서 실행된다.
 ( while true; do echo "hello"; sleep 1; done )
-# {command list} : command list는 같은 shell환경에서 실행된다.
+# {command line} : command line은 같은 shell환경에서 실행된다.
 { while true; do echo "hello"; sleep 1; done }
 
 # variable은 unset, null, not-null과 같이 3가지 상태를 갖는다.
