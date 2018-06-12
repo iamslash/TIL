@@ -84,6 +84,7 @@ bash에 대해 정리한다.
   * 친절한 한글
 * [bash reference manual @ gnu](https://www.gnu.org/software/bash/manual/bash.html)
 * [Advanced Bash-Scripting Guide](http://www.tldp.org/LDP/abs/html/index.html)
+* [bash repo](https://savannah.gnu.org/git/?group=bash)
 
 # Shell Metachars
 
