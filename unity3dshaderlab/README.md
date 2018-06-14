@@ -76,6 +76,8 @@ time에 vertex, fragment shader로 변환된다.
   - RTFM
 - [unity cg programming](https://en.wikibooks.org/wiki/Cg_Programming/Unity)
   - 여러가지 예제들과 이론들이 풍부하다.
+- [shaders @ unitywiki](http://wiki.unity3d.com/index.php/Shaders)
+  - 다양한 shader 예제가 가득하다.
 - [scratchapixel](http://www.scratchapixel.com/)
   - 밑바닥부터 설명하는 computer graphics
 
