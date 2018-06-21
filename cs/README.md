@@ -13,21 +13,22 @@
 
 # Subjects
 
-* [Data Structures and Algorithms](https://github.com/iamslash/learntocode/README.md)
-* [System Design and Scalabilities](../systemdesign/READE.md)
+* [Data Structures and Algorithms](https://github.com/iamslash/learntocode)
+* [System Design and Scalabilities](../systemdesign/README.md)
 * [Operating System](../os/README.md)
-* Computer System Architecture
+* [Computer System Architecture](../csa/README.md)
 * Programming Language
 * Compiler
-* Computer Graphics
+* [Computer Graphics](../gamegraphics/README.md)
+* [Network](../network/README.md)
+* [Database](../database/README.md)
 * Information Theory
 * Software Engineering
 * Computer System Security
 * Cryptography
-* Network
-* Database
 * Linear Algebra
 * Discrete Mathmatics
 * Mathmatical Analysis
 * [Probability and Statistics](prob)
 * Machine Learning
+* Reversing
