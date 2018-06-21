@@ -35,3 +35,6 @@
 
 * [Portable Executable Format](../pef/README.md)
   * 윈도우즈의 실행파일 포맷
+
+* [Elf](../elf/README.md)
+  * 리눅스의 실행파일 포맷
