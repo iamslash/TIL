@@ -8,6 +8,8 @@
   * 오래전에 출간되어 절판되었지만 한글로 된 책들중 최강이다.
 * [Write Great Code I](http://www.plantation-productions.com/Webster/www.writegreatcode.com/)
   * 킹왕짱
+* [google interview university @ github](https://github.com/jwasham/coding-interview-university)
+  * operating system 관련된 링크를 참고하자. 쓸만한 비디오가 잘 정리되어 있다.
 
 # Procedure and Stack
 

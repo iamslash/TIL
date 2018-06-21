@@ -10,6 +10,8 @@
   * CS를 항목별로 잘 정리했다. 괜찮은 course들도 있다.
 * [awesome cs courses](https://github.com/prakhar1989/awesome-courses)
   * 괜찮은 cs course들이 있다. 깨진 링크도 있음
+* [google interview university @ github](https://github.com/jwasham/coding-interview-university)
+  * cs 관련된 링크를 참고하자. 쓸만한 비디오가 잘 정리되어 있다.
 
 # Subjects
 
@@ -29,6 +31,6 @@
 * Linear Algebra
 * Discrete Mathmatics
 * Mathmatical Analysis
-* [Probability and Statistics](prob)
-* Machine Learning
+* [Probability and Statistics](../prob/README.md)
+* [Machine Learning](../machinelearning/README.md)
 * Reversing
