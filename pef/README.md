@@ -10,6 +10,8 @@ portable executable format 에 대해 적는다.
   * web 으로 pe 를 확인할 수 있다.
 * [Advance PE Viewer](http://www.codedebug.com/php/Products/Products_NikPEViewer_12v.php)
   * advance peviewer
+* [corkami/pics @ github](https://github.com/corkami/pics/tree/master/binary)
+  * pef, elf 등을 한장의 그림으로 표현했다.
 
 # Architect
 
