@@ -11,6 +11,8 @@
 * [google interview university @ github](https://github.com/jwasham/coding-interview-university)
   * operating system 관련된 링크를 참고하자. 쓸만한 비디오가 잘 정리되어 있다.
 
+# machine language
+
 # Procedure and Stack
 
 # Process and Thread
