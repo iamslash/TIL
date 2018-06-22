@@ -18,7 +18,7 @@
 * [Data Structures and Algorithms](https://github.com/iamslash/learntocode)
 * [System Design and Scalabilities](../systemdesign/README.md)
 * [Operating System](../os/README.md)
-* [Computer System Architecture](../csa/README.md)
+* [Computer System Architecture](https://github.com/iamslash/TIL/tree/master/os#computer-system-architecture)
 * Programming Language
 * Compiler
 * [Computer Graphics](../gamegraphics/README.md)
