@@ -1,8 +1,6 @@
-
-
 # Abstract
 
-운영체제 (Operating System) 에 대해 정리한다.
+운영체제 (Operating System) 에 대해 정리한다. [Computer System Architecture](../csa/README.md) 의 내용을 먼저 이해해야 한다.
 
 # Materials
 
@@ -12,16 +10,6 @@
   * 킹왕짱
 * [google interview university @ github](https://github.com/jwasham/coding-interview-university)
   * operating system 관련된 링크를 참고하자. 쓸만한 비디오가 잘 정리되어 있다.
-
-# Computer System Architecture 
-
-[csa](../csa/README.md)
-
-# Data Representation
-
-## Floating Point 
-
-## Byte Order
 
 # machine language
 
