@@ -10,3 +10,7 @@ database 를 만들어 보자.
 * [cubrid @ github](https://github.com/CUBRID/cubrid)
   * 국산 opensource rdbms
 * [sqlite @ github](https://github.com/smparkes/sqlite)
+
+# SQL
+
+* [sql](../sql/README.md)
