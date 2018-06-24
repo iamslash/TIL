@@ -147,3 +147,6 @@ virtual memory 환경에서 페이징 작업을 위해 virtual address 를 physi
 
 ## Byte Order
 
+# machine language
+
+
