@@ -4,12 +4,12 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Fundamentals](#fundamentals)
-    - [Digital Signatures](#digital-signatures)
-    - [Peer Discovery](#peer-discovery)
-    - [Consensus algorithm](#consensus-algorithm)
-    - [Simplified payment verification](#simplified-payment-verification)
-    - [vulnerability](#vulnerability)
-        - [51% attack](#51-attack)
+  - [Digital Signatures](#digital-signatures)
+  - [Peer Discovery](#peer-discovery)
+  - [Consensus algorithm](#consensus-algorithm)
+  - [Simplified payment verification](#simplified-payment-verification)
+  - [vulnerability](#vulnerability)
+    - [51% attack](#51-attack)
 - [References](#references)
 
 <!-- markdown-toc end -->
@@ -22,6 +22,8 @@ bitcoin에 대해 정리한다.
 
 # Materials
 
+* [awsome blockchain @ github](https://github.com/yunho0130/awesome-blockchain-kor/tree/master/whitepapers)
+  * 모두를 위한 블록체인
 * [Ever wonder how Bitcoin (and other cryptocurrencies) actually work?](https://www.youtube.com/watch?v=bBC-nXj3Ng4)
   * bitcoin internals 30분 요약 
 * [Bitcoin: A Peer-to-Peer Electronic Cash System - Satoshi Nakamoto](https://bitcoin.org/bitcoin.pdf)
