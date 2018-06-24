@@ -4,6 +4,10 @@ computer system architecture 에 대해 정리한다.
 
 # Materials
 
+
+
+* [Encoding x86 instructions](https://www-user.tu-chemnitz.de/~heha/viewchm.php/hs/x86.chm/x86.htm) 
+  * x86 instructions 인코딩 방법
 * [Computer System Architecture, 3e](https://www.amazon.in/Computer-System-Architecture-3e-Mano/dp/8131700704)
   * 굉장히 좋은 책이다.
 * [Windows 구조와 원리](http://www.hanbit.co.kr/store/books/look.php?p_code=B6822670083)
@@ -231,4 +235,16 @@ big endian
 
 # machine language
 
+[Encoding x86 instructions](https://www-user.tu-chemnitz.de/~heha/viewchm.php/hs/x86.chm/x86.htm) 를 기반으로 이해하자. 
 
+하나의 instruction 은 `Prefix Bytes, Opcode, Mod-Reg-r/m, Scaled Indexed Byte, Displacement, Immediate" 와 같이 총 6개의 구성요소로 이루어질 수 있다. 언급한 구성요소는 0byte 일 수 있고 1byte 이상일 수도 있다. 모든 구성요가 존재 한다면 최대 16byte 까지 가능할 것 같지만 실제로는 15byte 까지만 가능하다. 
+
+![](x86_instruction_encoding.png)
+
+![](x86_instruction_format.png)
+
+opcode 는 1byte 혹은 2byte 가 가능한데 2byte 의 경우 MSB 는 Opcode Expansion Prefix Bytes 를 의미하는 0Fh 이고 나머지 한 byte 가 opcode 를 표현한다. 따라서 opcode 의 종류는 512 개 까지 가능하지만 현재 모두를 사용하고 있지는 않다.
+
+general purpose registers 정도는 알아두자.
+
+![](gp_registers.jpg)
