@@ -143,7 +143,60 @@ virtual memory 환경에서 페이징 작업을 위해 virtual address 를 physi
 
 # Data Representation
 
+## Number
+
+음수를 표현할 때 2's complement 를 사용한다. 1's complement 에서 1을 더하면 2's complement 가 된다. 1's complement 는 모든 비트를 반대로 설정한다. 
+
+예를 들어 숫자 -8을 1byte 에 2's complement 로 표현해보자. 
+
+```
+00001000 : abs value
+11110111 : 1's complement
+11111000 : 2's complement
+```
+
+2's complement 를 사용하면 덧셈 연산만으로 덧셈, 뺄셈을 모두 할 수 있다.
+예를 들어 다음과 같이 4 + (-8) 을 해보자.
+
+```
+   00000100 : +4
+ + 11111000 : -8
+----------
+   11111100 : -4
+```
+
 ## Floating Point 
+
+부동 소수점을 표현하는 방법은 IEEE (Institute of Electrical and Electoronics Engineers) 에서 제시한 single precision, double precision 와 같이 두가지가 있다. single precision 은 4byte, double precision 은 8byte 로 표현한다.
+
+single precision 은 다음과 같이 4byte 를 sign bit, exponent bits, mantissa bits 로 나눈다.
+
+```
+ 31   30             23   22                        0
++-----------------------------------------------------+
+| s | exponent 8bit     | mantissa 23bit              |
++-----------------------------------------------------+ 
+```
+
+예를 들어서 `0.0096875` 를 표현해 보자. 첫번째 `0.0096875` 를 normalized form 으로 변환하면 `9.6875 * 10^-3` 이 된다. 두번째 이것을 이진수로 표현하면 `1001.1011` 이 된다. 세번째 다시 normalized form 으로 변환하면 `1.0011011*2^3` 이 된다. s 에 양수 0이 들어가고 exponent 에는 `130 (3 + 127)` 이 들어가고 가수부는 `0011011` 이 들어간다. 최종 결과는 다음과 같다. 
+
+```
+31   30    23   22                    0
++---------------------------------------+
+| s | 1000010 | 00110110000000000000000 |
++---------------------------------------+ 
+```
+
+exponent 는 부호가 있는 지수를 표현해야 하기 때문에 `0 ~ 127` 이 가능하다. mantissa 는 23bit 이므로 10진수로 표현하면 7자리 정도이다. 따라서 `9787512.5` 와 `9687512.0` 은 실제로 다른 수 이지만 single precision 으로 저장될 경우 메모리에 같은 값으로 저장된다.
+
+double precision 은 다음과 같이 8byte 를 sign bit, exponent bits, mantissa bits 로 나눈다.
+
+```
+ 63   62              52  51                        0
++-----------------------------------------------------+
+| s | exponent 11bit     | mantissa 52bit             |
++-----------------------------------------------------+ 
+```
 
 ## Byte Order
 

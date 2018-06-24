@@ -1,5 +1,7 @@
 # Abstract
 
+Executable and Linkable Format 에 대해 정리한다.
+
 # Materials
 
 * [teensy](http://www.muppetlabs.com/~breadbox/software/tiny/teensy.html)
