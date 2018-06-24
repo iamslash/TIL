@@ -200,6 +200,35 @@ double precision 은 다음과 같이 8byte 를 sign bit, exponent bits, mantiss
 
 ## Byte Order
 
+데이터가 주어지면 그것을 어떠한 바이트 순서로 저장할 것인지에 대한 방법을 endian 이라고 한다. 
+
+little endian 은 주어진 데이터의 LSB (least significant byte) 부터 낮은 주소를 시작으로 저장하는 것을 말한다. 이와는 반대로 big endian 은 MSB (most significant byte) 부터 낮은 주소를 시작으로 저장하는 것을 말한다.
+
+예를 들어서 다음과 같이 `0x12345678` 데이터가 주어졌다고 해보자. MSB 는 `0x12` 이고 LSB 는 `0x78` 이다.
+
+```
+  MSB
+  --
+0x12345678
+        --
+        LSB
+
+little endian
+
+0: 78
+1: 56
+2: 34
+3: 12
+
+big endian
+
+0: 12
+1: 34
+2: 56
+3: 78
+
+```
+
 # machine language
 
 
