@@ -31,6 +31,6 @@
 * Linear Algebra
 * Discrete Mathmatics
 * Mathmatical Analysis
-* [Probability and Statistics](../prob/README.md)
+* [Probability and Statistics](../statistics/README.md)
 * [Machine Learning](../machinelearning/README.md)
 * Reversing
