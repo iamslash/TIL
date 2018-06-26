@@ -19,8 +19,8 @@
 * [System Design and Scalabilities](../systemdesign/README.md)
 * [Operating System](../os/README.md)
 * [Computer System Architecture](../csa/README.md)
-* Programming Language
-* Compiler
+* [Programming Language](../pl/README.md)
+* [Compiler](../compiler/README.md)
 * [Computer Graphics](../gamegraphics/README.md)
 * [Network](../network/README.md)
 * [Database](../database/README.md)
