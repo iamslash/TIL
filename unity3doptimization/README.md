@@ -21,4 +21,6 @@
   포함된다. 사용하지 않는 script들은 삭제하자.
   - [참고](https://unity3d.com/kr/learn/tutorials/temas/best-practices/resources-folder)
 - json을 처리할때 minijson보다 JsonUtility를 사용하자. runtime memory를 절약할 수 있다.
+- Runtime에 fps 를 줄이면 battery life 를 증가시킬 수 있다.
+- Buildtime에 DPI 를 줄이면 battery life 를 증가시킬 수 있다.
 
