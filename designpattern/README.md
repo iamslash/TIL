@@ -37,14 +37,16 @@
 # [GOF Pattern](http://www.dofactory.com/net/design-patterns)
   
 - Creational Pattern
-  - Abstract Factory	(Creates an instance of several families of classes)
-    - strategy of related creating object
-  - Builder	(Separates object construction from its representation)
-    - selective arguments
-  - Factory Method	(Creates an instance of several derived classes)
-    - strategy of creating object
-  - Prototype	(A fully initialized instance to be copied or cloned)
-  - Singleton	(A class of which only a single instance can exist)    
+  - Abstract Factory
+    - Factory Method 를 추상화해서 타겟 오브젝트 인스턴스를 생성한다.
+  - Builder	
+    - 생성 절차를 추상화하여 타겟 오브젝트 인스턴스를 생성한다.
+  - Factory Method	
+    - 생성 방법을 추상화하여 타겟 오브젝트 인스턴스를 생성한다.
+  - Prototype	
+    - 복제를 통해 타겟 오브젝트 인스턴스를 생성한다.
+  - Singleton	
+    - 하나의 타겟 오브젝트 인스턴스만 생성한다.
 
 - Structural Pattern
   - Adapter	(Match interfaces of different classes)
