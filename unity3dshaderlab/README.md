@@ -1,9 +1,5 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
 - [Learning material](#learning-material)
-- [Contents](#contents)
 - [The Graphics Hardware Pipeline](#the-graphics-hardware-pipeline)
 - [Fixed function shader tutorial](#fixed-function-shader-tutorial)
 - [Vertex, fragment shader tutorial](#vertex-fragment-shader-tutorial)
@@ -17,10 +13,7 @@
     - [shadow mapping](#shadow-mapping)
     - [BRDF (bidirectional reflectance distribution function)](#brdf-bidirectional-reflectance-distribution-function)
     - [BRDF Anisotropy](#brdf-anisotropy)
-- [Tips](#tips)
 - [References](#references)
-
-<!-- markdown-toc end -->
 
 -------------------------------------------------------------------------------
 
@@ -57,6 +50,7 @@ time에 vertex, fragment shader로 변환된다.
 
 # Learning material
 
+- [Unity3d Shader Tutorial @ github](https://github.com/iamslash/UnityShaderTutorial)
 - [writing shaders in unity](http://www.jordanstevenstechart.com/writing-shaders-in-unity)
   - unity3d shaderlab의 기본기를 잘 정리한 블로그이다.
 - [fixed function shader tutorial](https://docs.unity3d.com/Manual/ShaderTut1.html)
