@@ -74,6 +74,8 @@ time에 vertex, fragment shader로 변환된다.
   - 다양한 shader 예제가 가득하다.
 - [scratchapixel](http://www.scratchapixel.com/)
   - 밑바닥부터 설명하는 computer graphics
+- [Resources for Writing Shaders in Unity](https://github.com/VoxelBoy/Resources-for-Writing-Shaders-in-Unity)
+  - 다양한 링크 모음
 
 # The Graphics Hardware Pipeline
 
@@ -1233,10 +1235,6 @@ Shader "Custom/TextureCoordinates/Fog" {
 }
 ```
 
-# Surface shader tutorial
-
-- updaing...
-
 # Usage
 
 - unity3d 에서 shader는 unity3d shader lab과 cg를 이용해서 제작한다.
@@ -1656,8 +1654,4 @@ a = \begin{matrix}
 ## BRDF Anisotropy
 
 
-# References
-
-- [Resources for Writing Shaders in Unity](https://github.com/VoxelBoy/Resources-for-Writing-Shaders-in-Unity)
-  - 다양한 링크 모음
   
