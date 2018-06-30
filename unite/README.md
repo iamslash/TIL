@@ -16,6 +16,7 @@
 - [에셋번들 실전 가이드 (AssetBundle Best Practices)](https://www.youtube.com/watch?v=Lx61ZEKEvnQ&index=45&list=PL412Ym60h6uvOCGVKFl1Y12ByyXjPlOUK)
 - [유니티 팁 & 트릭 총집편](https://www.youtube.com/watch?v=-ACzLA4mh4Q&index=46&list=PL412Ym60h6uvOCGVKFl1Y12ByyXjPlOUK)
 - [From mobile to high-end PC: Achieving high quality anime style rendering on Unity](https://www.youtube.com/watch?v=egHSE0dpWRw&index=48&list=PL412Ym60h6uvOCGVKFl1Y12ByyXjPlOUK)
+  - [한글요약 @ inven](http://www.inven.co.kr/webzine/news/?news=198924&site=honkai3rd)
 
 
 # unite seoul 2016
