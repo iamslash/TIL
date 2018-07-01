@@ -1,6 +1,27 @@
-# Comments
+- [Abstract](#abstract)
+- [Learning material](#learning-material)
+- [usage](#usage)
+    - [supervised learning](#supervised-learning)
+    - [unsupervised learning](#unsupervised-learning)
+    - [semisupervised learning](#semisupervised-learning)
+    - [reinforcement learning](#reinforcement-learning)
+    - [linear regression with one variable](#linear-regression-with-one-variable)
+    - [linear regression with multiple variables](#linear-regression-with-multiple-variables)
+    - [logistic regression (binary classification)](#logistic-regression-binary-classification)
+    - [Example: Titanic](#example-titanic)
+    - [softmax regression (multinomial classification)](#softmax-regression-multinomial-classification)
+    - [machine learning tips](#machine-learning-tips)
+    - [Example: Digit Recognizer](#example-digit-recognizer)
+    - [Deep Learning Fundamentals](#deep-learning-fundamentals)
+    - [NN (neural networks)](#nn-neural-networks)
+    - [CNN (convolutional neural networks)](#cnn-convolutional-neural-networks)
+    - [RNN (recurrent networks)](#rnn-recurrent-networks)
+    - [RL (reinforcement learning)](#rl-reinforcement-learning)
+    - [GAN (generative adversarial network)](#gan-generative-adversarial-network)
+    - [NLP (Naturla Language Processing)](#nlp-naturla-language-processing)
+- [reference](#reference)
 
-- RNN어렴 풋이 이해했다. RL로 넘어가자
+-----
 
 # Abstract
 
@@ -29,31 +50,13 @@
   sigmoid, ReLU, learning rate, forward propagation, back propagation,
   CNN (Convolutional Neural Networks), RNN (Recurrent Neural Networks)
 
-# Contents
-
-* [Learning Materials](#learning-material)
-* [Supervised Learning](#supervised-learning)
-* [Unsupervised Learning](#unsupervised-learning)
-* [Semisupervised Learning](#semisupervised-learning)
-* [Reinforcement Learning](#reinforcement-learning)
-* [Linear Regression with one variable](#linear-regression-with-one-variable)
-* [Linear Regression with multiple variable](#linear-regression-with-multiple-variables)
-* [Logistic Regression (binary classification)](#logistic-regression-binary-classification)
-* [Example: Titanic](#example-titanic)
-* [Softmax Regression (multinomial classification)](#softmax-regression-multinomial-classification)
-* [Machine Learning Tips](#machine-learning-tips)
-* [Example: Digit Recognizer](#example-digit-recognizer)
-* [Deep Learning Fundamentals](#deep-learning-fundamentals)
-* [NN (neural networks)](#nn-neural-networks)
-* [CNN (convolutional neural networks)](#cnn-convolutional-neural-networks)
-* [RNN (recurrent neural networks)](#rnn-recurrent-neural-networks)
-
 # Learning material
 
+- [paper with code](https://paperswithcode.com/)
+  - 논문과 구현
 - [Google AI course](https://ai.google/education)
   - 구글의 AI 코스웨어
 - 김훈 링크
-
   1. 뽀로로QA와 심층 임베딩 메모리망, 김경민, 서울대 박사과정, http://tv.naver.com/v/2231323
   2. Multimodal Sequential Learning for Video QA, 김은솔, 서울대 박사과정, http://tv.naver.com/v/2218642
   3. Finding connections among images using CycleGAN, 박태성, UC Berkeley 박사과정, http://tv.naver.com/v/2203900
@@ -131,7 +134,7 @@
 - [TensorFlow Tutorials (Simple Examples)](https://github.com/nlintz/TensorFlow-Tutorials)
 - [Another TensorFlow Tutorials](https://github.com/pkmital/tensorflow_tutorials)
 - [TensorFlow Examples](https://github.com/aymericdamien/TensorFlow-Examples)
-- [Deep learning @Udacity](https://www.udacity.com/course/viewer#!/c-ud730/l-6370362152/m-6379811817)
+- [Deep learning @ Udacity](https://www.udacity.com/course/viewer#!/c-ud730/l-6370362152/m-6379811817)
 - [SIRAJ RAVAL'S DEEP LEARNING](https://in.udacity.com/course/deep-learning-nanodegree-foundation--nd101/#)
   - nano degree
 
@@ -3840,7 +3843,6 @@ if __name__ == "__main__":
   데이터의 70%를 트레이닝 데이터로 사용하고 30%를 검증 데이터로
   사용하자. 검증 데이터의 실제 Close가격과 검증 데이터의 입력값을
   이용하여 예측한 Close가격이 거의 일치하는 것을 확인 할 수 있다.
-  
 
 ```python
 # -*- coding: utf-8 -*-
