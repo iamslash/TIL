@@ -2,9 +2,13 @@
 - [Materials](#materials)
 - [References](#references)
 - [Class Diagram Relationship](#class-diagram-relationship)
-  - [Inheritance vs Realization](#inheritance-vs-realization)
+  - [Inheritance](#inheritance)
+  - [Realization](#realization)
+  - [Dependency](#dependency)
+  - [Association](#association)
+  - [Aggregation](#aggregation)
+  - [Composition](#composition)
   - [Aggregation vs Composition](#aggregation-vs-composition)
-  - [Association vs Dependency](#association-vs-dependency)
 - [GOF Pattern](#gof-pattern)
 - [Game Programming Pattern](#game-programming-pattern)
 - [Design patterns implemented in Java](#design-patterns-implemented-in-java)
@@ -62,21 +66,62 @@
 
 ![](Uml_class_relation_arrows_en.svg.png)
 
-## Inheritance vs Realization
+## Inheritance
 
-클래스가 클래스를 상속할 때 둘의 관계는 Inheritance 이다. 클래스가 인터페이스를 구현할 때 둘의 관계는 Realization 이다.
+B 클래스가 A 클래스를 상속할 때 둘의 관계는 Inheritance 이다. 
+
+## Realization
+
+B 클래스가 A 인터페이스를 구현할 때 둘의 관계는 Realization 이다.
+
+## Dependency
+
+A 클래스가 B 클래스를 함수의 인자 혹은 리턴값 으로 사용할 때 둘의 관계는 Dependency 이다.
+
+```cs
+public class A {
+    public void enroll(B b){}
+}
+```
+
+## Association
+
+A 클래스가 B 클래스를 소유할 때 둘의 관계는 Association 이다. (has-a)
+
+```cs
+public class A {
+    private B b;
+}
+```
+
+## Aggregation
+
+A 클래스가 B 클래스를 소유하고 B 클래스는 A 클래스를 구성하는 부분일 때 둘의 관계는 Aggregation 이다. (has-a, whole-part)
+
+```cs
+public class A {
+    private List<B> b;
+}
+```
+
+## Composition
+
+A 클래스가 B 클래스를 소유하고 B 클래스는 A 클래스를 구성하는 부분이며 A 클래스가 파괴되면 B 클래스 역시 파괴될 때 둘의 관계는 Aggregation 이다. (has-a, whole-part, ownership)
+
+```cs
+public class A {
+    private B b;
+    public A() {
+       b = new B();
+    }
+}
+```
 
 ## Aggregation vs Composition
 
-둘다 has 관계를 의미한다. aggregation 관계는 소유주 클래스가 사라지면 소유물 클래스가 같이 사라질 때를 의미한다. composition 관계는 소유주 클래스가 사라지더라도 소유물 클래스가 같이 사라지지 않을 때를 의미한다. 
+호수 클래스와 오리 클래스가 있다고 하자. 호수위에 오리가 떠있다. 그리고 오리들은 농부의 소유물이다. 호수가 사라진다고 해서 오리가 사라지지는 않는다. 호수 클래스와 오리 클래스는 Aggregation 관계이다.
 
-예를 들어 호수위의 오리를 생각해 보자. 호수 클래스가 오리 인스턴스의 리스트를 소유하고 있다. 그러나 오리 인스턴스는 농장 클래스의 소유물 이기도 하다. 호수 클래스가 사라지더라도 오리 인스턴스는 농장 클래스에 의해 참조되고 있다. 그래서 호수 클래스와 오리 클래스는 aggregation 관계이다.
-
-이번에는 자동차와 카뷰레터 의 관계를 생각해 보자. 자동차 인스턴스가 사라지면 그 부속품인 카뷰레터 인스턴스 역시 사라진다. 그래서 자동차 클래스와 카뷰레터 클래스는 composition 관계이다.
-
-## Association vs Dependency
-
-
+자동차와 클래스와 카뷰레터 클래스가 있다고 하자. 카뷰레터는 자동차의 부품이다. 자동차가 파괴되면 카뷰레터 역시 파괴된다. 자동차 클래스와 카뷰레터 클래스는 Composition 관계이다.
 
 # [GOF Pattern](http://www.dofactory.com/net/design-patterns)
   
