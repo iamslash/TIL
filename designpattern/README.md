@@ -1,3 +1,27 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [References](#references)
+- [Class Diagram Relationship](#class-diagram-relationship)
+  - [Inheritance vs Realization](#inheritance-vs-realization)
+  - [Aggregation vs Composition](#aggregation-vs-composition)
+  - [Association vs Dependency](#association-vs-dependency)
+- [GOF Pattern](#gof-pattern)
+- [Game Programming Pattern](#game-programming-pattern)
+- [Design patterns implemented in Java](#design-patterns-implemented-in-java)
+  - [Architectural](#architectural)
+  - [Behavioral](#behavioral)
+  - [Business Tier](#business-tier)
+  - [Concurrency](#concurrency)
+  - [Creational](#creational)
+  - [Integration](#integration)
+  - [Persistence Tier](#persistence-tier)
+  - [Presentation Tier](#presentation-tier)
+  - [Structural](#structural)
+  - [Testing](#testing)
+  - [Other](#other)
+
+----
+
 # Abstract
 
 디자인 패턴은 간접 경험을 할 수 있어서 좋다. 가끔은 이런 걸 굳이
@@ -33,6 +57,26 @@
 * [.NET Design Patterns](http://dofactory.com/net/design-patterns)
 
 ---
+
+# Class Diagram Relationship
+
+![](Uml_class_relation_arrows_en.svg.png)
+
+## Inheritance vs Realization
+
+클래스가 클래스를 상속할 때 둘의 관계는 Inheritance 이다. 클래스가 인터페이스를 구현할 때 둘의 관계는 Realization 이다.
+
+## Aggregation vs Composition
+
+둘다 has 관계를 의미한다. aggregation 관계는 소유주 클래스가 사라지면 소유물 클래스가 같이 사라질 때를 의미한다. composition 관계는 소유주 클래스가 사라지더라도 소유물 클래스가 같이 사라지지 않을 때를 의미한다. 
+
+예를 들어 호수위의 오리를 생각해 보자. 호수 클래스가 오리 인스턴스의 리스트를 소유하고 있다. 그러나 오리 인스턴스는 농장 클래스의 소유물 이기도 하다. 호수 클래스가 사라지더라도 오리 인스턴스는 농장 클래스에 의해 참조되고 있다. 그래서 호수 클래스와 오리 클래스는 aggregation 관계이다.
+
+이번에는 자동차와 카뷰레터 의 관계를 생각해 보자. 자동차 인스턴스가 사라지면 그 부속품인 카뷰레터 인스턴스 역시 사라진다. 그래서 자동차 클래스와 카뷰레터 클래스는 composition 관계이다.
+
+## Association vs Dependency
+
+
 
 # [GOF Pattern](http://www.dofactory.com/net/design-patterns)
   
