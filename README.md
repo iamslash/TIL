@@ -21,13 +21,7 @@
 
 - [systemdesign](systemdeisgn)
 - [statistics](statistics)
-- [unity3dshaderlab](unity3dshaderlab)
-- [daemon](daemon)
 - [machinelearning](machinelearning/README.md)
-- [trading](trading/)
-- [WebRTC](webrtc/README.md)
-- [unity3dnetwork](unity3dnetwork/README.md)
-- [unite2016](unite2016/README.md)
 - [datascience](datascience/README.md)
-
-
+- [cs](datascience/cs.md)
+- [os](datascience/os.md)

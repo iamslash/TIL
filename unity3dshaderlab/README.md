@@ -3,7 +3,7 @@
 - [The Graphics Hardware Pipeline](#the-graphics-hardware-pipeline)
 - [Fixed function shader tutorial](#fixed-function-shader-tutorial)
 - [Vertex, fragment shader tutorial](#vertex-fragment-shader-tutorial)
-- [Surface shader tutorial](#surface-shader-tutorial)
+- [Surface Shader Tutorial](#surface-shader-tutorial)
 - [Usage](#usage)
     - [IBL (image based lighting)](#ibl-image-based-lighting)
     - [Irradiance Map](#irradiance-map)
@@ -13,7 +13,6 @@
     - [shadow mapping](#shadow-mapping)
     - [BRDF (bidirectional reflectance distribution function)](#brdf-bidirectional-reflectance-distribution-function)
     - [BRDF Anisotropy](#brdf-anisotropy)
-- [References](#references)
 
 -------------------------------------------------------------------------------
 
@@ -37,12 +36,6 @@ glsl은 사용할 일이 없을까???
 vertex shader는 vertex를 기준으로 연산한다. fragment shader는 pixel을
 기준으로 연산한다. fragment shader가 vertext shader보다 더 많이
 호출된다.
-
-[cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter10.html)에
-다음과 같은 언급이 있다.  A fragment program executes for each
-fragment that is generated, so fragment programs typically run several
-million times per frame. On the other hand, vertex programs normally
-run only tens of thousands of times per frame
 
 suface shader로 작성하면 vertex, fragment shader로 코드가 변환되고
 컴파일된다.  fixed function shader로 작성하면 내부적으로 shader import
@@ -1234,6 +1227,434 @@ Shader "Custom/TextureCoordinates/Fog" {
     }
 }
 ```
+# Surface Shader Tutorial
+
+surface shader 는 unity 에 의해 vertex, fragment shader 로 변환된다. vertex, fragment 함수의 boiler-plate 코드들을 생략하고  하나의 surf 함수로 구현할 수 있는 장점이 있다.
+
+`#pragma surface surf Lambert` 는 surface function 으로 `surf` 를 사용하고 램버트 라이팅 모델을 사용하겠다는 의미이다. 
+
+다음은 Lambert 라이팅 모델을 사용하고 물체의 표면을 하얀색으로 칠하는 예이다.
+
+```c
+  Shader "Example/Diffuse Simple" {
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      CGPROGRAM
+      #pragma surface surf Lambert
+      struct Input {
+          float4 color : COLOR;
+      };
+      void surf (Input IN, inout SurfaceOutput o) {
+          o.Albedo = 1;
+      }
+      ENDCG
+    }
+    Fallback "Diffuse"
+  }
+```
+
+다음은 물체의 표면을 텍스처로 채우는 예이다.
+
+```c
+  Shader "Example/Diffuse Texture" {
+    Properties {
+      _MainTex ("Texture", 2D) = "white" {}
+    }
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      CGPROGRAM
+      #pragma surface surf Lambert
+      struct Input {
+          float2 uv_MainTex;
+      };
+      sampler2D _MainTex;
+      void surf (Input IN, inout SurfaceOutput o) {
+          o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
+      }
+      ENDCG
+    } 
+    Fallback "Diffuse"
+  }
+```
+
+다음은 디퓨즈맵과 노멀맵을 사용한 예이다. vertex, fragment shader 로 노멀맵을 구현했을 때와 비교하면 코드의 양이 상당히 작다.
+
+```c
+  Shader "Example/Diffuse Bump" {
+    Properties {
+      _MainTex ("Texture", 2D) = "white" {}
+      _BumpMap ("Bumpmap", 2D) = "bump" {}
+    }
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      CGPROGRAM
+      #pragma surface surf Lambert
+      struct Input {
+        float2 uv_MainTex;
+        float2 uv_BumpMap;
+      };
+      sampler2D _MainTex;
+      sampler2D _BumpMap;
+      void surf (Input IN, inout SurfaceOutput o) {
+        o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
+        o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
+      }
+      ENDCG
+    } 
+    Fallback "Diffuse"
+  }
+```
+
+다음은 물체의 가장자리를 빛나게 하는 림라이팅을 구현한 예이다.
+
+```c
+  Shader "Example/Rim" {
+    Properties {
+      _MainTex ("Texture", 2D) = "white" {}
+      _BumpMap ("Bumpmap", 2D) = "bump" {}
+      _RimColor ("Rim Color", Color) = (0.26,0.19,0.16,0.0)
+      _RimPower ("Rim Power", Range(0.5,8.0)) = 3.0
+    }
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      CGPROGRAM
+      #pragma surface surf Lambert
+      struct Input {
+          float2 uv_MainTex;
+          float2 uv_BumpMap;
+          float3 viewDir;
+      };
+      sampler2D _MainTex;
+      sampler2D _BumpMap;
+      float4 _RimColor;
+      float _RimPower;
+      void surf (Input IN, inout SurfaceOutput o) {
+          o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
+          o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
+          half rim = 1.0 - saturate(dot (normalize(IN.viewDir), o.Normal));
+          o.Emission = _RimColor.rgb * pow (rim, _RimPower);
+      }
+      ENDCG
+    } 
+    Fallback "Diffuse"
+  }
+```
+
+다음은 두종류의 텍스처를 블렌딩한 예이다.
+
+```c
+  Shader "Example/Detail" {
+    Properties {
+      _MainTex ("Texture", 2D) = "white" {}
+      _BumpMap ("Bumpmap", 2D) = "bump" {}
+      _Detail ("Detail", 2D) = "gray" {}
+    }
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      CGPROGRAM
+      #pragma surface surf Lambert
+      struct Input {
+          float2 uv_MainTex;
+          float2 uv_BumpMap;
+          float2 uv_Detail;
+      };
+      sampler2D _MainTex;
+      sampler2D _BumpMap;
+      sampler2D _Detail;
+      void surf (Input IN, inout SurfaceOutput o) {
+          o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
+          o.Albedo *= tex2D (_Detail, IN.uv_Detail).rgb * 2;
+          o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
+      }
+      ENDCG
+    } 
+    Fallback "Diffuse"
+  }
+```
+
+다음은 두종류의 텍스처를 블렌딩할 때 스크린 좌표를 이용하여 구현한 예이다.
+
+```c
+  Shader "Example/ScreenPos" {
+    Properties {
+      _MainTex ("Texture", 2D) = "white" {}
+      _Detail ("Detail", 2D) = "gray" {}
+    }
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      CGPROGRAM
+      #pragma surface surf Lambert
+      struct Input {
+          float2 uv_MainTex;
+          float4 screenPos;
+      };
+      sampler2D _MainTex;
+      sampler2D _Detail;
+      void surf (Input IN, inout SurfaceOutput o) {
+          o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
+          float2 screenUV = IN.screenPos.xy / IN.screenPos.w;
+          screenUV *= float2(8,6);
+          o.Albedo *= tex2D (_Detail, screenUV).rgb * 2;
+      }
+      ENDCG
+    } 
+    Fallback "Diffuse"
+  }
+```
+
+다음은 큐브맵을 반사시킨 예이다.
+
+```c
+  Shader "Example/WorldRefl" {
+    Properties {
+      _MainTex ("Texture", 2D) = "white" {}
+      _Cube ("Cubemap", CUBE) = "" {}
+    }
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      CGPROGRAM
+      #pragma surface surf Lambert
+      struct Input {
+          float2 uv_MainTex;
+          float3 worldRefl;
+      };
+      sampler2D _MainTex;
+      samplerCUBE _Cube;
+      void surf (Input IN, inout SurfaceOutput o) {
+          o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb * 0.5;
+          o.Emission = texCUBE (_Cube, IN.worldRefl).rgb;
+      }
+      ENDCG
+    } 
+    Fallback "Diffuse"
+  }
+```
+
+다음은 큐브맵을 노멀맵을 고려하여 반사시킨 예이다. `Input` struct 안에 `INTERNAL_DATA` 가 사용되었다는 점을 주목하자.
+
+```c
+  Shader "Example/WorldRefl Normalmap" {
+    Properties {
+      _MainTex ("Texture", 2D) = "white" {}
+      _BumpMap ("Bumpmap", 2D) = "bump" {}
+      _Cube ("Cubemap", CUBE) = "" {}
+    }
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      CGPROGRAM
+      #pragma surface surf Lambert
+      struct Input {
+          float2 uv_MainTex;
+          float2 uv_BumpMap;
+          float3 worldRefl;
+          INTERNAL_DATA
+      };
+      sampler2D _MainTex;
+      sampler2D _BumpMap;
+      samplerCUBE _Cube;
+      void surf (Input IN, inout SurfaceOutput o) {
+          o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb * 0.5;
+          o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
+          o.Emission = texCUBE (_Cube, WorldReflectionVector (IN, o.Normal)).rgb;
+      }
+      ENDCG
+    } 
+    Fallback "Diffuse"
+  }
+```
+
+다음은 특정 행의 픽셀들을 렌더링을 생략하여 마치 가위로 잘린 것 처럼 표현한 예이다.
+
+```c
+  Shader "Example/Slices" {
+    Properties {
+      _MainTex ("Texture", 2D) = "white" {}
+      _BumpMap ("Bumpmap", 2D) = "bump" {}
+    }
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      Cull Off
+      CGPROGRAM
+      #pragma surface surf Lambert
+      struct Input {
+          float2 uv_MainTex;
+          float2 uv_BumpMap;
+          float3 worldPos;
+      };
+      sampler2D _MainTex;
+      sampler2D _BumpMap;
+      void surf (Input IN, inout SurfaceOutput o) {
+          clip (frac((IN.worldPos.y+IN.worldPos.z*0.1) * 5) - 0.5);
+          o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
+          o.Normal = UnpackNormal (tex2D (_BumpMap, IN.uv_BumpMap));
+      }
+      ENDCG
+    } 
+    Fallback "Diffuse"
+  }
+```
+
+다음은 vertex 정보를 동적으로 수정하여 물체가 볼록하게 보이도록 하는 예이다.
+
+```c
+  Shader "Example/Normal Extrusion" {
+    Properties {
+      _MainTex ("Texture", 2D) = "white" {}
+      _Amount ("Extrusion Amount", Range(-1,1)) = 0.5
+    }
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      CGPROGRAM
+      #pragma surface surf Lambert vertex:vert
+      struct Input {
+          float2 uv_MainTex;
+      };
+      float _Amount;
+      void vert (inout appdata_full v) {
+          v.vertex.xyz += v.normal * _Amount;
+      }
+      sampler2D _MainTex;
+      void surf (Input IN, inout SurfaceOutput o) {
+          o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
+      }
+      ENDCG
+    } 
+    Fallback "Diffuse"
+  }
+```
+
+다음은 custom vertex function 을 사용하여 물체의 색을 노멀값으로 표현한 예이다. `vertex` modifier 를 이용하면 vertex function을 정의할 수 있다.
+
+```c
+  Shader "Example/Custom Vertex Data" {
+    Properties {
+      _MainTex ("Texture", 2D) = "white" {}
+    }
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      CGPROGRAM
+      #pragma surface surf Lambert vertex:vert
+      struct Input {
+          float2 uv_MainTex;
+          float3 customColor;
+      };
+      void vert (inout appdata_full v, out Input o) {
+          UNITY_INITIALIZE_OUTPUT(Input,o);
+          o.customColor = abs(v.normal);
+      }
+      sampler2D _MainTex;
+      void surf (Input IN, inout SurfaceOutput o) {
+          o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
+          o.Albedo *= IN.customColor;
+      }
+      ENDCG
+    } 
+    Fallback "Diffuse"
+  }
+```
+
+다음은 `finalcolor` modifier 를 이용하여 마지막 색을 수정한 예이다.
+
+```c
+  Shader "Example/Tint Final Color" {
+    Properties {
+      _MainTex ("Texture", 2D) = "white" {}
+      _ColorTint ("Tint", Color) = (1.0, 0.6, 0.6, 1.0)
+    }
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      CGPROGRAM
+      #pragma surface surf Lambert finalcolor:mycolor
+      struct Input {
+          float2 uv_MainTex;
+      };
+      fixed4 _ColorTint;
+      void mycolor (Input IN, SurfaceOutput o, inout fixed4 color)
+      {
+          color *= _ColorTint;
+      }
+      sampler2D _MainTex;
+      void surf (Input IN, inout SurfaceOutput o) {
+           o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
+      }
+      ENDCG
+    } 
+    Fallback "Diffuse"
+  }
+```
+
+다음은 `finalcolor, vertex` modifier  를 사용하여 안개를 표현한 예이다.
+
+```c
+  Shader "Example/Fog via Final Color" {
+    Properties {
+      _MainTex ("Texture", 2D) = "white" {}
+      _FogColor ("Fog Color", Color) = (0.3, 0.4, 0.7, 1.0)
+    }
+    SubShader {
+      Tags { "RenderType" = "Opaque" }
+      CGPROGRAM
+      #pragma surface surf Lambert finalcolor:mycolor vertex:myvert
+      struct Input {
+          float2 uv_MainTex;
+          half fog;
+      };
+      void myvert (inout appdata_full v, out Input data)
+      {
+          UNITY_INITIALIZE_OUTPUT(Input,data);
+          float4 hpos = UnityObjectToClipPos(v.vertex);
+          hpos.xy/=hpos.w;
+          data.fog = min (1, dot (hpos.xy, hpos.xy)*0.5);
+      }
+      fixed4 _FogColor;
+      void mycolor (Input IN, SurfaceOutput o, inout fixed4 color)
+      {
+          fixed3 fogColor = _FogColor.rgb;
+          #ifdef UNITY_PASS_FORWARDADD
+          fogColor = 0;
+          #endif
+          color.rgb = lerp (color.rgb, fogColor, IN.fog);
+      }
+      sampler2D _MainTex;
+      void surf (Input IN, inout SurfaceOutput o) {
+           o.Albedo = tex2D (_MainTex, IN.uv_MainTex).rgb;
+      }
+      ENDCG
+    } 
+    Fallback "Diffuse"
+  }
+```
+
+다음은 데칼의 예이다. 데칼은 deferred rendering 에서 유효하다. 데칼은 그림자를 만들어 내지 않기 때문에 `ForceNoShadowCasting` tag 가 사용되었다.
+
+```c
+Shader "Example/Decal" {
+  Properties {
+    _MainTex ("Base (RGB)", 2D) = "white" {}
+  }
+  SubShader {
+    Tags { "RenderType"="Opaque" "Queue"="Geometry+1" "ForceNoShadowCasting"="True" }
+    LOD 200
+    Offset -1, -1
+    
+    CGPROGRAM
+    #pragma surface surf Lambert decal:blend
+    
+    sampler2D _MainTex;
+    
+    struct Input {
+      float2 uv_MainTex;
+    };
+    
+    void surf (Input IN, inout SurfaceOutput o) {
+        half4 c = tex2D (_MainTex, IN.uv_MainTex);
+        o.Albedo = c.rgb;
+        o.Alpha = c.a;
+      }
+    ENDCG
+    }
+}
+```
 
 # Usage
 
@@ -1652,6 +2073,3 @@ a = \begin{matrix}
 ## BRDF (bidirectional reflectance distribution function)
 
 ## BRDF Anisotropy
-
-
-  
