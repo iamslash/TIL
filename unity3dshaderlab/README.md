@@ -94,19 +94,19 @@ time에 vertex, fragment shader로 변환된다.
 
 - The Programmable Graphics Pipeline
 
-![](../renderingpipeline/the_programmable_graphics_pipeline.png)
+![](/renderingpipeline/the_programmable_graphics_pipeline.png)
 
 - programmable vertex processor flow chart
 
-![](../renderingpipeline/programmable_vertex_processor_flow_chart.png)
+![](/renderingpipeline/programmable_vertex_processor_flow_chart.png)
 
 - programmable fragment processor flow chart
 
-![](../renderingpipeline/programmable_fragment_processor_flow_chart.png)
+![](/renderingpipeline/programmable_fragment_processor_flow_chart.png)
 
 - standard opengl and direct3d raster operations
 
-![](../renderingpipeline/standard_opengl_and_direct3d_raster_operations.png)
+![](/renderingpipeline/standard_opengl_and_direct3d_raster_operations.png)
 
 # Fixed function shader tutorial
 
@@ -1663,6 +1663,19 @@ Shader "Example/Decal" {
   shading language이다. directx와 opengl이 지원한다.
 - shader lab은 properties, sub-shader, pass, vertex shader input,
   vertex shader, vertex shader output, fragment shader등으로 구성된다.
+- cg 는 packed arrays 와 packed matrices 를 지원한다. packed arrays 는 `float4` 와 같은 표현이다. packed matrices 는 `float4x4` 와 같은 표현이다. 특히 다음과 같이 packed matrices 의 멤버들을 접근할 수 있다.
+
+```
+float4x4 matrix;
+
+float first = matrix_m00;
+float last = matrix_m33;
+
+float4 diagonal = matrix_m00_m11_m22_m33;
+float4 firstrow = matrix[0];
+float4 firstrow = matrix_m00_m01_m02_m03;
+```
+
 - shader lab의 기본 구조는 다음과 같다. 아럐 코드에서 POSITION,
   SV_POSITION, COLOR과 같은 것들을 shader semantics라고 한다.  shader
   semantics는 shader가 처리되는 단계들 사이에 전달되는 parameter가
