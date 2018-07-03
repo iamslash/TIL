@@ -269,6 +269,7 @@ typedef struct _IMAGE_IMPORT_BY_NAME {
 * INT 와 IAT 는 4 byte 배열이고 NULL로 끝난다.
 * INT 의 각 원소의 값은 IMAGE_IMPORT_BY_NAME 의 주소값을 가지고 있다.
 * INT 와 IAT 는 크기가 같다.
+* INT 를 이용하여 IAT 를 채운다.
 
 다음은 PE LOADER 가 임포트할 DLL의 함수주소를 IAT 에 입력하는 과정을 나타낸다.
 
