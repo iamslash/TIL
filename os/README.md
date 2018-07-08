@@ -197,6 +197,51 @@ EPROCESS의 중요한 멤버는 다음과 같다.
 | IopmOffset | IO 허용 비트의 Offset |
 | Iopl | IO 특권레벨 (0일 경우 커널모드만 허용, 3일 경우 유저모드까지 허용 |
 | ActiveProcessors | 현재 활성화 되어있는 CPU 개수 |
+| KernelTime | 이 프로세스가 커널레벨에서 소비한 시간 단위 개수 |
+| UserTime | 이 프로세스가 유저레벨에서 소비한 시간 단위 개수 |
+| ReadyListHead | 현재 준비 상태에 있는 쓰레드의 리스트 |
+| SwapListEntry | 현재 스와핑이 되고 있는 쓰레드의 리스트 |
+| ThreadListHead | 이 프로세스가 가지고 있는 쓰레드 목록 |
+| ProcessLock | 이 프로세스가 접근시 사용하는 동기화 객체 |
+| Affinity | 멀티 코어 CPU 에서 이 프로세스의 Affinity |
+| StackCount | 이 프로세스에서 사용하는 스택 개수 |
+| BasePriority | 프로세스 우선순위 (0~15) |
+| ThreadQuantum | 이 프로세스에서 생성되는 쓰레드의 기본 퀀텀 값 |
+| CreateTime | 이 프로세스의 생성 시간 |
+| UniqueProcessId | 이 프로세스의 고유 아이디 |
+| ActiveProcessLinks | 모든 프로세스의 목록 |
+| CommitCharge | 이 프로세스가 사용하는 물리 메모리 크기 |
+| PeakPagefileUsage | 최고 페이지파일 사용 크기 |
+| PeakVirtualSize | 최고 가상 메모리 크기 |
+| VirtualSize | 가상 메모리 크기 |
+| WorkingSetSize | 이 프로세스의 워킹세트 크기 |
+| DebugPort | 디버깅 상태일 때 LPC 포트 |
+| Token | 프로세스의 토큰 정보 |
+| WorkingSetLock | Working Set 조정 시 사용되는 Lock |
+| WorkingSetPage | Working Set에 의한 Page 개수 |
+| AddressCreationLock | 이 프로세스에서 메모리 생성시 사용되는 Lock |
+| VadRoot | 유저 메모리 영역을 설명하는 VAD pointer |
+| NumberOfPriatePages | 이 프로세스의 프라이빗 페이지 개수 |
+| NumberOfLockedPages | 락 되어진 페이지 개수 |
+| Peb | Process Environment Block |
+| SectionBaseAddress | 프로세스 세션 베이스 주소, 주로 이미지의 베이스 주소 |
+| WorkingSetWatch | 페이지 폴트 발생 시 저장되는 히스토리 |
+| Win32WindowStation | 현재 실행되는 프로세스의 Window Station ID |
+| InheritedFromUniqueProcessId | 부모 프로세스의 ID |
+| LdtInformation | 이 프로세스의 LDT 정보를 지시 |
+| VdmObjects | 16비트 프로그램일 때 사용됨 |
+| DeviceMap | 이 프로세스에서 사용할 수 있는 DOS의 디바이스 맵 |
+| SessionId | 터미널 서비스의 세션 ID |
+| ImageFileName | 이 프로세스의 이름 |
+| PriorityClass | 이 프로세스의 우선순위 |
+| SubSystemMinorVersion | 서브시스템의 마이너 버전 |
+| SubSystemMajorVersion | 서브시스템의 메이저 버전 |
+| SubSystemVersion | 서브시스템 버전 |
+| LockedPageList | 이 페이지에서 락 되어진 페이지의 리스트 |
+| ReadOperationCount | I/O Read 개수 |
+| WriteOperationCount | I/O Write 개수 |
+| CommitChargeLimit | 최대로 사용할 수 있는 물리 메모리 크기 |
+| CommitChargePeak | 최대로 사용된 물리 메모리 크기 |
 
 윈도우즈의 커널레벨 프로세스는 다음과 같이 KPROCESS 로 구현한다. [참고](https://www.nirsoft.net/kernel_struct/vista/KPROCESS.html)
 
@@ -247,7 +292,7 @@ typedef struct _KPROCESS
 } KPROCESS, *PKPROCESS;
 ```
 
-윈도우즈의 유저레벨 프로세스는 다음과 같이 ETHREAD 구조체로 구현한다. [참고](https://www.nirsoft.net/kernel_struct/vista/ETHREAD.html)
+윈도우즈의 유저레벨 쓰레드는 다음과 같이 ETHREAD 구조체로 구현한다. [참고](https://www.nirsoft.net/kernel_struct/vista/ETHREAD.html)
 
 ```c
 typedef struct _ETHREAD
@@ -358,9 +403,38 @@ ETHREAD 의 중요한 멤버는 다음과 같다.
 
 | member field | description |
 |:------------:|:-----------:|
-| | |
-| | |
-| | |
+| InitialStack | 커널 스택의 낮은 주소 |
+| StackLimit | 커널 스택의 높은 주소 |
+| Kernel Stack | 커널 모드에서 현재 스택 포인터 (ESP) |
+| DebugActive | 디버깅 중인가? |
+| State | 현재 쓰레드 상태 |
+| Iopl | IOPL |
+| NpxState | Floating Point 상태 정보 |
+| Priority | 우선순위 |
+| ContextSwitches | 쓰레드 스위칭 횟수 |
+| WaitIrql | 현재 Wait 상태에서 IRQL |
+| WaitListEntry | 현재 상태가 Wait인 쓰레드 목록 |
+| BasePriority | 이 쓰레드의 베이스 우선순위 |
+| Quantum | 이 쓰레드의 퀀컴 값 |
+| ServiceTable | 서비스 테이블 |
+| Affinity | 커널에서의 쓰레드 Affinity |
+| Preempted | 선점 여부 |
+| KernelStackResident | 쓰레드 커널 스택이 쓰레드 종료 후에도 메모리에 있는가 |
+| NextProcessor | 스케줄러에 의해 결정된 다음번 실행시 사용될 CPU |
+| TrapFrame | Exception 발생시 사용될 트랩 프레임 포인터 |
+| PreviousMode | 이전의 모드가 유저모드인가 커널모드인가, 시스템 함수 호출에서 유효성을 체크하는데 사용되어진다. |
+| KernelTime | 커널모드에서 이 쓰레드가 수행된 시간 |
+| UserTime | 유저모드에서 이 쓰레드가 수행된 시간 |
+| Alertable | Alertable 상태 |
+| StackBase | 이 쓰레드의 스택 베이스 주소 |
+| ThreadListEntry | 프로세서가 가지고 있는 모든 쓰레드들의 목록 |
+| CreateTime | 생성시간 |
+| ExitTime | 종료시간 |
+| ExitStatus | exit status |
+| PostBlockList | 이 쓰레드가 참조하는 모든 Object들의 리스트 |
+| ActiveTimerListHead | 이 쓰레드에 활성화된 타이머 리스트 |
+| UniqueThread | 이 쓰레드의 고유한 번호 |
+| ImpersonationInfo | 임퍼스네이션 정보 |
 
 다음은 커널 쓰레드를 구현한 KTHREAD 이다. [참고](https://www.nirsoft.net/kernel_struct/vista/KTHREAD.html)
 
