@@ -1,3 +1,21 @@
+
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Procedure and Stack](#procedure-and-stack)
+- [Process and Thread](#process-and-thread)
+- [Thread Scheduling](#thread-scheduling)
+- [Thread synchronization](#thread-synchronization)
+- [Memory Management](#memory-management)
+- [Segmentation](#segmentation)
+- [Paging](#paging)
+- [Page Management](#page-management)
+- [Cache Management](#cache-management)
+- [Windows Cache Management](#windows-cache-management)
+- [Userlevel and Kernellevel](#userlevel-and-kernellevel)
+- [Execution file and Loader](#execution-file-and-loader)
+
+----
+
 # Abstract
 
 운영체제 (Operating System) 에 대해 정리한다. [Computer System Architecture](../csa/README.md) 의 내용을 먼저 이해해야 한다.
@@ -173,7 +191,12 @@ EPROCESS의 중요한 멤버는 다음과 같다.
 
 | member field | description |
 |:------------:|:-----------:|
-| | |
+| DirectoryTableBase | 가상 메모리의 CR3 레지스터값 |
+| LdtDescriptor | 16비트 애플리케이션에서 사용되는 LDT 디스크립터 |
+| Int21Descriptor | 16비트 애플리케이션에서 인터럽트 21의 디스크립터 |
+| IopmOffset | IO 허용 비트의 Offset |
+| Iopl | IO 특권레벨 (0일 경우 커널모드만 허용, 3일 경우 유저모드까지 허용 |
+| ActiveProcessors | 현재 활성화 되어있는 CPU 개수 |
 
 윈도우즈의 커널레벨 프로세스는 다음과 같이 KPROCESS 로 구현한다. [참고](https://www.nirsoft.net/kernel_struct/vista/KPROCESS.html)
 
@@ -335,6 +358,8 @@ ETHREAD 의 중요한 멤버는 다음과 같다.
 
 | member field | description |
 |:------------:|:-----------:|
+| | |
+| | |
 | | |
 
 다음은 커널 쓰레드를 구현한 KTHREAD 이다. [참고](https://www.nirsoft.net/kernel_struct/vista/KTHREAD.html)
