@@ -50,10 +50,31 @@
   sigmoid, ReLU, learning rate, forward propagation, back propagation,
   CNN (Convolutional Neural Networks), RNN (Recurrent Neural Networks)
 
-# Learning material
+# Materials
 
 - [paper with code](https://paperswithcode.com/)
   - 논문과 구현
+- [최신 논문으로 시작하는 딥러닝](http://www.edwith.org/deeplearningchoi/joinLectures/10979)
+  - 최성준님의 강좌. 모두를 위한 머신러닝을 클리어 하고 학습하면 좋다.
+  - [src](https://github.com/sjchoi86/dl_tutorials_10weeks)
+- [PR12 딥러닝 논문읽기 모임 @ youtube](https://www.youtube.com/playlist?list=PLlMkM4tgfjnJhhd4wn5aj8fVTYJwIpWkS)
+  - 딥러닝 논문읽기 모임 동영상
+  - [PR12 딥러닝 논문읽기 @ github](https://kkweon.github.io/pr12-web-app-elm/)
+- [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
+  - 한글로 제일 쉽게 설명하는 자료이다. 
+- [machine learning at coursera](https://www.coursera.org/learn/machine-learning)
+  - andrew Ng교수의 machine learning강좌
+  - 영문이지만 기초를 공부할 수 있다.
+- [machine learning note](http://www.holehouse.org/mlclass/)
+  - andrew Ng교수의 machine learning강좌 노트
+- [deep learning tutorial](http://deeplearning.stanford.edu/tutorial/)
+  - standford 대학의 tutorial이다. 코드와 텍스트가 가득하다.
+- [Andrej Karpathy's Youtube channel](https://www.youtube.com/channel/UCPk8m_r6fkUSYmvgCBwq-sw)
+- [CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/syllabus.html)
+  - 화상인식을 위한 CNN
+- [CS224d: Deep Learning for Natural Language Processing]()
+  - 자연어처리를 위한 Deep Learning
+- [Deep learning @ Udacity](https://www.udacity.com/course/viewer#!/c-ud730/l-6370362152/m-6379811817)
 - [Google AI course](https://ai.google/education)
   - 구글의 AI 코스웨어
 - 김훈 링크
@@ -85,9 +106,6 @@
   26. RLCode와 A3C 쉽고 깊게 이해하기, 이웅원(RLCode 리더), http://tv.naver.com/v/2022271
   27. Deepmind StarCraft II AI, 송호연(Kakao, now Naver), http://tv.naver.com/v/2451300
 
-- [최신 논문으로 시작하는 딥러닝](http://www.edwith.org/deeplearningchoi/joinLectures/10979)
-  - 최성준님의 강좌. 모두를 위한 머신러닝을 클리어 하고 학습하면 좋다.
-  - [src](https://github.com/sjchoi86/dl_tutorials_10weeks)
 - [(기계학습, 인공지능, 머신러닝) 한국어 기계 학습 강좌](https://www.youtube.com/playlist?list=PLbhbGI_ppZISMV4tAWHlytBqNq1-lb8bz)
   - 카이스트 산업공학과 문일철 교수 강의
 - [(기계학습,인공지능,머신러닝) 한국어 기계 학습 강좌 심화 1](https://www.youtube.com/playlist?list=PLbhbGI_ppZIRPeAjprW9u9A46IJlGFdLn)
@@ -98,8 +116,6 @@
     방법을 다룬다.
 - [2013 2학기 선형대수 - 이상화](https://www.youtube.com/playlist?list=PLSN_PltQeOyjDGSghAf92VhdMBeaLZWR3)
 - [확률및통계 - 이상화](http://www.kocw.net/home/search/kemView.do?kemId=1056974)
-- [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
-  - 한글로 제일 쉽게 설명하는 자료이다. 
 - [artificial intelligence: a modern approach by stuart russel, peter norvig](http://aima.cs.berkeley.edu/)
   - peter norvig의 교과서.
   - [한글](http://www.aladin.co.kr/shop/wproduct.aspx?ItemId=76161975)책도
@@ -114,29 +130,11 @@
   - 딥러닝 논문들을 task와 date별로 정리
 - [awesome deep learning papers @ github](https://github.com/terryum/awesome-deep-learning-papers)
   - 테리의 딥러닝 논문 추천
-- [PR12 딥러닝 논문읽기 모임 @ youtube](https://www.youtube.com/playlist?list=PLlMkM4tgfjnJhhd4wn5aj8fVTYJwIpWkS)
-  - 딥러닝 논문읽기 모임 동영상
-  - [PR12 딥러닝 논문읽기 @ github](https://kkweon.github.io/pr12-web-app-elm/)
 - [Hands-On Machine Learning with Scikit-Learn and TensorFlow](https://www.amazon.com/gp/product/1491962291/ref=oh_aui_detailpage_o00_s00)
-- [machine learning at coursera](https://www.coursera.org/learn/machine-learning)
-  - andrew Ng교수의 machine learning강좌
-  - 영문이지만 기초를 공부할 수 있다.
-- [machine learning note](http://www.holehouse.org/mlclass/)
-  - andrew Ng교수의 machine learning강좌 노트
-- [deep learning tutorial](http://deeplearning.stanford.edu/tutorial/)
-  - standford 대학의 tutorial이다. 코드와 텍스트가 가득하다.
-- [Andrej Karpathy's Youtube channel](https://www.youtube.com/channel/UCPk8m_r6fkUSYmvgCBwq-sw)
-- [CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/syllabus.html)
-  - 화상인식을 위한 CNN
-- [CS224d: Deep Learning for Natural Language Processing]()
-  - 자연어처리를 위한 Deep Learning
 - [tensorflow](https://www.tensorflow.org)
 - [TensorFlow Tutorials (Simple Examples)](https://github.com/nlintz/TensorFlow-Tutorials)
 - [Another TensorFlow Tutorials](https://github.com/pkmital/tensorflow_tutorials)
 - [TensorFlow Examples](https://github.com/aymericdamien/TensorFlow-Examples)
-- [Deep learning @ Udacity](https://www.udacity.com/course/viewer#!/c-ud730/l-6370362152/m-6379811817)
-- [SIRAJ RAVAL'S DEEP LEARNING](https://in.udacity.com/course/deep-learning-nanodegree-foundation--nd101/#)
-  - nano degree
 
 # usage
 
@@ -3969,9 +3967,10 @@ if __name__ == "__main__":
 \hat{Q}(s,a) \leftarrow r + \max_{a{}'} \hat{Q}(s{}',a{}') 
 ```
 
-다음은 openai gym, frozenlake 를 이용하여 dummy q learning 을 구현한 것이다.
+다음은 openai gym 으로 frozenlake 를 dummy q learning 으로 구현한 것이다.
 
 ```python
+
 ```
 
 액션을 선택할 때 경우에 따라서 보상이 많은 방향이 아닌 것을 선택해야할 필요가 있다. 이것을 exploit vs exploration 이라고 한다. 상태가 점점 변화될 때마다 보상의 가중치를 낮출 필요가 있다. 이것을 discounted future reward 라고 한다. 이것들을 다음과 같이 수식으로 표현할 수 있다.
