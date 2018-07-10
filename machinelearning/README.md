@@ -1,25 +1,25 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [usage](#usage)
-    - [supervised learning](#supervised-learning)
-    - [unsupervised learning](#unsupervised-learning)
-    - [semisupervised learning](#semisupervised-learning)
-    - [reinforcement learning](#reinforcement-learning)
-    - [linear regression with one variable](#linear-regression-with-one-variable)
-    - [linear regression with multiple variables](#linear-regression-with-multiple-variables)
-    - [logistic regression (binary classification)](#logistic-regression-binary-classification)
-    - [Example: Titanic](#example-titanic)
-    - [softmax regression (multinomial classification)](#softmax-regression-multinomial-classification)
-    - [machine learning tips](#machine-learning-tips)
-    - [Example: Digit Recognizer](#example-digit-recognizer)
-    - [Deep Learning Fundamentals](#deep-learning-fundamentals)
-    - [NN (neural networks)](#nn-neural-networks)
-    - [CNN (convolutional neural networks)](#cnn-convolutional-neural-networks)
-    - [RNN (recurrent networks)](#rnn-recurrent-networks)
-    - [RL (reinforcement learning)](#rl-reinforcement-learning)
-    - [GAN (generative adversarial network)](#gan-generative-adversarial-network)
-    - [NLP (Naturla Language Processing)](#nlp-naturla-language-processing)
-- [reference](#reference)
+- [Supervised Learning](#supervised-learning)
+- [Unsupervised Learning](#unsupervised-learning)
+- [Semisupervised Learning](#semisupervised-learning)
+- [Reinforcement Learning](#reinforcement-learning)
+- [linear regression with one variable](#linear-regression-with-one-variable)
+- [linear regression with multiple variables](#linear-regression-with-multiple-variables)
+- [Logistic Regression (binary classification)](#logistic-regression-binary-classification)
+- [Example: Titanic](#example-titanic)
+- [Softmax Regression (multinomial classification)](#softmax-regression-multinomial-classification)
+- [Machine Learning Tips](#machine-learning-tips)
+- [Example: Digit Recognizer](#example-digit-recognizer)
+- [Deep Learning Fundamentals](#deep-learning-fundamentals)
+- [NN (Neural Networks)](#nn-neural-networks)
+- [CNN (Convolutional Neural Networks)](#cnn-convolutional-neural-networks)
+- [RNN (Recurrent Neural Networks)](#rnn-recurrent-neural-networks)
+- [RL (Reinforcement Learning)](#rl-reinforcement-learning)
+- [GAN (Generative Adversarial Network)](#gan-generative-adversarial-network)
+- [NLP (Naturla Language Processing)](#nlp-naturla-language-processing)
+- [References](#references)
+
 
 -----
 
@@ -136,9 +136,7 @@
 - [Another TensorFlow Tutorials](https://github.com/pkmital/tensorflow_tutorials)
 - [TensorFlow Examples](https://github.com/aymericdamien/TensorFlow-Examples)
 
-# usage
-
-## supervised learning
+# Supervised Learning
 
 - supervised learning은 이미 x는 y라는 결론이 도출된 데이터를 이용하여 학습시키는 것이다.
   이미 결론이 도출된 데이터이기 때문에 데이터의 정확성은 높지만 이러한 데이터를 사람이 산출해야
@@ -153,18 +151,18 @@
   regression problem을 해결하기 위한 기법들로 통계학의 회귀분석 방법중 linear regression
   등이 있다.
 
-## unsupervised learning
+# Unsupervised Learning
 
 - unsupervised learning은 결론이 도출되지 않은 x 데이터를 이용하여 학습시키는 것이다.
   현실 세계의 대부분의 데이터는 결론이 도출되지 않았다.
 - unsupervised learning의 종류는 clustering (군집화),
   underlying probability density estimation (분포추정) 등이 있다.
 
-## semisupervised learning
+# Semisupervised Learning
 
 - 다수의 결론이 도출되지 않은 데이터와 약간의 결론이 도출된 데이터를 이용하여 학습시키는 것이다.
 
-## reinforcement learning
+# Reinforcement Learning
 
 - supervised learning과 unsupervised learning는 사람이 학습을 지도 하느냐
   마느냐와 관련이 되어 있지만 reinforcement learning은 조금 다르다.
@@ -172,7 +170,7 @@
   action을 취할때 마다 외부 환경에서 reward (보상)이 주어진다. reward를 최대화
   하는 방향으로 학습이 진행된다.
 
-## linear regression with one variable
+# linear regression with one variable
 
 - 한개의 독립변수(x)와 한개의 종속변수(y)를 이용하여 데이터를 분석하고
   예측하는 것. 이때 통계적 가설에 해당하는 데이터의 일정한 패턴은
@@ -449,7 +447,7 @@ if __name__ == "__main__":
 ```
 
 
-## linear regression with multiple variables
+# linear regression with multiple variables
 
 - 만약 feature가 x1, x2, x3와 같이 세가지 일때 hypothesis와
   cost(W, b)는 다음과 같다.
@@ -696,7 +694,7 @@ if __name__ == "__main__":
     main()
 ```
 
-## logistic regression (binary classification)
+# Logistic Regression (binary classification)
 
 - y가 0혹은 1과 같이 두개만 존재하는 경우의 회귀분석이다. 예를 들어서
   학생이 시험을 통과하기 위해 공부한 시간을 x1, 공부한 책의 숫자를 x2,
@@ -855,9 +853,9 @@ if __name__ == "__main__":
     main()
 ```
 
-## [Example: Titanic](https://www.kaggle.com/c/titanic)
+# [Example: Titanic](https://www.kaggle.com/c/titanic)
 
-## softmax regression (multinomial classification)
+# Softmax Regression (multinomial classification)
 
 - 출력이 A, B, C와 같이 세개 이상인 경우의 회귀분석이다. 공부한 시간,
   출석 횟수를 입력으로 성적을 출력으로 갖는 경우를 생각해보자. 이때
@@ -1131,7 +1129,7 @@ if __name__ == "__main__":
     main()
 ```
 
-## machine learning tips
+# Machine Learning Tips
 
 - ML으로 문제를 해결할때 다음과 같은 사항들을 주의 깊게 고민할 필요가 있다.
   - learning rate를 잘 설정해서 cost(W, b)를 최소화 하는 W, b를 빨리 찾기
@@ -1435,9 +1433,9 @@ if __name__ == "__main__":
     main()
 ```
 
-## [Example: Digit Recognizer](https://www.kaggle.com/c/digit-recognizer)
+# [Example: Digit Recognizer](https://www.kaggle.com/c/digit-recognizer)
 
-## Deep Learning Fundamentals
+# Deep Learning Fundamentals
 
 - machine llearning한계는 인간의 뇌를 구성하는 뉴런을 연구해왔다.
   그리고 뉴런의 동작 과정을 모델링해서 기계학습을 구현했다. 다음은
@@ -1665,7 +1663,7 @@ pp.pprint(sess.run(t).shape)
 pp.pprint(sess.run(t))
 ```
 
-## NN (neural networks)
+# NN (Neural Networks)
 
 - marvin minsky의 perceptrons라는 책의 발간 이후 상당 기간동안 XOR
   problem은 해결되지 못하고 있었다. 그러나 1986년 Hinton교수를 통해
@@ -2853,7 +2851,7 @@ if __name__ == "__main__":
 - MNIST를 CNN을 이용하여 구현하면 정확도를 약 99%로 만들 수
   있다. CNN은 도대체 무엇일까?
 
-## CNN (convolutional neural networks)
+# CNN (Convolutional Neural Networks)
 
 ![](img/CNN.png)
 
@@ -3506,7 +3504,7 @@ if __name__ == "__main__":
     main()
 ```
 
-## RNN (recurrent networks)
+# RNN (Recurrent Neural Networks)
 
 - node의 출력이 바로 옆 node의 입력으로 적용되는 형태의 neural
   networks를 recurrent neural networks라고 한다.
@@ -3957,11 +3955,11 @@ if __name__ == "__main__":
     main()
 ```
 
-## RL (reinforcement learning)
+# RL (Reinforcement Learning)
 
 * [reinforcement learning](/reinforcementlearning/README.md)
 
-## GAN (generative adversarial network)
+# GAN (Generative Adversarial Network)
 
 - discriminator는 이미지데이터를 입력받아 진짜인지 가짜인지 출력하기
   위해 학습시킨다.
@@ -3978,11 +3976,11 @@ if __name__ == "__main__":
   (natural language processing)
 - CycleGAN, StackGAN
 
-## NLP (Naturla Language Processing)
+# NLP (Naturla Language Processing)
 
 - ...
 
-# reference
+# References
 
 - [itex2img](http://www.sciweavers.org/free-online-latex-equation-editor)
   - github markdown에서 수식을 입력할때 사용하자.
