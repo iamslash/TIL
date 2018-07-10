@@ -1,13 +1,8 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
 - [Learning Material](#learning-material)
 - [Simple Rendering Pipeline](#simple-rendering-pipeline)
-- [The Graphics Hardware Pipeline](#the-graphics-hardware-pipeline)
-- [unity3d rendering pipeline](#unity3d-rendering-pipeline)
-
-<!-- markdown-toc end -->
+- [Advanced Rendering Pipeline](#advanced-rendering-pipeline)
+- [Unity3d Rendering Pipeline](#unity3d-rendering-pipeline)
 
 -------------------------------------------------------------------------------
 
@@ -39,13 +34,17 @@ programmable하다.  rasterization은 fragment를 만들어
 lighting, texturing을 처리하고 programmable하다.  output merging은
 z-buffering, alpha blending, z-culling등 이 수행되고 hardwired하다.
 
-# The Graphics Hardware Pipeline
+# Advanced Rendering Pipeline
   
 다음은 nvidia cg tutorial에 나와 있는 rendering pipeline들이다.  
   
 - The Programmable Graphics Pipeline
 
 ![](the_programmable_graphics_pipeline.png)
+
+- standard opengl and direct3d raster operations
+
+![](standard_opengl_and_direct3d_raster_operations.png)
 
 - programmable vertex processor flow chart
 
@@ -55,38 +54,19 @@ z-buffering, alpha blending, z-culling등 이 수행되고 hardwired하다.
 
 ![](programmable_fragment_processor_flow_chart.png)
 
-- standard opengl and direct3d raster operations
-
-![](standard_opengl_and_direct3d_raster_operations.png)
-
-# unity3d rendering pipeline
+# Unity3d Rendering Pipeline
 
 - [Optimizing graphics rendering in Unity games](https://unity3d.com/kr/learn/tutorials/temas/performance-optimization/optimizing-graphics-rendering-unity-games?playlist=44069)와
   [unity3d rendering pipeline](https://www.youtube.com/watch?v=qHpKfrkpt4c)를 읽고 정리한다.
-- a.obj를 unity3d에서 rendering한다고 해보자. 먼저 CPU에서 batch를 적당히 구성하여 
-  GPU에게 전송한다. GPU는 batch의 command들을 차례대로 실행한다. 이때 setpass call과 draw call등을
-  차례대로 실행한다. a.obj에 맵핑되어 있는 vertex shader, fragment shader를 차례대로 실행하고
-  raster operation을 진행한다. raster operation에서 scissor test, alpha test, sencil test,
-  depth test, blending등을 수행후 framebuffer에 기록한다. framebuffer를 flipping하여
-  화면에 픽셀들을 뿌려준다.
-- CPU는 GPU에게 command들의 덩어리를 전송한다. 이때 전송되는 하나의 단위를 
-  batch라고 한다. batch는 draw call, set VB, set IB, 
+- a.obj를 unity3d에서 rendering한다고 해보자. 먼저 CPU에서 여러 command 들을 하나의 batch 에 적당히 구성하여 
+  GPU에게 전송한다. 이때 batch 는 render-state 을 세팅하는 SetPass Call 과 오브젝트들을 그리는 Draw Call 와 같이 두 종류가 있다. GPU 는 batch 의 command 들을 차례대로 실행한다. 
+- SetPass Call 은 set VB, set IB, 
   Set Transform, Set Shader, Set Texture, Set Blending, 
   Set Z enable 등등을 포함한다.
-- draw call은 opengl의 경우 glDrawArrays, glDrawElements 과 같은
-  함수 호출과 같다. directx의 경우 gDevice->Draw* 함수 호출과 같다.
-- Set Shader, Set Texture, Set Blending, Set Z enable등을 
-  SetPass Call이라고 한다. 즉 SetPass call은 render state을 
-  바꾸는 command들이다.
-- 10개의 오브젝트가 있다고 해보자. 이때 모두 같은 머터리얼을 사용한다면
-  draw call이 10개이고 setpass call은 1개이기 때문에 batch는 11개이다.
-  하지만 모두 다른 머터리얼을 사용한다면 draw call이 10개이고 setpass call은
-  10개이기 때문에 batch는 20개이다. 
-- 만약 10개의 오브젝트를 rendering하기 위해 1개의 batch에 command들을 
-  잘 구성할 수 있다면 10개의 batch보다 효율적이다. 이러한 행위를 batching이라고 한다.
-- GPU가 CPU로 부터 넘겨받은 batch의 command에 SetPass Call포함되어 있다면 GPU는 
-  renderstate을 갱신하고 Draw Call이 포함되어 있다면 renderstate에 설정된
-  shader에 의해 mesh를 rendering한다.
-- CPU입장에서 GPU에게 전송하는 command들중 setpass call이 가장 비용이 크다.
-  따라서 CPU bound인 경우 SetPass call command를 줄이는 것은 성능향상의 
+- Draw Call 은 설정된 render-state 으로 오브젝트를 렌더링한다. opengl 의 경우 glDrawArrays, glDrawElements 과 같은
+  함수 호출에 의해, directx의 경우 gDevice->Draw* 함수 호출에 의해 실행된다.
+- 10개의 오브젝트가 있다고 해보자. 이때 모두 같은 머터리얼을 사용한다면 하나의 SetPass Call 과 10 개의 Draw Call 이 가능하기 때문에 batch 는 모두 11개이다. 만약 모두 다른 머터리얼을 사용한다면 10개의 SetPass Call 과 10개의 Draw Call 이 가능하기 때문에 batch 는 모두 20개가 된다.
+- 10개의 오브젝트가 있다고 해보자. 만약 하나의 DrawCall 이 하나의 batch 를 구성한다면 batch 는 모두 10개가 된다. 10 개의 DrawCall 들을 하나의 DrawCall 로 줄일 수 있다면 batch 는 모두 1개가 되어 훨씬 효율적이다. 이와 같이 여러개의 batch 를 하나의 batch 에 수집하는 행위를 batching 이라고 한다.
+- CPU입장에서 GPU에게 전송하는 command 들 중 SetPass Call 이 가장 비용이 크다.
+  따라서 CPU bound인 경우 SetPass Call 을 줄이는 것은 성능향상의 
   가장 좋은 방법이다.
