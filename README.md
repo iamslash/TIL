@@ -22,6 +22,7 @@
 - [systemdesign](systemdeisgn)
 - [statistics](statistics)
 - [machinelearning](machinelearning/README.md)
+- [reinforcementlearning](reinforcementlearning/README.md)
 - [datascience](datascience/README.md)
 - [cs](datascience/cs.md)
 - [os](datascience/os.md)
