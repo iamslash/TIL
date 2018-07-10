@@ -13,7 +13,7 @@ reinforcement learning 에 대해 정리한다.
 * [모두를 위한 딥러닝 @ github](https://hunkim.github.io/ml/)
   * 김훈님의 동영상 강좌이다. DQN 까지 쉽게 설명한다.
 * [RLCode와 A3C 쉽고 깊게 이해하기 @ youtube](https://www.youtube.com/watch?v=gINks-YCTBs)
-  * RLCode 의 리더 이웅원님의 동영상 강좌이다. 강화학습의 전반적인 내용을 설명한다.
+  * RLCode 의 리더 이웅원님의 동영상 강좌이다. 강화학습의 Policy Gradient, A3C 등을 설명한다.
   * [slide](https://www.slideshare.net/WoongwonLee/rlcode-a3c)
 * [파이썬과 케라스로 배우는 강화학습 @ wikibooks](http://wikibook.co.kr/reinforcement-learning/)
   * 이웅원님이 저술한 강화학습 책
