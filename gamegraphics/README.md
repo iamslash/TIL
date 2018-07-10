@@ -1,24 +1,20 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Comments](#comments)
 - [Materials](#materials)
-- [References](#references)
 - [Snippets](#snippets)
 - [3D graphics api](#3d-graphics-api)
 - [Opensource Game Engines](#opensource-game-engines)
 - [Math Prerequisites](#math-prerequisites)
-- [[Rendering Pipeline](../renderingpipeline/README.md)](#rendering-pipelinerenderingpipelinereadmemd)
+- [Rendering Pipeline](#rendering-pipeline)
 - [Polygon Mesh](#polygon-mesh)
 - [Vertex Processing](#vertex-processing)
 - [Rasterization](#rasterization)
 - [Fragment Processing](#fragment-processing)
 - [Output Merging](#output-merging)
-- [[Lighting](../lighting/README.md)](#lightinglightingreadmemd)
+- [Lighting](#lighting)
 - [Shader Models](#shader-models)
 - [Shader Language](#shader-language)
 - [Curve](#curve)
-- [[Bump Mapping](../bumpmapping/README.md)](#bump-mappingbumpmappingreadmemd)
+- [Bump Mapping](#bump-mapping)
 - [Environment Mapping](#environment-mapping)
 - [Light Mapping](#light-mapping)
 - [Shadow Mapping](#shadow-mapping)
@@ -27,30 +23,51 @@
 - [Animation](#animation)
 - [Collision Detection](#collision-detection)
 
-<!-- markdown-toc end -->
-
 -------------------------------------------------------------------------------
 
 # Comments
 
-radiosity, curve, Environment Mapping, Light Mapping, Shadow Mapping,
+updating radiosity, curve, Environment Mapping, Light Mapping, Shadow Mapping,
 Ambient Occlusion Mapping, Deferred Shading, animation, collision
 detection
 
 # Materials
 
-- [awesome gamedev](https://github.com/ellisonleao/magictools)
-- [awesome graphics resources](https://github.com/mattdesl/graphics-resources)
-- [awesome computer vision](https://github.com/jbhuang0604/awesome-computer-vision)
-- [awesome opengl](https://github.com/eug/awesome-opengl)
+- [3차원 그래픽스(게임 프로그래밍을위한)](http://media.korea.ac.kr/book/)
+  - 3차원 그래픽스 기반이론을 매우 자세히 풀어썼다. 저자의
+    홈페이지에서 제공하는 슬라이드는 각종 그림과 수식을 가득 포함하고 있다.
+  - [3D Graphics for Game Programming lecture notes](3dgraphics_for_game_programming_lecture_notes/)
+- [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)
+  - 기반이론이 1000페이지 넘게 잘 정리된 책이다.
+- [interactive 3D Graphics @ udacity](https://classroom.udacity.com/courses/cs291)
+  - [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)의 동영상 강좌
+  - [syllabus](https://www.udacity.com/wiki/cs291/syllabus)
+  - [comments](https://www.udacity.com/wiki/cs291/instructor-comments)
+  - [wiki](https://www.udacity.com/wiki/cs291)
+  - [three.js tutorial](http://stemkoski.github.io/Three.js/)
+- [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
+  - frank luna의 명저
+  - [src](https://github.com/d3dcoder/d3d12book)
+- [유니티로 배우는 게임 수학](http://www.yes24.com/24/goods/30119802?scode=032&OzSrank=1)
+  - 요약 설명이 많아서 초보자 보기에는 불편한 설명이다. 하지만 기반
+    내용을 정리하는 용도로 좋다. 짐벌락, PBR에 대한 간략한 설명은 특히
+    괜찮았다.
+  - [src](https://github.com/ryukbk/mobile_game_math_unity)
+- [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
+  - 컴퓨터그래픽스 기반 이론을 cg와 함께 설명한다.
+- [webgl fundamentals](https://webglfundamentals.org/)
+  - 게임그래픽스이론을 webgl에서 간단히 실습해 보자.
+- [realtimerendering graphics books page](http://www.realtimerendering.com/books.html)
+  - 아주 많은 책들이 정리되어 있다. 언제 다 보지?
+- [awesome gamedev @ github](https://github.com/ellisonleao/magictools)
+- [awesome graphics resources @ github](https://github.com/mattdesl/graphics-resources)
+- [awesome computer vision @ github](https://github.com/jbhuang0604/awesome-computer-vision)
+- [awesome opengl @ github](https://github.com/eug/awesome-opengl)
 - [directx11 tutorials](http://www.rastertek.com/tutdx11.html)
   - 약 50여 개의 directx11 튜토리얼 
 - [game engine development by Jamie King @ youtube](https://www.youtube.com/playlist?list=PLRwVmtr-pp04XomGtm-abzb-2M1xszjFx)
   - visual studio를 이용한 게임 엔진 개발
   - [src](https://github.com/1kingja/game-engine)
-- [game engine development by Bennybox](https://www.youtube.com/watch?v=ss3AnSxJ2X8&list=PLEETnX-uPtBXP_B2yupUKlflXBznWIlL5)
-  - java를 이용한 게임 엔진 개발
-  - [src](https://github.com/BennyQBD/3DGameEngine)
 - [GPU how to work](http://pixeljetstream.blogspot.kr/2015/02/life-of-triangle-nvidias-logical.html)
   - GPU가 어떻게 작동하는 가를 렌더링 파이플 라인과 함께 설명함
 - [Shadow algorithms for computer graphics](https://dl.acm.org/citation.cfm?id=563901)
@@ -70,8 +87,6 @@ detection
   - 특히 [OpenGL Normal Vector Transformation](http://www.songho.ca/opengl/gl_normaltransform.html)의 설명이 너무 좋았다.
 - [Mathematics for 3D Game Programming and Computer Graphics, Third Edition](http://www.mathfor3dgameprogramming.com/)
   - 3D computer graphics를 위한 수학
-- [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
-  - 예전에 공짜였지만 지금은 아니다. 기반 설명이 충실히 기술되어 있다.
 - [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3 ]()
   - opengl red book
   - [src](https://github.com/openglredbook/examples)
@@ -98,8 +113,6 @@ detection
   - [src](https://github.com/wolfgangfengel/GPUZen)
 - [ShaderX7](https://www.amazon.com/ShaderX7-Rendering-Techniques-Wolfgang-Engel/dp/1584505982)
 - [Physically Based Rendering](https://www.amazon.com/Physically-Based-Rendering-Second-Implementation/dp/0123750792)
-- [realtimerendering graphics books page](http://www.realtimerendering.com/books.html)
-  - 아주 많은 책들이 정리되어 있다. 언제 다 보지?
 - [modern opengl tutorial](http://ogldev.atspace.co.uk/)
   - 40여개의 튜토리얼이 단계별로 잘 설명되어 있다.
   - [src](http://ogldev.atspace.co.uk/ogldev-source.zip)
@@ -115,44 +128,22 @@ detection
 - [microsoft directx graphics samples](https://github.com/Microsoft/DirectX-Graphics-Samples)
   - 뭐지 이건
 
-# References
-
-- [3차원 그래픽스(게임 프로그래밍을위한)](http://media.korea.ac.kr/book/)
-  - 3차원 그래픽스 기반이론을 매우 자세히 풀어썼다. 저자의
-    홈페이지에서 제공하는 슬라이드는 각종 그림과 수식을 가득 포함하고 있다.
-  - [3D Graphics for Game Programming lecture notes](3dgraphics_for_game_programming_lecture_notes/)
-- [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)
-  - 기반이론이 1000페이지 넘게 잘 정리된 책이다.
-- [interactive 3D Graphics](https://classroom.udacity.com/courses/cs291)
-  - [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)의 동영상 강좌
-  - [syllabus](https://www.udacity.com/wiki/cs291/syllabus)
-  - [comments](https://www.udacity.com/wiki/cs291/instructor-comments)
-  - [wiki](https://www.udacity.com/wiki/cs291)
-  - [three.js tutorial](http://stemkoski.github.io/Three.js/)
-- [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
-  - frank luna의 명저
-  - [src](https://github.com/d3dcoder/d3d12book)
-- [유니티로 배우는 게임 수학](http://www.yes24.com/24/goods/30119802?scode=032&OzSrank=1)
-  - 요약 설명이 많아서 초보자 보기에는 불편한 설명이다. 하지만 기반
-    내용을 정리하는 용도로 좋다. 짐벌락, PBR에 대한 간략한 설명은 특히
-    괜찮았다.
-  - [src](https://github.com/ryukbk/mobile_game_math_unity)
-
 # Snippets
 
-- [Introduction to 3D Game Programming with Direct3D src](https://github.com/d3dcoder/d3d12book)
-- [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3 src](https://github.com/openglredbook/examples)
-- [OpenGL Superbible: Comprehensive Tutorial and Reference src](https://github.com/openglsuperbible/sb7code)
+- [Introduction to 3D Game Programming with Direct3D src @ github](https://github.com/d3dcoder/d3d12book)
+- [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3 src @ github](https://github.com/openglredbook/examples)
+- [OpenGL Superbible: Comprehensive Tutorial and Reference src @ github](https://github.com/openglsuperbible/sb7code)
 
 # 3D graphics api
 
 * [DirectX](/directx/README.md)
 * [OpenGL](/opengl/README.md)
+* [webgl](/webgl/README.md)
 
 # Opensource Game Engines
 
-- [unrealengine 4 src](https://github.com/EpicGames/UnrealEngine)
-  - opensource engine중 최고
+- [unrealengine 4 src @ github](https://github.com/EpicGames/UnrealEngine)
+- [unity cs reference @ github](https://github.com/Unity-Technologies/UnityCsReference)
 
 # Math Prerequisites
 
@@ -402,7 +393,9 @@ lighting 및 texturing 을 수행한다.
 
 z-buffering, alpha blending을 수행한다.
 
-# [Lighting](../lighting/README.md)
+# Lighting
+
+[lighting](/lighting/README.md)
 
 # Shader Models
 
@@ -444,7 +437,9 @@ Hermite Curve
 
 Catmull-Rom Spline
 
-# [Bump Mapping](../bumpmapping/README.md)
+# Bump Mapping
+
+[bumpmapping](/bumpmapping/README.md)
 
 # Environment Mapping
 
