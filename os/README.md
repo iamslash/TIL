@@ -4,7 +4,14 @@
 - [Procedure and Stack](#procedure-and-stack)
 - [Process and Thread](#process-and-thread)
 - [Thread Scheduling](#thread-scheduling)
+  - [Thread Status](#thread-status)
+  - [Preemptive Scheduling, Nonpreemptive Scheduling](#preemptive-scheduling-nonpreemptive-scheduling)
+  - [IRQL (Interrupt Request Level)](#irql-interrupt-request-level)
 - [Thread synchronization](#thread-synchronization)
+  - [Critical Section](#critical-section)
+  - [Mutex](#mutex)
+  - [Semaphore](#semaphore)
+  - [Event](#event)
 - [Memory Management](#memory-management)
 - [Segmentation](#segmentation)
 - [Paging](#paging)
@@ -623,9 +630,23 @@ typedef struct _KTHREAD
 
 # Thread Scheduling
 
+## Thread Status
 
+![](Windows_thread_states-f4.14.png)
+
+## Preemptive Scheduling, Nonpreemptive Scheduling
+
+## IRQL (Interrupt Request Level)
 
 # Thread synchronization
+
+## Critical Section
+
+## Mutex
+
+## Semaphore
+
+## Event
 
 # Memory Management
 
