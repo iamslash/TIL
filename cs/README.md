@@ -16,21 +16,22 @@
 # Subjects
 
 * [Data Structures and Algorithms](https://github.com/iamslash/learntocode)
-* [System Design and Scalabilities](../systemdesign/README.md)
-* [Operating System](../os/README.md)
-* [Computer System Architecture](../csa/README.md)
-* [Programming Language](../pl/README.md)
-* [Compiler](../compiler/README.md)
-* [Computer Graphics](../gamegraphics/README.md)
-* [Network](../network/README.md)
-* [Database](../database/README.md)
+* [System Design and Scalabilities](/systemdesign/README.md)
+* [Operating System](/os/README.md)
+* [Computer System Architecture](/csa/README.md)
+* [Programming Language](/pl/README.md)
+* [Compiler](/compiler/README.md)
+* [Computer Graphics](/gamegraphics/README.md)
+* [Network](/network/README.md)
+* [Database](/database/README.md)
 * Information Theory
 * Software Engineering
 * Computer System Security
 * Cryptography
-* Linear Algebra
+* [Linear Algebra](/linearalgebra/README.md)
 * Discrete Mathmatics
 * Mathmatical Analysis
-* [Probability and Statistics](../statistics/README.md)
-* [Machine Learning](../machinelearning/README.md)
+* [Probability and Statistics](/statistics/README.md)
+* [Machine Learning](/machinelearning/README.md)
 * Reversing
+* [Math](/math/README.md)
