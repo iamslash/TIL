@@ -5,8 +5,6 @@
 - [Process and Thread](#process-and-thread)
 - [Thread Scheduling](#thread-scheduling)
   - [Thread Status](#thread-status)
-  - [Preemptive Scheduling, Nonpreemptive Scheduling](#preemptive-scheduling-nonpreemptive-scheduling)
-  - [IRQL (Interrupt Request Level)](#irql-interrupt-request-level)
 - [Thread synchronization](#thread-synchronization)
   - [Critical Section](#critical-section)
   - [Mutex](#mutex)
@@ -634,9 +632,11 @@ typedef struct _KTHREAD
 
 ![](Windows_thread_states-f4.14.png)
 
-## Preemptive Scheduling, Nonpreemptive Scheduling
+쓰레드가 프로세서를 선점하고 있을 때 다른 쓰레드가 우선순위에 의해 프로세서를 선점하는 스케줄링 방식을 preemptive scheduling 이라고 한다. 쓰레드가 프로세서를 선점하고 있는 동안 다른 쓰레드가 프로세서를 선점하지 못하는 스케줄링 방식을 Nonpreemptive Shceduling 이라고 한다. 윈도우즈는 기본적으로 preemptive shceduling 을 사용한다. 
 
-## IRQL (Interrupt Request Level)
+윈도우즈는 선점형 스케줄링을 구현하기 위하여 타이머 인터럽트를 사용한다. 윈도우즈가 타이머 인터럽트를 받을 때 마다 실행되고 있는 쓰레드의 퀀텀을 감소시키고 이 값이 0 이하로 떨어지면 이 쓰레드의 할당 시간은 만료된 것으로 처리하고 DPC (Defered Procedure Call) 큐에 DPC 를 하나 삽입한다. IRQL (Interrupt Request Level) 이 DPC/dispatch level 이하로 떨어지면 DPC 인터럽트가 발생하고 윈도우즈의 Dispatcher 가 깨어나서 DPC 큐에서 DPC 를 하나 꺼내 실행한다. DPC 가 하나 실행될 때 마다 쓰레드가 실행되겠지?
+
+![](irql.png)
 
 # Thread synchronization
 

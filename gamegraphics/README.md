@@ -57,6 +57,8 @@ detection
   - 컴퓨터그래픽스 기반 이론을 cg와 함께 설명한다.
 - [webgl fundamentals](https://webglfundamentals.org/)
   - 게임그래픽스이론을 webgl에서 간단히 실습해 보자.
+- [pixar in a box @ khan](https://www.khanacademy.org/partner-content/pixar)
+  - 픽사의 그래픽스 강좌
 - [realtimerendering graphics books page](http://www.realtimerendering.com/books.html)
   - 아주 많은 책들이 정리되어 있다. 언제 다 보지?
 - [awesome gamedev @ github](https://github.com/ellisonleao/magictools)

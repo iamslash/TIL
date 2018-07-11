@@ -65,8 +65,7 @@ z-buffering, alpha blending, z-culling등 이 수행되고 hardwired하다.
   Set Z enable 등등을 포함한다.
 - Draw Call 은 설정된 render-state 으로 오브젝트를 렌더링한다. opengl 의 경우 glDrawArrays, glDrawElements 과 같은
   함수 호출에 의해, directx의 경우 gDevice->Draw* 함수 호출에 의해 실행된다.
-- 10개의 오브젝트가 있다고 해보자. 이때 모두 같은 머터리얼을 사용한다면 하나의 SetPass Call 과 10 개의 Draw Call 이 가능하기 때문에 batch 는 모두 11개이다. 만약 모두 다른 머터리얼을 사용한다면 10개의 SetPass Call 과 10개의 Draw Call 이 가능하기 때문에 batch 는 모두 20개가 된다.
-- 10개의 오브젝트가 있다고 해보자. 만약 하나의 DrawCall 이 하나의 batch 를 구성한다면 batch 는 모두 10개가 된다. 10 개의 DrawCall 들을 하나의 DrawCall 로 줄일 수 있다면 batch 는 모두 1개가 되어 훨씬 효율적이다. 이와 같이 여러개의 batch 를 하나의 batch 로 수집하는 행위를 batching 이라고 한다. 
+- 하나의 SetPass call 과 하나의 Draw call 은 하나의 batch 로 그룹화될 수 있다. 만약 Draw call 이 10개라면 batch 는 10개가 된다. 이때 10 개의 오브젝트들에 대해 SetPass call 을 잘 구성해서 하나의 Draw call 로 rendering 할 수 있다면 batch 는 한개로 줄어든다. 이렇게 하나의 batch 로 command 들을 그룹화 하는 것을 batching 이라고 한다.  
 - 앞서 언급한 바와 같이 10개의 오브젝트가 하나의 머터리얼을 사용한다면 `scene view | stats` 에서 `SetPass calls` 는 1개, `batches` 는 1개, `Saved by batching` 은 9개가 된다.
 - CPU입장에서 GPU에게 전송하는 command 들 중 SetPass Call 이 가장 비용이 크다.
   따라서 CPU bound인 경우 SetPass Call 을 줄이는 것은 성능향상의 
