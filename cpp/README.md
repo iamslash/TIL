@@ -1,32 +1,54 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Basic](#basic)
+  - [virtual function](#virtual-function)
+  - [vector vs deque vs list](#vector-vs-deque-vs-list)
+  - [vector](#vector)
+    - [pros](#pros)
+    - [cons](#cons)
+  - [deque (double ended queue)](#deque-double-ended-queue)
+    - [pros](#pros)
+    - [cons](#cons)
+  - [list](#list)
+    - [pros](#pros)
+    - [cons](#cons)
+- [How to choose a container](#how-to-choose-a-container)
+- [C++11](#c11)
+  - [auto](#auto)
+  - [range based for](#range-based-for)
+  - [initializer lists](#initializer-lists)
+  - [in-class member initializers](#in-class-member-initializers)
+  - [tuple](#tuple)
+  - [advanced STL container](#advanced-stl-container)
+  - [lambda](#lambda)
+  - [move semantics](#move-semantics)
+  - [Value Categories](#value-categories)
+  - [r-value reference](#r-value-reference)
+  - [move constructor](#move-constructor)
+  - [array](#array)
+  - [timer](#timer)
+  - [regex](#regex)
+  - [random](#random)
+  - [thread](#thread)
+  - [to_string](#tostring)
+  - [convert string](#convert-string)
+
+-----
+
 # Abstract
 
 c++에 대해 정리한다.
 
-# Contents
+# Materials
 
-* vector vs deque vs list
-* How to choose a container
-* C++11 Tips
-  * [auto](#auto)
-  * [range based for](#range-based-for)
-  * [initializer lists](#initializer)
-  * [in-class member initializers](#in-class-member-initializers)
-  * [tuple](#tuple)
-  * [advanced STL container](#advanced-stl-container)
-  * [lambda](#lambda-function)
-  * [move semantics](#move-semantics)
-  * [Value Categories](#value-categories)
-  * [r-value reference](#r-value-reference)
-  * [move constructor](#move-constructor)
-  * [array](#array)
-  * [timer](#timer)
-  * [regex](#regex)
-  * [random](#random)
-  * [thread](#thread)
-  * [to_string](#to_string)
-  * [convert string](#convert-string)
+- [c++ programming](http://boqian.weebly.com/c-programming.html)
+  - bo qian의 동영상 강좌
+- [프로그래밍 대회: C++11 이야기 @ slideshare](https://www.slideshare.net/JongwookChoi/c11-draft?ref=https://www.acmicpc.net/blog/view/46)
+- [c++ language](http://en.cppreference.com/w/cpp/language)
+- [cplusplus.com](https://www.cplusplus.com)
+- [c++11FAQ](http://pl.pusan.ac.kr/~woogyun/cpp11/C++11FAQ_ko.html)
 
-# Usage
+# Basic
 
 ## virtual function
 
@@ -153,7 +175,7 @@ public:
 
 ![](img/containerchoice.png)
 
-# C++11 Tips
+# C++11
 
 ## auto
 
@@ -533,11 +555,4 @@ long long y = stoll("2147483648");
 long long z = stoll("1000...0000", 0, 2); // 4294967296
 ```
 
-
-# REFERENCE
-
-- [프로그래밍 대회: C++11 이야기 @ slideshare](https://www.slideshare.net/JongwookChoi/c11-draft?ref=https://www.acmicpc.net/blog/view/46)
-- [c++ language](http://en.cppreference.com/w/cpp/language)
-- [cplusplus.com](https://www.cplusplus.com)
-- [c++11FAQ](http://pl.pusan.ac.kr/~woogyun/cpp11/C++11FAQ_ko.html)
 
