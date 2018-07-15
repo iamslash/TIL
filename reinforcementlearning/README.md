@@ -71,7 +71,40 @@ reinforcement learning 에 대해 정리한다.
 
 # Q-Network
 
-# DQN
+Q-table 를 사용한 강화학습은 메모리를 너무 많이 필요로 한다. 상태를 입력으로 하고 액션을 출력으로 하는 NN 을 제작하여 Q-table 대신 사용하자. 
+
+NN 을 통해 예측한 값(액션)이 최적의 값(액션)에 수렴하면 학습이 성공한 것이다. 이것을 수식으로 표현하면 다음과 같다. `^` 은 예측을 의미하고 `*` 는 최적을 의미한다.
+
+![](img/q_network_eq_1.png)
+
+```latex
+\hat{Q}(s,a|\theta) \sim  Q^{*}(s, a)
+```
+
+예측한 값을 최적의 값에 수렴시키기 위해 두 값에 대한 RMS 를 최소화 하는 `theta` 즉 `W` 를 학습을 통해 찾는다.
+
+![](img/q_network_eq_2.png)
+
+```latex
+\min_{\theta} \sum_{t=0}^{T}  [ \hat{Q}(s_{t},a_{t} | \theta) - ( r_{t} + \gamma \max_{a{'}} \hat{Q}(s_{t+1},a{'} | \theta) ) ]^{2}
+```
+
+이때 non-determinic world 를 고려하기 위해 learning rate 를 도입할 필요는 없다. NN 는 non-deterministic world 가 반영된다.
+
+다음은 q-network 를 구현한 것이다.
+
+```python
+```
+
+그러나 q-network 는 `Correlations between samples, Non-stationary targets` 때문에 잘 동작하지 않는다.
+
+# DQN NIPS 2013
+
+[Playing Atari with Deep Reinforcement Learning](https://arxiv.org/abs/1312.5602)
+
+# DQN Nature 2015
+
+DQN Nips 2013 에서 double DQN 이 적용된 것이다.
 
 # Policy Gradient
 
