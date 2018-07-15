@@ -91,7 +91,7 @@ NN 을 통해 예측한 값(액션)이 최적의 값(액션)에 수렴하면 학
 
 이때 non-determinic world 를 고려하기 위해 learning rate 를 도입할 필요는 없다. NN 는 non-deterministic world 가 반영된다.
 
-다음은 q-network 를 구현한 것이다.
+다음은 q-network 를 openai 의 cartpole 과 tensorflow 를 이용하여 구현한 것이다.
 
 ```python
 ```
@@ -100,11 +100,26 @@ NN 을 통해 예측한 값(액션)이 최적의 값(액션)에 수렴하면 학
 
 # DQN NIPS 2013
 
+q-network 에서 replay memory 가 적용된 것이다.
+
 [Playing Atari with Deep Reinforcement Learning](https://arxiv.org/abs/1312.5602)
+
+다음은 q-network with replay 를 구현한 것이다.
+
+```py
+```
 
 # DQN Nature 2015
 
 DQN Nips 2013 에서 double DQN 이 적용된 것이다.
+
+[Human-level control through deep reinforcement
+learning](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf)
+
+다음은 q-network with replay, with target 을 구현한 것이다.
+
+```python
+```
 
 # Policy Gradient
 
