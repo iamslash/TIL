@@ -20,9 +20,10 @@ reinforcement learning 에 대해 정리한다.
 * [파이썬과 케라스로 배우는 강화학습 @ gitbooks](https://dnddnjs.gitbooks.io/rl/)
   * 이웅원님이 저술한 강화학습 책
 * [deeplearning reinforcement learning nanodegree @ udacity](https://www.udacity.com/course/deep-reinforcement-learning-nanodegree--nd893) 
-* [deeplearning reinforcement learning nanodegree - preview @ udacity](https://www.udacity.com/course/ud893-preview) 
+  * [preview @ udacity](https://www.udacity.com/course/ud893-preview) 
+  * [src](https://github.com/udacity/deep-reinforcement-learning)
 
-# Basic
+# Dummy Q-learning
 
 현재의 상태가 있다. 그리고 상태를 변경할 액션이 있다. 액션은 현재 상태를 다음 상태로 변경하고 보상을 준다. 보상이 많이 주어지는 방향으로 상태를 변경해 가는 것이 강화 학습의 핵심이다. 이것을 dummy q learning 이라고 하고 다음과 같이 수식으로 표현한다.
 
@@ -38,7 +39,9 @@ reinforcement learning 에 대해 정리한다.
 
 ```
 
-액션을 선택할 때 경우에 따라서 보상이 많은 방향이 아닌 것을 선택해야할 필요가 있다. 이것을 exploit vs exploration 이라고 한다. 상태가 점점 변화될 때마다 보상의 가중치를 낮출 필요가 있다. 이것을 discounted future reward 라고 한다. 이것들을 다음과 같이 수식으로 표현할 수 있다.
+# Q-learning exploit, exploration, discounted reward
+
+기본적으로 액션을 선택할 때 보상이 많이 주어지는 방향을 고려한다. 이것을 exploit 이라고 한다. 그러나 경우에 따라서 보상이 많은 방향이 아닌 것을 선택해야 할 필요가 있다. 이것을 exploration 이라고 한다. 상태가 점점 변화될 때마다 보상의 가중치를 낮출 필요가 있다. 이것을 discounted future reward 라고 한다. 이것들을 다음과 같이 수식으로 표현할 수 있다.
 
 ![](img/adv_q_learning_eq.png)
 
@@ -51,7 +54,9 @@ reinforcement learning 에 대해 정리한다.
 ```python
 ```
 
-액션의 결과가 미리 정해져 있는 세계를 deterministic world 라고 한다. 액션의 결과가 정해져 있지 않는 세계를 non-deterministic world 라고 한다. non-deterministic world 의 경우 learning rate 를 도입하여 앞으로 보상이 많은 방향만 선택하는 것을 방지해보자. 이것을 다음과 같이 수식으로 표현할 수 있다.
+# Q-learning in non-deterministic world
+
+액션의 결과가 정해져 있는 세계를 deterministic world 라고 한다. 액션의 결과가 정해져 있지 않는 세계를 non-deterministic world 라고 한다. non-deterministic world 의 경우 learning rate 를 도입하여 앞으로 보상이 많은 방향만 선택하는 것을 방지해보자. 이것을 다음과 같이 수식으로 표현할 수 있다.
 
 ![](img/nondeterministic_q_learning_eq.png)
 
@@ -64,4 +69,12 @@ reinforcement learning 에 대해 정리한다.
 ```python
 ```
 
-...
+# Q-Network
+
+# DQN
+
+# Policy Gradient
+
+# Actor-Critic
+
+# A3C
