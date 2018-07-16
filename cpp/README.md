@@ -12,7 +12,13 @@
   - [list](#list)
     - [pros](#pros)
     - [cons](#cons)
-- [How to choose a container](#how-to-choose-a-container)
+  - [How to choose a container](#how-to-choose-a-container)
+- [Advanced](#advanced)
+  - [const](#const)
+  - [lvalue and rvalue](#lvalue-and-rvalue)
+- [Basic STL](#basic-stl)
+- [Advanced STL](#advanced-stl)
+- [Concurrent Programming](#concurrent-programming)
 - [C++11](#c11)
   - [auto](#auto)
   - [range based for](#range-based-for)
@@ -24,6 +30,7 @@
   - [move semantics](#move-semantics)
   - [Value Categories](#value-categories)
   - [r-value reference](#r-value-reference)
+  - [Perfect Forwarding](#perfect-forwarding)
   - [move constructor](#move-constructor)
   - [array](#array)
   - [timer](#timer)
@@ -32,6 +39,8 @@
   - [thread](#thread)
   - [to_string](#tostring)
   - [convert string](#convert-string)
+- [C++ Unit Test](#c-unit-test)
+- [Boost Library](#boost-library)
 
 -----
 
@@ -43,6 +52,8 @@ c++에 대해 정리한다.
 
 - [c++ programming](http://boqian.weebly.com/c-programming.html)
   - boqian의 동영상 강좌
+- [혼자 연구하는 c/c++](http://soen.kr/)
+  - 김상형님의 강좌
 - [프로그래밍 대회: C++11 이야기 @ slideshare](https://www.slideshare.net/JongwookChoi/c11-draft?ref=https://www.acmicpc.net/blog/view/46)
 - [c++ language](http://en.cppreference.com/w/cpp/language)
 - [cplusplus.com](https://www.cplusplus.com)
@@ -222,7 +233,160 @@ int main() {
 }
 ```
 
+`const function` 이라도 `mutable` 이 사용된 멤버변수를 수정할 수 있다.
 
+```cpp
+class BigArray {
+   vector<int> v; // huge vector
+   mutable int accessCounter;
+   
+   int* v2; // another int array
+
+public:
+   int getItem(int index) const {
+      accessCounter++;
+      return v[index];
+   }
+   
+    void setV2Item(int index, int x)  {
+      *(v2+index) = x;
+   }
+    
+   // Quiz:
+   const int*const fun(const int*const& p)const;
+ };
+
+ int main(){
+    BigArray b;
+ }
+```
+
+## lvalue and rvalue
+
+`lvalue` 는 메모리 위치를 가지고 있는 `expression` 이다. 따라서 다른 `value` 에 의해 가르켜 지거나 수정될 수 있다. `rvalue` 는 `lvalue` 가 아닌 `expression` 이다. 임시적으로 생성된 것이어서 다른 `value` 에 의해 가르켜 질 수 없고 수정될 수도 없다. `c++11` 은 `rvalue reference` 를 새롭게 소개하고 있다. 
+
+다음은 `lvalue` 의 예이다.
+
+```cpp
+int i;        // i is a lvalue
+int* p = &i;  // i's address is identifiable
+i = 2;    // Memory content is modified
+
+class dog;
+dog d1;   // lvalue of user defined type (class)
+
+         // Most variables in C++ code are lvalues
+```
+
+다음은 `rvalue` 의 예이다.
+
+```cpp
+//Rvalue Examples:
+int x = 2;        // 2 is an rvalue
+int x = i+2;      // (i+2) is an rvalue
+int* p = &(i+2);  // Error
+i+2 = 4;     // Error
+2 = i;       // Error
+
+dog d1;
+d1 = dog();  // dog() is rvalue of user defined type (class)
+
+int sum(int x, int y) { return x+y; }
+int i = sum(3, 4);  // sum(3, 4) is rvalue
+
+//Rvalues: 2, i+2, dog(), sum(3,4), x+y
+//Lvalues: x, i, d1, p
+```
+
+`lvalue reference` 는 `lvalue` 만 가르킬 수 있다. 그러나 예외적으로 `const lvalue reference` 의 경우 `rvalue` 를 가르킬 수 있다. 다음은 `lvalue reference` 의 예이다.
+
+```cpp
+//Reference (or lvalue reference):
+int i;
+int& r = i;
+
+int& r = 5;      // Error
+
+//Exception: Constant lvalue reference can be assign a rvalue;
+const int& r = 5;   //
+
+int square(int& x) { return x*x; }
+square(i);   //  OK
+square(40);  //  Error
+
+//Workaround:
+int square(const int& x) { return x*x; }  // square(40) and square(i) work
+```
+
+`lvalue` 는 `rvalue` 를 만들 때 `rvalue` 는 `lvalue` 를 만들 때 사용될 수 있다.
+
+```cpp
+/*
+ * lvalue can be used to create an rvalue
+ */
+int i = 1;
+int x = i + 2; 
+
+int x = i;
+
+/*
+ * rvalue can be used to create an lvalue
+ */
+int v[3];
+*(v+2) = 4;
+```
+
+function 혹은 operator 가 항상 `rvalue` 만을 리턴하지는 않는다.
+
+```cpp
+/*
+ * Misconception 1: function or operator always yields rvalues.
+ */
+int x = i + 3;  
+int y = sum(3,4);
+
+int myglobal ;
+int& foo() {
+   return myglobal;
+}
+foo() = 50;
+
+// A more common example:
+array[3] = 50;  // Operator [] almost always generates lvalue
+```
+
+`lvalue` 가 항상 수정될 수는 없다.
+
+```cpp
+/*
+ * Misconception 2: lvalues are modifiable.
+ *
+ * C language: lvalue means "value suitable for left-hand-side of assignment"
+ */
+const int c = 1;  // c is a lvalue
+c = 2;   // Error, c is not modifiable.
+```
+
+`rvalue` 도 수정될 수 있다.
+
+```cpp
+/*
+ * Misconception 3: rvalues are not modifiable.
+ */
+i + 3 = 6;    // Error
+sum(3,4) = 7; // Error
+
+// It is not true for user defined type (class)
+class dog;
+dog().bark();  // bark() may change the state of the dog object.
+```
+
+
+# Basic STL
+
+# Advanced STL
+
+# Concurrent Programming
 
 # C++11
 
@@ -513,18 +677,150 @@ E = E * E;
   
 ## r-value reference
 
-- foo는 rvalue argument를 받아 낼 수 있다.
+`rvalue` 는 `move semantics` 혹은 `perfect fowarding` 을 위해 사용된다. 다음은 `rvalue` 의 예이다. `std::move` 는 `lvalue` 를 인자로 받아서 `rvalue` 로 `move semantics` 하여 리턴한다.
 
 ```cpp
-vector<int> foo(vector<int>&& a, vector<int>&& b) { }
-vector<int> bar(int n) {}
+int a = 5;
+int& b = a;   // b is a lvalue reference, originally called reference in C++ 03
+
+int&& c       // c is an rvalue reference
+
+void printInt(int& i) { cout << "lvalue reference: " << i << endl; }
+void printInt(int&& i) { cout << "rvalue reference: " << i << endl; } 
+
 int main() {
-  vector<int> c = foo(vector<int> {0}, bar(5)};
-  for (int e : c)
-    cout << x << ' ';
-  cout << endl;
-  return 0;
+   int i = 1;
+   printInt(i);   // Call the first printInt
+   printInt(6);   // Call the second printInt
+
+   printInt(std::move(i));   // Call the second printInt
 }
+```
+
+`rvalue reference` 는 `move semantics` 를 수행하기 위해 `copy constructor` 혹은 `copy assignment operator` 에서 유용하게 사용된다.
+
+```cpp
+/* 
+ * Note 1: the most useful place for rvalue reference is overloading copy 
+ * constructor and assignment operator, to achieve move semantics.
+ */
+X& X::operator=(X const & rhs); 
+X& X::operator=(X&& rhs);
+```
+
+모든 `stl containers` 는 `move semantics` 가 구현되어 있다.
+
+```cpp
+/* Note 2: Move semantics is implemented for all STL containers, which means:
+ *    a. Move to C++ 11, You code will be faster without changing a thing.
+ *    b. You should use passing by value more often.
+ */
+
+vector<int> foo() { ...; return myvector; }
+
+void goo(vector<int>& arg);   // Pass by reference if you use arg to carry
+                             // data back from goo()
+```
+
+## Perfect Forwarding
+
+어떠한 함수가  `rvalue` 를 `rvalue` 로 `lvalue` 를 `lvalue` 로 전달하는 것을 `perfect forwarding` 이라고 한다. 다음의 예에서 `relay` 는 `perfect forwarding` 이 되고 있지 않다.
+
+```cpp
+void foo( boVector arg );
+// boVector has both move constructor and copy constructor
+
+template< typename T >
+void relay(T arg ) {
+   foo(arg);  
+}
+
+int main() {
+   boVector reusable = createBoVector();
+   relay(reusable);
+   ...
+   relay(createBoVector());
+}
+```
+
+앞서 언급한 예를 다음과 같이 수정하면 `perfect forwarding` 이 가능하다. 
+
+```cpp
+// Solution:
+template< typename T >
+void relay(T&& arg ) {
+  foo( std::forward<T>( arg ) );
+}
+
+//* Note: this will work because type T is a template type.
+
+/* 
+ * Reference Collapsing Rules ( C++ 11 ):
+ * 1.  T& &   ==>  T&
+ * 2.  T& &&  ==>  T&
+ * 3.  T&& &  ==>  T&
+ * 4.  T&& && ==>  T&&
+ */
+```
+
+`remove_reference` 는 `type T` 의 `reference` 를 제거한다.
+
+```cpp
+template< classs T >
+struct remove_reference;    // It removes reference on type T
+
+// T is int&
+remove_refence<int&>::type i;  // int i;
+
+// T is int
+remove_refence<int>::type i;   // int i;
+```
+
+앞서 언급한 `reference collapsing rules` 에 의해 `relay` 로 전달된 인자가 어떻게 `perfect forwarding` 이 가능해지는지 살펴보자.
+
+```cpp
+/*
+ * rvalue reference is specified with type&&.
+ *
+ * type&& is rvalue reference?
+ */
+
+// T&& variable is intialized with rvalue => rvalue reference
+  relay(9); =>  T = int&& =>  T&& = int&& && = int&&
+
+// T&& variable is intialized with lvalue => lvalue reference
+  relay(x); =>  T = int&  =>  T&& = int& && = int&
+
+// T&& is Universal Reference: rvalue, lvalue, const, non-const, etc...
+// Conditions:
+// 1. T is a template type.
+// 2. Type deduction (reference collasing) happens to T.
+//    - T is a function template type, not class template type.
+//
+```
+
+`std:forward` 는 다음과 같이 구현되어 있다.
+
+```cpp
+template< typename T >
+void relay(T&& arg ) {
+  foo( std::forward<T>( arg ) );
+}
+
+// Implementation of std::forward()
+template<class T>
+T&& forward(typename remove_reference<T>::type& arg) {
+  return static_cast<T&&>(arg);
+} 
+```
+
+`std::move` 와 `std::forward` 의 차이는 다음과 같다.
+
+```cpp
+
+// std::move() vs std::forward()
+std::move<T>(arg);    // Turn arg into an rvalue type
+std::forward<T>(arg); // Turn arg to type of T&&
 ```
 
 ## move constructor
@@ -604,4 +900,6 @@ long long y = stoll("2147483648");
 long long z = stoll("1000...0000", 0, 2); // 4294967296
 ```
 
+# C++ Unit Test
 
+# Boost Library
