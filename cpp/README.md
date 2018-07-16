@@ -42,7 +42,7 @@ c++에 대해 정리한다.
 # Materials
 
 - [c++ programming](http://boqian.weebly.com/c-programming.html)
-  - bo qian의 동영상 강좌
+  - boqian의 동영상 강좌
 - [프로그래밍 대회: C++11 이야기 @ slideshare](https://www.slideshare.net/JongwookChoi/c11-draft?ref=https://www.acmicpc.net/blog/view/46)
 - [c++ language](http://en.cppreference.com/w/cpp/language)
 - [cplusplus.com](https://www.cplusplus.com)
@@ -169,11 +169,60 @@ public:
 
 - index로 접근 불가능하다. 
 
-# How to choose a container
+## How to choose a container
 
 [C++ Containers Cheat Sheet](http://homepages.e3.net.nz/~djm/cppcontainers.html)
 
 ![](img/containerchoice.png)
+
+# Advanced
+
+## const
+
+기본적인 `const` 사용법은 다음과 같다.
+
+```cpp
+int i = 1;
+const int* p1 = &i; // data is const, pointer is not
+int* const p2 = &i; // pointer is const, data is not
+const int* const p3; // data and pointer are both const
+int const *p4 = &i; // data is const, pointer is not
+// left const of *, data is const
+// right const of *, pointer is const
+```
+
+`const` 를 `parameters, return value, function` 에 사용해 보자.
+
+```cpp
+class Dog {
+   int age;
+   string name;
+public:
+   Dog() { age = 3; name = "dummy"; }
+   
+   // const parameters
+   void setAge(const int& a) { age = a; }
+   void setAge(int& a) { age = a; }
+   
+   // Const return value
+   const string& getName() {return name;}
+   
+   // const function
+   void printDogName() const { cout << name << "const" << endl; }
+   void printDogName() { cout << getName() << " non-const" << endl; }
+};
+
+int main() {
+   Dog d;
+   d.printDogName();
+   
+   const Dog d2;
+   d2.printDogName();
+   
+}
+```
+
+
 
 # C++11
 
