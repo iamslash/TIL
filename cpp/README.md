@@ -14,8 +14,12 @@
     - [cons](#cons)
   - [How to choose a container](#how-to-choose-a-container)
 - [Advanced](#advanced)
+  - [Compiler Generated Code](#compiler-generated-code)
+  - [new delete](#new-delete)
+  - [casting](#casting)
   - [const](#const)
   - [lvalue and rvalue](#lvalue-and-rvalue)
+  - [ADL(Argument Dependent Lookup)](#adlargument-dependent-lookup)
 - [Basic STL](#basic-stl)
 - [Advanced STL](#advanced-stl)
 - [Concurrent Programming](#concurrent-programming)
@@ -187,6 +191,229 @@ public:
 ![](img/containerchoice.png)
 
 # Advanced
+
+## Compiler Generated Code
+
+compiler 는 경우에 따라 `Copy constructor, Copy Assignment Operator, Destructor, Default Constructor` 를 생성해 준다.
+
+```cpp
+
+Compiler silently writes 4 functions if they are not explicitly declared:
+1. Copy constructor.
+2. Copy Assignment Operator.
+3. Destructor.
+4. Default constructor (only if there is no constructor declared).
+*/
+
+class dog {};
+
+/* equivalent to */
+
+class dog {
+	public:
+		dog(const dog& rhs) {...};   // Member by member initialization
+
+		dog& operator=(const dog& rhs) {...}; // Member by member copying
+
+		dog() {...};  // 1. Call base class's default constructor; 
+		              // 2. Call data member's default constructor.
+
+		~dog() {...}; // 1. Call base class's destructor; 
+		              // 2. Call data member's destructor.
+}
+/*
+Note:
+1. They are public and inline.
+2. They are generated only if they are needed.
+*/
+```
+
+## new delete
+
+다음은 `new` 와 `delete` 의 underhood 이다.
+
+```cpp
+   dog* pd = new dog();
+/* 
+ * Step 1. operator new is called to allocate memory.
+ * Step 2. dog's constructor is called to create dog.
+ * Step 3. if step 2 throws an exception, call operator delete to free the 
+ *         memory allocated in step 1.
+ */
+   delete pd;
+/* 
+ * Step 1. dog's destructor is called.
+ * Step 2. operator delete is called to free the memory.
+ */
+```
+
+다음은 `global` `operator new` 의 구현이다. 
+
+```cpp
+/*
+ * This is how the operator new may look like if you re-implement it:
+ *
+ * Note: new handler is a function invoked when operator new failed to allocate 
+ * memory.
+ *   set_new_handler() installs a new handler and returns current new handler.
+ */
+void* operator new(std::size_t size) throw(std::bad_alloc) {
+   while (true) {
+      void* pMem = malloc(size);   // Allocate memory
+      if (pMem) 
+         return pMem;              // Return the memory if successful
+
+      std::new_handler Handler = std::set_new_handler(0);  // Get new handler
+      std::set_new_handler(Handler);
+
+      if (Handler)
+         (*Handler)();            // Invoke new handler
+      else
+         throw bad_alloc();       // If new handler is null, throw exception
+   }
+}
+```
+
+다음은 `class` `operator new` 의 구현이다.
+
+```cpp
+/* 
+ * Member Operator new
+ */
+class dog {
+   ...
+   public:
+   static void* operator new(std::size_t size) throw(std::bad_alloc) 
+   {
+      if (size == sizeof(dog))
+         customNewForDog(size);
+      else
+         ::operator new(size);
+   }
+   ...
+};
+
+class yellowdog : public dog {
+   int age;
+   static void* operator new(std::size_t size) throw(std::bad_alloc) 
+};
+
+int main() {
+   yellowdog* py= new yellowdog();
+}
+```
+
+다음은 `class` `operator delete` 의 구현이다.
+
+```cpp
+/* Similarly for operator delete */
+class dog {
+   static void operator delete(void* pMemory) throw() {
+      cout << "Bo is deleting a dog, \n";
+      customDeleteForDog();
+      free(pMemory);
+   }
+   ~dog() {};
+};
+
+class yellowdog : public dog {
+   static void operator delete(void* pMemory) throw() {
+      cout << "Bo is deleting a yellowdog, \n";
+      customDeleteForYellowDog();
+      free(pMemory);
+   }
+};
+
+int main() {
+   dog* pd = new yellowdog();
+   delete pd;
+}
+
+// See any problem?
+//
+//
+// How about a virtual static operator delete?
+//
+//
+// Solution:
+//   virtual ~dog() {}
+```
+
+우리는 다음과 같은 이유로 `new, delete` 을 customizing 한다.
+
+```cpp
+/*
+ * Why do we want to customize new/delete
+ *
+ * 1. Usage error detection: 
+ *    - Memory leak detection/garbage collection. 
+ *    - Array index overrun/underrun.
+ * 2. Improve efficiency:
+ *    a. Clustering related objects to reduce page fault.
+ *    b. Fixed size allocation (good for application with many small objects).
+ *    c. Align similar size objects to same places to reduce fragmentation.
+ * 3. Perform additional tasks:
+ *    a. Fill the deallocated memory with 0's - security.
+ *    b. Collect usage statistics.
+ */
+
+/*
+ * Writing a GOOD memory manager is HARD!
+ *
+ * Before writing your own version of new/delete, consider:
+ *
+ * 1. Tweak your compiler toward your needs;
+ * 2. Search for memory management library, E.g. Pool library from Boost.
+ */
+```
+
+## casting
+
+type conversion 은  `implicit type conversion` 과 `explicit type conversion` 과 같이 두가지가 있다. 이 중 `explicit type conversion` 이 곧 `casting` 에 해당된다.
+
+`casting` 은 `static_cast, dynamic_cast, const_cast, reinterpret_cast` 와 같이 네가지가 있다.
+
+```cpp
+/*
+ * 1. static_cast
+ */
+int i = 9;
+float f = static_cast<float>(i);  // convert object from one type to another
+dog d1 = static_cast<dog>(string("Bob"));  // Type conversion needs to be defined.
+dog* pd = static_cast<dog*>(new yellowdog()); // convert pointer/reference from one type 
+                                              // to a related type (down/up cast)
+
+/*
+ * 2. dynamic_cast 
+ */
+dog* pd = new yellowdog();
+yellowdog py = dynamic_cast<yellowdog*>(pd); 
+// a. It convert pointer/reference from one type to a related type (down cast)
+// b. run-time type check.  If succeed, py==pd; if fail, py==0;
+// c. It requires the 2 types to be polymorphic (have virtual function).
+
+/*
+ * 3. const_cast
+ */                                        // only works on pointer/reference
+const char* str = "Hello, world.";         // Only works on same type
+char* modifiable = const_cast<char*>(str); // cast away constness of the object 
+                                           // being pointed to
+
+/*
+ * 4. reinterpret_cast
+ */
+long p = 51110980;                   
+dog* dd = reinterpret_cast<dog*>(p);  // re-interpret the bits of the object pointed to
+// The ultimate cast that can cast one pointer to any other type of pointer.
+
+/*
+ * C-Style Casting:  
+ */
+short a = 2000;
+int i = (int)a;  // c-like cast notation
+int j = int(a);   // functional notation
+//   A mixture of static_cast, const_cast and reinterpret_cast
+```
 
 ## const
 
@@ -380,6 +607,53 @@ sum(3,4) = 7; // Error
 class dog;
 dog().bark();  // bark() may change the state of the dog object.
 ```
+
+## ADL(Argument Dependent Lookup)
+
+함수 `g(x)` 를 호출할 때 인자 `x` 의 타입을 고려하여 적당한 함수 `g` 를 찾는 것을 ADL 이라고 한다.
+
+```
+// Example 1:
+namespace A
+{
+   struct X {};
+   void g( X ) { cout << " calling A::g() \n"; }
+}
+
+void g( X ) { cout << " calling A::g() \n"; }
+
+int main() {
+   A::X x1;
+   g(x1);   // Koenig Lookup, or Argument Dependent Lookup (ADL)
+}
+
+//Notes:
+//1. Remove A:: from A::g(x);
+//2. Add a global g(A::X);
+// Argument Dependent Lookup (ADL)
+
+
+/*
+ *  Name Lookup Sequence
+ *
+ *  With namespaces:
+ *  current scope => next enclosed scope => ... => global scope 
+ *
+ *  To override the sequence:
+ *  1. Qualifier or using declaration
+ *  2. Koenig lookup
+ *
+ *  With classes:
+ *  current class scope => parent scope => ... => global scope
+ *
+ *  To override the sequence:
+ *   - Qualifier or using declaration
+ *
+ *
+ *  Name hiding
+ */
+```
+
 
 
 # Basic STL
