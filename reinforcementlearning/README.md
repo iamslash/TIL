@@ -17,8 +17,8 @@ reinforcement learning 에 대해 정리한다.
   * [slide](https://www.slideshare.net/WoongwonLee/rlcode-a3c)
 * [파이썬과 케라스로 배우는 강화학습 @ wikibooks](http://wikibook.co.kr/reinforcement-learning/)
   * 이웅원님이 저술한 강화학습 책
-* [파이썬과 케라스로 배우는 강화학습 @ gitbooks](https://dnddnjs.gitbooks.io/rl/)
-  * 이웅원님이 저술한 강화학습 책
+  * [draft @ gitbooks](https://dnddnjs.gitbooks.io/rl/)
+  * [src](https://github.com/rlcode/reinforcement-learning)
 * [deeplearning reinforcement learning nanodegree @ udacity](https://www.udacity.com/course/deep-reinforcement-learning-nanodegree--nd893) 
   * [preview @ udacity](https://www.udacity.com/course/ud893-preview) 
   * [src](https://github.com/udacity/deep-reinforcement-learning)
@@ -123,6 +123,17 @@ learning](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf)
 
 # Policy Gradient
 
+[Policy Gradient Methods for
+Reinforcement Learning with Function
+Approximation](https://papers.nips.cc/paper/1713-policy-gradient-methods-for-reinforcement-learning-with-function-approximation.pdf)
+
+[Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning](http://www-anw.cs.umass.edu/~barto/courses/cs687/williams92simple.pdf)
+
+
 # Actor-Critic
 
-# A3C
+# A2C (Advantaged Actor-Critic)
+
+
+
+# A3C (Async Advantaged Actor-Critic)
