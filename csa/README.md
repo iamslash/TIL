@@ -1,3 +1,22 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Computer System Architecture History](#computer-system-architecture-history)
+  - [ENIAC (Electronic Numerical Integrator And Computer)](#eniac-electronic-numerical-integrator-and-computer)
+  - [Von Neumann Architecture](#von-neumann-architecture)
+  - [IAS (Institute for Advanced Study) Machine](#ias-institute-for-advanced-study-machine)
+  - [8086](#8086)
+  - [80286](#80286)
+  - [80386](#80386)
+  - [80486](#80486)
+  - [Pentium](#pentium)
+- [Data Representation](#data-representation)
+  - [Number](#number)
+  - [Floating Point](#floating-point)
+  - [Byte Order](#byte-order)
+- [machine language](#machine-language)
+
+-----
+
 # Abstract 
 
 computer system architecture 에 대해 정리한다.
@@ -167,6 +186,15 @@ virtual memory 환경에서 페이징 작업을 위해 virtual address 를 physi
  + 11111000 : -8
 ----------
    11111100 : -4
+```
+
+`char` 의 경우 표현가능한 숫자는 `-128 ~ 127` 이다. `-128` 은 어떻게 표현해야 할까? `128` 의 각 비트를 뒤집고 1를 더하면 될 것 같다. 그러나 `char` 로 표현가능한 최대값은 `127` 이다. `-128 = -127 - 1` 이다.
+
+```
+   10000001 : -127
+ + 11111111 : -1
+------------------
+   10000000 : -128 
 ```
 
 ## Floating Point 
