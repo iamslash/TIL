@@ -138,39 +138,42 @@ public class A {
     - 하나의 타겟 오브젝트 인스턴스만 생성한다.
 
 - Structural Pattern
-  - Adapter	(Match interfaces of different classes)
-    - wrapper, various type, same feature
+  - Adapter
+    - 서로 다른 클래스의 인터페이스를 어울릴 수 있도록 맞춘다. 
   - Bridge	(Separates an object’s interface from its implementation)
-  - Composite	(A tree structure of simple and composite objects)
-    - tree
-  - Decorator	(Add responsibilities to objects dynamically)
-    - wrapper with same type, new feature
-  - Facade	(A single class that represents an entire subsystem)
-  - Flyweight	(A fine-grained instance used for efficient sharing)
-    - cache
-  - Proxy	(An object representing another object)
-    - wrapper, composition of function
+    - 구현과 추상을 분리한다.
+  - Composite
+    - 트리형태의 자료구조를 표현한다.
+  - Decorator
+    - 새로운 기능을 추가한다.
+  - Facade
+    - 복잡한 기능을 단순한 인터페이스로 추상화한다.
+  - Flyweight
+    - 인스턴스 공유를 추상화한다.
+  - Proxy
+    - 노출되지 않은 형제 클래스에 접근할 수 있도록 한다.
 
 - Behaviorial Pattern
-  - Chain of Resp.	(A way of passing a request between a chain of objects)
-    - composition of function
+  - Chain of Resp.
+    - 형제 클래스에게 임무를 전달한다.
   - Command	(Encapsulate a command request as an object)
-    - function
+    - 명령을 추상화 한다.
   - Interpreter	(A way to include language elements in a program)
-    - functions which process tree
+    - 해석을 추상화 한다.
   - Iterator	(Sequentially access the elements of a collection)
-    - sequence
+    - 반복접근을 추상화 한다.
   - Mediator	(Defines simplified communication between classes)
+    - 인스턴스 멤버들의 중재를 추상화 한다.
   - Memento	(Capture and restore an object's internal state)
-    - save and restore
+    - 저장하기 불러오기를 추상화 한다.
   - Observer	(A way of notifying change to a number of classes)
-    - a function which is called after other function is called
+    - 이벤트가 발생하면 구경꾼들에게 알려준다.
   - State	(Alter an object's behavior when its state changes)
-    - Strategy pattern which depends on states
+    - 변화할 수 있는 상태를 추상화 한다.
   - Strategy	(Encapsulates an algorithm inside a class)
-    - a function which receives arguments
+    - 인스턴스 교체를 통해 전략을 수정할 수 있다.
   - Template (Method	Defer the exact steps of an algorithm to a subclass)
-    - Stategy pattern which includes default values
+    - 추상 클래스에서 절차를 정의하고 구현 클래스에서 단위 절차들을 구현한다.
   - Visitor	(Defines a new operation to a class without change)
     - multi dispath
     

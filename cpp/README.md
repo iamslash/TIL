@@ -612,7 +612,7 @@ dog().bark();  // bark() may change the state of the dog object.
 
 함수 `g(x)` 를 호출할 때 인자 `x` 의 타입을 고려하여 적당한 함수 `g` 를 찾는 것을 ADL 이라고 한다.
 
-```
+```cpp
 // Example 1:
 namespace A
 {
