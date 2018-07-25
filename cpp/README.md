@@ -15,11 +15,16 @@
   - [How to choose a container](#how-to-choose-a-container)
 - [Advanced](#advanced)
   - [Compiler Generated Code](#compiler-generated-code)
+  - [Disallow the use of compiler generated functions](#disallow-the-use-of-compiler-generated-functions)
+  - [Declare a destructor virtual in polymorphic base classes](#declare-a-destructor-virtual-in-polymorphic-base-classes)
+  - [Never call virtual functions in constructor or destructor](#never-call-virtual-functions-in-constructor-or-destructor)
+  - [Named Parameter Idiom](#named-parameter-idiom)
   - [new delete](#new-delete)
   - [casting](#casting)
   - [const](#const)
   - [lvalue and rvalue](#lvalue-and-rvalue)
   - [ADL(Argument Dependent Lookup)](#adlargument-dependent-lookup)
+  - [typename vs class in template](#typename-vs-class-in-template)
 - [Basic STL](#basic-stl)
 - [Advanced STL](#advanced-stl)
 - [Concurrent Programming](#concurrent-programming)
@@ -197,7 +202,7 @@ public:
 compiler 는 경우에 따라 `Copy constructor, Copy Assignment Operator, Destructor, Default Constructor` 를 생성해 준다.
 
 ```cpp
-
+/*
 Compiler silently writes 4 functions if they are not explicitly declared:
 1. Copy constructor.
 2. Copy Assignment Operator.
@@ -226,6 +231,258 @@ Note:
 1. They are public and inline.
 2. They are generated only if they are needed.
 */
+```
+
+## Disallow the use of compiler generated functions
+
+`delete` 을 이용하여 컴파일러가 코드를 생성하지 못하도록 할 수 있다.
+
+```cpp
+class dog {
+   public:
+   dog(const dog& ) = delete; // Prevent copy constructor from being used.
+                              // Useful when dog holds unsharable resource.
+}
+```
+
+## Declare a destructor virtual in polymorphic base classes
+
+`destructor` 를 `virtual` 로 다형성을 실현할 수 있다. 예를 들어서 `yellowdog` 클래스가 `dog` 을 상속받는다고 하자. `yellowdog` 의 `destructor` 가 호출되게 하려면 어떻게 해야할까? `virtual destructor` 를 사용하거나 `shared_ptr` 을 사용한다.
+
+```cpp
+/* Problem */
+class yellowdog : public dog {
+};
+
+dog* dogFactory::createDog() {
+	dog* pd = new yellowdog();
+	return pd;
+}
+
+int main() {
+	dog* pd = dogFactory::createDog();
+	...
+	delete pd;  // Only dog's destructor is invoked, not yellowdog's.
+}
+
+/*
+Solution: 
+*/
+class dog {
+      virtual ~dog() {...}
+}
+
+/* 
+Note: All classes in STL have no virtual destructor, so be careful inheriting 
+from them.
+*/
+
+
+/*
+When we should use virtual destructor:
+Any class with virtual functions should have a virtual destructor.
+
+When not to use virtual destructor:
+1. Size of the class needs to be small;
+2. Size of the class needs to be precise, e.g. passing an object from C++ to C.
+*/
+
+
+/* Solution 2: 
+ *    using shared_prt
+ */
+
+class Dog {
+public:
+   ~Dog() {  cout << "Dog is destroyed"; }
+};
+
+class Yellowdog : public Dog {
+public:
+   ~Yellowdog() {cout << "Yellow dog destroyed." <<endl; }
+};
+
+
+class DogFactory {
+public:
+   //static Dog* createYellowDog() { return (new Yellowdog()); }
+   static shared_ptr<Dog> createYellowDog() { 
+      return shared_ptr<Yellowdog>(new Yellowdog()); 
+   }
+   //static unique_ptr<Dog> createYellowDog() {
+   //   return unique_ptr<Yellowdog>(new Yellowdog());
+   //}
+
+};
+
+int main() {
+
+   //Dog* pd = DogFactory::createYellowDog();
+   shared_ptr<Dog> pd = DogFactory::createYellowDog();
+   //unique_ptr<Dog> pd = DogFactory::createYellowDog();
+   
+   //delete pd;
+   
+	return 0;
+}
+/*Note: you cannot use unique_ptr for this purpose */
+```
+
+## Never call virtual functions in constructor or destructor
+
+`Constructor` 혹은 `Destructor` 에서 `virtual function` 을 호출하지 말자. 객체의 생명주기에 따라 호출이 안될 수 있기 때문이다.
+
+```cpp
+class dog {
+ public:
+  string m_name;
+  dog(string name) {m_name = name;  bark();}
+  virtual void bark() { cout<< "Woof, I am just a dog " << m_name << endl;}
+};
+
+class yellowdog : public dog {
+ public:
+  yellowdog(string name) : dog(string name) {...}
+  virtual void bark() { cout << "Woof, I am a yellow dog " << m_name << endl; }
+};
+
+int main ()
+{
+  yellowdog mydog("Bob");
+}
+
+OUTPUT:
+Woof, I am just a dog Bob.
+
+/*
+During the construction, all virtual function works like non-virtual function.
+
+Why?
+Base class's constructor run before derived class's constructor. So at the 
+time of bark(), the yellowlog is not constructed yet.
+
+Why Java behaves differently?
+
+There is a fundamental difference in how Java and C++ defines an object's Life time.
+Java: All members are null initialized before constructor runs. Life starts before constructor.
+C++: Constructor is supposed to initialize members. Life starts after constructor is finished.
+
+Calling down to parts of an object that haven not yet initialized is inherently dangerous.
+*/
+
+
+/*
+solution 1:
+*/
+class dog {
+ public:
+  ...
+  dog(string name, string color) { 
+    m_name = name; 
+    bark(color);
+  }
+  void bark(string str) { 
+    cout<< "Woof, I am "<< str << " dog " << m_name << endl;
+  }
+};
+
+class yellowdog : public dog {
+ public:
+  yellowdog(string name) : dog(name, "yellow") {}
+};
+
+int main ()
+{
+  yellowdog mydog("Bob");
+}
+
+OUTPUT:
+Woof, I am yellow dog Bob
+
+/*
+solution 2:
+*/
+class dog {
+ public:
+  ...
+  dog(string name, string woof) {
+    m_name = name; 
+    bark(woof);
+  }
+  dog(string name) {
+    m_name = name; 
+    bark( getMyColor() );
+  }
+  void bark(string str) { 
+    cout<< "Woof, I am "<< str << "private:"; 
+  }
+ private:
+  static string getMyColor() {
+    return "just a";
+  } 
+};
+
+class yellowdog : public dog {
+ public:
+  yellowdog(string name) : dog(name, getMyColor()) {}
+ private:
+  static string getMyColor() {
+    return "yellow";
+  }  //Why static?
+};
+
+int main ()
+{
+  yellowdog mydog("Bob");
+}
+OUTPUT:
+Woof, I am yellow dog Bob
+```
+
+## Named Parameter Idiom
+
+python 처럼 named parameter 를 흉내내보자.
+
+```cpp
+
+class OpenFile {
+ public:
+  OpenFile(
+    string filename, 
+    bool readonly=true, 
+    bool appendWhenWriting=false, 
+    int blockSize=256, 
+    bool unbuffered=true, 
+    bool exclusiveAccess=false);
+}
+
+OpenFile pf = OpenFile("foo.txt", true, false, 1024, true, true);
+// Inconvenient to use
+// Unreadable
+// Inflexible
+
+// What's ideal is:
+OpenFile pf = OpenFile(.filename("foo.txt"), .blockSize(1024) );
+
+/* Solution */
+class OpenFile {
+public:
+  OpenFile(std::string const& filename);
+  OpenFile& readonly()  { readonly_ = true; return *this; }
+  OpenFile& createIfNotExist() { createIfNotExist_ = true; return *this; }
+  OpenFile& blockSize(unsigned nbytes) { blockSize_ = nbytes; return *this; }
+  ...
+};
+
+OpenFile f = OpenFile("foo.txt")
+           .readonly()
+           .createIfNotExist()
+           .appendWhenWriting()
+           .blockSize(1024)
+           .unbuffered()
+           .exclusiveAccess();
+
+OpenFile f = OpenFile("foo.txt").blockSize(1024);
 ```
 
 ## new delete
@@ -654,7 +911,42 @@ int main() {
  */
 ```
 
+## typename vs class in template
 
+보통은 `typename` 과 `class` 를 교환해서 사용할 수 있다.
+
+```cpp
+template<typename T>
+T square(T x) {
+   return x*x;
+}
+
+template<class T>
+T square(T x) {
+   return x*x;
+}
+```
+
+`T::A *aObj;` 과 같은 표현을 살펴보자. 컴파일러는 `*` 을 곱연산자로 해석한다. `T::A` 의 `A` 가 static member 가 아닌 type 이라는 것을 컴파일러에게 알려주기 위해 `typename` 이라는 키워드를 만들었다.
+
+```cpp
+template <class T>
+class Demonstration {
+public:
+void method() {
+  T::A *aObj; // oops …
+  // …
+};
+
+template <class T>
+class Demonstration {
+public:
+void method() {
+  typename T::A* a6; // declare pointer to T’s A
+  // …
+};
+
+```
 
 # Basic STL
 
@@ -840,8 +1132,6 @@ E = E * E;
   일어나지 않는다. rvalue가 return된다.
   
 ## Value Categories
-
-![](_img/value_category.png)
 
 - [Value categories @ cppreference](http://en.cppreference.com/w/cpp/language/value_category)
 - lvalue
