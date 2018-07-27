@@ -1,6 +1,15 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Basic](#basic)
+- [Dummy Q-learning](#dummy-q-learning)
+- [Q-learning exploit, exploration, discounted reward](#q-learning-exploit-exploration-discounted-reward)
+- [Q-learning in non-deterministic world](#q-learning-in-non-deterministic-world)
+- [Q-Network](#q-network)
+- [DQN NIPS 2013](#dqn-nips-2013)
+- [DQN Nature 2015](#dqn-nature-2015)
+- [Policy Gradient](#policy-gradient)
+- [Actor-Critic](#actor-critic)
+- [A2C (Advantaged Actor-Critic)](#a2c-advantaged-actor-critic)
+- [A3C (Async Advantaged Actor-Critic)](#a3c-async-advantaged-actor-critic)
  
 ----
 
@@ -122,6 +131,8 @@ learning](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf)
 ```
 
 # Policy Gradient
+
+
 
 [Policy Gradient Methods for
 Reinforcement Learning with Function

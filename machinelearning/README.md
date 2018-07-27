@@ -17,7 +17,7 @@
 - [RNN (Recurrent Neural Networks)](#rnn-recurrent-neural-networks)
 - [RL (Reinforcement Learning)](#rl-reinforcement-learning)
 - [GAN (Generative Adversarial Network)](#gan-generative-adversarial-network)
-- [NLP (Naturla Language Processing)](#nlp-naturla-language-processing)
+- [NLP (Natural Language Processing)](#nlp-natural-language-processing)
 - [References](#references)
 
 
@@ -3961,24 +3961,11 @@ if __name__ == "__main__":
 
 # GAN (Generative Adversarial Network)
 
-- discriminator는 이미지데이터를 입력받아 진짜인지 가짜인지 출력하기
-  위해 학습시킨다.
-- generator는 임의의 데이터를 입력받아 이미지데이터를 출력한다. 출력된
-  이미지데이터는 다시 discriminator의 입력데이터로 사용되어
-  generator가 생성한 이미지가 진짜가 될 수 있도록 ganerator를
-  학습시킨다.
-- [1시간만에 GAN(Generative Adversarial Network) 완전 정복하기](http://tv.naver.com/v/1947034)
-  - [src](https://github.com/yunjey/pytorch-tutorial/tree/master/tutorials/03-advanced/deep_convolutional_gan)
-  - [ppt](https://www.slideshare.net/NaverEngineering/1-gangenerative-adversarial-network)
-  - pytorch를 이용한 설명
-- DCGAN (Deep Convolutional GAN), LSGAN (Least Squares GAN), SGAN
-  (Semi-Supervised GAN), ACGAN (Auxiliary Classifier GAN), NLP
-  (natural language processing)
-- CycleGAN, StackGAN
+* [Generative Adversarial Network](/gan/README.md)
 
-# NLP (Naturla Language Processing)
+# NLP (Natural Language Processing)
 
-- ...
+- [Natural Language Processing](/nlp/README.md)
 
 # References
 
