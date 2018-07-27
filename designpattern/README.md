@@ -128,54 +128,77 @@ public class A {
 - Creational Pattern
   - Abstract Factory
     - Factory Method 를 추상화해서 타겟 오브젝트 인스턴스를 생성한다.
+    - AbstractFactory, ConcreteFactory, AbstractProduct, ConcreteProduct
   - Builder	
     - 생성 절차를 추상화하여 타겟 오브젝트 인스턴스를 생성한다.
+    - Director, Builder, ConcreteBuilder, Product
   - Factory Method	
     - 생성 방법을 추상화하여 타겟 오브젝트 인스턴스를 생성한다.
+    - ConcreteProduct, Creator, ConcreateCreator
   - Prototype	
     - 복제를 통해 타겟 오브젝트 인스턴스를 생성한다.
+    - Prototype, ConcretePrototype
   - Singleton	
     - 하나의 타겟 오브젝트 인스턴스만 생성한다.
+    - Singleton
 
 - Structural Pattern
   - Adapter
     - 서로 다른 클래스의 인터페이스를 어울릴 수 있도록 맞춘다. 
+    - Target, Adapter, Adaptee
   - Bridge	(Separates an object’s interface from its implementation)
     - 구현과 추상을 분리한다.
+    - Abstract, RefinedAbstract, Implementor, ConcreteImplementor
   - Composite
     - 트리형태의 자료구조를 표현한다.
+    - Component, Leaf, Composite
   - Decorator
-    - 새로운 기능을 추가한다.
+    - 기존의 클래스 변경없이 새로운 기능을 추가한다.
+    - Component, ConcreteComponent, Decorator, ConcreteDecorator,
   - Facade
     - 복잡한 기능을 단순한 인터페이스로 추상화한다.
+    - Facade
   - Flyweight
     - 인스턴스 공유를 추상화한다.
+    - FlyweightFactory, Flyweight, UnsharedConcreteFlyweight, concreteFlyweight
   - Proxy
     - 노출되지 않은 형제 클래스에 접근할 수 있도록 한다.
+    - Subject, RealSubject, Proxy
 
 - Behaviorial Pattern
   - Chain of Resp.
     - 형제 클래스에게 임무를 전달한다.
+    - Handler, ConcreteHadler
   - Command	(Encapsulate a command request as an object)
     - 명령을 추상화 한다.
+    - Command, ConcreteCommand
   - Interpreter	(A way to include language elements in a program)
     - 해석을 추상화 한다.
+    - AbstractExpression, TerminalExpression
   - Iterator	(Sequentially access the elements of a collection)
     - 반복접근을 추상화 한다.
+    - Iterator, ConcreteIterator
   - Mediator	(Defines simplified communication between classes)
     - 인스턴스 멤버들의 중재를 추상화 한다.
+    - Mediator, ConcreteMediator, Colleague, ConcreteColleague
   - Memento	(Capture and restore an object's internal state)
     - 저장하기 불러오기를 추상화 한다.
+    - Originator, Memento, CareTaker
   - Observer	(A way of notifying change to a number of classes)
     - 이벤트가 발생하면 구경꾼들에게 알려준다.
+    - Subject, ConcreteSubject, Observer, ConcreteObserver
   - State	(Alter an object's behavior when its state changes)
     - 변화할 수 있는 상태를 추상화 한다.
+    - State, ConcreteState
   - Strategy	(Encapsulates an algorithm inside a class)
     - 인스턴스 교체를 통해 전략을 수정할 수 있다.
+    - Strategy, ConcreteStrategy
   - Template (Method	Defer the exact steps of an algorithm to a subclass)
     - 추상 클래스에서 절차를 정의하고 구현 클래스에서 단위 절차들을 구현한다.
+    - AbstractClass, ConcreteClass
   - Visitor	(Defines a new operation to a class without change)
-    - multi dispath
+    - 기존의 클래스 변경없이 새로운 기능을 정의한다.
+    - Element, ConcreteElement, Visitor, ConcreteVisitor
     
 ---
 
