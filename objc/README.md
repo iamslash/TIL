@@ -1,6 +1,3 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basic](#basic)
@@ -10,19 +7,19 @@
     - [Methods](#methods)
     - [Properties](#properties)
     - [Categories](#categories)
-- [Advanced](#advanced)
-- [References](#references)
-
-<!-- markdown-toc end -->
 
 -------------------------------------------------------------------------------
 
 # Abstract
 
-objc를 c#과 비교하여 정리한다.
+objc를 c#과 비교하여 정리한다. 
 
 # Materials
 
+* [objective-C 2.0 Programming Language](http://cagt.bu.edu/w/images/b/b6/Objective-C_Programming_Language.pdf)
+  * manual
+* [api doc](https://developer.apple.com/documentation)
+  * api 검색
 * [iOS 11 & Swift 4 @ udemy](https://www.udemy.com/ios-11-app-development-bootcamp/learn/v4/overview)
   * 유료이지만 알차다. src는 이메일 인증으로 다운받을 수 있다.
 * [Objective-C 강좌 - 12개 앱 만들면서 배우는 iOS 아이폰 앱 개발 @ inflearn](https://www.inflearn.com/course/objective-c-%EA%B0%95%EC%A2%8C/)
