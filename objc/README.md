@@ -285,3 +285,11 @@ NSLog(@"Reversed title: %@", [document.title reverse]);
 [document release];
 ```
 
+## Blocks
+
+apple 이 `lambda expression` 을 지원하기 위해 c, c++, objective-c 의 clang implementation 에 추가한 비표준 기능이다.
+
+[blocks @ wikipedia](https://en.wikipedia.org/wiki/Blocks_(C_language_extension))
+
+[blocks @ apple](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Blocks/Articles/00_Introduction.html)
+
