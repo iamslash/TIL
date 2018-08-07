@@ -16,7 +16,7 @@ objc를 c#과 비교하여 정리한다.
 
 # Materials
 
-* [objective-C 2.0 Programming Language](http://cagt.bu.edu/w/images/b/b6/Objective-C_Programming_Language.pdf)
+* [objective-C Programming Language](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011210-CH1-SW1)
   * manual
 * [api doc](https://developer.apple.com/documentation)
   * api 검색
