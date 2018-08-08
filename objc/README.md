@@ -7,26 +7,30 @@
     - [Methods](#methods)
     - [Properties](#properties)
     - [Categories](#categories)
+    - [Blocks](#blocks)
 
 -------------------------------------------------------------------------------
 
 # Abstract
 
-objc를 c#과 비교하여 정리한다. 
+objc를 정리한다. 
 
 # Materials
 
-* [objective-C Programming Language](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011210-CH1-SW1)
-  * manual
-* [api doc](https://developer.apple.com/documentation)
-  * api 검색
+* objective-c 2.0 programming language pdf
+* [Programming with Objective-C @ apple](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011210-CH1-SW1)
+* [developer doc](https://developer.apple.com/documentation)
+  * developer documents
+  * 일부 문서는 검색이 되지 않는다. 왜???
+* [apple opensource](https://opensource.apple.com/source/)
+  * apple opensource
+  * Framework 의 source 를 확인 할 수 있다.
+* [CFString.c](https://opensource.apple.com/source/CF/CF-744.18/CFString.c)
+  * NSString source
 * [iOS 11 & Swift 4 @ udemy](https://www.udemy.com/ios-11-app-development-bootcamp/learn/v4/overview)
   * 유료이지만 알차다. src는 이메일 인증으로 다운받을 수 있다.
 * [Objective-C 강좌 - 12개 앱 만들면서 배우는 iOS 아이폰 앱 개발 @ inflearn](https://www.inflearn.com/course/objective-c-%EA%B0%95%EC%A2%8C/)
   * 유료이다. src는 강좌안 링크로 다운받을 수 있다..
-* [objc for dotnet developer](https://timross.wordpress.com/2011/06/12/an-introduction-to-objective-c-for-net-developers/)
-* [learn objc](http://cocoadevcentral.com/d/learn_objectivec/)
-* [objc faq](http://www.faqs.org/faqs/computer-lang/Objective-C/faq/)
 * [effective objective-c 2.0](https://www.amazon.com/Effective-Objective-C-2-0-Specific-Development-ebook/dp/B00CUG5MZA)
 
 # Basic
@@ -287,9 +291,12 @@ NSLog(@"Reversed title: %@", [document.title reverse]);
 
 ## Blocks
 
-apple 이 `lambda expression` 을 지원하기 위해 c, c++, objective-c 의 clang implementation 에 추가한 비표준 기능이다.
+apple 이 `lambda expression` 을 지원하기 위해 clang implementation 에 추가한 비표준 기능이다.
 
 [blocks @ wikipedia](https://en.wikipedia.org/wiki/Blocks_(C_language_extension))
 
 [blocks @ apple](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Blocks/Articles/00_Introduction.html)
 
+```objc
+
+```
