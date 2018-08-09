@@ -401,7 +401,7 @@ z-buffering, alpha blending을 수행한다.
 opengl과 direct3D는 shader 용어들이 다르다.
 
 | opengl | directx |
-|:------:|:-------:|
+|:-------|:--------|
 |Vertex Shader|Vertex Shader|
 |Tessellation Control Shader|Hull Shader|
 |Tessellation Evaluation Shader|Domain Shader|
@@ -412,15 +412,7 @@ opengl과 direct3D는 shader 용어들이 다르다.
 shader model은 directX에서 사용하는 shader 버저닝 방법이다.
 opengl은 어떻게 하지???
 
-다음은 shader model 4의 특징이다. 
-geometry shader, stream output이 추가되었다.
-
-![](img/shader_model_4.png)
-
-다음은 shader model 5의 특징이다.
-hull shader, tessellator, domain shader가 추가되었다.
-
-![](img/shader_model_5.png)
+shader model 4는 geometry shader, stream output이 추가되었다. shader model 5는 hull shader, tessellator, domain shader가 추가되었다.
 
 # Shader Language
 
