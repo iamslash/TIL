@@ -25,12 +25,6 @@
 
 -------------------------------------------------------------------------------
 
-# Comments
-
-updating radiosity, curve, Environment Mapping, Light Mapping, Shadow Mapping,
-Ambient Occlusion Mapping, Deferred Shading, animation, collision
-detection
-
 # Materials
 
 - [3차원 그래픽스(게임 프로그래밍을위한)](http://media.korea.ac.kr/book/)
@@ -146,6 +140,7 @@ detection
 
 - [unrealengine 4 src @ github](https://github.com/EpicGames/UnrealEngine)
 - [unity cs reference @ github](https://github.com/Unity-Technologies/UnityCsReference)
+- [godot](https://godotengine.org/)
 
 # Math Prerequisites
 
@@ -235,7 +230,9 @@ vertex의 normal값을 기준으로 tangent space를 표현하는 TBN
 행렬을 구할 수 있고 normal map에 저장된 단위 tangent space normal
 vector와 연산하여 최종 normal vector를 구할 수 있다.
 
-# [Rendering Pipeline](../renderingpipeline/README.md)
+# Rendering Pipeline
+
+[rendering pipeline](../renderingpipeline/README.md)
 
 # Polygon Mesh
 
