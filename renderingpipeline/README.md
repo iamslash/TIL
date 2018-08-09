@@ -10,8 +10,9 @@
 
 - 렌더링 파이프라인에대해 정리한다.
 
-# Learning Material
+# Materials
 
+- [Unity3d Rendering Pipelines](https://catlikecoding.com/unity/tutorials/rendering/)
 - [GPU how to work](http://pixeljetstream.blogspot.kr/2015/02/life-of-triangle-nvidias-logical.html)
   - GPU가 어떻게 작동하는 가를 렌더링 파이프 라인과 함께 설명함
 - [3차원 그래픽스(게임 프로그래밍을위한)](http://media.korea.ac.kr/book/)
