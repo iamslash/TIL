@@ -420,14 +420,61 @@ NSLog(@"Reversed title: %@", [document.title reverse]);
 
 # Blocks
 
-apple 이 `lambda expression` 을 지원하기 위해 clang implementation 에 추가한 비표준 기능이다.
-
 [blocks @ wikipedia](https://en.wikipedia.org/wiki/Blocks_(C_language_extension))
 
 [blocks @ apple](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Blocks/Articles/00_Introduction.html)
 
-```objc
+apple 이 `lambda expression` 을 지원하기 위해 clang implementation 에 추가한 비표준 기능이다. 다음은 예이다.
 
+```objc
+int multiplier = 7;
+int (^myBlock)(int) = ^(int num) {
+    return num * multiplier;
+};
+```
+
+block 의 외부와 block 의 내부에서 변수를 공유하기 위해 `__block` 을 사용한다.
+
+```objc
+NSArray *stringsArray = @[ @"string 1",
+                          @"String 21", // <-
+                          @"string 12",
+                          @"String 11",
+                          @"Strîng 21", // <-
+                          @"Striñg 21", // <-
+                          @"String 02" ];
+ 
+NSLocale *currentLocale = [NSLocale currentLocale];
+__block NSUInteger orderedSameCount = 0;
+ 
+NSArray *diacriticInsensitiveSortArray = [stringsArray sortedArrayUsingComparator:^(id string1, id string2) {
+ 
+    NSRange string1Range = NSMakeRange(0, [string1 length]);
+    NSComparisonResult comparisonResult = [string1 compare:string2 options:NSDiacriticInsensitiveSearch range:string1Range locale:currentLocale];
+ 
+    if (comparisonResult == NSOrderedSame) {
+        orderedSameCount++;
+    }
+    return comparisonResult;
+}];
+ 
+NSLog(@"diacriticInsensitiveSortArray: %@", diacriticInsensitiveSortArray);
+NSLog(@"orderedSameCount: %d", orderedSameCount);
+ 
+/*
+Output:
+ 
+diacriticInsensitiveSortArray: (
+    "String 02",
+    "string 1",
+    "String 11",
+    "string 12",
+    "String 21",
+    "Str\U00eeng 21",
+    "Stri\U00f1g 21"
+)
+orderedSameCount: 2
+*/
 ```
 
 # Protocols
@@ -477,15 +524,64 @@ public class Document : IPrintable
 
 # Fast Enumeration
 
-# Enabling Handling
+collection 을 편리하게 순회하는 방법이다. 다음과 같은 방법으로 사용한다.
+
+```objc
+for ( Type newvar in expression ) { statements }
+```
+
+```objc
+Type existingvar;
+for ( Type existingvar in expression ) { statements }
+```
+
+다음은 fast enumeration 을 사용한 예이다.
+
+```objc
+NSArray *array = [NSArray arrayWithObjects:@"One", @"Two", @"Three", @"Four", nil];
+for (NSString *element in array) {
+  NSLog(@"element: %@", element);
+}
+
+NSDictionary *dictionary = [NSDictionary dictionaryWithObjectsAndKeys:@"quattuor", @"four", @"quinque", @"five", @"sex", @"six", nil];
+NSString *key;
+for (key in dictionary) {
+  NSLog(@"English: %@, Latin: %@", key, [dictionary valueForKey:key]);
+}
+```
+
+# Enabling Staic Bhavior
+
+# Selectors
+
+컴파일러는 메소드의 이름과 유니크한 아이디를 테이블 형태로 관리한다. 유니크한 아이디가 곧 실렉터이고 다음과 같이 선언할 수 있다.
+
+```objc
+SEL setWidthHeight;
+setWidthHeight = @selector(setWidth:height:);
+...
+setWidthHeight = NSSelectorFromString(aBuffer);
+...
+NSString *method;
+method = NSStringFromSelector(setWidthHeight);
+```
+
+실렉터는 `performSelector:, performSelector:withObject:, performSelector:withObject:withObject:` 과 같이 NSObject의 메소드로 호출 할 수 있다. 다음은 호출의 예이다.
+
+```objc
+[friend performSelector:@selector(gossipAbout:)
+withObject:aNeighbor];
+//[friend gossipAbout:aNeighbor];
+...
+id helper = getTheReceiver();
+SEL request = getTheSelector();
+[helper performSelector:request];
+```
+
+# Exception Handling
 
 # Threading
 
 # Remote Messaging
 
 # Using C++ With Objective-C
-
-# Deprecation Syntax
-
-# Naming Conventions
-
