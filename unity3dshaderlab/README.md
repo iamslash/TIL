@@ -41,10 +41,9 @@ suface shader로 작성하면 vertex, fragment shader로 코드가 변환되고
 컴파일된다.  fixed function shader로 작성하면 내부적으로 shader import
 time에 vertex, fragment shader로 변환된다.
 
-# Learning material
+# Materials
 
-- [Unity3d Rendering](https://catlikecoding.com/unity/tutorials/rendering/)
-  - Unity3d Rendering Pipelines
+- [Unity3d Rendering Pipelines](https://catlikecoding.com/unity/tutorials/rendering/)
 - [Unity3d Shader Tutorial @ github](https://github.com/iamslash/UnityShaderTutorial)
 - [writing shaders in unity](http://www.jordanstevenstechart.com/writing-shaders-in-unity)
   - unity3d shaderlab의 기본기를 잘 정리한 블로그이다.

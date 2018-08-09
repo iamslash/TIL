@@ -28,7 +28,7 @@
 # Materials
 
 - [Unity3d tutorials](https://catlikecoding.com/unity/tutorials/)
-  - 상세한 설명의 블로그
+  - water, rendering, noise, DOF, Bloom, FXAA, Triplanar Mapping 등등 많은 주제들을 다루는 상세한 블로그
 - [3차원 그래픽스(게임 프로그래밍을위한)](http://media.korea.ac.kr/book/)
   - 3차원 그래픽스 기반이론을 매우 자세히 풀어썼다. 저자의
     홈페이지에서 제공하는 슬라이드는 각종 그림과 수식을 가득 포함하고 있다.
