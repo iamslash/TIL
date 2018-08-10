@@ -45,6 +45,10 @@
   - [Algorithms For Sorted Data](#algorithms-for-sorted-data)
   - [Algorithms For Non-Modifying](#algorithms-for-non-modifying)
   - [Algorithms For Modifying](#algorithms-for-modifying)
+  - [Algorithms for Equality, Equivalance](#algorithms-for-equality-equivalance)
+  - [Algorithm vs Member Function](#algorithm-vs-member-function)
+  - [Modifying In A Container](#modifying-in-a-container)
+  - [Removing In A Container](#removing-in-a-container)
   - [shared_ptr](#sharedptr)
   - [weak_ptr](#weakptr)
   - [unique_ptr](#uniqueptr)
@@ -2183,6 +2187,319 @@ random_shuffle(vec.begin(), vec.end(), rand);
 // C++ 11
 shuffle(vec.begin(), vec.end(), default_random_engine()); 
 // Better random number generation
+```
+
+## Algorithms for Equality, Equivalance
+
+컨테이너에서 특정한 값과 동일한 값을 찾는 알고리즘을 algorithm for equality 이라 하고 다음과 같은 종류가 있다. 알고리즘에 함수가 사용되는 경우 `==` operator 를 사용한다.
+
+```cpp
+search
+find_end
+find_first_of
+adjacent_search
+```
+
+컨테이너에서 특정한 값과 유사한 값을 찾는 알고리즘을 algorithm for equivalance 라 하고 다음과 같은 종류가 있다. 알고리즘에 함수가 사용되는 경우 `<` 와 같은 크기 비교 operator 를 사용한다. associative container (set, multiset, map, multimap) 와 같이 원소들이 정렬되어 저장된 경우만 사용가능하다.
+
+```cpp
+binary_search   // simple forms
+includes
+lower_bound
+upper_bound
+```
+
+다음은 예이다.
+
+```cpp
+set<int> s = {21, 23, 26, 27};
+
+/*
+ * Algorithm find() looks for equality: if (x == y)  
+ */
+
+itr1 = find(s.begin(), s.end(), 36);  // itr1 points to s.end()
+
+/*
+ * set<int>::find() looks for equivalence: if ( !(x<y) && !(y<x) )
+ */
+
+itr2 = s.find(36);  // itr2 points to s.end()
+```
+
+## Algorithm vs Member Function
+
+컨테이너 클래스에 알고리즘과 똑같은 일을 수행하는 멤버 함수들이 있다. 그러한 경우 알고리즘 대신 멤버 함수를 사용하자. 
+
+```cpp
+// Functions with same name:
+// List:
+void remove(const T); template<class Comp> void remove_if(Comp);
+void unique();        template<class Comp> void unique(Comp);
+void sort();          template<class Comp> void sort(Comp);
+void merge(list&);    template<class Comp> void merge(Comp);
+void reverse();
+
+// Associative Container:
+size_type count(const T&) const;
+iterator find(const T&) const;
+iterator lower_bound(const T&) const;
+iterator upper_bound(const T&) const;
+pair<iterator,iterator> equal_range (const T&) const;
+// Note: they don't have generalized form, because comparison is defined by
+//       the container.
+
+// Unordered Container:
+size_type count(const T&) const;
+iterator find(const T&);
+std::pair<iterator, iterator> equal_range(const T&);
+// Note: No generalized form; use hash function to search
+
+unordered_set<int> s = {2,4,1,8,5,9};  // Hash table 
+unordered_set<int>::iterator itr;
+
+// Using member function
+itr = s.find(4);                      // O(1)
+
+// Using Algorithm
+itr = find(s.begin(), s.end(), 4);    // O(n)
+
+// How about map/multimap?
+map<char, string> mymap = {{'S',"Sunday"}, {'M',"Monday"}, {'W', "Wendesday"}, ...};
+
+// Using member function
+itr = mymap.find('F');                                           // O(log(n))
+
+// Using Algorithm
+itr = find(mymap.begin(), mymap.end(), make_pair('F', "Friday")); // O(n)
+
+// How about list?
+list<int> s = {2,1,4,8,5,9};
+
+// Using member function
+s.remove(4);                    // O(n)
+// s: {2,1,8,5,9}
+
+// Using Algorithm
+itr = remove(s.begin(), s.end(), 4);  // O(n)
+// s: {2,1,8,5,9,9}
+s.erase(itr, s.end());
+// s: {2,1,8,5,9}
+
+// Sort
+//
+// Member function
+s.sort();
+
+// Algorithm
+sort(s.begin(), s.end());   // Undefined behavior
+
+// s: {2,4,1,8,5,9}
+// s: {2,1,8,5,9,9}
+/*
+list<int>::iterator itr = remove(s.begin(), s.end(), 4);  // O(n)
+s.erase(itr, s.end());
+// Similarly for algorithm: remove_if() and unique()
+*/
+
+// Using member function
+s.sort();
+
+// Using Algorithm
+sort(s.begin(), s.end());   // Undefined Behavior
+```
+
+## Modifying In A Container
+
+assosiative container(set, map) 의 경우 키값을 바로 수정할 수는 없다. 수정하고 싶다면 제거한후 다시 삽입하자. 
+
+```cpp
+vector<int> vec = {1,2,3,4,5};
+vec[2] = 9;   // vec: {1,2,9,4,5}
+
+list<int> mylist = {1,2,3,4,5};
+list<int>::iterator itr = mylist.find(3);
+if (itr != mylist.end())
+	*itr = 9;   // mylist: {1,2,9,4,5}
+
+// How about modifying a set?
+set<int> myset = {1,2,3,4,5};
+set<int>::iterator itr = myset.find(3);
+if (itr != myset.end()) {
+	*itr = 9;     // Many STL implementation won't compile
+	const_cast<int&>(*itr) = 9;  // {1,2,9,4,5} ???
+}
+
+// What about map
+map<char,int> m;
+m.insert ( make_pair('a',100) );
+m.insert ( make_pair('b',200) );
+m.insert ( make_pair('c',300) );
+...
+map<char,int>::iterator itr = m.find('b');
+if (itr != m.end()) {
+	itr->second = 900;   // OK
+	itr->first = 'd';    // Error
+}
+
+// Same thing for multimap, multiset, unordered set/multiset, unordered map/multimap
+/*
+ * How to modify an element of associative container or unordered container?
+ */
+map<char,int> m;
+m.insert ( make_pair('a',100) );
+m.insert ( make_pair('b',200) );
+m.insert ( make_pair('c',300) );
+...
+map<char,int>::iterator itr = m.find('b');
+if (itr != m.end()) {
+	pair<char,int> orig(*itr);
+	orig.first = 'd';   
+	m.insert(orig);
+}
+```
+
+## Removing In A Container
+
+컨테이너 클래스의 원소를 삭제하기 위해 알고리즘을 사용한다면 `remove` 하고 `erase` 해야 한다.
+
+```cpp
+/*
+ * Remove from Vector or Deque
+ */
+  vector<int> vec = {1, 4, 1, 1, 1, 12, 18, 16}; // To remove all '1'
+  for (vector<int>::iterator itr = vec.begin(); itr != vec.end(); ++itr) {
+     if ( *itr == 1 ) {
+        vec.erase(itr);
+     }
+  }   // vec: { 4, 12, 18, 16}
+  // Complexity: O(n*m)
+
+  remove(vec.begin(), vec.end(), 1);  // O(n) 
+                                      // vec: {4, 12, 18, 16, ?, ?, ?, ?}
+  
+  vector<int>::iterator newEnd = remove(vec.begin(), vec.end(), 1);   // O(n)
+  vec.erase(newEnd, vec.end());  
+
+  // Similarly for algorithm: remove_if() and unique()
+
+  // vec still occupy 8 int space: vec.capacity() == 8
+  vec.shrink_to_fit();   // C++ 11
+  // Now vec.capacity() == 4 
+
+  // For C++ 03:
+  vector<int>(vec).swap(vec); // Release the vacant memory
+/*
+ * Remove from List
+ */
+  list<int> mylist = {1, 4, 1, 1, 1, 12, 18, 16};
+
+  list<int>::iterator newEnd = remove(mylist.begin(), mylist.end(), 1);  
+  mylist.erase(newEnd, mylist.end());
+
+  mylist.remove(1);  // faster
+
+/*
+ * Remove from associative containers or unordered containers
+ */
+  multiset<int> myset = {1, 4, 1, 1, 1, 12, 18, 16};
+
+  multiset<int>::iterator newEnd = remove(myset.begin(), myset.end(), 1);  
+  myset.erase(newEnd, myset.end()); // O(n)
+
+  myset.erase(1); // O(log(n)) or O(1)
+
+/*
+ * Remove and do something else
+ */
+
+// Associative Container:
+multiset<int> s = {1, 4, 1, 1, 1, 12, 18, 16};;
+
+multiset<int>::iterator itr;
+for (itr=s.begin(); itr!=s.end(); itr++) {
+   if (*itr == 1) {
+      s.erase(itr);      
+      cout << "Erase one item of " << *itr << endl;
+   } 
+}
+
+// First erase OK; second one is undefined behavior
+
+//Solution:
+multiset<int>::iterator itr;
+for (itr=s.begin(); itr!=s.end(); ) {
+   if (*itr == 1) {
+      cout << "Erase one item of " << *itr << endl;
+      s.erase(itr++);
+   } else {
+      itr++;
+   }
+}
+
+// Sequence Container:
+vector<int> v = {1, 4, 1, 1, 1, 12, 18, 16};
+vector<int>::iterator itr2;
+for (itr2=v.begin(); itr2!=v.end(); ) {
+   if (*itr2 == 1) {
+      cout << "Erase one item of " << *itr2 << endl;
+      v.erase(itr2++);
+   } else {
+      itr2++;
+   }
+}
+
+// Sequence container and unordered container's erase() returns  
+// iterator pointing to next item after the erased item.
+
+//Solution:
+for (itr2=v.begin(); itr2!=v.end(); ) {
+   if (*itr2 == 1) {
+      cout << "Erase one item of " << *itr2 << endl;
+      itr2 = v.erase(itr2);
+   } else {
+      itr2++;
+   }
+}
+
+// 1. Sequence container and unordered container's erase() returns the next 
+//    iterator after the erased item.
+// 2. Associative container's erase() returns nothing.
+// 
+// A thing about efficiency: v.end()
+
+vector<int> c = {1, 4, 1, 1, 1, 12, 18, 16};
+
+// Use Algorithm
+bool equalOne(int e) {
+   if (e == 1) {
+      cout << e << " will be removed" << endl;
+      return true;
+   }
+   return false;
+}
+auto itr = remove_if(c.begin(), c.end(), equalOne);
+c.erase(itr, c.end());
+
+// Use bind():
+bool equalOne(int e, int pattern) {
+   if (e == pattern) {
+      cout << e << " will be removed" << endl;
+      return true;
+   }
+   return false;
+}
+remove_if(v.begin(), v.end(), bind(equalOne, placeholders::_1, 1));
+
+// Lambda:
+auto itr = remove_if(v.begin(), v.end(), 
+      [](int e){ 
+         if(e == 1) {
+            cout << e << " will be removed" <<endl; return true; 
+         } 
+      } 
+   );
+
 ```
 
 ## shared_ptr
