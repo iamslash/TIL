@@ -53,9 +53,18 @@
   - [weak_ptr](#weakptr)
   - [unique_ptr](#uniqueptr)
 - [C++11](#c11)
+  - [nullptr](#nullptr)
+  - [enum class](#enum-class)
+  - [static_assert](#staticassert)
+  - [Delegating Contructor](#delegating-contructor)
+  - [override](#override)
+  - [final](#final)
+  - [default](#default)
+  - [delete](#delete)
   - [auto](#auto)
   - [range based for](#range-based-for)
   - [initializer lists](#initializer-lists)
+  - [Uniform Initialization](#uniform-initialization)
   - [in-class member initializers](#in-class-member-initializers)
   - [tuple](#tuple)
   - [advanced STL container](#advanced-stl-container)
@@ -2672,6 +2681,174 @@ int main ()
 
 # C++11
 
+## nullptr
+
+`NULL` 대신 `nullptr` 을 사용하자.
+
+```cpp
+oid foo(int i) { cout << "foo_int" << endl; }
+void foo(char* pc) { cout << "foo_char*" << endl; }
+
+int main() {
+   foo(NULL);    // Ambiguity
+
+   // C++ 11
+   foo(nullptr); // call foo(char*)
+}
+```
+
+## enum class
+
+```cpp
+   // C++ 03
+   enum apple {green_a, red_a};
+   enum orange {big_o, small_o};
+   apple a = green_a;
+   orange o = big_o;
+
+   if (a == o) 
+      cout << "green apple and big orange are the same\n";
+   else
+      cout << "green apple and big orange are not the same\n";
+
+   // C++ 11
+   enum class apple {green, red};
+   enum class orange {big, small};
+   apple a = apple::green;
+   orange o = orange::big;
+
+   if (a == o) 
+      cout << "green apple and big orange are the same\n";
+   else
+      cout << "green apple and big orange are not the same\n";
+
+   // Compile fails because we haven't define ==(apple, orange)
+```
+
+## static_assert
+
+```cpp
+// run-time assert
+   assert( myPointer != NULL );
+
+// Compile time assert (C++ 11)
+   static_assert( sizeof(int) == 4 );
+```
+
+## Delegating Contructor
+
+생성자에서 다른 생성자가 호출되게 할 수 있다.
+
+```cpp
+class Dog {
+  public:
+   Dog() { ... }
+   Dog(int a) { Dog(); doOtherThings(a); }
+};
+
+// C++ 03:
+class Dog {
+   init() { ... };
+  public:
+   Dog() { init(); }
+   Dog(int a) { init(); doOtherThings(); }
+};
+/* Cons:
+ * 1. Cumbersome code.
+ * 2. init() could be invoked by other functions.
+ */
+
+// C++ 11:
+class Dog {
+   int age = 9;
+  public:
+   Dog() { ... }
+   Dog(int a) : Dog() { doOtherThings(); }
+};
+// Limitation: Dog() has to be called first.
+```
+
+## override
+
+클래스의 멤버 함수를 오버라이딩할 때 사용한다.
+
+```cpp
+// C++ 03
+class Dog {
+   virtual void A(int);
+   virtual void B() const;
+}
+
+class Yellowdog : public Dog {
+   virtual void A(float);  // Created a new function
+   virtual void B(); // Created a new function 
+}
+
+// C++ 11
+class Dog {
+   virtual void A(int);
+   virtual void B() const;
+   void C();
+}
+
+class Yellowdog : public Dog {
+   virtual void A(float) override;  // Error: no function to override
+   virtual void B() override;       // Error: no function to override
+   void C() override;               // Error: not a virtual function
+}
+```
+
+## final
+
+더이상 오버라이딩을 못하게 할 때 함수에 사용한다. 더이상 상속을 못하게 할 때 클래스에 사용한다.
+
+```cpp
+class Dog final {    // no class can be derived from Dog
+   ...
+};
+   
+class Dog {
+   virtual void bark() final;  // No class can override bark() 
+};
+```
+
+## default
+
+기본 생성자가 강제로 생성되도록 하기 위해 `default` 키워드를 사용한다.
+
+```cpp
+class Dog {
+   Dog(int age) {}
+};
+
+Dog d1;  // Error: compiler will not generate the default constructor
+
+// C++ 11:
+class Dog {
+   Dog(int age);
+   Dog() = default;    // Force compiler to generate the default constructor
+};
+```
+
+## delete
+
+```cpp
+class Dog {
+   Dog(int age) {}
+}
+
+Dog a(2);
+Dog b(3.0); // 3.0 is converted from double to int
+a = b;     // Compiler generated assignment operator
+
+// C++ 11:
+class Dog {
+   Dog(int age) {}
+   Dog(double ) = delete;
+   Dog& operator=(const Dog&) = delete;
+}
+```
+
 ## auto
 
 - 컴파일 타임에 타입을 자동으로 추론한다.
@@ -2681,6 +2858,28 @@ int main ()
   for (auto it = M.begin(); it != M.end(); ++it) {
     std::cout << it->first << " : " << it->second << std::endl;
   }
+
+  std::vector<int> vec = {2, 3, 4, 5};
+
+// C++ 03
+for (std::vector<int>::iterator it = vec.begin(); it!=vec.end(); ++ it)
+    m_vec.push_back(*it);
+
+// C++ 11: use auto type
+for (auto it = vec.begin(); it!=vec.end(); ++ it)
+    m_vec.push_back(*it);
+
+auto a = 6;    // a is a integer
+auto b = 9.6;  // b is a double
+auto c = a;    // c is an integer
+auto const x = a;   // int const x = a
+auto& y = a;        // int& y = a
+
+// It's static type, no run-time cost, fat-free.
+// It also makes code easier to maintain.
+
+// 1. Don't use auto when type conversion is needed
+// 2. IDE becomes more important
 ```
 
 ## range based for
@@ -2693,6 +2892,28 @@ int main ()
   for (char c : "RGB") {...}
   // iterate 3 times
   for (char c : string("RGB") {...}
+
+// C++ 03:
+   for (vector<int>::iterator itr = v.begin(); itr!=v.end(); ++ itr)
+      cout << (*itr);
+
+// C++ 11:
+   for (auto i : v) { // works on any class that has begin() and end()
+      cout << i ;    // readonly access
+   }
+
+   for (auto& i : v) {
+      i++;                 // changes the values in v
+   }                       // and also avoids copy construction
+
+   auto x = begin(v);  // Same as: int x = v.begin();
+
+   int arr[4] = {3, 2, 4, 5};
+   auto y = begin(arr); // y == 3
+   auto z = end(arr);   // z == 5
+   // How this worked? Because begin() and end() are defined for array.
+   // Adapt your code to third party library by defining begin() and end()
+   // for their containers.
 ```
 
 ## initializer lists
@@ -2710,6 +2931,39 @@ tuple<int, string, int> e = {2222, "Yellow", 22};
 std::pair<std::string, std::string> get_name() {
   return {"BAZ", "baz"};
 }
+// Define your own initializer_list constructor:
+#include <initializer_list>
+class BoVector {
+   vector<int> m_vec;
+   public:
+   BoVector(const initializer_list<int>& v) {
+      for (initializer_list<int>::iterator itr = v.begin(); itr!=v.end(); ++ itr)
+         m_vec.push_back(*itr);
+   }
+};
+
+BoVector v = {0, 2, 3, 4};
+BoVector v{0, 2, 3, 4};   // effectively the same
+
+// Automatic normal Initialization
+class Rectangle {
+   public:
+   Rectangle(int height, int width, int length){ }
+};
+
+void draw_rect(Rectangle r);
+
+int main() {
+   draw_rect({5, 6, 9});  // Rectangle{5,6,9} is automatically called
+}
+
+// Note: use it with caution.
+// 1. Not very readable, even with the help of IDE. Funcion name rarely indicates
+//    the type of parameter the function takes.
+// 2. Function could be overloaded with differenct parameter types.
+
+void draw_rect(Triangle t);
+
 //
 struct vector3 {
   int x, y, z;
@@ -2731,6 +2985,48 @@ tie(min_val, max_val) = minmax({p, q, r, s});
 for (const auto & x : {2, 3, 5, 7}) {
   std::cout << x << std::endl;
 }
+```
+
+## Uniform Initialization
+
+타입 추론에 의해 객체를 생성할 때 3가지 순서를 따른다. 첫째 initializer_list constructor 를 찾는다. 둘째 적절한 constructor 를 찾는다. 셋째 aggreate initialization 을 한다.
+
+```cpp
+// C++ 03
+class Dog {     // Aggregate class or struct
+   public:
+      int age;
+      string name;
+};
+Dog d1 = {5, "Henry"};   // Aggregate Initialization
+
+// C++ 11 extended the scope of curly brace initialization
+class Dog {
+   public:
+      Dog(int age, string name) {...};
+};
+Dog d1 = {5, "Henry"}; 
+
+/* Uniform Initialization Search Order:
+ * 1. Initializer_list constructor
+ * 2. Regular constructor that takes the appropriate parameters.
+ * 3. Aggregate initializer.
+ */
+
+Dog d1{3};
+
+class Dog {
+   public:
+   int age;                                // 3rd choice
+
+   Dog(int a) {                            // 2nd choice
+      age = a;
+   }
+
+   Dog(const initializer_list<int>& vec) { // 1st choice
+      age = *(vec.begin());      
+   }
+};
 ```
 
 ## in-class member initializers
