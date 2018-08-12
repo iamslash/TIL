@@ -4128,11 +4128,501 @@ chrono::milliseconds mill = chrono::duration_cast<chrono::milliseconds>(mi);  //
 
 ## thread
 
+쓰레드의 기본적인 사용법은 다음과 같다. `join` 은 쓰레드가 종료될 때까지 기다리는 것이고 `detatch` 는 kernel thread 와 연결을 끊는 것이다. `detatch` 되고 나면 이후 thread 는 제어할 방법이 없다.
+
+```cpp
+// First example:
+void thread1() {
+	std::cout << "Helldo, Worlds" << std::endl;
+}
+
+int main() {
+	std::thread t1(thread1);
+	t1.join();   // main thread wait for t1 to finish
+	//t1.detach();  // main thread let t1 to run on its own: t1 is a daemon process.
+                   // C++ runtime library is responsible returning t1's resources
+                   // and main thread may finish before t2 prints "Hello"
+
+	return 0;
+}
+// If neither detach nor join is called, terminate() will be called for the t1.
+// A thread can only be joined once or detached once. After it is joined on detached
+// it becomes unjoinable ( t.joinable() returns false )
+```
+
+다음은 메인 쓰레드와 다른 쓰레드가 한가지 리소스를 두고 경쟁하는 예이다.
+
+```cpp
+// Second Example: Racing condition
+class Fctor {
+	ofstream& m_str;
+public:
+	Fctor(ofstream& s):m_str(s) {}   // Reference member can only be initialized
+	void operator()() {
+		for (int i=0; i>-100; i--)
+			m_str << "from t1: " << i << endl;
+	}
+};
+
+int main() {
+	cout << "Hollo Bo" << endl;
+	ofstream f;
+	f.open("log.txt");
+
+	Fctor fctor(f);
+	std::thread t1(fctor);
+
+	for (int i=0; i<100; i++)
+		f << "from main: " << i << endl;
+
+	t1.join();
+	f.close();
+
+	return 0;
+}
+```
+
+다음은 예외가 발생했을 때 `join` 이 꼭 호출되도록 하기 위해 `try...cath` 와 별도의 클래스 를 사용한 예이다.
+
+```cpp
+// If exception happens in the main()'s for loop, t1.join() will not be called.
+int main() {
+	cout << "Hollo Bo" << endl;
+	ofstream f;
+	f.open("log.txt");
+
+	Fctor fctor(f);
+	std::thread t1(fctor);
+
+	try {
+		for (int i=0; i<100; i++)
+			cout << "from main: " << i << endl;  // Exception may happen here
+	} catch (...) {
+		t1.join();
+		throw;
+	}
+
+	t1.join();
+	f.close();
+
+	return 0;
+}
+
+// Alternative way: RAII
+class ThreadJoiner {
+	thread& m_th;
+public:
+	explicit ThreadJoiner(thread& t):m_th(t) {}
+	~ThreadJoiner() {
+		if(m_th.joinable()) {
+			m_th.join();
+		}
+	}
+};
+
+int main() {
+	cout << "Hollo Bo" << endl;
+	ofstream f;
+	f.open("log.txt");
+
+	Fctor fctor(f);
+	std::thread t1(fctor);
+	ThreadJoiner tj(t1);
+
+	for (int i=0; i<100; i++)
+		cout << "from main: " << i << endl;
+
+	f.close();
+	return 0;
+}
+```
+
+쓰레드 엔트리 함수의 인자는 call by value 로 동작한다. 레퍼런스를 전달할 때는 `std::ref` 를 사용하자???
+
+```cpp
+oid call_from_thread(string& msg) {
+	msg = "Beauty is only skin-deep";
+	cout << "t1 says: " << msg << endl;
+}
+
+int main() {
+	
+	string s = "A friend in need is a friend indeed.";
+	std::thread t1(call_from_thread, std::ref(s));
+	// Function templates ref and cref are helper functions that generate an object of type std::reference_wrapper
+
+	t1.join();
+
+	cout << "main says: " << s << endl;
+	return 0;
+}
+// Paramters are always passed by value (copied).  why? same reason as bind(): deferred execution means the parmeter objects might not be valid at the time of execution
+// To pass by reference:
+// 1. use std::ref
+// 2. use pointer
+```
+
+클래스의 멤버 함수를 쓰레드 엔트리 함수로 이용할 경우 인자는 포인터로 전달하자???
+
+```cpp
+// To pass a class method as thread's initial function, use pointers
+class A {
+public:
+	void call_from_thread(string* msg) {
+		*msg = "Beauty is only skin-deep";
+		cout << "t1 says: " << *msg << endl;
+	}
+};
+
+int main() {
+
+	string s = "A friend in need is a friend indeed.";
+	A a;
+	std::thread t1(&A::call_from_thread, &a, &s);
+	t1.detach();
+
+	cout << "main says: " << s << endl;
+	return 0;
+}
+```
+
+r-value 로 전달할 때는 `std::move` 를 이용하자.
+
+```
+// Thread with moving parameters
+void call_from_thread(string msg) {
+	cout << "t1 says: " << msg << endl;
+}
+
+int main() {
+	string* ps = new string("A friend in need is a friend indeed.");
+	std::thread t1(call_from_thread,  std::move(*ps));
+	t1.join();
+
+	cout << "main: " << *ps << endl;
+	return 0;
+}
+```
+
+쓰레드 객체는 복사될 수 없고 `unique_ptr` 이나 `fstream` 처럼 이동만 가능하다.
+
+```cpp
+// A thread object cannot be copied
+// But it can be moved.  Like fstream, unique_ptr, etc.
+
+//Case 1:
+std::thread t1(call_from_thread);
+std::thread t2 = move(t1);  // t2 become the owner of the thread
+t2.join();
+
+//Case 2:
+thread f() {
+   // ...
+   return std::thread(call_from_thread);   // move semantics 
+}
+
+//Case 3:
+void f(std::thread t);
+int main() {
+   f(std::thread(call_from_thread));  // move semantics
+   //...
+}
+```
+
 ## mutex
+
+하나의 리소스에 대해 동기화를 보장하기 위해 `mutex` 를 사용하자. `mutex` 를 자동으로 해제 시키기 위해 `std::lock_guard` 를 사용한다.
+
+```cpp
+/* Using mutex to synchronize threads */
+std::mutex m_mutex;
+
+void shared_print(string id, int value) {
+	std::lock_guard<std::mutex> locker(m_mutex);
+   //m_mutex.lock();
+   // if (m_mutex.trylock()) {...}
+	cout << "From " << id << ": " << value << endl;
+   //m_mutex.unlock();
+}
+
+class Fctor {
+public:
+	void operator()() {
+		for (int i=0; i>-100; i--) 
+			shared_print("t1", i);
+	}
+};
+
+int main() {
+	Fctor fctor;
+	std::thread t1(fctor);
+
+	for (int i=0; i<100; i++)
+		shared_print("main", i);
+
+	t1.join();
+
+	return 0;
+}
+```
+
+`mutex` 는 글로벌로 선언하지 말고 해당 리소스에 포함시키는 것이 좋다.
+
+```cpp
+/*
+ * 1. Avoid global variables
+ * 2. Mutex should bundle together with the resource it is protecting.
+ */
+class LogFile {
+	std::mutex m_mutex;
+	ofstream f;
+public:
+	LogFile() {
+		f.open("log.txt");
+	} // Need destructor to close file
+	void shared_print(string id, int value) {
+		std::lock_guard<mutex> locker(m_mutex);
+		f << "From " << id << ": " << value << endl;
+	}
+	// Never leak f to outside world, like this:
+	void processf(void fun(ofstream&)) {
+		fun(f);
+	}
+
+};
+
+class Fctor {
+	LogFile& m_log;
+public:
+	Fctor(LogFile& log):m_log(log) {}
+	void operator()() {
+		for (int i=0; i>-100; i--) 
+			m_log.shared_print("t1", i);
+	}
+};
+
+int main() {
+	LogFile log;
+	Fctor fctor(log);
+	std::thread t1(fctor);
+
+	for (int i=0; i<100; i++)
+		log.shared_print("main", i);
+
+	t1.join();
+
+	return 0;
+}
+```
+
+다음은 deadlock 이 발생하는 예이다.
+
+```cpp
+/* Deadlock */
+class LogFile {
+	std::mutex _mu;
+	std::mutex _mu_2;
+	ofstream f;
+public:
+	LogFile() {
+		f.open("log.txt");
+	}
+	void shared_print(string id, int value) {
+		std::lock_guard<mutex> locker(_mu);
+		std::lock_guard<mutex> locker1(_mu_2);
+		f << "From " << id << ": " << value << endl;
+	}
+	void shared_print_2(string id, int value) {
+		std::lock_guard<mutex> locker1(_mu_2);
+		std::lock_guard<mutex> locker(_mu);
+		f << "From " << id << ": " << value << endl;
+	}
+};
+```
+
+deadlock 해결하기 위해 `mutex` 의 잠금 순서가 중요하다???
+
+```cpp
+/* C++ 11 std::lock */
+class LogFile {
+	std::mutex m_mutex;
+	std::mutex m_mutex_2;
+	ofstream f;
+public:
+	LogFile() {
+		f.open("log.txt");
+	}
+	void shared_print(string id, int value) {
+		std::lock(m_mutex, m_mutex_2);
+		std::lock_guard<mutex> locker(m_mutex, std::adopt_lock);
+		std::lock_guard<mutex> locker1(m_mutex_2, std::adopt_lock);
+		f << "From " << id << ": " << value << endl;
+	}
+	void shared_print_2(string id, int value) {
+		std::lock(m_mutex, m_mutex_2);
+		std::lock_guard<mutex> locker1(m_mutex_2, std::adopt_lock);
+		std::lock_guard<mutex> locker(m_mutex, std::adopt_lock);
+		f << "From " << id << ": " << value << endl;
+	}
+};
+
+/* Avoiding deadlock
+1. Prefer locking single mutex.
+2. Avoid locking a mutex and then calling a user provided function.
+3. Use std::lock() to lock more than one mutex.
+4. Lock the mutex in same order.
+
+
+Locking Granularity:
+- Fine-grained lock:  protects small amount of data
+- Coarse-grained lock: protects big amount of data
+*/
+```
+
+`std::unique_lock` 을 사용하여 뮤텍스의 잠금을 지연시키자.
+
+```cpp
+/* Deferred Lock */
+class LogFile {
+	std::mutex m_mutex;
+	ofstream f;
+public:
+	LogFile() {
+		f.open("log.txt");
+	}
+	void shared_print(string id, int value) {
+		//m_mutex.lock();  // lock before lock_guard is created
+		//std::lock_guard<mutex> locker(m_mutex, std::adopt_lock);
+		std::unique_lock<mutex> locker(m_mutex, std::defer_lock);
+		locker.lock();  // Now the mutex is locked
+		f << "From " << id << ": " << value << endl;
+	}
+};
+```
+
+쓰레드 엔트리 함수가 한번만 실행되도록 하기 위해 `std::call_once` 를 사용하자.
+
+```cpp
+// C++ 11 solution:
+class LogFile {
+   static int x;
+	std::mutex m_mutex;
+	ofstream f;
+	std::once_flag m_flag;
+	void init() { f.open("log.txt"); }
+public:
+	void shared_print(string id, int value) {
+      std::call_once(_flag, &LogFile::init, this); // init() will only be called once by one thread
+		//std::call_once(m_flag, [&](){ f.open("log.txt"); });  // Lambda solution
+		//std::call_once(_flag, [&](){ _f.open("log.txt"); });  // file will be opened only once by one thread
+		f << "From " << id << ": " << value << endl;
+	}
+};
+int LogFile::x = 9;
+
+//Note: once_flag and mutex cannot be copied or moved.
+//      LogFile can neither be copy constructed nor copy assigned
+
+// static member data are guaranteed to be initialized only once.
+```
 
 ## condition_variable
 
+서로 다른 쓰레드의 실행 시점을 조절하기 위해 `std::sleep_for` 를 사용해 보자.
+
+```cpp
+std::deque<int> q;
+std::mutex mu;
+
+void function_1() {
+	int count = 10;
+	while (count > 0) {
+		std::unique_lock<mutex> locker(mu);
+		q.push_front(count);
+		locker.unlock();
+		std::this_thread::sleep_for(chrono::seconds(1));
+		count--;
+	}
+}
+
+void function_2() {
+	int data = 0;
+	while ( data != 1) {
+		std::unique_lock<mutex> locker(mu);
+		if (!q.empty()) {
+			data = q.back();
+			q.pop_back();
+			locker.unlock();
+			cout << "t2 got a value from t1: " << data << endl;
+		} else {
+			locker.unlock();
+		}
+		std::this_thread::sleep_for(chrono::milliseconds(10));
+	}
+}
+// It is hard to set the sleep time.
+int main() {
+	std::thread t1(function_1);
+	std::thread t2(function_2);
+	t1.join();
+	t2.join();
+	return 0;
+}
+```
+
+`condition_variable` 을 사용하면 다른 쓰레드의 실행시점을 제어 할 수 있다.
+
+```cpp
+
+// Using conditional variable and mutex
+void function_1() {
+	int count = 10;
+	while (count > 0) {
+		std::unique_lock<mutex> locker(mu);
+		q.push_front(count);
+		locker.unlock();
+		cond.notify_one();  // Notify one waiting thread, if there is one.
+		std::this_thread::sleep_for(chrono::seconds(1));
+		count--;
+	}
+}
+
+void function_2() {
+	int data = 0;
+	while ( data != 1) {
+		std::unique_lock<mutex> locker(mu);
+		cond.wait(locker, [](){ return !q.empty();} );  // Unlock mu and wait to be notified
+			// relock mu
+		data = q.back();
+		q.pop_back();
+		locker.unlock();
+		cout << "t2 got a value from t1: " << data << endl;
+	}
+}
+```
+
 ## future
+
+`future` 를 이용하면 함수의 실행시점을 조정할 수 있다.
+
+```cpp
+/* For threads to return values: future */
+int factorial(int N) {
+	int res = 1;
+	for (int i=N; i>1; i--)
+		res *= i;
+
+	return res;
+}
+
+int main() {
+	//future<int> fu = std::async(factorial, 4); 
+	future<int> fu = std::async(std::launch::deferred | std::launch::async, factorial, 4);
+	cout << "Got from child thread #: " << fu.get() << endl;
+	// fu.get();  // crash
+	return 0;
+}
+```
 
 # C++ Unit Test
 
