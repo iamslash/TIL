@@ -91,7 +91,7 @@
   - [thread](#thread)
   - [mutex](#mutex)
   - [future, promise, async](#future-promise-async)
-  - [future](#future)
+  - [packaged_task](#packagedtask)
 - [C++ Unit Test](#c-unit-test)
 - [Boost Library](#boost-library)
 
@@ -4692,11 +4692,111 @@ int main() {
 }
 ```
 
-## future
+`async` 는 `thread`, `bind` 와 비슷하게 인자들을 전달 할 수 있다.
 
-`future` 를 이용하면 함수의 실행시점을 조정할 수 있다.
+```cpp
+/* async() are used in the same ways as thread(), bind() */
+class A {
+public:
+	string note;
+	void f(int x, char c) { }
+	long g(double x) { note = "changed"; return 0;}
+	int operator()(int N) { return 0;}
+};
+A a;
 
+int main() {
+	a.note = "Original"; 
+	std::future<int> fu3 = std::async(A(), 4);    // A tmpA;  tmpA is moved to async(); create a task/thread with tmpA(4);
+	std::future<int> fu4 = std::async(a, 7);    
+	std::future<int> fu4 = std::async(std::ref(a), 7); // a(7);  Must use reference wrapper
+	std::future<int> fu5 = std::async(&a, 7); // Won't compile
+
+	std::future<void> fu1 = std::async(&A::f, a, 56, 'z'); // A copy of a invokes f(56, 'z')
+	std::future<long> fu2 = std::async(&A::g, &a, 5.6);    // a.g(5.6);  a is passed by reference
+		// note: the parameter of the invocable are always passed by value, but the invokeable itself can be passed by ref.
+	cout << a.note << endl;
+	return 0;
+}
+/*
+	std::thread t1(a, 6);   
+	std::async(a, 6);   
+    std::bind(a, 6);
+    std::call_once(once_flag, a, 6);
+
+	std::thread t2(a, 6); 
+	std::thread t3(std::ref(a), 6); 
+	std::thread t4(std::move(a), 6);
+	std::thread t4([](int x){return x*x;}, 6);
+
+	std::thread t5(&A::f, a, 56, 'z');  // copy_of_a.f(56, 'z')
+	std::thread t6(&A::f, &a, 56, 'z');  // a.f(56, 'z') 
+*/
+```
+
+## packaged_task
+
+`future` 를 만드는 방법은 세가지가 있다. `async` 는 `future` 를 리턴한다. `promise` 를 통해 `future` 를 만들 수 있다. 마지막으로 `packaged_task` 를 이용하여 `future` 를 만들어낼 수 있다.
+
+```cpp
+/* packaged_task */
+
+std::mutex mu;
+std::deque<std::packaged_task<int()> > task_q;
+
+int factorial(int N) {
+	int res = 1;
+	for (int i=N; i>1; i--)
+		res *= i;
+
+	return res;
+}
+
+void thread_1() {
+	for (int i=0; i<10000; i++) {
+		std::packaged_task<int()> t;
+		{
+			std::lock_guard<std::mutex> locker(mu);
+			if (task_q.empty()) 
+				continue;
+			t = std::move(task_q.front());
+			task_q.pop_front();
+		}
+		t();
+	}
+}
+
+int main() {
+	std::thread th(thread_1);
+
+	std::packaged_task<int()> t(bind(factorial, 6));  
+	std::future<int> ret = t.get_future();
+	std::packaged_task<int()> t2(bind(factorial, 9));
+	std::future<int> ret2 = t2.get_future();
+	{
+		std::lock_guard<std::mutex> locker(mu);
+		task_q.push_back(std::move(t));
+		task_q.push_back(std::move(t2));
+	}
+	cout << "I see: " << ret.get() << endl;
+	cout << "I see: " << ret2.get() << endl;
+
+	th.join();
+	return 0;
+}
+
+/* Summary
+ * 3 ways to get a future:
+ * - promise::get_future()
+ * - packaged_task::get_future()
+ * - async() returns a future
+ */
+```
 
 # C++ Unit Test
 
+...
+
 # Boost Library
+
+...
