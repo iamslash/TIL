@@ -90,7 +90,7 @@
 - [Concurrent Programming](#concurrent-programming)
   - [thread](#thread)
   - [mutex](#mutex)
-  - [condition_variable](#conditionvariable)
+  - [future, promise, async](#future-promise-async)
   - [future](#future)
 - [C++ Unit Test](#c-unit-test)
 - [Boost Library](#boost-library)
@@ -4526,9 +4526,9 @@ int LogFile::x = 9;
 // static member data are guaranteed to be initialized only once.
 ```
 
-## condition_variable
+## future, promise, async
 
-서로 다른 쓰레드의 실행 시점을 조절하기 위해 `std::sleep_for` 를 사용해 보자.
+`function_1` 쓰레드가 일을 마치면 `function_2` 가 실행되도록 해보자. 가장 먼저 `sleep_for` 를 도입하여 `function_2` 가 일정 시간후에 실행되도록 해보자.
 
 ```cpp
 std::deque<int> q;
@@ -4570,10 +4570,9 @@ int main() {
 }
 ```
 
-`condition_variable` 을 사용하면 다른 쓰레드의 실행시점을 제어 할 수 있다.
+위의 코드는 지저분 하다. `condition_variable` 을 사용하면 다른 쓰레드의 실행시점을 제어 할 수 있다.
 
 ```cpp
-
 // Using conditional variable and mutex
 void function_1() {
 	int count = 10;
@@ -4601,9 +4600,9 @@ void function_2() {
 }
 ```
 
-## future
+위의 코드 역시 지저분 하자. golang 처럼 채널을 만들고 쓰레드가 그 채널에 값을 써줄 때까지 다른 쓰레드에서 기다리는 시스템이 있었으면 좋겠다. `std::future` 는 채널을 구현한 것이다. `async` 는 비동기 실행을 가능하게 하고 `future` 를 리턴한다. 
 
-`future` 를 이용하면 함수의 실행시점을 조정할 수 있다.
+가장 깔끔한 코드가 완성되었다. `async` 는 `std::launch::async` 를 사용하면 반드시 쓰레드가 만들어 져서 실행된다. `std::launch::async | std::launch::deferred` 는 구현체에 따라 다르다.
 
 ```cpp
 /* For threads to return values: future */
@@ -4622,7 +4621,81 @@ int main() {
 	// fu.get();  // crash
 	return 0;
 }
+``` 
+
+자식 쓰레드 역시 채널을 통해 다른 쓰레드에서 그 채널에 값을 보낼때 까지 기다리고 싶을 때 `promise` 를 도입한다.
+
+```cpp
+/* Asynchronously provide data with promise */
+int factorial(future<int>& f) {
+	// do something else
+
+	int N = f.get();     // If promise is distroyed, exception: std::future_errc::broken_promise
+	cout << "Got from parent: " << N << endl; 
+	int res = 1;
+	for (int i=N; i>1; i--)
+		res *= i;
+
+	return res;
+}
+
+int main() {
+	promise<int> p;
+	future<int> f = p.get_future();
+
+	future<int> fu = std::async(std::launch::async, factorial, std::ref(f));
+
+	// Do something else
+	std::this_thread::sleep_for(chrono::milliseconds(20));
+	//p.set_value(5);   
+	//p.set_value(28);  // It can only be set once
+	p.set_exception(std::make_exception_ptr(std::runtime_error("Flat tire")));
+
+	cout << "Got from child thread #: " << fu.get() << endl;
+	return 0;
+}
 ```
+
+만약 10개의 자식 쓰레드가 한개의 채널에 대기시키기 위해서는 `std::shaed_future` 를 사용해야 한다.
+
+```cpp
+/* shared_future */
+int factorial(shared_future<int> f) {
+	// do something else
+
+	int N = f.get();     // If promise is distroyed, exception: std::future_errc::broken_promise
+	f.get();
+	cout << "Got from parent: " << N << endl; 
+	int res = 1;
+	for (int i=N; i>1; i--)
+		res *= i;
+
+	return res;
+}
+
+int main() {
+	// Both promise and future cannot be copied, they can only be moved.
+	promise<int> p;
+	future<int> f = p.get_future();
+	shared_future<int> sf = f.share();
+
+	future<int> fu = std::async(std::launch::async, factorial, sf);
+	future<int> fu2 = std::async(std::launch::async, factorial, sf);
+
+	// Do something else
+	std::this_thread::sleep_for(chrono::milliseconds(20));
+	p.set_value(5);
+
+	cout << "Got from child thread #: " << fu.get() << endl;
+	cout << "Got from child thread #: " << fu2.get() << endl;
+	return 0;
+}
+```
+
+## future
+
+`future` 를 이용하면 함수의 실행시점을 조정할 수 있다.
+
 
 # C++ Unit Test
 
