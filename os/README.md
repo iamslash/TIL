@@ -10,6 +10,7 @@
   - [Mutex](#mutex)
   - [Semaphore](#semaphore)
   - [Event](#event)
+  - [Kernel Object](#kernel-object)
 - [Memory Management](#memory-management)
 - [Segmentation](#segmentation)
 - [Paging](#paging)
@@ -642,11 +643,500 @@ typedef struct _KTHREAD
 
 ## Critical Section
 
+유저레벨에서 간단히 사용할 수 있는 동기화 방법이다. 커널 객체를 바로 사용하지 않기 때문에 속도가 빠르다. 동일한 프로세스에서 사용 가능하다.
+
+```cpp
+// Global variable
+CRITICAL_SECTION CriticalSection; 
+
+int main( void )
+{
+    ...
+
+    // Initialize the critical section one time only.
+    if (!InitializeCriticalSectionAndSpinCount(&CriticalSection, 
+        0x00000400) ) 
+        return;
+    ...
+
+    // Release resources used by the critical section object.
+    DeleteCriticalSection(&CriticalSection);
+}
+
+DWORD WINAPI ThreadProc( LPVOID lpParameter )
+{
+    ...
+
+    // Request ownership of the critical section.
+    EnterCriticalSection(&CriticalSection); 
+
+    // Access the shared resource.
+
+    // Release ownership of the critical section.
+    LeaveCriticalSection(&CriticalSection);
+
+    ...
+return 1;
+}
+```
+
 ## Mutex
+
+커널객체를 사용하는 동기방법중 하나이다. 동일한 프로세스에서 사용해야 하는 제한이 없다.
+
+```cpp
+#include <windows.h>
+#include <stdio.h>
+
+#define THREADCOUNT 2
+
+HANDLE ghMutex; 
+
+DWORD WINAPI WriteToDatabase( LPVOID );
+
+int main( void )
+{
+    HANDLE aThread[THREADCOUNT];
+    DWORD ThreadID;
+    int i;
+
+    // Create a mutex with no initial owner
+
+    ghMutex = CreateMutex( 
+        NULL,              // default security attributes
+        FALSE,             // initially not owned
+        NULL);             // unnamed mutex
+
+    if (ghMutex == NULL) 
+    {
+        printf("CreateMutex error: %d\n", GetLastError());
+        return 1;
+    }
+
+    // Create worker threads
+
+    for( i=0; i < THREADCOUNT; i++ )
+    {
+        aThread[i] = CreateThread( 
+                     NULL,       // default security attributes
+                     0,          // default stack size
+                     (LPTHREAD_START_ROUTINE) WriteToDatabase, 
+                     NULL,       // no thread function arguments
+                     0,          // default creation flags
+                     &ThreadID); // receive thread identifier
+
+        if( aThread[i] == NULL )
+        {
+            printf("CreateThread error: %d\n", GetLastError());
+            return 1;
+        }
+    }
+
+    // Wait for all threads to terminate
+
+    WaitForMultipleObjects(THREADCOUNT, aThread, TRUE, INFINITE);
+
+    // Close thread and mutex handles
+
+    for( i=0; i < THREADCOUNT; i++ )
+        CloseHandle(aThread[i]);
+
+    CloseHandle(ghMutex);
+
+    return 0;
+}
+
+DWORD WINAPI WriteToDatabase( LPVOID lpParam )
+{ 
+    // lpParam not used in this example
+    UNREFERENCED_PARAMETER(lpParam);
+
+    DWORD dwCount=0, dwWaitResult; 
+
+    // Request ownership of mutex.
+
+    while( dwCount < 20 )
+    { 
+        dwWaitResult = WaitForSingleObject( 
+            ghMutex,    // handle to mutex
+            INFINITE);  // no time-out interval
+ 
+        switch (dwWaitResult) 
+        {
+            // The thread got ownership of the mutex
+            case WAIT_OBJECT_0: 
+                __try { 
+                    // TODO: Write to the database
+                    printf("Thread %d writing to database...\n", 
+                            GetCurrentThreadId());
+                    dwCount++;
+                } 
+
+                __finally { 
+                    // Release ownership of the mutex object
+                    if (! ReleaseMutex(ghMutex)) 
+                    { 
+                        // Handle error.
+                    } 
+                } 
+                break; 
+
+            // The thread got ownership of an abandoned mutex
+            // The database is in an indeterminate state
+            case WAIT_ABANDONED: 
+                return FALSE; 
+        }
+    }
+    return TRUE; 
+}
+```
 
 ## Semaphore
 
+커널객체를 사용하는 동기방법중 하나이다. 동일한 프로세스에서 사용해야 하는 제한이 없다. Mutex 는 한번에 하나의 스레드만이 자원에 접근할 수 있지만 semaphore 는 지정한 개수만큼의 스레드가 자원에 접근할 수 있다.
+
+```cpp
+#include <windows.h>
+#include <stdio.h>
+
+#define MAX_SEM_COUNT 10
+#define THREADCOUNT 12
+
+HANDLE ghSemaphore;
+
+DWORD WINAPI ThreadProc( LPVOID );
+
+int main( void )
+{
+    HANDLE aThread[THREADCOUNT];
+    DWORD ThreadID;
+    int i;
+
+    // Create a semaphore with initial and max counts of MAX_SEM_COUNT
+
+    ghSemaphore = CreateSemaphore( 
+        NULL,           // default security attributes
+        MAX_SEM_COUNT,  // initial count
+        MAX_SEM_COUNT,  // maximum count
+        NULL);          // unnamed semaphore
+
+    if (ghSemaphore == NULL) 
+    {
+        printf("CreateSemaphore error: %d\n", GetLastError());
+        return 1;
+    }
+
+    // Create worker threads
+
+    for( i=0; i < THREADCOUNT; i++ )
+    {
+        aThread[i] = CreateThread( 
+                     NULL,       // default security attributes
+                     0,          // default stack size
+                     (LPTHREAD_START_ROUTINE) ThreadProc, 
+                     NULL,       // no thread function arguments
+                     0,          // default creation flags
+                     &ThreadID); // receive thread identifier
+
+        if( aThread[i] == NULL )
+        {
+            printf("CreateThread error: %d\n", GetLastError());
+            return 1;
+        }
+    }
+
+    // Wait for all threads to terminate
+
+    WaitForMultipleObjects(THREADCOUNT, aThread, TRUE, INFINITE);
+
+    // Close thread and semaphore handles
+
+    for( i=0; i < THREADCOUNT; i++ )
+        CloseHandle(aThread[i]);
+
+    CloseHandle(ghSemaphore);
+
+    return 0;
+}
+
+DWORD WINAPI ThreadProc( LPVOID lpParam )
+{
+
+    // lpParam not used in this example
+    UNREFERENCED_PARAMETER(lpParam);
+
+    DWORD dwWaitResult; 
+    BOOL bContinue=TRUE;
+
+    while(bContinue)
+    {
+        // Try to enter the semaphore gate.
+
+        dwWaitResult = WaitForSingleObject( 
+            ghSemaphore,   // handle to semaphore
+            0L);           // zero-second time-out interval
+
+        switch (dwWaitResult) 
+        { 
+            // The semaphore object was signaled.
+            case WAIT_OBJECT_0: 
+                // TODO: Perform task
+                printf("Thread %d: wait succeeded\n", GetCurrentThreadId());
+                bContinue=FALSE;            
+
+                // Simulate thread spending time on task
+                Sleep(5);
+
+                // Release the semaphore when task is finished
+
+                if (!ReleaseSemaphore( 
+                        ghSemaphore,  // handle to semaphore
+                        1,            // increase count by one
+                        NULL) )       // not interested in previous count
+                {
+                    printf("ReleaseSemaphore error: %d\n", GetLastError());
+                }
+                break; 
+
+            // The semaphore was nonsignaled, so a time-out occurred.
+            case WAIT_TIMEOUT: 
+                printf("Thread %d: wait timed out\n", GetCurrentThreadId());
+                break; 
+        }
+    }
+    return TRUE;
+}
+```
+
 ## Event
+
+커널객체를 사용하는 동기화 방법중 하나이다. 동일한 프로세스에서 사용해야 하는 제한이 없다. 스레드가 시작되는 시점을 이벤트를 통해 제어한다.
+
+```cpp
+#include <windows.h>
+#include <stdio.h>
+
+#define THREADCOUNT 4 
+
+HANDLE ghWriteEvent; 
+HANDLE ghThreads[THREADCOUNT];
+
+DWORD WINAPI ThreadProc(LPVOID);
+
+void CreateEventsAndThreads(void) 
+{
+    int i; 
+    DWORD dwThreadID; 
+
+    // Create a manual-reset event object. The write thread sets this
+    // object to the signaled state when it finishes writing to a 
+    // shared buffer. 
+
+    ghWriteEvent = CreateEvent( 
+        NULL,               // default security attributes
+        TRUE,               // manual-reset event
+        FALSE,              // initial state is nonsignaled
+        TEXT("WriteEvent")  // object name
+        ); 
+
+    if (ghWriteEvent == NULL) 
+    { 
+        printf("CreateEvent failed (%d)\n", GetLastError());
+        return;
+    }
+
+    // Create multiple threads to read from the buffer.
+
+    for(i = 0; i < THREADCOUNT; i++) 
+    {
+        // TODO: More complex scenarios may require use of a parameter
+        //   to the thread procedure, such as an event per thread to  
+        //   be used for synchronization.
+        ghThreads[i] = CreateThread(
+            NULL,              // default security
+            0,                 // default stack size
+            ThreadProc,        // name of the thread function
+            NULL,              // no thread parameters
+            0,                 // default startup flags
+            &dwThreadID); 
+
+        if (ghThreads[i] == NULL) 
+        {
+            printf("CreateThread failed (%d)\n", GetLastError());
+            return;
+        }
+    }
+}
+
+void WriteToBuffer(VOID) 
+{
+    // TODO: Write to the shared buffer.
+    
+    printf("Main thread writing to the shared buffer...\n");
+
+    // Set ghWriteEvent to signaled
+
+    if (! SetEvent(ghWriteEvent) ) 
+    {
+        printf("SetEvent failed (%d)\n", GetLastError());
+        return;
+    }
+}
+
+void CloseEvents()
+{
+    // Close all event handles (currently, only one global handle).
+    
+    CloseHandle(ghWriteEvent);
+}
+
+int main( void )
+{
+    DWORD dwWaitResult;
+
+    // TODO: Create the shared buffer
+
+    // Create events and THREADCOUNT threads to read from the buffer
+
+    CreateEventsAndThreads();
+
+    // At this point, the reader threads have started and are most
+    // likely waiting for the global event to be signaled. However, 
+    // it is safe to write to the buffer because the event is a 
+    // manual-reset event.
+    
+    WriteToBuffer();
+
+    printf("Main thread waiting for threads to exit...\n");
+
+    // The handle for each thread is signaled when the thread is
+    // terminated.
+    dwWaitResult = WaitForMultipleObjects(
+        THREADCOUNT,   // number of handles in array
+        ghThreads,     // array of thread handles
+        TRUE,          // wait until all are signaled
+        INFINITE);
+
+    switch (dwWaitResult) 
+    {
+        // All thread objects were signaled
+        case WAIT_OBJECT_0: 
+            printf("All threads ended, cleaning up for application exit...\n");
+            break;
+
+        // An error occurred
+        default: 
+            printf("WaitForMultipleObjects failed (%d)\n", GetLastError());
+            return 1;
+    } 
+            
+    // Close the events to clean up
+
+    CloseEvents();
+
+    return 0;
+}
+
+DWORD WINAPI ThreadProc(LPVOID lpParam) 
+{
+    // lpParam not used in this example.
+    UNREFERENCED_PARAMETER(lpParam);
+
+    DWORD dwWaitResult;
+
+    printf("Thread %d waiting for write event...\n", GetCurrentThreadId());
+    
+    dwWaitResult = WaitForSingleObject( 
+        ghWriteEvent, // event handle
+        INFINITE);    // indefinite wait
+
+    switch (dwWaitResult) 
+    {
+        // Event object was signaled
+        case WAIT_OBJECT_0: 
+            //
+            // TODO: Read from the shared buffer
+            //
+            printf("Thread %d reading from buffer\n", 
+                   GetCurrentThreadId());
+            break; 
+
+        // An error occurred
+        default: 
+            printf("Wait error (%d)\n", GetLastError()); 
+            return 0; 
+    }
+
+    // Now that we are done reading the buffer, we could use another
+    // event to signal that this thread is no longer reading. This
+    // example simply uses the thread handle for synchronization (the
+    // handle is signaled when the thread terminates.)
+
+    printf("Thread %d exiting\n", GetCurrentThreadId());
+    return 1;
+}
+
+```
+
+## Kernel Object
+
+다음은 커널 동기화 오브젝트들이다. `KEVENT, KSEMAPHORE, KMUTANT` 모두 `DISPATCHER_HEADER` 를 멤버변수로 가지고 있다. `DISPATCHER_HEADER` 의 `WaitListHead` 를 이용하면 해당 동기화 객체에 대기하고 있는 쓰레드들의 목록을 얻어올 수 있다. `WaitListHead` 는 `KWAIT_BLOCK` 을 가리키고 `KWAIT_BLOCK` 의 `Thread` 는 `KTHREAD` 를 가리킨다.
+
+```cpp
+typedef struct _DISPATCHER_HEADER
+{
+     union
+     {
+          struct
+          {
+               UCHAR Type;
+               union
+               {
+                    UCHAR Abandoned;
+                    UCHAR Absolute;
+                    UCHAR NpxIrql;
+                    UCHAR Signalling;
+               };
+               union
+               {
+                    UCHAR Size;
+                    UCHAR Hand;
+               };
+               union
+               {
+                    UCHAR Inserted;
+                    UCHAR DebugActive;
+                    UCHAR DpcActive;
+               };
+          };
+          LONG Lock;
+     };
+     LONG SignalState;
+     LIST_ENTRY WaitListHead;
+} DISPATCHER_HEADER, *PDISPATCHER_HEADER;
+
+typedef struct _KEVENT
+{
+     DISPATCHER_HEADER Header;
+} KEVENT, *PKEVENT;
+
+typedef struct _KSEMAPHORE
+{
+     DISPATCHER_HEADER Header;
+     LONG Limit;
+} KSEMAPHORE, *PKSEMAPHORE;
+
+typedef struct _KMUTANT
+{
+     DISPATCHER_HEADER Header;
+     LIST_ENTRY MutantListEntry;
+     PKTHREAD OwnerThread;
+     UCHAR Abandoned;
+     UCHAR ApcDisable;
+} KMUTANT, *PKMUTANT;
+```
+
+![](dispatcher_header.png)
 
 # Memory Management
 
