@@ -28,6 +28,8 @@
 
 # Materials
 
+* [High Performance Computer Architecture @ udacity](https://www.udacity.com/course/high-performance-computer-architecture--ud007)
+  * 체계적인 인강 
 * [Windows 구조와 원리](http://www.hanbit.co.kr/store/books/look.php?p_code=B6822670083)
   * 오래전에 출간되어 절판되었지만 한글로 된 책들중 최강이다.
 * [Write Great Code I](http://www.plantation-productions.com/Webster/www.writegreatcode.com/)
