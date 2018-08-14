@@ -28,10 +28,12 @@
 
 # Materials
 
+* [Paging and Segmentation @ youtube](https://www.youtube.com/watch?v=5ioo7ezWn1U&list=PLWi7UcbOD_0uhZqGfWbpQ_Ym30ehQCeyq)
+  *  virtual address to physical address translation 은 설명이 좋다.
 * [Memory Management : Segmentation 2](http://anster.egloos.com/2138204)
   * 메모리 관리를 잘 정리한 블로그
 * [High Performance Computer Architecture @ udacity](https://www.udacity.com/course/high-performance-computer-architecture--ud007)
-  * 체계적인 인강 
+  * 체계적인 인강 그러나 virtual address to physical address translation 은 설명이 부족하다.
 * [Windows 구조와 원리](http://www.hanbit.co.kr/store/books/look.php?p_code=B6822670083)
   * 오래전에 출간되어 절판되었지만 한글로 된 책들중 최강이다.
 * [Write Great Code I](http://www.plantation-productions.com/Webster/www.writegreatcode.com/)
