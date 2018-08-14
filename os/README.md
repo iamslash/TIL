@@ -28,6 +28,8 @@
 
 # Materials
 
+* [Memory Management : Segmentation 2](http://anster.egloos.com/2138204)
+  * 메모리 관리를 잘 정리한 블로그
 * [High Performance Computer Architecture @ udacity](https://www.udacity.com/course/high-performance-computer-architecture--ud007)
   * 체계적인 인강 
 * [Windows 구조와 원리](http://www.hanbit.co.kr/store/books/look.php?p_code=B6822670083)
