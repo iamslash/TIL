@@ -1142,6 +1142,16 @@ typedef struct _KMUTANT
 
 # Memory Management
 
+모든 프로세스들은 자신만의 독립적인 메모리 공간을 갖는다. 이것을 Virtual Memory 라 하고 Virtual Memory Address 에 의해 접근한다. Virtual Memory 는 4KB 단위로 분할하여 물리 메모리로 이동되어야 프로세스가 접근할 수 있다. 4KB 단위를 페이지라고 부른다.
+
+가상 메모리의 페이지들중 물리메모리에 상주하는 것들을 working set 이라고 한다.
+
+페이지는 `Free, Reserved, Commited` 와 같이 총 3가지 상태를 갖는다. 
+
+Logical Address(Virtual Memory Address) 는 Segementation 을 통해서 Linear Address 로 변환된다. 그것은 다시 Paging 을 통해서 Physical Address 로 변환되야 물리 메모리 접근이 가능하다.
+
+![](address_translation.jpg)
+
 # Segmentation
 
 # Paging
