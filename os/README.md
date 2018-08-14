@@ -28,6 +28,7 @@
 
 # Materials
 
+* [Intel 80386 Reference Programmer's Manual](https://pdos.csail.mit.edu/6.828/2005/readings/i386/toc.htm)
 * [Paging and Segmentation @ youtube](https://www.youtube.com/watch?v=5ioo7ezWn1U&list=PLWi7UcbOD_0uhZqGfWbpQ_Ym30ehQCeyq)
   *  virtual address to physical address translation 은 설명이 좋다.
 * [Memory Management : Segmentation 2](http://anster.egloos.com/2138204)
