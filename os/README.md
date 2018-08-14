@@ -4,13 +4,13 @@
 - [Procedure and Stack](#procedure-and-stack)
 - [Process and Thread](#process-and-thread)
 - [Thread Scheduling](#thread-scheduling)
-  - [Thread Status](#thread-status)
+    - [Thread Status](#thread-status)
 - [Thread synchronization](#thread-synchronization)
-  - [Critical Section](#critical-section)
-  - [Mutex](#mutex)
-  - [Semaphore](#semaphore)
-  - [Event](#event)
-  - [Kernel Object](#kernel-object)
+    - [Critical Section](#critical-section)
+    - [Mutex](#mutex)
+    - [Semaphore](#semaphore)
+    - [Event](#event)
+    - [Kernel Object](#kernel-object)
 - [Memory Management](#memory-management)
 - [Segmentation](#segmentation)
 - [Paging](#paging)
@@ -1148,13 +1148,47 @@ typedef struct _KMUTANT
 
 페이지는 `Free, Reserved, Commited` 와 같이 총 3가지 상태를 갖는다. 
 
-Logical Address(Virtual Memory Address) 는 Segementation 을 통해서 Linear Address 로 변환된다. 그것은 다시 Paging 을 통해서 Physical Address 로 변환되야 물리 메모리 접근이 가능하다.
+Logical Address(Virtual Memory Address) 는 세그먼트 레지스터 (CS, DS, ES, SS, FS, GS) 의 visible part 인 16bit 의 segment selector 와 32 bit 의 offset 으로 구성된다.
+
+Segementation 을 통해서 Logical Address 는 Linear Address 로 변환된다. Linear Address 는 다시 Paging 을 통해서 Physical Address 로 변환되야 물리 메모리 접근이 가능하다.
 
 ![](address_translation.jpg)
 
 # Segmentation
 
+![](memory_registers.jpg)
+
+GDT (Global Descriptor Table) 은 8byte 의 Segment Descriptor 들을 가지고 있는 자료구조이다. GDTR (Global Descriptor Table Register) 은 GDT를 가리킨다. 
+
+LDT (Local Descriptor Table) 는 8byte 의 Segment Descriptor 들을 가지고 있는 자료구조이다. LDTR (Local Descriptor Table Register) 은 LDT를 가리킨다.
+
+IDTR, TR (Task Register) 는 어디에 쓰는 걸까?
+
+![](segment_selector.jpg)
+
+Logical Address 는 16bit 의 Segment Selector 와 32bit 의 offset 으로 구성된다. 아래 그림과 같이 Segment Selector 는 여러 세그먼트 레지스터의 visible part 에 해당한다. hidden part 는 해당 세그먼트 레지스터의 Segment Selector 가 가리키는 Segment Descriptor Table Entry 의 일부값들이 저장된다.
+
+![](segment_registers.jpg)
+
+Segment Selector 의 상위 13bit 는 `2^13` 즉 `8192` 와 같다. Segment Selector 의 Index 는 13bit 이고 이것은 TI 가 0혹은 1일 때에 따라서 GDT 혹은 LDT 의 항목의 인덱스를 저장한다. GDTR 의 베이스 어드레스로부터, Segment Selctor 의 인덱스 x 8 만큼의 주소를 더하면 특정 세그먼트 디스크립터에 접근 가능하다.
+
+RPL 은 0부터 3까지 특권레벨을 의미한다. 0은 커널레벨이고 3은 유저레벨이다.
+
+![](GDT_LDT.jpg)
+
+다음은 접근한 세그먼트 디스크립터의 자세한 내용이다.
+
+![](segment_descriptor.jpg)
+
+세그먼트 디스크립터의 Base Address(16bit) 와 Logical Address 의 offset(32bit) 을 더하면 Linear Address(32bit) 을 얻을 수 있다.
+
+![](logical_addr_to_linear_addr.jpg)
+
+페이징이 도입이 되기전의 CPU 에서는 segmentation 을 거친 Linear Address 가 곧 물리 메모리 주소 였다. 페이징은 80386 부터 도입되었다.
+
 # Paging
+
+
 
 # Page Management
 
