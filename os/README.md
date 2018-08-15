@@ -1153,11 +1153,16 @@ typedef struct _KMUTANT
 
 페이지는 `Free, Reserved, Commited` 와 같이 총 3가지 상태를 갖는다. 
 
-Logical Address(Virtual Memory Address) 는 세그먼트 레지스터 (CS, DS, ES, SS, FS, GS) 의 visible part 인 16bit 의 segment selector 와 32 bit 의 offset 으로 구성된다.
+Logical Address(Virtual Memory Address) 는 세그먼트 레지스터 (CS, DS, ES, SS, FS, GS) 의 visible part 인 segment selector(16bit) 와 offset(32bit) 으로 구성된다.
 
-Segementation 을 통해서 Logical Address 는 Linear Address 로 변환된다. Linear Address 는 다시 Paging 을 통해서 Physical Address 로 변환되야 물리 메모리 접근이 가능하다.
+Logical Address 는 Segementation 을 통해서 Linear Address 로 변환된다. Linear Address 는 다시 Paging 을 통해서 Physical Address 로 변환되야 물리 메모리 접근이 가능하다.
 
-![](address_translation.jpg)
+
+![](address_tralsation_overview.png)
+
+페이징이 도입되기 전에는 Linear Address 가 곧 Physical Address 였다. 페이징은 80386 부터 도입되었다.
+
+![](80386_Addr_Mech.png)
 
 # Segmentation
 
@@ -1185,17 +1190,35 @@ RPL 은 0부터 3까지 특권레벨을 의미한다. 0은 커널레벨이고 3�
 
 ![](segment_descriptor.jpg)
 
-세그먼트 디스크립터의 Base Address(16bit) 와 Logical Address 의 offset(32bit) 을 더하면 Linear Address(32bit) 을 얻을 수 있다.
+세그먼트 디스크립터의 Base Address(16bit) 와 Logical Address 의 offset(32bit) 을 더하면 Linear Address(32bit) 을 얻을 수 있다. 이렇게 만들어진 Linear Address 에서 어떻게 PDE, PTE, offset 을 얻을 수 있는 걸까? Segment Descriptor 의 Base Address 가 이미 PDE, PTE 를 포함하고 있는 건가?
 
 ![](logical_addr_to_linear_addr.jpg)
 
-페이징이 도입이 되기전의 CPU 에서는 segmentation 을 거친 Linear Address 가 곧 물리 메모리 주소 였다. 페이징은 80386 부터 도입되었다.
-
 # Paging
 
+Segmentation 과정을 통해서 만들어진 Linear Address 의 형태는 다음과 같다.
 
+![](linearaddr_format.png)
+
+CR3 는 Page Directory 를 가리킨다. Linear Address 의  `DIR` 는 Page Directory Entry 하나를 가리킨다. Page Directory Entry 는 Page Table 을 가리킨다. `PAGE` 는 Page Table Entry 하나를 가리킨다. Page Table Entry 는 Page Frame (4KB) 를 하나 가리킨다. `OFFSET` 은 Page Frame 의 특정 주소를 가리킨다.
+
+![](page_translation.png)
+
+CR3, PDE, PTE 의 비트별 세부내역은 생략한다. 
 
 # Page Management
+
+프로세서가 특정 프로세스 가상메모리의 페이지를 요청했을 때 그 페이지가 물리메모리에 없다면 페이지 폴트 예외가 발생한다. 이후 그 페이지는 디스크에서 물리메모리로 이동하는 데 이것을 페이지인이라고 한다.
+
+대부분의 경우 한번 사용된 Page 의 근처 Page 들을 다시 참조하는 경향이 있는데 이것을 Locality 라고 한다. OS 가 Locality 때문에 특정 페이지를 Page-in 할 때 그 페이지 근처의 다른 페이지들도 함께 Page-in 하는 것을 Prepaging 이라고 한다. 
+
+물리 메모리에 상주하는 페이지들을 Working Set 이라고 한다. 당장 작업할 수 있는 것들의 집합이라는 의미이다.
+
+페이지는 LRU 혹은 FIFO 방식으로 교체한다. LRU 는 가장 최근에 사용한 페이지는 다시 사용할 가능성이 있으므로 덜 Page-Out 하는 방법이다.
+
+프로세스가 잦은 Page fault Exception 때문에 Page-in, Page-out 을 하느라 CPU 이용률은 줄어들고 디스크 I/O 작업을 기다리는데 소비하는 시간이 많아지게 되면 시스템 전체가 성능 저하를 가져온다. 이러한 현상을 Thrashing (스레싱) 이라고 한다.
+
+예를 들어서 한 시스템에 프로세스의 개수가 점점 더 많아진다면 프로세스당 사용할 수 있는 물리 메모리 공간이 줄어들게 되어 Thrashing 이 발생할 테고 대부분의 프로세스는 CPU 이용률이 줄어들고 디스크 Page-In, Page-out 을 하기 위해 DISK I/O 작업 대기 시간이 늘어날 것이다. CPU 이용률이 낮아 지기 때문에 시스템의 성능 저하를 가져온다.
 
 # Cache Management
 
