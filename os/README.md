@@ -28,6 +28,17 @@
 
 # Materials
 
+* [Windows Internals, Part 1: System architecture, processes, threads, memory management, and more (7th Edition)](https://www.amazon.com/Windows-Internals-Part-architecture-management/dp/0735684189)
+  * [번역서](http://www.yes24.com/24/Goods/57905305?Acode=101#contentsConstitution)
+  * 윈도우즈 커널 추천 도서
+* [Linux Kernel Development (3rd Edition)](https://www.amazon.com/Linux-Kernel-Development-Robert-Love/dp/0672329468)
+  * [번역서](http://www.yes24.com/24/Goods/7351874?Acode=101)
+  * 리눅스 커널 추천 도서
+* [Understanding the Linux Kernel, 3rd Edition](http://shop.oreilly.com/product/9780596005658.do)
+  * [번역서](http://www.yes24.com/24/Goods/2157231?Acode=101)
+  * 리눅스 커널 추천 도서
+* [Understanding the Linux Virtual Memory Manager](https://www.amazon.com/Understanding-Linux-Virtual-Memory-Manager/dp/0131453483)
+  * 리눅스 커널 추천 도서
 * [Intel 80386 Reference Programmer's Manual](https://pdos.csail.mit.edu/6.828/2005/readings/i386/toc.htm)
 * [Paging and Segmentation @ youtube](https://www.youtube.com/watch?v=5ioo7ezWn1U&list=PLWi7UcbOD_0uhZqGfWbpQ_Ym30ehQCeyq)
   *  virtual address to physical address translation 은 설명이 좋다.
