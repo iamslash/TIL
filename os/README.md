@@ -15,7 +15,7 @@
 - [Segmentation](#segmentation)
 - [Paging](#paging)
 - [Page Management](#page-management)
-- [Cache Management](#cache-management)
+- [Processor Cache Management](#processor-cache-management)
 - [Windows Cache Management](#windows-cache-management)
 - [Userlevel and Kernellevel](#userlevel-and-kernellevel)
 - [Execution file and Loader](#execution-file-and-loader)
@@ -1231,9 +1231,124 @@ CR3, PDE, PTE 의 비트별 세부내역은 생략한다.
 
 예를 들어서 한 시스템에 프로세스의 개수가 점점 더 많아진다면 프로세스당 사용할 수 있는 물리 메모리 공간이 줄어들게 되어 Thrashing 이 발생할 테고 대부분의 프로세스는 CPU 이용률이 줄어들고 디스크 Page-In, Page-out 을 하기 위해 DISK I/O 작업 대기 시간이 늘어날 것이다. CPU 이용률이 낮아 지기 때문에 시스템의 성능 저하를 가져온다.
 
-# Cache Management
+# Processor Cache Management
+
+cache(캐시)는 다음에 사용할 것을 미리 저장하여 저장된 값을 로드하는 시간을 아낄 수 있는 것이다. CPU 는 저장된 것의 성격에 따라 Instruction Cache 와 Data Cache 두 종류를 가지고 있고 Processor 로 부터 접근 거리에 따라 L1 Cache, L2 Cache 등을 가지고 있다. 
+
+![](cpu_cache_overview.png)
+
+cache 가 주소를 매핑하는 방식은 Direct Mapping, Associative Mapping, Set-Associative Mapping 과 같이 3가지 방법이 있다. 주로 Set-Associative Mapping 을 사용한다.
+
+![](direct_mapping.png)
+
+![](associative_mapping.png)
+
+![](set_associative_mapping.png)
+
+cache 는 주로 LRU(least recently used) 방식을 사용한다.
+
+cache 는 line 단위로 정보를 저장하는데 line 의 크기는 Processor 에 따라 다르다. 주로 32B 이다. cache 의 line 크기를 고려하여 프로그래밍 하면 성능을 개선시킬 수 있다.
+
+cache 의 쓰기정책은 정보를 메모리에 저장하는 방법은 시점에 따라 Write Through, Write Back 과 같이 두가지 종류가 있다. cache 의 정보가 변경될 때마다 메모리에 저장하는 방식이 Write Through 이고 cache 의 정보가 변경될 때마다 표기해 놓고 해당 line 이 cache 에서 제거될 때 메모리에 반영하는 방식이 Write Back 이다.
+
+CR0 의 CD 는 Cache Disable 을 의미한다. 1 이면 cache 를 비활성화 하여 시스템의 성능이 저하된다. 디버깅을 할 때를 제외하고는 권장되지 않는다. NW 는 Non-Cache Write-Through 를 의미한다. 1 이면 Write Back 을 0 이면 Write Through 를 사용한다.
+
+![](cache_cr0.png)
+
+또한 CR3, PDE, PTE 의 비트들을 이용하여 페이지 단위로 cache 를 제어할 수 있다. PCD 는 Page Cache Disable 이다. PWT 는 Page Write Through 이다.
+
+![](cache_cr3.png)
+
+![](cache_pde_pte.png)
+
+cache 의 속도는 processor 와 거리가 가까울 수록 빠르다.
+
+![](cache_speed.png)
+
+다음은 space localtity 를 이용하여 최적화를 수행한 예이다.
+
+```cpp
+int v[10][10];
+void main() {
+    int r = 0;
+    for (int i = 0; i < 10; ++i) {
+        for (int j = 0; j < 10; ++j) {
+            r += v[i][j];
+            // r += v[j][i]; 
+        }
+    }
+}
+```
+
+`r += [i][j]` 대신 `r += [j][i]` 를 사용했다면 연속적으로 저장된 메모리를 사용하는 것이 아니므로 성능이 저하된다.
+
+다음은 미리 cache 에 로딩하여 최적화를 수행한 예이다. `PREFETCH0 [ecx]` 는 인텔 컴파일러만 지원하는 명령어이다.
+
+```cpp
+void __fastcall PREFETCH(void * p) {
+    // PREFETCH0 [ecx]
+    _asm _emit 0x0f;
+    _asm _emit 0x18;
+    _asm _emit 0x09;
+}
+
+int v[1615];
+int Sum(int * p) {
+    int r = 0;
+    for (int i = 0; i < 16; ++i) {
+        r += *(p + n);
+    }
+    return r;
+}
+
+void main() {
+    int r;
+    for (int i = 0; i < 100; ++i) {
+        PREFETCH(v + (16 * (i + 1)));
+        r = Sum(v + (16 * i));
+    }
+    r = Sum(v + (16 * 100));
+}
+```
+
+다음은 데이터이 정렬을 활용하여 최적화를 수행한 예이다.
+
+```cpp
+typedef struct _PHONE_BOOK_ENTRY {
+    _PHONE_BOOK_ENTRY* pnext;
+    char Name[20];
+    char Email[10];
+    char Phone[16];
+    //_PHONE_BOOK_ENTRY* pnext;
+} PHONE_BOOK_ENTRY, *PPHONE_BOOK_ENTRY;
+
+PHONE_BOOK_ENTRY SearchName(char* pname) {
+    PHONE_BOOK_ENTRY phead;
+    ...
+    while (phead != NULL) {
+        if (stricmp(pname, phead->Name) == 0) 
+            return phead;
+        phead = phead->Next;
+    }
+    return NULL;
+}
+```
+
+만약 위의 코드에서 `pnext` 를 `Phone` 아래에 위치시키면 `if (stricmp(pname, phead->Name) == 0)` 에서 space locality 가 지켜지지 않기 때문에 성능이 저하된다. 즉 `_PHONE_BOOK_ENTRY` 의 `pnext` 와 `Name` 은 가까이 있어야 한다. 
+
+TLB (Translate Lookaside Buffer) 는 virtual memory address 를 physical memory address 로 traslation 할 때 성능을 향상시키위해 존재하는 cache 이다.
+
+![](cache_tlb.png)
 
 # Windows Cache Management
+
+윈도우즈는 하나의 파일을 메모리로 읽어 들일 때 캐시를 활용하여 성능을 향상한다.
+
+![](cache_windows_read_file_overview.png)
+
+file 의 내용은 
+
+![](cache_system_cach.png)
 
 # Userlevel and Kernellevel
 
