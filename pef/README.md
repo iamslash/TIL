@@ -4,10 +4,16 @@ portable executable format 에 대해 적는다.
 
 # Materials
 
+* [Malware Theory - Memory Mapping of PE Files](https://www.youtube.com/watch?v=cc1tX1t_bLg&list=PLynb9SXC4yETaQYYBSg696V77Ku8TOM8-&index=3)
+  * PE 가 Virtual Memory 에 어떻게 매핑 되는지 설명해 준다.
+* [PEDUMP @ github](https://github.com/martell/pedump)
+  * PE 파일을 자세히 DUMP 한다.
+* [Peering Inside the PE: A Tour of the Win32 Portable Executable File Format @ MSDN](https://msdn.microsoft.com/en-us/library/ms809762.aspx?f=255&MSPPError=-2147217396)
+  * 킹왕짱
 * [PE @ tistory](http://www.reversecore.com/25?category=216978)
   * "리버싱 핵심 기술"의 저자가 설명한 PE.
 * [PeViewer.net](https://peviewer.net/)
-  * web 으로 pe 를 확인할 수 있다.
+  * web 으로 pe 를 간단히 확인할 수 있다.
 * [Advance PE Viewer](http://www.codedebug.com/php/Products/Products_NikPEViewer_12v.php)
   * advance peviewer
 * [corkami/pics @ github](https://github.com/corkami/pics/tree/master/binary)
@@ -21,7 +27,7 @@ portable executable format 에 대해 적는다.
 
 # notepad.exe
 
-![](notepad_pe_summary.png)
+[PeViewer.net](https://peviewer.net/) 에 `C:\WINDOWS\system32\notepad.exe` 를 업로드 해보자.
 
 # Overview
 
@@ -59,7 +65,7 @@ typedef struct _IMAGE_DOS_HEADER {
 
 
 | member field | description |
-|:------------:|:-----------:|
+|:------------|:-----------|
 | `e_magic` | 저자를 표현한 코드이다. `MZ` |
 | `e_lfanew` | `NT headers` 의 offset |
 
@@ -158,7 +164,7 @@ typedef struct _IMAGE_OPTIONAL_HEADER {
 중요한 멤버는 다음과 같다.
 
 | member field | description |
-|:------------:|:-----------:|
+|:------------|:-----------|
 | `Magic` | `IMAGE_OPTIONAL_HEADER32` 인 경우 `10Bh` `IMAGE_OPTIONAL_HEADER64` 인 경우 `20Bh` |
 | `AddressOfEntryPoint` | EP (Entry Point) 의 RVA (Relative Virtual Address) 값 |
 | `ImageBase` | 파일이 로딩되는 VA (Virtual Address) |
