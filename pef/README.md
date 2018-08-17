@@ -7,37 +7,27 @@ portable executable format 에 대해 적는다.
 * [Malware Theory - Memory Mapping of PE Files](https://www.youtube.com/watch?v=cc1tX1t_bLg&list=PLynb9SXC4yETaQYYBSg696V77Ku8TOM8-&index=3)
   * PE 가 Virtual Memory 에 어떻게 매핑 되는지 설명해 준다.
 * [PEDUMP @ github](https://github.com/martell/pedump)
-  * PE 파일을 자세히 DUMP 한다.
+  * PE 파일을 자세히 DUMP 한다. [Advance PE Viewer](http://www.codedebug.com/php/Products/Products_NikPEViewer_12v.php) 와 비교해서 보면 좋다.
 * [Peering Inside the PE: A Tour of the Win32 Portable Executable File Format @ MSDN](https://msdn.microsoft.com/en-us/library/ms809762.aspx?f=255&MSPPError=-2147217396)
   * 킹왕짱
 * [PE @ tistory](http://www.reversecore.com/25?category=216978)
   * "리버싱 핵심 기술"의 저자가 설명한 PE.
-* [PeViewer.net](https://peviewer.net/)
-  * web 으로 pe 를 간단히 확인할 수 있다.
-* [Advance PE Viewer](http://www.codedebug.com/php/Products/Products_NikPEViewer_12v.php)
-  * advance peviewer
 * [corkami/pics @ github](https://github.com/corkami/pics/tree/master/binary)
   * pef, elf 등을 한장의 그림으로 표현했다.
 
 # Architect
 
-![](pe101.svg)
+## Overview
 
-![](pe102.svg)
+대부분의 member field 는 사용되지 않는다.
 
-# notepad.exe
+![](Portable_Executable_32_bit_Structure_in_SVG_fixed.svg)
 
-[PeViewer.net](https://peviewer.net/) 에 `C:\WINDOWS\system32\notepad.exe` 를 업로드 해보자.
-
-# Overview
-
-* 크게 바라보면 `Dos header, NT headers, Section headers, Sections` 로 나누어 진다. 위의 notepad 예제에서 `Sections` 가 곧 `Section headers` 이다. `NT headers`  는 `NT Signature, File header, Optional header, Data Directories` 를 포함한다. `Data Directories` 는 `IMPORT TABLE, RESOURCE TABLE, BASERELOC TABLE, DEBUG TABLE, LOAD_CONFIG TABLE, UNDEFINED TABLE` 등을 포함한다. `Section headers` 는 `.text, .data, .idata, .rsrc, .reloc` 의 `header` 들을 포함한다. 마지막으로 `Sections` 는 `.text, .data, .idata, .rsrc, .reloc` 등을 포함한다.
-
-# DOS header
+## DOS header
 
 `DOS header` 는 `winnt.h` 의 `IMAGE_DOS_HEADER` 로 구현한다.
 
-```
+```cpp
 typedef struct _IMAGE_DOS_HEADER {
     WORD  e_magic;      /* 00: MZ Header signature */
     WORD  e_cblp;       /* 02: Bytes on last page of file */
@@ -61,19 +51,18 @@ typedef struct _IMAGE_DOS_HEADER {
 } IMAGE_DOS_HEADER, *PIMAGE_DOS_HEADER;
 ```
 
- 중요한 멤버는 다음과 같다.
-
+중요한 멤버는 다음과 같다.
 
 | member field | description |
 |:------------|:-----------|
 | `e_magic` | 저자를 표현한 코드이다. `MZ` |
-| `e_lfanew` | `NT headers` 의 offset |
+| `e_lfanew` | `NT headers` 의 file offset |
 
-# NT headers
+## NT header
 
-`NT headers` 는 `winnt.h` 의 `IMAGE_NT_HEADERS32` 으로 구현한다.
+`NT header` 는 `winnt.h` 의 `IMAGE_NT_HEADERS32` 으로 구현한다.
 
-```
+```cpp
 typedef struct _IMAGE_NT_HEADERS {
   DWORD Signature; /* "PE"\0\0 */	/* 0x00 */
   IMAGE_FILE_HEADER FileHeader;		/* 0x04 */
@@ -84,16 +73,16 @@ typedef struct _IMAGE_NT_HEADERS {
 중요한 멤버는 다음과 같다.
 
 | member field | description |
-|:------------:|:-----------:|
+|:------------|:-----------|
 | `Signature` | PE header를 표현한 코드이다. `PE` |
 | `FileHeader` | `File header` |
 | `OptionalHeader` | `Optional header` |
 
-# File Header
+## File Header
 
 `File Header` 는 `winnt.h` 의 `IMAGE_FILE_HEADER` 으로 구현한다.
 
-```
+```cpp
 typedef struct _IMAGE_FILE_HEADER {
   WORD  Machine;
   WORD  NumberOfSections;
@@ -108,17 +97,17 @@ typedef struct _IMAGE_FILE_HEADER {
 중요한 멤버는 다음과 같다.
 
 | member field | description |
-|:------------:|:-----------:|
+|:------------|:-----------|
 | `Machine` | CPU 별 고유값 |
 | `NumberOfSections` | 섹션의 개수 |
 | `SizeOfOptionalHeader` | `IMAGE_OPTIONAL_HEADER32` 의 크기 |
 | `Characteristics` | 파일 속성을 표현한 bitmask |
 
-# Optional Header
+## Optional Header
 
 `Optional Header` 는 `winnt.h` 의 `IMAGE_OPTIONAL_HEADER` 으로 구현한다.
 
-```
+```cpp
 typedef struct _IMAGE_OPTIONAL_HEADER {
 
   /* Standard fields */
@@ -173,12 +162,12 @@ typedef struct _IMAGE_OPTIONAL_HEADER {
 | `SizeOfImage` | 파일이 VM (Virtual Memory) 에 로딩되었을 때 크기 |
 | `SizeOfHeaders` | `PE header` 의 크기 |
 | `Subsystem` | 1: Driver File (*.sys), 2: GUI 파일, 3: CUI (console user interface) 파일 |
-| `NumberOfRvaAndSizes` | `DataDirectory` 배열의 개수 |
+| `NumberOfRvaAndSizes` | 마지막 멤버인 `DataDirectory` 배열의 개수 |
 | `DataDirectory` | `Data Directories` |
 
-# Data Directories
+## DataDirectory
 
-`Data Directories` 는 `winnt.h` 의 `IMAGE_DATA_DIRECTORY` 의 배열로 구현한다. 첫번째는 `EXPORT DIRECTORY` 두번째는 `IMPORT DIRECTORY` 이다.
+`DataDirectory` 는 `winnt.h` 의 `IMAGE_DATA_DIRECTORY` 의 배열로 구현한다. 첫번째는 `EXPORT DIRECTORY` 두번째는 `IMPORT DIRECTORY` 이다.
 
 ```
 typedef struct _IMAGE_DATA_DIRECTORY {
@@ -187,12 +176,12 @@ typedef struct _IMAGE_DATA_DIRECTORY {
 } IMAGE_DATA_DIRECTORY, *PIMAGE_DATA_DIRECTORY;
 ```
 
-# Section Headers
+## Section Headers
 
 
 `Section Headers` 는 `winnt.h` 의 `IMAGE_SECTION_HEADER` 의 배열로 구현한다. 
 
-```
+```cpp
 typedef struct _IMAGE_SECTION_HEADER {
   BYTE  Name[IMAGE_SIZEOF_SHORT_NAME];
   union {
@@ -213,14 +202,14 @@ typedef struct _IMAGE_SECTION_HEADER {
 중요한 멤버는 다음과 같다.
 
 | member field | description |
-|:------------:|:-----------:|
+|:------------|:-----------|
 | `VirtualSize` | VM 에서 섹션이 차지하는 크기 |
 | `VirtualAddress` | VM 에서 섹션이 시작하는 주소. RVA (Relative Virtual Address) |
 | `SizeOfRawData` | 파일에서 섹션이 차지하는 크기 |
 | `PointerToRawData` | 파일에서 섹션의 시작위치 |
 | `Characteristics` | 섹션의 특징을 표현한 bitmask |
 
-# RVA to RAW
+## RVA to RAW
 
 VM 의 주소 RVA 를 파일의 주소 RAW 로 표현해 보자.
 
@@ -229,14 +218,13 @@ RAW - PointerToRawData = RVA - VirtualAddress
 RAW = RVA - VirtualAddress + PointerToRawData
 ```
 
-# IAT (Import Address Table)
-
+## IAT (Import Address Table)
 
 특정 파일을 실행한다고 해보자. 그 실행파일이 특정 DLL (Dynamic Linked Library) 을 사용할 때 실행과 동시에 VM 에 DLL 을 로딩하고 종료와 동시에 언로딩 하도록 제작되었다면 실행 파일은 `Implicit Linking` 되었다고 한다. 만약 필요할 때마다 로딩하고 언로딩 한다면 `Explicit Linking` 되었다고 한다. IAT 는 `Implicit Linking` 을 구현하기 위해 필요하다. 즉 IAT 는 `Implicit Linking` 으로 연결된 모든 함수들의 시작주소를 저장한다.
 
 `IAT` 는 `winnt.h` 의 `IMAGE_IMPORT_DESCRIPTOR` 으로 구현한다. `Data Directories` 의 첫번째 원소가 `IMAGE_IMPORT_DESCRIPTOR` 의 VM 에서 RVA, SIZE 등을 포함한다.
 
-```
+```cpp
 typedef struct _IMAGE_IMPORT_DESCRIPTOR {
 	union {
 		DWORD	Characteristics; /* 0 for terminating null import descriptor  */
@@ -265,7 +253,7 @@ typedef struct _IMAGE_IMPORT_BY_NAME {
 중요한 멤버는 다음과 같다.
 
 | member field | description |
-|:------------:|:-----------:|
+|:------------|:-----------|
 | `OriginalFirstThunk` | INT (Import Name Table) 의 RVA  |
 | `Name` | DLL 이름 문자열의 RVA |
 | `FirstThunk` | IAT (Import Address Table) 의 RVA |
@@ -279,9 +267,42 @@ typedef struct _IMAGE_IMPORT_BY_NAME {
 
 다음은 PE LOADER 가 임포트할 DLL의 함수주소를 IAT 에 입력하는 과정을 나타낸다.
 
-```
+![](iat.png)
+
+## EAT (Export Address Table)
+
+`kernel32.dll` 과 같이 파일이 라이브러리인 경우 함수들을 노출시켜야 할때 EAT 를 포함한다.
+
+```cpp
+typedef struct _IMAGE_EXPORT_DIRECTORY {
+    DWORD   Characteristics;
+    DWORD   TimeDateStamp;
+    WORD    MajorVersion;
+    WORD    MinorVersion;
+    DWORD   Name;
+    DWORD   Base;
+    DWORD   NumberOfFunctions;
+    DWORD   NumberOfNames;
+    DWORD   AddressOfFunctions;     // RVA from base of image
+    DWORD   AddressOfNames;         // RVA from base of image
+    DWORD   AddressOfNameOrdinals;  // RVA from base of image
+} IMAGE_EXPORT_DIRECTORY, *PIMAGE_EXPORT_DIRECTORY;
 ```
 
-# EAT (Export Address Table)
+![](eat.png)
 
 # Load Process
+
+
+# Example C:\windows\system32\notepad.exe
+
+![](notepad_pe_summary.png)
+
+반드시 [Advance PE Viewer](http://www.codedebug.com/php/Products/Products_NikPEViewer_12v.php) 로 확인한다.
+
+# Example C:\windows\system32\kernel32.dll
+
+![](kernel32_pe_summary.png)
+
+
+반드시 [Advance PE Viewer](http://www.codedebug.com/php/Products/Products_NikPEViewer_12v.php) 로 확인한다.
