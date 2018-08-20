@@ -222,7 +222,7 @@ RAW = RVA - VirtualAddress + PointerToRawData
 
 특정 파일을 실행한다고 해보자. 그 실행파일이 특정 DLL (Dynamic Linked Library) 을 사용할 때 실행과 동시에 VM 에 DLL 을 로딩하고 종료와 동시에 언로딩 하도록 제작되었다면 실행 파일은 `Implicit Linking` 되었다고 한다. 만약 필요할 때마다 로딩하고 언로딩 한다면 `Explicit Linking` 되었다고 한다. IAT 는 `Implicit Linking` 을 구현하기 위해 필요하다. 즉 IAT 는 `Implicit Linking` 으로 연결된 모든 함수들의 시작주소를 저장한다.
 
-`IAT` 는 `winnt.h` 의 `IMAGE_IMPORT_DESCRIPTOR` 으로 구현한다. `Data Directories` 의 첫번째 원소가 `IMAGE_IMPORT_DESCRIPTOR` 의 VM 에서 RVA, SIZE 등을 포함한다.
+`IAT` 는 `winnt.h` 의 `IMAGE_IMPORT_DESCRIPTOR` 으로 구현한다. `Data Directories` 의 첫번째 원소이다. `FirstThunk` 등이 가리키는 데이터는 주로 `.idata` 섹션에 존재한다.
 
 ```cpp
 typedef struct _IMAGE_IMPORT_DESCRIPTOR {
@@ -258,20 +258,13 @@ typedef struct _IMAGE_IMPORT_BY_NAME {
 | `Name` | DLL 이름 문자열의 RVA |
 | `FirstThunk` | IAT (Import Address Table) 의 RVA |
 
-중요한 사항은 다음과 같다.
 
-* INT 와 IAT 는 4 byte 배열이고 NULL로 끝난다.
-* INT 의 각 원소의 값은 IMAGE_IMPORT_BY_NAME 의 주소값을 가지고 있다.
-* INT 와 IAT 는 크기가 같다.
-* INT 를 이용하여 IAT 를 채운다.
-
-다음은 PE LOADER 가 임포트할 DLL의 함수주소를 IAT 에 입력하는 과정을 나타낸다.
 
 ![](https://i-msdn.sec.s-msft.com/dynimg/IC112823.gif)
 
 ## EAT (Export Address Table)
 
-`kernel32.dll` 과 같이 파일이 라이브러리인 경우 함수들을 노출시켜야 할때 EAT 를 포함한다.
+`kernel32.dll` 과 같이 파일이 라이브러리인 경우 함수들을 노출시켜야 할때 `IMAGE_EXPORT_DIRECTORY` 를 포함한다. `Data Directories` 의 두번째 원소이다. `IMAGE_EXPORT_DIRECTORY` 가 가리키는 `AddressOfFunctions, AddressOfNames, AddressOfNameOrdinals` 는 주로 `.edata` 섹션에 존재한다.
 
 ```cpp
 typedef struct _IMAGE_EXPORT_DIRECTORY {
