@@ -21,7 +21,7 @@ portable executable format 에 대해 적는다.
 
 대부분의 member field 는 사용되지 않는다.
 
-![](Portable_Executable_32_bit_Structure_in_SVG_fixed.svg)
+![](https://i-msdn.sec.s-msft.com/dynimg/IC155437.gif)
 
 ## DOS header
 
@@ -267,7 +267,7 @@ typedef struct _IMAGE_IMPORT_BY_NAME {
 
 다음은 PE LOADER 가 임포트할 DLL의 함수주소를 IAT 에 입력하는 과정을 나타낸다.
 
-![](iat.png)
+![](https://i-msdn.sec.s-msft.com/dynimg/IC112823.gif)
 
 ## EAT (Export Address Table)
 
@@ -289,7 +289,7 @@ typedef struct _IMAGE_EXPORT_DIRECTORY {
 } IMAGE_EXPORT_DIRECTORY, *PIMAGE_EXPORT_DIRECTORY;
 ```
 
-![](eat.png)
+![](https://i-msdn.sec.s-msft.com/dynimg/IC60608.gif)
 
 # Load Process
 
