@@ -1348,9 +1348,11 @@ TLB (Translate Lookaside Buffer) 는 virtual memory address 를 physical memory 
 
 file 의 내용은 
 
-![](cache_system_cach.png)
+![](cache_system_cache.png)
 
 # Userlevel and Kernellevel
+
+...
 
 # Execution file and Loader
 
