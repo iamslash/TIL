@@ -1,11 +1,22 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Tips](#tips)
-
-<!-- markdown-toc end -->
+- [Internals](#internals)
+  - [Javascript Runtime Architecture](#javascript-runtime-architecture)
+- [Basic](#basic)
+  - [curly braces](#curly-braces)
+  - [parenthese](#parenthese)
+  - [anonymous function](#anonymous-function)
+  - [named function](#named-function)
+  - [closure](#closure)
+  - [IIFE(Immediately-invoked function expression)](#iifeimmediately-invoked-function-expression)
+  - [arrow function (ES6)](#arrow-function-es6)
+  - [hoisting](#hoisting)
+  - [scope](#scope)
+  - [execution context](#execution-context)
+  - [event loop](#event-loop)
+  - [background](#background)
+  - [task queue](#task-queue)
+  - [micro task](#micro-task)
 
 -------------------------------------------------------------------------------
 
@@ -15,6 +26,10 @@ java script에 대해 정리한다.
 
 # Materials
 
+
+* [How JavaScript works](https://blog.sessionstack.com/how-does-javascript-actually-work-part-1-b0bacc073cf)
+  * JavaScript 가 어떻게 동작하는지 기술한 시리즈 게시글중 첫번째
+  * [번역](https://engineering.huiseoul.com/%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EB%8A%94-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%9E%91%EB%8F%99%ED%95%98%EB%8A%94%EA%B0%80-%EC%97%94%EC%A7%84-%EB%9F%B0%ED%83%80%EC%9E%84-%EC%BD%9C%EC%8A%A4%ED%83%9D-%EA%B0%9C%EA%B4%80-ea47917c8442)
 * [The modern javascript tutorial](https://javascript.info/)
   * 가장 자세한 tutorial
 * [Secrets of the JavaScript Ninja - John Resig and Bear Bibeault](https://www.manning.com/books/secrets-of-the-javascript-ninja)
@@ -26,9 +41,19 @@ java script에 대해 정리한다.
 * [Underscore.js](http://underscorejs.org/)
   * functional programming helper
 
-# Tips
+# Internals
 
-* curly braces
+## Javascript Runtime Architecture
+
+아래 그림의 회색 박스는 `v8` 와 같은 interpreter engine 이고 나머지는 `chrome` 과 같은 browser 라고 생각하자.
+
+![](https://cdn-images-1.medium.com/max/800/1*4lHHyfEhVB0LnQ3HlhSs8g.png)
+
+
+
+# Basic
+
+## curly braces
 
 코드가 실행된다.
 
@@ -38,7 +63,7 @@ var a = function(a, b) {
 }
 ```
 
-* parenthese
+## parenthese
 
 함수를 정의한다.
 
@@ -64,7 +89,7 @@ if (a = 5)
     console.log(a);
 ```
 
-* anonymous function
+## anonymous function
 
 ```js
 var a = function(a, b) {
@@ -72,7 +97,7 @@ var a = function(a, b) {
 }
 ```
 
-* named function
+## named function
 
 
 ```js
@@ -81,7 +106,7 @@ var a = function f(a, b) {
 }
 ```
 
-* closure
+## closure
 
 자신이 생성될때의 스코프에서 알 수 있었던 변수를 기억하는 함수
 
@@ -110,7 +135,7 @@ counterClosure.decrease();
 counterClosure.show(); // 0
 ```
 
-* IIFE(Immediately-invoked function expression)
+## IIFE(Immediately-invoked function expression)
 
 ```js
 (function(a, b) {
@@ -118,7 +143,7 @@ counterClosure.show(); // 0
 })(1, 2);
 ```
 
-* arrow function (ES6)
+## arrow function (ES6)
 
 ```js
 var a = (a, b) => a + b;
@@ -128,7 +153,7 @@ var b = (a, b) => {
 }
 ```
 
-* hosting
+## hoisting
 
 변수를 선언하고 초기화했을때 선언부분이 최상단으로 끌어올려지는 현상
 
@@ -166,7 +191,7 @@ function sayWow() { // (2) 선언과 동시에 초기화(호이스팅)
 }
 ```
 
-* scope
+## scope
 
 lexical scoping
 
@@ -196,7 +221,7 @@ function wrapper() {
 wrapper(); // zero
 ```
 
-* execution context
+## execution context
 
 global context 생성후 함수 호출 할때 마다 execution context가
 생성된다.
@@ -208,7 +233,7 @@ chain을 따라 올라가며 검색한다.
 
 함수 실행이 종료되면 execution context는 사라진다.
 
-* event loop
+## event loop
 
 ```js
 function run() {
@@ -221,9 +246,8 @@ console.log('끝');
 
 [Loupe is a little visualisation to help you understand how JavaScript's call stack/event loop/callback queue interact with each other.](http://latentflip.com/loupe/)
 
-* background
+## background
 
-* task queue
+## task queue
 
-* micro task
-
+## micro task
