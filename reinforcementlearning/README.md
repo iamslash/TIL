@@ -31,6 +31,8 @@ reinforcement learning 에 대해 정리한다.
 * [deeplearning reinforcement learning nanodegree @ udacity](https://www.udacity.com/course/deep-reinforcement-learning-nanodegree--nd893) 
   * [preview @ udacity](https://www.udacity.com/course/ud893-preview) 
   * [src](https://github.com/udacity/deep-reinforcement-learning)
+* [RL Course by David Silver @ youtube](https://www.youtube.com/watch?v=2pWv7GOvuf0&list=PLqYmG7hTraZDM-OYHWgPebj2MfCFzFObQ)
+  * Policy Gradient 의 자세한 설명이 있음
 
 # Dummy Q-learning
 
