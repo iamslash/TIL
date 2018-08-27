@@ -1,4 +1,4 @@
-- [Comments](#comments)
+- [Abstract](#abstract)
 - [Materials](#materials)
 - [Snippets](#snippets)
 - [3D graphics api](#3d-graphics-api)
@@ -25,10 +25,15 @@
 
 -------------------------------------------------------------------------------
 
+# Abstract
+
+게임 그래픽스에 대한 많은 책들이 있지만 [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm), [3차원 그래픽스(게임 프로그래밍을위한)](http://media.korea.ac.kr/book/), [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240) 은 꼭 읽어야 한다.
+
 # Materials
 
-- [Unity3d tutorials](https://catlikecoding.com/unity/tutorials/)
-  - water, rendering, noise, DOF, Bloom, FXAA, Triplanar Mapping 등등 많은 주제들을 다루는 상세한 블로그
+- [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
+  - frank luna의 명저
+  - [src](https://github.com/d3dcoder/d3d12book)
 - [3차원 그래픽스(게임 프로그래밍을위한)](http://media.korea.ac.kr/book/)
   - 3차원 그래픽스 기반이론을 매우 자세히 풀어썼다. 저자의
     홈페이지에서 제공하는 슬라이드는 각종 그림과 수식을 가득 포함하고 있다.
@@ -41,9 +46,8 @@
   - [comments](https://www.udacity.com/wiki/cs291/instructor-comments)
   - [wiki](https://www.udacity.com/wiki/cs291)
   - [three.js tutorial](http://stemkoski.github.io/Three.js/)
-- [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
-  - frank luna의 명저
-  - [src](https://github.com/d3dcoder/d3d12book)
+- [Unity3d tutorials](https://catlikecoding.com/unity/tutorials/)
+  - water, rendering, noise, DOF, Bloom, FXAA, Triplanar Mapping 등등 많은 주제들을 다루는 상세한 블로그
 - [유니티로 배우는 게임 수학](http://www.yes24.com/24/goods/30119802?scode=032&OzSrank=1)
   - 요약 설명이 많아서 초보자 보기에는 불편한 설명이다. 하지만 기반
     내용을 정리하는 용도로 좋다. 짐벌락, PBR에 대한 간략한 설명은 특히
@@ -179,7 +183,7 @@ world transform, view transform은 scaling, rotation, translation등과
 같이 기본적인 변환들을 조합하여 만들어진다. 한편 scaling, rotation은
 linear transform(선형변환) 의 범주에 속한다. translation(이동)은
 linear transform에 속하지 않는다. 대신 linear transform과 함께 affine
-transform의 범주를 형성한다.
+transform 의 범주에 속한다.
 
 - affine space
 
@@ -213,16 +217,12 @@ point와 point의 덧셈 연산이 가능하고 이런 경우를 affine sum이�
 
 - homogeneous coordinates (동차좌표)
 
-vector와 point를 구분하기 위해 n-tuple에 하나의 차원을 증가시킨
-좌표체계이다.  예를 들어서 v = (v1, v2)가 있다고 하자. v의 homogeneous
-coordinates v' = (v1, v2, p)이고 p가 0이면 vector를 p가 0이 아니면
-point를 의미한다.  따라서 다음과 같은 position들은 모두 같다.  (5, 1,
-1) = (10, 2, 2) = (15, 3, 3) = (20, 4, 4)
+vector와 point를 구분하기 위해 n-tuple에 하나의 차원 `w` 을 추가시킨
+좌표체계이다.  예를 들어서 `v = (v1, v2)` 가 있다고 하자. `v` 의 homogeneous
+coordinates `v' = (v1, v2, w)` 이고 `w` 가 0 이면 vector 를 `w` 가 0 이 아니면
+point 를 의미한다. `w` 의 값이 `1` 보다 큰 homogeneous coordinates 의 경우 각 성분을 `w` 로 나누어 `x, y, z` 가 모두 같다면 같은 point 으로 취급한다. 따라서 다음과 같은 position 들은 모두 같다.  `(5, 1, 1) = (10, 2, 2) = (15, 3, 3) = (20, 4, 4)`
 
-3차원 좌표의 경우 normalized device coordiates를 window space
-coordiates로 변환할때 사용하기 위해 한가지 성분을 추가한다. 이것을
-w라고 하면 viewport transform후에 w는 필요 없게 된다. 그 전까지 변환의
-행렬 연산을 위해 w는 필요하다.
+실제로 viewport transform 에서 normalized device coordiates 를 window space coordiates 로 변환할때 point 의 각성분을 `w` 로 나누는 연산을 한다. viewport transform 이후에는 모든 점들의 `w` 가 1 이기 때문에 더이상 `w` 는 필요 없게 된다. 
 
 - tangent space
 
