@@ -4,6 +4,16 @@
 - [3D graphics api](#3d-graphics-api)
 - [Opensource Game Engines](#opensource-game-engines)
 - [Math Prerequisites](#math-prerequisites)
+  - [Law Of Cosines](#law-of-cosines)
+  - [Trigonometric Addtion formulas](#trigonometric-addtion-formulas)
+  - [Half-Angle Formulas](#half-angle-formulas)
+  - [Dot Product](#dot-product)
+  - [Cross Product](#cross-product)
+  - [affine transform](#affine-transform)
+  - [affine space](#affine-space)
+  - [affince space operation](#affince-space-operation)
+  - [homogeneous coordinates (동차좌표)](#homogeneous-coordinates-%EB%8F%99%EC%B0%A8%EC%A2%8C%ED%91%9C)
+  - [tangent space](#tangent-space)
 - [Rendering Pipeline](#rendering-pipeline)
 - [Polygon Mesh](#polygon-mesh)
 - [Vertex Processing](#vertex-processing)
@@ -150,7 +160,7 @@
 
 # Math Prerequisites
 
-- Law Of Cosines
+## Law Of Cosines
 
 ![](img/Triangle_with_notations_2.svg.png)
 
@@ -160,24 +170,24 @@ c^{2} = a^{2} + b^{2} - 2ab\cos(\gamma)
 
 ![](img/cosinelaw.png)
 
-- Trigonometric Addtion formulas
+## Trigonometric Addtion formulas
 
 [참고](http://mathworld.wolfram.com/TrigonometricAdditionFormulas.html)
 
-- Half-Angle Formulas
+## Half-Angle Formulas
 
 [참고](http://mathworld.wolfram.com/Half-AngleFormulas.html)
 
 
-- Dot Product
+## Dot Product
 
 [참고](http://mathworld.wolfram.com/DotProduct.html)
 
-- Cross Product
+## Cross Product
 
 [참고](http://mathworld.wolfram.com/CrossProduct.html)
 
-- affine transform
+## affine transform
 
 world transform, view transform은 scaling, rotation, translation등과
 같이 기본적인 변환들을 조합하여 만들어진다. 한편 scaling, rotation은
@@ -185,7 +195,7 @@ linear transform(선형변환) 의 범주에 속한다. translation(이동)은
 linear transform에 속하지 않는다. 대신 linear transform과 함께 affine
 transform 의 범주에 속한다.
 
-- affine space
+## affine space
 
 vector space에서는 vector가 어디에 위치해 있던지 크기와 방향만 같다면
 같은 vector로 생각한다. vector space에서 크기와 방향은 같지만 위치가
@@ -195,7 +205,7 @@ affine space에서는 position을 추가하여 vector의 위치를 표현한다.
 vector space는 affine space에 포함되고 affine space는 projection
 space에 포함된다.
 
-- affince space operation
+## affince space operation
 
 vector와 vector의 +, - 는 vector이다. scala와 vector의 *, /는
 vector이다. vector와 point의 +, -는 point이다. point와 point의
@@ -215,16 +225,15 @@ C = (1 - k)A + kB
 k가 1이면 C = B이고 k 가 0이면 C = A이다. 이처럼 계수의 합이 1인 경우는
 point와 point의 덧셈 연산이 가능하고 이런 경우를 affine sum이라고 한다.
 
-- homogeneous coordinates (동차좌표)
+## homogeneous coordinates (동차좌표)
 
-vector와 point를 구분하기 위해 n-tuple에 하나의 차원 `w` 을 추가시킨
-좌표체계이다.  예를 들어서 `v = (v1, v2)` 가 있다고 하자. `v` 의 homogeneous
-coordinates `v' = (v1, v2, w)` 이고 `w` 가 0 이면 vector 를 `w` 가 0 이 아니면
-point 를 의미한다. `w` 의 값이 `1` 보다 큰 homogeneous coordinates 의 경우 각 성분을 `w` 로 나누어 `x, y, z` 가 모두 같다면 같은 point 으로 취급한다. 따라서 다음과 같은 position 들은 모두 같다.  `(5, 1, 1) = (10, 2, 2) = (15, 3, 3) = (20, 4, 4)`
+n-tuple에 하나의 차원 `w` 을 추가시켜서 vector 혹은 point 를 표현할 수 있는 좌표체계이다. 하나의 좌표체계로 vector 혹은 point 를 표현할 수 있기 때문에 하나의 수식으로 vector 와 point 의 연산을 표현할 수 있다. 예를 들어서 `v = (v1, v2)` 가 있다고 하자. `v` 의 homogeneous coordinates `v' = (v1, v2, w)` 이고 `w` 가 0 이면 vector 를 `w` 가 1 이면 oint 를 의미한다. 
 
-실제로 viewport transform 에서 normalized device coordiates 를 window space coordiates 로 변환할때 point 의 각성분을 `w` 로 나누는 연산을 한다. viewport transform 이후에는 모든 점들의 `w` 가 1 이기 때문에 더이상 `w` 는 필요 없게 된다. 
+`w` 의 값이 `1` 보다 큰 homogeneous coordinates 의 경우 각 성분을 `w` 로 나누어 `x, y, z` 가 모두 같다면 같은 point 으로 취급한다. 따라서 다음과 같은 position 들은 모두 같다.  `(5, 1, 1) = (10, 2, 2) = (15, 3, 3) = (20, 4, 4)`
 
-- tangent space
+실제로 viewport transform 에서 normalized device coordiates 를 window space coordiates 로 변환할때 point 의 각 성분을 `w` 로 나누는 연산을 한다. viewport transform 이후에는 모든 점들의 `w` 가 1 이기 때문에 더이상 `w` 는 필요 없게 된다.
+
+## tangent space
 
 특정한 point의 normal, tangent, binormal
 vector를 축으로 하는 공간이다. normal mapping을 위해
