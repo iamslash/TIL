@@ -25,9 +25,11 @@ reinforcement learning 에 대해 정리한다.
   * RLCode 의 리더 이웅원님의 동영상 강좌이다. 강화학습의 Policy Gradient, A3C 등을 설명한다.
   * [slide](https://www.slideshare.net/WoongwonLee/rlcode-a3c)
 * [파이썬과 케라스로 배우는 강화학습 @ wikibooks](http://wikibook.co.kr/reinforcement-learning/)
-  * 이웅원님이 저술한 강화학습 책
+  * 이웅원님이 저술한 강화학습 책. 모두를 위한 딥러닝을 모두 보고 책을 읽는 것이 좋다.
   * [draft @ gitbooks](https://dnddnjs.gitbooks.io/rl/)
   * [src](https://github.com/rlcode/reinforcement-learning)
+* [Reinforcement Learning: An Introduction by Richard S. Sutton and Andrew G. Barto](https://tensorflowkorea.files.wordpress.com/2017/11/bookdraft2017nov5.pdf)
+  * 강화학습의 바이블
 * [deeplearning reinforcement learning nanodegree @ udacity](https://www.udacity.com/course/deep-reinforcement-learning-nanodegree--nd893) 
   * [preview @ udacity](https://www.udacity.com/course/ud893-preview) 
   * [src](https://github.com/udacity/deep-reinforcement-learning)
