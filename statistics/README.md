@@ -1,36 +1,31 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
 - [Material](#material)
 - [Terms](#terms)
-    - [모집단 (population)과 표본 (sample)](#모집단-population과-표본-sample)
-    - [일화적증거 (anecdotal evidence)](#일화적증거-anecdotal-evidence)
-    - [응답자그룹 (cohort)](#응답자그룹-cohort)
-    - [결합확률 (joint probability)](#결합확률-joint-probability)
-    - [조건부확률 (conditional probability)](#조건부확률-conditional-probability)
-    - [독립사건 (independent event)](#독립사건-independent-event)
-    - [베이즈 정리 (Bayes' theorem)](#베이즈-정리-bayes-theorem)
-    - [확률변수 (random variable)](#확률변수-random-variable)
-    - [확률질량함수 (PMF, Probability Mass Function)](#확률질량함수-pmf-probability-mass-function)
-    - [평균 (mean)](#평균-mean)
-    - [편차 (deviation)](#편차-deviation)
-    - [분산 (variance)](#분산-variance)
-    - [표준편차 (standard deviation)](#표준편차-standard-deviation)
-    - [극단값 (Outlier)](#극단값-outlier)
-    - [상대위험도 (ralative risk)](#상대위험도-ralative-risk)
-    - [최빈값 (mode)](#최빈값-mode)
-    - [백분위수 (percentile)](#백분위수-percentile)
-    - [누적분포함수 (CDF, Cumulative Distribution Function)](#누적분포함수-cdf-cumulative-distribution-function)
-    - [확률밀도함수 (PDF, probability density function)](#확률밀도함수-pdf-probability-density-function)
-    - [통계적 가설검정 (statistical hypothesis testing)](#통계적-가설검정-statistical-hypothesis-testing)
-    - [귀무가설 (null hypothesis)과 대립가설 (antagonistic hypothesis)](#귀무가설-null-hypothesis과-대립가설-antagonistic-hypothesis)
-    - [검정통계량 (test statistic)](#검정통계량-test-statistic)
-    - [기각역 (critical region)과 채택역 (acceptance region)](#기각역-critical-region과-채택역-acceptance-region)
-    - [상관분석 (correlation analysis)](#상관분석-correlation-analysis)
-    - [회귀분석 (regression)](#회귀분석-regression)
-
-<!-- markdown-toc end -->
+  - [모집단 (population)과 표본 (sample)](#%EB%AA%A8%EC%A7%91%EB%8B%A8-population%EA%B3%BC-%ED%91%9C%EB%B3%B8-sample)
+  - [일화적증거 (anecdotal evidence)](#%EC%9D%BC%ED%99%94%EC%A0%81%EC%A6%9D%EA%B1%B0-anecdotal-evidence)
+  - [응답자그룹 (cohort)](#%EC%9D%91%EB%8B%B5%EC%9E%90%EA%B7%B8%EB%A3%B9-cohort)
+  - [결합확률 (joint probability)](#%EA%B2%B0%ED%95%A9%ED%99%95%EB%A5%A0-joint-probability)
+  - [조건부확률 (conditional probability)](#%EC%A1%B0%EA%B1%B4%EB%B6%80%ED%99%95%EB%A5%A0-conditional-probability)
+  - [독립사건 (independent event)](#%EB%8F%85%EB%A6%BD%EC%82%AC%EA%B1%B4-independent-event)
+  - [베이즈 정리 (Bayes' theorem)](#%EB%B2%A0%EC%9D%B4%EC%A6%88-%EC%A0%95%EB%A6%AC-bayes-theorem)
+  - [확률변수 (random variable)](#%ED%99%95%EB%A5%A0%EB%B3%80%EC%88%98-random-variable)
+  - [확률질량함수 (PMF, Probability Mass Function)](#%ED%99%95%EB%A5%A0%EC%A7%88%EB%9F%89%ED%95%A8%EC%88%98-pmf-probability-mass-function)
+  - [평균 (mean)](#%ED%8F%89%EA%B7%A0-mean)
+  - [편차 (deviation)](#%ED%8E%B8%EC%B0%A8-deviation)
+  - [분산 (variance)](#%EB%B6%84%EC%82%B0-variance)
+  - [표준편차 (standard deviation)](#%ED%91%9C%EC%A4%80%ED%8E%B8%EC%B0%A8-standard-deviation)
+  - [극단값 (Outlier)](#%EA%B7%B9%EB%8B%A8%EA%B0%92-outlier)
+  - [상대위험도 (ralative risk)](#%EC%83%81%EB%8C%80%EC%9C%84%ED%97%98%EB%8F%84-ralative-risk)
+  - [최빈값 (mode)](#%EC%B5%9C%EB%B9%88%EA%B0%92-mode)
+  - [백분위수 (percentile)](#%EB%B0%B1%EB%B6%84%EC%9C%84%EC%88%98-percentile)
+  - [누적분포함수 (CDF, Cumulative Distribution Function)](#%EB%88%84%EC%A0%81%EB%B6%84%ED%8F%AC%ED%95%A8%EC%88%98-cdf-cumulative-distribution-function)
+  - [확률밀도함수 (PDF, probability density function)](#%ED%99%95%EB%A5%A0%EB%B0%80%EB%8F%84%ED%95%A8%EC%88%98-pdf-probability-density-function)
+  - [통계적 가설검정 (statistical hypothesis testing)](#%ED%86%B5%EA%B3%84%EC%A0%81-%EA%B0%80%EC%84%A4%EA%B2%80%EC%A0%95-statistical-hypothesis-testing)
+  - [귀무가설 (null hypothesis)과 대립가설 (antagonistic hypothesis)](#%EA%B7%80%EB%AC%B4%EA%B0%80%EC%84%A4-null-hypothesis%EA%B3%BC-%EB%8C%80%EB%A6%BD%EA%B0%80%EC%84%A4-antagonistic-hypothesis)
+  - [검정통계량 (test statistic)](#%EA%B2%80%EC%A0%95%ED%86%B5%EA%B3%84%EB%9F%89-test-statistic)
+  - [기각역 (critical region)과 채택역 (acceptance region)](#%EA%B8%B0%EA%B0%81%EC%97%AD-critical-region%EA%B3%BC-%EC%B1%84%ED%83%9D%EC%97%AD-acceptance-region)
+  - [상관분석 (correlation analysis)](#%EC%83%81%EA%B4%80%EB%B6%84%EC%84%9D-correlation-analysis)
+  - [회귀분석 (regression)](#%ED%9A%8C%EA%B7%80%EB%B6%84%EC%84%9D-regression)
 
 -------------------------------------------------------------------------------
 
@@ -40,6 +35,8 @@
 
 # Material
 
+- [Statistics Harvad @ youtube](https://www.youtube.com/watch?v=KbB0FjPg0mw&list=PL2SOU6wwxB0uwwH80KTQ6ht66KWxbzTIo&index=1)
+  - 하버드 대학의 통계학 강좌
 - [seeing theory](http://students.brown.edu/seeing-theory/)
   - 브라운 대학교에서 만든 인터랙티브 통계 강좌
 - [확률 및 통계 - 이상화](http://www.kocw.net/home/search/kemView.do?kemId=1056974)

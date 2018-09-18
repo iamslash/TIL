@@ -20,7 +20,6 @@
 - [NLP (Natural Language Processing)](#nlp-natural-language-processing)
 - [References](#references)
 
-
 -----
 
 # Abstract
