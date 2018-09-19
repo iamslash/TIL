@@ -35,6 +35,10 @@ PBR을 추상적으로 먼저 이해하고 엔진 별로 구현한 예를 살펴
 
 # Materials
 
+* [물리기반 렌더링의 최근 기술동향과 이슈 - 진성아](http://www.sersc.org/journals/AJMAHS/vol6_no9_2016/6.pdf)
+  * PBR 한글 논문
+* [Physically based rendering](https://bib.irb.hr/datoteka/890912.Final_0036473349_56.pdf)
+  * PBR 영어 논문
 * [VOLUME 1: THE THEORY OF PHYSICALLY BASED RENDERING AND SHADING](https://academy.allegorithmic.com/courses/b6377358ad36c444f45e2deaa0626e65)
   * 개발자 입장에서 본 PBR 요약
 * [VOLUME 2: PRACTICAL GUIDELINES FOR CREATING PBR TEXTURES](https://academy.allegorithmic.com/courses/05171e19aa8dc19421385fd9bb9e016e)
