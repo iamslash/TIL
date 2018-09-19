@@ -1,6 +1,3 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Workflow](#workflow)
@@ -22,8 +19,6 @@
   - [Unity3d](#unity3d)
     - [Unity3d builtin](#unity3d-builtin)
   - [Unreal Engine 4](#unreal-engine-4)
-
-<!-- markdown-toc end -->
 
 -------------------------------------------------------------------------------
 
@@ -51,6 +46,9 @@ PBR을 추상적으로 먼저 이해하고 엔진 별로 구현한 예를 살펴
   * unity3d를 이용하여 PBR을 자세히 설명했다.
 * [BASIC THEORY OF PHYSICALLY-BASED RENDERING](https://www.marmoset.co/posts/basic-theory-of-physically-based-rendering/)
 * [PBR이란무엇인가 @ tistory](http://lifeisforu.tistory.com/366)
+* [Physically Based Rendering](https://pbrt.org/)
+  * PBR 바이블
+  * [src](https://github.com/mmp/pbrt-v3/)
 
 # Workflow
 
