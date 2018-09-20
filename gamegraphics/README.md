@@ -62,6 +62,8 @@
   * [src](https://github.com/mmp/pbrt-v3/)
 - [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
   - 컴퓨터그래픽스 기반 이론을 cg와 함께 설명한다.
+- [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
+  - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
 
 # Materials
 
