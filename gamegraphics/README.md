@@ -37,7 +37,7 @@
 
 # Abstract
 
-게임 그래픽스에 대한 많은 책들이 있지만 [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm), [3차원 그래픽스(게임 프로그래밍을위한)](http://media.korea.ac.kr/book/), [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240) 은 꼭 읽어야 한다.
+게임 그래픽스에 대한 많은 책들이 있지만 [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm), [3차원 그래픽스(게임 프로그래밍을위한)](http://media.korea.ac.kr/book/), [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240), [Physically Based Rendering](https://pbrt.org/) 은 꼭 읽어야 한다.
 
 # Materials
 
@@ -56,6 +56,9 @@
   - [comments](https://www.udacity.com/wiki/cs291/instructor-comments)
   - [wiki](https://www.udacity.com/wiki/cs291)
   - [three.js tutorial](http://stemkoski.github.io/Three.js/)
+* [Physically Based Rendering](https://pbrt.org/)
+  * PBR 바이블
+  * [src](https://github.com/mmp/pbrt-v3/)
 - [Unity3d tutorials](https://catlikecoding.com/unity/tutorials/)
   - water, rendering, noise, DOF, Bloom, FXAA, Triplanar Mapping 등등 많은 주제들을 다루는 상세한 블로그
 - [유니티로 배우는 게임 수학](http://www.yes24.com/24/goods/30119802?scode=032&OzSrank=1)
@@ -87,7 +90,6 @@
 - [casting curved shadows on curved surfaces](http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.162.196&rep=rep1&type=pdf)
   - shadow mapping
 - [Advanced Global Illumination, Second Edition](https://www.amazon.com/Advanced-Global-Illumination-Second-Philip/dp/1568813074)
-- [Physically Based Rendering](http://www.pbrt.org/)
 - [Ke-Sen Huang's Home Page](http://kesen.realtimerendering.com/)
   - 컴퓨터그래픽스 컨퍼런스 자료 및 논문 모음
 - [awesome graphics @ github](https://github.com/ericjang/awesome-graphics)
