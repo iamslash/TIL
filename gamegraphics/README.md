@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [Essentials](#essentials)
 - [Materials](#materials)
 - [Snippets](#snippets)
 - [3D graphics api](#3d-graphics-api)
@@ -37,9 +38,9 @@
 
 # Abstract
 
-게임 그래픽스에 대한 많은 책들이 있지만 [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm), [3차원 그래픽스(게임 프로그래밍을위한)](http://media.korea.ac.kr/book/), [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240), [Physically Based Rendering](https://pbrt.org/) 은 꼭 읽어야 한다.
+게임 그래픽스에 대해 정리한다.
 
-# Materials
+# Essentials
 
 - [Introduction to 3D Game Programming with Direct3D](http://www.d3dcoder.net/d3d12.htm)
   - frank luna의 명저
@@ -50,7 +51,7 @@
   - [3D Graphics for Game Programming lecture notes](3dgraphics_for_game_programming_lecture_notes/)
 - [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)
   - 기반이론이 1000페이지 넘게 잘 정리된 책이다.
-- [interactive 3D Graphics @ udacity](https://classroom.udacity.com/courses/cs291)
+- [Interactive 3D Graphics @ udacity](https://classroom.udacity.com/courses/cs291)
   - [Real-Time Rendering](https://www.amazon.com/Real-Time-Rendering-Third-Edition-Akenine-Moller/dp/1568814240)의 동영상 강좌
   - [syllabus](https://www.udacity.com/wiki/cs291/syllabus)
   - [comments](https://www.udacity.com/wiki/cs291/instructor-comments)
@@ -59,6 +60,11 @@
 * [Physically Based Rendering](https://pbrt.org/)
   * PBR 바이블
   * [src](https://github.com/mmp/pbrt-v3/)
+- [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
+  - 컴퓨터그래픽스 기반 이론을 cg와 함께 설명한다.
+
+# Materials
+
 - [Unity3d tutorials](https://catlikecoding.com/unity/tutorials/)
   - water, rendering, noise, DOF, Bloom, FXAA, Triplanar Mapping 등등 많은 주제들을 다루는 상세한 블로그
 - [유니티로 배우는 게임 수학](http://www.yes24.com/24/goods/30119802?scode=032&OzSrank=1)
@@ -66,8 +72,6 @@
     내용을 정리하는 용도로 좋다. 짐벌락, PBR에 대한 간략한 설명은 특히
     괜찮았다.
   - [src](https://github.com/ryukbk/mobile_game_math_unity)
-- [nvidia cg tutorial](http://http.developer.nvidia.com/CgTutorial/cg_tutorial_chapter01.html)
-  - 컴퓨터그래픽스 기반 이론을 cg와 함께 설명한다.
 - [webgl fundamentals](https://webglfundamentals.org/)
   - 게임그래픽스이론을 webgl에서 간단히 실습해 보자.
 - [pixar in a box @ khan](https://www.khanacademy.org/partner-content/pixar)
@@ -101,15 +105,14 @@
   - 특히 [OpenGL Normal Vector Transformation](http://www.songho.ca/opengl/gl_normaltransform.html)의 설명이 너무 좋았다.
 - [Mathematics for 3D Game Programming and Computer Graphics, Third Edition](http://www.mathfor3dgameprogramming.com/)
   - 3D computer graphics를 위한 수학
-- [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3 ]()
+- [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3]()
   - opengl red book
   - [src](https://github.com/openglredbook/examples)
 - [OpenGL Superbible: Comprehensive Tutorial and Reference]()
   - opengl blue book
   - [src](https://github.com/openglsuperbible/sb7code)
 - [unity3d manual](https://docs.unity3d.com/Manual/index.html) [unity3d tutorial](https://unity3d.com/kr/learn/tutorials)
-  - unity3d manual과 tutorial이야 말로 잘 만들어진 엔진을 이용하여 computer graphcis로 입문
-    할 수 있는 좋은 교재이다. unity3d에서 제공하는 기능들을 위주로 학습한다.
+  - unity3d manual과 tutorial이야 말로 잘 만들어진 엔진을 이용하여 computer graphcis로 입문 할 수 있는 좋은 교재이다. unity3d에서 제공하는 기능들을 위주로 학습한다.
 - [unrealengine manual](https://docs.unrealengine.com/latest/KOR/index.html)
   - unrealengine manual역시 잘 만들어진 엔진을 이용하여 computer graphcis로 입문 할 수 있는
     좋은 교재이다.
@@ -126,7 +129,6 @@
   - GPU pro의 후속작이다.
   - [src](https://github.com/wolfgangfengel/GPUZen)
 - [ShaderX7](https://www.amazon.com/ShaderX7-Rendering-Techniques-Wolfgang-Engel/dp/1584505982)
-- [Physically Based Rendering](https://www.amazon.com/Physically-Based-Rendering-Second-Implementation/dp/0123750792)
 - [modern opengl tutorial](http://ogldev.atspace.co.uk/)
   - 40여개의 튜토리얼이 단계별로 잘 설명되어 있다.
   - [src](http://ogldev.atspace.co.uk/ogldev-source.zip)
