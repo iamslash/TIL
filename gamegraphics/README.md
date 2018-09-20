@@ -434,7 +434,7 @@ shader model 4는 geometry shader, stream output이 추가되었다. shader mode
 * [cg](/cg/README.md)
 * [hlsl](/hlsl/README.md)
 * [glsl](/glsl/README.md)
-* [unityshaderlab](/unityshaderlab/README.md)
+* [unity3dshaderlab](/unity3dshaderlab/README.md)
 
 # Curve
 
