@@ -43,6 +43,10 @@
 
 # Materials
 
+- [수학이야기 @ tistory](http://suhak.tistory.com/)
+  - 유클리드원론이 정리된 수학블로그
+- [조금은 느리게 살자 @ tistory](https://ghebook.blogspot.com/search/label/%EC%88%98%ED%95%99)
+  - 사전지식 링크가 신박한 수학블로그 
 - [math @ khanacademy](https://www.khanacademy.org/math)
   - 칸 아카데미 수학 동영상 강좌
 - [큐스터디](http://www.qstudy.kr/)
