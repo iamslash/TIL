@@ -2,22 +2,8 @@
 - [Materials](#materials)
 - [References](#references)
 - [History of Math](#history-of-math)
-- [미적분학](#%EB%AF%B8%EC%A0%81%EB%B6%84%ED%95%99)
-  - [Trigonometric functions](#trigonometric-functions)
-- [이산수학](#%EC%9D%B4%EC%82%B0%EC%88%98%ED%95%99)
-- [선형대수학](#%EC%84%A0%ED%98%95%EB%8C%80%EC%88%98%ED%95%99)
-- [해석학](#%ED%95%B4%EC%84%9D%ED%95%99)
-- [복소해석학](#%EB%B3%B5%EC%86%8C%ED%95%B4%EC%84%9D%ED%95%99)
-- [확률통계학](#%ED%99%95%EB%A5%A0%ED%86%B5%EA%B3%84%ED%95%99)
-- [위상수학](#%EC%9C%84%EC%83%81%EC%88%98%ED%95%99)
-- [현대대수학](#%ED%98%84%EB%8C%80%EB%8C%80%EC%88%98%ED%95%99)
-- [미분기하학](#%EB%AF%B8%EB%B6%84%EA%B8%B0%ED%95%98%ED%95%99)
-- [집합론](#%EC%A7%91%ED%95%A9%EB%A1%A0)
-- [정수론](#%EC%A0%95%EC%88%98%EB%A1%A0)
-- [기하학](#%EA%B8%B0%ED%95%98%ED%95%99)
-- [수리논리학](#%EC%88%98%EB%A6%AC%EB%85%BC%EB%A6%AC%ED%95%99)
-- [수치해석](#%EC%88%98%EC%B9%98%ED%95%B4%EC%84%9D)
-- [공업수학](#%EA%B3%B5%EC%97%85%EC%88%98%ED%95%99)
+- [Articles](#articles)
+- [Categories](#categories)
 
 -----
 
@@ -43,14 +29,14 @@
 
 # Materials
 
+- [수학벙커 @ naver](https://blog.naver.com/alwaysneoi)
+  - 중등, 고등 수학을 포함한 수학블로그
 - [수학이야기 @ tistory](http://suhak.tistory.com/)
   - 유클리드원론이 정리된 수학블로그
 - [조금은 느리게 살자 @ tistory](https://ghebook.blogspot.com/search/label/%EC%88%98%ED%95%99)
   - 사전지식 링크가 신박한 수학블로그 
 - [math @ khanacademy](https://www.khanacademy.org/math)
   - 칸 아카데미 수학 동영상 강좌
-- [큐스터디](http://www.qstudy.kr/)
-  - 대학 수학 유료 동영상 강좌
   
 # References
 
@@ -134,39 +120,45 @@
 |1994년	        | 와일스, 페르마의 마지막 정리 증명 |
 |2002년	        | 페렐만, 푸앵카레 추측 증명 |
 
-# [미적분학](/calaculus/)
+# Articles
 
-## Trigonometric functions
+* [오일러수](articles/euler_number.md)
+
+# Categories
+
+* [미적분학](/calaculus/)
+
+* Trigonometric functions
 
 ![](375px-Sinus_und_Kosinus_am_Einheitskreis_1.svg.png)
 
 삼각함수보다는 원함수가 더욱 어울린다. 원점을 중심으로 (1,0) 에서 부터 반지름이 1인 원을 그려 보자.
 반지름 r 과 호를 구성하는 점 (x, y) 를 이용하여 삼각함수 sin, cos, tan 을 만들어 낼 수 있다.
 
-# [이산수학](/discretemath/)
+* [이산수학](/discretemath/)
 
-# [선형대수학](/linearalgebra/)
+* [선형대수학](/linearalgebra/)
 
-# [해석학](/analystics/)
+* [해석학](/analystics/)
 
-# 복소해석학
+  * 복소해석학
 
-# [확률통계학](/statistics/)
+* [확률통계학](/statistics/)
 
-# 위상수학
+* 위상수학
 
-# 현대대수학
+* 현대대수학
 
-# 미분기하학
+* 미분기하학
 
-# 집합론
+* 집합론
 
-# [정수론](/numbertheory/)
+* [정수론](/numbertheory/)
 
-# [기하학](/geometry/)
+* [기하학](/geometry/)
 
-# [수리논리학](/mathlogic/)
+* [수리논리학](/mathlogic/)
 
-# [수치해석](/numericalanal/)
+* [수치해석](/numericalanal/)
 
-# 공업수학
+* 공업수학
