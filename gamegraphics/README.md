@@ -162,6 +162,7 @@
 
 # Opensource Game Engines
 
+- [ogre3d](https://www.ogre3d.org/) 
 - [unrealengine 4 src @ github](https://github.com/EpicGames/UnrealEngine)
 - [unity cs reference @ github](https://github.com/Unity-Technologies/UnityCsReference)
 - [godot](https://godotengine.org/)
