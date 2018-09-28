@@ -37,7 +37,8 @@
   - 사전지식 링크가 신박한 수학블로그 
 - [math @ khanacademy](https://www.khanacademy.org/math)
   - 칸 아카데미 수학 동영상 강좌
-  
+- [3blue1brown](https://m.youtube.com/channel/UCYO_jab_esuFRV4b17AJtAw)
+
 # References
 
 - [천재학습백과](http://koc.chunjae.co.kr/Dic/dicMain.do)
