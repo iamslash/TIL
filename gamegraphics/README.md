@@ -162,7 +162,12 @@
 
 # Opensource Game Engines
 
-- [ogre3d](https://www.ogre3d.org/) 
+- [MiniEngine](https://github.com/Microsoft/DirectX-Graphics-Samples/tree/master/MiniEngine)
+  - Microsoft 에서 DirectX 12 를 이용하여 만든 렌더링엔진
+  - [DirectX 12: Demo engine: A Mini Engine Overview](https://www.youtube.com/watch?v=bggYcB1mFDI)
+  - [DirectX 12: A MiniEngine Update](https://www.youtube.com/watch?v=bSTIsgiw7W0)
+- [ogre3d](https://www.ogre3d.org/)
+  - c++로 제작된 크로스플래폼 렌더링 엔진  
 - [unrealengine 4 src @ github](https://github.com/EpicGames/UnrealEngine)
 - [unity cs reference @ github](https://github.com/Unity-Technologies/UnityCsReference)
 - [godot](https://godotengine.org/)
