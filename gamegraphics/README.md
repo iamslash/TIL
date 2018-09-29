@@ -66,6 +66,17 @@
   - 게임엔진구조를 다룬 책이다. 그러나 구현체가 없어서 아쉽다. [ogre3d](https://www.ogre3d.org/) 를 이용하여 공부해 보자.
 - [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
   - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
+- [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3]()
+  - opengl red book
+  - [src](https://github.com/openglredbook/examples)
+- [OpenGL Superbible: Comprehensive Tutorial and Reference]()
+  - opengl blue book
+  - [src](https://github.com/openglsuperbible/sb7code)
+- [unity3d manual](https://docs.unity3d.com/Manual/index.html) [unity3d tutorial](https://unity3d.com/kr/learn/tutorials)
+  - unity3d manual과 tutorial이야 말로 잘 만들어진 엔진을 이용하여 computer graphcis로 입문 할 수 있는 좋은 교재이다. unity3d에서 제공하는 기능들을 위주로 학습한다.
+- [unrealengine manual](https://docs.unrealengine.com/latest/KOR/index.html)
+  - unrealengine manual역시 잘 만들어진 엔진을 이용하여 computer graphcis로 입문 할 수 있는
+    좋은 교재이다.
 
 # Materials
 
@@ -109,17 +120,6 @@
   - 특히 [OpenGL Normal Vector Transformation](http://www.songho.ca/opengl/gl_normaltransform.html)의 설명이 너무 좋았다.
 - [Mathematics for 3D Game Programming and Computer Graphics, Third Edition](http://www.mathfor3dgameprogramming.com/)
   - 3D computer graphics를 위한 수학
-- [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3]()
-  - opengl red book
-  - [src](https://github.com/openglredbook/examples)
-- [OpenGL Superbible: Comprehensive Tutorial and Reference]()
-  - opengl blue book
-  - [src](https://github.com/openglsuperbible/sb7code)
-- [unity3d manual](https://docs.unity3d.com/Manual/index.html) [unity3d tutorial](https://unity3d.com/kr/learn/tutorials)
-  - unity3d manual과 tutorial이야 말로 잘 만들어진 엔진을 이용하여 computer graphcis로 입문 할 수 있는 좋은 교재이다. unity3d에서 제공하는 기능들을 위주로 학습한다.
-- [unrealengine manual](https://docs.unrealengine.com/latest/KOR/index.html)
-  - unrealengine manual역시 잘 만들어진 엔진을 이용하여 computer graphcis로 입문 할 수 있는
-    좋은 교재이다.
 - [GPG gems](http://www.satori.org/game-programming-gems/)
   - Game Programming Gems, 줄여서 GPG는 Nintendo of America의 수석 소프트웨어 엔지니어인 
     Mark Deloura가 시작한 게임 프로그래밍 서적 시리즈이다. 업계와 학계의 여러 저자들이 쓴 글들을 
