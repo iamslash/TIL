@@ -1,5 +1,5 @@
 - [Abstract](#abstract)
-- [Learning Material](#learning-material)
+- [Materials](#materials)
 - [Simple Rendering Pipeline](#simple-rendering-pipeline)
 - [Advanced Rendering Pipeline](#advanced-rendering-pipeline)
 - [Unity3d Rendering Pipeline](#unity3d-rendering-pipeline)
@@ -34,6 +34,22 @@ programmable하다.  rasterization은 fragment를 만들어
 낸다. programmable하지 못하고 hardwired하다.  fragment processing은
 lighting, texturing을 처리하고 programmable하다.  output merging은
 z-buffering, alpha blending, z-culling등 이 수행되고 hardwired하다.
+
+`Vetex Processing` 을 쉐이더의 관점에서 다음과 같이 조금더 세분화하자.
+
+```
+Vertex Shader Stage
+Hull Shader Stage
+Tesselation Stage
+Domain Shader
+Geometry Shader Stage
+```
+
+`Hull Shader, Tesselation, Domain Shader` 는 모두 `Tesselation Stages` 에 포함된다. `Tesselation Stages` 는 주어진 기하구조를 더 작은 삼각형들로 분할하고 분할로 생긴 새 정점들의 위치를 조정하는 단계이다.
+
+`Geometry Shader` 는 `Pixel Shader` 전의 단계이며 생략가능하다. 단, `Tesselation Stages` 을 사용하는 경우에는 생략할 수 없다.
+
+`Compute Shader` 는 렌더링파이프라인에 포함되지 않는다. 대신 GPU 자원의 자료를 직접 읽어들이거나 GPU 자원에 직접 자료를 기록할 수 있다.
 
 # Advanced Rendering Pipeline
   
