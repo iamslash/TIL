@@ -66,10 +66,10 @@
   - 게임엔진구조를 다룬 책이다. 그러나 구현체가 없어서 아쉽다. [ogre3d](https://www.ogre3d.org/) 를 이용하여 공부해 보자.
 - [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
   - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
-- [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3]()
+- [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3](http://www.opengl-redbook.com/)
   - opengl red book
   - [src](https://github.com/openglredbook/examples)
-- [OpenGL Superbible: Comprehensive Tutorial and Reference]()
+- [OpenGL Superbible: Comprehensive Tutorial and Reference](http://www.openglsuperbible.com)
   - opengl blue book
   - [src](https://github.com/openglsuperbible/sb7code)
 - [unity3d manual](https://docs.unity3d.com/Manual/index.html) [unity3d tutorial](https://unity3d.com/kr/learn/tutorials)
@@ -203,41 +203,44 @@ c^{2} = a^{2} + b^{2} - 2ab\cos(\gamma)
 
 ## affine transform
 
-world transform, view transform은 scaling, rotation, translation등과
-같이 기본적인 변환들을 조합하여 만들어진다. 한편 scaling, rotation은
-linear transform(선형변환) 의 범주에 속한다. translation(이동)은
-linear transform에 속하지 않는다. 대신 linear transform과 함께 affine
+world transform, view transform 은 scaling, rotation, translation등과
+같이 기본적인 변환들을 조합하여 만들어진다. 한편 scaling, rotation 은
+linear transform(선형변환) 의 범주에 속한다. translation(이동) 은
+linear transform 에 속하지 않는다. 대신 linear transform과 함께 affine
 transform 의 범주에 속한다.
 
 ## affine space
 
-vector space에서는 vector가 어디에 위치해 있던지 크기와 방향만 같다면
-같은 vector로 생각한다. vector space에서 크기와 방향은 같지만 위치가
-다른 vector를 구분할 필요가 있다. 그래서 affine space를 만들어냈다.
-affine space에서는 position을 추가하여 vector의 위치를 표현한다.
+vector space 에서는 vector가 어디에 위치해 있던지 크기와 방향만 같다면
+같은 vector 로 생각한다. vector space 에서 크기와 방향은 같지만 위치가
+다른 vector 를 구분할 필요가 있다. 그래서 affine space를 만들어냈다.
+affine space 에서는 position 을 추가하여 vector 의 위치를 표현한다.
 
-vector space는 affine space에 포함되고 affine space는 projection
-space에 포함된다.
+vector space 는 affine space 에 포함되고 affine space 는 projection
+space 에 포함된다.
 
 ## affince space operation
 
-vector와 vector의 +, - 는 vector이다. scala와 vector의 *, /는
-vector이다. vector와 point의 +, -는 point이다. point와 point의
--는 vector이다. point와 point의 +는 허용되지 않는다. (단 계수의 합이
+vector 와 vector 의 `+, -` 는 vector 이다. scala와 vector의 `*, /` 는
+vector이다. vector 와 point 의 `+, -` 는 point 이다. point 와 point 의
+`-` 는 vector이다. point 와 point 의 `+` 는 허용되지 않는다. (단 계수의 합이
 1인 경우는 허용된다.)
 
 ![](img/affine_space_op.png)
 
-affine space에서 point A는 point O에서 point A로 가는 vector로 
+affine space 에서 point A 는 point O 에서 point  A로 가는 vector 로 
 생각 할 수 있다. 따라서 C = A + 0.5 * (B - A) 이다.
-point A와 vector B - A의 합은 point임을 알 수 있다.
+point A 와 vector B - A 의 합은 point 임을 알 수 있다.
 
-이때 0.5대신 k를 도입하여 다음과 같이 표기할 수 있다.
+이때 0.5 대신 k 를 도입하여 다음과 같이 표기할 수 있다.
+
+```
 C = A + k(B - A) (0 <= k <= 1)
 C = (1 - k)A + kB
+```
 
-k가 1이면 C = B이고 k 가 0이면 C = A이다. 이처럼 계수의 합이 1인 경우는
-point와 point의 덧셈 연산이 가능하고 이런 경우를 affine sum이라고 한다.
+k가 1이면 C = B 이고 k 가 0이면 C = A이다. 이처럼 계수의 합이 1인 경우는
+point 와 point 의 덧셈 연산이 가능하고 이런 경우를 affine sum 이라고 한다.
 
 ## homogeneous coordinates (동차좌표)
 
