@@ -160,7 +160,7 @@
 
 * [DirectX](/directx/README.md)
 * [OpenGL](/opengl/README.md)
-* [webgl](/webgl/README.md)
+* [webgl](https://webglfundamentals.org/)
 
 # Opensource Game Engines
 
