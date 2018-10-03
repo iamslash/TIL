@@ -4,7 +4,8 @@
 - [Abstract](#abstract)
 - [Material](#material)
 - [Basics](#basics)
-  - [First One](#first-one)
+  - [Drawing Red One](#drawing-red-one)
+  - [Passing Data](#passing-data)
   - [Standard library](#standard-library)
   - [Variable types](#variable-types)
   - [Type qualifiers](#type-qualifiers)
@@ -45,7 +46,7 @@ glsl에 대해 정리한다.
 
 # Basics
 
-## First One
+## Drawing Red One
 
 화면 우측 중앙에 빨간 점 하나를 그리자.
 
@@ -61,6 +62,58 @@ void main(void)
 #version 450 core out vec4 color; void main(void)
 {
   color = vec4(0.0, 0.8, 1.0, 1.0); 
+}
+```
+
+## Passing Data
+
+```cpp
+// Our rendering function
+virtual void render(double currentTime)
+{
+  const GLfloat color[] = { (float)sin(currentTime) * 0.5f + 0.5f,
+     
+  (float)cos(currentTime) * 0.5f + 0.5f, 0.0f, 1.0f };
+  glClearBufferfv(GL_COLOR, 0, color);
+  // Use the program object we created earlier for rendering
+  glUseProgram(rendering_program);
+  GLfloat attrib[] = { (float)sin(currentTime) * 0.5f, (float)cos(currentTime) * 0.6f, 0.0f, 0.0f };
+  // Update the value of input attribute 0
+  glVertexAttrib4fv(0, attrib);
+  // Draw one triangle
+  glDrawArrays(GL_TRIANGLES, 0, 3);
+}
+```
+
+```c
+#version 450 core
+// 'offset' and 'color' are input vertex attributes 
+layout (location = 0) in vec4 offset;
+layout (location = 1) in vec4 color;
+// 'vs_color' is an output that will be sent to the next shader stage 
+out vec4 vs_color;
+void main(void)
+{
+  const vec4 vertices[3] = vec4[3](
+    vec4(0.25, -0.25, 0.5, 1.0), 
+    vec4(-0.25, -0.25, 0.5, 1.0), 
+    vec4(0.25, 0.25, 0.5, 1.0));
+// Add 'offset' to our hard-coded vertex position 
+  gl_Position = vertices[gl_VertexID] + offset;
+  // Output a fixed value for vs_color
+  vs_color = color;
+}
+```
+
+```c
+#version 450 core
+// Input from the vertex shader
+in vec4 vs_color;
+// Output to the framebuffer
+out vec4 color;
+void main(void) {
+  // Simply assign the color we were given by the vertex shader to our output
+  color = vs_color;
 }
 ```
 
