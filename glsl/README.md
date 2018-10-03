@@ -394,20 +394,17 @@ void main(void) {
 
 * uniform
 
-application에서 값을 전달 받고 rendering pipeline에서 변하지 않는
-값이다. vertex, fragment shader에서 사용할 수 있고 읽기전용이다.
+Application 에서 vertex, fragment shader 에게 바뀌지 않는 값을 전달할 때 사용한다.
+
+Attribute variables communicate frequently changing values from the application to a vertex shader, uniform variables communicate infrequently changing values from the application to any shader, and varying variables communicate interpolated values from a vertex shader to a fragment shader.
 
 * attribute
-
-application에서 값을 전달 받고 rendering pipeline에서 변하지 않는
-값이다. vertex shader에서 사용할 수 있고 읽기전용이다. vertex별로
-값이 다를 수 있다.
+ 
+Application 에서 vetex shader 에게 자주 바뀌는 값을 전달할 때 사용한다.
 
 * varying
 
-vertex shader에서 fragment shader로 값을 전달 하는 경우 사용한다.
-vertex shader에서 읽기 쓰기 가능하다. fragment shader에서는
-interpolate된 값이 넘어온다.
+vertex shader에서 fragment shader로 보간된 값을 전달할 때 사용한다.
 
 ## Built-in Variables
 
