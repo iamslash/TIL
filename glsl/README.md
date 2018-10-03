@@ -15,12 +15,11 @@
   - [Control Structures](#control-structures)
   - [Operators](#operators)
   - [Builtin Functions](#builtin-functions)
-  - [Skeleton](#skeleton)
+  - [Red Dot](#red-dot)
   - [Passing Data](#passing-data)
   - [Interface Blocks](#interface-blocks)
   - [Variable Types](#variable-types)
   - [Built-in Variables](#built-in-variables)
-  - [Interface Blocks](#interface-blocks)
 - [Tutorial](#tutorial)
 
 -------------------------------------------------------------------------------
@@ -277,7 +276,7 @@ normalize(vector) == vector / length(vector)
 texture(aTexture, texCoord)
 ```
 
-## Skeleton
+## Red Dot
 
 화면 우측 중앙에 빨간 점 하나를 그리자.
 
@@ -413,10 +412,6 @@ interpolate된 값이 넘어온다.
 ## Built-in Variables
 
 `gl_VertexID` 처럼 쉐이더의 종류 마다 미리 정의된 변수들이 존재한다. [참고](https://www.khronos.org/opengl/wiki/Built-in_Variable_(GLSL))
-
-## Interface Blocks
-
-...
 
 # Tutorial
 
