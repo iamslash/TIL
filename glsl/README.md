@@ -3,7 +3,8 @@
 
 - [Abstract](#abstract)
 - [Material](#material)
-- [Basic](#basic)
+- [Basics](#basics)
+  - [First One](#first-one)
   - [Standard library](#standard-library)
   - [Variable types](#variable-types)
   - [Type qualifiers](#type-qualifiers)
@@ -42,7 +43,26 @@ glsl에 대해 정리한다.
 * [Physically-Based Rendering in glTF 2.0 using WebGL](https://github.com/KhronosGroup/glTF-WebGL-PBR)
   * [PBR](/pbr/) on WebGL
 
-# Basic
+# Basics
+
+## First One
+
+화면 우측 중앙에 빨간 점 하나를 그리자.
+
+```c
+#version 450 core
+void main(void)
+{
+  gl_Position = vec4(0.0, 0.0, 0.5, 1.0);
+}
+```
+
+```c
+#version 450 core out vec4 color; void main(void)
+{
+  color = vec4(0.0, 0.8, 1.0, 1.0); 
+}
+```
 
 ## Standard library
 
