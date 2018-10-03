@@ -28,6 +28,8 @@
 
 ![](simple_rendering_pipeline.png)
 
+![](https://people.eecs.ku.edu/~jrmiller/Courses/672/InClass/MaterialsFromElsewhere/SimplifiedGraphicsPipeline_FromSuperBible.png)
+
 rendering pipeline을 간단히 4단계로 생각해 볼 수 있다.  vertex
 processing은 transformation, animation, lighting을 처리하고
 programmable하다.  rasterization은 fragment를 만들어
