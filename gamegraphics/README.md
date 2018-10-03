@@ -72,6 +72,8 @@
 - [OpenGL Superbible: Comprehensive Tutorial and Reference](http://www.openglsuperbible.com)
   - opengl blue book
   - [src](https://github.com/openglsuperbible/sb7code)
+- [OpenGL Shading Language](https://www.amazon.com/OpenGL-Shading-Language-Randi-Rost/dp/0321637631/ref=sr_1_1?ie=UTF8&qid=1538565859&sr=8-1&keywords=opengl+shading+language)
+  - opengl orange book 
 - [unity3d manual](https://docs.unity3d.com/Manual/index.html) [unity3d tutorial](https://unity3d.com/kr/learn/tutorials)
   - unity3d manual과 tutorial이야 말로 잘 만들어진 엔진을 이용하여 computer graphcis로 입문 할 수 있는 좋은 교재이다. unity3d에서 제공하는 기능들을 위주로 학습한다.
 - [unrealengine manual](https://docs.unrealengine.com/latest/KOR/index.html)
