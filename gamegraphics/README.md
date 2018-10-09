@@ -170,6 +170,8 @@
   - [DirectX 12: A MiniEngine Update](https://www.youtube.com/watch?v=bSTIsgiw7W0)
 - [ogre3d](https://www.ogre3d.org/)
   - c++로 제작된 크로스플래폼 렌더링 엔진  
+- [ogitor](https://github.com/OGRECave/ogitor)
+  - qt 로 제작된 ogre3d scene builder 이다.
 - [unrealengine 4 src @ github](https://github.com/EpicGames/UnrealEngine)
 - [unity cs reference @ github](https://github.com/Unity-Technologies/UnityCsReference)
 - [godot](https://godotengine.org/)
