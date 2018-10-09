@@ -5,16 +5,16 @@
 - [3D graphics api](#3d-graphics-api)
 - [Opensource Game Engines](#opensource-game-engines)
 - [Math Prerequisites](#math-prerequisites)
-  - [Law Of Cosines](#law-of-cosines)
-  - [Trigonometric Addtion formulas](#trigonometric-addtion-formulas)
-  - [Half-Angle Formulas](#half-angle-formulas)
-  - [Dot Product](#dot-product)
-  - [Cross Product](#cross-product)
-  - [affine transform](#affine-transform)
-  - [affine space](#affine-space)
-  - [affince space operation](#affince-space-operation)
-  - [homogeneous coordinates (동차좌표)](#homogeneous-coordinates-%EB%8F%99%EC%B0%A8%EC%A2%8C%ED%91%9C)
-  - [tangent space](#tangent-space)
+    - [Law Of Cosines](#law-of-cosines)
+    - [Trigonometric Addtion formulas](#trigonometric-addtion-formulas)
+    - [Half-Angle Formulas](#half-angle-formulas)
+    - [Dot Product](#dot-product)
+    - [Cross Product](#cross-product)
+    - [affine transform](#affine-transform)
+    - [affine space](#affine-space)
+    - [affince space operation](#affince-space-operation)
+    - [homogeneous coordinates (동차좌표)](#homogeneous-coordinates-동차좌표)
+    - [tangent space](#tangent-space)
 - [Rendering Pipeline](#rendering-pipeline)
 - [Polygon Mesh](#polygon-mesh)
 - [Vertex Processing](#vertex-processing)
@@ -66,6 +66,10 @@
   - 게임엔진구조를 다룬 책이다. 그러나 구현체가 없어서 아쉽다. [ogre3d](https://www.ogre3d.org/) 를 이용하여 공부해 보자.
 - [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
   - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
+- [Learn Opengl](https://learnopengl.com/)
+  - 상세한 설명이 인상적인 튜토리얼이다.
+  - VAO, VBO, EBO 를 그림으로 이해할 수 있었다.
+  - [src](https://github.com/JoeyDeVries/LearnOpenGL)
 - [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3](http://www.opengl-redbook.com/)
   - opengl red book
   - [src](https://github.com/openglredbook/examples)
