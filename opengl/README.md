@@ -4,12 +4,15 @@ OpenGL을 정리한다. [OpenGL Superbible: Comprehensive Tutorial and Reference
 
 # Materials
 
+- [Learn Opengl](https://learnopengl.com/Getting-started/Hello-Triangle)
+  - VAO, VBO, EBO 를 그림으로 이해할 수 있었다.
 - [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3](http://www.opengl-redbook.com/)
   - opengl red book
   - [src](https://github.com/openglredbook/examples)
 - [OpenGL Superbible: Comprehensive Tutorial and Reference](http://www.openglsuperbible.com)
   - opengl blue book
   - [src](https://github.com/openglsuperbible/sb7code)
+- [OpenGL Shading Language](https://www.amazon.com/OpenGL-Shading-Language-Randi-Rost/dp/0321637631/ref=sr_1_1?ie=UTF8&qid=1538565859&sr=8-1&keywords=opengl+shading+language)
 * [OpenGL samples pack download](https://www.opengl.org/sdk/docs/tutorials/OGLSamples/)
   * 공식 배포 샘플 모음, 다양한 예제가 `~/tests/` 에 있다.
 * [OpenGL SDK download](https://sourceforge.net/projects/glsdk/)
