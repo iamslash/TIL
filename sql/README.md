@@ -4,7 +4,7 @@
 
 # Material
 
-- [sqlfiddle](http://sqlfiddle.com/)
+- [db-fiddle](https://www.db-fiddle.com/)
   - sql 을 웹에서 테스트할 수 있다. 
 - [sqlzoo](http://sqlzoo.net/)
 - [sql snippet](https://en.wikibooks.org/wiki/Structured_Query_Language/Snippets)
