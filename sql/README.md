@@ -4,6 +4,12 @@
 
 # Material
 
+- [sqlfiddle](http://sqlfiddle.com/)
+  - sql 을 웹에서 테스트할 수 있다. 
+- [sqlzoo](http://sqlzoo.net/)
+- [sql snippet](https://en.wikibooks.org/wiki/Structured_Query_Language/Snippets)
+- [sakila](https://dev.mysql.com/doc/sakila/en/sakila-preface.html)
+  - 비디오 대여점을 모델링한 example db이다. sql을 참고해서 공부하자.
 * [use the idex luke](http://use-the-index-luke.com/)
 * [sql @ w3schools](https://www.w3schools.com/sql/default.asp)
 
@@ -1954,10 +1960,3 @@ mysql> SELECT VERSION();
   automatically set itself to the current date and time. TIMESTAMP
   also accepts various formats, like YYYYMMDDHHMISS, YYMMDDHHMISS,
   YYYYMMDD, or YYMMDD.
-
-# References
-
-- [sqlzoo](http://sqlzoo.net/)
-- [sql snippet](https://en.wikibooks.org/wiki/Structured_Query_Language/Snippets)
-- [sakila](https://dev.mysql.com/doc/sakila/en/sakila-preface.html)
-  - 비디오 대여점을 모델링한 example db이다. sql을 참고해서 공부하자.
