@@ -3399,3 +3399,15 @@ $ trap 'myhandler' HUP INT QUIT TERM
 $ myhandler() { ...;}
 ```
 
+# Problems
+
+* [Word Frequency](https://leetcode.com/problems/word-frequency/description/)
+
+```bash
+cat words.txt | tr -s ' ' '\n' | sort | uniq -c | sort -r | awk '{ print $2, $1}'
+```
+
+* [Transpose File](https://leetcode.com/problems/transpose-file/description/)
+
+```bash
+```
