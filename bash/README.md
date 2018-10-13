@@ -3410,4 +3410,19 @@ cat words.txt | tr -s ' ' '\n' | sort | uniq -c | sort -r | awk '{ print $2, $1}
 * [Transpose File](https://leetcode.com/problems/transpose-file/description/)
 
 ```bash
+awk '
+{ 
+    for (i = 1; i <= NF; i++) {
+        if (NR == 1) {
+            s[i] = $i;
+        } else {
+            s[i] = s[i] " " $i;
+        }
+    }
+}
+END {
+    for (i = 1; s[i] != ""; ++i) {
+        print s[i];
+    }
+}' file.txt
 ```
