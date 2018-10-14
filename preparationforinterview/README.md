@@ -20,3 +20,8 @@
 # object oriented design interview
 
 - [object oriented design](../objectorienteddesign/)
+
+# backend interview
+
+- [bash](/bash/README.md)
+- [sql](/sql/README.md)
