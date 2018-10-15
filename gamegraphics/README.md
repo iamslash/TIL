@@ -16,6 +16,7 @@
     - [homogeneous coordinates (동차좌표)](#homogeneous-coordinates-동차좌표)
     - [tangent space](#tangent-space)
 - [Rendering Pipeline](#rendering-pipeline)
+- [Color Space](#color-space)
 - [Polygon Mesh](#polygon-mesh)
 - [Vertex Processing](#vertex-processing)
 - [Rasterization](#rasterization)
@@ -272,6 +273,10 @@ vector와 연산하여 최종 normal vector를 구할 수 있다.
 # Rendering Pipeline
 
 [rendering pipeline](../renderingpipeline/README.md)
+
+# Color Space
+
+[Gamma Space vs Linear Space](colorspace/README.md)
 
 # Polygon Mesh
 
