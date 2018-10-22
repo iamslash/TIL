@@ -7,7 +7,6 @@
 - [DQN NIPS 2013](#dqn-nips-2013)
 - [DQN Nature 2015](#dqn-nature-2015)
 - [Policy Gradient](#policy-gradient)
-- [Actor-Critic](#actor-critic)
 - [A2C (Advantaged Actor-Critic)](#a2c-advantaged-actor-critic)
 - [A3C (Async Advantaged Actor-Critic)](#a3c-async-advantaged-actor-critic)
  
@@ -129,6 +128,7 @@ DQN Nips 2013 에서 double DQN 이 적용된 것이다.
 [Human-level control through deep reinforcement
 learning](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf)
 
+
 다음은 q-network with replay, with target 을 구현한 것이다.
 
 ```python
@@ -136,19 +136,16 @@ learning](https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf)
 
 # Policy Gradient
 
-
-
 [Policy Gradient Methods for
 Reinforcement Learning with Function
 Approximation](https://papers.nips.cc/paper/1713-policy-gradient-methods-for-reinforcement-learning-with-function-approximation.pdf)
 
 [Simple Statistical Gradient-Following Algorithms for Connectionist Reinforcement Learning](http://www-anw.cs.umass.edu/~barto/courses/cs687/williams92simple.pdf)
 
-
-# Actor-Critic
-
 # A2C (Advantaged Actor-Critic)
 
-
+Actor 는 Policy-iteration 이다. Critic 은 Value-iteration 이다.
 
 # A3C (Async Advantaged Actor-Critic)
+
+A2C 에 Multithread 를 도입하여 데이터의 관계가 밀접하지 않게 해보자. 
