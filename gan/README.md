@@ -12,7 +12,8 @@
 
 # Materials
 
-- [Generative Adversarial Nets by Ian J. Goodfellow](https://arxiv.org/pdf/1406.2661.pdf)
+- [Generative Adversarial Nets @ arxiv](https://arxiv.org/pdf/1406.2661.pdf)
+  - Ian J. Goodfellow 논문
 - [GAN Tutorial @ youtube](https://www.youtube.com/watch?v=uQT464Ms6y8&index=1&list=RDuQT464Ms6y8)
   - [ppt](https://drive.google.com/file/d/0B377f9tIGAcwdVd1Z3dCX1lBTlE/view)
   - pytorch를 이용하여 code를 먼저 직관적으로 만들어보고 논문을 자세히 설명함
@@ -24,7 +25,7 @@
 - [Chara Tsukuru GAN: RPG character generator @ github](https://github.com/almchung/chara-tsukuru-gan)
   - RPG 2D 캐릭터 스프라이트를 생성하는 DCGAN
 - [StarGAN: Unified Generative Adversarial Networks for Multi-Domain Image-to-Image Translation @ arxiv](https://arxiv.org/abs/1711.09020)
-  - 최윤제님의 논문
+  - 최윤제님 논문
   
 # Implementation for Intuition
 
