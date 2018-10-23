@@ -51,6 +51,8 @@
 
 # Materials
 
+- [math for machine learning](https://mml-book.github.io/)
+  - 머신러닝을 위한 수학 공짜책
 - [paper with code](https://paperswithcode.com/)
   - 논문과 구현
 - [최신 논문으로 시작하는 딥러닝](http://www.edwith.org/deeplearningchoi/joinLectures/10979)
