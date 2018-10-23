@@ -12,6 +12,7 @@
 
 # Materials
 
+- [Generative Adversarial Nets by Ian J. Goodfellow](https://arxiv.org/pdf/1406.2661.pdf)
 - [GAN Tutorial @ youtube](https://www.youtube.com/watch?v=uQT464Ms6y8&index=1&list=RDuQT464Ms6y8)
   - [ppt](https://drive.google.com/file/d/0B377f9tIGAcwdVd1Z3dCX1lBTlE/view)
   - pytorch를 이용하여 code를 먼저 직관적으로 만들어보고 논문을 자세히 설명함
