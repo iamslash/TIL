@@ -2,10 +2,11 @@
 
 - discriminator는 이미지데이터를 입력받아 진짜인지 가짜인지 출력하기
   위해 학습시킨다.
-- generator는 임의의 데이터를 입력받아 이미지데이터를 출력한다. 출력된
-  이미지데이터는 다시 discriminator의 입력데이터로 사용되어
-  generator가 생성한 이미지가 진짜가 될 수 있도록 ganerator를
-  학습시킨다.
+- generator는 임의의 데이터를 입력받아 이미지데이터를 출력한다. 
+- GAN 은 generator 가 생성한 이미지를 discriminator 에 주어 
+  discriminator 의 출력이  1 에 가까워지도록 학습한다.
+- GAN 이 제대로 학습되었다면 generator 는 진짜에 가까운 이미지데이터를 
+  생성할 것이다.
 - 다양한 GAN 을 공부해 보자. DCGAN (Deep Convolutional GAN), LSGAN (Least Squares GAN), SGAN
   (Semi-Supervised GAN), ACGAN (Auxiliary Classifier GAN), CycleGAN, StackGAN
 
@@ -19,6 +20,8 @@
   - [ppt](https://www.slideshare.net/NaverEngineering/1-gangenerative-adversarial-network)
   - pytorch를 이용한 설명
 - [쌩(?!)초보자의 Python 케라스(Keras) GAN 코드 분석 (draft)](http://leestation.tistory.com/776)
+- [Chara Tsukuru GAN: RPG character generator @ github](https://github.com/almchung/chara-tsukuru-gan)
+  - RPG 2D 캐릭터 스프라이트를 생성하는 DCGAN
   
 # Implementation for Intuition
 
