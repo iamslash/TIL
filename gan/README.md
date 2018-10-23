@@ -19,3 +19,5 @@
 # Materials
 
 * [쌩(?!)초보자의 Python 케라스(Keras) GAN 코드 분석 (draft)](http://leestation.tistory.com/776)
+* [Chara Tsukuru GAN: RPG character generator @ github ](https://github.com/almchung/chara-tsukuru-gan)
+  * RPG 2D 캐릭터 스프라이트를 만들어내는 DCGAN
