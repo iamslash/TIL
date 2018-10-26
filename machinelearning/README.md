@@ -49,6 +49,17 @@
   sigmoid, ReLU, learning rate, forward propagation, back propagation,
   CNN (Convolutional Neural Networks), RNN (Recurrent Neural Networks)
 
+# Essentials
+
+- [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
+  - 한글로 제일 쉽게 설명하는 자료이다. 
+- [(2018) 인공지능 및 기계학습 개론Ⅰ @ edwith](https://kaist.edwith.org/machinelearning1_17)
+  - 카이스트 산업공학과 문일철 교수 강의
+- [(2018) 인공지능 및 기계학습 개론ⅠI @ edwith](https://kaist.edwith.org/machinelearning2__17)
+  - 카이스트 산업공학과 문일철 교수 강의
+- [(2018) 인공지능 및 기계학습 심화 @ edwith](https://kaist.edwith.org/aiml-adv)
+  - 카이스트 산업공학과 문일철 교수 강의
+
 # Materials
 
 - [math for machine learning](https://mml-book.github.io/)
@@ -61,8 +72,6 @@
 - [PR12 딥러닝 논문읽기 모임 @ youtube](https://www.youtube.com/playlist?list=PLlMkM4tgfjnJhhd4wn5aj8fVTYJwIpWkS)
   - 딥러닝 논문읽기 모임 동영상
   - [PR12 딥러닝 논문읽기 @ github](https://kkweon.github.io/pr12-web-app-elm/)
-- [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
-  - 한글로 제일 쉽게 설명하는 자료이다. 
 - [machine learning at coursera](https://www.coursera.org/learn/machine-learning)
   - andrew Ng교수의 machine learning강좌
   - 영문이지만 기초를 공부할 수 있다.
@@ -107,10 +116,7 @@
   26. RLCode와 A3C 쉽고 깊게 이해하기, 이웅원(RLCode 리더), http://tv.naver.com/v/2022271
   27. Deepmind StarCraft II AI, 송호연(Kakao, now Naver), http://tv.naver.com/v/2451300
 
-- [(기계학습, 인공지능, 머신러닝) 한국어 기계 학습 강좌](https://www.youtube.com/playlist?list=PLbhbGI_ppZISMV4tAWHlytBqNq1-lb8bz)
-  - 카이스트 산업공학과 문일철 교수 강의
-- [(기계학습,인공지능,머신러닝) 한국어 기계 학습 강좌 심화 1](https://www.youtube.com/playlist?list=PLbhbGI_ppZIRPeAjprW9u9A46IJlGFdLn)
-  - 카이스트 산업공학과 문일철 교수 강의
+
 - [인공지능 - 이건명](http://www.kocw.net/home/search/kemView.do?kemId=1170523)
   - 인공지능의 기본 개념을 살펴보고, 탐색과 최적화 기법, 지식표현의
     다양한 방법과 추론 기법, 딥러닝을 비롯한 기계학습 방법, 계획수립
