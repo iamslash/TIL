@@ -10,7 +10,8 @@ HTML, CSS, JavaScript 에 대해 정리한다.
   * 유용한 CSS 팁모음
 * [learn query](https://github.com/infinum/learnQuery)
   * let's make jQuery from scratch
-
+  
+  
 # References
 
 * [jQuery api documentation](http://api.jquery.com/category/selectors/)
