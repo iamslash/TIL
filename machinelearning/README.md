@@ -59,6 +59,9 @@
   - 카이스트 산업공학과 문일철 교수 강의
 - [(2018) 인공지능 및 기계학습 심화 @ edwith](https://kaist.edwith.org/aiml-adv)
   - 카이스트 산업공학과 문일철 교수 강의
+- [최신 논문으로 시작하는 딥러닝](http://www.edwith.org/deeplearningchoi/joinLectures/10979)
+  - 최성준님의 강좌. 모두를 위한 머신러닝을 클리어 하고 학습하면 좋다.
+  - [src](https://github.com/sjchoi86/dl_tutorials_10weeks)
 
 # Materials
 
@@ -66,9 +69,6 @@
   - 머신러닝을 위한 수학 공짜책
 - [paper with code](https://paperswithcode.com/)
   - 논문과 구현
-- [최신 논문으로 시작하는 딥러닝](http://www.edwith.org/deeplearningchoi/joinLectures/10979)
-  - 최성준님의 강좌. 모두를 위한 머신러닝을 클리어 하고 학습하면 좋다.
-  - [src](https://github.com/sjchoi86/dl_tutorials_10weeks)
 - [PR12 딥러닝 논문읽기 모임 @ youtube](https://www.youtube.com/playlist?list=PLlMkM4tgfjnJhhd4wn5aj8fVTYJwIpWkS)
   - 딥러닝 논문읽기 모임 동영상
   - [PR12 딥러닝 논문읽기 @ github](https://kkweon.github.io/pr12-web-app-elm/)
