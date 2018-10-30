@@ -18,8 +18,7 @@
 
 # P class problems
 
-- P문제는 다항시간에 풀 수 있는 알고리즘이 존재하는 문제를 말한다.
-- 정렬문제는 퀵정렬에 의해 O(nlgn)에 해결이 가능하기 때문에 P문제에 해당된다.
+- P 문제는 다항시간에 풀 수 있는 알고리즘이 존재하는 문제를 말한다. 예를 들어 정렬문제는 퀵정렬에 의해 O(nlgn)에 해결이 가능하기 때문에 P문제에 해당된다.
 
 # NP class problems
 
@@ -45,23 +44,20 @@
   한다. complete 은 빠뜨림이 없다는 의미이다.
 - Cook-Levin theorem(쿡-레빈 정리) 에 의해 SAT 가 NP-complete 이라는 것은
   증명되었다. 이것은 모든 NP 문제는 다항시간내에 SAT 로 reduction할 수
-  있다는 것을 의미한다. 따라서 SAT 문제는 모든 NP 문제 보다 어렵다는
+  있다는 것을 의미한다. 따라서 SAT 문제는 모든 NP 문제들 보다 어렵다는
   얘기이다. SAT 문제로 reduction 하기 위해 원래 문제의 입력을 SAT 문제가
   받아들일 수 있게 다항시간에 변형하고 SAT 문제의 결과를 원래 문제에서
   의도한 형태로 다항시간에 변형해야 하기 때문에 시간이 더욱 필요해서
   어렵다고 할 수 있다. SAT 문제는 NP 문제들 중에 가장 어렵다. 마치
   종결자와 같다.
-- 만약 SAT 를 다항시간에 해결할 알고리즘이 존재한다면 모든 NP 문제들은
-  SAT 로 reduction 해서 다항시간에 해결할 수 있다. SAT 는 마치 기준문제와
-  같다. SAT 와 같이 다항시간에 해결할 수 있는 알고리즘이 발견된다면
-  모든 NP 문제를 reduction 하여 다항시간에 해결 할 수 있는 그 문제를
-  NP-complete 문제 라고
-  한다. 
-- [Cook-Levin Proof @ youtube](https://www.youtube.com/watch?v=dKS4iDWQVnI&index=1&list=PLS4py2LeEJNDzezHTc0G3EsttsoKWQhGz)
+  - [Cook-Levin theorem(쿡-레빈 정리)](https://en.wikipedia.org/wiki/Cook%E2%80%93Levin_theorem) That is, any problem in NP can be reduced in polynomial time by a deterministic Turing machine to the problem of determining whether a Boolean formula is satisfiable.
+- SAT 를 다항시간에 해결할 알고리즘이 존재한다면 모든 NP 문제들은
+  SAT 로 reduction 해서 다항시간에 해결할 수 있다. 즉 `P = NP` 라고 할 수 있다. 
+  SAT 는 마치 기준문제와 같다.
   
 # NP-hard class problems
 
-- SAT 처럼 종결자 역할은 하지만 아직 NP문제인지 확인되지 않은 문제를 말한다.
+- SAT 처럼 종결자 역할은 하지만 아직 NP문제인지 확인되지 않은 문제를 말한다???
 
 # EXP class problems
 
