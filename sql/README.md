@@ -1,66 +1,68 @@
 - [Intro](#intro)
 - [Material](#material)
 - [Usage](#usage)
-        - [Select](#select)
-        - [Select Distinct](#select-distinct)
-        - [Where](#where)
-        - [And, Or, Not](#and-or-not)
-        - [Order By](#order-by)
-        - [Insert Into](#insert-into)
-        - [Null Values](#null-values)
-        - [Update](#update)
-        - [Delete](#delete)
-        - [Select Top](#select-top)
-        - [Min, Max](#min-max)
-        - [Count, Avg, Sum](#count-avg-sum)
-        - [Like](#like)
-        - [Wildcards](#wildcards)
-        - [In](#in)
-        - [Between](#between)
-        - [Aliases](#aliases)
-        - [JOIN Basic](#join-basic)
-        - [Join ON vs WHERE](#join-on-vs-where)
-        - [Inner Join](#inner-join)
-        - [Left Join](#left-join)
-        - [Right Join](#right-join)
-        - [FUll Join](#full-join)
-        - [Self Join](#self-join)
-        - [Union](#union)
-        - [Group By](#group-by)
-        - [Having](#having)
-        - [Exists](#exists)
-        - [Any, All](#any-all)
-        - [SElect Into](#select-into)
-        - [Insert Into Select](#insert-into-select)
-        - [Null Functions](#null-functions)
-        - [Comments](#comments)
-        - [Create DB](#create-db)
-        - [Drop DB](#drop-db)
-        - [Create Table](#create-table)
-        - [Drop Table](#drop-table)
-        - [Alter Table](#alter-table)
-        - [Constraints](#constraints)
-        - [Not Null](#not-null)
-        - [Unique](#unique)
-        - [Primary Key](#primary-key)
-        - [Foreign Key](#foreign-key)
-        - [Check](#check)
-        - [Default](#default)
-        - [Index](#index)
-        - [Auto Increment](#auto-increment)
-        - [Dates](#dates)
-        - [Views](#views)
-        - [Functions (MySQL)](#functions-mysql)
-        - [Operators](#operators)
-        - [Data Types (MySQL)](#data-types-mysql)
-                - [Text](#text)
-                - [Number](#number)
-                - [Date](#date)
+  - [Select](#select)
+  - [Select Distinct](#select-distinct)
+  - [Where](#where)
+  - [And, Or, Not](#and-or-not)
+  - [Order By](#order-by)
+  - [Insert Into](#insert-into)
+  - [Null Values](#null-values)
+  - [Update](#update)
+  - [Delete](#delete)
+  - [Select Top](#select-top)
+  - [Min, Max](#min-max)
+  - [Count, Avg, Sum](#count-avg-sum)
+  - [Like](#like)
+  - [Wildcards](#wildcards)
+  - [In](#in)
+  - [Between](#between)
+  - [Aliases](#aliases)
+  - [JOIN Basic](#join-basic)
+  - [Join ON vs WHERE](#join-on-vs-where)
+  - [Inner Join](#inner-join)
+  - [Left Join](#left-join)
+  - [Right Join](#right-join)
+  - [FUll Join](#full-join)
+  - [Self Join](#self-join)
+  - [Union](#union)
+  - [Group By](#group-by)
+  - [Having](#having)
+  - [Exists](#exists)
+  - [Any, All](#any-all)
+  - [SElect Into](#select-into)
+  - [Insert Into Select](#insert-into-select)
+  - [Null Functions](#null-functions)
+  - [Comments](#comments)
+  - [Create DB](#create-db)
+  - [Drop DB](#drop-db)
+  - [Create Table](#create-table)
+  - [Drop Table](#drop-table)
+  - [Alter Table](#alter-table)
+  - [Constraints](#constraints)
+  - [Not Null](#not-null)
+  - [Unique](#unique)
+  - [Primary Key](#primary-key)
+  - [Foreign Key](#foreign-key)
+  - [Check](#check)
+  - [Default](#default)
+  - [Index](#index)
+  - [Auto Increment](#auto-increment)
+  - [Dates](#dates)
+  - [Views](#views)
+  - [Functions (MySQL)](#functions-mysql)
+  - [Operators](#operators)
+  - [Data Types (MySQL)](#data-types-mysql)
+    - [Text](#text)
+    - [Number](#number)
+    - [Date](#date)
 - [Problems](#problems)
+
+-----
 
 # Intro
 
-- 주로 사용하는 phrase들을 정리해보자.
+- sql 에 대해 정리한다.
 
 # Material
 
@@ -87,7 +89,7 @@ SELECT * FROM Customers;
 ```sql
 SELECT DISTINCT Country FROM Customers;
 SELECT COUNT(DISTINCT Country) FROM Customers;
-SELECT Count(*) AS DistinctCountries
+SELECT COUNT(*) AS DistinctCountries
   FROM (SELECT DISTINCT Country FROM Customers);
 ```
 
@@ -293,7 +295,7 @@ SELECT * FROM Orders
 ## Aliases
 
 ```sql
-SELECT CustomerID as ID, CustomerName AS Customer
+SELECT CustomerID As ID, CustomerName AS Customer
   FROM Customers;
 SELECT CustomerName AS Customer, ContactName AS [Contact Person]
   FROM Customers;
