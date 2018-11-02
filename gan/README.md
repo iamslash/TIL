@@ -128,7 +128,7 @@ E_{x \sim  p(x)} [f(x)] &= \sum _x p(x) f(x) \\
 ```latex
 ```
 
-결국 `logD(G(z))` 의 기대값을 최대로 하는 `G` 를 찾는 것은 `-logD(G(z))` 의 기대값을 최소로 하는 `G` 를 찾는 것과 같다.
+결국 `logD(G(z))` 의 기대값을 최대로 하는 `G` 를 찾는 것은 `-logD(G(z))` 의 기대값을 최소로 하는 `G` 를 찾는 것과 같다. 이것을 `Poor Gradient in Early Training` 이라고 한다.
 
 # JSD (Jensson Shannon Divergence)
 
