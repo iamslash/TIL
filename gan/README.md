@@ -50,40 +50,59 @@ keras 로 간단히 구현해보고 GAN 을 직관적으로 접근해보자.
 |---|---|---|---|---|---|---|
 | P(X) | 1/6 | 1/6 | 1/6 | 1/6 | 1/6 | 1/6 |
 
-![](exp_discrete.png)
+다음은 확률변수 X 가 Discrete Space 에 속하는 경우와 X 가 continuous Space 에 속할 때의 `E(x)` 이다.
 
-```
-E(X) = 
-```
+![](exp_x_discrete.png)
 
-위의 식은 확률변수 X 가 Discrete Space 에 속하는 경우이고 만약 X 가
-continuous Space 에 속한다면 `E(x)` 는 다음과 같다.
-
-![](exp_continuous.png)
-
-```
-E(X) = 
+```latex
+\begin{align*}
+E_{x \sim  p(x)} [X] &= \sum _x p(x) X \\
+                     &= \int _x p(x) X dx
+\end{align*}
 ```
 
-확률변수 `X` 가 함수 일수도 있다. 확률변수가 `f(x)` 라고 하면 Discrete Space 에서 `E(f(x))` 는 다음과 같다.
+확률변수 `X` 가 함수 일수도 있다. 확률변수가 `f(x)` 라고 하면 `E(f(x))` 는 다음과 같다.
 
 ![](exp_func_discrete.png)
 
-```
-E(X) = 
-```
-
-확률변수가 `f(x)` 라고 하면 Continuous Space 에서 `E(f(x))` 는 다음과 같다.
-
-![](exp_func_continuous.png)
-
-```
-E(X) = 
+```latex
+\begin{align*}
+E_{x \sim  p(x)} [f(x)] &= \sum _x p(x) f(x) \\
+                        &= \int _x p(x) f(x) dx
+\end{align*}
 ```
 
 # Objective Function
 
+다음과 같은 `objective function` 에 대해 `V(D, G)` 를 최소로 만드는 `G` 와 최대로 만드는 `D` 를 찾으면 실제 이미지를 생성하는 `GAN` 을 완성할 수 있다.
+
+![](gan_objective_function.png)
+
+```latex
+\begin{align*}
+\min _{G} \max _{D} V(D, G) = \mathbb{E}_{x \sim p _{data} (x)}[\log D(x)] + \mathbb{E}_{z \sim p _{z} (z)}[\log (1 - D(G(z)))]
+\end{align*}
 ```
+
+`D` 의 관점에서 생각해 보자. `D(x) = 1` 이고 `D(G(z)) = 0` 일 때 `V(G, D)` 는 최대이다. `D(x) = 1` 일 때는 진짜를 진짜로 판별했을 때를 의미하고 `D(G(z)) = 0` 일 때는 가짜를 가짜로 판별했을 때를 의미한다.
+
+`G` 의 관점에서 생각해 보자. `V(D, G)` 의 첫번째 항은 `G` 와 관련없기 때문에 부시해도 된다. 두번째 항을 살펴보자. `D(G(z)) = 1` 일 때 `V(D, G)` 는 최소이다.
+
+즉 다음과 같은 수식을 만족하는 `G` 를 구해야 한다.
+
+![](gan_objective_eq_G.png)
+
+
+```latex
+\min _{G} \mathbb{E}_{z \sim p _{z} (z)}[\log (1 - D(G(z)))]
+```
+
+`y = log(1-x)` 그래프에서 최소 값을 찾는 것은 `y = log(x)` 그래프에서 최대 값을 찾는 것과 같다. 따라서 위의 식은 다음과  동치이다.
+
+![](gan_objective_eq_G_max.png)
+
+```latex
+\max _{G} \mathbb{E}_{z \sim p _{z} (z)}[\log D(G(z))]
 ```
 
 # JSD (Jensson Shannon Divergence)
