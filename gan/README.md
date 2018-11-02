@@ -130,10 +130,22 @@ E_{x \sim  p(x)} [f(x)] &= \sum _x p(x) f(x) \\
 
 결국 `logD(G(z))` 의 기대값을 최대로 하는 `G` 를 찾는 것은 `-logD(G(z))` 의 기대값을 최소로 하는 `G` 를 찾는 것과 같다. 이것을 `Poor Gradient in Early Training` 이라고 한다.
 
-# JSD (Jensson Shannon Divergence)
+# Proposition Proof
 
+`G` 를 고정하고 최적화된 `D` 를 얻어보자.
+
+# Theorem Proof
+
+`V(D, G)` 를 최대로 하는 `D` 를 찾았다고 가정하면 objective function 은 다음과 같은 식과 동치이다.
+
+![](gan_jsd_eq.png)
+
+```latex
 ```
-```
+
+# KLD (Kullback–Leibler divergence)
+
+# JSD (Jensson Shannon Divergence)
 
 # Simple GAN by keras
 
