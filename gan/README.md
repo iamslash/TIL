@@ -42,12 +42,46 @@ keras 로 간단히 구현해보고 GAN 을 직관적으로 접근해보자.
 ```
 ```
 
-# Objective Function
-
-```
-```
-
 # Expectation Function
+
+기대값 `E(X)` 을 어떻게 구하는지 설명한다. 완벽한 세계에서 주사위를 던지는 상황을 생각해 보자. 확률변수 X 와 P(X) 는 다음과 같다.
+
+| X | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| P(X) | 1/6 | 1/6 | 1/6 | 1/6 | 1/6 | 1/6 |
+
+![](exp_discrete.png)
+
+```
+E(X) = 
+```
+
+위의 식은 확률변수 X 가 Discrete Space 에 속하는 경우이고 만약 X 가
+continuous Space 에 속한다면 `E(x)` 는 다음과 같다.
+
+![](exp_continuous.png)
+
+```
+E(X) = 
+```
+
+확률변수 `X` 가 함수 일수도 있다. 확률변수가 `f(x)` 라고 하면 Discrete Space 에서 `E(f(x))` 는 다음과 같다.
+
+![](exp_func_discrete.png)
+
+```
+E(X) = 
+```
+
+확률변수가 `f(x)` 라고 하면 Continuous Space 에서 `E(f(x))` 는 다음과 같다.
+
+![](exp_func_continuous.png)
+
+```
+E(X) = 
+```
+
+# Objective Function
 
 ```
 ```
@@ -57,7 +91,9 @@ keras 로 간단히 구현해보고 GAN 을 직관적으로 접근해보자.
 ```
 ```
 
-# DCGAN (Deep Convolution Generative Adversarial Network)
+# Simple GAN by keras
+
+# DCGAN by keras (Deep Convolution Generative Adversarial Network)
 
 ```py
 ```
