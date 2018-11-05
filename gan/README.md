@@ -1,3 +1,24 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Implementation for Intuition](#implementation-for-intuition)
+- [Expectation Function](#expectation-function)
+- [Entropy](#entropy)
+- [Cross Entropy](#cross-entropy)
+- [KLD (Kullback–Leibler divergence)](#kld-kullback%E2%80%93leibler-divergence)
+- [JSD (Jensson Shannon Divergence)](#jsd-jensson-shannon-divergence)
+- [Posterior](#posterior)
+- [Likelihood](#likelihood)
+- [Prior](#prior)
+- [Bayes' Rule](#bayes-rule)
+- [Objective Function](#objective-function)
+- [Poor Gradient in Early Training](#poor-gradient-in-early-training)
+- [Global Optimality of `P_{g} = P_{data}`](#global-optimality-of-pg--pdata)
+- [Convergence of Algorithm 1](#convergence-of-algorithm-1)
+- [Simple GAN by keras](#simple-gan-by-keras)
+- [DCGAN by keras](#dcgan-by-keras)
+
+-----
+
 # Abstract
 
 - discriminator는 이미지데이터를 입력받아 진짜인지 가짜인지 출력하기
@@ -142,12 +163,13 @@ E_{x \sim  p(x)} [f(x)] &= \sum _x p(x) f(x) \\
 
 # Entropy
 
-[참고](http://t-robotics.blogspot.com/2017/08/26-entropy.html)
+* [참고](http://t-robotics.blogspot.com/2017/08/26-entropy.html)
+* [Entropy & Information Theory](https://hyeongminlee.github.io/post/prob001_information_theory/)
 
 정보를 최적으로 인코딩하기 위해 필요한 bit 의 수를 말한다.
 
 예를 들어서 오늘이 무슨 요일인지 bit 로 표현해보자. 요일의 개수가
-모두 7개이니까 3비트가 필요하다. (log7 = 3)
+모두 7개이니까 3비트가 필요하다. (log_{2}7 = 2.8073)
 
 ```
 월 : 000
@@ -158,46 +180,42 @@ E_{x \sim  p(x)} [f(x)] &= \sum _x p(x) f(x) \\
 
 만약 표현할 정보가 나타날 확률이 다르다고 해보자. 예를 들어
 40 개의 문자 (A, B, C, D, ..., Z, 1, 2, 3, ..., 14) 를
-bit 로 표현해보자. 40 개이기 때문에 6 bit 가 필요하다. (log40 = 5.3)
+bit 로 표현해보자. 40 개이기 때문에 6 bit 가 필요하다. (log_{2}40 = 5.3219)
 
 그런데 A, B, C, D 가 발생할 확률이 각각 22.5% 라고 해보자.
 모두 합하면 90% 확률이다. 6개의 비트를 모두 사용할 필요가 없다.
 
 첫번째 비트를 A, B, C, D 인지 아닌지를 표현하도록 하자. 만약 첫번째 비트가
-1 이면 2 비트만 있으면 A, B, C, D 를 구분할 수 있다. 만약 첫번째 비트가
-0 이면 6 bit 가 필요하다. (log36 = 6) 결과적으로 필요한 비트는 3.3 비트가 된다.
-`0.9 * 3 + 0.1 * 7 = 3.3 bit`
+1 이면 추가로 2 비트만 있으면 A, B, C, D 를 구분할 수 있다. 만약 첫번째 비트가
+0 이면 추가로 6 bit 가 필요하다. (log_{2}36 = 6) 결과적으로 필요한 비트는 3.3 비트가 된다. 확률을 고려했을 때 평균적으로 필요한 비트의 수를 엔트로피라고 한다.
+
+```
+0.9 * 3 + 0.1 * 6 = 3.3 bit
+```
 
 Entropy 의 공식을 다음과 같이 정리할 수 있다.
 
 ![](entropy_eq.png)
 
 ```latex
+\begin{align*}
+H &= \sum _{i} p_{i} I(s_{i}) \\
+  &= \sum _{i} p_{i} \log _{2} (\frac {1}{p_{i}}) \\
+  &= - \sum _{i} p_{i} \log _{2} (p_{i})
+\end{align*}
 ```
 
-Entropy 공식을 활용하여 앞서 언급한 40개 문자를 표현하기 위한 
-비트수를 계산해 보자.
-
-![](entropy_ex.png)
-
-```latex
-```
-
-Entropy 의 공식은 기대값의 공식과 비슷하다. 평균적으로 필요한 비트의 수라고
-이해하자. 혹은 평균적으로 놀람의 정도, 평균적으로 불확실한 정도라고도 한다. 왜지???
+`I(s_{i})` 를 information gain 이라고 할 수 있다. information gain 은 획득한 정보의 양을 얘기하는데 이것은 그 정보가 나타날 확률에 반비례한다. 예를 들어 김씨가 임씨보다 많다.
+어떤 사람이 임씨일 경우 information gain 은 김씨일 경우보다 높다. 더우 희귀한 성이기 
+때문에 그 사람에 대해 더욱 많은 정보를 획득했다고 할 수 있다.
 
 # Cross Entropy
 
-[참고](http://t-robotics.blogspot.com/2017/08/27-cross-entropy-kl-divergence.html)
+* [참고](http://t-robotics.blogspot.com/2017/08/27-cross-entropy-kl-divergence.html)
+
+Entropy 공식을 다시 살펴보자. 
 
 ![](entropy_eq.png)
-
-```latex
-```
-
-Entropy 공식을 다시 살펴보자. `y_{i}` 를 확률이라 하고 `\log \frac {1}{y_{i}}` 를 information gain 이라고 할 수 있다. information gain 은 정보를 획득한 수준을 얘기하는데 이것은 그 정보가 나타날 확률에 반비례한다. 예를 들어 김씨가 임씨보다 많다.
-어떤 사람이 임씨일 경우 information gain 은 김씨일 경우보다 높다. 더우 희귀한 성이기 
-때문에 그 사람에 대해 더욱 많은 정보를 획득했다고 할 수 있다.
 
 `p` 를 실제확률 `q` 를 예측확률 이라고 하자. 다음과 같이
 cross entropy 를 정의할 수 있다.
@@ -210,26 +228,45 @@ cross entropy 를 정의할 수 있다.
 # KLD (Kullback–Leibler divergence)
 
 * [참고](http://t-robotics.blogspot.com/2017/08/27-cross-entropy-kl-divergence.html)
-
 * [Kullback-Leibler Divergence & Jensen-Shannon Divergence](https://hyeongminlee.github.io/post/prob002_kld_jsd/)
 
-`p` 를 실제확률 `q` 를 예측확률이라고 하자. 다음과 같이 KLD
-를 정의할 수 있다.
+우리가 데이터의 분포를 추정했을 때 얼마나 잘 추정한 것인지 측정하는
+방법이 필요하다. KLD 는 서로 다른 확률분포의 차이를 측정하는 척도이다. 
+KLD 가 작다면 좋은 추정이라 할 수 있다.
+
+먼저 아이템 `s_{i}` 가 갖는 information gain 은 다음과 같다.
+
+![](kld_information_gain.png)
+
+```latex
+I_{i} = - \log (p_{i})
+```
+
+원본 확률 분포 p 와 근사된 분포 q 에 대하여 i 번째 아이템이
+가진 정보량 (information gain) 의 차이 (정보손실량) 은 다음과 같다.
+
+![](kld_information_gain_delta.png)
+
+```latex
+\Delta I_{i} = - \log (p_{i}) - \log (q_{i})
+```
+
+p 에 대하여 이러한 정보 손실량의 기대값을 구한 것이 바로 KLD 이다.
 
 ![](kld_eq.png)
 
 ```latex
+\begin{align*}
+D_{KL}(p||q) &= E[\log(p_{i}) - \log(q_{i})] \\
+             &= \sum _{i} p_{i} \log \frac {p_{i}}{q_{i}}
+\end{align*}
 ```
-
-KLD 는 두 확률분포가 얼마나 비슷한지를 나타내는 방법이다. 0
-에 가까워 질 수록 두 확률분포는 차이가 없음을 의미한다.
 
 그러나 KLD 는 symmetric 하지 않다. 즉 `D_{KL}(P||q) != D_{KL}(q||p)` 이다.
 
 # JSD (Jensson Shannon Divergence)
 
 * [참고](https://hyeongminlee.github.io/post/prob002_kld_jsd/)
-* [Kullback-Leibler Divergence & Jensen-Shannon Divergence](https://hyeongminlee.github.io/post/prob002_kld_jsd/)
 
 KLD 는 symmetric 하지 않다. 즉 `D_{KL}(P||q) != D_{KL}(q||p)` 이다.
 KLD 를 symmetric 하게 개량한 것이 JSD 이다.
@@ -239,6 +276,67 @@ KLD 를 symmetric 하게 개량한 것이 JSD 이다.
 ```latex
 JSD(p, q) = \frac {1}{2} D_{KL} (p || \frac {p + q}{2}) + D_{KL} (q || \frac {p + q}{2})
 ```
+
+# Posterior
+
+* [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+
+물고기가 주어졌을 때 이것이 농어인지 연어인지 구분하는 문제를 살펴보자.
+피부색의 밝기를 `x` 라고 물고기의 종류를 `w` 라고 하자. 물고기가 농어일
+사건을 `w = w_{1}` 연어일 사건을 `w = w_{2}` 라고 하자.
+
+그렇다면 물고기의 피부 밝기가 0.5 일 때 그 물고기가 농어일 확률은 다음과 
+같이 표현할 수 있다.
+
+![](posterior_ex.png)
+
+```latex
+\begin{align*}
+P(w = w_{1} | x = 0.5) = P(w_{1} | x = 0.5)
+\end{align*}
+```
+이제 임의의 `x` 에 대해 `P(w_{1}|x)` 와 `P(w_{2}|x)` 의 값이 주어지면
+다음과 같은 방법을 통해 농어와 연어를 구분할 수 있다.
+
+* `P(w_{1}|x) > P(w_{2}|x)` 라면 농어로 분류하자.
+* `P(w_{2}|x) > P(w_{1}|x)` 라면 연어로 분류하자.
+
+`P(w_{i}|x)` 를 사후확률 (Posterior) 라고 한다.
+
+# Likelihood
+
+* [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+
+물고기를 적당히 잡아서 데이터를 수집해 보자. `P(x|w_{1}` 에 해당하는 농어의
+피부밝기 분포와 `P(x|x_{2}` 에 해당하는 연어의 피부밝기 분포를 그려보자.
+이렇게 관찰을 통해 얻은 확률 분포 `P(x|w_{i})` 를 가능도 (likelihodd)
+라고 부른다.
+
+# Prior
+
+* [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+
+`x` 와 관계없이 애초에 농어가 잡힐 확률 `P(w_{1})`, 연어가 잡힐 확률 `P(w_{2})`
+를 사전확률 (Prior) 라고 한다. 이미 갖고 있는 사전 지식에 해당한다.
+
+# Bayes' Rule
+
+* [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+
+우리의 목적은 Posterior `P(w_{i}|x)` 를 구하는 것이다. 이 것은 Likelihood `(P(x|w_{i})` 와 Prior `P(w_{i})` 를 이용하면 구할 수 있다.
+
+![](bayes_rule.png)
+
+```latex
+\begin{align*}
+P(A, B) &= P(A|B) B(B) = P(B|A) P(A) \\
+P(A| B) &= \frac {P(B|A)P(A)}{P(B)} = \frac {P(B|A)P(A)}{\sum _{A} P(B|A)P(A)} \\
+P(w_{i} | x) &= \frac {P(x | w_{i})P(w_{i})}{\sum _{j} P(x|w_{j})P(w_{j})}
+\end{align*}
+```
+
+좌변은 Posterior 이고 우변의 분자는 Likelihood 와 Prior 의 곱이다. 분모는 Evidence 라고 부른다. 이것 또한 Likelihood 와 Prior 들을 통해 구할 수 있다. 이러한 식을
+Bayes' Rule 또는 Bayesian Equation 등으로 부른다.
 
 # Objective Function
 
