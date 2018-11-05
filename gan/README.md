@@ -37,9 +37,77 @@
   
 # Implementation for Intuition
 
-keras 로 간단히 구현해보고 GAN 을 직관적으로 접근해보자.
+* Discriminator Block
+
+`Discriminator` 는 진짜 이미지의 데이터 `x` 를 입력받아 그것이
+진짜 이미지일 확률 `D(x)` 를 출력한다. `D(x)` 는
+확률이기 때문에 `[0, 1]` 의 값이다.
 
 ```
+x -> D -> D(x)
+```
+
+* Adversarial Diagram
+
+`Generator` 는 랜덤값 `z` 를 입력받아 가짜이미지 `G(z)` 를
+출력하고 이것을 다시 `Discriminator` 의 입력으로 넘겨준다.
+`Discriminator` 는 가짜 이미지 데이터 `G(z)` 를 입력받아
+이것이 진짜 이미지일 확률 `D(G(z))` 를 출력한다. `D(G(z))` 는
+확률이기 때문에 `[0, 1]` 의 값이다.
+
+
+```
+z -> G -> G(z) -> D -> D(G(z))
+```
+
+pytorch 로 구현된 예를 보고 직관적으로 접근해 보자.
+
+[main.py](https://github.com/yunjey/pytorch-tutorial/blob/master/tutorials/03-advanced/generative_adversarial_network/main.py)
+
+```py
+...
+        # ================================================================== #
+        #                      Train the discriminator                       #
+        # ================================================================== #
+
+        # Compute BCE_Loss using real images where BCE_Loss(x, y): - y * log(D(x)) - (1-y) * log(1 - D(x))
+        # Second term of the loss is always zero since real_labels == 1
+        outputs = D(images)
+        d_loss_real = criterion(outputs, real_labels)
+        real_score = outputs
+        
+        # Compute BCELoss using fake images
+        # First term of the loss is always zero since fake_labels == 0
+        z = torch.randn(batch_size, latent_size).to(device)
+        fake_images = G(z)
+        outputs = D(fake_images)
+        d_loss_fake = criterion(outputs, fake_labels)
+        fake_score = outputs
+        
+        # Backprop and optimize
+        d_loss = d_loss_real + d_loss_fake
+        reset_grad()
+        d_loss.backward()
+        d_optimizer.step()
+        
+        # ================================================================== #
+        #                        Train the generator                         #
+        # ================================================================== #
+
+        # Compute loss with fake images
+        z = torch.randn(batch_size, latent_size).to(device)
+        fake_images = G(z)
+        outputs = D(fake_images)
+        
+        # We train G to maximize log(D(G(z)) instead of minimizing log(1-D(G(z)))
+        # For the reason, see the last paragraph of section 3. https://arxiv.org/pdf/1406.2661.pdf
+        g_loss = criterion(outputs, real_labels)
+        
+        # Backprop and optimize
+        reset_grad()
+        g_loss.backward()
+        g_optimizer.step()
+...        
 ```
 
 # Expectation Function
@@ -71,6 +139,55 @@ E_{x \sim  p(x)} [f(x)] &= \sum _x p(x) f(x) \\
                         &= \int _x p(x) f(x) dx
 \end{align*}
 ```
+
+# Entropy
+
+[참고](http://t-robotics.blogspot.com/search/label/%ED%85%8C%EB%A6%AC%EC%9D%98%20%EB%94%A5%EB%9F%AC%EB%8B%9D%20%ED%86%A0%ED%81%AC)
+
+정보를 최적으로 인코딩하기 위해 필요한 bit 의 수를 말한다.
+
+예를 들어서 오늘이 무슨 요일인지 bit 로 표현해보자. 요일의 개수가
+모두 7개이니까 3비트가 필요하다. (log7 = 3)
+
+```
+월 : 000
+화 : 001
+수 : 010
+...
+```
+
+만약 표현할 정보가 나타날 확률이 다르다고 해보자. 예를 들어
+40 개의 문자 (A, B, C, D, ..., Z, 1, 2, 3, ..., 14) 를
+bit 로 표현해보자. 40 개이기 때문에 6 bit 가 필요하다. (log40 = 5.3)
+
+그런데 A, B, C, D 가 발생할 확률이 각각 22.5% 라고 해보자.
+모두 합하면 90% 확률이다. 6개의 비트를 모두 사용할 필요가 없다.
+
+첫번째 비트를 A, B, C, D 인지 아닌지를 표현하도록 하자. 만약 첫번째 비트가
+1 이면 2 비트만 있으면 A, B, C, D 를 구분할 수 있다. 만약 첫번째 비트가
+0 이면 6 bit 가 필요하다. (log36 = 6) 결과적으로 필요한 비트는 3.3 비트가 된다.
+`0.9 * 3 + 0.1 * 7 = 3.3 bit`
+
+Entropy 의 공식을 다음과 같이 정리할 수 있다.
+
+![](entropy_eq.png)
+
+```latex
+```
+
+Entropy 공식을 활용하여 앞서 언급한 40개 문자를 표현하기 위한 
+비트수를 계산해 보자.
+
+![](entropy_ex.png)
+
+```latex
+```
+
+# Cross Entropy
+
+# KLD (Kullback–Leibler divergence)
+
+# JSD (Jensson Shannon Divergence)
 
 # Objective Function
 
@@ -130,11 +247,13 @@ E_{x \sim  p(x)} [f(x)] &= \sum _x p(x) f(x) \\
 
 결국 `logD(G(z))` 의 기대값을 최대로 하는 `G` 를 찾는 것은 `-logD(G(z))` 의 기대값을 최소로 하는 `G` 를 찾는 것과 같다. 이것을 `Poor Gradient in Early Training` 이라고 한다.
 
-# Proposition Proof
+# Poor Gradient in Early Training
+
+# Global Optimality of `P_{g} = P_{data}`
 
 `G` 를 고정하고 최적화된 `D` 를 얻어보자.
 
-# Theorem Proof
+# Convergence of Algorithm 1
 
 `V(D, G)` 를 최대로 하는 `D` 를 찾았다고 가정하면 objective function 은 다음과 같은 식과 동치이다.
 
@@ -143,13 +262,12 @@ E_{x \sim  p(x)} [f(x)] &= \sum _x p(x) f(x) \\
 ```latex
 ```
 
-# KLD (Kullback–Leibler divergence)
-
-# JSD (Jensson Shannon Divergence)
-
 # Simple GAN by keras
 
-# DCGAN by keras (Deep Convolution Generative Adversarial Network)
+```py
+```
+
+# DCGAN by keras 
 
 ```py
 ```
