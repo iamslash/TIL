@@ -142,7 +142,7 @@ E_{x \sim  p(x)} [f(x)] &= \sum _x p(x) f(x) \\
 
 # Entropy
 
-[참고](http://t-robotics.blogspot.com/search/label/%ED%85%8C%EB%A6%AC%EC%9D%98%20%EB%94%A5%EB%9F%AC%EB%8B%9D%20%ED%86%A0%ED%81%AC)
+[참고](http://t-robotics.blogspot.com/2017/08/26-entropy.html)
 
 정보를 최적으로 인코딩하기 위해 필요한 bit 의 수를 말한다.
 
@@ -183,11 +183,62 @@ Entropy 공식을 활용하여 앞서 언급한 40개 문자를 표현하기 위
 ```latex
 ```
 
+Entropy 의 공식은 기대값의 공식과 비슷하다. 평균적으로 필요한 비트의 수라고
+이해하자. 혹은 평균적으로 놀람의 정도, 평균적으로 불확실한 정도라고도 한다. 왜지???
+
 # Cross Entropy
+
+[참고](http://t-robotics.blogspot.com/2017/08/27-cross-entropy-kl-divergence.html)
+
+![](entropy_eq.png)
+
+```latex
+```
+
+Entropy 공식을 다시 살펴보자. `y_{i}` 를 확률이라 하고 `\log \frac {1}{y_{i}}` 를 information gain 이라고 할 수 있다. information gain 은 정보를 획득한 수준을 얘기하는데 이것은 그 정보가 나타날 확률에 반비례한다. 예를 들어 김씨가 임씨보다 많다.
+어떤 사람이 임씨일 경우 information gain 은 김씨일 경우보다 높다. 더우 희귀한 성이기 
+때문에 그 사람에 대해 더욱 많은 정보를 획득했다고 할 수 있다.
+
+`p` 를 실제확률 `q` 를 예측확률 이라고 하자. 다음과 같이
+cross entropy 를 정의할 수 있다.
+
+![](cross_entropy_eq.png)
+
+```latex
+```
 
 # KLD (Kullback–Leibler divergence)
 
+* [참고](http://t-robotics.blogspot.com/2017/08/27-cross-entropy-kl-divergence.html)
+
+* [Kullback-Leibler Divergence & Jensen-Shannon Divergence](https://hyeongminlee.github.io/post/prob002_kld_jsd/)
+
+`p` 를 실제확률 `q` 를 예측확률이라고 하자. 다음과 같이 KLD
+를 정의할 수 있다.
+
+![](kld_eq.png)
+
+```latex
+```
+
+KLD 는 두 확률분포가 얼마나 비슷한지를 나타내는 방법이다. 0
+에 가까워 질 수록 두 확률분포는 차이가 없음을 의미한다.
+
+그러나 KLD 는 symmetric 하지 않다. 즉 `D_{KL}(P||q) != D_{KL}(q||p)` 이다.
+
 # JSD (Jensson Shannon Divergence)
+
+* [참고](https://hyeongminlee.github.io/post/prob002_kld_jsd/)
+* [Kullback-Leibler Divergence & Jensen-Shannon Divergence](https://hyeongminlee.github.io/post/prob002_kld_jsd/)
+
+KLD 는 symmetric 하지 않다. 즉 `D_{KL}(P||q) != D_{KL}(q||p)` 이다.
+KLD 를 symmetric 하게 개량한 것이 JSD 이다.
+
+![](jsd_eq.png)
+
+```latex
+JSD(p, q) = \frac {1}{2} D_{KL} (p || \frac {p + q}{2}) + D_{KL} (q || \frac {p + q}{2})
+```
 
 # Objective Function
 
