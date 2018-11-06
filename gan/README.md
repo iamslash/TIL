@@ -1,10 +1,10 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Implementation for Intuition](#implementation-for-intuition)
+- [Intuition](#intuition)
 - [Objective Function](#objective-function)
-- [Poor Gradient in Early Training](#poor-gradient-in-early-training)
-- [Global Optimality of `P_{g} = P_{data}`](#global-optimality-of-pg--pdata)
-- [Convergence of Algorithm 1](#convergence-of-algorithm-1)
+- [Optimization of Discriminator](#optimization-of-discriminator)
+- [Optimization of Generator](#optimization-of-generator)
 - [Simple GAN by keras](#simple-gan-by-keras)
 - [DCGAN by keras](#dcgan-by-keras)
 
@@ -24,6 +24,8 @@
 
 # Materials
 
+- [[GAN]Generative Adversarial Network](https://hyeongminlee.github.io/post/gan001_gan/)
+  - GAN 을 잘 설명한 한글 블로그
 - [한국어 기계 학습 강좌 @ kaist](https://aailab.kaist.ac.kr/xe2/page_GBex27/)
   - 문일철 교수님의 머신러닝강좌. MLE, MAP, 확률분포등 유용한 내용들이 있음
 - [Generative Adversarial Nets @ arxiv](https://arxiv.org/pdf/1406.2661.pdf)
@@ -121,79 +123,31 @@ pytorch 로 구현된 예를 보고 직관적으로 접근해 보자.
         g_optimizer.step()
 ...        
 ```
+# Intuition
+
+다음과 같이 수식들을 정의하자.
+
+```
+x : Real Data
+z : G 가 입력으로 사용하는 노이즈
+G(z) : G 가 노이즈를 입력받아 출력한 Fake Data
+D(x) : D 가 Real Data 를 입력받아 출력한 값 [0, 1]
+D(G(z)) : D 가 Fake Data 를 입력받아 출력한 값 [0, 1]
+Error(a, b) : a 와 b 사이 차이. 작으면 작을 수록 a 와 b 는 유사하다는 의미이다.
+```
+
+`D` 는 Real Data 를 입력받으면 `1` 을 출력하고 Fake Data 를 입력 받으면 `0` 을 출력하도록 하자. 
+다음 수식을 최소화 시키면 `D` 를 최적화할 수 있다.
+
+```latex
+
+```
 
 # Objective Function
 
-다음과 같은 `objective function` 에 대해 `V(D, G)` 를 최소로 만드는 `G` 와 최대로 만드는 `D` 를 찾으면 실제 이미지를 생성하는 `GAN` 을 완성할 수 있다.
+# Optimization of Discriminator
 
-![](gan_objective_function.png)
-
-```latex
-\begin{align*}
-\min _{G} \max _{D} V(D, G) = \mathbb{E}_{x \sim p _{data} (x)}[\log D(x)] + \mathbb{E}_{z \sim p _{z} (z)}[\log (1 - D(G(z)))]
-\end{align*}
-```
-
-`D` 의 관점에서 생각해 보자. `D(x) = 1` 이고 `D(G(z)) = 0` 일 때 `V(G, D)` 는 최대이다. `D(x) = 1` 일 때는 진짜를 진짜로 판별했을 때를 의미하고 `D(G(z)) = 0` 일 때는 가짜를 가짜로 판별했을 때를 의미한다.
-
-`G` 의 관점에서 생각해 보자. `V(D, G)` 의 첫번째 항은 `G` 와 관련없기 때문에 무시해도 된다. 두번째 항을 살펴보자. `D(G(z)) = 1` 일 때 `V(D, G)` 는 최소이다.
-
-즉 다음과 같은 수식을 만족하는 `G` 를 구해야 한다.
-
-![](gan_objective_eq_G.png)
-
-
-```latex
-\min _{G} \mathbb{E}_{z \sim p _{z} (z)}[\log (1 - D(G(z)))]
-```
-
-`x = D(G(z))` 라고 생각하면 위의 식을 만족하는 `G` 를 찾는 것은 `y = log(1-x)` 그래프에서 최소의 기울기를 갖는 `x` 를  찾는 것과 같다. 이때 `x` 의 범위는 `[0, 1]` 임을 유의하자. `x` 가 0일 때 이미 기울기가 최소이기 때문에 학습이 잘 일어나지 않는다. heuristic 하게 생각해서 최대 기울기 부터 시작하는 그래프를 생각해보자.
-
-![](gan_graph_log_1-x.png)
-
-그래서 다음수식을 생각해 냈다. 다음의 식을 최대로 하는 `G` 를 찾는 것은 앞서 언급한 수식을 최소로 하는 `G` 를 찾는 것과 같다.
-
-![](gan_objective_eq_G_max.png)
-
-```latex
-\max _{G} \mathbb{E}_{z \sim p _{z} (z)}[\log D(G(z))]
-```
-
- 실제로 `y = log(x)` 그래프에서 `x` 가 0일 때 최대의 기울기를 갖는다. 학습 초반에 Generator 가 빨리 벋어 나려고 한다???
-
-![](gan_graph_log_x.png)
-
-그럼 이것을 어떻게 구현할 것인가? `sigmoid cross entropy loss` 를 이용하여 다음과 같은 수식을 만들자.
-
-![](gan_sigmoid_cross_entropy_loss.png)
-
-```latex
-```
-
-`y = 1` 을 하면 다음과 같다.
-
-
-![](gan_sigmoid_cross_entropy_loss_y_1.png)
-
-```latex
-```
-
-결국 `logD(G(z))` 의 기대값을 최대로 하는 `G` 를 찾는 것은 `-logD(G(z))` 의 기대값을 최소로 하는 `G` 를 찾는 것과 같다. 이것을 `Poor Gradient in Early Training` 이라고 한다.
-
-# Poor Gradient in Early Training
-
-# Global Optimality of `P_{g} = P_{data}`
-
-`G` 를 고정하고 최적화된 `D` 를 얻어보자.
-
-# Convergence of Algorithm 1
-
-`V(D, G)` 를 최대로 하는 `D` 를 찾았다고 가정하면 objective function 은 다음과 같은 식과 동치이다.
-
-![](gan_jsd_eq.png)
-
-```latex
-```
+# Optimization of Generator
 
 # Simple GAN by keras
 
