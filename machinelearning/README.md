@@ -443,7 +443,7 @@ p(D)              &= \prod _{i=1}^{N} p(t_{i}|x_{i}) \\
 이것을 Likelihood 라고 한다. `p(D|w)` 가 최대일 `w` 를 구하는 방법을
 Maximum Likelihood Estimation 이라고 한다.
 
-그렇다면 Posterior, Likelihood, Prior 를 다음과 같이 정리할 수 있다.
+이쯤에서 Posterior, Likelihood, Prior 를 다음과 같이 정리해 본다.
 
 * Posterior : 주어진 대상이 주어졌을 경우, 구하고자 하는 대상의 확률분포 `p(w|D)`
 * Likelihood : 구하고자 하는 대상을 모르지만 안다고 가정했을 경우, 주어진 대상의 분포. `p(D|w)` `w` 를 모르기 때문에 `w` 에 대한 함수형태로 나온다.
@@ -462,6 +462,7 @@ log \  likelihood &= \log (p(D|w) \\
 ```
 
 위의 수식에서 `w, σ` 는 상수이므로 최대값에 영향을 주지 않기 때문에 제거한다.
+그리고 음의 부호도 제거하면 다음과 같다.
 
 ![](img/mle_l2_loss.png)
 
@@ -481,6 +482,65 @@ Classification 문제에서는 Bernouli Distribution 을 이용하여
 비슷한 방법으로 Cross Entropy Error 를 유도할 수 있다.
 
 # MLP (Maximum A Posterior)
+
+MLE 가 Likelihood 를 최대화 시키는 것이라면 MLP 는 Posterior 를 최대화 시키는 것이다. Likelihood 와 Posterior 의 차이는 Prior 가 없느냐 있느냐이다. 
+`w` 를 데이터만 이용해서 구하고자 한다면 MLE 를 이용한다. 만약 `w` 를 
+데이터와 함께 사전지식까지 이용해서 구하고자 한다면 MLP 를 이용한다.
+
+Prior 를 조정해주면 고의적으로 `w` 의 분포를 조정해줄 수 있다. 예를 들어
+`w` 의 값을 0 주변에 배치하고 싶다면 0 을 중심으로 분포 되도록 `P(w)` 를 만들어 낼 수 있다. 이와 같이 Prior 를 조정하여 출력값을 조정하고 싶을 때
+MAP 를 사용한다.
+
+이제 MAP 를 계산해 보자. 몬저 Posterior 를 다음과 같이 표현할 수 있다.
+
+![](img/mlp_eq_1.png)
+
+```latex
+\begin{align*}
+P(w|D) &= \frac {P(D|w)P(w)}{\int P(D|w)P(w) dw} \\
+       &= \eta P(D|w)P(w)
+\end{align*}
+```
+
+이제 Prior 를 설정해 보자. `w` 를 0 을 중심으로 정규분포가 되도록 `p(w)` 를 설정하면
+다음과 같다.
+
+![](img/mlp_eq_prior.png)
+
+```latex
+\begin{align*}
+w    & \sim N(0, \sigma _{w}^{2}) \\
+p(w) &= \frac{1}{\sqrt{2\pi} \sigma_{w} } e ^{-\frac{w^{2}}{2 \sigma _{w}^{2}}}
+\end{align*}
+```
+
+다음은 Posterior 를 최대화 하는 `w` 를 구해보자.
+
+![](img/mlp_optimize_w.png)
+
+```latex
+\begin{align*}
+w^{*}    &= argmax_{w} \{ \log p(w|D) \} \\
+         &= argmax_{w} \{ \log \eta + \log p(D|w) + \log p(w) \} \\
+         &= argmax_{w} \{ \log \eta + L(w) + \log p(w) \} \\
+         &= argmax_{w} \{ \log \eta + L(w) - \log ({\sqrt{2 \pi}} \sigma_{w}) \} - \frac{w^{2}}{2 \sigma_{w}^{2}} \\
+\end{align*}
+```
+
+위의 수식에서 상수항을 모두 제거 하면 Posterior 를 최대로 하는 문제는 다음의 수식을 최소로 하는 문제로 바뀐다.
+
+![](img/mlp_eq_minimize_L.png)
+
+```latex
+\begin{align*}
+L(w) + \frac{w^{2}}{2 \sigma_{w}^{2}} &= \sum_{i=1}^{N} (t_{i} - y(x_{i} | w))^{2}
+                                          + \frac{w^{2}}{2 \sigma_{2}^{2}} \\
+                                      &= \sum_{i=1}^{N} (t_{i} - y(x_{i} | w))^{2}
+                                          + \frac{w^{2}}{\alpha}
+\end{align*}
+```
+
+위의 수식은 Weight Decay (L2 Regularization) 방식을 적용한 Deep Learning 의 Loss 함수가 된다. 지금까지의 과정은 Prior 를 Gaussian Distribution 을 따르도록 하고 MAP 으로부터 Weight Decay 식을 유도한 것이다. 이것은 L2 Regularization 을 적용하는 일은 `w` 에 가우시안분포를 Prior 로 설정하는 일을 의미한다. 참고로 Prior 를 Lapacian Distribution 을 따르도록 하면 L1 Regularization 을 얻을 수 있다.
 
 # Supervised Learning
 
