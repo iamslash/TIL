@@ -2,6 +2,7 @@
 - [Materials](#materials)
 - [Implementation for Intuition](#implementation-for-intuition)
 - [Intuition](#intuition)
+- [Poor Gradient in Early Training](#poor-gradient-in-early-training)
 - [Objective Function](#objective-function)
 - [Optimization of Discriminator](#optimization-of-discriminator)
 - [Optimization of Generator](#optimization-of-generator)
@@ -139,9 +140,39 @@ Error(a, b) : a 와 b 사이 차이. 작으면 작을 수록 a 와 b 는 유사�
 `D` 는 Real Data 를 입력받으면 `1` 을 출력하고 Fake Data 를 입력 받으면 `0` 을 출력하도록 하자. 
 다음 수식을 최소화 시키면 `D` 를 최적화할 수 있다.
 
+![](img/loss_D.png)
+
 ```latex
 
 ```
+
+`G` 는 Fake Data 를 입력받으면 `D` 가 `1` 을 출력하도록 하자. 다음 수식을 최소화 시키면 `G` 를 최적화 할 수 있다.
+
+![](img/loss_G.png)
+
+```latex
+
+```
+
+`Error()` 는 다음과 같이 Cross-Entropy Error 를 이용하자.
+
+![](img/Error_cross_entropy.png)
+
+```latex
+
+```
+
+결국 `D Loss` 와 `G Loss` 를 다음과 같이 정리할 수 있고 두 Loss 함수들을 최소화 하는 방향으로 `D, G` 를 학습시키면 GAN 을 구현할 수 있다.
+
+![](img/loss_D_G.png)
+
+```latex
+
+```
+
+# Poor Gradient in Early Training
+
+학습의 초기에 늪에 빠져 제대로 학습이 진행되지 않는 상황을 말한다. 그래프의 모양을 뒤집어서 해결해본다.
 
 # Objective Function
 

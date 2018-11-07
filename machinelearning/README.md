@@ -74,6 +74,7 @@
 - [최신 논문으로 시작하는 딥러닝](http://www.edwith.org/deeplearningchoi/joinLectures/10979)
   - 최성준님의 강좌. 모두를 위한 머신러닝을 클리어 하고 학습하면 좋다.
   - [src](https://github.com/sjchoi86/dl_tutorials_10weeks)
+- [머신러닝 단기집중과정 @ google](https://developers.google.com/machine-learning/crash-course/prereqs-and-prework?hl=ko)
 
 # Materials
 
