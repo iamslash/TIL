@@ -224,7 +224,7 @@ D_{G}^{*}(x) &= \frac{P_{data}(x)}{P_{data}(x) + P_{g}(x)}  \\
 
 # Optimization of Generator
 
-`D` 를 `D^{*}` 로 고정하고 `G^{*}` 를 다음과 같이 구해보자.
+`D` 를 `D^{*}` 로 고정하고 `G^{*}` 를 다음과 같이 최적화 해보자.
 
 ![](img/gan_optimize_of_G.png)
 
@@ -243,7 +243,7 @@ V(G, D^{*})  &= E_{x \sim p_{data}(x)} \left [ \log(D^{*}(x)) \right ] +
 ```
 
 `D`, `G` 를 최적화하는 것은 `JSD(P_{data} || P_{g})` 를 최소화하는 것과
-같다. 따라서 주어진 데이터의 실제 확률 분포와 GAN이 예측한 확률 분포 사이의 Jensen-Shannon Divergence를 최소화 하는 것임을 증명하였다.
+같다. 따라서 주어진 데이터의 실제 확률 분포와 GAN이 예측한 확률 분포 사이의 Jensen-Shannon Divergence 를 최소화 하는 것임을 증명하였다.
 
 # GAN by keras
 
