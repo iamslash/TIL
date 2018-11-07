@@ -6,8 +6,7 @@
 - [Objective Function](#objective-function)
 - [Optimization of Discriminator](#optimization-of-discriminator)
 - [Optimization of Generator](#optimization-of-generator)
-- [Simple GAN by keras](#simple-gan-by-keras)
-- [DCGAN by keras](#dcgan-by-keras)
+- [GAN by keras](#gan-by-keras)
 
 -----
 
@@ -27,6 +26,8 @@
 
 - [[GAN]Generative Adversarial Network](https://hyeongminlee.github.io/post/gan001_gan/)
   - GAN 을 잘 설명한 한글 블로그
+- [[GAN]GAN with Mathematics](https://hyeongminlee.github.io/post/gan002_gan_math/)
+  - GAN 의 수식을 잘 설명한 한글 블로그
 - [한국어 기계 학습 강좌 @ kaist](https://aailab.kaist.ac.kr/xe2/page_GBex27/)
   - 문일철 교수님의 머신러닝강좌. MLE, MAP, 확률분포등 유용한 내용들이 있음
 - [Generative Adversarial Nets @ arxiv](https://arxiv.org/pdf/1406.2661.pdf)
@@ -190,6 +191,8 @@ Loss_{G}    &= - \log (D(G(z))) \\
 
 # Objective Function
 
+논문에 등장하는 objective function (loss function) 은 다음과 같다.
+
 ![](img/gan_objective_function_exp.png)
 
 ```latex
@@ -198,16 +201,50 @@ Loss_{G}    &= - \log (D(G(z))) \\
 \end{align*}
 ```
 
+이것은 주어진 데이터의 실제 확률 분포와 GAN이 예측한 확률 분포 사이의 Jensen-Shannon Divergence를 최소화 하는 것을 의미한다. 이어지는 `Optimization of Discriminator` 와
+`Optimization of Generator` 에서 이것을 증명한다.
+
 # Optimization of Discriminator
+
+`G(z)` 를 고정하고 `D^{*}(x)` 를 다음과 같이 구해보자.
+
+![](img/gan_optimize_of_D.png)
+
+```latex
+\begin{align*}
+V(G, D)      &= E_{x \sim p_{data}(x)} \left [ \log(D(x)) \right ] + 
+               E_{z \sim p_{z}(z)} \left [ \log(1 - D(G(z))) \right ] \\
+             &= E_{x \sim p_{data}(x)} \left [ \log(D(x)) \right ] + 
+               E_{y \sim p_{g}(y)} \left [ \log(1 - D(y)) \right ] \\
+             &= \int _{x} P_{data}(x) \log(D(x)) dx + \int _{y} P_{g} (y) \log(1 - D(y)) dy \\
+             &= \int _{x} P_{data}(x) \log(D(x)) dx + P_{x} (x) \log(1 - D(x)) dx \\
+D_{G}^{*}(x) &= \frac{P_{data}(x)}{P_{data}(x) + P_{g}(x)}  \\
+\end{align*}
+```
 
 # Optimization of Generator
 
-# Simple GAN by keras
+`D` 를 `D^{*}` 로 고정하고 `G^{*}` 를 다음과 같이 구해보자.
 
-```py
+![](img/gan_optimize_of_G.png)
+
+```latex
+\begin{align*}
+V(G, D^{*})  &= E_{x \sim p_{data}(x)} \left [ \log(D^{*}(x)) \right ] + 
+               E_{z \sim p_{z}(z)} \left [ \log(1 - D^{x}(G(z))) \right ] \\
+             &= E_{x \sim p_{data}(x)} \left [ \frac{P_{data}(x)}{P_{data}(x) + P_{g}(x)} \right ] + 
+               E_{x \sim p_{data}(x)} \left [ \frac{P_{g}(x)}{P_{data}(x) + P_{g}(x)} \right ] \\
+             &= - \log(4) + E_{x \sim p_{data}(x)} \left [ \log(P_{data}(x)) - \log \left (\frac{P_{data}(x) + P_{g}(x)}{2} \right ) \right ] + \\
+             &\ \ \ \ \ \ \ E_{x \sim p_{g}(x)} \left [ \log(P_{g}(x)) - \log \left (\frac{P_{data}(x) + P_{g}(x)}{2} \right ) \right ] \\
+             &= - \log(4) + KL \left ( P_{data} || \frac{P_{data} + P_{g}}{2} \right ) + 
+               KL \left ( P_{g} || \frac{P_{data} + P_{g}}{2} \right ) \\
+             &= - \log(4) + 2 \times JSD (P_{data} || P_{g})
+\end{align*}
 ```
 
-# DCGAN by keras 
+`D`, `G` 를 최적화하는 것은 `JSD(P_{data} || P_{g})` 를 최소화하는 것과
+같다. 따라서 주어진 데이터의 실제 확률 분포와 GAN이 예측한 확률 분포 사이의 Jensen-Shannon Divergence를 최소화 하는 것임을 증명하였다.
 
-```py
-```
+# GAN by keras
+
+[mnistgan.py @ examplesofml](https://github.com/iamslash/examplesofml/blob/master/mnistgan/mnistgan.py)
