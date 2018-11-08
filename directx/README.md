@@ -10,8 +10,10 @@ DirectX SDK는 windows8부터 Windows SDK에 통합되었다. DirectX기능을
 
 # Materials
 
-- [directx11 tutorials](http://www.rastertek.com/tutdx11.html)
-  - 약 50여 개의 directx11 튜토리얼 
+* [directx11 tutorials](http://www.rastertek.com/tutdx11.html)
+  * 약 50여 개의 directx11 튜토리얼 
+* [directxtutorial](http://www.directxtutorial.com/default.aspx)
+  * 유료이다. 그러나 초반부는 무료임. 설명이 상세함. 
 * [개발자코드샘플 @ MS](https://code.msdn.microsoft.com/site/search?f%5B0%5D.Type=SearchText&f%5B0%5D.Value=directx&f%5B1%5D.Type=Technology&f%5B1%5D.Value=DirectX)
   * DirectX 샘플은 Windows SDK에 없고 online에만 존재한다.
 
