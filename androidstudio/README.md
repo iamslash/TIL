@@ -26,6 +26,8 @@ android studio 에 대해 정리한다.
 * [될 때까지 안드로이드 @ yes24](http://www.yes24.com/24/goods/59298937)
   * [video @ youtube](https://www.youtube.com/watch?v=MjtlPTUUL74&list=PLxTmPHxRH3VWSF7kMcsIaTglWUJZpWeQ9)
   * [src @ github](https://github.com/junsuk5/android-first-book)
+* [sample android apps @ github](https://github.com/codepath/android_guides/wiki/Sample-Android-Apps)
+  * 유용한 샘플 모음
 * [android-architecture-components @ github](https://github.com/googlesamples/android-architecture-components)
   * 구글에서 제공하는 샘플
 * [awesome android @ github](https://github.com/JStumpp/awesome-android)
