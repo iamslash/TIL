@@ -1,6 +1,3 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Concepts](#concepts)
@@ -15,8 +12,6 @@
 - [Tools](#tools)
     - [jarsigner](#jarsigner)
 
-<!-- markdown-toc end -->
-
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -28,6 +23,15 @@ android studio 에 대해 정리한다.
 * [doit 안드로이드](https://www.youtube.com/playlist?list=PLG7te9eYUi7sq701GghpoSKe-jbkx9NIF)
   * 킹왕짱 한글 동영상
   * [src](http://147.46.109.80:9090/board/board-list.do?boardId=doitandroid)
+* [될 때까지 안드로이드 @ yes24](http://www.yes24.com/24/goods/59298937)
+  * [video @ youtube](https://www.youtube.com/watch?v=MjtlPTUUL74&list=PLxTmPHxRH3VWSF7kMcsIaTglWUJZpWeQ9)
+  * [src @ github](https://github.com/junsuk5/android-first-book)
+* [sample android apps @ github](https://github.com/codepath/android_guides/wiki/Sample-Android-Apps)
+  * 유용한 샘플 모음
+* [android-architecture-components @ github](https://github.com/googlesamples/android-architecture-components)
+  * 구글에서 제공하는 샘플
+* [awesome android @ github](https://github.com/JStumpp/awesome-android)
+* [awesome android-ui @ github](https://github.com/wasabeef/awesome-android-ui)
 
 # Concepts
 
