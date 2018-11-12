@@ -72,6 +72,12 @@ E_{x \sim  p(x)} [f(x)] &= \sum _x p(x) f(x) \\
 \end{align*}
 ```
 
+# Entropy
+
+확률과 information gain
+
+# Cross Entropy
+
 # Objective Function
 
 다음과 같은 `objective function` 에 대해 `V(D, G)` 를 최소로 만드는 `G` 와 최대로 만드는 `D` 를 찾으면 실제 이미지를 생성하는 `GAN` 을 완성할 수 있다.
