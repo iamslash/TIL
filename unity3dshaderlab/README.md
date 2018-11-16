@@ -1,5 +1,6 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
+- [References](#references)
 - [The Graphics Hardware Pipeline](#the-graphics-hardware-pipeline)
 - [Fixed function shader tutorial](#fixed-function-shader-tutorial)
 - [Vertex, fragment shader tutorial](#vertex-fragment-shader-tutorial)
@@ -60,19 +61,22 @@ time에 vertex, fragment shader로 변환된다.
 - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false)
   - unity3d shader를 가장 잘 설명한 책이다. 
 - [Unity3d Rendering Pipelines](https://catlikecoding.com/unity/tutorials/rendering/)
-- [Unity3d Shader Tutorial @ github](https://github.com/iamslash/UnityShaderTutorial)
 - [writing shaders in unity](http://www.jordanstevenstechart.com/writing-shaders-in-unity)
   - unity3d shaderlab의 기본기를 잘 정리한 블로그이다.
 - [a gentle introduction to shaders in unity3d](http://www.alanzucconi.com/2015/06/10/a-gentle-introduction-to-shaders-in-unity3d/)
   - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false) 저자 블로그이다.
   - PBR을 쉽게 이해할 수 있었다. PBR은 Lambertian처럼 lighting model중
     하나이다. 
-- [Unity3d Shader Reference](https://docs.unity3d.com/Manual/SL-Reference.html)
-  - RTFM
 - [scratchapixel](http://www.scratchapixel.com/)
   - 밑바닥부터 설명하는 computer graphics
 - [Resources for Writing Shaders in Unity](https://github.com/VoxelBoy/Resources-for-Writing-Shaders-in-Unity)
   - 다양한 링크 모음
+
+# References
+
+- [Unity3d Shader Tutorial @ github](https://github.com/iamslash/UnityShaderTutorial)
+- [Unity3d Shader Reference](https://docs.unity3d.com/Manual/SL-Reference.html)
+  - RTFM
 
 # The Graphics Hardware Pipeline
 
