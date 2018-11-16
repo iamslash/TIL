@@ -1952,10 +1952,75 @@ Shader "Example/Decal" {
 
 # Unity Built-in Shaders
 
-* `Mobile-Diffuse`
+Unity 에 포함된 쉐이더들중 주목할 만 한 것들 몇가지를 적어본다.
 
+* `Normal-Diffuse`
+
+```c
+Shader "Legacy Shaders/Diffuse" {
+    Properties {
+        _Color ("Main Color", Color) = (1,1,1,1)
+        _MainTex ("Base (RGB)", 2D) = "white" {}
+    }
+    SubShader {
+        Tags { "RenderType"="Opaque" }
+        LOD 200
+
+CGPROGRAM
+    #pragma surface surf Lambert
+
+    sampler2D _MainTex;
+    fixed4 _Color;
+
+    struct Input {
+        float2 uv_MainTex;
+    };
+
+    void surf (Input IN, inout SurfaceOutput o) {
+        fixed4 c = tex2D(_MainTex, IN.uv_MainTex) * _Color;
+        o.Albedo = c.rgb;
+        o.Alpha = c.a;
+    }
+ENDCG
+    }
+    Fallback "Legacy Shaders/VertexLit"
+}
 ```
+
+`surf` 에서 해주는 일은 texture 에서 읽어온 컬러를 `SurfaceOutput` 의 `Albedo, Alpha` 에 채워주는 일이 전부이다. 이후 `SurfaceOutput` 에 대해 `LightingLambert` 를 포함한 많은 처리가 수행될 것이다.
+
+* `Mobile/Diffuse`
+
+```c
+Shader "Mobile/Diffuse" {
+    Properties {
+        _MainTex ("Base (RGB)", 2D) = "white" {}
+    }
+    SubShader {
+        Tags { "RenderType"="Opaque" }
+        LOD 150
+
+CGPROGRAM
+        #pragma surface surf Lambert noforwardadd
+
+        sampler2D _MainTex;
+
+        struct Input {
+            float2 uv_MainTex;
+        };
+
+        void surf (Input IN, inout SurfaceOutput o) {
+            fixed4 c = tex2D(_MainTex, IN.uv_MainTex);
+            o.Albedo = c.rgb;
+            o.Alpha = c.a;
+        }
+ENDCG
+    }
+    Fallback "Mobile/VertexLit"
+}
 ```
+
+`Normal-Diffuse` 와 비교해 보자. `_Color` 를 곱하는 연산을 하지 않는다. `noforwardadd` 가 사용되었다.
 
 # Usage
 
