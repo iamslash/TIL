@@ -35,6 +35,9 @@
 
 # Material
 
+- [CS109: Probability for Computer Scientists](http://web.stanford.edu/class/cs109//)
+  - 스탠포드 대학의 통계학 강좌
+  - 강의자료가 쓸만함
 - [Statistics Harvad @ youtube](https://www.youtube.com/watch?v=KbB0FjPg0mw&list=PL2SOU6wwxB0uwwH80KTQ6ht66KWxbzTIo&index=1)
   - 하버드 대학의 통계학 강좌
 - [seeing theory](http://students.brown.edu/seeing-theory/)
