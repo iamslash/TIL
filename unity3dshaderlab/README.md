@@ -60,7 +60,7 @@ time에 vertex, fragment shader로 변환된다.
   - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
 - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false)
   - unity3d shader를 가장 잘 설명한 책이다. 
-- [Unity3d Rendering Pipelines](https://catlikecoding.com/unity/tutorials/rendering/)
+- [C# and Shader Tutorials for the Unity Engine](https://catlikecoding.com/unity/tutorials/rendering/)
 - [writing shaders in unity](http://www.jordanstevenstechart.com/writing-shaders-in-unity)
   - unity3d shaderlab의 기본기를 잘 정리한 블로그이다.
 - [a gentle introduction to shaders in unity3d](http://www.alanzucconi.com/2015/06/10/a-gentle-introduction-to-shaders-in-unity3d/)
