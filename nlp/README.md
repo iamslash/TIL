@@ -4,6 +4,9 @@
 
 # Materials
 
+* [Modern Deep Learning Techniques Applied to Natural Language Processing](https://nlpoverview.com/)
+  * nlp deeplearning
+  * [src](https://github.com/omarsar/nlp_overview)
 * [NLTK 로 배우는 자연어처리](https://blog.naver.com/bcj1210/221144598072)
 * [NLTK with Python 3 for Natural Language Processing @ youtube](https://www.youtube.com/playlist?list=PLQVvvaa0QuDf2JswnfiGkliBInZnIC4HL)
 * [Deep Natural Language Processing course offered in Hilary Term 2017 at the University of Oxford](https://github.com/oxford-cs-deepnlp-2017/lectures/blob/master/README.md)
