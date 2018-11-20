@@ -78,6 +78,8 @@
 
 # Materials
 
+- [모두를 위한 컨벡스 최적화 (Convex Optimization For All)](https://wikidocs.net/book/1896)
+  - 최적화 문제를 정리한 책 
 - [math for machine learning](https://mml-book.github.io/)
   - 머신러닝을 위한 수학 공짜책
 - [paper with code](https://paperswithcode.com/)
