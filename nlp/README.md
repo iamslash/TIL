@@ -4,6 +4,7 @@
 
 # Materials
 
+* [[토크ON세미나] 딥러닝을 활용한 자연어 처리 기술 실습 1강 | T아카데미 @ youtube](https://www.youtube.com/watch?v=F8b0jGyZ_W8&list=PL9mhQYIlKEhdorgRaoASuZfgIQTakIEE9)
 * [Modern Deep Learning Techniques Applied to Natural Language Processing](https://nlpoverview.com/)
   * nlp deeplearning
   * [src](https://github.com/omarsar/nlp_overview)
