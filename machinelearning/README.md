@@ -627,34 +627,30 @@ cost(W, b) = \frac{1}{m} \sum_{m}^{i=1} (H(x_{i})-y_{i})^{2}
   eval한 결과를 리턴한다.
 
 ```python
-# -*- coding: utf-8 -*-
 import tensorflow as tf
 
 def main():
-    tf.set_random_seed(777)
-    x_train = [1, 2, 3]
-    y_train = [1, 2, 3]
+    tf.set_random_seed(111)
+    l_X = [1, 2, 3]
+    l_Y = [1, 2, 3]
+    t_W = tf.Variable(tf.random_normal([1]), name='W')
+    t_b = tf.Variable(tf.random_normal([1]), name='b')
+    t_H = l_X * t_W + t_b
+    t_C = tf.reduce_mean(tf.square(t_H - l_Y))
+    t_O = tf.train.GradientDescentOptimizer(learning_rate=0.001)
+    t_T = t_O.minimize(t_C)
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for n_step in range(10000):
+            sess.run(t_T)
+            if n_step % 20 == 0:
+                f_cost = sess.run(t_C)
+                l_W = sess.run(t_W)
+                l_b = sess.run(t_b)
 
-    # W, b, Hypothesis, cost
-    W = tf.Variable(tf.random_normal([1]), name='weight')
-    b = tf.Variable(tf.random_normal([1]), name='bias')
-    hypothesis = x_train * W + b
-    cost = tf.reduce_mean(tf.square(hypothesis - y_train))
-    
-    # minimize cost
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
-    train = optimizer.minimize(cost)
-    
-    # launch it
-    sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
+                #print("step = {:7d} loss = {:5.3f} W = {:5.3f} b = {:5.3f}".format(step, f_cost, f_W, f_b) )
+                print("{:7d}".format(n_step), "{:10.7f}".format(f_cost), l_W, l_b)
 
-    # fit the line
-    for step in range(2001):
-        sess.run(train)
-        if step % 20 == 0:
-            print(step, sess.run(cost), sess.run(W), sess.run(b))
-            
 if __name__ == "__main__":
     main()
 ```
@@ -664,35 +660,29 @@ if __name__ == "__main__":
   값은 sess.run의 feed_dict인자로 넘겨준다.
 
 ```python
-# -*- coding: utf-8 -*-
 import tensorflow as tf
-tf.set_random_seed(777)
+tf.set_random_seed(111)
 
 def main():
-    # set nodes 
-    W = tf.Variable(tf.random_normal([1]), name='weight')
-    b = tf.Variable(tf.random_normal([1]), name='bias')
-    X = tf.placeholder(tf.float32, shape=[None])
-    Y = tf.placeholder(tf.float32, shape=[None])
-    hypothesis = X * W + b
-    cost = tf.reduce_mean(tf.square(hypothesis - Y))
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.01)
-    train = optimizer.minimize(cost)
-
-    # train nodes
-    sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
-    for step in range(2001):
-        cost_val, W_val, b_val, _ = sess.run([cost, W, b, train],
-                                             feed_dict={X: [1, 2, 3],
-                                                        Y: [1, 2, 3]})
-        if step % 20 == 0:
-            print(step, cost_val, W_val, b_val)
-
-    # test nodes
-    print(sess.run(hypothesis, feed_dict={X: [5]}))
-    print(sess.run(hypothesis, feed_dict={X: [2.5]}))
-    print(sess.run(hypothesis, feed_dict={X: [1.5, 3.5]}))
+    l_X = [1., 2., 3.]
+    l_Y = [1., 2., 3.]
+    t_W = tf.Variable(tf.random_normal([1]), name='W')
+    t_b = tf.Variable(tf.random_normal([1]), name='b')
+    t_X = tf.placeholder(tf.float32, shape=[None], name='X')
+    t_Y = tf.placeholder(tf.float32, shape=[None], name='Y')
+    t_H = t_X * t_W + t_b
+    t_C = tf.reduce_mean(tf.square(t_H - t_Y))
+    t_O = tf.train.GradientDescentOptimizer(learning_rate=0.001)
+    t_T = t_O.minimize(t_C)
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for n_step in range(10000):
+            _, f_cost, l_W, l_b = sess.run([t_T, t_C, t_W, t_b], feed_dict={t_X: l_X, t_Y: l_Y})
+            if n_step % 20 == 0:
+                print(f"{n_step:10d} {f_cost:10.7f}", l_W, l_b)
+        print(sess.run(t_H, feed_dict={t_X: [5]}))
+        print(sess.run(t_H, feed_dict={t_X: [2.5]}))
+        print(sess.run(t_H, feed_dict={t_X: [1.5, 3.5]}))
 
 if __name__ == "__main__":
     main()
@@ -702,6 +692,7 @@ if __name__ == "__main__":
   살펴보자. 먼저 H(x)와 cost(W) 다음과 같이 정의하자.
   
 ![](img/hypothesis.png)
+
 ![](img/cost.png)
 
 - cost(W)를 최소화될때까지 W를 갱신해야한다. 다음과 같이 새로운 W는
