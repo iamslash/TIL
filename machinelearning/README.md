@@ -1110,6 +1110,7 @@ if __name__ == "__main__":
   일차함수로 표현하면 문제가 될 수 있다.
 
 ![](img/logistic_regression_linear_hypothesis_1.png)
+
 ![](img/logistic_regression_linear_hypothesis_2.png)
 
 - logistic regression은 일차함수가 아닌 새로운 형태의 hypothesis
@@ -1120,11 +1121,13 @@ if __name__ == "__main__":
   function혹은 sigmoid function이라고 한다.  그래서 logistic
   regression이라는 말이 만들어 졌다.
 
+![](img/sigmoid_equation.png)  
+
+![](img/sigmoid_graph.png)
+
 ```latex
 g(z) = \frac{1}{1 + e^{-z}}
 ```
-![](img/sigmoid_equation.png)  
-![](img/sigmoid_graph.png)
 
 - logistic regression의 sigmoid를 활용한 H(X), cost(W, b)는 다음과
   같다. cost(W, b)의 경우 sigmoid를 활용한 H(X)를 사용할 경우 기울기가
@@ -1133,6 +1136,8 @@ g(z) = \frac{1}{1 + e^{-z}}
   필요하다. 그래서 다음과 같은 cost(W, b)가 발견되었다. 결국 linear
   regression과 마찬가지로 gradient descent algorithm을 이용하여
   cost(W, b)가 최소가 되는 W를 발견할 수 있다.
+
+![](img/logistic_regression_hypothesis_cost.png)
 
 ```latex
 \begin{align*}
@@ -1148,8 +1153,6 @@ cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} \left ( -y \log(H(x)) - (1-y) \log(1 - 
 W &:= W - \alpha \frac{\partial}{\partial W} cost(W, b) \\
 \end{align*}
 ```
-
-![](img/logistic_regression_hypothesis_cost.png)
 
 - 두개의 x와 한개의 y를 갖는 경우 logistic regression을 구현해보자.
 
@@ -1261,6 +1264,8 @@ if __name__ == "__main__":
   multinomial classification 은 binary classification을 여러개
   이용해서 해결한다.
 
+![](img/softmax_regression_hypothesis_matrix.png)
+
 ```latex
 \begin{bmatrix}
 w_{A1} & w_{A2} & w_{A3}\\ 
@@ -1298,7 +1303,7 @@ H_{C}(X) \\
 \bar{y}_{C} \\
 \end{bmatrix}
 ```
-![](img/softmax_regression_hypothesis_matrix.png)
+
 
 - 출력값들이 각각 2.0, 1.0, 0.1이라고 하자. 그렇다면 이것은 A등급에 속한다.
   하지만 출력값들의 형태를 각각의 등급에 대해 [0, 1]의 확률값으로 표현하고 싶다.
@@ -1306,11 +1311,11 @@ H_{C}(X) \\
   0.7, 0.2, 0.1의 형태로 출력값이 변경된다. 결과적으로 0.7의 확률로
   A등급에 속한다는 의미이다. 확률이기 때문에 모두 더하면 1이다. 
 
+![](img/softmax_regression_softmax_function.png)
+
 ```latex
 S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
 ```
-
-![](img/softmax_regression_softmax_function.png)
 
 - 출력값들이 각각 0.7, 0.2, 0.1이라고 하자. 한번 더 처리하여 1.0, 0.,
   0.과 같이 명쾌하게 A등급에 속한다고 결론내고 싶다. 그래서 one hot
@@ -1324,16 +1329,18 @@ S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
   무한대의 값을 리턴하는 함수가 필요하다. 그래서 cross-entropy
   function이 발견되었고 다음과 같이 정의가 가능하다.
 
+![](img/softmax_regression_cross.png)
+
 ```latex
 D(S, L) = -\sum_{j=1}^{k}L_{j}\log(S_{j})
 ```
-
-![](img/softmax_regression_cross.png)
 
 - cross entropy function이 제대로 동작하는지 예를 들어서
   살펴보자. 앞서 언급한 cross entropy function은 다음과 같이 전개 할
   수 있고 -log(x)함수의 모양을 눈여겨 볼 필요가 있다. `L_{j}`는
   학습데이터값이고 `\bar{y}_{j}`는 예측값이다.
+
+![](img/softmax_regression_cross_ex.png)
 
 ```latex
 \begin{align*} 
@@ -1342,8 +1349,6 @@ D(S, L) &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
         &= \sum_{j=1}^{k}L_{j} \cdot -\log(\bar{y}_{j}) \\
 \end{align*}
 ```
-
-![](img/softmax_regression_cross_ex.png)
 
 - `L_{j}`가 [0, 1], `\bar{y}_{j}`가 [0, 1]이라고 해보자.  cost는 `0 x
   ∞ + 1 x 0`가 되어 0이 된다. `\bar{y}_{j}`가 [1, 0]이라고 해보자.
@@ -1359,6 +1364,8 @@ D(S, L) &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
   cross entropy function은 사실상 같다. H(x), S는 예측 값을 의미하고
   y, L은 데이터 값을 의미한다.
 
+![](img/softmax_regression_vs_logistic_regression_cost.png)
+
 ```latex
 \begin{align*} 
 c(H(x), y) &= -y \log(H(x)) - (1-y) \log(1 - H(x)) \\
@@ -1366,14 +1373,14 @@ D(S, L)    &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
 \end{align*}
 ```
 
-![](img/softmax_regression_vs_logistic_regression_cost.png)
-
 - softmax regression의 cost function은 다음과 같다.  실제 그래프로
   그려보면 logistic regression의 cost function처럼 아래가 볼록한
   모양이다. 기울기가 0인 지점은 한 곳이다. gradient descent
   algorithm을 이용해서 cost function이 최소인 W, b를 찾아 낼 수
   있다. grade descent algorithm을 적용하기 위한 미분 방정식은 복잡해서
   생략한다.
+
+![](img/softmax_regression_cost.png)
 
 ```latex
 \begin{align*} 
@@ -1384,7 +1391,7 @@ cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S, L) \\
 \end{align*}
 ```
 
-![](img/softmax_regression_cost.png)
+
 
 - x가 4개이고 y가 3개인 데이터를 이용하여 softmax regression을 구현해 보자.
   one hot encoding을 위해 tf.arg_max를 사용했다.
@@ -1539,11 +1546,11 @@ if __name__ == "__main__":
   cost(W, b)를 최소화 하는 W, b는 찾기 어려워 질 것이다. 이러한 현상을
   overshooting이라고 한다.
 
+![](img/gradient_descent_algorithm.png)
+
 ```latex
 W := W - \alpha \frac{\partial}{\partial W} cost(W, b) 
 ```
-
-![](img/gradient_descent_algorithm.png)
 
 - learning rate이 너무 작게 설정하면 어떻게 될까? 앞서 언급한 상황에서
   step값은 매우 작아질테고 새로운 W와 현재의 W는 거의 차이가 없을 것이다.
@@ -1560,11 +1567,13 @@ W := W - \alpha \frac{\partial}{\partial W} cost(W, b)
   있다. x2를 보정한다고 할때 다음과 같은 공식으로 normlize하자. 이것을
   standardization이라고 한다.
 
+
+![](img/standardization.png)
+
 ```latex
 {x}'_{j} = \frac{x_{j} - \mu _{j}}{\sigma _j{}}
 ```
 
-  ![](img/standardization.png)
 
 - training data set에 대해서 너무 훈련이 되있다면 test data set에 대한
   정확도가 낮을 수 있다. 이러한 현상을 overfitting이라고 한다. 다음과
@@ -1572,7 +1581,9 @@ W := W - \alpha \frac{\partial}{\partial W} cost(W, b)
   확보해서 학습시켜보자.  둘째 feature가 너무 많은 경우 줄여서
   학습시켜 보자. 셋째 gradient descent algorithm에 사용할 step값을
   다른 방법으로 구해보자. 이것을 regularization이라고 한다.
-  
+
+![](img/regularization.png)
+
 ```latex
 \begin{align*} 
 cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S_{i}, L_{i}) \\
@@ -1580,7 +1591,7 @@ cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S_{i}, L_{i}) \\
 \end{align*}
 ```
   
-![](img/regularization.png)
+
 
 - 다음은 learning rate다양하게 했을때를 구현한 것이다. learning rate이
   1.5와 같이 너무 클때 cost는 inf가 되고 learning rate이 1e-10과 같이
@@ -2130,14 +2141,14 @@ if __name__ == "__main__":
 - 위의 그림을 바탕으로 다음과 같이 out layer에 해당하는 예측값을 표현
   할 수 있다.
 
+![](img/xor3equation.png)
+
 ```latex
 \begin{align*} 
 K(X)    &= sigmoid(XW_{1} + B_{1}) \\
 \bar{Y} &= sigmoid(K(X)W_{2} + B_{2}) \\
 \end{align*}
 ```
-
-![](img/xor3equation.png)
 
 - 다음은 위의 수식을 tensorflow를 이용하여 구현한 것이다.
 
@@ -2372,14 +2383,14 @@ if __name__ == "__main__":
 
 - chain rule은 두 함수를 합성한 합성 함수의 도함수에 관한 공식이다.
 
+![](img/chainrule.png)
+
 ```latex
 \begin{align*}
 (f \circ g)^{'}(x) &= (f(g(x)))' = f^{'}(g(x))g^{'}(x) \\
 \frac {\partial{f}}{\partial{x}} &= \frac {\partial{f}}{\partial{g}} \cdot \frac {\partial{g}}{\partial{x}} \\
  \end{align*}
 ```
-
-![](img/chainrule.png)
 
 - back propagation는 output layer부터 input layer방향으로 cost(W, b)를
   를 최소화 하기 위해 W, b를 갱신하는
@@ -2810,6 +2821,8 @@ def xavier_init(n_inputs, n_outputs, uniform=True):
 l2reg = 0.001 * tf.reduce_sum(tf.square(W))
 ```
 
+![](img/regularization.png)
+
 ```latex
 \begin{align*} 
 cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S_{i}, L_{i}) \\
@@ -2817,7 +2830,7 @@ cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S_{i}, L_{i}) \\
 \end{align*}
 ```
   
-![](img/regularization.png)
+
 
 - dropout이란 neural networks의 노드중 임의의 것들을 제거하여 overfitting
   현상을 해결하는 것이다. tensorflow로 간단히 구현할 수 있다.
