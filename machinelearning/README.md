@@ -591,11 +591,11 @@ L(w) + \frac{w^{2}}{2 \sigma_{w}^{2}} &= \sum_{i=1}^{N} (t_{i} - y(x_{i} | w))^{
 - linear regression의 hypothesis function은 일차 함수이기 때문에
   다음과 같이 표현 가능 하다.
 
+![](img/hypothesis.png)
+
 ```
 H(x) = Wx + b
 ```
-
-![](img/hypothesis.png)
 
 - 여러가지 H(x)가 존재할 수 있다. 여러가지 가설이 존재할 수 있다는
   말이다.  데이터값 y와 예측값 H(x)를 비교해서 흩어짐의 정도가 가장
@@ -604,12 +604,12 @@ H(x) = Wx + b
   b(bias)를 인자로 갖는 함수라고 할 수 있다. 곧 linear regression은
   W와 b를 어떻게 정해서 cost(W, b)의 값을 최소로하는 H(x)를 구하는
   행위이다.
-  
+
+![](img/cost.png)
+
 ```latex
 cost(W, b) = \frac{1}{m} \sum_{m}^{i=1} (H(x_{i})-y_{i})^{2}
 ```
-
-![](img/cost.png)
 
 - cost(W, b)를 최소로 하는 W, b를 찾기 위해 gradient descent
   algorithm을 사용한다. gradient descent algorithm은 여러가지 W, b를
