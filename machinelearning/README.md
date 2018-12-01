@@ -718,31 +718,27 @@ if __name__ == "__main__":
 - 앞서 언급한 것 처럼 x축을 W, y축을 cost(W)로 하는 그래프를 그려 보자.
 
 ```python
-# -*- coding: utf-8 -*-
-
 import tensorflow as tf
 import matplotlib.pyplot as plt
-tf.set_random_seed(777)
+tf.set_random_seed(111)
 
 def main():
-    # set node
-    X = [1, 2, 3]
-    Y = [1, 2, 3]
-    W = tf.placeholder(tf.float32)
-    hypothesis = W * X
-    cost = tf.reduce_mean(tf.square(hypothesis - Y))
-    
-    # launch node
-    sess = tf.Session()
-    W_history = []
-    cost_history = []
-    for i in range(-30, 50):
-        cur_W = i * 0.1 # learning rate
-        cur_cost = sess.run(cost, feed_dict={W: cur_W})
-        W_history.append(cur_W)
-        cost_history.append(cur_cost)
-    plt.plot(W_history, cost_history)
-    plt.show()
+    l_X = [1, 2, 3]
+    l_Y = [1, 2, 3]
+    t_W = tf.placeholder(tf.float32)
+    t_H = t_W * l_X
+    t_C = tf.reduce_mean(tf.square(t_H - l_Y))
+
+    with tf.Session() as sess:
+        l_W_history = []
+        l_C_history = []
+        for i in range(-30, 50):
+            f_W = i * 0.1
+            f_C = sess.run(t_C, feed_dict={t_W: f_W})
+            l_W_history.append(f_W)
+            l_C_history.append(f_C)
+        plt.plot(l_W_history, l_C_history)
+        plt.show()
 
 if __name__ == "__main__":
     main()
@@ -752,34 +748,31 @@ if __name__ == "__main__":
   W를 찾아 보자.
 
 ```python
-# -*- coding: utf-8 -*-
 import tensorflow as tf
-tf.set_random_seed(777)
+tf.set_random_seed(111)
 
 def main():
-    # set nodes
-    x_data = [1, 2, 3]
-    y_data = [1, 2, 3]
-    W = tf.Variable(tf.random_normal([1]), name='weight')
-    X = tf.placeholder(tf.float32)
-    Y = tf.placeholder(tf.float32)
-    hypothesis = W * X
-    cost = tf.reduce_mean(tf.square(hypothesis - Y))
-    
-    # set gradient descent applied W node
-    learning_rate = 0.1
-    gradient = tf.reduce_mean((W * X - Y) * X)
-    descent = W - learning_rate * gradient
-    update = W.assign(descent)
-    
-    # launch node
-    sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
-    for step in range(21):
-         sess.run(update, feed_dict = {X: x_data, Y: y_data})
-         print(step, sess.run(cost, feed_dict = {X: x_data, Y: y_data}), sess.run(W))
+    l_X = [1, 2, 3]
+    l_Y = [1, 2, 3]
+    t_W = tf.Variable(tf.random_normal([1]), name='W')
+    t_X = tf.placeholder(tf.float32)
+    t_Y = tf.placeholder(tf.float32)
+    t_H = t_W * t_X
+    t_C = tf.reduce_mean(tf.square(t_H - t_Y))
 
-if __name__ == "__main__":
+    f_learning_rate = 0.01
+    t_G = tf.reduce_mean((t_W * t_X - t_Y) * t_X)  # gradient
+    t_D = t_W - f_learning_rate * t_G              # descent
+    t_U = t_W.assign(t_D)                          # update
+
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for n_step in range(101):
+            _, f_C = sess.run([t_U, t_C], feed_dict={t_X: l_X, t_Y: l_Y})
+            l_W = sess.run(t_W)
+            print(f'{n_step:10d} {f_C:10.7f}', l_W)
+
+if __name__ == '__main__':
     main()
 ```
 
@@ -787,29 +780,30 @@ if __name__ == "__main__":
   쉽게 구현할 수 있다.
   
 ```python
-# -*- coding: utf-8 -*-
 import tensorflow as tf
-tf.set_random_seed(777)
+tf.set_random_seed(111)
 
 def main():
-    # set nodes
-    X = [1, 2, 3]
-    Y = [1, 2, 3]
-    W = tf.Variable(5.0)
-    hypothesis = W * X
-    cost = tf.reduce_mean(tf.square(hypothesis - Y))
-    
-    # set cost function node
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1)
-    train = optimizer.minimize(cost)
-    
-    # launch node
-    sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
-    for step in range(100):
-        print(step, sess.run(W))
-        sess.run(train)
-        
+    l_X = [1., 2., 3.]
+    l_Y = [1., 2., 3.]
+    t_W = tf.Variable(tf.random_normal([1]), name='W')
+    t_b = tf.Variable(tf.random_normal([1]), name='b')
+    t_X = tf.placeholder(tf.float32, shape=[None], name='X')
+    t_Y = tf.placeholder(tf.float32, shape=[None], name='Y')
+    t_H = t_X * t_W + t_b
+    t_C = tf.reduce_mean(tf.square(t_H - t_Y))
+    t_O = tf.train.GradientDescentOptimizer(learning_rate=0.01)
+    t_T = t_O.minimize(t_C)
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for n_step in range(101):
+            _, f_cost, l_W, l_b = sess.run([t_T, t_C, t_W, t_b], feed_dict={t_X: l_X, t_Y: l_Y})
+            if n_step % 20 == 0:
+                print(f"{n_step:10d} {f_cost:10.7f}", l_W, l_b)
+        print(sess.run(t_H, feed_dict={t_X: [5]}))
+        print(sess.run(t_H, feed_dict={t_X: [2.5]}))
+        print(sess.run(t_H, feed_dict={t_X: [1.5, 3.5]}))
+
 if __name__ == "__main__":
     main()
 ```
@@ -818,43 +812,39 @@ if __name__ == "__main__":
   결과는 동일하다. gvs를 보정하면 custom gradient descent값을 이용 할 수 있다.
   
 ```python
-# -*- coding: utf-8 -*-
-
+import tensorflow as tf
 
 def main():
-    import tensorflow as tf
-    tf.set_random_seed(777)
-
-    # set nodes
-    X = [1, 2, 3]
-    Y = [1, 2, 3]
-    W = tf.Variable(5.)
-    hypothesis = W * X
-    gradient = tf.reduce_mean((W * X - Y) * X) * 2
-    cost = tf.reduce_mean(tf.square(hypothesis - Y))
-
-    # set cost function node
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1)
-    train = optimizer.minimize(cost)
-    gvs = optimizer.compute_gradients(cost, [W])
-    apply_gradients = optimizer.apply_gradients(gvs)
-
-    # launch nodes
-    sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
-    for step in range(100):
-        print(step, sess.run([gradient, W, gvs]))
-        sess.run(apply_gradients)
+    tf.set_random_seed(111)
+    l_X = [1, 2, 3]
+    l_Y = [1, 2, 3]
+    t_X = tf.placeholder(tf.float32)
+    t_Y = tf.placeholder(tf.float32)
+    t_W = tf.Variable(tf.random_normal([1]), name='W')
+    t_b = tf.Variable(tf.random_normal([1]), name='b')
+    t_H = l_X * t_W + t_b
+    t_G = tf.reduce_mean((t_W * t_X - t_Y) * t_X) * 2
+    t_C = tf.reduce_mean(tf.square(t_H - l_Y))
+    t_O = tf.train.GradientDescentOptimizer(learning_rate=0.1)
+    t_T = t_O.minimize(t_C)
+    t_GVS = t_O.compute_gradients(t_C, [t_W])
+    t_apply_gradients = t_O.apply_gradients(t_GVS)
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for n_step in range(100):
+            l_fetch = sess.run([t_G, t_W, t_GVS], feed_dict={t_X: l_X, t_Y: l_Y})
+            print("{:7d}".format(n_step), l_fetch)
 
 if __name__ == "__main__":
     main()
 ```
 
-
 # Linear regression with multiple variables
 
 - 만약 feature가 x1, x2, x3와 같이 세가지 일때 hypothesis와
   cost(W, b)는 다음과 같다.
+
+![](img/multiple_linear_regression_hypothesis_cost.png)
   
 ```latex
 \begin{align*}
@@ -863,8 +853,6 @@ cost(W, b) &= \frac{1}{m} \sum_{m}^{i=1} (H(x_{1}, x_{2}, x_{3}) - y_{i})^{2} \\
 H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ... + w_{n}x_{n} + b \\
 \end{align*}
 ```
-
-![](img/multiple_linear_regression_hypothesis_cost.png)
 
 - feature가 여러개인 경우 matrix를 이용하여 계산 할 수 있다. matrix를
   이용한다는 것은 여러개의 데이터를 pararrel하게 처리할 수 있다는
@@ -880,63 +868,66 @@ H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ...
   해보자. 이때 X의 행렬의 형태는 5 x 3, W행렬의 형태는 3 x 2,
   H(X)행렬의 형태는 5 x 2가 된다.
 
-```
+![](img/multiple_linear_regression_multi.png)
+
+```latex
+\begin{align*}
 \begin{pmatrix}
   x_1&x_2&x_3
 \end{pmatrix}
+
 \cdot
 \begin{pmatrix}
   w_1\\
   w_2\\
   w_3\
-end{pmatrix}
-=
+\end{pmatrix}
+&=
 \begin{pmatrix}
   x_1w_1+x_2w_2+x_3w_3
 \end{pmatrix} \\
-H(X) = X W
+H(X) &= X W
+\end{align*}
 ```
 
 - feature가 여러개일때 linear regression을 구현해보자.
 
 ```python
-# -*- coding: utf-8 -*-
 import tensorflow as tf
-tf.set_random_seed(777)
+tf.set_random_seed(111)
 
 def main():
-    # set nodes
-    x1_data = [73., 93., 89., 96., 73.]
-    x2_data = [80., 88., 91., 98., 66.]
-    x3_data = [75., 93., 90., 100., 70.]
-    y_data = [152., 185., 180., 196., 142.]
-    x1 = tf.placeholder(tf.float32)
-    x2 = tf.placeholder(tf.float32)
-    x3 = tf.placeholder(tf.float32)
-    Y = tf.placeholder(tf.float32)
-    w1 = tf.Variable(tf.random_normal([1]), name='weight1')
-    w2 = tf.Variable(tf.random_normal([1]), name='weight2')
-    w3 = tf.Variable(tf.random_normal([1]), name='weight3')
-    b = tf.Variable(tf.random_normal([1]), name='bias')
-    hypothesis = x1 * w1 + x2 * w2 + x3 * w3 + b
-    print(hypothesis)
+    l_X1 = [73., 93., 89., 96., 73.]
+    l_X2 = [80., 88., 91., 98., 66.]
+    l_X3 = [75., 93., 90., 100., 70.]
+    l_Y  = [152., 185., 180., 196., 142.]
+    t_X1 = tf.placeholder(tf.float32)
+    t_X2 = tf.placeholder(tf.float32)
+    t_X3 = tf.placeholder(tf.float32)
+    t_Y  = tf.placeholder(tf.float32)
+    t_W1 = tf.Variable(tf.random_normal([1]), name='W1')
+    t_W2 = tf.Variable(tf.random_normal([1]), name='W2')
+    t_W3 = tf.Variable(tf.random_normal([1]), name='W3')
+    t_b  = tf.Variable(tf.random_normal([1]), name='b')
+    t_H  = t_W1 * t_X1 + t_W2 * t_X2 + t_W3 * t_X3 + t_b
+    print(t_H)
 
-    # set train node
-    cost = tf.reduce_mean(tf.square(hypothesis - Y))
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
-    train = optimizer.minimize(cost)
+    t_C  = tf.reduce_mean(tf.square(t_H - t_Y))
+    t_O  = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
+    t_T  = t_O.minimize(t_C)
 
-    # train nodes
-    sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
-    for step in range(2001):
-        cost_val, hy_val, _ = sess.run([cost, hypothesis, train],
-                                       feed_dict={x1: x1_data, x2: x2_data, x3: x3_data, Y: y_data})
-        if step % 10 == 0:
-            print(step, "Cost: ", cost_val, "\nPrediction:\n", hy_val)
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for n_step in range(2001):
+            f_C, f_H, _ = sess.run([t_C, t_H, t_T], 
+                            feed_dict={t_X1: l_X1,
+                            t_X2: l_X2,
+                            t_X3: l_X3,
+                            t_Y: l_Y})
+            if n_step % 10 == 0:
+                print(f'{n_step:10d} cost: {f_C:10.7f}', f_H)
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
 ```
 
@@ -946,41 +937,39 @@ if __name__ == "__main__":
 ```python
 # -*- coding: utf-8 -*-
 import tensorflow as tf
-tf.set_random_seed(777)
+tf.set_random_seed(111)
 
 def main():
     # set data
-
-    x_data = [[73., 80., 75.],
-              [93., 88., 93.],
-              [89., 91., 90.],
-              [96., 98., 100.],
-              [73., 66., 70.]]
-    y_data = [[152.],
-              [185.],
-              [180.],
-              [196.],
-              [142.]]
+    l_X = [[73., 80., 75.],
+           [93., 88., 93.],
+           [89., 91., 90.],
+           [96., 98., 100.],
+           [73., 66., 70.]]
+    l_Y = [[152.],
+           [185.],
+           [180.],
+           [196.],
+           [142.]]
     # set nodes
-    X = tf.placeholder(tf.float32, shape=[None, 3])
-    Y = tf.placeholder(tf.float32, shape=[None, 1])
-    W = tf.Variable(tf.random_normal([3, 1]), name='weight')
-    b = tf.Variable(tf.random_normal([1]), name='bias')
-    hypothesis = tf.matmul(X, W) + b
-    cost = tf.reduce_mean(tf.square(hypothesis - Y))
+    t_X = tf.placeholder(tf.float32, shape=[None, 3])
+    t_Y = tf.placeholder(tf.float32, shape=[None, 1])
+    t_W = tf.Variable(tf.random_normal([3, 1]), name='W')
+    t_b = tf.Variable(tf.random_normal([1]), name='B')
+    t_H = tf.matmul(t_X, t_W) + t_b
+    t_C = tf.reduce_mean(tf.square(t_H - t_Y))
 
     # set train node
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
-    train = optimizer.minimize(cost)
+    t_O = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
+    t_T = t_O.minimize(t_C)
 
     # train node
-    sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
-    for step in range(2001):
-        cost_val, hy_val, _ = sess.run(
-            [cost, hypothesis, train], feed_dict={X: x_data, Y: y_data})
-        if step % 10 == 0:
-            print(step, "Cost: ", cost_val, "\nPrediction:\n", hy_val)
+    with tf.Session() as sess:
+        sess.run(tf.global_variables_initializer())
+        for n_step in range(8001):
+            f_C, l_H, _ = sess.run([t_C, t_H, t_T], feed_dict={t_X: l_X, t_Y: l_Y})
+            if n_step % 10 == 0:
+                print(f'{n_step:10d} cost: {f_C:10.7f} pred: ', l_H)
 
 if __name__ == "__main__":
     main()
