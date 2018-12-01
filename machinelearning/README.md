@@ -76,6 +76,9 @@
   - [src](https://github.com/sjchoi86/dl_tutorials_10weeks)
 - [머신러닝 단기집중과정 @ google](https://developers.google.com/machine-learning/crash-course/prereqs-and-prework?hl=ko)
 - [cs229, cs230, cme102, cme106 cheatsheets](https://stanford.edu/~shervine/teaching.html)
+  - machine learning, deep learning, probability, statistics cheatsheets
+- [골빈해커의 3분 딥러닝](http://www.yes24.com/24/goods/49853812?scode=032&OzSrank=1)
+  - [src](https://github.com/golbin/TensorFlow-Tutorials)
 
 # Materials
 
