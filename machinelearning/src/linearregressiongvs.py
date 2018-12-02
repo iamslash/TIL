@@ -4,6 +4,8 @@ def main():
     tf.set_random_seed(111)
     l_X = [1, 2, 3]
     l_Y = [1, 2, 3]
+    t_X = tf.placeholder(tf.float32)
+    t_Y = tf.placeholder(tf.float32)
     t_W = tf.Variable(tf.random_normal([1]), name='W')
     t_b = tf.Variable(tf.random_normal([1]), name='b')
     t_H = l_X * t_W + t_b

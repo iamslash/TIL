@@ -1089,37 +1089,36 @@ if __name__ == "__main__":
 
 # Logistic Regression (binary classification)
 
-- y가 0혹은 1과 같이 두개만 존재하는 경우의 회귀분석이다. 예를 들어서
-  학생이 시험을 통과하기 위해 공부한 시간을 x1, 공부한 책의 숫자를 x2,
-  시험통과여부를 y라고 하자. 이때 y값의 후보는 0, 1이고 logistic
-  regression이라고 할 수 있다. 이 밖에도 스팸인지 햄인지 구별하는
+- `y` 가 `0` 혹은 `1` 과 같이 두개만 존재하는 경우의 회귀분석이다. 예를 들어서
+  학생이 시험을 통과하기 위해 공부한 시간을 `x1`, 공부한 책의 숫자를 `x2`,
+  시험통과여부를 `y` 라고 하자. 이때 `y` 값의 후보는 `0, 1` 이고 logistic
+  regression 이라고 할 수 있다. 이 밖에도 스팸인지 햄인지 구별하는
   경우, 페이스북 친구의 타임라인을 보여줄 것인지 말 것인지, 신용카드
   이용 패턴을 분석해서 내가 사용한 것인지 다른 사람이 도용해서
   사용한것인지, 주식투자에서 특정 종목에 대해서 투자를 할 것인지 말
   것인지 등등이 해당된다.
 
-- hypothesis function 를 linear regression처럼 일차 함수로 적용하면
+- hypothesis function 를 linear regression 처럼 일차 함수로 적용하면
   문제가 발생한다. 예를 들어서 앞서 언급한 학생의 시험 통과 결정의
-  예를 생각해보자.  training data가 x1이 1일때 y는 0, x1이 2일때 y는
-  1, x1이 3일때 y는 2이라고 하자. 이때 y가 0.5보다 크거나 같은 경우는
-  통과 0.5보다 작은 경우는 실패하고 할 수 있다. 이 경우 `H(x) = x -
-  1`이다. 하지만 training data에 x1이 4일때 y가 1이라는 데이터가
-  추가되었다고 해보자. 그렇다면 `H(x) = x/2 - 1`이 될테고 test data의
-  x1이 2일 경우 y는 0이므로 training data와 달리 보정된 y는 실패가
-  되어 버린다. 이 것은 accuracy가 떨어진다고 할 수 있다. 따라서
+  예를 생각해보자.  training data 가 `x1` 이 `1` 일때 `y` 는 `0`, `x1` 이 `2` 일때 `y` 는
+  `1` , `x1` 이 `3` 일때 `y` 는 `2` 이라고 하자. 이때 `y` 가 `0.5` 보다 크거나 같은 경우는
+  통과 `0.5` 보다 작은 경우는 실패하고 할 수 있다. 이 경우 `H(x) = x - 1`이다. 하지만 training data 에 `x1` 이 `4` 일때 `y` 가 `1` 이라는 데이터가
+  추가되었다고 해보자. 그렇다면 `H(x) = x/2 - 1` 이 될테고 test data 의
+  `x1` 이 `2` 일 경우 `y` 는 `0` 이므로 training data 와 달리 보정된 `y` 는 실패가
+  되어 버린다. 이 것은 accuracy 가 떨어진다고 할 수 있다. 따라서
   일차함수로 표현하면 문제가 될 수 있다.
 
 ![](img/logistic_regression_linear_hypothesis_1.png)
 
 ![](img/logistic_regression_linear_hypothesis_2.png)
 
-- logistic regression은 일차함수가 아닌 새로운 형태의 hypothesis
-  function이 필요하다. 이것은 일차함수 `WX+b`의 값을 인자로 받아 그
-  값이 0보다 작으면 0.5보다 작은 값인데 아래로 쏠린 값(0에 가까운
-  값)을, 0보다 크거나 같으면 0.5보다 큰 값인데 위로 쏠린 값(1에 가까운
+- logistic regression 은 일차함수가 아닌 새로운 형태의 hypothesis
+  function 이 필요하다. 이것은 일차함수 `WX+b` 의 값을 인자로 받아 그
+  값이 `0` 보다 작으면 `0.5` 보다 작은 값인데 아래로 쏠린 값(`0` 에 가까운
+  값)을, `0` 보다 크거나 같으면 `0.5` 보다 큰 값인데 위로 쏠린 값(`1` 에 가까운
   값)을 리턴하는 함수가 필요하다. 이러한 용도로 발견된 함수를 logistic
-  function혹은 sigmoid function이라고 한다.  그래서 logistic
-  regression이라는 말이 만들어 졌다.
+  function 혹은 sigmoid function 이라고 한다.  그래서 logistic
+  regression 이라는 말이 만들어 졌다.
 
 ![](img/sigmoid_equation.png)  
 
@@ -1129,13 +1128,13 @@ if __name__ == "__main__":
 g(z) = \frac{1}{1 + e^{-z}}
 ```
 
-- logistic regression의 sigmoid를 활용한 H(X), cost(W, b)는 다음과
-  같다. cost(W, b)의 경우 sigmoid를 활용한 H(X)를 사용할 경우 기울기가
-  0인 지점이 여러 곳에서 발생하기 때문에 새로운 형태의 cost(W, b)가
+- logistic regression 의 sigmoid 를 활용한 `H(X), cost(W, b)` 는 다음과
+  같다. `cost(W, b)` 의 경우 sigmoid 를 활용한 `H(X)` 를 사용할 경우 기울기가
+  `0` 인 지점이 여러 곳에서 발생하기 때문에 새로운 형태의 `cost(W, b)` 가
   필요하다.  즉 기울기가 0인 지점이 한 곳만 존재하는 수식이
-  필요하다. 그래서 다음과 같은 cost(W, b)가 발견되었다. 결국 linear
-  regression과 마찬가지로 gradient descent algorithm을 이용하여
-  cost(W, b)가 최소가 되는 W를 발견할 수 있다.
+  필요하다. 그래서 다음과 같은 `cost(W, b)` 가 발견되었다. 결국 linear
+  regression 과 마찬가지로 gradient descent algorithm 을 이용하여
+  `cost(W, b)` 가 최소가 되는 `W` 를 발견할 수 있다.
 
 ![](img/logistic_regression_hypothesis_cost.png)
 
@@ -1154,7 +1153,7 @@ W &:= W - \alpha \frac{\partial}{\partial W} cost(W, b) \\
 \end{align*}
 ```
 
-- 두개의 x와 한개의 y를 갖는 경우 logistic regression을 구현해보자.
+- 두개의 `x` 와 한개의 `y` 를 갖는 경우 logistic regression 을 구현해보자.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1163,44 +1162,41 @@ tf.set_random_seed(777)
 
 def main():
     # set train data
-    x_data = [[1, 2],
-              [2, 3],
-              [3, 1],
-              [4, 3],
-              [5, 3],
-              [6, 2]]
-    y_data = [[0],
-              [0],
-              [0],
-              [1],
-              [1],
-              [1]]
+    ll_X = [[1, 2],
+           [2, 3],
+           [3, 1],
+           [4, 3],
+           [5, 3],
+           [6, 2]]
+    ll_Y = [[0],
+           [0],
+           [0],
+           [1],
+           [1],
+           [1]]
     # set nodes
-    X = tf.placeholder(tf.float32, shape=[None, 2])
-    Y = tf.placeholder(tf.float32, shape=[None, 1])
-    W = tf.Variable(tf.random_normal([2, 1]), name='weight')
-    b = tf.Variable(tf.random_normal([1]), name='bias')
-    hypothesis = tf.sigmoid(tf.matmul(X, W) + b)
-    cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) *
-                           tf.log(1 - hypothesis))
-    train = tf.train.GradientDescentOptimizer(learning_rate=0.01).minimize(cost)
+    t_X = tf.placeholder(tf.float32, shape=[None, 2])
+    t_Y = tf.placeholder(tf.float32, shape=[None, 1])
+    t_W = tf.Variable(tf.random_normal([2, 1]), name='W')
+    t_b = tf.Variable(tf.random_normal([1]), name='b')
+    t_H = tf.sigmoid(tf.matmul(t_X, t_W) + t_b)
+    t_C = -tf.reduce_mean(t_Y * tf.log(t_H) + (1 - t_Y) * tf.log(1 - t_H))
+    t_T = tf.train.GradientDescentOptimizer(learning_rate=0.01).minimize(t_C)
 
     # accuracy computation
-    predicted = tf.cast(hypothesis > 0.5, dtype=tf.float32)
-    accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y),
-                                      dtype=tf.float32))
+    t_pred = tf.cast(t_H > 0.5, dtype=tf.float32)
+    t_accu = tf.reduce_mean(tf.cast(tf.equal(t_pred, t_Y), dtype=tf.float32))
     # launch nodes
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        for step in range(10001):
-            cost_val, _ = sess.run([cost, train], feed_dict={X: x_data, Y: y_data})
-            if step % 200 == 0:
-                print(step, cost_val)
+        for n_step in range(10001):
+            f_cost, _ = sess.run([t_C, t_T], feed_dict={t_X: ll_X, t_Y: ll_Y})
+            if n_step % 200 == 0:
+                print(f'{n_step:10d} cost: {f_cost:10.7f}')
 
         # Accuracy report
-        h, c, a = sess.run([hypothesis, predicted, accuracy],
-                       feed_dict={X: x_data, Y: y_data})
-        print("\nHypothesis: ", h, "\nCorrect (Y): ", c, "\nAccuracy: ", a)
+        l_h, l_c, l_a = sess.run([t_H, t_pred, t_accu], feed_dict={t_X: ll_X, t_Y: ll_Y})
+        print("\nHypothesis: ", l_h, "\nCorrect (Y): ", l_c, "\nAccuracy: ", l_a)
               
 if __name__ == "__main__":
     main()
@@ -1253,15 +1249,15 @@ if __name__ == "__main__":
 
 # Softmax Regression (multinomial classification)
 
-- 출력이 A, B, C와 같이 세개 이상인 경우의 회귀분석이다. 공부한 시간,
+- 출력이 `A, B, C` 와 같이 세개 이상인 경우의 회귀분석이다. 공부한 시간,
   출석 횟수를 입력으로 성적을 출력으로 갖는 경우를 생각해보자. 이때
-  성적은 A, B, C중 하나이다. 이것은 multinomial
-  classification문제이다. 입력 x1, x2에 대해 출력 Y가 A이냐 아니냐에
-  대한 logistic regression을 할 수 있다. 마찬 가지로 Y가 B, C인 경우
-  각각 logistic regression을 할 수 있다. 그렇다면 logistic
-  regression을 수행할 hypothesis function은 3가지이다. 이것은
+  성적은 `A, B, C` 중 하나이다. 이것은 multinomial
+  classification 문제이다. 입력 `x1, x2` 에 대해 출력 `Y` 가 `A` 이냐 아니냐에
+  대한 logistic regression 을 할 수 있다. 마찬 가지로 `Y` 가 `B, C` 인 경우
+  각각 logistic regression 을 할 수 있다. 그렇다면 logistic
+  regression 을 수행할 `hypothesis function` 은 3 가지이다. 이것은
   행렬연산을 활용하여 다음과 같이 한 번에 수행할 수 있다. 이와 같이
-  multinomial classification 은 binary classification을 여러개
+  multinomial classification 은 binary classification 을 여러개
   이용해서 해결한다.
 
 ![](img/softmax_regression_hypothesis_matrix.png)
@@ -1305,11 +1301,11 @@ H_{C}(X) \\
 ```
 
 
-- 출력값들이 각각 2.0, 1.0, 0.1이라고 하자. 그렇다면 이것은 A등급에 속한다.
-  하지만 출력값들의 형태를 각각의 등급에 대해 [0, 1]의 확률값으로 표현하고 싶다.
-  그래서 softmax function 이 발견되었다. softmax function을 이용하면
-  0.7, 0.2, 0.1의 형태로 출력값이 변경된다. 결과적으로 0.7의 확률로
-  A등급에 속한다는 의미이다. 확률이기 때문에 모두 더하면 1이다. 
+- 출력값들이 각각 `2.0, 1.0, 0.1` 이라고 하자. 그렇다면 이것은 `A` 등급에 속한다.
+  하지만 출력값들의 형태를 각각의 등급에 대해 `[0, 1]` 의 확률값으로 표현하고 싶다.
+  그래서 softmax function 이 발견되었다. softmax function 을 이용하면
+  `0.7, 0.2, 0.1` 의 형태로 출력값이 변경된다. 결과적으로 `0.7` 의 확률로
+  `A` 등급에 속한다는 의미이다. 확률이기 때문에 모두 더하면 `1` 이다. 
 
 ![](img/softmax_regression_softmax_function.png)
 
@@ -1317,17 +1313,16 @@ H_{C}(X) \\
 S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
 ```
 
-- 출력값들이 각각 0.7, 0.2, 0.1이라고 하자. 한번 더 처리하여 1.0, 0.,
-  0.과 같이 명쾌하게 A등급에 속한다고 결론내고 싶다. 그래서 one hot
-  encoding 이 발견되었다. 최종 출력값은 1, 0, 0 이다. one hot
-  encoding은 tf.arg_max를 사용했다.
+- 출력값들이 각각 `0.7, 0.2, 0.1` 이라고 하자. 한번 더 처리하여 `1.0, 0.,
+  0.` 과 같이 명쾌하게 A등급에 속한다고 결론내고 싶다. 그래서 one hot
+  encoding 이 발견되었다. 최종 출력값은 `1, 0, 0` 이다. one hot encoding 은 `tf.arg_max` 를 사용했다.
 
-- 0.7, 0.2, 0.1의 출력값은 `S(\bar{Y})`라고 표기하자. `\bar{Y}`는
-  예측값을 의미한다.  1, 0, 0과 같은 출력값은 L이라고 표기하자. 이것은
-  학습데이터의 값이다.  cost function을 제작하기 위해 인자로 예측값과
-  데이터값을 하고 예측값과 데이터값이 같으면 0에 가까운 값을 다르면
+- `0.7, 0.2, 0.1` 의 출력값은 `S(\bar{Y})`라고 표기하자. `\bar{Y}` 는
+  예측값을 의미한다.  `1, 0, 0` 과 같은 출력값은 `L` 이라고 표기하자. 이것은
+  학습데이터의 값이다.  cost function 을 제작하기 위해 인자로 예측값과
+  데이터값을 하고 예측값과 데이터값이 같으면 `0` 에 가까운 값을 다르면
   무한대의 값을 리턴하는 함수가 필요하다. 그래서 cross-entropy
-  function이 발견되었고 다음과 같이 정의가 가능하다.
+  function 이 발견되었고 다음과 같이 정의가 가능하다.
 
 ![](img/softmax_regression_cross.png)
 
@@ -1335,10 +1330,10 @@ S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
 D(S, L) = -\sum_{j=1}^{k}L_{j}\log(S_{j})
 ```
 
-- cross entropy function이 제대로 동작하는지 예를 들어서
-  살펴보자. 앞서 언급한 cross entropy function은 다음과 같이 전개 할
-  수 있고 -log(x)함수의 모양을 눈여겨 볼 필요가 있다. `L_{j}`는
-  학습데이터값이고 `\bar{y}_{j}`는 예측값이다.
+- cross entropy function 이 제대로 동작하는지 예를 들어서
+  살펴보자. 앞서 언급한 cross entropy function 은 다음과 같이 전개 할
+  수 있고 `-log(x)` 함수의 모양을 눈여겨 볼 필요가 있다. `L_{j}` 는
+  학습데이터값이고 `\bar{y}_{j}` 는 예측값이다.
 
 ![](img/softmax_regression_cross_ex.png)
 
@@ -1350,19 +1345,18 @@ D(S, L) &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
 \end{align*}
 ```
 
-- `L_{j}`가 [0, 1], `\bar{y}_{j}`가 [0, 1]이라고 해보자.  cost는 `0 x
-  ∞ + 1 x 0`가 되어 0이 된다. `\bar{y}_{j}`가 [1, 0]이라고 해보자.
+- `L_{j}` 가 `[0, 1]`, `\bar{y}_{j}` 가 `[0, 1]` 이라고 해보자.  `cost` 는 `0 x ∞ + 1 x 0`가 되어 `0` 이 된다. `\bar{y}_{j}` 가 `[1, 0]` 이라고 해보자.
   cost는 `0 x 0 + 1 x ∞`가 되어 무한대가 된다.  앞서 언급한 cross
-  entropy function의 전개식과 -log(x)를 이용하여 보면 데이터값과
-  예측값이 동일할때 cost function의 리턴값이 0에 가깝고 그렇지 않으면
-  무한대에 가까워진다. 이것으로 cross entropy function이 제대로
+  entropy function 의 전개식과 -log(x)를 이용하여 보면 데이터값과
+  예측값이 동일할때 cost function 의 리턴값이 `0` 에 가깝고 그렇지 않으면
+  무한대에 가까워진다. 이것으로 cross entropy function 이 제대로
   동작한다고 말 할 수 있다.
 
 ![](img/minus_log_graph.png)
 
-- logistic regression의 logistic cost function과 softmax regression의
-  cross entropy function은 사실상 같다. H(x), S는 예측 값을 의미하고
-  y, L은 데이터 값을 의미한다.
+- logistic regression 의 logistic cost function 과 softmax regression 의
+  cross entropy function 은 사실상 같다. `H(x), S` 는 예측 값을 의미하고
+  `y, L` 은 데이터 값을 의미한다.
 
 ![](img/softmax_regression_vs_logistic_regression_cost.png)
 
@@ -1373,11 +1367,11 @@ D(S, L)    &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
 \end{align*}
 ```
 
-- softmax regression의 cost function은 다음과 같다.  실제 그래프로
-  그려보면 logistic regression의 cost function처럼 아래가 볼록한
+- softmax regression 의 cost function 은 다음과 같다.  실제 그래프로
+  그려보면 logistic regression 의 cost function 처럼 아래가 볼록한
   모양이다. 기울기가 0인 지점은 한 곳이다. gradient descent
-  algorithm을 이용해서 cost function이 최소인 W, b를 찾아 낼 수
-  있다. grade descent algorithm을 적용하기 위한 미분 방정식은 복잡해서
+  algorithm 을 이용해서 cost function 이 최소인 `W, b` 를 찾아 낼 수
+  있다. grade descent algorithm 을 적용하기 위한 미분 방정식은 복잡해서
   생략한다.
 
 ![](img/softmax_regression_cost.png)
@@ -1391,10 +1385,8 @@ cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S, L) \\
 \end{align*}
 ```
 
-
-
-- x가 4개이고 y가 3개인 데이터를 이용하여 softmax regression을 구현해 보자.
-  one hot encoding을 위해 tf.arg_max를 사용했다.
+- x 가 4 개이고 y 가 3 개인 데이터를 이용하여 softmax regression 을 구현해 보자.
+  one hot encoding 을 위해 `tf.arg_max` 를 사용했다.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1403,7 +1395,7 @@ tf.set_random_seed(777)  # for reproducibility
 
 def main():
     # set data
-    x_data = [[1, 2, 1, 1],
+    ll_X = [[1, 2, 1, 1],
               [2, 1, 3, 2],
               [3, 1, 3, 4],
               [4, 1, 5, 5],
@@ -1411,7 +1403,7 @@ def main():
               [1, 2, 5, 6],
               [1, 6, 6, 6],
               [1, 7, 7, 7]]
-    y_data = [[0, 0, 1],
+    ll_Y = [[0, 0, 1],
               [0, 0, 1],
               [0, 0, 1],
               [0, 1, 0],
@@ -1421,47 +1413,48 @@ def main():
               [1, 0, 0]]
 
     # set nodes
-    X = tf.placeholder("float", [None, 4])
-    Y = tf.placeholder("float", [None, 3])
-    nb_classes = 3
-    W = tf.Variable(tf.random_normal([4, nb_classes]), name='weight')
-    b = tf.Variable(tf.random_normal([nb_classes]), name='bias')
+    t_X = tf.placeholder("float", [None, 4])
+    t_Y = tf.placeholder("float", [None, 3])
+    n_classes = 3
+    t_W = tf.Variable(tf.random_normal([4, n_classes]), name='W')
+    t_b = tf.Variable(tf.random_normal([n_classes]), name='b')
     # tf.nn.softmax computes softmax activations
     # softmax = exp(logits) / reduce_sum(exp(logits), dim)
-    hypothesis = tf.nn.softmax(tf.matmul(X, W) + b)
-    cost = tf.reduce_mean(-tf.reduce_sum(Y * tf.log(hypothesis), axis=1))
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1).minimize(cost)
+    t_H = tf.nn.softmax(tf.matmul(t_X, t_W) + t_b)
+    t_C = tf.reduce_mean(-tf.reduce_sum(t_Y * tf.log(t_H), axis=1))
+    t_T = tf.train.GradientDescentOptimizer(learning_rate=0.1).minimize(t_C)
 
     # launch nodes
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
 
-        for step in range(2001):
-            sess.run(optimizer, feed_dict={X: x_data, Y: y_data})
-            if step % 200 == 0:
-                print(step, sess.run(cost, feed_dict={X: x_data, Y: y_data}))
+        for n_step in range(2001):
+            sess.run(t_T, feed_dict={t_X: ll_X, t_Y: ll_Y})
+            if n_step % 200 == 0:
+                l_cost = sess.run(t_C, feed_dict={t_X: ll_X, t_Y: ll_Y})
+                print(f'{n_step:10d}', l_cost)
 
         print('--------------')
 
         # Testing & One-hot encoding
-        a = sess.run(hypothesis, feed_dict={X: [[1, 11, 7, 9]]})
-        print(a, sess.run(tf.arg_max(a, 1)))
+        l_a = sess.run(t_H, feed_dict={t_X: [[1, 11, 7, 9]]})
+        print(l_a, sess.run(tf.argmax(l_a, 1)))
 
         print('--------------')
 
-        b = sess.run(hypothesis, feed_dict={X: [[1, 3, 4, 3]]})
-        print(b, sess.run(tf.arg_max(b, 1)))
+        l_b = sess.run(t_H, feed_dict={t_X: [[1, 3, 4, 3]]})
+        print(l_b, sess.run(tf.argmax(l_b, 1)))
 
         print('--------------')
 
-        c = sess.run(hypothesis, feed_dict={X: [[1, 1, 0, 1]]})
-        print(c, sess.run(tf.arg_max(c, 1)))
+        l_c = sess.run(t_H, feed_dict={t_X: [[1, 1, 0, 1]]})
+        print(l_c, sess.run(tf.argmax(l_c, 1)))
 
         print('--------------')
 
-        all = sess.run(hypothesis, feed_dict={
-            X: [[1, 11, 7, 9], [1, 3, 4, 3], [1, 1, 0, 1]]})
-        print(all, sess.run(tf.arg_max(all, 1)))
+        l_all = sess.run(t_H, feed_dict={
+            t_X: [[1, 11, 7, 9], [1, 3, 4, 3], [1, 1, 0, 1]]})
+        print(l_all, sess.run(tf.argmax(l_all, 1)))
     
 if __name__ == "__main__":
     main()
@@ -1478,52 +1471,50 @@ tf.set_random_seed(777)  # for reproducibility
 
 def main():
     # set data
-    xy = np.loadtxt('data-04-zoo.csv', delimiter=',', dtype=np.float32)
-    x_data = xy[:, 0:-1]
-    y_data = xy[:, [-1]]
+    ll_XY = np.loadtxt('data-04-zoo.csv', delimiter=',', dtype=np.float32)
+    ll_X  = ll_XY[:, 0:-1]
+    ll_Y  = ll_XY[:, [-1]]
 
     # set nodes
-    nb_classes = 7  # 0 ~ 6
+    n_classes = 7  # 0 ~ 6
 
-    X = tf.placeholder(tf.float32, [None, 16])
-    Y = tf.placeholder(tf.int32, [None, 1])  # 0 ~ 6
-    Y_one_hot = tf.one_hot(Y, nb_classes)  # one hot
-    print("one_hot", Y_one_hot)
-    Y_one_hot = tf.reshape(Y_one_hot, [-1, nb_classes])
-    print("reshape", Y_one_hot)
-    W = tf.Variable(tf.random_normal([16, nb_classes]), name='weight')
-    b = tf.Variable(tf.random_normal([nb_classes]), name='bias')
+    t_X = tf.placeholder(tf.float32, [None, 16])
+    t_Y = tf.placeholder(tf.int32, [None, 1])  # 0 ~ 6
+    t_Y_one_hot = tf.one_hot(t_Y, n_classes)  # one hot
+    #print("one_hot", t_Y_one_hot)
+    t_Y_one_hot = tf.reshape(t_Y_one_hot, [-1, n_classes])
+    #print("reshape", Y_one_hot)
+    t_W = tf.Variable(tf.random_normal([16, n_classes]), name='W')
+    t_b = tf.Variable(tf.random_normal([n_classes]), name='b')
 
     # tf.nn.softmax computes softmax activations
     # softmax = exp(logits) / reduce_sum(exp(logits), dim)
-    logits = tf.matmul(X, W) + b
-    hypothesis = tf.nn.softmax(logits)
+    t_logits = tf.matmul(t_X, t_W) + t_b
+    t_H = tf.nn.softmax(t_logits)
     # Cross entropy cost/loss
-    cost_i = tf.nn.softmax_cross_entropy_with_logits(logits=logits,
-                                                     labels=Y_one_hot)
-    cost = tf.reduce_mean(cost_i)
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1).minimize(cost)
-    prediction = tf.argmax(hypothesis, 1)
-    correct_prediction = tf.equal(prediction, tf.argmax(Y_one_hot, 1))
-    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+    t_cost_i = tf.nn.softmax_cross_entropy_with_logits(logits=t_logits, labels=t_Y_one_hot)
+    t_cost   = tf.reduce_mean(t_cost_i)
+    t_T = tf.train.GradientDescentOptimizer(learning_rate=0.1).minimize(t_cost)
+    t_pred = tf.argmax(t_H, 1)
+    t_correct_prediction = tf.equal(t_pred, tf.argmax(t_Y_one_hot, 1))
+    t_accuracy = tf.reduce_mean(tf.cast(t_correct_prediction, tf.float32))
 
     # launch nodes
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
 
-        for step in range(2000):
-            sess.run(optimizer, feed_dict={X: x_data, Y: y_data})
-            if step % 100 == 0:
-                loss, acc = sess.run([cost, accuracy], feed_dict={
-                    X: x_data, Y: y_data})
-                print("Step: {:5}\tLoss: {:.3f}\tAcc: {:.2%}".format(
-                    step, loss, acc))
+        for n_step in range(2000):
+            sess.run(t_T, feed_dict={t_X: ll_X, t_Y: ll_Y})
+            if n_step % 100 == 0:
+                f_cost, f_accu = sess.run([t_cost, t_accuracy], feed_dict={
+                    t_X: ll_X, t_Y: ll_Y})
+                print(f'{n_step:10d} cost: {f_cost:10.7f} accu: {f_accu:.2%}')
 
         # Let's see if we can predict
-        pred = sess.run(prediction, feed_dict={X: x_data})
+        l_pred = sess.run(t_pred, feed_dict={t_X: ll_X})
         # y_data: (N,1) = flatten => (N, ) matches pred.shape
-        for p, y in zip(pred, y_data.flatten()):
-            print("[{}] Prediction: {} True Y: {}".format(p == int(y), p, int(y)))
+        for p, y in zip(l_pred, ll_Y.flatten()):
+            print(f'result: {p==int(y)} H(X): {p} Y: {int(y)}')
     
 if __name__ == "__main__":
     main()

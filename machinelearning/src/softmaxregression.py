@@ -4,7 +4,7 @@ tf.set_random_seed(777)  # for reproducibility
 
 def main():
     # set data
-    x_data = [[1, 2, 1, 1],
+    ll_X = [[1, 2, 1, 1],
               [2, 1, 3, 2],
               [3, 1, 3, 4],
               [4, 1, 5, 5],
@@ -12,7 +12,7 @@ def main():
               [1, 2, 5, 6],
               [1, 6, 6, 6],
               [1, 7, 7, 7]]
-    y_data = [[0, 0, 1],
+    ll_Y = [[0, 0, 1],
               [0, 0, 1],
               [0, 0, 1],
               [0, 1, 0],
@@ -22,47 +22,48 @@ def main():
               [1, 0, 0]]
 
     # set nodes
-    X = tf.placeholder("float", [None, 4])
-    Y = tf.placeholder("float", [None, 3])
-    nb_classes = 3
-    W = tf.Variable(tf.random_normal([4, nb_classes]), name='weight')
-    b = tf.Variable(tf.random_normal([nb_classes]), name='bias')
+    t_X = tf.placeholder("float", [None, 4])
+    t_Y = tf.placeholder("float", [None, 3])
+    n_classes = 3
+    t_W = tf.Variable(tf.random_normal([4, n_classes]), name='W')
+    t_b = tf.Variable(tf.random_normal([n_classes]), name='b')
     # tf.nn.softmax computes softmax activations
     # softmax = exp(logits) / reduce_sum(exp(logits), dim)
-    hypothesis = tf.nn.softmax(tf.matmul(X, W) + b)
-    cost = tf.reduce_mean(-tf.reduce_sum(Y * tf.log(hypothesis), axis=1))
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=0.1).minimize(cost)
+    t_H = tf.nn.softmax(tf.matmul(t_X, t_W) + t_b)
+    t_C = tf.reduce_mean(-tf.reduce_sum(t_Y * tf.log(t_H), axis=1))
+    t_T = tf.train.GradientDescentOptimizer(learning_rate=0.1).minimize(t_C)
 
     # launch nodes
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
 
-        for step in range(2001):
-            sess.run(optimizer, feed_dict={X: x_data, Y: y_data})
-            if step % 200 == 0:
-                print(step, sess.run(cost, feed_dict={X: x_data, Y: y_data}))
+        for n_step in range(2001):
+            sess.run(t_T, feed_dict={t_X: ll_X, t_Y: ll_Y})
+            if n_step % 200 == 0:
+                l_cost = sess.run(t_C, feed_dict={t_X: ll_X, t_Y: ll_Y})
+                print(f'{n_step:10d}', l_cost)
 
         print('--------------')
 
         # Testing & One-hot encoding
-        a = sess.run(hypothesis, feed_dict={X: [[1, 11, 7, 9]]})
-        print(a, sess.run(tf.arg_max(a, 1)))
+        l_a = sess.run(t_H, feed_dict={t_X: [[1, 11, 7, 9]]})
+        print(l_a, sess.run(tf.argmax(l_a, 1)))
 
         print('--------------')
 
-        b = sess.run(hypothesis, feed_dict={X: [[1, 3, 4, 3]]})
-        print(b, sess.run(tf.arg_max(b, 1)))
+        l_b = sess.run(t_H, feed_dict={t_X: [[1, 3, 4, 3]]})
+        print(l_b, sess.run(tf.argmax(l_b, 1)))
 
         print('--------------')
 
-        c = sess.run(hypothesis, feed_dict={X: [[1, 1, 0, 1]]})
-        print(c, sess.run(tf.arg_max(c, 1)))
+        l_c = sess.run(t_H, feed_dict={t_X: [[1, 1, 0, 1]]})
+        print(l_c, sess.run(tf.argmax(l_c, 1)))
 
         print('--------------')
 
-        all = sess.run(hypothesis, feed_dict={
-            X: [[1, 11, 7, 9], [1, 3, 4, 3], [1, 1, 0, 1]]})
-        print(all, sess.run(tf.arg_max(all, 1)))
+        l_all = sess.run(t_H, feed_dict={
+            t_X: [[1, 11, 7, 9], [1, 3, 4, 3], [1, 1, 0, 1]]})
+        print(l_all, sess.run(tf.argmax(l_all, 1)))
     
 if __name__ == "__main__":
     main()
