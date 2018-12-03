@@ -9,70 +9,63 @@ def main():
     mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
     # set variables
-    learning_rate = 1e-3
-    training_epocs = 15
-    batch_size = 100
+    f_learning_rate = 1e-3
+    n_epocs = 15
+    n_batch_size = 100
 
     # set place holders
-    X = tf.placeholder(tf.float32, [None, 784])
-    Y = tf.placeholder(tf.float32, [None, 10])
+    t_X = tf.placeholder(tf.float32, [None, 784])
+    t_Y = tf.placeholder(tf.float32, [None, 10])
 
     # set nodes
-    W1 = tf.get_variable("W1", shape=[784, 512],
-                         initializer=tf.contrib.layers.xavier_initializer())
-    b1 = tf.Variable(tf.random_normal([512]))
-    L1 = tf.nn.relu(tf.matmul(X, W1) + b1)
+    t_W1 = tf.get_variable("W1", shape=[784, 256], initializer=tf.contrib.layers.xavier_initializer())
+    t_b1 = tf.Variable(tf.random_normal([256]))
+    t_L1 = tf.nn.relu(tf.matmul(t_X, t_W1) + t_b1)
 
-    W2 = tf.get_variable("W2", shape=[512, 512],
-                         initializer=tf.contrib.layers.xavier_initializer())
-    b2 = tf.Variable(tf.random_normal([512]))
-    L2 = tf.nn.relu(tf.matmul(L1, W2) + b2)
+    t_W2 = tf.get_variable("W2", shape=[256, 256], initializer=tf.contrib.layers.xavier_initializer())
+    t_b2 = tf.Variable(tf.random_normal([256]))
+    t_L2 = tf.nn.relu(tf.matmul(t_L1, t_W2) + t_b2)
 
-    W3 = tf.get_variable("W3", shape=[512, 512],
-                         initializer=tf.contrib.layers.xavier_initializer())
-    b3 = tf.Variable(tf.random_normal([512]))
-    L3 = tf.nn.relu(tf.matmul(L2, W3) + b3)
+    t_W3 = tf.get_variable("W3", shape=[256, 256], initializer=tf.contrib.layers.xavier_initializer())
+    t_b3 = tf.Variable(tf.random_normal([256]))
+    t_L3 = tf.nn.relu(tf.matmul(t_L2, t_W3) + t_b3)
 
-    W4 = tf.get_variable("W4", shape=[512, 512],
-                         initializer=tf.contrib.layers.xavier_initializer())
-    b4 = tf.Variable(tf.random_normal([512]))
-    L4 = tf.nn.relu(tf.matmul(L3, W4) + b4)
+    t_W4 = tf.get_variable("W4", shape=[256, 256], initializer=tf.contrib.layers.xavier_initializer())
+    t_b4 = tf.Variable(tf.random_normal([256]))
+    t_L4 = tf.nn.relu(tf.matmul(t_L3, t_W4) + t_b4)
 
-    W5 = tf.get_variable("W5", shape=[512, 10],
-                         initializer=tf.contrib.layers.xavier_initializer())
-    b5 = tf.Variable(tf.random_normal([10]))
-    hypothesis = tf.matmul(L4, W5) + b5
+    t_W5 = tf.get_variable("W5", shape=[256, 10], initializer=tf.contrib.layers.xavier_initializer())
+    t_b5 = tf.Variable(tf.random_normal([10]))
+    t_H  = tf.matmul(t_L4, t_W5) + t_b5    
 
     # set train node
-    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
-        logits=hypothesis, labels=Y))
-    train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+    t_C = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=t_H, labels=t_Y))
+    t_T = tf.train.AdamOptimizer(learning_rate=f_learning_rate).minimize(t_C)
 
     # launch nodes
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        for epoch in range(training_epocs):
-            avg_cost = 0
-            total_batch = int(mnist.train.num_examples / batch_size)
-            for i in range(total_batch):
-                batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-                c, _ = sess.run([cost, train], feed_dict={X: batch_xs, Y: batch_ys})
-                avg_cost += c / total_batch
+        for n_epoch in range(n_epocs):
+            f_avg_cost = 0
+            n_total_batch = int(mnist.train.num_examples / n_batch_size)
+            for i in range(n_total_batch):
+                l_X, l_Y = mnist.train.next_batch(n_batch_size)
+                f_cost, _ = sess.run([t_C, t_T], feed_dict={t_X: l_X, t_Y: l_Y})
+                f_avg_cost += f_cost / n_total_batch
 
-            print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))
+            print('Epoch:', '%04d' % (n_epoch + 1), 'cost =', '{:.9f}'.format(f_avg_cost))
         print('Learning Finished')
 
         # check accuracy
-        correct_prediction = tf.equal(tf.argmax(hypothesis, 1), tf.argmax(Y, 1))
-        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-        print('Accuracy:', sess.run(accuracy, feed_dict={
-            X: mnist.test.images, Y: mnist.test.labels}))
+        t_pred = tf.equal(tf.argmax(t_H, 1), tf.argmax(t_Y, 1))
+        t_accu = tf.reduce_mean(tf.cast(t_pred, tf.float32))
+        print('Accuracy:', sess.run(t_accu, feed_dict={
+            t_X: mnist.test.images, t_Y: mnist.test.labels}))
 
         # Get one and predict
-        r = random.randint(0, mnist.test.num_examples - 1)
-        print("Label: ", sess.run(tf.argmax(mnist.test.labels[r:r + 1], 1)))
-        print("Prediction: ", sess.run(
-            tf.argmax(hypothesis, 1), feed_dict={X: mnist.test.images[r:r + 1]}))
+        n_r = random.randint(0, mnist.test.num_examples - 1)
+        print("Label: ", sess.run(tf.argmax(mnist.test.labels[n_r:n_r + 1], 1)))
+        print("Prediction: ", sess.run(tf.argmax(t_H, 1), feed_dict={t_X: mnist.test.images[n_r:n_r + 1]}))
 
 
 if __name__ == "__main__":
