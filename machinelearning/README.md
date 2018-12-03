@@ -1318,9 +1318,9 @@ S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
   encoding 이 발견되었다. 최종 출력값은 `1, 0, 0` 이다. one hot encoding 은 `tf.arg_max` 를 사용했다.
 
 - `0.7, 0.2, 0.1` 의 출력값은 `S(\bar{Y})`라고 표기하자. `\bar{Y}` 는
-  예측값을 의미한다.  `1, 0, 0` 과 같은 출력값은 `L` 이라고 표기하자. 이것은
-  학습데이터의 값이다.  cost function 을 제작하기 위해 인자로 예측값과
-  데이터값을 하고 예측값과 데이터값이 같으면 `0` 에 가까운 값을 다르면
+  예측값을 의미한다. `1, 0, 0` 과 같은 출력값은 `L` 이라고 표기하자. 이것은
+  학습데이터의 값이다. cost function 을 제작하기 위해 예측값과
+  데이터값을 인자로 하고 예측값과 데이터값이 같으면 `0` 에 가까운 값을 다르면
   무한대의 값을 리턴하는 함수가 필요하다. 그래서 cross-entropy
   function 이 발견되었고 다음과 같이 정의가 가능하다.
 
@@ -1347,7 +1347,7 @@ D(S, L) &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
 
 - `L_{j}` 가 `[0, 1]`, `\bar{y}_{j}` 가 `[0, 1]` 이라고 해보자.  `cost` 는 `0 x ∞ + 1 x 0`가 되어 `0` 이 된다. `\bar{y}_{j}` 가 `[1, 0]` 이라고 해보자.
   cost는 `0 x 0 + 1 x ∞`가 되어 무한대가 된다.  앞서 언급한 cross
-  entropy function 의 전개식과 -log(x)를 이용하여 보면 데이터값과
+  entropy function 의 전개식과 `-log(x)` 를 이용하면 데이터값과
   예측값이 동일할때 cost function 의 리턴값이 `0` 에 가깝고 그렇지 않으면
   무한대에 가까워진다. 이것으로 cross entropy function 이 제대로
   동작한다고 말 할 수 있다.
@@ -1369,7 +1369,7 @@ D(S, L)    &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
 
 - softmax regression 의 cost function 은 다음과 같다.  실제 그래프로
   그려보면 logistic regression 의 cost function 처럼 아래가 볼록한
-  모양이다. 기울기가 0인 지점은 한 곳이다. gradient descent
+  모양이다. 기울기가 `0` 인 지점은 한 곳이다. gradient descent
   algorithm 을 이용해서 cost function 이 최소인 `W, b` 를 찾아 낼 수
   있다. grade descent algorithm 을 적용하기 위한 미분 방정식은 복잡해서
   생략한다.
@@ -1396,21 +1396,21 @@ tf.set_random_seed(777)  # for reproducibility
 def main():
     # set data
     ll_X = [[1, 2, 1, 1],
-              [2, 1, 3, 2],
-              [3, 1, 3, 4],
-              [4, 1, 5, 5],
-              [1, 7, 5, 5],
-              [1, 2, 5, 6],
-              [1, 6, 6, 6],
-              [1, 7, 7, 7]]
+            [2, 1, 3, 2],
+            [3, 1, 3, 4],
+            [4, 1, 5, 5],
+            [1, 7, 5, 5],
+            [1, 2, 5, 6],
+            [1, 6, 6, 6],
+            [1, 7, 7, 7]]
     ll_Y = [[0, 0, 1],
-              [0, 0, 1],
-              [0, 0, 1],
-              [0, 1, 0],
-              [0, 1, 0],
-              [0, 1, 0],
-              [1, 0, 0],
-              [1, 0, 0]]
+            [0, 0, 1],
+            [0, 0, 1],
+            [0, 1, 0],
+            [0, 1, 0],
+            [0, 1, 0],
+            [1, 0, 0],
+            [1, 0, 0]]
 
     # set nodes
     t_X = tf.placeholder("float", [None, 4])
@@ -1523,19 +1523,18 @@ if __name__ == "__main__":
 # Machine Learning Tips
 
 - ML으로 문제를 해결할때 다음과 같은 사항들을 주의 깊게 고민할 필요가 있다.
-  - learning rate를 잘 설정해서 cost(W, b)를 최소화 하는 W, b를 빨리 찾기
-  - data를 잘 전처리 해서 cost(W, b)를 최소화 하는 W, b를 빨리 찾기
-  - overfitting을 잘 해결해서 cost(W, b)를 최소화 하는 W, b를 빨리 찾기
+  - learning rate 를 잘 설정해서 `cost(W, b)` 를 최소화 하는 `W, b` 를 빨리 찾기
+  - data 를 잘 전처리 해서 `cost(W, b)` 를 최소화 하는 `W, b` 를 빨리 찾기
+  - overfitting 을 잘 해결해서 `cost(W, b)` 를 최소화 하는 `W, b` 를 빨리 찾기
 
-- learning rate을 너무 크게 설정하면 어떠한 현상이 발생하는지
-  생각해보자.  cost(W, b)는 아래로 볼록한 모양의 그래프이다. gradient
-  descent algorithm을 위한 step값은 아래 방정식의 우변의 두번째
-  항이다.  새로운 W는 현재의 W에 step값을 빼서 구한다. step은 learning
-  rate와 cost(W, b)를 미분한 값을 곱한 것이다. learning rate이 너무
-  크면 step값 역시 너무 커질 테고 새로운 W를 현재의 W와 차이가 커지게
-  된다.  cost(W, b)를 미분한 값은 0보다 큰 값으로 수렴할 수 있고
-  cost(W, b)를 최소화 하는 W, b는 찾기 어려워 질 것이다. 이러한 현상을
-  overshooting이라고 한다.
+- learning rate 을 너무 크게 설정하면 어떠한 현상이 발생하는지
+  생각해보자.  `cost(W, b)` 는 아래로 볼록한 모양의 그래프이다. gradient
+  descent algorithm 을 위한 `step` 값은 아래 방정식의 우변의 두번째
+  항이다.  새로운 `W` 는 현재의 `W` 에 `step` 값을 빼서 구한다. `step` 은 `learning rate` 와 `cost(W, b)` 를 미분한 값을 곱한 것이다. `learning rate` 이 너무
+  크면 `step` 값 역시 너무 커질 테고 새로운 `W` 를 현재의 `W` 와 차이가 커지게
+  된다. `cost(W, b)` 를 미분한 값은 `0` 보다 큰 값으로 수렴할 수 있고
+  `cost(W, b)` 를 최소화 하는 `W, b` 는 찾기 어려워 질 것이다. 이러한 현상을
+  `overshooting` 이라고 한다.
 
 ![](img/gradient_descent_algorithm.png)
 
@@ -1543,20 +1542,20 @@ if __name__ == "__main__":
 W := W - \alpha \frac{\partial}{\partial W} cost(W, b) 
 ```
 
-- learning rate이 너무 작게 설정하면 어떻게 될까? 앞서 언급한 상황에서
-  step값은 매우 작아질테고 새로운 W와 현재의 W는 거의 차이가 없을 것이다.
-  따라서 cost(W, b)를 최소화 하는 W, b를 찾기 위해 매우 많은 반복을
-  수행해야 할 것이다. 즉 시간이 너무 많이 걸린다. 현실 세계에서 0.01은
+- learning rate 이 너무 작게 설정하면 어떻게 될까? 앞서 언급한 상황에서
+  `step` 값은 매우 작아질테고 새로운 `W` 와 현재의 `W` 는 거의 차이가 없을 것이다.
+  따라서 `cost(W, b)` 를 최소화 하는 `W, b` 를 찾기 위해 매우 많은 반복을
+  수행해야 할 것이다. 즉 시간이 너무 많이 걸린다. 현실 세계에서 `0.01` 은
   적당하다고 한다. 
 
-- feature가 x1, x2로 두개인 경우를 생각해 보자. x1은 [1, 2, 4, 6,
-  9]이고 x2는 [9000, -5000, -2000, 8000, 9000]이라고
-  가정하자. feature가 두개이기 때문에 w1, w2가 존재한다. x1의 각
-  값들의 차이와 x2의 각 값들의 차이는 스케일이 다르다. feature들의
-  스케일이 차이가 나면 cost(W, b)를 최소화 하는 W, b를 찾는데 시간이
-  오래걸린다.  feature들의 스케일이 비슷하게 보정(normalize)할 필요가
-  있다. x2를 보정한다고 할때 다음과 같은 공식으로 normlize하자. 이것을
-  standardization이라고 한다.
+- feature 가 `x1, x2` 로 두개인 경우를 생각해 보자. `x1` 은 
+- `[1, 2, 4, 6, 9]` 이고 `x2` 는 `[9000, -5000, -2000, 8000, 9000]` 이라고
+  가정하자. feature 가 두개이기 때문에 `w1, w2` 가 존재한다. `x1` 의 각
+  값들의 차이와 `x2` 의 각 값들의 차이는 스케일이 다르다. `feature` 들의
+  스케일이 차이가 나면 `cost(W, b)` 를 최소화 하는 `W, b` 를 찾는데 시간이
+  오래걸린다. `feature` 들의 스케일이 비슷하게 보정(normalize)할 필요가
+  있다. `x2` 를 보정한다고 할때 다음과 같은 공식으로 normlize 하자. 이것을
+  standardization 이라고 한다.
 
 
 ![](img/standardization.png)
@@ -1566,12 +1565,12 @@ W := W - \alpha \frac{\partial}{\partial W} cost(W, b)
 ```
 
 
-- training data set에 대해서 너무 훈련이 되있다면 test data set에 대한
-  정확도가 낮을 수 있다. 이러한 현상을 overfitting이라고 한다. 다음과
-  같은 방법으로 해결해 보자. 첫째 더욱 많은 training data set을
-  확보해서 학습시켜보자.  둘째 feature가 너무 많은 경우 줄여서
-  학습시켜 보자. 셋째 gradient descent algorithm에 사용할 step값을
-  다른 방법으로 구해보자. 이것을 regularization이라고 한다.
+- training data set 에 대해서 너무 훈련이 되있다면 test data set 에 대한
+  정확도가 낮을 수 있다. 이러한 현상을 overfitting 이라고 한다. 다음과
+  같은 방법으로 해결해 보자. 첫째 더욱 많은 training data set 을
+  확보해서 학습시켜보자.  둘째 feature 가 너무 많은 경우 줄여서
+  학습시켜 보자. 셋째 gradient descent algorithm 에 사용할 step 값을
+  다른 방법으로 구해보자. 이것을 regularization 이라고 한다.
 
 ![](img/regularization.png)
 
@@ -1582,11 +1581,9 @@ cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S_{i}, L_{i}) \\
 \end{align*}
 ```
   
-
-
-- 다음은 learning rate다양하게 했을때를 구현한 것이다. learning rate이
-  1.5와 같이 너무 클때 cost는 inf가 되고 learning rate이 1e-10과 같이
-  너무 작을때 cost는 너무 적게 변화 된다.
+- 다음은 learning rate 이 다양한 경우를 구현한 것이다. learning rate 이
+  `1.5` 와 같이 너무 클때 `cost` 는 `inf` 가 되고 learning rate 이 `1e-10` 과 같이
+  너무 작을때 `cost` 는 너무 적게 변화 된다.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1655,8 +1652,8 @@ if __name__ == "__main__":
     main(1e-5)
 ```
 
-- 다음은 normalizing없이 linear regression을 수행한 것을 구현한 것이다.
-  cost가 inf넘어서 nan이 되는 것을 유심히 살펴보자.
+- 다음은 normalizing 없이 linear regression 을 수행한 것을 구현한 것이다.
+  cost 가 `inf` 넘어서 `nan` 이 되는 것을 유심히 살펴보자.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1701,8 +1698,8 @@ if __name__ == "__main__":
     main()
 ```
 
-- 다음은 위의 구현을 normalizing을 이용하여 수행한 것을 구현한 것이다.
-  cost가 정상적으로 변화하는 것을 잘 살펴보자.
+- 다음은 위의 구현을 normalizing 을 이용하여 수행한 것을 구현한 것이다.
+  cost 가 정상적으로 변화하는 것을 잘 살펴보자.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1754,7 +1751,7 @@ if __name__ == "__main__":
     main()
 ```
 
-- 다음은 MNIST를 softmax regression을 이용하여 구현한 것이다.
+- 다음은 MNIST 를 softmax regression 을 이용하여 구현한 것이다.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1832,51 +1829,51 @@ if __name__ == "__main__":
 
 # Deep Learning Fundamentals
 
-- machine llearning한계는 인간의 뇌를 구성하는 뉴런을 연구해왔다.
+- 사람들은 인간의 뇌를 구성하는 뉴런을 연구해왔다.
   그리고 뉴런의 동작 과정을 모델링해서 기계학습을 구현했다. 다음은
-  뉴런을 모델링한 그림이다. activation function은 입력되는 값들에 따라
-  출력되는 값들을 0(비활성) 혹은 1(활성)로 설정한다. 이것은 logistic
-  regression과 같다. 이러한 뉴런들이 여러개 모여서 기계 학습이
+  뉴런을 모델링한 그림이다. activation function 은 입력되는 값들에 따라
+  출력되는 값들을 `0` (비활성) 혹은 `1` (활성)로 설정한다. 이것은 logistic
+  regression 과 같다. 이러한 뉴런들이 여러개 모여서 기계 학습이
   구현된다. 실제로(1957) 뉴런들을 하드웨어로 구현했고 사람들의 관심을 얻었다. 
-  하지만 AND와 OR는 해결가능했지만 XOR은 해결 불가능 했다.
+  하지만 AND 와 OR 는 해결가능했지만 XOR 은 해결 불가능 했다.
   
-![](img/img/deeplearning_fundamentals_activation_function.jpeg)
+![](img/deeplearning_fundamentals_activation_function.jpg)
 
-- marvin minsky는 1969년 Perceptrons라는 책에서 
+- marvin minsky 는 1969년 Perceptrons 라는 책에서 
   "No one on earth had found a viable way to train"
-  이라고 주장했다. XOR을 multi layer perceptron으로 표현은 가능하지만
-  학습시키는 불가능하다는 얘기다. 이로써 artificial intelligence분야는
+  이라고 주장했다. XOR 을 multi layer perceptron 으로 표현은 가능하지만
+  학습시키는 불가능하다는 얘기다. 이로써 artificial intelligence 분야는
   당분간 사람들의 관심을 떠나게 된다.
 
-- 1974년 1982년 Paul Werbos는 앞서 언급한 marvin minsky의 주장을
-  반증 할 수 있는 backpropagation을 발표했지만 사람들의 반응은 냉랭했다.
-  심지어는 marvin minsky를 만나서 직접 얘기했지만 marvin minsky의 관심을
-  얻지 못했다. 그러나 1986년 Hinton이 발표한 backpropagation은 그렇지 않았다.
+- 1974년 1982년 Paul Werbos 는 앞서 언급한 marvin minsky 의 주장을
+  반증 할 수 있는 backpropagation 을 발표했지만 사람들의 반응은 냉랭했다.
+  심지어는 marvin minsky 를 만나서 직접 얘기했지만 marvin minsky 의 관심을
+  얻지 못했다. 그러나 1986 년 Hinton 이 발표한 backpropagation 은 그렇지 않았다.
   발명보다는 재발견에 해당되지만 전세계 적으로 많은 호응을 얻었다.
 
-- 1980년 LeCun 교수는 고양이가 그림을 볼때 어떤 뉴런은 활성화 되는데
+- 1980 년 LeCun 교수는 고양이가 그림을 볼때 어떤 뉴런은 활성화 되는데
   어떤 뉴런은 비활성화되는 것에서 아이디어를 얻어 CNN을 발명하였다.
 
-- 1984년 부터 1994년 CMU에서 자율주행연구를 진행하였다.
+- 1984 년 부터 1994 년 CMU 에서 자율주행연구를 진행하였다.
 
-- 1995년 LeCun교수는 "Comparison of Learning Algorithms For
-  Handwritten Digit Recognition"에서 hidden layer가 많을때
-  backpropagation과 같이 복잡한 알고리즘은 문제해결에 효과적이지
-  못하고 오히려 SVM, RandomForest같은 단순한 알로리즘이 효과적이라고
-  주장한다. neural networks은 다시 침체기로 접어든다.
+- 1995 년 LeCun 교수는 "Comparison of Learning Algorithms For
+  Handwritten Digit Recognition" 에서 hidden layer 가 많을때
+  backpropagation 과 같이 복잡한 알고리즘은 문제해결에 효과적이지
+  못하고 오히려 SVM, RandomForest 같은 단순한 알로리즘이 효과적이라고
+  주장한다. neural networks 은 다시 침체기로 접어든다.
 
-- 1987년 CIFAR (Canadian Institute for Advanced Research)는 deep
-  learning의 침체기 분위기 속에 Hinton교수를 적극 지원했다.  당시에는
-  neural networks이라는 키워드가 포함된 논문들은 대부분 reject되었다.
+- 1987 년 CIFAR (Canadian Institute for Advanced Research) 는 deep
+  learning 의 침체기 분위기 속에 Hinton 교수를 적극 지원했다. 당시에는
+  neural networks 이라는 키워드가 포함된 논문들은 대부분 reject 되었다.
   
-- 2006년 Hinton교수와 Yoshua Bengio교수는 neural network의 weight를
-  잘 초기화 해주면 backpropagation이 가능하다는 논문을 발표한 후 많은
-  호응을 얻었다. 그리고 neural networks를 deep learning이라는 새로운
+- 2006 년 Hinton 교수와 Yoshua Bengio 교수는 neural network 의 weight 를
+  잘 초기화 해주면 backpropagation 이 가능하다는 논문을 발표한 후 많은
+  호응을 얻었다. 그리고 neural networks 를 deep learning 이라는 새로운
   용어로 재탄생 시켰다.
   
-- imagenet 이라는 대회에서 2010년에 26.2%였던 오류는 2012년 15.3%로
-  감소하였다.  이것을 통해 neural networks은 관심을 얻는데
-  성공한다. 2015년 deep learning을 이용한 시스템이 오류를 3%까지
+- imagenet 이라는 대회에서 2010 년에 26.2% 였던 오류는 2012 년 15.3% 로
+  감소하였다. 이것을 통해 neural networks은 관심을 얻는데
+  성공한다. 2015 년 deep learning 을 이용한 시스템이 오류를 3% 까지
   감소시킨다.
 
 - Geoffery Hinton교수는 왜 그동안 deep learning이 잘 동작 안했는지 다음과
@@ -1888,9 +1885,9 @@ if __name__ == "__main__":
   - We used the wrong type of non-linearity.
     - sigmoid보다 ReLu를 사용하자.
 
-- 이후 알파고를 통해 deep learning은 핫한 기술로 부상한다.
+- 이후 알파고를 통해 deep learning 은 핫한 기술로 부상한다.
 
-- 다음은 tensor flow의 유용한 함수들을 사용한 예제이다. 잘 학습해 놓자.
+- 다음은 tensor flow 의 유용한 함수들을 사용한 예제이다. 잘 학습해 놓자.
 
 ```python
 # https://www.tensorflow.org/api_guides/python/array_ops
@@ -2060,68 +2057,69 @@ pp.pprint(sess.run(t))
 
 # NN (Neural Networks)
 
-- marvin minsky의 perceptrons라는 책의 발간 이후 상당 기간동안 XOR
-  problem은 해결되지 못하고 있었다. 그러나 1986년 Hinton교수를 통해
-  backpropagation을 이용한 해결 방법이 모색되고 neural networks는 다시
+- marvin minsky 의 perceptrons 라는 책의 발간 이후 상당 기간동안 XOR
+  problem은 해결되지 못하고 있었다. 그러나 1986년 Hinton 교수를 통해
+  backpropagation 을 이용한 해결 방법이 모색되고 neural networks 는 다시
   관심을 얻게 된다.
 
-- XOR을 하나의 logistic regression unit으로 구현해 보자. 정확도가 0.5이기 때문에
+- XOR 을 하나의 logistic regression unit 으로 구현해 보자. 정확도가 `0.5` 이기 때문에
   제대로 동작하지 않는다. 뭔가 다른 방법이 필요하다.
   
 ```python
 # -*- coding: utf-8 -*-
 import tensorflow as tf
 import numpy as np
+tf.set_random_seed(777)
 
 def main():
     # set var
-    tf.set_random_seed(777)
-    learning_rate = 0.1
+
+    f_learning_rate = 0.1
 
     # set data
-    x_data = [[0, 0],
-              [0, 1],
-              [1, 0],
-              [1, 1]]
-    y_data = [[0],
-              [1],
-              [1],
-              [0]]
+    l_X = [[0, 0],
+           [0, 1],
+           [1, 0],
+           [1, 1]]
+    l_Y = [[0],
+           [1],
+           [1],
+           [0]]
     # set nodes
-    x_data = np.array(x_data, dtype=np.float32)
-    y_data = np.array(y_data, dtype=np.float32)
-    X = tf.placeholder(tf.float32, [None, 2]) # ? x 2
-    Y = tf.placeholder(tf.float32, [None, 1]) # ? x 1
-    W = tf.Variable(tf.random_normal([2, 1]), name='weight') # 2 x 1
-    b = tf.Variable(tf.random_normal([1]), name='bias')
-    hypothesis = tf.sigmoid(tf.matmul(X, W) + b)
-    cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) * tf.log(1 - hypothesis))
-    train = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
+    l_X = np.array(l_X, dtype=np.float32)
+    l_Y = np.array(l_Y, dtype=np.float32)
+    t_X = tf.placeholder(tf.float32, [None, 2]) # ? x 2
+    t_Y = tf.placeholder(tf.float32, [None, 1]) # ? x 1
+    t_W = tf.Variable(tf.random_normal([2, 1]), name='W') # 2 x 1
+    t_b = tf.Variable(tf.random_normal([1]), name='b')
+    t_H = tf.sigmoid(tf.matmul(t_X, t_W) + t_b)
+    t_C = -tf.reduce_mean(t_Y * tf.log(t_H) + (1 - t_Y) * tf.log(1 - t_H))
+    t_T = tf.train.GradientDescentOptimizer(learning_rate=f_learning_rate).minimize(t_C)
     # set accuracy
-    predicted = tf.cast(hypothesis > 0.5, dtype=tf.float32)
-    accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
+    t_pred = tf.cast(t_H > 0.5, dtype=tf.float32)
+    t_accu = tf.reduce_mean(tf.cast(tf.equal(t_pred, t_Y), dtype=tf.float32))
 
     # Launch nodes
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
 
-        for step in range(10001):
-            sess.run(train, feed_dict={X: x_data, Y: y_data})
-            if step % 100 == 0:
-                print(step, sess.run(cost, feed_dict={
-                    X: x_data, Y: y_data}), sess.run(W))
+        for n_step in range(10001):
+            sess.run(t_T, feed_dict={t_X: l_X, t_Y: l_Y})
+            if n_step % 100 == 0:
+                f_cost = sess.run(t_C, feed_dict={t_X: l_X, t_Y: l_Y})
+                l_W = sess.run(t_W)
+                print(f'{n_step:10d} cost: {f_cost:10.7f} W: \n', l_W)
 
-        h, c, a = sess.run([hypothesis, predicted, accuracy],
-                           feed_dict={X: x_data, Y: y_data})
-        print("\nHypothesis: ", h, "\nCorrect: ", c, "\nAccuracy: ", a)
+        l_h, l_c, f_a = sess.run([t_H, t_pred, t_accu], feed_dict={t_X: l_X, t_Y: l_Y})
+        print("\nHypothesis: ", l_h, "\nCorrect: ", l_c, "\nAccuracy: ", f_a)
 
 if __name__ == "__main__":
     main()
 ```
 
-- XOR문제를 해결하기 위해 3개의 logistic regression unit으로
-  표현해보자.  x1, x2에 [0, 0], [0, 1], [1, 0], [1, 1]을 입력해서
-  연산해서 ``bar{y}`값을 확인 해 보면 정상 동작함을 알 수 있다.
+- XOR 문제를 해결하기 위해 3개의 logistic regression unit 으로
+  표현해보자.  x1, x2 에 [0, 0], [0, 1], [1, 0], [1, 1]을 입력해서
+  연산해서 `bar{y}` 값을 확인 해 보면 정상 동작함을 알 수 있다.
 
 ![](img/xor3units_1.png)
 
@@ -2141,76 +2139,77 @@ K(X)    &= sigmoid(XW_{1} + B_{1}) \\
 \end{align*}
 ```
 
-- 다음은 위의 수식을 tensorflow를 이용하여 구현한 것이다.
+- 다음은 위의 수식을 tensorflow 를 이용하여 구현한 것이다.
 
 ```python
 K = tf.sigmoid(tf.matmul(X, W1) + b1)
 hypothesis = tf.sigmoid(tf.matmul(K, W2) + b2)
 ```
 
-- 3개의 logistic regression unit을 이용해서 구현해 보자. 3개의
-  logistic regression unit은 hidden layer가 하나 추가되었다고 볼 수
-  있다. layer를 2개 이상으로 계속 늘려나가면 연산량은 많아지지만
-  hypothesis값은 점점 0에 가까워지거나 1에 가까워져간다. 예측값이 점점
+- 3 개의 logistic regression unit 을 이용해서 구현해 보자. 3 개의
+  logistic regression unit 은 hidden layer 가 하나 추가되었다고 볼 수
+  있다. layer 를 2 개 이상으로 계속 늘려나가면 연산량은 많아지지만
+  hypothesis 값은 점점 0에 가까워지거나 1 에 가까워져간다. 예측값이 점점
   정확하다고 생각 할 수 있다.
   
 ```python
 # -*- coding: utf-8 -*-
 import tensorflow as tf
 import numpy as np
+tf.set_random_seed(777)
 
 def main():
     # set var
-    tf.set_random_seed(777)
-    learning_rate = 0.1
+
+    f_learning_rate = 0.1
 
     # set data
-    x_data = [[0, 0],
-              [0, 1],
-              [1, 0],
-              [1, 1]]
-    y_data = [[0],
-              [1],
-              [1],
-              [0]]
-    x_data = np.array(x_data, dtype=np.float32)
-    y_data = np.array(y_data, dtype=np.float32)
+    l_X = [[0, 0],
+           [0, 1],
+           [1, 0],
+           [1, 1]]
+    l_Y = [[0],
+           [1],
+           [1],
+           [0]]
+    l_X = np.array(l_X, dtype=np.float32)
+    l_Y = np.array(l_Y, dtype=np.float32)
 
     # set in layer 
-    X = tf.placeholder(tf.float32, [None, 2]) # ? x 2
-    Y = tf.placeholder(tf.float32, [None, 1]) # ? x 1
+    t_X = tf.placeholder(tf.float32, [None, 2]) # ? x 2
+    t_Y = tf.placeholder(tf.float32, [None, 1]) # ? x 1
 
     # set hidden layer
-    W1 = tf.Variable(tf.random_normal([2, 2]), name='weight1')
-    b1 = tf.Variable(tf.random_normal([2]), name='bias1')
-    layer1 = tf.sigmoid(tf.matmul(X, W1) + b1)
+    t_W1 = tf.Variable(tf.random_normal([2, 2]), name='W1')
+    t_b1 = tf.Variable(tf.random_normal([2]), name='b1')
+    t_L1 = tf.sigmoid(tf.matmul(t_X, t_W1) + t_b1)
 
     # set out layer
-    W2 = tf.Variable(tf.random_normal([2, 1]), name='weight2')
-    b2 = tf.Variable(tf.random_normal([1]), name='bias2')
-    hypothesis = tf.sigmoid(tf.matmul(layer1, W2) + b2)
+    t_W2 = tf.Variable(tf.random_normal([2, 1]), name='W2')
+    t_b2 = tf.Variable(tf.random_normal([1]), name='b2')
+    t_H = tf.sigmoid(tf.matmul(t_L1, t_W2) + t_b2)
 
     # set train
-    cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) * tf.log(1 - hypothesis))
-    train = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
+    t_C = -tf.reduce_mean(t_Y * tf.log(t_H) + (1 - t_Y) * tf.log(1 - t_H))
+    t_T = tf.train.GradientDescentOptimizer(learning_rate=f_learning_rate).minimize(t_C)
 
     # set accuracy
-    predicted = tf.cast(hypothesis > 0.5, dtype=tf.float32)
-    accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
+    t_pred = tf.cast(t_H > 0.5, dtype=tf.float32)
+    t_accu = tf.reduce_mean(tf.cast(tf.equal(t_pred, t_Y), dtype=tf.float32))
 
     # Launch nodes
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
 
-        for step in range(10001):
-            sess.run(train, feed_dict={X: x_data, Y: y_data})
-            if step % 100 == 0:
-                print(step, sess.run(cost, feed_dict={
-                    X: x_data, Y: y_data}), sess.run([W1, W2]))
+        for n_step in range(10001):
+            sess.run(t_T, feed_dict={t_X: l_X, t_Y: l_Y})
+            if n_step % 100 == 0:
+                f_cost = sess.run(t_C, feed_dict={t_X: l_X, t_Y: l_Y})
+                ll_W = sess.run([t_W1, t_W2])
+                print(f'{n_step:10d} cost: {f_cost:10.7f} W: \n', ll_W)                
 
-        h, c, a = sess.run([hypothesis, predicted, accuracy],
-                           feed_dict={X: x_data, Y: y_data})
-        print("\nHypothesis: ", h, "\nCorrect: ", c, "\nAccuracy: ", a)
+        l_h, l_c, f_a = sess.run([t_H, t_pred, t_accu], feed_dict={t_X: l_X, t_Y: l_Y})
+        print("\nHypothesis: ", l_h, "\nCorrect: ", l_c, "\nAccuracy: ", f_a)
 
 if __name__ == "__main__":
     main()
@@ -2223,72 +2222,71 @@ if __name__ == "__main__":
 # -*- coding: utf-8 -*-
 import tensorflow as tf
 import numpy as np
+tf.set_random_seed(777)  # for reproducibility
 
 def main():
     # set var
-    tf.set_random_seed(777)  # for reproducibility
-    learning_rate = 0.1
+    f_learning_rate = 0.1
 
     # set data
-    x_data = [[0, 0],
-              [0, 1],
-              [1, 0],
-              [1, 1]]
-    y_data = [[0],
-              [1],
-              [1],
-              [0]]
-    x_data = np.array(x_data, dtype=np.float32)
-    y_data = np.array(y_data, dtype=np.float32)
+    l_X = [[0, 0],
+           [0, 1],
+           [1, 0],
+           [1, 1]]
+    l_Y = [[0],
+           [1],
+           [1],
+           [0]]
+    l_X = np.array(l_X, dtype=np.float32)
+    l_Y = np.array(l_Y, dtype=np.float32)
 
     # set in, out layer
-    X = tf.placeholder(tf.float32, [None, 2])
-    Y = tf.placeholder(tf.float32, [None, 1])
+    t_X = tf.placeholder(tf.float32, [None, 2])
+    t_Y = tf.placeholder(tf.float32, [None, 1])
     # set hidden layer 1
-    W1 = tf.Variable(tf.random_normal([2, 10]), name='weight1')
-    b1 = tf.Variable(tf.random_normal([10]), name='bias1')
-    layer1 = tf.sigmoid(tf.matmul(X, W1) + b1)
+    t_W1 = tf.Variable(tf.random_normal([2, 10]), name='W1')
+    t_b1 = tf.Variable(tf.random_normal([10]), name='b1')
+    t_L1 = tf.sigmoid(tf.matmul(t_X, t_W1) + t_b1)
     # set hidden layer 2
-    W2 = tf.Variable(tf.random_normal([10, 10]), name='weight2')
-    b2 = tf.Variable(tf.random_normal([10]), name='bias2')
-    layer2 = tf.sigmoid(tf.matmul(layer1, W2) + b2)
+    t_W2 = tf.Variable(tf.random_normal([10, 10]), name='W2')
+    t_b2 = tf.Variable(tf.random_normal([10]), name='b2')
+    t_L2 = tf.sigmoid(tf.matmul(t_L1, t_W2) + t_b2)
     # set hidden layer 3
-    W3 = tf.Variable(tf.random_normal([10, 10]), name='weight3')
-    b3 = tf.Variable(tf.random_normal([10]), name='bias3')
-    layer3 = tf.sigmoid(tf.matmul(layer2, W3) + b3)
+    t_W3 = tf.Variable(tf.random_normal([10, 10]), name='W3')
+    t_b3 = tf.Variable(tf.random_normal([10]), name='b3')
+    t_L3 = tf.sigmoid(tf.matmul(t_L2, t_W3) + t_b3)
     # set out layer 4
-    W4 = tf.Variable(tf.random_normal([10, 1]), name='weight4')
-    b4 = tf.Variable(tf.random_normal([1]), name='bias4')
-    hypothesis = tf.sigmoid(tf.matmul(layer3, W4) + b4)
+    t_W4 = tf.Variable(tf.random_normal([10, 1]), name='W4')
+    t_b4 = tf.Variable(tf.random_normal([1]), name='b4')
+    t_H  = tf.sigmoid(tf.matmul(t_L3, t_W4) + t_b4)
 
     # set train node
-    cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) *
-                           tf.log(1 - hypothesis))
-    train = tf.train.GradientDescentOptimizer(learning_rate=learning_rate).minimize(cost)
+    t_C = -tf.reduce_mean(t_Y * tf.log(t_H) + (1 - t_Y) * tf.log(1 - t_H))
+    t_T = tf.train.GradientDescentOptimizer(learning_rate=f_learning_rate).minimize(t_C)
 
     # set accuracy node
-    predicted = tf.cast(hypothesis > 0.5, dtype=tf.float32)
-    accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
+    t_pred = tf.cast(t_H > 0.5, dtype=tf.float32)
+    t_accu = tf.reduce_mean(tf.cast(tf.equal(t_pred, t_Y), dtype=tf.float32))
 
     # Launch nodes
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
 
-        for step in range(10001):
-            sess.run(train, feed_dict={X: x_data, Y: y_data})
-            if step % 100 == 0:
-                print(step, sess.run(cost, feed_dict={
-                    X: x_data, Y: y_data}), sess.run([W1, W2]))
+        for n_step in range(10001):
+            sess.run(t_T, feed_dict={t_X: l_X, t_Y: l_Y})
+            if n_step % 100 == 0:
+                f_cost = sess.run(t_C, feed_dict={t_X: l_X, t_Y: l_Y})
+                ll_W = sess.run([t_W1, t_W2, t_W3, t_W4])
+                print(f'{n_step:10d} cost: {f_cost:10.7f} W: \n', ll_W)                
 
-        h, c, a = sess.run([hypothesis, predicted, accuracy],
-                           feed_dict={X: x_data, Y: y_data})
-        print("\nHypothesis: ", h, "\nCorrect: ", c, "\nAccuracy: ", a)
+        l_h, l_c, f_a = sess.run([t_H, t_pred, t_accu], feed_dict={t_X: l_X, t_Y: l_Y})
+        print("\nHypothesis: ", l_h, "\nCorrect: ", l_c, "\nAccuracy: ", f_a)
 
 if __name__ == "__main__":
     main()
 ```
 
-- tensorflow는 tensorboard라는 것을 이용해서 노드의 상태를 그림으로
+- tensorflow 는 tensorboard 라는 것을 이용해서 노드의 상태를 그림으로
   확인 할 수 있다. 실행하면 `./logs/xor_logs_r0_01` 가 만들어진다. 
   `$ tensorboard --logdir logs` 실행하고
   브라우저로 `http://127.0.0.1:6006`해보자.
@@ -2372,7 +2370,7 @@ if __name__ == "__main__":
     main()
 ```
 
-- chain rule은 두 함수를 합성한 합성 함수의 도함수에 관한 공식이다.
+- chain rule 은 두 함수를 합성한 합성 함수의 도함수에 관한 공식이다.
 
 ![](img/chainrule.png)
 
@@ -2383,85 +2381,35 @@ if __name__ == "__main__":
  \end{align*}
 ```
 
-- back propagation는 output layer부터 input layer방향으로 cost(W, b)를
-  를 최소화 하기 위해 W, b를 갱신하는
-  과정이다. chain rule을 이용해서 구현할 수 있다.
-  아래의 그림들은 [이곳](https://docs.google.com/presentation/d/1_ZmtfEjLmhbuM_PqbDYMXXLAqeWN0HwuhcSKnUQZ6MM/edit#slide=id.p6)에서 
-  가져왔다. softmax regression을 어떻게 backpropagation하는지 수식으로 이해 할 수 있다.
+- back propagation 는 output layer 부터 input layer 방향으로 `cost(W, b)` 를
+  를 최소화 하기 위해 `W, b` 를 갱신하는
+  과정이다. chain rule 을 이용해서 구현할 수 있다.
+  아래의 그림들은 [이곳](https://docs.google.com/presentation/d/1_ZmtfEjLmhbuM_PqbDYMXXLAqeWN0HwuhcSKnUQZ6MM/edit#slide=id.p6) 에서 
+  가져왔다. softmax regression 을 어떻게 backpropagation 하는지 수식으로 이해 할 수 있다.
   중간에 사용된 전치 행렬은 곱셈 결과 행렬의 행과 열을 뒤집어 주기 위한 방법이다.
   
-- 다음은 한개의 레이어를 backpropagation하는 과정이다.
+- 다음은 한개의 레이어를 backpropagation 하는 과정이다.
   
 ![](img/backpropagation_1.png)
 
-- 다음은 두개 이상의 레이어를 backpropagation하는 과정이다. 한개의
-  레이어를 backpropagation하는 것과 거의 유사하다.
+- 다음은 두개 이상의 레이어를 backpropagation 하는 과정이다. 한개의
+  레이어를 backpropagation 하는 것과 거의 유사하다.
 
 ![](img/backpropagation_2.png)
 
-- 다음은 X, W, b가 행렬일때 backpropagation하는 과정이다.
+- 다음은 `X, W, b` 가 행렬일때 backpropagation 하는 과정이다.
 
 ![](img/backpropagation_3.png)
 
-- 다음은 tensorflow로 backpropagation을 구현하는 코드중 일부이다.
+- 다음은 tensorflow 로 backpropagation 을 구현하는 코드중 일부이다.
 
 ![](img/backpropagation_4.png)
 
-- 다음은 linear regression를 한개의 입력과 함께 backpropagation을
+- 다음은 linear regression 를 한개의 입력과 함께 backpropagation 을
   이용하여 구현한 것이다.
 
 ```python
-# -*- coding: utf-8 -*-
-import tensorflow as tf
-tf.set_random_seed(777)
 
-# Network
-#          p      l1 (y_pred)
-# X -> (*) -> (+) -> (E)
-#       ^      ^ 
-#       |      | 
-#       W      b
-#
-# ∂E/∂b =
-
-def main():
-    # set data
-    x_data = [[1.],
-              [2.],
-              [3.]]
-    y_data = [[1.],
-              [2.],
-              [3.]]
-    # set placeholder
-    X = tf.placeholder(tf.float32, shape=[None, 1])
-    Y = tf.placeholder(tf.float32, shape=[None, 1])
-    # set nodes
-    W = tf.Variable(tf.truncated_normal([1, 1]))
-    b = tf.Variable(5.)
-    hypothesis = tf.matmul(X, W) + b
-    # set diff
-    diff = (hypothesis - Y)
-    # set back prop
-    d_l1 = diff
-    d_b = d_l1
-    d_w = tf.matmul(tf.transpose(X), d_l1)
-    # update network
-    learning_rate = 0.1
-    step = [
-        tf.assign(W, W - learning_rate * d_w),
-        tf.assign(b, b - learning_rate * tf.reduce_mean(d_b))                  
-    ]
-    RMSE = tf.reduce_mean(tf.square(Y - hypothesis))
-    # launch nodes
-    sess = tf.InteractiveSession()
-    sess.run(tf.global_variables_initializer())
-    for i in range(1000):
-        print(i, sess.run([step, RMSE],
-                              feed_dict={X: x_data, Y:y_data}))
-    print(sess.run(hypothesis, feed_dict={X: x_data}))
-
-if __name__ == "__main__":
-    main()
 ```
 
 - 다음은 linear regression을 세개의 입력과 함께 backpropagation을 
@@ -2483,43 +2431,44 @@ tf.set_random_seed(777)
 
 def main():
     # set data
-    x_data = [[73., 80., 75.],
-              [93., 88., 93.],
-              [89., 91., 90.],
-              [96., 98., 100.],
-              [73., 66., 70.]]
-    y_data = [[152.],
-              [185.],
-              [180.],
-              [196.],
-              [142.]]
+    l_X = [[73., 80., 75.],
+           [93., 88., 93.],
+           [89., 91., 90.],
+           [96., 98., 100.],
+           [73., 66., 70.]]
+    l_Y = [[152.],
+           [185.],
+           [180.],
+           [196.],
+           [142.]]
     # set placeholder
-    X = tf.placeholder(tf.float32, shape=[None, 3])
-    Y = tf.placeholder(tf.float32, shape=[None, 1])
+    t_X = tf.placeholder(tf.float32, shape=[None, 3])
+    t_Y = tf.placeholder(tf.float32, shape=[None, 1])
     # set nodes
-    W = tf.Variable(tf.truncated_normal([3, 1]))
-    b = tf.Variable(5.)
-    hypothesis = tf.matmul(X, W) + b
+    t_W = tf.Variable(tf.truncated_normal([3, 1]))
+    t_b = tf.Variable(5.)
+    t_H = tf.matmul(t_X, t_W) + t_b
     # set diff
-    diff = (hypothesis - Y)
+    t_diff = (t_H - t_Y)
     # set back prop
-    d_l1 = diff
-    d_b = d_l1
-    d_w = tf.matmul(tf.transpose(X), d_l1)
+    t_d_l1 = t_diff
+    t_d_b = t_d_l1
+    t_d_W = tf.matmul(tf.transpose(t_X), t_d_l1)
     # update network
-    learning_rate = 1e-6
-    step = [
-        tf.assign(W, W - learning_rate * d_w),
-        tf.assign(b, b - learning_rate * tf.reduce_mean(d_b))                  
+    f_learning_rate = 1e-6
+    l_t_step = [
+        tf.assign(t_W, t_W - f_learning_rate * t_d_W),
+        tf.assign(t_b, t_b - f_learning_rate * tf.reduce_mean(t_d_b))                  
     ]
-    RMSE = tf.reduce_mean(tf.square(Y - hypothesis))
+    t_C = tf.reduce_mean(tf.square(t_Y - t_H))
     # launch nodes
     sess = tf.InteractiveSession()
     sess.run(tf.global_variables_initializer())
     for i in range(1000):
-        print(i, sess.run([step, RMSE],
-                              feed_dict={X: x_data, Y:y_data}))
-    print(sess.run(hypothesis, feed_dict={X: x_data}))
+        l_step, f_cost = sess.run([l_t_step, t_C],
+                              feed_dict={t_X: l_X, t_Y: l_Y})
+        print(f'{i:10d} cost:{f_cost:10.7f} step:\n', l_step)
+    print(sess.run(t_H, feed_dict={t_X: l_X}))
 
 if __name__ == "__main__":
     main()
@@ -2740,25 +2689,25 @@ if __name__ == "__main__":
     main()
 ```
 
-- XOR문제를 해결하기 위해 hidden layer를 9개 설정해 보자. 정확도는
-  0.5가 나온다. hidden layer를 깊게 설정했는데도 왜 이런 현상이
-  발생할까?  activation function으로 sigmoid를 사용하면
-  backpropagation할 때 vanishing gradient현상이 발생하기
-  때문이다. vanishing gradient란 output layer에서 hidden layer를 거쳐
-  input layer로 갈수록 입력값의 영향을 덜 받게 되는
-  현상이다. sigmoid와 달리 입력값이 0이하일때 출력값이 0이되는 또 다른
-  activate function이 필요하다. sigmoid보다 ReLU (Rectified Linear
-  Unit) 을 사용하면 vanishing gradient를 해결 할 수 있다. sigmoid,
-  ReLU를 제외하고도 tanh, Leaky ReLU, Maxout, ELU등등 Activation
-  Function들이 있다.
+- XOR 문제를 해결하기 위해 hidden layer 를 9 개 설정해 보자. 정확도는
+  0.5 가 나온다. hidden layer 를 깊게 설정했는데도 왜 이런 현상이
+  발생할까?  activation function 으로 sigmoid 를 사용하면
+  backpropagation 할 때 vanishing gradient 현상이 발생하기
+  때문이다. vanishing gradient 란 output layer 에서 hidden layer 를 거쳐
+  input layer 로 갈수록 입력값의 영향을 덜 받게 되는
+  현상이다. sigmoid 와 달리 입력값이 0이하일때 출력값이 0 이되는 또 다른
+  activate function 이 필요하다. sigmoid 보다 ReLU (Rectified Linear
+  Unit) 을 사용하면 vanishing gradient 를 해결 할 수 있다. sigmoid,
+  ReLU를 제외하고도 tanh, Leaky ReLU, Maxout, ELU 등등 Activation
+  Function 들이 있다.
 
 ![](img/sigmoid_vs_relu.png)
 
-- ML학계의 사람들은 weight값을 잘 정해서 더욱 정확하게 ML할 수 있는
-  방법을 연구했다. 2006년 Hinton교수는 RBM (Restricted Boatman
-  Macine)을 이용하여 weight값을 초기화 하면 deep learning을 효율적으로
-  할 수 있다고 했다. 그러나 RBM은 너무 복잡하다.  Xavier
-  initialization 혹은 He's initialization과 같이 간단한 방법이 더욱
+- ML학계의 사람들은 weight 값을 잘 정해서 더욱 정확하게 ML 할 수 있는
+  방법을 연구했다. 2006 년 Hinton 교수는 RBM (Restricted Boatman
+  Macine) 을 이용하여 weight 값을 초기화 하면 deep learning 을 효율적으로
+  할 수 있다고 했다. 그러나 RBM 은 너무 복잡하다.  Xavier
+  initialization 혹은 He's initialization 과 같이 간단한 방법이 더욱
   효율적이다. weight 초기값을 어떻게 설정하느냐는 지금도 활발한 연구
   분야이다.
 
@@ -2801,12 +2750,12 @@ def xavier_init(n_inputs, n_outputs, uniform=True):
     return tf.truncated_normal_initializer(stddev=stddev)
 ```
 
-- overfitting이란 neural networks가 training data의 정확도는 높지만
-  predicting data의 정확도는 낮은 현상을 말한다. 이것을 해결하기 위한 방법으로
-  regularization, dropout등이 있다.
+- overfitting 이란 neural networks 가 training data 의 정확도는 높지만
+  predicting data 의 정확도는 낮은 현상을 말한다. 이것을 해결하기 위한 방법으로
+  regularization, dropout 등이 있다.
   
-- regularization은 다음과 같이 새로운 항을 cost(W, b)구할때
-  더한다. `\lambda`는 0.001로 하자.
+- regularization 은 다음과 같이 새로운 항을 `cost(W, b)` 구할때
+  더한다. `\lambda` 는 `0.001` 로 하자.
 
 ```python
 l2reg = 0.001 * tf.reduce_sum(tf.square(W))
@@ -2823,8 +2772,8 @@ cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S_{i}, L_{i}) \\
   
 
 
-- dropout이란 neural networks의 노드중 임의의 것들을 제거하여 overfitting
-  현상을 해결하는 것이다. tensorflow로 간단히 구현할 수 있다.
+- dropout 이란 neural networks 의 노드중 임의의 것들을 제거하여 overfitting
+  현상을 해결하는 것이다. tensorflow 로 간단히 구현할 수 있다.
 
 ```python
 dropout_rate = tf.placeholder("float")
@@ -2847,15 +2796,15 @@ mnist.test.labels, dropout_rate: 1})
 
 - recurrent network
 
-- MNIST문제를 다양한 방법으로 이용해서 정확도를 향상 시킬 수 있다.
+- MNIST 문제를 다양한 방법으로 이용해서 정확도를 향상 시킬 수 있다.
   - softmax regression : 90%
   - softmax regression neural networks : 94.5%
   - softmax regression Xavier initialization : 97.8%
   - batch normalization : ???%
   - CNN : 99%
   
-- 다음은 MNIST를 softmax regression을 이용하여 구현한 것이다. 정확도는
-  약 90%이다. 
+- 다음은 MNIST 를 softmax regression 을 이용하여 구현한 것이다. 정확도는
+  약 90% 이다. 
 
 ```python
 # -*- coding: utf-8 -*-
@@ -2918,9 +2867,9 @@ if __name__ == "__main__":
     main()
 ```
 
-- 다음은 MNIST를 softmax regression, neural networks 를 이용하여
-  구현한 것이다. layer가 늘어났기 때문에 앞서 구현한 것보다
-  느려진다. 그러나 정확도는 약 94%이다.
+- 다음은 MNIST 를 softmax regression, neural networks 를 이용하여
+  구현한 것이다. layer 가 늘어났기 때문에 앞서 구현한 것보다
+  느려진다. 그러나 정확도는 약 94% 이다.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -2991,9 +2940,9 @@ if __name__ == "__main__":
     main()
 ```
 
-- 다음은 MNIST를 softmax regression, multi layer, xavier init을
-  이용하여 구현한 것이다. W만 잘 초기화 해도 이렇게 향상되다니 놀랍다. W를 초기화하는
-  것은 아직도 활발한 연구 주제라고 한다. 정확도는 약 97%이다.
+- 다음은 MNIST 를 softmax regression, multi layer, xavier init 을
+  이용하여 구현한 것이다. `W` 만 잘 초기화 해도 이렇게 향상되다니 놀랍다. `W` 를 초기화하는
+  것은 아직도 활발한 연구 주제라고 한다. 정확도는 약 97% 이다.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -3067,8 +3016,8 @@ if __name__ == "__main__":
     main()
 ```
 
-- 다음은 MNIST를 softmax regression, deep layer, xavier init을
-  이용하여 구현한 것이다. 정확도는 약 97%이다. layer가 더욱 깊어지고 수행시간은
+- 다음은 MNIST 를 softmax regression, deep layer, xavier init 을
+  이용하여 구현한 것이다. 정확도는 약 97% 이다. layer 가 더욱 깊어지고 수행시간은
   더욱 늘어났지만 정확도는 향상되지 않았다. 뭔가 다른 방법이 필요하다.
 
 ```python
@@ -3153,11 +3102,11 @@ if __name__ == "__main__":
     main()
 ```
 
-- 다음은 MNIST를 softmax regression, deep layer, xavier init, drop
-  out을 이용하여 구현한 것이다. keep_prob은 dropout의 정도를
-  의미한다. 학습할때는 node가 듬성 듬성 배치되는 것이 좋기 때문에
-  0.7정도가 적당하고 검증할때는 모든 노드가 배치되어야 하므로 1이 되야
-  한다. 정확도는 약 98%이다.
+- 다음은 MNIST 를 softmax regression, deep layer, xavier init, drop
+  out 을 이용하여 구현한 것이다. keep_prob 은 dropout 의 정도를
+  의미한다. 학습할때는 node 가 듬성 듬성 배치되는 것이 좋기 때문에
+  0.7 정도가 적당하고 검증할때는 모든 노드가 배치되어야 하므로 1 이 되야
+  한다. 정확도는 약 98% 이다.
   
 ```python
 # -*- coding: utf-8 -*-
@@ -3245,8 +3194,8 @@ if __name__ == "__main__":
     main()
 ```
 
-- MNIST를 CNN을 이용하여 구현하면 정확도를 약 99%로 만들 수
-  있다. CNN은 도대체 무엇일까?
+- MNIST 를 CNN 을 이용하여 구현하면 정확도를 약 99% 로 만들 수
+  있다. CNN 은 도대체 무엇일까?
 
 # CNN (Convolutional Neural Networks)
 
