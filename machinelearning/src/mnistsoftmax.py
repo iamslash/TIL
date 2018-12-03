@@ -9,50 +9,54 @@ def main():
     mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
     # set variables
-    learning_rate = 1e-3
-    training_epocs = 15
-    batch_size = 100
+    f_learning_rate = 1e-3
+    n_epocs = 15
+    n_batch_size = 100
 
     # set place holders
-    X = tf.placeholder(tf.float32, [None, 784])
-    Y = tf.placeholder(tf.float32, [None, 10])
+    t_X = tf.placeholder(tf.float32, [None, 784])
+    t_Y = tf.placeholder(tf.float32, [None, 10])
 
     # set nodes
-    W = tf.Variable(tf.random_normal([784, 10]))
-    b = tf.Variable(tf.random_normal([10]))
-    hypothesis = tf.matmul(X, W) + b
+    t_W1 = tf.Variable(tf.random_normal([784, 256]))
+    t_b1 = tf.Variable(tf.random_normal([256]))
+    t_L1 = tf.nn.relu(tf.matmul(t_X, t_W1) + t_b1)
+
+    t_W2 = tf.Variable(tf.random_normal([256, 256]))
+    t_b2 = tf.Variable(tf.random_normal([256]))
+    t_L2 = tf.nn.relu(tf.matmul(t_L1, t_W2) + t_b2)
+
+    t_W3 = tf.Variable(tf.random_normal([256, 10]))
+    t_b3 = tf.Variable(tf.random_normal([10]))
+    t_H = tf.matmul(t_L2, t_W3) + t_b3
 
     # set train node
-    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
-        logits=hypothesis, labels=Y))
-    train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+    t_C = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=t_H, labels=t_Y))
+    t_T = tf.train.AdamOptimizer(learning_rate=f_learning_rate).minimize(t_C)
 
     # launch nodes
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
-        for epoch in range(training_epocs):
-            avg_cost = 0
-            total_batch = int(mnist.train.num_examples / batch_size)
-            for i in range(total_batch):
-                batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-                c, _ = sess.run([cost, train], feed_dict={X: batch_xs, Y: batch_ys})
-                avg_cost += c / total_batch
-
-            print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))
+        for n_epoch in range(n_epocs):
+            f_avg_cost = 0
+            n_total_batch = int(mnist.train.num_examples / n_batch_size)
+            for i in range(n_total_batch):
+                l_X, l_Y = mnist.train.next_batch(n_batch_size)
+                f_cost, _ = sess.run([t_C, t_T], feed_dict={t_X: l_X, t_Y: l_Y})
+                f_avg_cost += f_cost / n_total_batch
+            print(f'epoch: {n_epoch+1:10d} avg_cost: {f_avg_cost:10.7f}')
         print('Learning Finished')
 
         # check accuracy
-        correct_prediction = tf.equal(tf.argmax(hypothesis, 1), tf.argmax(Y, 1))
-        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-        print('Accuracy:', sess.run(accuracy, feed_dict={
-            X: mnist.test.images, Y: mnist.test.labels}))
+        t_pred = tf.equal(tf.argmax(t_H, 1), tf.argmax(t_Y, 1))
+        t_accu = tf.reduce_mean(tf.cast(t_pred, tf.float32))
+        print('Accuracy:', sess.run(t_accu, feed_dict={
+            t_X: mnist.test.images, t_Y: mnist.test.labels}))
 
         # Get one and predict
-        r = random.randint(0, mnist.test.num_examples - 1)
-        print("Label: ", sess.run(tf.argmax(mnist.test.labels[r:r + 1], 1)))
-        print("Prediction: ", sess.run(
-            tf.argmax(hypothesis, 1), feed_dict={X: mnist.test.images[r:r + 1]}))
-
+        n_r = random.randint(0, mnist.test.num_examples - 1)
+        print("Label: ", sess.run(tf.argmax(mnist.test.labels[n_r:n_r + 1], 1)))
+        print("Prediction: ", sess.run(tf.argmax(t_H, 1), feed_dict={t_X: mnist.test.images[n_r:n_r + 1]}))
 
 if __name__ == "__main__":
     main()
