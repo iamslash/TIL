@@ -3876,7 +3876,7 @@ tf.set_random_seed(777)
 def main():
     # set data
     idx2char = ['h', 'i', 'e', 'l', 'o']
-    x_data = [[0, 1, 0, 2, 3, 4]]   # hihell
+    x_data = [[0, 1, 0, 2, 3, 3]]   # hihell
     x_one_hot = [[[1, 0, 0, 0, 0],  # h 0
                   [0, 1, 0, 0, 0],  # i 1
                   [1, 0, 0, 0, 0],  # h 0
