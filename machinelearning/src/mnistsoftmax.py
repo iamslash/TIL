@@ -18,17 +18,9 @@ def main():
     t_Y = tf.placeholder(tf.float32, [None, 10])
 
     # set nodes
-    t_W1 = tf.Variable(tf.random_normal([784, 256]))
-    t_b1 = tf.Variable(tf.random_normal([256]))
-    t_L1 = tf.nn.relu(tf.matmul(t_X, t_W1) + t_b1)
-
-    t_W2 = tf.Variable(tf.random_normal([256, 256]))
-    t_b2 = tf.Variable(tf.random_normal([256]))
-    t_L2 = tf.nn.relu(tf.matmul(t_L1, t_W2) + t_b2)
-
-    t_W3 = tf.Variable(tf.random_normal([256, 10]))
-    t_b3 = tf.Variable(tf.random_normal([10]))
-    t_H = tf.matmul(t_L2, t_W3) + t_b3
+    t_W = tf.Variable(tf.random_normal([784, 10]))
+    t_b = tf.Variable(tf.random_normal([10]))
+    t_H = tf.matmul(t_X, t_W) + t_b
 
     # set train node
     t_C = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=t_H, labels=t_Y))
