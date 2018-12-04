@@ -3344,104 +3344,98 @@ if __name__ == "__main__":
 import tensorflow as tf
 import random
 from tensorflow.examples.tutorials.mnist import input_data
+# set variables
+tf.set_random_seed(777)
 
 def main():
-    # set variables
-    tf.set_random_seed(777)
 
     # set data
     mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
     # set hyper params
-    learning_rate = 0.001
-    training_epochs = 15
-    batch_size = 100
-    keep_prop = tf.placeholder(tf.float32)
+    f_learning_rate = 0.001
+    n_epochs = 15
+    n_batch_size = 100
 
     # set place holders
-    X = tf.placeholder(tf.float32, [None, 784])
-    X_img = tf.reshape(X, [-1, 28, 28, 1])
-    Y = tf.placeholder(tf.float32, [None, 10])
+    t_X = tf.placeholder(tf.float32, [None, 784])
+    t_X_img = tf.reshape(t_X, [-1, 28, 28, 1])
+    t_Y = tf.placeholder(tf.float32, [None, 10])
+    t_K = tf.placeholder(tf.float32)
 
     # set W, L, b nodes
     # L1 ImgIn shape=(?, 28, 28, 1)
     # conv -> (?, 28, 28, 32)
     # pool -> (?, 14, 14, 32)
-    W1 = tf.Variable(tf.random_normal([3, 3, 1, 32], stddev=0.01))
-    L1 = tf.nn.conv2d(X_img, W1, strides=[1, 1, 1, 1], padding='SAME')
-    L1 = tf.nn.relu(L1)
-    L1 = tf.nn.max_pool(L1, ksize=[1, 2, 2, 1],
-                        strides=[1, 2, 2, 1], padding='SAME')
-    L1 = tf.nn.dropout(L1, keep_prob=keep_prob)
+    t_W1 = tf.Variable(tf.random_normal([3, 3, 1, 32], stddev=0.01))
+    t_L1 = tf.nn.conv2d(t_X_img, t_W1, strides=[1, 1, 1, 1], padding='SAME')
+    t_L1 = tf.nn.relu(t_L1)
+    t_L1 = tf.nn.max_pool(t_L1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+    t_L1 = tf.nn.dropout(t_L1, keep_prob=t_K)
 
     # L2 ImgIn shape=(?, 14, 14, 32)
     # conv -> (?, 14, 14, 64)
     # pool -> (?,  7,  7, 64)
-    W2 = tf.Variable(tf.random_normal([3, 3, 32, 64], stddev=0.01))
-    L2 = tf.nn.conv2d(L1, W2, strides=[1, 1, 1, 1], padding='SAME')
-    L2 = tf.nn.relu(L2)
-    L2 = tf.nn.max_pool(L2, ksize=[1, 2, 2, 1],
-                        strides=[1, 2, 2, 1], padding='SAME')
-    L2 = tf.nn.dropout(L2, keep_prob=keep_prob)
+    t_W2 = tf.Variable(tf.random_normal([3, 3, 32, 64], stddev=0.01))
+    t_L2 = tf.nn.conv2d(t_L1, t_W2, strides=[1, 1, 1, 1], padding='SAME')
+    t_L2 = tf.nn.relu(t_L2)
+    t_L2 = tf.nn.max_pool(t_L2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+    t_L2 = tf.nn.dropout(t_L2, keep_prob=t_K)
 
     # L3 ImgIn shape=(?, 7, 7, 64)
     #    Conv      ->(?, 7, 7, 128)
     #    Pool      ->(?, 4, 4, 128)
     #    Reshape   ->(?, 4 * 4 * 128) # Flatten them for FC
-    W3 = tf.Variable(tf.random_normal([3, 3, 64, 128], stddev=0.01))
-    L3 = tf.nn.conv2d(L2, W3, strides=[1, 1, 1, 1], padding='SAME')
-    L3 = tf.nn.relu(L3)
-    L3 = tf.nn.max_pool(L3, ksize=[1, 2, 2, 1], strides=[
-        1, 2, 2, 1], padding='SAME')
-    L3 = tf.nn.dropout(L3, keep_prob=keep_prob)
-    L3_flat = tf.reshape(L3, [-1, 128 * 4 * 4])    
+    t_W3 = tf.Variable(tf.random_normal([3, 3, 64, 128], stddev=0.01))
+    t_L3 = tf.nn.conv2d(t_L2, t_W3, strides=[1, 1, 1, 1], padding='SAME')
+    t_L3 = tf.nn.relu(t_L3)
+    t_L3 = tf.nn.max_pool(t_L3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+    t_L3 = tf.nn.dropout(t_L3, keep_prob=t_K)
+    t_L3_flat = tf.reshape(t_L3, [-1, 128 * 4 * 4])    
     
     # L4 FC 4x4x128 inputs -> 625 outputs
-    W4 = tf.get_variable("W4", shape=[128 * 4 * 4, 625],
-                         initializer=tf.contrib.layers.xavier_initializer())
-    b4 = tf.Variable(tf.random_normal([625]))
-    L4 = tf.nn.relu(tf.matmul(L3_flat, W4) + b4)
-    L4 = tf.nn.dropout(L4, keep_prob=keep_prob)
+    t_W4 = tf.get_variable("W4", shape=[128 * 4 * 4, 625], initializer=tf.contrib.layers.xavier_initializer())
+    t_b4 = tf.Variable(tf.random_normal([625]))
+    t_L4 = tf.nn.relu(tf.matmul(t_L3_flat, t_W4) + t_b4)
+    t_L4 = tf.nn.dropout(t_L4, keep_prob=t_K)
 
     # L5 Final FC 625 inputs -> 10 outputs
-    W5 = tf.get_variable("W5", shape=[625, 10],
-                         initializer=tf.contrib.layers.xavier_initializer())
-    b5 = tf.Variable(tf.random_normal([10]))
-    logits = tf.matmul(L4, W5) + b5
+    t_W5 = tf.get_variable("W5", shape=[625, 10], initializer=tf.contrib.layers.xavier_initializer())
+    t_b5 = tf.Variable(tf.random_normal([10]))
+    t_H = tf.matmul(t_L4, t_W5) + t_b5
 
     # set train node
-    cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
-        logits=logits, labels=Y))
-    train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+    t_C = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=t_H, labels=t_Y))
+    t_T = tf.train.AdamOptimizer(learning_rate=f_learning_rate).minimize(t_C)
 
     # launch nodes
     with tf.Session() as sess:
         print("started machine learning")
         sess.run(tf.global_variables_initializer())
-        for epoch in range(training_epochs):
-            avg_cost = 0
+        for n_epoch in range(n_epochs):
+            f_avg_cost = 0
             # 55000 / 100 = 550
-            total_batch = int(mnist.train.num_examples / batch_size)
-            for i in range(total_batch):
-                batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-                c, _ = sess.run([cost, train], feed_dict={X: batch_xs, Y: batch_ys, keep_prob: 0.7})
-                avg_cost += c / total_batch
-                if i % 10 == 0:
-                    print("  ", i, "avg_cost: ", avg_cost)
-            print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))
+            n_total_batch = int(mnist.train.num_examples / n_batch_size)
+            for i in range(n_total_batch):
+                l_X, l_Y = mnist.train.next_batch(n_batch_size)
+                f_cost, _ = sess.run([t_C, t_T], feed_dict={t_X: l_X, t_Y: l_Y, t_K: 0.7})
+                f_avg_cost += f_cost / n_total_batch
+                # if i % 10 == 0:
+                #     print(f'  batch: {i:8d}, cost:{f_cost:10.9f}, f_avg_cost: {f_avg_cost:10.9f}')
+            print(f'epoch: {n_epoch:10d}, cost: {f_avg_cost:10.9f}')
         print("ended machine learning")
 
         # Test model and check accuracy
-        correct_prediction = tf.equal(tf.argmax(logits, 1), tf.argmax(Y, 1))
-        accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-        print('Accuracy:', sess.run(accuracy, feed_dict={
-            X: mnist.test.images, Y: mnist.test.labels, keep_prob=1}))
+        t_pred = tf.equal(tf.argmax(t_H, 1), tf.argmax(t_Y, 1))
+        t_accu = tf.reduce_mean(tf.cast(t_pred, tf.float32))
+        print('Accuracy:', sess.run(t_accu, 
+            feed_dict={t_X: mnist.test.images, t_Y: mnist.test.labels, t_K: 1.0}))
 
         # Get one and predict
-        r = random.randint(0, mnist.test.num_examples - 1)
-        print("Label: ", sess.run(tf.argmax(mnist.test.labels[r:r + 1], 1)))
-        print("Prediction: ", sess.run(
-            tf.argmax(logits, 1), feed_dict={X: mnist.test.images[r:r + 1], keep_prob=1}))
+        n_r = random.randint(0, mnist.test.num_examples - 1)
+        print("Label: ", sess.run(tf.argmax(mnist.test.labels[n_r:n_r + 1], 1)))
+        print("Prediction: ", sess.run(tf.argmax(t_H, 1), 
+            feed_dict={t_X: mnist.test.images[n_r:n_r + 1], t_K: 1.0}))
 
 # plt.imshow(mnist.test.images[r:r + 1].
 #           reshape(28, 28), cmap='Greys', interpolation='nearest')
@@ -3459,87 +3453,77 @@ if __name__ == "__main__":
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
-class Model:
+class MnistCnn:
 
-    def __init__(self, sess, name, learning_rate=1e-3):
+    def __init__(self, sess, name, f_learn_rate=1e-3):
         self.sess = sess
         self.name = name
-        self.learning_rate = learning_rate
-        self._build_net()
+        self.f_learn_rate = f_learn_rate
+        self.build()
 
-    def _build_net(self):
+    def build(self):
         with tf.variable_scope(self.name):
             # set place holder
-            self.keep_prob = tf.placeholder(tf.float32)
-            self.X = tf.placeholder(tf.float32, [None, 784])
-            X_img = tf.reshape(self.X, [-1, 28, 28, 1])
-            self.Y = tf.placeholder(tf.float32, [None, 10])
+            self.t_K = tf.placeholder(tf.float32)
+            self.t_X = tf.placeholder(tf.float32, [None, 784])
+            t_X_img  = tf.reshape(self.t_X, [-1, 28, 28, 1])
+            self.t_Y = tf.placeholder(tf.float32, [None, 10])
 
             # L1 ImgIn shape=(?, 28, 28, 1)
             #    Conv     -> (?, 28, 28, 32)
             #    Pool     -> (?, 14, 14, 32)
-            W1 = tf.Variable(tf.random_normal([3, 3, 1, 32], stddev=0.01))
-            L1 = tf.nn.conv2d(X_img, W1, strides=[1, 1, 1, 1], padding='SAME')
-            L1 = tf.nn.relu(L1)
-            L1 = tf.nn.max_pool(L1, ksize=[1, 2, 2, 1],
-                                strides=[1, 2, 2, 1], padding='SAME')
-            L1 = tf.nn.dropout(L1, keep_prob=self.keep_prob)
+            t_W1 = tf.Variable(tf.random_normal([3, 3, 1, 32], stddev=0.01))
+            t_L1 = tf.nn.conv2d(t_X_img, t_W1, strides=[1, 1, 1, 1], padding='SAME')
+            t_L1 = tf.nn.relu(t_L1)
+            t_L1 = tf.nn.max_pool(t_L1, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+            t_L1 = tf.nn.dropout(t_L1, keep_prob=self.t_K)
 
             # L2 ImgIn shape=(?, 14, 14, 32)
             #    Conv      ->(?, 14, 14, 64)
             #    Pool      ->(?, 7, 7, 64)
-            W2 = tf.Variable(tf.random_normal([3, 3, 32, 64], stddev=0.01))
-            L2 = tf.nn.conv2d(L1, W2, strides=[1, 1, 1, 1], padding='SAME')
-            L2 = tf.nn.relu(L2)
-            L2 = tf.nn.max_pool(L2, ksize=[1, 2, 2, 1],
-                                strides=[1, 2, 2, 1], padding='SAME')
-            L2 = tf.nn.dropout(L2, keep_prob=self.keep_prob)
+            t_W2 = tf.Variable(tf.random_normal([3, 3, 32, 64], stddev=0.01))
+            t_L2 = tf.nn.conv2d(t_L1, t_W2, strides=[1, 1, 1, 1], padding='SAME')
+            t_L2 = tf.nn.relu(t_L2)
+            t_L2 = tf.nn.max_pool(t_L2, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+            t_L2 = tf.nn.dropout(t_L2, keep_prob=self.t_K)
 
             # L3 ImgIn shape=(?, 7, 7, 64)
             #    Conv      ->(?, 7, 7, 128)
             #    Pool      ->(?, 4, 4, 128)
             #    Reshape   ->(?, 4 * 4 * 128) # Flatten them for FC
-            W3 = tf.Variable(tf.random_normal([3, 3, 64, 128], stddev=0.01))
-            L3 = tf.nn.conv2d(L2, W3, strides=[1, 1, 1, 1], padding='SAME')
-            L3 = tf.nn.relu(L3)
-            L3 = tf.nn.max_pool(L3, ksize=[1, 2, 2, 1], strides=[
-                                1, 2, 2, 1], padding='SAME')
-            L3 = tf.nn.dropout(L3, keep_prob=self.keep_prob)
-            L3_flat = tf.reshape(L3, [-1, 128 * 4 * 4])
+            t_W3 = tf.Variable(tf.random_normal([3, 3, 64, 128], stddev=0.01))
+            t_L3 = tf.nn.conv2d(t_L2, t_W3, strides=[1, 1, 1, 1], padding='SAME')
+            t_L3 = tf.nn.relu(t_L3)
+            t_L3 = tf.nn.max_pool(t_L3, ksize=[1, 2, 2, 1], strides=[1, 2, 2, 1], padding='SAME')
+            t_L3 = tf.nn.dropout(t_L3, keep_prob=self.t_K)
+            t_L3_flat = tf.reshape(t_L3, [-1, 128 * 4 * 4])
 
             # L4 FC 4x4x128 inputs -> 625 outputs
-            W4 = tf.get_variable("W4", shape=[128 * 4 * 4, 625],
-                                 initializer=tf.contrib.layers.xavier_initializer())
-            b4 = tf.Variable(tf.random_normal([625]))
-            L4 = tf.nn.relu(tf.matmul(L3_flat, W4) + b4)
-            L4 = tf.nn.dropout(L4, keep_prob=self.keep_prob)
+            t_W4 = tf.get_variable("W4", shape=[128 * 4 * 4, 625], initializer=tf.contrib.layers.xavier_initializer())
+            t_b4 = tf.Variable(tf.random_normal([625]))
+            t_L4 = tf.nn.relu(tf.matmul(t_L3_flat, t_W4) + t_b4)
+            t_L4 = tf.nn.dropout(t_L4, keep_prob=self.t_K)
 
             # L5 Final FC 625 inputs -> 10 outputs
-            W5 = tf.get_variable("W5", shape=[625, 10],
-                                 initializer=tf.contrib.layers.xavier_initializer())
-            b5 = tf.Variable(tf.random_normal([10]))
-            self.logits = tf.matmul(L4, W5) + b5
+            t_W5 = tf.get_variable("W5", shape=[625, 10], initializer=tf.contrib.layers.xavier_initializer())
+            t_b5 = tf.Variable(tf.random_normal([10]))
+            self.t_H = tf.matmul(t_L4, t_W5) + t_b5
 
         # define cost/loss & optimizer
-        self.cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
-            logits=self.logits, labels=self.Y))
-        
-        self.optimizer = tf.train.AdamOptimizer(
-            learning_rate=self.learning_rate).minimize(self.cost)
+        self.t_C = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=self.t_H, labels=self.t_Y))        
+        self.t_T = tf.train.AdamOptimizer(learning_rate=self.f_learn_rate).minimize(self.t_C)
 
-        correct_prediction = tf.equal(
-            tf.argmax(self.logits, 1), tf.argmax(self.Y, 1))
-        self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        t_pred = tf.equal(tf.argmax(self.t_H, 1), tf.argmax(self.t_Y, 1))
+        self.t_accu = tf.reduce_mean(tf.cast(t_pred, tf.float32))
 
-    def predict(self, x_test, keep_prob=1.0):
-        return self.sess.run(self.logits, feed_dict={self.X: x_test, self.keep_prob: keep_prob})
+    def predict(self, l_X, f_K=1.0):
+        return self.sess.run(self.t_H, feed_dict={self.t_X: l_X, self.t_K: f_K})
 
-    def get_accuracy(self, x_test, y_test, keep_prob=1.0):
-        return self.sess.run(self.accuracy, feed_dict={self.X: x_test, self.Y: y_test, self.keep_prob: keep_prob})
+    def get_accuracy(self, l_X, l_Y, f_K=1.0):
+        return self.sess.run(self.t_accu, feed_dict={self.t_X: l_X, self.t_Y: l_Y, self.t_K: f_K})
 
-    def train(self, x_data, y_data, keep_prob=0.7):
-        return self.sess.run([self.cost, self.optimizer], feed_dict={
-            self.X: x_data, self.Y: y_data, self.keep_prob: keep_prob})
+    def train(self, l_X, l_Y, f_K=0.7):
+        return self.sess.run([self.t_C, self.t_T], feed_dict={self.t_X: l_X, self.t_Y: l_Y, self.t_K: f_K})
 
 def main():
     # set variables
@@ -3549,24 +3533,24 @@ def main():
     mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
     # set hyper parameters
-    training_epochs = 15
-    batch_size = 100
+    n_epochs = 15
+    n_batch_size = 100
 
     # launch nodes
     with tf.Session() as sess:
-        m1 = Model(sess, "m1")
+        m1 = MnistCnn(sess, "m1")
         sess.run(tf.global_variables_initializer())
         print('Learning started!!!')
-        for epoch in range(training_epochs):
-            avg_cost = 0
-            total_batch = int(mnist.train.num_examples / batch_size)
-            for i in range(total_batch):
-                batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-                c, _ = m1.train(batch_xs, batch_ys)
-                avg_cost += c / total_batch
-                if i % 10 == 0:
-                    print("  ", i, "avg_cost: ", avg_cost)
-            print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))                    
+        for n_epoch in range(n_epochs):
+            f_avg_cost = 0
+            n_total_batch = int(mnist.train.num_examples / n_batch_size)
+            for i in range(n_total_batch):
+                l_X, l_Y = mnist.train.next_batch(n_batch_size)
+                f_cost, _ = m1.train(l_X, l_Y)
+                f_avg_cost += f_cost / n_total_batch
+                # if i % 10 == 0:
+                #     print("  ", i, "f_avg_cost: ", f_avg_cost)
+            print(f'epoch: {n_epoch:10d}, cost: {f_avg_cost:10.9f}')                    
         print('Learning ended!!!')
         print('Accuracy:', m1.get_accuracy(mnist.test.images, mnist.test.labels))
     
@@ -3581,78 +3565,60 @@ if __name__ == "__main__":
 import tensorflow as tf
 from tensorflow.examples.tutorials.mnist import input_data
 
-class Model:
+class MnistCnn:
 
-    def __init__(self, sess, name, learning_rate=1e-3):
+    def __init__(self, sess, name, f_learn_rate=1e-3):
         self.sess = sess
         self.name = name
-        self.learning_rate = learning_rate
-        self._build_net()
+        self.f_learn_rate = f_learn_rate
+        self.build()
 
-    def _build_net(self):
+    def build(self):
         with tf.variable_scope(self.name):
             # set place holder
-            self.training = tf.placeholder(tf.bool)
-            self.X = tf.placeholder(tf.float32, [None, 784])
-            X_img = tf.reshape(self.X, [-1, 28, 28, 1])
-            self.Y = tf.placeholder(tf.float32, [None, 10])
+            self.t_train = tf.placeholder(tf.bool)
+            self.t_X = tf.placeholder(tf.float32, [None, 784])
+            t_X_img  = tf.reshape(self.t_X, [-1, 28, 28, 1])
+            self.t_Y = tf.placeholder(tf.float32, [None, 10])
 
             # layer 1
-            conv1 = tf.layers.conv2d(inputs=X_img, filters=32, kernel_size=[3, 3],
-                                     padding="SAME", activation=tf.nn.relu)
-            pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=[2, 2],
-                                            padding="SAME", strides=2)
-            dropout1 = tf.layers.dropout(inputs=pool1,
-                                         rate=0.7, training=self.training)
+            conv1    = tf.layers.conv2d(inputs=t_X_img, filters=32, kernel_size=[3, 3], padding="SAME", activation=tf.nn.relu)
+            pool1    = tf.layers.max_pooling2d(inputs=conv1, pool_size=[2, 2], padding="SAME", strides=2)
+            dropout1 = tf.layers.dropout(inputs=pool1, rate=0.7, training=self.t_train)
+
             # layer 2
-            conv2 = tf.layers.conv2d(inputs=dropout1, filters=64, kernel_size=[3, 3],
-                                     padding="SAME", activation=tf.nn.relu)
-            pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2],
-                                            padding="SAME", strides=2)
-            dropout2 = tf.layers.dropout(inputs=pool2,
-                                         rate=0.7, training=self.training)
+            conv2 = tf.layers.conv2d(inputs=dropout1, filters=64, kernel_size=[3, 3], padding="SAME", activation=tf.nn.relu)
+            pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2], padding="SAME", strides=2)
+            dropout2 = tf.layers.dropout(inputs=pool2, rate=0.7, training=self.t_train)
 
             # layer 3
-            conv3 = tf.layers.conv2d(inputs=dropout2, filters=128, kernel_size=[3, 3],
-                                     padding="same", activation=tf.nn.relu)
-            pool3 = tf.layers.max_pooling2d(inputs=conv3, pool_size=[2, 2],
-                                            padding="same", strides=2)
-            dropout3 = tf.layers.dropout(inputs=pool3,
-                                         rate=0.7, training=self.training)
+            conv3 = tf.layers.conv2d(inputs=dropout2, filters=128, kernel_size=[3, 3], padding="same", activation=tf.nn.relu)
+            pool3 = tf.layers.max_pooling2d(inputs=conv3, pool_size=[2, 2], padding="same", strides=2)
+            dropout3 = tf.layers.dropout(inputs=pool3, rate=0.7, training=self.t_train)
 
             # layer4
             flat = tf.reshape(dropout3, [-1, 128 * 4 * 4])
-            dense4 = tf.layers.dense(inputs=flat,
-                                     units=625, activation=tf.nn.relu)
-            dropout4 = tf.layers.dropout(inputs=dense4,
-                                         rate=0.5, training=self.training)
+            dense4 = tf.layers.dense(inputs=flat, units=625, activation=tf.nn.relu)
+            dropout4 = tf.layers.dropout(inputs=dense4, rate=0.5, training=self.t_train)
 
             # Logits (no activation) Layer: L5 Final FC 625 inputs -> 10 outputs
-            self.logits = tf.layers.dense(inputs=dropout4, units=10)
+            self.t_H = tf.layers.dense(inputs=dropout4, units=10)
 
         # define cost/loss & optimizer
-        self.cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
-            logits=self.logits, labels=self.Y))
-        
-        self.optimizer = tf.train.AdamOptimizer(
-            learning_rate=self.learning_rate).minimize(self.cost)
+        self.t_C = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=self.t_H, labels=self.t_Y))        
+        self.t_T = tf.train.AdamOptimizer(learning_rate=self.f_learn_rate).minimize(self.t_C)
 
-        correct_prediction = tf.equal(
-            tf.argmax(self.logits, 1), tf.argmax(self.Y, 1))
-        self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        t_pred = tf.equal(tf.argmax(self.t_H, 1), tf.argmax(self.t_Y, 1))
+        self.t_accu = tf.reduce_mean(tf.cast(t_pred, tf.float32))
 
-    def predict(self, x_test, training=False):
-        return self.sess.run(self.logits,
-                             feed_dict={self.X: x_test, self.training: training})
+    def predict(self, l_X, b_train=False):
+        return self.sess.run(self.t_H, feed_dict={self.t_X: l_X, self.t_train: b_train})
 
-    def get_accuracy(self, x_test, y_test, training=False):
-        return self.sess.run(self.accuracy,
-                             feed_dict={self.X: x_test,
-                                        self.Y: y_test, self.training: training})
+    def get_accuracy(self, l_X, l_Y, b_train=False):
+        return self.sess.run(self.t_accu, feed_dict={self.t_X: l_X, self.t_Y: l_Y, self.t_train: b_train})
 
-    def train(self, x_data, y_data, training=True):
-        return self.sess.run([self.cost, self.optimizer], feed_dict={
-            self.X: x_data, self.Y: y_data, self.training: training})
+    def train(self, l_X, l_Y, b_train=True):
+        return self.sess.run([self.t_C, self.t_T], feed_dict={self.t_X: l_X, self.t_Y: l_Y, self.t_train: b_train})
 
 def main():
     # set variables
@@ -3662,24 +3628,24 @@ def main():
     mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
     # set hyper parameters
-    training_epochs = 15
-    batch_size = 100
+    n_epochs = 15
+    n_batch_size = 100
 
     # launch nodes
     with tf.Session() as sess:
-        m1 = Model(sess, "m1")
+        m1 = MnistCnn(sess, "m1")
         sess.run(tf.global_variables_initializer())
         print('Learning started!!!')
-        for epoch in range(training_epochs):
-            avg_cost = 0
-            total_batch = int(mnist.train.num_examples / batch_size)
-            for i in range(total_batch):
-                batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-                c, _ = m1.train(batch_xs, batch_ys)
-                avg_cost += c / total_batch
-                if i % 10 == 0:
-                    print("  ", i, "avg_cost: ", avg_cost)
-            print('Epoch:', '%04d' % (epoch + 1), 'cost =', '{:.9f}'.format(avg_cost))                    
+        for n_epoch in range(n_epochs):
+            f_avg_cost = 0
+            n_total_batch = int(mnist.train.num_examples / n_batch_size)
+            for i in range(n_total_batch):
+                l_X, l_Y = mnist.train.next_batch(n_batch_size)
+                f_cost, _ = m1.train(l_X, l_Y)
+                f_avg_cost += f_cost / n_total_batch
+                # if i % 10 == 0:
+                #     print("  ", i, "f_avg_cost: ", f_avg_cost)
+            print(f'epoch: {n_epoch:10d}, cost: {f_avg_cost:10.9f}')                    
         print('Learning ended!!!')
         print('Accuracy:', m1.get_accuracy(mnist.test.images, mnist.test.labels))
     
@@ -3696,78 +3662,60 @@ import tensorflow as tf
 import numpy as np
 from tensorflow.examples.tutorials.mnist import input_data
 
-class Model:
+class MnistCnn:
 
-    def __init__(self, sess, name, learning_rate=1e-3):
+    def __init__(self, sess, name, f_learn_rate=1e-3):
         self.sess = sess
         self.name = name
-        self.learning_rate = learning_rate
-        self._build_net()
+        self.f_learn_rate = f_learn_rate
+        self.build()
 
-    def _build_net(self):
+    def build(self):
         with tf.variable_scope(self.name):
             # set place holder
-            self.training = tf.placeholder(tf.bool)
-            self.X = tf.placeholder(tf.float32, [None, 784])
-            X_img = tf.reshape(self.X, [-1, 28, 28, 1])
-            self.Y = tf.placeholder(tf.float32, [None, 10])
+            self.t_train = tf.placeholder(tf.bool)
+            self.t_X = tf.placeholder(tf.float32, [None, 784])
+            t_X_img  = tf.reshape(self.t_X, [-1, 28, 28, 1])
+            self.t_Y = tf.placeholder(tf.float32, [None, 10])
 
             # layer 1
-            conv1 = tf.layers.conv2d(inputs=X_img, filters=32, kernel_size=[3, 3],
-                                     padding="SAME", activation=tf.nn.relu)
-            pool1 = tf.layers.max_pooling2d(inputs=conv1, pool_size=[2, 2],
-                                            padding="SAME", strides=2)
-            dropout1 = tf.layers.dropout(inputs=pool1,
-                                         rate=0.7, training=self.training)
+            conv1    = tf.layers.conv2d(inputs=t_X_img, filters=32, kernel_size=[3, 3], padding="SAME", activation=tf.nn.relu)
+            pool1    = tf.layers.max_pooling2d(inputs=conv1, pool_size=[2, 2], padding="SAME", strides=2)
+            dropout1 = tf.layers.dropout(inputs=pool1, rate=0.7, training=self.t_train)
+
             # layer 2
-            conv2 = tf.layers.conv2d(inputs=dropout1, filters=64, kernel_size=[3, 3],
-                                     padding="SAME", activation=tf.nn.relu)
-            pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2],
-                                            padding="SAME", strides=2)
-            dropout2 = tf.layers.dropout(inputs=pool2,
-                                         rate=0.7, training=self.training)
+            conv2 = tf.layers.conv2d(inputs=dropout1, filters=64, kernel_size=[3, 3], padding="SAME", activation=tf.nn.relu)
+            pool2 = tf.layers.max_pooling2d(inputs=conv2, pool_size=[2, 2], padding="SAME", strides=2)
+            dropout2 = tf.layers.dropout(inputs=pool2, rate=0.7, training=self.t_train)
 
             # layer 3
-            conv3 = tf.layers.conv2d(inputs=dropout2, filters=128, kernel_size=[3, 3],
-                                     padding="same", activation=tf.nn.relu)
-            pool3 = tf.layers.max_pooling2d(inputs=conv3, pool_size=[2, 2],
-                                            padding="same", strides=2)
-            dropout3 = tf.layers.dropout(inputs=pool3,
-                                         rate=0.7, training=self.training)
+            conv3 = tf.layers.conv2d(inputs=dropout2, filters=128, kernel_size=[3, 3], padding="same", activation=tf.nn.relu)
+            pool3 = tf.layers.max_pooling2d(inputs=conv3, pool_size=[2, 2], padding="same", strides=2)
+            dropout3 = tf.layers.dropout(inputs=pool3, rate=0.7, training=self.t_train)
 
             # layer4
             flat = tf.reshape(dropout3, [-1, 128 * 4 * 4])
-            dense4 = tf.layers.dense(inputs=flat,
-                                     units=625, activation=tf.nn.relu)
-            dropout4 = tf.layers.dropout(inputs=dense4,
-                                         rate=0.5, training=self.training)
+            dense4 = tf.layers.dense(inputs=flat, units=625, activation=tf.nn.relu)
+            dropout4 = tf.layers.dropout(inputs=dense4, rate=0.5, training=self.t_train)
 
             # Logits (no activation) Layer: L5 Final FC 625 inputs -> 10 outputs
-            self.logits = tf.layers.dense(inputs=dropout4, units=10)
+            self.t_H = tf.layers.dense(inputs=dropout4, units=10)
 
         # define cost/loss & optimizer
-        self.cost = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
-            logits=self.logits, labels=self.Y))
-        
-        self.optimizer = tf.train.AdamOptimizer(
-            learning_rate=self.learning_rate).minimize(self.cost)
+        self.t_C = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=self.t_H, labels=self.t_Y))        
+        self.t_T = tf.train.AdamOptimizer(learning_rate=self.f_learn_rate).minimize(self.t_C)
 
-        correct_prediction = tf.equal(
-            tf.argmax(self.logits, 1), tf.argmax(self.Y, 1))
-        self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        t_pred = tf.equal(tf.argmax(self.t_H, 1), tf.argmax(self.t_Y, 1))
+        self.t_accu = tf.reduce_mean(tf.cast(t_pred, tf.float32))
 
-    def predict(self, x_test, training=False):
-        return self.sess.run(self.logits,
-                             feed_dict={self.X: x_test, self.training: training})
+    def predict(self, l_X, b_train=False):
+        return self.sess.run(self.t_H, feed_dict={self.t_X: l_X, self.t_train: b_train})
 
-    def get_accuracy(self, x_test, y_test, training=False):
-        return self.sess.run(self.accuracy,
-                             feed_dict={self.X: x_test,
-                                        self.Y: y_test, self.training: training})
+    def get_accuracy(self, l_X, l_Y, b_train=False):
+        return self.sess.run(self.t_accu, feed_dict={self.t_X: l_X, self.t_Y: l_Y, self.t_train: b_train})
 
-    def train(self, x_data, y_data, training=True):
-        return self.sess.run([self.cost, self.optimizer], feed_dict={
-            self.X: x_data, self.Y: y_data, self.training: training})
+    def train(self, l_X, l_Y, b_train=True):
+        return self.sess.run([self.t_C, self.t_T], feed_dict={self.t_X: l_X, self.t_Y: l_Y, self.t_train: b_train})
 
 def main():
     # set variables
@@ -3777,45 +3725,42 @@ def main():
     mnist = input_data.read_data_sets("MNIST_data/", one_hot=True)
 
     # set hyper parameters
-    training_epochs = 20
-    batch_size = 100
+    n_epochs  = 20
+    n_batches = 100
 
     # launch nodes
     with tf.Session() as sess:
         # models
-        models = []
-        num_models = 2
-        for m in range(num_models):
-            models.append(Model(sess, "mode" + str(m)))        
+        l_models = []
+        n_models = 2
+        for m in range(n_models):
+            l_models.append(MnistCnn(sess, "model" + str(m)))        
         sess.run(tf.global_variables_initializer())
         print('Learning started!!!')
         
-        for epoch in range(training_epochs):
-            avg_cost_list = np.zeros(len(models))
-            total_batch = int(mnist.train.num_examples / batch_size)
-            for i in range(total_batch):
-                batch_xs, batch_ys = mnist.train.next_batch(batch_size)
-                for m_idx, m in enumerate(models):
-                    c, _ = m.train(batch_xs, batch_ys)
-                    avg_cost_list[m_idx] += c / total_batch
-                if i % 10 == 0:
-                    print("  ", i, "cost: ", avg_cost_list)
-            print('Epoch:', '%04d' % (epoch + 1), 'cost =', avg_cost_list)
+        for n_epoch in range(n_epochs):
+            l_avg_costs = np.zeros(len(l_models))
+            n_total_batch = int(mnist.train.num_examples / n_batches)
+            for i in range(n_total_batch):
+                l_X, l_Y = mnist.train.next_batch(n_batches)
+                for m_idx, m in enumerate(l_models):
+                    f_cost, _ = m.train(l_X, l_Y)
+                    l_avg_costs[m_idx] += f_cost / n_total_batch
+                # if i % 10 == 0:
+                #     print("  ", i, "cost: ", l_avg_costs)
+            print('Epoch:', '%04d' % (n_epoch + 1), 'cost =', l_avg_costs)
         print('Learning ended!!!')
 
         # test model and check accuracy
-        test_size = len(mnist.test.labels)
-        predictions = np.zeros(test_size * 10).reshape(test_size, 10)
-        for m_idx, m in enumerate(models):
-            print(m_idx, 'Accuracy:', m.get_accuracy(
-                mnist.test.images, mnist.test.labels))
+        n_test_size = len(mnist.test.labels)
+        l_t_preds = np.zeros(n_test_size * 10).reshape(n_test_size, 10)
+        for m_idx, m in enumerate(l_models):
+            print(m_idx, 'Accuracy:', m.get_accuracy(mnist.test.images, mnist.test.labels))
             p = m.predict(mnist.test.images)
-            predictions += p
-        ensemble_correct_prediction = tf.equal(
-            tf.argmax(predictions, 1), tf.argmax(mnist.test.labels, 1))
-        ensemble_accuracy = tf.reduce_mean(
-            tf.cast(ensemble_correct_prediction, tf.float32))
-        print('Ensemble accuracy', sess.run(ensemble_accuracy))
+            l_t_preds += p
+        t_preds = tf.equal(tf.argmax(l_t_preds, 1), tf.argmax(mnist.test.labels, 1))
+        t_accu = tf.reduce_mean(tf.cast(t_preds, tf.float32))
+        print('Ensemble accuracy', sess.run(t_accu))
     
 if __name__ == "__main__":
     main()
@@ -3823,19 +3768,19 @@ if __name__ == "__main__":
 
 # RNN (Recurrent Neural Networks)
 
-- node의 출력이 바로 옆 node의 입력으로 적용되는 형태의 neural
-  networks를 recurrent neural networks라고 한다.
-- 다음과 같은 Vanilla RNN을 살펴보자. 현재 노드의
-  hypothesis 인 `h_{t}`는 현재 노드의 입력값 `x_{t}`와 이전 노드의
-  hypothesis 인 `h_{t-1}`에 의해 결정된다. `W_{hh}`는 이전 노드에서
-  넘어오는 weight이다.  `W_{xh}`는 inputlayer에서 넘어오는
-  weightdlek. activation function으로 tanh를 사용하였다.
+- node 의 출력이 바로 옆 node의 입력으로 적용되는 형태의 neural
+  networks 를 recurrent neural networks 라고 한다.
+- 다음과 같은 Vanilla RNN 을 살펴보자. 현재 노드의
+  hypothesis 인 `h_{t}` 는 현재 노드의 입력값 `x_{t}` 와 이전 노드의
+  hypothesis 인 `h_{t-1}` 에 의해 결정된다. `W_{hh}` 는 이전 노드에서
+  넘어오는 weight 이다.  `W_{xh}` 는 inputlayer 에서 넘어오는
+  weight 이다. activation function 으로 tanh 를 사용하였다.
   
 ![](img/vanillarnn.png)
 
-- "hell"라는 문자열을 vanilla RNN에 입력 데이터로 넣어 보자. 전체 문자는 "hel"
-  세 종류이기 때문에 hidden layer의 값은 [3,1]형태 이다. 마지막 출력을 위해서
-  fully connected layer를 사용했다.
+- "hell" 라는 문자열을 vanilla RNN 에 입력 데이터로 넣어 보자. 전체 문자는 "hel"
+  세 종류이기 때문에 hidden layer의 값은 `[3,1]` 형태 이다. 마지막 출력을 위해서
+  fully connected layer 를 사용했다.
 
 ![](img/vanillarnn_hello_0.png)
 
