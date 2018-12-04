@@ -3768,6 +3768,8 @@ if __name__ == "__main__":
 
 # RNN (Recurrent Neural Networks)
 
+- [RNN과 LSTM을 이해해보자!](https://ratsgo.github.io/natural%20language%20processing/2017/03/09/rnnlstm/)
+  - RNN 을 아주 잘 설명하고 있는 블로그
 - node 의 출력이 바로 옆 node의 입력으로 적용되는 형태의 neural
   networks 를 recurrent neural networks 라고 한다.
 - 다음과 같은 Vanilla RNN 을 살펴보자. 현재 노드의
@@ -3818,64 +3820,58 @@ tf.set_random_seed(777)
 def main():
     # set data
     idx2char = ['h', 'i', 'e', 'l', 'o']
-    x_data = [[0, 1, 0, 2, 3, 3]]   # hihell
-    x_one_hot = [[[1, 0, 0, 0, 0],  # h 0
-                  [0, 1, 0, 0, 0],  # i 1
-                  [1, 0, 0, 0, 0],  # h 0
-                  [0, 0, 1, 0, 0],  # e 2
-                  [0, 0, 0, 1, 0],  # l 3
-                  [0, 0, 0, 1, 0]]] # l 3
-    y_data = [[1, 0, 2, 3, 3, 4]]   # ihello
+    l_X = [[0, 1, 0, 2, 3, 4]]   # hihell
+    l_X_one_hot = [[[1, 0, 0, 0, 0],  # h 0
+                   [0, 1, 0, 0, 0],  # i 1
+                   [1, 0, 0, 0, 0],  # h 0
+                   [0, 0, 1, 0, 0],  # e 2
+                   [0, 0, 0, 1, 0],  # l 3
+                   [0, 0, 0, 1, 0]]] # l 3
+    l_Y = [[1, 0, 2, 3, 3, 4]]   # ihello
 
     # set variables
-    num_classes     = 5
-    input_dim       = 5  # input data is one hot
-    hidden_size     = 5  # output from the LSTM. 5 to one-hot
-    batch_size      = 1
-    sequence_length = 6
-    learning_rate   = 0.1
+    n_class_cnt     = 5
+    n_input_dim     = 5  # input data is one hot
+    n_hidden_size   = 5  # output from the LSTM. 5 to one-hot
+    n_batch_size    = 1
+    n_seq_len       = 6
+    f_learn_rate    = 0.1
 
     # set placeholder
-    X = tf.placeholder(
-        tf.float32, [None, sequence_length, input_dim])
-    Y = tf.placeholder(
-        tf.int32, [None, sequence_length])
+    t_X = tf.placeholder(tf.float32, [None, n_seq_len, n_input_dim])
+    t_Y = tf.placeholder(tf.int32, [None, n_seq_len])
 
     # set RNN
-    cell = tf.contrib.rnn.BasicLSTMCell(num_units=hidden_size,
-                                        state_is_tuple=True)
-    initial_state = cell.zero_state(batch_size, tf.float32)
-    outputs, _state = tf.nn.dynamic_rnn(
-        cell, X, initial_state=initial_state, dtype=tf.float32)
+    cell = tf.nn.rnn_cell.LSTMCell(num_units=n_hidden_size, state_is_tuple=True)
+    initial_state = cell.zero_state(n_batch_size, tf.float32)
+    t_outputs, _ = tf.nn.dynamic_rnn(cell, t_X, initial_state=initial_state, dtype=tf.float32)
 
     # set FCNN
-    x_for_fc = tf.reshape(outputs, [-1, hidden_size])
-    # fc_w = tf.get_variable("fc_w", [hidden_size, num_classes])
-    # fc_b = tf.get_variable("fc_b", [num_classes])
-    # outputs = tf.matmul(X_for_fc, fc_w) + fc_b
-    outputs = tf.contrib.layers.fully_connected(
-        inputs=x_for_fc, num_outputs=num_classes, activation_fn=None)
+    t_X_for_fc = tf.reshape(t_outputs, [-1, n_hidden_size])
+    # fc_w = tf.get_variable("fc_w", [n_hidden_size, n_class_cnt])
+    # fc_b = tf.get_variable("fc_b", [n_class_cnt])
+    # t_outputs = tf.matmul(X_for_fc, fc_w) + fc_b
+    t_outputs = tf.contrib.layers.fully_connected(inputs=t_X_for_fc, num_outputs=n_class_cnt, activation_fn=None)
     # reshape out for sequence_loss
-    outputs = tf.reshape(outputs, [batch_size, sequence_length, num_classes])
+    t_outputs = tf.reshape(t_outputs, [n_batch_size, n_seq_len, n_class_cnt])
 
     # set nodes
-    weights = tf.ones([batch_size, sequence_length])
-    sequence_loss = tf.contrib.seq2seq.sequence_loss(
-        logits=outputs, targets=Y, weights=weights)
-    loss = tf.reduce_mean(sequence_loss)
-    train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(loss)
-    prediction = tf.argmax(outputs, axis=2)
+    weights = tf.ones([n_batch_size, n_seq_len])
+    t_seq_loss = tf.contrib.seq2seq.sequence_loss(logits=t_outputs, targets=t_Y, weights=weights)
+    t_C = tf.reduce_mean(t_seq_loss)
+    t_T = tf.train.AdamOptimizer(learning_rate=f_learn_rate).minimize(t_C)
+    t_pred = tf.argmax(t_outputs, axis=2)
 
     # launch nodes
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
         for i in range(50):
-            l, _ = sess.run([loss, train], feed_dict={X: x_one_hot, Y: y_data})
-            result = sess.run(prediction, feed_dict={X: x_one_hot})
-            print(i, "loss: ", l, "pred: ", result, "true Y", y_data)
-            #
-            result_str = [idx2char[c] for c in np.squeeze(result)]
-            print("\tpred str: ", ''.join(result_str))
+            f_cost, _ = sess.run([t_C, t_T], feed_dict={t_X: l_X_one_hot, t_Y: l_Y})
+            l_pred = sess.run(t_pred, feed_dict={t_X: l_X_one_hot})
+            pred_str = ''.join([idx2char[c] for c in np.squeeze(l_pred)])
+            true_str = ''.join([idx2char[c] for c in np.squeeze(l_Y)])
+            print(f'{i:10d}, pred: {pred_str}, true: {true_str}')
+        #print(sess.run(weights))
 
 if __name__ == "__main__":
     main()
