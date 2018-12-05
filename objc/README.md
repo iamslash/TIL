@@ -49,7 +49,34 @@ objc를 정리한다.
   * 유료이다. src는 강좌안 링크로 다운받을 수 있다..
 * [effective objective-c 2.0](https://www.amazon.com/Effective-Objective-C-2-0-Specific-Development-ebook/dp/B00CUG5MZA)
 
-# Language Summary
+# Usage
+
+## Collections compared to c++ containers
+
+* [이곳](https://developer.apple.com/library/archive/documentation/General/Conceptual/DevPedia-CocoaCore/Collection.html)
+  에 의하면 objc 의 collection 은 `NSArray, NSSet, NSDictionary, NSPointerArray, NSHashTable, NSMapTable,
+  NSMutableArray, NSMutableDictionary, NSMutableSet, NSCountedSet` 등이 있다.
+  
+| c++                  | objc               |
+|:---------------------|:-------------------|
+| `if, else`           | ``   |
+| `for, while`         | ``       |
+| `array`              | ``            |
+| `vector`             | ``             |
+| `deque`              | ``            |
+| `forward_list`       | ``             |
+| `list`               | ``            |
+| `stack`              | ``             |
+| `queue`              | ``            |
+| `priority_queue`     | ``            |
+| `set`                | ``                 |
+| `multiset`           | ``                 |
+| `map`                | ``                 |
+| `multimap`           | ``                 |
+| `unordered_set`      | ``              |
+| `unordered_multiset` | ``          |
+| `unordered_map`      | ``             |
+| `unordered_multimap` | ``|
 
 ## Messages
 

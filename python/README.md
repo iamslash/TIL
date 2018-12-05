@@ -36,7 +36,7 @@ python3에 대해 정리한다.
 
 # Usage
 
-## Collections Compared to c++
+## Collections Compared to c++ containers
 
 | c++                  | python    |
 |:---------------------|:----------|

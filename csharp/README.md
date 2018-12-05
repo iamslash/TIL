@@ -14,6 +14,10 @@ c#에 대해 정리한다.
 
 # Usage
 
+## Collections compared to c++ containers
+
+
+
 ## volatile을 사용하자.
 
 volatile을 사용하지 않으면 CACHE에서 읽어올 수 있다. multi thread
