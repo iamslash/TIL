@@ -3,27 +3,28 @@
 
 - [Abstract](#abstract)
 - [Usage](#usage)
-    - [collections](#collections)
-    - [generator](#generator)
-    - [pdb](#pdb)
-    - [async, await](#async-await)
-    - [performance check](#performance-check)
-    - [`__slots__`](#slots)
-    - [`__metaclass__`](#metaclass)
-    - [weakref](#weakref)
-    - [memory leak](#memory-leak)
-    - [gc](#gc)
-    - [dependencies](#dependencies)
+  - [Collections Compared to c++](#collections-compared-to-c)
+  - [collections](#collections)
+  - [generator](#generator)
+  - [pdb](#pdb)
+  - [async, await](#async-await)
+  - [performance check](#performance-check)
+  - [`__slots__`](#slots)
+  - [`__metaclass__`](#metaclass)
+  - [weakref](#weakref)
+  - [memory leak](#memory-leak)
+  - [gc](#gc)
+  - [dependencies](#dependencies)
 - [Library](#library)
-    - [regex](#regex)
-    - [numpy](#numpy)
-    - [pandas](#pandas)
-    - [click](#click)
-    - [pytest](#pytest)
-    - [urwid](#urwid)
-    - [fabric](#fabric)
-    - [flake8](#flake8)
-    - [objgraph](#objgraph)
+  - [regex](#regex)
+  - [numpy](#numpy)
+  - [pandas](#pandas)
+  - [click](#click)
+  - [pytest](#pytest)
+  - [urwid](#urwid)
+  - [fabric](#fabric)
+  - [flake8](#flake8)
+  - [objgraph](#objgraph)
 - [References](#references)
 
 <!-- markdown-toc end -->
@@ -34,6 +35,27 @@
 python3에 대해 정리한다.
 
 # Usage
+
+## Collections Compared to c++
+
+| c++                  | python    |
+|:---------------------|:----------|
+| `array`              | `tuple`   |
+| `vector`             | |
+| `deque`              | |
+| `forward_list`       | |
+| `list`               | |
+| `stack`              | |
+| `queue`              | |
+| `priority_queue`     | |
+| `set`                | |
+| `multiset`           | |
+| `map`                | |
+| `multimap`           | |
+| `unordered_set`      | |
+| `unordered_multiset` | |
+| `unordered_map`      | |
+| `unordered_multimap` | |
 
 ## collections
 
