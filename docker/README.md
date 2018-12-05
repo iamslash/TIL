@@ -1,8 +1,14 @@
-# intro
+# Abstract
 
 - 가상화 기술의 하나이다. 기존의 vmware, virtualbox보다 훨씬 성능이 좋다.
 
-# usage
+# Materials
+
+- [도커 Docker 기초 확실히 다지기](https://futurecreator.github.io/2018/11/16/docker-container-basics/index.html)
+  - 명쾌한 한장 요약
+- [가장 빨리 만나는 Docker](http://pyrasis.com/docker.html)
+
+# Usage
 
 - docker help
 - docker search <image-name>
@@ -30,8 +36,3 @@
 - docker exec
   - docker exec -it myubuntu /bin/bash
     - 기존에 뭔가 실행하고 있는 container에 terminal을 획득해보자.
-
-# reference
-
-
-- [가장 빨리 만나는 Docker](http://pyrasis.com/docker.html)
