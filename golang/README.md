@@ -3,8 +3,10 @@
 
 - [Abstract](#abstract)
 - [Materials](#materials)
-    - [Tutorial](#tutorial)
-    - [Language](#language)
+- [References](#references)
+- [Usage](#usage)
+    - [Collections compared to c++ containers](#collections-compared-to-c-containers)
+    - [Collections](#collections)
     - [Tools](#tools)
     - [Best Practices](#best-practices)
     - [Concurrency](#concurrency)
@@ -15,8 +17,7 @@
     - [Map, Slice](#map-slice)
     - [Logging](#logging)
     - [Encoding, JSON](#encoding-json)
-- [References](#references)
-- [Language](#language-1)
+- [Language](#language)
     - [Hello World](#hello-world)
     - [Operators](#operators)
         - [Arithmetic](#arithmetic)
@@ -72,9 +73,8 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 * [1ambda golang](https://github.com/1ambda/golang)
   * 유용한 go links
 * [effective go](https://golang.org/doc/effective_go.html)
-
-## Tutorial
-
+* [Go Bootcamp](http://www.golangbootcamp.com/book/collection_types)
+  * 예제위주의 책
 * [예제로 배우는 GO프로그래밍](http://golang.site/)
   * 최고의 한글 예제들
 * [go by example](https://gobyexample.com/)
@@ -84,8 +84,6 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 * [A Tour of Go video](https://research.swtch.com/gotour)
   * interface, concurrency 에 관한 screencast
 
-## Language 
-
 * [Rob Pike: Simplicity is Complicated](https://www.youtube.com/watch?v=rFejpH_tAHM)
 * [Rob Pike: Go at Google](https://www.infoq.com/presentations/Go-Google)
   * [Article](https://talks.golang.org/2012/splash.article)
@@ -93,11 +91,22 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 * [Golang FAQ: Types](https://golang.org/doc/faq#types)
 * [Campoy: Functional Go?](https://www.youtube.com/watch?v=ouyHp2nJl0I)
 
+
+# References
+
+* [golang doc](https://golang.org/doc/)
+
+# Usage
+
+## Collections compared to c++ containers
+
+## Collections
+
 ## Tools
 
 * [Go Tooling in Action](https://www.youtube.com/watch?v=uBjoTxosSys)
   * go run, go build, go install, go test, go list, go doc, go-wrk,
-    go-torch, debugging등등을 다루는 킹왕짱 동영상
+    go-torch, debugging 등등을 다루는 킹왕짱 동영상
 
 ## Best Practices
 
@@ -164,9 +173,6 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 - [JSON, interface, and go generate](https://www.youtube.com/watch?v=YgnD27GFcyA)
 
-# References
-
-* [golang doc](https://golang.org/doc/)
 
 # Language
 

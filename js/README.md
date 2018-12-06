@@ -1,8 +1,9 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Internals](#internals)
+- [Usage](#usage)
+  - [Collections compared c++ container](#collections-compared-c-container)
+  - [Collections](#collections)
   - [Javascript Runtime Architecture](#javascript-runtime-architecture)
-- [Basic](#basic)
   - [curly braces](#curly-braces)
   - [parenthese](#parenthese)
   - [anonymous function](#anonymous-function)
@@ -41,7 +42,11 @@ java script에 대해 정리한다.
 * [Underscore.js](http://underscorejs.org/)
   * functional programming helper
 
-# Internals
+# Usage
+
+## Collections compared c++ container
+
+## Collections
 
 ## Javascript Runtime Architecture
 
@@ -50,8 +55,6 @@ java script에 대해 정리한다.
 ![](https://cdn-images-1.medium.com/max/800/1*4lHHyfEhVB0LnQ3HlhSs8g.png)
 
 
-
-# Basic
 
 ## curly braces
 

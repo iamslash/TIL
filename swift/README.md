@@ -4,8 +4,13 @@
 
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Basic](#basic)
+- [Usage](#usage)
+    - [Collections compared c++ container](#collections-compared-c-container)
+    - [Collections](#collections)
     - [Class](#class)
+- [Type](#type)
+- [Constants](#constants)
+- [Variables](#variables)
 
 <!-- markdown-toc end -->
 
@@ -20,7 +25,11 @@ swift에 대해 정리한다.
 * [Introduction to Swift (for C#.NET developers)](https://www.jbssolutions.com/introduction-swift-c-net-developers/)
 * [swift basic](http://minsone.github.io/mac/ios/swift-the-basic-summary)
 
-# Basic
+# Usage
+
+## Collections compared c++ container
+
+## Collections
 
 ## Class
 
