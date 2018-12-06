@@ -3,8 +3,8 @@
 
 - [Abstract](#abstract)
 - [Usage](#usage)
-  - [Collections Compared to c++](#collections-compared-to-c)
-  - [collections](#collections)
+  - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
+  - [Collections](#collections)
   - [generator](#generator)
   - [pdb](#pdb)
   - [async, await](#async-await)
@@ -38,26 +38,64 @@ python3에 대해 정리한다.
 
 ## Collections Compared to c++ containers
 
-| c++                  | python    |
-|:---------------------|:----------|
-| `array`              | `tuple`   |
-| `vector`             | |
-| `deque`              | |
-| `forward_list`       | |
-| `list`               | |
-| `stack`              | |
-| `queue`              | |
-| `priority_queue`     | |
-| `set`                | |
-| `multiset`           | |
-| `map`                | |
-| `multimap`           | |
-| `unordered_set`      | |
-| `unordered_multiset` | |
-| `unordered_map`      | |
-| `unordered_multimap` | |
+| c++                  | python             | 
+|:---------------------|:-------------------|
+| `if, else`           | `if, elif, else`   |
+| `for, while`         | `for, while`       |
+| `array`              | `tuple`            |
+| `vector`             | `list`             |
+| `deque`              | `deque`            |
+| `forward_list`       | `list`             |
+| `list`               | `deque`            |
+| `stack`              | `list`             |
+| `queue`              | `deque`            |
+| `priority_queue`     | `heapq`            |
+| `set`                | ``                 |
+| `multiset`           | ``                 |
+| `map`                | ``                 |
+| `multimap`           | ``                 |
+| `unordered_set`      | `set`              |
+| `unordered_multiset` | `Counter`          |
+| `unordered_map`      | `dict`             |
+| `unordered_multimap` | `defaultdict(list)`|
 
-## collections
+## Collections
+
+* tuple
+
+tuple은 list와 비슷하지만 원소를 추가, 갱신, 삭제가 불가한 immutable
+type이다.
+
+```python
+>>> t = ("A", 1, False)
+>>> t
+('A', 1, False)
+>>> type(t)
+<class 'tuple'>
+>>> t[1]
+1
+>>> t[-1]
+False
+>>> t[1:2]
+(1,)
+>>> t[1:]
+(1, False)
+>>> a = (1, 2)
+>>> b = (3, 4, 5)
+>>> c = a + b
+>>> c
+(1, 2, 3, 4, 5)
+>>> d = a * 3
+>>> c[0] = 0
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: 'tuple' object does not support item assignment
+>>> f, l = ("John", "Kim")
+>>> f
+'John'
+>>> l
+'Kim'
+```
 
 * list
 
@@ -99,117 +137,6 @@ python3에 대해 정리한다.
 1
 >>> [n ** 2 for n in range(10) if n % 3 == 0]
 [0, 9, 36, 81]
-```
-
-* tuple
-
-tuple은 list와 비슷하지만 원소를 추가, 갱신, 삭제가 불가한 immutable
-type이다.
-
-```python
->>> t = ("A", 1, False)
->>> t
-('A', 1, False)
->>> type(t)
-<class 'tuple'>
->>> t[1]
-1
->>> t[-1]
-False
->>> t[1:2]
-(1,)
->>> t[1:]
-(1, False)
->>> a = (1, 2)
->>> b = (3, 4, 5)
->>> c = a + b
->>> c
-(1, 2, 3, 4, 5)
->>> d = a * 3
->>> c[0] = 0
-Traceback (most recent call last):
-  File "<stdin>", line 1, in <module>
-TypeError: 'tuple' object does not support item assignment
->>> f, l = ("John", "Kim")
->>> f
-'John'
->>> l
-'Kim'
-```
-
-* dict
-
-```python
->>> s = {"a": 1, "b": 2, "c": 3}
->>> type(s)
-<class 'dict'>
->>> s["a"] = 100
->>> s
-{'a': 100, 'b': 2, 'c': 3}
->>> dict([('a', 2), ('b', 4), ('c', 5)])
-{'a': 2, 'b': 4, 'c': 5}
->>> dict(a=2, b=4, c=5)
-{'a': 2, 'b': 4, 'c': 5}
->>> for key in s:
-...     s[key]
-...
-100
-2
-3
->>> s.update({'a':-1, 'b':-1})
->>> s
-{'a': -1, 'b': -1, 'c': 3}
-```
-
-* set
-
-```python
->>> s = {1, 1, 1, 1, 2}
->>> s
-{1, 2}
->>> s = set([1, 1, 1, 1, 2])
->>> s
-{1, 2}
->>> s.add(7)
->>> s
-{1, 2, 7}
->>> s.update({4, 2, 10})
->>> s
-{1, 2, 4, 7, 10}
->>> s.remove(1)
->>> s
-{2, 4, 7, 10}
->>> s.clear()
->>> s
-set()
->>> a = {1, 2, 3}
->>> b = {3, 5, 6}
->>> a & b
-{3}
->>> a | b
-{1, 2, 3, 5, 6}
->>> a - b
-{1, 2}
-```
-
-* namedtuple
-
-tuple의 subclass이다. tuple은 index로만 접근 가능하지만
-namedtuple은 index, name으로 접근 가능하다.
-
-```python
->>> import collections
->>> p = collections.namedtuple('Vector', ['x', 'y'])
->>> issubclass(p, tuple)
-True
->>> Vector =  collections.namedtuple('Vector', ['x', 'y'])
->>> v = Vector(11, y=22)
->>> v
-Vector(x=11, y=22)
->>> print(v[0], v[1])
-11 22
->>> print(v.x, v.y)
-11 22
 ```
 
 * deque
@@ -264,31 +191,54 @@ IndexError: pop from an empty deque
 deque(['c', 'b', 'a'])
 ```
 
-* ChainMap
-
-dict의 subclass이다. 여러 개의 dict를 모아서 하나의 dict처럼 사용한다.
-여러개의 dict를 이용하여 하나의 dict를 생성하거나 update를 사용하는
-것보다 훨씬 효율적이다.
+* heapq
 
 ```python
->>> from collections import ChainMap
->>> c1 = {'a': 1}
->>> c2 = {'b': 2}
->>> c = ChainMap(c1, c2)
->>> c
-ChainMap({'a': 1}, {'b': 2})
->>> c['a']
-1
->>> c['b']
-2
->>> c['c'] = 3
->>> c
-ChainMap({'a': 1, 'c': 3}, {'b': 2})
->>> c.clear()
->>> c
-ChainMap({}, {'b': 2})
->>> c['b']
-2
+>>> import heapq
+>>> a = []
+>>> heapq.heappush(a, (5, 'write code'))
+>>> heapq.heappush(a, (7, 'release product'))
+>>> heapq.heappush(a, (1, 'write spec'))
+>>> heapq.heappush(a, (3, 'create tests'))
+>>> heapq.heappop(a)
+(1, 'write spec')
+>>> heapq.heappop(a)
+(3, 'create tests')
+>>> heapq.heappop(a)
+(5, 'write code')
+>>> heapq.heappop(a)
+(7, 'release product')
+```
+
+* set
+
+```python
+>>> s = {1, 1, 1, 1, 2}
+>>> s
+{1, 2}
+>>> s = set([1, 1, 1, 1, 2])
+>>> s
+{1, 2}
+>>> s.add(7)
+>>> s
+{1, 2, 7}
+>>> s.update({4, 2, 10})
+>>> s
+{1, 2, 4, 7, 10}
+>>> s.remove(1)
+>>> s
+{2, 4, 7, 10}
+>>> s.clear()
+>>> s
+set()
+>>> a = {1, 2, 3}
+>>> b = {3, 5, 6}
+>>> a & b
+{3}
+>>> a | b
+{1, 2, 3, 5, 6}
+>>> a - b
+{1, 2}
 ```
 
 * Counter
@@ -314,21 +264,28 @@ Counter({2: 3, 1: 1, 3: 1})
 Counter({2: 5, 1: 4, 3: 1})
 ```
 
-* OrderedDict
-
-dict의 subclass이다. 순서가 보장되는 dict이다.
+* dict
 
 ```python
->>> from collections import OrderedDict
->>> d = OrderedDict.fromkeys('abcde')
->>> d
-OrderedDict([('a', None), ('b', None), ('c', None), ('d', None), ('e', None)])
->>> d.move_to_end('b')
->>> d.keys()
-odict_keys(['a', 'c', 'd', 'e', 'b'])
->>> d.move_to_end('b', last=False)
->>> d
-OrderedDict([('b', None), ('a', None), ('c', None), ('d', None), ('e', None)])
+>>> s = {"a": 1, "b": 2, "c": 3}
+>>> type(s)
+<class 'dict'>
+>>> s["a"] = 100
+>>> s
+{'a': 100, 'b': 2, 'c': 3}
+>>> dict([('a', 2), ('b', 4), ('c', 5)])
+{'a': 2, 'b': 4, 'c': 5}
+>>> dict(a=2, b=4, c=5)
+{'a': 2, 'b': 4, 'c': 5}
+>>> for key in s:
+...     s[key]
+...
+100
+2
+3
+>>> s.update({'a':-1, 'b':-1})
+>>> s
+{'a': -1, 'b': -1, 'c': 3}
 ```
 
 * defaultdict
@@ -359,6 +316,70 @@ defaultdict(<function <lambda> at 0x0000025C0DA03E18>, {'a': 10, 'b': 'default-v
 >>> d['c'] = 3
 >>> d
 defaultdict(<function <lambda> at 0x0000025C0DA03E18>, {'a': 10, 'b': 'default-value', 'c': 3})
+```
+
+* namedtuple
+
+tuple의 subclass이다. tuple은 index로만 접근 가능하지만
+namedtuple은 index, name으로 접근 가능하다.
+
+```python
+>>> import collections
+>>> p = collections.namedtuple('Vector', ['x', 'y'])
+>>> issubclass(p, tuple)
+True
+>>> Vector =  collections.namedtuple('Vector', ['x', 'y'])
+>>> v = Vector(11, y=22)
+>>> v
+Vector(x=11, y=22)
+>>> print(v[0], v[1])
+11 22
+>>> print(v.x, v.y)
+11 22
+```
+
+* ChainMap
+
+dict의 subclass이다. 여러 개의 dict를 모아서 하나의 dict처럼 사용한다.
+여러개의 dict를 이용하여 하나의 dict를 생성하거나 update를 사용하는
+것보다 훨씬 효율적이다.
+
+```python
+>>> from collections import ChainMap
+>>> c1 = {'a': 1}
+>>> c2 = {'b': 2}
+>>> c = ChainMap(c1, c2)
+>>> c
+ChainMap({'a': 1}, {'b': 2})
+>>> c['a']
+1
+>>> c['b']
+2
+>>> c['c'] = 3
+>>> c
+ChainMap({'a': 1, 'c': 3}, {'b': 2})
+>>> c.clear()
+>>> c
+ChainMap({}, {'b': 2})
+>>> c['b']
+2
+```
+
+* OrderedDict
+
+dict의 subclass이다. 순서가 보장되는 dict이다.
+
+```python
+>>> from collections import OrderedDict
+>>> d = OrderedDict.fromkeys('abcde')
+>>> d
+OrderedDict([('a', None), ('b', None), ('c', None), ('d', None), ('e', None)])
+>>> d.move_to_end('b')
+>>> d.keys()
+odict_keys(['a', 'c', 'd', 'e', 'b'])
+>>> d.move_to_end('b', last=False)
+>>> d
+OrderedDict([('b', None), ('a', None), ('c', None), ('d', None), ('e', None)])
 ```
 
 ## generator

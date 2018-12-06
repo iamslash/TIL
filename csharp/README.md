@@ -14,9 +14,180 @@ c#에 대해 정리한다.
 
 # Usage
 
-## Collections compared to c++ containers
+## Collections Compared to c++ containers
 
+| c++                  | c#                   | 
+|:---------------------|:---------------------|
+| `if, else`           | `if, else`           |
+| `for, while`         | `for, while, foreach`|
+| `array`              | ``                   |
+| `vector`             | `List`               |
+| `deque`              | ``                   |
+| `forward_list`       | `List`               |
+| `list`               | `LinkedList`         |
+| `stack`              | `Stack`              |
+| `queue`              | `Queue`              |
+| `priority_queue`     | ``                   |
+| `set`                | `SortedSet`          |
+| `multiset`           | ``                   |
+| `map`                | `SortedDictionary`   |
+| `multimap`           | ``                   |
+| `unordered_set`      | `HashSet`            |
+| `unordered_multiset` | ``                   |
+| `unordered_map`      | `Dictionary`         |
+| `unordered_multimap` | ``                   |
 
+## Collections
+
+* List
+
+```cs
+List<int> list = new List<int>();
+        list.Add(2);
+        list.Add(3);
+        list.Add(7);
+```
+
+* LinkedList
+
+```cs
+        LinkedList<string> linked = new LinkedList<string>();
+        linked.AddLast("cat");
+        linked.AddLast("dog");
+        linked.AddLast("man");
+        linked.AddFirst("first");
+        foreach (var item in linked)
+        {
+            Console.WriteLine(item);
+        }
+
+        LinkedListNode<string> node = linked.Find("one");
+        linked.AddAfter(node, "inserted");        
+```
+
+* Stack
+
+```cs
+        Stack<int> stack = new Stack<int>();
+        stack.Push(100);
+        stack.Push(1000);
+        stack.Push(10000);
+        int pop = stack.Pop();
+```
+
+* Queue
+
+```cs
+        Queue<int> q = new Queue<int>();
+
+        q.Enqueue(5);   // Add 5 to the end of the Queue.
+        q.Enqueue(10);  // Then add 10. 5 is at the start.
+        q.Enqueue(15);  // Then add 15.
+        q.Enqueue(20);  // Then add 20.
+        q.Dequeue();
+```
+
+* SortedSet
+
+```cs
+        SortedSet<string> set = new SortedSet<string>();
+
+        set.Add("perls");
+        set.Add("net");
+        set.Add("dot");
+        set.Add("sam");
+
+        set.Remove("sam");
+
+        foreach (string val in set)
+        {
+            Console.WriteLine(val);
+        }
+```
+
+* SortedDictionary
+
+```cs
+        SortedDictionary<string, int> sort =
+            new SortedDictionary<string, int>();
+
+        sort.Add("zebra", 5);
+        sort.Add("cat", 2);
+        sort.Add("dog", 9);
+        sort.Add("mouse", 4);
+        sort.Add("programmer", 100);
+
+        if (sort.ContainsKey("dog"))
+        {
+            Console.WriteLine(true);
+        }
+
+        if (sort.ContainsKey("zebra"))
+        {
+            Console.WriteLine(true);
+        }
+
+        Console.WriteLine(sort.ContainsKey("ape"));
+
+        int v;
+        if (sort.TryGetValue("programmer", out v))
+        {
+            Console.WriteLine(v);
+        }
+
+        foreach (KeyValuePair<string, int> p in sort)
+        {
+            Console.WriteLine("{0} = {1}",
+                p.Key,
+                p.Value);
+        }
+```
+
+* HashSet
+
+```cs
+        string[] array1 =
+        {
+            "cat",
+            "dog",
+            "cat",
+            "leopard",
+            "tiger",
+            "cat"
+        };
+
+        Console.WriteLine(string.Join(",", array1));
+
+        var hash = new HashSet<string>(array1);
+
+        string[] array2 = hash.ToArray();
+
+        Console.WriteLine(string.Join(",", array2));
+
+```
+
+* Dictionary
+
+```cs
+        Dictionary<string, int> dictionary = new Dictionary<string, int>();
+
+        dictionary.Add("cat", 2);
+        dictionary.Add("dog", 1);
+        dictionary.Add("llama", 0);
+        dictionary.Add("iguana", -1);
+
+        if (dictionary.ContainsKey("apple"))
+        {
+            int value = dictionary["apple"];
+            Console.WriteLine(value);
+        }
+
+        string test;
+        if (values.TryGetValue("cat", out test)) // Returns true.
+        {
+            Console.WriteLine(test); // This is the value at cat.
+        }
+```
 
 ## volatile을 사용하자.
 

@@ -1,6 +1,8 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Language Summary](#language-summary)
+- [Usage](#usage)
+    - [Collections compared to c++ containers](#collections-compared-to-c-containers)
+    - [Collections](#collections)
     - [Messages](#messages)
     - [Defined Types](#defined-types)
     - [Preprocessor Directives](#preprocessor-directives)
@@ -18,12 +20,12 @@
 - [Blocks](#blocks)
 - [Protocols](#protocols)
 - [Fast Enumeration](#fast-enumeration)
-- [Enabling Handling](#enabling-handling)
+- [Enabling Staic Bhavior](#enabling-staic-bhavior)
+- [Selectors](#selectors)
+- [Exception Handling](#exception-handling)
 - [Threading](#threading)
 - [Remote Messaging](#remote-messaging)
 - [Using C++ With Objective-C](#using-c-with-objective-c)
-- [Deprecation Syntax](#deprecation-syntax)
-- [Naming Conventions](#naming-conventions)
 
 -------------------------------------------------------------------------------
 
@@ -48,35 +50,65 @@ objc를 정리한다.
 * [Objective-C 강좌 - 12개 앱 만들면서 배우는 iOS 아이폰 앱 개발 @ inflearn](https://www.inflearn.com/course/objective-c-%EA%B0%95%EC%A2%8C/)
   * 유료이다. src는 강좌안 링크로 다운받을 수 있다..
 * [effective objective-c 2.0](https://www.amazon.com/Effective-Objective-C-2-0-Specific-Development-ebook/dp/B00CUG5MZA)
+* [iOS Programming](https://eezytutorials.com/ios/)
 
 # Usage
 
 ## Collections compared to c++ containers
 
-* [이곳](https://developer.apple.com/library/archive/documentation/General/Conceptual/DevPedia-CocoaCore/Collection.html)
-  에 의하면 objc 의 collection 은 `NSArray, NSSet, NSDictionary, NSPointerArray, NSHashTable, NSMapTable,
-  NSMutableArray, NSMutableDictionary, NSMutableSet, NSCountedSet` 등이 있다.
+* [이곳](https://developer.apple.com/library/archive/documentation/General/Conceptual/DevPedia-CocoaCore/Collection.html) 에 의하면 objc 의 collection 은 `NSArray, NSSet, NSDictionary, NSPointerArray, NSHashTable, NSMapTable, NSMutableArray, NSMutableDictionary, NSMutableSet, NSCountedSet` 등이 있다.
   
-| c++                  | objc               |
-|:---------------------|:-------------------|
-| `if, else`           | ``   |
-| `for, while`         | ``       |
-| `array`              | ``            |
-| `vector`             | ``             |
-| `deque`              | ``            |
-| `forward_list`       | ``             |
-| `list`               | ``            |
-| `stack`              | ``             |
-| `queue`              | ``            |
-| `priority_queue`     | ``            |
-| `set`                | ``                 |
-| `multiset`           | ``                 |
-| `map`                | ``                 |
-| `multimap`           | ``                 |
-| `unordered_set`      | ``              |
-| `unordered_multiset` | ``          |
-| `unordered_map`      | ``             |
-| `unordered_multimap` | ``|
+| c++                  | objc                  |
+|:---------------------|:----------------------|
+| `if, else`           | `if, else`            |
+| `for, while`         | `for, while`          |
+| `array`              | `NSArray`             |
+| `vector`             | `NSMutableArray`      |
+| `deque`              | ``                    |
+| `forward_list`       | ``                    |
+| `list`               | ``                    |
+| `stack`              | ``                    |
+| `queue`              | ``                    |
+| `priority_queue`     | ``                    |
+| `set`                | ``                    |
+| `multiset`           | ``                    |
+| `map`                | ``                    |
+| `multimap`           | ``                    |
+| `unordered_set`      | `NSMutableSet`        |
+| `unordered_multiset` | `NSCountedSet`        |
+| `unordered_map`      | `NSMutableDictionary` |
+| `unordered_multimap` | ``                    |
+
+## Collections
+
+* NSArray
+
+```objc
+#import <Foundation/Foundation.h>
+
+int main(void) {
+  // initialization
+  NSArray *array = @[@"FOO", @"BAR"];
+  // access value at index 0
+  NSString *value = array[0];
+
+  NSArray *array = [NSArray array];   
+  NSLog(@"%@",array);
+
+  NSArray *array =  [NSArray arrayWithObject:@"Foo"];
+  NSLog(@"%@",array);
+}
+```
+
+* NSset
+* NSDictionary
+* NSPointerArray
+* NSHashTable
+* NSMapTable
+* NSMutableArray
+* NSMutableDictionary
+* NSMutableSet
+* NSCountedSet
 
 ## Messages
 
@@ -102,11 +134,12 @@ message 는 다음과 같은 형식을 갖는다.
 
 다음은 `objc.h` 에 정의된 주요 값들이다.
 
+| Value | |
+|:-----|:-----------|
 | `nil` | A null object pointer |
 | `Nil` | A null class Pointer |
 | `NO` | A Boolean false value |
 | `YES` | A boolean true value |
-
 
 ## Preprocessor Directives
 
@@ -211,7 +244,7 @@ message 는 다음과 같은 형식을 갖는다.
 
 ## Methods
 
-objc는 함수를 호출하는 형식이 특이하다. 메소드 앞의 `+` 는 `class method` 를 의미한다. 메소드 앞의 `-` 는 `instance method` 를 의미한다. 메소드의 argument 는 c-style 의 형변환 문법을 이용해서 표기한다. 메소드를 호출하는 것은 메시지를 전달한다는 의미이기
+objc 는 함수를 호출하는 형식이 특이하다. 메소드 앞의 `+` 는 `class method` 를 의미한다. 메소드 앞의 `-` 는 `instance method` 를 의미한다. 메소드의 argument 는 c-style 의 형변환 문법을 이용해서 표기한다. 메소드를 호출하는 것은 메시지를 전달한다는 의미이기
 때문에 c#과 달리 `[nil print]`를 허용한다. 인자는 `:` 다음에 따라온다. 인자가 여러개인 경우
 두번째 인자부터 label을 사용한다. label은 생략할 수 있지만 추천하지 않는다. label 역시 메소드의 구성요소 이기 때문에 컴파일러는 label 을 포함하여 메소드를 구별한다. 메소드의 리턴, 인자 타입은 기본이 `int` 가 아니고 `id` 이다.
 
@@ -281,14 +314,14 @@ BOOL success = [document saveAs:@"MyFile.txt" toLocation:@"~/Temp"];
 
 클래스, 카테고리, 프로토콜의 선언은 주로 `.h` 에 저장하고 구현은 주로 `.m` 에 저장한다.
 
-클래스, 카테고리, 프로토콜의 이름은 주로 대문자로 시작한다. 그러나 메소드, 인스턴스 변수의 이름은 소문자로 시작한다. 인스턴서를 저장한 변수 역시 소문자로 시작한다. 
+클래스, 카테고리, 프로토콜의 이름은 주로 대문자로 시작한다. 그러나 메소드, 인스턴스 변수의 이름은 소문자로 시작한다. 인스턴스를 저장한 변수 역시 소문자로 시작한다. 
 
 
 # Objects, Classes and Methods
 
-objc는 `a.h`에서 `@interface`를 이용하여 class를 선언하고 `a.m`에서
-`@implementation`를 이용하여 class를 구현한다.  `id` type은 `void*`와
-유사하다. 함수이름 앞의 `-`는 instance method를 의미하고 `+`는 class
+objc는 `a.h` 에서 `@interface` 를 이용하여 class를 선언하고 `a.m` 에서
+`@implementation` 를 이용하여 class를 구현한다.  `id` type은 `void*` 와
+유사하다. 함수이름 앞의 `-` 는 instance method를 의미하고 `+` 는 class
 method를 의미한다.
 
 ```c#
@@ -324,11 +357,10 @@ public class Document
 # Allocating and Initializing Objects
 
 objc에서 메모리는 `alloc` 함수를 호출하여 할당한다. `dealloc` 함수를
-호출하여 해제할 수 있다. `alloc`, `retain` 함수를 호출하면 reference
-count가 증가하고 `release`를 호출하면 reference count가
-감소한다. reference count가 0이되면 `dealloc`이 호출된다.
+호출하여 해제할 수 있다. `alloc`, `retain` 함수를 호출하면 `reference count` 가 증가하고 `release` 를 호출하면 `reference count 가
+감소한다. `reference count` 가 `0` 이되면 `dealloc` 이 호출된다.
 
-`autorelease`를 이용하면 자동으로 해제할 수 있지만 의도치 않는 일이
+`autorelease` 를 이용하면 자동으로 해제할 수 있지만 의도치 않는 일이
 발생할 수 있기 때문에 추천하지 않는다.
 
 ```csharp
@@ -349,8 +381,8 @@ Document *document = [[[Document alloc] initWithTitle:@"My New Document"] autore
 
 # Declared Properties
 
-c#의 property와 유사하다. `@property`로 선언하고 `@synthesize`로
-구현한다. `nonatomic`은 thread safe하지 않다는 의미하고 `copy`는
+c#의 property와 유사하다. `@property` 로 선언하고 `@synthesize` 로
+구현한다. `nonatomic` 은 thread safe 하지 않다는 의미하고 `copy` 는
 문자열을 복사한다는 의미이다.
 
 ```csharp
@@ -395,7 +427,7 @@ public class Document : IPrintable
 
 # Categories and Exensions
 
-c#의 extension method와 비슷하다. class의 상속없이 기능을 확장할 수
+c# 의 extension method 와 비슷하다. class 의 상속없이 기능을 확장할 수
 있다.
 
 ```csharp
@@ -506,7 +538,7 @@ orderedSameCount: 2
 
 # Protocols
 
-objc의 protocol은 c#의 interface와 비슷하다.
+objc 의 protocol 은 c# 의 interface 와 비슷하다.
 
 ```csharp
 // IPrintable.cs
