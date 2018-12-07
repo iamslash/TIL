@@ -2,7 +2,7 @@
 - [Materials](#materials)
 - [Usage](#usage)
   - [Collections compared c++ container](#collections-compared-c-container)
-  - [Collections](#collections)
+  - [Collection Examples](#collection-examples)
   - [Javascript Runtime Architecture](#javascript-runtime-architecture)
   - [curly braces](#curly-braces)
   - [parenthese](#parenthese)
@@ -46,7 +46,73 @@ java script에 대해 정리한다.
 
 ## Collections compared c++ container
 
-## Collections
+| c++                  | js                  |
+|:---------------------|:--------------------------------|
+| `if, else`           | `if, else`                      |
+| `for, while`         | `for, while`                    |
+| `array`              | ``  |
+| `vector`             | `Array`                     |
+| `deque`              | `` |
+| `forward_list`       | ``                              |
+| `list`               | ``              |
+| `stack`              | ``             |
+| `queue`              | ``             |
+| `priority_queue`     | ``          |
+| `set`                | ``            |
+| `multiset`           | ``                              |
+| `map`                | ``                  |
+| `multimap`           | ``                              |
+| `unordered_set`      | `Set`                  |
+| `unordered_multiset` | ``                              |
+| `unordered_map`      | `Map`                  |
+| `unordered_multimap` | ``                              |
+
+
+## Collection Examples
+
+* Array
+
+```js
+var fruits = ['사과', '바나나'];
+console.log(fruits.length);
+// 2
+```
+
+* Set
+
+```js
+var mySet = new Set();
+mySet.add(1);
+mySet.add("some text");
+mySet.add("foo");
+
+mySet.has(1); // true
+mySet.delete("foo");
+mySet.size; // 2
+
+for (let item of mySet) console.log(item);
+// 1
+// "some text"
+```
+
+* Map
+
+```js
+var sayings = new Map();
+sayings.set("dog", "woof");
+sayings.set("cat", "meow");
+sayings.set("elephant", "toot");
+sayings.size; // 3
+sayings.get("fox"); // undefined
+sayings.has("bird"); // false
+sayings.delete("dog");
+
+for (var [key, value] of sayings) {
+  console.log(key + " goes " + value);
+}
+// "cat goes meow"
+// "elephant goes toot"
+```
 
 ## Javascript Runtime Architecture
 
