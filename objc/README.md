@@ -92,23 +92,237 @@ int main(void) {
   // access value at index 0
   NSString *value = array[0];
 
+  // + array
   NSArray *array = [NSArray array];   
   NSLog(@"%@",array);
 
+  // + arrayWithObject:
   NSArray *array =  [NSArray arrayWithObject:@"Foo"];
   NSLog(@"%@",array);
+
+  // + arrayWithObjects:
+  NSArray *array =  [NSArray arrayWithObjects:@"Eezy",@"Tutorials"];  
+  NSLog(@"%@",array);
+
+  // + arrayWithArray:
+  NSArray *tempArray = [NSArray arrayWithObjects:@"Eezy",@"Tutorials"]; 
+  NSArray *array =  [NSArray arrayWithArray:tempArray];   
+  NSLog(@"%@",array);
+
+  // + arrayWithContentsOfFile:
+  //
+  // plist
+/*
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+ <array>
+    <string>Foo</string>
+    <string>Bar</string>
+</array>
+</plist>
+*/
+  NSString *file = [[NSBundle mainBundle] pathForResource:@"Data" ofType:@"plist"];
+  NSArray *array = [NSArray arrayWithContentsOfFile:file];
+  NSLog(@"%@", array);      
 }
+
+  // + arrayWithContentsOfURL:
+  NSURL *url = [NSURL URLWithString:@"http://www.foo.com/a.plist"];
+  NSArray *array = [NSArray arrayWithContentsOfURL:url];
+  NSLog(@"%@", array]);
+
+  // + arrayWithObjects:count:
+  NSString *values[3];
+  values[0] = @"Foo";
+  values[1] = @"Bar";
+  values[2] = @"Baz"; // Baz ignored since count is 2 
+  NSArray *array = [NSArray arrayWithObjects:values count:2];
+  NSLog(@"%@",array ]);
+
+  // - init
+  NSArray *array = [[NSArray alloc]init];
+  NSLog(@"%@",array ]);
+
+  // - initWithArray:
+  var tempArray:NSArray = NSArray(array: ["Foo","Bar"])  
+  var array = NSArray(array: tempArray)
+  println(array)
+
+  // - initWithArray:copyItems:
+  NSArray *tempArray = [NSArray arrayWithObjects:@"Foo",@"Bar"];
+// Check if the two array objects refer to same objects. It shouldn't.
+  NSArray *array =  [[NSArray alloc]initWithArray:tempArray copyItems:YES];   
+  NSLog(@"%@",array);
+
+  // - initWithContentsOfFile:
+  // plist
+  /*
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+ <array>
+    <string>Foo</string>
+    <string>Bar</string>
+</array>
+</plist>  
+  */
+  NSString *file = [[NSBundle mainBundle] pathForResource:@"Data" ofType:@"plist"];
+  NSArray *array = [[NSArray alloc]initWithContentsOfFile:file];
+  NSLog(@"%@", array);
+
+  // - initWithContentsOfURL:
+  NSURL *url = [NSURL URLWithString:@"http://www.foo.com/a.plist"];
+  NSArray *array = [[NSArray alloc]initWithContentsOfURL:url];
+  NSLog(@"%@",array ]);
+
+  // - initWithObjects:
+  NSArray *array =  [[NSArray alloc] initWithObjects:@"Foo",@"Bar"];       
+  NSLog(@"%@",array)
+
+  // - initWithObjects:count:
+  NSString *values[3];
+  values[0] = @"Foo";
+  values[1] = @"Bar";
+  values[2] = @"Baz"; // Baz ignored since count is 2 
+  NSArray *array = [[NSArray alloc] initWithObjects:values count:2];
+  NSLog(@"%@",array ]);
+
+  // - containsObject:
+  NSArray *array =  [NSArray arrayWithObjects:@"Foo", @"Bar"];
+  BOOL containsObject = [array containsObject:@"Bar"];
+  NSLog(@"Contains Object Bar: ",containsObject)
+  containsObject = [array containsObject:@"Foo Bar"];
+  NSLog(@"Contains Object Foo Bar: ",containsObject)
+
+  // - count
+  NSArray *array =  [NSArray arrayWithObjects:@"Foo",@"Bar"];
+  NSLog(@"Count: %d",[array count]);
+
+  // - getObjects:range:
+  NSArray *tempArray = [NSArray arrayWithObjects:@"Foo",@"Bar", @"Baz"];
+  id *array;
+  NSRange range = NSMakeRange(1, 2);
+  objects = malloc(sizeof(id) * range.length);
+  [tempArray getObjects:array range:range];
+  for (index = 0; index < range.length; index++) {
+    NSLog(@"Array object index %d: %@",index, objects[index]);
+  }
+
+  // - firstObject  
+  NSArray *array = [NSArray arrayWithObjects:@"Foo",@"Bar", @"Baz"];
+  NSLog(@"First Object: %@", [array firstObject])
+
+  // - lastObject
+  NSArray *array = [NSArray arrayWithObjects:@"Foo",@"Bar", @"Baz"];
+  NSLog(@"Last Object: %@", [array lastObject])
+
+  // - objectAtIndex:
+  NSArray *array = [NSArray arrayWithObjects:@"Foo",@"Bar", @"Baz"];
+  NSLog(@"Object at index 2: %@", [array objectAtIndex:2])
+
+  // - objectAtIndexedSubscript:
+  NSArray *array = [NSArray arrayWithObjects:@"Foo",@"Bar", @"Baz"];
+  NSLog(@"Object at Indexed Subscript 2: %@", [array objectAtIndexedSubscript:2])
+  NSLog(@"Object at Indexed Subscript 3: %@", [array objectAtIndexedSubscript:3])
+
+  // - objectsAtIndexes:
+  NSArray *tempArray = [NSArray arrayWithObjects:@"Foo",@"Bar", @"Baz"];
+  array = [tempArray objectsAtIndexes:[NSIndexSet indexSetWithIndexesInRange:NSMakeRange(1, 2)]]; 
+  NSLog(@"%@",array ]);
+
+  // - objectEnumerator
+  NSArray *array = [NSArray arrayWithObjects:@"Foo",@"Bar", @"Baz"];
+  NSEnumerator *enumerator = [array objectEnumerator];
+  id anObject;
+  while (anObject = [enumerator nextObject]) {
+    NSLog(@"%@",anObject ]);
+  }
+
+  // - reverseObjectEnumerator
+  NSArray *array = [NSArray arrayWithObjects:@"Foo",@"Bar", @"Baz"];
+  NSEnumerator *enumerator = [array reverseObjectEnumerator];
+  id anObject;
+  while (anObject = [enumerator nextObject]) {
+    NSLog(@"%@",anObject ]);
+  }
+
+  // - indexOfObject:
+  NSArray *array = [NSArray arrayWithObjects:@"Foo",@"Bar", @"Baz"];
+  NSLog(@"Index of Baz is %d",[array indexOfObject:@"Baz"]);
+
+  // - indexOfObject:inRange:
+  NSArray *array = [NSArray arrayWithObjects:@"Foo",@"Bar", @"Baz",@"Foo"];
+  NSRange range = NSMakeRange(1, 2);
+  NSLog(@"Index of Foo in range 1,3 is %d",[array indexOfObject:@"Foo" inRange:range ]);
+  range = NSMakeRange(0, 3);
+  NSLog(@"Index of Foo in range 0,3 is %d",[array indexOfObject:@"Foo" inRange:range ]);
+
+  // - indexOfObjectIdenticalTo:
+  NSString *str = @"Foo";
+  NSArray *array = [NSArray arrayWithObjects:str,@"Bar", @"Baz"];
+  NSLog(@"Index of Eezy identical",[array indexOfObject:str]);
+  NSLog(@"Index of Eezy identical",[array indexOfObject:@"Foo"]);
+
+  // - indexOfObjectIdenticalTo:inRange:
+  NSString *str = @"Foo";
+  NSArray *array = [NSArray arrayWithObjects:@"Foo",@"Bar", @"Baz", str];
+  NSRange range = NSMakeRange(1, 3);
+  NSLog(@"Index of Foo identical",[array indexOfObject:str inRange:range ]);
+  range = NSMakeRange(0, 3);
+  NSLog(@"Index of Foo identical",[array indexOfObject:str inRange:range ]);
+
+  // - indexOfObjectPassingTest:
+  NSArray *array = [NSArray arrayWithObjects:@"Foo",@"Bar", @"Baz"];
+  int index = [array indexOfObjectPassingTest:^BOOL(id element,NSUInteger idx,BOOL *stop){
+     return [(NSArray *)element containsObject:@"Foo"];
+  }];
+  NSLog(@"Index is %d",index);
+  if (index >= 0 && index < [arrayWithArray count]){
+    [arrayWithArray removeObjectAtIndex:index];
+  }
 ```
 
 * NSset
+  * [NSSet by example](https://eezytutorials.com/ios/nsset-by-example.php)
+  * [NSset @ apple](https://developer.apple.com/documentation/foundation/nsset?language=objc)
+
 * NSDictionary
+
+  * [NSDictionary by example](https://eezytutorials.com/ios/nsdictionary-by-example.php)
+  * [NSDictionary @ apple](https://developer.apple.com/documentation/foundation/nsdictionary?language=objc)
+
 * NSPointerArray
+
+  * [NSPointerArray @ apple](https://developer.apple.com/documentation/foundation/nspointerarray?language=objc)
+
+
 * NSHashTable
+    
+    * [NSHashTable @ apple](https://developer.apple.com/documentation/foundation/nshashtable?language=objc)
+
+
 * NSMapTable
+
+  * [NSMapTable @ apple](https://developer.apple.com/documentation/foundation/nsmaptable?language=objc)
+
+
 * NSMutableArray
+  * [NSMutableArray by example](https://eezytutorials.com/ios/nsmutablearray-by-example.php)
+  * [NSMutableArray @ apple](https://developer.apple.com/documentation/foundation/nsmaptable?language=objc)
+
 * NSMutableDictionary
+  
+  * [NSMutableDictionary by example](https://eezytutorials.com/ios/nsmutabledictionary-by-example.php)
+  * [NSMutableDictionary @ apple](https://developer.apple.com/documentation/foundation/nsmutabledictionary?language=objc)
+
 * NSMutableSet
+  * [NSMutableSet by example](https://eezytutorials.com/ios/nsmutableset-by-example.php)
+  * [NSMutableSet @ apple](https://developer.apple.com/documentation/foundation/nsmutableset?language=objc)
+
 * NSCountedSet
+  * [NSCountedSet by example](https://eezytutorials.com/ios/nscountedset-by-example.php)
+  * [NSCountedSet @ apple](https://developer.apple.com/documentation/foundation/nscountedset?language=objc)
 
 ## Messages
 

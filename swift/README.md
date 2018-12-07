@@ -7,10 +7,31 @@
 - [Usage](#usage)
     - [Collections compared c++ container](#collections-compared-c-container)
     - [Collections](#collections)
-    - [Class](#class)
-- [Type](#type)
-- [Constants](#constants)
-- [Variables](#variables)
+    - [Tour](#tour)
+    - [Basics](#basics)
+    - [Strings and Characters](#strings-and-characters)
+    - [Control Flow](#control-flow)
+    - [Functions](#functions)
+    - [Closures](#closures)
+    - [Enumerations](#enumerations)
+    - [Structures and Classes](#structures-and-classes)
+    - [Properties](#properties)
+    - [Methods](#methods)
+    - [Subscripts](#subscripts)
+    - [Inheritance](#inheritance)
+    - [Initialization](#initialization)
+    - [Deinitialization](#deinitialization)
+    - [Optional Chaining](#optional-chaining)
+    - [Error Handling](#error-handling)
+    - [Type Casting](#type-casting)
+    - [Nested Types](#nested-types)
+    - [Extensions](#extensions)
+    - [Protocols](#protocols)
+    - [Generics](#generics)
+    - [Automatic Reference Counting](#automatic-reference-counting)
+    - [Memory Safety](#memory-safety)
+    - [Access Control](#access-control)
+    - [Advanced Operators](#advanced-operators)
 
 <!-- markdown-toc end -->
 
@@ -24,14 +45,71 @@ swift에 대해 정리한다.
 
 * [Introduction to Swift (for C#.NET developers)](https://www.jbssolutions.com/introduction-swift-c-net-developers/)
 * [swift basic](http://minsone.github.io/mac/ios/swift-the-basic-summary)
+* [the swift programming language
+swift 4.2](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html)
+* [야곰의 스위프트 기본 문법 강좌](https://www.inflearn.com/course/%EC%8A%A4%EC%9C%84%ED%94%84%ED%8A%B8-%EA%B8%B0%EB%B3%B8-%EB%AC%B8%EB%B2%95/)
+  * swift 3 기본 문법
 
 # Usage
 
 ## Collections compared c++ container
 
+[Collection Types](https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html) 에 의하면 swift 의 collection 은 `Array, Set, Dictionary` 가 있다.
+
+| c++                  | swift                  |
+|:---------------------|:----------------------|
+| `if, else`           | `if, else`            |
+| `for, while`         | `for, while`          |
+| `array`              | `Array`               |
+| `vector`             | `Array`               |
+| `deque`              | ``                    |
+| `forward_list`       | ``                    |
+| `list`               | ``                    |
+| `stack`              | ``                    |
+| `queue`              | ``                    |
+| `priority_queue`     | ``                    |
+| `set`                | ``                    |
+| `multiset`           | ``                    |
+| `map`                | ``                    |
+| `multimap`           | ``                    |
+| `unordered_set`      | `Set`                 |
+| `unordered_multiset` | ``        |
+| `unordered_map`      | `Dictionary`          |
+| `unordered_multimap` | ``                    |
+
 ## Collections
 
-## Class
+* Array
+
+* Set
+
+* Dictionary
+
+## Tour
+
+## Basics
+
+## Strings and Characters
+
+## Control Flow
+
+## Functions
+
+## Closures
+
+## Enumerations
+
+## Structures and Classes
+
+## Properties
+
+## Methods
+
+## Subscripts
+
+## Inheritance
+
+* Class
 
 ```csharp
 // c#
@@ -89,23 +167,28 @@ var a : HelloWorld
 var b = HelloWorld(message: "hello")
 ```
 
-# Type
+## Initialization
 
-* Int
-* Double, Float
-* Boolean
-* String
-* Array, Dictionary
-* Tuple
+## Deinitialization
 
-# Constants
+## Optional Chaining
 
-```swift
-let a = 10
-```
+## Error Handling
 
-# Variables
+## Type Casting
 
-```swift
-var a = 10
-```
+## Nested Types
+
+## Extensions
+
+## Protocols
+
+## Generics
+
+## Automatic Reference Counting
+
+## Memory Safety
+
+## Access Control
+
+## Advanced Operators
