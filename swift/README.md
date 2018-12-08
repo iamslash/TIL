@@ -1,7 +1,3 @@
-
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basic Usages](#basic-usages)
@@ -35,8 +31,6 @@
     - [ARC (Automatic Reference Counting)](#arc-automatic-reference-counting)
     - [Nested Types](#nested-types)
     - [Custom Operators](#custom-operators)
-
-<!-- markdown-toc end -->
 
 -------------------------------------------------------------------------------
 
