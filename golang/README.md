@@ -1,7 +1,4 @@
-﻿<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
-- [Abstract](#abstract)
+﻿- [Abstract](#abstract)
 - [Materials](#materials)
 - [References](#references)
     - [Tools](#tools)
@@ -15,9 +12,9 @@
     - [Logging](#logging)
     - [Encoding, JSON](#encoding-json)
 - [Basic Usages](#basic-usages)
-    - [Collections compared to c++ containers](#collections-compared-to-c-containers)
-    - [Collections](#collections)
     - [Hello World](#hello-world)
+    - [Collections compared to c++ containers](#collections-compared-to-c-containers)
+    - [Collections by examples](#collections-by-examples)
     - [Operators](#operators)
         - [Arithmetic](#arithmetic)
         - [Comparison](#comparison)
@@ -59,8 +56,6 @@
 - [Benchmarks](#benchmarks)
 - [Profile](#profile)
 
-<!-- markdown-toc end -->
-
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -69,6 +64,9 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 # Materials
 
+* [가장 빨리 만나는 Go 언어](http://pyrasis.com/go.html)
+  * 킹왕짱 golang 기본문법
+  * [src](https://github.com/pyrasis/golangbook)
 * [1ambda golang](https://github.com/1ambda/golang)
   * 유용한 go links
 * [effective go](https://golang.org/doc/effective_go.html)
@@ -82,7 +80,6 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
   * 최고의 요약
 * [A Tour of Go video](https://research.swtch.com/gotour)
   * interface, concurrency 에 관한 screencast
-
 * [Rob Pike: Simplicity is Complicated](https://www.youtube.com/watch?v=rFejpH_tAHM)
 * [Rob Pike: Go at Google](https://www.infoq.com/presentations/Go-Google)
   * [Article](https://talks.golang.org/2012/splash.article)
@@ -111,7 +108,6 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
   * rob pike가 전하는 golang철학
 
 ## Concurrency
-
 
 * [Rob Pike: Concurrency is not Parallelism @ youtube](https://www.youtube.com/watch?v=B9lP-E4J_lc)
   * [Slide](https://talks.golang.org/2012/waza.slide)
@@ -169,10 +165,6 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 # Basic Usages
 
-## Collections compared to c++ containers
-
-## Collections
-
 ## Hello World
 
 * a.go
@@ -187,9 +179,14 @@ func main() {
 
 `go run a.go`
 
+## Collections compared to c++ containers
+
+## Collections by examples
+
 ## Operators
 
 ### Arithmetic
+
 | Operator | Description         |            |
 |----------|---------------------|------------|
 | `+`      | addition            |            |
@@ -205,6 +202,7 @@ func main() {
 | `>>`     | right shift         |            |
 
 ### Comparison
+
 | Operator | Description           |
 |----------|-----------------------|
 | `==`     | equal                 |
@@ -215,6 +213,7 @@ func main() {
 | `>=`     | greater than or equal |
 
 ### Logical
+
 | Operator | Description |   |            |
 |----------|-------------|---|------------|
 | `&&`     | logical and |   |            |
@@ -222,6 +221,7 @@ func main() {
 | `!`      | logical not |   |            |
 
 ### Other
+
 | Operator | Description                                    |
 |----------|------------------------------------------------|
 | `&`      | address of / create pointer                    |
@@ -240,9 +240,6 @@ var foo = 42 // type omitted, will be inferred
 foo := 42 // shorthand, only in func bodies, omit var keyword, type is always implicit
 const constant = "This is a constant"
 ```
-
-
-
 
 ## Functions
 ```go
@@ -278,6 +275,7 @@ var x, str = returnMulti2()
 ```
 
 ### Functions As Values And Closures
+
 ```go
 func main() {
     // assign a function to a name
@@ -316,6 +314,7 @@ func outer() (func() int, int) {
 ```
 
 ### Variadic Functions
+
 ```go
 func main() {
 	fmt.Println(adder(1, 2, 3)) 	// 6
@@ -337,6 +336,7 @@ func adder(args ...int) int {
 ```
 
 ## Built-in Types
+
 ```
 bool
 
@@ -355,6 +355,7 @@ complex64 complex128
 ```
 
 ## Type Conversions
+
 ```go
 var i int = 42
 var f float64 = float64(i)
@@ -367,6 +368,7 @@ u := uint(f)
 ```
 
 ## Packages 
+
 * Package declaration at top of every source file
 * Executables are in package `main`
 * Convention: package name == last name of import path (import path `math/rand` => package `rand`)
@@ -448,6 +450,7 @@ func main() {
 ## Arrays, Slices, Ranges
 
 ### Arrays
+
 ```go
 var a [10]int // declare an int array with length 10. Array length is part of the type!
 a[3] = 42     // set elements
@@ -460,6 +463,7 @@ a := [...]int{1, 2} // elipsis -> Compiler figures out array length
 ```
 
 ### Slices
+
 ```go
 var a []int                              // declare a slice - similar to an array, but length is unspecified
 var a = []int {1, 2, 3, 4}               // declare and initialize a slice (backed by the array given implicitly)
@@ -483,6 +487,7 @@ s := x[:] // a slice referencing the storage of x
 ```
 
 ### Operations on Arrays and Slices
+
 `len(a)` gives you the length of an array/a slice. It's a built-in function, not a attribute/method on the array.
 
 ```go
@@ -531,6 +536,7 @@ var m = map[string]Vertex{
 ## Structs
 
 There are no classes, only structs. Structs can have methods.
+
 ```go
 // A struct is a type. It's also a collection of fields 
 
@@ -565,6 +571,7 @@ func (v *Vertex) add(n float64) {
 }
 
 ```
+
 **Anonymous structs:**  
 Cheaper and safer than using `map[string]interface{}`.
 ```go
@@ -574,6 +581,7 @@ point := struct {
 ```
 
 ## Pointers
+
 ```go
 p := Vertex{1, 2}  // p is a Vertex
 q := &p            // q is a pointer to a Vertex
@@ -585,6 +593,7 @@ var s *Vertex = new(Vertex) // new creates a pointer to a new struct instance
 ```
 
 ## Interfaces
+
 ```go
 // interface declaration
 type Awesomizer interface {
@@ -629,6 +638,7 @@ var logger *log.Logger = server.Logger
 ```
 
 ## Errors
+
 There is no exception handling. Functions that might produce an error just declare an additional return value of type `Error`. This is the `Error` interface:
 ```go
 type error interface {
@@ -652,6 +662,7 @@ func main() {
 ```
 
 ## Goroutines
+
 Goroutines are lightweight threads (managed by Go, not OS threads). `go f(a, b)` starts a new goroutine which runs `f` (given `f` is a function).
 
 ```go
@@ -671,6 +682,7 @@ func main() {
 ```
 
 ## Channels
+
 ```go
 ch := make(chan int) // create a channel of type int
 ch <- 42             // Send a value to the channel ch.
@@ -707,6 +719,7 @@ func doStuff(channelOut, channelIn chan int) {
 ```
 
 ### Channel Axioms
+
 - A send to a nil channel blocks forever
 
   ```go

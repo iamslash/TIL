@@ -1,11 +1,11 @@
 - [Abstract](#abstract)
 - [Basic Usages](#basic-usages)
-    - [Keywords](#keywords)
+    - [Compile, Execution](#compile-execution)
+    - [Useful Keywords](#useful-keywords)
     - [Collections compared c++ container](#collections-compared-c-container)
     - [Collection Examples](#collection-examples)
     - [Collection Framework](#collection-framework)
     - [Collection Implementations](#collection-implementations)
-- [Advanced](#advanced)
 
 -------------------------------------------------------------------------------
 # Abstract
@@ -14,7 +14,14 @@ java를 정리한다.
 
 # Basic Usages
 
-## Keywords
+## Compile, Execution
+
+```bash
+> javac A.java
+> java A
+```
+
+## Useful Keywords
 
 - volatile
 - strictfp
@@ -23,14 +30,13 @@ java를 정리한다.
 
 ## Collections compared c++ container
 
-
-| c++                  | java                  |
+| c++                  | java                            |
 |:---------------------|:--------------------------------|
 | `if, else`           | `if, else`                      |
 | `for, while`         | `for, while`                    |
 | `array`              | `Collections.unmodifiableList`  |
 | `vector`             | `ArrayList`                     |
-| `deque`              | `Deque, ArrayDeque` |
+| `deque`              | `Deque, ArrayDeque`             |
 | `forward_list`       | ``                              |
 | `list`               | `List, LinkedList`              |
 | `stack`              | `Stack, LinkedList`             |
@@ -38,7 +44,7 @@ java를 정리한다.
 | `priority_queue`     | `Queue, PriorityQueue`          |
 | `set`                | `SortedSet, TreeSet`            |
 | `multiset`           | ``                              |
-| `map`                | `SortedMap, TreeMap`                  |
+| `map`                | `SortedMap, TreeMap`            |
 | `multimap`           | ``                              |
 | `unordered_set`      | `Set, HashSet`                  |
 | `unordered_multiset` | ``                              |
@@ -89,5 +95,3 @@ java를 정리한다.
 | Deque     |                    | ArrayDeque                      |               | LinkedList         |                                 |
 | Map       | HashMap            |                                 | TreeMap       |                    | LinkedHashMap                   |
 
-
-# Advanced

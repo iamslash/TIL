@@ -2,7 +2,7 @@
 - [Materials](#materials)
 - [Basic Usages](#basic-usages)
   - [Collections compared c++ container](#collections-compared-c-container)
-  - [Collection Examples](#collection-examples)
+  - [Collection by Examples](#collection-by-examples)
   - [Javascript Runtime Architecture](#javascript-runtime-architecture)
   - [curly braces](#curly-braces)
   - [parenthese](#parenthese)
@@ -18,7 +18,6 @@
   - [background](#background)
   - [task queue](#task-queue)
   - [micro task](#micro-task)
-- [Advanced](#advanced)
 
 -------------------------------------------------------------------------------
 
@@ -28,7 +27,11 @@ java script에 대해 정리한다.
 
 # Materials
 
-
+* [JavaScript @ opentutorials](https://opentutorials.org/module/532)
+  * 킹왕짱 JavaScript 기본문법
+  * [video](http://www.youtube.com/playlist?list=PLuHgQVnccGMA4uSig3hCjl7wTDeyIeZVU)
+* [JavaScript on Web @ opentutorials](https://opentutorials.org/course/838)
+  * 웹개발을 위한 JavaScript 
 * [How JavaScript works](https://blog.sessionstack.com/how-does-javascript-actually-work-part-1-b0bacc073cf)
   * JavaScript 가 어떻게 동작하는지 기술한 시리즈 게시글중 첫번째
   * [번역](https://engineering.huiseoul.com/%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EB%8A%94-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%9E%91%EB%8F%99%ED%95%98%EB%8A%94%EA%B0%80-%EC%97%94%EC%A7%84-%EB%9F%B0%ED%83%80%EC%9E%84-%EC%BD%9C%EC%8A%A4%ED%83%9D-%EA%B0%9C%EA%B4%80-ea47917c8442)
@@ -47,29 +50,29 @@ java script에 대해 정리한다.
 
 ## Collections compared c++ container
 
-| c++                  | js                  |
-|:---------------------|:--------------------------------|
-| `if, else`           | `if, else`                      |
-| `for, while`         | `for, while`                    |
-| `array`              | ``  |
-| `vector`             | `Array`                     |
-| `deque`              | `` |
-| `forward_list`       | ``                              |
-| `list`               | ``              |
-| `stack`              | ``             |
-| `queue`              | ``             |
-| `priority_queue`     | ``          |
-| `set`                | ``            |
-| `multiset`           | ``                              |
-| `map`                | ``                  |
-| `multimap`           | ``                              |
-| `unordered_set`      | `Set`                  |
-| `unordered_multiset` | ``                              |
-| `unordered_map`      | `Map`                  |
-| `unordered_multimap` | ``                              |
+| c++                  | js           |
+|:---------------------|:-------------|
+| `if, else`           | `if, else`   |
+| `for, while`         | `for, while` |
+| `array`              | ``           |
+| `vector`             | `Array`      |
+| `deque`              | ``           |
+| `forward_list`       | ``           |
+| `list`               | ``           |
+| `stack`              | ``           |
+| `queue`              | ``           |
+| `priority_queue`     | ``           |
+| `set`                | ``           |
+| `multiset`           | ``           |
+| `map`                | ``           |
+| `multimap`           | ``           |
+| `unordered_set`      | `Set`        |
+| `unordered_multiset` | ``           |
+| `unordered_map`      | `Map`        |
+| `unordered_multimap` | ``           |
 
 
-## Collection Examples
+## Collection by Examples
 
 * Array
 
@@ -120,8 +123,6 @@ for (var [key, value] of sayings) {
 아래 그림의 회색 박스는 `v8` 와 같은 interpreter engine 이고 나머지는 `chrome` 과 같은 browser 라고 생각하자.
 
 ![](https://cdn-images-1.medium.com/max/800/1*4lHHyfEhVB0LnQ3HlhSs8g.png)
-
-
 
 ## curly braces
 
@@ -321,5 +322,3 @@ console.log('끝');
 ## task queue
 
 ## micro task
-
-# Advanced

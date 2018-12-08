@@ -19,7 +19,7 @@
     - [init, deinit](#init-deinit)
     - [optional chaining](#optional-chaining)
     - [type casting](#type-casting)
-    - [assert guard](#assert-guard)
+    - [assert, guard](#assert-guard)
     - [protocol](#protocol)
     - [extension](#extension)
     - [error handling](#error-handling)
@@ -40,11 +40,10 @@ swift에 대해 정리한다.
 
 # Materials
 
-* [the swift programming language
-swift 4.2](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html)
 * [야곰의 스위프트 기본 문법 강좌](https://www.inflearn.com/course/%EC%8A%A4%EC%9C%84%ED%94%84%ED%8A%B8-%EA%B8%B0%EB%B3%B8-%EB%AC%B8%EB%B2%95/)
-  * swift 3 기본 문법
+  * 킹왕짱 swift 3 기본 문법
   * [src](https://github.com/yagom/swift_basic)
+* [the swift programming language swift 4.2](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html)
 
 # Basic Usages
 
@@ -164,7 +163,7 @@ d["someKey"] = nil
 print(d)
 
 let d0: [String: String] = [:]
-let d1: [String: String] = ["name": "yagom", "gender": "male"]
+let d1: [String: String] = ["name": "foo", "gender": "male"]
 // d0["key"] = "value" // error
 // let somevalue: String = d1["name"] // error
 ```
@@ -481,72 +480,1350 @@ jina.selfIntroduce()
 ## class
 
 ```swift
+class Sample {
+    var mutableProperty: Int = 100
+    let immutableProperty: Int = 100
+    static var typeProperty: Int = 100
+    func instanceMethod() {
+        print("instance method")
+    }
+    static func typeMethod() {
+        print("type method - static")
+    }
+    class func classMethod() {
+        print("type method - class")
+    }
+}
+
+var mutableReference: Sample = Sample()
+mutableReference.mutableProperty = 200
+//mutableReference.immutableProperty = 200 // error
+
+let immutableReference: Sample = Sample()
+immutableReference.mutableProperty = 200
+//immutalbeReference = mutableReference // error
+//immutableReference.immutableProperty = 200
+
+Sample.typeProperty = 300
+Sample.typeMethod()
+
+//mutableReference.typeProperty = 400 // error
+//mutableReference.typeMethod() // error
+
+class Student {
+    var name: String = "unknown"
+    var `class`: String = "Swift"
+    class func selfIntroduce() {
+        print("학생타입니다.")
+    }
+    func slefIntroduce() {
+        print("저는 \(self.class)반 \(name)입니다.")
+    }
+}
+Student.selfIntroduce()
+var foo: Student = Student()
+foo.name = "foo"
+foo.class = "스위프트"
+foo.selfIntroduce()
+
+let jina: Student = Student()
+jina.name = "jina"
+jina.selfIntroduce()
 
 ```
 
 ## enum
 
 ```swift
+enum Weekday {
+    case mon
+    case true
+    case wed
+    case thu, fri, sat, sun
+}
+var day: Weekday = Weekday.mon
+day = .true
+print(day)
+
+switch day {
+case .mon, .tue, .wed, .thu:
+    print("평일입니다.")
+case Weekday.fri:
+    print("불금파티!!")
+case .sat, .sun:
+    print("신나는 주말!!")
+}
+
+enum Fruit: Int {
+    case apple = 0
+    case grape = 1
+    case peach
+}
+print("Fruit.peach.rawValue == \(Fruit.peach.rawValue)")
+enum School: String {
+    case elementary = "초등"
+    case middle = "중등"
+    case high = "고등"
+    case university
+}
+print("School.middle.rawValue == \(School.middle.rawValue)")
+// School.middle.rawValue == 중등
+print("School.middle.rawValue == \(School.univerty.rawValue)")
+// School.middle.rawValue == university
+
+let apple: Fruit? = Fruit(rawValue: 0)
+if let orange: Fruit = Fruit(rawValue: 5) {
+    print("rawValue 5 에 해당하는 케이스는 \(orange)입니다.")
+} else {
+    print("rawValue 5 에 해당하는 케이스가 없습니다.")
+}
+
+enum Month {
+    case dec, jan, feb
+    case mar, apr, may
+    case jun, jul, aug
+    case sep, oct, nov
+    func printMessage() {
+        switch self {
+        case .mar, .apr, .may:
+            print("따스한 봄")
+        case .jun, .jul, .aug:
+            print("더운 여름")
+        case .sep, .oct, .nov:
+            print("완연한 가을")
+        case .dec, .jan, .feb:
+            print("추운 겨울")
+        }    
+    }
+}
+Month.mar.printMessage()
 ```
 
 ## value reference
 
 ```swift
+struct ValueType {
+    var property = 1
+}
+class ReferenceType {
+    var property = 1
+}
+let firstStructInstance = ValueType()
+var secondStructInstance = firstStructInstance
+secondStructInstance.property = 2
+
+print("first struct instance property : \(firstStructInstance.property)")    // 1
+print("second struct instance property : \(secondStructInstance.property)")  // 2
+
+let firstClassReference = ReferenceType()
+let secondClassReference = firstClassReference
+secondClassReference.property = 2
+print("first class reference property : \(firstClassReference.property)")    // 2
+print("second class reference property : \(secondClassReference.property)")  // 2
 ```
 
 ## closure
 
+클로저는 코드의 블럭이다. 일급 시민 (First-Citizen) 으로 전달인자, 변수, 상수 등으로 저장, 전달이 가능하다. 함수는 클로저의 일종이다. 이름이 있는 클로저라고 생각하자.
+
 ```swift
+import Swift
+
+func sumFunction(a: Int, b: Int) -> Int {
+    return a + b
+}
+
+var sumResult: Int = sumFunction(a: 1, b: 2)
+
+print(sumResult) // 3
+
+var sum: (Int, Int) -> Int = { (a: Int, b: Int) -> Int in
+    return a + b
+}
+
+sumResult = sum(1, 2)
+print(sumResult) // 3
+sum = sumFunction(a:b:)
+
+sumResult = sum(1, 2)
+print(sumResult) // 3
+
+let add: (Int, Int) -> Int
+add = { (a: Int, b: Int) -> Int in
+    return a + b
+}
+
+let substract: (Int, Int) -> Int
+substract = { (a: Int, b: Int) -> Int in
+    return a - b
+}
+
+let divide: (Int, Int) -> Int
+divide = { (a: Int, b: Int) -> Int in
+    return a / b
+}
+
+func calculate(a: Int, b: Int, method: (Int, Int) -> Int) -> Int {
+    return method(a, b)
+}
+
+var calculated: Int
+
+calculated = calculate(a: 50, b: 10, method: add)
+
+print(calculated) // 60
+calculated = calculate(a: 50, b: 10, method: substract)
+
+print(calculated) // 40
+calculated = calculate(a: 50, b: 10, method: divide)
+
+print(calculated) // 5
+calculated = calculate(a: 50, b: 10, method: { (left: Int, right: Int) -> Int in
+    return left * right
+})
+
+print(calculated) // 500
+
+var result: Int
+
+result = calculate(a: 10, b: 10) { (left: Int, right: Int) -> Int in
+    return left + right
+}
+
+print(result) // 20
+
+result = calculate(a: 10, b: 10, method: { (left: Int, right: Int) in
+    return left + right
+})
+
+print(result) // 20
+result = calculate(a: 10, b: 10) { (left: Int, right: Int) in
+    return left + right
+}
+
+result = calculate(a: 10, b: 10, method: {
+    return $0 + $1
+})
+
+print(result) // 20
+result = calculate(a: 10, b: 10) {
+    return $0 + $1
+}
+
+print(result) // 20
+
+result = calculate(a: 10, b: 10) {
+    $0 + $1
+}
+
+print(result) // 20
+result = calculate(a: 10, b: 10) { $0 + $1 }
+
+print(result) // 20
+result = calculate(a: 10, b: 10, method: { (left: Int, right: Int) -> Int in
+    return left + right
+})
+
+result = calculate(a: 10, b: 10) { $0 + $1 }
+
+print(result) // 20
 ```
 
 ## property
 
 ```swift
+struct Student {
+    var name: String = ""
+    var `class`: String = "Swift"
+    var koreanAge: Int = 0
+    
+    var westernAge: Int {
+        get {
+            return koreanAge - 1
+        }
+        
+        set(inputValue) {
+            koreanAge = inputValue + 1
+        }
+    }
+    
+    static var typeDescription: String = "학생"
+    
+    /*
+    func selfIntroduce() {
+        print("저는 \(self.class)반 \(name)입니다")
+    }
+     */
+    
+    var selfIntroduction: String {
+        get {
+            return "저는 \(self.class)반 \(name)입니다"
+        }
+    }
+        
+    /*
+     static func selfIntroduce() {
+     print("학생타입입니다")
+     }
+     */
+
+    // read only type property    
+    static var selfIntroduction: String {
+        return "학생타입입니다"
+    }
+}
+
+print(Student.selfIntroduction)
+// 학생타입입니다
+
+var foo: Student = Student()
+foo.koreanAge = 10
+
+foo.name = "foo"
+print(foo.name)
+// foo
+
+print(foo.selfIntroduction)
+// 저는 Swift반 foo입니다
+
+print("제 한국나이는 \(foo.koreanAge)살이고, 미쿡나이는 \(foo.westernAge)살입니다.")
+// 제 한국나이는 10살이고, 미쿡나이는 9살입니다.
+
+struct Money {
+    var currencyRate: Double = 1100
+    var dollar: Double = 0
+    var won: Double {
+        get {
+            return dollar * currencyRate
+        }
+        set {
+            dollar = newValue / currencyRate
+        }
+    }
+}
+
+var moneyInMyPocket = Money()
+moneyInMyPocket.won = 11000
+print(moneyInMyPocket.won)
+// 11000.0
+
+moneyInMyPocket.dollar = 10
+print(moneyInMyPocket.won)
+// 11000.0
+```
+```swift
+struct Money {
+    var currencyRate: Double = 1100 {
+        willSet(newRate) {
+            print("환율이 \(currencyRate)에서 \(newRate)으로 변경될 예정입니다")
+        }
+        
+        didSet(oldRate) {
+            print("환율이 \(oldRate)에서 \(currencyRate)으로 변경되었습니다")
+        }
+    }
+
+    var dollar: Double = 0 {
+        willSet {
+            print("\(dollar)달러에서 \(newValue)달러로 변경될 예정입니다")
+        }
+        
+        didSet {
+            print("\(oldValue)달러에서 \(dollar)달러로 변경되었습니다")
+        }
+    }
+
+    var won: Double {
+        get {
+            return dollar * currencyRate
+        }
+        set {
+            dollar = newValue / currencyRate
+        }
+    }    
+}
+
+var moneyInMyPocket: Money = Money()
+
+// 환율이 1100.0에서 1150.0으로 변경될 예정입니다
+moneyInMyPocket.currencyRate = 1150
+// 환율이 1100.0에서 1150.0으로 변경되었습니다
+
+// 0.0달러에서 10.0달러로 변경될 예정입니다
+moneyInMyPocket.dollar = 10
+// 0.0달러에서 10.0달러로 변경되었습니다
+
+print(moneyInMyPocket.won)
+// 11500.0
 ```
 
 ## inheritance
 
 ```swift
+class Person {
+    var name: String = ""
+    
+    func selfIntroduce() {
+        print("저는 \(name)입니다")
+    }
+    
+    final func sayHello() {
+        print("hello")
+    }
+    
+    static func typeMethod() {
+        print("type method - static")
+    }
+    
+    class func classMethod() {
+        print("type method - class")
+    }
+    
+    final class func finalCalssMethod() {
+        print("type method - final class")
+    }
+}
+
+class Student: Person {
+    var major: String = ""
+    
+    override func selfIntroduce() {
+        print("저는 \(name)이고, 전공은 \(major)입니다")
+    }
+    
+    override class func classMethod() {
+        print("overriden type method - class")
+    }
+    
+//    override static func typeMethod() {    }
+    
+//    override func sayHello() {    }
+//    override class func finalClassMethod() {    }
+
+}
+```
+
+```swift
+let foo: Person = Person()
+let hana: Student = Student()
+
+foo.name = "foo"
+hana.name = "hana"
+hana.major = "Swift"
+
+foo.selfIntroduce()
+// 저는 foo입니다
+
+hana.selfIntroduce()
+// 저는 hana이고, 전공은 Swift입니다
+
+Person.classMethod()
+// type method - class
+
+Person.typeMethod()
+// type method - static
+
+Person.finalCalssMethod()
+// type method - final class
+
+
+Student.classMethod()
+// overriden type method - class
+
+Student.typeMethod()
+// type method - static
+
+Student.finalCalssMethod()
+// type method - final class
 ```
 
 ## init, deinit
 
 ```swift
+class PersonA {
+    var name: String = "unknown"
+    var age: Int = 0
+    var nickName: String = "nick"
+}
+
+let jason: PersonA = PersonA()
+
+jason.name = "jason"
+jason.age = 30
+jason.nickName = "j"
+
+class PersonB {
+    var name: String
+    var age: Int
+    var nickName: String
+    
+    // initializer
+    init(name: String, age: Int, nickName: String) {
+        self.name = name
+        self.age = age
+        self.nickName = nickName
+    }
+}
+
+let hana: PersonB = PersonB(name: "hana", age: 20, nickName: "하나")
+
+class PersonC {
+    var name: String
+    var age: Int
+    var nickName: String?
+    
+    init(name: String, age: Int, nickName: String) {
+        self.name = name
+        self.age = age
+        self.nickName = nickName
+    }
+    
+    init(name: String, age: Int) {
+        self.name = name
+        self.age = age
+    }
+}
+
+let jenny: PersonC = PersonC(name: "jenny", age: 10)
+let mike: PersonC = PersonC(name: "mike", age: 15, nickName: "m")
+
+class Puppy {
+    var name: String
+    var owner: PersonC!
+    
+    init(name: String) {
+        self.name = name
+    }
+    
+    func goOut() {
+        print("\(name)가 주인 \(owner.name)와 산책을 합니다")
+    }
+}
+
+let happy: Puppy = Puppy(name: "happy")
+//happy.goOut() // error
+happy.owner = jenny
+happy.goOut()
+// happy가 주인 jenny와 산책을 합니다
+
+class PersonD {
+    var name: String
+    var age: Int
+    var nickName: String?
+    
+    init?(name: String, age: Int) {
+        if (0...120).contains(age) == false {
+            return nil
+        }
+        
+        if name.characters.count == 0 {
+            return nil
+        }
+        
+        self.name = name
+        self.age = age
+    }
+}
+
+//let john: PersonD = PersonD(name: "john", age: 23)
+let john: PersonD? = PersonD(name: "john", age: 23)
+let joker: PersonD? = PersonD(name: "joker", age: 123)
+let batman: PersonD? = PersonD(name: "", age: 10)
+
+print(joker) // nil
+print(batman) // nil
+
+class PersonE {
+    var name: String
+    var pet: Puppy?
+    var child: PersonC
+    
+    init(name: String, child: PersonC) {
+        self.name = name
+        self.child = child
+    }
+    
+    deinit {
+        if let petName = pet?.name {
+            print("\(name)가 \(child.name)에게 \(petName)를 인도합니다")
+            self.pet?.owner = child
+        }
+    }
+}
+
+var donald: PersonE? = PersonE(name: "donald", child: jenny)
+donald?.pet = happy
+donald = nil // donald 인스턴스가 더이상 필요없으므로 메모리에서 해제됩니다
+// donald가 jenny에게 happy를 인도합니다
 ```
 
 ## optional chaining
 
 ```swift
+class Person {
+    var name: String
+    var job: String?
+    var home: Apartment?
+    
+    init(name: String) {
+        self.name = name
+    }
+}
+
+class Apartment {
+    var buildingNumber: String
+    var roomNumber: String
+    var `guard`: Person?
+    var owner: Person?
+    
+    init(dong: String, ho: String) {
+        buildingNumber = dong
+        roomNumber = ho
+    }
+}
+
+let foo: Person? = Person(name: "foo")
+let apart: Apartment? = Apartment(dong: "101", ho: "202")
+let superman: Person? = Person(name: "superman")
+
+// 옵셔널 체이닝을 사용하지 않는다면...
+func guardJob(owner: Person?) {
+    if let owner = owner {
+        if let home = owner.home {
+            if let `guard` = home.guard {
+                if let guardJob = `guard`.job {
+                    print("우리집 경비원의 직업은 \(guardJob)입니다")
+                } else {
+                    print("우리집 경비원은 직업이 없어요")
+                }
+            }
+        }
+    }
+}
+
+guardJob(owner: foo)
+
+// 옵셔널 체이닝을 사용한다면
+func guardJobWithOptionalChaining(owner: Person?) {
+    if let guardJob = owner?.home?.guard?.job {
+        print("우리집 경비원의 직업은 \(guardJob)입니다")
+    } else {
+        print("우리집 경비원은 직업이 없어요")
+    }
+}
+
+guardJobWithOptionalChaining(owner: foo)
+// 우리집 경비원은 직업이 없어요
+
+foo?.home?.guard?.job // nil
+foo?.home = apart
+foo?.home // Optional(Apartment)
+foo?.home?.guard // nil
+foo?.home?.guard = superman
+foo?.home?.guard // Optional(Person)
+foo?.home?.guard?.name // superman
+foo?.home?.guard?.job // nil
+foo?.home?.guard?.job = "경비원"
+
+
+// 옵셔널 값이 nil일 경우, 우측의 값을 반환합니다. 띄어쓰기에 주의하여야 합니다.
+var guardJob: String
+    
+guardJob = foo?.home?.guard?.job ?? "슈퍼맨"
+print(guardJob) // 경비원
+
+foo?.home?.guard?.job = nil
+
+guardJob = foo?.home?.guard?.job ?? "슈퍼맨"
+print(guardJob) // 슈퍼맨
 ```
 
 ## type casting
 
 ```swift
+class Person {
+    var name: String = ""
+    func breath() {
+        print("숨을 쉽니다")
+    }
+}
+
+class Student: Person {
+    var school: String = ""
+    func goToSchool() {
+        print("등교를 합니다")
+    }
+}
+
+class UniversityStudent: Student {
+    var major: String = ""
+    func goToMT() {
+        print("멤버쉽 트레이닝을 갑니다 신남!")
+    }
+}
+
+// 인스턴스 생성
+var foo: Person = Person()
+var hana: Student = Student()
+var jason: UniversityStudent = UniversityStudent()
+
+var result: Bool
+
+result = foo is Person // true
+result = foo is Student // false
+result = foo is UniversityStudent // false
+
+result = hana is Person // true
+result = hana is Student // true
+result = hana is UniversityStudent // false
+
+result = jason is Person // true
+result = jason is Student // true
+result = jason is UniversityStudent // true
+
+if foo is UniversityStudent {
+    print("foo은 대학생입니다")
+} else if foo is Student {
+    print("foo은 학생입니다")
+} else if foo is Person {
+    print("foo은 사람입니다")
+} // foo은 사람입니다
+
+switch jason {
+case is Person:
+    print("jason은 사람입니다")
+case is Student:
+    print("jason은 학생입니다")
+case is UniversityStudent:
+    print("jason은 대학생입니다")
+default:
+    print("jason은 사람도, 학생도, 대학생도 아닙니다")
+} // jason은 사람입니다
+
+switch jason {
+case is UniversityStudent:
+    print("jason은 대학생입니다")
+case is Student:
+    print("jason은 학생입니다")
+case is Person:
+    print("jason은 사람입니다")
+default:
+    print("jason은 사람도, 학생도, 대학생도 아닙니다")
+} // jason은 대학생입니다
+
+var mike: Person = UniversityStudent() as Person
+
+var jenny: Student = Student()
+//var jina: UniversityStudent = Person() as UniversityStudent // error
+
+var jina: Any = Person()
+
+var optionalCasted: Student?
+
+optionalCasted = mike as? UniversityStudent
+optionalCasted = jenny as? UniversityStudent // nil
+optionalCasted = jina as? UniversityStudent // nil
+optionalCasted = jina as? Student // nil
+
+var forcedCasted: Student
+
+optionalCasted = mike as! UniversityStudent
+//optionalCasted = jenny as! UniversityStudent // 런타임 오류
+//optionalCasted = jina as! UniversityStudent // 런타임 오류
+//optionalCasted = jina as! Student // 런타임 오류
+
+func doSomethingWithSwitch(someone: Person) {
+    switch someone {
+    case is UniversityStudent:
+        (someone as! UniversityStudent).goToMT()
+    case is Student:
+        (someone as! Student).goToSchool()
+    case is Person:
+        (someone as! Person).breath()
+    }
+}
+
+doSomethingWithSwitch(someone: mike as Person) // 멤버쉽 트레이닝을 갑니다 신남!
+doSomethingWithSwitch(someone: mike) // 멤버쉽 트레이닝을 갑니다 신남!
+doSomethingWithSwitch(someone: jenny) // 등교를 합니다
+doSomethingWithSwitch(someone: foo) // 숨을 쉽니다
+
+func doSomething(someone: Person) {
+    if let universityStudent = someone as? UniversityStudent {
+        universityStudent.goToMT()
+    } else if let student = someone as? Student {
+        student.goToSchool()
+    } else if let person = someone as? Person {
+        person.breath()
+    }
+}
+
+doSomething(someone: mike as Person) // 멤버쉽 트레이닝을 갑니다 신남!
+doSomething(someone: mike) // 멤버쉽 트레이닝을 갑니다 신남!
+doSomething(someone: jenny) // 등교를 합니다
+doSomething(someone: foo) // 숨을 쉽니다
 ```
 
-## assert guard
+## assert, guard
 
 ```swift
+var someInt: Int = 0
+
+assert(someInt == 0, "someInt != 0")
+someInt = 1
+//assert(someInt == 0) // 동작 중지, 검증 실패
+//assert(someInt == 0, "someInt != 0") // 동작 중지, 검증 실패
+// assertion failed: someInt != 0: file guard_assert.swift, line 26
+
+func functionWithAssert(age: Int?) {
+    assert(age != nil, "age == nil")
+    assert((age! >= 0) && (age! <= 130), "나이값 입력이 잘못되었습니다")
+    print("당신의 나이는 \(age!)세입니다")
+}
+
+functionWithAssert(age: 50)
+//functionWithAssert(age: -1) // 동작 중지, 검증 실패
+//functionWithAssert(age: nil) // 동작 중지, 검증 실패
+
+func functionWithGuard(age: Int?) {
+    
+    guard let unwrappedAge = age,
+        unwrappedAge < 130,
+        unwrappedAge >= 0 else {
+        print("나이값 입력이 잘못되었습니다")
+        return
+    }
+    
+    print("당신의 나이는 \(unwrappedAge)세입니다")
+}
+
+var count = 1
+
+while true {
+    guard count < 3 else {
+        break
+    }
+    print(count)
+    count += 1
+}
+// 1
+// 2
+
+
+func someFunction(info: [String: Any]) {
+    guard let name = info["name"] as? String else {
+        return
+    }
+    
+    guard let age = info["age"] as? Int, age >= 0 else {
+        return
+    }
+    
+    print("\(name): \(age)")
+    
+}
+
+someFunction(info: ["name": "jenny", "age": "10"])
+someFunction(info: ["name": "mike"])
+someFunction(info: ["name": "foo", "age": 10]) // foo: 10
 ```
 
 ## protocol
 
 ```swift
+/* 프로토콜 */
+
+//프로토콜은 특정 역할을 수행하기 위한 
+//메서드, 프로퍼티, 이니셜라이저 등의 요구사항을 정의합니다.
+//구조체, 클래스, 열거형은 프로토콜을 채택(Adopted)해서
+//프로토콜의 요구사항을 실제로 구현할 수 있습니다. 
+//어떤 프로토콜의 요구사항을 모두 따르는 타입은 
+//그 ‘프로토콜을 준수한다(Conform)’고 표현합니다. 
+//프로토콜의 요구사항을 충족시키려면 프로토콜이 제시하는 기능을 
+//모두 구현해야 합니다.
+import Swift
+
+//MARK: - 정의 문법
+/*
+protocol <#프로토콜 이름#> {
+    /* 정의부 */
+}
+ */
+
+protocol Talkable {
+    
+    // 프로퍼티 요구
+    // 프로퍼티 요구는 항상 var 키워드를 사용합니다
+    // get은 읽기만 가능해도 상관 없다는 뜻이며
+    // get과 set을 모두 명시하면 
+    // 읽기 쓰기 모두 가능한 프로퍼티여야 합니다
+    var topic: String { get set }
+    var language: String { get }
+    
+    // 메서드 요구
+    func talk()
+    
+    // 이니셜라이저 요구
+    init(topic: String, language: String)
+}
+
+//MARK: - 프로토콜 채택 및 준수
+// Person 구조체는 Talkable 프로토콜을 채택했습니다
+struct Person: Talkable {
+    // 프로퍼티 요구 준수
+    var topic: String
+    let language: String
+    
+    // 메서드 요구 준수
+    func talk() {
+        print("\(topic)에 대해 \(language)로 말합니다")
+    }
+    
+    // 이니셜라이저 요구 준수
+    init(topic: String, language: String) {
+        self.topic = topic
+        self.language = language
+    }
+}
+
+
+//MARK: - 프로토콜 상속
+// 프로토콜은 클래스와 다르게 다중상속이 가능합니다
+/*
+ protocol <#프로토콜 이름#>: <#부모 프로토콜 이름 목록#> {
+ /* 정의부 */
+ }
+ */
+
+protocol Readable {
+    func read()
+}
+protocol Writeable {
+    func write()
+}
+protocol ReadSpeakable: Readable {
+//    func read()
+    func speak()
+}
+protocol ReadWriteSpeakable: Readable, Writeable {
+//    func read()
+//    func write()
+    func speak()
+}
+
+struct SomeType: ReadWriteSpeakable {
+    func read() {
+        print("Read")
+    }
+    
+    func write() {
+        print("Write")
+    }
+    
+    func speak() {
+        print("Speak")
+    }
+}
+
+//MARK: 클래스 상속과 프로토콜
+// 클래스에서 상속과 프로토콜 채택을 동시에 하려면 
+// 상속받으려는 클래스를 먼저 명시하고
+// 그 뒤에 채택할 프로토콜 목록을 작성합니다
+class SuperClass: Readable {
+    func read() { }
+}
+
+class SubClass: SuperClass, Writeable, ReadSpeakable {
+    func write() { }
+    func speak() { }
+}
+
+//MARK:- 프로토콜 준수 확인
+// 인스턴스가 특정 프로토콜을 준수하는지 확인할 수 있습니다
+// is, as 연산자 사용
+let sup: SuperClass = SuperClass()
+let sub: SubClass = SubClass()
+
+var someAny: Any = sup
+someAny is Readable // true
+someAny is ReadSpeakable // false
+someAny = sub
+
+someAny is Readable // true
+someAny is ReadSpeakable // true
+someAny = sup
+
+if let someReadable: Readable = someAny as? Readable {
+    someReadable.read()
+} // read
+if let someReadSpeakable: ReadSpeakable = someAny as? ReadSpeakable {
+    someReadSpeakable.speak()
+} // 동작하지 않음
+someAny = sub
+
+if let someReadable: Readable = someAny as? Readable {
+    someReadable.read()
+} // read
 ```
 
 ## extension
 
 ```swift
+/* 익스텐션 */
+
+//익스텐션은 구조체, 클래스, 열거형, 프로토콜 타입에 
+//새로운 기능을 추가할 수 있는 기능입니다. 
+//기능을 추가하려는 타입의 구현된 소스 코드를 
+//알지 못하거나 볼 수 없다 해도, 
+//타입만 알고 있다면 그 타입의 기능을 확장할 수도 있습니다.
+//익스텐션으로 추가할 수 있는 기능
+//연산 타입 프로퍼티 / 연산 인스턴스 프로퍼티
+//타입 메서드 / 인스턴스 메서드
+//이니셜라이저
+//서브스크립트
+//중첩 타입
+//특정 프로토콜을 준수할 수 있도록 기능 추가
+//기존에 존재하는 기능을 재정의할 수는 없습니다
+import Swift
+
+//MARK: - 정의 문법
+/*
+extension <#확장할 타입 이름#> {
+    /* 타입에 추가될 새로운 기능 구현 */
+}
+ */
+
+//익스텐션은 기존에 존재하는 타입이
+//추가적으로 다른 프로토콜을 채택할 수 있도록 
+//확장할 수도 있습니다.
+/*
+extension <#확장할 타입 이름#>: <#프로토콜1#>, <#프로토콜2#>, <#프로토콜3#>... {
+    /* 프로토콜 요구사항 구현 */
+}
+ */
+
+//MARK: - 익스텐션 구현
+//MARK: 연산 프로퍼티 추가
+extension Int {
+    var isEven: Bool {
+        return self % 2 == 0
+    }
+    var isOdd: Bool {
+        return self % 2 == 1
+    }
+}
+
+print(1.isEven) // false
+print(2.isEven) // true
+print(1.isOdd)  // true
+print(2.isOdd)  // false
+var number: Int = 3
+print(number.isEven) // false
+print(number.isOdd) // true
+number = 2
+print(number.isEven) // true
+print(number.isOdd) // false
+
+
+//MARK: 메서드 추가
+extension Int {
+    func multiply(by n: Int) -> Int {
+        return self * n
+    }
+}
+print(3.multiply(by: 2))  // 6
+print(4.multiply(by: 5))  // 20
+number = 3
+print(number.multiply(by: 2))   // 6
+print(number.multiply(by: 3))   // 9
+
+//MARK: 이니셜라이저 추가
+extension String {
+    init(int: Int) {
+        self = "\(int)"
+    }
+    
+    init(double: Double) {
+        self = "\(double)"
+    }
+}
+
+let stringFromInt: String = String(int: 100)
+// "100"
+let stringFromDouble: String = String(double: 100.0)
+// "100.0"
 ```
 
 ## error handling
 
 ```swift
+
+import Swift
+
+//MARK: - 오류표현
+//Error 프로토콜과 (주로) 열거형을 통해서 오류를 표현합니다
+/*
+enum <#오류종류이름#>: Error {
+    case <#종류1#>
+    case <#종류2#>
+    case <#종류3#>
+    //...
+}
+*/
+
+
+// 자판기 동작 오류의 종류를 표현한 VendingMachineError 열거형
+enum VendingMachineError: Error {
+    case invalidInput
+    case insufficientFunds(moneyNeeded: Int)
+    case outOfStock
+}
+
+//MARK:- 함수에서 발생한 오류 던지기
+// 자판기 동작 도중 발생한 오류 던지기
+// 오류 발생의 여지가 있는 메서드는 throws를 사용하여
+// 오류를 내포하는 함수임을 표시합니다
+class VendingMachine {
+    let itemPrice: Int = 100
+    var itemCount: Int = 5
+    var deposited: Int = 0
+    
+    // 돈 받기 메서드
+    func receiveMoney(_ money: Int) throws {
+        
+        // 입력한 돈이 0이하면 오류를 던집니다
+        guard money > 0 else {
+            throw VendingMachineError.invalidInput
+        }
+        
+        // 오류가 없으면 정상처리를 합니다
+        self.deposited += money
+        print("\(money)원 받음")
+    }
+    
+    // 물건 팔기 메서드
+    func vend(numberOfItems numberOfItemsToVend: Int) throws -> String {
+        
+        // 원하는 아이템의 수량이 잘못 입력되었으면 오류를 던집니다
+        guard numberOfItemsToVend > 0 else {
+            throw VendingMachineError.invalidInput
+        }
+        
+        // 구매하려는 수량보다 미리 넣어둔 돈이 적으면 오류를 던집니다
+        guard numberOfItemsToVend * itemPrice <= deposited else {
+            let moneyNeeded: Int
+            moneyNeeded = numberOfItemsToVend * itemPrice - deposited
+            
+            throw VendingMachineError.insufficientFunds(moneyNeeded: moneyNeeded)
+        }
+        
+        // 구매하려는 수량보다 요구하는 수량이 많으면 오류를 던집니다
+        guard itemCount >= numberOfItemsToVend else {
+            throw VendingMachineError.outOfStock
+        }
+        
+        // 오류가 없으면 정상처리를 합니다
+        let totalPrice = numberOfItemsToVend * itemPrice
+        
+        self.deposited -= totalPrice
+        self.itemCount -= numberOfItemsToVend
+        
+        return "\(numberOfItemsToVend)개 제공함"
+    }
+}
+
+// 자판기 인스턴스
+let machine: VendingMachine = VendingMachine()
+
+// 판매 결과를 전달받을 변수
+var result: String?
+
+
+//MARK:- 오류처리
+//오류발생의 여지가 있는 throws 함수(메서드)는
+//try를 사용하여 호출해야합니다
+//try, try?, try!
+
+//MARK: do-catch
+//오류발생의 여지가 있는 throws 함수(메서드)는
+//do-catch 구문을 활용하여
+//오류발생에 대비합니다
+// 가장 정석적인 방법으로 모든 오류 케이스에 대응합니다
+do {
+    try machine.receiveMoney(0)
+} catch VendingMachineError.invalidInput {
+    print("입력이 잘못되었습니다")
+} catch VendingMachineError.insufficientFunds(let moneyNeeded) {
+    print("\(moneyNeeded)원이 부족합니다")
+} catch VendingMachineError.outOfStock {
+    print("수량이 부족합니다")
+} // 입력이 잘못되었습니다
+
+// 하나의 catch 블럭에서 switch 구문을 사용하여
+// 오류를 분류해봅니다
+// 굳이 위의 것과 크게 다를 것이 없습니다
+do {
+    try machine.receiveMoney(300)
+} catch /*(let error)*/ {
+    
+    switch error {
+    case VendingMachineError.invalidInput:
+        print("입력이 잘못되었습니다")
+    case VendingMachineError.insufficientFunds(let moneyNeeded):
+        print("\(moneyNeeded)원이 부족합니다")
+    case VendingMachineError.outOfStock:
+        print("수량이 부족합니다")
+    default:
+        print("알수없는 오류 \(error)")
+    }
+} // 300원 받음
+
+// 딱히 케이스별로 오류처리 할 필요가 없으면 
+// catch 구문 내부를 간략화해도 무방합니다
+do {
+    result = try machine.vend(numberOfItems: 4)
+} catch {
+    print(error)
+} // insufficientFunds(100)
+// 딱히 케이스별로 오류처리 할 필요가 없으면 do 구문만 써도 무방합니다
+do {
+    result = try machine.vend(numberOfItems: 4)
+}
+
+
+//MARK: try? 와 try!
+//try?
+//별도의 오류처리 결과를 통보받지 않고
+//오류가 발생했으면 결과값을 nil로 돌려받을 수 있습니다
+//정상동작 후에는 옵셔널 타입으로 정상 반환값을 돌려 받습니다
+result = try? machine.vend(numberOfItems: 2)
+result // Optional("2개 제공함")
+result = try? machine.vend(numberOfItems: 2)
+result // nil
+//try!
+//오류가 발생하지 않을 것이라는 강력한 확신을 가질 때
+//try!를 사용하면 정상동작 후에 바로 결과값을 돌려받습니다
+//오류가 발생하면 런타임 오류가 발생하여 
+//애플리케이션 동작이 중지됩니다
+result = try! machine.vend(numberOfItems: 1)
+result // 1개 제공함
+//result = try! machine.vend(numberOfItems: 1)
+// 런타임 오류 발생!
+
+/*
+더 알아보기 : rethrows, defer
+*/
 ```
 
 ## higher order function
 
 ```swift
+
+import Swift
+
+//전달인자로 함수를 전달받거나
+//함수실행의 결과를 함수로 반환하는 함수
+//스위프트 표준라이브러리에서 제공하는
+//유용한 고차함수에 대해 알아봅니다
+//map, filter, reduce
+//컨테이너 타입(Array, Set, Dictionary 등)에 구현되어 있습니다
+//MARK:- map
+//컨테이너 내부의 기존 데이터를 변형(transform)하여 새로운 컨테이너 생성
+let numbers: [Int] = [0, 1, 2, 3, 4]
+var doubledNumbers: [Int]
+var strings: [String]
+
+// for 구문 사용
+doubledNumbers = [Int]()
+strings = [String]()
+
+for number in numbers {
+    doubledNumbers.append(number * 2)
+    strings.append("\(number)")
+}
+
+print(doubledNumbers) // [0, 2, 4, 6, 8]
+print(strings) // ["0", "1", "2", "3", "4"]
+// map 메서드 사용
+// numbers의 각 요소를 2배하여 새로운 배열 반환
+doubledNumbers = numbers.map({ (number: Int) -> Int in
+    return number * 2
+})
+
+// numbers의 각 요소를 문자열로 변환하여 새로운 배열 반환
+strings = numbers.map({ (number: Int) -> String in
+    return "\(number)"
+})
+
+print(doubledNumbers) // [0, 2, 4, 6, 8]
+print(strings) // ["0", "1", "2", "3", "4"]
+// 매개변수, 반환 타입, 반환 키워드(return) 생략, 후행 클로저
+doubledNumbers = numbers.map { $0 * 2 }
+print(doubledNumbers) // [0, 2, 4, 6, 8]
+
+//MARK:- filter
+//컨테이너 내부의 값을 걸러서 새로운 컨테이너로 추출
+// for 구문 사용
+// 변수 사용에 주목하세요
+var filtered: [Int] = [Int]()
+
+for number in numbers {
+    if number % 2 == 0 {
+        filtered.append(number)
+    }
+}
+
+print(filtered) // [0, 2, 4]
+// filter 메서드 사용
+// numbers의 요소 중 짝수를 걸러내어 새로운 배열로 반환
+let evenNumbers: [Int] = numbers.filter { (number: Int) -> Bool in
+    return number % 2 == 0
+}
+print(evenNumbers) // [0, 2, 4]
+// 매개변수, 반환 타입, 반환 키워드(return) 생략, 후행 클로저
+let oddNumbers: [Int] = numbers.filter {
+    $0 % 2 != 0
+}
+print(oddNumbers) // [1, 3]
+
+
+//MARK:- reduce
+// 컨테이너 내부의 콘텐츠를 하나로 통합
+let someNumbers: [Int] = [2, 8, 15]
+
+// for 구문 사용
+// 변수 사용에 주목하세요
+var result: Int = 0
+
+// someNumbers의 모든 요소를 더합니다
+for number in someNumbers {
+    result += number
+}
+
+print(result) // 25
+
+// reduce 메서드 사용
+// 초깃값이 0이고 someNumbers 내부의 모든 값을 더합니다.
+let sum: Int = someNumbers.reduce(0, { (first: Int, second: Int) -> Int in
+    //print("\(first) + \(second)") //어떻게 동작하는지 확인해보세요
+    return first + second
+})
+
+print(sum)  // 25
+// 초깃값이 0이고 someNumbers 내부의 모든 값을 뺍니다.
+var subtract: Int = someNumbers.reduce(0, { (first: Int, second: Int) -> Int in
+    //print("\(first) - \(second)") //어떻게 동작하는지 확인해보세요
+    return first - second
+})
+
+print(subtract) // -25
+// 초깃값이 3이고 someNumbers 내부의 모든 값을 더합니다.
+let sumFromThree = someNumbers.reduce(3) { $0 + $1 }
+
+print(sumFromThree) // 28
+/*
+ 더 알아보기 : flatMap
+ */
 ```
 
 # Advanced

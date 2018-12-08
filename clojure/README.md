@@ -1,17 +1,15 @@
-# Abstract
-
-clojure에 대해 정리한다.
-
-# Contents
-
 - [Abstract](#abstract)
-- [Contents](#contents)
 - [Material](#material)
 - [References](#references)
-- [Environment](#environment)
+- [Install](#install)
   - [Windows10](#windows10)
+  - [osx](#osx)
+- [Environment](#environment)
+  - [Windows10](#windows10-1)
   - [macosx](#macosx)
 - [Basic Usages](#basic-usages)
+  - [REPL](#repl)
+  - [Compile & Run](#compile--run)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collections](#collections)
   - [data types](#data-types)
@@ -22,9 +20,17 @@ clojure에 대해 정리한다.
   - [Polymorphism](#polymorphism)
   - [Concurrency](#concurrency)
   - [Macro](#macro)
-  
+
+-----------------------------------
+
+# Abstract
+
+clojure에 대해 정리한다.
+
 # Material
 
+* [클로저 시작하기](https://github.com/eunmin/getting-started-clojure/wiki/%ED%81%B4%EB%A1%9C%EC%A0%80-%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0)
+  * 실행하기, 컴파일하기
 * [Clojure 병행성 @ github](https://github.com/eunmin/clojure-study/wiki/%5B%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D-%ED%81%B4%EB%A1%9C%EC%A0%80%5D-6%EC%9E%A5-%EB%B3%91%ED%96%89%EC%84%B1)
 * [Clojure Programming](www.clojurebook.com/)
   * Clojure의 internal을 가장 잘 설명한 책이다.
@@ -61,6 +67,24 @@ clojure에 대해 정리한다.
 * [clojure doc](https://clojuredocs.org/)
 * [clojure cheatsheet](https://clojure.org/api/cheatsheet)
 
+# Install
+
+## Windows10
+
+* windows 용 command line 도구는 아직 없다. (20181208)
+* [이곳](https://clojure.org/community/downloads) 에서 `clojure-1.9.0.jar` 를 다운로드 하여 `d:\clojure` 에 저장한다.
+
+```bash
+```
+
+## osx
+
+* [Getting Started @ clojure](https://clojure.org/guides/getting_started)
+
+```bash
+> brew install clojure
+```
+
 # Environment
 
 ## Windows10
@@ -86,8 +110,20 @@ brew install leiningen
 * intelliJ
   * install Cursive plugin
 
-
 # Basic Usages
+
+## REPL
+
+```bash
+> java -cp clojure-1.7.0.jar clojure.main
+```
+
+## Compile & Run
+
+```bash
+> 
+> java -cp classes:clojure-1.7.0.jar a.hello
+```
 
 ## Collections compared c++ container
 

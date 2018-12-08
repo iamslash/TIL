@@ -11,7 +11,15 @@
 
 ## Compile, Run
 
+컴파일하고 실행하는 방법
+
 ## Print standard out
+
+화면에 출력하는 방법
+
+## Useful Keywords
+
+특이한 키워드들
 
 ## Data Types
 
