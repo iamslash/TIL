@@ -4,9 +4,6 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [References](#references)
-- [Usage](#usage)
-    - [Collections compared to c++ containers](#collections-compared-to-c-containers)
-    - [Collections](#collections)
     - [Tools](#tools)
     - [Best Practices](#best-practices)
     - [Concurrency](#concurrency)
@@ -17,7 +14,9 @@
     - [Map, Slice](#map-slice)
     - [Logging](#logging)
     - [Encoding, JSON](#encoding-json)
-- [Language](#language)
+- [Basic Usages](#basic-usages)
+    - [Collections compared to c++ containers](#collections-compared-to-c-containers)
+    - [Collections](#collections)
     - [Hello World](#hello-world)
     - [Operators](#operators)
         - [Arithmetic](#arithmetic)
@@ -96,12 +95,6 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 * [golang doc](https://golang.org/doc/)
 
-# Usage
-
-## Collections compared to c++ containers
-
-## Collections
-
 ## Tools
 
 * [Go Tooling in Action](https://www.youtube.com/watch?v=uBjoTxosSys)
@@ -174,7 +167,11 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 - [JSON, interface, and go generate](https://www.youtube.com/watch?v=YgnD27GFcyA)
 
 
-# Language
+# Basic Usages
+
+## Collections compared to c++ containers
+
+## Collections
 
 ## Hello World
 
@@ -191,6 +188,7 @@ func main() {
 `go run a.go`
 
 ## Operators
+
 ### Arithmetic
 | Operator | Description         |            |
 |----------|---------------------|------------|

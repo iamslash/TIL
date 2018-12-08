@@ -11,7 +11,7 @@ clojure에 대해 정리한다.
 - [Environment](#environment)
   - [Windows10](#windows10)
   - [macosx](#macosx)
-- [Usage](#usage)
+- [Basic Usages](#basic-usages)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collections](#collections)
   - [data types](#data-types)
@@ -87,7 +87,7 @@ brew install leiningen
   * install Cursive plugin
 
 
-# Usage
+# Basic Usages
 
 ## Collections compared c++ container
 
