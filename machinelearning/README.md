@@ -226,7 +226,7 @@ bit 로 표현해보자. 40 개이기 때문에 6 bit 가 필요하다. (log_{2}
 
 Entropy 의 공식을 다음과 같이 정리할 수 있다.
 
-![](entropy_eq.png)
+![](img/entropy_eq.png)
 
 ```latex
 \begin{align*}
