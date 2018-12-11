@@ -20,7 +20,7 @@
 * [뤼카의 정리](#뤼카의-정리-lucas-theorem)
 * [나머지 연산에 대한 곱셈의 엮원](#나머지-곱셈의-역원-modular-multiplicative-inverse)
 
-# Learning Materials
+# Materials
 
 * [KMO BIBLE 한국수학올림피아드 바이블 프리미엄 1 정수론](http://www.yes24.com/24/Goods/12554932?Acode=101)
 * [정수론 @ qstudy](http://www.qstudy.kr/?m=234)
@@ -117,9 +117,14 @@ x + y = xy 를 만족하는 정수해의 순서쌍 (x, y)를 모두 구하라.
 [합동식 @ 나무위키](https://namu.wiki/w/%ED%95%A9%EB%8F%99%EC%8B%9D)
 
 ```
+a - b 가 m 으로 나누어 떨어질때 m | (a - b) 라고 표기한다. 즉
+a - b = km (k는정수) 이라는 의미이다.
+
 정수 a, b, m에 대하여 m | (a - b)일때 a는 법 m에 대하여 b와 합동이다.
 a is congruent to b modulo m
-기호로 a ≡ b(mod m)라고 표현한다.
+기호로 a ≡ b (mod m)라고 표현한다.
+
+만약 0 <= b < m 이라는 a 를 m 으로 나누었을 때 나머지는 b 라는 의미와 같다.
 ```
 
 ## 예
@@ -128,6 +133,10 @@ a is congruent to b modulo m
 7 ≡ 1 (mod 3)
 7 ≡ -2 (mod 3)
 ```
+
+## 성질
+
+
 
 # 오일러의 Φ 함수 (Euler's Φ function)
 

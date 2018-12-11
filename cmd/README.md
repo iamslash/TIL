@@ -3,9 +3,26 @@
 - [Basic Usages](#basic-usages)
   - [Commands](#commands)
   - [Variables](#variables)
+    - [Commandline Arguments](#commandline-arguments)
+    - [Set Command](#set-command)
+    - [Working with Numeric Values](#working-with-numeric-values)
+    - [Local vs Global Variables](#local-vs-global-variables)
+    - [Working with Environment Variables](#working-with-environment-variables)
   - [String](#string)
+    - [Create String](#create-string)
+    - [Empty String](#empty-string)
+    - [String Interpolation](#string-interpolation)
+    - [String Concatenation](#string-concatenation)
     - [String length](#string-length)
+    - [toInt](#toint)
+    - [Align Right](#align-right)
+    - [Left String](#left-string)
+    - [Mid String](#mid-string)
     - [Right String](#right-string)
+    - [Remove](#remove)
+    - [Remove Both Ends](#remove-both-ends)
+    - [Remove All Spaces](#remove-all-spaces)
+    - [Replace a String](#replace-a-string)
     - [Expansion](#expansion)
 
 ---
@@ -176,6 +193,8 @@ Displays the list of environment variables on the current system.
 ## Variables
 
 
+### Commandline Arguments
+
 ```cmd
 @echo off 
 echo %1 
@@ -184,9 +203,116 @@ echo %3
 REM Test.bat 1 2 3
 ```
 
+### Set Command
+
+```cmd
+set /A variable-name=value
+REM /A – This switch is used if the value needs to be numeric in nature.
+
+@echo off 
+set message=Hello World 
+echo %message%
+```
+
+### Working with Numeric Values
+
+```cmd
+@echo off 
+SET /A a=5 
+SET /A b=10 
+SET /A c=%a% + %b% 
+echo %c%
+REM 15
+
+@echo off 
+SET /A a=5 
+SET /A b=10 
+SET /A c=%a% + %b% 
+echo %c% 
+SET /A c=%a% - %b% 
+echo %c% 
+SET /A c=%b% / %a% 
+echo %c% 
+SET /A c=%b% * %a% 
+echo %c%
+REM 15 
+REM -5 
+REM 2 
+REM 50
+```
+
+### Local vs Global Variables
+
+* Local Variable 을 선언하기 위해서는 `set` 을 `SETLOCAL` 과 `ENDLOCAL` 사이에 선언한다.
+
+```cmd
+@echo off 
+set globalvar=5
+SETLOCAL
+set var=13145
+set /A var=%var% + 5
+echo %var%
+echo %globalvar%
+ENDLOCAL
+```
+
+### Working with Environment Variables
+
+```cmd
+@echo off 
+echo %PATH%
+REM D:\local\bin
+```
+
 ## String
 
+### Create String
+
+```cmd
+@echo off 
+:: This program just displays Hello World 
+set message=Hello World 
+echo %message%
+REM Hello World
+```
+
+### Empty String
+
+```cmd
+@echo off 
+SET a= 
+SET b=Hello 
+if [%a%]==[] echo "String A is empty" 
+if [%b%]==[] echo "String B is empty "
+REM String A is empty
+```
+
+### String Interpolation
+
+```cmd
+@echo off 
+SET a=Hello 
+SET b=World 
+SET /A d=50 
+SET c=%a% and %b% %d%
+echo %c%
+REM Hello and World 50
+```
+
+### String Concatenation
+
+```cmd
+@echo off 
+SET a=Hello 
+SET b=World 
+SET c=%a% and %b% 
+echo %c%
+REM Hello and World
+```
+
 ### String length
+
+* [EnableDelayedExpansion](https://ss64.com/nt/delayedexpansion.html)
 
 ```cmd
 @echo off
@@ -205,6 +331,57 @@ goto :eof
 REM 1 2 3
 ```
 
+### toInt
+
+```cmd
+@echo off
+set var=13145
+set /A var=%var% + 5
+echo %var%
+REM 13150
+```
+
+### Align Right
+
+```cmd
+@echo off 
+set x=1000 
+set y=1 
+set y=%y% 
+echo %x% 
+
+set y=%y:~-4% 
+echo %y%
+REM 1000
+REM 1
+```
+
+### Left String
+
+```cmd
+@echo off 
+set str=Helloworld 
+echo %str% 
+
+set str=%str:~0,5% 
+echo %str%
+REM Helloworld 
+REM Hello
+```
+
+### Mid String
+
+```cmd
+@echo off 
+set str=Helloworld 
+echo %str%
+
+set str=%str:~5,10% 
+echo %str%
+REM Helloworld 
+REM world
+```
+
 ### Right String
 
 ```cmd
@@ -216,6 +393,58 @@ set str=%str:~-8%
 echo %str%
 REM This message needs changed. 
 REM changed.
+```
+
+### Remove 
+
+```cmd
+@echo off 
+set str=Batch scripts is easy. It is really easy. 
+echo %str% 
+
+set str=%str:is=% 
+echo %str%
+REM Batch scripts is easy. It is really easy. 
+REM Batch scripts easy. It really easy.
+```
+
+### Remove Both Ends
+
+```cmd
+@echo off 
+set str=Batch scripts is easy. It is really easy 
+echo %str% 
+
+set str=%str:~1,-1% 
+echo %str%
+REM Batch scripts is easy. It is really easy 
+REM atch scripts is easy. It is really eas
+```
+
+### Remove All Spaces
+
+```cmd
+@echo off 
+set str=This string    has    a  lot  of spaces 
+echo %str% 
+
+set str=%str:=% 
+echo %str%
+REM This string    has    a  lot  of spaces
+REM Thisstringhasalotofspaces
+```
+
+### Replace a String
+
+```cmd
+@echo off 
+set str=This message needs changed. 
+echo %str% 
+
+set str=%str:needs=has% 
+echo %str%
+REM This message needs changed. 
+REM This message has changed.
 ```
 
 ### Expansion
