@@ -2,6 +2,7 @@
 - [Materials](#materials)
 - [Basic Usages](#basic-usages)
   - [Commands](#commands)
+  - [Input, Output](#input-output)
   - [Variables](#variables)
     - [Parameter Expansion](#parameter-expansion)
     - [Commandline Arguments](#commandline-arguments)
@@ -208,6 +209,25 @@ This batch command sets the title displayed in the console window.
 
 50	**SET**
 Displays the list of environment variables on the current system.
+
+## Input, Output
+
+* Redirecting Output
+  
+```cmd
+REM the stdout of the command Dir C:\ is redirected to the file list.txt.
+Dir C:\ > list.txt
+REM the stderr to the file lists.txt.
+Dir C:\ 2> list.txt
+REM stdout and stderr streams using the file number and the ‘&’ prefix.
+DIR C:\ > lists.txt 2>&1
+```
+
+* Suppressing Program Output
+
+```cmd
+Dir C:\ > NUL
+```
 
 ## Variables
 
