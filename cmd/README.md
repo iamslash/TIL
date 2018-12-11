@@ -35,6 +35,7 @@ cmd.exe 에 대해 정리한다.
 
 * [batch script @ tutorialpoint](https://www.tutorialspoint.com/batch_script/batch_script_environment.htm)
 * [An A-Z Index of the Windows CMD command line](https://ss64.com/nt/)
+* [Windows CMD Shell Command Line Syntax](https://ss64.com/nt/syntax.html)
 
 # Basic Usages
 
