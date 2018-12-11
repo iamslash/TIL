@@ -1,40 +1,33 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Prerequisites](#prerequisites)
 - [Principles](#principles)
-    - [How to approach a system design interview question](#how-to-approach-a-system-design-interview-question)
-    - [Scalability](#scalability)
-    - [Performance vs scalability](#performance-vs-scalability)
-    - [Latency vs throughput](#latency-vs-throughput)
-    - [Availability vs consistency](#availability-vs-consistency)
-    - [Consistency patterns](#consistency-patterns)
-    - [Availability patterns](#availability-patterns)
-    - [Domain name system](#domain-name-system)
-    - [Content delivery network](#content-delivery-network)
-    - [Load balancer](#load-balancer)
-    - [Reverse proxy](#reverse-proxy)
-    - [Application layer](#application-layer)
-    - [Database](#database)
-    - [Cache](#cache)
-- [reading values](#reading-values)
-- [writing values](#writing-values)
-    - [Asynchronism](#asynchronism)
-    - [Communication](#communication)
-    - [Security](#security)
+  - [How to approach a system design interview question](#how-to-approach-a-system-design-interview-question)
+  - [Scalability](#scalability)
+  - [Performance vs scalability](#performance-vs-scalability)
+  - [Latency vs throughput](#latency-vs-throughput)
+  - [Availability vs consistency](#availability-vs-consistency)
+  - [Consistency patterns](#consistency-patterns)
+  - [Availability patterns](#availability-patterns)
+  - [Domain name system](#domain-name-system)
+  - [Content delivery network](#content-delivery-network)
+  - [Load balancer](#load-balancer)
+  - [Reverse proxy](#reverse-proxy)
+  - [Application layer](#application-layer)
+  - [Database](#database)
+  - [Cache](#cache)
+  - [Asynchronism](#asynchronism)
+  - [Communication](#communication)
+  - [Security](#security)
 - [Practices](#practices)
 - [Additional System Design Interview Questions](#additional-system-design-interview-questions)
 - [Real World Architecture](#real-world-architecture)
 - [Company Architectures](#company-architectures)
 - [company engineering blog](#company-engineering-blog)
 - [System Design Pattern](#system-design-pattern)
-    - [aws cloud design pattern](#aws-cloud-design-pattern)
-    - [azure cloud design pattern](#azure-cloud-design-pattern)
-    - [google cloud design pattern](#google-cloud-design-pattern)
-
-<!-- markdown-toc end -->
+  - [aws cloud design pattern](#aws-cloud-design-pattern)
+  - [azure cloud design pattern](#azure-cloud-design-pattern)
+  - [google cloud design pattern](#google-cloud-design-pattern)
 
 
 # Abstract
@@ -50,6 +43,8 @@
   - [infographic](https://azure.microsoft.com/en-us/resources/infographics/cloud-design-patterns/)
 - [AWS Architect](https://aws.amazon.com/ko/architecture/)
 - [GCP Solutions](https://cloud.google.com/solutions/)
+- [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
+  - 유료 시스템 디자인 인터뷰
 
 # Prerequisites
 

@@ -25,3 +25,7 @@
 
 - [bash](/bash/README.md)
 - [sql](/sql/README.md)
+
+# leadership principle
+
+- [Lewis C. Lin's Amazon Interview Spreadsheet](https://www.instapaper.com/read/1138208081)
