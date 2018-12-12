@@ -1,24 +1,59 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [References](#references)
+- [서로소 (coprime)](#%EC%84%9C%EB%A1%9C%EC%86%8C-coprime)
+  - [정의](#%EC%A0%95%EC%9D%98)
+  - [예](#%EC%98%88)
+- [유클리드 알고리즘 (Euclidean algorithm)](#%EC%9C%A0%ED%81%B4%EB%A6%AC%EB%93%9C-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98-euclidean-algorithm)
+  - [정의](#%EC%A0%95%EC%9D%98-1)
+  - [예](#%EC%98%88-1)
+  - [증명](#%EC%A6%9D%EB%AA%85)
+- [최대공약수와 유클리드 호제법 (GCD and Eclidean algorithm)](#%EC%B5%9C%EB%8C%80%EA%B3%B5%EC%95%BD%EC%88%98%EC%99%80-%EC%9C%A0%ED%81%B4%EB%A6%AC%EB%93%9C-%ED%98%B8%EC%A0%9C%EB%B2%95-gcd-and-eclidean-algorithm)
+  - [정의](#%EC%A0%95%EC%9D%98-2)
+  - [예](#%EC%98%88-2)
+- [디오판틴 방정식 (diophantine equation)](#%EB%94%94%EC%98%A4%ED%8C%90%ED%8B%B4-%EB%B0%A9%EC%A0%95%EC%8B%9D-diophantine-equation)
+  - [정의](#%EC%A0%95%EC%9D%98-3)
+  - [예](#%EC%98%88-3)
+- [합동과 법 (congruence and modular)](#%ED%95%A9%EB%8F%99%EA%B3%BC-%EB%B2%95-congruence-and-modular)
+  - [정의](#%EC%A0%95%EC%9D%98-4)
+  - [예](#%EC%98%88-4)
+  - [성질](#%EC%84%B1%EC%A7%88)
+- [오일러의 Φ 함수 (Euler's Φ function)](#%EC%98%A4%EC%9D%BC%EB%9F%AC%EC%9D%98-%CF%86-%ED%95%A8%EC%88%98-eulers-%CF%86-function)
+  - [정의](#%EC%A0%95%EC%9D%98-5)
+  - [예](#%EC%98%88-5)
+- [오일러의 정리 (Euler's theorem)](#%EC%98%A4%EC%9D%BC%EB%9F%AC%EC%9D%98-%EC%A0%95%EB%A6%AC-eulers-theorem)
+  - [정의](#%EC%A0%95%EC%9D%98-6)
+  - [예](#%EC%98%88-6)
+- [윌슨의 정리 (wilson's theorem)](#%EC%9C%8C%EC%8A%A8%EC%9D%98-%EC%A0%95%EB%A6%AC-wilsons-theorem)
+  - [정의](#%EC%A0%95%EC%9D%98-7)
+  - [예](#%EC%98%88-7)
+- [페르마의 소정리 (Ferma's little theorem)](#%ED%8E%98%EB%A5%B4%EB%A7%88%EC%9D%98-%EC%86%8C%EC%A0%95%EB%A6%AC-fermas-little-theorem)
+  - [정의](#%EC%A0%95%EC%9D%98-8)
+  - [예](#%EC%98%88-8)
+- [베주의 정의 (Bezout's identity)](#%EB%B2%A0%EC%A3%BC%EC%9D%98-%EC%A0%95%EC%9D%98-bezouts-identity)
+  - [정의](#%EC%A0%95%EC%9D%98-9)
+- [확장 유클리드 알고리즘 (extended euclidean algorithm)](#%ED%99%95%EC%9E%A5-%EC%9C%A0%ED%81%B4%EB%A6%AC%EB%93%9C-%EC%95%8C%EA%B3%A0%EB%A6%AC%EC%A6%98-extended-euclidean-algorithm)
+  - [정의](#%EC%A0%95%EC%9D%98-10)
+  - [예](#%EC%98%88-9)
+- [중국인 나머지 정리 (Chinese Remainder's theorem)](#%EC%A4%91%EA%B5%AD%EC%9D%B8-%EB%82%98%EB%A8%B8%EC%A7%80-%EC%A0%95%EB%A6%AC-chinese-remainders-theorem)
+  - [정의](#%EC%A0%95%EC%9D%98-11)
+  - [예](#%EC%98%88-10)
+- [뤼카의 정리 (lucas' theorem)](#%EB%A4%BC%EC%B9%B4%EC%9D%98-%EC%A0%95%EB%A6%AC-lucas-theorem)
+  - [정의](#%EC%A0%95%EC%9D%98-12)
+  - [예](#%EC%98%88-11)
+- [나머지 곱셈의 역원 (modular multiplicative inverse)](#%EB%82%98%EB%A8%B8%EC%A7%80-%EA%B3%B1%EC%85%88%EC%9D%98-%EC%97%AD%EC%9B%90-modular-multiplicative-inverse)
+- [라그랑주의 네제곱수 정리 (Lagrange's Four-Square Theorem)](#%EB%9D%BC%EA%B7%B8%EB%9E%91%EC%A3%BC%EC%9D%98-%EB%84%A4%EC%A0%9C%EA%B3%B1%EC%88%98-%EC%A0%95%EB%A6%AC-lagranges-four-square-theorem)
+  - [정의](#%EC%A0%95%EC%9D%98-13)
+  - [증명](#%EC%A6%9D%EB%AA%85-1)
+  - [예](#%EC%98%88-12)
+  - [활용](#%ED%99%9C%EC%9A%A9)
+
+----------
+
+
 # Abstract
 
 정수론에 대해 정리해본다.
-
-# Contents
-
-* [Learning Materials](#learning-materials)
-* [서로소](#서로소-coprime)
-* [유클리드 알고리즘](#유클리드-알고리즘-euclidean-algorithm)
-* [최대공약수와 유클리드 호제법](#최대공약수와-유클리드-호제법-gcd-and-eclidean-algorithm)
-* [디오판틴 방정식](#디오판틴-방정식-diophantine-equation)
-* [합동과 법](#합동과-법-congruence-and-modular)
-* [오일러의 Φ 함수](#오일러의-Φ-함수-eulers-Φ-function)
-* [오일러의 정리](#오일러의-정리-eulers-theorem)
-* [윌슨의 정리](#윌슨의-정리-wilsons-theorem)
-* [페르마의 소정리](#페르마의-소정리-fermas-little-theorem)
-* [베주의 정의](#베주의-정의-bezouts-identity)
-* [확장 유클리드 알고리즘](#확장-유클리드-알고리즘-extended-euclidean-algorithm)
-* [중국인의 나머지 정리](#중국인-나머지-정리-chinese-remainders-theorem)
-* [뤼카의 정리](#뤼카의-정리-lucas-theorem)
-* [나머지 연산에 대한 곱셈의 엮원](#나머지-곱셈의-역원-modular-multiplicative-inverse)
 
 # Materials
 
@@ -394,3 +429,37 @@ n % 11 * y % 11 = 1 % 11
 나머지 곱셈의 역원을 구하는 알고리즘 구현은 다음을 참고하자.
 
 [modular arithmetic @ learntocode](https://github.com/iamslash/learntocode/blob/master/doc/number_modular.md#div)
+
+
+
+# 라그랑주의 네제곱수 정리 (Lagrange's Four-Square Theorem)
+
+## 정의
+
+
+* [라그랑주의 네제곱수 정리(Four Square Theorem)와 그 증명 @ tistory](http://jjycjnmath.tistory.com/295)
+* [Lagrange's Four-Square Theorem @ wolfram](http://mathworld.wolfram.com/LagrangesFour-SquareTheorem.html)
+
+```
+모든 자연수 n 에 대하여, 아래의 식을 만족하는 네 개의 음이 아닌 정수 a, b, c, d 가 존재한다.
+
+n = a^2 + b^2 + c^2 + d^2
+```
+
+## 증명
+
+어렵다.
+
+## 예
+
+```
+1   =  1^2
+2   =  1^2 + 1^2
+3   =  1^2 + 1^2 + 1^2
+31  =  5^2 + 2^2 + 1^2 + 1^2
+310 = 17^2 + 4^2 + 2^2 + 1^2
+```
+
+## 활용
+
+* [PerfectSquares @ learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode/PerfectSquares/a.cpp)
