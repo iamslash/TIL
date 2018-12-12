@@ -79,7 +79,7 @@
   - machine learning, deep learning, probability, statistics cheatsheets
 - [골빈해커의 3분 딥러닝](http://www.yes24.com/24/goods/49853812?scode=032&OzSrank=1)
   - [src](https://github.com/golbin/TensorFlow-Tutorials)
-- [PR12 딥러닝 논문읽기 모임 season-1 @ youtube](https://www.youtube.com/playlist?list=PLlMkM4tgfjnJhhd4wn5aj8fVTYJwIpWkS)
+- [PR12 딥러닝 논문읽기 모임 season-1 @ youtube](https://m.youtube.com/watch?v=auKdde7Anr8&list=PLWKf9beHi3Tg50UoyTe6rIm20sVQOH1br)
   - 딥러닝 논문읽기 모임 동영상 시즌 1
 - [PR12 딥러닝 논문읽기 모임 season-2 @ youtube](https://www.youtube.com/watch?v=FfBp6xJqZVA&list=PLWKf9beHi3TgstcIn8K6dI_85_ppAxzB8&fbclid=IwAR2P2XP1dWIRhJtExFQ2t6ZxkRNyiFpnmI9749cEoU6OSjr67nCvggBP-5Y)
   - 딥러닝 논문읽기 모임 동영상 시즌 2
