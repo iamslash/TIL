@@ -37,7 +37,10 @@
   - 사전지식 링크가 신박한 수학블로그 
 - [math @ khanacademy](https://www.khanacademy.org/math)
   - 칸 아카데미 수학 동영상 강좌
-- [3blue1brown](https://m.youtube.com/channel/UCYO_jab_esuFRV4b17AJtAw)
+- [3blue1brown @ youtube](https://m.youtube.com/channel/UCYO_jab_esuFRV4b17AJtAw)
+  - 수학 동영상
+- [jjycjn's Math Storehouse @ tistory](http://jjycjnmath.tistory.com/category)
+  - 다양한 분야를 정리한 수학 블로그, [wordpress](http://www.mathstorehouse.com/) 로 이주했다.
 
 # References
 
@@ -127,7 +130,7 @@
 
 # Categories
 
-* [미적분학](/calaculus/)
+* [미적분학](/calculus/)
 
 * Trigonometric functions
 
