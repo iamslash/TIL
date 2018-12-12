@@ -79,6 +79,10 @@
   - machine learning, deep learning, probability, statistics cheatsheets
 - [골빈해커의 3분 딥러닝](http://www.yes24.com/24/goods/49853812?scode=032&OzSrank=1)
   - [src](https://github.com/golbin/TensorFlow-Tutorials)
+- [PR12 딥러닝 논문읽기 모임 season-1 @ youtube](https://www.youtube.com/playlist?list=PLlMkM4tgfjnJhhd4wn5aj8fVTYJwIpWkS)
+  - 딥러닝 논문읽기 모임 동영상 시즌 1
+- [PR12 딥러닝 논문읽기 모임 season-2 @ youtube](https://www.youtube.com/watch?v=FfBp6xJqZVA&list=PLWKf9beHi3TgstcIn8K6dI_85_ppAxzB8&fbclid=IwAR2P2XP1dWIRhJtExFQ2t6ZxkRNyiFpnmI9749cEoU6OSjr67nCvggBP-5Y)
+  - 딥러닝 논문읽기 모임 동영상 시즌 2
 
 # Materials
 
@@ -88,9 +92,6 @@
   - 머신러닝을 위한 수학 공짜책
 - [paper with code](https://paperswithcode.com/)
   - 논문과 구현
-- [PR12 딥러닝 논문읽기 모임 @ youtube](https://www.youtube.com/playlist?list=PLlMkM4tgfjnJhhd4wn5aj8fVTYJwIpWkS)
-  - 딥러닝 논문읽기 모임 동영상
-  - [PR12 딥러닝 논문읽기 @ github](https://kkweon.github.io/pr12-web-app-elm/)
 - [machine learning at coursera](https://www.coursera.org/learn/machine-learning)
   - andrew Ng교수의 machine learning강좌
   - 영문이지만 기초를 공부할 수 있다.
