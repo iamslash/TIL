@@ -1,5 +1,5 @@
 - [Abstract](#abstract)
-- [Material](#material)
+- [Materials](#materials)
 - [Terms](#terms)
   - [모집단 (population)과 표본 (sample)](#%EB%AA%A8%EC%A7%91%EB%8B%A8-population%EA%B3%BC-%ED%91%9C%EB%B3%B8-sample)
   - [일화적증거 (anecdotal evidence)](#%EC%9D%BC%ED%99%94%EC%A0%81%EC%A6%9D%EA%B1%B0-anecdotal-evidence)
@@ -33,8 +33,11 @@
 
 - 개발자가 알아야할 확률 통계지식에 대해 적는다.
 
-# Material
+# Materials
 
+- [확률 및 통계 - 이상화](http://www.kocw.net/home/search/kemView.do?kemId=1056974)
+  - 킹왕짱 강좌
+  - [pdf](http://www.kocw.net/home/cview.do?lid=783ed9142748e2dd)
 - [CS109: Probability for Computer Scientists](http://web.stanford.edu/class/cs109//)
   - 스탠포드 대학의 통계학 강좌
   - 강의자료가 쓸만함
@@ -42,8 +45,6 @@
   - 하버드 대학의 통계학 강좌
 - [seeing theory](http://students.brown.edu/seeing-theory/)
   - 브라운 대학교에서 만든 인터랙티브 통계 강좌
-- [확률 및 통계 - 이상화](http://www.kocw.net/home/search/kemView.do?kemId=1056974)
-  - 확률 및 통계 동영상 강좌
 - [나부랭이의 수학블로그-통계](http://math7.tistory.com/category/%ED%86%B5%EA%B3%84)
   - 통계를 아주 찰지게 정리한 블로그
 - Think Stats 프로그래머를 위한 통계 및 데이터 분석 방법
