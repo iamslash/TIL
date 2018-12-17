@@ -4,6 +4,10 @@
 
 # Materials
 
+* [골빈해커의 3분 딥러닝 RNN @ github](https://github.com/golbin/TensorFlow-Tutorials/tree/master/10%20-%20RNN)
+  * NLP 예제들
+* [keras examples @ github](https://github.com/keras-team/keras/tree/master/examples)
+  * NLP 예제들
 * [[토크ON세미나] 딥러닝을 활용한 자연어 처리 기술 실습 1강 | T아카데미 @ youtube](https://www.youtube.com/watch?v=F8b0jGyZ_W8&list=PL9mhQYIlKEhdorgRaoASuZfgIQTakIEE9)
   * [src](https://github.com/hugman/deep_learning)
 * [Natural Language Processing Tasks and Selected References @ github](https://github.com/Kyubyong/nlp_tasks)
