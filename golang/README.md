@@ -181,7 +181,7 @@ func main() {
 
 ## Collections compared to c++ containers
 
-| c++                  | c#                   | 
+| c++                  | go                   | 
 |:---------------------|:---------------------|
 | `if, else`           | `if, else`           |
 | `for, while`         | `for`                |

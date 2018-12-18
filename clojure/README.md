@@ -4,9 +4,6 @@
 - [Install](#install)
   - [Windows10](#windows10)
   - [osx](#osx)
-- [Environment](#environment)
-  - [Windows10](#windows10-1)
-  - [macosx](#macosx)
 - [Basic Usages](#basic-usages)
   - [REPL](#repl)
   - [Compile & Run](#compile--run)
@@ -72,9 +69,11 @@ clojure에 대해 정리한다.
 ## Windows10
 
 * windows 용 command line 도구는 아직 없다. (20181208)
-* [이곳](https://clojure.org/community/downloads) 에서 `clojure-1.9.0.jar` 를 다운로드 하여 `d:\clojure` 에 저장한다.
+* [leiningen.org](https://leiningen.org/#install) 에서 lein.bat를 d:\local\bin에 다운받는다.
 
 ```bash
+> lein repl
+>> (load-file 'a.clj')
 ```
 
 ## osx
@@ -83,51 +82,52 @@ clojure에 대해 정리한다.
 
 ```bash
 > brew install clojure
+> clj a.clj
 ```
-
-# Environment
-
-## Windows10
-
-* leiningen 
-  * [leiningen.org](https://leiningen.org/#install) 에서 lein.bat를 d:\local\bin에 다운받고 다음을 실행한다. 
-
-```
-lein.bat self-install
-```
-
-* intelliJ
-  * install Cursive plugin
-  
-## macosx
-
-* leiningen
-
-```bash
-brew install leiningen
-```
-
-* intelliJ
-  * install Cursive plugin
 
 # Basic Usages
 
 ## REPL
 
 ```bash
-> java -cp clojure-1.7.0.jar clojure.main
+> clj
+> lein repl
 ```
 
 ## Compile & Run
 
 ```bash
-> 
-> java -cp classes:clojure-1.7.0.jar a.hello
+> clj a.clj
+> lein repl
+>> (load-file "a.clj")
 ```
 
 ## Collections compared c++ container
 
+| c++                  | clojure                   | 
+|:---------------------|:---------------------|
+| `if, else`           | `if, else`           |
+| `for, while`         | ``                |
+| `array`              | ``              |
+| `vector`             | ``              |
+| `deque`              | ``                   |
+| `forward_list`       | ``                   |
+| `list`               | ``               |
+| `stack`              | ``                   |
+| `queue`              | ``                   |
+| `priority_queue`     | ``               |
+| `set`                | ``                   |
+| `multiset`           | ``                   |
+| `map`                | ``                   |
+| `multimap`           | ``                   |
+| `unordered_set`      | ``                   |
+| `unordered_multiset` | ``                   |
+| `unordered_map`      | ``                |
+| `unordered_multimap` | ``                   |
+
 ## Collections
+
+* 
 
 ## data types
 
@@ -258,45 +258,45 @@ Associative destructuring
 
 ## Collections
 
-clojure의 collection은 크게 sequential, associative, counted와 같이
-세가지 분류로 구분 할 수 있다. set은 sorted set, hash set으로 map은
-sorted map, hash map으로 구성된다.
+clojure 의 collection 은 크게 `sequential, associative, counted` 와 같이
+세가지 분류로 구분 할 수 있다. `set` 은 `sorted set, hash set` 으로 `map` 은
+`sorted map, hash map` 으로 구성된다.
 
 ![](img/collection-properties-venn.png)
 
-vector
+* vector
 
 ```clojure
 [1 2 3 4 5]
 ```
 
-list
+* list
 
 ```clojure
 (1 2 3 4 5)
 ```
 
-hash map
+* hash map
 
 ```clojure
 {:one 1 :two 2}
 (hash-map :one 1 :two 2)
 ```
 
-sorted map
+* sorted map
 
 ```clojure
 (sorted-map :one 1 :two 2) ;; {:one 1, :two 2)
 (sorted-map-by > 1 :one 5 :five 3 :three) ;; {5 :five, 3 :three, 1 :one}
 ```
 
-hash set
+* hash set
 
 ```clojure
 #{1 2 3 4 5}
 ```
 
-sorted set
+* sorted set
 
 ```clojure
 (doseq [x (->> (sorted-set :b :c :d)
@@ -307,7 +307,7 @@ sorted set
 ;; d
 ```
 
-union, difference, and intersection
+* union, difference, and intersection
 
 ```clojure
 (def a #{:a :b :c :d :e})
