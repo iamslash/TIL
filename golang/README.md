@@ -181,7 +181,575 @@ func main() {
 
 ## Collections compared to c++ containers
 
+| c++                  | c#                   | 
+|:---------------------|:---------------------|
+| `if, else`           | `if, else`           |
+| `for, while`         | `for`                |
+| `array`              | `array`              |
+| `vector`             | `slice`              |
+| `deque`              | ``                   |
+| `forward_list`       | ``                   |
+| `list`               | `list`               |
+| `stack`              | ``                   |
+| `queue`              | ``                   |
+| `priority_queue`     | `heap`               |
+| `set`                | ``                   |
+| `multiset`           | ``                   |
+| `map`                | ``                   |
+| `multimap`           | ``                   |
+| `unordered_set`      | ``                   |
+| `unordered_multiset` | ``                   |
+| `unordered_map`      | `map`                |
+| `unordered_multimap` | ``                   |
+
 ## Collections by examples
+
+* array
+
+```go
+// In Go, an _array_ is a numbered sequence of elements of a
+// specific length.
+
+package main
+
+import "fmt"
+
+func main() {
+
+    // Here we create an array `a` that will hold exactly
+    // 5 `int`s. The type of elements and length are both
+    // part of the array's type. By default an array is
+    // zero-valued, which for `int`s means `0`s.
+    var a [5]int
+    fmt.Println("emp:", a)
+
+    // We can set a value at an index using the
+    // `array[index] = value` syntax, and get a value with
+    // `array[index]`.
+    a[4] = 100
+    fmt.Println("set:", a)
+    fmt.Println("get:", a[4])
+
+    // The builtin `len` returns the length of an array.
+    fmt.Println("len:", len(a))
+
+    // Use this syntax to declare and initialize an array
+    // in one line.
+    b := [5]int{1, 2, 3, 4, 5}
+    fmt.Println("dcl:", b)
+
+    // Array types are one-dimensional, but you can
+    // compose types to build multi-dimensional data
+    // structures.
+    var twoD [2][3]int
+    for i := 0; i < 2; i++ {
+        for j := 0; j < 3; j++ {
+            twoD[i][j] = i + j
+        }
+    }
+    fmt.Println("2d: ", twoD)
+}
+// $ go run arrays.go
+// emp: [0 0 0 0 0]
+// set: [0 0 0 0 100]
+// get: 100
+// len: 5
+// dcl: [1 2 3 4 5]
+// 2d:  [[0 1 2] [1 2 3]]
+```
+
+* slice
+
+```go
+// _Slices_ are a key data type in Go, giving a more
+// powerful interface to sequences than arrays.
+
+package main
+
+import "fmt"
+
+func main() {
+
+    // Unlike arrays, slices are typed only by the
+    // elements they contain (not the number of elements).
+    // To create an empty slice with non-zero length, use
+    // the builtin `make`. Here we make a slice of
+    // `string`s of length `3` (initially zero-valued).
+    s := make([]string, 3)
+    fmt.Println("emp:", s)
+
+    // We can set and get just like with arrays.
+    s[0] = "a"
+    s[1] = "b"
+    s[2] = "c"
+    fmt.Println("set:", s)
+    fmt.Println("get:", s[2])
+
+    // `len` returns the length of the slice as expected.
+    fmt.Println("len:", len(s))
+
+    // In addition to these basic operations, slices
+    // support several more that make them richer than
+    // arrays. One is the builtin `append`, which
+    // returns a slice containing one or more new values.
+    // Note that we need to accept a return value from
+    // `append` as we may get a new slice value.
+    s = append(s, "d")
+    s = append(s, "e", "f")
+    fmt.Println("apd:", s)
+
+    // Slices can also be `copy`'d. Here we create an
+    // empty slice `c` of the same length as `s` and copy
+    // into `c` from `s`.
+    c := make([]string, len(s))
+    copy(c, s)
+    fmt.Println("cpy:", c)
+
+    // Slices support a "slice" operator with the syntax
+    // `slice[low:high]`. For example, this gets a slice
+    // of the elements `s[2]`, `s[3]`, and `s[4]`.
+    l := s[2:5]
+    fmt.Println("sl1:", l)
+
+    // This slices up to (but excluding) `s[5]`.
+    l = s[:5]
+    fmt.Println("sl2:", l)
+
+    // And this slices up from (and including) `s[2]`.
+    l = s[2:]
+    fmt.Println("sl3:", l)
+
+    // We can declare and initialize a variable for slice
+    // in a single line as well.
+    t := []string{"g", "h", "i"}
+    fmt.Println("dcl:", t)
+
+    // Slices can be composed into multi-dimensional data
+    // structures. The length of the inner slices can
+    // vary, unlike with multi-dimensional arrays.
+    twoD := make([][]int, 3)
+    for i := 0; i < 3; i++ {
+        innerLen := i + 1
+        twoD[i] = make([]int, innerLen)
+        for j := 0; j < innerLen; j++ {
+            twoD[i][j] = i + j
+        }
+    }
+    fmt.Println("2d: ", twoD)
+}
+
+// $ go run slices.go
+// emp: [  ]
+// set: [a b c]
+// get: c
+// len: 3
+// apd: [a b c d e f]
+// cpy: [a b c d e f]
+// sl1: [c d e]
+// sl2: [a b c d e]
+// sl3: [c d e f]
+// dcl: [g h i]
+// 2d:  [[0] [1 2] [2 3 4]]
+```
+
+* map
+
+```go
+// _Maps_ are Go's built-in [associative data type](http://en.wikipedia.org/wiki/Associative_array)
+// (sometimes called _hashes_ or _dicts_ in other languages).
+
+package main
+
+import "fmt"
+
+func main() {
+
+    // To create an empty map, use the builtin `make`:
+    // `make(map[key-type]val-type)`.
+    m := make(map[string]int)
+
+    // Set key/value pairs using typical `name[key] = val`
+    // syntax.
+    m["k1"] = 7
+    m["k2"] = 13
+
+    // Printing a map with e.g. `fmt.Println` will show all of
+    // its key/value pairs.
+    fmt.Println("map:", m)
+
+    // Get a value for a key with `name[key]`.
+    v1 := m["k1"]
+    fmt.Println("v1: ", v1)
+
+    // The builtin `len` returns the number of key/value
+    // pairs when called on a map.
+    fmt.Println("len:", len(m))
+
+    // The builtin `delete` removes key/value pairs from
+    // a map.
+    delete(m, "k2")
+    fmt.Println("map:", m)
+
+    // The optional second return value when getting a
+    // value from a map indicates if the key was present
+    // in the map. This can be used to disambiguate
+    // between missing keys and keys with zero values
+    // like `0` or `""`. Here we didn't need the value
+    // itself, so we ignored it with the _blank identifier_
+    // `_`.
+    _, prs := m["k2"]
+    fmt.Println("prs:", prs)
+
+    // You can also declare and initialize a new map in
+    // the same line with this syntax.
+    n := map[string]int{"foo": 1, "bar": 2}
+    fmt.Println("map:", n)
+}
+
+
+// $ go run maps.go 
+// map: map[k1:7 k2:13]
+// v1:  7
+// len: 2
+// map: map[k1:7]
+// prs: false
+// map: map[foo:1 bar:2]
+```
+
+* heap
+
+```go
+// Copyright 2012 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+// This example demonstrates a priority queue built using the heap interface.
+package heap_test
+
+import (
+	"container/heap"
+	"fmt"
+)
+
+// An Item is something we manage in a priority queue.
+type Item struct {
+	value    string // The value of the item; arbitrary.
+	priority int    // The priority of the item in the queue.
+	// The index is needed by update and is maintained by the heap.Interface methods.
+	index int // The index of the item in the heap.
+}
+
+// A PriorityQueue implements heap.Interface and holds Items.
+type PriorityQueue []*Item
+
+func (pq PriorityQueue) Len() int { return len(pq) }
+
+func (pq PriorityQueue) Less(i, j int) bool {
+	// We want Pop to give us the highest, not lowest, priority so we use greater than here.
+	return pq[i].priority > pq[j].priority
+}
+
+func (pq PriorityQueue) Swap(i, j int) {
+	pq[i], pq[j] = pq[j], pq[i]
+	pq[i].index = i
+	pq[j].index = j
+}
+
+func (pq *PriorityQueue) Push(x interface{}) {
+	n := len(*pq)
+	item := x.(*Item)
+	item.index = n
+	*pq = append(*pq, item)
+}
+
+func (pq *PriorityQueue) Pop() interface{} {
+	old := *pq
+	n := len(old)
+	item := old[n-1]
+	item.index = -1 // for safety
+	*pq = old[0 : n-1]
+	return item
+}
+
+// update modifies the priority and value of an Item in the queue.
+func (pq *PriorityQueue) update(item *Item, value string, priority int) {
+	item.value = value
+	item.priority = priority
+	heap.Fix(pq, item.index)
+}
+
+// This example creates a PriorityQueue with some items, adds and manipulates an item,
+// and then removes the items in priority order.
+func Example_priorityQueue() {
+	// Some items and their priorities.
+	items := map[string]int{
+		"banana": 3, "apple": 2, "pear": 4,
+	}
+
+	// Create a priority queue, put the items in it, and
+	// establish the priority queue (heap) invariants.
+	pq := make(PriorityQueue, len(items))
+	i := 0
+	for value, priority := range items {
+		pq[i] = &Item{
+			value:    value,
+			priority: priority,
+			index:    i,
+		}
+		i++
+	}
+	heap.Init(&pq)
+
+	// Insert a new item and then modify its priority.
+	item := &Item{
+		value:    "orange",
+		priority: 1,
+	}
+	heap.Push(&pq, item)
+	pq.update(item, item.value, 5)
+
+	// Take the items out; they arrive in decreasing priority order.
+	for pq.Len() > 0 {
+		item := heap.Pop(&pq).(*Item)
+		fmt.Printf("%.2d:%s ", item.priority, item.value)
+	}
+	// Output:
+	// 05:orange 04:pear 03:banana 02:apple
+}
+```
+
+* list
+
+```go
+// Copyright 2013 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package list_test
+
+import (
+	"container/list"
+	"fmt"
+)
+
+func Example() {
+	// Create a new list and put some numbers in it.
+	l := list.New()
+	e4 := l.PushBack(4)
+	e1 := l.PushFront(1)
+	l.InsertBefore(3, e4)
+	l.InsertAfter(2, e1)
+
+	// Iterate through list and print its contents.
+	for e := l.Front(); e != nil; e = e.Next() {
+		fmt.Println(e.Value)
+	}
+
+	// Output:
+	// 1
+	// 2
+	// 3
+	// 4
+}
+```
+
+* ring
+
+```go
+// Copyright 2017 The Go Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style
+// license that can be found in the LICENSE file.
+
+package ring_test
+
+import (
+	"container/ring"
+	"fmt"
+)
+
+func ExampleRing_Len() {
+	// Create a new ring of size 4
+	r := ring.New(4)
+
+	// Print out its length
+	fmt.Println(r.Len())
+
+	// Output:
+	// 4
+}
+
+func ExampleRing_Next() {
+	// Create a new ring of size 5
+	r := ring.New(5)
+
+	// Get the length of the ring
+	n := r.Len()
+
+	// Initialize the ring with some integer values
+	for i := 0; i < n; i++ {
+		r.Value = i
+		r = r.Next()
+	}
+
+	// Iterate through the ring and print its contents
+	for j := 0; j < n; j++ {
+		fmt.Println(r.Value)
+		r = r.Next()
+	}
+
+	// Output:
+	// 0
+	// 1
+	// 2
+	// 3
+	// 4
+}
+
+func ExampleRing_Prev() {
+	// Create a new ring of size 5
+	r := ring.New(5)
+
+	// Get the length of the ring
+	n := r.Len()
+
+	// Initialize the ring with some integer values
+	for i := 0; i < n; i++ {
+		r.Value = i
+		r = r.Next()
+	}
+
+	// Iterate through the ring backwards and print its contents
+	for j := 0; j < n; j++ {
+		r = r.Prev()
+		fmt.Println(r.Value)
+	}
+
+	// Output:
+	// 4
+	// 3
+	// 2
+	// 1
+	// 0
+}
+
+func ExampleRing_Do() {
+	// Create a new ring of size 5
+	r := ring.New(5)
+
+	// Get the length of the ring
+	n := r.Len()
+
+	// Initialize the ring with some integer values
+	for i := 0; i < n; i++ {
+		r.Value = i
+		r = r.Next()
+	}
+
+	// Iterate through the ring and print its contents
+	r.Do(func(p interface{}) {
+		fmt.Println(p.(int))
+	})
+
+	// Output:
+	// 0
+	// 1
+	// 2
+	// 3
+	// 4
+}
+
+func ExampleRing_Move() {
+	// Create a new ring of size 5
+	r := ring.New(5)
+
+	// Get the length of the ring
+	n := r.Len()
+
+	// Initialize the ring with some integer values
+	for i := 0; i < n; i++ {
+		r.Value = i
+		r = r.Next()
+	}
+
+	// Move the pointer forward by three steps
+	r = r.Move(3)
+
+	// Iterate through the ring and print its contents
+	r.Do(func(p interface{}) {
+		fmt.Println(p.(int))
+	})
+
+	// Output:
+	// 3
+	// 4
+	// 0
+	// 1
+	// 2
+}
+
+func ExampleRing_Link() {
+	// Create two rings, r and s, of size 2
+	r := ring.New(2)
+	s := ring.New(2)
+
+	// Get the length of the ring
+	lr := r.Len()
+	ls := s.Len()
+
+	// Initialize r with 0s
+	for i := 0; i < lr; i++ {
+		r.Value = 0
+		r = r.Next()
+	}
+
+	// Initialize s with 1s
+	for j := 0; j < ls; j++ {
+		s.Value = 1
+		s = s.Next()
+	}
+
+	// Link ring r and ring s
+	rs := r.Link(s)
+
+	// Iterate through the combined ring and print its contents
+	rs.Do(func(p interface{}) {
+		fmt.Println(p.(int))
+	})
+
+	// Output:
+	// 0
+	// 0
+	// 1
+	// 1
+}
+
+func ExampleRing_Unlink() {
+	// Create a new ring of size 6
+	r := ring.New(6)
+
+	// Get the length of the ring
+	n := r.Len()
+
+	// Initialize the ring with some integer values
+	for i := 0; i < n; i++ {
+		r.Value = i
+		r = r.Next()
+	}
+
+	// Unlink three elements from r, starting from r.Next()
+	r.Unlink(3)
+
+	// Iterate through the remaining ring and print its contents
+	r.Do(func(p interface{}) {
+		fmt.Println(p.(int))
+	})
+
+	// Output:
+	// 0
+	// 4
+	// 5
+}
+```
 
 ## Operators
 
