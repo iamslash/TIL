@@ -4,7 +4,10 @@
 
 # Materials
 
+* [learn ruby in y minutes](https://learnxinyminutes.com/docs/ruby/)
+  * 짧은 시간에 ruby 가 어떠한 언어인지 파악해보자
 * [루비 20분 가이드](https://www.ruby-lang.org/ko/documentation/quickstart/)
+* [ruby @ tutorialspoint](https://www.tutorialspoint.com/ruby/)
 
 # Basic Usages
 

@@ -24,8 +24,11 @@
 
 clojure에 대해 정리한다.
 
-# Material
+# Masterials
 
+* [learn clojure in y minutes](https://learnxinyminutes.com/docs/ko-kr/clojure-kr/)
+  * 짧은 시간에 ruby 가 어떠한 언어인지 파악해보자
+* [clojure @ tutorialspoint](https://www.tutorialspoint.com/clojure/)
 * [클로저 시작하기](https://github.com/eunmin/getting-started-clojure/wiki/%ED%81%B4%EB%A1%9C%EC%A0%80-%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0)
   * 실행하기, 컴파일하기
 * [Clojure 병행성 @ github](https://github.com/eunmin/clojure-study/wiki/%5B%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%B0%8D-%ED%81%B4%EB%A1%9C%EC%A0%80%5D-6%EC%9E%A5-%EB%B3%91%ED%96%89%EC%84%B1)
@@ -38,7 +41,6 @@ clojure에 대해 정리한다.
 * [debux](https://github.com/philoskim/debux)
   * clojure, clojurescript 디버깅 툴
 * [클로저 Ring으로 하는 웹개발](https://hatemogi.gitbooks.io/ring/content/%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0.html)
-* [clojure in y minutes](https://learnxinyminutes.com/docs/ko-kr/clojure-kr/)
 * [초보자를 위한 클로저](https://eunmin.gitbooks.io/clojure-for-beginners/content/)
 * [clojure design pattern](http://clojure.or.kr/docs/clojure-and-gof-design-patterns.html)
   * GOF design pattern을 clojure에서 이렇게 쉽게 할 수 있다.
@@ -111,25 +113,25 @@ M-x cider-jackin-in
 
 ## Collections compared c++ container
 
-| c++                  | clojure                   | 
+| c++                  | clojure              | 
 |:---------------------|:---------------------|
 | `if, else`           | `if, else`           |
-| `for, while`         | ``                |
-| `array`              | ``              |
-| `vector`             | ``              |
+| `for, while`         | ``                   |
+| `array`              | `PersistentVector`   |
+| `vector`             | `PersistentVector`   |
 | `deque`              | ``                   |
 | `forward_list`       | ``                   |
-| `list`               | ``               |
+| `list`               | `PersistentList`     |
 | `stack`              | ``                   |
 | `queue`              | ``                   |
-| `priority_queue`     | ``               |
+| `priority_queue`     | ``                   |
 | `set`                | ``                   |
 | `multiset`           | ``                   |
 | `map`                | ``                   |
 | `multimap`           | ``                   |
-| `unordered_set`      | ``                   |
+| `unordered_set`      | `HashedSet`          |
 | `unordered_multiset` | ``                   |
-| `unordered_map`      | ``                |
+| `unordered_map`      | `HashedMap`          |
 | `unordered_multimap` | ``                   |
 
 ## Collections
