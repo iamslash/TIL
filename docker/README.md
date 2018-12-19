@@ -12,21 +12,27 @@
 
 ```bash
 > docker version
+> docker run hello-world
 > docker help
 > docker search <image-name>
 > docker pull <image-name>:<tag>
 > docker images
+# container 를 하나 실행하자.
 > docker run <option> <execution-filename>
-  > docker run -i -t --name myubuntu ubuntu:latest /bin/bash
+# my-ubuntu container 를 실행하고 bash shell 을 획득하자.
+> docker run -i -t --name my-ubuntu ubuntu:latest /bin/bash
 > docker ps -a
 > docker start <container-name>
 > docker restart <container-name>
 > docker attach <container-name>
 > docker attach <container-name> <command> <argument>
-  > docker attach myubuntu echo "hello world"
+# my-ubuntu container 에서 echo 명령어를 실행해보자.
+> docker attach my-ubuntu echo "hello world"
 > docker stop <container-name>
+# container 를 삭제하자
 > docker rm <container-name>
 > docker rmi <image-name>:<tag>
+# image 를 삭제하자
 > docker build <option> <build-path>
   > mkdir A
   > cd A
