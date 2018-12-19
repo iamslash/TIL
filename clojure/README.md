@@ -94,6 +94,12 @@ clojure에 대해 정리한다.
 > lein repl
 ```
 
+## REPL on emacs
+
+```
+M-x cider-jackin-in
+```
+
 ## Compile & Run
 
 ```bash
@@ -101,6 +107,7 @@ clojure에 대해 정리한다.
 > lein repl
 >> (load-file "a.clj")
 ```
+
 
 ## Collections compared c++ container
 
