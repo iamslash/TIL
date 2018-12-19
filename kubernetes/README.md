@@ -1,3 +1,7 @@
+# Abstract
+
+Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이다. 
+
 # Materials
 
 * [쿠버네티스 차근차근 다지기(Full영상) ::: developerWorks 밋업 @ youtube](https://www.youtube.com/watch?v=l42GttmnnZ4)
@@ -55,7 +59,7 @@ Node 는 초기에 미니언(minion) 이라고 불렀다. Node 는 kubelet, kube
   * 리소스 사용, 성능 통계를 제공
 
 
-### addons
+### Addons
 
 cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주로 Deployment Controller, Replication Controller 에 의해 관리된다.  Addon 이 사용하는 namespace 는 kub-system 이다.
 
@@ -68,15 +72,23 @@ cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주�
 # Usages
 
 ```bash
+# 하나의 pod 에 my-nginx container 를 실행하자
 > kubectl run my-nginx --image nginx --port=80
+# 제대로 실행되었는지 pod 들의 목록을 보자
 > kubectl get pods
+# 실행중인 pod 들의 목록을 보자
 > kubectl get dployments
+# my-nginx pod 의 개수를 늘려보자.
 > kubectl scale deploy my-nginx --replicas=2
-# 서비스타입의 종류 ClusterIP, NodePort, LoadBalancer, ExteralName
+# 서비스를 외부에 노출하기 위해서는 service 를 실행해야 한다. 서비스타입의 종류는 다음과 같다. ClusterIP, NodePort, LoadBalancer, ExteralName
 > kubectl expose deployment my-nginx --type=NodePort
+# 서비스들의 목록을 얻어오자.
 > kubectl get services
+# my-nginx service 의 자세한 정보를 보자
 > kubectl describe service my-nginx
+# my-ngnix pod 를 삭제하자.
 > kubectl delete deployment my-nginx
+# my-nginx service 를 삭제하자.
 > kubectl delete service my-nginx
 ```
 
