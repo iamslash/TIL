@@ -1232,6 +1232,8 @@ Java Object 는 `(Date.)` 과 같이 `.` 을 클래스다음에 추가하여 생
    (:gen-class))
 (defn Example []
    (println (.. System getProperties (get "java.version"))))
+; (. System getProperty "java.vm.version")
+; (System/getProperty "java.vm.version")
 (Example)
 ;1.8.0_45
 ```
