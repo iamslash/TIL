@@ -116,7 +116,7 @@ M-x cider-jackin-in
 | c++                  | clojure              | 
 |:---------------------|:---------------------|
 | `if, else`           | `if, else`           |
-| `for, while`         | ``                   |
+| `for, while`         | `while, doseq, dotimes, loop, recur` |
 | `array`              | `PersistentVector`   |
 | `vector`             | `PersistentVector`   |
 | `deque`              | ``                   |
@@ -125,145 +125,14 @@ M-x cider-jackin-in
 | `stack`              | ``                   |
 | `queue`              | ``                   |
 | `priority_queue`     | ``                   |
-| `set`                | ``                   |
+| `set`                | `PersistentTreeSet`  |
 | `multiset`           | ``                   |
-| `map`                | ``                   |
+| `map`                | `PersistenTreeMap`   |
 | `multimap`           | ``                   |
-| `unordered_set`      | `HashedSet`          |
+| `unordered_set`      | `PersistentHashSet`  |
 | `unordered_multiset` | ``                   |
-| `unordered_map`      | `HashedMap`          |
+| `unordered_map`      | `PersistentArrayMap` |
 | `unordered_multimap` | ``                   |
-
-## Collections
-
-* 
-
-## data types
-
-String
-
-```cojure
-"Hello world"
-```
-
-Boolean
-
-```clojure
-true
-false
-```
-
-Character
-
-```clojure
-\c
-\u0045 ;; unicode char 45 E
-```
-
-Keywords
-
-```clojure
-:foo
-:bar
-```
-
-Number
-
-```clojure
-11N ;; BigInteger
-11  ;; long
-0.1M ;; BigDecimal
-```
-
-Ratio
-
-```clojure
-11/7
-```
-
-Symbol
-
-```clojure
-foo-bar
-```
-
-nil
-
-```clojure
-nil
-```
-
-Regular expressions
-
-```clojure
-#"\d"
-```
-
-## Packages
-
-:import
-
-```clojure
-(:import java.util.List)
-(:import [java.util ArrayList HashMap])
-(ns a.foo
-  (:import [java.util Date])
-```
-
-:require
-
-```clojure
-(:require [a.b :refere [:all]])
-(:require [a.b :as c))
-(c/a-function 5)
-(:require [a.b :as c :refer [d-funcion]])
-```
-
-## Destructuring
-
-Sequential destructuring
-
-```clojure
-(let [[f s] [1 2]] f) ;; 1
-(let [[f s t] [1 2 3]] [f t]) ;; [1 3]
-(let [[f] [1 2]] f) ;; 1
-(let [[f s t] [1 2]] t) ;; nil
-(let [[f & t] [1 2]] t) ;; (2)
-(let [[f & t] [1 2 3]] t) ;; (2 3)
-(let [[f & [_ t]] [1 2 3]] [f t]) ;; [1 3]
-```
-
-Associative destructuring
-
-```clojure
-(let [{a-value :a c-value :c} {:a 5 :b 6 :c 7}] a-value) ;; 5
-(let [{a-value :a c-value :c} {:a 5 :b 6 :c 7}] c-value) ;; 7
-(let [{:keys [a c]} {:a 5 :b 6 :c 7}] c) ;; 7
-(let [{:syms [a c]} {'a 5 :b 6 'c 7}] c) ;; 7
-(let [{:strs [a c]} {:a 5 :b 6 :c 7 "a" 9}] [a c]) ;; [9 nil]
-(let [{:strs [a c] :or {c 42}} {:a 5 :b 6 :c 7 "a" 9}] [a c]) ;; [9 42]
-```
-## implementing interfaces and protocols
-
-```clojure
-(import '(javax.swing JFrame Jlabel JTextField JButton)
-        '(java.awt.event ActionListener)
-        '(java.awt GridLayout))
-(defn sample []
-  (let [frame (JFrame. "Hello")
-      sample-button (JButton. "Hello")]
-    (.addActionListener
-      sample-button
-      (reify ActionListener
-          (actionPerformed
-           [_ evt]
-           (println "Hello World"))))
-    (doto frame
-      (.add sample-button)
-      (.setSize 100 40)
-      (.setVisible true))))
-```
-
 
 ## Collections
 
@@ -273,39 +142,26 @@ clojure 의 collection 은 크게 `sequential, associative, counted` 와 같이
 
 ![](img/collection-properties-venn.png)
 
-* vector
+* vector (PersistentVector)
 
 ```clojure
 [1 2 3 4 5]
 ```
 
-* list
+* list (PersistentList)
 
 ```clojure
 (1 2 3 4 5)
 ```
 
-* hash map
 
-```clojure
-{:one 1 :two 2}
-(hash-map :one 1 :two 2)
-```
-
-* sorted map
-
-```clojure
-(sorted-map :one 1 :two 2) ;; {:one 1, :two 2)
-(sorted-map-by > 1 :one 5 :five 3 :three) ;; {5 :five, 3 :three, 1 :one}
-```
-
-* hash set
+* hash set (PersistentHashSet)
 
 ```clojure
 #{1 2 3 4 5}
 ```
 
-* sorted set
+* sorted set (PersistentTreeSet)
 
 ```clojure
 (doseq [x (->> (sorted-set :b :c :d)
@@ -327,9 +183,626 @@ clojure 의 collection 은 크게 `sequential, associative, counted` 와 같이
 (s/intersection a b) ;; #{:d :a}
 ```
 
+* hash map (PersistentArrayMap)
+
+```clojure
+{:one 1 :two 2}
+(hash-map :one 1 :two 2)
+```
+
+* sorted map (PersistentTreeMap)
+
+```clojure
+(sorted-map :one 1 :two 2) ;; {:one 1, :two 2)
+(sorted-map-by > 1 :one 5 :five 3 :three) ;; {5 :five, 3 :three, 1 :one}
+```
+
+## Data types
+
+* String
+
+```cojure
+"Hello world"
+```
+
+* Boolean
+
+```clojure
+true
+false
+```
+
+* Character
+
+```clojure
+\c
+\u0045 ;; unicode char 45 E
+```
+
+* Keywords
+
+```clojure
+:foo
+:bar
+```
+
+* Number
+
+```clojure
+1234   ;; Decimal Integers
+012    ;; Octal Numbers
+0xFF   ;; Hexadecimal Numbers
+2r1000 ;; Radix Numbers
+
+12.34    ;; 32bit Floating Point
+1.35e-12 ;; 32bit Floating Point Scientific Notation
+
+11N ;; BigInteger
+11  ;; long
+0.1M ;; BigDecimal
+```
+
+* Ratio
+
+```clojure
+11/7
+```
+
+* Symbol
+
+```clojure
+foo-bar
+```
+
+* nil
+
+```clojure
+nil
+```
+
+* Atom
+
+```clojure
+(atom 3)
+```
+
+* Regular expressions
+
+```clojure
+#"\d"
+```
+
+## Packages
+
+`:import`
+
+```clojure
+(:import java.util.List)
+(:import [java.util ArrayList HashMap])
+(ns a.foo
+  (:import [java.util Date])
+```
+
+`:require`
+
+```clojure
+(:require [a.b :refere [:all]])
+(:require [a.b :as c))
+(c/a-function 5)
+(:require [a.b :as c :refer [d-funcion]])
+```
+
+`use`
+
+```clojure
+(use 'clojure.string)
+(split "a,b,c" #",")
+(use '[clojure.string :only [split]])
+(split "a,b,c" #",")
+```
+
+## Variables
+
+```clojure
+;; Variable Declarations
+(def x 1)
+;; Printing variables
+(println x)
+```
+
+## Operators
+
+```clojure
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Arithmetic operators
+(+ 1 2)
+(- 2 1)
+(* 2 2)
+(/ 3 2)
+(inc 5)
+(dec 5)
+(max 1 2 3)
+(min 1 2 3)
+(rem 3 2) ; 1
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Relational operators
+(= 2 2)
+(not= 3 2)
+(< 2 3)
+(<= 2 3)
+(> 3 2)
+(>= 3 2)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Logical operators
+(and true false)
+(or true false)
+(not false)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Bitwise operators
+(bit-and 2 3)
+(bit-or 2 3)
+(bit-xor 2 3)
+(bit-not 2 3)
+```
+
+## Loops
+
+```clojure
+;; while 
+(defn Example []
+  (def x (atom 1))
+  (while (< @x 5)
+    (do
+      (println @x)
+      (swap! x inc))))
+(Example)
+
+;; doseq
+(defn Example []
+  (doseq [n [0 1 2]]
+    (println n)))
+(Example)
+
+;; dotimes
+(defn Example []
+  (dotimes [n 5]
+    (println n)))
+(Example)
+
+;; loop
+(defn Example []
+  (loop [x 10]
+    (when (> x 1)
+      (println x)
+      (recur (- x 2)))))
+(Example)
+```
+
+## Decision Making
+
+```clojure
+;; if
+(if (= 2 2)
+  (println "Values are equal")
+  (println "Values are not equal"))
+
+;; if-do
+(if (= 2 2)
+  (do (println "Both the values are equal")
+      (println "true"))
+  (do (println "Both the values are not equal")
+      (println "false")))
+
+;; nested if
+(if (and (= 2 2) (= 3 3))
+  (println "Values are equal")
+  (println "Values are not equal"))
+
+;; case
+(def x 5)
+(case x 
+  5 (println "x is 5")
+  6 (println "x is 6")
+  (println "x is neither 5 nor 6"))
+
+;; cond
+(def x 5)
+(cond 
+  (= x 5) (println "x is 5")
+  (= x 6) (println "x is 6")
+  :else (println "x is not defined"))
+```
+
+## Functions
+
+```clojure
+;; Defining function
+(defn Example []
+  (def x 1)
+  (println x))
+
+;; Anonymous Functions
+(defn Example []
+  ((fn [x] (* 2 x)) 2))
+
+;; Functions with Multiple Arguments
+(defn demo [] (* 2 2))
+(defn demo [x] (* 2 x))
+(defn demo [x y] (* 2 x y))
+
+;; Variadic Functions
+(defn demo [msg & others]
+  (str msg (clojure.string/join " " others)))
+(demo "Hello" "This" "is" "the" "message")
+
+;; Higher Order Functions
+(filter even? (range 0 10))
+
+```
+
+## File I/O
+
+```clojure
+;; Reading the contents of a file as an entire string
+(defn Example []
+  (def s (slurp "a.txt"))
+  (println s))
+
+;; Reading the contents of a file one line at a time
+(defn Example []
+  (with-open [rdr (clojure.java.io/reader "a.txt")]
+  (reduce conj [] (line-seq rdr))))
+
+;; Writing to files
+(defn Example []
+  (with-open [w (clojure.java.io/writer "a.txt" :append true)]
+    (.write w (str "foo" "bar"))))
+
+;; Checking to see if a file exists
+(defn Example []
+  (println (.exists (clojure.java.io/file "a.txt"))))
+```
+
+## Strings
+
+```clojure
+;; str
+(str "Hello" "World")
+;; format
+(format "Hello, %s" "World")
+(format "Pad with leading zeros %06d" 1234)
+;; count
+(count "Hello")
+;; subs
+(subs "Hello World" 2 5)
+;; compare
+(compare "Hello" "hello")
+;; lower-case
+(clojure.string/lower-case "HelloWorld")
+;; upper-case
+(clojure.string/upper-case "HelloWorld")
+;; join
+(clojure.string/jon ", " [1 2 3])
+;; split
+(clojure.string/split "Hello World" #" ")
+;; split-lines
+(clojure.string/split-lines "Hello\nWorld")
+;; reverse
+(reverse "Hello World")
+;; replace
+(clojure.string/replace "The tutorial is about Groovy" #"Groovy" "Clojure")
+;; trim
+(clojure.string/trim " White spaces ")
+;; triml
+(clojure.string/triml " White spaces ")
+;; trimr 
+(clojure.string/trimr " White spaces ")
+```
+
+## Lists
+
+```clojure
+;; list*
+(list* 1 [2, 3])
+;; first
+(first (list 1 2 3))
+;; nth
+(nth (list 1 2 3) 0)
+;; (cons elementlst lst)
+(cons 0 (list 1 2 3)) ;; (0 1 2 3)
+;; (conj lst elementlst)
+(conj (list 1 2 3) 4 5) ;; (5 4 1 2 3)
+;; (rest lst)
+(rest (list 1 2 3))  ;; (2 3)
+```
+
+## Sets
+
+```clojure
+;; sorted-set
+(sorted-set 3 2 1)  ;; #{1,2,3}
+;; get
+(get (set '(3 2 1)) 2) ;; 2
+(get (set '(3 2 1)) 1) ;; 1
+;; contains?
+(contains? (set '(3 2 1)) 2) ;; true
+;; (conj setofelements x)
+(conj (set '(3 2 1)) 5)
+;; (disj setofelements x)
+(disj (set '(3 2 1)) 2)
+;; (union set1 set2)
+(clojure.set/union #{1 2} ${3 4})  ;; #{1 4 3 2}
+;; difference
+(clojure.set/difference #{1 2} #{2 3})
+;; intersection
+(clojure.set/intersection #{1 2} #{2 3})
+;; subset?
+(clojure.set/subset? #{1 2} #{2 3})
+;; superset?
+(clojure.set/superset? #{1 2} #{2 3})
+```
+
+## Vectors
+
+```clojure
+;; (vector-of t setofelements)
+(vector-of :nint 1 2 3)
+;; (nth vec index)
+(nth (vector 1 2 3) 0)
+;; (get vec index)
+(get (vector 3 2 1) 2) ;; 2
+;; (conj vec x)
+(conj (vector 3 2 1) 5)
+;; (pop vec)
+(pop (vector 3 2 1)) ;; [3 2]
+;; (subvec vec start end)
+(subvec (ve tor 1 2 3 4 5 6 7) 2 5)
+```
+
+## Maps
+
+```clojure
+;; (get hmap key)
+(get (hash-map "z" "1" "b" "2" "a" "3") "b") ;; 2
+;; (contains? hmap key)
+(contains? (hash-map "z" "1" "b" "2" "a" "3") "b")
+;; find
+(find (hash-map "z" "1" "b" "2" "a" "3") "b") ;; [b 2]
+;; keys
+(keys (hash-map "z" "1" "b" "2" "a" "3")) ;; (z a b)
+;; vals
+(vals (hash-map "z" "1" "b" "2" "a" "3")) ;; (1 2 3)
+;; (dissoc hmap key)
+(dissoc (hash-map "z" "1" "b" "2" "a" "3") "b") ;; {z 1, a 3}
+;; (merge hmap1 hmap2)
+(def hm1 (hash-map "z" 1 "b" 2 "a" 3))
+(def hm2 (hash-map "x" 2 "h" 5 "i" 7))
+(merge hm1 hm2)
+;; (merge-with f hmap1 hmap2)
+(def hm1 (hash-map "z" 1 "b" 2 "a" 3))
+(def hm2 (hash-map "a" 2 "h" 5 "i" 7))
+(merge-with + hm1 hm2) ;; {z 1, a 5, i 7, b 2, h 5}
+;; (select-keys hmap keys)
+(select-keys (hash-map "z" 1 "b" 2 "a" 3) ["z" "a"]) ;; {z 1, a 3}
+;; (rename-keys hmap keys)
+(clojure.set/rename-keys (hash-map "z" 1 "b" 2 "a" 3)
+  {"z" "newz" "b" "newb" "a" "newa"}) ;; {newa 3, newb 2, newz 1}
+;; (map-invert hmap)
+(clojure.set/map-invert (hash-map "z" 1 "b" 2 "a" 3)) ;; {1 z, 3 a, 2 b}
+```
+
+## Namespaces
+
+```clojure
+;; *ns* current namespace
+(println *ns*)
+;; (ns namespace-name)
+(ns iamslash
+  (:require [clojure.set :as set])
+  (:gen-class))
+;; (alias aliasname namespace-name)
+(alias 'string 'clojure.examples.hello)
+;; all-ns
+(println all-ns)
+;; (find-ns namespace-name)
+(find-ns 'clojure.string)
+;; ns-name returns the name of a particular namespace
+(ns-name 'clojure.string)
+;; ns-aliases, returns the aliases, which are associated with any namespaces
+(ns-aliases 'clojure.core)
+;; ns-map, returns a map of all the mappings for the namespace
+(ns-map 'clojure.string)
+;; (un-alias namespace-name aliasname)
+(ns-unalias 'clojure.core 'string)
+```
+
+## Exception Handling
+
+```clojure
+;; Catching Exceptions
+; (try
+;    (//Protected code)
+;    catch Exception e1)
+; (//Catch block)
+(try 
+  (def s (slurp "a.txt"))
+  (println s)
+  (catch Exception e 
+    (println (str "caught exception: " (.getMessage e)))))
+;; Multiple Catch Blocks
+(try
+  (def s (slurp "a.txt"))
+  (println s)
+  (catch java.io.FileNotFoundException e 
+    (println (str "caught file exception: " (.getMessage e))))
+  (catch Exception e 
+    (println (str "caught exception: " (.getMessage e))))
+  (println "Let's move on"))
+;; finally
+(try
+  (def s (slurp "a.txt"))
+  (println s)
+  (catch java.io.FileNotFoundException e 
+    (println (str "caught file exception: " (.getMessage e))))
+  (catch Exception e 
+    (println (str "caught exception: " (.getMessage e))))
+  (finally 
+    (println "This is out final block"))
+  (println "Let's move on"))
+```
+
+## Sequences
+
+```clojure
+;; (cons x seq)
+(cons 0 (seq [1 2 3])) ;; (0 1 2 3)
+;; (conj seq x)
+;; concat
+;; distincs
+;; reverse
+;; first
+;; last
+;; rest
+;; sort
+;; drop
+;; take-last
+;; take
+;; split-at
+```
+
+## Regular Expressions
+
+```clojure
+```
+
+## Predicates
+
+```clojure
+```
+
+## Destructuring
+
+* Sequential destructuring
+
+```clojure
+(let [[f s] [1 2]] f) ;; 1
+(let [[f s t] [1 2 3]] [f t]) ;; [1 3]
+(let [[f] [1 2]] f) ;; 1
+(let [[f s t] [1 2]] t) ;; nil
+(let [[f & t] [1 2]] t) ;; (2)
+(let [[f & t] [1 2 3]] t) ;; (2 3)
+(let [[f & [_ t]] [1 2 3]] [f t]) ;; [1 3]
+```
+
+* Associative destructuring
+
+```clojure
+(let [{a-value :a c-value :c} {:a 5 :b 6 :c 7}] a-value) ;; 5
+(let [{a-value :a c-value :c} {:a 5 :b 6 :c 7}] c-value) ;; 7
+(let [{:keys [a c]} {:a 5 :b 6 :c 7}] c) ;; 7
+(let [{:syms [a c]} {'a 5 :b 6 'c 7}] c) ;; 7
+(let [{:strs [a c]} {:a 5 :b 6 :c 7 "a" 9}] [a c]) ;; [9 nil]
+(let [{:strs [a c] :or {c 42}} {:a 5 :b 6 :c 7 "a" 9}] [a c]) ;; [9 42]
+```
+
+## Date & Time
+
+```clojure
+```
+
+## Atoms
+
+```clojure
+```
+
+## Metadata
+
+```clojure
+```
+
+## StructMaps
+
+```clojure
+```
+
+## Agents
+
+```clojure
+```
+
+## Watchers
+
+```clojure
+```
+
+## Macro
+
+* defmacro
+
+```clojure
+(def a 150)
+(defmacro my-if [tset positive negative]
+  '(if test positive negative))
+(my-if (> a 200)
+  (println "Bigger than 200")
+  (println "Smaller than 200"))
+```
+
+* macroexpand-1
+
+```clojure
+(def a 150)
+(defmacro my-if [test positive negative]
+  '(if test positive negative))
+(macroexpand-1
+  '(my-if (> a 200)
+     (println "Bigger than 200")
+     (println "Smaller than 200")))
+;; (if test positive negative)
+```
+
+## Reference Values
+
+```clojure
+```
+
+## Dtabases
+
+```clojure
+```
+
+## Java Interface
+
+```clojure
+```
+
+## Implementing interfaces and protocols
+
+```clojure
+(import '(javax.swing JFrame Jlabel JTextField JButton)
+        '(java.awt.event ActionListener)
+        '(java.awt GridLayout))
+(defn sample []
+  (let [frame (JFrame. "Hello")
+      sample-button (JButton. "Hello")]
+    (.addActionListener
+      sample-button
+      (reify ActionListener
+          (actionPerformed
+           [_ evt]
+           (println "Hello World"))))
+    (doto frame
+      (.add sample-button)
+      (.setSize 100 40)
+      (.setVisible true))))
+```
+
 ## Polymorphism
 
-multimethod
+* multimethod
 
 ```clojure
 (defn avg [& coll]
@@ -349,7 +822,7 @@ multimethod
 ;; "4 humans travelling by car
 ```
 
-protocol
+* protocol
 
 ```clojure
 (defprotocol Shape
@@ -358,7 +831,7 @@ protocol
   (area [this] "Calculate the area of this shape"))
 ```
 
-record
+* record
 
 ```clojure
 (defrecord Square [side]
@@ -370,12 +843,12 @@ record
 
 ## Concurrency
 
-identity and state
+* identity and state
 
 identity는 state를 가리키고 있다. state는 항상 변할 수 있다. state가
 변할때 마다 그때 그때의 state는 별도의 존재들이다.
 
-promise
+* promise
 
 이미 값이 채워졌다면 역참조할때 바로 값을 얻어올 수 있다. 그러나 값이
 채워져있지 않다면 값이 채워질때까지 블록되어 기다린다. promise는
@@ -391,7 +864,7 @@ promise
 (deliver p 5)
 ```
 
-future
+* future
 
 promise와 비슷하지만 항상 다른 thread에서 동작한다는 큰 차이가 있다.
 thread pool에서 가용 thread하나를 선택하여 실행한다. 만약 가용
@@ -403,7 +876,7 @@ thread가 없다면 기다릴 수 있기 때문에 주의가 필요하다.
 (println @f)
 ```
 
-STM (software transaction memory) and ref
+* STM (software transaction memory) and ref
 
 ref-set을 이용해 ref를 변경 할 수 있다. 이때 dosync를 반드시 이용하여
 transaction을 만들어 내야 한다. 그렇지 않으면
@@ -432,7 +905,7 @@ STM은 DATABASE의 transaction과 비슷하게 다음과 같은 특성을 갖는
 (dosync (ref-set account 5))
 ```
 
-atom
+* atom
 
 ref와 비슷하게 동기화를 보장하지만 transaction은 발생하지 않기 때문에
 훨씬 가볍다.
@@ -442,7 +915,7 @@ ref와 비슷하게 동기화를 보장하지만 transaction은 발생하지 않
 (deref a)
 ```
 
-agent
+* agent
 
 ref, atom과 비슷하게 동기화를 보장하지만 thread pool의 가용 thread에서
 별도로 동작한다. 일을 시키고 잃어버리고 싶을때 사용한다. 즉 비동기
@@ -453,29 +926,5 @@ ref, atom과 비슷하게 동기화를 보장하지만 thread pool의 가용 thr
 (send counter inc)
 ```
 
-## Macro
 
-defmacro
-
-```clojure
-(def a 150)
-(defmacro my-if [tset positive negative]
-  '(if test positive negative))
-(my-if (> a 200)
-  (println "Bigger than 200")
-  (println "Smaller than 200"))
-```
-
-macroexpand-1
-
-```clojure
-(def a 150)
-(defmacro my-if [test positive negative]
-  '(if test positive negative))
-(macroexpand-1
-  '(my-if (> a 200)
-     (println "Bigger than 200")
-     (println "Smaller than 200")))
-;; (if test positive negative)
-```
 
