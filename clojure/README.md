@@ -1,22 +1,46 @@
 - [Abstract](#abstract)
-- [Material](#material)
+- [Masterials](#masterials)
 - [References](#references)
 - [Install](#install)
   - [Windows10](#windows10)
   - [osx](#osx)
 - [Basic Usages](#basic-usages)
   - [REPL](#repl)
+  - [REPL on emacs](#repl-on-emacs)
   - [Compile & Run](#compile--run)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collections](#collections)
-  - [data types](#data-types)
+  - [Data types](#data-types)
   - [Packages](#packages)
+  - [Variables](#variables)
+  - [Operators](#operators)
+  - [Loops](#loops)
+  - [Decision Making](#decision-making)
+  - [Functions](#functions)
+  - [File I/O](#file-io)
+  - [Strings](#strings)
+  - [Lists](#lists)
+  - [Sets](#sets)
+  - [Vectors](#vectors)
+  - [Maps](#maps)
+  - [Namespaces](#namespaces)
+  - [Exception Handling](#exception-handling)
+  - [Sequences](#sequences)
+  - [Regular Expressions](#regular-expressions)
   - [Destructuring](#destructuring)
-  - [implementing interfaces and protocols](#implementing-interfaces-and-protocols)
-  - [Collections](#collections-1)
+  - [Date & Time](#date--time)
+  - [Atoms](#atoms)
+  - [Metadata](#metadata)
+  - [StructMaps](#structmaps)
+  - [Agents](#agents)
+  - [Watchers](#watchers)
+  - [Macro](#macro)
+  - [Reference Values](#reference-values)
+  - [Dtabases](#dtabases)
+  - [Java Interface](#java-interface)
+  - [Implementing interfaces and protocols](#implementing-interfaces-and-protocols)
   - [Polymorphism](#polymorphism)
   - [Concurrency](#concurrency)
-  - [Macro](#macro)
 
 -----------------------------------
 
@@ -660,32 +684,57 @@ nil
 ;; (cons x seq)
 (cons 0 (seq [1 2 3])) ;; (0 1 2 3)
 ;; (conj seq x)
-;; concat
-;; distincs
+(conj [1 2 3] 4) ;; (1 2 3 4)
+;; (concat seq1 seq2)
+(concat (seq [1 2] (seq [3 4]))) ; (1 2 3 4)
+;; distinct
+(distinct (seq [1 1 2 2]))
 ;; reverse
+(reverse (seq [1 2 3]))
 ;; first
+(first (seq [1 2 3]))
 ;; last
+(last (seq [1 2 3]))
 ;; rest
+(rest (seq [1 2 3]))
 ;; sort
-;; drop
-;; take-last
-;; take
-;; split-at
+(sort (seq [3 2 1]))
+;; (drop num seq1)
+(drop 2 (seq [5 4 3 2 1])) ; (3 2 1)
+;; (take-last num seq1)
+(take-last 2 (seq [5 4 3 2 1])) ; (2 1)
+;; (take num seq1)
+(take 2 (seq [5 4 3 2 1]))
+;; (split-at num seq1)
+(split-at 2 (seq [5 4 3 2 1])) ; [(5 4) (3 2 1)]
 ```
 
 ## Regular Expressions
 
 ```clojure
-```
-
-## Predicates
-
-```clojure
+;; (re-pattern pat)
+(re-pattern "\\d+")
+;; (re-find pat str)
+(re-find (re-pattern "\\d+") "abc123de") ; 123
+;; replace
+(clojure.string/replace "abc123de" 
+  (re-pattern "\\d+" "789")) ; abc789de
+;; replace-first
+(defn Example []
+   (def pat (re-pattern "\\d+"))
+   (def newstr1 (clojure.string/replace "abc123de123" pat "789"))
+   (def newstr2 (clojure.string/replace-first "abc123de123" pat "789"))
+   (println newstr1)
+   (println newstr2))
+;abc789de789
+;abc789de123
 ```
 
 ## Destructuring
 
 * Sequential destructuring
+
+`f & t` 에서 `&` 다음의 argument `t` 는 list 이다.
 
 ```clojure
 (let [[f s] [1 2]] f) ;; 1
@@ -711,49 +760,249 @@ nil
 ## Date & Time
 
 ```clojure
+;; java.util.Date.
+(def date (.toString (java.util.Date.)))
+;Tue Mar 01 06:11:17 UTC 2016
+;; java.text.SimpleDateFormat
+(def date (.format (java.text.SimpleDateFormat. "MM/dd/yyyy") (new java.util.Date)))
+; 03/01/2016
+;; getTime
+(def date (.getTime (java.util.Date.)))
+;1456812778160
 ```
 
 ## Atoms
 
+clojure 가 제공하는 mutable data type 중 하나이다. 이름처럼 원자성을 보장한다. 즉 동기화가 보장된다. mutable data type 은 atom, agent 등이 있다.
+
 ```clojure
+;; (reset! atom-name newvalue)
+(def myatom (atom 1))
+(println @myatom) ; 1
+(reset! myatom 2)
+(println @myatom) ; 2
+;; (compare-and-set! atom-name oldvalue newvalue)
+   (def myatom (atom 1))
+   (println @myatom) ; 1
+   
+   (compare-and-set! myatom 0 3)
+   (println @myatom) ; 1
+  
+   (compare-and-set! myatom 1 3)
+   (println @myatom) ; 3
+;; (swap! atom-name function)
+(def myatom (atom 1))
+(println @myatom) ; 1
+(swap! myatom inc)
+(println @myatom) ; 2
 ```
 
 ## Metadata
 
+부가정보에 해당한다.
+
 ```clojure
+;; (with-meta obj mapentry)
+(defn Example []
+  (def my-map (with-meta [1 2 3] {:prop "values"})
+  (println (meta my-map))))
+(Example) ; {:prop values}
+;; (vary-meta obj new-meta)
+;; Returns an object of the same type and value as the original object, but with a combined metadata.
+(defn Example []
+  (def my-map (with-meta [1 2 3] {:prop "values"}))
+  (println (meta my-map))
+  (def ne-map (vary-meta my-map assoc :newprop "new values"))
+  (println (meta ne-map)))
+(Example) 
+;{:prop values}
+;{:prop values, :newprop new values}
 ```
 
 ## StructMaps
 
 ```clojure
+;; (defstruct structname keys)
+(defstruct Employee :EmployeeName :Employeeid)
+;; struct
+(struct Employee "John" 1)
+;; (struct-map structname keyn valuen …. )
+(struct-map Employee :EmployeeName "John" :Employeeid 1)
+;; Accesing Indivisual Fields
+;; :key structure-name
+(def emp (struct-map Employee :EmployeeName "John" :Employeeid 1))
+(:Employeeid emp)
+;; Immutable Nature
+(defn Example []
+   (defstruct Employee :EmployeeName :Employeeid)
+   (def emp (struct-map Employee :EmployeeName "John" :Employeeid 1))
+   (println (:EmployeeName emp))
+   
+   (assoc emp :EmployeeName "Mark")
+   (println (:EmployeeName emp)))
+(Example) 
+;John
+;John
+(defn Example []
+   (defstruct Employee :EmployeeName :Employeeid)
+   (def emp (struct-map Employee :EmployeeName "John" :Employeeid 1))
+   (def newemp (assoc emp :EmployeeName "Mark"))
+   (println newemp))
+(Example)
+;{:EmployeeName Mark, :Employeeid 1}
+;; Adding a New key to the Structure
+(defn Example []
+   (defstruct Employee :EmployeeName :Employeeid)
+   (def emp (struct-map Employee :EmployeeName "John" :Employeeid 1))
+   (def newemp (assoc emp :EmployeeRank "A"))
+   (println newemp))
+(Example)
+;{:EmployeeName John, :Employeeid 1, :EmployeeRank A}
 ```
 
 ## Agents
 
+ref, atom과 비슷하게 동기화를 보장하는 reference type 이다. thread pool의 가용 thread에서
+별도로 동작한다. 일을 시키고 잃어버리고 싶을때 사용한다. 즉 비동기
+태스크에 적당하다.
+
 ```clojure
+;; (agent state)
+(defn Example []
+  (def counter (agent 0))
+  (println counter)
+  (println @counter))
+(Example)
+;#object[clojure.lang.Agent 0x371c02e5 {:status :ready, :val 0}]
+; 0
+;; (send agentname function value)
+(defn Example []
+   (def counter (agent 0))
+   (println @counter) 
+   (send counter + 100)
+   (println "Incrementing Counter")
+   (println @counter))
+(Example)
+;0
+;Incrementing Counter
+;0
+
+;; (shutdown-agents)
+(defn Example []
+   (def counter (agent 0))
+   (println @counter)
+   
+   (send counter + 100)
+   (println "Incrementing Counter")
+   (println @counter)
+   (shutdown-agents))
+(Example)
+;0
+;Incrementing Counter
+;0
+
+;; send-off
+(ns clojure.examples.example
+   (:gen-class))
+(defn Example []
+   (def counter (agent 0))
+   (println @counter)   
+   (send-off counter + 100)
+   (println @counter)
+   (println @counter))
+(Example)
+;0
+;0
+;0
+
+;; (await-for time agentname)
+(defn Example []
+   (def counter (agent 0))
+   (println @counter)
+   
+   (send-off counter + 100)
+   (println (await-for 100 counter))
+   (println @counter)
+   
+   (shutdown-agents))
+(Example)
+;0
+;true
+;100
+
+;; (await agentname)
+(defn Example []
+   (def counter (agent 0))
+   (println @counter)
+   
+   (send-off counter + 100)
+   (await counter)
+   (println @counter)
+   
+   (shutdown-agents))
+(Example)
+;0
+;100
+
+;; agent-error
+(defn Example []
+   (def my-date (agent (java.util.Date.)))
+   (send my-date + 100)
+   (await-for 100 my-date)
+   (println (agent-error my-date)))
+(Example)
+;
 ```
 
 ## Watchers
 
 ```clojure
+;; (add-watch variable :watcher
+;;   (fn [key variable-type old-state new-state]))
+(defn Example []
+   (def x (atom 0))
+   (add-watch x :watcher
+      (fn [key atom old-state new-state]
+      (println "The value of the atom has been changed")
+      (println "old-state" old-state)
+      (println "new-state" new-state)))
+(reset! x 2))
+(Example)
+;The value of the atom has been changed
+;old-state 0
+;new-state 2
+
+;; (remove-watch variable watchname)
+(defn Example []
+   (def x (atom 0))
+   (add-watch x :watcher
+      (fn [key atom old-state new-state]
+         (println "The value of the atom has been changed")
+         (println "old-state" old-state)
+         (println "new-state" new-state)))
+   (reset! x 2)
+   (remove-watch x :watcher)
+(reset! x 4))
+(Example)
+;The value of the atom has been changed
+;old-state 0
+;new-state 2
 ```
 
 ## Macro
 
-* defmacro
+in-line 코드를 생성하기 위해 사용한다.
 
 ```clojure
+;; (defmacro name [params*] body)
 (def a 150)
 (defmacro my-if [tset positive negative]
   '(if test positive negative))
 (my-if (> a 200)
   (println "Bigger than 200")
   (println "Smaller than 200"))
-```
 
-* macroexpand-1
-
-```clojure
+;; (macroexpand macroname)
 (def a 150)
 (defmacro my-if [test positive negative]
   '(if test positive negative))
@@ -761,22 +1010,230 @@ nil
   '(my-if (> a 200)
      (println "Bigger than 200")
      (println "Smaller than 200")))
-;; (if test positive negative)
+; (if test positive negative)
+
+;; Macro with arguments
+(defn Example []
+   (defmacro Simple [arg]
+      (list 2 arg))
+   (println (macroexpand '(Simple 2))))
+(Example)
 ```
 
 ## Reference Values
 
+clojure 가 제공하는 mutable data type 중 하나이다. mutable data type 은 atom, agent, ref 등이 있다.
+
 ```clojure
+;; (ref x options)
+(defn Example []
+   (def my-ref (ref 1 :validator pos?))
+   (println @my-ref))
+(Example)
+;1
+
+;; (ref-set refname newvalue)
+(defn Example []
+   (def my-ref (ref 1 :validator pos?))
+   (dosync
+      (ref-set my-ref 2))
+   (println @my-ref))
+(Example)
+;2
+
+;; (alter refname fun)
+(defn Example []
+   (def names (ref []))
+   
+   (defn change [newname]
+      (dosync
+         (alter names conj newname)))
+   (change "John")
+   (change "Mark")
+   (println @names))
+(Example)
+;[John Mark]
+
+;; (dosync expression)
+;; Runs the expression (in an implicit do) in a transaction that encompasses expression and any nested calls. Starts a transaction if none is already running on this thread. Any uncaught exception will abort the transaction and flow out of dosync.
+
+;; (commute refname fun)
+;; Commute is also used to change the value of a reference type just like alter and ref-set. The only difference is that this also needs to be placed inside a ‘dosync’ block. However, this can be used whenever there is no need to know which calling process actually changed the value of the reference type. Commute also uses a function to change the value of the reference variable.
+(defn Example []
+   (def counter (ref 0))
+   
+   (defn change [counter]
+      (dosync
+         (commute counter inc)))
+   (change counter)
+   (println @counter)
+   
+   (change counter)
+   (println @counter))
+(Example)
+;1
+;2
 ```
 
 ## Dtabases
 
 ```clojure
+; (def connection_name {
+;    :subprotocol “protocol_name”
+;    :subname “Location of mysql DB”
+;    :user “username” :password “password” })
+(ns A.core
+   (:require [clojure.java.jdbc :as sql]))
+(defn -main []
+   (def mysql-db {
+      :subprotocol "mysql"
+      :subname "//127.0.0.1:3306/information_schema"
+      :user "root"
+      :password "shakinstev"})
+   (println (sql/query mysql-db
+      ["select table_name from tables"]
+      :row-fn :table_name)))
+
+;; query select
+; clojure.java.jdbc/query dbconn
+; ["query"]
+;    :row-fn :sequence
+(ns A.core
+   (:require [clojure.java.jdbc :as sql]))
+(defn -main []
+   (def mysql-db {
+      :subprotocol "mysql"
+      :subname "//127.0.0.1:3306/testdb"
+      :user "root"
+      :password "shakinstev"})
+   (println (sql/query mysql-db
+      ["select first_name from employee"]
+      :row-fn :first_name)))
+
+;; query insert
+; clojure.java.jdbc/insert!
+;    :table_name {:column_namen columnvalue}
+(ns test.core
+   (:require [clojure.java.jdbc :as sql]))
+(defn -main []
+   (def mysql-db {
+      :subprotocol "mysql"
+      :subname "//127.0.0.1:3306/testdb"
+      :user "root"
+      :password "shakinstev"})
+   (sql/insert! mysql-db
+      :employee {:first_name "John" :last_name "Mark" :sex "M" :age 30 :income 30}))
+
+;; query delete
+; clojure.java.jdbc/delete!
+;    :table_name [condition]
+(ns A.core
+   (:require [clojure.java.jdbc :as sql]))
+(defn -main []
+   (def mysql-db {
+      :subprotocol "mysql"
+      :subname "//127.0.0.1:3306/testdb"
+      :user "root"
+      :password "shakinstev"})
+   (println (sql/delete! mysql-db
+      :employee ["age = ? " 30])))
+
+;; query update
+; clojure.java.jdbc/update!
+;    :table_name
+; {setcondition}
+; [condition]
+(ns test.core
+   (:require [clojure.java.jdbc :as sql]))
+(defn -main []
+   (def mysql-db {
+      :subprotocol "mysql"
+      :subname "//127.0.0.1:3306/testdb"
+      :user "root"
+      :password "shakinstev"})
+   (println (sql/update! mysql-db
+      :employee
+      {:income 40}
+      ["age = ? " 30])))
+
+;; transaction
+(ns A.core
+   (:require [clojure.java.jdbc :as sql]))
+(defn -main []
+   (def mysql-db {
+      :subprotocol "mysql"
+      :subname "//127.0.0.1:3306/testdb"
+      :user "root"
+      :password "shakinstev"})
+   (sql/with-db-transaction [t-con mysql-db]
+      (sql/update! t-con
+         :employee
+         {:income 40}
+         ["age = ? " 30])))
 ```
 
 ## Java Interface
 
+Java Object 는 `(Date.)` 과 같이 `.` 을 클래스다음에 추가하여 생성한다. 
+
 ```clojure
+;; calling java methods
+(ns Project
+   (:gen-class))
+(defn Example []
+   (println (.toUpperCase "Hello World")))
+(Example)
+; HELLO WORLD
+
+;; calling java methods with params
+(ns Project
+   (:gen-class))
+(defn Example []
+   (println (.indexOf "Hello World","e")))
+(Example)
+;1
+
+;; creating Java Objects
+(ns Project
+   (:gen-class))
+(defn Example []
+   (def str1 (new String "Hello"))
+   (println str1))
+(Example)
+; Hello
+(ns Project
+   (:gen-class))
+(defn Example []
+   (def my-int(new Integer 1))
+   (println (+ 2 my-int)))
+(Example)
+; 3
+
+;; import
+(ns Project
+   (:gen-class))
+(import java.util.Stack)
+(defn Example []
+   (let [stack (Stack.)]
+   (.push stack "First Element")
+   (.push stack "Second Element")
+   (println (first stack))))
+(Example)
+;First Element
+
+;; Java Built-in functions
+(ns Project
+   (:gen-class))
+(defn Example []
+   (println (. Math PI)))
+(Example)
+;3.141592653589793
+(ns Project
+   (:gen-class))
+(defn Example []
+   (println (.. System getProperties (get "java.version"))))
+(Example)
+;1.8.0_45
 ```
 
 ## Implementing interfaces and protocols
@@ -925,6 +1382,3 @@ ref, atom과 비슷하게 동기화를 보장하지만 thread pool의 가용 thr
 (def counter (agent 0))
 (send counter inc)
 ```
-
-
-
