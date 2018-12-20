@@ -20,6 +20,12 @@ puts "hello world"
 # ruby a.rb
 ```
 
+## REPL
+
+```bash
+> irb
+```
+
 ## Collections compared to c++ containers
 
 | c++                  | ruby                   | 

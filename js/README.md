@@ -27,6 +27,8 @@ java script에 대해 정리한다.
 
 # Materials
 
+* [learn javascript in Y minutes](https://learnxinyminutes.com/docs/javascript/)
+* [javascript @ tutorialspoint](https://www.tutorialspoint.com/javascript/)
 * [JavaScript @ opentutorials](https://opentutorials.org/module/532)
   * 킹왕짱 JavaScript 기본문법
   * [video](http://www.youtube.com/playlist?list=PLuHgQVnccGMA4uSig3hCjl7wTDeyIeZVU)

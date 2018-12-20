@@ -64,6 +64,9 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 # Materials
 
+
+* [learn go in Y minutes](https://learnxinyminutes.com/docs/go/)
+* [go @ tutorialspoint](https://www.tutorialspoint.com/go/)
 * [가장 빨리 만나는 Go 언어](http://pyrasis.com/go.html)
   * 킹왕짱 golang 기본문법
   * [src](https://github.com/pyrasis/golangbook)
