@@ -76,28 +76,127 @@ puts "hello world"
 |:---------------------|:-----------------------|
 | `if, else`           | `if, else, elsif, end` |
 | `for, while`         | `while, until, for`    |
-| `array`              | ``              |
-| `vector`             | ``              |
+| `array`              | ``                   |
+| `vector`             | `Array`              |
 | `deque`              | ``                   |
 | `forward_list`       | ``                   |
-| `list`               | ``               |
+| `list`               | ``                   |
 | `stack`              | ``                   |
-| `queue`              | ``                   |
-| `priority_queue`     | ``               |
+| `queue`              | `Queue`              |
+| `priority_queue`     | ``                   |
 | `set`                | ``                   |
 | `multiset`           | ``                   |
 | `map`                | ``                   |
 | `multimap`           | ``                   |
-| `unordered_set`      | ``                   |
+| `unordered_set`      | `Set`                |
 | `unordered_multiset` | ``                   |
-| `unordered_map`      | ``                |
+| `unordered_map`      | `Hash`               |
 | `unordered_multimap` | ``                   |
 
 ## Collections by examples
 
 * Array
+
+```ruby
+a = [1, "two", 3.0]#=> [1, "two", 3.0]
+a = Array.new      #=> []
+Array.new(3)       #=> [nil, nil, nil]
+Array.new(3, true) #=> [true, true, true]
+Array.new(4) { Hash.new } #=> [{}, {}, {}, {}]
+a = Array.new(3) { Array.new(3) }
+#=> [[nil, nil, nil], [nil, nil, nil], [nil, nil, nil]]
+Array({:a => "a", :b => "b"}) #=> [[:a, "a"], [:b, "b"]]
+```
+
 * Queue
+
+```ruby
+require 'thread'
+queue = Queue.new
+
+producer = Thread.new do
+  5.times do |i|
+     sleep rand(i) # simulate expense
+     queue << i
+     puts "#{i} produced"
+  end
+end
+
+consumer = Thread.new do
+  5.times do |i|
+     value = queue.pop
+     sleep rand(i/2) # simulate expense
+     puts "consumed #{value}"
+  end
+end
+```
+
+* Set
+
+```ruby
+require 'set'
+s1 = Set[1, 2]                        #=> #<Set: {1, 2}>
+s2 = [1, 2].to_set                    #=> #<Set: {1, 2}>
+s1 == s2                              #=> true
+s1.add("foo")                         #=> #<Set: {1, 2, "foo"}>
+s1.merge([2, 6])                      #=> #<Set: {1, 2, "foo", 6}>
+s1.subset?(s2)                        #=> false
+s2.subset?(s1)                        #=> true
+```
+
 * Hash
+
+```ruby
+grades = { "Jane Doe" => 10, "Jim Doe" => 6 }
+options = { :font_size => 10, :font_family => "Arial" }
+options = { font_size: 10, font_family: "Arial" }
+options[:font_size]  # => 10
+grades = Hash.new
+grades["Dorothy Doe"] = 9
+grades = Hash.new(0)
+grades = {"Timmy Doe" => 8}
+grades.default = 0
+puts grades["Jane Doe"] # => 0
+books         = {}
+books[:matz]  = "The Ruby Programming Language"
+books[:black] = "The Well-Grounded Rubyist"
+Person.create(name: "John Doe", age: 27)
+def self.create(params)
+  @name = params[:name]
+  @age  = params[:age]
+end
+
+class Book
+  attr_reader :author, :title
+
+  def initialize(author, title)
+    @author = author
+    @title = title
+  end
+
+  def ==(other)
+    self.class === other and
+      other.author == @author and
+      other.title == @title
+  end
+
+  alias eql? ==
+
+  def hash
+    @author.hash ^ @title.hash # XOR
+  end
+end
+
+book1 = Book.new 'matz', 'Ruby in a Nutshell'
+book2 = Book.new 'matz', 'Ruby in a Nutshell'
+
+reviews = {}
+
+reviews[book1] = 'Great reference!'
+reviews[book2] = 'Nice and compact!'
+
+reviews.length #=> 1
+```
 
 ## Reserved Words
 

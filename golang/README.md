@@ -165,7 +165,6 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 - [JSON, interface, and go generate](https://www.youtube.com/watch?v=YgnD27GFcyA)
 
-
 # Basic Usages
 
 ## Hello World
@@ -178,9 +177,8 @@ import "fmt"
 func main() {
     fmt.Println("Hello World")
 }
+// go run a.go
 ```
-
-`go run a.go`
 
 ## Collections compared to c++ containers
 
