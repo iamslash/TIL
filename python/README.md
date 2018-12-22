@@ -2,7 +2,8 @@
 **Table of Contents**
 
 - [Abstract](#abstract)
-- [Usage](#usage)
+- [References](#references)
+- [Basic Usages](#basic-usages)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
   - [generator](#generator)
@@ -15,6 +16,7 @@
   - [memory leak](#memory-leak)
   - [gc](#gc)
   - [dependencies](#dependencies)
+- [Advanced Usages](#advanced-usages)
 - [Library](#library)
   - [regex](#regex)
   - [numpy](#numpy)
@@ -25,7 +27,6 @@
   - [fabric](#fabric)
   - [flake8](#flake8)
   - [objgraph](#objgraph)
-- [References](#references)
 
 <!-- markdown-toc end -->
 
@@ -34,7 +35,16 @@
 
 python3에 대해 정리한다.
 
-# Usage
+# References
+
+* [파이썬 생존 안내서](https://www.slideshare.net/sublee/ss-67589513)
+  * 듀랑고를 제작한 왓스튜디오의 이흥섭 PT
+* [awesome-python](https://awesome-python.com/)
+  * A curated list of awesome python things
+* [python package index](https://pypi.python.org/pypi)
+  * library검색이 용이하다.
+
+# Basic Usages
 
 ## Collections Compared to c++ containers
 
@@ -691,6 +701,8 @@ tossi==0.0.1
 > pip install -r requirements.txt
 ```
 
+# Advanced Usages
+
 # Library
 
 ## regex
@@ -800,11 +812,3 @@ type                       163
 99
 ```
 
-# References
-
-* [파이썬 생존 안내서](https://www.slideshare.net/sublee/ss-67589513)
-  * 듀랑고를 제작한 왓스튜디오의 이흥섭 PT
-* [awesome-python](https://awesome-python.com/)
-  * A curated list of awesome python things
-* [python package index](https://pypi.python.org/pypi)
-  * library검색이 용이하다.

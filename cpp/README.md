@@ -1,19 +1,19 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Basic](#basic)
+- [Basic Usages](#basic-usages)
   - [virtual function](#virtual-function)
   - [vector vs deque vs list](#vector-vs-deque-vs-list)
   - [vector](#vector)
     - [pros](#pros)
     - [cons](#cons)
   - [deque (double ended queue)](#deque-double-ended-queue)
-    - [pros](#pros)
-    - [cons](#cons)
+    - [pros](#pros-1)
+    - [cons](#cons-1)
   - [list](#list)
-    - [pros](#pros)
-    - [cons](#cons)
+    - [pros](#pros-2)
+    - [cons](#cons-2)
   - [How to choose a container](#how-to-choose-a-container)
-- [Advanced](#advanced)
+- [Advanced Usages](#advanced-usages)
   - [Compiler Generated Code](#compiler-generated-code)
   - [Disallow the use of compiler generated functions](#disallow-the-use-of-compiler-generated-functions)
   - [Declare a destructor virtual in polymorphic base classes](#declare-a-destructor-virtual-in-polymorphic-base-classes)
@@ -27,9 +27,9 @@
   - [typename vs class in template](#typename-vs-class-in-template)
 - [STL](#stl)
   - [Major Headers](#major-headers)
-  - [vector](#vector)
+  - [vector](#vector-1)
   - [deque](#deque)
-  - [list](#list)
+  - [list](#list-1)
   - [set, multiset](#set-multiset)
   - [map, multimap](#map-multimap)
   - [unordered container](#unordered-container)
@@ -77,7 +77,7 @@
   - [r-value reference](#r-value-reference)
   - [Perfect Forwarding](#perfect-forwarding)
   - [move constructor](#move-constructor)
-  - [array](#array)
+  - [array](#array-1)
   - [timer](#timer)
   - [regex](#regex)
   - [random](#random)
@@ -113,7 +113,7 @@ c++에 대해 정리한다.
 - [cplusplus.com](https://www.cplusplus.com)
 - [c++11FAQ](http://pl.pusan.ac.kr/~woogyun/cpp11/C++11FAQ_ko.html)
 
-# Basic
+# Basic Usages
 
 ## virtual function
 
@@ -240,7 +240,7 @@ public:
 
 ![](img/containerchoice.png)
 
-# Advanced
+# Advanced Usages
 
 ## Compiler Generated Code
 

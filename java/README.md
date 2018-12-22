@@ -1,16 +1,27 @@
 - [Abstract](#abstract)
+- [Materials](#materials)
 - [Basic Usages](#basic-usages)
-    - [Compile, Execution](#compile-execution)
-    - [Useful Keywords](#useful-keywords)
-    - [Collections compared c++ container](#collections-compared-c-container)
-    - [Collection Examples](#collection-examples)
-    - [Collection Framework](#collection-framework)
-    - [Collection Implementations](#collection-implementations)
+  - [Compile, Execution](#compile-execution)
+  - [Reserved Words](#reserved-words)
+  - [Useful Keywords](#useful-keywords)
+  - [Collections compared c++ container](#collections-compared-c-container)
+  - [Collection Examples](#collection-examples)
+  - [Collection Framework](#collection-framework)
+  - [Collection Implementations](#collection-implementations)
+  - [Data Types](#data-types)
+  - [Decision Making](#decision-making)
+  - [Loops](#loops)
+  - [Inner Classes](#inner-classes)
 
 -------------------------------------------------------------------------------
 # Abstract
 
 java를 정리한다.
+
+# Materials
+
+* [learn java in Y minutes](https://learnxinyminutes.com/docs/java/)
+* [java @ tutorialspoint](https://www.tutorialspoint.com/java/)
 
 # Basic Usages
 
@@ -19,6 +30,24 @@ java를 정리한다.
 ```bash
 > javac A.java
 > java A
+```
+
+## Reserved Words
+
+```java
+abstract    assert      boolean     break 
+byte        case        catch       char
+class       const       continue    default
+do          double      else        enum
+extends     final       finally     float
+for         goto        if          implements
+import      instanceof  int         interface
+long        native      new         package
+private     protected   public      return
+short       static      strictfp    super
+switch      synchronized    this    throw
+throws      transient   try         void
+volatile    while
 ```
 
 ## Useful Keywords
@@ -95,3 +124,167 @@ java를 정리한다.
 | Deque     |                    | ArrayDeque                      |               | LinkedList         |                                 |
 | Map       | HashMap            |                                 | TreeMap       |                    | LinkedHashMap                   |
 
+
+## Data Types
+
+```java
+// 
+byte short int long float double
+boolean char
+
+// Literals
+byte a = 68;
+char a = 'A';
+int decimal = 100;
+int octal = 0144;
+int hexa  = 0x64;
+char a = '\u001';
+String a = "\u001";
+```
+
+## Decision Making
+
+```java
+//// if
+      int x = 30;
+      if( x == 10 ) {
+         System.out.print("Value of X is 10");
+      }else if( x == 20 ) {
+         System.out.print("Value of X is 20");
+      }else if( x == 30 ) {
+         System.out.print("Value of X is 30");
+      }else {
+         System.out.print("This is else statement");
+      }
+//// switch
+      // char grade = args[0].charAt(0);
+      char grade = 'C';
+      switch(grade) {
+         case 'A' :
+            System.out.println("Excellent!"); 
+            break;
+         case 'B' :
+         case 'C' :
+            System.out.println("Well done");
+            break;
+         case 'D' :
+            System.out.println("You passed");
+         case 'F' :
+            System.out.println("Better try again");
+            break;
+         default :
+            System.out.println("Invalid grade");
+      }
+      System.out.println("Your grade is " + grade);
+```
+
+## Loops
+
+```java
+//// while
+      int x = 10;
+      while( x < 20 ) {
+         System.out.print("value of x : " + x );
+         x++;
+         System.out.print("\n");
+      }
+//// for
+      for(int x = 10; x < 20; x = x + 1) {
+         System.out.print("value of x : " + x );
+         System.out.print("\n");
+      }
+//// do while 
+      int x = 10;
+      do {
+         System.out.print("value of x : " + x );
+         x++;
+         System.out.print("\n");
+      } while ( x < 20 );
+//// break
+      int [] numbers = {10, 20, 30, 40, 50};
+      for (int x : numbers ) {
+         if( x == 30 ) {
+            break;
+         }
+         System.out.print( x );
+         System.out.print("\n");
+      }
+//// continue
+      int [] numbers = {10, 20, 30, 40, 50};
+      for (int x : numbers ) {
+         if( x == 30 ) {
+            continue;
+         }
+         System.out.print( x );
+         System.out.print("\n");
+      }
+//// range based for
+      int [] numbers = {10, 20, 30, 40, 50};
+      for(int x : numbers ) {
+         System.out.print( x );
+         System.out.print(",");
+      }
+      System.out.print("\n");
+      String [] names = {"James", "Larry", "Tom", "Lacy"};
+      for( String name : names ) {
+         System.out.print( name );
+         System.out.print(",");
+      }
+```
+
+## Inner Classes
+
+```java
+//// Anonymous Inner Class
+// AnonymousInner an_inner = new AnonymousInner() {
+//    public void my_method() {
+//       ........
+//       ........
+//    }   
+// };
+abstract class AnonymousInner {
+   public abstract void mymethod();
+}
+
+public class Outer_class {
+   public static void main(String args[]) {
+      AnonymousInner inner = new AnonymousInner() {
+         public void mymethod() {
+            System.out.println("This is an example of anonymous inner class");
+         }
+      };
+      inner.mymethod();	
+   }
+}
+
+//// Anonymous Inner Class as Argument
+// obj.my_Method(new My_Class() {
+//    public void Do() {
+//       .....
+//       .....
+//    }
+// });
+interface Message {
+   String greet();
+}
+
+public class My_class {
+   // method which accepts the object of interface Message
+   public void displayMessage(Message m) {
+      System.out.println(m.greet() +
+         ", This is an example of anonymous inner class as an argument");  
+   }
+
+   public static void main(String args[]) {
+      // Instantiating the class
+      My_class obj = new My_class();
+
+      // Passing an anonymous inner class as an argument
+      obj.displayMessage(new Message() {
+         public String greet() {
+            return "Hello";
+         }
+      });
+   }
+}
+```

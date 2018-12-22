@@ -1,41 +1,41 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Usage](#usage)
-    - [Collections compared to c++ containers](#collections-compared-to-c-containers)
-    - [Collections](#collections)
-    - [Messages](#messages)
-    - [Defined Types](#defined-types)
-    - [Preprocessor Directives](#preprocessor-directives)
-    - [Compiler Directives](#compiler-directives)
-    - [Classes](#classes)
-    - [Categories](#categories)
-    - [Formal Protocols](#formal-protocols)
-    - [Methods](#methods)
-    - [Deprecation Syntax](#deprecation-syntax)
-    - [Naming Conventions](#naming-conventions)
-- [Objects, Classes and Methods](#objects-classes-and-methods)
-- [Allocating and Initializing Objects](#allocating-and-initializing-objects)
-- [Declared Properties](#declared-properties)
-- [Categories and Exensions](#categories-and-exensions)
-- [Blocks](#blocks)
-- [Protocols](#protocols)
-- [Fast Enumeration](#fast-enumeration)
-- [Enabling Staic Bhavior](#enabling-staic-bhavior)
-- [Selectors](#selectors)
-- [Exception Handling](#exception-handling)
-- [Threading](#threading)
-- [Remote Messaging](#remote-messaging)
-- [Using C++ With Objective-C](#using-c-with-objective-c)
+- [Basic Usages](#basic-usages)
+  - [Collections compared to c++ containers](#collections-compared-to-c-containers)
+  - [Collections](#collections)
+  - [Messages](#messages)
+  - [Defined Types](#defined-types)
+  - [Preprocessor Directives](#preprocessor-directives)
+  - [Compiler Directives](#compiler-directives)
+  - [Classes](#classes)
+  - [Categories](#categories)
+  - [Formal Protocols](#formal-protocols)
+  - [Methods](#methods)
+  - [Deprecation Syntax](#deprecation-syntax)
+  - [Naming Conventions](#naming-conventions)
+- [Advanced Usages](#advanced-usages)
+  - [Objects, Classes and Methods](#objects-classes-and-methods)
+  - [Allocating and Initializing Objects](#allocating-and-initializing-objects)
+  - [Declared Properties](#declared-properties)
+  - [Categories and Exensions](#categories-and-exensions)
+  - [Blocks](#blocks)
+  - [Protocols](#protocols)
+  - [Fast Enumeration](#fast-enumeration)
+  - [Enabling Staic Bhavior](#enabling-staic-bhavior)
+  - [Selectors](#selectors)
+  - [Exception Handling](#exception-handling)
+  - [Threading](#threading)
+  - [Remote Messaging](#remote-messaging)
+  - [Using C++ With Objective-C](#using-c-with-objective-c)
 
 -------------------------------------------------------------------------------
 
 # Abstract
 
-objc를 정리한다. 
-
+[objective-c 2.0 programming language pdf](http://cagt.bu.edu/w/images/b/b6/Objective-C_Programming_Language.pdf) 를 읽고 정리하자.
 # Materials
 
-* objective-c 2.0 programming language pdf
+* [objective-c 2.0 programming language pdf](http://cagt.bu.edu/w/images/b/b6/Objective-C_Programming_Language.pdf)
 * [Programming with Objective-C @ apple](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/ProgrammingWithObjectiveC/Introduction/Introduction.html#//apple_ref/doc/uid/TP40011210-CH1-SW1)
 * [developer doc](https://developer.apple.com/documentation)
   * developer documents
@@ -52,7 +52,7 @@ objc를 정리한다.
 * [effective objective-c 2.0](https://www.amazon.com/Effective-Objective-C-2-0-Specific-Development-ebook/dp/B00CUG5MZA)
 * [iOS Programming](https://eezytutorials.com/ios/)
 
-# Usage
+# Basic Usages
 
 ## Collections compared to c++ containers
 
@@ -530,8 +530,9 @@ BOOL success = [document saveAs:@"MyFile.txt" toLocation:@"~/Temp"];
 
 클래스, 카테고리, 프로토콜의 이름은 주로 대문자로 시작한다. 그러나 메소드, 인스턴스 변수의 이름은 소문자로 시작한다. 인스턴스를 저장한 변수 역시 소문자로 시작한다. 
 
+# Advanced Usages
 
-# Objects, Classes and Methods
+## Objects, Classes and Methods
 
 objc는 `a.h` 에서 `@interface` 를 이용하여 class를 선언하고 `a.m` 에서
 `@implementation` 를 이용하여 class를 구현한다.  `id` type은 `void*` 와
@@ -568,7 +569,7 @@ public class Document
 @end
 ```
 
-# Allocating and Initializing Objects
+## Allocating and Initializing Objects
 
 objc에서 메모리는 `alloc` 함수를 호출하여 할당한다. `dealloc` 함수를
 호출하여 해제할 수 있다. `alloc`, `retain` 함수를 호출하면 `reference count` 가 증가하고 `release` 를 호출하면 `reference count 가
@@ -593,7 +594,7 @@ Document *document = [[[Document alloc] initWithTitle:@"My New Document"] autore
 // No need to manually release
 ```
 
-# Declared Properties
+## Declared Properties
 
 c#의 property와 유사하다. `@property` 로 선언하고 `@synthesize` 로
 구현한다. `nonatomic` 은 thread safe 하지 않다는 의미하고 `copy` 는
@@ -639,7 +640,7 @@ public class Document : IPrintable
 @end
 ```
 
-# Categories and Exensions
+## Categories and Exensions
 
 c# 의 extension method 와 비슷하다. class 의 상속없이 기능을 확장할 수
 있다.
@@ -691,7 +692,7 @@ NSLog(@"Reversed title: %@", [document.title reverse]);
 [document release];
 ```
 
-# Blocks
+## Blocks
 
 [blocks @ wikipedia](https://en.wikipedia.org/wiki/Blocks_(C_language_extension))
 
@@ -750,7 +751,7 @@ orderedSameCount: 2
 */
 ```
 
-# Protocols
+## Protocols
 
 objc 의 protocol 은 c# 의 interface 와 비슷하다.
 
@@ -795,7 +796,7 @@ public class Document : IPrintable
 @end
 ```
 
-# Fast Enumeration
+## Fast Enumeration
 
 collection 을 편리하게 순회하는 방법이다. 다음과 같은 방법으로 사용한다.
 
@@ -823,9 +824,9 @@ for (key in dictionary) {
 }
 ```
 
-# Enabling Staic Bhavior
+## Enabling Staic Bhavior
 
-# Selectors
+## Selectors
 
 컴파일러는 메소드의 이름과 유니크한 아이디를 테이블 형태로 관리한다. 유니크한 아이디가 곧 실렉터이고 다음과 같이 선언할 수 있다.
 
@@ -851,10 +852,10 @@ SEL request = getTheSelector();
 [helper performSelector:request];
 ```
 
-# Exception Handling
+## Exception Handling
 
-# Threading
+## Threading
 
-# Remote Messaging
+## Remote Messaging
 
-# Using C++ With Objective-C
+## Using C++ With Objective-C
