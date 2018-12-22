@@ -2461,6 +2461,61 @@ a = \begin{matrix}
 
 ## Outline
 
+```c
+Shader "Custom/Outlined Diffuse" 
+{
+    Properties {
+        _MainTex ("Texture", 2D) = "white" {}
+        _OutlineColor("Outline Color", Color) = (0, 0, 0, 1)
+        _OutlineWidth("Outline Width", Range(0, 5)) = 1
+    }
+
+    SubShader {
+        Tags{ "Queue" = "Geometry"}
+
+        Pass {  // Render Outline
+            ZWrite OFF
+            CULL FRONT
+
+CGPROGRAM
+            #pragma vertex vert
+            #pragma fragment frag
+
+            struct appdata {
+                float4 vertex : POSITION;
+            };
+
+            struct v2f {
+                float4 pos : SV_POSITION;
+            };
+
+            float _OutlineWidth;
+            float4 _OutlineColor;
+
+            v2f vert(appdata v) {
+                v.vertex *= _OutlineWidth;
+
+                v2f o;
+                o.pos = UnityObjectToClipPos(v.vertex);
+                return o;
+            }
+
+            float4 frag(v2f i) : COLOR {
+                return _OutlineColor;
+            }
+ENDCG
+        }
+
+        Pass {  // Normal Render
+            ZWrite ON
+            CULL BACK
+
+            SetTexture[_MainTex]
+        }
+    }
+}
+```
+
 ## rimlight
 
 ## ramp
