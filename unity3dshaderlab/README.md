@@ -7,14 +7,18 @@
 - [Surface Shader Tutorial](#surface-shader-tutorial)
 - [Unity Built-in Shaders](#unity-built-in-shaders)
 - [Usage](#usage)
-    - [IBL (image based lighting)](#ibl-image-based-lighting)
-    - [Irradiance Map](#irradiance-map)
-    - [Image based Relection](#image-based-relection)
-    - [Image based Refraction](#image-based-refraction)
-    - [Image based Fresnel](#image-based-fresnel)
-    - [shadow mapping](#shadow-mapping)
-    - [BRDF (bidirectional reflectance distribution function)](#brdf-bidirectional-reflectance-distribution-function)
-    - [BRDF Anisotropy](#brdf-anisotropy)
+  - [IBL (image based lighting)](#ibl-image-based-lighting)
+  - [Irradiance Map](#irradiance-map)
+  - [Image based Relection](#image-based-relection)
+  - [Image based Refraction](#image-based-refraction)
+  - [Image based Fresnel](#image-based-fresnel)
+  - [shadow mapping](#shadow-mapping)
+  - [BRDF (bidirectional reflectance distribution function)](#brdf-bidirectional-reflectance-distribution-function)
+  - [BRDF Anisotropy](#brdf-anisotropy)
+- [Snippets](#snippets)
+  - [Outline](#outline)
+  - [rimlight](#rimlight)
+  - [ramp](#ramp)
 
 -------------------------------------------------------------------------------
 
@@ -2452,3 +2456,12 @@ a = \begin{matrix}
 ## BRDF (bidirectional reflectance distribution function)
 
 ## BRDF Anisotropy
+
+# Snippets
+
+## Outline
+
+## rimlight
+
+## ramp
+
