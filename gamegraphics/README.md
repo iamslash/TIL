@@ -5,16 +5,16 @@
 - [3D graphics api](#3d-graphics-api)
 - [Opensource Game Engines](#opensource-game-engines)
 - [Math Prerequisites](#math-prerequisites)
-    - [Law Of Cosines](#law-of-cosines)
-    - [Trigonometric Addtion formulas](#trigonometric-addtion-formulas)
-    - [Half-Angle Formulas](#half-angle-formulas)
-    - [Dot Product](#dot-product)
-    - [Cross Product](#cross-product)
-    - [affine transform](#affine-transform)
-    - [affine space](#affine-space)
-    - [affince space operation](#affince-space-operation)
-    - [homogeneous coordinates (동차좌표)](#homogeneous-coordinates-동차좌표)
-    - [tangent space](#tangent-space)
+  - [Law Of Cosines](#law-of-cosines)
+  - [Trigonometric Addtion formulas](#trigonometric-addtion-formulas)
+  - [Half-Angle Formulas](#half-angle-formulas)
+  - [Dot Product](#dot-product)
+  - [Cross Product](#cross-product)
+  - [affine transform](#affine-transform)
+  - [affine space](#affine-space)
+  - [affince space operation](#affince-space-operation)
+  - [homogeneous coordinates (동차좌표)](#homogeneous-coordinates-%EB%8F%99%EC%B0%A8%EC%A2%8C%ED%91%9C)
+  - [tangent space](#tangent-space)
 - [Rendering Pipeline](#rendering-pipeline)
 - [Color Space](#color-space)
 - [Polygon Mesh](#polygon-mesh)
@@ -89,6 +89,8 @@
 
 # Materials
 
+- [이득우의 게임 기술 블로그 @ naver](https://m.blog.naver.com/PostList.nhn?blogId=destiny9720&categoryNo=22&listStyle=style1)
+  - 이득우님의 게임수학 블로그 
 - [Unity3d tutorials](https://catlikecoding.com/unity/tutorials/)
   - water, rendering, noise, DOF, Bloom, FXAA, Triplanar Mapping 등등 많은 주제들을 다루는 상세한 블로그
 - [유니티로 배우는 게임 수학](http://www.yes24.com/24/goods/30119802?scode=032&OzSrank=1)
