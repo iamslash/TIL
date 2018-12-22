@@ -3,9 +3,15 @@
 - [References](#references)
 - [Basic Usages](#basic-usages)
   - [Hello World](#hello-world)
+  - [Reserved Words](#reserved-words)
+  - [Contextual Keywords](#contextual-keywords)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
+  - [Datatypes](#datatypes)
+  - [Constants](#constants)
+  - [Preprocessor Directives](#preprocessor-directives)
 - [Advanced Usages](#advanced-usages)
+  - [Atrributes](#atrributes)
 - [Tips](#tips)
   - [volatile을 사용하자.](#volatile%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EC%9E%90)
   - [var를 잘 사용하자.](#var%EB%A5%BC-%EC%9E%98-%EC%82%AC%EC%9A%A9%ED%95%98%EC%9E%90)
@@ -46,7 +52,33 @@ namespace HelloWorldApplication {
       }
    }
 }
-// mcs 
+// > mcs -out:a.exe a.cs
+// > mono a.exe
+```
+
+## Reserved Words
+
+```cs
+abstract as base bool break byte case
+catch char checked class const continue decimal
+default delegatre do double else enum event
+explicit extern false finally fixed float for
+foreach goto if implicit in in(generic modifier) int
+interface internal is lock long namespace new
+null object operator out out(generic modifier) override params
+private protected public readonly ref return sbyte
+sealed short sizeof stackalloc static string struct
+switch this throw true try typeof uint
+ulong unchedked unsafe ushort using virtual void
+volatile while
+```
+
+## Contextual Keywords
+
+```cs
+add alias ascending descending dynamic from get
+global group into join let orderby partial(type)
+partial(method) remove select set
 ```
 
 ## Collections Compared to c++ containers
@@ -224,9 +256,335 @@ List<int> list = new List<int>();
         }
 ```
 
+## Datatypes
+
+```cs
+// value types
+bool byte char decimal double float int long
+sbyte short uint ulong ushort
+// reference types
+object, dynamic, string
+// pointer types
+char* cptr;
+int* iptr;
+```
+
+## Constants
+
+```cs
+//// Integer Literals
+212         /* Legal */
+215u        /* Legal */
+0xFeeL      /* Legal */
+85         /* decimal */
+0x4b       /* hexadecimal */
+30         /* int */
+30u        /* unsigned int */
+30l        /* long */
+30ul       /* unsigned long */
+
+//// Floating-point Literals
+3.14159       /* Legal */
+314159E-5F    /* Legal */
+510E          /* Illegal: incomplete exponent */
+210f          /* Illegal: no decimal or exponent */
+.e55          /* Illegal: missing integer or fraction */
+
+//// String Literals
+"hello, dear"
+"hello, \
+dear"
+"hello, " "d" "ear"
+@"hello dear"
+```
+
+## Preprocessor Directives
+
+```cs
+#define
+#undef
+#if
+#else
+#elif
+#endif
+#line
+#error
+#warning
+#region
+#endregion
+```
+
 # Advanced Usages
 
+## Atrributes
 
+classes, methods, structures, enumerators, assemblies 등에 런타임에 확인할 수 있는 추가정보를 제공한다. 주로 다음과 같이 사용한다.
+
+```cs
+[attribute(positional_parameters, name_parameter = value, ...)]
+element
+```
+
+.net framework 는 AttributeUSage, Conditional, Obsolete 를 기본 attribute 로 제공한다.
+
+```cs
+//// AttributeUsage
+[AttributeUsage(
+   AttributeTargets.Class |
+   AttributeTargets.Constructor |
+   AttributeTargets.Field |
+   AttributeTargets.Method |
+   AttributeTargets.Property,
+   AllowMultiple = true)]
+public class DeBugInfo : System.Attribute
+
+//// Conditional
+#define DEBUG
+using System;
+using System.Diagnostics;
+
+public class Myclass {
+   [Conditional("DEBUG")]
+   
+   public static void Message(string msg) {
+      Console.WriteLine(msg);
+   }
+}
+class Test {
+   static void function1() {
+      Myclass.Message("In Function 1.");
+      function2();
+   }
+   static void function2() {
+      Myclass.Message("In Function 2.");
+   }
+   public static void Main() {
+      Myclass.Message("In Main function.");
+      function1();
+      Console.ReadKey();
+   }
+}
+
+//// Obsolete Attribute
+using System;
+
+public class MyClass {
+   [Obsolete("Don't use OldMethod, use NewMethod instead", true)]
+   
+   static void OldMethod() {
+      Console.WriteLine("It is the old method");
+   }
+   static void NewMethod() {
+      Console.WriteLine("It is the new method"); 
+   }
+   public static void Main() {
+      OldMethod();
+   }
+}
+```
+
+custom attribute 를 제작하기 위해서는 다음과 같이 4 가지를 수행해야 한다.
+
+* Declaring a custom attribute
+* Constructing the custom attribute
+* Apply the custom attribute on a target program element
+* Accessing Attributes Through Reflection
+
+```cs
+
+// * Declaring a custom attribute
+//a custom attribute BugFix to be assigned to a class and its members
+[AttributeUsage(
+   AttributeTargets.Class |
+   AttributeTargets.Constructor |
+   AttributeTargets.Field |
+   AttributeTargets.Method |
+   AttributeTargets.Property,
+   AllowMultiple = true)]
+
+public class DeBugInfo : System.Attribute
+
+// * Constructing the custom attribute
+//a custom attribute BugFix to be assigned to a class and its members
+[AttributeUsage(
+   AttributeTargets.Class |
+   AttributeTargets.Constructor |
+   AttributeTargets.Field |
+   AttributeTargets.Method |
+   AttributeTargets.Property,
+   AllowMultiple = true)]
+
+public class DeBugInfo : System.Attribute {
+   private int bugNo;
+   private string developer;
+   private string lastReview;
+   public string message;
+   
+   public DeBugInfo(int bg, string dev, string d) {
+      this.bugNo = bg;
+      this.developer = dev;
+      this.lastReview = d;
+   }
+   public int BugNo {
+      get {
+         return bugNo;
+      }
+   }
+   public string Developer {
+      get {
+         return developer;
+      }
+   }
+   public string LastReview {
+      get {
+         return lastReview;
+      }
+   }
+   public string Message {
+      get {
+         return message;
+      }
+      set {
+         message = value;
+      }
+   }
+}
+
+// * Apply the custom attribute on a target program element
+[DeBugInfo(45, "Zara Ali", "12/8/2012", Message = "Return type mismatch")]
+[DeBugInfo(49, "Nuha Ali", "10/10/2012", Message = "Unused variable")]
+class Rectangle {
+   //member variables
+   protected double length;
+   protected double width;
+   public Rectangle(double l, double w) {
+      length = l;
+      width = w;
+   }
+   [DeBugInfo(55, "Zara Ali", "19/10/2012", Message = "Return type mismatch")]
+   
+   public double GetArea() {
+      return length * width;
+   }
+   [DeBugInfo(56, "Zara Ali", "19/10/2012")]
+   
+   public void Display() {
+      Console.WriteLine("Length: {0}", length);
+      Console.WriteLine("Width: {0}", width);
+      Console.WriteLine("Area: {0}", GetArea());
+   }
+}
+
+// * Accessing Attributes Through Reflection
+using System;
+using System.Reflection;
+
+namespace BugFixApplication {
+   //a custom attribute BugFix to be assigned to a class and its members
+   [AttributeUsage(
+      AttributeTargets.Class |
+      AttributeTargets.Constructor |
+      AttributeTargets.Field |
+      AttributeTargets.Method |
+      AttributeTargets.Property,
+      AllowMultiple = true)]
+
+   public class DeBugInfo : System.Attribute {
+      private int bugNo;
+      private string developer;
+      private string lastReview;
+      public string message;
+      
+      public DeBugInfo(int bg, string dev, string d) {
+         this.bugNo = bg;
+         this.developer = dev;
+         this.lastReview = d;
+      }
+      public int BugNo {
+         get {
+            return bugNo;
+         }
+      }
+      public string Developer {
+         get {
+            return developer;
+         }
+      }
+      public string LastReview {
+         get {
+            return lastReview;
+         }
+      }
+      public string Message {
+         get {
+            return message;
+         }
+         set {
+            message = value;
+         }
+      }
+   }
+   [DeBugInfo(45, "Zara Ali", "12/8/2012", Message = "Return type mismatch")]
+   [DeBugInfo(49, "Nuha Ali", "10/10/2012", Message = "Unused variable")]
+   
+   class Rectangle {
+      //member variables
+      protected double length;
+      protected double width;
+      
+      public Rectangle(double l, double w) {
+         length = l;
+         width = w;
+      }
+      [DeBugInfo(55, "Zara Ali", "19/10/2012", Message = "Return type mismatch")]
+      public double GetArea() {
+         return length * width;
+      }
+      [DeBugInfo(56, "Zara Ali", "19/10/2012")]
+      public void Display() {
+         Console.WriteLine("Length: {0}", length);
+         Console.WriteLine("Width: {0}", width);
+         Console.WriteLine("Area: {0}", GetArea());
+      }
+   }//end class Rectangle
+   
+   class ExecuteRectangle {
+      static void Main(string[] args) {
+         Rectangle r = new Rectangle(4.5, 7.5);
+         r.Display();
+         Type type = typeof(Rectangle);
+         
+         //iterating through the attribtues of the Rectangle class
+         foreach (Object attributes in type.GetCustomAttributes(false)) {
+            DeBugInfo dbi = (DeBugInfo)attributes;
+            
+            if (null != dbi) {
+               Console.WriteLine("Bug no: {0}", dbi.BugNo);
+               Console.WriteLine("Developer: {0}", dbi.Developer);
+               Console.WriteLine("Last Reviewed: {0}", dbi.LastReview);
+               Console.WriteLine("Remarks: {0}", dbi.Message);
+            }
+         }
+         
+         //iterating through the method attribtues
+         foreach (MethodInfo m in type.GetMethods()) {
+            
+            foreach (Attribute a in m.GetCustomAttributes(true)) {
+               DeBugInfo dbi = (DeBugInfo)a;
+               
+               if (null != dbi) {
+                  Console.WriteLine("Bug no: {0}, for Method: {1}", dbi.BugNo, m.Name);
+                  Console.WriteLine("Developer: {0}", dbi.Developer);
+                  Console.WriteLine("Last Reviewed: {0}", dbi.LastReview);
+                  Console.WriteLine("Remarks: {0}", dbi.Message);
+               }
+            }
+         }
+         Console.ReadLine();
+      }
+   }
+}
+```
 
 # Tips
 
