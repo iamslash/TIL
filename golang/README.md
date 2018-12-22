@@ -15,22 +15,26 @@
   - [Hello World](#hello-world)
   - [Collections compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections by examples](#collections-by-examples)
+  - [Reserved Words](#reserved-words)
+  - [Data Types](#data-types)
+  - [Declarations](#declarations)
+  - [Constants](#constants)
   - [Operators](#operators)
     - [Arithmetic](#arithmetic)
     - [Comparison](#comparison)
     - [Logical](#logical)
     - [Other](#other)
-  - [Declarations](#declarations)
+  - [Decision Making](#decision-making)
+    - [If](#if)
+    - [Switch](#switch)
+    - [select](#select)
+  - [Loops](#loops)
   - [Functions](#functions)
     - [Functions As Values And Closures](#functions-as-values-and-closures)
     - [Variadic Functions](#variadic-functions)
-  - [Built-in Types](#built-in-types)
   - [Type Conversions](#type-conversions)
   - [Packages](#packages)
-  - [Control structures](#control-structures)
-    - [If](#if)
-    - [Loops](#loops)
-    - [Switch](#switch)
+  - [Strings](#strings)
   - [Arrays, Slices, Ranges](#arrays-slices-ranges)
     - [Arrays](#arrays)
     - [Slices](#slices)
@@ -45,17 +49,17 @@
   - [Channels](#channels)
     - [Channel Axioms](#channel-axioms)
   - [Printing](#printing)
+- [Advanced Usages](#advanced-usages)
+  - [Tools](#tools-1)
+    - [go](#go)
+    - [go-wrk](#go-wrk)
+    - [go-torch](#go-torch)
+  - [Debug](#debug)
+  - [Test](#test)
+  - [Benchmarks](#benchmarks)
+  - [Profile](#profile)
 - [Snippets](#snippets)
   - [HTTP Server](#http-server)
-- [Tools](#tools-1)
-  - [go](#go)
-  - [go-wrk](#go-wrk)
-  - [go-torch](#go-torch)
-- [Debug](#debug)
-- [Test](#test)
-- [Benchmarks](#benchmarks)
-- [Profile](#profile)
-
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -752,6 +756,96 @@ func ExampleRing_Unlink() {
 }
 ```
 
+## Reserved Words
+
+```go
+break    default     func   interface select
+case     defer       go     map       struct
+chan     else        goto   package   switch
+const    fallthrough if     range     type
+continue for         import return    var
+```
+
+## Data Types
+
+```go
+bool
+
+string
+
+int  int8  int16  int32  int64
+uint uint8 uint16 uint32 uint64 uintptr
+
+byte // alias for uint8
+
+rune // alias for int32 ~= a character (Unicode code point) - very Viking
+
+float32 float64
+
+complex64 complex128
+```
+
+## Declarations
+
+타입은 변수이름 뒤에 위치한다.
+
+```go
+var foo int // declaration without initialization
+var foo int = 42 // declaration with initialization
+var foo, bar int = 42, 1302 // declare and init multiple vars at once
+var foo = 42 // type omitted, will be inferred
+foo := 42 // shorthand, only in func bodies, omit var keyword, type is always implicit
+const constant = "This is a constant"
+```
+
+## Constants
+
+```go
+// Integer literals
+212         /* Legal */
+215u        /* Legal */
+0xFeeL      /* Legal */
+078         /* Illegal: 8 is not an octal digit */
+032UU       /* Illegal: cannot repeat a suffix */
+85         /* decimal */
+0213       /* octal */
+0x4b       /* hexadecimal */
+30         /* int */
+30u        /* unsigned int */
+30l        /* long */
+30ul       /* unsigned long */
+
+// floating-point literals
+3.14159       /* Legal */
+314159E-5L    /* Legal */
+510E          /* Illegal: incomplete exponent */
+210f          /* Illegal: no decimal or exponent */
+.e55          /* Illegal: missing integer or fraction */
+
+// string literals
+"hello, dear"
+
+"hello, \
+
+dear"
+
+"hello, " "d" "ear"
+
+// const
+package main
+
+import "fmt"
+
+func main() {
+   const LENGTH int = 10
+   const WIDTH int = 5   
+   var area int
+
+   area = LENGTH * WIDTH
+   fmt.Printf("value of area : %d", area)   
+}
+```
+
 ## Operators
 
 ### Arithmetic
@@ -786,7 +880,7 @@ func ExampleRing_Unlink() {
 | Operator | Description |   |            |
 |----------|-------------|---|------------|
 | `&&`     | logical and |   |            |
-| `\       | \           | ` | logical or |
+| `||`     | logical or  |   |            |
 | `!`      | logical not |   |            |
 
 ### Other
@@ -797,17 +891,157 @@ func ExampleRing_Unlink() {
 | `*`      | dereference pointer                            |
 | `<-`     | send / receive operator (see 'Channels' below) |
 
-## Declarations
 
-타입은 변수이름 뒤에 위치한다.
+## Decision Making
+
+### If
+```go
+func main() {
+	// Basic one
+	if x > 0 {
+		return x
+	} else {
+		return -x
+	}
+    	
+	// You can put one statement before the condition
+	if a := b + c; a < 42 {
+		return a
+	} else {
+		return a - 42
+	}
+    
+	// Type assertion inside if
+	var val interface{}
+	val = "foo"
+	if str, ok := val.(string); ok {
+		fmt.Println(str)
+	}
+}
+```
+
+### Switch
+```go
+    // switch statement
+    switch operatingSystem {
+    case "darwin":
+        fmt.Println("Mac OS Hipster")
+        // cases break automatically, no fallthrough by default
+    case "linux":
+        fmt.Println("Linux Geek")
+    default:
+        // Windows, BSD, ...
+        fmt.Println("Other")
+    }
+
+    // as with for and if, you can have an assignment statement before the switch value 
+    switch os := runtime.GOOS; os {
+    case "darwin": ...
+    }
+
+    // you can also make comparisons in switch cases
+    number := 42
+    switch {
+        case number < 42:
+            fmt.Println("Smaller")
+        case number == 42:
+            fmt.Println("Equal")
+        case number > 42:
+            fmt.Println("Greater")
+    }
+```
+
+### select
 
 ```go
-var foo int // declaration without initialization
-var foo int = 42 // declaration with initialization
-var foo, bar int = 42, 1302 // declare and init multiple vars at once
-var foo = 42 // type omitted, will be inferred
-foo := 42 // shorthand, only in func bodies, omit var keyword, type is always implicit
-const constant = "This is a constant"
+// select {
+//    case communication clause  :
+//       statement(s);      
+//    case communication clause  :
+//       statement(s); 
+//    /* you can have any number of case statements */
+//    default : /* Optional */
+//       statement(s);
+// }
+package main
+
+import "fmt"
+
+func main() {
+   var c1, c2, c3 chan int
+   var i1, i2 int
+   select {
+      case i1 = <-c1:
+         fmt.Printf("received ", i1, " from c1\n")
+      case c2 <- i2:
+         fmt.Printf("sent ", i2, " to c2\n")
+      case i3, ok := (<-c3):  // same as: i3, ok := <-c3
+         if ok {
+            fmt.Printf("received ", i3, " from c3\n")
+         } else {
+            fmt.Printf("c3 is closed\n")
+         }
+      default:
+         fmt.Printf("no communication\n")
+   }    
+}  
+```
+## Loops
+
+```go
+    // There's only `for`, no `while`, no `until`
+    for i := 1; i < 10; i++ {
+    }
+    for ; i < 10; { // while - loop
+    }
+    for i < 10 { // you can omit semicolons if there is only a condition
+    }
+    for { // you can omit the condition ~ while (true)
+    }
+
+// break
+   /* local variable definition */
+   var a int = 10
+
+   /* for loop execution */
+   for a < 20 {
+      fmt.Printf("value of a: %d\n", a);
+      a++;
+      if a > 15 {
+         /* terminate the loop using break statement */
+         break;
+      }
+   }
+
+// continue
+   /* local variable definition */
+   var a int = 10
+
+   /* do loop execution */
+   for a < 20 {
+      if a == 15 {
+         /* skip the iteration */
+         a = a + 1;
+         continue;
+      }
+      fmt.Printf("value of a: %d\n", a);
+      a++;     
+   }  
+
+// goto
+   /* local variable definition */
+   var a int = 10
+
+   /* do loop execution */
+   LOOP: for a < 20 {
+      if a == 15 {
+         /* skip the iteration */
+         a = a + 1
+         goto LOOP
+      }
+      fmt.Printf("value of a: %d\n", a)
+      a++     
+   }  
 ```
 
 ## Functions
@@ -904,25 +1138,6 @@ func adder(args ...int) int {
 }
 ```
 
-## Built-in Types
-
-```
-bool
-
-string
-
-int  int8  int16  int32  int64
-uint uint8 uint16 uint32 uint64 uintptr
-
-byte // alias for uint8
-
-rune // alias for int32 ~= a character (Unicode code point) - very Viking
-
-float32 float64
-
-complex64 complex128
-```
-
 ## Type Conversions
 
 ```go
@@ -942,78 +1157,48 @@ u := uint(f)
 * Executables are in package `main`
 * Convention: package name == last name of import path (import path `math/rand` => package `rand`)
 * Upper case identifier: exported (visible from other packages)
-* Lower case identifier: private (not visible from other packages) 
+* Lower case identifier: private (not visible from other packages)
 
-## Control structures
 
-### If
+## Strings
+
 ```go
-func main() {
-	// Basic one
-	if x > 0 {
-		return x
-	} else {
-		return -x
-	}
-    	
-	// You can put one statement before the condition
-	if a := b + c; a < 42 {
-		return a
-	} else {
-		return a - 42
-	}
-    
-	// Type assertion inside if
-	var val interface{}
-	val = "foo"
-	if str, ok := val.(string); ok {
-		fmt.Println(str)
-	}
-}
-```
+// creating strings
+   var greeting =  "Hello world!"
+   
+   fmt.Printf("normal string: ")
+   fmt.Printf("%s", greeting)
+   fmt.Printf("\n")
+   fmt.Printf("hex bytes: ")
+   
+   for i := 0; i < len(greeting); i++ {
+       fmt.Printf("%x ", greeting[i])
+   }
+   
+   fmt.Printf("\n")
+   const sampleText = "\xbd\xb2\x3d\xbc\x20\xe2\x8c\x98" 
+   
+   /*q flag escapes unprintable characters, with + flag it escapses non-ascii 
+   characters as well to make output unambigous */
+   fmt.Printf("quoted string: ")
+   fmt.Printf("%+q", sampleText)
+   fmt.Printf("\n") 
+// normal string: Hello world!
+// hex bytes: 48 65 6c 6c 6f 20 77 6f 72 6c 64 21 
+// quoted string: "\xbd\xb2=\xbc \u2318"
 
-### Loops
-```go
-    // There's only `for`, no `while`, no `until`
-    for i := 1; i < 10; i++ {
-    }
-    for ; i < 10;  { // while - loop
-    }
-    for i < 10  { // you can omit semicolons if there is only a condition
-    }
-    for { // you can omit the condition ~ while (true)
-    }
-```
+// length
+   var greeting =  "Hello world!"
+   
+   fmt.Printf("String Length is: ")
+   fmt.Println(len(greeting))  
+// 
+// String Length is : 12
 
-### Switch
-```go
-    // switch statement
-    switch operatingSystem {
-    case "darwin":
-        fmt.Println("Mac OS Hipster")
-        // cases break automatically, no fallthrough by default
-    case "linux":
-        fmt.Println("Linux Geek")
-    default:
-        // Windows, BSD, ...
-        fmt.Println("Other")
-    }
-
-    // as with for and if, you can have an assignment statement before the switch value 
-    switch os := runtime.GOOS; os {
-    case "darwin": ...
-    }
-
-    // you can also make comparisons in switch cases
-    number := 42
-    switch {
-        case number < 42:
-            fmt.Println("Smaller")
-        case number == 42:
-            fmt.Println("Equal")
-        case number > 42:
-            fmt.Println("Greater")
-    }
+// concatenating strings
+   greetings :=  []string{"Hello","world!"}   
+   fmt.Println(strings.Join(greetings, " "))
+// Hello world!
 ```
 
 ## Arrays, Slices, Ranges
@@ -1209,6 +1394,7 @@ var logger *log.Logger = server.Logger
 ## Errors
 
 There is no exception handling. Functions that might produce an error just declare an additional return value of type `Error`. This is the `Error` interface:
+
 ```go
 type error interface {
     Error() string
@@ -1216,6 +1402,7 @@ type error interface {
 ```
 
 A function that might return an error:
+
 ```go
 func doStuff() (int, error) {
 }
@@ -1342,6 +1529,60 @@ hellomsg := `
 ` // multi-line string literal, using back-tick at beginning and end
 ```
 
+
+# Advanced Usages
+
+## Tools
+
+### go
+
+주로 사용하는 command는 다음과 같다. 도움말은 go help를 이용하자.
+
+```
+go run
+go build
+go install
+go get
+go fmt
+go vet
+```
+
+### go-wrk
+
+an HTTP benchmarking tool
+
+```
+go-wrk -c 5 -d 5 http://localhost:8080/
+```
+
+### go-torch
+
+Tool for stochastically profiling Go programs. Collects stack traces
+and synthesizes them into a flame graph. Uses Go's built in pprof
+library.
+
+## Debug
+
+VS Code를 사용한다면 debug mode로 launch하자.
+
+## Test
+
+tests from VS Code
+
+code coverage
+
+table driven tests
+
+## Benchmarks
+
+```
+go test-bench
+```
+
+## Profile
+
+go-torch
+
 # Snippets
 
 ## HTTP Server
@@ -1371,54 +1612,3 @@ func main() {
 //     ServeHTTP(w http.ResponseWriter, r *http.Request)
 // }
 ```
-
-# Tools
-
-## go
-
-주로 사용하는 command는 다음과 같다. 도움말은 go help를 이용하자.
-
-```
-go run
-go build
-go install
-go get
-go fmt
-go vet
-```
-
-## go-wrk
-
-an HTTP benchmarking tool
-
-```
-go-wrk -c 5 -d 5 http://localhost:8080/
-```
-
-## go-torch
-
-Tool for stochastically profiling Go programs. Collects stack traces
-and synthesizes them into a flame graph. Uses Go's built in pprof
-library.
-
-# Debug
-
-VS Code를 사용한다면 debug mode로 launch하자.
-
-# Test
-
-tests from VS Code
-
-code coverage
-
-table driven tests
-
-# Benchmarks
-
-```
-go test-bench
-```
-
-# Profile
-
-go-torch

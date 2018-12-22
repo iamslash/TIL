@@ -3,14 +3,20 @@
 - [Basic Usages](#basic-usages)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collection by Examples](#collection-by-examples)
+  - [Data types](#data-types)
+  - [Reserved Words](#reserved-words)
+  - [Operators](#operators)
+  - [Decision Making](#decision-making)
+  - [Loops](#loops)
   - [Javascript Runtime Architecture](#javascript-runtime-architecture)
-  - [curly braces](#curly-braces)
-  - [parenthese](#parenthese)
-  - [anonymous function](#anonymous-function)
-  - [named function](#named-function)
-  - [closure](#closure)
-  - [IIFE(Immediately-invoked function expression)](#iifeimmediately-invoked-function-expression)
-  - [arrow function (ES6)](#arrow-function-es6)
+  - [Functions](#functions)
+    - [curly braces](#curly-braces)
+    - [parenthese](#parenthese)
+    - [anonymous function](#anonymous-function)
+    - [named function](#named-function)
+    - [closure](#closure)
+    - [IIFE(Immediately-invoked function expression)](#iifeimmediately-invoked-function-expression)
+    - [arrow function (ES6)](#arrow-function-es6)
   - [hoisting](#hoisting)
   - [scope](#scope)
   - [execution context](#execution-context)
@@ -18,6 +24,16 @@
   - [background](#background)
   - [task queue](#task-queue)
   - [micro task](#micro-task)
+  - [Cookies](#cookies)
+  - [Objects](#objects)
+  - [Number](#number)
+  - [Boolean](#boolean)
+  - [Strings](#strings)
+  - [Arrays](#arrays)
+  - [Date](#date)
+  - [Math](#math)
+  - [RegExp](#regexp)
+  - [HTML DOM](#html-dom)
 
 -------------------------------------------------------------------------------
 
@@ -120,13 +136,390 @@ for (var [key, value] of sayings) {
 // "elephant goes toot"
 ```
 
+## Data types
+
+```js
+// Numbers
+var n = 123;
+var f = 120.50;
+
+// Strings
+var s = "hello world";
+
+// Boolean
+var b = true;
+```
+
+## Reserved Words
+
+```js
+abstract   else        instanceof   switch
+boolean    enum        int          synchronized
+break      export      interface    this
+byte       extends     long         throw
+case       false       native       throws
+catch      final       new          transient
+char       finally     null         true
+class      float       package      try
+const      for         private      typeof
+continue   function    protected    var
+debugger   goto        public       void 
+default    if          return       volatile
+delete     implements  short        while
+do         import      static       with
+double     in          super
+```
+
+## Operators
+
+```js
+// Arithmetic Operators
+            var a = 33;
+            var b = 10;
+            var c = "Test";
+            var linebreak = "<br />";
+         
+            document.write("a + b = ");
+            result = a + b;
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("a - b = ");
+            result = a - b;
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("a / b = ");
+            result = a / b;
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("a % b = ");
+            result = a % b;
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("a + b + c = ");
+            result = a + b + c;
+            document.write(result);
+            document.write(linebreak);
+         
+            a = ++a;
+            document.write("++a = ");
+            result = ++a;
+            document.write(result);
+            document.write(linebreak);
+         
+            b = --b;
+            document.write("--b = ");
+            result = --b;
+            document.write(result);
+            document.write(linebreak);
+// a + b = 43
+// a - b = 23
+// a / b = 3.3
+// a % b = 3
+// a + b + c = 43Test
+// ++a = 35
+// --b = 8
+
+// Comparison Operators
+            var a = 10;
+            var b = 20;
+            var linebreak = "<br />";
+      
+            document.write("(a == b) => ");
+            result = (a == b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("(a < b) => ");
+            result = (a < b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("(a > b) => ");
+            result = (a > b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("(a != b) => ");
+            result = (a != b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("(a >= b) => ");
+            result = (a >= b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("(a <= b) => ");
+            result = (a <= b);
+            document.write(result);
+            document.write(linebreak);
+// (a == b) => false 
+// (a < b) => true 
+// (a > b) => false 
+// (a != b) => true 
+// (a >= b) => false 
+// a <= b) => true            
+
+// Logical Operators
+            var a = true;
+            var b = false;
+            var linebreak = "<br />";
+      
+            document.write("(a && b) => ");
+            result = (a && b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("(a || b) => ");
+            result = (a || b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("!(a && b) => ");
+            result = (!(a && b));
+            document.write(result);
+            document.write(linebreak);
+// (a && b) => false 
+// (a || b) => true 
+// !(a && b) => true
+
+// Bitwise Operators
+            var a = 2; // Bit presentation 10
+            var b = 3; // Bit presentation 11
+            var linebreak = "<br />";
+         
+            document.write("(a & b) => ");
+            result = (a & b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("(a | b) => ");
+            result = (a | b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("(a ^ b) => ");
+            result = (a ^ b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("(~b) => ");
+            result = (~b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("(a << b) => ");
+            result = (a << b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("(a >> b) => ");
+            result = (a >> b);
+            document.write(result);
+            document.write(linebreak);
+// (a & b) => 2 
+// (a | b) => 3 
+// (a ^ b) => 1 
+// (~b) => -4 
+// (a << b) => 16 
+// (a >> b) => 0
+
+// Assignment Operators
+            var a = 33;
+            var b = 10;
+            var linebreak = "<br />";
+         
+            document.write("Value of a => (a = b) => ");
+            result = (a = b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("Value of a => (a += b) => ");
+            result = (a += b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("Value of a => (a -= b) => ");
+            result = (a -= b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("Value of a => (a *= b) => ");
+            result = (a *= b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("Value of a => (a /= b) => ");
+            result = (a /= b);
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write("Value of a => (a %= b) => ");
+            result = (a %= b);
+            document.write(result);
+            document.write(linebreak);
+// Value of a => (a = b) => 10
+// Value of a => (a += b) => 20 
+// Value of a => (a -= b) => 10 
+// Value of a => (a *= b) => 100 
+// Value of a => (a /= b) => 10
+// Value of a => (a %= b) => 0
+
+// Miscellaneous Operators
+            var a = 10;
+            var b = 20;
+            var linebreak = "<br />";
+         
+            document.write ("((a > b) ? 100 : 200) => ");
+            result = (a > b) ? 100 : 200;
+            document.write(result);
+            document.write(linebreak);
+         
+            document.write ("((a < b) ? 100 : 200) => ");
+            result = (a < b) ? 100 : 200;
+            document.write(result);
+            document.write(linebreak);
+// ((a > b) ? 100 : 200) => 200 
+// ((a < b) ? 100 : 200) => 100
+
+// typeof Operators
+            var a = 10;
+            var b = "String";
+            var linebreak = "<br />";
+         
+            result = (typeof b == "string" ? "B is String" : "B is Numeric");
+            document.write("Result => ");
+            document.write(result);
+            document.write(linebreak);
+         
+            result = (typeof a == "string" ? "A is String" : "A is Numeric");
+            document.write("Result => ");
+            document.write(result);
+            document.write(linebreak);
+// Result => B is String 
+// Result => A is Numeric
+```
+
+## Decision Making
+
+```js
+// if else if
+            var book = "maths";
+            if( book == "history" ) {
+               document.write("<b>History Book</b>");
+            } else if( book == "maths" ) {
+               document.write("<b>Maths Book</b>");
+            } else if( book == "economics" ) {
+               document.write("<b>Economics Book</b>");
+            } else {
+               document.write("<b>Unknown Book</b>");
+            }
+// switch
+            var grade = 'A';
+            document.write("Entering switch block<br />");
+            switch (grade) {
+               case 'A': document.write("Good job<br />");
+               break;
+            
+               case 'B': document.write("Pretty good<br />");
+               break;
+            
+               case 'C': document.write("Passed<br />");
+               break;
+            
+               case 'D': document.write("Not so good<br />");
+               break;
+            
+               case 'F': document.write("Failed<br />");
+               break;
+            
+               default:  document.write("Unknown grade<br />")
+            }
+            document.write("Exiting switch block");
+// Entering switch block
+// Good job
+// Exiting switch block         
+```
+
+## Loops
+
+```js
+// while
+            var count = 0;
+            document.write("Starting Loop ");
+         
+            while (count < 10) {
+               document.write("Current Count : " + count + "<br />");
+               count++;
+            }
+         
+            document.write("Loop stopped!");
+// Starting Loop
+// Current Count : 0
+// Current Count : 1
+// Current Count : 2
+// Current Count : 3
+// Current Count : 4
+// Current Count : 5
+// Current Count : 6
+// Current Count : 7
+// Current Count : 8
+// Current Count : 9
+// Loop stopped!
+
+// do while
+            var count = 0;
+            
+            document.write("Starting Loop" + "<br />");
+            do {
+               document.write("Current Count : " + count + "<br />");
+               count++;
+            }
+            
+            while (count < 5);
+            document.write ("Loop stopped!");
+// Starting Loop
+// Current Count : 0 
+// Current Count : 1 
+// Current Count : 2 
+// Current Count : 3 
+// Current Count : 4
+// Loop Stopped!       
+
+// for 
+            var count;
+            document.write("Starting Loop" + "<br />");
+         
+            for(count = 0; count < 10; count++){
+               document.write("Current Count : " + count );
+               document.write("<br />");
+            }
+         
+            document.write("Loop stopped!");
+
+// for in
+            var aProperty;
+            document.write("Navigator Object Properties<br /> ");        
+            for (aProperty in navigator) {
+               document.write(aProperty);
+               document.write("<br />");
+            }
+            document.write ("Exiting from the loop!");
+```
+
 ## Javascript Runtime Architecture
 
 아래 그림의 회색 박스는 `v8` 와 같은 interpreter engine 이고 나머지는 `chrome` 과 같은 browser 라고 생각하자.
 
 ![](https://cdn-images-1.medium.com/max/800/1*4lHHyfEhVB0LnQ3HlhSs8g.png)
 
-## curly braces
+## Functions
+
+### curly braces
 
 코드가 실행된다.
 
@@ -136,7 +529,7 @@ var a = function(a, b) {
 }
 ```
 
-## parenthese
+### parenthese
 
 함수를 정의한다.
 
@@ -162,7 +555,7 @@ if (a = 5)
     console.log(a);
 ```
 
-## anonymous function
+### anonymous function
 
 ```js
 var a = function(a, b) {
@@ -170,7 +563,7 @@ var a = function(a, b) {
 }
 ```
 
-## named function
+### named function
 
 
 ```js
@@ -179,7 +572,7 @@ var a = function f(a, b) {
 }
 ```
 
-## closure
+### closure
 
 자신이 생성될때의 스코프에서 알 수 있었던 변수를 기억하는 함수
 
@@ -208,7 +601,7 @@ counterClosure.decrease();
 counterClosure.show(); // 0
 ```
 
-## IIFE(Immediately-invoked function expression)
+### IIFE(Immediately-invoked function expression)
 
 ```js
 (function(a, b) {
@@ -216,7 +609,7 @@ counterClosure.show(); // 0
 })(1, 2);
 ```
 
-## arrow function (ES6)
+### arrow function (ES6)
 
 ```js
 var a = (a, b) => a + b;
@@ -324,3 +717,155 @@ console.log('끝');
 ## task queue
 
 ## micro task
+
+## Cookies
+
+쿠키는 `Expires, Domain, Path, Secure, Name=Value` 와 같이 5가지로 구성되어 있다. 다음은 쿠키를 세팅하는 예이다.
+
+```js
+document.cookie = "key1 = value1;key2 = value2;expires = date";
+```
+
+다음은 쿠키에 고객이름을 세팅하는 예이다.
+
+```html
+<html>
+   <head>   
+      <script type = "text/javascript">
+         <!--
+            function WriteCookie() {
+               if( document.myform.customer.value == "" ) {
+                  alert("Enter some value!");
+                  return;
+               }
+               cookievalue = escape(document.myform.customer.value) + ";";
+               document.cookie = "name=" + cookievalue;
+               document.write ("Setting Cookies : " + "name=" + cookievalue );
+            }
+         //-->
+      </script>      
+   </head>
+   
+   <body>      
+      <form name = "myform" action = "">
+         Enter name: <input type = "text" name = "customer"/>
+         <input type = "button" value = "Set Cookie" onclick = "WriteCookie();"/>
+      </form>   
+   </body>
+</html>
+```
+
+다음은 쿠키를 읽어오는 예이다.
+
+```html
+<html>
+   <head>   
+      <script type = "text/javascript">
+         <!--
+            function ReadCookie() {
+               var allcookies = document.cookie;
+               document.write ("All Cookies : " + allcookies );
+               
+               // Get all the cookies pairs in an array
+               cookiearray = allcookies.split(';');
+               
+               // Now take key value pair out of this array
+               for(var i=0; i<cookiearray.length; i++) {
+                  name = cookiearray[i].split('=')[0];
+                  value = cookiearray[i].split('=')[1];
+                  document.write ("Key is : " + name + " and Value is : " + value);
+               }
+            }
+         //-->
+      </script>      
+   </head>
+   
+   <body>     
+      <form name = "myform" action = "">
+         <p> click the following button and see the result:</p>
+         <input type = "button" value = "Get Cookie" onclick = "ReadCookie()"/>
+      </form>      
+   </body>
+</html>
+```
+
+다음은 쿠키의 유효기간을 설정하는 에이다.
+
+```html
+<html>
+   <head>   
+      <script type = "text/javascript">
+         <!--
+            function WriteCookie() {
+               var now = new Date();
+               now.setMonth( now.getMonth() + 1 );
+               cookievalue = escape(document.myform.customer.value) + ";"
+               
+               document.cookie = "name=" + cookievalue;
+               document.cookie = "expires=" + now.toUTCString() + ";"
+               document.write ("Setting Cookies : " + "name=" + cookievalue );
+            }
+         //-->
+      </script>      
+   </head>
+   
+   <body>
+      <form name = "myform" action = "">
+         Enter name: <input type = "text" name = "customer"/>
+         <input type = "button" value = "Set Cookie" onclick = "WriteCookie()"/>
+      </form>      
+   </body>
+</html>
+```
+
+다음은 쿠키를 삭제하는 예이다. expires 를 현재시간을 설정한다.
+
+```html
+<html>
+   <head>   
+      <script type = "text/javascript">
+         <!--
+            function WriteCookie() {
+               var now = new Date();
+               now.setMonth( now.getMonth() - 1 );
+               cookievalue = escape(document.myform.customer.value) + ";"
+               
+               document.cookie = "name=" + cookievalue;
+               document.cookie = "expires=" + now.toUTCString() + ";"
+               document.write("Setting Cookies : " + "name=" + cookievalue );
+            }
+          //-->
+      </script>      
+   </head>
+   
+   <body>
+      <form name = "myform" action = "">
+         Enter name: <input type = "text" name = "customer"/>
+         <input type = "button" value = "Set Cookie" onclick = "WriteCookie()"/>
+      </form>      
+   </body>
+</html>
+```
+
+## Objects
+
+## Number
+
+## Boolean
+
+## Strings
+
+## Arrays
+
+## Date
+
+## Math
+
+## RegExp
+
+## HTML DOM
+
+다음은 DOM 의 구조를 표현한 그림이다.
+
+![](https://www.tutorialspoint.com/javascript/images/html-dom.jpg)
+
