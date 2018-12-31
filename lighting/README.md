@@ -1118,6 +1118,8 @@ shadow ray s1 은 광원으로 날아간다. 가는 도중 다른 오브젝트�
 
 * [GPU Ray Tracing in Unity  Part 1](http://blog.three-eyed-games.com/2018/05/03/gpu-ray-tracing-in-unity-part-1/)
   * [src](https://bitbucket.org/Daerst/gpu-ray-tracing-in-unity/src/Tutorial_Pt1/) 
+* [Peter Shirley mini books on ray tracing](https://drive.google.com/drive/u/0/folders/14yayBb9XiL16lmuhbYhhvea8mKUUK77W) 
+  * [src](https://github.com/ouj/safegi)
 
 # Path Tracing
 
