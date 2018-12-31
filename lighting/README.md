@@ -1,53 +1,49 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
-- [Learning Materials](#learning-materials)
+- [Materials](#materials)
 - [Fundamentals](#fundamentals)
-	- [Light](#light)
-	- [Eye](#eye)
-	- [조도와 휘도 (illuminance & luminance)](#%EC%A1%B0%EB%8F%84%EC%99%80-%ED%9C%98%EB%8F%84-illuminance-luminance)
-	- [빛의 감쇠 (attenuation)](#%EB%B9%9B%EC%9D%98-%EA%B0%90%EC%87%A0-attenuation)
-	- [광속](#%EA%B4%91%EC%86%8D)
-	- [광도](#%EA%B4%91%EB%8F%84)
-	- [조도](#%EC%A1%B0%EB%8F%84)
-	- [휘도](#%ED%9C%98%EB%8F%84)
-	- [BRDF, BTDF](#brdf-btdf)
-	- [Local Illumination & Global Illumination](#local-illumination-global-illumination)
-	- [굴절률(Refractive index)](#%EA%B5%B4%EC%A0%88%EB%A5%A0refractive-index)
-	- [Snell's law](#snells-law)
-	- [Fresnel Equation](#fresnel-equation)
+  - [Light](#light)
+  - [Eye](#eye)
+  - [조도와 휘도 (illuminance & luminance)](#%EC%A1%B0%EB%8F%84%EC%99%80-%ED%9C%98%EB%8F%84-illuminance--luminance)
+  - [빛의 감쇠 (attenuation)](#%EB%B9%9B%EC%9D%98-%EA%B0%90%EC%87%A0-attenuation)
+  - [광속](#%EA%B4%91%EC%86%8D)
+  - [광도](#%EA%B4%91%EB%8F%84)
+  - [조도](#%EC%A1%B0%EB%8F%84)
+  - [휘도](#%ED%9C%98%EB%8F%84)
+  - [BRDF, BTDF](#brdf-btdf)
+  - [Local Illumination & Global Illumination](#local-illumination--global-illumination)
+  - [굴절률(Refractive index)](#%EA%B5%B4%EC%A0%88%EB%A5%A0refractive-index)
+  - [Snell's law](#snells-law)
+  - [Fresnel Equation](#fresnel-equation)
 - [Lambert's cosine law](#lamberts-cosine-law)
 - [Lambertian Reflectance Model](#lambertian-reflectance-model)
-	- [WebGL](#webgl)
-	- [Unity3d shaderlab](#unity3d-shaderlab)
+  - [WebGL](#webgl)
+  - [Unity3d shaderlab](#unity3d-shaderlab)
 - [Half Lambert Diffuse](#half-lambert-diffuse)
-	- [WebGL](#webgl)
-	- [Unity3d shaderlab](#unity3d-shaderlab)
-- [Phong Reflectance  Model](#phong-reflectance-model)
+  - [WebGL](#webgl-1)
+  - [Unity3d shaderlab](#unity3d-shaderlab-1)
+- [Phong Reflectance Model](#phong-reflectance-model)
 - [Gouraud shading](#gouraud-shading)
-	- [WebGL](#webgl)
-	- [Unity3d shaderlab](#unity3d-shaderlab)
+  - [WebGL](#webgl-2)
+  - [Unity3d shaderlab](#unity3d-shaderlab-2)
 - [Phong Shading](#phong-shading)
-	- [WebGL](#webgl)
-	- [unity3d shaderlab](#unity3d-shaderlab)
+  - [WebGL](#webgl-3)
+  - [unity3d shaderlab](#unity3d-shaderlab)
 - [Rim Lighting](#rim-lighting)
-	- [WebGL](#webgl)
-	- [unity3d shaderlab](#unity3d-shaderlab)
+  - [WebGL](#webgl-4)
+  - [unity3d shaderlab](#unity3d-shaderlab-1)
 - [Cook-Torrance Model](#cook-torrance-model)
-	- [WebGL](#webgl)
-	- [unity3d shader lab](#unity3d-shader-lab)
+  - [WebGL](#webgl-5)
+  - [unity3d shader lab](#unity3d-shader-lab)
 - [Oren-Nayar Model](#oren-nayar-model)
-	- [WebGL](#webgl)
-	- [unity3d shader lab](#unity3d-shader-lab)
+  - [WebGL](#webgl-6)
+  - [unity3d shader lab](#unity3d-shader-lab-1)
 - [Physically Based Rendering](#physically-based-rendering)
 - [Ray Tracing](#ray-tracing)
+- [Path Tracing](#path-tracing)
 - [Radiosity](#radiosity)
+- [Ray Marching](#ray-marching)
 - [LPV (Light Propagation Volume)](#lpv-light-propagation-volume)
 - [SVOGI (Sparse Voxel Octree Global Illumination)](#svogi-sparse-voxel-octree-global-illumination)
-
-<!-- markdown-toc end -->
-
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -1104,34 +1100,38 @@ Shader "Custom/OrenNayar" {
 
 ![](img/ray_tracing_1.png)
 
-view frustumn은 camera에 수렴하는 투영선(projection line)의 집합이다.
-투영선의 개수는 스크린 공간의 뷰포트 해상도와 같다. 투영선 하나가 픽셀
-하나의 색상을 결정한다.
+camera 에서 ray 가 뷰포트의 해상도 만큼 발산한다고 해보자. 하나의 ray 가 뷰포트의 하나의 픽셀의 색상을 결정한다. 위의 그림에서 뷰포트의 해상도는 8x6 이다. ray 의 개수는 48 개이다.
 
 1차 광선(primary ray)가 투영선을 타고 카메라로 부터 오브젝트로
-발사된다.  이후 오브젝트와 충돌하면 2차 광선(secondary ray)에 해당하는
+발사된다. 이후 오브젝트와 점 p1 에서 충돌하면 2차 광선(secondary ray)에 해당하는
 그림자 광선(shadow ray), 반사 광선(reflection ray), 굴절
-광선(refraction ray)가 발사된다.
+광선(refraction ray)가 발산된다.
 
 ![](img/ray_tracing_2.png)
 
-충돌점을 p1이라고 하자 그림자 광선 s1은 광원으로 날아간다. 
-가는 도중 다른 오브젝트와 충돌하면 p1은 광원의 직접적인 영향권에 있지
-않고 그림자 영역에 있다는 의미이다. 만약 s1이 광원에 도달하면
-이 광원에서 p1에 입사하는 빛을 이용하여 p1의 직접 조명 색상을 결정한다.
+n1 은 점 p1 의 normal vector 이다. r1 은 reflection ray 에 해당한다. primary ray 와 충돌한 물체가 불투명하지 않는 녀석이면 refraction ray 인 t1 이 발산한다. 
 
-굴절광선은 p1이 불투명하지 않을때 생성된다. 
+shadow ray s1 은 광원으로 날아간다. 가는 도중 다른 오브젝트와 충돌하면 p1 은 광원에 영향을 받지 않는 그림자 영역에 있다는 의미이다. p1 의 색을 결정할 때 광원의 값을 계산할 이유가 없다. 만약 s1 이 광원에 도달하면
+이 광원에서 p1 에 입사하는 빛을 이용하여 p1 의 직접 조명 색상을 결정한다. reflection ray 와 refraction ray 는 indirect light 를 계산하는 목적으로 발사된다. 
 
-반사광선과 굴절광선은 간접 조명을 계산하는 목적으로 발사된다.  광선
-추적법(ray tracing)은 재귀적인 알고리즘이다. r1, t1은 발사되고 나서
-1차 광선(primary ray)처럼 취급된다. 예를 들어 r1이 불투명한 물체의
-p2와 충돌한다면 반사광선r2와 그림자광선 s2가 만들어지고 t1이 반투명한
-물체의 p3와 충돌한다면 반사광선 r3, 그림자광선 s3, 굴절광선 t3가
-만들어 진다.
+광선 추적법(ray tracing)은 재귀적인 알고리즘이다. r1, t1 은 발사되고 나서 1차 광선(primary ray)처럼 취급된다. 예를 들어 r1 이 불투명한 물체의 p2 와 충돌한다면 반사광선 r2 와 그림자광선 s2 가 만들어지고 t1 이 반투명한 물체의 p3 와 충돌한다면 반사광선 r3, 그림자광선 s3, 굴절광선 t3 가 만들어 진다.
+
+* [GPU Ray Tracing in Unity  Part 1](http://blog.three-eyed-games.com/2018/05/03/gpu-ray-tracing-in-unity-part-1/)
+  * [src](https://bitbucket.org/Daerst/gpu-ray-tracing-in-unity/src/Tutorial_Pt1/) 
+
+# Path Tracing
+
+* [GPU Path Tracing in Unity  Part 2](http://blog.three-eyed-games.com/2018/05/12/gpu-path-tracing-in-unity-part-2/)
+  * [src](https://github.com/aras-p/ToyPathTracer)
 
 # Radiosity
 
 ...
+
+# Ray Marching
+
+* [Volumetric Rendering: Raymarching in Unity](https://www.alanzucconi.com/2016/07/01/raymarching/)
+* [Raymarching Distance Fields: Concepts and Implementation in Unity](http://flafla2.github.io/2016/10/01/raymarching.html)
 
 # LPV (Light Propagation Volume)
 
