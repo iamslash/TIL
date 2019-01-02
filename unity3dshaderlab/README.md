@@ -6,6 +6,13 @@
 - [Vertex, fragment shader tutorial](#vertex-fragment-shader-tutorial)
 - [Surface Shader Tutorial](#surface-shader-tutorial)
 - [Unity Built-in Shaders](#unity-built-in-shaders)
+- [Built-in Shader Variables](#built-in-shader-variables)
+  - [Transformations](#transformations)
+  - [Camera and screen](#camera-and-screen)
+  - [Time](#time)
+  - [Lighting](#lighting)
+  - [Fog and Ambient](#fog-and-ambient)
+  - [Various](#various)
 - [Usage](#usage)
   - [IBL (image based lighting)](#ibl-image-based-lighting)
   - [Irradiance Map](#irradiance-map)
@@ -65,6 +72,7 @@ time에 vertex, fragment shader로 변환된다.
 - [Unity 2018 Shaders and Effects Cookbook - Third Edition](https://www.alanzucconi.com/books/)
   - unity3d shader를 가장 잘 설명한 책이다. 
   - [src](https://www.packtpub.com/books/content/support/33527)
+  - [blog](https://www.alanzucconi.com/)
 - [C# and Shader Tutorials for the Unity Engine](https://catlikecoding.com/unity/tutorials/rendering/)
 - [writing shaders in unity](http://www.jordanstevenstechart.com/writing-shaders-in-unity)
   - unity3d shaderlab의 기본기를 잘 정리한 블로그이다.
