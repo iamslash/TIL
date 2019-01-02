@@ -48,7 +48,7 @@
 
 # Abstract
 
-3d그래픽의 라이팅에 대해 기술한다.
+라이트의 기본개념과 로컬일루미네이션 그리고 글로벌 일루미네이션까지 정리한다.
 
 # Materials
 
@@ -1096,7 +1096,15 @@ Shader "Custom/OrenNayar" {
 
 [PBR](/pbr/README.md)
 
+# Ray Casting
+
+Ray 와 Surface 의 충돌점을 이용하여 컴퓨터 그래픽스의 다양한 문제점들을 해결하는 방법을 말한다.
+
+[ray casting @ wikipedia](https://en.wikipedia.org/wiki/Ray_casting)
+
 # Ray Tracing
+
+Ray 들을 재귀적으로 연산하여 Global Illumination 을 표현한 방법이다. Ray Casting 는 primary ray 만 취급하지만 Ray Tracing 은 primary ray 에서 생성되는 다양한 ray 들을 취급한다.
 
 ![](img/ray_tracing_1.png)
 
@@ -1116,29 +1124,33 @@ shadow ray s1 은 광원으로 날아간다. 가는 도중 다른 오브젝트�
 
 광선 추적법(ray tracing)은 재귀적인 알고리즘이다. r1, t1 은 발사되고 나서 1차 광선(primary ray)처럼 취급된다. 예를 들어 r1 이 불투명한 물체의 p2 와 충돌한다면 반사광선 r2 와 그림자광선 s2 가 만들어지고 t1 이 반투명한 물체의 p3 와 충돌한다면 반사광선 r3, 그림자광선 s3, 굴절광선 t3 가 만들어 진다.
 
-* [GPU Ray Tracing in Unity  Part 1](http://blog.three-eyed-games.com/2018/05/03/gpu-ray-tracing-in-unity-part-1/)
+* [GPU Ray Tracing in Unity @ Part 1](http://blog.three-eyed-games.com/2018/05/03/gpu-ray-tracing-in-unity-part-1/)
   * [src](https://bitbucket.org/Daerst/gpu-ray-tracing-in-unity/src/Tutorial_Pt1/) 
 * [Peter Shirley mini books on ray tracing](https://drive.google.com/drive/u/0/folders/14yayBb9XiL16lmuhbYhhvea8mKUUK77W) 
   * [src](https://github.com/ouj/safegi)
 
 # Path Tracing
 
-* [GPU Path Tracing in Unity  Part 2](http://blog.three-eyed-games.com/2018/05/12/gpu-path-tracing-in-unity-part-2/)
+* [GPU Path Tracing in Unity @ Part 2](http://blog.three-eyed-games.com/2018/05/12/gpu-path-tracing-in-unity-part-2/)
   * [src](https://github.com/aras-p/ToyPathTracer)
-
-# Radiosity
-
-...
 
 # Ray Marching
 
+* [Ray Marching for Dummies! @ youtube](https://www.youtube.com/watch?v=PGtv-dBi2wE)
+  * ray marching 을 shadertoy 를 이용하여 쉽게 설명함
 * [Volumetric Rendering: Raymarching in Unity](https://www.alanzucconi.com/2016/07/01/raymarching/)
 * [Raymarching Distance Fields: Concepts and Implementation in Unity](http://flafla2.github.io/2016/10/01/raymarching.html)
 
+# Radiosity
+
+* [라디오시티(radiosity) 란? 래디오시티 @ tistory](http://iskim3068.tistory.com/80)
+  * 한글 블로그
+
 # LPV (Light Propagation Volume)
 
-...
+* [Light Propagation Volumes in
+CryEngine 3](http://advances.realtimerendering.com/s2009/Light_Propagation_Volumes.pdf)
 
-# SVOGI (Sparse Voxel Octree Global Illumination)
+# SVO (Sparse Voxel Octree)
 
-...
+* [Voxel-based Global Illumination](https://turanszkij.wordpress.com/2017/08/30/voxel-based-global-illumination/)
