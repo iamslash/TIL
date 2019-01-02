@@ -2027,6 +2027,34 @@ ENDCG
 
 `Normal-Diffuse` 와 비교해 보자. `_Color` 를 곱하는 연산을 하지 않는다. `noforwardadd` 가 사용되었다.
 
+# Built-in Shader Variables
+
+* [Built-in Shader Variables @ unity](https://docs.unity3d.com/Manual/SL-UnityShaderVariables.html)
+
+## Transformations
+
+| Name |	Value |
+|:-----|:---------|
+| UNITY_MATRIX_MVP | Current model * view * projection matrix. |
+|UNITY_MATRIX_MV|	Current model * view matrix. |
+|UNITY_MATRIX_V|	Current view matrix. |
+|UNITY_MATRIX_P	|Current projection matrix. |
+|UNITY_MATRIX_VP|	Current view * projection matrix. |
+|UNITY_MATRIX_T_MV|	Transpose of model * view matrix. |
+|UNITY_MATRIX_IT_MV|	Inverse transpose of model * view matrix. |
+|unity_ObjectToWorld|	Current model matrix. |
+|unity_WorldToObject|	Inverse of current world matrix. |
+
+## Camera and screen
+
+## Time
+
+## Lighting
+
+## Fog and Ambient
+
+## Various
+
 # Usage
 
 - unity3d 에서 shader는 unity3d shader lab과 cg를 이용해서 제작한다.
@@ -2345,7 +2373,7 @@ s = \sum_{i=0}^{n}\text{intensity}_\text{light i} \times
 
 ![](specular_lighting_equation.png)
 
-```
+```c
 float3 SpecularBlinnPhong(float3 normalDir, float3 lightDir, float3 worldSpaceViewDir, float3 specularColor, float specularFactor, float attenuation, float specularPower)
 {
 	float3 halfwayDir = normalize(lightDir + worldSpaceViewDir);
@@ -2400,7 +2428,7 @@ a = \begin{matrix}
 
 ![](ambient_lighting_equation.png)
 
-```
+```c
 	Properties 
 	{
         ...
