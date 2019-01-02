@@ -38,12 +38,13 @@
   - [WebGL](#webgl-6)
   - [unity3d shader lab](#unity3d-shader-lab-1)
 - [Physically Based Rendering](#physically-based-rendering)
+- [Ray Casting](#ray-casting)
 - [Ray Tracing](#ray-tracing)
 - [Path Tracing](#path-tracing)
-- [Radiosity](#radiosity)
 - [Ray Marching](#ray-marching)
+- [Radiosity](#radiosity)
 - [LPV (Light Propagation Volume)](#lpv-light-propagation-volume)
-- [SVOGI (Sparse Voxel Octree Global Illumination)](#svogi-sparse-voxel-octree-global-illumination)
+- [SVO (Sparse Voxel Octree)](#svo-sparse-voxel-octree)
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -586,21 +587,19 @@ I_{S} &= I_{L}C(max(0, R \cdot V))^{\alpha}\\
 \end{align*}
 ```
 
-위의 식에서 R을 구하는데 내적연산을 사용한다. 내적은 계산 비용이 많기 때문에
-R대신 H를 이용해서 같은 효과를 얻을 수 있다. 이것을 Blinn-Phong reflection model
-이라고 한다.
+`L, N, R, V` 등은 모두 단위벡터이다. 위의 식에서 `R` 을 구하는데 내적연산을 사용한다. 내적은 계산 비용이 많기 때문에 `R` 대신 `H` 를 내적연산없이 구하고 `dot(R, V)` 대신 `dot(H, N)` 를 사용하여 같은 효과를 얻을 수 있다. 이것을 Blinn-Phong reflection model 이라고 한다.
 
 ![](img/blinn_phong_reflectance_model_eq.png)
 
 ```latex
-H = \frace{L + V}{|L+V|}
+H = \frac{L + V}{|L+V|}
 ```
 
 ![](img\File-Blinn_phong_comparison.jpg)
 
 # Gouraud shading
 
-phong reflectance model을 vertex shader에 적용한 것
+phong reflectance model 을 vertex shader 에 적용한 것
 
 ## WebGL
 
@@ -668,7 +667,7 @@ Shader "Custom/Gouraud" {
 
 # Phong Shading
 
-phong reflectance model을 fragment shader에 적용한 것
+phong reflectance model 을 fragment shader 에 적용한 것
 
 ## WebGL
 
@@ -813,12 +812,12 @@ Shader "Custom/Rim" {
 # Cook-Torrance Model
 
 다음은 쿡토런스(cook-torrance) 모델을 표현하는 공식이다.
-L은 입사광 벡터, V는 시선벡터, H는 L과 V의 하프벡터이다.
-D(H)는 법선분포함수(normal distribution function, NDF)이다.
-하이라이트 형태로 반영된다. NDF를 사용하면 거칠기(roughness)라는
+L 은 입사광 벡터, V 는 시선벡터, H 는 L 과 V 의 하프벡터이다.
+D(H) 는 법선분포함수(normal distribution function, NDF)이다.
+하이라이트 형태로 반영된다. NDF 를 사용하면 거칠기(roughness)라는
 매개변수로 머터리얼의 성질을 나타낼 수 있다.
-F(V,H)는 Fresnel effect를 표현한다. 하이라이트 색에 영향을 미친다.
-G(L,V,H)는 기하감쇠(geometric attenuation)이다. 미세면의
+F(V,H) 는 Fresnel effect를 표현한다. 하이라이트 색에 영향을 미친다.
+G(L,V,H) 는 기하감쇠(geometric attenuation)이다. 미세면의
 요철이 시선/입사광/반사광 벡터를 도중에 가려서 생기는 그림자의 영향을
 나타내는 항이다.
 
@@ -828,8 +827,8 @@ G(L,V,H)는 기하감쇠(geometric attenuation)이다. 미세면의
 I_{s} = \frac {D(H)F(V, H)G(L, V, H)} {4(N \cdot L)(N \cdot V)}
 ```
 
-D(H)는 다음과 같이 GGX(trowbridge-Reitz) 알고리즘을 NDF로 이용했다.
-NDF는 그밖에도 블린퐁이나 베크만(Beckmann)을 이용하기도 한다.
+D(H) 는 다음과 같이 GGX(trowbridge-Reitz) 알고리즘을 NDF 로 이용했다.
+NDF 는 그밖에도 블린퐁이나 베크만(Beckmann)을 이용하기도 한다.
 
 ![](img/cook_torrance_ggx_eq.png)
 
@@ -840,7 +839,7 @@ D_{ggx}(H) &= \frac {\alpha^{2}} {\pi((N \cdot H)^{2}(\alpha^{2}-1)+1)^{2}} \\
 \end{align*}
 ```
 
-F(V,H)는 다음과 같이 Schlick's approximation을 이용했다.
+F(V,H) 는 다음과 같이 Schlick's approximation 을 이용했다.
 
 ![](img/cook_torrance_schlick_eq.png)
 
@@ -848,9 +847,7 @@ F(V,H)는 다음과 같이 Schlick's approximation을 이용했다.
 F_{schilick}(V,H) = F_{0} + (1 - F_{0})(1 - V \cdot H)^{5}
 ```
 
-G(L,V,H)는 다음과 같이 cook-torrance가 1982년에 발표한 논문에 실린
-식을 이용했다.
-
+G(L,V,H) 는 다음과 같이 cook-torrance 가 1982년에 발표한 논문에 실린 식을 이용했다.
 
 ![](img/cook_torrance_geometry_att_eq.png)
 
@@ -858,7 +855,7 @@ G(L,V,H)는 다음과 같이 cook-torrance가 1982년에 발표한 논문에 실
 G_{cook-torrance}(L,V,H) = min(1, \frac {2 (N \cdot H)(N \cdot V)} {V \cdot H}, \frac {2(N \cdot H)(N \cdot L)} {V \cdot H})
 ```
 
-마지막에 0.000001을 더해서 0으로 나누기를 방지하자.
+마지막에 `0.000001` 을 더해서 `0` 으로 나누기를 방지하자.
 
 ## WebGL
 
@@ -948,7 +945,7 @@ Shader "Custom/CookTorrance" {
 
 # Oren-Nayar Model
 
-Michael Oren 과 Shree K. Nayar 이 개발한 lighting model이다. 표면의 거칠기(roughness)가 반영된 diffuse reflection을 표현한다.
+Michael Oren 과 Shree K. Nayar 이 개발한 lighting model 이다. 표면의 거칠기(roughness)가 반영된 diffuse reflection 을 표현한다.
 
 [oren-nayar @ wikipedia](https://en.wikipedia.org/wiki/Oren%E2%80%93Nayar_reflectance_model)
 
