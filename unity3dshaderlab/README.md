@@ -31,28 +31,26 @@
 
 # Abstract
 
-unity3d는 shader lab이라는 language로 shader를 표현한다. unity3d
-shader lab은 fixed function과 programmable pipeline으로 표현할 수
+unity3d는 shader lab 이라는 language 로 shader 를 표현한다. unity3d
+shader lab 은 fixed function 과 programmable pipeline 으로 표현할 수
 있다.
 
-programmable pipeline에는 vertex, fragment, surface shader가 있다.
-shader lab은 여러개의 subshader로 구성되어 있다. subshader는 여러개의
-pass로 구성될 수 있다. subshader는 하드웨어의 성능이 열악한 순서대로
+programmable pipeline 에는 vertex, fragment, surface shader 가 있다.
+shader lab 은 여러개의 subshader 로 구성되어 있다. subshader 는 여러개의
+pass 로 구성될 수 있다. subshader 는 하드웨어의 성능이 열악한 순서대로
 기록한다. 
 
-shader lab은 중간에 cg를 사용할 것을 추천한다. cg는 nvidia가
-microsoft와 함께 개발한 shading language이다. directx, opengl을
-지원한다. 그래서 unity3d shader lab이 cg사용을 권고하는 것
-같다. 하지만 2012년 이후 개발이 중단됬다. directx의 hlsl, opengl의
-glsl은 사용할 일이 없을까???
+shader lab 은 중간에 cg 를 사용할 것을 추천한다. cg 는 nvidia 가
+microsoft 와 함께 개발한 shading language 이다. directx, opengl 을
+지원한다. 그래서 unity3d shader lab 이 cg 사용을 권고하는 것
+같다. 하지만 2012년 이후 개발이 중단됬다. directx 의 hlsl, opengl 의
+glsl 은 사용할 일이 없을까???
 
-vertex shader는 vertex를 기준으로 연산한다. fragment shader는 pixel을
-기준으로 연산한다. fragment shader가 vertext shader보다 더 많이
-호출된다.
+vertex shader 는 vertex 를 기준으로 연산한다. fragment shader 는 pixel 을
+기준으로 연산한다.
 
-suface shader로 작성하면 vertex, fragment shader로 코드가 변환되고
-컴파일된다.  fixed function shader로 작성하면 내부적으로 shader import
-time에 vertex, fragment shader로 변환된다.
+suface shader 로 작성하면 vertex, fragment shader 로 코드가 변환되고
+컴파일된다. fixed function shader 로 작성하면 내부적으로 shader import time 에 vertex, fragment shader 로 변환된다.
 
 # Materials
 
@@ -63,19 +61,19 @@ time에 vertex, fragment shader로 변환된다.
 - [surface shader tutorial](https://docs.unity3d.com/Manual/SL-SurfaceShaderExamples.html)
 - [Unity Built-in Shaders](http://unity3d.com/unity/download/archive)
   - Unity 에 포함된 쉐이더들이다.
-- [unity cg programming](https://en.wikibooks.org/wiki/Cg_Programming/Unity)
-  - 여러가지 예제들과 이론들이 풍부하다.
-- [shaders @ unitywiki](http://wiki.unity3d.com/index.php/Shaders)
-  - 다양한 shader 예제가 가득하다.
-- [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
-  - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
 - [Unity 2018 Shaders and Effects Cookbook - Third Edition](https://www.alanzucconi.com/books/)
   - unity3d shader를 가장 잘 설명한 책이다. 
   - [src](https://www.packtpub.com/books/content/support/33527)
   - [blog](https://www.alanzucconi.com/)
+- [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
+  - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
 - [C# and Shader Tutorials for the Unity Engine](https://catlikecoding.com/unity/tutorials/rendering/)
 - [writing shaders in unity](http://www.jordanstevenstechart.com/writing-shaders-in-unity)
   - unity3d shaderlab의 기본기를 잘 정리한 블로그이다.
+- [unity cg programming](https://en.wikibooks.org/wiki/Cg_Programming/Unity)
+  - 여러가지 예제들과 이론들이 풍부하다.
+- [shaders @ unitywiki](http://wiki.unity3d.com/index.php/Shaders)
+  - 다양한 shader 예제가 가득하다.
 - [a gentle introduction to shaders in unity3d](http://www.alanzucconi.com/2015/06/10/a-gentle-introduction-to-shaders-in-unity3d/)
   - [Unity 5.x Shaders and Effects Cookbook](https://books.google.co.kr/books?id=-llLDAAAQBAJ&printsec=frontcover&dq=unity3d+5.x+shader+cook+book&hl=ko&sa=X&redir_esc=y#v=onepage&q=unity3d%205.x%20shader%20cook%20book&f=false) 저자 블로그이다.
   - PBR을 쉽게 이해할 수 있었다. PBR은 Lambertian처럼 lighting model중
