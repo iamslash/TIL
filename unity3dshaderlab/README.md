@@ -21,12 +21,11 @@
   - [Image based Fresnel](#image-based-fresnel)
   - [shadow mapping](#shadow-mapping)
   - [BRDF (bidirectional reflectance distribution function)](#brdf-bidirectional-reflectance-distribution-function)
-  - [BRDF Anisotropy](#brdf-anisotropy)
 - [Snippets](#snippets)
   - [Outline](#outline)
+  - [holographic](#holographic)
   - [rimlight](#rimlight)
   - [ramp](#ramp)
-
 -------------------------------------------------------------------------------
 
 # Abstract
