@@ -2529,13 +2529,20 @@ a = \begin{matrix}
 
 ## Shadow mapping
 
-빛이 표면을 비추고 있을 때 그림자는 만들어진다. 빛이 바라보는 scene 을 렌더링해보자. 이때 빛이 directional light 이면 orthographic frustumn 이 만들어지고 point light 이면 perspective frustumn 이 만들어진다. 렌더링된 scene 은 depth map 에 저장된다. 이것을 shadow map 이라고 하자.
+빛이 표면을 비추고 있을 때 그림자는 만들어진다. 빛이 바라보는 scene 을 렌더링해보자. 이때 빛이 directional light 이면 orthographic frustumn 이 만들어지고 point light 이면 perspective frustumn 이 만들어진다. 렌더링된 scene 은 depth map 에 저장된다. 이것을 shadow map 이라고 하자. 
 
-이제 camera 가 바라보는 scene 을 렌더링해보자. 픽셀하나를 렌더링할 때 그 shadow map 과 비교해서 그림자 영역에 해당하는지 조사하고 그림자 영역에 해당된다면 어둡게 하자.
+이제 camera 가 바라보는 scene 을 렌더링해보자. 픽셀하나를 렌더링할 때 그 shadow map 과 비교해서 그림자 영역에 해당하는지 조사하고 그림자 영역에 해당된다면 어둡게 하자. 이때 앞서 언급한 픽셀의 world position 을 shadow map 의 texture position 으로 변환 하는 것이 중요하다. 
+
+light 의 입장에서 projection space 의 x, y 를 w 로 나누면 clip space 의 coordinates 가 된다. NDC 의 성질에 따라 x/w, y/w 의 범위는 `[-1, 1]` 이다. 그러나 shadow map 의 x, y 의 범위는 `[0, 1]` 이다. clip space coordinates 의 x, y 를 texture space coordinates 의 u, v 로 매핑하기 위해서는 다음 공식을 이용해야 한다.
+
+```
+u = (x/w + 1) * 0.5
+v = (x/y + 1) * 0.5
+```
 
 shadow map 은 도대체 몇장이 필요한 걸까???
 
-다음은 shadow mapping 을 unity 를 이용하여 구현한 것이다.
+다음은 camera 가 scene 을 렌더링할 때 특정 fragment 의 world space position 을 shadow map 의 texture space position 으로 변환 하는 함수를 구현한 것이다.
 
 ```c
 ```
