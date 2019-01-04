@@ -19,7 +19,7 @@
   - [Image based Relection](#image-based-relection)
   - [Image based Refraction](#image-based-refraction)
   - [Image based Fresnel](#image-based-fresnel)
-  - [shadow mapping](#shadow-mapping)
+  - [Shadow mapping](#shadow-mapping)
   - [BRDF (bidirectional reflectance distribution function)](#brdf-bidirectional-reflectance-distribution-function)
 - [Snippets](#snippets)
   - [Outline](#outline)
@@ -2527,7 +2527,18 @@ a = \begin{matrix}
 
 ## Image based Fresnel
 
-## shadow mapping
+## Shadow mapping
+
+빛이 표면을 비추고 있을 때 그림자는 만들어진다. 빛이 바라보는 scene 을 렌더링해보자. 이때 빛이 directional light 이면 orthographic frustumn 이 만들어지고 point light 이면 perspective frustumn 이 만들어진다. 렌더링된 scene 은 depth map 에 저장된다. 이것을 shadow map 이라고 하자.
+
+이제 camera 가 바라보는 scene 을 렌더링해보자. 픽셀하나를 렌더링할 때 그 shadow map 과 비교해서 그림자 영역에 해당하는지 조사하고 그림자 영역에 해당된다면 어둡게 하자.
+
+shadow map 은 도대체 몇장이 필요한 걸까???
+
+다음은 shadow mapping 을 unity 를 이용하여 구현한 것이다.
+
+```c
+```
 
 ## BRDF (bidirectional reflectance distribution function)
 
