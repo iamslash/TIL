@@ -14,6 +14,20 @@
   - [Fog and Ambient](#fog-and-ambient)
   - [Various](#various)
 - [Usages](#usages)
+  - [Unity Shader Lab](#unity-shader-lab)
+  - [Barebones Shader](#barebones-shader)
+  - [Model View Projection Matrix](#model-view-projection-matrix)
+  - [Depth Sorting, Z Sorting](#depth-sorting-z-sorting)
+  - [Subshader Tags](#subshader-tags)
+  - [Blending](#blending)
+  - [Texture Mapping](#texture-mapping)
+  - [Normalmap Shader](#normalmap-shader)
+  - [Outline Shader](#outline-shader)
+  - [Multi Variant Shader](#multi-variant-shader)
+  - [Basic Lighting Model and Rendering Path](#basic-lighting-model-and-rendering-path)
+  - [Diffuse Reflection](#diffuse-reflection)
+  - [Specular Reflection](#specular-reflection)
+  - [Ambient Reflection](#ambient-reflection)
   - [IBL (image based lighting)](#ibl-image-based-lighting)
   - [Irradiance Map](#irradiance-map)
   - [Image based Relection](#image-based-relection)
@@ -2104,6 +2118,8 @@ ENDCG
 
 # Usages
 
+## Unity Shader Lab
+
 - unity3d 에서 shader는 unity3d shader lab과 cg를 이용해서 제작한다.
   shader lab에서 cg를 이용하는 방식이다. cg는 nvidia가 주도로 제작한
   shading language이다. directx와 opengl이 지원한다.
@@ -2121,6 +2137,8 @@ float4 diagonal = matrix_m00_m11_m22_m33;
 float4 firstrow = matrix[0];
 float4 firstrow = matrix_m00_m01_m02_m03;
 ```
+
+## Barebones Shader
 
 - shader lab의 기본 구조는 다음과 같다. 아럐 코드에서 POSITION,
   SV_POSITION, COLOR과 같은 것들을 shader semantics라고 한다.  shader
@@ -2169,6 +2187,8 @@ Shader "Custom/skeleton"
 }
 ```
 
+## Model View Projection Matrix
+
 - 두가지 coordinate system을 주목하자. cartesian coordinate system과 
   homogeneous coordinate system이다. homogeneous coordinate system은 
   cartesian coordinate system에 matrix 연산을 위해 한개의 포지션을 추가한 것이다. 
@@ -2180,11 +2200,17 @@ Shader "Custom/skeleton"
   이것을 view matrix와 곱하면 camera coordinate space에서의 position을 얻을 수 있다.
   앞서 얻은 결과를 projection matrix와 곱하면 projection coordinate space에서의
   position을 얻을 수 있다.
+
+## Depth Sorting, Z Sorting
+
 - unity3d는 render queue그리고 depth sorting을 통해 화면에 순서대로 그려진다.
   render queue값이 작은 순서 대로 그려지고 render queue값이 같다면 
   카메라에서 멀리 떨어진 순서 즉 depth값이 큰 순서대로 그려진다.
   이때 color buffer와 똑같은 픽셀수의 depth buffer에 depth값이 기록된다.
   depth buffer는 shader lab에서 접근하여 다양하게 활용할 수 있다.
+
+## Subshader Tags
+
 - sub-shader 와 pass는 tags를 가질 수 있다. tags는 key, value의 짝이 모여있는 형태이다.
   구분자는 공백이라는 점이 특이하다. tags는 선언한 위치에 따라 scope이 적용된다.
   pass tags는 선언된 pass에서만 유효하고 subshader tags는 선언된
@@ -2192,9 +2218,15 @@ Shader "Custom/skeleton"
   IgnoreProjector는 Projector component의 적용 여부를 설정할 수 있고
   RenderType는 Camera.RenderWithShader 혹은 Camera.SetReplacementShader
   의 적용 여부를 설정 할 수 있다.
+
+## Blending  
+
 - shader lab은 Blend command를 통해 blending할 수 있다. src prefix는 지금
   그릴 오브젝트의 픽셀을 나타내고 dst prefix는 이미 그려진 color buffer의 픽셀을
   의미한다.
+
+## Texture Mapping
+
 - 3d max와 같은 프로그램에서 제작된 *.fbx는 특정 오브젝트의 vertex position,
   vertex normal, vertex color, uv position등을 포함한다. unity3d는 *.fbx
   를 import하면 fragment shader단계에서 보간된 uv position을 이용하여 
@@ -2227,6 +2259,9 @@ Shader "Custom/skeleton"
 				return o;
 			}
 ```
+
+## Normalmap Shader
+
 - normal map은 object space normal map, tagent space normal map과 같이
   두가지 종류가 있다. object space normal map은 object의 pivot을
   기준으로 vertex의 단위 normal vector를 texture에 저장한 것이다.
@@ -2308,8 +2343,13 @@ Shader "Custom/skeleton"
 			}
 ```
 
+## Outline Shader
+
 - outline shader는 특정 object의 scale를 늘리고 
   ZWrite Off, Cull Front 를 통해 구현한다.
+
+## Multi Variant Shader
+
 - multi variant shader는 properties의 KeywordEnum과 
   #pragma multi_compile 혹은 #pragma shader_feature directive 
   에 의해 이루어진다. multi_compile은 모든 variant가 만들어지지만 
@@ -2328,6 +2368,8 @@ Shader "Custom/skeleton"
 			#pragma fragment frag
 			#pragma shader_feature _USENORMAL_OFF _USENORMAL_ON
 ```
+
+## Basic Lighting Model and Rendering Path
 
 - basic lighting model에서 surface color는 다음과 같이 얻어낸다.
   surface color = emission + ambient + diffuse + specular
@@ -2365,6 +2407,9 @@ Tags { "LightMode" = "ForwardBase"
   fixed function lighting model 을 제공한다. nvidia 문서는 이것을 좀 더
   단순화 시켜 Basic Model이라고 이름지었다. Basic lighting Model은
   directX와 opengl처럼 classic phong model을 수정하고 확장한 것이다.
+
+## Diffuse Reflection
+
 - diffuse reflection은 Lambertian reflectance을 이용하여 구현할 수 있다.
   DiffuseLambert함수를 참고하자. BEADS의 D를 
   lightColor * diffuseFactor * attenuation * max(0, dot(normalVal,lightDir)
@@ -2403,9 +2448,12 @@ float3 DiffuseLambert(float3 normalVal, float3 lightDir, float3 lightColor, floa
 			}
 ```
 
-- specular reflection은 blinn-phong model을 이용하여 구현할 수 있다.
-  Phong이 제안한 model은 N (normal vector of surface) 과 V (view vector of camera)
-  를 이용했지만 나중에 blinn과 phong에 의해 제안된 model은 N 과 H 를 이용해서 최적화 했다.
+## Specular Reflection
+
+- specular reflection 은 blinn-phong model 을 이용하여 구현할 수 있다.
+  Phong 이 제안한 model 은 N (normal vector of surface) 과 V (view vector of camera) 를 이용했지만 나중에 blinn과 phong 에 의해 제안된 model 은 N 과 H 를 이용해서 최적화 했다.
+
+![](specular_lighting_equation.png)
 
 ```latex
 s = \sum_{i=0}^{n}\text{intensity}_\text{light i} \times 
@@ -2417,8 +2465,6 @@ s = \sum_{i=0}^{n}\text{intensity}_\text{light i} \times
  \end{matrix}
 \times \text{attenuation} \times \max\left(0, ({N} \cdot {H}) \right)^\text{specular power}
 ```
-
-![](specular_lighting_equation.png)
 
 ```c
 float3 SpecularBlinnPhong(float3 normalDir, float3 lightDir, float3 worldSpaceViewDir, float3 specularColor, float specularFactor, float attenuation, float specularPower)
@@ -2456,7 +2502,12 @@ float3 SpecularBlinnPhong(float3 normalDir, float3 lightDir, float3 worldSpaceVi
 			}
 ```
 
+## Ambient Reflection
+
 - ambient reflection은 다음과 같은 식을 이용하여 구현 할 수 있다.
+
+![](ambient_lighting_equation.png)
+
 
 ```latex
 a = \begin{matrix}
@@ -2473,49 +2524,27 @@ a = \begin{matrix}
 \end{matrix}
 ```
 
-![](ambient_lighting_equation.png)
-
 ```c
 	Properties 
 	{
         ...
-		_AmbientFactor ("Ambient %", Range(0,1)) = 1
+		[Toggle] _AmbientMode("Ambient Light?", Float) = 0
+		_AmbientFactor("Ambient %", Range(0,1)) = 1
+        ...
 	}
-    ...
 			half4 frag(vertexOutput i) : COLOR
 			{
-				#if _USENORMAL_ON
-					float3 worldNormalAtPixel = WorldNormalFromNormalMap(_NormalMap, i.normalTexCoord.xy, i.tangentWorld.xyz, i.binormalWorld.xyz, i.normalWorld.xyz);
-					//return tex2D(_MainTex, i.texcoord) * _Color;
-				#else
-					float3 worldNormalAtPixel = i.normalWorld.xyz;
-				#endif
-				
-				#if _LIGHTING_FRAG
-					float3 lightDir  = normalize(_WorldSpaceLightPos0.xyz);
-					float3 lightColor = _LightColor0.xyz;
-					float attenuation = 1;
-					float3 diffuseCol =  DiffuseLambert(worldNormalAtPixel, lightDir, lightColor, _Diffuse, attenuation);
-					
-					float4 specularMap = tex2D(_SpecularMap, i.texcoord.xy);
-					
-					float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
-					float3 specularCol = SpecularBlinnPhong(worldNormalAtPixel, lightDir, worldSpaceViewDir, specularMap.rgb , _SpecularFactor, attenuation, _SpecularPower);
-					
-					#if _AMBIENTMODE_ON
-						float3 ambientColor = _AmbientFactor * UNITY_LIGHTMODEL_AMBIENT;
-						return float4(diffuseCol + specularCol + ambientColor,1);
-					#else
-						return float4(diffuseCol + specularCol,1);
-					#endif
+                ...    
+	#if _AMBIENTMODE_ON
+				float3 ambientColor = _AmbientFactor * UNITY_LIGHTMODEL_AMBIENT;
+				finalColor.rgb += ambientColor;
+	#endif    
+                ...
+            }
 
-				#elif _LIGHTING_VERT
-					return i.surfaceColor;
-				#else
-					return float4(worldNormalAtPixel,1);
-				#endif
-			}
 ```
+
+전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
 
 ## IBL (image based lighting)
 
@@ -2565,15 +2594,180 @@ float3 IBLRefl(samplerCUBE cubeMap, half detail, float3 worldRefl, float exposur
 ...
 finalColor.rgb += IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
 ...
-
 ```
 
-아래는 전체 shader 이다.
+전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
+
+## Image based Refraction
+
+빛은 서로다른 매질을 통과할 때 방향이 달라진다. 이것을 굴절(Refraction)현상이라고 한다. 방향이 달라지는 정도는 각 매질의 IOR(Index of Rfraction) 에 따라 다르다.
+
+IOR 은 진공매질에서 빛의 휘어짐과 특정매질의 빛의 휘어짐의 비율이다.
+
+```
+IOR = velocity of light in vaccum / velocity of light in medium
+    = 1 / vecltocity of light in medium
+```
+
+Refraction vector 를 구하기 위해서는 Snell 의 법칙을 이해해야 한다.
+
+![](../lighting/img/snell_law_eq.png)
+
+Refraction vector 를 다음과 같이 유도한다.
+
+![]()
+
+```
+```
+
+Refraction vector 는 cg function 중 `reflect` 를 이용하여 구한다. reflect 는 앞서 유도한 식과 똑같다.
 
 ```c
-Shader "Custom/Lighting_IBLReflection"
+float3 refract( float3 i, float3 n, float eta )
 {
-	Properties 
+  float cosi = dot(-i, n);
+  float cost2 = 1.0f - eta * eta * (1.0f - cosi*cosi);
+  float3 t = eta*i + ((eta*cosi - sqrt(abs(cost2))) * n);
+  return t * (float3)(cost2 > 0);
+}
+```
+
+다음은 Reflection Vector 혹은 Reflection vector 와 매핑되는 Irradiance Map 의 값을 얻어오는 것을 구현한 것이다. Reflection Vector 를 선택하면 재질에 반사현상이 일어나고 Refraction vector 를 선택하면 재질에 굴절현상이 일어난다.
+
+```c
+	Properties
+	{
+        ...
+		_RefractionFactor("Refraction %",Range(0,1)) = 1
+		_RefractiveIndex("Refractive Index", Range(0,50)) = 1
+        ...
+    }
+			half4 frag(vertexOutput i) : COLOR
+			{
+                ...
+float3 IBLRefl (samplerCUBE cubeMap, half detail, float3 worldRefl, float exposure, float reflectionFactor)
+{
+	float4 cubeMapCol = texCUBElod(cubeMap, float4(worldRefl, detail)).rgba;
+	return reflectionFactor * cubeMapCol.rgb * (cubeMapCol.a * exposure);
+}                
+                ...
+	#if _IBLMODE_REFL
+				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
+				float3 worldRefl = reflect(-worldSpaceViewDir, worldNormalAtPixel);
+				finalColor.rgb += IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
+	#endif	
+
+	#if _IBLMODE_REFR
+				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
+				float3 worldRefr = refract(-worldSpaceViewDir, worldNormalAtPixel, 1 / _RefractiveIndex);
+				finalColor.rgb += IBLRefl(_Cube, _Detail, worldRefr,  _ReflectionExposure, _RefractionFactor);
+	#endif                
+                ...
+            }
+```
+
+전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
+
+## Image based Fresnel
+
+전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
+
+## Shadow mapping
+
+빛이 표면을 비추고 있을 때 그림자는 만들어진다. 빛이 바라보는 scene 을 렌더링해보자. 이때 빛이 directional light 이면 orthographic frustumn 이 만들어지고 point light 이면 perspective frustumn 이 만들어진다. 렌더링된 scene 은 depth map 에 저장된다. 이것을 shadow map 이라고 하자. 
+
+이제 camera 가 바라보는 scene 을 렌더링해보자. 픽셀하나를 렌더링할 때 그 shadow map 과 비교해서 그림자 영역에 해당하는지 조사하고 그림자 영역에 해당된다면 어둡게 하자. 이때 앞서 언급한 픽셀의 world position 을 shadow map 의 texture position 으로 변환 하는 것이 중요하다. 
+
+light 의 입장에서 projection space 의 x, y 를 w 로 나누면 clip space 의 coordinates 가 된다. NDC 의 성질에 따라 x/w, y/w 의 범위는 `[-1, 1]` 이다. 그러나 shadow map 의 x, y 의 범위는 `[0, 1]` 이다. clip space coordinates 의 x, y 를 texture space coordinates 의 u, v 로 매핑하기 위해서는 다음 공식을 이용해야 한다.
+
+```
+u = (x/w + 1) * 0.5
+v = (x/y + 1) * 0.5
+```
+
+shadow map 은 각각의 라이트별로 각각의 쉐이더마다 한장씩 필요하다.
+
+다음은 camera 가 scene 을 렌더링할 때 특정 fragment 의 world space position 을 shadow map 의 texture space position 으로 변환 하는 함수를 구현한 것이다. direct 와 opengl 은 texture 의 uv 좌표의 원점위치가 다르다. 따라서 `UNITY_HALF_TEXEL_OFFSET` 를 이용해서 플래폼별로 구현을 다르게 해야 한다.
+
+```c
+inline float4 ProjectionToTextureSpace(float4 pos)
+{
+	float4 textureSpacePos = pos;
+#if defined(UNITY_HALF_TEXEL_OFFSET)
+	textureSpacePos.xy = float2 (textureSpacePos.x, textureSpacePos.y * _ProjectionParams.x) + textureSpacePos.w * _ScreenParams.zw;
+#else
+	textureSpacePos.xy = float2 (textureSpacePos.x, textureSpacePos.y * _ProjectionParams.x) + textureSpacePos.w;
+#endif
+	textureSpacePos.xy = float2 (textureSpacePos.x/textureSpacePos.w, textureSpacePos.y/textureSpacePos.w) * 0.5f;
+	return textureSpacePos;
+}
+```
+
+전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
+
+## BRDF (bidirectional reflectance distribution function)
+
+BRDF 는 빛이 불투명한 표면에서 어떤 방식으로 반사되는지를 정의하는 4차원 함수이다. BRDF 는 추상적으로 다음과 같이 정의할 수 있다.
+
+```
+BRDF = 반사되는 빛의 양 / 들어오는 빛의 양
+     = radiance / irradiance
+
+radiance = 단위면적당 에너지
+         = watt / area(m^2)
+```
+
+BRDF 는 [PBR(Physically based rendering)](/pbr/README.md) 에서 반사를 담당한다.
+
+표면에 들어오는 빛은 일부는 흡수 및 굴절되고 일부는 반사된다. 반사는 다시 난반사(diffuse reflection), 정반사(specular reflection) 로 나눌 수 있다. 
+
+[An Anisotropic Phong BRDF Model, Michael Ashikhmin Peter Shirley](https://www.cs.utah.edu/~shirley/papers/jgtbrdf.pdf) 에 의하면 다음과 같은 공식으로 specular refelction term 를 얻어낼 수 있다.
+
+![](anisotropic_brdf_eq.png)
+
+```latex
+\begin{align*}
+spec &= \frac { \sqrt{(n_{u}+1)(n_{v}+1)}
+               (N \cdot H)^{\frac{n_{u}(H \cdot T)^{2}+n_{v}(H \cdot B)^{2}}{1-(N \cdot H)^{2}}}
+             }
+             { 8 \pi (V \cdot H) \max((N \cdot L), (N \cdot V))} F 
+\\\\
+F &= (F_{0} + (1 - F_{0})(1-(V \cdot H)^{5}))
+\end{align*}
+```
+
+다음은 위의 수식을 이용하여 unityshaderlab 으로 구현한 것이다. `float AshikhminShirleyPremoze_BRDF` 은 `specular reflection term` 을 반환한다.
+
+```c
+			float AshikhminShirleyPremoze_BRDF(float nU, float nV, float3 tangentDir, float3 normalDir, float3 lightDir, float3 viewDir, float reflectionFactor)
+			{
+				float pi = 3.141592;
+				float3 halfwayVector = normalize(lightDir + viewDir);
+				float3 NdotH = dot(normalDir, halfwayVector);
+				float3 NdotL = dot(normalDir, lightDir);
+				float3 NdotV = dot(normalDir, viewDir);
+				float3 HdotT = dot(halfwayVector, tangentDir);
+				float3 HdotB = dot(halfwayVector, cross(tangentDir, normalDir));
+				float3 VdotH = dot(viewDir, halfwayVector);
+
+				float power = nU * pow(HdotT,2) + nV * pow(HdotB,2);
+				power /= 1.0 - pow(NdotH,2);
+
+				float spec = sqrt((nU + 1) * (nV + 1)) * pow(NdotH, power);
+				spec /= 8.0 * pi * VdotH * max(NdotL, NdotV);
+
+				float Fresnel = reflectionFactor + (1.0 - reflectionFactor) * pow(1.0 - VdotH, 5.0);
+				spec *= Fresnel;
+				return spec;
+			}
+```
+
+다음은 전체 코드이다.
+
+```c
+Shader "Custom/Lighting_BRDF_Anisotrophy" 
+{
+	Properties
 	{
 		_Color("Main Color", Color) = (1,1,1,1)
 		_MainTex("Main Texture", 2D) = "white" {}
@@ -2584,18 +2778,31 @@ Shader "Custom/Lighting_IBLReflection"
 		_SpecularMap("Specular Map", 2D) = "black" {}
 		_SpecularFactor("Specular %",Range(0,1)) = 1
 		_SpecularPower("Specular Power", Float) = 100
+
+		[KeywordEnum(Off, Map, Nomap, Aniso)] _Specular("Specular Mode", Float) = 1
+		_TangentMap("Tangent Map", 2D) = "black" {}
+		_AnisoU("Aniso U", Float) = 1
+		_AnisoV("Aniso V", Float) = 1
+
 		[Toggle] _AmbientMode("Ambient Light?", Float) = 0
 		_AmbientFactor("Ambient %", Range(0,1)) = 1
 
-		[KeywordEnum(Off, Refl, Refr)] _IBLMode("IBL Mode", Float) = 0
+		[KeywordEnum(Off, Refl, Refr, Fres)] _IBLMode("IBL Mode", Float) = 0
 		_ReflectionFactor("Reflection %",Range(0,1)) = 1
 
 		_Cube("Cube Map", Cube) = "" {}
 		_Detail("Reflection Detail", Range(1,9)) = 1.0
 		_ReflectionExposure("HDR Exposure", float) = 1.0
+
+		_RefractionFactor("Refraction %",Range(0,1)) = 1
+		_RefractiveIndex("Refractive Index", Range(0,50)) = 1
+
+		_FresnelWidth("FresnelWidth", Range(0,1)) = 0.3
+
+		[Toggle] _ShadowMode("Shadow On/Off?", Float) = 0
 	}
 
-	Subshader 
+	Subshader
 	{
 		//http://docs.unity3d.com/462/Documentation/Manual/SL-SubshaderTags.html
 		// Background : 1000     -        0 - 1499 = Background
@@ -2605,80 +2812,59 @@ Shader "Custom/Lighting_IBLReflection"
 		// Overlay    : 4000     -     3600 - 5000 = Overlay
 
 		Tags {"Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
-		Pass 
+		// Pass for Shadow Map
+		Pass
+		{
+			Name "ShadowCaster"
+			Tags { "Queue" = "Opaque" "LightMode" = "ShadowCaster" }
+			ZWrite On
+			Cull Off
+
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+
+			struct vertexInput
+			{
+				float4 vertex : POSITION;
+			};
+			struct vertexOutput
+			{
+				float4 pos : SV_POSITION;
+			};
+
+			vertexOutput vert(vertexInput v)
+			{
+				vertexOutput o;
+				o.pos = UnityObjectToClipPos(v.vertex);
+				return o;
+			}
+
+			float4 frag(vertexOutput i) : SV_Target
+			{
+				return 0;
+			}
+			ENDCG
+		}
+
+		Pass
 		{
 			Tags {"LightMode" = "ForwardBase"}
 			Blend SrcAlpha OneMinusSrcAlpha
 
 CGPROGRAM
+			//http://docs.unity3d.com/Manual/SL-ShaderPrograms.html
 			#pragma vertex vert
 			#pragma fragment frag
 			#pragma shader_feature _USENORMAL_OFF _USENORMAL_ON
 			#pragma shader_feature _LIGHTING_OFF _LIGHTING_VERT _LIGHTING_FRAG
+			#pragma shader_feature _SPECULAR_OFF _SPECULAR_MAP _SPECULAR_NOMAP _SPECULAR_ANISO
 			#pragma shader_feature _AMBIENTMODE_OFF _AMBIENTMODE_ON
-			#pragma shader_feature _IBLMODE_OFF _IBLMODE_REFL _IBLMODE_REFR
-
-////////////////////////////////////////////////////////////////////////////////////////////////
-// Utility Functions
-float3 normalFromColor(float4 colorVal)
-{
-#if defined(UNITY_NO_DXT5nm)
-	return colorVal.xyz * 2 - 1;
-#else
-	// R => x => A
-	// G => y
-	// B => z => ignored
-
-	float3 normalVal;
-	normalVal = float3 (colorVal.a * 2.0 - 1.0, colorVal.g * 2.0 - 1.0, 0.0);
-	normalVal.z = sqrt(1.0 - dot(normalVal, normalVal));
-	return normalVal;
-#endif
-}
-
-float3 WorldNormalFromNormalMap(sampler2D normalMap, float2 normalTexCoord, float3 tangentWorld, float3 binormalWorld, float3 normalWorld)
-{
-	// Color at Pixel which we read from Tangent space normal map
-	float4 colorAtPixel = tex2D(normalMap, normalTexCoord);
-
-	// Normal value converted from Color value
-	float3 normalAtPixel = normalFromColor(colorAtPixel);
-
-	// Compose TBN matrix
-	float3x3 TBNWorld = float3x3(tangentWorld, binormalWorld, normalWorld);
-	return normalize(mul(normalAtPixel, TBNWorld));
-}
-
-float3 DiffuseLambert(float3 normalVal, float3 lightDir, float3 lightColor, float diffuseFactor, float attenuation)
-{
-	return lightColor * diffuseFactor * attenuation * max(0, dot(normalVal,lightDir));
-}
-
-float3 SpecularBlinnPhong(float3 normalDir, float3 lightDir, float3 worldSpaceViewDir, float3 specularColor, float specularFactor, float attenuation, float specularPower)
-{
-	float3 halfwayDir = normalize(lightDir + worldSpaceViewDir);
-	return specularColor * specularFactor * attenuation * pow(max(0,dot(normalDir,halfwayDir)),specularPower);
-}
-
-float3 IBLRefl(samplerCUBE cubeMap, half detail, float3 worldRefl, float exposure, float reflectionFactor)
-{
-	float4 cubeMapCol = texCUBElod(cubeMap, float4(worldRefl, detail)).rgba;
-	return reflectionFactor * cubeMapCol.rgb * (cubeMapCol.a * exposure);
-}
-
-inline float4 ProjectionToTextureSpace(float4 pos)
-{
-float4 textureSpacePos = pos;
-#if defined(UNITY_HALF_TEXEL_OFFSET)
-	textureSpacePos.xy = float2 (textureSpacePos.x, textureSpacePos.y * _ProjectionParams.x) + textureSpacePos.w * _ScreenParams.zw;
-#else
-	textureSpacePos.xy = float2 (textureSpacePos.x, textureSpacePos.y * _ProjectionParams.x) + textureSpacePos.w;
-#endif
-	textureSpacePos.xy = float2 (textureSpacePos.x / textureSpacePos.w, textureSpacePos.y / textureSpacePos.w) * 0.5f;
-	return textureSpacePos;
-}
-////////////////////////////////////////////////////////////////////////////////////////////////
-
+			#pragma shader_feature _IBLMODE_OFF _IBLMODE_REFL _IBLMODE_REFR _IBLMODE_FRES
+			#pragma shader_feature _SHADOWMODE_OFF _SHADOWMODE_ON
+			#include "CVGLighting.cginc" 
+			//http://docs.unity3d.com/ru/current/Manual/SL-ShaderPerformance.html
+			//http://docs.unity3d.com/Manual/SL-ShaderPerformance.html
 			uniform half4 _Color;
 			uniform sampler2D _MainTex;
 			uniform float4 _MainTex_ST;
@@ -2689,19 +2875,53 @@ float4 textureSpacePos = pos;
 			uniform float _Diffuse;
 			uniform float4 _LightColor0;
 
+#if _SPECULAR_MAP
 			uniform sampler2D _SpecularMap;
+#endif
+
+#if _SPECULAR_MAP || _SPECULAR_NOMAP
 			uniform float _SpecularFactor;
 			uniform float _SpecularPower;
+#endif
 
+#if _SPECULAR_ANISO
+			uniform sampler2D _TangentMap;
+			uniform float _AnisoU;
+			uniform float _AnisoV;
+#endif
+
+#if _IBLMODE_REFL || _IBLMODE_REFR || _IBLMODE_FRES
 			uniform samplerCUBE _Cube;
-			float _ReflectionFactor;
-			half _Detail;
-			float _ReflectionExposure;
+			uniform half _Detail;
+			uniform float _ReflectionExposure;
+#endif
+
+#if _IBLMODE_REFL || _IBLMODE_FRES || _SPECULAR_ANISO
+			uniform float _ReflectionFactor;
+#endif
+
+#if _IBLMODE_REFR
+			uniform float _RefractionFactor;
+			uniform float _RefractiveIndex;
+#endif
+
+#if _IBLMODE_FRES
+			uniform float _FresnelWidth;
+#endif
 
 #if _AMBIENTMODE_ON
 			uniform float _AmbientFactor;
 #endif
-			//https://msdn.microsoft.com/en-us/library/windows/desktop/bb509647%28v=vs.85%29.aspx#VS
+
+#if _SHADOWMODE_ON
+	#if defined(SHADER_TARGET_GLSL)
+			sampler2DShadow _ShadowMapTexture;
+	#else
+			sampler2D _ShadowMapTexture;
+	#endif
+
+#endif
+					//https://msdn.microsoft.com/en-us/library/windows/desktop/bb509647%28v=vs.85%29.aspx#VS
 			struct vertexInput
 			{
 				float4 vertex : POSITION;
@@ -2723,30 +2943,60 @@ float4 textureSpacePos = pos;
 				float3 binormalWorld : TEXCOORD4;
 				float4 normalTexCoord : TEXCOORD5;
 #endif
-#if _LIGHTING_VERT
+
+#if _LIGHTING_VERT ||  _IBLMODE_REFL || _IBLMODE_REFR || _IBLMODE_FRES
 				float4 surfaceColor : COLOR0;
-#else
-	#if _IBLMODE_REFL
-				float4 surfaceColor : COLOR0;
-	#endif
+#endif
+
+#if _SHADOWMODE_ON
+				float4 shadowCoord : COLOR1;
 #endif
 			};
 
+			float AshikhminShirleyPremoze_BRDF(float nU, float nV, float3 tangentDir, float3 normalDir, float3 lightDir, float3 viewDir, float reflectionFactor)
+			{
+				float pi = 3.141592;
+				float3 halfwayVector = normalize(lightDir + viewDir);
+				float3 NdotH = dot(normalDir, halfwayVector);
+				float3 NdotL = dot(normalDir, lightDir);
+				float3 NdotV = dot(normalDir, viewDir);
+				float3 HdotT = dot(halfwayVector, tangentDir);
+				float3 HdotB = dot(halfwayVector, cross(tangentDir, normalDir));
+				float3 VdotH = dot(viewDir, halfwayVector);
+
+				float power = nU * pow(HdotT,2) + nV * pow(HdotB,2);
+				power /= 1.0 - pow(NdotH,2);
+
+				float spec = sqrt((nU + 1) * (nV + 1)) * pow(NdotH, power);
+				spec /= 8.0 * pi * VdotH * max(NdotL, NdotV);
+
+				float Fresnel = reflectionFactor + (1.0 - reflectionFactor) * pow(1.0 - VdotH, 5.0);
+				spec *= Fresnel;
+				return spec;
+			}
+
 			vertexOutput vert(vertexInput v)
 			{
-				vertexOutput o; UNITY_INITIALIZE_OUTPUT(vertexOutput, o);
+				vertexOutput o; UNITY_INITIALIZE_OUTPUT(vertexOutput, o); // d3d11 requires initialization
 				o.pos = UnityObjectToClipPos(v.vertex);
 				o.texcoord.xy = (v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw);
 				o.normalWorld = float4(normalize(mul(normalize(v.normal.xyz),(float3x3)unity_WorldToObject)),v.normal.w);
 
 				o.posWorld = mul(unity_ObjectToWorld, v.vertex);
+#if _SHADOWMODE_ON
+	#if defined(UNITY_NO_SCREENSPACE_SHADOWS)
+				o.shadowCoord = mul(unity_WorldToShadow[0], o.posWorld);
+	#else
+				o.shadowCoord = ProjectionToTextureSpace(o.pos);
+	#endif
+
+#endif
 
 #if _USENORMAL_ON
 				// World space T, B, N values
 				o.normalTexCoord.xy = (v.texcoord.xy * _NormalMap_ST.xy + _NormalMap_ST.zw);
-				//o.tangentWorld = normalize(mul(v.tangent,_Object2World));
 				o.tangentWorld = (normalize(mul((float3x3)unity_ObjectToWorld, v.tangent.xyz)),v.tangent.w);
-				o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); //https://forum.unity3d.com/threads/floating-point-division-by-zero-at-line-warning-in-unity-5-1.332098/
+				o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w);
 #endif
 #if _LIGHTING_VERT
 				float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
@@ -2754,10 +3004,20 @@ float4 textureSpacePos = pos;
 				float attenuation = 1;
 				float3 diffuseCol = DiffuseLambert(o.normalWorld, lightDir, lightColor, _Diffuse, attenuation);
 
-				float4 specularMap = tex2Dlod(_SpecularMap, float4(o.texcoord.xy, 0, 0));//float4 specularMap = tex2D(_SpecularMap, o.texcoord.xy);
-				//o.posWorld = mul(_Object2World, v.vertex);
 				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - o.posWorld);
+	#if _SPECULAR_MAP
+				float4 specularMap = tex2Dlod(_SpecularMap, float4(o.texcoord.xy, 0, 0));//float4 specularMap = tex2D(_SpecularMap, o.texcoord.xy);//float4 specularMap = tex2D(_SpecularMap, o.texcoord.xy);
 				float3 specularCol = SpecularBlinnPhong(o.normalWorld, lightDir, worldSpaceViewDir, specularMap.rgb , _SpecularFactor, attenuation, _SpecularPower);
+	#endif
+
+	#if _SPECULAR_NOMAP
+				float3 specularCol = SpecularBlinnPhong(o.normalWorld, lightDir, worldSpaceViewDir, 1 , _SpecularFactor, attenuation, _SpecularPower);
+	#endif
+
+	#if _SPECULAR_ANISO
+				float4 tangentMap = tex2D(_TangentMap, o.texcoord.xy);
+				float3 specularCol = AshikhminShirleyPremoze_BRDF(_AnisoU, _AnisoV, tangentMap.xyz, o.normalWorld, lightDir, worldSpaceViewDir, _ReflectionFactor);
+	#endif
 
 				float3 mainTexCol = tex2Dlod(_MainTex, float4(o.texcoord.xy, 0,0));
 
@@ -2771,13 +3031,19 @@ float4 textureSpacePos = pos;
 				float3 worldRefl = reflect(-worldSpaceViewDir, o.normalWorld.xyz);
 				o.surfaceColor.rgb *= IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
 	#endif
-#else
-	#if _IBLMODE_REFL
-				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - o.posWorld);
-				float3 worldRefl = reflect(-worldSpaceViewDir, o.normalWorld.xyz);
-				o.surfaceColor.rgb += IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
-	#endif				
+	#if _IBLMODE_REFR
+				float3 worldRefr = refract(-worldSpaceViewDir, o.normalWorld.xyz, 1 / _RefractiveIndex);
+				o.surfaceColor.rgb *= IBLRefl(_Cube, _Detail, worldRefr,  _ReflectionExposure, _RefractionFactor);
+	#endif
 
+	#if _IBLMODE_FRES
+				float3 worldRefl = reflect(-worldSpaceViewDir, o.normalWorld.xyz);
+				float3 reflColor = IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
+
+				float fresnel = 1 - saturate(dot(worldSpaceViewDir,o.normalWorld.xyz));
+				fresnel = smoothstep(1 - _FresnelWidth, 1, fresnel);
+				o.surfaceColor.rgb = lerp(o.surfaceColor.rgb, o.surfaceColor.rgb * reflColor, fresnel);
+	#endif
 #endif
 				return o;
 			}
@@ -2785,9 +3051,9 @@ float4 textureSpacePos = pos;
 			half4 frag(vertexOutput i) : COLOR
 			{
 				float4 finalColor = float4(0,0,0,_Color.a);
+
 #if _USENORMAL_ON
 				float3 worldNormalAtPixel = WorldNormalFromNormalMap(_NormalMap, i.normalTexCoord.xy, i.tangentWorld.xyz, i.binormalWorld.xyz, i.normalWorld.xyz);
-				//return tex2D(_MainTex, i.texcoord) * _Color;
 #else
 				float3 worldNormalAtPixel = i.normalWorld.xyz;
 #endif
@@ -2798,13 +3064,35 @@ float4 textureSpacePos = pos;
 				float attenuation = 1;
 				float3 diffuseCol = DiffuseLambert(worldNormalAtPixel, lightDir, lightColor, _Diffuse, attenuation);
 
-				float4 specularMap = tex2D(_SpecularMap, i.texcoord.xy);
-
 				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
+	#if _SPECULAR_OFF
+				float specularCol = 0;
+	#endif
+	#if _SPECULAR_MAP
+				float4 specularMap = tex2D(_SpecularMap, i.texcoord.xy);
 				float3 specularCol = SpecularBlinnPhong(worldNormalAtPixel, lightDir, worldSpaceViewDir, specularMap.rgb , _SpecularFactor, attenuation, _SpecularPower);
+	#endif
+
+	#if _SPECULAR_NOMAP
+				float3 specularCol = SpecularBlinnPhong(worldNormalAtPixel, lightDir, worldSpaceViewDir, 1, _SpecularFactor, attenuation, _SpecularPower);
+	#endif
+
+	#if _SPECULAR_ANISO
+				float4 tangentMap = tex2D(_TangentMap, i.texcoord.xy);
+				float3 specularCol = AshikhminShirleyPremoze_BRDF(_AnisoU, _AnisoV, tangentMap.xyz, worldNormalAtPixel, lightDir, worldSpaceViewDir, _ReflectionFactor);
+	#endif
+
 
 				float3 mainTexCol = tex2D(_MainTex, i.texcoord.xy);
 				finalColor.rgb += mainTexCol * _Color * diffuseCol + specularCol;
+	#if _SHADOWMODE_ON
+		#if defined(SHADER_TARGET_GLSL)
+				float shadow = shadow2D(_ShadowMapTexture, i.shadowCoord);
+		#else
+				float shadow = tex2D(_ShadowMapTexture, i.shadowCoord).a;
+		#endif
+				finalColor.rgb *= shadow;
+	#endif
 
 	#if _AMBIENTMODE_ON
 				float3 ambientColor = _AmbientFactor * UNITY_LIGHTMODEL_AMBIENT;
@@ -2816,82 +3104,61 @@ float4 textureSpacePos = pos;
 				finalColor.rgb *= IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
 	#endif
 
+	#if _IBLMODE_REFR
+				float3 worldRefr = refract(-worldSpaceViewDir, worldNormalAtPixel, 1 / _RefractiveIndex);
+				finalColor.rgb *= IBLRefl(_Cube, _Detail, worldRefr,  _ReflectionExposure, _RefractionFactor);
+	#endif
+
+	#if _IBLMODE_FRES
+				float3 worldRefl = reflect(-worldSpaceViewDir, worldNormalAtPixel);
+				float3 reflColor = IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
+
+				float fresnel = 1 - saturate(dot(worldSpaceViewDir,worldNormalAtPixel));
+				fresnel = smoothstep(1 - _FresnelWidth, 1, fresnel);
+				finalColor.rgb = lerp(finalColor.rgb, finalColor.rgb * reflColor, fresnel);
+	#endif
+
 #elif _LIGHTING_VERT
 				finalColor = i.surfaceColor;
+	#if _SHADOWMODE_ON
+		#if defined(SHADER_TARGET_GLSL)
+				float shadow = shadow2D(_ShadowMapTexture, i.shadowCoord);
+		#else
+				float shadow = tex2D(_ShadowMapTexture, i.shadowCoord).a;
+		#endif
+				finalColor.rgb *= shadow;
+	#endif
 #else
 	#if _IBLMODE_REFL
 				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
 				float3 worldRefl = reflect(-worldSpaceViewDir, worldNormalAtPixel);
 				finalColor.rgb += IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
+	#endif	
+
+	#if _IBLMODE_REFR
+				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
+				float3 worldRefr = refract(-worldSpaceViewDir, worldNormalAtPixel, 1 / _RefractiveIndex);
+				finalColor.rgb += IBLRefl(_Cube, _Detail, worldRefr,  _ReflectionExposure, _RefractionFactor);
+	#endif
+
+	#if _IBLMODE_FRES
+				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
+				float3 worldRefl = reflect(-worldSpaceViewDir, worldNormalAtPixel);
+				float3 reflColor = IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
+
+				float fresnel = 1 - saturate(dot(worldSpaceViewDir,worldNormalAtPixel));
+				fresnel = smoothstep(1 - _FresnelWidth, 1, fresnel);
+				float3 mainTexCol = tex2D(_MainTex, i.texcoord.xy);
+
+				finalColor.rgb = lerp(mainTexCol * _Color.rgb, finalColor.rgb + reflColor, fresnel);
 	#endif
 #endif
 				return finalColor;
 			}
-	ENDCG
+ENDCG
 		}
 	}
 }
-```
-
-## Image based Refraction
-
-## Image based Fresnel
-
-## Shadow mapping
-
-빛이 표면을 비추고 있을 때 그림자는 만들어진다. 빛이 바라보는 scene 을 렌더링해보자. 이때 빛이 directional light 이면 orthographic frustumn 이 만들어지고 point light 이면 perspective frustumn 이 만들어진다. 렌더링된 scene 은 depth map 에 저장된다. 이것을 shadow map 이라고 하자. 
-
-이제 camera 가 바라보는 scene 을 렌더링해보자. 픽셀하나를 렌더링할 때 그 shadow map 과 비교해서 그림자 영역에 해당하는지 조사하고 그림자 영역에 해당된다면 어둡게 하자. 이때 앞서 언급한 픽셀의 world position 을 shadow map 의 texture position 으로 변환 하는 것이 중요하다. 
-
-light 의 입장에서 projection space 의 x, y 를 w 로 나누면 clip space 의 coordinates 가 된다. NDC 의 성질에 따라 x/w, y/w 의 범위는 `[-1, 1]` 이다. 그러나 shadow map 의 x, y 의 범위는 `[0, 1]` 이다. clip space coordinates 의 x, y 를 texture space coordinates 의 u, v 로 매핑하기 위해서는 다음 공식을 이용해야 한다.
-
-```
-u = (x/w + 1) * 0.5
-v = (x/y + 1) * 0.5
-```
-
-shadow map 은 도대체 몇장이 필요한 걸까???
-
-다음은 camera 가 scene 을 렌더링할 때 특정 fragment 의 world space position 을 shadow map 의 texture space position 으로 변환 하는 함수를 구현한 것이다.
-
-```c
-```
-
-## BRDF (bidirectional reflectance distribution function)
-
-BRDF 는 빛이 불투명한 표면에서 어떤 방식으로 반사되는지를 정의하는 4차원 함수이다. BRDF 는 추상적으로 다음과 같이 정의할 수 있다.
-
-```
-BRDF = 반사되는 빛의 양 / 들어오는 빛의 양
-     = radiance / irradiance
-
-radiance = 단위면적당 에너지
-         = watt / area(m^2)
-```
-
-BRDF 는 [PBR(Physically based rendering)](/pbr/README.md) 에서 반사를 담당한다.
-
-표면에 들어오는 빛은 일부는 흡수 및 굴절되고 일부는 반사된다. 반사는 다시 난반사(diffuse reflection), 정반사(specular reflection) 로 나눌 수 있다. 
-
-[An Anisotropic Phong BRDF Model, Michael Ashikhmin Peter Shirley](https://www.cs.utah.edu/~shirley/papers/jgtbrdf.pdf) 에 의하면 다음과 같은 공식으로 BRDF 를 얻어낼 수 있다.
-
-![](anisotropic_brdf_eq.png)
-
-```latex
-\begin{align*}
-spec &= \frac { \sqrt{(n_{u}+1)(n_{v}+1)}
-               (N \cdot H)^{\frac{n_{u}(H \cdot T)^{2}+n_{v}(H \cdot B)^{2}}{1-(N \cdot H)^{2}}}
-             }
-             { 8 \pi (V \cdot H) \max((N \cdot L), (N \cdot V))} F 
-\\\\
-F &= (F_{0} + (1 - F_{0})(1-(V \cdot H)^{5}))
-\end{align*}
-```
-
-다음은 위의 수식을 이용하여 unityshaderlab 으로 구현한 것이다. `float AshikhminShirleyPremoze_BRDF` 를 참고하자.
-
-```c
-
 ```
 
 # Snippets
