@@ -13,7 +13,7 @@
   - [Lighting](#lighting)
   - [Fog and Ambient](#fog-and-ambient)
   - [Various](#various)
-- [Usage](#usage)
+- [Usages](#usages)
   - [IBL (image based lighting)](#ibl-image-based-lighting)
   - [Irradiance Map](#irradiance-map)
   - [Image based Relection](#image-based-relection)
@@ -2102,7 +2102,7 @@ ENDCG
 | unity_LODFade	| float4 | Level-of-detail fade when using LODGroup. x is fade (0..1), y is fade quantized to 16 levels, z and w unused. |
 | _TextureSampleAdd	| float4 | Set automatically by Unity for UI only based on whether the texture being used is in Alpha8 format (the value is set to (1,1,1,0)) or not (the value is set to (0,0,0,0)). |
 
-# Usage
+# Usages
 
 - unity3d 에서 shader는 unity3d shader lab과 cg를 이용해서 제작한다.
   shader lab에서 cg를 이용하는 방식이다. cg는 nvidia가 주도로 제작한
@@ -2128,7 +2128,7 @@ float4 firstrow = matrix_m00_m01_m02_m03;
   어떤 의도로 사용될 것인지 정의하는 것이다. [이곳](https://docs.unity3d.com/Manual/SL-ShaderSemantics.html)을
   참고해서 여러가지 semantics에 대해 파악해 두자.
 
-```cg
+```c
 Shader "Custom/skeleton"
 {
     Properties
@@ -2200,7 +2200,7 @@ Shader "Custom/skeleton"
   를 import하면 fragment shader단계에서 보간된 uv position을 이용하여 
   color buffer에 기록한다.
 
-```
+```c
             // pixel shader; returns low precision ("fixed4" type)
             // color ("SV_Target" semantic)
             fixed4 frag (v2f i) : SV_Target
@@ -2215,7 +2215,7 @@ Shader "Custom/skeleton"
   수정하면 tiling값을 조절하여 texture를 tiling할 수 있다. _MainTex_ST.xy는 tiling
   의 x, y를 _MainTex_ST.zw는 offset의 x, y를 의미한다.
 
-```
+```c
 			uniform sampler2D _MainTex;
 			uniform float4 _MainTex_ST;
 ...
@@ -2519,9 +2519,319 @@ a = \begin{matrix}
 
 ## IBL (image based lighting)
 
+scene 을 rendering 할 때 lighting 을 실시간으로 계산하지 않는다. lighting 을 미리 계산하여 image 에 저장하고 scene 을 rendering 할 때 그 image 를 lighting 연산에 사용하는 것을 IBL 이라고 한다.
+
 ## Irradiance Map
 
+radiance 는 단위 면적당 발산하는 빛의 에너지이다. irradiance 는 단위 면적당 들어오는 빛의 에너지이다. 둘다 단위는 `watt / m^2` 을 사용한다. 
+
+scene 에 sphere 가 하나 있고 directional light 가 9개 있다고 해보자. sphere 의 특정 점 하나를 렌더링 해보자. 그 점의 normal vector 와 각각의 light vector 의 dot product 를 구해서 모두 9번 더해야 한다. dot product 연산을 하고 9번 더한 것을 미리 계산하여 image 에 저장해두고 렌더링 할 때 사용하면 렌더링의 성능을 향살 할 수 있다. 미리 계산된 irradiance 값이 저장된 image 를 irradiance map 이라고 한다. irradiance map 은 cubemap 으로 제작된다. 물론 lighting environment map 으로 저장해도 된다. 그러나 sphere 가 움직이면 변경된 위치의 irradiance 값을 얻어올 수 없기 때문에 보통 lighting environment map 과 irradiance map 을 함께 사용한다.
+
+이번에는 잘 만들어둔 irradiance map 을 사용하여 irradiance 값을 얻어오자. sphere 의 특정 점의 normal vector 를 irradiance map 이 구성하는 정육면체의 중앙으로 가져온 다음 그 normal vector 와 mapping 되는 irradiance map 의 texel 이 곧 irradiance 값이다. cg function 을 이용하면 다음과 같이 구할 수 있다.
+
+```c
+color of texel = texCube(irradianceMap, normal vector)
+```
+
+point light 는 물체와의 거리에 따라 attenuation 이 달라지는데 irradiance map 은 거리에 따른 attenuation 을 저장할 수 없다. 따라서 irradiance map 은 directional light 의 irradiance 값만 저장한다.
+
+이번에는 irradiance map 을 만들어 보자. lighting environment map 은 이미 제작했다고 하자. irradiance map 과 lighting environment map 으로 정육면체를 구성할 수 있다. 그 정육면체의 한면을 4 구역으로 나눈다. 그러면 모두 24 개의 면이 만들어지고 각각을 `L_i` 라고 부르자. irradiance map 으로 구성할 수 있는 정육면체 공간의 중앙을 점 C 라고 하자. 
+
+irradiance map 의 각 texel 을 순회한다. 점 C 에서 irradiance map 의 texel 로 향하는 vector 을 `N` 이라고 하자. 그럼 다음과 같이 lighting environment map 의 `L_i` 와 dot product 하여 모두 합한 값을 irradiance map 의 texel 에 저장한다.
+
+```c
+for (all texel of Irradiance map) {
+    N = calDirFromCenterOfIrradianceSquare()
+    diffuseCol = 0
+    for (all texel of Lighting env map) {
+        L = calDirFromCenterOfLightingSquare()
+        diffuseCol += dot(N, L)
+    }
+    texel = diffuseCol
+}
+```
+
 ## Image based Relection
+
+reflection factor 를 Irradiance map 에서 얻어와 color 에 연산하자.
+
+```c
+...
+float3 IBLRefl(samplerCUBE cubeMap, half detail, float3 worldRefl, float exposure, float reflectionFactor)
+{
+	float4 cubeMapCol = texCUBElod(cubeMap, float4(worldRefl, detail)).rgba;
+	return reflectionFactor * cubeMapCol.rgb * (cubeMapCol.a * exposure);
+}
+...
+finalColor.rgb += IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
+...
+
+```
+
+아래는 전체 shader 이다.
+
+```c
+Shader "Custom/Lighting_IBLReflection"
+{
+	Properties 
+	{
+		_Color("Main Color", Color) = (1,1,1,1)
+		_MainTex("Main Texture", 2D) = "white" {}
+		_NormalMap("Normal map", 2D) = "white" {}
+		[KeywordEnum(Off,On)] _UseNormal("Use Normal Map?", Float) = 0
+		_Diffuse("Diffuse %", Range(0,1)) = 1
+		[KeywordEnum(Off, Vert, Frag)] _Lighting("Lighting Mode", Float) = 0
+		_SpecularMap("Specular Map", 2D) = "black" {}
+		_SpecularFactor("Specular %",Range(0,1)) = 1
+		_SpecularPower("Specular Power", Float) = 100
+		[Toggle] _AmbientMode("Ambient Light?", Float) = 0
+		_AmbientFactor("Ambient %", Range(0,1)) = 1
+
+		[KeywordEnum(Off, Refl, Refr)] _IBLMode("IBL Mode", Float) = 0
+		_ReflectionFactor("Reflection %",Range(0,1)) = 1
+
+		_Cube("Cube Map", Cube) = "" {}
+		_Detail("Reflection Detail", Range(1,9)) = 1.0
+		_ReflectionExposure("HDR Exposure", float) = 1.0
+	}
+
+	Subshader 
+	{
+		//http://docs.unity3d.com/462/Documentation/Manual/SL-SubshaderTags.html
+		// Background : 1000     -        0 - 1499 = Background
+		// Geometry   : 2000     -     1500 - 2399 = Geometry
+		// AlphaTest  : 2450     -     2400 - 2699 = AlphaTest
+		// Transparent: 3000     -     2700 - 3599 = Transparent
+		// Overlay    : 4000     -     3600 - 5000 = Overlay
+
+		Tags {"Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Pass 
+		{
+			Tags {"LightMode" = "ForwardBase"}
+			Blend SrcAlpha OneMinusSrcAlpha
+
+CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma shader_feature _USENORMAL_OFF _USENORMAL_ON
+			#pragma shader_feature _LIGHTING_OFF _LIGHTING_VERT _LIGHTING_FRAG
+			#pragma shader_feature _AMBIENTMODE_OFF _AMBIENTMODE_ON
+			#pragma shader_feature _IBLMODE_OFF _IBLMODE_REFL _IBLMODE_REFR
+
+////////////////////////////////////////////////////////////////////////////////////////////////
+// Utility Functions
+float3 normalFromColor(float4 colorVal)
+{
+#if defined(UNITY_NO_DXT5nm)
+	return colorVal.xyz * 2 - 1;
+#else
+	// R => x => A
+	// G => y
+	// B => z => ignored
+
+	float3 normalVal;
+	normalVal = float3 (colorVal.a * 2.0 - 1.0, colorVal.g * 2.0 - 1.0, 0.0);
+	normalVal.z = sqrt(1.0 - dot(normalVal, normalVal));
+	return normalVal;
+#endif
+}
+
+float3 WorldNormalFromNormalMap(sampler2D normalMap, float2 normalTexCoord, float3 tangentWorld, float3 binormalWorld, float3 normalWorld)
+{
+	// Color at Pixel which we read from Tangent space normal map
+	float4 colorAtPixel = tex2D(normalMap, normalTexCoord);
+
+	// Normal value converted from Color value
+	float3 normalAtPixel = normalFromColor(colorAtPixel);
+
+	// Compose TBN matrix
+	float3x3 TBNWorld = float3x3(tangentWorld, binormalWorld, normalWorld);
+	return normalize(mul(normalAtPixel, TBNWorld));
+}
+
+float3 DiffuseLambert(float3 normalVal, float3 lightDir, float3 lightColor, float diffuseFactor, float attenuation)
+{
+	return lightColor * diffuseFactor * attenuation * max(0, dot(normalVal,lightDir));
+}
+
+float3 SpecularBlinnPhong(float3 normalDir, float3 lightDir, float3 worldSpaceViewDir, float3 specularColor, float specularFactor, float attenuation, float specularPower)
+{
+	float3 halfwayDir = normalize(lightDir + worldSpaceViewDir);
+	return specularColor * specularFactor * attenuation * pow(max(0,dot(normalDir,halfwayDir)),specularPower);
+}
+
+float3 IBLRefl(samplerCUBE cubeMap, half detail, float3 worldRefl, float exposure, float reflectionFactor)
+{
+	float4 cubeMapCol = texCUBElod(cubeMap, float4(worldRefl, detail)).rgba;
+	return reflectionFactor * cubeMapCol.rgb * (cubeMapCol.a * exposure);
+}
+
+inline float4 ProjectionToTextureSpace(float4 pos)
+{
+float4 textureSpacePos = pos;
+#if defined(UNITY_HALF_TEXEL_OFFSET)
+	textureSpacePos.xy = float2 (textureSpacePos.x, textureSpacePos.y * _ProjectionParams.x) + textureSpacePos.w * _ScreenParams.zw;
+#else
+	textureSpacePos.xy = float2 (textureSpacePos.x, textureSpacePos.y * _ProjectionParams.x) + textureSpacePos.w;
+#endif
+	textureSpacePos.xy = float2 (textureSpacePos.x / textureSpacePos.w, textureSpacePos.y / textureSpacePos.w) * 0.5f;
+	return textureSpacePos;
+}
+////////////////////////////////////////////////////////////////////////////////////////////////
+
+			uniform half4 _Color;
+			uniform sampler2D _MainTex;
+			uniform float4 _MainTex_ST;
+
+			uniform sampler2D _NormalMap;
+			uniform float4 _NormalMap_ST;
+
+			uniform float _Diffuse;
+			uniform float4 _LightColor0;
+
+			uniform sampler2D _SpecularMap;
+			uniform float _SpecularFactor;
+			uniform float _SpecularPower;
+
+			uniform samplerCUBE _Cube;
+			float _ReflectionFactor;
+			half _Detail;
+			float _ReflectionExposure;
+
+#if _AMBIENTMODE_ON
+			uniform float _AmbientFactor;
+#endif
+			//https://msdn.microsoft.com/en-us/library/windows/desktop/bb509647%28v=vs.85%29.aspx#VS
+			struct vertexInput
+			{
+				float4 vertex : POSITION;
+				float4 normal : NORMAL;
+				float4 texcoord : TEXCOORD0;
+#if _USENORMAL_ON
+				float4 tangent : TANGENT;
+#endif
+			};
+
+			struct vertexOutput
+			{
+				float4 pos : SV_POSITION;
+				float4 texcoord : TEXCOORD0;
+				float4 normalWorld : TEXCOORD1;
+				float4 posWorld : TEXCOORD2;
+#if _USENORMAL_ON
+				float4 tangentWorld : TEXCOORD3;
+				float3 binormalWorld : TEXCOORD4;
+				float4 normalTexCoord : TEXCOORD5;
+#endif
+#if _LIGHTING_VERT
+				float4 surfaceColor : COLOR0;
+#else
+	#if _IBLMODE_REFL
+				float4 surfaceColor : COLOR0;
+	#endif
+#endif
+			};
+
+			vertexOutput vert(vertexInput v)
+			{
+				vertexOutput o; UNITY_INITIALIZE_OUTPUT(vertexOutput, o);
+				o.pos = UnityObjectToClipPos(v.vertex);
+				o.texcoord.xy = (v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw);
+				o.normalWorld = float4(normalize(mul(normalize(v.normal.xyz),(float3x3)unity_WorldToObject)),v.normal.w);
+
+				o.posWorld = mul(unity_ObjectToWorld, v.vertex);
+
+#if _USENORMAL_ON
+				// World space T, B, N values
+				o.normalTexCoord.xy = (v.texcoord.xy * _NormalMap_ST.xy + _NormalMap_ST.zw);
+				//o.tangentWorld = normalize(mul(v.tangent,_Object2World));
+				o.tangentWorld = (normalize(mul((float3x3)unity_ObjectToWorld, v.tangent.xyz)),v.tangent.w);
+				o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w); //https://forum.unity3d.com/threads/floating-point-division-by-zero-at-line-warning-in-unity-5-1.332098/
+#endif
+#if _LIGHTING_VERT
+				float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+				float3 lightColor = _LightColor0.xyz;
+				float attenuation = 1;
+				float3 diffuseCol = DiffuseLambert(o.normalWorld, lightDir, lightColor, _Diffuse, attenuation);
+
+				float4 specularMap = tex2Dlod(_SpecularMap, float4(o.texcoord.xy, 0, 0));//float4 specularMap = tex2D(_SpecularMap, o.texcoord.xy);
+				//o.posWorld = mul(_Object2World, v.vertex);
+				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - o.posWorld);
+				float3 specularCol = SpecularBlinnPhong(o.normalWorld, lightDir, worldSpaceViewDir, specularMap.rgb , _SpecularFactor, attenuation, _SpecularPower);
+
+				float3 mainTexCol = tex2Dlod(_MainTex, float4(o.texcoord.xy, 0,0));
+
+				o.surfaceColor = float4(mainTexCol * _Color * diffuseCol + specularCol,1);
+	#if _AMBIENTMODE_ON
+				float3 ambientColor = _AmbientFactor * UNITY_LIGHTMODEL_AMBIENT;
+				o.surfaceColor = float4(o.surfaceColor.rgb + ambientColor,1);
+	#endif
+
+	#if _IBLMODE_REFL
+				float3 worldRefl = reflect(-worldSpaceViewDir, o.normalWorld.xyz);
+				o.surfaceColor.rgb *= IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
+	#endif
+#else
+	#if _IBLMODE_REFL
+				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - o.posWorld);
+				float3 worldRefl = reflect(-worldSpaceViewDir, o.normalWorld.xyz);
+				o.surfaceColor.rgb += IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
+	#endif				
+
+#endif
+				return o;
+			}
+
+			half4 frag(vertexOutput i) : COLOR
+			{
+				float4 finalColor = float4(0,0,0,_Color.a);
+#if _USENORMAL_ON
+				float3 worldNormalAtPixel = WorldNormalFromNormalMap(_NormalMap, i.normalTexCoord.xy, i.tangentWorld.xyz, i.binormalWorld.xyz, i.normalWorld.xyz);
+				//return tex2D(_MainTex, i.texcoord) * _Color;
+#else
+				float3 worldNormalAtPixel = i.normalWorld.xyz;
+#endif
+
+#if _LIGHTING_FRAG
+				float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+				float3 lightColor = _LightColor0.xyz;
+				float attenuation = 1;
+				float3 diffuseCol = DiffuseLambert(worldNormalAtPixel, lightDir, lightColor, _Diffuse, attenuation);
+
+				float4 specularMap = tex2D(_SpecularMap, i.texcoord.xy);
+
+				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
+				float3 specularCol = SpecularBlinnPhong(worldNormalAtPixel, lightDir, worldSpaceViewDir, specularMap.rgb , _SpecularFactor, attenuation, _SpecularPower);
+
+				float3 mainTexCol = tex2D(_MainTex, i.texcoord.xy);
+				finalColor.rgb += mainTexCol * _Color * diffuseCol + specularCol;
+
+	#if _AMBIENTMODE_ON
+				float3 ambientColor = _AmbientFactor * UNITY_LIGHTMODEL_AMBIENT;
+				finalColor.rgb += ambientColor;
+	#endif
+
+	#if _IBLMODE_REFL
+				float3 worldRefl = reflect(-worldSpaceViewDir, worldNormalAtPixel);
+				finalColor.rgb *= IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
+	#endif
+
+#elif _LIGHTING_VERT
+				finalColor = i.surfaceColor;
+#else
+	#if _IBLMODE_REFL
+				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
+				float3 worldRefl = reflect(-worldSpaceViewDir, worldNormalAtPixel);
+				finalColor.rgb += IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
+	#endif
+#endif
+				return finalColor;
+			}
+	ENDCG
+		}
+	}
+}
+```
 
 ## Image based Refraction
 
@@ -2581,408 +2891,7 @@ F &= (F_{0} + (1 - F_{0})(1-(V \cdot H)^{5}))
 다음은 위의 수식을 이용하여 unityshaderlab 으로 구현한 것이다. `float AshikhminShirleyPremoze_BRDF` 를 참고하자.
 
 ```c
-// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
-// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
-// Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
-// Upgrade NOTE: replaced 'unity_World2Shadow' with 'unity_WorldToShadow'
-
-Shader "ShaderDev/21Lighting_BRDF_Aniso"
-
-{
-	Properties 
-	{
-		_Color ("Main Color", Color) = (1,1,1,1)
-		_MainTex("Main Texture", 2D) = "white" {}
-		_NormalMap("Normal map", 2D) = "white" {}
-		[KeywordEnum(Off,On)] _UseNormal("Use Normal Map?", Float) = 0
-		_Diffuse("Diffuse %", Range(0,1)) = 1
-		[KeywordEnum(Off, Vert, Frag)] _Lighting ("Lighting Mode", Float) = 0
-		_SpecularMap ("Specular Map", 2D) = "black" {}
-		_SpecularFactor("Specular %",Range(0,1)) = 1
-		_SpecularPower("Specular Power", Float) = 100
-		
-		[KeywordEnum(Off, Map, Nomap, Aniso)] _Specular ("Specular Mode", Float) = 1
-		_TangentMap ("Tangent Map", 2D) = "black" {}
-		_AnisoU("Aniso U", Float) = 1
-		_AnisoV("Aniso V", Float) = 1
-		
-		[Toggle] _AmbientMode ("Ambient Light?", Float) = 0
-		_AmbientFactor ("Ambient %", Range(0,1)) = 1
-		
-		[KeywordEnum(Off, Refl, Refr, Fres)] _IBLMode ("IBL Mode", Float) = 0
-		_ReflectionFactor("Reflection %",Range(0,1)) = 1
-		
-		_Cube("Cube Map", Cube) = "" {}
-		_Detail("Reflection Detail", Range(1,9)) = 1.0
-		_ReflectionExposure("HDR Exposure", float) = 1.0
-		
-		_RefractionFactor("Refraction %",Range(0,1)) = 1
-		_RefractiveIndex("Refractive Index", Range(0,50)) = 1
-		
-		_FresnelWidth("FresnelWidth", Range(0,1)) = 0.3
-		
-		[Toggle] _ShadowMode ("Shadow On/Off?", Float) = 0
-	}
-	
-	Subshader
-	{
-		//http://docs.unity3d.com/462/Documentation/Manual/SL-SubshaderTags.html
-	    // Background : 1000     -        0 - 1499 = Background
-        // Geometry   : 2000     -     1500 - 2399 = Geometry
-        // AlphaTest  : 2450     -     2400 - 2699 = AlphaTest
-        // Transparent: 3000     -     2700 - 3599 = Transparent
-        // Overlay    : 4000     -     3600 - 5000 = Overlay
-        
-		Tags {"Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
-		Pass
-		{
-			Name "ShadowCaster"
-			Tags { "Queue" = "Opaque" "LightMode" = "ShadowCaster" }
-			ZWrite On
-			Cull Off
-		
-			CGPROGRAM
-			#pragma vertex vert
-			#pragma fragment frag
-			
-			struct vertexInput
-			{
-				float4 vertex : POSITION;
-			};
-			struct vertexOutput
-			{
-				float4 pos : SV_POSITION;
-			};
-			
-			vertexOutput vert (vertexInput v)
-			{
-				vertexOutput o;
-				o.pos = UnityObjectToClipPos(v.vertex);
-				return o;
-			}
-			
-			float4 frag(vertexOutput i) : SV_Target
-			{
-				return 0;
-			}
-			ENDCG
-
-		}
-		
-		Pass
-		{
-			Tags {"LightMode" = "ForwardBase"}
-			Blend SrcAlpha OneMinusSrcAlpha
-			
-			CGPROGRAM
-			//http://docs.unity3d.com/Manual/SL-ShaderPrograms.html
-			#pragma vertex vert
-			#pragma fragment frag
-			#pragma shader_feature _USENORMAL_OFF _USENORMAL_ON
-			#pragma shader_feature _LIGHTING_OFF _LIGHTING_VERT _LIGHTING_FRAG
-			#pragma shader_feature _SPECULAR_OFF _SPECULAR_MAP _SPECULAR_NOMAP _SPECULAR_ANISO
-			#pragma shader_feature _AMBIENTMODE_OFF _AMBIENTMODE_ON
-			#pragma shader_feature _IBLMODE_OFF _IBLMODE_REFL _IBLMODE_REFR _IBLMODE_FRES
-			#pragma shader_feature _SHADOWMODE_OFF _SHADOWMODE_ON
-			#include "CVGLighting.cginc" 
-			//http://docs.unity3d.com/ru/current/Manual/SL-ShaderPerformance.html
-			//http://docs.unity3d.com/Manual/SL-ShaderPerformance.html
-			uniform half4 _Color;
-			uniform sampler2D _MainTex;
-			uniform float4 _MainTex_ST;
-			
-			uniform sampler2D _NormalMap;
-			uniform float4 _NormalMap_ST;
-			
-			uniform float _Diffuse;
-			uniform float4 _LightColor0;
-			
-			#if _SPECULAR_MAP
-				uniform sampler2D _SpecularMap;
-			#endif
-			
-			#if _SPECULAR_MAP || _SPECULAR_NOMAP
-				uniform float _SpecularFactor;
-				uniform float _SpecularPower;
-			#endif
-			
-			#if _SPECULAR_ANISO
-				uniform sampler2D _TangentMap;
-				uniform float _AnisoU;
-				uniform float _AnisoV; 
-			#endif
-			
-			#if _IBLMODE_REFL || _IBLMODE_REFR || _IBLMODE_FRES
-				uniform samplerCUBE _Cube;
-				uniform half _Detail;
-				uniform float _ReflectionExposure;
-			#endif
-			
-			#if _IBLMODE_REFL || _IBLMODE_FRES || _SPECULAR_ANISO
-				uniform float _ReflectionFactor;
-			#endif
-			
-			#if _IBLMODE_REFR
-				uniform float _RefractionFactor;
-				uniform float _RefractiveIndex;
-			#endif
-			
-			#if _IBLMODE_FRES
-				uniform float _FresnelWidth;
-			#endif
-			
-			#if _AMBIENTMODE_ON
-				uniform float _AmbientFactor;
-			#endif
-			
-			#if _SHADOWMODE_ON
-				#if defined(SHADER_TARGET_GLSL)
-					sampler2DShadow _ShadowMapTexture;
-				#else
-					sampler2D _ShadowMapTexture;
-				#endif
-				
-			#endif
-			
-			//https://msdn.microsoft.com/en-us/library/windows/desktop/bb509647%28v=vs.85%29.aspx#VS
-			struct vertexInput
-			{
-				float4 vertex : POSITION;
-				float4 normal : NORMAL;
-				float4 texcoord : TEXCOORD0;
-				#if _USENORMAL_ON
-					float4 tangent : TANGENT;
-				#endif
-			};
-			
-			struct vertexOutput
-			{
-				float4 pos : SV_POSITION;
-				float4 texcoord : TEXCOORD0;
-				float4 normalWorld : TEXCOORD1;
-				float4 posWorld : TEXCOORD2;
-				#if _USENORMAL_ON
-					float4 tangentWorld : TEXCOORD3;
-					float3 binormalWorld : TEXCOORD4;
-					float4 normalTexCoord : TEXCOORD5;
-				#endif
-				
-				#if _LIGHTING_VERT ||  _IBLMODE_REFL || _IBLMODE_REFR || _IBLMODE_FRES
-						float4 surfaceColor : COLOR0;
-				#endif
-				
-				#if _SHADOWMODE_ON
-					float4 shadowCoord : COLOR1;
-				#endif
-			};
-			
-			float AshikhminShirleyPremoze_BRDF(float nU, float nV, float3 tangentDir, float3 normalDir, float3 lightDir, float3 viewDir, float reflectionFactor)
-			{
-				float pi = 3.141592;
-				float3 halfwayVector = normalize(lightDir + viewDir);
-				float3 NdotH = dot(normalDir, halfwayVector);
-				float3 NdotL = dot(normalDir, lightDir);
-				float3 NdotV = dot(normalDir, viewDir);
-				float3 HdotT = dot(halfwayVector, tangentDir);
-				float3 HdotB = dot(halfwayVector, cross(tangentDir, normalDir));
-				float3 VdotH = dot(viewDir, halfwayVector);
-				
-				float power = nU * pow(HdotT,2) + nV * pow(HdotB,2);
-				power /= 1.0 - pow(NdotH,2);
-				
-				float spec = sqrt((nU + 1) * (nV + 1)) * pow(NdotH, power);
-				spec /= 8.0 * pi * VdotH * max(NdotL, NdotV);
-				
-				float Fresnel = reflectionFactor + (1.0 - reflectionFactor) * pow(1.0 - VdotH, 5.0);
-				spec *= Fresnel;
-				return spec;
-			}
-			
-			vertexOutput vert(vertexInput v)
-			{
-				vertexOutput o; UNITY_INITIALIZE_OUTPUT(vertexOutput, o); // d3d11 requires initialization
-				o.pos = UnityObjectToClipPos( v.vertex);
-				o.texcoord.xy = (v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw);
-				o.normalWorld = float4(normalize(mul(normalize(v.normal.xyz),(float3x3)unity_WorldToObject)),v.normal.w);
-				
-				o.posWorld = mul(unity_ObjectToWorld, v.vertex);
-				#if _SHADOWMODE_ON
-					#if defined(UNITY_NO_SCREENSPACE_SHADOWS)
-						o.shadowCoord = mul(unity_WorldToShadow[0], o.posWorld);
-					#else
-						o.shadowCoord = ProjectionToTextureSpace(o.pos);
-					#endif
-					
-				#endif
-				
-				#if _USENORMAL_ON
-					// World space T, B, N values
-					o.normalTexCoord.xy = (v.texcoord.xy * _NormalMap_ST.xy + _NormalMap_ST.zw);
-					o.tangentWorld = (normalize(mul((float3x3)unity_ObjectToWorld, v.tangent.xyz)),v.tangent.w);
-					o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w);
-				#endif
-				#if _LIGHTING_VERT
-					float3 lightDir  = normalize(_WorldSpaceLightPos0.xyz);
-					float3 lightColor = _LightColor0.xyz;
-					float attenuation = 1;
-					float3 diffuseCol =  DiffuseLambert(o.normalWorld, lightDir, lightColor, _Diffuse, attenuation);
-					
-					float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - o.posWorld);
-					#if _SPECULAR_MAP
-						float4 specularMap = tex2Dlod(_SpecularMap, float4(o.texcoord.xy, 0, 0));//float4 specularMap = tex2D(_SpecularMap, o.texcoord.xy);//float4 specularMap = tex2D(_SpecularMap, o.texcoord.xy);
-						float3 specularCol = SpecularBlinnPhong(o.normalWorld, lightDir, worldSpaceViewDir, specularMap.rgb , _SpecularFactor, attenuation, _SpecularPower);
-					#endif
-					
-					#if _SPECULAR_NOMAP
-						float3 specularCol = SpecularBlinnPhong(o.normalWorld, lightDir, worldSpaceViewDir, 1 , _SpecularFactor, attenuation, _SpecularPower);
-					#endif
-					
-					#if _SPECULAR_ANISO
-						float4 tangentMap = tex2D(_TangentMap, o.texcoord.xy);
-						float3 specularCol = AshikhminShirleyPremoze_BRDF(_AnisoU, _AnisoV, tangentMap.xyz, o.normalWorld, lightDir, worldSpaceViewDir, _ReflectionFactor);
-					#endif
-										
-					float3 mainTexCol = tex2Dlod(_MainTex, float4(o.texcoord.xy, 0,0));
-					
-					o.surfaceColor = float4(mainTexCol * _Color * diffuseCol + specularCol,1);
-					#if _AMBIENTMODE_ON
-						float3 ambientColor = _AmbientFactor * UNITY_LIGHTMODEL_AMBIENT;
-						o.surfaceColor = float4(o.surfaceColor.rgb + ambientColor,1);
-					#endif
-					
-					#if _IBLMODE_REFL
-						float3 worldRefl = reflect(-worldSpaceViewDir, o.normalWorld.xyz);
-						o.surfaceColor.rgb *= IBLRefl (_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
-					#endif
-					#if _IBLMODE_REFR
-						float3 worldRefr = refract(-worldSpaceViewDir, o.normalWorld.xyz, 1/_RefractiveIndex);
-						o.surfaceColor.rgb *= IBLRefl (_Cube, _Detail, worldRefr,  _ReflectionExposure, _RefractionFactor);
-					#endif
-					
-					#if _IBLMODE_FRES
-						float3 worldRefl = reflect(-worldSpaceViewDir, o.normalWorld.xyz);
-						float3 reflColor = IBLRefl (_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
-						
-						float fresnel = 1 - saturate(dot(worldSpaceViewDir,o.normalWorld.xyz));
-						fresnel = smoothstep( 1 - _FresnelWidth, 1, fresnel);
-						o.surfaceColor.rgb = lerp(o.surfaceColor.rgb, o.surfaceColor.rgb * reflColor, fresnel);
-					#endif
-				#endif
-				return o;
-			}
-
-			half4 frag(vertexOutput i) : COLOR
-			{
-				float4 finalColor = float4(0,0,0,_Color.a);
-				
-				#if _USENORMAL_ON
-					float3 worldNormalAtPixel = WorldNormalFromNormalMap(_NormalMap, i.normalTexCoord.xy, i.tangentWorld.xyz, i.binormalWorld.xyz, i.normalWorld.xyz);
-				#else
-					float3 worldNormalAtPixel = i.normalWorld.xyz;
-				#endif
-				
-				#if _LIGHTING_FRAG
-					float3 lightDir  = normalize(_WorldSpaceLightPos0.xyz);
-					float3 lightColor = _LightColor0.xyz;
-					float attenuation = 1;
-					float3 diffuseCol =  DiffuseLambert(worldNormalAtPixel, lightDir, lightColor, _Diffuse, attenuation);
-					
-					float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
-					#if _SPECULAR_OFF
-						float specularCol = 0;
-					#endif
-					#if _SPECULAR_MAP
-						float4 specularMap = tex2D(_SpecularMap, i.texcoord.xy);
-						float3 specularCol = SpecularBlinnPhong(worldNormalAtPixel, lightDir, worldSpaceViewDir, specularMap.rgb , _SpecularFactor, attenuation, _SpecularPower);
-					#endif
-					
-					#if _SPECULAR_NOMAP
-						float3 specularCol = SpecularBlinnPhong(worldNormalAtPixel, lightDir, worldSpaceViewDir, 1, _SpecularFactor, attenuation, _SpecularPower);
-					#endif
-					
-					#if _SPECULAR_ANISO
-						float4 tangentMap = tex2D(_TangentMap, i.texcoord.xy);
-						float3 specularCol = AshikhminShirleyPremoze_BRDF(_AnisoU, _AnisoV, tangentMap.xyz, worldNormalAtPixel, lightDir, worldSpaceViewDir, _ReflectionFactor);
-					#endif
-							
-					
-					float3 mainTexCol = tex2D(_MainTex, i.texcoord.xy);
-					finalColor.rgb += mainTexCol * _Color * diffuseCol + specularCol;
-					#if _SHADOWMODE_ON
-						#if defined(SHADER_TARGET_GLSL)
-							float shadow =  shadow2D(_ShadowMapTexture, i.shadowCoord);
-						#else
-							float shadow = tex2D(_ShadowMapTexture, i.shadowCoord).a;
-						#endif
-						finalColor.rgb *= shadow; 
-					#endif
-					
-					#if _AMBIENTMODE_ON
-						float3 ambientColor = _AmbientFactor * UNITY_LIGHTMODEL_AMBIENT;
-						finalColor.rgb += ambientColor;
-					#endif
-					
-					#if _IBLMODE_REFL
-						float3 worldRefl = reflect(-worldSpaceViewDir, worldNormalAtPixel);
-						finalColor.rgb *= IBLRefl (_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
-					#endif
-					
-					#if _IBLMODE_REFR
-						float3 worldRefr = refract(-worldSpaceViewDir, worldNormalAtPixel, 1/_RefractiveIndex);
-						finalColor.rgb *= IBLRefl (_Cube, _Detail, worldRefr,  _ReflectionExposure, _RefractionFactor);
-					#endif
-					
-					#if _IBLMODE_FRES
-						float3 worldRefl = reflect(-worldSpaceViewDir, worldNormalAtPixel);
-						float3 reflColor = IBLRefl (_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
-						
-						float fresnel = 1 - saturate(dot(worldSpaceViewDir,worldNormalAtPixel));
-						fresnel = smoothstep( 1 - _FresnelWidth, 1, fresnel);
-						finalColor.rgb = lerp(finalColor.rgb, finalColor.rgb * reflColor, fresnel);
-					#endif
-
-				#elif _LIGHTING_VERT
-					finalColor = i.surfaceColor;
-					#if _SHADOWMODE_ON
-						#if defined(SHADER_TARGET_GLSL)
-							float shadow =  shadow2D(_ShadowMapTexture, i.shadowCoord);
-						#else
-							float shadow = tex2D(_ShadowMapTexture, i.shadowCoord).a;
-						#endif
-						finalColor.rgb *= shadow;
-					#endif
-				#else
-					#if _IBLMODE_REFL
-						float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
-						float3 worldRefl = reflect(-worldSpaceViewDir, worldNormalAtPixel);
-						finalColor.rgb += IBLRefl (_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
-					#endif	
-					
-					#if _IBLMODE_REFR
-						float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
-						float3 worldRefr = refract(-worldSpaceViewDir, worldNormalAtPixel, 1/_RefractiveIndex);
-						finalColor.rgb += IBLRefl (_Cube, _Detail, worldRefr,  _ReflectionExposure, _RefractionFactor);
-					#endif
-					
-					#if _IBLMODE_FRES
-						float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
-						float3 worldRefl = reflect(-worldSpaceViewDir, worldNormalAtPixel);
-						float3 reflColor = IBLRefl (_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
-						
-						float fresnel = 1 - saturate(dot(worldSpaceViewDir,worldNormalAtPixel));
-						fresnel = smoothstep( 1 - _FresnelWidth, 1, fresnel);
-						float3 mainTexCol = tex2D(_MainTex, i.texcoord.xy);
-						
-						finalColor.rgb = lerp(mainTexCol * _Color.rgb, finalColor.rgb + reflColor, fresnel);
-					#endif
-				#endif
-				return finalColor;
-			}
-			ENDCG
-		}
-	}
-}
 ```
 
 # Snippets
