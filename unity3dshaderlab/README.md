@@ -2673,7 +2673,7 @@ float3 IBLRefl (samplerCUBE cubeMap, half detail, float3 worldRefl, float exposu
 
 Fresnel 은 물체를 보는 각도에 따라 반사되는 정도가 다른 현상이다.
 
-다음은 Irradiance Map 을 이용하여 fresnel 을 구현한 것이다. `fresnel` 값을 계산해서 Main Texture 의 Color 와 reflColor 가 반영된 Color 사이를 `_FresnelWidth` 의 값으로 조정한다.
+다음은 Irradiance Map 을 이용하여 fresnel 을 구현한 것이다. reflColor 가 반영되지 않는 Color 와 반영된 Color 사이를 `fresnel` 값으로 조정하여 새로운 Color 를 계산한다. 참고로 `fresnel` 의 범위는 `[0, 1]` 이다.
 
 ```
 	Properties
