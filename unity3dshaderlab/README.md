@@ -2615,10 +2615,11 @@ Refraction vector 를 구하기 위해서는 Snell 의 법칙을 이해해야 �
 
 Refraction vector 를 다음과 같이 유도한다.
 
-![]()
+![](refract_derivation_1.png)
 
-```
-```
+![](refract_derivation_2.png)
+
+![](refract_derivation_3.png)
 
 Refraction vector 는 cg function 중 `reflect` 를 이용하여 구한다. reflect 는 앞서 유도한 식과 똑같다.
 
@@ -2669,6 +2670,35 @@ float3 IBLRefl (samplerCUBE cubeMap, half detail, float3 worldRefl, float exposu
 전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
 
 ## Image based Fresnel
+
+Fresnel 은 물체를 보는 각도에 따라 반사되는 정도가 다른 현상이다.
+
+다음은 Irradiance Map 을 이용하여 fresnel 을 구현한 것이다. `fresnel` 값을 계산해서 Main Texture 의 Color 와 reflColor 가 반영된 Color 사이를 `_FresnelWidth` 의 값으로 조정한다.
+
+```
+	Properties
+	{
+        ...
+		_FresnelWidth("FresnelWidth", Range(0,1)) = 0.3
+        ...
+    }
+			half4 frag(vertexOutput i) : COLOR
+			{
+                ...
+	#if _IBLMODE_FRES
+				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
+				float3 worldRefl = reflect(-worldSpaceViewDir, worldNormalAtPixel);
+				float3 reflColor = IBLRefl(_Cube, _Detail, worldRefl,  _ReflectionExposure, _ReflectionFactor);
+
+				float fresnel = 1 - saturate(dot(worldSpaceViewDir,worldNormalAtPixel));
+				fresnel = smoothstep(1 - _FresnelWidth, 1, fresnel);
+				float3 mainTexCol = tex2D(_MainTex, i.texcoord.xy);
+
+				finalColor.rgb = lerp(mainTexCol * _Color.rgb, finalColor.rgb + reflColor, fresnel);
+	#endif
+                ...
+            }
+```
 
 전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
 
