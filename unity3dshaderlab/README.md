@@ -28,6 +28,9 @@
   - [Diffuse Reflection](#diffuse-reflection)
   - [Specular Reflection](#specular-reflection)
   - [Ambient Reflection](#ambient-reflection)
+  - [Wrap up Basic Lighting Model](#wrap-up-basic-lighting-model)
+  - [Advanced Lighting Model](#advanced-lighting-model)
+  - [Hemispherical Lighting Model](#hemispherical-lighting-model)
   - [IBL (image based lighting)](#ibl-image-based-lighting)
   - [Irradiance Map](#irradiance-map)
   - [Image based Relection](#image-based-relection)
@@ -2371,9 +2374,12 @@ Shader "Custom/skeleton"
 
 ## Basic Lighting Model and Rendering Path
 
-- basic lighting model에서 surface color는 다음과 같이 얻어낸다.
-  surface color = emission + ambient + diffuse + specular
-  이것을 BEADS로 기억하자.
+- basic lighting model 에서 surface color 는 다음과 같이 구할 수 있다. 이것을 BEADS 로 기억하자.
+  
+```
+  Basic lighting model = Emission + Ambient + Diffuse + Specular
+```
+  
 - unity3d의 rendering path는 foward, legacy deferred,
   deferred shading, legacy vertex lit등 이 있다.
 - forward path는 다시 forward base, forward additional로 나누어 진다.
@@ -2545,6 +2551,29 @@ a = \begin{matrix}
 ```
 
 전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
+
+## Wrap up Basic Lighting Model 
+
+Basic Lighting Model 은 BEADS 로 기억하자.
+
+```
+  Basic lighting model = Emission + Ambient + Diffuse + Specular
+```
+
+다음은 Basic Lighting Model 을 Texture 와 Tint Color 를 적용하여 구현한 것이다.
+
+```c
+```
+
+## Advanced Lighting Model
+
+Basic Lighting Model 은 Photo realism 을 표현하기에 부족하다. 예를 들어서 Shadow 를 표현할 수 없다. 그리고 Inter object interaction 을 표현할 수 없다. 즉 간접광을 처리하지 앟는다. Energy Balance 를 표현할 수 없다. 즉 에너지 보존법칙을 고려하지 않는다.
+
+Advanced Lighting Model 은 Basic Lighting Model 보다 발전된 것이며 Photo Realism 을 표현할 수 있다. [Physically Based Rendering](/pbr/README.md) 은 Advanced Lighting Model 의 대표적인 예이다. Advanced Lighting Model 을 구현하기 위해서는 `reflection, refraction, fresnel` 등을 잘 익혀야 한다.
+
+## Hemispherical Lighting Model
+
+Hemispherical Lighting Model 은 두개의 반구를 이용하여 구현한 Lighting Model 이다. 렌더링한 물체를 중심으로 위부분은 sky light 를 의미하고 아래 부분은 ground light 를 의미한다. 만약 물체의 한점의 normal vector 를 `N` 이라고 하고 light 의 vector 를 `L` 이라고 했을 때 `dot(N, L)` 이 0 보다 크거나 같으면 sky light 를 적용하고  0 보다 작으면 ground light 를 적용한다. 
 
 ## IBL (image based lighting)
 
