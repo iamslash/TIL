@@ -2377,7 +2377,9 @@ Shader "Custom/skeleton"
 - basic lighting model 에서 surface color 는 다음과 같이 구할 수 있다. 이것을 BEADS 로 기억하자.
   
 ```
-  Basic lighting model = Emission + Ambient + Diffuse + Specular
+Basic lighting model
+
+surface color = Emission + Ambient + Diffuse + Specular
 ```
   
 - unity3d의 rendering path는 foward, legacy deferred,
@@ -2558,7 +2560,9 @@ a = \begin{matrix}
 Basic Lighting Model 은 BEADS 로 기억하자.
 
 ```
-  Basic lighting model = Emission + Ambient + Diffuse + Specular
+Basic lighting model
+
+surface color = Emission + Ambient + Diffuse + Specular
 ```
 
 다음은 Basic Lighting Model 을 Texture 와 Tint Color 를 적용하여 구현한 것이다.
