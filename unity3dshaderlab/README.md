@@ -2353,10 +2353,10 @@ Shader "Custom/skeleton"
 
 ## Multi Variant Shader
 
-- multi variant shader는 properties의 KeywordEnum과 
+- multi variant shader 는 properties 의 KeywordEnum 과 
   #pragma multi_compile 혹은 #pragma shader_feature directive 
-  에 의해 이루어진다. multi_compile은 모든 variant가 만들어지지만 
-  shader_feature는 특정 variant만 만들어진다.
+  에 의해 이루어진다. multi_compile 은 모든 variant 가 만들어지지만 
+  shader_feature 는 특정 variant 만 만들어진다.
   
 ```c
 	Properties 
@@ -2381,50 +2381,47 @@ Shader "Custom/skeleton"
 ```
   
 - unity3d의 rendering path는 foward, legacy deferred,
-  deferred shading, legacy vertex lit등 이 있다.
-- forward path는 다시 forward base, forward additional로 나누어 진다.
-  forward base는 가장 밝은 directional light를 반영해서 SH (spherical
-  harmonic) lighting (light probe, GI, sky ambient)과 함께
-  rendering한다.  forward additional은 forward base에서 처리되지 않은
-  light를 rendering한다.  LightMode tag를 이용해서 shader의 forward
-  base, forward additional pass를 설정할 수 있다.
+  deferred shading, legacy vertex lit 등 이 있다.
+- forward path 는 다시 forward base, forward additional 로 나누어 진다.
+  forward base는 가장 밝은 directional light를 반영해서 SH (spherical harmonic) lighting (light probe, GI, sky ambient)과 함께 rendering 한다. forward additional 은 forward base 에서 처리되지 않은
+  light 를 rendering 한다.  LightMode tag 를 이용해서 shader 의 forward base, forward additional pass 를 설정할 수 있다.
   
 ```
 Tags { "LightMode" = "ForwardBase" 
 ```
-- legacy deferred path는 3가지 단계로 진행된다. 첫째 geometry buffer에
-  depth, normal, specular power등의 정보를 rendering한다.
-  둘째 각 light에 영향 받는 pixe들을 모아서 geometry buffer에서 데이터를
-  읽어 들인다. 그리고 light vlaue를 기록하고 light-accumulation buffer에
-  다시 저장한다. 셋째 accumulated light value와 mesh color를 이용하여
-  다시 scene을 렌더링한다. 두번 렌더링하게 된다. 
-- deferred shading path는 2가지 단계로 진행된다. 첫째 geometry buffer에
+- legacy deferred path는 3가지 단계로 진행된다. 첫째 geometry buffer 에
+  depth, normal, specular power 등의 정보를 rendering 한다.
+  둘째 각 light 에 영향 받는 pixel 들을 모아서 geometry buffer 에서 데이터를
+  읽어 들인다. 그리고 light vlaue 를 기록하고 light-accumulation buffer 에
+  다시 저장한다. 셋째 accumulated light value 와 mesh color 를 이용하여
+  다시 scene 을 렌더링한다. 두번 렌더링하게 된다. 
+- deferred shading path 는 2가지 단계로 진행된다. 첫째 geometry buffer 에
   depth, diffuse color, world space normal, specular color, smoothness,
-  emmission등을 rendering한다. 둘째 각 light에 영향 받는 pixel들을 찾아서
-  geometry buffer에서 데이터를 읽어들인다. 그리고 light value를 계산하고 
-  light-accumulation buffer에 기록한다. accumulated-light value와
-  diffuse color, specular, emission등을 결합해서 color를 완성한다.
-  legacy deferred lighting path와 다르게 한번만 렌더링하게 된다.
-- object의 appearance는 lighting과 object's material
+  emmission 등을 rendering 한다. 둘째 각 light 에 영향 받는 pixel 들을 찾아서
+  geometry buffer 에서 데이터를 읽어들인다. 그리고 light value 를 계산하고 
+  light-accumulation buffer 에 기록한다. accumulated-light value 와
+  diffuse color, specular, emission 등을 결합해서 color 를 완성한다.
+  legacy deferred lighting path 와 다르게 한번만 렌더링하게 된다.
+- object 의 appearance 는 lighting 과 object's material
   properties(albedo, alpha, emissive, gloss, etc...)로 결정된다.
-  lighting model은 lighting과 object가 어떻게 상호작용하는지 기술하는
-  것이다. 예를 들어 lighting model은 phong ,anisotropic ,fresnel
-  lighting ,Blinn lighting model이 있다. directX와 opengl은 동일하게
+  lighting model 은 lighting 과 object 가 어떻게 상호작용하는지 기술하는
+  것이다. 예를 들어 lighting model 은 phong ,anisotropic ,fresnel
+  lighting ,Blinn lighting model 이 있다. directX 와 opengl 은 동일하게
   fixed function lighting model 을 제공한다. nvidia 문서는 이것을 좀 더
-  단순화 시켜 Basic Model이라고 이름지었다. Basic lighting Model은
-  directX와 opengl처럼 classic phong model을 수정하고 확장한 것이다.
+  단순화 시켜 Basic Model 이라고 이름지었다. Basic lighting Model 은
+  directX와 opengl 처럼 classic phong model 을 수정하고 확장한 것이다.
 
 ## Diffuse Reflection
 
-- diffuse reflection은 Lambertian reflectance을 이용하여 구현할 수 있다.
-  DiffuseLambert함수를 참고하자. BEADS의 D를 
+- diffuse reflection 은 Lambertian reflectance 을 이용하여 구현할 수 있다.
+  DiffuseLambert 함수를 참고하자. BEADS 의 D 를 
   lightColor * diffuseFactor * attenuation * max(0, dot(normalVal,lightDir)
   를 이용하여 구할 수 있다.
 
+![](diffuse_lighting_equation.png)
+
 ```latex
 ```
-
-![](diffuse_lighting_equation.png)
 
 ```c
 float3 DiffuseLambert(float3 normalVal, float3 lightDir, float3 lightColor, float diffuseFactor, float attenuation)
@@ -2454,10 +2451,12 @@ float3 DiffuseLambert(float3 normalVal, float3 lightDir, float3 lightColor, floa
 			}
 ```
 
+전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
+
 ## Specular Reflection
 
 - specular reflection 은 blinn-phong model 을 이용하여 구현할 수 있다.
-  Phong 이 제안한 model 은 N (normal vector of surface) 과 V (view vector of camera) 를 이용했지만 나중에 blinn과 phong 에 의해 제안된 model 은 N 과 H 를 이용해서 최적화 했다.
+  Phong 이 제안한 model 은 N (normal vector of surface) 과 V (view vector of camera) 를 이용했지만 나중에 blinn 과 phong 에 의해 제안된 model 은 N 과 H 를 이용해서 최적화 했다.
 
 ![](specular_lighting_equation.png)
 
@@ -2508,9 +2507,11 @@ float3 SpecularBlinnPhong(float3 normalDir, float3 lightDir, float3 worldSpaceVi
 			}
 ```
 
+전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
+
 ## Ambient Reflection
 
-- ambient reflection은 다음과 같은 식을 이용하여 구현 할 수 있다.
+- ambient reflection 은 다음과 같은 식을 이용하여 구현 할 수 있다.
 
 ![](ambient_lighting_equation.png)
 
