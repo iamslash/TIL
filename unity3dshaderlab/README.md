@@ -41,8 +41,15 @@
 - [Snippets](#snippets)
   - [Outline](#outline)
   - [holographic](#holographic)
-  - [rimlight](#rimlight)
-  - [ramp](#ramp)
+  - [Rimlight](#rimlight)
+  - [Ramp](#ramp)
+  - [Dissolve](#dissolve)
+  - [Space Distortion](#space-distortion)
+  - [Matcap](#matcap)
+  - [Water](#water)
+  - [Blur](#blur)
+  - [Depth of field](#depth-of-field)
+  - [Vignette](#vignette)
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -3229,6 +3236,8 @@ ENDCG
 
 ## Outline
 
+물체의 외곽선을 그리는 효과
+
 ```c
 Shader "Custom/Outlined Diffuse" 
 {
@@ -3286,6 +3295,34 @@ ENDCG
 
 ## holographic
 
-## rimlight
+홀로그램효과
 
-## ramp
+## Rimlight
+
+물체의 가장자리가 두드러지게 빛나는 효과
+
+## Ramp 
+
+음영을 임의의 단계로 표현하는 효과
+
+## Dissolve
+
+낙엽이 타서 없어지는 것 같은 효과
+
+## Space Distortion
+
+특정 공간이 왜곡되는 효과
+
+## Matcap
+
+텍스처를 이용하여 물체의 재질을 표현할 수 있는 효과
+
+## Water
+
+물을 표현하는 효과
+
+## Blur
+
+## Depth of field
+
+## Vignette
