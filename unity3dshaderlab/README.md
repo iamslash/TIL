@@ -40,7 +40,7 @@
   - [BRDF (bidirectional reflectance distribution function)](#brdf-bidirectional-reflectance-distribution-function)
 - [Snippets](#snippets)
   - [Outline](#outline)
-  - [holographic](#holographic)
+  - [Holographic](#holographic)
   - [Rimlight](#rimlight)
   - [Ramp](#ramp)
   - [Dissolve](#dissolve)
@@ -51,6 +51,8 @@
   - [Blur](#blur)
   - [Depth of field](#depth-of-field)
   - [Vignette](#vignette)
+  - [Oren Nayar](#oren-nayar)
+  - [Physicall Based Rendering](#physicall-based-rendering)
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -2415,15 +2417,16 @@ Tags { "LightMode" = "ForwardBase"
 
 ## Diffuse Reflection
 
-- diffuse reflection 은 Lambertian reflectance 을 이용하여 구현할 수 있다.
-  DiffuseLambert 함수를 참고하자. BEADS 의 D 를 
-  lightColor * diffuseFactor * attenuation * max(0, dot(normalVal,lightDir)
-  를 이용하여 구할 수 있다.
+![](diffuse_reflection.png)
+
+- 빛이 표면을 비출 때 표면의 점에서 빛이 난반사하는 현상을 Diffuse Reflection 이라고 한다. 빛이 여러 방향으로 퍼지는 현상이다. 위의 그림과 같이 특정 점에서 난반사하는 정도는 특정 점의 Normal vector 와 Diffuse Reflection vector 가 이루는 사이각에 따라 다르다. Normal vector 를 `N` 이라고 하고 View vector 를 `V` 라 할때 diffuse reflection 은 `dot(N,V)` 와 비례한다. 이때 `dot(N,V)` 의 범위는 `[0,1]` 이기 때문에 `max(0, dot(N,V))` 를 이용한다.
+- Lambertian reflectance 의 수식을 이용하여 다음과 같이 Basic Lighting Model 의 Diffuse term 을 구한다.
+
+```
+  diffuse = lightColor * diffuseFactor * attenuation * max(0, dot(normalVal, lightDir)
+```
 
 ![](diffuse_lighting_equation.png)
-
-```latex
-```
 
 ```c
 float3 DiffuseLambert(float3 normalVal, float3 lightDir, float3 lightColor, float diffuseFactor, float attenuation)
@@ -2453,12 +2456,21 @@ float3 DiffuseLambert(float3 normalVal, float3 lightDir, float3 lightColor, floa
 			}
 ```
 
-전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
+전체 코드는 [Wrap up Basic Lighting Model](#wrap-up-basic-lighting-model) 코드를 참고한다.
 
 ## Specular Reflection
 
-- specular reflection 은 blinn-phong model 을 이용하여 구현할 수 있다.
-  Phong 이 제안한 model 은 N (normal vector of surface) 과 V (view vector of camera) 를 이용했지만 나중에 blinn 과 phong 에 의해 제안된 model 은 N 과 H 를 이용해서 최적화 했다.
+![](specular_reflection.png)
+
+빛이 표면을 비출 때 특정 점에서 정반사하는 현상을 Specular Reflection 이라고 한다. Specular reflection vector `R` 을 중심으로 원뿔이 형성되고 원뿔의 영역에서만 반사되는 현상이다. View vector `V` 가 이 영역안에 존재하면 눈으로 Specular Reflection 을 볼 수 있다. Specular reflection 의 정도는 `R` 과 `V` 가 이루는 사이각이 0 에 가까울 수록 강해진다. Phong 에 의하면 Specular reflection 의 정도는 다음에 비례한다.
+
+```
+max(0, dot(R,V))^sharness
+```
+
+![](specular_reflection_eq.png)
+
+왼쪽은 Phong 이 제안한 model 이고 `R` 과 `V` 의 내적을 이용하여 Specular reflection 정도를 구한다. 오른쪽은 blinn 과 phong 에 의해 제안된 model 이고 `H` 과 `V` 의 내적을 이요하여 Specular reflection 정도를 구한다. Basic lighting model 의 specular term 은 다음과 같이 blinn-phong model 을 이용하여 구한다.
 
 ![](specular_lighting_equation.png)
 
@@ -2472,6 +2484,8 @@ s = \sum_{i=0}^{n}\text{intensity}_\text{light i} \times
  \end{matrix}
 \times \text{attenuation} \times \max\left(0, ({N} \cdot {H}) \right)^\text{specular power}
 ```
+
+다음은 blinn phong model 을 이용하여 basic lighting model 의 specular term 을 구현한 것이다.
 
 ```c
 float3 SpecularBlinnPhong(float3 normalDir, float3 lightDir, float3 worldSpaceViewDir, float3 specularColor, float specularFactor, float attenuation, float specularPower)
@@ -2509,11 +2523,13 @@ float3 SpecularBlinnPhong(float3 normalDir, float3 lightDir, float3 worldSpaceVi
 			}
 ```
 
-전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
+전체 코드는 [Wrap up Basic Lighting Model](#wrap-up-basic-lighting-model) 코드를 참고한다.
 
 ## Ambient Reflection
 
-- ambient reflection 은 다음과 같은 식을 이용하여 구현 할 수 있다.
+물체의 reflection 처리를 할 때 indirect lighting 도 처리를 해주어야 하는데 이것은 상당히 번거롭다. 그래서 scene 의 indirect lighting 들을 한가지 값으로 간략화 하는데 이것을 ambient reflection 이라고 한다. 주로 게임엔진에서 ambient reflection 값을 이용한다. Unity 의 경우 `UNITY_LIGHTMODEL_AMBIENT` 을 이용하여 ambient reflection 의 정도를 얻어 올 수 있다.
+
+Basic Lighting Model 의 ambient term 은 다음과 같은 식을 이용하여 구현 할 수 있다. 
 
 ![](ambient_lighting_equation.png)
 
@@ -2532,6 +2548,8 @@ a = \begin{matrix}
   \text{value} \\
 \end{matrix}
 ```
+
+다음은 Basic Lighting Model 의 ambient term 을 unity shader lab 을 이용하여 구현한 것이다.
 
 ```c
 	Properties 
@@ -2553,7 +2571,7 @@ a = \begin{matrix}
 
 ```
 
-전체 코드는 [BRDF](#brdf-bidirectional-reflectance-distribution-function) 코드를 참고한다.
+전체 코드는 [Wrap up Basic Lighting Model](#wrap-up-basic-lighting-model) 코드를 참고한다.
 
 ## Wrap up Basic Lighting Model 
 
@@ -2568,6 +2586,228 @@ surface color = Emission + Ambient + Diffuse + Specular
 다음은 Basic Lighting Model 을 Texture 와 Tint Color 를 적용하여 구현한 것이다.
 
 ```c
+Shader "Custom/Lighting_basicLighting"
+{
+	Properties
+	{
+		_Color("Main Color", Color) = (1,1,1,1)
+		_MainTex("Main Texture", 2D) = "white" {}
+		_NormalMap("Normal map", 2D) = "white" {}
+		[KeywordEnum(Off,On)] _UseNormal("Use Normal Map?", Float) = 0
+		_Diffuse("Diffuse %", Range(0,1)) = 1
+		[KeywordEnum(Off, Vert, Frag)] _Lighting("Lighting Mode", Float) = 0
+		_SpecularMap("Specular Map", 2D) = "black" {}
+		_SpecularFactor("Specular %",Range(0,1)) = 1
+		_SpecularPower("Specular Power", Float) = 100
+		[Toggle] _AmbientMode("Ambient Light?", Float) = 0
+		_AmbientFactor("Ambient %", Range(0,1)) = 1
+	}
+
+	Subshader
+	{
+		//http://docs.unity3d.com/462/Documentation/Manual/SL-SubshaderTags.html
+		// Background : 1000     -        0 - 1499 = Background
+		// Geometry   : 2000     -     1500 - 2399 = Geometry
+		// AlphaTest  : 2450     -     2400 - 2699 = AlphaTest
+		// Transparent: 3000     -     2700 - 3599 = Transparent
+		// Overlay    : 4000     -     3600 - 5000 = Overlay
+
+		Tags {"Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Pass
+		{
+			Tags {"LightMode" = "ForwardBase"}
+			Blend SrcAlpha OneMinusSrcAlpha
+
+CGPROGRAM
+			//http://docs.unity3d.com/Manual/SL-ShaderPrograms.html
+			#pragma vertex vert
+			#pragma fragment frag
+			#pragma shader_feature _USENORMAL_OFF _USENORMAL_ON
+			#pragma shader_feature _LIGHTING_OFF _LIGHTING_VERT _LIGHTING_FRAG
+			#pragma shader_feature _AMBIENTMODE_OFF _AMBIENTMODE_ON
+
+
+float3 normalFromColor(float4 colorVal)
+{
+#if defined(UNITY_NO_DXT5nm)
+	return colorVal.xyz * 2 - 1;
+#else
+		// R => x => A
+		// G => y
+		// B => z => ignored
+
+		float3 normalVal;
+		normalVal = float3 (colorVal.a * 2.0 - 1.0,
+							colorVal.g * 2.0 - 1.0,
+							0.0);
+		normalVal.z = sqrt(1.0 - dot(normalVal, normalVal));
+		return normalVal;
+	#endif
+}
+
+float3 WorldNormalFromNormalMap(sampler2D normalMap, float2 normalTexCoord, float3 tangentWorld, float3 binormalWorld, float3 normalWorld)
+{
+	// Color at Pixel which we read from Tangent space normal map
+	float4 colorAtPixel = tex2D(normalMap, normalTexCoord);
+
+	// Normal value converted from Color value
+	float3 normalAtPixel = normalFromColor(colorAtPixel);
+
+	// Compose TBN matrix
+	float3x3 TBNWorld = float3x3(tangentWorld, binormalWorld, normalWorld);
+	return normalize(mul(normalAtPixel, TBNWorld));
+}
+
+float3 DiffuseLambert(float3 normalVal, float3 lightDir, float3 lightColor, float diffuseFactor, float attenuation)
+{
+return lightColor * diffuseFactor * attenuation * max(0, dot(normalVal,lightDir));
+}
+
+float3 SpecularBlinnPhong(float3 normalDir, float3 lightDir, float3 worldSpaceViewDir, float3 specularColor, float specularFactor, float attenuation, float specularPower)
+{
+float3 halfwayDir = normalize(lightDir + worldSpaceViewDir);
+return specularColor * specularFactor * attenuation * pow(max(0,dot(normalDir,halfwayDir)),specularPower);
+}
+
+float3 IBLRefl(samplerCUBE cubeMap, half detail, float3 worldRefl, float exposure, float reflectionFactor)
+{
+float4 cubeMapCol = texCUBElod(cubeMap, float4(worldRefl, detail)).rgba;
+return reflectionFactor * cubeMapCol.rgb * (cubeMapCol.a * exposure);
+}
+
+inline float4 ProjectionToTextureSpace(float4 pos)
+{
+float4 textureSpacePos = pos;
+#if defined(UNITY_HALF_TEXEL_OFFSET)
+textureSpacePos.xy = float2 (textureSpacePos.x, textureSpacePos.y * _ProjectionParams.x) + textureSpacePos.w * _ScreenParams.zw;
+#else
+textureSpacePos.xy = float2 (textureSpacePos.x, textureSpacePos.y * _ProjectionParams.x) + textureSpacePos.w;
+#endif
+textureSpacePos.xy = float2 (textureSpacePos.x / textureSpacePos.w, textureSpacePos.y / textureSpacePos.w) * 0.5f;
+return textureSpacePos;
+}
+
+			//http://docs.unity3d.com/ru/current/Manual/SL-ShaderPerformance.html
+			//http://docs.unity3d.com/Manual/SL-ShaderPerformance.html
+			uniform half4 _Color;
+			uniform sampler2D _MainTex;
+			uniform float4 _MainTex_ST;
+
+			uniform sampler2D _NormalMap;
+			uniform float4 _NormalMap_ST;
+
+			uniform float _Diffuse;
+			uniform float4 _LightColor0;
+
+			uniform sampler2D _SpecularMap;
+			uniform float _SpecularFactor;
+			uniform float _SpecularPower;
+
+#if _AMBIENTMODE_ON
+			uniform float _AmbientFactor;
+#endif
+
+			//https://msdn.microsoft.com/en-us/library/windows/desktop/bb509647%28v=vs.85%29.aspx#VS
+			struct vertexInput
+			{
+				float4 vertex : POSITION;
+				float4 normal : NORMAL;
+				float4 texcoord : TEXCOORD0;
+#if _USENORMAL_ON
+				float4 tangent : TANGENT;
+#endif
+			};
+
+			struct vertexOutput
+			{
+				float4 pos : SV_POSITION;
+				float4 texcoord : TEXCOORD0;
+				float4 normalWorld : TEXCOORD1;
+				float4 posWorld : TEXCOORD2;
+#if _USENORMAL_ON
+				float4 tangentWorld : TEXCOORD3;
+				float3 binormalWorld : TEXCOORD4;
+				float4 normalTexCoord : TEXCOORD5;
+#endif
+#if _LIGHTING_VERT
+				float4 surfaceColor : COLOR0;
+#endif
+			};
+
+			vertexOutput vert(vertexInput v)
+			{
+				vertexOutput o; UNITY_INITIALIZE_OUTPUT(vertexOutput, o); // d3d11 requires initialization
+				o.pos = UnityObjectToClipPos(v.vertex);
+				o.texcoord.xy = (v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw);
+				o.normalWorld = float4(normalize(mul(normalize(v.normal.xyz),(float3x3)unity_WorldToObject)),v.normal.w);
+				o.posWorld = mul(unity_ObjectToWorld, v.vertex); // added in chapter of IBL-Reflection
+#if _USENORMAL_ON
+				// World space T, B, N values
+				o.normalTexCoord.xy = (v.texcoord.xy * _NormalMap_ST.xy + _NormalMap_ST.zw);
+				//o.tangentWorld = normalize(mul(v.tangent,_Object2World));
+				o.tangentWorld = (normalize(mul((float3x3)unity_ObjectToWorld, v.tangent.xyz)),v.tangent.w);
+				o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w);
+#endif
+#if _LIGHTING_VERT
+				float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+				float3 lightColor = _LightColor0.xyz;
+				float attenuation = 1;
+				float3 diffuseCol = DiffuseLambert(o.normalWorld, lightDir, lightColor, _Diffuse, attenuation);
+
+				float4 specularMap = tex2Dlod(_SpecularMap, float4(o.texcoord.xy, 0, 0));//float4 specularMap = tex2D(_SpecularMap, o.texcoord.xy);//float4 specularMap = tex2D(_SpecularMap, o.texcoord.xy);
+				//o.posWorld = mul(_Object2World, v.vertex);// commented out in chapter of IBL-Reflection
+				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - o.posWorld);
+				float3 specularCol = SpecularBlinnPhong(o.normalWorld, lightDir, worldSpaceViewDir, specularMap.rgb , _SpecularFactor, attenuation, _SpecularPower);
+
+				float3 mainTexCol = tex2Dlod(_MainTex, float4(o.texcoord.xy, 0,0));
+
+				o.surfaceColor = float4(mainTexCol * _Color * diffuseCol + specularCol,1);
+	#if _AMBIENTMODE_ON
+				float3 ambientColor = _AmbientFactor * UNITY_LIGHTMODEL_AMBIENT;
+				o.surfaceColor = float4(o.surfaceColor.rgb + ambientColor,1);
+	#endif
+#endif
+				return o;
+			}
+
+			half4 frag(vertexOutput i) : COLOR
+			{
+#if _USENORMAL_ON
+				float3 worldNormalAtPixel = WorldNormalFromNormalMap(_NormalMap, i.normalTexCoord.xy, i.tangentWorld.xyz, i.binormalWorld.xyz, i.normalWorld.xyz);
+				//return tex2D(_MainTex, i.texcoord) * _Color;
+#else
+				float3 worldNormalAtPixel = i.normalWorld.xyz;
+#endif
+
+#if _LIGHTING_FRAG
+				float3 lightDir = normalize(_WorldSpaceLightPos0.xyz);
+				float3 lightColor = _LightColor0.xyz;
+				float attenuation = 1;
+				float3 diffuseCol = DiffuseLambert(worldNormalAtPixel, lightDir, lightColor, _Diffuse, attenuation);
+
+				float4 specularMap = tex2D(_SpecularMap, i.texcoord.xy);
+
+				float3 worldSpaceViewDir = normalize(_WorldSpaceCameraPos - i.posWorld);
+				float3 specularCol = SpecularBlinnPhong(worldNormalAtPixel, lightDir, worldSpaceViewDir, specularMap.rgb , _SpecularFactor, attenuation, _SpecularPower);
+
+				float3 mainTexCol = tex2D(_MainTex, i.texcoord.xy);
+	#if _AMBIENTMODE_ON
+				float3 ambientColor = _AmbientFactor * UNITY_LIGHTMODEL_AMBIENT;
+				return float4(mainTexCol * _Color * diffuseCol + specularCol + ambientColor,1);
+	#else
+				return float4(mainTexCol * _Color * diffuseCol + specularCol,1);
+	#endif
+
+#elif _LIGHTING_VERT
+				return i.surfaceColor;
+#else
+				return float4(worldNormalAtPixel,1);
+#endif
+			}
+			ENDCG
+		}
+	}
+}
 ```
 
 ## Advanced Lighting Model
@@ -3286,7 +3526,7 @@ ENDCG
 }
 ```
 
-## holographic
+## Holographic
 
 홀로그램효과
 
@@ -3322,3 +3562,6 @@ ENDCG
 
 ## Vignette
 
+## Oren Nayar
+
+## Physicall Based Rendering
