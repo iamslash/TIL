@@ -14,37 +14,25 @@
   - [굴절률(Refractive index)](#%EA%B5%B4%EC%A0%88%EB%A5%A0refractive-index)
   - [Snell's law](#snells-law)
   - [Fresnel Equation](#fresnel-equation)
-- [Lambert's cosine law](#lamberts-cosine-law)
-- [Lambertian Reflectance Model](#lambertian-reflectance-model)
-  - [WebGL](#webgl)
-  - [Unity3d shaderlab](#unity3d-shaderlab)
-- [Half Lambert Diffuse](#half-lambert-diffuse)
-  - [WebGL](#webgl-1)
-  - [Unity3d shaderlab](#unity3d-shaderlab-1)
-- [Phong Reflectance Model](#phong-reflectance-model)
-- [Gouraud shading](#gouraud-shading)
-  - [WebGL](#webgl-2)
-  - [Unity3d shaderlab](#unity3d-shaderlab-2)
-- [Phong Shading](#phong-shading)
-  - [WebGL](#webgl-3)
-  - [unity3d shaderlab](#unity3d-shaderlab)
-- [Rim Lighting](#rim-lighting)
-  - [WebGL](#webgl-4)
-  - [unity3d shaderlab](#unity3d-shaderlab-1)
-- [Cook-Torrance Model](#cook-torrance-model)
-  - [WebGL](#webgl-5)
-  - [unity3d shader lab](#unity3d-shader-lab)
-- [Oren-Nayar Model](#oren-nayar-model)
-  - [WebGL](#webgl-6)
-  - [unity3d shader lab](#unity3d-shader-lab-1)
-- [Physically Based Rendering](#physically-based-rendering)
-- [Ray Casting](#ray-casting)
-- [Ray Tracing](#ray-tracing)
-- [Path Tracing](#path-tracing)
-- [Ray Marching](#ray-marching)
-- [Radiosity](#radiosity)
-- [LPV (Light Propagation Volume)](#lpv-light-propagation-volume)
-- [SVO (Sparse Voxel Octree)](#svo-sparse-voxel-octree)
+- [Lighting Models](#lighting-models)
+  - [Lambert's cosine law](#lamberts-cosine-law)
+  - [Lambertian Reflectance Model](#lambertian-reflectance-model)
+  - [Half Lambert Diffuse](#half-lambert-diffuse)
+  - [Phong Reflectance Model](#phong-reflectance-model)
+  - [Gouraud shading](#gouraud-shading)
+  - [Phong Shading](#phong-shading)
+  - [Rim Lighting](#rim-lighting)
+  - [Cook-Torrance Model](#cook-torrance-model)
+  - [Oren-Nayar Model](#oren-nayar-model)
+  - [Physically Based Rendering](#physically-based-rendering)
+- [Advanced Light](#advanced-light)
+  - [Ray Casting](#ray-casting)
+  - [Ray Tracing](#ray-tracing)
+  - [Path Tracing](#path-tracing)
+  - [Ray Marching](#ray-marching)
+  - [Radiosity](#radiosity)
+  - [LPV (Light Propagation Volume)](#lpv-light-propagation-volume)
+  - [SVO (Sparse Voxel Octree)](#svo-sparse-voxel-octree)
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -356,7 +344,7 @@ light)의 각도, v 는 속도(velocity), n은 굴절률(IOR), λ 는
 
 ## Fresnel Equation
 
-fresnel equation은 빛이 서로다른 매질을 통과할때 관찰자가 어느
+fresnel equation 은 빛이 서로다른 매질을 통과할때 관찰자가 어느
 방향으로 보는지에 따라 얼만큼의 빛이 반사되는지를 얻을 수 있는
 공식이다. [law of reflection](https://en.wikipedia.org/wiki/Specular_reflection) 등을
 통해서 유도된다. 편광도 고려해야 해서 매우 복잡하다. 컴퓨터
@@ -391,13 +379,15 @@ R_{0}     &= ( \frac{n_{1} - n_{2}}{n_{1} + n_{2}} )^{2} \\
 * [Real Shading in Unreal Engine 4](http://lifeisforu.tistory.com/348)
 * [머터리얼에 프레넬 사용하기 @ unrealengine](https://docs.unrealengine.com/latest/KOR/Engine/Rendering/Materials/HowTo/Fresnel/index.html)
 
-# Lambert's cosine law
+# Lighting Models
+
+## Lambert's cosine law
 
 확산반사(diffuse reflectance)가 일어나는 표면의 한 점에서의
 복사강도(radiant intensity)I는, 입사광의 단위벡터 L과 표면의 법선
 벡터인 면법선 (surface normal)N이 이루는 각도 θ의 코사인에 비례한다.
 
-# Lambertian Reflectance Model
+## Lambertian Reflectance Model
 
 [Johann Heinrich Lambert](https://en.wikipedia.org/wiki/Johann_Heinrich_Lambert)가
 1760년에 그의
@@ -420,13 +410,6 @@ I_{L} &= \text{intenciry of the incomming light} \\
 I_{D} = L \cdot N C I_{L} \\
 \end{align*}
 ```
-
-## WebGL
-
-```glsl
-```
-
-## Unity3d shaderlab
 
 다음은 lambertian reflectance model을 unity3d shader lab으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
@@ -475,7 +458,7 @@ Shader "Custom/Diffuse" {
 }
 ```
 
-# Half Lambert Diffuse
+## Half Lambert Diffuse
 
 [Half lambert](https://developer.valvesoftware.com/wiki/Half_Lambert)
 는 half-life라는 게임에서 처음 등장한 기술이다. 앞서 살펴 본
@@ -485,14 +468,6 @@ lambertian reflectance model은 어두운 부분이 너무 어둡기 때문에 �
 ![](img/200px-Alyx_lambert_half_lambert.jpg)
 
 ![](img/200px-Lambert_vs_halflambert.png)
-
-
-## WebGL
-
-```glsl
-```
-
-## Unity3d shaderlab
 
 다음은 half lambert diffuse를 unity3d shaderlab으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
@@ -543,7 +518,7 @@ Shader "Custom/Half Lambert" {
 }
 ```
 
-# Phong Reflectance  Model
+## Phong Reflectance  Model
 
 [Bui Tuong Phong](https://en.wikipedia.org/wiki/Bui_Tuong_Phong)
 이 1975년에 제안한 lighting model이다.
@@ -597,16 +572,10 @@ H = \frac{L + V}{|L+V|}
 
 ![](img\File-Blinn_phong_comparison.jpg)
 
-# Gouraud shading
+## Gouraud shading
 
 phong reflectance model 을 vertex shader 에 적용한 것
 
-## WebGL
-
-```glsl
-```
-
-## Unity3d shaderlab
 
 다음은 gouraud shading을 unity3d shader lab으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
@@ -665,18 +634,11 @@ Shader "Custom/Gouraud" {
 }
 ```
 
-# Phong Shading
+## Phong Shading
 
 phong reflectance model 을 fragment shader 에 적용한 것
 
-## WebGL
-
-```glsl
-```
-
-## unity3d shaderlab
-
-다음은 phong shading을 unity3d shader lab으로 구현한 것이다.
+다음은 phong shading을 unity3d shader lab 으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
 
 ```glsl
@@ -736,16 +698,12 @@ Shader "Custom/Phong" {
 }
 ```
 
-# Rim Lighting
+## Rim Lighting
 
 빛에 의해 오브젝트의 외곽이 빛나는 현상. N과 L의 사이각이 0일때 가장
 약하고 90일때 가장 강하다.
 
-## WebGL
-
-## unity3d shaderlab
-
-다음은 phong shading과 rim lighting을 unity3d shader lab으로 구현한 것이다.
+다음은 phong shading 과 rim lighting 을 unity3d shader lab 으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
 
 ```glsl
@@ -809,7 +767,7 @@ Shader "Custom/Rim" {
 ```
 
 
-# Cook-Torrance Model
+## Cook-Torrance Model
 
 다음은 쿡토런스(cook-torrance) 모델을 표현하는 공식이다.
 L 은 입사광 벡터, V 는 시선벡터, H 는 L 과 V 의 하프벡터이다.
@@ -856,10 +814,6 @@ G_{cook-torrance}(L,V,H) = min(1, \frac {2 (N \cdot H)(N \cdot V)} {V \cdot H}, 
 ```
 
 마지막에 `0.000001` 을 더해서 `0` 으로 나누기를 방지하자.
-
-## WebGL
-
-## unity3d shader lab
 
 다음은 cook-torrance model을 unity3d shader lab으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
@@ -943,17 +897,13 @@ Shader "Custom/CookTorrance" {
 }
 ```
 
-# Oren-Nayar Model
+## Oren-Nayar Model
 
 Michael Oren 과 Shree K. Nayar 이 개발한 lighting model 이다. 표면의 거칠기(roughness)가 반영된 diffuse reflection 을 표현한다.
 
 [oren-nayar @ wikipedia](https://en.wikipedia.org/wiki/Oren%E2%80%93Nayar_reflectance_model)
 
-## WebGL
-
-## unity3d shader lab
-
-아래의 구현은 [이곳](http://www.jordanstevenstechart.com/lighting-models)에서 가져왔다.
+다음은 unity shader lab 을 이용하여 구현한 것이다. [참고](http://www.jordanstevenstechart.com/lighting-models)
 
 ```cg
      float roughness = _Roughness;
@@ -1089,17 +1039,19 @@ Shader "Custom/OrenNayar" {
 }
 ```
 
-# Physically Based Rendering
+## Physically Based Rendering
 
 [PBR](/pbr/README.md)
 
-# Ray Casting
+# Advanced Light
+
+## Ray Casting
 
 Ray 와 Surface 의 충돌점을 이용하여 컴퓨터 그래픽스의 다양한 문제점들을 해결하는 방법을 말한다.
 
 [ray casting @ wikipedia](https://en.wikipedia.org/wiki/Ray_casting)
 
-# Ray Tracing
+## Ray Tracing
 
 Ray 들을 재귀적으로 연산하여 Global Illumination 을 표현한 방법이다. Ray Casting 는 primary ray 만 취급하지만 Ray Tracing 은 primary ray 에서 생성되는 다양한 ray 들을 취급한다.
 
@@ -1126,28 +1078,28 @@ shadow ray s1 은 광원으로 날아간다. 가는 도중 다른 오브젝트�
 * [Peter Shirley mini books on ray tracing](https://drive.google.com/drive/u/0/folders/14yayBb9XiL16lmuhbYhhvea8mKUUK77W) 
   * [src](https://github.com/ouj/safegi)
 
-# Path Tracing
+## Path Tracing
 
 * [GPU Path Tracing in Unity @ Part 2](http://blog.three-eyed-games.com/2018/05/12/gpu-path-tracing-in-unity-part-2/)
   * [src](https://github.com/aras-p/ToyPathTracer)
 
-# Ray Marching
+## Ray Marching
 
 * [Ray Marching for Dummies! @ youtube](https://www.youtube.com/watch?v=PGtv-dBi2wE)
   * ray marching 을 shadertoy 를 이용하여 쉽게 설명함
 * [Volumetric Rendering: Raymarching in Unity](https://www.alanzucconi.com/2016/07/01/raymarching/)
 * [Raymarching Distance Fields: Concepts and Implementation in Unity](http://flafla2.github.io/2016/10/01/raymarching.html)
 
-# Radiosity
+## Radiosity
 
 * [라디오시티(radiosity) 란? 래디오시티 @ tistory](http://iskim3068.tistory.com/80)
   * 한글 블로그
 
-# LPV (Light Propagation Volume)
+## LPV (Light Propagation Volume)
 
 * [Light Propagation Volumes in
 CryEngine 3](http://advances.realtimerendering.com/s2009/Light_Propagation_Volumes.pdf)
 
-# SVO (Sparse Voxel Octree)
+## SVO (Sparse Voxel Octree)
 
 * [Voxel-based Global Illumination](https://turanszkij.wordpress.com/2017/08/30/voxel-based-global-illumination/)

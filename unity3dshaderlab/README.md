@@ -47,6 +47,7 @@
   - [Space Distortion](#space-distortion)
   - [Matcap](#matcap)
   - [Water](#water)
+  - [Bloom](#bloom)
   - [Blur](#blur)
   - [Depth of field](#depth-of-field)
   - [Vignette](#vignette)
@@ -3313,8 +3314,11 @@ ENDCG
 
 물을 표현하는 효과
 
+## Bloom
+
 ## Blur
 
 ## Depth of field
 
 ## Vignette
+
