@@ -2358,8 +2358,106 @@ Shader "Custom/skeleton"
 
 ## Outline Shader
 
-- outline shader는 특정 object의 scale를 늘리고 
-  ZWrite Off, Cull Front 를 통해 구현한다.
+outline shader 는 특정 object의 scale 를 늘리고 ZWrite Off, Cull Front 를 통해 구현한다.
+
+```c
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+Shader "ShaderDev/12Outline"
+{
+	Properties
+	{
+		_Color("Main Color", Color) = (1,1,1,1)
+		_MainTex("Main Texture", 2D) = "white" {}
+		_Outline("Outline", Float) = 0.1
+		_OutlineColor("Outline Color",Color) = (1,1,1,1)
+	}
+
+	Subshader
+	{
+		Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Pass
+		{
+			Blend SrcAlpha OneMinusSrcAlpha
+			Cull Front
+			Zwrite off
+CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+
+			uniform half _Outline;
+			uniform half4 _OutlineColor;
+
+			struct vertexInput
+			{
+				float4 vertex : POSITION;
+			};
+
+			struct vertexOutput
+			{
+				float4 pos : SV_POSITION;
+			};
+
+			vertexOutput vert(vertexInput v)
+			{
+				v.vertex.xyz = v.vertex.xyz * (1.0 + _Outline);
+				vertexOutput o;
+				o.pos = UnityObjectToClipPos(v.vertex);
+				return o;
+			}
+
+			half4 frag(vertexOutput i) : COLOR
+			{
+				return _OutlineColor;
+			}
+ENDCG
+		}
+
+		Pass
+		{
+			Blend SrcAlpha OneMinusSrcAlpha
+
+			CGPROGRAM
+				//http://docs.unity3d.com/Manual/SL-ShaderPrograms.html
+				#pragma vertex vert
+				#pragma fragment frag
+
+				//http://docs.unity3d.com/ru/current/Manual/SL-ShaderPerformance.html
+				//http://docs.unity3d.com/Manual/SL-ShaderPerformance.html
+				uniform half4 _Color;
+				uniform sampler2D _MainTex;
+				uniform float4 _MainTex_ST;
+
+				//https://msdn.microsoft.com/en-us/library/windows/desktop/bb509647%28v=vs.85%29.aspx#VS
+				struct vertexInput
+				{
+					float4 vertex : POSITION;
+					float4 texcoord : TEXCOORD0;
+				};
+
+				struct vertexOutput
+				{
+					float4 pos : SV_POSITION;
+					float4 texcoord : TEXCOORD0;
+				};
+
+				vertexOutput vert(vertexInput v)
+				{
+					vertexOutput o; UNITY_INITIALIZE_OUTPUT(vertexOutput, o); // d3d11 requires initialization
+					o.pos = UnityObjectToClipPos(v.vertex);
+					o.texcoord.xy = (v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw);
+					return o;
+				}
+
+				half4 frag(vertexOutput i) : COLOR
+				{
+					return tex2D(_MainTex, i.texcoord) * _Color;
+				}
+				ENDCG
+			}
+	}
+}
+```
 
 ## Multi Variant Shader
 
@@ -3485,7 +3583,7 @@ ENDCG
 
 ## Outline
 
-물체의 외곽선을 그리는 효과
+물체의 외곽선을 그리는 효과 [참고](https://github.com/iamslash/UnityShaderTutorial/tree/master/Assets/Tutorials/outline)
 
 ```c
 Shader "Custom/Outlined Diffuse" 
