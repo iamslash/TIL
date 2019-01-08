@@ -2363,23 +2363,39 @@ Shader "Custom/skeleton"
 
 ## Multi Variant Shader
 
-- multi variant shader 는 properties 의 KeywordEnum 과 
-  #pragma multi_compile 혹은 #pragma shader_feature directive 
-  에 의해 이루어진다. multi_compile 은 모든 variant 가 만들어지지만 
-  shader_feature 는 특정 variant 만 만들어진다.
+multi variant shader 는 properties 의 `KeywordEnum, Toggle` 과 
+`#pragma multi_compile` 혹은 `#pragma shader_feature directive` 에 의해 이루어진다. multi_compile 은 모든 variant 가 만들어지지만 
+shader_feature 는 사용된 variant 만 만들어진다??? `#pragma shader_feature AAA BBB` 선언하고 코드에 `AAA, BBB` 를 사용하지 않으면 variant 가 만들어지지 않는다는 얘기인가???
   
 ```c
-	Properties 
+	Properties
 	{
-		_Color ("Main Color", Color) = (1,1,1,1)
+		_Color("Main Color", Color) = (1,1,1,1)
 		_MainTex("Main Texture", 2D) = "white" {}
 		_NormalMap("Normal map", 2D) = "white" {}
-		[KeywordEnum(Off,On)] _UseNormal("Use Normal", Float) = 0
+		[KeywordEnum(Off,On)] _UseNormal("Use Normal Map?", Float) = 0
+		_Diffuse("Diffuse %", Range(0,1)) = 1
+		[KeywordEnum(Off, Vert, Frag)] _Lighting("Lighting Mode", Float) = 0
+		_SpecularMap("Specular Map", 2D) = "black" {}
+		_SpecularFactor("Specular %",Range(0,1)) = 1
+		_SpecularPower("Specular Power", Float) = 100
+		[Toggle] _AmbientMode("Ambient Light?", Float) = 0
+		_AmbientFactor("Ambient %", Range(0,1)) = 1
 	}
     ...
-    			#pragma vertex vert
+CGPROGRAM
+			//http://docs.unity3d.com/Manual/SL-ShaderPrograms.html
+			#pragma vertex vert
 			#pragma fragment frag
 			#pragma shader_feature _USENORMAL_OFF _USENORMAL_ON
+			#pragma shader_feature _LIGHTING_OFF _LIGHTING_VERT _LIGHTING_FRAG
+			#pragma shader_feature _AMBIENTMODE_OFF _AMBIENTMODE_ON
+...
+#if _USENORMAL_ON
+				float4 tangentWorld : TEXCOORD3;
+				float3 binormalWorld : TEXCOORD4;
+				float4 normalTexCoord : TEXCOORD5;
+#endif                
 ```
 
 ## Basic Lighting Model and Rendering Path
