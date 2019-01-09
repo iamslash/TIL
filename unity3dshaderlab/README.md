@@ -563,7 +563,7 @@ Shader "Unlit/SingleColor"
 
 - normal맵을 적용해보자.
 
-```
+```c
 Shader "Unlit/WorldSpaceNormals"
 {
     // no Properties block this time!
@@ -2275,27 +2275,65 @@ Shader "Custom/skeleton"
 
 ## Normalmap Shader
 
-- normal map은 object space normal map, tagent space normal map과 같이
-  두가지 종류가 있다. object space normal map은 object의 pivot을
-  기준으로 vertex의 단위 normal vector를 texture에 저장한 것이다.
-  단위 vector는 크기가 1이므로 x, y, z중 두가지만 저장해도 나머지는
-  계산에 의해서 구할 수 있다. 이것은 skin animation을 적용할 때
-  skinned world position을 계산하기 곤란하다??? tangent space normal
-  map은 vertex의 단위 tangent space normal vector를 저장한다.  tangent
-  space normal map은 skin animation 적용이 가능하다.  tangent space
-  normal map을 더욱 많이 사용한다.
-- tangent space normal map의 tangent space normal vector는 TBN
-  (tangent, bitangent, normal) matrices와 multiplay하여 final normal
-  vector를 구한다. 이때 TBN의 N이 object space normal vector 이라면
-  final normal vector는 object space normal vector가 되고 N이 world
-  space normal vector 라면 final normal vector는 world space normal
-  vector가 된다.
-- world normal vector를 구하기 위해 vertex normal vector에
-  model matrix를 곱하지 않고 inverse of model matrix를 곱한다???
+normal map 은 object space normal map, tagent space normal map 과 같이
+  두가지 종류가 있다. object space normal map 은 object 의 pivot 을
+  기준으로 vertex 의 단위 normal vector 를 texture 에 저장한 것이다.
+  단위 vector 는 크기가 1이므로 x, y, z 중 두가지만 저장해도 나머지는
+  계산에 의해서 구할 수 있다. 이것은 skin animation 을 적용할 때
+  skinned world position 을 계산하기 곤란하다??? tangent space normal
+  map 은 vertex 의 단위 tangent space normal vector 를 저장한다. tangent
+  space normal map 은 skin animation 적용이 가능하다.  tangent space
+  normal map 을 더욱 많이 사용한다.
+
+tangent space normal map 의 tangent space normal vector 는 TBN
+  (tangent, bitangent, normal) matrices 와 multiplay 하여 final normal
+  vector 를 구한다. 이때 TBN 의 N 이 object space normal vector 이라면
+  final normal vector 는 object space normal vector 가 되고 N 이 world
+  space normal vector 라면 final normal vector 는 world space normal
+  vector 가 된다.
+
+world normal vector 를 구하기 위해 vertex normal vector 에
+  model matrix 를 곱하지 않고 inverse of model matrix 를 곱한다???
   skewing problem with normal when object is non-uniformly scaled
   because normal is orthogonal to mesh-surface.
 
 ```c
+Shader "Custom/NormalMap"
+{
+	Properties
+	{
+		_Color("Main Color", Color) = (1,1,1,1)
+		_MainTex("Main Texture", 2D) = "white" {}
+		_NormalMap("Normal map", 2D) = "white" {}
+	}
+
+	Subshader
+	{
+		//http://docs.unity3d.com/462/Documentation/Manual/SL-SubshaderTags.html
+		// Background : 1000     -        0 - 1499 = Background
+		// Geometry   : 2000     -     1500 - 2399 = Geometry
+		// AlphaTest  : 2450     -     2400 - 2699 = AlphaTest
+		// Transparent: 3000     -     2700 - 3599 = Transparent
+		// Overlay    : 4000     -     3600 - 5000 = Overlay
+		Tags { "Queue" = "Transparent" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
+		Pass
+		{
+			Blend SrcAlpha OneMinusSrcAlpha
+CGPROGRAM
+			//http://docs.unity3d.com/Manual/SL-ShaderPrograms.html
+			#pragma vertex vert
+			#pragma fragment frag
+
+			//http://docs.unity3d.com/ru/current/Manual/SL-ShaderPerformance.html
+			//http://docs.unity3d.com/Manual/SL-ShaderPerformance.html
+			uniform half4 _Color;
+			uniform sampler2D _MainTex;
+			uniform float4 _MainTex_ST;
+
+			uniform sampler2D _NormalMap;
+			uniform float4 _NormalMap_ST;
+
+			//https://msdn.microsoft.com/en-us/library/windows/desktop/bb509647%28v=vs.85%29.aspx#VS
 			struct vertexInput
 			{
 				float4 vertex : POSITION;
@@ -2303,57 +2341,70 @@ Shader "Custom/skeleton"
 				float4 tangent : TANGENT;
 				float4 texcoord : TEXCOORD0;
 			};
-			
+
 			struct vertexOutput
 			{
 				float4 pos : SV_POSITION;
 				float4 texcoord : TEXCOORD0;
-				
+
 				float4 normalWorld : TEXCOORD1;
 				float4 tangentWorld : TEXCOORD2;
 				float3 binormalWorld : TEXCOORD3;
 				float4 normalTexCoord : TEXCOORD4;
 			};
-			
-			float3 normalFromColor (float4 colorVal)
+
+			float3 normalFromColor(float4 colorVal)
 			{
-				#if defined(UNITY_NO_DXT5nm)
-					return colorVal.xyz * 2 - 1;
-				#else
-					float3 normalVal;
-					normalVal = float3 (colorVal.a * 2.0 - 1.0,
-										colorVal.g * 2.0 - 1.0,
-										0.0);
-					normalVal.z = sqrt(1.0 - dot(normalVal, normalVal));
-					return normalVal;
-				#endif
+#if defined(UNITY_NO_DXT5nm)
+				return colorVal.xyz * 2 - 1;
+#else
+				// R => x => A
+				// G => y
+				// B => z => ignored
+				float3 normalVal;
+				normalVal = float3 (colorVal.a * 2.0 - 1.0,
+									colorVal.g * 2.0 - 1.0,
+									0.0);
+				normalVal.z = sqrt(1.0 - dot(normalVal, normalVal));
+				return normalVal;
+#endif
 			}
-			
-			
+
 			vertexOutput vert(vertexInput v)
 			{
 				vertexOutput o; UNITY_INITIALIZE_OUTPUT(vertexOutput, o); // d3d11 requires initialization
-				o.pos = mul(UNITY_MATRIX_MVP , v.vertex);
+				o.pos = UnityObjectToClipPos(v.vertex);
 				o.texcoord.xy = (v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw);
 				o.normalTexCoord.xy = (v.texcoord.xy * _NormalMap_ST.xy + _NormalMap_ST.zw);
 
-                o.normalWorld = normalize(mul(v.normal, unity_WorldToObject));
-				o.tangentWorld = normalize(mul(v.tangent,unity_ObjectToWorld));
+				// World space T, B, N values
+				o.normalWorld = normalize(mul(v.normal, unity_WorldToObject));
+				o.tangentWorld = normalize(mul(v.tangent, unity_ObjectToWorld));
 				o.binormalWorld = normalize(cross(o.normalWorld, o.tangentWorld) * v.tangent.w);
 
 				return o;
 			}
-			
+
 			half4 frag(vertexOutput i) : COLOR
 			{
-				float4 colorAtPixel = tex2D(_NormalMap, i.normalTexCoord);			
+				// Color at Pixel which we read from Tangent space normal map
+				float4 colorAtPixel = tex2D(_NormalMap, i.normalTexCoord);
+
+				// Normal value converted from Color value
 				float3 normalAtPixel = normalFromColor(colorAtPixel);
-				
+
+				// Compose TBN matrix
 				float3x3 TBNWorld = float3x3(i.tangentWorld.xyz, i.binormalWorld.xyz, i.normalWorld.xyz);
+				//Correction : float3x3 TBNWorld = float3x3(i.tangentWorld.xyz, i.binormalWorld.xyz, i.normalWorld.xyz);
 				float3 worldNormalAtPixel = normalize(mul(normalAtPixel, TBNWorld));
-				
+
 				return float4(worldNormalAtPixel,1);
+				//return tex2D(_MainTex, i.texcoord) * _Color;
 			}
+ENDCG
+		}
+	}
+}
 ```
 
 ## Outline Shader
