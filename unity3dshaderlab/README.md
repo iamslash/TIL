@@ -21,6 +21,12 @@
   - [Subshader Tags](#subshader-tags)
   - [Blending](#blending)
   - [Texture Mapping](#texture-mapping)
+  - [Gradient Pattern](#gradient-pattern)
+  - [Wave Function](#wave-function)
+  - [Line Pattern](#line-pattern)
+  - [Union and Intersection Pattern](#union-and-intersection-pattern)
+  - [Circle Pattern](#circle-pattern)
+  - [Smoothstep](#smoothstep)
   - [Normalmap Shader](#normalmap-shader)
   - [Outline Shader](#outline-shader)
   - [Multi Variant Shader](#multi-variant-shader)
@@ -57,7 +63,7 @@
 
 # Abstract
 
-unity3d는 shader lab 이라는 language 로 shader 를 표현한다. unity3d
+unity3d 는 shader lab 이라는 language 로 shader 를 표현한다. unity3d
 shader lab 은 fixed function 과 programmable pipeline 으로 표현할 수
 있다.
 
@@ -118,23 +124,20 @@ suface shader 로 작성하면 vertex, fragment shader 로 코드가 변환되�
 # The Graphics Hardware Pipeline
 
 - Vertex Transformation
-  - vertex의 screen position을 만들어낸다.
-  - vertex의 텍스처 좌표를 만들어낸다.
-  - vertex의 라이팅 정보를 만들어낸다.
+  - vertex 의 screen position 을 만들어낸다.
+  - vertex 의 텍스처 좌표를 만들어낸다.
+  - vertex 의 라이팅 정보를 만들어낸다.
 - Primitive Assembly and Rasterization
-  - 이전 단계에서 전달된 vertex들은 geometric primitive들로 조립된다.
-  - 조립된 primitive들은 view frustum clipping, back face culling된다. 
-  - clipping, culling에서 살아남은 polygon들은 rasterize되어 fragment들을 만들어낸다.
-  - fragment는 번데기 pixel은 나비와 같다. fragment는 여러 처리를
-    거쳐서 framebuffer의 pixel로 전환된다. 그래서 potential
-    pixel이라고 한다.
-    - A fragment has an associated pixel location, a depth value, and a
-    set of interpolated parameters such as a color, a secondary
-    (specular) color, and one or more texture coordinate sets.
+  - 이전 단계에서 전달된 vertex 들은 geometric primitive 들로 조립된다.
+  - 조립된 primitive 들은 view frustum clipping, back face culling 된다. 
+  - clipping, culling 에서 살아남은 polygon 들은 rasterize 되어 fragment 들을 만들어낸다.
+  - fragment 는 번데기 pixel 은 나비와 같다. fragment 는 여러 처리를
+    거쳐서 framebuffer 의 pixel 로 전환된다. 그래서 potential
+    pixel 이라고 한다.
 - Interpolation, Texturing, and Coloring
-  - fragment의 parameter들을 interpolate하고 fragment의 final color를 결정한다.
+  - fragment 의 parameter 들을 interpolate 하고 fragment 의 final color 를 결정한다.
 - Raster Operations
-  - fragment마다 실행된다. depth testing, blending, sencil test가 수행된다.
+  - fragment 마다 실행된다. depth testing, blending, sencil test 가 수행된다.
   - 결국 frame buffer는 최종 처리된 컬러값을 쓴다.
 
 - The Programmable Graphics Pipeline
@@ -157,7 +160,7 @@ suface shader 로 작성하면 vertex, fragment shader 로 코드가 변환되�
 
 - 빨간 색으로 칠하자.
 
-```
+```c
 Shader "Custom/A" {
     SubShader { 
         Pass {
@@ -167,11 +170,11 @@ Shader "Custom/A" {
 }
 ```
 
-- Direct Light를 배치하고 Cube의 표면에 Diffuse, Ambient를 적용하자. 
-  - Direct Light를 활성화 비활성화 해보면 차이를 알 수 있다.
-  - Lighting On은 Material이 없으면 작동하지 않는다.
+- Direct Light 를 배치하고 Cube 의 표면에 Diffuse, Ambient 를 적용하자. 
+  - Direct Light 를 활성화 비활성화 해보면 차이를 알 수 있다.
+  - Lighting On 은 Material 이 없으면 작동하지 않는다.
 
-```
+```c
 Shader "Custom/A"{ 
     SubShader { 
         Pass { 
@@ -185,9 +188,9 @@ Shader "Custom/A"{
 }
 ```
 
-- Properties를 이용하여 Diffuse, Ambient를 조정할 수 있게 해보자.
+- Properties 를 이용하여 Diffuse, Ambient 를 조정할 수 있게 해보자.
 
-```
+```c
 Shader "Custom/A"{ 
     Properties { 
         _MyColor ("Main Color", COLOR) = (0,0,1,1) 
@@ -204,9 +207,9 @@ Shader "Custom/A"{
 } 
 ```
 
-- Properties를 이용하여 texture를 지정해 보자.
+- Properties 를 이용하여 texture 를 지정해 보자.
 
-```
+```c
 Shader "Custom/A" { 
     Properties { 
         _MyColor ("Main Color", COLOR) = (1,1,1,1) 
@@ -226,9 +229,9 @@ Shader "Custom/A" {
 } 
 ```
 
-- texture는 color와 blending되고 light적용도 받게 해보자.
+- texture 는 color 와 blending 되고 light 적용도 받게 해보자.
 
-```
+```c
 Shader "Custom/A"{ 
     Properties { 
         _MyColor ("Main Color", COLOR) = (0,0,1,1) 
@@ -252,10 +255,10 @@ Shader "Custom/A"{
 
 - 두장의 텍스처를 섞어 보자.
   - A lerp(B) C 의 의미는 다음과 같다.
-    - B의 alpha값을 확인해서 A와 B값을 보간하여 사용한다.
-    - B의 alpha값이 1이면 A를 사용하고 0이면 B를 사용한다.
+    - B 의 alpha 값을 확인해서 A 와 B 값을 보간하여 사용한다.
+    - B 의 alpha 값이 1 이면 A 를 사용하고 0 이면 B 를 사용한다.
 
-```
+```c
 Shader "Custom/A"{ 
     Properties { 
          _MainTex("Texture", 2D) = "white" {} 
@@ -277,9 +280,8 @@ Shader "Custom/A"{
 
 - 반 투명한 물체를 만들어 보자.
   - _Color의 alpha값을 조정해보니 투명해진다. 하지만 가려진 물체는 안그려진다. 왜지???
-  
 
-```
+```c
 Shader "Custom/A"{ 
     Properties { 
         _Color ("Main Color", COLOR) = (1,1,1,1) 
@@ -303,13 +305,13 @@ Shader "Custom/A"{
 } 
 ```
 
-- cg를 이용해서 simple unlit을 만들어 보자.
-  - Light와 상관없이 텍스처를 보여주자.
-  - : POSITION, : TEXCOORD0, : SV_Target 등은 semantic이라고 한다.
-    - cg에게 해당 변수를 어떤 용도로 사용하겠다는 의도를 표현한다.
+- cg 를 이용해서 simple unlit 을 만들어 보자.
+  - Light 와 상관없이 텍스처를 보여주자.
+  - : POSITION, : TEXCOORD0, : SV_Target 등은 semantic 이라고 한다.
+    - cg 에게 해당 변수를 어떤 용도로 사용하겠다는 의도를 표현한다.
     - [이곳](https://docs.unity3d.com/Manual/SL-ShaderSemantics.html)에 자세한 설명이 있다.
 
-```cg
+```c
 Shader "Custom/A"
 {
     Properties
@@ -371,11 +373,11 @@ Shader "Custom/A"
 }
 ```
 
-- culling을 적용해 보자.
-  - front를 culling하자 backface만 rendering된다.
+- culling 을 적용해 보자.
+  - front 를 culling 하자 backface 만 rendering 된다.
   - 자세한 설명은 [이곳](https://docs.unity3d.com/Manual/SL-CullAndDepth.html)을 참고하자.
   
-```
+```c
 Shader "Show Insides" {
     SubShader {
         Pass {
@@ -389,11 +391,11 @@ Shader "Show Insides" {
 }
 ```
 
-- depth testing을 적용해 보자.
-  - 특정 fragment는 depth testing을 통과할때 frame buffer에 쓰자.
+- depth testing 을 적용해 보자.
+  - 특정 fragment 는 depth testing 을 통과할때 frame buffer 에 쓰자.
   - 자세한 설명은 [이곳](https://docs.unity3d.com/Manual/SL-CullAndDepth.html)을 참고하자.
   
-```
+```c
 Shader "Transparent/Diffuse ZWrite" {
 Properties {
     _Color ("Main Color", Color) = (1,1,1,1)
@@ -416,14 +418,14 @@ Fallback "Transparent/VertexLit"
 }
 ```
 
-- stencil testing을 적용해 보자.
-  - 특정 fragment는 stencil testing을 통과할때 framebuffer에 쓰자.
+- stencil testing 을 적용해 보자.
+  - 특정 fragment 는 stencil testing 을 통과할때 framebuffer 에 쓰자.
   - 자세한 설명은 [이곳](https://docs.unity3d.com/Manual/SL-Stencil.html)을 참고하자.
-  - 연두색 물체는 빨강색 물체보다 앞에 있지만 stencil testing을 통과한 fragment들만 렌더링 된다.
-  - stencil buffer는 기본적으로 0값을 가지고 있다.
-  - Editor를 통해서 값을 변경해 가면서 이해하자.
+  - 연두색 물체는 빨강색 물체보다 앞에 있지만 stencil testing 을 통과한 fragment 들만 렌더링 된다.
+  - stencil buffer 는 기본적으로 0 값을 가지고 있다.
+  - Editor 를 통해서 값을 변경해 가면서 이해하자.
   
-```
+```c
 Shader "Red" {
     SubShader {
         Tags { "RenderType"="Opaque" "Queue"="Geometry"}
@@ -457,7 +459,7 @@ Shader "Red" {
 }
 ```
 
-```
+```c
 Shader "Green" {
     SubShader {
         Tags { "RenderType"="Opaque" "Queue"="Geometry+1"}
@@ -493,13 +495,13 @@ Shader "Green" {
 ```
 
 - blending 을 적용해보자.
-  - Blend의 [문법](https://docs.unity3d.com/460/Documentation/Manual/SL-Blend.html)을 먼저 이해해야 한다.
-  - blend의 문법은 다음과 같다. Blend SrcFactor DstFactor
-    - src는 현재 fragment의 color이다. dst는 framebuffer에 이미 존재하는 color이다.
-    - srcFactor를 src의 color에 곱하고 dstFactor를 dst의 color에 곱한후 두가지를 더한다.
-    - 물론 더하기 말고 다양한 blend operation들을 적용할 수 있다.
+  - Blend 의 [문법](https://docs.unity3d.com/460/Documentation/Manual/SL-Blend.html)을 먼저 이해해야 한다.
+  - blend 의 문법은 다음과 같다. Blend SrcFactor DstFactor
+    - src 는 현재 fragment 의 color 이다. dst 는 framebuffer 에 이미 존재하는 color이다.
+    - srcFactor 를 src 의 color 에 곱하고 dstFactor 를 dst 의 color 에 곱한후 두가지를 더한다.
+    - 물론 더하기 말고 다양한 blend operation 들을 적용할 수 있다.
   
-```
+```c
 Shader "Simple Additive" {
     Properties {
         _MainTex ("Texture to blend", 2D) = "black" {}
@@ -514,12 +516,11 @@ Shader "Simple Additive" {
 }
 ```
 
-
 # Vertex, fragment shader tutorial
 
-- vertex, fragment shader를 이용하여 한가지 색으로 칠해보자.
+- vertex, fragment shader 를 이용하여 한가지 색으로 칠해보자.
 
-```
+```c
 // Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
 
 Shader "Unlit/SingleColor"
@@ -561,7 +562,8 @@ Shader "Unlit/SingleColor"
 
 ```
 
-- normal맵을 적용해보자.
+- normal vector 를 색상으로 표현해 보자. normal vector 를 구성하는 `x,y,z` 는 각각 값의 범위가 `[-1,1]` 이다. 이것을 색상으로
+사용하기 위해서는 `[0,1]` 으로 바꿔야 한다. 따라서 `normal*0.5+0.5` 한 것을 `color` 에 저장한다.
 
 ```c
 Shader "Unlit/WorldSpaceNormals"
@@ -599,15 +601,14 @@ Shader "Unlit/WorldSpaceNormals"
         }
     }
 }
-
 ```
 
-- skymap을 reflect해보자.
-  - worldViewDir는 특정 정점에서 카메라를 바라보는 vector이다.
-  - refelct는 builtin cg function이다. I와 N을 입력받아 반사된 벡터 R을 리턴한다.
+- skymap 을 reflect 해보자.
+  - worldViewDir 는 특정 정점에서 카메라를 바라보는 vector 이다.
+  - refelct 는 builtin cg function 이다. `I` 와 `N` 을 입력받아 반사된 벡터 `R` 을 리턴한다.
     - [reflect in cg](http://http.developer.nvidia.com/Cg/reflect.html)
     
-```
+```c
 Shader "Unlit/SkyReflection"
 {
     SubShader
@@ -656,12 +657,9 @@ Shader "Unlit/SkyReflection"
 }
 ```
 
-- skymap을 normal map과 함께 reflect해보자.
-  - tangent space는 3차원의 물체를 2차원으로 만들때 다시 3차원으로
-    복원하기 위해 2차원의 각 vertex마다 저장해 두는 정보이다. 3차원에
-    복원에 사용되는 정보이다. 자세한 설명은 [이곳](http://rapapa.net/?p=2419) 참고
+- skymap 을 normal map 과 함께 reflect 해보자.
   
-```
+```c
 Shader "Unlit/SkyReflection Per Pixel"
 {
     Properties {
@@ -740,9 +738,9 @@ Shader "Unlit/SkyReflection Per Pixel"
 }
 ```
  
-- skymap을 reflect하면서 normal map과 occlusion map을 적용해보자.
+- skymap 을 reflect 하면서 normal map 과 occlusion map 을 적용해보자.
 
-```
+```c
 Shader "Unlit/More Textures"
 {
     Properties {
@@ -820,10 +818,10 @@ Shader "Unlit/More Textures"
 ```
 
 - 체커보드 패턴으로 텍스처링 해보자.
-  - frag()는 0(black) 아니면 1(white)을 리턴한다.
-  - frac()는 0 아니면 0.5를 리턴한다.
+  - frag() 는 0(black) 아니면 1(white) 을 리턴한다.
+  - frac() 는 0 아니면 0.5 를 리턴한다.
 
-```
+```c
 Shader "Unlit/Checkerboard"
 {
     Properties
@@ -868,12 +866,12 @@ Shader "Unlit/Checkerboard"
 }
 ```
 
-- tri-planar texturing해보자.
-  - 터레인(Height Field)에서 텍스쳐 매핑을 할 경우, 높이를 조절하면서
-    텍스쳐가 늘어나는 현상을 방지하기 위해서, 축에 따라서 텍스쳐 uv를
+- tri-planar texturing 해보자.
+  - 터레인(Height Field) 에서 텍스쳐 매핑을 할 경우, 높이를 조절하면서
+    텍스쳐가 늘어나는 현상을 방지하기 위해서, 축에 따라서 텍스쳐 uv 를
     적용해주는 기술을 "Tri-Planar Texture Mapping" 이라고 한다.
 
-```
+```c
 Shader "Unlit/Triplanar"
 {
     Properties
@@ -936,10 +934,10 @@ Shader "Unlit/Triplanar"
 }
 ```
 
-- 간단한 diffuse lighting을 적용해보자.
-  - Tags를 이용해서 forward rendering pipeline을 이용하고 있다.
+- 간단한 diffuse lighting 을 적용해보자.
+  - Tags 를 이용해서 forward rendering pipeline 을 이용하고 있다.
 
-```
+```c
 Shader "Lit/Simple Diffuse"
 {
     Properties
@@ -1000,12 +998,12 @@ Shader "Lit/Simple Diffuse"
 }
 ```
 
-- diffuse lighting에 ambient lighting과 light probe를 적용해보자.
-  - ambient와 light probe 데이터는 Spherical Harmonics form으로
-    제공된다. UnityCG.cginc의 ShadeSH9함수는 world space normal 이
+- diffuse lighting 에 ambient lighting 과 light probe 를 적용해보자.
+  - ambient 와 light probe 데이터는 Spherical Harmonics form 으로
+    제공된다. UnityCG.cginc 의 ShadeSH9 함수는 world space normal 이
     주어지면 언급한 데이터를 계산해 낸다.
     
-```
+```c
 Shader "Lit/Diffuse With Ambient"
 {
     Properties
@@ -1063,9 +1061,9 @@ Shader "Lit/Diffuse With Ambient"
 }
 ```
 
-- builtin pass를 이용하여 그림자를 만들어 보자.
+- builtin pass 를 이용하여 그림자를 만들어 보자.
 
-```
+```c
 Pass
 {
     // regular lighting pass
@@ -1074,9 +1072,9 @@ Pass
 UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
 ```
 
-- builtin pass사용하지 않고 그림자를 만들어 보자.
+- builtin pass 사용하지 않고 그림자를 만들어 보자.
 
-```
+```c
 Shader "Lit/Shadow Casting"
 {
     SubShader
@@ -1146,7 +1144,7 @@ Shader "Lit/Shadow Casting"
 
 - 그림자를 드리워 보자.
 
-```
+```c
 Shader "Lit/Diffuse With Shadows"
 {
     Properties
@@ -1215,7 +1213,7 @@ Shader "Lit/Diffuse With Shadows"
 
 - 안개효과
 
-```
+```c
 Shader "Custom/TextureCoordinates/Fog" {
     SubShader {
         Pass {
@@ -2133,14 +2131,9 @@ ENDCG
 
 ## Unity Shader Lab
 
-- unity3d 에서 shader는 unity3d shader lab과 cg를 이용해서 제작한다.
-  shader lab에서 cg를 이용하는 방식이다. cg는 nvidia가 주도로 제작한
-  shading language이다. directx와 opengl이 지원한다.
-- shader lab은 properties, sub-shader, pass, vertex shader input,
-  vertex shader, vertex shader output, fragment shader등으로 구성된다.
-- cg 는 packed arrays 와 packed matrices 를 지원한다. packed arrays 는 `float4` 와 같은 표현이다. packed matrices 는 `float4x4` 와 같은 표현이다. 특히 다음과 같이 packed matrices 의 멤버들을 접근할 수 있다.
+cg 는 packed arrays 와 packed matrices 를 지원한다. packed arrays 는 `float4` 와 같은 표현이다. packed matrices 는 `float4x4` 와 같은 표현이다. 특히 다음과 같이 packed matrices 의 멤버들을 접근할 수 있다.
 
-```
+```c
 float4x4 matrix;
 
 float first = matrix_m00;
@@ -2153,11 +2146,11 @@ float4 firstrow = matrix_m00_m01_m02_m03;
 
 ## Barebones Shader
 
-- shader lab의 기본 구조는 다음과 같다. 아럐 코드에서 POSITION,
-  SV_POSITION, COLOR과 같은 것들을 shader semantics라고 한다.  shader
-  semantics는 shader가 처리되는 단계들 사이에 전달되는 parameter가
+- shader lab 의 기본 구조는 다음과 같다. 아럐 코드에서 POSITION,
+  SV_POSITION, COLOR 과 같은 것들을 shader semantics 라고 한다.  shader
+  semantics 는 shader 가 처리되는 단계들 사이에 전달되는 parameter 가
   어떤 의도로 사용될 것인지 정의하는 것이다. [이곳](https://docs.unity3d.com/Manual/SL-ShaderSemantics.html)을
-  참고해서 여러가지 semantics에 대해 파악해 두자.
+  참고해서 여러가지 semantics 에 대해 파악해 두자.
 
 ```c
 Shader "Custom/skeleton"
@@ -2240,10 +2233,10 @@ Shader "Custom/skeleton"
 
 ## Texture Mapping
 
-- 3d max와 같은 프로그램에서 제작된 *.fbx는 특정 오브젝트의 vertex position,
-  vertex normal, vertex color, uv position등을 포함한다. unity3d는 *.fbx
-  를 import하면 fragment shader단계에서 보간된 uv position을 이용하여 
-  color buffer에 기록한다.
+- 3d max 와 같은 DCC 프로그램에서 제작된 *.fbx 는 특정 오브젝트의 vertex position,
+  vertex normal, vertex color, uv position 등을 포함한다. unity3d 는 *.fbx
+  를 import 하면 fragment shader 단계에서 보간된 uv position 을 이용하여 
+  color buffer 에 기록한다.
 
 ```c
             // pixel shader; returns low precision ("fixed4" type)
@@ -2256,9 +2249,7 @@ Shader "Custom/skeleton"
             }
 ```
 
-- texture의 wrap mode를 repeat으로 하고 shader lab의 verex shader를 다음과 같이 
-  수정하면 tiling값을 조절하여 texture를 tiling할 수 있다. _MainTex_ST.xy는 tiling
-  의 x, y를 _MainTex_ST.zw는 offset의 x, y를 의미한다.
+- 특정 texture 의 wrap mode 를 repeat 으로 하면 `u, v` 값이 `[0,1]` 이외의 영역에서 texel 을 얻어올 수 있다. 예를 들어서 texture 가 wrap mode 이고 `(1.5, 1.5)` 의 texel 은 `(0.5, 0.5)` 와 같다. 따라서 vertex shader 에서 인자로 주어진 `(u, v)` 에 `(tiling.x, tiling.y)` 을 곱하면 tiling 효과를 구현할 수 있다.
 
 ```c
 			uniform sampler2D _MainTex;
@@ -2273,29 +2264,70 @@ Shader "Custom/skeleton"
 			}
 ```
 
+## Gradient Pattern
+
+fragment shader 에서 컬러의 알파를 fragment 의 `uv.x` 로 치환하면 gradient 효과를 구현할 수 있다.
+
+```c
+			half4 frag(vertexOutput i) : COLOR
+			{
+				float4 col = tex2D(_MainTex, i.texcoord) * _Color;
+				col.a = i.texcoord.x;
+				return col;
+			}
+```
+
+## Wave Function
+
+## Line Pattern
+
+## Union and Intersection Pattern
+
+## Circle Pattern
+
+## Smoothstep
+
 ## Normalmap Shader
 
-normal map 은 object space normal map, tagent space normal map 과 같이
-  두가지 종류가 있다. object space normal map 은 object 의 pivot 을
-  기준으로 vertex 의 단위 normal vector 를 texture 에 저장한 것이다.
-  단위 vector 는 크기가 1이므로 x, y, z 중 두가지만 저장해도 나머지는
-  계산에 의해서 구할 수 있다. 이것은 skin animation 을 적용할 때
-  skinned world position 을 계산하기 곤란하다??? tangent space normal
-  map 은 vertex 의 단위 tangent space normal vector 를 저장한다. tangent
-  space normal map 은 skin animation 적용이 가능하다.  tangent space
-  normal map 을 더욱 많이 사용한다.
+`a.fbx` 를 읽고 특정한 점 p 를 렌더링한다고 해보자.
+점 p 의 normal 을 그대로 이용하지 않고 변형시키면 `a.fbx` 의
+폴리곤 숫자를 늘리지 않고 점 p 에 굴곡을 표현할 수 있다.
+얼만큼 변형할지를 텍스처에 저장하고 이 텍스처를 normal map 이라고 한다.
 
-tangent space normal map 의 tangent space normal vector 는 TBN
-  (tangent, bitangent, normal) matrices 와 multiplay 하여 final normal
-  vector 를 구한다. 이때 TBN 의 N 이 object space normal vector 이라면
-  final normal vector 는 object space normal vector 가 되고 N 이 world
-  space normal vector 라면 final normal vector 는 world space normal
-  vector 가 된다.
+점 p 와 매핑되는 normal map 의 texel 에는 점 p 의 변형된 normal vector 가
+tangent space coordinate 으로 저장되어 있다. texel 에 저장된 `(x,y,z)` 는
+각각 `[0,1]` 이므로 tangent space normal vector 로 사용하기 위해
+나중에 2 를 곱하고 1 을 빼서 `[-1,1]` 으로 변형해야 한다.
 
-world normal vector 를 구하기 위해 vertex normal vector 에
-  model matrix 를 곱하지 않고 inverse of model matrix 를 곱한다???
-  skewing problem with normal when object is non-uniformly scaled
-  because normal is orthogonal to mesh-surface.
+normal map 에서 읽어들인 tangent space normal vector 는 
+world space normal vector 로 변환해야 한다. 따라서 좌표변환을 위한
+행렬이 필요한 데 그것을 `TBN` 행렬이라고 한다. 
+`TBN` 행렬을 tangent space normal vector 와 곱연산 하여 
+world space normal vector 를 만들고 이것을 
+점 p 의 새로운 world space normal vector
+로 사용하면 우리가 원하는데로 점 p 에 굴곡을 줄 수 있다.
+
+`TBN` 행렬은 vertex shader 에서 구한다. 점 p 의 `normal, tangent`
+vector 정보를 `a.fbx` 에서 얻어올 수 있고 각각 `p.normal, p.tangent` 라고 하자.
+`p.normal` 과 `p.tangent` 는 서로 수직이고 점 p 를 원점으로 하는 
+tangent space 의 두 좌표축과 일치한다. 나머지 좌표축과 일치하는 `p.binormal`은
+`cross(p.normal, p.tangent)` 를 이용하여 구할 수 있다. 
+`p.normal, p.tangent, p.binormal` 은 점 p 를 원점으로
+하는 tangent space 의 좌표축과 일치하고 각각 
+object space coordinates 가 저장되어 있다. 
+
+`p.normal, p.tangent, p.binormal` 은 object space `TBN` 을 구성한다.
+우리는 world space normal vector 를 구하기 위해
+tangent space normal vector 와 곱연산을 할 world space `TBN` 이 필요하다.
+world space `TBN` 은 vertex shader 에서 `p.normal, p.tangent, p.binormal`
+에 model matrix 를 곱연산하여 구할 수 있다.
+
+한가지 특이한 것은 world space `p.normal` 은 
+`o.normalWorld = normalize(mul(v.normal, unity_WorldToObject));`
+으로 구한다. 왜 `unity_ObjectToWorld` 대신 `unity_WorldToObject`
+가 사용되는 것일까? skewing problem with normal when 
+object is non-uniformly scaled
+because normal is orthogonal to mesh-surface.
 
 ```c
 Shader "Custom/NormalMap"
