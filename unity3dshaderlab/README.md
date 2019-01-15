@@ -2266,7 +2266,7 @@ Shader "Custom/skeleton"
 
 ## Gradient Pattern
 
-fragment shader 에서 컬러의 알파를 fragment 의 `uv.x` 로 치환하면 gradient 효과를 구현할 수 있다.
+Quard 를 하나 만들고 texture 를 하여 gradent 효과를 구현해 보자. fragment shader 에서 컬러의 알파를 fragment 의 `uv.x` 로 치환하면 gradient 효과를 구현할 수 있다.
 
 ```c
 			half4 frag(vertexOutput i) : COLOR
@@ -2279,13 +2279,134 @@ fragment shader 에서 컬러의 알파를 fragment 의 `uv.x` 로 치환하면 
 
 ## Wave Function
 
+Quard 를 하나 만들고 texture 를 매핑하여 `sqrt, sin, tan` 등을 통해 gradient 변화의 정도를 조절해 보자.
+
+```c
+			half4 frag(vertexOutput i) : COLOR
+			{
+				float4 col = tex2D(_MainTex, i.texcoord) * _Color;
+				//col.a = i.texcoord.x;
+				//col.a = sqrt(i.texcoord.x);
+				//col.a = sin(i.texcoord.x * 20);
+				col.a = tan(i.texcoord.x * 20);
+				return col;
+			}
+```
+
 ## Line Pattern
+
+Quard 를 하나 만들고 texture 를 매핑하여 가로 혹은 세로 줄무늬를 그려보자.
+
+```c
+	Properties 
+	{
+		_Color ("Main Color", Color) = (1,1,1,1)
+		_MainTex("Main Texture", 2D) = "white" {}
+		_Start ("Line Start", Float) = 0.5
+		_Width ("Line Width", Float) = 0.1
+	}
+...
+			float drawLine (float2 uv, float start, float end)
+			{
+				if( uv.x > start && uv.x < end)
+				{
+					return 1;
+				}
+				else
+				{
+					return 0;
+				}
+			}
+			
+			half4 frag(vertexOutput i) : COLOR
+			{
+				float4 col = tex2D(_MainTex, i.texcoord) * _Color;
+				col.a = drawLine(i.texcoord, _Start , _Start + _Width);
+				return col;
+			}    
+```
 
 ## Union and Intersection Pattern
 
+Quard 를 하나 만들고 texture 를 매핑하여 두개 라인의 합집합을 그려보자. `||` 를 `&&` 로 교체하면 두개 라인의 교집합을 그려볼 수 있다.
+
+```c
+			float drawLine (float2 uv, float start, float end)
+			{
+				if ((uv.x > start && uv.x < end) || (uv.y > start && uv.y < end))
+				{
+					return 1;
+				}
+				else
+				{
+					return 0;
+				}
+			}
+			
+			half4 frag(vertexOutput i) : COLOR
+			{
+				float4 col = tex2D(_MainTex, i.texcoord) * _Color;
+				col.a = drawLine(i.texcoord, _Start , _Start + _Width);
+				return col;
+			}
+```
+
 ## Circle Pattern
 
+Quard 를 하나 만들고 texture 를 매핑하여 원을 그려보자. `r^2 = x^2 + y^2` 식을 이용하여 원안의 점들은 alpha 를 1 로 해보자.
+
+```c
+			float drawCircle(float2 uv, float2 center, float radius)
+			{
+				float circle = pow((uv.y - center.y), 2) + pow ((uv.x - center.x), 2);
+				float radiusSq = pow (radius, 2);
+				
+				if (circle < radiusSq)
+				{
+					return 1;
+				}
+				return 0;
+			}
+			
+			
+			half4 frag(vertexOutput i) : COLOR
+			{
+				float4 col = tex2D(_MainTex, i.texcoord) * _Color;
+				col.a = drawCircle(i.texcoord, _Center , _Radius);
+				return col;
+			}
+```
+
 ## Smoothstep
+
+[cg smoothsteap @ nvidia](http://developer.download.nvidia.com/cg/smoothstep.html)
+
+![](smoothstep.png)
+
+`smoothstep(a, b, c)` 은 `c` 가 `a` 혹은 `b` 에 어느정도 가까운지에 따라 `[0,1]` 을 반환하는 함수이다.
+
+Quard 를 하나 만들고 texture 를 매핑하여 gradient 효과를 smoothstepping 해보자.
+
+```c
+			float drawCircleFade(float2 uv, float2 center, float radius, float feather)
+			{
+				float circle = pow((uv.y - center.y), 2) + pow ((uv.x - center.x), 2);
+				float radiusSq = pow (radius, 2);
+				
+				if (circle < radiusSq) // This if condition is not needed as smoothstep itself returns value between 0-1 based on the range provided
+				{
+					return smoothstep(radiusSq, radiusSq - feather, circle);
+				}
+				return 0;
+			}
+			
+			half4 frag(vertexOutput i) : COLOR
+			{
+				float4 col = tex2D(_MainTex, i.texcoord) * _Color;
+				col.a = drawCircleFade(i.texcoord, _Center , _Radius, _Feather);
+				return col;
+			}
+```
 
 ## Normalmap Shader
 
