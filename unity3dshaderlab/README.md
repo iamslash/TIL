@@ -2483,7 +2483,77 @@ Quard 를 하나 만들고 texture 를 매핑하여 bokeh effect 를 구현해 �
 
 ## Vertex Animation
 
+깃발을 시간의 흐름에 따라 펄럭여 보자. `y = sin(ax)+b` 에서 `a` 를 이용하여 `frequency` 를
+조정할 수 있고 `b` 를 이용하여 `amplitude` 를 조정할 수 있다.
+
+```c
+	Properties 
+	{
+		_Color ("Main Color", Color) = (1,1,1,1)
+		_MainTex("Main Texture", 2D) = "white" {}
+		_Frequency("Frequency", Float) = 1
+		_Amplitude("Amplitude", Float) = 1
+		_Speed("Speed", Float) = 1
+	}
+...
+			float4 vertexFlagAnim(float4 vertPos, float2 uv)
+			{
+				vertPos.z = vertPos.z + sin( (uv.x - (_Time.y * _Speed)) * _Frequency) * (uv.x * _Amplitude);
+				return vertPos;
+			}
+			
+			vertexOutput vert(vertexInput v)
+			{
+				vertexOutput o; UNITY_INITIALIZE_OUTPUT(vertexOutput, o); // d3d11 requires initialization
+				v.vertex = vertexFlagAnim(v.vertex, v.texcoord);
+				o.pos = UnityObjectToClipPos( v.vertex);
+				o.texcoord.xy = (v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw);
+				return o;
+			}
+			
+			half4 frag(vertexOutput i) : COLOR
+			{
+				float4 col = tex2D(_MainTex, i.texcoord) * _Color;
+				return col;
+			}
+```
+
 ## Normal Vertex Animation
+
+해파리를 시간의 흐름에 따라 움직여 보자.
+
+```c
+	Properties 
+	{
+		_Color ("Main Color", Color) = (1,1,1,1)
+		_MainTex("Main Texture", 2D) = "white" {}
+		_Frequency("Frequency", Float) = 1
+		_Amplitude("Amplitude", Float) = 1
+		_Speed("Speed", Float) = 1
+	}
+...
+			float4 vertexAnimNormal(float4 vertPos, float4 vertNormal, float2 uv)
+			{					
+				vertPos += sin((vertNormal - (_Time.y * _Speed)) * _Frequency) * (vertNormal * _Amplitude);
+				return vertPos;
+			}			
+			
+			vertexOutput vert(vertexInput v)
+			{
+				vertexOutput o; 
+                UNITY_INITIALIZE_OUTPUT(vertexOutput, o); // d3d11 requires initialization
+				v.vertex = vertexAnimNormal(v.vertex, v.normal, v.texcoord);
+				o.pos = UnityObjectToClipPos(v.vertex);
+				o.texcoord.xy = (v.texcoord.xy * _MainTex_ST.xy + _MainTex_ST.zw);
+				return o;
+			}
+
+			half4 frag(vertexOutput i) : COLOR
+			{
+				float4 col = tex2D(_MainTex, i.texcoord) * _Color;
+				return col;
+			}    
+```
 
 ## Normalmap Shader
 
