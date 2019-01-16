@@ -27,6 +27,10 @@
   - [Union and Intersection Pattern](#union-and-intersection-pattern)
   - [Circle Pattern](#circle-pattern)
   - [Smoothstep](#smoothstep)
+  - [Circle Fading Edges](#circle-fading-edges)
+  - [Pattern Animation](#pattern-animation)
+  - [Vertex Animation](#vertex-animation)
+  - [Normal Vertex Animation](#normal-vertex-animation)
   - [Normalmap Shader](#normalmap-shader)
   - [Outline Shader](#outline-shader)
   - [Multi Variant Shader](#multi-variant-shader)
@@ -2407,6 +2411,79 @@ Quard 를 하나 만들고 texture 를 매핑하여 gradient 효과를 smoothste
 				return col;
 			}
 ```
+
+## Circle Fading Edges
+
+Quard 를 하나 만들고 texture 를 매핑하여 원의 모서리를 부드럽게 구현해 보자.
+
+```c
+	Properties 
+	{
+		_Color ("Main Color", Color) = (1,1,1,1)
+		_MainTex("Main Texture", 2D) = "white" {}
+		_Center ("Center", Float) = 0.5
+		_Radius ("Radius", Float) = 0.5
+		_Feather("Feather", Range(0.001,0.05)) = 0.2
+	}
+...
+			float drawCircleFade(float2 uv, float2 center, float radius, float feather)
+			{
+				float circle = pow((uv.y - center.y), 2) + pow ((uv.x - center.x), 2);
+				float radiusSq = pow (radius, 2);
+				
+				if (circle < radiusSq) // This if condition is not needed as smoothstep itself returns value between 0-1 based on the range provided
+				{
+					return smoothstep(radiusSq, radiusSq - feather, circle);
+				}
+				return 0;
+			}
+			
+			half4 frag(vertexOutput i) : COLOR
+			{
+				float4 col = tex2D(_MainTex, i.texcoord) * _Color;
+				col.a = drawCircleFade(i.texcoord, _Center, _Radius, _Feather);
+				return col;
+			}
+```
+
+## Pattern Animation
+
+Quard 를 하나 만들고 texture 를 매핑하여 bokeh effect 를 구현해 보자.
+
+```c
+	Properties 
+	{
+		_Color ("Main Color", Color) = (1,1,1,1)
+		_MainTex("Main Texture", 2D) = "white" {}
+		_Center ("Center", Float) = 0.5
+		_Radius ("Radius", Float) = 0.5
+		_Feather("Feather", Range(0.001,0.05)) = 0.2
+		_Speed ("Speed", Float) = 1.0
+	}
+...
+			float drawCircleAnimate(float2 uv, float2 center, float radius, float feather)
+			{
+				float circle = pow((uv.y - center.y), 2) + pow ((uv.x - center.x), 2);
+				float radiusSq = pow (radius, 2);
+				
+				if (circle < radiusSq)
+				{
+					float fadeVal = abs(sin(_Time.y * _Speed));
+					return smoothstep(radiusSq, radiusSq - feather, circle) * fadeVal;
+				}
+				return 0;
+			}			
+			half4 frag(vertexOutput i) : COLOR
+			{
+				float4 col = tex2D(_MainTex, i.texcoord) * _Color;
+				col.a = drawCircleAnimate(i.texcoord, _Center, _Radius, _Feather);
+				return col;
+			}    
+```
+
+## Vertex Animation
+
+## Normal Vertex Animation
 
 ## Normalmap Shader
 
