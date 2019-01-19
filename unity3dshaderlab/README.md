@@ -61,6 +61,8 @@
   - [Blur](#blur)
   - [Depth of field](#depth-of-field)
   - [Vignette](#vignette)
+  - [Sufface scattering](#sufface-scattering)
+  - [Handpainted](#handpainted)
   - [Oren Nayar](#oren-nayar)
   - [Physicall Based Rendering](#physicall-based-rendering)
 -------------------------------------------------------------------------------
@@ -4026,6 +4028,10 @@ ENDCG
 ## Depth of field
 
 ## Vignette
+
+## Sufface scattering
+
+## Handpainted
 
 ## Oren Nayar
 
