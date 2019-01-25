@@ -873,9 +873,9 @@ Shader "Unlit/Checkerboard"
 ```
 
 - tri-planar texturing 해보자.
-  - 터레인(Height Field) 에서 텍스쳐 매핑을 할 경우, 높이를 조절하면서
-    텍스쳐가 늘어나는 현상을 방지하기 위해서, 축에 따라서 텍스쳐 uv 를
-    적용해주는 기술을 "Tri-Planar Texture Mapping" 이라고 한다.
+  - [참고](https://gamedevelopment.tutsplus.com/articles/use-tri-planar-texture-mapping-for-better-terrain--gamedev-13821)
+  - 터레인(Height Field) 에서 텍스쳐 매핑을 할 경우, 높이를 조절하면서 텍스쳐가 늘어나는 현상을 방지하는 방법이다. 
+  - 프래그먼트 쉐이더에서 다음과 같은 일련의 작업을 수행한다. 먼저 오브젝트 노멀값을 이용하여 블렌딩 웨이트를 만들어낸다. 그리고 `yz, xz, xy` 평면에 투영된 별도의 `uv` 들을 만들어 세가지 텍셀을 읽어온다. 그리고 앞서 제작한 웨이트를 이용하여 세가지 텍셀을 블렌딩하고 그것을 최종 컬러로 이용한다.
 
 ```c
 Shader "Unlit/Triplanar"
