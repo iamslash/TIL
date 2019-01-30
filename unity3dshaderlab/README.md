@@ -50,21 +50,27 @@
   - [BRDF (bidirectional reflectance distribution function)](#brdf-bidirectional-reflectance-distribution-function)
 - [Snippets](#snippets)
   - [Outline](#outline)
-  - [Holographic](#holographic)
-  - [Rimlight](#rimlight)
-  - [Ramp](#ramp)
-  - [Dissolve](#dissolve)
-  - [Space Distortion](#space-distortion)
+  - [Ramp with slider](#ramp-with-slider)
+  - [Ramp with texture](#ramp-with-texture)
   - [Matcap](#matcap)
+  - [Sufface scattering](#sufface-scattering)
+  - [Handpainted](#handpainted)
+  - [sketch](#sketch)
+  - [random titling](#random-titling)
+  - [x-ray](#x-ray)
+  - [Dissolve](#dissolve)
+  - [Outline with normal](#outline-with-normal)
+  - [snow](#snow)
+  - [Rimlight](#rimlight)
+  - [Physicall Based Rendering](#physicall-based-rendering)
   - [Water](#water)
+  - [Space Distortion](#space-distortion)
   - [Bloom](#bloom)
   - [Blur](#blur)
   - [Depth of field](#depth-of-field)
   - [Vignette](#vignette)
-  - [Sufface scattering](#sufface-scattering)
-  - [Handpainted](#handpainted)
   - [Oren Nayar](#oren-nayar)
-  - [Physicall Based Rendering](#physicall-based-rendering)
+  - [Holographic](#holographic)
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -3993,33 +3999,47 @@ ENDCG
 }
 ```
 
-## Holographic
-
-홀로그램효과
-
-## Rimlight
-
-물체의 가장자리가 두드러지게 빛나는 효과
-
-## Ramp 
+## Ramp with slider
 
 음영을 임의의 단계로 표현하는 효과
 
-## Dissolve
-
-낙엽이 타서 없어지는 것 같은 효과
-
-## Space Distortion
-
-특정 공간이 왜곡되는 효과
+## Ramp with texture
 
 ## Matcap
 
 텍스처를 이용하여 물체의 재질을 표현할 수 있는 효과
 
+## Sufface scattering
+
+## Handpainted
+
+## sketch
+
+## random titling
+
+## x-ray
+
+## Dissolve
+
+낙엽이 타서 없어지는 것 같은 효과
+
+## Outline with normal
+
+## snow
+
+## Rimlight
+
+물체의 가장자리가 두드러지게 빛나는 효과
+
+## Physicall Based Rendering
+
 ## Water
 
 물을 표현하는 효과
+
+## Space Distortion
+
+특정 공간이 왜곡되는 효과
 
 ## Bloom
 
@@ -4029,10 +4049,8 @@ ENDCG
 
 ## Vignette
 
-## Sufface scattering
-
-## Handpainted
-
 ## Oren Nayar
 
-## Physicall Based Rendering
+## Holographic
+
+홀로그램효과
