@@ -26,6 +26,7 @@
   - [Oren-Nayar Model](#oren-nayar-model)
   - [Physically Based Rendering](#physically-based-rendering)
 - [Advanced Light](#advanced-light)
+  - [Spherical Harmonics Lighting](#spherical-harmonics-lighting)
   - [Ray Casting](#ray-casting)
   - [Ray Tracing](#ray-tracing)
   - [Path Tracing](#path-tracing)
@@ -1044,6 +1045,14 @@ Shader "Custom/OrenNayar" {
 [PBR](/pbr/README.md)
 
 # Advanced Light
+
+## Spherical Harmonics Lighting
+
+[In-Depth: Spherical Harmonic Lighting @ gamasutra](https://www.gamasutra.com/view/news/128550/InDepth_Spherical_Harmonic_Lighting.php)
+
+Spherical harmonics functions (구면조화함수) 을 이용한 라이팅 방법이다.
+Spherical harmonics functions (구면조화함수) 는 orthogonal basis functions (직교기저함수) 들의 모음이다. 이 함수들은
+imagenery numbers (복소수) 를 사용한 spherical coordinates (구면좌표) 에서 정의된다.
 
 ## Ray Casting
 
