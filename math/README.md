@@ -194,4 +194,6 @@
   * [참고](https://wikidocs.net/7001)
 * `Laplace's equation` 은 `eigenvalue` 가 0 인 `Laplacian` 의 고유함수가 만족시키는 방정식이다.
 * `harmonics function` 은 `Laplace's equation` 의 해가 되는 함수이다.
+* `Legendre Polynomials`
+  * [참고](https://www.youtube.com/watch?v=1iXvMffmfhA)
 * `spherical harmonics function` 은 구면에서 `Laplace's equation` 의 해의 정규직교기저다.
