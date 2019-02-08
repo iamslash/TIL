@@ -4,6 +4,7 @@
 - [History of Math](#history-of-math)
 - [Articles](#articles)
 - [Categories](#categories)
+- [Tutorials](#tutorials)
 
 -----
 
@@ -166,3 +167,31 @@
 * [수치해석](/numericalanal/)
 
 * 공업수학
+
+# Tutorials
+
+* 음수의 발견은 한 방향으로만 정의되어 있던 '수' 인 양수를 1 차원 벡터로 확장했다라는 의미를 갖는다.
+* 허수의 발견은 실수영역에서 1 차원 벡터로 표현될 수 있었던 수 체계를 2 차원 벡터로 확장했다는 의미를 갖는다.
+* 행렬은 column vector 들의 모음이다. `2X2` 행렬의 경우 두 벡터 `(a, c)` 와 `(b, d)` 의 모음이다.
+* `det` 는 행렬식이다. `2X2` 행렬의 경우 그 행렬이 표현할 수 있는 마름모의 넓이와 같다.
+  * [참고](https://wikidocs.net/4049)
+* 벡터와 벡터를 내적하여 결과가 0 이면 그 두 벡터는 서로 직교한다고 할 수 있다. 함수와 함수를 `[a,b]` 에서 정적분하여 0 이면 그 두 함수는 서로 직교한다고 할 수 있다. 
+* `부분적분`
+* `euler equation (오일러공식)`
+* `Inner Product of Functions (함수의 내적)`
+* `Orthogonal Functions (직교함수)`
+* `Orthogonal Set (직교함수집합)`
+* `Continuous Time fourier Series`
+* `eigenvector` 는 선형변환 A 가 있을 때 그 크기만 변하고 방향은 변하지 않는 벡터를 의미한다. `eigenvalue` 는 `eigenvector` 가 선형변환 A 를 적용한 후에 변화된 크기를 의미한다.
+  * [참고](https://wikidocs.net/4050)
+* `gradient` 는 vector 를 반환 하는 함수이다. 이것을 vector field 라고도 한다. 이 벡터는 특정 점에서 함수의 크기가 어느 방향으로 얼마의 변화량으로 커지고 있는지를 나타낸다.
+  * [참고](https://wikidocs.net/6998)
+* `divergence` 는 scalar 를 반환하는 함수이다. 이 scalar 는 특정 점에서 함수가 src 로 향하는지 sync 로 향하는지를 나타낸다.
+  * [참고](https://wikidocs.net/6999)
+* `curl` 는 vector 를 반환하는 함수이다. 이 벡터는 특정 점에서 회전의 정도를 나타낸다.
+  * [참고](https://wikidocs.net/7000)
+* `Laplacian` 은 scalar 를 반환하는 함수이다. scalar 함수 `f` 에 대해서 `gradient` 연산을 하고 출력되는 vector field 에 `divergence` 를 연산한 결과와 같다.
+  * [참고](https://wikidocs.net/7001)
+* `Laplace's equation` 은 `eigenvalue` 가 0 인 `Laplacian` 의 고유함수가 만족시키는 방정식이다.
+* `harmonics function` 은 `Laplace's equation` 의 해가 되는 함수이다.
+* `spherical harmonics function` 은 구면에서 `Laplace's equation` 의 해의 정규직교기저다.
