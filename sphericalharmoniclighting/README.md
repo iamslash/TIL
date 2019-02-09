@@ -6,6 +6,12 @@ Spherical Harmonics Functions (구면조화함수) 를 이용한 Lighting 방법
 
 * [Spherical Harmonics and applications in real time graphics](http://xlgames-inc.github.io/posts/sphericalharmonics0/)
 * [In-Depth: Spherical Harmonic Lighting @ gamasutra](https://www.gamasutra.com/view/news/128550/InDepth_Spherical_Harmonic_Lighting.php)
+* Spherical Harmonic Lighting:
+The Gritty Details by Robin Green
+  * [paper](http://silviojemma.com/public/papers/lighting/spherical-harmonic-lighting.pdf)
+  * [slide](https://basesandframes.files.wordpress.com/2016/05/spherical-harmonic-lighting-gdc-2003.pdf)
+  * [audio](https://www.gdcvault.com/play/1022720/Spherical-Harmonic-Lighting-The-Gritty)
+
 
 # Usages
 
