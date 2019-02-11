@@ -86,6 +86,8 @@
     좋은 교재이다.
 - [webgl fundamentals](https://webglfundamentals.org/)
   - 게임그래픽스이론을 webgl에서 간단히 실습해 보자.
+- [GPU gems](https://developer.nvidia.com/gpugems/GPUGems/gpugems_pref01.html)
+  - nvidia 에서 발간하는 advanced graphics 무료 책
 
 # Materials
 
@@ -133,8 +135,6 @@
   - Game Programming Gems, 줄여서 GPG는 Nintendo of America의 수석 소프트웨어 엔지니어인 
     Mark Deloura가 시작한 게임 프로그래밍 서적 시리즈이다. 업계와 학계의 여러 저자들이 쓴 글들을 
     모은 일종의 앤솔로지 형태이다.
-- [GPU gems](https://developer.nvidia.com/gpugems/GPUGems/gpugems_pref01.html)
-  - nvidia 에서 발간하는 graphics 책
 - [GPU pro](https://www.amazon.com/gp/product/149874253X?tag=realtimerenderin&pldnSite=1)
   - advand rendering technique
   - [src](https://github.com/wolfgangfengel/GPU-Pro-7)
