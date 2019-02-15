@@ -68,7 +68,7 @@
 - [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
   - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
 - [Learn Opengl](https://learnopengl.com/)
-  - 상세한 설명이 인상적인 튜토리얼이다.
+  - very good opengl tutorial
   - VAO, VBO, EBO 를 그림으로 이해할 수 있었다.
   - [src](https://github.com/JoeyDeVries/LearnOpenGL)
 - [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3](http://www.opengl-redbook.com/)
