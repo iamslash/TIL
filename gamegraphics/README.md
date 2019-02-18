@@ -89,6 +89,12 @@
 - [GPU gems](https://developer.nvidia.com/gpugems/GPUGems/gpugems_pref01.html)
   - nvidia 에서 발간하는 advanced graphics 무료 책
   - [src](https://github.com/QianMo/GPU-Gems-Book-Source-Code)
+- [modern opengl tutorial](http://ogldev.atspace.co.uk/)
+  - 40여개의 튜토리얼이 단계별로 잘 설명되어 있다.
+  - [src](http://ogldev.atspace.co.uk/ogldev-source.zip)
+- [opengl-tutorial](http://www.opengl-tutorial.org/)
+  - 초급, 중급의 튜토리얼이 설명되어 있다. particle 에 대한 글이 있음.
+  - [src](https://github.com/opengl-tutorials/ogl)
 
 # Materials
 
@@ -143,12 +149,6 @@
   - GPU pro의 후속작이다.
   - [src](https://github.com/wolfgangfengel/GPUZen)
 - [ShaderX7](https://www.amazon.com/ShaderX7-Rendering-Techniques-Wolfgang-Engel/dp/1584505982)
-- [modern opengl tutorial](http://ogldev.atspace.co.uk/)
-  - 40여개의 튜토리얼이 단계별로 잘 설명되어 있다.
-  - [src](http://ogldev.atspace.co.uk/ogldev-source.zip)
-- [learn opengl](https://learnopengl.com/)
-  - [src](https://github.com/JoeyDeVries/LearnOpenGL)
-  - opengl 튜토리얼중 최고
 - [scratchapixel 2.0](http://www.scratchapixel.com/)
   - computer graphics를 알기쉽게 설명한다.
 - [intel developer zone game dev code samples](https://software.intel.com/en-us/gamedev/code-samples)
