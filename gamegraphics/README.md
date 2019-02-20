@@ -478,7 +478,7 @@ Catmull-Rom Spline
 
 # Bump Mapping
 
-[Bumpmapping](/bumpmapping/README.md)
+* [Bumpmapping](/bumpmapping/README.md)
 
 # Environment Mapping
 
@@ -491,6 +491,11 @@ Catmull-Rom Spline
 # Ambient Occlusion Mapping
 
 # Deferred Shading
+
+* geometry pass, lighting pass 와 같이 2 단계로 렌더링 한다. geometry pass 에서는 gbuffer 에 positions, normals, albedos, speculars 등을 저장한다. lighting pass 에서는 gbuffer 를 입력으로 이용하여 light 를 렌더링한다.
+* forward shading 은 light 마다 fragment shader 를 실행하지만 deferred shading 은 fragment shader 를 한번 실행해서 여러개의 light 를 처리한다. light 의 개수가 많을 때는 deferred shading 이 효율적이다. 
+* deferred shading 을 사용하기 위해서는 GPU 가 MRT 를 지원해야 한다.
+* [8.1.deferred_shading @ github](https://github.com/JoeyDeVries/LearnOpenGL/blob/master/src/5.advanced_lighting/8.1.deferred_shading/deferred_shading.cpp) 은 deffered shading 을 opengl 로 구현했다.
 
 # Animation
 
