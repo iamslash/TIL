@@ -1,31 +1,44 @@
-# abstract
+# Abstract
 
 - 인터뷰 준비에 대해 정리해본다.
 
-# resume
+# Resume
 
 - [resume tips in careercup](https://careercup.com/resume)
 - "improved by xx%" instead of "developed A"
 - "We built the software together and I workd on backend" instead of "I built the software"
 - "2M customers uses it" instead of "I released it"
 
-# coding interview
+# Coding interview
 
 - [learn to code](https://github.com/iamslash/learntocode)
 
-# system design interview
+# System design interview
 
-- [system design](../systemdesign/)
+- [system design](/systemdesign/)
 
-# object oriented design interview
+# Computer System Architecture
 
-- [object oriented design](../objectorienteddesign/)
+- [computer system architecture](/csa/README.md)
 
-# backend interview
+# Operating System
+
+- [concurrency]()
+
+# Programming Languages
+
+- [c++](/cpp)
+- [java](/java)
+
+# Object oriented design
+
+- [object oriented design](/objectorienteddesign/)
+
+# Backend
 
 - [bash](/bash/README.md)
 - [sql](/sql/README.md)
 
-# leadership principle
+# Leadership principle
 
 - [Lewis C. Lin's Amazon Interview Spreadsheet](https://www.instapaper.com/read/1138208081)

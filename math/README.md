@@ -186,9 +186,18 @@
 
 * `phasor`
   * [참고](https://wikidocs.net/4175)
+  * 모든 신호는 정현파의 합으로 나타낼 수 있다. phasor 는 오일러 공식 을 이용해 시간에 대해 진폭, 위상, 주기가 불변인 정현함수를 표현하는 방법이다. 
+* `discrete time convolution` 은 blah blah
+  * [DT convolution @ youtube](https://wikidocs.net/4043) 
+* `delta function`
+* `linear time invariant (LTI)`
+* `continuous time convolution`
+  * [CT convolution @ youtube](https://wikidocs.net/4044) 
+
 
 * 미분방정식은 미지의 함수와 그 함수의 도함수들로 이루어져 있는 방정식이다. 미지함수가 일변수이면 상미분항만을 포함한 상미분방정식이 되고, 두 개 이상의 변수를 갖는 미지함수와 이에 대한 편미분항들이 등장하면 편미분방정식이라고 한다. order (계수), degree (차수), 제차, 비제차, 선형, 비선형, 일반해, 특수해, 해곡선 (적분곡선), 해곡선집합, IVP (initial variable problem) 등이 중요하다.
-  * [참고](https://www.youtube.com/watch?v=7HEQj20fw_s) 
+  * [참고](https://www.youtube.com/watch?v=7HEQj20fw_s)
+  * [벡터미적분학+상미분방정식](https://www.youtube.com/playlist?list=PLGqSWalYhuTW6P994i9OKhyCav-qA2Ns3)
 
 * 행렬은 column vector 들의 모음이다. `2X2` 행렬의 경우 두 벡터 `(a, c)` 와 `(b, d)` 의 모음이다.
 * `det` 는 행렬식이다. `2X2` 행렬의 경우 그 행렬이 표현할 수 있는 마름모의 넓이와 같다.
