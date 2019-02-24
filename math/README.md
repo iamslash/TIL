@@ -174,15 +174,30 @@
 
 * radian (호도법) 을 degree (각도법) 보다 많이 사용하는 이유는 삼각함수 미분을 간단히 하기 위해서이다.
 
-* 허수의 발견은 실수영역에서 1 차원 벡터로 표현될 수 있었던 수 체계를 2 차원 벡터로 확장했다는 의미를 갖는다. 예를 들어 `1 + 1i` 는 실수축이 `x` 축과 같고 허수축이 `y` 축과 같을 때 `(1, 1)` 을 말한다. 이것은 실수 1 을 반시계방향으로 `45` 도 만큼 회전한 것과 같다. 복소수는 실수를 회전했다는 의미이다.
+* 허수의 발견은 실수영역에서 1 차원 벡터로 표현될 수 있었던 수 체계를 2 차원 벡터로 확장했다는 의미를 갖는다. 예를 들어 `1` 는 실수에 허수 `i` 를 곱하면 `i` 가 된다. 이것은 실수 1 을 반시계방향으로 `90` 도 만큼 회전한 것과 같다. 실수에 허수를 곱하면 회전했다는 의미가 된다.
 
 ![](complex_number_position.png)
 
-* 자연상수 `e` 는 왜 만들어 졌는가???
+* `Mathmatical constant e` (자연상수) 는 왜 만들어 졌는가???
   * [참고](https://wikidocs.net/4035)
+
+![](math_contant_e_eq.png)
+
+* `Orthogonal functions` 은 서로 내적이 0 인 함수들을 말한다. 벡터처럼 함수도 내적을 계산할 수 있다. 두 함수 F1, F2 의 내적이 0 이면 두 함수는 직교한다고 말할 수 있고 서로 직교하는 함수들의 집합을 `Orthogonal Functions Set` 이라고 한다. 임임의 함수는 `Orthogonal Functions Set` 의 급수형태로 표현가능하다. `cos` 과 `sin` 은 서로 직교한다.
+  * [참고](https://m.blog.naver.com/sagala_soske/220983389992)
+
+![](orthogonal_function_eq.png)
 
 * `euler's identity` (오일러공식)
   * [참고](https://wikidocs.net/4037)
+  * 모든 실수 `x` 에 대해 다음이 성립한다.
+
+![](euler_id_eq.png)
+
+```latex
+e^{ix} = \cos x + i \sin x
+```
+  * 오일러공식이 출현하기 전까지 실수와 허수는 서로 계산이 불가능했다. 그러나 오일러공식이 출현후 실수와 순허수는 복소평면에서 서로 만나게 되었다. 그리고 초월함수인 지수함수와 삼각함수는 복소평면의 위에서 동일한 현상이었음이 밝혀졌다.
 
 * `phasor`
   * [참고](https://wikidocs.net/4175)
@@ -199,18 +214,46 @@
   * [참고](https://www.youtube.com/watch?v=7HEQj20fw_s)
   * [벡터미적분학+상미분방정식](https://www.youtube.com/playlist?list=PLGqSWalYhuTW6P994i9OKhyCav-qA2Ns3)
 
+* `Laplace's transform` 은 ODE 를 수월히 풀기위해 ODE 를 단순하게 만드는 방법이다.
+
+![](laplace_transform.png)
+
+```latex
+F(s) = \mathscr{L} \{f(t)\} = \int_{0}^{\infty} e^{-st} f(t) dt
+```
+
+* `Continuous Time Fourier Series`
+  * [참고](https://wikidocs.net/4026)
+
+![](ctfs.png)
+
+* `Continuous Time Fourier Transform`
+  * [참고](https://wikidocs.net/4031)
+
+![](ctft.png)
+
+* `Discrete Time Fourier Series`
+  * [참고](https://wikidocs.net/4032)
+  
+![](dtfs.png)
+
+* `Discrete Time Fourier Transform`
+  * [참고](https://wikidocs.net/4033)
+
+![](dtft.png)
+
+* `Taylor Series`
+
+  * 임의의 함수를 다항식의 급수로 분해한 것이다. 만약 삼각함수의 급수로 분해되었다면 `Fourier Series` 라고 한다.
+
+![](taylor_series_eq.png)
+
 * 행렬은 column vector 들의 모음이다. `2X2` 행렬의 경우 두 벡터 `(a, c)` 와 `(b, d)` 의 모음이다.
 * `det` 는 행렬식이다. `2X2` 행렬의 경우 그 행렬이 표현할 수 있는 마름모의 넓이와 같다.
   * [참고](https://wikidocs.net/4049)
-* 벡터와 벡터를 내적하여 결과가 0 이면 그 두 벡터는 서로 직교한다고 할 수 있다. 함수와 함수를 `[a,b]` 에서 정적분하여 0 이면 그 두 함수는 서로 직교한다고 할 수 있다. 
-* 푸리에급수는 주기가 있는 함수를 삼각함수들의 합으로 표현한 것이다.
-* 테일러급수는 다항 함수를 다항 함수들의 합으로 표현한 것이다.
+
 * `부분적분`
-* `euler equation (오일러공식)`
-* `Inner Product of Functions (함수의 내적)`
-* `Orthogonal Functions (직교함수)`
-* `Orthogonal Set (직교함수집합)`
-* `Continuous Time fourier Series`
+
 * `eigenvector` 는 선형변환 A 가 있을 때 그 크기만 변하고 방향은 변하지 않는 벡터를 의미한다. `eigenvalue` 는 `eigenvector` 가 선형변환 A 를 적용한 후에 변화된 크기를 의미한다.
   * [참고](https://wikidocs.net/4050)
 * `gradient` 는 vector 를 반환 하는 함수이다. 이것을 vector field 라고도 한다. 이 벡터는 특정 점에서 함수의 크기가 어느 방향으로 얼마의 변화량으로 커지고 있는지를 나타낸다.

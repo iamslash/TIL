@@ -68,7 +68,7 @@
 - [shader development using unity5](http://shaderdev.com/p/shader-development-using-unity-5)
   - 유료이긴 하지만 가장 자세히 설명하는 동영상 강좌이다. 174$
 - [Learn Opengl](https://learnopengl.com/)
-  - 상세한 설명이 인상적인 튜토리얼이다.
+  - very good opengl tutorial
   - VAO, VBO, EBO 를 그림으로 이해할 수 있었다.
   - [src](https://github.com/JoeyDeVries/LearnOpenGL)
 - [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3](http://www.opengl-redbook.com/)
@@ -86,6 +86,15 @@
     좋은 교재이다.
 - [webgl fundamentals](https://webglfundamentals.org/)
   - 게임그래픽스이론을 webgl에서 간단히 실습해 보자.
+- [GPU gems](https://developer.nvidia.com/gpugems/GPUGems/gpugems_pref01.html)
+  - nvidia 에서 발간하는 advanced graphics 무료 책
+  - [src](https://github.com/QianMo/GPU-Gems-Book-Source-Code)
+- [modern opengl tutorial](http://ogldev.atspace.co.uk/)
+  - 40여개의 튜토리얼이 단계별로 잘 설명되어 있다.
+  - [src](http://ogldev.atspace.co.uk/ogldev-source.zip)
+- [opengl-tutorial](http://www.opengl-tutorial.org/)
+  - 초급, 중급의 튜토리얼이 설명되어 있다. particle 에 대한 글이 있음.
+  - [src](https://github.com/opengl-tutorials/ogl)
 
 # Materials
 
@@ -133,8 +142,6 @@
   - Game Programming Gems, 줄여서 GPG는 Nintendo of America의 수석 소프트웨어 엔지니어인 
     Mark Deloura가 시작한 게임 프로그래밍 서적 시리즈이다. 업계와 학계의 여러 저자들이 쓴 글들을 
     모은 일종의 앤솔로지 형태이다.
-- [GPU gems](https://developer.nvidia.com/gpugems/GPUGems/gpugems_pref01.html)
-  - nvidia 에서 발간하는 graphics 책
 - [GPU pro](https://www.amazon.com/gp/product/149874253X?tag=realtimerenderin&pldnSite=1)
   - advand rendering technique
   - [src](https://github.com/wolfgangfengel/GPU-Pro-7)
@@ -142,12 +149,6 @@
   - GPU pro의 후속작이다.
   - [src](https://github.com/wolfgangfengel/GPUZen)
 - [ShaderX7](https://www.amazon.com/ShaderX7-Rendering-Techniques-Wolfgang-Engel/dp/1584505982)
-- [modern opengl tutorial](http://ogldev.atspace.co.uk/)
-  - 40여개의 튜토리얼이 단계별로 잘 설명되어 있다.
-  - [src](http://ogldev.atspace.co.uk/ogldev-source.zip)
-- [learn opengl](https://learnopengl.com/)
-  - [src](https://github.com/JoeyDeVries/LearnOpenGL)
-  - opengl 튜토리얼중 최고
 - [scratchapixel 2.0](http://www.scratchapixel.com/)
   - computer graphics를 알기쉽게 설명한다.
 - [intel developer zone game dev code samples](https://software.intel.com/en-us/gamedev/code-samples)
@@ -477,7 +478,7 @@ Catmull-Rom Spline
 
 # Bump Mapping
 
-[bumpmapping](/bumpmapping/README.md)
+* [Bumpmapping](/bumpmapping/README.md)
 
 # Environment Mapping
 
@@ -485,9 +486,16 @@ Catmull-Rom Spline
 
 # Shadow Mapping
 
+* [Shadow Mapping @ TIL](/unity3dshaderlab#shadow-mapping)
+
 # Ambient Occlusion Mapping
 
 # Deferred Shading
+
+* geometry pass, lighting pass 와 같이 2 단계로 렌더링 한다. geometry pass 에서는 gbuffer 에 positions, normals, albedos, speculars 등을 저장한다. lighting pass 에서는 gbuffer 를 입력으로 이용하여 light 를 렌더링한다.
+* forward shading 은 light 마다 fragment shader 를 실행하지만 deferred shading 은 fragment shader 를 한번 실행해서 여러개의 light 를 처리한다. light 의 개수가 많을 때는 deferred shading 이 효율적이다. 
+* deferred shading 을 사용하기 위해서는 GPU 가 MRT 를 지원해야 한다.
+* [8.1.deferred_shading @ github](https://github.com/JoeyDeVries/LearnOpenGL/blob/master/src/5.advanced_lighting/8.1.deferred_shading/deferred_shading.cpp) 은 deffered shading 을 opengl 로 구현했다.
 
 # Animation
 
