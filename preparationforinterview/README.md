@@ -22,11 +22,15 @@
   * [알고리즘문제해결전략](http://book.algospot.com/)
   * [백준온라인알고리즘문제풀이강좌](https://code.plus/courses/1)
 * Math & Logic Puzzles
+  * math & logic puzzles quiz
 * object oriented design
+  * object oriented design quiz
   * [object oriented design](/objectorienteddesign/)
 * systemdesign & scalability
+  * systemdesign & scalability quiz
   * [system design](/systemdesign/)
 * Testing
+  * testing quiz
 * c++
   * c++ quiz
   * [c++](/cpp)
@@ -34,8 +38,10 @@
   * java quiz
   * [java](/java)
 * Databases
+  * Databaes quiz
   * [sql](/sql/README.md)
 * Threads and Locks 
+  * threads and locks quiz
 * Behaviorial Questions
   * [Lewis C. Lin's Amazon Interview Spreadsheet](https://www.instapaper.com/read/1138208081)
 
