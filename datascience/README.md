@@ -6,10 +6,13 @@
   - 데이터시각화, 선형대수, 통계, 확률, 가설과 추론, 경사 하강법, 기계학습
   - k-근접이웃, 나이브 베이즈, 단순 선형회귀, 다중 선형회귀, 로지스틱 회귀
   - 의사결정나무, 신경망, 군집화, 자연어처리, 추천시스템
-- learning material 위주로 공부 해본다.
 
-# Learning Materials
+# Materials
 
+- [타이타닉 튜토리얼](https://kaggle-kr.tistory.com/category/Kaggle%20%ED%8A%9C%ED%86%A0%EB%A6%AC%EC%96%BC/Titanic%20%ED%8A%9C%ED%86%A0%EB%A6%AC%EC%96%BC)
+  - kaggle Titanic 튜토리얼
+- [오늘코드 todaycode @ youtube](https://www.youtube.com/channel/UCLR3sD0KB_dWpvcsrLP0aUg)
+  - pandas, kaggle 튜토리얼
 - [데이터 사이언스 스쿨 (파이썬 버전)](https://datascienceschool.net/view-notebook/661128713b654edc928ecb455a826b1d/)
   - 오프라인강좌의 커리큘럼의 일부이다. numpy, pandas, scikit-learn등 한글 설명이 좋다.
 - [따라하며 배우는 데이터 과학 : 실리콘벨리 데이터 과학자가 알려주는](http://www.yes24.com/24/Goods/44184320?Acode=101)
@@ -46,7 +49,11 @@
 - [D3 tutorial](http://alignedleft.com/tutorials)
   - 데이터시각화를 위한 D3 튜토리얼
 
-# datasets
+# Process
+
+Explorary Data Analysis, Feature Engineering, Machine Learning
+
+# Datasets
 
 - [공공데이터포털](https://www.data.go.kr/)
   - 전국 신규 민간 아파트 분양가격 동향
