@@ -51,7 +51,7 @@
 
 # Process
 
-Explorary Data Analysis, Feature Engineering, Machine Learning
+`Explorary Data Analysis` => `Feature Engineering` => `Data Preprocessing` => `Machine Learning`
 
 # Datasets
 
