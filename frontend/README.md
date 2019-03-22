@@ -18,3 +18,5 @@ HTML, CSS, JavaScript 에 대해 정리한다.
 # References
 
 * [jQuery api documentation](http://api.jquery.com/category/selectors/)
+* [google fonts](https://fonts.google.com/)
+  * 글자를 입력하고 폰트미리보기를 할 수 있다.
