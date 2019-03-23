@@ -43,6 +43,13 @@
 * Threads and Locks 
   * threads and locks quiz
 * Behaviorial Questions
+  * episodes for projects
+    * Challenges
+    * Mistakes/Failures
+    * Enjoyed
+    * Leadership
+    * Conflicts
+    * What you would do differently
   * [Lewis C. Lin's Amazon Interview Spreadsheet](https://www.instapaper.com/read/1138208081)
 
 # Advanced Interview
