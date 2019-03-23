@@ -4,13 +4,13 @@
 - [Procedure and Stack](#procedure-and-stack)
 - [Process and Thread](#process-and-thread)
 - [Thread Scheduling](#thread-scheduling)
-    - [Thread Status](#thread-status)
+  - [Thread Status](#thread-status)
 - [Thread synchronization](#thread-synchronization)
-    - [Critical Section](#critical-section)
-    - [Mutex](#mutex)
-    - [Semaphore](#semaphore)
-    - [Event](#event)
-    - [Kernel Object](#kernel-object)
+  - [Critical Section](#critical-section)
+  - [Mutex](#mutex)
+  - [Semaphore](#semaphore)
+  - [Event](#event)
+  - [Kernel Object](#kernel-object)
 - [Memory Management](#memory-management)
 - [Segmentation](#segmentation)
 - [Paging](#paging)
@@ -28,6 +28,10 @@
 
 # Materials
 
+* [linux-insides](https://0xax.gitbooks.io/linux-insides/content/index.html)
+  * [src](https://github.com/0xAX/linux-insides)
+  * [번역](https://github.com/junsooo/linux-insides-ko) 
+  * 리눅스 커널에 대해 설명한다.
 * [Windows Internals, Part 1: System architecture, processes, threads, memory management, and more (7th Edition)](https://www.amazon.com/Windows-Internals-Part-architecture-management/dp/0735684189)
   * [번역서](http://www.yes24.com/24/Goods/57905305?Acode=101#contentsConstitution)
   * 윈도우즈 커널 추천 도서

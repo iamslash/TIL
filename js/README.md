@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [Essentials](#essentials)
 - [Materials](#materials)
 - [Basic Usages](#basic-usages)
   - [Collections compared c++ container](#collections-compared-c-container)
@@ -41,7 +42,7 @@
 
 java script에 대해 정리한다.
 
-# Materials
+# Essentials
 
 * [learn javascript in Y minutes](https://learnxinyminutes.com/docs/javascript/)
 * [javascript @ tutorialspoint](https://www.tutorialspoint.com/javascript/)
@@ -49,6 +50,12 @@ java script에 대해 정리한다.
   * 킹왕짱 JavaScript 기본문법
   * [video](http://www.youtube.com/playlist?list=PLuHgQVnccGMA4uSig3hCjl7wTDeyIeZVU)
 * [JavaScript on Web @ opentutorials](https://opentutorials.org/course/838)
+* [초보자를 위한 JavaScript 200제](http://www.infopub.co.kr/new/include/detail.asp?sku=05000265)
+  * [목차](http://www.infopub.co.kr/common/book_contents/05000265.html)
+  * [src](http://www.infopub.co.kr/new/include/detail.asp?sku=05000265) 
+
+# Materials
+
   * 웹개발을 위한 JavaScript 
 * [How JavaScript works](https://blog.sessionstack.com/how-does-javascript-actually-work-part-1-b0bacc073cf)
   * JavaScript 가 어떻게 동작하는지 기술한 시리즈 게시글중 첫번째
