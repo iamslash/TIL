@@ -233,6 +233,11 @@ double     in          super
 // ++a = 35
 // --b = 8
 
+// === comparison operator with value, type
+//
+// undefined == null => true
+// undefined === null => false
+
 // Comparison Operators
             var a = 10;
             var b = 20;
@@ -272,7 +277,7 @@ double     in          super
 // (a > b) => false 
 // (a != b) => true 
 // (a >= b) => false 
-// a <= b) => true            
+// a <= b) => true  
 
 // Logical Operators
             var a = true;
