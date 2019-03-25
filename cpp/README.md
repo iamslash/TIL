@@ -95,6 +95,7 @@
   - [threads with time constrains](#threads-with-time-constrains)
 - [C++ Unit Test](#c-unit-test)
 - [Boost Library](#boost-library)
+- [Quiz](#quiz)
 
 -----
 
@@ -104,6 +105,8 @@ c++에 대해 정리한다.
 
 # Materials
 
+* [cracking the coding interview](http://www.crackingthecodinginterview.com/)
+  * c/c++ quiz 
 - [c++ programming](http://boqian.weebly.com/c-programming.html)
   - boqian의 동영상 강좌
 - [혼자 연구하는 c/c++](http://soen.kr/)
@@ -4861,3 +4864,17 @@ int main() {
 # Boost Library
 
 ...
+
+# Quiz
+
+* Last K Lines
+* Reverse String
+* Hash Table vs. STL Map
+* Virtual Functions
+* Shallow vs. Deep Copy
+* Volatile
+* Virtual Base Class
+* Copy Node
+* Smart Pointer
+* Malloc
+* 20 Alloc

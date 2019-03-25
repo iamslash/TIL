@@ -57,6 +57,7 @@
     - [Number](#number)
     - [Date](#date)
 - [Problems](#problems)
+- [Quiz](#quiz)
 
 -----
 
@@ -66,6 +67,9 @@
 
 # Material
 
+
+* [cracking the coding interview](http://www.crackingthecodinginterview.com/)
+  * databases quiz 가 볼만함
 - [db-fiddle](https://www.db-fiddle.com/)
   - sql 을 웹에서 테스트할 수 있다. 
 - [sqlzoo](http://sqlzoo.net/)
@@ -2049,3 +2053,12 @@ SELECT dep.Name AS Department,
                         WHERE e2.DepartmentId = dep.Id);
 ```
 
+# Quiz
+
+* Multiple Apartments
+* Open Requests
+* Close All Requests
+* Joins
+* Denormalization
+* Entity-Relationship Diagram
+* Design Grade Database

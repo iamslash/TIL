@@ -12,6 +12,7 @@
   - [Decision Making](#decision-making)
   - [Loops](#loops)
   - [Inner Classes](#inner-classes)
+- [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
 # Abstract
@@ -288,3 +289,14 @@ public class My_class {
    }
 }
 ```
+
+# Quiz
+
+* Private Constructor
+* Return from Finally
+* Final, etc.
+* Generics vs. Templates
+* TreeMap, HashMap, LinkedHashMap
+* Object Reflection
+* Lambda Expressions
+* Lambda Random

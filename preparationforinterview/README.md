@@ -22,26 +22,26 @@
   * [알고리즘문제해결전략](http://book.algospot.com/)
   * [백준온라인알고리즘문제풀이강좌](https://code.plus/courses/1)
 * Math & Logic Puzzles
-  * math & logic puzzles quiz
+  * [math & logic puzzles quiz](/brainteasers/README.md#quiz)
 * object oriented design
-  * object oriented design quiz
+  * [object oriented design quiz](/objectorienteddesign/README.md@quiz)
   * [object oriented design](/objectorienteddesign/)
 * systemdesign & scalability
-  * systemdesign & scalability quiz
-  * [system design](/systemdesign/)
+  * [systemdesign & scalability quiz](/systemdesign/README.md#quiz)
+  * [system design](/systemdesign/README.md)
 * Testing
-  * testing quiz
+  * [testing quiz](/testing/README.md#quiz)
 * c++
-  * c++ quiz
-  * [c++](/cpp)
+  * [c++ quiz](/cpp/README.md#quiz)
+  * [c++](/cpp/README.md)
 * java
-  * java quiz
-  * [java](/java)
+  * [java quiz](/java/README.md#quiz)
+  * [java](/java/README.md)
 * Databases
-  * Databaes quiz
+  * [Databaes quiz](/sql/README.md#quiz)
   * [sql](/sql/README.md)
 * Threads and Locks 
-  * threads and locks quiz
+  * [threads and locks quiz](/os/README.md#quiz)
 * Behaviorial Questions
   * episodes for projects
     * Challenges

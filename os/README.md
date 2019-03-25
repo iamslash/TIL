@@ -19,6 +19,7 @@
 - [Windows Cache Management](#windows-cache-management)
 - [Userlevel and Kernellevel](#userlevel-and-kernellevel)
 - [Execution file and Loader](#execution-file-and-loader)
+- [Quiz](#quiz)
 
 ----
 
@@ -28,10 +29,15 @@
 
 # Materials
 
+* [cracking the coding interview](http://www.crackingthecodinginterview.com/)
+  * threads and lock quiz 가 볼만함
 * [linux-insides](https://0xax.gitbooks.io/linux-insides/content/index.html)
   * [src](https://github.com/0xAX/linux-insides)
   * [번역](https://github.com/junsooo/linux-insides-ko) 
   * 리눅스 커널에 대해 설명한다.
+* [밑바닥부터 만드는 컴퓨팅 시스템](https://www.nand2tetris.org/)
+  * [번역서](http://www.yes24.com/Product/Goods/71129079?scode=032&OzSrank=1)
+  * 블리언로직부터 운영체제까지 제작해보기
 * [Windows Internals, Part 1: System architecture, processes, threads, memory management, and more (7th Edition)](https://www.amazon.com/Windows-Internals-Part-architecture-management/dp/0735684189)
   * [번역서](http://www.yes24.com/24/Goods/57905305?Acode=101#contentsConstitution)
   * 윈도우즈 커널 추천 도서
@@ -1365,3 +1371,13 @@ file 의 내용은
 
 * [Elf](/elf/README.md)
   * 리눅스의 실행파일 포맷
+
+# Quiz
+
+* Thread vs. Process
+* Context Switch
+* Dining Philosophers
+* Deadlock-Free Class
+* Call In Order
+* Synchronized Methods
+* FizzBuzz

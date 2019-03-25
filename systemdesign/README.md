@@ -28,6 +28,7 @@
   - [aws cloud design pattern](#aws-cloud-design-pattern)
   - [azure cloud design pattern](#azure-cloud-design-pattern)
   - [google cloud design pattern](#google-cloud-design-pattern)
+- [Quiz](#quiz)
 
 
 # Abstract
@@ -37,6 +38,7 @@
 
 # Materials
 
+- [cracking the coding interview](http://www.crackingthecodinginterview.com/)
 - [system deisgn primer](https://github.com/donnemartin/system-design-primer#federation)
   - 킹왕짱 내가 다시 정리할 필요성을 못 느낀다.
 - [Azure Cloud Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
@@ -386,3 +388,13 @@ cache.put(k, v)
 
 ## google cloud design pattern
 
+# Quiz
+
+* Stock Data
+* Social Network
+* Web Crawler
+* Duplicate URLs
+* Cache
+* Sales Rank
+* Personal Financial Manager
+* Pastebin
