@@ -35,6 +35,8 @@
   - [Math](#math)
   - [RegExp](#regexp)
   - [HTML DOM](#html-dom)
+- [Advanced Usages](#advanced-usages)
+  - [var, let, const](#var-let-const)
 
 -------------------------------------------------------------------------------
 
@@ -884,3 +886,56 @@ document.cookie = "key1 = value1;key2 = value2;expires = date";
 
 ![](https://www.tutorialspoint.com/javascript/images/html-dom.jpg)
 
+# Advanced Usages
+
+## var, let, const
+
+* var 는 function-scoped 이고 let, const 는 block-scoped 이다.
+* var 는 함수를 기준으로 hoisting 이 발생한다.
+
+```js
+// 잘된다.
+for (var i = 0; i < 5; ++i)
+  console.log(i);
+console.log(i);
+
+// 안된다.
+for (j = 0; j < 5; ++j)
+  console.log(j);
+console.log(j);
+//Thrown:
+//ReferenceError: k is not defined
+```
+
+* IIFE 를 사용하면 var 를 선언한 것처럼 hoisting 된다.
+
+```js
+// "var i" 가 선언된 것 같다.
+(function() {
+  for(i = 0; i < 5; i++) {
+    console.log(i)
+  }
+})()
+console.log(i) 
+
+// 그러나 use strict 를 사용하면 불가하다.
+(function() {
+  'use strict'
+  for(i = 0; i < 5; i++) {
+    console.log(i)
+  }
+})()
+console.log(i) 
+```
+
+* let, const 는 변수재선언이 불가능하다. const 는 immutable 하다.
+
+```js
+let a = 'hello'
+let a = 'world' // 안된다.
+a = 'world'; // 잘된다.
+
+const b = 'hello';
+const b; // ERROR
+b = 'world'; // ERROR
+```
