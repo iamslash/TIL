@@ -1,8 +1,6 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
 
 - [Abstract](#abstract)
-- [References](#references)
+- [Materials](#materials)
 - [Basic Usages](#basic-usages)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
@@ -28,16 +26,18 @@
   - [fabric](#fabric)
   - [flake8](#flake8)
   - [objgraph](#objgraph)
-
-<!-- markdown-toc end -->
-
+  
+----
 
 # Abstract
 
 python3에 대해 정리한다.
 
-# References
+# Materials
 
+* [James Powell: So you want to be a Python expert? | PyData Seattle 2017 @ youtube](https://www.youtube.com/watch?v=cKPlPJyQrt4&list=WL&index=5&t=0s)
+  * python inside explanation
+* [James Powell - Advanced Metaphors in Coding with Python @ youtube](https://www.youtube.com/watch?v=R2ipPgrWypI)
 * [파이썬 생존 안내서](https://www.slideshare.net/sublee/ss-67589513)
   * 듀랑고를 제작한 왓스튜디오의 이흥섭 PT
 * [awesome-python](https://awesome-python.com/)
