@@ -50,6 +50,7 @@
   - [Auto Increment](#auto-increment)
   - [Dates](#dates)
   - [Views](#views)
+  - [CASE](#case)
   - [Functions (MySQL)](#functions-mysql)
   - [Operators](#operators)
   - [Data Types (MySQL)](#data-types-mysql)
@@ -891,6 +892,39 @@ FROM Products
 WHERE Discontinued = No;
 
 DROP VIEW view_name;
+```
+
+## CASE
+
+* `CASE WHEN THEN ELSE END` 를 기억하자.
+
+```sql
+SELECT 
+  CASE 1 
+    WHEN 1 
+      THEN 'one'
+    WHEN 2 
+      THEN 'two' 
+    ELSE 'more' 
+  END;
+# 'one'
+
+SELECT 
+  CASE 
+    WHEN 1 > 0 
+      THEN 'true' 
+    ELSE 'false' 
+  END;
+# 'true'
+
+SELECT 
+  CASE BINARY 'B'
+    WHEN 'a' 
+      THEN 1 
+    WHEN 'b' 
+      THEN 2 
+  END;
+# NULL
 ```
 
 ## Functions (MySQL)
