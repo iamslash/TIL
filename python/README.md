@@ -35,6 +35,9 @@ python3에 대해 정리한다.
 
 # Materials
 
+* [초보자를 위한 파이썬 200제](http://www.infopub.co.kr/new/include/detail.asp?sku=06000238)
+  * [목차](http://www.infopub.co.kr/common/book_contents/06000238.html)
+  * [src](http://www.infopub.co.kr/new/include/detail.asp?sku=06000238#)
 * [James Powell: So you want to be a Python expert? | PyData Seattle 2017 @ youtube](https://www.youtube.com/watch?v=cKPlPJyQrt4&list=WL&index=5&t=0s)
   * python inside explanation
 * [James Powell - Advanced Metaphors in Coding with Python @ youtube](https://www.youtube.com/watch?v=R2ipPgrWypI)
