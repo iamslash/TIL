@@ -2031,29 +2031,7 @@ mysql> SELECT VERSION();
 
 # Problems
 
-* [Rank Scores](https://leetcode.com/problems/rank-scores/description/)
-
-```sql
-SELECT Score, 
-  (SELECT COUNT(*) 
-    FROM (SELECT distinct Score s FROM Scores) tmp
-    WHERE s >= Score) Rank
-  FROM Scores
-  ORDER BY Score DESC;
-```
-
-* [Department Highest Salary](https://leetcode.com/problems/department-highest-salary/description/)
-
-```sql
-SELECT dep.Name AS Department, 
-  emp.Name AS Employee, 
-  emp.Salary 
-  FROM Department dep, Employee emp 
-  WHERE emp.DepartmentId = dep.Id 
-    AND emp.Salary = (Select MAX(Salary) 
-                        FROM Employee e2 
-                        WHERE e2.DepartmentId = dep.Id);
-```
+* [database problems @ leecode](https://leetcode.com/problemset/database/)
 
 # Quiz
 
