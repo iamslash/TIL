@@ -325,6 +325,8 @@ SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate
 
 ![](img/Visual_SQL_JOINS_V2.png)
 
+- [The JOIN operation @ sqlzoo](https://sqlzoo.net/wiki/The_JOIN_operation) 에서 연습하자.
+
 - mysql workbench를 이용하여 다음과 같이 Customers, Order 테이블을 생성한 후 몇가지 SQL을 통해 INNER JOIN과 OUTER JOIN의 개념을 기억하자.
 Customers, Orders 는 다음과 같다.
 
