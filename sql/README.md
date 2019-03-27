@@ -95,6 +95,7 @@ SELECT DISTINCT Country FROM Customers;
 SELECT COUNT(DISTINCT Country) FROM Customers;
 SELECT COUNT(*) AS DistinctCountries
   FROM (SELECT DISTINCT Country FROM Customers);
+SELECT COUNT(DISTINCT Country city) FROM Customers;
 ```
 
 ## Where
