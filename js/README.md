@@ -37,6 +37,8 @@
   - [HTML DOM](#html-dom)
 - [Advanced Usages](#advanced-usages)
   - [var, let, const](#var-let-const)
+  - [promise](#promise)
+  - [async, await](#async-await)
 
 -------------------------------------------------------------------------------
 
@@ -938,4 +940,104 @@ a = 'world'; // 잘된다.
 const b = 'hello';
 const b; // ERROR
 b = 'world'; // ERROR
+```
+
+## promise
+
+
+비동기를 구현하기 위한 object 이다. `promise` 는 `pending, fullfilled, rejected` 와 같이 3 가지 상태를 갖는다. `then()` 에서 해결하고 `catch()` 에서 오류처리를 한다. 
+
+```js
+function promiseFoo(b) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      console.log('Foo');
+      if (b) {
+         resolve({result: 'RESOLVE'});
+      } else {
+         reject(new Error('REJECT'));
+      }
+    }, 5000);
+  });
+}
+
+const promiseA = promiseFoo(true);
+console.log('promiseA created', promiseA);
+
+const promiseB = promiseFoo(false);
+console.log('promiseB created', promiseB);
+
+promiseA.then(a => console.log(a));
+promiseB
+  .then(a => console.log(a))
+  .catch(e => console.error(e));
+```
+
+다음은 `promise chaining` 의 예이다. `then` 에서
+다시 `promise` 를 리턴한다. 그 `promise` 가 `fullfilled` 상태로 전환되면 다음 `then` 이 호출되고 `rejected` 상태로 전환되면 `catch` 가 호출된다.
+
+```js
+function promiseBar(name, stuff) {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (stuff.energy > 50) {
+         resolve({result: '${name} alive', loss: 10});
+      } else {
+         reject(new Error('${name} died'));
+      }
+    }, 3000);
+  });
+}
+const bar = { energy: 70 };
+promiseBar('jane', bar)
+  .then(a => {
+    console.log(a.result);
+    bar.energy -= a.loss;
+    return promiseBar('john', bar);
+  })
+  .then(a => {
+     console.log(a.result);
+     bar.energy -= a.loss;
+     return promiseBar('paul', bar);
+  })
+  .then(a => {
+     console.log(a.result);
+     bar.energy -= a.loss;
+     return promiseBar('sam', bar);
+  })
+  .catch(e => console.error(e));
+```
+
+## async, await
+
+비동기를 구현하는 새로운 방법이다. 콜백지옥을 탈출 할 수 있다. `async` 로 함수선언을 하고 함수안에서 `promise` 앞에 `await` 로 기다린다. 이것은 `c#` 의 `IEnumerator, yield` 와 유사하다.
+
+```js
+function promiseBaz(name, stuff) {
+   return new Promise((resolve, reject) => {
+      setTimeout(() => {
+         if (stuff.energy > 50) {
+            stuff.energy -= 10;
+            resolve({ result: `${name} alive` });
+         } else {
+            reject(new Error(`${name} dead`));
+         }
+      }, 1000);
+   })
+}
+const bar = { energy: 70 };
+const f = async function() {
+   try {
+      let a = await promiseBaz('jane', bar);
+      console.log(a.result);
+      a = await promiseBaz('john', bar);
+      console.log(a.result);
+      a = await promiseBaz('paul', bar);
+      console.log(a.result);
+      a = await promiseBaz('sam', bar);
+      console.log(a.result);
+   } catch (e) {
+      console.log(e);
+   }
+}
 ```
