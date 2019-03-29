@@ -1,4 +1,4 @@
-
+﻿
 - [Abstract](#abstract)
 - [Essentials](#essentials)
 - [Materials](#materials)
@@ -11,13 +11,14 @@
   - [async, await](#async-await)
   - [performance check](#performance-check)
   - [`__slots__`](#slots)
-  - [`__metaclass__`](#metaclass)
+  - [metaclass](#metaclass)
   - [weakref](#weakref)
   - [memory leak](#memory-leak)
   - [gc](#gc)
   - [dependencies](#dependencies)
 - [Advanced Usages](#advanced-usages)
   - [Builtin functions](#builtin-functions)
+  - [Decorator](#decorator)
 - [Library](#library)
   - [regex](#regex)
   - [numpy](#numpy)
@@ -430,6 +431,23 @@ OrderedDict([('b', None), ('a', None), ('c', None), ('d', None), ('e', None)])
 # 파이썬 인터프리터에 의해 '__foo' 가 `_A__foo` 로 mangling 되었다.
 ```
 
+
+
+## args, kwargs
+
+arguments, keyword arguments 를 의미한다. 다음과 같이 함수의 인자를
+튜플, 딕셔너리로 받아낼 수 있다.
+
+```py
+def foo(*args, **kwargs):
+  for a in args:
+    print(f'{a}')
+  print('-'*8)
+  for k, v in kwargs.items():
+    print(f'{k} : {v}')
+foo(1, 2, 3, 4, i=0, j=1, k=2)
+```
+
 ## generator
 
 `iterator` 를 리턴하는 `function` 이다. `yield` 를 이용하여 `iterator` 를 리턴한다. `yield` 를 사용한 `function` 이라고 할 수도 있다.
@@ -534,10 +552,12 @@ if __name__ == "__main__":
 정의 할 수 없다. 특정 class의 attributes는 생성과 동시에 정해지고
 runtime에 추가될 일이 없다면 __slots__를 이용하자.
 
-## `__metaclass__`
+## metaclass
 
-* class는 class instance의 type이고 metaclass는 class의
-  type이다. 
+* metaclass 는 runtime 에 class 를 생성할 수 있다. 한편 class 는 runtime 에 instance 를 생성할 수 있다. 또한 클래스가 정의될 때를 decorating 할 수 있다. 
+* `__metaclass__` 는 python 3 에서 더이상 사용하지 않는다. 클래스를 정의할때 인자로 `metaclass` 를 사용하자.
+* class 는 class instance 의 type 이고 metaclass 는 class 의
+  type 이다. 
   
 ```python
 >>> class Foo(object): pass
@@ -581,12 +601,12 @@ runtime에 추가될 일이 없다면 __slots__를 이용하자.
 >>> f = Foo()
 >>> f.__class__
 <class '__main__.Foo'>
->>> b = type('Bar', (), {})
->>> b.__class__
+>>> Bar = type('Bar', (), {})
+>>> Bar.__class__
 <class 'type'>
 ```
 
-* metaclass를 정의 하면 metaclass를 소유한 class를 새롭게 정의할 수 있다.
+* metaclass 를 지정하면 class 가 정의될때 decorating 할 수 있다.
 
 ```python
 >>> def MyMetaClass(name, bases, attrs):
@@ -828,6 +848,61 @@ def zip(*iterables):
 >>> x2, y2 = zip(*zip(x, y))
 >>> x == list(x2) and y == list(y2)
 True
+```
+
+## Decorator
+
+어떤 함수의 앞, 뒤에 수행될 내용을 장식해 주는 기능을 한다. 
+
+다음은 `method decorator` 의 예이다.
+
+```py
+import datetime
+
+def datetime_decorator(f):
+  def decorated():
+    print(datetime.datetime.now())
+    f()
+    print(datetime.datetime.now())
+  return decorated
+
+@datetime_decorator
+def foo():
+  print('foo')
+
+@datetime_decorator
+def bar():
+  print('bar')
+
+@datetime_decorator
+def baz():
+  print('baz')
+```
+
+다음은 `class decorator` 의 예이다.
+
+```py
+import datetime
+
+class DatetimeDecorator:
+  def __init__(self, f):
+    self.f = f
+  def __call__(self, *args, **kwargs):
+    print(datetime.datetime.now())
+    self.f(*args, **kwargs)
+    print(datetime.datetime.now())
+
+@DatetimeDecorator
+def foo():
+  print('foo')
+
+@DatetimeDecorator
+def bar():
+  print('bar')
+
+@DatetimeDecorator
+def baz():
+  print('baz')    
 ```
 
 # Library

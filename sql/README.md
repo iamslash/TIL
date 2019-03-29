@@ -1,5 +1,6 @@
 - [Intro](#intro)
-- [Material](#material)
+- [Essentials](#essentials)
+- [Materials](#materials)
 - [Usage](#usage)
   - [Select](#select)
   - [Select Distinct](#select-distinct)
@@ -64,16 +65,21 @@
 
 # Intro
 
-- sql 에 대해 정리한다.
+- sql 은 자주 다루는 언어가 아니기 때문에 사용법을 잊어 버리기 쉽다. [sqlzoo](http://sqlzoo.net/) 와 [database problems @ leecode](https://leetcode.com/problemset/database/) 를 복습한다.
 
-# Material
+# Essentials
 
-
+- [sqlzoo](http://sqlzoo.net/)
+  - tutorial 의 문제들은 필수다.
+- [database problems @ leecode](https://leetcode.com/problemset/database/) 
+  - 문제들을 모두 풀어보자.
 * [cracking the coding interview](http://www.crackingthecodinginterview.com/)
   * databases quiz 가 볼만함
+
+# Materials
+
 - [db-fiddle](https://www.db-fiddle.com/)
   - sql 을 웹에서 테스트할 수 있다. 
-- [sqlzoo](http://sqlzoo.net/)
 - [sql snippet](https://en.wikibooks.org/wiki/Structured_Query_Language/Snippets)
 - [sakila](https://dev.mysql.com/doc/sakila/en/sakila-preface.html)
   - 비디오 대여점을 모델링한 example db이다. sql을 참고해서 공부하자.
