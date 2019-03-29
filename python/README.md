@@ -1,9 +1,11 @@
 
 - [Abstract](#abstract)
+- [Essentials](#essentials)
 - [Materials](#materials)
 - [Basic Usages](#basic-usages)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
+  - [underscore](#underscore)
   - [generator](#generator)
   - [pdb](#pdb)
   - [async, await](#async-await)
@@ -33,13 +35,18 @@
 
 python3에 대해 정리한다.
 
+# Essentials
+
+* [python 3 doc](https://docs.python.org/3/contents.html)
+  * 목차분석이 필요함
+* [James Powell: So you want to be a Python expert? | PyData Seattle 2017 @ youtube](https://www.youtube.com/watch?v=cKPlPJyQrt4&list=WL&index=5&t=0s)
+  * dunder method, metaclass, decorator, context manager, generator
+  
 # Materials
 
 * [초보자를 위한 파이썬 200제](http://www.infopub.co.kr/new/include/detail.asp?sku=06000238)
   * [목차](http://www.infopub.co.kr/common/book_contents/06000238.html)
   * [src](http://www.infopub.co.kr/new/include/detail.asp?sku=06000238#)
-* [James Powell: So you want to be a Python expert? | PyData Seattle 2017 @ youtube](https://www.youtube.com/watch?v=cKPlPJyQrt4&list=WL&index=5&t=0s)
-  * python inside explanation
 * [James Powell - Advanced Metaphors in Coding with Python @ youtube](https://www.youtube.com/watch?v=R2ipPgrWypI)
 * [파이썬 생존 안내서](https://www.slideshare.net/sublee/ss-67589513)
   * 듀랑고를 제작한 왓스튜디오의 이흥섭 PT
@@ -396,7 +403,36 @@ odict_keys(['a', 'c', 'd', 'e', 'b'])
 OrderedDict([('b', None), ('a', None), ('c', None), ('d', None), ('e', None)])
 ```
 
+## underscore
+
+[참고](https://dbader.org/blog/meaning-of-underscores-in-python)
+
+파이썬은 다음과 같이 5 가지 underscore 문법을 가지고 있다.
+
+| pattern | example | desc |
+|:--------|:--------|:-----|
+| Single Leading Underscore | `_foo` | 개발자끼리 약속한 internal use |
+| Single Trailing Underscore | `foo_` | 파이썬 키워드와 이름충돌을 피하기 위함 |
+| Double Leading Underscore | `__foo` | 파이썬 인터프리터가 강제로 이름을 바꿔 버린다. `dir(a)` 이용하여 확인할 수 있다. |
+| Double Leading and Trailing Underscore | `__foo__` | 파이썬 인터프리터가 내부적으로 사용하는 이름들. dunder members |
+| Single Underscore | `_` | 신경쓰지 않아도되는 오브젝트들 |
+
+```bash
+>>> class A:
+...   def __init__(self):
+...     self.foo = 1
+...     self._foo = 2
+...     self.__foo = 3
+...
+>>> a = A()
+>>> dir(a)
+['_A__foo', '__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__', '__gt__', '__hash__', '__init__', '__init_subclass__', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_foo', 'foo']
+# 파이썬 인터프리터에 의해 '__foo' 가 `_A__foo` 로 mangling 되었다.
+```
+
 ## generator
+
+`iterator` 를 리턴하는 `function` 이다. `yield` 를 이용하여 `iterator` 를 리턴한다. `yield` 를 사용한 `function` 이라고 할 수도 있다.
 
 ```python
 def only_odds(nums):
@@ -428,6 +464,8 @@ import pdb; pdb.set_trace()
 [python in visual studio code](https://code.visualstudio.com/docs/languages/python)도 멋지다.
 
 ## async, await
+
+`sync, await` 은 unity c# 의 `IEnumerator, yield` 와 비슷하다.
 
 ```python
 import aiohttp
