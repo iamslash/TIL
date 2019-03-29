@@ -6,7 +6,9 @@
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
   - [underscore](#underscore)
+  - [args, kwargs](#args-kwargs)
   - [generator](#generator)
+  - [Dunder methods (Magic methods)](#dunder-methods-magic-methods)
   - [pdb](#pdb)
   - [async, await](#async-await)
   - [performance check](#performance-check)
@@ -462,6 +464,26 @@ def only_odds(nums):
 1
 >>> next(odds)
 3
+```
+
+## Dunder methods (Magic methods)
+
+파이썬 인터프리터가 사용하는 내부적인 함수들이다.
+
+```py
+class A:
+  def __init__(self, n):
+    self.a = n
+  def __repr__(self):
+    return f'a:{self.a}'
+  def __add__(self, other):
+    return self.a + other
+
+if __name__ == '__main__':
+  a1 = A(1)
+  a2 = A(2)
+  print(a1)    
+  print(a1 + a2)
 ```
 
 ## pdb
