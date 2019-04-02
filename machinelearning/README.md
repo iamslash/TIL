@@ -63,6 +63,9 @@
 
 # Essentials
 
+- [모두를 위한 머신러닝/딥러닝 시즌 2](https://deeplearningzerotoall.github.io/season2/)
+  - [tensorflow](https://deeplearningzerotoall.github.io/season2/lec_tensorflow.html)
+  - [pytorch](https://deeplearningzerotoall.github.io/season2/lec_pytorch.html)
 - [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
   - 한글로 제일 쉽게 설명하는 자료이다. 
 - [(2018) 인공지능 및 기계학습 개론Ⅰ @ edwith](https://kaist.edwith.org/machinelearning1_17)
