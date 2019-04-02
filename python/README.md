@@ -7,6 +7,7 @@
   - [Collections](#collections)
   - [underscore](#underscore)
   - [args, kwargs](#args-kwargs)
+  - [comprehension](#comprehension)
   - [generator](#generator)
   - [Dunder methods (Magic methods)](#dunder-methods-magic-methods)
   - [pdb](#pdb)
@@ -433,8 +434,6 @@ OrderedDict([('b', None), ('a', None), ('c', None), ('d', None), ('e', None)])
 # 파이썬 인터프리터에 의해 '__foo' 가 `_A__foo` 로 mangling 되었다.
 ```
 
-
-
 ## args, kwargs
 
 arguments, keyword arguments 를 의미한다. 다음과 같이 함수의 인자를
@@ -448,6 +447,39 @@ def foo(*args, **kwargs):
   for k, v in kwargs.items():
     print(f'{k} : {v}')
 foo(1, 2, 3, 4, i=0, j=1, k=2)
+```
+
+## comprehension
+
+list, set, dict, generator 를 간략히 표현할 수 있다.
+
+* list comprehension
+
+```py
+l = [x*2 for x in range(10)]
+l = [x*2 for x in range(10) if x%2 == 0]
+l = [(a,b) for a in range(0,5) for b in range(5,10)]
+l = [(a,b) for a in range(0,5) for b in range(5,10) if a%2==0 and b%2==0]
+```
+
+* set comprehension
+
+```py
+s = {j for i in range(2, 9) for j in range(i*2, 50, i)}
+```
+
+* dict comprehension
+
+```py
+d = {key: val for key, val in zip(range(0,5), range(5, 10))}
+```
+
+* generator expression
+
+```py
+g = (x**2 for x in range(10))
+print(next(g))
+print(next(g))
 ```
 
 ## generator
