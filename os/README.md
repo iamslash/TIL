@@ -31,6 +31,12 @@
 
 * [linux 0.01](https://github.com/zavg/linux-0.01)
   * 토발즈가 릴리즈한 최초 리눅스 커널
+  * gcc 1.x 에서 빌드가 된다.
+* [linux 0.01 remake](http://draconux.free.fr/os_dev/linux0.01_news.html)
+  * gcc 4.x 에서 빌드가 되도록 수정된 fork
+  * [src](https://github.com/issamabd/linux-0.01-remake)
+* [linux 0.01 commentary](https://www.academia.edu/5267870/The_Linux_Kernel_0.01_Commentary)
+* [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
 * [C++로 나만의 운영체제 만들기](http://www.yes24.com/Product/goods/64574002)
   * [src](https://github.com/pdpdds/SkyOS)
 * [Source code listing for the Lions' Commentary in PDF and PostScript](http://v6.cuzuco.com/)
