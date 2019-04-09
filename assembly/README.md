@@ -1,3 +1,27 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [AT&T Basic Usages](#att-basic-usages)
+  - [Registers](#registers)
+  - [Static Data Regions](#static-data-regions)
+  - [Addressing Memory](#addressing-memory)
+  - [Operation Suffixes](#operation-suffixes)
+  - [Instruction Notations](#instruction-notations)
+  - [Data Move Instructions](#data-move-instructions)
+  - [Arithmetic and Logic Instructions](#arithmetic-and-logic-instructions)
+  - [Control Flow Instructions](#control-flow-instructions)
+  - [Calling Convention](#calling-convention)
+- [AT&T vs Intel](#att-vs-intel)
+  - [Overview](#overview)
+  - [register names](#register-names)
+  - [operand order](#operand-order)
+  - [operand size](#operand-size)
+- [Inline Assembly](#inline-assembly)
+  - [Basic Inline Assembly](#basic-inline-assembly)
+  - [Extended Inline Assembly](#extended-inline-assembly)
+  - [Constraints](#constraints)
+
+-----
+
 # Abstract
 
 assembly language 에 대해 정리한다.
@@ -391,6 +415,25 @@ myFunc:
 
 # AT&T vs Intel
 
+## Overview
+
+```
++------------------------------+------------------------------------+
+|       Intel Code             |      AT&T Code                     |
++------------------------------+------------------------------------+
+| mov     eax,1                |  movl    $1,%eax                   |   
+| mov     ebx,0ffh             |  movl    $0xff,%ebx                |   
+| int     80h                  |  int     $0x80                     |   
+| mov     ebx, eax             |  movl    %eax, %ebx                |
+| mov     eax,[ecx]            |  movl    (%ecx),%eax               |
+| mov     eax,[ebx+3]          |  movl    3(%ebx),%eax              | 
+| mov     eax,[ebx+20h]        |  movl    0x20(%ebx),%eax           |
+| add     eax,[ebx+ecx*2h]     |  addl    (%ebx,%ecx,0x2),%eax      |
+| lea     eax,[ebx+ecx]        |  leal    (%ebx,%ecx),%eax          |
+| sub     eax,[ebx+ecx*4h-20h] |  subl    -0x20(%ebx,%ecx,0x4),%eax |
++------------------------------+------------------------------------+
+```
+
 ## register names
 
 | AT&T | Intel |
@@ -417,3 +460,105 @@ copy word from foo to bx
 
 # Inline Assembly
 
+## Basic Inline Assembly
+
+다음과 같이 `asm, __asm__` 으로 inline assembly 를 작성할 수 있다.
+
+```c++
+asm("movl %ecx %eax"); /* moves the contents of ecx to eax */
+__asm__("movb %bh (%eax)"); /*moves the byte from bh to the memory pointed by eax */
+```
+
+gcc 는 inline assembly code 를 문자열로 `as` 에게 전송한다. 따라서 `\n\t` 도 추가할 수 있다.
+
+```c++
+ __asm__ ("movl %eax, %ebx\n\t"
+          "movl $56, %esi\n\t"
+          "movl %ecx, $label(%edx,%ebx,$4)\n\t"
+          "movb %ah, (%ebx)");
+```
+
+## Extended Inline Assembly
+
+다음과 같이 inline assembly 를 확장할 수 있다.
+
+```c++
+       asm ( assembler template 
+           : output operands                  /* optional */
+           : input operands                   /* optional */
+           : list of clobbered registers      /* optional */
+           );
+```
+
+`output operands` 는 `as` 가 출력하여 `gcc` 가 사용할 피연산자들의 모음이다.  `input operands` 는 `gcc` 가 저장하고 `as` 가 입력에 사용할 피연산자들의 모음이다. `clobbered registers` 는 inline assembly 에서 변경되었기 때문에 `gcc` 는 사용하지 말라는 의미이다.
+
+`operands` 들은 다음과 같이 생략할 수도 있다. `"c", "a", "D"` 와 같은 것들을 `constraints` 라 하고 `"=r"` 에서 `=` 를 `constraint modifier` 라고 한다.
+
+```c++
+        asm ("cld\n\t"
+             "rep\n\t"
+             "stosl"
+             : /* no output registers */
+             : "c" (count), "a" (fill_value), "D" (dest)
+             : "%ecx", "%edi" 
+             );
+```
+
+다음은 `a` 를 inline assembly 의 입력으로 `b` 를 출력으로 사용하는 예이다. `%eax` 는 inline assembly 에서 변경되었기 때문에 `gcc` 는 사용하지 말라는 의미이다. `output operands, input operands` 는 inline assembly 에서 순서대로 `%0, %1` 등과 같이  접근할 수 있다. `%%eax` 에서 `%%` 는 `%0` 과 혼돈하지 않기 위해 사용한다.
+
+```c++
+        int a=10, b;
+        asm ("movl %1, %%eax; 
+              movl %%eax, %0;"
+             :"=r"(b)        /* output */
+             :"r"(a)         /* input */
+             :"%eax"         /* clobbered register */
+             );    
+```
+
+다음과 같이 `volatile, __volatile__` 를 사용하면 optimization 을 하지 말라는 의미이다.
+
+```
+asm volatile ( ... : ... : ... : ...);
+```
+
+## Constraints
+
+* `r` : Register operand constraint
+
+`r` 을 사용하면 다음과 같은 GPR (General purpose registers) 중 적당한 것을 사용하라는 의미이다. `=r` 의 `=` 은 쓰기를 의미한다. `a, b, c, d, S, D` 를 사용하면 GPR 의 특정 레지스터로 한정할 수 있다.
+
+```
++---+--------------------+
+| r |    Register(s)     |
++---+--------------------+
+| a |   %eax, %ax, %al   |
+| b |   %ebx, %bx, %bl   |
+| c |   %ecx, %cx, %cl   |
+| d |   %edx, %dx, %dl   |
+| S |   %esi, %si        |
+| D |   %edi, %di        |
++---+--------------------+
+```
+
+다음은 `eax` 의 값을 `myval` 에 복사하는 예이다.
+
+```cpp
+asm ("movl %%eax, %0\n" :"=r"(myval));
+```
+
+* `m` : memory operand constraint
+
+피연산자가 메모리에 있다면 `m` 을 사용하자.
+
+```
+asm("sidt %0\n" : :"m"(loc));
+```
+
+* `0` : matching digit constraint
+
+숫자를 이용하면 inline assembly 에서 참조할 때 사용할 숫자를 정할 수 있다. 
+
+```cpp
+asm ("incl %0" :"=a"(var):"0"(var));
+```
