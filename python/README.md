@@ -41,6 +41,9 @@ python3에 대해 정리한다.
 
 # Essentials
 
+* [Python Tips](http://book.pythontips.com/en/latest/)
+  * intermediate python
+  * [번역](https://ddanggle.gitbooks.io/interpy-kr/content/)
 * [python 3 doc](https://docs.python.org/3/contents.html)
   * 목차분석이 필요함
 * [James Powell: So you want to be a Python expert? | PyData Seattle 2017 @ youtube](https://www.youtube.com/watch?v=cKPlPJyQrt4&list=WL&index=5&t=0s)
