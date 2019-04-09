@@ -414,3 +414,6 @@ copy word from foo to bx
 | AT&T | Intel |
 |:-----|:------|
 | `movw foo, %bx` | `mov bx, word ptr foo` |
+
+# Inline Assembly
+
