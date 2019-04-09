@@ -10,15 +10,17 @@
   - [Arithmetic and Logic Instructions](#arithmetic-and-logic-instructions)
   - [Control Flow Instructions](#control-flow-instructions)
   - [Calling Convention](#calling-convention)
+- [AT&T Inline Assembly](#att-inline-assembly)
+  - [Basic Inline Assembly](#basic-inline-assembly)
+  - [Extended Inline Assembly](#extended-inline-assembly)
+  - [Constraints](#constraints)
 - [AT&T vs Intel](#att-vs-intel)
   - [Overview](#overview)
   - [register names](#register-names)
   - [operand order](#operand-order)
   - [operand size](#operand-size)
-- [Inline Assembly](#inline-assembly)
-  - [Basic Inline Assembly](#basic-inline-assembly)
-  - [Extended Inline Assembly](#extended-inline-assembly)
-  - [Constraints](#constraints)
+  - [constant and Immediate operand](#constant-and-immediate-operand)
+  - [Memory operands](#memory-operands)
 
 -----
 
@@ -36,6 +38,7 @@ gnu assembler 는 AT&T syntax 를 따른다. nasm assembler 는 Intel syntax 를
 * [x86 Intel Assembly Guide](http://www.cs.virginia.edu/~evans/cs216/guides/x86.html)
   * Intel assembly language 튜토리얼
 * [linux assembly code @ kldp](http://doc.kldp.org/KoreanDoc/html/Assembly_Example-KLDP/Assembly_Example-KLDP.html)
+* [GCC-Inline-Assembly-HOWTO](https://www.ibiblio.org/gferg/ldp/GCC-Inline-Assembly-HOWTO.html)
 
 # AT&T Basic Usages
 
@@ -59,7 +62,7 @@ gnu assembler 는 AT&T syntax 를 따른다. nasm assembler 는 Intel syntax 를
 ## Static Data Regions
 
 ```as
-/* 전역변수 선언 방법 */
+/* 정적변수 선언 방법 */
 .data		
 var:		
   .byte 64	/* Declare a byte, referred to as location var, containing the value 64. */
@@ -78,6 +81,13 @@ str:
   .string "hello"   	/* Declare 6 bytes starting at the address str initialized to the ASCII character values for hello followed by a nul (0) byte. */
 ```
 ## Addressing Memory
+
+다음과 같은 형태로 사용한다.
+
+```
+ format: immed32(base, index, scale)
+address: base + index * scale + immed32
+```
 
 ```as
 /* () 는 dereference operator 와 같음 */
@@ -98,7 +108,7 @@ mov %ebx, (%eax,%esi,%edi,1)     	/* At most 2 registers in address computation.
 
 ## Operation Suffixes
 
-instruction 의 접미사에 따라 목표공간의 크기가 다르다. 예를 들어 `b = byte(1 byte), w = word(2 bytes), l = long(4 bytes)` 이다.
+instruction 의 접미사에 따라 목표공간의 크기가 다르다. 예를 들어 `b = byte (1 byte), w = word (2 bytes), l = long (4 bytes)` 이다.
 
 ```as
 movb $2, (%ebx)	/* Move 2 into the single byte at the address stored in EBX. */
@@ -356,7 +366,7 @@ ret
 
 ## Calling Convention
 
-함수가 호출될 때 parameter 들을 어떻게 처리하는지에 대한 규약을 calling convention 이라고 하고 `__cdecl, __stdcall, __fastcall` 등이 있다. `__cdecl` 은 함수를 호출한 쪽에서 parameter 들을 해제한다. `__stdcall` 은 호출된 함수 쪽에서 parameter 들을 해제한다. `__fastcall` 은 두개까지의 parameter 들은 ECX, EDX 레지스터에 저장하고 호출된 함수 쪽에서 parameter 들을 해제한다.
+함수가 호출될 때 parameter 들을 어떻게 처리하는지에 대한 규약을 `calling convention` 이라고 하고 `__cdecl, __stdcall, __fastcall` 등이 있다. `__cdecl` 은 함수를 호출한 쪽에서 parameter 들을 해제한다. `__stdcall` 은 호출된 함수 쪽에서 parameter 들을 해제한다. `__fastcall` 은 두개까지의 parameter 들은 ECX, EDX 레지스터에 저장하고 호출된 함수 쪽에서 parameter 들을 해제한다.
 
 다음은 `__cdecl` 의 예이다.
 
@@ -413,6 +423,111 @@ myFunc:
   ret
 ```
 
+# AT&T Inline Assembly
+
+## Basic Inline Assembly
+
+다음과 같이 `asm, __asm__` 으로 inline assembly 를 작성할 수 있다.
+
+```c++
+asm("movl %ecx %eax"); /* moves the contents of ecx to eax */
+__asm__("movb %bh (%eax)"); /*moves the byte from bh to the memory pointed by eax */
+```
+
+gcc 는 inline assembly 를 문자열 형태로 `as` 에게 전송한다. 따라서 `\n\t` 도 추가할 수 있다.
+
+```c++
+ __asm__ ("movl %eax, %ebx\n\t"
+          "movl $56, %esi\n\t"
+          "movl %ecx, $label(%edx,%ebx,$4)\n\t"
+          "movb %ah, (%ebx)");
+```
+
+## Extended Inline Assembly
+
+다음과 같이 inline assembly 를 확장할 수 있다.
+
+```c++
+       asm ( assembler template 
+           : output operands                  /* optional */
+           : input operands                   /* optional */
+           : list of clobbered registers      /* optional */
+           );
+```
+
+`output operands` 는 `as` 가 출력하여 `gcc` 가 사용할 피연산자들의 모음이다.  `input operands` 는 `gcc` 가 저장하고 `as` 가 입력에 사용할 피연산자들의 모음이다. `clobbered registers` 는 inline assembly 에서 변경되었기 때문에 `gcc` 는 사용하지 말라는 의미이다.
+
+`operands` 들은 `"constraints" (gcc variable)` 형태로 구성한다.  `"c", "a", "D"` 와 같은 것들을 `constraints` 라 하고 `"=r"` 에서 `=` 를 `constraint modifier` 라고 한다.
+
+```c++
+        asm ("cld\n\t"
+             "rep\n\t"
+             "stosl"
+             : /* no output registers */
+             : "c" (count), "a" (fill_value), "D" (dest)
+             : "%ecx", "%edi" 
+             );
+```
+
+다음은 gcc 변수 `a` 를 inline assembly 의 입력으로 gcc 변수 `b` 를 출력으로 사용하는 예이다. `%eax` 는 inline assembly 에서 변경되었기 때문에 `gcc` 는 사용하면 안된다. `output operands, input operands` 는 inline assembly 에서 순서대로 `%0, %1` 등과 같이 접근할 수 있다. `%%eax` 에서 `%%` 는 `%0` 과 혼돈하지 않기 위해 사용한다.
+
+```c++
+        int a=10, b;
+        asm ("movl %1, %%eax; 
+              movl %%eax, %0;"
+             :"=r"(b)        /* output */
+             :"r"(a)         /* input */
+             :"%eax"         /* clobbered register */
+             );    
+```
+
+다음과 같이 `volatile, __volatile__` 를 사용하면 optimization 을 하지 말라는 의미이다.
+
+```
+asm volatile ( ... : ... : ... : ...);
+```
+
+## Constraints
+
+* `r` : Register operand constraint
+
+`operands` 에 쓰여진 gcc variable 은 inline assembly 에서 레지스터에 복사되어 사용된다. `r` 을 사용하면 다음과 같은 GPR (General purpose registers) 중 적당한 것을 사용하라는 의미이다. `=r` 의 `=` 은 쓰기를 의미한다. `a, b, c, d, S, D` 를 사용하면 GPR 의 특정 레지스터로 한정할 수 있다.
+
+```
++---+--------------------+
+| r |    Register(s)     |
++---+--------------------+
+| a |   %eax, %ax, %al   |
+| b |   %ebx, %bx, %bl   |
+| c |   %ecx, %cx, %cl   |
+| d |   %edx, %dx, %dl   |
+| S |   %esi, %si        |
+| D |   %edi, %di        |
++---+--------------------+
+```
+
+다음은 `eax` 의 값을 `myval` 에 복사하는 예이다.
+
+```cpp
+asm ("movl %%eax, %0\n" :"=r"(myval));
+```
+
+* `m` : memory operand constraint
+
+operands 가 메모리에 있다면 `m` 을 사용하자.
+
+```
+asm("sidt %0\n" : :"m"(loc));
+```
+
+* `0` : matching digit constraint
+
+숫자를 이용하면 inline assembly 에서 참조할 때 사용할 숫자를 정할 수 있다. 
+
+```cpp
+asm ("incl %0" :"=a"(var):"0"(var));
+```
+
 # AT&T vs Intel
 
 ## Overview
@@ -450,7 +565,7 @@ copy from eax to ebx.
 
 ## operand size
 
-`AT&T` 는 
+`AT&T` 는 `b, w, l` 과 같은 접미사를 이용하여 크기를 조정한다. `Intel` 는 `byte ptr, word ptr, dword ptr` 과 같은 키워드를 이용하여 크기를 조정한다.
 
 copy word from foo to bx
 
@@ -458,107 +573,26 @@ copy word from foo to bx
 |:-----|:------|
 | `movw foo, %bx` | `mov bx, word ptr foo` |
 
-# Inline Assembly
+## constant and Immediate operand
 
-## Basic Inline Assembly
+| AT&T | Intel | desc |
+|:-----|:------|:-----|
+| `movl $foo, %eax` | `mov eax, foo` | foo 변수의 주소를 eax 로 복사 |
+| `movl foo, %eax` | `mov eax, [foo]` | foo 변수의 값을 eax 로 복사  |
+| `movl $0xd00d, %eax` | `mov eax, 0d00dh` | 숫자 0xd00d 를 eax 로 복사  |
 
-다음과 같이 `asm, __asm__` 으로 inline assembly 를 작성할 수 있다.
+## Memory operands
 
-```c++
-asm("movl %ecx %eax"); /* moves the contents of ecx to eax */
-__asm__("movb %bh (%eax)"); /*moves the byte from bh to the memory pointed by eax */
-```
-
-gcc 는 inline assembly code 를 문자열로 `as` 에게 전송한다. 따라서 `\n\t` 도 추가할 수 있다.
-
-```c++
- __asm__ ("movl %eax, %ebx\n\t"
-          "movl $56, %esi\n\t"
-          "movl %ecx, $label(%edx,%ebx,$4)\n\t"
-          "movb %ah, (%ebx)");
-```
-
-## Extended Inline Assembly
-
-다음과 같이 inline assembly 를 확장할 수 있다.
-
-```c++
-       asm ( assembler template 
-           : output operands                  /* optional */
-           : input operands                   /* optional */
-           : list of clobbered registers      /* optional */
-           );
-```
-
-`output operands` 는 `as` 가 출력하여 `gcc` 가 사용할 피연산자들의 모음이다.  `input operands` 는 `gcc` 가 저장하고 `as` 가 입력에 사용할 피연산자들의 모음이다. `clobbered registers` 는 inline assembly 에서 변경되었기 때문에 `gcc` 는 사용하지 말라는 의미이다.
-
-`operands` 들은 다음과 같이 생략할 수도 있다. `"c", "a", "D"` 와 같은 것들을 `constraints` 라 하고 `"=r"` 에서 `=` 를 `constraint modifier` 라고 한다.
-
-```c++
-        asm ("cld\n\t"
-             "rep\n\t"
-             "stosl"
-             : /* no output registers */
-             : "c" (count), "a" (fill_value), "D" (dest)
-             : "%ecx", "%edi" 
-             );
-```
-
-다음은 `a` 를 inline assembly 의 입력으로 `b` 를 출력으로 사용하는 예이다. `%eax` 는 inline assembly 에서 변경되었기 때문에 `gcc` 는 사용하지 말라는 의미이다. `output operands, input operands` 는 inline assembly 에서 순서대로 `%0, %1` 등과 같이  접근할 수 있다. `%%eax` 에서 `%%` 는 `%0` 과 혼돈하지 않기 위해 사용한다.
-
-```c++
-        int a=10, b;
-        asm ("movl %1, %%eax; 
-              movl %%eax, %0;"
-             :"=r"(b)        /* output */
-             :"r"(a)         /* input */
-             :"%eax"         /* clobbered register */
-             );    
-```
-
-다음과 같이 `volatile, __volatile__` 를 사용하면 optimization 을 하지 말라는 의미이다.
+주소 `base + index * scale + immed32` 를 다음과 같이 표기한다.
 
 ```
-asm volatile ( ... : ... : ... : ...);
+AT&T : section:immed32(base, index, scale)
+intel: section:[base + index * scale + immed32]
 ```
 
-## Constraints
-
-* `r` : Register operand constraint
-
-`r` 을 사용하면 다음과 같은 GPR (General purpose registers) 중 적당한 것을 사용하라는 의미이다. `=r` 의 `=` 은 쓰기를 의미한다. `a, b, c, d, S, D` 를 사용하면 GPR 의 특정 레지스터로 한정할 수 있다.
-
-```
-+---+--------------------+
-| r |    Register(s)     |
-+---+--------------------+
-| a |   %eax, %ax, %al   |
-| b |   %ebx, %bx, %bl   |
-| c |   %ecx, %cx, %cl   |
-| d |   %edx, %dx, %dl   |
-| S |   %esi, %si        |
-| D |   %edi, %di        |
-+---+--------------------+
-```
-
-다음은 `eax` 의 값을 `myval` 에 복사하는 예이다.
-
-```cpp
-asm ("movl %%eax, %0\n" :"=r"(myval));
-```
-
-* `m` : memory operand constraint
-
-피연산자가 메모리에 있다면 `m` 을 사용하자.
-
-```
-asm("sidt %0\n" : :"m"(loc));
-```
-
-* `0` : matching digit constraint
-
-숫자를 이용하면 inline assembly 에서 참조할 때 사용할 숫자를 정할 수 있다. 
-
-```cpp
-asm ("incl %0" :"=a"(var):"0"(var));
-```
+| AT&T | Intel | desc |
+|:-----|:------|:-----|
+| `(%eax)` | `[eax]` | eax 가 가리키는 주소의 값을 참조 |
+| `var(%eax)` | `[eax + var]` | 변수의 옵셋을 합한 주소의 값을 참조  |
+| `arry(, %eax, 4)` | `[eax * 4 + array]` | `int array[eax]` 의 값을 참조 |
+| `array(%ebx, %eax, 4)` | `[ebx + eax * 4 + array]` | `int array[ebx + eax]` 의 값을 참조 |
