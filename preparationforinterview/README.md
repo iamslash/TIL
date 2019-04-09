@@ -54,9 +54,9 @@
 
 # Advanced Interview
 
-* Computer system architecture
+* Computer system architecture & Operating System
   * [computer system architecture](/csa/README.md)
-* Operating System
   * [operating system](/os/README.md)
+  * [assembly](/assembly/README.md)
 * Backend
   * [bash](/bash/README.md)
