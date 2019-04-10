@@ -554,20 +554,34 @@ if __name__ == '__main__':
 
 ## pdb
 
-pdb로 break point하고 싶은 라인에 다음을 복사하고 실행하자.
+다음과 같이 commandline 으로 pdb 를 사용할 수 있다.
+
+```bash
+$ python -m pdb foo.py
+```
+
+또한 다음과 같이 code 중간에 break point 를 설정하여 pdb 를 사용할 수 있다.
 
 ```python
 import pdb; pdb.set_trace()
 ```
 
+다음은 주로 사용하는 pdb command 이다.
+
 ```
 (Pdb) l         실행중인 코드 위치 확인
 (Pdb) pdb.pm()  마지막 에러가 발생했던 곳을 디버깅
-
+(Pdb) c         continue execution
+(Pdb) w         shows the context of the current line it is executing.
+(Pdb) a         print the argument list of the current function
+(Pdb) s         Execute the current line and stop at the first possible occasion.
+(Pdb) n         Continue execution until the next line in the current function is reached or it returns.
 ```
 
-[visual studio python](https://www.visualstudio.com/ko/vs/python/)도 멋지다.
-[python in visual studio code](https://code.visualstudio.com/docs/languages/python)도 멋지다.
+더 읽을 거리
+
+* [visual studio python](https://www.visualstudio.com/ko/vs/python/) 도 멋지다.
+* [python in visual studio code](https://code.visualstudio.com/docs/languages/python) 도 멋지다.
 
 ## async, await
 
