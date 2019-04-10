@@ -5,6 +5,8 @@
 - [Basic Usages](#basic-usages)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
+  - [classes](#classes)
+  - [lambdas](#lambdas)
   - [slice](#slice)
   - [underscore](#underscore)
   - [args, kwargs](#args-kwargs)
@@ -14,20 +16,31 @@
   - [set](#set)
   - [ternary operators](#ternary-operators)
   - [multiple return](#multiple-return)
+  - [for else](#for-else)
+  - [exception](#exception)
   - [Dunder methods (Magic methods)](#dunder-methods-magic-methods)
   - [pdb](#pdb)
   - [async, await](#async-await)
   - [performance check](#performance-check)
   - [`__slots__`](#slots)
+  - [enumerate](#enumerate)
+  - [object introspection](#object-introspection)
   - [metaclass](#metaclass)
   - [weakref](#weakref)
   - [memory leak](#memory-leak)
   - [gc](#gc)
   - [dependencies](#dependencies)
 - [Advanced Usages](#advanced-usages)
+  - [open function](#open-function)
   - [Builtin functions](#builtin-functions)
   - [Decorator](#decorator)
   - [virtual environment](#virtual-environment)
+  - [one-liners](#one-liners)
+  - [c extension](#c-extension)
+  - [python 2+3](#python-23)
+  - [coroutine](#coroutine)
+  - [function caches](#function-caches)
+  - [context managers](#context-managers)
 - [Library](#library)
   - [regex](#regex)
   - [numpy](#numpy)
@@ -298,6 +311,32 @@ Counter({2: 3, 1: 1, 3: 1})
 Counter({2: 5, 1: 4, 3: 1})
 ```
 
+```py
+from collections import Counter
+
+colours = (
+    ('Yasoob', 'Yellow'),
+    ('Ali', 'Blue'),
+    ('Arham', 'Green'),
+    ('Ali', 'Black'),
+    ('Yasoob', 'Red'),
+    ('Ahmed', 'Silver'),
+)
+
+favs = Counter(name for name, colour in colours)
+print(favs)
+# Output: Counter({
+#    'Yasoob': 2,
+#    'Ali': 2,
+#    'Arham': 1,
+#    'Ahmed': 1
+# })
+
+with open('filename', 'rb') as f:
+    line_count = Counter(f)
+print(line_count)
+```
+
 * dict
 
 ```python
@@ -434,6 +473,184 @@ odict_keys(['a', 'c', 'd', 'e', 'b'])
 OrderedDict([('b', None), ('a', None), ('c', None), ('d', None), ('e', None)])
 ```
 
+* enum (python 3.4+)
+
+c# 의 enum 과 같다.
+
+```py
+from collections import namedtuple
+from enum import Enum
+
+class Species(Enum):
+    cat = 1
+    dog = 2
+    horse = 3
+    aardvark = 4
+    butterfly = 5
+    owl = 6
+    platypus = 7
+    dragon = 8
+    unicorn = 9
+    # The list goes on and on...
+
+    # But we don't really care about age, so we can use an alias.
+    kitten = 1
+    puppy = 2
+
+Animal = namedtuple('Animal', 'name age type')
+perry = Animal(name="Perry", age=31, type=Species.cat)
+drogon = Animal(name="Drogon", age=4, type=Species.dragon)
+tom = Animal(name="Tom", age=75, type=Species.cat)
+charlie = Animal(name="Charlie", age=2, type=Species.kitten)
+
+# And now, some tests.
+>>> charlie.type == tom.type
+True
+>>> charlie.type
+<Species.cat: 1>
+```
+
+다음은 enum 의 member 를 접근하는 방법이다. 모두 `cat` 을 리턴한다.
+
+```py
+Species(1)
+Species['cat']
+Species.cat
+```
+
+## classes
+
+* class, instance variables
+
+```py
+class Cal(object):
+    # pi is a class variable
+    pi = 3.142
+
+    def __init__(self, radius):
+        # self.radius is an instance variable
+        self.radius = radius
+
+    def area(self):
+        return self.pi * (self.radius ** 2)
+
+a = Cal(32)
+a.area()
+# Output: 3217.408
+a.pi
+# Output: 3.142
+a.pi = 43
+a.pi
+# Output: 43
+
+b = Cal(44)
+b.area()
+# Output: 6082.912
+b.pi
+# Output: 3.142
+b.pi = 50
+b.pi
+# Output: 50
+```
+
+* old style vs new style classes
+
+new style classes 는 object 를 상속받는다. 따라서 `__slots__` 등과 같은 magic mathod 를 사용할 수 있다. python 3 는 명시적으로 object 를 상속받지 않아도 new style classes 로 선언된다.
+
+```py
+class OldClass():
+    def __init__(self):
+        print('I am an old class')
+
+class NewClass(object):
+    def __init__(self):
+        print('I am a jazzy new class')
+
+old = OldClass()
+# Output: I am an old class
+
+new = NewClass()
+# Output: I am a jazzy new class
+```
+
+* `__init__`
+
+```py
+class GetTest(object):
+    def __init__(self):
+        print('Greetings!!')
+    def another_method(self):
+        print('I am another method which is not'
+              ' automatically called')
+
+a = GetTest()
+# Output: Greetings!!
+
+a.another_method()
+# Output: I am another method which is not automatically
+# called
+
+class GetTest(object):
+    def __init__(self, name):
+        print('Greetings!! {0}'.format(name))
+    def another_method(self):
+        print('I am another method which is not'
+              ' automatically called')
+
+a = GetTest('yasoob')
+# Output: Greetings!! yasoob
+
+# Try creating an instance without the name arguments
+b = GetTest()
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+TypeError: __init__() takes exactly 2 arguments (1 given)
+```
+
+* `__getitem__`
+
+```py
+class GetTest(object):
+    def __init__(self):
+        self.info = {
+            'name':'Yasoob',
+            'country':'Pakistan',
+            'number':12345812
+        }
+
+    def __getitem__(self,i):
+        return self.info[i]
+
+foo = GetTest()
+
+foo['name']
+# Output: 'Yasoob'
+
+foo['number']
+# Output: 12345812
+```
+
+## lambdas
+
+`lambda argument: manipulate(argument)` 과 같은 형식으로 사용하는 한줄 함수이다.
+
+```py
+add = lambda x, y: x + y
+
+print(add(3, 5))
+# Output: 8
+
+a = [(1, 2), (4, 1), (9, 10), (13, -3)]
+a.sort(key=lambda x: x[1])
+
+print(a)
+# Output: [(13, -3), (4, 1), (1, 2), (9, 10)]
+
+data = zip(list1, list2)
+data.sort()
+list1, list2 = map(lambda t: list(t), zip(*data))
+```
+
 ## slice
 
 `list, tuple` 를 `[start:end:step]` 의 문법을 사용하여 새로운 객체를
@@ -512,31 +729,67 @@ list, set, dict, generator 를 간략히 표현할 수 있다.
 
 * list comprehension
 
+`variable = [out_exp for out_exp in input_list if out_exp == 2]` 와 같은 형식으로 사용한다. `[..for..in..if..]` 형식이라고 기억하자.
+
 ```py
 l = [x*2 for x in range(10)]
 l = [x*2 for x in range(10) if x%2 == 0]
 l = [(a,b) for a in range(0,5) for b in range(5,10)]
 l = [(a,b) for a in range(0,5) for b in range(5,10) if a%2==0 and b%2==0]
+
+# origin
+squared = []
+for x in range(10):
+    squared.append(x**2)
+# list comprehension
+squared = [x**2 for x in range(10)]
 ```
 
 * set comprehension
 
+`variable = {out_exp for out_exp in input_list if out_exp == 2}` 와 같은 형식으로 사용한다. `{..for..in..if..}` 형식이라고 기억하자.
+
+
 ```py
 s = {j for i in range(2, 9) for j in range(i*2, 50, i)}
+
+squared = {x**2 for x in [1, 1, 2]}
+print(squared)
+# Output: {1, 4}
 ```
 
 * dict comprehension
 
+`{v: k for k, v in some_dict.items()}` 와 같은 형식으로 사용한다.
+
 ```py
 d = {key: val for key, val in zip(range(0,5), range(5, 10))}
+
+mcase = {'a': 10, 'b': 34, 'A': 7, 'Z': 3}
+
+mcase_frequency = {
+    k.lower(): mcase.get(k.lower(), 0) + mcase.get(k.upper(), 0)
+    for k in mcase.keys()
+}
+
+# mcase_frequency == {'a': 17, 'z': 3, 'b': 34}
 ```
 
 * generator expression
+
+`variable = (out_exp for out_exp in input_list if out_exp == 2)` 와 같은 형식으로 사용한다. `(..for..in..if..)` 형식이라고 기억하자. list comprehension 과 유사하지만 메모리를 덜 사용한다.
 
 ```py
 g = (x**2 for x in range(10))
 print(next(g))
 print(next(g))
+
+multiples_gen = (i for i in range(30) if i % 3 == 0)
+print(multiples_gen)
+# Output: <generator object <genexpr> at 0x7fdaa8e407d8>
+for x in multiples_gen:
+  print(x)
+  # Outputs numbers
 ```
 
 ## generator
@@ -842,6 +1095,88 @@ print(age)
 #31
 ```
 
+## for else
+
+```py
+for item in container:
+    if search_something(item):
+        # Found it!
+        process(item)
+        break
+else:
+    # Didn't find anything..
+    not_found_in_container()
+ 
+for n in range(2, 10):
+    for x in range(2, n):
+        if n % x == 0:
+            print( n, 'equals', x, '*', n/x)
+            break
+    else:
+        # loop fell through without finding a factor
+        print(n, 'is a prime number')
+```
+
+## exception
+
+```py
+# single exception
+try:
+    file = open('test.txt', 'rb')
+except IOError as e:
+    print('An IOError occurred. {}'.format(e.args[-1]))
+
+# multiple oneline exception
+try:
+    file = open('test.txt', 'rb')
+except (IOError, EOFError) as e:
+    print("An error occurred. {}".format(e.args[-1]))
+
+# multiple multiline exception
+try:
+    file = open('test.txt', 'rb')
+except EOFError as e:
+    print("An EOF error occurred.")
+    raise e
+except IOError as e:
+    print("An error occurred.")
+    raise e    
+
+# all exceptiontry:
+    file = open('test.txt', 'rb')
+except Exception as e:
+    # Some logging if you want
+    raise e
+
+# finally
+try:
+    file = open('test.txt', 'rb')
+except IOError as e:
+    print('An IOError occurred. {}'.format(e.args[-1]))
+finally:
+    print("This would be printed whether or not an exception occurred!")
+
+# Output: An IOError occurred. No such file or directory
+# This would be printed whether or not an exception occurred!
+
+# try, else
+try:
+    print('I am sure no exception is going to occur!')
+except Exception:
+    print('exception')
+else:
+    # any code that should only run if no exception occurs in the try,
+    # but for which exceptions should NOT be caught
+    print('This would only run if no exception occurs. And an error here '
+          'would NOT be caught.')
+finally:
+    print('This would be printed in every case.')
+
+# Output: I am sure no exception is going to occur!
+# This would only run if no exception occurs. And an error here would NOT be caught
+# This would be printed in every case.
+```
+
 ## Dunder methods (Magic methods)
 
 파이썬 인터프리터가 사용하는 내부적인 함수들이다.
@@ -981,6 +1316,82 @@ class MyClass(object):
         self.identifier = identifier
         self.set_up()
     # ...
+```
+
+## enumerate
+
+무언가에 대해 반복할 때 auto increment number 와 함께 순회할 수 있다.
+
+```py
+for counter, value in enumerate(some_list):
+    print(counter, value)
+
+my_list = ['apple', 'banana', 'grapes', 'pear']
+for c, value in enumerate(my_list, 1):
+    print(c, value)
+
+# Output:
+# 1 apple
+# 2 banana
+# 3 grapes
+# 4 pear
+```
+
+auto increment number 의 초기값을 제어할 수 있다.
+
+```py
+my_list = ['apple', 'banana', 'grapes', 'pear']
+counter_list = list(enumerate(my_list, 1))
+print(counter_list)
+# Output: [(1, 'apple'), (2, 'banana'), (3, 'grapes'), (4, 'pear')]
+```
+
+## object introspection
+
+* `dir`
+
+```py
+my_list = [1, 2, 3]
+dir(my_list)
+# Output: ['__add__', '__class__', '__contains__', '__delattr__', '__delitem__',
+# '__delslice__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__',
+# '__getitem__', '__getslice__', '__gt__', '__hash__', '__iadd__', '__imul__',
+# '__init__', '__iter__', '__le__', '__len__', '__lt__', '__mul__', '__ne__',
+# '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__reversed__', '__rmul__',
+# '__setattr__', '__setitem__', '__setslice__', '__sizeof__', '__str__',
+# '__subclasshook__', 'append', 'count', 'extend', 'index', 'insert', 'pop',
+# 'remove', 'reverse', 'sort']
+```
+
+* `type, id`
+
+```py
+print(type(''))
+# Output: <type 'str'>
+
+print(type([]))
+# Output: <type 'list'>
+
+print(type({}))
+# Output: <type 'dict'>
+
+print(type(dict))
+# Output: <type 'type'>
+
+print(type(3))
+# Output: <type 'int'>
+
+name = "Yasoob"
+print(id(name))
+# Output: 139972439030304
+```
+
+* inspect module
+
+```py
+import inspect
+print(inspect.getmembers(str))
+# Output: [('__add__', <slot wrapper '__add__' of ... ...
 ```
 
 ## metaclass
@@ -1197,6 +1608,42 @@ tossi==0.0.1
 
 
 # Advanced Usages
+
+## open function
+
+다음의 코드는 3 가지 문제점이 있다.
+
+```py
+f = open('photo.jpg', 'r+')
+jpgdata = f.read()
+f.close()
+```
+
+첫째, `open` 이후 exception 이 발생해도 `close` 가 호출되지 않는다. 다음과 같이 `with` 를 사용하자.
+
+```py
+with open('photo.jpg', 'r+') as f:
+    jpgdata = f.read()
+```
+
+둘째, 파일이 바이너리인지 텍스트인지를 읽기모드 옵션으로 제공해야 한다.
+셋째, 파일의 인코딩형식을 제공해야 한다.
+
+```py
+import io
+
+with open('photo.jpg', 'rb') as inf:
+    jpgdata = inf.read()
+
+if jpgdata.startswith(b'\xff\xd8'):
+    text = u'This is a JPEG file (%d bytes long)\n'
+else:
+    text = u'This is a random file (%d bytes long)\n'
+
+with io.open('summary.txt', 'w', encoding='utf-8') as outf:
+    outf.write(text % len(jpgdata))
+
+```
 
 ## Builtin functions
 
@@ -1455,6 +1902,377 @@ $ deactivate
 
 ```bash
 $ virtualenv --system-site-packages mycoolproject
+```
+
+## one-liners
+
+```bash
+# Python 2
+python -m SimpleHTTPServer
+
+# Python 3
+python -m http.server
+
+# pretty print
+cat file.json | python -m json.tool
+
+# profile
+python -m cProfile my_script.py
+
+# json dump
+python -c "import csv,json;print json.dumps(list(csv.reader(open('csv_file.csv'))))"
+```
+
+```py
+# list flattening
+a_list = [[1, 2], [3, 4], [5, 6]]
+print(list(itertools.chain.from_iterable(a_list)))
+# Output: [1, 2, 3, 4, 5, 6]
+
+# or
+print(list(itertools.chain(*a_list)))
+# Output: [1, 2, 3, 4, 5, 6]
+
+# one line construct
+class A(object):
+    def __init__(self, a, b, c, d, e, f):
+        self.__dict__.update({k: v for k, v in locals().items() if k != 'self'})
+```
+
+## c extension
+
+* Ctypes
+
+다음과 같이 `add.c` 를 작성한다.
+
+```cpp
+//sample C file to add 2 numbers - int and floats
+
+#include <stdio.h>
+
+int add_int(int, int);
+float add_float(float, float);
+
+int add_int(int num1, int num2){
+    return num1 + num2;
+}
+
+float add_float(float num1, float num2){
+    return num1 + num2;
+}
+```
+
+다음과 같이 `add.c` 파일을 빌드하여 `adder.so` 를 만들자.
+
+```bash
+#For Linux
+$  gcc -shared -Wl,-soname,adder -o adder.so -fPIC add.c
+
+#For Mac
+$ gcc -shared -Wl,-install_name,adder.so -o adder.so -fPIC add.c
+```
+
+다음과 같이 python 에서 `adder.so` 를 이용한다.
+
+```py
+from ctypes import *
+
+#load the shared object file
+adder = CDLL('./adder.so')
+
+#Find sum of integers
+res_int = adder.add_int(4,5)
+print "Sum of 4 and 5 = " + str(res_int)
+
+#Find sum of floats
+a = c_float(5.5)
+b = c_float(4.1)
+
+add_float = adder.add_float
+add_float.restype = c_float
+print "Sum of 5.5 and 4.1 = ", str(add_float(a, b))
+```
+
+출력은 다음과 같다.
+
+```
+Sum of 4 and 5 = 9
+Sum of 5.5 and 4.1 =  9.60000038147
+```
+
+* SWIG (Simplified Wrapper and Interface Generator)
+
+다음과 같이 `example.c` 를 작성한다.
+
+```cpp
+#include <time.h>
+double My_variable = 3.0;
+
+int fact(int n) {
+    if (n <= 1) return 1;
+    else return n*fact(n-1);
+}
+
+int my_mod(int x, int y) {
+    return (x%y);
+}
+
+char *get_time()
+{
+    time_t ltime;
+    time(&ltime);
+    return ctime(&ltime);
+}
+```
+
+다음과 같이 `example.i` 를 작성한다.
+
+```c
+/* example.i */
+ %module example
+ %{
+ /* Put header files here or function declarations like below */
+ extern double My_variable;
+ extern int fact(int n);
+ extern int my_mod(int x, int y);
+ extern char *get_time();
+ %}
+
+ extern double My_variable;
+ extern int fact(int n);
+ extern int my_mod(int x, int y);
+ extern char *get_time();
+```
+
+다음과 같이 `example.c` 를 빌드하여 `example.so` 를 만들자.
+
+```bash
+unix % swig -python example.i
+unix % gcc -c example.c example_wrap.c \
+        -I/usr/local/include/python2.1
+unix % ld -shared example.o example_wrap.o -o _example.so
+```
+
+다음과 같이 python 에서 `example.so` 를 이용하자. c library 를 다른 모듈과 같이 `import` 하여 사용할 수 있다.
+
+```py
+>>> import example
+>>> example.fact(5)
+120
+>>> example.my_mod(7,3)
+1
+>>> example.get_time()
+'Sun Feb 11 23:01:07 1996'
+>>>
+```
+
+* python/c api
+
+가장 많이 사용하는 방법이다. python/c api 를 사용하여 `adder.c` 를 작성한다.
+
+```c
+//Python.h has all the required function definitions to manipulate the Python objects
+#include <Python.h>
+
+ //This is the function that is called from your python code
+static PyObject* addList_add(PyObject* self, PyObject* args){
+
+  PyObject * listObj;
+
+  //The input arguments come as a tuple, we parse the args to get the various variables
+  //In this case it's only one list variable, which will now be referenced by listObj
+  if (! PyArg_ParseTuple( args, "O", &listObj))
+    return NULL;
+
+  //length of the list
+  long length = PyList_Size(listObj);
+
+  //iterate over all the elements
+  long i, sum =0;
+  for(i = 0; i < length; i++){
+    //get an element out of the list - the element is also a python objects
+    PyObject* temp = PyList_GetItem(listObj, i);
+    //we know that object represents an integer - so convert it into C long
+    long elem = PyInt_AsLong(temp);
+    sum += elem;
+  }
+
+  //value returned back to python code - another python object
+  //build value here converts the C long to a python integer
+  return Py_BuildValue("i", sum);
+}
+
+//This is the docstring that corresponds to our 'add' function.
+static char addList_docs[] =
+    "add( ): add all elements of the list\n";
+
+/* This table contains the relavent info mapping -
+  <function-name in python module>, <actual-function>,
+  <type-of-args the function expects>, <docstring associated with the function>
+*/
+static PyMethodDef addList_funcs[] = {
+    {"add", (PyCFunction)addList_add, METH_VARARGS, addList_docs},
+    {NULL, NULL, 0, NULL}
+};
+
+/*
+addList is the module name, and this is the initialization block of the module.
+<desired module name>, <the-info-table>, <module's-docstring>
+*/
+PyMODINIT_FUNC initaddList(void){
+    Py_InitModule3("addList", addList_funcs,
+                   "Add all ze lists");
+}
+```
+
+다음과 같이 module 설치 스크립트 `setpu.py` 를 작성한다.
+
+```py
+#build the modules
+
+from distutils.core import setup, Extension
+
+setup(name='addList', version='1.0',  \
+      ext_modules=[Extension('addList', ['adder.c'])])
+```
+
+`python setup.py install` 와 같이 c module 을 설치한다.
+
+다음과 같이 python 에서 사용한다.
+
+```py
+#module that talks to the C code
+import addList
+
+l = [1,2,3,4,5]
+print "Sum of List - " + str(l) + " = " +  str(addList.add(l))
+```
+
+## python 2+3
+
+python 2 와 python 3 에서 실행될 수 있는 코드를 작성하자. 
+
+
+```py
+# python 2 에서 `with` 를 사용할 수 있다.
+from __future__ import with_statement
+
+# pythno 2 에서 python 3 print() 를 사용할 수 있다.
+print
+# Output:
+
+from __future__ import print_function
+print(print)
+# Output: <built-in function print>
+
+#
+import foo as foo
+
+# try exception 을 활용하여 version 별로 다른 module 을 import 할 수 있다.
+try:
+    import urllib.request as urllib_request  # for Python 3
+except ImportError:
+    import urllib2 as urllib_request  # for Python 2
+
+# python 2 에서 deprecated 12 functions 들을 사용하지 않도록 설정할 수 있다. 사용하면 NameError 가 발생한다.
+from future.builtins.disabled import *
+```
+
+## coroutine
+
+generator 는 data producer 이고 coroutine 은 data consumer 인 것을 제외하면 generator 와 coroutine 은 유사하다. coroutine 은 `send()` 를 이용하여 데이터를 외부에서 제공해야 한다. 
+
+```py
+# generator
+def fib():
+    a, b = 0, 1
+    while True:
+        yield a
+        a, b = b, a+b
+for i in fib():
+    print(i)
+
+# coroutine
+def grep(pattern):
+    print("Searching for", pattern)
+    while True:
+        line = (yield)
+        if pattern in line:
+            print(line)
+search = grep('coroutine')
+next(search)
+# Output: Searching for coroutine
+search.send("I love you")
+search.send("Don't you love me?")
+search.send("I love coroutines instead!")
+# Output: I love coroutines instead!
+search = grep('coroutine')
+# ...
+search.close()
+```
+
+## function caches
+
+함수의 `인자:리턴` 을 캐시에 저장한다.
+
+```py
+from functools import lru_cache
+
+@lru_cache(maxsize=32)
+def fib(n):
+    if n < 2:
+        return n
+    return fib(n-1) + fib(n-2)
+
+>>> print([fib(n) for n in range(10)])
+# Output: [0, 1, 1, 2, 3, 5, 8, 13, 21, 34]
+>>> fib.cache_clear()
+```
+
+## context managers
+
+context managers 는 resource 할당과 해제를 자동으로 해준다. 주로 `with` 와 함께 사용한다. 아래의 두블록은 같다.
+
+```py
+# 
+with open('some_file', 'w') as opened_file:
+    opened_file.write('Hola!')
+# 
+file = open('some_file', 'w')
+try:
+    file.write('Hola!')
+finally:
+    file.close()
+```
+
+class 에 `__enter__, __exit__` 를 정의하여 context amangers 로 만들어 보자. 그리고 `with` 에서 사용해 보자. exception 은 `__exit__` 에서 `traceback` 을 참고하여 handle 한다. 이상없으면 `True` 를 리턴한다.
+
+```py
+class File(object):
+    def __init__(self, file_name, method):
+        self.file_obj = open(file_name, method)
+    def __enter__(self):
+        return self.file_obj
+    def __exit__(self, type, value, traceback):
+        print("Exception has been handled")
+        self.file_obj.close()
+        return True
+with File('demo.txt', 'w') as opened_file:
+    opened_file.write('Hola!')
+```
+
+generator 를 이용하여 context manager 를 만들자.
+
+```py
+from contextlib import contextmanager
+
+@contextmanager
+def open_file(name):
+    f = open(name, 'w')
+    yield f
+    f.close()
+with open_file('foo') as f:
+    f.write('hola')
 ```
 
 # Library
