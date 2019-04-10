@@ -10,6 +10,7 @@
   - [args, kwargs](#args-kwargs)
   - [comprehension](#comprehension)
   - [generator](#generator)
+  - [Map, filter, reduce](#map-filter-reduce)
   - [Dunder methods (Magic methods)](#dunder-methods-magic-methods)
   - [pdb](#pdb)
   - [async, await](#async-await)
@@ -518,18 +519,151 @@ print(next(g))
 
 ## generator
 
-`iterator` 를 리턴하는 `function` 이다. `yield` 를 이용하여 `iterator` 를 리턴한다. `yield` 를 사용한 `function` 이라고 할 수도 있다.
+python 의 반복과 관련된 3 가지 키워드 `iterable, iterator, iteration` 이 중요하다.
 
-```python
-def only_odds(nums):
-    for n in nums:
-        if n % 2 == 1:
-            yield n
->>> odds = only_odds(range(100))
->>> next(odds)
-1
->>> next(odds)
-3
+* `iterable`
+  * `__iter__, __getitem__` 함수를 소유한 오브젝트이다. `iterator` 를 만들어줄 수 있다???
+* `iterator`
+  * `next (python2), __next__ (python3)` 함수를 소유한 오브젝트이다.
+* `iteration`
+  * 반복을 처리하는 절차를 의미한다.
+
+generator 는 곧 iterator 이다. 다음과 같이 generator 를 리턴하는 함수를 정의하고 `for..in..` 에서 사용해 보자. `in` 에서 `StopIteration` Error 가 발생할 때까지 매번 `next(generator)` 를 수행한다.
+
+```py
+def generator_function():
+    for i in range(10):
+        yield i
+for item in generator_function():
+    print(item)
+# Output: 0
+# 1
+# 2
+# 3
+# 4
+# 5
+# 6
+# 7
+# 8
+# 9
+```
+
+다음은 fibonacci 수열을 generator 를 이용하여 구현한 것이다.
+
+```py
+# generator version
+def fibon(n):
+    a = b = 1
+    for i in range(n):
+        yield a
+        a, b = b, a + b
+for x in fibon(1000000):
+    print(x)        
+```
+
+다음은 fibonacci 수열을 generator 없이 구현한 것이다. 매우 많은 메모리가 필요할 것이다.
+
+```py
+def fibon(n):
+    a = b = 1
+    result = []
+    for i in range(n):
+        result.append(a)
+        a, b = b, a + b
+    return result
+for x in fibon(1000000):
+    print(x)        
+```
+
+다음은 `next(generator)` 를 직접 호출한 예이다. 마지막에 `StopIteration` Error 가 발생했다.
+
+```py
+def generator_function():
+    for i in range(3):
+        yield i
+
+gen = generator_function()
+print(next(gen))
+# Output: 0
+print(next(gen))
+# Output: 1
+print(next(gen))
+# Output: 2
+print(next(gen))
+# Output: Traceback (most recent call last):
+#            File "<stdin>", line 1, in <module>
+#         StopIteration
+```
+
+다음은 문자열을 generator 처럼 사용해 본 예제이다. 문자열은 iterator 가 아니기 때문에 에러가 발생한다.
+
+```py
+my_string = "Yasoob"
+next(my_string)
+# Output: Traceback (most recent call last):
+#      File "<stdin>", line 1, in <module>
+#    TypeError: str object is not an iterator
+```
+
+그러나 다음과 같이 `iter` 함수를 이용하면 iterator 를 만들어 낼 수 있다.
+
+```py
+int_var = 1779
+iter(int_var)
+# Output: Traceback (most recent call last):
+#   File "<stdin>", line 1, in <module>
+# TypeError: 'int' object is not iterable
+# This is because int is not iterable
+
+my_string = "Yasoob"
+my_iter = iter(my_string)
+print(next(my_iter))
+# Output: 'Y'
+```
+
+## Map, filter, reduce
+
+`map` 은 `map(function_to_apply, list_of_inputs)` 와 같이 사용한다. `map` 은 `map object` 를 리턴하기 때문에 `list` 가 필요할 때가 있다.
+
+```py
+items = [1, 2, 3, 4, 5]
+squared = list(map(lambda x: x**2, items))
+
+def multiply(x):
+    return (x*x)
+def add(x):
+    return (x+x)
+
+funcs = [multiply, add]
+for i in range(5):
+    value = list(map(lambda x: x(i), funcs))
+    print(value)
+
+# Output:
+# [0, 0]
+# [1, 2]
+# [4, 4]
+# [9, 6]
+# [16, 8]
+```
+
+`filter` 는 `filter(function_to_apply, list_of_inputs)` 와 같이 사용한다. `filter` 은 `filter object` 를 리턴하기 때문에 `list` 가 필요할 때가 있다.
+
+```py
+number_list = range(-5, 5)
+less_than_zero = list(filter(lambda x: x < 0, number_list))
+print(less_than_zero)
+
+# Output: [-5, -4, -3, -2, -1]
+```
+
+`reduce` 는 `reduce(function_to_apply, list_of_inputs)` 와 같이 사용한다.
+
+```py
+from functools import reduce
+product = reduce((lambda x, y: x * y), [1, 2, 3, 4])
+
+# Output: 24
 ```
 
 ## Dunder methods (Magic methods)
