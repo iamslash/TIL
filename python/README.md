@@ -5,6 +5,7 @@
 - [Basic Usages](#basic-usages)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
+  - [slice](#slice)
   - [underscore](#underscore)
   - [args, kwargs](#args-kwargs)
   - [comprehension](#comprehension)
@@ -408,6 +409,36 @@ odict_keys(['a', 'c', 'd', 'e', 'b'])
 >>> d.move_to_end('b', last=False)
 >>> d
 OrderedDict([('b', None), ('a', None), ('c', None), ('d', None), ('e', None)])
+```
+
+## slice
+
+`list, tuple` 를 `[start:end:step]` 의 문법을 사용하여 새로운 객체를
+만들어 내는 방법이다.
+
+```py
+>>> a = ['a', 'b', 'c', 'd', 'e']
+>>> #     0    1    2    3    4 : positive index
+... #    -5   -4   -3   -2   -1 : negative index
+... 
+>>> a[1:]
+['b', 'c', 'd', 'e']
+>>> a[-4:]
+['b', 'c', 'd', 'e']
+>>> a[:2]
+['a', 'b']
+>>> a[:-3]
+['a', 'b']
+>>> a[2:4]
+['c', 'd']
+>>> a[-3:-1]
+['c', 'd']
+>>> a[0:5:2]
+['a', 'c', 'e']
+>>> a[4::-2]
+['e', 'c', 'a']
+>>> a[4::-1]
+['e', 'd', 'c', 'b', 'a']
 ```
 
 ## underscore
