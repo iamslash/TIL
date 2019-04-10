@@ -11,6 +11,9 @@
   - [comprehension](#comprehension)
   - [generator](#generator)
   - [Map, filter, reduce](#map-filter-reduce)
+  - [set](#set)
+  - [ternary operators](#ternary-operators)
+  - [multiple return](#multiple-return)
   - [Dunder methods (Magic methods)](#dunder-methods-magic-methods)
   - [pdb](#pdb)
   - [async, await](#async-await)
@@ -24,6 +27,7 @@
 - [Advanced Usages](#advanced-usages)
   - [Builtin functions](#builtin-functions)
   - [Decorator](#decorator)
+  - [virtual environment](#virtual-environment)
 - [Library](#library)
   - [regex](#regex)
   - [numpy](#numpy)
@@ -94,7 +98,7 @@ python3에 대해 정리한다.
 * tuple
 
 tuple은 list와 비슷하지만 원소를 추가, 갱신, 삭제가 불가한 immutable
-type이다.
+type 이다.
 
 ```python
 >>> t = ("A", 1, False)
@@ -273,8 +277,8 @@ set()
 
 * Counter
 
-dict의 subclass이다. 리스트 입력 데이터로 부터 값과 출현횟수를 각각
-key와 value로 하는 dict이다.
+dict 의 subclass 이다. 리스트 입력 데이터로 부터 값과 출현횟수를 각각
+key 와 value 로 하는 dict 이다.
 
 ```python
 >>> from collections import Counter
@@ -320,8 +324,8 @@ Counter({2: 5, 1: 4, 3: 1})
 
 * defaultdict
 
-dict의 subclass이다. 기본값을 지정할 수 있는 dict이다.  기본값은
-callable하거나 None이어야 한다.
+dict 의 subclass 이다. 기본값을 지정할 수 있는 dict 이다.  기본값은
+callable 하거나 None 이어야 한다.
 
 ```python
 >>> from collections import defaultdict
@@ -348,10 +352,28 @@ defaultdict(<function <lambda> at 0x0000025C0DA03E18>, {'a': 10, 'b': 'default-v
 defaultdict(<function <lambda> at 0x0000025C0DA03E18>, {'a': 10, 'b': 'default-value', 'c': 3})
 ```
 
+다음과 같이 재귀적으로 사용할 수도 있다.
+
+```py
+some_dict = {}
+some_dict['colours']['favourite'] = "yellow"
+# Raises KeyError: 'colours'
+
+from collections import defaultdict
+tree = lambda: defaultdict(tree)
+some_dict = tree()
+some_dict['colours']['favourite'] = "yellow"
+# Works fine
+
+import json
+print(json.dumps(some_dict))
+# Output: {"colours": {"favourite": "yellow"}}
+```
+
 * namedtuple
 
-tuple의 subclass이다. tuple은 index로만 접근 가능하지만
-namedtuple은 index, name으로 접근 가능하다.
+tuple 의 subclass 이다. tuple 은 index 로만 접근 가능하지만
+namedtuple 은 index, name 으로 접근 가능하다.
 
 ```python
 >>> import collections
@@ -370,8 +392,8 @@ Vector(x=11, y=22)
 
 * ChainMap
 
-dict의 subclass이다. 여러 개의 dict를 모아서 하나의 dict처럼 사용한다.
-여러개의 dict를 이용하여 하나의 dict를 생성하거나 update를 사용하는
+dict 의 subclass 이다. 여러 개의 dict 를 모아서 하나의 dict 처럼 사용한다.
+여러개의 dict 를 이용하여 하나의 dict 를 생성하거나 update 를 사용하는
 것보다 훨씬 효율적이다.
 
 ```python
@@ -397,7 +419,7 @@ ChainMap({}, {'b': 2})
 
 * OrderedDict
 
-dict의 subclass이다. 순서가 보장되는 dict이다.
+dict 의 subclass 이다. 순서가 보장되는 dict 이다.
 
 ```python
 >>> from collections import OrderedDict
@@ -666,6 +688,160 @@ product = reduce((lambda x, y: x * y), [1, 2, 3, 4])
 # Output: 24
 ```
 
+## set
+
+다음은 일반적인 예이다.
+
+```py
+some_list = ['a', 'b', 'c', 'b', 'd', 'm', 'n', 'n']
+duplicates = set([x for x in some_list if some_list.count(x) > 1])
+print(duplicates)
+# Output: set(['b', 'n'])
+
+a_set = {'red', 'blue', 'green'}
+print(type(a_set))
+# Output: <type 'set'>
+```
+
+다음은 교집합을 구하는 예이다.
+
+```py
+valid = set(['yellow', 'red', 'blue', 'green', 'black'])
+input_set = set(['red', 'brown'])
+print(input_set.intersection(valid))
+# Output: set(['red'])
+```
+
+다음은 합집합을 구하는 예이다.
+
+```py
+valid = set(['yellow', 'red', 'blue', 'green', 'black'])
+input_set = set(['red', 'brown'])
+print(input_set.difference(valid))
+# Output: set(['brown'])
+```
+
+## ternary operators
+
+삼항 연산자는 `condition_if_true if condition else condition_if_false` 와 같이 사용한다.
+
+```py
+is_nice = True
+state = "nice" if is_nice else "not nice"
+```
+
+튜플 삼항 연산자는 `(if_test_is_false, if_test_is_true)[test]` 와 같이 사용한다. 그러나 튜플의 내용이 evaluation 되기 때문에 자주 사용되지는 않는다.
+
+```py
+nice = True
+personality = ("mean", "nice")[nice]
+print("The cat is ", personality)
+# Output: The cat is nice
+
+condition = True
+print(2 if condition else 1/0)
+#Output is 2
+
+print((1/0, 2)[condition])
+#ZeroDivisionError is raised
+```
+
+다음은 shorthand ternary 이다.
+
+```py
+>>> True or "Some"
+True
+>>>
+>>> False or "Some"
+'Some'
+>>> output = None
+>>> msg = output or "No data returned"
+>>> print(msg)
+No data returned
+```
+
+## multiple return
+
+`global` 을 사용하면 multiple return 이 가능하다.
+
+```py
+def profile():
+    global name
+    global age
+    name = "Danny"
+    age = 30
+
+profile()
+print(name)
+# Output: Danny
+
+print(age)
+# Output: 30
+```
+
+tuple 을 이용하여 구현할 수도 있다.
+
+```py
+def profile():
+    name = "Danny"
+    age = 30
+    return (name, age)
+
+profile_data = profile()
+print(profile_data[0])
+# Output: Danny
+
+print(profile_data[1])
+# Output: 30
+```
+
+다음과 같이 unpacked tuple 로 구현할 수도 있다.
+
+```py
+def profile():
+    name = "Danny"
+    age = 30
+    return name, age
+
+profile_name, profile_age = profile()
+print(profile_name)
+# Output: Danny
+print(profile_age)
+# Output: 30
+```
+
+다음과 같이 named tuple 로 구현할 수도 있다.
+
+```py
+from collections import namedtuple
+def profile():
+    Person = namedtuple('Person', 'name age')
+    return Person(name="Danny", age=31)
+
+# Use as namedtuple
+p = profile()
+print(p, type(p))
+# Person(name='Danny', age=31) <class '__main__.Person'>
+print(p.name)
+# Danny
+print(p.age)
+#31
+
+# Use as plain tuple
+p = profile()
+print(p[0])
+# Danny
+print(p[1])
+#31
+
+# Unpack it immediatly
+name, age = profile()
+print(name)
+# Danny
+print(age)
+#31
+```
+
 ## Dunder methods (Magic methods)
 
 파이썬 인터프리터가 사용하는 내부적인 함수들이다.
@@ -782,11 +958,30 @@ if __name__ == "__main__":
   
 ## `__slots__`
 
-임의의 class는 attributes를 dict를 이용하여 저장한다. dict는 메모리를
-많이 소모한다.  __slots__를 이용하면 dict를 사용하지 않고 attributes를
-저장할 수 있기에 메모리를 적게 사용한다. 그러나 동적으로 attributes를
-정의 할 수 없다. 특정 class의 attributes는 생성과 동시에 정해지고
-runtime에 추가될 일이 없다면 __slots__를 이용하자.
+임의의 class 는 attributes 를 dict 를 이용하여 저장한다. dict 는 메모리를
+많이 소모한다.  `__slots__` 를 이용하면 `dict` 를 사용하지 않고 attributes 를
+저장할 수 있기에 메모리를 적게 사용한다. 그러나 동적으로 attributes 를
+정의 할 수 없다. 특정 class 의 attributes 는 생성과 동시에 정해지고
+runtime 에 추가될 일이 없다면 `__slots__` 를 이용하자. 40% 혹은 50% 까지 성능향상 할 수 있다고 함. [참고](http://book.pythontips.com/en/latest/__slots__magic.html)
+
+```py
+# members with dict
+class MyClass(object):
+    def __init__(self, name, identifier):
+        self.name = name
+        self.identifier = identifier
+        self.set_up()
+    # ...
+
+# members with __slots__
+class MyClass(object):
+    __slots__ = ['name', 'identifier']
+    def __init__(self, name, identifier):
+        self.name = name
+        self.identifier = identifier
+        self.set_up()
+    # ...
+```
 
 ## metaclass
 
@@ -999,6 +1194,8 @@ tossi==0.0.1
 > pip install -r requirements.txt
 ```
 
+
+
 # Advanced Usages
 
 ## Builtin functions
@@ -1090,6 +1287,108 @@ True
 
 어떤 함수의 앞, 뒤에 수행될 내용을 장식해 주는 기능을 한다. 
 
+다음은 `a_function_requiring_decoration()` 의 앞, 뒤에 수행될 내용을 장식하는 단순한 방법이다.
+
+```py
+def a_new_decorator(a_func):
+
+    def wrapTheFunction():
+        print("I am doing some boring work before executing a_func()")
+
+        a_func()
+
+        print("I am doing some boring work after executing a_func()")
+
+    return wrapTheFunction
+
+def a_function_requiring_decoration():
+    print("I am the function which needs some decoration to remove my foul smell")
+
+a_function_requiring_decoration()
+#outputs: "I am the function which needs some decoration to remove my foul smell"
+
+a_function_requiring_decoration = a_new_decorator(a_function_requiring_decoration)
+#now a_function_requiring_decoration is wrapped by wrapTheFunction()
+
+a_function_requiring_decoration()
+#outputs:I am doing some boring work before executing a_func()
+#        I am the function which needs some decoration to remove my foul smell
+#        I am doing some boring work after executing a_func()
+```
+
+다음은 위의 예를 `@` 를 이용하여 간단히 구현한 것이다.
+
+```py
+@a_new_decorator
+def a_function_requiring_decoration():
+    """Hey you! Decorate me!"""
+    print("I am the function which needs some decoration to "
+          "remove my foul smell")
+
+a_function_requiring_decoration()
+#outputs: I am doing some boring work before executing a_func()
+#         I am the function which needs some decoration to remove my foul smell
+#         I am doing some boring work after executing a_func()
+
+#the @a_new_decorator is just a short way of saying:
+a_function_requiring_decoration = a_new_decorator(a_function_requiring_decoration)
+```
+
+그러나 다음과 같이 `decorator` 의 이름이 의도와 다르게 출력된다.
+
+```py
+print(a_function_requiring_decoration.__name__)
+# Output: wrapTheFunction
+```
+
+다음과 같이 수정하여 `decorator` 의 이름이 올바르게 출력되도록 하자.
+
+```py
+from functools import wraps
+
+def a_new_decorator(a_func):
+    @wraps(a_func)
+    def wrapTheFunction():
+        print("I am doing some boring work before executing a_func()")
+        a_func()
+        print("I am doing some boring work after executing a_func()")
+    return wrapTheFunction
+
+@a_new_decorator
+def a_function_requiring_decoration():
+    """Hey yo! Decorate me!"""
+    print("I am the function which needs some decoration to "
+          "remove my foul smell")
+
+print(a_function_requiring_decoration.__name__)
+# Output: a_function_requiring_decoration
+```
+
+정리하면 `decorator` 는 다음과 같이 사용할 수 있다.
+
+```py
+from functools import wraps
+def decorator_name(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        if not can_run:
+            return "Function will not run"
+        return f(*args, **kwargs)
+    return decorated
+
+@decorator_name
+def func():
+    return("Function is running")
+
+can_run = True
+print(func())
+# Output: Function is running
+
+can_run = False
+print(func())
+# Output: Function will not run
+```
+
 다음은 `method decorator` 의 예이다.
 
 ```py
@@ -1139,6 +1438,23 @@ def bar():
 @DatetimeDecorator
 def baz():
   print('baz')    
+```
+
+## virtual environment
+
+다음과 같이 설치하고 사용한다.
+
+```bash
+$ pip install virtualenv
+$ virtualenv myproject
+$ source myproject/bin/activate
+$ deactivate
+```
+
+만약 virtual env 가 system site package 에 접근하길 원한다면 다음과 같이 하자.
+
+```bash
+$ virtualenv --system-site-packages mycoolproject
 ```
 
 # Library
