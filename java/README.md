@@ -26,7 +26,11 @@ java를 정리한다.
 * [초보자를 위한 Java 200제 (2판)](http://www.infopub.co.kr/index.asp)
   * [목차](http://www.infopub.co.kr/common/book_contents/05000262.html)
   * [src](http://www.infopub.co.kr/index.asp)
-
+* [JAVA 의 정석](http://www.yes24.com/Product/goods/24259565)
+  * [video](https://www.youtube.com/watch?v=xRkCbqR0v84&list=PLW2UjW795-f5LNeTO6VQB1ZIeZJ_kwEG1)
+  * [src](https://github.com/castello/javajungsuk3)
+  * [blog](https://codechobo.tistory.com/1?category=645496)
+  
 # Basic Usages
 
 ## Compile, Execution
