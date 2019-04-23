@@ -12,6 +12,9 @@
   - [Decision Making](#decision-making)
   - [Loops](#loops)
   - [Inner Classes](#inner-classes)
+- [Advanced Usages](#advanced-usages)
+  - [JAVA 8 Interface Changes](#java-8-interface-changes)
+  - [Functional Interfaces](#functional-interfaces)
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
@@ -298,6 +301,46 @@ public class My_class {
       });
    }
 }
+```
+
+# Advanced Usages
+
+## JAVA 8 Interface Changes
+
+java 8 의 interface 는 `default methods, static methods` 가 가능하다.
+
+```java
+public interface IA {
+
+	void foo(String str);
+
+	default void bar(String str){
+	}
+   
+   static void baz(String str) {      
+   }
+}
+```
+
+## Functional Interfaces
+
+single abstract method 를 갖는 interface 를 특별히 functional interface 라고 한다. 다음과 같이 `@FunctionalInterface` 를 사용하면 compiler 에게 functional interface 라는 힌트를 줄 수 있다.
+
+```java
+@FunctionalInterface
+public interface Runnable {
+  void run();
+}
+```
+
+java 8 부터 다음과 같이 functional interface 를 구현한 anonymous class instance 를 lambda expression 으로 생성할 수 있다.
+
+```java
+public void runMe(final Runnable r) {
+  r.run();
+}
+...
+runMe(() -> System.out.println( "Run!" ));
 ```
 
 # Quiz
