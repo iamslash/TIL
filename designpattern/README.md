@@ -127,13 +127,13 @@ public class A {
   
 - Creational Pattern
   - Abstract Factory
-    - Factory Method 를 추상화해서 타겟 오브젝트 인스턴스를 생성한다.
+    - 다양한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다.
     - AbstractFactory, ConcreteFactory, AbstractProduct, ConcreteProduct
   - Builder	
     - 생성 절차를 추상화하여 타겟 오브젝트 인스턴스를 생성한다.
     - Director, Builder, ConcreteBuilder, Product
   - Factory Method	
-    - 생성 방법을 추상화하여 타겟 오브젝트 인스턴스를 생성한다.
+    - 동일한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다.
     - ConcreteProduct, Creator, ConcreateCreator
   - Prototype	
     - 복제를 통해 타겟 오브젝트 인스턴스를 생성한다.
