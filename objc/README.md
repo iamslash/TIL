@@ -21,7 +21,7 @@
   - [Blocks](#blocks)
   - [Protocols](#protocols)
   - [Fast Enumeration](#fast-enumeration)
-  - [Enabling Staic Bhavior](#enabling-staic-bhavior)
+  - [Enabling Staic Behavior](#enabling-staic-behavior)
   - [Selectors](#selectors)
   - [Exception Handling](#exception-handling)
   - [Threading](#threading)
@@ -394,21 +394,27 @@ message 는 다음과 같은 형식을 갖는다.
 
 ```objc
 #import "ItsSuperclass.h"
-          @interface ClassName : ItsSuperclass < protocol_list >
-          {
-              instance variable declarations
-          }
-          method declarations
-          @end
+
+@interface ClassName : ItsSuperclass < protocol_list >
+{
+    instance variable declarations
+}
+
+method declarations
+
+@end
 ```
 
 일반적인 클래스 구현은 다음과 같다. 주로 `.m` 에 저장한다.
 
 ```objc
-  #import “ClassName.h”
-          @implementation ClassName
-          method definitions
-          @end
+#import “ClassName.h”
+
+@implementation ClassName
+
+method definitions
+
+@end
 ```
 
 ## Categories
@@ -824,7 +830,20 @@ for (key in dictionary) {
 }
 ```
 
-## Enabling Staic Bhavior
+## Enabling Staic Behavior
+
+objc 는 기본적으로 dynamic behavior 이다. 즉 compile time 보다는 run time 에 결정되는 것들이 많다. 그러나 다음과 같이 class 의 인스턴스를 `id` 형으로 저장하지 않는 다면 `static typing, type checking` 을 할 수 있다. 곧, static behavior 가 가능해진다.
+
+```objc
+// static typing
+Rectangle *thisObject = [[Square alloc] init];
+
+// type checking
+Shape     *aShape;
+Rectangle *aRect;
+aRect = [[Rectangle alloc] init];
+aShape = aRect;
+```
 
 ## Selectors
 
@@ -854,8 +873,125 @@ SEL request = getTheSelector();
 
 ## Exception Handling
 
+`@try, @catch, @throw, @finally` 등으로 exception handling 한다.
+
+```objc
+// Basic Exception
+Cup *cup = [[Cup alloc] init];
+@try {
+    [cup fill];
+} @catch (NSException *ex) {
+    NSLog(@"main: Caught %@: %@", [ex name], [ex reason]);
+} @finally {
+    [cup release];
+}
+
+// Catching Different Types of Exception
+@try {
+    ...
+} @catch (CustomException *ce) {
+    ...
+} @catch (NSException * ne) {
+    ...
+} @catch (id ue) {
+    ...
+} @finally {
+    ...
+}
+
+// Throwing Exceptions
+NSException *ex = [NSException exceptionWithName:@"HotTeaException" reason:@"The tea is too hot" userInfo:nil];
+@throw exception;
+```
+
 ## Threading
+
+```objc
+// locking a method using self
+- (void)Foo {
+    @synchronized(self) {
+        // ciritical code
+        ...
+    }
+}
+
+// locking a method using a custom semaphore
+Account* account = [Account accountFromString:[ccountField stringValue]];
+id accountSemaphore = [Account semaphore];
+@synchronized(accountSemaphore) {
+    // ciritical code.
+    ...
+}
+```
 
 ## Remote Messaging
 
+updating...
+
 ## Using C++ With Objective-C
+
+objc 에서 c++ 를 사용하고 싶다면 `*.mm` 를 작성해야 한다.
+objc 는 c++ 의 virtual function 을 지원하지 않는다.
+그리고 c++ 의 constructor, destructor 를 호출하지 않는다.
+
+```objc
+/* Hello.mm
+* Compile with: g++ -x objective-c++ -framework Foundation Hello.mm  -o hello
+*/
+#import <Foundation/Foundation.h>
+class Hello {
+    private:
+        id greeting_text;  // holds an NSString
+    public:
+        Hello() {
+            greeting_text = @"Hello, world!";
+        }
+        Hello(const char* initial_greeting_text) {
+            greeting_text = [[NSString alloc]
+initWithUTF8String:initial_greeting_text];
+        }
+        void say_hello() {
+            printf("%s\n", [greeting_text UTF8String]);
+        } 
+};
+
+@interface Greeting : NSObject {
+    @private
+        Hello *hello;
+}
+- (id)init;
+- (void)dealloc;
+- (void)sayGreeting;
+- (void)sayGreeting:(Hello*)greeting;
+@end
+
+@implementation Greeting
+- (id)init {
+    if (self = [super init]) {
+        hello = new Hello();
+}
+    return self;
+}
+- (void)dealloc {
+    delete hello;
+    [super dealloc];
+}
+- (void)sayGreeting {
+    hello->say_hello();
+}
+- (void)sayGreeting:(Hello*)greeting {
+    greeting->say_hello();
+}
+@end
+int main() {
+    NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+    Greeting *greeting = [[Greeting alloc] init];
+    [greeting sayGreeting];
+    Hello *hello = new Hello("Bonjour, monde!");
+    [greeting sayGreeting:hello];
+    delete hello;
+    [greeting release];
+    [pool release];
+    return 0;
+}
+```
