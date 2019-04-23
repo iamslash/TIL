@@ -127,13 +127,13 @@ public class A {
   
 - Creational Pattern
   - Abstract Factory
-    - 다양한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다.
-    - AbstractFactory, ConcreteFactory, AbstractProduct, ConcreteProduct
+    - 다양한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다. 예를 들어 LG부품 인터페이스를 상속받는 LG키보드, LG마우스 클래스의 생성방법과 MS부품 인터페이스를 상속받는 MS키보드, MS마우스 클래스의 생성방법을 추상화한다.
+    - AbstractFactory, ConcreteFactory1, ConcreteFactory2, AbstractProductA, ConcreteProductA1, ConcreteProductA2, AbstractProductB, ConcreteProductB1, ConcreteProductB2
   - Builder	
     - 생성 절차를 추상화하여 타겟 오브젝트 인스턴스를 생성한다.
     - Director, Builder, ConcreteBuilder, Product
   - Factory Method	
-    - 동일한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다.
+    - 동일한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다. 예를 들어 부품 인터페이스를 상속받는 키보드, 마우스 클래스의 생성방법을 추상화한다.
     - ConcreteProduct, Creator, ConcreateCreator
   - Prototype	
     - 복제를 통해 타겟 오브젝트 인스턴스를 생성한다.
