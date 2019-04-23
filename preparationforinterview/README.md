@@ -27,6 +27,7 @@
 * object oriented design
   * [object oriented design quiz](/objectorienteddesign/README.md@quiz)
   * [object oriented design](/objectorienteddesign/)
+  * [design pattern](/designpattern/README.md)
 * systemdesign & scalability
   * [systemdesign & scalability quiz](/systemdesign/README.md#quiz)
   * [system design](/systemdesign/README.md)
