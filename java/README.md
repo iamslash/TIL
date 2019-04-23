@@ -15,12 +15,15 @@
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
+
 # Abstract
 
 java를 정리한다.
 
 # Materials
 
+* [Advanced Java](http://enos.itcollege.ee/~jpoial/allalaadimised/reading/Advanced-java.pdf)
+  * java 의 고급내용
 * [learn java in Y minutes](https://learnxinyminutes.com/docs/java/)
 * [java @ tutorialspoint](https://www.tutorialspoint.com/java/)
 * [초보자를 위한 Java 200제 (2판)](http://www.infopub.co.kr/index.asp)

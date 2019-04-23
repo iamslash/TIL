@@ -30,6 +30,8 @@ c#에 대해 정리한다.
 
 * [effective c#](http://www.aladin.co.kr/shop/wproduct.aspx?ItemId=873761)
   * 실력자 bill wagner의 번역서
+* [An advanced introduction to C# @ codeproject](https://www.codeproject.com/Articles/1094079/An-advanced-introduction-to-Csharp-Lecture-Notes-P)
+  * 기초부터 고급까지 정리된 글
 
 # References
 
