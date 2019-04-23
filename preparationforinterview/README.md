@@ -23,6 +23,7 @@
   * [백준온라인알고리즘문제풀이강좌](https://code.plus/courses/1)
 * Math & Logic Puzzles
   * [math & logic puzzles quiz](/brainteasers/README.md#quiz)
+  * [design pattern](/designpattern/README.md)
 * object oriented design
   * [object oriented design quiz](/objectorienteddesign/README.md@quiz)
   * [object oriented design](/objectorienteddesign/)
