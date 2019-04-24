@@ -12,9 +12,13 @@
   - [Decision Making](#decision-making)
   - [Loops](#loops)
   - [Inner Classes](#inner-classes)
-- [Advanced Usages](#advanced-usages)
-  - [JAVA 8 Interface Changes](#java-8-interface-changes)
+  - [java 8 Interface Changes](#java-8-interface-changes)
+  - [Marker Interfaces](#marker-interfaces)
   - [Functional Interfaces](#functional-interfaces)
+  - [Anonymous Classes](#anonymous-classes)
+  - [Enum](#enum)
+  - [Annotation](#annotation)
+- [Advanced Usages](#advanced-usages)
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
@@ -303,9 +307,7 @@ public class My_class {
 }
 ```
 
-# Advanced Usages
-
-## JAVA 8 Interface Changes
+## java 8 Interface Changes
 
 java 8 의 interface 는 `default methods, static methods` 가 가능하다.
 
@@ -319,6 +321,17 @@ public interface IA {
    
    static void baz(String str) {      
    }
+}
+```
+
+## Marker Interfaces
+
+다음과 같이 몸체가 없는 interface 를 marker interface 라고 한다. 이것을 상속받으면 단지 상속받았다는 표시만 하기 때문에 marker interface 라고 한다.
+
+```java
+public interface Cloneable {
+}
+public interface Serializable {   
 }
 ```
 
@@ -342,6 +355,265 @@ public void runMe(final Runnable r) {
 ...
 runMe(() -> System.out.println( "Run!" ));
 ```
+
+## Anonymous Classes
+
+anonymous function 처럼 interface 를 구현한 클래스를 이름없이 생성할 수 있다. 다음은 `Runnable` 인터페이스를 상속받는 클래스를 이름없이 생성하는 예이다.
+
+```java
+public class AnonymousClass {
+   public static void main( String[] args ) {
+      new Thread(
+         new Runnable() {
+            @Override
+            public void run() {
+            // Implementation here
+            }
+         }
+      ).start();
+   }
+}
+```
+
+## Enum
+
+다음은 요일을 표현한 class 이다.
+
+```java
+public class DaysOfTheWeekConstants {
+   public static final int MONDAY = 0;
+   public static final int TUESDAY = 1;
+   public static final int WEDNESDAY = 2;
+   public static final int THURSDAY = 3;
+   public static final int FRIDAY = 4;
+   public static final int SATURDAY = 5;
+   public static final int SUNDAY = 6;
+}
+
+public boolean isWeekend( int day ) {
+   return( day == SATURDAY || day == SUNDAY );
+}
+```
+
+위의 예를 enum 을 사용하여 다음과 같이 간단히 구현할 수 있다. 
+
+```java
+public enum DaysOfTheWeek {
+   MONDAY,
+   TUESDAY,
+   WEDNESDAY,
+   THURSDAY,
+   FRIDAY,
+   SATURDAY,
+   SUNDAY
+}
+
+public boolean isWeekend( DaysOfTheWeek day ) {
+   return( day == SATURDAY || day == SUNDAY );
+}
+```
+
+enum 은 특수한 class 이다. 다음과 같이 instance field, constructor, method 등을 갖을 수 있다.
+
+```java
+public enum DaysOfTheWeekFields {
+   
+   MONDAY(false),
+   TUESDAY(false),
+   WEDNESDAY(false),
+   THURSDAY(false),
+   FRIDAY(false),
+   SATURDAY(true),
+   SUNDAY(true);
+
+   private final boolean isWeekend;
+
+   private DaysOfTheWeekFields(final boolean isWeekend) {
+      this.isWeekend = isWeekend;
+   }
+
+   public boolean isWeekend() {
+      return isWeekend;
+   }
+}
+
+public boolean isWeekend(DaysOfTheWeek day) {
+   return day.isWeekend();
+}
+```
+
+enum 은 class 이기 때문에 다음과 같이 interface 를 구현할 수도 있다.
+
+```java
+interface DayOfWeek {
+   boolean isWeekend();
+}
+
+public enum DaysOfTheWeekInterfaces implements DayOfWeek {
+   MONDAY() {
+      @Override
+      public boolean isWeekend() {
+         return false;
+      }
+   },
+   TUESDAY() {
+      @Override
+      public boolean isWeekend() {
+         return false;
+      }
+   },
+   WEDNESDAY() {
+      @Override
+      public boolean isWeekend() {
+         return false;
+      }
+   },
+   THURSDAY() {
+   @Override
+      public boolean isWeekend() {
+         return false;
+      }
+   },
+   FRIDAY() {
+      @Override
+      public boolean isWeekend() {
+         return false;
+      }
+   },
+   SATURDAY() {
+      @Override
+      public boolean isWeekend() {
+         return true;
+      }
+   },
+   SUNDAY() {
+      @Override
+      public boolean isWeekend() {
+         return true;
+      }
+   };
+}
+```
+
+위의 예를 `@Override` 를 하나 사용하여 더욱 간략히 구현할 수도 있다.
+
+```java
+public enum DaysOfTheWeekFieldsInterfaces implements DayOfWeek {
+   MONDAY( false ),
+   TUESDAY( false ),
+   WEDNESDAY( false ),
+   THURSDAY( false ),
+   FRIDAY( false ),
+   SATURDAY( true ),
+   SUNDAY( true );
+   private final boolean isWeekend;
+   private DaysOfTheWeekFieldsInterfaces( final boolean isWeekend ) {
+      this.isWeekend = isWeekend;
+   }
+   @Override
+   public boolean isWeekend() {
+      return isWeekend;
+   }
+}
+```
+
+컴파일러는 enum 을 다음과 같이 변환한다. 즉 `Enum<...>` generic 을 상속받는 class 로 변환된다.
+
+```java
+public class DaysOfTheWeek extends Enum<DaysOfTheWeek> {
+   // Other declarations here
+}
+```
+
+## Annotation
+
+annotation 은 특수한 interface 이다. `@interface` 를 이용하여 다음과 같이 선언한다. class, method, field 등등에 `key=value` 형태의 추가정보를 주입할 수 있다.
+
+```java
+public @interface SimpleAnnotation {
+}
+
+public @interface SimpleAnnotationWithAttributes {
+   String name();
+   int order() default 0;
+}
+```
+
+예를 들어 다음과 같이 `SimpleAnnotationWithValue` 를 선언하고 field `aaa` 에 사용하면 `aaa` 에 `value=new annotation` 가 추가된다.
+
+```java
+public @interface SimpleAnnotationWithValue {
+   String value();
+}
+
+@SimpleAnnotationWithValue( "new annotation" )
+public int aaa;
+```
+
+다음은 builtin annotation 들이다.
+
+| name | desc | type |
+|:-----|:-----|:-----|
+| `@Deprecated` | something deprecated | |
+| `@Override` | overrided method | |
+| `@SuppressWarnings` | suppress compile warnings | |
+| `@SafeVarargs` | suppress variable arguments warning | |
+| `@Retention` | retention of annotation | `SOURCE, CLASS, RUNTIME` |
+| `@Target` | target of annotation | `ANNOTATION_TYPE, CONSTRUCTOR, FIELD, LOCAL_VARIABLE, METHOD, PACKAGE, PARAMETER, TYPE, TYPE_PARAMETER, TYPE_USE` |
+| `@Documented` | documented in javadoc | |
+| `@Inherited` | this annotation will be inherited | |
+| `@FunctionalInterface` | for functional interface | |
+| `@Repeatable` | repeatable annotation | |
+
+`@Target` 를 사용하면 다음과 같이 annotation 의 대상이 되는 자료형을 정할 수 있다.
+
+```java
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
+@Target( { ElementType.FIELD, ElementType.METHOD } )
+public @interface AnnotationWithTarget {
+}
+```
+
+annotation 은 기본적으로 상속되지 않는다. 그러나 `@Inherited` 를 사용하면 상속된다.
+
+```java
+@Target( { ElementType.TYPE } )
+@Retention( RetentionPolicy.RUNTIME )
+@Inherited
+@interface InheritableAnnotation {
+}
+
+@InheritableAnnotation
+public class Parent {
+}
+
+public class Child extends Parent {
+}
+```
+
+다음은 `@Repeatable` 를 사용한 예이다.
+
+```java
+@Target( ElementType.METHOD )
+@Retention( RetentionPolicy.RUNTIME )
+public @interface RepeatableAnnotations {
+   RepeatableAnnotation[] value();
+}
+@Target( ElementType.METHOD )
+@Retention( RetentionPolicy.RUNTIME )
+@Repeatable( RepeatableAnnotations.class )
+public @interface RepeatableAnnotation {
+   String value();
+};
+@RepeatableAnnotation( "repeatition 1" )
+@RepeatableAnnotation( "repeatition 2" )
+public void performAction() {
+   // Some code here
+}
+```
+
+# Advanced Usages
 
 # Quiz
 
