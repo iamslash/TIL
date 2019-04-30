@@ -18,7 +18,7 @@
   - [Anonymous Classes](#anonymous-classes)
   - [Enum](#enum)
   - [Annotation](#annotation)
-- [Advanced Usages](#advanced-usages)
+  - [Generics](#generics)
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
@@ -613,7 +613,149 @@ public void performAction() {
 }
 ```
 
-# Advanced Usages
+## Generics
+
+다음은 generic interface 의 예이다. actual type 은 generic interface 를 구현한 class 를 작성할 때 사용한다.
+
+```java
+public interface GenericInterfaceOneType< T > {
+   void performAction( final T action );
+}
+
+public interface GenericInterfaceSeveralTypes< T, R > {
+   R performAction( final T action );
+}
+
+public class ClassImplementingGenericInterface implements GenericInterfaceOneType< String > {
+   @Override
+   public void performAction( final String action ) {
+      // Implementation here
+   }
+}
+```
+
+다음은 generic class 의 예이다. actual type 은 generic class 의 instance 를 생성하거나 class 에서 상속받을 때 사용한다.
+
+```java
+public class GenericClassOneType< T > {
+   public void performAction( final T action ) {
+      // Implementation here
+   }
+}
+
+public class GenericClassImplementingGenericInterface< T > implements GenericInterfaceOneType< T > {
+   @Override
+   public void performAction( final T action ) {
+      // Implementation here
+   }
+}
+```
+
+다음은 generic method 의 예이다. actual type 은 generic method 를
+호출할 때 사용한다.
+
+```java
+public< T, R > R performAction( final T action ) {
+   final R result = ...;
+   // Implementation here
+   return result;
+}
+
+protected abstract< T, R > R performAction( final T action );
+static< T, R > R performActionOn( final Collection< T > action ) {
+   final R result = ...;
+   // Implementation here
+   return result;
+}  
+
+public class GenericMethods< T > {
+   public< R > R performAction( final T action ) {
+      final R result = ...;
+      // Implementation here
+      return result;
+   }
+   public< U, R > R performAnotherAction( final U action ) {
+      final R result = ...;
+      // Implementation here
+      return result;
+   }
+}
+
+public class GenericMethods< T > {
+   public GenericMethods( final T initialAction ) {
+      // Implementation here
+   }
+   public< J > GenericMethods( final T initialAction, final J nextAction ) {
+      // Implementation here
+   }
+}
+```
+
+generic 의 type 에 primitive type 은 사용할 수 없다. primitive Wrapper type 를 사용해야 한다. generic method 의 경우 argument 로 primitive type 이 전달될 때 primitive wrapper type 으로 형변환 된다. 이것을 boxing 이라고 한다.
+
+```java
+final List< Long > longs = new ArrayList<>();
+final Set< Integer > integers = new HashSet<>();
+
+final List< Long > longs = new ArrayList<>();
+longs.add( 0L ); // ’long’ is boxed to ’Long’
+long value = longs.get( 0 ); // ’Long’ is unboxed to ’long’
+// Do something with value
+```
+
+generic 은 compile time 에 type erasure 를 한다. 즉 type 결정을 runtime 에 하기 위해 compile time 에 generic type 을 지운다. 따라서 다음과 같은 코드는 compile 할 때 method 가 중복 선언되었다는 오류를 발생한다.
+
+```java
+void sort( Collection< String > strings ) {
+   // Some implementation over strings heres
+}
+void sort( Collection< Number > numbers ) {
+   // Some implementation over numbers here
+}
+```
+generic 의 array 는 만들 수 없다.
+
+```java
+public< T > void performAction( final T action ) {
+   T[] actions = new T[0];
+}
+```
+
+generic type 을 `extends` 를 사용하여 자신 혹은 후손으로 제한할 수 있다.
+
+```java
+public< T extends InputStream > void read( final T stream ) {
+   // Some implementation here
+}
+public< T extends Serializable > void store( final T object ) {
+   // Some implementation here
+}  
+public< T, J extends T > void action( final T initial, final J next ) {
+   // Some implementation here
+}
+public< T extends InputStream &amp; Serializable > 
+void storeToRead( final T stream ) {
+   // Some implementation here
+}
+public< T extends Serializable &amp; Externalizable &amp; Cloneable > 
+void persist(final T object ) {
+   // Some implementation here
+}
+```
+
+다음은 method 의 argument 에 generic type 을 사용한 예이다.
+
+```java
+public void store( final Collection< ? extends Serializable > objects ) {
+   // Some implementation here
+}
+public void store( final Collection< ? > objects ) {
+   // Some implementation here
+}
+public void interate( final Collection< ? super Integer > objects ) {
+   // Some implementation here
+}
+```
 
 # Quiz
 
