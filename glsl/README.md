@@ -30,6 +30,9 @@ glsl에 대해 정리한다.
 
 # Material
 
+* [shader playground](http://shader-playground.timjones.io/)
+  * online compiler
+  * [src](https://github.com/tgjones/shader-playground) 
 - [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3](http://www.opengl-redbook.com/)
   - opengl red book
   - [src](https://github.com/openglredbook/examples)
