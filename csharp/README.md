@@ -10,6 +10,7 @@
   - [Datatypes](#datatypes)
   - [Constants](#constants)
   - [Preprocessor Directives](#preprocessor-directives)
+  - [Concurrencies](#concurrencies)
 - [Advanced Usages](#advanced-usages)
   - [Atrributes](#atrributes)
 - [Tips](#tips)
@@ -28,6 +29,7 @@ c#에 대해 정리한다.
 
 # Material
 
+* [예제로 배우는 csharp 프로그래밍](http://www.csharpstudy.com/)
 * [effective c#](http://www.aladin.co.kr/shop/wproduct.aspx?ItemId=873761)
   * 실력자 bill wagner의 번역서
 * [An advanced introduction to C# @ codeproject](https://www.codeproject.com/Articles/1094079/An-advanced-introduction-to-Csharp-Lecture-Notes-P)
@@ -314,6 +316,70 @@ dear"
 #warning
 #region
 #endregion
+```
+
+## Concurrencies
+
+* [C# 멀티쓰레딩](http://www.csharpstudy.com/Threads/thread.aspx)
+
+thread 는 다음과 같이 `Thread, ThreadStart` 를 생성하여 사용한다.
+
+```cs
+    using System;
+    using System.Threading;
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            new Program().DoTest();
+        }
+
+        void DoTest()
+        {
+            Thread t1 = new Thread(new ThreadStart(Run));
+            t1.Start();
+            Run();         
+        }
+
+        // 출력
+        // Thread#1: Begin
+        // Thread#3: Begin
+        // Thread#1: End
+        // Thread#3: End
+
+        void Run()
+        {
+            Console.WriteLine("Thread#{0}: Begin", Thread.CurrentThread.ManagedThreadId);
+            // Do Something
+            Thread.Sleep(3000);
+            Console.WriteLine("Thread#{0}: End", Thread.CurrentThread.ManagedThreadId);
+        }
+    }
+```
+
+thread pool 을 사용하면 thread 를 효과적으로 관리할 수 있다. `ThreadPool` 보다 `Task` 를 이용하여 thread pooling 하자.
+
+```cs
+    using System;    
+    using System.Threading.Tasks;    
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Task.Factory.StartNew(new Action<object>(Run), null);
+            Task.Factory.StartNew(new Action<object>(Run), "1st");
+            Task.Factory.StartNew(Run, "2nd");
+
+            Console.Read();
+        }
+
+        static void Run(object data)
+        {            
+            Console.WriteLine(data == null ? "NULL" : data);
+        }
+    }
 ```
 
 # Advanced Usages
