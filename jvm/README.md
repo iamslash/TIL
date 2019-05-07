@@ -5,6 +5,9 @@ jvm 에 대해 적는다.
 # Materials
 
 * [The JVM Architecture Explained](https://dzone.com/articles/jvm-architecture-explained)
+* [The Java® Virtual Machine Specification
+Java SE 7 Edition](https://docs.oracle.com/javase/specs/jvms/se7/html/index.html)
+* [자바 바이트코드 소개](https://iamsang.com/blog/2012/08/19/introduction-to-java-bytecode/)
 
 # Overview
 
