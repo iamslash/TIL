@@ -1,0 +1,171 @@
+# Abstract
+
+jvm 에 대해 적는다.
+
+# Materials
+
+* [The JVM Architecture Explained](https://dzone.com/articles/jvm-architecture-explained)
+
+# Overview
+
+![](jvm.png)
+
+# Example
+
+다음은 `Foo.java, Main.java` 를 작성하여 `javac Foo.java Main.java` 와 
+`javap -l -v Foo Main` 을 수행하여 disassemble 된 것이다.
+constant pool 과 java byte code 를 구경할 수 있다.
+
+* Foo.java
+
+```java
+class Foo {
+	public void Hello() {
+		System.out.println("Hello World");
+	}
+}
+```
+
+* Main.java
+
+```java
+public class Main {
+
+	public static void main(String args[]) {
+		Foo f = new Foo();
+		f.Hello();
+	}
+}
+```
+
+* Foo.class
+
+```
+Classfile /C:/temp/Foo.class
+  Last modified 2019. 5. 7; size 387 bytes
+  MD5 checksum a71df214fd9d74a08493e309a450405b
+  Compiled from "Foo.java"
+class Foo
+  minor version: 0
+  major version: 52
+  flags: ACC_SUPER
+Constant pool:
+   #1 = Methodref          #6.#14         // java/lang/Object."<init>":()V
+   #2 = Fieldref           #15.#16        // java/lang/System.out:Ljava/io/PrintStream;
+   #3 = String             #17            // Hello World
+   #4 = Methodref          #18.#19        // java/io/PrintStream.println:(Ljava/lang/String;)V
+   #5 = Class              #20            // Foo
+   #6 = Class              #21            // java/lang/Object
+   #7 = Utf8               <init>
+   #8 = Utf8               ()V
+   #9 = Utf8               Code
+  #10 = Utf8               LineNumberTable
+  #11 = Utf8               Hello
+  #12 = Utf8               SourceFile
+  #13 = Utf8               Foo.java
+  #14 = NameAndType        #7:#8          // "<init>":()V
+  #15 = Class              #22            // java/lang/System
+  #16 = NameAndType        #23:#24        // out:Ljava/io/PrintStream;
+  #17 = Utf8               Hello World
+  #18 = Class              #25            // java/io/PrintStream
+  #19 = NameAndType        #26:#27        // println:(Ljava/lang/String;)V
+  #20 = Utf8               Foo
+  #21 = Utf8               java/lang/Object
+  #22 = Utf8               java/lang/System
+  #23 = Utf8               out
+  #24 = Utf8               Ljava/io/PrintStream;
+  #25 = Utf8               java/io/PrintStream
+  #26 = Utf8               println
+  #27 = Utf8               (Ljava/lang/String;)V
+{
+  Foo();
+    descriptor: ()V
+    flags:
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 1: 0
+
+  public void Hello();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=1, args_size=1
+         0: getstatic     #2                  // Field java/lang/System.out:Ljava/io/PrintStream;
+         3: ldc           #3                  // String Hello World
+         5: invokevirtual #4                  // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+         8: return
+      LineNumberTable:
+        line 3: 0
+        line 4: 8
+}
+SourceFile: "Foo.java"
+```
+
+* Main.class
+
+```
+Classfile /C:/temp/Main.class
+  Last modified 2019. 5. 7; size 305 bytes
+  MD5 checksum 9db60d538675a632bf0d17b242a45b28
+  Compiled from "Main.java"
+public class Main
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+   #1 = Methodref          #6.#15         // java/lang/Object."<init>":()V
+   #2 = Class              #16            // Foo
+   #3 = Methodref          #2.#15         // Foo."<init>":()V
+   #4 = Methodref          #2.#17         // Foo.Hello:()V
+   #5 = Class              #18            // Main
+   #6 = Class              #19            // java/lang/Object
+   #7 = Utf8               <init>
+   #8 = Utf8               ()V
+   #9 = Utf8               Code
+  #10 = Utf8               LineNumberTable
+  #11 = Utf8               main
+  #12 = Utf8               ([Ljava/lang/String;)V
+  #13 = Utf8               SourceFile
+  #14 = Utf8               Main.java
+  #15 = NameAndType        #7:#8          // "<init>":()V
+  #16 = Utf8               Foo
+  #17 = NameAndType        #20:#8         // Hello:()V
+  #18 = Utf8               Main
+  #19 = Utf8               java/lang/Object
+  #20 = Utf8               Hello
+{
+  public Main();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+      LineNumberTable:
+        line 1: 0
+
+  public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=2, locals=2, args_size=1
+         0: new           #2                  // class Foo
+         3: dup
+         4: invokespecial #3                  // Method Foo."<init>":()V
+         7: astore_1
+         8: aload_1
+         9: invokevirtual #4                  // Method Foo.Hello:()V
+        12: return
+      LineNumberTable:
+        line 4: 0
+        line 5: 8
+        line 6: 12
+}
+SourceFile: "Main.java"
+```
+
