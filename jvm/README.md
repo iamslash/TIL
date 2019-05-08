@@ -182,4 +182,6 @@ SourceFile: "Main.java"
 
 # java class architecture
 
+* [Java Executable Workthrough](https://github.com/corkami/pics/blob/master/binary/class101/class101.pdf)
+
 ![](https://github.com/corkami/pics/blob/master/binary/CLASS.png?raw=true)
