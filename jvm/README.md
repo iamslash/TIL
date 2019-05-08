@@ -172,3 +172,6 @@ Constant pool:
 SourceFile: "Main.java"
 ```
 
+# java class architecture
+
+![](https://github.com/corkami/pics/blob/master/binary/CLASS.png?raw=true)
