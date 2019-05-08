@@ -8,6 +8,14 @@ jvm 에 대해 적는다.
 * [The Java® Virtual Machine Specification
 Java SE 7 Edition](https://docs.oracle.com/javase/specs/jvms/se7/html/index.html)
 * [자바 바이트코드 소개](https://iamsang.com/blog/2012/08/19/introduction-to-java-bytecode/)
+* [C# Java Virtual Machine @ sourceforge](https://sourceforge.net/projects/szjavavm/)
+  * opensource jvm in cs
+* [A toy JVM written in Go @ github](https://github.com/zxh0/jvm.go)
+  * opensource jvm in go
+* [Java Virtual Machine implementation in Python @github](https://github.com/gkbrk/python-jvm-interpreter)
+  * opensource jvm in python
+* [A toy Java Virtual Machine implement by C++](https://github.com/XUranus/JVM)
+  * opensource jvm in c++
 
 # Overview
 
