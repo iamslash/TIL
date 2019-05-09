@@ -64,11 +64,13 @@
 
 # pandas
 
+* [TIL/pandas](/pandas/README.md)
+
 # scikit-learn
 
-# [linear algebra](../linearalgebra/README.md)
+# [TIL/linear algebra](/linearalgebra/README.md)
 
-# [probability and statistics](../statistics/README.md)
+# [TIL/probability and statistics](/statistics/README.md)
 
 # k-nearest neighbors
 
@@ -92,6 +94,6 @@
 
 # recommend systems
 
-# [sql](../sql/README.md)
+# [TIL/sql](/sql/README.md)
 
 # mapreduce
