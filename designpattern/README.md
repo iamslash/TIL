@@ -127,10 +127,12 @@ public class A {
   
 - Creational Pattern
   - Abstract Factory
-    - 다양한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다. 예를 들어 LG부품 인터페이스를 상속받는 LG키보드, LG마우스 클래스의 생성방법과 MS부품 인터페이스를 상속받는 MS키보드, MS마우스 클래스의 생성방법을 추상화한다.
+    - 다양한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다. 예를 들어 LG부품 인터페이스를 상속받는 LG키보드, LG마우스 클래스의 생성방법과 MS부품 인터페이스를 상속받는 MS키보드, MS마우스 클래스의 생성방법을 추상화한다. 
+    - Factory Method 는 한가지 분류를 생성하지만 Abstract Factory 는 두가지 이상의 분류를 생성한다. 따라서 Factory Method 가 두개이상이다.
     - AbstractFactory, ConcreteFactory1, ConcreteFactory2, AbstractProductA, ConcreteProductA1, ConcreteProductA2, AbstractProductB, ConcreteProductB1, ConcreteProductB2
   - Builder	
-    - 생성 절차를 추상화하여 타겟 오브젝트 인스턴스를 생성한다.
+    - 생성 절차를 다양하게 하여 타겟 오브젝트 인스턴스를 생성한다.
+    - Director 는 생성절차를 다양하게 호출할 수 있다. 생성절차를 Builder 안으로 포함한다면 Factory Method 와 다를게 없다.
     - Director, Builder, ConcreteBuilder, Product
   - Factory Method	
     - 동일한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다. 예를 들어 부품 인터페이스를 상속받는 키보드, 마우스 클래스의 생성방법을 추상화한다.
@@ -163,6 +165,7 @@ public class A {
     - FlyweightFactory, Flyweight, UnsharedConcreteFlyweight, concreteFlyweight
   - Proxy
     - 노출되지 않은 형제 클래스에 접근할 수 있도록 한다.
+    - 형제 클래스에 접근한다는 점이 Adapter 와 다르다.
     - Subject, RealSubject, Proxy
 
 - Behaviorial Pattern
