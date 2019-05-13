@@ -202,6 +202,12 @@ public class A {
   - Visitor	(Defines a new operation to a class without change)
     - 기존의 클래스 변경없이 새로운 기능을 정의한다.
     - Element, ConcreteElement, Visitor, ConcreteVisitor
+
+- Question
+  - Factory Method vs Abstract Factory difference???
+  - Proxy vs Adapter difference??? 
+  - Decorator is better than Subclassing???
+  - Bridge vs Strategy difference???
     
 ---
 
