@@ -88,18 +88,37 @@ Ad Hoc 등 모든 기기에서 실행 가능한 앱의 Mobile Provisioning Profi
 
 # Mach-O 
 
-`a.ipa` 의 압축을 풀면 `~/Payload/a.app/Info.plist` 가 존재한다. `Excecutable file` 의 값이 실행할 `Mac-O` binary 파일이다. 다음은 `mach-o` 의 구조이다.
+`a.ipa` 의 압축을 풀면 `~/Payload/a.app/Info.plist` 가 존재한다. `Excecutable file` 의 값이 실행할 `Mac-O` binary 파일이다. 다음은 `mach-o` 의 대강의 구조이다. 자세한 구조는 [macho101.pdf @ github](https://github.com/corkami/pics/blob/master/binary/macho101/macho101.pdf) 를 참고한다.
 
 ![](mach-o_structure.png)
 
+[machoview @ sourceforge](https://sourceforge.net/projects/machoview/) 는 `Mach-O` 뷰어이다.
+
 `Mach-O` 는 크게 `mach header, load commands, Data` 로 구분된다. 
 
-* `Mach-O` 의 주요 항목은 다음과 같다.
+* 다음은 `Mach64Header` 의 주요 항목이다.
 
+![](mach64header.png)
 
 * `Load Command` 의 중요 항목은 다음과 같다. 그중 code signing 과 관계있는 것은 `LC_CODE_SIGNATURE` 이다.
 
+![](LoadCommand.png)
+
+`otool` 을 이용하여 `LC_CODE_SIGNATURE` 의 내용을 확인할 수 있다.
+
+```bash
+$ otool -l Payload/a.app/a | grep LC_CODE_SIGNATURE -A3
+      cmd LC_CODE_SIGNATURE
+  cmdsize 16
+  dataoff 3188480
+ datasize 59808
+```
+
 * `LC_CODE_SIGNATURE` 가 가리키는 `Code Signature` 의 중요 항목은 `CodeDirectory, Entitlement, Requirements, BlobWrapper` 등이 있다.
+
+![](LC_CODE_SIGNATURE.png)
+
+
 
 * CodeDirectory
 * Entitlement
