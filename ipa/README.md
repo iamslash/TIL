@@ -1,3 +1,7 @@
+# Abstract
+
+`ipa, Mach-O` 의 구조를 코드 서명의 관점에서 기술한다.
+
 # Materials
 
 * [iOS 코드 서명에 대해서](https://engineering.linecorp.com/ko/blog/ios-code-signing/)
@@ -114,15 +118,101 @@ $ otool -l Payload/a.app/a | grep LC_CODE_SIGNATURE -A3
  datasize 59808
 ```
 
-* `LC_CODE_SIGNATURE` 가 가리키는 `Code Signature` 의 중요 항목은 `CodeDirectory, Entitlement, Requirements, BlobWrapper` 등이 있다.
-
 ![](LC_CODE_SIGNATURE.png)
 
 
+* `LC_CODE_SIGNATURE` 가 가리키는 `Code Signature` 의 중요 항목은 `CodeDirectory, Entitlement, Requirements, BlobWrapper` 등이 있다. 다음은 `CodeSignature` 의 대강의 구조이다.
+
+![](codeSignature.png)
 
 * CodeDirectory
-* Entitlement
-* Requirements
+
+`CodeDirectory` 는 특정 파일과 실행 파일 조각들의 해시값들이 모여있다. 다음은 `CodeDirectory` 의 구조이다. `struct HashSlot specialHash[]` 와 `struct HashSlot codeHash[]` 를 주목하자.
+
+![](CodeDirectory.png)
+
+* `struct HashSlot codeHash[]`
+
+`codeHash[]` 는 실행 파일을 `pageSize (0x1000)` 의 크기로 나누고 각각의 해시를 포함한다.
+
+![](structHashSlotCodeHash.png)
+
+* `struct HashSlot specialHash[]`
+
+`specialHash[]` 는 인덱스에 따라 특별한 대상의 해시값을 가지고 있다.
+
+| index | description | example value |
+|:------|:------------|:--|
+| 0 | Entitlement (bound in code signature) | 4b255acb014ab5dc8cd63f5120baeef19309e340 |
+| 1 | Application Specific (largely unused) | 0000000000000000000000000000000000000000 |
+| 2 | Resource Directory (_CodeResources) | 35b65bb61f6b617e9a944cdada31cb78b47ab393 |
+| 3 | Internal requirements | cdbf07382a5a26998e34dc9d80070fc5db8c9230 |
+| 4 | Bound Info.plist (Manifest) | 5108d83c00eb7f294fb73914abdb0a1c977b92f2 |
+
+* `specialHash[0] Entitlement`
+
+`Entitlement` 는 `CodeSignature` 안에 존재한다.
+
+![](CodeSignatureEntitlement)
+
+`Entitlement` 내용 (`enum BlobMagic magic, uin32 length, char data[510]`) 을 복사하여 `Entitlement.txt` 를 제작하면 `shasum` command
+를 이용하여 `SHA-1` 값을 확인할 수 있고 이것은 앞서 언급한 예제의 값과 같다.
+
+```bash
+$ shasum Entitlement.txt
+4b255acb014ab5dc8cd63f5120baeef19309e340  Entitlement.txt
+```
+
+* `specialHash[1] Application Specific`
+
+not used yet
+
+* `specialHash[1] Resource Directory`
+
+`a.ipa` 의 `Payload/a.app/_CodeSignature/CodeResources` 파일의 해시값을 포함한다. 
+
+![](codeSignatureResources.png)
+
+`CodeResources` 파일은 `a.ipa` 에 존재하는 리소스 파일들에 대한 checksum 이 포함되어 있다. 다음과 같이 `shasum` command 로 해시값을 확인해볼 수 있다.
+
+```bash
+$ shasum Payload/a.app/_CodeSignature/CodeResources
+35b65bb61f6b617e9a944cdada31cb78b47ab393  Payload/a.app/_CodeSignature/CodeResources
+```
+
+앞서 언급한 예제의 값과 동일하다.
+
+* `specialHash[2] Internal requirements`
+
+`a.ipa` 에 존재하는 `Requirements` 부분을 가리킨다. `Requirement` 는 코드 서명을 검증하기 위한 규칙이다. 규칙은 여러개일 수 있고 그 숫자는 `struct Requirements` 의 `uint32 length` 의 값과 같다.
+`Requirements` 는 `codesign` command 를 이용하여 확인할 수 있다.
+
+```bash
+$ codesign --display -r- Payload/a.app/a
+Executable=Payload/a.app/a
+designated => identifier "com.iamslash.a" and anchor apple generic and certificate leaf[subject.CN] = "iPhone Distribution: XXXXXXX (XXXXXXX)" and certificate 1[field.1.2.840.113635.100.6.2.1] /* exists */
+```
+
+![](CodeSignatureRequirements.png)
+
+`Requirements` 와 `Requirement` 를 복사하여 `Requirements.txt` 파일로 저장하면 `shasum` command 를 이용하여 해시값을 확인할 수 있다.
+
+```bash
+$ shasum Requirements.txt
+cdbf07382a5a26998e34dc9d80070fc5db8c9230  Requirements.txt
+```
+
+앞서 언급한 예제의 값과 같다.
+
+* `specialHash[3] Bound Info.plist`
+
+`a.ipa` 의 `Info.plist` 의 해시값이다. 다음과 같이 확인할 수 있다.
+
+```bash
+$ shasum Payload/a.app/Info.plist
+5108d83c00eb7f294fb73914abdb0a1c977b92f2  Payload/a.app/Info.plist
+```
+
 * BlobWrapper
 
 `BlogWrapper` 안에 `CMS (Cryptographic Message Syntax` 서명이 있다. `jtool` command 를 이용하면 CMS 서명을 확인할 수 있다.
@@ -133,6 +223,8 @@ $ jtool --sig -v Payload/a.app/a
     Blob 4: Type: 10000 @41788: Blob Wrapper (4802 bytes) (0x10000 is CMS (RFC3852) signature)
 ```
 
+![](codeSignatureBlobWrapper.png)
+
 `BlogWrapper` 의 `data` 를 추출하여 `blobwrapper_data.txt` 로 저장하면 `openssl` 을 이용하여 내용을 확인할 수 있다.
 
 ```bash
@@ -141,7 +233,7 @@ PKCS7:
   type: pkcs7-signedData (1.2.840.113549.1.7.2)
   d.sign:
     version: 1
-    md_algs:
+    md_algs: 
         algorithm: sha256 (2.16.840.1.101.3.4.2.1)
         parameter: NULL
     contents:
@@ -168,5 +260,7 @@ PKCS7:
 ```
 
 `CodeDirectory` 의 내용을 변경하고 동일한 Developer Certificate 으로 서명해도 `CMS` 서명이 달라진다. 따라서 공격자가 코드를 변경하고 `CodeDirectory` 를 그에 맞게 수정하더라도 최초 작성자가 가지고 있는 Developer Certificate 이 없기 때문에 `CMS` 서명은 달라질 수 밖에 없다. 따라서 `CMS` 서명을 검증하면 앱의 무결성을 보장할 수 있다.
+
+![](codevalidation.png)
 
 `iOS` 는 앱을 실행하기 전에 `Mach-O` 의 해시값을 확인하고 `CMS` 서명을 검증한다.
