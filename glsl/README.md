@@ -79,7 +79,7 @@ shader 의 첫 줄에 다음과 같은 형식의 버전이 필요하다.
 다음은 opengl 과 glsl 의 버전목록이다. 
 
 | GLSL Version | OpenGL Version | Date | Shader Preprocessor |
-|:--|:--|:--|:--|:--|
+|:--|:--|:--|:--|
 | 1.10.59 |	2.0 |	30 April 2004 |	`#version 110` |
 | 1.20.8  |	2.1	| 07 September 2006 |	`#version 120` |
 | 1.30.10 |	3.0	| 22 November 2009	| `#version 130` |
@@ -179,9 +179,9 @@ void A(vec2 pos) {
   pos.y = 0.0;
 }
 // [0] .x .r .s
-// [2] .y .g .t
-// [3] .z .b .p
-// [4] .w .a .q
+// [1] .y .g .t
+// [2] .z .b .p
+// [3] .w .a .q
 
 void B(vec4 col) {
   vec3 c = col.rgb;
@@ -283,7 +283,7 @@ texture(aTexture, texCoord)
 
 화면 우측 중앙에 빨간 점 하나를 그리자.
 
-```c
+```glsl
 #version 450 core
 void main(void)
 {
@@ -291,8 +291,10 @@ void main(void)
 }
 ```
 
-```c
-#version 450 core out vec4 color; void main(void)
+```glsl
+#version 450 core 
+out vec4 color; 
+void main(void)
 {
   color = vec4(0.0, 0.8, 1.0, 1.0); 
 }
@@ -300,29 +302,36 @@ void main(void)
 
 ## Passing Data
 
-```cpp
+```glsl
 // Our rendering function
 virtual void render(double currentTime)
 {
-  const GLfloat color[] = { (float)sin(currentTime) * 0.5f + 0.5f,
-     
-  (float)cos(currentTime) * 0.5f + 0.5f, 0.0f, 1.0f };
+  const GLfloat color[] = { 
+    (float)sin(currentTime) * 0.5f + 0.5f,
+    (float)cos(currentTime) * 0.5f + 0.5f, 0.0f, 1.0f };
   glClearBufferfv(GL_COLOR, 0, color);
+  
   // Use the program object we created earlier for rendering
   glUseProgram(rendering_program);
-  GLfloat attrib[] = { (float)sin(currentTime) * 0.5f, (float)cos(currentTime) * 0.6f, 0.0f, 0.0f };
+  GLfloat attrib[] = { 
+    (float)sin(currentTime) * 0.5f, 
+    (float)cos(currentTime) * 0.6f, 0.0f, 0.0f };
+  
   // Update the value of input attribute 0
   glVertexAttrib4fv(0, attrib);
+  
   // Draw one triangle
   glDrawArrays(GL_TRIANGLES, 0, 3);
 }
 ```
 
-```c
+```glsl
 #version 450 core
+
 // 'offset' and 'color' are input vertex attributes 
 layout (location = 0) in vec4 offset;
 layout (location = 1) in vec4 color;
+
 // 'vs_color' is an output that will be sent to the next shader stage 
 out vec4 vs_color;
 void main(void)
@@ -331,19 +340,24 @@ void main(void)
     vec4(0.25, -0.25, 0.5, 1.0), 
     vec4(-0.25, -0.25, 0.5, 1.0), 
     vec4(0.25, 0.25, 0.5, 1.0));
-// Add 'offset' to our hard-coded vertex position 
+
+  // Add 'offset' to our hard-coded vertex position 
   gl_Position = vertices[gl_VertexID] + offset;
+  
   // Output a fixed value for vs_color
   vs_color = color;
 }
 ```
 
-```c
+```glsl
 #version 450 core
+
 // Input from the vertex shader
 in vec4 vs_color;
+
 // Output to the framebuffer
 out vec4 color;
+
 void main(void) {
   // Simply assign the color we were given by the vertex shader to our output
   color = vs_color;
@@ -354,16 +368,18 @@ void main(void) {
 
 `in, out` 변수들이 두개 이상인 경우 블록으로 만들어 사용하면 편하다.
 
-```c
+```glsl
 #version 450 core
+
 // 'offset' is an input vertex attribute
 layout (location = 0) in vec4 offset; 
 layout (location = 1) in vec4 color;
+
 // Declare VS_OUT as an output interface block 
 // Send color to the next stage
 out VS_OUT {
+  vec4 color;
 } vs_out;
-vec4 color;
 
 void main(void)
 {
@@ -371,15 +387,18 @@ void main(void)
     vec4(0.25, -0.25, 0.5, 1.0), 
     vec4(-0.25, -0.25, 0.5, 1.0), 
     vec4(0.25, 0.25, 0.5, 1.0));
+
   // Add 'offset' to our hard-coded vertex position 
   gl_Position = vertices[gl_VertexID] + offset;
+
   // Output a fixed value for vs_color
   vs_out.color = color;
 }
 ```
 
-```c
+```glsl
 #version 450 core
+
 // Declare VS_OUT as an input interface block 
 in VS_OUT {
   vec4 color; // Send color to the next stage
@@ -387,6 +406,7 @@ in VS_OUT {
 
 // Output to the framebuffer
 out vec4 color;
+
 void main(void) {
   // Simply assign the color we were given by the vertex shader to our  output
   color = fs_in.color;
@@ -399,7 +419,7 @@ void main(void) {
 
 Application 에서 vertex, fragment shader 에게 바뀌지 않는 값을 전달할 때 사용한다.
 
-Attribute variables communicate frequently changing values from the application to a vertex shader, uniform variables communicate infrequently changing values from the application to any shader, and varying variables communicate interpolated values from a vertex shader to a fragment shader.
+> * Attribute variables communicate frequently changing values from the application to a vertex shader, uniform variables communicate infrequently changing values from the application to any shader, and varying variables communicate interpolated values from a vertex shader to a fragment shader.
 
 * attribute
  
@@ -407,7 +427,7 @@ Application 에서 vetex shader 에게 자주 바뀌는 값을 전달할 때 사
 
 * varying
 
-vertex shader에서 fragment shader로 보간된 값을 전달할 때 사용한다.
+vertex shader 에서 fragment shader 로 보간된 값을 전달할 때 사용한다.
 
 ## Built-in Variables
 
