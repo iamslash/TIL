@@ -39,14 +39,15 @@
 # Materials
 
 - [cracking the coding interview](http://www.crackingthecodinginterview.com/)
+* [Designing Data-Intensive Applications](https://dataintensive.net/)
+* [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
+  - 유료 시스템 디자인 인터뷰
 - [system deisgn primer](https://github.com/donnemartin/system-design-primer#federation)
   - 킹왕짱 내가 다시 정리할 필요성을 못 느낀다.
 - [Azure Cloud Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
   - [infographic](https://azure.microsoft.com/en-us/resources/infographics/cloud-design-patterns/)
 - [AWS Architect](https://aws.amazon.com/ko/architecture/)
 - [GCP Solutions](https://cloud.google.com/solutions/)
-- [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
-  - 유료 시스템 디자인 인터뷰
 
 # Prerequisites
 
