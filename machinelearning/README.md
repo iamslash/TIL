@@ -86,6 +86,8 @@
   - 딥러닝 논문읽기 모임 동영상 시즌 1
 - [PR12 딥러닝 논문읽기 모임 season-2 @ youtube](https://www.youtube.com/watch?v=FfBp6xJqZVA&list=PLWKf9beHi3TgstcIn8K6dI_85_ppAxzB8&fbclid=IwAR2P2XP1dWIRhJtExFQ2t6ZxkRNyiFpnmI9749cEoU6OSjr67nCvggBP-5Y)
   - 딥러닝 논문읽기 모임 동영상 시즌 2
+- [Hands-On Machine Learning with Scikit-Learn and TensorFlow](http://www.hanbit.co.kr/store/books/look.php?p_code=B9267655530)
+  - [src](https://github.com/rickiepark/handson-ml)
 
 # Materials
 
@@ -160,7 +162,6 @@
   - 딥러닝 논문들을 task와 date별로 정리
 - [awesome deep learning papers @ github](https://github.com/terryum/awesome-deep-learning-papers)
   - 테리의 딥러닝 논문 추천
-- [Hands-On Machine Learning with Scikit-Learn and TensorFlow](https://www.amazon.com/gp/product/1491962291/ref=oh_aui_detailpage_o00_s00)
 - [tensorflow](https://www.tensorflow.org)
 - [TensorFlow Tutorials (Simple Examples)](https://github.com/nlintz/TensorFlow-Tutorials)
 - [Another TensorFlow Tutorials](https://github.com/pkmital/tensorflow_tutorials)
