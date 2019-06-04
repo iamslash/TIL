@@ -13,6 +13,7 @@
   
 # References
 
+* [A LaTeX template](https://github.com/STOM-Group/LaTeX-Paper-Template)
 * [introduction to LaTeX](https://tobi.oetiker.ch/lshort/lshort.pdf)
   * 약 200페이지의 레퍼런스
 * [detexify](http://detexify.kirelabs.org/classify.html)
