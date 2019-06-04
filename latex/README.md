@@ -4,11 +4,12 @@
 
 # Materials
 
+* [A simple guide to LaTeX - Step by Step](https://www.latex-tutorial.com/tutorials/)
+  * 간결한 튜토리얼 
+* [Learn LaTeX in 30 minutes](https://ko.sharelatex.com/learn/Learn_LaTeX_in_30_minutes)
 * [LaTeX tutorial](https://www.maths.tcd.ie/~dwilkins/LaTeXPrimer/)
   * 킹왕짱 튜토리얼
-* [Learn LaTeX in 30 minutes](https://ko.sharelatex.com/learn/Learn_LaTeX_in_30_minutes)
-* [beginngers tutorial](https://ko.sharelatex.com/blog/latex-guides/beginners-tutorial.html)
-
+  
 # References
 
 * [introduction to LaTeX](https://tobi.oetiker.ch/lshort/lshort.pdf)
@@ -33,15 +34,18 @@
 
 * 한글 사용하기
 
-```
+```latex
 \documentclass{article}
 \usepackage[T1]{fontenc}
 \usepackage{CJKutf8}
 \usepackage[english]{babel}
+
 \begin{document}
+
 \begin{CJK}{UTF8}{mj}
 한글이 됩니다.
 \end{CJK}
+
 \end{document}
 ```
 
