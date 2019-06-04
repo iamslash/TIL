@@ -8,4 +8,7 @@
   * 최고의 물리 엔진
 * [box2d-lite @ github](https://github.com/erincatto/box2d-lite)
   * 가벼운 [box2d](https://github.com/erincatto/Box2D)
+* [Box2D Physics @ youtube](https://www.youtube.com/watch?v=MsRROjQJxuo&list=PLRqwX-V7Uu6Zy4FyZtCHsZc_K0BrXzxfE)
+  * box2d 강의 
+
 
