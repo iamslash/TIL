@@ -6,6 +6,7 @@
 
 * [A simple guide to LaTeX - Step by Step](https://www.latex-tutorial.com/tutorials/)
   * 간결한 튜토리얼 
+* [LaTeX로 논문 쓰기 - 입문편](http://t-robotics.blogspot.com/2016/02/latex.html)
 * [Learn LaTeX in 30 minutes](https://ko.sharelatex.com/learn/Learn_LaTeX_in_30_minutes)
 * [LaTeX tutorial](https://www.maths.tcd.ie/~dwilkins/LaTeXPrimer/)
   * 킹왕짱 튜토리얼
