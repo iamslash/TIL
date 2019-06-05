@@ -6,37 +6,39 @@
 
 * [프로그래밍언어 by 이광근](https://ropas.snu.ac.kr/~kwang/4190.310/mooc/)
   * 서울대학교 프로그래밍 언어 동영상 강좌
+* [streem @ github](https://github.com/matz/streem)
+  * ruby 제작자 마츠모토가 만든 streem 언어 
 
-# Basic Usages
+# Features
 
-## Compile, Run
+* Compile, Run
 
-컴파일하고 실행하는 방법
+  * 컴파일하고 실행하는 방법
 
-## Print standard out
+* Print standard out
 
-화면에 출력하는 방법
+  * 화면에 출력하는 방법
 
-## Useful Keywords
+* Useful Keywords
 
-특이한 키워드들
+  * 특이한 키워드들
 
-## Data Types
+* Data Types
 
-## Control Flows
+* Control Flows
 
-## Loops
+* Loops
 
-## Collections compared to c++ containers
+* Collections compared to c++ containers
 
-## Collections
+* Collections
 
-## Functions
+* Functions
 
-## Struct, Class, Interface, AbstractClass
+* Struct, Class, Interface, AbstractClass
 
-## Closure
+* Closure
 
-## Lambda
+* Lambda
 
-## Exception
+* Exception
