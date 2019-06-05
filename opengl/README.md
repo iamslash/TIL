@@ -21,3 +21,19 @@ OpenGL을 정리한다. [OpenGL Superbible: Comprehensive Tutorial and Reference
 * [OpenGL and OpenGL-es Reference Pages](https://www.khronos.org/registry/OpenGL-Refpages/)
   * 각종 링크 모음
 * [awesome opengl](https://github.com/eug/awesome-opengl)
+
+# Basic Usage
+
+## Setup Projects
+
+* [Glitter](https://github.com/Polytonic/Glitter) 를 이용하면 assimp, bullet, glad, glfw, glm, std 등등의 라이브러리와 함께 프로젝트를 설정할 수 있다. cmake 를 이용하여 IDE projects 를 설정한다.
+
+```bash
+git clone --recursive https://github.com/Polytonic/Glitter
+cd Glitter
+mkdir build
+cd build
+cmake -G "Visual Studio 15 2017" ..
+```
+
+* [OpenGL-sandbox](https://github.com/OpenGL-adepts/OpenGL-sandbox) 는 Glitter 에 imgui 가 더해진 버전이다.
