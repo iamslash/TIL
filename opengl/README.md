@@ -5,8 +5,7 @@ OpenGL을 정리한다. [OpenGL Superbible: Comprehensive Tutorial and Reference
 # Materials
 
 - [Learn Opengl](https://learnopengl.com/)
-  - 상세한 설명이 인상적인 튜토리얼이다.
-  - VAO, VBO, EBO 를 그림으로 이해할 수 있었다.
+  - 킹왕짱 tutorial 이다.
   - [src](https://github.com/JoeyDeVries/LearnOpenGL)
 - [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3](http://www.opengl-redbook.com/)
   - opengl red book
