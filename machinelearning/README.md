@@ -91,6 +91,8 @@
 
 # Materials
 
+- [100+ Basic Machine Learning Interview Questions and Answers](https://theprofessionalspoint.blogspot.com/2019/01/100-basic-machine-learning-interview.html?m=1&fbclid=IwAR3VAZ_58yR5A7F2-YiYFdiV5bW2gwkz_aE8WnxbzZ6RHUZ7FvANj4l893I)
+  - machine learning 인터뷰 퀴즈 모음
 - [모두를 위한 컨벡스 최적화 (Convex Optimization For All)](https://wikidocs.net/book/1896)
   - 최적화 문제를 정리한 책 
 - [math for machine learning](https://mml-book.github.io/)
