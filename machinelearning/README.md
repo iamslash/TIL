@@ -7,11 +7,11 @@
 - [KLD (Kullback–Leibler divergence)](#kld-kullback%E2%80%93leibler-divergence)
 - [JSD (Jensson Shannon Divergence)](#jsd-jensson-shannon-divergence)
 - [Posterior](#posterior)
-- [Likelihood](#likelihood)
 - [Prior](#prior)
+- [Likelihood](#likelihood)
 - [Bayes' Rule](#bayes-rule)
 - [MLE (Maximum Likelihood Estimation)](#mle-maximum-likelihood-estimation)
-- [MLP (Maximum A Posterior)](#mlp-maximum-a-posterior)
+- [MAP (Maximum A Posterior)](#map-maximum-a-posterior)
 - [Supervised Learning](#supervised-learning)
 - [Unsupervised Learning](#unsupervised-learning)
 - [Semisupervised Learning](#semisupervised-learning)
@@ -346,7 +346,7 @@ JSD(p, q) = \frac {1}{2} D_{KL} (p || \frac {p + q}{2}) + D_{KL} (q || \frac {p 
 피부색의 밝기를 `x` 라고 하고 물고기의 종류를 `w` 라고 하자. 물고기가 농어일
 사건을 `w = w_{1}` 연어일 사건을 `w = w_{2}` 라고 하자.
 
-그렇다면 물고기의 피부 밝기가 0.5 일 때 그 물고기가 농어일 확률은 다음과 
+그렇다면 물고기의 피부 밝기가 `0.5` 일 때 그 물고기가 농어일 확률은 다음과 
 같이 표현할 수 있다.
 
 ![](img/posterior_ex.png)
@@ -363,16 +363,7 @@ P(w = w_{1} | x = 0.5) = P(w_{1} | x = 0.5)
 * `P(w_{1}|x) > P(w_{2}|x)` 라면 농어로 분류하자.
 * `P(w_{2}|x) > P(w_{1}|x)` 라면 연어로 분류하자.
 
-`P(w_{i}|x)` 를 사후확률 (Posterior) 라고 한다.
-
-# Likelihood
-
-* [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
-
-물고기를 적당히 잡아서 데이터를 수집해 보자. `P(x|w_{1})` 에 해당하는 농어의
-피부밝기 분포와 `P(x|x_{2})` 에 해당하는 연어의 피부밝기 분포를 그려보자.
-이렇게 관찰을 통해 얻은 확률 분포 `P(x|w_{i})` 를 가능도 (likelihodd)
-라고 부른다.
+확률분포 `P(w_{i}|x)` 를 바로 사후확률 (Posterior) 라고 한다.
 
 # Prior
 
@@ -381,6 +372,14 @@ P(w = w_{1} | x = 0.5) = P(w_{1} | x = 0.5)
 
 `x` 와 관계없이 애초에 농어가 잡힐 확률 `P(w_{1})`, 연어가 잡힐 확률 `P(w_{2})`
 를 사전확률 (Prior) 라고 한다. 이미 갖고 있는 사전 지식에 해당한다.
+
+# Likelihood
+
+* [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+
+물고기를 적당히 잡아서 데이터를 수집해 보자. `P(x|w_{1})` 에 해당하는 농어의
+피부밝기 분포와 `P(x|w_{2})` 에 해당하는 연어의 피부밝기 분포를 그려보자.
+이렇게 관찰을 통해 얻은 확률 분포 `P(x|w_{i})` 를 가능도 (likelihood) 라고 부른다.
 
 # Bayes' Rule
 
@@ -500,17 +499,17 @@ log \  likelihood &= \log (p(D|w) \\
 Classification 문제에서는 Bernouli Distribution 을 이용하여
 비슷한 방법으로 Cross Entropy Error 를 유도할 수 있다.
 
-# MLP (Maximum A Posterior)
+# MAP (Maximum A Posterior)
 
-MLE 가 Likelihood 를 최대화 시키는 것이라면 MLP 는 Posterior 를 최대화 시키는 것이다. Likelihood 와 Posterior 의 차이는 Prior 가 없느냐 있느냐이다. 
+MLE 가 Likelihood 를 최대화 시키는 것이라면 MAP 는 Posterior 를 최대화 시키는 것이다. Likelihood 와 Posterior 의 차이는 Prior 가 없느냐 있느냐이다. 
 `w` 를 데이터만 이용해서 구하고자 한다면 MLE 를 이용한다. 만약 `w` 를 
-데이터와 함께 사전지식까지 이용해서 구하고자 한다면 MLP 를 이용한다.
+데이터와 함께 사전지식까지 이용해서 구하고자 한다면 MAP 를 이용한다.
 
 Prior 를 조정해주면 고의적으로 `w` 의 분포를 조정해줄 수 있다. 예를 들어
 `w` 의 값을 0 주변에 배치하고 싶다면 0 을 중심으로 분포 되도록 `P(w)` 를 만들어 낼 수 있다. 이와 같이 Prior 를 조정하여 출력값을 조정하고 싶을 때
 MAP 를 사용한다.
 
-이제 MAP 를 계산해 보자. 몬저 Posterior 를 다음과 같이 표현할 수 있다.
+이제 MAP 를 계산해 보자. 먼저 Posterior 를 다음과 같이 표현할 수 있다.
 
 ![](img/mlp_eq_1.png)
 
