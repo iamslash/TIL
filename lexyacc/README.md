@@ -2,9 +2,10 @@
 
 * [Flex and Bison Howto](https://www.joinc.co.kr/w/Site/Development/Env/Yacc)
   * 한글 튜토리얼 초급
-
 * [Lex & Yacc(소개와 예제 중심으로)](http://nlp.kookmin.ac.kr/sskang/lect/compiler/lexyacc/Lex_Yacc.htm)
   * 한글 튜토리얼 중급
+* [The Lex & Yacc Page](http://dinosaur.compilertools.net/)
+  * 자세한 소개
 
 # References
 
