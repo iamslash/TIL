@@ -7,11 +7,11 @@
 - [KLD (Kullback–Leibler divergence)](#kld-kullback%E2%80%93leibler-divergence)
 - [JSD (Jensson Shannon Divergence)](#jsd-jensson-shannon-divergence)
 - [Posterior](#posterior)
-- [Likelihood](#likelihood)
 - [Prior](#prior)
+- [Likelihood](#likelihood)
 - [Bayes' Rule](#bayes-rule)
 - [MLE (Maximum Likelihood Estimation)](#mle-maximum-likelihood-estimation)
-- [MLP (Maximum A Posterior)](#mlp-maximum-a-posterior)
+- [MAP (Maximum A Posterior)](#map-maximum-a-posterior)
 - [Supervised Learning](#supervised-learning)
 - [Unsupervised Learning](#unsupervised-learning)
 - [Semisupervised Learning](#semisupervised-learning)
@@ -36,20 +36,20 @@
 
 # Abstract
 
-- machine learning이란 다량의 데이터를 이용하여 학습하고 예측하는 것에 대한 학문이다.
-  예를 들어서 machine learning을 이용하면 다음과 같은 것을 할 수 있다.
+- machine learning 이란 다량의 데이터를 이용하여 학습하고 예측하는 것에 대한 학문이다.
+  예를 들어서 machine learning 을 이용하면 다음과 같은 것을 할 수 있다.
   학생들의 등교시간과 성적에 관한 데이터를 이용하여 새로 전학온 학생의 등교시간을 입력하면
   성적을 예상 할 수 있다.
-- machine learning은 회귀분석, 다변량분석, 군집분석, 확률분포 추정,
+- machine learning 은 회귀분석, 다변량분석, 군집분석, 확률분포 추정,
   마르코프, 은닉마르토크 모델, 서포트 벡터 머신, 베이즈의법칙, 베이즈 확률론,
   베이지언 통계등등 통계학에서 많은 부분들이 인용되었다. 
-- machine learning의 종류는 크게 supervised learning, unsupervised learning
-  semisupervised learning, reinforcement learning으로 분류할 수 있다.
+- machine learning 의 종류는 크게 supervised learning, unsupervised learning
+  semisupervised learning, reinforcement learning 으로 분류할 수 있다.
   다음은 위키피디아가 분류한 것들이다. supervised learning, clustering,
   dimensionality reduction, structured prediction, anomaly detenction,
   neural nets, reinforcement learning
-- deep learning은 한개이상의 hidden layer가 존재하는 neural networks를 다루는 학문이다.
-  deep의 의미는 hidden layer가 많아지면 점점 깊어진다는 의미이다.
+- deep learning 은 한개이상의 hidden layer 가 존재하는 neural networks 를 다루는 학문이다.
+  deep 의 의미는 hidden layer 가 많아지면 점점 깊어진다는 의미이다.
 - 다음과 같은 용어들을 중심으로 공부해본다. linear regression with one variable,
   hypothesis function, weight, bias, feature
   loss, gradiant decent algorithm, epoch, cost function,
@@ -88,6 +88,8 @@
   - 딥러닝 논문읽기 모임 동영상 시즌 2
 - [Hands-On Machine Learning with Scikit-Learn and TensorFlow](http://www.hanbit.co.kr/store/books/look.php?p_code=B9267655530)
   - [src](https://github.com/rickiepark/handson-ml)
+- [100+ Basic Machine Learning Interview Questions and Answers](https://theprofessionalspoint.blogspot.com/2019/01/100-basic-machine-learning-interview.html?m=1&fbclid=IwAR3VAZ_58yR5A7F2-YiYFdiV5bW2gwkz_aE8WnxbzZ6RHUZ7FvANj4l893I)
+  - machine learning 인터뷰 퀴즈 모음
 
 # Materials
 
@@ -201,11 +203,12 @@ E_{x \sim  p(x)} [f(x)] &= \sum _x p(x) f(x) \\
 
 * [참고](http://t-robotics.blogspot.com/2017/08/26-entropy.html)
 * [Entropy & Information Theory](https://hyeongminlee.github.io/post/prob001_information_theory/)
+* [Information Theory 1편 @ brunch](https://brunch.co.kr/@chris-song/68)
 
 정보를 최적으로 인코딩하기 위해 필요한 bit 의 수를 말한다.
 
 예를 들어서 오늘이 무슨 요일인지 bit 로 표현해보자. 요일의 개수가
-모두 7개이니까 3비트가 필요하다. (log_{2}7 = 2.8073)
+모두 7개이니까 3비트가 필요하다. `(log_{2}7 = 2.8073)`
 
 ```
 월 : 000
@@ -285,6 +288,7 @@ Cross-Entropy \ Loss \  E(w)     &= \frac{1}{\left | D \right |} \sum _{d \in D}
 
 * [참고](http://t-robotics.blogspot.com/2017/08/27-cross-entropy-kl-divergence.html)
 * [Kullback-Leibler Divergence & Jensen-Shannon Divergence](https://hyeongminlee.github.io/post/prob002_kld_jsd/)
+* [KL-Divergence @ brunch](https://brunch.co.kr/@chris-song/69)
 
 우리가 데이터의 분포를 추정했을 때 얼마나 잘 추정한 것인지 측정하는
 방법이 필요하다. KLD 는 서로 다른 확률분포의 차이를 측정하는 척도이다. 
@@ -336,12 +340,13 @@ JSD(p, q) = \frac {1}{2} D_{KL} (p || \frac {p + q}{2}) + D_{KL} (q || \frac {p 
 # Posterior
 
 * [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+* [베이지안 추론 - 1편 @ brunch](https://brunch.co.kr/@chris-song/59)
 
 물고기가 주어졌을 때 이것이 농어인지 연어인지 구분하는 문제를 살펴보자.
 피부색의 밝기를 `x` 라고 하고 물고기의 종류를 `w` 라고 하자. 물고기가 농어일
 사건을 `w = w_{1}` 연어일 사건을 `w = w_{2}` 라고 하자.
 
-그렇다면 물고기의 피부 밝기가 0.5 일 때 그 물고기가 농어일 확률은 다음과 
+그렇다면 물고기의 피부 밝기가 `0.5` 일 때 그 물고기가 농어일 확률은 다음과 
 같이 표현할 수 있다.
 
 ![](img/posterior_ex.png)
@@ -358,27 +363,28 @@ P(w = w_{1} | x = 0.5) = P(w_{1} | x = 0.5)
 * `P(w_{1}|x) > P(w_{2}|x)` 라면 농어로 분류하자.
 * `P(w_{2}|x) > P(w_{1}|x)` 라면 연어로 분류하자.
 
-`P(w_{i}|x)` 를 사후확률 (Posterior) 라고 한다.
+확률분포 `P(w_{i}|x)` 를 바로 사후확률 (Posterior) 라고 한다.
+
+# Prior
+
+* [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+* [베이지안 추론 - 1편 @ brunch](https://brunch.co.kr/@chris-song/59)
+
+`x` 와 관계없이 애초에 농어가 잡힐 확률 `P(w_{1})`, 연어가 잡힐 확률 `P(w_{2})`
+를 사전확률 (Prior) 라고 한다. 이미 갖고 있는 사전 지식에 해당한다.
 
 # Likelihood
 
 * [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
 
 물고기를 적당히 잡아서 데이터를 수집해 보자. `P(x|w_{1})` 에 해당하는 농어의
-피부밝기 분포와 `P(x|x_{2})` 에 해당하는 연어의 피부밝기 분포를 그려보자.
-이렇게 관찰을 통해 얻은 확률 분포 `P(x|w_{i})` 를 가능도 (likelihodd)
-라고 부른다.
-
-# Prior
-
-* [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
-
-`x` 와 관계없이 애초에 농어가 잡힐 확률 `P(w_{1})`, 연어가 잡힐 확률 `P(w_{2})`
-를 사전확률 (Prior) 라고 한다. 이미 갖고 있는 사전 지식에 해당한다.
+피부밝기 분포와 `P(x|w_{2})` 에 해당하는 연어의 피부밝기 분포를 그려보자.
+이렇게 관찰을 통해 얻은 확률 분포 `P(x|w_{i})` 를 가능도 (likelihood) 라고 부른다.
 
 # Bayes' Rule
 
 * [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+* [베이지안 추론 - 1편 @ brunch](https://brunch.co.kr/@chris-song/59)
 
 우리의 목적은 Posterior `P(w_{i}|x)` 를 구하는 것이다. 이 것은 Likelihood `(P(x|w_{i})` 와 Prior `P(w_{i})` 를 이용하면 구할 수 있다.
 
@@ -493,17 +499,17 @@ log \  likelihood &= \log (p(D|w) \\
 Classification 문제에서는 Bernouli Distribution 을 이용하여
 비슷한 방법으로 Cross Entropy Error 를 유도할 수 있다.
 
-# MLP (Maximum A Posterior)
+# MAP (Maximum A Posterior)
 
-MLE 가 Likelihood 를 최대화 시키는 것이라면 MLP 는 Posterior 를 최대화 시키는 것이다. Likelihood 와 Posterior 의 차이는 Prior 가 없느냐 있느냐이다. 
+MLE 가 Likelihood 를 최대화 시키는 것이라면 MAP 는 Posterior 를 최대화 시키는 것이다. Likelihood 와 Posterior 의 차이는 Prior 가 없느냐 있느냐이다. 
 `w` 를 데이터만 이용해서 구하고자 한다면 MLE 를 이용한다. 만약 `w` 를 
-데이터와 함께 사전지식까지 이용해서 구하고자 한다면 MLP 를 이용한다.
+데이터와 함께 사전지식까지 이용해서 구하고자 한다면 MAP 를 이용한다.
 
 Prior 를 조정해주면 고의적으로 `w` 의 분포를 조정해줄 수 있다. 예를 들어
 `w` 의 값을 0 주변에 배치하고 싶다면 0 을 중심으로 분포 되도록 `P(w)` 를 만들어 낼 수 있다. 이와 같이 Prior 를 조정하여 출력값을 조정하고 싶을 때
 MAP 를 사용한다.
 
-이제 MAP 를 계산해 보자. 몬저 Posterior 를 다음과 같이 표현할 수 있다.
+이제 MAP 를 계산해 보자. 먼저 Posterior 를 다음과 같이 표현할 수 있다.
 
 ![](img/mlp_eq_1.png)
 
