@@ -60,9 +60,11 @@
 
 # Advanced 
 
-* Math
+* [Math](/math/README.md)
+  * [numbertheory](/numbertheory/README.md)
   * [linearalgebra](/linearalgebra/README.md)
   * [probability](/prob/README.md)
+
 * Fundamentals of Computer Science
   * [computer system architecture](/csa/README.md)
   * [operating system](/os/README.md)
@@ -70,7 +72,11 @@
   * [network](/network/README.md)
   * [database](/database/README.md)
   * [programming language](/pl/README.md)
-  * [designpattern](/designpattern/README.md)
+  * software engineering
+    * [designpattern](/designpattern/README.md)
+    * [uml](/uml/README.md)
+  * [regular expression](/re/README.md)
+
 * Programming Language
   * [assembly](/assembly/README.md)
   * [c](/c/README.md)
@@ -84,11 +90,21 @@
   * [swift](/swift/README.md)
   * [clojure](/clojure/README.md)
   * [ruby](/ruby/README.md)
+  * [php](/php/README.md)
+
 * BackEnd
   * [systemdesign & scalability](/systemdesign/README.md)
   * [bash](/bash/README.md)
+  * [Linux](/linux/README.md)
+  * [mysql](/mysql/README.md)
+  * [mongodb](/mongodb/README.md)
+  * [make](/make/README.md)
+  * [prometheus](/prometheus/README.md)
+  * [sed](/sed/README.md)
+
 * FrontEnd
   * [html,css,js](/frontend/README.md)
+
 * Game
   * [game graphics](/gamegraphics/README.md)
   * [game physics](/gamephysics/README.md)
@@ -99,9 +115,12 @@
   * [glsl](/glsl/README.md)
   * [hlsl](/hlsl/README.md)
   * [cg](/cg/README.md)
+
 * Data Science
   * [datascience](/datascience/README.md)
+
 * Machine Learning
   * [machine learning](/ml/README.md)
+
 * Block Chain
   * [bitcoin](/bitcoin/README.md)
