@@ -15,7 +15,7 @@
 - "We built the software together and I workd on backend" instead of "I built the software"
 - "2M customers uses it" instead of "I released it"
 
-# Basic Interview
+# Basic 
 
 * coding
   * [learn to code](https://github.com/iamslash/learntocode)
@@ -46,6 +46,8 @@
   * [sql](/sql/README.md)
 * Threads and Locks 
   * [threads and locks quiz](/os/README.md#quiz)
+* Open Source Contributions
+  * [chidb](https://github.com/iamslash/chidb)
 * Behaviorial Questions
   * episodes for projects
     * Challenges
@@ -56,11 +58,50 @@
     * What you would do differently
   * [Lewis C. Lin's Amazon Interview Spreadsheet](https://www.instapaper.com/read/1138208081)
 
-# Advanced Interview
+# Advanced 
 
-* Computer system architecture & Operating System
+* Math
+  * [linearalgebra](/linearalgebra/README.md)
+  * [probability](/prob/README.md)
+* Fundamentals of Computer Science
   * [computer system architecture](/csa/README.md)
   * [operating system](/os/README.md)
+  * [datastructure algorithm](https://github.com/iamslash/learntocode)
+  * [network](/network/README.md)
+  * [database](/database/README.md)
+  * [programming language](/pl/README.md)
+  * [designpattern](/designpattern/README.md)
+* Programming Language
   * [assembly](/assembly/README.md)
-* Backend
+  * [c](/c/README.md)
+  * [cpp](/cpp/README.md)
+  * [java](/java/README.md)
+  * [python](/python/README.md)
+  * [cs](/cs/README.md)
+  * [objc](/objc/README.md)
+  * [go](/golang/README.md)
+  * [js](/js/README.md)
+  * [swift](/swift/README.md)
+  * [clojure](/clojure/README.md)
+  * [ruby](/ruby/README.md)
+* BackEnd
+  * [systemdesign & scalability](/systemdesign/README.md)
   * [bash](/bash/README.md)
+* FrontEnd
+  * [html,css,js](/frontend/README.md)
+* Game
+  * [game graphics](/gamegraphics/README.md)
+  * [game physics](/gamephysics/README.md)
+  * [lighting](/lighting/README.md)
+  * [unity3d shader](/unity3dshaderlab/README.md)
+  * [directx](/directx/README.md)
+  * [opengl](/opengl/README.md)
+  * [glsl](/glsl/README.md)
+  * [hlsl](/hlsl/README.md)
+  * [cg](/cg/README.md)
+* Data Science
+  * [datascience](/datascience/README.md)
+* Machine Learning
+  * [machine learning](/ml/README.md)
+* Block Chain
+  * [bitcoin](/bitcoin/README.md)
