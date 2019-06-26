@@ -75,6 +75,7 @@
   * software engineering
     * [designpattern](/designpattern/README.md)
     * [uml](/uml/README.md)
+  * [crypto](/crypto/README.md)
   * [regular expression](/re/README.md)
 
 * Programming Language
