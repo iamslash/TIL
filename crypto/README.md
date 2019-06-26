@@ -6,6 +6,9 @@
 
 * [RSA 인증서 (Certification) 와 전자서명 (Digital Sign)의 원리](https://rsec.kr/?p=426)
 * [HTTPS와 SSL 인증서](https://opentutorials.org/course/228/4894)
+* [SSL이란 무엇이며 인증서(Certificate)란 무엇인가?](https://wiki.kldp.org/HOWTO/html/SSL-Certificates-HOWTO/x70.html)
+* [[Windows] 디지털서명의 구조와 원리](https://code13.tistory.com/165)
+* [네이버 애플리케이션의 전자 서명 원리](https://d2.naver.com/helloworld/744920)
 
 # 대칭키 암호화 (Symmetric-key algorithm)
 
@@ -38,28 +41,46 @@ CPU bound job 이다. 따라서 먼저 대칭키 암호화에 사용할
 # 인증서
 
 인증서는 인증기관 (CA, Certificate Authority) 에서 발행한다.
-인증서에는 서명해시알고리즘, 발급자, 주체, 공개키, 지문 등이 있다.
+
+다음은 인증서에 포함된 정보들이다.
+
+* 인증서 소유자의 e-mail 주소
+* 소유자의 이름
+* 인증서의 용도
+* 인증서 유효기간
+* 발행 장소
+* Distinguished Name (DN)
+  * Common Name (CN)
+  * 인증서 정보에 대해 서명한 사람의 디지털 ID
+* Public Key
+* 해쉬(Hash)
+
+https://wiki.kldp.org/HOWTO/html/SSL-Certificates-HOWTO/x70.html
 
 다음은 크롬브라우저에서 구글에 접속했을 때 사용한 인증서이다.
 
 ![](certificate_sample.png)
 
-# Hash and Digital Signing
+# Digital Signing
 
-예를 들어 `foo.com` 에서 공개키를 배포한다고 해보자. 이것을 그냥 배포할 수는 없고 인증기관 (CA) 를 통해 인증서 형태로 배포해야 한다. 그래야 다른 사람들이 `foo.com` 의 공개키를 신뢰할 수 있을 것이다.
+![](digital_signing.png)
 
-CA 는 `foo.com` 의 공개키를 보증하기 위해 서명을 한다. 서명을 한다는 것은 `foo.com` 의 공개키를 SHA256 등으로 해시하고 그 해시된 값을 CA 의 비밀키로 암호화하는 것이다. 그리고 암호화한 결과를 디지털 서명이라고 한다.
+다음은 데이터 B1 을 디지털 서명하는 과정이다. C1 은 디지털 서명된 데이터이다. C1 은 원래의 데이터 B1 과 서명 S 그리고 공개키 KeyD 로 구성된다.
 
+```c
+Hash(B1) => H1;                 // B1 을 해쉬한 값을 H1 에 저장한다. H1 을 지문이라 하자.
+Encrypt(KeyE, H1) => S;         // H1 을 개인키 KeyE 로 암호화하여 서명 S 를 얻는다.  
+C1 = {B1, S, KeyD}              // B1, S, 공개키 KeyD 를 묶어서 디지털 서명된 데이터 C1 생성한다.
 ```
-foo.com 의 공개키 ---------> CA 의 디지털 서명
-                      ^
-                      |
-            CA 의 비밀키로 암호화
+
+다음은 디지털 서명된 데이터 C1 을 받아서 검증하는 절차이다.
+
+```c
+C1 => B1, S, KeyD;                            // C1 에서 B1, S, KeyD 를 추출한다.  
+Decrypt(KeyD, S) => H1;                       // 서명 S 를 공개키 KeyD 로 복호화하여 지문 H1 을 얻는다.  
+Hash(B1) => H1;                               // B1 을 해시 해쉬한 값 H1 을 얻는다.  
+Because H1 == H1, Execute C1 => Very Good!    // 두 지문이 일치하는지 검증한다.
 ```
 
-한편, 인증서는 발급대상 (issued, `foo.com`), 발급대상의 공개키 (`foo.com` 의 공개키), 발급자 (issuer, CA), 발급자의 서명 (issuer signing) 등을 포함한다. 이러한 주요정보를 모아서 다시 SHA256 으로 해시한 것을 Finger Print 라고 한다.
-
-이렇게 얻은 Finger Print 를 발급자인 인증기관은 자신의 비밀키로 암호화한 후 그 결과값을 발급자 서명 (Digital Signing) 으로 등록한다. 이것을 FingerPrintA 라고 하자.
-
-또한 서명값은 상위 인증기관의 공개키로 복호화 하면 `foo.com` 의 Finger Print 값이 나온다. 이것을 FingerPrintB 라고 하자. FingerPrintA 와 FingerPrintB 가 동일하면 무결성이 보장된다.
-이런식으로 상위 인증기관이 하위 인증서가 포함하고 있는 공개키 (인증서) 를 상위기관의 비밀키로 암호화하여 보증하는 것을 인증서 체인 (Certificate Chain) 이라고 한다.
+과연 `C1` 의 `S` 는 믿을만 한가?
+인증서를 이용하여 `C1 = {B1, S, KeyD}` 대신 `C1 = {B1, 인증서, KeyD}` 형태로 C1 을 제작한다.
