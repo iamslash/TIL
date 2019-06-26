@@ -6,6 +6,7 @@ database 를 만들어 보자.
 
 * [정보처리 실기_데이터베이스 @ youtube](https://www.youtube.com/playlist?list=PLimVTOIIZt2aP6msQIw0011mfVP-oJGab)
   * 관계대수, 정규화 등등 속시원한 설명
+  * 강의자료 pdf 가 너무 좋다.
 * [chidb](http://chi.cs.uchicago.edu/chidb/index.html)
   * c로 제작된 database, transaction이 없다.
   * [src](https://github.com/uchicago-cs/chidb)
