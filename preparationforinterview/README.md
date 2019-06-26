@@ -7,6 +7,7 @@
 * [cracking the coding interview](http://www.crackingthecodinginterview.com/)
 * [Designing Data-Intensive Applications](https://dataintensive.net/)
 * [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
+* [Grokking the Object Oriented Design Interview](https://www.educative.io/collection/5668639101419520/5692201761767424)
 
 # Resume
 
