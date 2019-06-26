@@ -171,3 +171,4 @@ subnet mask: 11111111 11111111 11111111 11000000
 
 # WebRTC
 
+# hall punching
