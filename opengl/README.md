@@ -36,3 +36,118 @@ cmake -G "Visual Studio 15 2017" ..
 ```
 
 * [OpenGL-sandbox](https://github.com/OpenGL-adepts/OpenGL-sandbox) 는 Glitter 에 imgui 가 더해진 버전이다.
+
+## Depth Test
+
+Depth Buffer 값을 이용해서 특정 프래그먼트의 그리기 여부를 조정할 수 있다.
+
+```cpp
+    // configure global opengl state
+    // -----------------------------
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_ALWAYS); // always pass the depth test (same effect as glDisable(GL_DEPTH_TEST))
+```
+
+## Stencil Test
+
+Stencil Buffer 값을 이용해서 특정 프래그먼트의 그리기 여부를 조정할 수 있다.
+
+```cpp
+    // configure global opengl state
+    // -----------------------------
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+    glEnable(GL_STENCIL_TEST);
+    glStencilFunc(GL_NOTEQUAL, 1, 0xFF);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+```
+
+* [glStencilFunc](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glStencilFunc.xhtml)
+
+```cpp
+void glStencilFunc(	GLenum func,
+ 	GLint ref,
+ 	GLuint mask);
+
+GL_NEVER
+Always fails.
+
+GL_LESS
+Passes if ( ref & mask ) < ( stencil & mask ).
+
+GL_LEQUAL
+Passes if ( ref & mask ) <= ( stencil & mask ).
+
+GL_GREATER
+Passes if ( ref & mask ) > ( stencil & mask ).
+
+GL_GEQUAL
+Passes if ( ref & mask ) >= ( stencil & mask ).
+
+GL_EQUAL
+Passes if ( ref & mask ) = ( stencil & mask ).
+
+GL_NOTEQUAL
+Passes if ( ref & mask ) != ( stencil & mask ).
+
+GL_ALWAYS
+Always passes.
+```
+
+* [glStencilOp](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glStencilOp.xhtml)
+
+```cpp
+void glStencilOp(	GLenum sfail,
+ 	GLenum dpfail,
+ 	GLenum dppass);
+
+GL_KEEP
+Keeps the current value.
+
+GL_ZERO
+Sets the stencil buffer value to 0.
+
+GL_REPLACE
+Sets the stencil buffer value to ref, as specified by glStencilFunc.
+
+GL_INCR
+Increments the current stencil buffer value. Clamps to the maximum representable unsigned value.
+
+GL_INCR_WRAP
+Increments the current stencil buffer value. Wraps stencil buffer value to zero when incrementing the maximum representable unsigned value.
+
+GL_DECR
+Decrements the current stencil buffer value. Clamps to 0.
+
+GL_DECR_WRAP
+Decrements the current stencil buffer value. Wraps stencil buffer value to the maximum representable unsigned value when decrementing a stencil buffer value of zero.
+
+GL_INVERT
+Bitwise inverts the current stencil buffer value.
+```
+
+## Blend
+
+```cpp
+    // configure global opengl state
+    // -----------------------------
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    // dst fragment = src fragment * src factor + dst fragment * dst factor
+    // src fragment: fragment of current object
+    // dst fragment: fragment of backbuffer
+```
+
+* [glBlendFunc](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glBlendFunc.xhtml)
+
+```cpp
+
+void glBlendFunc(	GLenum sfactor,
+ 	GLenum dfactor);
+ 
+void glBlendFunci(	GLuint buf,
+ 	GLenum sfactor,
+ 	GLenum dfactor);
+```
