@@ -1,39 +1,39 @@
-- [Abstract](#abstract)
-- [Materials](#materials)
-- [Fundamentals](#fundamentals)
-  - [Light](#light)
-  - [Eye](#eye)
+- [Abstract](#Abstract)
+- [Materials](#Materials)
+- [Fundamentals](#Fundamentals)
+  - [Light](#Light)
+  - [Eye](#Eye)
   - [조도와 휘도 (illuminance & luminance)](#%EC%A1%B0%EB%8F%84%EC%99%80-%ED%9C%98%EB%8F%84-illuminance--luminance)
   - [빛의 감쇠 (attenuation)](#%EB%B9%9B%EC%9D%98-%EA%B0%90%EC%87%A0-attenuation)
   - [광속](#%EA%B4%91%EC%86%8D)
   - [광도](#%EA%B4%91%EB%8F%84)
   - [조도](#%EC%A1%B0%EB%8F%84)
   - [휘도](#%ED%9C%98%EB%8F%84)
-  - [BRDF, BTDF](#brdf-btdf)
-  - [Local Illumination & Global Illumination](#local-illumination--global-illumination)
-  - [굴절률(Refractive index)](#%EA%B5%B4%EC%A0%88%EB%A5%A0refractive-index)
-  - [Snell's law](#snells-law)
-  - [Fresnel Equation](#fresnel-equation)
-- [Lighting Models](#lighting-models)
-  - [Lambert's cosine law](#lamberts-cosine-law)
-  - [Lambertian Reflectance Model](#lambertian-reflectance-model)
-  - [Half Lambert Diffuse](#half-lambert-diffuse)
-  - [Phong Reflectance Model](#phong-reflectance-model)
-  - [Gouraud shading](#gouraud-shading)
-  - [Phong Shading](#phong-shading)
-  - [Rim Lighting](#rim-lighting)
-  - [Cook-Torrance Model](#cook-torrance-model)
-  - [Oren-Nayar Model](#oren-nayar-model)
-  - [Physically Based Rendering](#physically-based-rendering)
-- [Advanced Light](#advanced-light)
-  - [Spherical Harmonics Lighting](#spherical-harmonics-lighting)
-  - [Ray Casting](#ray-casting)
-  - [Ray Tracing](#ray-tracing)
-  - [Path Tracing](#path-tracing)
-  - [Ray Marching](#ray-marching)
-  - [Radiosity](#radiosity)
-  - [LPV (Light Propagation Volume)](#lpv-light-propagation-volume)
-  - [SVO (Sparse Voxel Octree)](#svo-sparse-voxel-octree)
+  - [BRDF, BTDF](#BRDF-BTDF)
+  - [Local Illumination & Global Illumination](#Local-Illumination--Global-Illumination)
+  - [굴절률(Refractive index)](#%EA%B5%B4%EC%A0%88%EB%A5%A0Refractive-index)
+  - [Snell's law](#Snells-law)
+  - [Fresnel Equation](#Fresnel-Equation)
+- [Lighting Models](#Lighting-Models)
+  - [Lambert's cosine law](#Lamberts-cosine-law)
+  - [Lambertian Reflectance Model](#Lambertian-Reflectance-Model)
+  - [Half Lambert Diffuse](#Half-Lambert-Diffuse)
+  - [Phong Reflectance Model](#Phong-Reflectance-Model)
+  - [Gouraud shading](#Gouraud-shading)
+  - [Phong Shading](#Phong-Shading)
+  - [Rim Lighting](#Rim-Lighting)
+  - [Cook-Torrance Model](#Cook-Torrance-Model)
+  - [Oren-Nayar Model](#Oren-Nayar-Model)
+  - [Physically Based Rendering](#Physically-Based-Rendering)
+- [Advanced Light](#Advanced-Light)
+  - [Spherical Harmonics Lighting](#Spherical-Harmonics-Lighting)
+  - [Ray Casting](#Ray-Casting)
+  - [Ray Tracing](#Ray-Tracing)
+  - [Path Tracing](#Path-Tracing)
+  - [Ray Marching](#Ray-Marching)
+  - [Radiosity](#Radiosity)
+  - [LPV (Light Propagation Volume)](#LPV-Light-Propagation-Volume)
+  - [SVO (Sparse Voxel Octree)](#SVO-Sparse-Voxel-Octree)
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -65,7 +65,7 @@
 
 ![전자기파의 스펙트럼](img/EM_spectrum.png)
 
-빛은 전자기파(Electromagnetic wave)이다. 전자기파는 전자기적 과정에 의해 발생하는
+빛은 전자기파(Electromagnetic wave) 이다. 전자기파는 전자기적 과정에 의해 발생하는
 에너지이다. 파동의 형태로 발산되는 에너지라고 할 수 있다. 빛은 파장이 다른 여러 가지 
 전자기파로 구성되어 있다.
 
@@ -85,15 +85,15 @@
 
 ![인간의 눈 구조](img/HumanEye.png)
 
-우리 눈의 망막(retina)를 확대해 보면 원추세포(cone cell: blue cone,
-red cone, green cone)와 간상세포(rod)가 있다. 원추세포(cone cell)는
-색상을 감지하고 간상세포(rod)는 명암을 감지한다.  원추세포는 그것을
+우리 눈의 망막(retina) 를 확대해 보면 원추세포(cone cell: blue cone,
+red cone, green cone) 와 간상세포(rod) 가 있다. 원추세포(cone cell) 는
+색상을 감지하고 간상세포(rod) 는 명암을 감지한다.  원추세포는 그것을
 구성하고 있는 감광세포의 종류에 따라 받아들일 수 있는 색상이 정해져
-있다. 우측 그림을 보면 3종류의 원추세포가 존재하고 그것은 RGB와 같다.
-이것은 텍스처를 제작할때 RGB채널을 사용하는 이유기도 하다.
+있다. 우측 그림을 보면 3 종류의 원추세포가 존재하고 그것은 RGB 와 같다.
+이것은 텍스처를 제작할때 RGB 채널을 사용하는 이유기도 하다.
 
-우리 눈의 원추세포(cone cell)는 약 600만개이고 간상세포(rod)는 약
-9000만개이다.  따라서 우리 눈은 색상 대비보다 명도 대비에 더욱
+우리 눈의 원추세포(cone cell) 는 약 600 만개이고 간상세포(rod) 는 약
+9000 만개이다.  따라서 우리 눈은 색상 대비보다 명도 대비에 더욱
 민감하다. 새의 눈은 인간 보다 많은 감광 색소를 가지고 있어서 자외선
 까지 볼 수 있다고 한다.
 
@@ -105,30 +105,30 @@ red cone, green cone)와 간상세포(rod)가 있다. 원추세포(cone cell)는
 
 ![](img/EM_spectrum.png)
 
-빛은 다양한 전자기파로 구성되어 있다. 가시광선(visible spectrum)을
+빛은 다양한 전자기파로 구성되어 있다. 가시광선(visible spectrum) 을
 포함한 전체 파장 영역의 전자기파들로 구성된 빛을
-방사선(radiation)이라고 한다. 전체 파장 영역의 빛을 다루기 위해
-에너지를 측정하는 것은 방사측정(radiometry)라 하고 가시 영역(visible
-spectrum)의 빛을 다루기 위해 에너지를 측정하는 것을
-광도측정(photometry)라고 한다.
+방사선(radiation) 이라고 한다. 전체 파장 영역의 빛을 다루기 위해
+에너지를 측정하는 것은 방사측정(radiometry) 라 하고 가시 영역(visible
+spectrum) 의 빛을 다루기 위해 에너지를 측정하는 것을
+광도측정(photometry) 라고 한다.
 
-방사측정(radiometry)는 제곱미터당 일률(watt per sqaure meter)의 단위로
-에너지를 측정하고 광도측정(photometry)는 제곱미터당 루멘(lumens per
-square meter)단위로 에너지를 측정한다. 전자는 파워(power)를 의미하고 후자는
-밝기(brightness)를 의미한다.
+방사측정(radiometry) 는 제곱미터당 일률(watt per sqaure meter) 의 단위로
+에너지를 측정하고 광도측정(photometry) 는 제곱미터당 루멘(lumens per
+square meter) 단위로 에너지를 측정한다. 전자는 파워(power) 를 의미하고 후자는
+밝기(brightness) 를 의미한다.
 
 조도의 "조(照)"는 "비출 조" 이고 휘도의 "휘(輝)"는 "빛날 휘"다.
-광원(light source)에서 빛이 나오는 양을 조도라고 하고 광원(light source)에서
+광원(light source) 에서 빛이 나오는 양을 조도라고 하고 광원(light source) 에서
 나온 빛이 특정 오브젝트에 반사되어 나오는 빛의 양을 휘도라고 한다.
 조도는 빛이 비추는 정도이고 휘도는 빛이 빛나는 정도라고 기억하면 쉽다.
 
-방사측정(radiometry)의 경우 조도를 irradiance라고 하고 휘도를
-radiance라고 한다.  광도측정(photometry)의 경우 조도를 illuminance라고
-하고 휘도를 luminance라고 한다.
+방사측정(radiometry) 의 경우 조도를 irradiance 라고 하고 휘도를
+radiance 라고 한다.  광도측정(photometry)의 경우 조도를 illuminance 라고
+하고 휘도를 luminance 라고 한다.
 
 ![](img/light-reflected-transmitted-absorbed.png)
 
-특정 표면(surface)에 도달한 빛이 모두 우리 눈으로 들어 오는 것은 아니다. 표면의
+특정 표면(surface) 에 도달한 빛이 모두 우리 눈으로 들어 오는 것은 아니다. 표면의
 재질에 따라 흡수(absorbed), 투과(transmitted), 반사(reflected), 방출(emitted)
 된다. 우리 눈은 반사(reflected), 투과(transmitted), 방출(emitted)된 빛만 인지 할 수 있다.
 
@@ -141,7 +141,7 @@ radiance라고 한다.  광도측정(photometry)의 경우 조도를 illuminance
 
 빛은 다양한 파장의 전자기파들의 조합 이지만 때로는 입자 처럼 보일때가
 있다. 이것을 빛이 파동성과 입자성을 가지고 있다고 한다. 입자 처럼
-보일때 빛을 광자(photon)라고 한다.
+보일때 빛을 광자(photon) 라고 한다.
 
 ![](img/inverse-square-law.jpg)
 
@@ -158,16 +158,16 @@ Intensity = \frac{1}{Distance^{2}}
 
 ![](img/433px-Steradian_svg.png)
 
-반지름이 r이고 구의 면적이 r^2일때 만들어지는 원뿔의 각을
-1스테라디안(steradian, sr) 이라고 한다. 원뿔의 꼭지점으로 부터
+반지름이 r 이고 구의 면적이 r^2 일때 만들어지는 원뿔의 각을
+1 스테라디안(steradian, sr) 이라고 한다. 원뿔의 꼭지점으로 부터
 만들어지는 가로 사이각과 세로 사이각의 합이다. 이러한 각도를
-입체각(solid angle)이라고 정의 한다. 만약 구의 면적이 구 전체에
-해당된다면 입체각은 4π (2π + 2π)이다.
+입체각(solid angle) 이라고 정의 한다. 만약 구의 면적이 구 전체에
+해당된다면 입체각은 4π (2π + 2π) 이다.
 
-반지름이 r인 구의 면적은 `4πr^2`이고 반지름이 r인 구에서 입체각이
-a(radian)인 원뿔의 겉면적은 ar^2이고 이것을 단위 면적이라고 하자. 이때
-광자의 개수는 4라고 하자. 반지름이 2r이면 겉면적은 a(2r)^2이고 광자의
-개수는 단위 면적당 1이다. 거리가 두배 늘어나면 겉면적의 넓이는 거리의
+반지름이 r 인 구의 면적은 `4πr^2` 이고 반지름이 `r` 인 구에서 입체각이
+`a(radian)` 인 원뿔의 겉면적은 `ar^2` 이고 이것을 단위 면적이라고 하자. 이때
+광자의 개수는 4 라고 하자. 반지름이 `2r` 이면 겉면적은 `a(2r)^2` 이고 광자의
+개수는 단위 면적당 1 이다. 거리가 두배 늘어나면 겉면적의 넓이는 거리의
 제곱배 만큼 늘어나고 단위면적당 광자의 개수는 거리의 제곱에
 반비례한다는 결론을 얻을 수 있다
 
@@ -181,8 +181,8 @@ a(radian)인 원뿔의 겉면적은 ar^2이고 이것을 단위 면적이라고 
 
 ![](img/measuring_light_alm2.jpg)
 
-광속(luminous flux, luminous power)은 광원의 밝기이고 단위는 lumen,
-lm이다. 광선속(光線束) 혹은 광속(光束)이라는 것은 속도를 의미하는 것이
+광속(luminous flux, luminous power) 은 광원의 밝기이고 단위는 lumen,
+lm 이다. 광선속(光線束) 혹은 광속(光束)이라는 것은 속도를 의미하는 것이
 아니다. 빛 광(光)과 묶을 속(束)이다. 빛의 다발이다. 다발이 많으면
 더욱 밝을 것이다.
 
@@ -190,9 +190,9 @@ lm이다. 광선속(光線束) 혹은 광속(光束)이라는 것은 속도를 �
 
 ![](img/measuring_light_alm2.jpg)
 
-광도(luminous intensity)는 광원에서 방출된 빛이 사방으로 뻗어갈 때
-만들어지는 단위 입체각(1 sr)당 광속(lumen)이다. 단위는 candelas,
-cd이다. 1 cd는 촛불의 단위 입체각당 광속이다.
+광도(luminous intensity) 는 광원에서 방출된 빛이 사방으로 뻗어갈 때
+만들어지는 단위 입체각(1 sr) 당 광속(lumen) 이다. 단위는 candelas,
+cd 이다. 1 cd 는 촛불의 단위 입체각당 광속이다.
 
 
 ![](img/candela_eq.png)
@@ -207,8 +207,8 @@ cd이다. 1 cd는 촛불의 단위 입체각당 광속이다.
 1 \  lm = 1 \  cd \cdot \ sr = \frac{1 \  lm}{ 1 \ sr} \cdot sr = 1 \ lm
 ```
 
-촛불의 광속(lumen)을 계산해 보자. 촛불의 광도(luminous intensity)는
-1 cd이고 반지름이 1일때 촛불의 구의 겉면적은 4π이므로 다음과 같이 계산한다.
+촛불의 광속(lumen) 을 계산해 보자. 촛불의 광도(luminous intensity) 는
+1 cd 이고 반지름이 1 일때 촛불의 구의 겉면적은 4π 이므로 다음과 같이 계산한다.
 
 ![](img\luminous_flux_of_a_candle.png)
 
@@ -229,9 +229,9 @@ cd이다. 1 cd는 촛불의 단위 입체각당 광속이다.
 
 ![](img/measuring_light_alm2.jpg)
 
-조도(illuminance)는 빛이 비춰지는 표면의 단위 면적(1 m^2)당
-광속(lumen)이고 단위는 lux이다. 1m^2내에 들어 온 빛의 양이 1 lm일때 1
-럭스(lux)라고 한다.
+조도(illuminance) 는 빛이 비춰지는 표면의 단위 면적(1 m^2) 당
+광속(lumen) 이고 단위는 lux 이다. 1m^2 내에 들어 온 빛의 양이 1 lm 일때 1
+럭스(lux) 라고 한다.
 
 ![](img/lux_eq.png)
 
@@ -246,20 +246,20 @@ cd이다. 1 cd는 촛불의 단위 입체각당 광속이다.
 
 ![](img/measuring_light_alm2.jpg)
 
-휘도(luminance)는 광원에서 방출된 빛이 지표면을 비추고 반사되어
-우리눈에 들어올때 단위면적(m^2)당 광도(luminous intensity, cd)이다.
+휘도(luminance) 는 광원에서 방출된 빛이 지표면을 비추고 반사되어
+우리눈에 들어올때 단위면적(m^2) 당 광도(luminous intensity, cd) 이다.
 
 ## BRDF, BTDF
 
-컴퓨터 그래픽에서는 계산의 편의를 위해 illuminance에 해당하는 표면의
-면적과 luminance에 해당하는 눈의 면적은 점이라고 가정하자.
+컴퓨터 그래픽에서는 계산의 편의를 위해 illuminance 에 해당하는 표면의
+면적과 luminance 에 해당하는 눈의 면적은 점이라고 가정하자.
 
 ![](img/BSDF05_800.png)
 
-표면(surface)에 들어온 빛(조도, illuminance)는 전부 눈(휘도, luminance)으로
-들어오지 않는다. 표면(surface)이 빛을 흡수, 반사, 투과 시키기 때문이다. 우리눈은
-반사, 투과된 빛들만 볼 수 있다. 얼만큼의 빛이 반사되었는지 결정하는 함수가 BRDF이고
-얼만큼의 빛이 투과되었는지 결정하는 함수가 BTDF이다.
+표면(surface) 에 들어온 빛(조도, illuminance) 는 전부 눈(휘도, luminance) 으로
+들어오지 않는다. 표면(surface) 이 빛을 흡수, 반사, 투과 시키기 때문이다. 우리눈은
+반사, 투과된 빛들만 볼 수 있다. 얼만큼의 빛이 반사되었는지 결정하는 함수가 BRDF 이고
+얼만큼의 빛이 투과되었는지 결정하는 함수가 BTDF 이다.
 
 * [PBR 이란 무엇인가 - 6. 휘도 측정](http://lifeisforu.tistory.com/371)
 * [luminance @ wikipedia](https://en.wikipedia.org/wiki/Luminance)
@@ -274,22 +274,22 @@ cd이다. 1 cd는 촛불의 단위 입체각당 광속이다.
 간접광이 없다면 직접광이 비추어지지 않는 곳은 굉장히 어두울 것이다.
 간접광을 잘 계산해야 현실세계와 비슷한 장면을 연출 할 수 있다.  그러나
 간접광의 현실적 계산은 비용이 많이 들기 때문에 간략히 계산하기 위해
-ambient light를 만들어 모든 오브젝트에 동일한 밝기를 적용한다. ambient
-light는 global ambient와 material ambient로 분류된다.  직접광과
-ambient light을 이용하여 조명 연출하는 것을 local illumination이라고
+ambient light 를 만들어 모든 오브젝트에 동일한 밝기를 적용한다. ambient
+light 는 global ambient 와 material ambient 로 분류된다.  직접광과
+ambient light 을 이용하여 조명 연출하는 것을 local illumination 이라고
 한다.
 
 ![](img/Global_illumination.jpg)
 
-local illumination은 현실세계와 거리가 멀다. 표면에 들어온
-빛(직접광,간접광)은 반사, 흡수, 투과 된다. 이때 반사 및 투과되는 빛은
-새로운 광원(간접광)으로 작용한다.  간접광을 잘 계산하여 조명 연출하는
-것을 global illumination이라고 한다.
+local illumination 은 현실세계와 거리가 멀다. 표면에 들어온
+빛(직접광,간접광) 은 반사, 흡수, 투과 된다. 이때 반사 및 투과되는 빛은
+새로운 광원(간접광) 으로 작용한다.  간접광을 잘 계산하여 조명 연출하는
+것을 global illumination 이라고 한다.
 
 간접광을 실시간으로 근사계산 하기 위해 LPV(Light Propagation Volume),
 SVOGI(Sparse Voxel Octree Global Illumination)등이 있다.
 간접광을 실시간으로 계산하는 것은 어렵기 때문에 미리 계산한 것을
-이용하는 방법도 있다. 이것을 Image Based Lighting이라고 한다.
+이용하는 방법도 있다. 이것을 Image Based Lighting 이라고 한다.
 
 * [PBR 이란 무엇인가 - 9. Global Illumination & Indirect Lighting](http://lifeisforu.tistory.com/374)
 * [Global Illumination @ wikipedia](https://en.wikipedia.org/wiki/Global_illumination)
@@ -298,8 +298,8 @@ SVOGI(Sparse Voxel Octree Global Illumination)등이 있다.
 
 ## 굴절률(Refractive index)
 
-굴절률(refractive index)는 빛이 진공에서 특정 매질로 이동할 때 속도가
-얼마나 느려지는지 그 비율을 측정한 것이다. IOR (Index of refraction)이라고도
+굴절률(refractive index) 는 빛이 진공에서 특정 매질로 이동할 때 속도가
+얼마나 느려지는지 그 비율을 측정한 것이다. IOR (Index of refraction) 이라고도
 한다. 속도가 느려지면 전진하는 방향도 달라진다.
 
 ![](img/20170917_133753.jpg)
@@ -321,9 +321,9 @@ SVOGI(Sparse Voxel Octree Global Illumination)등이 있다.
 
 서로 다른 굴절률을 가진 매질에서 빛이 얼마나 꺾이는 지에 대한
 법칙이다.  붉은색 라인은 빛의 경로를 의미한다. 매질의
-경계(interface)에서 빛이 굴절한다. θ 는 normal과 굴절광(refracted
-light)의 각도, v 는 속도(velocity), n은 굴절률(IOR), λ 는
-파장(wavelength)을 의미할때 다음과 같은 수식이 성립한다.
+경계(interface) 에서 빛이 굴절한다. θ 는 normal 과 굴절광(refracted
+light) 의 각도, v 는 속도(velocity), n은 굴절률(IOR), λ 는
+파장(wavelength) 을 의미할때 다음과 같은 수식이 성립한다.
 
 ![](img/snell_law_eq.png)
 
@@ -334,7 +334,7 @@ light)의 각도, v 는 속도(velocity), n은 굴절률(IOR), λ 는
 ![](img/1920px-RefractionReflextion_svg.png)
 
 빛이 서로 다른 매질을 만날때 특정 각도에서는 굴절을 하지 않고 완전히
-반사하는 경우가 있다. 각도가 critical angle보다 커지면 전반사가
+반사하는 경우가 있다. 각도가 critical angle 보다 커지면 전반사가
 일어난다. critical angle 은 다음과 같은 수식을 통해서 구한다.
 
 ![](img/critical_angle_eq.png)
@@ -363,9 +363,9 @@ R_{0}     &= ( \frac{n_{1} - n_{2}}{n_{1} + n_{2}} )^{2} \\
 
 ![](img/fihms.jpg)
 
-위 그림은 Fresnel equation을 나타내는 그래프이다. 여러가지 매질에 대해
-각도에 따라 반사율(R(θ))을 알 수 있다. 가로축이 눈과 노멀의 각도이고
-세로축이 반사율(R(θ))이다. 눈과 노멀의 각도가 90에 가까울 수록 반사가 
+위 그림은 Fresnel equation 을 나타내는 그래프이다. 여러가지 매질에 대해
+각도에 따라 반사율(R(θ)) 을 알 수 있다. 가로축이 눈과 노멀의 각도이고
+세로축이 반사율(R(θ)) 이다. 눈과 노멀의 각도가 90 에 가까울 수록 반사가 
 많이 된다.
 
 * [PBR 이란 무엇인가- 17.Fresnel이란? @ tistory](http://lifeisforu.tistory.com/384)
@@ -384,17 +384,17 @@ R_{0}     &= ( \frac{n_{1} - n_{2}}{n_{1} + n_{2}} )^{2} \\
 
 ## Lambert's cosine law
 
-확산반사(diffuse reflectance)가 일어나는 표면의 한 점에서의
-복사강도(radiant intensity)I는, 입사광의 단위벡터 L과 표면의 법선
-벡터인 면법선 (surface normal)N이 이루는 각도 θ의 코사인에 비례한다.
+확산반사(diffuse reflectance) 가 일어나는 표면의 한 점에서의
+복사강도(radiant intensity) I 는, 입사광의 단위벡터 L 과 표면의 법선
+벡터인 면법선 (surface normal) N 이 이루는 각도 θ 의 코사인에 비례한다.
 
 ## Lambertian Reflectance Model
 
-[Johann Heinrich Lambert](https://en.wikipedia.org/wiki/Johann_Heinrich_Lambert)가
-1760년에 그의
-저서 [Photometria](https://en.wikipedia.org/wiki/Photometria)에서
-제안한 lighting model이다. lambert's cosine law를 기본으로 하며
-diffuse relection을 구하는 방법은 다음과 같다.
+[Johann Heinrich Lambert](https://en.wikipedia.org/wiki/Johann_Heinrich_Lambert) 가
+1760 년에 그의
+저서 [Photometria](https://en.wikipedia.org/wiki/Photometria) 에서
+제안한 lighting model이다. lambert's cosine law 를 기본으로 하며
+diffuse relection 을 구하는 방법은 다음과 같다.
 
 ![](img/lambert_reflectance_model.png)
 
@@ -412,7 +412,7 @@ I_{D} = L \cdot N C I_{L} \\
 \end{align*}
 ```
 
-다음은 lambertian reflectance model을 unity3d shader lab으로 구현한 것이다.
+다음은 lambertian reflectance model 을 unity3d shader lab 으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
 
 ```glsl
@@ -462,15 +462,15 @@ Shader "Custom/Diffuse" {
 ## Half Lambert Diffuse
 
 [Half lambert](https://developer.valvesoftware.com/wiki/Half_Lambert)
-는 half-life라는 게임에서 처음 등장한 기술이다. 앞서 살펴 본
-lambertian reflectance model은 어두운 부분이 너무 어둡기 때문에 이것을
-보완 하고자 N과 L의 내적값을 [-1,1]에서 [0,1]로 조정한 것이다.
+는 half-life 라는 게임에서 처음 등장한 기술이다. 앞서 살펴 본
+lambertian reflectance model 은 어두운 부분이 너무 어둡기 때문에 이것을
+보완 하고자 N 과 L 의 내적값을 [-1,1] 에서 [0,1] 로 조정한 것이다.
 
 ![](img/200px-Alyx_lambert_half_lambert.jpg)
 
 ![](img/200px-Lambert_vs_halflambert.png)
 
-다음은 half lambert diffuse를 unity3d shaderlab으로 구현한 것이다.
+다음은 half lambert diffuse 를 unity3d shaderlab 으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
 
 ```glsl
@@ -522,9 +522,9 @@ Shader "Custom/Half Lambert" {
 ## Phong Reflectance  Model
 
 [Bui Tuong Phong](https://en.wikipedia.org/wiki/Bui_Tuong_Phong)
-이 1975년에 제안한 lighting model이다.
+이 1975 년에 제안한 lighting model 이다.
 
-phong reflection은 ambient, diffuse, specular term의 합으로 구한다.
+phong reflection 은 ambient, diffuse, specular term 의 합으로 구한다.
 
 ![](img/Phong_components_version_4.png)
 
@@ -577,8 +577,7 @@ H = \frac{L + V}{|L+V|}
 
 phong reflectance model 을 vertex shader 에 적용한 것
 
-
-다음은 gouraud shading을 unity3d shader lab으로 구현한 것이다.
+다음은 gouraud shading 을 unity3d shader lab 으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
 
 ```glsl
@@ -639,7 +638,7 @@ Shader "Custom/Gouraud" {
 
 phong reflectance model 을 fragment shader 에 적용한 것
 
-다음은 phong shading을 unity3d shader lab 으로 구현한 것이다.
+다음은 phong shading 을 unity3d shader lab 으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
 
 ```glsl
@@ -701,8 +700,8 @@ Shader "Custom/Phong" {
 
 ## Rim Lighting
 
-빛에 의해 오브젝트의 외곽이 빛나는 현상. N과 L의 사이각이 0일때 가장
-약하고 90일때 가장 강하다.
+빛에 의해 오브젝트의 외곽이 빛나는 현상. N 과 L 의 사이각이 0 일때 가장
+약하고 90 일때 가장 강하다.
 
 다음은 phong shading 과 rim lighting 을 unity3d shader lab 으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
@@ -772,10 +771,10 @@ Shader "Custom/Rim" {
 
 다음은 쿡토런스(cook-torrance) 모델을 표현하는 공식이다.
 L 은 입사광 벡터, V 는 시선벡터, H 는 L 과 V 의 하프벡터이다.
-D(H) 는 법선분포함수(normal distribution function, NDF)이다.
-하이라이트 형태로 반영된다. NDF 를 사용하면 거칠기(roughness)라는
+D(H) 는 법선분포함수 (normal distribution function, NDF)이다.
+하이라이트 형태로 반영된다. NDF 를 사용하면 거칠기 (roughness) 라는
 매개변수로 머터리얼의 성질을 나타낼 수 있다.
-F(V,H) 는 Fresnel effect를 표현한다. 하이라이트 색에 영향을 미친다.
+F(V,H) 는 Fresnel effect 를 표현한다. 하이라이트 색에 영향을 미친다.
 G(L,V,H) 는 기하감쇠(geometric attenuation)이다. 미세면의
 요철이 시선/입사광/반사광 벡터를 도중에 가려서 생기는 그림자의 영향을
 나타내는 항이다.
@@ -787,7 +786,7 @@ I_{s} = \frac {D(H)F(V, H)G(L, V, H)} {4(N \cdot L)(N \cdot V)}
 ```
 
 D(H) 는 다음과 같이 GGX(trowbridge-Reitz) 알고리즘을 NDF 로 이용했다.
-NDF 는 그밖에도 블린퐁이나 베크만(Beckmann)을 이용하기도 한다.
+NDF 는 그밖에도 블린퐁이나 베크만(Beckmann) 을 이용하기도 한다.
 
 ![](img/cook_torrance_ggx_eq.png)
 
@@ -816,7 +815,7 @@ G_{cook-torrance}(L,V,H) = min(1, \frac {2 (N \cdot H)(N \cdot V)} {V \cdot H}, 
 
 마지막에 `0.000001` 을 더해서 `0` 으로 나누기를 방지하자.
 
-다음은 cook-torrance model을 unity3d shader lab으로 구현한 것이다.
+다음은 cook-torrance model 을 unity3d shader lab 으로 구현한 것이다.
 [참고](https://github.com/ryukbk/mobile_game_math_unity)
 
 ```glsl
@@ -900,7 +899,7 @@ Shader "Custom/CookTorrance" {
 
 ## Oren-Nayar Model
 
-Michael Oren 과 Shree K. Nayar 이 개발한 lighting model 이다. 표면의 거칠기(roughness)가 반영된 diffuse reflection 을 표현한다.
+Michael Oren 과 Shree K. Nayar 이 개발한 lighting model 이다. 표면의 거칠기(roughness) 가 반영된 diffuse reflection  을 표현한다.
 
 [oren-nayar @ wikipedia](https://en.wikipedia.org/wiki/Oren%E2%80%93Nayar_reflectance_model)
 

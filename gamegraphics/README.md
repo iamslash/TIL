@@ -1,39 +1,39 @@
-- [Abstract](#abstract)
-- [Essentials](#essentials)
-- [Materials](#materials)
-- [Snippets](#snippets)
-- [3D graphics api](#3d-graphics-api)
-- [Opensource Game Engines](#opensource-game-engines)
-- [Math Prerequisites](#math-prerequisites)
-  - [Law Of Cosines](#law-of-cosines)
-  - [Trigonometric Addtion formulas](#trigonometric-addtion-formulas)
-  - [Half-Angle Formulas](#half-angle-formulas)
-  - [Dot Product](#dot-product)
-  - [Cross Product](#cross-product)
-  - [affine transform](#affine-transform)
+- [Abstract](#Abstract)
+- [Essentials](#Essentials)
+- [Materials](#Materials)
+- [Snippets](#Snippets)
+- [3D graphics api](#3D-graphics-api)
+- [Opensource Game Engines](#Opensource-Game-Engines)
+- [Math Prerequisites](#Math-Prerequisites)
+  - [Law Of Cosines](#Law-Of-Cosines)
+  - [Trigonometric Addition formulas](#Trigonometric-Addition-formulas)
+  - [Half-Angle Formulas](#Half-Angle-Formulas)
+  - [Dot Product](#Dot-Product)
+  - [Cross Product](#Cross-Product)
+  - [Affine Transform](#Affine-Transform)
   - [affine space](#affine-space)
   - [affince space operation](#affince-space-operation)
   - [homogeneous coordinates (동차좌표)](#homogeneous-coordinates-%EB%8F%99%EC%B0%A8%EC%A2%8C%ED%91%9C)
   - [tangent space](#tangent-space)
-- [Rendering Pipeline](#rendering-pipeline)
-- [Color Space](#color-space)
-- [Polygon Mesh](#polygon-mesh)
-- [Vertex Processing](#vertex-processing)
-- [Rasterization](#rasterization)
-- [Fragment Processing](#fragment-processing)
-- [Output Merging](#output-merging)
-- [Lighting](#lighting)
-- [Shader Models](#shader-models)
-- [Shader Language](#shader-language)
-- [Curve](#curve)
-- [Bump Mapping](#bump-mapping)
-- [Environment Mapping](#environment-mapping)
-- [Light Mapping](#light-mapping)
-- [Shadow Mapping](#shadow-mapping)
-- [Ambient Occlusion Mapping](#ambient-occlusion-mapping)
-- [Deferred Shading](#deferred-shading)
-- [Animation](#animation)
-- [Collision Detection](#collision-detection)
+- [Rendering Pipeline](#Rendering-Pipeline)
+- [Color Space](#Color-Space)
+- [Polygon Mesh](#Polygon-Mesh)
+- [Vertex Processing](#Vertex-Processing)
+- [Rasterization](#Rasterization)
+- [Fragment Processing](#Fragment-Processing)
+- [Output Merging](#Output-Merging)
+- [Lighting](#Lighting)
+- [Shader Models](#Shader-Models)
+- [Shader Language](#Shader-Language)
+- [Curve](#Curve)
+- [Bump Mapping](#Bump-Mapping)
+- [Environment Mapping](#Environment-Mapping)
+- [Light Mapping](#Light-Mapping)
+- [Shadow Mapping](#Shadow-Mapping)
+- [Ambient Occlusion Mapping](#Ambient-Occlusion-Mapping)
+- [Deferred Shading](#Deferred-Shading)
+- [Animation](#Animation)
+- [Collision Detection](#Collision-Detection)
 
 -------------------------------------------------------------------------------
 
@@ -199,14 +199,13 @@ c^{2} = a^{2} + b^{2} - 2ab\cos(\gamma)
 
 ![](img/cosinelaw.png)
 
-## Trigonometric Addtion formulas
+## Trigonometric Addition formulas
 
 [참고](http://mathworld.wolfram.com/TrigonometricAdditionFormulas.html)
 
 ## Half-Angle Formulas
 
 [참고](http://mathworld.wolfram.com/Half-AngleFormulas.html)
-
 
 ## Dot Product
 
@@ -216,19 +215,19 @@ c^{2} = a^{2} + b^{2} - 2ab\cos(\gamma)
 
 [참고](http://mathworld.wolfram.com/CrossProduct.html)
 
-## affine transform
+## Affine Transform
 
-world transform, view transform 은 scaling, rotation, translation등과
+world transform, view transform 은 scaling, rotation, translation 등과
 같이 기본적인 변환들을 조합하여 만들어진다. 한편 scaling, rotation 은
 linear transform(선형변환) 의 범주에 속한다. translation(이동) 은
-linear transform 에 속하지 않는다. 대신 linear transform과 함께 affine
+linear transform 에 속하지 않는다. 대신 linear transform 과 함께 affine
 transform 의 범주에 속한다.
 
 ## affine space
 
-vector space 에서는 vector가 어디에 위치해 있던지 크기와 방향만 같다면
+vector space 에서는 vector 가 어디에 위치해 있던지 크기와 방향만 같다면
 같은 vector 로 생각한다. vector space 에서 크기와 방향은 같지만 위치가
-다른 vector 를 구분할 필요가 있다. 그래서 affine space를 만들어냈다.
+다른 vector 를 구분할 필요가 있다. 그래서 affine space 를 만들어냈다.
 affine space 에서는 position 을 추가하여 vector 의 위치를 표현한다.
 
 vector space 는 affine space 에 포함되고 affine space 는 projection
@@ -236,14 +235,14 @@ space 에 포함된다.
 
 ## affince space operation
 
-vector 와 vector 의 `+, -` 는 vector 이다. scala와 vector의 `*, /` 는
-vector이다. vector 와 point 의 `+, -` 는 point 이다. point 와 point 의
+vector 와 vector 의 `+, -` 는 vector 이다. scala 와 vector 의 `*, /` 는
+vector 이다. vector 와 point 의 `+, -` 는 point 이다. point 와 point 의
 `-` 는 vector이다. point 와 point 의 `+` 는 허용되지 않는다. (단 계수의 합이
 1인 경우는 허용된다.)
 
 ![](img/affine_space_op.png)
 
-affine space 에서 point A 는 point O 에서 point  A로 가는 vector 로 
+affine space 에서 point A 는 point O 에서 point  A 로 가는 vector 로 
 생각 할 수 있다. 따라서 C = A + 0.5 * (B - A) 이다.
 point A 와 vector B - A 의 합은 point 임을 알 수 있다.
 
@@ -254,12 +253,12 @@ C = A + k(B - A) (0 <= k <= 1)
 C = (1 - k)A + kB
 ```
 
-k가 1이면 C = B 이고 k 가 0이면 C = A이다. 이처럼 계수의 합이 1인 경우는
+k 가 1 이면 C = B 이고 k 가  0이면 C = A 이다. 이처럼 계수의 합이 1 인 경우는
 point 와 point 의 덧셈 연산이 가능하고 이런 경우를 affine sum 이라고 한다.
 
 ## homogeneous coordinates (동차좌표)
 
-n-tuple에 하나의 차원 `w` 을 추가시켜서 vector 혹은 point 를 표현할 수 있는 좌표체계이다. 하나의 좌표체계로 vector 혹은 point 를 표현할 수 있기 때문에 하나의 수식으로 vector 와 point 의 연산을 표현할 수 있다. 예를 들어서 `v = (v1, v2)` 가 있다고 하자. `v` 의 homogeneous coordinates `v' = (v1, v2, w)` 이고 `w` 가 0 이면 vector 를 `w` 가 1 이면 oint 를 의미한다. 
+n-tuple 에 하나의 차원 `w` 을 추가시켜서 vector 혹은 point 를 표현할 수 있는 좌표체계이다. 하나의 좌표체계로 vector 혹은 point 를 표현할 수 있기 때문에 하나의 수식으로 vector 와 point 의 연산을 표현할 수 있다. 예를 들어서 `v = (v1, v2)` 가 있다고 하자. `v` 의 homogeneous coordinates `v' = (v1, v2, w)` 이고 `w` 가 0 이면 vector 를 `w` 가 1 이면 point 를 의미한다. 
 
 `w` 의 값이 `1` 보다 큰 homogeneous coordinates 의 경우 각 성분을 `w` 로 나누어 `x, y, z` 가 모두 같다면 같은 point 으로 취급한다. 따라서 다음과 같은 position 들은 모두 같다.  `(5, 1, 1) = (10, 2, 2) = (15, 3, 3) = (20, 4, 4)`
 
@@ -267,35 +266,35 @@ n-tuple에 하나의 차원 `w` 을 추가시켜서 vector 혹은 point 를 표�
 
 ## tangent space
 
-특정한 point의 normal, tangent, binormal
-vector를 축으로 하는 공간이다. normal mapping을 위해
-vertex의 normal값을 기준으로 tangent space를 표현하는 TBN
-행렬을 구할 수 있고 normal map에 저장된 단위 tangent space normal
-vector와 연산하여 최종 normal vector를 구할 수 있다.
+특정한 point 의 normal, tangent, binormal
+vector 를 축으로 하는 공간이다. normal mapping 을 위해
+vertex 의 normal 값을 기준으로 tangent space 를 표현하는 TBN
+행렬을 구할 수 있고 normal map 에 저장된 단위 tangent space normal
+vector 와 연산하여 최종 normal vector 를 구할 수 있다.
 
 # Rendering Pipeline
 
-[rendering pipeline](../renderingpipeline/README.md)
+[rendering pipeline](/renderingpipeline/README.md)
 
 # Color Space
 
-[Gamma Space vs Linear Space](colorspace/README.md)
+[Gamma Space vs Linear Space](/colorspace/README.md)
 
 # Polygon Mesh
 
 ![](img/vertex_index_buffer.png)
 
-위의 그림은 vertex buffer와 index buffer를 표현한 것이다.  polygon
-t1을 주목하자. index buffer에 vertex buffer의 index가 CCW(counter
-clock wise, 반시계방향)으로 3개 저장되어 있다.
+위의 그림은 vertex buffer 와 index buffer 를 표현한 것이다.  polygon
+t1 을 주목하자. index buffer 에 vertex buffer 의 index 가 CCW(counter
+clock wise, 반시계방향) 으로 3 개 저장되어 있다.
 
 ![](img/surface_normal_ccw.png)
 
 ![](img/surface_normal_ccw_eq.png)
 
-surface normal은 중요하다. 위의 그림처럼 polygon을 구성하는 vertex p1, p2, p3에 
-대해서 vector v1, v2를 외적하고 정규화해서 surface normal을 구한다.
-반드시 p1, p2, p3는 CCW로 index buffer에 저장되어 있어야 한다.
+surface normal 은 중요하다. 위의 그림처럼 polygon 을 구성하는 vertex p1, p2, p3 에 
+대해서 vector v1, v2 를 외적하고 정규화해서 surface normal 을 구한다.
+반드시 p1, p2, p3 는 CCW 로 index buffer 에 저장되어 있어야 한다.
 
 ![](img/surface_normal_ccw.png)
 
@@ -308,18 +307,18 @@ surface normal은 중요하다. 위의 그림처럼 polygon을 구성하는 vert
 
 ![](img/vertex_normal_eq.png)
 
-vertex normal은 surface normal보다 더 중요하다.
-vertex normal과 인접한 polygon들의 surface normal을 이용하여
+vertex normal 은 surface normal 보다 더 중요하다.
+vertex normal 과 인접한 polygon 들의 surface normal 을 이용하여
 구할 수 있다.
 
 ![](img/RHS_LHS.png)
 
 ![](img/RHS_LHS_normal.png)
 
-좌표계는 오른손 좌표계와 왼손 좌표계가 있다. opengl은 RHS를
-directx3D는 LHS를 사용한다. surface normal이 구의 바깥쪽으로
-만들어질려면 RHS의 경우 index buffer에 polygon을 구성하는 vertex 들의
-index가 CCW로 저장되어야 하고 LHS의 경우 CW로 저장되어야 한다.
+좌표계는 오른손 좌표계와 왼손 좌표계가 있다. opengl 은 RHS 를
+directx3D 는 LHS 를 사용한다. surface normal이 구의 바깥쪽으로
+만들어질려면 RHS 의 경우 index buffer에 polygon을 구성하는 vertex 들의
+index 가 CCW 로 저장되어야 하고 LHS 의 경우 CW 로 저장되어야 한다.
 
 ![](img/RHS_to_LHS_a.png)
 
@@ -327,49 +326,49 @@ index가 CCW로 저장되어야 하고 LHS의 경우 CW로 저장되어야 한�
 
 ![](img/RHS_to_LHS_c.png)
 
-RHS에서 LHS로 좌표계를 포팅하는 것은 두가지 주요 작업을 포함한다.
-첫째는 polygon을 구성하는 index buffer의 내용이 CCW에서 CW로
-재정렬되어야 한다. 둘째는 오브젝트 pos의 z값과 camera z axis방향이
-반전되어야 한다. 위의 첫번째 그림은 RHS의 상황이고 두번째 그림은
+RHS 에서 LHS 로 좌표계를 포팅하는 것은 두가지 주요 작업을 포함한다.
+첫째는 polygon 을 구성하는 index buffer 의 내용이 CCW 에서 CW 로
+재정렬되어야 한다. 둘째는 오브젝트 pos 의 z 값과 camera z axis 방향이
+반전되어야 한다. 위의 첫번째 그림은 RHS 의 상황이고 두번째 그림은
 별다른 작업없이 좌표계를 LHS로 전환했을때 벌어지는 현상이다. 거울에 비처진 것처럼
 반대로 화면에 그려졌다. 세번째 그림은 포팅작업을 통해 RHS에서의 화면과
 LHS에서의 화면이 같다.
 
 앞서 언급한 포팅 작업중 첫째 작업은 필요 없을 수 있다.
-DirectX의 경우 기본 컬링 모드는 D3DCULL_CCW이다. 이것을
-D3DCULL_CW로 바꾸면 재정렬 작업은 필요 없게된다.
+DirectX 의 경우 기본 컬링 모드는 D3DCULL_CCW 이다. 이것을
+D3DCULL_CW 로 바꾸면 재정렬 작업은 필요 없게된다.
 
 # Vertex Processing
 
-확대축소(scaling), 회전(rotation)은 선형변환(linear transformation)이다.
-선형변환(linear transformation)에 이동(translation)까지 포함되면
-affine transformation이다.
+확대축소(scaling), 회전(rotation)은 선형변환(linear transformation) 이다.
+선형변환(linear transformation) 에 이동(translation) 까지 포함되면
+affine transformation 이다.
 
 ![](img/transform.png)
 
-object(local) space coordinates를 world space coordinates
-로 변환하는 것을 world transform이라고 한다.
-world space coordinates를 camera space coordinates로 변환하는 것을
-view transform이라고 한다.
-view space coordinates를 clip space coordinates로 변환하는 것을
-투영변환(projection transform)이라고 한다. 
-clip space coordinates는 normalized device coordinates로 변환된다.
-normalized device coordinates를 window space coordinates로 변환하는
-것을 viewport transform이라고 한다. clip space coordinates부터 시작되는
+object(local) space coordinates 를 world space coordinates
+로 변환하는 것을 world transform 이라고 한다.
+world space coordinates 를 camera space coordinates 로 변환하는 것을
+view transform 이라고 한다.
+view space coordinates 를 clip space coordinates 로 변환하는 것을
+투영변환(projection transform) 이라고 한다. 
+clip space coordinates 는 normalized device coordinates 로 변환된다.
+normalized device coordinates 를 window space coordinates 로 변환하는
+것을 viewport transform 이라고 한다. clip space coordinates 부터 시작되는
 변환은 rasterization 단계에서 이루어지는 것일까? viewport transform은
 rasterization 단계에서 실행되는 것은 확실하다.
 
 ![](img/projection_transform.png)
 
-projection transform은 좌측의 view fustumn을 우측의 canonical view
-volume으로 찌그러트리는 것이다. canonical view volume은 directx의 경우
-직육면체 형태(2, 2, 1)이기 때문에 near plane의 object들은 상대적으로
-크기가 커질 것이고 far plane의 object들은 상대적으로 크기가 작아질
-것이다. opengl의 경우 정육면체 형태(2, 2, 2)이다.
+projection transform 은 좌측의 view fustumn 을 우측의 canonical view
+volume 으로 찌그러트리는 것이다. canonical view volume 은 directx 의 경우
+직육면체 형태(2, 2, 1) 이기 때문에 near plane 의 object 들은 상대적으로
+크기가 커질 것이고 far plane 의 object 들은 상대적으로 크기가 작아질
+것이다. opengl 의 경우 정육면체 형태(2, 2, 2)이다.
 
 ![](img/RHS_to_LHS_on_rasterization.png)
 
-rasterization 단계는 LHS를 사용한다. 이전 단계에서 오른손좌표계(RHS)를
+rasterization 단계는 LHS 를 사용한다. 이전 단계에서 오른손좌표계(RHS) 를
 사용했다면 z좌표를 반전시켜야 한다.
 
 ```
@@ -385,50 +384,50 @@ src는 [이곳](https://github.com/erich666/cs291/blob/master/demo/unit7-view-pi
 
 ![](img/normal_transform.png)
 
-normal vector를 변환하는 것은 vertex를 변환하는 것과 다르게 처리되어야
-한다. vertex를 변환 할 때와 똑같은 방법으로 변환행렬 M과 surface
-normal vector를 곱하면 변환후 표면에 수직이 되지 못한다.  `M`대신
-`(M^{-1})^{T}`를 곱해야 한다. 다음은 surface normal n과 변환행렬
-`(M^{-1})^{T}`을 곱한 것과 `(r^{'}-p^{'})`이 수직임을 보여준다.
-`((r^{'}-p^{'})^{T}`는 행렬 곱셉을 위해 transpose한 것이다.
+normal vector 를 변환하는 것은 vertex 를 변환하는 것과 다르게 처리되어야
+한다. vertex 를 변환 할 때와 똑같은 방법으로 변환행렬 M 과 surface
+normal vector 를 곱하면 변환후 표면에 수직이 되지 못한다.  `M` 대신
+`(M^{-1})^{T}` 를 곱해야 한다. 다음은 surface normal n 과 변환행렬
+`(M^{-1})^{T}` 을 곱한 것과 `(r^{'}-p^{'})` 이 수직임을 보여준다.
+`((r^{'}-p^{'})^{T}` 는 행렬 곱셉을 위해 transpose 한 것이다.
 
 ![](img/normal_transform_eq.png)
 
 # Rasterization
 
-Rasterization은 hard wired하다. 클리핑(clipping), 원근
+Rasterization 은 hard wired하다. 클리핑(clipping), 원근
 나눗셈(perspective division), 뒷면 제거(back-face culling), 뷰포트
-변환(view-port transform), 스캔 변환(scan conversion), z-culling등의
+변환(view-port transform), 스캔 변환(scan conversion), z-culling 등의
 요소로 구성된다.
 
-클리핑(clipping)은 canonical view volume의 바깥쪽에 포함된 폴리곤을
+클리핑(clipping) 은 canonical view volume 의 바깥쪽에 포함된 폴리곤을
 잘라내는 과정이다.
 
-원근 나눗셈(perspective division)은 지금까지 사용했던
-동차좌표계(homogenious coordinates system)를 데카르트좌표계(cartesian
-coordinate system)으로 변환하는 과정이다. 예를 들어 동차좌표가 (x, y,
-z, w)라면 데카르트좌표는 (x/w, y/w, z/w)가 된다.
+원근 나눗셈(perspective division) 은 지금까지 사용했던
+동차좌표계(homogenious coordinates system) 를 데카르트좌표계(cartesian
+coordinate system) 으로 변환하는 과정이다. 예를 들어 동차좌표가 (x, y,
+z, w) 라면 데카르트좌표는 (x/w, y/w, z/w) 가 된다.
 
 ![](img/viewport_transform.png)
 
-normalized device coordinates를 screen space coordinates로 변환하는
-것을 viewport transform이라고 한다. screen space는 RHS를 이용한다.
-canonical view volume의 z값은 추후 z-buffering을 위해 사용된다.
+normalized device coordinates 를 screen space coordinates 로 변환하는
+것을 viewport transform 이라고 한다. screen space 는 RHS 를 이용한다.
+canonical view volume 의 z 값은 추후 z-buffering 을 위해 사용된다.
 
 ![](img/scan_conversion_1.png)
 ![](img/scan_conversion_2.png)
 
-viewport transform후에 각각의 polygon은 screen space에서 내부가 특정한
-색깔로 채워져 보이게 된다. 이때 채워지는 색깔은 fragment라는 것의
-color속성을 읽어온 것이다. polygon의 내부를 채우는 pixel수 만큼
-fragment들이 존재한다.  이와 같은 fragment들을 생성하는 것을
-스캔변환(scan conversion)이라고 한다.  polygon을 구성하는 vertex 3개를
-보간(interpolation)해서 fragment들을 생성한다.  fragment는 pixel에
-해당하는 normal, texture coordinates, color, depth등을 가지고 있다.
+viewport transform 후에 각각의 polygon 은 screen space 에서 내부가 특정한
+색깔로 채워져 보이게 된다. 이때 채워지는 색깔은 fragment 라는 것의
+color 속성을 읽어온 것이다. polygon 의 내부를 채우는 pixel 수 만큼
+fragment 들이 존재한다.  이와 같은 fragment 들을 생성하는 것을
+스캔변환(scan conversion) 이라고 한다.  polygon 을 구성하는 vertex 3개를
+보간(interpolation) 해서 fragment 들을 생성한다.  fragment 는 pixel 에
+해당하는 normal, texture coordinates, color, depth 등을 가지고 있다.
 
-output merging단계에서 z-buffering을 이용해서 깊이검사를 하는 것보다 
-rasterization단계에서 z-culling을 한다면 훨 씬 효율적이다.
-z-culling을 최대한 활용하고자 하는 목적으로 이른바 pre-z pass algorithm이
+output merging 단계에서 z-buffering 을 이용해서 깊이검사를 하는 것보다 
+rasterization 단계에서 z-culling 을 한다면 훨 씬 효율적이다.
+z-culling 을 최대한 활용하고자 하는 목적으로 이른바 pre-z pass algorithm 이
 제안되었다.
 
 # Fragment Processing
@@ -437,7 +436,7 @@ lighting 및 texturing 을 수행한다.
 
 # Output Merging
 
-z-buffering, alpha blending을 수행한다.
+z-buffering, alpha blending 을 수행한다.
 
 # Lighting
 
@@ -445,7 +444,7 @@ z-buffering, alpha blending을 수행한다.
 
 # Shader Models
 
-opengl과 direct3D는 shader 용어들이 다르다.
+opengl 과 direct3D 는 shader 용어들이 다르다.
 
 | opengl | directx |
 |:-------|:--------|
@@ -456,10 +455,10 @@ opengl과 direct3D는 shader 용어들이 다르다.
 |Fragment Shader|Pixel Shader|
 |Compute Shader|Compute Shader|
 
-shader model은 directX에서 사용하는 shader 버저닝 방법이다.
-opengl은 어떻게 하지???
+shader model 은 directX 에서 사용하는 shader 버저닝 방법이다.
+opengl 은 어떻게 하지???
 
-shader model 4는 geometry shader, stream output이 추가되었다. shader model 5는 hull shader, tessellator, domain shader가 추가되었다.
+shader model 4 는 geometry shader, stream output 이 추가되었다. shader model 5 는 hull shader, tessellator, domain shader 가 추가되었다.
 
 # Shader Language
 
@@ -486,7 +485,7 @@ Catmull-Rom Spline
 
 # Shadow Mapping
 
-* [Shadow Mapping @ TIL](/unity3dshaderlab#shadow-mapping)
+* [Shadow Mapping @ TIL](/unity3dshaderlab/README.md#shadow-mapping)
 
 # Ambient Occlusion Mapping
 
