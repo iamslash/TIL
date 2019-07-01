@@ -14,6 +14,7 @@
     skinned mesh renderer, bake mesh, fill rate, overdraw,
     texture compression, mipmap, normap mapping, level of detail 등등의
     내용을 자세히 기술한다.
+- [Best practice guides @ unity](https://docs.unity3d.com/Manual/BestPracticeGuides.html)
 
 # Usages
 
