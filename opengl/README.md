@@ -322,3 +322,190 @@ glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);  
 ```
 
+## Uniform Buffer Object
+
+한번 설정해 두면 여러개의 Shader 에서 global 하게 사용할 수 잇는 buffer object 이다. 다음은 projection, view matrix 를 uniform buffer object 로 만들어 이용한 것이다. projection matrix 는 안 바뀐다고 가정하고 한번만 설정한다. 그러나 view matrix 는 camera 의 position, rotation 등이 변환될 때 마다 바뀌므로 rendering loop 에서 매번 설정한다.
+
+* create, bind and set uniform buffer object with projection matrix
+
+```c
+    // configure a uniform buffer object
+    // ---------------------------------
+    // first. We get the relevant block indices
+    unsigned int uniformBlockIndexRed = glGetUniformBlockIndex(shaderRed.ID, "Matrices");
+    unsigned int uniformBlockIndexGreen = glGetUniformBlockIndex(shaderGreen.ID, "Matrices");
+    unsigned int uniformBlockIndexBlue = glGetUniformBlockIndex(shaderBlue.ID, "Matrices");
+    unsigned int uniformBlockIndexYellow = glGetUniformBlockIndex(shaderYellow.ID, "Matrices");
+    // then we link each shader's uniform block to this uniform binding point
+    glUniformBlockBinding(shaderRed.ID, uniformBlockIndexRed, 0);
+    glUniformBlockBinding(shaderGreen.ID, uniformBlockIndexGreen, 0);
+    glUniformBlockBinding(shaderBlue.ID, uniformBlockIndexBlue, 0);
+    glUniformBlockBinding(shaderYellow.ID, uniformBlockIndexYellow, 0);
+    // Now actually create the buffer
+    unsigned int uboMatrices;
+    glGenBuffers(1, &uboMatrices);
+    glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+    glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_STATIC_DRAW);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    // define the range of the buffer that links to a uniform binding point
+    glBindBufferRange(GL_UNIFORM_BUFFER, 0, uboMatrices, 0, 2 * sizeof(glm::mat4));
+
+    // store the projection matrix (we only do this once now) (note: we're not using zoom anymore by changing the FoV)
+    glm::mat4 projection = glm::perspective(45.0f, (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+    glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+```
+
+* set uniform buffer object with view matrix
+
+```c
+        // set the view and projection matrix in the uniform block - we only have to do this once per loop iteration.
+        glm::mat4 view = camera.GetViewMatrix();
+        glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+        glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+```
+
+## Instancing
+
+월드 좌표가 다른 다수의 동일한 model 을 하나의 Draw Call 로 렌더링하는 방법이다. 다음은 사각형 100 개를 Instancing Draw 하는 예이다.
+
+* create, bind instance vbo
+
+`glVertexAttribDivisor` 를 이용하여 instance vbo 를 특별한 attribute 로 취급하는 것을 주의하자.
+
+```c
+    // store instance data in an array buffer
+    // --------------------------------------
+    unsigned int instanceVBO;
+    glGenBuffers(1, &instanceVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::vec2) * 100, &translations[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+    float quadVertices[] = {
+        // positions     // colors
+        -0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
+         0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
+        -0.05f, -0.05f,  0.0f, 0.0f, 1.0f,
+
+        -0.05f,  0.05f,  1.0f, 0.0f, 0.0f,
+         0.05f, -0.05f,  0.0f, 1.0f, 0.0f,
+         0.05f,  0.05f,  0.0f, 1.0f, 1.0f
+    };
+    unsigned int quadVAO, quadVBO;
+    glGenVertexArrays(1, &quadVAO);
+    glGenBuffers(1, &quadVBO);
+    glBindVertexArray(quadVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(2 * sizeof(float)));
+    // also set instance data
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, instanceVBO); // this attribute comes from a different vertex buffer
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glVertexAttribDivisor(2, 1); // tell OpenGL this is an instanced vertex attribute.
+```
+
+* draw instanced quads
+
+```c
+        // draw 100 instanced quads
+        shader.use();
+        glBindVertexArray(quadVAO);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 6, 100); // 100 triangles of 6 vertices each
+        glBindVertexArray(0);
+```
+
+## MSAA (Multi Sampled Anti Aliasing)
+
+anti aliasing algorithm 중 하나이다. Frame Buffer Object 두개를 이용하여 anti aliasing 한다.
+
+* create, bind 2 frame buffer objects
+
+```c
+
+    // configure MSAA framebuffer
+    // --------------------------
+    unsigned int framebuffer;
+    glGenFramebuffers(1, &framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+    // create a multisampled color attachment texture
+    unsigned int textureColorBufferMultiSampled;
+    glGenTextures(1, &textureColorBufferMultiSampled);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, textureColorBufferMultiSampled);
+    glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
+    glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, textureColorBufferMultiSampled, 0);
+    // create a (also multisampled) renderbuffer object for depth and stencil attachments
+    unsigned int rbo;
+    glGenRenderbuffers(1, &rbo);
+    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, rbo);
+
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // configure second post-processing framebuffer
+    unsigned int intermediateFBO;
+    glGenFramebuffers(1, &intermediateFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, intermediateFBO);
+    // create a color attachment texture
+    unsigned int screenTexture;
+    glGenTextures(1, &screenTexture);
+    glBindTexture(GL_TEXTURE_2D, screenTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenTexture, 0);	// we only need a color buffer
+```
+
+* blit 2 frame objects
+
+framebuffer 에서 intermediateFBO 로 blit 하면 intermediateFBO 에 바인딩되어 있는 screenTexture 에 렌더링 된다. 그리고 default frame buffer 에 screenTexture 를 렌더링 한다.
+
+```c
+        // 1. draw scene as normal in multisampled buffers
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glEnable(GL_DEPTH_TEST);
+
+        // set transformation matrices		
+        shader.use();
+        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
+        shader.setMat4("projection", projection);
+        shader.setMat4("view", camera.GetViewMatrix());
+        shader.setMat4("model", glm::mat4(1.0f));
+
+        glBindVertexArray(cubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+
+        // 2. now blit multisampled buffer(s) to normal colorbuffer of intermediate FBO. Image is stored in screenTexture
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, framebuffer);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, intermediateFBO);
+        glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+        // 3. now render quad with scene's visuals as its texture image
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glDisable(GL_DEPTH_TEST);
+
+        // draw Screen quad
+        screenShader.use();
+        glBindVertexArray(quadVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, screenTexture); // use the now resolved color attachment as the quad's texture
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+```
