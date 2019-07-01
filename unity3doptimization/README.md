@@ -23,4 +23,5 @@
 - json을 처리할때 minijson보다 JsonUtility를 사용하자. runtime memory를 절약할 수 있다.
 - Runtime에 fps 를 줄이면 battery life 를 증가시킬 수 있다.
 - Buildtime에 DPI 를 줄이면 battery life 를 증가시킬 수 있다.
-
+- unity 는 기본적으로 하나의 main thread, 하나의 render thread, 다수의 worker thread 가 동작한다. 이때 render thread 는 GPU command 를 GPU 에게 보내는       일을 하는데 만약 render thread 에서 bottle neck 현상이 발생한다면 SetPass       call 의 개수를 줄이는 최적화를 해야 한다. GPU command 중 SetPass call 이 가장 비용이 크기 때문이다.
+- main thread 는 rednering 의 중요한 단계들을 처리한다. 따라서 main thread 가 수행하는 일들 중 rendering 과 관련없는 것을 work thread 가 처리하게 하면 main thread 의 성능을 개선할 수 있다.
