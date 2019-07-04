@@ -2,6 +2,12 @@
 
 aws 사용법에 대해 간략히 정리한다.
 
+# Materials
+
+* [AWS @ 생활코딩](https://opentutorials.org/course/2717)
+* [44bit](https://www.44bits.io/ko)
+  * 클라우드블로그
+
 # Basic
 
 ## VPC (Virtual Private Cloud)
@@ -33,6 +39,30 @@ OS 가 설치된 machine 이다.
 * 개별 IAM 사용자 생성(Create individual IAM users)
 * 그룹을 사용하여 권한 할당(Use groups to assign permissions)
 * IAM 비밀번호 정책 적용(Apply an IAM password policy)
+
+## S3 (Simple Storage Service)
+
+* [PHP를 위한 S3 SDK @ 생활코딩](https://opentutorials.org/course/2717/11781)
+
+## RDS
+
+## ElastiCachi
+
+## Lambda
+
+## DynamoDB
+
+## ElasticSearch Service
+
+## Kinesis
+
+## ELB
+
+## Route 53
+
+## CloudFront
+
+## CloudWatch
 
 # Advanced
 
