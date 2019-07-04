@@ -1,65 +1,65 @@
-﻿- [Abstract](#abstract)
-- [Materials](#materials)
-- [References](#references)
-  - [Tools](#tools)
-  - [Best Practices](#best-practices)
-  - [Concurrency](#concurrency)
-  - [Error Handling](#error-handling)
-  - [Interface](#interface)
-  - [Struct](#struct)
-  - [Pointer](#pointer)
-  - [Map, Slice](#map-slice)
-  - [Logging](#logging)
-  - [Encoding, JSON](#encoding-json)
-- [Basic Usages](#basic-usages)
-  - [Hello World](#hello-world)
-  - [Collections compared to c++ containers](#collections-compared-to-c-containers)
-  - [Collections by examples](#collections-by-examples)
-  - [Reserved Words](#reserved-words)
-  - [Data Types](#data-types)
-  - [Declarations](#declarations)
-  - [Constants](#constants)
-  - [Operators](#operators)
-    - [Arithmetic](#arithmetic)
-    - [Comparison](#comparison)
-    - [Logical](#logical)
-    - [Other](#other)
-  - [Decision Making](#decision-making)
-    - [If](#if)
-    - [Switch](#switch)
+﻿- [Abstract](#Abstract)
+- [Materials](#Materials)
+- [References](#References)
+  - [Tools](#Tools)
+  - [Best Practices](#Best-Practices)
+  - [Concurrency](#Concurrency)
+  - [Error Handling](#Error-Handling)
+  - [Interface](#Interface)
+  - [Struct](#Struct)
+  - [Pointer](#Pointer)
+  - [Map, Slice](#Map-Slice)
+  - [Logging](#Logging)
+  - [Encoding, JSON](#Encoding-JSON)
+- [Basic Usages](#Basic-Usages)
+  - [Hello World](#Hello-World)
+  - [Collections compared to c++ containers](#Collections-compared-to-c-containers)
+  - [Collections by examples](#Collections-by-examples)
+  - [Reserved Words](#Reserved-Words)
+  - [Data Types](#Data-Types)
+  - [Declarations](#Declarations)
+  - [Constants](#Constants)
+  - [Operators](#Operators)
+    - [Arithmetic](#Arithmetic)
+    - [Comparison](#Comparison)
+    - [Logical](#Logical)
+    - [Other](#Other)
+  - [Decision Making](#Decision-Making)
+    - [If](#If)
+    - [Switch](#Switch)
     - [select](#select)
-  - [Loops](#loops)
-  - [Functions](#functions)
-    - [Functions As Values And Closures](#functions-as-values-and-closures)
-    - [Variadic Functions](#variadic-functions)
-  - [Type Conversions](#type-conversions)
-  - [Packages](#packages)
-  - [Strings](#strings)
-  - [Arrays, Slices, Ranges](#arrays-slices-ranges)
-    - [Arrays](#arrays)
-    - [Slices](#slices)
-    - [Operations on Arrays and Slices](#operations-on-arrays-and-slices)
-  - [Maps](#maps)
-  - [Structs](#structs)
-  - [Pointers](#pointers)
-  - [Interfaces](#interfaces)
-  - [Embedding](#embedding)
-  - [Errors](#errors)
-  - [Goroutines](#goroutines)
-  - [Channels](#channels)
-    - [Channel Axioms](#channel-axioms)
-  - [Printing](#printing)
-- [Advanced Usages](#advanced-usages)
-  - [Tools](#tools-1)
+  - [Loops](#Loops)
+  - [Functions](#Functions)
+    - [Functions As Values And Closures](#Functions-As-Values-And-Closures)
+    - [Variadic Functions](#Variadic-Functions)
+  - [Type Conversions](#Type-Conversions)
+  - [Packages](#Packages)
+  - [Strings](#Strings)
+  - [Arrays, Slices, Ranges](#Arrays-Slices-Ranges)
+    - [Arrays](#Arrays)
+    - [Slices](#Slices)
+    - [Operations on Arrays and Slices](#Operations-on-Arrays-and-Slices)
+  - [Maps](#Maps)
+  - [Structs](#Structs)
+  - [Pointers](#Pointers)
+  - [Interfaces](#Interfaces)
+  - [Embedding](#Embedding)
+  - [Errors](#Errors)
+  - [Goroutines](#Goroutines)
+  - [Channels](#Channels)
+    - [Channel Axioms](#Channel-Axioms)
+  - [Printing](#Printing)
+- [Advanced Usages](#Advanced-Usages)
+  - [Tools](#Tools-1)
     - [go](#go)
     - [go-wrk](#go-wrk)
     - [go-torch](#go-torch)
-  - [Debug](#debug)
-  - [Test](#test)
-  - [Benchmarks](#benchmarks)
-  - [Profile](#profile)
-- [Snippets](#snippets)
-  - [HTTP Server](#http-server)
+  - [Debug](#Debug)
+  - [Test](#Test)
+  - [Benchmarks](#Benchmarks)
+  - [Profile](#Profile)
+- [Snippets](#Snippets)
+  - [HTTP Server](#HTTP-Server)
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -198,7 +198,7 @@ func main() {
 | `stack`              | ``                   |
 | `queue`              | ``                   |
 | `priority_queue`     | `heap`               |
-| `set`                | ``                   |
+| `set`                | `map[keytype]struct{}`|
 | `multiset`           | ``                   |
 | `map`                | ``                   |
 | `multimap`           | ``                   |
@@ -858,7 +858,7 @@ func main() {
 | `/`      | quotient            |            |
 | `%`      | remainder           |            |
 | `&`      | bitwise and         |            |
-| `|`      | bitwise or          |            |
+| '`|`'      | bitwise or          |            |
 | `^`      | bitwise xor         |            |
 | `&^`     | bit clear (and not) |            |
 | `<<`     | left shift          |            |
@@ -881,7 +881,7 @@ func main() {
 |----------|-------------|---|------------|
 | `&&`     | logical and |   |            |
 | `||`     | logical or  |   |            |
-| `!`      | logical not |   |            |
+| '`!`'      | logical not |   |            |
 
 ### Other
 
@@ -1324,6 +1324,18 @@ func (v *Vertex) add(n float64) {
     v.Y += n
 }
 
+// struct{} for signal without allocating memory
+func main() {
+    done := make(chan struct{})
+    go func() {
+        time.Sleep(1 * time.Second)
+        close(done)
+    }()
+
+    fmt.Println("Wait...")
+    <-done
+    fmt.Println("done.")
+}
 ```
 
 **Anonymous structs:**  
