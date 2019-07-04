@@ -40,9 +40,13 @@ OS 가 설치된 machine 이다.
 * 그룹을 사용하여 권한 할당(Use groups to assign permissions)
 * IAM 비밀번호 정책 적용(Apply an IAM password policy)
 
+## CloudFront
+
+* [AWS2 - CloudFront @ 생활코딩](https://www.youtube.com/playlist?list=PLuHgQVnccGMDMQ1my6bVT-BPoo0LvnQMa)
+
 ## S3 (Simple Storage Service)
 
-* [PHP를 위한 S3 SDK @ 생활코딩](https://opentutorials.org/course/2717/11781)
+* [실전 Amazon S3와 CloudFront로 정적 파일 배포하기 @ aws](https://aws.amazon.com/ko/blogs/korea/amazon-s3-amazon-cloudfront-a-match-made-in-the-cloud/)
 
 ## RDS
 
@@ -59,8 +63,6 @@ OS 가 설치된 machine 이다.
 ## ELB
 
 ## Route 53
-
-## CloudFront
 
 ## CloudWatch
 
