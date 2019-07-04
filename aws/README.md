@@ -70,17 +70,19 @@ aws s3 sync
 
 ## Lambda
 
+## API Gateway
+
 ## DynamoDB
 
 ## ElasticSearch Service
 
 ## Kinesis
 
-## ELB
-
 ## Route 53
 
 ## CloudWatch
+
+## ELB
 
 # Advanced
 
