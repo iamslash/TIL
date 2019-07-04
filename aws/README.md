@@ -7,6 +7,8 @@ aws 사용법에 대해 간략히 정리한다.
 * [AWS @ 생활코딩](https://opentutorials.org/course/2717)
 * [44bit](https://www.44bits.io/ko)
   * 클라우드블로그
+* [아마존 웹 서비스를 다루는 기술](http://pyrasis.com/aws.html)
+  * 오래되었지만 괜찮은 책
 
 # Basic
 
@@ -44,9 +46,23 @@ OS 가 설치된 machine 이다.
 
 * [AWS2 - CloudFront @ 생활코딩](https://www.youtube.com/playlist?list=PLuHgQVnccGMDMQ1my6bVT-BPoo0LvnQMa)
 
+CloudFront 는 CDN (Contents Delivery Network) 이다. 예를 들어, 특정 region 의 S3 bucket 을 전세계 유저들이 지연없이 다운 받을 수 있도록 캐싱하는 역할을 한다. 캐싱역할을 하는 엣지서버는 이곳 저곳 설치되어 있다.
+
 ## S3 (Simple Storage Service)
 
 * [실전 Amazon S3와 CloudFront로 정적 파일 배포하기 @ aws](https://aws.amazon.com/ko/blogs/korea/amazon-s3-amazon-cloudfront-a-match-made-in-the-cloud/)
+
+주요 command line 은 다음과 같다.
+
+```
+aws s3 ls
+aws s3 rm
+aws s3 mb # make bucket
+aws s3 rb # remove bucket
+aws s3 cp
+aws s3 mv
+aws s3 sync
+```
 
 ## RDS
 
