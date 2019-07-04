@@ -9,6 +9,8 @@ aws 사용법에 대해 간략히 정리한다.
   * 클라우드블로그
 * [아마존 웹 서비스를 다루는 기술](http://pyrasis.com/aws.html)
   * 오래되었지만 괜찮은 책
+* [cloudcraft](https://cloudcraft.co/)
+  * aws diagram tool
 
 # Basic
 
@@ -66,19 +68,41 @@ aws s3 sync
 
 ## RDS
 
+mySQL 등을 사용할 수 있다.
+
 ## ElastiCachi
+
+redis, memcached 를 사용할 수 있다.
 
 ## Lambda
 
+* [[AWS]Lambda의 시작 - 'Hello World' 출력하기](https://gun0912.tistory.com/60)
+* [AWS Lambda: 가볍게 시작하기](https://hyunseob.github.io/2017/05/27/aws-lambda-easy-start/)
+
+서버설정은 필요 없이 비지니스 로직을 실행할 수 있다. 함수만 작성하면 끝이다. coldstart 문제는 없을까? 
+API Gateway 에서 routing 설정을 해야 외부에서 HTTP request 할 수 있다.
+
 ## API Gateway
+
+* [[AWS]API Gateway - RESTful API만들기](https://gun0912.tistory.com/63)
+
+HTTP URL 을 routing 할 수 있다. 예를 들어 `HTTP GET /user` 를 수신하면 `Lambda Hello` 혹은 `Lambda World` 등으로 routing 할 수 있다.
 
 ## DynamoDB
 
+key value DB 이다.
+
 ## ElasticSearch Service
+
+ElasticSearch, logstash, kibana 를 이용할 수 있다.
 
 ## Kinesis
 
+kafka 를 이용할 수 있다.
+
 ## Route 53
+
+DNS server 이다.
 
 ## CloudWatch
 
