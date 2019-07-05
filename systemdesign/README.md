@@ -1,34 +1,34 @@
-- [Abstract](#abstract)
-- [Materials](#materials)
-- [Prerequisites](#prerequisites)
-- [Principles](#principles)
-  - [How to approach a system design interview question](#how-to-approach-a-system-design-interview-question)
-  - [Scalability](#scalability)
-  - [Performance vs scalability](#performance-vs-scalability)
-  - [Latency vs throughput](#latency-vs-throughput)
-  - [Availability vs consistency](#availability-vs-consistency)
-  - [Consistency patterns](#consistency-patterns)
-  - [Availability patterns](#availability-patterns)
-  - [Domain name system](#domain-name-system)
-  - [Content delivery network](#content-delivery-network)
-  - [Load balancer](#load-balancer)
-  - [Reverse proxy](#reverse-proxy)
-  - [Application layer](#application-layer)
-  - [Database](#database)
-  - [Cache](#cache)
-  - [Asynchronism](#asynchronism)
-  - [Communication](#communication)
-  - [Security](#security)
-- [Practices](#practices)
-- [Additional System Design Interview Questions](#additional-system-design-interview-questions)
-- [Real World Architecture](#real-world-architecture)
-- [Company Architectures](#company-architectures)
+- [Abstract](#Abstract)
+- [Materials](#Materials)
+- [Prerequisites](#Prerequisites)
+- [Principles](#Principles)
+  - [How to approach a system design interview question](#How-to-approach-a-system-design-interview-question)
+  - [Scalability](#Scalability)
+  - [Performance vs scalability](#Performance-vs-scalability)
+  - [Latency vs throughput](#Latency-vs-throughput)
+  - [Availability vs consistency](#Availability-vs-consistency)
+  - [Consistency patterns](#Consistency-patterns)
+  - [Availability patterns](#Availability-patterns)
+  - [Domain name system](#Domain-name-system)
+  - [Content delivery network](#Content-delivery-network)
+  - [Load balancer](#Load-balancer)
+  - [Reverse proxy](#Reverse-proxy)
+  - [Application layer](#Application-layer)
+  - [Database](#Database)
+  - [Cache](#Cache)
+  - [Asynchronism](#Asynchronism)
+  - [Communication](#Communication)
+  - [Security](#Security)
+- [Practices](#Practices)
+- [Additional System Design Interview Questions](#Additional-System-Design-Interview-Questions)
+- [Real World Architecture](#Real-World-Architecture)
+- [Company Architectures](#Company-Architectures)
 - [company engineering blog](#company-engineering-blog)
-- [System Design Pattern](#system-design-pattern)
+- [System Design Pattern](#System-Design-Pattern)
   - [aws cloud design pattern](#aws-cloud-design-pattern)
   - [azure cloud design pattern](#azure-cloud-design-pattern)
   - [google cloud design pattern](#google-cloud-design-pattern)
-- [Quiz](#quiz)
+- [Quiz](#Quiz)
 
 
 # Abstract
@@ -95,6 +95,27 @@ Notes
 ```
 
 ![](img/latency_numbers_every_programmer_should_know.png)
+
+- time
+
+| years | days | hours | mins | secs |
+|------:|-----:|------:|-----:|-----:|
+| 1     | 365  | 8,760  | 525,600 | 31,536,000 |
+|       | 1    | 24    | 1,440 | 86,400 |
+|       |      | 1    | 60 | 3,600 |
+|       |      |      | 1 | 60 |
+
+- terms
+  - nas, san, das 
+  - saas paas iaas 
+  - waf firewall
+  - osi 7 layer
+  - how to make onpremise vpc
+  - restfull api advantages, disadvantages
+  - msa
+  - hdfs 
+  - virtualization 3 types
+  - devops
 
 # Principles
 
