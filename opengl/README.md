@@ -20,6 +20,16 @@ OpenGL을 정리한다. [OpenGL Superbible: Comprehensive Tutorial and Reference
 * [OpenGL and OpenGL-es Reference Pages](https://www.khronos.org/registry/OpenGL-Refpages/)
   * 각종 링크 모음
 * [awesome opengl](https://github.com/eug/awesome-opengl)
+* [opengl-tutorial](http://www.opengl-tutorial.org/kr/)
+  * particle 예제가 있음
+* [ogldev](http://ogldev.atspace.co.uk/)
+  * 예제가 많다.
+* [bgfx](https://github.com/bkaradzic/bgfx)
+  * opengl 을 지원하는 cross platform graphics library
+* [renderdoc](https://renderdoc.org/)
+  * opengl debugger
+* [OpenGL Window Example @ qt](https://doc.qt.io/qt-5/qtgui-openglwindow-example.html)
+  * qt 로 opengl 구현
 
 # Basic Usage
 
