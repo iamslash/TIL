@@ -270,7 +270,7 @@ cache.put(k, v)
 | Question | |
 |---|---|
 | [Designing a URL Shortening service like TinyURL](Designing_a_URL_Shortening_service_like_TinyURL.md) |
-| [Designing Pastebin]() |
+| [Designing Pastebin](DesigningPastebin.md) |
 | [Designing Instagram]() |
 | [Designing Dropbox]() |
 | [Designing Facebook Messenger]() |
@@ -278,7 +278,7 @@ cache.put(k, v)
 | [Designing Youtube or Netflix]() |
 | [Designing Typeahead Suggestion]() |
 | [Designing an API Rate Limiter]() |
-| [Designing Twitter Search]() |
+| [Designing Twitter Search](DesigningTwitterSearch.md) |
 | [Designing a Web Crawler]() |
 | [Designing Facebook’s Newsfeed](DesigningFacebooksNewsfeed.md) |
 | [Designing Yelp or Nearby Friends]() |
