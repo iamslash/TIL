@@ -294,7 +294,7 @@ cache.put(k, v)
 | [ZooKeeper - Wait-free coordination for Internet-scale systems](https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf) |
 | [MapReduce - Simplified Data Processing on Large Clusters](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf) |
 | [Hadoop - A Distributed File System](http://storageconference.us/2010/Papers/MSST/Shvachko.pdf) |
-| [Key Characteristics of Distributed Systems]() |
+| [Key Characteristics of Distributed Systems](Key_Characteristics_of_Distributed_Systems.md) |
 | [Load Balancing]() |
 | [Caching]() |
 | [Data Partitioning]() |
