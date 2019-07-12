@@ -274,13 +274,13 @@ cache.put(k, v)
 | [Designing Instagram]() |
 | [Designing Dropbox]() |
 | [Designing Facebook Messenger]() |
-| [Designing Twitter]() |
+| [Designing Twitter](DesigningTwitter.md) |
 | [Designing Youtube or Netflix]() |
 | [Designing Typeahead Suggestion]() |
 | [Designing an API Rate Limiter]() |
 | [Designing Twitter Search]() |
 | [Designing a Web Crawler]() |
-| [Designing Facebook’s Newsfeed]() |
+| [Designing Facebook’s Newsfeed](DesigningFacebooksNewsfeed.md) |
 | [Designing Yelp or Nearby Friends]() |
 | [Designing Uber backend]() |
 | [Design Ticketmaster]() |
