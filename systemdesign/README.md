@@ -19,7 +19,8 @@
   - [Asynchronism](#Asynchronism)
   - [Communication](#Communication)
   - [Security](#Security)
-- [Practices](#Practices)
+- [Grokking the System Design Interview Practices](#Grokking-the-System-Design-Interview-Practices)
+- [System Design Primer Practices](#System-Design-Primer-Practices)
 - [Additional System Design Interview Questions](#Additional-System-Design-Interview-Questions)
 - [Real World Architecture](#Real-World-Architecture)
 - [Company Architectures](#Company-Architectures)
@@ -28,7 +29,7 @@
   - [aws cloud design pattern](#aws-cloud-design-pattern)
   - [azure cloud design pattern](#azure-cloud-design-pattern)
   - [google cloud design pattern](#google-cloud-design-pattern)
-- [Quiz](#Quiz)
+- [Cracking The Coding Interview Quiz](#Cracking-The-Coding-Interview-Quiz)
 
 
 # Abstract
@@ -42,6 +43,8 @@
 * [Designing Data-Intensive Applications](https://dataintensive.net/)
 * [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
   - 유료 시스템 디자인 인터뷰
+* [Grokking the Object Oriented Design Interview](https://www.educative.io/collection/5668639101419520/5692201761767424)
+  - 유료 OOD 인터뷰 
 - [system deisgn primer](https://github.com/donnemartin/system-design-primer#federation)
   - 킹왕짱 내가 다시 정리할 필요성을 못 느낀다.
 - [Azure Cloud Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
@@ -262,7 +265,48 @@ cache.put(k, v)
 
 ## Security
 
-# Practices
+# Grokking the System Design Interview Practices
+
+| Question | |
+|---|---|
+| [Designing a URL Shortening service like TinyURL](Designing_a_URL_Shortening_service_like_TinyURL.md) |
+| [Designing Pastebin]() |
+| [Designing Instagram]() |
+| [Designing Dropbox]() |
+| [Designing Facebook Messenger]() |
+| [Designing Twitter]() |
+| [Designing Youtube or Netflix]() |
+| [Designing Typeahead Suggestion]() |
+| [Designing an API Rate Limiter]() |
+| [Designing Twitter Search]() |
+| [Designing a Web Crawler]() |
+| [Designing Facebook’s Newsfeed]() |
+| [Designing Yelp or Nearby Friends]() |
+| [Designing Uber backend]() |
+| [Design Ticketmaster]() |
+| [Dynamo - Highly Available Key-value Store](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) |
+| [Kafka - A Distributed Messaging System for Log Processing](http://notes.stephenholiday.com/Kafka.pdf) |
+| [Consistent Hashing - Original paper](https://www.akamai.com/es/es/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf) |
+| [Paxos - Protocol for distributed consensus](https://www.microsoft.com/en-us/research/uploads/prod/2016/12/paxos-simple-Copy.pdf) |
+| [Concurrency Controls - Optimistic methods for concurrency controls](http://sites.fas.harvard.edu/~cs265/papers/kung-1981.pdf) |
+| [Gossip protocol - For failure detection and more.](http://highscalability.com/blog/2011/11/14/using-gossip-protocols-for-failure-detection-monitoring-mess.html) |
+| [Chubby - Lock service for loosely-coupled distributed systems](http://static.googleusercontent.com/media/research.google.com/en/us/archive/chubby-osdi06.pdf) |
+| [ZooKeeper - Wait-free coordination for Internet-scale systems](https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf) |
+| [MapReduce - Simplified Data Processing on Large Clusters](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf) |
+| [Hadoop - A Distributed File System](http://storageconference.us/2010/Papers/MSST/Shvachko.pdf) |
+| [Key Characteristics of Distributed Systems]() |
+| [Load Balancing]() |
+| [Caching]() |
+| [Data Partitioning]() |
+| [Indexes]() |
+| [Proxies]() |
+| [Redundancy and Replication]() |
+| [SQL vs. NoSQL]() |
+| [CAP Theorem]() |
+| [Consistent Hashing]() |
+| [Long-Polling vs WebSockets vs Server-Sent Events]() |
+
+# System Design Primer Practices
 
 | Question | |
 |---|---|
@@ -410,7 +454,7 @@ cache.put(k, v)
 
 ## google cloud design pattern
 
-# Quiz
+# Cracking The Coding Interview Quiz
 
 * Stock Data
 * Social Network
