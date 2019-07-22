@@ -1,3 +1,22 @@
+
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Basic Usage](#basic-usage)
+  - [Setup Projects](#setup-projects)
+  - [Depth Test](#depth-test)
+  - [Stencil Test](#stencil-test)
+  - [Blend](#blend)
+  - [Frame Buffer](#frame-buffer)
+  - [Cube Map](#cube-map)
+  - [Uniform Buffer Object](#uniform-buffer-object)
+  - [Instancing](#instancing)
+  - [MSAA (Multi Sampled Anti Aliasing)](#msaa-multi-sampled-anti-aliasing)
+  - [Phong / Blinn Phong Lighting](#phong--blinn-phong-lighting)
+  - [Gamma Correction](#gamma-correction)
+  - [Shadow Mapping](#shadow-mapping)
+
+-----
+
 # Abstract
 
 OpenGL을 정리한다. [OpenGL Superbible: Comprehensive Tutorial and Reference](http://www.openglsuperbible.com), [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3](http://www.opengl-redbook.com/), [OpenGL Shading Language](https://www.amazon.com/OpenGL-Shading-Language-Randi-Rost/dp/0321637631/ref=sr_1_1?ie=UTF8&qid=1538565859&sr=8-1&keywords=opengl+shading+language) 는 꼭 읽어보자. 특히 예제는 꼭 분석해야 한다.
@@ -519,3 +538,135 @@ framebuffer 에서 intermediateFBO 로 blit 하면 intermediateFBO 에 바인딩
         glBindTexture(GL_TEXTURE_2D, screenTexture); // use the now resolved color attachment as the quad's texture
         glDrawArrays(GL_TRIANGLES, 0, 6);
 ```
+
+## Phong / Blinn Phong Lighting
+
+Phong 은 specular 성분을 구할 때 V (view vector) 와 R (light reflected vector) 를 이용한다. V 와 R 은 사이각이 90 도를 넘을 수 있고 이것을 모두 0 처리 해버린다. 정밀도가 떨어진다.
+
+![](advanced_lighting_over_90.png)
+
+Blinn Phong Lighting model 은 specular 성분을 구할 때 V (view vector) 와 H (half between light and light reflected vector) 를 이용한다. V 와 H 는 사이각이 90 도를 넘을 수 없다. 정밀도가 더욱 높다.
+
+![](advanced_lighting_halfway_vector.png)
+
+다음은 Phong 과 Blinn Phong Lighting Model 을 구현한 fragment shader 이다.
+
+```c
+void main()
+{           
+    vec3 color = texture(floorTexture, fs_in.TexCoords).rgb;
+    // ambient
+    vec3 ambient = 0.05 * color;
+    // diffuse
+    vec3 lightDir = normalize(lightPos - fs_in.FragPos);
+    vec3 normal = normalize(fs_in.Normal);
+    float diff = max(dot(lightDir, normal), 0.0);
+    vec3 diffuse = diff * color;
+    // specular
+    vec3 viewDir = normalize(viewPos - fs_in.FragPos);
+    vec3 reflectDir = reflect(-lightDir, normal);
+    float spec = 0.0;
+    if(blinn)
+    {
+        vec3 halfwayDir = normalize(lightDir + viewDir);  
+        spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+    }
+    else
+    {
+        vec3 reflectDir = reflect(-lightDir, normal);
+        spec = pow(max(dot(viewDir, reflectDir), 0.0), 8.0);
+    }
+    vec3 specular = vec3(0.3) * spec; // assuming bright white light color
+    FragColor = vec4(ambient + diffuse + specular, 1.0);
+}
+```
+
+## Gamma Correction
+
+모니터는 gamma 가 적용된 fragment 를 입력으로 한다. 아마도 입력된 color 에 대해 `color = pow(color, vec3(2.2))` 를 할 것이다. 
+
+따라서 texture 의 internalFormat 이 gamma 가 적용된 (GL_SRGB) 것이라면 fragment shader 는 입력된 linear space fragment 를  gamma correction 해야 한다. gamma correction 한다는 것은 `color = pow(color, vec3(1.0/2.2))` 를 의미한다. 
+
+그렇다면 texture 의 internal Format 이 gamma 가 적용되지 않은 (GL_RGB) 것이라면 fragment shader 는 gamma correction 할 필요가 없는 것이다???
+
+![](gamma_correction_gamma_curves.png)
+
+예를 들어 다음과 같이 두개의 텍스처 오브젝트를 생성한다.
+
+```cpp
+    // load textures
+    // -------------
+    unsigned int floorTexture               = loadTexture(FileSystem::getPath("resources/textures/wood.png").c_str(), false);
+    unsigned int floorTextureGammaCorrected = loadTexture(FileSystem::getPath("resources/textures/wood.png").c_str(), true);
+```
+
+다음은 `loadTexture` 의 구현이다. [glTexImage2D](https://www.khronos.org/registry/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml) 에서 `internalFormat` 을 주목하자. gamma 를 사용한다면 `GL_SRGB` 로 설정하고 그렇지 않다면 `GL_RGB` 로 설정한다.
+
+```cpp
+// utility function for loading a 2D texture from file
+// ---------------------------------------------------
+unsigned int loadTexture(char const * path, bool gammaCorrection)
+{
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+
+    int width, height, nrComponents;
+    unsigned char *data = stbi_load(path, &width, &height, &nrComponents, 0);
+    if (data)
+    {
+        GLenum internalFormat;
+        GLenum dataFormat;
+        if (nrComponents == 1)
+        {
+            internalFormat = dataFormat = GL_RED;
+        }
+        else if (nrComponents == 3)
+        {
+            internalFormat = gammaCorrection ? GL_SRGB : GL_RGB;
+            dataFormat = GL_RGB;
+        }
+        else if (nrComponents == 4)
+        {
+            internalFormat = gammaCorrection ? GL_SRGB_ALPHA : GL_RGBA;
+            dataFormat = GL_RGBA;
+        }
+
+        glBindTexture(GL_TEXTURE_2D, textureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        stbi_image_free(data);
+    }
+    else
+    {
+        std::cout << "Texture failed to load at path: " << path << std::endl;
+        stbi_image_free(data);
+    }
+
+    return textureID;
+}
+```
+
+다음은 fragment shader 에서 gamma correction 하는 구현이다.
+
+```c
+void main()
+{           
+    vec3 color = texture(floorTexture, fs_in.TexCoords).rgb;
+    vec3 lighting = vec3(0.0);
+    for(int i = 0; i < 4; ++i)
+        lighting += BlinnPhong(normalize(fs_in.Normal), fs_in.FragPos, lightPositions[i], lightColors[i]);
+    color *= lighting;
+    if(gamma)
+        color = pow(color, vec3(1.0/2.2));
+    FragColor = vec4(color, 1.0);
+}
+```
+
+## Shadow Mapping
+
