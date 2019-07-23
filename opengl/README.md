@@ -14,6 +14,13 @@
   - [Phong / Blinn Phong Lighting](#phong--blinn-phong-lighting)
   - [Gamma Correction](#gamma-correction)
   - [Shadow Mapping](#shadow-mapping)
+  - [Normal Mapping](#normal-mapping)
+  - [Parallax Mapping](#parallax-mapping)
+  - [HDR](#hdr)
+  - [Bloom](#bloom)
+  - [Deferred Shading](#deferred-shading)
+  - [SSAO (Screen Sapce Ambient Optimization)](#ssao-screen-sapce-ambient-optimization)
+  - [PBR (Physicall Based Rendering)](#pbr-physicall-based-rendering)
 
 -----
 
@@ -185,7 +192,7 @@ void glBlendFunci(	GLuint buf,
 
 frame buffer 를 만들고 이곳에 렌더링 할 수 있다. 주로 post processing 에 이용한다.
 
-frame buffer object 를 만들고 texture, render buffer object (depth, stencil buffer) 등을 attatch 한다. 그리고 frame buffer 를 binding 하면 이후 frame buffer object 에 렌더링된다. 이때 binding 되어 있는 fragment shader 를 수정하면 post processing 할 수 있다.
+frame buffer object 를 만들고 texture, render buffer object (depth, stencil buffer) 등을 attatch 한다. 그리고 frame buffer 를 binding 하면 이후 frame buffer object 에 렌더링되고 attatch 한 texture, render buffer object 역시 값이 채워진다. 이때 binding 되어 있는 fragment shader 를 수정하면 post processing 할 수 있다.
 
 * create and bind frame buffer object
 
@@ -672,3 +679,327 @@ void main()
 
 ## Shadow Mapping
 
+![](shadow_mapping_theory.png)
+
+카메라를 기준으로 렌더링한 fragment 의 depth value 와 라이트를 기준으로 렌더링한 fragment 의 depth value 를 비교해서 그림자를 그리는 방식이다. 이때 라이트를 기준으로 렌더링한 것을 shadow map 이라고 한다.
+
+![](shadow_mapping_theory_spaces.png)
+
+위의 그림처럼 fragment P 를 살펴보자. 라이트를 기준으로 검증하기 위해 Light Transform 을 한 다음 깊이 값 `depth(T(P)) = 0.9` 을 가져온다. 이 값은 shadow map 의 값 `depth(C) = 0.4` 보다 크기 때문에 그림자 영역이다.
+
+다음은 shadow map 을 생성하는 과정이다.
+
+```c
+unsigned int depthMapFBO;
+glGenFramebuffers(1, &depthMapFBO);  
+
+...
+
+const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+
+unsigned int depthMap;
+glGenTextures(1, &depthMap);
+glBindTexture(GL_TEXTURE_2D, depthMap);
+glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, 
+             SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT); 
+glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);  
+
+...
+
+glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+glDrawBuffer(GL_NONE);
+glReadBuffer(GL_NONE);
+glBindFramebuffer(GL_FRAMEBUFFER, 0);  
+
+...
+
+// 1. first render to depth map
+glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    ConfigureShaderAndMatrices();
+    RenderScene();
+glBindFramebuffer(GL_FRAMEBUFFER, 0);
+// 2. then render scene as normal with shadow mapping (using depth map)
+glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+ConfigureShaderAndMatrices();
+glBindTexture(GL_TEXTURE_2D, depthMap);
+RenderScene();
+```
+
+다음은 라이트 좌표변환을 위한 행렬을 구현한 것이다.
+
+```c
+float near_plane = 1.0f, far_plane = 7.5f;
+glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);  
+
+...
+
+glm::mat4 lightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f), 
+                                  glm::vec3( 0.0f, 0.0f,  0.0f), 
+                                  glm::vec3( 0.0f, 1.0f,  0.0f));  
+
+...
+
+glm::mat4 lightSpaceMatrix = lightProjection * lightView; 
+```
+
+다음은 shadow map 에 렌더링 하기 위한 vertex, fragment shader, opengl code 이다.
+
+```c
+#version 330 core
+layout (location = 0) in vec3 aPos;
+
+uniform mat4 lightSpaceMatrix;
+uniform mat4 model;
+
+void main()
+{
+    gl_Position = lightSpaceMatrix * model * vec4(aPos, 1.0);
+}  
+
+...
+
+#version 330 core
+
+void main()
+{             
+    // gl_FragDepth = gl_FragCoord.z;
+}  
+
+...
+
+simpleDepthShader.use();
+glUniformMatrix4fv(lightSpaceMatrixLocation, 1, GL_FALSE, glm::value_ptr(lightSpaceMatrix));
+
+glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+    glClear(GL_DEPTH_BUFFER_BIT);
+    RenderScene(simpleDepthShader);
+glBindFramebuffer(GL_FRAMEBUFFER, 0);  
+```
+
+다음은 화면에 shadow map 을 렌더링하는 fragment shader 이다.
+
+```c
+#version 330 core
+out vec4 FragColor;
+  
+in vec2 TexCoords;
+
+uniform sampler2D depthMap;
+
+void main()
+{             
+    float depthValue = texture(depthMap, TexCoords).r;
+    FragColor = vec4(vec3(depthValue), 1.0);
+}  
+```
+
+다음은 default frame buffer object 에 rendering 하는 vertex shader 이다. `vs_out.FragPosLightSpace` 에 Light Transform 한 결과를 저장한다.
+
+```c
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
+
+out VS_OUT {
+    vec3 FragPos;
+    vec3 Normal;
+    vec2 TexCoords;
+    vec4 FragPosLightSpace;
+} vs_out;
+
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
+uniform mat4 lightSpaceMatrix;
+
+void main()
+{    
+    vs_out.FragPos = vec3(model * vec4(aPos, 1.0));
+    vs_out.Normal = transpose(inverse(mat3(model))) * aNormal;
+    vs_out.TexCoords = aTexCoords;
+    vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.FragPos, 1.0);
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
+}
+```
+
+다음은 default frame buffer object 에 rendering 하는 fragment shader 이다. `fs_in.FragPosLightSpace` 를 확인하고 해당 fragment 가 그림자 영역에 있는지 확인한다.
+
+```c
+#version 330 core
+out vec4 FragColor;
+
+in VS_OUT {
+    vec3 FragPos;
+    vec3 Normal;
+    vec2 TexCoords;
+    vec4 FragPosLightSpace;
+} fs_in;
+
+uniform sampler2D diffuseTexture;
+uniform sampler2D shadowMap;
+
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+
+float ShadowCalculation(vec4 fragPosLightSpace)
+{
+    // perform perspective divide
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    // transform to [0,1] range
+    projCoords = projCoords * 0.5 + 0.5;
+    // get closest depth value from light's perspective (using [0,1] range fragPosLight as coords)
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
+    // get depth of current fragment from light's perspective
+    float currentDepth = projCoords.z;
+    // check whether current frag pos is in shadow
+    float shadow = currentDepth > closestDepth  ? 1.0 : 0.0;
+
+    return shadow;
+}  
+
+void main()
+{           
+    vec3 color = texture(diffuseTexture, fs_in.TexCoords).rgb;
+    vec3 normal = normalize(fs_in.Normal);
+    vec3 lightColor = vec3(1.0);
+    // ambient
+    vec3 ambient = 0.15 * color;
+    // diffuse
+    vec3 lightDir = normalize(lightPos - fs_in.FragPos);
+    float diff = max(dot(lightDir, normal), 0.0);
+    vec3 diffuse = diff * lightColor;
+    // specular
+    vec3 viewDir = normalize(viewPos - fs_in.FragPos);
+    float spec = 0.0;
+    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
+    vec3 specular = spec * lightColor;    
+    // calculate shadow
+    float shadow = ShadowCalculation(fs_in.FragPosLightSpace);       
+    vec3 lighting = (ambient + (1.0 - shadow) * (diffuse + specular)) * color;    
+    
+    FragColor = vec4(lighting, 1.0);
+}
+```
+
+Shadow Mapping 을 구현해 보면 다음과 같은 노이즈 현상이 발생한다. 이것을 shadow acne 라고 한다.
+
+![](shadow_mapping_acne.png)
+
+다음의 그림 처럼 floor 에 많은 그림자 영역때문에 발생한다.
+
+![](shadow_mapping_acne_diagram.png)
+
+따라서 다음의 그림과 같이 shadow map 을 빛으로 부터 멀리 떨어뜨리면 해결할 수 있다. 멀리 떨어 뜨리는 수치를 bias 라고 한다.
+
+![](shadow_mapping_acne_bias.png)
+
+다음은 bias 를 적용한 구현이다.
+
+```c
+float bias = 0.005;
+float shadow = currentDepth - bias > closestDepth  ? 1.0 : 0.0;  
+```
+
+다음은 bias 를 normal 과 lightDir 에 따라 연산하여 구현한 것이다.
+
+```c
+float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);  
+```
+
+bias 는 shadow acne 가 사라질 때까지 임의로 조정해도 좋다.
+
+bias 가 너무 크면 다음과 같이 오브젝트가 붕 떠 있는 것 같이 보일 때가 있다. 이것을 peter panning 이라고 한다.
+
+![](shadow_mapping_peter_panning.png)
+
+shadow map 을 rendering 할 때 front face culling 하면 해결할 수 있다???
+
+![](shadow_mapping_culling.png)
+
+실제로 이렇게 구현한다.
+
+```c
+glCullFace(GL_FRONT);
+RenderSceneToDepthMap();
+glCullFace(GL_BACK); // don't forget to reset original culling face
+```
+
+over sampling 은 뭐지??? light frustum 이외의 영역을 자연스럽게 렌더링 하는 방법이다.
+
+그림자의 가장자리가 다음과 같이 매끄럽지 않다면 filtering 해보자.
+
+![](shadow_mapping_zoom.png)
+
+다음은 PCF (percentage-closer filtering) 의 구현이다.
+
+```c
+float shadow = 0.0;
+vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
+for(int x = -1; x <= 1; ++x)
+{
+    for(int y = -1; y <= 1; ++y)
+    {
+        float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+        shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;        
+    }    
+}
+shadow /= 9.0;
+```
+
+light 의 frustum 이 perspective 이면 그림자의 왜곡이 심하다. directional light 인 경우는 orthographic frustum 을 사용하고 point, spot light 인 경우는 perspective frustum 을 사용하자.
+
+![](shadow_mapping_projection.png)
+
+다음은 light frustum 이 perspective 인 경우의 fragment shader 이다.
+
+```c
+#version 330 core
+out vec4 FragColor;
+  
+in vec2 TexCoords;
+
+uniform sampler2D depthMap;
+uniform float near_plane;
+uniform float far_plane;
+
+float LinearizeDepth(float depth)
+{
+    float z = depth * 2.0 - 1.0; // Back to NDC 
+    return (2.0 * near_plane * far_plane) / (far_plane + near_plane - z * (far_plane - near_plane));
+}
+
+void main()
+{             
+    float depthValue = texture(depthMap, TexCoords).r;
+    FragColor = vec4(vec3(LinearizeDepth(depthValue) / far_plane), 1.0); // perspective
+    // FragColor = vec4(vec3(depthValue), 1.0); // orthographic
+}  
+```
+
+## Normal Mapping
+
+## Parallax Mapping
+
+## HDR
+
+## Bloom
+
+
+## Deferred Shading
+
+## SSAO (Screen Sapce Ambient Optimization)
+
+## PBR (Physicall Based Rendering)
+
+* [pbr @ TIL](/pbr/README.md)
+  
