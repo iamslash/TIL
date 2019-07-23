@@ -583,15 +583,17 @@ void main()
 
 ## Gamma Correction
 
-모니터는 gamma 가 적용된 fragment 를 입력으로 한다. 아마도 입력된 color 에 대해 `color = pow(color, vec3(2.2))` 를 할 것이다. 
+사람의 눈은 밝은색 보다는 어두운색을 더욱 잘 구별한다. 따라서 색 정보를 저장할 때 어두운 색에 더욱 많은 비트를 할당하면 더욱 효율적으로 저장할 수 있다. 이렇게 저장하는 방식을 gamma encoding 이라고 한다.
 
-따라서 texture 의 internalFormat 이 gamma 가 적용된 (GL_SRGB) 것이라면 fragment shader 는 입력된 linear space fragment 를  gamma correction 해야 한다. gamma correction 한다는 것은 `color = pow(color, vec3(1.0/2.2))` 를 의미한다. 
+모니터는 gamma 가 적용된 color 를 입력으로 한다. 모든 모니터가 그런가??? 아마도 입력된 color 에 대해 `color = pow(color, vec3(2.2))` 를 할 것이다. 
 
-그렇다면 texture 의 internal Format 이 gamma 가 적용되지 않은 (GL_RGB) 것이라면 fragment shader 는 gamma correction 할 필요가 없는 것이다???
+한편 texture 의 internalFormat 이 gamma 가 적용된 (GL_SRGB) 것이라면 fragment shader 는 입력된 linear space color 를  gamma correction 해야 한다. gamma correction 한다는 것은 `color = pow(color, vec3(1.0/2.2))` 를 의미한다. 
+
+그렇다면 texture 의 internal Format 이 gamma 가 적용되지 않은 (GL_RGB) 것이라면 fragment shader 는 gamma correction 할 필요가 없는 것인가???
 
 ![](gamma_correction_gamma_curves.png)
 
-예를 들어 다음과 같이 두개의 텍스처 오브젝트를 생성한다.
+다음은 gamma correction 을 구현하기 위해 하나의 텍스처를 internalFormat 을 달리해서 읽은 것이다.
 
 ```cpp
     // load textures
