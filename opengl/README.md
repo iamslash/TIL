@@ -14,6 +14,7 @@
   - [Phong / Blinn Phong Lighting](#phong--blinn-phong-lighting)
   - [Gamma Correction](#gamma-correction)
   - [Shadow Mapping](#shadow-mapping)
+  - [Cascaded Shadow Mapping](#cascaded-shadow-mapping)
   - [Normal Mapping](#normal-mapping)
   - [Parallax Mapping](#parallax-mapping)
   - [HDR](#hdr)
@@ -985,6 +986,8 @@ void main()
     // FragColor = vec4(vec3(depthValue), 1.0); // orthographic
 }  
 ```
+
+## Cascaded Shadow Mapping
 
 ## Normal Mapping
 
