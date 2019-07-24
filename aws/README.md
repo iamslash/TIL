@@ -1,3 +1,26 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Basic](#basic)
+  - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud)
+  - [EC2 (Elastic Compute)](#ec2-elastic-compute)
+  - [IAM (Identity and Access Management)](#iam-identity-and-access-management)
+  - [CloudFront](#cloudfront)
+  - [S3 (Simple Storage Service)](#s3-simple-storage-service)
+  - [RDS](#rds)
+  - [ElastiCachi](#elasticachi)
+  - [Lambda](#lambda)
+  - [API Gateway](#api-gateway)
+  - [DynamoDB](#dynamodb)
+  - [ElasticSearch Service](#elasticsearch-service)
+  - [Kinesis](#kinesis)
+  - [Route 53](#route-53)
+  - [CloudWatch](#cloudwatch)
+  - [ELB](#elb)
+- [Advanced](#advanced)
+  - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
+
+----
+
 # Abstract
 
 aws 사용법에 대해 간략히 정리한다.
@@ -11,22 +34,34 @@ aws 사용법에 대해 간략히 정리한다.
   * 오래되었지만 괜찮은 책
 * [cloudcraft](https://cloudcraft.co/)
   * aws diagram tool
+* [AWS re:Invent 2018 DeepDive series @ youtube](https://www.youtube.com/results?search_query=AWS+re%3AInvent+2018+Deep+Dive)
+* [AWS re:Invent 2018 Under the hood series @ youtube](https://www.youtube.com/results?search_query=AWS+re%3AInvent+2018+Under+the+hood)
+* [AWS Summit 2019 | AWS 아키텍처 @ youtube](https://www.youtube.com/playlist?list=PLORxAVAC5fUWWpxC5TW10P35GpLBOKWKS)
+* [AWS Summit 2019 | 게임 @ youtube](https://www.youtube.com/playlist?list=PLORxAVAC5fUXgqiJJKJ8h8E5BkrFXUS2j)
+* [AWS Summit 2019 | AWS 기술트랙 1 @ youtube](https://www.youtube.com/watch?v=KKkK6d8Srik&list=PLORxAVAC5fUUoQB13KiV8ezs7cAfwSagC)
+* [AWS Summit 2019 | AWS 기술트랙 2 @ youtube](https://www.youtube.com/watch?v=l7W_urK43aE&list=PLORxAVAC5fUX3c9KwLE9E-qZv7tXk-b3O)
+* [AWS Summit 2019 | AWS 기술트랙 3 @ youtube](https://www.youtube.com/watch?v=QFeSXY3cL7Q&list=PLORxAVAC5fUUa8XFFLtB6aK4vgZhTKBLg)
+* [AWS Summit 2019 | AWS 기술트랙 4 @ youtube](https://www.youtube.com/watch?v=Sf6j7PPHeeI&list=PLORxAVAC5fUUeaSHb91d5wpDGfR14uNCi)
+* [AWS Summit 2019 | AWS 기술트랙 5 @ youtube](https://www.youtube.com/watch?v=nxgGk-PbXf0&list=PLORxAVAC5fUWZGawyaMyz8NepNGqHbHtZ)
+* [AWS Summit 2019 @ youtube](https://www.youtube.com/playlist?list=PLORxAVAC5fUWyB6Hsk9ibYJHw97k1h6s9)
 
 # Basic
 
 ## VPC (Virtual Private Cloud)
 
+* [만들면서 배우는 아마존 버추얼 프라이빗 클라우드(Amazon VPC) @ 44BITS](https://www.44bits.io/ko/post/understanding_aws_vpc)
+
 AWS 외부와는 격리된 가상의 사설 클라우드이다. EC2 를 실행하려면 반드시 VPC 가 하나 필요하다. VPC 를 생성하기 위해서는 반드시 다음과 같은 것들을 함께 생성해야 사용이 가능하다.
 
-[참고](https://www.44bits.io/ko/post/understanding_aws_vpc)
-
+```
 1 VPC
-n 서브넷Subnet
-1 라우트 테이블Route Table
+n 서브넷 Subnet
+1 라우트 테이블 Route Table
 1 네트워크 ACLNetwork ACL
-1 시큐리티 그룹Security Group
-1 인터넷 게이트웨이Internet Gateway
-1 DHCP 옵션셋DHCP options set
+1 시큐리티 그룹 Security Group
+1 인터넷 게이트웨이 Internet Gateway
+1 DHCP 옵션셋 DHCP options set
+```
 
 ## EC2 (Elastic Compute)
 
