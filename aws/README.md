@@ -1,9 +1,10 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Terms](#terms)
+- [Prerequisites](#prerequisites)
   - [Storage](#storage)
   - [as a service](#as-a-service)
-  - [...](#)
+  - [WAF (Web Application Fairewall)](#waf-web-application-fairewall)
+  - [OSI 7 layer](#osi-7-layer)
 - [Basic](#basic)
   - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud)
   - [EC2 (Elastic Compute)](#ec2-elastic-compute)
@@ -32,6 +33,7 @@ aws 사용법에 대해 간략히 정리한다.
 
 # Materials
 
+* [AWS Services Overview - September 2016 Webinar Series @ slideshare](https://www.slideshare.net/AmazonWebServices/aws-services-overview-september-2016-webinar-series)
 * [AWS @ 생활코딩](https://opentutorials.org/course/2717)
 * [44bit](https://www.44bits.io/ko)
   * 클라우드블로그
@@ -51,7 +53,7 @@ aws 사용법에 대해 간략히 정리한다.
 * [AWS Summit 2019 | AWS 기술트랙 5 @ youtube](https://www.youtube.com/watch?v=nxgGk-PbXf0&list=PLORxAVAC5fUWZGawyaMyz8NepNGqHbHtZ)
 * [AWS Summit 2019 @ youtube](https://www.youtube.com/playlist?list=PLORxAVAC5fUWyB6Hsk9ibYJHw97k1h6s9)
 
-# Terms
+# Prerequisites
 
 ## Storage 
 
@@ -89,20 +91,26 @@ aws 사용법에 대해 간략히 정리한다.
   * Networking 부터 Applications 까지 유저대신 관리해주는 서비스 이다. 유저는 별도로 관리할 필요가 없다.
   * Google Apps, Dropbox, Salesforce, Cisco WebEx, Concur, GoToMeeting
   
-## ...
+## WAF (Web Application Fairewall)
 
+* [AWS WAF – 웹 애플리케이션 방화벽](https://aws.amazon.com/ko/waf/)
+* [웹방화벽이란?](https://www.pentasecurity.co.kr/resource/%EC%9B%B9%EB%B3%B4%EC%95%88/%EC%9B%B9%EB%B0%A9%ED%99%94%EB%B2%BD%EC%9D%B4%EB%9E%80/)
+  
+* 일반적인 방화벽과 달리 웹 애플리케이션의 보안에 특화된 솔루션이다. 
+* 애플리케이션의 가용성에 영향을 주거나, 보안을 위협하거나, 리소스를 과도하게 사용하는 웹 공격으로부터 웹 애플리케이션을 보호하는 데 도움이 된다.
 
-waf
-osi 7 layer
-onpremise 
+## OSI 7 layer
+
 vpc
+how to make a vpc on onpremise
+
 restfull api
 msa
 good architect
 hdfs 
 virtualization 3 가지
 devops msa 관계
-how to make a vpc on onpremise
+
 CAP
 PACELC
 capa
