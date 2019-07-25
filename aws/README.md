@@ -1,5 +1,9 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
+- [Terms](#terms)
+  - [Storage](#storage)
+  - [as a service](#as-a-service)
+  - [...](#)
 - [Basic](#basic)
   - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud)
   - [EC2 (Elastic Compute)](#ec2-elastic-compute)
@@ -18,6 +22,7 @@
   - [ELB](#elb)
 - [Advanced](#advanced)
   - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
+- [Best Practices](#best-practices)
 
 ----
 
@@ -45,6 +50,64 @@ aws 사용법에 대해 간략히 정리한다.
 * [AWS Summit 2019 | AWS 기술트랙 4 @ youtube](https://www.youtube.com/watch?v=Sf6j7PPHeeI&list=PLORxAVAC5fUUeaSHb91d5wpDGfR14uNCi)
 * [AWS Summit 2019 | AWS 기술트랙 5 @ youtube](https://www.youtube.com/watch?v=nxgGk-PbXf0&list=PLORxAVAC5fUWZGawyaMyz8NepNGqHbHtZ)
 * [AWS Summit 2019 @ youtube](https://www.youtube.com/playlist?list=PLORxAVAC5fUWyB6Hsk9ibYJHw97k1h6s9)
+
+# Terms
+
+## Storage 
+
+* [SAN의 정의 그리고 NAS와의 차이점](http://www.ciokorea.com/news/37369)
+
+* NAS - Network Attatched Storage
+  * 표준 이더넷 연결을 통해 네트워크에 부착된 저장장치.
+* DAS - Direct Attatched Soorage
+  * 머신에 부착된 저장장치
+* SAN - Storage Area Network
+  * 파이버 연결 채널을 통해 네트워크에 고속으로 부착된 저장장치.
+* SAN vs NAS
+  * SAN 과 NAS 는 모두 네트워크 기반 스토리지 이다. 그러나 SAN 은 일반적으로 파이버 채널 연결을 이용하고 NAS 는 표준 이더넷 연결을 통해 네트워크에 연결된다. 
+  * SAN은 블록 수준에서 데이터를 저장하지만 NAS는 파일 단위로 데이터에 접속한다. 
+  * 클라이언트 OS 입장에서 보면, SAN 은 일반적으로 디스크로 나타나며 별도로 구성된 스토리지용 네트워크로 존재한다. 반면 NAS 는 클라이언트 OS 에 파일 서버로 표시된다.
+* Unified storage
+  * SAN 과 NAS 가 합쳐진 것이다.
+  * iSCI (Internet Small Computing System Interface), NFS, SMB 모두를 지원하는 Multiprotocol Storage 이다.
+
+## as a service
+
+* [SaaS vs PaaS vs IaaS: What’s The Difference and How To Choose](https://www.bmc.com/blogs/saas-vs-paas-vs-iaas-whats-the-difference-and-how-to-choose/)
+
+![](img/saas-vs-paas-vs-iaas-810x754.png)
+
+* On-Premises
+  * Netwoking 부터 Appliations 까지 유저가 모두 관리해야 하는 개발 환경
+* IaaS (Infrastructure as a service)
+  * Networking 부터 Virtualization 까지 유저대신 관리해주는 서비스 이다. 유저는 O/S 부터 Applications 까지 관리한다.
+  * DigitalOcean, Linode, Rackspace, Amazon Web Services (AWS), Cisco Metapod, Microsoft Azure, Google Compute Engine (GCE)
+* PaaS (Platform as a service)
+  * Networking 부터 Runtime 까지 유저대신 관리해주는 서비스 이다. 유저는 Data 부터 Applications 까지 관리한다.
+  * AWS Elastic Beanstalk, Windows Azure, Heroku, Force.com, Google App Engine, Apache Stratos, OpenShift
+* SaaS (Software as a service)
+  * Networking 부터 Applications 까지 유저대신 관리해주는 서비스 이다. 유저는 별도로 관리할 필요가 없다.
+  * Google Apps, Dropbox, Salesforce, Cisco WebEx, Concur, GoToMeeting
+  
+## ...
+
+
+waf
+osi 7 layer
+onpremise 
+vpc
+restfull api
+msa
+good architect
+hdfs 
+virtualization 3 가지
+devops msa 관계
+how to make a vpc on onpremise
+CAP
+PACELC
+capa
+CIDR
+subnet
 
 # Basic
 
@@ -184,3 +247,6 @@ region = ap-northeast-2
 aws_secret_access_key = AKIAJEXHUYCTEHM2D3S2A
 aws_access_key_id = 3BqwEFsOBd3vx11+TOHhI9LVi2
 ```
+
+# Best Practices
+
