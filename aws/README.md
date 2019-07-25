@@ -8,7 +8,12 @@
   - [CSRF (Cross Site Request Forgery)](#csrf-cross-site-request-forgery)
   - [XSS vs CSRF](#xss-vs-csrf)
   - [OSI 7 layer](#osi-7-layer)
-  - [VPC](#vpc)
+  - [TCP/IP Protocol Suite](#tcpip-protocol-suite)
+  - [Subnet](#subnet)
+  - [CIDR (Classless Inter-Domain Routing)](#cidr-classless-inter-domain-routing)
+  - [Private Network](#private-network)
+  - [VPN (Virtual Private Network)](#vpn-virtual-private-network)
+  - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud)
   - [RESTfull API](#restfull-api)
   - [MSA](#msa)
   - [HDFS](#hdfs)
@@ -16,10 +21,8 @@
   - [Devops](#devops)
   - [CAP](#cap)
   - [PACELC](#pacelc)
-  - [CIDR](#cidr)
-  - [Subnet](#subnet)
 - [Basic](#basic)
-  - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud)
+  - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud-1)
   - [EC2 (Elastic Compute)](#ec2-elastic-compute)
   - [IAM (Identity and Access Management)](#iam-identity-and-access-management)
   - [CloudFront](#cloudfront)
@@ -132,13 +135,59 @@ aws 사용법에 대해 간략히 정리한다.
 
 ![](/network/Osi-model-7-layers.png))
 
+ISO (International Standard Organization) 에서 개발한 네트워크 모델이다. 컴퓨터 네트워크 프로토콜 디자인과 통신을 계층으로 나누어 설명했다. 1984 년에 ISO 가 ISO 7498, CCITT (ITU-T) 는 X.200 으로 출판하였다.
 
+## TCP/IP Protocol Suite
 
-## VPC
+* [Computer Network | TCP/IP Model @ geeksforgeeks](https://www.geeksforgeeks.org/computer-network-tcpip-model/)
 
-vpc
-how to make a vpc on onpremise
+![](img/tcpAndOSI.png)
 
+1960 년대 말 DARPA (Defense Advanced Research Projects Agency) 가 수행한 연구개발의 산출물로 부터 탄생했다. DARPA 가 개발한 ARPANET 는 NCP (Network Control Program) 라는 프로토콜을 사용했다. 1983 년 TCP/IP 가 이를 대체하며 지금의 인터넷으로 진화했다.
+
+Internet Protocol Suite 는 인터넷에서 컴퓨터들이 서로 정보를 주고 받는데 쓰이는 프로토콜의 모음이다. TCP, IP 가 가장 많이 쓰이기 때문에 TCP/IP Protocol Suite 라고도 한다. 
+
+TCP/IP Protocol Suite 는 OSI 의 7 개 레이어 를 4 개로 줄였다.
+
+## Subnet
+
+IP 의 network 가 논리적으로 분할된 것이다. Subnet 을 만드는 것을 Subnetting 이라고 한다. Subnet 은 Subnet Mask 를 이용하여 만든다. 
+
+Subnet 의 IP address 는 network number 혹은 routing prefix 와 rest field 혹은 host identifier 와 같이 두가지로 나뉘어 진다. 
+
+routing prefix 는 `198.51.100.0/24` 와 같이 CIDR (Classless Inter-Domain Routing) 표기법으로 표현할 수 있다. `198.51.100.0/24` 의 subnet mask 는 `255.255.255.0` 이다.
+
+## CIDR (Classless Inter-Domain Routing)
+
+기존의 IP 주소 할당 방식이었던 네트워크 클래스를 대체하기 위해 IETF ()가 1993년 에 [RFC4632](https://tools.ietf.org/html/rfc4632) 라는 표준으로 개발한 IP 주소 할당 방법이다. 
+
+`198.51.100.0/24` 와 같이 표기한다. `/24` 는 routing prefix 비트의 개수를 의미한다.
+
+## Private Network
+
+Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineering Task Force) 는 Private IP Address 를 위해 다음과 같은 IPv4 주소를 사용하도록 RFC 1918 라는 표준으로 IANA ( Internet Assigned Numbers Authority) 를 지도했다.
+
+| RFC 1918 name | IP address range | Numger of addresses | Largest CIDR block (subnet mask) | Host ID size | Mask bits | Classful description | 
+|--|--|--|--|--|--|--|
+| 24-bit block | 10.0.0.0 - 10.255.255.255 | 16,777,216 | 10.0.0.0/8 (255.0.0.0) | 24 bits | 8 bits | single class A network |
+| 20-bit block | 172.16.0.0 – 172.31.255.255 | 1,048,576 | 172.16.0.0/12 (255.240.0.0) | 20 bits | 12 bits | 16 contiguous class B networks |
+| 16-bit block | 192.168.0.0 – 192.168.255.255 | 65,536 | 192.168.0.0/16 (255.255.0.0) | 16 bits | 16 bits | 256 contiguous class C networks |
+
+* 24-bit block 은 `10.x.x.x, 24 / 8 bits` 으로 기억하자.
+* 20-bit block 은 `172.x.x.x, 20 / 12 bits` 으로 기억하자.
+* 16-bit block 은 `192.168.x.x, 16 / 16 bits` 으로 기억하자.
+
+## VPN (Virtual Private Network)
+
+* [가상 사설망](https://namu.wiki/w/%EA%B0%80%EC%83%81%20%EC%82%AC%EC%84%A4%EB%A7%9D)
+* 물리 적으로 여러 곳에 퍼져있는 컴퓨터들을 인터넷 네트워크와 암호화 기술을 이용하여 하나의 네트워크로 구성하는 것
+
+## VPC (Virtual Private Cloud)
+
+* [Amazon VPC란 무엇인가? @ aws](https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/what-is-amazon-vpc.html)
+
+* AWS 외부와는 격리된 가상의 사설 클라우드이다.
+* IP 주소 범위와 VPC 범위를 설정하고 서브넷을 추가하고 보안 그룹을 연결한 다음 라우팅 테이블을 구성한다.
 
 ## RESTfull API
 
@@ -161,9 +210,6 @@ devops msa 관계
 
 ## PACELC
 
-## CIDR
-
-## Subnet
 
 # Basic
 
