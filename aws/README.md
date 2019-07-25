@@ -1,8 +1,11 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Prerequisites](#prerequisites)
+  - [Cloud Computing](#cloud-computing)
   - [Storage](#storage)
-  - [as a service](#as-a-service)
+  - [Cloud Service Types](#cloud-service-types)
+  - [Router](#router)
+  - [Switch](#switch)
   - [WAF (Web Application Fairewall)](#waf-web-application-fairewall)
   - [XSS (Cross Site Scripting)](#xss-cross-site-scripting)
   - [CSRF (Cross Site Request Forgery)](#csrf-cross-site-request-forgery)
@@ -14,11 +17,14 @@
   - [Private Network](#private-network)
   - [VPN (Virtual Private Network)](#vpn-virtual-private-network)
   - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud)
+  - [Virtualization](#virtualization)
+  - [Devops](#devops)
+  - [AWS Region](#aws-region)
+  - [AWS Availability Zone](#aws-availability-zone)
+  - [Edge Location](#edge-location)
   - [RESTfull API](#restfull-api)
   - [MSA](#msa)
   - [HDFS](#hdfs)
-  - [Virtualization](#virtualization)
-  - [Devops](#devops)
   - [CAP](#cap)
   - [PACELC](#pacelc)
 - [Basic](#basic)
@@ -37,6 +43,7 @@
   - [Route 53](#route-53)
   - [CloudWatch](#cloudwatch)
   - [ELB](#elb)
+  - [Elastics Beanstalk](#elastics-beanstalk)
 - [Advanced](#advanced)
   - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
 - [Best Practices](#best-practices)
@@ -71,6 +78,10 @@ aws 사용법에 대해 간략히 정리한다.
 
 # Prerequisites
 
+## Cloud Computing
+
+컴퓨터의 연산을 PC 가 아닌 인터넷 즉 클라우드에서 처리하는 방식이다. 클라우드는 인터넷을 말한다. 드롭박스, 구글 드라이브, MS 윈드라이브 등이 해당한다.
+
 ## Storage 
 
 * [SAN의 정의 그리고 NAS와의 차이점](http://www.ciokorea.com/news/37369)
@@ -89,7 +100,7 @@ aws 사용법에 대해 간략히 정리한다.
   * SAN 과 NAS 가 합쳐진 것이다.
   * iSCI (Internet Small Computing System Interface), NFS, SMB 모두를 지원하는 Multiprotocol Storage 이다.
 
-## as a service
+## Cloud Service Types
 
 * [SaaS vs PaaS vs IaaS: What’s The Difference and How To Choose](https://www.bmc.com/blogs/saas-vs-paas-vs-iaas-whats-the-difference-and-how-to-choose/)
 
@@ -106,6 +117,20 @@ aws 사용법에 대해 간략히 정리한다.
 * SaaS (Software as a service)
   * Networking 부터 Applications 까지 유저대신 관리해주는 서비스 이다. 유저는 별도로 관리할 필요가 없다.
   * Google Apps, Dropbox, Salesforce, Cisco WebEx, Concur, GoToMeeting
+* FaaS (Function as a service)
+  * 유저는 Function 만 제공하면 된다.
+  * AWS Lambda 
+* CaaS (Container as a service)
+  * 유저는 서비스로 제공되는 경량의 가상컨테이너에 서비스를 배포한다.
+  * AWS ECS
+
+## Router
+
+* 서로 다른 네트워크에 패킷을 전송하는 장비
+
+## Switch
+
+* 하나의 네트워크에 여러 대의 컴퓨터를 연결하는 장비
   
 ## WAF (Web Application Fairewall)
 
@@ -159,7 +184,7 @@ routing prefix 는 `198.51.100.0/24` 와 같이 CIDR (Classless Inter-Domain Rou
 
 ## CIDR (Classless Inter-Domain Routing)
 
-기존의 IP 주소 할당 방식이었던 네트워크 클래스를 대체하기 위해 IETF ()가 1993년 에 [RFC4632](https://tools.ietf.org/html/rfc4632) 라는 표준으로 개발한 IP 주소 할당 방법이다. 
+기존의 IP 주소 할당 방식이었던 네트워크 클래스를 대체하기 위해 IETF (Internet Engineering Task Force) 가 1993년 에 [RFC4632](https://tools.ietf.org/html/rfc4632) 라는 표준으로 개발한 IP 주소 할당 방법이다. 
 
 `198.51.100.0/24` 와 같이 표기한다. `/24` 는 routing prefix 비트의 개수를 의미한다.
 
@@ -196,6 +221,46 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
   * subnet 이 public internet 통신을 위한 Internet Gateway
   * DHCP options set
 
+## Virtualization
+
+* [가장 빨리 만나는 Docker 1장 - 1. 가상 머신과 Docker](http://pyrasis.com/book/DockerForTheReallyImpatient/Chapter01/01)
+* [전가상화와 반가상화](https://m.blog.naver.com/PostView.nhn?blogId=brickbot&logNo=220413822823&proxyReferer=https%3A%2F%2Fwww.google.com%2F)
+virtualization 은 Host Virtualization, Hypervisor Virtualization, Container Virtualization 과 같이 3 가지가 있다.
+* [하이퍼바이저](https://blog.naver.com/brickbot/220413523885)
+
+* Host Virtualization
+  * 하드웨어에 Host O/S 를 설치하고 Host O/S 에 Virtualizaion S/W 를 설치한다. 그리고 Guest O/S 는 Virtualization S/S 에서 실행되는 가상화를 말한다. 가상 환경을 손쉽게 구축할 수 있지만 오버헤드가 굉장히 크다. Hosted Full Virtualization 과 같은 건가??? 
+* Hypervisor Virtualization 
+  * 하이퍼바이저는 가상화를 관리하는 소프트웨어이다. VMM (Virtuall Machine Monitor) 이라고도 한다. 하드웨어에 하이퍼바이저를 배치해 H/W 와 가상환경을 제어한다. Full Virtualization 과 Para Virtualization 이 있다. KVM 은 Full Virtualization 과 Para Virtualization 에 해당한다.
+  * **Full Virtualization**
+    * 하이퍼바이저가 Host O/S 에서 실행되는 것을 Hosted Full Virtualization 이라고 한다. VMware, Virtual Box 가 해당한다.
+    * 하이퍼바이저가 H/W 에서 실행되는 것을 Native Full Virtualization 이라고 한다. Xen 이 해당한다.
+  * **Para Virtualization**
+    * Guest OS 를 수정해야 한다. 대신 Full Virtualization 보다 성능이 좋다.
+* Container Virtualization
+  * 하드웨어에 Host O/S 를 설치하고 Host O/S 에 논리적인 영역 (컨테이너) 을 만들고 애플리케이션과 라이브러리등을 컨테이너 안에 넣어 가상화를 제공하는 것이다.
+  * OpenVZ, LSC, Lunix vServer, FreeBSD Fail, Solaris Zones, Docker 등이 해당한다. 
+
+## Devops
+
+* [DevOps is a culture, not a role!](https://medium.com/@neonrocket/devops-is-a-culture-not-a-role-be1bed149b0)
+
+개발팀과 운영팀이 서로 소통이 원활히 이루어질 수 있도록 하는 것을 의미한다.
+
+![](img/devops.png)
+
+## AWS Region
+
+AWS 는 물리적으로 떨어진 지역에 여러 개의 클라우드 인프라를 운영한다. 이 지역을 region 이라고 한다.
+
+## AWS Availability Zone
+
+하나의 region 은 다시 여러개의 물리적인 Availability Zone 으로 나뉘어 진다. 하나의 region 안에서 서비스를 두개 이상의 Availability Zone 에 배치해 두면 가용성을 확보할 수 있다.
+
+## Edge Location
+
+CDN (Content Delivery Netowrk) 을 이루는 캐시 서버이다. AWS Cloud Front 가 해당한다.
+
 ## RESTfull API
 
 restfull api
@@ -204,14 +269,6 @@ restfull api
 msa
 
 ## HDFS
-
-## Virtualization
-
-virtualization 3 가지
-
-## Devops
-
-devops msa 관계
 
 ## CAP
 
@@ -315,6 +372,8 @@ DNS server 이다.
 ## CloudWatch
 
 ## ELB
+
+## Elastics Beanstalk
 
 # Advanced
 
