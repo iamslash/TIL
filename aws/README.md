@@ -165,7 +165,7 @@ routing prefix 는 `198.51.100.0/24` 와 같이 CIDR (Classless Inter-Domain Rou
 
 ## Private Network
 
-Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineering Task Force) 는 Private IP Address 를 위해 다음과 같은 IPv4 주소를 사용하도록 RFC 1918 라는 표준으로 IANA ( Internet Assigned Numbers Authority) 를 지도했다.
+Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineering Task Force) 는 Private IP Address 를 위해 다음과 같은 IPv4 주소를 사용하도록 [RFC1918](https://tools.ietf.org/html/rfc1918) 라는 표준으로 IANA ( Internet Assigned Numbers Authority) 를 지도했다.
 
 | RFC 1918 name | IP address range | Numger of addresses | Largest CIDR block (subnet mask) | Host ID size | Mask bits | Classful description | 
 |--|--|--|--|--|--|--|
@@ -185,9 +185,16 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
 ## VPC (Virtual Private Cloud)
 
 * [Amazon VPC란 무엇인가? @ aws](https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/what-is-amazon-vpc.html)
+* [[AWS] 가장쉽게 VPC 개념잡기](https://medium.com/harrythegreat/aws-%EA%B0%80%EC%9E%A5%EC%89%BD%EA%B2%8C-vpc-%EA%B0%9C%EB%85%90%EC%9E%A1%EA%B8%B0-71eef95a7098)
 
-* AWS 외부와는 격리된 가상의 사설 클라우드이다.
-* IP 주소 범위와 VPC 범위를 설정하고 서브넷을 추가하고 보안 그룹을 연결한 다음 라우팅 테이블을 구성한다.
+* AWS 외부와는 격리된 가상의 사설 클라우드이다. 2011년 8월에 도입되었다. 
+* VPC 를 하나 만들기 위해서는 다음과 같은 것들이 필요하다.
+  * n 개의 subnet
+  * subnet 끼리 통신을 위해 subnet 별 routing table
+  * subnet 별 inbound, outbound 방화벽 설정을 위한 Network ACL
+  * subnet 별 보안설정을 위한 Security Group
+  * subnet 이 public internet 통신을 위한 Internet Gateway
+  * DHCP options set
 
 ## RESTfull API
 
@@ -223,7 +230,7 @@ AWS 외부와는 격리된 가상의 사설 클라우드이다. EC2 를 실행�
 1 VPC
 n 서브넷 Subnet
 1 라우트 테이블 Route Table
-1 네트워크 ACLNetwork ACL
+1 네트워크 ACL Network ACL
 1 시큐리티 그룹 Security Group
 1 인터넷 게이트웨이 Internet Gateway
 1 DHCP 옵션셋 DHCP options set
