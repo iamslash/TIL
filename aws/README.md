@@ -4,7 +4,20 @@
   - [Storage](#storage)
   - [as a service](#as-a-service)
   - [WAF (Web Application Fairewall)](#waf-web-application-fairewall)
+  - [XSS (Cross Site Scripting)](#xss-cross-site-scripting)
+  - [CSRF (Cross Site Request Forgery)](#csrf-cross-site-request-forgery)
+  - [XSS vs CSRF](#xss-vs-csrf)
   - [OSI 7 layer](#osi-7-layer)
+  - [VPC](#vpc)
+  - [RESTfull API](#restfull-api)
+  - [MSA](#msa)
+  - [HDFS](#hdfs)
+  - [Virtualization](#virtualization)
+  - [Devops](#devops)
+  - [CAP](#cap)
+  - [PACELC](#pacelc)
+  - [CIDR](#cidr)
+  - [Subnet](#subnet)
 - [Basic](#basic)
   - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud)
   - [EC2 (Elastic Compute)](#ec2-elastic-compute)
@@ -97,25 +110,60 @@ aws 사용법에 대해 간략히 정리한다.
 * [웹방화벽이란?](https://www.pentasecurity.co.kr/resource/%EC%9B%B9%EB%B3%B4%EC%95%88/%EC%9B%B9%EB%B0%A9%ED%99%94%EB%B2%BD%EC%9D%B4%EB%9E%80/)
   
 * 일반적인 방화벽과 달리 웹 애플리케이션의 보안에 특화된 솔루션이다. 
-* 애플리케이션의 가용성에 영향을 주거나, 보안을 위협하거나, 리소스를 과도하게 사용하는 웹 공격으로부터 웹 애플리케이션을 보호하는 데 도움이 된다.
+* 애플리케이션의 가용성에 영향을 주거나, SQL Injection, XSS (Cross Site Scripting) 과 같이 보안을 위협하거나, 리소스를 과도하게 사용하는 웹 공격으로부터 웹 애플리케이션을 보호하는 데 도움이 된다.
+
+## XSS (Cross Site Scripting)
+
+* [웹 해킹 강좌 ⑦ - XSS(Cross Site Scripting) 공격의 개요와 실습 (Web Hacking Tutorial #07) @ youtube](https://www.youtube.com/watch?v=DoN7bkdQBXU)
+* 웹 게시판에 javascript 를 내용으로 삽입해 놓으면 그 게시물을 사용자가 읽을 때 삽입된 스크립트가 실행되는 공격방법
+
+## CSRF (Cross Site Request Forgery)
+
+* [웹 해킹 강좌 ⑩ - CSRF(Cross Site Request Forgery) 공격 기법 (Web Hacking Tutorial #10) @ youtube](https://www.youtube.com/watch?v=nzoUgKPwn_A)
+* 특정 사용자의 세션을 탈취하는 데에는 실패하였지만 스크립팅 공격이 통할 때 사용할 수 있는 해킹 기법. 피해자가 스크립트를 보는 것과 동시에 자기도 모르게 특정한 사이트에 어떠한 요청(Request) 데이터를 보낸다.
+
+## XSS vs CSRF
+
+* XSS 는 공격대상이 Client 이고 CRSF 는 공격대상이 Server 이다.
+* XSS 는 사이트변조나 백도어를 통해 Client 를 공격한다.
+* CSRF 는 요청을 위조하여 사용자의 권한을 이용해 서버를 공격한다.
 
 ## OSI 7 layer
+
+![](/network/Osi-model-7-layers.png))
+
+
+
+## VPC
 
 vpc
 how to make a vpc on onpremise
 
+
+## RESTfull API
+
 restfull api
+
+## MSA
 msa
-good architect
-hdfs 
+
+## HDFS
+
+## Virtualization
+
 virtualization 3 가지
+
+## Devops
+
 devops msa 관계
 
-CAP
-PACELC
-capa
-CIDR
-subnet
+## CAP
+
+## PACELC
+
+## CIDR
+
+## Subnet
 
 # Basic
 
