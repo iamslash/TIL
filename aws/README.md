@@ -49,6 +49,7 @@
 - [Advanced](#advanced)
   - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
 - [Best Practices](#best-practices)
+  - [Chatting Service](#chatting-service)
 
 ----
 
@@ -509,4 +510,9 @@ aws_access_key_id = 3BqwEFsOBd3vx11+TOHhI9LVi2
 ```
 
 # Best Practices
+
+## Chatting Service
+
+* [elasticache-chatapp @ github](https://github.com/aws-samples/elasticache-refarch-chatapp)
+  * node.js, redis 를 이용한 채팅 예제
 
