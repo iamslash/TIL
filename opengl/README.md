@@ -989,6 +989,8 @@ void main()
 
 ## Cascaded Shadow Mapping
 
+보다 현실감 있는 그림자 표현을 위해 shadowmap 을 여러 장 사용한다. 
+
 ## Normal Mapping
 
 ## Parallax Mapping
@@ -996,7 +998,6 @@ void main()
 ## HDR
 
 ## Bloom
-
 
 ## Deferred Shading
 
