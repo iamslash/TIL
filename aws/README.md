@@ -22,11 +22,11 @@
   - [AWS Region](#aws-region)
   - [AWS Availability Zone](#aws-availability-zone)
   - [Edge Location](#edge-location)
+  - [CAP (Consistency Availability Partition tolerance)](#cap-consistency-availability-partition-tolerance)
+  - [PACELC (Partitioning Availability Consistency Else Latency Consistency)](#pacelc-partitioning-availability-consistency-else-latency-consistency)
   - [RESTfull API](#restfull-api)
   - [MSA](#msa)
   - [HDFS](#hdfs)
-  - [CAP](#cap)
-  - [PACELC](#pacelc)
 - [Basic](#basic)
   - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud-1)
   - [EC2 (Elastic Compute)](#ec2-elastic-compute)
@@ -86,6 +86,8 @@ aws 사용법에 대해 간략히 정리한다.
 
 * [SAN의 정의 그리고 NAS와의 차이점](http://www.ciokorea.com/news/37369)
 
+<br/>
+
 * NAS - Network Attatched Storage
   * 표준 이더넷 연결을 통해 네트워크에 부착된 저장장치.
 * DAS - Direct Attatched Soorage
@@ -105,6 +107,8 @@ aws 사용법에 대해 간략히 정리한다.
 * [SaaS vs PaaS vs IaaS: What’s The Difference and How To Choose](https://www.bmc.com/blogs/saas-vs-paas-vs-iaas-whats-the-difference-and-how-to-choose/)
 
 ![](img/saas-vs-paas-vs-iaas-810x754.png)
+
+<br/>
 
 * On-Premises
   * Netwoking 부터 Appliations 까지 유저가 모두 관리해야 하는 개발 환경
@@ -136,6 +140,8 @@ aws 사용법에 대해 간략히 정리한다.
 
 * [AWS WAF – 웹 애플리케이션 방화벽](https://aws.amazon.com/ko/waf/)
 * [웹방화벽이란?](https://www.pentasecurity.co.kr/resource/%EC%9B%B9%EB%B3%B4%EC%95%88/%EC%9B%B9%EB%B0%A9%ED%99%94%EB%B2%BD%EC%9D%B4%EB%9E%80/)
+
+<br/>
   
 * 일반적인 방화벽과 달리 웹 애플리케이션의 보안에 특화된 솔루션이다. 
 * 애플리케이션의 가용성에 영향을 주거나, SQL Injection, XSS (Cross Site Scripting) 과 같이 보안을 위협하거나, 리소스를 과도하게 사용하는 웹 공격으로부터 웹 애플리케이션을 보호하는 데 도움이 된다.
@@ -143,11 +149,17 @@ aws 사용법에 대해 간략히 정리한다.
 ## XSS (Cross Site Scripting)
 
 * [웹 해킹 강좌 ⑦ - XSS(Cross Site Scripting) 공격의 개요와 실습 (Web Hacking Tutorial #07) @ youtube](https://www.youtube.com/watch?v=DoN7bkdQBXU)
+
+<br/>
+
 * 웹 게시판에 javascript 를 내용으로 삽입해 놓으면 그 게시물을 사용자가 읽을 때 삽입된 스크립트가 실행되는 공격방법
 
 ## CSRF (Cross Site Request Forgery)
 
 * [웹 해킹 강좌 ⑩ - CSRF(Cross Site Request Forgery) 공격 기법 (Web Hacking Tutorial #10) @ youtube](https://www.youtube.com/watch?v=nzoUgKPwn_A)
+
+<br/>
+
 * 특정 사용자의 세션을 탈취하는 데에는 실패하였지만 스크립팅 공격이 통할 때 사용할 수 있는 해킹 기법. 피해자가 스크립트를 보는 것과 동시에 자기도 모르게 특정한 사이트에 어떠한 요청(Request) 데이터를 보낸다.
 
 ## XSS vs CSRF
@@ -167,6 +179,8 @@ ISO (International Standard Organization) 에서 개발한 네트워크 모델�
 * [Computer Network | TCP/IP Model @ geeksforgeeks](https://www.geeksforgeeks.org/computer-network-tcpip-model/)
 
 ![](img/tcpAndOSI.png)
+
+<br/>
 
 1960 년대 말 DARPA (Defense Advanced Research Projects Agency) 가 수행한 연구개발의 산출물로 부터 탄생했다. DARPA 가 개발한 ARPANET 는 NCP (Network Control Program) 라는 프로토콜을 사용했다. 1983 년 TCP/IP 가 이를 대체하며 지금의 인터넷으로 진화했다.
 
@@ -212,6 +226,8 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
 * [Amazon VPC란 무엇인가? @ aws](https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/what-is-amazon-vpc.html)
 * [[AWS] 가장쉽게 VPC 개념잡기](https://medium.com/harrythegreat/aws-%EA%B0%80%EC%9E%A5%EC%89%BD%EA%B2%8C-vpc-%EA%B0%9C%EB%85%90%EC%9E%A1%EA%B8%B0-71eef95a7098)
 
+<br/>
+
 * AWS 외부와는 격리된 가상의 사설 클라우드이다. 2011년 8월에 도입되었다. 
 * VPC 를 하나 만들기 위해서는 다음과 같은 것들이 필요하다.
   * n 개의 subnet
@@ -227,6 +243,8 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
 * [전가상화와 반가상화](https://m.blog.naver.com/PostView.nhn?blogId=brickbot&logNo=220413822823&proxyReferer=https%3A%2F%2Fwww.google.com%2F)
 virtualization 은 Host Virtualization, Hypervisor Virtualization, Container Virtualization 과 같이 3 가지가 있다.
 * [하이퍼바이저](https://blog.naver.com/brickbot/220413523885)
+
+<br/>
 
 * Host Virtualization
   * 하드웨어에 Host O/S 를 설치하고 Host O/S 에 Virtualizaion S/W 를 설치한다. 그리고 Guest O/S 는 Virtualization S/S 에서 실행되는 가상화를 말한다. 가상 환경을 손쉽게 구축할 수 있지만 오버헤드가 굉장히 크다. Hosted Full Virtualization 과 같은 건가??? 
@@ -245,6 +263,8 @@ virtualization 은 Host Virtualization, Hypervisor Virtualization, Container Vir
 
 * [DevOps is a culture, not a role!](https://medium.com/@neonrocket/devops-is-a-culture-not-a-role-be1bed149b0)
 
+<br/>
+
 개발팀과 운영팀이 서로 소통이 원활히 이루어질 수 있도록 하는 것을 의미한다.
 
 ![](img/devops.png)
@@ -261,6 +281,36 @@ AWS 는 물리적으로 떨어진 지역에 여러 개의 클라우드 인프라
 
 CDN (Content Delivery Netowrk) 을 이루는 캐시 서버이다. AWS Cloud Front 가 해당한다.
 
+## CAP (Consistency Availability Partition tolerance)
+
+* [CAP Theorem @ medium](https://medium.com/system-design-blog/cap-theorem-1455ce5fc0a0)
+
+<br/>
+
+![](img/1_rxTP-_STj-QRDt1X9fdVlA.jpg)
+
+Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availability, Partition tolerance 중 3 가지 모두 만족할 수 없다. 2 가지만을 만족 할 수 있다.
+
+* Consistency
+  * 모든 클라이언트는 같은 데이터를 읽는다.
+* Availability
+  * 서버 노드중 일부가 고장나도 서비스의 지장이 없다.
+* Partition tolerance
+  * 노드들 끼리 전송하는 네트워크 패킷이 유실되거나 지연되더라도 서비스의 지장이 없다.
+
+## PACELC (Partitioning Availability Consistency Else Latency Consistency)
+
+* [CAP Theorem, 오해와 진실](http://eincs.com/2013/07/misleading-and-truth-of-cap-theorem/)
+
+<br/>
+
+![](img/truth-of-cap-theorem-pacelc.jpg)
+
+시스템이 Partitioning 상황 즉 네트워크 장애 상황일 때는 Availability 혹은 Consistency 중 하나를 추구하고 일반적인 상황일 때는 Latency 혹은 Consistency 중 하나를 추구하라는 이론이다.
+
+* HBase 는 PC/EC 이다. 네트워크 장애 상황일때 C 를 위해 A 를 희생한다. 정상 상황일때 C를 위해 L를 희생한다.
+* Cassandra 는 PA/EL 이다. 네트워크 장애 상황일때 A 를 위해 C 를 희생한다. 즉 Eventual Consistency 의 특성을 갖는다. 정상 상황일때 L 을 위해 C 를 희생한다. 즉 모든 노드에 데이터를 반영하지는 않는다.
+
 ## RESTfull API
 
 restfull api
@@ -269,11 +319,6 @@ restfull api
 msa
 
 ## HDFS
-
-## CAP
-
-## PACELC
-
 
 # Basic
 
