@@ -113,6 +113,8 @@
   * [make](/make/README.md)
   * [prometheus](/prometheus/README.md)
   * [sed](/sed/README.md)
+  * [awk](/awk/README.md)
+  * [hadoop](/hadoop/README.md)
 
 * FrontEnd
   * [html,css,js](/frontend/README.md)
