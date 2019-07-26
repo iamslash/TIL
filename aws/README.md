@@ -306,10 +306,12 @@ Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availa
 
 ![](img/truth-of-cap-theorem-pacelc.jpg)
 
-시스템이 Partitioning 상황 즉 네트워크 장애 상황일 때는 Availability 혹은 Consistency 중 하나를 추구하고 일반적인 상황일 때는 Latency 혹은 Consistency 중 하나를 추구하라는 이론이다.
+시스템이 Partitioning 상황 즉 네트워크 장애 상황일 때는 Availability 혹은 Consistency 중 하나를 추구하고 일반적인 상황일 때는 Latency 혹은 Consistency 중 하나를 추구하라는 이론이다. 
 
-* HBase 는 PC/EC 이다. 네트워크 장애 상황일때 C 를 위해 A 를 희생한다. 정상 상황일때 C를 위해 L를 희생한다.
-* Cassandra 는 PA/EL 이다. 네트워크 장애 상황일때 A 를 위해 C 를 희생한다. 즉 Eventual Consistency 의 특성을 갖는다. 정상 상황일때 L 을 위해 C 를 희생한다. 즉 모든 노드에 데이터를 반영하지는 않는다.
+이것을 다시 한번 풀어보면 이렇다. 네트워크 장애 상황일 때 클라이언트는 일관성은 떨어져도 좋으니 일단 데이터를 받겠다 혹은 일관성있는 데이터 아니면 에러를 받겠다는 말이다. 네트워크 장애가 아닌 보통의 상황일 때 클라이언트는 일관성은 떨어져도 빨리 받겠다 혹은 일관성있는 데이터 아니면 늦게 받겠다는 말이다.
+
+* HBase 는 PC/EC 이다. 네트워크 장애상황일 때 무조건 일관성있는 데이터를 보내고 보통의 상황일 때도 무조건 일관성있는 데이터를 보낸다. 한마디로 일관성 성애자이다.
+* Cassandra 는 PA/EL 이다. 일관성은 별로 중요하지 않다. 네트워크 장애상황일 때 일관성은 떨어져도 데이터를 일단 보낸다. 보통의 상황일 때 역시 일관성은 떨어져도 좋으니 일단 빨리 데이터를 보낸다.
 
 ## RESTfull API
 
