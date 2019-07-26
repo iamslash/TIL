@@ -12,19 +12,19 @@
   - [brew](#brew)
   - [yum](#yum)
 - [Commands](#commands)
-  - [메뉴얼](#%EB%A9%94%EB%89%B4%EC%96%BC)
-  - [자주 사용](#%EC%9E%90%EC%A3%BC-%EC%82%AC%EC%9A%A9)
-  - [유저 관리](#%EC%9C%A0%EC%A0%80-%EA%B4%80%EB%A6%AC)
-  - [파일 권한](#%ED%8C%8C%EC%9D%BC-%EA%B6%8C%ED%95%9C)
-  - [시스템 모니터링](#%EC%8B%9C%EC%8A%A4%ED%85%9C-%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81)
-  - [로그](#%EB%A1%9C%EA%B7%B8)
-  - [텍스트](#%ED%85%8D%EC%8A%A4%ED%8A%B8)
-  - [디버깅](#%EB%94%94%EB%B2%84%EA%B9%85)
-  - [압축](#%EC%95%95%EC%B6%95)
-  - [에디터](#%EC%97%90%EB%94%94%ED%84%B0)
-  - [데몬 관리](#%EB%8D%B0%EB%AA%AC-%EA%B4%80%EB%A6%AC)
+  - [메뉴얼](#%eb%a9%94%eb%89%b4%ec%96%bc)
+  - [자주 사용](#%ec%9e%90%ec%a3%bc-%ec%82%ac%ec%9a%a9)
+  - [유저 관리](#%ec%9c%a0%ec%a0%80-%ea%b4%80%eb%a6%ac)
+  - [파일 권한](#%ed%8c%8c%ec%9d%bc-%ea%b6%8c%ed%95%9c)
+  - [시스템 모니터링](#%ec%8b%9c%ec%8a%a4%ed%85%9c-%eb%aa%a8%eb%8b%88%ed%84%b0%eb%a7%81)
+  - [로그](#%eb%a1%9c%ea%b7%b8)
+  - [텍스트](#%ed%85%8d%ec%8a%a4%ed%8a%b8)
+  - [디버깅](#%eb%94%94%eb%b2%84%ea%b9%85)
+  - [압축](#%ec%95%95%ec%b6%95)
+  - [에디터](#%ec%97%90%eb%94%94%ed%84%b0)
+  - [데몬 관리](#%eb%8d%b0%eb%aa%ac-%ea%b4%80%eb%a6%ac)
 - [Security](#security)
-  - [root 소유의 setuid, setgid파일 검색 후 퍼미션 조정하기](#root-%EC%86%8C%EC%9C%A0%EC%9D%98-setuid-setgid%ED%8C%8C%EC%9D%BC-%EA%B2%80%EC%83%89-%ED%9B%84-%ED%8D%BC%EB%AF%B8%EC%85%98-%EC%A1%B0%EC%A0%95%ED%95%98%EA%B8%B0)
+  - [root 소유의 setuid, setgid파일 검색 후 퍼미션 조정하기](#root-%ec%86%8c%ec%9c%a0%ec%9d%98-setuid-setgid%ed%8c%8c%ec%9d%bc-%ea%b2%80%ec%83%89-%ed%9b%84-%ed%8d%bc%eb%af%b8%ec%85%98-%ec%a1%b0%ec%a0%95%ed%95%98%ea%b8%b0)
 - [System Monitoring](#system-monitoring)
   - [swapin, swapout](#swapin-swapout)
 
@@ -138,6 +138,10 @@ linux는 파일의 sticky bit를 무시한다. 디렉토리에 sticky bit가 설
 ## yum
 
 # Commands
+
+* [The Art of Command Line @ github](https://github.com/jlevy/the-art-of-command-line/blob/master/README-ko.md)
+
+<br/>
 
 application commands와 bash builtin commands등이 있다.  상황별로
 유용한 commands를 정리한다. bash builtin commands의 경우 `/usr/bin/`
