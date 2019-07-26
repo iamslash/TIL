@@ -24,9 +24,11 @@
   - [Edge Location](#edge-location)
   - [CAP (Consistency Availability Partition tolerance)](#cap-consistency-availability-partition-tolerance)
   - [PACELC (Partitioning Availability Consistency Else Latency Consistency)](#pacelc-partitioning-availability-consistency-else-latency-consistency)
-  - [RESTfull API](#restfull-api)
-  - [MSA](#msa)
-  - [HDFS](#hdfs)
+  - [REST (REpresentational State Transfer) API](#rest-representational-state-transfer-api)
+  - [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
+  - [Apache Hadoop](#apache-hadoop)
+  - [HDFS (Hadoop Distributed FileSystem)](#hdfs-hadoop-distributed-filesystem)
+  - [MapReduce](#mapreduce)
 - [Basic](#basic)
   - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud-1)
   - [EC2 (Elastic Compute)](#ec2-elastic-compute)
@@ -313,14 +315,56 @@ Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availa
 * HBase 는 PC/EC 이다. 네트워크 장애상황일 때 무조건 일관성있는 데이터를 보내고 보통의 상황일 때도 무조건 일관성있는 데이터를 보낸다. 한마디로 일관성 성애자이다.
 * Cassandra 는 PA/EL 이다. 일관성은 별로 중요하지 않다. 네트워크 장애상황일 때 일관성은 떨어져도 데이터를 일단 보낸다. 보통의 상황일 때 역시 일관성은 떨어져도 좋으니 일단 빨리 데이터를 보낸다.
 
-## RESTfull API
+## REST (REpresentational State Transfer) API 
 
-restfull api
+* [1) Rest API란? @ edwith](https://www.edwith.org/boostcourse-web/lecture/16740/)
 
-## MSA
-msa
+<br/>
 
-## HDFS
+2000 년도에 로이 필딩 (Roy Fielding) 의 박사학위 논문에서 최초로 소개되었다. REST 형식의 API 를 말한다.
+
+로이 필딩은 현재 공개된 REST API 라고 불리우는 것은 대부분 REST API 가 아니다라고 말한다. REST API 는 다음과 같은 것들을 포함해야 한다고 한다.
+
+* client-server
+* stateless
+* cache
+* uniform interface
+* layered system
+* code-on-demand (optional)
+
+HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다. uniform interface 는 다음을 포함한다.
+
+* 리소스가 URI로 식별되야 합니다.
+* 리소스를 생성,수정,추가하고자 할 때 HTTP메시지에 표현을 해서 전송해야 합니다.
+* 메시지는 스스로 설명할 수 있어야 합니다. (Self-descriptive message)
+* 애플리케이션의 상태는 Hyperlink를 이용해 전이되야 합니다.(HATEOAS)
+
+위의 두가지는 이미 만족하지만 나머지 두가지는 HTTP 로 구현하기 어렵다. 예를 들어 HTTP BODY 에 JSON 을 포함했을 때 HTTP message 스스로 body 의 내용을 설명하기란 어렵다. 그리고 웹 게시판을 사용할 때, 리스트 보기를 보면, 상세보기나 글쓰기로 이동할 수 있는 링크가 있습니다.
+상세보기에서는 글 수정이나 글 삭제로 갈 수 있는 링크가 있습니다. 이렇게 웹 페이지를 보면, 웹 페이지 자체에 관련된 링크가 있는것을 알 수 있는데 이를 HATEOAS (Hypermedia As The Engine Of Application State) 라고 한다. HATEOAS 를 API 에서 제공하는 것은 어렵다.
+
+결국 HTTP 는 REST API 의 uniform interface 스타일 중 self-descriptive message, HATEOAS 를 제외하고 대부분의 특징들이 구현되어 있다고 할 수 있다. 그래서 REST API 대신 HTTP API 또는 WEB API 라고 한다.
+
+## MSA (Micro Service Architecture)
+
+하나의 서비스를 느슨하게 연결된 작은 서비스들로 구성하여 구축하는 software development technique 중 하나이다.
+
+모듈화도 되고 여러 팀이 독립적으로 개발할 수도 있고 만은 장점이 있다. 그러나 너무 많은 서비스들의 개수때문에 많은 프로토콜을 구현해야 하고 유지보수가 용이하지 않다.
+
+## Apache Hadoop
+
+* [하둡(Hadoop) 소개 및 기본 구성요소 설명 @ opentutorials](https://opentutorials.org/module/2926/17055)
+
+<br/>
+
+대용량 데이터를 분산 처리할 수 있는 자바 기반의 오픈 소스 프레임워크이다. 구글이 논문으로 발표한 GFS(Google File System)과 맵리듀스(MapReduce)를 2005년 더그커팅이 구현한 구현체이다.
+
+## HDFS (Hadoop Distributed FileSystem)
+
+하둡 네트워크에 연결된 기기에 데이터를 저장하는 분산형 파일시스템
+
+## MapReduce
+
+대용량의 데이터 처리를 위한 분산 프로그래밍 모델 및 소프트웨어 프레임워크. 맵리듀스 프레임워크를 이용하면 대규모 분산 컴퓨팅 환경에서 대량의 데이터를 병렬로 분석 가능하다. 프로그래머가 직접 작성하는 맵과 리듀스 라는 두 개의 메소드로 구성된다.
 
 # Basic
 
