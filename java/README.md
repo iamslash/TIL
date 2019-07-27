@@ -32,6 +32,7 @@ java를 정리한다.
 
 # Materials
 
+* [자바 프로그래밍 언어 코딩 규칙](https://myeonguni.tistory.com/1596)
 * [Advanced Java](http://enos.itcollege.ee/~jpoial/allalaadimised/reading/Advanced-java.pdf)
   * java 의 고급내용
 * [learn java in Y minutes](https://learnxinyminutes.com/docs/java/)
