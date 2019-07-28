@@ -46,6 +46,7 @@
   - [CloudWatch](#cloudwatch)
   - [ELB](#elb)
   - [Elastics Beanstalk](#elastics-beanstalk)
+  - [Code Deploy](#code-deploy)
 - [Advanced](#advanced)
   - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
 - [Best Practices](#best-practices)
@@ -467,6 +468,10 @@ DNS server 이다.
 ## ELB
 
 ## Elastics Beanstalk
+
+## Code Deploy
+
+* [AWS 코드 서비스 특집 - 아마존 데브옵스 개발 방법 (윤석찬) :: AWS 월간 웨비나 @ youtube](https://www.youtube.com/watch?v=t6tTyDTpGoY)
 
 # Advanced
 
