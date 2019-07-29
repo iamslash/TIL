@@ -10,6 +10,7 @@
   - [XSS (Cross Site Scripting)](#xss-cross-site-scripting)
   - [CSRF (Cross Site Request Forgery)](#csrf-cross-site-request-forgery)
   - [XSS vs CSRF](#xss-vs-csrf)
+  - [CORS (Cross Origin Resource Sharing)](#cors-cross-origin-resource-sharing)
   - [OSI 7 layer](#osi-7-layer)
   - [TCP/IP Protocol Suite](#tcpip-protocol-suite)
   - [Subnet](#subnet)
@@ -31,11 +32,19 @@
   - [MapReduce](#mapreduce)
 - [Basic](#basic)
   - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud-1)
-  - [EC2 (Elastic Compute)](#ec2-elastic-compute)
+  - [EC2 (Elastic Compute Cloud)](#ec2-elastic-compute-cloud)
+    - [How to make a EC2 instance](#how-to-make-a-ec2-instance)
+    - [How to scaleup EC2 instance Manually](#how-to-scaleup-ec2-instance-manually)
+    - [ELB (Elastic Load Balancer)](#elb-elastic-load-balancer)
+    - [How to scaleout EC2 instance Manually](#how-to-scaleout-ec2-instance-manually)
   - [IAM (Identity and Access Management)](#iam-identity-and-access-management)
+  - [AWS Auto Scaling](#aws-auto-scaling)
+  - [Certificate Manager](#certificate-manager)
   - [CloudFront](#cloudfront)
   - [S3 (Simple Storage Service)](#s3-simple-storage-service)
   - [RDS](#rds)
+  - [SNS (Simple Notification Service)](#sns-simple-notification-service)
+  - [SES (Simple Email Service)](#ses-simple-email-service)
   - [ElastiCachi](#elasticachi)
   - [Lambda](#lambda)
   - [API Gateway](#api-gateway)
@@ -44,12 +53,14 @@
   - [Kinesis](#kinesis)
   - [Route 53](#route-53)
   - [CloudWatch](#cloudwatch)
-  - [ELB](#elb)
   - [Elastics Beanstalk](#elastics-beanstalk)
   - [Code Deploy](#code-deploy)
+  - [Cloud Formation](#cloud-formation)
 - [Advanced](#advanced)
   - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
 - [Best Practices](#best-practices)
+  - [Basic Web Service](#basic-web-service)
+  - [Basic AWS Auto Scaling](#basic-aws-auto-scaling)
   - [Chatting Service](#chatting-service)
 
 ----
@@ -61,7 +72,9 @@ aws 사용법에 대해 간략히 정리한다.
 # Materials
 
 * [AWS Services Overview - September 2016 Webinar Series @ slideshare](https://www.slideshare.net/AmazonWebServices/aws-services-overview-september-2016-webinar-series)
+  * AWS serices overview
 * [AWS @ 생활코딩](https://opentutorials.org/course/2717)
+  * AWS 한글 설명
 * [44bit](https://www.44bits.io/ko)
   * 클라우드블로그
 * [아마존 웹 서비스를 다루는 기술](http://pyrasis.com/aws.html)
@@ -172,6 +185,10 @@ aws 사용법에 대해 간략히 정리한다.
 * XSS 는 공격대상이 Client 이고 CRSF 는 공격대상이 Server 이다.
 * XSS 는 사이트변조나 백도어를 통해 Client 를 공격한다.
 * CSRF 는 요청을 위조하여 사용자의 권한을 이용해 서버를 공격한다.
+
+## CORS (Cross Origin Resource Sharing)
+
+XMLHttpRequest 가 cross-domain 을 요청할 수 있도록하는 방법이다. request 를 수신하는 Web Server 에서 설정해야 한다.
 
 ## OSI 7 layer
 
@@ -376,6 +393,8 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 
 * [만들면서 배우는 아마존 버추얼 프라이빗 클라우드(Amazon VPC) @ 44BITS](https://www.44bits.io/ko/post/understanding_aws_vpc)
 
+----
+
 AWS 외부와는 격리된 가상의 사설 클라우드이다. EC2 를 실행하려면 반드시 VPC 가 하나 필요하다. VPC 를 생성하기 위해서는 반드시 다음과 같은 것들을 함께 생성해야 사용이 가능하다.
 
 ```
@@ -388,9 +407,67 @@ n 서브넷 Subnet
 1 DHCP 옵션셋 DHCP options set
 ```
 
-## EC2 (Elastic Compute)
+## EC2 (Elastic Compute Cloud)
 
-OS 가 설치된 machine 이다.
+* [AWS EC2 @ 생활코딩](https://opentutorials.org/course/2717/11273)
+* [더 빠른 게임시스템을 위하여 개선된 서비스들 - 김병수 솔루션즈 아키텍트, AWS :: AWS Summit Seoul 2019 @ slideshare](https://www.slideshare.net/awskorea/aws-aws-summit-seoul-2019-141161806)
+* [EC2Instances.info](https://www.ec2instances.info/)
+  * EC2 인스턴스 유형별 비교
+* [aws 요금](https://aws.amazon.com/ko/ec2/pricing/)  
+
+----
+
+OS 가 설치된 machine 이다. 
+
+### How to make a EC2 instance
+
+* AMI 선택
+  * `Ubuntu Server 18.04 LTS (HVM), SSD Volume Type`
+* 인스턴스 유형 선택
+  * `t2.micro`
+  * 범용 : `A1, T3, T3a, T2 M5, M5a, M4`
+  * 컴퓨팅 최적화 : `C5, C5n, C4`
+  * 메모리 최적화 : `R5, R5a, R4, X1e, X1, u, z1d`  
+  * 가속화된 컴퓨팅 : `P3, P2, G3, F1`
+  * 스토리지 최적화 : `I3, I3en, D2, H1`
+* 인스턴스 구성
+  * `{인스턴스개수: 1}`
+* 스토리지 추가
+  * `8 GiB`
+* 태그 추가
+  * EC2 instance 의 meta information 이다.
+  * `{Key: Name, Value: 웹서버}`
+* 보안 그룹 구성
+  * `SSH, HTTP, HTTPS` 추가
+* 검토
+
+putty 를 이용하여 public DNS 에 SSH 접속할 수 있다. user 는 `ubuntu`. EC2 기본적으로 Dynamic IP 이다. 만약 Static IP 를 사용하고 싶다면 Elastic IP 를 할당받아야 하고 이것은 유로이다. 
+
+### How to scaleup EC2 instance Manually
+
+기존의 EC2 instance 를 A 라 하자. 그리고 미리 만들어 놓은 AMI 를 이용하여 scaleup 한 EC2 instance 를 B 라 하자. A 가 사용하고 있는 Elastic IP 를 Disassociate 하고 이것을 B 에 Associate 한다.
+
+### ELB (Elastic Load Balancer)
+
+* [EC2 Scalability - Scale Out (ELB) @ 생활코딩](https://opentutorials.org/course/2717/11332)
+
+----
+
+EC2 들 앞에서 EC2 들의 로드를 분산한다. ELB 의 유형은 Application Load Balancer 와 Network Load Balancer 와 같이 2 가지가 있다. 기존의 L7, L4 라고 할 수 있다. 
+
+Application Load Balancer 는 다음과 같은 과정으로 생성한다. 대부분의 과정은 EC2 와 상당히 유사하다.
+
+* 로드 밸런서 구성
+  * `ultrahigh-elb`
+* 보안 설정 구성
+* 보안 그룹 구성
+* 라우팅 구성
+* 대상등록
+* 검토
+
+### How to scaleout EC2 instance Manually
+
+먼저 ELB 를 하나 생성하고 두개 이상의 EC2 instance 를 등록한다.
 
 ## IAM (Identity and Access Management)
 
@@ -403,6 +480,27 @@ OS 가 설치된 machine 이다.
 * 개별 IAM 사용자 생성(Create individual IAM users)
 * 그룹을 사용하여 권한 할당(Use groups to assign permissions)
 * IAM 비밀번호 정책 적용(Apply an IAM password policy)
+
+## AWS Auto Scaling
+
+* [EC2 Scalability - Auto Scaling @ 생활코딩](https://opentutorials.org/course/2717/11336)
+
+----
+
+EC2 instance 들을 자동으로 scaling 할 수 있다. Launch Configurations 과 Auto Scaling Groups 두가지를 설정해야 한다.
+
+* Launch Configurations 
+  * EC2 Instance 생성할 때와 유사하게 AMI 선택 및 configuration 들을 설정한다.
+* Auto Scaling Groups
+  * 
+
+## Certificate Manager
+
+* [AWS SSL 적용 방법 @ tistory](https://interconnection.tistory.com/21)
+
+----
+
+SSL/TLS 인증서 관리. ELB 로 HTTPS 를 제공할려면 설정이 필요하다.
 
 ## CloudFront
 
@@ -429,6 +527,10 @@ aws s3 sync
 ## RDS
 
 mySQL 등을 사용할 수 있다.
+
+## SNS (Simple Notification Service)
+
+## SES (Simple Email Service)
 
 ## ElastiCachi
 
@@ -466,13 +568,15 @@ DNS server 이다.
 
 ## CloudWatch
 
-## ELB
-
 ## Elastics Beanstalk
 
 ## Code Deploy
 
 * [AWS 코드 서비스 특집 - 아마존 데브옵스 개발 방법 (윤석찬) :: AWS 월간 웨비나 @ youtube](https://www.youtube.com/watch?v=t6tTyDTpGoY)
+
+## Cloud Formation
+
+aws 의 resource 들을 () template 를 통해 생성할 수 있는 서비스이다. 예를 들어 내가 디자인한 서비스의 AWS resource 들 즉 ELB, EC2, RDS, ElastiCachde 등을 [yaml](https://github.com/aws-samples/elasticache-refarch-chatapp/blob/master/cloudformation/chatapp.yaml) 파일을 통해 생성할 수 있다.
 
 # Advanced
 
@@ -517,8 +621,19 @@ aws_access_key_id = 3BqwEFsOBd3vx11+TOHhI9LVi2
 
 # Best Practices
 
+## Basic Web Service
+
+* [AWS - EC2 12-4 : ELB 적용 @ youtube](https://www.youtube.com/watch?v=T_VFEQPuRjw)
+  * ELB 에 하나에 APM EC2 instance 두개를 연결한다. 그리고 부하측정을 위한 AB EC2 instance 하나를 생성한다.
+
+## Basic AWS Auto Scaling
+
+* [EC2 Scalability - Auto Scaling](https://opentutorials.org/course/2717/11336)
+  * ELB 에 webapp EC2 instance 를 연결한다. 그리고 부하측정을 통해 Auto Scaling 한다. 그리고 알람을 수신한다.
+
 ## Chatting Service
 
-* [elasticache-chatapp @ github](https://github.com/aws-samples/elasticache-refarch-chatapp)
+* [Amazon ElastiCache(Redis)를 이용한 채팅 애플리케이션 구성 방법](https://aws.amazon.com/ko/blogs/korea/how-to-build-a-chat-application-with-amazon-elasticache-for-redis/)
   * node.js, redis 를 이용한 채팅 예제
-
+  * [src](https://github.com/aws-samples/elasticache-refarch-chatapp)
+  
