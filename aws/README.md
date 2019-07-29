@@ -10,6 +10,7 @@
   - [XSS (Cross Site Scripting)](#xss-cross-site-scripting)
   - [CSRF (Cross Site Request Forgery)](#csrf-cross-site-request-forgery)
   - [XSS vs CSRF](#xss-vs-csrf)
+  - [CORS (Cross Origin Resource Sharing)](#cors-cross-origin-resource-sharing)
   - [OSI 7 layer](#osi-7-layer)
   - [TCP/IP Protocol Suite](#tcpip-protocol-suite)
   - [Subnet](#subnet)
@@ -31,8 +32,13 @@
   - [MapReduce](#mapreduce)
 - [Basic](#basic)
   - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud-1)
-  - [EC2 (Elastic Compute)](#ec2-elastic-compute)
+  - [EC2 (Elastic Compute Cloud)](#ec2-elastic-compute-cloud)
+    - [How to make a EC2 instance](#how-to-make-a-ec2-instance)
+    - [How to scaleup EC2 instance](#how-to-scaleup-ec2-instance)
+    - [How to scaleout EC2 instance](#how-to-scaleout-ec2-instance)
+    - [How to autoscale EC2 instance](#how-to-autoscale-ec2-instance)
   - [IAM (Identity and Access Management)](#iam-identity-and-access-management)
+  - [AWS Auto Scaling](#aws-auto-scaling)
   - [CloudFront](#cloudfront)
   - [S3 (Simple Storage Service)](#s3-simple-storage-service)
   - [RDS](#rds)
@@ -61,7 +67,9 @@ aws 사용법에 대해 간략히 정리한다.
 # Materials
 
 * [AWS Services Overview - September 2016 Webinar Series @ slideshare](https://www.slideshare.net/AmazonWebServices/aws-services-overview-september-2016-webinar-series)
+  * AWS serices overview
 * [AWS @ 생활코딩](https://opentutorials.org/course/2717)
+  * AWS 한글 설명
 * [44bit](https://www.44bits.io/ko)
   * 클라우드블로그
 * [아마존 웹 서비스를 다루는 기술](http://pyrasis.com/aws.html)
@@ -171,6 +179,10 @@ aws 사용법에 대해 간략히 정리한다.
 * XSS 는 공격대상이 Client 이고 CRSF 는 공격대상이 Server 이다.
 * XSS 는 사이트변조나 백도어를 통해 Client 를 공격한다.
 * CSRF 는 요청을 위조하여 사용자의 권한을 이용해 서버를 공격한다.
+
+## CORS (Cross Origin Resource Sharing)
+
+XMLHttpRequest 가 cross-domain 을 요청할 수 있도록하는 방법이다. request 를 수신하는 Web Server 에서 설정해야 한다.
 
 ## OSI 7 layer
 
@@ -375,6 +387,8 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 
 * [만들면서 배우는 아마존 버추얼 프라이빗 클라우드(Amazon VPC) @ 44BITS](https://www.44bits.io/ko/post/understanding_aws_vpc)
 
+----
+
 AWS 외부와는 격리된 가상의 사설 클라우드이다. EC2 를 실행하려면 반드시 VPC 가 하나 필요하다. VPC 를 생성하기 위해서는 반드시 다음과 같은 것들을 함께 생성해야 사용이 가능하다.
 
 ```
@@ -387,9 +401,45 @@ n 서브넷 Subnet
 1 DHCP 옵션셋 DHCP options set
 ```
 
-## EC2 (Elastic Compute)
+## EC2 (Elastic Compute Cloud)
 
-OS 가 설치된 machine 이다.
+* [AWS EC2 @ 생활코딩](https://opentutorials.org/course/2717/11273)
+* [더 빠른 게임시스템을 위하여 개선된 서비스들 - 김병수 솔루션즈 아키텍트, AWS :: AWS Summit Seoul 2019 @ slideshare](https://www.slideshare.net/awskorea/aws-aws-summit-seoul-2019-141161806)
+* [EC2Instances.info](https://www.ec2instances.info/)
+  * EC2 인스턴스 유형별 비교
+
+----
+
+OS 가 설치된 machine 이다. 다음과 같은 순서대로 EC2 를 생성한다.
+
+### How to make a EC2 instance
+
+* AMI 선택
+  * `Ubuntu Server 18.04 LTS (HVM), SSD Volume Type`
+* 인스턴스 유형 선택
+  * `t2.micro`
+  * 범용 : `A1, T3, T3a, T2 M5, M5a, M4`
+  * 컴퓨팅 최적화 : `C5, C5n, C4`
+  * 메모리 최적화 : `R5, R5a, R4, X1e, X1, u, z1d`  
+  * 가속화된 컴퓨팅 : `P3, P2, G3, F1`
+  * 스토리지 최적화 : `I3, I3en, D2, H1`
+* 인스턴스 구성
+  * `{인스턴스개수: 1}`
+* 스토리지 추가
+  * `8 GiB`
+* 태그 추가
+  * `{Key: Name, Value: 웹서버}`
+* 보안 그룹 구성
+  * `SSH, HTTP, HTTPS` 추가
+* 검토
+
+putty 를 이용하여 public DNS 에 SSH 접속할 수 있다. user 는 `ubuntu`.
+
+### How to scaleup EC2 instance
+
+### How to scaleout EC2 instance
+
+### How to autoscale EC2 instance
 
 ## IAM (Identity and Access Management)
 
@@ -402,6 +452,10 @@ OS 가 설치된 machine 이다.
 * 개별 IAM 사용자 생성(Create individual IAM users)
 * 그룹을 사용하여 권한 할당(Use groups to assign permissions)
 * IAM 비밀번호 정책 적용(Apply an IAM password policy)
+
+## AWS Auto Scaling
+
+
 
 ## CloudFront
 
