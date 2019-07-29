@@ -40,9 +40,9 @@
   - [IAM (Identity and Access Management)](#iam-identity-and-access-management)
   - [AWS Auto Scaling](#aws-auto-scaling)
   - [Certificate Manager](#certificate-manager)
-  - [CloudFront](#cloudfront)
   - [S3 (Simple Storage Service)](#s3-simple-storage-service)
-  - [RDS](#rds)
+  - [CloudFront](#cloudfront)
+  - [RDS (Relational Database Service)](#rds-relational-database-service)
   - [SNS (Simple Notification Service)](#sns-simple-notification-service)
   - [SES (Simple Email Service)](#ses-simple-email-service)
   - [ElastiCachi](#elasticachi)
@@ -61,6 +61,8 @@
 - [Best Practices](#best-practices)
   - [Basic Web Service](#basic-web-service)
   - [Basic AWS Auto Scaling](#basic-aws-auto-scaling)
+  - [Basic S3](#basic-s3)
+  - [Basic RDS](#basic-rds)
   - [Chatting Service](#chatting-service)
 
 ----
@@ -392,10 +394,14 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 ## VPC (Virtual Private Cloud)
 
 * [만들면서 배우는 아마존 버추얼 프라이빗 클라우드(Amazon VPC) @ 44BITS](https://www.44bits.io/ko/post/understanding_aws_vpc)
+* [AWS VPC를 디자인해보자(1) - Multi AZ와 Subnet을 활용한 고가용성 @ tistory](https://bluese05.tistory.com/45)
+  * VPC, Subnet best practices
 
 ----
 
-AWS 외부와는 격리된 가상의 사설 클라우드이다. EC2 를 실행하려면 반드시 VPC 가 하나 필요하다. VPC 를 생성하기 위해서는 반드시 다음과 같은 것들을 함께 생성해야 사용이 가능하다.
+AWS 외부와는 격리된 가상의 사설 클라우드이다. EC2 를 실행하려면 반드시 VPC 가 하나 필요하다. VPC 는 하나의 region 에 속해야 한다. 그리고 하나의 VPC 는 여러개의 availability zone 을 소유한다. 보통 하나의 VPC 에 두개의 AZ 를 설정하고 하나의 AZ 는 public subnet, private subnet 으로 설정한다.
+
+VPC 를 생성하기 위해서는 반드시 다음과 같은 것들을 함께 생성해야 사용이 가능하다.
 
 ```
 1 VPC
@@ -502,17 +508,13 @@ EC2 instance 들을 자동으로 scaling 할 수 있다. Launch Configurations �
 
 SSL/TLS 인증서 관리. ELB 로 HTTPS 를 제공할려면 설정이 필요하다.
 
-## CloudFront
-
-* [AWS2 - CloudFront @ 생활코딩](https://www.youtube.com/playlist?list=PLuHgQVnccGMDMQ1my6bVT-BPoo0LvnQMa)
-
-CloudFront 는 CDN (Contents Delivery Network) 이다. 예를 들어, 특정 region 의 S3 bucket 을 전세계 유저들이 지연없이 다운 받을 수 있도록 캐싱하는 역할을 한다. 캐싱역할을 하는 엣지서버는 이곳 저곳 설치되어 있다.
-
 ## S3 (Simple Storage Service)
 
-* [실전 Amazon S3와 CloudFront로 정적 파일 배포하기 @ aws](https://aws.amazon.com/ko/blogs/korea/amazon-s3-amazon-cloudfront-a-match-made-in-the-cloud/)
+* [S3 콘솔을 통한 기본 조작 방법 @ 생활코딩](https://opentutorials.org/course/2717/11379)
 
-주요 command line 은 다음과 같다.
+----
+
+bucket 은 디스크드라이브와 같다. 주요 command line 은 다음과 같다.
 
 ```
 aws s3 ls
@@ -524,9 +526,27 @@ aws s3 mv
 aws s3 sync
 ```
 
-## RDS
+## CloudFront
 
-mySQL 등을 사용할 수 있다.
+* [실전 Amazon S3와 CloudFront로 정적 파일 배포하기 @ aws](https://aws.amazon.com/ko/blogs/korea/amazon-s3-amazon-cloudfront-a-match-made-in-the-cloud/)
+* [AWS2 - CloudFront @ 생활코딩](https://www.youtube.com/playlist?list=PLuHgQVnccGMDMQ1my6bVT-BPoo0LvnQMa)
+
+CloudFront 는 CDN (Contents Delivery Network) 이다. 예를 들어, 특정 region 의 S3 bucket 을 전세계 유저들이 지연없이 다운 받을 수 있도록 캐싱하는 역할을 한다. 캐싱역할을 하는 엣지서버는 이곳 저곳 설치되어 있다.
+
+## RDS (Relational Database Service)
+
+* [RDS 서버 생성](https://opentutorials.org/course/2717/11808)
+  * MariaDB 를 생성해 본다.
+
+----
+
+Mysql, MariaDB, PostgreSQL 등등을 런칭할 수 있는 서비스이다.
+
+Multi-AZ Deployment 를 선택하면 여러개의 Availability Zone 에 replica 를 설정할 수 있다. replica 를 통해 가용성을 확보할 수 있을 뿐만 아니라 read operation 의 성능을 개선할 수 있다. free-tier 는 할 수 없다.
+
+Modify Action 을 통해 Scale-up 할 수 있다. 그러나 Multi-AZ Deployment 가 설정되어 있어야 Rolling Scale-up 이 가능하다. 역시 Multi-AZ Deployment 가 설정되어 있어야 Scale-out 을 통해 read replica 를 할 수 있다.
+
+Snapshot 를 만들어서 백업에 사용할 있다. 민감한 작업을 하기전에는 반드시 Snapshot 을 만들어 두자.
 
 ## SNS (Simple Notification Service)
 
@@ -576,7 +596,7 @@ DNS server 이다.
 
 ## Cloud Formation
 
-aws 의 resource 들을 () template 를 통해 생성할 수 있는 서비스이다. 예를 들어 내가 디자인한 서비스의 AWS resource 들 즉 ELB, EC2, RDS, ElastiCachde 등을 [yaml](https://github.com/aws-samples/elasticache-refarch-chatapp/blob/master/cloudformation/chatapp.yaml) 파일을 통해 생성할 수 있다.
+aws 의 resource 들을 미리 정의된 template 를 통해 생성할 수 있는 서비스이다. 예를 들어 내가 디자인한 서비스의 AWS resource 들 즉 ELB, EC2, RDS, ElastiCachde 등을 [yaml](https://github.com/aws-samples/elasticache-refarch-chatapp/blob/master/cloudformation/chatapp.yaml) 파일에 기록할 수 있다. 그리고 그 파일을 실행해서 AWS resources 를 생성할 수 있다.
 
 # Advanced
 
@@ -629,7 +649,17 @@ aws_access_key_id = 3BqwEFsOBd3vx11+TOHhI9LVi2
 ## Basic AWS Auto Scaling
 
 * [EC2 Scalability - Auto Scaling](https://opentutorials.org/course/2717/11336)
-  * ELB 에 webapp EC2 instance 를 연결한다. 그리고 부하측정을 통해 Auto Scaling 한다. 그리고 알람을 수신한다.
+  * ELB 에 webapp EC2 instance 를 Auto Scaling 한다. 그리고 부하측정을 위한 AB EC2 instance 를 하나 생성한다. SNS 를 통해 알람을 수신한다.
+
+## Basic S3  
+
+* [Nodejs를 위한 S3 SDK](https://opentutorials.org/course/2717/11797)
+  * S3 에 파일을 업로드하는 node.js app 을 제작한다.
+
+## Basic RDS
+
+* [PHP를 위한 RDS](https://opentutorials.org/course/2717/11815)
+  * PHP 를 이용하여 RDS 를 접속한다.
 
 ## Chatting Service
 
