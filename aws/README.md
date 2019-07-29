@@ -32,7 +32,15 @@
   - [MapReduce](#mapreduce)
 - [Basic](#basic)
   - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud-1)
+    - [VPC](#vpc)
+    - [Subnet](#subnet-1)
+    - [Route Table](#route-table)
+    - [Network ACL](#network-acl)
+    - [Security Group](#security-group)
+    - [Internet Gateway](#internet-gateway)
+    - [DHCP options set](#dhcp-options-set)
   - [EC2 (Elastic Compute Cloud)](#ec2-elastic-compute-cloud)
+  - [* aws 요금](#aws-%ec%9a%94%ea%b8%88)
     - [How to make a EC2 instance](#how-to-make-a-ec2-instance)
     - [How to scaleup EC2 instance Manually](#how-to-scaleup-ec2-instance-manually)
     - [ELB (Elastic Load Balancer)](#elb-elastic-load-balancer)
@@ -63,6 +71,7 @@
   - [Basic AWS Auto Scaling](#basic-aws-auto-scaling)
   - [Basic S3](#basic-s3)
   - [Basic RDS](#basic-rds)
+  - [Basic VPC Design](#basic-vpc-design)
   - [Chatting Service](#chatting-service)
 
 ----
@@ -413,6 +422,34 @@ n 서브넷 Subnet
 1 DHCP 옵션셋 DHCP options set
 ```
 
+### VPC
+
+하나의 VPC 는 반드시 하나의 Region 에 속한다. 그리고 여러개의 AZ 를 소유할 수 있다. 즉 여러개의 AZ 에 걸쳐있다. 또한 65536 개의 IP 를 할당할 수 있다. 기본 CIDR 블록은 `172.31.0.0/16` 이다. 
+
+### Subnet
+
+EC2 instance 의 네트워크를 설정할 때 반드시 하나의 VPC 와 하나의 Subnet 이 필요하다. VPC 가 논리적인 개념이라면 AZ 는 물리적인 개념이다. Subnet 는 반드시 하나의 AZ 에 포함된다.
+
+### Route Table
+
+Subnet 이 목적지를 찾기 위해 필요하다. 하나의 Route Table 은 VPC 의 여러 개의 Subnet 과 연결할 수 있다.
+
+### Network ACL
+
+하나의 Subnet 앞에서 설정해야하는 Virtual Firewall 이다.
+
+### Security Group
+
+하나의 EC2 instance 앞에서 설정해야 하는 Virtual Firewall 이다.
+
+### Internet Gateway
+
+Route Table 에 Internet Gateway 를 향하는 적절한 규칙을 추가해주면 특정 Subnet 이 인터넷과 연결된다. 그리고 인터넷을 사용하고자 하는 리소스는 반드시 public IP 를 가지고 있어야 한다.
+
+### DHCP options set
+
+???
+
 ## EC2 (Elastic Compute Cloud)
 
 * [AWS EC2 @ 생활코딩](https://opentutorials.org/course/2717/11273)
@@ -420,7 +457,6 @@ n 서브넷 Subnet
 * [EC2Instances.info](https://www.ec2instances.info/)
   * EC2 인스턴스 유형별 비교
 * [aws 요금](https://aws.amazon.com/ko/ec2/pricing/)  
-
 ----
 
 OS 가 설치된 machine 이다. 
@@ -660,6 +696,14 @@ aws_access_key_id = 3BqwEFsOBd3vx11+TOHhI9LVi2
 
 * [PHP를 위한 RDS](https://opentutorials.org/course/2717/11815)
   * PHP 를 이용하여 RDS 를 접속한다.
+
+## Basic VPC Design
+
+* [만들면서 배우는 아마존 버추얼 프라이빗 클라우드(Amazon VPC)](https://www.44bits.io/ko/post/understanding_aws_vpc)
+  * 하나의 VPC 에 두개의 AZ 를 할당한다.
+  * 하나의 AZ 는 public, private subnet 을 각각 하나씩 갖는다.
+  * webapp EC2 instance 두개를 두개의 AZ 의 public subnet 에 각각 실행한다.
+  * RDS instance Master, Slace 를 두개의 AZ 의 private subnet 에 각각 실행한다.
 
 ## Chatting Service
 
