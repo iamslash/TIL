@@ -1,62 +1,65 @@
-- [Abstract](#abstract)
-- [Materials](#materials)
-- [Prerequisites](#prerequisites)
-  - [Cloud Computing](#cloud-computing)
-  - [Storage](#storage)
-  - [Cloud Service Types](#cloud-service-types)
-  - [Router](#router)
-  - [Switch](#switch)
-  - [WAF (Web Application Fairewall)](#waf-web-application-fairewall)
-  - [XSS (Cross Site Scripting)](#xss-cross-site-scripting)
-  - [CSRF (Cross Site Request Forgery)](#csrf-cross-site-request-forgery)
-  - [XSS vs CSRF](#xss-vs-csrf)
-  - [CORS (Cross Origin Resource Sharing)](#cors-cross-origin-resource-sharing)
-  - [OSI 7 layer](#osi-7-layer)
-  - [TCP/IP Protocol Suite](#tcpip-protocol-suite)
-  - [Subnet](#subnet)
-  - [CIDR (Classless Inter-Domain Routing)](#cidr-classless-inter-domain-routing)
-  - [Private Network](#private-network)
-  - [VPN (Virtual Private Network)](#vpn-virtual-private-network)
-  - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud)
-  - [Virtualization](#virtualization)
-  - [Devops](#devops)
-  - [AWS Region](#aws-region)
-  - [AWS Availability Zone](#aws-availability-zone)
-  - [Edge Location](#edge-location)
-  - [CAP (Consistency Availability Partition tolerance)](#cap-consistency-availability-partition-tolerance)
-  - [PACELC (Partitioning Availability Consistency Else Latency Consistency)](#pacelc-partitioning-availability-consistency-else-latency-consistency)
-  - [REST (REpresentational State Transfer) API](#rest-representational-state-transfer-api)
-  - [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
-  - [Apache Hadoop](#apache-hadoop)
-  - [HDFS (Hadoop Distributed FileSystem)](#hdfs-hadoop-distributed-filesystem)
-  - [MapReduce](#mapreduce)
-- [Basic](#basic)
-  - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud-1)
-  - [EC2 (Elastic Compute Cloud)](#ec2-elastic-compute-cloud)
-    - [How to make a EC2 instance](#how-to-make-a-ec2-instance)
-    - [How to scaleup EC2 instance](#how-to-scaleup-ec2-instance)
-    - [How to scaleout EC2 instance](#how-to-scaleout-ec2-instance)
-    - [How to autoscale EC2 instance](#how-to-autoscale-ec2-instance)
-  - [IAM (Identity and Access Management)](#iam-identity-and-access-management)
-  - [AWS Auto Scaling](#aws-auto-scaling)
-  - [CloudFront](#cloudfront)
-  - [S3 (Simple Storage Service)](#s3-simple-storage-service)
-  - [RDS](#rds)
-  - [ElastiCachi](#elasticachi)
-  - [Lambda](#lambda)
-  - [API Gateway](#api-gateway)
-  - [DynamoDB](#dynamodb)
-  - [ElasticSearch Service](#elasticsearch-service)
-  - [Kinesis](#kinesis)
-  - [Route 53](#route-53)
-  - [CloudWatch](#cloudwatch)
-  - [ELB](#elb)
-  - [Elastics Beanstalk](#elastics-beanstalk)
-  - [Code Deploy](#code-deploy)
-- [Advanced](#advanced)
-  - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
-- [Best Practices](#best-practices)
-  - [Chatting Service](#chatting-service)
+- [Abstract](#Abstract)
+- [Materials](#Materials)
+- [Prerequisites](#Prerequisites)
+  - [Cloud Computing](#Cloud-Computing)
+  - [Storage](#Storage)
+  - [Cloud Service Types](#Cloud-Service-Types)
+  - [Router](#Router)
+  - [Switch](#Switch)
+  - [WAF (Web Application Fairewall)](#WAF-Web-Application-Fairewall)
+  - [XSS (Cross Site Scripting)](#XSS-Cross-Site-Scripting)
+  - [CSRF (Cross Site Request Forgery)](#CSRF-Cross-Site-Request-Forgery)
+  - [XSS vs CSRF](#XSS-vs-CSRF)
+  - [CORS (Cross Origin Resource Sharing)](#CORS-Cross-Origin-Resource-Sharing)
+  - [OSI 7 layer](#OSI-7-layer)
+  - [TCP/IP Protocol Suite](#TCPIP-Protocol-Suite)
+  - [Subnet](#Subnet)
+  - [CIDR (Classless Inter-Domain Routing)](#CIDR-Classless-Inter-Domain-Routing)
+  - [Private Network](#Private-Network)
+  - [VPN (Virtual Private Network)](#VPN-Virtual-Private-Network)
+  - [VPC (Virtual Private Cloud)](#VPC-Virtual-Private-Cloud)
+  - [Virtualization](#Virtualization)
+  - [Devops](#Devops)
+  - [AWS Region](#AWS-Region)
+  - [AWS Availability Zone](#AWS-Availability-Zone)
+  - [Edge Location](#Edge-Location)
+  - [CAP (Consistency Availability Partition tolerance)](#CAP-Consistency-Availability-Partition-tolerance)
+  - [PACELC (Partitioning Availability Consistency Else Latency Consistency)](#PACELC-Partitioning-Availability-Consistency-Else-Latency-Consistency)
+  - [REST (REpresentational State Transfer) API](#REST-REpresentational-State-Transfer-API)
+  - [MSA (Micro Service Architecture)](#MSA-Micro-Service-Architecture)
+  - [Apache Hadoop](#Apache-Hadoop)
+  - [HDFS (Hadoop Distributed FileSystem)](#HDFS-Hadoop-Distributed-FileSystem)
+  - [MapReduce](#MapReduce)
+- [Basic](#Basic)
+  - [VPC (Virtual Private Cloud)](#VPC-Virtual-Private-Cloud-1)
+  - [EC2 (Elastic Compute Cloud)](#EC2-Elastic-Compute-Cloud)
+    - [How to make a EC2 instance](#How-to-make-a-EC2-instance)
+    - [How to scaleup EC2 instance Manually](#How-to-scaleup-EC2-instance-Manually)
+    - [ELB (Elastic Load Balancer)](#ELB-Elastic-Load-Balancer)
+    - [How to scaleout EC2 instance Manually](#How-to-scaleout-EC2-instance-Manually)
+  - [IAM (Identity and Access Management)](#IAM-Identity-and-Access-Management)
+  - [AWS Auto Scaling](#AWS-Auto-Scaling)
+  - [Certificate Manager](#Certificate-Manager)
+  - [CloudFront](#CloudFront)
+  - [S3 (Simple Storage Service)](#S3-Simple-Storage-Service)
+  - [RDS](#RDS)
+  - [ElastiCachi](#ElastiCachi)
+  - [Lambda](#Lambda)
+  - [API Gateway](#API-Gateway)
+  - [DynamoDB](#DynamoDB)
+  - [ElasticSearch Service](#ElasticSearch-Service)
+  - [Kinesis](#Kinesis)
+  - [Route 53](#Route-53)
+  - [CloudWatch](#CloudWatch)
+  - [Elastics Beanstalk](#Elastics-Beanstalk)
+  - [Code Deploy](#Code-Deploy)
+  - [Cloud Formation](#Cloud-Formation)
+- [Advanced](#Advanced)
+  - [How to use awscli on Windows](#How-to-use-awscli-on-Windows)
+- [Best Practices](#Best-Practices)
+  - [Basic Web Service](#Basic-Web-Service)
+  - [Basic AWS Auto Scaling](#Basic-AWS-Auto-Scaling)
+  - [Chatting Service](#Chatting-Service)
 
 ----
 
@@ -407,10 +410,11 @@ n 서브넷 Subnet
 * [더 빠른 게임시스템을 위하여 개선된 서비스들 - 김병수 솔루션즈 아키텍트, AWS :: AWS Summit Seoul 2019 @ slideshare](https://www.slideshare.net/awskorea/aws-aws-summit-seoul-2019-141161806)
 * [EC2Instances.info](https://www.ec2instances.info/)
   * EC2 인스턴스 유형별 비교
+* [aws 요금](https://aws.amazon.com/ko/ec2/pricing/)  
 
 ----
 
-OS 가 설치된 machine 이다. 다음과 같은 순서대로 EC2 를 생성한다.
+OS 가 설치된 machine 이다. 
 
 ### How to make a EC2 instance
 
@@ -428,18 +432,39 @@ OS 가 설치된 machine 이다. 다음과 같은 순서대로 EC2 를 생성한
 * 스토리지 추가
   * `8 GiB`
 * 태그 추가
+  * EC2 instance 의 meta information 이다.
   * `{Key: Name, Value: 웹서버}`
 * 보안 그룹 구성
   * `SSH, HTTP, HTTPS` 추가
 * 검토
 
-putty 를 이용하여 public DNS 에 SSH 접속할 수 있다. user 는 `ubuntu`.
+putty 를 이용하여 public DNS 에 SSH 접속할 수 있다. user 는 `ubuntu`. EC2 기본적으로 Dynamic IP 이다. 만약 Static IP 를 사용하고 싶다면 Elastic IP 를 할당받아야 하고 이것은 유로이다. 
 
-### How to scaleup EC2 instance
+### How to scaleup EC2 instance Manually
 
-### How to scaleout EC2 instance
+기존의 EC2 instance 를 A 라 하자. 그리고 미리 만들어 놓은 AMI 를 이용하여 scaleup 한 EC2 instance 를 B 라 하자. A 가 사용하고 있는 Elastic IP 를 Disassociate 하고 이것을 B 에 Associate 한다.
 
-### How to autoscale EC2 instance
+### ELB (Elastic Load Balancer)
+
+* [EC2 Scalability - Scale Out (ELB) @ 생활코딩](https://opentutorials.org/course/2717/11332)
+
+----
+
+EC2 들 앞에서 EC2 들의 로드를 분산한다. ELB 의 유형은 Application Load Balancer 와 Network Load Balancer 와 같이 2 가지가 있다. 기존의 L7, L4 라고 할 수 있다. 
+
+Application Load Balancer 는 다음과 같은 과정으로 생성한다. 대부분의 과정은 EC2 와 상당히 유사하다.
+
+* 로드 밸런서 구성
+  * `ultrahigh-elb`
+* 보안 설정 구성
+* 보안 그룹 구성
+* 라우팅 구성
+* 대상등록
+* 검토
+
+### How to scaleout EC2 instance Manually
+
+먼저 ELB 를 하나 생성하고 두개 이상의 EC2 instance 를 등록한다.
 
 ## IAM (Identity and Access Management)
 
@@ -455,7 +480,24 @@ putty 를 이용하여 public DNS 에 SSH 접속할 수 있다. user 는 `ubuntu
 
 ## AWS Auto Scaling
 
+* [EC2 Scalability - Auto Scaling @ 생활코딩](https://opentutorials.org/course/2717/11336)
 
+----
+
+EC2 instance 들을 자동으로 scaling 할 수 있다. Launch Configurations 과 Auto Scaling Groups 두가지를 설정해야 한다.
+
+* Launch Configurations 
+  * EC2 Instance 생성할 때와 유사하게 AMI 선택 및 configuration 들을 설정한다.
+* Auto Scaling Groups
+  * 
+
+## Certificate Manager
+
+* [AWS SSL 적용 방법 @ tistory](https://interconnection.tistory.com/21)
+
+----
+
+SSL/TLS 인증서 관리. ELB 로 HTTPS 를 제공할려면 설정이 필요하다.
 
 ## CloudFront
 
@@ -519,13 +561,15 @@ DNS server 이다.
 
 ## CloudWatch
 
-## ELB
-
 ## Elastics Beanstalk
 
 ## Code Deploy
 
 * [AWS 코드 서비스 특집 - 아마존 데브옵스 개발 방법 (윤석찬) :: AWS 월간 웨비나 @ youtube](https://www.youtube.com/watch?v=t6tTyDTpGoY)
+
+## Cloud Formation
+
+aws 의 resource 들을 () template 를 통해 생성할 수 있는 서비스이다. 예를 들어 내가 디자인한 서비스의 AWS resource 들 즉 ELB, EC2, RDS, ElastiCachde 등을 [yaml](https://github.com/aws-samples/elasticache-refarch-chatapp/blob/master/cloudformation/chatapp.yaml) 파일을 통해 생성할 수 있다.
 
 # Advanced
 
@@ -570,8 +614,19 @@ aws_access_key_id = 3BqwEFsOBd3vx11+TOHhI9LVi2
 
 # Best Practices
 
+## Basic Web Service
+
+* [AWS - EC2 12-4 : ELB 적용 @ youtube](https://www.youtube.com/watch?v=T_VFEQPuRjw)
+  * ELB 에 하나에 APM EC2 instance 두개를 연결한다. 그리고 부하측정을 위한 AB EC2 instance 하나를 생성한다.
+
+## Basic AWS Auto Scaling
+
+* [EC2 Scalability - Auto Scaling](https://opentutorials.org/course/2717/11336)
+  * ELB 에 webapp EC2 instance 를 연결한다. 그리고 부하측정을 통해 Auto Scaling 한다. 그리고 알람을 수신한다.
+
 ## Chatting Service
 
-* [elasticache-chatapp @ github](https://github.com/aws-samples/elasticache-refarch-chatapp)
+* [Amazon ElastiCache(Redis)를 이용한 채팅 애플리케이션 구성 방법](https://aws.amazon.com/ko/blogs/korea/how-to-build-a-chat-application-with-amazon-elasticache-for-redis/)
   * node.js, redis 를 이용한 채팅 예제
-
+  * [src](https://github.com/aws-samples/elasticache-refarch-chatapp)
+  
