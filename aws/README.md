@@ -634,6 +634,14 @@ DNS server 이다.
 
 aws 의 resource 들을 미리 정의된 template 를 통해 생성할 수 있는 서비스이다. 예를 들어 내가 디자인한 서비스의 AWS resource 들 즉 ELB, EC2, RDS, ElastiCachde 등을 [yaml](https://github.com/aws-samples/elasticache-refarch-chatapp/blob/master/cloudformation/chatapp.yaml) 파일에 기록할 수 있다. 그리고 그 파일을 실행해서 AWS resources 를 생성할 수 있다.
 
+## Glacier
+
+## CodeCommit
+
+## CodePipeline
+
+## Storage Gateway
+
 # Advanced
 
 ## How to use awscli on Windows
