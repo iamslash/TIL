@@ -3,6 +3,7 @@
 - [Materials](#materials)
 - [Procedure and Stack](#procedure-and-stack)
 - [Process and Thread](#process-and-thread)
+- [User Level Thread vs Kernel Level Thread](#user-level-thread-vs-kernel-level-thread)
 - [Thread Scheduling](#thread-scheduling)
   - [Thread Status](#thread-status)
 - [Thread synchronization](#thread-synchronization)
@@ -29,6 +30,8 @@
 
 # Materials
 
+* [뇌를 자극하는 윈도우즈 시스템 프로그래밍 @ youtube](https://www.youtube.com/playlist?list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc)
+  * 쉽게 설명하는 동영상 강좌 
 * [linux 0.01](https://github.com/zavg/linux-0.01)
   * 토발즈가 릴리즈한 최초 리눅스 커널
   * gcc 1.x 에서 빌드가 된다.
@@ -237,7 +240,7 @@ typedef struct _EPROCESS
 EPROCESS의 중요한 멤버는 다음과 같다.
 
 | member field | description |
-|:------------:|:-----------:|
+|:------------|:-----------|
 | DirectoryTableBase | 가상 메모리의 CR3 레지스터값 |
 | LdtDescriptor | 16비트 애플리케이션에서 사용되는 LDT 디스크립터 |
 | Int21Descriptor | 16비트 애플리케이션에서 인터럽트 21의 디스크립터 |
@@ -449,7 +452,7 @@ typedef struct _ETHREAD
 ETHREAD 의 중요한 멤버는 다음과 같다.
 
 | member field | description |
-|:------------:|:-----------:|
+|:------------|:-----------|
 | InitialStack | 커널 스택의 낮은 주소 |
 | StackLimit | 커널 스택의 높은 주소 |
 | Kernel Stack | 커널 모드에서 현재 스택 포인터 (ESP) |
@@ -667,6 +670,18 @@ typedef struct _KTHREAD
      PVOID MdlForLockedTeb;
 } KTHREAD, *PKTHREAD;
 ```
+
+# User Level Thread vs Kernel Level Thread
+
+* [11장. 커널 레벨 쓰레드와 유저 레벨 쓰레드 @ youtube](https://www.youtube.com/watch?v=sOt80Kw0Ols&list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc&index=30)
+
+----
+
+![](userlevelvskernellevelthread.png)
+
+kernel level thread 는 kernel level 에서 scheduling 된다. 따라서 하나의 process 가 두개 이상의 kernel level thread 를 소유하고 있을 때 그 중 하나가 I/O block 되더라도 다른 thread 는 계속 실행할 수 있다. 또한 kernel 에서 직접 제공해주기 때문에 안전성과 기능의 다양성이 장점이다. 그러나 O/S 가 kernel level thread 를 context switching 하기 위해서는 user level 에서 kernel level 로 전환되야 하기 때문에 느리다. 
+
+user level thread 는 user level 에서 scheduling 된다. kernel 은 user level thread 를 포함한 process 단위로 scheduling 한다. kernel 은 user level thread 를 알 수 없다. 따라서 user level thread 중 하나가 I/O 블록이 되면 kernel 은 그 thread 를 소유한 process 의 상태를 running 에서 ready 로 바꾼다. user level thread 는 context switching 될 때 O/S 가 user level 에서 kernel level 로 전환할 필요가 없다. 따라서 user level thread 는 context switching 이 kernel level thread 보다 빠르다.
 
 # Thread Scheduling
 
