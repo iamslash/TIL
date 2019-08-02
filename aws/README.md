@@ -1,5 +1,8 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
+- [References](#references)
+  - [Examples](#examples)
+  - [Diagrams](#diagrams)
 - [Prerequisites](#prerequisites)
   - [Cloud Computing](#cloud-computing)
   - [Storage](#storage)
@@ -40,7 +43,6 @@
     - [Internet Gateway](#internet-gateway)
     - [DHCP options set](#dhcp-options-set)
   - [EC2 (Elastic Compute Cloud)](#ec2-elastic-compute-cloud)
-  - [* aws 요금](#aws-%ec%9a%94%ea%b8%88)
     - [How to make a EC2 instance](#how-to-make-a-ec2-instance)
     - [How to scaleup EC2 instance Manually](#how-to-scaleup-ec2-instance-manually)
     - [ELB (Elastic Load Balancer)](#elb-elastic-load-balancer)
@@ -62,8 +64,15 @@
   - [Route 53](#route-53)
   - [CloudWatch](#cloudwatch)
   - [Elastics Beanstalk](#elastics-beanstalk)
-  - [Code Deploy](#code-deploy)
   - [Cloud Formation](#cloud-formation)
+  - [Glacier](#glacier)
+  - [CodeCommit](#codecommit)
+  - [CodePipeline](#codepipeline)
+  - [Code Deploy](#code-deploy)
+  - [Storage Gateway](#storage-gateway)
+  - [ECS (Elastic Container Service)](#ecs-elastic-container-service)
+  - [ECR (Elastic Container Registry)](#ecr-elastic-container-registry)
+  - [KMS (Key Management Service)](#kms-key-management-service)
 - [Advanced](#advanced)
   - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
 - [Best Practices](#best-practices)
@@ -72,6 +81,8 @@
   - [Basic S3](#basic-s3)
   - [Basic RDS](#basic-rds)
   - [Basic VPC Design](#basic-vpc-design)
+  - [NAT Gateway, Bastion Host](#nat-gateway-bastion-host)
+  - [VPC Peering](#vpc-peering)
   - [Chatting Service](#chatting-service)
 
 ----
@@ -90,8 +101,6 @@ aws 사용법에 대해 간략히 정리한다.
   * 클라우드블로그
 * [아마존 웹 서비스를 다루는 기술](http://pyrasis.com/aws.html)
   * 오래되었지만 괜찮은 책
-* [cloudcraft](https://cloudcraft.co/)
-  * aws diagram tool
 * [Amazon Web Services 한국 블로그](https://aws.amazon.com/ko/blogs/korea/tag/korea-techtips/)
 * [Amazon Web Services 한국 DeepDive series @ youtube](https://www.youtube.com/user/AWSKorea/search?query=Dive)
 * [AWS re:Invent 2018 DeepDive series @ youtube](https://www.youtube.com/results?search_query=AWS+re%3AInvent+2018+Deep+Dive)
@@ -104,6 +113,23 @@ aws 사용법에 대해 간략히 정리한다.
 * [AWS Summit 2019 | AWS 기술트랙 4 @ youtube](https://www.youtube.com/watch?v=Sf6j7PPHeeI&list=PLORxAVAC5fUUeaSHb91d5wpDGfR14uNCi)
 * [AWS Summit 2019 | AWS 기술트랙 5 @ youtube](https://www.youtube.com/watch?v=nxgGk-PbXf0&list=PLORxAVAC5fUWZGawyaMyz8NepNGqHbHtZ)
 * [AWS Summit 2019 @ youtube](https://www.youtube.com/playlist?list=PLORxAVAC5fUWyB6Hsk9ibYJHw97k1h6s9)
+
+# References
+
+## Examples
+
+* [AWS examples by visual paradigm](https://online.visual-paradigm.com/diagram-examples/aws-architecture-diagram/?page=5)
+  * 약 50 여개의 AWS 예들이 있다.
+* [Amazon Web Service Examples Created by the Creately Team](https://creately.com/diagram-community/examples/t/aws-diagram)
+  * 약 10 여개의 AWS 예들이 있다.
+
+## Diagrams
+
+* [cloudcraft](https://cloudcraft.co/)
+  * 3d diagram
+* [visual paradigm](https://online.visual-paradigm.com)
+  * general diagram
+* [creatly](https://creately.com/)
 
 # Prerequisites
 
@@ -457,6 +483,7 @@ Route Table 에 Internet Gateway 를 향하는 적절한 규칙을 추가해주�
 * [EC2Instances.info](https://www.ec2instances.info/)
   * EC2 인스턴스 유형별 비교
 * [aws 요금](https://aws.amazon.com/ko/ec2/pricing/)  
+
 ----
 
 OS 가 설치된 machine 이다. 
@@ -586,7 +613,11 @@ Snapshot 를 만들어서 백업에 사용할 있다. 민감한 작업을 하기
 
 ## SNS (Simple Notification Service)
 
+???
+
 ## SES (Simple Email Service)
+
+???
 
 ## ElastiCachi
 
@@ -624,15 +655,94 @@ DNS server 이다.
 
 ## CloudWatch
 
+???
+
 ## Elastics Beanstalk
+
+???
+
+## Cloud Formation
+
+aws 의 resource 들을 미리 정의된 template 를 통해 생성할 수 있는 서비스이다. 예를 들어 내가 디자인한 서비스의 AWS resource 들 즉 ELB, EC2, RDS, ElastiCachde 등을 [yaml](https://github.com/aws-samples/elasticache-refarch-chatapp/blob/master/cloudformation/chatapp.yaml) 파일에 기록할 수 있다. 그리고 그 파일을 실행해서 AWS resources 를 생성할 수 있다.
+
+## Glacier
+
+* [AWS Glacier는 뭐지? - AWS S3 와 Glacier 장단점 비교](https://bluese05.tistory.com/35?category=559701)
+
+----
+
+아카이브 백업 데이터를 주 목적으로 하는 스토리지 서비스이다. S3 와 비슷하지만 서비스의 목적이 다르다. S3 에 비해서 가격이 저렴하다. 그러나 검색 및 삭제를 마음대로 할 수는 없다.
+
+## CodeCommit
+
+* [AWS CodeCommit 어렵지 않아요](https://bluese05.tistory.com/32?category=559701)
+
+----
+
+AWS git repository 서비스이다. 주요 cli 사용법은 다음과 같다.
+
+```bash
+apt-get install python-pip
+pip install awscli
+aws --version
+aws configure
+apt-get install git
+git config --global credential.help '!aws codecommit credential-help $@'
+git config --global credential.Usehttppath true
+git clone https://git-codecommit.us-east-1.amazonaws.com/v1/repos/myrepo
+
+```
+
+## CodePipeline
 
 ## Code Deploy
 
 * [AWS 코드 서비스 특집 - 아마존 데브옵스 개발 방법 (윤석찬) :: AWS 월간 웨비나 @ youtube](https://www.youtube.com/watch?v=t6tTyDTpGoY)
 
-## Cloud Formation
+## Storage Gateway
 
-aws 의 resource 들을 미리 정의된 template 를 통해 생성할 수 있는 서비스이다. 예를 들어 내가 디자인한 서비스의 AWS resource 들 즉 ELB, EC2, RDS, ElastiCachde 등을 [yaml](https://github.com/aws-samples/elasticache-refarch-chatapp/blob/master/cloudformation/chatapp.yaml) 파일에 기록할 수 있다. 그리고 그 파일을 실행해서 AWS resources 를 생성할 수 있다.
+* [AWS Storage Gateway](https://bluese05.tistory.com/24?category=559701)
+
+----
+
+S3 를 iSCSI 방식으로 제공해 준다. S3 를 ISCSI 방식으로 처리하기 위해서는 Gateway Applicance 를 On-premise host 에 설치해야 한다. Gateway Appliance 는 AWS 에서 image 형태로 제공한다. VMware, Hyper-V, AWS EC2 를 지원한다.
+
+## ECS (Elastic Container Service)
+
+* [AWS EC2 Container Service(ECS) (1) - 구조와 특징](https://bluese05.tistory.com/52?category=559701)
+
+----
+
+docker 를 사용할 수 있게 해주는 서비스이다. 특이하게도 EC2 instance 위에서 docker 가 실행된다.
+
+## ECR (Elastic Container Registry)
+
+* [AWS EC2 Container Registry(ECR) 어렵지 않아요](https://bluese05.tistory.com/51?category=559701)
+
+----
+
+dockerhub 와 같다. 주요 사용법은 다음과 같다.
+
+```bash
+pip install awscli
+aws ecr help
+aws configure
+aws ecr get-login --region us-east-1
+aws login -u AWS -p
+docker images
+docker tag ubuntu:latest XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/repo-test:latest
+docker images
+docker push XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/repo-test:latest
+docker pull XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/repo-test:latest
+```
+
+## KMS (Key Management Service)
+
+* [AWS KMS 어렵지 않아요](https://bluese05.tistory.com/71?category=559701)
+
+----
+
+암호화 복호화 할 때 사용할 key 를 관리하는 서비스이다.
 
 # Advanced
 
@@ -704,6 +814,25 @@ aws_access_key_id = 3BqwEFsOBd3vx11+TOHhI9LVi2
   * 하나의 AZ 는 public, private subnet 을 각각 하나씩 갖는다.
   * webapp EC2 instance 두개를 두개의 AZ 의 public subnet 에 각각 실행한다.
   * RDS instance Master, Slace 를 두개의 AZ 의 private subnet 에 각각 실행한다.
+
+## NAT Gateway, Bastion Host
+
+* [SSH 프로토콜과 Tunneling 이해하기](https://swalloow.github.io/ssh-tunneling)
+
+----
+
+* [AWS VPC를 디자인해보자(3) - NAT Gateway 와 Bastion host](https://bluese05.tistory.com/48)
+  * NAT Gateway 를 이용해서 Private Subnet 과 통신해 본다.
+  * Bastion host 를 설정하고 SSH Tunneling 을 통해 VPC 외부에서 접속해 보자.
+  > * Bastion host public IP : `52.100.1.1`
+  > * Target Instance Private IP : `10.10.101.225`
+  > * ssh tunneling : `ssh -i key.pem -L 22:10.10.101.225:22 ubuntu@52.100.1.1`
+  > * ssh connect : `ssh -i key.pem ubuntu@localhost`
+
+## VPC Peering
+
+* [AWS VPC를 디자인해보자(4) - VPC Peering을 활용한 Multi VPC 사용하기](https://bluese05.tistory.com/49)
+  * 서로다른 VPC 를 연결하는 것을 VPC Peering 이라고 한다.
 
 ## Chatting Service
 
