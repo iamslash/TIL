@@ -115,6 +115,8 @@
   * [sed](/sed/README.md)
   * [awk](/awk/README.md)
   * [hadoop](/hadoop/README.md)
+  * [redis](/redis/README.md)
+  * [elk](/elk/README.md)
 
 * FrontEnd
   * [html,css,js](/frontend/README.md)
