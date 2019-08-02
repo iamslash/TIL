@@ -305,6 +305,7 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
 * ['SW와 HW의 분리'··· 하이퍼바이저의 이해](http://www.ciokorea.com/insider/36713)
 * [What is a Hypervisor? @ youtube](https://www.youtube.com/watch?v=VtXNIy_noWg)
 * [Hypervisors and Virtual Machines Implementation Insights on the x86 Architecture](https://www.usenix.org/system/files/login/articles/105498-Revelle.pdf)
+* [Linux AMI 가상화 유형 @ aws](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/virtualization_types.html)
 
 ----
 
