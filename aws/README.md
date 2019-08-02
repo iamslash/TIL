@@ -300,21 +300,24 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
 
 * [가장 빨리 만나는 Docker 1장 - 1. 가상 머신과 Docker](http://pyrasis.com/book/DockerForTheReallyImpatient/Chapter01/01)
 * [전가상화와 반가상화](https://m.blog.naver.com/PostView.nhn?blogId=brickbot&logNo=220413822823&proxyReferer=https%3A%2F%2Fwww.google.com%2F)
-virtualization 은 Host Virtualization, Hypervisor Virtualization, Container Virtualization 과 같이 3 가지가 있다.
 * [하이퍼바이저](https://blog.naver.com/brickbot/220413523885)
 * [AWS re:Invent 2017: C5 Instances and the Evolution of Amazon EC2 Virtualization (CMP332)](https://www.youtube.com/watch?v=LabltEXk0VQ)
+* ['SW와 HW의 분리'··· 하이퍼바이저의 이해](http://www.ciokorea.com/insider/36713)
+* [What is a Hypervisor? @ youtube](https://www.youtube.com/watch?v=VtXNIy_noWg)
+* [Hypervisors and Virtual Machines Implementation Insights on the x86 Architecture](https://www.usenix.org/system/files/login/articles/105498-Revelle.pdf)
 
 ----
 
-* Host Virtualization
-  * 하드웨어에 Host O/S 를 설치하고 Host O/S 에 Virtualizaion S/W 를 설치한다. 그리고 Guest O/S 는 Virtualization S/S 에서 실행되는 가상화를 말한다. 가상 환경을 손쉽게 구축할 수 있지만 오버헤드가 굉장히 크다. Hosted Full Virtualization 과 같은 건가??? 
+![](img/Hyperviseur.png)
+
 * Hypervisor Virtualization 
-  * 하이퍼바이저는 가상화를 관리하는 소프트웨어이다. VMM (Virtuall Machine Monitor) 이라고도 한다. 하드웨어에 하이퍼바이저를 배치해 H/W 와 가상환경을 제어한다. Full Virtualization 과 Para Virtualization 이 있다. KVM 은 Full Virtualization 과 Para Virtualization 에 해당한다.
-  * **Full Virtualization**
-    * 하이퍼바이저가 Host O/S 에서 실행되는 것을 Hosted Full Virtualization 이라고 한다. VMware, Virtual Box 가 해당한다.
-    * 하이퍼바이저가 H/W 에서 실행되는 것을 Native Full Virtualization 이라고 한다. Xen 이 해당한다.
-  * **Para Virtualization**
-    * Guest OS 를 수정해야 한다. 대신 Full Virtualization 보다 성능이 좋다.
+  * 하이퍼바이저는 가상화를 관리하는 소프트웨어이다. VMM (Virtual Machine Monitor) 이라고도 한다. Type 1 (native or bare-metal), Type 2 (hosted) 와 같이 두가지 종류가 있다. 
+  * Type 1 Hypervisor
+    * H/W 위에 hypervisor 가 바로 설치된다. 
+    * Xen, Citrix의 XenServer, VMware 의 ESX Server, L4 마이크로커널, TRANGO, IBM의 POWER 하이퍼바이저(PR/SM), 마이크로소프트의 하이퍼-V, 패러럴서버, 썬의 로지컬 도메인 하이퍼바이저 가 해당한다.
+  * Type 2 Hypervisor
+    * H/W 위에 Host O/S 가 설치되고 Host O/S 위에 hypervisor 가 설치된다. 
+    * VMware Server, VMware Workstation, VMware Fusion, QEMU, 마이크로소프트의 버추얼 PC 와 버추얼 서버, Oracle(SUN)의 버추얼박스, SWsoft의 Parallels Workstation 과 Parallels Desktop 이 해당한다.
 * Container Virtualization
   * 하드웨어에 Host O/S 를 설치하고 Host O/S 에 논리적인 영역 (컨테이너) 을 만들고 애플리케이션과 라이브러리등을 컨테이너 안에 넣어 가상화를 제공하는 것이다.
   * OpenVZ, LSC, Lunix vServer, FreeBSD Fail, Solaris Zones, Docker 등이 해당한다. 
