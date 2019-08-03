@@ -18,15 +18,15 @@ redis 에 대해 정리한다.
 
 redis 는 REmote dIctionary System 의 약자이다. 
 
-redis 는 disk 에 데이터를 저장할 수 있다. RDB (snapshot), AOF (append olny file) 의 방법이 있다. RDB 는 한번에 메모리의 데이터를 디스크로 저장하는 방법이다. AOF 는 저금씩 디스크에 저장하는 방법이다. 두가지 방법을 적절히 혼합하여 사용하면 좋다. [참고](http://redisgate.kr/redis/configuration/redis_overview.php)
+redis 는 disk 에 데이터를 저장할 수 있다. RDB (snapshot), AOF (append olny file) 의 방법이 있다. RDB 는 한번에 메모리의 데이터를 디스크로 저장하는 방법이다. AOF 는 조금씩 디스크에 저장하는 방법이다. 두가지 방법을 적절히 혼합하여 사용하면 좋다. [참고](http://redisgate.kr/redis/configuration/redis_overview.php)
 
 string, set, sorted set, hash, list 등의 datatype 을 지원한다.
 
-Sentinel 은 redis monitoring tool 이다. redis 의 master, slave 들을 지켜보고 있다가 장애처리를 해준다. `redis-sentinel   sentinel.conf` 와 같이 실행한다.
+Sentinel 은 redis monitoring tool 이다. redis 의 master, slave 들을 지켜보고 있다가 장애처리를 해준다. `> redis-sentinel sentinel.conf` 와 같이 실행한다.
 
 redis 3.0 부터 cluster 기능을 지원한다.
 
-master 와 slave 들을 read replica 로 구성할 수 있다.
+master 와 여러개의 slave 들로 read replica 구성을 할 수 있다.
 
 # Commands
 
@@ -57,9 +57,9 @@ HyperLogLog 는 집합의 원소의 개수를 추정하는 방법으로 2.8.9 �
 
 | Command | Description | Exapmle |
 |---------|-------------|---------|
-| `PFADD` | | |
-| `PFCOUNT` | | |
-| `PFMERGE` | | |
+| `PFADD` | add elements | `> PFADD k1 e1 e2` |
+| `PFCOUNT` | get counts of key | `> PFCOUNT k1` |
+| `PFMERGE` | merge keys | `> PFMERGE dstkey k1 k2` |
 
 ## Strings
 
@@ -69,12 +69,6 @@ key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Ha
 * GET: `GET, MGET, GETRANGE, STRLEN`
 * INCR: `INCR, DECR, INCRBY, DECRBY, INCRBYFLOAT`
 
-| Command | Description | Exapmle |
-|---------|-------------|---------|
-| `SET` | | |
-| `GET` | | |
-| `DEL` | | |
-
 ## Lists
 
 * SET (PUSH): `LPUSH, RPUSH, LPUSHX, RPUSHX, LSET, LINSERT, RPOPLPUSH`
@@ -83,13 +77,6 @@ key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Ha
 * REM: `LREM, LTRIM`
 * BLOCK: `BLPOP, BRPOP, BRPOPLPUSH`
 
-| Command | Description | Exapmle |
-|---------|-------------|---------|
-| `LPUSH` | | |
-| `LPOP` | | |
-| `RPUSH` | | |
-| `RPOP` | | |
-
 ## Sets
 
 * SET: `SADD, SMOVE`
@@ -97,10 +84,6 @@ key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Ha
 * POP: `SPOP`
 * REM: `SREM`
 * 집합연산: `SUNION, SINTER, SDIFF, SUNIONSTORE, SINTERSTORE, SDIFFSTORE`
-
-| Command | Description | Exapmle |
-|---------|-------------|---------|
-| `SADD` | | |
 
 ## Sorted Sets
 
@@ -122,38 +105,34 @@ INCR: ZINCRBY`
 * REM: `HDEL`
 * INCR: `HINCRBY, HINCRBYFLOAT`
 
-| Command | Description | Exapmle |
-|---------|-------------|---------|
-| | | |
-
 ## Common
 
 5 가지 Data type 에 관계없이 모든 Key 적용되는 명령이다.
 
-| Command | Description | Exapmle |
-|---------|-------------|---------|
-| | | |
+* Key 확인, 조회: `EXISTS, KEYS, SCAN, SORT`
+* Key 이름 변경: `RENAME, RENAMENX`
+* Key 자동 소멸 관련: `EXPIRE, EXPIREAT, TTL, PEXPIRE, EXPIREAT, PTTL, PERSIST`
+* 정보 확인: `TYPE, OBJECT`
+* 샘플링: `RANDOMKEY`
+* Data 이동: `MOVE, DUMP, RESTORE, MIGRATE`
 
 ## Geo
 
 3.2 에 도입된 기능이다. 두 지점/도시의 경도(세로선/longitude)와 위도(가로선/latitude)를 입력해서 두 지점의 거리를 구한다.
 
-| Command | Description | Exapmle |
-|---------|-------------|---------|
-| | | |
+* 경도/위도 입력: `GEOADD`
+* 경도/위도 조회: `GEOPOS`
+* 거리 조회: `GEODIST`
+* 주변 지점 조회: `GEORADIUSBYMEMBER, GEORADIUS`
+* 해시값 조회: `GEOHASH`
+* 범위 조회: `ZRANGE`
+* 삭제 조회: `ZREM`
+* 개수 조회: `ZCARD`
 
 ## Pub/Sub
 
 Pub 으로 message 를 보내고 Sub 으로 message 를 받는다.
 
-| Command | Description | Exapmle |
-|---------|-------------|---------|
-| | | |
-
 ## Streams
 
 로그 데이터를 처리하기 위해서 5.0 에 도입된 데이터 타입이다.
-
-| Command | Description | Exapmle |
-|---------|-------------|---------|
-| | | |
