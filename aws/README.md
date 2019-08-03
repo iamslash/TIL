@@ -295,6 +295,8 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
   * xen 을 설치한 컴퓨터 한대로 리니지 2 클라이언트를 40 대 운용하는 방법 
 * [Xen Project Beginners Guide](https://wiki.xenproject.org/wiki/Xen_Project_Beginners_Guide)
   * xen beginner 를 위한 페이지. virtualization 의 기반 이론을 설명한다.
+* [AWS EC2 Virtualization 2017: Introducing Nitro](http://www.brendangregg.com/blog/2017-11-29/aws-ec2-virtualization-2017.html)
+  * EC2 Virtualization 의 역사를 설명한다. 
 
 ----
 
