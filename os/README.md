@@ -6,6 +6,12 @@
 - [Bus Overview](#bus-overview)
 - [문자셋의 종류와 특징](#%eb%ac%b8%ec%9e%90%ec%85%8b%ec%9d%98-%ec%a2%85%eb%a5%98%ec%99%80-%ed%8a%b9%ec%a7%95)
 - [MBCS, WBCS 동시 지원](#mbcs-wbcs-%eb%8f%99%ec%8b%9c-%ec%a7%80%ec%9b%90)
+- [32Bit vs 64Bit](#32bit-vs-64bit)
+- [Design minimal CPU instruction set](#design-minimal-cpu-instruction-set)
+- [Direct Address Mode and Indirect Address Mode](#direct-address-mode-and-indirect-address-mode)
+- [Process](#process)
+- [Scheduler](#scheduler)
+- [Process Status](#process-status)
 - [Procedure and Stack](#procedure-and-stack)
 - [Process and Thread](#process-and-thread)
 - [User Level Thread vs Kernel Level Thread](#user-level-thread-vs-kernel-level-thread)
@@ -191,6 +197,48 @@ TCHAR arr[10] => CHAR arr[10] => char arr[10]
   #define _tscanf scanf
 #endif
 ```
+
+# 32Bit vs 64Bit
+
+다음과 같은 차이점에 따라 32bit CPU 인지 64bit CPU 인지 구분이 가능하다.
+
+* 한번에 송수신 가능한 데이터의 크기가 32bit 이냐 64bit 이냐
+* CPU 가 한번에 처리하는 데이터의 크기가 32bit 이냐 64bit 이냐
+
+64bit application 을 제작하더라도 32bit application 을 코딩할 때와 별 차이가 없다. 대신 데이터 모델을 유의하자. CPU, OS 에 다음과 같이 데이터 모델이 달라진다. [참고](https://dojang.io/mod/page/view.php?id=737)
+
+| 데이터 모델 | short | int | long | long long | pointer | CPU, OS |
+|----|----|----|----|----|----|----|
+| LLP64 / IL32P64 | 2 | 4 | 4 | 8 | 8 | x86_64: Windows |
+| LP64 / I32LP64 | 2 | 4 | 8 | 8 | 8 | x86_64: UNIX, Linux, SUN OS, BSD, OSX | 
+
+# Design minimal CPU instruction set
+
+* 사칙연산을 위한 `ADD, SUB, MUL, DIV`
+  * 피연산자는 register 뿐 이다. memory 를 접근할 instruction 이 필요하다.
+* 메모리 접근을 위한 `LOAD, STORE`
+  * 메모리의 정보를 레지스터로 가져오거나 레지스터의 정보를 메모리에 저장한다.
+
+# Direct Address Mode and Indirect Address Mode
+
+* `LOAD r1, 0x10`
+  * Memory 의 `0x10` 주소에서 한바이트 값을 가져와서 register `r1` 에 저장한다. 이것을 direct address mode 라고 한다.
+* `LOAD r1, 0x30`
+  * MEmory 의 `0x30` 주소의 값은 `0x10` 이다. 메모리의 `0x10` 주소에서 한바이트 값을 가져와서 register `r1` 에 저장한다. 이렇게 한번도 참조해서 값을 가져오는 것을 indirect address mode 라고 한다.
+
+# Process
+
+메인 메모리로 이동하여 실행중인 프로그램을 프로세스라고 한다.
+
+# Scheduler
+
+둘 이상의 프로세스가 적절히 실행되도록 컨트롤하는 소프트웨어이다. OS 의 부분 요소이다.
+
+# Process Status
+
+Process 는 Scheduler 에 의해 다음과 같이 상태가 변화한다. Blocked 은 I/O 처리를 위해 잠을 자야하는 상태이다.
+
+![](processstatus.png)
 
 # Procedure and Stack
 
