@@ -3,6 +3,9 @@
 - [Materials](#materials)
 - [Computer System Architecture Overview](#computer-system-architecture-overview)
 - [Stored Program Concept](#stored-program-concept)
+- [Bus Overview](#bus-overview)
+- [문자셋의 종류와 특징](#%eb%ac%b8%ec%9e%90%ec%85%8b%ec%9d%98-%ec%a2%85%eb%a5%98%ec%99%80-%ed%8a%b9%ec%a7%95)
+- [MBCS, WBCS 동시 지원](#mbcs-wbcs-%eb%8f%99%ec%8b%9c-%ec%a7%80%ec%9b%90)
 - [Procedure and Stack](#procedure-and-stack)
 - [Process and Thread](#process-and-thread)
 - [User Level Thread vs Kernel Level Thread](#user-level-thread-vs-kernel-level-thread)
@@ -87,11 +90,107 @@
 
 # Stored Program Concept
 
+![](storedprogramconcept.png)
+
 [Von Neumann Architecture](/csa/README.md) 라고도 한다. fetch, decode, execute 과정으로 프로그램을 실행한다.
 
 * fetch
+  * CPU 내부로 명령어 이동
 * decode
+  * 명령어 해석
+  * 컨트롤 유닛
 * execution
+  * 연산을 진행
+  * 보통은 ALU 를 생각
+
+# Bus Overview
+
+![](busoverview.png)
+
+Bus 의 종류는 Data Bus, Address Bus, Control Bus 가 있다.
+
+* Data Bus
+  * 데이터 이동
+* Address Bus
+  * 메모리 주소 이동
+* Control Bus
+  * 컨트롤 신호 이동   
+
+# 문자셋의 종류와 특징
+
+문자셋은 다음과 같은 종류가 있다.
+
+* SBCS (single byte character set)
+  * 문자를 표현하는데 1 바이트 사용
+  * 아스키코드
+* MBCS (multi byte character set)
+  * 한글은 2 바이트, 영문은 1 바이트를 사용
+* WBCS (wide byte character set)
+  * 문자를 표현하는데 SBCS 의 두배 즉 2 바이트를 사용하겠다. 
+  * 유니코드
+
+한글은 MBCS 로 구현하면 `strlen` 이 제대로 동작하지 않는다. WBCS 를 이용하자. WBCS 를 이용하려면 SBCS API 에 대응되는 WBCS API 를 사용한다. (`strlen vs wcslen`)  
+
+application 을 WBCS 로 구현하려면 `int main(int argc, char* argv[])` 대신 `int wmain(int argc, wchar_t* argv[])` 를 사용해야 한다.
+
+# MBCS, WBCS 동시 지원
+
+`char, wchar_t` 를 동시에 지원하기 위해 `windows.h` 에 다음과 같이 정의되어 있다. `UNICODE` 를 선언하면 WBCS 를 구현할 수 있다.
+
+```c
+#ifdef UNICODE
+  typedef WCHAR   TCHAR;
+  typedef LPWSTR  LPTSTR;
+  typedef LPCWSTR LPCTSTR;  
+#else
+  typedef CHAR   TCHAR;
+  typedef LPSTR  LPTSTR;
+  typedef LPCSTR LPCTSTR;  
+#endif
+```
+
+* `UNICODE` 가 선언되어 있다면 
+
+```c
+TCHAR arr[10] => WCHAR arr[10] => wchar_t arr[10] 
+```
+
+* `UNICODE` 가 선언되어 있지 않다면
+
+```c
+TCHAR arr[10] => CHAR arr[10] => char arr[10] 
+```
+
+또한 `"", L""` 을 동시에 지원하기 위해 `windows.h` 에 다음과 같이 정의되어 있다.
+
+```c
+#ifdef _UNICODE
+  #define __T(x)  L ## x
+#else
+  #define __T(x)  x
+#endif
+
+#define _T(x)  __T(x)
+#define _TEXT(x)  __T(x)
+```
+
+따라서 `UNICODE` 가 정의되어 있으면 `_T("A") => __T("A") => L"A"` 이다. 그리고 `UNICODE` 가 정의되어 있지 않으면 `_T("A") => __T("A") => "A"` 이다.
+
+또한 `strlen, wcslen` 과 같은 API 를 동시에 지원하기 위해 `windows.h` 에 다음과 같이 정의도어 있다.
+
+```c
+#ifdef _UNICODE
+  #define _tmain wmain
+  #define _tcslen wcslen
+  #define _tprintf wprintf
+  #define _tscanf wscanf
+#else
+  #define _tmain main
+  #define _tcslen strlen
+  #define _tprintf printf
+  #define _tscanf scanf
+#endif
+```
 
 # Procedure and Stack
 
