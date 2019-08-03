@@ -306,6 +306,10 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
 * [What is a Hypervisor? @ youtube](https://www.youtube.com/watch?v=VtXNIy_noWg)
 * [Hypervisors and Virtual Machines Implementation Insights on the x86 Architecture](https://www.usenix.org/system/files/login/articles/105498-Revelle.pdf)
 * [Linux AMI 가상화 유형 @ aws](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/virtualization_types.html)
+* [젠서버 구축과 설치를 통해 40계정 리니지2 3D게임 사양 @ youtube](https://www.youtube.com/watch?v=T3lQx-6_23Q)
+  * xen 을 설치한 컴퓨터 한대로 리니지 2 클라이언트를 40 대 운용하는 방법 
+* [Xen Project Beginners Guide](https://wiki.xenproject.org/wiki/Xen_Project_Beginners_Guide)
+  * xen beginner 를 위한 페이지. virtualization 의 기반 이론을 설명한다.
 
 ----
 
@@ -316,6 +320,13 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
   * Type 1 Hypervisor
     * H/W 위에 hypervisor 가 바로 설치된다. 
     * Xen, Citrix의 XenServer, VMware 의 ESX Server, L4 마이크로커널, TRANGO, IBM의 POWER 하이퍼바이저(PR/SM), 마이크로소프트의 하이퍼-V, 패러럴서버, 썬의 로지컬 도메인 하이퍼바이저 가 해당한다.
+    * Xen 의 경우 Guest OS 를 domain 이라고 부른다. 특히 dom0 는 다른 Guest OS 를 컨트롤하는 특별한 domain 이다. 다른 Guest OS 는 domUs 라고 부른다.
+    * Xen 의 경우 Type 1 Hypervisor 는 다시 PV (ParaVirtualization) 와 HVM (Hardware Virtualization Machine) 을 지원한다. HVM 은 Full Virtualization 이라고도 한다. 아마 다른 Type 1 Hypervisor 마찬가지 아닐까???
+    * **PV (ParaVirtualization)**
+      * Guest OS 는 special call 을 호출하여 Hypervisor 를 통해 CPU, Storage, Network 둥의 리소를 효율적으로 접근할 수 있다. 단, Guest OS 는 수정되어야 한다.  
+    * **HVM (Hardware Virtualized Machine)**
+      * HVM Guest OS 는 수정될 필요는 없다. Hypervisor 는 x86 emulator 를 Guest OS 에게 제공한다. 당연히 이 방법은 H/W 를 직접 접근하는 PV 보다 overhead 가 크다. 그러나 CPU 의 Vertual Technology (Intel VT, AMD-V, etc...)가 활성화 되면 효율적으로 운용할 수 있다. HVM 은 CPU 의 VT extention 이 지원되야 사용할 수 있다.
+    * xen 은 PV 와 HVM 을 둘다 지원하기 때문에 성능을 개선하기 위해 둘을 다양하게 섞어서 사용할 수 있다. 예를 들어,  HVM with PV drivers, PVHVM (Paravirtualization on HVM), PVH 등이 가능하다.
   * Type 2 Hypervisor
     * H/W 위에 Host O/S 가 설치되고 Host O/S 위에 hypervisor 가 설치된다. 
     * VMware Server, VMware Workstation, VMware Fusion, QEMU, 마이크로소프트의 버추얼 PC 와 버추얼 서버, Oracle(SUN)의 버추얼박스, SWsoft의 Parallels Workstation 과 Parallels Desktop 이 해당한다.
