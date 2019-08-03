@@ -140,23 +140,7 @@ aws 사용법에 대해 간략히 정리한다.
 
 ## Storage 
 
-* [SAN의 정의 그리고 NAS와의 차이점](http://www.ciokorea.com/news/37369)
-
-<br/>
-
-* NAS - Network Attatched Storage
-  * 표준 이더넷 연결을 통해 네트워크에 부착된 저장장치.
-* DAS - Direct Attatched Soorage
-  * 머신에 부착된 저장장치
-* SAN - Storage Area Network
-  * 파이버 연결 채널을 통해 네트워크에 고속으로 부착된 저장장치.
-* SAN vs NAS
-  * SAN 과 NAS 는 모두 네트워크 기반 스토리지 이다. 그러나 SAN 은 일반적으로 파이버 채널 연결을 이용하고 NAS 는 표준 이더넷 연결을 통해 네트워크에 연결된다. 
-  * SAN은 블록 수준에서 데이터를 저장하지만 NAS는 파일 단위로 데이터에 접속한다. 
-  * 클라이언트 OS 입장에서 보면, SAN 은 일반적으로 디스크로 나타나며 별도로 구성된 스토리지용 네트워크로 존재한다. 반면 NAS 는 클라이언트 OS 에 파일 서버로 표시된다.
-* Unified storage
-  * SAN 과 NAS 가 합쳐진 것이다.
-  * iSCI (Internet Small Computing System Interface), NFS, SMB 모두를 지원하는 Multiprotocol Storage 이다.
+* [storage](/storage/RADME.md)
 
 ## Cloud Service Types
 

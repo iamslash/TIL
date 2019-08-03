@@ -81,6 +81,7 @@
   * [datastructure algorithm](https://github.com/iamslash/learntocode)
   * [network](/network/README.md)
   * [database](/database/README.md)
+  * [storage](/storage/README.md)
   * [programming language](/pl/README.md)
   * software engineering
     * [designpattern](/designpattern/README.md)
