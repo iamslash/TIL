@@ -33,6 +33,7 @@
   - [Apache Hadoop](#apache-hadoop)
   - [HDFS (Hadoop Distributed FileSystem)](#hdfs-hadoop-distributed-filesystem)
   - [MapReduce](#mapreduce)
+  - [공개키 암호화](#%ea%b3%b5%ea%b0%9c%ed%82%a4-%ec%95%94%ed%98%b8%ed%99%94)
 - [Basic](#basic)
   - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud-1)
     - [VPC](#vpc)
@@ -439,6 +440,10 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 ## MapReduce
 
 대용량의 데이터 처리를 위한 분산 프로그래밍 모델 및 소프트웨어 프레임워크. 맵리듀스 프레임워크를 이용하면 대규모 분산 컴퓨팅 환경에서 대량의 데이터를 병렬로 분석 가능하다. 프로그래머가 직접 작성하는 맵과 리듀스 라는 두 개의 메소드로 구성된다.
+
+## 공개키 암호화
+
+* [crypto](/crypto/README.md)
 
 # Basic
 
