@@ -23,8 +23,6 @@ computer system architecture 에 대해 정리한다.
 
 # Materials
 
-
-
 * [Encoding x86 instructions](https://www-user.tu-chemnitz.de/~heha/viewchm.php/hs/x86.chm/x86.htm) 
   * x86 instructions 인코딩 방법
 * [Computer System Architecture, 3e](https://www.amazon.in/Computer-System-Architecture-3e-Mano/dp/8131700704)
@@ -41,7 +39,7 @@ computer system architecture 에 대해 정리한다.
 프로세서의 역사를 다음과 같이 간략히 표현할 수 있다.
 
 | 프로세서 | 도입년도 | 레지스터 크기 | 데이터 버스 | 어드레스 버스 | clock speed |
-|:------:|:------:|:------:|:------:|:------:|:------:|
+|:------|:------|:------|:------|:------|:------|
 | 8008 | 1972 | 8 | 8 | 8 | |
 | 8080 | 1974 | 8 | 8 | 16 | |
 | 8086/88 | 1978 | 16/16 | 16/8 | 20 | 8Mhz |
@@ -94,7 +92,7 @@ Commands
 IAS 는 다읕과 같이 7개의 레지스터를 가지고 있다.
 
 | name | description |
-:-----:|:------------:
+:-----|:------------|
 | MBR (Memory Buffer Register) | 메모리로부터 읽어들인 데이터를 저장하고 있다. |
 | MAR (Memory Address Register) | MBR 로 읽어들일 메모리 주소를 저장한다. |
 | IR (Instruction Register) | 실행될 명령어를 저장한다. |
@@ -276,3 +274,4 @@ opcode 는 1byte 혹은 2byte 가 가능한데 2byte 의 경우 MSB 는 Opcode E
 general purpose registers 정도는 알아두자.
 
 ![](gp_registers.jpg)
+

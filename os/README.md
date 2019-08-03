@@ -1,6 +1,8 @@
 
 - [Abstract](#abstract)
 - [Materials](#materials)
+- [Computer System Architecture Overview](#computer-system-architecture-overview)
+- [Stored Program Concept](#stored-program-concept)
 - [Procedure and Stack](#procedure-and-stack)
 - [Process and Thread](#process-and-thread)
 - [User Level Thread vs Kernel Level Thread](#user-level-thread-vs-kernel-level-thread)
@@ -78,6 +80,18 @@
   * 킹왕짱
 * [google interview university @ github](https://github.com/jwasham/coding-interview-university)
   * operating system 관련된 링크를 참고하자. 쓸만한 비디오가 잘 정리되어 있다.
+
+# Computer System Architecture Overview
+
+![](computerhwsystem.png)
+
+# Stored Program Concept
+
+[Von Neumann Architecture](/csa/README.md) 라고도 한다. fetch, decode, execute 과정으로 프로그램을 실행한다.
+
+* fetch
+* decode
+* execution
 
 # Procedure and Stack
 
