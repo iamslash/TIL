@@ -234,6 +234,12 @@ TCHAR arr[10] => CHAR arr[10] => char arr[10]
 
 둘 이상의 프로세스가 적절히 실행되도록 컨트롤하는 소프트웨어이다. OS 의 부분 요소이다.
 
+General OS 는 preemptive (선점형) 방식으로 scheduling 한다. time slice 가 길다. 프로세스가
+생성될 때 마다 priority 를 봐서 기존의 것보다 높으면 새로운 프로세스의 상태를 running 으로 바꾼다.
+
+Realtime OS 는 non-preemptive (비선점형) 방식으로 scheduling 한다. time slice 가 짧다. 프로세스가
+생성되더라도 기존의 프로세스가 모두 끝날 때까지 기다린다.
+
 # Process Status
 
 Process 는 Scheduler 에 의해 다음과 같이 상태가 변화한다. Blocked 은 I/O 처리를 위해 잠을 자야하는 상태이다.
@@ -249,6 +255,22 @@ Process 는 Scheduler 에 의해 다음과 같이 상태가 변화한다. Blocke
 함수가 호출될 때 parameter 들을 어떻게 처리하는지에 대한 규약을 calling convention 이라고 하고 `__cdecl, __stdcall, __fastcall` 등이 있다. `__cdecl` 은 함수를 호출한 쪽에서 parameter 들을 해제한다. `__stdcall` 은 호출된 함수 쪽에서 parameter 들을 해제한다. `__fastcall` 은 두개까지의 parameter 들은 ECX, EDX 레지스터에 저장하고 호출된 함수 쪽에서 parameter 들을 해제한다.
 
 compiler 는 linker 에게 산출물을 전달할 때 함수, 변수 등의 이름을 일정한 규칙을 가지고 변경하게 되는데 이것을 name mangling 혹은 name decoration 이라고 한다. 일반적으로 함수의 이름, 파라미터 타입, calling convention 등을 사용하여 이름을 만들어 낸다. name mangling 은 compiler 마다 다르기 때문에 각 메뉴얼을 참고하자.
+
+다음은 다양한 calling convention 들을 비교한 것이다.
+
+| Segment word size | Calling Convention | Parameters in registers | Parameter order on stack | Stack cleanup by |
+|---|---|---|---|---|
+| 32bit | `__cdecl` | | `C` | `Caller` |
+|       | `__stdcall` |  | `C` | `Callee` |
+|       | `__fastcall` | `ecx, edx` | `C` | `Callee` |
+|       | `__thiscall` | `ecx` | `C` | `Callee` |
+| 64bit | Windows(MS, Intel) | `rcx/xmm0` | `C` | `Caller` |
+|       |  | `rdx/xmm1` | `C` | `Caller` |
+|       |  | `r8/xmm2` | `C` | `Caller` |
+|       |  | `r9/xmm3` | `C` | `Caller` |
+|       | Linux, BSD (GNU, Intel) | `rdi, rsi` | `C` | `Caller` |
+|       | | `rdx, rcx, r8` | `C` | `Caller` |
+|       | | `r9, xmm0-7` | `C` | `Caller` |
 
 # Process and Thread
 
