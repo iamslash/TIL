@@ -1383,6 +1383,8 @@ typedef struct _KMUTANT
 
 모든 프로세스들은 자신만의 독립적인 메모리 공간을 갖는다. 이것을 Virtual Memory 라 하고 Virtual Memory Address 에 의해 접근한다. Virtual Memory 는 4KB 단위로 분할하여 물리 메모리로 이동되어야 프로세스가 접근할 수 있다. 4KB 단위를 페이지라고 부른다.
 
+CPU 는 instruction 을 실행할 때 virtual memory address 를 사용한다. 이때 이것을 physical memory address 로 전환해주는 일을 OS 의 MMU (Memory Management Unit) 가 수행한다. 
+
 가상 메모리의 페이지들중 물리메모리에 상주하는 것들을 working set 이라고 한다.
 
 페이지는 `Free, Reserved, Commited` 와 같이 총 3가지 상태를 갖는다. 
