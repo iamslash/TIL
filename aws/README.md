@@ -1,9 +1,8 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Quiz](#quiz)
-  - [AWS Solution Architect](#aws-solution-architect)
 - [References](#references)
   - [Examples](#examples)
+  - [AWS Solution Architect Quiz](#aws-solution-architect-quiz)
   - [Diagrams](#diagrams)
 - [Prerequisites](#prerequisites)
   - [Cloud Computing](#cloud-computing)
@@ -117,14 +116,6 @@ aws 사용법에 대해 간략히 정리한다.
 * [AWS Summit 2019 | AWS 기술트랙 5 @ youtube](https://www.youtube.com/watch?v=nxgGk-PbXf0&list=PLORxAVAC5fUWZGawyaMyz8NepNGqHbHtZ)
 * [AWS Summit 2019 @ youtube](https://www.youtube.com/playlist?list=PLORxAVAC5fUWyB6Hsk9ibYJHw97k1h6s9)
 
-# Quiz
-
-## AWS Solution Architect
-
-* [AWS Interview Questions & Answers](https://www.besanttechnologies.com/aws-interview-questions-and-answers)
-* [Top AWS Solution Architect Interview Questions](https://www.whizlabs.com/blog/aws-solution-architect-interview-questions/)
-* [AWS Architect Interview Questions](https://mindmajix.com/aws-architect-interview-questions)
-
 # References
 
 ## Examples
@@ -133,6 +124,12 @@ aws 사용법에 대해 간략히 정리한다.
   * 약 50 여개의 AWS 예들이 있다.
 * [Amazon Web Service Examples Created by the Creately Team](https://creately.com/diagram-community/examples/t/aws-diagram)
   * 약 10 여개의 AWS 예들이 있다.
+
+## AWS Solution Architect Quiz
+
+* [AWS Interview Questions & Answers](https://www.besanttechnologies.com/aws-interview-questions-and-answers)
+* [Top AWS Solution Architect Interview Questions](https://www.whizlabs.com/blog/aws-solution-architect-interview-questions/)
+* [AWS Architect Interview Questions](https://mindmajix.com/aws-architect-interview-questions)
 
 ## Diagrams
 
