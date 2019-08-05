@@ -31,6 +31,9 @@
 - [Windows Cache Management](#windows-cache-management)
 - [Userlevel and Kernellevel](#userlevel-and-kernellevel)
 - [Virtual Memory Control](#virtual-memory-control)
+- [Heap Control](#heap-control)
+- [MMF (Memory Mapped File)](#mmf-memory-mapped-file)
+- [DLL (Dynamic Link Library)](#dll-dynamic-link-library)
 - [Execution file and Loader](#execution-file-and-loader)
 - [Quiz](#quiz)
 
@@ -1578,7 +1581,7 @@ file 의 내용은
 
 # Userlevel and Kernellevel
 
-...
+TODO
 
 # Virtual Memory Control
 
@@ -1605,6 +1608,21 @@ allocGranularity = si.dwAllocationGranularity // 64k
 예를 들어서 최초 메모리를 `VirtualAlloc` 을 이용해 `4k` 할당하면 
 `64k` 부터 `4k` 가 할당된다. 그 다음 `8k` 를 할당하면 `128k`
 부터 `8k` 가 할당된다.
+
+# Heap Control
+
+Windows 는 `default heap` 을 제공한다. 그러나 별도의 heap 을 사용하면
+메모리 단편화 등등 장점이 있다. `HeapCreate, HeapDestroy` 로 additional heap
+을 만들어서 사용해보자. 그러나 메모리 할당을 위해 `malloc, free` 대신 `HeapAlloc, HeapFree` 
+를 사용해야 한다.
+
+# MMF (Memory Mapped File)
+
+TODO
+
+# DLL (Dynamic Link Library)
+
+TODO
 
 # Execution file and Loader
 
