@@ -1,5 +1,7 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
+- [Quiz](#quiz)
+  - [AWS Solution Architect](#aws-solution-architect)
 - [References](#references)
   - [Examples](#examples)
   - [Diagrams](#diagrams)
@@ -114,6 +116,14 @@ aws 사용법에 대해 간략히 정리한다.
 * [AWS Summit 2019 | AWS 기술트랙 4 @ youtube](https://www.youtube.com/watch?v=Sf6j7PPHeeI&list=PLORxAVAC5fUUeaSHb91d5wpDGfR14uNCi)
 * [AWS Summit 2019 | AWS 기술트랙 5 @ youtube](https://www.youtube.com/watch?v=nxgGk-PbXf0&list=PLORxAVAC5fUWZGawyaMyz8NepNGqHbHtZ)
 * [AWS Summit 2019 @ youtube](https://www.youtube.com/playlist?list=PLORxAVAC5fUWyB6Hsk9ibYJHw97k1h6s9)
+
+# Quiz
+
+## AWS Solution Architect
+
+* [AWS Interview Questions & Answers](https://www.besanttechnologies.com/aws-interview-questions-and-answers)
+* [Top AWS Solution Architect Interview Questions](https://www.whizlabs.com/blog/aws-solution-architect-interview-questions/)
+* [AWS Architect Interview Questions](https://mindmajix.com/aws-architect-interview-questions)
 
 # References
 
@@ -846,4 +856,3 @@ aws_access_key_id = 3BqwEFsOBd3vx11+TOHhI9LVi2
 * [Amazon ElastiCache(Redis)를 이용한 채팅 애플리케이션 구성 방법](https://aws.amazon.com/ko/blogs/korea/how-to-build-a-chat-application-with-amazon-elasticache-for-redis/)
   * node.js, redis 를 이용한 채팅 예제
   * [src](https://github.com/aws-samples/elasticache-refarch-chatapp)
-  

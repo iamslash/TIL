@@ -30,6 +30,7 @@
 - [Processor Cache Management](#processor-cache-management)
 - [Windows Cache Management](#windows-cache-management)
 - [Userlevel and Kernellevel](#userlevel-and-kernellevel)
+- [Virtual Memory Control](#virtual-memory-control)
 - [Execution file and Loader](#execution-file-and-loader)
 - [Quiz](#quiz)
 
@@ -1578,6 +1579,32 @@ file 의 내용은
 # Userlevel and Kernellevel
 
 ...
+
+# Virtual Memory Control
+
+virtual memory 는 page 단위로 physical memory 와 mapping 된다.
+그리고 page 단위로 할당된다. virtual memory 는 page 단위로 `commit, free, reserve`
+의 상태로 둘 수 있다. `commit` 은 physical memory 와 연결됨을 의미한다.
+`free` 는 physical memory 와 연결되어 있지 않음을 의미한다. 메모리 단편화를
+방지하기 위해 연속된 공간을 `reserve` 해 놓으면 caching 이 될 수 있기 때문에
+효율적이다.
+
+메모리 할당은 `malloc` 으로 할 수 있지만 Windows 의 경우 `VirtualAlloc` 을 사용하면
+더욱 많은 기능을 이용할 수 있다. 메모리는 `Allocation Granularity Boundary` 배수를 
+시작주소로 `page size` 배수 만큼씩 할당된다. 
+
+다음과 같이 `GetSystemInfo(&si)` 를 이용하면 `Allocation Granularity Boundary, page size`
+를 알 수 있다.
+
+```c
+GetSystemInfo(&si);
+pageSize         = si.dwPageSize // 4k
+allocGranularity = si.dwAllocationGranularity // 64k
+```
+
+예를 들어서 최초 메모리를 `VirtualAlloc` 을 이용해 `4k` 할당하면 
+`64k` 부터 `4k` 가 할당된다. 그 다음 `8k` 를 할당하면 `128k`
+부터 `8k` 가 할당된다.
 
 # Execution file and Loader
 

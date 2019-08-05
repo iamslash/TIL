@@ -3,8 +3,6 @@
 - [Resume](#resume)
 - [Basic](#basic)
 - [Advanced](#advanced)
-- [Jobs](#jobs)
-  - [AWS Solution Architect](#aws-solution-architect)
 
 ----
 
@@ -143,11 +141,3 @@
 
 * Block Chain
   * [bitcoin](/bitcoin/README.md)
-
-# Jobs
-
-## AWS Solution Architect
-
-* [AWS Interview Questions & Answers](https://www.besanttechnologies.com/aws-interview-questions-and-answers)
-* [Top AWS Solution Architect Interview Questions](https://www.whizlabs.com/blog/aws-solution-architect-interview-questions/)
-* [AWS Architect Interview Questions](https://mindmajix.com/aws-architect-interview-questions)
