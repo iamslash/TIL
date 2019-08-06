@@ -17,7 +17,7 @@
   - [Cascaded Shadow Mapping](#cascaded-shadow-mapping)
   - [Normal Mapping](#normal-mapping)
   - [Parallax Mapping](#parallax-mapping)
-  - [HDR](#hdr)
+  - [HDR (High Dynamic Range)](#hdr-high-dynamic-range)
   - [Bloom](#bloom)
   - [Deferred Shading](#deferred-shading)
   - [SSAO (Screen Sapce Ambient Optimization)](#ssao-screen-sapce-ambient-optimization)
@@ -993,17 +993,41 @@ void main()
 
 ## Normal Mapping
 
+* [normal mapping](https://github.com/iamslash/TIL/tree/master/bumpmapping#normal-mapping)
+
+----
+
+TODO
+
 ## Parallax Mapping
 
-## HDR
+* [parallax mapping](https://github.com/iamslash/TIL/tree/master/bumpmapping#parallax-mapping)
+
+----
+
+TODO
+
+## HDR (High Dynamic Range)
+
+TODO
 
 ## Bloom
 
+TODO
+
 ## Deferred Shading
 
+TODO
+
 ## SSAO (Screen Sapce Ambient Optimization)
+
+TODO
 
 ## PBR (Physicall Based Rendering)
 
 * [pbr @ TIL](/pbr/README.md)
+
+----
+
+TODO
   
