@@ -1009,7 +1009,131 @@ TODO
 
 ## HDR (High Dynamic Range)
 
-TODO
+* [6.hdr @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/6.hdr)
+
+----
+
+기존에는 color 의 각 채널을 1 byte 를 이용해서 `[0..1]` 로 표현했다. 
+이것을 LDR (Low Dynamic Range) 라 한다.
+이에 더하여 color 의 각 채널을 2 byte 를 이용해 `[0-?]` 로 표현하는 것을 HDR 이라고 한다.
+그러나 마지막 단계에서는 color 의 각 채널을 1 byte 를 이용해 `[0..1]` 로 복귀해야 한다.
+이와 같이 LDR 로 변환하는 것을 Tone Mapping 이라고 한다.
+color 를 HDR 로 계산하면 LDR 보다 정밀하게 계산할 수 있다. 밝은 면을 더욱 세밀하게 표현 가능하다.
+
+다음과 같은 방법으로 구현한다.
+
+* frame buffer object 를 만들고 RGBA16 texture 를 한장 붙여놓는다.
+* 장면을 HDR frame buffer object 에 렌더링하고 첨부된
+* texture 를 카메라 앞의 quad 에 매핑한다. 그리고 quad 를 default frame buffer object 에 렌더링한다.
+
+다음은 HDR frame buffer object 를 생성하고 RGBA16 texture 를
+붙이는 구현이다.
+
+```cpp
+    // configure floating point framebuffer
+    // ------------------------------------
+    unsigned int hdrFBO;
+    glGenFramebuffers(1, &hdrFBO);
+    // create floating point color buffer
+    unsigned int colorBuffer;
+    glGenTextures(1, &colorBuffer);
+    glBindTexture(GL_TEXTURE_2D, colorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // create depth buffer (renderbuffer)
+    unsigned int rboDepth;
+    glGenRenderbuffers(1, &rboDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
+    // attach buffers
+    glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, colorBuffer, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "Framebuffer not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+```
+
+다음은 redering loop 에서 HDR framebuffer object 에 rendering 하는 구현이다.
+
+```cpp
+        // 1. render scene into floating point framebuffer
+        // -----------------------------------------------
+        glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (GLfloat)SCR_WIDTH / (GLfloat)SCR_HEIGHT, 0.1f, 100.0f);
+            glm::mat4 view = camera.GetViewMatrix();
+            shader.use();
+            shader.setMat4("projection", projection);
+            shader.setMat4("view", view);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, woodTexture);
+            // set lighting uniforms
+            for (unsigned int i = 0; i < lightPositions.size(); i++)
+            {
+                shader.setVec3("lights[" + std::to_string(i) + "].Position", lightPositions[i]);
+                shader.setVec3("lights[" + std::to_string(i) + "].Color", lightColors[i]);
+            }
+            shader.setVec3("viewPos", camera.Position);
+            // render tunnel
+            glm::mat4 model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(0.0f, 0.0f, 25.0));
+            model = glm::scale(model, glm::vec3(2.5f, 2.5f, 27.5f));
+            shader.setMat4("model", model);
+            shader.setInt("inverse_normals", true);
+            renderCube();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+```
+
+다음은 HDR frame buffer object 에 첨부된 texture 를 카메라 앞의 quad 에
+매핑하고 default frame buffer object 에 rendering 하는 구현이다.
+
+```cpp
+        // 2. now render floating point color buffer to 2D quad and tonemap HDR colors to default framebuffer's (clamped) color range
+        // --------------------------------------------------------------------------------------------------------------------------
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        hdrShader.use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, colorBuffer);
+        hdrShader.setInt("hdr", hdr);
+        hdrShader.setFloat("exposure", exposure);
+        renderQuad();
+```
+
+이 때 사용하는 fragment shader 이다. LDR 로 변환하는 과정을 눈여겨 보자.
+
+```cpp
+#version 330 core
+out vec4 FragColor;
+
+in vec2 TexCoords;
+
+uniform sampler2D hdrBuffer;
+uniform bool hdr;
+uniform float exposure;
+
+void main()
+{             
+    const float gamma = 2.2;
+    vec3 hdrColor = texture(hdrBuffer, TexCoords).rgb;
+    if(hdr)
+    {
+        // reinhard
+        // vec3 result = hdrColor / (hdrColor + vec3(1.0));
+        // exposure
+        vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
+        // also gamma correct while we're at it       
+        result = pow(result, vec3(1.0 / gamma));
+        FragColor = vec4(result, 1.0);
+    }
+    else
+    {
+        vec3 result = pow(hdrColor, vec3(1.0 / gamma));
+        FragColor = vec4(result, 1.0);
+    }
+}
+```
 
 ## Bloom
 
@@ -1017,7 +1141,16 @@ TODO
 
 ## Deferred Shading
 
-TODO
+* [8.1.deferred_shading](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/8.1.deferred_shading)
+* [8.2.deferred_shading_volumes](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/8.2.deferred_shading_volumes)
+  
+----
+
+Forward Shading 은 light 의 개수 만큼 rendering 한다. 그러나 Deferred Shading 은
+마지막 단계에서 light 들을 단 한번에 redndering 하는 기법이다. Deferred Shading 이
+훨씬 효율적이다. 그러나 디바이스가 MRT (Multi Render Target) 을 지원해야 사용할 수 있다.
+
+
 
 ## SSAO (Screen Sapce Ambient Optimization)
 
