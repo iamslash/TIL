@@ -1172,7 +1172,7 @@ void main()
 * [5.1.parallax_mapping @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/5.1.parallax_mapping)
 * [5.2.steep_parallax_mapping @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/5.2.steep_parallax_mapping)
 * [5.3.parallax_occlusion_mapping @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/5.3.parallax_occlusion_mapping)
-* [parallax mapping](https://github.com/iamslash/TIL/tree/master/bumpmapping#parallax-mapping)
+* [parallax mapping 원리 공식 @ egloos](http://egloos.zum.com/chulin28ho/v/3749030)
 
 ----
 
