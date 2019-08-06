@@ -1,5 +1,6 @@
 
 - [Abstract](#abstract)
+- [Essential](#essential)
 - [Materials](#materials)
 - [Basic Usage](#basic-usage)
   - [Setup Projects](#setup-projects)
@@ -27,9 +28,9 @@
 
 # Abstract
 
-OpenGL을 정리한다. [OpenGL Superbible: Comprehensive Tutorial and Reference](http://www.openglsuperbible.com), [OpenGL Programming Guide: The Official Guide to Learning OpenGL, Version 4.3](http://www.opengl-redbook.com/), [OpenGL Shading Language](https://www.amazon.com/OpenGL-Shading-Language-Randi-Rost/dp/0321637631/ref=sr_1_1?ie=UTF8&qid=1538565859&sr=8-1&keywords=opengl+shading+language) 는 꼭 읽어보자. 특히 예제는 꼭 분석해야 한다.
+OpenGL을 정리한다.
 
-# Materials
+# Essential
 
 - [Learn Opengl](https://learnopengl.com/)
   - 킹왕짱 tutorial 이다.
@@ -41,6 +42,9 @@ OpenGL을 정리한다. [OpenGL Superbible: Comprehensive Tutorial and Reference
   - opengl blue book
   - [src](https://github.com/openglsuperbible/sb7code)
 - [OpenGL Shading Language](https://www.amazon.com/OpenGL-Shading-Language-Randi-Rost/dp/0321637631/ref=sr_1_1?ie=UTF8&qid=1538565859&sr=8-1&keywords=opengl+shading+language)
+
+# Materials
+
 * [OpenGL samples pack download](https://www.opengl.org/sdk/docs/tutorials/OGLSamples/)
   * 공식 배포 샘플 모음, 다양한 예제가 `~/tests/` 에 있다.
 * [OpenGL SDK download](https://sourceforge.net/projects/glsdk/)
@@ -76,6 +80,12 @@ cmake -G "Visual Studio 15 2017" ..
 
 ## Depth Test
 
+* [Depth Test @ learnopengl](https://learnopengl.com/Advanced-OpenGL/Depth-testing)
+* [1.1.depth_testin @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/1.1.depth_testing)
+* [1.2.depth_testing_view @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/1.2.depth_testing_view)
+
+----
+
 Depth Buffer 값을 이용해서 특정 프래그먼트의 그리기 여부를 조정할 수 있다.
 
 ```cpp
@@ -86,6 +96,11 @@ Depth Buffer 값을 이용해서 특정 프래그먼트의 그리기 여부를 �
 ```
 
 ## Stencil Test
+
+* [Stencil Test @ learnopengl](https://learnopengl.com/Advanced-OpenGL/Stencil-testing)
+* [2.stencil_testing @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/2.stencil_testing)
+
+----
 
 Stencil Buffer 값을 이용해서 특정 프래그먼트의 그리기 여부를 조정할 수 있다.
 
@@ -165,6 +180,12 @@ Bitwise inverts the current stencil buffer value.
 
 ## Blend
 
+* [Blend @ learnopengl](https://learnopengl.com/Advanced-OpenGL/Blending)
+* [3.1.blending_discard @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/3.1.blending_discard)
+* [3.2.blending_sort @ github]([)](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/3.2.blending_sort)
+
+----
+
 ```cpp
     // configure global opengl state
     // -----------------------------
@@ -190,6 +211,12 @@ void glBlendFunci(	GLuint buf,
 ```
 
 ## Frame Buffer
+
+* [Frame Buffer @ learnopengl](https://learnopengl.com/Advanced-OpenGL/Framebuffers)
+* [5.1.framebuffers @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/5.1.framebuffers)
+* [5.2.framebuffers_exercise1 @ github](hhttps://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/5.2.framebuffers_exercise1)
+
+----
 
 frame buffer 를 만들고 이곳에 렌더링 할 수 있다. 주로 post processing 에 이용한다.
 
@@ -324,6 +351,12 @@ float kernel[9] = float[](
 
 ## Cube Map
 
+* [Cube Map @ learnopengl](https://learnopengl.com/Advanced-OpenGL/Cubemaps)
+* [6.1.cubemaps_skybox @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/6.1.cubemaps_skybox)
+* [6.2.cubemaps_environment_mapping](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/6.2.cubemaps_environment_mapping)
+
+-----
+
 6 개의 텍스처를 사용하는 방법이다. 주로 스카이박스를 구현할 때 사용한다.
 
 * create, bind cube map
@@ -360,6 +393,9 @@ glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 ```
 
 ## Uniform Buffer Object
+
+* [Advanced Data @ learnopengl](https://learnopengl.com/Advanced-OpenGL/Advanced-Data)
+* [8.advanced_glsl_ubo @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/8.advanced_glsl_ubo)
 
 한번 설정해 두면 여러개의 Shader 에서 global 하게 사용할 수 잇는 buffer object 이다. 다음은 projection, view matrix 를 uniform buffer object 로 만들어 이용한 것이다. projection matrix 는 안 바뀐다고 가정하고 한번만 설정한다. 그러나 view matrix 는 camera 의 position, rotation 등이 변환될 때 마다 바뀌므로 rendering loop 에서 매번 설정한다.
 
@@ -405,6 +441,13 @@ glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 ```
 
 ## Instancing
+
+* [Instancing @ learnopengl](https://learnopengl.com/Advanced-OpenGL/Instancing)
+* [10.1.instancing_quad @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/10.1.instancing_quads)
+* [10.2.asteroids @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/10.2.asteroids)
+* [10.3.asteroids_instanced @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/10.3.asteroids_instanced)
+
+----
 
 월드 좌표가 다른 다수의 동일한 model 을 하나의 Draw Call 로 렌더링하는 방법이다. 다음은 사각형 100 개를 Instancing Draw 하는 예이다.
 
@@ -1009,6 +1052,7 @@ TODO
 
 ## HDR (High Dynamic Range)
 
+* [HDR @ learnopengl](https://learnopengl.com/Advanced-Lighting/HDR)
 * [6.hdr @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/6.hdr)
 
 ----
@@ -1141,8 +1185,9 @@ TODO
 
 ## Deferred Shading
 
-* [8.1.deferred_shading](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/8.1.deferred_shading)
-* [8.2.deferred_shading_volumes](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/8.2.deferred_shading_volumes)
+* [Deferred Shading @ learnopengl](https://learnopengl.com/Advanced-Lighting/Deferred-Shading)
+* [8.1.deferred_shading @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/8.1.deferred_shading)
+* [8.2.deferred_shading_volumes @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/8.2.deferred_shading_volumes)
   
 ----
 
@@ -1150,7 +1195,208 @@ Forward Shading 은 light 의 개수 만큼 rendering 한다. 그러나 Deferred
 마지막 단계에서 light 들을 단 한번에 redndering 하는 기법이다. Deferred Shading 이
 훨씬 효율적이다. 그러나 디바이스가 MRT (Multi Render Target) 을 지원해야 사용할 수 있다.
 
+Deferred Shading 은 다음과 같이 구현한다.
 
+* g-buffer frame buffer object 를 생성한다.
+* position, normal, albedo + specular texture object 를 생성한후 g-buffer frame object 에 attatch 한다.
+* 장면을 g-buffer frame object 에 렌더링 한다. 그러면 position, normal, albedo + specular texture object 에 해당 값들이 채워질 것이다. 이것을 geometry pass 라고 한다.
+* 앞서 채운 position, normal, albedo + specular texture object 을 이용해 default frame buffer object 에 rendering 한다. 이때 모든 light 를 한번에 적용한다. 이것을 lighting pass 라고 한다.
+* g-buffer frame buffer object 의 deapth map 을 default frame buffer object 에 복사한다.
+
+다음은 g-buffer frame buffer object 를 생성하고 texture object 를 attach 하는 구현이다.
+
+```cpp
+    // configure g-buffer framebuffer
+    // ------------------------------
+    unsigned int gBuffer;
+    glGenFramebuffers(1, &gBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+    unsigned int gPosition, gNormal, gAlbedoSpec;
+    // position color buffer
+    glGenTextures(1, &gPosition);
+    glBindTexture(GL_TEXTURE_2D, gPosition);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+    // normal color buffer
+    glGenTextures(1, &gNormal);
+    glBindTexture(GL_TEXTURE_2D, gNormal);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
+    // color + specular color buffer
+    glGenTextures(1, &gAlbedoSpec);
+    glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedoSpec, 0);
+    // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
+    unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    glDrawBuffers(3, attachments);
+    // create and attach depth buffer (renderbuffer)
+    unsigned int rboDepth;
+    glGenRenderbuffers(1, &rboDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+    // finally check if framebuffer is complete
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "Framebuffer not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+```
+
+다음은 g-buffer FBO 에 rendering 하는 구현이다.
+
+```cpp
+        // 1. geometry pass: render scene's geometry/color data into gbuffer
+        // -----------------------------------------------------------------
+        glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+            glm::mat4 view = camera.GetViewMatrix();
+            glm::mat4 model = glm::mat4(1.0f);
+            shaderGeometryPass.use();
+            shaderGeometryPass.setMat4("projection", projection);
+            shaderGeometryPass.setMat4("view", view);
+            for (unsigned int i = 0; i < objectPositions.size(); i++)
+            {
+                model = glm::mat4(1.0f);
+                model = glm::translate(model, objectPositions[i]);
+                model = glm::scale(model, glm::vec3(0.25f));
+                shaderGeometryPass.setMat4("model", model);
+                nanosuit.Draw(shaderGeometryPass);
+            }
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+```
+
+다음은 이 때 사용한 fragment shader 이다.
+
+```c
+#version 330 core
+layout (location = 0) out vec3 gPosition;
+layout (location = 1) out vec3 gNormal;
+layout (location = 2) out vec4 gAlbedoSpec;
+
+in vec2 TexCoords;
+in vec3 FragPos;
+in vec3 Normal;
+
+uniform sampler2D texture_diffuse1;
+uniform sampler2D texture_specular1;
+
+void main()
+{    
+    // store the fragment position vector in the first gbuffer texture
+    gPosition = FragPos;
+    // also store the per-fragment normals into the gbuffer
+    gNormal = normalize(Normal);
+    // and the diffuse per-fragment color
+    gAlbedoSpec.rgb = texture(texture_diffuse1, TexCoords).rgb;
+    // store specular intensity in gAlbedoSpec's alpha component
+    gAlbedoSpec.a = texture(texture_specular1, TexCoords).r;
+}
+```
+
+다음은 lighting pass 를 구현한 것이다.
+
+```cpp
+        // 2. lighting pass: calculate lighting by iterating over a screen filled quad pixel-by-pixel using the gbuffer's content.
+        // -----------------------------------------------------------------------------------------------------------------------
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        shaderLightingPass.use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, gPosition);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, gNormal);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+        // send light relevant uniforms
+        for (unsigned int i = 0; i < lightPositions.size(); i++)
+        {
+            shaderLightingPass.setVec3("lights[" + std::to_string(i) + "].Position", lightPositions[i]);
+            shaderLightingPass.setVec3("lights[" + std::to_string(i) + "].Color", lightColors[i]);
+            // update attenuation parameters and calculate radius
+            const float constant = 1.0; // note that we don't send this to the shader, we assume it is always 1.0 (in our case)
+            const float linear = 0.7;
+            const float quadratic = 1.8;
+            shaderLightingPass.setFloat("lights[" + std::to_string(i) + "].Linear", linear);
+            shaderLightingPass.setFloat("lights[" + std::to_string(i) + "].Quadratic", quadratic);
+        }
+        shaderLightingPass.setVec3("viewPos", camera.Position);
+        // finally render quad
+        renderQuad();
+```
+
+다음은 lighting pass 에서 사용한 fragment shader 이다.
+
+```c
+#version 330 core
+out vec4 FragColor;
+
+in vec2 TexCoords;
+
+uniform sampler2D gPosition;
+uniform sampler2D gNormal;
+uniform sampler2D gAlbedoSpec;
+
+struct Light {
+    vec3 Position;
+    vec3 Color;
+    
+    float Linear;
+    float Quadratic;
+};
+const int NR_LIGHTS = 32;
+uniform Light lights[NR_LIGHTS];
+uniform vec3 viewPos;
+
+void main()
+{             
+    // retrieve data from gbuffer
+    vec3 FragPos = texture(gPosition, TexCoords).rgb;
+    vec3 Normal = texture(gNormal, TexCoords).rgb;
+    vec3 Diffuse = texture(gAlbedoSpec, TexCoords).rgb;
+    float Specular = texture(gAlbedoSpec, TexCoords).a;
+    
+    // then calculate lighting as usual
+    vec3 lighting  = Diffuse * 0.1; // hard-coded ambient component
+    vec3 viewDir  = normalize(viewPos - FragPos);
+    for(int i = 0; i < NR_LIGHTS; ++i)
+    {
+        // diffuse
+        vec3 lightDir = normalize(lights[i].Position - FragPos);
+        vec3 diffuse = max(dot(Normal, lightDir), 0.0) * Diffuse * lights[i].Color;
+        // specular
+        vec3 halfwayDir = normalize(lightDir + viewDir);  
+        float spec = pow(max(dot(Normal, halfwayDir), 0.0), 16.0);
+        vec3 specular = lights[i].Color * spec * Specular;
+        // attenuation
+        float distance = length(lights[i].Position - FragPos);
+        float attenuation = 1.0 / (1.0 + lights[i].Linear * distance + lights[i].Quadratic * distance * distance);
+        diffuse *= attenuation;
+        specular *= attenuation;
+        lighting += diffuse + specular;        
+    }
+    FragColor = vec4(lighting, 1.0);
+}
+```
+
+다음은 g-buffer FBO 의 depth buffer 를 default FBO 에 복사하는 구현이다.
+
+```cpp
+        // 2.5. copy content of geometry's depth buffer to default framebuffer's depth buffer
+        // ----------------------------------------------------------------------------------
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0); // write to default framebuffer
+        // blit to default framebuffer. Note that this may or may not work as the internal formats of both the FBO and default framebuffer have to match.
+        // the internal formats are implementation defined. This works on all of my systems, but if it doesn't on yours you'll likely have to write to the 		
+        // depth buffer in another shader stage (or somehow see to match the default framebuffer's internal format with the FBO's internal format).
+        glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+```
 
 ## SSAO (Screen Sapce Ambient Optimization)
 
