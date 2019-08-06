@@ -506,6 +506,11 @@ glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
 ## MSAA (Multi Sampled Anti Aliasing)
 
+* [Anti Aliasing @ learnopengl](https://learnopengl.com/Advanced-OpenGL/Anti-Aliasing)
+* [11.anti_aliasing_offscreen @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/4.advanced_opengl/11.anti_aliasing_offscreen)
+
+----
+
 anti aliasing algorithm 중 하나이다. Frame Buffer Object 두개를 이용하여 anti aliasing 한다.
 
 * create, bind 2 frame buffer objects
@@ -592,6 +597,11 @@ framebuffer 에서 intermediateFBO 로 blit 하면 intermediateFBO 에 바인딩
 
 ## Phong / Blinn Phong Lighting
 
+* [Advanced Lighting @ learnopengl](https://learnopengl.com/Advanced-Lighting/Advanced-Lighting)
+* [1.advanced_lighting @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/1.advanced_lighting)
+
+----
+
 Phong 은 specular 성분을 구할 때 V (view vector) 와 R (light reflected vector) 를 이용한다. V 와 R 은 사이각이 90 도를 넘을 수 있고 이것을 모두 0 처리 해버린다. 정밀도가 떨어진다.
 
 ![](advanced_lighting_over_90.png)
@@ -633,6 +643,11 @@ void main()
 ```
 
 ## Gamma Correction
+
+* [Gamma Correction @ learnopengl](https://learnopengl.com/Advanced-Lighting/Gamma-Correction)
+* [2.gamma_correction @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/2.gamma_correction)
+
+----
 
 사람의 눈은 밝은색 보다는 어두운색을 더욱 잘 구별한다. 따라서 색 정보를 저장할 때 어두운 색에 더욱 많은 비트를 할당하면 더욱 효율적으로 저장할 수 있다. 이렇게 저장하는 방식을 gamma encoding 이라고 한다.
 
@@ -722,6 +737,16 @@ void main()
 ```
 
 ## Shadow Mapping
+
+* [Shadow Mapping @ learnopengl](https://learnopengl.com/Advanced-Lighting/Shadows/Shadow-Mapping)
+* [Point Shadows @ learnopengl](https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows)
+* [3.1.1.shadow_mapping_depth @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/3.1.1.shadow_mapping_depth)
+* [3.1.2.shadow_mapping_base @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/3.1.2.shadow_mapping_base)
+* [3.1.3.shadow_mapping @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/3.1.3.shadow_mapping)
+* [3.2.1.point_shadows @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/3.2.1.point_shadows)
+* [3.2.2.point_shadows_soft @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/3.2.2.point_shadows_soft)
+
+----
 
 ![](shadow_mapping_theory.png)
 
@@ -1036,19 +1061,229 @@ void main()
 
 ## Normal Mapping
 
+* [Normal Mapping @ learnopengl](https://learnopengl.com/Advanced-Lighting/Normal-Mapping)
+* [4.normal_mapping @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/4.normal_mapping)
 * [normal mapping](https://github.com/iamslash/TIL/tree/master/bumpmapping#normal-mapping)
 
 ----
 
-TODO
+normal map texture 를 이용하여 폴리곤을 사용하지 않고 굴곡을 표현하는 기법을 normal mapping 이라고 한다. normal map texture 에는 tangent space coordinate system 을 기준으로 normal vector 의 값이 저장되어 있다. tangent space 는 vertex 와 접하는 평면이다. 당연히 `normal vector (x, y, z)` 중 z 값이 1.0 에 가까울테니 normal map texture 는 전체 적으로 푸르게 보인다.
+
+다음과 같이 구현한다.
+
+* diffuse, normal map texture 를 준비한다.
+* vertex shader 에서 입력된 해당 vertex 의 normal, tangent vector 를 이용하여 TBN 행렬을 구한다. 그리고 light, view, position 을 TBN 과 연산하여 tangent space coordinate system 을 기준으로 하는 light, view, position vector 를 fragment shader 에게 넘겨준다.
+* fragment shader 는 basic lighting model 의 term 들을 tangent space coordinate system 을 기준으로 하는 light, view, position vector 를 이용하여 연산한다.
+
+다음은 vertex shader 이다.
+
+```cpp
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
+layout (location = 3) in vec3 aTangent;
+layout (location = 4) in vec3 aBitangent;
+
+out VS_OUT {
+    vec3 FragPos;
+    vec2 TexCoords;
+    vec3 TangentLightPos;
+    vec3 TangentViewPos;
+    vec3 TangentFragPos;
+} vs_out;
+
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
+
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+
+void main()
+{
+    vs_out.FragPos = vec3(model * vec4(aPos, 1.0));   
+    vs_out.TexCoords = aTexCoords;
+    
+    mat3 normalMatrix = transpose(inverse(mat3(model)));
+    vec3 T = normalize(normalMatrix * aTangent);
+    vec3 N = normalize(normalMatrix * aNormal);
+    T = normalize(T - dot(T, N) * N);
+    vec3 B = cross(N, T);
+    
+    mat3 TBN = transpose(mat3(T, B, N));    
+    vs_out.TangentLightPos = TBN * lightPos;
+    vs_out.TangentViewPos  = TBN * viewPos;
+    vs_out.TangentFragPos  = TBN * vs_out.FragPos;
+        
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
+}
+```
+
+다음은 fragment shader 이다.
+
+```cpp
+#version 330 core
+out vec4 FragColor;
+
+in VS_OUT {
+    vec3 FragPos;
+    vec2 TexCoords;
+    vec3 TangentLightPos;
+    vec3 TangentViewPos;
+    vec3 TangentFragPos;
+} fs_in;
+
+uniform sampler2D diffuseMap;
+uniform sampler2D normalMap;
+
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+
+void main()
+{           
+     // obtain normal from normal map in range [0,1]
+    vec3 normal = texture(normalMap, fs_in.TexCoords).rgb;
+    // transform normal vector to range [-1,1]
+    normal = normalize(normal * 2.0 - 1.0);  // this normal is in tangent space
+   
+    // get diffuse color
+    vec3 color = texture(diffuseMap, fs_in.TexCoords).rgb;
+    // ambient
+    vec3 ambient = 0.1 * color;
+    // diffuse
+    vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
+    float diff = max(dot(lightDir, normal), 0.0);
+    vec3 diffuse = diff * color;
+    // specular
+    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+    vec3 reflectDir = reflect(-lightDir, normal);
+    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+
+    vec3 specular = vec3(0.2) * spec;
+    FragColor = vec4(ambient + diffuse + specular, 1.0);
+}
+```
 
 ## Parallax Mapping
 
+* [Parallax Mapping @ learnopengl](https://learnopengl.com/Advanced-Lighting/Parallax-Mapping)
+* [5.1.parallax_mapping @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/5.1.parallax_mapping)
+* [5.2.steep_parallax_mapping @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/5.2.steep_parallax_mapping)
+* [5.3.parallax_occlusion_mapping @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/5.3.parallax_occlusion_mapping)
 * [parallax mapping](https://github.com/iamslash/TIL/tree/master/bumpmapping#parallax-mapping)
 
 ----
 
+normal mapping 과 비슷한 하지만 굴곡을 더욱 정밀하게 표현할 수 있다.
+
+다음은 parallax Mapping 의 구현 과정이다.
+
+* normal mapping 과 비슷하게 TBN 행렬을 만들고 tangent space coordinate system 을 기준으로 light, view, position vector 를 fragment shader 에게 넘겨준다.
+
 TODO
+
+다음은 vertex shader 이다.
+
+```c
+#version 330 core
+layout (location = 0) in vec3 aPos;
+layout (location = 1) in vec3 aNormal;
+layout (location = 2) in vec2 aTexCoords;
+layout (location = 3) in vec3 aTangent;
+layout (location = 4) in vec3 aBitangent;
+
+out VS_OUT {
+    vec3 FragPos;
+    vec2 TexCoords;
+    vec3 TangentLightPos;
+    vec3 TangentViewPos;
+    vec3 TangentFragPos;
+} vs_out;
+
+uniform mat4 projection;
+uniform mat4 view;
+uniform mat4 model;
+
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+
+void main()
+{
+    vs_out.FragPos = vec3(model * vec4(aPos, 1.0));   
+    vs_out.TexCoords = aTexCoords;   
+    
+    vec3 T = normalize(mat3(model) * aTangent);
+    vec3 B = normalize(mat3(model) * aBitangent);
+    vec3 N = normalize(mat3(model) * aNormal);
+    mat3 TBN = transpose(mat3(T, B, N));
+
+    vs_out.TangentLightPos = TBN * lightPos;
+    vs_out.TangentViewPos  = TBN * viewPos;
+    vs_out.TangentFragPos  = TBN * vs_out.FragPos;
+    
+    gl_Position = projection * view * model * vec4(aPos, 1.0);
+}
+```
+
+다음은 fragment shader 이다.
+
+```c
+#version 330 core
+out vec4 FragColor;
+
+in VS_OUT {
+    vec3 FragPos;
+    vec2 TexCoords;
+    vec3 TangentLightPos;
+    vec3 TangentViewPos;
+    vec3 TangentFragPos;
+} fs_in;
+
+uniform sampler2D diffuseMap;
+uniform sampler2D normalMap;
+uniform sampler2D depthMap;
+
+uniform float heightScale;
+
+vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
+{ 
+    float height =  texture(depthMap, texCoords).r;     
+    return texCoords - viewDir.xy * (height * heightScale);        
+}
+
+void main()
+{           
+    // offset texture coordinates with Parallax Mapping
+    vec3 viewDir = normalize(fs_in.TangentViewPos - fs_in.TangentFragPos);
+    vec2 texCoords = fs_in.TexCoords;
+    
+    texCoords = ParallaxMapping(fs_in.TexCoords,  viewDir);       
+    if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
+        discard;
+
+    // obtain normal from normal map
+    vec3 normal = texture(normalMap, texCoords).rgb;
+    normal = normalize(normal * 2.0 - 1.0);   
+   
+    // get diffuse color
+    vec3 color = texture(diffuseMap, texCoords).rgb;
+    // ambient
+    vec3 ambient = 0.1 * color;
+    // diffuse
+    vec3 lightDir = normalize(fs_in.TangentLightPos - fs_in.TangentFragPos);
+    float diff = max(dot(lightDir, normal), 0.0);
+    vec3 diffuse = diff * color;
+    // specular    
+    vec3 reflectDir = reflect(-lightDir, normal);
+    vec3 halfwayDir = normalize(lightDir + viewDir);  
+    float spec = pow(max(dot(normal, halfwayDir), 0.0), 32.0);
+
+    vec3 specular = vec3(0.2) * spec;
+    FragColor = vec4(ambient + diffuse + specular, 1.0);
+}
+```
 
 ## HDR (High Dynamic Range)
 
@@ -1180,6 +1415,11 @@ void main()
 ```
 
 ## Bloom
+
+* [ @ learnopengl]()
+* [ @ github]()
+
+----
 
 TODO
 
@@ -1400,10 +1640,18 @@ void main()
 
 ## SSAO (Screen Sapce Ambient Optimization)
 
+* [ @ learnopengl]()
+* [ @ github]()
+
+----
+
 TODO
 
 ## PBR (Physicall Based Rendering)
 
+
+* [ @ learnopengl]()
+* [ @ github]()
 * [pbr @ TIL](/pbr/README.md)
 
 ----
