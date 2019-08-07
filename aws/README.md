@@ -2,7 +2,6 @@
 - [Materials](#materials)
 - [References](#references)
   - [Examples](#examples)
-  - [AWS Solution Architect Quiz](#aws-solution-architect-quiz)
   - [Diagrams](#diagrams)
 - [Prerequisites](#prerequisites)
   - [Cloud Computing](#cloud-computing)
@@ -120,16 +119,11 @@ aws 사용법에 대해 간략히 정리한다.
 
 ## Examples
 
+* [AWS 아키텍처 센터 @ aws](https://aws.amazon.com/ko/architecture/)
 * [AWS examples by visual paradigm](https://online.visual-paradigm.com/diagram-examples/aws-architecture-diagram/?page=5)
   * 약 50 여개의 AWS 예들이 있다.
 * [Amazon Web Service Examples Created by the Creately Team](https://creately.com/diagram-community/examples/t/aws-diagram)
   * 약 10 여개의 AWS 예들이 있다.
-
-## AWS Solution Architect Quiz
-
-* [AWS Interview Questions & Answers](https://www.besanttechnologies.com/aws-interview-questions-and-answers)
-* [Top AWS Solution Architect Interview Questions](https://www.whizlabs.com/blog/aws-solution-architect-interview-questions/)
-* [AWS Architect Interview Questions](https://mindmajix.com/aws-architect-interview-questions)
 
 ## Diagrams
 
@@ -188,7 +182,7 @@ aws 사용법에 대해 간략히 정리한다.
 * [AWS WAF – 웹 애플리케이션 방화벽](https://aws.amazon.com/ko/waf/)
 * [웹방화벽이란?](https://www.pentasecurity.co.kr/resource/%EC%9B%B9%EB%B3%B4%EC%95%88/%EC%9B%B9%EB%B0%A9%ED%99%94%EB%B2%BD%EC%9D%B4%EB%9E%80/)
 
-<br/>
+----
   
 * 일반적인 방화벽과 달리 웹 애플리케이션의 보안에 특화된 솔루션이다. 
 * 애플리케이션의 가용성에 영향을 주거나, SQL Injection, XSS (Cross Site Scripting) 과 같이 보안을 위협하거나, 리소스를 과도하게 사용하는 웹 공격으로부터 웹 애플리케이션을 보호하는 데 도움이 된다.
@@ -197,7 +191,7 @@ aws 사용법에 대해 간략히 정리한다.
 
 * [웹 해킹 강좌 ⑦ - XSS(Cross Site Scripting) 공격의 개요와 실습 (Web Hacking Tutorial #07) @ youtube](https://www.youtube.com/watch?v=DoN7bkdQBXU)
 
-<br/>
+----
 
 * 웹 게시판에 javascript 를 내용으로 삽입해 놓으면 그 게시물을 사용자가 읽을 때 삽입된 스크립트가 실행되는 공격방법
 
@@ -205,7 +199,7 @@ aws 사용법에 대해 간략히 정리한다.
 
 * [웹 해킹 강좌 ⑩ - CSRF(Cross Site Request Forgery) 공격 기법 (Web Hacking Tutorial #10) @ youtube](https://www.youtube.com/watch?v=nzoUgKPwn_A)
 
-<br/>
+----
 
 * 특정 사용자의 세션을 탈취하는 데에는 실패하였지만 스크립팅 공격이 통할 때 사용할 수 있는 해킹 기법. 피해자가 스크립트를 보는 것과 동시에 자기도 모르게 특정한 사이트에 어떠한 요청(Request) 데이터를 보낸다.
 
@@ -255,7 +249,7 @@ routing prefix 는 `198.51.100.0/24` 와 같이 CIDR (Classless Inter-Domain Rou
 
 ## Private Network
 
-Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineering Task Force) 는 Private IP Address 를 위해 다음과 같은 IPv4 주소를 사용하도록 [RFC1918](https://tools.ietf.org/html/rfc1918) 라는 표준으로 IANA ( Internet Assigned Numbers Authority) 를 지도했다.
+Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineering Task Force) 는 Private IP Address 를 위해 다음과 같은 IPv4 주소를 사용하도록 [RFC1918](https://tools.ietf.org/html/rfc1918) 라는 표준으로 IANA (Internet Assigned Numbers Authority) 를 지도했다.
 
 | RFC 1918 name | IP address range | Numger of addresses | Largest CIDR block (subnet mask) | Host ID size | Mask bits | Classful description | 
 |--|--|--|--|--|--|--|
@@ -270,6 +264,9 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
 ## VPN (Virtual Private Network)
 
 * [가상 사설망](https://namu.wiki/w/%EA%B0%80%EC%83%81%20%EC%82%AC%EC%84%A4%EB%A7%9D)
+
+----
+
 * 물리 적으로 여러 곳에 퍼져있는 컴퓨터들을 인터넷 네트워크와 암호화 기술을 이용하여 하나의 네트워크로 구성하는 것
 
 ## VPC (Virtual Private Cloud)
@@ -277,9 +274,9 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
 * [Amazon VPC란 무엇인가? @ aws](https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/what-is-amazon-vpc.html)
 * [[AWS] 가장쉽게 VPC 개념잡기](https://medium.com/harrythegreat/aws-%EA%B0%80%EC%9E%A5%EC%89%BD%EA%B2%8C-vpc-%EA%B0%9C%EB%85%90%EC%9E%A1%EA%B8%B0-71eef95a7098)
 
-<br/>
+----
 
-* AWS 외부와는 격리된 가상의 사설 클라우드이다. 2011년 8월에 도입되었다. 
+* AWS 외부와는 격리된 가상의 사설 클라우드이다. 2011 년 8 월에 도입되었다. 
 * VPC 를 하나 만들기 위해서는 다음과 같은 것들이 필요하다.
   * n 개의 subnet
   * subnet 끼리 통신을 위해 subnet 별 routing table
@@ -313,7 +310,7 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
   * 하이퍼바이저는 가상화를 관리하는 소프트웨어이다. VMM (Virtual Machine Monitor) 이라고도 한다. Type 1 (native or bare-metal), Type 2 (hosted) 와 같이 두가지 종류가 있다. 
   * Type 1 Hypervisor
     * H/W 위에 hypervisor 가 바로 설치된다. 
-    * Xen, Citrix의 XenServer, VMware 의 ESX Server, L4 마이크로커널, TRANGO, IBM의 POWER 하이퍼바이저(PR/SM), 마이크로소프트의 하이퍼-V, 패러럴서버, 썬의 로지컬 도메인 하이퍼바이저 가 해당한다.
+    * Xen, Citrix 의 XenServer, VMware 의 ESX Server, L4 마이크로커널, TRANGO, IBM 의 POWER 하이퍼바이저(PR/SM), 마이크로소프트의 하이퍼-V, 패러럴서버, 썬의 로지컬 도메인 하이퍼바이저 가 해당한다.
     * Xen 의 경우 Guest OS 를 domain 이라고 부른다. 특히 dom0 는 다른 Guest OS 를 컨트롤하는 특별한 domain 이다. 다른 Guest OS 는 domUs 라고 부른다.
     * Xen 의 경우 Type 1 Hypervisor 는 다시 PV (ParaVirtualization) 와 HVM (Hardware Virtualization Machine) 을 지원한다. HVM 은 Full Virtualization 이라고도 한다. 아마 다른 Type 1 Hypervisor 마찬가지 아닐까???
     * **PV (ParaVirtualization)**
@@ -323,7 +320,7 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
     * xen 은 PV 와 HVM 을 둘다 지원하기 때문에 성능을 개선하기 위해 둘을 다양하게 섞어서 사용할 수 있다. 예를 들어,  HVM with PV drivers, PVHVM (Paravirtualization on HVM), PVH 등이 가능하다.
   * Type 2 Hypervisor
     * H/W 위에 Host O/S 가 설치되고 Host O/S 위에 hypervisor 가 설치된다. 
-    * VMware Server, VMware Workstation, VMware Fusion, QEMU, 마이크로소프트의 버추얼 PC 와 버추얼 서버, Oracle(SUN)의 버추얼박스, SWsoft의 Parallels Workstation 과 Parallels Desktop 이 해당한다.
+    * VMware Server, VMware Workstation, VMware Fusion, QEMU, 마이크로소프트의 버추얼 PC 와 버추얼 서버, Oracle(SUN)의 버추얼박스, SWsoft 의 Parallels Workstation 과 Parallels Desktop 이 해당한다.
 * Container Virtualization
   * 하드웨어에 Host O/S 를 설치하고 Host O/S 에 논리적인 영역 (컨테이너) 을 만들고 애플리케이션과 라이브러리등을 컨테이너 안에 넣어 가상화를 제공하는 것이다.
   * OpenVZ, LSC, Lunix vServer, FreeBSD Fail, Solaris Zones, Docker 등이 해당한다. 
@@ -332,7 +329,7 @@ Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineeri
 
 * [DevOps is a culture, not a role!](https://medium.com/@neonrocket/devops-is-a-culture-not-a-role-be1bed149b0)
 
-<br/>
+----
 
 개발팀과 운영팀이 서로 소통이 원활히 이루어질 수 있도록 하는 것을 의미한다.
 
@@ -354,11 +351,11 @@ CDN (Content Delivery Netowrk) 을 이루는 캐시 서버이다. AWS Cloud Fron
 
 * [CAP Theorem @ medium](https://medium.com/system-design-blog/cap-theorem-1455ce5fc0a0)
 
-<br/>
+----
 
 ![](img/1_rxTP-_STj-QRDt1X9fdVlA.jpg)
 
-Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availability, Partition tolerance 중 3 가지 모두 만족할 수 없다. 2 가지만을 만족 할 수 있다.
+Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availability, Partition tolerance 중 3 가지 모두 만족할 수 없다. 2 가지만을 선택해야 한다.
 
 * Consistency
   * 모든 클라이언트는 같은 데이터를 읽는다.
@@ -371,7 +368,7 @@ Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availa
 
 * [CAP Theorem, 오해와 진실](http://eincs.com/2013/07/misleading-and-truth-of-cap-theorem/)
 
-<br/>
+----
 
 ![](img/truth-of-cap-theorem-pacelc.jpg)
 
@@ -386,7 +383,7 @@ Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availa
 
 * [1) Rest API란? @ edwith](https://www.edwith.org/boostcourse-web/lecture/16740/)
 
-<br/>
+----
 
 2000 년도에 로이 필딩 (Roy Fielding) 의 박사학위 논문에서 최초로 소개되었다. REST 형식의 API 를 말한다.
 
@@ -422,9 +419,9 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 * [하둡(Hadoop) 소개 및 기본 구성요소 설명 @ opentutorials](https://opentutorials.org/module/2926/17055)
 * [hadoop @ TIL](/hadoop/README.md)
 
-<br/>
+----
 
-대용량 데이터를 분산 처리할 수 있는 자바 기반의 오픈 소스 프레임워크이다. 구글이 논문으로 발표한 GFS(Google File System)과 맵리듀스(MapReduce)를 2005년 더그커팅이 구현한 구현체이다.
+대용량 데이터를 분산 처리할 수 있는 자바 기반의 오픈 소스 프레임워크이다. 구글이 논문으로 발표한 GFS(Google File System)과 맵리듀스(MapReduce) 를 2005년 더그커팅이 제작한 구현체이다.
 
 ## HDFS (Hadoop Distributed FileSystem)
 
