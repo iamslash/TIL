@@ -50,6 +50,18 @@ unix 계열 os는 모두 해당된다. linux와 함께 [bash](/bash/),
 
 ----
 
+```bash
+ > chmod 4644 setuidfile.txt 
+ > chmod 2644 setgidfile.txt 
+ > chmod 1644 stickyfile.txt 
+
+ > ls -l
+
+-rw-r-Sr--  1 iamslash  staff     0  8 10 21:16 setgidfile.txt
+-rwSr--r--  1 iamslash  staff     0  8 10 21:16 setuidfile.txt
+-rw-r--r-T  1 iamslash  staff     0  8 10 21:16 stickyfile.txt
+```
+
 `chmod`의 첫번째 인자가 mode이고 8진법으로 4자리이다.
 
 ```bash
