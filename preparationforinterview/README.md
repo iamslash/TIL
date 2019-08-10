@@ -110,8 +110,9 @@
   * [AWS](/aws/README.md)
   * [apache](/apache/README.md), [tomcat](/tomcat/README.md), [nginx](/nginx/README.md), [caddy](/caddy/README.md)
   * [mysql](/mysql/README.md), 
-  * [mongodb](/mongodb/README.md), [cassandra](), [riak](), [hbase](), [neo4j](), [etcd](), [couchbase]()
-  * [redis](/redis/README.md), [memcached](/memcached/README.md), [zookeeper](), [kafka](/kafka/README.md), [zeromq]()
+  * [mongodb](/mongodb/README.md), [cassandra](/cassandra/README.md), [riak](/riak/README.md), [hbase](/hbase/README.md), neo4j, [etcd](/etcd/README.md), [couchbase](/couchbase/README.md)
+  * [redis](/redis/README.md), [memcached](/memcached/README.md), zookeeper
+  * [kafka](/kafka/README.md), zeromq, ActiveMQ, RabbitMQ, [Mosquitto](/mosquitto/README.md)
   * [prometheus](/prometheus/README.md)
   * [graylog](/graylog/README.md)
   * [hadoop](/hadoop/README.md)

@@ -1,18 +1,18 @@
-# intro
+# Abstract
 
-- 머신의 cpu, rem, diskio 등등의 상태를 모니터링하는 프로그램.
-- graphite, influxDB, OpenTSDB, Nagios, Sensu등과 비슷하다.
-- go로 제작되었다. time series db, web service 등등 all in one이다.
-- sql을 사용하지 않고 전용 쿼리를 이용한다.
-- grafana를 활용하면 여러 prometheus instance들의 상태를 하나의 대쉬보드로 모니터링 할 수 있다.
+서버를 모니터링하는 시스템이다. 모니터링을 원하는 서버에 Exporter 를 설치한다. Prometheus 는 여러 Exporter 들에게 접속하여 데이터를 얻어온다. 즉 pulling 한다. 알림을 받을 규칙을 만들어서 Alert Manager 로 보내면 Alert Manager 가 규칙에 따라 알림을 보낸다.
 
-# install
+# Materials
+
+* [오픈소스 모니터링 시스템 Prometheus #1](https://blog.outsider.ne.kr/1254)
+
+# Install on osx
 
 ```bash
 brew install prometheus
 ```
 
-# usage
+# Basic usages
 
 - run prometheus
 
@@ -116,13 +116,3 @@ receivers:
     auth_identity: "GMAIL_ACCOUNT"
     auth_password: "GMAIL_AUTH_TOKEN"
 ```
-
-# conclusion
-
-- 특정 머신에 prometheus를 띄우고 모니터링을 원하는 머신마다 exporter를 실행하자. prometheus를 웹으로 접속하여 모니터링하자.
-- application server에 exporter기능을 추가하자. exporter port가 필요하다.
-
-# reference
-
-- [Monitoring linux stats with Prometheus.io](https://resin.io/blog/monitoring-linux-stats-with-prometheus-io/)
-- [Fleet-wide Machine Metrics Monitoring in 20mins](https://resin.io/blog/prometheusv2/)

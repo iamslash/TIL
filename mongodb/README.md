@@ -1,6 +1,6 @@
-# intro
+# Abstract
 
-- 3.4를 기준으로 정리한다. 메뉴얼이 정말 잘 되어 있다. 서비스에 이요한다면 꼭 필독하자.
+- 3.4를 기준으로 정리한다. 메뉴얼이 정말 잘 되어 있다. 서비스에 이용한다면 꼭 필독하자.
 - NoSql db중 document type의 db이다.
 - single-document transaction은 지원하지만 multi-document
   transaction은 지원하지 않는다. two phase commit을 이용해
@@ -13,7 +13,7 @@
 # install
 
 - brew install mongodb
-- 
+
 
 # terms and definition
 
