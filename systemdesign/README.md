@@ -184,7 +184,15 @@ Notes
 
 ## Reverse proxy
 
-* Load balancer vs reverse proxy
+* [Apache2 설치 (Ubuntu 16.04)](https://lng1982.tistory.com/288)
+  
+-----
+
+![](img/foward_reverse_proxy.png)
+
+forward proxy 는 HTTP req 인터넷에 전달한다. reverse proxy 는 HTTP 를 요청을 인터넷으로부터 HTTP req 를 받아서 back-end 서버들에게 전달한다. L4, L7 스위치도 reverse proxy 라고 할 수 있다. reverse 라는 말은 왜 사용되었을까???
+
+reverse proxy 는 load balaning 혹은 single point failure 를 위해 사용된다.
 
 ## Application layer
 
