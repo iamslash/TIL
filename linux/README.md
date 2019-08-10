@@ -46,6 +46,10 @@ unix 계열 os는 모두 해당된다. linux와 함께 [bash](/bash/),
 
 ## mode
 
+* [참고](https://eunguru.tistory.com/115)
+
+----
+
 `chmod`의 첫번째 인자가 mode이고 8진법으로 4자리이다.
 
 ```bash
