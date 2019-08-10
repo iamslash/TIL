@@ -53,4 +53,163 @@ func Run() {
 > sudo ufw status
 
 # Configuring Caddy
+> sudo touch /var/www/index.html
+> sudo nano /var/www/index.html
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello from Caddy!</title>
+  </head>
+  <body>
+    <h1 style="font-family: sans-serif">This page is being served via Caddy</h1>
+  </body>
+</html>
+
+> sudo nano /etc/caddy/Caddyfile
+
+:80 {
+    root /var/www
+    gzip {
+        ext .html .htm .php
+        level 6
+    }
+}
+
+> sudo systemctl start caddy
+> sudo systemctl status caddy
+> sudo systemctl stop caddy
+
+# Using Plugins
+
+> cd $GOPATH/src/github.com/mholt/caddy
+> nano caddy/caddymain/run.go
+
+. . .
+import (
+    "errors"
+    "flag"
+    "fmt"
+    "io/ioutil"
+    "log"
+    "os"
+    "runtime"
+    "strconv"
+    "strings"
+
+    "gopkg.in/natefinch/lumberjack.v2"
+
+    "github.com/xenolf/lego/acmev2"
+
+    "github.com/mholt/caddy"
+    // plug in the HTTP server type
+    _ "github.com/mholt/caddy/caddyhttp"
+
+    "github.com/mholt/caddy/caddytls"
+    // This is where other plugins get plugged in (imported)
+)
+. . .
+
+> nano caddy/caddymain/run.go
+
+. . .
+import (
+    . . .
+    "github.com/mholt/caddy/caddytls"
+    // This is where other plugins get plugged in (imported)
+
+    _ "github.com/hacdias/caddy-minify"
+)
+
+> git config --global user.email "sammy@example.com"
+> git config --global user.name "Sammy"
+> git add -A .
+> git commit -m "Added minify plugin"
+> go get ./...
+> go install github.com/mholt/caddy/caddy
+> sudo cp $GOPATH/bin/caddy /usr/local/bin/
+> sudo chown root:root /usr/local/bin/caddy
+> sudo chmod 755 /usr/local/bin/caddy
+> sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/caddy
+> sudo nano /etc/caddy/Caddyfile
+
+:80 {
+    root /var/www
+    gzip
+    minify
+}
+
+> sudo systemctl start caddy
+
+# curl http://example.com
+```
+
+```bash
+
+# Enabling Automatic TLS with Let's Encrypt
+
+> nano $GOPATH/src/github.com/mholt/caddy/caddy/caddymain/run.go
+ 
+. . .
+import (
+    . . .
+    "github.com/mholt/caddy/caddytls"
+    // This is where other plugins get plugged in (imported)
+
+    _ "github.com/hacdias/caddy-minify"
+    _ "github.com/caddyserver/dnsproviders/digitalocean"
+)
+
+> cd $GOPATH/src/github.com/mholt/caddy
+> git add -A .
+> git commit -m "Add DigitalOcean DNS provider"
+> go get ./...
+> go install github.com/mholt/caddy/caddy
+> sudo systemctl stop caddy
+> sudo cp $GOPATH/bin/caddy /usr/local/bin/
+> sudo chown root:root /usr/local/bin/caddy
+> sudo chmod 755 /usr/local/bin/caddy
+> sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/caddy
+> sudo nano /etc/systemd/system/caddy.service
+
+[Service]
+Restart=on-abnormal
+
+; User and group the process will run as.
+User=www-data
+Group=www-data
+
+; Letsencrypt-issued certificates will be written to this directory.
+Environment=CADDYPATH=/etc/ssl/caddy DO_AUTH_TOKEN=your_token_here
+
+> sudo systemctl daemon-reload
+> sudo systemctl status caddy
+> sudo nano /etc/caddy/Caddyfile
+
+example.com {
+    root /var/www
+    gzip
+    minify
+    tls {
+        dns digitalocean
+    }
+}
+
+> sudo systemctl start caddy
+> sudo systemctl enable caddy
+
+# Updating Your Caddy Installation
+
+> cd $GOPATH/src/github.com/mholt/caddy
+> git checkout adding_plugins
+> git fetch origin
+> git tag
+> git merge adding_plugins v0.10.13
+> go install github.com/mholt/caddy/caddy
+> sudo systemctl stop caddy
+> sudo cp $GOPATH/bin/caddy /usr/local/bin/
+> sudo chown root:root /usr/local/bin/caddy
+> sudo chmod 755 /usr/local/bin/caddy
+> sudo setcap 'cap_net_bind_service=+ep' /usr/local/bin/caddy
+> sudo systemctl start caddy
 ```
