@@ -14,7 +14,7 @@
   - [CSRF (Cross Site Request Forgery)](#csrf-cross-site-request-forgery)
   - [XSS vs CSRF](#xss-vs-csrf)
   - [CORS (Cross Origin Resource Sharing)](#cors-cross-origin-resource-sharing)
-  - [OSI 7 layer](#osi-7-layer)
+  - [OSI (Open System Interconnection) Reference Model](#osi-open-system-interconnection-reference-model)
   - [TCP/IP Protocol Suite](#tcpip-protocol-suite)
   - [Subnet](#subnet)
   - [CIDR (Classless Inter-Domain Routing)](#cidr-classless-inter-domain-routing)
@@ -205,7 +205,7 @@ aws 사용법에 대해 간략히 정리한다.
 
 ## XSS vs CSRF
 
-* XSS 는 공격대상이 Client 이고 CRSF 는 공격대상이 Server 이다.
+* XSS 는 공격대상이 Client 이고 CSRF 는 공격대상이 Server 이다.
 * XSS 는 사이트변조나 백도어를 통해 Client 를 공격한다.
 * CSRF 는 요청을 위조하여 사용자의 권한을 이용해 서버를 공격한다.
 
@@ -213,7 +213,7 @@ aws 사용법에 대해 간략히 정리한다.
 
 XMLHttpRequest 가 cross-domain 을 요청할 수 있도록하는 방법이다. request 를 수신하는 Web Server 에서 설정해야 한다.
 
-## OSI 7 layer
+## OSI (Open System Interconnection) Reference Model
 
 ![](/network/Osi-model-7-layers.png))
 
@@ -225,7 +225,7 @@ ISO (International Standard Organization) 에서 개발한 네트워크 모델�
 
 ![](img/tcpAndOSI.png)
 
-<br/>
+----
 
 1960 년대 말 DARPA (Defense Advanced Research Projects Agency) 가 수행한 연구개발의 산출물로 부터 탄생했다. DARPA 가 개발한 ARPANET 는 NCP (Network Control Program) 라는 프로토콜을 사용했다. 1983 년 TCP/IP 가 이를 대체하며 지금의 인터넷으로 진화했다.
 
@@ -251,15 +251,11 @@ routing prefix 는 `198.51.100.0/24` 와 같이 CIDR (Classless Inter-Domain Rou
 
 Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineering Task Force) 는 Private IP Address 를 위해 다음과 같은 IPv4 주소를 사용하도록 [RFC1918](https://tools.ietf.org/html/rfc1918) 라는 표준으로 IANA (Internet Assigned Numbers Authority) 를 지도했다.
 
-| RFC 1918 name | IP address range | Numger of addresses | Largest CIDR block (subnet mask) | Host ID size | Mask bits | Classful description | 
+| RFC 1918 name | IP address range | Number of addresses | Largest CIDR block (subnet mask) | Host ID size | Mask bits | Classful description | 
 |--|--|--|--|--|--|--|
 | 24-bit block | 10.0.0.0 - 10.255.255.255 | 16,777,216 | 10.0.0.0/8 (255.0.0.0) | 24 bits | 8 bits | single class A network |
 | 20-bit block | 172.16.0.0 – 172.31.255.255 | 1,048,576 | 172.16.0.0/12 (255.240.0.0) | 20 bits | 12 bits | 16 contiguous class B networks |
 | 16-bit block | 192.168.0.0 – 192.168.255.255 | 65,536 | 192.168.0.0/16 (255.255.0.0) | 16 bits | 16 bits | 256 contiguous class C networks |
-
-* 24-bit block 은 `10.x.x.x, 24 / 8 bits` 으로 기억하자.
-* 20-bit block 은 `172.x.x.x, 20 / 12 bits` 으로 기억하자.
-* 16-bit block 은 `192.168.x.x, 16 / 16 bits` 으로 기억하자.
 
 ## VPN (Virtual Private Network)
 
