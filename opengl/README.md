@@ -21,7 +21,7 @@
   - [HDR (High Dynamic Range)](#hdr-high-dynamic-range)
   - [Bloom](#bloom)
   - [Deferred Shading](#deferred-shading)
-  - [SSAO (Screen Sapce Ambient Optimization)](#ssao-screen-sapce-ambient-optimization)
+  - [SSAO (Screen Sapce Ambient Occlusion)](#ssao-screen-sapce-ambient-occlusion)
   - [PBR (Physicall Based Rendering)](#pbr-physicall-based-rendering)
 
 -----
@@ -1839,23 +1839,140 @@ void main()
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 ```
 
-## SSAO (Screen Sapce Ambient Optimization)
+## SSAO (Screen Sapce Ambient Occlusion)
 
-* [ @ learnopengl]()
-* [ @ github]()
+* [SSAO @ learnopengl](https://learnopengl.com/Advanced-Lighting/SSAO)
+* [9.ssao @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/5.advanced_lighting/9.ssao)
 
 ----
+
+ambient light 에 의해 음영이 드리워진 것을 표현하는 기법이다.
 
 TODO
 
 ## PBR (Physicall Based Rendering)
 
 
-* [ @ learnopengl]()
-* [ @ github]()
+* [Theory @ learnopengl](https://learnopengl.com/PBR/Theory)
+* [6.pbr/1.2.lighting_textured @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/6.pbr/1.2.lighting_textured)
 * [pbr @ TIL](/pbr/README.md)
 
 ----
 
-TODO
+빛을 현실세계에 가깝게 모델링한 것이 다음과 같은 rendering equation 이다. [참고](https://en.wikipedia.org/wiki/Rendering_equation)
+
+![](renderingeq.svg)
+
+```
+L_{O} : 위치 x 에서 view vector 가 w_{o}, 파장이 λ, 시간이 t 일 때 radiance
+L_{e} : 위치 x 에서 view vector 가 w_{o}, 파장이 λ, 시간이 t 일 때 emitted radiance
+f_{r} : BRDF
+L_{i} : 위치 x 에서 light vector 가 w_{i}, 파장이 λ, 시간이 t 일 때 radiance
+dot(w_{i}, n) : w_{i} 와 n 의 각도가 0 에 가까울 수록 L_{0} 은 커진다. weakening factor 라고함
+```
+
+적분 기호는 빛의 개수만큼 더한다는 의미이다.
+다음은 앞서 언급한 rendering equation 의 prototype code 이다.
+
+```c
+int steps = 100;
+float sum = 0.0f;
+vec3 P    = ...;
+vec3 Wo   = ...;
+vec3 N    = ...;
+float dW  = 1.0f / steps;
+for(int i = 0; i < steps; ++i) 
+{
+    vec3 Wi = getNextIncomingLightDir(i);
+    sum += Fr(P, Wi, Wo) * L(P, Wi) * dot(N, Wi) * dW;
+}
+```
+
+위와 같은 rendering equation 을 구현할 수 있는 방법은 여러가지이다. 
+이곳에서는 다음과 같은 `Cook-Torrance BRDF` 를 이용하여 구현한다. 
+
+![](BRDF_eq_0.png)
+
+![](BRDF_eq_1.png)
+
+![](BRDF_eq_2.png)
+
+`BRDF` 는 다시 `NDF(Normal distribution function), G(Geometry function), F(Fresnel equation)` 으로 나누어진다.
+
+다음은 `Trowbridge-Reitz GGX` 라고 알려진 NDF 수식이다.
+
+![](NDF_eq_0.png)
+
+다음은 `Trowbridge-Reitz GGX` 의 구현이다.
+
+```c
+float DistributionGGX(vec3 N, vec3 H, float a)
+{
+    float a2     = a*a;
+    float NdotH  = max(dot(N, H), 0.0);
+    float NdotH2 = NdotH*NdotH;
+	
+    float nom    = a2;
+    float denom  = (NdotH2 * (a2 - 1.0) + 1.0);
+    denom        = PI * denom * denom;
+	
+    return nom / denom;
+}
+```
+
+다음은 `Schlick-GGX` 라고 알려진 `Geometry function` 수식이다.
+
+![](G_eq_0.png)
+
+![](G_eq_1.png)
+
+![](G_eq_2.png)
+
+![](G_eq_3.png)
+
+다음은 `Schlick-GGX` 의 구현이다.
+
+```c
+float GeometrySchlickGGX(float NdotV, float k)
+{
+    float nom   = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+	
+    return nom / denom;
+}
   
+float GeometrySmith(vec3 N, vec3 V, vec3 L, float k)
+{
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+    float ggx1 = GeometrySchlickGGX(NdotV, k);
+    float ggx2 = GeometrySchlickGGX(NdotL, k);
+	
+    return ggx1 * ggx2;
+}
+```
+
+다음은 `Fresnel-Schlick` 라고 알려진 `Fresnel equation` 수식이다.
+
+![](F_eq_0.png)
+
+다음은 `` 의 구현이다.
+
+```c
+vec3 F0 = vec3(0.04);
+F0      = mix(F0, surfaceColor.rgb, metalness);
+
+vec3 fresnelSchlick(float cosTheta, vec3 F0)
+{
+    return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
+}
+```
+
+앞서 언급한 것들을 조합한 `Cook-Torrance reflectance equation` 은
+다음과 같다.
+
+![](cook-torrance_reflectance_eq_0.png)
+
+그러나 `k_{s}` 는 이미 `F` 에 포함되므로 생략하고 다음 수식을 사용한다.
+
+![](cook-torrance_reflectance_eq_1.png)
