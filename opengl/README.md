@@ -1176,13 +1176,19 @@ void main()
 
 ----
 
-normal mapping 과 비슷한 하지만 굴곡을 더욱 정밀하게 표현할 수 있다.
+굴곡을 polygon 없이 표현하는 것은 normal mapping 과 비슷하다. 굴곡의 깊이 정보를 depth map 에 저장하고 normal map 과 함께 표현하여 더욱 정밀하게 굴곡을 표현하는 방법이다.
 
-다음은 parallax Mapping 의 구현 과정이다.
+특정 fragment 는 굴곡을 표현하기 위해 normal map 의 texel 이 필요하다. 이때 depth map 의 깊이값을 이용하여 normal map 의 texel 위치를 적절히 조정한다.
 
-* normal mapping 과 비슷하게 TBN 행렬을 만들고 tangent space coordinate system 을 기준으로 light, view, position vector 를 fragment shader 에게 넘겨준다.
+다음은 옳바른 normal map 의 texel 의 위치를 구하는 함수이다.
 
-TODO
+```cpp
+vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir)
+{ 
+    float height =  texture(depthMap, texCoords).r;     
+    return texCoords - viewDir.xy * (height * heightScale);        
+}
+```
 
 다음은 vertex shader 이다.
 
