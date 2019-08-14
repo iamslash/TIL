@@ -1848,10 +1848,215 @@ void main()
 
 ambient light 에 의해 음영이 드리워진 것을 표현하는 기법이다.
 
-TODO
+![](ssao_crysis_circle.png)
+
+위의 그림과 같이 fragment 한개 마다 샘플링을 수행한다. 예를 들어 주변의 64 개 점을 샘플링하고 fragment 와 depth value 를 비교한다. depth value 가 fragment 보다 큰 것이 많을 수록 어둡게 표현한다.
+
+![](ssao_overview.png)
+
+SSAO 는 다음과 같이 구현한다.
+
+* G-buffer FBO 를 생성하고 position, normal, albedo 를 저장할 TBO 3 개를 attatch 하고 rendering 한다.
+* SSAO FBO 를 생성하고 ssao TBO 를 attatch 한다. 그리고 앞서 생성한 position, normal, labedo TBO 를 입력으로 하여 sampling 을 수행한다. 마지막으로 ssao TBO 에 occlusion color 를 rendering 한다.
+* SSAO blur FBO 를 생성하고 ssao blur TBO 를 attatch 한다. ssao TBO 를 입력으로 하여 blur 처리를 하고 ssao blur TBO 에 rendering 한다.
+* position, normal, albedo, ssao blur TBO 를 입력으로 하여 default FBO 에 rednering 한다.
+
+다음은 G-buffer FBO 를 생성하고 position, normal, albedo TBO 를 attatch 하는 구현이다.
+
+```cpp
+    // configure g-buffer framebuffer
+    // ------------------------------
+    unsigned int gBuffer;
+    glGenFramebuffers(1, &gBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+    unsigned int gPosition, gNormal, gAlbedo;
+    // position color buffer
+    glGenTextures(1, &gPosition);
+    glBindTexture(GL_TEXTURE_2D, gPosition);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+    // normal color buffer
+    glGenTextures(1, &gNormal);
+    glBindTexture(GL_TEXTURE_2D, gNormal);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
+    // color + specular color buffer
+    glGenTextures(1, &gAlbedo);
+    glBindTexture(GL_TEXTURE_2D, gAlbedo);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedo, 0);
+    // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
+    unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    glDrawBuffers(3, attachments);
+    // create and attach depth buffer (renderbuffer)
+    unsigned int rboDepth;
+    glGenRenderbuffers(1, &rboDepth);
+    glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+    // finally check if framebuffer is complete
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "Framebuffer not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+```
+
+다음은 SSAO FBO 를 생성하고 SSAO TBO 를 attatch 하는 구현이다.
+
+```cpp
+    // also create framebuffer to hold SSAO processing stage 
+    // -----------------------------------------------------
+    unsigned int ssaoFBO, ssaoBlurFBO;
+    glGenFramebuffers(1, &ssaoFBO);  glGenFramebuffers(1, &ssaoBlurFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+    unsigned int ssaoColorBuffer, ssaoColorBufferBlur;
+    // SSAO color buffer
+    glGenTextures(1, &ssaoColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "SSAO Framebuffer not complete!" << std::endl;
+    // and blur stage
+    glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+    glGenTextures(1, &ssaoColorBufferBlur);
+    glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBufferBlur, 0);
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "SSAO Blur Framebuffer not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+```
+
+다음은 sampling 에 이용할 kernel 을 생성하는 구현이다.
+
+```cpp
+    // generate sample kernel
+    // ----------------------
+    std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0); // generates random floats between 0.0 and 1.0
+    std::default_random_engine generator;
+    std::vector<glm::vec3> ssaoKernel;
+    for (unsigned int i = 0; i < 64; ++i)
+    {
+        glm::vec3 sample(randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, randomFloats(generator));
+        sample = glm::normalize(sample);
+        sample *= randomFloats(generator);
+        float scale = float(i) / 64.0;
+
+        // scale samples s.t. they're more aligned to center of kernel
+        scale = lerp(0.1f, 1.0f, scale * scale);
+        sample *= scale;
+        ssaoKernel.push_back(sample);
+    }
+```
+
+다음은 rendering-loop 에서 G-buffer FBO 에 attatch 된 position, normal, albedo TBO 에 렌더링하는 구현이다.
+
+```cpp
+        // 1. geometry pass: render scene's geometry/color data into gbuffer
+        // -----------------------------------------------------------------
+        glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 50.0f);
+            glm::mat4 view = camera.GetViewMatrix();
+            glm::mat4 model = glm::mat4(1.0f);
+            shaderGeometryPass.use();
+            shaderGeometryPass.setMat4("projection", projection);
+            shaderGeometryPass.setMat4("view", view);
+            // room cube
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(0.0, 7.0f, 0.0f));
+            model = glm::scale(model, glm::vec3(7.5f, 7.5f, 7.5f));
+            shaderGeometryPass.setMat4("model", model);
+            shaderGeometryPass.setInt("invertedNormals", 1); // invert normals as we're inside the cube
+            renderCube();
+            shaderGeometryPass.setInt("invertedNormals", 0); 
+            // nanosuit model on the floor
+            model = glm::mat4(1.0f);
+            model = glm::translate(model, glm::vec3(0.0f, 0.0f, 5.0));
+            model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(1.0, 0.0, 0.0));
+            model = glm::scale(model, glm::vec3(0.5f));
+            shaderGeometryPass.setMat4("model", model);
+            nanosuit.Draw(shaderGeometryPass);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+```
+
+다음은 SSAO FBO 에 attatch 된 SSAO TBO 에 렌더링하는 구현이다.
+
+```cpp
+        // 2. generate SSAO texture
+        // ------------------------
+        glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+            glClear(GL_COLOR_BUFFER_BIT);
+            shaderSSAO.use();
+            // Send kernel + rotation 
+            for (unsigned int i = 0; i < 64; ++i)
+                shaderSSAO.setVec3("samples[" + std::to_string(i) + "]", ssaoKernel[i]);
+            shaderSSAO.setMat4("projection", projection);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, gPosition);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, gNormal);
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, noiseTexture);
+            renderQuad();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+```
+
+다음은 SSAO blur FBO 에 attatch 된 SSAO blur TBO 에 렌더링하는 구현이다.
+
+```cpp
+        // 3. blur SSAO texture to remove noise
+        // ------------------------------------
+        glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+            glClear(GL_COLOR_BUFFER_BIT);
+            shaderSSAOBlur.use();
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+            renderQuad();
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+```
+
+다음은 default FBO 에 position, normal, albedo, ssao blur TBO 를 입력으로 하여 렌더링하는 구현이다.
+
+```cpp
+        // 4. lighting pass: traditional deferred Blinn-Phong lighting with added screen-space ambient occlusion
+        // -----------------------------------------------------------------------------------------------------
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        shaderLightingPass.use();
+        // send light relevant uniforms
+        glm::vec3 lightPosView = glm::vec3(camera.GetViewMatrix() * glm::vec4(lightPos, 1.0));
+        shaderLightingPass.setVec3("light.Position", lightPosView);
+        shaderLightingPass.setVec3("light.Color", lightColor);
+        // Update attenuation parameters
+        const float constant  = 1.0; // note that we don't send this to the shader, we assume it is always 1.0 (in our case)
+        const float linear    = 0.09;
+        const float quadratic = 0.032;
+        shaderLightingPass.setFloat("light.Linear", linear);
+        shaderLightingPass.setFloat("light.Quadratic", quadratic);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, gPosition);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, gNormal);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, gAlbedo);
+        glActiveTexture(GL_TEXTURE3); // add extra SSAO texture to lighting pass
+        glBindTexture(GL_TEXTURE_2D, ssaoColorBufferBlur);
+        renderQuad();
+```
 
 ## PBR (Physicall Based Rendering)
-
 
 * [Theory @ learnopengl](https://learnopengl.com/PBR/Theory)
 * [6.pbr/1.2.lighting_textured @ github](https://github.com/JoeyDeVries/LearnOpenGL/tree/master/src/6.pbr/1.2.lighting_textured)
