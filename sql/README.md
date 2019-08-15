@@ -2,6 +2,7 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Usage](#usage)
+  - [Select statement order](#select-statement-order)
   - [Select](#select)
   - [Select Distinct](#select-distinct)
   - [Where](#where)
@@ -87,6 +88,28 @@
 * [sql @ w3schools](https://www.w3schools.com/sql/default.asp)
 
 # Usage
+
+## Select statement order
+
+* [](https://j2yes.tistory.com/entry/select%EB%AC%B8-%EC%88%9C%EC%84%9C%EC%99%80-having%EC%A0%88)
+
+----
+
+* order of select definition
+  * SELECT
+  * FROM
+  * WHERE
+  * GROUP BY
+  * HAVING
+  * ORDER BY
+
+* order of select execution
+  * FROM
+  * WHERE
+  * GROUP BY
+  * HAVING
+  * SELECT
+  * ORDER BY
 
 ## Select
 
