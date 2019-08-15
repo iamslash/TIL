@@ -91,7 +91,7 @@
 
 ## Select statement order
 
-* [](https://j2yes.tistory.com/entry/select%EB%AC%B8-%EC%88%9C%EC%84%9C%EC%99%80-having%EC%A0%88)
+* [SELECT 실행 순서](https://j2yes.tistory.com/entry/select%EB%AC%B8-%EC%88%9C%EC%84%9C%EC%99%80-having%EC%A0%88)
 
 ----
 
@@ -2095,7 +2095,8 @@ mysql> SELECT VERSION();
 
 # Problems
 
-* [database problems @ leecode](https://leetcode.com/problemset/database/)
+* `WHERE IN`
+  * [Highest Grade For Each Student @ learntocode](https://github.com/iamslash/learntocode/tree/master/leetcode/HighestGradeForEachStudent/a.sql)
 
 # Quiz
 
