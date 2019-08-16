@@ -5,6 +5,7 @@
   - [Select statement order](#select-statement-order)
   - [Select](#select)
   - [Select Distinct](#select-distinct)
+  - [Select subquery](#select-subquery)
   - [Where](#where)
   - [And, Or, Not](#and-or-not)
   - [Order By](#order-by)
@@ -126,6 +127,73 @@ SELECT COUNT(DISTINCT Country) FROM Customers;
 SELECT COUNT(*) AS DistinctCountries
   FROM (SELECT DISTINCT Country FROM Customers);
 SELECT COUNT(DISTINCT Country city) FROM Customers;
+```
+
+## Select subquery
+
+* [SQL / MySQL 서브쿼리](https://snowple.tistory.com/360)
+
+----
+
+* SELECT
+
+```sql
+SELECT 
+  player_name, height, (
+    SELECT
+      AVG(height)        
+    FROM
+      Player P1
+    WHERE
+      P1.team_id = P2.team_id
+  ) AS avg_height
+FROM
+  Player P2
+```
+
+* FROM
+
+```sql
+SELECT 
+  ROUND(AVG(ratio*100), 2) average_daily_percent
+FROM
+  (SELECT
+    COUNT(DISTINCT(R.post_id)) / COUNT(DISTINCT(A.post_id)) AS ratio
+  FROM
+    Actions A
+  LEFT JOIN 
+    Removals R
+  ON
+    A.post_id = R.post_id  
+  WHERE A.extra = 'spam'
+  GROUP BY A.action_date) T
+;
+```
+
+* WHERE
+
+```sql
+SELECT 
+  student_id, 
+  MIN(course_id) AS course_id, 
+  grade
+FROM 
+  Enrollments
+WHERE (student_id, grade) in
+  (
+    SELECT 
+      student_id, 
+      MAX(grade)
+    FROM 
+      Enrollements
+    GROUP BY 
+      student_id
+  )
+GROUP BY 
+  student_id
+ORDER BY 
+  student_id
+;
 ```
 
 ## Where
