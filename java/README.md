@@ -19,6 +19,8 @@
   - [Enum](#enum)
   - [Annotation](#annotation)
   - [Generics](#generics)
+  - [Concurrency](#concurrency)
+  - [What's new Java8](#whats-new-java8)
 - [Advanced Usage](#advanced-usage)
   - [jvm architecture](#jvm-architecture)
   - [jvm garbage collector](#jvm-garbage-collector)
@@ -760,6 +762,19 @@ public void interate( final Collection< ? super Integer > objects ) {
    // Some implementation here
 }
 ```
+
+## Concurrency
+
+* [Java Concurrency and Multithreading Tutorial](http://tutorials.jenkov.com/java-concurrency)
+  * Java 의 Concurrency 에 대해 기가 막히게 설명한 글
+
+----
+
+TODO
+
+## What's new Java8
+
+TODO
 
 # Advanced Usage
 
