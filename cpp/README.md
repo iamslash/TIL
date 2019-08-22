@@ -14,6 +14,7 @@
     - [cons](#cons-2)
   - [How to choose a container](#how-to-choose-a-container)
 - [Advanced Usages](#advanced-usages)
+  - [RAII (Resource Acquisition Is Initialzation)](#raii-resource-acquisition-is-initialzation)
   - [Compiler Generated Code](#compiler-generated-code)
   - [Disallow the use of compiler generated functions](#disallow-the-use-of-compiler-generated-functions)
   - [Declare a destructor virtual in polymorphic base classes](#declare-a-destructor-virtual-in-polymorphic-base-classes)
@@ -244,6 +245,43 @@ public:
 ![](img/containerchoice.png)
 
 # Advanced Usages
+
+## RAII (Resource Acquisition Is Initialzation)
+
+* [RAII는 무엇인가](https://blog.seulgi.kim/2014/01/raii.html)
+
+----
+
+resource 생성이 곧 초기화이다 라는 의미이다. 예를 들어 다음과 같이 ThreadJoiner 의 소멸자에 join 을 사용하면 ThreadJoiner 는 선언된 scope 을 벗어나면 자동으로 thread resource 가 초기화된다.
+
+```cpp
+class ThreadJoiner {
+	thread& m_th;
+public:
+	explicit ThreadJoiner(thread& t):m_th(t) {}
+	~ThreadJoiner() {
+		if(m_th.joinable()) {
+			m_th.join();
+		}
+	}
+};
+
+int main() {
+	cout << "Hollo Bo" << endl;
+	ofstream f;
+	f.open("log.txt");
+
+	Fctor fctor(f);
+	std::thread t1(fctor);
+	ThreadJoiner tj(t1);
+
+	for (int i=0; i<100; i++)
+		cout << "from main: " << i << endl;
+
+	f.close();
+	return 0;
+}
+```
 
 ## Compiler Generated Code
 
