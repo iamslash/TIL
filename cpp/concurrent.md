@@ -424,7 +424,7 @@ cv->wait(lk,
          [&] { return a == 3 || b == 4; });
 ```
 
-또한 `notify, notify_all` 을 통해 기다리고 있는 `condition_variable` 을 깨울 수 있다.
+또한 `notify, notify_all` 을 통해 기다리고 있는 `condition_variable` 을 깨워서 조건을 검사하도록 한다. 조건이 없을 수 도 있다.
 
 ```cpp
 cv->notify_one();
