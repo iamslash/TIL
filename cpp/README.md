@@ -26,6 +26,7 @@
   - [lvalue and rvalue](#lvalue-and-rvalue)
   - [ADL(Argument Dependent Lookup)](#adlargument-dependent-lookup)
   - [typename vs class in template](#typename-vs-class-in-template)
+  - [size() infinite loop](#size-infinite-loop)
 - [STL](#stl)
 - [C++11](#c11)
 - [Concurrent Programming](#concurrent-programming)
@@ -1145,6 +1146,17 @@ void method() {
   // …
 };
 
+```
+
+## size() infinite loop
+
+다음과 같은 경우 size() 의 type 이 unsigned 이므로 무한 루프에 빠진다. 
+
+```cpp
+  std::vector<int> v;
+  for (int i = 0; v.size() - 1; ++i) {
+    printf("loop\n");
+  }
 ```
 
 # STL
