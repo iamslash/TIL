@@ -655,20 +655,179 @@ type conversion 은  `implicit type conversion` 과 `explicit type conversion` �
 
 `casting` 은 `static_cast, dynamic_cast, const_cast, reinterpret_cast` 와 같이 네가지가 있다.
 
-`static_cast` 는 `implicit cast` 와 같다. 그럼 왜 `static_cast` 를 사용할까? 문법적 엄격함을 위해 사용한다. 
+`static_cast` 는 한가지 차이점을 제외하고 `implicit cast` 와 같다. `static_cast` 를 사용하면 문법적 엄격함을 표현할 수 있다. 
 
 ```cpp
 int  i = 1;
-char c = i; // implicit cast 이다.
+char c = i;  // implicit cast 
+char d = static_cast<char>(i); // static_cast 
 ```
 
-위의 코드는 implicit cast 의 예이다. 다음과 같이 `static_cast` 를 사용하면 문법적 엄격함을 보여줄 수 있다.
+`implicit, static_cast` 는 pointer 에 적용할 때 데이터타입이 같아야 한다. 예를 들어 다음과 같이 `char*` 를 `int*` 로 형변환 하면 에러가 발생한다.
 
 ```cpp
-char c = static_cast<char>(i); 
+  char c = 'A';
+  char*d = &c;
+  int* e = d;
+  int* f = static_cast<int*>(d);
+
+//   g++ -std=c++11 -o a.out a.cpp
+// a.cpp:13:8: error: cannot initialize a variable of type 'int *'
+//       with an lvalue of type 'char *'
+//   int* e = d;
+//        ^   ~
+// a.cpp:14:12: error: static_cast from 'char *' to 'int *' is not
+//       allowed
+//   int* f = static_cast<int*>(d);
+//            ^~~~~~~~~~~~~~~~~~~~
+// 2 errors generated.
 ```
 
+`static_cast` 는 `implicit cast` 와 한가지 차이점이 있다. 
+`implicit cast` 는 `is a` 관계가 성립하는 경우만 형변환이 되지만 `static_cast` 는 `is a` 관계가 성립하는 경우도 허용하고 down cast 도 허용한다. 즉, 상속관계이면 형변환을 허용한다.
 
+```cpp
+  CFoo* pFoo = new CFoo();
+  CBase* p0 = pFoo;
+  CBase* p1 = static_cast<CBase*>(pFoo);
+
+  CBase* p2 = new CFoo();
+  CFoo*  p3 = p2; // error
+  CFoo*  p4 = static_cast<CFoo*>(p2);
+```
+
+`reinterpret_cast` 는 관련없는 포인터 타입을 변환한다. `const, volatile` 을 형변환할 수 없는 점을 제외하고 `()` 와 같다.
+
+```cpp
+  char c = 'A';
+  char*d = &c;
+  // int* e = d; // error
+  // int* f = static_cast<int*>(d); //error
+  int* g = reinterpret_cast<int*>(d);
+  int* h = (int*)d;
+
+  int  i = 1;
+  // char j = reinterpret_cast<char>(i); // error
+  char k = (char)i;
+```
+
+`const_cast` 는 동일한 데이터타입의 pointer, reference 에만 적용가능하다. const 로 선언된 데이터를 수정할 필요가 있을 때 형변환 한다. 역시 `()` 와 같다. 그러나 문법적 엄격함 때문에 `const_cast` 를 사용한다.
+또한 volatile 로 선언된 데이터를 형변환할 때도 사용한다.
+
+```cpp
+  const CFoo* p0  = new CFoo();
+  // CFoo* p1 = p0; // error
+  CFoo* p2 = (CFoo*)p0;
+  p2->b = 10;
+  CFoo* p3 = const_cast<CFoo*>(p0);
+  p3->b = 10;
+
+  volatile CFoo foo;
+  CFoo* p4 = const_cast<CFoo*>(&foo);
+```
+
+`dynamic_cast` 는 runtime 에 형변환을 한다. 다음과 같은 형식으로 사용한다.
+
+* 표현식은 가상함수와 RTTI(Runtime Type Information) 를 포함하는 클래스에 대한 포인터, 참조형, 객체이다.
+* 타입은 가상함수와 RTTI 를 포함하는 클래스의 포인터, 참조형이다.
+
+```
+dynamic_cast<타입>(표현식)
+```
+
+다음은 RTTI 로 사용하는 `type_info` 클래스의 모양이다.
+
+```cpp
+class type_info {
+    public: virtual ~type_info();
+    int operator==(const type_info& rhs) const;
+    int operator!=(const type_info& rhs) const;
+    int before(const type_info& rhs) const;
+    const char* name() const;
+    const char* raw_name() const;
+    private: void *_m_data;
+    char _m_d_name[1];
+    type_info(const type_info& rhs);
+    type_info& operator=(const type_info& rhs);
+};
+```
+
+runtime 에 사용할 `class` 의 메타정보의 모음이다. 
+
+예를 들어 다음과 같은 경우 pf2 는 NULL 이 저장된다. pb2 는 유효한 주소가 저장된다. `dynamic_cast` 를 이용하여 캐스트를 한 경우 실행 코드는 `dynamic_cast` 의 표현식에 기술된 객체를 이용하여 RTTI 포인터 테이블을 검색하고, 만약 RTTI 포인터 테이블 상에 일치하는 RTTI 가 존재 한다면 표현식에 기술된 객체의 타입을 변환하여 반환하고, RTTI 포인터 테이블 상에 일치하는 RTTI 가 존재 하지 않는다면 dynamic_cast 는 NULL 을 반환한다.
+
+```cpp
+class CBase {
+ public:
+  int a;
+  virtual void fun1() {
+    printf("CBase::fun1\n");
+  }
+  virtual void fun2() {
+    printf("CBase::fun2\n");
+  }
+};
+class CFoo : public CBase {
+ public:
+  int b;
+  virtual void fun3() {
+    printf("CFoo::fun3\n");
+  }
+};
+
+int main() {
+
+  CBase* pb1 = new CBase();
+  CFoo*  pf1 = new CFoo();
+  CFoo*  pf2 = dynamic_cast<CFoo*>(pb1);  // pf2 is NULL
+  CBase* pb2 = dynamic_cast<CBase*>(pf1); // pb2 is valid
+
+  printf("%p\n", pf2);
+  printf("%p\n", pb2);
+// 0x0
+// 0x7fc49bc02ae0
+  return 0;
+}
+```
+RTTI 는 `typeid` 를 통해 얻어낼 수도 있다.
+
+```cpp
+class CBase {
+ public:
+  int a;
+  virtual void fun1() {
+    printf("CBase::fun1\n");
+  }
+  virtual void fun2() {
+    printf("CBase::fun2\n");
+  }
+};
+class CFoo : public CBase {
+ public:
+  int b;
+  virtual void fun3() {
+    printf("CFoo::fun3\n");
+  }
+};
+
+int main() {
+
+
+  CBase* p1 = new CBase();
+  CFoo*  p2 = new CFoo();
+  const std::type_info& t1 = typeid(p1);
+  const std::type_info& t2 = typeid(*p1);
+
+  printf("%s\n", t1.name());
+  printf("%s\n", t2.name());
+// P5CBase
+// 5CBase
+    
+  return 0;
+}
+```
+
+다음은 다양한 사용예이다.
 
 ```cpp
 /*
