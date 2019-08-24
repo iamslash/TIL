@@ -647,9 +647,28 @@ int main() {
 
 ## casting
 
+* [형 변환( static_cast, const_cast, reinterpret_cast , dynamic_cast )](https://recoverlee.tistory.com/48)
+
+----
+
 type conversion 은  `implicit type conversion` 과 `explicit type conversion` 과 같이 두가지가 있다. 이 중 `explicit type conversion` 이 곧 `casting` 에 해당된다.
 
 `casting` 은 `static_cast, dynamic_cast, const_cast, reinterpret_cast` 와 같이 네가지가 있다.
+
+`static_cast` 는 `implicit cast` 와 같다. 그럼 왜 `static_cast` 를 사용할까? 문법적 엄격함을 위해 사용한다. 
+
+```cpp
+int  i = 1;
+char c = i; // implicit cast 이다.
+```
+
+위의 코드는 implicit cast 의 예이다. 다음과 같이 `static_cast` 를 사용하면 문법적 엄격함을 보여줄 수 있다.
+
+```cpp
+char c = static_cast<char>(i); 
+```
+
+
 
 ```cpp
 /*
