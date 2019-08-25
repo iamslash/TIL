@@ -165,11 +165,11 @@ class Person implements Serializable {
 | `if, else`           | `if, else`                      |
 | `for, while`         | `for, while`                    |
 | `array`              | `Collections.unmodifiableList`  |
-| `vector`             | `ArrayList`                     |
+| `vector`             | `ArrayList, Vector`             |
 | `deque`              | `Deque, ArrayDeque`             |
 | `forward_list`       | ``                              |
 | `list`               | `List, LinkedList`              |
-| `stack`              | `Stack, LinkedList`             |
+| `stack`              | `Deque, Stack`                  |
 | `queue`              | `Queue, LinkedList`             |
 | `priority_queue`     | `Queue, PriorityQueue`          |
 | `set`                | `SortedSet, TreeSet`            |
@@ -195,9 +195,15 @@ class Person implements Serializable {
   * [Collections in java @ geeksforgeeks](https://www.geeksforgeeks.org/collections-in-java-2/)
   * [Collections in Java @ javapoint](https://www.javatpoint.com/collections-in-java)
 
-
-```
-```
+* Legacy classes
+  * Collection 이 개발되기 전에 container 들이다. 사용을 추천하지 않는다.
+  * Vector, Dictionary, HashTable, Properties, Stack 은 모두 lgacy class 이다.
+* Vector vs ArrayList
+  * Vector 는 legacy class 이다. ArrayList 는 새로 개발된 Collection 이다.
+  * Vector 는 thread safe 하다. ArrayList 그렇지 않다. 그래서 ArrayList 가 더 빠르다.
+* Stack vs Deque
+  * Stack 은 legacy class 이다. Degue 는 새로 개발된 Collection 이다.
+  * Deque 은 LIFO queue 를 지원한다. Deque 의 사용을 추천한다. 
 
 ## Collection Examples
 
