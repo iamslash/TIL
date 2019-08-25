@@ -77,9 +77,86 @@ volatile    while
 ## Useful Keywords
 
 - volatile
+  - 데이터를 읽을 때 cahe 에서 읽지 않고 memory 에서 읽는다. 그리고 데이터를 쓸 때 cache 에 쓰지 않고 memory 에 쓴다.
+  - thread 들이 여러개의 cache 때문에 데이터의 원자성이 보장되지 않을 때 사용한다.
+
+```java
+public class SharedFoo {
+    public volatile int counter = 0;
+}
+```
+
 - strictfp
+  - JVM 은 host platform 에 따라 부동 소수점 표현방식이 다양할 수 있다. IEEE 754 로 표준화 하기 위해 필요하다.
+
+```java
+strictfp class Example {
+  public static void main(String[] args) {
+    double d = Double.MAX_VALUE;
+    System.out.println(d*1.1);
+  }
+}
+strictfp class A {...} 
+strictfp interface B {...} 
+strictfp void method() {...} 
+```
+
 - native
+  - [참고](https://www.baeldung.com/java-native)
+  - java 에서 c/cpp library 와 같은 platform dependent api 를 이용할 때 선언한다.
+
+```java
+public class DateTimeUtils {
+    public native String getSystemTime();
+ 
+    static {
+        System.loadLibrary("nativedatetimeutils");
+    }
+}
+
+public class DateTimeUtilsManualTest {
+ 
+   @BeforeClass
+    public static void setUpClass() {
+        // .. load other dependent libraries  
+        System.loadLibrary("nativedatetimeutils");
+    }
+ 
+    @Test
+    public void givenNativeLibsLoaded_thenNativeMethodIsAccessible() {
+        DateTimeUtils dateTimeUtils = new DateTimeUtils();
+        LOG.info("System time is : " + dateTimeUtils.getSystemTime());
+        assertNotNull(dateTimeUtils.getSystemTime());
+    }
+}
+```
+
 - transient
+  - serialize 의 대상이 되지 않도록 한다.
+
+```java
+class Person implements Serializable {
+    private transient String name; // thi shoul be null
+    private String email;
+    private int age;
+
+    public Member(String name, String email, int age) {
+        this.name = name;
+        this.email = email;
+        this.age = age;
+    }
+    @Override
+    public String toString() {
+        return String.format("Person{name='%s', email='%s', age='%s'}", name, email, age);
+    }
+}
+...
+  public static void main(String[] args) throws IOException, ClassNotFoundException {
+        Person p = new Person("iamslash", "iamslash@gmail.com", 28); 
+        String s = serializeTest(p);
+        deSerializeTest(s);
+    }
+```
 
 ## Collections compared c++ container
 
@@ -103,6 +180,24 @@ volatile    while
 | `unordered_multiset` | ``                              |
 | `unordered_map`      | `Map, HashMap`                  |
 | `unordered_multimap` | ``                              |
+
+* core interfaces in Collections
+
+```
+            Collection                Map
+         /    |    |    \              |
+       Set List  Queue Deque       SortedMap 
+        |
+       SortedSet
+```
+
+* core classes in Collections
+  * [Collections in java @ geeksforgeeks](https://www.geeksforgeeks.org/collections-in-java-2/)
+  * [Collections in Java @ javapoint](https://www.javatpoint.com/collections-in-java)
+
+
+```
+```
 
 ## Collection Examples
 
