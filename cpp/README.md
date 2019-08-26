@@ -59,75 +59,72 @@ c++에 대해 정리한다.
 
 ![](img/virtualfunction.png)
 
-virtual function 은 vptr, vtable 에 의해 구현된다. 다음과 같이 `Instrument, Wind, Percussion, Stringed, Brass` 를 정의해 보자.
+virtual function 은 vptr, vtable 에 의해 구현된다. `vtable` 은 virtual function 주소들의 배열이다. `vptr` 은 `vtable` 을 가리키는 포인터이다. 임의의 class 가 virtual function 이 하나라도 있다면 runtime 에서 vptr 이 만들어진다. 아래와 같은 예에서 `vptr` 이 4 byte 이면 `sizeof(Instrument) == 4` 이다.
+
+그리고 vptr 은 vtable 을 가리킨다. 따라서 아래의 예에서 `wp->play()` 를 호출하면 `wp->vptr->Brass::vtable->Brass::play()` 를 호출하게 된다.
+
+다음은 위 그림의 구현이다.
 
 ```cpp
 class Instrument {
 public:
   virtual void play() {
-
   }
   virtual void what() {
-
   }
   virtual void adjust() {
-
   }
 };
 
 class Wind : public Instrument {
 public:
   virtual void play() {
-
   }
   virtual void what() {
-
   }
   virtual void adjust() {
-
   }
 }
 
 class Percussion : public Instrument {
 public:
   virtual void play() {
-
   }
   virtual void what() {
-
   }
   virtual void adjust() {
-
   }
 }
 class Stringed : public Instrument {
 public:
   virtual void play() {
-
   }
   virtual void what() {
-
   }
   virtual void adjust() {
-
   }
 }
 
 class Brass : public Instrument {
 public:
   virtual void play() {
-
   }
   virtual void what() {
-
   }
   virtual void adjust() {
-
   }
 }
-```
 
-각각의 child class 들의 object 들은 `vptr, vtable` 을 갖는다.
+int main() {
+  WindPercussion* wp;
+  Brass br;
+  Instrument inst;
+
+  wp = &br;
+  //wp = &inst;
+  // sizeof(br) is 4 because of vtpr
+}
+```
 
 ## vector vs deque vs list
 
@@ -141,8 +138,7 @@ public:
 
 ### pros
 
-- 동적으로 확장 및 축소가 가능하다. dynamic array로 구현되어 있다.
-  재할당 방식이다. 메모리가 연속으로 할당되어 있어 포인터 연산이 가능하다.
+- 동적으로 확장 및 축소가 가능하다. dynamic array 로 구현되어 있다. 재할당 방식이다. 메모리가 연속으로 할당되어 있어 포인터 연산이 가능하다.
 - index로 접근 가능하다. O(1)
 
 ### cons
@@ -158,21 +154,21 @@ public:
 - 끝이 아닌 위치에 삽입 및 제거시 성능이 좋다. O(1)
 - 동적으로 확장 될때 일정한 크기만큼 chuck가 하나 더 할당되는 방식이다.
   저장 원소가 많거나 원소의 크기가 클때 즉 메모리 할당이 큰 경우 
-  vector에 비해 확장 비용이 적다.
+  vector 에 비해 확장 비용이 적다.
 
 ### cons
 
-- 메모리가 연속으로 할당되어 있지 않아 vector와 달리 포인터 연산이 불가능하다.
+- 메모리가 연속으로 할당되어 있지 않아 vector 와 달리 포인터 연산이 불가능하다.
 
 ## list
 
 ### pros
 
-- vector, deque와 달리 임의의 위치에 삽입 및 제거시 성능이 좋다. O(1)
+- vector, deque와 달리 임의의 위치에 삽입 및 제거시 성능이 좋다. `O(1)`
 
 ### cons
 
-- index로 접근 불가능하다. 
+- index 로 접근 불가능하다. 
 
 ## How to choose a container
 
@@ -188,34 +184,46 @@ public:
 
 ----
 
-resource 생성이 곧 초기화이다 라는 의미이다. 예를 들어 다음과 같이 ThreadJoiner 의 소멸자에 join 을 사용하면 ThreadJoiner 는 선언된 scope 을 벗어나면 자동으로 thread resource 가 초기화된다.
+resource 생성이 곧 초기화이다 라는 의미이다. scope 을 벗어나면 자동으로 초기화되도록 구현하는 것이다. 
+
+c++ 는 finally 가 없다. RAII 때문이다. C++의 아버지이자 RAII 라는 용어를 처음 만든 Bjarne Stroustrub 는 "RAII가 있는데 굳이 있을 필요가 없다." 라고 말했다.
+
+아래는 `unique_ptr` 를 이용하여 RAII 을 구현한 예이다.
 
 ```cpp
-class ThreadJoiner {
-	thread& m_th;
-public:
-	explicit ThreadJoiner(thread& t):m_th(t) {}
-	~ThreadJoiner() {
-		if(m_th.joinable()) {
-			m_th.join();
-		}
-	}
-};
+void unsafeFunction() {
+  Resource* resource = new Resource();
+  /* Do something with resource */
+  thisFunctionCanThrow예외();
+  /* Do something else with resource */
+  delete resource;
+}
 
-int main() {
-	cout << "Hollo Bo" << endl;
-	ofstream f;
-	f.open("log.txt");
+void unmainta
+nableFunct i on(
 
-	Fctor fctor(f);
-	std::thread t1(fctor);
-	ThreadJoiner tj(t1);
+) {
+  Resource* resource = nullptr;
+  try {
+ 
+    resource 
+  = n
+  ew Resource();
+    /* Do something with resource */
+    thisFunctionCanThrowException();
+    /* Do something else with resource */
+    delete resource;
+  catch(std::exception& e) {
+    delete resource;
+    throw e;
+  }
+}
 
-	for (int i=0; i<100; i++)
-		cout << "from main: " << i << endl;
-
-	f.close();
-	return 0;
+void safeFunction() {
+  std::unique_ptr<Resource> resource(new Resource());
+  /* Do something with resource */
+  thisFunctionCanThrowException();
+  /* Do something else with resource */
 }
 ```
 
@@ -262,7 +270,7 @@ Note:
 ```cpp
 class dog {
    public:
-   dog(const dog& ) = delete; // Prevent copy constructor from being used.
+   dog(const dog&) = delete; // Prevent copy constructor from being used.
                               // Useful when dog holds unsharable resource.
 }
 ```
@@ -299,7 +307,6 @@ Note: All classes in STL have no virtual destructor, so be careful inheriting
 from them.
 */
 
-
 /*
 When we should use virtual destructor:
 Any class with virtual functions should have a virtual destructor.
@@ -308,7 +315,6 @@ When not to use virtual destructor:
 1. Size of the class needs to be small;
 2. Size of the class needs to be precise, e.g. passing an object from C++ to C.
 */
-
 
 /* Solution 2: 
  *    using shared_prt
@@ -352,20 +358,31 @@ int main() {
 
 ## Never call virtual functions in constructor or destructor
 
-`Constructor` 혹은 `Destructor` 에서 `virtual function` 을 호출하지 말자. 객체의 생명주기에 따라 호출이 안될 수 있기 때문이다.
+`Constructor` 혹은 `Destructor` 에서 `virtual function` 을 호출하지 말자. 객체의 생명주기에 따라 호출이 안될 수 있기 때문이다. 
+
+아래의 예에서 `dog` 의 constructor 에서 `bark()` 를 호출하면 `vptr` 이 아직 만들어지지 않았기 때문에 `dog::bark()` 가 호출된다.
+
+`yellowdog` 의 생성자에서 `dog` 의 생성자에 `color` 를 전달하는 식으로 해결할 수 있다.
 
 ```cpp
 class dog {
  public:
   string m_name;
-  dog(string name) {m_name = name;  bark();}
-  virtual void bark() { cout<< "Woof, I am just a dog " << m_name << endl;}
+  dog(string name) {
+    m_name = name; 
+    bark();
+  }
+  virtual void bark() { 
+    cout<< "Woof, I am just a dog " << m_name << endl;
+  }
 };
 
 class yellowdog : public dog {
  public:
   yellowdog(string name) : dog(string name) {...}
-  virtual void bark() { cout << "Woof, I am a yellow dog " << m_name << endl; }
+  virtual void bark() {
+    cout << "Woof, I am a yellow dog " << m_name << endl; 
+  }
 };
 
 int main ()
@@ -391,7 +408,6 @@ C++: Constructor is supposed to initialize members. Life starts after constructo
 
 Calling down to parts of an object that haven not yet initialized is inherently dangerous.
 */
-
 
 /*
 solution 1:
@@ -490,9 +506,18 @@ OpenFile pf = OpenFile(.filename("foo.txt"), .blockSize(1024) );
 class OpenFile {
 public:
   OpenFile(std::string const& filename);
-  OpenFile& readonly()  { readonly_ = true; return *this; }
-  OpenFile& createIfNotExist() { createIfNotExist_ = true; return *this; }
-  OpenFile& blockSize(unsigned nbytes) { blockSize_ = nbytes; return *this; }
+  OpenFile& readonly()  { 
+    readonly_ = true; 
+    return *this; 
+  }
+  OpenFile& createIfNotExist() { 
+    createIfNotExist_ = true; 
+    return *this; 
+  }
+  OpenFile& blockSize(unsigned nbytes) { 
+    blockSize_ = nbytes; 
+    return *this; 
+  }
   ...
 };
 
@@ -509,7 +534,7 @@ OpenFile f = OpenFile("foo.txt").blockSize(1024);
 
 ## new delete
 
-다음은 `new` 와 `delete` 의 underhood 이다.
+다음은 `new` 와 `delete` 의 under the hood 이다.
 
 ```cpp
    dog* pd = new dog();
@@ -648,7 +673,7 @@ int main() {
 
 ## casting
 
-* [형 변환( static_cast, const_cast, reinterpret_cast , dynamic_cast )](https://recoverlee.tistory.com/48)
+* [형 변환(static_cast, const_cast, reinterpret_cast , dynamic_cast)](https://recoverlee.tistory.com/48)
 
 ----
 
@@ -727,14 +752,14 @@ char d = static_cast<char>(i); // static_cast
   CFoo* p4 = const_cast<CFoo*>(&foo);
 ```
 
-`dynamic_cast` 는 runtime 에 형변환을 한다. 다음과 같은 형식으로 사용한다.
-
-* 표현식은 가상함수와 RTTI(Runtime Type Information) 를 포함하는 클래스에 대한 포인터, 참조형, 객체이다.
-* 타입은 가상함수와 RTTI 를 포함하는 클래스의 포인터, 참조형이다.
+`dynamic_cast` 는 runtime 에 형변환을 하면서 검증한다. 즉, 상속관계, is a 관계가 아니면 NULL 을 리턴한다. 다음과 같은 형식으로 사용한다.
 
 ```
 dynamic_cast<타입>(표현식)
 ```
+
+* 표현식은 가상함수와 RTTI(Runtime Type Information) 를 포함하는 클래스에 대한 포인터, 참조형, 객체이다.
+* 타입은 가상함수와 RTTI 를 포함하는 클래스의 포인터, 참조형이다.
 
 다음은 RTTI 로 사용하는 `type_info` 클래스의 모양이다.
 
@@ -753,9 +778,9 @@ class type_info {
 };
 ```
 
-runtime 에 사용할 `class` 의 메타정보의 모음이다. 
+`type_info` 는 runtime 에 사용할 `class` 의 메타정보의 모음이다. 
 
-예를 들어 다음과 같은 경우 pf2 는 NULL 이 저장된다. pb2 는 유효한 주소가 저장된다. `dynamic_cast` 를 이용하여 캐스트를 한 경우 실행 코드는 `dynamic_cast` 의 표현식에 기술된 객체를 이용하여 RTTI 포인터 테이블을 검색하고, 만약 RTTI 포인터 테이블 상에 일치하는 RTTI 가 존재 한다면 표현식에 기술된 객체의 타입을 변환하여 반환하고, RTTI 포인터 테이블 상에 일치하는 RTTI 가 존재 하지 않는다면 dynamic_cast 는 NULL 을 반환한다.
+예를 들어 다음과 같은 경우 `pf2` 는 NULL 이 저장된다. `pb2` 는 유효한 주소가 저장된다. `dynamic_cast` 를 이용하여 캐스트를 한 경우 실행 코드는 `dynamic_cast` 의 표현식에 기술된 객체를 이용하여 RTTI 포인터 테이블을 검색하고, 만약 RTTI 포인터 테이블 상에 일치하는 RTTI 가 존재 한다면 표현식에 기술된 객체의 타입을 변환하여 반환하고, RTTI 포인터 테이블 상에 일치하는 RTTI 가 존재 하지 않는다면 dynamic_cast 는 NULL 을 반환한다.
 
 ```cpp
 class CBase {
@@ -917,7 +942,7 @@ int main() {
 }
 ```
 
-`const function` 이라도 `mutable` 이 사용된 멤버변수를 수정할 수 있다.
+`const function` 이라도 `mutable` 이 사용된 멤버변수는 수정할 수 있다.
 
 ```cpp
 class BigArray {
@@ -975,7 +1000,9 @@ i+2 = 4;     // Error
 dog d1;
 d1 = dog();  // dog() is rvalue of user defined type (class)
 
-int sum(int x, int y) { return x+y; }
+int sum(int x, int y) { 
+  return x+y; 
+}
 int i = sum(3, 4);  // sum(3, 4) is rvalue
 
 //Rvalues: 2, i+2, dog(), sum(3,4), x+y
@@ -991,15 +1018,20 @@ int& r = i;
 
 int& r = 5;      // Error
 
-//Exception: Constant lvalue reference can be assign a rvalue;
+//예외: Constant lvalue reference can be assign a rvalue;
 const int& r = 5;   //
 
-int square(int& x) { return x*x; }
+int square(int& x) { 
+  return x * x; 
+}
 square(i);   //  OK
 square(40);  //  Error
 
 //Workaround:
-int square(const int& x) { return x*x; }  // square(40) and square(i) work
+int square(const int& x) { 
+  return x * x; 
+}  
+// square(40) and square(i) work
 ```
 
 `lvalue` 는 `rvalue` 를 만들 때 `rvalue` 는 `lvalue` 를 만들 때 사용될 수 있다.
@@ -1058,7 +1090,7 @@ c = 2;   // Error, c is not modifiable.
  * Misconception 3: rvalues are not modifiable.
  */
 i + 3 = 6;    // Error
-sum(3,4) = 7; // Error
+sum(3, 4) = 7; // Error
 
 // It is not true for user defined type (class)
 class dog;
@@ -1073,11 +1105,15 @@ dog().bark();  // bark() may change the state of the dog object.
 // Example 1:
 namespace A
 {
-   struct X {};
-   void g( X ) { cout << " calling A::g() \n"; }
+  struct X {};
+  void g(X) {
+    cout << " calling A::g() \n"; 
+  }
 }
 
-void g( X ) { cout << " calling A::g() \n"; }
+void g(X) { 
+  cout << " calling ::g() \n"; 
+}
 
 int main() {
    A::X x1;
@@ -1118,12 +1154,12 @@ int main() {
 ```cpp
 template<typename T>
 T square(T x) {
-   return x*x;
+   return x * x;
 }
 
 template<class T>
 T square(T x) {
-   return x*x;
+   return x * x;
 }
 ```
 
@@ -1132,29 +1168,29 @@ T square(T x) {
 ```cpp
 template <class T>
 class Demonstration {
-public:
-void method() {
-  T::A *aObj; // oops …
-  // …
-};
+ public:
+  void method() {
+    T::A *aObj; // oops …
+    // …
+  };
 
 template <class T>
 class Demonstration {
-public:
-void method() {
-  typename T::A* a6; // declare pointer to T’s A
-  // …
-};
+ public:
+  void method() {
+    typename T::A* a6; // declare pointer to T’s A
+    // …
+  };
 
 ```
 
 ## size() infinite loop
 
-다음과 같은 경우 size() 의 type 이 unsigned 이므로 무한 루프에 빠진다. 
+다음과 같은 경우 size() 의 type 이 unsigned 이므로 `` 무한 루프에 빠진다. 
 
 ```cpp
   std::vector<int> v;
-  for (int i = 0; v.size() - 1; ++i) {
+  for (int i = 0; v.size() - 1 < 0; ++i) {
     printf("loop\n");
   }
 ```
