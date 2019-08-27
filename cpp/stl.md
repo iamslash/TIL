@@ -1555,7 +1555,7 @@ auto itr = remove_if(v.begin(), v.end(),
 
 ## shared_ptr
 
-share_ptr 는 strong refCnt, weak refCnt를 갖고 있다. strong refCnt 를 이용하여 객체의 수명을 관리한다. shared_ptr 은 strong refCnt 를 이용하여 객체의 수명을 관리하는 똑똑한 포인터이다.
+`share_ptr` 는 `strong refCnt, weak refCnt` 를 갖고 있다.  `strong refCnt` 를 이용하여 객체의 수명을 관리한다. `shared_ptr` 은 `strong refCnt` 를 이용하여 객체의 수명을 관리하는 똑똑한 포인터이다.
 
 ```cpp
 class Dog {
@@ -1614,21 +1614,30 @@ int main ()
 
 ## weak_ptr
 
-shared_ptr 를 weak_ptr 로 할당 해도 shared_ptr 의 strong refCnt 는 변하지 않고 weak refCnt 만 증가한다.
+`shared_ptr` 를 `weak_ptr` 로 할당 해도 `shared_ptr` 의 `strong refCnt` 는 변하지 않고 `weak refCnt` 만 증가한다.
 
 ```cpp
 class Dog {
-      //shared_ptr<Dog> m_pFriend;
-      weak_ptr<Dog> m_pFriend;
-  public:
-      string m_name;
-      void bark() { cout << "Dog " << m_name << " rules!" << endl; }
-      Dog(string name) { cout << "Dog is created: " << name << endl; m_name = name; }
-     ~Dog() { cout << "dog is destroyed: " << m_name << endl; }
-     void makeFriend(shared_ptr<Dog> f) { m_pFriend = f; }
-     void showFriend() { //cout << "My friend is: " << m_pFriend.lock()->m_name << endl;
-                         if (!m_pFriend.expired()) cout << "My friend is: " << m_pFriend.lock()->m_name << endl;
-                         cout << " He is owned by " << m_pFriend.use_count() << " pointers." << endl; }
+  //shared_ptr<Dog> m_pFriend;
+  weak_ptr<Dog> m_pFriend;
+ public:
+  string m_name;
+  void bark() { 
+     cout << "Dog " << m_name << " rules!" << endl; 
+  }
+  Dog(string name) { 
+    cout << "Dog is created: " << name << endl; m_name = name; 
+  }
+  ~Dog() {
+     cout << "dog is destroyed: " << m_name << endl; 
+  }
+  void makeFriend(shared_ptr<Dog> f) { m_pFriend = f; }
+  void showFriend() { 
+    //cout << "My friend is: " << m_pFriend.lock()->m_name << endl;
+    if (!m_pFriend.expired()) 
+      cout << "My friend is: " << m_pFriend.lock()->m_name << endl;
+    cout << " He is owned by " << m_pFriend.use_count() << " pointers." << endl; 
+  }
 };
 
 int main ()
@@ -1644,70 +1653,78 @@ int main ()
 
 ## unique_ptr
 
-단 하나의 주인만 허용하는 똑똑한 포인터이다. unique_ptr 가 scope 를 벗어나면 객체를 파괴한다.
+단 하나의 주인만 허용하는 똑똑한 포인터이다. `unique_ptr` 가 `scope` 를 벗어나면 객체를 파괴한다.
 
 ```cpp
 // Unique Pointers: exclusive owenership
 
 class Dog {
-      //Bone* pB;
-      unique_ptr<Bone> pB;  // This prevents memory leak even constructor fails.
-  public:
-      string m_name;
-      void bark() { cout << "Dog " << m_name << " rules!" << endl; }
-      Dog() { pB = new Bone(); cout << "Nameless dog created." << endl; m_name = "nameless"; }
-      Dog(string name) { cout << "Dog is created: " << name << endl; m_name = name; }
-     ~Dog() { delete pB; cout << "dog is destroyed: " << m_name << endl; }
+  //Bone* pB;
+  unique_ptr<Bone> pB;  // This prevents memory leak even constructor fails.
+ public:
+  string m_name;
+  void bark() { 
+    cout << "Dog " << m_name << " rules!" << endl; 
+  }
+  Dog() { 
+    pB = new Bone(); 
+    cout << "Nameless dog created." << endl; m_name = "nameless"; 
+  }
+  Dog(string name) { 
+    cout << "Dog is created: " << name << endl; m_name = name; 
+  }
+  ~Dog() { 
+    delete pB; 
+    cout << "dog is destroyed: " << m_name << endl; 
+  }
 };
 
-void test() {
-    
-    //Dog* pD = new Dog("Gunner");
-    unique_ptr<Dog> pD(new Dog("Gunner"));
-    
-    pD->bark();
-    /* pD does a bunch of different things*/
-    
-    //Dog* p = pD.release();
-    pD = nullptr;
-    //pD.reset(new Dog("Smokey"));
-    
-    if (!pD) {
-        cout << "pD is empty.\n";
-    }
-    
-    //delete pD;   
+void test() {    
+  //Dog* pD = new Dog("Gunner");
+  unique_ptr<Dog> pD(new Dog("Gunner"));
+
+  pD->bark();
+  /*pD does a bunch of different things*/
+
+  //Dog* p = pD.release();
+  pD = nullptr;
+  //pD.reset(new Dog("Smokey"));
+
+  if (!pD) {
+    cout << "pD is empty.\n";
+  }
+//delete pD;   
 }
 
 void f(unique_ptr<Dog> p) {
-    p->bark();
+  p->bark();
 }
 
 unique_ptr<Dog> getDog() {
-    unique_ptr<Dog> p(new Dog("Smokey"));
-    return p;
+  unique_ptr<Dog> p(new Dog("Smokey"));
+  return p;
 }
 
 void test2() {
-    unique_ptr<Dog> pD(new Dog("Gunner"));
-    unique_ptr<Dog> pD2(new Dog("Smokey"));
-    pD2 = move(pD);
-    // 1. Smokey is destroyed
-    // 2. pD becomes empty.
-    // 3. pD2 owns Gunner.
+   unique_ptr<Dog> pD(new Dog("Gunner"));
+   unique_ptr<Dog> pD2(new Dog("Smokey"));
+   pD2 = move(pD);
+   // 1. Smokey is destroyed
+   // 2. pD becomes empty.
+   // 3. pD2 owns Gunner.
 
-    pD2->bark();
-//    f(move(pD));
-//    if (!pD) {
-//        cout << "pD is empty.\n";
-//    }
-//    
-//    unique_ptr<Dog> pD2 = getDog();
-//    pD2->bark();
-    
-    unique_ptr<Dog[]> dogs(new Dog[3]);
-    dogs[1].bark();
-    //(*dogs).bark(); // * is not defined
+   pD2->bark();
+   //    f(move(pD));
+   //    if (!pD) {
+   //        cout << "pD is empty.\n";
+   //    }
+   //    
+   //    unique_ptr<Dog> pD2 = getDog();
+   //    pD2->bark();
+
+   unique_ptr<Dog[]> dogs(new Dog[3]);
+   dogs[1].bark();
+   //(*dogs).bark(); // * is not defined
 }
 
 void test3() {
