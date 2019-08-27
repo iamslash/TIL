@@ -579,7 +579,6 @@ int main() {
   int i = 1;
   //get<i>(t); // Won't compile, i must be a compile time constant
 
-
   tuple<int, string, char> t2;  // default construction 
   t2 = tuple<int, string, char>(12, "Curiosity kills the cat", 'd'); 
   t2 = make_tuple(12, "Curiosity kills the cat", 'd'); 
@@ -590,7 +589,7 @@ int main() {
 
   t = t2;  // member by member copying
 
-// Tuple can store references !!  STL containers such as vectors cannot.  Pair can.
+  // Tuple can store references !!  STL containers such as vectors cannot.  Pair can.
   string st = "In for a penny";
   tuple<string&> t3(st);  
   //auto t3 = make_tuple(ref(st));  // Do the same thing
@@ -604,14 +603,13 @@ int main() {
   std::tie(x,y,z) = t2;  // same thing
   std::tie(x, std::ignore, z) = t2;  // get<1>(t2) is ignored
 
-// Other features
+  // Other features
   auto t4 = std::tuple_cat( t2, t3 );  // t4 is tuple<int, string, char, string>
   cout << get<3>(t4) << endl;  // "In for a pound" 
 
   // type traits
   cout << std::tuple_size<decltype(t4)>::value << endl;  // Output: 4
   std::tuple_element<1, decltype(t4)>::type dd; // dd is a string
-   
 }
 
 // tuple vs struct
@@ -646,7 +644,6 @@ int main() {
    // Little trick
   int a, b, c;
   tie(b, c, a) = make_tuple(a, b, c);
-
 }
 ```
 
@@ -672,25 +669,27 @@ int main() {
 ## lambda
 
 ```cpp
-  // lambda function
-  // [captures](parameters){body}
-  auto func = [](){};
-  func();
+// lambda function
+// [captures](parameters) -> return type {body}
+auto func = [](){};
+func();
 
-  // lambda function recursive
-  std::function<int(int)> f;
-  f = [&f](int x) -> int {
-    if (x <= 1)
-      return x;
-    return f(x - 1) + f(x - 2);
-  };
+// lambda function recursive
+std::function<int(int)> f;
+f = [&f](int x) -> int {
+  if (x <= 1)
+    return x;
+  return f(x - 1) + f(x - 2);
+};
 
-  // lambda stl algorithms
-  std::vector<int> primes = {2, 3, 5, 7, 11};
-  auto is_even = [](int n){return (n & 1) == 0;};
-  bool all_even = std::all_of(primes.begin(), primes.end(), is_even);
+// lambda stl algorithms
+std::vector<int> primes = {2, 3, 5, 7, 11};
+auto is_even = [](int n){
+  return (n & 1) == 0;
+};
+bool all_even = std::all_of(primes.begin(), primes.end(), is_even);
 
-cout << [](int x, int y){return x+y}(3,4) << endl;  // Output: 7
+cout << [](int x, int y){ return x+y; }(3,4) << endl;  // Output: 7
 auto f = [](int x, int y) { return x+y; };
 cout << f(3,4) << endl;   // Output: 7
 
@@ -749,12 +748,15 @@ Matrix E = (D * D) + I;
 E = E * E;
 ```
 
-- c++11에서 RVO(Return Value Optimization)덕분에 Matrix 값 복사는
+- c++11에서 RVO(Return Value Optimization) 덕분에 Matrix 값 복사는
   일어나지 않는다. rvalue 가 return 된다.
   
 ## Value Categories
 
-- [Value categories @ cppreference](http://en.cppreference.com/w/cpp/language/value_category)
+* [Value categories @ cppreference](http://en.cppreference.com/w/cpp/language/value_category)
+
+----
+
 - lvalue
   - `std::cin`, `std::endl`
     - the name of a variable or a function in scope, regarless of type
@@ -865,9 +867,8 @@ E = E * E;
 `rvalue` 는 `move semantics` 혹은 `perfect fowarding` 을 위해 사용된다. 다음은 `rvalue` 의 예이다. `std::move` 는 `lvalue` 를 인자로 받아서 `rvalue` 로 `move semantics` 하여 리턴한다.
 
 ```cpp
-int a = 5;
+int  a = 5;
 int& b = a;   // b is a lvalue reference, originally called reference in C++ 03
-
 int&& c;       // c is an rvalue reference
 
 void printInt(int& i) { 
@@ -886,7 +887,7 @@ int main() {
 }
 ```
 
-`rvalue reference` 는 `move semantics` 를 수행하기 위해 `copy constructor` 혹은 `copy assignment operator` 에서 유용하게 사용된다.
+`rvalue reference` 는 `move semantics` 를 수행을 목적으로 `copy constructor` 혹은 `copy assignment operator` 에서 유용하게 사용된다.
 
 ```cpp
 /* 
@@ -995,9 +996,9 @@ remove_refence<int>::type i;   // int i;
 `std:forward` 는 다음과 같이 구현되어 있다.
 
 ```cpp
-template< typename T >
-void relay(T&& arg ) {
-  foo(std::forward<T>( arg ));
+template<typename T>
+void relay(T&& arg) {
+  foo(std::forward<T>(arg));
 }
 
 // Implementation of std::forward()
@@ -1054,8 +1055,10 @@ long millisecs = duration_cast<milliseconds>(_end - _start).count();
 
 ## regex
 
+`regex e` 를 `regex_match` 에 전달하여 매칭이 있는 검증한다. `regex e, match_results r` 를  `regex_search` 에 전달하고 `r[*]` 으로 패턴을 찾는다.
+
 ```cpp
-if (regex_match("ABCD", regex("(A|B)C(.*)D"))) { 
+if (regex_match("ABCD", regex("[A|B].*D"))) { 
   //... 
 }
 ```
@@ -1390,7 +1393,50 @@ class BoTemplate;
 
 ## decltype
 
+* [decltype @ cppreference](https://en.cppreference.com/w/cpp/language/decltype)
+
+----
+
 인스턴스를 인자로 받아 타입을 리턴할 때 사용한다.
+
+```cpp
+#include <iostream>
+ 
+struct A { double x; };
+const A* a;
+ 
+decltype(a->x) y;       // type of y is double (declared type)
+decltype((a->x)) z = y; // type of z is const double& (lvalue expression)
+
+// return type depends on template parameters
+// return type can be deduced since C++14
+template<typename T, typename U>
+auto add(T t, U u) -> decltype(t + u) 
+{
+  return t+u;
+}
+ 
+int main() 
+{
+  int i = 33;
+  decltype(i) j = i * 2;
+
+  std::cout << "i = " << i << ", "
+            << "j = " << j << '\n';
+
+  auto f = [](int a, int b) -> int
+  {
+    return a * b;
+  };
+
+  decltype(f) g = f; // the type of a lambda function is unique and unnamed
+  i = f(2, 2);
+  j = g(3, 3);
+
+  std::cout << "i = " << i << ", "
+            << "j = " << j << '\n';
+}
+```
 
 ```cpp
   const int& foo();      // Declare a function foo()
@@ -1466,18 +1512,19 @@ cout << chrono::high_resolution_clock::period::num << "/" << chrono::high_resolu
  */
 chrono::microseconds mi(2745);
 chrono::nanoseconds na = mi;
-chrono::milliseconds mill = chrono::duration_cast<chrono::milliseconds>(mi);  // when information loss could happen, convert explicitly
-														  // Truncation instead of rounding
-	mi = mill + mi;  // 2000 + 2745 = 4745
-	mill = chrono::duration_cast<chrono::milliseconds>(mill + mi);  // 6
-	cout << na.count() << std::endl;
-	cout << mill.count() << std::endl;
-	cout << mi.count() << std::endl;
+chrono::milliseconds mill = chrono::duration_cast<chrono::milliseconds>(mi);  
+// when information loss could happen, convert explicitly
+// Truncation instead of rounding
+mi = mill + mi;  // 2000 + 2745 = 4745
+mill = chrono::duration_cast<chrono::milliseconds>(mill + mi);  // 6
+cout << na.count() << std::endl;
+cout << mill.count() << std::endl;
+cout << mi.count() << std::endl;
 
-   cout << "min: " << chrono::system_clock::duration::min().count() << "\n";
-   cout << "max: " << chrono::system_clock::duration::max().count() << "\n";
+cout << "min: " << chrono::system_clock::duration::min().count() << "\n";
+cout << "max: " << chrono::system_clock::duration::max().count() << "\n";
 
- /* std::chrono::time_point<>: represents a point of time
+/* std::chrono::time_point<>: represents a point of time
  *       -- Length of time elapsed since a spacific time in history: 
  *          00:00 January 1, 1970 (Corordinated Universal Time - UTC)  -- epoch of a clock
  * time_point<system_clock, milliseconds>:  according to system_clock, the elapsed time since epoch in milliseconds
@@ -1486,7 +1533,7 @@ chrono::milliseconds mill = chrono::duration_cast<chrono::milliseconds>(mi);  //
   system_clock::time_point  -- time_point<system_clock, system_clock::duration>
   steady_clock::time_point  -- time_point<steady_clock, steady_clock::duration>
  */
-	// Use system_clock
+  // Use system_clock
 	chrono::system_clock::time_point tp = chrono::system_clock::now();
 	cout << tp.time_since_epoch().count() << endl;  
 	tp = tp + seconds(2);  // no need for cast because tp is very high resolution
