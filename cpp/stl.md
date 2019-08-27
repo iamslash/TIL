@@ -1,4 +1,3 @@
-- [Major Headers](#major-headers)
 - [vector](#vector)
 - [deque](#deque)
 - [list](#list)
@@ -24,29 +23,13 @@
 - [shared_ptr](#sharedptr)
 - [weak_ptr](#weakptr)
 - [unique_ptr](#uniqueptr)
+- [input output stream](#input-output-stream)
 
 ----
-
-## Major Headers
-
-```cpp
-#include <vector>
-#include <deque>
-#include <list>
-#include <set>   // set and multiset
-#include <map>   // map and multimap
-#include <unordered_set>  // unordered set/multiset
-#include <unordered_map>  // unordered map/multimap
-#include <iterator>
-#include <algorithm>
-#include <numeric>    // some numeric algorithm
-#include <functional>
-```
 
 ## vector
 
 ```cpp
-
 vector<int> vec;   // vec.size() == 0
 vec.push_back(4);
 vec.push_back(1);
@@ -70,14 +53,13 @@ int* p = &vec[0];   p[2] = 6;
 
 // Common member functions of all containers.
 // vec: {4, 1, 8}
-if (vec.empty()) { cout << "Not possible.\n"; }
+if (vec.empty()) { 
+   cout << "Not possible.\n"; 
+}
 
 cout << vec.size();   // 3
-
 vector<int> vec2(vec);  // Copy constructor, vec2: {4, 1, 8}
-
 vec.clear();    // Remove all items in vec;   vec.size() == 0
-
 vec2.swap(vec);   // vec2 becomes empty, and vec has 3 items.
 
 // Notes: No penalty of abstraction, very efficient.
@@ -87,7 +69,6 @@ vec2.swap(vec);   // vec2 becomes empty, and vec has 3 items.
  * 2. slow insert/remove at the begining or in the middle: O(n)
  * 3. slow search: O(n)
  */
-
 ```
 
 ## deque
@@ -100,7 +81,6 @@ deq.push_back(3);   // deq: {2, 4, 6, 7, 3}
 
 // Deque has similar interface with vector
 cout << deq[1];  // 4
-
 
 /* Properties:
  * 1. fast insert/remove at the begining and the end;
@@ -115,7 +95,6 @@ cout << deq[1];  // 4
 list<int> mylist = {5, 2, 9 }; 
 mylist.push_back(6);  // mylist: { 5, 2, 9, 6}
 mylist.push_front(4); // mylist: { 4, 5, 2, 9, 6}
-
    
 list<int>::iterator itr = find(mylist.begin(), mylist.end(), 2); // itr -> 2
 mylist.insert(itr, 8);   // mylist: {4, 5, 8, 2, 9, 6}  
@@ -153,7 +132,7 @@ mylist1.splice(itr, mylist2, itr_a, itr_b );   // O(1)
   myset.erase(it);         // myset:  {1, 7, 9}
 
   myset.erase(7);   // myset:  {1, 9}
-     // Note: none of the sequence containers provide this kind of erase.
+  // Note: none of the sequence containers provide this kind of erase.
 
 // multiset is a set that allows duplicated items
 multiset<int> myset;
@@ -162,10 +141,10 @@ multiset<int> myset;
 *it = 10;  // *it is read-only
 
 /* Properties:
- * 1. Fast search: O(log(n))
- * 2. Traversing is slow (compared to vector & deque)
- * 3. No random access, no [] operator.
- */
+* 1. Fast search: O(log(n))
+* 2. Traversing is slow (compared to vector & deque)
+* 3. No random access, no [] operator.
+*/
 ```
 
 ## map, multimap
@@ -402,7 +381,7 @@ vec.erase(ritr.base());    // vec: {1,2,3,5}
 vector<int> vec1 = {4,5};
 vector<int> vec2 = {12, 14, 16, 18};
 vector<int>::iterator it = find(vec2.begin(), vec2.end(), 16);
-insert_iterator< vector<int> > i_itr(vec2,it);
+insert_iterator<vector<int>> i_itr(vec2, it);
 copy(vec1.begin(),vec1.end(),  // source
      i_itr);                   // destination
      //vec2: {12, 14, 4, 5, 16, 18}
@@ -425,7 +404,6 @@ reverse_iterator<vector<int>::iterator> ritr;
 for (ritr = vec.rbegin(); ritr != vec.rend(); ritr++)
    cout << *ritr << endl;   // prints: 7 6 5 4
 ```
-
 
 ## Functors (Function Objects)
 
@@ -458,8 +436,8 @@ int main()
 class X {
    public:
    X(int i) {}
-   void operator()(string str) { 
-      cout << "Calling functor X with parameter " << str<< endl;
+   void operator()(string s) { 
+      cout << "Calling functor X with parameter " << s << endl;
    }
 };
 
@@ -708,6 +686,27 @@ int main()
 ## Sorting
 
 ```cpp
+// use functor or function as sorting function
+class Cmp {
+ public:
+  bool operator()(int a, int b) {
+    return a < b;
+  }
+};
+
+bool cmp(int a, int b) {
+  return a < b;
+}
+
+int main(void)
+{
+  vector<int> vec = {4, 3, 2, 6, 4, 1};
+
+  std::sort(vec.begin(), vec.end(), Cmp());
+  std::sort(vec.begin(), vec.end(), cmp);
+   
+  return 0;
+}
 
 // Sorting algorithm requires random access iterators:
 //    vector, deque, container array, native array
@@ -1719,4 +1718,46 @@ int main ()
 {
     test2();
 }
+```
+
+## input output stream
+
+* [Input/Output @ cplusplus](http://www.cplusplus.com/reference/iolibrary/)
+
+----
+
+* 다음은 stringstream 을 이용하여 word 를 가져오는 예이다.
+
+```cpp
+float num; 
+stringstream ss; 
+string s = "25 1 3 .235\n1111111\n222222";	
+ss.str(s); 
+while(ss >> num)
+  cout << "num: " << num << endl;
+// num: 25
+// num: 1
+// num: 3
+// num: 0.235
+// num: 1.11111e+06
+// num: 222222  
+```
+
+* 다음은 getline 을 이용하여 word 를 가져오는 예이다.
+
+```cpp
+int main(void)
+{
+  std::istringstream iss("foo bar baz");
+  std::string word;
+ 
+  while (std::getline(iss, word, ' '))
+  {
+    printf("word: %s\n", word.c_str());
+  }  
+  return 0;
+}
+// word: goo
+// word: bar
+// word: baz
 ```
