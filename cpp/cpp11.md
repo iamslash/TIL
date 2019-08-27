@@ -1117,20 +1117,20 @@ Regular Expression Grammars:
 */
 
 int main() {
-   string str;
+  string str;
 
-   while (true) {
-      cin >> str;
+  while (true) {
+    cin >> str;
 	  smatch m;        // typedef std::match_results<string>
 
 	  regex e("([[:w:]]+)@([[:w:]]+)\.com");  
 
 	  bool found = regex_search(str, m, e);
 
-      cout << "m.size() " << m.size() << endl;
+    cout << "m.size() " << m.size() << endl;
 	  for (int n = 0; n< m.size(); n++) {
-		   cout << "m[" << n << "]: str()=" << m[n].str() << endl;
-		   cout << "m[" << n << "]: str()=" << m.str(n) << endl;
+		  cout << "m[" << n << "]: str()=" << m[n].str() << endl;
+		  cout << "m[" << n << "]: str()=" << m.str(n) << endl;
 			cout << "m[" << n << "]: str()=" << *(m.begin()+n) << endl;
 	  }
 	  cout << "m.prefix().str(): " << m.prefix().str() << endl;
@@ -1142,10 +1142,10 @@ int main() {
 int main() {
 	cout << "Hi" << endl;
 
-   string str;
+  string str;
 
-   while (true) {
-      cin >> str;
+  while (true) {
+    cin >> str;
 
 	  regex e("([[:w:]]+)@([[:w:]]+)\.com"); 
 	  
@@ -1158,7 +1158,7 @@ int main() {
 		  cout << endl;
 	  }
 	  cout << "=============================\n\n";
-   }
+  }
 }
 
 /**************** Regex Token Iterator ******************/
@@ -1178,8 +1178,6 @@ int main() {
 		cout << "Matched:  " << *pos << endl;
 	}
 	cout << "=============================\n\n";
-		
-	
 	cin >> str;
 }
 
@@ -1193,7 +1191,7 @@ int main() {
 	regex e("([[:w:]]+)@([[:w:]]+)\.com", regex_constants::grep|regex_constants::icase );
 	  
 	//cout << regex_replace(str, e, "$1 is on $2");
-   cout << regex_replace(str, e, "$1 is on $2", regex_constants::format_no_copy|regex_constants::format_first_only);
+  cout << regex_replace(str, e, "$1 is on $2", regex_constants::format_no_copy|regex_constants::format_first_only);
 	cout << regex_replace(str, e, "$1 is on $2");
 		
 	std::cin >> str;
@@ -1289,8 +1287,8 @@ int main ()  {
 	// engine only provides a source of randomness
 	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 	std::default_random_engine e(seed);
-   // How to get a random number between 0 and 5?
-   //  e()%6  
+  // How to get a random number between 0 and 5?
+  //  e()%6  
 	//    -- Bad quality of randomness
 	//    -- Can only provide uniform distribution
 
@@ -1298,32 +1296,33 @@ int main ()  {
 													// default param: [0, INT_MAX]
 	cout << " int_distribution: " << endl; 
     for (int i=0; i<30; i++) {
-        cout << distr(e) << " ";
+      cout << distr(e) << " ";
     }
 
 	cout << "\n\n real_distribution: " << endl;
 
-	std::uniform_real_distribution<double> distrReal(0,5);  // half open: [1, 5)  -- 1 is included, 5 is not.
-														// default param: [0, 1)
-    for (int i=0; i<30; i++) {
-        cout << distrReal(e) << " ";
-    }
+	std::uniform_real_distribution<double> distrReal(0,5);  
+  // half open: [1, 5)  -- 1 is included, 5 is not.
+	// default param: [0, 1)
+  for (int i=0; i<30; i++) {
+    cout << distrReal(e) << " ";
+  }
 
 	cout << " poisson_distribution: " << endl; 
 	std::poisson_distribution<int> distrP(1.0);  //  mean (double) 
-    for (int i=0; i<30; i++) {
-        cout << distrP(e) << " ";
-    }
+  for (int i=0; i<30; i++) {
+    cout << distrP(e) << " ";
+  }
 	cout << endl;	
 
 	cout << " normal_distribution: " << endl; 
 	std::normal_distribution<double> distrN(10.0, 3.0);  // mean and standard deviation
 	vector<int> v(20);
-    for (int i=0; i<800; i++) {
-        int num = distrN(e); // convert double to int
+  for (int i=0; i<800; i++) {
+    int num = distrN(e); // convert double to int
 		if (num >= 0 && num < 20)
 			v[num]++;   // E.g., v[10] records number of times 10 appeared
-    }
+  }
 	for (int i=0; i<20; i++) {
 		cout << i << ": " << std::string(v[i], '*') << endl;
 	}
@@ -1384,7 +1383,7 @@ class BoTemplate;
 ```cpp
   template<class T> class Dog { /* ... */ };
   template<class T>
-    using DogVec = std::vector<T, Dog<T>>;
+  using DogVec = std::vector<T, Dog<T>>;
 
   DogVec<int> v;  // Same as: std::vector<int, Dog<int>>
 ```
@@ -1397,7 +1396,9 @@ class BoTemplate;
   const int& foo();      // Declare a function foo()
   decltype(foo())  x1;  //  type is const int&
 
-  struct S { double x; };
+  struct S { 
+    double x; 
+  };
   decltype(S::x)   x2;  //  x2 is double
 
   auto s = make_shared<S>();
@@ -1412,21 +1413,21 @@ class BoTemplate;
   // decltype turns out to be very useful for template generic programming
   template<type X, type Y>
   void foo(X x, Y y) {
-     ...
-     decltype(x+y) z;
-     ...
+    ...
+    decltype(x+y) z;
+    ...
   }
 
   // How about return type needs to use decltype?
   template<type X, type Y>
   decltype(x+y) goo(X x, Y y) {      // Error: x & y are undefined 
-     return  x + y;
+    return  x + y;
   }
 
   // Combining auto and decltype to implement templates with trailing return type
   template<type X, type Y>
   auto goo(X x, Y y) -> decltype(x+y) {
-     return  x + y;
+    return  x + y;
   }
 ```
 
