@@ -41,8 +41,12 @@
 `NULL` 대신 `nullptr` 을 사용하자.
 
 ```cpp
-oid foo(int i) { cout << "foo_int" << endl; }
-void foo(char* pc) { cout << "foo_char*" << endl; }
+void foo(int i) { 
+  cout << "foo_int" << endl; 
+}
+void foo(char* pc) { 
+  cout << "foo_char*" << endl; 
+}
 
 int main() {
    foo(NULL);    // Ambiguity
@@ -55,39 +59,39 @@ int main() {
 ## enum class
 
 ```cpp
-   // C++ 03
-   enum apple {green_a, red_a};
-   enum orange {big_o, small_o};
-   apple a = green_a;
-   orange o = big_o;
+  // C++ 03
+  enum apple {green_a, red_a};
+  enum orange {big_o, small_o};
+  apple a = green_a;
+  orange o = big_o;
 
-   if (a == o) 
-      cout << "green apple and big orange are the same\n";
-   else
-      cout << "green apple and big orange are not the same\n";
+  if (a == o) 
+    cout << "green apple and big orange are the same\n";
+  else
+    cout << "green apple and big orange are not the same\n";
 
-   // C++ 11
-   enum class apple {green, red};
-   enum class orange {big, small};
-   apple a = apple::green;
-   orange o = orange::big;
+  // C++ 11
+  enum class apple {green, red};
+  enum class orange {big, small};
+  apple a = apple::green;
+  orange o = orange::big;
 
-   if (a == o) 
-      cout << "green apple and big orange are the same\n";
-   else
-      cout << "green apple and big orange are not the same\n";
+  if (a == o) 
+    cout << "green apple and big orange are the same\n";
+  else
+    cout << "green apple and big orange are not the same\n";
 
-   // Compile fails because we haven't define ==(apple, orange)
+  // Compile fails because we haven't define ==(apple, orange)
 ```
 
 ## static_assert
 
 ```cpp
 // run-time assert
-   assert( myPointer != NULL );
+  assert(myPointer != NULL);
 
 // Compile time assert (C++ 11)
-   static_assert( sizeof(int) == 4 );
+  static_assert(sizeof(int) == 4);
 ```
 
 ## Delegating Contructor
@@ -96,17 +100,25 @@ int main() {
 
 ```cpp
 class Dog {
-  public:
-   Dog() { ... }
-   Dog(int a) { Dog(); doOtherThings(a); }
+ public:
+  Dog() { ... }
+  Dog(int a) { 
+    Dog(); 
+    doOtherThings(a); 
+  }
 };
 
 // C++ 03:
 class Dog {
-   init() { ... };
-  public:
-   Dog() { init(); }
-   Dog(int a) { init(); doOtherThings(); }
+  init() { ... };
+ public:
+  Dog() { 
+    init(); 
+  }
+  Dog(int a) { 
+    init(); 
+    doOtherThings(); 
+  }
 };
 /* Cons:
  * 1. Cumbersome code.
@@ -115,10 +127,12 @@ class Dog {
 
 // C++ 11:
 class Dog {
-   int age = 9;
-  public:
-   Dog() { ... }
-   Dog(int a) : Dog() { doOtherThings(); }
+  int age = 9;
+ public:
+  Dog() { ... }
+  Dog(int a) : Dog() { 
+    doOtherThings(); 
+  }
 };
 // Limitation: Dog() has to be called first.
 ```
@@ -130,26 +144,26 @@ class Dog {
 ```cpp
 // C++ 03
 class Dog {
-   virtual void A(int);
-   virtual void B() const;
+  virtual void A(int);
+  virtual void B() const;
 }
 
 class Yellowdog : public Dog {
-   virtual void A(float);  // Created a new function
-   virtual void B(); // Created a new function 
+  virtual void A(float);  // Created a new function
+  virtual void B(); // Created a new function 
 }
 
 // C++ 11
 class Dog {
-   virtual void A(int);
-   virtual void B() const;
-   void C();
+  virtual void A(int);
+  virtual void B() const;
+  void C();
 }
 
 class Yellowdog : public Dog {
-   virtual void A(float) override;  // Error: no function to override
-   virtual void B() override;       // Error: no function to override
-   void C() override;               // Error: not a virtual function
+  virtual void A(float) override;  // Error: no function to override
+  virtual void B() override;       // Error: no function to override
+  void C() override;               // Error: not a virtual function
 }
 ```
 
@@ -163,7 +177,7 @@ class Dog final {    // no class can be derived from Dog
 };
    
 class Dog {
-   virtual void bark() final;  // No class can override bark() 
+  virtual void bark() final;  // No class can override bark() 
 };
 ```
 
@@ -173,15 +187,15 @@ class Dog {
 
 ```cpp
 class Dog {
-   Dog(int age) {}
+  Dog(int age) {}
 };
 
 Dog d1;  // Error: compiler will not generate the default constructor
 
 // C++ 11:
 class Dog {
-   Dog(int age);
-   Dog() = default;    // Force compiler to generate the default constructor
+  Dog(int age);
+  Dog() = default;    // Force compiler to generate the default constructor
 };
 ```
 
@@ -191,7 +205,7 @@ class Dog {
 
 ```cpp
 class Dog {
-   Dog(int age) {}
+  Dog(int age) {}
 }
 
 Dog a(2);
@@ -200,9 +214,9 @@ a = b;     // Compiler generated assignment operator
 
 // C++ 11:
 class Dog {
-   Dog(int age) {}
-   Dog(double ) = delete;
-   Dog& operator=(const Dog&) = delete;
+  Dog(int age) {}
+  Dog(double) = delete;
+  Dog& operator=(const Dog&) = delete;
 }
 ```
 
@@ -212,16 +226,23 @@ class Dog {
 
 ```cpp
 int arr[6];    //OK
-int A() { return 3; }
+int A() { 
+  return 3; 
+}
 int arr[A()+3];   // Compile Error 
 
 // C++ 11
-constexpr int A() { return 3; }  // Forces the computation to happen 
-                                 // at compile time.
+constexpr int A() { 
+  return 3; 
+}  
+// Forces the computation to happen 
+// at compile time.
 int arr[A()+3];   // Create an array of size 6
 
 // Write faster program with constexpr
-constexpr int cubed(int x) { return x * x * x; }
+constexpr int cubed(int x) { 
+  return x * x * x; 
+}
 
 int y = cubed(1789);  // computed at compile time
 
@@ -265,9 +286,15 @@ ratio = 3.4cm / 2.1mm;
 // 2. Run time cost associated with the unit translation
 
 // C++ 11:
-long double operator"" _cm(long double x) { return x * 10; }
-long double operator"" _m(long double x) { return x * 1000; }
-long double operator"" _mm(long double x) { return x; }
+long double operator"" _cm(long double x) {
+  return x * 10; 
+}
+long double operator"" _m(long double x) { 
+  return x * 1000; 
+}
+long double operator"" _mm(long double x) {
+  return x; 
+}
 
 int main() {
    long double height = 3.4_cm;
@@ -279,29 +306,29 @@ int main() {
 //Note: add constexpr to make the translation happen in compile time.
 
 // Restriction: it can only work with following paramters:
-   char const*
-   unsigned long long
-   long double
-   char const*, std::size_t
-   wchar_t const*, std::size_t
-   char16_t const*, std::size_t
-   char32_t const*, std::size_t
+  char const*
+  unsigned long long
+  long double
+  char const*, std::size_t
+  wchar_t const*, std::size_t
+  char16_t const*, std::size_t
+  char32_t const*, std::size_t
 // Note: return value can be of any types.
 
 // Example:
 int operator"" _hex(char const* str, size_t l) { 
-   // Convert hexdecimal formated str to integer ret
-   return ret;
+  // Convert hexdecimal formated str to integer ret
+  return ret;
 }
 
 int operator"" _oct(char const* str, size_t l) { 
-   // Convert octal formated str to integer ret
-   return ret;
+  // Convert octal formated str to integer ret
+  return ret;
 }
 
 int main() {
-   cout << "FF"_hex << endl;  // 255
-   cout << "40"_oct << endl;  // 32
+  cout << "FF"_hex << endl;  // 255
+  cout << "40"_oct << endl;  // 32
 }
 ```
 
@@ -319,11 +346,11 @@ int main() {
 
 // C++ 03
 for (std::vector<int>::iterator it = vec.begin(); it!=vec.end(); ++ it)
-    m_vec.push_back(*it);
+  m_vec.push_back(*it);
 
 // C++ 11: use auto type
 for (auto it = vec.begin(); it!=vec.end(); ++ it)
-    m_vec.push_back(*it);
+  m_vec.push_back(*it);
 
 auto a = 6;    // a is a integer
 auto b = 9.6;  // b is a double
@@ -350,26 +377,26 @@ auto& y = a;        // int& y = a
   for (char c : string("RGB") {...}
 
 // C++ 03:
-   for (vector<int>::iterator itr = v.begin(); itr!=v.end(); ++ itr)
-      cout << (*itr);
+  for (vector<int>::iterator itr = v.begin(); itr!=v.end(); ++ itr)
+    cout << (*itr);
 
 // C++ 11:
-   for (auto i : v) { // works on any class that has begin() and end()
-      cout << i ;    // readonly access
+  for (auto i : v) { // works on any class that has begin() and end()
+    cout << i ;    // readonly access
    }
 
-   for (auto& i : v) {
-      i++;                 // changes the values in v
-   }                       // and also avoids copy construction
+  for (auto& i : v) {
+    i++;                 // changes the values in v
+  }                       // and also avoids copy construction
 
-   auto x = begin(v);  // Same as: int x = v.begin();
+  auto x = begin(v);  // Same as: int x = v.begin();
 
-   int arr[4] = {3, 2, 4, 5};
-   auto y = begin(arr); // y == 3
-   auto z = end(arr);   // z == 5
-   // How this worked? Because begin() and end() are defined for array.
-   // Adapt your code to third party library by defining begin() and end()
-   // for their containers.
+  int arr[4] = {3, 2, 4, 5};
+  auto y = begin(arr); // y == 3
+  auto z = end(arr);   // z == 5
+  // How this worked? Because begin() and end() are defined for array.
+  // Adapt your code to third party library by defining begin() and end()
+  // for their containers.
 ```
 
 ## initializer lists
@@ -394,7 +421,7 @@ class BoVector {
    public:
    BoVector(const initializer_list<int>& v) {
       for (initializer_list<int>::iterator itr = v.begin(); itr!=v.end(); ++ itr)
-         m_vec.push_back(*itr);
+        m_vec.push_back(*itr);
    }
 };
 
@@ -445,21 +472,21 @@ for (const auto & x : {2, 3, 5, 7}) {
 
 ## Uniform Initialization
 
-타입 추론에 의해 객체를 생성할 때 3가지 순서를 따른다. 첫째 initializer_list constructor 를 찾는다. 둘째 적절한 constructor 를 찾는다. 셋째 aggreate initialization 을 한다.
+타입 추론에 의해 객체를 생성할 때 3가지 순서를 따른다. 첫째 `initializer_list constructor` 를 찾는다. 둘째 적절한 `constructor` 를 찾는다. 셋째 `aggreate initialization` 을 한다.
 
 ```cpp
 // C++ 03
 class Dog {     // Aggregate class or struct
-   public:
-      int age;
-      string name;
+  public:
+    int age;
+    string name;
 };
 Dog d1 = {5, "Henry"};   // Aggregate Initialization
 
 // C++ 11 extended the scope of curly brace initialization
 class Dog {
-   public:
-      Dog(int age, string name) {...};
+  public:
+    Dog(int age, string name) {...};
 };
 Dog d1 = {5, "Henry"}; 
 
@@ -472,15 +499,15 @@ Dog d1 = {5, "Henry"};
 Dog d1{3};
 
 class Dog {
-   public:
-   int age;                                // 3rd choice
+  public:
+  int age;                                // 3rd choice
 
-   Dog(int a) {                            // 2nd choice
-      age = a;
-   }
+  Dog(int a) {                            // 2nd choice
+    age = a;
+  }
 
-   Dog(const initializer_list<int>& vec) { // 1st choice
-      age = *(vec.begin());      
+  Dog(const initializer_list<int>& vec) { // 1st choice
+    age = *(vec.begin());      
    }
 };
 ```
@@ -526,99 +553,99 @@ class Foo {
   //   }); 
 
 struct Node {
-    char id; 
-    int value;
-    Node(char i, int v) : id(i), value(v) {}
-    Node() : id(0), value('z') {}
+  char id; 
+  int value;
+  Node(char i, int v) : id(i), value(v) {}
+  Node() : id(0), value('z') {}
 };
 
 int main() {
-   tuple<int, string, char> t(32, "Penny wise", 'a');
-   tuple<int, string, char> t = {32, "Penny wise", 'a'};  // Wont compile, constructor is explicit
+  tuple<int, string, char> t(32, "Penny wise", 'a');
+  tuple<int, string, char> t = {32, "Penny wise", 'a'};  // Wont compile, constructor is explicit
 
-   cout << get<0>(t) << endl;
-   cout << get<1>(t) << endl;
-   cout << get<2>(t) << endl;
+  cout << get<0>(t) << endl;
+  cout << get<1>(t) << endl;
+  cout << get<2>(t) << endl;
 
-   get<1>(t) = "Pound foolish";
-   cout << get<1>(t) << endl;
+  get<1>(t) = "Pound foolish";
+  cout << get<1>(t) << endl;
 
-   string& s = get<1>(t);
-   s = "Patience is virtue"; 
-   cout << get<1>(t) << endl;   
-   //get<3>(t);  // Won't compile, t only has 3 fields
-   // get<1>(t) is similar to t[1] for vector
+  string& s = get<1>(t);
+  s = "Patience is virtue"; 
+  cout << get<1>(t) << endl;   
+  //get<3>(t);  // Won't compile, t only has 3 fields
+  // get<1>(t) is similar to t[1] for vector
 
-   int i = 1;
-   //get<i>(t); // Won't compile, i must be a compile time constant
+  int i = 1;
+  //get<i>(t); // Won't compile, i must be a compile time constant
 
 
-   tuple<int, string, char> t2;  // default construction 
-   t2 = tuple<int, string, char>(12, "Curiosity kills the cat", 'd'); 
-   t2 = make_tuple(12, "Curiosity kills the cat", 'd'); 
+  tuple<int, string, char> t2;  // default construction 
+  t2 = tuple<int, string, char>(12, "Curiosity kills the cat", 'd'); 
+  t2 = make_tuple(12, "Curiosity kills the cat", 'd'); 
 
-   if (t > t2) {  // Lexicographical comparison
-       cout << "t is larger than t2" << endl;
-   }
+  if (t > t2) {  // Lexicographical comparison
+    cout << "t is larger than t2" << endl;
+  }
 
-   t = t2;  // member by member copying
+  t = t2;  // member by member copying
 
 // Tuple can store references !!  STL containers such as vectors cannot.  Pair can.
-   string st = "In for a penny";
-   tuple<string&> t3(st);  
-   //auto t3 = make_tuple(ref(st));  // Do the same thing
-   get<0>(t3) = "In for a pound";  // st has "In for a pound"
-   cout << st << endl;
-   t2 = make_tuple(12, "Curiosity kills the cat", 'd'); 
-   int x;
-   string y;
-   char z;
-   std::make_tuple(std::ref(x), std::ref(y), std::ref(z)) = t2;  // assign t2 to x, y, z
-   std::tie(x,y,z) = t2;  // same thing
-   std::tie(x, std::ignore, z) = t2;  // get<1>(t2) is ignored
+  string st = "In for a penny";
+  tuple<string&> t3(st);  
+  //auto t3 = make_tuple(ref(st));  // Do the same thing
+  get<0>(t3) = "In for a pound";  // st has "In for a pound"
+  cout << st << endl;
+  t2 = make_tuple(12, "Curiosity kills the cat", 'd'); 
+  int x;
+  string y;
+  char z;
+  std::make_tuple(std::ref(x), std::ref(y), std::ref(z)) = t2;  // assign t2 to x, y, z
+  std::tie(x,y,z) = t2;  // same thing
+  std::tie(x, std::ignore, z) = t2;  // get<1>(t2) is ignored
 
 // Other features
-   auto t4 = std::tuple_cat( t2, t3 );  // t4 is tuple<int, string, char, string>
-   cout << get<3>(t4) << endl;  // "In for a pound" 
+  auto t4 = std::tuple_cat( t2, t3 );  // t4 is tuple<int, string, char, string>
+  cout << get<3>(t4) << endl;  // "In for a pound" 
 
-   // type traits
-   cout << std::tuple_size<decltype(t4)>::value << endl;  // Output: 4
-   std::tuple_element<1, decltype(t4)>::type dd; // dd is a string
+  // type traits
+  cout << std::tuple_size<decltype(t4)>::value << endl;  // Output: 4
+  std::tuple_element<1, decltype(t4)>::type dd; // dd is a string
    
 }
 
 // tuple vs struct
 
 tuple<string, int> getNameAge() { 
-   return make_tuple("Bob", 34);
+  return make_tuple("Bob", 34);
 }
 
 int main() {
-   struct Person { string name; int age; } p;
-   tuple<string, int> t;
+  struct Person { string name; int age; } p;
+  tuple<string, int> t;
 
-   cout << p.name << " " << p.age << endl;
-   cout << get<0>(t) << " " << get<1>(t) << endl;
+  cout << p.name << " " << p.age << endl;
+  cout << get<0>(t) << " " << get<1>(t) << endl;
 
-   // As a one-time only structure to transfer a group of data
-   string name;
-   int age;
-   tie(name, age) = getNameAge();
+  // As a one-time only structure to transfer a group of data
+  string name;
+  int age;
+  tie(name, age) = getNameAge();
 
-   // Comparison of tuples
-   tuple<int, int, int> time1, time2; // hours, minutes, seconds
-   if (time1 > time2) 
-      cout << " time1 is a later time";
+  // Comparison of tuples
+  tuple<int, int, int> time1, time2; // hours, minutes, seconds
+  if (time1 > time2) 
+    cout << " time1 is a later time";
 
-   // Multi index map
-   map<tuple<int,int,int>, string> timemap;
-   timemap.insert(make_pair(make_tuple(12, 2, 3), "Game start"));
+  // Multi index map
+  map<tuple<int,int,int>, string> timemap;
+  timemap.insert(make_pair(make_tuple(12, 2, 3), "Game start"));
 	cout << timemap[make_tuple(2,3,4)]; 
-   unordered_map<tuple<int,int,int>, string> timemap;
+  unordered_map<tuple<int,int,int>, string> timemap;
 
    // Little trick
-   int a, b, c;
-   tie(b, c, a) = make_tuple(a, b, c);
+  int a, b, c;
+  tie(b, c, a) = make_tuple(a, b, c);
 
 }
 ```
@@ -669,23 +696,23 @@ cout << f(3,4) << endl;   // Output: 7
 
 template<typename func>
 void filter(func f, vector<int> arr) {
-   for (auto i: arr) {
-      if (f(i))
-         cout << i << " ";
-   }
+  for (auto i: arr) {
+    if (f(i))
+      cout << i << " ";
+  }
 }
 
 int main() {
-   vector<int> v = {1, 2, 3, 4, 5, 6 };
+  vector<int> v = {1, 2, 3, 4, 5, 6 };
 
-   filter([](int x) {return (x>3);},  v);    // Output: 4 5 6
-   ...
-   filter([](int x) {return (x>2 && x<5);},  v); // Output: 3 4
+  filter([](int x) {return (x>3);},  v);    // Output: 4 5 6
+  ...
+  filter([](int x) {return (x>2 && x<5);},  v); // Output: 3 4
 
 
-   int y = 4;  
-   filter([&](int x) {return (x>y);},  v);    // Output: 5 6
-   //Note: [&] tells compiler that we want variable capture
+  int y = 4;  
+  filter([&](int x) {return (x>y);},  v);    // Output: 5 6
+  //Note: [&] tells compiler that we want variable capture
 }
 
 // Lambda function works almost like a language extention
@@ -723,7 +750,7 @@ E = E * E;
 ```
 
 - c++11에서 RVO(Return Value Optimization)덕분에 Matrix 값 복사는
-  일어나지 않는다. rvalue가 return된다.
+  일어나지 않는다. rvalue 가 return 된다.
   
 ## Value Categories
 
@@ -841,10 +868,14 @@ E = E * E;
 int a = 5;
 int& b = a;   // b is a lvalue reference, originally called reference in C++ 03
 
-int&& c       // c is an rvalue reference
+int&& c;       // c is an rvalue reference
 
-void printInt(int& i) { cout << "lvalue reference: " << i << endl; }
-void printInt(int&& i) { cout << "rvalue reference: " << i << endl; } 
+void printInt(int& i) { 
+  cout << "lvalue reference: " << i << endl; 
+}
+void printInt(int&& i) { 
+  cout << "rvalue reference: " << i << endl; 
+} 
 
 int main() {
    int i = 1;
@@ -874,10 +905,14 @@ X& X::operator=(X&& rhs);
  *    b. You should use passing by value more often.
  */
 
-vector<int> foo() { ...; return myvector; }
+vector<int> foo() { 
+  ...; 
+  return myvector; 
+}
 
-void goo(vector<int>& arg);   // Pass by reference if you use arg to carry
-                             // data back from goo()
+void goo(vector<int>& arg);   
+// Pass by reference if you use arg to carry
+// data back from goo()
 ```
 
 ## Perfect Forwarding
@@ -885,19 +920,19 @@ void goo(vector<int>& arg);   // Pass by reference if you use arg to carry
 어떠한 함수가  `rvalue` 를 `rvalue` 로 `lvalue` 를 `lvalue` 로 전달하는 것을 `perfect forwarding` 이라고 한다. 다음의 예에서 `relay` 는 `perfect forwarding` 이 되고 있지 않다.
 
 ```cpp
-void foo( boVector arg );
+void foo(boVector arg);
 // boVector has both move constructor and copy constructor
 
-template< typename T >
-void relay(T arg ) {
-   foo(arg);  
+template<typename T>
+void relay(T arg) {
+  foo(arg);
 }
 
 int main() {
-   boVector reusable = createBoVector();
-   relay(reusable);
-   ...
-   relay(createBoVector());
+  boVector reusable = createBoVector();
+  relay(reusable);
+  ...
+  relay(createBoVector());
 }
 ```
 
@@ -905,9 +940,9 @@ int main() {
 
 ```cpp
 // Solution:
-template< typename T >
-void relay(T&& arg ) {
-  foo( std::forward<T>( arg ) );
+template<typename T>
+void relay(T&& arg) {
+  foo(std::forward<T>(arg));
 }
 
 //* Note: this will work because type T is a template type.
@@ -924,7 +959,7 @@ void relay(T&& arg ) {
 `remove_reference` 는 `type T` 의 `reference` 를 제거한다.
 
 ```cpp
-template< classs T >
+template<classs T>
 struct remove_reference;    // It removes reference on type T
 
 // T is int&
@@ -962,7 +997,7 @@ remove_refence<int>::type i;   // int i;
 ```cpp
 template< typename T >
 void relay(T&& arg ) {
-  foo( std::forward<T>( arg ) );
+  foo(std::forward<T>( arg ));
 }
 
 // Implementation of std::forward()
@@ -983,8 +1018,8 @@ std::forward<T>(arg); // Turn arg to type of T&&
 
 ## move constructor
 
-- 값 복사 없이 메모리가 이동하는 형태를 move semantic이라고 한다. move
-  semantic이 가능한 생성자를 move constructor라고 한다.
+- 값 복사 없이 메모리가 이동하는 형태를 move semantic 이라고 한다. move
+  semantic 이 가능한 생성자를 move constructor 라고 한다.
 
 ```cpp
 template<typename T>
@@ -1002,11 +1037,11 @@ struct vector {
 array<int, 6> a = {1, 2, 3};
 ```
 
-- vector와 다르게 크기가 고정된 배열이다.
-- int[]와 다른점은 무엇일까?
-  - STL algorithm함수 들에 적용이 가능하다. (ex. begin, end)
+- vector 와 다르게 크기가 고정된 배열이다.
+- int[] 와 다른점은 무엇일까?
+  - STL algorithm 함수 들에 적용이 가능하다. (ex. begin, end)
   - 값 복사, 사전순 비교 등이 쉽다. 
-  - assertive하게 동작 (out-of-index일때 바로 throw)
+  - assertive 하게 동작 (out-of-index 일때 바로 throw)
   
 ## timer
 
@@ -1030,9 +1065,9 @@ if (regex_match("ABCD", regex("(A|B)C(.*)D"))) {
 using namespace std;
 
 int main() {
-   string str;
-   while (true) {
-      cin >> str;
+  string str;
+  while (true) {
+    cin >> str;
 	  //regex e("abc.", regex_constants::icase);   // .   Any character except newline
 	  //regex e("abc?");               // ?       Zero or 1 preceding character
 	  //regex e("abc*");               // *       Zero or more preceding character
@@ -1053,20 +1088,18 @@ int main() {
 	  bool match = regex_search(str, e);
 
 	  cout << (match? "Matched" : "Not matched") << endl << endl;
-   }
+  }
 }
 
 /*
-
 Regular Expression Grammars:
 
-   ECMAScript
-   basic
-   extended
-   awk
-   grep 
-   egrep
-
+  ECMAScript
+  basic
+  extended
+  awk
+  grep 
+  egrep
  */
 
 /***************  Deal with subexpression *****************/
