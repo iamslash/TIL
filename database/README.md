@@ -57,3 +57,8 @@ Project([*],
 )
 chidb>
 ```
+
+# Index
+
+* [SQL Unplugged 2013] 쉽고 재미있는 인덱스 이야기/ 씨퀄로 이장래](https://www.youtube.com/watch?v=TRfVeco4wZM)
+  
