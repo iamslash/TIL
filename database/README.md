@@ -69,6 +69,10 @@ chidb>
 
 위의 그림을 잘 살펴보자. xdb file 은 여러개의 page 로 구성되어 있다. 하나의 page 는 하나의 BTreeNode 를 저장한다. 하나의 BTreeNode 는 하나 이상의 record 를 저장한다. 또한 하나의 page 는 여러개의 cell 로 이루어져 있다. cell 은 record 에 대응된다. 
 
-Courses 테이블은 schema 가 `CREATE TABLE Courses(Id INTEGER PRIMARY KEY, Name TEXT, Instructor INTEGER, Dept INTEGER)` 라고 해보자. primary key 인 id 를 hasing 한 값을 key 로 BTree 를 제작한다. 당연히 Id 를 조건으로 검색하면 빠르다. 
+Courses 테이블은 schema 가 `CREATE TABLE Courses(Id INTEGER PRIMARY KEY, Name TEXT, Instructor INTEGER, Dept INTEGER)` 라고 해보자. primary key 인 id 를 hashing 한 값을 key 로 BTree 를 제작한다. 당연히 Id 를 조건으로 검색하면 빠르다. 
+
+예를 들어 위 그림에서 id 를 hashing 한 값 `86` 을 검색하기 위해 BTree 를 `42->85->86` 순으로 검색에 성공했다.
 
 그러나 Dept 를 조건으로 검색하면 느리다. Dept 의 인덱스를 제작한다. 즉, Dept 의 hashing 값을 key 로 B+Tree 를 제작한다. 당연히 Dept 를 조건으로 검색하면 빨라진다.
+
+예를 들어 Dept 를 hashing 한 값 `42` 를 검색하기 위해 B+Tree 를 `10->42` 순으로 검색에 성공했다. `42` 는 primary key 인 ID 를 hashing 한 값 `67` 를 소유한 cell 을 가리키고 있다.
