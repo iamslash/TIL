@@ -39,6 +39,8 @@
 
 # Materials
 
+- [A pattern language for microservices](https://microservices.io/patterns/index.html)
+  - microservices 의 기본개념
 - [cracking the coding interview](http://www.crackingthecodinginterview.com/)
 * [Designing Data-Intensive Applications](https://dataintensive.net/)
 * [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)

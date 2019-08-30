@@ -1,6 +1,6 @@
-# abstract
+# Abstract
 
-
+Use Case, Class Diagram, Sequence Diagram, Activity Diagram 정도를 알아두자.
 
 # Sequence diagram
 
