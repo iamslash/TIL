@@ -120,7 +120,28 @@ curl -H 'Content-Type: application/json' -XPUT http://localhost:9200/classes/cla
 #   "_seq_no" : 0,
 #   "_primary_term" : 1
 # }
-curl -H 'Content-Type: application/json' -XPUT http://localhost:9200/classes -d 
+
+## create document with file
+curl -H 'Content-type: application/json' -XPUT http://localhost:9200/classes/class/1?pretty -d @a.json
+#
+# a.json
+# {"title": "Programming Language", "professor": "Tom"}
+#
+# {
+#   "_index" : "classes",
+#   "_type" : "class",
+#   "_id" : "1",
+#   "_version" : 2,
+#   "result" : "updated",
+#   "_shards" : {
+#     "total" : 2,
+#     "successful" : 1,
+#     "failed" : 0
+#   },
+#   "_seq_no" : 1,
+#   "_primary_term" : 2
+# }
+
 ```
 
 ## Update
