@@ -20,7 +20,7 @@
   - [Communication](#communication)
   - [Security](#security)
   - [Database Primary Key](#database-primary-key)
-  - [Coordinator](#coordinator)
+  - [Coordinator, discovery](#coordinator-discovery)
 - [Grokking the System Design Interview Practices](#grokking-the-system-design-interview-practices)
 - [System Design Primer Practices](#system-design-primer-practices)
 - [Additional System Design Interview Questions](#additional-system-design-interview-questions)
@@ -326,7 +326,7 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
   * 이것은 mongoDB 의 ID 이다. 
 * `{timestamp}_{shard_id}_{type}_{sequence}` 8 bytes
 
-## Coordinator
+## Coordinator, discovery
 
 service 들의 목록을 저장하고 살아있는지 검증한다. 변경된 사항은 등록된 service 들에게 공지한다. zookeeper, etcd, consul, eureka 가 해당된다.
 
