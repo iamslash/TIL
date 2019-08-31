@@ -211,7 +211,7 @@ reverse proxy 는 load balaning 혹은 single point failure 를 위해 사용된
   * Master-Master replication
 * Federation
 * Sharding
-  * consistent hashing
+  * [consistent hashing](/consistent_hasing/README.md)
 * Denormalization
 * SQL Tuning
 * NoSQL
