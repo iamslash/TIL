@@ -38,3 +38,9 @@ int32_t JumpConsistentHash(uint64_t key, int32_t num_buckets) {
     return b;
 }
 ```
+
+* `key` 는 할당하기 위한 값이다.
+* `number_bucket` 은 `key` 를 할당할 bucket 의 개수이다.
+* `b` 는 이전 bucket 의 위치이다. 곧 key 를 당할 bucket 위치이다.
+* `j` 는 새로운 bucket 위치이다. `b` 에서 jump 하여 `j` 에 도착했을 때 `j < num_bucket` 이면 한번 더 jump 하여 `b` 를 갱신한다. `j >= num_bucket` 이면 `b` 가 답이다.
+* `key = key * 2862933555777941757ULL + 1` 에서 key 는 overflow 가 발생할 것이다. 따라서 `double(key >> 33)` 은 random value 를 얻어올 수 있다.
