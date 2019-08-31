@@ -19,6 +19,8 @@
   - [Asynchronism](#asynchronism)
   - [Communication](#communication)
   - [Security](#security)
+  - [Database Primary Key](#database-primary-key)
+  - [Coordinator](#coordinator)
 - [Grokking the System Design Interview Practices](#grokking-the-system-design-interview-practices)
 - [System Design Primer Practices](#system-design-primer-practices)
 - [Additional System Design Interview Questions](#additional-system-design-interview-questions)
@@ -31,6 +33,7 @@
   - [google cloud design pattern](#google-cloud-design-pattern)
 - [Cracking The Coding Interview Quiz](#cracking-the-coding-interview-quiz)
 
+----
 
 # Abstract
 
@@ -192,9 +195,9 @@ Notes
 
 ![](img/foward_reverse_proxy.png)
 
-forward proxy 는 HTTP req 인터넷에 전달한다. reverse proxy 는 HTTP 를 요청을 인터넷으로부터 HTTP req 를 받아서 back-end 서버들에게 전달한다. L4, L7 스위치도 reverse proxy 라고 할 수 있다. reverse 라는 말은 왜 사용되었을까???
+forward proxy 는 HTTP req 를 인터넷에 전달한다. reverse proxy 는 HTTP 를 요청을 인터넷으로부터 HTTP req 를 받아서 back-end 서버들에게 전달한다. L4, L7 스위치도 reverse proxy 라고 할 수 있다. reverse 라는 말은 왜 사용되었을까???
 
-reverse proxy 는 load balaning 혹은 single point failure 를 위해 사용된다.
+`reverse proxy` 는 `load balaning` 혹은 `SPOF (single point failure)` 를 위해 사용된다.
 
 ## Application layer
 
@@ -235,7 +238,7 @@ reverse proxy 는 load balaning 혹은 single point failure 를 위해 사용된
   * Cache-Aside
     * 응용프로그램이 직접 cache를 제어한다.
 
-```
+```python
 # reading values
 v = cache.get(k)
 if (v == null) {
@@ -249,16 +252,16 @@ sor.put(k, v)
 cache.put(k, v)
 ```
   * Read-through
-    * cache에 읽기 요청하면 cache가 판단해서 자신이 가지고 있는 값 혹은
-      SOR(system of record)로 부터 읽어들인 값을 응답으로 전달한다.
+    * `cache` 에 읽기 요청하면 `cache` 가 판단해서 자신이 가지고 있는 값 혹은
+      `SOR(system of record)` 로 부터 읽어들인 값을 응답으로 전달한다.
   
   * Write-through
-    * cache에 쓰기 요청하면 cache가 판단해서 SOR(system of record)에
+    * `cache` 에 쓰기 요청하면 `cache` 가 판단해서 `SOR(system of record)` 에
       쓰고 자신을 갱신한다.
 
   * Write-behind
-    * cache에 쓰기 요청하면 일단 자신을 갱신하고 요청에 응답한후
-      SOR을 갱신한다. SOR갱신이 완료되기 전에 요청에 빠르게 응답한다.
+    * `cache` 에 쓰기 요청하면 일단 자신을 갱신하고 요청에 응답한후
+      `SOR` 을 갱신한다. `SOR` 갱신이 완료되기 전에 요청에 빠르게 응답한다.
 
 ## Asynchronism
 
@@ -274,6 +277,58 @@ cache.put(k, v)
 * REST
 
 ## Security
+
+## Database Primary Key
+
+* [강대명 <대용량 서버 구축을 위한 Memcached와 Redis>](https://americanopeople.tistory.com/177)
+
+----
+
+예를 들어 이메일 시스템을 디자인한다고 해보자. User 와 Email 테이블의 스키마는 다음과 같다. 
+
+| field | type | description |
+|-------|------|-------------|
+| user_id | Long (8B) | unique id (각 DB 별) |
+| email | String | 이메일 주소 |
+| shard | Long | 자신의 메일 리스트를 저장한 DB server 번호 |
+| type | int | 활성화 유저인가?? |
+| created_at | timestamp | 계정 생성시간 |
+| last_login_time | timestamp | 마지막 로그인 시간 |
+
+| field | type | description |
+|-------|------|-------------|
+| mail_id | Long (8B) | unique id (각 DB 별) |
+| receiver | String or Long | 수신자 |
+| sender | String or Long | 송신자 |
+| subject | String | 메일제목 |
+| received_at | timestamp | 수신시간 |
+| eml_id | String or Long | 메일 본문 저장 id or url |
+| is_read | boolean | 읽었는가?? |
+| contents | String | 미리보기 (내용의 일부) |
+
+eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다. 
+
+* `{receiver_id}_{mail_id}` 
+  * `mail_id` 는 이미 shard 마다 중복해서 존재한다. 따라서 `receiver_id` 와 결합하여 사용하자.
+  * 그렇다면 `eml_id` 는 필요할까? `{receiver_id}_{mail_id}` 만으로도 eml file 의 key 로 사용할 수 있기 때문이다. 조금 더 key 를 잘 설계할 수는 없을까???
+* UUID (Universally Unique Identifier)
+  * id 에 시간 정보가 반영되어 있다. id 를 오름차순으로 정렬하면 시간순 으로 데이터를 정렬할 수 있다.
+  * 16B (128b), 36 characters 이다. 너무 크다.
+  * 적은 바이트로 시간 정보를 저장할 수 있었으면 좋겠다.
+* `{timestamp:52bit}_{sequence:12bit}` 8 bytes
+  * 샤드 아이디도 저장되었으면 좋겠다.
+  * timestamp 는 4 bytes 이다. 단, `1970/01/01` 부터 `2016/02/07/06/28` 까지만 표현 가능하다.  
+* `{timestamp:52bit}_{shard_id:12bit}_{sequence:12bit}` 8 bytes 
+  * IDC 정보도 반영되었으면 좋겠다.
+* `{timestamp:42bits}_{datacenter_id:5bits}_{worker_id:5bits}_{sequence:12bits}` 8 bytes
+  * 이것은 twitter 의 id 이다.
+* `{timetamp:4B}_{machine_id:3B}_{process_id:2B}_{counter:3B}` 12 bytes
+  * 이것은 mongoDB 의 ID 이다. 
+* `{timestamp}_{shard_id}_{type}_{sequence}` 8 bytes
+
+## Coordinator
+
+service 들의 목록을 저장하고 살아있는지 검증한다. 변경된 사항은 등록된 service 들에게 공지한다. zookeeper, etcd, consul, eureka 가 해당된다.
 
 # Grokking the System Design Interview Practices
 
