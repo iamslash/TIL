@@ -23,6 +23,10 @@ B 가 복구되고 클라이언트가 1 을 요청하면 B 에 할당된다. 이
 
 # Implementation
 
+* [Karger Consistent hash](https://www.joinc.co.kr/w/man/12/hash/consistent)
+
+----
+
 ```c
 int32_t JumpConsistentHash(uint64_t key, int32_t num_buckets) {
    int64_t b = 1,   j = 0;
