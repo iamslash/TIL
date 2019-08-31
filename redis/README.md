@@ -4,6 +4,8 @@ redis 에 대해 정리한다.
 
 # Materials
 
+* [강대명 <대용량 서버 구축을 위한 Memcached와 Redis>](https://americanopeople.tistory.com/177)
+* [대용량 서버 구축을 위한 Memcached와 Redis](http://www.hanbit.co.kr/store/books/look.php?p_code=E1904063627)
 * [redis Introduction](https://bcho.tistory.com/654)
 * [redis cheatsheet](https://www.cheatography.com/tasjaevan/cheat-sheets/redis/)
 * [redis @ github](https://github.com/antirez/redis)
@@ -35,7 +37,6 @@ master 와 여러개의 slave 들로 read replica 구성을 할 수 있다.
 | Command | Description | Exapmle |
 |---------|-------------|---------|
 | `SELECT`  | Set current database by index | `> SELECT 8` |
-| | |
 
 ## Database
 
@@ -53,7 +54,7 @@ master 와 여러개의 slave 들로 read replica 구성을 할 수 있다.
 
 ## HyperL­ogLogs
 
-HyperLogLog 는 집합의 원소의 개수를 추정하는 방법으로 2.8.9 추가되었다.
+HyperLogLog 는 집합의 원소의 개수를 추정하는 방법으로 2.8.9 에 추가되었다.
 
 | Command | Description | Exapmle |
 |---------|-------------|---------|
@@ -93,10 +94,6 @@ key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Ha
 * REM: `ZREM, ZREMRANGEBYRANK, ZREMRANGEBYSCORE, ZREMRANGEBYLEX
 INCR: ZINCRBY`
 * 집합연산: `ZUNIONSTORE, ZINTERSTORE`
-
-| Command | Description | Exapmle |
-|---------|-------------|---------|
-| | | |
 
 ## Hashes
 
