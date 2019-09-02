@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Prerequisites](#prerequisites)
 - [Principles](#principles)
@@ -39,6 +40,11 @@
 
 - 시스템 디자인에 대해 적어본다. [system deisgn primer](https://github.com/donnemartin/system-design-primer#federation)
   이 너무 잘 정리 되 있어서 기억할 만한 주제들을 열거해 본다.
+
+# References
+
+* [cloudcraft](https://cloudcraft.co/app)
+  * aws architcture diagram tool
 
 # Materials
 
