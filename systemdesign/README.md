@@ -21,7 +21,6 @@
   - [Communication](#communication)
   - [Security](#security)
   - [Database Primary Key](#database-primary-key)
-  - [Coordinator, discovery](#coordinator-discovery)
 - [Grokking the System Design Interview Practices](#grokking-the-system-design-interview-practices)
 - [System Design Primer Practices](#system-design-primer-practices)
 - [Additional System Design Interview Questions](#additional-system-design-interview-questions)
@@ -152,40 +151,103 @@ Notes
 
 ## Performance vs scalability
 
+performance 의 문제가 있다면 single user 가 느린 시스템을 경험할 것이다. scalability 의 문제가 있다면 single user 가 빠른 시스템을 경험할 지라도 multi user 는 느린 시스템을 경험할 수 있다???
+
 ## Latency vs throughput
+
+Latency 는 어떤 action 을 수행하고 결과를 도출하는데 걸리는 시간이다. Throughput 은 단위 시간당 수행하는 액션 혹은 결과의 수이다.
 
 ## Availability vs consistency
 
 * [CAP Theorem, 오해와 진실](http://eincs.com/2013/07/misleading-and-truth-of-cap-theorem/)
-  * CAP이론은 논란이 많다. CAP보다 PACELC를 이용하자.
-  * Partition(장애)상활일때 A(Availability) 혹은 C(Consistency)가
-    중요하냐 Else(정상)상황일때 L(Latency) 혹은 C(Consistency)가
+  * CAP 이론은 논란이 많다. CAP 보다 PACELC 를 이용하자.
+  * Partition(장애) 상활일때 A(Availability) 혹은 C(Consistency) 가
+    중요하냐 Else(정상) 상황일때 L(Latency) 혹은 C(Consistency) 가
     중요하냐
-  * HBase는 PC/EC이다. 장애 상황일때 C를 위해 A를 희생한다. 정상
-    상황일때 C를 위해 L를 희생한다.
-  * Cassandra는 PA/EL이다. 장애 상황일때 A를 위해 C를 희생한다. 즉
-    Eventual Consistency의 특성을 갖는다. 정상 상황일때 L을 위해 C를
+  * HBase 는 PC/EC 이다. 장애 상황일때 C 를 위해 A 를 희생한다. 정상
+    상황일때 C 를 위해 L 를 희생한다.
+  * Cassandra 는 PA/EL 이다. 장애 상황일때 A 를 위해 C 를 희생한다. 즉
+    Eventual Consistency 의 특성을 갖는다. 정상 상황일때 L 을 위해 C 를
     희생한다. 즉 모든 노드에 데이터를 반영하지는 않는다.
 
 ## Consistency patterns
 
 * Weak consistency
+  * write operation 후에 그 값을 read 할 수 있다고 장담할 수 없다.
+  * memcached 가 해당된다.
 * Eventual consistency
+  * write operation 후에 시간이 걸리기는 하지만 그 값을 read 할 수 있다.
+  * DNS, email 이 해당된다.
 * Strong consistency
+  * write operation 후에 그 값을 바로 read 할 수 있다.
+  * RDBMS
 
 ## Availability patterns
 
 * Fail-over
+  * Active-passive
+    * LB 가 active 와 passive 를 health check 한다. acitve 에 장애가 발생하면 passive 를 active 시킨다.
+  * Active-active
+    * active 를 여러개 운용하기 때문에 load 가 분산된다. DNS 가 모든 active 의 IP 를 알아야할 수도 있다.
+* Disadvanges of Fail-over 
+  * Active 가 passive 에 data 를 replication 하기 전에 장애가 발생하면 일부 data 를 유실할 수 있다.
 * Replication
+  * Master-slave replication
+  * Master-master replication
+* Availabilty in numbers
+  * availability 는 uptime 혹은 downtime 을 percent 단위로 표현된다. 예를 들어 99.9% (three 9s) 혹은 99.99% (four 9s) 등으로 표기한다.
+
+* 99.9% availability - three 9s
+
+| Duration            | Acceptable downtime|
+|---------------------|--------------------|
+| Downtime per year   | 8h 45min 57s       |
+| Downtime per month  | 43m 49.7s          |
+| Downtime per week   | 10m 4.8s           |
+| Downtime per day    | 1m 26.4s           |
+
+* 99.99% availability - four 9s
+
+| Duration            | Acceptable downtime|
+|---------------------|--------------------|
+| Downtime per year   | 52min 35.7s        |
+| Downtime per month  | 4m 23s             |
+| Downtime per week   | 1m 5s              |
+| Downtime per day    | 8.6s               |
 
 ## Domain name system
 
+<p align="center">
+  <img src="http://i.imgur.com/IOyLj4i.jpg"/>
+  <br/>
+  <i><a href=http://www.slideshare.net/srikrupa5/dns-security-presentation-issa>Source: DNS security presentation</a></i>
+</p>
+
+사람이 읽을 수 있는 domain name 을 기계가 이해할 수 있는 IP address 로 번역하는 시스템이다.
+
+* **NS record (name server)** - Specifies the DNS servers for your domain/subdomain.
+* **MX record (mail exchange)** - Specifies the mail servers for accepting messages.
+* **A record (address)** - Points a name to an IP address.
+* **CNAME (canonical)** - Points a name to another name or `CNAME` (example.com to www.example.com) or to an `A` record.
+
 ## Content delivery network
+
+<p align="center">
+  <img src="http://i.imgur.com/h9TAuGI.jpg"/>
+  <br/>
+  <i><a href=https://www.creative-artworks.eu/why-use-a-content-delivery-network-cdn/>Source: Why use a CDN</a></i>
+</p>
 
 * Push CDNs
 * Pull CDNs
 
 ## Load balancer
+
+<p align="center">
+  <img src="http://i.imgur.com/h81n9iK.png"/>
+  <br/>
+  <i><a href=http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html>Source: Scalable system design patterns</a></i>
+</p>
 
 * Active-passive
 * Active-active
@@ -199,18 +261,43 @@ Notes
   
 -----
 
+<p align="center">
+  <img src="http://i.imgur.com/n41Azff.png"/>
+  <br/>
+  <i><a href=https://upload.wikimedia.org/wikipedia/commons/6/67/Reverse_proxy_h2g2bob.svg>Source: Wikipedia</a></i>
+  <br/>
+</p>
+
 ![](img/foward_reverse_proxy.png)
 
 forward proxy 는 HTTP req 를 인터넷에 전달한다. reverse proxy 는 HTTP 를 요청을 인터넷으로부터 HTTP req 를 받아서 back-end 서버들에게 전달한다. L4, L7 스위치도 reverse proxy 라고 할 수 있다. reverse 라는 말은 왜 사용되었을까???
 
-`reverse proxy` 는 `load balaning` 혹은 `SPOF (single point failure)` 를 위해 사용된다.
+nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은 `SPOF (single point failure)` 를 위해 사용된다.
 
 ## Application layer
 
+<p align="center">
+  <img src="http://i.imgur.com/yB5SYwm.png"/>
+  <br/>
+  <i><a href=http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer>Source: Intro to architecting systems for scale</a></i>
+</p>
+
+서비스의 성격에 따라 layer 를 두면 SPOF (Single Point of Failure) 를 해결할 수 있다.
+
 * Microservices
+  * 하나의 service 를 loosely coupled service 들로 분리해서 독립적으로 서비스를 구성하는 기술
+
 * Service discovery
+  * service 의 ip, port 등을 등록하고 살아있는지 확인할 수 있다.
+  * consul, etcd, zookeepr 가 해당된다.
 
 ## Database
+
+<p align="center">
+  <img src="http://i.imgur.com/Xkm5CXz.png"/>
+  <br/>
+  <i><a href=https://www.youtube.com/watch?v=w95murBkYmU>Source: Scaling up to your first 10 million users</a></i>
+</p>
 
 * RDBMS
   * ACID - set of properties of relational database transactions
@@ -221,9 +308,26 @@ forward proxy 는 HTTP req 를 인터넷에 전달한다. reverse proxy 는 HTTP
   * Master-slave replication
   * Master-Master replication
 * Federation
+  * 수직분할 이라고도 한다. 테이블별로 partitioning 한다.
+
+<p align="center">
+  <img src="http://i.imgur.com/U3qV33e.png"/>
+  <br/>
+  <i><a href=https://www.youtube.com/watch?v=w95murBkYmU>Source: Scaling up to your first 10 million users</a></i>
+</p>
+
 * Sharding
+  * 수평분할 이라고도 한다. 하나의 테이블을 레코드별로 partitioning 한다.
   * [consistent hashing](/consistent_hasing/README.md)
+
+<p align="center">
+  <img src="http://i.imgur.com/wU8x5Id.png"/>
+  <br/>
+  <i><a href=http://www.slideshare.net/jboner/scalability-availability-stability-patterns/>Source: Scalability, availability, stability, patterns</a></i>
+</p>
+
 * Denormalization
+  * [normalization @ TIL](/normalization/README.md)
 * SQL Tuning
 * NoSQL
   * Key-value store
@@ -232,6 +336,12 @@ forward proxy 는 HTTP req 를 인터넷에 전달한다. reverse proxy 는 HTTP
   * Graph database
 
 ## Cache
+
+<p align="center">
+  <img src="http://i.imgur.com/Q6z24La.png"/>
+  <br/>
+  <i><a href=http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html>Source: Scalable system design patterns</a></i>
+</p>
 
 * Client caching
 * CDN caching
@@ -271,16 +381,40 @@ cache.put(k, v)
 
 ## Asynchronism
 
+<p align="center">
+  <img src="http://i.imgur.com/54GYsSx.png"/>
+  <br/>
+  <i><a href=http://lethain.com/introduction-to-architecting-systems-for-scale/#platform_layer>Source: Intro to architecting systems for scale</a></i>
+</p>
+
 * Message Queues
+  * Redis, RabbitMQ, Amazon SQS
 * Task Queues
+  * Celery
 * Back pressure
+  * MQ 가 바쁘면 client 에게 503 Service Unavailable 을 줘서 시스템의 성능저하를 예방한다. 일종의 circuit breaker 같다.
 
 ## Communication
+
+* [network @ TIL](/network/README.md)
+
+----
 
 * TCP
 * UDP
 * RPC
 * REST
+* RPC VS REST
+
+| Operation | RPC | REST |
+|---|---|---|
+| Signup    | **POST** /signup | **POST** /persons |
+| Resign    | **POST** /resign<br/>{<br/>"personid": "1234"<br/>} | **DELETE** /persons/1234 |
+| Read a person | **GET** /readPerson?personid=1234 | **GET** /persons/1234 |
+| Read a person’s items list | **GET** /readUsersItemsList?personid=1234 | **GET** /persons/1234/items |
+| Add an item to a person’s items | **POST** /addItemToUsersItemsList<br/>{<br/>"personid": "1234";<br/>"itemid": "456"<br/>} | **POST** /persons/1234/items<br/>{<br/>"itemid": "456"<br/>} |
+| Update an item    | **POST** /modifyItem<br/>{<br/>"itemid": "456";<br/>"key": "value"<br/>} | **PUT** /items/456<br/>{<br/>"key": "value"<br/>} |
+| Delete an item | **POST** /removeItem<br/>{<br/>"itemid": "456"<br/>} | **DELETE** /items/456 |
 
 ## Security
 
@@ -331,10 +465,6 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
 * `{timetamp:4B}_{machine_id:3B}_{process_id:2B}_{counter:3B}` 12 bytes
   * 이것은 mongoDB 의 ID 이다. 
 * `{timestamp}_{shard_id}_{type}_{sequence}` 8 bytes
-
-## Coordinator, discovery
-
-service 들의 목록을 저장하고 살아있는지 검증한다. 변경된 사항은 등록된 service 들에게 공지한다. zookeeper, etcd, consul, eureka 가 해당된다.
 
 # Grokking the System Design Interview Practices
 
