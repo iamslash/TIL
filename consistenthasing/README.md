@@ -44,3 +44,39 @@ int32_t JumpConsistentHash(uint64_t key, int32_t num_buckets) {
 * `b` 는 이전 bucket 의 위치이다. 곧 key 를 당할 bucket 위치이다.
 * `j` 는 새로운 bucket 위치이다. `b` 에서 jump 하여 `j` 에 도착했을 때 `j < num_bucket` 이면 한번 더 jump 하여 `b` 를 갱신한다. `j >= num_bucket` 이면 `b` 가 답이다.
 * `key = key * 2862933555777941757ULL + 1` 에서 key 는 overflow 가 발생할 것이다. 따라서 `double(key >> 33)` 은 random value 를 얻어올 수 있다.
+
+아래는 위의 코드를 파악하기 위해 일부 수정했다.
+
+```c
+// 64 = 33 + 31
+int32_t JumpConsistentHash(uint64_t key, int32_t num_buckets) {
+  int64_t b = 1, j = 0;
+  while (j < num_buckets) {
+    b = j;
+    uint64_t rnd = key * 2862933555777941757ULL + 1;
+    double   da  = double(1LL << 31);   // 2^32
+    double   db  = double((rnd >> 33) + 1); // 1 <= db <= 2^32
+    double   dc  = (da / db);           // 1 <= dc <= 2^32
+    j = (b + 1) * dc;
+
+    printf("key: %2llu, b: %-2lld, j: %-14lld, da: %14.2lf, db: %14.2lf, dc: %14.2lf\n",
+           key, b, j, da, db, dc);
+  }
+  return b;
+}
+
+int main() {  
+  for (int i = 0; i < 5; ++i)
+    JumpConsistentHash(i, 4);  
+  return 0;
+}
+// key:  0, b: 0 , j: 2147483648    , da:  2147483648.00, db:           1.00, dc:  2147483648.00
+// key:  1, b: 0 , j: 6             , da:  2147483648.00, db:   333289332.00, dc:           6.44
+// key:  2, b: 0 , j: 3             , da:  2147483648.00, db:   666578663.00, dc:           3.22
+// key:  2, b: 3 , j: 12            , da:  2147483648.00, db:   666578663.00, dc:           3.22
+// key:  3, b: 0 , j: 2             , da:  2147483648.00, db:   999867994.00, dc:           2.15
+// key:  3, b: 2 , j: 6             , da:  2147483648.00, db:   999867994.00, dc:           2.15
+// key:  4, b: 0 , j: 1             , da:  2147483648.00, db:  1333157326.00, dc:           1.61
+// key:  4, b: 1 , j: 3             , da:  2147483648.00, db:  1333157326.00, dc:           1.61
+// key:  4, b: 3 , j: 6             , da:  2147483648.00, db:  1333157326.00, dc:           1.61
+```
