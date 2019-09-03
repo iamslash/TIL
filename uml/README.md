@@ -97,7 +97,6 @@ public class A {
 * decision
 * transition
 * swim lane (actor 별 구분)
-* 
 
 # Sequence diagram
 

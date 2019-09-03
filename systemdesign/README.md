@@ -8,6 +8,8 @@
   - [Performance vs scalability](#performance-vs-scalability)
   - [Latency vs throughput](#latency-vs-throughput)
   - [Availability vs consistency](#availability-vs-consistency)
+    - [CAP (Consistency Availability Partition tolerance)](#cap-consistency-availability-partition-tolerance)
+    - [PACELC (Partitioning Availability Consistency Else Latency Consistency)](#pacelc-partitioning-availability-consistency-else-latency-consistency)
   - [Consistency patterns](#consistency-patterns)
   - [Availability patterns](#availability-patterns)
   - [Domain name system](#domain-name-system)
@@ -15,11 +17,23 @@
   - [Load balancer](#load-balancer)
   - [Reverse proxy](#reverse-proxy)
   - [Application layer](#application-layer)
+    - [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
+    - [Service discovery](#service-discovery)
   - [Database](#database)
   - [Cache](#cache)
   - [Asynchronism](#asynchronism)
   - [Communication](#communication)
+    - [TCP](#tcp)
+    - [UDP](#udp)
+    - [RPC](#rpc)
+    - [REST (REpresentational State Transfer) API](#rest-representational-state-transfer-api)
+    - [RPC VS REST](#rpc-vs-rest)
   - [Security](#security)
+    - [WAF (Web Application Fairewall)](#waf-web-application-fairewall)
+    - [XSS (Cross Site Scripting)](#xss-cross-site-scripting)
+    - [CSRF (Cross Site Request Forgery)](#csrf-cross-site-request-forgery)
+    - [XSS vs CSRF](#xss-vs-csrf)
+    - [CORS (Cross Origin Resource Sharing)](#cors-cross-origin-resource-sharing)
   - [Database Primary Key](#database-primary-key)
 - [Grokking the System Design Interview Practices](#grokking-the-system-design-interview-practices)
 - [System Design Primer Practices](#system-design-primer-practices)
@@ -39,6 +53,11 @@
 
 - 시스템 디자인에 대해 적어본다. [system deisgn primer](https://github.com/donnemartin/system-design-primer#federation)
   이 너무 잘 정리 되 있어서 기억할 만한 주제들을 열거해 본다.
+
+<p align="center">
+  <img src="http://i.imgur.com/jj3A5N8.png"/>
+  <br/>
+</p>
 
 # References
 
@@ -119,18 +138,6 @@ Notes
 |       |      | 1    | 60 | 3,600 |
 |       |      |      | 1 | 60 |
 
-- terms
-  - nas, san, das 
-  - saas paas iaas 
-  - waf firewall
-  - osi 7 layer
-  - how to make onpremise vpc
-  - restfull api advantages, disadvantages
-  - msa
-  - hdfs 
-  - virtualization 3 types
-  - devops
-
 # Principles
 
 ## How to approach a system design interview question
@@ -160,16 +167,37 @@ Latency 는 어떤 action 을 수행하고 결과를 도출하는데 걸리는 �
 
 ## Availability vs consistency
 
+### CAP (Consistency Availability Partition tolerance)
+
+* [CAP Theorem @ medium](https://medium.com/system-design-blog/cap-theorem-1455ce5fc0a0)
+
+----
+
+![](/aws/img/1_rxTP-_STj-QRDt1X9fdVlA.jpg)
+
+Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availability, Partition tolerance 중 3 가지 모두 만족할 수 없다. 2 가지만을 선택해야 한다.
+
+* Consistency
+  * 모든 클라이언트는 같은 데이터를 읽는다.
+* Availability
+  * 서버 노드중 일부가 고장나도 서비스의 지장이 없다.
+* Partition tolerance
+  * 노드들 끼리 전송하는 네트워크 패킷이 유실되거나 지연되더라도 서비스의 지장이 없다.
+
+### PACELC (Partitioning Availability Consistency Else Latency Consistency)
+
 * [CAP Theorem, 오해와 진실](http://eincs.com/2013/07/misleading-and-truth-of-cap-theorem/)
-  * CAP 이론은 논란이 많다. CAP 보다 PACELC 를 이용하자.
-  * Partition(장애) 상활일때 A(Availability) 혹은 C(Consistency) 가
-    중요하냐 Else(정상) 상황일때 L(Latency) 혹은 C(Consistency) 가
-    중요하냐
-  * HBase 는 PC/EC 이다. 장애 상황일때 C 를 위해 A 를 희생한다. 정상
-    상황일때 C 를 위해 L 를 희생한다.
-  * Cassandra 는 PA/EL 이다. 장애 상황일때 A 를 위해 C 를 희생한다. 즉
-    Eventual Consistency 의 특성을 갖는다. 정상 상황일때 L 을 위해 C 를
-    희생한다. 즉 모든 노드에 데이터를 반영하지는 않는다.
+
+----
+
+![](/aws/img/truth-of-cap-theorem-pacelc.jpg)
+
+시스템이 Partitioning 상황 즉 네트워크 장애 상황일 때는 Availability 혹은 Consistency 중 하나를 추구하고 일반적인 상황일 때는 Latency 혹은 Consistency 중 하나를 추구하라는 이론이다. 
+
+이것을 다시 한번 풀어보면 이렇다. 네트워크 장애 상황일 때 클라이언트는 일관성은 떨어져도 좋으니 일단 데이터를 받겠다 혹은 일관성있는 데이터 아니면 에러를 받겠다는 말이다. 네트워크 장애가 아닌 보통의 상황일 때 클라이언트는 일관성은 떨어져도 빨리 받겠다 혹은 일관성있는 데이터 아니면 늦게 받겠다는 말이다.
+
+* HBase 는 PC/EC 이다. 네트워크 장애상황일 때 무조건 일관성있는 데이터를 보내고 보통의 상황일 때도 무조건 일관성있는 데이터를 보낸다. 한마디로 일관성 성애자이다.
+* Cassandra 는 PA/EL 이다. 일관성은 별로 중요하지 않다. 네트워크 장애상황일 때 일관성은 떨어져도 데이터를 일단 보낸다. 보통의 상황일 때 역시 일관성은 떨어져도 좋으니 일단 빨리 데이터를 보낸다.
 
 ## Consistency patterns
 
@@ -285,12 +313,17 @@ nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은
 
 서비스의 성격에 따라 layer 를 두면 SPOF (Single Point of Failure) 를 해결할 수 있다.
 
-* Microservices
-  * 하나의 service 를 loosely coupled service 들로 분리해서 독립적으로 서비스를 구성하는 기술
 
-* Service discovery
-  * service 의 ip, port 등을 등록하고 살아있는지 확인할 수 있다.
-  * consul, etcd, zookeepr 가 해당된다.
+### MSA (Micro Service Architecture)
+
+하나의 서비스를 느슨하게 연결된 작은 서비스들로 구성하여 구축하는 software development technique 중 하나이다.
+
+모듈화도 되고 여러 팀이 독립적으로 개발할 수도 있다. 그러나 너무 많은 서비스들의 수때문에 많은 프로토콜을 구현해야 하고 유지보수가 용이하지 않다.
+
+### Service discovery
+
+* service 의 ip, port 등을 등록하고 살아있는지 확인할 수 있다.
+* consul, etcd, zookeepr 가 해당된다.
 
 ## Database
 
@@ -401,11 +434,48 @@ cache.put(k, v)
 
 ----
 
-* TCP
-* UDP
-* RPC
-* REST
-* RPC VS REST
+### TCP
+
+TODO
+
+### UDP
+
+TODO
+
+### RPC
+
+TODO
+
+### REST (REpresentational State Transfer) API 
+
+* [1) Rest API란? @ edwith](https://www.edwith.org/boostcourse-web/lecture/16740/)
+
+----
+
+2000 년도에 로이 필딩 (Roy Fielding) 의 박사학위 논문에서 최초로 소개되었다. REST 형식의 API 를 말한다.
+
+로이 필딩은 현재 공개된 REST API 라고 불리우는 것은 대부분 REST API 가 아니다라고 말한다. REST API 는 다음과 같은 것들을 포함해야 한다고 한다.
+
+* client-server
+* stateless
+* cache
+* uniform interface
+* layered system
+* code-on-demand (optional)
+
+HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다. uniform interface 는 다음을 포함한다.
+
+* 리소스가 URI로 식별되야 합니다.
+* 리소스를 생성,수정,추가하고자 할 때 HTTP메시지에 표현을 해서 전송해야 합니다.
+* 메시지는 스스로 설명할 수 있어야 합니다. (Self-descriptive message)
+* 애플리케이션의 상태는 Hyperlink를 이용해 전이되야 합니다.(HATEOAS)
+
+위의 두가지는 이미 만족하지만 나머지 두가지는 HTTP 로 구현하기 어렵다. 예를 들어 HTTP BODY 에 JSON 을 포함했을 때 HTTP message 스스로 body 의 내용을 설명하기란 어렵다. 그리고 웹 게시판을 사용할 때, 리스트 보기를 보면, 상세보기나 글쓰기로 이동할 수 있는 링크가 있습니다.
+상세보기에서는 글 수정이나 글 삭제로 갈 수 있는 링크가 있습니다. 이렇게 웹 페이지를 보면, 웹 페이지 자체에 관련된 링크가 있는것을 알 수 있는데 이를 HATEOAS (Hypermedia As The Engine Of Application State) 라고 한다. HATEOAS 를 API 에서 제공하는 것은 어렵다.
+
+결국 HTTP 는 REST API 의 uniform interface 스타일 중 self-descriptive message, HATEOAS 를 제외하고 대부분의 특징들이 구현되어 있다고 할 수 있다. 그래서 REST API 대신 HTTP API 또는 WEB API 라고 한다.
+
+### RPC VS REST
 
 | Operation | RPC | REST |
 |---|---|---|
@@ -418,6 +488,42 @@ cache.put(k, v)
 | Delete an item | **POST** /removeItem<br/>{<br/>"itemid": "456"<br/>} | **DELETE** /items/456 |
 
 ## Security
+
+### WAF (Web Application Fairewall)
+
+* [AWS WAF – 웹 애플리케이션 방화벽](https://aws.amazon.com/ko/waf/)
+* [웹방화벽이란?](https://www.pentasecurity.co.kr/resource/%EC%9B%B9%EB%B3%B4%EC%95%88/%EC%9B%B9%EB%B0%A9%ED%99%94%EB%B2%BD%EC%9D%B4%EB%9E%80/)
+
+----
+  
+* 일반적인 방화벽과 달리 웹 애플리케이션의 보안에 특화된 솔루션이다. 
+* 애플리케이션의 가용성에 영향을 주거나, SQL Injection, XSS (Cross Site Scripting) 과 같이 보안을 위협하거나, 리소스를 과도하게 사용하는 웹 공격으로부터 웹 애플리케이션을 보호하는 데 도움이 된다.
+
+### XSS (Cross Site Scripting)
+
+* [웹 해킹 강좌 ⑦ - XSS(Cross Site Scripting) 공격의 개요와 실습 (Web Hacking Tutorial #07) @ youtube](https://www.youtube.com/watch?v=DoN7bkdQBXU)
+
+----
+
+* 웹 게시판에 javascript 를 내용으로 삽입해 놓으면 그 게시물을 사용자가 읽을 때 삽입된 스크립트가 실행되는 공격방법
+
+### CSRF (Cross Site Request Forgery)
+
+* [웹 해킹 강좌 ⑩ - CSRF(Cross Site Request Forgery) 공격 기법 (Web Hacking Tutorial #10) @ youtube](https://www.youtube.com/watch?v=nzoUgKPwn_A)
+
+----
+
+* 특정 사용자의 세션을 탈취하는 데에는 실패하였지만 스크립팅 공격이 통할 때 사용할 수 있는 해킹 기법. 피해자가 스크립트를 보는 것과 동시에 자기도 모르게 특정한 사이트에 어떠한 요청(Request) 데이터를 보낸다.
+
+### XSS vs CSRF
+
+* XSS 는 공격대상이 Client 이고 CSRF 는 공격대상이 Server 이다.
+* XSS 는 사이트변조나 백도어를 통해 Client 를 공격한다.
+* CSRF 는 요청을 위조하여 사용자의 권한을 이용해 서버를 공격한다.
+
+### CORS (Cross Origin Resource Sharing)
+
+XMLHttpRequest 가 cross-domain 을 요청할 수 있도록하는 방법이다. request 를 수신하는 Web Server 에서 설정해야 한다.
 
 ## Database Primary Key
 
@@ -652,9 +758,15 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
 
 ## aws cloud design pattern
 
+TODO
+
 ## azure cloud design pattern
 
+TODO
+
 ## google cloud design pattern
+
+TODO
 
 # Cracking The Coding Interview Quiz
 
