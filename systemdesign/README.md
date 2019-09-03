@@ -47,6 +47,7 @@
 
 # Materials
 
+- [aws @ TIL](/aws/README.md)
 - [A pattern language for microservices](https://microservices.io/patterns/index.html)
   - microservices 의 기본개념
 - [cracking the coding interview](http://www.crackingthecodinginterview.com/)
