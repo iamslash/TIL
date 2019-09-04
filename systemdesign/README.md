@@ -354,7 +354,7 @@ nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은
 
 * Sharding
   * 수평분할 이라고도 한다. 하나의 테이블을 레코드별로 partitioning 한다.
-  * [consistent hashing](/consistent_hasing/README.md)
+  * [consistent hashing @ TIL](/consistent_hasing/README.md)
 
 <p align="center">
   <img src="http://i.imgur.com/wU8x5Id.png"/>
