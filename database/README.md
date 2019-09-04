@@ -76,3 +76,24 @@ Courses 테이블은 schema 가 `CREATE TABLE Courses(Id INTEGER PRIMARY KEY, Na
 그러나 Dept 를 조건으로 검색하면 느리다. Dept 의 인덱스를 제작한다. 즉, Dept 의 hashing 값을 key 로 B+Tree 를 제작한다. 당연히 Dept 를 조건으로 검색하면 빨라진다.
 
 예를 들어 Dept 를 hashing 한 값 `42` 를 검색하기 위해 B+Tree 를 `10->42` 순으로 검색에 성공했다. `42` 는 primary key 인 ID 를 hashing 한 값 `67` 를 소유한 cell 을 가리키고 있다.
+
+# Pages
+
+* [How does SQLite work? Part 2: btrees! (or: disk seeks are slow don't do them!)](https://jvns.ca/blog/2014/10/02/how-does-sqlite-work-part-2-btrees/)
+  * sqlite 의 database file 이 왜 pages 로 구성되어 있는지 설명한다.
+
+----
+
+database file 은 물리적으로 여러개의 pages 로 구성되야 한다.
+
+CPU 는 disk 에서 데이터를 읽어들여 memeory 로 로드해야 한다. 이때 데이터의 크기는 내가 찾고자 하는
+것에 가까운 최소의 크기여야 한다. 내가 찾고자하는 데이터는 16 Byte 인데 1 MB 를 메모리에 로드하는 것은
+낭비이다. 
+
+그리고 filesystem 의 block size 는 4 KB 이다. 따라서 한번에 1 MB 를 메모리에서 읽는 것은 불가능하다.
+여러번에 걸쳐 disk access 를 해야 한다. I/O 낭비가 발생한다.
+
+따라서 데이터를 page 에 저장하고 그것의 크기는 block size 보다는 작고 
+너무 작지 않게 설정하여 L1, L2 Cache hit 가 이루어 지도록 해야 한다.
+
+참고로 chidb, sqlite 는 page 의 size 가 1K 이다.
