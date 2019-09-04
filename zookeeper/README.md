@@ -2,7 +2,7 @@
 
 consensus algorithm 중 하나인 zab 을 구현한 coordinator 이다.
 
-Consensus 란 분산 시스템에서 노드 간의 상태를 공유하는 알고리즘을 말한다. 가장 유명한 알고리즘으로 `Paxos` 가 있다. `Raft` 는 이해하기 어려운 기존의 알고리즘과 달리 쉽게 이해하고 구현하기 위해 설계되었습니다.
+Consensus 란 분산 시스템에서 노드 간의 상태를 공유하는 알고리즘을 말한다. 가장 유명한 알고리즘으로 `Paxos` 가 있다. `Raft` 는 이해하기 어려운 기존의 알고리즘과 달리 쉽게 이해하고 구현하기 위해 설계되었다.
 
 # Materials
 
@@ -12,17 +12,27 @@ Consensus 란 분산 시스템에서 노드 간의 상태를 공유하는 알고
 * [How To Install and Configure an Apache ZooKeeper Cluster on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-an-apache-zookeeper-cluster-on-ubuntu-18-04)
 * [Zookeeper Tutorial @ tutorialpoint](https://www.tutorialspoint.com/zookeeper/index.htm)
 
-# Install
+# Install with Docker
 
-TODO
+* [zookeeper @ dockerhub](https://hub.docker.com/_/zookeeper)
+
+----
 
 ```bash
+docker pull zookeeper
+docker run --name my-zookeeper -p 2181:2181 -p 2888:2888 -p 3888:3888 -p 8080:8080 --restart always -d zookeeper
+# EXPOSE 2181 2888 3888 8080 (the zookeeper client port, follower port, election port, AdminServer port respectively)
+docker exec -it my-zookeeper /bin/bash
+cd bin
+./zkCli.sh
 # start zookeeper server
-bin/zkServer.sh start
-
+#bin/zkServer.sh start
 # start zookeeper cli
-bin/zkCli.sh
+#bin/zkCli.sh
 ```
+
+* browser 로 `http://localhost:8080/commands` 를 접속해 본다.
+  * [참고](http://www.mtitek.com/tutorials/zookeeper/http-admin-interface.php)
 
 # Basic
 
@@ -82,7 +92,8 @@ get /FirstZnode0000000023
 watch 는 get command 로 등록할 수 있다.
 
 ```bash
-get /FirstZnode watch 1
+#get /FirstZnode watch 1 # deprecated
+get -w /FirstZnode
 ```
 
 ## Set data

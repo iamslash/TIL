@@ -45,12 +45,21 @@ redis-cli
 
 # Sentinel
 
+* [](http://redisgate.kr/redis/sentinel/sentinel.php)
 
+----
+
+![](http://redisgate.kr/images/sentinel/sentinel-01.png)
+
+sentinel 은 Redis Master 와 Redis Slave 를 fail over 처리 한다.
+redis-cli 는 sentinel 로 접속한다.
 
 # Cluster
 
 * [Docker기반 Redis 구축하기 - (10) Redis Cluster Mode 설정하기](https://jaehun2841.github.io/2018/12/03/2018-12-03-docker-10/#docker-entrypointsh)
 * [vishnunair/docker-redis-cluster](https://hub.docker.com/r/vishnunair/docker-redis-cluster/)
+* [레디스 클러스터 소개](http://redisgate.kr/redis/cluster/cluster_introduction.php)
+* [레디스 클러스터 구성](http://redisgate.kr/redis/cluster/cluster_configuration.php)
 
 ----
 
