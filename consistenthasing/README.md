@@ -80,3 +80,18 @@ int main() {
 // key:  4, b: 1 , j: 3             , da:  2147483648.00, db:  1333157326.00, dc:           1.61
 // key:  4, b: 3 , j: 6             , da:  2147483648.00, db:  1333157326.00, dc:           1.61
 ```
+
+* 아래는 modulo 연산으로 간단히 구현해 보았다. 책임 못짐.
+
+```cpp
+//  fails: failed bucket
+// return: bucket number
+int32_t ModuloConsistentHash(uint64_t key, int32_t num_buckets, set<int>& fails) {
+  if (buckets == fails.size())
+    return -1;
+  int32_t r = key % num_buckets;
+  while (fails.count(r))
+    r = (r + 1) % num_buckets;
+  retur r;
+}
+```  
