@@ -25,6 +25,8 @@ docker exec -it my-elk /bin/bash
 * browser 를 이용하여 `localhost:5601` (kibana) 에 접속한다.
 * browser 를 이용하여 `localhost:9200` (elasticsearch) 에 접속한다.
 
+* [샘플 데이터 로드](https://www.elastic.co/guide/kr/kibana/current/tutorial-load-dataset.html)
+
 # Basic Elastic Search
 
 ## Elastic Search vs RDBMS
