@@ -35,6 +35,7 @@
     - [XSS vs CSRF](#xss-vs-csrf)
     - [CORS (Cross Origin Resource Sharing)](#cors-cross-origin-resource-sharing)
   - [Database Primary Key](#database-primary-key)
+  - [Idempotency](#idempotency)
 - [Grokking the System Design Interview Practices](#grokking-the-system-design-interview-practices)
 - [System Design Primer Practices](#system-design-primer-practices)
 - [Additional System Design Interview Questions](#additional-system-design-interview-questions)
@@ -574,6 +575,14 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
 * `{timetamp:4B}_{machine_id:3B}_{process_id:2B}_{counter:3B}` 12 bytes
   * 이것은 mongoDB 의 ID 이다. 
 * `{timestamp}_{shard_id}_{type}_{sequence}` 8 bytes
+
+## Idempotency
+
+* [RESTful API](https://lifeisgift.tistory.com/entry/Restful-API-%EA%B0%9C%EC%9A%94)
+
+----
+
+한글로 멱등성이라고 한다. RESTful API 에서 같은 호출을 여러번 해도 동일한 결과를 리턴하는 것을 말한다.
 
 # Grokking the System Design Interview Practices
 
