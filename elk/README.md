@@ -26,6 +26,13 @@ docker exec -it my-elk /bin/bash
 * browser 를 이용하여 `localhost:9200` (elasticsearch) 에 접속한다.
 
 * [샘플 데이터 로드](https://www.elastic.co/guide/kr/kibana/current/tutorial-load-dataset.html)
+  * 샘플 데이터를 다운로드해서 bulk 로 입력할 수 있다.
+
+```bash
+curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/bank/account/_bulk?pretty' --data-binary @accounts.json
+curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/shakespeare/_bulk?pretty' --data-binary @shakespeare.json
+curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/_bulk?pretty' --data-binary @logs.jsonl
+```
 
 # Basic Elastic Search
 
@@ -453,8 +460,63 @@ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pre
 
 # Basic Kibana
 
-TODO
+* [Kibana 사용자 가이드](https://www.elastic.co/guide/kr/kibana/current/index.html)
+  * 킹왕짱
 
 # Basic Logstash
 
-TODO
+* [kafka-elk-docker-compose](https://github.com/sermilrod/kafka-elk-docker-compose)
+  * dockercompose 로 filebeat, kafka, zookeeper, elk 를 실행한다. 특히 logstash 설정을 참고할 만 함.
+
+logstash 는 input, filter, output plugin 을 설정할 수 있다. 예를 들어 logstash 가 kafka 를 data source 로 한다면 input 항목에 kafka 를 설정한다. 그리고 logstash 가 elasticsearch 를 data destination 으로 한다면 output 항목에 elasticsearch 를 설정한다.
+
+```yml
+input {
+  kafka {
+    bootstrap_servers => "kafka1:9092,kafka2:9092,kafka3:9092"
+    client_id => "logstash"
+    group_id => "logstash"
+    consumer_threads => 3
+    topics => ["log"]
+    codec => "json"
+    tags => ["log", "kafka_source"]
+    type => "log"
+  }
+}
+
+filter {
+  if [type] == "apache_access" {
+    grok {
+      match => { "message" => "%{COMMONAPACHELOG}" }
+    }
+    date {
+      match => ["timestamp", "dd/MMM/yyyy:HH:mm:ss Z"]
+      remove_field => ["timestamp"]
+    }
+  }
+  if [type] == "apache_error" {
+    grok {
+      match => { "message" => "%{COMMONAPACHELOG}" }
+    }
+    date {
+      match => ["timestamp", "dd/MMM/yyyy:HH:mm:ss Z"]
+      remove_field => ["timestamp"]
+    }
+  }
+}
+
+output {
+  if [type] == "apache_access" {
+    elasticsearch {
+         hosts => ["elasticsearch:9200"]
+         index => "logstash-apache-access-%{+YYYY.MM.dd}"
+    }
+  }
+  if [type] == "apache_error" {
+    elasticsearch {
+         hosts => ["elasticsearch:9200"]
+         index => "logstash-apache-error-%{+YYYY.MM.dd}"
+    }
+  }
+}
+```
