@@ -45,14 +45,18 @@ redis-cli
 
 # Sentinel
 
-* [](http://redisgate.kr/redis/sentinel/sentinel.php)
+* [sentinel](http://redisgate.kr/redis/sentinel/sentinel.php)
+* [twemproxy를 이용한 redis failover @ youtube](https://www.youtube.com/watch?v=xMSVlUnBy6c)
+  * twemproxy 와 sentinel 을 이용한 failover 방법을 설명한다. 
 
 ----
 
 ![](http://redisgate.kr/images/sentinel/sentinel-01.png)
 
-sentinel 은 Redis Master 와 Redis Slave 를 fail over 처리 한다.
-redis-cli 는 sentinel 로 접속한다.
+sentinel 은 Master 와 Redis Slave 를 fail over 처리 한다.
+sentinel 은 twemproxy 와 같은 machine 에서 실행해야 한다.
+만약 Redis Mater 가 죽으면 twemproxy 의 설정파일을 수정하여
+Redis Slave 의 주소를 Redis Master 의 주소로 교체한다.
 
 # Cluster
 
