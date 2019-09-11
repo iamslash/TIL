@@ -5,6 +5,7 @@
 # Materials
 
 - [[예제로 배우는 스프링 입문] 1. 강좌 소개 @ youtube](https://www.youtube.com/watch?v=HACQV_koAIU&list=PLfI752FpVCS8_5t29DWnsrL9NudvKDAKY)
+  - [spring-petclinic @ github](https://github.com/spring-projects/spring-petclinic)
 - [Spring Boot Reference Guide](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
 
 # Tutorial of STS
