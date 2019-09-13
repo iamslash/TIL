@@ -75,21 +75,21 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 
 [Spring Framework Core](SpringFrameworkCore.md)
 
+# Spring Boot
+
+[Spring Boot](SpringBoot.md)
+
 # Spring Web MVC
 
 [Spring Web MVC](SpringWebMvc.md)
-
-# Spring REST API
-
-[Spring REST API](SpringRestApi.md)
 
 # Spring Data JPA
 
 [Spring Data JPA](SpringDataJpa.md)
 
-# Spring Boot
+# Spring REST API
 
-[Spring Boot](SpringBoot.md)
+[Spring REST API](SpringRestApi.md)
 
 # Spring Security
 
