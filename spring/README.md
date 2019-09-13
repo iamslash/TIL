@@ -71,214 +71,27 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 ```java
 ```
 
-# IoC Container and Bean
+# Spring Framework Core
 
-## Spring IoC Container and Bean
+[Spring Framework Core](SpringFrameworkCore.md)
 
-IOC Container 가 관리하는 객체를 Bean 이라고 한다. 마치 MS 의 COM 과 비슷한 것 같다. IOC Container 가 생성하고 다른 class 에 DI (Dependency Injection) 한다. Bean 은 주로 Singleton 이다.
+# Spring Web MVC
 
-다음은 `BookService` Bean 의 구현이다. `@service` 를 사용해서 Bean 이 되었다. `@Autowired` 를 사용해서 IOC Container 가 생성한 `BookRepository` Bean 을 얻어올 수 있다. `BookRepository` Bean 을 Dependency Injection 에 의해 constructor 에서 argument 로 전달받는다. `@PostConstruct` 를 사용해서 `BookService` Bean 이 생성된 후 함수가 실행되도록 구현했다.
+[Spring Web MVC](SpringWebMvc.md)
 
-```java
-@service
-public class BookService {
-  @Autowired
-  private BookRepository bookRepository;
-  
-  public BookService(BookRepository bookRepository) {
-    this.bookRepository = bookRepository;
-  }
-  
-  public Book save(Book book) {
-    book.setCreated(new Date());
-    book.setBookStatus(BookStatus.DRAFT);
-    return bookRepository.save(book);
-  }
-  
-  @PostConstruct
-  public void postConstruct() {
-    System.out.println("==============================");
-    System.out.println("BookService::postConstruct");
-  }
-}
-...
-@Repository
-public class BookRepository {
-  public Book save(Book book) {
-    return null;
-  }
-}
-```
+# Spring REST API
 
-IOC 의 핵심은 [BeanFactory interface](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html) 이다. 다음과 같이 Bean 의 lifecycle 을 이해할 수 있다. 
+[Spring REST API](SpringRestApi.md)
 
-* BeanNameAware's setBeanName
-* BeanClassLoaderAware's setBeanClassLoader
-* BeanFactoryAware's setBeanFactory
-* EnvironmentAware's setEnvironment
-* EmbeddedValueResolverAware's setEmbeddedValueResolver
-* ResourceLoaderAware's setResourceLoader (only applicable when running in an application context)
-* ApplicationEventPublisherAware's setApplicationEventPublisher (only applicable when running in an application context)
-* MessageSourceAware's setMessageSource (only applicable when running in an application context)
-* ApplicationContextAware's setApplicationContext (only applicable when running in an application context)
-* ServletContextAware's setServletContext (only applicable when running in a web application context)
-* postProcessBeforeInitialization methods of BeanPostProcessors
-* InitializingBean's afterPropertiesSet
-* a custom init-method definition
-* postProcessAfterInitialization methods of BeanPostProcessors
+# Spring Data JPA
 
-[ApplicationContext](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html) 는 가장 많이 사용하는 [BeanFactory](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html) 이다.
+[Spring Data JPA](SpringDataJpa.md)
 
-## Application Context and Setting Bean
+# Spring Boot
 
-Bean 을 생성하는 방법크게 xml 혹은 class 를 이용하는 방법이 있다.
+[Spring Boot](SpringBoot.md)
 
-먼저 xml 에 생성하고자 하는 Bean 을 모두 표기해보자. `bookService` 에서 `bookRepository` 를 DI 해야한다. 따라서 `bookRepository` Bean 을 reference 하기 위해 `property` 가 사용되었음을 주목하자. Bean 이 늘어날 때 마다 application.xml 에 모두 등록해야 한다. 상당히 귀찮다.
+# Spring Security
 
-```xml
-<bean id="bookService" 
-      class="..."
-      autowire="default">
-  <property name="bookRespository" ref="bookRespository"/>
-</bean>      
-<bean id="bookRespository"
-      class="..."/>
-```
+[Spring Security](SpringSecurity.md)
 
-```java
-public class DemoApplication {
-  public static void main(String[] args) {
-    ApplicationContext ctx = new ClassPathXmlApplicationContext(...);
-    String[] names = ctx.getBeanDefinitionNames();
-    System.out.println(Arrays.toString(names));
-    BookService bookService = (BookService) ctx.getBean(s:"bookService");
-    System.out.println(bookService.bookRepository != null);    
-  }
-}
-```
-
-또 다른 방법은 application.xml 에 component scan 을 사용하여 간단히 Bean 설정할 수 있다. Bean class 들은 `@Component` 를 사용해야 한다. `@Bean, @Service, @Repository` 는 `@Component` 를 확장한 annotation 이다. DI 를 위해 `@Autowired` 를 사용한다.
-
-```xml
-<context:component-scan base-package="..."/>
-```
-
-ApplicationConfig class 를 사용해서 Bean 을 등록할 수 있다. 여전히 component scan 은 xml 에서 수행한다.
-
-```java
-@Configuration
-public class ApplicationConfig {
-  @Bean
-  public BookRepository bookRepository() {
-    return new BookRespotiroy();
-  }
-  @Bean
-  public BookService bookService() {
-    BookService bookService = new BookService();
-    bookService.setBookRepository(bookRepository());
-    return bookService;
-  }
-}
-```
-
-```java
-public class DemoApplication {
-  public static void main(String[] args) {
-    ApplicationContext ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-    String[] names = ctx.getBeanDefinitionNames();
-    System.out.println(Arrays.toString(names));
-    BookService bookService = (BookService) ctx.getBean(s:"bookService");
-    System.out.println(bookService.bookRepository != null);    
-  }
-}
-```
-
-이번에는 component scan 마저 annotation 을 이용해보자. 더 이상 xml 은 필요 없다.
-
-```java
-@Configuration
-@ComponentScan(basePackageClasses = DemoApplication.class)
-public class ApplicationConfig {
-}
-...
-@SpringBootApplication
-public class DemoApplication {
-  public static void main(String[] args) {
-
-  }
-}
-```
-
-## @Autowire
-
-## @Component and Component Scan
-
-## Scope of Bean
-
-## Environment Profile
-
-## Environment Property
-
-## MessageSource
-
-## ApplicationEventPublisher
-
-## ResourceLoader
-
-# Resource and Validation
-
-## Resource Abstraction
-
-## Validation Abstraction
-
-# Data Binding
-
-## PropertyEditor
-
-## Converter and Formatter
-
-# SpEL (Spring Expression Language)
-
-# Spring AOP (Aspected Oriented Programming)
-
-## Overview
-
-## Proxy Based AOP
-
-## @AOP
-
-# Null-Safty
-
-
-# Tutorial of STS
-
-- [Spring Tool Suite](https://spring.io/tools)를 설치한다.
-- STS를 시작하고 File | New | Spring Starter Project를 선택하고 적당히 설정하자.
-  - com.iamslash.firstspring
-- 다음과 같은 파일을 com.iamslash.firstspring에 추가하자.
-
-```java
-package com.iamslash.firstspring;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-public class A {
-	@RequestMapping("/")
-	public String index() {
-		return "helloworld!";
-	}
-}
-```
-- firstspring을 R-click후에 Run As | Spring Boot App선택해서 실행하자.
-- 브라우저를 이용하여 http://localhost:8080으로 접속하자.
-
-# Tutorial of springboot 
-
-- [springboot manual installation](https://docs.spring.io/spring-boot/docs/current/reference/html/getting-started-installing-spring-boot.html#getting-started-manual-cli-installation)
-  에서 zip을 다운받아 `d:\local\src\`에 압축을 해제하자.
-- 환경설정변수 SPRING_HOME을 만들자. `d:\local\src\D:\local\src\spring-1.5.6.RELEASE`
-- 환경설정변수 PATH에 `%SPRING_HOME%\bin`을 추가하자.
-- command shell에서 `spring version`을 실행한다.
-- command shell에서 `spring init'을 이용하여 새로운 프로젝트를 제작할 수 있다.
