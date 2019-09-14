@@ -418,11 +418,154 @@ TODO
 
 ## MessageSource
 
+ApplicationContext 는 MessageSource 를 구현한다. MessageSource 를 field 로 DI 하면 i18n 을 처리할 수 있다.
+
 TODO
 
 ## ApplicationEventPublisher
 
-TODO
+ApplicationContext 는 ApplicationEventPublisher 를 구현한다. ApplicationContext 가 field 로 DI 되면 event 를 보내고 처리할 수 있다. 
+
+```java
+// MyEvent.java
+public class MyEvent extends ApplicationEvent {
+  private int data;
+
+  public MyEvent(Object src) {
+    super(src);
+  }
+
+  public MyEvent(Object src, int data) {
+    super(src);
+    this.data = data;
+  }
+
+  public int getData() {
+    return data;
+  }
+}
+
+// AppRunner.java
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Autowired
+  ApplicationEventPublisher publishEvent;
+
+  @Override
+  public void run(ApplicationArguments args) throws Exception {
+    publishEvent.publishEvent(new MyEvent(this, 100));
+  }
+}
+
+// MyEventHandler.java
+@Component
+public class MyEventHandler implements ApplicationListener<MyEvent> {
+  @Override
+  public void onApplicationEvent(MyEvent evt) {
+    puslishEvent.publishEvent("I got it " + evt.getData());
+  }
+}
+```
+
+그러나 Spring 4.2 부터는 MyEvent 가 ApplicationEvent 를 상속할 필요가 없고 MyEventHandler 가 ApplicationListener 를 상속 할 필요가 없다. 더욱 POJO 스러운 코드를 만들 수 있다.
+
+```java
+// MyEvent.java
+public class MyEvent {
+  private int data;
+  private Object src;
+
+  public MyEvent(Object src, int data) {
+    this.src = src;
+    this.data = data;
+  }
+
+  public Object getSrc() {
+    return src;
+  }
+
+  public int getData() {
+    return data;
+  }
+}
+
+// MyEventHandler.java
+@Component
+public class MyEventHandler {
+  
+  @EventListener
+  public void handle(MyEvent evt) {
+    puslishEvent.publishEvent("I got it " + evt.getData());
+  }
+}
+```
+
+이번에는 또 다른 Handler 를 정의해 보자. 핸들러의 우선순위를 조정하고 싶다면 `@Order` 를 사용해보자.
+
+```java
+// YourEventHandler.java
+@Component
+public class YourEventHandler {
+  
+  @EventListener
+  @Order(Ordered.HIGHEST_PRECEDENCE + 2)
+  public void handle(MyEvent evt) {
+    puslishEvent.publishEvent("YourEventHandler::I got it " + evt.getData());
+  }
+}
+```
+
+또한 `@Async, @EnableAsync` 를 사용하여 비동기로 event 를 handle 할 수 있다. 비동기이기 때문에 더 이상 `@Order` 는 의미없다.
+
+```java
+// YourEventHandler.java
+@Component
+public class YourEventHandler {
+  
+  @EventListener
+  @Async
+  public void handle(MyEvent evt) {
+    puslishEvent.publishEvent("YourEventHandler::I got it " + evt.getData());
+  }
+}
+
+//DemoApplication
+@SpringBootApplication
+@EnableAsync
+public class DemoApplication {
+  public static void main(Stringp[ args)){
+    SpringAppilcation.run(DemoApplication.class, args);
+  }
+}
+```
+
+이번에는 ApplicationContext 가 제공하는 이벤트를 핸들링 해보자.
+
+```java
+@Component
+public class MyEventHandler {
+  @EventListener
+  @Async
+  public void handle(MyEvent evt) {
+    System.out.println(Thread.currentThread().toString());
+    System.out.println("I got it MyEvent : " + evt.getData());
+  }
+  
+  @EventListener
+  @Async
+  public void handle(ContextRefreshedEvent evt) {
+    System.out.println(Thread.currentThread().toString());
+    System.out.println("I got it ContextRefreshedEvent : ");
+  }
+
+  @EventListener
+  @Async
+  public void handle(ContextClosedEvent evt) {
+    System.out.println(Thread.currentThread().toString());
+    System.out.println("I got it ContextClosedEvent : ");
+  }
+}
+```
 
 ## ResourceLoader
 
