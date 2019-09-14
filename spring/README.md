@@ -1,3 +1,19 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Feature](#feature)
+  - [IOC (Inversion Of Control)](#ioc-inversion-of-control)
+  - [DI (Dependency Injection)](#di-dependency-injection)
+  - [AOP (Aspect Oriented Programming)](#aop-aspect-oriented-programming)
+  - [PSA (Portable Service Abstraction)](#psa-portable-service-abstraction)
+- [Spring Framework Core](#spring-framework-core)
+- [Spring Boot](#spring-boot)
+- [Spring Web MVC](#spring-web-mvc)
+- [Spring Data JPA](#spring-data-jpa)
+- [Spring REST API](#spring-rest-api)
+- [Spring Security](#spring-security)
+
+----
+
 # Abstract
 
 - spring framework에 대해 적는다.
@@ -55,104 +71,6 @@ AOP 는 언어별로 다양한 구현체가 있다. java 는 주로 AspectJ 를 
 * compile time 에 AOP 를 적용한다면 Foo 의 compile time 에 aspect 가 적용된 byte 코드를 생성한다. 그러나 compile time 이 느려진다.
 * load time 에 AOP 를 적용한다면 VM 이 Foo 를 load 할 때 aspect 가 적용된 Foo 를 메모리에 로드한다. 이것을 AOP weaving 이라고 한다. AOP weaving 을 위해서는 agent 를 포함하여 복잡한 설정을 해야 한다.
 * rum time 에 AOP 를 적용한다면 VM 이 Foo 를 실행할 때 aspect 를 적용한다. 수행성능은 load time 과 비슷할 것이다. 대신 복잡한 설정이 필요없다.
-
-Spring 은 run time 에 Proxy Bean 을 만들어서 특정 Bean 의 methods 가 호출될 때 apect 를 실행하도록 한다.
-
-예를 `A, B, C` 라는 class 를 구현한다고 해보자. `A, B, C` 의 methods 의 수행성능을 측정하기 위해 코드를 삽입하려고 한다. 수행속도를 측정하는 코드는 모든 methods 에서 반복되기 마련이다. 다음과 같이 Proxy Bean 을 만들어서 run time 에 AOP 를 적용해보자.
-
-```java
-// IService
-public class IService {
-  void create();
-  void puslish();
-  void delete();
-}
-
-// AService
-@Service
-public class AService implements IService {
-  @Override
-  public void create() {
-    try {
-      Thread.sleep(1000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    System.out.println("Created");
-  }
-
-  @Override
-  public void publish() {
-    try {
-      Thread.sleep(2000);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-    System.out.println("Published");
-  }
-
-  @Override
-  public void delete() {
-    System.out.println("Deleted");
-  }
-}
-
-// ProxyService
-@Primary
-@Service
-public class ProxyService implements IService {
-
-  @Autowired
-  Iservice iservice;
-
-  @Override
-  public void create() {    
-    long begin = System.currentTimeMillis();
-    iservice.create();
-    System.out.println(System.currentTimeMillis() - begin);
-  }
-
-  @Override
-  public void publish() {
-    long begin = System.currentTimeMillis();
-    iservice.publish();
-    System.out.println(System.currentTimeMillis() - begin);
-  }
-
-  @Override
-  public void delete() {
-    iservice.delete();
-  }
-}
-
-// AppRunner
-@Component
-public class AppRunner implements ApplicationRunner {
-  @Autowired
-  IService iservice;
-
-  @Override
-  public void run(ApplicationArguements args) throws Exception {
-    iservice.create();
-    iservice.publish();
-    iservice.delete();
-  }
-}
-
-// spring 의 web 을 이용하면 runtime 이 느려지므로 
-// 다음과 같이 web 을 제거하여 실행할 수 있다.
-// DemoApplication
-@SpringBootApplication
-public class DemoApplication {
-  public static void main(String[] args) {
-    SpringApplication app = new SpringApplication(DemoApplication.class);
-    app.setWebApplicationType(WebApplicationType.NONE);
-    app.run(args);
-  }
-}
-```
-
-그러나 Spring 에서 프로그래머가 위와 같이 Proxy class 를 제공할 필요는 없다. `AbstractAutoProxyCreate` 가 runtime 에 Proxy class 를 제공해 준다. `AbstractAutoProxyCreate` 는 `BeanPostProcessor` 를 구현한다.
 
 ## PSA (Portable Service Abstraction)
 
