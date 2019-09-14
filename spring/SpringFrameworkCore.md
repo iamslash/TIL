@@ -424,7 +424,253 @@ public class MyRunner implements ApplicationRunner {
 
 ## PropertyEditor
 
+사용자가 입력한 값을 object 로 binding 하는 것을 data binding 이라 한다. 예를 들어 xml, *.perperties 파일에서 값을 읽어서 object 로 binding 하는 것을 포함한다. 
+
+Spring 은 PropertyEditor 를 제공하여 data binding 을 할 수 있게 해준다. PropertyEditor 를 구현하면 많은 method 를 구현해야 한다. PropertyEditorSupport 는 PropertyEditor 를 상속한다. PropertyEditorSuport 를 상속하면 보다 적은 method 를 구현하여 data binding 을 할 수 있다.
+
+다음은 `/Foo/1` 과 같은 url 을 넘겨받아 `Foo` instance 로 변환하는 구현이다.
+
+```java
+// Foo.java
+public class Foo {
+  private Integer id;
+  private String title;
+  public Foo(Integer id) {
+    this.id = id;
+  }
+  public Integer getId() {
+    return id;
+  }
+  public void setId(Integer id) {
+    this.id = id;
+  }
+  public String getTitle() {
+    return title;
+  }
+  public void setTitle(String title) {
+    this.title = title;
+  }
+  public String toString() {
+    return "Foo:: " +
+      "id: " + this.id + 
+      "title: " + this.title;
+  }
+}
+
+// FooController.java
+@RestController
+public class FooController {
+
+  @InitBinder
+  public void init(WebDataBinder webDataBinder) {
+    webDataBinder.registerCustomEditor(Foo.class, new FooEditor());
+  }
+
+  @GetMapping("/foo/{foo}")
+  public String getFoo(@PathVariable Foo foo) {
+    System.out.println(foo);
+    return foo.getId().toString();
+  }
+}
+
+// FooControllerTest.java
+@RunWith(SpringRunner.class)
+@WebMvcTest
+public class FoocontrollerTest {  
+  @Autowired
+  MockMvc mockMvc;
+
+  @Test
+  public void getTest() throws Exception {
+    mockMvc.perform(get("/foo/1"))
+           .andExect(status().isOK())
+           .andExpect(content().string("1"));      
+  }
+}
+
+// FooEditor.java
+public class FooEditor extends PropertyEditorSupport {
+  @Override
+  public String getAsText() {
+    return super.getAsText();
+  }
+
+  @Override
+  public void setAsText(String text) throws IllegalArgumentException {
+    setvalue(new Foo(Integer.parseInt(text)));
+  }
+}
+```
+
+FooEditor 는 thread-safe 하지 않다. 유의해야 한다.
+
 ## Converter and Formatter
+
+PropertyEditor 의 단점을 보완하기 위해 Converter 와 Formatter 가 탄생했다.
+
+다음은 Converter 의 예이다.
+
+```java
+// FooConverter
+public class FooConverter {
+  
+  public static class StringToFooConverter implements Converter<String, Foo> {
+    @Override
+    public Foo convert(String src) {
+      return new Foo(Integer.parseInt(src));
+    }
+  }
+
+  public static class FooToStringConverter implements  Converter<Foo, String> {
+    @Override
+    public String convert(Foo src) {
+      return src.getId().toString();
+    }
+  }
+}
+```
+
+Spring Boot 를 사용하지 않는다면 Converter 를 FormatterRegistry 에 등록해야 한다.
+
+```java
+// WebConfig.java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+  @Override
+  public void addFormatters(FormatterRegistry registry) {
+    registry.addConverter(new EventConverter.StringToEventConverter());
+  }
+}
+```
+
+다음은 Formatter 의 예이다.
+
+```java
+// FooFormatter.java
+public class FooFormatter implements Formatter<Foo> {
+  @Override
+  public Foo parse(String text, Locale locale) throws ParseException {
+    return new Foo(Integer.parseInt(text));
+  }
+
+  @Override
+  public String print(Foo object, Locale locale) {
+    return object.getId().toString();
+  }
+}
+```
+
+역시 Bean 으로 등록하지 않고 사용하려면 
+Formatter 를 FormatterRegistry 에 등록해야 한다.
+
+```java
+// WebConfig.java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+  @Override
+  public void addFormatters(FormatterRegistry registry) {
+    registry.addFormatter(new FooFormatter());
+  }
+}
+```
+
+이번에는 Converter 를 별도의 등록없이 `@Component` 를 이용하여 Bean 으로 선언한다. 그러면 Spring Boot 에서 손쉽게 사용할 수 있다.
+
+```java
+// FooConverter
+public class FooConverter {
+  
+  @Component
+  public static class StringToFooConverter implements Converter<String, Foo> {
+    @Override
+    public Foo convert(String src) {
+      return new Foo(Integer.parseInt(src));
+    }
+  }
+
+  @Component
+  public static class FooToStringConverter implements  Converter<Foo, String> {
+    @Override
+    public String convert(Foo src) {
+      return src.getId().toString();
+    }
+  }
+}
+```
+
+다음은 Formatter 를 별도의 등록없이 `@Component` 를 이용하여 Bean 으로 선언하고 사용해보자. `@WebMvcTest` 는 Test code 실행을 위해 특정 class 들을 Bean 으로 등록할 수 있다.
+
+```java
+// FooFormatter.java
+@Component
+public class FooFormatter implements Formatter<Foo> {
+  @Override
+  public Foo parse(String text, Locale locale) throws ParseException {
+    return new Foo(Integer.parseInt(text));
+  }
+
+  @Override
+  public String print(Foo object, Locale locale) {
+    return object.getId().toString();
+  }
+}
+
+// FooControllerTest.java
+@RunWith(SpringRunner.class)
+@WebMvcTest({FooFormatter.class, FooController.class})
+public class FooControllerTest {
+  @Autowired
+  MockMvc mockMvc;
+
+  @Test
+  public void getTest() throws Exception {
+    mockMvc.perform(get("/foo/1"))
+           .andExpect(status().isOk())
+           .andExpect(content().string("1"));
+  }
+}
+```
+
+주로 Formatter 를 사용하자.
+
+실제 어떠한 `Converter, Formatter` 가 등록되어 있는지 다음과 같이 확인할 수 있다.
+
+```java
+//AppRunner.java
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Autowired
+  ConversionService conversionService;
+
+  @Override
+  public void run(ApplicationArguements args) throws Exception {
+    System.out.println(conversionService);
+    System.out.println(conversionService.getClass().toString());
+  }
+}
+```
+
+PropertyEditor 는 DataBinder 를 통해서 변환업무를 수행한다. Converter, Formatter 는 ConversionService 를 통해서 변환업무를 수행한다.  DefaultFormattingConversionService 는 ConversionService 의 구현체이다. 그리고 DefaultFormattingConversionService 는 FormatterRegistry, Converter Registry 도 구현한다.
+
+다음은 ConversionService 의 class diagram 이다.
+
+![](img/conversionserviceclassdiagram.png)
+
+그리고 Spring Boot 에서 다음과 같이 ConversionService Bean 을 출력해보면 `class org.springframework.boot.autoconfigure.web.format.WebConversionService` 가 등록되어 있음을 알 수 있다. `WebConversionService` 는 `DefaultFormattingConversionService` 를 상속한 class 이다.
+
+```java
+//AppRunner.java
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Autowired
+  ConversionService conversionService;
+
+  @Override
+  public void run(ApplicationArguements args) throws Exception {
+    System.out.println(conversionService.getClass().toString());
+  }
+}
+```
 
 # SpEL (Spring Expression Language)
 
