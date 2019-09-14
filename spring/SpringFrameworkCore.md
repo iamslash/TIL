@@ -402,23 +402,58 @@ public class MyRunner implements ApplicationRunner {
 
 ## @Component and Component Scan
 
+TODO
+
 ## Scope of Bean
+
+TODO
 
 ## Environment Profile
 
+TODO
+
 ## Environment Property
+
+TODO
 
 ## MessageSource
 
+TODO
+
 ## ApplicationEventPublisher
 
+TODO
+
 ## ResourceLoader
+
+ApplicationContext 는 ResourceLoader 를 구현한다. ApplicationContext 가 field 로 DI 되면 resource 를 접근할 수 있다. 예를 들어 `~/src/main/resources/a.txt` 를 만들고 build 하면 `~/classpath/a.txt` 로 이동한다. 이것을 java 에서 접근해 보자.
+
+```java
+// AppRunner.java
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Autowired
+  ResourceLoader resourceLoader;
+
+  @Override
+  public void run(ApplicationArguements args) throws Exception {
+    Resource resource = resourceLoader.getResource("classpath:a.txt");
+    System.out.println(resource.exists());
+    System.out.println(resource.getDescription());
+    System.out.print(Files.readString(Path.of(resource.getURI())));
+  }
+}
+```
 
 # Resource and Validation
 
 ## Resource Abstraction
 
+TODO
+
 ## Validation Abstraction
+
+TODO
 
 # Data Binding
 
