@@ -46,9 +46,17 @@ object 를 내가 생성하지 않고 Spring Container 가 생성해서 주입�
 
 ## AOP (Aspect Oriented Programming)
 
-annotation 을 사용하여 반복되는 코드를 줄일 수 있다.
+반복되는 코드를 분리해서 모듈화하는 프로그래밍 기법이다. 그 모듈을 aspect 라고 한다. 따라서 AOP 를 이용하면 반복되는 코드를 줄일 수 있다. 이때 반복되는 코드와 같이 해야할 일들을 `advice`, 어디에 적용해야 하는지를 `pointcut`, 적용해야할 class 를 `target`, method 를 호출할 때 aspect 를 삽입하는 지점을 `joinpoint` 라고 한다. 
 
-다음은 함수의 수행속도를 측정하는 AOP 의 예이다.
+AOP 는 다양한 구현체가 있다. java 는 주로 AspectJ 를 사용한다. 또한 AOP 는 compile, load, run time 에 적용 가능하다. 만약 Foo 라는 class 에 A 라는 aspect 를 적용한다고 해보자. 
+
+* compile time 에 AOP 를 적용한다면 Foo 의 byte code 만들어질 때 aspect 가 적용된 byte 코드가 만들어 진다.
+* load time 에 AOP 를 적용한다면 VM 이 Foo 를 load 할 때 aspect 를 적용된 Foo 를 메모리에 로드한다.
+* rum time 에 AOP 를 적용한다면 VM 이 Foo 를 실행할 때 aspect 를 적용하는 것이다.
+
+Spring 은 run time 에 Proxy Bean 을 만들어서 특정 Bean 의 methods 가 호출될 때 apect 를 실행하도록 한다.
+
+예를 `A, B, C` 라는 class 를 구현한다고 해보자. `A, B, C` 의 methods 의 수행성능을 측정하기 위해 코드를 삽입하려고 한다. 수행속도를 측정하는 모드는 모든 methods 에서 반복되기 마련이다.
 
 ```java
 ```

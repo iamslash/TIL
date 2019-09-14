@@ -409,3 +409,33 @@ public class MyRunner implements ApplicationRunner {
 ## @AOP
 
 # Null-Safty
+
+Spring 은 argument 와 return value 가 null 인지 IDE 의 도움을 받아 compile time 에 검증할 수 있는 annotation `@NonNull` 을 제공한다. `@NonNull` 을 사용하려면 IntelliJ 의 `Menu | Preferences | Build, Excecution, Deployment | Compiler` 을 선택한다. `Add Runtime Assertions for notnullable-annotated methods and parameters` 를 체크하고 `Configure Annotations` 를 클릭한다. 그리고 `Nullable, NonNullable` annotation 을 추가해야 한다.
+
+```java
+// AService.java
+public class AService {
+  @NonNull
+  public String createStr(@NonNull String name) {
+    return "created : " + name;
+  }
+}
+
+// ARunner.java
+public class ARunner implements ApplicationRunner {
+  @Autowired
+  AService aservice;
+
+  @Override
+  public void run(ApplicationArguments args) throws Exception {
+    aservice.createStr(null);
+  }
+}
+```
+
+또한 package 위에 `@NonNull` 을 사용하면 그 패키지에서 사용하는 모든 methods 의 parameter, return value 가 notnullable 인지 IDE 를 통해서 검증할 수 있다.
+
+```java
+@NonNullApi
+package com.iamslash.A
+```
