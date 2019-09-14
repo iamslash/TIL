@@ -1,6 +1,6 @@
 # Materials
 
-* [스프링 프레임워크 핵심 기술 @ inflearn](https://www.inflearn.com/course/spring-framework_core/)
+* [스프링 부트 개념과 활용 @ inflearn](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8)
 
 ## Tutorial of STS
 
