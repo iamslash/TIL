@@ -1,3 +1,31 @@
+
+- [Materials](#materials)
+- [IoC Container and Bean](#ioc-container-and-bean)
+  - [Spring IoC Container and Bean](#spring-ioc-container-and-bean)
+  - [Application Context and Setting Bean](#application-context-and-setting-bean)
+  - [@Autowire](#autowire)
+  - [@Component and Component Scan](#component-and-component-scan)
+  - [Scope of Bean](#scope-of-bean)
+  - [Environment Profile](#environment-profile)
+  - [Environment Property](#environment-property)
+  - [MessageSource](#messagesource)
+  - [ApplicationEventPublisher](#applicationeventpublisher)
+  - [ResourceLoader](#resourceloader)
+- [Resource and Validation](#resource-and-validation)
+  - [Resource Abstraction](#resource-abstraction)
+  - [Validation Abstraction](#validation-abstraction)
+- [Data Binding](#data-binding)
+  - [PropertyEditor](#propertyeditor)
+  - [Converter and Formatter](#converter-and-formatter)
+- [SpEL (Spring Expression Language)](#spel-spring-expression-language)
+- [Spring AOP (Aspected Oriented Programming)](#spring-aop-aspected-oriented-programming)
+  - [Overview](#overview)
+  - [Proxy Based AOP](#proxy-based-aop)
+  - [@AOP](#aop)
+- [Null-Safty](#null-safty)
+
+----
+
 # Materials
 
 * [스프링 프레임워크 핵심 기술 @ inflearn](https://www.inflearn.com/course/spring-framework_core/)
@@ -400,13 +428,286 @@ public class MyRunner implements ApplicationRunner {
 
 # SpEL (Spring Expression Language)
 
+객체 그래프를 조회하고 조작하는 기능을 제공한다. `#{}` 를 이용하면 expression 을 사용할 수 있다. `${}` 를 이용하면 properties 의 값을 얻어올 수 있다.
+
+다음은 `@Value` annotation 에 `SpEL` 을 사용한 에이다.
+
+```java
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Value("#{1 + 1}")
+  int value;
+
+  @Value("#{'Foo ' + 'Bar'}")
+  String greeting;
+
+  @Value("#{Baz}")
+  String something;
+
+  @Value("#{1 eq 1}")
+  boolean bval;
+
+  @Override
+  public void run(ApplicationArguments args) throws Exception {
+    System.out.println("==========");
+    System.out.println(value);
+    System.out.println(greeting);
+    System.out.println(bval);    
+    System.out.println(something);    
+  }
+}
+```
+
+다음은 `${}` 을 이용하여 properties 의 값을 얻어오는 구현이다.
+
+```java
+// application.properties
+name=Foo
+
+// AppRunner.java
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Value("${name.value}")
+  String name
+
+  @Override
+  public void run(ApplicationArguments args) throws Exception {
+    System.out.println("==========");
+    System.out.println(name);
+  }
+}
+```
+
+expression 안에 properties 는 가능하다. 그러나 반대는 불가능하다.
+
+```java
+// application.properties
+name=Foo
+
+// AppRunner.java
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Value("#{${name.value} eq 100}")
+  bool bval;
+
+  @Override
+  public void run(ApplicationArguments args) throws Exception {
+    System.out.println("==========");
+    System.out.println(bval);
+  }
+}
+```
+
+Bean 의 field 를 접근할 수 있다. 다음은 `Foo` Bean 의 `data` field 를 접근한 예이다.
+
+```java
+// AppRunner.java
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Value("#{Foo.data}")
+  int data;
+
+  @Override
+  public void run(ApplicationArguments args) throws Exception {
+    System.out.println("==========");
+    System.out.println(data);
+  }
+}
+```
+
+SpEL 은 ExpressionParser 를 사용하여 evaluation 한다. 다음은 ExpressionParser 를 사용하여 직접 evaluation 하는 예이다.
+
+```java
+public void run(ApplicationArguements args) throws Exception {
+  ExpressionParser parser = new SpelExpressionParser();
+  Expression exp = parser.parseExpression("1 + 2");
+  Integer val = exp.getValue(Integer.class);
+  System.out.println(val);
+}
+```
+
 # Spring AOP (Aspected Oriented Programming)
 
 ## Overview
 
+반복되는 코드를 분리해서 모듈화하는 프로그래밍 기법이다. 반복되는 코드를 `cross-cutting`, 분리된 모듈을 `aspect` 라고 한다. 따라서 AOP 를 적용하면 반복되는 코드를 줄일 수 있다. 이때 반복되는 코드와 같이 해야할 일들을 `advice`, 어디에 적용해야 하는지를 `pointcut`, 적용해야할 class 를 `target`, method 를 호출할 때 aspect 를 삽입하는 지점을 `joinpoint` 라고 한다. 
+
+AOP 는 언어별로 다양한 구현체가 있다. java 는 주로 AspectJ 를 사용한다. 또한 AOP 는 compile, load, run time 에 적용 가능하다. 만약 Foo 라는 class 에 A 라는 aspect 를 적용한다고 해보자. 
+
+* compile time 에 AOP 를 적용한다면 Foo 의 compile time 에 aspect 가 적용된 byte 코드를 생성한다. 그러나 compile time 이 느려진다.
+* load time 에 AOP 를 적용한다면 VM 이 Foo 를 load 할 때 aspect 가 적용된 Foo 를 메모리에 로드한다. 이것을 AOP weaving 이라고 한다. AOP weaving 을 위해서는 agent 를 포함하여 복잡한 설정을 해야 한다.
+* rum time 에 AOP 를 적용한다면 VM 이 Foo 를 실행할 때 aspect 를 적용한다. 수행성능은 load time 과 비슷할 것이다. 대신 복잡한 설정이 필요없다.
+
 ## Proxy Based AOP
 
+Spring 은 run time 에 Proxy Bean 을 만들어서 특정 Bean 의 methods 가 호출될 때 apect 를 실행하도록 한다.
+
+예를 `A, B, C` 라는 class 를 구현한다고 해보자. `A, B, C` 의 methods 의 수행성능을 측정하기 위해 코드를 삽입하려고 한다. 수행속도를 측정하는 코드는 모든 methods 에서 반복되기 마련이다. 다음과 같이 Proxy Bean 을 만들어서 run time 에 AOP 를 적용해보자.
+
+```java
+// IService
+public class IService {
+  void create();
+  void puslish();
+  void delete();
+}
+
+// AService
+@Service
+public class AService implements IService {
+  @Override
+  public void create() {
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.out.println("Created");
+  }
+
+  @Override
+  public void publish() {
+    try {
+      Thread.sleep(2000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.out.println("Published");
+  }
+
+  @Override
+  public void delete() {
+    System.out.println("Deleted");
+  }
+}
+
+// ProxyService
+@Primary
+@Service
+public class ProxyService implements IService {
+
+  @Autowired
+  Iservice iservice;
+
+  @Override
+  public void create() {    
+    long begin = System.currentTimeMillis();
+    iservice.create();
+    System.out.println(System.currentTimeMillis() - begin);
+  }
+
+  @Override
+  public void publish() {
+    long begin = System.currentTimeMillis();
+    iservice.publish();
+    System.out.println(System.currentTimeMillis() - begin);
+  }
+
+  @Override
+  public void delete() {
+    iservice.delete();
+  }
+}
+
+// AppRunner
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Autowired
+  IService iservice;
+
+  @Override
+  public void run(ApplicationArguements args) throws Exception {
+    iservice.create();
+    iservice.publish();
+    iservice.delete();
+  }
+}
+
+// spring 의 web 을 이용하면 runtime 이 느려지므로 
+// 다음과 같이 web 을 제거하여 실행할 수 있다.
+// DemoApplication
+@SpringBootApplication
+public class DemoApplication {
+  public static void main(String[] args) {
+    SpringApplication app = new SpringApplication(DemoApplication.class);
+    app.setWebApplicationType(WebApplicationType.NONE);
+    app.run(args);
+  }
+}
+```
+
+그러나 Spring 에서 프로그래머가 위와 같이 Proxy class 를 제공할 필요는 없다. `AbstractAutoProxyCreate` 가 runtime 에 Proxy class 를 제공해 준다. `AbstractAutoProxyCreate` 는 `BeanPostProcessor` 를 구현한다.
+
 ## @AOP
+
+annotation 을 이용하여 AOP 를 구현해보자.
+
+pom.xml 에 dependency 를 입력한다.
+
+```xml
+<dependencies>
+  <dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-app</artifactId>
+  </dependency>
+```
+
+`AbstractAutoProxyCreate` 에게 `PerfAspect` 가 `aspect` 임을 알리기 위해 `@Aspect` 를 선언한다. 그리고 component scan 을 위해 `@Component` 를 선언한다. `logPerf` 의 내용은 `advice` 라고 할 수 있다. `@Around` advice 를 사용하면 `proceed()` 전후로 advice 를 적용할 수 있다. `@Around` 의 `"execution(* com.iamslash.*.IService.*(..))"` 는 `IService` 의 모든 method 들을 의미한다. 즉, `pointcut` 이다. `pointcut` 을 재사용할 수도 있다.
+
+```java
+@Component
+@Aspect
+public class PerfAspect {
+
+  @Around("execution(* com.iamslash.*.IService.*(..))")
+  public Object logPerf(ProceedingJointPoint pjp) {
+    long begin = System.currentTimeMillis();
+    Object retVal = pjp.proceed();
+    System.out.println(System.currentTimeMillis() - begin);
+    return retVal;
+  }
+}
+```
+
+위와 같이 `PerAspect` 를 작성하면 `IService` 의 모든 method `create, publish, delete` 에 `advice` 가 적용된다. 만약 `delete` 에는 적용되는 것을 원하지 않는다면 다음과 같이 별도의 annotation `PerfLogging` 을 제작하고 사용하기를 원하는 method 에만 선언하자.
+
+```java
+// PerfLogging.java
+@Documented
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.CLASS)
+public @interface PerfLogging {
+
+}
+
+// AService
+@Primary
+@Service
+public class AService implements IService {
+
+  @Autowired
+  Iservice iservice;
+
+  @PerfLogging
+  @Override
+  public void create() {    
+    iservice.create();
+  }
+
+  @PerfLogging
+  @Override
+  public void publish() {
+    iservice.publish();
+  }
+
+  @Override
+  public void delete() {
+    iservice.delete();
+  }
+}
+```
+
+advice 의 종류는 `@Around, @Before, @AfterReturning, @AfterThrowing` 이 있다. 
 
 # Null-Safty
 
