@@ -402,25 +402,253 @@ public class MyRunner implements ApplicationRunner {
 
 ## @Component and Component Scan
 
-TODO
+annotation 은 Spring 3.1 부터 도입되었다. `@Compoent` 를 포함하여 그것을 상속한 `@Repository, @Service, @Controller, @Configuration` 을 선언하면 component scan 의 대상이된다.
+
+`DemoApplication` class 에 `@SpringBootApplication` 이 선언되었다.  `SpringBootApplication.java` 를 살펴보면 `@ComponentScan` 을 선언하여 component scan 을 실행한다. 이때 필터설정을 통하여 특정 bean 들을 exclude 할수도 있다. 
+
+```java
+// DemoApplication.java
+@SpringBootApplication
+public class DemoApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(DemoApplication.class, args);
+  }
+}
+
+// SpringBootApplication.java
+@Target(Element.Type)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan(excludeFilters = {
+  @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
+  @Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class)})
+public @interface SpringBootApplication {
+  ...
+}
+```
+
+위와 같은 경우 `DemoApplication` 와 다른 package 는 component scan 이 될 수 없다. 다른 package 의 bean 을 function 을 이용하여 component scan 해 보자. 예를 들어 `MyService`  는 다른 package 에 정의되어 있고 `DemoApplication` 에서 별도로 등록해 보자.
+
+```java
+// MyService in other package
+
+// DemoApplication.java
+@SpringBootApplication
+public class DemoApplication {
+  
+  @Autowired
+  MyService myService;
+
+  public static void main(String[] args) {
+    var app = new SpringApplication(DemoApplication.class);
+    app.addInitializers((ApplicationContextInitializer<GenericApplicationContext>) ctx -> {
+      ctx.registerBean(MyService.class);
+    });
+  }
+}
+```
+
+function 을 이용하여 component 를 등록하는 방법은 추천하지 않는다.
 
 ## Scope of Bean
 
-TODO
+Spring Component 는 `Single, Prototype` 의 scope 을 갖는다. `Single scope` 은 인스턴스가 하나이다. `Prototype scope` 은 `@Component @Scope("prototype")` 를 선언하여 DI 할 때 마다 instance 를 생성한다.
+
+```java
+// Single.java
+@Component
+public class Single {
+
+  @Autowired
+  private Proto proto;
+
+  public Proto getProto() {
+    return proto;
+  }
+}
+
+// Proto.java
+@Component @Scope("prototype")
+public class Proto {
+}
+
+// AppRunner.java
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Autowired
+  ApplicationContext ctx;
+
+  @Override
+  public void run(ApplicationArguments args) throws Exception {
+    System.out.println("proto");
+
+    System.out.println(ctx.getBean(Proto.class));
+    System.out.println(ctx.getBean(Proto.class));
+    System.out.println(ctx.getBean(Proto.class));
+
+    System.out.println("single");
+
+    System.out.println(ctx.getBean(Single.class));
+    System.out.println(ctx.getBean(Single.class));
+    System.out.println(ctx.getBean(Single.class));        
+
+    System.out.println("proto by single");    
+    System.out.println(ctx.getBean(Single.class).getProto());  // same
+    System.out.println(ctx.getBean(Single.class).getProto());  // same
+    System.out.println(ctx.getBean(Single.class).getProto());  // same          
+  }
+}
+```
+
+그러나 `proto by single` 인 경우 `proto` instance 는 모두 같다. 다음과 같이 `proxyMode` 를 사용하면 proto bean 을 감싸는 proxy 가 생성되고 참조할 때마다 instance 가 만들어진다.
+
+```java
+// Proto.java
+@Component @Scope("prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
+public class Proto {
+}
+```
+
+물론 annotation 없이 다음과 같은 방법으로 prototype scope 을 구현할 수 있다. 그러나 Single 이 POJO 에서 멀어진다. 추천하지 않는다.
+
+```java
+// Single.java
+@Component
+public class Single {
+
+  @Autowired
+  private ObjectProvider<Proto> proto;
+
+  public Proto getProto() {
+    return proto.getIfAvailable();
+  }
+}
+```
 
 ## Environment Profile
 
-TODO
+ApplicationContext 는 EnvironmentCapable 를 구현한다. Component 를 `test, stage, production` 과 같은 특정 환경에서만 등록할 수 있다.
+
+먼저 다음과 같이 현재의 프로파일을 출력해보자.
+
+```java
+// AppRunner.java
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Autowried
+  ApplicationContext ctx;
+
+  @Override
+  public void run(ApplicationArguments args) throws Exception {
+    Environment environment = ctx.getEnvironment();
+    System.out.println(Arrays.toString(environment.getActiveProfiles()));
+    System.out.println(Arrays.toString(environment.getDefaultProfiles()));   
+  }
+}
+```
+
+VM option 으로 `-Dspring.profiles.active="test"` 을 삽입하여 profile 을 설정할 수 있다. 그리고 다음과 같이 configuration class 를 제작하자.
+
+```java
+//TestConfiguration
+@Configuration
+@Profile("test")
+public class TestConfiguration {
+  @Bean
+  public BookRepository bookRepository() {
+    return new TestBookRepository();
+  }
+}
+```
+
+한편 다음과 같이 method 에 profile 을 정의할 수도 있다.
+
+```java
+//TestBookRepository.java
+@Repository
+@Profile("test")
+public class TestBookRepository implements BookRepository {
+
+}
+```
+
+다음과 같이 logic expression 을 사용할 수도 있다.
+```java
+//TestBookRepository.java
+@Repository
+@Profile("!prod")
+public class TestBookRepository implements BookRepository {
+
+}
+```
 
 ## Environment Property
 
-TODO
+다양한 방법으로 key value 쌍을 읽어올 수 있다. 
+
+VM option 으로 `"-Dapp.name=foo"` 을 설정하자. 다음과 같이 얻어올 수 있다.
+
+```java
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Autowired
+  ApplicationContext ctx;
+
+  @autowired
+  BookRepository bookRepository;
+
+  @Override
+  public void run(ApplicationAguments args) throws Exception {
+    Environment environment = ctx.getEnvironment();
+    System.out.println(environment.getProperty("app.name"));
+    System.out.println(environment.getProperty("app.about"));
+  }
+}
+```
+
+또한 app.properties 를 만들고 다음과 같이 읽어올 수 있다.
+
+```java
+// app.properties
+app.about = bar
+app.name = baz
+
+// DemoApplication.java
+@SpringBootApplication
+@PropertySource("classpath:/app.properties")
+public class DemoApplication {
+  ...
+}
+```
+
+app.properties 보다는 VM option 이 우선순위가 높다.
 
 ## MessageSource
 
 ApplicationContext 는 MessageSource 를 구현한다. MessageSource 를 field 로 DI 하면 i18n 을 처리할 수 있다.
 
-TODO
+```java
+//messages.properties
+greeting=Hello {0}
+
+//messages_ko_KR.properties
+greeting=안녕 {0}
+
+// AppRunner.java
+public class AppRunner implements ApplicationRunner {
+  @Autowired
+  MessageSource messageSource;
+
+  @Override
+  public void run(ApplicationArguements args) throws Exceptio {
+    System.out.println(messageSource.getMessage("greeting", new String[]{"foo"}, Local.KOREA));
+    System.out.println(messageSource.getMessage("greeting", new String[]{"foo"}));
+  }
+}
+```
 
 ## ApplicationEventPublisher
 
@@ -592,11 +820,147 @@ public class AppRunner implements ApplicationRunner {
 
 ## Resource Abstraction
 
-TODO
+`java.net.URL` 를 `org.springfamework.core.io.Resource` 로 추상화 했다. 즉, 모든 resource 를 `Resource` 로 접근할 수 있다. Resource 의 구현체는 `UrlResource, ClassPathResource, FileSystemResource, ServletContextResource` 를 주목할 만 하다.
+
+resource string 에 `classpath, file` 과 같은 prefix 를 사용하는 것이 좋다.
+
+예를 들어 `~/src/main/resources/a.txt` 를 만들고 build 하면 `~/classpath/a.txt` 로 이동한다. 이것을 java 에서 접근해 보자.
+
+```java
+// AppRunner.java
+@Component
+public class AppRunner implements ApplicationRunner {
+  @Autowired
+  ResourceLoader resourceLoader;
+
+  @Override
+  public void run(ApplicationArguements args) throws Exception {
+    Resource resource = resourceLoader.getResource("classpath:a.txt");
+    //Resource resource = resourceLoader.getResource("file:///a.txt");
+    System.out.println(resource.exists());
+    System.out.println(resource.getDescription());
+    System.out.print(Files.readString(Path.of(resource.getURI())));
+  }
+}
+```
 
 ## Validation Abstraction
 
-TODO
+검증을 `org.springframework.validation.Validator` 로 추상화 했다.
+
+예를 들어 다음과 같이 `Event` 를 정의하고 그것의 validator `EventValidator` 를 정의해보자.
+
+```java
+//Event.java
+public class Event {
+  Integer id;
+  String title;
+  public Integer getId() {
+    return id;
+  }
+  public void setId(Integer id) {
+    this.id = id;
+  }
+  public String getTitle() {
+    return title;
+  }
+  public void setTitle(String title) {
+    this.title = title;
+  }
+}
+
+//EventValidator.java
+public class EventValidator implements Validator {
+  @Override
+  public boolean supoprts(Class<?> clazz) {
+    return Event.class.equals(clazz);
+  }
+
+  @Override
+  public void validate(Object target, Errors errors) {
+    ValidationUtils.rejectIfEmptyOrWhitespace(error, "title", "notempty", "Empty title is not allowed.");
+  }
+}
+
+// AppRunner.java
+@Component
+public class AppRunner implements ApplicationRunner {
+
+  @Override
+  public void run(ApplicationArguements args) throws Exception {
+    Event evt = new Event();
+    EventValidator evtValidator = new EventValidator();
+    Error errors = new BeanPropertyBindingResult(evt, "event");
+
+    evtValidtor.validate(evt, errors);
+    System.out.println(erros.hasErrors());
+    errors.getAllErrors().forEach(e -> {
+      System.out.println("===== error code =====");
+      Arrays.stream(e.getCodes().forEach(System.out::println));
+      System.out.println(e.getDefaultMessage());
+    })
+  }
+}
+```
+
+그러나 위와 같은 방법 보다는 다음과 같이 `@NotEmpty, @NotNull, @Min, @Max, @Email` 을 이용하는 것이 더욱 간결하다.
+
+```java
+//Event.java
+public class Event {
+  Integer id;
+
+  @NotEmpty
+  String title;
+
+  @NotNull @Min(0)
+  Integer limit;
+
+  @Email
+  String email;
+
+  public Integer getId() {
+    return id;
+  }
+  public void setId(Integer id) {
+    this.id = id;
+  }
+  public String getTitle() {
+    return title;
+  }
+  public void setTitle(String title) {
+    this.title = title;
+  }
+}
+
+// AppRunner.java
+@Component
+public class AppRunner implements ApplicationRunner {
+
+  @Autowired
+  Validator validator;
+
+  @Override
+  public void run(ApplicationArguements args) throws Exception {
+    System.out.println(validate.getClass());
+
+    Event evt = new Event();
+    evt.setLimit(-1);
+    evt.setEmail("aaa");
+    Error errors = new BeanPropertyBindingResult(evt, "event");
+
+    validator.validate(evt, errors);
+
+    System.out.println(erros.hasErrors());
+    
+    errors.getAllErrors().forEach(e -> {
+      System.out.println("===== error code =====");
+      Arrays.stream(e.getCodes().forEach(System.out::println));
+      System.out.println(e.getDefaultMessage());
+    })
+  }
+}
+```
 
 # Data Binding
 
