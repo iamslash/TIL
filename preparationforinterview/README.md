@@ -121,9 +121,10 @@
   * [hadoop](/hadoop/README.md)
   * [ELK](/elk/README.md)
   * [LAMP](/lamp/README.md)
+  * [jenkins](/jenkins/README.md)
 
 * FrontEnd
-  * [html,css,js](/frontend/README.md)
+  * [html, css, js](/frontend/README.md)
 
 * Game
   * [game graphics](/gamegraphics/README.md)
@@ -144,6 +145,8 @@
 
 * Block Chain
   * [bitcoin](/bitcoin/README.md)
+  * [libplanet](/libplanet/README.md)
 
 * Soft Skills
   * [code review](/codereview/README.md)
+
