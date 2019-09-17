@@ -144,3 +144,6 @@
 
 * Block Chain
   * [bitcoin](/bitcoin/README.md)
+
+* Soft Skills
+  * [code review](/codereview/README.md)
