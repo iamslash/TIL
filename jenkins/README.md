@@ -8,3 +8,4 @@ jenkins 에 대해 정리한다.
 * [도커(Docker) 활용 및 배포 자동화 실전 초급 @ youtube](https://www.youtube.com/playlist?list=PLRx0vPvlEmdChjc6N3JnLaX-Gihh5pHcx)
 * [Jenkins User Handbook](https://jenkins.io/user-handbook.pdf)
 * [Jenkins doc](https://jenkins.io/doc/)
+* [jenkins @ github](https://github.com/jenkinsci/jenkins)
