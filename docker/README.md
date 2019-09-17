@@ -45,3 +45,29 @@
   # 기존에 뭔가 실행하고 있는 container에 terminal을 획득해보자.
   > docker exec -it myubuntu /bin/bash
 ```
+
+# Advanced
+
+```bash
+# 정지한 컨테이너, 연결이 끊긴 볼륨, 연결이 끊긴 네트워크, dangling 이미지가 삭제.
+> docker system prune
+# docker disk free
+> docker system df
+
+# get dangling image id
+> docker images -f "dangling=true" -q
+# remove image
+> docker rmi $(docker images -f "dangling=true" -q)
+
+# save image
+> docker save img_name > img_name.tar
+> docker save -o img_name.tar img_name
+# load image
+> docker load < img_name.tar
+> docker load -i img_name.tar
+
+# export container
+> docker export container_name > container_name.tar
+# import container
+> docker import container_name.tar
+```
