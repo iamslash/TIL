@@ -1,6 +1,6 @@
 # Abstract
 
-- 가상화 기술의 하나이다. 기존의 vmware, virtualbox보다 훨씬 성능이 좋다.
+- 가상화 기술의 하나이다. 기존의 vmware, virtualboxb 보다 훨씬 성능이 좋다.
 
 # Materials
 
