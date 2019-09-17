@@ -36,6 +36,7 @@
 
 # Materials
 
+* [자바 디자인 패턴 이해 @ youtube](https://www.youtube.com/playlist?list=PLsoscMhnRc7pPsRHmgN4M8tqUdWZzkpxY)
 * [패턴으로 가는길, 손영수](http://www.devpia.com/MAEUL/Contents/Detail.aspx?BoardID=70&MAEULNO=28&no=187&page=1)
   *  패턴 공부 로드맵
 * [GOF pattern]()
