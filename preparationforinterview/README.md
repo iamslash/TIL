@@ -90,24 +90,27 @@
   * [regular expression](/re/README.md)
 
 * Programming Language
-  * [assembly](/assembly/README.md)
+  * [bash](/bash/README.md)
   * [c](/c/README.md)
   * [cpp](/cpp/README.md)
   * [java](/java/README.md)
   * [python](/python/README.md)
+  * [go](/golang/README.md)
   * [cs](/cs/README.md)
   * [objc](/objc/README.md)
-  * [go](/golang/README.md)
-  * [js](/js/README.md)
   * [swift](/swift/README.md)
+  * kotlin
+  * [assembly](/assembly/README.md)
+  * [js](/js/README.md)
   * [clojure](/clojure/README.md)
   * [ruby](/ruby/README.md)
   * [php](/php/README.md)
+  * [sql](/sql/README.md)
 
 * BackEnd
   * [systemdesign & scalability](/systemdesign/README.md)
   * [Linux](/linux/README.md), [bash](/bash/README.md), [sed](/sed/README.md), [awk](/awk/README.md), [make](/make/README.md)
-  * [AWS](/aws/README.md)
+  * [AWS](/aws/README.md), [docker](/docker/README.md)
   * [apache](/apache/README.md), [tomcat](/tomcat/README.md), [nginx](/nginx/README.md), [caddy](/caddy/README.md)
   * [mysql](/mysql/README.md), 
   * [mongodb](/mongodb/README.md), [cassandra](/cassandra/README.md), [riak](/riak/README.md), [hbase](/hbase/README.md), neo4j, [etcd](/etcd/README.md), [couchbase](/couchbase/README.md)
