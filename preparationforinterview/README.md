@@ -90,7 +90,9 @@
   * [regular expression](/re/README.md)
 
 * Programming Language
-  * [bash](/bash/README.md)
+  * [bash](/bash/README.md), [sed](/sed/README.md), [awk](/awk/README.md), [make](/make/README.md)
+  * [assembly](/assembly/README.md)
+  * [sql](/sql/README.md)
   * [c](/c/README.md)
   * [cpp](/cpp/README.md)
   * [java](/java/README.md)
@@ -100,12 +102,10 @@
   * [objc](/objc/README.md)
   * [swift](/swift/README.md)
   * kotlin
-  * [assembly](/assembly/README.md)
   * [js](/js/README.md)
-  * [clojure](/clojure/README.md)
   * [ruby](/ruby/README.md)
+  * [clojure](/clojure/README.md)
   * [php](/php/README.md)
-  * [sql](/sql/README.md)
 
 * BackEnd
   * [systemdesign & scalability](/systemdesign/README.md)
