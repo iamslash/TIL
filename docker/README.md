@@ -1,6 +1,20 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Basics](#basics)
+  - [Hello Docker](#hello-docker)
+  - [How to build a image](#how-to-build-a-image)
+  - [Dockerhub](#dockerhub)
+  - [Private docker registry](#private-docker-registry)
+  - [Basic Docker Commands](#basic-docker-commands)
+  - [Dockerfile Instruction](#dockerfile-instruction)
+  - [Advanced Docker Commands](#advanced-docker-commands)
+- [Advanced](#advanced)
+
+----
+
 # Abstract
 
-기존의 vmware, virtualbox 보다 훨씬 성능이 좋은 가상화 기술이다.
+vmware, virtualbox 보다 훨씬 성능이 좋은 가상화 기술이다.
 
 # Materials
 
@@ -208,69 +222,385 @@ distribution/registry:2.6.0
 ## Dockerfile Instruction
 
 ```Dockerfile
+## FROM
 # 어떤 이미지를 기반으로 이미지를 생성할지 설정
-FROM
-#
-MAINTAINER
-#
-RUN
-CMD
-ENTRYPOINT
-EXPOSE
-ENV
-ADD
-COPY
-VOLUME
-USER
-WORKDIR
-ONBUILD
+FROM ubuntu:14.04
+# 이미지를 생성한 사람의 정보
+
+## MAINTAINER
+MAINTAINER    David, Sun <iamslash@gmail.com>
+
+## RUN
+# FROM 에서 설정한 이미지 위에서 스크립트 혹은 명령을 실행
+
+# /bin/sh 로 실행
+RUN apt-get install -y nginx
+RUN echo "Hello Docker" > /tmp/hello
+RUN curl -sSL https://golang.org/dl/go1.3.1.src.tar.gz | tar -v -C /usr/local -xz
+RUN git clone https://github.com/docker/docker.git
+# shell 없이 실행
+RUN ["apt-get", "install", "-y", "nginx"]
+RUN ["/user/local/bin/hello", "--help"]
+
+## CMD
+# 컨테이너가 시작되었을 때 스크립트 혹은 명령을 실행
+
+# /bin/sh 로 실행
+CMD touch /home/hello/hello.txt
+# shell 없이 실행
+CMD ["redis-server"]
+CMD ["mysqld", "--datadir=/var/lib/mysql", "--user=mysql"]
+
+## ENTRYPOINT
+# 컨테이너가 시작되었을 때 스크립트 혹은 명령을 실행
+# ENTRYPOINT 에 설정한 명령에 매개 변수를 전달하여 실행합니다.
+# ENTRYPOINT 와 CMD 를 동시에 사용하면 CMD 는 agument 역할만 한다.
+ENTRYPOINT ["echo"]
+CMD ["hello"]
+
+## EXPOSE
+# 호스트와 연결할 포트 번호를 설정
+EXPOSE 80
+EXPOSE 443
+EXPOSE 80 443
+
+## ENV
+# 환경 변수를 설정
+ENV GOPATH /go
+ENV PATH /go/bin:$PATH
+ENV HELLO 1234
+CMD echo $HELLO
+
+# docker run 에서도 설정할 수 있다.
+docker run -e HELLO=1234 app
+
+## ADD
+# 파일을 이미지에 추가
+# 압축파일 해제, 파일 URL 도 사용가능하다
+ADD hello-entrypoint.sh /entrypoint.sh
+ADD hello-dir /hello-dir
+ADD zlib-1.2.8.tar.gz /
+ADD hello.zip /
+ADD http://example.com/hello.txt /hello.txt
+ADD *.txt /root/
+
+## COPY
+# 파일을 이미지에 추가
+# ADD 와는 달리 COPY 는 압축 파일을 추가할 때 압축을 해제하지 않고 파일 URL 도 사용할 수 없다.
+COPY hello-entrypoint.sh /entrypoint.sh
+COPY hello-dir /hello-dir
+COPY zlib-1.2.8.tar.gz /zlib-1.2.8.tar.gz
+COPY *.txt /root/
+
+## VOLUME
+# 디렉터리의 내용을 컨테이너에 저장하지 않고 호스트에 저장하도록 설정
+VOLUME /data
+VOLUME ["/data", "/var/log/hello"]
+
+# docker run 에서도 사용가능
+docker run -v /prj/data:/data app
+
+## USER
+# 명령을 실행할 사용자 계정을 설정. RUN, CMD, ENTRYPOINT 가 USER 로 실행된다.
+USER nobody
+RUN touch /tmp/hello.txt
+
+USER root
+RUN touch /hello.txt
+ENTRYPOINT /hello-entrypoint.sh
+
+## WORKDIR
+# RUN, CMD, ENTRYPOINT의 명령이 실행될 디렉터리를 설정
+WORKDIR /root
+RUN touch hello.txt
+
+WORKDIR /tmp
+RUN touch hello.txt
+
+## ONBUILD
+# 생성한 이미지를 기반으로 다른 이미지가 생성될 때 명령을 실행
+# build event handler 이다.
+ONBUILD RUN touch /hello.txt
+ONBUILD ADD world.txt /world.txt
 ```
 
 ## Advanced Docker Commands
 
 ```bash
-# attach
+## attach
 # 실행되고 있는 컨테이너에 표준 입력(stdin)과 표준 출력(stdout)을 연결
 # docker attach <옵션> <컨테이너 이름, ID>
 > docker run -i -t -d --name hello ubuntu:14.01 /bin/bash
 > docker attach hello
 
-# build
-# commit
-# cp
-# create
-# diff
-# events
-# exec
-# export
-# history
-# images
-# import
-# info
-# inspect
-# kill
-# load
-# login
-# logout
-# logs
-# port
-# pause
-# ps
-# pull
-# push
-# restart
-# rm
-# rmi
-# run
-# save
-# search
-# start
-# stop
-# tag
-# top
-# unpause
-# version
-# wait
+## build
+#  Dockerfile로 이미지를 생성
+# docker build <옵션> <Dockerfile 경로>
+$ docker build -t hello .
+$ docker build -t hello /opt/hello
+$ docker build -t hello ../../
+$ docker build -t hello https://raw.githubusercontent.com/kstaken/dockerfile-examples/master/apache/Dockerfile
+$ echo -e "FROM ubuntu:14.04\nRUN apt-get update" | sudo docker build -t hello -
+$ cat Dockerfile | sudo docker build -t hello -
+$ docker build -t hello - < Dockerfile
+
+## commit
+# 컨테이너의 변경 사항을 이미지로 생성
+# docker commit <옵션> <컨테이너 이름, ID> <저장소 이름>/<이미지 이름>:<태그>
+$ docker commit -a "iamslash <iamslash@gmail.com>" -m "add hello.txt" hello hello:0.2
+
+## cp
+# 컨테이너의 디렉터리나 파일을 호스트로 복사
+# docker cp <컨테이너 이름>:<경로> <호스트 경로>
+$ docker cp hello:/hello.txt .
+
+## create
+# 이미지로 컨테이너를 생성
+# docker create <옵션> <이미지 이름, ID> <명령> <매개 변수>
+$ docker create -i -t --name hello ubuntu:14.04 /bin/bash
+$ docker start hello
+$ docker attach hello
+
+## diff
+# 컨테이너에서 변경된 파일을 확인
+# docker diff <컨테이너 이름, ID>
+$ docker diff hello
+
+## events
+# Docker 서버에서 일어난 이벤트를 실시간으로 출력
+# docker events
+$ docker events
+
+## exec
+# 외부에서 컨테이너 안의 명령을 실행
+# docker export <옵션> <컨테이너 이름, ID> <명령> <매개 변수>
+$ docker exec -i -t hello /bin/bash
+$ docker exec hello apt-get update
+$ docker exec hello apt-get install -y redis-server
+$ docker exec -d hello redis-server
+$ sudo docker top hello ax
+
+## export
+# 컨테이너의 파일시스템을 tar 파일로 저장
+# docker export <컨테이너 이름, ID>
+$ docker export hello > hello.tar
+
+## history
+# 이미지의 히스토리를 출력
+# docker history <옵션> <이미지 이름, ID>
+$ docker history hello
+
+## images
+# 이미지 목록을 출력
+# docker images <옵션> <이미지 이름>
+docker images ubuntu
+echo -e "FROM ubuntu:14.04\nRUN apt-get update" | sudo docker build -
+# 이름이 없는 이미지 출력
+docker images -f "dangling=true"
+# 이름 없는 이미지를 모두 삭제
+sudo docker rmi $(sudo docker images -f "dangling=true" -q)
+
+## import
+# tar 파일(.tar, .tar.gz, .tgz, .bzip, .tar.xz, .txz)로 압축된 파일시스템으로부터 이미지를 생성
+# docker import <tar 파일의 URL 또는 -> <저장소 이름>/<이미지 이름>:<태그>
+$ docker import http://example.com/hello.tar.gz hello
+$ cat hello.tar | docker import - hello
+# 현재 디렉토리의 내용을 바로 이미지로 생성
+$ sudo tar -c . | sudo docker import - hello
+
+## info
+# 현재 시스템 정보와 Docker 컨테이너, 이미지 개수, 설정 등을 출력
+# docker info
+$ docker info
+
+## inspect
+# 컨테이너와 이미지의 세부 정보를 JSON 형태로 출력
+# docker inspect <옵션> <컨테이너 또는 이미지 이름, ID>
+# 이미지의 세부 정보에서 아키텍처와 OS를 출력
+$ docker inspect -f "{{ .Architecture }} {{ .Os }}" ubuntu:14.04
+# 컨테이너의 IP 주소를 출력
+$ docker inspect -f "{{ .NetworkSettings.IPAddress }}" hello
+# 세부 정보의 일부 내용을 JSON 형태로 출력
+$ docker inspect -f "{{json .NetworkSettings}}" hello
+# 컨테이너의 세부 정보에서 특정 부분만 추출하여 원하는 포맷으로 출력
+$ docker inspect -f '{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} -> {{(index $conf 0).HostPort}} {{end}}' hello
+80/tcp -> 80  8080/tcp -> 8080
+# .NetworkSettings.Ports
+# "Ports": {
+#     "80/tcp": [
+#         {
+#             "HostIp": "0.0.0.0",
+#             "HostPort": "80"
+#         }
+#     ],
+#     "8080/tcp": [
+#         {
+#             "HostIp": "0.0.0.0",
+#             "HostPort": "8080"
+#         }
+#     ]
+# }
+# {{range $p, $conf := .NetworkSettings.Ports}} 으로 .NetworkSettings.Ports 의 내용을 순회하면서 $p, $conf 에 저장. 그리고 $p는 그대로 출력하고, $conf 배열에서 첫 번째 항목(index $conf 0) 의 .HostPort 를 출력
+
+## kill
+# 컨테이너에 KILL 시그널을 보내 컨테이너를 종료
+# docker kill <옵션> <컨테이너 이름, ID>
+$ docker kill hello
+
+## load
+# tar 파일로 이미지를 생성
+# docker load <옵션>
+sudo docker load < ubuntu.tar
+
+## login
+# Docker 레지스트리에 로그인
+# docker login <옵션> <Docker 레지스트리 URL>
+docker login
+
+## logout
+# Docker 레지스트리에서 로그아웃
+# docker logout <Docker 레지스트리 서버 URL>
+docker logout
+
+## logs
+# 컨테이너의 로그를 출력
+# docker logs <컨테이너 이름, ID>
+docker logs hello
+
+## port
+# 컨테이너에서 포트가 열려 있는지 확인
+# docker port <컨테이너 이름, ID> <포트>
+docker port hello 80
+
+## pause
+# 컨테이너에서 실행되고 있는 모든 프로세스를 일시 정지
+# docker pause <컨테이너 이름, ID>
+docker pause hello
+
+## ps
+# 컨테이너 목록을 출력
+# docker ps <옵션>
+docker ps -a
+
+## pull
+#  Docker 레지스트리에서 이미지를 다운로드
+# docker pull <옵션> <저장소 이름>/<이미지 이름>:<태그>
+$ docker pull centos
+$ docker pull ubuntu:14.04
+$ docker pull registry.hub.docker.com/ubuntu:14.04
+$ docker pull exampleuser/hello:0.1
+$ docker pull 192.168.0.39:5000/hello:0.1
+$ docker pull exampleregistry.com:5000/hello:0.1
+
+## push
+# Docker 레지스트리에 이미지를 업로드
+# docker push <저장소 이름>/<이미지 이름>:<태그>
+$ docker tag hello:0.1 exampleuser/hello:0.1
+$ docker pull exampleuser/hello:0.1
+$ docker tag hello:0.1 192.168.0.39:5000/hello:0.1
+$ docker pull 192.168.0.39:5000/hello:0.1
+$ docker tag hello:0.1 exampleregistry.com:5000/hello:0.1
+$ docker pull exampleregistry.com:5000/hello:0.1
+
+## restart
+# 컨테이너를 재시작
+# docker restart <옵션> <컨테이너 이름, ID>
+$ docker restart hello
+
+## rm
+# 컨테이너를 삭제
+# docker rm <옵션> <컨테이너 이름, ID>
+$ docker rm -l hello/db
+
+## rmi
+# 이미지를 삭제
+# docker rmi <저장소 이름>/<이미지 이름, ID>:<태그>
+$ sudo docker rmi hello
+$ sudo docker rmi hello:0.1
+$ sudo docker rmi exampleuser/hello:0.1
+$ sudo docker rmi 192.168.0.39:5000/hello:0.1
+$ sudo docker rmi exampleregistry.com:5000/hello:0.1
+# 실행되고 있는 이미지를 강제로 삭제
+$ docker run -i -t -d --name hello ubuntu:14.04 /bin/bash
+$ docker rmi -f hello
+# 한번에 삭제
+$ docker rmi `sudo docker images -aq`
+$ docker rmi $(sudo docker images -aq)
+
+## run
+# 이미지로 컨테이너를 생성
+# docker run <옵션> <이미지 이름, ID> <명령> <매개 변수>
+$ docker run -i -t ubuntu:14.04 /bin/bash
+# --cap-add 옵션을 사용하여 컨테이너에서 SYS_ADMIN Capability 를 사용
+$ docker run -it --rm --name hello --cap-add SYS_ADMIN ubuntu:14.04 bash
+$ docker -p 192.168.0.10:80:8080 ubuntu:14.04 bash
+# --expose 옵션을 사용하여 80 포트를 호스트에만 연결하고 외부에 노출하지 않는다. 호스트와 --link 옵션으로 연결한 컨테이너에서만 접속가능.
+$ docker run --expose 80 ubuntu:14.04 bash
+# 환경변수 설정
+$ docker run -it -e HELLO_VAR="Hello World" ubuntu:14.04 bash
+# 환경변수 파일 설정, -e 옵션이 파일보다 우선순위가 높다
+$ docker run -it --env-file ./example-env.sh -e HELLO="Hello World" ubuntu:14.04 bash
+# bash 환경변수 설정
+$ EXAMPLE=10 docker run -it --env-file ./example-env.sh ubuntu:14.04 bash
+# --link 를 사용하여 Redis 컨테이너와 연결
+$ docker run -d --name cache redis:latest
+$ docker run -it --link cache:cache ubuntu:14.04 bash
+
+## save
+# 이미지를 tar 파일로 저장
+# docker save <옵션> <이미지 이름>:<태그>
+$ docker save -o nginx.tar nginx:latest
+$ docker save -o redis.tar redis:latest
+$ docker save ubuntu:14.04 > ubuntu14.04.tar
+$ docker save ubuntu > ubuntu.tar
+
+## search
+# Docker Hub에서 이미지를 검색
+# docker search <옵션> <검색어>
+$ docker search -s 10 ubuntu
+
+## start
+# 컨테이너를 시작
+# docker start <옵션> <컨테이너 이름, ID>
+$ docker run -d --name hello ubuntu:14.04 /bin/bash -c "while true; do echo Hello World; sleep 1; done"
+
+## stop
+# 컨테이너를 정지
+# docker stop <옵션> <컨테이너 이름, ID>
+$ docker run -d --name hello ubuntu:14.04 /bin/bash -c "while true; do echo Hello World; sleep 1; done"
+$ docker stop -t 0 hello
+
+## tag
+# 이미지에 태그를 설정
+# docker tag <옵션> <이미지 이름>:<태그> <저장소 주소, 사용자명>/<이미지 이름>:<태그>
+$ echo "FROM ubuntu:14.04" | docker build -t hello:latest -
+$ docker tag hello:latest hello:0.1
+$ docker tag hello:latest exampleuser/hello:0.1
+$ docker tag hello:latest 192.168.0.39/hello:0.1
+$ docker images
+
+## top
+# 컨테이너에서 실행되고 있는 프로세스 목록을 출력
+# docker top <컨테이너 이름, ID> <ps 옵션>
+$ docker top hello aux
+
+## unpause
+# 일시 정지된 컨테이너를 다시 시작
+# docker unpause <컨테이너 이름, ID>
+$ docker run -i -t -d --name hello ubuntu:14.04 /bin/bash
+$ docker pause hello
+$ docker unpause hello
+
+## version
+# Docker 버전을 출력
+# docker version
+$ docker version
+
+## wait
+# 컨테이너가 정지될 때까지 기다린 뒤 Exit Code를 출력
+# docker wait <컨테이너 이름, ID>
+$ docker run -d --name hello redis:latest
+$ docker wait hello
 ```
 
 # Advanced
