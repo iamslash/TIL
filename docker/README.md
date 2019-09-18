@@ -11,7 +11,7 @@
 - [가장 빨리 만나는 Docker](http://pyrasis.com/docker.html)
   - 쉬운 한글 책
 
-# Usage
+# Basics
 
 ## Hello Docker
 
@@ -118,7 +118,7 @@ docker run --rm \
 app 
 ```
 
-# Dockerhub 
+## Dockerhub 
 
 docker image 를 dockerhub 에 push 해보자.
 
@@ -133,7 +133,7 @@ docker tag app iamslash/iamslash-app:1
 docker push iamslash/iamslash-app:1
 ```
 
-# Private docker registry
+## Private docker registry
 
 dockerhub 는 private repository 가 유료이다. 무료 private docker registry 를 운영해보자.
 
@@ -148,7 +148,7 @@ distribution/registry:2.6.0
 > tree c:\my\docker\registry
 ```
 
-## Useful Commands
+## Basic Docker Commands
 
 ```bash
 # print version 
@@ -203,6 +203,74 @@ distribution/registry:2.6.0
 # get a bash from a alive container
 # > docker exec
 > docker exec -it myubuntu /bin/bash
+```
+
+## Dockerfile Instruction
+
+```Dockerfile
+# 어떤 이미지를 기반으로 이미지를 생성할지 설정
+FROM
+#
+MAINTAINER
+#
+RUN
+CMD
+ENTRYPOINT
+EXPOSE
+ENV
+ADD
+COPY
+VOLUME
+USER
+WORKDIR
+ONBUILD
+```
+
+## Advanced Docker Commands
+
+```bash
+# attach
+# 실행되고 있는 컨테이너에 표준 입력(stdin)과 표준 출력(stdout)을 연결
+# docker attach <옵션> <컨테이너 이름, ID>
+> docker run -i -t -d --name hello ubuntu:14.01 /bin/bash
+> docker attach hello
+
+# build
+# commit
+# cp
+# create
+# diff
+# events
+# exec
+# export
+# history
+# images
+# import
+# info
+# inspect
+# kill
+# load
+# login
+# logout
+# logs
+# port
+# pause
+# ps
+# pull
+# push
+# restart
+# rm
+# rmi
+# run
+# save
+# search
+# start
+# stop
+# tag
+# top
+# unpause
+# version
+# wait
 ```
 
 # Advanced
