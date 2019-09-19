@@ -97,7 +97,7 @@ win10
 이제 ping 해보자.
 
 ```bash
-ansible -i hosts 192.168.0.133 -m win_ping
+ansible -i hosts win10 -m win_ping
 ```
 
 이제 playbook `ping.win32.yaml` 을 제작한다.
@@ -105,7 +105,7 @@ ansible -i hosts 192.168.0.133 -m win_ping
 ```yml
 # This playbook uses the win_ping module to test connectivity to Windows hosts
 - name: Ping
-  hosts: 192.168.0.133
+  hosts: win10
 
   tasks:
   - name: ping
@@ -123,7 +123,7 @@ ansible-playbook -i hosts ping.win32.yaml
 ```yml
 # This playbook uses the win_ping module to test connectivity to Windows hosts
 - name: Whoami
-  hosts: 192.168.0.133
+  hosts: win10
 
   tasks:
   - name: whoami
@@ -139,7 +139,7 @@ ansible-playbook -i hosts -v whoami.win32.yaml
 ```yml
 # This playbook tests the script module on Windows hosts
 - name: Run powershell script
-  hosts: 192.168.0.133
+  hosts: win10
   gather_facts: false
   tasks:
     - name: Run calc.exe
