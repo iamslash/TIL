@@ -32,12 +32,14 @@
 
 # Abstract
 
-linux를 활용할 때 필요한 지식들을 정리한다. macosx, sunos, hp-ux 등등
-unix 계열 os는 모두 해당된다. linux와 함께 [bash](/bash/),
+linux 를 활용할 때 필요한 지식들을 정리한다. macosx, sunos, hp-ux 등등
+unix 계열 os 는 모두 해당된다. linux 와 함께 [bash](/bash/),
 [awk](/awk/), [sed](/sed/) 역시 학습이 필요하다.
 
 # References
 
+* [The Art of Command Line @ github](https://github.com/jlevy/the-art-of-command-line/blob/master/README-ko.md)
+  * 킹왕짱 커맨드 라인
 * [Most Important Penetration Testing commands Cheat Sheet for Linux Machine](https://techincidents.com/important-penetration-testing-cheat-sheet/)
 * [command line reference](https://ss64.com/)
   * bash, macOS, cmd, powershell 등등의 command line reference

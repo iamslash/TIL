@@ -30,7 +30,7 @@
 
 # Abstract
 
-java를 정리한다.
+java 를 정리한다.
 
 # Materials
 
@@ -165,16 +165,16 @@ class Person implements Serializable {
 | `if, else`           | `if, else`                      |
 | `for, while`         | `for, while`                    |
 | `array`              | `Collections.unmodifiableList`  |
-| `vector`             | `ArrayList, Vector`             |
+| `vector`             | `Vector, ArrayList`             |
 | `deque`              | `Deque, ArrayDeque`             |
 | `forward_list`       | ``                              |
 | `list`               | `List, LinkedList`              |
-| `stack`              | `Deque, Stack`                  |
+| `stack`              | `Stack, Deque`                  |
 | `queue`              | `Queue, LinkedList`             |
 | `priority_queue`     | `Queue, PriorityQueue`          |
-| `set`                | `SortedSet, TreeSet`            |
+| `set`                | `Set, SortedSet, TreeSet`       |
 | `multiset`           | ``                              |
-| `map`                | `SortedMap, TreeMap`            |
+| `map`                | `Map, SortedMap, TreeMap`       |
 | `multimap`           | ``                              |
 | `unordered_set`      | `Set, HashSet`                  |
 | `unordered_multiset` | ``                              |
@@ -223,16 +223,24 @@ class Person implements Serializable {
       List<Character> immutablelist = Collections.unmodifiableList(list);
 ```
 
+* Vector
 * ArrayList
-* Deque, ArrayDeque
-* List, LinkedList
-* Stack, LinkedList
-* Queue, LinkedList
-* Queue, PriorityQueue
-* SortedSet, TreeSet
-* SortedMap, TreeMap
-* Set, HashSet
-* Map, HashMap
+* Deque
+* ArrayDeque
+* List
+* LinkedList
+* Stack
+* Deque
+* Queue
+* PriorityQueue
+* Set
+* SortedSet
+* TreeSet
+* Map
+* SortedMap
+* TreeMap
+* HashSet
+* HashMap
 
 ## Collection Framework
 
