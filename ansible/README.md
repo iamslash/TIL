@@ -78,6 +78,22 @@ pywinrm==0.3.0
 pip install -r requirements.txt
 ```
 
+그리고 `hosts` 파일을 제작한다.
+
+```yml
+[win10]
+192.168.0.133
+
+[win10:vars]
+ansible_user=iamslash
+ansible_password=xxxx
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore
+
+[windows:children]
+win10
+```
+
 이제 ping 해보자.
 
 ```bash

@@ -17,7 +17,7 @@ jenkins 에 대해 정리한다.
 
 ```bash
 docker pull jenkins/jenkins:lts
-docker run -d -p 50000:50000 -p 8080:8080 --name my-jenkins jenkins/jenkins:lts
+docker run -d -p 50000:50000 -p 8080:8080 -v C:/my/dockervolume/var/jenkins_home:/var/jenkins_home --name my-jenkins jenkins/jenkins:lts
 ```
 
 brower 로 `localhost:8080` 으로 접속한다. docker 실행창에 출력된 key 를 입력한다. install suggested plugins 하면 끝.
