@@ -37,10 +37,13 @@
 # Materials
 
 * [자바 디자인 패턴 이해 @ youtube](https://www.youtube.com/playlist?list=PLsoscMhnRc7pPsRHmgN4M8tqUdWZzkpxY)
+  * 쉬운 한글 설명
+* [A pattern language for microservices](https://microservices.io/patterns/index.html)
+  * microservice pattern
 * [패턴으로 가는길, 손영수](http://www.devpia.com/MAEUL/Contents/Detail.aspx?BoardID=70&MAEULNO=28&no=187&page=1)
-  *  패턴 공부 로드맵
-* [GOF pattern]()
-* [POSA]()
+  * 패턴 공부 로드맵
+* GOF pattern
+* POSA
 * [PLoPD, pattern language of program design](http://wiki.c2.com/?PatternLanguagesOfProgramDesign)
   * 패턴에 관련된 컨퍼런스인 PLoP의 논문들을 정리한 책
 * [Pattern-Oriented Analysis and Design: Composing Patterns to Design Software Systems](http://www.kangcom.com/sub/view.asp?sku=200309010011)
@@ -54,7 +57,7 @@
 * [Architecting Enterprise Solutions: Patterns for High-Capability Internet-Based Systems](http://www.kangcom.com/sub/view.asp?sku=200410040307)
 * [PLoP papers](http://www.hillside.net/index.php/past-plop-conferences)
 * [클로저 디자인 패턴](http://clojure.or.kr/docs/clojure-and-gof-design-patterns.html)
-  * java로 표현한 디자인 패턴은 clojure로 이렇게 간단히 된다.
+  * java 로 표현한 디자인 패턴은 clojure 로 이렇게 간단히 된다.
 
 # References
 
@@ -176,7 +179,7 @@ public class A {
   - [Command (Encapsulate a command request as an object)](https://www.dofactory.com/net/command-design-pattern)
     - 명령을 추상화 한다.
     - Command, ConcreteCommand
-  - [Interpreter	(A way to include language elements in a program)](https://www.dofactory.com/net/interpreter-design-pattern)
+  - [Interpreter (A way to include language elements in a program)](https://www.dofactory.com/net/interpreter-design-pattern)
     - 해석을 추상화 한다.
     - AbstractExpression, TerminalExpression
   - [Iterator	(Sequentially access the elements of a collection)](https://www.dofactory.com/net/iterator-design-pattern)
@@ -185,13 +188,13 @@ public class A {
   - [Mediator	(Defines simplified communication between classes)](https://www.dofactory.com/net/mediator-design-pattern)
     - 인스턴스 멤버들의 중재를 추상화 한다.
     - Mediator, ConcreteMediator, Colleague, ConcreteColleague
-  - [Memento	(Capture and restore an object's internal state)](https://www.dofactory.com/net/memento-design-pattern)
+  - [Memento (Capture and restore an object's internal state)](https://www.dofactory.com/net/memento-design-pattern)
     - 저장하기 불러오기를 추상화 한다.
     - Originator, Memento, CareTaker
   - [Observer	(A way of notifying change to a number of classes)](https://www.dofactory.com/net/observer-design-pattern)
     - 이벤트가 발생하면 구경꾼들에게 알려준다.
     - Subject, ConcreteSubject, Observer, ConcreteObserver
-  - [State	(Alter an object's behavior when its state changes)](https://www.dofactory.com/net/state-design-pattern)
+  - [State (Alter an object's behavior when its state changes)](https://www.dofactory.com/net/state-design-pattern)
     - 변화할 수 있는 상태를 추상화 한다.
     - State, ConcreteState
   - [Strategy	(Encapsulates an algorithm inside a class)](https://www.dofactory.com/net/strategy-design-pattern)
@@ -200,9 +203,10 @@ public class A {
   - [Template (Method	Defer the exact steps of an algorithm to a subclass)](https://www.dofactory.com/net/template-method-design-pattern)
     - 추상 클래스에서 절차를 정의하고 구현 클래스에서 단위 절차들을 구현한다. template method 가 실행되면 실제 실행은 자식 클래스들로 지연되어 있다.
     - AbstractClass, ConcreteClass
-  - [Visitor	(Defines a new operation to a class without change)](https://www.dofactory.com/net/visitor-design-pattern)
-    - 기존의 클래스 변경없이 새로운 기능을 정의한다.
-    - Element, ConcreteElement, Visitor, ConcreteVisitor
+  - [Visitor (Defines a new operation to a class without change)](https://www.dofactory.com/net/visitor-design-pattern)
+    - 기능 (Visitor) 이 클래스 (Element) 와 분리되어 있다. 따라서 기존의 클래스 (Element) 를 변경하지 않고 새로운 기능 (Visitor) 을 정의할 수 있다.
+    - 예를 들어 기능을 추가하기 위해 Element 를 변경하지 않고 ConcreteVisitor 를 하나 새로 제작한다.
+    - Element, ConcreteElement, Visitor, ConcreteVisitor    
 
 - Q&A
   - Factory Method vs Abstract Factory difference???
@@ -218,7 +222,7 @@ public class A {
     - 예를 들어 Strategy class `Video` 를 상속받은 Concrete Strategy class `MpegCompression, AviCompression, QuickTimeCompression` 가 있다고 해보자. 
     - 시간이 지나 Audio 압축을 지원하고자 한다. `MpegVideoCompression, MpegVideoCompression` 과 같이 중복해서 Concrete Strategy class 를 추가하는 것보다는 Visitor interface `IVisitor`  를 상속받은 Concrete Visitor `MpegCompression` 을 이용하는 것이 더욱 간단하다. 다음은 `MpegCompression` 의 vistor method 이다.
 
-```
+```java
    MpegCompression::compressVideo(Video object)MpegCompression::compressAudio(Audio object)
 ```   
   

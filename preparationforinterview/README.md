@@ -104,6 +104,7 @@
   * kotlin
   * [js](/js/README.md)
   * [ruby](/ruby/README.md)
+  * [groovy](/groovy/READM.md)
   * [clojure](/clojure/README.md)
   * [php](/php/README.md)
 
