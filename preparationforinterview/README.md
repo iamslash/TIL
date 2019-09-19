@@ -112,16 +112,16 @@
   * [Linux](/linux/README.md), [bash](/bash/README.md), [sed](/sed/README.md), [awk](/awk/README.md), [make](/make/README.md)
   * [AWS](/aws/README.md), [docker](/docker/README.md)
   * [apache](/apache/README.md), [tomcat](/tomcat/README.md), [nginx](/nginx/README.md), [caddy](/caddy/README.md)
-  * [mysql](/mysql/README.md), 
+  * [mysql](/mysql/README.md), postgresql
   * [mongodb](/mongodb/README.md), [cassandra](/cassandra/README.md), [riak](/riak/README.md), [hbase](/hbase/README.md), neo4j, [etcd](/etcd/README.md), [couchbase](/couchbase/README.md)
   * [redis](/redis/README.md), [memcached](/memcached/README.md), zookeeper
   * [kafka](/kafka/README.md), zeromq, ActiveMQ, RabbitMQ, [Mosquitto](/mosquitto/README.md)
-  * [prometheus](/prometheus/README.md)
-  * [graylog](/graylog/README.md)
+  * [prometheus](/prometheus/README.md), [graylog](/graylog/README.md), graphite, grafana
   * [hadoop](/hadoop/README.md)
   * [ELK](/elk/README.md)
   * [LAMP](/lamp/README.md)
-  * [jenkins](/jenkins/README.md)
+  * [jenkins](/jenkins/README.md), TravisCI
+  * chef, puppet, ansible, terraform
 
 * FrontEnd
   * [html, css, js](/frontend/README.md)
