@@ -1,4 +1,4 @@
-# Materials
+﻿# Materials
 
 * [progit](https://git-scm.com/book/ko/v2)
   * 킹왕짱 메뉴얼
@@ -751,6 +751,7 @@ $ git log --pretty=format:"%h %s" HEAD~3..HEAD
 # f7f3f6d changed my name a bit
 
 ## 커밋 순서 바꾸기???
+## 커밋 순서 바꾸기
 
 # commit message 를 아래와 같이 바꾸어 보자.
 $ git rebase -i HEAD~3
