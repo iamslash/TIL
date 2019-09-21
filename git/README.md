@@ -945,7 +945,11 @@ $ git reset --soft HEAD~2
 
 ## 경로없음
 
+TODO
+
 ## 경로있음
+
+TODO
 ```
 
 ## 고급 Merge
