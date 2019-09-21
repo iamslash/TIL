@@ -702,13 +702,60 @@ $ git log -L :git_deflate_bound:zlib.c
 ```bash
 ## 마지막 커밋을 수정하기
 
-# 바뀐 메시지로 마지막 커밋을 수정
+# 마지막 commit 메시지만 수정
+# changes not staged 는 commit 되지 않는다.
 $ git commit --amend
 
-# changers not staged 와 함께 마지막 메시지를 수정
-# SHA-1 값이 바뀐다.
+# changes not staged 와 함께 마지막 메시지를 수정
+# SHA-1 값이 바뀐다. 물론 git reflog 로 메지만 바뀐 
+# commit 을 추적할 수 있다.
 $ git add .
 $ git commit --amend
+
+# commit 메시지 편집없이 마지막 commit 수정
+$ git commit --amend --no-edit
+
+## 커밋 메시지를 여러 개 수정하기
+
+# 마지막 3 개의 메시지를 interactive 하게 수정
+$ git rebase -i HEAD~3
+
+pick f7f3f6d changed my name a bit
+pick 310154e updated README formatting and added blame
+pick a5f4a0d added cat-file
+
+# Rebase 710f0f8..a5f4a0d onto 710f0f8
+#
+# Commands:
+#  p, pick = use commit
+#  r, reword = use commit, but edit the commit message
+#  e, edit = use commit, but stop for amending
+#  s, squash = use commit, but meld into previous commit
+#  f, fixup = like "squash", but discard this commit's log message
+#  x, exec = run command (the rest of the line) using shell
+#
+# These lines can be re-ordered; they are executed from top to bottom.
+#
+# If you remove a line here THAT COMMIT WILL BE LOST.
+#
+# However, if you remove everything, the rebase will be aborted.
+#
+# Note that empty commits are commented out
+
+# 위의 명령은 log 와 순서가 반대이다.
+$ git log --pretty=format:"%h %s" HEAD~3..HEAD
+# a5f4a0d added cat-file
+# 310154e updated README formatting and added blame
+# f7f3f6d changed my name a bit
+
+## 커밋 순서 바꾸기
+
+# commit message 를 아래와 같이 바꾸어 보자.
+$ git rebase -i HEAD~3
+# pick f7f3f6d changed my name a bit
+# pick 310154e updated README formatting and added blame
+# pick a5f4a0d added cat-file
+
 ```
 
 ## Reset 명확히 알고 가기
