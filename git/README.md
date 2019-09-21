@@ -5,7 +5,9 @@
 
 # Git Overview
 
-git 은 `working directory, staging area, local repository, remote repository` 와 같이 4 가지 영역을 관리한다.
+git 은 `working directory, Index(staging area), local repository, remote repository` 와 같이 4 가지 영역을 관리한다.
+
+![](img/reset-workflow.png)
 
 # Git 도구
 
@@ -748,7 +750,7 @@ $ git log --pretty=format:"%h %s" HEAD~3..HEAD
 # 310154e updated README formatting and added blame
 # f7f3f6d changed my name a bit
 
-## 커밋 순서 바꾸기
+## 커밋 순서 바꾸기???
 
 # commit message 를 아래와 같이 바꾸어 보자.
 $ git rebase -i HEAD~3
@@ -756,11 +758,193 @@ $ git rebase -i HEAD~3
 # pick 310154e updated README formatting and added blame
 # pick a5f4a0d added cat-file
 
+## 커밋 합치기
+
+#
+# Commands:
+#  p, pick = use commit
+#  r, reword = use commit, but edit the commit message
+#  e, edit = use commit, but stop for amending
+#  s, squash = use commit, but meld into previous commit
+#  f, fixup = like "squash", but discard this commit's log message
+#  x, exec = run command (the rest of the line) using shell
+#
+# These lines can be re-ordered; they are executed from top to bottom.
+#
+# If you remove a line here THAT COMMIT WILL BE LOST.
+#
+# However, if you remove everything, the rebase will be aborted.
+#
+# Note that empty commits are commented out
+
+# pick 을 squash 로 고치면 3 개의 커밋을 합칠 수 있다.
+$ git rebase -i HEAD~3
+# pick f7f3f6d changed my name a bit
+# squash 310154e updated README formatting and added blame
+# squash a5f4a0d added cat-file
+
+# # This is a combination of 3 commits.
+# # The first commit's message is:
+# changed my name a bit
+#
+# # This is the 2nd commit message:
+#
+# updated README formatting and added blame
+#
+# # This is the 3rd commit message:
+#
+# added cat-file
+
+## 커밋 분리하기???
+
+# “updated README formatting and added blame” 을 
+# “updated README formatting” 과 “added blame” 으로 분리
+$ git rebase -i HEAD~3
+# pick f7f3f6d changed my name a bit
+# edit 310154e updated README formatting and added blame
+# pick a5f4a0d added cat-file
+
+$ git reset HEAD^
+$ git add README
+$ git commit -m 'updated README formatting'
+$ git add lib/simplegit.rb
+$ git commit -m 'added blame'
+$ git rebase --continue
+
+$ git log -4 --pretty=format:"%h %s"
+1c002dd added cat-file
+9b29157 added blame
+35cfb2b updated README formatting
+f3cc40e changed my name a bit
+
+### filter-branch는 포크레인
+
+## 모든 커밋에서 파일을 제거하기
+
+# history 에서 passwords.txt 제거
+# --tree-filter 를 추가하여 argument 를 실행하고 다시 커밋
+$ git filter-branch --tree-filter 'rm -f passwords.txt' HEAD
+# Rewrite 6b9b3cf04e7c5686a9cb838c3f36a8cb6a0fc2bd (21/21)
+# Ref 'refs/heads/master' was rewritten
+
+# 백업파일을 커밋했다면 제거하자.
+$ git filter-branch --tree-filter 'rm -f *~' HEAD
+
+## 하위 디렉토리를 루트 디렉토리로 만들기
+
+# SVN 에서 임포트하면 trunk, tags, branch 디렉토리가 포함된다.
+# 모든 커밋에 대해 trunk 디렉토리를 루트디렉토리로 바꾸자
+$ git filter-branch --subdirectory-filter trunk HEAD
+# Rewrite 856f0bf61e41a27326cdae8f09fe708d679f596f (12/12)
+# Ref 'refs/heads/master' was rewritten
+
+## 모든 커밋의 이메일 주소를 수정
+$ git filter-branch --commit-filter '
+        if [ "$GIT_AUTHOR_EMAIL" = "schacon@localhost" ];
+        then
+                GIT_AUTHOR_NAME="Scott Chacon";
+                GIT_AUTHOR_EMAIL="schacon@example.com";
+                git commit-tree "$@";
+        else
+                git commit-tree "$@";
+        fi' HEAD
 ```
 
-## Reset 명확히 알고 가기
+## **Reset 명확히 알고 가기**
+
+reset 을 정확히 이해하기 위해 각 단계별로 설명한다.
+
+![](img/reset-start.png)
+
+* 1 단계: HEAD 이동 (--soft)
+  * HEAD가 master 브랜치를 가리키고 있다면 HEAD, master 를 이동한다.
+
+![](img/reset-soft.png)
+
+* 2 단계: Index 업데이트 (--mixed)
+  * Index를 현재 HEAD가 가리키는 스냅샷으로 업데이트
+  * 가리키는 대상을 가장 최근의 커밋 으로 되돌리는 것은 같다. 
+  * 그리고 Staging Area 를 비우기까지 한다. 
+  * git commit, git add 까지 되돌린다.
+
+![](img/reset-mixed.png)
+
+* 3 단계: 워킹 디렉토리 업데이트 (--hard)
+  * 워킹 디렉토리까지 업데이트
+
+![](img/reset-hard.png)
+
+
+다음은 reset, checkout 의 summary 이다.
+
+|              | HEAD | Index | Workdir | Workdir Safe? |
+|--------------|------|-------|---------|---------------|
+| **Commit Level** | | | | |
+| `reset --soft [commit]` | REF | NO | NO | YES |
+| `reset [commit]` | REF | YES | NO | YES |
+| `reset --hard [commit]` | REF | YES | YES | **NO** |
+| `checkout [commit]` | HARD | YES | YES | YES |
+| **File Level** | | | | |
+| `reset [commit] <paths>` | NO | YES | NO | YES |
+| `checkout [commit]` | NO | YES | YES | **NO** |
 
 ```bash
+## 세 개의 트리
+
+# git 은 다음과 같은 세가지 트리를 관리한다.
+# HEAD: 마지막 커밋 스냅샵, 다음 커밋의 부모 커밋
+# Index: 다음에 커밋할 스냅샷
+# 워킹디렉토리: 샌드박스
+
+## HEAD
+$ git cat-file -p HEAD
+# tree cfda3bf379e4f8dba8717dee55aab78aef7f4daf
+# author Scott Chacon  1301511835 -0700
+# committer Scott Chacon  1301511835 -0700
+#
+# initial commit
+
+$ git ls-tree -r HEAD
+# 100644 blob a906cb2a4a904a152...   README
+# 100644 blob 8f94139338f9404f2...   Rakefile
+# 040000 tree 99f1a6d12cb4b6f19...   lib
+
+## Index
+$ git ls-files -s
+# 100644 a906cb2a4a904a152e80877d4088654daad0c859 0	README
+# 100644 8f94139338f9404f26296befa88755fc2598c289 0	Rakefile
+# 100644 47c6340d6459e05787f644c2447d2595f5d3a54b 0	lib/simplegit.rb
+
+## 워킹 디렉토리
+
+$ tree
+# .
+# ├── README
+# ├── Rakefile
+# └── lib
+#     └── simplegit.rb
+
+# 1 directory, 3 files
+
+## 경로를 주고 Reset 하기
+
+# git reset --mixed HEAD file.txt 와 같다.
+# HEAD 를 옮기고 file.txt 만 Index 에 복사한다.
+$ git reset file.txt 
+
+# “`HEAD에서 파일을 가져오는” 것이 아니라 그 커밋에서 파일을 가져온다.
+$ git reset eb43bf file.txt
+
+## 합치기(Squash)
+
+# https://git-scm.com/book/ko/v2/Git-%EB%8F%84%EA%B5%AC-Reset-%EB%AA%85%ED%99%95%ED%9E%88-%EC%95%8C%EA%B3%A0-%EA%B0%80%EA%B8%B0
+$ git reset --soft HEAD~2
+
+### Checkout
+
+## 경로없음
+
+## 경로있음
 ```
 
 ## 고급 Merge
