@@ -6,6 +6,7 @@
   - [Useful Keywords](#useful-keywords)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collection Examples](#collection-examples)
+- [Multi dimensional array](#multi-dimensional-array)
   - [Collection Framework](#collection-framework)
   - [Collection Implementations](#collection-implementations)
   - [Data Types](#data-types)
@@ -21,6 +22,9 @@
   - [Generics](#generics)
   - [Concurrency](#concurrency)
   - [What's new Java8](#whats-new-java8)
+    - [Interface Default and Static Methods](#interface-default-and-static-methods)
+    - [Method References](#method-references)
+    - [Optional<T>](#optionalt)
 - [Advanced Usage](#advanced-usage)
   - [jvm architecture](#jvm-architecture)
   - [jvm garbage collector](#jvm-garbage-collector)
@@ -172,9 +176,9 @@ class Person implements Serializable {
 | `stack`              | `Stack, Deque`                  |
 | `queue`              | `Queue, LinkedList`             |
 | `priority_queue`     | `Queue, PriorityQueue`          |
-| `set`                | `Set, SortedSet, TreeSet`       |
+| `set`                | `SortedSet, TreeSet`       |
 | `multiset`           | ``                              |
-| `map`                | `Map, SortedMap, TreeMap`       |
+| `map`                | `SortedMap, TreeMap`       |
 | `multimap`           | ``                              |
 | `unordered_set`      | `Set, HashSet`                  |
 | `unordered_multiset` | ``                              |
@@ -224,33 +228,219 @@ class Person implements Serializable {
 ```
 
 * Vector
-* ArrayList
 
 ```java
-    List<List<Integer>> G = new ArrayList<>(
-        Collections.nCopies(N, new ArrayList<>()));
+    Vector<Integer> D = new Vector<Integer>(Collections.nCopies(N,  1));
+    Integer a = D.get(0);
+    D.set(0, 1);
+    D.add(1);
+```
+
+* List, ArrayList
+
+```java
     List<Integer> D = new ArrayList<Integer>(Collections.nCopies(N,  1));
     Integer a = D.get(0);
     D.set(0, 1);
     D.add(1);
 ```
 
-* Deque
-* ArrayDeque
-* List
-* LinkedList
+* Deque, ArrayDeque
+
+```java
+   Deque<Integer> deque = new ArrayDeque<>();
+   deque.push(10);
+   deque.push(500);
+   deque.push(1000);
+   int peekResult = deque.peek();
+   int popResult = deque.pop();
+   popResult = deque.pop();
+```
+
+* List, LinkedList
+
+```java
+   List<Integer> D = new LinkedList<Integer>(Collections.nCopies(N,  1));
+   Integer a = D.get(0);
+   D.set(0, 1);
+   D.add(1);
+```
+
 * Stack
-* Deque
-* Queue
-* PriorityQueue
-* Set
-* SortedSet
-* TreeSet
-* Map
-* SortedMap
-* TreeMap
-* HashSet
-* HashMap
+
+```java
+   Stack<String> stack = new Stack<>();
+   stack.push("fly");
+   stack.push("worm");
+   stack.push("butterfly");
+   String peekResult = stack.peek();
+   String popResult = stack.pop();
+   popResult = stack.pop();
+```
+
+* Queue, ArrayDeque
+
+```java
+   Queue<Integer> queue = new ArrayDeque<>();
+   queue.add(1);
+   queue.add(100);
+   queue.add(0);
+   queue.add(1000);
+   int peeked = queue.peek();
+   while (queue.size() > 0) {
+   int polled = queue.poll();
+   System.out.println(polled);
+   }
+```
+
+* Queue, PriorityQueue
+
+```java
+   Queue<Integer> queue = new PriorityQueue<>();
+   queue.add(1);
+   queue.add(100);
+   queue.add(0);
+   queue.add(1000);
+   int peeked = queue.peek();
+   while (queue.size() > 0) {
+      int polled = queue.poll();
+      System.out.println(polled);
+   }
+```
+
+* SortedSet, TreeSet
+
+```java
+   SortedSet<String> set = new TreeSet<String>();
+   set.add("perls");
+   set.add("net");
+   set.add("dot");
+   set.add("sam");
+   set.remove("sam");
+   for (String val : set) // ... Alphabetical order.
+   {
+      System.out.println(val);
+   }    
+```
+
+* SortedMap, TreeMap
+
+```java
+   SortedMap<String, String> map = new TreeMap<>();
+   map.put(".com", "International");
+   map.put(".us", "United States");
+   map.put(".uk", "United Kingdom");
+   map.put(".jp", "Japan");
+   map.put(".au", "Australia");
+   System.out.println(map);
+   System.out.println(map.get(".au"));
+```
+
+* Set, HashSet
+
+```java
+   Set<String> set = new HashSet<String>();
+   set.add("perls");
+   set.add("net");
+   set.add("dot");
+   set.add("sam");
+   set.remove("sam");
+   for (String val : set) // ... Alphabetical order.
+   {
+      System.out.println(val);
+   }    
+```
+
+* Map, HashMap
+
+```java
+   Map<String, String> map = new HashMap<>();
+   map.put(".com", "International");
+   map.put(".us", "United States");
+   map.put(".uk", "United Kingdom");
+   map.put(".jp", "Japan");
+   map.put(".au", "Australia");
+   System.out.println(map);
+   System.out.println(map.get(".au"));
+```
+
+* Set, LinkedHashSet
+
+LinkedList 처럼 입력된 순서대로 저장
+
+```java
+   Set<String> set = new LinkedHashSet<String>();
+   set.add("perls");
+   set.add("net");
+   set.add("dot");
+   set.add("sam");
+   set.remove("sam");
+   for (String val : set)
+   {
+      System.out.println(val);
+   }
+```
+
+* Map, LinkedHashMap
+
+LinkedList 처럼 입력된 순서대로 저장
+
+```java
+   Map<String, String> map = new LinkedHashMap<>();
+   map.put(".com", "International");
+   map.put(".us", "United States");
+   map.put(".uk", "United Kingdom");
+   map.put(".jp", "Japan");
+   map.put(".au", "Australia");
+   System.out.println(map.get(".au"));
+```
+
+# Multi dimensional array
+
+* [Multi Dimensional ArrayList in Java](https://www.baeldung.com/java-multi-dimensional-arraylist)
+
+----
+
+```java
+// 2d
+int vertexCount = 3;
+ArrayList<ArrayList<Integer>> graph = new ArrayList<>(vertexCount);
+for(int i=0; i < vertexCount; i++) {
+    graph.add(new ArrayList());
+}
+graph.get(0).add(1);
+graph.get(1).add(2);
+graph.get(2).add(0);
+graph.get(1).add(0);
+graph.get(2).add(1);
+graph.get(0).add(2);
+int vertexCount = graph.size();
+for (int i = 0; i < vertexCount; i++) {
+    int edgeCount = graph.get(i).size();
+    for (int j = 0; j < edgeCount; j++) {
+        Integer startVertex = i;
+        Integer endVertex = graph.get(i).get(j);
+        System.out.printf("Vertex %d is connected to vertex %d%n", startVertex, endVertex);
+    }
+}
+
+// 3d
+int x_axis_length = 2;
+int y_axis_length = 2;
+int z_axis_length = 2;  
+ArrayList<ArrayList<ArrayList<String>>> space = new ArrayList<>(x_axis_length);
+for (int i = 0; i < x_axis_length; i++) {
+    space.add(new ArrayList<ArrayList<String>>(y_axis_length));
+    for (int j = 0; j < y_axis_length; j++) {
+        space.get(i).add(new ArrayList<String>(z_axis_length));
+    }
+}
+space.get(0).get(0).add(0,"Red");
+space.get(0).get(0).add(1,"Red");
+space.get(0).get(1).add(0,"Blue");
+space.get(0).get(1).add(1,"Blue");
+space.get(i).get(j).get(k)
+```
 
 ## Collection Framework
 
@@ -289,90 +479,90 @@ String a = "\u001";
 
 ```java
 //// if
-      int x = 30;
-      if( x == 10 ) {
-         System.out.print("Value of X is 10");
-      }else if( x == 20 ) {
-         System.out.print("Value of X is 20");
-      }else if( x == 30 ) {
-         System.out.print("Value of X is 30");
-      }else {
-         System.out.print("This is else statement");
-      }
+int x = 30;
+if(x == 10) {
+   System.out.print("Value of X is 10");
+} else if( x == 20 ) {
+   System.out.print("Value of X is 20");
+} else if( x == 30 ) {
+   System.out.print("Value of X is 30");
+} else {
+   System.out.print("This is else statement");
+}
 //// switch
-      // char grade = args[0].charAt(0);
-      char grade = 'C';
-      switch(grade) {
-         case 'A' :
-            System.out.println("Excellent!"); 
-            break;
-         case 'B' :
-         case 'C' :
-            System.out.println("Well done");
-            break;
-         case 'D' :
-            System.out.println("You passed");
-         case 'F' :
-            System.out.println("Better try again");
-            break;
-         default :
-            System.out.println("Invalid grade");
-      }
-      System.out.println("Your grade is " + grade);
+// char grade = args[0].charAt(0);
+char grade = 'C';
+switch(grade) {
+   case 'A' :
+      System.out.println("Excellent!"); 
+      break;
+   case 'B' :
+   case 'C' :
+      System.out.println("Well done");
+      break;
+   case 'D' :
+      System.out.println("You passed");
+   case 'F' :
+      System.out.println("Better try again");
+      break;
+   default :
+      System.out.println("Invalid grade");
+}
+System.out.println("Your grade is " + grade);
 ```
 
 ## Loops
 
 ```java
 //// while
-      int x = 10;
-      while( x < 20 ) {
-         System.out.print("value of x : " + x );
-         x++;
-         System.out.print("\n");
-      }
+int x = 10;
+while(x < 20) {
+   System.out.print("value of x : " + x );
+   x++;
+   System.out.print("\n");
+}
 //// for
-      for(int x = 10; x < 20; x = x + 1) {
-         System.out.print("value of x : " + x );
-         System.out.print("\n");
-      }
+for(int x = 10; x < 20; x = x + 1) {
+   System.out.print("value of x : " + x );
+   System.out.print("\n");
+}
 //// do while 
-      int x = 10;
-      do {
-         System.out.print("value of x : " + x );
-         x++;
-         System.out.print("\n");
-      } while ( x < 20 );
+int x = 10;
+do {
+   System.out.print("value of x : " + x );
+   x++;
+   System.out.print("\n");
+} while ( x < 20 );
 //// break
-      int [] numbers = {10, 20, 30, 40, 50};
-      for (int x : numbers ) {
-         if( x == 30 ) {
-            break;
-         }
-         System.out.print( x );
-         System.out.print("\n");
-      }
+int [] numbers = {10, 20, 30, 40, 50};
+for (int x : numbers) {
+   if( x == 30 ) {
+      break;
+   }
+   System.out.print( x );
+   System.out.print("\n");
+}
 //// continue
-      int [] numbers = {10, 20, 30, 40, 50};
-      for (int x : numbers ) {
-         if( x == 30 ) {
-            continue;
-         }
-         System.out.print( x );
-         System.out.print("\n");
-      }
+int [] numbers = {10, 20, 30, 40, 50};
+for (int x : numbers) {
+   if( x == 30 ) {
+      continue;
+   }
+   System.out.print( x );
+   System.out.print("\n");
+}
 //// range based for
-      int [] numbers = {10, 20, 30, 40, 50};
-      for(int x : numbers ) {
-         System.out.print( x );
-         System.out.print(",");
-      }
-      System.out.print("\n");
-      String [] names = {"James", "Larry", "Tom", "Lacy"};
-      for( String name : names ) {
-         System.out.print( name );
-         System.out.print(",");
-      }
+int [] numbers = {10, 20, 30, 40, 50};
+for(int x : numbers) {
+   System.out.print( x );
+   System.out.print(",");
+}
+System.out.print("\n");
+String [] names = {"James", "Larry", "Tom", "Lacy"};
+for( String name : names) {
+   System.out.print( name );
+   System.out.print(",");
+}
 ```
 
 ## Inner Classes
@@ -492,7 +682,7 @@ public class AnonymousClass {
          new Runnable() {
             @Override
             public void run() {
-            // Implementation here
+               // Implementation here
             }
          }
       ).start();
@@ -515,7 +705,7 @@ public class DaysOfTheWeekConstants {
    public static final int SUNDAY = 6;
 }
 
-public boolean isWeekend( int day ) {
+public boolean isWeekend(int day) {
    return( day == SATURDAY || day == SUNDAY );
 }
 ```
@@ -533,8 +723,8 @@ public enum DaysOfTheWeek {
    SUNDAY
 }
 
-public boolean isWeekend( DaysOfTheWeek day ) {
-   return( day == SATURDAY || day == SUNDAY );
+public boolean isWeekend(DaysOfTheWeek day) {
+   return(day == SATURDAY || day == SUNDAY);
 }
 ```
 
@@ -632,7 +822,7 @@ public enum DaysOfTheWeekFieldsInterfaces implements DayOfWeek {
    SATURDAY( true ),
    SUNDAY( true );
    private final boolean isWeekend;
-   private DaysOfTheWeekFieldsInterfaces( final boolean isWeekend ) {
+   private DaysOfTheWeekFieldsInterfaces(final boolean isWeekend) {
       this.isWeekend = isWeekend;
    }
    @Override
@@ -671,7 +861,7 @@ public @interface SimpleAnnotationWithValue {
    String value();
 }
 
-@SimpleAnnotationWithValue( "new annotation" )
+@SimpleAnnotationWithValue("new annotation")
 public int aaa;
 ```
 
@@ -695,7 +885,7 @@ public int aaa;
 ```java
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
-@Target( { ElementType.FIELD, ElementType.METHOD } )
+@Target({ElementType.FIELD, ElementType.METHOD})
 public @interface AnnotationWithTarget {
 }
 ```
@@ -703,8 +893,8 @@ public @interface AnnotationWithTarget {
 annotation 은 기본적으로 상속되지 않는다. 그러나 `@Inherited` 를 사용하면 상속된다.
 
 ```java
-@Target( { ElementType.TYPE } )
-@Retention( RetentionPolicy.RUNTIME )
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
 @Inherited
 @interface InheritableAnnotation {
 }
@@ -720,19 +910,19 @@ public class Child extends Parent {
 다음은 `@Repeatable` 를 사용한 예이다.
 
 ```java
-@Target( ElementType.METHOD )
-@Retention( RetentionPolicy.RUNTIME )
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
 public @interface RepeatableAnnotations {
    RepeatableAnnotation[] value();
 }
-@Target( ElementType.METHOD )
-@Retention( RetentionPolicy.RUNTIME )
-@Repeatable( RepeatableAnnotations.class )
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+@Repeatable(RepeatableAnnotations.class)
 public @interface RepeatableAnnotation {
    String value();
 };
-@RepeatableAnnotation( "repeatition 1" )
-@RepeatableAnnotation( "repeatition 2" )
+@RepeatableAnnotation("repeatition 1")
+@RepeatableAnnotation("repeatition 2")
 public void performAction() {
    // Some code here
 }
@@ -743,17 +933,17 @@ public void performAction() {
 다음은 generic interface 의 예이다. actual type 은 generic interface 를 구현한 class 를 작성할 때 사용한다.
 
 ```java
-public interface GenericInterfaceOneType< T > {
-   void performAction( final T action );
+public interface GenericInterfaceOneType<T> {
+   void performAction(final T action);
 }
 
-public interface GenericInterfaceSeveralTypes< T, R > {
-   R performAction( final T action );
+public interface GenericInterfaceSeveralTypes<T, R> {
+   R performAction(final T action);
 }
 
-public class ClassImplementingGenericInterface implements GenericInterfaceOneType< String > {
+public class ClassImplementingGenericInterface implements GenericInterfaceOneType<String> {
    @Override
-   public void performAction( final String action ) {
+   public void performAction(final String action) {
       // Implementation here
    }
 }
@@ -762,15 +952,15 @@ public class ClassImplementingGenericInterface implements GenericInterfaceOneTyp
 다음은 generic class 의 예이다. actual type 은 generic class 의 instance 를 생성하거나 class 에서 상속받을 때 사용한다.
 
 ```java
-public class GenericClassOneType< T > {
-   public void performAction( final T action ) {
+public class GenericClassOneType<T> {
+   public void performAction(final T action) {
       // Implementation here
    }
 }
 
-public class GenericClassImplementingGenericInterface< T > implements GenericInterfaceOneType< T > {
+public class GenericClassImplementingGenericInterface<T> implements GenericInterfaceOneType<T> {
    @Override
-   public void performAction( final T action ) {
+   public void performAction(final T action) {
       // Implementation here
    }
 }
@@ -780,37 +970,37 @@ public class GenericClassImplementingGenericInterface< T > implements GenericInt
 호출할 때 사용한다.
 
 ```java
-public< T, R > R performAction( final T action ) {
+public<T, R> R performAction(final T action) {
    final R result = ...;
    // Implementation here
    return result;
 }
 
-protected abstract< T, R > R performAction( final T action );
-static< T, R > R performActionOn( final Collection< T > action ) {
+protected abstract<T, R> R performAction(final T action);
+static<T, R> R performActionOn(final Collection<T> action) {
    final R result = ...;
    // Implementation here
    return result;
 }  
 
-public class GenericMethods< T > {
-   public< R > R performAction( final T action ) {
+public class GenericMethods<T> {
+   public<R> R performAction(final T action) {
       final R result = ...;
       // Implementation here
       return result;
    }
-   public< U, R > R performAnotherAction( final U action ) {
+   public<U, R> R performAnotherAction(final U action) {
       final R result = ...;
       // Implementation here
       return result;
    }
 }
 
-public class GenericMethods< T > {
-   public GenericMethods( final T initialAction ) {
+public class GenericMethods<T> {
+   public GenericMethods(final T initialAction) {
       // Implementation here
    }
-   public< J > GenericMethods( final T initialAction, final J nextAction ) {
+   public<J> GenericMethods(final T initialAction, final J nextAction) {
       // Implementation here
    }
 }
@@ -819,29 +1009,29 @@ public class GenericMethods< T > {
 generic 의 type 에 primitive type 은 사용할 수 없다. primitive Wrapper type 를 사용해야 한다. generic method 의 경우 argument 로 primitive type 이 전달될 때 primitive wrapper type 으로 형변환 된다. 이것을 boxing 이라고 한다.
 
 ```java
-final List< Long > longs = new ArrayList<>();
-final Set< Integer > integers = new HashSet<>();
+final List<Long> longs = new ArrayList<>();
+final Set<Integer> integers = new HashSet<>();
 
-final List< Long > longs = new ArrayList<>();
-longs.add( 0L ); // ’long’ is boxed to ’Long’
-long value = longs.get( 0 ); // ’Long’ is unboxed to ’long’
+final List<Long> longs = new ArrayList<>();
+longs.add(0L); // ’long’ is boxed to ’Long’
+long value = longs.get(0); // ’Long’ is unboxed to ’long’
 // Do something with value
 ```
 
 generic 은 compile time 에 type erasure 를 한다. 즉 type 결정을 runtime 에 하기 위해 compile time 에 generic type 을 지운다. 따라서 다음과 같은 코드는 compile 할 때 method 가 중복 선언되었다는 오류를 발생한다.
 
 ```java
-void sort( Collection< String > strings ) {
+void sort(Collection<String> strings) {
    // Some implementation over strings heres
 }
-void sort( Collection< Number > numbers ) {
+void sort(Collection<Number> numbers) {
    // Some implementation over numbers here
 }
 ```
 generic 의 array 는 만들 수 없다.
 
 ```java
-public< T > void performAction( final T action ) {
+public<T> void performAction(final T action) {
    T[] actions = new T[0];
 }
 ```
@@ -849,21 +1039,21 @@ public< T > void performAction( final T action ) {
 generic type 을 `extends` 를 사용하여 자신 혹은 후손으로 제한할 수 있다.
 
 ```java
-public< T extends InputStream > void read( final T stream ) {
+public<T extends InputStream> void read(final T stream) {
    // Some implementation here
 }
-public< T extends Serializable > void store( final T object ) {
+public<T extends Serializable> void store(final T object) {
    // Some implementation here
 }  
-public< T, J extends T > void action( final T initial, final J next ) {
+public<T, J extends T> void action(final T initial, final J next) {
    // Some implementation here
 }
-public< T extends InputStream &amp; Serializable > 
-void storeToRead( final T stream ) {
+public<T extends InputStream & Serializable> 
+void storeToRead(final T stream) {
    // Some implementation here
 }
-public< T extends Serializable &amp; Externalizable &amp; Cloneable > 
-void persist(final T object ) {
+public<T extends Serializable & Externalizable & Cloneable> 
+void persist(final T object) {
    // Some implementation here
 }
 ```
@@ -871,13 +1061,13 @@ void persist(final T object ) {
 다음은 method 의 argument 에 generic type 을 사용한 예이다.
 
 ```java
-public void store( final Collection< ? extends Serializable > objects ) {
+public void store(final Collection<? extends Serializable> objects) {
    // Some implementation here
 }
-public void store( final Collection< ? > objects ) {
+public void store( final Collection<?> objects) {
    // Some implementation here
 }
-public void interate( final Collection< ? super Integer > objects ) {
+public void interate( final Collection<? super Integer> objects) {
    // Some implementation here
 }
 ```
@@ -893,7 +1083,117 @@ TODO
 
 ## What's new Java8
 
-TODO
+* [What's New in JDK 8 @ oracle](https://www.oracle.com/technetwork/java/javase/8-whats-new-2157071.html)
+* [New Features in Java 8](https://www.baeldung.com/java-8-new-features)
+
+----
+
+### Interface Default and Static Methods
+
+```java
+//// static method
+interface Vehicle {
+  static String producer() {
+    return "N&F Vehicles";
+  }
+}
+
+class A {
+  public static void main(String[] args) {
+    String producer = Vehicle.producer();
+  }
+}
+
+//// default method
+interface Vehicle {
+  static String producer() {
+    return "N&F Vehicles";
+  }
+  default String getOverview() {
+    return "ATV made by " + producer();
+  }
+}
+
+class VehicleImpl implements Vehicle {
+}
+
+class A {
+  public static void main(String[] args) {
+    Vehicle v = new VehicleImpl();
+    String overview = v.getOverview();
+  }
+}
+```
+
+### Method References
+
+```java
+//// Reference to a Static Method
+// boolean isReal = list.stream().anyMatch(u -> User.isRealUser(u));
+boolean isReal = list.stream().anyMatch(User::isRealUser);
+
+//// Reference to an Instance Method
+User user = new User();
+boolean isLegalName = list.stream().anyMatch(user::isLegalName);
+
+//// Reference to an Instance Method of an Object of a Particular Type
+long count = list.stream().filter(String::isEmpty).count();
+
+//// Reference to a Constructor
+Stream<User> stream = list.stream().map(User::new);
+```
+
+### Optional<T>
+
+```java
+//// Creation of the Optional<T>
+Optional<String> optional = Optional.empty();
+String str = "value";
+Optional<String> optional = Optional.of(str);
+Optional<String> optional = Optional.ofNullable(getString());
+
+//// Optional<T> usage
+// List<String> list = getList();
+// List<String> listOpt = list != null ? list : new ArrayList<>();
+List<String> listOpt = getList().orElseGet(() -> new ArrayList<>());
+
+// User user = getUser();
+// if (user != null) {
+//     Address address = user.getAddress();
+//     if (address != null) {
+//         String street = address.getStreet();
+//         if (street != null) {
+//             return street;
+//         }
+//     }
+// }
+// return "not specified";
+Optional<User> user = Optional.ofNullable(getUser());
+String result = user
+  .map(User::getAddress)
+  .map(Address::getStreet)
+  .orElse("not specified");
+
+// Optional<T>
+Optional<OptionalUser> optionalUser = Optional.ofNullable(getOptionalUser());
+String result = optionalUser
+  .flatMap(OptionalUser::getAddress)
+  .flatMap(OptionalAddress::getStreet)
+  .orElse("not specified");
+
+// handling NPE
+// String value = null;
+// String result = "";
+// try {
+//     result = value.toUpperCase();
+// } catch (NullPointerException exception) {
+//     throw new CustomException();
+// }
+String value = null;
+Optional<String> valueOpt = Optional.ofNullable(value);
+String result = valueOpt.orElseThrow(CustomException::new).toUpperCase();
+
+```
 
 # Advanced Usage
 
