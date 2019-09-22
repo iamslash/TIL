@@ -943,18 +943,226 @@ $ git reset --soft HEAD~2
 
 ### Checkout
 
-## 경로없음
+## 경로없음???
 
-TODO
-
-## 경로있음
-
-TODO
+## 경로있음???
 ```
 
 ## 고급 Merge
 
 ```bash
+
+## Merge 충돌
+
+# merge 하기 전에 working dir 를 stash 에 push 하거나
+# branch 에 commit 하는 것이 좋다.
+# 그렇지 않으면 모두 잃어버릴 수 있다.
+
+# 이것은 예제로 사용할 hello.rb 파일이다.
+# #! /usr/bin/env ruby
+#
+# def hello
+#   puts 'hello world'
+# end
+#
+# hello()
+
+# whitespace branch 를 만들고 이동한다.
+$ git checkout -b whitespace
+# Switched to a new branch 'whitespace'
+
+$ unix2dos hello.rb
+# unix2dos: converting file hello.rb to DOS format ...
+$ git commit -am 'converted hello.rb to DOS'
+# [whitespace 3270f76] converted hello.rb to DOS
+#  1 file changed, 7 insertions(+), 7 deletions(-)
+
+$ vim hello.rb
+$ git diff -b
+# diff --git a/hello.rb b/hello.rb
+# index ac51efd..e85207e 100755
+# --- a/hello.rb
+# +++ b/hello.rb
+# @@ -1,7 +1,7 @@
+#  #! /usr/bin/env ruby
+#
+#  def hello
+# -  puts 'hello world'
+# +  puts 'hello mundo'^M
+#  end
+#
+#  hello()
+
+$ git commit -am 'hello mundo change'
+# [whitespace 6d338d2] hello mundo change
+#  1 file changed, 1 insertion(+), 1 deletion(-)
+
+# 이제 master branch 로 이동한다.
+$ git checkout master
+# Switched to branch 'master'
+
+$ vim hello.rb
+$ git diff
+# diff --git a/hello.rb b/hello.rb
+# index ac51efd..36c06c8 100755
+# --- a/hello.rb
+# +++ b/hello.rb
+# @@ -1,5 +1,6 @@
+#  #! /usr/bin/env ruby
+#
+# +# prints out a greeting
+#  def hello
+#    puts 'hello world'
+#  end
+
+$ git commit -am 'document the function'
+# [master bec6336] document the function
+#  1 file changed, 1 insertion(+)
+
+# master branch 에서 white space branch 를 merge 하면
+# 충돌이 발생한다.
+$ git merge whitespace
+# Auto-merging hello.rb
+# CONFLICT (content): Merge conflict in hello.rb
+# Automatic merge failed; fix conflicts and then commit the result.
+
+## Merge 취소하기
+$ git status -sb
+# ## master
+# UU hello.rb
+
+$ git merge --abort
+
+$ git status -sb
+# ## master
+
+# merge 를 처음부터 다시하고 싶다
+$ git reset --hard HEAD 
+
+## 공백 무시하기
+# 공백이 충돌의 전부라면 merge 를 취소하고 -Xignore-all-space 혹은 # -Xignore-space-change 를 추가하여 공백을 부시하고 merge 하자.
+# -Xignore-space-change 는 여러공백을 하나로 취급한다.
+# 스페이스를 탭으로 혹은 탭을 스페이스로 바꾸었을 때 유용하다
+$ git merge -Xignore-space-change whitespace
+Auto-merging hello.rb
+Merge made by the 'recursive' strategy.
+ hello.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+## 수동으로 Merge 하기
+
+# 충돌이 발생하면 index 에 3 가지 파일이 존재한다.
+# Stage 1는 공통 조상 파일, Stage 2는 현재 개발자의 버전에 해당하는 파일, Stage 3은 MERGE_HEAD 가 가리키는 커밋의 파일이다.
+# git show 를 이용해서 각 버전의 파일을 꺼낼 수 있다.
+$ git show :1:hello.rb > hello.common.rb
+$ git show :2:hello.rb > hello.ours.rb
+$ git show :3:hello.rb > hello.theirs.rb
+# ls-files -u 를 이용해서 Git blob 의 SHA-1 을 얻어오자.
+# :1:hello.rg 는 Blob SHA-1 의 줄임말이다.
+$ git ls-files -u
+# 100755 ac51efdc3df4f4fd328d1a02ad05331d8e2c9111 1	hello.rb
+# 100755 36c06c8752c78d2aff89571132f3bf7841a7b5c3 2	hello.rb
+# 100755 e85207e04dfdd5eb0a1e9febbc67fd837c44a1cd 3	hello.rb
+
+# 이제 working dir 에 3 가지 파일을 가져왔다. git merge-file 을
+# 이용하여 merge 해보자.
+$ dos2unix hello.theirs.rb
+# dos2unix: converting file hello.theirs.rb to Unix format ...
+
+$ git merge-file -p \
+    hello.ours.rb hello.common.rb hello.theirs.rb > hello.rb
+
+$ git diff -b
+# diff --cc hello.rb
+# index 36c06c8,e85207e..0000000
+# --- a/hello.rb
+# +++ b/hello.rb
+# @@@ -1,8 -1,7 +1,8 @@@
+#   #! /usr/bin/env ruby
+#
+#  +# prints out a greeting
+#   def hello
+# -   puts 'hello world'
+# +   puts 'hello mundo'
+#   end
+#
+#   hello()
+
+# merge 후의 결과를 merge 하기 전의 브랜치와 비교
+$ git diff --ours
+# * Unmerged path hello.rb
+# diff --git a/hello.rb b/hello.rb
+# index 36c06c8..44d0a25 100755
+# --- a/hello.rb
+# +++ b/hello.rb
+# @@ -2,7 +2,7 @@
+#
+#  # prints out a greeting
+#  def hello
+# -  puts 'hello world'
+# +  puts 'hello mundo'
+#  end
+#
+#  hello()
+
+# merge 할 파일을 가져온 쪽과 비교
+$ git diff --theirs -b
+# * Unmerged path hello.rb
+# diff --git a/hello.rb b/hello.rb
+# index e85207e..44d0a25 100755
+# --- a/hello.rb
+# +++ b/hello.rb
+# @@ -1,5 +1,6 @@
+#  #! /usr/bin/env ruby
+#
+# +# prints out a greeting
+#  def hello
+#    puts 'hello mundo'
+#  end
+
+# 양쪽 모두와 비교
+# -b 를 추가하여 공백은 무시하자.
+$ git diff --base -b
+# * Unmerged path hello.rb
+# diff --git a/hello.rb b/hello.rb
+# index ac51efd..44d0a25 100755
+# --- a/hello.rb
+# +++ b/hello.rb
+# @@ -1,7 +1,8 @@
+#  #! /usr/bin/env ruby
+#
+# +# prints out a greeting
+#  def hello
+# -  puts 'hello world'
+# +  puts 'hello mundo'
+#  end
+#
+#  hello()
+
+# merge 를 완료했으니 필요없는 파일을 제거하자.
+$ git clean -f
+# Removing hello.common.rb
+# Removing hello.ours.rb
+# Removing hello.theirs.rb
+
+## 충돌 파일 Checkout
+
+
+## Merge 로그
+
+## Combined Diff 형식
+
+## Merge 되돌리기
+
+## Refs 수정
+
+## 커밋 되돌리기
+
+### 다른 방식의 Merge
+
+## Our/Their 선택하기
+
+## 서브트리 Merge
 ```
 
 ## Rerere
