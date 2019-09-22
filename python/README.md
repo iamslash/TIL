@@ -5,6 +5,7 @@
 - [Basic Usages](#basic-usages)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
+  - [Multidimensional Array](#multidimensional-array)
   - [classes](#classes)
   - [lambdas](#lambdas)
   - [slice](#slice)
@@ -516,6 +517,28 @@ True
 Species(1)
 Species['cat']
 Species.cat
+```
+
+## Multidimensional Array
+
+* [Python | Using 2D arrays/lists the right way](https://www.geeksforgeeks.org/python-using-2d-arrays-lists-the-right-way/)
+
+----
+
+```py
+# 1D
+N = 5
+arr = [0]*N 
+# arr = [0 for i in range(N)] 
+print(arr)
+# [0, 0, 0, 0, 0]
+
+# 2D
+rows, cols = (5, 5) 
+arr = [[0]*cols]*rows 
+# arr = [[0 for i in range(cols)] for j in range(rows)] 
+print(arr) 
+# [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]
 ```
 
 ## classes
