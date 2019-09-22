@@ -225,6 +225,16 @@ class Person implements Serializable {
 
 * Vector
 * ArrayList
+
+```java
+    List<List<Integer>> G = new ArrayList<>(
+        Collections.nCopies(N, new ArrayList<>()));
+    List<Integer> D = new ArrayList<Integer>(Collections.nCopies(N,  1));
+    Integer a = D.get(0);
+    D.set(0, 1);
+    D.add(1);
+```
+
 * Deque
 * ArrayDeque
 * List
