@@ -1147,27 +1147,376 @@ $ git clean -f
 
 ## 충돌 파일 Checkout
 
+# 이번에 서로다른 3개의 commit 을 갖는 branch 두 개가 있다.
+$ git log --graph --oneline --decorate --all
+# * f1270f7 (HEAD, master) update README
+# * 9af9d3b add a README
+# * 694971d update phrase to hola world
+# | * e3eb223 (mundo) add more tests
+# | * 7cff591 add testing script
+# | * c3ffff1 changed text to hello mundo
+# |/
+# * b7dcc89 initial hello world code
+
+# 충돌이 발생한다.
+$ git merge mundo
+# Auto-merging hello.rb
+# CONFLICT (content): Merge conflict in hello.rb
+# Automatic merge failed; fix conflicts and then commit the result.
+
+# 다음은 hello.rb 의 충돌 내용이다.
+# #! /usr/bin/env ruby
+#
+# def hello
+# <<<<<<< HEAD
+#   puts 'hola world'
+# =======
+#   puts 'hello mundo'
+# >>>>>>> mundo
+# end
+#
+# hello()
+
+# --conflict=diff3 를 추가하여 base 버전의 내용도 살펴보자.
+# --conflict 는 파일을 다시 checkout 해서 충돌 표시된 부분을 교체한다.
+# 충돌 부분을 원래 코드로 되돌리고 다시 수정할 때 필요하다.
+$ git checkout --conflict=diff3 hello.rb
+# #! /usr/bin/env ruby
+#
+# def hello
+# <<<<<<< ours
+#   puts 'hola world'
+# ||||||| base
+#   puts 'hello world'
+# =======
+#   puts 'hello mundo'
+# >>>>>>> theirs
+# end
+#
+# hello()
+
+# 다음과 같이 global config 를 수정할 수도 있다.
+$ git config --global merge.conflictstyle diff3
 
 ## Merge 로그
 
+# Triple Dot 을 이용하여 양쪽 branch 의 모든 commit 을 얻어오자.
+$ git log --oneline --left-right HEAD...MERGE_HEAD
+# < f1270f7 update README
+# < 9af9d3b add a README
+# < 694971d update phrase to hola world
+# > e3eb223 add more tests
+# > 7cff591 add testing script
+# > c3ffff1 changed text to hello mundo
+
+# 충돌이 발생한 파일이 속한 커밋만 얻어오자.
+$ git log --oneline --left-right --merge
+# < 694971d update phrase to hola world
+# > c3ffff1 changed text to hello mundo
+
 ## Combined Diff 형식
 
-## Merge 되돌리기
+# merge 하다가 충돌이 났을 때 git diff 를 실행해보자.
+# 이런 형식을 combined diff 라고 한다.
+# 각 라인은 두개의 컬럼으로 구분할 수 있다.
+# 첫번째 컬럼은 ours branch 와 working dir 의 차이
+# 두번째 컬럼은 theirs branch 와 working dir 의 차이
+$ git diff
+# diff --cc hello.rb
+# index 0399cd5,59727f0..0000000
+# --- a/hello.rb
+# +++ b/hello.rb
+# @@@ -1,7 -1,7 +1,11 @@@
+#   #! /usr/bin/env ruby
+#
+#   def hello
+# ++<<<<<<< HEAD
+#  +  puts 'hola world'
+# ++=======
+# +   puts 'hello mundo'
+# ++>>>>>>> mundo
+#   end
+#
+#   hello()
+
+# 충돌을 해결하고 git diff 실행하자.
+# merge 후에 무엇이 바뀌었는지 확인
+$ vim hello.rb
+$ git diff
+# diff --cc hello.rb
+# index 0399cd5,59727f0..0000000
+# --- a/hello.rb
+# +++ b/hello.rb
+# @@@ -1,7 -1,7 +1,7 @@@
+#   #! /usr/bin/env ruby
+#
+#   def hello
+# -   puts 'hola world'
+#  -  puts 'hello mundo'
+# ++  puts 'hola mundo'
+#   end
+#
+#   hello()
+
+# merge 후에 무엇이 바뀌었는지 확인하기 위해
+# git log -p 를 사용할 수도 있다.
+$ git log --cc -p -1
+# commit 14f41939956d80b9e17bb8721354c33f8d5b5a79
+# Merge: f1270f7 e3eb223
+# Author: Scott Chacon <schacon@gmail.com>
+# Date:   Fri Sep 19 18:14:49 2014 +0200
+#
+#     Merge branch 'mundo'
+#
+#     Conflicts:
+#         hello.rb
+#
+# diff --cc hello.rb
+# index 0399cd5,59727f0..e1d0799
+# --- a/hello.rb
+# +++ b/hello.rb
+# @@@ -1,7 -1,7 +1,7 @@@
+#   #! /usr/bin/env ruby
+#
+#   def hello
+# -   puts 'hola world'
+#  -  puts 'hello mundo'
+# ++  puts 'hola mundo'
+#   end
+#
+#   hello()
+
+
+### Merge 되돌리기
+# https://git-scm.com/book/ko/v2/Git-%EB%8F%84%EA%B5%AC-%EA%B3%A0%EA%B8%89-Merge 의 그림을 참고해서 이해하는 것이 좋다.
 
 ## Refs 수정
 
+$ git reset --hard HEAD~
+
 ## 커밋 되돌리기
+
+# 모든 변경사항을 취소하는 새로운 커밋을 생성
+# -m 1 옵션은 부모가 보호되어야 하는 “mainline” 이라는 것을 나타낸다.
+$ git revert -m 1 HEAD
+# [master b1d8379] Revert "Merge branch 'topic'"
 
 ### 다른 방식의 Merge
 
 ## Our/Their 선택하기
 
+# 다시 hello.rg 로 돌아가서 충돌을 재현하자.
+$ git merge mundo
+# Auto-merging hello.rb
+# CONFLICT (content): Merge conflict in hello.rb
+# Resolved 'hello.rb' using previous resolution.
+# Automatic merge failed; fix conflicts and then commit the result.
+
+# -Xours 혹은 -Xtheirs 를 추가하여 충돌을 해결하자.
+$ git merge -Xours mundo
+# Auto-merging hello.rb
+# Merge made by the 'recursive' strategy.
+#  hello.rb | 2 +-
+#  test.sh  | 2 ++
+#  2 files changed, 3 insertions(+), 1 deletion(-)
+#  create mode 100644 test.sh
+
+# ???
+$ git merge -s ours mundo
+# Merge made by the 'ours' strategy.
+$ git diff HEAD HEAD~
+
 ## 서브트리 Merge
+
+# 다른 프로젝트를 내 프로젝트의 subtree 로 추가하자.
+$ git remote add rack_remote https://github.com/rack/rack
+$ git fetch rack_remote --no-tags
+# warning: no common commits
+# remote: Counting objects: 3184, done.
+# remote: Compressing objects: 100% (1465/1465), done.
+# remote: Total 3184 (delta 1952), reused 2770 (delta 1675)
+# Receiving objects: 100% (3184/3184), 677.42 KiB | 4 KiB/s, done.
+# Resolving deltas: 100% (1952/1952), done.
+# From https://github.com/rack/rack
+#  * [new branch]      build      -> rack_remote/build
+#  * [new branch]      master     -> rack_remote/master
+#  * [new branch]      rack-0.4   -> rack_remote/rack-0.4
+#  * [new branch]      rack-0.9   -> rack_remote/rack-0.9
+$ git checkout -b rack_branch rack_remote/master
+# Branch rack_branch set up to track remote branch refs/remotes/rack_remote/master.
+# Switched to a new branch "rack_branch"
+
+# 두 프로젝트가 한 저장소에 있는 것처럼 보인다.
+$ ls
+# AUTHORS         KNOWN-ISSUES   Rakefile      contrib         lib
+# COPYING         README         bin           example         test
+$ git checkout master
+# Switched to branch "master"
+$ ls
+# README
+
+# rack_branch 를 master 의 하위 디렉토리로 만들어 보자.
+$ git read-tree --prefix=rack/ -u rack_branch
+
+# remote rack_branch 에서 변경된 내용을 적용하고 다시 
+# master 로 merge 한다.
+$ git checkout rack_branch
+$ git pull
+$ git checkout master
+$ git merge --squash -s recursive -Xsubtree=rack rack_branch
+# Squash commit -- not updating HEAD
+# Automatic merge went well; stopped before committing as requested
+
+# rack 하위 디렉토리와 rack_branch 의 차이
+$ git diff-tree -p rack_branch
+
+# rack 하위 디렉토리와 rack 프로젝트의 remote repo 의 master 의 차이 비교
+$ git diff-tree -p rack_remote/master
 ```
 
 ## Rerere
 
+rerere 는 "reuse recorded resolution" 이다. [7.9 Git 도구 - Rerere](https://git-scm.com/book/ko/v2/Git-%EB%8F%84%EA%B5%AC-Rerere) 의 그림을 참고해서 이해하자.
+
 ```bash
+# rerere 를 활성화 하자.
+$ git config --global rerere.enabled true
+
+# 다음은 예로 사용할 hello.rb 이다.
+# #! /usr/bin/env ruby
+#
+# def hello
+#   puts 'hello world'
+# end
+
+# 충돌 발생
+# rerere 기능 때문에 몇 가지 정보를 더 출력
+$ git merge i18n-world
+# Auto-merging hello.rb
+# CONFLICT (content): Merge conflict in hello.rb
+# Recorded preimage for 'hello.rb'
+# Automatic merge failed; fix conflicts and then commit the result.
+
+# 충돌난 파일 확인
+$ git rerere status
+# hello.rb
+
+$ git rerere diff
+# --- a/hello.rb
+# +++ b/hello.rb
+# @@ -1,11 +1,11 @@
+#  #! /usr/bin/env ruby
+#
+#  def hello
+# -<<<<<<<
+# -  puts 'hello mundo'
+# -=======
+# +<<<<<<< HEAD
+#    puts 'hola world'
+# ->>>>>>>
+# +=======
+# +  puts 'hello mundo'
+# +>>>>>>> i18n-world
+#  end
+
+# rerere 기능은 아니지만 ls-files -u 를 사용하여 이전/현재/대상
+# 버전의 hash 를 확인
+$ git ls-files -u
+# 100644 39804c942a9c1f2c03dc7c5ebcd7f3e3a6b97519 1	hello.rb
+# 100644 a440db6e8d1fd76ad438a49025a9ad9ce746f581 2	hello.rb
+# 100644 54336ba847c3758ab604876419607e9443848474 3	hello.rb
+
+# 충돌 해결후 rerere 가 기록할 내용 확인 
+$ git rerere diff
+# --- a/hello.rb
+# +++ b/hello.rb
+# @@ -1,11 +1,7 @@
+#  #! /usr/bin/env ruby
+#
+#  def hello
+# -<<<<<<<
+# -  puts 'hello mundo'
+# -=======
+# -  puts 'hola world'
+# ->>>>>>>
+# +  puts 'hola mundo'
+#  end
+
+# 이제 commit 한다.
+$ git add hello.rb
+$ git commit
+# Recorded resolution for 'hello.rb'.
+# [master 68e16e5] Merge branch 'i18n'
+
+# 이제 merge 를 되돌리고 rebase 해서 master 에 쌓아보자.
+$ git reset --hard HEAD^
+# HEAD is now at ad63f15 i18n the hello
+$ git checkout i18n-world
+# Switched to branch 'i18n-world'
+$ git rebase master
+# First, rewinding head to replay your work on top of it...
+# Applying: i18n one word
+# Using index info to reconstruct a base tree...
+# Falling back to patching base and 3-way merge...
+# Auto-merging hello.rb
+# CONFLICT (content): Merge conflict in hello.rb
+# Resolved 'hello.rb' using previous resolution.
+# Failed to merge in the changes.
+# Patch failed at 0001 i18n one word
+
+# 다음은 rerere 로 merge 된 hello.rb 이다.
+# #! /usr/bin/env ruby
+
+# def hello
+#   puts 'hola mundo'
+# end
+
+# 자동으로 충돌이 해결되었다.
+$ git diff
+# diff --cc hello.rb
+# index a440db6,54336ba..0000000
+# --- a/hello.rb
+# +++ b/hello.rb
+# @@@ -1,7 -1,7 +1,7 @@@
+#   #! /usr/bin/env ruby
+
+#   def hello
+# -   puts 'hola world'
+#  -  puts 'hello mundo'
+# ++  puts 'hola mundo'
+#   end
+
+# 충돌이 발생한 시점의 상태로 파일 내용을 되돌리자.
+$ git checkout --conflict=merge hello.rb
+# $ cat hello.rb
+# #! /usr/bin/env ruby
+#
+# def hello
+# <<<<<<< ours
+#   puts 'hola world'
+# =======
+#   puts 'hello mundo'
+# >>>>>>> theirs
+# end
+
+# 총돌이 발생한 코드를 자동으로 다시 해결
+$ git rerere
+# Resolved 'hello.rb' using previous resolution.
+# $ cat hello.rb
+# #! /usr/bin/env ruby
+
+# def hello
+#   puts 'hola mundo'
+# end
+
+# 이제 rebase 한다.
+$ git add hello.rb
+$ git rebase --continue
+# Applying: i18n one word
+
+# 여러 번 Merge 하거나, Merge 커밋을 쌓지 않으면서도 토픽 브랜치를
+# master 브랜치의 최신 내용으로 유지하거나, Rebase를 자주 한다면
+# rerere 가 도움이 된다.
 ```
 
 ## Git으로 버그 찾기
@@ -1247,11 +1596,454 @@ $ git bisect run test-error.sh
 ## 서브모듈
 
 ```bash
+
+## 서브모듈 시작하기
+
+# 서브모듈 "DbConnect" 를 추가하자.
+$ git submodule add https://github.com/chaconinc/DbConnector
+# Cloning into 'DbConnector'...
+# remote: Counting objects: 11, done.
+# remote: Compressing objects: 100% (10/10), done.
+# remote: Total 11 (delta 0), reused 11 (delta 0)
+# Unpacking objects: 100% (11/11), done.
+# Checking connectivity... done.
+
+# .gitmodules 파일이 생성.
+$ git status
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#   (use "git reset HEAD <file>..." to unstage)
+#
+#     new file:   .gitmodules
+#     new file:   DbConnector
+
+# 다음은 .gitmodules 파일의 내용이다.
+# [submodule "DbConnector"]
+#     path = DbConnector
+#     url = https://github.com/chaconinc/DbConnector
+
+# submodule 을 통째로 특별한 commit 으로 취급하낟.
+$ git diff --cached DbConnector
+# diff --git a/DbConnector b/DbConnector
+# new file mode 160000
+# index 0000000..c3f01dc
+# --- /dev/null
+# +++ b/DbConnector
+# @@ -0,0 +1 @@
+# +Subproject commit c3f01dc8862123d317dd46284b05b6892c7b29bc
+
+# --submodule 을 추가하여 더 자세히 살펴보자.
+$ git diff --cached --submodule
+# diff --git a/.gitmodules b/.gitmodules
+# new file mode 100644
+# index 0000000..71fc376
+# --- /dev/null
+# +++ b/.gitmodules
+# @@ -0,0 +1,3 @@
+# +[submodule "DbConnector"]
+# +       path = DbConnector
+# +       url = https://github.com/chaconinc/DbConnector
+# Submodule DbConnector 0000000...c3f01dc (new submodule)
+
+# commit 하자.
+# mode 160000 는 특별하다.
+$ git commit -am 'added DbConnector module'
+# [master fb9093c] added DbConnector module
+#  2 files changed, 4 insertions(+)
+#  create mode 100644 .gitmodules
+#  create mode 160000 DbConnector
+
+# push 하자.
+$ git push origin master
+
+## 서브모듈 포함한 프로젝트 Clone
+
+# 서브모듈이 비어 있다.
+$ git clone https://github.com/chaconinc/MainProject
+# Cloning into 'MainProject'...
+# remote: Counting objects: 14, done.
+# remote: Compressing objects: 100% (13/13), done.
+# remote: Total 14 (delta 1), reused 13 (delta 0)
+# Unpacking objects: 100% (14/14), done.
+# Checking connectivity... done.
+$ cd MainProject
+$ ls -la
+# total 16
+# drwxr-xr-x   9 schacon  staff  306 Sep 17 15:21 .
+# drwxr-xr-x   7 schacon  staff  238 Sep 17 15:21 ..
+# drwxr-xr-x  13 schacon  staff  442 Sep 17 15:21 .git
+# -rw-r--r--   1 schacon  staff   92 Sep 17 15:21 .gitmodules
+# drwxr-xr-x   2 schacon  staff   68 Sep 17 15:21 DbConnector
+# -rw-r--r--   1 schacon  staff  756 Sep 17 15:21 Makefile
+# drwxr-xr-x   3 schacon  staff  102 Sep 17 15:21 includes
+# drwxr-xr-x   4 schacon  staff  136 Sep 17 15:21 scripts
+# drwxr-xr-x   4 schacon  staff  136 Sep 17 15:21 src
+$ cd DbConnector/
+$ ls
+
+# submodule init 을 추가하여 submodule 을 clone 하자.
+$ git submodule init
+# Submodule 'DbConnector' (https://github.com/chaconinc/DbConnector) registered for path 'DbConnector'
+$ git submodule update
+# Cloning into 'DbConnector'...
+# remote: Counting objects: 11, done.
+# remote: Compressing objects: 100% (10/10), done.
+# remote: Total 11 (delta 0), reused 11 (delta 0)
+# Unpacking objects: 100% (11/11), done.
+# Checking connectivity... done.
+# Submodule path 'DbConnector': checked out 'c3f01dc8862123d317dd46284b05b6892c7b29bc'
+
+# --recurse-submodules 를 추가하면 간단히 submodule 을 포함하여
+# clone 할 수 있다.
+$ git clone --recurse-submodules https://github.com/chaconinc/MainProject
+# Cloning into 'MainProject'...
+# remote: Counting objects: 14, done.
+# remote: Compressing objects: 100% (13/13), done.
+# remote: Total 14 (delta 1), reused 13 (delta 0)
+# Unpacking objects: 100% (14/14), done.
+# Checking connectivity... done.
+# Submodule 'DbConnector' (https://github.com/chaconinc/DbConnector) registered for path 'DbConnector'
+# Cloning into 'DbConnector'...
+# remote: Counting objects: 11, done.
+# remote: Compressing objects: 100% (10/10), done.
+# remote: Total 11 (delta 0), reused 11 (delta 0)
+# Unpacking objects: 100% (11/11), done.
+# Checking connectivity... done.
+# Submodule path 'DbConnector': checked out 'c3f01dc8862123d317dd46284b05b6892c7b29bc'
+
+### 서브모듈 포함한 프로젝트 작업
+
+## 서브모듈 업데이트하기
+
+# submodule 을 수정하지 않는 경우
+# 단순히 submodule 을 fetch 하고 merge 한다.
+$ git fetch
+# From https://github.com/chaconinc/DbConnector
+#    c3f01dc..d0354fc  master     -> origin/master
+$ git merge origin/master
+# Updating c3f01dc..d0354fc
+# Fast-forward
+#  scripts/connect.sh | 1 +
+#  src/db.c           | 1 +
+#  2 files changed, 2 insertions(+)
+
+# git log 할 때 --submodule 를 사용하지 않고 submodule 의 로그를
+# 보고 싶다면 diff.submodule 를 설정한다.
+$ git config --global diff.submodule log
+$ git diff
+# Submodule DbConnector c3f01dc..d0354fc:
+#   > more efficient db routine
+#   > better connection routine
+
+# 보다 간단히 submodule 을 최신화 하자.
+$ git submodule update --remote DbConnector
+# remote: Counting objects: 4, done.
+# remote: Compressing objects: 100% (2/2), done.
+# remote: Total 4 (delta 2), reused 4 (delta 2)
+# Unpacking objects: 100% (4/4), done.
+# From https://github.com/chaconinc/DbConnector
+#    3f19983..d0354fc  master     -> origin/master
+# Submodule path 'DbConnector': checked out 'd0354fc054692d3906c85c3af05ddce39a1c0644'
+
+$ git config -f .gitmodules submodule.DbConnector.branch stable
+
+$ git submodule update --remote
+# remote: Counting objects: 4, done.
+# remote: Compressing objects: 100% (2/2), done.
+# remote: Total 4 (delta 2), reused 4 (delta 2)
+# Unpacking objects: 100% (4/4), done.
+# From https://github.com/chaconinc/DbConnector
+#    27cf5d3..c87d55d  stable -> origin/stable
+# Submodule path 'DbConnector': checked out 'c87d55d4c6d4b05ee34fbc8cb6f7bf4585ae6687'
+
+$ git status
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#   modified:   .gitmodules
+#   modified:   DbConnector (new commits)
+#
+# no changes added to commit (use "git add" and/or "git commit -a")
+
+$ git config status.submodulesummary 1
+
+$ git status
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes not staged for commit:
+#   (use "git add <file>..." to update what will be committed)
+#   (use "git checkout -- <file>..." to discard changes in working directory)
+#
+#     modified:   .gitmodules
+#     modified:   DbConnector (new commits)
+#
+# Submodules changed but not updated:
+#
+# * DbConnector c3f01dc...c87d55d (4):
+#   > catch non-null terminated lines
+
+$ git diff
+# diff --git a/.gitmodules b/.gitmodules
+# index 6fc0b3d..fd1cc29 100644
+# --- a/.gitmodules
+# +++ b/.gitmodules
+# @@ -1,3 +1,4 @@
+#  [submodule "DbConnector"]
+#         path = DbConnector
+#         url = https://github.com/chaconinc/DbConnector
+# +       branch = stable
+#  Submodule DbConnector c3f01dc..c87d55d:
+#   > catch non-null terminated lines
+#   > more robust error handling
+#   > more efficient db routine
+#   > better connection routine
+
+$ git log -p --submodule
+# commit 0a24cfc121a8a3c118e0105ae4ae4c00281cf7ae
+# Author: Scott Chacon <schacon@gmail.com>
+# Date:   Wed Sep 17 16:37:02 2014 +0200
+
+#     updating DbConnector for bug fixes
+
+# diff --git a/.gitmodules b/.gitmodules
+# index 6fc0b3d..fd1cc29 100644
+# --- a/.gitmodules
+# +++ b/.gitmodules
+# @@ -1,3 +1,4 @@
+#  [submodule "DbConnector"]
+#         path = DbConnector
+#         url = https://github.com/chaconinc/DbConnector
+# +       branch = stable
+# Submodule DbConnector c3f01dc..c87d55d:
+#   > catch non-null terminated lines
+#   > more robust error handling
+#   > more efficient db routine
+#   > better connection routine
+
+## 서브모듈 관리하기
+
+# 서브모듈을 수정해보자. 서브모듈 디렉토리로 가서 브랜치를
+# Checkout 하자.
+$ git checkout stable
+# Switched to branch 'stable'
+
+# 서브모듈을 머지하자.
+$ git submodule update --remote --merge
+# remote: Counting objects: 4, done.
+# remote: Compressing objects: 100% (2/2), done.
+# remote: Total 4 (delta 2), reused 4 (delta 2)
+# Unpacking objects: 100% (4/4), done.
+# From https://github.com/chaconinc/DbConnector
+#    c87d55d..92c7337  stable     -> origin/stable
+# Updating c87d55d..92c7337
+# Fast-forward
+#  src/main.c | 1 +
+#  1 file changed, 1 insertion(+)
+# Submodule path 'DbConnector': merged in '92c7337b30ef9e0893e758dac2459d07362ab5ea'
+
+# 이제 다른 사람이 DbConnector 서브모듈을 수정하고
+# 우리가 DbConnector 를 수정했다.
+$ cd DbConnector/
+$ vim src/db.c
+$ git commit -am 'unicode support'
+# [stable f906e16] unicode support
+#  1 file changed, 1 insertion(+)
+
+$ git submodule update --remote --rebase
+# First, rewinding head to replay your work on top of it...
+# Applying: unicode support
+# Submodule path 'DbConnector': rebased into '5d60ef9bbebf5a0c1c1050f242ceeb54ad58da94'
+
+# --rebase 옵션이나 --merge 옵션을 지정하지 않으면 Git은 로컬 
+# 변경사항을 무시하고 서버로부터 받은 해당 서브모듈의 버전으로 
+# Reset을 하고 Detached HEAD 상태로 만든다.
+$ git submodule update --remote
+# Submodule path 'DbConnector': checked out '5d60ef9bbebf5a0c1c1050f242ceeb54ad58da94'
+
+$ git submodule update --remote
+# remote: Counting objects: 4, done.
+# remote: Compressing objects: 100% (3/3), done.
+# remote: Total 4 (delta 0), reused 4 (delta 0)
+# Unpacking objects: 100% (4/4), done.
+# From https://github.com/chaconinc/DbConnector
+#    5d60ef9..c75e92a  stable     -> origin/stable
+# error: Your local changes to the following files would be overwritten by checkout:
+#     scripts/setup.sh
+# Please, commit your changes or stash them before you can switch branches.
+# Aborting
+# Unable to checkout 'c75e92a2b3855c9e5b66f915308390d9db204aca' in submodule path 'DbConnector'
+
+# 충돌이 발생하면 서브모듈 디렉토리로 가서 충돌을 해결한다.
+$ git submodule update --remote --merge
+# Auto-merging scripts/setup.sh
+# CONFLICT (content): Merge conflict in scripts/setup.sh
+# Recorded preimage for 'scripts/setup.sh'
+# Automatic merge failed; fix conflicts and then commit the result.
+# Unable to merge 'c75e92a2b3855c9e5b66f915308390d9db204aca' in submodule path 'DbConnector'
+
+## 서브모듈 수정 사항 공유하기
+
+# 서브모듈의 변경사항은 우리의 local repo 에만 있다.
+# 이 상태에서 main repo 를 push 하면 안된다.
+$ git diff
+# Submodule DbConnector c87d55d..82d2ad3:
+#   > Merge from origin/stable
+#   > updated setup script
+#   > unicode support
+#   > remove unnecessary method
+#   > add new option for conn pooling
+
+# push 되지 않은 submodule 이 있는지 검사한다.
+$ git push --recurse-submodules=check
+# The following submodule paths contain changes that can
+# not be found on any remote:
+#   DbConnector
+#
+# Please try
+#
+#     git push --recurse-submodules=on-demand
+#
+# or cd to the path and use
+#
+#     git push
+#
+# to push them to a remote.
+
+# push.recurseSubmodules 를 설정할 수도 있다.
+$ git config push.recurseSubmodules check
+
+# git 이 대신 push 를 하게 할 수도 있다.
+$ git push --recurse-submodules=on-demand
+# Pushing submodule 'DbConnector'
+# Counting objects: 9, done.
+# Delta compression using up to 8 threads.
+# Compressing objects: 100% (8/8), done.
+# Writing objects: 100% (9/9), 917 bytes | 0 bytes/s, done.
+# Total 9 (delta 3), reused 0 (delta 0)
+# To https://github.com/chaconinc/DbConnector
+#    c75e92a..82d2ad3  stable -> stable
+# Counting objects: 2, done.
+# Delta compression using up to 8 threads.
+# Compressing objects: 100% (2/2), done.
+# Writing objects: 100% (2/2), 266 bytes | 0 bytes/s, done.
+# Total 2 (delta 1), reused 0 (delta 0)
+# To https://github.com/chaconinc/MainProject
+#    3d6d338..9a377d1  master -> master
+
+
+## 서브모듈 Merge 하기
+
+$ git pull
+# remote: Counting objects: 2, done.
+# remote: Compressing objects: 100% (1/1), done.
+# remote: Total 2 (delta 1), reused 2 (delta 1)
+# Unpacking objects: 100% (2/2), done.
+# From https://github.com/chaconinc/MainProject
+#    9a377d1..eb974f8  master     -> origin/master
+# Fetching submodule DbConnector
+# warning: Failed to merge submodule DbConnector (merge following commits not found)
+# Auto-merging DbConnector
+# CONFLICT (submodule): Merge conflict in DbConnector
+# Automatic merge failed; fix conflicts and then commit the result.
+
+### 서브모듈 팁 ???
+## 서브모듈 Foreach 여행???
+## 유용한 Alias???
+## 서브모듈 사용할 때 주의할 점들???
 ```
 
 ## Bundle
 
+네트워크가 불통일 때 push 할 내용을 binary 로 만드는 방법이다. usb 에 담아서 전달할 수 있다.
+
 ```bash
+# 두개의 커밋이 있다.
+$ git log
+# commit 9a466c572fe88b195efd356c3f2bbeccdb504102
+# Author: Scott Chacon <schacon@gmail.com>
+# Date:   Wed Mar 10 07:34:10 2010 -0800
+#
+#     second commit
+#
+# commit b1ec3248f39900d2a406049d762aa68e9641be25
+# Author: Scott Chacon <schacon@gmail.com>
+# Date:   Wed Mar 10 07:34:01 2010 -0800
+#
+#     first commit
+
+# bundle 을 만들자.
+$ git bundle create repo.bundle HEAD master
+# Counting objects: 6, done.
+# Delta compression using up to 2 threads.
+# Compressing objects: 100% (2/2), done.
+# Writing objects: 100% (6/6), 441 bytes, done.
+# Total 6 (delta 0), reused 0 (delta 0)
+
+# 이제 usb 로 전달받은 bundle 을 clone 하자.
+$ git clone repo.bundle repo
+# Cloning into 'repo'...
+# ...
+$ cd repo
+$ git log --oneline
+# 9a466c5 second commit
+# b1ec324 first commit
+
+# 3 개의 commit 을 추가해서 usb 를 통해 옮겨 보자.
+$ git log --oneline
+# 71b84da last commit - second repo
+# c99cf5b fourth commit - second repo
+# 7011d3d third commit - second repo
+# 9a466c5 second commit
+# b1ec324 first commit
+
+# origin/master 에는 없고 master 에만 있는 commit 을 출력해본다.
+$ git log --oneline master ^origin/master
+# 71b84da last commit - second repo
+# c99cf5b fourth commit - second repo
+# 7011d3d third commit - second repo
+
+# bundle 의 대상을 정한다.
+$ git bundle create commits.bundle master ^9a466c5
+# Counting objects: 11, done.
+# Delta compression using up to 2 threads.
+# Compressing objects: 100% (3/3), done.
+# Writing objects: 100% (9/9), 775 bytes, done.
+# Total 9 (delta 0), reused 0 (delta 0)
+
+# 동료가 usb 를 전달받으면 검증해본다.
+$ git bundle verify ../commits.bundle
+# The bundle contains 1 ref
+# 71b84daaf49abed142a373b6e5c59a22dc6560dc refs/heads/master
+# The bundle requires these 1 ref
+# 9a466c572fe88b195efd356c3f2bbeccdb504102 second commit
+# ../commits.bundle is okay
+
+$ git bundle verify ../commits-bad.bundle
+# error: Repository lacks these prerequisite commits:
+# error: 7011d3d8fc200abe0ad561c011c3852a4b7bbe95 third commit - second repo
+
+$ git bundle list-heads ../commits.bundle
+# 71b84daaf49abed142a373b6e5c59a22dc6560dc refs/heads/master
+
+$ git fetch ../commits.bundle master:other-master
+# From ../commits.bundle
+#  * [new branch]      master     -> other-master
+
+$ git log --oneline --decorate --graph --all
+# * 8255d41 (HEAD, master) third commit - first repo
+# | * 71b84da (other-master) last commit - second repo
+# | * c99cf5b fourth commit - second repo
+# | * 7011d3d third commit - second repo
+# |/
+# * 9a466c5 second commit
+# * b1ec324 first commit
 ```
 
 ## Replace
