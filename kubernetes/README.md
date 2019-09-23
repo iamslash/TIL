@@ -7,6 +7,8 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 * [쿠버네티스 차근차근 다지기(Full영상) ::: developerWorks 밋업 @ youtube](https://www.youtube.com/watch?v=l42GttmnnZ4)
   * 3시간 동영상
 * [kebernetes blog @ tistory](http://arisu1000.tistory.com/category/Kubernetes)
+* [Kubernetes Deconstructed: Understanding Kubernetes by Breaking It Down - Carson Anderson, DOMO](https://www.youtube.com/watch?v=90kZRyPcRZw&fbclid=IwAR0InYUnMQD-t-o8JhS5U5KRRaJvSQQc1fBDeBCb8cv6eRk62vsG2Si_Ijo)
+  * [slide](http://kube-decon.carson-anderson.com/Layers/3-Network.sozi.html#frame4156)
 
 # Basic
 
