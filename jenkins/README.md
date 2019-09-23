@@ -9,9 +9,10 @@ jenkins 에 대해 정리한다.
 * [Jenkins Handbook](https://jenkins.io/doc/book/)
   * 꼭 읽어야할 필독서
   * [pdf](https://jenkins.io/user-handbook.pdf)
-
 * [Jenkins doc](https://jenkins.io/doc/)
 * [jenkins @ github](https://github.com/jenkinsci/jenkins)
+* [Jenkins World 2017: Mastering the Jenkins Script Console @ youtube](https://www.youtube.com/watch?v=qaUPESDcsGg)
+  * jenkins script console
 
 # Install with docker
 

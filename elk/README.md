@@ -10,8 +10,9 @@ OLAP (Online Analytical Processing) soution 중 하나인 ELK 에 대해 정리�
 * [Elasticsearch, Logstash, Kibana (ELK) Docker image documentation](https://elk-docker.readthedocs.io/)
   * elk docker image
   * [image](https://hub.docker.com/r/sebp/elk)
+* [Elastic Stack (6.2.4) 을 활용한 Dashboard 만들기 Project](https://github.com/higee/elastic)
 
-# Install on docker
+# Install with docker
 
 * [Elasticsearch, Logstash, Kibana (ELK) Docker image](https://hub.docker.com/r/sebp/elk) docker image 를 설치한다.
 

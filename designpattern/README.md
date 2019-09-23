@@ -23,6 +23,8 @@
   - [Structural](#structural)
   - [Testing](#testing)
   - [Other](#other)
+- [Microservice pattern](#microservice-pattern)
+- [Cloud Design Patterns](#cloud-design-patterns)
 
 ----
 
@@ -37,10 +39,13 @@
 # Materials
 
 * [자바 디자인 패턴 이해 @ youtube](https://www.youtube.com/playlist?list=PLsoscMhnRc7pPsRHmgN4M8tqUdWZzkpxY)
+  * 쉬운 한글 설명
+* [A pattern language for microservices](https://microservices.io/patterns/index.html)
+  * microservice pattern
 * [패턴으로 가는길, 손영수](http://www.devpia.com/MAEUL/Contents/Detail.aspx?BoardID=70&MAEULNO=28&no=187&page=1)
-  *  패턴 공부 로드맵
-* [GOF pattern]()
-* [POSA]()
+  * 패턴 공부 로드맵
+* GOF pattern
+* POSA
 * [PLoPD, pattern language of program design](http://wiki.c2.com/?PatternLanguagesOfProgramDesign)
   * 패턴에 관련된 컨퍼런스인 PLoP의 논문들을 정리한 책
 * [Pattern-Oriented Analysis and Design: Composing Patterns to Design Software Systems](http://www.kangcom.com/sub/view.asp?sku=200309010011)
@@ -54,7 +59,7 @@
 * [Architecting Enterprise Solutions: Patterns for High-Capability Internet-Based Systems](http://www.kangcom.com/sub/view.asp?sku=200410040307)
 * [PLoP papers](http://www.hillside.net/index.php/past-plop-conferences)
 * [클로저 디자인 패턴](http://clojure.or.kr/docs/clojure-and-gof-design-patterns.html)
-  * java로 표현한 디자인 패턴은 clojure로 이렇게 간단히 된다.
+  * java 로 표현한 디자인 패턴은 clojure 로 이렇게 간단히 된다.
 
 # References
 
@@ -128,97 +133,111 @@ public class A {
   
 - Creational Pattern
   - [Abstract Factory](https://www.dofactory.com/net/abstract-factory-design-pattern)
+    - AbstractFactory, ConcreteFactory1, ConcreteFactory2, AbstractProductA, ConcreteProductA1, ConcreteProductA2, AbstractProductB, ConcreteProductB1, ConcreteProductB2
     - 다양한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다. 예를 들어 LG부품 인터페이스를 상속받는 LG키보드, LG마우스 클래스의 생성방법과 MS부품 인터페이스를 상속받는 MS키보드, MS마우스 클래스의 생성방법을 추상화한다. 
     - Factory Method 는 한가지 분류를 생성하지만 Abstract Factory 는 두가지 이상의 분류를 생성한다. 따라서 Factory Method 가 두개이상이다.
-    - AbstractFactory, ConcreteFactory1, ConcreteFactory2, AbstractProductA, ConcreteProductA1, ConcreteProductA2, AbstractProductB, ConcreteProductB1, ConcreteProductB2
+
   - [Builder](https://www.dofactory.com/net/builder-design-pattern)
+    - Director, Builder, ConcreteBuilder, Product
     - 생성 절차를 다양하게 하여 타겟 오브젝트 인스턴스를 생성한다.
     - Director 는 생성절차를 다양하게 호출할 수 있다. 생성절차를 Builder 안으로 포함한다면 Factory Method 와 다를게 없다.
-    - Director, Builder, ConcreteBuilder, Product
   - [Factory Method](https://www.dofactory.com/net/factory-method-design-pattern)
-    - 동일한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다. 예를 들어 부품 인터페이스를 상속받는 키보드, 마우스 클래스의 생성방법을 추상화한다.
     - ConcreteProduct, Creator, ConcreateCreator
+    - 동일한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다. 예를 들어 부품 인터페이스를 상속받는 키보드, 마우스 클래스의 생성방법을 추상화한다.
   - [Prototype](https://www.dofactory.com/net/prototype-design-pattern)
-    - 복제를 통해 타겟 오브젝트 인스턴스를 생성한다.
     - Prototype, ConcretePrototype
+    - 복제를 통해 타겟 오브젝트 인스턴스를 생성한다.
   - [Singleton](https://www.dofactory.com/net/singleton-design-pattern)
-    - 하나의 타겟 오브젝트 인스턴스만 생성한다.
     - Singleton
+    - 하나의 타겟 오브젝트 인스턴스만 생성한다.
 
 - Structural Pattern
   - [Adapter](https://www.dofactory.com/net/adapter-design-pattern)
-    - 서로 다른 클래스의 인터페이스를 어울릴 수 있도록 맞춘다. 
     - Target, Adapter, Adaptee
-  - [Bridge	(Separates an object’s interface from its implementation)](https://www.dofactory.com/net/bridge-design-pattern)
-    - 구현과 추상을 분리한다.
+    - 서로 다른 클래스의 인터페이스를 어울릴 수 있도록 맞춘다. 
+  - [Bridge](https://www.dofactory.com/net/bridge-design-pattern)
     - Abstract, RefinedAbstract, Implementor, ConcreteImplementor
+    - 구현과 추상을 분리한다.
   - [Composite](https://www.dofactory.com/net/composite-design-pattern)
-    - 트리형태의 자료구조를 표현한다.
     - Component, Leaf, Composite
+    - 트리형태의 자료구조를 표현한다.
   - [Decorator](https://www.dofactory.com/net/decorator-design-pattern)
-    - 기존의 클래스 변경없이 새로운 기능을 추가한다.
     - Component, ConcreteComponent, Decorator, ConcreteDecorator,
+    - Attach additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing for extending functionality.
+    - subclassing 하지 않고 새로운 기능을 추가한다. 
+    - 새로운 기능을 추가하기 위해 subclassing 을 사용한다면 모든 ConcreteComponent 를 수정해야 한다. 그러나 decorator pattern 을 사용한다면 새로운 기능을 담고 있는 concreteDecorator 하나만 추가하면 된다.
   - [Facade](https://www.dofactory.com/net/facade-design-pattern)
-    - 복잡한 기능을 단순한 인터페이스로 추상화한다.
     - Facade
+    - 복잡한 기능을 단순한 인터페이스로 추상화한다.
   - [Flyweight](https://www.dofactory.com/net/flyweight-design-pattern)
-    - 인스턴스 공유를 추상화한다.
     - FlyweightFactory, Flyweight, UnsharedConcreteFlyweight, concreteFlyweight
+    - 인스턴스 공유를 추상화한다.
   - [Proxy](https://www.dofactory.com/net/proxy-design-pattern)
+    - Subject, RealSubject, Proxy
     - 노출되지 않은 형제 클래스에 접근할 수 있도록 한다.
     - 형제 클래스에 접근한다는 점이 Adapter 와 다르다.
-    - Subject, RealSubject, Proxy
 
 - Behaviorial Pattern
   - [Chain of Resp.](https://www.dofactory.com/net/chain-of-responsibility-design-pattern)
+    - Handler, ConcreteHadler    
     - 형제 클래스에게 임무를 전달한다.
-    - Handler, ConcreteHadler
-  - [Command (Encapsulate a command request as an object)](https://www.dofactory.com/net/command-design-pattern)
-    - 명령을 추상화 한다.
+  - [Command](https://www.dofactory.com/net/command-design-pattern)
     - Command, ConcreteCommand
-  - [Interpreter	(A way to include language elements in a program)](https://www.dofactory.com/net/interpreter-design-pattern)
-    - 해석을 추상화 한다.
+    - Encapsulate a command request as an object
+    - 명령을 추상화 한다.
+  - [Interpreter](https://www.dofactory.com/net/interpreter-design-pattern)
     - AbstractExpression, TerminalExpression
-  - [Iterator	(Sequentially access the elements of a collection)](https://www.dofactory.com/net/iterator-design-pattern)
-    - 반복접근을 추상화 한다.
+    - A way to include language elements in a program
+    - 해석을 추상화 한다.
+  - [Iterator](https://www.dofactory.com/net/iterator-design-pattern)
     - Iterator, ConcreteIterator
-  - [Mediator	(Defines simplified communication between classes)](https://www.dofactory.com/net/mediator-design-pattern)
-    - 인스턴스 멤버들의 중재를 추상화 한다.
+    - Sequentially access the elements of a collection
+    - 반복접근을 추상화 한다.
+  - [Mediator](https://www.dofactory.com/net/mediator-design-pattern)
     - Mediator, ConcreteMediator, Colleague, ConcreteColleague
-  - [Memento	(Capture and restore an object's internal state)](https://www.dofactory.com/net/memento-design-pattern)
-    - 저장하기 불러오기를 추상화 한다.
+    - Defines simplified communication between classes
+    - 인스턴스 멤버들의 중재를 추상화 한다.
+  - [Memento](https://www.dofactory.com/net/memento-design-pattern)
     - Originator, Memento, CareTaker
-  - [Observer	(A way of notifying change to a number of classes)](https://www.dofactory.com/net/observer-design-pattern)
-    - 이벤트가 발생하면 구경꾼들에게 알려준다.
+    - Capture and restore an object's internal state
+    - 저장하기 불러오기를 추상화 한다.
+  - [Observer](https://www.dofactory.com/net/observer-design-pattern)
     - Subject, ConcreteSubject, Observer, ConcreteObserver
-  - [State	(Alter an object's behavior when its state changes)](https://www.dofactory.com/net/state-design-pattern)
-    - 변화할 수 있는 상태를 추상화 한다.
+    - A way of notifying change to a number of classes
+    - 이벤트가 발생하면 구경꾼들에게 알려준다.
+  - [State](https://www.dofactory.com/net/state-design-pattern)
     - State, ConcreteState
-  - [Strategy	(Encapsulates an algorithm inside a class)](https://www.dofactory.com/net/strategy-design-pattern)
-    - 인스턴스 교체를 통해 전략을 수정할 수 있다.
+    - Alter an object's behavior when its state changes
+    - 변화할 수 있는 상태를 추상화 한다.
+  - [Strategy](https://www.dofactory.com/net/strategy-design-pattern)
     - Strategy, ConcreteStrategy
-  - [Template (Method	Defer the exact steps of an algorithm to a subclass)](https://www.dofactory.com/net/template-method-design-pattern)
-    - 추상 클래스에서 절차를 정의하고 구현 클래스에서 단위 절차들을 구현한다. template method 가 실행되면 실제 실행은 자식 클래스들로 지연되어 있다.
+    - Encapsulates an algorithm inside a class
+    - 인스턴스 교체를 통해 전략을 수정할 수 있다.
+  - [Template](https://www.dofactory.com/net/template-method-design-pattern)
     - AbstractClass, ConcreteClass
-  - [Visitor	(Defines a new operation to a class without change)](https://www.dofactory.com/net/visitor-design-pattern)
-    - 기존의 클래스 변경없이 새로운 기능을 정의한다.
+    - Method	Defer the exact steps of an algorithm to a subclass
+    - 추상 클래스에서 절차를 정의하고 구현 클래스에서 단위 절차들을 구현한다. template method 가 실행되면 실제 실행은 자식 클래스들로 지연되어 있다.
+  - [Visitor](https://www.dofactory.com/net/visitor-design-pattern)
     - Element, ConcreteElement, Visitor, ConcreteVisitor
+    - Defines a new operation to a class without change
+    - 기능 (Visitor) 이 클래스 (Element) 와 분리되어 있다. 따라서 기존의 클래스 (Element) 를 변경하지 않고 새로운 기능 (Visitor) 을 정의할 수 있다.
+    - 예를 들어 기능을 추가하기 위해 Element 를 변경하지 않고 ConcreteVisitor 를 하나 새로 제작한다.
 
 - Q&A
-  - Factory Method vs Abstract Factory difference???
+  - **Factory Method vs Abstract Factory difference???**
     - Factory Method 는 동일한 분류의 객체를 생성할 때 사용한다. Abstract Factory 는 다양한 분류의 객체를 생성할 때 사용한다. Abstract Factory 는 두개 이상의 Factory Method 를 소유한다.
-  - Proxy vs Adapter difference???
+  - **Proxy vs Adapter difference???**
     - Proxy class 는 wrapping 하고 싶은 class 와 형제관계이다. Adapter class 는 wrapping 하고 싶은 class 와 형제관계가 아니다.
-  - Decorator is better than Subclassing???
+  - **Decorator is better than Subclassing???**
     - IFruit 를 상속받은 Apple, Orange 가 있다고 해보자. 과일판매기능을 추가하고 싶다. Subclassing 을 이용한다면 Apple, Orange 를 각각 구현해 주어야 한다. 그러나 Decorator 를 이용하면 하나의 ConcreteDecorator 를 추가하여 더욱 간단히 구현할 수 있다.
-  - Bridge vs Strategy difference???
+  - **Bridge vs Strategy difference???**
     - Strategy 는 behavioral pattern 이다. 인스턴스 교체를 통해서 runtime 에 동작이 달라진다. Bridge pattern 은 structural pattern 이다. 추상과 구현이 분리된 구조이다. Strategy 는 추상과 구현이 분리되어 있지 않다. 따라서 Strategy 의 추상과 구현의 결합도가 Bridge 보다 높다.
-  - Strategy vs Visitor difference???
+  - **Strategy vs Visitor difference???**
     - Strategy 는 `1:many` 관계를 추상화한다. Visitor 는 `many:many` 관계를 추상화한다. 
     - 예를 들어 Strategy class `Video` 를 상속받은 Concrete Strategy class `MpegCompression, AviCompression, QuickTimeCompression` 가 있다고 해보자. 
     - 시간이 지나 Audio 압축을 지원하고자 한다. `MpegVideoCompression, MpegVideoCompression` 과 같이 중복해서 Concrete Strategy class 를 추가하는 것보다는 Visitor interface `IVisitor`  를 상속받은 Concrete Visitor `MpegCompression` 을 이용하는 것이 더욱 간단하다. 다음은 `MpegCompression` 의 vistor method 이다.
 
-```
+```java
    MpegCompression::compressVideo(Video object)MpegCompression::compressAudio(Audio object)
 ```   
   
@@ -630,3 +649,19 @@ public class A {
   - Resource Acquisition Is Initialization pattern can be used to
     implement exception safe resource management.
   - similar to execute around pattern
+
+# Microservice pattern
+
+* [A pattern language for microservices](https://microservices.io/patterns/index.html)
+
+----
+
+TODO
+
+# Cloud Design Patterns
+
+* [클라우드 디자인 패턴 @ msdn](https://docs.microsoft.com/ko-kr/azure/architecture/patterns/)
+
+----
+
+TODO
