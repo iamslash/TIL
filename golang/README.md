@@ -1042,6 +1042,11 @@ func main() {
       fmt.Printf("value of a: %d\n", a)
       a++     
    }  
+
+// string iteration
+for i, c := range "Hello, 世界" {
+        fmt.Printf("%d: %c\n", i, c)
+}
 ```
 
 ## Functions
@@ -1164,41 +1169,61 @@ u := uint(f)
 
 ```go
 // creating strings
-   var greeting =  "Hello world!"
-   
-   fmt.Printf("normal string: ")
-   fmt.Printf("%s", greeting)
-   fmt.Printf("\n")
-   fmt.Printf("hex bytes: ")
-   
-   for i := 0; i < len(greeting); i++ {
-       fmt.Printf("%x ", greeting[i])
-   }
-   
-   fmt.Printf("\n")
-   const sampleText = "\xbd\xb2\x3d\xbc\x20\xe2\x8c\x98" 
-   
-   /*q flag escapes unprintable characters, with + flag it escapses non-ascii 
-   characters as well to make output unambigous */
-   fmt.Printf("quoted string: ")
-   fmt.Printf("%+q", sampleText)
-   fmt.Printf("\n") 
+var greeting =  "Hello world!"
+
+fmt.Printf("normal string: ")
+fmt.Printf("%s", greeting)
+fmt.Printf("\n")
+fmt.Printf("hex bytes: ")
+
+for i := 0; i < len(greeting); i++ {
+    fmt.Printf("%x ", greeting[i])
+}
+
+fmt.Printf("\n")
+const sampleText = "\xbd\xb2\x3d\xbc\x20\xe2\x8c\x98" 
+
+/*q flag escapes unprintable characters, with + flag it escapses non-ascii 
+characters as well to make output unambigous */
+fmt.Printf("quoted string: ")
+fmt.Printf("%+q", sampleText)
+fmt.Printf("\n") 
 // normal string: Hello world!
 // hex bytes: 48 65 6c 6c 6f 20 77 6f 72 6c 64 21 
 // quoted string: "\xbd\xb2=\xbc \u2318"
 
 // length
-   var greeting =  "Hello world!"
-   
-   fmt.Printf("String Length is: ")
-   fmt.Println(len(greeting))  
+var greeting =  "Hello world!"
+
+fmt.Printf("String Length is: ")
+fmt.Println(len(greeting))  
 // 
 // String Length is : 12
 
 // concatenating strings
-   greetings :=  []string{"Hello","world!"}   
-   fmt.Println(strings.Join(greetings, " "))
+greetings :=  []string{"Hello","world!"}   
+fmt.Println(strings.Join(greetings, " "))
 // Hello world!
+
+// append strings
+a := "hello"
+b := "world"
+c := a + " " + b
+d := c + string(' ')
+e := a + b[0:1]
+fmt.Printf("%s, %s, %s\n", c, d, e)
+fmt.Printf("%T %T %d\n", a[0], a[0:1], len(a[0:1]))
+// hello world, hello world , hellow
+// uint8 string 1
+
+a := "hello world"
+for i, c := range a {
+  fmt.Printf("%d:%T %c:%T %t\n", i, c, i, c, c == ' ')
+}
+// 0:int32 h:int32 false
+// ...
+fmt.Printf("%T\n", ' ')
+// int32
 ```
 
 ## Arrays, Slices, Ranges
