@@ -402,7 +402,7 @@ LinkedList 처럼 입력된 순서대로 저장
 ----
 
 ```java
-// 2d
+// 2d Integer
 int vertexCount = 3;
 ArrayList<ArrayList<Integer>> graph = new ArrayList<>(vertexCount);
 for(int i=0; i < vertexCount; i++) {
@@ -424,7 +424,7 @@ for (int i = 0; i < vertexCount; i++) {
     }
 }
 
-// 3d
+// 3d String
 int x_axis_length = 2;
 int y_axis_length = 2;
 int z_axis_length = 2;  
@@ -440,6 +440,24 @@ space.get(0).get(0).add(1,"Red");
 space.get(0).get(1).add(0,"Blue");
 space.get(0).get(1).add(1,"Blue");
 space.get(i).get(j).get(k)
+
+// 2d string
+String a = "abac";
+String b = "cab";
+
+int m = a.length(), n = b.length();
+String[][] C = new String[m+1][n+1];
+for (int i = 0; i < m; ++i) {
+   for (int j = 0; j < n; ++j) {
+      C[i][j] = "";
+   }
+}
+for (int i = 0; i < m; ++i) {
+   for (int j = 0; j < n; ++j) {
+      System.out.print(String.format("%s ", C[i][j]));
+   }
+   System.out.println("");
+}
 ```
 
 ## Collection Framework
