@@ -395,6 +395,46 @@ LinkedList 처럼 입력된 순서대로 저장
    System.out.println(map.get(".au"));
 ```
 
+* sort
+
+```java
+// sort array ascending
+// It's not possible to sort descending with Arrays.sort 
+// use ArrayList instead of Arrays.sort
+int[] A = new int[]{5, 4, 3, 2, 1};
+// int[] A = {5, 4, 3, 2, 1};
+Arrays.sort(A);
+
+// Create a list of strings 
+ArrayList<String> al = new ArrayList<String>(); 
+al.add("Geeks For Geeks"); 
+al.add("Friends"); 
+al.add("Dear"); 
+al.add("Is"); 
+al.add("Superb"); 
+Collections.sort(al); 
+Collections.sort(al, Collections.reverseOrder()); 
+
+// comparator class
+class CompDsc implements Comparator<Integer> 
+{ 
+   public int compare(Integer a, Integer b) 
+   { 
+      return b - a;
+   } 
+}
+Collections.sort(al, new CompDsc()); 
+
+// anonymous comparator class
+Collections.sort(rec, new Comparator() {
+   public int compare(Object o1, Object o2) {
+      Integer a = (Integer)o1;
+      Integer b = (Integer)o2;
+      return a.compareTo(b);
+   }
+});
+```
+
 # Multi dimensional array
 
 * [Multi Dimensional ArrayList in Java](https://www.baeldung.com/java-multi-dimensional-arraylist)

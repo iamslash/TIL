@@ -519,6 +519,14 @@ Species['cat']
 Species.cat
 ```
 
+* sort
+  
+```py
+l = [5, 4, 3, 2, 1]
+l.sort()
+l.sort(reverse=True)
+```
+
 ## Multidimensional Array
 
 * [Python | Using 2D arrays/lists the right way](https://www.geeksforgeeks.org/python-using-2d-arrays-lists-the-right-way/)
