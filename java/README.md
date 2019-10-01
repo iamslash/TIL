@@ -6,7 +6,7 @@
   - [Useful Keywords](#useful-keywords)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collection Examples](#collection-examples)
-- [Multi dimensional array](#multi-dimensional-array)
+  - [Multi dimensional array](#multi-dimensional-array)
   - [Collection Framework](#collection-framework)
   - [Collection Implementations](#collection-implementations)
   - [Data Types](#data-types)
@@ -435,7 +435,7 @@ Collections.sort(rec, new Comparator() {
 });
 ```
 
-# Multi dimensional array
+## Multi dimensional array
 
 * [Multi Dimensional ArrayList in Java](https://www.baeldung.com/java-multi-dimensional-arraylist)
 

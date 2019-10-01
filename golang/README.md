@@ -15,6 +15,7 @@
   - [Hello World](#hello-world)
   - [Collections compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections by examples](#collections-by-examples)
+  - [Multidimensional Array](#multidimensional-array)
   - [Reserved Words](#reserved-words)
   - [Data Types](#data-types)
   - [Declarations](#declarations)
@@ -836,6 +837,36 @@ for _, k := range keys {
 // Alice 2
 // Bob 3
 // Cecil 1
+```
+
+## Multidimensional Array
+
+* [How is two dimensional array's memory representation @ stackoverflow](https://stackoverflow.com/questions/39561140/how-is-two-dimensional-arrays-memory-representation)
+
+----
+
+```go
+//// 2d slice
+var n = len(s)
+var C = make([][]int, n+1)
+for i := range C {
+  C[i] = make([]int, n+1) 
+}
+
+a := [][]uint8{
+    {0, 1, 2, 3},
+    {4, 5, 6, 7},
+}
+fmt.Println(a) // Output is [[0 1 2 3] [4 5 6 7]]
+
+//// partial initialization
+b := []uint{10: 1, 2}
+fmt.Println(b) // Prints [0 0 0 0 0 0 0 0 0 0 1 2]
+
+//// 2d array
+c := [5][5]uint8{}
+fmt.Println(c)
+// [[0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]]
 ```
 
 ## Reserved Words
