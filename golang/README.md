@@ -842,6 +842,7 @@ for _, k := range keys {
 ## Multidimensional Array
 
 * [How is two dimensional array's memory representation @ stackoverflow](https://stackoverflow.com/questions/39561140/how-is-two-dimensional-arrays-memory-representation)
+* [Arrays, slices (and strings): The mechanics of 'append'](https://blog.golang.org/slices)
 
 ----
 
