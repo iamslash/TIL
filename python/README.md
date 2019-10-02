@@ -6,6 +6,7 @@
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
   - [Multidimensional Array](#multidimensional-array)
+  - [round](#round)
   - [classes](#classes)
   - [lambdas](#lambdas)
   - [slice](#slice)
@@ -547,6 +548,20 @@ arr = [[0]*cols]*rows
 # arr = [[0 for i in range(cols)] for j in range(rows)] 
 print(arr) 
 # [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]
+```
+
+## round
+
+* [Rounding numbers in Python 2 and Python 3](https://kingant.net/2019/01/rounding-numbers-in-python-2-and-python-3/)
+
+```py
+print(round(0.5)) 
+# 0
+print(round(0.6)) 
+# 1
+print(round(1.5))
+# 2 
+
 ```
 
 ## classes

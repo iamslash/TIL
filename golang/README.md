@@ -868,6 +868,18 @@ fmt.Println(b) // Prints [0 0 0 0 0 0 0 0 0 0 1 2]
 c := [5][5]uint8{}
 fmt.Println(c)
 // [[0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]]
+
+//// 2d array initialization partially
+var n = len("DID")
+var C = make([][]int, n+1)
+for i := range C {
+  C[i] = make([]int, n+1) 
+}
+for i := range C[0] {
+  C[0][i] = 1
+}
+fmt.Println(C)
+// [[1 1 1 1] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
 ```
 
 ## Reserved Words
@@ -928,6 +940,8 @@ const constant = "This is a constant"
 30u        /* unsigned int */
 30l        /* long */
 30ul       /* unsigned long */
+1e1        // 10
+10e1       // 100
 
 // floating-point literals
 3.14159       /* Legal */
