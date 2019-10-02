@@ -72,14 +72,38 @@ take 3 cookies
 
 # Basic 
 
+## Reserved Words
+
+TODO
+
+## Data Types
+
+TODO
+
+## Collections compared with c++ container
+
+TODO
+
 ## Collections
 
 TODO
 
-## Multidimensional Arrays
+## Multidimensional Array
 
 TODO
 
 ## Sort
+
+TODO
+
+## Operators
+
+TODO
+
+## Decision Making
+
+TODO
+
+## Loops
 
 TODO

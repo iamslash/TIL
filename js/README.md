@@ -2,12 +2,14 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Basic Usages](#basic-usages)
+  - [Inspecting Functions](#inspecting-functions)
+  - [Documents](#documents)
+  - [Reserved Words](#reserved-words)
+  - [Data types](#data-types)
   - [Collections compared c++ container](#collections-compared-c-container)
-  - [Collection by Examples](#collection-by-examples)
+  - [Collections](#collections)
   - [Multidimensional Array](#multidimensional-array)
   - [Sort](#sort)
-  - [Data types](#data-types)
-  - [Reserved Words](#reserved-words)
   - [Operators](#operators)
   - [Decision Making](#decision-making)
   - [Loops](#loops)
@@ -82,6 +84,68 @@ java script에 대해 정리한다.
 
 # Basic Usages
 
+## Inspecting Functions
+
+`node` 를 실행하고 `TAB` 을 누르면 리스트를 확인할 수 있다.
+
+## Documents
+
+* [JavaScript @ MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript)
+
+## Reserved Words
+
+```js
+abstract   else        instanceof   switch
+boolean    enum        int          synchronized
+break      export      interface    this
+byte       extends     long         throw
+case       false       native       throws
+catch      final       new          transient
+char       finally     null         true
+class      float       package      try
+const      for         private      typeof
+continue   function    protected    var
+debugger   goto        public       void 
+default    if          return       volatile
+delete     implements  short        while
+do         import      static       with
+double     in          super
+```
+
+## Data types
+
+```js
+// Boolean
+var a = true; // false
+
+// Null
+var b = null;
+
+// Undefined
+// 값을 할당하지 않은 변수
+var c = undefined
+
+// Numbers
+var n = 123;
+var f = 120.50;
+
+// Strings
+var s = "hello world";
+
+// Symbol
+// Symbol 은 ECMAScript 6 에서 추가되었다. Symbol은 유일하고 변경 불가능한 (immutable) 기본값 (primitive value) 이다.
+const symbol1 = Symbol();
+const symbol2 = Symbol(42);
+const symbol3 = Symbol('foo');
+
+console.log(typeof symbol1);
+// expected output: "symbol"
+console.log(symbol3.toString());
+// expected output: "Symbol(foo)"
+console.log(Symbol('foo') === Symbol('foo'));
+// expected output: false
+```
+
 ## Collections compared c++ container
 
 | c++                  | js           |
@@ -106,7 +170,20 @@ java script에 대해 정리한다.
 | `unordered_multimap` | ``           |
 
 
-## Collection by Examples
+## Collections
+
+* [JavaScript Collections](https://velog.io/@yesdoing/JavaScript-Collections)
+* Object, Array, Typed Array, Set, Map, WeakSet, WeakMap
+  
+----
+
+* Object
+
+```js
+a = new Object()
+a.foo = 1; a.bar = 2; a.baz = 3
+console.log(a)
+```
 
 * Array
 
@@ -116,19 +193,33 @@ console.log(fruits.length);
 // 2
 ```
 
+* TypedArray
+
+```js
+Int8Array();
+Uint8Array();
+Uint8ClampedArray();
+Int16Array();
+Uint16Array();
+Int32Array();
+Uint32Array();
+Float32Array();
+Float64Array();
+```
+
 * Set
 
 ```js
-var mySet = new Set();
-mySet.add(1);
-mySet.add("some text");
-mySet.add("foo");
+var s = new Set();
+s.add(1);
+s.add("some text");
+s.add("foo");
 
-mySet.has(1); // true
-mySet.delete("foo");
-mySet.size; // 2
+s.has(1); // true
+s.delete("foo");
+s.size; // 2
 
-for (let item of mySet) console.log(item);
+for (let e of s) console.log(e);
 // 1
 // "some text"
 ```
@@ -136,20 +227,43 @@ for (let item of mySet) console.log(item);
 * Map
 
 ```js
-var sayings = new Map();
-sayings.set("dog", "woof");
-sayings.set("cat", "meow");
-sayings.set("elephant", "toot");
-sayings.size; // 3
-sayings.get("fox"); // undefined
-sayings.has("bird"); // false
-sayings.delete("dog");
+var m = new Map();
+m.set("dog", "woof");
+m.set("cat", "meow");
+m.set("elephant", "toot");
+m.size; // 3
+m.get("fox"); // undefined
+m.has("bird"); // false
+m.delete("dog");
 
-for (var [key, value] of sayings) {
-  console.log(key + " goes " + value);
+for (var [key, val] of m) {
+  console.log(key + " goes " + val);
 }
 // "cat goes meow"
 // "elephant goes toot"
+```
+
+* WeakSet
+
+```js
+const yesdoing = new WeakSet(); 
+const age = {}; 
+yesdoing.add(age);
+yesdoing.has(age); // True
+yesdoing.delete(age)
+```
+
+* WeakMap
+
+```js
+const wm = new WeakMap(); 
+const age = {}; 
+const job = {}; 
+
+wm.set(age, 11111); 
+wm.set(job, 'air'); 
+wm.has(job); // True
+wm.delete(job)  
 ```
 
 ## Multidimensional Array
@@ -195,40 +309,6 @@ a.sort((a, b) => a < b ? -1 : 1)
 a.sort().reverse();
 a.sort((a, b) => (a > b ? -1 : 1))
 a.sort((a, b) => b.localeCompare(a))
-```
-
-## Data types
-
-```js
-// Numbers
-var n = 123;
-var f = 120.50;
-
-// Strings
-var s = "hello world";
-
-// Boolean
-var b = true;
-```
-
-## Reserved Words
-
-```js
-abstract   else        instanceof   switch
-boolean    enum        int          synchronized
-break      export      interface    this
-byte       extends     long         throw
-case       false       native       throws
-catch      final       new          transient
-char       finally     null         true
-class      float       package      try
-const      for         private      typeof
-continue   function    protected    var
-debugger   goto        public       void 
-default    if          return       volatile
-delete     implements  short        while
-do         import      static       with
-double     in          super
 ```
 
 ## Operators
