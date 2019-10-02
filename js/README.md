@@ -4,6 +4,8 @@
 - [Basic Usages](#basic-usages)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collection by Examples](#collection-by-examples)
+  - [Multidimensional Array](#multidimensional-array)
+  - [Sort](#sort)
   - [Data types](#data-types)
   - [Reserved Words](#reserved-words)
   - [Operators](#operators)
@@ -148,6 +150,44 @@ for (var [key, value] of sayings) {
 }
 // "cat goes meow"
 // "elephant goes toot"
+```
+
+## Multidimensional Array
+
+* [How to create multidimensional array](https://stackoverflow.com/questions/7545641/how-to-create-multidimensional-array)
+
+----
+
+```js
+Array.matrix = function(numrows, numcols, initial) {
+   var arr = [];
+   for (var i = 0; i < numrows; ++i) {
+      var columns = [];
+      for (var j = 0; j < numcols; ++j) {
+         columns[j] = initial;
+      }
+      arr[i] = columns;
+   }
+   return arr;
+}
+var nums = Array.matrix(5, 5, 0);
+print(nums[1][1]); // displays 0
+var names = Array.matrix(3, 3, "");
+names[1][2] = "Joe";
+print(names[1][2]); // display "Joe"
+var grades = [[89, 77, 78],[76, 82, 81],[91, 94, 89]];
+print(grades[2][2]); // displays 89
+```
+
+## Sort
+
+```js
+//// sort descending
+// obj.sort().reverse() is the best for the performance.
+//  
+obj.sort().reverse();
+obj.sort((a, b) => (a > b ? -1 : 1))
+obj.sort((a, b) => b.localeCompare(a) )
 ```
 
 ## Data types
