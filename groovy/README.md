@@ -9,11 +9,21 @@
 * [Groovy for Java developers @ youtube](https://www.youtube.com/watch?v=BXRDTiJfrSE)
   * java 개발자를 위한 groovy
 
-# Install on Windows 10
+# Install
+
+## Install on Windows 10
 
 ```
 choco install groovy
 ```
+
+## Install on OSX
+
+```bash
+brew install groovy
+```
+
+# Hello World
 
 * a.groovy
 
@@ -26,13 +36,11 @@ class A {
 }
 ```
 
-```
+```bash
 groovy a.groovy
 ```
 
-# Basic
- 
-## DSL (Domain Specific Language)
+# DSL (Domain Specific Language)
 
 groovy 의 top level statement 는 argument 주변의 `()` 를 생략할 수 있다. `command chains` 특성때문에 argument 주변의 `()` 와 chained call 사이의 `.` 를 생략 할 수 있다. 예를 들어 다음과 같은 표현이 가능하다. 이것 때문에 DSL 에 사용된다.
 
@@ -61,3 +69,17 @@ select all unique() from names
 // and also this: take(3).getCookies()
 take 3 cookies
 ```
+
+# Basic 
+
+## Collections
+
+TODO
+
+## Multidimensional Arrays
+
+TODO
+
+## Sort
+
+TODO
