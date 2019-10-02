@@ -182,12 +182,19 @@ print(grades[2][2]); // displays 89
 ## Sort
 
 ```js
+//// sort ascending
+a = [5, 1, 4, 2, 3]
+a.sort();
+a.sort((a, b) => (a < b ? -1 : 1))
+a.sort((a, b) => {a < b ? -1 : 1})
+a.sort((a, b) => a < b ? -1 : 1)
+
 //// sort descending
 // obj.sort().reverse() is the best for the performance.
 //  
-obj.sort().reverse();
-obj.sort((a, b) => (a > b ? -1 : 1))
-obj.sort((a, b) => b.localeCompare(a) )
+a.sort().reverse();
+a.sort((a, b) => (a > b ? -1 : 1))
+a.sort((a, b) => b.localeCompare(a))
 ```
 
 ## Data types
