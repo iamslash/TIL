@@ -554,14 +554,31 @@ print(arr)
 
 * [Rounding numbers in Python 2 and Python 3](https://kingant.net/2019/01/rounding-numbers-in-python-2-and-python-3/)
 
-```py
-print(round(0.5)) 
-# 0
-print(round(0.6)) 
-# 1
-print(round(1.5))
-# 2 
+----
 
+python3 는 `ROUND_HALF_EVEN` 반올림 방식을 사용한다. `x.5` 일때 짝수쪽으로 변환한다. 즉, `round(0.5) == 0, round(0.6) == 1` 이다.
+
+```py
+print(round(0.5)) # 0
+print(round(0.6)) # 1.0
+print(round(1.5)) # 2.0 
+print(round(1.6)) # 2.0 
+print(round(2.5)) # 2.0 
+print(round(2.6)) # 3.0
+```
+
+`round(0.5) == 1` 을 위해서는 `ROUND_HALF_UP` 반올림 방식을 사용해야 한다.
+
+```py
+from decimal import Decimal, ROUND_HALF_UP, ROUND_HALF_EVEN
+>>> int(Decimal(0.5).quantize(Decimal(0), rounding=ROUND_HALF_UP))
+1
+>>> int(Decimal(0.6).quantize(Decimal(0), rounding=ROUND_HALF_UP))
+1
+>>> int(Decimal(1.5).quantize(Decimal(0), rounding=ROUND_HALF_UP))
+2
+>>> int(Decimal(2.5).quantize(Decimal(0), rounding=ROUND_HALF_UP))
+3
 ```
 
 ## classes
