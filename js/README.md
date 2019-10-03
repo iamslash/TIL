@@ -6,12 +6,15 @@
   - [Documents](#documents)
   - [Reserved Words](#reserved-words)
   - [Data types](#data-types)
+  - [Print Formatted String](#print-formatted-string)
+  - [Global Objects](#global-objects)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collections](#collections)
   - [Multidimensional Array](#multidimensional-array)
   - [Sort](#sort)
+  - [Variables](#variables)
   - [Operators](#operators)
-  - [Decision Making](#decision-making)
+  - [Control Flow](#control-flow)
   - [Loops](#loops)
   - [Javascript Runtime Architecture](#javascript-runtime-architecture)
   - [Functions](#functions)
@@ -30,14 +33,6 @@
   - [task queue](#task-queue)
   - [micro task](#micro-task)
   - [Cookies](#cookies)
-  - [Objects](#objects)
-  - [Number](#number)
-  - [Boolean](#boolean)
-  - [Strings](#strings)
-  - [Arrays](#arrays)
-  - [Date](#date)
-  - [Math](#math)
-  - [RegExp](#regexp)
   - [HTML DOM](#html-dom)
 - [Advanced Usages](#advanced-usages)
   - [var, let, const](#var-let-const)
@@ -52,6 +47,8 @@ java script에 대해 정리한다.
 
 # Essentials
 
+* [JavaScript 재입문하기 (JS ​튜토리얼)](https://developer.mozilla.org/ko/docs/A_re-introduction_to_JavaScript)
+  * Custom Objects (new 다음에 function) 이 어떻게 동작하는지 알 수 있다.  
 * [learn javascript in Y minutes](https://learnxinyminutes.com/docs/javascript/)
 * [javascript @ tutorialspoint](https://www.tutorialspoint.com/javascript/)
 * [JavaScript @ opentutorials](https://opentutorials.org/module/532)
@@ -114,6 +111,20 @@ double     in          super
 
 ## Data types
 
+javascript 는 다음과 같은 타입들을 가지고 있다.
+
+* Number
+* String
+* Boolean
+* Symbol
+* Object
+  * Function
+  * Array
+  * Date
+  * RegExp
+* Null
+* Undefined
+
 ```js
 // Boolean
 var a = true; // false
@@ -144,6 +155,47 @@ console.log(symbol3.toString());
 // expected output: "Symbol(foo)"
 console.log(Symbol('foo') === Symbol('foo'));
 // expected output: false
+```
+
+## Print Formatted String
+
+```js
+// from ES6. focus on ` not '
+let a = 10;
+console.log(`This is ${a}.`);
+
+// format function
+// https://coderwall.com/p/flonoa/simple-string-format-in-javascript
+String.prototype.format = function() {
+  a = this;
+  for (k in arguments) {
+    a = a.replace("{" + k + "}", arguments[k])
+  }
+  return a
+}
+console.log("Hello, {0}!".format("World"))
+```
+
+## Global Objects
+
+* Array
+* Boolean
+* Date
+* Error
+* Function
+* JSON
+* Math
+* Number
+* Object
+* RegExp
+* String
+* Map
+* Set
+* WeakMap
+* WeakSet
+
+```js
+TODO
 ```
 
 ## Collections compared c++ container
@@ -246,11 +298,11 @@ for (var [key, val] of m) {
 * WeakSet
 
 ```js
-const yesdoing = new WeakSet(); 
+const ws = new WeakSet(); 
 const age = {}; 
-yesdoing.add(age);
-yesdoing.has(age); // True
-yesdoing.delete(age)
+ws.add(age);
+ws.has(age); // True
+ws.delete(age)
 ```
 
 * WeakMap
@@ -273,12 +325,12 @@ wm.delete(job)
 ----
 
 ```js
-Array.matrix = function(numrows, numcols, initial) {
+Array.matrix = function(r, c, v) {
    var arr = [];
-   for (var i = 0; i < numrows; ++i) {
+   for (var i = 0; i < r; ++i) {
       var columns = [];
-      for (var j = 0; j < numcols; ++j) {
-         columns[j] = initial;
+      for (var j = 0; j < c; ++j) {
+         columns[j] = v;
       }
       arr[i] = columns;
    }
@@ -311,281 +363,146 @@ a.sort((a, b) => (a > b ? -1 : 1))
 a.sort((a, b) => b.localeCompare(a))
 ```
 
+## Variables
+
+JavaScript에서 새로운 변수는 `let, const, var` 키워드로 선언한다. 변수에 값을 지정하지 않고 선언한 경우 타입은 `undefined` 이다.
+
+```js
+//// let
+// 블록 유효 범위 변수를 선언. 선언 된 변수는 변수가 포함 된 함수 블록에서 사용할 수 있다.
+// i 는 여기에서 보이지 않는다.
+for (let i = 0; i < 5; i++) {
+  // i 는 여기서 유효하다.
+}
+// i 는 여기에서 보이지 않는다.
+
+//// const
+// 블록 유효 범위 변수를 선언. 그러나 선언이후 수정할 수 없다.
+const Pi = 3.14; // 변수 Pi 설정 
+Pi = 1; // 상수로 설정된 변수는 변경 할 수 없기 때문에 애러 발생.
+
+//// var
+// 변수가 선언 된 함수 블록에서 사용가능.
+// i 는 여기에서 접근가능.
+for (var i = 0; i < 5; i++) {
+  // i 는 여기서 유효하다.
+}
+// i 는 여기에서 접근가능.
+```
+
 ## Operators
 
 ```js
-// Arithmetic Operators
-            var a = 33;
-            var b = 10;
-            var c = "Test";
-            var linebreak = "<br />";
-         
-            document.write("a + b = ");
-            result = a + b;
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("a - b = ");
-            result = a - b;
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("a / b = ");
-            result = a / b;
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("a % b = ");
-            result = a % b;
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("a + b + c = ");
-            result = a + b + c;
-            document.write(result);
-            document.write(linebreak);
-         
-            a = ++a;
-            document.write("++a = ");
-            result = ++a;
-            document.write(result);
-            document.write(linebreak);
-         
-            b = --b;
-            document.write("--b = ");
-            result = --b;
-            document.write(result);
-            document.write(linebreak);
-// a + b = 43
-// a - b = 23
-// a / b = 3.3
-// a % b = 3
-// a + b + c = 43Test
-// ++a = 35
-// --b = 8
+//// Arithmetic Operators
+var a = 33;
+var b = 10;
+var c = "Test";
 
-// === comparison operator with value, type
+console.log(`a + b = ${a + b}`); // 43
+console.log(`a - b = ${a + b}`); // 23
+console.log(`a / b = ${a + b}`); // 3.3
+console.log(`a % b = ${a + b}`); // 3
+console.log(`a + b + c = ${a + b + c}`); // 43Test
+console.log(`++a = ${++a}`); // 34
+console.log(`++a = ${--b}`); // 9
+
+//// comparison operator with value, type
 //
 // undefined == null => true
 // undefined === null => false
 
-// Comparison Operators
-            var a = 10;
-            var b = 20;
-            var linebreak = "<br />";
-      
-            document.write("(a == b) => ");
-            result = (a == b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("(a < b) => ");
-            result = (a < b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("(a > b) => ");
-            result = (a > b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("(a != b) => ");
-            result = (a != b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("(a >= b) => ");
-            result = (a >= b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("(a <= b) => ");
-            result = (a <= b);
-            document.write(result);
-            document.write(linebreak);
-// (a == b) => false 
-// (a < b) => true 
-// (a > b) => false 
-// (a != b) => true 
-// (a >= b) => false 
-// a <= b) => true  
+//// Comparison Operators
+var a = 10;
+var b = 20;
 
-// Logical Operators
-            var a = true;
-            var b = false;
-            var linebreak = "<br />";
-      
-            document.write("(a && b) => ");
-            result = (a && b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("(a || b) => ");
-            result = (a || b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("!(a && b) => ");
-            result = (!(a && b));
-            document.write(result);
-            document.write(linebreak);
-// (a && b) => false 
-// (a || b) => true 
-// !(a && b) => true
+console.log(`(a == b) => ${a == b}`); // false
+console.log(`(a < b) => ${a < b}`); // true
+console.log(`(a > b) => ${a > b}`); // false
+console.log(`(a != b) => ${a != b}`); // true
+console.log(`(a >= b) => ${a >= b}`); // false
+console.log(`(a <= b) => ${a <>= b}`); // true
 
-// Bitwise Operators
-            var a = 2; // Bit presentation 10
-            var b = 3; // Bit presentation 11
-            var linebreak = "<br />";
-         
-            document.write("(a & b) => ");
-            result = (a & b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("(a | b) => ");
-            result = (a | b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("(a ^ b) => ");
-            result = (a ^ b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("(~b) => ");
-            result = (~b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("(a << b) => ");
-            result = (a << b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("(a >> b) => ");
-            result = (a >> b);
-            document.write(result);
-            document.write(linebreak);
-// (a & b) => 2 
-// (a | b) => 3 
-// (a ^ b) => 1 
-// (~b) => -4 
-// (a << b) => 16 
-// (a >> b) => 0
+//// Logical Operators
+var a = true;
+var b = false;
 
-// Assignment Operators
-            var a = 33;
-            var b = 10;
-            var linebreak = "<br />";
-         
-            document.write("Value of a => (a = b) => ");
-            result = (a = b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("Value of a => (a += b) => ");
-            result = (a += b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("Value of a => (a -= b) => ");
-            result = (a -= b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("Value of a => (a *= b) => ");
-            result = (a *= b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("Value of a => (a /= b) => ");
-            result = (a /= b);
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write("Value of a => (a %= b) => ");
-            result = (a %= b);
-            document.write(result);
-            document.write(linebreak);
-// Value of a => (a = b) => 10
-// Value of a => (a += b) => 20 
-// Value of a => (a -= b) => 10 
-// Value of a => (a *= b) => 100 
-// Value of a => (a /= b) => 10
-// Value of a => (a %= b) => 0
+console.log(`(a && b) => ${a && b}`); // false
+console.log(`(a || b) => ${a || b}`); // true
+console.log(`!(a && b) => ${!(a && b)}`); // true
 
-// Miscellaneous Operators
-            var a = 10;
-            var b = 20;
-            var linebreak = "<br />";
-         
-            document.write ("((a > b) ? 100 : 200) => ");
-            result = (a > b) ? 100 : 200;
-            document.write(result);
-            document.write(linebreak);
-         
-            document.write ("((a < b) ? 100 : 200) => ");
-            result = (a < b) ? 100 : 200;
-            document.write(result);
-            document.write(linebreak);
-// ((a > b) ? 100 : 200) => 200 
-// ((a < b) ? 100 : 200) => 100
+//// Bitwise Operators
+var a = 2; // Bit presentation 10
+var b = 3; // Bit presentation 11
 
-// typeof Operators
-            var a = 10;
-            var b = "String";
-            var linebreak = "<br />";
-         
-            result = (typeof b == "string" ? "B is String" : "B is Numeric");
-            document.write("Result => ");
-            document.write(result);
-            document.write(linebreak);
-         
-            result = (typeof a == "string" ? "A is String" : "A is Numeric");
-            document.write("Result => ");
-            document.write(result);
-            document.write(linebreak);
-// Result => B is String 
-// Result => A is Numeric
+console.log(`(a & b) => ${a & b}`); // 2
+console.log(`(a | b) => ${a | b}`); // 3
+console.log(`(a ^ b) => ${a ^ b}`); // 1
+console.log(`(~b) => ${~b}`); // -4
+console.log(`(a << b) => ${a << b}`); // 16
+console.log(`(a >> b) => ${a >> b}`); // 0
+
+//// Assignment Operators
+var a = 33;
+var b = 10;
+
+console.log(`(a = b) => ${a = b}`); // 10
+console.log(`(a += b) => ${a += b}`); // 20
+console.log(`(a -= b) => ${a -= b}`); // 10
+console.log(`(a *= b) => ${a *= b}`); // 100
+console.log(`(a /= b) => ${a /= b}`); // 10
+console.log(`(a %= b) => ${a %= b}`); // 0
+
+//// Miscellaneous Operators
+var a = 10;
+var b = 20;
+
+console.log(`(a > b) ? 100 : 200) => ${(a > b) ? 100 : 200)}`); // 200
+console.log(`(a < b) ? 100 : 200) => ${(a < b) ? 100 : 200)}`); // 100
+
+//// typeof Operators
+var a = 10;
+var b = "String";
+
+console.log(`(typeof a => ${typeof a == "string" ? "String" : "Numeric")}`); // Numeric
+console.log(`(typeof b => ${typeof b == "string" ? "String" : "Numeric")}`); // String
 ```
 
-## Decision Making
+## Control Flow
 
 ```js
-// if else if
-            var book = "maths";
-            if( book == "history" ) {
-               document.write("<b>History Book</b>");
-            } else if( book == "maths" ) {
-               document.write("<b>Maths Book</b>");
-            } else if( book == "economics" ) {
-               document.write("<b>Economics Book</b>");
-            } else {
-               document.write("<b>Unknown Book</b>");
-            }
-// switch
-            var grade = 'A';
-            document.write("Entering switch block<br />");
-            switch (grade) {
-               case 'A': document.write("Good job<br />");
-               break;
-            
-               case 'B': document.write("Pretty good<br />");
-               break;
-            
-               case 'C': document.write("Passed<br />");
-               break;
-            
-               case 'D': document.write("Not so good<br />");
-               break;
-            
-               case 'F': document.write("Failed<br />");
-               break;
-            
-               default:  document.write("Unknown grade<br />")
-            }
-            document.write("Exiting switch block");
+//// if else if
+var book = "maths";
+if( book == "history" ) {
+   document.write("<b>History Book</b>");
+} else if( book == "maths" ) {
+   document.write("<b>Maths Book</b>");
+} else if( book == "economics" ) {
+   document.write("<b>Economics Book</b>");
+} else {
+   document.write("<b>Unknown Book</b>");
+}
+//// switch
+var grade = 'A';
+document.write("Entering switch block<br />");
+switch (grade) {
+  case 'A': document.write("Good job<br />");
+  break;
+
+  case 'B': document.write("Pretty good<br />");
+  break;
+
+  case 'C': document.write("Passed<br />");
+  break;
+
+  case 'D': document.write("Not so good<br />");
+  break;
+
+  case 'F': document.write("Failed<br />");
+  break;
+
+  default:  document.write("Unknown grade<br />")
+}
+document.write("Exiting switch block");
 // Entering switch block
 // Good job
 // Exiting switch block         
@@ -594,16 +511,16 @@ a.sort((a, b) => b.localeCompare(a))
 ## Loops
 
 ```js
-// while
-            var count = 0;
-            document.write("Starting Loop ");
-         
-            while (count < 10) {
-               document.write("Current Count : " + count + "<br />");
-               count++;
-            }
-         
-            document.write("Loop stopped!");
+//// while
+var count = 0;
+document.write("Starting Loop ");
+
+while (count < 10) {
+  document.write("Current Count : " + count + "<br />");
+  count++;
+}
+
+document.write("Loop stopped!");
 // Starting Loop
 // Current Count : 0
 // Current Count : 1
@@ -617,17 +534,17 @@ a.sort((a, b) => b.localeCompare(a))
 // Current Count : 9
 // Loop stopped!
 
-// do while
-            var count = 0;
-            
-            document.write("Starting Loop" + "<br />");
-            do {
-               document.write("Current Count : " + count + "<br />");
-               count++;
-            }
-            
-            while (count < 5);
-            document.write ("Loop stopped!");
+//// do while
+var count = 0;
+
+document.write("Starting Loop" + "<br />");
+do {
+   document.write("Current Count : " + count + "<br />");
+   count++;
+}
+
+while (count < 5);
+document.write ("Loop stopped!");
 // Starting Loop
 // Current Count : 0 
 // Current Count : 1 
@@ -636,25 +553,25 @@ a.sort((a, b) => b.localeCompare(a))
 // Current Count : 4
 // Loop Stopped!       
 
-// for 
-            var count;
-            document.write("Starting Loop" + "<br />");
-         
-            for(count = 0; count < 10; count++){
-               document.write("Current Count : " + count );
-               document.write("<br />");
-            }
-         
-            document.write("Loop stopped!");
+//// for 
+var count;
+document.write("Starting Loop" + "<br />");
 
-// for in
-            var aProperty;
-            document.write("Navigator Object Properties<br /> ");        
-            for (aProperty in navigator) {
-               document.write(aProperty);
-               document.write("<br />");
-            }
-            document.write ("Exiting from the loop!");
+for(count = 0; count < 10; count++){
+   document.write("Current Count : " + count );
+   document.write("<br />");
+}
+
+document.write("Loop stopped!");
+
+//// for in
+var aProperty;
+document.write("Navigator Object Properties<br /> ");        
+for (aProperty in navigator) {
+   document.write(aProperty);
+   document.write("<br />");
+}
+document.write ("Exiting from the loop!");
 ```
 
 ## Javascript Runtime Architecture
@@ -685,7 +602,7 @@ var a = function(a, b) {
 }
 ```
 
-함수를 실행한다. execution context가 만들어 진다.
+함수를 실행한다. execution context 가 만들어 진다.
 
 ```js
 (function(a, b) {
@@ -835,15 +752,9 @@ wrapper(); // zero
 
 ## execution context
 
-global context 생성후 함수 호출 할때 마다 execution context가
-생성된다.
-
-execution context는 arguments, variable, scope chain, this가 저장된다.
-
-함수가 실행될때 그 함수의 execution context에 변수가 없다면 scope
-chain을 따라 올라가며 검색한다.
-
-함수 실행이 종료되면 execution context는 사라진다.
+`global context` 생성후 함수 호출 할때 마다 `execution context` 가
+생성된다. `execution context` 는 `arguments, variable, scope chain, this` 가 저장된다. 함수가 실행될때 그 함수의 `execution context` 에 변수가 없다면 `scope
+chain` 을 따라 올라가며 검색한다. 함수 실행이 종료되면 `execution context` 는 사라진다.
 
 ## event loop
 
@@ -993,22 +904,6 @@ document.cookie = "key1 = value1;key2 = value2;expires = date";
 </html>
 ```
 
-## Objects
-
-## Number
-
-## Boolean
-
-## Strings
-
-## Arrays
-
-## Date
-
-## Math
-
-## RegExp
-
 ## HTML DOM
 
 다음은 DOM 의 구조를 표현한 그림이다.
@@ -1070,7 +965,6 @@ b = 'world'; // ERROR
 ```
 
 ## promise
-
 
 비동기를 구현하기 위한 object 이다. `promise` 는 `pending, fullfilled, rejected` 와 같이 3 가지 상태를 갖는다. `then()` 에서 해결하고 `catch()` 에서 오류처리를 한다. 
 

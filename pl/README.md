@@ -17,15 +17,17 @@
 
   * 컴파일하고 실행하는 방법
 
-* Print standard out
+* Hello World
 
   * 화면에 출력하는 방법
 
-* Useful Keywords
+* Reserved Words
 
-  * 특이한 키워드들
+  * 예약어
 
 * Data Types
+
+* Print Formatted Text
 
 * Control Flows
 
