@@ -359,7 +359,7 @@ class Person implements Serializable {
    map.put(".us", "United States");
    map.put(".uk", "United Kingdom");
    map.put(".jp", "Japan");
-   map.put(".au", "Australia");
+   map.put(".au", map.getOrDefault(".au", "Australia"));
    System.out.println(map);
    System.out.println(map.get(".au"));
 ```
