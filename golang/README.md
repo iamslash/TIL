@@ -12,24 +12,26 @@
   - [Logging](#logging)
   - [Encoding, JSON](#encoding-json)
 - [Basic Usages](#basic-usages)
+  - [Compile, Run](#compile-run)
   - [Hello World](#hello-world)
-  - [Collections compared to c++ containers](#collections-compared-to-c-containers)
-  - [Collections by examples](#collections-by-examples)
-  - [Multidimensional Array](#multidimensional-array)
   - [Reserved Words](#reserved-words)
   - [Data Types](#data-types)
-  - [Declarations](#declarations)
-  - [Constants](#constants)
+  - [Print Formatted String](#print-formatted-string)
+  - [Control Flows](#control-flows)
+    - [If](#if)
+    - [Switch](#switch)
+    - [select](#select)
+  - [Loops](#loops)
   - [Operators](#operators)
     - [Arithmetic](#arithmetic)
     - [Comparison](#comparison)
     - [Logical](#logical)
     - [Other](#other)
-  - [Decision Making](#decision-making)
-    - [If](#if)
-    - [Switch](#switch)
-    - [select](#select)
-  - [Loops](#loops)
+  - [Collections compared to c++ containers](#collections-compared-to-c-containers)
+  - [Collections by examples](#collections-by-examples)
+  - [Multidimensional Array](#multidimensional-array)
+  - [Declarations](#declarations)
+  - [Constants](#constants)
   - [Functions](#functions)
     - [Functions As Values And Closures](#functions-as-values-and-closures)
     - [Variadic Functions](#variadic-functions)
@@ -49,7 +51,6 @@
   - [Goroutines](#goroutines)
   - [Channels](#channels)
     - [Channel Axioms](#channel-axioms)
-  - [Printing](#printing)
 - [Advanced Usages](#advanced-usages)
   - [Tools](#tools-1)
     - [go](#go)
@@ -172,6 +173,13 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 # Basic Usages
 
+## Compile, Run
+
+```bash
+go build a.go
+go run a.go
+```
+
 ## Hello World
 
 * a.go
@@ -185,6 +193,257 @@ func main() {
 // go run a.go
 ```
 
+## Reserved Words
+
+```go
+break    default     func   interface select
+case     defer       go     map       struct
+chan     else        goto   package   switch
+const    fallthrough if     range     type
+continue for         import return    var
+```
+
+## Data Types
+
+```go
+bool
+
+string
+
+int  int8  int16  int32  int64
+uint uint8 uint16 uint32 uint64 uintptr
+
+byte // alias for uint8
+
+rune // alias for int32 ~= a character (Unicode code point) - very Viking
+
+float32 float64
+
+complex64 complex128
+```
+
+
+## Print Formatted String
+
+```go
+fmt.Println("Hello, 你好, नमस्ते, Привет, ᎣᏏᏲ") // basic print, plus newline
+p := struct { X, Y int }{ 17, 2 }
+fmt.Println( "My point:", p, "x coord=", p.X ) // print structs, ints, etc
+s := fmt.Sprintln( "My point:", p, "x coord=", p.X ) // print to string variable
+
+fmt.Printf("%d hex:%x bin:%b fp:%f sci:%e",17,17,17,17.0,17.0) // c-ish format
+s2 := fmt.Sprintf( "%d %f", 17, 17.0 ) // formatted print to string variable
+
+hellomsg := `
+ "Hello" in Chinese is 你好 ('Ni Hao')
+ "Hello" in Hindi is नमस्ते ('Namaste')
+` // multi-line string literal, using back-tick at beginning and end
+```
+
+## Control Flows
+
+### If
+```go
+func main() {
+	// Basic one
+	if x > 0 {
+		return x
+	} else {
+		return -x
+	}
+    	
+	// You can put one statement before the condition
+	if a := b + c; a < 42 {
+		return a
+	} else {
+		return a - 42
+	}
+    
+	// Type assertion inside if
+	var val interface{}
+	val = "foo"
+	if str, ok := val.(string); ok {
+		fmt.Println(str)
+	}
+}
+```
+
+### Switch
+```go
+    // switch statement
+    switch operatingSystem {
+    case "darwin":
+        fmt.Println("Mac OS Hipster")
+        // cases break automatically, no fallthrough by default
+    case "linux":
+        fmt.Println("Linux Geek")
+    default:
+        // Windows, BSD, ...
+        fmt.Println("Other")
+    }
+
+    // as with for and if, you can have an assignment statement before the switch value 
+    switch os := runtime.GOOS; os {
+    case "darwin": ...
+    }
+
+    // you can also make comparisons in switch cases
+    number := 42
+    switch {
+        case number < 42:
+            fmt.Println("Smaller")
+        case number == 42:
+            fmt.Println("Equal")
+        case number > 42:
+            fmt.Println("Greater")
+    }
+```
+
+### select
+
+```go
+// select {
+//    case communication clause  :
+//       statement(s);      
+//    case communication clause  :
+//       statement(s); 
+//    /* you can have any number of case statements */
+//    default : /* Optional */
+//       statement(s);
+// }
+package main
+
+import "fmt"
+
+func main() {
+   var c1, c2, c3 chan int
+   var i1, i2 int
+   select {
+      case i1 = <-c1:
+         fmt.Printf("received ", i1, " from c1\n")
+      case c2 <- i2:
+         fmt.Printf("sent ", i2, " to c2\n")
+      case i3, ok := (<-c3):  // same as: i3, ok := <-c3
+         if ok {
+            fmt.Printf("received ", i3, " from c3\n")
+         } else {
+            fmt.Printf("c3 is closed\n")
+         }
+      default:
+         fmt.Printf("no communication\n")
+   }    
+}  
+```
+
+## Loops
+
+```go
+    // There's only `for`, no `while`, no `until`
+    for i := 1; i < 10; i++ {
+    }
+    for ; i < 10; { // while - loop
+    }
+    for i < 10 { // you can omit semicolons if there is only a condition
+    }
+    for { // you can omit the condition ~ while (true)
+    }
+
+// break
+   /* local variable definition */
+   var a int = 10
+
+   /* for loop execution */
+   for a < 20 {
+      fmt.Printf("value of a: %d\n", a);
+      a++;
+      if a > 15 {
+         /* terminate the loop using break statement */
+         break;
+      }
+   }
+
+// continue
+   /* local variable definition */
+   var a int = 10
+
+   /* do loop execution */
+   for a < 20 {
+      if a == 15 {
+         /* skip the iteration */
+         a = a + 1;
+         continue;
+      }
+      fmt.Printf("value of a: %d\n", a);
+      a++;     
+   }  
+
+// goto
+   /* local variable definition */
+   var a int = 10
+
+   /* do loop execution */
+   LOOP: for a < 20 {
+      if a == 15 {
+         /* skip the iteration */
+         a = a + 1
+         goto LOOP
+      }
+      fmt.Printf("value of a: %d\n", a)
+      a++     
+   }  
+
+// string iteration
+for i, c := range "Hello, 世界" {
+        fmt.Printf("%d: %c\n", i, c)
+}
+```
+
+
+## Operators
+
+### Arithmetic
+
+| Operator | Description         |            |
+|----------|---------------------|------------|
+| `+`      | addition            |            |
+| `-`      | subtraction         |            |
+| `*`      | multiplication      |            |
+| `/`      | quotient            |            |
+| `%`      | remainder           |            |
+| `&`      | bitwise and         |            |
+| '`|`'      | bitwise or          |            |
+| `^`      | bitwise xor         |            |
+| `&^`     | bit clear (and not) |            |
+| `<<`     | left shift          |            |
+| `>>`     | right shift         |            |
+
+### Comparison
+
+| Operator | Description           |
+|----------|-----------------------|
+| `==`     | equal                 |
+| `!=`     | not equal             |
+| `<`      | less than             |
+| `<=`     | less than or equal    |
+| `>`      | greater than          |
+| `>=`     | greater than or equal |
+
+### Logical
+
+| Operator | Description |   |            |
+|----------|-------------|---|------------|
+| `&&`     | logical and |   |            |
+| `||`     | logical or  |   |            |
+| '`!`'      | logical not |   |            |
+
+### Other
+
+| Operator | Description                                    |
+|----------|------------------------------------------------|
+| `&`      | address of / create pointer                    |
+| `*`      | dereference pointer                            |
+| `<-`     | send / receive operator (see 'Channels' below) |
+
 ## Collections compared to c++ containers
 
 | c++                  | go                   | 
@@ -195,10 +454,10 @@ func main() {
 | `vector`             | `slice`              |
 | `deque`              | ``                   |
 | `forward_list`       | ``                   |
-| `list`               | `list`               |
+| `list`               | `container/list`     |
 | `stack`              | ``                   |
 | `queue`              | ``                   |
-| `priority_queue`     | `heap`               |
+| `priority_queue`     | `container/heap`     |
 | `set`                | `map[keytype]struct{}`|
 | `multiset`           | ``                   |
 | `map`                | ``                   |
@@ -882,35 +1141,6 @@ fmt.Println(C)
 // [[1 1 1 1] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
 ```
 
-## Reserved Words
-
-```go
-break    default     func   interface select
-case     defer       go     map       struct
-chan     else        goto   package   switch
-const    fallthrough if     range     type
-continue for         import return    var
-```
-
-## Data Types
-
-```go
-bool
-
-string
-
-int  int8  int16  int32  int64
-uint uint8 uint16 uint32 uint64 uintptr
-
-byte // alias for uint8
-
-rune // alias for int32 ~= a character (Unicode code point) - very Viking
-
-float32 float64
-
-complex64 complex128
-```
-
 ## Declarations
 
 타입은 변수이름 뒤에 위치한다.
@@ -971,209 +1201,6 @@ func main() {
 
    area = LENGTH * WIDTH
    fmt.Printf("value of area : %d", area)   
-}
-```
-
-## Operators
-
-### Arithmetic
-
-| Operator | Description         |            |
-|----------|---------------------|------------|
-| `+`      | addition            |            |
-| `-`      | subtraction         |            |
-| `*`      | multiplication      |            |
-| `/`      | quotient            |            |
-| `%`      | remainder           |            |
-| `&`      | bitwise and         |            |
-| '`|`'      | bitwise or          |            |
-| `^`      | bitwise xor         |            |
-| `&^`     | bit clear (and not) |            |
-| `<<`     | left shift          |            |
-| `>>`     | right shift         |            |
-
-### Comparison
-
-| Operator | Description           |
-|----------|-----------------------|
-| `==`     | equal                 |
-| `!=`     | not equal             |
-| `<`      | less than             |
-| `<=`     | less than or equal    |
-| `>`      | greater than          |
-| `>=`     | greater than or equal |
-
-### Logical
-
-| Operator | Description |   |            |
-|----------|-------------|---|------------|
-| `&&`     | logical and |   |            |
-| `||`     | logical or  |   |            |
-| '`!`'      | logical not |   |            |
-
-### Other
-
-| Operator | Description                                    |
-|----------|------------------------------------------------|
-| `&`      | address of / create pointer                    |
-| `*`      | dereference pointer                            |
-| `<-`     | send / receive operator (see 'Channels' below) |
-
-
-## Decision Making
-
-### If
-```go
-func main() {
-	// Basic one
-	if x > 0 {
-		return x
-	} else {
-		return -x
-	}
-    	
-	// You can put one statement before the condition
-	if a := b + c; a < 42 {
-		return a
-	} else {
-		return a - 42
-	}
-    
-	// Type assertion inside if
-	var val interface{}
-	val = "foo"
-	if str, ok := val.(string); ok {
-		fmt.Println(str)
-	}
-}
-```
-
-### Switch
-```go
-    // switch statement
-    switch operatingSystem {
-    case "darwin":
-        fmt.Println("Mac OS Hipster")
-        // cases break automatically, no fallthrough by default
-    case "linux":
-        fmt.Println("Linux Geek")
-    default:
-        // Windows, BSD, ...
-        fmt.Println("Other")
-    }
-
-    // as with for and if, you can have an assignment statement before the switch value 
-    switch os := runtime.GOOS; os {
-    case "darwin": ...
-    }
-
-    // you can also make comparisons in switch cases
-    number := 42
-    switch {
-        case number < 42:
-            fmt.Println("Smaller")
-        case number == 42:
-            fmt.Println("Equal")
-        case number > 42:
-            fmt.Println("Greater")
-    }
-```
-
-### select
-
-```go
-// select {
-//    case communication clause  :
-//       statement(s);      
-//    case communication clause  :
-//       statement(s); 
-//    /* you can have any number of case statements */
-//    default : /* Optional */
-//       statement(s);
-// }
-package main
-
-import "fmt"
-
-func main() {
-   var c1, c2, c3 chan int
-   var i1, i2 int
-   select {
-      case i1 = <-c1:
-         fmt.Printf("received ", i1, " from c1\n")
-      case c2 <- i2:
-         fmt.Printf("sent ", i2, " to c2\n")
-      case i3, ok := (<-c3):  // same as: i3, ok := <-c3
-         if ok {
-            fmt.Printf("received ", i3, " from c3\n")
-         } else {
-            fmt.Printf("c3 is closed\n")
-         }
-      default:
-         fmt.Printf("no communication\n")
-   }    
-}  
-```
-## Loops
-
-```go
-    // There's only `for`, no `while`, no `until`
-    for i := 1; i < 10; i++ {
-    }
-    for ; i < 10; { // while - loop
-    }
-    for i < 10 { // you can omit semicolons if there is only a condition
-    }
-    for { // you can omit the condition ~ while (true)
-    }
-
-// break
-   /* local variable definition */
-   var a int = 10
-
-   /* for loop execution */
-   for a < 20 {
-      fmt.Printf("value of a: %d\n", a);
-      a++;
-      if a > 15 {
-         /* terminate the loop using break statement */
-         break;
-      }
-   }
-
-// continue
-   /* local variable definition */
-   var a int = 10
-
-   /* do loop execution */
-   for a < 20 {
-      if a == 15 {
-         /* skip the iteration */
-         a = a + 1;
-         continue;
-      }
-      fmt.Printf("value of a: %d\n", a);
-      a++;     
-   }  
-
-// goto
-   /* local variable definition */
-   var a int = 10
-
-   /* do loop execution */
-   LOOP: for a < 20 {
-      if a == 15 {
-         /* skip the iteration */
-         a = a + 1
-         goto LOOP
-      }
-      fmt.Printf("value of a: %d\n", a)
-      a++     
-   }  
-
-// string iteration
-for i, c := range "Hello, 世界" {
-        fmt.Printf("%d: %c\n", i, c)
 }
 ```
 
@@ -1676,24 +1703,6 @@ func doStuff(channelOut, channelIn chan int) {
   }
   // 1 2 0
   ```
-
-## Printing
-
-```go
-fmt.Println("Hello, 你好, नमस्ते, Привет, ᎣᏏᏲ") // basic print, plus newline
-p := struct { X, Y int }{ 17, 2 }
-fmt.Println( "My point:", p, "x coord=", p.X ) // print structs, ints, etc
-s := fmt.Sprintln( "My point:", p, "x coord=", p.X ) // print to string variable
-
-fmt.Printf("%d hex:%x bin:%b fp:%f sci:%e",17,17,17,17.0,17.0) // c-ish format
-s2 := fmt.Sprintf( "%d %f", 17, 17.0 ) // formatted print to string variable
-
-hellomsg := `
- "Hello" in Chinese is 你好 ('Ni Hao')
- "Hello" in Hindi is नमस्ते ('Namaste')
-` // multi-line string literal, using back-tick at beginning and end
-```
-
 
 # Advanced Usages
 

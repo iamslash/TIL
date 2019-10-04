@@ -33,6 +33,8 @@
 
 * Loops
 
+* Operators
+
 * Collections compared to c++ containers
 
 * Collections
@@ -46,3 +48,5 @@
 * Lambda
 
 * Exception
+
+* Structure of Project
