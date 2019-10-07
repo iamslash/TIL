@@ -1,4 +1,44 @@
-﻿# Materials
+﻿- [Materials](#materials)
+- [Git Overview](#git-overview)
+- [Git 도구](#git-%eb%8f%84%ea%b5%ac)
+  - [리비전 조회하기](#%eb%a6%ac%eb%b9%84%ec%a0%84-%ec%a1%b0%ed%9a%8c%ed%95%98%ea%b8%b0)
+  - [대화형 명령](#%eb%8c%80%ed%99%94%ed%98%95-%eb%aa%85%eb%a0%b9)
+  - [Stashing과 Cleaning](#stashing%ea%b3%bc-cleaning)
+  - [내 작업에 서명하기](#%eb%82%b4-%ec%9e%91%ec%97%85%ec%97%90-%ec%84%9c%eb%aa%85%ed%95%98%ea%b8%b0)
+  - [검색](#%ea%b2%80%ec%83%89)
+  - [히스토리 단장하기](#%ed%9e%88%ec%8a%a4%ed%86%a0%eb%a6%ac-%eb%8b%a8%ec%9e%a5%ed%95%98%ea%b8%b0)
+  - [**Reset 명확히 알고 가기**](#reset-%eb%aa%85%ed%99%95%ed%9e%88-%ec%95%8c%ea%b3%a0-%ea%b0%80%ea%b8%b0)
+  - [고급 Merge](#%ea%b3%a0%ea%b8%89-merge)
+  - [Rerere](#rerere)
+  - [Git으로 버그 찾기](#git%ec%9c%bc%eb%a1%9c-%eb%b2%84%ea%b7%b8-%ec%b0%be%ea%b8%b0)
+  - [서브모듈](#%ec%84%9c%eb%b8%8c%eb%aa%a8%eb%93%88)
+  - [Bundle](#bundle)
+  - [Replace](#replace)
+  - [Credential 저장소](#credential-%ec%a0%80%ec%9e%a5%ec%86%8c)
+- [Git맞춤](#git%eb%a7%9e%ec%b6%a4)
+  - [Git 설정하기](#git-%ec%84%a4%ec%a0%95%ed%95%98%ea%b8%b0)
+  - [Git Attributes](#git-attributes)
+  - [Git Hooks](#git-hooks)
+  - [정책 구현하기](#%ec%a0%95%ec%b1%85-%ea%b5%ac%ed%98%84%ed%95%98%ea%b8%b0)
+- [Git과 여타 버전 관리 시스템](#git%ea%b3%bc-%ec%97%ac%ed%83%80-%eb%b2%84%ec%a0%84-%ea%b4%80%eb%a6%ac-%ec%8b%9c%ec%8a%a4%ed%85%9c)
+  - [Git: 범용 Client](#git-%eb%b2%94%ec%9a%a9-client)
+  - [Git으로 옮기기](#git%ec%9c%bc%eb%a1%9c-%ec%98%ae%ea%b8%b0%ea%b8%b0)
+- [Git의 내부](#git%ec%9d%98-%eb%82%b4%eb%b6%80)
+  - [Plumbing 명령과 Porcelain 명령](#plumbing-%eb%aa%85%eb%a0%b9%ea%b3%bc-porcelain-%eb%aa%85%eb%a0%b9)
+  - [Git 개체](#git-%ea%b0%9c%ec%b2%b4)
+  - [Git Refs](#git-refs)
+  - [Packfile](#packfile)
+  - [Refspec](#refspec)
+  - [데이터 전송 프로토콜](#%eb%8d%b0%ec%9d%b4%ed%84%b0-%ec%a0%84%ec%86%a1-%ed%94%84%eb%a1%9c%ed%86%a0%ec%bd%9c)
+  - [운영 및 데이터 복구](#%ec%9a%b4%ec%98%81-%eb%b0%8f-%eb%8d%b0%ec%9d%b4%ed%84%b0-%eb%b3%b5%ea%b5%ac)
+  - [환경변수](#%ed%99%98%ea%b2%bd%eb%b3%80%ec%88%98)
+- [Git Tip](#git-tip)
+  - [use cat instead of pager](#use-cat-instead-of-pager)
+  - [git diff output](#git-diff-output)
+
+----
+
+# Materials
 
 * [progit](https://git-scm.com/book/ko/v2)
   * 킹왕짱 메뉴얼
@@ -2076,3 +2116,20 @@ $ git log --oneline --decorate --graph --all
 ## 데이터 전송 프로토콜
 ## 운영 및 데이터 복구
 ## 환경변수
+
+# Git Tip
+
+## use cat instead of pager
+
+pager 를 less 로 설정하면 `git diff` 의 출력을 페이지 단위로 확인이 가능하다. 그러나 `q` 를 선택하면 출력내용이 사라진다.
+pager 를 cat 로 설정하면 `git diff` 의 출력은 사라지지 않는다.
+
+```bash
+git config --global core.pager cat
+git config --global core.pager less
+```
+
+## git diff output
+
+* [diff output formats](https://www.slideshare.net/OhgyunAhn/diff-output-formats)
+
