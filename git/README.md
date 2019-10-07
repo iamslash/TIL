@@ -32,9 +32,11 @@
   - [데이터 전송 프로토콜](#%eb%8d%b0%ec%9d%b4%ed%84%b0-%ec%a0%84%ec%86%a1-%ed%94%84%eb%a1%9c%ed%86%a0%ec%bd%9c)
   - [운영 및 데이터 복구](#%ec%9a%b4%ec%98%81-%eb%b0%8f-%eb%8d%b0%ec%9d%b4%ed%84%b0-%eb%b3%b5%ea%b5%ac)
   - [환경변수](#%ed%99%98%ea%b2%bd%eb%b3%80%ec%88%98)
-- [Git Tip](#git-tip)
+- [Git Tips](#git-tips)
   - [use cat instead of pager](#use-cat-instead-of-pager)
   - [git diff output](#git-diff-output)
+  - [git diff](#git-diff)
+  - [git blame](#git-blame)
 
 ----
 
@@ -2117,7 +2119,7 @@ $ git log --oneline --decorate --graph --all
 ## 운영 및 데이터 복구
 ## 환경변수
 
-# Git Tip
+# Git Tips
 
 ## use cat instead of pager
 
@@ -2133,3 +2135,43 @@ git config --global core.pager less
 
 * [diff output formats](https://www.slideshare.net/OhgyunAhn/diff-output-formats)
 
+----
+
+diff 는 normal format, context format, unified format 과 같이 다양한 출력형식을 가지고 있다. `git diff` 의 출력형식은 unified format 이다.
+
+```
+--- 원파일 수정시각
++++ 새파일 수정시각
+@@ -원파일범위 +새파일범위 @@
+[변경 키워드] 파일의 라인
+```
+
+## git diff
+
+```bash
+# diff between working directory and index
+git diff
+
+# diff between index and repository
+git diff --cached
+
+# diff with local branches
+git diff <branch name> <branch name>
+
+# diff between local branch and remote branch
+git diff <branch name> <origin/branch name>
+
+# diff with commits
+git diff <commit id> <commit id>
+
+# ???
+git diff <a>..<b>
+```
+
+## git blame
+
+파일별 수정이력을 확인할 수 있다.
+
+```bash
+git blame a.py
+```
