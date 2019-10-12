@@ -54,9 +54,9 @@ git 은 `working directory, Index(staging area), local repository, remote reposi
 
 ![](img/reset-workflow.png)
 
-# Git 의 기초
+# Git 브랜치
 
-## Git 브랜치
+## merge vs rebase
 
 ![](img/basic-rebase-1.png)
 
@@ -82,12 +82,50 @@ git rebase experiment
 
 rebase 는 history 가 선형이기 때문에 merge 에 비해 더욱 깔끔하다.
 
-![]()
+master, server, client branch 가 다음과 같이 존재한다.
 
+![](img/interesting-rebase-1.png)
 
+ master 에 client 의 C8, C9 만 rebase 해보자. 이때 server branch 와 공통 커밋 C3 는 제외해야 한다.
 
 ```bash
+$ git rebase --onto master server client
 ```
+
+![](img/interesting-rebase-2.png)
+
+이제 master 에서 client 를 fast-forward 해 보자.
+
+```bash
+$ git checkout master
+$ git merge client
+```
+
+![](img/interesting-rebase-3.png)
+
+master 에서 server 를 rebase 해 보자.
+
+```bash
+$ git rebase master server
+```
+
+![](img/interesting-rebase-4.png)
+
+master 를 fast-forward 하자.
+
+```bash
+$ git checkout master
+$ git merge server
+```
+
+master 에 client, server 가 모두 합쳐졌다. client, server branch 는 더이상 필요 없으니 삭제하자.
+
+```bash
+$ git branch -d client
+$ git branch -d server
+```
+
+![](img/interesting-rebase-5.png)
 
 
 # Git 도구
@@ -544,7 +582,6 @@ $ git clean -x -i
 #     1: clean                2: filter by pattern    3: select by numbers    4: ask each             5: quit
 #     6: help
 What now>
-
 ```
 
 ## 내 작업에 서명하기
@@ -1114,16 +1151,18 @@ $ git status -sb
 # ## master
 # UU hello.rb
 
+# merge 하기 전으로 되돌린다.
 $ git merge --abort
 
 $ git status -sb
 # ## master
 
-# merge 를 처음부터 다시하고 싶다
+# merge 를 처음부터 다시하고 싶다. 저장하지 않는 것은 사라진다.
 $ git reset --hard HEAD 
 
 ## 공백 무시하기
 # 공백이 충돌의 전부라면 merge 를 취소하고 -Xignore-all-space 혹은 # -Xignore-space-change 를 추가하여 공백을 부시하고 merge 하자.
+# -Xignore-all-space 는 모든 공백을 무시한다.
 # -Xignore-space-change 는 여러공백을 하나로 취급한다.
 # 스페이스를 탭으로 혹은 탭을 스페이스로 바꾸었을 때 유용하다
 $ git merge -Xignore-space-change whitespace
@@ -1141,7 +1180,7 @@ $ git show :1:hello.rb > hello.common.rb
 $ git show :2:hello.rb > hello.ours.rb
 $ git show :3:hello.rb > hello.theirs.rb
 # ls-files -u 를 이용해서 Git blob 의 SHA-1 을 얻어오자.
-# :1:hello.rg 는 Blob SHA-1 의 줄임말이다.
+# :1:hello.rb 는 Blob SHA-1 의 줄임말이다.
 $ git ls-files -u
 # 100755 ac51efdc3df4f4fd328d1a02ad05331d8e2c9111 1	hello.rb
 # 100755 36c06c8752c78d2aff89571132f3bf7841a7b5c3 2	hello.rb
@@ -1188,7 +1227,7 @@ $ git diff --ours
 #
 #  hello()
 
-# merge 할 파일을 가져온 쪽과 비교
+# merge 할 파일을 가져온 쪽과 비교. -b 를 이용하여 공백을 빼고 비교한다.
 $ git diff --theirs -b
 # * Unmerged path hello.rb
 # diff --git a/hello.rb b/hello.rb
@@ -1260,9 +1299,7 @@ $ git merge mundo
 #
 # hello()
 
-# --conflict=diff3 를 추가하여 base 버전의 내용도 살펴보자.
-# --conflict 는 파일을 다시 checkout 해서 충돌 표시된 부분을 교체한다.
-# 충돌 부분을 원래 코드로 되돌리고 다시 수정할 때 필요하다.
+# --conflict 옵션에는 diff3 나 merge 를 넘길 수 있고 merge 가 기본 값이다. diff3 를 사용하면 “ours” 나 “theirs” 말고도 “base” 버전의 내용까지 제공한다.
 $ git checkout --conflict=diff3 hello.rb
 # #! /usr/bin/env ruby
 #
@@ -1292,7 +1329,7 @@ $ git log --oneline --left-right HEAD...MERGE_HEAD
 # > 7cff591 add testing script
 # > c3ffff1 changed text to hello mundo
 
-# 충돌이 발생한 파일이 속한 커밋만 얻어오자.
+# --merge 를 이용하여 충돌이 발생한 파일이 속한 커밋만 얻어오자.
 $ git log --oneline --left-right --merge
 # < 694971d update phrase to hola world
 # > c3ffff1 changed text to hello mundo
@@ -1368,22 +1405,53 @@ $ git log --cc -p -1
 #   end
 #
 #   hello()
+```
 
+merge 를 되돌리는 방법은 refs 수정, 커밋 되돌리기 등이 있다. 다음과 같이 master 에서 topic 을 merge 했다.
 
-### Merge 되돌리기
-# https://git-scm.com/book/ko/v2/Git-%EB%8F%84%EA%B5%AC-%EA%B3%A0%EA%B8%89-Merge 의 그림을 참고해서 이해하는 것이 좋다.
+![](img/undomerge-start.png)
 
-## Refs 수정
+`reset --hard` 을 이용하여 C6 로 이동하자. `reset --hard` 는 아래의 세 단계로 수행한다.
 
-$ git reset --hard HEAD~
+* HEAD 의 브랜치를 지정한 위치로 옮긴다. 이 경우엔 master 브랜치를 Merge 커밋(C6) 이전으로 되돌린다.
+* Index 를 HEAD 의 내용으로 바꾼다.
+* 워킹 디렉토리를 Index 의 내용으로 바꾼다.
 
-## 커밋 되돌리기
+```bash
+git reset --hard HEAD~
+```
 
-# 모든 변경사항을 취소하는 새로운 커밋을 생성
-# -m 1 옵션은 부모가 보호되어야 하는 “mainline” 이라는 것을 나타낸다.
+![](img/undomerge-reset.png)
+
+다음은 모든 변경사항을 취소하는 새로운 커밋을 만드는 방법이다. -m 1 옵션은 부모가 보호되어야 하는 mainline 을 나타낸다. HEAD 로 Merge를 했을 때(git merge topic1) Merge 커밋은 두 개의 부모 커밋을 가진다. 첫 번째 부모 커밋은 HEAD (C6)이고 두 번째 부모 커밋은 Merge 대상 브랜치(C4)이다. 두 번째 부모 커밋(C4)에서 받아온 모든 변경사항을 되돌리고 첫 번째 부모(C6)로부터 받아온 변경사항은 남겨두고자 하는 상황이다.
+
+```bash
 $ git revert -m 1 HEAD
-# [master b1d8379] Revert "Merge branch 'topic'"
+[master b1d8379] Revert "Merge branch 'topic'"
+```
 
+![](img/undomerge-revert.png)
+
+`^M` 은 C6 와 내용이 같다. topic 을 master 에 다시 merge 하면 소용없다.
+
+```bash
+$ git merge topic
+Already up-to-date.
+```
+
+![](img/undomerge-revert2.png)
+
+되돌렸던 merge 커밋을 다시 되돌린다. 이후에 추가한 내용을 새 merge 커밋으로 만드는 것이 좋다.
+
+```bash
+$ git revert ^M
+[master 09f0126] Revert "Revert "Merge branch 'topic'""
+$ git merge topic
+```
+
+![](img/undomerge-revert3.png)
+
+```bash
 ### 다른 방식의 Merge
 
 ## Our/Their 선택하기
