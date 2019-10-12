@@ -1,7 +1,8 @@
 ﻿- [Materials](#materials)
 - [Git Overview](#git-overview)
-- [Git 도구](#git-%eb%8f%84%ea%b5%ac)
+- [Git 의 기초](#git-%ec%9d%98-%ea%b8%b0%ec%b4%88)
   - [Git 브랜치](#git-%eb%b8%8c%eb%9e%9c%ec%b9%98)
+- [Git 도구](#git-%eb%8f%84%ea%b5%ac)
   - [분산환경에서의 Git](#%eb%b6%84%ec%82%b0%ed%99%98%ea%b2%bd%ec%97%90%ec%84%9c%ec%9d%98-git)
   - [리비전 조회하기](#%eb%a6%ac%eb%b9%84%ec%a0%84-%ec%a1%b0%ed%9a%8c%ed%95%98%ea%b8%b0)
   - [대화형 명령](#%eb%8c%80%ed%99%94%ed%98%95-%eb%aa%85%eb%a0%b9)
@@ -80,6 +81,13 @@ git rebase experiment
 ```
 
 rebase 는 history 가 선형이기 때문에 merge 에 비해 더욱 깔끔하다.
+
+![]()
+
+
+
+```bash
+```
 
 
 # Git 도구
