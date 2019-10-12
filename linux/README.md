@@ -41,6 +41,7 @@ unix 계열 os 는 모두 해당된다. linux 와 함께 [bash](/bash/),
 * [The Art of Command Line @ github](https://github.com/jlevy/the-art-of-command-line/blob/master/README-ko.md)
   * 킹왕짱 커맨드 라인
 * [Most Important Penetration Testing commands Cheat Sheet for Linux Machine](https://techincidents.com/important-penetration-testing-cheat-sheet/)
+  * 유용한 시스템 침입 테스트 커맨드들
 * [command line reference](https://ss64.com/)
   * bash, macOS, cmd, powershell 등등의 command line reference
 
@@ -59,34 +60,34 @@ unix 계열 os 는 모두 해당된다. linux 와 함께 [bash](/bash/),
 
  > ls -l
 
--rw-r-Sr--  1 iamslash  staff     0  8 10 21:16 setgidfile.txt
 -rwSr--r--  1 iamslash  staff     0  8 10 21:16 setuidfile.txt
+-rw-r-Sr--  1 iamslash  staff     0  8 10 21:16 setgidfile.txt
 -rw-r--r-T  1 iamslash  staff     0  8 10 21:16 stickyfile.txt
 ```
 
-`chmod`의 첫번째 인자가 mode이고 8진법으로 4자리이다.
+`chmod` 의 첫번째 인자가 mode 이고 8 진법으로 4 자리이다.
 
 ```bash
 chmod 4000 a.txt
 ```
 
-mode는 8진법으로 표기했을때 왼쪽 부터 특수권한, 유저권한, 그룹권한,
+mode 는 8 진법으로 표기했을때 왼쪽 부터 특수권한, 유저권한, 그룹권한,
 기타권한과 같이 구성된다.  각 권한 별로 3비트가 할당된다. 특수권한의
-3비트는 왼쪽부터 setuid, setgid, stckybit을 의미하고 유저권한,
+3 비트는 왼쪽부터 setuid, setgid, stckybit 을 의미하고 유저권한,
 그룹권한, 기타권한의 3비트는 왼쪽부터 읽기, 쓰기, 실행 권한을
 의미한다.
 
-특수권한을 확인 하는 요령은 다음과 같다. `ls -l` 했을때 setuid가
-on되어 있으면 유저권한의 3비트중 가장 오른쪽 비트가 s 혹은 S로
-보여진다.  setgid가 on되어 있으면 그룹권한의 3비트중 가장 오른쪽
-비트가 s 혹은 S로 보여진다.  stickybit가 on되어 있으면 기타권한의
-3비트중 가장 오른쪽 비트가 t 혹은 T로 보여진다.  표시되는 권한의
+특수권한을 확인 하는 요령은 다음과 같다. `ls -l` 했을때 setuid 가
+on 되어 있으면 유저권한의 3 비트중 가장 오른쪽 비트가 s 혹은 S 로
+보여진다. setgid 가 on 되어 있으면 그룹권한의 3 비트중 가장 오른쪽
+비트가 s 혹은 S 로 보여진다.  stickybit 가 on 되어 있으면 기타권한의
+3 비트중 가장 오른쪽 비트가 t 혹은 T 로 보여진다.  표시되는 권한의
 실행권한이 없다면 소문자로 보여지고 실행권한이 있다면 대문자로
 보여진다.
 
 ### setuid
 
-setuid가 설정된 파일을 실행할때 다음과 같은 현상이 발생한다.  실행을
+setuid 가 설정된 파일을 실행할때 다음과 같은 현상이 발생한다.  실행을
 위해 태어난 프로세스의 EUID(유효 사용자 아이디)가 RUID(실행 사용자
 아이디)에서 파일의 소유자 아이디로 변경된다.
 
@@ -94,7 +95,7 @@ setuid가 설정된 파일을 실행할때 다음과 같은 현상이 발생한�
 
 ### setgid
 
-setgid가 설정된 파일을 실행할때 다음과 같은 현상이 발생한다.  실행을
+setgid 가 설정된 파일을 실행할때 다음과 같은 현상이 발생한다.  실행을
 위해 태어난 프로세스의 EGID(유효 그룹 아이디)가 RGID(실행 그룹
 아이디)에서 파일의 소유 그룹 아이디로 변경된다.
 
@@ -102,9 +103,9 @@ setgid가 설정된 파일을 실행할때 다음과 같은 현상이 발생한�
 
 ### sticky bit
 
-linux는 파일의 sticky bit를 무시한다. 디렉토리에 sticky bit가 설정되어
+linux 는 파일의 sticky bit 를 무시한다. 디렉토리에 sticky bit 가 설정되어
 있다면 누구나 해당 디렉토리에서 파일을 생성할 수 있지만 삭제는
-디렉토리 소유자, 파일 소유자, 슈퍼 유저만 할 수 있다. 그래서 sticky bit를
+디렉토리 소유자, 파일 소유자, 슈퍼 유저만 할 수 있다. 그래서 sticky bit 를
 공유모드라고 한다.
 
 # Special Directories
