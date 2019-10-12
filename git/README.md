@@ -1,49 +1,4 @@
-﻿- [Materials](#materials)
-- [Git Overview](#git-overview)
-- [Git 의 기초](#git-%ec%9d%98-%ea%b8%b0%ec%b4%88)
-  - [Git 브랜치](#git-%eb%b8%8c%eb%9e%9c%ec%b9%98)
-- [Git 도구](#git-%eb%8f%84%ea%b5%ac)
-  - [분산환경에서의 Git](#%eb%b6%84%ec%82%b0%ed%99%98%ea%b2%bd%ec%97%90%ec%84%9c%ec%9d%98-git)
-  - [리비전 조회하기](#%eb%a6%ac%eb%b9%84%ec%a0%84-%ec%a1%b0%ed%9a%8c%ed%95%98%ea%b8%b0)
-  - [대화형 명령](#%eb%8c%80%ed%99%94%ed%98%95-%eb%aa%85%eb%a0%b9)
-  - [Stashing과 Cleaning](#stashing%ea%b3%bc-cleaning)
-  - [내 작업에 서명하기](#%eb%82%b4-%ec%9e%91%ec%97%85%ec%97%90-%ec%84%9c%eb%aa%85%ed%95%98%ea%b8%b0)
-  - [검색](#%ea%b2%80%ec%83%89)
-  - [히스토리 단장하기](#%ed%9e%88%ec%8a%a4%ed%86%a0%eb%a6%ac-%eb%8b%a8%ec%9e%a5%ed%95%98%ea%b8%b0)
-  - [**Reset 명확히 알고 가기**](#reset-%eb%aa%85%ed%99%95%ed%9e%88-%ec%95%8c%ea%b3%a0-%ea%b0%80%ea%b8%b0)
-  - [고급 Merge](#%ea%b3%a0%ea%b8%89-merge)
-  - [Rerere](#rerere)
-  - [Git으로 버그 찾기](#git%ec%9c%bc%eb%a1%9c-%eb%b2%84%ea%b7%b8-%ec%b0%be%ea%b8%b0)
-  - [서브모듈](#%ec%84%9c%eb%b8%8c%eb%aa%a8%eb%93%88)
-  - [Bundle](#bundle)
-  - [Replace](#replace)
-  - [Credential 저장소](#credential-%ec%a0%80%ec%9e%a5%ec%86%8c)
-- [Git맞춤](#git%eb%a7%9e%ec%b6%a4)
-  - [Git 설정하기](#git-%ec%84%a4%ec%a0%95%ed%95%98%ea%b8%b0)
-  - [Git Attributes](#git-attributes)
-  - [Git Hooks](#git-hooks)
-  - [정책 구현하기](#%ec%a0%95%ec%b1%85-%ea%b5%ac%ed%98%84%ed%95%98%ea%b8%b0)
-- [Git과 여타 버전 관리 시스템](#git%ea%b3%bc-%ec%97%ac%ed%83%80-%eb%b2%84%ec%a0%84-%ea%b4%80%eb%a6%ac-%ec%8b%9c%ec%8a%a4%ed%85%9c)
-  - [Git: 범용 Client](#git-%eb%b2%94%ec%9a%a9-client)
-  - [Git으로 옮기기](#git%ec%9c%bc%eb%a1%9c-%ec%98%ae%ea%b8%b0%ea%b8%b0)
-- [Git의 내부](#git%ec%9d%98-%eb%82%b4%eb%b6%80)
-  - [Plumbing 명령과 Porcelain 명령](#plumbing-%eb%aa%85%eb%a0%b9%ea%b3%bc-porcelain-%eb%aa%85%eb%a0%b9)
-  - [Git 개체](#git-%ea%b0%9c%ec%b2%b4)
-  - [Git Refs](#git-refs)
-  - [Packfile](#packfile)
-  - [Refspec](#refspec)
-  - [데이터 전송 프로토콜](#%eb%8d%b0%ec%9d%b4%ed%84%b0-%ec%a0%84%ec%86%a1-%ed%94%84%eb%a1%9c%ed%86%a0%ec%bd%9c)
-  - [운영 및 데이터 복구](#%ec%9a%b4%ec%98%81-%eb%b0%8f-%eb%8d%b0%ec%9d%b4%ed%84%b0-%eb%b3%b5%ea%b5%ac)
-  - [환경변수](#%ed%99%98%ea%b2%bd%eb%b3%80%ec%88%98)
-- [Git Tips](#git-tips)
-  - [use cat instead of pager](#use-cat-instead-of-pager)
-  - [git diff output](#git-diff-output)
-  - [git diff](#git-diff)
-  - [git blame](#git-blame)
-
-----
-
-# Materials
+﻿# Materials
 
 * [progit](https://git-scm.com/book/ko/v2)
   * 킹왕짱 메뉴얼
@@ -54,9 +9,166 @@ git 은 `working directory, Index(staging area), local repository, remote reposi
 
 ![](img/reset-workflow.png)
 
-# Git 의 기초
+# Git 기초
 
-## Git 브랜치
+## Git 저장소 만들기
+
+다음과 같이 foo 디렉토리를 git repository 로 만들 수 있다.
+
+```bash
+$ cd foo
+$ git init
+```
+
+## 수정하고 저장소에 저장하기
+
+`git status -s` 혹은 `git status --short` 를 이용하여 파일의 상태를 간단히 확인할 수 있다.
+
+```bash
+$ git status -s
+ M README
+MM Rakefile
+A  lib/git.rb
+M  lib/simplegit.rb
+?? LICENSE.txt
+```
+
+다음과 같은 `.gitignore` 를 만들어서 파일을 무시할 수 있다.
+
+```
+# 확장자가 .a인 파일 무시
+*.a
+
+# 윗 라인에서 확장자가 .a인 파일은 무시하게 했지만 lib.a는 무시하지 않음
+!lib.a
+
+# 현재 디렉토리에 있는 TODO파일은 무시하고 subdir/TODO처럼 하위디렉토리에 있는 파일은 무시하지 않음
+/TODO
+
+# build/ 디렉토리에 있는 모든 파일은 무시
+build/
+
+# doc/notes.txt 파일은 무시하고 doc/server/arch.txt 파일은 무시하지 않음
+doc/*.txt
+
+# doc 디렉토리 아래의 모든 .pdf 파일을 무시
+doc/**/*.pdf
+```
+
+staged 와 unstaged 상태의 변경내용을 다음과 같이 볼 수 있다.
+
+```bash
+$ git status
+# working directory 와 local repo 의 파일을 비교한다.
+$ git diff
+# staging area 와 local repo 의 파일을 비교한다.
+$ git diff --staged
+$ git diff --cached
+```
+
+## 커밋 히스토리 조회하기
+
+```bash
+# -p, --patch 는 각 커밋의 diff 결과를 출력한다. -2 는 두개만 보여준다.
+$ git log -p -2
+# --stat 은 각 커밋의 통계를 보여준다.
+$ git log --stat -2
+# 한줄로 보여준다.
+$ git log --pretty=oneline -2
+$ git log --oneline -2
+# formatted print
+$ git log --pretty=format:"%h - %an, %ar : %s"
+```
+
+다음은 `git log` 의 주요 옵션이다.
+
+| 옵션 | 설명 |
+|------|------|
+| -p | 각 커밋에 적용된 패치를 보여준다. |
+| --stat | 각 커밋에서 수정된 파일의 통계정보를 보여준다. |
+| --shortstat | --stat 명령의 결과 중에서 수정한 파일, 추가된 라인, 삭제된 라인만 보여준다. |
+| --name-only | 커밋 정보중에서 수정된 파일의 목록만 보여준다. |
+| --name-status | 수정된 파일의 목록을 보여줄 뿐만 아니라 파일을 추가한 것인지, 수정한 것인지, 삭제한 것인지도 보여준다. |
+| --abbrev-commit | 40자 짜리 SHA-1 체크섬을 전부 보여주는 것이 아니라 처음 몇 자만 보여준다. |
+| --relative-date | 정확한 시간을 보여주는 것이 아니라 “2 weeks ago” 처럼 상대적인 형식으로 보여준다. |
+| --graph | 브랜치와 머지 히스토리 정보까지 아스키 그래프로 보여준다. |
+| --pretty | 지정한 형식으로 보여준다. 이 옵션에는 oneline, short, full, fuller, format이 있다. format은 원하는 형식으로 출력하고자 할 때 사용한다. |
+| --oneline | --pretty=oneline --abbrev-commit 두 옵션을 함께 사용한 것과 같다. |
+
+## 되돌리기
+
+마지막 커밋에 파일 하나를 빼먹었다. 다음과 같이 마지막 커밋을 수정할 수 있다.
+
+```bash
+$ git commit -m 'initial commit'
+$ git add forgotten_file
+$ git commit --amend
+```
+
+다음과 같이 `CONTRIBUTING.md` 를 staged area 에 올려놓는다.
+
+```bash
+$ git add *
+$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+    renamed:    README.md -> README
+    modified:   CONTRIBUTING.md
+```
+
+다시 `CONTRIBUTING.md` 를 unstaged 하자.
+
+```bash
+$ git reset HEAD CONTRIBUTING.md
+Unstaged changes after reset:
+M	CONTRIBUTING.md
+$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+    renamed:    README.md -> README
+
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+    modified:   CONTRIBUTING.md
+```
+
+다음과 같이 `CONTRIBUTING.md` 가 수정되었다.
+
+```bash
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+  (use "git checkout -- <file>..." to discard changes in working directory)
+
+    modified:   CONTRIBUTING.md
+```
+
+다시 `CONTRIBUTING.md` 를 수정되기 전으로 돌려놓자.
+
+```bash
+$ git checkout -- CONTRIBUTING.md
+$ git status
+On branch master
+Changes to be committed:
+  (use "git reset HEAD <file>..." to unstage)
+
+    renamed:    README.md -> README
+```
+
+## 리모트 저장소
+
+## 태그
+
+## Git Alias
+
+# Git 브랜치
+
+## merge vs rebase
 
 ![](img/basic-rebase-1.png)
 
@@ -82,13 +194,50 @@ git rebase experiment
 
 rebase 는 history 가 선형이기 때문에 merge 에 비해 더욱 깔끔하다.
 
-![]()
+master, server, client branch 가 다음과 같이 존재한다.
 
+![](img/interesting-rebase-1.png)
 
+master 에 client 의 C8, C9 만 rebase 해보자. 이때 server branch 와 공통 커밋 C3 는 제외해야 한다.
 
 ```bash
+$ git rebase --onto master server client
 ```
 
+![](img/interesting-rebase-2.png)
+
+이제 master 에서 client 를 fast-forward 해 보자.
+
+```bash
+$ git checkout master
+$ git merge client
+```
+
+![](img/interesting-rebase-3.png)
+
+master 에서 server 를 rebase 해 보자.
+
+```bash
+$ git rebase master server
+```
+
+![](img/interesting-rebase-4.png)
+
+master 를 fast-forward 하자.
+
+```bash
+$ git checkout master
+$ git merge server
+```
+
+master 에 client, server 가 모두 합쳐졌다. client, server branch 는 더이상 필요 없으니 삭제하자.
+
+```bash
+$ git branch -d client
+$ git branch -d server
+```
+
+![](img/interesting-rebase-5.png)
 
 # Git 도구
 
@@ -97,6 +246,7 @@ rebase 는 history 가 선형이기 때문에 merge 에 비해 더욱 깔끔하�
 ## 리비전 조회하기
 
 ```bash
+
 ## short hash
 $ git show 1c002dd4b536e7479fe34593e72e6c6c1819e53b
 $ git show 1c002dd4b536e7479f
@@ -375,7 +525,7 @@ What now> 1
 #   3:        +1/-1        +4/-0 lib/simplegit.rb
 ```
 
-## Stashing과 Cleaning
+## Stashing 과 Cleaning
 
 ```bash
 # stashing 은 하던 것을 commit 하지 않고 잠시 보관해두는 것이다.
@@ -544,7 +694,6 @@ $ git clean -x -i
 #     1: clean                2: filter by pattern    3: select by numbers    4: ask each             5: quit
 #     6: help
 What now>
-
 ```
 
 ## 내 작업에 서명하기
@@ -1114,16 +1263,18 @@ $ git status -sb
 # ## master
 # UU hello.rb
 
+# merge 하기 전으로 되돌린다.
 $ git merge --abort
 
 $ git status -sb
 # ## master
 
-# merge 를 처음부터 다시하고 싶다
+# merge 를 처음부터 다시하고 싶다. 저장하지 않는 것은 사라진다.
 $ git reset --hard HEAD 
 
 ## 공백 무시하기
 # 공백이 충돌의 전부라면 merge 를 취소하고 -Xignore-all-space 혹은 # -Xignore-space-change 를 추가하여 공백을 부시하고 merge 하자.
+# -Xignore-all-space 는 모든 공백을 무시한다.
 # -Xignore-space-change 는 여러공백을 하나로 취급한다.
 # 스페이스를 탭으로 혹은 탭을 스페이스로 바꾸었을 때 유용하다
 $ git merge -Xignore-space-change whitespace
@@ -1141,7 +1292,7 @@ $ git show :1:hello.rb > hello.common.rb
 $ git show :2:hello.rb > hello.ours.rb
 $ git show :3:hello.rb > hello.theirs.rb
 # ls-files -u 를 이용해서 Git blob 의 SHA-1 을 얻어오자.
-# :1:hello.rg 는 Blob SHA-1 의 줄임말이다.
+# :1:hello.rb 는 Blob SHA-1 의 줄임말이다.
 $ git ls-files -u
 # 100755 ac51efdc3df4f4fd328d1a02ad05331d8e2c9111 1	hello.rb
 # 100755 36c06c8752c78d2aff89571132f3bf7841a7b5c3 2	hello.rb
@@ -1188,7 +1339,7 @@ $ git diff --ours
 #
 #  hello()
 
-# merge 할 파일을 가져온 쪽과 비교
+# merge 할 파일을 가져온 쪽과 비교. -b 를 이용하여 공백을 빼고 비교한다.
 $ git diff --theirs -b
 # * Unmerged path hello.rb
 # diff --git a/hello.rb b/hello.rb
@@ -1260,9 +1411,7 @@ $ git merge mundo
 #
 # hello()
 
-# --conflict=diff3 를 추가하여 base 버전의 내용도 살펴보자.
-# --conflict 는 파일을 다시 checkout 해서 충돌 표시된 부분을 교체한다.
-# 충돌 부분을 원래 코드로 되돌리고 다시 수정할 때 필요하다.
+# --conflict 옵션에는 diff3 나 merge 를 넘길 수 있고 merge 가 기본 값이다. diff3 를 사용하면 “ours” 나 “theirs” 말고도 “base” 버전의 내용까지 제공한다.
 $ git checkout --conflict=diff3 hello.rb
 # #! /usr/bin/env ruby
 #
@@ -1292,7 +1441,7 @@ $ git log --oneline --left-right HEAD...MERGE_HEAD
 # > 7cff591 add testing script
 # > c3ffff1 changed text to hello mundo
 
-# 충돌이 발생한 파일이 속한 커밋만 얻어오자.
+# --merge 를 이용하여 충돌이 발생한 파일이 속한 커밋만 얻어오자.
 $ git log --oneline --left-right --merge
 # < 694971d update phrase to hola world
 # > c3ffff1 changed text to hello mundo
@@ -1368,22 +1517,53 @@ $ git log --cc -p -1
 #   end
 #
 #   hello()
+```
 
+merge 를 되돌리는 방법은 refs 수정, 커밋 되돌리기 등이 있다. 다음과 같이 master 에서 topic 을 merge 했다.
 
-### Merge 되돌리기
-# https://git-scm.com/book/ko/v2/Git-%EB%8F%84%EA%B5%AC-%EA%B3%A0%EA%B8%89-Merge 의 그림을 참고해서 이해하는 것이 좋다.
+![](img/undomerge-start.png)
 
-## Refs 수정
+`reset --hard` 을 이용하여 C6 로 이동하자. `reset --hard` 는 아래의 세 단계로 수행한다.
 
-$ git reset --hard HEAD~
+* HEAD 의 브랜치를 지정한 위치로 옮긴다. 이 경우엔 master 브랜치를 Merge 커밋(C6) 이전으로 되돌린다.
+* Index 를 HEAD 의 내용으로 바꾼다.
+* 워킹 디렉토리를 Index 의 내용으로 바꾼다.
 
-## 커밋 되돌리기
+```bash
+git reset --hard HEAD~
+```
 
-# 모든 변경사항을 취소하는 새로운 커밋을 생성
-# -m 1 옵션은 부모가 보호되어야 하는 “mainline” 이라는 것을 나타낸다.
+![](img/undomerge-reset.png)
+
+다음은 모든 변경사항을 취소하는 새로운 커밋을 만드는 방법이다. -m 1 옵션은 부모가 보호되어야 하는 mainline 을 나타낸다. HEAD 로 Merge를 했을 때(git merge topic1) Merge 커밋은 두 개의 부모 커밋을 가진다. 첫 번째 부모 커밋은 HEAD (C6)이고 두 번째 부모 커밋은 Merge 대상 브랜치(C4)이다. 두 번째 부모 커밋(C4)에서 받아온 모든 변경사항을 되돌리고 첫 번째 부모(C6)로부터 받아온 변경사항은 남겨두고자 하는 상황이다.
+
+```bash
 $ git revert -m 1 HEAD
-# [master b1d8379] Revert "Merge branch 'topic'"
+[master b1d8379] Revert "Merge branch 'topic'"
+```
 
+![](img/undomerge-revert.png)
+
+`^M` 은 C6 와 내용이 같다. topic 을 master 에 다시 merge 하면 소용없다.
+
+```bash
+$ git merge topic
+Already up-to-date.
+```
+
+![](img/undomerge-revert2.png)
+
+되돌렸던 merge 커밋을 다시 되돌린다. 이후에 추가한 내용을 새 merge 커밋으로 만드는 것이 좋다.
+
+```bash
+$ git revert ^M
+[master 09f0126] Revert "Revert "Merge branch 'topic'""
+$ git merge topic
+```
+
+![](img/undomerge-revert3.png)
+
+```bash
 ### 다른 방식의 Merge
 
 ## Our/Their 선택하기

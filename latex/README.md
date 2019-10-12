@@ -28,6 +28,12 @@
 
 `pgf` 와 `tickz` 는 매크로 패키지이다. `latex` 으로 이미지를 저작하기 위해서 주로 `pgf` 를 backend 로 `tickz` 를 frontend 로 사용한다.
 
+# Install
+
+## Install with vscode on windows 10
+
+* [Visual Studio Code에서 LaTeX 쓰기](https://hycszero.tistory.com/75)
+
 # Packages
 
 * [Tikz](/tikz/README.md)
