@@ -24,7 +24,7 @@
 
 # Overview
 
-`tex` 는 donul knuth 가 만든 프로그램이다. 미려한 문서를 제작할 수 있다. `tex` 로 제작된 소스는 `dvi` 파일로 컴파일될 수 있고 이것은 `ps` 혹은 `pdf` 파일로 변환될 수 있다. 하나의 소스로 다양한 형식의 문서 파일을 만들어 낼 수 있다. `latex` 는 leslie lamport 가 만들었다. `tex` 를 쉽게 사용하기 위한 매크로이다.
+`tex` 는 donul knuth 가 만든 프로그램이다. 미려한 문서를 제작할 수 있다. `tex` 로 제작된 소스는 `dvi` 파일로 컴파일될 수 있고 이것은 `ps` 혹은 `pdf` 파일로 변환될 수 있다. 하나의 소스로 다양한 형식의 문서 파일을 만들어 낼 수 있다. `latex` 는 leslie lamport 가 만들었다. `tex` 를 쉽게 사용하기 위한 매크로들의 집합이다.
 
 `pgf` 와 `tickz` 는 매크로 패키지이다. `latex` 으로 이미지를 저작하기 위해서 주로 `pgf` 를 backend 로 `tickz` 를 frontend 로 사용한다.
 
