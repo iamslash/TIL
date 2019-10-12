@@ -53,7 +53,7 @@ git 은 `working directory, Index(staging area), local repository, remote reposi
 
 ![](img/reset-workflow.png)
 
-# Git 도구
+# Git 의 기초
 
 ## Git 브랜치
 
@@ -80,6 +80,9 @@ git rebase experiment
 ```
 
 rebase 는 history 가 선형이기 때문에 merge 에 비해 더욱 깔끔하다.
+
+
+# Git 도구
 
 ## 분산환경에서의 Git
 
