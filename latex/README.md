@@ -34,6 +34,17 @@
 
 * [Visual Studio Code에서 LaTeX 쓰기](https://hycszero.tistory.com/75)
 
+## Install with vscode on macOS
+
+* [MacTeX 설치](http://wiki.ktug.org/wiki/wiki.php/MacTeX%20%EC%84%A4%EC%B9%98)
+* [설치하기MacOSX/Mac TeX](http://wiki.ktug.org/wiki/wiki.php/%EC%84%A4%EC%B9%98%ED%95%98%EA%B8%B0MacOSX/MacTeX)
+
+----
+
+```bash
+brew install cask basictex
+```
+
 # Packages
 
 * [Tikz](/tikz/README.md)
