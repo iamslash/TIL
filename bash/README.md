@@ -457,9 +457,9 @@ substitution, word splitting, filename expansion, quote removal
 {string1, string2,..., stringN}
 ```
 
-`,`가 사용되지 않은 단일 항목은 확장되지 않는다. `,`전 후에 공백을
-사용할 수는 없다. 문자열에 공백이 포함되는 경우 quote해야
-expansion할 수 있다.
+`,` 가 사용되지 않은 단일 항목은 확장되지 않는다. `,` 전 후에 공백을
+사용할 수는 없다. 문자열에 공백이 포함되는 경우 quote 해야
+expansion 할 수 있다.
 
 ```bash
 # ',' 가 사용되지 않은 단일 항목은 확장되지 않는다.
@@ -475,7 +475,7 @@ $ echo X{apple,"ban ana",orange,melon}Y
 XappleY Xban anaY XorangeY XmelonY
 ```
 
-preamble과 postscript의 사용
+preamble 과 postscript 의 사용
 
 ```bash
 $ echo X{apple,banana,orange,melon}         # 여기서 X 는 preamble
@@ -512,7 +512,7 @@ globbing과 사용
 mv *.{png,gif,jpg} ~/tmp
 ```
 
-null값과 사용
+null 값과 사용
 
 ```bash
 $ echo aa{,}11
@@ -612,7 +612,7 @@ printf "%s\n" img{00{1..9},0{10..99},{100..999}}.png
 $ for i in 0{1..9} 10; do echo $i; done
 ```
 
-preamble 혹은 postscript의 사용
+preamble 혹은 postscript 의 사용
 
 ```bash
 $ echo 1.{0..9}
@@ -687,24 +687,20 @@ $ echo `{a..c}`
 
 현재 디렉토리로 확장된다.
 
-```
+```bash
 $ echo ~
 /Users/iamslash
-
 $ echo ~iamslash # iamslash 유저 디렉토리를 출력하라.
 /Users/iamslash
-
-$ echo ~+ # $PWD와 같다.
-
-$ echo ~- # $OLDPWD와 같다.
+$ echo ~+ # $PWD 와 같다.
+$ echo ~- # $OLDPWD 와 같다.
 ```
 
 ## parameter and variable expansion
 
-
 ### basic usage
 
-`{}`를 사용한다.
+`{}` 를 사용한다.
 
 ```bash
 $ AA=cde
@@ -1197,8 +1193,8 @@ $( <COMMANDS> )
 `<COMMANDS>`
 ```
 
-command substitution은 subshell에서 실행된다. 실행결과에 해당하는 stdout
-값이 pipe를 통해 전달된다. 일종의 IPC이다.
+command substitution 은 subshell에서 실행된다. 실행결과에 해당하는 stdout
+ 값이 pipe 를 통해 전달된다. 일종의 IPC 이다.
 
 ```bash
 $ AA=$( pgrep -d, -x ibus )
@@ -1214,7 +1210,7 @@ $ cat /proc/`pgrep -x awk`/maps
 $ cd /lib/modules/`uname -r`
 ```
 
-backtick은 escape sequence가 다르게 처리된다.
+backtick 은 escape sequence 가 다르게 처리된다.
 
 ```bash
 # 원본 명령
@@ -1350,7 +1346,6 @@ $ echo $( cat file )
 보통 다음과 같이 사용한다.
 
 ```bash
-#(( arithmetic-expr ))
 (( arithmetic-expr ))
 ```
 
@@ -1359,7 +1354,7 @@ $ echo $( cat file )
 ```bash
 $ cat > a.sh
 echo $(( 3 + 7 ))
-# bash a.sh
+$ bash a.sh
 10
 ```
 
@@ -1371,7 +1366,6 @@ echo $(( 3 + 7 ))
 ```
 
 `command1 > >( command2 )` 명령의 경우 command1 의 stdout 이 command2 의 stdin 과 연결되며 `command1 < <( command2 )` 명령의 경우는 command2 의 stdout 이 command1 의 stdin 과 연결됩니다.  현재 shell pid 를 나타내는 $$ 변수는 subshell 에서도 동일한 값을 가지므로 >( ) 표현식 내에서의 FD 상태를 보기 위해서는 $BASHPID 변수를 이용해야 합니다.
-
 
 ```bash
 # '>( )' 표현식 내의 명령은 subshell 에서 실행되므로 '$$' 값이 같게나온다.
@@ -1487,7 +1481,7 @@ echo "$i lines processed"
 12 lines processed
 ```
 
-명령 실행 결과중 stderr만 전달하고 싶을때
+명령 실행 결과중 stderr 만 전달하고 싶을때
 
 ```bash
 $ command1 2> >( command2 ... )
@@ -2040,7 +2034,7 @@ $ find -name '*.c'
 
 ## quote removal
 
-지금까지 expansion에 포함되지 않고 quote되지 않은 `\`, `'`, `"` 캐릭터는 제거된다.
+지금까지 expansion 에 포함되지 않고 quote 되지 않은 `\`, `'`, `"` 캐릭터는 제거된다.
 
 ```bash
 echo "hello" \ \
@@ -2171,7 +2165,7 @@ $ select KEY in "${A[@]}"; do echo "$KEY"; done
 
 ## Tips
 
-이름은 같고 의미가 다른 command를 조사하고 싶을때는 `type`을 이용하자.
+이름은 같고 의미가 다른 command 를 조사하고 싶을때는 `type` 을 이용하자.
 
 ```bash
 $ type -a kill
