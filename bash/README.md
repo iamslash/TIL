@@ -51,9 +51,6 @@
 - [Shell Variables](#shell-variables)
   - [Bourne Shell Variables](#bourne-shell-variables)
   - [Bash Variables](#bash-variables)
-- [Shell Parameters](#shell-parameters-1)
-  - [Positional Parameters](#positional-parameters-1)
-  - [Special Parameters](#special-parameters-1)
 - [Bash Features](#bash-features)
   - [Bash Startup Files](#bash-startup-files)
     - [login shell](#login-shell)
@@ -77,7 +74,7 @@
 
 # Abstract
 
-bash에 대해 정리한다.
+bash 에 대해 정리한다.
 
 # References
 
@@ -120,6 +117,7 @@ $ compgen -k | column
 if              elif            esac            while           done            time            !               coproc
 then            fi              for             until           in              {               [[
 else            case            select          do              function        }               ]]
+
 # list builtins
 $ compgen -b | column
 .               caller          dirs            false           kill            pwd             source          ulimit
@@ -137,7 +135,7 @@ echo "hello world" > [[]].txt
 # '-' can be stdin for input
 echo hello world | cat -
 # '-' can be stdout for output
-edcho hello world | cat a.txt -
+echo hello world | cat a.txt -
 seq 10 | paste - - -
 
 # > 
@@ -243,11 +241,11 @@ echo $bar
 echo "foo"
 echo \
   "foo"
-  
+
+# brace expansion
 # {1..10}
 # 
 echo {1..10}
-
 # {string1,string2}
 #
 cp {foo.txt,bar.txt} a/
@@ -260,22 +258,25 @@ for name [ [in [words …] ] ; ] do commands; done
 for (( expr1 ; expr2 ; expr3 )) ; do commands ; done
 
 # while
-while :
+while 1
 do
     echo "foo";
     sleep 1;
 done
+while 1; do echo "foo"; sleep 1; done
 
 # for
 for i in $(l)
 do 
     echo $i
 done
+for i in ${1..10}; do echo ${i}; done
 
 for (( i=0; i < 10; i++ ))
 do
     echo $i
 done
+for (( i=0; i<10; i++ )); do echo $i; done
 
 NUM=(1 2 3)
 for i in ${NUM[@]}
@@ -296,12 +297,12 @@ if [ $a -eq $b ]; then
 fi
 
 # grouping commands : (), {}
-# (command line) : command line은 subshell환경에서 실행된다.
+# (command line) : command line 은 subshell 환경에서 실행된다.
 ( while true; do echo "hello"; sleep 1; done )
-# {command line} : command line은 같은 shell환경에서 실행된다.
+# {command line} : command line 은 같은 shell 환경에서 실행된다.
 { while true; do echo "hello"; sleep 1; done }
 
-# variable은 unset, null, not-null과 같이 3가지 상태를 갖는다.
+# variable 은 unset, null, not-null 과 같이 3 가지 상태를 갖는다.
 # unset state
 declare A
 local A
@@ -314,7 +315,7 @@ A=" "
 A="hello"
 A=123
 
-# function은 command들을 그룹화 하는 방법이다. 그룹의 이름을 사용하면 그룹안의 commands를 실행할 수 있다.
+# function 은 command 들을 그룹화 하는 방법이다. 그룹의 이름을 사용하면 그룹안의 commands를 실행할 수 있다.
 # name () compound-command [ redirections ]
 H() { echo "hello"; }; H; echo "world";
 # function name [()] compound-command [ redirections ]
@@ -327,7 +328,7 @@ ls *.[ch]
 [[ $A = *.tar.gz ]]; echo $?
 [[ $A = *dog\ cat* ]]; echo $?
 
-# shell file의 첫줄에서 스크립트를 실행할 command line을 shabang line이라고 한다. 옵션은 하나로 제한된다.
+# shell file의 첫줄에서 스크립트를 실행할 command line 을 shabang line 이라고 한다. 옵션은 하나로 제한된다.
 #! /bin/bash
 #! /bin/sed -f
 #! /usr/bin/awk -f
@@ -355,81 +356,93 @@ printf "%s %s \n" $Message1 $Message2
 
 # sed
 sed -i "s/foo/bar/g" a.txt
-
 ```
 
 # Shell Operation
 
-shell이 command를 읽고 실행하는 과정은 다음과 같다.
+shell 이 command 를 읽고 실행하는 과정은 다음과 같다.
 
-* commands 및 arguments를 읽어 들인다.
-* 읽어 들인 commands를 Quoting과 동시에 words와 operators로 쪼갠다. 쪼개진 토큰들은 metacharaters를 구분자로 한다. 이때 alias expansion이 수행된다.
-* 토큰들을 읽어서 simple, compound commands를 구성한다.
-* 다양한 shell expansion이 수행되고 expanded tokens는 파일이름, 커맨드, 인자로 구성된다.
-* redirection을 수행하고 redirection operators와 operands를 argument list에서 제거한다.
-* command를 실행한다.
-* 필요한 경우 command가 실행 완료될 때까지 기다리고 exit status를 수집한다.
+* commands 및 arguments 를 읽어 들인다.
+* 읽어 들인 commands 를 quoting 과 동시에 words 와 operators 로 쪼갠다. 쪼개진 토큰들은 metacharaters 를 구분자로 한다. 이때 alias expansion 이 수행된다.
+* 토큰들을 읽어서 simple, compound commands 를 구성한다.
+* 다양한 shell expansion 이 수행되고 expanded tokens 는 파일이름, 커맨드, 인자로 구성된다.
+* redirection 을 수행하고 redirection operators 와 operands 를 argument list 에서 제거한다.
+* command 를 실행한다.
+* 필요한 경우 command 가 실행 완료될 때까지 기다리고 exit status 를 수집한다.
 
 # Shell Parameters
 
 ## Positional Parameters
 
-`${N}`처럼 표기한다. N는 paramter의 서수이다.
+`${N}` 처럼 표기한다. N 는 paramter 의 서수이다.
 
-a.sh `echo ${0}, ${1}, ${2}`
+* a.sh `echo ${0}, ${1}, ${2}` 
+  * `echo a.sh "hello" "world" "foo"`
+
+* `shift`
+  * positional parameters 를 좌측으로 n 만큼 이동한다.
 
 ```bash
-echo a.sh "hello" "world" "foo"
+$ set -- 11 22 33 44 55
+$ echo $@
+11 22 33 44 55
+$ shift 2
+$ echo $@
+33 44 55
 ```
 
 ## Special Parameters
 
-* `$*`
-  * 모든 parameter들
-  * a.sh `echo $*` `bash a.sh 1 2 3 4 5`
-    * 결과는 `1 2 3 4 5`
-
-* `$@`
-  * `$*`와 같다.
+* `$*`, `$@`
+  * 모든 parameter 들
+  * a.sh `echo $*` 
+    * `bash a.sh 1 2 3 4 5`
+      * 결과는 `1 2 3 4 5`
 
 * `$#`
   * 마지막 parameter
-  * a.sh `echo $#` `bash a.sh 1 2 3 4 5`
-    * 결과는 `5`
+  * a.sh `echo $#` 
+    * `bash a.sh 1 2 3 4 5`
+      * 결과는 `5`
 
 * `$?`
-  * 마지막 실행된 foreground pipeline의 exit status
-  * a.sh `echo $?` `bash a.sh 1 2 3 4 5`
-    * 결과는 `0`
+  * 마지막 실행된 foreground pipeline 의 exit status
+  * a.sh `echo $?` 
+    * `bash a.sh 1 2 3 4 5`
+      * 결과는 `0`
 
 * `$-`
   * 현재 설정된 option flags
-  * a.sh `echo $-` `bash a.sh 1 2 3 4 5` 
-    * 결과는 `hB`
+  * a.sh `echo $-` 
+    * `bash a.sh 1 2 3 4 5` 
+      * 결과는 `hB`
   
 * `$$`
   * 실행 프로세스 ID
-  * a.sh `echo $$` `bash a.sh 1 2 3 4 5`
-    * 결과는 `3`
+  * a.sh `echo $$` 
+    * `bash a.sh 1 2 3 4 5`
+      * 결과는 `3`
 
 * `$!`
   * 가장 최근에 실행된 background 프로세스 ID
-  * a.sh `echo $!` `bash a.sh 1 2 3 4 5`
-    * 결과는 ``
+  * a.sh `echo $!` 
+    * `bash a.sh 1 2 3 4 5`
+      * 결과는 ``
 
 * `$0`
   * shell or shell script
-  * a.sh `echo $!` `bash a.sh 1 2 3 4 5`
-    * 결과는 `a.sh`
+  * a.sh `echo $!` 
+    * `bash a.sh 1 2 3 4 5`
+      * 결과는 `a.sh`
 
 * `$_`
-  * shell 혹은 shell script의 절대경로
-  * a.sh `echo $_` `bash a.sh 1 2 3 4 5`
-    * 결과는 `/bin/bash`
+  * shell 혹은 shell script 의 절대경로
+    * a.sh `echo $_` `bash a.sh 1 2 3 4 5`
+      * 결과는 `/bin/bash`
 
 # Shell Expansions
 
-command line은 tokens로 나눠진 후 다음과 같은 순서 대로 expansion처리
+command line 은 tokens 로 나눠진 후 다음과 같은 순서 대로 expansion 처리
 된다. brace expansion, tilde expansion, parameter and variable
 expansion, command expansion, arithmetic expansion, process
 substitution, word splitting, filename expansion, quote removal
@@ -2242,60 +2255,6 @@ $ echo "$@"
 * `BASH`
 * `BASHOPTS`
 
-# Shell Parameters
-
-## Positional Parameters
-
-* `$0`
-  * script name이다.
-* `$1, $2, $3 ...`
-  * arguments이다.
-* `$#`
-  * arguments의 길이
-* `$@, $*`
-  * arguments list
-* `set`
-  * 주로 option설정할 때 이용되지만 positional parameter설정 할 수도 있다.
-
-```bash
-$ set 11 22 33
-$ set - 11 22 33
-$ set -- 11 22 33
-$ echo $1 $2 $3
-11 22 33
-$ set --
-$ echo $1 $2 $3
-```
-
-* `shift`
-  * positional parameters를 좌측으로 n만큼 이동한다.
-
-```bash
-$ set -- 11 22 33 44 55
-$ echo $@
-11 22 33 44 55
-$ shift 2
-$ echo $@
-33 44 55
-```
-
-## Special Parameters
-
-* `$?`
-  * 바로 이전에 실행된 명령의 exit status
-* `$$`
-  * 자신의 PID
-* `$!`
-  * `&`를 이용하여 가장 최근에 실행한 background process id
-* `$_`
-  * 바로 이전에 실행된 명령의 마지막 argument
-  * argument가 없으면 마지막 command
-* `$-`
-  * `set`에 의해 현재 shell에 enable되어 있는 option flags
-
-
-
-
 # Bash Features
 
 ## Bash Startup Files
@@ -3313,18 +3272,18 @@ bg, fg, jobs, kill, wait, disown, suspend
 ```bash
 $ kill -l
  1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL       5) SIGTRAP
- 6) SIGABRT      7) SIGBUS       8) SIGFPE       9) SIGKILL     10) SIGUSR1
-11) SIGSEGV     12) SIGUSR2     13) SIGPIPE     14) SIGALRM     15) SIGTERM
-16) SIGSTKFLT   17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP
-21) SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU     25) SIGXFSZ
-26) SIGVTALRM   27) SIGPROF     28) SIGWINCH    29) SIGIO       30) SIGPWR
-31) SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3
-38) SIGRTMIN+4  39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8
-43) SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13
-48) SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13 52) SIGRTMAX-12
-53) SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7
-58) SIGRTMAX-6  59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2
-63) SIGRTMAX-1  64) SIGRTMAX
+ 2) SIGABRT      7) SIGBUS       8) SIGFPE       9) SIGKILL     10) SIGUSR1
+1)  SIGSEGV     12) SIGUSR2     13) SIGPIPE     14) SIGALRM     15) SIGTERM
+2)  SIGSTKFLT   17) SIGCHLD     18) SIGCONT     19) SIGSTOP     20) SIGTSTP
+3)  SIGTTIN     22) SIGTTOU     23) SIGURG      24) SIGXCPU     25) SIGXFSZ
+4)  SIGVTALRM   27) SIGPROF     28) SIGWINCH    29) SIGIO       30) SIGPWR
+5)  SIGSYS      34) SIGRTMIN    35) SIGRTMIN+1  36) SIGRTMIN+2  37) SIGRTMIN+3
+6)  SIGRTMIN+4  39) SIGRTMIN+5  40) SIGRTMIN+6  41) SIGRTMIN+7  42) SIGRTMIN+8
+7)  SIGRTMIN+9  44) SIGRTMIN+10 45) SIGRTMIN+11 46) SIGRTMIN+12 47) SIGRTMIN+13
+8)  SIGRTMIN+14 49) SIGRTMIN+15 50) SIGRTMAX-14 51) SIGRTMAX-13 52) SIGRTMAX-12
+9)  SIGRTMAX-11 54) SIGRTMAX-10 55) SIGRTMAX-9  56) SIGRTMAX-8  57) SIGRTMAX-7
+10) SIGRTMAX-6  59) SIGRTMAX-5  60) SIGRTMAX-4  61) SIGRTMAX-3  62) SIGRTMAX-2
+11) SIGRTMAX-1  64) SIGRTMAX
 ```
 
 ## kill

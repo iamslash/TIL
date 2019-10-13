@@ -23,6 +23,7 @@
   - [압축](#%ec%95%95%ec%b6%95)
   - [에디터](#%ec%97%90%eb%94%94%ed%84%b0)
   - [데몬 관리](#%eb%8d%b0%eb%aa%ac-%ea%b4%80%eb%a6%ac)
+  - [oneline](#oneline)
 - [Security](#security)
   - [root 소유의 setuid, setgid파일 검색 후 퍼미션 조정하기](#root-%ec%86%8c%ec%9c%a0%ec%9d%98-setuid-setgid%ed%8c%8c%ec%9d%bc-%ea%b2%80%ec%83%89-%ed%9b%84-%ed%8d%bc%eb%af%b8%ec%85%98-%ec%a1%b0%ec%a0%95%ed%95%98%ea%b8%b0)
 - [System Monitoring](#system-monitoring)
@@ -152,9 +153,24 @@ linux 는 파일의 sticky bit 를 무시한다. 디렉토리에 sticky bit 가 
 | /etc/fstab	| File system mounts. |
 
 # Package Managers
+
 ## apt-get
+
+```bash
+apt-get install curl
+```
+
 ## brew
+
+```bash
+brew install curl
+```
+
 ## yum
+
+```bash
+yum install curl
+```
 
 # Commands
 
@@ -162,12 +178,11 @@ linux 는 파일의 sticky bit 를 무시한다. 디렉토리에 sticky bit 가 
 
 <br/>
 
-application commands와 bash builtin commands등이 있다.  상황별로
-유용한 commands를 정리한다. bash builtin commands의 경우 `/usr/bin/`
-에 application commands으로 존재한다. 다음은 macosx에서
-`/usr/bin/ulimit`의 내용이다. 단지 bash builtin으로 command와
-argument들을 전달 하고 있다.
-
+application commands 와 bash builtin commands 등이 있다.  상황별로
+유용한 commands 를 정리한다. bash builtin commands 의 경우 `/usr/bin/`
+에 application commands 으로 존재한다. 다음은 macOS 에서
+`/usr/bin/ulimit` 의 내용이다. 단지 bash builtin 으로 command 와
+argument 들을 전달 하고 있다.
 
 ```bash
 builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
@@ -180,10 +195,10 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `man ls`
 * `apropos`
   * 잘은 모르겠고 이런거 비슷한 거 찾아줘봐라
-  * `man -k`와 같다.
+  * `man -k` 와 같다.
   * `apropos brew`
 * `info`
-  * 메뉴얼 좀 보여줘봐. 단축키는 emacs와 비슷한데?
+  * 메뉴얼 좀 보여줘봐. 단축키는 emacs 와 비슷한데?
   * `info ls`
 
 ## 자주 사용
@@ -292,7 +307,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `ftp`
   * file transfer program
 * `screen, tmux`
-  * [tmux](../tmux/)
+  * [tmux](/tmux/)
   * terminal multiplexer
 * `nslookup`
   * domain을 주고 ip로 확인하자.
@@ -357,6 +372,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 * `netstat`
   * 네트워크 상태좀 알려다오
+  * `netstat -lntp` tcp 로 리스닝하는 프로세스들 보여줘
   * `netstat -a | more` TCP, UDP 포트 모두 보여줘
   * `netstat -at` TCP 포트만 보여줘
   * `netstat -au` UDP 포트만 보여줘
@@ -378,6 +394,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `netstat --statistics --raw` 아주 심한 통계를 보여달라
 * `ss`
   * socket statistics. netstat과 옵션의 의미가 유사하다.
+  * `ss -plat` tcp 로 리스닝하는 프로세스들 보여줘
   * `ss | less` 모든 연결을 보여다오
   * `ss -t` TCP `ss-u` UDP `ss-x` UNIX
   * `ss -nt` hostname얻어 오지 말고 숫자로만 보여줘
@@ -601,8 +618,8 @@ Swap:         3999          0       3999
   * `grep -o -b "3" a.txt` 검색된 위치를 보여다오
   * `grep -n "go" a.txt` 검색된 줄번호도 보여다오
 * `xargs`
-  * 구분자 `\n`을 이요해서 argument list를 구성하고 command 한개에 argument 하나씩 대응해서 실행하자
-  * xargs 가 실행할 command가 없다면 `/bin/echo`를 사용한다.
+  * 구분자 `\n` 을 이용해서 argument list 를 구성하고 command 한개에 argument 하나씩 대응해서 실행하자
+  * xargs 가 실행할 command 가 없다면 `/bin/echo`를 사용한다.
   * `echo a b c d e f | xargs`
   * `echo a b c d e f | xargs -n 3` argument는 3개씩 한조가 되라
   * `echo a b c d e f | xargs -p -n 3` prompt 등장
@@ -906,6 +923,10 @@ Swap:         3999          0       3999
     * 타겟은 동시에 서비스들을 시작하는 걸 허용하기 위한 그룹 메커니즘이다. 
   * `systemctl set-default grpahical.target` 타겟 바꾸기
   * `systemctl get-default`
+
+## oneline
+
+
 
 # Security
 
