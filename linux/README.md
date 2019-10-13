@@ -445,7 +445,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 |        | id        | 유휴 시간                                                                                         |
 
 * `free`
-  * physical memory와 swap memory의 상태를 알려다오
+  * physical memory 와 swap memory 의 상태를 알려다오
   * `free -b` `free -k` `free -m` `free -g`
   * `free -t` total 추가해조
   * `free -o` buffer adjusted line은 빼고 보여다오
@@ -684,7 +684,7 @@ Swap:         3999          0       3999
   * `head -n -5 a.txt`
   * `ls | head`
 * `awk`
-  * [awk](../awk/README.md)
+  * [awk](/awk/README.md)
 * `uniq`
   * `uniq a.txt`
   * `uniq -c a.txt`
@@ -704,7 +704,7 @@ Swap:         3999          0       3999
   * `sort -u a.txt` 정렬하고 중복된 거 지워라
   * `sort a.txt b.txt`
   * `sort -u a.txt b.txt`
-  * `ls -l /home/$USER | sort -t "," -nk2,5 -k9` 숫자인 2, 5열, 문자인 9열을 기준으로 정렬해라.x
+  * `ls -l /home/$USER | sort -t "," -nk2,5 -k9` 숫자인 2, 5열, 문자인 9열을 기준으로 정렬해라.
 * `wc`
   * `wc a.txt` 줄개수, 단어수, 바이트 표시해조
   * `wc -l a.txt` 줄개수 보여줘
@@ -717,7 +717,7 @@ Swap:         3999          0       3999
 * `paste`
   * 파일의 특정 행들을 머지해줘
   * `paste a.txt`
-  * `paste -s a.txt` 모든 행을 join해도
+  * `paste -s a.txt` 모든 행을 join 해줘
   * `paste -d, -s a.txt` comma를 구분자로 모든 행을 join해도
   * `paste - - < a.txt` 2열로 merge해라.
   * `paste -d':' - - < a.txt` 구분자는 `:`로 하고 2열로 merge해라.
@@ -728,15 +728,16 @@ Swap:         3999          0       3999
   * `cat a.txt | paste -d, - b.txt`
   * `cat a.txt b.txt | paste -d, - -`
   * `paste -d'\n' a.txt b.txt`
-* [sed](../sed/)
+* [sed](/sed/)
 * `tr`
   * 문자열 번역해줘
-  * `echo HELLO | tr [A-Z] [a-z]`
+  * `echo HELLO | tr "[:upper:]" "[:lower:]"` 대문자를 소문자로 바꾸어 다오
+  * `echo HELLO | tr "[A-Z]" "[a-z]"` 대문자를 소문자로 바꾸어 다오
   * `tr '{}' '()' < a.txt > b.txt`
   * `echo "the geek stuff" | tr -d 't'` t문자 지워줘
-  * `echo "my username is 432234 | tr -d [:digit:]` 숫자 지워줘
-  * `echo "my username is 432234 | tr -cd [:digit:]` 숫자 빼고 지워줘
-  * `tr -cd [:print:] < a.txt` non printable 문자들을 지워다오
+  * `echo "my username is 432234" | tr -d "[:digit:]"` 숫자 지워줘
+  * `echo "my username is 432234" | tr -cd "[:digit:]æ` 숫자 빼고 지워줘
+  * `tr -cd "[:print:]" < a.txt` non printable 문자들을 지워다오
   * `tr -s '\n' ' ' < a.txt` 모든 행을 join하자.
 * `printf`
   * format string을 출력해줘
@@ -988,8 +989,7 @@ function taocl() {
 
 ## root 소유의 setuid, setgid파일 검색 후 퍼미션 조정하기
 
-setuid가 설정되어 있으면 실행 되었을 때 EUID가 root로 변경된다. 불필요한
-파일을 찾아서 퍼미션을 변경하자.
+owner 가 root 인 파일들을 생각해보자. setuid 가 설정되어 있으면 실행 되었을 때 EUID 가 root 로 변경된다. 매우 위험하다. 그러한 파일들을 찾아서 위험해 보인다면 권한을 변경해준다.
 
 ```bash
 find / -user root -perm 4000 -print
@@ -998,17 +998,16 @@ find / -user root -perm 4000 -print
 
 ## swapin, swapout
 
-process의 virtual memory는 page(4KB)단위로 잘게 나뉘 어져
-있다. page들은 물리 메모리에 옮겨질때 꼭 연속적이지 않아도
-된다. pagetable에 의해 logical address가 physical address로 잘
+process 의 virtual memory 는 page(4KB) 단위로 잘게 나뉘 어져
+있다. page 들은 물리 메모리에 옮겨질때 꼭 연속적이지 않아도
+된다. pagetable 에 의해 logical address 가 physical address 로 잘
 변환되기 때문이다. [참고](https://www.slideshare.net/sunnykwak90/ss-43933481)
 
 물리 메모리에 적재된 프로세스의 메모리 공간 전체를 디스크의 스왑
-영역에 일시적으로 내려 놓는 것을 swapping이라고 한다. 덜 중요한
-프로세스는 더 중요한 프로세스를 위해 물리메모리에서 swapspace로
-swapping되야 한다. 디스크에서 물리메모리로 프로세스를 옮기는 작업을
-swap-in이라고 한다. 물리 메모리에서 디스크로 프로세스를 옮기는 작업을
-swap-out이라고 한다.
+영역에 일시적으로 내려 놓는 것을 swapping 이라고 한다. 덜 중요한
+프로세스는 더 중요한 프로세스를 위해 물리메모리에서 swapspace 로
+swapping 되야 한다. 디스크에서 물리메모리로 프로세스를 옮기는 작업을
+swap-in 이라고 한다. 물리 메모리에서 디스크로 프로세스를 옮기는 작업을
+swap-out 이라고 한다.
 
-swap-in(page-in), swap-out(page-out)이 많다면 물리 메모리가 모자르다는
-의미이다.
+swap-in(page-in), swap-out(page-out) 의 횟수가 많다면 물리 메모리가 모자르다는 의미이다.
