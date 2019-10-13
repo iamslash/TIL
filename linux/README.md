@@ -23,7 +23,7 @@
   - [압축](#%ec%95%95%ec%b6%95)
   - [에디터](#%ec%97%90%eb%94%94%ed%84%b0)
   - [데몬 관리](#%eb%8d%b0%eb%aa%ac-%ea%b4%80%eb%a6%ac)
-  - [oneline](#oneline)
+  - [oneline commands](#oneline-commands)
 - [Security](#security)
   - [root 소유의 setuid, setgid파일 검색 후 퍼미션 조정하기](#root-%ec%86%8c%ec%9c%a0%ec%9d%98-setuid-setgid%ed%8c%8c%ec%9d%bc-%ea%b2%80%ec%83%89-%ed%9b%84-%ed%8d%bc%eb%af%b8%ec%85%98-%ec%a1%b0%ec%a0%95%ed%95%98%ea%b8%b0)
 - [System Monitoring](#system-monitoring)
@@ -617,6 +617,17 @@ Swap:         3999          0       3999
   * `grep -o "is.*line" a.txt` 검색된 문자열들만 보여다오
   * `grep -o -b "3" a.txt` 검색된 위치를 보여다오
   * `grep -n "go" a.txt` 검색된 줄번호도 보여다오
+* `grep` vs `egrep` vs `fgrep`
+  * `grep` is `grep -G`
+  * `egrep` is `grep -E` or `grep --extended-regexp`
+    * 확장 정규표현식을 사용할 때 메타캐릭터를 escape 하지 않아도 된다.
+    * `egrep 'no(foo|bar)' a.txt` 와 `grep 'no\(foo\|bar\)' a.txt` 은 결과가 같다.
+  * `fgrep` is `grep -F` or `grep --fixed-strings`
+    * 정규표현식을 사용하지 않겠다는 의미이다.
+    * `fgrep 'foo.' a.txt`
+      * `foo.` 만 검색된다.
+    * `grep 'foo.' a.txt`
+      * `fooa, foob, fooc` 등이 검색된다.
 * `xargs`
   * 구분자 `\n` 을 이용해서 argument list 를 구성하고 command 한개에 argument 하나씩 대응해서 실행하자
   * xargs 가 실행할 command 가 없다면 `/bin/echo`를 사용한다.
@@ -924,9 +935,54 @@ Swap:         3999          0       3999
   * `systemctl set-default grpahical.target` 타겟 바꾸기
   * `systemctl get-default`
 
-## oneline
+## oneline commands
 
+* 파일의 내용을 정렬하고 집합연산해 보자.
 
+```bash
+cat a.txt b.txt | sort | uniq > c.txt   # c is a union b
+cat a.txt b.txt | sort | uniq -d > c.txt   # c is a intersect b
+cat a.txt b.txt | sort | uniq -u > c.txt   # c is set difference a - b
+```
+
+* 파일을 읽어서 특정한 열을 더해보자.
+
+```bash
+awk '{ x += $3 } END { print x }' a.txt
+```
+
+* 모든 디렉토리의 파일들을 재귀적으로 크기와 날짜를 출력해보자. `ls -lR` 과 같지만 출력형식이 더욱 간단하다. 
+
+```bash
+find . -type f -ls
+```
+
+* `acc_id` 에 대해 얼마나 많은 요청이 있었는지 알아보자.
+
+```bash
+cat access.log | egrep -o 'acct_id=[0-9]+' | cut -d= -f2 | sort | uniq -c | sort -rn
+```
+
+* 파일의 변경을 모니터링 해보자.
+
+```bash
+# 디렉토리의 변경을 모니터링
+watch -d -n 2 'ls -rtlh | tail'
+# 네트워크 변경을 모니터링
+watch -d -n 2 ifconfig
+```
+
+* 마크다운을 파싱하고 임의의 것을 출력한다.
+
+```bash
+function taocl() {
+  curl -s https://raw.githubusercontent.com/jlevy/the-art-of-command-line/master/README.md |
+    pandoc -f markdown -t html |
+    xmlstarlet fo --html --dropdtd |
+    xmlstarlet sel -t -v "(html/body/ul/li[count(p)>0])[$RANDOM mod last()+1]" |
+    xmlstarlet unesc | fmt -80
+}
+```
 
 # Security
 
