@@ -26,6 +26,8 @@ browser 로 `localhost:8080` 으로 접속한다. docker 실행창에 출력된 
 # Pipeline
 
 * [Using a Jenkinsfile ](https://jenkins.io/doc/book/pipeline/jenkinsfile/)
+* [젠킨스 파이프라인 정리 - 2. Scripted 문법 소개 @ tistory](https://jojoldu.tistory.com/356)
+* [scripted-pipeline @ jenkins](https://jenkins.io/doc/book/pipeline/syntax/#scripted-pipeline)
 
 ----
 
