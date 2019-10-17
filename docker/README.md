@@ -197,6 +197,7 @@ distribution/registry:2.6.0
 > docker attach my-ubuntu echo "hello world"
 
 # stop container
+#   sends a SIGTERM signal
 > docker stop <container-name>
 # remove container
 > docker rm <container-name>
@@ -444,7 +445,7 @@ $ docker inspect -f '{{range $p, $conf := .NetworkSettings.Ports}} {{$p}} -> {{(
 # {{range $p, $conf := .NetworkSettings.Ports}} 으로 .NetworkSettings.Ports 의 내용을 순회하면서 $p, $conf 에 저장. 그리고 $p는 그대로 출력하고, $conf 배열에서 첫 번째 항목(index $conf 0) 의 .HostPort 를 출력
 
 ## kill
-# 컨테이너에 KILL 시그널을 보내 컨테이너를 종료
+# sends a SIGKILL signal.
 # docker kill <옵션> <컨테이너 이름, ID>
 $ docker kill hello
 
@@ -628,4 +629,23 @@ $ docker wait hello
 > docker export container_name > container_name.tar
 # import container
 > docker import container_name.tar
+
+# restart policy (no | on-failure | always | )
+#   https://rampart81.github.io/post/docker_commands/
+#   docker container 가 멈추었을때 다시시작하는 옵션
+#   --restart=on-failure:5
+#     optional restart count
+#   --restart unless-stopped
+#     restart the container unless it is explicitly stopped or Docker itself is stopped or restarted.
+#   --restart always
+#     always restart the container if it stops.
+sudo docker run --detach \
+  --hostname gitlab.example.com \
+  --publish 443:443 --publish 80:80 --publish 22:22 \
+  --name gitlab \
+  --restart always \
+  --volume /srv/gitlab/config:/etc/gitlab \
+  --volume /srv/gitlab/logs:/var/log/gitlab \
+  --volume /srv/gitlab/data:/var/opt/gitlab \
+  gitlab/gitlab-ce:latest
 ```

@@ -113,6 +113,7 @@
 
 * BackEnd
   * [systemdesign & scalability](/systemdesign/README.md)
+  * [devops](/devops/README.md)
   * [Linux](/linux/README.md), [bash](/bash/README.md), [sed](/sed/README.md), [awk](/awk/README.md), [make](/make/README.md)
   * [AWS](/aws/README.md), [docker](/docker/README.md)
   * [spring](/spring/README.md), [gradle](/gradle/README.md), maven, proguard

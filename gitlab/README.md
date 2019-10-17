@@ -20,3 +20,12 @@
 
 # System Architecture
 
+* [GitLab Architecture Overview](https://docs.gitlab.com/ee/development/architecture.html)
+
+-----
+
+![](https://docs.gitlab.com/ee/development/img/architecture_simplified.png)
+
+## Component diagram
+
+
