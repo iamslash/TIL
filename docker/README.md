@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basics](#basics)
+  - [Permission](#permission)
   - [Hello Docker](#hello-docker)
   - [How to build a image](#how-to-build-a-image)
   - [Dockerhub](#dockerhub)
@@ -14,7 +15,7 @@
 
 # Abstract
 
-vmware, virtualbox 보다 훨씬 성능이 좋은 가상화 기술이다.
+vmware, virtualbox 보다 훨씬 성능이 좋은 가상화 기술이다. 
 
 # Materials
 
@@ -27,6 +28,19 @@ vmware, virtualbox 보다 훨씬 성능이 좋은 가상화 기술이다.
   - [src](https://github.com/pyrasis/dockerbook)
 
 # Basics
+
+## Permission
+
+* [초보를 위한 도커 안내서 - 설치하고 컨테이너 실행하기](https://subicura.com/2017/01/19/docker-guide-for-beginners-2.html)
+
+----
+
+docker 는 root 권한이 필요하다. root 가 아닌 사용자가 sudo 없이 사용하려면 해당 사용자를 docker 그룹에 추가한다.
+
+```bash
+sudo usermod -aG docker $USER
+sudo usermod -aG docker iamslash
+```
 
 ## Hello Docker
 
@@ -227,14 +241,13 @@ distribution/registry:2.6.0
 ## FROM
 # 어떤 이미지를 기반으로 이미지를 생성할지 설정
 FROM ubuntu:14.04
-# 이미지를 생성한 사람의 정보
 
 ## MAINTAINER
+# 이미지를 생성한 사람의 정보
 MAINTAINER    David, Sun <iamslash@gmail.com>
 
 ## RUN
-# FROM 에서 설정한 이미지 위에서 스크립트 혹은 명령을 실행
-
+# 이미지를 빌드할때 스크립트 혹은 명령을 실행
 # /bin/sh 로 실행
 RUN apt-get install -y nginx
 RUN echo "Hello Docker" > /tmp/hello
@@ -245,8 +258,7 @@ RUN ["apt-get", "install", "-y", "nginx"]
 RUN ["/user/local/bin/hello", "--help"]
 
 ## CMD
-# 컨테이너가 시작되었을 때 스크립트 혹은 명령을 실행
-
+# 컨테이너를 시작할때 스크립트 혹은 명령을 실행
 # /bin/sh 로 실행
 CMD touch /home/hello/hello.txt
 # shell 없이 실행
@@ -255,13 +267,13 @@ CMD ["mysqld", "--datadir=/var/lib/mysql", "--user=mysql"]
 
 ## ENTRYPOINT
 # 컨테이너가 시작되었을 때 스크립트 혹은 명령을 실행
-# ENTRYPOINT 에 설정한 명령에 매개 변수를 전달하여 실행합니다.
-# ENTRYPOINT 와 CMD 를 동시에 사용하면 CMD 는 agument 역할만 한다.
+# ENTRYPOINT 에 설정한 명령에 매개 변수를 전달하여 실행
+# ENTRYPOINT 와 CMD 를 동시에 사용하면 CMD 는 agument 역할만 한다
 ENTRYPOINT ["echo"]
 CMD ["hello"]
 
 ## EXPOSE
-# 호스트와 연결할 포트 번호를 설정
+# 호스트에 노출할 포트
 EXPOSE 80
 EXPOSE 443
 EXPOSE 80 443
@@ -272,9 +284,8 @@ ENV GOPATH /go
 ENV PATH /go/bin:$PATH
 ENV HELLO 1234
 CMD echo $HELLO
-
 # docker run 에서도 설정할 수 있다.
-docker run -e HELLO=1234 app
+# > docker run -e HELLO=1234 app
 
 ## ADD
 # 파일을 이미지에 추가
@@ -300,7 +311,7 @@ VOLUME /data
 VOLUME ["/data", "/var/log/hello"]
 
 # docker run 에서도 사용가능
-docker run -v /prj/data:/data app
+# > docker run -v /prj/data:/data app
 
 ## USER
 # 명령을 실행할 사용자 계정을 설정. RUN, CMD, ENTRYPOINT 가 USER 로 실행된다.
