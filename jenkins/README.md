@@ -14,14 +14,14 @@ jenkins 에 대해 정리한다.
 * [Jenkins World 2017: Mastering the Jenkins Script Console @ youtube](https://www.youtube.com/watch?v=qaUPESDcsGg)
   * jenkins script console
 
-# Install with docker
+# Install with docker on windows10
 
 ```bash
 docker pull jenkins/jenkins:lts
 docker run -d -p 50000:50000 -p 8080:8080 -v C:/my/dockervolume/var/jenkins_home:/var/jenkins_home --name my-jenkins jenkins/jenkins:lts
 ```
 
-brower 로 `localhost:8080` 으로 접속한다. docker 실행창에 출력된 key 를 입력한다. install suggested plugins 하면 끝. 플러그인 설치를 실패할 때가 있다. 그렇다면 `C:/my/dockervolume/var/jenkins_home/*` 를 모두 지우고 `docker stop, rm` 이후 다시 실행해본다. 잘 된다.
+browser 로 `localhost:8080` 으로 접속한다. docker 실행창에 출력된 key 를 입력한다. install suggested plugins 하면 끝. 플러그인 설치를 실패할 때가 있다. 그렇다면 `C:/my/dockervolume/var/jenkins_home/*` 를 모두 지우고 `docker stop, rm` 이후 다시 실행해본다. 잘 된다.
 
 # Pipeline
 
