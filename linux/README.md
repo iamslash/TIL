@@ -313,8 +313,29 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * domain을 주고 ip로 확인하자.
   * `nslookup www.google.co.kr`
 * `dig`
-  * ip를 주고 domain을 확인하자.
-  * `dig -x 216.58.200.3`
+  * DNS name server 와 도메인 설정이 완료된 후 DNS 질의 응답이 정상적으로 이루어지는 지를 확인한다.
+  * `dig [@name server] [name] [query type]` 와 같은 형식으로 사용한다. 
+    * `server` : name server 를 의미한다. 지정되지 않으면 `/etc/resolve.conf` 를 사용한다.
+    * `query type`
+      * `a` : network address
+      * `any` : all query
+      * `mx` : mail exchanger
+      * `soa` : zone file 의 SOA 정보
+      * `hinfo` : host info
+      * `axfr` : zone transfer
+      * `txt` : txt 값
+  * `dig @kns1.kornet.net rootman.co.kr +trace`
+    * kornet 에 rootman.co.kr 에 대한 계층적 위임 관계 요청
+  * `dig . ns`
+    * root name server 조회
+  * `dig kr. ns`
+    * 국내 kr name server 조회
+  * `dig @kns1.kornet.net google.co.kr axfr`
+    * zone transfer 이용 시, serial number 이후에 변경된 사항을 질의
+  * `dig @kns.kornet.net txt chaos version.bind`
+    * bind 버전 알아내기
+  * `dig -x 216.58.200.3 +trace`
+    * ip 를 주고 domain 을 확인하자.
 * `curl`
   * URL을 활용하여 data전송하는 program. HTTP, HTTPS, RTMP등등을 지원한다.
   * `curl "http://a.b.com/a?a=1"`
@@ -911,7 +932,7 @@ Swap:         3999          0       3999
     * `*/10 * * * * /tmp/a.sh` 10 분 마다 실행해 
     * `0 2 * * * /tmp/a.sh` 매일 02:00 에 마다 실행해 
     * `30 */6 * * * /tmp/a.sh` 매 6 시간 마다(00:30, 06:30, 12:30, 18:30) 실행해 
-    * `30 1-23/6 * * * /tmp/a.sh` 1tlqnxj 매 6시간 마다(01:30, 07:30, 13:30, 19:30) 실행해 
+    * `30 1-23/6 * * * /tmp/a.sh` 1 시부터 23 시까지 매 6시간 마다(01:30, 07:30, 13:30, 19:30) 실행해 
     * `0 8 * * 1-5 /tmp/a.sh` 평일(월-금) 08:00 
     * `0 8 * * 0,6 /tmp/a.sh` 주말(일,토) 08:00
   * `crontab -r` 모두 삭제
