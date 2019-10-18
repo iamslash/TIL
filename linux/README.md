@@ -893,14 +893,24 @@ Swap:         3999          0       3999
 
 * cron
   * 반복 예약 작업 등록
+  * 시간의 형식은 `MIN HOUR DOM MONTH DOW` 와 같다.
+    * `MIN` : minutes within the hour (0-59)
+    * `HOUR` : the hour of the day (0-23)
+    * `DOM` : The day of the month (1-31)
+    * `MONTH` : The month (1-12)
+    * `DOW` : The day of the week (0-7), where 0 and 7 are Sundays.
+    * `*` specifies all valid values
+    * `M-N` specifies a range of values
+    * `M-N/X` or `*/X` steps by intervals of X through the specified range or whole valid range
+    * `A,B,...,Z` enumerates multiple values
   * `crontab -l` 등록된 목록을 보여줘
-  * `crontab -l -u iamslash` iamslash USER의 목록 보여줘
+  * `crontab -l -u iamslash` iamslash USER 의 목록 보여줘
   * `crontab -e` 크론탭 수정해볼까
     * `* * * * * /tmp/a.sh` 매 1분 마다 실행해 
     * `15,45 * * * * /tmp/a.sh` 매시 15, 45분 마다 실행해 
-    * `*/10 * * * * /tmp/a.sh` 10분 마다 실행해 
-    * `0 2 * * * /tmp/a.sh` 매일 02:00에 마다 실행해 
-    * `30 */6 * * * /tmp/a.sh` 매 6시간 마다(00:30, 06:30, 12:30, 18:30) 실행해 
+    * `*/10 * * * * /tmp/a.sh` 10 분 마다 실행해 
+    * `0 2 * * * /tmp/a.sh` 매일 02:00 에 마다 실행해 
+    * `30 */6 * * * /tmp/a.sh` 매 6 시간 마다(00:30, 06:30, 12:30, 18:30) 실행해 
     * `30 1-23/6 * * * /tmp/a.sh` 1tlqnxj 매 6시간 마다(01:30, 07:30, 13:30, 19:30) 실행해 
     * `0 8 * * 1-5 /tmp/a.sh` 평일(월-금) 08:00 
     * `0 8 * * 0,6 /tmp/a.sh` 주말(일,토) 08:00
