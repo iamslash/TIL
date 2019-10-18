@@ -56,6 +56,7 @@
     - [go](#go)
     - [go-wrk](#go-wrk)
     - [go-torch](#go-torch)
+    - [present](#present)
   - [Debug](#debug)
   - [Test](#test)
   - [Benchmarks](#benchmarks)
@@ -1734,6 +1735,27 @@ go-wrk -c 5 -d 5 http://localhost:8080/
 Tool for stochastically profiling Go programs. Collects stack traces
 and synthesizes them into a flame graph. Uses Go's built in pprof
 library.
+
+### present
+
+[present](https://godoc.org/golang.org/x/tools/present) is a tool for a slide. You can install like this.
+
+```
+go get golang.org/x/tools/cmd/present
+```
+
+And you have to make a present `*.slide` with [present format](https://godoc.org/golang.org/x/tools/present). Finally you can see the present like this.
+
+```
+present <slide-filename>.slide
+```
+
+If you have a github repository you can see that using [talks.godoc.org](https://talks.godoc.org). Just open the browser with the url like this.
+
+```
+https://talks.godoc.org/github.com/owner/project/file.ext
+https://talks.godoc.org/github.com/owner/project/sub/directory/file.ext
+```
 
 ## Debug
 
