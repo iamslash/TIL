@@ -1757,6 +1757,25 @@ https://talks.godoc.org/github.com/owner/project/file.ext
 https://talks.godoc.org/github.com/owner/project/sub/directory/file.ext
 ```
 
+This is a major present format.
+
+```
+#_italic_
+#*bold*
+#`program`
+#Markup—_especially_italic_text_—can easily be overused.
+#_Why_use_scoped__ptr_? Use plain ***ptr* instead.
+#.code scmmig/a.go /^func main/,/^}/
+#.code scmmig/a.go 
+#.play scmmig/a.go
+#.image scmmig/a.png
+#.background scmmig/a.png
+#.iframe http://www.coupang.com 560 960
+#.link http://www.google.co.kr Google
+#.html scmmig/a.html
+#.caption _Gopher_ by [[https://www.instagram.com/reneefrench/][Renée French]]
+```
+
 ## Debug
 
 VS Code를 사용한다면 debug mode로 launch하자.

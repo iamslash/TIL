@@ -14,7 +14,9 @@ jenkins 에 대해 정리한다.
 * [Jenkins World 2017: Mastering the Jenkins Script Console @ youtube](https://www.youtube.com/watch?v=qaUPESDcsGg)
   * jenkins script console
 
-# Install with docker on windows10
+# Install
+
+## Install with docker on windows10
 
 ```bash
 docker pull jenkins/jenkins:lts
@@ -23,15 +25,24 @@ docker run -d -p 50000:50000 -p 8080:8080 -v C:/my/dockervolume/var/jenkins_home
 
 browser 로 `localhost:8080` 으로 접속한다. docker 실행창에 출력된 key 를 입력한다. install suggested plugins 하면 끝. 플러그인 설치를 실패할 때가 있다. 그렇다면 `C:/my/dockervolume/var/jenkins_home/*` 를 모두 지우고 `docker stop, rm` 이후 다시 실행해본다. 잘 된다.
 
+## Install Jenkins 2.190.1 with docker on maxOS
+
+```bash
+docker pull jenkins/jenkins:lts
+docker run -d -p 50000:50000 -p 8080:8080 -v /Users/davidsun/my/dockervolume/jenkins_home:/var/jenkins_home --name jenkins jenkins/jenkins:lts
+```
+
 # Pipeline
 
+* [Jenkinsfile 을 이용한 젠킨스 Pipeline 설정](https://limsungmook.github.io/2016/11/09/jenkins-pipeline/)
+* [Pipeline as Code with Jenkins](https://jenkins.io/solutions/pipeline/)
 * [Using a Jenkinsfile ](https://jenkins.io/doc/book/pipeline/jenkinsfile/)
 * [젠킨스 파이프라인 정리 - 2. Scripted 문법 소개 @ tistory](https://jojoldu.tistory.com/356)
 * [scripted-pipeline @ jenkins](https://jenkins.io/doc/book/pipeline/syntax/#scripted-pipeline)
 
 ----
 
-`Jenkinsfile` 이라는 이름의 text file 이다. groovy 로 작성한다. `Declarative Pipeline`, `Scripted Pipeline` 과 같은 두가지 형식으로 작성한다.
+`Jenkinsfile` 이라는 이름의 text file 이다. repository root 에 groovy 로 작성한다. `Declarative Pipeline`, `Scripted Pipeline` 과 같은 두가지 형식으로 작성한다.
 
 ```groovy
 // Jenkinsfile (Declarative Pipeline)
