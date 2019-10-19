@@ -562,7 +562,7 @@ $ git stash list
 # stash@{1}: WIP on master: c264051 Revert "added file_size"
 # stash@{2}: WIP on master: 21d80a5 added number to log
 
-# 이제 stash 를 working directory 에 적용해 보자.
+# let's apply stash without index.
 $ git stash apply
 # On branch master
 # Changes not staged for commit:
@@ -574,7 +574,7 @@ $ git stash apply
 #
 # no changes added to commit (use "git add" and/or "git commit -a")
 
-# --index 를 추가하여 staged 상태까지 적용해보자.
+# let's apply stash with index.
 $ git stash apply --index
 # On branch master
 # Changes to be committed:
