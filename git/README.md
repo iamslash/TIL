@@ -185,7 +185,7 @@ git merge experiment
 
 ![](img/basic-rebase-4.png)
 
-rebase 는 experiment 의 마지막 커밋 (C4) 를 master 의 마지막 커밋 (C3) 에 적용하고 master 를 fast-forward 시키는 방법이다.
+rebase 는 experiment 의 마지막 커밋 (C4) 를 master 의 마지막 커밋 (C3) 에 적용하고 master 를 fast-forward 시키는 방법이다. merge 와 달리 commit 이 추가되지 않는다.
 
 ```bash
 git checkout master
@@ -246,7 +246,6 @@ $ git branch -d server
 ## 리비전 조회하기
 
 ```bash
-
 ## short hash
 $ git show 1c002dd4b536e7479fe34593e72e6c6c1819e53b
 $ git show 1c002dd4b536e7479f
@@ -254,6 +253,7 @@ $ git show 1c002d
 
 ## 짧고 중복되지 않는 해시 값
 git log --abbrev-commit --pretty=oneline
+git log --oneline
 # ca82a6d changed the version number
 # 085bb3b removed unnecessary test code
 # a11bef0 first commit
@@ -302,10 +302,9 @@ $ git log -g master
 
 ## 계통 관계로 가리키기
 
-# 이름 끝에 ^ (캐럿) 기호를 붙이면 Git은 해당 커밋의 부모를 찾는다.
 $ git log --pretty=format:'%h %s' --graph
 # * 734713b fixed refs handling, added gc auto, updated tests
-# *   d921970 Merge commit 'phedders/rdocs'
+# * d921970 Merge commit 'phedders/rdocs'
 # |\
 # | * 35cfb2b Some rdoc changes
 # * | 1c002dd added some blame and merge stuff
@@ -313,12 +312,13 @@ $ git log --pretty=format:'%h %s' --graph
 # * 1c36188 ignore *.gem
 # * 9b29157 add open3_detach to gemspec file list
 
+# 이름 끝에 ^ (캐럿) 기호를 붙이면 Git은 해당 커밋의 부모를 찾는다.
 $ git show HEAD^
 # commit d921970aadf03b3cf0e71becdaab3147ba71cdef
 # Merge: 1c002dd... 35cfb2b...
 # Author: Scott Chacon <schacon@gmail.com>
 # Date:   Thu Dec 11 15:08:43 2008 -0800
-
+#
 #     Merge commit 'phedders/rdocs'
 
 # Windows 에서는 ^^ "*^" 을 사용한다.
@@ -326,7 +326,7 @@ $ git show HEAD^     # will NOT work on Windows
 $ git show HEAD^^    # OK
 $ git show "HEAD^"   # OK
 
-# d921970^2 는 “d921970의 두 번째 부모” 를 의미한다. 
+# d921970^^ 는 “d921970의 두 번째 부모” 를 의미한다. 
 $ git show d921970^
 # commit 1c002dd4b536e7479fe34593e72e6c6c1819e53b
 # Author: Scott Chacon <schacon@gmail.com>
@@ -341,16 +341,8 @@ $ git show d921970^2
 #
 #     Some rdoc changes
 
-# HEAD~2 는 명령을 실행할 시점의 “첫 번째 부모의 첫 번째 부모” , 즉 “조부모” 를 가리킨다. 
-$ git show HEAD~3
-# commit 1c3618887afb5fbcbea25b7c013f4e2114448b8d
-# Author: Tom Preston-Werner <tom@mojombo.com>
-# Date:   Fri Nov 7 13:47:59 2008 -0500
-#
-#     ignore *.gem
-
-# HEAD~2 와 HEAD^^^ 는 같다.
-$ git show HEAD^^^
+# HEAD~2 와 HEAD^^ 는 같다.
+$ git show HEAD^^
 # commit 1c3618887afb5fbcbea25b7c013f4e2114448b8d
 # Author: Tom Preston-Werner <tom@mojombo.com>
 # Date:   Fri Nov 7 13:47:59 2008 -0500
