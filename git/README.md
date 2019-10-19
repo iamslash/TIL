@@ -9,6 +9,40 @@ git 은 `working directory, Index(staging area), local repository, remote reposi
 
 ![](img/reset-workflow.png)
 
+# Git 설정
+
+```bash
+## set name, email
+$ git config --global user.name "David Sun"
+$ git config --global user.email iamslash@gmail.com
+
+## set editor
+$ git config --global core.editor vim
+
+## set commit message template
+# vim $HOME/.gitmsg.txt
+# 
+# [AA]
+$ git config --global commit.template $HOME/.gitmsg.txt
+
+## set pager
+$ git config --global core.pager less
+
+## set mergetool
+$ git config --global merge.tool p4mergetool
+$ git config --global mergetool.p4mergetool.cmd \
+"/Applications/p4merge.app/Contents/Resources/launchp4merge \$PWD/\$BASE \$PWD/\$REMOTE \$PWD/\$LOCAL \$PWD/\$MERGED"
+$ git config --global mergetool.p4mergetool.trustExitCode false
+$ git config --global mergetool.keepBackup false
+$ git mergetool
+
+## set difftool
+$ git config --global diff.tool p4mergetool
+$ git config --global difftool.p4mergetool.cmd \
+"/Applications/p4merge.app/Contents/Resources/launchp4merge \$LOCAL \$REMOTE"
+$ git difftool
+```
+
 # Git 기초
 
 ## Git 저장소 만들기
