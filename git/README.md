@@ -9,6 +9,10 @@ git 은 `working directory, Index(staging area), local repository, remote reposi
 
 ![](img/reset-workflow.png)
 
+# Git branch strategy
+
+* [git branch strategy](gitbranchstrategy.md)
+
 # Git 설정
 
 ```bash

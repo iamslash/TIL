@@ -196,3 +196,7 @@ succeeded with volumes. Then open the browser with url `localhost`, change passw
 ![](https://docs.gitlab.com/ee/development/img/architecture_simplified.png)
 
 
+# Brainstorming
+
+* group 은 github 의 team 과 비슷하다.
+* 
