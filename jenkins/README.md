@@ -34,9 +34,12 @@ $ docker run -d -p 50000:50000 -p 8080:8080 -v /Users/davidsun/my/> dockervolume
 $ docker logs jenkins -f
 ```
 
-# jenkin_home structure
 
-## directories
+# Basic
+
+## jenkin_home structure
+
+### directories
 
 | directory | description |
 |-----------|-------------|
@@ -46,32 +49,31 @@ $ docker logs jenkins -f
 | `/plugins` | list of plugins |
 | `/workspace` | list of job worksspacees |
 
-## files
+### files
 
 | directory | description |
 |-----------|-------------|
 | `/config.xml` | global configuration |
 
-# Build Now Process
+## Build Now Process
 
 * make workspace direcotry at `/jenkins_home/worksspace/<job-name>`
 * execute Pipeline script
 
-# Setting
+## Setting
 
-## Locale 
+### Locale 
 
 * MENU | Manage Plugins | Install Locale plugin
 * MENU | Configure System
 * Locale | Default Language | en or ENGLISH
 
-## GitHub secret text
+### GitHub secret text
 
 * [gitHub와 Jenkins 연결하기](https://webcache.googleusercontent.com/search?q=cache:P6VRZNmJqRkJ:https://bcho.tistory.com/1237+&cd=1&hl=ko&ct=clnk&gl=kr)
 
-# Basic
 
-## Simple Job with Pipeline value
+### Simple Job with Pipeline value
 
 * Jenkins | New Item | "HelloWorld.pipeline" with Pipeline template
 * Pipeline | Pipeline script
@@ -101,7 +103,7 @@ void print(message) {
 
 * Build Now
 
-## Simple Job with pipeline script from scm
+### Simple Job with pipeline script from scm
 
 * Jenkinsfile
 
@@ -132,7 +134,17 @@ void print(message) {
 * Pipeline | Pipeline script from SCM
 * Build Now
 
-# Pipeline as a code
+## Contribution
+
+* [Beginners Guide to Contributing](https://wiki.jenkins.io/display/JENKINS/Beginners+Guide+to+Contributing)
+
+## JenkinsCLI
+
+```bash
+$ java -jar jenkins-cli.jar -s http://localhost:8080/ -auth iamslash:?????? help
+```
+
+## Pipeline as a code
 
 * [Learning Jenkins Pipeline @ github](https://github.com/mcpaint/learning-jenkins-pipeline)
   * declaritive pipeline script 연구
@@ -146,9 +158,9 @@ void print(message) {
 
 browser 로 `http://localhost:8080/pipeline-syntax` 를 접속하면 자세한 reference 들을 확인할 수 있다.
 
-# Declaritive pipeline
+## Declaritive pipeline
 
-## skeleton
+### skeleton
 
 ```groovy
 pipeline {
@@ -183,10 +195,10 @@ pipeline {
 }
 ```
 
-## example 1
+### example 1
 
 
-# Scripted pipeline
+## Scripted pipeline
 
 * [Pipeline Examples](https://jenkins.io/doc/pipeline/examples/)
   * 킹왕짱 예제들
@@ -195,6 +207,3 @@ pipeline {
 
 ----
 
-# Contribution
-
-* [Beginners Guide to Contributing](https://wiki.jenkins.io/display/JENKINS/Beginners+Guide+to+Contributing)

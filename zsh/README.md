@@ -17,3 +17,9 @@ sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/mas
 ## Auto completetion
 
 * `git a` 하고 `tab` 하면 argument 까지도 auto completetion 이 된다.
+
+## Shortcus
+
+```
+Ctrl-U : delete one line
+```
