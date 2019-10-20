@@ -192,3 +192,9 @@ pipeline {
 * [scripted-pipeline @ jenkins](https://jenkins.io/doc/book/pipeline/syntax/#scripted-pipeline)
 
 ----
+
+
+
+# Contribution
+
+* [Beginners Guide to Contributing](https://wiki.jenkins.io/display/JENKINS/Beginners+Guide+to+Contributing)
