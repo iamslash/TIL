@@ -34,7 +34,82 @@ $ docker run -d -p 50000:50000 -p 8080:8080 -v /Users/davidsun/my/> dockervolume
 $ docker logs jenkins -f
 ```
 
-# Pipeline
+# Setting
+
+## Locale 
+
+* MENU | Manage Plugins | Install Locale plugin
+* MENU | Configure System
+* Locale | Default Language | en or ENGLISH
+
+## GitHub secret text
+
+* [gitHub와 Jenkins 연결하기](https://webcache.googleusercontent.com/search?q=cache:P6VRZNmJqRkJ:https://bcho.tistory.com/1237+&cd=1&hl=ko&ct=clnk&gl=kr)
+
+# Basic
+
+## Simple Job with Pipeline value
+
+* Jenkins | New Item | "HelloWorld.pipeline" with Pipeline template
+* Pipeline | Pipeline script
+
+```groovy
+node {
+    def hello = 'Hello World'
+    stage ('clone') {
+        git 'https://github.com/welearntocode/HelloWorld.git'
+    }
+    dir ('sh') {
+        stage ('sh/execute') {
+            sh './a.sh'
+        }
+    }
+    stage ('print') {
+        print(hello) 
+    }
+}
+
+// void for no return
+// def for return
+void print(message) {
+    echo "${message}"
+}
+```
+
+* Build Now
+
+## Simple Job with pipeline script from scm
+
+* Jenkinsfile
+
+```groovy
+node {
+    def hello = 'Hello World'
+    stage ('clone') {
+        git 'https://github.com/welearntocode/HelloWorld.git'
+    }
+    dir ('sh') {
+        stage ('sh/execute') {
+            sh './a.sh'
+        }
+    }
+    stage ('print') {
+        print(hello) 
+    }
+}
+
+// void for no return
+// def for return
+void print(message) {
+    echo "${message}"
+}
+```
+
+* Jenkins | New Item | "HelloWorld.pipeline" with Pipeline template
+* Pipeline | Pipeline script from SCM
+* Build Now
+
+# Pipeline as a code
 
 * [Jenkinsfile 을 이용한 젠킨스 Pipeline 설정](https://limsungmook.github.io/2016/11/09/jenkins-pipeline/)
 * [Pipeline as Code with Jenkins](https://jenkins.io/solutions/pipeline/)
@@ -46,93 +121,3 @@ $ docker logs jenkins -f
 
 `Jenkinsfile` 이라는 이름의 text file 이다. repository root 에 groovy 로 작성한다. `Declarative Pipeline`, `Scripted Pipeline` 과 같은 두가지 형식으로 작성한다.
 
-```groovy
-// Jenkinsfile (Declarative Pipeline)
-pipeline {
-    agent any
-
-    stages {
-        stage('Build') {
-            steps {
-                echo 'Building..'
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
-        }
-    }
-}
-// Jenkinsfile (Scripted Pipeline)
-node {
-    checkout scm 
-    /* .. snip .. */
-}
-```
-
-다음은 Build Automation 을 위한 Jenkinsfile 의 예이다.
-
-```groovy
-Jenkinsfile (Declarative Pipeline)
-pipeline {
-    agent any
-
-    stages {
-        stage('Build') {
-            steps {
-                sh 'make' 
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true 
-            }
-        }
-    }
-}
-```
-
-다음은 Test Automation 을 위한 Jenkinsfile 의 예이다.
-
-```groovy
-// Jenkinsfile (Declarative Pipeline)
-pipeline {
-    agent any
-
-    stages {
-        stage('Test') {
-            steps {
-                /* `make check` returns non-zero on test failures,
-                * using `true` to allow the Pipeline to continue nonetheless
-                */
-                sh 'make check || true' 
-                junit '**/target/*.xml' 
-            }
-        }
-    }
-}
-```
-
-다음은 Deploy Automation 을 위한 Jenkinsfile 의 예이다.
-
-```groovy
-// Jenkinsfile (Declarative Pipeline)
-pipeline {
-    agent any
-
-    stages {
-        stage('Deploy') {
-            when {
-              expression {
-                currentBuild.result == null || currentBuild.result == 'SUCCESS' 
-              }
-            }
-            steps {
-                sh 'make publish'
-            }
-        }
-    }
-}
-```
