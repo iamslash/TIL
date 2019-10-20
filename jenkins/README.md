@@ -134,11 +134,11 @@ void print(message) {
 
 # Pipeline as a code
 
+* [Learning Jenkins Pipeline @ github](https://github.com/mcpaint/learning-jenkins-pipeline)
+  * declaritive pipeline script 연구
 * [Jenkinsfile 을 이용한 젠킨스 Pipeline 설정](https://limsungmook.github.io/2016/11/09/jenkins-pipeline/)
 * [Pipeline as Code with Jenkins](https://jenkins.io/solutions/pipeline/)
 * [Using a Jenkinsfile ](https://jenkins.io/doc/book/pipeline/jenkinsfile/)
-* [젠킨스 파이프라인 정리 - 2. Scripted 문법 소개 @ tistory](https://jojoldu.tistory.com/356)
-* [scripted-pipeline @ jenkins](https://jenkins.io/doc/book/pipeline/syntax/#scripted-pipeline)
 
 ----
 
@@ -146,3 +146,49 @@ void print(message) {
 
 browser 로 `http://localhost:8080/pipeline-syntax` 를 접속하면 자세한 reference 들을 확인할 수 있다.
 
+# Declaritive pipeline
+
+## skeleton
+
+```groovy
+pipeline {
+    agent {}
+    triggers {}
+    tools {}
+    environment {}
+    options {}
+    parameters {}
+    stages {
+        stage('stage1') {}
+        stage('stage2') {}
+        
+        parallel { 
+            stage('parallel_1') {}
+            stage('parallel_2') {}
+        }
+    }
+    
+    // execute after stages
+    post {
+      always {}
+      changed {}
+      fixed {}
+      regression {}
+      aborted {}
+      failure {}
+      success {}
+      unstable {}
+      cleanup {}
+    }
+}
+```
+
+## example 1
+
+
+# Scripted pipeline
+
+* [젠킨스 파이프라인 정리 - 2. Scripted 문법 소개 @ tistory](https://jojoldu.tistory.com/356)
+* [scripted-pipeline @ jenkins](https://jenkins.io/doc/book/pipeline/syntax/#scripted-pipeline)
+
+----
