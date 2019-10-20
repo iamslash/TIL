@@ -34,6 +34,29 @@ $ docker run -d -p 50000:50000 -p 8080:8080 -v /Users/davidsun/my/> dockervolume
 $ docker logs jenkins -f
 ```
 
+# jenkin_home structure
+
+## directories
+
+| directory | description |
+|-----------|-------------|
+| `/jobs` | list of jobs |
+| `/nodes` | list of nodes |
+| `/logs` | log files |
+| `/plugins` | list of plugins |
+| `/workspace` | list of job worksspacees |
+
+## files
+
+| directory | description |
+|-----------|-------------|
+| `/config.xml` | global configuration |
+
+# Build Now Process
+
+* make workspace direcotry at `/jenkins_home/worksspace/<job-name>`
+* execute Pipeline script
+
 # Setting
 
 ## Locale 
@@ -119,5 +142,7 @@ void print(message) {
 
 ----
 
-`Jenkinsfile` 이라는 이름의 text file 이다. repository root 에 groovy 로 작성한다. `Declarative Pipeline`, `Scripted Pipeline` 과 같은 두가지 형식으로 작성한다.
+`Jenkinsfile` 이라는 이름의 text file 이다. repository root 에 groovy 로 작성한다. `Declarative Pipeline`, `Scripted Pipeline` 과 같은 두가지 형식으로 작성한다. 
+
+browser 로 `http://localhost:8080/pipeline-syntax` 를 접속하면 자세한 reference 들을 확인할 수 있다.
 
