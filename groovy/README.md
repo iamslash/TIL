@@ -2,20 +2,27 @@
 - [Install](#install)
   - [Install on Windows 10](#install-on-windows-10)
   - [Install on OSX](#install-on-osx)
-- [Hello World](#hello-world)
 - [DSL (Domain Specific Language)](#dsl-domain-specific-language)
 - [Basic](#basic)
+  - [Compile, Run](#compile-run)
+  - [Hello World](#hello-world)
   - [Reserved Words](#reserved-words)
   - [Data Types](#data-types)
-  - [Collections compared with c++ container](#collections-compared-with-c-container)
-  - [Collections](#collections)
-  - [Multidimensional Array](#multidimensional-array)
-  - [Sort](#sort)
-  - [Operators](#operators)
-  - [Decision Making](#decision-making)
+  - [Print Formatted Text](#print-formatted-text)
+  - [Control Flows](#control-flows)
   - [Loops](#loops)
-- [Advance](#advance)
+  - [Operators](#operators)
+  - [Collections compared to c++ containers](#collections-compared-to-c-containers)
+  - [Collections](#collections)
+  - [Functions](#functions)
+  - [Struct, Class, Interface, AbstractClass](#struct-class-interface-abstractclass)
+  - [Closure](#closure)
+  - [Lambda](#lambda)
+  - [Exception](#exception)
+  - [Structure of Project](#structure-of-project)
+- [Advanced](#advanced)
   - [Introspection](#introspection)
+  - [Traits](#traits)
 
 ----
 
@@ -44,23 +51,6 @@ choco install groovy
 
 ```bash
 brew install groovy
-```
-
-# Hello World
-
-* a.groovy
-
-```groovy
-class A {
-    static void main(String[] args){
-    // Print to the screen
-    println("Hello World");
-    }
-}
-```
-
-```bash
-groovy a.groovy
 ```
 
 # DSL (Domain Specific Language)
@@ -134,43 +124,260 @@ EmailDsl.make {
 
 # Basic 
 
+## Compile, Run
+
+```bash
+$ groovy a.groovy
+```
+
+## Hello World
+
+* a.groovy
+
+```groovy
+class A {
+    static void main(String[] args){
+    // Print to the screen
+    println("Hello World");
+    }
+}
+```
+
 ## Reserved Words
 
-TODO
+```groovy
+as     assert  break      case
+catch  class   const      continue
+def    default do         else  
+enum   extends false      finally
+for    goto    if         implements 
+import in      instanceof interface
+new    null    package    return
+super  switch  this       throw
+throws trait   true       try
+while
+```
 
 ## Data Types
 
-TODO
+* [Built-in Data Types @ tutorialpoints](https://www.tutorialspoint.com/groovy/groovy_data_types.htm)
 
-## Collections compared with c++ container
+----
 
-TODO
+```groovy
+byte
+short
+int
+long
+float
+double
+char
+Boolean
+String
+```
 
-## Collections
+## Print Formatted Text
 
-TODO
+```groovy
+println(String.format("%s : %s", "name", "pass"))
+```
 
-## Multidimensional Array
+## Control Flows
 
-TODO
+```groovy
+//// if-else
+if (a < 100) {
+   println("The value is less than 100")
+} else if (a < 50) {
+   println("The value is less than 50")
+} else {
+   println("The value is too small")
+}
 
-## Sort
-
-TODO
-
-## Operators
-
-TODO
-
-## Decision Making
-
-TODO
+//// switch
+switch(a) {
+   case 1:
+     println("The value is one")
+     break;
+   case 2:
+     println("The value is two")
+     break;
+   default:
+     println("The value is unknown")
+     break;
+}
+```
 
 ## Loops
 
+```groovy
+//// while
+while (cnt < 10) {
+   println(cnt)
+   cnt++
+}
+
+//// for
+for (int i = 0; i < 5; i++) {
+   println(i)
+}
+
+//// for-in
+for (int i in 1..5) {
+   println(i)
+}
+```
+
+## Operators
+
+```groovy
+//// Arithmetic operators
+1 + 2 // 3
+2 - 1 // 1
+2 * 2 // 4
+3 / 2 // 1.5
+3 % 2 // 1
+
+//// Relational operators
+2 == 2
+3 != 2
+2 < 3
+2 <= 3
+3 > 2
+3 >= 2
+
+//// Logical operators
+true && true
+ture || true
+!false
+
+//// Bitwise operators
+1 & 1
+1 | 0
+1 ^ 1
+~1
+
+//// Assignment operators
+def A = 5; 
+A += 3
+A -= 3
+A *= 3
+A /= 3
+A %= 3
+```
+
+## Collections compared to c++ containers
+
+
+| c++                  | groovy                            |
+|:---------------------|:--------------------------------|
+| `if, else`           | `if, else`                      |
+| `for, while`         | `for, while`                    |
+| `array`              | `Collections.unmodifiableList`  |
+| `vector`             | `Vector, ArrayList`             |
+| `deque`              | `Deque, ArrayDeque`             |
+| `forward_list`       | ``                              |
+| `list`               | `List, LinkedList`              |
+| `stack`              | `Stack, Deque`                  |
+| `queue`              | `Queue, LinkedList`             |
+| `priority_queue`     | `Queue, PriorityQueue`          |
+| `set`                | `SortedSet, TreeSet`       |
+| `multiset`           | ``                              |
+| `map`                | `SortedMap, TreeMap`       |
+| `multimap`           | ``                              |
+| `unordered_set`      | `Set, HashSet`                  |
+| `unordered_multiset` | ``                              |
+| `unordered_map`      | `Map, HashMap`                  |
+| `unordered_multimap` | ``                              |
+
+## Collections
+
+Lists, Maps, Ranges
+
+* Lists
+
+```groovy
+def list = [5, 6, 7, 8]
+assert list.get(2) == 7
+assert list[2] == 7
+assert list instanceof java.util.List
+
+def emptyList = []
+assert emptyList.size() == 0
+emptyList.add(5)
+assert emptyList.size() == 1
+```
+
+* Maps
+
+```groovy
+def map = [name: 'Gromit', likes: 'cheese', id: 1234]
+assert map.get('name') == 'Gromit'
+assert map.get('id') == 1234
+assert map['name'] == 'Gromit'
+assert map['id'] == 1234
+assert map instanceof java.util.Map
+
+def emptyMap = [:]
+assert emptyMap.size() == 0
+emptyMap.put("foo", 5)
+assert emptyMap.size() == 1
+assert emptyMap.get("foo") == 5
+```
+
+* Ranges
+  * Range extends java.util.List.
+
+```groovy
+// an inclusive range
+def range = 5..8
+assert range.size() == 4
+assert range.get(2) == 7
+assert range[2] == 7
+assert range instanceof java.util.List
+assert range.contains(5)
+assert range.contains(8)
+
+// lets use a half-open range
+range = 5..<8
+assert range.size() == 3
+assert range.get(2) == 7
+assert range[2] == 7
+assert range instanceof java.util.List
+assert range.contains(5)
+assert !range.contains(8)
+
+//get the end points of the range without using indexes
+range = 1..10
+assert range.from == 1
+assert range.to == 10
+```
+
+## Functions
+
 TODO
 
-# Advance
+## Struct, Class, Interface, AbstractClass
+
+TODO
+
+## Closure
+
+TODO
+
+## Lambda
+
+TODO
+
+## Exception
+
+TODO
+
+## Structure of Project
+
+TODO
+
+# Advanced
 
 ## Introspection
 
@@ -196,3 +403,7 @@ String.methods.name
 d = new Date()
 d.properties.each{ println(it) }
 ```
+
+## Traits
+
+TODO

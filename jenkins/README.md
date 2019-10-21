@@ -20,6 +20,9 @@
   - [Scripted pipeline](#scripted-pipeline)
 - [How to make a Jenkins-plugin](#how-to-make-a-jenkins-plugin)
 - [Script Console](#script-console)
+- [How to backup and install plugins](#how-to-backup-and-install-plugins)
+  - [How to backup](#how-to-backup)
+  - [How to install](#how-to-install)
 
 ----
 
@@ -340,7 +343,6 @@ pipeline {
 }
 ```
 
-
 ## Scripted pipeline
 
 * [Pipeline Examples](https://jenkins.io/doc/pipeline/examples/)
@@ -350,10 +352,9 @@ pipeline {
 
 ----
 
-
 Scripted Pipeline should start `node {...}` block. And It is effectively a general pupose DSL built with Groovy.
 
-This is an example of Flow Control
+* This is an example of Flow Control
 
 ```groovy
 // Jenkinsfile (Scripted Pipeline)
@@ -368,7 +369,7 @@ node {
 }
 ```
 
-This is an example of try/catch. 
+* This is an example of try/catch. 
 
 ```groovy
 // Jenkinsfile (Scripted Pipeline)
@@ -382,6 +383,29 @@ node {
             throw
         }
     }
+}
+```
+
+* Archive Build Output Artifacts 
+
+```groovy
+// This shows a simple example of how to archive the build output artifacts.
+node {
+    stage "Create build output"
+    
+    // Make the output directory.
+    sh "mkdir -p output"
+
+    // Write an useful file, which is needed to be archived.
+    writeFile file: "output/usefulfile.txt", text: "This file is useful, need to archive it."
+
+    // Write an useless file, which is not needed to be archived.
+    writeFile file: "output/uselessfile.md", text: "This file is useless, no need to archive it."
+
+    stage "Archive build output"
+    
+    // Archive the build output artifacts.
+    archiveArtifacts artifacts: 'output/*.txt', excludes: 'output/*.md'
 }
 ```
 
@@ -463,11 +487,102 @@ $ idea pom.xml
 
 * [Jenkins World 2017: Mastering the Jenkins Script Console](https://www.youtube.com/watch?v=qaUPESDcsGg)
 * [Jenkins Area Meetup - Hacking on Jenkins Internals - Jenkins Script Console](https://www.youtube.com/watch?v=T1x2kCGRY1w)
+* [jenkins-scripts @ github](https://github.com/jenkinsci/jenkins-scripts)
+  * This is a collection of utility scripts for use with Jenkins.
 
 ----
 
 * open browser with url `http://localhost:8080/script`
 
-```groovy
+* list methods on a class instance
 
+* [introspection @ TIL](/groovy/README.md#introspection)
+
+```groovy
+a.metaClass.methods*.name.sort().unique()
+```
+
+* determine a class from an instance
+
+```groovy
+a.class
+a.getClass()
+```
+
+* set GithubSecurityRealm after install Github Auth plugin.
+
+```groovy
+import org.jenkinsci.plugins.GithubSecurityRealm
+
+def J = Jenkins.instance
+println(J.getSecurityRealm())
+
+def github = new GithubSecurityRealm('https://a.foo.com',
+               'https://a.foo.com/api/v3',
+               'foo',
+               'bar',
+               'do not care')
+Jenkins.instance.setSecurityRealm(github)                    
+```
+
+This is `/jenkins_home/config.xml` after running above script.
+
+```xml
+...
+<securityRealm class="org.jenkinsci.plugins.GithubSecurityRealm">
+    <githubWebUri>https://a.foo.com</githubWebUri>
+    <githubApiUri>https://a.foo.com/api/v3</githubApiUri>
+    <clientID>foo</clientID>
+    <clientSecret>????????????????</clientSecret>
+    <oauthScopes>do not care</oauthScopes>
+  </securityRealm>
+...  
+```
+
+# How to backup and install plugins
+
+## How to backup
+
+save plugin names into plugins.txt. don't need to add version because want to install latest versions.
+
+```groovy
+String path = '~/tmp/plugins.txt'
+File data = new File(path)
+if (data.exists()) {
+  data.write('')
+} else {
+  data.createNewFile()
+}
+for (config in Jenkins.instance.pluginManager.activePlugins) {   
+  data.append(config.getShortName() + '\n')
+}
+```
+
+* plugins.txt
+
+```
+...
+jdk-tool
+script-security
+command-launcher
+bouncycastle-api
+ace-editor
+structs
+ant
+workflow-step-api
+scm-api
+workflow-api
+...
+```
+
+## How to install
+
+install plugins using `/usr/local/bin/install-plugins.sh`.
+
+```Dockerfile
+...
+FROM jenkins/jenkins:lts
+COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
+RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
+...
 ```
