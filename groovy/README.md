@@ -355,7 +355,43 @@ assert range.to == 10
 
 ## Functions
 
-TODO
+```groovy
+// basic function
+static def DisplayName() {
+  println("This is how methods work in groovy");
+  println("This is an example of a simple method");
+}
+// parameter
+static void sum(int a, int b) {
+  int c = a + b;
+  println(c);
+}
+// default parameter
+static void sum(int a,int b = 5) { 
+  int c = a + b; 
+  println(c); 
+} 
+// return value
+static int sum(int a,int b = 5) {
+  int c = a + b;
+  return c;
+} 
+// instance methods
+class Example { 
+  int x; 
+  public int getX() { 
+    return x; 
+  } 
+  public void setX(int pX) { 
+    x = pX; 
+  } 
+  static void main(String[] args) { 
+    Example ex = new Example(); 
+    ex.setX(100); 
+    println(ex.getX()); 
+  } 
+}
+```
 
 ## Struct, Class, Interface, AbstractClass
 
@@ -363,11 +399,91 @@ TODO
 
 ## Closure
 
-TODO
+A closure is a short anonymous block of code.
+
+```groovy
+//// basic closure
+class Example {
+  static void main(String[] args) {
+    def clos = { println "Hello World" };
+    clos.call();
+  } 
+}
+//// formal parameters in closures
+class Example {
+   static void main(String[] args) {
+      def clos = { param -> println "Hello ${param}" };
+      clos.call("World");
+   } 
+}
+class Example {
+   static void main(String[] args) {
+      def clos = { println "Hello ${it}" };
+      clos.call("World");
+   } 
+}
+//// Closures and Variables
+class Example {     
+   static void main(String[] args) {
+      def str1 = "Hello";
+      def clos = { param -> println "${str1} ${param}" }
+      clos.call("World");		
+      // We are now changing the value of the String str1 which is referenced in the closure
+      str1 = "Welcome";
+      clos.call("World");
+   } 
+}
+// Hello World 
+// Welcome World
+//// using closures in methods
+class Example { 
+   def static Display(clo) {
+      // This time the $param parameter gets replaced by the string "Inner"         
+      clo.call("Inner");
+   } 
+	
+   static void main(String[] args) {
+      def str1 = "Hello";
+      def clos = { param -> println "${str1} ${param}" }
+      clos.call("World");
+		
+      // We are now changing the value of the String str1 which is referenced in the closure
+      str1 = "Welcome";
+      clos.call("World");
+		
+      // Passing our closure to a method
+      Example.Display(clos);
+   } 
+}
+// Hello World 
+// Welcome World 
+// Welcome Inner
+
+//// Closures in Collections and String
+class Example {
+   static void main(String[] args) {
+      def lst = [11, 12, 13, 14];
+      lst.each { println it }
+   } 
+}
+class Example {
+   static void main(String[] args) {
+      def mp = ["TopicName" : "Maps", "TopicDescription" : "Methods in Maps"]             
+      mp.each({ println it })
+      mp.each({ println "${it.key} maps to: ${it.value}"})
+   } 
+}
+```
 
 ## Lambda
 
-TODO
+There is no lambda but closure.
+
+```groovy
+def str1 = "Hello";
+def clos = { param -> println "${str1} ${param}" }
+clos.call("World");		
+```
 
 ## Exception
 
