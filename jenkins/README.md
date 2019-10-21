@@ -1,3 +1,27 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Install](#install)
+  - [Install with 2.190.1 docker on windows10](#install-with-21901-docker-on-windows10)
+  - [Install Jenkins 2.190.1 with docker on maxOS](#install-jenkins-21901-with-docker-on-maxos)
+- [Basic](#basic)
+  - [jenkin_home structure](#jenkinhome-structure)
+    - [directories](#directories)
+    - [files](#files)
+  - [Build Now Process](#build-now-process)
+  - [Setting](#setting)
+    - [Locale](#locale)
+    - [GitHub secret text](#github-secret-text)
+    - [Simple Job with Pipeline value](#simple-job-with-pipeline-value)
+    - [Simple Job with pipeline script from scm](#simple-job-with-pipeline-script-from-scm)
+  - [Contribution](#contribution)
+  - [JenkinsCLI](#jenkinscli)
+  - [Pipeline as a code](#pipeline-as-a-code)
+  - [Declaritive pipeline](#declaritive-pipeline)
+  - [Scripted pipeline](#scripted-pipeline)
+- [How to make a Jenkins-plugin](#how-to-make-a-jenkins-plugin)
+
+----
+
 # Abstract
 
 jenkins 에 대해 정리한다.
@@ -34,7 +58,6 @@ $ docker run -d -p 50000:50000 -p 8080:8080 -v /Users/davidsun/my/> dockervolume
 $ docker logs jenkins -f
 ```
 
-
 # Basic
 
 ## jenkin_home structure
@@ -67,6 +90,7 @@ $ docker logs jenkins -f
 * MENU | Manage Plugins | Install Locale plugin
 * MENU | Configure System
 * Locale | Default Language | en or ENGLISH
+* check `Ignore browser preference and force this language to all users`
 
 ### GitHub secret text
 
@@ -158,44 +182,162 @@ $ java -jar jenkins-cli.jar -s http://localhost:8080/ -auth iamslash:?????? help
 
 browser 로 `http://localhost:8080/pipeline-syntax` 를 접속하면 자세한 reference 들을 확인할 수 있다.
 
+`Jenkinsfile` 의 문법은 [DSL with Groovy](/groovy/README.md) 를 참고하자.
+
 ## Declaritive pipeline
 
-### skeleton
+* [Pipeline Syntax](https://jenkins.io/doc/book/pipeline/syntax)
+* [Pipeline Steps Reference](https://jenkins.io/doc/pipeline/steps/)
+
+----
+
+Declarative Pipeline follow the same rules.
+
+* The top-level of the Pipeline must be a block, specifically: `pipeline { }`
+* No semicolons as statement separators. Each statement has to be on its own line
+* Blocks must only consist of **Sections**, **Directives**, **Steps**, or assignment statements.
+* A property reference statement is treated as no-argument method invocation. So for example, `input` is treated as `input()`
+
+Sections in Declarative Pipeline typically contain one or more Directives or Steps.
+
+* agent, post, stages, steps
+
+Directives are consisted of these.
+
+* environment, options, parameters, triggers, jenkins cron syntax, stage, tools, input, when
+
+Sequential stages is a list of nested stages to be run within them in sequential order. 
 
 ```groovy
+// Jenkinsfile (Declarative Pipeline)
 pipeline {
-    agent {}
-    triggers {}
-    tools {}
-    environment {}
-    options {}
-    parameters {}
+    agent none
     stages {
-        stage('stage1') {}
-        stage('stage2') {}
-        
-        parallel { 
-            stage('parallel_1') {}
-            stage('parallel_2') {}
+        stage('Non-Sequential Stage') {
+            agent {
+                label 'for-non-sequential'
+            }
+            steps {
+                echo "On Non-Sequential Stage"
+            }
         }
-    }
-    
-    // execute after stages
-    post {
-      always {}
-      changed {}
-      fixed {}
-      regression {}
-      aborted {}
-      failure {}
-      success {}
-      unstable {}
-      cleanup {}
+        stage('Sequential') {
+            agent {
+                label 'for-sequential'
+            }
+            environment {
+                FOR_SEQUENTIAL = "some-value"
+            }
+            stages {
+                stage('In Sequential 1') {
+                    steps {
+                        echo "In Sequential 1"
+                    }
+                }
+                stage('In Sequential 2') {
+                    steps {
+                        echo "In Sequential 2"
+                    }
+                }
+                stage('Parallel In Sequential') {
+                    parallel {
+                        stage('In Parallel 1') {
+                            steps {
+                                echo "In Parallel 1"
+                            }
+                        }
+                        stage('In Parallel 2') {
+                            steps {
+                                echo "In Parallel 2"
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 ```
 
-### example 1
+Parallel block will be executed in parallel.
+
+```groovy
+// Jenkinsfile (Declarative Pipeline)
+pipeline {
+    agent any
+    stages {
+        stage('Non-Parallel Stage') {
+            steps {
+                echo 'This stage will be executed first.'
+            }
+        }
+        stage('Parallel Stage') {
+            when {
+                branch 'master'
+            }
+            failFast true
+            parallel {
+                stage('Branch A') {
+                    agent {
+                        label "for-branch-a"
+                    }
+                    steps {
+                        echo "On Branch A"
+                    }
+                }
+                stage('Branch B') {
+                    agent {
+                        label "for-branch-b"
+                    }
+                    steps {
+                        echo "On Branch B"
+                    }
+                }
+                stage('Branch C') {
+                    agent {
+                        label "for-branch-c"
+                    }
+                    stages {
+                        stage('Nested 1') {
+                            steps {
+                                echo "In stage Nested 1 within Branch C"
+                            }
+                        }
+                        stage('Nested 2') {
+                            steps {
+                                echo "In stage Nested 2 within Branch C"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+```
+
+Declarative Pipelines may use all the avilable steps in the [Pipeline Steps Reference](https://jenkins.io/doc/pipeline/steps/). The `script` step is only supported in Declaritive Piepline.
+
+```groovy
+// Jenkinsfile (Declarative Pipeline)
+pipeline {
+    agent any
+    stages {
+        stage('Example') {
+            steps {
+                echo 'Hello World'
+
+                script {
+                    def browsers = ['chrome', 'firefox']
+                    for (int i = 0; i < browsers.size(); ++i) {
+                        echo "Testing the ${browsers[i]} browser"
+                    }
+                }
+            }
+        }
+    }
+}
+```
 
 
 ## Scripted pipeline
@@ -207,3 +349,41 @@ pipeline {
 
 ----
 
+
+Scripted Pipeline should start `node {...}` block. And It is effectively a general pupose DSL built with Groovy.
+
+This is an example of Flow Control
+
+```groovy
+// Jenkinsfile (Scripted Pipeline)
+node {
+    stage('Example') {
+        if (env.BRANCH_NAME == 'master') {
+            echo 'I only execute on the master branch'
+        } else {
+            echo 'I execute elsewhere'
+        }
+    }
+}
+```
+
+This is an example of try/catch. 
+
+```groovy
+// Jenkinsfile (Scripted Pipeline)
+node {
+    stage('Example') {
+        try {
+            sh 'exit 1'
+        }
+        catch (exc) {
+            echo 'Something failed, I should sound the klaxons!'
+            throw
+        }
+    }
+}
+```
+
+# How to make a Jenkins-plugin
+
+* [](https://dzone.com/articles/implementing-a-jenkins-plugin-from-scratch-in-5-st)
