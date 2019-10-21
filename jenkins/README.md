@@ -386,4 +386,75 @@ node {
 
 # How to make a Jenkins-plugin
 
-* [](https://dzone.com/articles/implementing-a-jenkins-plugin-from-scratch-in-5-st)
+* [IntelliJ setup for Jenkins Plugin Development](https://medium.com/@baymac/setting-up-intellij-idea-for-jenkins-plugin-development-66a074bbe4a9)
+
+----
+
+* Configure Maven Settings
+  * vim `~/.m2/settings.xml`
+
+```xml
+<settings>
+  <pluginGroups>
+    <pluginGroup>org.jenkins-ci.tools</pluginGroup>
+  </pluginGroups>
+ 
+  <profiles>
+    <!-- Give access to Jenkins plugins -->
+    <profile>
+      <id>jenkins</id>
+      <activation>
+        <activeByDefault>true</activeByDefault> <!-- change this to false, if you don't like to have it on per default -->
+      </activation>
+      <repositories>
+        <repository>
+          <id>repo.jenkins-ci.org</id>
+          <url>https://repo.jenkins-ci.org/public/</url>
+        </repository>
+      </repositories>
+      <pluginRepositories>
+        <pluginRepository>
+          <id>repo.jenkins-ci.org</id>
+          <url>https://repo.jenkins-ci.org/public/</url>
+        </pluginRepository>
+      </pluginRepositories>
+    </profile>
+  </profiles>
+  <mirrors>
+    <mirror>
+      <id>repo.jenkins-ci.org</id>
+      <url>https://repo.jenkins-ci.org/public/</url>
+      <mirrorOf>m.g.o-public</mirrorOf>
+    </mirror>
+  </mirrors>
+</settings>
+```
+
+* Generate an empty skeleton plugin
+
+```bash
+$ mvn archetype:generate -Dfilter=io.jenkins.archetypes:empty-plugin
+$ cd <artiface-id>
+$ idea pom.xml
+```
+
+* Add run/debug configuration
+
+```bash
+$ mvn install
+$ mvn hpi:run
+```
+
+open browser with url `http://localhost:8080/jenkins`
+
+* Next time you open your project
+
+```bash
+$ cd my/java/aaa
+$ idea pom.xml
+```
+
+* Plugins to aid development
+  * Stapler
+  * Jenkins Control Plugin
+  
