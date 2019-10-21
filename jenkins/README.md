@@ -19,6 +19,7 @@
   - [Declaritive pipeline](#declaritive-pipeline)
   - [Scripted pipeline](#scripted-pipeline)
 - [How to make a Jenkins-plugin](#how-to-make-a-jenkins-plugin)
+- [Script Console](#script-console)
 
 ----
 
@@ -457,4 +458,16 @@ $ idea pom.xml
 * Plugins to aid development
   * Stapler
   * Jenkins Control Plugin
-  
+
+# Script Console
+
+* [Jenkins World 2017: Mastering the Jenkins Script Console](https://www.youtube.com/watch?v=qaUPESDcsGg)
+* [Jenkins Area Meetup - Hacking on Jenkins Internals - Jenkins Script Console](https://www.youtube.com/watch?v=T1x2kCGRY1w)
+
+----
+
+* open browser with url `http://localhost:8080/script`
+
+```groovy
+
+```
