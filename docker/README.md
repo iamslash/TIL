@@ -233,6 +233,8 @@ distribution/registry:2.6.0
 # get a bash from a alive container
 # > docker exec
 > docker exec -it myubuntu /bin/bash
+# get a bash as root user
+> docker exec -it -u root jenkins /bin/bash
 ```
 
 ## Dockerfile Instruction
