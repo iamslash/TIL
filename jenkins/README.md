@@ -2,7 +2,8 @@
 - [Materials](#materials)
 - [Install](#install)
   - [Install with 2.190.1 docker on windows10](#install-with-21901-docker-on-windows10)
-  - [Install Jenkins 2.190.1 with docker on maxOS](#install-jenkins-21901-with-docker-on-maxos)
+  - [Install Jenkins 2.190.1 with docker on macOS](#install-jenkins-21901-with-docker-on-macos)
+  - [Install Jenkins 2.190.1 on macOS](#install-jenkins-21901-on-macos)
 - [Basic](#basic)
   - [jenkin_home structure](#jenkinhome-structure)
     - [directories](#directories)
@@ -54,12 +55,25 @@ $ docker logs jenkins -f
 
 browser 로 `localhost:8080` 으로 접속한다. docker 실행창에 출력된 key 를 입력한다. install suggested plugins 하면 끝. 플러그인 설치를 실패할 때가 있다. 그렇다면 `C:\my\dockervolume\jenkins_home/*` 를 모두 지우고 `docker stop, rm` 이후 다시 실행해본다. 잘 된다.
 
-## Install Jenkins 2.190.1 with docker on maxOS
+## Install Jenkins 2.190.1 with docker on macOS
 
 ```bash
 $ docker pull jenkins/jenkins:lts
 $ docker run -d -p 50000:50000 -p 8080:8080 -v /Users/davidsun/my/> dockervolume/jenkins_home:/var/jenkins_home --name jenkins jenkins/jenkins:lts
 $ docker logs jenkins -f
+```
+
+## Install Jenkins 2.190.1 on macOS
+
+* [Mac에 Homebrew를 사용하여 Jenkins 설치하기](http://theeye.pe.kr/archives/2783)
+  
+-----
+
+```bash
+$ brew install jenkins
+$ brew services start jenkins
+$ brew services stop jenkins
+$ brew remove jenkins
 ```
 
 # Basic
