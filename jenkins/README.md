@@ -553,6 +553,16 @@ This is `/jenkins_home/config.xml` after running above script.
 ...  
 ```
 
+* remove bulk build history of a job
+
+```groovy
+def jobName = "EmbedJenkinsSupport"  
+def job = Jenkins.instance.getItem(jobName)  
+job.getBuilds().each { it.delete() }  
+job.nextBuildNumber = 1   
+job.save()
+```
+
 # How to backup and install plugins
 
 ## How to backup
