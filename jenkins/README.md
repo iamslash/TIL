@@ -615,6 +615,7 @@ RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
 # Jenkins with Docker
 
 * [Jenkins Building Docker Image and Sending to Registry](https://medium.com/@gustavo.guss/jenkins-building-docker-image-and-sending-to-registry-64b84ea45ee9)
+* [Using Docker with Pipeline](https://jenkins.io/doc/book/pipeline/docker/)
 
 ----
 
