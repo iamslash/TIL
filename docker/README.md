@@ -192,10 +192,8 @@ distribution/registry:2.6.0
 > docker pull <image-name>:<tag>
 # list image
 > docker images
-# container 를 하나 실행하자.
-# my-ubuntu container 를 실행하고 bash shell 을 획득하자.
 # docker run <option> <execution-filename>
-> docker run -i -t --name my-ubuntu ubuntu:latest /bin/bash
+> docker run -it --name ubuntu ubuntu:latest /bin/bash
 # list containers
 > docker ps -a
 # start container
@@ -203,12 +201,12 @@ distribution/registry:2.6.0
 # restart container
 > docker restart <container-name>
 
-# attatch to container
+# attach to container
 # > docker attach <container-name>
-# attatch to container with command, argument
+# attach to container with command, argument
 # > docker attach <container-name> <command> <argument>
-# my-ubuntu container 에서 echo 명령어를 실행해보자.
-> docker attach my-ubuntu echo "hello world"
+# run echo command on ubuntu container
+> docker attach ubuntu echo "hello world"
 
 # stop container
 #   sends a SIGTERM signal
@@ -225,15 +223,15 @@ distribution/registry:2.6.0
   > cd A
   > emacs Dockerfile
   > docker build tag A:0.1 .
-  > docker run --name myA -d -p 80:80 -v /root/data:data A:0.1
+  > docker run --name A -d -p 80:80 -v /root/data:data A:0.1
 # commit container  
 > docker commit
-  > docker commit -a "iamslash <iamslash@gmail.com>" -m "vim installed" my-ubuntu ubuntu:latest
+  > docker commit -a "iamslash <iamslash@gmail.com>" -m "vim installed" ubuntu ubuntu:latest
 
-# get a bash from a alive container
+# run /bin/bash on container and get a terminal
 # > docker exec
 > docker exec -it myubuntu /bin/bash
-# get a bash as root user
+# get a terminal as root user
 > docker exec -it -u root jenkins /bin/bash
 ```
 
@@ -345,7 +343,7 @@ ONBUILD ADD world.txt /world.txt
 ## attach
 # 실행되고 있는 컨테이너에 표준 입력(stdin)과 표준 출력(stdout)을 연결
 # docker attach <옵션> <컨테이너 이름, ID>
-> docker run -i -t -d --name hello ubuntu:14.01 /bin/bash
+> docker run -it -d --name hello ubuntu:14.01 /bin/bash
 > docker attach hello
 
 ## build
@@ -372,7 +370,7 @@ $ docker cp hello:/hello.txt .
 ## create
 # 이미지로 컨테이너를 생성
 # docker create <옵션> <이미지 이름, ID> <명령> <매개 변수>
-$ docker create -i -t --name hello ubuntu:14.04 /bin/bash
+$ docker create -it --name hello ubuntu:14.04 /bin/bash
 $ docker start hello
 $ docker attach hello
 
@@ -389,7 +387,7 @@ $ docker events
 ## exec
 # 외부에서 컨테이너 안의 명령을 실행
 # docker export <옵션> <컨테이너 이름, ID> <명령> <매개 변수>
-$ docker exec -i -t hello /bin/bash
+$ docker exec -it hello /bin/bash
 $ docker exec hello apt-get update
 $ docker exec hello apt-get install -y redis-server
 $ docker exec -d hello redis-server
@@ -465,37 +463,38 @@ $ docker kill hello
 ## load
 # tar 파일로 이미지를 생성
 # docker load <옵션>
-sudo docker load < ubuntu.tar
+$ sudo docker load < ubuntu.tar
 
 ## login
 # Docker 레지스트리에 로그인
 # docker login <옵션> <Docker 레지스트리 URL>
-docker login
+$ docker login
 
 ## logout
 # Docker 레지스트리에서 로그아웃
 # docker logout <Docker 레지스트리 서버 URL>
-docker logout
+$ docker logout
 
 ## logs
 # 컨테이너의 로그를 출력
 # docker logs <컨테이너 이름, ID>
-docker logs hello
+$ docker logs hello
+$ docker logs hello -f
 
 ## port
 # 컨테이너에서 포트가 열려 있는지 확인
 # docker port <컨테이너 이름, ID> <포트>
-docker port hello 80
+$ docker port hello 80
 
 ## pause
 # 컨테이너에서 실행되고 있는 모든 프로세스를 일시 정지
 # docker pause <컨테이너 이름, ID>
-docker pause hello
+$ docker pause hello
 
 ## ps
 # 컨테이너 목록을 출력
 # docker ps <옵션>
-docker ps -a
+$ docker ps -a
 
 ## pull
 #  Docker 레지스트리에서 이미지를 다운로드
