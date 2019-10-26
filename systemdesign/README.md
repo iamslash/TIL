@@ -262,6 +262,13 @@ Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availa
 * **A record (address)** - Points a name to an IP address.
 * **CNAME (canonical)** - Points a name to another name or `CNAME` (example.com to www.example.com) or to an `A` record.
 
+| name | type | value |
+|-----|----|----|
+| a.foo.com | A | 192.1.1.15 |
+| b.foo.com | CNAME | a.foo.com |
+
+* [Online DNS Record Viewer](http://dns-record-viewer.online-domain-tools.com/)
+
 ## Content delivery network
 
 <p align="center">

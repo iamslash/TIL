@@ -297,12 +297,21 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `apt-get install psmisc`
 * `telnet`
   * TELNET protocol client
-* `nc`
-  * 방화벽이 실행되고 있는지 확인하기 위해 특정 포트에 리슨해 보자.
+* `nc` netcat
+  * [넷캣(Netcat) 간단한 사용방법](https://devanix.tistory.com/307)
   * `nc -l 1234`
-    * 1234포트에 리슨해보자.
+    * 방화벽이 실행되고 있는지 확인하기 위해 1234 포트에 리슨해보자.
   * `nc 127.0.0.1 1234`
     * 1234포트로 접속해보자.
+  * `ps auxf | nc -w3 10.0.2.15 1234`
+    * `ps auxf` 결과를 전송하자.
+    * `-w3` 를 사용하여 3 초 동안 전송해 보자.
+  * `nc -n -v -z -w 1 10.0.2.100 1-1023`
+    * `-n` : DNS 이름 주소 변환 안한다.
+    * `-v` : verbose
+    * `-z` : 데이터 전송 안한다.
+    * `-w` : 최대 1 초의 연결 시간
+    * `1-1023` : TCP 를 사용해서 1-1023 사이의 포트를 스캔한다.
 * `ssh`
   * OpenSSH SSH client
   * `ssh iamslash@a.b.com`
@@ -323,9 +332,22 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * [tmux](/tmux/)
   * terminal multiplexer
 * `nslookup`
-  * domain을 주고 ip로 확인하자.
+  * `apt-get install dnsutils`
+  * [nslookup 명령어 사용법 및 예제 정리](https://www.lesstif.com/pages/viewpage.action?pageId=20775988)
+  * domain 을 주고 ip 로 확인하자.
   * `nslookup www.google.co.kr`
+  * `nslookup -query=mx google.com`
+    * DNS 중 MX RECORD 조회
+  * `nslookup -q=cname example.com`
+    * DNS 중 CNAME 조회
+  * `nslookup -type=ns google.com`
+    * NS RECORD 로 DNS 확인
+  * `nslookup 209.132.183.181`
+    * ip 를 주고 domain 을 찾는다.
+  * `nslookup redhat.com 8.8.8.8`
+    * name server 를 `8.8.8.8` 로 설정한다.
 * `dig`
+  * `apt-get install dnsutils`
   * DNS name server 와 도메인 설정이 완료된 후 DNS 질의 응답이 정상적으로 이루어지는 지를 확인한다.
   * `dig [@name server] [name] [query type]` 와 같은 형식으로 사용한다. 
     * `server` : name server 를 의미한다. 지정되지 않으면 `/etc/resolve.conf` 를 사용한다.
@@ -420,82 +442,101 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 ## 시스템 모니터링
 
-* `netstat`
-  * 네트워크 상태좀 알려다오
-  * `netstat -lntp` tcp 로 리스닝하는 프로세스들 보여줘
-  * `netstat -a | more` TCP, UDP 포트 모두 보여줘
-  * `netstat -at` TCP 포트만 보여줘
-  * `netstat -au` UDP 포트만 보여줘
-  * `netstat -l` listening 포트 보여줘
-  * `netstat -lt` TCP listening 포트 보여줘
-  * `netstat -lu` UDP listening 포트 보여줘
-  * `netstat -lx` UNIX domain socket listening 포트 보여줘
-  * `netstat -s` 프로토콜(TCP, UDP, ICMP, IP)별로 통계를 보여줘
-  * `netstat -st` `netstat -su`
-  * `netstat -tp` TCP 사용하는 녀석들을 PID/programname 형태로 보여줘
-  * `netstat -ac 5 | grep tcp` 5초마다 갱신하면서 promiscuous mode인 녀석들 보여줘
-  * `netstat -r` routing table보여줘
-  * `netstat -i` network interface별로 MTU등등을 보여줘
-  * `netstat -ie` kernal interface table 보여줘 ifconfig와 유사
-  * `netstat -g` multicast group membership information을 보여줘
-  * `netstat -c` 몇초마다 갱신하면서 보여줘
-  * `netstat --verbose`
-  * `netstat -ap | grep http`
-  * `netstat --statistics --raw` 아주 심한 통계를 보여달라
-* `ss`
-  * socket statistics. netstat과 옵션의 의미가 유사하다.
-  * `ss -plat` tcp 로 리스닝하는 프로세스들 보여줘
-  * `ss | less` 모든 연결을 보여다오
-  * `ss -t` TCP `ss-u` UDP `ss-x` UNIX
-  * `ss -nt` hostname얻어 오지 말고 숫자로만 보여줘
-  * `ss -ltn` TCP listening socket보여줘
-  * `ss -ltp` TCP listening socket들을 PID/name와 함께 보여줘
-  * `ss -s` 통계 보여줘
-  * `ss -tn -o` timer 정보도 함께 보여줘
-  * `ss -tl -f inet` `ss -tl -4` IPv4 연결만 보여줘
-  * `ss -tl -f inet6` `ss -tl -6` IPv6 연결만 보여줘
-  * `ss -t4 state established` `ss -t4 state time-wait`
-  * `ss -at '( dport = :ssh or sport = :ssh )'` source, destination 이 ssh인 것만 보여줘
-  * `ss -nt '( dst :443 or dst :80 )'`
-  * `ss -nt dst 74.125.236.178` `ss -nt dst 74.125.236.178/16` `ss -nt dst 74.125.236.178:80`
-  * `ss -nt dport = :80` `ss -nt src 127.0.0.1 sport gt :5000`
-  * `sudo ss -ntlp sport eq :smtp` `sudo ss -nt sport gt :1024`
-  * `sudo ss -nt dport \< :100` `sudo ss -nt state connected dport = :80`
+* [Linux Performance Analysis in 60,000 Milliseconds](https://medium.com/netflix-techblog/linux-performance-analysis-in-60-000-milliseconds-accc10403c55)
+  * uptime
+  * dmesg | tail
+  * vmstat 1
+  * mpstat -P ALL 1
+  * pidstat 1
+  * iostat -xz 1
+  * free -m
+  * sar -n DEV 1
+  * sar -n TCP,ETCP 1
+  * top
+  
+----
+
+* `uptime`
+  * `13:24:20 up  3:18,  0 users,  load average: 0.00, 0.01, 0.00`
+  * 시스템이 `13:24:20` 부터 `3:18` 동안 살아있어
+  * 1 분, 5 분, 15 분의 평균 load 를 보여줘
+  * load 는 process 들 중 run, block 인 것들의 숫자야
+  * `1 분 avg load < 5 분 avg load < 15 분 avg load` 이면 점점 load 가 늘어가는 추세이기 때문에 무언가 문제가 있다고 생각할 수 있다.
+* `dmesg`
+  * 커널의 메시지 버퍼를 보여다오
+  * `dmesg | tail`
+    * 마지막 커널의 메시지 버퍼 10 개를 보여다오
+    * 치명적인 내용이 있는지 반드시 체크해야함
 * `vmstat`
   * virtual memory 통계 보여조
   * `vmstat 1`
+    * 1 초 마다 보여다오
   * `vmstat -s` 부트이후 통계
   * `vmstat -S` 스와핑 통계
   * `vmstat -i` 장치당 인터럽트
+  * `r` 이 `CPU` 보다 크면 CPU 의 모든 core 가 일을 하고 있는 상황이다.
+  * `free` 가 부족하면 메모리가 부족한 상황이다.
+  * `si, so` 가 0 이 아니면 메모리가 부족한 상황이다.
+  * `us, sy, id, wa, st` 중에 `id` 가 작으면 CPU 가 바쁜 상황이다.
 
 | 범주   | 필드 이름 | 설명                                                                                              |
 |--------|-----------|---------------------------------------------------------------------------------------------------|
-| procs  | r         | 전달 대기열의 커널 스레드 수                                                                      |
-|        | b         | 리소스를 대기 중인 차단된 커널 스레드 수                                                          |
-|        | w         | 처리 중인 리소스 완료를 대기 중인 스왑 아웃된 LWP 수                                              |
-| memory |           | 실제 메모리 및 가상 메모리의 사용에 대해 보고합니다.                                              |
-|        | swap      | 사용 가능한 스왑 공간                                                                             |
-|        | free      | 해제 목록의 크기                                                                                  |
-| page   |           | 페이지 폴트 및 페이지 작업을 초 단위로 보고합니다.                                                |
-|        | re        | 재확보된 페이지                                                                                   |
-|        | mf        | 작은 결함 및 큰 결함                                                                              |
-|        | pi        | 페이징인(킬로바이트)                                                                              |
-|        | po        | 페이징아웃(킬로바이트)                                                                            |
-|        | fr        | 해제됨(킬로바이트)                                                                                |
-|        | de        | 최근 스왑 인된 프로세스에서 필요한 예상 메모리                                                    |
-|        | sr        | 현재 사용되고 있지 않은 page 데몬으로 스캔된 페이지. sr이 0이 아니면 page 데몬이 실행된 것입니다. |
-| disk   |           | 최대 4개 디스크의 데이터에 대한 초당 디스크 작업 수를 보고합니다.                                 |
-| faults |           | 초당 트랩/인터럽트 비율을 보고합니다.                                                             |
-|        | in        | 초당 인터럽트                                                                                     |
-|        | sy        | 초당 시스템 호출                                                                                  |
-|        | cs        | CPU 컨텍스트 전환 비율                                                                            |
-| cpu    |           | CPU 시간 사용을 보고합니다.                                                                       |
-|        | us        | 사용자 시간                                                                                       |
-|        | sy        | 시스템 시간                                                                                       |
-|        | id        | 유휴 시간                                                                                         |
+| procs  | r         | The num of runnable processes |
+|        | b         | The number of processes in uninterruptible sleep |
+| memory | swpd      | the amount of virtual memory used in KB |
+|        | free      | the amout of idle memory in KB |
+|        | buff      | the amout of memory used as buffers in KB |
+|        | cache      | the amout of memory used as cache in KB |
+|        | inact      | the amout of inactive memory in KB |
+|        | active      | the amout of active memory in KB |
+| swap   | si      | amount of memory swapped in from disk (/s) |
+|        | so      | amount of memory swapped to disk (/s) |
+| IO     | bi      | blocks received from a block device (blocks/s) |
+|        | bo      | amount of memory swapped to disk (blocks/s) |
+| system | in      | The number of interrupts per second. including the clock. |
+|        | cs      | The number of context switches per second. |
+| CPU    | us      | Time spent running non-kernel code (user time, including nice time) |
+|        | sy      | Time spent running kernel code (system time) |
+|        | id      | Time spent idle, Prior to Linux 2.5.41, this inclues IO-wait time. |
+|        | wa      | Time spent waiting for IO, Prior to Linux 2.5.41, inclues in idle. |
+|        | st      | Time stolen from a virtual machine, Prior to Linux 2.5.41, unknown. |
 
+* `mpstat`
+  * `apt-get install sysstat`
+  * CPU 상황을 자세히 모니터링한다.
+  * `mpstat -P ALL 1`
+
+| name | desc |
+|----|-----|
+| CPU  | Processor number |
+| %usr | while executing at the user level (application) |
+| %nice | while executing at the user level with nice priority. |
+| %sys | while executing at the system level (kernel) |
+| %iowait | percentage of time that the CPU or CPUs were idle during which the system had an outstanding disk I/O request. |
+| %irq | percentage of time spent by the CPU or CPUs to service hardware interrupts. |
+| %soft | percentage of time spent by the CPU or CPUs to service software interrupts. |
+| %steal | percentage of time spent in involuntary wait by the virtual CPU or CPUs while the hypervisor was servicing another virtual processor. |
+| %guest | percentage of time spent by the CPU or CPUs to run a virtual processor. |
+| %gnice | percentage of time spent by the CPU or CPUs to run a niced guest. |
+| %idle | percentage of time that the CPU or CPUs were idle and the system did not have an outstanding disk I/O request. |
+
+* `pidstat`
+  * process 별 TOP
+  * `pidstat 1`
+  * CPU Command 별 `%CPU` 를 주목하자.
+
+* `iostat`
+  * block device io 를 모니터링 하자.
+  * `iostat -xz 1`
+    * `r/s, w/s, rkB/s, wkB/s` 는 각각 초당 읽기, 쓰기, kB읽기, kB 쓰기를 의미한다.
+    * `await` : The average time for the I/O in milliseconds.
+    * `avgqu-sz` : The average number of requests issued to the device. 
+    * `%util` : Device utilization. 
 * `free`
   * physical memory 와 swap memory 의 상태를 알려다오
+  * `buffers` : For the buffer cache, used for block device I/O.
+  * `cached` : For the page cache, used by file systems.
+  * `free -m`
   * `free -b` `free -k` `free -m` `free -g`
   * `free -t` total 추가해조
   * `free -o` buffer adjusted line은 빼고 보여다오
@@ -514,20 +555,10 @@ Mem:          1869       1398        471          0         24        400
 Swap:         3999          0       3999
 ```
 
-* `sysstat` `sar` `sadc`
-  * 시스템 통계를 위한 툴들의 모임이다.
-    * **sar** collects and displays ALL system activities statistics.
-    * **sadc** stands for “system activity data collector”. This is the sar backend tool that does the data collection.
-    * **sa1** stores system activities in binary data file. sa1 depends on sadc for this purpose. sa1 runs from cron.
-    * **sa2** creates daily summary of the collected statistics. sa2 runs from cron.
-    * **sadf** can generate sar report in CSV, XML, and various other formats. Use this to integrate sar data with other tools.
-    * **iostat** generates CPU, I/O statistics
-    * **mpstat** displays CPU statistics.
-    * **pidstat** reports statistics based on the process id (PID)
-    * **nfsiostat** displays NFS I/O statistics.
-    * **cifsiostat** generates CIFS statistics.
-  * `sudo vi /etc/default/sysstat` `ENABLED="true"` 매 10분마다 데이터 수집을 위한 sadc활성화
-    * `sudo vi /etc/cron.d/sysstat` `* * * * * root command -v debian-sa1 > /dev/null && debian-sa1 1 1` 매분마다 해볼까
+* `sar`
+  * network interface throughput
+  * `sar -n DEV 1`
+  * `sar -n TCP,ETCP 1`
   * `sar -u 1 3` 모든 CPU를 1초마다 갱신해서 3번 보여조
   * `sar -r 1 3` 메모리 보여줘
   * `sar -S` 스왑공간 보여줘
@@ -559,6 +590,79 @@ Swap:         3999          0       3999
 |              | sy    | system 용 processor 활용 비율                                                                            |
 |              | id    | idle 용 processor 활용 비율                                                                              |
 | PhysysMem    | wired | non-paged pool???                                                                                        |
+* `du`
+  * `du -h /home/iamslash`
+  * `du -sh /home/iamslash` 요약해서 알려줘
+  * `du -ah /home/iamslash` 모든 파일과 디렉토리 알려줘
+  * `du -hk /home/iamslash`
+  * `du -hm /home/iamslash`
+  * `du -hc /home/iamslash` 마지막에 total보여줘
+  * `du -ah --exclude="*.txt /home/iamslash"`
+  * `du -ah --time /home/iamslash`
+* `df`
+  * `df -h` free space를 읽기쉬운 형식으로 보여줘
+  * `df -ah` 모든 파일 시스템에 대한 free space를 읽기쉬운 형식으로 알려다오
+  * `df -ih` i-node정보좀 털어봐라
+  * `df -Th` 파일 시스템 타입좀
+  * `df -th ext3` ext3포함해서 알려줘
+  * `df -xh ext3` ext3빼고 알려줘
+* `netstat`
+  * `apt install net-tools`
+  * 네트워크 상태좀 알려다오
+  * `netstat -lntp` tcp 로 리스닝하는 프로세스들 보여줘
+  * `netstat -a | more` TCP, UDP 포트 모두 보여줘
+  * `netstat -at` TCP 포트만 보여줘
+  * `netstat -au` UDP 포트만 보여줘
+  * `netstat -l` listening 포트 보여줘
+  * `netstat -lt` TCP listening 포트 보여줘
+  * `netstat -lu` UDP listening 포트 보여줘
+  * `netstat -lx` UNIX domain socket listening 포트 보여줘
+  * `netstat -s` 프로토콜(TCP, UDP, ICMP, IP)별로 통계를 보여줘
+  * `netstat -st` `netstat -su`
+  * `netstat -tp` TCP 사용하는 녀석들을 PID/programname 형태로 보여줘
+  * `netstat -ac 5 | grep tcp` 5초마다 갱신하면서 promiscuous mode인 녀석들 보여줘
+  * `netstat -r` routing table보여줘
+  * `netstat -i` network interface별로 MTU등등을 보여줘
+  * `netstat -ie` kernal interface table 보여줘 ifconfig와 유사
+  * `netstat -g` multicast group membership information을 보여줘
+  * `netstat -c` 몇초마다 갱신하면서 보여줘
+  * `netstat --verbose`
+  * `netstat -ap | grep http`
+  * `netstat --statistics --raw` 아주 심한 통계를 보여달라
+* `ss`
+  * socket statistics. netstat 과 옵션의 의미가 유사하다.
+  * `ss -plat` tcp 로 리스닝하는 프로세스들 보여줘
+  * `ss | less` 모든 연결을 보여다오
+  * `ss -t` TCP `ss-u` UDP `ss-x` UNIX
+  * `ss -nt` hostname얻어 오지 말고 숫자로만 보여줘
+  * `ss -ltn` TCP listening socket보여줘
+  * `ss -ltp` TCP listening socket들을 PID/name와 함께 보여줘
+  * `ss -s` 통계 보여줘
+  * `ss -tn -o` timer 정보도 함께 보여줘
+  * `ss -tl -f inet` `ss -tl -4` IPv4 연결만 보여줘
+  * `ss -tl -f inet6` `ss -tl -6` IPv6 연결만 보여줘
+  * `ss -t4 state established` `ss -t4 state time-wait`
+  * `ss -at '( dport = :ssh or sport = :ssh )'` source, destination 이 ssh인 것만 보여줘
+  * `ss -nt '( dst :443 or dst :80 )'`
+  * `ss -nt dst 74.125.236.178` `ss -nt dst 74.125.236.178/16` `ss -nt dst 74.125.236.178:80`
+  * `ss -nt dport = :80` `ss -nt src 127.0.0.1 sport gt :5000`
+  * `sudo ss -ntlp sport eq :smtp` `sudo ss -nt sport gt :1024`
+  * `sudo ss -nt dport \< :100` `sudo ss -nt state connected dport = :80`
+
+* `sysstat` `sar` `sadc`
+  * 시스템 통계를 위한 툴들의 모임이다.
+    * **sar** collects and displays ALL system activities statistics.
+    * **sadc** stands for “system activity data collector”. This is the sar backend tool that does the data collection.
+    * **sa1** stores system activities in binary data file. sa1 depends on sadc for this purpose. sa1 runs from cron.
+    * **sa2** creates daily summary of the collected statistics. sa2 runs from cron.
+    * **sadf** can generate sar report in CSV, XML, and various other formats. Use this to integrate sar data with other tools.
+    * **iostat** generates CPU, I/O statistics
+    * **mpstat** displays CPU statistics.
+    * **pidstat** reports statistics based on the process id (PID)
+    * **nfsiostat** displays NFS I/O statistics.
+    * **cifsiostat** generates CIFS statistics.
+  * `sudo vi /etc/default/sysstat` `ENABLED="true"` 매 10분마다 데이터 수집을 위한 sadc활성화
+    * `sudo vi /etc/cron.d/sysstat` `* * * * * root command -v debian-sa1 > /dev/null && debian-sa1 1 1` 매분마다 해볼까
 
 * `ifconfig`
   * network interface parameter설정하기
@@ -609,22 +713,6 @@ Swap:         3999          0       3999
 * `time`
   * command 실행하고 소요시간 출력해다오
   * `time a.out`
-* `du`
-  * `du -h /home/iamslash`
-  * `du -sh /home/iamslash` 요약해서 알려줘
-  * `du -ah /home/iamslash` 모든 파일과 디렉토리 알려줘
-  * `du -hk /home/iamslash`
-  * `du -hm /home/iamslash`
-  * `du -hc /home/iamslash` 마지막에 total보여줘
-  * `du -ah --exclude="*.txt /home/iamslash"`
-  * `du -ah --time /home/iamslash`
-* `df`
-  * `df -h` free space를 읽기쉬운 형식으로 보여줘
-  * `df -ah` 모든 파일 시스템에 대한 free space를 읽기쉬운 형식으로 알려다오
-  * `df -ih` i-node정보좀 털어봐라
-  * `df -Th` 파일 시스템 타입좀
-  * `df -th ext3` ext3포함해서 알려줘
-  * `df -xh ext3` ext3빼고 알려줘
 * `uname`
   * 운영체제이름 알려다오
   * `uname -a`
@@ -632,8 +720,6 @@ Swap:         3999          0       3999
   * 호스트이름 알려다오
 * `last`
   * 마지막에 로그인했던 user, tty, host알려다오
-* `uptime`
-  * 시스템이 실행된지 얼마나 지났니?
 * `ping`
   * ICMP ECHO_REQUEST packet를 보낸다.
   * `ping -i 5 127.0.0.1` 패킷 보내기 전에 5초 쉬어
@@ -1080,4 +1166,4 @@ swapping 되야 한다. 디스크에서 물리메모리로 프로세스를 옮�
 swap-in 이라고 한다. 물리 메모리에서 디스크로 프로세스를 옮기는 작업을
 swap-out 이라고 한다.
 
-swap-in(page-in), swap-out(page-out) 의 횟수가 많다면 물리 메모리가 모자르다는 의미이다.
+swap-in(page-in), swap-out(page-out) 의 횟수가 많다면 물리 메모리가 부족하다는 의미이다.
