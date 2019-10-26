@@ -157,7 +157,19 @@ linux 는 파일의 sticky bit 를 무시한다. 디렉토리에 sticky bit 가 
 ## apt-get
 
 ```bash
+apt-get update
+apt-get upgrade
 apt-get install curl
+apt-get --reinstall install curl
+apt-get remove curl
+# remove curl package including config files
+apt-get --purge remove curl
+# download curl pakcage source
+apt-get source curl
+# search curl pakcage
+apt-cache search curl
+# show curl package informations
+apt-cache show curl
 ```
 
 ## brew
@@ -282,6 +294,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `pstree`
   * 프로세스의 트리를 보여다오
   * `pstree -a`
+  * `apt-get install psmisc`
 * `telnet`
   * TELNET protocol client
 * `nc`
@@ -337,10 +350,26 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `dig -x 216.58.200.3 +trace`
     * ip 를 주고 domain 을 확인하자.
 * `curl`
-  * URL을 활용하여 data전송하는 program. HTTP, HTTPS, RTMP등등을 지원한다.
+  * [curl 설치 및 사용법 - HTTP GET/POST, REST API 연계등](https://www.lesstif.com/pages/viewpage.action?pageId=14745703)
+  * URL을 활용하여 data전송하는 program. HTTP, HTTPS, RTMP 등등을 지원한다.
   * `curl "http://a.b.com/a?a=1"`
+    * HTTP GET
+  * `curl -X POST http://a.b.com`
+    * `-X POST` 를 사용하여 HTTP POST 를 전송한다. `-d` 를 사용하면 `-X POST` 는 사용하지 않아도 HTTP POST 를 전송한다.
   * `curl --data "a=1&b=%20OK%20" http://a.b.com/a`
+    * HTTP POST 를 데이터와 함께 전송하라.
   * `curl --data-urlencode "a=I am david" http://a.b.com/a`
+    * HTTP POST 를 인코딩된 데이터와 함께 전송하라. 데이터에 공백이 있는 경우 유용하다.
+  * `curl -i https://api.github.com/users/iamslash/orgs`
+    * `-i` 를 사용하여 response 에 HTTP HEAD 를 포함하라. 
+  * `curl -i https://api.github.com/users/iamslash/orgs -u <user-name>:<pass-word>`
+    * authenticate with user-name, pass-word
+  * `curl -H "Authorization: token OAUTH-TOKEN" https://api.github.com`
+    * authenticate with OAuth2 token
+`curl -d @a.js -H "Content-Type: application/json" --user-agent "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.14 (KHTML, like Gecko) Chrome/24.0.1292.0 Safari/537.14" http://a.b.com/a`
+  * `-d` 를 이용하여 `a.js` 를 읽어서 HTTP POST 데이터로 전송한다.
+  * `-H` 를 이용하여 HTTP HEAD 를 설정한다.
+  * `--user-agent` 를 이용하여 BROWSER 를 설정한다.
 * `wget`
   * web에서 파일좀 내려받아다오
   * `wget ftp://a.b.com/a.msg`
@@ -936,6 +965,16 @@ Swap:         3999          0       3999
     * `0 8 * * 1-5 /tmp/a.sh` 평일(월-금) 08:00 
     * `0 8 * * 0,6 /tmp/a.sh` 주말(일,토) 08:00
   * `crontab -r` 모두 삭제
+  * `* * * * * /tmp/a.sh > /dev/null 2>&1`
+    * run `/tmp/a.sh` every min without logs
+  * `* * * * * /tmp/a.sh > /tmp/a.txt`
+    * run `/tmp/a.sh` every min and write STDOUT to `/tmp/a.txt`
+  * `* * * * * /tmp/a.sh >> /tmp/a.txt`
+    * run `/tmp/a.sh` every min and append STDOUT to `/tmp/a.txt`
+  * cron logs
+    * `$ cat /var/log/cron`
+  * view crontab
+    * `$ cat /var/spool/cron/crontab/root`
 
 * systemd
   * `systemctl` 현재 작동하고 있는 서비스들 보여줘

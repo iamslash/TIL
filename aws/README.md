@@ -76,6 +76,9 @@
   - [NAT Gateway, Bastion Host](#nat-gateway-bastion-host)
   - [VPC Peering](#vpc-peering)
   - [Chatting Service](#chatting-service)
+- [AWS-CLI](#aws-cli)
+  - [Install](#install)
+  - [S3](#s3)
 
 ----
 
@@ -734,3 +737,40 @@ aws_access_key_id = 3BqwEFsOBd3vx11+TOHhI9LVi2
 * [Amazon ElastiCache(Redis)를 이용한 채팅 애플리케이션 구성 방법](https://aws.amazon.com/ko/blogs/korea/how-to-build-a-chat-application-with-amazon-elasticache-for-redis/)
   * node.js, redis 를 이용한 채팅 예제
   * [src](https://github.com/aws-samples/elasticache-refarch-chatapp)
+
+# AWS-CLI
+
+## Install
+
+* [AWS CLI 설치](https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/cli-chap-install.html)
+
+```bash
+$ pip3 install awscli --upgrade --user
+$ aws --version
+$ pip3 list -o
+$ $ pip3 uninstall awscli
+```
+
+## S3
+
+* [AWS CLI에서 상위 수준(s3) 명령 사용](https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/cli-services-s3-commands.html)
+
+```bash
+$ aws s3 help
+## make a bucket
+$ aws s3 mb s3://bucket-name
+$ aws s3 ls
+$ aws s3 ls s3://bucket-name
+$ aws s3 ls s3://bucket-name/path/
+## delete a bucket
+$ aws s3 rb s3://bucket-name
+$ aws s3 rb s3://bucket-name --force
+## copy a bucket
+#  copy a object to a bucket and grant a read perssion to everyone and grant a full perssion to a account which is connected with user@example.com
+$ aws s3 cp file.txt s3://my-bucket/ --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers full=emailaddress=user@example.com
+#  copy a object to a bucket and set storage class
+$ aws s3 cp file.txt s3://my-bucket/ --storage-class REDUCED_REDUNDANCY
+## sync a bucket
+#  sync . with a bucket
+$ aws s3 sync . s3://my-bucket/path
+```
