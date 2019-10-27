@@ -78,6 +78,8 @@
   - [Chatting Service](#chatting-service)
 - [AWS-CLI](#aws-cli)
   - [Install](#install)
+    - [Install awscli on macOS](#install-awscli-on-macos)
+  - [Settings](#settings)
   - [S3](#s3)
 
 ----
@@ -742,13 +744,21 @@ aws_access_key_id = 3BqwEFsOBd3vx11+TOHhI9LVi2
 
 ## Install
 
-* [AWS CLI 설치](https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/cli-chap-install.html)
+### Install awscli on macOS
+
+* [AWS 커맨드라인 인터페이스(awscli) 기초](https://www.44bits.io/ko/post/aws_command_line_interface_basic)
 
 ```bash
-$ pip3 install awscli --upgrade --user
+$ brew install awscli
 $ aws --version
-$ pip3 list -o
-$ $ pip3 uninstall awscli
+```
+
+## Settings
+
+* [AWS 커맨드라인 인터페이스(awscli) 기초](https://www.44bits.io/ko/post/aws_command_line_interface_basic)
+
+```bash
+$ aws config
 ```
 
 ## S3
