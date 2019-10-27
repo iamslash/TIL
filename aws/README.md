@@ -79,8 +79,10 @@
 - [AWS-CLI](#aws-cli)
   - [Install](#install)
     - [Install awscli on macOS](#install-awscli-on-macos)
-  - [Settings](#settings)
+  - [configure](#configure)
   - [S3](#s3)
+    - [Commands](#commands)
+    - [CRR (Cross Region Replication)](#crr-cross-region-replication)
 
 ----
 
@@ -753,29 +755,37 @@ $ brew install awscli
 $ aws --version
 ```
 
-## Settings
+## configure
 
 * [AWS 커맨드라인 인터페이스(awscli) 기초](https://www.44bits.io/ko/post/aws_command_line_interface_basic)
 
 ```bash
-$ aws config
+$ aws configure
+$ aws configure --profile iamslash
 ```
 
 ## S3
 
 * [AWS CLI에서 상위 수준(s3) 명령 사용](https://docs.aws.amazon.com/ko_kr/cli/latest/userguide/cli-services-s3-commands.html)
 
+----
+
+### Commands
+
+* `cp, ls, mb, mv, presign, rb, rm, sync, website`
+
 ```bash
 $ aws s3 help
+$ aws s3 ls help
 ## make a bucket
-$ aws s3 mb s3://bucket-name
+$ aws s3 mb s3://bucket
 $ aws s3 ls
-$ aws s3 ls s3://bucket-name
-$ aws s3 ls s3://bucket-name/path/
-## delete a bucket
-$ aws s3 rb s3://bucket-name
-$ aws s3 rb s3://bucket-name --force
-## copy a bucket
+$ aws s3 ls s3://bucket
+$ aws s3 ls s3://bucket/path/
+## remove a bucket
+$ aws s3 rb s3://bucket
+$ aws s3 rb s3://bucket --force
+## copy a object
 #  copy a object to a bucket and grant a read perssion to everyone and grant a full perssion to a account which is connected with user@example.com
 $ aws s3 cp file.txt s3://my-bucket/ --grants read=uri=http://acs.amazonaws.com/groups/global/AllUsers full=emailaddress=user@example.com
 #  copy a object to a bucket and set storage class
@@ -783,4 +793,15 @@ $ aws s3 cp file.txt s3://my-bucket/ --storage-class REDUCED_REDUNDANCY
 ## sync a bucket
 #  sync . with a bucket
 $ aws s3 sync . s3://my-bucket/path
+$ aws s3 cp /tmp/foo/ s3://bucket/ --recursive --exclude "*" --include "*.jpg"
+$ aws s3 cp /tmp/foo/ s3://bucket/ --recursive \
+              --exclude "*" --include "*.jpg" --include "*.txt"
 ```
+
+### CRR (Cross Region Replication)
+
+* [AWS S3 Cross-region Replication](https://huzz.tistory.com/8)
+
+replications between regions
+
+
