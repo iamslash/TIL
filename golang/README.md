@@ -80,6 +80,7 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 * [1ambda golang](https://github.com/1ambda/golang)
   * 유용한 go links
 * [effective go](https://golang.org/doc/effective_go.html)
+  * [한글](https://gosudaweb.gitbooks.io/effective-go-in-korean/content/)
 * [Go Bootcamp](http://www.golangbootcamp.com/book/collection_types)
   * 예제위주의 책
 * [예제로 배우는 GO프로그래밍](http://golang.site/)
@@ -96,7 +97,6 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 * [Golang FAQ: Design](https://golang.org/doc/faq#Design)
 * [Golang FAQ: Types](https://golang.org/doc/faq#types)
 * [Campoy: Functional Go?](https://www.youtube.com/watch?v=ouyHp2nJl0I)
-
 
 # References
 
