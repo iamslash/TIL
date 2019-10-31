@@ -9,7 +9,26 @@
 
 ![](img/git-flow_overall_graph.png)
 
-* repository 는 upstream remote repo, origin remote repo, local repo 와 같이 3 가지가 존재한다.
+* upstream remote repo 를 fork 한다. fork 한 remote repo 를 origin remote repo 라고 하자.
+* origin 을 clone 하고 upstream remote repo 를 remote 로 추가한다. 이후 다음과 같은 방법으로 upstream 의 내용을 fetch 한다.
+  * [Configuring a remote for a fork](https://help.github.com/articles/configuring-a-remote-for-a-fork/)
+  * [Syncing a fork](https://help.github.com/articles/syncing-a-fork/)
+
+```bash
+$ git remote -v
+origin	git@github.com:iamslash/TIL.git (fetch)
+origin	git@github.com:iamslash/TIL.git (push)
+$ git remote add upstream git@github.com:davidsun/TIL.git
+$ git remote -v
+origin	git@github.com:iamslash/TIL.git (fetch)
+origin	git@github.com:iamslash/TIL.git (push)
+upstream	git@github.com:davidsun/TIL.git (fetch)
+upstream	git@github.com:davidsun/TIL.git (push)
+$ git fetch upstream
+$ git checkout master
+$ git merge upstream/master
+```
+
 * branch 는 master, develop, feature/*, release/*, hotfix/* 와 같이 5 가지가 존재한다.
   * master : 출시 가능
   * develop : 다음 출시
