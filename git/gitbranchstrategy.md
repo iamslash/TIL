@@ -5,16 +5,21 @@
 * [Git flow 사용해보기](https://boxfoxs.tistory.com/347) 
 * [git-flow cheatsheet](https://danielkummer.github.io/git-flow-cheatsheet/) 
 
-# Brainstorming
+# Git branching model by Vincent Drissen
 
 ![](img/git-flow_overall_graph.png)
 
-* upstream remote repo 를 fork 한다. fork 한 remote repo 를 origin remote repo 라고 하자.
-* origin 을 clone 하고 upstream remote repo 를 remote 로 추가한다. 이후 다음과 같은 방법으로 upstream 의 내용을 fetch 한다.
-  * [Configuring a remote for a fork](https://help.github.com/articles/configuring-a-remote-for-a-fork/)
-  * [Syncing a fork](https://help.github.com/articles/syncing-a-fork/)
+* There are 5 branches such as master, develop, feature/*, release/*, hotfix/*.
+  * master : production deployment
+  * develop : most recent
+  * feature : for the specific feature
+  * release : stage deployment
+  * hotfix : bugs of production deployment
+
+There are 2 remote repositories, upstream and origin. the origin is the forked one from the upstream.
 
 ```bash
+$ git clone git@github.com:iamslash/TIL.git
 $ git remote -v
 origin	git@github.com:iamslash/TIL.git (fetch)
 origin	git@github.com:iamslash/TIL.git (push)
@@ -24,17 +29,33 @@ origin	git@github.com:iamslash/TIL.git (fetch)
 origin	git@github.com:iamslash/TIL.git (push)
 upstream	git@github.com:davidsun/TIL.git (fetch)
 upstream	git@github.com:davidsun/TIL.git (push)
+```
+
+When you need sync the origin with the upstream you need to fetch from upstream.
+
+* [Configuring a remote for a fork](https://help.github.com/articles/configuring-a-remote-for-a-fork/)
+* [Syncing a fork](https://help.github.com/articles/syncing-a-fork/)
+
+```bash
 $ git fetch upstream
 $ git checkout master
 $ git merge upstream/master
 ```
 
-* branch 는 master, develop, feature/*, release/*, hotfix/* 와 같이 5 가지가 존재한다.
-  * master : 출시 가능
-  * develop : 다음 출시
-  * feature : 기능 추가
-  * release : 이번 출시
-  * hotfix : 출시된 버전의 버그
+[git-flow](https://danielkummer.github.io/git-flow-cheatsheet/) is a good utility for Git branching models by Vicent Drissen.
+
+When you start a new **feature** `Foo` you need to do this.
+
+```bash
+
+```
+
+Make a release
+
+Hotfixes
+
+
+
 * 새로운 이슈 iss1 이 발급되었다.
 * develop branch 로부터 feature/iss1 branch 를 만들고 기능을 구현하고 commit, push 한다. 
 * develop branch 에서 feature/iss1 branch 를 merge 한다.
@@ -46,7 +67,7 @@ $ git merge upstream/master
 
 # git-flow
 
-* [git-flow cheatsheet](https://danielkummer.github.io/git-flow-cheatsheet/)
+* 
   * git-flow 는 Vincent Driessen's branching model 을 지원하는 git extension 이다. sourcetree 역시 git-flow 를 지원한다. git-flow cheatsheet 으로 git branch strategy 의 큰 그림을 이해하는 것이 좋다.
 
 -----
