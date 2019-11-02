@@ -42,12 +42,59 @@ $ git checkout master
 $ git merge upstream/master
 ```
 
+<<<<<<< HEAD
 [git-flow](https://danielkummer.github.io/git-flow-cheatsheet/) is a good utility for Git branching models by Vicent Drissen.
+=======
+[git-flow](https://danielkummer.github.io/git-flow-cheatsheet/) is a good utility for Git branching models by Vicent Drissen. This is about a `git-flow init`.
+
+```bash
+$ git flow init
+How to name your supporting branch prefixes?
+Branch name for production releases: [master]
+Feature branches? [feature/]
+Bugfix branches? [bugfix/]
+Release branches? [release/]
+Hotfix branches? [hotfix/]
+Support branches? [support/]
+Version tag prefix? []
+Hooks and filters directory? [D:/prj/github/TIL/.git/hooks]
+```
+>>>>>>> git branch model ing...
 
 When you start a new **feature** `Foo` you need to do this.
 
 ```bash
+<<<<<<< HEAD
 
+=======
+## start feature
+$ git flow feature start Foo
+Switched to a new branch 'feature/Foo'
+M       git/gitbranchstrategy.md
+
+Summary of actions:
+- A new branch 'feature/Foo' was created, based on 'develop'
+- You are now on branch 'feature/Foo'
+
+Now, start committing on your feature. When done, use:
+
+     git flow feature finish Foo
+
+# after editing...     
+$ git commit -am "git branching model feature ing..."
+$ git log -5 --decorate --graph --oneline
+* 88c8029 (HEAD -> feature/Foo, origin/master, origin/HEAD, master, develop) git branch model ing...
+* d888023 update git origin, upstream sync
+* 57e3819 update golang links
+* 0e87eb1 update links
+* 235a1d3 added ldap
+
+## publish feature
+$ 
+
+## finish feature
+$
+>>>>>>> git branch model ing...
 ```
 
 Make a release
