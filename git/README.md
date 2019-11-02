@@ -1,4 +1,34 @@
-﻿# Materials
+﻿- [Materials](#materials)
+- [Git Overview](#git-overview)
+- [Git 설정](#git-%ec%84%a4%ec%a0%95)
+- [Git Basic](#git-basic)
+- [`.gitignore`](#gitignore)
+- [Git log](#git-log)
+- [Git edit commit](#git-edit-commit)
+- [Git revert](#git-revert)
+- [Git reset](#git-reset)
+- [Git rebase, merge](#git-rebase-merge)
+- [Git cherrypick](#git-cherrypick)
+- [Git merge --squash](#git-merge---squash)
+- [Git rebase -i](#git-rebase--i)
+- [Git stash](#git-stash)
+- [Git Clean](#git-clean)
+- [Git tag](#git-tag)
+- [Advanced](#advanced)
+  - [내 작업에 서명하기](#%eb%82%b4-%ec%9e%91%ec%97%85%ec%97%90-%ec%84%9c%eb%aa%85%ed%95%98%ea%b8%b0)
+  - [검색](#%ea%b2%80%ec%83%89)
+  - [히스토리 단장하기](#%ed%9e%88%ec%8a%a4%ed%86%a0%eb%a6%ac-%eb%8b%a8%ec%9e%a5%ed%95%98%ea%b8%b0)
+  - [고급 Merge](#%ea%b3%a0%ea%b8%89-merge)
+  - [Rerere](#rerere)
+  - [Git으로 버그 찾기](#git%ec%9c%bc%eb%a1%9c-%eb%b2%84%ea%b7%b8-%ec%b0%be%ea%b8%b0)
+  - [서브모듈](#%ec%84%9c%eb%b8%8c%eb%aa%a8%eb%93%88)
+- [Git Tips](#git-tips)
+  - [use cat instead of pager](#use-cat-instead-of-pager)
+  - [git diff output](#git-diff-output)
+  - [git diff](#git-diff)
+  - [git blame](#git-blame)
+
+# Materials
 
 * [누구나 쉽게 이해할 수 있는 Git입문](https://backlog.com/git-tutorial/kr/)
   * 킹왕짱 튜토리얼
@@ -74,6 +104,106 @@ $ git diff
 # compare index with local repo
 $ git diff --staged
 $ git diff --cached
+
+# reset to HEAD without work changes, index
+$ git reset --hard HEAD
+
+# list remote repositories
+$ git remote -v
+origin	git@github.com:iamslash/TIL.git (fetch)
+origin	git@github.com:iamslash/TIL.git (push)
+# add remote repositories
+$ git remote add upstream git@github.com:davidsun/TIL.git
+$ git remote -v
+origin	git@github.com:iamslash/TIL.git (fetch)
+origin	git@github.com:iamslash/TIL.git (push)
+upstream	git@github.com:davidsun/TIL.git (fetch)
+upstream	git@github.com:davidsun/TIL.git (push)
+
+# merge using mergetool
+$ $ git mergetool
+
+# log of past HEAD
+$ git reflog
+...
+b29fe09 (develop) HEAD@{23}: merge develop: Fast-forward
+c8755e4 (tag: 0.2, upstream/master, origin/master) HEAD@{24}: checkout: moving from develop to master
+b29fe09 (develop) HEAD@{25}: rebase finished: returning to refs/heads/develop
+b29fe09 (develop) HEAD@{26}: rebase: added e, f
+c8755e4 (tag: 0.2, upstream/master, origin/master) HEAD@{27}: rebase: checkout master
+aea064d HEAD@{28}: commit: added e, f
+690ef48 HEAD@{29}: reset: moving to ORIG_HEAD
+
+# show specific HEAD
+$ git show HEAD~4 -s --oneline --decorate
+b29fe09 (develop) added e, f
+$ git show HEAD@{28} -s --oneline --decorate
+aea064d added e, f
+$ git show master@{yesterday} -s --oneline --decorate
+
+# get SHA1
+$ git rev-parse master
+d3b5f7e7a975b32dc39c7b12481710a032d3ae55
+
+# current status
+$ git log -10 --oneline --graph --decorate --all
+* 6b068dd (HEAD -> feature/Foo) added j
+* aee6c2c added i, x
+* b6313df added h
+* 2353cf5 added g
+| * d3b5f7e (master) added g
+|/
+* b29fe09 (develop) added e, f
+| *   998d92d (upstream/develop, origin/develop) Merge tag '0.2' into develop
+| |\
+| |/
+|/|
+
+# log commits which are not in master but in feature/Foo
+$ git log master..feature/Foo --oneline --graph
+* 6b068dd (HEAD -> feature/Foo) added j
+* aee6c2c added i, x
+* b6313df added h
+* 2353cf5 added g
+
+$ git log feature/Foo..master --oneline --graph
+* d3b5f7e (master) added g
+
+# log commits which are not in origin/master but in checkouted branch
+$ git log origin/master..HEAD --oneline
+6b068dd (HEAD -> feature/Foo) added j
+aee6c2c added i, x
+b6313df added h
+2353cf5 added g
+b29fe09 (develop) added e, f
+
+## 세 개 이상의 Refs
+
+# these are same
+$ git log refA..refB
+$ git log ^refA refB
+$ git log refB --not refA
+
+# three branches
+$ git log refA refB ^refC
+$ git log refA refB --not refC
+
+# log not common commits
+$ git log master...feature/Foo --oneline
+6b068dd (HEAD -> feature/Foo) added j
+aee6c2c added i, x
+b6313df added h
+d3b5f7e (master) added g
+2353cf5 added g
+
+$ git log --left-right master...feature/Foo --oneline
+git log --left-right master...feature/Foo --oneline
+> 6b068dd (HEAD -> feature/Foo) added j
+> aee6c2c added i, x
+> b6313df added h
+< d3b5f7e (master) added g
+> 2353cf5 added g
+
 ```
 
 # `.gitignore`
@@ -189,623 +319,490 @@ $ git log -3 --oneline --graph --decorate --all
 |\
 ```
 
-# Git conflict
-
-# Git rebase
-
-# Git squash
-
 # Git reset
 
-# Git stash
+| command | desc |
+|--------|------|
+| `git reset --soft` | reset with work changes and index |
+| `git reset --mixed` | reset with work changes and unstaged |
+| `git reset --hard` | reset with nothing |
+
+```bash
+$ rm forgotten.txt
+$ git status -s
+ D forgotten.txt
+
+$ git reset --hard HEAD
+HEAD is now at 1399858 Revert "removed forgotten.txt"
+$ git status -s
+
+$ git log -3 --oneline --graph --decorate --all
+* 1399858 (HEAD -> develop) Revert "removed forgotten.txt"
+* 690ef48 removed forgotten.txt
+*   35b9d0b Merge tag '0.2' into develop
+|\
+
+$ git reset --hard HEAD~
+HEAD is now at 690ef48 removed forgotten.txt
+
+$ git log -3 --oneline --graph --decorate --all
+* 690ef48 (HEAD -> develop) removed forgotten.txt
+*   35b9d0b Merge tag '0.2' into develop
+|\
+| | *   998d92d (upstream/develop, origin/develop) Merge tag '0.2' into develop
+| | |\
+| |/ /
+|/| /
+| |/
+
+$ vim e.md
+$ git add .
+$ vim f.md
+$ git status -s
+A  e.md
+?? f.md
+
+$ git reset --soft HEAD
+$ git status -s
+A  e.md
+?? f.md
+
+$ git reset --mixed HEAD
+$ git status -s
+?? e.md
+?? f.md
+```
+
+# Git rebase, merge
+
+```bash
+$ git log -10 --oneline --graph --decorate --all
+* 690ef48 (HEAD -> develop) removed forgotten.txt
+*   35b9d0b Merge tag '0.2' into develop
+|\
+| | *   998d92d (upstream/develop, origin/develop) Merge tag '0.2' into develop
+| | |\
+| |/ /
+|/| /
+| |/
+| *   c8755e4 (tag: 0.2, upstream/master, origin/master, master) Merge branch 'hotfix/0.2'
+| |\
+| | * 51ba540 fixed blah blah
+| |/
+* |   99f9fd9 Merge tag '0.1' into develop
+|\ \
+| |/
+| *   721d99f (tag: 0.1) Merge branch 'release/0.1'
+| |\
+| |/
+|/|
+* | 29fb4b0 added Foo.md
+|/
+* 2fee5b4 kick off
+
+$ git rebase master
+First, rewinding head to replay your work on top of it...
+Applying: removed forgotten.txt
+Using index info to reconstruct a base tree...
+A       forgotten.txt
+Falling back to patching base and 3-way merge...
+No changes -- Patch already applied.
+
+$ git log -10 --oneline --graph --decorate --all
+*   998d92d (upstream/develop, origin/develop) Merge tag '0.2' into develop
+|\
+| *   c8755e4 (HEAD -> develop, tag: 0.2, upstream/master, origin/master, master) Merge branch 'hotfix/0.2'
+| |\
+| | * 51ba540 fixed blah blah
+| |/
+* |   99f9fd9 Merge tag '0.1' into develop
+|\ \
+| |/
+| *   721d99f (tag: 0.1) Merge branch 'release/0.1'
+| |\
+| |/
+|/|
+* | 29fb4b0 added Foo.md
+|/
+* 2fee5b4 kick off
+
+$ git reset --hard ORIG_HEAD
+HEAD is now at 690ef48 removed forgotten.txt
+
+$ git add .
+$ git commit -am "added e, f"
+$ git log -10 --oneline --graph --decorate --all
+* aea064d (HEAD -> develop) added e, f
+* 690ef48 removed forgotten.txt
+*   35b9d0b Merge tag '0.2' into develop
+|\
+| | *   998d92d (upstream/develop, origin/develop) Merge tag '0.2' into develop
+| | |\
+| |/ /
+|/| /
+| |/
+| *   c8755e4 (tag: 0.2, upstream/master, origin/master, master) Merge branch 'hotfix/0.2'
+| |\
+| | * 51ba540 fixed blah blah
+| |/
+* |   99f9fd9 Merge tag '0.1' into develop
+|\ \
+| |/
+| *   721d99f (tag: 0.1) Merge branch 'release/0.1'
+| |\
+| |/
+|/|
+* | 29fb4b0 added Foo.md
+|/
+* 2fee5b4 kick off
+
+$ git rebase master
+First, rewinding head to replay your work on top of it...
+Applying: removed forgotten.txt
+Using index info to reconstruct a base tree...
+A       forgotten.txt
+Falling back to patching base and 3-way merge...
+No changes -- Patch already applied.
+Applying: added e, f
+
+$ git log -10 --oneline --graph --decorate --all
+* b29fe09 (HEAD -> develop) added e, f
+| *   998d92d (upstream/develop, origin/develop) Merge tag '0.2' into develop
+| |\
+| |/
+|/|
+* |   c8755e4 (tag: 0.2, upstream/master, origin/master, master) Merge branch 'hotfix/0.2'
+|\ \
+| * | 51ba540 fixed blah blah
+|/ /
+| *   99f9fd9 Merge tag '0.1' into develop
+| |\
+| |/
+|/|
+* |   721d99f (tag: 0.1) Merge branch 'release/0.1'
+|\ \
+| |/
+| * 29fb4b0 added Foo.md
+|/
+* 2fee5b4 kick off
+
+$ git checkout master
+Switched to branch 'master'
+Your branch is up to date with 'origin/master'.
+
+$ git merge develop
+Updating c8755e4..b29fe09
+Fast-forward
+ e.md | 1 +
+ f.md | 1 +
+ 2 files changed, 2 insertions(+)
+ create mode 100644 e.md
+ create mode 100644 f.md
+
+$ git log -10 --oneline --graph --decorate --all
+* b29fe09 (HEAD -> master, develop) added e, f
+| *   998d92d (upstream/develop, origin/develop) Merge tag '0.2' into develop
+| |\
+| |/
+|/|
+* |   c8755e4 (tag: 0.2, upstream/master, origin/master) Merge branch 'hotfix/0.2'
+|\ \
+| * | 51ba540 fixed blah blah
+|/ /
+| *   99f9fd9 Merge tag '0.1' into develop
+| |\
+| |/
+|/|
+* |   721d99f (tag: 0.1) Merge branch 'release/0.1'
+|\ \
+| |/
+| * 29fb4b0 added Foo.md
+|/
+* 2fee5b4 kick off
+```
 
 # Git cherrypick
 
-# Git remote
+```bash
+$ git checkout -b feature/Foo
+$ vim g.md
+$ git add .
+$ git commit -am "added g"
+$ git checkout master
+
+$ git log -2 --oneline --graph --decorate --all
+* 2353cf5 (feature/Foo) added g
+* b29fe09 (HEAD -> master, develop) added e, f
+
+$ git cherry-pick feature/Foo
+$ git log -2 --oneline --graph --decorate --all
+* d3b5f7e (HEAD -> master) added g
+| * 2353cf5 (feature/Foo) added g
+|/
+```
+
+# Git merge --squash
 
 ```bash
+$ git checkout feature/Foo
+$ vim h.md
+$ git add .
+$ git commit -am "added h"
+$ vim i.md
+$ git add .
+$ git commit -am "added i"
+$ vim j.md
+$ git add .
+$ git commit -am "added j"
+
+$ git log -10 --oneline --graph --decorate --all
+* e423161 (HEAD -> feature/Foo) added j
+* e5abac2 added i
+* b6313df added h
+* 2353cf5 added g
+| * d3b5f7e (master) added g
+|/
+* b29fe09 (develop) added e, f
+| *   998d92d (upstream/develop, origin/develop) Merge tag '0.2' into develop
+
+$ git checkout master
+$ git merge --squash feature/Foo
+Automatic merge went well; stopped before committing as requested
+Squash commit -- not updating HEAD
+
+$ git status -s
+A  h.md
+A  i.md
+A  j.md
+
+$ git commit
+# Squashed commit of the following:
+
+# commit e42316177b286cc97e3994dc24a1839fd15b86b0
+# Author: iamslash <iamslash@gmail.com>
+# Date:   Sat Nov 2 21:51:10 2019 +0900
+
+#     added j
+
+# commit e5abac27c3c91bb417375081c60fcffa3cf9c138
+# Author: iamslash <iamslash@gmail.com>
+# Date:   Sat Nov 2 21:50:54 2019 +0900
+
+#     added i
+
+# commit b6313dff15d8181239422c9867d0fd365acff74e
+# Author: iamslash <iamslash@gmail.com>
+# Date:   Sat Nov 2 21:50:37 2019 +0900
+
+#     added h
+
+# commit 2353cf57e958acc8b182d0e1004dbd8211b96226
+# Author: iamslash <iamslash@gmail.com>
+# Date:   Sat Nov 2 21:47:23 2019 +0900
+
+#     added g
+
+$ git log -10 --oneline --graph --decorate --all
+* 76a238e (HEAD -> master) Squashed commit of the following:
+* d3b5f7e added g
+| * e423161 (feature/Foo) added j
+| * e5abac2 added i
+| * b6313df added h
+| * 2353cf5 added g
+|/
+* b29fe09 (develop) added e, f
+| *   998d92d (upstream/develop, origin/develop) Merge tag '0.2' into develop
+| |\
+| |/
+|/|
+* |   c8755e4 (tag: 0.2, upstream/master, origin/master) Merge branch 'hotfix/0.2'
+|\ \
+| * | 51ba540 fixed blah blah
+|/ /
+```
+
+# Git rebase -i
+
+make commits into one commit.
+
+```bash
+$ git reset --hard ORIG_HEAD
+$ git log -10 --oneline --graph --decorate --all
+* e423161 (feature/Foo) added j
+* e5abac2 added i
+* b6313df added h
+* 2353cf5 added g
+| * d3b5f7e (HEAD -> master) added g
+|/
+* b29fe09 (develop) added e, f
+| *   998d92d (upstream/develop, origin/develop) Merge tag '0.2' into develop
+
+$ git checkout feature/Foo
+$ git log -5 --oneline --graph --decorate
+* e423161 (HEAD -> feature/Foo) added j
+* e5abac2 added i
+* b6313df added h
+* 2353cf5 added g
+* b29fe09 (develop) added e, f
+
+$ git show HEAD~4 -s --oneline
+b29fe09 (develop) added e, f
+
+$ git rebase -i HEAD~4
+# pick 2353cf5 added g
+# squash b6313df added h
+# squash e5abac2 added i
+# squash e423161 added j
+
+$ git log -10 --oneline --graph --decorate --all
+* c6906f8 (HEAD -> feature/Foo) added g
+| * d3b5f7e (master) added g
+|/
+* b29fe09 (develop) added e, f
+
+$ git log -1
+commit c6906f8db77a8e44285910f8eba41b9a6432e337 (HEAD -> feature/Foo)
+Author: iamslash <iamslash@gmail.com>
+Date:   Sat Nov 2 21:47:23 2019 +0900
+
+    added g
+
+    added h
+
+    added i
+
+    added j
+
+$ git reset --hard ORIG_HEAD
+git log -10 --oneline --graph --decorate --all
+* e423161 (HEAD -> feature/Foo) added j
+* e5abac2 added i
+* b6313df added h
+* 2353cf5 added g
+| * d3b5f7e (master) added g
+|/
+* b29fe09 (develop) added e, f
+
+# modify commits
+$ git rebase -i HEAD~2
+# edit e5abac2 added i
+# pick e423161 added j 
+Stopped at e5abac2...  added i
+You can amend the commit now, with
+
+  git commit --amend
+
+Once you are satisfied with your changes, run
+
+  git rebase --continue
+
+$ vim x.md
+$ git add .
+$ git commit --amend
+[detached HEAD aee6c2c] added i, x
+ Date: Sat Nov 2 21:50:54 2019 +0900
+ 2 files changed, 2 insertions(+)
+ create mode 100644 i.md
+ create mode 100644 x.md
+
+$ git status
+interactive rebase in progress; onto b6313df
+Last command done (1 command done):
+   edit e5abac2 added i
+Next command to do (1 remaining command):
+   pick e423161 added j
+  (use "git rebase --edit-todo" to view and edit)
+You are currently editing a commit while rebasing branch 'feature/Foo' on 'b6313df'.
+  (use "git commit --amend" to amend the current commit)
+  (use "git rebase --continue" once you are satisfied with your changes)
+
+nothing to commit, working tree clean 
+
+$ git log -10 --oneline --graph --decorate --all
+* aee6c2c (HEAD) added i, x
+| * e423161 (feature/Foo) added j
+| * e5abac2 added i
+|/
+* b6313df added h
+* 2353cf5 added g
+| * d3b5f7e (master) added g
+
+$ git rebase --continue
+
+$ git log -10 --oneline --graph --decorate --all
+* 6b068dd (HEAD -> feature/Foo) added j
+* aee6c2c added i, x
+* b6313df added h
+* 2353cf5 added g
+| * d3b5f7e (master) added g
+|/
+* b29fe09 (develop) added e, f
+```
+
+# Git stash
+
+```bash
+# save stash to top
+$ git stash save
+# save stash without index
+$ git stash --keep-index
+# ???
+$ git stash -u
+# stash interactively
+$ git stash --patch
+
+# list stash
+$ git stash list
+
+# load stash from top
+$ git stash pop
+
+# drop stash top
+$ git stash drop
+$ git stash drop stash@{0}
+
+# clean all stashes
+$ git stash clear
+
+# let's apply stash with index.
+$ git stash apply --index
+
+# create branch with applying stash
+$ git stash branch feature/Foo
+```
+
+# Git Clean
+
+clean working directory,
+
+```bash
+$ vim y.md
+
+# clean dryrun
+$ git clean -d -n
+Would remove y.md
+
+# clean dryrun with .gitignore files
+$ git clean -d -n -x
 ```
 
 # Git tag
 
-# Git ORG_HEAD
-
-
---------
-
-# Git 기초
-## 되돌리기
-
-마지막 커밋에 파일 하나를 빼먹었다. 다음과 같이 마지막 커밋을 수정할 수 있다.
-
 ```bash
-$ git commit -m 'initial commit'
-$ git add forgotten_file
-$ git commit --amend
+# list tags
+$ git tag
+
+# create lightweight tag
+$ git tag 0.1
+
+# create annotated tag
+$ git tag -a 0.2
+
+# remove tag
+$ git tag -d 0.1
 ```
 
-다음과 같이 `CONTRIBUTING.md` 를 staged area 에 올려놓는다.
-
-```bash
-$ git add *
-$ git status
-On branch master
-Changes to be committed:
-  (use "git reset HEAD <file>..." to unstage)
-
-    renamed:    README.md -> README
-    modified:   CONTRIBUTING.md
-```
-
-다시 `CONTRIBUTING.md` 를 unstaged 하자.
-
-```bash
-$ git reset HEAD CONTRIBUTING.md
-Unstaged changes after reset:
-M	CONTRIBUTING.md
-$ git status
-On branch master
-Changes to be committed:
-  (use "git reset HEAD <file>..." to unstage)
-
-    renamed:    README.md -> README
-
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git checkout -- <file>..." to discard changes in working directory)
-
-    modified:   CONTRIBUTING.md
-```
-
-다음과 같이 `CONTRIBUTING.md` 가 수정되었다.
-
-```bash
-Changes not staged for commit:
-  (use "git add <file>..." to update what will be committed)
-  (use "git checkout -- <file>..." to discard changes in working directory)
-
-    modified:   CONTRIBUTING.md
-```
-
-다시 `CONTRIBUTING.md` 를 수정되기 전으로 돌려놓자.
-
-```bash
-$ git checkout -- CONTRIBUTING.md
-$ git status
-On branch master
-Changes to be committed:
-  (use "git reset HEAD <file>..." to unstage)
-
-    renamed:    README.md -> README
-```
-
-## 리모트 저장소
-
-## 태그
-
-## Git Alias
-
-# Git 브랜치
-
-## merge vs rebase
-
-![](img/basic-rebase-1.png)
-
-master branch 에 experiment branch 를 합해야 하는 상황이다. merge 혹은 rebase 방법을 사용할 수 있다. 
-
-![](img/basic-rebase-2.png)
-
-merge 는 master, experiment 의 마지막 커밋 (C3, C4) 와 공통조상 (C2) 를 사용하는 3-way merge 로 새로운 커밋을 만들어 합하는 방법이다.
-
-```bash
-git checkout master
-git merge experiment
-```
-
-![](img/basic-rebase-4.png)
-
-rebase 는 experiment 의 마지막 커밋 (C4) 를 master 의 마지막 커밋 (C3) 에 적용하고 master 를 fast-forward 시키는 방법이다. merge 와 달리 commit 이 추가되지 않는다.
-
-```bash
-git checkout master
-git rebase experiment
-```
-
-rebase 는 history 가 선형이기 때문에 merge 에 비해 더욱 깔끔하다.
-
-master, server, client branch 가 다음과 같이 존재한다.
-
-![](img/interesting-rebase-1.png)
-
-master 에 client 의 C8, C9 만 rebase 해보자. 이때 server branch 와 공통 커밋 C3 는 제외해야 한다.
-
-```bash
-$ git rebase --onto master server client
-```
-
-![](img/interesting-rebase-2.png)
-
-이제 master 에서 client 를 fast-forward 해 보자.
-
-```bash
-$ git checkout master
-$ git merge client
-```
-
-![](img/interesting-rebase-3.png)
-
-master 에서 server 를 rebase 해 보자.
-
-```bash
-$ git rebase master server
-```
-
-![](img/interesting-rebase-4.png)
-
-master 를 fast-forward 하자.
-
-```bash
-$ git checkout master
-$ git merge server
-```
-
-master 에 client, server 가 모두 합쳐졌다. client, server branch 는 더이상 필요 없으니 삭제하자.
-
-```bash
-$ git branch -d client
-$ git branch -d server
-```
-
-![](img/interesting-rebase-5.png)
-
-# Git 도구
-
-## 분산환경에서의 Git
-
-## 리비전 조회하기
-
-```bash
-## short hash
-$ git show 1c002dd4b536e7479fe34593e72e6c6c1819e53b
-$ git show 1c002dd4b536e7479f
-$ git show 1c002d
-
-## 짧고 중복되지 않는 해시 값
-git log --abbrev-commit --pretty=oneline
-git log --oneline
-# ca82a6d changed the version number
-# 085bb3b removed unnecessary test code
-# a11bef0 first commit
-
-## 브랜치로 가리키기
-# Git은 자동으로 브랜치와 HEAD가 지난 몇 달 동안에 가리켰었던 커밋을 모두 
-# 기록하는데 이 로그를 “Reflog” 라고 부른다.
-$ git show ca82a6dff817ec66f44342007202690a93763949
-$ git show topic1
-$ git rev-parse topic1
-# ca82a6dff817ec66f44342007202690a93763949
-
-## RefLog로 가리키기
-$ git reflog
-# 734713b HEAD@{0}: commit: fixed refs handling, added gc auto, updated
-# d921970 HEAD@{1}: merge phedders/rdocs: Merge made by the 'recursive' strategy.
-# 1c002dd HEAD@{2}: commit: added some blame and merge stuff
-# 1c36188 HEAD@{3}: rebase -i (squash): updating HEAD
-# 95df984 HEAD@{4}: commit: # This is a combination of two commits.
-# 1c36188 HEAD@{5}: rebase -i (squash): updating HEAD
-# 7e05da5 HEAD@{6}: rebase -i (pick): updating HEAD
-
-#  HEAD가 5번 전에 가리켰던 것
-$ git show HEAD@{5}
-
-# 어제 날짜의 master 브랜치
-$ git show master@{yesterday}
-
-# git log -g 명령을 사용하면 git reflog 결과를 git log 명령과 같은 형태로 볼 수 있다.
-$ git log -g master
-# commit 734713bc047d87bf7eac9674765ae793478c50d3
-# Reflog: master@{0} (Scott Chacon <schacon@gmail.com>)
-# Reflog message: commit: fixed refs handling, added gc auto, updated
-# Author: Scott Chacon <schacon@gmail.com>
-# Date:   Fri Jan 2 18:32:33 2009 -0800
-
-#     fixed refs handling, added gc auto, updated tests
-
-# commit d921970aadf03b3cf0e71becdaab3147ba71cdef
-# Reflog: master@{1} (Scott Chacon <schacon@gmail.com>)
-# Reflog message: merge phedders/rdocs: Merge made by recursive.
-# Author: Scott Chacon <schacon@gmail.com>
-# Date:   Thu Dec 11 15:08:43 2008 -0800
-
-#     Merge commit 'phedders/rdocs'
-
-## 계통 관계로 가리키기
-
-$ git log --pretty=format:'%h %s' --graph
-# * 734713b fixed refs handling, added gc auto, updated tests
-# * d921970 Merge commit 'phedders/rdocs'
-# |\
-# | * 35cfb2b Some rdoc changes
-# * | 1c002dd added some blame and merge stuff
-# |/
-# * 1c36188 ignore *.gem
-# * 9b29157 add open3_detach to gemspec file list
-
-# 이름 끝에 ^ (캐럿) 기호를 붙이면 Git은 해당 커밋의 부모를 찾는다.
-$ git show HEAD^
-# commit d921970aadf03b3cf0e71becdaab3147ba71cdef
-# Merge: 1c002dd... 35cfb2b...
-# Author: Scott Chacon <schacon@gmail.com>
-# Date:   Thu Dec 11 15:08:43 2008 -0800
-#
-#     Merge commit 'phedders/rdocs'
-
-# Windows 에서는 ^^ "*^" 을 사용한다.
-$ git show HEAD^     # will NOT work on Windows
-$ git show HEAD^^    # OK
-$ git show "HEAD^"   # OK
-
-# d921970^^ 는 “d921970의 두 번째 부모” 를 의미한다. 
-$ git show d921970^
-# commit 1c002dd4b536e7479fe34593e72e6c6c1819e53b
-# Author: Scott Chacon <schacon@gmail.com>
-# Date:   Thu Dec 11 14:58:32 2008 -0800
-#
-#     added some blame and merge stuff
-
-$ git show d921970^2
-# commit 35cfb2b795a55793d7cc56a6cc2060b4bb732548
-# Author: Paul Hedderly <paul+git@mjr.org>
-# Date:   Wed Dec 10 22:22:03 2008 +0000
-#
-#     Some rdoc changes
-
-# HEAD~2 와 HEAD^^ 는 같다.
-$ git show HEAD^^
-# commit 1c3618887afb5fbcbea25b7c013f4e2114448b8d
-# Author: Tom Preston-Werner <tom@mojombo.com>
-# Date:   Fri Nov 7 13:47:59 2008 -0500
-#
-#     ignore *.gem
-
-### 범위로 커밋 가리키기
-
-# A <- B <- E <- F -< master
-#       \
-#        <- C <- D -< experiment
-
-## Double Dot
-# experiment 브랜치의 커밋들 중에서 아직 master 브랜치에 Merge 
-# 하지 않은 것들만 보고 싶으면 master..experiment 라고 사용한다. 
-# 이 표현은 “master에는 없지만, experiment에는 있는 커밋” 을 의미
-
-$ git log master..experiment
-# C
-# D
-
-$ git log experiment..master
-# F
-# E
-
-# origin 저장소의 master 브랜치에는 없고 현재 Checkout 중인 브랜치에만 있는 커밋
-$ git log origin/master..HEAD
-
-## 세 개 이상의 Refs
-
-# ^ 이나 --not 옵션 뒤에 브랜치 이름은 그 브랜치에 없는 커밋
-# 아래는 모두 같은 표현이다.
-$ git log refA..refB
-$ git log ^refA refB
-$ git log refB --not refA
-
-# 세개 이상의 브랜치에 적용
-$ git log refA refB ^refC
-$ git log refA refB --not refC
-
-## Triple Dot
-# Triple Dot은 양쪽에 있는 두 Refs 사이에서 공통으로 가지는 것을 제외하고 서로 다른 커밋
-$ git log master...experiment
-# F
-# E
-# D
-# C
-
-$ git log --left-right master...experiment
-# < F
-# < E
-# > D
-# > C
-```
-
-## 대화형 명령
-
-```bash
-# 대화형 모드 진입
-$ git add -i
-#            staged     unstaged path
-#   1:    unchanged        +0/-1 TODO
-#   2:    unchanged        +1/-1 index.html
-#   3:    unchanged        +5/-1 lib/simplegit.rb
-
-# *** Commands ***
-#   1: status     2: update      3: revert     4: add untracked
-#   5: patch      6: diff        7: quit       8: help
-What now>
-
-# Staging Area에 파일 추가하고 추가 취소하기
-What now> 2
-#            staged     unstaged path
-#   1:    unchanged        +0/-1 TODO
-#   2:    unchanged        +1/-1 index.html
-#   3:    unchanged        +5/-1 lib/simplegit.rb
-Update>> 1,2
-#            staged     unstaged path
-# * 1:    unchanged        +0/-1 TODO
-# * 2:    unchanged        +1/-1 index.html
-#   3:    unchanged        +5/-1 lib/simplegit.rb
-Update>> [enter]
-# updated 2 paths
-
-# *** Commands ***
-#   1: status     2: update      3: revert     4: add untracked
-#   5: patch      6: diff        7: quit       8: help
-What now> 1
-#            staged     unstaged path
-#   1:        +0/-1      nothing TODO
-#   2:        +1/-1      nothing index.html
-#   3:    unchanged        +5/-1 lib/simplegit.rb
-# *** Commands ***
-#   1: status     2: update      3: revert     4: add untracked
-#   5: patch      6: diff        7: quit       8: help
-What now> 3
-#            staged     unstaged path
-#   1:        +0/-1      nothing TODO
-#   2:        +1/-1      nothing index.html
-#   3:    unchanged        +5/-1 lib/simplegit.rb
-Revert>> 1
-#            staged     unstaged path
-# * 1:        +0/-1      nothing TODO
-#   2:        +1/-1      nothing index.html
-#   3:    unchanged        +5/-1 lib/simplegit.rb
-Revert>> [enter]
-# *** Commands ***
-#   1: status     2: update      3: revert     4: add untracked
-#   5: patch      6: diff        7: quit       8: help
-What now> 1
-#            staged     unstaged path
-#   1:    unchanged        +0/-1 TODO
-#   2:        +1/-1      nothing index.html
-#   3:    unchanged        +5/-1 lib/simplegit.rb
-# *** Commands ***
-#   1: status     2: update      3: revert     4: add untracked
-#   5: patch      6: diff        7: quit       8: help
-What now> 6
-#            staged     unstaged path
-#   1:        +1/-1      nothing index.html
-Review diff>> 1
-# diff --git a/index.html b/index.html
-# index 4d07108..4335f49 100644
-# --- a/index.html
-# +++ b/index.html
-# @@ -16,7 +16,7 @@ Date Finder
-
-#  <p id="out">...</p>
-
-# -<div id="footer">contact : support@github.com</div>
-# +<div id="footer">contact : email.support@github.com</div>
-
-#  <script type="text/javascript">
-
-## 파일의 일부분만 Staging Area에 추가하기
-
-# *** Commands ***
-#   1: status     2: update      3: revert     4: add untracked
-#   5: patch      6: diff        7: quit       8: help
-What now> 5
-# diff --git a/lib/simplegit.rb b/lib/simplegit.rb
-# index dd5ecc4..57399e0 100644
-# --- a/lib/simplegit.rb
-# +++ b/lib/simplegit.rb
-# @@ -22,7 +22,7 @@ class SimpleGit
-#    end
-
-#    def log(treeish = 'master')
-# -    command("git log -n 25 #{treeish}")
-# +    command("git log -n 30 #{treeish}")
-#    end
-
-#    def blame(path)
-Stage this hunk [y,n,a,d,/,j,J,g,e,?]? ?
-# y - stage this hunk
-# n - do not stage this hunk
-# a - stage this and all the remaining hunks in the file
-# d - do not stage this hunk nor any of the remaining hunks in the file
-# g - select a hunk to go to
-# / - search for a hunk matching the given regex
-# j - leave this hunk undecided, see next undecided hunk
-# J - leave this hunk undecided, see next hunk
-# k - leave this hunk undecided, see previous undecided hunk
-# K - leave this hunk undecided, see previous hunk
-# s - split the current hunk into smaller hunks
-# e - manually edit the current hunk
-# ? - print help
-What now> 1
-#            staged     unstaged path
-#   1:    unchanged        +0/-1 TODO
-#   2:        +1/-1      nothing index.html
-#   3:        +1/-1        +4/-0 lib/simplegit.rb
-```
-
-## Stashing 과 Cleaning
-
-```bash
-# stashing 은 하던 것을 commit 하지 않고 잠시 보관해두는 것이다.
-# 여러 세트를 보관할 수 있고 다시 복원할 수 있다.
-
-## 하던 일을 stash 하기
-$ git status
-# Changes to be committed:
-#   (use "git reset HEAD <file>..." to unstage)
-#
-#   modified:   index.html
-#
-# Changes not staged for commit:
-#   (use "git add <file>..." to update what will be committed)
-#   (use "git checkout -- <file>..." to discard changes in working directory)
-#
-#   modified:   lib/simplegit.rb
-
-# stack 에 새로운 stash 가 생성된다.
-$ git stash
-# Saved working directory and index state \
-#   "WIP on master: 049d078 added the index file"
-# HEAD is now at 049d078 added the index file
-# (To restore them type "git stash apply")
-
-# working directory 는 깨끗해 졌다.
-$ git status
-# On branch master
-# nothing to commit, working directory clean
-
-# stash 를 확인하자.
-$ git stash list
-# stash@{0}: WIP on master: 049d078 added the index file
-# stash@{1}: WIP on master: c264051 Revert "added file_size"
-# stash@{2}: WIP on master: 21d80a5 added number to log
-
-# let's apply stash without index.
-$ git stash apply
-# On branch master
-# Changes not staged for commit:
-#   (use "git add <file>..." to update what will be committed)
-#   (use "git checkout -- <file>..." to discard changes in working directory)
-#
-#   modified:   index.html
-#   modified:   lib/simplegit.rb
-#
-# no changes added to commit (use "git add" and/or "git commit -a")
-
-# let's apply stash with index.
-$ git stash apply --index
-# On branch master
-# Changes to be committed:
-#   (use "git reset HEAD <file>..." to unstage)
-#
-#   modified:   index.html
-#
-# Changes not staged for commit:
-#   (use "git add <file>..." to update what will be committed)
-#   (use "git checkout -- <file>..." to discard changes in working directory)
-#
-#   modified:   lib/simplegit.rb
-
-# 적용한 stash 는 버리자.
-$ git stash list
-# stash@{0}: WIP on master: 049d078 added the index file
-# stash@{1}: WIP on master: c264051 Revert "added file_size"
-# stash@{2}: WIP on master: 21d80a5 added number to log
-$ git stash drop stash@{0}
-# Dropped stash@{0} (364e91f3f268f0900bc3ee613f9f733e82aaed43)
-
-## Stash 를 만드는 새로운 방법
-$ git status -s
-# M  index.html
-#  M lib/simplegit.rb
-
-# 이미 staging area 에 있는 파일은 stash 하지 말자.
-$ git stash --keep-index
-# Saved working directory and index state WIP on master: 1b65b17 added the index file
-# HEAD is now at 1b65b17 added the index file
-$ git status -s
-# M  index.html
-
-# --include-untracked, -u 를 추가하여 untracked files 도 stash 해보자.
-$ git status -s
-# M  index.html
-#  M lib/simplegit.rb
-# ?? new-file.txt
-
-$ git stash -u
-# Saved working directory and index state WIP on master: 1b65b17 added the index file
-# HEAD is now at 1b65b17 added the index file
-
-$ git status -s
-
-# --patch 를 추가하여 interactive 하게 처리해 보자.
-$ git stash --patch
-# diff --git a/lib/simplegit.rb b/lib/simplegit.rb
-# index 66d332e..8bb5674 100644
-# --- a/lib/simplegit.rb
-# +++ b/lib/simplegit.rb
-# @@ -16,6 +16,10 @@ class SimpleGit
-#          return `#{git_cmd} 2>&1`.chomp
-#        end
-#      end
-# +
-# +    def show(treeish = 'master')
-# +      command("git show #{treeish}")
-# +    end
-
-#  end
-#  test
-Stash this hunk [y,n,q,a,d,/,e,?]? y
-
-# Saved working directory and index state WIP on master: 1b65b17 added the index file
-
-## Stash 를 적용한 브랜치 만들기
-
-# branch 를 만들고 stash 를 복원해 준다.
-$ git stash branch testchanges
-# M index.html
-# M lib/simplegit.rb
-# Switched to a new branch 'testchanges'
-# On branch testchanges
-# Changes to be committed:
-#   (use "git reset HEAD <file>..." to unstage)
-
-#   modified:   index.html
-
-# Changes not staged for commit:
-#   (use "git add <file>..." to update what will be committed)
-#   (use "git checkout -- <file>..." to discard changes in working directory)
-
-#   modified:   lib/simplegit.rb
-
-# Dropped refs/stash@{0} (29d385a81d163dfd45a452a2ce816487a6b8b014)
-
-## 워킹 디렉토리 청소하기
-# git clean 은 untracked files 를 모두 지운다.
-
-# -n 을 추가하여 가상으로 실행해 보자.
-$ git clean -d -n
-# Would remove test.o
-# Would remove tmp/
-
-# .gitignore 에 등록된 파일은 지우지 않는다. -X 를 추가하여
-# .gitignore 에 등록된 파일도 지우자.
-$ git status -s
-#  M lib/simplegit.rb
-# ?? build.TMP
-# ?? tmp/
-
-$ git clean -n -d
-# Would remove build.TMP
-# Would remove tmp/
-
-$ git clean -n -d -x
-# Would remove build.TMP
-# Would remove test.o
-# Would remove tmp/
-
-# -i 를 추가하여 interactive 하게 실행해보자.
-$ git clean -x -i
-# Would remove the following items:
-#   build.TMP  test.o
-# *** Commands ***
-#     1: clean                2: filter by pattern    3: select by numbers    4: ask each             5: quit
-#     6: help
-What now>
-```
+# Advanced
 
 ## 내 작업에 서명하기
 
@@ -1045,122 +1042,6 @@ $ git log -L :git_deflate_bound:zlib.c
 ## 히스토리 단장하기
 
 ```bash
-## 마지막 커밋을 수정하기
-
-# 마지막 commit 메시지만 수정
-# changes not staged 는 commit 되지 않는다.
-$ git commit --amend
-
-# changes not staged 와 함께 마지막 메시지를 수정
-# SHA-1 값이 바뀐다. 물론 git reflog 로 메지만 바뀐 
-# commit 을 추적할 수 있다.
-$ git add .
-$ git commit --amend
-
-# commit 메시지 편집없이 마지막 commit 수정
-$ git commit --amend --no-edit
-
-## 커밋 메시지를 여러 개 수정하기
-
-# 마지막 3 개의 메시지를 interactive 하게 수정
-$ git rebase -i HEAD~3
-
-pick f7f3f6d changed my name a bit
-pick 310154e updated README formatting and added blame
-pick a5f4a0d added cat-file
-
-# Rebase 710f0f8..a5f4a0d onto 710f0f8
-#
-# Commands:
-#  p, pick = use commit
-#  r, reword = use commit, but edit the commit message
-#  e, edit = use commit, but stop for amending
-#  s, squash = use commit, but meld into previous commit
-#  f, fixup = like "squash", but discard this commit's log message
-#  x, exec = run command (the rest of the line) using shell
-#
-# These lines can be re-ordered; they are executed from top to bottom.
-#
-# If you remove a line here THAT COMMIT WILL BE LOST.
-#
-# However, if you remove everything, the rebase will be aborted.
-#
-# Note that empty commits are commented out
-
-# 위의 명령은 log 와 순서가 반대이다.
-$ git log --pretty=format:"%h %s" HEAD~3..HEAD
-# a5f4a0d added cat-file
-# 310154e updated README formatting and added blame
-# f7f3f6d changed my name a bit
-
-## 커밋 순서 바꾸기???
-## 커밋 순서 바꾸기
-
-# commit message 를 아래와 같이 바꾸어 보자.
-$ git rebase -i HEAD~3
-# pick f7f3f6d changed my name a bit
-# pick 310154e updated README formatting and added blame
-# pick a5f4a0d added cat-file
-
-## 커밋 합치기
-
-#
-# Commands:
-#  p, pick = use commit
-#  r, reword = use commit, but edit the commit message
-#  e, edit = use commit, but stop for amending
-#  s, squash = use commit, but meld into previous commit
-#  f, fixup = like "squash", but discard this commit's log message
-#  x, exec = run command (the rest of the line) using shell
-#
-# These lines can be re-ordered; they are executed from top to bottom.
-#
-# If you remove a line here THAT COMMIT WILL BE LOST.
-#
-# However, if you remove everything, the rebase will be aborted.
-#
-# Note that empty commits are commented out
-
-# pick 을 squash 로 고치면 3 개의 커밋을 합칠 수 있다.
-$ git rebase -i HEAD~3
-# pick f7f3f6d changed my name a bit
-# squash 310154e updated README formatting and added blame
-# squash a5f4a0d added cat-file
-
-# # This is a combination of 3 commits.
-# # The first commit's message is:
-# changed my name a bit
-#
-# # This is the 2nd commit message:
-#
-# updated README formatting and added blame
-#
-# # This is the 3rd commit message:
-#
-# added cat-file
-
-## 커밋 분리하기???
-
-# “updated README formatting and added blame” 을 
-# “updated README formatting” 과 “added blame” 으로 분리
-$ git rebase -i HEAD~3
-# pick f7f3f6d changed my name a bit
-# edit 310154e updated README formatting and added blame
-# pick a5f4a0d added cat-file
-
-$ git reset HEAD^
-$ git add README
-$ git commit -m 'updated README formatting'
-$ git add lib/simplegit.rb
-$ git commit -m 'added blame'
-$ git rebase --continue
-
-$ git log -4 --pretty=format:"%h %s"
-1c002dd added cat-file
-9b29157 added blame
-35cfb2b updated README formatting
-f3cc40e changed my name a bit
-
 ### filter-branch는 포크레인
 
 ## 모든 커밋에서 파일을 제거하기
@@ -1192,103 +1073,6 @@ $ git filter-branch --commit-filter '
         else
                 git commit-tree "$@";
         fi' HEAD
-```
-
-## **Reset 명확히 알고 가기**
-
-reset 을 정확히 이해하기 위해 각 단계별로 설명한다.
-
-![](img/reset-start.png)
-
-* 1 단계: HEAD 이동 (--soft)
-  * HEAD가 master 브랜치를 가리키고 있다면 HEAD, master 를 이동한다.
-
-![](img/reset-soft.png)
-
-* 2 단계: Index 업데이트 (--mixed)
-  * Index를 현재 HEAD가 가리키는 스냅샷으로 업데이트
-  * 가리키는 대상을 가장 최근의 커밋 으로 되돌리는 것은 같다. 
-  * 그리고 Staging Area 를 비우기까지 한다. 
-  * git commit, git add 까지 되돌린다.
-
-![](img/reset-mixed.png)
-
-* 3 단계: 워킹 디렉토리 업데이트 (--hard)
-  * 워킹 디렉토리까지 업데이트
-
-![](img/reset-hard.png)
-
-
-다음은 reset, checkout 의 summary 이다.
-
-|              | HEAD | Index | Workdir | Workdir Safe? |
-|--------------|------|-------|---------|---------------|
-| **Commit Level** | | | | |
-| `reset --soft [commit]` | REF | NO | NO | YES |
-| `reset [commit]` | REF | YES | NO | YES |
-| `reset --hard [commit]` | REF | YES | YES | **NO** |
-| `checkout [commit]` | HARD | YES | YES | YES |
-| **File Level** | | | | |
-| `reset [commit] <paths>` | NO | YES | NO | YES |
-| `checkout [commit]` | NO | YES | YES | **NO** |
-
-```bash
-## 세 개의 트리
-
-# git 은 다음과 같은 세가지 트리를 관리한다.
-# HEAD: 마지막 커밋 스냅샵, 다음 커밋의 부모 커밋
-# Index: 다음에 커밋할 스냅샷
-# 워킹디렉토리: 샌드박스
-
-## HEAD
-$ git cat-file -p HEAD
-# tree cfda3bf379e4f8dba8717dee55aab78aef7f4daf
-# author Scott Chacon  1301511835 -0700
-# committer Scott Chacon  1301511835 -0700
-#
-# initial commit
-
-$ git ls-tree -r HEAD
-# 100644 blob a906cb2a4a904a152...   README
-# 100644 blob 8f94139338f9404f2...   Rakefile
-# 040000 tree 99f1a6d12cb4b6f19...   lib
-
-## Index
-$ git ls-files -s
-# 100644 a906cb2a4a904a152e80877d4088654daad0c859 0	README
-# 100644 8f94139338f9404f26296befa88755fc2598c289 0	Rakefile
-# 100644 47c6340d6459e05787f644c2447d2595f5d3a54b 0	lib/simplegit.rb
-
-## 워킹 디렉토리
-
-$ tree
-# .
-# ├── README
-# ├── Rakefile
-# └── lib
-#     └── simplegit.rb
-
-# 1 directory, 3 files
-
-## 경로를 주고 Reset 하기
-
-# git reset --mixed HEAD file.txt 와 같다.
-# HEAD 를 옮기고 file.txt 만 Index 에 복사한다.
-$ git reset file.txt 
-
-# “`HEAD에서 파일을 가져오는” 것이 아니라 그 커밋에서 파일을 가져온다.
-$ git reset eb43bf file.txt
-
-## 합치기(Squash)
-
-# https://git-scm.com/book/ko/v2/Git-%EB%8F%84%EA%B5%AC-Reset-%EB%AA%85%ED%99%95%ED%9E%88-%EC%95%8C%EA%B3%A0-%EA%B0%80%EA%B8%B0
-$ git reset --soft HEAD~2
-
-### Checkout
-
-## 경로없음???
-
-## 경로있음???
 ```
 
 ## 고급 Merge
@@ -2333,123 +2117,6 @@ $ git pull
 ## 서브모듈 사용할 때 주의할 점들???
 ```
 
-## Bundle
-
-네트워크가 불통일 때 push 할 내용을 binary 로 만드는 방법이다. usb 에 담아서 전달할 수 있다.
-
-```bash
-# 두개의 커밋이 있다.
-$ git log
-# commit 9a466c572fe88b195efd356c3f2bbeccdb504102
-# Author: Scott Chacon <schacon@gmail.com>
-# Date:   Wed Mar 10 07:34:10 2010 -0800
-#
-#     second commit
-#
-# commit b1ec3248f39900d2a406049d762aa68e9641be25
-# Author: Scott Chacon <schacon@gmail.com>
-# Date:   Wed Mar 10 07:34:01 2010 -0800
-#
-#     first commit
-
-# bundle 을 만들자.
-$ git bundle create repo.bundle HEAD master
-# Counting objects: 6, done.
-# Delta compression using up to 2 threads.
-# Compressing objects: 100% (2/2), done.
-# Writing objects: 100% (6/6), 441 bytes, done.
-# Total 6 (delta 0), reused 0 (delta 0)
-
-# 이제 usb 로 전달받은 bundle 을 clone 하자.
-$ git clone repo.bundle repo
-# Cloning into 'repo'...
-# ...
-$ cd repo
-$ git log --oneline
-# 9a466c5 second commit
-# b1ec324 first commit
-
-# 3 개의 commit 을 추가해서 usb 를 통해 옮겨 보자.
-$ git log --oneline
-# 71b84da last commit - second repo
-# c99cf5b fourth commit - second repo
-# 7011d3d third commit - second repo
-# 9a466c5 second commit
-# b1ec324 first commit
-
-# origin/master 에는 없고 master 에만 있는 commit 을 출력해본다.
-$ git log --oneline master ^origin/master
-# 71b84da last commit - second repo
-# c99cf5b fourth commit - second repo
-# 7011d3d third commit - second repo
-
-# bundle 의 대상을 정한다.
-$ git bundle create commits.bundle master ^9a466c5
-# Counting objects: 11, done.
-# Delta compression using up to 2 threads.
-# Compressing objects: 100% (3/3), done.
-# Writing objects: 100% (9/9), 775 bytes, done.
-# Total 9 (delta 0), reused 0 (delta 0)
-
-# 동료가 usb 를 전달받으면 검증해본다.
-$ git bundle verify ../commits.bundle
-# The bundle contains 1 ref
-# 71b84daaf49abed142a373b6e5c59a22dc6560dc refs/heads/master
-# The bundle requires these 1 ref
-# 9a466c572fe88b195efd356c3f2bbeccdb504102 second commit
-# ../commits.bundle is okay
-
-$ git bundle verify ../commits-bad.bundle
-# error: Repository lacks these prerequisite commits:
-# error: 7011d3d8fc200abe0ad561c011c3852a4b7bbe95 third commit - second repo
-
-$ git bundle list-heads ../commits.bundle
-# 71b84daaf49abed142a373b6e5c59a22dc6560dc refs/heads/master
-
-$ git fetch ../commits.bundle master:other-master
-# From ../commits.bundle
-#  * [new branch]      master     -> other-master
-
-$ git log --oneline --decorate --graph --all
-# * 8255d41 (HEAD, master) third commit - first repo
-# | * 71b84da (other-master) last commit - second repo
-# | * c99cf5b fourth commit - second repo
-# | * 7011d3d third commit - second repo
-# |/
-# * 9a466c5 second commit
-# * b1ec324 first commit
-```
-
-## Replace
-
-```bash
-```
-
-## Credential 저장소
-
-```bash
-```
-
-# Git맞춤
-
-## Git 설정하기
-## Git Attributes
-## Git Hooks
-## 정책 구현하기
-
-# Git과 여타 버전 관리 시스템
-## Git: 범용 Client
-## Git으로 옮기기
-
-# Git의 내부
-## Plumbing 명령과 Porcelain 명령
-## Git 개체
-## Git Refs
-## Packfile
-## Refspec
-## 데이터 전송 프로토콜
-## 운영 및 데이터 복구
-## 환경변수
 
 # Git Tips
 
