@@ -1,5 +1,7 @@
 ﻿# Materials
 
+* [누구나 쉽게 이해할 수 있는 Git입문](https://backlog.com/git-tutorial/kr/)
+  * 킹왕짱 튜토리얼
 * [progit](https://git-scm.com/book/ko/v2)
   * 킹왕짱 메뉴얼
 
