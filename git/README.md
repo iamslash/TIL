@@ -7,13 +7,13 @@
 
 # Git Overview
 
-git 은 `working directory, Index(staging area), local repository, remote repository` 와 같이 4 가지 영역을 관리한다.
+git 의 세계관은 `working directory, Index(staging area), local repository, origin remote repository, upstream remote repository` 와 같이 5 가지 영역을 갖는다.
 
 ![](img/reset-workflow.png)
 
-# Git branch strategy
+[git branch strategy](gitbranchstrategy.md) 를 참고하여 branch 전략을 운영하자.
 
-* [git branch strategy](gitbranchstrategy.md)
+`HEAD` 는 현재 속해있는 branch 의 끝을 가리킨다. `ORIG_HEAD` 는 바로 이전의 `HEAD` 이다. `HEAD~` 는 `HEAD` 의 부모 `commit` 이다. `HEAD~2` 는 `HEAD` 의 부모의 부모 `commit` 이다. `HEAD^` 는 뭐지???
 
 # Git 설정
 
@@ -49,31 +49,34 @@ $ git config --global difftool.p4mergetool.cmd \
 $ git difftool
 ```
 
-# Git 기초
-
-## Git 저장소 만들기
-
-다음과 같이 foo 디렉토리를 git repository 로 만들 수 있다.
+# Git Basic
 
 ```bash
-$ cd foo
-$ git init
-```
+# make git repository with barebone
+$ git init . --bare
 
-## 수정하고 저장소에 저장하기
+# -10 : 10 counts of logs
+# --oneline : just one line of log
+# --graph : show me graph
+# --decorate : with tags
+# --all : all branches
+$ git log -10 --oneline --graph --decorate --all
 
-`git status -s` 혹은 `git status --short` 를 이용하여 파일의 상태를 간단히 확인할 수 있다.
-
-```bash
+# -s : simple
 $ git status -s
- M README
-MM Rakefile
-A  lib/git.rb
-M  lib/simplegit.rb
-?? LICENSE.txt
+
+$ git commit -am "update blah blah"
+$ git push origin develop
+$ git push upstream develop
+
+# compare working dir with local repo
+$ git diff
+# compare index with local repo
+$ git diff --staged
+$ git diff --cached
 ```
 
-다음과 같은 `.gitignore` 를 만들어서 파일을 무시할 수 있다.
+# `.gitignore`
 
 ```
 # 확장자가 .a인 파일 무시
@@ -95,32 +98,19 @@ doc/*.txt
 doc/**/*.pdf
 ```
 
-staged 와 unstaged 상태의 변경내용을 다음과 같이 볼 수 있다.
+# Git log
 
 ```bash
-$ git status
-# working directory 와 local repo 의 파일을 비교한다.
-$ git diff
-# staging area 와 local repo 의 파일을 비교한다.
-$ git diff --staged
-$ git diff --cached
-```
-
-## 커밋 히스토리 조회하기
-
-```bash
-# -p, --patch 는 각 커밋의 diff 결과를 출력한다. -2 는 두개만 보여준다.
+# -p: with diff
 $ git log -p -2
-# --stat 은 각 커밋의 통계를 보여준다.
+# --stat: with stat
 $ git log --stat -2
-# 한줄로 보여준다.
+# just oneline
 $ git log --pretty=oneline -2
 $ git log --oneline -2
 # formatted print
 $ git log --pretty=format:"%h - %an, %ar : %s"
 ```
-
-다음은 `git log` 의 주요 옵션이다.
 
 | 옵션 | 설명 |
 |------|------|
@@ -135,6 +125,95 @@ $ git log --pretty=format:"%h - %an, %ar : %s"
 | --pretty | 지정한 형식으로 보여준다. 이 옵션에는 oneline, short, full, fuller, format이 있다. format은 원하는 형식으로 출력하고자 할 때 사용한다. |
 | --oneline | --pretty=oneline --abbrev-commit 두 옵션을 함께 사용한 것과 같다. |
 
+# Git edit commit
+
+can edit last commit.
+
+```bash
+$ git log -10 --oneline --graph --decorate --all
+*   998d92d (HEAD -> develop, upstream/develop, origin/develop) Merge tag '0.2' into develop
+|\
+| *   c8755e4 (tag: 0.2, upstream/master, origin/master, master) Merge branch 'hotfix/0.2'
+| |\
+| | * 51ba540 fixed blah blah
+| |/
+* |   99f9fd9 Merge tag '0.1' into develop
+|\ \
+| |/
+| *   721d99f (tag: 0.1) Merge branch 'release/0.1'
+| |\
+| |/
+|/|
+* | 29fb4b0 added Foo.md
+|/
+* 2fee5b4 kick off
+
+$ vim forgotten.txt
+$ git add .
+$ git commit --amend
+
+$ git log -2 --oneline --graph --decorate --all
+*   35b9d0b (HEAD -> develop) Merge tag '0.2' into develop
+|\
+| | *   998d92d (upstream/develop, origin/develop) Merge tag '0.2' into develop
+| | |\
+| |/ /
+|/| /
+| |/
+```
+# Git revert
+
+can revert last commit.
+
+```bash
+$ rm forgotten.txt
+$ git add .
+$ git commit -am "removed forgotten.txt"
+
+$ git log -3 --oneline --graph --decorate --all
+* 690ef48 (HEAD -> develop) removed forgotten.txt
+*   35b9d0b Merge tag '0.2' into develop
+|\
+| | *   998d92d (upstream/develop, origin/develop) Merge tag '0.2' into develop
+| | |\
+| |/ /
+|/| /
+| |/
+
+$ git revert HEAD
+
+$ git log -3 --oneline --graph --decorate --all
+* 1399858 (HEAD -> develop) Revert "removed forgotten.txt"
+* 690ef48 removed forgotten.txt
+*   35b9d0b Merge tag '0.2' into develop
+|\
+```
+
+# Git conflict
+
+# Git rebase
+
+# Git squash
+
+# Git reset
+
+# Git stash
+
+# Git cherrypick
+
+# Git remote
+
+```bash
+```
+
+# Git tag
+
+# Git ORG_HEAD
+
+
+--------
+
+# Git 기초
 ## 되돌리기
 
 마지막 커밋에 파일 하나를 빼먹었다. 다음과 같이 마지막 커밋을 수정할 수 있다.
