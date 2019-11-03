@@ -14,10 +14,10 @@
 - [Git stash](#git-stash)
 - [Git Clean](#git-clean)
 - [Git tag](#git-tag)
+- [Git grep](#git-grep)
+- [Git filter-branch](#git-filter-branch)
 - [Advanced](#advanced)
   - [내 작업에 서명하기](#%eb%82%b4-%ec%9e%91%ec%97%85%ec%97%90-%ec%84%9c%eb%aa%85%ed%95%98%ea%b8%b0)
-  - [검색](#%ea%b2%80%ec%83%89)
-  - [히스토리 단장하기](#%ed%9e%88%ec%8a%a4%ed%86%a0%eb%a6%ac-%eb%8b%a8%ec%9e%a5%ed%95%98%ea%b8%b0)
   - [고급 Merge](#%ea%b3%a0%ea%b8%89-merge)
   - [Rerere](#rerere)
   - [Git으로 버그 찾기](#git%ec%9c%bc%eb%a1%9c-%eb%b2%84%ea%b7%b8-%ec%b0%be%ea%b8%b0)
@@ -43,7 +43,9 @@ git 의 세계관은 `working directory, Index(staging area), local repository, 
 
 [git branch strategy](gitbranchstrategy.md) 를 참고하여 branch 전략을 운영하자.
 
-`HEAD` 는 현재 속해있는 branch 의 끝을 가리킨다. `ORIG_HEAD` 는 바로 이전의 `HEAD` 이다. `HEAD~` 는 `HEAD` 의 부모 `commit` 이다. `HEAD~2` 는 `HEAD` 의 부모의 부모 `commit` 이다. `HEAD^` 는 뭐지???
+`HEAD` 는 현재 속해있는 branch 의 끝을 가리킨다. `ORIG_HEAD` 는 바로 이전의 `HEAD` 이다. `HEAD~` 는 `HEAD` 의 부모 `commit` 이다. `HEAD~2` 는 `HEAD` 의 부모의 부모 `commit` 이다. `HEAD^` 는 뭐지??? 또한 `HEAD@{15}` 과 같은 형태로 부모 commit 을 가리킬 수 있다. `MERGE_HEAD` 는 뭐지???
+
+stash 역시 `STASH@{0}` 와 같은 형태로 특정 stash 를 가리킬 수 있다.
 
 # Git 설정
 
@@ -240,6 +242,11 @@ $ git log --pretty=oneline -2
 $ git log --oneline -2
 # formatted print
 $ git log --pretty=format:"%h - %an, %ar : %s"
+
+# -S : search logs???
+$ git log -S ZLIB_BUF_MAX --oneline
+# -L : search line logs???
+$ git log -L :git_deflate_bound:zlib.c
 ```
 
 | 옵션 | 설명 |
@@ -802,6 +809,62 @@ $ git tag -a 0.2
 $ git tag -d 0.1
 ```
 
+# Git grep
+
+```bash
+# -n or --line-number : print line numbers
+$ git grep -n gmtime_r
+
+# -c, --count : show counts 
+$ git grep --count gmtime_r
+
+# -p or --show-function : show functions matched with
+$ git grep -p gmtime_r *.c
+
+# --and : logical and
+$ git grep --break --heading \
+    -n -e '#define' --and \( -e LINK -e BUF_MAX \) v1.8.0
+```
+
+# Git filter-branch
+
+can refine the history with `git filter-branch`.
+
+```bash
+### filter-branch는 포크레인
+
+## 모든 커밋에서 파일을 제거하기
+
+# history 에서 passwords.txt 제거
+# --tree-filter 를 추가하여 argument 를 실행하고 다시 커밋
+$ git filter-branch --tree-filter 'rm -f passwords.txt' HEAD
+# Rewrite 6b9b3cf04e7c5686a9cb838c3f36a8cb6a0fc2bd (21/21)
+# Ref 'refs/heads/master' was rewritten
+
+# 백업파일을 커밋했다면 제거하자.
+$ git filter-branch --tree-filter 'rm -f *~' HEAD
+
+## 하위 디렉토리를 루트 디렉토리로 만들기
+
+# SVN 에서 임포트하면 trunk, tags, branch 디렉토리가 포함된다.
+# 모든 커밋에 대해 trunk 디렉토리를 루트디렉토리로 바꾸자
+$ git filter-branch --subdirectory-filter trunk HEAD
+# Rewrite 856f0bf61e41a27326cdae8f09fe708d679f596f (12/12)
+# Ref 'refs/heads/master' was rewritten
+
+## 모든 커밋의 이메일 주소를 수정
+$ git filter-branch --commit-filter '
+        if [ "$GIT_AUTHOR_EMAIL" = "schacon@localhost" ];
+        then
+                GIT_AUTHOR_NAME="Scott Chacon";
+                GIT_AUTHOR_EMAIL="schacon@example.com";
+                git commit-tree "$@";
+        else
+                git commit-tree "$@";
+        fi' HEAD
+```
+
+
 # Advanced
 
 ## 내 작업에 서명하기
@@ -934,145 +997,6 @@ $ git merge --verify-signatures -S  signed-branch
 #  README | 2 ++
 #  1 file changed, 2 insertions(+)
 
-```
-
-## 검색
-
-```bash
-## Git Grep
-
-# -n or --line-number 르 ㄹ추가하여 라인 번호도 출력한다.
-$ git grep -n gmtime_r
-# compat/gmtime.c:3:#undef gmtime_r
-# compat/gmtime.c:8:      return git_gmtime_r(timep, &result);
-# compat/gmtime.c:11:struct tm *git_gmtime_r(const time_t *timep, struct tm *result)
-# compat/gmtime.c:16:     ret = gmtime_r(timep, result);
-# compat/mingw.c:826:struct tm *gmtime_r(const time_t *timep, struct tm *result)
-# compat/mingw.h:206:struct tm *gmtime_r(const time_t *timep, struct tm *result);
-# date.c:482:             if (gmtime_r(&now, &now_tm))
-# date.c:545:             if (gmtime_r(&time, tm)) {
-# date.c:758:             /* gmtime_r() in match_digit() may have clobbered it */
-# git-compat-util.h:1138:struct tm *git_gmtime_r(const time_t *, struct tm *);
-# git-compat-util.h:1140:#define gmtime_r git_gmtime_r
-
-# -c, --count 를 추가하여 몇개 찾았는지 표시해 보자.
-$ git grep --count gmtime_r
-# compat/gmtime.c:4
-# compat/mingw.c:1
-# compat/mingw.h:1
-# date.c:3
-# git-compat-util.h:2
-
-# -p or --show-function 을 추가하여 매칭되는 라인이 있는 함수나 메서드를 찾아보자.
-$ git grep -p gmtime_r *.c
-# date.c=static int match_multi_number(timestamp_t num, char c, const char *date,
-# date.c:         if (gmtime_r(&now, &now_tm))
-# date.c=static int match_digit(const char *date, struct tm *tm, int *offset, int *tm_gmt)
-# date.c:         if (gmtime_r(&time, tm)) {
-# date.c=int parse_date_basic(const char *date, timestamp_t *timestamp, int *offset)
-# date.c:         /* gmtime_r() in match_digit() may have clobbered it */
-
-# --and 를 추가하여 logical and 를 해보자.
-$ git grep --break --heading \
-    -n -e '#define' --and \( -e LINK -e BUF_MAX \) v1.8.0
-# v1.8.0:builtin/index-pack.c
-# 62:#define FLAG_LINK (1u<<20)
-
-# v1.8.0:cache.h
-# 73:#define S_IFGITLINK  0160000
-# 74:#define S_ISGITLINK(m)       (((m) & S_IFMT) == S_IFGITLINK)
-
-# v1.8.0:environment.c
-# 54:#define OBJECT_CREATION_MODE OBJECT_CREATION_USES_HARDLINKS
-
-# v1.8.0:strbuf.c
-# 326:#define STRBUF_MAXLINK (2*PATH_MAX)
-
-# v1.8.0:symlinks.c
-# 53:#define FL_SYMLINK  (1 << 2)
-
-# v1.8.0:zlib.c
-# 30:/* #define ZLIB_BUF_MAX ((uInt)-1) */
-# 31:#define ZLIB_BUF_MAX ((uInt) 1024 * 1024 * 1024) /* 1GB */
-
-## Git 로그 검색
-
-# -S 를 추가하여 log 에서 검색해보자.
-$ git log -S ZLIB_BUF_MAX --oneline
-# e01503b zlib: allow feeding more than 4GB in one go
-# ef49a7a zlib: zlib can only process 4GB at a time
-
-## 라인 로그 검색
-$ git log -L :git_deflate_bound:zlib.c
-# commit ef49a7a0126d64359c974b4b3b71d7ad42ee3bca
-# Author: Junio C Hamano <gitster@pobox.com>
-# Date:   Fri Jun 10 11:52:15 2011 -0700
-
-#     zlib: zlib can only process 4GB at a time
-
-# diff --git a/zlib.c b/zlib.c
-# --- a/zlib.c
-# +++ b/zlib.c
-# @@ -85,5 +130,5 @@
-# -unsigned long git_deflate_bound(z_streamp strm, unsigned long size)
-# +unsigned long git_deflate_bound(git_zstream *strm, unsigned long size)
-#  {
-# -       return deflateBound(strm, size);
-# +       return deflateBound(&strm->z, size);
-#  }
-
-
-# commit 225a6f1068f71723a910e8565db4e252b3ca21fa
-# Author: Junio C Hamano <gitster@pobox.com>
-# Date:   Fri Jun 10 11:18:17 2011 -0700
-
-#     zlib: wrap deflateBound() too
-
-# diff --git a/zlib.c b/zlib.c
-# --- a/zlib.c
-# +++ b/zlib.c
-# @@ -81,0 +85,5 @@
-# +unsigned long git_deflate_bound(z_streamp strm, unsigned long size)
-# +{
-# +       return deflateBound(strm, size);
-# +}
-# +
-```
-
-## 히스토리 단장하기
-
-```bash
-### filter-branch는 포크레인
-
-## 모든 커밋에서 파일을 제거하기
-
-# history 에서 passwords.txt 제거
-# --tree-filter 를 추가하여 argument 를 실행하고 다시 커밋
-$ git filter-branch --tree-filter 'rm -f passwords.txt' HEAD
-# Rewrite 6b9b3cf04e7c5686a9cb838c3f36a8cb6a0fc2bd (21/21)
-# Ref 'refs/heads/master' was rewritten
-
-# 백업파일을 커밋했다면 제거하자.
-$ git filter-branch --tree-filter 'rm -f *~' HEAD
-
-## 하위 디렉토리를 루트 디렉토리로 만들기
-
-# SVN 에서 임포트하면 trunk, tags, branch 디렉토리가 포함된다.
-# 모든 커밋에 대해 trunk 디렉토리를 루트디렉토리로 바꾸자
-$ git filter-branch --subdirectory-filter trunk HEAD
-# Rewrite 856f0bf61e41a27326cdae8f09fe708d679f596f (12/12)
-# Ref 'refs/heads/master' was rewritten
-
-## 모든 커밋의 이메일 주소를 수정
-$ git filter-branch --commit-filter '
-        if [ "$GIT_AUTHOR_EMAIL" = "schacon@localhost" ];
-        then
-                GIT_AUTHOR_NAME="Scott Chacon";
-                GIT_AUTHOR_EMAIL="schacon@example.com";
-                git commit-tree "$@";
-        else
-                git commit-tree "$@";
-        fi' HEAD
 ```
 
 ## 고급 Merge
