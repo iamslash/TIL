@@ -16,6 +16,7 @@
 - [Git tag](#git-tag)
 - [Git grep](#git-grep)
 - [Git filter-branch](#git-filter-branch)
+- [Git merge](#git-merge)
 - [Advanced](#advanced)
   - [내 작업에 서명하기](#%eb%82%b4-%ec%9e%91%ec%97%85%ec%97%90-%ec%84%9c%eb%aa%85%ed%95%98%ea%b8%b0)
   - [고급 Merge](#%ea%b3%a0%ea%b8%89-merge)
@@ -34,6 +35,8 @@
   * 킹왕짱 튜토리얼
 * [progit](https://git-scm.com/book/ko/v2)
   * 킹왕짱 메뉴얼
+* `file:///C:/Program%20Files/Git/mingw64/share/doc/git-doc/`
+  * git documents
 
 # Git Overview
 
@@ -831,28 +834,22 @@ $ git grep --break --heading \
 can refine the history with `git filter-branch`.
 
 ```bash
-### filter-branch는 포크레인
-
-## 모든 커밋에서 파일을 제거하기
-
-# history 에서 passwords.txt 제거
-# --tree-filter 를 추가하여 argument 를 실행하고 다시 커밋
+# remote passwords.txt in the history
+# --tree-filter : execute a argument and commit again
 $ git filter-branch --tree-filter 'rm -f passwords.txt' HEAD
 # Rewrite 6b9b3cf04e7c5686a9cb838c3f36a8cb6a0fc2bd (21/21)
 # Ref 'refs/heads/master' was rewritten
 
-# 백업파일을 커밋했다면 제거하자.
+# remove files with the pattern '*~ ' of all commits in the history.
 $ git filter-branch --tree-filter 'rm -f *~' HEAD
 
-## 하위 디렉토리를 루트 디렉토리로 만들기
-
-# SVN 에서 임포트하면 trunk, tags, branch 디렉토리가 포함된다.
-# 모든 커밋에 대해 trunk 디렉토리를 루트디렉토리로 바꾸자
+# If you import from SVN you can trunk, tags, branch 
+# Let's change SVN to root directory of all commits in the history.
 $ git filter-branch --subdirectory-filter trunk HEAD
 # Rewrite 856f0bf61e41a27326cdae8f09fe708d679f596f (12/12)
 # Ref 'refs/heads/master' was rewritten
 
-## 모든 커밋의 이메일 주소를 수정
+# modify emails of all commits in the history
 $ git filter-branch --commit-filter '
         if [ "$GIT_AUTHOR_EMAIL" = "schacon@localhost" ];
         then
@@ -864,233 +861,87 @@ $ git filter-branch --commit-filter '
         fi' HEAD
 ```
 
+# Git merge
 
-# Advanced
-
-## 내 작업에 서명하기
+If it conflict just edit conflicted files and commit, push.
 
 ```bash
-## GPG 소개
+$ cd ~/tmp/L/david/HelloWorld
+$ git log -10 --oneline --graph --decorate --all
+*   7ead648 (HEAD -> develop, origin/develop) Merge branch 'develop' of D:/tmp/R/origin\HelloWorld into develop
+|\
+| *   998d92d (upstream/develop) Merge tag '0.2' into develop
+| |\
+| * \   99f9fd9 Merge tag '0.1' into develop
+| |\ \
+* | | | 190e701 added y.md
+$ vim y.md
+# sdiosdisdfjoiojsfdijo
+#
+# Hbllo Wbrld
+$ git commit -am "update y.md"
+$ git push origin develop
 
-# 설치된 개인키의 목록을 확인
-$ gpg --list-keys
-# /Users/schacon/.gnupg/pubring.gpg
-# ---------------------------------
-# pub   2048R/0A46826A 2014-06-04
-# uid                  Scott Chacon (Git signing key) <schacon@gmail.com>
-# sub   2048R/874529A9 2014-06-04
+$ cd ~/tmp/L/peter/HelloWorld
+git log -10 --oneline --graph --decorate --all
+*   7ead648 (HEAD -> develop, origin/develop, master) Merge branch 'develop' of D:/tmp/R/origin\HelloWorld into develop
+|\
+| *   998d92d Merge tag '0.2' into develop
+| |\
+| * \   99f9fd9 Merge tag '0.1' into develop
+| |\ \
+* | | | 190e701 added y.md
+* | | | b29fe09 added e, f
+$ vim y.md
+# sdiosdisdfjoiojsfdijo
+#
+# Hallo Warld
+$ git commit -am "update y.md"
+$ git push origin develop
+To D:/tmp/R/origin\\HelloWorld
+ ! [rejected]        develop -> develop (fetch first)
+$ git pull origin develop
+remote: Counting objects: 3, done.
+remote: Total 3 (delta 0), reused 0 (delta 0)
+Unpacking objects: 100% (3/3), done.
+From D:/tmp/R/origin\\HelloWorld
+ * branch            develop    -> FETCH_HEAD
+   7ead648..5e197af  develop    -> origin/develop
+Auto-merging y.md
+CONFLICT (content): Merge conflict in y.md
+Automatic merge failed; fix conflicts and then commit the result.
+$ git status
+On branch develop
+Your branch and 'origin/develop' have diverged,
+and have 1 and 1 different commits each, respectively.
+  (use "git pull" to merge the remote branch into yours)
 
-# 키를 만들자
-$ gpg --gen-key
+You have unmerged paths.
+  (fix conflicts and run "git commit")
+  (use "git merge --abort" to abort the merge)
 
-# 개인키가 이미 있다면 설정하자
-$ git config --global user.signingkey 0A46826A
+Unmerged paths:
+  (use "git add <file>..." to mark resolution)
 
-## 태그 서명하기
-# -a 대신 -s 를 쓰자
-$ git tag -s v1.5 -m 'my signed 1.5 tag'
+        both modified:   y.md
 
-# You need a passphrase to unlock the secret key for
-# user: "Ben Straub <ben@straub.cc>"
-# 2048-bit RSA key, ID 800430EB, created 2014-05-04
-
-# tag 에 gpg 서명이 첨부되어 있다.
-$ git show v1.5
-# tag v1.5
-# Tagger: Ben Straub <ben@straub.cc>
-# Date:   Sat May 3 20:29:41 2014 -0700
-
-# my signed 1.5 tag
-# -----BEGIN PGP SIGNATURE-----
-# Version: GnuPG v1
-
-# iQEcBAABAgAGBQJTZbQlAAoJEF0+sviABDDrZbQH/09PfE51KPVPlanr6q1v4/Ut
-# LQxfojUWiLQdg2ESJItkcuweYg+kc3HCyFejeDIBw9dpXt00rY26p05qrpnG+85b
-# hM1/PswpPLuBSr+oCIDj5GMC2r2iEKsfv2fJbNW8iWAXVLoWZRF8B0MfqX/YTMbm
-# ecorc4iXzQu7tupRihslbNkfvfciMnSDeSvzCpWAHl7h8Wj6hhqePmLm9lAYqnKp
-# 8S5B/1SSQuEAjRZgI4IexpZoeKGVDptPHxLLS38fozsyi0QyDyzEgJxcJQVMXxVi
-# RUysgqjcpT8+iQM1PblGfHR4XAhuOqN5Fx06PSaFZhqvWFezJ28/CLyX5q+oIVk=
-# =EFTF
-# -----END PGP SIGNATURE-----
-
-# commit ca82a6dff817ec66f44342007202690a93763949
-# Author: Scott Chacon <schacon@gee-mail.com>
-# Date:   Mon Mar 17 21:52:11 2008 -0700
-
-#     changed the version number
-
-## tag 확인하기. 확인 작업을 하려면 서명한 사람의 GPG 공개키를 키 관리 시스템에 등록해두어야 한다.
-$ git tag -v v1.4.2.1
-# object 883653babd8ee7ea23e6a5c392bb739348b1eb61
-# type commit
-# tag v1.4.2.1
-# tagger Junio C Hamano <junkio@cox.net> 1158138501 -0700
-
-# GIT 1.4.2.1
-
-# Minor fixes since 1.4.2, including git-mv and git-http with alternates.
-# gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
-# gpg: Good signature from "Junio C Hamano <junkio@cox.net>"
-# gpg:                 aka "[jpeg image of size 1513]"
-# Primary key fingerprint: 3565 2A26 2040 E066 C9A7  4A7D C0C6 D9A4 F311 9B9A
-
-# 서명한 사람의 공개키가 없으면 다음과 같은 에러 메시지를 출력한다.
-# gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
-# gpg: Can't check signature: public key not found
-# error: could not verify the tag 'v1.4.2.1'
-
-## 커밋에 서명하기
-
-# -S 를 추가하여 commit 에 서명해보자.
-$ git commit -a -S -m 'signed commit'
-
-# You need a passphrase to unlock the secret key for
-# user: "Scott Chacon (Git signing key) <schacon@gmail.com>"
-# 2048-bit RSA key, ID 0A46826A, created 2014-06-04
-
-# [master 5c3386c] signed commit
-#  4 files changed, 4 insertions(+), 24 deletions(-)
-#  rewrite Rakefile (100%)
-#  create mode 100644 lib/git.rb
-
-# --show-signature 를 추가하여 서명을 확인 하자.
-$ git log --show-signature -1
-# commit 5c3386cf54bba0a33a32da706aa52bc0155503c2
-# gpg: Signature made Wed Jun  4 19:49:17 2014 PDT using RSA key ID 0A46826A
-# gpg: Good signature from "Scott Chacon (Git signing key) <schacon@gmail.com>"
-# Author: Scott Chacon <schacon@gmail.com>
-# Date:   Wed Jun 4 19:49:17 2014 -0700
-
-#     signed commit
-
-# git log 로 출력한 로그에서 커밋에 대한 서명 정보를 알려면 %G? 포맷을 이용한다.
-$ git log --pretty="format:%h %G? %aN  %s"
-
-# 5c3386c G Scott Chacon  signed commit
-# ca82a6d N Scott Chacon  changed the version number
-# 085bb3b N Scott Chacon  removed unnecessary test code
-# a11bef0 N Scott Chacon  first commit
-
-# --verify-signatures 를 추가하여 Merge 할 커밋 중 서명하지 않았거나 
-# 신뢰할 수 없는 사람이 서명한 커밋이 있으면 Merge 되지 않는다.
-$ git merge --verify-signatures non-verify
-# fatal: Commit ab06180 does not have a GPG signature.
-
-# Merge 할 커밋 전부가 신뢰할 수 있는 사람에 의해 서명된 커밋이면 
-# 모든 서명을 출력하고 Merge를 수행한다.
-$ git merge --verify-signatures signed-branch
-# Commit 13ad65e has a good GPG signature by Scott Chacon (Git signing key) <schacon@gmail.com>
-# Updating 5c3386c..13ad65e
-# Fast-forward
-#  README | 2 ++
-#  1 file changed, 2 insertions(+)
-
-# -S 를 추가하여 merge commit 을 서명해 보자.
-$ git merge --verify-signatures -S  signed-branch
-# Commit 13ad65e has a good GPG signature by Scott Chacon (Git signing key) <schacon@gmail.com>
-
-# You need a passphrase to unlock the secret key for
-# user: "Scott Chacon (Git signing key) <schacon@gmail.com>"
-# 2048-bit RSA key, ID 0A46826A, created 2014-06-04
-
-# Merge made by the 'recursive' strategy.
-#  README | 2 ++
-#  1 file changed, 2 insertions(+)
-
+no changes added to commit (use "git add" and/or "git commit -a")
+$ vim y.md
+# sdiosdisdfjoiojsfdijo
+#
+# <<<<<<< HEAD
+# Hallo Warld
+# =======
+# Hbllo Wbrld
+# >>>>>>> 5e197af72259ed8e0f170a748341f03284cdb906
+$ git commit -a
+# Merge branch 'develop' of D:/tmp/R/origin\\HelloWorld into develop
+$ git push origin develop
 ```
 
-## 고급 Merge
+can merge with ignoring white spaces.
 
 ```bash
-
-## Merge 충돌
-
-# merge 하기 전에 working dir 를 stash 에 push 하거나
-# branch 에 commit 하는 것이 좋다.
-# 그렇지 않으면 모두 잃어버릴 수 있다.
-
-# 이것은 예제로 사용할 hello.rb 파일이다.
-# #! /usr/bin/env ruby
-#
-# def hello
-#   puts 'hello world'
-# end
-#
-# hello()
-
-# whitespace branch 를 만들고 이동한다.
-$ git checkout -b whitespace
-# Switched to a new branch 'whitespace'
-
-$ unix2dos hello.rb
-# unix2dos: converting file hello.rb to DOS format ...
-$ git commit -am 'converted hello.rb to DOS'
-# [whitespace 3270f76] converted hello.rb to DOS
-#  1 file changed, 7 insertions(+), 7 deletions(-)
-
-$ vim hello.rb
-$ git diff -b
-# diff --git a/hello.rb b/hello.rb
-# index ac51efd..e85207e 100755
-# --- a/hello.rb
-# +++ b/hello.rb
-# @@ -1,7 +1,7 @@
-#  #! /usr/bin/env ruby
-#
-#  def hello
-# -  puts 'hello world'
-# +  puts 'hello mundo'^M
-#  end
-#
-#  hello()
-
-$ git commit -am 'hello mundo change'
-# [whitespace 6d338d2] hello mundo change
-#  1 file changed, 1 insertion(+), 1 deletion(-)
-
-# 이제 master branch 로 이동한다.
-$ git checkout master
-# Switched to branch 'master'
-
-$ vim hello.rb
-$ git diff
-# diff --git a/hello.rb b/hello.rb
-# index ac51efd..36c06c8 100755
-# --- a/hello.rb
-# +++ b/hello.rb
-# @@ -1,5 +1,6 @@
-#  #! /usr/bin/env ruby
-#
-# +# prints out a greeting
-#  def hello
-#    puts 'hello world'
-#  end
-
-$ git commit -am 'document the function'
-# [master bec6336] document the function
-#  1 file changed, 1 insertion(+)
-
-# master branch 에서 white space branch 를 merge 하면
-# 충돌이 발생한다.
-$ git merge whitespace
-# Auto-merging hello.rb
-# CONFLICT (content): Merge conflict in hello.rb
-# Automatic merge failed; fix conflicts and then commit the result.
-
-## Merge 취소하기
-$ git status -sb
-# ## master
-# UU hello.rb
-
-# merge 하기 전으로 되돌린다.
-$ git merge --abort
-
-$ git status -sb
-# ## master
-
-# merge 를 처음부터 다시하고 싶다. 저장하지 않는 것은 사라진다.
-$ git reset --hard HEAD 
-
 ## 공백 무시하기
 # 공백이 충돌의 전부라면 merge 를 취소하고 -Xignore-all-space 혹은 # -Xignore-space-change 를 추가하여 공백을 부시하고 merge 하자.
 # -Xignore-all-space 는 모든 공백을 무시한다.
@@ -1101,9 +952,11 @@ Auto-merging hello.rb
 Merge made by the 'recursive' strategy.
  hello.rb | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
+``` 
 
-## 수동으로 Merge 하기
+can merge manually
 
+```bash
 # 충돌이 발생하면 index 에 3 가지 파일이 존재한다.
 # Stage 1는 공통 조상 파일, Stage 2는 현재 개발자의 버전에 해당하는 파일, Stage 3은 MERGE_HEAD 가 가리키는 커밋의 파일이다.
 # git show 를 이용해서 각 버전의 파일을 꺼낼 수 있다.
@@ -1338,49 +1191,143 @@ $ git log --cc -p -1
 #   hello()
 ```
 
-merge 를 되돌리는 방법은 refs 수정, 커밋 되돌리기 등이 있다. 다음과 같이 master 에서 topic 을 merge 했다.
+# Advanced
 
-![](img/undomerge-start.png)
-
-`reset --hard` 을 이용하여 C6 로 이동하자. `reset --hard` 는 아래의 세 단계로 수행한다.
-
-* HEAD 의 브랜치를 지정한 위치로 옮긴다. 이 경우엔 master 브랜치를 Merge 커밋(C6) 이전으로 되돌린다.
-* Index 를 HEAD 의 내용으로 바꾼다.
-* 워킹 디렉토리를 Index 의 내용으로 바꾼다.
+## 내 작업에 서명하기
 
 ```bash
-git reset --hard HEAD~
+## GPG 소개
+
+# 설치된 개인키의 목록을 확인
+$ gpg --list-keys
+# /Users/schacon/.gnupg/pubring.gpg
+# ---------------------------------
+# pub   2048R/0A46826A 2014-06-04
+# uid                  Scott Chacon (Git signing key) <schacon@gmail.com>
+# sub   2048R/874529A9 2014-06-04
+
+# 키를 만들자
+$ gpg --gen-key
+
+# 개인키가 이미 있다면 설정하자
+$ git config --global user.signingkey 0A46826A
+
+## 태그 서명하기
+# -a 대신 -s 를 쓰자
+$ git tag -s v1.5 -m 'my signed 1.5 tag'
+
+# You need a passphrase to unlock the secret key for
+# user: "Ben Straub <ben@straub.cc>"
+# 2048-bit RSA key, ID 800430EB, created 2014-05-04
+
+# tag 에 gpg 서명이 첨부되어 있다.
+$ git show v1.5
+# tag v1.5
+# Tagger: Ben Straub <ben@straub.cc>
+# Date:   Sat May 3 20:29:41 2014 -0700
+
+# my signed 1.5 tag
+# -----BEGIN PGP SIGNATURE-----
+# Version: GnuPG v1
+
+# iQEcBAABAgAGBQJTZbQlAAoJEF0+sviABDDrZbQH/09PfE51KPVPlanr6q1v4/Ut
+# LQxfojUWiLQdg2ESJItkcuweYg+kc3HCyFejeDIBw9dpXt00rY26p05qrpnG+85b
+# hM1/PswpPLuBSr+oCIDj5GMC2r2iEKsfv2fJbNW8iWAXVLoWZRF8B0MfqX/YTMbm
+# ecorc4iXzQu7tupRihslbNkfvfciMnSDeSvzCpWAHl7h8Wj6hhqePmLm9lAYqnKp
+# 8S5B/1SSQuEAjRZgI4IexpZoeKGVDptPHxLLS38fozsyi0QyDyzEgJxcJQVMXxVi
+# RUysgqjcpT8+iQM1PblGfHR4XAhuOqN5Fx06PSaFZhqvWFezJ28/CLyX5q+oIVk=
+# =EFTF
+# -----END PGP SIGNATURE-----
+
+# commit ca82a6dff817ec66f44342007202690a93763949
+# Author: Scott Chacon <schacon@gee-mail.com>
+# Date:   Mon Mar 17 21:52:11 2008 -0700
+
+#     changed the version number
+
+## tag 확인하기. 확인 작업을 하려면 서명한 사람의 GPG 공개키를 키 관리 시스템에 등록해두어야 한다.
+$ git tag -v v1.4.2.1
+# object 883653babd8ee7ea23e6a5c392bb739348b1eb61
+# type commit
+# tag v1.4.2.1
+# tagger Junio C Hamano <junkio@cox.net> 1158138501 -0700
+
+# GIT 1.4.2.1
+
+# Minor fixes since 1.4.2, including git-mv and git-http with alternates.
+# gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
+# gpg: Good signature from "Junio C Hamano <junkio@cox.net>"
+# gpg:                 aka "[jpeg image of size 1513]"
+# Primary key fingerprint: 3565 2A26 2040 E066 C9A7  4A7D C0C6 D9A4 F311 9B9A
+
+# 서명한 사람의 공개키가 없으면 다음과 같은 에러 메시지를 출력한다.
+# gpg: Signature made Wed Sep 13 02:08:25 2006 PDT using DSA key ID F3119B9A
+# gpg: Can't check signature: public key not found
+# error: could not verify the tag 'v1.4.2.1'
+
+## 커밋에 서명하기
+
+# -S 를 추가하여 commit 에 서명해보자.
+$ git commit -a -S -m 'signed commit'
+
+# You need a passphrase to unlock the secret key for
+# user: "Scott Chacon (Git signing key) <schacon@gmail.com>"
+# 2048-bit RSA key, ID 0A46826A, created 2014-06-04
+
+# [master 5c3386c] signed commit
+#  4 files changed, 4 insertions(+), 24 deletions(-)
+#  rewrite Rakefile (100%)
+#  create mode 100644 lib/git.rb
+
+# --show-signature 를 추가하여 서명을 확인 하자.
+$ git log --show-signature -1
+# commit 5c3386cf54bba0a33a32da706aa52bc0155503c2
+# gpg: Signature made Wed Jun  4 19:49:17 2014 PDT using RSA key ID 0A46826A
+# gpg: Good signature from "Scott Chacon (Git signing key) <schacon@gmail.com>"
+# Author: Scott Chacon <schacon@gmail.com>
+# Date:   Wed Jun 4 19:49:17 2014 -0700
+
+#     signed commit
+
+# git log 로 출력한 로그에서 커밋에 대한 서명 정보를 알려면 %G? 포맷을 이용한다.
+$ git log --pretty="format:%h %G? %aN  %s"
+
+# 5c3386c G Scott Chacon  signed commit
+# ca82a6d N Scott Chacon  changed the version number
+# 085bb3b N Scott Chacon  removed unnecessary test code
+# a11bef0 N Scott Chacon  first commit
+
+# --verify-signatures 를 추가하여 Merge 할 커밋 중 서명하지 않았거나 
+# 신뢰할 수 없는 사람이 서명한 커밋이 있으면 Merge 되지 않는다.
+$ git merge --verify-signatures non-verify
+# fatal: Commit ab06180 does not have a GPG signature.
+
+# Merge 할 커밋 전부가 신뢰할 수 있는 사람에 의해 서명된 커밋이면 
+# 모든 서명을 출력하고 Merge를 수행한다.
+$ git merge --verify-signatures signed-branch
+# Commit 13ad65e has a good GPG signature by Scott Chacon (Git signing key) <schacon@gmail.com>
+# Updating 5c3386c..13ad65e
+# Fast-forward
+#  README | 2 ++
+#  1 file changed, 2 insertions(+)
+
+# -S 를 추가하여 merge commit 을 서명해 보자.
+$ git merge --verify-signatures -S  signed-branch
+# Commit 13ad65e has a good GPG signature by Scott Chacon (Git signing key) <schacon@gmail.com>
+
+# You need a passphrase to unlock the secret key for
+# user: "Scott Chacon (Git signing key) <schacon@gmail.com>"
+# 2048-bit RSA key, ID 0A46826A, created 2014-06-04
+
+# Merge made by the 'recursive' strategy.
+#  README | 2 ++
+#  1 file changed, 2 insertions(+)
+
 ```
 
-![](img/undomerge-reset.png)
+## 고급 Merge
 
-다음은 모든 변경사항을 취소하는 새로운 커밋을 만드는 방법이다. -m 1 옵션은 부모가 보호되어야 하는 mainline 을 나타낸다. HEAD 로 Merge를 했을 때(git merge topic1) Merge 커밋은 두 개의 부모 커밋을 가진다. 첫 번째 부모 커밋은 HEAD (C6)이고 두 번째 부모 커밋은 Merge 대상 브랜치(C4)이다. 두 번째 부모 커밋(C4)에서 받아온 모든 변경사항을 되돌리고 첫 번째 부모(C6)로부터 받아온 변경사항은 남겨두고자 하는 상황이다.
 
-```bash
-$ git revert -m 1 HEAD
-[master b1d8379] Revert "Merge branch 'topic'"
-```
-
-![](img/undomerge-revert.png)
-
-`^M` 은 C6 와 내용이 같다. topic 을 master 에 다시 merge 하면 소용없다.
-
-```bash
-$ git merge topic
-Already up-to-date.
-```
-
-![](img/undomerge-revert2.png)
-
-되돌렸던 merge 커밋을 다시 되돌린다. 이후에 추가한 내용을 새 merge 커밋으로 만드는 것이 좋다.
-
-```bash
-$ git revert ^M
-[master 09f0126] Revert "Revert "Merge branch 'topic'""
-$ git merge topic
-```
-
-![](img/undomerge-revert3.png)
 
 ```bash
 ### 다른 방식의 Merge
