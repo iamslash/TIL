@@ -769,7 +769,7 @@ bash_hackers.txt
 
 ### use a default value
 
-`-`는 4.3 BSD와 같이 예전 SHELL에서 `:-`를 처리하지 못하기 때문에 필요하다.
+`-` 는 4.3 BSD와 같이 예전 SHELL에서 `:-` 를 처리하지 못하기 때문에 필요하다.
 
 ```bash
 ${PARAMETER:-WORD}
@@ -909,7 +909,6 @@ $ unset AA
 $ echo ${AA:+linux}       # 변수가 존재하지 않으므로 null 을 리턴한다.
 
 $ echo ${AA+linux}
-
 
 # 함수이름을 갖는 FUNCNAME 변수가 있을 경우 뒤에 '()' 를 붙여서 프린트 하고 싶다면
 echo ${FUNCNAME:+${FUNCNAME}()}
@@ -1121,7 +1120,7 @@ $ echo ${!linux}    # '!linux' 부분이 'hello' 로 바뀐다고 생각하면 �
 123
 ```
 
-sh의 경우 eval을 이용하여 indirection구현
+sh 의 경우 eval 을 이용하여 indirection 구현
 
 ```sh
 $ hello=123
@@ -2192,16 +2191,16 @@ $ info printf
 
 다음은 man의 secion에 대한 내용이다.
 
-| section |	desc |	example
-|------|-------|------|  
-| 1 |	User Commands	| |
-| 2 |	System Calls	| man 2 write |
-| 3 |	C Library Functions	man 3 printf | |
-| 4 |	Devices and Special Files (usually found in /dev) |	man 4 tty |
-| 5 |	File formats and conventions e.g /etc/passwd, /etc/crontab |	man 5 proc |
-| 6 |	Games	| |
-| 7 |	Miscellaneous (including macro packages and conventions)	| man 7 signal, man 7 hier |
-| 8 |	System Administration tools and Deamons (usually only for root)	 | |
+| section | desc                                                            | example                  |
+| ------- | --------------------------------------------------------------- | ------------------------ |
+| 1       | User Commands                                                   |                          |
+| 2       | System Calls                                                    | man 2 write              |
+| 3       | C Library Functions	man 3 printf                                |                          |
+| 4       | Devices and Special Files (usually found in /dev)               | man 4 tty                |
+| 5       | File formats and conventions e.g /etc/passwd, /etc/crontab      | man 5 proc               |
+| 6       | Games                                                           |                          |
+| 7       | Miscellaneous (including macro packages and conventions)        | man 7 signal, man 7 hier |
+| 8       | System Administration tools and Deamons (usually only for root) |                          |
 
 # Shell Options
 
@@ -2527,13 +2526,13 @@ hello   world foo   bar baz
 
 array의 특수표현을 살펴보자.
 
-| expression | meaning |
-|------------|---------|
-| `${#array[@]}` `${#array[*]}` | array 전체 원소의 개수 |
+| expression                         | meaning                                                                                 |
+| ---------------------------------- | --------------------------------------------------------------------------------------- |
+| `${#array[@]}` `${#array[*]}`      | array 전체 원소의 개수                                                                         |
 | `${#array[N]}` `${#array[string]}` | indexed array 에서 N 번째 원소의 문자 수를 나타냄 associative array 에서 index 가 string 인 원소의 문자 수를 나타냄 |
-| `${array[@]}` `${array[*]}` | array 전체 원소 |
-| `${!array[@]}` `${!array[*]}` | array 전체 인덱스 |
-| `${!name@}` `${!name*}` | name 으로 시작하는 이름을 갖는 모든 변수를 나타냄 |
+| `${array[@]}` `${array[*]}`        | array 전체 원소                                                                             |
+| `${!array[@]}` `${!array[*]}`      | array 전체 인덱스                                                                            |
+| `${!name@}` `${!name*}`            | name 으로 시작하는 이름을 갖는 모든 변수를 나타냄                                                          |
 
 array를 순회하자.
 
@@ -2564,11 +2563,11 @@ $ echo "${BB[1]}"
 
 array를 삭제해 보자.
 
-| command | meaning |
-|---------|---------|
-| `array=()` `unset -v array` `unset -v "array[@]"` | array 삭제 |
-| `unset -v "array[N]"` | indexed array에서 N번째 원소 삭제 |
-| `unset -v "array[string]"` | associative array에서 index가 string인 원소 삭제 |
+| command                                           | meaning                                  |
+| ------------------------------------------------- | ---------------------------------------- |
+| `array=()` `unset -v array` `unset -v "array[@]"` | array 삭제                                 |
+| `unset -v "array[N]"`                             | indexed array에서 N번째 원소 삭제                |
+| `unset -v "array[string]"`                        | associative array에서 index가 string인 원소 삭제 |
 
 ```bash
 $ AA=(11 22 33 44 55)
@@ -3337,16 +3336,16 @@ $ trap - INT
 $ trap '' INT
 ```
 
-`SIGKILL`, `SIGSTOP`, `SIGCONT`는 trap으로 handler를 등록할 수 없다. default handler만 사용 가능하다.
+`SIGKILL`, `SIGSTOP`, `SIGCONT`는 trap 으로 handler를 등록할 수 없다. default handler 만 사용 가능하다.
 
-process가 정상종료될 때 handler를 등록하려면 `HUP, INT, QUIT, TERM`등의 signal을 trap해야 한다. 그러나 `EXIT`라는 pseudo signal을 하나만 등록해도 동일한 기능을 한다. 다음은 pseudo signal의 목록이다.
+process 가 정상종료될 때 handler 를 등록하려면 `HUP, INT, QUIT, TERM` 등의 signal 을 trap 해야 한다. 그러나 `EXIT` 라는 pseudo signal 을 하나만 등록해도 동일한 기능을 한다. 다음은 pseudo signal의 목록이다.
 
-| Signal | Description |
-|-----|-----|
-| EXIT | shell 이 exit 할때 발생. ( subshell 에도 적용 가능 ) |
-| ERR |	명령이 0 이 아닌 값을 리턴할 경우 발생. |
-| DEBUG |	명령 실행전에 매번 발생. |
-| RETURN |	함수에서 리턴할때, source 한 파일에서 리턴할때 발생. |
+| Signal | Description                               |
+| ------ | ----------------------------------------- |
+| EXIT   | shell 이 exit 할때 발생. ( subshell 에도 적용 가능 ) |
+| ERR    | 명령이 0 이 아닌 값을 리턴할 경우 발생.      |
+| DEBUG  | 명령 실행전에 매번 발생.                    |
+| RETURN | 함수에서 리턴할때, source 한 파일에서 리턴할때 발생. |
 
 ```bash 
 $ trap 'myhandler' HUP INT QUIT TERM

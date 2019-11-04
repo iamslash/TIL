@@ -422,6 +422,30 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `script`
   * 갈무리
   * `script a.txt` `exit`
+* `cut`
+  * extract fields from a file
+  ```bash
+  $ cat a.txt
+  aaa:bbb:Ccc:ddd:gdef
+  efef:aab:wef:bgb:azc
+  # -c : character position to cut
+  $ cat a.txt | cut -c 3
+  a
+  e    
+  $ cat a.txt | cut -c 1-5
+  aaa:b
+  efef:
+  # -d : set field separater (default is TAB)
+  # -f : field odd to cut
+  $ cat a.txt | cut -d":" -f3
+  Ccc
+  wef
+  $ cat a.txt | cut -d"K" -f3
+  aaa:bbb:Ccc:ddd:gdef
+  efef:aab:wef:bgb:azc
+  # -s : If there is no field separator just skip
+  $ cat a.txt | cut -d"K" -f3 -s
+  ```
 
 ## Process management
 
