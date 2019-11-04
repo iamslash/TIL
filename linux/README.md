@@ -14,6 +14,7 @@
 - [Commands](#commands)
   - [메뉴얼](#%eb%a9%94%eb%89%b4%ec%96%bc)
   - [자주 사용](#%ec%9e%90%ec%a3%bc-%ec%82%ac%ec%9a%a9)
+  - [Process management](#process-management)
   - [유저 관리](#%ec%9c%a0%ec%a0%80-%ea%b4%80%eb%a6%ac)
   - [파일 권한](#%ed%8c%8c%ec%9d%bc-%ea%b6%8c%ed%95%9c)
   - [시스템 모니터링](#%ec%8b%9c%ec%8a%a4%ed%85%9c-%eb%aa%a8%eb%8b%88%ed%84%b0%eb%a7%81)
@@ -421,7 +422,34 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `script`
   * 갈무리
   * `script a.txt` `exit`
- 
+
+## Process management
+
+* `nice`
+  * handle process priorities (-20~19)
+  * replace the current process image with the new process image which has the specific priority.
+    ```bash
+    $ ps -o pid,ni,comm
+    $ nice -n 19
+    ```
+* `renice`
+  * replace the specific process image with the new process image which has the specific priority.
+    ```bash
+    $ ps -o pid,ni,comm
+    $ renice 19 12345
+    # change the priority of the processes with PIDs 987 and 32, plus all processes owned by the users daemon and root
+    $ renice +1 987 -u daemon root -p 32
+    ```
+* `ionice`
+  * handle process io priorities (0~7)
+    ```bash
+    # Sets process with PID 89 as an idle I/O process.
+    $ ionice -c 3 -p 89
+    # Runs 'bash' as a best-effort program with highest priority.
+    $ ionice -c 2 -n 0 bash
+    # Prints the class and priority of the processes with PID 89 and 91.    
+    $ ionice -p 89 91
+    ``` 
 ## 유저 관리
 
 * `useradd`
