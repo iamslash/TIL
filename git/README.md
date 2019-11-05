@@ -100,6 +100,21 @@ $ git log -10 --oneline --graph --decorate --all
 # -s : simple
 $ git status -s
 
+# list local branches
+$ git branch
+# list remote branches
+$ git branch -r
+# list branches all including remotes
+$ git branch -a
+# delete a branch
+$ git branch -d feature/AddA
+# checkout develop branch with tracking origin/develop
+$ git checkout -b develop origin/develop
+# same as above but after Git 1.6.2
+$ git checkout -t origin/develop
+# make an existing branch track a remote branch
+$ git branch --set-upstream-to origin/develop
+
 $ git commit -am "update blah blah"
 $ git push origin develop
 $ git push upstream develop
