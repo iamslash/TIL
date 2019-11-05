@@ -17,6 +17,7 @@
 - [Git grep](#git-grep)
 - [Git filter-branch](#git-filter-branch)
 - [Git merge](#git-merge)
+- [Git LFS](#git-lfs)
 - [Advanced](#advanced)
   - [내 작업에 서명하기](#%eb%82%b4-%ec%9e%91%ec%97%85%ec%97%90-%ec%84%9c%eb%aa%85%ed%95%98%ea%b8%b0)
   - [고급 Merge](#%ea%b3%a0%ea%b8%89-merge)
@@ -1204,6 +1205,22 @@ $ git log --cc -p -1
 #   end
 #
 #   hello()
+```
+
+# Git LFS
+
+* [git-lfs @ github](https://help.github.com/en/github/managing-large-files/configuring-git-large-file-storage)
+
+----
+
+This is a git extension for very large file. It saves text pointers and binary file. When you handle very large files you need to use it. You can install on macOS `brew install git-lfs` and initialize `git lfs install` on the root directory of the repository. Next you can track big file with `git lfs track "*.png"`. This will add to `.gitattributes`. 
+
+You need to focus no `~/.git/hooks/post-checkout,post-commit,post-merge,pre-push`. For example this is `pre-push`. The machine git-lfs was not installed can't push because of hooks.
+
+```bash
+!/bin/sh
+command -v git-lfs >/dev/null 2>&1 || { echo >&2 "\nThis repository is configured for Git LFS but 'git-lfs' was not found on your path. If you no longer wish to use Git LFS, remove this hook by deleting .git/hooks/pre-push.\n"; exit 2; }
+git lfs pre-push "$@"
 ```
 
 # Advanced
