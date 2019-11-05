@@ -101,10 +101,10 @@ metachars 는 command 와 다르게 처리되기 때문에 command line 에 포�
 # Basic Usages
 
 ```bash
-# help command
-help echo
+# help (bash-builtin)
+$ help echo
 
-# type command
+# type (bash-builtin)
 $ type ssh
 ssh is /usr/bin/ssh
 $ type caller
@@ -112,6 +112,12 @@ caller is a shell builtin
 $ type time
 time is a shell keyword
 
+# command (bash-builtin)
+# check whether the command is installed.
+$ command -v git-lfs
+/usr/local/bin/git-lfs
+
+# compgen (bash-builtin)
 # list keywords
 $ compgen -k | column
 if              elif            esac            while           done            time            !               coproc
@@ -129,143 +135,157 @@ bind            compopt         exec            help            popd            
 break           continue        exit            history         printf          shift           type
 builtin         declare         export          jobs            pushd           shopt           typeset
 
-# file name can be anything except NUL, / on linux
-echo "hello world" > [[]].txt
+# file name can be anything except "NUL, /" on linux
+$ echo "hello world" > [[]].txt
 
 # '-' can be stdin for input
-echo hello world | cat -
+$ echo hello world | cat -
 # '-' can be stdout for output
-echo hello world | cat a.txt -
-seq 10 | paste - - -
+$ echo hello world | cat a.txt -
+$ seq 10 | paste - - -
 
 # > 
 # redirect the stdout of a command to a file. 
 # Overwrite the file if it already exists.
-echo "foo" > a.txt
+$ echo "foo" > a.txt
 
 # <
 # redirect file contents to stdin of command.
-cat < a.txt
+$ cat < a.txt
 
 # >>
 # redirect and append stdout of a command to a file
-echo "foo" >> a.txt
+$ echo "foo" >> a.txt
 
 # 2>
 # redirect the stderr of a command to a file
-echo "foo" 2> a.txt
+$ echo "foo" 2> a.txt
+$ abc 2> a.txt || cat a.txt
+bash: abc: command not found
 
 # 2>>
 # redirect and append the stderr of a command to a file
-echo "foo" 2>> a.txt
+$ echo "foo" 2>> a.txt
 
 # &>
 # redirect stdout, stderr of a command to a file
-echo "foo" &> a.txt
+$ echo "foo" &> a.txt
+$ abc &> a.txt || cat a.txt
+bash: abc: command not found
 
 # 1>&2
 # redirect stdout of a command to stderr
 foo=$(echo "foo" 1>&2)
-echo $foo
+$ echo $foo
 
 # 2>&1
 # redirect stderr of a command to stdout
-foo > /dev/null 2>&1
+$ foo > /dev/null
+bash: foo: command not found
+$ foo > /dev/null 2>&1
+$ foo 2> /dev/null
 
 # |
 # redirect stdout of first command to stdin of other command
-ls -al | grep foo
+$ ls -al | grep foo
 
 # $
-foo="hello world"
-echo $foo
+$ foo="hello world"
+$ echo $foo
 
 # ``
 # command substitution
-echo `date`
+$ echo `date`
 
 # $()
 # The alternative form of command substitution
-echo $(date)
+$ echo $(date)
 
 # &&, ||
 # execute several commands
-make && make install
-echo "hello" || echo "world"
+$ make && make install
+$ echo "hello" || echo "world"
 
 # ;
 # execute several commands on a line
-false; echo "foo"
+$ false; echo "foo"
 
 # ''
 # full quoting (single quoting)
 #  'STRING' preserves all special characters within STRING. 
 # This is a stronger form of quoting than "STRING".
-echo '$USER'
+$ echo '$USER'
+$USER
+$ echo "$USER"
+davidsun
 
 # ""
 # partial quoting (double quoting)
 # "STRING" preserves (from interpretation) 
 # most of the special characters within STRING.
-# except $, `, \
-echo "foo"
-echo "$USER"
-echo "Now is $(date)"
-echo "Now is `date`"
+# except "$, `, \"
+$ echo "foo"
+$ echo "$USER"
+$ echo "Now is $(date)"
+$ echo "Now is `date`"
 
 # "''"
-bash -c "/bin/echo foo 'bar'"
+$ bash -c "/bin/echo foo 'bar'"
 
 # \" \$foo
-bash -c "/bin/echo '{ \"user\" : \"$USER\" }'"
-echo "\$foo \" \`"
+$ bash -c "/bin/echo '{ \"user\" : \"$USER\" }'"
+$ echo "\$foo \" \`"
 
 # $
 # variable substitution
-msg="bar"
-echo "foo $msg"
+$ msg="bar"
+$ echo "foo $msg"
 
 # ${}
 # parameter substitution
-msg="bar"
-echo "foo ${msg}"
-foo=
-foo=${foo-"aaa"}
-echo $foo
-bar=
-bar=${bar:-"aaa"}
-echo $bar
+# the status of variable can be unset, NUL, set.
+# foo is unset
+$ unset foo
+$ echo ${foo:-"aaa"}
+aaa
+$ echo ${foo-"aaa"}
+aaa
+# foo is NUL
+$ foo=
+$ echo ${foo:-"aaa"}
+aaa
+$ echo ${foo-"aaa"}
 
 # \
 # represent a command in several lines
-echo "foo"
-echo \
+$ echo "foo"
+$ echo \
   "foo"
 
 # brace expansion
 # {1..10}
 # 
-echo {1..10}
+$ echo {1..10}
 # {string1,string2}
 #
-cp {foo.txt,bar.txt} a/
+$ cp {foo.txt,bar.txt} a/
 
 # looping constructs
 # until, while, for, break, continue
-until test-commands; do consequent-commands; done
-while test-commands; do consequent-commands; done
-for name [ [in [words …] ] ; ] do commands; done
-for (( expr1 ; expr2 ; expr3 )) ; do commands ; done
+$ until test-commands; do consequent-commands; done
+$ while test-commands; do consequent-commands; done
+$ for name [ [in [words …] ] ; ] do commands; done
+$ for (( expr1 ; expr2 ; expr3 )) ; do commands ; done
 
-# while
+# while..do..done
 while 1
 do
-    echo "foo";
-    sleep 1;
+  echo "foo";
+  sleep 1;
 done
 while 1; do echo "foo"; sleep 1; done
 
-# for
+# for..do..done
 for i in $(l)
 do 
     echo $i
@@ -297,36 +317,38 @@ if [ $a -eq $b ]; then
 fi
 
 # grouping commands : (), {}
-# (command line) : command line 은 subshell 환경에서 실행된다.
-( while true; do echo "hello"; sleep 1; done )
-# {command line} : command line 은 같은 shell 환경에서 실행된다.
-{ while true; do echo "hello"; sleep 1; done }
+# (command line) : command line execute on subshell environment.
+$ ( while true; do echo `date`; sleep 1; done )
+$ pstree
+# {command line} : command line execute on same shell environment.
+$ { while true; do echo `date`; sleep 1; done }
+$ pstree
 
-# variable 은 unset, null, not-null 과 같이 3 가지 상태를 갖는다.
+# the status of variable can be unset, null, not-null.
 # unset state
-declare A
-local A
+$ declare A
+$ local A
 # null state
-A=
-A=""
-A=''
+$ A=
+$ A=""
+$ A=''
 # not-null state
-A=" "
-A="hello"
-A=123
+$ A=" "
+$ A="hello"
+$ A=123
 
 # function 은 command 들을 그룹화 하는 방법이다. 그룹의 이름을 사용하면 그룹안의 commands를 실행할 수 있다.
 # name () compound-command [ redirections ]
-H() { echo "hello"; }; H; echo "world";
+$ H() { echo "hello"; }; H; echo "world";
 # function name [()] compound-command [ redirections ]
-function H() { echo "hello"; }; H; echo "world";
+$ function H() { echo "hello"; }; H; echo "world";
 
 # '*', '?', '[]' 과 같은 glob characters 을 이용하여 filename, case, parameter expansion, [[]] expression 등에서 pattern matching이 가능하다.
 # filename
-ls *.[ch]
+$ ls *.[ch]
 # [[]] expression
-[[ $A = *.tar.gz ]]; echo $?
-[[ $A = *dog\ cat* ]]; echo $?
+$ [[ $A = *.tar.gz ]]; echo $?
+$ [[ $A = *dog\ cat* ]]; echo $?
 
 # shell file의 첫줄에서 스크립트를 실행할 command line 을 shabang line 이라고 한다. 옵션은 하나로 제한된다.
 #! /bin/bash
@@ -336,26 +358,26 @@ ls *.[ch]
 
 # <<<
 # redirect a string to stdin of a command
-cat <<< "I am $USER"
+$ cat <<< "I am $USER"
 
 # <<EOF EOF
 # redirect several lines to stdin of a command
-cat > a.txt <<EOF
+$ cat > a.txt <<EOF
 I am the man.
 HOST is $(hostname)
 USER is $(USER)
 EOF
 
 # export
-export foo=bar
+$ export foo=bar
 
 # printf
-Message1="foo"
-Message2="bar
-printf "%s %s \n" $Message1 $Message2
+$ Message1="foo"
+$ Message2="bar
+$ printf "%s %s \n" $Message1 $Message2
 
 # sed
-sed -i "s/foo/bar/g" a.txt
+$ sed -i "s/foo/bar/g" a.txt
 ```
 
 # Shell Operation
@@ -363,7 +385,7 @@ sed -i "s/foo/bar/g" a.txt
 shell 이 command 를 읽고 실행하는 과정은 다음과 같다.
 
 * commands 및 arguments 를 읽어 들인다.
-* 읽어 들인 commands 를 quoting 과 동시에 words 와 operators 로 쪼갠다. 쪼개진 토큰들은 metacharaters 를 구분자로 한다. 이때 alias expansion 이 수행된다.
+* 읽어 들인 commands 를 quoting 과 동시에 metacharaters 를 구분자로 words 와 operators 로 쪼갠다. 이때 alias expansion 이 수행된다.
 * 토큰들을 읽어서 simple, compound commands 를 구성한다.
 * 다양한 shell expansion 이 수행되고 expanded tokens 는 파일이름, 커맨드, 인자로 구성된다.
 * redirection 을 수행하고 redirection operators 와 operands 를 argument list 에서 제거한다.
@@ -376,8 +398,13 @@ shell 이 command 를 읽고 실행하는 과정은 다음과 같다.
 
 `${N}` 처럼 표기한다. N 는 paramter 의 서수이다.
 
-* a.sh `echo ${0}, ${1}, ${2}` 
-  * `echo a.sh "hello" "world" "foo"`
+* a.sh 
+  
+  ```bash
+  echo ${0}, ${1}, ${2}
+  ```
+
+* `echo a.sh "hello" "world" "foo"`
 
 * `shift`
   * positional parameters 를 좌측으로 n 만큼 이동한다.
@@ -443,9 +470,17 @@ $ echo $@
 # Shell Expansions
 
 command line 은 tokens 로 나눠진 후 다음과 같은 순서 대로 expansion 처리
-된다. brace expansion, tilde expansion, parameter and variable
-expansion, command expansion, arithmetic expansion, process
-substitution, word splitting, filename expansion, quote removal
+된다. 
+
+* brace expansion
+* tilde expansion
+* parameter and variable expansion
+* command expansion
+* arithmetic expansion
+* process substitution
+* word splitting
+* filename expansion
+* quote removal
 
 ## brace expansion
 
@@ -457,7 +492,7 @@ substitution, word splitting, filename expansion, quote removal
 {string1, string2,..., stringN}
 ```
 
-`,` 가 사용되지 않은 단일 항목은 확장되지 않는다. `,` 전 후에 공백을
+',' 가 사용되지 않은 단일 항목은 확장되지 않는다. ',' 전 후에 공백을
 사용할 수는 없다. 문자열에 공백이 포함되는 경우 quote 해야
 expansion 할 수 있다.
 
