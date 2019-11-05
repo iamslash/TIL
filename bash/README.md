@@ -541,10 +541,10 @@ $ ls
 slides_part1.html slides_part2.html slides_part3.html slides_part4.htmlx
 ```
 
-globbing과 사용
+globbing 과 사용
 
 ```bash
-mv *.{png,gif,jpg} ~/tmp
+$ mv *.{png,gif,jpg} ~/tmp
 ```
 
 null 값과 사용
@@ -602,12 +602,12 @@ XappleY XhelloY XorangeY XmelonY
 
 보통 다음과 같은 형식으로 사용한다.
 
-```
-{< START >...< END > }
+```bash
+{< START >...< END >}
 {< START >...< END >...< INCR >}
 ```
 
-```
+```bash
 $ a=1 b=10
 
 $ echo {$a..$b}         # no brace expansion
@@ -667,8 +667,8 @@ slides_part1.html slides_part2.html slides_part3.html slides_part4.html
 
 ### combining and nesting
 
-`{}`를 서로 붙이면 combining이 일어난다. `{}`안에서 `,`를
-사용하면 nesting이 일어난다.
+`{}` 를 서로 붙이면 combining 이 일어난다. `{}` 안에서 `,` 를
+사용하면 nesting 이 일어난다.
 
 ```bash
 $ echo {A..Z}{0..9}
@@ -687,7 +687,7 @@ $ echo {{A..Z},{a..z}}
 A B C D E F G H I J K L M N O P Q R S T U V W X Y Z a b c d e f g h i j k l m n o p q r s 
 ```
 
-{ } 안에서 , 로 분리하여 nesting 을 할 수 있다.
+'{ }' 안에서 ',' 로 분리하여 nesting 을 할 수 있다.
 
 ```bash
 $ echo {{A..Z},{a..z}}
@@ -735,7 +735,7 @@ $ echo ~- # $OLDPWD 와 같다.
 
 ### basic usage
 
-`{}` 를 사용한다.
+'{}' 를 사용한다.
 
 ```bash
 $ AA=cde
@@ -774,11 +774,11 @@ ${PARAMETER%PATTERN}
 ${PARAMETER%%PATTERN}
 ```
 
-`#`는 앞에서 부터 `%`는 뒤에서 부터를 의미한다. 두개가 사용된 것은
-greedy match를 의미한다.
+`#` 는 앞에서 부터 `%` 는 뒤에서 부터를 의미한다. 두개가 사용된 것은
+greedy match 를 의미한다.
 
 ```bash
-AA="this.is.a.inventory.tar.gz"
+$ AA="this.is.a.inventory.tar.gz"
 
 $ echo ${AA#*.}               # 앞에서 부터 shortest match
 is.a.inventory.tar.gz
@@ -793,7 +793,7 @@ $ echo ${AA%%.*}              # 뒤에서 부터 longest match
 this
 
 # 디렉토리를 포함한 파일명에서 디렉토리와 파일명을 분리하기
-AA="/home/bash/bash_hackers.txt"
+$ AA="/home/bash/bash_hackers.txt"
 
 $ echo ${AA%/*}               # 디렉토리 부분 구하기
 /home/bash
@@ -804,7 +804,7 @@ bash_hackers.txt
 
 ### use a default value
 
-`-` 는 4.3 BSD와 같이 예전 SHELL에서 `:-` 를 처리하지 못하기 때문에 필요하다.
+`-` 는 4.3 BSD 와 같이 예전 SHELL 에서 `:-` 를 처리하지 못하기 때문에 필요하다.
 
 ```bash
 ${PARAMETER:-WORD}
@@ -988,7 +988,6 @@ $ echo $?
 $ echo ${AA?}                        # error message 는 생략할 수 있다.
 bash: AA: parameter null or not set
 
-
 # 예제
 case ${AA:?"missing pattern; try '$0 --help' for help"} in
     (abc) ... ;;
@@ -1034,7 +1033,7 @@ $ echo ${ARR[@]:1:2}
 22 33
 ```
 
-positional parameters는 idx가 1부터 시작
+positional parameters  는 idx가 1 부터 시작
 
 ```bash
 $ set -- 11 22 33 44 55
@@ -1096,7 +1095,7 @@ $ echo ${AA/%?/}
 X12345
 ```
 
-`array[@]`는 원소별로 적용
+`array[@]` 는 원소별로 적용
 
 ```bash
 $ AA=( "Arch Linux" "Ubuntu Linux" "Fedora Linux" )
@@ -1181,7 +1180,6 @@ for (( i = 0; i <= $#; i++ ))
 do
     echo \$$i : ${!i}              # ${$i} 이렇게 하면 안됩니다.
 done
-
 -------------------------------
 
 $ args.sh 11 22 33
@@ -1227,7 +1225,7 @@ $( <COMMANDS> )
 `<COMMANDS>`
 ```
 
-command substitution 은 subshell에서 실행된다. 실행결과에 해당하는 stdout
+command substitution 은 subshell 에서 실행된다. 실행결과에 해당하는 stdout
  값이 pipe 를 통해 전달된다. 일종의 IPC 이다.
 
 ```bash
@@ -1286,7 +1284,7 @@ echo $index
 30
 ```
 
-quotes가 중첩되도 좋다.
+quotes 가 중첩되도 좋다.
 
 ```bash
 # 명령치환을 quote 하지 않은 경우
@@ -1315,7 +1313,7 @@ $ echo "$(echo "$(echo "$(date)")")"
 Thu Jul 23 18:34:33 KST 2015
 ```
 
-null문자를 보낼 수 없다.
+null 문자를 보낼 수 없다.
 
 ```bash
 $ ls          # a, b, c  3개의 파일이 존재
@@ -1330,7 +1328,7 @@ $ echo -n "$(find . -print0)" | od -a
 0000000   .   .   /   a   .   /   b   .   /   c
 ```
 
-변수에 값을 대입할 때 마지막 newline들은 제거된다.
+변수에 값을 대입할 때 마지막 newline 들은 제거된다.
 
 ```bash
 $ AA=$'hello\n\n\n'
@@ -1360,7 +1358,7 @@ $ echo -n "$AA" | od -a                   # 파일의 마지막 newline 이 모�
 0000007
 ```
 
-`$( < filename )` 은 `$( cat filename )`과 같다.
+'`$( < filename )`' 은 '`$( cat filename )`' 과 같다.
 
 ```bash
 $ cat file
@@ -1414,7 +1412,6 @@ $ { echo '$BASHPID' : $BASHPID >&2 ;} > >( echo '$BASHPID' : $BASHPID )
 $BASHPID : 504
 $BASHPID : 22037
 
-
 ---------------------------------------------------------------------------
 
 $ ls -l <( : ) 
@@ -1426,7 +1423,7 @@ $ [ -p <( : ) ]; echo $?  # pipe 인지 테스트
 0
 ```
 
-임시 파일을 만들지 않고 ulimit의 내용을 비교 해보자.
+임시 파일을 만들지 않고 ulimit 의 내용을 비교 해보자.
 
 ```bash
 $ ulimit -Sa > ulimit.Sa.out
@@ -1524,8 +1521,8 @@ $ command1 2> >( command2 ... )
 $ command1 2>&1 > /dev/null | command2 ...
 ```
 
-process substitution은 background로 실행된다.
-parent process가 child process를 기다리는 방법을
+process substitution 은 background 로 실행된다.
+parent process 가 child process 를 기다리는 방법을
 소개한다.
 
 ```bash
@@ -1555,9 +1552,9 @@ echo --- end 2 ---
 
 ## word splitting
 
-IFS(internal field separater)에 저장된 값을 기준으로 단어들을
-분리한다. 단어들을 분리한다는 것은 command line의 IFS값들을
-space로 변환한다는 것을 의미한다.
+IFS(internal field separater) 에 저장된 값을 기준으로 단어들을
+분리한다. 단어들을 분리한다는 것은 command line 의 IFS 값들을
+space 로 변환한다는 것을 의미한다.
 
 ```bash
 $ AA="11X22X33Y44Y55"
@@ -1585,8 +1582,8 @@ $ ( IFS=:; for v in $PATH; do echo "$v"; done )
 . . . .
 ```
 
-IFS의 기본값은 space, tab, newline이다. IFS가 unset일때 역시 기본값과
-마찬가지다. IFS가 null이면 word splitting은 없다.
+IFS의 기본값은 space, tab, newline 이다. IFS 가 unset 일때 역시 기본값과
+마찬가지다. IFS 가 null 이면 word splitting 은 없다.
 
 ```bash
 $ echo -n "$IFS" | od -a
@@ -1665,7 +1662,7 @@ two
 three
 ```
 
-quote는 word splitting이 발생 하지 않게 한다.
+quote 는 word splitting 이 발생 하지 않게 한다.
 
 ```bash
 AA="echo hello world"
@@ -1693,7 +1690,7 @@ $ echo ${ARR[1]}
 Linux:Ubuntu
 ```
 
-`$AA` 은 word spltting이 옳바르게 된다.
+`$AA` 은 word spltting 이 옳바르게 된다.
 
 ```bash
 $ AA="Arch Linux:Ubuntu Linux:Suse Linux:Fedora Linux"
@@ -1708,7 +1705,7 @@ $ echo ${ARR[1]}
 Ubuntu Linux
 ```
 
-IFS값을 `Q`로 바꾸었지만 space를 기준으로 wordsplitting이 발생
+IFS 값을 `Q` 로 바꾸었지만 space 를 기준으로 wordsplitting 이 발생
 
 ```bash
 f1() {
@@ -1728,8 +1725,8 @@ $1 : 33        # 그대로 공백에 의해 인수가 분리된다.
 $2 : 44
 ```
 
-IFS값을 `Q`로 바꾸고 variable expansion이 발생하면 
-`Q`를 기준으로 wordsplitting이 발생.
+IFS 값을 `Q` 로 바꾸고 variable expansion 이 발생하면 
+`Q` 를 기준으로 wordsplitting 이 발생.
 
 ```bash
 IFS=Q     
@@ -1745,7 +1742,7 @@ $1 : 33 44     # 공백 에서는 분리되지 않는다.
 $2 :
 ```
 
-IFS값이 white space (space, tab, newline)일 경우와 아닐 경우의 차이
+IFS 값이 white space (space, tab, newline) 일 경우와 아닐 경우의 차이
 
 ```bash
 $ AA="11          22"
@@ -1795,14 +1792,13 @@ $ echo ${ARR[2]}
 Mint
 ```
 
-파일 이름에 space가 포함되어 있는 경우 word splitting때문에 파일
-이름이 분리 될 수 있다. IFS값을 newline으로 변경하면 해결 가능하다.
+파일 이름에 space 가 포함되어 있는 경우 word splitting 때문에 파일
+이름이 분리 될 수 있다. IFS 값을 newline 으로 변경하면 해결 가능하다.
 
 ```bash
 $ ls
 2013-03-19 154412.csv  ReadObject.java       WriteObject.class
 ReadObject.class       쉘 스크립트 테스팅.txt    WriteObject.java
-
 
 $ for file in $(find .)
 do
@@ -1840,9 +1836,9 @@ $ set +f; IFS=$' \t\n'
 
 ## filename expansion
 
-파일 이름을 다룰때 `*`, `?`, `[]`는 패턴 매칭과 동일하게 확장된다.
+파일 이름을 다룰때 '`*`', '`?`', '`[]`'는 패턴 매칭과 동일하게 확장된다.
 앞서 언급한 문자들을 glob 문자라고 한다. glob 문자가 확장되는 것을
-globbing이라고 한다.
+globbing 이라고 한다.
 
 ```bash
 $ ls
@@ -1868,7 +1864,7 @@ readObject.c
 readObject.h
 ```
 
-bash전용 옵션인 globstar를 이용하여 recursive matching을 수행
+bash 전용 옵션인 globstar 를 이용하여 recursive matching 을 수행
 
 ```bash
 # globstar 옵션은 기본적으로 off 상태 이므로 on 으로 설정해 줍니다.
@@ -1910,7 +1906,7 @@ $ awk 'BEGINFILE { print FILENAME; nextfile }' **/*.txt
 ....
 ```
 
-globbing으로 부족하여 find를 이용하는 경우
+globbing 으로 부족하여 find 를 이용하는 경우
 
 ```bash
 for file in $(find . -type f) ...  # Wrong!
@@ -1935,8 +1931,8 @@ arr=( $(find . -type f) ) ...
 set +f; IFS=$' \t\n'
 ```
 
-find는 파일 이름을 출력할때 newline을 구분자로 이용한다. 그러나
-`-print0`옵션을 사용하면 `NUL`을 구분자로 이용하여 출력 할 수 있다.
+find 는 파일 이름을 출력할때 newline 을 구분자로 이용한다. 그러나
+`-print0` 옵션을 사용하면 `NUL` 을 구분자로 이용하여 출력 할 수 있다.
 
 ```bash
 # find 명령에서 -print0 을 이용해 출력했으므로 read 명령의 -d 옵션 값을 null 로 설정
@@ -2068,7 +2064,7 @@ $ find -name '*.c'
 
 ## quote removal
 
-지금까지 expansion 에 포함되지 않고 quote 되지 않은 `\`, `'`, `"` 캐릭터는 제거된다.
+지금까지 expansion 에 포함되지 않고 quote 되지 않은 '`\`', '`'`', '`"`' 캐릭터는 제거된다.
 
 ```bash
 echo "hello" \ \
@@ -2191,9 +2187,9 @@ $ select KEY in "${A[@]}"; do echo "$KEY"; done
 `;`, `&`, `&&`, `||` 를 활용한 command
 
 ```bash
-# (command list) : command list는 subshell환경에서 실행된다.
+# (command list) : command list 는 subshell 환경에서 실행된다.
 ( while true; do echo "hello"; sleep 1; done )
-# {command list} : command list는 같은 shell환경에서 실행된다.
+# {command list} : command list 는 같은 shell 환경에서 실행된다.
 { while true; do echo "hello"; sleep 1; done }
 ```
 
@@ -2239,11 +2235,11 @@ $ info printf
 
 # Shell Options
 
-shell의 옵션은 `set`과 `shopt`를 이용하여 설정할 수 있다. `shopt`는 bash 전용이다. 옵션의 설정값은 sh의 경우 `SHELLOPTS`에 bash의 경우 `BASHOPTS`에 저장된다.
+shell의 옵션은 `set` 과 `shopt` 를 이용하여 설정할 수 있다. `shopt` 는 bash 전용이다. 옵션의 설정값은 sh의 경우 `SHELLOPTS` 에 bash의 경우 `BASHOPTS` 에 저장된다.
 
 ## set
 
-`--`는 현재 설정되어있는 positional parameters를 삭제한다.
+`--` 는 현재 설정되어있는 positional parameters 를 삭제한다.
 
 ```bash
 $ set 11 22 33
@@ -2287,7 +2283,7 @@ $ echo "$@"
 
 ## Bash Startup Files
 
-ssh, telnet등으로 접속하여 login한 다음 얻은 shell을 login shell이라고 한다. 윈도우 매니저에서 메뉴를 통해 얻은 shell을 non-login shell이라고 한다.
+ssh, telnet 등으로 접속하여 login 한 다음 얻은 shell 을 login shell 이라고 한다. 윈도우 매니저에서 메뉴를 통해 얻은 shell 을 non-login shell 이라고 한다.
 
 ### login shell
 
@@ -2305,7 +2301,7 @@ ssh, telnet등으로 접속하여 login한 다음 얻은 shell을 login shell이
 
 ## Bash Conditional Expressions
 
-conditional expressions는 `[[` compound command 그리고 `test`, `[` builtin command 에 의해 사용된다.
+conditional expressions 는 '`[[`' compound command 그리고 '`test`', '`[`' builtin command 에 의해 사용된다.
 
 ```
 -a file
@@ -2477,7 +2473,7 @@ comma
 
 ## Arrays
 
-array를 만들어 보자.
+array 를 만들어 보자.
 
 ```bash
 A=( 11 "hello world" 22 )
@@ -2489,7 +2485,7 @@ A[1]="hello world"
 A[2]=22
 ```
 
-associative array를 만들어 보자.
+associative array 를 만들어 보자.
 
 ```bash
 declare -A A
@@ -2500,14 +2496,14 @@ A[cd]="hello world"
 A[ef]=22
 ```
 
-array를 조회해 보자.
+array 를 조회해 보자.
 
 ```bash
 A=(foo bar baz)
 declare -p A
 ```
 
-현재 shell env에 정의된 array 보기
+현재 shell env 에 정의된 array 보기
 
 ```bash
 compgen -A arrayvar
@@ -3378,9 +3374,9 @@ process 가 정상종료될 때 handler 를 등록하려면 `HUP, INT, QUIT, TER
 | Signal | Description                               |
 | ------ | ----------------------------------------- |
 | EXIT   | shell 이 exit 할때 발생. ( subshell 에도 적용 가능 ) |
-| ERR    | 명령이 0 이 아닌 값을 리턴할 경우 발생.      |
-| DEBUG  | 명령 실행전에 매번 발생.                    |
-| RETURN | 함수에서 리턴할때, source 한 파일에서 리턴할때 발생. |
+| ERR    | 명령이 0 이 아닌 값을 리턴할 경우 발생.                  |
+| DEBUG  | 명령 실행전에 매번 발생.                            |
+| RETURN | 함수에서 리턴할때, source 한 파일에서 리턴할때 발생.         |
 
 ```bash 
 $ trap 'myhandler' HUP INT QUIT TERM

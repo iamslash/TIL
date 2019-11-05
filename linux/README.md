@@ -26,7 +26,7 @@
   - [데몬 관리](#%eb%8d%b0%eb%aa%ac-%ea%b4%80%eb%a6%ac)
   - [oneline commands](#oneline-commands)
 - [Security](#security)
-  - [root 소유의 setuid, setgid파일 검색 후 퍼미션 조정하기](#root-%ec%86%8c%ec%9c%a0%ec%9d%98-setuid-setgid%ed%8c%8c%ec%9d%bc-%ea%b2%80%ec%83%89-%ed%9b%84-%ed%8d%bc%eb%af%b8%ec%85%98-%ec%a1%b0%ec%a0%95%ed%95%98%ea%b8%b0)
+  - [root 소유의 setuid, setgid 파일 검색 후 퍼미션 조정하기](#root-%ec%86%8c%ec%9c%a0%ec%9d%98-setuid-setgid-%ed%8c%8c%ec%9d%bc-%ea%b2%80%ec%83%89-%ed%9b%84-%ed%8d%bc%eb%af%b8%ec%85%98-%ec%a1%b0%ec%a0%95%ed%95%98%ea%b8%b0)
 - [System Monitoring](#system-monitoring)
   - [swapin, swapout](#swapin-swapout)
 
@@ -34,7 +34,7 @@
 
 # Abstract
 
-linux 를 활용할 때 필요한 지식들을 정리한다. macosx, sunos, hp-ux 등등
+linux 를 활용할 때 필요한 지식들을 정리한다. macOS, sunos, hp-ux 등등
 unix 계열 os 는 모두 해당된다. linux 와 함께 [bash](/bash/),
 [awk](/awk/), [sed](/sed/) 역시 학습이 필요하다.
 
@@ -251,7 +251,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * 한번에 한화면씩 출력한다.
   * `man ls | more`
 * `less`
-  * `more`보다 기능이 확장 된 것
+  * `more` 보다 기능이 확장 된 것
   * `man ls | less`
 * `echo`
   * 화면에 한줄 출력하자
@@ -263,8 +263,9 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * 두개의 파일들을 줄 단위로 비교하자.
   * `diff a.txt b.txt`
 * `which`
-  * command위치는 어디있어?
+  * command 위치는 어디있어?
   * `which ls`
+  * `command -v ls`
 * `file`
   * 이 파일의 종류는 무엇이지?
   * `file a.out`
@@ -281,7 +282,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `kill -l`
     * 가능한 시글널 목록을 보여다오
   * `kill -9 123`
-    * 123 프로세스에게 SIGKILL보내다오
+    * 123 프로세스에게 SIGKILL 보내다오
 * `killall`
   * 이름을 이용하여 특정 프로세스에게 시그널을 보내자.
   * `killall -9 a.sh`
@@ -405,7 +406,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * 다른 유저로 command를 실행하자.
   * `sudo find / -name "aaa"`
 * `su`
-  * EUID, EGID를 수정하여 SHELL을 실행하자.
+  * EUID, EGID 를 수정하여 SHELL 을 실행하자.
   * `su - root`
 * `bc`
   * 계산기 언어
@@ -414,9 +415,9 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `reset`
   * 터미널을 초기화 한다. 지저분 해졌을때 사용하면 좋음
 * `tee`
-  * stdin으로 입력 받고 stdout과 파일로 출력하자.
+  * stdin 으로 입력 받고 stdout 과 파일로 출력하자.
   * `ls | tee a.txt`
-    * `ls > file`은 stdout말고 파일로만 출력한다.
+    * `ls > file`은 stdout 말고 파일로만 출력한다.
   * `ls | tee -a a.txt`
   * `ls | tee a.txt b.txt c.txt`
 * `script`
@@ -1054,7 +1055,7 @@ Swap:         3999          0       3999
   * `bzcat a.txt.bz2`
   * `bzgrep exa a.txt.bz2`
 * `xz`
-  * gzip, bzip2보다 압축률이 더욱 좋다.
+  * gzip, bzip2 보다 압축률이 더욱 좋다.
   * `xz a.txt`
   * `xz a.txt b.txt c.txt`
   * `xz -k a.txt` `xz -c a.txt > a.txt.xz`
@@ -1195,7 +1196,7 @@ function taocl() {
 
 # Security
 
-## root 소유의 setuid, setgid파일 검색 후 퍼미션 조정하기
+## root 소유의 setuid, setgid 파일 검색 후 퍼미션 조정하기
 
 owner 가 root 인 파일들을 생각해보자. setuid 가 설정되어 있으면 실행 되었을 때 EUID 가 root 로 변경된다. 매우 위험하다. 그러한 파일들을 찾아서 위험해 보인다면 권한을 변경해준다.
 
