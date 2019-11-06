@@ -19,18 +19,47 @@
 There are 2 remote repositories, upstream and origin. the origin is the forked one from the upstream.
 
 ```bash
-$ git init d:/tmp/R/origin/HelloWorld --bare
-$ git init d:/tmp/R/upstream/HelloWorld --bare
-$ cd d:/tmp/L/david
-$ git clone d:/tmp/R/origin/HelloWorld
-$ cd HelloWorld
-$ git remote add upstream d:/tmp/R/upstream/HelloWorld
-$ git remote -v
-origin  D:/tmp/R/origin\HelloWorld (fetch)
-origin  D:/tmp/R/origin\HelloWorld (push)
-upstream        D:/tmp/R/upstream\HelloWorld (fetch)
-upstream        D:/tmp/R/upstream\HelloWorld (push)
+$ cd ~/tmp
+$ mkdir local origin upstream
+$ mkdir local/david local/peter
+$ mkdir origin/david origin/peter
+$ git init --bare upstream/HelloWorld.git
+$ cd origin/david && git clone ../../upstream/HelloWorld.git  && cd ~/tmp
+$ cd origin/peter && git clone ../../upstream/HelloWorld.git && cd ~/tmp
+$ cd local/david && git clone ../../origin/david/HelloWorld && git remote add upstream ../../origin/david/HelloWorld && cd ~/tmp
+$ cd local/peter && git clone ../../origin/peter/HelloWorld && git remote add upstream ../../origin/peter/HelloWorld && cd ~/tmp
+$ cd local/david && git remote -v && cd ~/tmp
+$ cd local/peter && git remote -v && cd ~/tmp
 ```
+
+This is a direcgtory structure what we did.
+
+
+```
+.
+├── local
+│   ├── david
+│   │   └── HelloWorld
+│   └── peter
+│       └── HelloWorld
+├── origin
+│   ├── david
+│   │   └── HelloWorld
+│   └── peter
+│       └── HelloWorld
+└── upstream
+    └── HelloWorld.git
+        ├── hooks
+        ├── info
+        ├── objects
+        │   ├── info
+        │   └── pack
+        └── refs
+            ├── heads
+            └── tags
+```
+
+And There should be version convention, and 3 system environments, DEV (development environemnt), STG (stage environment), PRD (production environment).
 
 When you need sync the origin with the upstream you need to fetch from upstream.
 

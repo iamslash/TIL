@@ -1209,11 +1209,15 @@ $ git log --cc -p -1
 
 # Git LFS
 
+* [What is the advantage of git lfs? @ stackoverflow](https://stackoverflow.com/questions/35575400/what-is-the-advantage-of-git-lfs)
+* [Git LFS @ bitbucket](https://www.atlassian.com/git/tutorials/git-lfs)
 * [git-lfs @ github](https://help.github.com/en/github/managing-large-files/configuring-git-large-file-storage)
 
 ----
 
-This is a git extension for very large file. It saves text pointers and binary file. When you handle very large files you need to use it. You can install on macOS `brew install git-lfs` and initialize `git lfs install` on the root directory of the repository. Next you can track big file with `git lfs track "*.png"`. This will add to `.gitattributes`. 
+This is a git extension for very large file. It saves text pointers and binary file. It can improve the performance using seperated binary file downloaded lazily.
+
+You can install on macOS `brew install git-lfs` and initialize `git lfs install` on the root directory of the repository. Next you can track big file with `git lfs track "*.png"`. This will add to `.gitattributes`. 
 
 You need to focus no `~/.git/hooks/post-checkout,post-commit,post-merge,pre-push`. For example this is `pre-push`. The machine git-lfs was not installed can't push because of hooks.
 
