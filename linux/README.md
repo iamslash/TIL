@@ -875,8 +875,8 @@ Swap:         3999          0       3999
 * `awk`
   * [awk](/awk/README.md)
 * `uniq`
-  * `uniq a.txt`
-  * `uniq -c a.txt`
+  * `uniq a.txt` 유일한 라인만 출력
+  * `uniq -c a.txt` 중복된 라인의 개수를 출력
   * `uniq -d a.txt` 중복된 녀석들은 제거해라.
   * `uniq -D a.txt` 중복된 녀석들은 제거하지마라
   * `uniq -u a.txt` 중복되지 않은 행들은?
