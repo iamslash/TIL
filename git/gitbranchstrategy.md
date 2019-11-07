@@ -20,16 +20,16 @@ There are 2 remote repositories, upstream and origin. the origin is the forked o
 
 ```bash
 $ cd ~/tmp
-$ mkdir local origin upstream
-$ mkdir local/david local/peter
+$ mkdir clone origin upstream
+$ mkdir clone/david clone/peter
 $ mkdir origin/david origin/peter
 $ git init --bare upstream/HelloWorld.git
 $ cd origin/david && git clone ../../upstream/HelloWorld.git  && cd ~/tmp
 $ cd origin/peter && git clone ../../upstream/HelloWorld.git && cd ~/tmp
-$ cd local/david && git clone ../../origin/david/HelloWorld && git remote add upstream ../../origin/david/HelloWorld && cd ~/tmp
-$ cd local/peter && git clone ../../origin/peter/HelloWorld && git remote add upstream ../../origin/peter/HelloWorld && cd ~/tmp
-$ cd local/david && git remote -v && cd ~/tmp
-$ cd local/peter && git remote -v && cd ~/tmp
+$ cd clone/david && git clone ../../origin/david/HelloWorld && git remote add upstream ../../origin/david/HelloWorld && cd ~/tmp
+$ cd clone/peter && git clone ../../origin/peter/HelloWorld && git remote add upstream ../../origin/peter/HelloWorld && cd ~/tmp
+$ cd clone/david && git remote -v && cd ~/tmp
+$ cd clone/peter && git remote -v && cd ~/tmp
 ```
 
 This is a direcgtory structure what we did.
@@ -37,7 +37,7 @@ This is a direcgtory structure what we did.
 
 ```
 .
-├── local
+├── clone
 │   ├── david
 │   │   └── HelloWorld
 │   └── peter
@@ -93,7 +93,7 @@ Version tag prefix? []
 Hooks and filters directory? [D:/tmp/HelloWorld/.git/hooks]
 ```
 
-When you start a new **feature** `Foo` you need to do this. I am going to do this on `L/david/HelloWorld`.
+When you start a new **feature** `Foo` you need to do this. I am going to do this on `clone/david/HelloWorld`.
 
 ```bash
 ## initial status
@@ -185,7 +185,7 @@ $ git flow feature pull origin Foo
 $ git flow feature track Foo
 ```
 
-When you start make a **release** `0.1` you need to do this.  I am going to do this on `L/david/HelloWorld`
+When you start make a **release** `0.1` you need to do this.  I am going to do this on `clone/david/HelloWorld`
 
 ```bash
 ## initial status
@@ -232,7 +232,7 @@ Summary of actions:
 - The local branch 'release/0.1' was configured to track the remote branch
 - You are now on branch 'release/0.1'
 
-$ git log -5 --decorate --graph --oneline
+$ git log -5 --decorate --graph --oneline -all
 * 29fb4b0 (HEAD -> release/0.1, origin/release/0.1, origin/develop, develop) added Foo.md
 * 2fee5b4 (origin/master, master) kick off
 
@@ -261,7 +261,7 @@ Summary of actions:
 - Release branch 'release/0.1' has been locally deleted; it has been remotely deleted from 'origin'
 - You are now on branch 'develop'
 
-$ git log -5 --decorate --graph --oneline
+$ git log -5 --decorate --graph --oneline -all
 *   99f9fd9 (HEAD -> develop) Merge tag '0.1' into develop
 |\
 | *   721d99f (tag: 0.1, master) Merge branch 'release/0.1'
@@ -300,12 +300,12 @@ $ git log -10 --decorate --graph --oneline
 * 2fee5b4 kick off
 
 ## create pull request origin/master to upstream/master with tags
-## create pull request origin/develop to upstream/develop
+## create pull request origin/develop to upstream/develop with tags
 ```
 
 But This is also very important. When you merge `release/0.1` to `master, develop` You have to squash them. Then You can revert it easily and make the history simple.
 
-When you start make a **hofix** `0.2` you need to do this.  I am going to do this on `L/david/HelloWorld`
+When you start make a **hofix** `0.2` you need to do this.  I am going to do this on `clone/david/HelloWorld`
 
 ```bash
 $ git remote -v
@@ -403,11 +403,11 @@ $ git log -10 --decorate --graph --oneline
 |/
 * 2fee5b4 kick off
 
-## push local/develop to origin/develop
+## push local/develop to origin/develop with tags
 ## push local/master to origin/master with tags
 $ git push origin master --tags
-$ git push origin develop
-$ git log -10 --decorate --graph --oneline
+$ git push origin develop --tags
+$ git log -10 --decorate --graph --oneline --all
 *   998d92d (HEAD -> develop, origin/develop) Merge tag '0.2' into develop
 |\
 | *   c8755e4 (tag: 0.2, origin/master, master) Merge branch 'hotfix/0.2'
@@ -426,9 +426,9 @@ $ git log -10 --decorate --graph --oneline
 * 2fee5b4 kick off
 
 ## create a pull request origin/master to upstream/master with tags
-## create a pull request origin/develop to upstream/develop
+## create a pull request origin/develop to upstream/develop with tags
 
-$ git log -10 --decorate --graph --oneline
+$ git log -10 --decorate --graph --oneline --all
 *   998d92d (HEAD -> develop, upstream/develop, origin/develop) Merge tag '0.2' into develop
 |\
 | *   c8755e4 (tag: 0.2, upstream/master, origin/master, master) Merge branch 'hotfix/0.2'
