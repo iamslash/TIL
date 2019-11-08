@@ -10,7 +10,22 @@
   - [Tags](#tags)
   - [Remote](#remote)
 - [Packfile](#packfile)
-- [Refs](#refs)
+- [Refspec](#refspec)
+  - [Refspec Fetch](#refspec-fetch)
+  - [Refspec Push](#refspec-push)
+  - [Refspec Delete](#refspec-delete)
+- [Maintenance and Data Recovery](#maintenance-and-data-recovery)
+  - [Maintenance](#maintenance)
+  - [Data Recovery](#data-recovery)
+  - [Removing Objects](#removing-objects)
+- [Environment Variables](#environment-variables)
+  - [Global Behavior](#global-behavior)
+  - [Repository Location](#repository-location)
+  - [Pathspecs](#pathspecs)
+  - [Committing](#committing)
+  - [Diffing and Merging](#diffing-and-merging)
+  - [Debugging](#debugging)
+  - [Miscellaneous](#miscellaneous)
 
 -----
 
@@ -29,7 +44,7 @@ This is a directory structure of `.git`.
 
 ```
 .
-├── local
+├── clone
 │   ├── david
 │   │   └── HelloWorld
 │   └── peter
@@ -438,5 +453,336 @@ chain length = 1: 3 objects
 .git/objects/pack/pack-978e03944f5c581011e6998cd0e9e30000905586.pack: ok
 ```
 
-# Refs
+# Refspec
 
+## Refspec Fetch
+
+```bash
+$ git remote add origin https://github.com/schacon/simplegit-progit
+```
+
+* `.git/config`
+
+```
+[remote "origin"]
+    url = https://github.com/schacon/simplegit-progit
+    fetch = +refs/heads/*:refs/remotes/origin/*
+```
+
+The format of Refspec in fetch is `+<remote refspec pattern>:<local refspec pattern>`. `+` means to allow not even fast-forward updates. For example, `+refs/heads/*:refs/remotes/origin/*` tells that fetch refs in remote `refs/heads` to refs in local `refs/remotes/origin`.
+
+If you want to access master branches use these commands. They are all same.
+
+```bash
+$ git log origin/master
+$ git log remotes/origin/master
+$ git log refs/remotes/origin/master
+```
+
+If you want to fetch just master branch use this.
+
+```
+fetch = +refs/heads/master:refs/remotes/origin/master
+```
+
+You can fetch specific branch using Refspec like this.
+
+```bash
+$ git fetch origin master:refs/remotes/origin/mymaster
+
+$ git fetch origin master:refs/remotes/origin/mymaster \
+     topic:refs/remotes/origin/topic
+# use '+' sign to fetch not even in fast-forward.
+$ git fetch origin master:refs/remotes/origin/mymaster \
+     +topic:refs/remotes/origin/topic
+```
+
+But cannot use Glob pattern.
+
+```
+fetch = +refs/heads/qa*:refs/remotes/origin/qa*
+```
+
+But can use Glob pattern for namespace
+
+```
+[remote "origin"]
+    url = https://github.com/schacon/simplegit-progit
+    fetch = +refs/heads/master:refs/remotes/origin/master
+    fetch = +refs/heads/qa/*:refs/remotes/origin/qa/*
+```
+
+## Refspec Push
+
+The format of Refspec in push is `<local refspec pattern>:<remote refspec pattern>`.
+
+If you want to push local `master` branch to remote `qa/master` branch use this.
+
+```bash
+$ git push origin master:refs/heads/qa/master
+```
+
+If you want to push automatically like that save this to `.git/config`.
+
+```
+[remote "origin"]
+    url = https://github.com/schacon/simplegit-progit
+    fetch = +refs/heads/*:refs/remotes/origin/*
+    push = refs/heads/master:refs/heads/qa/master
+```
+
+## Refspec Delete
+
+You can delete Refs using Refspec.
+
+```bash
+# There is no local Refspec.
+$ git push origin :topic
+
+# This is same with before.
+$ git push origin --delete topic
+```
+
+# Maintenance and Data Recovery
+
+## Maintenance
+
+```bash
+$ git gc --auto
+
+$ find .git/refs -type f
+.git/refs/heads/experiment
+.git/refs/heads/master
+.git/refs/tags/v1.0
+.git/refs/tags/v1.1
+
+$ git gc
+
+$ cat .git/packed-refs
+# pack-refs with: peeled fully-peeled
+cac0cab538b970a37ea1e769cbbde608743bc96d refs/heads/experiment
+ab1afef80fac8e34258ff41fc1b867c702daa24b refs/heads/master
+cac0cab538b970a37ea1e769cbbde608743bc96d refs/tags/v1.0
+9585191f37f7b0fb9444f35a9bf50de191beadc2 refs/tags/v1.1
+^1a410efbd13591db07496601ebc7a059dd55cfe9
+```
+
+## Data Recovery
+
+```bash
+$ git log --pretty=oneline
+ab1afef80fac8e34258ff41fc1b867c702daa24b modified repo a bit
+484a59275031909e19aadb7c92262719cfcdf19a added repo.rb
+1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
+cac0cab538b970a37ea1e769cbbde608743bc96d second commit
+fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
+
+$ git reset --hard 1a410efbd13591db07496601ebc7a059dd55cfe9
+HEAD is now at 1a410ef third commit
+
+$ git log --pretty=oneline
+1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
+cac0cab538b970a37ea1e769cbbde608743bc96d second commit
+fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
+
+$ git reflog
+1a410ef HEAD@{0}: reset: moving to 1a410ef
+ab1afef HEAD@{1}: commit: modified repo.rb a bit
+484a592 HEAD@{2}: commit: added repo.rb
+
+$ git log -g
+commit 1a410efbd13591db07496601ebc7a059dd55cfe9
+Reflog: HEAD@{0} (Scott Chacon <schacon@gmail.com>)
+Reflog message: updating HEAD
+Author: Scott Chacon <schacon@gmail.com>
+Date:   Fri May 22 18:22:37 2009 -0700
+
+		third commit
+
+commit ab1afef80fac8e34258ff41fc1b867c702daa24b
+Reflog: HEAD@{1} (Scott Chacon <schacon@gmail.com>)
+Reflog message: updating HEAD
+Author: Scott Chacon <schacon@gmail.com>
+Date:   Fri May 22 18:15:24 2009 -0700
+
+       modified repo.rb a bit
+
+$ git branch recover-branch ab1afef
+$ git log --pretty=oneline recover-branch
+ab1afef80fac8e34258ff41fc1b867c702daa24b modified repo a bit
+484a59275031909e19aadb7c92262719cfcdf19a added repo.rb
+1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
+cac0cab538b970a37ea1e769cbbde608743bc96d second commit
+fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
+```
+
+
+```bash
+
+$ git branch -D recover-branch
+$ rm -Rf .git/logs/
+
+$ git fsck --full
+Checking object directories: 100% (256/256), done.
+Checking objects: 100% (18/18), done.
+dangling blob d670460b4b4aece5915caf5c68d12f560a9fe3e4
+dangling commit ab1afef80fac8e34258ff41fc1b867c702daa24b
+dangling tree aea790b9a58f6cf6f2804eeac9f0abbe9631e4c9
+dangling blob 7108f7ecb345ee9d0084193f147cdad4d2998293
+```
+
+## Removing Objects
+
+```bash
+$ curl https://www.kernel.org/pub/software/scm/git/git-2.1.0.tar.gz > git.tgz
+
+$ git add git.tgz
+
+$ git commit -m 'add git tarball'
+[master 7b30847] add git tarball
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ create mode 100644 git.tgz
+
+$ git rm git.tgz
+rm 'git.tgz'
+
+$ git commit -m 'oops - removed large tarball'
+[master dadf725] oops - removed large tarball
+ 1 file changed, 0 insertions(+), 0 deletions(-)
+ delete mode 100644 git.tgz
+
+$ git gc
+Counting objects: 17, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (13/13), done.
+Writing objects: 100% (17/17), done.
+Total 17 (delta 1), reused 10 (delta 0)
+
+$ git count-objects -v
+count: 7
+size: 32
+in-pack: 17
+packs: 1
+size-pack: 4868
+prune-packable: 0
+garbage: 0
+size-garbage: 0
+
+$ git verify-pack -v .git/objects/pack/pack-29…69.idx \
+  | sort -k 3 -n \
+  | tail -3
+dadf7258d699da2c8d89b09ef6670edb7d5f91b4 commit 229 159 12
+033b4468fa6b2a9547a70d88d1bbe8bf3f9ed0d5 blob   22044 5792 4977696
+82c99a3e86bb1267b236a4b6eff7868d97489af1 blob   4975916 4976258 1438
+
+$ git rev-list --objects --all | grep 82c99a3
+82c99a3e86bb1267b236a4b6eff7868d97489af1 git.tgz
+
+$ git log --oneline --branches -- git.tgz
+dadf725 oops - removed large tarball
+7b30847 add git tarball
+
+$ git filter-branch --index-filter \
+  'git rm --ignore-unmatch --cached git.tgz' -- 7b30847^..
+Rewrite 7b30847d080183a1ab7d18fb202473b3096e9f34 (1/2)rm 'git.tgz'
+Rewrite dadf7258d699da2c8d89b09ef6670edb7d5f91b4 (2/2)
+Ref 'refs/heads/master' was rewritten
+
+$ rm -Rf .git/refs/original
+$ rm -Rf .git/logs/
+$ git gc
+Counting objects: 15, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (11/11), done.
+Writing objects: 100% (15/15), done.
+Total 15 (delta 1), reused 12 (delta 0)
+
+$ git count-objects -v
+count: 11
+size: 4904
+in-pack: 15
+packs: 1
+size-pack: 8
+prune-packable: 0
+garbage: 0
+size-garbage: 0
+
+$ git prune --expire now
+$ git count-objects -v
+count: 0
+size: 0
+in-pack: 15
+packs: 1
+size-pack: 8
+prune-packable: 0
+garbage: 0
+size-garbage: 0
+```
+
+# Environment Variables
+
+## Global Behavior
+
+* `GIT_EXEC_PATH`
+* `HOME`
+* ``
+* ``
+* ``
+* ``
+* ``
+* ``
+* ``
+
+## Repository Location
+
+* ``
+  * 
+
+## Pathspecs
+
+* ``
+  * 
+
+## Committing
+
+* ``
+  * 
+
+## Diffing and Merging
+
+* `GIT_TRACE`
+  * 
+* `GIT_TRACE_PACK_ACCESS`
+  * 
+* `GIT_TRACE_PACKET`
+  * 
+* `GIT_TRACE_PERFORMANCE`
+  * 
+* `GIT_TRACE_SETUP`
+  * 
+
+## Debugging
+
+* `GIT_TRACE`
+  * 
+* `GIT_TRACE_PACK_ACCESS`
+  * 
+* `GIT_TRACE_PACKET`
+  * 
+* `GIT_TRACE_PERFORMANCE`
+  * 
+* `GIT_TRACE_SETUP`
+  * 
+
+## Miscellaneous
+
+* `GIT_SSH`
+  * 
+* `GIT_ASKPASS`
+  * 
+* `GIT_NAMESPACE`
+  * 
+* `GIT_FLUSH`
+  * 
+* `GIT_REFLOG_ACTION`
+  * 
