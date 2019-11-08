@@ -20,7 +20,7 @@
   - [Removing Objects](#removing-objects)
 - [Environment Variables](#environment-variables)
   - [Global Behavior](#global-behavior)
-  - [Repository Location](#repository-location)
+  - [Repository Locations](#repository-locations)
   - [Pathspecs](#pathspecs)
   - [Committing](#committing)
   - [Networking](#networking)
@@ -764,94 +764,167 @@ size-garbage: 0
 * `GIT_EDITOR`
   * Git will launch when the user needs to edit some text. if unset, `$EDITOR` will be used.
 
-## Repository Location
+## Repository Locations
 
 * `GIT_DIR`
-  * 
+  * the location of the `.git` folder
 * `GIT_CEILING_DIRECTORIES`
-  * 
+  * controls the behavior of searching for a .git directory
 * `GIT_WORK_TREE`
-  * 
+  * the location of the root of the working directory for a non-bare repository.
 * `GIT_INDEX_FILE`
-  * 
+  * is the path to the index file for non-bare repository.
 * `GIT_OBJECT_DIRECTORY`
-  * 
+  * `.git/objects`
 * `GIT_ALTERNATE_OBJECT_DIRECTORIES`
-  * 
+  * a colon-separated list (formatted like /dir/one:/dir/two:…) which tells Git where to check for objects if they aren’t in `GIT_OBJECT_DIRECTORY`.
 
 ## Pathspecs
 
 * `GIT_GLOB_PATHSPECS`
-  * 
+  * If `GIT_GLOB_PATHSPECS` is set to 1, wildcard characters act as wildcards (which is the default)
 * `GIT_NOGLOB_PATHSPECS`
-  * 
+  * if `GIT_NOGLOB_PATHSPECS` is set to 1, wildcard characters only match themselves, meaning something like *.c would only match a file named “*.c”, rather than any file whose name ends with .c.
 * `GIT_LITERAL_PATHSPECS`
-  * 
+  * disables both of the above behaviors.
 * `GIT_ICASE_PATHSPECS`
-  * 
+*  sets all pathspecs to work in a case-insensitive manner
 
 ## Committing
 
 * `GIT_AUTHOR_NAME`
-  * 
+  * name in the "author" field
 * `GIT_AUTHOR_EMAIL`
-  * 
+  * email for the "author" field
 * `GIT_AUTHOR_DATE`
-  * 
+  * the timestamp used for the "author" field
 * `GIT_COMMITTER_NAME`
-  * 
+  * name for the "committer" field
 * `GIT_COMMITTER_EMAIL`
-  * 
+  * email for the "committer" field
 * `GIT_COMMITTER_DATE`
-  * 
-
+  * the timestamp in the "committer" field
 
 ## Networking
 
 * `GIT_CURL_VERBOSE`
-  * 
+  * `curl -v`
 * `GIT_SSL_NO_VERIFY`
   * This can sometimes be necessary if you’re using a self-signed certificate to serve Git repositories over HTTPS
 * `GIT_HTTP_LOW_SPEED_LIMIT`
-  *  
+  * Git will abort that operation if the date rate of an HTTP operations is lower than `GIT_HTTP_LOW_SPEED_LIMIT`. It overrides `http.lowSpeedLimit`.
 * `GIT_HTTP_LOW_SPEED_TIME`
-  * 
+  * Git will abort that operation if bytes for second of an HTTP operations is longer than `GIT_HTTP_LOW_SPEED_LIMIT`. It overrides `http.lowSpeedTime`.
 * `GIT_HTTP_USER_AGENT`
-  * The default is a value like git/2.0.0.
+  * The default is a value like `git/2.0.0`.
 
 ## Diffing and Merging
 
 * `GIT_DIFF_OPTS`
-  * 
+  * The only valid values are `-u<n>` or `--unified=<n>`
 * `GIT_EXTERNAL_DIFF`
-  * 
+  * external diff tool
 * `GIT_DIFF_PATH_COUNTER, GIT_DIFF_PATH_TOTAL`
-  * 
+  * The former represents which file in a series is being diffed (starting with 1), and the latter is the total number of files in the batch.
 * `GIT_MERGE_VERBOSITY`
-  * 
+  * 0: outputs nothing, except possibly a single error message.
+  * 1: shows only conflicts.
+  * **2: also shows file changes. (default)**
+  * 3: shows when files are skipped because they haven’t changed.
+  * 4: shows all paths as they are processed.
+  * 5: and above show detailed debugging information.
 
 ## Debugging
 
 * `GIT_TRACE`
-  * 
+
+```bash
+$ GIT_TRACE=true git lga
+20:12:49.877982 git.c:554               trace: exec: 'git-lga'
+20:12:49.878369 run-command.c:341       trace: run_command: 'git-lga'
+20:12:49.879529 git.c:282               trace: alias expansion: lga => 'log' '--graph' '--pretty=oneline' '--abbrev-commit' '--decorate' '--all'
+20:12:49.879885 git.c:349               trace: built-in: git 'log' '--graph' '--pretty=oneline' '--abbrev-commit' '--decorate' '--all'
+20:12:49.899217 run-command.c:341       trace: run_command: 'less'
+20:12:49.899675 run-command.c:192       trace: exec: 'less'
+```
+   
 * `GIT_TRACE_PACK_ACCESS`
-  * 
+
+```bash
+$ GIT_TRACE_PACK_ACCESS=true git status
+20:10:12.081397 sha1_file.c:2088        .git/objects/pack/pack-c3fa...291e.pack 12
+20:10:12.081886 sha1_file.c:2088        .git/objects/pack/pack-c3fa...291e.pack 34662
+20:10:12.082115 sha1_file.c:2088        .git/objects/pack/pack-c3fa...291e.pack 35175
+# […]
+20:10:12.087398 sha1_file.c:2088        .git/objects/pack/pack-e80e...e3d2.pack 56914983
+20:10:12.087419 sha1_file.c:2088        .git/objects/pack/pack-e80e...e3d2.pack 14303666
+On branch master
+Your branch is up-to-date with 'origin/master'.
+nothing to commit, working directory clean
+```
+  
 * `GIT_TRACE_PACKET`
-  * 
+
+```bash
+$ GIT_TRACE_PACKET=true git ls-remote origin
+20:15:14.867043 pkt-line.c:46           packet:          git< # service=git-upload-pack
+20:15:14.867071 pkt-line.c:46           packet:          git< 0000
+20:15:14.867079 pkt-line.c:46           packet:          git< 97b8860c071898d9e162678ea1035a8ced2f8b1f HEAD\0multi_ack thin-pack side-band side-band-64k ofs-delta shallow no-progress include-tag multi_ack_detailed no-done symref=HEAD:refs/heads/master agent=git/2.0.4
+20:15:14.867088 pkt-line.c:46           packet:          git< 0f20ae29889d61f2e93ae00fd34f1cdb53285702 refs/heads/ab/add-interactive-show-diff-func-name
+20:15:14.867094 pkt-line.c:46           packet:          git< 36dc827bc9d17f80ed4f326de21247a5d1341fbc refs/heads/ah/doc-gitk-config
+# […]
+```
+
 * `GIT_TRACE_PERFORMANCE`
-  * 
+
+```bash
+$ GIT_TRACE_PERFORMANCE=true git gc
+20:18:19.499676 trace.c:414             performance: 0.374835000 s: git command: 'git' 'pack-refs' '--all' '--prune'
+20:18:19.845585 trace.c:414             performance: 0.343020000 s: git command: 'git' 'reflog' 'expire' '--all'
+Counting objects: 170994, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (43413/43413), done.
+Writing objects: 100% (170994/170994), done.
+Total 170994 (delta 126176), reused 170524 (delta 125706)
+20:18:23.567927 trace.c:414             performance: 3.715349000 s: git command: 'git' 'pack-objects' '--keep-true-parents' '--honor-pack-keep' '--non-empty' '--all' '--reflog' '--unpack-unreachable=2.weeks.ago' '--local' '--delta-base-offset' '.git/objects/pack/.tmp-49190-pack'
+20:18:23.584728 trace.c:414             performance: 0.000910000 s: git command: 'git' 'prune-packed'
+20:18:23.605218 trace.c:414             performance: 0.017972000 s: git command: 'git' 'update-server-info'
+20:18:23.606342 trace.c:414             performance: 3.756312000 s: git command: 'git' 'repack' '-d' '-l' '-A' '--unpack-unreachable=2.weeks.ago'
+Checking connectivity: 170994, done.
+20:18:25.225424 trace.c:414             performance: 1.616423000 s: git command: 'git' 'prune' '--expire' '2.weeks.ago'
+20:18:25.232403 trace.c:414             performance: 0.001051000 s: git command: 'git' 'rerere' 'gc'
+20:18:25.233159 trace.c:414             performance: 6.112217000 s: git command: 'git' 'gc'
+```
+
 * `GIT_TRACE_SETUP`
-  * 
+
+```bash
+$ GIT_TRACE_SETUP=true git status
+20:19:47.086765 trace.c:315             setup: git_dir: .git
+20:19:47.087184 trace.c:316             setup: worktree: /Users/ben/src/git
+20:19:47.087191 trace.c:317             setup: cwd: /Users/ben/src/git
+20:19:47.087194 trace.c:318             setup: prefix: (null)
+On branch master
+Your branch is up-to-date with 'origin/master'.
+nothing to commit, working directory clean
+```
 
 ## Miscellaneous
 
 * `GIT_SSH`
-  * 
+  * a program that is invoked instead of ssh.
 * `GIT_ASKPASS`
-  * 
+  * It overrides `core.askpass`.
 * `GIT_NAMESPACE`
-  * 
+  * same with `--namespace`
 * `GIT_FLUSH`
-  * 
+  * can be used to force Git to use non-buffered I/O when writing incrementally to stdout.
 * `GIT_REFLOG_ACTION`
-  * 
+  * lets you specify the descriptive text written to the reflog.
+
+```bash
+$ GIT_REFLOG_ACTION="my action" git commit --allow-empty -m 'my message'
+[master 9e3d55a] my message
+$ git reflog -1
+9e3d55a HEAD@{0}: my action: my message
+```
