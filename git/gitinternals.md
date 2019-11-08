@@ -5,15 +5,15 @@
 - [Git Objects](#git-objects)
   - [Tree objects](#tree-objects)
   - [Commit Objects](#commit-objects)
-- [Git Refs](#git-refs)
-  - [HEAD](#head)
+- [Git References](#git-references)
+  - [The HEAD](#the-head)
   - [Tags](#tags)
-  - [Remote](#remote)
+  - [Remotes](#remotes)
 - [Packfile](#packfile)
-- [Refspec](#refspec)
-  - [Refspec Fetch](#refspec-fetch)
+- [The Refspec](#the-refspec)
+  - [The Refspec Fetch](#the-refspec-fetch)
   - [Refspec Push](#refspec-push)
-  - [Refspec Delete](#refspec-delete)
+  - [Deleting References](#deleting-references)
 - [Maintenance and Data Recovery](#maintenance-and-data-recovery)
   - [Maintenance](#maintenance)
   - [Data Recovery](#data-recovery)
@@ -23,6 +23,7 @@
   - [Repository Location](#repository-location)
   - [Pathspecs](#pathspecs)
   - [Committing](#committing)
+  - [Networking](#networking)
   - [Diffing and Merging](#diffing-and-merging)
   - [Debugging](#debugging)
   - [Miscellaneous](#miscellaneous)
@@ -68,10 +69,10 @@ This is a directory structure of `.git`.
 
 # Git Objects
 
-There are 3 kinds of Git objects, commit object, tree object, blob object.
+There are 3 kinds of Git objects, commit, tree, blob object.
 
 ```bash
-$ cd local/david/HelloWorld
+$ cd clone/david/HelloWorld
 
 # There is no file yet.
 $ find .git/objects -type f
@@ -115,16 +116,17 @@ test content
 # make a test.txt file.
 $ echo 'version 1' > test.txt
 
-# write test.txt blob object to objects directory.
+# write test.txt to blob object in objects directory.
 $ git hash-object -w test.txt
 83baae61804e65cc73a7201a7252750c76066a30
 
 # modify the test.txt file.
 $ echo 'version 2' > test.txt
 
-# write test.txt blob object to bojects directory again.
+# write test.txt to blob object in ojects directory again.
 $ git hash-object -w test.txt
 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a
+
 $ tree -a .git/objects
  .git/objects
 ├── 1f
@@ -156,8 +158,12 @@ blob
 ```bash
 # master^{tree} means the tree object of the commit object pointed by master
 $ git cat-file -p master^{tree}
+100644 blob a906cb2a4a904a152e80877d4088654daad0c859      README
+100644 blob 8f94139338f9404f26296befa88755fc2598c289      Rakefile
+040000 tree 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0      lib
 
 $ git cat-file -p 99f1a6d12cb4b6f19c8655fca46c3ecf317074e0
+100644 blob 47c6340d6459e05787f644c2447d2595f5d3a54b      simplegit.rb
 
 # let's make a tree object. git make a tree object from index
 # update the index with adding test.txt.
@@ -170,12 +176,15 @@ $ git update-index --add --cacheinfo 100644 \
 
 # write the index to the tree object.
 $ git write-tree
+d8329fc1cc938780ffdd9f94e0d364e0ea74f579
 
 # show the content of the tree object
 $ git cat-file -p d8329fc1cc938780ffdd9f94e0d364e0ea74f579
+100644 blob 83baae61804e65cc73a7201a7252750c76066a30      test.txt
 
 # show the type of the tree object
 $ git cat-file -t d8329fc1cc938780ffdd9f94e0d364e0ea74f579
+tree
 
 # make a new file.
 $ echo 'new file' > new.txt
@@ -189,9 +198,12 @@ $ git update-index --add new.txt
 
 # save the index to the tree object.
 $ git write-tree
+0155eb4229851634a0f03eb265b69f5a2d56f341
 
 # show the content of the tree object.
 $ git cat-file -p 0155eb4229851634a0f03eb265b69f5a2d56f341
+100644 blob fa49b077972391ad58037050f2a75f74e3671e92      new.txt
+100644 blob 1f7a7a472abf3dd9643fd615f6da379c4acb3e3a      test.txt
 
 # update index with adding the tree object.
 $ git read-tree --prefix=bak d8329fc1cc938780ffdd9f94e0d364e0ea74f579
@@ -272,9 +284,9 @@ $ find .git/objects -type f
 .git/objects/fd/f4fc3344e67ab068f836878b6c4951e3b15f3d # commit 1
 ```
 
-# Git Refs
+# Git References
 
-Refs is References. Git saves them to `.git/refs/*`. If we use refs it is very easy point the commit object.
+Git saves them to `.git/refs/*`. If we use references it is very easy point the commit object.
 
 ```bash
 $ find .git/refs
@@ -284,10 +296,13 @@ $ find .git/refs
 
 $ find .git/refs -type f
 
-# make a ref with suing echo command.
+# make a reference with using echo command.
 $ echo 1a410efbd13591db07496601ebc7a059dd55cfe9 > .git/refs/heads/master
 
-# git log --pretty=oneline master
+$ git log --pretty=oneline master
+1a410efbd13591db07496601ebc7a059dd55cfe9 third commit
+cac0cab538b970a37ea1e769cbbde608743bc96d second commit
+fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
 
 # make a ref with using plumbing command.
 $ git update-ref refs/heads/master 1a410efbd13591db07496601ebc7a059dd55cfe9
@@ -296,9 +311,9 @@ $ git update-ref refs/heads/master 1a410efbd13591db07496601ebc7a059dd55cfe9
 $ git update-ref refs/heads/test cac0ca
 ```
 
-## HEAD
+## The HEAD
 
-HEAD is symbolic refs point to the branch.
+HEAD is a symbolic reference to the branch you're currently on.
 
 ```bash
 $ cat .git/HEAD
@@ -310,6 +325,7 @@ ref: refs/heads/test
 $ git symbolic-ref HEAD
 refs/heads/master
 
+# set the value of HEAD.
 $ git symbolic-ref HEAD refs/heads/test
 $ cat .git/HEAD
 ref: refs/heads/test
@@ -321,11 +337,11 @@ fatal: Refusing to point HEAD outside of refs/
 
 ## Tags
 
-
-
 ```bash
+# set lightweight tag
 $ git update-ref refs/tags/v1.0 cac0cab538b970a37ea1e769cbbde608743bc96d
 
+# set annotated tag
 $ git tag -a v1.1 1a410efbd13591db07496601ebc7a059dd55cfe9 -m 'test tag'
 
 $ cat .git/refs/tags/v1.1
@@ -339,11 +355,12 @@ tagger Scott Chacon <schacon@gmail.com> Sat May 23 16:48:58 2009 -0700
 
 test tag
 
+# You can view the public key by running this in a clone of the Git repository
 $ git cat-file blob junio-gpg-pub
 
 ```
 
-## Remote
+## Remotes
 
 remote refs is readonly and a kind of bookmarks.
 
@@ -360,7 +377,6 @@ To git@github.com:schacon/simplegit-progit.git
 $ cat .git/refs/remotes/origin/master
 ca82a6dff817ec66f44342007202690a93763949
 ```
-
 
 # Packfile
 
@@ -394,6 +410,7 @@ $ git cat-file -p master^{tree}
 100644 blob 033b4468fa6b2a9547a70d88d1bbe8bf3f9ed0d5      repo.rb
 100644 blob e3f094f522629ae358806b17daf78246c27c007b      test.txt
 
+# how how large that object
 $ git cat-file -s 033b4468fa6b2a9547a70d88d1bbe8bf3f9ed0d5
 22044
 
@@ -453,9 +470,9 @@ chain length = 1: 3 objects
 .git/objects/pack/pack-978e03944f5c581011e6998cd0e9e30000905586.pack: ok
 ```
 
-# Refspec
+# The Refspec
 
-## Refspec Fetch
+## The Refspec Fetch
 
 ```bash
 $ git remote add origin https://github.com/schacon/simplegit-progit
@@ -490,6 +507,7 @@ You can fetch specific branch using Refspec like this.
 ```bash
 $ git fetch origin master:refs/remotes/origin/mymaster
 
+# you can use 2 refspec at the sametime.
 $ git fetch origin master:refs/remotes/origin/mymaster \
      topic:refs/remotes/origin/topic
 # use '+' sign to fetch not even in fast-forward.
@@ -531,9 +549,9 @@ If you want to push automatically like that save this to `.git/config`.
     push = refs/heads/master:refs/heads/qa/master
 ```
 
-## Refspec Delete
+## Deleting References
 
-You can delete Refs using Refspec.
+You can delete references using Refspec.
 
 ```bash
 # There is no local Refspec.
@@ -548,6 +566,7 @@ $ git push origin --delete topic
 ## Maintenance
 
 ```bash
+# You can run auto gc manually as follows:
 $ git gc --auto
 
 $ find .git/refs -type f
@@ -558,6 +577,7 @@ $ find .git/refs -type f
 
 $ git gc
 
+# made a packed-refs file.
 $ cat .git/packed-refs
 # pack-refs with: peeled fully-peeled
 cac0cab538b970a37ea1e769cbbde608743bc96d refs/heads/experiment
@@ -568,6 +588,8 @@ cac0cab538b970a37ea1e769cbbde608743bc96d refs/tags/v1.0
 ```
 
 ## Data Recovery
+
+You can recover a branch using reflog.
 
 ```bash
 $ git log --pretty=oneline
@@ -616,12 +638,15 @@ cac0cab538b970a37ea1e769cbbde608743bc96d second commit
 fdf4fc3344e67ab068f836878b6c4951e3b15f3d first commit
 ```
 
+This is more a desperative situation.
 
 ```bash
 
 $ git branch -D recover-branch
 $ rm -Rf .git/logs/
 
+# If you run it with the --full option, it shows you all objects that aren’t pointed to by another object. 
+# In this case, you can see your missing commit after the string “dangling commit”. You can recover it the same way, by adding a branch that points to that SHA-1.
 $ git fsck --full
 Checking object directories: 100% (256/256), done.
 Checking objects: 100% (18/18), done.
@@ -675,6 +700,7 @@ dadf7258d699da2c8d89b09ef6670edb7d5f91b4 commit 229 159 12
 033b4468fa6b2a9547a70d88d1bbe8bf3f9ed0d5 blob   22044 5792 4977696
 82c99a3e86bb1267b236a4b6eff7868d97489af1 blob   4975916 4976258 1438
 
+# If you pass --objects to rev-list, it lists all the commit SHA-1s and also the blob SHA-1s with the file paths associated with them. You can use this to find your blob’s name:
 $ git rev-list --objects --all | grep 82c99a3
 82c99a3e86bb1267b236a4b6eff7868d97489af1 git.tgz
 
@@ -682,6 +708,7 @@ $ git log --oneline --branches -- git.tgz
 dadf725 oops - removed large tarball
 7b30847 add git tarball
 
+# --index-filter: you’re modifying your staging area or index each time. 
 $ git filter-branch --index-filter \
   'git rm --ignore-unmatch --cached git.tgz' -- 7b30847^..
 Rewrite 7b30847d080183a1ab7d18fb202473b3096e9f34 (1/2)rm 'git.tgz'
@@ -707,6 +734,7 @@ prune-packable: 0
 garbage: 0
 size-garbage: 0
 
+# you could remove the object completely by running git prune with the --expire option:
 $ git prune --expire now
 $ git count-objects -v
 count: 0
@@ -724,41 +752,82 @@ size-garbage: 0
 ## Global Behavior
 
 * `GIT_EXEC_PATH`
+  * path for subprograms like git-commit, git-diff.
 * `HOME`
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
-* ``
+  * Git looks for user configuration at `$HOME/.gitconfig`   
+* `PREFIX`
+  * Git looks for global configuration at `$PREFIX/etc/gitconfig`.
+* `GIT_CONFIG_NOSYSTEM`
+  * if set, disable global configuration.
+* `GIT_PAGER`
+  * If this is unset, no paing.
+* `GIT_EDITOR`
+  * Git will launch when the user needs to edit some text. if unset, `$EDITOR` will be used.
 
 ## Repository Location
 
-* ``
+* `GIT_DIR`
+  * 
+* `GIT_CEILING_DIRECTORIES`
+  * 
+* `GIT_WORK_TREE`
+  * 
+* `GIT_INDEX_FILE`
+  * 
+* `GIT_OBJECT_DIRECTORY`
+  * 
+* `GIT_ALTERNATE_OBJECT_DIRECTORIES`
   * 
 
 ## Pathspecs
 
-* ``
+* `GIT_GLOB_PATHSPECS`
+  * 
+* `GIT_NOGLOB_PATHSPECS`
+  * 
+* `GIT_LITERAL_PATHSPECS`
+  * 
+* `GIT_ICASE_PATHSPECS`
   * 
 
 ## Committing
 
-* ``
+* `GIT_AUTHOR_NAME`
   * 
+* `GIT_AUTHOR_EMAIL`
+  * 
+* `GIT_AUTHOR_DATE`
+  * 
+* `GIT_COMMITTER_NAME`
+  * 
+* `GIT_COMMITTER_EMAIL`
+  * 
+* `GIT_COMMITTER_DATE`
+  * 
+
+
+## Networking
+
+* `GIT_CURL_VERBOSE`
+  * 
+* `GIT_SSL_NO_VERIFY`
+  * This can sometimes be necessary if you’re using a self-signed certificate to serve Git repositories over HTTPS
+* `GIT_HTTP_LOW_SPEED_LIMIT`
+  *  
+* `GIT_HTTP_LOW_SPEED_TIME`
+  * 
+* `GIT_HTTP_USER_AGENT`
+  * The default is a value like git/2.0.0.
 
 ## Diffing and Merging
 
-* `GIT_TRACE`
+* `GIT_DIFF_OPTS`
   * 
-* `GIT_TRACE_PACK_ACCESS`
+* `GIT_EXTERNAL_DIFF`
   * 
-* `GIT_TRACE_PACKET`
+* `GIT_DIFF_PATH_COUNTER, GIT_DIFF_PATH_TOTAL`
   * 
-* `GIT_TRACE_PERFORMANCE`
-  * 
-* `GIT_TRACE_SETUP`
+* `GIT_MERGE_VERBOSITY`
   * 
 
 ## Debugging
