@@ -21,6 +21,12 @@ $ git gc
 
 Recent commit objects can't be packed. So they became huge even if they are useless. Finally, You have to delete branched
 
+This is a command line which deletes all branches except master.
+
+```bash
+$ git branch | grep -v "master" | xargs git branch -D 
+```
+
 # Git LFS
 
 [Git LFS @ TIL](/git#git-lfs)
