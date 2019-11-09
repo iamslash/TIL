@@ -1369,8 +1369,6 @@ $ git merge --verify-signatures -S  signed-branch
 
 ## 고급 Merge
 
-
-
 ```bash
 ### 다른 방식의 Merge
 
@@ -2029,7 +2027,6 @@ $ git pull
 ## 유용한 Alias???
 ## 서브모듈 사용할 때 주의할 점들???
 ```
-
 
 # Git Tips
 

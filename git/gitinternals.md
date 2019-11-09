@@ -410,7 +410,7 @@ $ git cat-file -p master^{tree}
 100644 blob 033b4468fa6b2a9547a70d88d1bbe8bf3f9ed0d5      repo.rb
 100644 blob e3f094f522629ae358806b17daf78246c27c007b      test.txt
 
-# how how large that object
+# show how large that object
 $ git cat-file -s 033b4468fa6b2a9547a70d88d1bbe8bf3f9ed0d5
 22044
 
