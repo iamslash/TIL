@@ -1,11 +1,9 @@
 # Materials
 
-* [우린 Git-flow를 사용하고 있어요](http://woowabros.github.io/experience/2017/10/30/baemin-mobile-git-branch-strategy.html)
 * [A successful Git branching model](https://nvie.com/posts/a-successful-git-branching-model/) 
-* [Git flow 사용해보기](https://boxfoxs.tistory.com/347) 
 * [git-flow cheatsheet](https://danielkummer.github.io/git-flow-cheatsheet/) 
 
-# Git branching model by Vincent Drissen
+# Git branching model by Vincent Driessen
 
 ![](img/git-flow_overall_graph.png)
 
@@ -16,7 +14,7 @@
   * release : stage deployment
   * hotfix : bugs of production deployment
 
-There are 2 remote repositories, upstream and origin. the origin is the forked one from the upstream.
+There are 2 remote repositories, upstream and origin. The origin is the forked one from the upstream. The clone is the cloned one from the origin.
 
 ```bash
 $ cd ~/tmp
@@ -32,8 +30,7 @@ $ cd clone/david && git remote -v && cd ~/tmp
 $ cd clone/peter && git remote -v && cd ~/tmp
 ```
 
-This is a direcgtory structure what we did.
-
+This is a directory structure what we did.
 
 ```
 .
@@ -61,17 +58,20 @@ This is a direcgtory structure what we did.
 
 And There should be version convention, and 3 system environments, DEV (development environemnt), STG (stage environment), PRD (production environment).
 
-When you need sync the origin with the upstream you need to fetch from upstream.
+When you need sync the clone/origin with the upstream you need to fetch from upstream.
 
 * [Configuring a remote for a fork](https://help.github.com/articles/configuring-a-remote-for-a-fork/)
 * [Syncing a fork](https://help.github.com/articles/syncing-a-fork/)
 
 ```bash
 $ git fetch upstream
-$ git checkout develop
+# sync develop
 $ git merge upstream/develop
+$ git push origin develop
+# sync master
 $ git checkout master
 $ git merge upstream/master
+$ git push origin master
 ```
 
 [git-flow](https://danielkummer.github.io/git-flow-cheatsheet/) is a good utility for Git branching models by Vicent Drissen. This is about a `git-flow init`.
@@ -93,7 +93,7 @@ Version tag prefix? []
 Hooks and filters directory? [D:/tmp/HelloWorld/.git/hooks]
 ```
 
-When you start a new **feature** `Foo` you need to do this. I am going to do this on `clone/david/HelloWorld`.
+When you start a new **feature** `Foo` you need to do following. I am going to do this on `clone/david/HelloWorld`.
 
 ```bash
 ## initial status
@@ -177,7 +177,7 @@ $ git log -5 --decorate --graph --oneline
 
 But This is very important. When you merge `feature/Foo` to `develop` You have to squash them. Then You can revert it easily and make the history simple.
 
-If you need to pull another feature you need to do this.
+If you need to pull another feature you need to do following.
 
 ```bash
 ## pull origin/feature/Foo
@@ -185,7 +185,7 @@ $ git flow feature pull origin Foo
 $ git flow feature track Foo
 ```
 
-When you start make a **release** `0.1` you need to do this.  I am going to do this on `clone/david/HelloWorld`
+When you start make a **release** `0.1` you need to do following.  I am going to do this on `clone/david/HelloWorld`
 
 ```bash
 ## initial status
@@ -305,7 +305,7 @@ $ git log -10 --decorate --graph --oneline
 
 But This is also very important. When you merge `release/0.1` to `master, develop` You have to squash them. Then You can revert it easily and make the history simple.
 
-When you start make a **hofix** `0.2` you need to do this.  I am going to do this on `clone/david/HelloWorld`
+When you start make a **hofix** `0.2` you need to do following.  I am going to do this on `clone/david/HelloWorld`
 
 ```bash
 $ git remote -v
