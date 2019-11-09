@@ -7,17 +7,9 @@
 
 Structures of Git objects (commit, tree, blob).
 
-```graphviz
-graph {
-    a
-}
-```
+
 
 Git can pack old objects automatically.
-
-```bash
-$ git gc
-```
 
 Recent commit objects can't be packed. So they became huge even if they are useless. Finally, You have to delete branched
 
