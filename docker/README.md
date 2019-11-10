@@ -196,6 +196,8 @@ distribution/registry:2.6.0
 > docker run -it --name ubuntu ubuntu:latest /bin/bash
 # list containers
 > docker ps -a
+# list containers with format
+> docker ps -a --format "table {{.ID}}\t{{.Status}}\t{{.Names}}"
 # start container
 > docker start <container-name>
 # restart container
