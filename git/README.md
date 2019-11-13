@@ -824,8 +824,14 @@ $ git tag 0.1
 # create annotated tag
 $ git tag -a 0.2
 
-# remove tag
+# remove local tag
 $ git tag -d 0.1
+
+# remove remote tags
+$ git push --delete origin 0.1
+
+# push tag
+$ git push origin master --tags
 ```
 
 # Git grep
