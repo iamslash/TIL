@@ -15,6 +15,8 @@ target … : prerequisites …
 
 # References
 
+* [make tutorial](https://makefiletutorial.com/)
+  * the most wonderful tutorial
 * [GNU Make 강좌](https://wiki.kldp.org/KoreanDoc/html/GNU-Make/GNU-Make.html#toc3)
   * 오래되긴 하였지만 한글 이다.
 * [GNU Make @ kgnu](http://korea.gnu.org/manual/release/make/make-sjp/make-ko_toc.html)  
