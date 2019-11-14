@@ -506,6 +506,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * sar -n DEV 1
   * sar -n TCP,ETCP 1
   * top
+  * meminfo
   
 ----
 
@@ -643,6 +644,11 @@ Swap:         3999          0       3999
 |              | sy    | system 용 processor 활용 비율                                                                            |
 |              | id    | idle 용 processor 활용 비율                                                                              |
 | PhysysMem    | wired | non-paged pool???                                                                                        |
+
+* meminfo
+  * `$meminfo`
+  * `cat /proc/meminfo`
+
 * `du`
   * `du -h /home/iamslash`
   * `du -sh /home/iamslash` 요약해서 알려줘
