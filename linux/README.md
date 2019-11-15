@@ -847,6 +847,7 @@ Swap:         3999          0       3999
   * `echo a b c d e f | xargs`
   * `echo a b c d e f | xargs -n 3` argument는 3개씩 한조가 되라
   * `echo a b c d e f | xargs -p -n 3` prompt 등장
+  * `ls -t | xargs -I % sh -c "echo %; echo %"`
   * `find . -name "*.c" | xargs rm -rf`
   * `find . -name "*.c" -print0 | xargs -0 rm -rf`
   * `find . -name '*.c' | xargs grep 'stdlib.h'`
@@ -888,14 +889,16 @@ Swap:         3999          0       3999
   * `find / -type f -name *.mp3 -size +10M -exec rm {} \;`
 * `tail`
   * `tail -n 5 a.txt`
+    * a.txt 의 끝에서 5 줄을 출력하라.
+  * `tail -n +5 a.txt`
+    * a.txt 의 5 줄부터 출력하라. 
   * `tail -f /var/log/messages`
   * `tail -f /tmp/a.log --pid=2575` 2575프로세스 죽을때까지
   * `tail -f /tmp/debug.log --retry`
 * `head`
   * `head -n 5 a.txt`
-  * `head -4 a.txt`
-  * `head -n -5 a.txt`
-  * `ls | head`
+  * `head -5 a.txt`
+  * `ls | head -5`
 * `awk`
   * [awk](/awk/README.md)
 * `uniq`
@@ -911,6 +914,7 @@ Swap:         3999          0       3999
 * `sort`
   * `sort a.txt > b.txt`
   * `sort -r a.txt > b.txt`
+    * sort reversly
   * `sort -nk2 a.txt` 2열을 기준으로 정렬해라.
   * `sort -k9 a.txt`
   * `ls -l /home/$USER | sort -nk5`
