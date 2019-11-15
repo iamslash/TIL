@@ -531,11 +531,17 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * 마지막 커널의 메시지 버퍼 10 개를 보여다오
     * 치명적인 내용이 있는지 반드시 체크해야함
 * `vmstat`
+  * [vmstat에 대한 고찰(성능) 1편](http://egloos.zum.com/sword33/v/5976684)
+  * [vmstat(8) - Linux man page](https://linux.die.net/man/8/vmstat)
   * virtual memory 통계 보여조
   * `vmstat 1`
     * 1 초 마다 보여다오
   * `vmstat -S M 1`
     * 1 초 마다 MB 단위로 보여다오
+  * `total physical memory = free + buff + cache + used`
+    * buff 는 i-node 값 즉 파일들의 실제 주소를 보관한다. disk seek time 을 최소화 할 수 있다.
+    * cache 는 파일의 real data 를 cache 한다.
+    * free 가 부족하면 cache 에서 옮겨갈 수도 있다.
   * `vmstat -s` 부트이후 통계
   * `vmstat -S` 스와핑 통계
   * `vmstat -i` 장치당 인터럽트
@@ -546,7 +552,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 | 범주   | 필드 이름 | 설명                                                                                              |
 |--------|-----------|---------------------------------------------------------------------------------------------------|
-| procs  | r         | The num of runnable processes |
+| procs  | r         | The number of processes waiting for run time |
 |        | b         | The number of processes in uninterruptible sleep |
 | memory | swpd      | the amount of virtual memory used in KB |
 |        | free      | the amout of idle memory in KB |
@@ -657,8 +663,9 @@ Swap:         3999          0       3999
 | PhysysMem    | wired | non-paged pool???                                                                                        |
 
 * meminfo
-  * `$meminfo`
-  * `cat /proc/meminfo`
+  * [[Linux] Cached Memory 비우고 Free Memory 늘리기](http://egloos.zum.com/mcchae/v/11217429)
+  * `$ meminfo`
+  * `head /proc/meminfo`
 
 * `du`
   * `du -h /home/iamslash`
