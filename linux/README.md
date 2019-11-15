@@ -450,24 +450,33 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 ## Process management
 
+* `cpulimit`
+  * [cpulimit @ github](https://github.com/opsengine/cpulimit)
+  * throttle the cpu usage
+  * `cpulimit -l 50 tar czvf a.tar.gz Hello`
+    * tar with cpu usage under 50%.
+
 * `nice`
   * handle process priorities (-20~19)
   * replace the current process image with the new process image which has the specific priority.
     ```bash
     $ ps -o pid,ni,comm
-    $ nice -n 19
+    # tar with nice
+    $ nice -n 19 tar czvf a.tar.gz Hello
     ```
 * `renice`
   * replace the specific process image with the new process image which has the specific priority.
     ```bash
     $ ps -o pid,ni,comm
-    $ renice 19 12345
+    $ renice 19 12345 
     # change the priority of the processes with PIDs 987 and 32, plus all processes owned by the users daemon and root
     $ renice +1 987 -u daemon root -p 32
     ```
 * `ionice`
   * handle process io priorities (0~7)
     ```bash
+    # tar with ionice
+    $ ionice -c 3 tar czvf a.tar.gz Hello
     # Sets process with PID 89 as an idle I/O process.
     $ ionice -c 3 -p 89
     # Runs 'bash' as a best-effort program with highest priority.
@@ -525,6 +534,8 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * virtual memory 통계 보여조
   * `vmstat 1`
     * 1 초 마다 보여다오
+  * `vmstat -S M 1`
+    * 1 초 마다 MB 단위로 보여다오
   * `vmstat -s` 부트이후 통계
   * `vmstat -S` 스와핑 통계
   * `vmstat -i` 장치당 인터럽트
