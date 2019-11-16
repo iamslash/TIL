@@ -743,7 +743,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * meminfo
   * [리눅스 메모리 정보](https://classpath.tistory.com/306)
   * [[Linux] Cached Memory 비우고 Free Memory 늘리기](http://egloos.zum.com/mcchae/v/11217429)
-
+  * [[Memory] 커널 메모리 관리](https://fmyson.tistory.com/212)
 
     | item         | desc                  |
     | ------------ | --------------------- |
@@ -764,19 +764,8 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     | Committed_AS |                       |
     | Slab         |                       |
 
-  * `head /proc/meminfo`
-    ```
-    MemTotal:        2047016 kB
-    MemFree:          371632 kB
-    MemAvailable:    1100580 kB
-    Buffers:           96400 kB
-    Cached:           741012 kB
-    SwapCached:            0 kB
-    Active:           804772 kB
-    Inactive:         731176 kB
-    Active(anon):     554084 kB
-    Inactive(anon):   145844 kB
-    root@86e6c5bfb041:~/tmp# cat /proc/meminfo
+  * `cat /proc/meminfo`
+    ```    
     MemTotal:        2047016 kB
     MemFree:          371632 kB
     MemAvailable:    1100604 kB
@@ -825,21 +814,22 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     ```
 
 * `du`
-  * `du -h /home/iamslash`
+  * `du -h /home/iamslash` human readable format
   * `du -sh /home/iamslash` 요약해서 알려줘
+  * `du -h -d 1 /home/iamslash` depth 1 directory 까지 알려줘
   * `du -ah /home/iamslash` 모든 파일과 디렉토리 알려줘
-  * `du -hk /home/iamslash`
-  * `du -hm /home/iamslash`
-  * `du -hc /home/iamslash` 마지막에 total보여줘
-  * `du -ah --exclude="*.txt /home/iamslash"`
-  * `du -ah --time /home/iamslash`
+  * `du -hk /home/iamslash` KB
+  * `du -hm /home/iamslash` MB
+  * `du -hc /home/iamslash` 마지막에 total 보여줘
+  * `du -ah --exclude="*.txt" /home/iamslash`
+  * `du -ah --time /home/iamslash` last modified time 도 보여줘
 * `df`
-  * `df -h` free space를 읽기쉬운 형식으로 보여줘
-  * `df -ah` 모든 파일 시스템에 대한 free space를 읽기쉬운 형식으로 알려다오
-  * `df -ih` i-node정보좀 털어봐라
+  * `df -h` human readable format
+  * `df -ah` 모두 보여다오
+  * `df -ih` i-node 정보좀 털어봐라
   * `df -Th` 파일 시스템 타입좀
-  * `df -th ext3` ext3포함해서 알려줘
-  * `df -xh ext3` ext3빼고 알려줘
+  * `df -th ext3` ext3 포함해서 알려줘
+  * `df -xh ext3` ext3 빼고 알려줘
 * `netstat`
   * `apt install net-tools`
   * 네트워크 상태좀 알려다오
