@@ -1378,7 +1378,7 @@ $ echo $( cat file )
 보통 다음과 같이 사용한다.
 
 ```bash
-(( arithmetic-expr ))
+$(( arithmetic-expr ))
 ```
 
 산술연산을 계산한다.
@@ -1900,7 +1900,6 @@ $ for imgfile in ~/tmp/**/*.{png,jpg,gif}; do
       echo "$imgfile"
 done
 
-
 $ awk 'BEGINFILE { print FILENAME; nextfile }' **/*.txt
 ....
 ....
@@ -2235,7 +2234,7 @@ $ info printf
 
 # Shell Options
 
-shell의 옵션은 `set` 과 `shopt` 를 이용하여 설정할 수 있다. `shopt` 는 bash 전용이다. 옵션의 설정값은 sh의 경우 `SHELLOPTS` 에 bash의 경우 `BASHOPTS` 에 저장된다.
+shell 의 옵션은 `set` 과 `shopt` 를 이용하여 설정할 수 있다. `shopt` 는 bash 전용이다. 옵션의 설정값은 sh의 경우 `SHELLOPTS` 에 bash의 경우 `BASHOPTS` 에 저장된다.
 
 ## set
 

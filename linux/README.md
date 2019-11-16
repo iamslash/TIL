@@ -382,7 +382,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * ip 를 주고 domain 을 확인하자.
 * `curl`
   * [curl 설치 및 사용법 - HTTP GET/POST, REST API 연계등](https://www.lesstif.com/pages/viewpage.action?pageId=14745703)
-  * URL을 활용하여 data전송하는 program. HTTP, HTTPS, RTMP 등등을 지원한다.
+  * URL 을 활용하여 data 전송하는 program. HTTP, HTTPS, RTMP 등등을 지원한다.
   * `curl "http://a.b.com/a?a=1"`
     * HTTP GET
   * `curl -X POST http://a.b.com`
@@ -399,10 +399,10 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * authenticate with OAuth2 token
 `curl -d @a.js -H "Content-Type: application/json" --user-agent "Mozilla/5.0 (Windows NT 6.2; WOW64) AppleWebKit/537.14 (KHTML, like Gecko) Chrome/24.0.1292.0 Safari/537.14" http://a.b.com/a`
   * `-d` 를 이용하여 `a.js` 를 읽어서 HTTP POST 데이터로 전송한다.
-  * `-H` 를 이용하여 HTTP HEAD 를 설정한다.
+  * `-H` 를 이용하여 HTTP HEAD 를 설정한다. 여러개의 HEAD 를 전송하고 싶다면 `-H` 를 여러개 사용하라.
   * `--user-agent` 를 이용하여 BROWSER 를 설정한다.
 * `wget`
-  * web에서 파일좀 내려받아다오
+  * web 에서 파일좀 내려받아다오
   * `wget ftp://a.b.com/a.msg`
 * `traceroute`
   * 네트워크 호스트까지 경로를 추적하자. 특정 라우터 까지 어떤 라우터들을 거쳐 가는가?
@@ -410,7 +410,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `locate, updatedb`
   * 파일이름에 해당하는 걸 찾아다오
 * `sudo`
-  * 다른 유저로 command를 실행하자.
+  * 다른 유저로 command 를 실행하자.
   * `sudo find / -name "aaa"`
 * `su`
   * EUID, EGID 를 수정하여 SHELL 을 실행하자.
@@ -424,8 +424,9 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `tee`
   * stdin 으로 입력 받고 stdout 과 파일로 출력하자.
   * `ls | tee a.txt`
-    * `ls > file`은 stdout 말고 파일로만 출력한다.
+    * `ls > file` 은 stdout 말고 파일로만 출력한다.
   * `ls | tee -a a.txt`
+    * stdout 으로 출력하고 파일레 추가하라.
   * `ls | tee a.txt b.txt c.txt`
 * `script`
   * 갈무리
@@ -491,6 +492,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     # Prints the class and priority of the processes with PID 89 and 91.    
     $ ionice -p 89 91
     ``` 
+
 ## 유저 관리
 
 * `useradd`
@@ -524,8 +526,6 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `top`
   * `cat /proc/meminfo`
   
-----
-
 * `uptime`
   * `13:24:20 up  3:18,  0 users,  load average: 0.00, 0.01, 0.00`
   * 시스템이 `13:24:20` 부터 `3:18` 동안 살아있어
@@ -590,7 +590,6 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `swapd` 는 Virtual Memory 즉 DISK 에 상주하는 VM 의 크기이다.
   * active memory are pages which have been accessed "recently", inactive memory are pages which have not been accessed "recently"
     * [Linux inactive memory @ stackexchange](https://unix.stackexchange.com/questions/305606/linux-inactive-memory)
-
   * `vmstat -s` 부트이후 통계
     ```
             1999 M total memory
@@ -679,24 +678,14 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * `%util` : Device utilization. 
 * `free`
   * physical memory 와 swap memory 의 상태를 알려다오
-    * `buffers` : For the buffer cache, used for block device I/O.
-    * `cached` : For the page cache, used by file systems.
+    * `total physical memory = used + free + shared + buffers + cached`
+    * `buffers` : For the buffer cache, used for block device I/O, saves i-node data to reduce DISK seek time.
+    * `cached` : For the page cache, used by file systems, saves file data to reduce I/O.
+    * `available` : include `free` and a part of `buff/cache`.
   * `free -h`
     * human readable 하게 보여줘
   * `free -ht` total 추가해조
   * `free -hts 5` 5초마다 갱신해서 보여줘
-  * [free example](http://www.golinuxhub.com/2015/02/what-is-bufferscache-in-free-command-in.html)
-    * physical memory = 2048
-      * 2048 = 1869 + 152 (부팅때문에 커널에 의해 예약된 공간)
-    * free 가 471 이지만 `buffer/cache adjust line` 을 통해 895 까지 확장 될 수 있음을 알 수 있다.
-
-    ```
-    # free -m
-                 total       used       free     shared    buffers     cached
-    Mem:          1869       1398        471          0         24        400
-    -/+ buffers/cache:        974        895
-    Swap:         3999          0       3999
-    ```
 
 * `sar`
   * network interface throughput
@@ -704,7 +693,6 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     ```
     $ vim /etc/default/sysstat
     ENABLED = true
-    $
     ```
   * `sar -n DEV 1`
   * `sar -n TCP,ETCP 1`
@@ -731,14 +719,6 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `SHIFT + m` 메모리 사용량이 큰 순서대로 정렬
   * `SHIFT + p` cpu 사용량이 큰 순서대로 정렬
   * `SHIFT + t` 실행시간이 큰 순서대로 정렬
-
-    | class        | 이름    | 설명                                                                     |
-    | ------------ | ----- | ---------------------------------------------------------------------- |
-    | load average |       | 1분, 5분, 15분동안 run queue 에 저장된 job 의 평균개수이다. 1 이면 여유 5 이면 버겁고 10 이상이면 과부하이다. |
-    | cpu          | us    | user 용 processor 활용 비율                                                 |
-    |              | sy    | system 용 processor 활용 비율                                               |
-    |              | id    | idle 용 processor 활용 비율                                                 |
-    | PhysysMem    | wired | non-paged pool???                                                      |
 
 * meminfo
   * [리눅스 메모리 정보](https://classpath.tistory.com/306)
@@ -995,6 +975,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `echo a b c d e f | xargs -n 3` argument는 3개씩 한조가 되라
   * `echo a b c d e f | xargs -p -n 3` prompt 등장
   * `ls -t | xargs -I % sh -c "echo %; echo %"`
+    * % 를 argument 로 해서 여러 command 를 실행하라
   * `find . -name "*.c" | xargs rm -rf`
   * `find . -name "*.c" -print0 | xargs -0 rm -rf`
   * `find . -name '*.c' | xargs grep 'stdlib.h'`
@@ -1048,16 +1029,18 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `ls | head -5`
 * `awk`
   * [awk](/awk/README.md)
+  * `cat a.txt | awk '{print $4}'`
+    * a.txt 를 읽어서 매 줄마다 4 번 째 컬럼만 출력하라
 * `uniq`
   * `uniq a.txt` 유일한 라인만 출력
   * `uniq -c a.txt` 중복된 라인의 개수를 출력
-  * `uniq -d a.txt` 중복된 녀석들은 제거해라.
-  * `uniq -D a.txt` 중복된 녀석들은 제거하지마라
-  * `uniq -u a.txt` 중복되지 않은 행들은?
-  * `uniq -c -w 8 a.txt` 처음 8바이트만 중복되지 않은 녀석들을 보여다오
-  * `uniq -D -w 8 a.txt` 처음 8바이트만 중복된 녀석들을 보여다오
-  * `uniq -D -s 2 a.txt` 2바이트는 건너띄고 중복된 녀석들을 보여다오
-  * `uniq -D -f 2 a.txt` 2필드는 건너띄고 중복된 녀석들을 보여다오
+  * `uniq -d a.txt` 중복된 라인들을 하나씩만 출력.
+  * `uniq -D a.txt` 중복된 라인들을 모두 출력
+  * `uniq -u a.txt` 유일한 라인들을 출력
+  * `uniq -c -w 8 a.txt` 처음 8 바이트만 중복되지 않은 라인들
+  * `uniq -D -w 8 a.txt` 처음 8 바이트만 중복된 라인들 모두 보여다오
+  * `uniq -D -s 2 a.txt` 2 바이트는 건너띄고 중복된 라인들 모두
+  * `uniq -D -f 2 a.txt` 2 필드는 건너띄고 중복된 라인들 모두
 * `sort`
   * `sort a.txt > b.txt`
   * `sort -r a.txt > b.txt`
@@ -1068,31 +1051,39 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `sort -u a.txt` 정렬하고 중복된 거 지워라
   * `sort a.txt b.txt`
   * `sort -u a.txt b.txt`
-  * `ls -l /home/$USER | sort -t "," -nk2,5 -k9` 숫자인 2, 5열, 문자인 9열을 기준으로 정렬해라.
+  * `ls -l /home/$USER | sort -t "," -nk2,5 -k9` 숫자인 2, 5 열, 문자인 9 열을 기준으로 정렬해라.
 * `wc`
   * `wc a.txt` 줄개수, 단어수, 바이트 표시해조
   * `wc -l a.txt` 줄개수 보여줘
   * `wc -w a.txt` 단어수 보여줘
-  * `wc -c a.txt` `wc -m a.txt` 바이트수 보여도
-  * `wc -L a.txt` 가장 길이가 긴 행의 문자개수는?
+  * `wc -c a.txt` 바이트수 보여도
+  * `wc -m a.txt` 바이트수 보여도
+  * `wc -L a.txt` 가장 길이가 긴 행의 문자개수
 
 ## 텍스트
 
 * `paste`
   * 파일의 특정 행들을 머지해줘
+  * `seq 1 10 | paste - - -`
+    * `seq 1 10 | column`
   * `paste a.txt`
   * `paste -s a.txt` 모든 행을 join 해줘
-  * `paste -d, -s a.txt` comma를 구분자로 모든 행을 join해도
+  * `paste -d, -s a.txt` comma 를 구분자로 모든 행을 join 해도
   * `paste - - < a.txt` 2열로 merge해라.
-  * `paste -d':' - - < a.txt` 구분자는 `:`로 하고 2열로 merge해라.
-  * `paste -d ':,' - - - < a.txt` 구분자는 `:` `,` 로 하고 3열로 merge해라.
-  * `paste a.txt b.txt` 파일 두개 2열로 merge하라.
-  * `paste -d, a.txt b.txt` 구분자는 `,` 으로 파일 두개 2열로 merge해라.
+  * `paste -d':' - - < a.txt` 구분자는 `:` 로 하고 2 열로 merge 해라.
+  * `paste -d ':,' - - - < a.txt` 구분자는 `:` `,` 로 하고 3 열로 merge 해라.
+  * `paste a.txt b.txt` 파일 두개 2 열로 merge 하라.
+  * `paste -d, a.txt b.txt` 구분자는 `,` 으로 파일 두개 2 열로 merge 해라.
   * `cat b.txt | paste -d, a.txt -`
   * `cat a.txt | paste -d, - b.txt`
   * `cat a.txt b.txt | paste -d, - -`
   * `paste -d'\n' a.txt b.txt`
 * [sed](/sed/)
+  * `sed -e 's/regex/REGEXP/g' a.txt`
+    * a.txt 를 읽어서 모든 regex 를 REGEXP 로 바꿔라
+  * `sed -e 's/regex/REGEXP/g' a.txt > b.txt`
+  * `sed -e 's/regex/REGEXP/g' -i a.txt`
+    * a.txt 를 읽어서 모든 regex 를 REGEXP 로 바꿔서 a.txt 에 저장하라
 * `tr`
   * 문자열 번역해줘
   * `echo HELLO | tr "[:upper:]" "[:lower:]"` 대문자를 소문자로 바꾸어 다오
@@ -1146,7 +1137,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `nm -g a.out` external 심볼만 알려다오
   * `nm -g --size-sort a.out` 실볼을 크기 정렬해서 알려다오
 * `strace`
-  * system call과 signal을 모니터링 해주라. 소스는 없는데 디버깅 하고 싶을때 유용하다
+  * system call 과 signal 을 모니터링 해주라. 소스는 없는데 디버깅 하고 싶을때 유용하다
   * `strace ls`
   * `strace -e open ls` system call중 open만 보여주라
   * `strace -e trace-open,read ls /home` system call중 open, read보여주라
@@ -1157,37 +1148,36 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `strace -r ls` 상대 시간으로 보여다오
   * `strace -c ls /home` 테이블 형태로 보여다오
 * `ltrace`
-  * library call좀 보여다오
+  * library call 좀 보여다오
   * `ltrace ls`
   * `ltrace -p 1275`
 * `pstack`
-  * process의 callstack을 thread별로 보여다오
+  * process 의 callstack 을 thread 별로 보여다오
   * `pstack 1275` 
 * `pmap`
   * process의 memory map좀 보여다오
   * `pmap 1275`
-  * `pmap -x 1275`
-  * `pmap -d 1275`
-  * `pmap -q 1275` header와 footer는 보여주지 말아라
-  * 
+  * `pmap -x 1275` show details
+  * `pmap -d 1275` show the device format
+  * `pmap -q 1275` header 와 footer 는 보여주지 말아라
 * `valgrind`
   * 메모리 누수를 검사하자.
   * `valgrind --leak-check=yes myprog arg1 arg2`
 * `od`
   * octal numbers(8진수)로 보여다오
-  * `od -b a.txt`
+  * `od -b a.txt` 8 진수로 보여줘
   * `od -c a.txt` 캐릭터로 보여줄래?
-  * `od -Ax -c a.txt` byte offset을 hexadecimal형식으로 보여다오
-  * `od -An -c a.txt` byte offset제외 하고 보여다오
-  * `od -j9 -c a.txt` 9bytes  건너뛰고 보여다오
-  * `od -N9 -c a.txt` 9bytes만 보여다오
+  * `od -Ax -c a.txt` byte offset 을 hexadecimal 형식으로 보여다오
+  * `od -An -c a.txt` byte offset 제외 하고 보여다오
+  * `od -j9 -c a.txt` 9 bytes 건너뛰고 보여다오
+  * `od -N9 -c a.txt` 9 bytes 만 보여다오
   * `od -i a.txt` decimal 형식으로 보여다오
   * `od -x a.txt` hexadecimal 2 byte단위로 보여다오
   * `od -o a.txt` octal 2 byte단위로 보여다오
   * `od -w1 -c -Ad a.txt`
   * `od -w1 -v -c -Ad a.txt` 중복된 것도 보여줘
 * `strings`
-  * 최소한 4byte보다 크거나 같은 문자열을 보여다오
+  * 최소한 4 byte 보다 크거나 같은 문자열을 보여다오
   * `strings a.out`
   * `strings a.out | grep hello`
   * `strings -n 2 welcome | grep ls`
@@ -1198,11 +1188,13 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 * `tar`
   * `tar -cvf a.tar /home/iamslash/tmp`
-  * `tar -cvzf a.tar.gz /home/iamslash/tmp`
-  * `tar -cvjf a.tar.gz2 /home/iamslash/tmp`
+  * `tar -czvf a.tar -C /home/iamslash/ tmp`
+    * `/home/iamslash/` 에서 tmp 를 압축해라
+  * `tar -czvf a.tar.gz /home/iamslash/tmp`
+  * `tar -cjvf a.tar.gz2 /home/iamslash/tmp`
   * `tar -xvf a.tar`
-  * `tar -xvf a.tar.gz`
-  * `tar -xvf a.tar.gz2`
+  * `tar -xzvf a.tar.gz`
+  * `tar -xjvf a.tar.gz2`
 * `compress`
   * Lempel-Ziv 코딩으로 압축한다.
   * `compress a.txt`
@@ -1245,8 +1237,10 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `xzip -c a.txt > a.xz` `xzip -c b.txt >> a.xz`
   * `xzcat a.txt.xz` `xzgrep exa a.txt.xz`
 * `zless`
+  * less with gz files
   * `zless a.txt.gz`
 * `bzless`
+  * less with bz2 files
   * `bzless a.txt.bz2`
 
 ## 에디터
@@ -1283,16 +1277,15 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * run `/tmp/a.sh` every min without logs
   * `* * * * * /tmp/a.sh > /tmp/a.txt`
     * run `/tmp/a.sh` every min and write STDOUT to `/tmp/a.txt`
-  * `* * * * * /tmp/a.sh >> /tmp/a.txt`
-    * run `/tmp/a.sh` every min and append STDOUT to `/tmp/a.txt`
+  * `* * * * * /tmp/a.sh >> /var/log/a.log`
+    * run `/tmp/a.sh` every min and append STDOUT to `/var/log/a.log`
   * cron logs
     * `$ cat /var/log/cron`
   * view crontab
     * `$ cat /var/spool/cron/crontab/root`
 
 * systemd
-  * `System has not been booted with systemd as init system (PID 1). Can't operate.` error 해결 방법
-    *   
+  * `System has not been booted with systemd as init system (PID 1). Can't operate.` error 해결 방법???
   * `systemctl` 현재 작동하고 있는 서비스들 보여줘
   * `systemctl list-unit-files` 작동하지 않아도 좋으니 모든 서비스들 보여줘
   * `systemctl enable vsftpd` 리눅스 부팅할때 vsftpd 시작해줘
@@ -1380,6 +1373,7 @@ owner 가 root 인 파일들을 생각해보자. setuid 가 설정되어 있으�
 ```bash
 find / -user root -perm 4000 -print
 ```
+
 # System Monitoring
 
 ## swapin, swapout
@@ -1396,4 +1390,4 @@ swapping 되야 한다. 디스크에서 물리메모리로 프로세스를 옮�
 swap-in 이라고 한다. 물리 메모리에서 디스크로 프로세스를 옮기는 작업을
 swap-out 이라고 한다.
 
-swap-in(page-in), swap-out(page-out) 의 횟수가 많다면 물리 메모리가 부족하다는 의미이다.
+swap-in, swap-ou 의 횟수가 많다면 물리 메모리가 부족하다는 의미이다.
