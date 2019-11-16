@@ -38,6 +38,13 @@ linux 를 활용할 때 필요한 지식들을 정리한다. macOS, sunos, hp-ux
 unix 계열 os 는 모두 해당된다. linux 와 함께 [bash](/bash/),
 [awk](/awk/), [sed](/sed/) 역시 학습이 필요하다.
 
+systemd 가 설치된 [ubuntu docker image](https://hub.docker.com/r/jrei/systemd-ubuntu) 를 이용하여 실습하자.
+
+```bash
+$ docker run -d --name systemd-ubuntu --privileged jrei/systemd-ubuntu
+$ docker exec -it systemd-ubuntu bash
+```
+
 # References
 
 * [The Art of Command Line @ github](https://github.com/jlevy/the-art-of-command-line/blob/master/README-ko.md)
@@ -112,46 +119,46 @@ linux 는 파일의 sticky bit 를 무시한다. 디렉토리에 sticky bit 가 
 
 # Special Directories
 
-| DIRECTORY | DESCRIPTION |
-|-----------|-------------|
-| /	    | / also know as “slash” or the root. |
-| /bin	| Common programs, shared by the system, the system administrator and the users. |
-| /boot	| Boot files, boot loader (grub), kernels, vmlinuz |
-| /dev	| Contains references to system devices, files with special properties. |
-| /etc	| Important system config files. |
-| /home	| Home directories for system users. |
-| /lib	| Library files, includes files for all kinds of programs needed by the system and the users. |
-| /lost+found	| Files that were saved during failures are here. |
-| /mnt	| Standard mount point for external file systems. |
-| /media|	Mount point for external file systems (on some distros). |
-| /net	| Standard mount point for entire remote file systems ? nfs. |
-| /opt	| Typically contains extra and third party software. |
-| /proc	| A virtual file system containing information about system resources. |
-| /root	| root users home dir. |
-| /sbin	| Programs for use by the system and the system administrator. |
-| /tmp	| Temporary space for use by the system, cleaned upon reboot. |
-| /usr	| Programs, libraries, documentation etc. for all user-related programs. |
-| /var	| Storage for all variable files and temporary files created by users, such as log files, mail queue, print spooler. Web servers, Databases etc. |
+| DIRECTORY   | DESCRIPTION                                                                                                                                    |
+| ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| /           | / also know as “slash” or the root.                                                                                                            |
+| /bin        | Common programs, shared by the system, the system administrator and the users.                                                                 |
+| /boot       | Boot files, boot loader (grub), kernels, vmlinuz                                                                                               |
+| /dev        | Contains references to system devices, files with special properties.                                                                          |
+| /etc        | Important system config files.                                                                                                                 |
+| /home       | Home directories for system users.                                                                                                             |
+| /lib        | Library files, includes files for all kinds of programs needed by the system and the users.                                                    |
+| /lost+found | Files that were saved during failures are here.                                                                                                |
+| /mnt        | Standard mount point for external file systems.                                                                                                |
+| /media      | Mount point for external file systems (on some distros).                                                                                       |
+| /net        | Standard mount point for entire remote file systems ? nfs.                                                                                     |
+| /opt        | Typically contains extra and third party software.                                                                                             |
+| /proc       | A virtual file system containing information about system resources.                                                                           |
+| /root       | root users home dir.                                                                                                                           |
+| /sbin       | Programs for use by the system and the system administrator.                                                                                   |
+| /tmp        | Temporary space for use by the system, cleaned upon reboot.                                                                                    |
+| /usr        | Programs, libraries, documentation etc. for all user-related programs.                                                                         |
+| /var        | Storage for all variable files and temporary files created by users, such as log files, mail queue, print spooler. Web servers, Databases etc. |
 
 # Special Files
 
-| DIRECTORY	| DESCRIPTION |
-|-----------|-------------|
-| /etc/passwd   |  Contains local Linux users. |
-| /etc/shadow   |	Contains local account password hashes. |
-| /etc/group    |	Contains local account groups. |
-| /etc/init.d/  |	Contains service init script ? worth a look to see whats installed. |
-| /etc/hostname	| System hostname. |
-| /etc/network/interfaces |	Network interfaces. |
-| /etc/resolv.conf	      | System DNS servers. |
-| /etc/profile	          | System environment variables. |
-| ~/.ssh/	| SSH keys. |
-| ~/.bash_history	| Users bash history log. |
-| /var/log/	        | Linux system log files are typically stored here. |
-| /var/adm/	        | UNIX system log files are typically stored here. |
-| /var/log/apache2/access.log | Apache access log file typical path. |
-| /var/log/httpd/access.log | Apache access log file typical path. |
-| /etc/fstab	| File system mounts. |
+| DIRECTORY                   | DESCRIPTION                                                         |
+| --------------------------- | ------------------------------------------------------------------- |
+| /etc/passwd                 | Contains local Linux users.                                         |
+| /etc/shadow                 | Contains local account password hashes.                             |
+| /etc/group                  | Contains local account groups.                                      |
+| /etc/init.d/                | Contains service init script ? worth a look to see whats installed. |
+| /etc/hostname               | System hostname.                                                    |
+| /etc/network/interfaces     | Network interfaces.                                                 |
+| /etc/resolv.conf            | System DNS servers.                                                 |
+| /etc/profile                | System environment variables.                                       |
+| ~/.ssh/                     | SSH keys.                                                           |
+| ~/.bash_history             | Users bash history log.                                             |
+| /var/log/                   | Linux system log files are typically stored here.                   |
+| /var/adm/                   | UNIX system log files are typically stored here.                    |
+| /var/log/apache2/access.log | Apache access log file typical path.                                |
+| /var/log/httpd/access.log   | Apache access log file typical path.                                |
+| /etc/fstab                  | File system mounts.                                                 |
 
 # Package Managers
 
@@ -294,9 +301,9 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * 이름에 해당하는 프로세스에게 시그널을 보내자.
   * `pkill -HUP syslogd`
 * `pstree`
+  * `apt-get install psmisc`
   * 프로세스의 트리를 보여다오
   * `pstree -a`
-  * `apt-get install psmisc`
 * `telnet`
   * TELNET protocol client
 * `nc` netcat
@@ -505,17 +512,17 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 ## 시스템 모니터링
 
 * [Linux Performance Analysis in 60,000 Milliseconds](https://medium.com/netflix-techblog/linux-performance-analysis-in-60-000-milliseconds-accc10403c55)
-  * uptime
-  * dmesg | tail
-  * vmstat 1
-  * mpstat -P ALL 1
-  * pidstat 1
-  * iostat -xz 1
-  * free -m
-  * sar -n DEV 1
-  * sar -n TCP,ETCP 1
-  * top
-  * meminfo
+  * `uptime`
+  * `dmesg | tail`
+  * `vmstat -S M 1`
+  * `mpstat -P ALL 1`
+  * `pidstat 1`
+  * `iostat -xz 1`
+  * `free -m`
+  * `sar -n DEV 1`
+  * `sar -n TCP,ETCP 1`
+  * `top`
+  * `cat /proc/meminfo`
   
 ----
 
@@ -532,72 +539,139 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * 치명적인 내용이 있는지 반드시 체크해야함
 * `vmstat`
   * [vmstat에 대한 고찰(성능) 1편](http://egloos.zum.com/sword33/v/5976684)
+  * [Vmstat에 대한 고찰(성능) 2편](http://egloos.zum.com/sword33/v/5997876)
   * [vmstat(8) - Linux man page](https://linux.die.net/man/8/vmstat)
   * virtual memory 통계 보여조
+
+    | 범주     | 필드 이름  | 설명                                                                  |
+    | ------ | ------ | ------------------------------------------------------------------- |
+    | procs  | r      | The number of processes waiting for run time                        |
+    |        | b      | The number of processes in uninterruptible sleep                    |
+    | memory | swpd   | the amount of virtual memory used in KB                             |
+    |        | free   | the amout of idle memory in KB                                      |
+    |        | buff   | the amout of memory used as buffers in KB                           |
+    |        | cache  | the amout of memory used as cache in KB                             |
+    |        | inact  | the amout of inactive memory in KB                                  |
+    |        | active | the amout of active memory in KB                                    |
+    | swap   | si     | amount of memory swapped in from disk (/s)                          |
+    |        | so     | amount of memory swapped to disk (/s)                               |
+    | IO     | bi     | blocks received from a block device (blocks/s)                      |
+    |        | bo     | amount of memory swapped to disk (blocks/s)                         |
+    | system | in     | The number of interrupts per second. including the clock.           |
+    |        | cs     | The number of context switches per second.                          |
+    | CPU    | us     | Time spent running non-kernel code (user time, including nice time) |
+    |        | sy     | Time spent running kernel code (system time)                        |
+    |        | id     | Time spent idle, Prior to Linux 2.5.41, this inclues IO-wait time.  |
+    |        | wa     | Time spent waiting for IO, Prior to Linux 2.5.41, inclues in idle.  |
+    |        | st     | Time stolen from a virtual machine, Prior to Linux 2.5.41, unknown. |
+
   * `vmstat 1`
     * 1 초 마다 보여다오
+    ```bash
+    procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+    r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+    6  0      0 376096  93376 788776    0    0    15    34  234   67  2  3 94  1  0
+    ```
   * `vmstat -S M 1`
     * 1 초 마다 MB 단위로 보여다오
   * `total physical memory = free + buff + cache + used`
     * buff 는 i-node 값 즉 파일들의 실제 주소를 보관한다. disk seek time 을 최소화 할 수 있다.
-    * cache 는 파일의 real data 를 cache 한다.
-    * free 가 부족하면 cache 에서 옮겨갈 수도 있다.
-  * `vmstat -s` 부트이후 통계
-  * `vmstat -S` 스와핑 통계
-  * `vmstat -i` 장치당 인터럽트
-  * `r` 이 `CPU` 보다 크면 CPU 의 모든 core 가 일을 하고 있는 상황이다.
-  * `free` 가 부족하면 메모리가 부족한 상황이다.
+    * cache 는 파일의 real data 를 cache 한다. disk read performance 를 향상시킬 수 있다.
+    * free 가 부족하면 cache 에서 free 로 메모리가 옮겨갈 수도 있다. free 가 부족하다고 꼭 메모리가 부족한 상황은 아니다.
+    * `/proc/sys/vm/vfs_cache_pressure` 가 buff 와 cache 의 비율을 설정하는 값이다. default 는 100 이다. 파일의 개수가 많아서 buff 가 중요한 시스템이라면 이 것을 높게 설정한다.
+    * `/proc/sys/vm/min_free_kbytes` 는 free 의 최소 용량이다. 이것이 낮아지면 cache 가 높아진다. hit ratio 가 낮은 시스템인 경우 cache 가 필요 없으므로 min_free_kbytes 를 늘려주자.
+    * `/proc/sys/vm/swappiness` 는 swapping 하는 정도이다. 이것이 높으면 cache 를 삭제하는 것보다 swapping 하는 비율이 높아진다. 이 것이 낮으면 swapping 하는 것보다 cache 를 삭제하는 비율이 높아진다. 이 것을 0 으로 설정하면 swapping 을 하지 않기 때문에 disk 와 memory 사이에 데이터 전송이 발생하지 않는다. memory 가 낮고 memory 사용량이 높은 시스템의 경우 swappiness 를 0 보다 크게 설정해야 한다.
+  * `r` 이 `CPU core` 보다 크면 CPU 의 모든 core 가 일을 하고 있는 상황이다.
+  * `b` 가 `CPU core` 보다 크면 disk write bottle neck 일 수 있다.
+  * `wa` 가 크면 disk read bottle neck 일 수 있다.
   * `si, so` 가 0 이 아니면 메모리가 부족한 상황이다.
-  * `us, sy, id, wa, st` 중에 `id` 가 작으면 CPU 가 바쁜 상황이다.
+  * `id` 가 작으면 CPU 가 바쁜 상황이다.
+  * `in` 은 인터럽트이다. 주변장치에서 CPU 에 자원을 요청하는 횟수이다. 일반 적인 컴퓨터에서 마우스의 인터럽트가 많지만 서버의 경우는 이더넷장치와 DISK 의 인터럽트가 많다.
+  * `swapd` 는 Virtual Memory 즉 DISK 에 상주하는 VM 의 크기이다.
+  * active memory are pages which have been accessed "recently", inactive memory are pages which have not been accessed "recently"
+    * [Linux inactive memory @ stackexchange](https://unix.stackexchange.com/questions/305606/linux-inactive-memory)
 
-| 범주   | 필드 이름 | 설명                                                                                              |
-|--------|-----------|---------------------------------------------------------------------------------------------------|
-| procs  | r         | The number of processes waiting for run time |
-|        | b         | The number of processes in uninterruptible sleep |
-| memory | swpd      | the amount of virtual memory used in KB |
-|        | free      | the amout of idle memory in KB |
-|        | buff      | the amout of memory used as buffers in KB |
-|        | cache      | the amout of memory used as cache in KB |
-|        | inact      | the amout of inactive memory in KB |
-|        | active      | the amout of active memory in KB |
-| swap   | si      | amount of memory swapped in from disk (/s) |
-|        | so      | amount of memory swapped to disk (/s) |
-| IO     | bi      | blocks received from a block device (blocks/s) |
-|        | bo      | amount of memory swapped to disk (blocks/s) |
-| system | in      | The number of interrupts per second. including the clock. |
-|        | cs      | The number of context switches per second. |
-| CPU    | us      | Time spent running non-kernel code (user time, including nice time) |
-|        | sy      | Time spent running kernel code (system time) |
-|        | id      | Time spent idle, Prior to Linux 2.5.41, this inclues IO-wait time. |
-|        | wa      | Time spent waiting for IO, Prior to Linux 2.5.41, inclues in idle. |
-|        | st      | Time stolen from a virtual machine, Prior to Linux 2.5.41, unknown. |
+  * `vmstat -s` 부트이후 통계
+    ```
+            1999 M total memory
+             769 M used memory
+             782 M active memory
+             713 M inactive memory
+             367 M free memory
+              91 M buffer memory
+             770 M swap cache
+            1023 M total swap
+               0 M used swap
+            1023 M free swap
+             94387 non-nice user cpu ticks
+                 0 nice user cpu ticks
+            115807 system cpu ticks
+           4524005 idle cpu ticks
+             57978 IO-wait cpu ticks
+                 0 IRQ cpu ticks
+             11650 softirq cpu ticks
+                 0 stolen cpu ticks
+            704619 pages paged in
+           1647336 pages paged out
+                 0 pages swapped in
+                 0 pages swapped out
+          11245885 interrupts
+          89013771 CPU context switches
+        1573848951 boot time
+              3959 forks
+    ```
 
 * `mpstat`
   * `apt-get install sysstat`
   * CPU 상황을 자세히 모니터링한다.
-  * `mpstat -P ALL 1`
 
-| name | desc |
-|----|-----|
-| CPU  | Processor number |
-| %usr | while executing at the user level (application) |
-| %nice | while executing at the user level with nice priority. |
-| %sys | while executing at the system level (kernel) |
-| %iowait | percentage of time that the CPU or CPUs were idle during which the system had an outstanding disk I/O request. |
-| %irq | percentage of time spent by the CPU or CPUs to service hardware interrupts. |
-| %soft | percentage of time spent by the CPU or CPUs to service software interrupts. |
-| %steal | percentage of time spent in involuntary wait by the virtual CPU or CPUs while the hypervisor was servicing another virtual processor. |
-| %guest | percentage of time spent by the CPU or CPUs to run a virtual processor. |
-| %gnice | percentage of time spent by the CPU or CPUs to run a niced guest. |
-| %idle | percentage of time that the CPU or CPUs were idle and the system did not have an outstanding disk I/O request. |
+    | name    | desc                                                                                                                                  |
+    | ------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+    | CPU     | Processor number                                                                                                                      |
+    | %usr    | while executing at the user level (application)                                                                                       |
+    | %nice   | while executing at the user level with nice priority.                                                                                 |
+    | %sys    | while executing at the system level (kernel)                                                                                          |
+    | %iowait | percentage of time that the CPU or CPUs were idle during which the system had an outstanding disk I/O request.                        |
+    | %irq    | percentage of time spent by the CPU or CPUs to service hardware interrupts.                                                           |
+    | %soft   | percentage of time spent by the CPU or CPUs to service software interrupts.                                                           |
+    | %steal  | percentage of time spent in involuntary wait by the virtual CPU or CPUs while the hypervisor was servicing another virtual processor. |
+    | %guest  | percentage of time spent by the CPU or CPUs to run a virtual processor.                                                               |
+    | %gnice  | percentage of time spent by the CPU or CPUs to run a niced guest.                                                                     |
+    | %idle   | percentage of time that the CPU or CPUs were idle and the system did not have an outstanding disk I/O request.                        |
+  * `mpstat -P ALL 1`
+    * 1 초 마다 모든 CPU 에 대해 보여줘
 
 * `pidstat`
-  * process 별 TOP
+  * process 별로 CPU 의 점유율을 확인할 수 있다.
+  * `pidstat`
+    ```
+    Linux 4.9.184-linuxkit (86e6c5bfb041)   11/16/19        _x86_64_        (2 CPU)
+
+    03:59:53      UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
+    03:59:53        0         1    0.0%    0.0%    0.0%    0.0%    0.0%     1  bash
+    03:59:53        0        10    0.0%    0.0%    0.0%    0.0%    0.0%     1  bash    
+    ```
   * `pidstat 1`
-  * CPU Command 별 `%CPU` 를 주목하자.
+    * 1 초 마다 보여도
 
 * `iostat`
-  * block device io 를 모니터링 하자.
+  * block device 별로 io 를 모니터링 하자.
+  * `man iostat`
+  * `iostat`
+    ```
+    Linux 4.9.184-linuxkit (86e6c5bfb041)   11/16/19        _x86_64_        (2 CPU)
+
+    avg-cpu:  %user   %nice %system %iowait  %steal   %idle
+              2.10    0.00    2.81    1.20    0.00   93.88
+
+    Device             tps    kB_read/s    kB_wrtn/s    kB_dscd/s    kB_read    kB_wrtn    kB_dscd
+    sda              18.40        14.87        78.69         0.00     416883    2205424          0
+    sr0               0.09         6.74         0.00         0.00     188798          0          0
+    sr1               0.00         0.02         0.00         0.00        470          0          0
+    sr2               0.05         3.52         0.00         0.00      98584          0          0    
+    ``` 
+  * `iostat 1`
+    * 1 초마다 보여줘
   * `iostat -xz 1`
     * `r/s, w/s, rkB/s, wkB/s` 는 각각 초당 읽기, 쓰기, kB읽기, kB 쓰기를 의미한다.
     * `await` : The average time for the I/O in milliseconds.
@@ -605,29 +679,33 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * `%util` : Device utilization. 
 * `free`
   * physical memory 와 swap memory 의 상태를 알려다오
-  * `buffers` : For the buffer cache, used for block device I/O.
-  * `cached` : For the page cache, used by file systems.
-  * `free -m`
-  * `free -b` `free -k` `free -m` `free -g`
-  * `free -t` total 추가해조
-  * `free -o` buffer adjusted line은 빼고 보여다오
-  * `free -s 5` 5초마다 갱신해서 보여줘
-  * `free -l` low, high size 통계보여줘
+    * `buffers` : For the buffer cache, used for block device I/O.
+    * `cached` : For the page cache, used by file systems.
+  * `free -h`
+    * human readable 하게 보여줘
+  * `free -ht` total 추가해조
+  * `free -hts 5` 5초마다 갱신해서 보여줘
   * [free example](http://www.golinuxhub.com/2015/02/what-is-bufferscache-in-free-command-in.html)
     * physical memory = 2048
       * 2048 = 1869 + 152 (부팅때문에 커널에 의해 예약된 공간)
-    * free가 471이지만 buffer/cache adjust line을 통해 895까지 확장 될 수 있음을 알 수 있다.
+    * free 가 471 이지만 `buffer/cache adjust line` 을 통해 895 까지 확장 될 수 있음을 알 수 있다.
 
-```
-# free -m
-             total       used       free     shared    buffers     cached
-Mem:          1869       1398        471          0         24        400
--/+ buffers/cache:        974        895
-Swap:         3999          0       3999
-```
+    ```
+    # free -m
+                 total       used       free     shared    buffers     cached
+    Mem:          1869       1398        471          0         24        400
+    -/+ buffers/cache:        974        895
+    Swap:         3999          0       3999
+    ```
 
 * `sar`
   * network interface throughput
+  * `Cannot open /var/log/sa/sa16: No such file or directory` error 해결 방법
+    ```
+    $ vim /etc/default/sysstat
+    ENABLED = true
+    $
+    ```
   * `sar -n DEV 1`
   * `sar -n TCP,ETCP 1`
   * `sar -u 1 3` 모든 CPU를 1초마다 갱신해서 3번 보여조
@@ -654,18 +732,97 @@ Swap:         3999          0       3999
   * `SHIFT + p` cpu 사용량이 큰 순서대로 정렬
   * `SHIFT + t` 실행시간이 큰 순서대로 정렬
 
-| class        | 이름  | 설명                                                                                                     |
-|--------------|-------|:--------------------------------------------------------------------------------------------------------:|
-| load average |       | 1분, 5분, 15분동안 run queue에 저장된 job의 평균개수이다. 1이면 여유 5이면 버겁고 10이상이면 과부하이다. |
-| cpu          | us    | user 용 processor 활용 비율                                                                              |
-|              | sy    | system 용 processor 활용 비율                                                                            |
-|              | id    | idle 용 processor 활용 비율                                                                              |
-| PhysysMem    | wired | non-paged pool???                                                                                        |
+    | class        | 이름    | 설명                                                                     |
+    | ------------ | ----- | ---------------------------------------------------------------------- |
+    | load average |       | 1분, 5분, 15분동안 run queue 에 저장된 job 의 평균개수이다. 1 이면 여유 5 이면 버겁고 10 이상이면 과부하이다. |
+    | cpu          | us    | user 용 processor 활용 비율                                                 |
+    |              | sy    | system 용 processor 활용 비율                                               |
+    |              | id    | idle 용 processor 활용 비율                                                 |
+    | PhysysMem    | wired | non-paged pool???                                                      |
 
 * meminfo
+  * [리눅스 메모리 정보](https://classpath.tistory.com/306)
   * [[Linux] Cached Memory 비우고 Free Memory 늘리기](http://egloos.zum.com/mcchae/v/11217429)
-  * `$ meminfo`
+
+
+    | item         | desc                  |
+    | ------------ | --------------------- |
+    | MemTotal     | total physical memory |
+    | MemFree      |                       |
+    | Buffers      |                       |
+    | Cached       |                       |
+    | SwapCache    |                       |
+    | Active       |                       |
+    | Inactive     |                       |
+    | HighTotal    |                       |
+    | LowTotal     |                       |
+    | LowFree      |                       |
+    | SwapTotal    |                       |
+    | SwapFree     |                       |
+    | Dirty        |                       |
+    | Writeback    |                       |
+    | Committed_AS |                       |
+    | Slab         |                       |
+
   * `head /proc/meminfo`
+    ```
+    MemTotal:        2047016 kB
+    MemFree:          371632 kB
+    MemAvailable:    1100580 kB
+    Buffers:           96400 kB
+    Cached:           741012 kB
+    SwapCached:            0 kB
+    Active:           804772 kB
+    Inactive:         731176 kB
+    Active(anon):     554084 kB
+    Inactive(anon):   145844 kB
+    root@86e6c5bfb041:~/tmp# cat /proc/meminfo
+    MemTotal:        2047016 kB
+    MemFree:          371632 kB
+    MemAvailable:    1100604 kB
+    Buffers:           96416 kB
+    Cached:           741020 kB
+    SwapCached:            0 kB
+    Active:           804832 kB
+    Inactive:         731148 kB
+    Active(anon):     554092 kB
+    Inactive(anon):   145844 kB
+    Active(file):     250740 kB
+    Inactive(file):   585304 kB
+    Unevictable:           0 kB
+    Mlocked:               0 kB
+    SwapTotal:       1048572 kB
+    SwapFree:        1048572 kB
+    Dirty:                 8 kB
+    Writeback:             0 kB
+    AnonPages:        695892 kB
+    Mapped:           282732 kB
+    Shmem:              1396 kB
+    Slab:              71876 kB
+    SReclaimable:      49464 kB
+    SUnreclaim:        22412 kB
+    KernelStack:        6688 kB
+    PageTables:         3672 kB
+    NFS_Unstable:          0 kB
+    Bounce:                0 kB
+    WritebackTmp:          0 kB
+    CommitLimit:     2072080 kB
+    Committed_AS:    3489592 kB
+    VmallocTotal:   34359738367 kB
+    VmallocUsed:           0 kB
+    VmallocChunk:          0 kB
+    AnonHugePages:     10240 kB
+    ShmemHugePages:        0 kB
+    ShmemPmdMapped:        0 kB
+    HugePages_Total:       0
+    HugePages_Free:        0
+    HugePages_Rsvd:        0
+    HugePages_Surp:        0
+    Hugepagesize:       2048 kB
+    DirectMap4k:       32052 kB
+    DirectMap2M:     2064384 kB
+    DirectMap1G:           0 kB    
+    ```
 
 * `du`
   * `du -h /home/iamslash`
@@ -738,7 +895,7 @@ Swap:         3999          0       3999
     * **pidstat** reports statistics based on the process id (PID)
     * **nfsiostat** displays NFS I/O statistics.
     * **cifsiostat** generates CIFS statistics.
-  * `sudo vi /etc/default/sysstat` `ENABLED="true"` 매 10분마다 데이터 수집을 위한 sadc활성화
+  * `sudo vi /etc/default/sysstat` `ENABLED="true"` 매 10분마다 데이터 수집을 위한 sadc 활성화
     * `sudo vi /etc/cron.d/sysstat` `* * * * * root command -v debian-sa1 > /dev/null && debian-sa1 1 1` 매분마다 해볼까
 
 * `ifconfig`
@@ -782,11 +939,11 @@ Swap:         3999          0       3999
   * 로그인한 녀석들 보여다오
 * `date`
   * 날짜 시간을 datetime 형식으로 출력해다오
+  * `date +"%Y-%m-%d %H:%M:%S"`
   * `date --date="12/2/2014"`
   * `date --date="next mon"`
   * `date --date=@5` UTC 이후로 5초 지났다.
   * `date --date='3 seconds ago'`
-  * `date +%<format-option>`
 * `time`
   * command 실행하고 소요시간 출력해다오
   * `time a.out`
@@ -953,9 +1110,9 @@ Swap:         3999          0       3999
   * `tr '{}' '()' < a.txt > b.txt`
   * `echo "the geek stuff" | tr -d 't'` t문자 지워줘
   * `echo "my username is 432234" | tr -d "[:digit:]"` 숫자 지워줘
-  * `echo "my username is 432234" | tr -cd "[:digit:]æ` 숫자 빼고 지워줘
+  * `echo "my username is 432234" | tr -cd "[:digit:]` 숫자 빼고 지워줘
   * `tr -cd "[:print:]" < a.txt` non printable 문자들을 지워다오
-  * `tr -s '\n' ' ' < a.txt` 모든 행을 join하자.
+  * `tr -s '\n' ' ' < a.txt` 모든 행을 join 하자.
 * `printf`
   * format string을 출력해줘
   * `printf "%s\n" "hello printf"`
@@ -1144,6 +1301,8 @@ Swap:         3999          0       3999
     * `$ cat /var/spool/cron/crontab/root`
 
 * systemd
+  * `System has not been booted with systemd as init system (PID 1). Can't operate.` error 해결 방법
+    *   
   * `systemctl` 현재 작동하고 있는 서비스들 보여줘
   * `systemctl list-unit-files` 작동하지 않아도 좋으니 모든 서비스들 보여줘
   * `systemctl enable vsftpd` 리눅스 부팅할때 vsftpd 시작해줘

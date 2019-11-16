@@ -1,7 +1,3 @@
-
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
 - [Basics](#basics)
 - [Addresses](#addresses)
@@ -14,33 +10,31 @@
 - [Debugging](#debugging)
 - [References](#references)
 - [Tips](#tips)
-    - [두개의 패턴 사이의 내용을 지우자.](#두개의-패턴-사이의-내용을-지우자)
-
-<!-- markdown-toc end -->
+  - [두개의 패턴 사이의 내용을 지우자.](#%eb%91%90%ea%b0%9c%ec%9d%98-%ed%8c%a8%ed%84%b4-%ec%82%ac%ec%9d%b4%ec%9d%98-%eb%82%b4%ec%9a%a9%ec%9d%84-%ec%a7%80%ec%9a%b0%ec%9e%90)
 
 -------------------------------------------------------------------------------
 
 # Abstract
 
 unix 가 만들어 졌을때 적은 메모리에도 동작할 수 있는 라인 에디터가
-필요해서 `/bin/ed`가 탄생했다. ed는 이후 sed, ex, vi, grep 등의 기반이
-된다. `sed`는 `ed`의 stream 버전이다. 명령어 사용법이 같다.
+필요해서 `/bin/ed` 가 탄생했다. ed 는 이후 sed, ex, vi, grep 등의 기반이
+된다. `sed` 는 `ed` 의 stream 버전이다. 명령어 사용법이 같다.
 
-`ex`는 `ed`의 확장버전이다. `vi`에서 `:`를 이용한 command mode로 사용된다.
-`ex`의 visual mode version 이 `vi`이다.
+`ex` 는 `ed` 의 확장버전이다. `vi` 에서 `:` 를 이용한 command mode 로 사용된다.
+`ex` 의 visual mode version 이 `vi` 이다.
 
 # Basics
 
-sed command line은 보통 다음과 같은 형식을 같는다.
+sed command line 은 보통 다음과 같은 형식을 같는다.
 
 ```bash
 sed SCRIPT INPUTFILE...
 ```
 
-sed는 pattern space와 hold space라는 두가지 버퍼가 존재한다.  하나의
-줄을 읽으면 pattern space에 저장하고 필요할 때마다 hold space에 저장해
-둔다. hold space에 저장해두면 명령어에 적용되지 않는다. 아무런 옵션이 없다면
-pattern space에 저장된 줄을 출력한다.
+sed 는 **pattern space** 와 **hold space** 라는 두가지 버퍼가 존재한다.  하나의
+줄을 읽으면 **pattern space** 에 저장하고 필요할 때마다 **hold space** 에 저장해
+둔다. **hold space** 에 저장해두면 명령어에 적용되지 않는다. 아무런 옵션이 없다면
+**pattern space** 에 저장된 줄을 출력한다.
 
 ```bash
 $ seq 111 111 555 | sed ''
@@ -58,13 +52,13 @@ $ seq 111 111 555 | sed '2d'
 # 3번째 줄만 출력한다. 나머지는 삭제한다.
 $ seq 111 111 555 | sed '1d; 2d; 4d; 5d'
 333
-# -n 옵션은 출력을 허용하지 않는다. p명령으로 출력한다.
+# -n 옵션은 출력을 허용하지 않는다. p 명령으로 출력한다.
 $ seq 111 111 555 | sed -n '3p'
 333
 ```
 
-`{}`를 이용하여 command group을 만들자. `;`를 이용하여 command list를
-만들자. `{}`뒤에 `;`를 붙여야 한다.
+`{}` 를 이용하여 command group 을 만들자. `;` 를 이용하여 command list 를
+만들자. `{}` 뒤에 `;` 를 붙여야 한다.
 
 ```bash
 # 해당 address 에 여러 개의 명령을 사용하려면 { } 를 사용합니다.
@@ -135,9 +129,10 @@ sed '/PATTERN-1/,/PATTERN-2/d' a.txt
 ```
 
 * 패턴 다음 내용을 모두 지우자.
+  * [참고](https://nixtricks.wordpress.com/2013/01/09/sed-delete-the-lines-lying-in-between-two-patterns/)
 
 ```bash
 sed '/PATTERN-1/,$d' a.txt
 ```
 
-* [참고](https://nixtricks.wordpress.com/2013/01/09/sed-delete-the-lines-lying-in-between-two-patterns/)
+

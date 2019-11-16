@@ -735,7 +735,7 @@ $ echo ~- # $OLDPWD 와 같다.
 
 ### basic usage
 
-'{}' 를 사용한다.
+`{}` 를 사용한다.
 
 ```bash
 $ AA=cde
