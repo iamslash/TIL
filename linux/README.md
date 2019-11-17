@@ -24,6 +24,7 @@
   - [압축](#%ec%95%95%ec%b6%95)
   - [에디터](#%ec%97%90%eb%94%94%ed%84%b0)
   - [데몬 관리](#%eb%8d%b0%eb%aa%ac-%ea%b4%80%eb%a6%ac)
+  - [Automation](#automation)
   - [oneline commands](#oneline-commands)
 - [Security](#security)
   - [root 소유의 setuid, setgid 파일 검색 후 퍼미션 조정하기](#root-%ec%86%8c%ec%9c%a0%ec%9d%98-setuid-setgid-%ed%8c%8c%ec%9d%bc-%ea%b2%80%ec%83%89-%ed%9b%84-%ed%8d%bc%eb%af%b8%ec%85%98-%ec%a1%b0%ec%a0%95%ed%95%98%ea%b8%b0)
@@ -1355,6 +1356,13 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * 타겟은 동시에 서비스들을 시작하는 걸 허용하기 위한 그룹 메커니즘이다. 
   * `systemctl set-default grpahical.target` 타겟 바꾸기
   * `systemctl get-default`
+
+## Automation
+
+* `expect`
+  * interactive job 을 프로그래밍할 수 있다.
+  * [expect 를 이용한 자동화 프로그래밍](https://www.joinc.co.kr/w/Site/JPerl/expect)
+  * [Hak5 - Automate Everything, Using Expect, Hak5 1023.1](https://www.youtube.com/watch?v=dlwqyMW5H5I)
 
 ## oneline commands
 
