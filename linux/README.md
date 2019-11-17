@@ -164,8 +164,12 @@ linux 는 파일의 sticky bit 를 무시한다. 디렉토리에 sticky bit 가 
 
 ## apt-get
 
+* [apt-get(8) - Linux man page](https://linux.die.net/man/8/apt-get)
+
 ```bash
+# update the list of packages
 apt-get update
+# upgrade every packages
 apt-get upgrade
 apt-get install curl
 apt-get --reinstall install curl
@@ -942,6 +946,11 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * 파일 패턴 검색기
   * `grep "this" a.txt`
   * `grep "this" a.*`
+  * `grep -l this a.*`
+    * files with matches recursively
+  * `grep -r "this" *`
+  * `grep -v "go" a.txt` 검색 대상이 안된 줄을 보여줘라
+  * `grep -c "go" a.txt` 검색된 수를 보여다오
   * `grep -i "the" a.txt` case insensitive
   * `grep "lines.*empty" a.txt` regular expression
   * `grep -i "is" a.txt`
@@ -950,10 +959,6 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `grep -B 2 "single WORD" a.txt` 검색된 줄 이전 2줄 더 보여줘라
   * `grep -C 2 "example" a.txt` 검색된 줄 이전 이후 2줄 더 보여줘라
   * `export GREP_OPTIONS='--color=auto' GREP_COLOR='100;8'` `grep this a.txt`
-  * `grep -r "this" *`
-  * `grep -v "go" a.txt` 검색 대상이 안된 줄을 보여줘라
-  * `grep -c "go" a.txt` 검색된 수를 보여다오
-  * `grep -l this a.*` 검색된 파일들을 보여다오
   * `grep -o "is.*line" a.txt` 검색된 문자열들만 보여다오
   * `grep -o -b "3" a.txt` 검색된 위치를 보여다오
   * `grep -n "go" a.txt` 검색된 줄번호도 보여다오

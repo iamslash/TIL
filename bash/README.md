@@ -733,6 +733,8 @@ $ echo ~- # $OLDPWD 와 같다.
 
 ## parameter and variable expansion
 
+'`${}`' 안에 "`#, ##, %, %%, :-, -, :=, =, :+, +, :?, ?, :, /, //, ^, ^^, ',', ',,', !`" 등이 있을 때 parameter and variable expansion 이 발생한다.
+
 ### basic usage
 
 `{}` 를 사용한다.
@@ -1242,7 +1244,7 @@ $ cat /proc/`pgrep -x awk`/maps
 $ cd /lib/modules/`uname -r`
 ```
 
-backtick 은 escape sequence 가 다르게 처리된다.
+backtick 안의 escape sequence 는 다르게 처리된다.
 
 ```bash
 # 원본 명령
@@ -1255,7 +1257,7 @@ $ echo $( grep -lr --include='*.md' ' \\t\\n' )
 filename_expansion.md word_splitting.md
 --------------------------------------------------
 
-# backtick 은 escape sequence 가 다르게 처리되어 값이 출력되지 않는다.
+# backtick 안의 escape sequence 는 다르게 처리된다.
 $ echo `grep -lr --include='*.md' ' \\t\\n'`
 $
 $ echo `grep -lr --include='*.md' ' \\\\t\\\\n'`
@@ -1287,7 +1289,7 @@ echo $index
 quotes 가 중첩되도 좋다.
 
 ```bash
-# 명령치환을 quote 하지 않은 경우
+# command substitution 을 quote 하지 않은 경우
 $ echo $( echo "
 > I
 > like
@@ -1295,7 +1297,7 @@ $ echo $( echo "
 
 I like winter and snow
 
-# 명령치환을 quote 하여 공백과 라인개행이 유지되었다.
+# command substitution 을 quote 하여 공백과 라인개행이 유지되었다.
 $ echo "$( echo "
 > I
 > like
@@ -1309,14 +1311,14 @@ winter     and     snow
 
 # quotes 이 여러번 중첩되어도 상관없다.
 
-$ echo "$(echo "$(echo "$(date)")")"       
+$ echo "$( echo "$( echo "$( date )" )" )"
 Thu Jul 23 18:34:33 KST 2015
 ```
 
 null 문자를 보낼 수 없다.
 
 ```bash
-$ ls          # a, b, c  3개의 파일이 존재
+$ ls          # a, b, c 3 개의 파일이 존재
 a  b  c
 
 # 파이프는 null 값이 정상적으로 전달된다.
@@ -1335,23 +1337,23 @@ $ AA=$'hello\n\n\n'
 $ echo -n "$AA" | od -a
 0000000   h   e   l   l   o  nl  nl  nl    # 정상적으로 newline 이 표시된다.
 
-$ AA=$(echo -en "hello\n\n\n")
+$ AA=$( echo -en "hello\n\n\n" )
 $ echo -n "$AA" | od -a
 0000000   h   e   l   l   o                # 명령치환은 newline 이 모두 제거된다.
 
 ---------------------------------------
 
-$ cat file         # 파일의 마지막에 4 개의 newline 이 존재.
+$ cat a.txt         # 파일의 마지막에 4 개의 newline 이 존재.
 111
 222
 
 
 
-$ cat file | od -a
+$ cat a.txt | od -a
 0000000   1   1   1  nl   2   2   2  nl  nl  nl  nl
 0000013
 
-$ AA=$(cat file)
+$ AA=$( cat a.txt )
 
 $ echo -n "$AA" | od -a                   # 파일의 마지막 newline 이 모두 제거 되었다.
 0000000   1   1   1  nl   2   2   2
@@ -1413,7 +1415,7 @@ $BASHPID : 504
 $BASHPID : 22037
 
 ---------------------------------------------------------------------------
-
+# ':' 는 no-operation 이다. 'true' 와 같다. no-operation 의 pipe 를 ls 해보자.
 $ ls -l <( : ) 
 lr-x------ 1 mug896 mug896 64 02.07.2015 22:29 /dev/fd/63 -> pipe:[681827]
 
@@ -1836,7 +1838,7 @@ $ set +f; IFS=$' \t\n'
 
 ## filename expansion
 
-파일 이름을 다룰때 '`*`', '`?`', '`[]`'는 패턴 매칭과 동일하게 확장된다.
+파일 이름을 다룰때 "`*`, `?`, `[]`"는 패턴 매칭과 동일하게 확장된다.
 앞서 언급한 문자들을 glob 문자라고 한다. glob 문자가 확장되는 것을
 globbing 이라고 한다.
 
