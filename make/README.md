@@ -1,10 +1,36 @@
+- [Abstract](#abstract)
+- [Intro](#intro)
+- [References](#references)
+- [make Usages](#make-usages)
+  - [`--dry-run`](#dry-run)
+- [Makefile Usages](#makefile-usages)
+  - [Special Built-in Target Names](#special-built-in-target-names)
+    - [`.PHONY`](#phony)
+    - [`.SUFFIXES`](#suffixes)
+  - [Conditional Parts of Makefiles](#conditional-parts-of-makefiles)
+  - [Automatic Variables](#automatic-variables)
+    - [`$*`](#)
+    - [`$@`](#)
+    - [`$<`, `<$?`](#)
+  - [Functions for Transforming Text](#functions-for-transforming-text)
+    - [shell](#shell)
+    - [patsubst](#patsubst)
+    - [notdir](#notdir)
+    - [wildcard](#wildcard)
+    - [abspath](#abspath)
+  - [Pattern Rules](#pattern-rules)
+  - [Directives](#directives)
+  - [variable assignment](#variable-assignment)
+
+----
+
 # Abstract
 
-make에 대해 정리한다.
+make 에 대해 정리한다.
 
 # Intro
 
-Makefile의 규칙은 보통 다음과 같다.
+Makefile 의 규칙은 보통 다음과 같다.
 
 ```make
 target … : prerequisites …

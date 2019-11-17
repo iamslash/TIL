@@ -2103,6 +2103,7 @@ complete        fc              printf          times
 ## Shell Functions
 
 ```bash
+# restrict action or display to function names and definitions
 $ declare -F
 ```
 
@@ -2185,7 +2186,7 @@ $ select KEY in "${A[@]}"; do echo "$KEY"; done
 
 ### Grouping Commands
 
-`;`, `&`, `&&`, `||` 를 활용한 command
+"`;`, `&`, `&&`, `||`" 를 활용한 command
 
 ```bash
 # (command list) : command list 는 subshell 환경에서 실행된다.
@@ -2199,6 +2200,7 @@ $ select KEY in "${A[@]}"; do echo "$KEY"; done
 이름은 같고 의미가 다른 command 를 조사하고 싶을때는 `type` 을 이용하자.
 
 ```bash
+# display all locations containing an executable named NAME
 $ type -a kill
 kill is a shell builtin
 kill is /bin/kill
@@ -2210,7 +2212,7 @@ $ type -a [
 [ is /usr/bin/[
 ```
 
-command의 help를 보는 방법은 다음과 같다.
+command 의 help 를 보는 방법은 다음과 같다.
 
 ```bash
 $ man -f printf
@@ -2252,7 +2254,15 @@ $ echo "$@"
 
 ## shopt
 
-설정한 옵션값은 `shopt` 혹은 `shopt -p` 으로 확인할 수 있다. 옵션값을 enable 할때는 `shopt -s 옵션이름` , disable 할때는 `shopt -u 옵션이름` 을 사용한다.
+```bash
+# diplay current shell options
+$ shopt
+$ shopt -p
+# set option
+$ shopt -s <option-name>
+# unset option
+$ shopt -u <option-name>
+```
 
 # Shell Variables
 
@@ -2520,7 +2530,7 @@ echo $AA[2]
 echo ${AA[2]}
 ```
 
-`${AA[@]}`, `${AA[*]}` 는 double quote 하지 않으면 차이가 없다. `"${AA[@]}"` 는 `"${AA[0]}" "${AA[1]}" "${AA[2]}" ...`과 같다. `"${AA[*]}"` 는 `"${AA[0]}X${AA[1]}X${AA[2]}...`과 같다. `X`는 IFS의 첫번째 캐릭터이다.
+`${AA[@]}`, `${AA[*]}` 는 double quote 하지 않으면 차이가 없다. `"${AA[@]}"` 는 `"${AA[0]}" "${AA[1]}" "${AA[2]}" ...`과 같다. `"${AA[*]}"` 는 `"${AA[0]}X${AA[1]}X${AA[2]}...`과 같다. `X` 는 IFS 의 첫번째 캐릭터이다.
 
 ```bash
 # quote 하지 않은 경우
@@ -2578,7 +2588,7 @@ AA=( [ab]=11 [cd]="hello world" [ef]=22 )
 for idx in "${!AA[@]}"; do echo index : "$idx", value : "${AA[idx]}"; done
 ```
 
-array를 복사해보자. 항상 `()`를 사용하자.
+array 를 복사해보자. 항상 `()` 를 사용하자.
 
 ```bash
 $ AA=( 11 22 33 )
@@ -2656,7 +2666,7 @@ $ echo "${AA[@]:1:3}"
 Ubuntu Fedora Suse
 ```
 
-array에 원소를 추가해보자.
+array 에 원소를 추가해보자.
 
 ```bash
 $ AA=( "Arch Linux" Ubuntu Fedora);
@@ -2683,7 +2693,7 @@ $ echo ${#AA[@]}
 4
 ```
 
-array에 패턴을 적용하여 치환해 보자.
+array 에 패턴을 적용하여 치환해 보자.
 
 ```bash
 $ AA=( "Arch Linux" "Ubuntu Linux" "Suse Linux" "Fedora Linux" )
@@ -2712,7 +2722,7 @@ Ubuntu Linux
 Fedora Linux
 ```
 
-array에 패턴을 적용하여 삭제해 보자.
+array 에 패턴을 적용하여 삭제해 보자.
 
 ```bash
 $ AA=( "Arch Linux" "Ubuntu Linux" "Suse Linux" "Fedora Linux" )
@@ -3066,7 +3076,7 @@ $ [[ -n "$AA" ]]; echo $?
 
 # Special Expressions
 
-`$(( ))`, `(( ))`는 arithmatic expression을 처리할 수 있다. `[[ ]]`는 text expression을 처리할 수 있다. command와 달리 excape, quote가 필요 없다. command의 경우 참은 0이고 거짓은 1이다. 그러나 arithmatic expression의 경우 참은 1이고 거짓은 0이다. 
+`$(( ))`, `(( ))` 는 arithmatic expression 을 처리할 수 있다. `[[ ]]` 는 text expression 을 처리할 수 있다. command 와 달리 excape, quote 가 필요 없다. command 의 경우 참은 0 이고 거짓은 1 이다. 그러나 arithmatic expression 의 경우 참은 1 이고 거짓은 0 이다. 
 
 ```bash
 $ A=10
@@ -3153,7 +3163,7 @@ $ help let
 
 # Sub Shell
 
-`( )`, `$( )`, ` `, `|`, `&` 으로 command 실행하면 만들어지는 shell을 subshell이라고 한다.
+`( )`, `$( )`, ` `, `|`, `&` 으로 command 실행하면 만들어지는 shell 을 subshell 이라고 한다.
 
 ```
 $ ( sleep 10; echo )
@@ -3162,12 +3172,12 @@ $ echo | { sleep 10; echo;}
 $ command &
 ```
 
-child process가 parent process로 부터 다음과 같은 것들을 물려 받는다.
+child process 가 parent process 로 부터 다음과 같은 것들을 물려 받는다.
 
 * 현재 디렉토리
-* export된 환경 변수, 함수
+* export 된 환경 변수, 함수
 * 현재 설정되어 있는 file descriptor (STDIN(1), STDOUT(2), STDERR(3))
-* ignore된 신호 ( trap " INT)
+* ignore 된 신호 `( trap '' INT )`
 
 ```bash
 $ echo "PID : $$, PPID : $PPID"
@@ -3295,6 +3305,7 @@ bg, fg, jobs, kill, wait, disown, suspend
 ## signal list
 
 ```bash
+# list the signal names
 $ kill -l
  1) SIGHUP       2) SIGINT       3) SIGQUIT      4) SIGILL       5) SIGTRAP
  2) SIGABRT      7) SIGBUS       8) SIGFPE       9) SIGKILL     10) SIGUSR1
@@ -3325,14 +3336,14 @@ $ kill -n 15 1111
 $ kill 1111
 ```
 
-`-`를 이용하면 process groupd에 signal을 보낼 수 있다.
+`-` 를 이용하면 process groupd 에 signal을 보낼 수 있다.
 
 ```bash
 $ kill -TERM -1111
 $ kill -- -1111
 ```
 
-`kill -0`은 process가 살아있고 signal을 보낼 수 있는지 검사한다.
+`kill -0` 은 process 가 살아있고 signal 을 보낼 수 있는지 검사한다.
 
 ```bash
 # 1111 프로세스는 존재할 때
@@ -3356,7 +3367,7 @@ $ kill -INT 0
 
 ## trap
 
-signal handler를 등록하자.
+signal handler 를 등록하자.
 
 ```bash
 $ trap 'myhandler' INT
@@ -3368,9 +3379,9 @@ $ trap - INT
 $ trap '' INT
 ```
 
-`SIGKILL`, `SIGSTOP`, `SIGCONT`는 trap 으로 handler를 등록할 수 없다. default handler 만 사용 가능하다.
+`SIGKILL`, `SIGSTOP`, `SIGCONT`는 trap 으로 handler 를 등록할 수 없다. default handler 만 사용 가능하다.
 
-process 가 정상종료될 때 handler 를 등록하려면 `HUP, INT, QUIT, TERM` 등의 signal 을 trap 해야 한다. 그러나 `EXIT` 라는 pseudo signal 을 하나만 등록해도 동일한 기능을 한다. 다음은 pseudo signal의 목록이다.
+process 가 정상종료될 때 handler 를 등록하려면 `HUP, INT, QUIT, TERM` 등의 signal 을 trap 해야 한다. 그러나 `EXIT` 라는 pseudo signal 을 하나만 등록해도 동일한 기능을 한다. 다음은 pseudo signal 의 목록이다.
 
 | Signal | Description                               |
 | ------ | ----------------------------------------- |
