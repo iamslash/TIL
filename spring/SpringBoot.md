@@ -34,3 +34,4 @@ public class A {
 - 환경설정변수 PATH에 `%SPRING_HOME%\bin`을 추가하자.
 - command shell에서 `spring version`을 실행한다.
 - command shell에서 `spring init'을 이용하여 새로운 프로젝트를 제작할 수 있다.
+
