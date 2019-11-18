@@ -38,6 +38,8 @@
   * 킹왕짱 메뉴얼
 * `file:///C:/Program%20Files/Git/mingw64/share/doc/git-doc/`
   * git documents
+* [learn git branching](https://learngitbranching.js.org/)
+  * practise git branch with web
 
 # Git Overview
 
