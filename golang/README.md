@@ -54,6 +54,7 @@
 - [Advanced Usages](#advanced-usages)
   - [Tools](#tools-1)
     - [go](#go)
+    - [mod](#mod)
     - [go-wrk](#go-wrk)
     - [go-torch](#go-torch)
     - [present](#present)
@@ -1720,6 +1721,23 @@ go install
 go get
 go fmt
 go vet
+```
+
+### mod
+
+[[Go] Go Modules 살펴보기](https://velog.io/@kimmachinegun/Go-Go-Modules-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0-7cjn4soifk)
+
+----
+
+Handle module dependencies. Execute command line `go mod init` and this will make `go.mod`. After build you can find out `go.sum` which has total dependent modules (name, version, sha1sum).
+
+```bash
+$ mkdir a && cd a
+$ cat > main.go
+$ go mod init
+$ cat go.mod
+$ go build
+$ cat go.sum
 ```
 
 ### go-wrk
