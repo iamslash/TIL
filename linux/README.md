@@ -460,6 +460,13 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   # -s : If there is no field separator just skip
   $ cat a.txt | cut -d"K" -f3 -s
   ```
+* `stat`
+  * tell me the status of the file
+  * `stat -c%s a.txt`
+* `numfmt`
+  * convert number format human readable
+  * `numfmt --to=si --suffix=B --format="%.3f" $( stat -c%s a.txt )`
+    * tell me the size of the file 'a.txt' such as 12B, 12KB, 12MB, 12GM.
 
 ## Process management
 
