@@ -336,6 +336,8 @@ CDN (Content Delivery Netowrk) 을 이루는 캐시 서버이다. AWS Cloud Fron
 
 ----
 
+![](img/awsvpc.png)
+
 AWS 외부와는 격리된 가상의 사설 클라우드이다. EC2 를 실행하려면 반드시 VPC 가 하나 필요하다. VPC 는 하나의 region 에 속해야 한다. 그리고 하나의 VPC 는 여러개의 availability zone 을 소유한다. 보통 하나의 VPC 에 두개의 AZ 를 설정하고 하나의 AZ 는 public subnet, private subnet 으로 설정한다.
 
 VPC 를 생성하기 위해서는 반드시 다음과 같은 것들을 함께 생성해야 사용이 가능하다.
