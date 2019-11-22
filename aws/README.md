@@ -30,9 +30,9 @@
     - [VPC](#vpc)
     - [Subnet](#subnet-1)
     - [Route Table](#route-table)
+    - [Internet Gateway](#internet-gateway)
     - [Network ACL](#network-acl)
     - [Security Group](#security-group)
-    - [Internet Gateway](#internet-gateway)
     - [DHCP options set](#dhcp-options-set)
   - [EC2 (Elastic Compute Cloud)](#ec2-elastic-compute-cloud)
     - [How to make a EC2 instance](#how-to-make-a-ec2-instance)
@@ -354,27 +354,27 @@ n 서브넷 Subnet
 
 ### VPC
 
-하나의 VPC 는 반드시 하나의 Region 에 속한다. 그리고 여러개의 AZ 를 소유할 수 있다. 즉 여러개의 AZ 에 걸쳐있다. 또한 최대 65536 개의 IP 를 할당할 수 있다. 기본 CIDR 블록은 `172.31.0.0/16` 이다. CIDR 블록은 private network 를 참고하여 설정한다. 그러나 하나의 VPC 는 65536 개의 IP 제한이 있으므로 주로 `10.10.0.0/16` 을 사용한다.
+하나의 VPC 는 반드시 하나의 Region 에 속한다. 그리고 여러개의 AZ 를 소유할 수 있다. 또한 최대 65536 개의 IP 를 할당할 수 있다. 기본 CIDR 블록은 `172.31.0.0/16` 이다. CIDR 블록은 private network 를 참고하여 설정한다. 그러나 하나의 VPC 는 65536 개의 IP 제한이 있으므로 주로 `10.10.0.0/16` 을 사용한다.
 
 ### Subnet
 
-EC2 instance 의 네트워크를 설정할 때 반드시 하나의 VPC 와 하나의 Subnet 이 필요하다. VPC 가 논리적인 개념이라면 AZ 는 물리적인 개념이다. Subnet 는 반드시 하나의 AZ 에 포함된다.
+EC2 instance 의 네트워크를 설정할 때 반드시 하나의 VPC 와 하나의 Subnet 이 필요하다. VPC 가 논리적인 개념이라면 AZ 는 물리적인 개념이다. Subnet 는 반드시 하나의 AZ 에 포함되고 LB 에 attach 할 수 있다. LB 는 하나의 VPC 에 속한 여러 subnet 만 로드밸런싱할 수 있다. 여러 VPC 에 로드밸런싱을 위해서는 Route 53 을 사용해야 한다.
 
 ### Route Table
 
 Subnet 이 목적지를 찾기 위해 필요하다. 하나의 Route Table 은 VPC 의 여러 개의 Subnet 과 연결할 수 있다.
 
+### Internet Gateway
+
+Route Table 에 Internet Gateway 를 향하는 적절한 규칙을 추가해주면 그 Route table 과 연결된 subnet 이 인터넷과 연결된다. 그리고 인터넷을 사용하고자 하는 리소스는 반드시 public IP 를 가지고 있어야 한다.
+
 ### Network ACL
 
-하나의 Subnet 앞에서 설정해야하는 Virtual Firewall 이다.
+하나의 Subnet 앞에서 설정해야하는 Virtual Firewall 이다. 여러 subnet 에 연결 할 수 있다. 또한 하나의 subnet 은 한개의 ACL 만 연결할 수 있다. ACL 규칙 목록은 번호가 낮은 것부터 우선으로 적용된다. ACL 은 stateless 하기 때문에 특정 port 에 대해 inbound, outbound 를 모두 입력해야 한다. 
 
 ### Security Group
 
-하나의 EC2 instance 앞에서 설정해야 하는 Virtual Firewall 이다.
-
-### Internet Gateway
-
-Route Table 에 Internet Gateway 를 향하는 적절한 규칙을 추가해주면 특정 Subnet 이 인터넷과 연결된다. 그리고 인터넷을 사용하고자 하는 리소스는 반드시 public IP 를 가지고 있어야 한다.
+하나의 EC2 instance 앞에서 설정해야 하는 Virtual Firewall 이다. 동일한 subnet 의 instance 들은 ACL 은 상관없이 Security Group 만 적용한다. stateful 하기 때문에 허용된 inbound 트래픽의 응답은 outbound 규칙에 관계없이 허용된다.
 
 ### DHCP options set
 
