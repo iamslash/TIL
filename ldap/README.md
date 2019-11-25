@@ -10,6 +10,8 @@ macOS 에 ldapsearch 가 기본적으로 설치되어 있고 ldap 조회를 실�
 
 * [Examples of using ldapsearch](https://www.ibm.com/support/knowledgecenter/en/SSKTMJ_9.0.1/admin/conf_examplesofusingldapsearch_t.html)
 * [How to do ldapsearch Example @ youtube](https://www.youtube.com/watch?v=sFGq7k31B-I)
+* [5. 데이타베이스 생성과 유지 보수 @ KLDP](http://doc.kldp.org/HOWTO/html/LDAP/LDAP-HOWTO-5.html)
+  * ldapsearch, ldapmodify usages
 
 # openldap client 
 
