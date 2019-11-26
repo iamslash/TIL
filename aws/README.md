@@ -34,10 +34,14 @@
     - [Network ACL](#network-acl)
     - [Security Group](#security-group)
     - [DHCP options set](#dhcp-options-set)
+  - [ELB (Elastic Load Balancer)](#elb-elastic-load-balancer)
+    - [CLB vs ALB vs NLB](#clb-vs-alb-vs-nlb)
+    - [Decision for ELB](#decision-for-elb)
+    - [Cross-Zone Load Balancing](#cross-zone-load-balancing)
   - [EC2 (Elastic Compute Cloud)](#ec2-elastic-compute-cloud)
     - [How to make a EC2 instance](#how-to-make-a-ec2-instance)
     - [How to scaleup EC2 instance Manually](#how-to-scaleup-ec2-instance-manually)
-    - [ELB (Elastic Load Balancer)](#elb-elastic-load-balancer)
+    - [ELB (Elastic Load Balancer)](#elb-elastic-load-balancer-1)
     - [How to scaleout EC2 instance Manually](#how-to-scaleout-ec2-instance-manually)
   - [IAM (Identity and Access Management)](#iam-identity-and-access-management)
   - [AWS Auto Scaling](#aws-auto-scaling)
@@ -213,11 +217,11 @@ routing prefix 는 `198.51.100.0/24` 와 같이 CIDR (Classless Inter-Domain Rou
 
 Private IP Address 를 사용하는 네트워크이다. IETF (Internet Engineering Task Force) 는 Private IP Address 를 위해 다음과 같은 IPv4 주소를 사용하도록 [RFC1918](https://tools.ietf.org/html/rfc1918) 라는 표준으로 IANA (Internet Assigned Numbers Authority) 를 지도했다.
 
-| RFC 1918 name | IP address range | Number of addresses | Largest CIDR block (subnet mask) | Host ID size | Mask bits | Classful description | 
-|--|--|--|--|--|--|--|
-| 24-bit block | 10.0.0.0 - 10.255.255.255 | 16,777,216 | 10.0.0.0/8 (255.0.0.0) | 24 bits | 8 bits | single class A network |
-| 20-bit block | 172.16.0.0 – 172.31.255.255 | 1,048,576 | 172.16.0.0/12 (255.240.0.0) | 20 bits | 12 bits | 16 contiguous class B networks |
-| 16-bit block | 192.168.0.0 – 192.168.255.255 | 65,536 | 192.168.0.0/16 (255.255.0.0) | 16 bits | 16 bits | 256 contiguous class C networks |
+| RFC 1918 name | IP address range              | Number of addresses | Largest CIDR block (subnet mask) | Host ID size | Mask bits | Classful description            |
+| ------------- | ----------------------------- | ------------------- | -------------------------------- | ------------ | --------- | ------------------------------- |
+| 24-bit block  | 10.0.0.0 - 10.255.255.255     | 16,777,216          | 10.0.0.0/8 (255.0.0.0)           | 24 bits      | 8 bits    | single class A network          |
+| 20-bit block  | 172.16.0.0 – 172.31.255.255   | 1,048,576           | 172.16.0.0/12 (255.240.0.0)      | 20 bits      | 12 bits   | 16 contiguous class B networks  |
+| 16-bit block  | 192.168.0.0 – 192.168.255.255 | 65,536              | 192.168.0.0/16 (255.255.0.0)     | 16 bits      | 16 bits   | 256 contiguous class C networks |
 
 ## VPN (Virtual Private Network)
 
@@ -379,6 +383,34 @@ Route Table 에 Internet Gateway 를 향하는 적절한 규칙을 추가해주�
 ### DHCP options set
 
 ???
+
+## ELB (Elastic Load Balancer)
+
+* [Elastic Load Balancing 심층 분석 (ALB을 중심으로) - 오길재 테크니컬 어카운트 매니저(AWS 코리아)](https://www.youtube.com/watch?v=yAzERx-HCPI)
+  * [slide](https://www.slideshare.net/awskorea/6-elastic-load-balancing)
+
+----
+
+### CLB vs ALB vs NLB
+
+| title                | CLB                   | ALB         | NLB |
+| -------------------- | --------------------- | ----------- | --- |
+| Protocol             | TCP, SSL, HTTP, HTTPS | HTTP, HTTPS |     |
+| Platform             | EC2-Classic, EC2-VPC  | EC2-VPC     |     |
+| Health check         | O                     | improved    |     |
+| CloudWatch           | O                     | improved    |     |
+| Path/Host Routing    |                       | O           |     |
+| Container Support    |                       | O           |     |
+| Web socker && HTTP/2 |                       | O           |     |
+
+### Decision for ELB
+
+* Use CLB incase of TCP/SSL or EC2-Classic
+* Use ALB in other cases
+
+### Cross-Zone Load Balancing
+
+![](img/crosszoneelb.png)
 
 ## EC2 (Elastic Compute Cloud)
 
