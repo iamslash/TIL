@@ -589,7 +589,15 @@ kafka 를 이용할 수 있다.
 
 ## Route 53
 
-DNS server 이다.
+* [Amazon Route53 101 - 서태호 | 강남비기너모임 : AWS Community Day](https://www.youtube.com/watch?v=Nr7nLwfvT3Y)
+  * [slide](https://brunch.co.kr/@topasvga/85)
+* [Amazon AWS Route 53 Weighted Route Policy | AWS Solution Architect Training](https://www.youtube.com/watch?v=3oDzfdwVs20)
+  * Weighted Round Robin
+* [Amazon AWS Route 53 with Failover Route Policy | AWS Solution Architect Training](https://www.youtube.com/watch?v=n8wsQrklpEU)
+
+----
+
+DNS server 이다. Simple, Weighted, Latency, Failover, GeoLocation, Multivalue Answer policy 를 지원한다.
 
 ## CloudWatch
 
