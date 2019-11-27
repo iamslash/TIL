@@ -59,6 +59,7 @@
   - [Kinesis](#kinesis)
   - [Route 53](#route-53)
   - [CloudWatch](#cloudwatch)
+  - [Athena](#athena)
   - [Elastics Beanstalk](#elastics-beanstalk)
   - [Cloud Formation](#cloud-formation)
   - [Glacier](#glacier)
@@ -69,6 +70,7 @@
   - [ECS (Elastic Container Service)](#ecs-elastic-container-service)
   - [ECR (Elastic Container Registry)](#ecr-elastic-container-registry)
   - [KMS (Key Management Service)](#kms-key-management-service)
+  - [Lightsail](#lightsail)
 - [Advanced](#advanced)
   - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
 - [Best Practices](#best-practices)
@@ -591,7 +593,20 @@ DNS server 이다.
 
 ## CloudWatch
 
-???
+* [AWS CLOUD Gaming 5. CloudWatch 성능 모니터링과 신속한 대응을 위한 노하우 @ youtube](https://www.youtube.com/watch?v=PbUS0Lu-uAQ)
+  
+----
+
+하나의 Metric 은 Namespace / Metrics name / Dimension 으로 구성된다. Sum, Max, Min, Average, Sample Count 와 같은 통계 기능이 제공된다.
+
+## Athena
+
+* [Amazon Athena를 통한 데이터 분석하기, 김명보(VCNC 개발자)](https://www.youtube.com/watch?v=rNFGelMqNUY)
+* [AWS CLOUD 2017 | Amazon Athena 및 Glue를 통한 빠른 데이터 질의 및 처리 기능 소개 | 김상필 솔루션즈 아키텍트](https://www.youtube.com/watch?v=jc_nT3WF90Q)
+
+----
+
+* s3 의 data 를 SQL 로 query 할 수 있다.
 
 ## Elastics Beanstalk
 
@@ -679,6 +694,12 @@ docker pull XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/repo-test:latest
 ----
 
 암호화 복호화 할 때 사용할 key 를 관리하는 서비스이다.
+
+## Lightsail
+
+* [Amazon LightSail을 통한 가상 서버 호스팅 이용하기 - 최원근 (AWS 솔루션즈 아키텍트)](https://www.youtube.com/watch?v=WODr_GPLoFI)
+
+* EC2 보다 쉽게 VM Instance 를 만들 수 있다. 개발장비를 만들 때 좋을 것 같다.
 
 # Advanced
 
