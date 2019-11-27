@@ -8,6 +8,8 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
   * 한글로 설명한 자세한 강의
   * [Workshop 개발 환경 셋팅하기 @ github](https://github.com/subicura/workshop-init)
   * [kubernetes 기본 가이드 @ github](https://github.com/subicura/workshop-k8s-basic)
+* [AWS Kubernetes 서비스 자세히 살펴보기 - 정영준 솔루션즈 아키텍트(AWS), 이창수 솔루션즈 아키텍트(AWS)](https://www.youtube.com/watch?v=iAP_pTrm4Eo)
+  * [slide](https://www.slideshare.net/awskorea/aws-kubernetes-aws-aws-devday2018)
 * [Kubernetes Deconstructed: Understanding Kubernetes by Breaking It Down - Carson Anderson, DOMO](https://www.youtube.com/watch?v=90kZRyPcRZw&fbclid=IwAR0InYUnMQD-t-o8JhS5U5KRRaJvSQQc1fBDeBCb8cv6eRk62vsG2Si_Ijo)
   * [slide](http://kube-decon.carson-anderson.com/Layers/3-Network.sozi.html#frame4156)
 
@@ -64,7 +66,7 @@ Node 는 초기에 미니언(minion) 이라고 불렀다. Node 는 kubelet, kube
 
 ### Addons
 
-cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주로 Deployment Controller, Replication Controller 에 의해 관리된다.  Addon 이 사용하는 namespace 는 kub-system 이다.
+cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주로 Deployment Controller, Replication Controller 에 의해 관리된다. Addon 이 사용하는 namespace 는 kub-system 이다.
 
 * Networking Addon
 * DNS Addon

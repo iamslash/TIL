@@ -34,15 +34,13 @@
     - [Network ACL](#network-acl)
     - [Security Group](#security-group)
     - [DHCP options set](#dhcp-options-set)
+  - [EC2 (Elastic Compute Cloud)](#ec2-elastic-compute-cloud)
+    - [How to make a EC2 instance](#how-to-make-a-ec2-instance)
+    - [How to scaleup EC2 instance Manually](#how-to-scaleup-ec2-instance-manually)
   - [ELB (Elastic Load Balancer)](#elb-elastic-load-balancer)
     - [CLB vs ALB vs NLB](#clb-vs-alb-vs-nlb)
     - [Decision for ELB](#decision-for-elb)
     - [Cross-Zone Load Balancing](#cross-zone-load-balancing)
-  - [EC2 (Elastic Compute Cloud)](#ec2-elastic-compute-cloud)
-    - [How to make a EC2 instance](#how-to-make-a-ec2-instance)
-    - [How to scaleup EC2 instance Manually](#how-to-scaleup-ec2-instance-manually)
-    - [ELB (Elastic Load Balancer)](#elb-elastic-load-balancer-1)
-    - [How to scaleout EC2 instance Manually](#how-to-scaleout-ec2-instance-manually)
   - [IAM (Identity and Access Management)](#iam-identity-and-access-management)
   - [AWS Auto Scaling](#aws-auto-scaling)
   - [Certificate Manager](#certificate-manager)
@@ -51,6 +49,7 @@
   - [RDS (Relational Database Service)](#rds-relational-database-service)
   - [SNS (Simple Notification Service)](#sns-simple-notification-service)
   - [SES (Simple Email Service)](#ses-simple-email-service)
+  - [SQS (Simple Queue Service)](#sqs-simple-queue-service)
   - [ElastiCachi](#elasticachi)
   - [Lambda](#lambda)
   - [API Gateway](#api-gateway)
@@ -71,6 +70,7 @@
   - [ECR (Elastic Container Registry)](#ecr-elastic-container-registry)
   - [KMS (Key Management Service)](#kms-key-management-service)
   - [Lightsail](#lightsail)
+  - [EKS](#eks)
 - [Advanced](#advanced)
   - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
 - [Best Practices](#best-practices)
@@ -388,34 +388,6 @@ Route Table 에 Internet Gateway 를 향하는 적절한 규칙을 추가해주�
 
 ???
 
-## ELB (Elastic Load Balancer)
-
-* [Elastic Load Balancing 심층 분석 (ALB을 중심으로) - 오길재 테크니컬 어카운트 매니저(AWS 코리아)](https://www.youtube.com/watch?v=yAzERx-HCPI)
-  * [slide](https://www.slideshare.net/awskorea/6-elastic-load-balancing)
-
-----
-
-### CLB vs ALB vs NLB
-
-| title                | CLB                   | ALB         | NLB |
-| -------------------- | --------------------- | ----------- | --- |
-| Protocol             | TCP, SSL, HTTP, HTTPS | HTTP, HTTPS |     |
-| Platform             | EC2-Classic, EC2-VPC  | EC2-VPC     |     |
-| Health check         | O                     | improved    |     |
-| CloudWatch           | O                     | improved    |     |
-| Path/Host Routing    |                       | O           |     |
-| Container Support    |                       | O           |     |
-| Web socker && HTTP/2 |                       | O           |     |
-
-### Decision for ELB
-
-* Use CLB incase of TCP/SSL or EC2-Classic
-* Use ALB in other cases
-
-### Cross-Zone Load Balancing
-
-![](img/crosszoneelb.png)
-
 ## EC2 (Elastic Compute Cloud)
 
 * [AWS EC2 @ 생활코딩](https://opentutorials.org/course/2717/11273)
@@ -456,8 +428,11 @@ putty 를 이용하여 public DNS 에 SSH 접속할 수 있다. user 는 `ubuntu
 
 기존의 EC2 instance 를 A 라 하자. 그리고 미리 만들어 놓은 AMI 를 이용하여 scaleup 한 EC2 instance 를 B 라 하자. A 가 사용하고 있는 Elastic IP 를 Disassociate 하고 이것을 B 에 Associate 한다.
 
-### ELB (Elastic Load Balancer)
 
+## ELB (Elastic Load Balancer)
+
+* [Elastic Load Balancing 심층 분석 (ALB을 중심으로) - 오길재 테크니컬 어카운트 매니저(AWS 코리아)](https://www.youtube.com/watch?v=yAzERx-HCPI)
+  * [slide](https://www.slideshare.net/awskorea/6-elastic-load-balancing)
 * [EC2 Scalability - Scale Out (ELB) @ 생활코딩](https://opentutorials.org/course/2717/11332)
 
 ----
@@ -474,9 +449,26 @@ Application Load Balancer 는 다음과 같은 과정으로 생성한다. 대부
 * 대상등록
 * 검토
 
-### How to scaleout EC2 instance Manually
+### CLB vs ALB vs NLB
 
-먼저 ELB 를 하나 생성하고 두개 이상의 EC2 instance 를 등록한다.
+| title                | CLB                   | ALB         | NLB |
+| -------------------- | --------------------- | ----------- | --- |
+| Protocol             | TCP, SSL, HTTP, HTTPS | HTTP, HTTPS |     |
+| Platform             | EC2-Classic, EC2-VPC  | EC2-VPC     |     |
+| Health check         | O                     | improved    |     |
+| CloudWatch           | O                     | improved    |     |
+| Path/Host Routing    |                       | O           |     |
+| Container Support    |                       | O           |     |
+| Web socker && HTTP/2 |                       | O           |     |
+
+### Decision for ELB
+
+* Use CLB incase of TCP/SSL or EC2-Classic
+* Use ALB in other cases
+
+### Cross-Zone Load Balancing
+
+![](img/crosszoneelb.png)
 
 ## IAM (Identity and Access Management)
 
@@ -553,11 +545,19 @@ Snapshot 를 만들어서 백업에 사용할 있다. 민감한 작업을 하기
 
 ## SNS (Simple Notification Service)
 
-???
+* [Amazon SNS로 지속적 관리가 가능한 대용량 푸쉬 시스템 구축 여정 - 강승욱 개발자(글로우데이즈)](https://www.youtube.com/watch?v=XnX22EIjRhc)
+
+----
+
+Subscription 을 만들어 Email 등을 등록한다. Topic 을 만들어 Subscription 을 등록한다. Topic 에 내용이 도착하면 Subscrption 에 등록된 Email 로 메일이 발송된다.
 
 ## SES (Simple Email Service)
 
-???
+not available in Seoul
+
+## SQS (Simple Queue Service)
+
+Message Queue ???
 
 ## ElastiCachi
 
@@ -620,7 +620,11 @@ DNS server 이다. Simple, Weighted, Latency, Failover, GeoLocation, Multivalue 
 
 ## Elastics Beanstalk
 
-???
+* [AWS Elastic Beanstalk 활용하여 수 분만에 코드 배포하기 - 최원근 솔루션즈 아키텍트(AWS)](https://www.youtube.com/watch?v=AfRnvsRxZ_0)
+
+----
+
+Managed WebApp 을 제작할 때 개발자는 코드에만 집중할 수 있다. 코드를 업로드 하면 배포, 스케일 아웃, 로깅이 자동화 된다.
 
 ## Cloud Formation
 
@@ -710,6 +714,15 @@ docker pull XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/repo-test:latest
 * [Amazon LightSail을 통한 가상 서버 호스팅 이용하기 - 최원근 (AWS 솔루션즈 아키텍트)](https://www.youtube.com/watch?v=WODr_GPLoFI)
 
 * EC2 보다 쉽게 VM Instance 를 만들 수 있다. 개발장비를 만들 때 좋을 것 같다.
+
+## EKS
+
+* [AWS Kubernetes 서비스 자세히 살펴보기 - 정영준 솔루션즈 아키텍트(AWS), 이창수 솔루션즈 아키텍트(AWS)](https://www.youtube.com/watch?v=iAP_pTrm4Eo)
+  * [slide](https://www.slideshare.net/awskorea/aws-kubernetes-aws-aws-devday2018)
+
+----
+
+Managed Kubernetes Service
 
 # Advanced
 
