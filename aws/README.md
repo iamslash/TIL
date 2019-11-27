@@ -719,6 +719,8 @@ docker pull XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/repo-test:latest
 
 * [AWS Kubernetes 서비스 자세히 살펴보기 - 정영준 솔루션즈 아키텍트(AWS), 이창수 솔루션즈 아키텍트(AWS)](https://www.youtube.com/watch?v=iAP_pTrm4Eo)
   * [slide](https://www.slideshare.net/awskorea/aws-kubernetes-aws-aws-devday2018)
+* [EKS workshop](https://eksworkshop.com/)
+  * EKS practice
 
 ----
 
