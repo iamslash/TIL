@@ -4,6 +4,8 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 # Materials
 
+* [EKS workshop](https://eksworkshop.com/010_introduction/basics/concepts_nodes/)
+  * This explains about K8s
 * [[토크ON세미나] 쿠버네티스 살펴보기 @ youtube](https://www.youtube.com/watch?v=xZ3tcFvbUGc&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=2)
   * 한글로 설명한 자세한 강의
   * [Workshop 개발 환경 셋팅하기 @ github](https://github.com/subicura/workshop-init)
