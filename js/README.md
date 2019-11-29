@@ -1031,6 +1031,10 @@ promiseBar('jane', bar)
 
 ## async, await
 
+* [JavaScript async and await in loops](https://zellwk.com/blog/async-await-in-loops/)
+
+----
+
 비동기를 구현하는 새로운 방법이다. 콜백지옥을 탈출 할 수 있다. `async` 로 함수선언을 하고 함수안에서 `promise` 앞에 `await` 로 기다린다. 이것은 `c#` 의 `IEnumerator, yield` 와 유사하다.
 
 ```js
