@@ -966,7 +966,54 @@ b = 'world'; // ERROR
 
 ## promise
 
-비동기를 구현하기 위한 object 이다. `promise` 는 `pending, fullfilled, rejected` 와 같이 3 가지 상태를 갖는다. `then()` 에서 해결하고 `catch()` 에서 오류처리를 한다. 
+* [Promises in JavaScript](https://zellwk.com/blog/js-promises/)
+
+----
+
+비동기를 구현하기 위한 object 이다. `promise` 는 `pending, resolved, rejected` 와 같이 3 가지 상태를 갖는다.
+
+`Promise` 의 function argument 에서 `resolve` 를 호출하면 `then()` 의 function arg 가 호출되고 `reject` 를 호출하면 `catch()` 의 function arg 가 호출된다. `then()` 의 function arg 가 곧 `resolve` 이고 `catch()` 의 function arg 가 곧 `reject` 이다.
+
+`promise` 를 `then()` 의 function arg 로 정상처리를 하고 `catch()` 의 function arg 로 오류처리를 한다고 생각하자.
+
+```js
+// simple promise
+p = new Promise(() => {}) // p is pending
+p = new Promise((resolve, reject) => {}) // p is pending
+
+// promise with calling resolve 
+p = new Promise((resolve, reject) => {
+  return resolve(7) // 
+})
+p.then(num => console.log(num)) // 7, p is resolved
+
+// promise with calling reject
+p = new Promise((resolve, reject) => {
+   //return reject(7)
+   return reject(new Error('7'))
+})
+p.then(num => console.log(num))
+.catch(num => console.error(num)) // Error 7, p is resolved
+
+// sleep with setTimeout
+setTimeout(() => console.log("done"), 1000)
+
+// promise with setTimeout
+p = new Promise((resolve, reject) => {
+  return setTimeout(resolve, 1000);
+})
+p.then(() => console.log("done"))
+
+// sleep function with promise
+const sleep = ms => {
+  //return new Promise(resolve => setTimeout(resolve, ms))
+  return new Promise((resolve, reject) => setTimeout(resolve, ms))
+}
+sleep(1000).then(() => console.log("done"))
+
+// await sleep function with promise
+r = await sleep(1000).then(() => "done")
+```
 
 ```js
 function promiseFoo(b) {
@@ -995,7 +1042,7 @@ promiseB
 ```
 
 다음은 `promise chaining` 의 예이다. `then` 에서
-다시 `promise` 를 리턴한다. 그 `promise` 가 `fullfilled` 상태로 전환되면 다음 `then` 이 호출되고 `rejected` 상태로 전환되면 `catch` 가 호출된다.
+다시 `promise` 를 리턴한다. 그 `promise` 가 `resolved` 상태로 전환되면 다음 `then` 이 호출되고 `rejected` 상태로 전환되면 `catch` 가 호출된다.
 
 ```js
 function promiseBar(name, stuff) {
@@ -1039,14 +1086,14 @@ promiseBar('jane', bar)
 비동기를 구현하는 새로운 방법이다. 콜백지옥을 탈출 할 수 있다. `async` 로 함수선언을 하고 함수안에서 `promise` 앞에 `await` 로 기다린다. 이것은 `c#` 의 `IEnumerator, yield` 와 유사하다.
 
 ```js
-// sleep, async, await
-const sleep = ms => { 
-   return new Promise(resolve => setTimeout(resolve, ms))
+// sleep, async, await in a loop
+const sleep = ms => {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 (async _ => {
-    for (i = 0; i < 5; ++i) {
-        await sleep(1000);
-        console.log(i);
-    }
-})().then(r => console.log("done"))
+  for (i = 0; i < 5; ++i) {
+    r = await sleep(1000).then(() => i);
+    console.log(r)
+  }
+})().then(() => { console.log("done") })
 ```
