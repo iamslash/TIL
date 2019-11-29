@@ -1031,6 +1031,7 @@ promiseBar('jane', bar)
 
 ## async, await
 
+* [JavaScript async and await](https://zellwk.com/blog/async-await/)
 * [JavaScript async and await in loops](https://zellwk.com/blog/async-await-in-loops/)
 
 ----
@@ -1038,31 +1039,14 @@ promiseBar('jane', bar)
 비동기를 구현하는 새로운 방법이다. 콜백지옥을 탈출 할 수 있다. `async` 로 함수선언을 하고 함수안에서 `promise` 앞에 `await` 로 기다린다. 이것은 `c#` 의 `IEnumerator, yield` 와 유사하다.
 
 ```js
-function promiseBaz(name, stuff) {
-   return new Promise((resolve, reject) => {
-      setTimeout(() => {
-         if (stuff.energy > 50) {
-            stuff.energy -= 10;
-            resolve({ result: `${name} alive` });
-         } else {
-            reject(new Error(`${name} dead`));
-         }
-      }, 1000);
-   })
+// sleep, async, await
+const sleep = ms => { 
+   return new Promise(resolve => setTimeout(resolve, ms))
 }
-const bar = { energy: 70 };
-const f = async function() {
-   try {
-      let a = await promiseBaz('jane', bar);
-      console.log(a.result);
-      a = await promiseBaz('john', bar);
-      console.log(a.result);
-      a = await promiseBaz('paul', bar);
-      console.log(a.result);
-      a = await promiseBaz('sam', bar);
-      console.log(a.result);
-   } catch (e) {
-      console.log(e);
-   }
-}
+(async _ => {
+    for (i = 0; i < 5; ++i) {
+        await sleep(1000);
+        console.log(i);
+    }
+})().then(r => console.log("done"))
 ```
