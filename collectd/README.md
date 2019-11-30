@@ -9,7 +9,7 @@ logging agent 인 collectd 와 influxdb, grafana 를 연동하여 centralized lo
 
 # Install
 
-## Install on docker 
+## Install collectd-influxdb-grafana on docker 
 
 * [Try InfluxDB and Grafana by docker](https://blog.laputa.io/try-influxdb-and-grafana-by-docker-6b4d50c6a446)
   * [src](https://github.com/justlaputa/collectd-influxdb-grafana-docker)
@@ -24,6 +24,8 @@ $ docker-compose up -d
 # http://localhost:8083 influxdb admin page
 # http://localhost:3000 grafana web page (login with admin/admin)
 ```
+
+* It doesn't work on Win7 So I installed [Collectd Win](https://ssc-serv.com/download.shtml) on Win 7. And It worked. But Free Version can send a data just every 5 min.
 
 # Config for Collectd
 
@@ -117,20 +119,21 @@ LoadPlugin network
 
 * check the data
 
-```bash
-D:\my\docker\collectd-influxdb-grafana-docker>docker exec -it collectd-influxdb-grafana-docker_influxdb_1 /bin/bash
-root@b9761538ff53:/# influx
-Visit https://enterprise.influxdata.com to register for updates, InfluxDB server management, and monitoring.
-Connected to http://localhost:8086 version 1.0.2
-InfluxDB shell version: 1.0.2
-> show databases;
-name: databases
----------------
-name
-collectd
-_internal
-
-> use collectd
-Using database collectd
-> select * from cpu_value;
-```
+  * browse `http://localhost:8083`
+  * `SHOW DATABASES`
+  * `show measurements`
+    ```
+    cpu_value
+    df_value
+    disk_read
+    disk_value
+    disk_write
+    interface_rx
+    interface_tx
+    memory_value
+    processes_processes
+    processes_threads
+    ```
+  * `select * from cpu_value`
+  * `select * from memory_value`
+  * `select * from df_value`
