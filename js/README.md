@@ -1118,3 +1118,56 @@ const sleep = ms => {
   }
 })().then(() => { console.log("done") })
 ```
+
+다음은 nested async function 의 예이다. promise 만으로
+구현하려면 call back hell 을 피할 수 없다.
+
+```js
+// sleep
+const sleep = ms => {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+async function bazAsync() {
+  for (i = 0; i < 5; ++i) {
+    await sleep(1000);
+    // do something
+    console.log(`\t\t${i}`);
+  }
+}
+await bazAsync().then(() => console.log("done"));
+
+// does not work ???
+async function barAsync() {
+  for (i = 0; i < 5; ++i) {
+    await bazAsync();
+    await sleep(5000);    
+    // do something
+    console.log(`\t${i}`);
+  }
+}
+await barAsync().then(() => console.log("done"));
+
+// does not work ???
+async function fooAsync() {
+  for (i = 0; i < 5; ++i) {
+    await barAsync();
+    // do something
+    console.log(`${i}`);
+  }
+}
+await fooAsync().then(() => console.log("done"));
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
