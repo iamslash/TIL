@@ -970,11 +970,13 @@ b = 'world'; // ERROR
 
 ----
 
-비동기를 구현하기 위한 object 이다. `promise` 는 `pending, resolved, rejected` 와 같이 3 가지 상태를 갖는다.
+비동기를 구현하기 위한 object 이다. `promise` 는 `pending, resolved, rejected` 와 같이 3 가지 상태를 갖는다 ???
 
-`Promise` 의 function argument 에서 `resolve` 를 호출하면 `then()` 의 function arg 가 호출되고 `reject` 를 호출하면 `catch()` 의 function arg 가 호출된다. `then()` 의 function arg 가 곧 `resolve` 이고 `catch()` 의 function arg 가 곧 `reject` 이다.
+`Promise` object 의 `then()` 혹은 `catch()`을 호출하면 `Promise` object 는 resolved 상태로 된다.
 
-`promise` 를 `then()` 의 function arg 로 정상처리를 하고 `catch()` 의 function arg 로 오류처리를 한다고 생각하자.
+`Promise` 의 function argument 는 `resolve, rejectr` 를 argument 로 하는 함수이다. `resolve` 를 호출하면 `then()` 의 function arg 가 호출되고 `reject` 를 호출하면 `catch()` 의 function arg 가 호출된다. 곧 `then()` 의 function arg 가 `resolve` 이고 `catch()` 의 function arg 가 `reject` 이다.
+
+`promise` 를 `then()` 의 function arg 에서 정상처리를 하고 `catch()` 의 function arg 에서 오류처리를 한다고 생각하자.
 
 ```js
 // simple promise
@@ -1085,11 +1087,30 @@ promiseBar('jane', bar)
 
 비동기를 구현하는 새로운 방법이다. 콜백지옥을 탈출 할 수 있다. `async` 로 함수선언을 하고 함수안에서 `promise` 앞에 `await` 로 기다린다. 이것은 `c#` 의 `IEnumerator, yield` 와 유사하다.
 
+`await` 다음에 오는 `Promise` 의 `then()` 혹은 `catch()` 를 호출하지 않아도 `Promise` 가 `resolved` 상태로 전환된다 ???
+
 ```js
-// sleep, async, await in a loop
+// sleep
 const sleep = ms => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
+
+// It works well, sleep, async, await in a loop
+(async _ => {
+  for (i = 0; i < 5; ++i) {
+    await sleep(1000);
+    console.log(i)
+  }
+})().then(() => { console.log("done") })
+// It works welll, sleep, async, await in a loop
+(async _ => {
+  for (i = 0; i < 5; ++i) {
+    await sleep(1000).then(() => {});
+    console.log(i)
+  }
+})().then(() => { console.log("done") })
+
+// It works well. sleep, async, await in a loop with await return
 (async _ => {
   for (i = 0; i < 5; ++i) {
     r = await sleep(1000).then(() => i);
