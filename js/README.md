@@ -1119,50 +1119,42 @@ const sleep = ms => {
 })().then(() => { console.log("done") })
 ```
 
-다음은 nested async function 의 예이다. promise 만으로
-구현하려면 call back hell 을 피할 수 없다.
+다음은 nested async function 의 예이다. `await bazAsync()`
+는 `basZsync()` 를 모두 마치고 종료한다. 이때 index `i, j, k` 를
+구분해서 사용해야 한다. 같은 index 를 사용하면 동작하지 않는다. async, await 를 사용해서 callback hell 을 피했다.
 
 ```js
-// sleep
 const sleep = ms => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 async function bazAsync() {
-  for (i = 0; i < 5; ++i) {
+  for (i = 0; i < 3; ++i) {
     await sleep(1000);
     // do something
     console.log(`\t\t${i}`);
   }
 }
-await bazAsync().then(() => console.log("done"));
+//await bazAsync().then(() => console.log("\t\tdone"));
 
-// does not work ???
 async function barAsync() {
-  for (i = 0; i < 5; ++i) {
+  for (j = 0; j < 3; ++j) {
     await bazAsync();
-    await sleep(5000);    
     // do something
-    console.log(`\t${i}`);
+    console.log(`\t${j}`);
   }
 }
-await barAsync().then(() => console.log("done"));
+//await barAsync().then(() => console.log("\tdone"));
 
-// does not work ???
 async function fooAsync() {
-  for (i = 0; i < 5; ++i) {
+  for (k = 0; k < 3; ++k) {
     await barAsync();
     // do something
-    console.log(`${i}`);
+    console.log(`${k}`);
   }
 }
 await fooAsync().then(() => console.log("done"));
 ```
-
-
-
-
-
 
 
 
