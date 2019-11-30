@@ -25,7 +25,20 @@ $ docker-compose up -d
 # http://localhost:3000 grafana web page (login with admin/admin)
 ```
 
-* It doesn't work on Win7 So I installed [Collectd Win](https://ssc-serv.com/download.shtml) on Win 7. And It worked. But Free Version can send a data just every 5 min.
+* Collectd doesn't work So I installed Collectd on Win64 And It worked. 
+
+## Install Collectd on Win64
+
+* [Collectd Win](https://ssc-serv.com/download.shtml) But Free Version can send a data just every 5 min.
+* Should reset Server Config as `127.0.0.1`
+  
+## Install Collectd on macOS
+
+```bash
+$ brew install collectd
+$ vim /usr/local/etc/collectd.conf
+$ /usr/local/sbin/collectd -f -C /usr/local/etc/collectd.conf
+```
 
 # Config for Collectd
 
