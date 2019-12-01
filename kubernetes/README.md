@@ -9,9 +9,36 @@
 - [Install](#install)
   - [Install on macOS](#install-on-macos)
 - [Basic](#basic)
-  - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
+  - [Useful Commands](#useful-commands)
   - [Launch Single Pod](#launch-single-pod)
-  - [](#)
+  - [Lunach Pods with livnessprobe, readynessprobe](#lunach-pods-with-livnessprobe-readynessprobe)
+    - [key commands](#key-commands)
+    - [Launch Simple Pod](#launch-simple-pod)
+    - [Launch Simple Pod with LivenessProbe](#launch-simple-pod-with-livenessprobe)
+    - [Launch Simple Pod with ReadinessProbe](#launch-simple-pod-with-readinessprobe)
+    - [Launch Simple Pod with HealthCheck](#launch-simple-pod-with-healthcheck)
+    - [Launch Simple Pod with Multi Containers](#launch-simple-pod-with-multi-containers)
+    - [Delete All resources](#delete-all-resources)
+  - [Launch Replicaset](#launch-replicaset)
+    - [Launch Simple Replicaset](#launch-simple-replicaset)
+    - [Launch ReplicaSet Scale out](#launch-replicaset-scale-out)
+  - [Launch Replicaset](#launch-replicaset-1)
+    - [Launch Simple Deployment](#launch-simple-deployment)
+    - [Launch Deployment with RollingUpdate](#launch-deployment-with-rollingupdate)
+  - [Launch Service](#launch-service)
+  - [Launch Simple Service](#launch-simple-service)
+    - [Launch Service with NodePort](#launch-service-with-nodeport)
+  - [Launch LoadBalancer](#launch-loadbalancer)
+  - [Launch Simple LoadBalancer](#launch-simple-loadbalancer)
+    - [????](#)
+    - [???](#)
+    - [???](#1)
+  - [Launch Ingress](#launch-ingress)
+    - [Launch Simple Ingress](#launch-simple-ingress)
+    - [????](#1)
+  - [Launch Horizontal Pod Autoscaler](#launch-horizontal-pod-autoscaler)
+    - [Launch Simple Horizontal Pod Autoscaler](#launch-simple-horizontal-pod-autoscaler)
+  - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
 
 ----
 
@@ -102,6 +129,1029 @@ cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주�
 * Install docker, enable kubernetes. That's all.
 
 # Basic
+
+## Useful Commands
+
+* [workshop-k8s-basic/guide/guide-03/task-01.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-01.md)
+  * [[토크ON세미나] 쿠버네티스 살펴보기 6강 - Kubernetes(쿠버네티스) 실습 1 | T아카데미](https://www.youtube.com/watch?v=G0-VoHbunks&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=6)
+
+----
+
+* api-resources
+
+```bash
+# show all objects including node, pod, replicaset, deployemnt,
+# service, loadbalancer, ingress, volume, configmap, secret,
+# namespace
+$ kubectl api-resources
+```
+
+* get
+
+```bash
+# show recent pod, replicaset, deployment, service not all
+$ kubectl get all
+
+# show nodes
+$ kubectl get no
+$ kubectl get node
+$ kubectl get nodes
+
+# change result format
+$ kubectl get nodes -o wide
+$ kubectl get nodes -o yaml
+$ kubectl get nodes -o json
+$ kubectl get nodes -o json |
+      jq ".items[] | {name:.metadata.name} + .status.capacity"
+```
+
+* describe
+
+```bash
+# kubectl describe type/name
+# kubectl describe type name
+kubectl describe node <node name>
+kubectl describe node/<node name>
+```
+
+* etc
+
+```bash
+kubectl exec -it <POD_NAME>
+kubectl logs -f <POD_NAME|TYPE/NAME>
+
+kubectl apply -f <FILENAME>
+kubectl delete -f <FILENAME>
+```
+
+## Launch Single Pod
+
+```bash
+# Create my-nginx-* pod and my-nginx deployment
+> kubectl run my-nginx --image nginx --port=80
+# Show running pods
+> kubectl get pods
+# Show deployments. Deployment is a specification for deploying pods.
+> kubectl get dployments
+# Scale out my-nginx deployment.
+> kubectl scale deploy my-nginx --replicas=2
+# Create a service to expose my-nginx pods. These are kinds of services. ClusterIP, NodePort, LoadBalancer, ExteralName
+> kubectl expose deployment my-nginx --type=NodePort
+# show services
+> kubectl get services
+# show details of my-nginx service
+> kubectl describe service my-nginx
+# Delete my-nginx deployment including pods.
+> kubectl delete deployment my-nginx
+# Delete my-nginx service
+> kubectl delete service my-nginx
+```
+
+## Lunach Pods with livnessprobe, readynessprobe
+
+* [workshop-k8s-basic/guide/guide-03/task-02.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-02.md)
+  * [[토크ON세미나] 쿠버네티스 살펴보기 6강 - Kubernetes(쿠버네티스) 실습 1 | T아카데미](https://www.youtube.com/watch?v=G0-VoHbunks&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=6)
+
+----
+
+### key commands
+
+```bash
+$ kubectl run whoami --image subicura/whoami:1 
+$ kubectl get po
+$ kubectl get pod
+$ kubectl get pods
+$ kubectl get pods -o wide
+$ kubectl get pods -o yaml
+$ kubectl get pods -o json
+$ kubectl logs whoami-<xxxx>
+$ kubectl logs -f whoami-<xxxx>
+$ kubectl exec -it whoami-<xxxx> sh
+$ kubectl describe pods whoami-<xxxx>
+$ kubectl delete pods whoami-<xxxx>
+$ kubectl get pods
+$ kubectl get all
+$ kubectl delete deployment/whoami
+```
+
+### Launch Simple Pod
+
+* whoami-pod.yml
+   
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: whoami
+  labels:
+    type: app
+spec:
+  containers:
+  - name: app
+    image: subicura/whoami:1
+```
+* launch
+
+```bash
+$ kubectl apply -f whoami-pod.yml
+```
+
+### Launch Simple Pod with LivenessProbe
+
+* whoami-pod-lp.yml
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: whoami-lp
+  labels:
+    type: app
+spec:
+  containers:
+  - name: app
+    image: subicura/whoami:1
+    livenessProbe:
+      httpGet:
+        path: /not/exist
+        port: 8080
+      initialDelaySeconds: 5
+      timeoutSeconds: 2 # Default 1
+      periodSeconds: 5 # Defaults 10
+      failureThreshold: 1 # Defaults 3
+```
+
+* launch
+
+```bash
+$ kubectl apply -f whoami-pod-lp.yml
+```
+
+### Launch Simple Pod with ReadinessProbe
+
+* whoami-pod-rp.yml
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: whoami-rp
+  labels:
+    type: app
+spec:
+  containers:
+  - name: app
+    image: subicura/whoami:1
+    readinessProbe:
+      httpGet:
+        path: /not/exist
+        port: 8080
+      initialDelaySeconds: 5
+      timeoutSeconds: 2 # Default 1
+      periodSeconds: 5 # Defaults 10
+      failureThreshold: 1 # Defaults 3
+```
+
+* launch
+
+```bash
+$ kubectl apply -f whoami-pod-rp.yml
+```
+
+### Launch Simple Pod with HealthCheck
+
+* whoami-pod-health.yml
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: whoami-health
+  labels:
+    type: app
+spec:
+  containers:
+  - name: app
+    image: subicura/whoami:1
+    livenessProbe:
+      httpGet:
+        path: /
+        port: 4567
+    readinessProbe:
+      httpGet:
+        path: /
+        port: 4567
+```
+
+* launch
+
+```bash
+$ kubectl apply -f whoami-pod-health.yml
+```
+
+### Launch Simple Pod with Multi Containers
+
+* whoami-pod-redis.yml
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: whoami-redis
+  labels:
+    type: stack
+spec:
+  containers:
+  - name: app
+    image: subicura/whoami-redis:1
+    env:
+    - name: REDIS_HOST
+      value: "localhost"
+  - name: db
+    image: redis
+```
+
+* launch
+
+```bash
+$ kubectl apply -f whoami-pod-redis.yml
+$ kubectl get all
+$ kubectl logs whoami-redis
+$ kubectl logs whoami-redis app
+$ kubectl logs whoami-redis db
+$ kubectl exec -it whoami-redis
+$ kubectl exec -it whoami-redis -c db sh
+$ kubectl exec -it whoami-redis -c app sh
+  apk add curl busybox-extras # install telnet
+  curl localhost:4567
+  telnet localhost 6379
+    dbsize
+    KEYS *
+    GET count
+    quit
+$ kubectl get pod/whoami-redis
+$ kubectl get pod/whoami-redis -o yaml
+$ kubectl get pod/whoami-redis -o jsonpath="{.spec.containers[0].name}"
+$ kubectl get pod/whoami-redis -o jsonpath="{.spec.containers[*].name}"
+$ kubectl describe pod/whoami-redis
+```
+
+### Delete All resources
+
+```bash
+$ kubectl delete -f ./
+```
+
+## Launch Replicaset
+
+* [workshop-k8s-basic/guide/guide-03/task-03.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-03.md)
+  * [[토크ON세미나] 쿠버네티스 살펴보기 6강 - Kubernetes(쿠버네티스) 실습 1 | T아카데미](https://www.youtube.com/watch?v=G0-VoHbunks&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=6)
+
+----
+
+### Launch Simple Replicaset
+
+We use Deployment more than Replicaset. ReplicaSet is used in Deployment.
+
+* whoami-rs.yml
+  * ReplicaSet is still beta.
+  * If there is no pod such as selector, Launch pod with template. 
+
+```yml
+apiVersion: apps/v1beta2
+kind: ReplicaSet
+metadata:
+  name: whoami-rs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      type: app
+      service: whoami
+  template:
+    metadata:
+      labels:
+        type: app
+        service: whoami
+    spec:
+      containers:
+      - name: whoami
+        image: subicura/whoami:1
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 4567
+```
+
+* launch
+
+```bash
+$ kubectl apply -f whoami-rs.yml
+$ kubectl get pods --show-labels
+# If remove service from label, ReplicatSet launch another pod
+$ kubectl label pod/whoami-rs-<xxxx> service-
+# set label
+$ kubectl label pod/whoami-rs-<xxxx> service=whoami
+# modify replicas as 3 and apply again
+#   It is same with kubectl scale --replicas=3 -f whoami-rs.yml
+$ kubectl apply -f whoami-rs.yml
+```
+
+### Launch ReplicaSet Scale out
+
+* whoami-rs-scaled.yml
+
+```yml
+apiVersion: apps/v1beta2
+kind: ReplicaSet
+metadata:
+  name: whoami-rs
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      type: app
+      service: whoami
+  template:
+    metadata:
+      labels:
+        type: app
+        service: whoami
+    spec:
+      containers:
+      - name: whoami
+        image: subicura/whoami:1
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 4567
+```
+
+* launch
+
+```bash
+$ kubectl apply -f whoami-rs-scaled.yml
+```
+
+## Launch Replicaset
+
+* [workshop-k8s-basic/guide/guide-03/task-04.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-04.md)
+  * [[토크ON세미나] 쿠버네티스 살펴보기 6강 - Kubernetes(쿠버네티스) 실습 1 | T아카데미](https://www.youtube.com/watch?v=G0-VoHbunks&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=6)
+
+----
+
+### Launch Simple Deployment
+
+* whoami-deploy.yml
+  * It is almost same with ReplicaSet.
+  * Deployment manages versions of ReplicaSet.
+
+```yml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: whoami-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: app
+      service: whoami
+  template:
+    metadata:
+      labels:
+        type: app
+        service: whoami
+    spec:
+      containers:
+      - name: whoami
+        image: subicura/whoami:1
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 4567
+```
+
+* launch
+
+```bash
+$ kubectl apply -f whoami-deploy.yml
+$ kubectl set image deploy/whoami-deploy whoami=subicura/whoami:2
+$ kubectl apply -f whoami-deploy.yml
+# watch continuously
+$ kubectl get rs -w
+$ kubectl describe deploy/whoami-deploy
+# show history
+$ kubectl rollout history -f whoami-deploy.yml
+$ kubectl set image deploy/whoami-deploy whoami=subicura/whoami:1 --record=true
+$ kubectl rollout history -f whoami-deploy.yml
+$ kubectl rollout history -f whoami-deploy.yml --revision=2
+$ kubectl rollout status deploy/whoami-deploy
+$ kubectl rollout undo deploy/whoami-deploy
+$ kubectl rollout undo deploy/whoami-deploy --to-revision=3
+```
+
+### Launch Deployment with RollingUpdate
+
+* whoami-deploy-strategy.yml
+
+```yml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: whoami-deploy
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: app
+      service: whoami
+  minReadySeconds: 5
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+  template:
+    metadata:
+      labels:
+        type: app
+        service: whoami
+    spec:
+      containers:
+      - name: whoami
+        image: subicura/whoami:1
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 4567
+```
+
+* launch
+
+```bash
+$ kubectl apply -f whoami-deploy-strategy
+$ kubectl describe deploy/whoami-deploy
+$ kubectl set image deploy/whoami-deploy whoami=subicura/whoami:2
+$ kubectl get rs -w
+```
+
+## Launch Service
+
+* [workshop-k8s-basic/guide/guide-03/task-05.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-05/task-05.md)
+  * [[토크ON세미나] 쿠버네티스 살펴보기 7강 - Kubernetes(쿠버네티스) 실습 2 | T아카데미](https://www.youtube.com/watch?v=v6TUgqfV3Fo&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=7)
+* [Kubernetes NodePort vs LoadBalancer vs Ingress? When should I use what?](https://medium.com/google-cloud/kubernetes-nodeport-vs-loadbalancer-vs-ingress-when-should-i-use-what-922f010849e0)
+
+----
+
+* ClusterIP is used for internal communication.
+* NodePort is used for external communication???
+
+## Launch Simple Service
+
+* redis-app.yml
+
+```yml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      type: db
+      service: redis
+  template:
+    metadata:
+      labels:
+        type: db
+        service: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis
+        ports:
+        - containerPort: 6379
+          protocol: TCP
+---
+# This is for ClusterIP
+# ClusterIP is used for internal communication
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  ports:
+  - port: 6379
+    protocol: TCP
+  selector:
+    type: db
+    service: redis
+```
+
+* whoami.yml
+
+```yml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: whoami
+spec:
+  selector:
+    matchLabels:
+      type: app
+      service: whoami
+  template:
+    metadata:
+      labels:
+        type: app
+        service: whoami
+    spec:
+      containers:
+      - name: whoami
+        image: subicura/whoami-redis:1
+        env:
+        - name: REDIS_HOST
+          value: "redis"
+        - name: REDIS_PORT
+          value: "6379"
+```
+
+* launch
+
+```bash
+$ kubectl apply -f redis-app.yml
+$ kubectl apply -f whoami.yml
+$ kubectl get ep
+$ kubectl exec -it whoami-<xxxxx> sh
+  apk add curl busybox-extras # install telnet
+  curl localhost:4567
+  curl localhost:4567
+  telnet localhost 6379
+  telnet redis 6379
+    dbsize
+    KEYS *
+    GET count
+    quit
+```
+
+### Launch Service with NodePort
+
+* whoami-svc.yml
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami
+spec:
+  type: NodePort
+  ports:
+  - port: 4567
+    protocol: TCP
+  selector:
+    type: app
+    service: whoami
+```
+
+## Launch LoadBalancer
+
+* [workshop-k8s-basic/guide/guide-03/task-06.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-05/task-06.md)
+  * [[토크ON세미나] 쿠버네티스 살펴보기 7강 - Kubernetes(쿠버네티스) 실습 2 | T아카데미](https://www.youtube.com/watch?v=v6TUgqfV3Fo&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=7)
+
+----
+
+## Launch Simple LoadBalancer
+
+* whoami-app.yml
+  * If you launch this on AWS, ELB will attached to service.
+  * NodePort is just a external port of Node But LoadBalancer is external reousrce to load balances.
+
+```yml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: whoami
+spec:
+  selector:
+    matchLabels:
+      type: app
+      service: whoami
+  template:
+    metadata:
+      labels:
+        type: app
+        service: whoami
+    spec:
+      containers:
+      - name: whoami
+        image: subicura/whoami-redis:1
+        env:
+        - name: REDIS_HOST
+          value: "redis"
+        - name: REDIS_PORT
+          value: "6379"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8000
+    targetPort: 4567
+    protocol: TCP
+  selector:
+    type: app
+    service: whoami
+
+---
+
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: redis
+spec:
+  selector:
+    matchLabels:
+      type: db
+      service: redis
+  template:
+    metadata:
+      labels:
+        type: db
+        service: redis
+    spec:
+      containers:
+      - name: redis
+        image: redis
+        ports:
+        - containerPort: 6379
+          protocol: TCP
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+spec:
+  ports:
+  - port: 6379
+    protocol: TCP
+  selector:
+    type: db
+    service: redis
+```
+
+* launch
+
+```bash
+```
+
+### ????
+
+* whoami-svc-v1-v2.yml
+
+```yml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: whoami-v1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: app
+      service: whoami
+      version: v1
+  template:
+    metadata:
+      labels:
+        type: app
+        service: whoami
+        version: v1
+    spec:
+      containers:
+      - name: whoami
+        image: subicura/whoami:1
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 4567
+
+---
+
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: whoami-v2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: app
+      service: whoami
+      version: v2
+  template:
+    metadata:
+      labels:
+        type: app
+        service: whoami
+        version: v2
+    spec:
+      containers:
+      - name: whoami
+        image: subicura/whoami:2
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 4567
+```
+
+* launch
+
+```bash
+```
+
+### ???
+
+* whoami-svc-v1.yml
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8000
+    targetPort: 4567
+    protocol: TCP
+  selector:
+    type: app
+    service: whoami
+    version: v1
+```
+
+* launch
+
+```bash
+```
+
+### ???
+
+* whoami-svc-all.yml
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8000
+    targetPort: 4567
+    protocol: TCP
+  selector:
+    type: app
+    service: whoami
+```
+
+* launch
+
+```bash
+```
+
+## Launch Ingress
+
+* [workshop-k8s-basic/guide/guide-03/bonus.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-05/bonus.md)
+  * [[토크ON세미나] 쿠버네티스 살펴보기 7강 - Kubernetes(쿠버네티스) 실습 2 | T아카데미](https://www.youtube.com/watch?v=v6TUgqfV3Fo&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=7)
+
+----
+
+* Ingress is a mapping between DNS to internals.
+* You can use IP as DNS
+  * [sslip.io](https://sslip.io/)
+  * [nip.io](https://nip.io/)
+
+```bash
+10.0.0.1.nip.io maps to 10.0.0.1
+192-168-1-250.nip.io maps to 192.168.1.250
+app.10.8.0.1.nip.io maps to 10.8.0.1
+app-37-247-48-68.nip.io maps to 37.247.48.68
+customer1.app.10.0.0.1.nip.io maps to 10.0.0.1
+customer2-app-127-0-0-1.nip.io maps to 127.0.0.1
+```
+
+### Launch Simple Ingress
+
+* whoami-v1.yml
+
+```yml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: whoami-v1
+  annotations:
+    ingress.kubernetes.io/rewrite-target: "/"
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - host: v1.whoami.13.125.41.102.sslip.io
+    http:
+      paths: 
+      - path: /
+        backend:
+          serviceName: whoami-v1
+          servicePort: 4567
+
+---
+
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: whoami-v1
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: app
+      service: whoami
+      version: v1
+  template:
+    metadata:
+      labels:
+        type: app
+        service: whoami
+        version: v1
+    spec:
+      containers:
+      - name: whoami
+        image: subicura/whoami:1
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 4567
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami-v1
+spec:
+  ports:
+  - port: 4567
+    protocol: TCP
+  selector:
+    type: app
+    service: whoami
+    version: v1
+```
+
+* launch
+
+```bash
+$ kubectl get ingress
+```
+
+### ????
+
+* whoami-v2.yml
+
+```yml
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: whoami-v2
+  annotations:
+    ingress.kubernetes.io/rewrite-target: "/"
+    ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+  - host: v2.whoami.13.125.41.102.sslip.io
+    http:
+      paths: 
+      - path: /
+        backend:
+          serviceName: whoami-v2
+          servicePort: 4567
+
+---
+
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: whoami-v2
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      type: app
+      service: whoami
+      version: v2
+  template:
+    metadata:
+      labels:
+        type: app
+        service: whoami
+        version: v2
+    spec:
+      containers:
+      - name: whoami
+        image: subicura/whoami:2
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 4567
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: whoami-v2
+spec:
+  ports:
+  - port: 4567
+    protocol: TCP
+  selector:
+    type: app
+    service: whoami
+    version: v2
+```
+
+## Launch Horizontal Pod Autoscaler
+
+* [workshop-k8s-basic/guide/guide-03/task-06.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-05/task-06.md)
+  * [[토크ON세미나] 쿠버네티스 살펴보기 7강 - Kubernetes(쿠버네티스) 실습 2 | T아카데미](https://www.youtube.com/watch?v=v6TUgqfV3Fo&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=7)
+
+----
+
+
+### Launch Simple Horizontal Pod Autoscaler
+
+* hpa-example-deploy.yml.yml
+
+```yml
+apiVersion: apps/v1beta2
+kind: Deployment
+metadata:
+  name: hpa-example-deploy
+spec:
+  selector:
+    matchLabels:
+      type: app
+      service: hpa-example
+  template:
+    metadata:
+      labels:
+        type: app
+        service: hpa-example
+    spec:
+      containers:
+      - name: hpa-example
+        image: k8s.gcr.io/hpa-example
+        resources:
+            limits:
+              cpu: "0.5"
+            requests:
+              cpu: "0.25"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: hpa-example
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+  selector:
+    type: app
+    service: hpa-example
+```
+
+* hpa.yml
+
+```yml
+apiVersion: autoscaling/v1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-example
+spec:
+  maxReplicas: 4
+  minReplicas: 1
+  scaleTargetRef:
+    apiVersion: extensions/v1
+    kind: Deployment
+    name: hpa-example-deploy
+  targetCPUUtilizationPercentage: 10
+```
 
 ## Launch Kubernetes Dashboard
 
@@ -291,28 +1341,3 @@ spec:
   selector:
     k8s-app: kubernetes-dashboard
 ```
-
-## Launch Single Pod
-
-```bash
-# Create my-nginx-* pod and my-nginx deployment
-> kubectl run my-nginx --image nginx --port=80
-# Show running pods
-> kubectl get pods
-# Show deployments. Deployment is a specification for deploying pods.
-> kubectl get dployments
-# Scale out my-nginx deployment.
-> kubectl scale deploy my-nginx --replicas=2
-# Create a service to expose my-nginx pods. These are kinds of services. ClusterIP, NodePort, LoadBalancer, ExteralName
-> kubectl expose deployment my-nginx --type=NodePort
-# show services
-> kubectl get services
-# show details of my-nginx service
-> kubectl describe service my-nginx
-# Delete my-nginx deployment including pods.
-> kubectl delete deployment my-nginx
-# Delete my-nginx service
-> kubectl delete service my-nginx
-```
-
-## 
