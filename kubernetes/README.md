@@ -1,3 +1,20 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Architecture](#architecture)
+  - [Overview](#overview)
+  - [Kubernetes Components](#kubernetes-components)
+    - [Master](#master)
+    - [Node](#node)
+    - [Addons](#addons)
+- [Install](#install)
+  - [Install on macOS](#install-on-macos)
+- [Basic](#basic)
+  - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
+  - [Launch Single Pod](#launch-single-pod)
+  - [](#)
+
+----
+
 # Abstract
 
 Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이다. 
@@ -15,11 +32,11 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 * [Kubernetes Deconstructed: Understanding Kubernetes by Breaking It Down - Carson Anderson, DOMO](https://www.youtube.com/watch?v=90kZRyPcRZw&fbclid=IwAR0InYUnMQD-t-o8JhS5U5KRRaJvSQQc1fBDeBCb8cv6eRk62vsG2Si_Ijo)
   * [slide](http://kube-decon.carson-anderson.com/Layers/3-Network.sozi.html#frame4156)
 
-# Basic
+# Architecture
 
 ## Overview
 
-Kubernetes 가 사용하는 큰 개념은 객체 (Object) 와 그것을 관리하는 컨트롤러 (Controller) 두가지가 있다. Object 의 종류는 Pod, Service, Volume, Namespace 등이 있다. Controller 의 종류는 ReplicaSet, Deployment, StatefulSet, DaemonSet, Job 등이 있다. Kubernetes 는 yaml 파일을 사용하여 설정한다.
+Kubernetes 가 사용하는 큰 개념은 객체 (Object) 와 그것을 관리하는 컨트롤러 (Controller) 두가지가 있다. Object 의 종류는 **Pod, Service, Volume, Namespace** 등이 있다. Controller 의 종류는 **ReplicaSet, Deployment, StatefulSet, DaemonSet, Job** 등이 있다. Kubernetes 는 yaml 파일을 사용하여 설정한다.
 
 ```yaml
 apiVersion : v1
@@ -30,9 +47,9 @@ Kind 의 값에 따라 설정파일이 어떤 Object 혹은 controller 에 대�
 
 Kubernetes Cluster 는 Master 와 Node 두가지 종류가 있다. 
 
-Master 는 etcd, kube-apiserver, kube-scheduler, kube-controller-manager, kubelet, kube-proxy, docker 등이 실행된다. Master 장비 1대에 앞서 언급한 프로세스들 한 묶음을 같이 실행하는게 일반적인 구성이다. Master 는 일반적으로 High Availibility 를 위해 3 대 실행한다. 평소 1 대를 활성시키고 나머지 2 대는 대기시킨다.
+Master 는 **etcd, kube-apiserver, kube-scheduler, kube-controller-manager, kubelet, kube-proxy, docker** 등이 실행된다. Master 장비 1대에 앞서 언급한 프로세스들 한 묶음을 같이 실행하는게 일반적인 구성이다. Master 는 일반적으로 High Availibility 를 위해 3 대 실행한다. 평소 1 대를 활성시키고 나머지 2 대는 대기시킨다.
 
-Node 는 초기에 미니언(minion) 이라고 불렀다. Node 는 kubelet, kube-proxy, docker 등이 실행된다. 대부분의 컨테이너들은 Node 에서 실행된다.
+Node 는 초기에 미니언(minion) 이라고 불렀다. Node 는 **kubelet, kube-proxy, docker** 등이 실행된다. 대부분의 컨테이너들은 Node 에서 실행된다.
 
 ![](https://upload.wikimedia.org/wikipedia/commons/b/be/Kubernetes.png)
 
@@ -76,26 +93,226 @@ cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주�
 * Container resource monitoring
 * cluster logging
 
-# Usages
+# Install
+
+## Install on macOS
+
+* [도커(Docker), 쿠버네티스(Kubernetes) 통합 도커 데스크톱을 스테이블 채널에 릴리즈 @ 44bits](https://www.44bits.io/ko/post/news--release-docker-desktop-with-kubernetes-to-stable-channel)
+
+* Install docker, enable kubernetes. That's all.
+
+# Basic
+
+## Launch Kubernetes Dashboard
 
 ```bash
-# 하나의 pod 에 my-nginx container 를 실행하자
+# show k8s client, server version
+$ kubectl version --output yaml
+# show contexts, default context is docker-for-desktop
+$ kubectl config get-contexts
+# show nodes
+$ kubectl get nodes
+# show pods
+$ kubectl get pods --all-namespaces
+# launch k8s dashbaord
+$ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml
+# show services
+$ kubectl get services --all-namespaces
+# launch proxy server to connect k8s dashboard
+$ kubectl proxy
+# open http://localhost:8001/api/v1/namespaces/kube-system/services/https:kubernetes-dashboard:/proxy/
+# create sample user and login. 
+# - https://github.com/kubernetes/dashboard/blob/master/docs/user/access-control/creating-sample-user.md
+```
+
+* `https://raw.githubusercontent.com/kubernetes/dashboard/v1.10.1/src/deploy/recommended/kubernetes-dashboard.yaml`
+
+```yaml
+# Copyright 2017 The Kubernetes Authors.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+# ------------------- Dashboard Secret ------------------- #
+
+apiVersion: v1
+kind: Secret
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard-certs
+  namespace: kube-system
+type: Opaque
+
+---
+# ------------------- Dashboard Service Account ------------------- #
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard
+  namespace: kube-system
+
+---
+# ------------------- Dashboard Role & Role Binding ------------------- #
+
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: kubernetes-dashboard-minimal
+  namespace: kube-system
+rules:
+  # Allow Dashboard to create 'kubernetes-dashboard-key-holder' secret.
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["create"]
+  # Allow Dashboard to create 'kubernetes-dashboard-settings' config map.
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["create"]
+  # Allow Dashboard to get, update and delete Dashboard exclusive secrets.
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["kubernetes-dashboard-key-holder", "kubernetes-dashboard-certs"]
+  verbs: ["get", "update", "delete"]
+  # Allow Dashboard to get and update 'kubernetes-dashboard-settings' config map.
+- apiGroups: [""]
+  resources: ["configmaps"]
+  resourceNames: ["kubernetes-dashboard-settings"]
+  verbs: ["get", "update"]
+  # Allow Dashboard to get metrics from heapster.
+- apiGroups: [""]
+  resources: ["services"]
+  resourceNames: ["heapster"]
+  verbs: ["proxy"]
+- apiGroups: [""]
+  resources: ["services/proxy"]
+  resourceNames: ["heapster", "http:heapster:", "https:heapster:"]
+  verbs: ["get"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: kubernetes-dashboard-minimal
+  namespace: kube-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kubernetes-dashboard-minimal
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-dashboard
+  namespace: kube-system
+
+---
+# ------------------- Dashboard Deployment ------------------- #
+
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard
+  namespace: kube-system
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      k8s-app: kubernetes-dashboard
+  template:
+    metadata:
+      labels:
+        k8s-app: kubernetes-dashboard
+    spec:
+      containers:
+      - name: kubernetes-dashboard
+        image: k8s.gcr.io/kubernetes-dashboard-amd64:v1.10.1
+        ports:
+        - containerPort: 8443
+          protocol: TCP
+        args:
+          - --auto-generate-certificates
+          # Uncomment the following line to manually specify Kubernetes API server Host
+          # If not specified, Dashboard will attempt to auto discover the API server and connect
+          # to it. Uncomment only if the default does not work.
+          # - --apiserver-host=http://my-address:port
+        volumeMounts:
+        - name: kubernetes-dashboard-certs
+          mountPath: /certs
+          # Create on-disk volume to store exec logs
+        - mountPath: /tmp
+          name: tmp-volume
+        livenessProbe:
+          httpGet:
+            scheme: HTTPS
+            path: /
+            port: 8443
+          initialDelaySeconds: 30
+          timeoutSeconds: 30
+      volumes:
+      - name: kubernetes-dashboard-certs
+        secret:
+          secretName: kubernetes-dashboard-certs
+      - name: tmp-volume
+        emptyDir: {}
+      serviceAccountName: kubernetes-dashboard
+      # Comment the following tolerations if Dashboard must not be deployed on master
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+
+---
+# ------------------- Dashboard Service ------------------- #
+
+kind: Service
+apiVersion: v1
+metadata:
+  labels:
+    k8s-app: kubernetes-dashboard
+  name: kubernetes-dashboard
+  namespace: kube-system
+spec:
+  ports:
+    - port: 443
+      targetPort: 8443
+  selector:
+    k8s-app: kubernetes-dashboard
+```
+
+## Launch Single Pod
+
+```bash
+# Create my-nginx-* pod and my-nginx deployment
 > kubectl run my-nginx --image nginx --port=80
-# 제대로 실행되었는지 pod 들의 목록을 보자
+# Show running pods
 > kubectl get pods
-# 실행중인 pod 들의 목록을 보자
+# Show deployments. Deployment is a specification for deploying pods.
 > kubectl get dployments
-# my-nginx pod 의 개수를 늘려보자.
+# Scale out my-nginx deployment.
 > kubectl scale deploy my-nginx --replicas=2
-# 서비스를 외부에 노출하기 위해서는 service 를 실행해야 한다. 서비스타입의 종류는 다음과 같다. ClusterIP, NodePort, LoadBalancer, ExteralName
+# Create a service to expose my-nginx pods. These are kinds of services. ClusterIP, NodePort, LoadBalancer, ExteralName
 > kubectl expose deployment my-nginx --type=NodePort
-# 서비스들의 목록을 얻어오자.
+# show services
 > kubectl get services
-# my-nginx service 의 자세한 정보를 보자
+# show details of my-nginx service
 > kubectl describe service my-nginx
-# my-ngnix pod 를 삭제하자.
+# Delete my-nginx deployment including pods.
 > kubectl delete deployment my-nginx
-# my-nginx service 를 삭제하자.
+# Delete my-nginx service
 > kubectl delete service my-nginx
 ```
 
+## 
