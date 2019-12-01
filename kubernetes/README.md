@@ -7,6 +7,7 @@
     - [Node](#node)
     - [Addons](#addons)
 - [Install](#install)
+  - [Install on Win64](#install-on-win64)
   - [Install on macOS](#install-on-macos)
 - [Basic](#basic)
   - [Useful Commands](#useful-commands)
@@ -121,6 +122,19 @@ cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주�
 * cluster logging
 
 # Install
+
+## Install on Win64
+
+* Install docker, enable kubernetes. That's all.
+* If you meet the issue like following, set env `%KUBECONFIG%` as `c:\Users\iamslash\.kube\config`
+
+```bash
+> kubectl config get-contexts
+CURRENT   NAME      CLUSTER   AUTHINFO   NAMESPACE
+> kubectl version
+...
+Unable to connect to the server: dial tcp [::1]:8080: connectex: No connection could be made because the target machine actively refused it.
+```
 
 ## Install on macOS
 
