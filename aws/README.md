@@ -37,6 +37,8 @@
   - [EC2 (Elastic Compute Cloud)](#ec2-elastic-compute-cloud)
     - [How to make a EC2 instance](#how-to-make-a-ec2-instance)
     - [How to scaleup EC2 instance Manually](#how-to-scaleup-ec2-instance-manually)
+    - [User-Data](#user-data)
+    - [Launch Template](#launch-template)
   - [ELB (Elastic Load Balancer)](#elb-elastic-load-balancer)
     - [CLB vs ALB vs NLB](#clb-vs-alb-vs-nlb)
     - [Decision for ELB](#decision-for-elb)
@@ -59,6 +61,7 @@
   - [Route 53](#route-53)
   - [CloudWatch](#cloudwatch)
   - [Athena](#athena)
+  - [CloudTrail](#cloudtrail)
   - [Elastics Beanstalk](#elastics-beanstalk)
   - [Cloud Formation](#cloud-formation)
   - [Glacier](#glacier)
@@ -81,6 +84,7 @@
   - [Basic VPC Design](#basic-vpc-design)
   - [NAT Gateway, Bastion Host](#nat-gateway-bastion-host)
   - [VPC Peering](#vpc-peering)
+  - [VPC Endpoint](#vpc-endpoint)
   - [Chatting Service](#chatting-service)
 - [AWS-CLI](#aws-cli)
   - [Install](#install)
@@ -429,6 +433,20 @@ putty 를 이용하여 public DNS 에 SSH 접속할 수 있다. user 는 `ubuntu
 
 기존의 EC2 instance 를 A 라 하자. 그리고 미리 만들어 놓은 AMI 를 이용하여 scaleup 한 EC2 instance 를 B 라 하자. A 가 사용하고 있는 Elastic IP 를 Disassociate 하고 이것을 B 에 Associate 한다.
 
+### User-Data
+
+Initiate EC2 instance with the script (cloud-config format) in user-data when it starts for the first time. 
+* [AWS EC2 user-data @ AWS](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/user-data.html). 
+* [cloud-config @ digitalocean](https://www.digitalocean.com/community/tutorials/an-introduction-to-cloud-config-scripting). 
+
+Ofcourse you can run user-stat whenever EC2 instance restarts. 
+* [Amazon EC2 인스턴스를 다시 시작할 때마다 사용자 데이터를 실행하여 파일을 자동으로 생성하려면 어떻게 해야 합니까? @ AWS](https://aws.amazon.com/ko/premiumsupport/knowledge-center/execute-user-data-ec2/)
+
+### Launch Template
+
+template 을 만들어서 EC2 를 쉽게 provisioning 할 수 있다. launch configuration 의 다음 버전이다. 
+
+* [EC2 Launch Template](https://www.bespinglobal.com/tech-blog-180124-ec2-launchtemplate/)
 
 ## ELB (Elastic Load Balancer)
 
@@ -619,6 +637,10 @@ DNS server 이다. Simple, Weighted, Latency, Failover, GeoLocation, Multivalue 
 
 * s3 의 data 를 SQL 로 query 할 수 있다.
 
+## CloudTrail
+
+Show AWS console logging. 
+
 ## Elastics Beanstalk
 
 * [AWS Elastic Beanstalk 활용하여 수 분만에 코드 배포하기 - 최원근 솔루션즈 아키텍트(AWS)](https://www.youtube.com/watch?v=AfRnvsRxZ_0)
@@ -804,6 +826,8 @@ aws_access_key_id = 3BqwEFsOBd3vx11+TOHhI9LVi2
 
 ----
 
+NAT Gateway 를 사용하면 VPC 안의 subnet 에서 인터넷에 접근할 수 있다. VPC 밖의 네트워크에서 VPC 안의 AWS resources 를 접근할 때 보안을 위해 특정 Host 를 사용하는데 이것을 Bastion Host 라고 한다.
+
 * [AWS VPC를 디자인해보자(3) - NAT Gateway 와 Bastion host](https://bluese05.tistory.com/48)
   * NAT Gateway 를 이용해서 Private Subnet 과 통신해 본다.
   * Bastion host 를 설정하고 SSH Tunneling 을 통해 VPC 외부에서 접속해 보자.
@@ -814,8 +838,15 @@ aws_access_key_id = 3BqwEFsOBd3vx11+TOHhI9LVi2
 
 ## VPC Peering
 
-* [AWS VPC를 디자인해보자(4) - VPC Peering을 활용한 Multi VPC 사용하기](https://bluese05.tistory.com/49)
-  * 서로다른 VPC 를 연결하는 것을 VPC Peering 이라고 한다.
+서로다른 VPC 를 연결하는 것을 VPC Peering 이라고 한다.
+
+* [AWS VPC를 디자인해보자(4) - VPC Peering을 활용한 Multi VPC 사용하기](https://bluese05.tistory.com/49) 
+
+## VPC Endpoint
+
+VPC 를 다른 AWS branch (S3) 와 private link 할 수 있다.
+
+* [VPC endpoint to S3 @ tistory](https://soul0.tistory.com/591)
 
 ## Chatting Service
 
