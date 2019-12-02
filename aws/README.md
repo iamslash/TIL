@@ -584,15 +584,34 @@ redis, memcached 를 사용할 수 있다.
 
 ## Lambda
 
+* [AWS Lambda 개요 - 순식간에 웹 서버 만들어 보기 [AWS Lambda 강좌] @ youtube](https://www.youtube.com/watch?v=7uEDep9DFJs&list=PLRx0vPvlEmdD_AdG6fEwcfVrq5Qb3q_Ja)
 * [[AWS]Lambda의 시작 - 'Hello World' 출력하기](https://gun0912.tistory.com/60)
 * [AWS Lambda: 가볍게 시작하기](https://hyunseob.github.io/2017/05/27/aws-lambda-easy-start/)
 
-서버설정은 필요 없이 비지니스 로직을 실행할 수 있다. 함수만 작성하면 끝이다. coldstart 문제는 없을까? 
+----
+
+서버관리 및 코드배포 등은 AWS 에 맞기고 개발자는 비지니스 로직 구현에만 집중할 수 있다. Lambda function 하나가 실행될 때 docker container 위에서 실행되기 때문에 cold start 문제가 있다. 또한 Lambda function 하나에 메모리 제한이 있다.
+
 API Gateway 에서 routing 설정을 해야 외부에서 HTTP request 할 수 있다.
+
+Lambda function 들이 사용할 library 는 Layer 를 만들어서 업로드 할 수 있다. 그리고 Lambda function 들에서 업로드한 library 를 사용할 수 있다. 
+
+다음과 같이 특정 폴더에 python library 를 설치하고 압축해보자. 압축된 파일은 최상위 폴더가 python 이어야 한다. 그리고 압축된 파일을 업로드하여 Layer 를 만들어 보자. 
+
+```bash
+$ cd a
+$ mkdir python && cd python
+$ pip3 install bs4 -t
+$ cd ..
+$ zip -r bs4.zip .
+# upload AWS Lambda Layer 
+```
 
 ## API Gateway
 
 * [[AWS]API Gateway - RESTful API만들기](https://gun0912.tistory.com/63)
+
+----
 
 HTTP URL 을 routing 할 수 있다. 예를 들어 `HTTP GET /user` 를 수신하면 `Lambda Hello` 혹은 `Lambda World` 등으로 routing 할 수 있다.
 
