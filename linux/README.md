@@ -315,10 +315,12 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * [넷캣(Netcat) 간단한 사용방법](https://devanix.tistory.com/307)
   * `nc -l -p 1234`
     * simple tcp listen server
+  * `nc 127.0.0.1 1234`
+    * connect tcp server and send a data
   * `nc -l -u 1234`
     * simple udp listen server
-  * `nc 127.0.0.1 1234`
-    * 1234포트로 접속해보자.
+  * `nc -u 127.0.0.1 1234`
+    * send a udp data
   * `ps auxf | nc -w3 10.0.2.15 1234`
     * `ps auxf` 결과를 전송하자.
     * `-w3` 를 사용하여 3 초 동안 전송해 보자.
