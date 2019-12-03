@@ -313,8 +313,10 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * TELNET protocol client
 * `nc` netcat
   * [넷캣(Netcat) 간단한 사용방법](https://devanix.tistory.com/307)
-  * `nc -l 1234`
-    * 방화벽이 실행되고 있는지 확인하기 위해 1234 포트에 리슨해보자.
+  * `nc -l -p 1234`
+    * simple tcp listen server
+  * `nc -l -u 1234`
+    * simple udp listen server
   * `nc 127.0.0.1 1234`
     * 1234포트로 접속해보자.
   * `ps auxf | nc -w3 10.0.2.15 1234`
