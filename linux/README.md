@@ -727,6 +727,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `top -n 10` 10번만 갱신해
   * `top -n 1 -b > a.txt` export
   * `top -u iamslash` 특정 유저 소유의 프로세스들만 보여줘
+  * `e` change the unit, K, M, G, B, etc...
   * `z` running 프로세스들은 색깔표시해조
   * `c` 절대 경로 
   * `d` 갱신 시간 조정
