@@ -283,12 +283,17 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `file a.out`
 * `ps`
   * 현재 실행되고 있는 프로세스들의 스냅샷을 보여다오
-  * `ps aux`
-    * BSD syntax로 보여다오
-  * `ps axjf`
-    * 트리형태로 보여다오
-  * `ps axms`
-    * 쓰레드들 보여다오
+  * option 의 종류는 UNIX, BSD, GNU 와 같이 3 가지이다. UNIX 는 `-` 를 사용한다. GNU 는 `--` 를 사용한다.
+  * `ps a` Lift the BSD-style "only yourself" restriction. "only yourself" 조건을 제거하라.
+  * `ps u` Display user-oriented format.
+  * `ps x` Lift the BSD-style "must have a tty" restriction. "must have a tty" 조건을 제거하라.
+    * ttys stands for teletype or terminal.
+  * `ps j` BSD job control format.
+  * `ps f` ASCII art process hierarchy (forest).
+  * `ps m` Show threads after processes.
+  * `ps aux` lift "only yourself", display user-oriented format, lift "must have a tty".
+  * `ps axjf` show processes with the tree.
+  * `ps axms` show processes with threads.
 * `kill`
   * 번호를 이용하여 특정 프로세스에게 시글널을 보내자.
   * `kill -l`
