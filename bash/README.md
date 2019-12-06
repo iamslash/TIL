@@ -63,7 +63,38 @@
 - [Special Expressions](#special-expressions)
 - [Sub Shell](#sub-shell)
 - [Job Control](#job-control)
-  - [Job Control Builtins](#job-control-builtins)
+  - [Job Control](#job-control-1)
+    - [Job Id and Job specification](#job-id-and-job-specification)
+    - [Jobspec vs Pid](#jobspec-vs-pid)
+    - [Job Control Builtins](#job-control-builtins)
+    - [Job Control Keys](#job-control-keys)
+    - [Input and Output](#input-and-output)
+    - [Background job 은 subshell 에서 실행된다.](#background-job-%ec%9d%80-subshell-%ec%97%90%ec%84%9c-%ec%8b%a4%ed%96%89%eb%90%9c%eb%8b%a4)
+    - [Script 파일 실행 중에 background 로 실행](#script-%ed%8c%8c%ec%9d%bc-%ec%8b%a4%ed%96%89-%ec%a4%91%ec%97%90-background-%eb%a1%9c-%ec%8b%a4%ed%96%89)
+    - [SHELL 이 종료되면 background job 은 어떻게 되는가?](#shell-%ec%9d%b4-%ec%a2%85%eb%a3%8c%eb%90%98%eb%a9%b4-background-job-%ec%9d%80-%ec%96%b4%eb%96%bb%ea%b2%8c-%eb%90%98%eb%8a%94%ea%b0%80)
+  - [Session and Process Group](#session-and-process-group)
+    - [조회하고 신호보내기](#%ec%a1%b0%ed%9a%8c%ed%95%98%ea%b3%a0-%ec%8b%a0%ed%98%b8%eb%b3%b4%eb%82%b4%ea%b8%b0)
+    - [실행중인 스크립트를 종료하는 방법](#%ec%8b%a4%ed%96%89%ec%a4%91%ec%9d%b8-%ec%8a%a4%ed%81%ac%eb%a6%bd%ed%8a%b8%eb%a5%bc-%ec%a2%85%eb%a3%8c%ed%95%98%eb%8a%94-%eb%b0%a9%eb%b2%95)
+    - [새로운 sid 로 실행하기](#%ec%83%88%eb%a1%9c%ec%9a%b4-sid-%eb%a1%9c-%ec%8b%a4%ed%96%89%ed%95%98%ea%b8%b0)
+    - [pgid 를 변경하여 child process 를 실행](#pgid-%eb%a5%bc-%eb%b3%80%ea%b2%bd%ed%95%98%ec%97%ac-child-process-%eb%a5%bc-%ec%8b%a4%ed%96%89)
+  - [Process State Codes](#process-state-codes)
+  - [TTY](#tty)
+    - [입출력 장치 사용의 구분](#%ec%9e%85%ec%b6%9c%eb%a0%a5-%ec%9e%a5%ec%b9%98-%ec%82%ac%ec%9a%a9%ec%9d%98-%ea%b5%ac%eb%b6%84)
+    - [Controlling Terminal](#controlling-terminal)
+    - [`/dev/tty`](#devtty)
+    - [Configuring TTY device](#configuring-tty-device)
+    - [Control Keys](#control-keys)
+    - [End of file](#end-of-file)
+    - [Race condition](#race-condition)
+    - [SIGHUP signal](#sighup-signal)
+  - [Mutual Exclusion](#mutual-exclusion)
+    - [flock](#flock)
+    - [flock 의 직접 명령 실행](#flock-%ec%9d%98-%ec%a7%81%ec%a0%91-%eb%aa%85%eb%a0%b9-%ec%8b%a4%ed%96%89)
+    - [Lock propagation](#lock-propagation)
+    - [Lock, lockfile](#lock-lockfile)
+- [Command Line Editing](#command-line-editing)
+- [Using History Interatively](#using-history-interatively)
+- [Installing Bash](#installing-bash)
 - [Signals](#signals)
   - [signal list](#signal-list)
   - [kill](#kill)
@@ -3295,11 +3326,263 @@ $ ( echo $$ $BASHPID )
 
 # Job Control
 
-## Job Control Builtins
+## Job Control
+
+### Job Id and Job specification
+
+```
+$ wget http://a.b.com/a.txt &
+[3] 1999
+```
+
+job id 는 3 이고 process id 는 1999 이다. job 에 signal 을 보내고 싶다면 job spec `%3` 을 사용해야 한다. 
+
+### Jobspec vs Pid
+
+pid 는 특정 프로세스를 의미하지만 job spec 은 파이프로 연결된 모든 프로세스를 의미한다.
 
 ```bash
-bg, fg, jobs, kill, wait, disown, suspend
+$ sleep 100 | sleep 100 | sleep 100 &
+[1] 65
+$ jobs %1
+[1]+  Running                 sleep 100 | sleep 100 | sleep 100 &
+$ ps axjf
+ PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
+    0    15    15    15 pts/1       66 Ss       0   0:00 /bin/bash
+   15    63    63    15 pts/1       66 S        0   0:00  \_ sleep 100
+   15    64    63    15 pts/1       66 S        0   0:00  \_ sleep 100
+   15    65    63    15 pts/1       66 S        0   0:00  \_ sleep 100
+   15    66    66    15 pts/1       66 R+       0   0:00  \_ ps axjf
+    0     1     1     1 pts/0        1 Ss+      0   0:00 /bin/bash
 ```
+
+### Job Control Builtins
+
+* `jobs`
+  * `jobs` 현재 job table 목록을 보여준다.
+  * `jobs -l` show job table with process id
+  * `%+` job spec which means current job
+  * `%-` job spec which means previous job
+  * `jobs -p` show just process id which is representative.
+* `fg [jobspec]`
+  * make it foreground job.
+* `bg [jobspec ...]`
+  * make it background job.
+* `suspend`
+  * stop until get the `SIGCONT` signal.
+  * `suspend -f` login shell 에서 사용할 수 없지만 oevrride 가 가능하다.
+* `disown [-h] [-ar] [jobspec ...]`
+  * do not make it stop. just remove from job table.
+  * `shopt -s huponexit` 가 설정되어 있는 경우 login shell 에서 exit 할 때 `SIGHUP` 시그널에 의해 job 종료되는 것을 막을 수 있다. 
+  * `-h` 옵션도 동일한 역할을 하지만 job 이 job table 에 남아있기 때문에 control 할 수 있다.
+* `wait`
+  * `wait [-n] [jobspec or pid ...]`
+  * background job 이 종료될 때까지 기다린다. child 프로세스만 wait 할 수 있다.
+
+### Job Control Keys
+
+* `Ctrl C`
+  * send the `SIGINT` signal to foreground job.
+* `Ctrl z`
+  * send the `SIGTSTP` signal (suspend) to foreground job and make the background job the foreground job.
+
+### Input and Output
+
+* Input
+  * 입력은 foreground job 에서만 가능합니다. background job 에서 입력을 받게되면 `SIGTTIN` 신호가 전달되어 suspend 된다.
+* Output
+  * 출력은 현재 session 에서 실행되고 있는 모든 job 들이 공유한다. `stty tostop` 을 사용하면 background job 에서 출력이 발생했을 때 suspend 시킬 수 있다.
+
+### Background job 은 subshell 에서 실행된다.
+
+```bash
+$ AA=100; echo $$ $BASHPID;
+15 15
+$ { AA=200; echo $$ $BASHPID; } &
+[1] 70
+$ 15 70
+
+[1]+  Done                    { AA=200; echo $$ $BASHPID; }
+$ echo $AA
+100
+```
+
+### Script 파일 실행 중에 background 로 실행
+
+스크립트 파일을 실행 도중에 background 로 명령을 실행하면 실행되는 명령은 job table 에 나타나지 않고 stdin 은 `/dev/null` 에 연결된다. parent process 에 해당하는 스크립트 파일이 면저 종료하면 PPID 가 init 으로 바뀌어 실행을 계속하므로 daemon 으로 만들 수 있다.
+
+### SHELL 이 종료되면 background job 은 어떻게 되는가?
+
+* prompt 에서 exit 나 logout 으로 종료하는 경우 
+  * background job 이 stopped 인 경우 
+    * prompt 에 job 이 종료되었다고 알려준다.
+  * background job 이 running 인 경우
+    * ppid 가 init 으로 바뀐다.
+    * login shell 인 경우 `shopt -s huponexit` 가 설정되었다면 logout 했을 때 모든 running background job 들이 `SIGHUP` 을 수신하고 종료한다.
+* 윈도우에서 terminal program 을 종료하거나 시스템이 종료되는 경우
+  * remote login 에서 네트웍, 모뎀 연결이 끊기거나 interactive shell 에 `kill -HUP` 신호를 주는 경우도 해당한다.
+  * shell 의 stopped, running job 들이 모두 `SIGHUP` 을 받고 종료한다.
+
+## Session and Process Group
+
+터미널을 열면 shell 이 실행된다. shell pid 는 sid (session id) 이면서 session leader 이다. 이후 자손 process 들은 모두 같은 sid 를 갖는다. shell script 가 실행되면 process group 이 만들어진다. script pid 가 pgid (process group id) 가 되며 process group leader 가 된다. 새로 생성되는 프로세스는 parent process 의 pgid 를 상속한다. 따라서 이후 script 에서 실행되는 process 들은 모두 같은 pid 를 갖는다.
+
+`|` 를 통해 여러 명령을 실행하는 경우도 process group 이 만들어진다. 이때 첫번째 명령의 pid 가 pgid, process group leader 가 된다.
+
+### 조회하고 신호보내기
+
+```bash
+$ ps jf
+ PPID   PID  PGID   SID TTY      TPGID STAT   UID   TIME COMMAND
+    0    15    15    15 pts/1       83 Ss       0   0:00 /bin/bash
+   15    83    83    15 pts/1       83 R+       0   0:00  \_ ps jf
+    0     1     1     1 pts/0        1 Ss+      0   0:00 /bin/bash
+$ ps fo user,ppid,pid,pgid,sid,comm
+USER      PPID   PID  PGID   SID COMMAND
+root         0    15    15    15 bash
+root        15    84    84    15  \_ ps
+root         0     1     1     1 bash
+```
+
+### 실행중인 스크립트를 종료하는 방법
+
+script 를 종료하고 싶다면 jobspec 혹은 pgid 를 이용하여 process group 에 signal 을 보낸다. `Ctrl C` 는 process group 에 signal 을 보내는 방법이다.
+
+### 새로운 sid 로 실행하기
+
+script 를 background 로 실행할 때 `setsid` 를 이용하면 새로운 sid, pgid 가 할당되고 ppid 도 init 으로 바뀐다. sid 가 바뀌기 때문에 controlling terminal 에서 분리되고 /dev/tty 도 사용하지 못한다. ppid 가 init 이 되기 때문에 script 를 daemon 으로 만들 수 있다.
+
+```bash
+$ setsid a.sh > /dev/null 2>&1 < /dev/null
+```
+
+### pgid 를 변경하여 child process 를 실행
+
+script 를 `a.sh -> b.sh -> c.sh -> d.sh` 순서로 d.sh 에서 sleep 상태에 있다고 하자. `Ctrl c` 를 누를 경우 tty driver 에 의해 SIGINT 신호가 foreground process group 에 전달되어 4 개의 프로세스는 모두 종료한다. 만약, b.sh 에서 c.sh 를 실행할 때 pgid 를 변경하면 c.sh, d.sh 만 종료하고 a.sh, b.sh 는 실행되게 할 수 있다.
+
+shell 에서 setsid 를 사용하여 sid, pgid 를 변경할 수 있지만 setpgid 는 없다. 그러나 `set -o monitor` 옵션을 설정하여 다른 pgid 를 갖게 할 수 있다.
+
+* `b.sh`
+
+```bash
+#!/bin/bash
+..
+set -o monitor
+source c.sh
+...
+```
+
+## Process State Codes
+
+```bash
+$ ps ax
+```
+
+![](img/process_state2.png)
+
+| symbol | description                                                            |
+| ------ | ---------------------------------------------------------------------- |
+| `D`    | uninterruptible sleep (usually IO)                                     |
+| `R`    | running or runnable (on run queue)                                     |
+| `S`    | interruptible sleep (waiting for an event to complete)                 |
+| `T`    | stopped, either by a job control signal or because it is being traced. |
+| `t`    | stopped by debugger during the tracing                                 |
+| `X`    | dead (should never be seen)                                            |
+| `Z`    | defunct ("zombie") process, terminated but not reaped by its parent.   |
+
+additional information with BSD format 
+
+| symbol | description                                                   |
+| ------ | ------------------------------------------------------------- |
+| `<`    | high-priority (not nice to other users)                       |
+| `N`    | low-priority (nice to other users)                            |
+| `L`    | has pages locked into memory (for real-time and custom IO)    |
+| `s`    | is a session leader                                           |
+| `|`    | is multi-threaded (using CLONE_THREAD, like NPTL pthreads do) |
+| `+`    | is in the foreground process group.                           |
+
+## TTY
+
+* [The TTY demystified](http://www.linusakesson.net/programming/tty/)
+
+tty 는 teletypewrite 혹은 terminal 을 의미한다.
+
+### 입출력 장치 사용의 구분
+
+* 외부 터미널 장치 연결
+
+![](img/case1.png)
+
+VT100 과 같은 외부 터미널 장치가 시리얼 라인을 통해 연결되는 경우이다. `getty` process 가 background 에서 line 을 모니터링하고 있다가 터미널 접속을 발견하면 login prompt 를 보여준다. `/dev/ttyS[number]` 파일을 사용한다. `UART driver` 는 bytes 를 전송하고 parity check 혹은 flow control 을 담당한다. `Line discipline` 라는 layer 를 하나 더 두면 같은 장치를 여러가지 용도로 사용할 수 있다.
+
+![](img/line_discipline.png)
+
+`TTY driver`  는 session management 즉 job control 기능을 한다. `Ctrl z` 를 누르면 running job 을 suspend 시키고 user input 은 foreground job 에만 전달한다. background job 이 입력을 받으면 SIGTTIN 신호를 보내 suspend 시킨다.
+
+* linux virtual console
+
+![](img/case2.png)
+
+OS 에서 제공하는 virtual console 이다. `Ctrl - Alt - F1 ~ F6` 으로 전환한다. kernal 에서 terminal 을 emulation 한다. `외부 터미널 장치 연결` 과 비교해서 이해하자. `/dev/tty[num]` 파일을 사용한다.
+
+* pseudo TTY (xterm, gnome-terminal, telnet, ssh, etc...)
+  
+![](img/case3.png)  
+
+user application 에서 terminal 을 emulation 하는 것이 PTY (Pseudo TTY) 이다. PTY 는 master/slave 로 이루어 진다. /dev/ptmx 파일을 open 하면 psedu terminal master 에 해당하는 file descriptor 가 생성되고 pseudo terminal slave (PTS) 에 해당하는 device 가 /dev/pts/ 디렉토리에 생성한다. ptm, pts 가 open 되면 `/dev/pts/[num]` 는 terminal 을 process 에 제공한다.
+
+ptm 에 write 한 data 는 pts 의 input 으로 pts 에 write 한 data 는 ptm 의 input 으로 사용된다. kernll 이 처리하는 layer 가 중간에 들어간 named pipe 와 비슷하다.
+
+xterm 에서 ls 를 입력하면 `ptm -> line discipline -> pts` 를 거쳐서 bash shell (user process) 에 전달되고 ls 의 결과가 `ptr -> line discipline -> ptm` 을 통해서 xterm 에 전달되면 xterm 은 terminal 과 같이 화면에 표시한다.
+
+![](img/case3_1.jpg)
+
+### Controlling Terminal
+
+![](img/session1.png)
+
+controlling terminal 은 session leader 에 의해 할당된다. 보통 `/dev/tty*` 혹은 `/dev/pts/*` 와 같은 terminal device 를 의미한다. 하나의 session 은 하나의 controlling terminal 만 가질 수 있다. controlling terminal 과 연결된 session leader 를 controlling process 라고 한다. session 은 하나의 foreground process group 과 다수의 background process groups 로 구성된다. `Ctrl-c` 를 누르면 `SIGINT` 가 foreground process group 에 전달된다. modem, network 가 끊기면 `SIGHUP` 이 controlling process (session leader) 에게 전달된다. `ps x` 의 결과중 두번째 tty 컬럼에 나오는 내용이 `controlling terminal (tty)` 이다. tty 를 갖지 않는 프로세스는 `?` 로 표시된다.
+
+![](img/session2.png)
+
+### `/dev/tty`
+
+process 의 controlling terminal 과 같다.
+
+### Configuring TTY device
+
+### Control Keys
+
+### End of file
+
+### Race condition
+
+### SIGHUP signal
+
+terminal 이 없어졌다는 것을 의미한다. interactive shell 이 `SIGHUP` 을 수신하면 stopped, running job 들도 `SIGHUP` 을 수신한다.
+
+## Mutual Exclusion
+
+### flock
+
+### flock 의 직접 명령 실행
+
+### Lock propagation
+
+### Lock, lockfile
+
+# Command Line Editing
+
+Updating...
+
+# Using History Interatively
+
+Updating...
+
+# Installing Bash
+
+Updating...
+
 # Signals
 
 ## signal list
