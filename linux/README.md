@@ -287,7 +287,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `ps a` Lift the BSD-style "only yourself" restriction. "only yourself" 조건을 제거하라.
   * `ps u` Display user-oriented format.
   * `ps x` Lift the BSD-style "must have a tty" restriction. "must have a tty" 조건을 제거하라.
-    * ttys stands for teletype or terminal.
+    * [tty](https://www.howtoforge.com/linux-tty-command/)s stands for teletype or terminal.
   * `ps j` BSD job control format.
   * `ps f` ASCII art process hierarchy (forest).
   * `ps m` Show threads after processes.
