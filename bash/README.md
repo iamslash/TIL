@@ -3547,9 +3547,37 @@ controlling terminal 은 session leader 에 의해 할당된다. 보통 `/dev/tt
 
 ### `/dev/tty`
 
-process 의 controlling terminal 과 같다.
+`/dev/tty` 는 파일이고 process 의 controlling terminal 과 같다.
 
 ### Configuring TTY device
+
+```bash
+# show current tty
+$ tty
+/dev/pts/1
+
+# set tty config
+$ ssty -a
+speed 38400 baud; rows 26; columns 190; line = 0;
+intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = <undef>; eol2 = <undef>; swtch = <undef>; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R; werase = ^W; lnext = ^V; discard = ^O;
+min = 1; time = 0;
+-parenb -parodd -cmspar cs8 -hupcl -cstopb cread -clocal -crtscts
+-ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ixon -ixoff -iuclc -ixany -imaxbel -iutf8
+opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
+isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt echoctl echoke -flusho -extproc
+```
+
+`-` prefix 는 off 를 의미한다.
+
+| attribute       | description                                                                |
+| --------------- | -------------------------------------------------------------------------- |
+| `speed`         | UART parameters 이다. pseudo terminal 에서는 필요없다.                              |
+| `rows, columns` | terminal 의 행열의 크기이다. 창을 변화하면 foreground job 에 SIGWINCH 를 보낸다. 그리고 값이 변화한다. |
+| `line`          | line discipline 값이다. 0 은 line editing 을 제공하는 standard line discipline 이다.  |
+| `intr = ^C`     | foreground job 에 SIGINT 를 보내는 shortcut 이다.                                 |
+| `icanon`     | line sdscipline 이다. canonical mode 를 의미한다. canonical mode 는 backspace 로 수정하고 enter 를 누르면 라인을 단위로 데이터전송을 한다. vi 는 command mode 가 non-canonical mode 와 같다.  |
+
+자세한 것은 `man tty` 를 읽어보자.
 
 ### Control Keys
 
