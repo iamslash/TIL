@@ -476,6 +476,21 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * convert number format human readable
   * `numfmt --to=si --suffix=B --format="%.3f" $( stat -c%s a.txt )`
     * tell me the size of the file 'a.txt' such as 12B, 12KB, 12MB, 12GM.
+* `tcpdump`
+  * [Manpage of TCPDUMP](http://www.tcpdump.org/manpages/tcpdump.1.html)
+  * `tcpdump -i eth0` show the eth0 status
+  * `tcpdump -i eth0 tcp port 80` show the eth0 port 80 packets
+    * if you want to see the contens use `nc`
+  * `tcpdump -i eth0 src 192.168.0.1` show the eth0 packets have specific src
+  * `tcpdump -i eth0 dst 192.168.0.1` show the eth0 packets have specific dst
+  * `tcpdump -i eth0 src 192.168.0.1 and tcp port 80` and condition
+  * `tcpdump host 192.168.0.1` show packets have specific src, dst
+  * `tcpdump net 192.168.0.1/24` can use CIDR
+  * `tcpdump tcp` show only tcp
+  * `tcpdump udp` show only udp
+  * `tcpdump port 3389` show only port 3389
+  * `tcpdump src port 3389` show only src port 3389
+  * `tcpdump dst port 3389` show only dst port 3389
 
 ## Process management
 
