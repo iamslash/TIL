@@ -3581,9 +3581,32 @@ isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt echo
 
 ### Control Keys
 
+| attribute       | description                                                                |
+| --------------- | -------------------------------------------------------------------------- |
+| `^M`         | Enter                              |
+| `^C`         | SIGINT                              |
+| `^D`         | End of file                              |
+| `^\`         | SIGQUIT and core dump                              |
+| `^S`         | pause screen output                              |
+| `^Q`         | resume screen output                              |
+| `DEL or ^?`         | erase last character                              |
+| `^U`         | delete line to left                              |
+| `^Z`         | send SIGTSTP to foreground job and make it suspended                              |
+
 ### End of file
 
+`read` function 은 0 byte 를 읽으면 모두 읽었다고 판단하고 종료한다. 0 byte 가 곧 end of file 이다.
+
 ### Race condition
+
+두개의 프로세스가 stdout, stderror 에 출력을 수행한다면 race condition 이 발생한다. 다음은 `f()` 의 첫번째 `echo` 가 두번째 `echo` 와 경합을 벌여서 빨간색을 출력하는 경우이다.
+
+```bash
+f() {
+  { echo 111; date; echo 222; } &
+  { echo -en "\e[31m"; sleep 1; echo -en "\e[m"; } >&2
+}
+```
 
 ### SIGHUP signal
 
@@ -3591,13 +3614,165 @@ terminal 이 없어졌다는 것을 의미한다. interactive shell 이 `SIGHUP`
 
 ## Mutual Exclusion
 
+두 process 가 하나의 자원을 가지고 경쟁을 하게 되면 문제가 발생한다. 다음과 같이 lock 파일을 이용하여 race condition 을 해결해 보자.
+
+```bash
+#!/bin/bash
+
+lockfile=/var/lock/$(basename "$0")
+
+if [ -f "$lockfile" ]; then                          
+    exit 1
+fi                        
+
+touch "$lockfile"
+trap 'rm -f "$lockfile"' EXIT
+...
+```
+
+그러나 파일을 확인하고 생성하는 과정이 분리되어 있다. 하나의 transaction 으로 묶여 있지 않다. 다음과 같이 mkdir 을 이용해서 해결해보자.
+
+```bash
+#!/bin/bash
+
+lockfile=/var/lock/$(basename "$0")
+
+if ! mkdir "$lockfile" 2> /dev/null; then 
+    exit 1
+fi                        
+
+trap 'rmdir "$lockfile"' EXIT
+...
+```
+
+다음은 `set -C` 을 이용하여 해결한 예이다.
+
+```bash
+#!/bin/bash
+
+lockfile=/var/lock/$(basename "$0")
+if ! (set -C; : > "$lockfile") 2> /dev/null; then
+    exit 1
+fi
+trap 'rm -f "$lockfile"' EXIT
+...
+```
+
 ### flock
+
+`flock` 을 이용하면 하나의 블록을 하나의 transaction 으로 묶을 수 있다.
+
+```bash
+#!/bin/bash
+
+lockfile=$0
+tasks_file=tasks.txt
+
+read_task_id() { ... ;}
+delete_task_id() { ... ;}
+do_task() { ... ;}
+
+# this is a critical section because of file descriptor 9
+get_task_id ()  
+{  
+    flock 9     # lock with file descriptor
+    local task_id
+    task_id=$(read_task_id);     # 1. read task id
+
+    if [ -n "$task_id" ]; then   # 2. if task id exists
+        delete_task_id           #    delete it 
+        echo "$task_id"          #    echo
+    else
+        echo 0                   # 3. if task id does not exist echo 0
+    fi
+
+} 9< "$lockfile"  # make a file for lock
+
+while true; do
+    task_id=$(get_task_id)
+    [ "$task_id" -eq 0 ] && break
+    do_task "$task_id" 
+done
+```
+
+위의 `get_task_id` 는 아래와 같다.
+
+```bash
+get_task_id ()
+{
+    exec 9< "$lockfile"
+    flock 9
+    ...
+} 
+
+```
+
+`flock -u 9` 을 이용하여 lock 을 해제할 수도 있다.
+
+```bash
+get_task_id_ ()
+{
+    flock 9
+    ...
+    flock -u 9
+    ...
+} 9< "$lockfile"  # make a file for lock
+```
+
+이제 앞서 언급했던 `mkdir`를 이용하여 critical section 을 구현한 것을 다음과 같이 flock 을 이용하여 구현해 보자. `flock -n 9` 은 다른 프로세스가 이미 lock 을 가지고 있는 경우 바로 fail return 한다.
+
+```bash
+#!/bin/bash
+
+lockfile=$0
+
+exec 9< "$lockfile"
+flock -n 9 || { echo already in use; exit 1 ;}
+...
+```
 
 ### flock 의 직접 명령 실행
 
+기존의 함수를 수정하지 않고 flock 으로 critical section 을 구현해 보자.
+
+```bash
+$ export -f func1
+$ flock /var/lock/mylock -c 'func1 11 22 33'
+```
+
+기존의 스크립트를 수정하지 않고 flock 으로 critical section 을 구현해 보자.
+
+```bash
+flock -n /var/lock/mylock ./script.sh
+```
+
 ### Lock propagation
 
+`flock -o` 을 사용하면 `server.sh` 가 실행될 때 lock 을 소유하지 않는다.
+
+```bash
+flock -n -o /var/lock/mylock ./server.sh
+```
+
 ### Lock, lockfile
+
+`flock` 는 반드시 file descriptor 가 필요하다.
+
+```bash
+# use /tmp as a lockfile
+flock [option] /tmp command ...       
+
+# use /dev/null as a lockfile
+exec 9> /dev/null                    
+flock 9
+
+# use self script as a lockfile
+exec 9< "$0"
+flock 9
+
+# this will make a critical section when use in the first line of the script
+[ "${FLOCKER}" != "$0" ] && exec env FLOCKER=$0 flock -n "$0" "$0" "$@" || :
+```
 
 # Command Line Editing
 
