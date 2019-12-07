@@ -747,12 +747,12 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `top -n 10` 10번만 갱신해
   * `top -n 1 -b > a.txt` export
   * `top -u iamslash` 특정 유저 소유의 프로세스들만 보여줘
-  * `e` change the unit, K, M, G, B, etc...
-  * `z` running 프로세스들은 색깔표시해조
+  * `E` change the unit of machine memory
+  * `e` change the unit of process memory
   * `c` 절대 경로 
   * `d` 갱신 시간 조정
-  * `k` 프로세스에게 SIGKILL전송
-  * `r` 프로세스의 nice를 변경하여 우선순위를 조정한다.
+  * `k` 프로세스에게 SIGKILL 전송
+  * `r` 프로세스의 nice 를 변경하여 우선순위를 조정한다.
   * `SHIFT + m` 메모리 사용량이 큰 순서대로 정렬
   * `SHIFT + p` cpu 사용량이 큰 순서대로 정렬
   * `SHIFT + t` 실행시간이 큰 순서대로 정렬
@@ -1449,7 +1449,7 @@ function taocl() {
 
 ## root 소유의 setuid, setgid 파일 검색 후 퍼미션 조정하기
 
-owner 가 root 인 파일들을 생각해보자. setuid 가 설정되어 있으면 실행 되었을 때 EUID 가 root 로 변경된다. 매우 위험하다. 그러한 파일들을 찾아서 위험해 보인다면 권한을 변경해준다.
+owner 가 root 인 파일들을 생각해보자. setuid 가 설정되어 있으면 실행 되었을 때 EUID 가 root 로 변경된다. 매우 위험하다. 그러한 파일들을 찾아서 위험해 보인다면 권한을 변경���준다.
 
 ```bash
 find / -user root -perm 4000 -print
