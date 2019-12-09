@@ -6,6 +6,7 @@ logging agent 인 collectd 와 influxdb, grafana 를 연동하여 centralized lo
 
 * [How To Configure Collectd to Gather System Metrics for Graphite on Ubuntu 14.04 @ digitalocean](https://www.digitalocean.com/community/tutorials/how-to-configure-collectd-to-gather-system-metrics-for-graphite-on-ubuntu-14-04)
 * [collectd @ github](https://github.com/collectd/collectd)
+* [CollectD ubuntu 18.04](https://www.youtube.com/watch?v=l57-TGaYQak)
 
 # Install
 
@@ -150,3 +151,38 @@ LoadPlugin network
   * `select * from cpu_value`
   * `select * from memory_value`
   * `select * from df_value`
+
+# Config replace value
+
+* [Match:RegEx](https://collectd.org/wiki/index.php/Match:RegEx)
+* [Target:Replace](https://collectd.org/wiki/index.php/Target:Replace)
+
+----
+
+* `/etc/collectd/collectd.conf.d/target_replace.conf`
+  * You should use `?...$` in Host.
+
+```conf
+LoadPlugin "regex"
+LoadPlugin "target_replace"
+
+<Chain "PreCache">
+  <Rule "replace_host_foo">
+    <Match "regex">
+      Host "?www.foo.com$"
+    </Match>
+    <Target "replace">
+      Host "\\<www.foo.com\\>" "www.baz.com"
+    </Target>
+  </Rule>
+  <Rule "replace_host_bar">
+    <Match "regex">
+      Host "?www.bar.com$"
+    </Match>
+    <Target "replace">
+      Host "\\<www.bar.com\\>" "www.baz.com"
+    </Target>
+  </Rule>
+</Chain>
+
+```
