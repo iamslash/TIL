@@ -623,6 +623,9 @@ $ docker wait hello
 # Advanced
 
 ```bash
+# remove containers which stopped
+> sudo docker ps -a | grep Exit | cut -d ' ' -f 1 | xargs sudo docker rm
+
 # 정지한 컨테이너, 연결이 끊긴 볼륨, 연결이 끊긴 네트워크, dangling 이미지가 삭제.
 > docker system prune
 # docker disk free

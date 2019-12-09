@@ -489,6 +489,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `tcpdump tcp` show only tcp
   * `tcpdump udp` show only udp
   * `tcpdump port 3389` show only port 3389
+  * `tcpdump -A port 3389` show only port 3389 and print packets in ASCII
   * `tcpdump src port 3389` show only src port 3389
   * `tcpdump dst port 3389` show only dst port 3389
 
