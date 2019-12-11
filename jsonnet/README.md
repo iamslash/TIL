@@ -112,14 +112,15 @@ $ jsonnet -y f.jsonnet
 
 ## Syntax
 
+* Fields do not need quotes.
+* Trailing commas at the end of arrays or objects
 * C-style, Python-style comments
-* `|||` means text blocks
-* commas at the end of arrays or objects
-* `"` and `'` is same.
+* String literals use `"` and `'`.
   * `"Farmer's Gin`, `'Farmer\'s Fin'`
+* `|||` means text blocks across multiple lines
 * `@` means verbatim strings.
  
-```jsonnet
+```js
 /* A C-style comment. */
 # A Python-style comment.
 {
@@ -154,9 +155,9 @@ $ jsonnet -y f.jsonnet
 }
 ```
 
-* run
+* output.json
 
-```bash
+```json
 {
    "cocktails": {
       "Manhattan": {
@@ -210,6 +211,10 @@ $ jsonnet -y f.jsonnet
 ```
 
 ## Variables
+
+The local keyword defines a variable.
+Variables defined next to fields end with a comma (,).
+All other cases end with a semicolon (;).
 
 * f.jsonnet
 
@@ -302,7 +307,156 @@ local house_rum = 'Banks Rum';
 
 ## References
 
-* f.jsonnet
+self refers to the current object.
+`$` refers to the outer-most object.
+`['foo']` looks up a field.
+`.f` can be used if the field name is an identifier.
+`[10]` looks up an array element.
+Arbitrarily long paths are allowed.
+Array slices like arr[10:20:2] are allowed, like in Python.
+Strings can be looked up / sliced too, by unicode codepoint.
+
+* references.jsonnet
+
+```js
+{
+  'Tom Collins': {
+    ingredients: [
+      { kind: "Farmer's Gin", qty: 1.5 },
+      { kind: 'Lemon', qty: 1 },
+      { kind: 'Simple Syrup', qty: 0.5 },
+      { kind: 'Soda', qty: 2 },
+      { kind: 'Angostura', qty: 'dash' },
+    ],
+    garnish: 'Maraschino Cherry',
+    served: 'Tall',
+  },
+  Martini: {
+    ingredients: [
+      {
+        // Use the same gin as the Tom Collins.
+        kind:
+          $['Tom Collins'].ingredients[0].kind,
+        qty: 2,
+      },
+      { kind: 'Dry White Vermouth', qty: 1 },
+    ],
+    garnish: 'Olive',
+    served: 'Straight Up',
+  },
+  // Create an alias.
+  'Gin Martini': self.Martini,
+}
+```
+
+```json
+{
+  "Gin Martini": {
+    "garnish": "Olive",
+    "ingredients": [
+      {
+        "kind": "Farmer's Gin",
+        "qty": 2
+      },
+      {
+        "kind": "Dry White Vermouth",
+        "qty": 1
+      }
+    ],
+    "served": "Straight Up"
+  },
+  "Martini": {
+    "garnish": "Olive",
+    "ingredients": [
+      {
+        "kind": "Farmer's Gin",
+        "qty": 2
+      },
+      {
+        "kind": "Dry White Vermouth",
+        "qty": 1
+      }
+    ],
+    "served": "Straight Up"
+  },
+  "Tom Collins": {
+    "garnish": "Maraschino Cherry",
+    "ingredients": [
+      {
+        "kind": "Farmer's Gin",
+        "qty": 1.5
+      },
+      {
+        "kind": "Lemon",
+        "qty": 1
+      },
+      {
+        "kind": "Simple Syrup",
+        "qty": 0.5
+      },
+      {
+        "kind": "Soda",
+        "qty": 2
+      },
+      {
+        "kind": "Angostura",
+        "qty": "dash"
+      }
+    ],
+    "served": "Tall"
+  }
+}
+```
+
+* inner-reference.jsonnet
+
+```js
+{
+  Martini: {
+    local drink = self,
+    ingredients: [
+      { kind: "Farmer's Gin", qty: 1 },
+      {
+        kind: 'Dry White Vermouth',
+        qty: drink.ingredients[0].qty,
+      },
+    ],
+    garnish: 'Olive',
+    served: 'Straight Up',
+  },
+}
+```
+
+```json
+{
+  "Martini": {
+    "garnish": "Olive",
+    "ingredients": [
+      {
+        "kind": "Farmer's Gin",
+        "qty": 1
+      },
+      {
+        "kind": "Dry White Vermouth",
+        "qty": 1
+      }
+    ],
+    "served": "Straight Up"
+  }
+}
+```
+
+## Arithmetic
+
+Use floating point arithmetic, bitwise ops, boolean logic.
+Strings may be concatenated with `+`, which implicitly converts one operand to string if needed.
+Two strings can be compared with `<` (unicode codepoint order).
+Objects may be combined with `+` where the right-hand side wins field conflicts.
+Test if a field is in an object with in.
+`==` is deep value equality.
+Python-compatible string formatting is available via `%`. When combined with `|||` this can be used for templating text files.
+
+* arith.jsonnet
 
 ```js
 {
@@ -341,8 +495,6 @@ local house_rum = 'Banks Rum';
 }
 ```
 
-* output.json
-
 ```json
 {
   "concat_array": [
@@ -372,11 +524,11 @@ local house_rum = 'Banks Rum';
 }
 ```
 
-## Arithmetic
+## Functions
 
-* f.jsonnet
+* functions.jsonnet
 
-```
+```js
 // Define a local function.
 // Default arguments are like Python:
 local my_function(x, y=10) = x + y;
@@ -414,8 +566,6 @@ local object = {
 }
 ```
 
-* output.json
-
 ```json
 {
   "call": 12,
@@ -431,11 +581,9 @@ local object = {
 }
 ```
 
-## Functions
+* sours.jsonnet
 
-* f.jsonnet
-
-```
+```js
 // This function returns an object. Although
 // the braces look like Java or C++ they do
 // not mean a statement block, they are instead
@@ -458,8 +606,6 @@ local Sour(spirit, garnish='Lemon twist') = {
                      'Angostura bitters'),
 }
 ```
-
-* output.json
 
 ```json
 {
@@ -513,9 +659,9 @@ local Sour(spirit, garnish='Lemon twist') = {
 
 ## Conditionals
 
-* f.jsonnet
+* conditionals.jsonnet
 
-```
+```js
 local Mojito(virgin=false, large=false) = {
   // A local next to fields ends with ','.
   local factor = if large then 2 else 1,
@@ -548,8 +694,6 @@ local Mojito(virgin=false, large=false) = {
   'Large Mojito': Mojito(large=true),
 }
 ```
-
-* run
 
 ```json
 {
@@ -638,18 +782,1031 @@ local Mojito(virgin=false, large=false) = {
 
 ## Computed Field Names
 
+Recall that a field lookup can be computed with `obj[e]`
+The definition equivalent is `{[e]: ... }`
+`self` or `object locals` cannot be accessed when field names are being computed, since the object is not yet constructed.
+If a field name evaluates to null during object construction, the field is omitted. This works nicely with the default false branch of a conditional.
+
+* computed-fields.jsonnet
+
+```js
+local Margarita(salted) = {
+  ingredients: [
+    { kind: 'Tequila Blanco', qty: 2 },
+    { kind: 'Lime', qty: 1 },
+    { kind: 'Cointreau', qty: 1 },
+  ],
+  [if salted then 'garnish']: 'Salt',
+};
+{
+  Margarita: Margarita(true),
+  'Margarita Unsalted': Margarita(false),
+}
+```
+
+```json
+{
+  "Margarita": {
+    "garnish": "Salt",
+    "ingredients": [
+      {
+        "kind": "Tequila Blanco",
+        "qty": 2
+      },
+      {
+        "kind": "Lime",
+        "qty": 1
+      },
+      {
+        "kind": "Cointreau",
+        "qty": 1
+      }
+    ]
+  },
+  "Margarita Unsalted": {
+    "ingredients": [
+      {
+        "kind": "Tequila Blanco",
+        "qty": 2
+      },
+      {
+        "kind": "Lime",
+        "qty": 1
+      },
+      {
+        "kind": "Cointreau",
+        "qty": 1
+      }
+    ]
+  }
+}
+```
 
 ## Array and Object Comprehension
 
+Any nesting of `for` and `if` can be used.
+The nest behaves like a loop nest, although the body is written first.
+
+```js
+local arr = std.range(5, 8);
+{
+  array_comprehensions: {
+    higher: [x + 3 for x in arr],
+    lower: [x - 3 for x in arr],
+    evens: [x for x in arr if x % 2 == 0],
+    odds: [x for x in arr if x % 2 == 1],
+    evens_and_odds: [
+      '%d-%d' % [x, y]
+      for x in arr
+      if x % 2 == 0
+      for y in arr
+      if y % 2 == 1
+    ],
+  },
+  object_comprehensions: {
+    evens: {
+      ['f' + x]: true
+      for x in arr
+      if x % 2 == 0
+    },
+    // Use object composition (+) to add in
+    // static fields:
+    mixture: {
+      f: 1,
+      g: 2,
+    } + {
+      [x]: 0
+      for x in ['a', 'b', 'c']
+    },
+  },
+}
+```
+
+```json
+{
+  "array_comprehensions": {
+    "evens": [
+      6,
+      8
+    ],
+    "evens_and_odds": [
+      "6-5",
+      "6-7",
+      "8-5",
+      "8-7"
+    ],
+    "higher": [
+      8,
+      9,
+      10,
+      11
+    ],
+    "lower": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "odds": [
+      5,
+      7
+    ]
+  },
+  "object_comprehensions": {
+    "evens": {
+      "f6": true,
+      "f8": true
+    },
+    "mixture": {
+      "a": 0,
+      "b": 0,
+      "c": 0,
+      "f": 1,
+      "g": 2
+    }
+  }
+}
+```
+
+* cocktail-comprehensions.jsonnet
+
+```js
+{
+  cocktails: {
+    "Bee's Knees": {
+      // Construct the ingredients by using
+      // 4/3 oz of each element in the given
+      // list.
+      ingredients: [  // Array comprehension.
+        { kind: kind, qty: 4 / 3 }
+        for kind in [
+          'Honey Syrup',
+          'Lemon Juice',
+          'Farmers Gin',
+        ]
+      ],
+      garnish: 'Lemon Twist',
+      served: 'Straight Up',
+    },
+  } + {  // Object comprehension.
+    [sd.name + 'Screwdriver']: {
+      ingredients: [
+        { kind: 'Vodka', qty: 1.5 },
+        { kind: sd.fruit, qty: 3 },
+      ],
+      served: 'On The Rocks',
+    }
+    for sd in [
+      { name: 'Yellow ', fruit: 'Lemonade' },
+      { name: '', fruit: 'Orange Juice' },
+    ]
+  },
+}
+```
+
+```json
+{
+  "cocktails": {
+    "Bee's Knees": {
+      "garnish": "Lemon Twist",
+      "ingredients": [
+        {
+          "kind": "Honey Syrup",
+          "qty": 1.3333333333333333
+        },
+        {
+          "kind": "Lemon Juice",
+          "qty": 1.3333333333333333
+        },
+        {
+          "kind": "Farmers Gin",
+          "qty": 1.3333333333333333
+        }
+      ],
+      "served": "Straight Up"
+    },
+    "Screwdriver": {
+      "ingredients": [
+        {
+          "kind": "Vodka",
+          "qty": 1.5
+        },
+        {
+          "kind": "Orange Juice",
+          "qty": 3
+        }
+      ],
+      "served": "On The Rocks"
+    },
+    "Yellow Screwdriver": {
+      "ingredients": [
+        {
+          "kind": "Vodka",
+          "qty": 1.5
+        },
+        {
+          "kind": "Lemonade",
+          "qty": 3
+        }
+      ],
+      "served": "On The Rocks"
+    }
+  }
+}
+```
 
 ## Imports
 
+The import construct is like copy/pasting Jsonnet code.
+Files designed for import by convention end with .libsonnet
+Raw JSON can be imported this way too.
+The importstr construct is for verbatim UTF-8 text.
+
+* martinis.libsonnet
+
+```js
+{
+  'Vodka Martini': {
+    ingredients: [
+      { kind: 'Vodka', qty: 2 },
+      { kind: 'Dry White Vermouth', qty: 1 },
+    ],
+    garnish: 'Olive',
+    served: 'Straight Up',
+  },
+  Cosmopolitan: {
+    ingredients: [
+      { kind: 'Vodka', qty: 2 },
+      { kind: 'Triple Sec', qty: 0.5 },
+      { kind: 'Cranberry Juice', qty: 0.75 },
+      { kind: 'Lime Juice', qty: 0.5 },
+    ],
+    garnish: 'Orange Peel',
+    served: 'Straight Up',
+  },
+}
+```
+
+* garnish.txt
+
+```
+Maraschino Cherry
+```
+
+* imports.jsonnet
+
+```js
+local martinis = import 'martinis.libsonnet';
+
+{
+  'Vodka Martini': martinis['Vodka Martini'],
+  Manhattan: {
+    ingredients: [
+      { kind: 'Rye', qty: 2.5 },
+      { kind: 'Sweet Red Vermouth', qty: 1 },
+      { kind: 'Angostura', qty: 'dash' },
+    ],
+    garnish: importstr 'garnish.txt',
+    served: 'Straight Up',
+  },
+}
+```
+
+```js
+{
+  "Manhattan": {
+    "garnish": "Maraschino Cherry",
+    "ingredients": [
+      {
+        "kind": "Rye",
+        "qty": 2.5
+      },
+      {
+        "kind": "Sweet Red Vermouth",
+        "qty": 1
+      },
+      {
+        "kind": "Angostura",
+        "qty": "dash"
+      }
+    ],
+    "served": "Straight Up"
+  },
+  "Vodka Martini": {
+    "garnish": "Olive",
+    "ingredients": [
+      {
+        "kind": "Vodka",
+        "qty": 2
+      },
+      {
+        "kind": "Dry White Vermouth",
+        "qty": 1
+      }
+    ],
+    "served": "Straight Up"
+  }
+}
+```
+
+* utils.libsonnet
+
+```js
+{
+  equal_parts(size, ingredients)::
+    // Define a function-scoped variable.
+    local qty = size / std.length(ingredients);
+    // Return an array.
+    [
+      { kind: i, qty: qty }
+      for i in ingredients
+    ],
+}
+```
+
+* negroni.jsonnet
+
+```js
+local utils = import 'utils.libsonnet';
+{
+  Negroni: {
+    // Divide 3oz among the 3 ingredients.
+    ingredients: utils.equal_parts(3, [
+      'Farmers Gin',
+      'Sweet Red Vermouth',
+      'Campari',
+    ]),
+    garnish: 'Orange Peel',
+    served: 'On The Rocks',
+  },
+}
+```
+
+```json
+{
+  "Negroni": {
+    "garnish": "Orange Peel",
+    "ingredients": [
+      {
+        "kind": "Farmers Gin",
+        "qty": 1
+      },
+      {
+        "kind": "Sweet Red Vermouth",
+        "qty": 1
+      },
+      {
+        "kind": "Campari",
+        "qty": 1
+      }
+    ],
+    "served": "On The Rocks"
+  }
+}
+```
 
 ## Errors
+
+To raise an error: `error "foo"`
+To assert a condition before an expression: assert "foo";
+A custom failure message: assert "foo" : "message";
+Assert fields have a property: assert self.f == 10,
+With custom failure message: assert "foo" : "message",
+
+* error-examples.jsonnet
+
+```js
+// Extend above example to sanity check input.
+local equal_parts(size, ingredients) =
+  local qty = size / std.length(ingredients);
+  // Check a pre-condition
+  if std.length(ingredients) == 0 then
+    error 'Empty ingredients.'
+  else [
+    { kind: i, qty: qty }
+    for i in ingredients
+  ];
+
+local subtract(a, b) =
+  assert a > b : 'a must be bigger than b';
+  a - b;
+
+assert std.isFunction(subtract);
+
+{
+  test1: equal_parts(1, ['Whiskey']),
+  test2: subtract(10, 3),
+  object: {
+    assert self.f < self.g : 'wat',
+    f: 1,
+    g: 2,
+  },
+  assert std.isObject(self.object),
+}
+```
+
+```json
+{
+  "object": {
+    "f": 1,
+    "g": 2
+  },
+  "test1": [
+    {
+      "kind": "Whiskey",
+      "qty": 1
+    }
+  ],
+  "test2": 7
+}
+```
 
 
 ## Parameterize Entire Config
 
+**External variables**, which are accessible anywhere in the config, or any file, using std.extVar("foo").
+**Top-level arguments**, where the whole config is expressed as a function.
+
+### External variables
+
+* library-ext.libsonnet
+
+```js
+local fizz = if std.extVar('brunch') then
+  'Cheap Sparkling Wine'
+else
+  'Champagne';
+{
+  Mimosa: {
+    ingredients: [
+      { kind: fizz, qty: 3 },
+      { kind: 'Orange Juice', qty: 3 },
+    ],
+    garnish: 'Orange Slice',
+    served: 'Champagne Flute',
+  },
+}
+```
+
+* top-level-ext.jsonnet
+
+```js
+local lib = import 'library-ext.libsonnet';
+{
+  [std.extVar('prefix') + 'Pina Colada']: {
+    ingredients: [
+      { kind: 'Rum', qty: 3 },
+      { kind: 'Pineapple Juice', qty: 6 },
+      { kind: 'Coconut Cream', qty: 2 },
+      { kind: 'Ice', qty: 12 },
+    ],
+    garnish: 'Pineapple slice',
+    served: 'Frozen',
+  },
+
+  [if std.extVar('brunch') then
+    std.extVar('prefix') + 'Bloody Mary'
+  ]: {
+    ingredients: [
+      { kind: 'Vodka', qty: 1.5 },
+      { kind: 'Tomato Juice', qty: 3 },
+      { kind: 'Lemon Juice', qty: 1.5 },
+      { kind: 'Worcestershire', qty: 0.25 },
+      { kind: 'Tobasco Sauce', qty: 0.15 },
+    ],
+    garnish: 'Celery salt & pepper',
+    served: 'Tall',
+  },
+
+  [std.extVar('prefix') + 'Mimosa']:
+    lib.Mimosa,
+}
+```
+
+```bash
+$ jsonnet --ext-str prefix="Happy Hour " \
+        --ext-code brunch=true top-level-ext.jsonnet
+```
+
+prefix is bound to the string "Happy Hour "
+brunch is bound to true
+
+```json
+{
+  "Happy Hour Bloody Mary": {
+    "garnish": "Celery salt & pepper",
+    "ingredients": [
+      {
+        "kind": "Vodka",
+        "qty": 1.5
+      },
+      {
+        "kind": "Tomato Juice",
+        "qty": 3
+      },
+      {
+        "kind": "Lemon Juice",
+        "qty": 1.5
+      },
+      {
+        "kind": "Worcestershire",
+        "qty": 0.25
+      },
+      {
+        "kind": "Tobasco Sauce",
+        "qty": 0.15
+      }
+    ],
+    "served": "Tall"
+  },
+  "Happy Hour Mimosa": {
+    "garnish": "Orange Slice",
+    "ingredients": [
+      {
+        "kind": "Cheap Sparkling Wine",
+        "qty": 3
+      },
+      {
+        "kind": "Orange Juice",
+        "qty": 3
+      }
+    ],
+    "served": "Champagne Flute"
+  },
+  "Happy Hour Pina Colada": {
+    "garnish": "Pineapple slice",
+    "ingredients": [
+      {
+        "kind": "Rum",
+        "qty": 3
+      },
+      {
+        "kind": "Pineapple Juice",
+        "qty": 6
+      },
+      {
+        "kind": "Coconut Cream",
+        "qty": 2
+      },
+      {
+        "kind": "Ice",
+        "qty": 12
+      }
+    ],
+    "served": "Frozen"
+  }
+}
+```
+
+### Top-level arguments
+
+Values must be explicitly threaded through files
+Default values can be provided
+The config can be imported as a library and called as a function
+
+* library-tla.libsonnet
+
+```js
+{
+  // Note that the Mimosa is now
+  // parameterized.
+  Mimosa(brunch): {
+    local fizz = if brunch then
+      'Cheap Sparkling Wine'
+    else
+      'Champagne',
+    ingredients: [
+      { kind: fizz, qty: 3 },
+      { kind: 'Orange Juice', qty: 3 },
+    ],
+    garnish: 'Orange Slice',
+    served: 'Champagne Flute',
+  },
+}
+```
+
+* top-level-tla.jsonnet
+
+```js
+local lib = import 'library-tla.libsonnet';
+
+// Here is the top-level function, note brunch
+// now has a default value.
+function(prefix, brunch=false) {
+
+  [prefix + 'Pina Colada']: {
+    ingredients: [
+      { kind: 'Rum', qty: 3 },
+      { kind: 'Pineapple Juice', qty: 6 },
+      { kind: 'Coconut Cream', qty: 2 },
+      { kind: 'Ice', qty: 12 },
+    ],
+    garnish: 'Pineapple slice',
+    served: 'Frozen',
+  },
+
+  [if brunch then prefix + 'Bloody Mary']: {
+    ingredients: [
+      { kind: 'Vodka', qty: 1.5 },
+      { kind: 'Tomato Juice', qty: 3 },
+      { kind: 'Lemon Juice', qty: 1.5 },
+      { kind: 'Worcestershire', qty: 0.25 },
+      { kind: 'Tobasco Sauce', qty: 0.15 },
+    ],
+    garnish: 'Celery salt & pepper',
+    served: 'Tall',
+  },
+
+  [prefix + 'Mimosa']: lib.Mimosa(brunch),
+}
+```
+
+```bash
+$ jsonnet --tla-str prefix="Happy Hour " \
+        --tla-code brunch=true top-level-tla.jsonnet
+```
+
+```json
+{
+  "Happy Hour Bloody Mary": {
+    "garnish": "Celery salt & pepper",
+    "ingredients": [
+      {
+        "kind": "Vodka",
+        "qty": 1.5
+      },
+      {
+        "kind": "Tomato Juice",
+        "qty": 3
+      },
+      {
+        "kind": "Lemon Juice",
+        "qty": 1.5
+      },
+      {
+        "kind": "Worcestershire",
+        "qty": 0.25
+      },
+      {
+        "kind": "Tobasco Sauce",
+        "qty": 0.15
+      }
+    ],
+    "served": "Tall"
+  },
+  "Happy Hour Mimosa": {
+    "garnish": "Orange Slice",
+    "ingredients": [
+      {
+        "kind": "Cheap Sparkling Wine",
+        "qty": 3
+      },
+      {
+        "kind": "Orange Juice",
+        "qty": 3
+      }
+    ],
+    "served": "Champagne Flute"
+  },
+  "Happy Hour Pina Colada": {
+    "garnish": "Pineapple slice",
+    "ingredients": [
+      {
+        "kind": "Rum",
+        "qty": 3
+      },
+      {
+        "kind": "Pineapple Juice",
+        "qty": 6
+      },
+      {
+        "kind": "Coconut Cream",
+        "qty": 2
+      },
+      {
+        "kind": "Ice",
+        "qty": 12
+      }
+    ],
+    "served": "Frozen"
+  }
+}
+```
 
 ## Object-Orientation
 
+Objects (which we inherit from JSON)
+The object composition operator `+`, which merges two objects, choosing the right hand side when fields collide
+The `self` keyword, a reference to the current object
+
+Hidden fields, defined with `::`, which do not appear in generated JSON
+The `super` keyword, which has its usual meaning
+The `+:` field syntax for overriding deeply nested fields
+
+* oo-contrived.jsonnet
+
+```js
+local Base = {
+  f: 2,
+  g: self.f + 100,
+};
+
+local WrapperBase = {
+  Base: Base,
+};
+
+{
+  Derived: Base + {
+    f: 5,
+    old_f: super.f,
+    old_g: super.g,
+  },
+  WrapperDerived: WrapperBase + {
+    Base+: { f: 5 },
+  },
+}
+```
+
+```json
+{
+  "Derived": {
+    "f": 5,
+    "g": 105,
+    "old_f": 2,
+    "old_g": 105
+  },
+  "WrapperDerived": {
+    "Base": {
+      "f": 5,
+      "g": 105
+    }
+  }
+}
+```
+
+----
+
+* templates.libsonnet
+
+```js
+{
+  // Abstract template of a "sour" cocktail.
+  Sour: {
+    local drink = self,
+
+    // Hidden fields can be referred to
+    // and overrridden, but do not appear
+    // in the JSON output.
+    citrus:: {
+      kind: 'Lemon Juice',
+      qty: 1,
+    },
+    sweetener:: {
+      kind: 'Simple Syrup',
+      qty: 0.5,
+    },
+
+    // A field that must be overridden.
+    spirit:: error 'Must override "spirit"',
+
+    ingredients: [
+      { kind: drink.spirit, qty: 2 },
+      drink.citrus,
+      drink.sweetener,
+    ],
+    garnish: self.citrus.kind + ' twist',
+    served: 'Straight Up',
+  },
+}
+```
+
+* sours-oo.jsonnet
+
+```js
+local templates = import 'templates.libsonnet';
+
+{
+  // The template requires us to override
+  // the 'spirit'.
+  'Whiskey Sour': templates.Sour {
+    spirit: 'Whiskey',
+  },
+
+  // Specialize it further.
+  'Deluxe Sour': self['Whiskey Sour'] {
+    // Don't replace the whole sweetner,
+    // just change 'kind' within it.
+    sweetener+: { kind: 'Gomme Syrup' },
+  },
+
+  Daiquiri: templates.Sour {
+    spirit: 'Banks 7 Rum',
+    citrus+: { kind: 'Lime' },
+    // Any field can be overridden.
+    garnish: 'Lime wedge',
+  },
+
+  "Nor'Easter": templates.Sour {
+    spirit: 'Whiskey',
+    citrus: { kind: 'Lime', qty: 0.5 },
+    sweetener+: { kind: 'Maple Syrup' },
+    // +: Can also add to a list.
+    ingredients+: [
+      { kind: 'Ginger Beer', qty: 1 },
+    ],
+  },
+}
+```
+
+----
+
+* sours-oo.jsonnet
+
+```js
+local templates = import 'templates.libsonnet';
+
+{
+  // The template requires us to override
+  // the 'spirit'.
+  'Whiskey Sour': templates.Sour {
+    spirit: 'Whiskey',
+  },
+
+  // Specialize it further.
+  'Deluxe Sour': self['Whiskey Sour'] {
+    // Don't replace the whole sweetner,
+    // just change 'kind' within it.
+    sweetener+: { kind: 'Gomme Syrup' },
+  },
+
+  Daiquiri: templates.Sour {
+    spirit: 'Banks 7 Rum',
+    citrus+: { kind: 'Lime' },
+    // Any field can be overridden.
+    garnish: 'Lime wedge',
+  },
+
+  "Nor'Easter": templates.Sour {
+    spirit: 'Whiskey',
+    citrus: { kind: 'Lime', qty: 0.5 },
+    sweetener+: { kind: 'Maple Syrup' },
+    // +: Can also add to a list.
+    ingredients+: [
+      { kind: 'Ginger Beer', qty: 1 },
+    ],
+  },
+}
+```
+
+* templaets.libssont
+
+```js
+{
+  // Abstract template of a "sour" cocktail.
+  Sour: {
+    local drink = self,
+
+    // Hidden fields can be referred to
+    // and overrridden, but do not appear
+    // in the JSON output.
+    citrus:: {
+      kind: 'Lemon Juice',
+      qty: 1,
+    },
+    sweetener:: {
+      kind: 'Simple Syrup',
+      qty: 0.5,
+    },
+
+    // A field that must be overridden.
+    spirit:: error 'Must override "spirit"',
+
+    ingredients: [
+      { kind: drink.spirit, qty: 2 },
+      drink.citrus,
+      drink.sweetener,
+    ],
+    garnish: self.citrus.kind + ' twist',
+    served: 'Straight Up',
+  },
+}
+```
+
+* mixins.jsonnet
+
+```js
+local sours = import 'sours-oo.jsonnet';
+
+local RemoveGarnish = {
+  // Not technically removed, but made hidden.
+  garnish:: super.garnish,
+};
+
+// Make virgin cocktails
+local NoAlcohol = {
+  local Substitute(ingredient) =
+    local k = ingredient.kind;
+    local bitters = 'Angustura Bitters';
+    if k == 'Whiskey' then [
+      { kind: 'Water', qty: ingredient.qty },
+      { kind: bitters, qty: 'tsp' },
+    ] else if k == 'Banks 7 Rum' then [
+      { kind: 'Water', qty: ingredient.qty },
+      { kind: 'Vanilla Essence', qty: 'dash' },
+      { kind: bitters, qty: 'dash' },
+    ] else [
+      ingredient,
+    ],
+  ingredients: std.flattenArrays([
+    Substitute(i)
+    for i in super.ingredients
+  ]),
+};
+
+local PartyMode = {
+  served: 'In a plastic cup',
+};
+
+{
+  'Whiskey Sour':
+    sours['Whiskey Sour']
+    + RemoveGarnish + PartyMode,
+
+  'Virgin Whiskey Sour':
+    sours['Whiskey Sour'] + NoAlcohol,
+
+  'Virgin Daiquiri':
+    sours.Daiquiri + NoAlcohol,
+
+}
+```
+
+```
+{
+  "Virgin Daiquiri": {
+    "garnish": "Lime wedge",
+    "ingredients": [
+      {
+        "kind": "Water",
+        "qty": 2
+      },
+      {
+        "kind": "Vanilla Essence",
+        "qty": "dash"
+      },
+      {
+        "kind": "Angustura Bitters",
+        "qty": "dash"
+      },
+      {
+        "kind": "Lime",
+        "qty": 1
+      },
+      {
+        "kind": "Simple Syrup",
+        "qty": 0.5
+      }
+    ],
+    "served": "Straight Up"
+  },
+  "Virgin Whiskey Sour": {
+    "garnish": "Lemon Juice twist",
+    "ingredients": [
+      {
+        "kind": "Water",
+        "qty": 2
+      },
+      {
+        "kind": "Angustura Bitters",
+        "qty": "tsp"
+      },
+      {
+        "kind": "Lemon Juice",
+        "qty": 1
+      },
+      {
+        "kind": "Simple Syrup",
+        "qty": 0.5
+      }
+    ],
+    "served": "Straight Up"
+  },
+  "Whiskey Sour": {
+    "ingredients": [
+      {
+        "kind": "Whiskey",
+        "qty": 2
+      },
+      {
+        "kind": "Lemon Juice",
+        "qty": 1
+      },
+      {
+        "kind": "Simple Syrup",
+        "qty": 0.5
+      }
+    ],
+    "served": "In a plastic cup"
+  }
+}
+```
