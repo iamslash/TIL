@@ -438,6 +438,7 @@ putty 를 이용하여 public DNS 에 SSH 접속할 수 있다. user 는 `ubuntu
 Initiate EC2 instance with the script (cloud-config format) in user-data when it starts for the first time. 
 * [AWS EC2 user-data @ AWS](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/user-data.html). 
 * [cloud-config @ digitalocean](https://www.digitalocean.com/community/tutorials/an-introduction-to-cloud-config-scripting). 
+* [cloudinit @ ubuntu](https://help.ubuntu.com/community/CloudInit)
 
 Ofcourse you can run user-stat whenever EC2 instance restarts. 
 * [Amazon EC2 인스턴스를 다시 시작할 때마다 사용자 데이터를 실행하여 파일을 자동으로 생성하려면 어떻게 해야 합니까? @ AWS](https://aws.amazon.com/ko/premiumsupport/knowledge-center/execute-user-data-ec2/)
