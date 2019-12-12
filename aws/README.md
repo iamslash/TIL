@@ -671,6 +671,11 @@ Managed WebApp 을 제작할 때 개발자는 코드에만 집중할 수 있다.
 
 ## Cloud Formation
 
+* [인프라 자동 배포를 위한 AWS CloudFormation 고급 활용법 - 박철수 솔루션즈 아키텍트(AWS 코리아) @ youtube](https://youtu.be/DpkB38n7Yv4)
+  * [slide](https://www.slideshare.net/awskorea/6-infra-auto-deploy-awscloudformation-advanced-skill)
+
+----
+
 aws 의 resource 들을 미리 정의된 template 를 통해 생성할 수 있는 서비스이다. 예를 들어 내가 디자인한 서비스의 AWS resource 들 즉 ELB, EC2, RDS, ElastiCachde 등을 [yaml](https://github.com/aws-samples/elasticache-refarch-chatapp/blob/master/cloudformation/chatapp.yaml) 파일에 기록할 수 있다. 그리고 그 파일을 실행해서 AWS resources 를 생성할 수 있다.
 
 ## Glacier
