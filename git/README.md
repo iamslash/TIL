@@ -56,6 +56,9 @@ stash 역시 `STASH@{0}` 와 같은 형태로 특정 stash 를 가리킬 수 있
 # Git 설정
 
 ```bash
+## get config
+$ git config --global --list
+
 ## set name, email
 $ git config --global user.name "David Sun"
 $ git config --global user.email iamslash@gmail.com
@@ -71,7 +74,7 @@ $ git config --global alias.st status
 $ git config --global alias.unstage 'reset HEAD --'
 $ git config --global alias.last 'log -1 HEAD'
 $ git config --global alias.visual '!gitk'
-$ git config --global alias.log10 `log -10 --oneline --graph --decorate --all`
+$ git config --global alias.log10 'log -10 --oneline --graph --decorate --all'
 
 ## use alias
 $ git unstage fileA
