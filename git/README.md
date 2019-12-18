@@ -2,7 +2,7 @@
 - [Git Overview](#git-overview)
 - [Git 설정](#git-%ec%84%a4%ec%a0%95)
 - [Git Basic](#git-basic)
-- [`.gitignore`](#gitignore)
+- [.gitignore](#gitignore)
 - [Git log](#git-log)
 - [Git edit commit](#git-edit-commit)
 - [Git revert](#git-revert)
@@ -62,6 +62,20 @@ $ git config --global user.email iamslash@gmail.com
 
 ## set editor
 $ git config --global core.editor vim
+
+## set alias
+$ git config --global alias.co checkout
+$ git config --global alias.br branch
+$ git config --global alias.ci commit
+$ git config --global alias.st status
+$ git config --global alias.unstage 'reset HEAD --'
+$ git config --global alias.last 'log -1 HEAD'
+$ git config --global alias.visual '!gitk'
+$ git config --global alias.log10 `log -10 --oneline --graph --decorate --all`
+
+## use alias
+$ git unstage fileA
+$ git reset HEAD -- fileA
 
 ## set commit message template
 # vim $HOME/.gitmsg.txt
