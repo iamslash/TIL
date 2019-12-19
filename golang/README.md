@@ -671,6 +671,13 @@ func main() {
     // the same line with this syntax.
     n := map[string]int{"foo": 1, "bar": 2}
     fmt.Println("map:", n)
+
+    // You can compare map using relfect.DeepEqual
+    f := map[rune]int{'a' : 1, 'b' : 2}
+    g := map[rune]int{'a' : 1, 'b' : 2}
+    h := map[rune]int{'a' : 1, 'b' : 3}
+    fmt.Println(reflect.DeepEqual(f, g))
+    fmt.Println(reflect.DeepEqual(f, h))
 }
 
 
