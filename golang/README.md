@@ -271,6 +271,7 @@ func main() {
 ```
 
 ### Switch
+
 ```go
     // switch statement
     switch operatingSystem {
@@ -399,7 +400,6 @@ for i, c := range "Hello, 世界" {
         fmt.Printf("%d: %c\n", i, c)
 }
 ```
-
 
 ## Operators
 
@@ -1214,6 +1214,7 @@ func main() {
 ```
 
 ## Functions
+
 ```go
 // a simple function
 func functionName() {}
@@ -1327,7 +1328,6 @@ u := uint(f)
 * Convention: package name == last name of import path (import path `math/rand` => package `rand`)
 * Upper case identifier: exported (visible from other packages)
 * Lower case identifier: private (not visible from other packages)
-
 
 ## Strings
 
