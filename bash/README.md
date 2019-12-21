@@ -99,6 +99,7 @@
   - [signal list](#signal-list)
   - [kill](#kill)
   - [trap](#trap)
+- [Shortcuts](#shortcuts)
 - [Problems](#problems)
 
 -------------------------------------------------------------------------------
@@ -3569,29 +3570,29 @@ isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt echo
 
 `-` prefix 는 off 를 의미한다.
 
-| attribute       | description                                                                |
-| --------------- | -------------------------------------------------------------------------- |
-| `speed`         | UART parameters 이다. pseudo terminal 에서는 필요없다.                              |
-| `rows, columns` | terminal 의 행열의 크기이다. 창을 변화하면 foreground job 에 SIGWINCH 를 보낸다. 그리고 값이 변화한다. |
-| `line`          | line discipline 값이다. 0 은 line editing 을 제공하는 standard line discipline 이다.  |
-| `intr = ^C`     | foreground job 에 SIGINT 를 보내는 shortcut 이다.                                 |
-| `icanon`     | line sdscipline 이다. canonical mode 를 의미한다. canonical mode 는 backspace 로 수정하고 enter 를 누르면 라인을 단위로 데이터전송을 한다. vi 는 command mode 가 non-canonical mode 와 같다.  |
+| attribute       | description                                                                                                                                              |
+| --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `speed`         | UART parameters 이다. pseudo terminal 에서는 필요없다.                                                                                                            |
+| `rows, columns` | terminal 의 행열의 크기이다. 창을 변화하면 foreground job 에 SIGWINCH 를 보낸다. 그리고 값이 변화한다.                                                                               |
+| `line`          | line discipline 값이다. 0 은 line editing 을 제공하는 standard line discipline 이다.                                                                                |
+| `intr = ^C`     | foreground job 에 SIGINT 를 보내는 shortcut 이다.                                                                                                               |
+| `icanon`        | line sdscipline 이다. canonical mode 를 의미한다. canonical mode 는 backspace 로 수정하고 enter 를 누르면 라인을 단위로 데이터전송을 한다. vi 는 command mode 가 non-canonical mode 와 같다. |
 
 자세한 것은 `man tty` 를 읽어보자.
 
 ### Control Keys
 
-| attribute       | description                                                                |
-| --------------- | -------------------------------------------------------------------------- |
-| `^M`         | Enter                              |
-| `^C`         | SIGINT                              |
-| `^D`         | End of file                              |
-| `^\`         | SIGQUIT and core dump                              |
-| `^S`         | pause screen output                              |
-| `^Q`         | resume screen output                              |
-| `DEL or ^?`         | erase last character                              |
-| `^U`         | delete line to left                              |
-| `^Z`         | send SIGTSTP to foreground job and make it suspended                              |
+| attribute   | description                                          |
+| ----------- | ---------------------------------------------------- |
+| `^M`        | Enter                                                |
+| `^C`        | SIGINT                                               |
+| `^D`        | End of file                                          |
+| `^\`        | SIGQUIT and core dump                                |
+| `^S`        | pause screen output                                  |
+| `^Q`        | resume screen output                                 |
+| `DEL or ^?` | erase last character                                 |
+| `^U`        | delete line to left                                  |
+| `^Z`        | send SIGTSTP to foreground job and make it suspended |
 
 ### End of file
 
@@ -3880,6 +3881,69 @@ process 가 정상종료될 때 handler 를 등록하려면 `HUP, INT, QUIT, TER
 $ trap 'myhandler' HUP INT QUIT TERM
 $ myhandler() { ...;}
 ```
+
+# Shortcuts
+
+* [Bash Shortcuts For Maximum Productivity](https://skorks.com/2009/09/bash-shortcuts-for-maximum-productivity/)
+
+----
+
+* Command Editing
+
+| shortcut                      | action                                                                               |
+| ----------------------------- | ------------------------------------------------------------------------------------ |
+| `CTRL + a`                    | move to the beginning of the line                                                    |
+| `CTRL + e`                    | move to the end of the line                                                          |
+| `CTRL + k`                    | clear the characters on the line after the current cursor position                   |
+| `CTRL + u`                    | clear the entire line                                                                |
+| `CTRL + w`                    | delete the word in front of the cursor                                               |
+| `CTRL + y`                    | paste word or text that was cut using one of the deletion shortcuts after the cursor |
+| `CTRL + xx`                   | move between start of command line and current cursor position                       |
+| `CTRL + [left arrow], ALT-b`  | move one word backward                                                               |
+| `CTRL + [right arrow], ALT-f` | move one word forward                                                                |
+| `Alt + d`                     | delete the word after the cursor                                                     |
+| `Alt + c`                     | capitalize to end of word starting at cursor                                         |
+| `Alt + u`                     | make uppercase from cursor to end of word                                            |
+| `Alt + l`                     | make lowercase from cursor to end of word                                            |
+| `Alt + t`                     | swap current word with previous                                                      |
+| `CTRL + f`                    | move forward one character                                                           |
+| `CTRL + b`                    | move backward one character                                                          |
+| `CTRL + d`                    | delete character under the cursor                                                    |
+| `CTRL + h`                    | delete character before the cursor                                                   |
+| `CTRL + t`                    | swap character under cursor with the previous one                                    |
+
+* Command Recall
+
+| shortcut   | action                                    |
+| ---------- | ----------------------------------------- |
+| `CTRL + r` | search history                            |
+| `CTRL + g` | escape from search mode                   |
+| `CTRL + p` | previous command in history               |
+| `CTRL + n` | next command in history                   |
+| `ALT  + .` | use the last word of the previous command |
+| `CTRL + -` | undo the last change                      |
+
+* Command Control
+
+| shortcut   | action                               |
+| ---------- | ------------------------------------ |
+| `CTRL + l` | clear the screen                     |
+| `CTRL + s` | stops the output to the screen       |
+| `CTRL + q` | reenable the screen                  |
+| `CTRL + c` | terminate current foreground process |
+| `CTRL + z` | suspend  current foreground process  |
+
+* Bash Bang(!) Commands
+
+| shortcut  | action                                                    |
+| --------- | --------------------------------------------------------- |
+| `!!`      | run last command                                          |
+| `!blah`   | run the most recent command that starts with ‘blah’       |
+| `!blah:p` | print out the command that `!blah` would run              |
+| `!$`      | the last word of the previous command (same as `Alt + .`) |
+| `!$:p`    | print out the word that !$ would substitute               |
+| `!*`      | the previous command except for the last word             |
+| `!*:p`    | print out what `!*` would substitute                      |
 
 # Problems
 
