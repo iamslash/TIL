@@ -81,7 +81,7 @@
   - [TTY](#tty)
     - [입출력 장치 사용의 구분](#%ec%9e%85%ec%b6%9c%eb%a0%a5-%ec%9e%a5%ec%b9%98-%ec%82%ac%ec%9a%a9%ec%9d%98-%ea%b5%ac%eb%b6%84)
     - [Controlling Terminal](#controlling-terminal)
-    - [`/dev/tty`](#devtty)
+    - [/dev/tty](#devtty)
     - [Configuring TTY device](#configuring-tty-device)
     - [Control Keys](#control-keys)
     - [End of file](#end-of-file)

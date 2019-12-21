@@ -28,6 +28,7 @@
   - [Disk](#disk)
   - [Automation](#automation)
   - [oneline commands](#oneline-commands)
+  - [Tips](#tips)
 - [Security](#security)
   - [root 소유의 setuid, setgid 파일 검색 후 퍼미션 조정하기](#root-%ec%86%8c%ec%9c%a0%ec%9d%98-setuid-setgid-%ed%8c%8c%ec%9d%bc-%ea%b2%80%ec%83%89-%ed%9b%84-%ed%8d%bc%eb%af%b8%ec%85%98-%ec%a1%b0%ec%a0%95%ed%95%98%ea%b8%b0)
 - [System Monitoring](#system-monitoring)
@@ -1513,6 +1514,12 @@ function taocl() {
     xmlstarlet unesc | fmt -80
 }
 ```
+
+## Tips
+
+* execute muli-line commands on bash, zsh
+  * `C-x C-e` 
+  * [셸에서 여러줄의 명령어를 에디터로 편집하고 실행하기 @ 44bits](https://www.44bits.io/ko/post/editing-multiline-command-on-shell)
 
 # Security
 
