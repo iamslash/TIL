@@ -7,6 +7,7 @@
     - [sticky bit](#sticky-bit)
 - [Special Directories](#special-directories)
 - [Special Files](#special-files)
+- [Speicial FileSystem](#speicial-filesystem)
 - [Package Managers](#package-managers)
   - [apt-get](#apt-get)
   - [brew](#brew)
@@ -24,6 +25,7 @@
   - [압축](#%ec%95%95%ec%b6%95)
   - [에디터](#%ec%97%90%eb%94%94%ed%84%b0)
   - [데몬 관리](#%eb%8d%b0%eb%aa%ac-%ea%b4%80%eb%a6%ac)
+  - [Disk](#disk)
   - [Automation](#automation)
   - [oneline commands](#oneline-commands)
 - [Security](#security)
@@ -160,6 +162,16 @@ linux 는 파일의 sticky bit 를 무시한다. 디렉토리에 sticky bit 가 
 | /var/log/apache2/access.log | Apache access log file typical path.                                |
 | /var/log/httpd/access.log   | Apache access log file typical path.                                |
 | /etc/fstab                  | File system mounts.                                                 |
+
+# Speicial FileSystem
+
+* [What is “udev” and “tmpfs”](https://askubuntu.com/questions/1150434/what-is-udev-and-tmpfs)
+
+----
+
+| DIRECTORY | DESCRIPTION |
+| --------- | ----------- |
+|           |             |
 
 # Package Managers
 
@@ -1389,6 +1401,14 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * 타겟은 동시에 서비스들을 시작하는 걸 허용하기 위한 그룹 메커니즘이다. 
   * `systemctl set-default grpahical.target` 타겟 바꾸기
   * `systemctl get-default`
+
+## Disk
+
+* `df`
+  * `df -h` show disk free by filesystem
+* `resize2fs` 
+* `lsblk`
+* `fdisk`
 
 ## Automation
 
