@@ -166,12 +166,30 @@ linux 는 파일의 sticky bit 를 무시한다. 디렉토리에 sticky bit 가 
 # Speicial FileSystem
 
 * [What is “udev” and “tmpfs”](https://askubuntu.com/questions/1150434/what-is-udev-and-tmpfs)
+* [Specfs, Devfs, Tmpfs, and Others](https://www.linux.org/threads/specfs-devfs-tmpfs-and-others.9382/)
 
 ----
 
-| DIRECTORY | DESCRIPTION |
-| --------- | ----------- |
-|           |             |
+* `df`
+
+```bash
+$ df -hT
+Filesystem      Size  Used Avail Use% Mounted on
+overlay          59G  7.3G   49G  14% /
+tmpfs            64M     0   64M   0% /dev
+tmpfs          1000M     0 1000M   0% /sys/fs/cgroup
+shm              64M     0   64M   0% /dev/shm
+/dev/sda1        59G  7.3G   49G  14% /etc/hosts
+tmpfs          1000M     0 1000M   0% /proc/acpi
+tmpfs          1000M     0 1000M   0% /sys/firmware
+```
+
+| file system | DESCRIPTION                                                                                                     |
+| ----------- | --------------------------------------------------------------------------------------------------------------- |
+| `tmpfs`     | Virtual filesystem located in RAM                                                                               |
+| `udev`      | Virtual filesystem related to the devices files, aka the interface between actual physical device and the user. |
+| `/dev/sda1` | Device file                                                                                                     |
+| `/dev/sdb`  | Device file                                                                                                     |
 
 # Package Managers
 
@@ -1404,11 +1422,41 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 ## Disk
 
+* [Ubuntu 14.04에 새로운 하드디스크 추가 및 포맷후 자동 마운트 설정](http://reachlab-kr.github.io/linux/2015/10/03/Ubuntu-fstab.html)
+
+----
+
 * `df`
-  * `df -h` show disk free by filesystem
-* `resize2fs` 
-* `lsblk`
+  * `df -hT` show disk free by filesystem with Type.
+    ```bash
+    $ df -hT
+    Filesystem      Size  Used Avail Use% Mounted on
+    overlay          59G  7.3G   49G  14% /
+    tmpfs            64M     0   64M   0% /dev
+    tmpfs          1000M     0 1000M   0% /sys/fs/cgroup
+    shm              64M     0   64M   0% /dev/shm
+    /dev/sda1        59G  7.3G   49G  14% /etc/hosts
+    tmpfs          1000M     0 1000M   0% /proc/acpi
+    tmpfs          1000M     0 1000M   0% /sys/firmware`
+    ```
+* `resize2fs`
+  * `resize2fs /dev/sdb` resize `/dev/sdb`
 * `fdisk`
+  * `fdisk -l` show hard disk partitions
+  * `fdisk /dev/sdb` create partition
+* `mkfs`
+  * `mkfs -t ext4 /dev/sdb1` format `/dev/sdb1`
+* `blkid` 
+  * `blkid` list properties of block devices including UUID for mount
+* `mount`
+  * `mount` show all mounts
+  * `mount -t ext4 auto /dev/sdb1 /mnt/dir1`
+  * `mount -a`  mount all filesystems mentioned in fstab
+  * `vim /etc/fstab` add mount automatically
+* `umount`
+  * `umount /mnt/dir1` unmount `/mnt/dir1`
+* `lsblk`
+  * `lsblk` list block devices
 
 ## Automation
 
