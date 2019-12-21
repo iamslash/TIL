@@ -1,4 +1,5 @@
 
+- [Concurrency &amp; parallelism](#concurrency-amp-parallelism)
 - [thread](#thread)
 - [mutex](#mutex)
 - [condition_variable](#conditionvariable)
@@ -10,24 +11,31 @@
 
 ----
 
+## Concurrency & parallelism
+
+A, B 두개의 일을 동시에 진행하는 것을 parallelism (병행성) 이 있다고 한다. A, B 두개의 일을 조금씩 교대로 할 수 있는 것을 Concurrency (동시성) 이 있다고 한다. concurrency 가 있다면 parallism 이 있을 수도 있고 없을 수도 있다. 
+
+예를 들어 신문을 보는 것을 A, 커피를 마시는 것을 B 라고 했을 때 A, B 는 concurrency 가 있다고 할 수 있다. 또한 신문을 보면서 커피를 마실 수 있기 때문에 parallism 이 있다고 할 수 있다. 그러나 양말을 신는 것을 A, 신발을 신는 것을 B 라고 했을 때 A, B 는 concurrency 가 없다고 할 수 있다. 양말을 신어야 신발을 신을 수 있기 때문이다. concurrency 가 없기 때문에 parallelism 은 존재할 수 없다.
+
 ## thread
 
 쓰레드의 기본적인 사용법은 다음과 같다. `join` 은 쓰레드가 종료될 때까지 기다리는 것이고 `detatch` 는 kernel thread 와 연결을 끊는 것이다. `detatch` 되고 나면 이후 thread 는 제어할 방법이 없다.
 
 ```cpp
-// First example:
+#include <thread>
+
 void thread1() {
-	std::cout << "Helldo, Worlds" << std::endl;
+  std::cout << "Helldo, Worlds" << std::endl;
 }
 
 int main() {
-	std::thread t1(thread1);
-	t1.join();   // main thread wait for t1 to finish
-	//t1.detach();  // main thread let t1 to run on its own: t1 is a daemon process.
-                   // C++ runtime library is responsible returning t1's resources
-                   // and main thread may finish before t2 prints "Hello"
+  std::thread t1(thread1);
+  t1.join();   // main thread wait for t1 to finish
+  //t1.detach();  // main thread let t1 to run on its own: t1 is a daemon process.
+                  // C++ runtime library is responsible returning t1's resources
+                  // and main thread may finish before t2 prints "Hello"
 
-	return 0;
+  return 0;
 }
 // If neither detach nor join is called, terminate() will be called for the t1.
 // A thread can only be joined once or detached once. After it is joined on detached
@@ -37,32 +45,36 @@ int main() {
 다음은 메인 쓰레드와 다른 쓰레드가 한가지 리소스를 두고 경쟁하는 예이다.
 
 ```cpp
-// Second Example: Racing condition
+#include <cstdio>
+#include <thread>
+#include <fstream>
+#include <iostream>
+
 class Fctor {
-	ofstream& m_str;
+ private:
+  std::ofstream& m_ofs;
  public:
-	Fctor(ofstream& s) : m_str(s) {}   // Reference member can only be initialized
-	void operator()() {
-		for (int i=0; i>-100; i--)
-			m_str << "from t1: " << i << endl;
-	}
+  Fctor(std::ofstream& s) : m_ofs(s) {}
+  void operator()() {
+    for (int i = 0; i > -100; --i)
+      m_ofs << "from t: " << i << std::endl;
+  }
 };
 
 int main() {
-	cout << "Hollo Bo" << endl;
-	ofstream f;
-	f.open("log.txt");
+  std::cout << "Hello World" << std::endl;
+  std::ofstream f;
+  f.open("log.txt");
+  Fctor fctor(f);
+  std::thread t1(fctor);
 
-	Fctor fctor(f);
-	std::thread t1(fctor);
+  for (int i = 0; i < 100; ++i)
+    f << "from main: " << i << std::endl;
 
-	for (int i=0; i<100; i++)
-		f << "from main: " << i << endl;
-
-	t1.join();
-	f.close();
-
-	return 0;
+  t1.join();
+  f.close();
+  
+  return 0;
 }
 ```
 
