@@ -31,6 +31,7 @@
   - [Collections by examples](#collections-by-examples)
   - [Multidimensional Array](#multidimensional-array)
   - [Declarations](#declarations)
+  - [Nested Maps](#nested-maps)
   - [Constants](#constants)
   - [Functions](#functions)
     - [Functions As Values And Closures](#functions-as-values-and-closures)
@@ -1161,6 +1162,21 @@ var foo, bar int = 42, 1302 // declare and init multiple vars at once
 var foo = 42 // type omitted, will be inferred
 foo := 42 // shorthand, only in func bodies, omit var keyword, type is always implicit
 const constant = "This is a constant"
+```
+
+## Nested Maps
+
+```go
+var data = map[string]map[string]string{}
+
+data["a"] = map[string]string{}
+data["b"] = make(map[string]string)
+data["c"] = make(map[string]string)
+
+data["a"]["w"] = "x"
+data["b"]["w"] = "x"
+data["c"]["w"] = "x"
+fmt.Println(data)
 ```
 
 ## Constants
