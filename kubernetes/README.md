@@ -23,14 +23,14 @@
   - [Launch Replicaset](#launch-replicaset)
     - [Launch Simple Replicaset](#launch-simple-replicaset)
     - [Launch ReplicaSet Scale out](#launch-replicaset-scale-out)
-  - [Launch Replicaset](#launch-replicaset-1)
+  - [Launch Deployment](#launch-deployment)
     - [Launch Simple Deployment](#launch-simple-deployment)
     - [Launch Deployment with RollingUpdate](#launch-deployment-with-rollingupdate)
   - [Launch Service](#launch-service)
-  - [Launch Simple Service](#launch-simple-service)
+    - [Launch Simple Service](#launch-simple-service)
     - [Launch Service with NodePort](#launch-service-with-nodeport)
   - [Launch LoadBalancer](#launch-loadbalancer)
-  - [Launch Simple LoadBalancer](#launch-simple-loadbalancer)
+    - [Launch Simple LoadBalancer](#launch-simple-loadbalancer)
     - [????](#)
     - [???](#)
     - [???](#1)
@@ -49,6 +49,11 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 # Materials
 
+* [Kubernetes in Action](http://acornpub.co.kr/book/k8s-in-action)
+  * [src](https://github.com/luksa/kubernetes-in-action?files=1)
+* [CNCF @ youtube](https://www.youtube.com/channel/UCvqbFHwN-nwalWPjPUKpvTA)
+  * Cloud Native Computing Foundation
+* [Kubernetes Blog](https://kubernetes.io/blog/)
 * [EKS workshop](https://eksworkshop.com/010_introduction/basics/concepts_nodes/)
   * This explains about K8s
 * [[토크ON세미나] 쿠버네티스 살펴보기 @ youtube](https://www.youtube.com/watch?v=xZ3tcFvbUGc&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=2)
@@ -75,7 +80,7 @@ Kind 의 값에 따라 설정파일이 어떤 Object 혹은 controller 에 대�
 
 Kubernetes Cluster 는 Master 와 Node 두가지 종류가 있다. 
 
-Master 는 **etcd, kube-apiserver, kube-scheduler, kube-controller-manager, kubelet, kube-proxy, docker** 등이 실행된다. Master 장비 1대에 앞서 언급한 프로세스들 한 묶음을 같이 실행하는게 일반적인 구성이다. Master 는 일반적으로 High Availibility 를 위해 3 대 실행한다. 평소 1 대를 활성시키고 나머지 2 대는 대기시킨다.
+Master 는 **etcd, kube-apiserver, kube-scheduler, kube-controller-manager, kubelet, kube-proxy, docker** 등이 실행된다. Master 장비 1 대에 앞서 언급한 프로세스들 한 묶음을 같이 실행하는게 일반적인 구성이다. Master 는 일반적으로 High Availibility 를 위해 3 대 실행한다. 평소 1 대를 활성시키고 나머지 2 대는 대기시킨다.
 
 Node 는 초기에 미니언(minion) 이라고 불렀다. Node 는 **kubelet, kube-proxy, docker** 등이 실행된다. 대부분의 컨테이너들은 Node 에서 실행된다.
 
@@ -175,6 +180,8 @@ $ kubectl get nodes
 $ kubectl get nodes -o wide
 $ kubectl get nodes -o yaml
 $ kubectl get nodes -o json
+$ kubectl get nodes -o json |
+      jq ".items[].metadata.name"
 $ kubectl get nodes -o json |
       jq ".items[] | {name:.metadata.name} + .status.capacity"
 ```
@@ -507,7 +514,7 @@ spec:
 $ kubectl apply -f whoami-rs-scaled.yml
 ```
 
-## Launch Replicaset
+## Launch Deployment
 
 * [workshop-k8s-basic/guide/guide-03/task-04.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-04.md)
   * [[토크ON세미나] 쿠버네티스 살펴보기 6강 - Kubernetes(쿠버네티스) 실습 1 | T아카데미](https://www.youtube.com/watch?v=G0-VoHbunks&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=6)
@@ -621,7 +628,7 @@ $ kubectl get rs -w
 * ClusterIP is used for internal communication.
 * NodePort is used for external communication???
 
-## Launch Simple Service
+### Launch Simple Service
 
 * redis-app.yml
 
@@ -735,7 +742,7 @@ spec:
 
 ----
 
-## Launch Simple LoadBalancer
+### Launch Simple LoadBalancer
 
 * whoami-app.yml
   * If you launch this on AWS, ELB will attached to service.
