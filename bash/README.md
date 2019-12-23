@@ -2274,6 +2274,15 @@ shell 의 옵션은 `set` 과 `shopt` 를 이용하여 설정할 수 있다. `sh
 
 ## set
 
+옵션을 `set -o` 로 켜고 `set +o` 로 끈다. [참고](https://pinocc.tistory.com/161)
+
+```bash
+$ set -o xtrace
+$ echo "Hello World'
+$ set +o xtrace
+$ echo "Hello World'
+```
+
 `--` 는 현재 설정되어있는 positional parameters 를 삭제한다.
 
 ```bash
