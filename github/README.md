@@ -37,3 +37,16 @@ This is for github usage.
 * issue/pullrequest 는 `assignee, label, project, milestone` 를 설정할 수 있다.
 * label 은 `bug, documentation, duplicate, enhancement, good first issue, help wanted, invalid, question, wontfix` 가 미리 설정되어 있다.
 * milestone 은 repository 별로 생성한다.
+
+
+# Advanced
+
+## `ghe-governor`
+
+* [Analyzing Git traffic using Governor](https://github.community/t5/GitHub-Enterprise-Best-Practices/Analyzing-Git-traffic-using-Governor/ba-p/20355)
+
+----
+
+* Shows count of Git operations.
+* `ghe-governor-summary`
+* `ghe-governor aggregate repo count` Count of all Git operations by repository
