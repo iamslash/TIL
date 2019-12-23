@@ -106,7 +106,7 @@ aws 사용법에 대해 간략히 정리한다.
 * [AWS 지식 센터](https://aws.amazon.com/ko/premiumsupport/knowledge-center/)
   * FAQ
 * [AWS DOCS](https://docs.aws.amazon.com)
-  * RTFM
+  * [AWS Command Line Interface Documentation](https://docs.aws.amazon.com/cli/index.html)
 * [AWS Services Overview - September 2016 Webinar Series @ slideshare](https://www.slideshare.net/AmazonWebServices/aws-services-overview-september-2016-webinar-series)
   * AWS serices overview
 * [AWS @ 생활코딩](https://opentutorials.org/course/2717)
