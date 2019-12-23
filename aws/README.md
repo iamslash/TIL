@@ -43,6 +43,8 @@
     - [CLB vs ALB vs NLB](#clb-vs-alb-vs-nlb)
     - [Decision for ELB](#decision-for-elb)
     - [Cross-Zone Load Balancing](#cross-zone-load-balancing)
+  - [ASG (Auto Scaling Group)](#asg-auto-scaling-group)
+  - [ASGLC (Auto Scaling Group Launch Configuration)](#asglc-auto-scaling-group-launch-configuration)
   - [IAM (Identity and Access Management)](#iam-identity-and-access-management)
   - [AWS Auto Scaling](#aws-auto-scaling)
   - [Certificate Manager](#certificate-manager)
@@ -489,6 +491,14 @@ Application Load Balancer 는 다음과 같은 과정으로 생성한다. 대부
 ### Cross-Zone Load Balancing
 
 ![](img/crosszoneelb.png)
+
+## ASG (Auto Scaling Group)
+
+EC2 instace 를 scale out 할 수 있다. ASG 를 생성할 때 반드시 Launch Configuration 이 필요하다.
+
+## ASGLC (Auto Scaling Group Launch Configuration)
+
+ASG 에서 scale out 할 때 필요한 EC2 의 설정이다. 예를 들어서 `AMI ID, instance type, Security Group, key` 등이 해당된다.
 
 ## IAM (Identity and Access Management)
 
