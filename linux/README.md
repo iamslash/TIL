@@ -1391,35 +1391,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * `$ cat /var/spool/cron/crontab/root`
 
 * systemd
-  * `System has not been booted with systemd as init system (PID 1). Can't operate.` error 해결 방법???
-  * `systemctl` 현재 작동하고 있는 서비스들 보여줘
-  * `systemctl list-unit-files` 작동하지 않아도 좋으니 모든 서비스들 보여줘
-  * `systemctl enable vsftpd` 리눅스 부팅할때 vsftpd 시작해줘
-    * `disable` `start` `stop` `restart` `reload` 
-  * `systemctl is-enabled vsftpd` `systemctl is-active vsftpd`
-  * `systemctl show http.service` 서비스에 대한 systemd설정 보기
-  * `systemctl list-dependencies` 각 서비스들의 의존관계
-  * `systemctl list-dependencies mariadb.service` 특정 서비스의 의존관계
-  * `systemctl daemon-reload` systemd를 다시 시작
-  * unit file 편집하기
-    * `/usr/lib/system/system/ntpd.service`를 편집해도 되지만
-      `/etc/systemd/system/ntpd.service.d`에 `override.conf`를
-      만들어서 바꿀 설정만 기록해도 좋다.
-    * `systemctl edit ntpd` override하련다.
-      * `etc/systemd/system/ntpd.service.d` 디렉토리 생성
-      * 편집기 런칭
-      * 편집기 종료하면 언급한 디렉토리에 `override.conf` 저장
-    * `systemctl edit ntpd --full` 바로 편집 하련다.
-  * `systemd-analyze` 부팅시간정보 알려줘
-  * `systemd-analyze blame` 각 서비스별 초기화 시간 알려줘
-  * `systemd-analyze plot > a.html` html export
-  * `systemd-analyze critical-chain` 시간을 많이 소요하는 서비스들을 트리형태로 보여줘
-  * `systemd-analyze critical-chain firewalld.service`
-  * `systemctl --failed` 실패한 녀석들 보여줘
-  * `systemctl rescue` `systemctl isolate runlevel3.target` `systemctl isolate grphical.target`
-    * 타겟은 동시에 서비스들을 시작하는 걸 허용하기 위한 그룹 메커니즘이다. 
-  * `systemctl set-default grpahical.target` 타겟 바꾸기
-  * `systemctl get-default`
+  * [systemd](/systemd/README.md)
 
 ## Disk
 
