@@ -578,6 +578,14 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `chown -R iamslash tmp`
 * `chgrp`
   * `chgrp -R staff tmp`
+* `umask`
+  * [What is Umask and How To Setup Default umask Under Linux?](https://www.cyberciti.biz/tips/understanding-linux-unix-umask-value-usage.html) 
+  * set user default permission for creating files, directories
+  * Can set default umask adding followings to `/etc/profile`, `~/.profile`, `~/.bashrc`
+  * `umask 022` 
+    * create directory with permission `755 = 777 - 022`
+    * create file with permission `644 = 777 - 022 - 111`. subtract additionally `111` just for files.  
+  * `umask u=rwx,g=rx,o=rx` same with `umask 022`
 
 ## 시스템 모니터링
 

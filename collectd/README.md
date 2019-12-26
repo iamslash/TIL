@@ -1,3 +1,17 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Install](#install)
+  - [Install collectd-influxdb-grafana on docker](#install-collectd-influxdb-grafana-on-docker)
+  - [Install Collectd on Win64](#install-collectd-on-win64)
+  - [Install Collectd on macOS](#install-collectd-on-macos)
+- [Config for Collectd](#config-for-collectd)
+- [Config for influxdb](#config-for-influxdb)
+- [csv plugin](#csv-plugin)
+- [target_replace plugin](#targetreplace-plugin)
+- [Install to Systemd](#install-to-systemd)
+
+----
+
 # Abstract
 
 logging agent 인 collectd 와 influxdb, grafana 를 연동하여 centralized logging system 을 구성해본다.
@@ -152,12 +166,29 @@ LoadPlugin network
   * `select * from memory_value`
   * `select * from df_value`
 
-# Config replace value
+# csv plugin
+
+Can save metrics to a csv file. Please notice that this might cause disk full situcations.
+
+* `/etc/collectd/collectd.conf.d/csv.conf`
+
+```conf
+LoadPlugin csv
+
+<Plugin "csv">
+  DataDir "/var/lib/collectd/csv"
+  StoreRates true
+</Plugin>
+```
+
+# target_replace plugin
 
 * [Match:RegEx](https://collectd.org/wiki/index.php/Match:RegEx)
 * [Target:Replace](https://collectd.org/wiki/index.php/Target:Replace)
 
 ----
+
+Can replace metrics.
 
 * `/etc/collectd/collectd.conf.d/target_replace.conf`
   * You should use `?...$` in Host.
@@ -185,4 +216,60 @@ LoadPlugin "target_replace"
   </Rule>
 </Chain>
 
+```
+
+# Install to Systemd
+
+* [systemd](/systemd/README.md)
+
+----
+
+* `vim /etc/collectd.conf`
+
+```
+...
+Hostname    "platform.github.i-0c3a809def28db035.github_test"
+...
+<Include "/etc/collectd/collectd.conf.d">
+        Filter "*.conf"
+</Include>
+```
+
+* `vim /etc/collectd.d/`
+
+* `vim /etc/collectd.d/*`
+
+* `vim /etc/systemd/system/collectdbro.service`
+
+```
+[Unit]
+Description=Statistics collection and monitoring daemon
+After=local-fs.target network.target
+Requires=local-fs.target network.target
+ConditionPathExists=/etc/collectd/collectd.conf
+Documentation=man:collectd(1)
+Documentation=man:collectd.conf(5)
+Documentation=https://collectd.org
+
+[Service]
+Type=notify
+NotifyAccess=main
+EnvironmentFile=-/etc/default/collectd
+ExecStartPre=/usr/sbin/collectd -t
+ExecStart=/usr/sbin/collectd
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+* register collectdbro.service
+
+```bash
+$ sudo systemctl enable collectdbro.service
+$ sudo systemctl daemon-reload
+$ sudo systemctl restart collectdbro
+$ sudo systemctl status collectdbro
+$ sudo systemctl edit collectdbro --full
 ```

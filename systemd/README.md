@@ -2,6 +2,7 @@
 
 * [Creating systemd Service Files @ youtube](https://www.youtube.com/watch?v=fYQBvjYQ63U)
 * `man system.service`
+* [systemd @ wikipedia](https://en.wikipedia.org/wiki/Systemd)
 
 # Simple Service
 
