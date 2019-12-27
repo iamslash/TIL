@@ -1,4 +1,3 @@
-- [Abstract](#abstract)
 - [Materials](#materials)
 - [Special pattern characters](#special-pattern-characters)
 - [Quantifiers](#quantifiers)
@@ -13,51 +12,47 @@
 
 -----
 
-# Abstract 
-
-Regular Expression 에 대해 정리한다.
-
 # Materials
 
 * [ECMAScript regular expressions pattern syntax](http://www.cplusplus.com/reference/regex/ECMAScript/)
 * [regular expressions 101](https://regex101.com/)
-  * PCRE, ECMAScript, Python, Golang 을 
+  * Test PCRE, ECMAScript, Python, Golang regex.
 
 # Special pattern characters
 
-| characters | description | example |
-| ---------- | ----------- | ------- |
-| `.` | not newline  | `.+` matches '<u>a b c</u>' |
-| `\t` | tab (HT)  | `` |
-| `\n` | newline (LF) | `` |
-| `\v` | vertical tab (VT) | `` |
-| `\f` | form feed (FF) | `` |
-| `\r` | carriage return (CR) | `` |
-| `\c`<i>letter</i> | control code | `cI` matches 'vertical<u>        </u>tab' |
-| `\x`<i>hh</i> | ASCII character | `` |
-| `\u`<i>hhhh</i> | unicode character | `` |
-| `\0` | null | `` |
-| `\int` | backreference | `` |
-| `\d` | digit | `` |
-| `\D` | not digit | `` |
-| `\s` | whitespace | `` |
-| `\S` | not whitespace | `` |
-| `\w` | word | `` |
-| `\W` | not word | `` |
-| `\`<i>character</i> | character | `` |
-| `[class]` | character class | `[abc]+` matches '<u>a</u> <u>bb</u> <u>ccc</u>' |
-| `[^class]` | negated character class | `[^abc]+` matches '<u>Anything </u>b<u>ut </u>abc<u>.</u>' |
+| characters          | description             | example                                                    |
+| ------------------- | ----------------------- | ---------------------------------------------------------- |
+| `.`                 | not newline             | `.+` matches '<u>a b c</u>'                                |
+| `\t`                | tab (HT)                | ``                                                         |
+| `\n`                | newline (LF)            | ``                                                         |
+| `\v`                | vertical tab (VT)       | ``                                                         |
+| `\f`                | form feed (FF)          | ``                                                         |
+| `\r`                | carriage return (CR)    | ``                                                         |
+| `\c`<i>letter</i>   | control code            | `cI` matches 'vertical<u>        </u>tab'                  |
+| `\x`<i>hh</i>       | ASCII character         | ``                                                         |
+| `\u`<i>hhhh</i>     | unicode character       | ``                                                         |
+| `\0`                | null                    | ``                                                         |
+| `\int`              | backreference           | ``                                                         |
+| `\d`                | digit                   | ``                                                         |
+| `\D`                | not digit               | ``                                                         |
+| `\s`                | whitespace              | ``                                                         |
+| `\S`                | not whitespace          | ``                                                         |
+| `\w`                | word                    | ``                                                         |
+| `\W`                | not word                | ``                                                         |
+| `\`<i>character</i> | character               | ``                                                         |
+| `[class]`           | character class         | `[abc]+` matches '<u>a</u> <u>bb</u> <u>ccc</u>'           |
+| `[^class]`          | negated character class | `[^abc]+` matches '<u>Anything </u>b<u>ut </u>abc<u>.</u>' |
 
 # Quantifiers
 
-| characters | description | example |
-| ---------- | ----------- | ------- |
-| `*` | 0 or more | `ba*` matches 'a <u>ba</u> <u>baa</u> aaa <u>ba</u> <u>b</u>' |
-| `+` | 1 or more | `a+` matches '<u>a</u> <u>aa</u> <u>aaa</u> <u>aaaa</u> b<u>a</u>b b<u>aa</u>b' |
-| `?` | 0 or 1 | `ba?` matches '<u>ba</u> <u>b</u> a' |
-| `{int}` | int | `a{3}` matches 'a aa <u>aaa</u> <u>aaa</u>a' |
-| `{int,}` | int or more | `a{3,}` matches 'a aa <u>aaa</u> <u>aaaa</u> <u>aaaaaa</u>' |
-| `{min, max}` | between min and max | `a{3,6}` matches 'a aa <u>aaa</u> <u>aaaa</u> <u>aaaaaa</u>aaaa' |
+| characters   | description         | example                                                                         |
+| ------------ | ------------------- | ------------------------------------------------------------------------------- |
+| `*`          | 0 or more           | `ba*` matches 'a <u>ba</u> <u>baa</u> aaa <u>ba</u> <u>b</u>'                   |
+| `+`          | 1 or more           | `a+` matches '<u>a</u> <u>aa</u> <u>aaa</u> <u>aaaa</u> b<u>a</u>b b<u>aa</u>b' |
+| `?`          | 0 or 1              | `ba?` matches '<u>ba</u> <u>b</u> a'                                            |
+| `{int}`      | int                 | `a{3}` matches 'a aa <u>aaa</u> <u>aaa</u>a'                                    |
+| `{int,}`     | int or more         | `a{3,}` matches 'a aa <u>aaa</u> <u>aaaa</u> <u>aaaaaa</u>'                     |
+| `{min, max}` | between min and max | `a{3,6}` matches 'a aa <u>aaa</u> <u>aaaa</u> <u>aaaaaa</u>aaaa'                |
 
 # Groups
 
