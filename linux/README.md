@@ -1035,6 +1035,8 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `grep -o "is.*line" a.txt` 검색된 문자열들만 보여다오
   * `grep -o -b "3" a.txt` 검색된 위치를 보여다오
   * `grep -n "go" a.txt` 검색된 줄번호도 보여다오
+  * `grep -P '^(\d{3}-|\(\d{3}\) )\d{3}-\d{4}$' file.txt` PCRE (perl compatible regular expression)
+    * file.txt 에서 `000-000-0000` 혹은 `(000) 000-0000` 만 보여다오
 * `grep` vs `egrep` vs `fgrep`
   * `grep` is `grep -G`
   * `egrep` is `grep -E` or `grep --extended-regexp`
