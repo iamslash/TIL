@@ -679,6 +679,13 @@ func main() {
     h := map[rune]int{'a' : 1, 'b' : 3}
     fmt.Println(reflect.DeepEqual(f, g))
     fmt.Println(reflect.DeepEqual(f, h))
+
+    // not existed value
+    M := make(map[int]int)
+	i, ok := M[3]
+	fmt.Println(i)
+	fmt.Println(ok)
+	fmt.Println(len(M))
 }
 
 
