@@ -1115,6 +1115,17 @@ for _, k := range keys {
 // Cecil 1
 ```
 
+* search
+
+```go
+// binary search
+A := []int{2, 3, 5, 6}
+fmt.Println(sort.SearchInts(A, 1)) // 0
+fmt.Println(sort.SearchInts(A, 3)) // 1
+fmt.Println(sort.SearchInts(A, 4)) // 2
+fmt.Println(sort.SearchInts(A, 7)) // 4
+```
+
 ## Multidimensional Array
 
 * [How is two dimensional array's memory representation @ stackoverflow](https://stackoverflow.com/questions/39561140/how-is-two-dimensional-arrays-memory-representation)
