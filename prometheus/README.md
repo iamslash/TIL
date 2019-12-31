@@ -2,14 +2,40 @@
 
 서버를 모니터링하는 시스템이다. 모니터링을 원하는 서버에 Exporter 를 설치한다. Prometheus 는 여러 Exporter 들에게 접속하여 데이터를 얻어온다. 즉 pulling 한다. 알림을 받을 규칙을 만들어서 Alert Manager 로 보내면 Alert Manager 가 규칙에 따라 알림을 보낸다.
 
+# Architecture
+
+![](https://prometheus.io/assets/architecture.png)
+
+
 # Materials
 
 * [오픈소스 모니터링 시스템 Prometheus #1](https://blog.outsider.ne.kr/1254)
+  * [오픈소스 모니터링 시스템 Prometheus #2](https://blog.outsider.ne.kr/1255)
 
-# Install on osx
+# Install
+
+## Install on osx
 
 ```bash
 brew install prometheus
+```
+
+## Install with docker-compose
+
+* [A Prometheus & Grafana docker-compose stack](https://github.com/vegasbrianc/prometheus)
+  * Prometheus, Grafana
+
+----
+
+```bash
+$ cd my/docker/
+$ git clone git@github.com:vegasbrianc/prometheus.git
+$ HOSTNAME=$(hostname) docker stack deploy -c docker-stack.yml prom
+# open Grafana dashboard http://192.168.10.1:3000
+# admin / foobar (/grafana/config.monitoring)
+$ docker stack ps prom
+$ docker service ls
+$ docker service logs prom_<service_name>
 ```
 
 # Basic usages
@@ -18,7 +44,7 @@ brew install prometheus
 
   - prometheus config file, a.yml
 
-```
+```yml
 global:
   scrape_interval:     15s # By default, scrape targets every 15 seconds.
 
@@ -116,3 +142,69 @@ receivers:
     auth_identity: "GMAIL_ACCOUNT"
     auth_password: "GMAIL_AUTH_TOKEN"
 ```
+
+# PromQL
+
+* [QUERY EXAMPLES](https://prometheus.io/docs/prometheus/latest/querying/examples/)
+* [QUERYING PROMETHEUS](https://prometheus.io/docs/prometheus/latest/querying/basics/)
+* [169. [Prometheus] 1편 : Prometheus (프로메테우스) 사용 방법, 기본 개념, 데이터 구조](https://blog.naver.com/PostView.nhn?blogId=alice_k106&logNo=221535163599)
+  * [170. [Prometheus] 2편. PromQL 사용하기, k8s에서 Meta Label과 relabel을 활용한 기본 라벨 설정, 그 외의 이야기](https://blog.naver.com/PostView.nhn?blogId=alice_k106&logNo=221535575875)
+
+----
+
+* `http_request_total` 
+  * get last http_request_total value
+
+* `http_requests_total{job="apiserver", handler="/api/comments"}`
+  * get last http_request_total filtered with labels
+
+* `http_requests_total{job="apiserver", handler="/api/comments"}[5m]`
+  * get last 5m http_request_total filtered with labels and with 10 sec granularity
+
+* `http_requests_total{job=~".*server"}`
+  * `~` means REGEX
+  * `=, !=, =~, !~`
+  * use `.+` instead of `.*`
+
+    ```
+    {job=~".*"} # Bad!
+    {job=~".+"}              # Good!
+    {job=~".*",method="get"} # Good!
+    ```
+
+* `rate(http_requests_total[5m])[30m:1m]`
+  * subquery
+  * get the last 5-min rate of the http_requests_total for the past 30 min, with a resolution of 1m
+
+* `max_over_time(deriv(rate(distance_covered_total[5s])[30s:5s])[10m:])`
+  * too complicated
+
+* `rate(http_requests_total[5m])`
+  * get the per-second rate for all time series with the http_requests_total, as measured over the last 5 min.
+
+* `sum by (job) (
+  rate(http_requests_total[5m])
+)`
+  * get summation grouped by job
+
+* `(instance_memory_limit_bytes - instance_memory_usage_bytes) / 1024 / 1024`
+  * get the unused memory in MiB for every instance
+
+* `sum by (app, proc) (
+  instance_memory_limit_bytes - instance_memory_usage_bytes
+) / 1024 / 1024`
+  * get the sum of the unused memory grouped by app, proc
+
+* `topk(3, sum by (app, proc) (rate(instance_cpu_time_ns[5m])))`
+  * top 3 CPU users grouped by app, proc
+  * These are datas
+  ```
+  instance_cpu_time_ns{app="lion", proc="web", rev="34d0f99", env="prod", job="cluster-manager"}
+  instance_cpu_time_ns{app="elephant", proc="worker", rev="34d0f99", env="prod", job="cluster-manager"}
+  instance_cpu_time_ns{app="turtle", proc="api", rev="4d3a513", env="prod", job="cluster-manager"}
+  instance_cpu_time_ns{app="fox", proc="widget", rev="4d3a513", env="prod", job="cluster-manager"}
+  ...
+  ```
+
+  * `count by (app) (instance_cpu_time_ns)`
+    * get the count of the running instances per application
