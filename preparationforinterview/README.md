@@ -16,6 +16,9 @@
 * [Designing Data-Intensive Applications](https://dataintensive.net/)
 * [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
 * [Grokking the Object Oriented Design Interview](https://www.educative.io/collection/5668639101419520/5692201761767424)
+* [Behavioral Interviews for Software Engineers @ youtube](https://www.youtube.com/watch?v=zIJ1qRCPHUw&feature=youtu.be&app=desktop)
+* [Episode 07: Intro to Behavioural Interviews](https://www.youtube.com/watch?v=PJKYqLP6MRE)
+* [ Best Posts of 2019 @ leetcode](https://leetcode.com/discuss/general-discussion/459286/Best-Posts-of-2019)
 
 # Resume
 
