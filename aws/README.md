@@ -905,10 +905,20 @@ $ aws --version
 ## configure
 
 * [AWS 커맨드라인 인터페이스(awscli) 기초](https://www.44bits.io/ko/post/aws_command_line_interface_basic)
+* [AWS Configure 여러 계정으로 스위칭하며 사용하기](https://novemberde.github.io/aws/2018/06/20/AWS-config-switching.html)
 
 ```bash
+# configure default account
 $ aws configure
+
+# configure multi account
 $ aws configure --profile iamslash
+$ aws s3 ls --profile iamslash
+$ export AWS_DEFAULT_PROFILE=iamslash
+$ aws s3 ls
+
+# show configure list
+$ aws configure list
 ```
 
 ## S3
