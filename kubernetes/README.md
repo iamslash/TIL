@@ -40,6 +40,8 @@
   - [Launch Horizontal Pod Autoscaler](#launch-horizontal-pod-autoscaler)
     - [Launch Simple Horizontal Pod Autoscaler](#launch-simple-horizontal-pod-autoscaler)
   - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
+- [Dive Deep](#dive-deep)
+  - [controller](#controller)
 
 ----
 
@@ -1362,3 +1364,29 @@ spec:
   selector:
     k8s-app: kubernetes-dashboard
 ```
+
+# Dive Deep
+
+## controller
+
+* [A deep dive into Kubernetes controllers](https://engineering.bitnami.com/articles/a-deep-dive-into-kubernetes-controllers.html)
+  * [kubewatch](https://github.com/bitnami-labs/kubewatch)
+    * controller which sends slack messages
+  * [sample-controller](https://github.com/kubernetes/sample-controller)
+
+----
+
+* kubernetes 의 controller 는 특정한 kubernetes resource 를 지켜보고 있다가 desired state 를 적용한다.
+  ```go
+  for {
+    desired := getDesiredState()
+    current := getCurrentState()
+    makeChanges(desired, current)
+  }
+  ```
+* controller 의 주요 컴포넌트로 Informer/SharedInformer 와 Workqueue 가 있다.
+* Informer/SharedInformer 는 desired state 를 발견하면 Workqueue 에 아이템을 하나 삽입한다.
+* kube-controller-manager 는 많은 수의 controller 들을 포함한다. 각 controller 는 자신들이 담당하는 특정 resource 에 대해서만 polling 하고 caching 한다. 이 cache 는 controller 들에 의해 공유된다. SharedInformer 는 이와 같이 공유된 cache 를 사용한다. 따라서 SharedInformer 를 Informer 보다 더 많이 사용한다. 
+* Worker thread 는 Workqueue 에서 아이템을 하나 꺼내어 처리한다.
+
+
