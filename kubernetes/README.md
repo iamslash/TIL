@@ -13,6 +13,7 @@
   - [Microsoft AZURE](#microsoft-azure)
   - [Install on Win64](#install-on-win64)
   - [Install on macOS](#install-on-macos)
+- [AWS EKS Basic](#aws-eks-basic)
 - [Basic](#basic)
   - [Useful Commands](#useful-commands)
   - [Launch Single Pod](#launch-single-pod)
@@ -44,7 +45,6 @@
   - [Launch Horizontal Pod Autoscaler](#launch-horizontal-pod-autoscaler)
     - [Launch Simple Horizontal Pod Autoscaler](#launch-simple-horizontal-pod-autoscaler)
   - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
-- [AWS EKS Basic](#aws-eks-basic)
 - [Dive Deep](#dive-deep)
   - [controller](#controller)
 
@@ -354,6 +354,12 @@ Unable to connect to the server: dial tcp [::1]:8080: connectex: No connection c
 * [도커(Docker), 쿠버네티스(Kubernetes) 통합 도커 데스크톱을 스테이블 채널에 릴리즈 @ 44bits](https://www.44bits.io/ko/post/news--release-docker-desktop-with-kubernetes-to-stable-channel)
 
 * Install docker, enable kubernetes. That's all.
+
+# AWS EKS Basic
+
+* [EKS workshop beginner](https://eksworkshop.com/beginner/)
+  * AWS EKS handsson
+  * [src](https://github.com/aws-samples/eks-workshop)
 
 # Basic
 
@@ -1576,25 +1582,19 @@ spec:
     k8s-app: kubernetes-dashboard
 ```
 
-# AWS EKS Basic
-
-* [EKS workshop beginner](https://eksworkshop.com/beginner/)
-  * AWS EKS handson
-
-----
-
-Updating...
-
 # Dive Deep
 
 ## controller
 
 * [A deep dive into Kubernetes controllers](https://engineering.bitnami.com/articles/a-deep-dive-into-kubernetes-controllers.html)
-  * [kubewatch](https://github.com/bitnami-labs/kubewatch)
+  * [sample-controller @ github](https://github.com/kubernetes/sample-controller)
+    * pretty simple custom controller
+  * [kubewatch @ github](https://github.com/bitnami-labs/kubewatch)
     * controller which sends slack messages
-  * [sample-controller](https://github.com/kubernetes/sample-controller)
 
 ----
+
+![](img/client-go-controller-interaction.jpeg)
 
 * kubernetes 의 controller 는 특정한 kubernetes resource 를 지켜보고 있다가 desired state 를 적용한다.
   ```go
