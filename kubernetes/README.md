@@ -47,6 +47,7 @@
   - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
 - [Dive Deep](#dive-deep)
   - [controller](#controller)
+  - [API server](#api-server)
 
 ----
 
@@ -378,6 +379,29 @@ Unable to connect to the server: dial tcp [::1]:8080: connectex: No connection c
 # service, loadbalancer, ingress, volume, configmap, secret,
 # namespace
 $ kubectl api-resources
+$ kubectl api-versions
+$ kubectl explain deploy
+$ kubectl explain deploy --api-version apps/v1
+kubectl api-resources | awk '{print $3}' | sort | uniq
+APIGROUP
+Binding
+PodTemplate
+Secret
+apiextensions.k8s.io
+apps
+autoscaling
+awslb.coupang.com
+batch
+certificates.k8s.io
+events.k8s.io
+extensions
+false
+networking.k8s.io
+policy
+scheduling.k8s.io
+storage.k8s.io
+true
+workload.coupang.com
 ```
 
 * get
@@ -1609,4 +1633,6 @@ spec:
 * kube-controller-manager 는 많은 수의 controller 들을 포함한다. 각 controller 는 자신들이 담당하는 특정 resource 에 대해서만 polling 하고 caching 한다. 이 cache 는 controller 들에 의해 공유된다. SharedInformer 는 이와 같이 공유된 cache 를 사용한다. 따라서 SharedInformer 를 Informer 보다 더 많이 사용한다. 
 * Worker thread 는 Workqueue 에서 아이템을 하나 꺼내어 처리한다.
 
+## API server
 
+* [Kubernetes API Reference](https://kubernetes.io/docs/reference/)
