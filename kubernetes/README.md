@@ -40,6 +40,8 @@
   - [Launch Horizontal Pod Autoscaler](#launch-horizontal-pod-autoscaler)
     - [Launch Simple Horizontal Pod Autoscaler](#launch-simple-horizontal-pod-autoscaler)
   - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
+- [Authorization](#authorization)
+- [AWS EKS](#aws-eks)
 - [Dive Deep](#dive-deep)
   - [controller](#controller)
 
@@ -155,6 +157,7 @@ Unable to connect to the server: dial tcp [::1]:8080: connectex: No connection c
 
 * [workshop-k8s-basic/guide/guide-03/task-01.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-01.md)
   * [[토크ON세미나] 쿠버네티스 살펴보기 6강 - Kubernetes(쿠버네티스) 실습 1 | T아카데미](https://www.youtube.com/watch?v=G0-VoHbunks&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=6)
+* [kubectl 치트 시트](https://kubernetes.io/ko/docs/reference/kubectl/cheatsheet/)
 
 ----
 
@@ -186,6 +189,10 @@ $ kubectl get nodes -o json |
       jq ".items[].metadata.name"
 $ kubectl get nodes -o json |
       jq ".items[] | {name:.metadata.name} + .status.capacity"
+
+# show pods with the namespace
+$ k get pods --all-namespace
+$ k get pods --namespace kube-system
 ```
 
 * describe
@@ -1364,6 +1371,139 @@ spec:
   selector:
     k8s-app: kubernetes-dashboard
 ```
+
+# Authorization
+
+* [쿠버네티스 권한관리(Authorization)](https://arisu1000.tistory.com/27848)
+
+# AWS EKS
+
+* [Kubernetes On AWS | AWS Kubernetes Tutorial | AWS EKS Tutorial | AWS Training | Edureka](https://www.youtube.com/watch?v=6H5sXQoJiso)
+  * [Getting Started with the AWS Management Console](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-console.html#w243aac11b9b7c11b7b1)
+* [Amazon EKS 시작하기](https://aws.amazon.com/ko/eks/getting-started/)
+* [Amazon EKS Starter: Docker on AWS EKS with Kubernetes @ udemy](https://www.udemy.com/course/amazon-eks-starter-kubernetes-on-aws/)
+* [AWS 기반 Kubernetes 정복하기 - 정영준 솔루션즈 아키텍트(AWS)](https://www.youtube.com/watch?v=lGw2y-GLBbs)
+* [Getting Started with Amazon EKS](https://docs.aws.amazon.com/en_en/eks/latest/userguide/getting-started.html)
+
+----
+
+![](img/eks_arch.png)
+
+* create IAM role "`eks-role`" 
+  * with policies "`AmazonEKSClusterPolicy, AmazonEKSServicePolicy`"
+* create Network (VPC, subnets, security groups) "`eks-net`" with CloudFormation
+  * with the template body `https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-11-15/amazon-eks-vpc-sample.yaml`
+* create EKS cluster "`nginx-cluster`"
+* install kubectl
+
+  ```bash
+  $ kubectl version --short --client
+  ```
+
+* install aws cli
+
+  ```bash
+  $ aws --version
+  ```
+
+* install aws-iam-authenticator
+
+   ```bash
+   $ brew install aws-iam-authenticator
+   $ aws-iam-authenticator --help
+   ```
+
+* Create a kubeconfig File
+
+  ```bash
+  $ aws --region ap-northeast-2 eks update-kubeconfig --name nginx-cluster
+  Added new context arn:aws:eks:ap-northeast-2:612149981322:cluster/nginx-cluster to /Users/davidsun/.kube/config
+  ```
+
+* create worker nodes "`nginx-cluster-worker-nodes`" with CloudFormation
+  * with the template body `https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-11-15/amazon-eks-nodegroup-role.yaml`
+
+* create ConfigMap
+  
+  * `aws-iam-authenticator.yaml`
+
+    ```yaml
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: aws-auth
+      namespace: kube-system
+    data:
+      mapRoles:
+        - rolearn: <NodeInstanceRole of CloudFormation nginx-cluster-worker-nodes>
+          username: system:node:{{EC2PrivateDNSName}}
+          groups:
+            - system:bootstrappers
+            - system:nodes
+    ```
+
+  * apply
+
+    ```bash
+    $ kubectl apply -f aws-iam-authenticator.yaml
+    $ kubectl get nodes
+    ```
+
+* create k8s Deployment, Service 
+
+  * `nginx-deploy.yaml`
+
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      selector:
+        matchlabels:
+          run: nginx
+      replicas: 2
+      template:
+        metadata:
+          labels:
+            run: nginx
+        spec:
+          containers:
+          - name: nginx
+            image: nginx:1.7.9
+            ports:
+            - containerPort: 80 
+    ```
+
+  * `nginx-service.yaml`
+
+    ```yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx
+      labels:
+        run: nginx
+    spec:
+      ports:
+      - port: 80
+        protocol: TCP
+      selector:
+        run: nginx
+      type: LoadBalancer
+    ```
+
+  * apply
+
+    ```bash
+    $ kubectl create -f nginx-deploy.yaml
+    $ kubectl create -f nginx-service.yaml
+    $ kubectl get services -o wide
+    # copy LoadBalancer Ingress
+    $ kubectl describe svc nginx
+    ```
+
+* open browser copied url
 
 # Dive Deep
 
