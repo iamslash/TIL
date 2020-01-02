@@ -1423,7 +1423,7 @@ spec:
 * create worker nodes "`nginx-cluster-worker-nodes`" with CloudFormation
   * with the template body `https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-11-15/amazon-eks-nodegroup-role.yaml`
 
-* create ConfigMap
+* create k8s ConfigMap and connect `nginx-cluster-worker-nodes` to `nginx-cluster`
   
   * `aws-iam-authenticator.yaml`
 
