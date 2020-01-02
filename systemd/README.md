@@ -3,6 +3,7 @@
 * [Creating systemd Service Files @ youtube](https://www.youtube.com/watch?v=fYQBvjYQ63U)
 * `man system.service`
 * [systemd @ wikipedia](https://en.wikipedia.org/wiki/Systemd)
+* [systemd unit 등록 관련 옵션 정리](https://fmd1225.tistory.com/93)
 
 # Simple Service
 
