@@ -3,10 +3,14 @@
 - [Architecture](#architecture)
   - [Overview](#overview)
   - [Kubernetes Components](#kubernetes-components)
-    - [Master](#master)
-    - [Node](#node)
+    - [Master Node](#master-node)
+    - [Worker Node](#worker-node)
     - [Addons](#addons)
+- [Authorization](#authorization)
 - [Install](#install)
+  - [AWS EKS](#aws-eks)
+  - [Google GCP](#google-gcp)
+  - [Microsoft AZURE](#microsoft-azure)
   - [Install on Win64](#install-on-win64)
   - [Install on macOS](#install-on-macos)
 - [Basic](#basic)
@@ -40,8 +44,7 @@
   - [Launch Horizontal Pod Autoscaler](#launch-horizontal-pod-autoscaler)
     - [Launch Simple Horizontal Pod Autoscaler](#launch-simple-horizontal-pod-autoscaler)
   - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
-- [Authorization](#authorization)
-- [AWS EKS](#aws-eks)
+- [AWS EKS Basic](#aws-eks-basic)
 - [Dive Deep](#dive-deep)
   - [controller](#controller)
 
@@ -73,7 +76,48 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 ## Overview
 
-Kubernetes 가 사용하는 큰 개념은 객체 (Object) 와 그것을 관리하는 컨트롤러 (Controller) 두가지가 있다. Object 의 종류는 **Pod, Service, Volume, Namespace** 등이 있다. Controller 의 종류는 **ReplicaSet, Deployment, StatefulSet, DaemonSet, Job** 등이 있다. Kubernetes 는 yaml 파일을 사용하여 설정한다.
+Kubernetes cluster 는 Master-node, Workder-node 와 같이 두 가지 종류의 Node 를 갖는다. 
+
+* A Master-node type, which makes up the Control Plane, acts as the “brains” of the cluster.
+* A Worker-node type, which makes up the Data Plane, runs the actual container images (via pods).
+
+Kubernetes cluster 는 current state 을 object 로 표현한다. Kubernetes 는 current state 의 object 들을 예의 주시하다가 desired state 의 object 가 발견되면 지체 없이 current state object 들을 desired state state 으로 변경한다. 
+
+Kubernetes object 는 Pod, DaemonSet, Deployment, ReplicaSet, Job, Service, Label 등이 있다.
+
+* Pod
+  * A thin wrapper around one or more containers
+* DaemonSet
+  * Implements a single instance of a pod on a worker node
+* Deployment
+  * Details how to roll out (or roll back) across versions of your application
+* ReplicaSet
+  * Ensures a defined number of pods are always running
+* Job
+  * Ensures a pod properly runs to completion
+* Service
+  * Maps a fixed IP address to a logical group of pods
+* Label
+  * Key/Value pairs used for association and filtering
+
+Kubernetes 는 Control Plane 과 Data Plane 으로 구성된다.
+
+![](img/KubernetesArchitecturalOverview.png)
+
+Ctonrol Plane 은 Scheduler, Controller Manager, API Server, etcd 등으로 구성된다.
+
+* One or More API Servers: Entry point for REST / kubectl
+* etcd: Distributed key/value store
+* Controller-manager: Always evaluating current vs desired state
+* Scheduler: Schedules pods to worker nodes
+
+Data Plane 은 kube-proxy, kubelet 등으로 구성된다.
+
+* Made up of worker nodes
+* kubelet: Acts as a conduit between the API server and the node
+* kube-proxy: Manages IP translation and routing
+
+Controller 의 종류는 **ReplicaSet, Deployment, StatefulSet, DaemonSet, Job** 등이 있다. Kubernetes 는 yaml 파일을 사용하여 설정한다.
 
 ```yaml
 apiVersion : v1
@@ -94,7 +138,7 @@ Node 는 초기에 미니언(minion) 이라고 불렀다. Node 는 **kubelet, ku
 
 ## Kubernetes Components
 
-### Master
+### Master Node
 
 * ETCD
   * key-value 저장소
@@ -108,17 +152,16 @@ Node 는 초기에 미니언(minion) 이라고 불렀다. Node 는 **kubelet, ku
   * 또 다른 cloud 와 연동할 때 사용한다. 
   * Node Controller, Route Controller, Service Controller, Volume Controler 등이 관련되어 있다.
 
-### Node
+### Worker Node
 
 * kubelet
-  * 모든 Node 에서 실행되는 agent 이다. Pod 의 Container 가 실행되는 것을 관리한다. PodSpecs 라는 설정을 받아서 그 조건에 맞게 Container 를 실행하고 Container 가 정상적으로 실행되고 있는지 상태 체크를 한다.
+  * 모든 Worker Node 에서 실행되는 agent 이다. Pod 의 Container 가 실행되는 것을 관리한다. PodSpecs 라는 설정을 받아서 그 조건에 맞게 Container 를 실행하고 Container 가 정상적으로 실행되고 있는지 상태 체크를 한다.
 * kube-proxy 
   * kubernetes 는 cluster 안의 virtual network 를 설정하고 관리한다. kube-proxy 는 virtual network 가 동작할 수 있도록하는 process 이다. host 의 network 규칙을 관리하거나 connection forwarding 을 한다.
 * container runtime
   * container 를 실행한다. 가장 많이 알려진 container runtime 은 docker 이다. container 에 관한 표준을 제정하는 [OCI(Open Container Initiative)](https://www.opencontainers.org/) 의 runtime-spec 을 구현하는 container runtime 이라면 kubernetes 에서 사용할 수 있다.
 * cAdvisor (container advisor)
   * 리소스 사용, 성능 통계를 제공
-
 
 ### Addons
 
@@ -130,7 +173,168 @@ cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주�
 * Container resource monitoring
 * cluster logging
 
+# Authorization
+
+* [쿠버네티스 권한관리(Authorization)](https://arisu1000.tistory.com/27848)
+
 # Install
+
+## AWS EKS
+
+* [Kubernetes On AWS | AWS Kubernetes Tutorial | AWS EKS Tutorial | AWS Training | Edureka](https://www.youtube.com/watch?v=6H5sXQoJiso)
+  * [Getting Started with the AWS Management Console](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-console.html#w243aac11b9b7c11b7b1)
+* [Amazon EKS 시작하기](https://aws.amazon.com/ko/eks/getting-started/)
+* [Amazon EKS Starter: Docker on AWS EKS with Kubernetes @ udemy](https://www.udemy.com/course/amazon-eks-starter-kubernetes-on-aws/)
+* [AWS 기반 Kubernetes 정복하기 - 정영준 솔루션즈 아키텍트(AWS)](https://www.youtube.com/watch?v=lGw2y-GLBbs)
+* [Getting Started with Amazon EKS](https://docs.aws.amazon.com/en_en/eks/latest/userguide/getting-started.html)
+
+----
+
+AWS eks 를 사용한다면 다음과 같은 순서로 Kubernetes cluster 를 만들어 낼 수 있다.
+
+* Create EKS cluster
+* Provision worker nodes
+* Launch add-ons
+* Launch workloads
+
+AWS eks 를 사용하여 Kubernetes cluster 를 만들면 다음과 같은 일이 벌어진다.
+
+* Create HA Control Plane
+* IAM integration
+* Certificate Management
+* Setup LB
+  
+다음은 AWS EKS 의 Architecture 이다.
+
+![](img/eks-architecture.svg)
+
+AWS EKS cluster 가 만들어지고 나면 다음과 같이 kubectl 을 통해 API endpoint 와 통신할 수 있다.
+
+![](img/eks-high-level.svg)
+
+* create IAM role "`eks-role`" 
+  * with policies "`AmazonEKSClusterPolicy, AmazonEKSServicePolicy`"
+* create Network (VPC, subnets, security groups) "`eks-net`" with CloudFormation
+  * with the template body `https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-11-15/amazon-eks-vpc-sample.yaml`
+* create EKS cluster "`nginx-cluster`"
+* install kubectl
+
+  ```bash
+  $ kubectl version --short --client
+  ```
+
+* install aws cli
+
+  ```bash
+  $ aws --version
+  ```
+
+* install aws-iam-authenticator
+
+   ```bash
+   $ brew install aws-iam-authenticator
+   $ aws-iam-authenticator --help
+   ```
+
+* Create a kubeconfig File
+
+  ```bash
+  $ aws --region ap-northeast-2 eks update-kubeconfig --name nginx-cluster
+  Added new context arn:aws:eks:ap-northeast-2:612149981322:cluster/nginx-cluster to /Users/davidsun/.kube/config
+  ```
+
+* create worker nodes "`nginx-cluster-worker-nodes`" with CloudFormation
+  * with the template body `https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-11-15/amazon-eks-nodegroup-role.yaml`
+
+* create k8s ConfigMap and connect `nginx-cluster-worker-nodes` to `nginx-cluster`
+  
+  * `aws-iam-authenticator.yaml`
+
+    ```yaml
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: aws-auth
+      namespace: kube-system
+    data:
+      mapRoles:
+        - rolearn: <NodeInstanceRole of CloudFormation nginx-cluster-worker-nodes>
+          username: system:node:{{EC2PrivateDNSName}}
+          groups:
+            - system:bootstrappers
+            - system:nodes
+    ```
+
+  * apply
+
+    ```bash
+    $ kubectl apply -f aws-iam-authenticator.yaml
+    $ kubectl get nodes
+    ```
+
+* create k8s Deployment, Service 
+
+  * `nginx-deploy.yaml`
+
+    ```yaml
+    apiVersion: apps/v1
+    kind: Deployment
+    metadata:
+      name: nginx
+    spec:
+      selector:
+        matchlabels:
+          run: nginx
+      replicas: 2
+      template:
+        metadata:
+          labels:
+            run: nginx
+        spec:
+          containers:
+          - name: nginx
+            image: nginx:1.7.9
+            ports:
+            - containerPort: 80 
+    ```
+
+  * `nginx-service.yaml`
+
+    ```yaml
+    apiVersion: v1
+    kind: Service
+    metadata:
+      name: nginx
+      labels:
+        run: nginx
+    spec:
+      ports:
+      - port: 80
+        protocol: TCP
+      selector:
+        run: nginx
+      type: LoadBalancer
+    ```
+
+  * apply
+
+    ```bash
+    $ kubectl create -f nginx-deploy.yaml
+    $ kubectl create -f nginx-service.yaml
+    $ kubectl get services -o wide
+    # copy LoadBalancer Ingress
+    $ kubectl describe svc nginx
+    ```
+
+* open browser copied url
+
+## Google GCP
+
+Updating...
+
+## Microsoft AZURE
+
+Updating...
 
 ## Install on Win64
 
@@ -1372,138 +1576,14 @@ spec:
     k8s-app: kubernetes-dashboard
 ```
 
-# Authorization
+# AWS EKS Basic
 
-* [쿠버네티스 권한관리(Authorization)](https://arisu1000.tistory.com/27848)
-
-# AWS EKS
-
-* [Kubernetes On AWS | AWS Kubernetes Tutorial | AWS EKS Tutorial | AWS Training | Edureka](https://www.youtube.com/watch?v=6H5sXQoJiso)
-  * [Getting Started with the AWS Management Console](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-console.html#w243aac11b9b7c11b7b1)
-* [Amazon EKS 시작하기](https://aws.amazon.com/ko/eks/getting-started/)
-* [Amazon EKS Starter: Docker on AWS EKS with Kubernetes @ udemy](https://www.udemy.com/course/amazon-eks-starter-kubernetes-on-aws/)
-* [AWS 기반 Kubernetes 정복하기 - 정영준 솔루션즈 아키텍트(AWS)](https://www.youtube.com/watch?v=lGw2y-GLBbs)
-* [Getting Started with Amazon EKS](https://docs.aws.amazon.com/en_en/eks/latest/userguide/getting-started.html)
+* [EKS workshop beginner](https://eksworkshop.com/beginner/)
+  * AWS EKS handson
 
 ----
 
-![](img/eks_arch.png)
-
-* create IAM role "`eks-role`" 
-  * with policies "`AmazonEKSClusterPolicy, AmazonEKSServicePolicy`"
-* create Network (VPC, subnets, security groups) "`eks-net`" with CloudFormation
-  * with the template body `https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-11-15/amazon-eks-vpc-sample.yaml`
-* create EKS cluster "`nginx-cluster`"
-* install kubectl
-
-  ```bash
-  $ kubectl version --short --client
-  ```
-
-* install aws cli
-
-  ```bash
-  $ aws --version
-  ```
-
-* install aws-iam-authenticator
-
-   ```bash
-   $ brew install aws-iam-authenticator
-   $ aws-iam-authenticator --help
-   ```
-
-* Create a kubeconfig File
-
-  ```bash
-  $ aws --region ap-northeast-2 eks update-kubeconfig --name nginx-cluster
-  Added new context arn:aws:eks:ap-northeast-2:612149981322:cluster/nginx-cluster to /Users/davidsun/.kube/config
-  ```
-
-* create worker nodes "`nginx-cluster-worker-nodes`" with CloudFormation
-  * with the template body `https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-11-15/amazon-eks-nodegroup-role.yaml`
-
-* create k8s ConfigMap and connect `nginx-cluster-worker-nodes` to `nginx-cluster`
-  
-  * `aws-iam-authenticator.yaml`
-
-    ```yaml
-    apiVersion: v1
-    kind: ConfigMap
-    metadata:
-      name: aws-auth
-      namespace: kube-system
-    data:
-      mapRoles:
-        - rolearn: <NodeInstanceRole of CloudFormation nginx-cluster-worker-nodes>
-          username: system:node:{{EC2PrivateDNSName}}
-          groups:
-            - system:bootstrappers
-            - system:nodes
-    ```
-
-  * apply
-
-    ```bash
-    $ kubectl apply -f aws-iam-authenticator.yaml
-    $ kubectl get nodes
-    ```
-
-* create k8s Deployment, Service 
-
-  * `nginx-deploy.yaml`
-
-    ```yaml
-    apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: nginx
-    spec:
-      selector:
-        matchlabels:
-          run: nginx
-      replicas: 2
-      template:
-        metadata:
-          labels:
-            run: nginx
-        spec:
-          containers:
-          - name: nginx
-            image: nginx:1.7.9
-            ports:
-            - containerPort: 80 
-    ```
-
-  * `nginx-service.yaml`
-
-    ```yaml
-    apiVersion: v1
-    kind: Service
-    metadata:
-      name: nginx
-      labels:
-        run: nginx
-    spec:
-      ports:
-      - port: 80
-        protocol: TCP
-      selector:
-        run: nginx
-      type: LoadBalancer
-    ```
-
-  * apply
-
-    ```bash
-    $ kubectl create -f nginx-deploy.yaml
-    $ kubectl create -f nginx-service.yaml
-    $ kubectl get services -o wide
-    # copy LoadBalancer Ingress
-    $ kubectl describe svc nginx
-    ```
-
-* open browser copied url
+Updating...
 
 # Dive Deep
 
