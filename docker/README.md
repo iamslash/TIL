@@ -674,5 +674,91 @@ sudo docker run --detach \
 
 ----
 
-Updating...
+There are 4 kinds of network options in docker. (host, bridge, container, null)
 
+* bridge (default)
+  * docker daemon create a network bridge "docker0" and docker containers make a network interface binded the bridge "docker0"
+
+```bash
+$ docker network inspect bridge
+[
+    {
+        "Name": "bridge",
+        "Id": "988a07e544f2202a05fe010539d909f26e60f0c0013af07ae2a5c44f157fc9f5",
+        "Created": "2019-12-27T23:10:10.381976258Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": null,
+            "Config": [
+                {
+                    "Subnet": "172.17.0.0/16",
+                    "Gateway": "172.17.0.1"
+                }
+            ]
+        },
+        "Internal": false,
+        "Attachable": false,
+        "Ingress": false,
+        "ConfigFrom": {
+            "Network": ""
+        },
+        "ConfigOnly": false,
+        "Containers": {},
+        "Options": {
+            "com.docker.network.bridge.default_bridge": "true",
+            "com.docker.network.bridge.enable_icc": "true",
+            "com.docker.network.bridge.enable_ip_masquerade": "true",
+            "com.docker.network.bridge.host_binding_ipv4": "0.0.0.0",
+            "com.docker.network.bridge.name": "docker0",
+            "com.docker.network.driver.mtu": "1500"
+        },
+        "Labels": {}
+    }
+]
+```
+
+* host
+  * use same network with host OS.
+
+```bash
+$ docker run --net=host httpd web01
+# show network interfaces same with host OS
+$ docker exec web01 ip addr show
+# there is no binding with the bridge "docker0"
+$ brctl show
+# There is no IP address for web01 because it does not have network environments. 
+$ docker network inspect host
+```
+
+* container
+  * can communicate with other containers.
+
+```bash
+$ docker run --name web02 -d httpd
+$ docker ps -a
+# web03 can communicate with web02 with net option
+$ docker run --name web03 --net=container:e1b4a085348e -d httpd
+$ docker ps -a
+# web03 has same IP, MAC with web02 
+$ docker exec web02 ip addr show
+$ docker exec web03 ip addr show
+# There is no inteface for web03 because it uses the interface of web02
+$ brctl show
+$ docker network inspect bridge
+```
+
+* null
+  * make isolated network environments but no network interface.
+
+```bash
+$ docker run --name web04 --net=none -d httpd
+# There is just loopback no eth0 interface. So web04 cannot communicate with it's outside
+$ docker exec web04 ip addr show
+```
+
+* connect to host from the container
+  * [Access MacOS host from a docker container](https://medium.com/@balint_sera/access-macos-host-from-a-docker-container-e0c2d0273d7f)
+  * use `host.docker.internal` as ip addr in a container
