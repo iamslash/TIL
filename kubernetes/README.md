@@ -48,6 +48,7 @@
 - [Dive Deep](#dive-deep)
   - [controller](#controller)
   - [API server](#api-server)
+  - [Monitoring](#monitoring)
 
 ----
 
@@ -1636,3 +1637,8 @@ spec:
 ## API server
 
 * [Kubernetes API Reference](https://kubernetes.io/docs/reference/)
+
+## Monitoring
+
+* [Prometheus with Kubernetes](https://www.slideshare.net/jinsumoon33/kubernetes-prometheus-monitoring)
+

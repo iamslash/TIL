@@ -28,6 +28,7 @@
 * [오픈소스 모니터링 시스템 Prometheus #1](https://blog.outsider.ne.kr/1254)
   * [오픈소스 모니터링 시스템 Prometheus #2](https://blog.outsider.ne.kr/1255)
 * [How To Install Prometheus on Ubuntu 16.04](https://www.digitalocean.com/community/tutorials/how-to-install-prometheus-on-ubuntu-16-04)
+* [Prometheus with Kubernetes](https://www.slideshare.net/jinsumoon33/kubernetes-prometheus-monitoring)
 
 # Install
 
