@@ -395,7 +395,7 @@ httpReqs.Delete(prometheus.Labels{"method": "GET", "code": "200"})
 
 **Gauge**
 
-This is a metric that represents a single numerical value that can arbitrarily go up and down. For example, temperature, current cpu usage, current thread count.
+This is a metric that represents a single numerical value that can arbitrarily go up and down. For example, memory, disk usage, temperature, current cpu usage, current thread count.
 
 [Gauge doc](https://godoc.org/github.com/prometheus/client_golang/prometheus#Gauge)
 
