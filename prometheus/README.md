@@ -22,9 +22,9 @@
 
 ![](https://prometheus.io/assets/architecture.png)
 
-
 # Materials
 
+* [Prometheus 를 알아보자](https://gompangs.tistory.com/entry/Prometheus-%EB%A5%BC-%EC%95%8C%EC%95%84%EB%B3%B4%EC%9E%90)
 * [오픈소스 모니터링 시스템 Prometheus #1](https://blog.outsider.ne.kr/1254)
   * [오픈소스 모니터링 시스템 Prometheus #2](https://blog.outsider.ne.kr/1255)
 * [How To Install Prometheus on Ubuntu 16.04](https://www.digitalocean.com/community/tutorials/how-to-install-prometheus-on-ubuntu-16-04)
@@ -356,9 +356,13 @@ $ docker service logs prom_<service_name>
 
 ----
 
-* Counter
+There 4 kinds of metric types such as Counter, Gauge, Histogram, Summary.
 
-This is a cumulative metric. For example, the number of requests served, tasks completed, or errors.
+**Counter**
+
+This is a cumulative metric. For example, the number of requests served, tasks completed, http total send bytes, http total request, running time or errors. There is just increment no decrement. 
+
+[Counter doc](https://godoc.org/github.com/prometheus/client_golang/prometheus#Counter)
 
 ```go
 httpReqs := prometheus.NewCounterVec(
@@ -388,9 +392,11 @@ httpReqs.DeleteLabelValues("200", "GET")
 httpReqs.Delete(prometheus.Labels{"method": "GET", "code": "200"})
 ```
 
-* Gauge
+**Gauge**
 
-This is a metric that represents a single numerical value that can arbitrarily go up and down.
+This is a metric that represents a single numerical value that can arbitrarily go up and down. For example, temperature, current cpu usage, current thread count.
+
+[Gauge doc](https://godoc.org/github.com/prometheus/client_golang/prometheus#Gauge)
 
 ```go
 opsQueued := prometheus.NewGauge(prometheus.GaugeOpts{
@@ -409,9 +415,11 @@ opsQueued.Dec()
 opsQueued.Dec()
 ```
 
-* Histogram
+**Histogram**
 
-A histogram samples observations (usually things like request durations or response sizes) and counts them in configurable buckets. It also provides a sum of all observed values.
+A histogram samples observations (usually things like request durations or response sizes) and counts them in configurable buckets. It also provides a sum of all observed values. For example, TPS.
+
+[Histogram doc](https://godoc.org/github.com/prometheus/client_golang/prometheus#Histogram)
 
 ```go
 temps := prometheus.NewHistogram(prometheus.HistogramOpts{
@@ -460,7 +468,9 @@ histogram: <
 >
 ```
 
-* Summary
+**Summary**
+
+[Summary doc](https://godoc.org/github.com/prometheus/client_golang/prometheus#Summary)
 
 ```go
 temps := prometheus.NewSummary(prometheus.SummaryOpts{
