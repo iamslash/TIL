@@ -181,19 +181,15 @@ $ docker service logs prom_<service_name>
 
 * [QUERY EXAMPLES](https://prometheus.io/docs/prometheus/latest/querying/examples/)
 * [QUERYING PROMETHEUS](https://prometheus.io/docs/prometheus/latest/querying/basics/)
-* [169. [Prometheus] 1편 : Prometheus (프로메테우스) 사용 방법, 기본 개념, 데이터 구조](https://blog.naver.com/PostView.nhn?blogId=alice_k106&logNo=221535163599)
-  * [170. [Prometheus] 2편. PromQL 사용하기, k8s에서 Meta Label과 relabel을 활용한 기본 라벨 설정, 그 외의 이야기](https://blog.naver.com/PostView.nhn?blogId=alice_k106&logNo=221535575875)
+* [Prometheus Blog Series (Part 2): Metric types](https://blog.pvincent.io/2017/12/prometheus-blog-series-part-2-metric-types/)
 
 ----
 
 * `http_request_total` 
-  * get last http_request_total value
+  * return all time series with the metric
 
 * `http_requests_total{job="apiserver", handler="/api/comments"}`
-  * get last http_request_total filtered with labels
-
-* `http_requests_total{job="apiserver", handler="/api/comments"}[5m]`
-  * get last 5m http_request_total filtered with labels and with 10 sec granularity
+  * return all time series with the metric and the given job and handler lables
 
 * `http_requests_total{job=~".*server"}`
   * `~` means REGEX
@@ -201,25 +197,33 @@ $ docker service logs prom_<service_name>
   * use `.+` instead of `.*`
 
     ```
-    {job=~".*"} # Bad!
+    {job=~".*"}              # Bad!
     {job=~".+"}              # Good!
     {job=~".*",method="get"} # Good!
     ```
+* `http_requests_total{environment=~"staging|testing|development",method!="GET"}`
+  * or 
 
-* `rate(http_requests_total[5m])[30m:1m]`
-  * subquery
-  * get the last 5-min rate of the http_requests_total for the past 30 min, with a resolution of 1m
+* `{__name__="http_requests_total"}` is same with `http_requests_total`
 
-* `max_over_time(deriv(rate(distance_covered_total[5s])[30s:5s])[10m:])`
-  * too complicated
+* `{__name__=~"job:.*"}`
+  * return all time series starts with `job:`
 
 * `rate(http_requests_total[5m])`
-  * get the per-second rate for all time series with the http_requests_total, as measured over the last 5 min.
+  * subquery
+  * return 5-minute rate of the metric
+  * `s, m, h, d, w, y` means each `seconds, minutes, hours, days, weeks, years`
+
+* `max_over_time(deriv(rate(distance_covered_total[5s])[30s:5s])[10m:])`
+  * this is an example of nested subquery but too complicated.
+
+* `rate(http_requests_total[5m])`
+  * Return the per-second rate for all time series with the http_requests_total metric name, as measured over the last 5 minutes.
 
 * `sum by (job) (
   rate(http_requests_total[5m])
 )`
-  * get summation grouped by job
+  * get sum of rates grouped by job
 
 * `(instance_memory_limit_bytes - instance_memory_usage_bytes) / 1024 / 1024`
   * get the unused memory in MiB for every instance
@@ -240,8 +244,18 @@ $ docker service logs prom_<service_name>
   ...
   ```
 
-  * `count by (app) (instance_cpu_time_ns)`
-    * get the count of the running instances per application
+* `http_requests_total offset 5m`
+  * returns the value of http_requests_total 5 minutes in the past relative to the current query evaluation time
+
+* `sum(http_requests_total{method="GET"} offset 5m)`
+  * subquery sum with offset
+  * `sum(http_requests_total{method="GET"}) offset 5m // INVALID.`
+
+* `rate(http_requests_total[5m] offset 1w)`
+  * subquery rate with offset
+
+* `count by (app) (instance_cpu_time_ns)`
+  * get the count of the running instances grouped by app
 
 # Client
 
