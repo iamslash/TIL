@@ -257,6 +257,15 @@ $ docker service logs prom_<service_name>
 * `count by (app) (instance_cpu_time_ns)`
   * get the count of the running instances grouped by app
 
+* `histogram_quantile(0.9, rate(http_request_duration_seconds_bucket[10m]))`
+  * return the 90th percentile of request durations over the last 10m
+
+* `histogram_quantile(0.9, sum(rate(http_request_duration_seconds_bucket[10m])) by (job, le))`
+  * 
+
+* `histogram_quantile(0.9, sum(rate(http_request_duration_seconds_bucket[10m])) by (le))`
+  * 
+
 # Client
 
 ## Simple Instrumentation
@@ -272,6 +281,7 @@ $ docker service logs prom_<service_name>
     package main
 
     import (
+      "math/rand"
       "net/http"
       "time"
 
@@ -284,6 +294,15 @@ $ docker service logs prom_<service_name>
       go func() {
         for {
           opsProcessed.Inc()
+
+          if n := rand.Intn(100); n%2 == 0 {
+            httpReqs.WithLabelValues("200 OK", "GET").Inc()
+          } else {
+            httpReqs.WithLabelValues("200 OK", "POST").Inc()
+          }
+
+          apiLatency.WithLabelValues("myapp").Observe(float64(rand.Intn(100)))
+
           time.Sleep(2 * time.Second)
         }
       }()
@@ -294,7 +313,30 @@ $ docker service logs prom_<service_name>
         Name: "myapp_processed_ops_total",
         Help: "The total number of processed events",
       })
+
+      httpReqs = prometheus.NewCounterVec(
+        prometheus.CounterOpts{
+          Name: "myapp_http_requests_total",
+          Help: "How many HTTP requests processed, partitioned by status code and HTTP method.",
+        },
+        []string{"code", "method"},
+      )
+
+      apiLatency = prometheus.NewHistogramVec(
+        prometheus.HistogramOpts{
+          Name:    "myapp_api_latency",
+          Help:    "api latency",
+          Buckets: prometheus.LinearBuckets(0, 5, 20),
+        },
+        []string{"target_group"},
+      )
     )
+
+    func init() {
+      //prometheus.MustRegister(opsProcessed)
+      prometheus.MustRegister(httpReqs)
+      prometheus.MustRegister(apiLatency)
+    }
 
     func main() {
       recordMetrics()
