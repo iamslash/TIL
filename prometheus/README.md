@@ -182,8 +182,20 @@ $ docker service logs prom_<service_name>
 * [QUERY EXAMPLES](https://prometheus.io/docs/prometheus/latest/querying/examples/)
 * [QUERYING PROMETHEUS](https://prometheus.io/docs/prometheus/latest/querying/basics/)
 * [Prometheus Blog Series (Part 2): Metric types](https://blog.pvincent.io/2017/12/prometheus-blog-series-part-2-metric-types/)
+* [Go gRPC Interceptors for Prometheus monitoring](https://github.com/grpc-ecosystem/go-grpc-prometheus)
 
 ----
+
+* `http_request_total` 
+  * return all time series with the metric.
+
+* `prometheus_http_requests_total{handler="/metrics"}`
+  * return all time series in graph
+  * return the last data in console
+
+* `prometheus_http_requests_total{handler="/metrics"}[5m]`
+  * error because the result is range vector in graph
+  * return the last 5min data in console
 
 * `http_request_total` 
   * return all time series with the metric
@@ -257,14 +269,29 @@ $ docker service logs prom_<service_name>
 * `count by (app) (instance_cpu_time_ns)`
   * get the count of the running instances grouped by app
 
-* `histogram_quantile(0.9, rate(http_request_duration_seconds_bucket[10m]))`
-  * return the 90th percentile of request durations over the last 10m
+* `prometheus_http_request_duration_seconds_sum{handler="/metrics"}`
+  * return sum of http request duration seconds
 
-* `histogram_quantile(0.9, sum(rate(http_request_duration_seconds_bucket[10m])) by (job, le))`
-  * 
+* `prometheus_http_request_duration_seconds_count{handler="/metrics"}`
+  * return count of http request duration seconds
 
-* `histogram_quantile(0.9, sum(rate(http_request_duration_seconds_bucket[10m])) by (le))`
-  * 
+* `prometheus_http_request_duration_seconds_sum{handler="/metrics"} / prometheus_http_request_duration_seconds_count{handler="/metrics"}`
+  * return avg of http request duration seconds
+
+* `rate(prometheus_http_request_duration_seconds_sum{handler="/metrics"}[5m]) / rate(prometheus_http_request_duration_seconds_count{handler="/metrics"}[5m])`
+  * the average request duration during the last 5 minutes.
+
+* `prometheus_http_request_duration_seconds_bucket{handler="/metrics"}`
+  * return the count of http request duration seconds lesser than or equal with value of "le".
+
+* `rate(prometheus_http_request_duration_seconds_bucket{handler="/metrics"}[5m])`
+  * return the rate of count of http request duration seconds lesser than or equal with value of "le".
+  * If the count graph is linear, This must be no volatile.
+
+* `histogram_quantile(0.99, 
+  sum(rate(grpc_server_handling_seconds_bucket{job="foo",grpc_type="unary"}[5m])) by (grpc_service,le)
+)`
+  * 99%-tile latency of unary requests
 
 # Client
 
