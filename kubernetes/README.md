@@ -373,6 +373,13 @@ Unable to connect to the server: dial tcp [::1]:8080: connectex: No connection c
 
 ----
 
+* config
+
+```bash
+# show current cluster
+$ kubectl config view
+```
+
 * api-resources
 
 ```bash
@@ -403,6 +410,23 @@ scheduling.k8s.io
 storage.k8s.io
 true
 workload.coupang.com
+```
+
+* inspecting something
+
+```bash
+# check curretn cluster
+$ kubectl config view
+# check namespaces
+$ kubectl get namespaces
+# get all resources
+$ kubectl get all --namespace kube-system 
+$ kubectl get nodes --namespace kube-system
+$ kubectl get pods --namespace kube-system
+# describe nodes
+$ kubectl describe nodes <node-name> --namespace <namespace>
+# 
+$ kubectl describe pods <pod0-name> --namespace <namespace>
 ```
 
 * get
