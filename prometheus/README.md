@@ -183,6 +183,7 @@ $ docker service logs prom_<service_name>
 * [QUERYING PROMETHEUS](https://prometheus.io/docs/prometheus/latest/querying/basics/)
 * [Prometheus Blog Series (Part 2): Metric types](https://blog.pvincent.io/2017/12/prometheus-blog-series-part-2-metric-types/)
 * [Go gRPC Interceptors for Prometheus monitoring](https://github.com/grpc-ecosystem/go-grpc-prometheus)
+* [TRACKING REQUEST DURATION WITH PROMETHEUS](https://povilasv.me/prometheus-tracking-request-duration/)
 
 ----
 
