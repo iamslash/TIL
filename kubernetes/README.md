@@ -412,7 +412,7 @@ true
 workload.coupang.com
 ```
 
-* inspecting something
+* inspecting clusters
 
 ```bash
 # check curretn cluster
@@ -423,12 +423,39 @@ $ kubectl get namespaces
 $ kubectl get all --namespace kube-system 
 $ kubectl get nodes --namespace kube-system
 $ kubectl get pods --namespace kube-system
+$ kubectl --namespace kube-system get pods -o wide # wide format
+$ kubectl --namespace <ns> get pod/my-pod -o yaml # show pod's yaml
+$ kubectl --namespace <ns> get pod/my-pod -o json # show pod's json
 # get nodes with all namespaces
 $ kubectl get nodes -A
 # describe nodes
-$ kubectl describe nodes <node-name> --namespace <namespace>
+$ kubectl --namespace <ns> describe nodes <pn> 
 # dscribe pods
-$ kubectl describe pods <pod0-name> --namespace <namespace>
+$ kubectl --namespace <ns> describe pods <pn>
+# show manifest of resource
+$ kubectl explain pods,svc
+
+# sort by name
+$ kubectl --namespace <ns> get services --sort-by=.metadata.name
+# sort by restartCount
+$ kubectl --namespace <ns> get pods --sort-by='.status.containerStatuses[0].restartCount'
+
+# logs
+$ kubectl --namespace <ns> logs <pod-name>
+$ kubectl --namespace <ns> logs <pod-name> -c <container-name>
+$ kubectl --namespace <ns> logs -f <pod-name>
+$ kubectl --namespace <ns> logs -f <pod-name> -c <container-name>
+
+# run
+$ kubectl --namespace <ns> run -it busybox --image=busybox -- sh
+# attach
+$ kubectl --namespace <ns> attach <pod-name> -i
+# forward port
+$ kubectl --namespace <ns> port-forward <pod-name> 5000:6000
+# exec
+$ kubectl --namespace <ns> exec <pod-name> -- ls /
+$ kubectl --namespace <ns> exec <pod-name> -c <container-name> -- ls /
+$ kubectl top pod <pod-name> --containers
 ```
 
 * get
