@@ -423,9 +423,11 @@ $ kubectl get namespaces
 $ kubectl get all --namespace kube-system 
 $ kubectl get nodes --namespace kube-system
 $ kubectl get pods --namespace kube-system
+# get nodes with all namespaces
+$ kubectl get nodes -A
 # describe nodes
 $ kubectl describe nodes <node-name> --namespace <namespace>
-# 
+# dscribe pods
 $ kubectl describe pods <pod0-name> --namespace <namespace>
 ```
 
