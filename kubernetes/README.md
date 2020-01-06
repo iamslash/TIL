@@ -854,18 +854,26 @@ spec:
 
 ```bash
 $ kubectl apply -f whoami-deploy.yml
+# set image and rollout
 $ kubectl set image deploy/whoami-deploy whoami=subicura/whoami:2
+# rollout with files
 $ kubectl apply -f whoami-deploy.yml
-# watch continuously
+# get replicaset and watch continuously
 $ kubectl get rs -w
+# describe deploy
 $ kubectl describe deploy/whoami-deploy
 # show history
+$ kubectl rollout history deploy/whoami-deploy
 $ kubectl rollout history -f whoami-deploy.yml
 $ kubectl set image deploy/whoami-deploy whoami=subicura/whoami:1 --record=true
 $ kubectl rollout history -f whoami-deploy.yml
 $ kubectl rollout history -f whoami-deploy.yml --revision=2
 $ kubectl rollout status deploy/whoami-deploy
+# inspect rolling update status and watch continuously
+$ kubectl rollout status deploy/whoami-deploy -w
+# rollback to prev version
 $ kubectl rollout undo deploy/whoami-deploy
+# rollback to specific version
 $ kubectl rollout undo deploy/whoami-deploy --to-revision=3
 ```
 

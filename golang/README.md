@@ -56,6 +56,7 @@
   - [Tools](#tools-1)
     - [go](#go)
     - [mod](#mod)
+    - [local module](#local-module)
     - [go-wrk](#go-wrk)
     - [go-torch](#go-torch)
     - [present](#present)
@@ -1862,6 +1863,15 @@ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 ```
+
+### local module
+
+* [Go Modules - Local Modules](https://jusths.tistory.com/107)
+* [](https://jusths.tistory.com/108)
+
+----
+
+Updating...
 
 ### go-wrk
 
