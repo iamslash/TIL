@@ -1,3 +1,16 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Go Examples](#go-examples)
+  - [Hello binary](#hello-binary)
+  - [Hello binary with library](#hello-binary-with-library)
+  - [gazelle](#gazelle)
+  - [go get](#go-get)
+  - [protobuf](#protobuf)
+  - [grpc](#grpc)
+  - [go docker image](#go-docker-image)
+
+----
+
 # Abstract
 
 Bazel is a build, test application.
@@ -178,117 +191,124 @@ gazelle generates BUILD.bazel files.
 
 * origin directories
 
-```
-.
-├── BUILD.bazel
-├── WORKSPACE
-└── src
-    └── hello
-        ├── cmd
-        │   └── main.go
-        └── hello.go
-```
+  ```
+  .
+  ├── BUILD.bazel
+  ├── WORKSPACE
+  └── src
+      └── hello
+          ├── cmd
+          │   └── main.go
+          └── hello.go
+  ```
 
 * BUILD.bazel
 
-```py
-load("@bazel_gazelle//:def.bzl", "gazelle")
+  ```py
+  load("@bazel_gazelle//:def.bzl", "gazelle")
 
-gazelle(
-    name = "gazelle",
-    command = "fix",
-)
-```
+  gazelle(
+      name = "gazelle",
+      command = "fix",
+  )
+  ```
 
 * WORKSPACE
 
-```py
+  ```py
 
-```
+  ```
 
 * src/hello/hello.go
 
-```go
-package hello
+  ```go
+  package hello
 
-func Message() string {
-	return "Hello Bazel!"
-}
-```
+  func Message() string {
+    return "Hello Bazel!"
+  }
+  ```
 
 * src/hello/cmd/main.go
 
-```go
-package main
+  ```go
+  package main
 
-import (
-	"fmt"
-	"hello"
-)
+  import (
+    "fmt"
+    "hello"
+  )
 
-func main() {
-	fmt.Printf("%s\n", hello.Message())
-}
-```
+  func main() {
+    fmt.Printf("%s\n", hello.Message())
+  }
+  ```
 
 * generate bazel files
 
-```bash
-$ bazel run -c opt //:gazelle
-```
+  ```bash
+  $ bazel run -c opt //:gazelle
+  ```
 
 * after directoreis
 
-```
-.
-├── BUILD.bazel
-├── README.md
-├── WORKSPACE
-└── src
-    ├── BUILD.bazel
-    └── hello
-        └── cmd
-            ├── BUILD.bazel
-            └── main.go
-```
+  ```
+  .
+  ├── BUILD.bazel
+  ├── README.md
+  ├── WORKSPACE
+  └── src
+      ├── BUILD.bazel
+      └── hello
+          └── cmd
+              ├── BUILD.bazel
+              └── main.go
+  ```
 
 * src/BUILD.bazel
 
-```py
-load("@io_bazel_rules_go//go:def.bzl", "go_library")
+  ```py
+  load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
-go_library(
-    name = "go_default_library",
-    srcs = ["hello.go"],
-    importpath = "",
-    visibility = ["//visibility:public"],
-)
-```
+  go_library(
+      name = "go_default_library",
+      srcs = ["hello.go"],
+      importpath = "",
+      visibility = ["//visibility:public"],
+  )
+  ```
 
 * src/hello/cmd/BUILD.bazel
 
-```py
-load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+  ```py
+  load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
 
-go_library(
-    name = "go_default_library",
-    srcs = ["main.go"],
-    importpath = "hello/cmd",
-    visibility = ["//visibility:private"],
-)
+  go_library(
+      name = "go_default_library",
+      srcs = ["main.go"],
+      importpath = "hello/cmd",
+      visibility = ["//visibility:private"],
+  )
 
-go_binary(
-    name = "cmd",
-    embed = [":go_default_library"],
-    visibility = ["//visibility:public"],
-)
-```
+  go_binary(
+      name = "cmd",
+      embed = [":go_default_library"],
+      visibility = ["//visibility:public"],
+  )
+  ```
 
 * build
 
+  ```bash
+  $ bazel build //hello/main:cmd
+  ```
+
+* "`no package error`"
+
 ```bash
-# why failed ???
-$ bazel build //hello/main:cmd
+$ bazel run //:gazelle -- update-repos github.com/grpc-ecosystem/go-grpc-prometheus
+$ bazel run //:gazelle
+$ bazel build //...
 ```
 
 ## go get
@@ -480,7 +500,6 @@ message Greet {
 * build
 
 ```bash
-# why failed ???
 $ bazel build //hello:cmd
 ```
 
