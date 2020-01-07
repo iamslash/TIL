@@ -8,6 +8,11 @@
   - [Install with docker-compose](#install-with-docker-compose)
 - [Basic usages](#basic-usages)
 - [PromQL](#promql)
+  - [Histogram](#histogram)
+    - [prometheus http request duration seconds](#prometheus-http-request-duration-seconds)
+    - [grpc server handling seconds](#grpc-server-handling-seconds)
+  - [Summary](#summary)
+  - [Summary vs Histogram](#summary-vs-histogram)
 - [Client](#client)
   - [Simple Instrumentation](#simple-instrumentation)
   - [Metric types](#metric-types)
@@ -270,29 +275,117 @@ $ docker service logs prom_<service_name>
 * `count by (app) (instance_cpu_time_ns)`
   * get the count of the running instances grouped by app
 
-* `prometheus_http_request_duration_seconds_sum{handler="/metrics"}`
-  * return sum of http request duration seconds
+## Histogram
 
-* `prometheus_http_request_duration_seconds_count{handler="/metrics"}`
-  * return count of http request duration seconds
+* [Prometheus monitoring for your gRPC Go servers.](https://github.com/grpc-ecosystem/go-grpc-prometheus)
+* [How does a Prometheus Histogram work?](https://www.robustperception.io/how-does-a-prometheus-histogram-work)
 
-* `prometheus_http_request_duration_seconds_sum{handler="/metrics"} / prometheus_http_request_duration_seconds_count{handler="/metrics"}`
-  * return avg of http request duration seconds
+----
 
-* `rate(prometheus_http_request_duration_seconds_sum{handler="/metrics"}[5m]) / rate(prometheus_http_request_duration_seconds_count{handler="/metrics"}[5m])`
-  * the average request duration during the last 5 minutes.
+Usually measure the latency. Can adjust time period when make the range vector. But Summary can't.
 
-* `prometheus_http_request_duration_seconds_bucket{handler="/metrics"}`
-  * return the count of http request duration seconds lesser than or equal with value of "le".
+### prometheus http request duration seconds
 
-* `rate(prometheus_http_request_duration_seconds_bucket{handler="/metrics"}[5m])`
-  * return the rate of count of http request duration seconds lesser than or equal with value of "le".
-  * If the count graph is linear, This must be no volatile.
+* data
 
-* `histogram_quantile(0.99, 
-  sum(rate(grpc_server_handling_seconds_bucket{job="foo",grpc_type="unary"}[5m])) by (grpc_service,le)
-)`
-  * 99%-tile latency of unary requests
+  ```json
+  # HELP prometheus_http_request_duration_seconds Histogram of latencies for HTTP requests.
+  # TYPE prometheus_http_request_duration_seconds histogram
+  prometheus_http_request_duration_seconds_bucket{handler="/",le="0.1"} 25547
+  prometheus_http_request_duration_seconds_bucket{handler="/",le="0.2"} 26688
+  prometheus_http_request_duration_seconds_bucket{handler="/",le="0.4"} 27760
+  prometheus_http_request_duration_seconds_bucket{handler="/",le="1"} 28641
+  prometheus_http_request_duration_seconds_bucket{handler="/",le="3"} 28782
+  prometheus_http_request_duration_seconds_bucket{handler="/",le="8"} 28844
+  prometheus_http_request_duration_seconds_bucket{handler="/",le="20"} 28855
+  prometheus_http_request_duration_seconds_bucket{handler="/",le="60"} 28860
+  prometheus_http_request_duration_seconds_bucket{handler="/",le="120"} 28860
+  prometheus_http_request_duration_seconds_bucket{handler="/",le="+Inf"} 28860
+  prometheus_http_request_duration_seconds_sum{handler="/"} 1863.80491025699
+  prometheus_http_request_duration_seconds_count{handler="/"} 28860
+  ```
+
+* the number of observations per second over the last five minutes on average
+  * `rate(prometheus_http_request_duration_seconds_sum[5m]`
+* how long they took per second on average
+  * `rate(prometheus_http_request_duration_seconds_count[5m])`
+* the average duration of one observation
+  * `rate(prometheus_http_request_duration_seconds_sum[5m] / rate(prometheus_http_request_duration_seconds_count[5m])`
+* 0.9 quantile (the 90th percentile) of seconds
+  * `histogram_quantile(0.9, rate(prometheus_http_request_duration_seconds_bucket[5m]))`
+
+### grpc server handling seconds
+
+* data
+
+  ```json
+  grpc_server_handling_seconds_bucket{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream",le="0.005"} 1
+  grpc_server_handling_seconds_bucket{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream",le="0.01"} 1
+  grpc_server_handling_seconds_bucket{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream",le="0.025"} 1
+  grpc_server_handling_seconds_bucket{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream",le="0.05"} 1
+  grpc_server_handling_seconds_bucket{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream",le="0.1"} 1
+  grpc_server_handling_seconds_bucket{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream",le="0.25"} 1
+  grpc_server_handling_seconds_bucket{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream",le="0.5"} 1
+  grpc_server_handling_seconds_bucket{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream",le="1"} 1
+  grpc_server_handling_seconds_bucket{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream",le="2.5"} 1
+  grpc_server_handling_seconds_bucket{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream",le="5"} 1
+  grpc_server_handling_seconds_bucket{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream",le="10"} 1
+  grpc_server_handling_seconds_bucket{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream",le="+Inf"} 1
+  grpc_server_handling_seconds_sum{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream"} 0.0003866430000000001
+  grpc_server_handling_seconds_count{grpc_code="OK",grpc_method="PingList",grpc_service="mwitkow.testproto.TestService",grpc_type="server_stream"} 1
+  ```
+
+* request inbound rate
+  * `sum(rate(grpc_server_started_total{job="foo"}[1m])) by (grpc_service)`
+* unary request error rate
+  * `sum(rate(grpc_server_handled_total{job="foo",grpc_type="unary",grpc_code!="OK"}[1m])) by (grpc_service)`
+* unary request error percentage
+  ```json
+  sum(rate(grpc_server_handled_total{job="foo",grpc_type="unary",grpc_code!="OK"}[1m])) by (grpc_service)
+  / 
+  sum(rate(grpc_server_started_total{job="foo",grpc_type="unary"}[1m])) by (grpc_service)
+  * 100.0
+  ```
+* average response stream size
+  ```json
+  sum(rate(grpc_server_msg_sent_total{job="foo",grpc_type="server_stream"}[10m])) by (grpc_service)
+  /
+  sum(rate(grpc_server_started_total{job="foo",grpc_type="server_stream"}[10m])) by (grpc_service)
+  ``` 
+* 99%-tile latency of unary requests
+  * `histogram_quantile(0.99, sum(rate(grpc_server_handling_seconds_bucket{job="foo",grpc_type="unary"}[5m])) by (grpc_service,le))`
+* percentage of slow unary queries (>250ms)
+  * `100.0 - (sum(rate(grpc_server_handling_seconds_bucket{job="foo",grpc_type="unary",le="0.25"}[5m])) by (grpc_service) / sum(rate(grpc_server_handling_seconds_count{job="foo",grpc_type="unary"}[5m])) by (grpc_service)) * 100.0`
+
+## Summary
+
+* [How does a Prometheus Summary work?](https://www.robustperception.io/how-does-a-prometheus-summary-work)
+
+----
+
+* data
+
+  ```json
+  # HELP prometheus_rule_evaluation_duration_seconds The duration for a rule to execute.
+  # TYPE prometheus_rule_evaluation_duration_seconds summary
+  prometheus_rule_evaluation_duration_seconds{quantile="0.5"} 6.4853e-05
+  prometheus_rule_evaluation_duration_seconds{quantile="0.9"} 0.00010102
+  prometheus_rule_evaluation_duration_seconds{quantile="0.99"} 0.000177367
+  prometheus_rule_evaluation_duration_seconds_sum 1.623860968846092e+06
+  prometheus_rule_evaluation_duration_seconds_count 1.112293682e+09
+  ```
+
+* the number of observations per second over the last five minutes on average
+  * `rate(prometheus_rule_evaluation_duration_seconds_count[5m])`
+* how long they took per second on average  
+  * `rate(prometheus_rule_evaluation_duration_seconds_sum[5m])`
+* the average duration of one observation  
+  * `rate(prometheus_rule_evaluation_duration_seconds_sum[5m] / rate(prometheus_rule_evaluation_duration_seconds_count[5m])`
+  
+## Summary vs Histogram
+
+* Histogram can adjust time period when make the range vector. But Summary can't.
+* Histogram costs more than Summary in server-side.
 
 # Client
 
