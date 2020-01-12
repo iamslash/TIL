@@ -73,6 +73,10 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
   * [slide](https://www.slideshare.net/awskorea/aws-kubernetes-aws-aws-devday2018)
 * [Kubernetes Deconstructed: Understanding Kubernetes by Breaking It Down - Carson Anderson, DOMO](https://www.youtube.com/watch?v=90kZRyPcRZw&fbclid=IwAR0InYUnMQD-t-o8JhS5U5KRRaJvSQQc1fBDeBCb8cv6eRk62vsG2Si_Ijo)
   * [slide](http://kube-decon.carson-anderson.com/Layers/3-Network.sozi.html#frame4156)
+* [Comprehensive Guide to EKS Worker Nodes](https://blog.gruntwork.io/comprehensive-guide-to-eks-worker-nodes-94e241092cbe)
+  * Self Managed Worker Nodes, Managed Node groups, Serverless Worker Nodes
+* [A Practical Step-by-Step Guide to Understanding Kubernetes](https://medium.com/better-programming/a-practical-step-by-step-guide-to-understanding-kubernetes-d8be7f82e533)
+  * Launch Django, PostgreSQL, Redis on Kubernetes.
 
 # Architecture
 
