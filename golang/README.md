@@ -1323,6 +1323,10 @@ func outer() (func() int, int) {
 
 ### Variadic Functions
 
+* [Ultimate Guide to Go Variadic Functions](https://blog.learngoprogramming.com/golang-variadic-funcs-how-to-patterns-369408f19085)
+
+----
+
 ```go
 func main() {
 	fmt.Println(adder(1, 2, 3)) 	// 6
