@@ -56,6 +56,8 @@
   - [Tools](#tools-1)
     - [go](#go)
     - [mod](#mod)
+      - [Simple](#simple)
+      - [Advanced](#advanced)
     - [local module](#local-module)
     - [go-wrk](#go-wrk)
     - [go-torch](#go-torch)
@@ -1771,13 +1773,16 @@ go vet
 
 ### mod
 
-[[Go] Go Modules 살펴보기](https://velog.io/@kimmachinegun/Go-Go-Modules-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0-7cjn4soifk)
+* [Using Go Modules](https://blog.golang.org/using-go-modules)
+* [[Go] Go Modules 살펴보기](https://velog.io/@kimmachinegun/Go-Go-Modules-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0-7cjn4soifk)
 
 ----
 
 Handle module dependencies. Execute command line `go mod init` and this will make `go.mod`. Everytime you execute go command `go.mod` will be changed. 
 
 After `go build` you can find out `go.sum` which has total dependent modules (name, version, sha1sum) and libries installed at `$GOPATH/pkg/mod/`.
+
+#### Simple
 
 ```bash
 $ mkdir a && cd a
@@ -1868,10 +1873,16 @@ gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8
 gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 ```
 
+#### Advanced
+
+```bash
+
+```
+
 ### local module
 
 * [Go Modules - Local Modules](https://jusths.tistory.com/107)
-* [](https://jusths.tistory.com/108)
+* [Go Modules - Local Modules 실전](https://jusths.tistory.com/108)
 
 ----
 
