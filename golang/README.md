@@ -55,10 +55,14 @@
 - [Advanced Usages](#advanced-usages)
   - [Tools](#tools-1)
     - [go](#go)
+    - [go build](#go-build)
+    - [go test](#go-test)
     - [mod](#mod)
       - [Simple](#simple)
       - [Advanced](#advanced)
     - [local module](#local-module)
+    - [bazel](#bazel)
+    - [gazel](#gazel)
     - [go-wrk](#go-wrk)
     - [go-torch](#go-torch)
     - [present](#present)
@@ -1771,6 +1775,45 @@ go fmt
 go vet
 ```
 
+### go build
+
+```bash
+$ tree .
+.
+├── cmd
+│   └── main
+│       └── main.go
+└── internal
+    └── person
+        ├── person.go
+        └── person_test.go
+
+$ go build cmd/main/main.go
+$ go build internal/person/person.go
+```
+
+### go test
+
+* [Testing in Go: go test](https://ieftimov.com/post/testing-in-go-go-test/)
+
+----
+
+```bash
+$ tree .
+.
+└── internal
+    └── person
+        ├── person.go
+        └── person_test.go
+# test all
+$ go test -v ./...
+
+# test specific funtion in same package
+$ cd internal/person
+$ go test -v -run Testxxx_xxx
+$ go test -v -run ^Testxxx_xxx$
+```
+
 ### mod
 
 * [Using Go Modules](https://blog.golang.org/using-go-modules)
@@ -1876,7 +1919,17 @@ gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 #### Advanced
 
 ```bash
+$ tree .
+.
+├── cmd
+│   └── main
+│       └── main.go
+└── internal
+    └── person
+        ├── person.go
+        └── person_test.go
 
+$ 
 ```
 
 ### local module
@@ -1887,6 +1940,14 @@ gopkg.in/yaml.v2 v2.2.2/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=
 ----
 
 Updating...
+
+### bazel
+
+[bazel](/bazel/README.md)
+
+### gazel
+
+[gazel](/gazelle/README.md)
 
 ### go-wrk
 
