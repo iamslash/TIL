@@ -18,13 +18,13 @@ $ cat WORKSPACE
 $ cat BUILD
 
 # change WORKSPACE with deps of go.mod
-$ bazel run //:gazelle update-repos -from_file=go.mod
+$ bazel run //:gazelle -- update-repos -from_file=go.mod
 
 # generate BUILD
 $ bazel run //:gazelle
 
 # build all
-$ bazel buil //...
+$ bazel build //...
 
 # test all
 $ bazel test //...
