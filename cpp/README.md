@@ -42,6 +42,8 @@ c++에 대해 정리한다.
 
 # Materials
 
+* [C++ Tips of the Week](https://abseil.io/tips/)
+  * Abseil is a c++ library. They provide tips of the week.
 * [cracking the coding interview](http://www.crackingthecodinginterview.com/)
   * c/c++ quiz 
 - [c++ programming](http://boqian.weebly.com/c-programming.html)

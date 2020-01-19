@@ -1,5 +1,5 @@
 
-- [Concurrency &amp; parallelism](#concurrency-amp-parallelism)
+- [Concurrency & parallelism](#concurrency--parallelism)
 - [thread](#thread)
 - [mutex](#mutex)
 - [condition_variable](#conditionvariable)
@@ -13,9 +13,13 @@
 
 ## Concurrency & parallelism
 
-A, B 두개의 일을 동시에 진행하는 것을 parallelism (병행성) 이 있다고 한다. A, B 두개의 일을 조금씩 교대로 할 수 있는 것을 Concurrency (동시성) 이 있다고 한다. concurrency 가 있다면 parallism 이 있을 수도 있고 없을 수도 있다. 
+A, B 두 개의 일을 물리적으로 동시에 진행하는 것을 parallelism (병행성) 이라고 한다. A, B 두 개의 일을 논리적으로 동시에 진행하는 것을 Concurrency (동시성) 이라고 한다.
 
-예를 들어 신문을 보는 것을 A, 커피를 마시는 것을 B 라고 했을 때 A, B 는 concurrency 가 있다고 할 수 있다. 또한 신문을 보면서 커피를 마실 수 있기 때문에 parallism 이 있다고 할 수 있다. 그러나 양말을 신는 것을 A, 신발을 신는 것을 B 라고 했을 때 A, B 는 concurrency 가 없다고 할 수 있다. 양말을 신어야 신발을 신을 수 있기 때문이다. concurrency 가 없기 때문에 parallelism 은 존재할 수 없다.
+예를 들어 신문을 보는 것을 A, 커피를 마시는 것을 B 라고 하자. A 를 잠깐 하다가 B 를 잠깐 하다가 다시 A 를 할 수 잇기 때문에 Concurrency 가 있다고 할 수 있다. 또한 신문을 보면서 커피를 마실 수 있기 때문에 Parallism 이 있다고 할 수 있다. 
+
+다른 예를 들어 양말을 신는 것을 A, 신발을 신는 것을 B 라고 하자. B 를 하고 나면 A 를 할 수 없으므로 Concurrency 가 없다고 할 수 있다. 역시 물리적으로 B 다음 A 를 할 수 없으므로 Parallelism 은 없다고 할 수 있다.
+
+이와 같이 Concurrency 가 존재해야 Parallelism 이 존재할 수 있다.
 
 ## thread
 
