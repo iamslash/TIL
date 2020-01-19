@@ -33,10 +33,9 @@ $ bazel build //main:hello
 
 ```
 .
+├── BUILD
 ├── WORKSPACE
-└── main
-    ├── BUILD
-    └── hello.go
+└── hello.go
 ```
 
 * WORKSPACE
@@ -75,9 +74,26 @@ go_binary(
 
 * hello.go
 
-```
+```go
+package main
+
+import "fmt"
+
+func main() {
+  fmt.Println("Hello World")
+}
 ```
 
+* build & run
+
+```bash
+# build
+$ bazel build -c opt //:hello
+
+# run
+$ ./bazel-bin/../hello
+$ bazel run -c opt :hello
+```
 
 ## Hello binary with library
 
@@ -91,7 +107,7 @@ $ bazel build //cmd:hello
 ├── WORKSPACE
 ├── cmd
 │   ├── BUILD
-│   └── hello.go
+│   └── main.go
 └── hello
     ├── BUILD
     └── hello.go
@@ -131,6 +147,7 @@ load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_depe
 go_rules_dependencies()
 go_register_toolchains()
 ```
+
 * cmd/BUILD
 
 ```py

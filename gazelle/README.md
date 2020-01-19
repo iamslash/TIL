@@ -1,3 +1,11 @@
+- [Materials](#materials)
+- [Basics](#basics)
+  - [Hello world with go build](#hello-world-with-go-build)
+  - [Hello World with bazel](#hello-world-with-bazel)
+  - [Hello World with gazel](#hello-world-with-gazel)
+
+----
+
 # Materials
 
 * [bazel-gazelle @ github](https://github.com/bazelbuild/bazel-gazelle)
@@ -6,7 +14,11 @@
 
 ## Hello world with go build
 
-updating...
+* [golang build](/golang/README.md#go-build)
+
+## Hello World with bazel
+
+* [bazel](/bazel/README.md)
 
 ## Hello World with gazel
 

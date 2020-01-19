@@ -60,7 +60,7 @@
     - [mod](#mod)
       - [Simple](#simple)
       - [Advanced](#advanced)
-    - [local module](#local-module)
+    - [local modules](#local-modules)
     - [bazel](#bazel)
     - [gazel](#gazel)
     - [go-wrk](#go-wrk)
@@ -1777,6 +1777,8 @@ go help build
 ### go build
 
 * [Command go](https://golang.org/cmd/go/)
+* [Go Modules - Local Modules](https://jusths.tistory.com/107)
+* [Modules](https://github.com/golang/go/wiki/Modules)
 
 ----
 
@@ -1787,9 +1789,9 @@ $ tree .
 │   └── main
 │       └── main.go
 └── internal
-    └── person
-        ├── person.go
-        └── person_test.go
+    └── hello
+        ├── hello.go
+        └── hello_test.go
 ```
 
 * `main.go`
@@ -1797,53 +1799,74 @@ $ tree .
 ```go
 package main
 
-import "fmt"
-
-func main() {
-    p1 := Person{18}
-    p2 := Person{19}
-    fmt.Println(p1.older(p2))
-}
-```
-
-* `person.go`
-
-```go
-package person
-
-type Person struct {
-	age  int64
-}
-
-func (p *Person) older(other *Person) bool {
-	return p.age > other.age
-}
-```
-
-* `person_test.go`
-
-```go
-package person
-
 import (
 	"fmt"
-	"testing"
+
+	"iamslash.com/a/internal/hello"
 )
 
-func TestOlder(t *testing.T) {
-	p1 := &Person{21}
-	p2 := &Person{22}
+func main() {
+	fmt.Println(hello.Hello())
+}
 
-	if !p1.older(p2) {
-		t.Fatalf(fmt.Sprintf("Expected %d > %d", p1.age, p2.age))
-	}
+```
+
+* `hello.go`
+
+```go
+package hello
+
+func Hello() string {
+	return "Hello, world."
+}
+```
+
+* `hello_test.go`
+
+```go
+package hello
+
+import "testing"
+
+func TestHello(t *testing.T) {
+    want := "Hello, world."
+    if got := Hello(); got != want {
+        t.Errorf("Hello() = %q, want %q", got, want)
+    }
 }
 ```
 
 ```bash
+$ go build ./internal/...
+$ go build ./internal/person
+$ go build ./internal/person/
+$ go build ./internal/person/...
+$ go build ./cmd/...
+cmd\main\main.go:3:8: cannot find package "person" in any of:
+        c:\go\src\person (from $GOROOT)
+        d:\my\gopath\src\person (from $GOPATH)
+```
+
+To fix build error you have to use modules.
+
+```bash
+$ go mod init iamslash.com/a
+$ cat go.mod
+module iamslash.com/a
+
+go 1.13
+
+$ vim go.mod
+$ cat go.mod
+module iamslash.com/a
+
+go 1.13
+
+replace iamslash.com/a => ./
+
 $ go build ./...
-$ go build cmd/main/main.go
-$ go build internal/person/person.go
+$ ./out
+$ go run ./cmd/main/main.go
 ```
 
 ### go test
@@ -1872,10 +1895,13 @@ $ go test -v -run ^Testxxx_xxx$
 
 * [Using Go Modules](https://blog.golang.org/using-go-modules)
 * [[Go] Go Modules 살펴보기](https://velog.io/@kimmachinegun/Go-Go-Modules-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0-7cjn4soifk)
+* [Everything you need to know about Packages in Go](https://medium.com/rungo/everything-you-need-to-know-about-packages-in-go-b8bac62b74cc)
 
 ----
 
 Handle module dependencies. Execute command line `go mod init` and this will make `go.mod`. Everytime you execute go command `go.mod` will be changed. 
+
+`go.mod` have 4 kinds of directives `module, require, replace, exclude`
 
 After `go build` you can find out `go.sum` which has total dependent modules (name, version, sha1sum) and libries installed at `$GOPATH/pkg/mod/`.
 
@@ -1979,21 +2005,75 @@ $ tree .
 │   └── main
 │       └── main.go
 └── internal
-    └── person
-        ├── person.go
-        └── person_test.go
-
-$ 
+    └── hello
+        ├── hello.go
+        └── hello_test.go
 ```
 
-### local module
+* `main.go`
 
-* [Go Modules - Local Modules](https://jusths.tistory.com/107)
-* [Go Modules - Local Modules 실전](https://jusths.tistory.com/108)
+```go
+package main
 
-----
+import (
+	"fmt"
 
-Updating...
+	"github.com/iamslash/alpha/internal/hello"
+)
+
+func main() {
+	fmt.Println(hello.Hello())
+}
+
+```
+
+* `hello.go`
+
+```go
+package hello
+
+func Hello() string {
+	return "Hello, world."
+}
+```
+
+* `hello_test.go`
+
+```go
+package hello
+
+import "testing"
+
+func TestHello(t *testing.T) {
+    want := "Hello, world."
+    if got := Hello(); got != want {
+        t.Errorf("Hello() = %q, want %q", got, want)
+    }
+}
+```
+
+```bash
+$ go mod init github.com/iamslash/alpha
+$ cat go.mod
+module github.com/iamslash/alpha
+
+go 1.13
+
+# Show final versions that will be used in a build for all direct and indirect dependencies
+$ go list -m all
+# Show available minor and patch upgrades for all direct and indirect dependencies
+$ go list -u -m all
+# Update all direct and indirect dependencies to latest minor or patch upgrades
+$ go get -u or go get -u=patch
+$ go build ./...
+$ go test ./...
+# Prune any no-longer-needed dependencies from go.mod and add any dependencies needed for other combinations of OS, architecture, and build tags
+$ go mod tidy
+```
+
+### local modules
+
+* [go build](#go-build)
 
 ### bazel
 
