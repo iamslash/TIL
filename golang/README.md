@@ -72,6 +72,7 @@
   - [Profile](#profile)
 - [Snippets](#snippets)
   - [HTTP Server](#http-server)
+  - [gRPC Server](#grpc-server)
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -1788,40 +1789,43 @@ $ tree .
 ├── cmd
 │   └── main
 │       └── main.go
-└── internal
-    └── hello
-        ├── hello.go
-        └── hello_test.go
+├── go.mod
+├── internal
+│   └── hello
+│       ├── hello.go
+│       └── hello_test.go
+└── main
 ```
 
-* `main.go`
+* `cmd/main/main.go`
 
 ```go
 package main
 
-import (
-	"fmt"
-
-	"iamslash.com/a/internal/hello"
-)
+import "fmt"
+import "iamslash.com/HelloWorld/internal/hello"
 
 func main() {
-	fmt.Println(hello.Hello())
+	fmt.Println(hello.HelloWorld())
+	fmt.Println(hello.HelloFoo())
 }
-
 ```
 
-* `hello.go`
+* `internal/hello/hello.go`
 
 ```go
 package hello
 
-func Hello() string {
-	return "Hello, world."
+func HelloWorld() string {
+	return "Hello World"
+}
+
+func HelloFoo() string {
+	return "Hello Foo"
 }
 ```
 
-* `hello_test.go`
+* `internal/hello/hello_test.go`
 
 ```go
 package hello
@@ -1829,43 +1833,27 @@ package hello
 import "testing"
 
 func TestHello(t *testing.T) {
-    want := "Hello, world."
-    if got := Hello(); got != want {
-        t.Errorf("Hello() = %q, want %q", got, want)
-    }
+	want := "Hello, world."
+	if got := Hello(); got != want {
+		t.Errorf("Hello() = %q, want %q", got, want)
+	}
 }
 ```
 
 ```bash
+$ go mod init iamslash.com/HelloWorld
+$ cat go.mod
+module iamslash.com/HelloWorld
+
+go 1.13
+
 $ go build ./internal/...
-$ go build ./internal/person
-$ go build ./internal/person/
-$ go build ./internal/person/...
+$ go build ./internal/hello
+$ go build ./internal/hello/
+$ go build ./internal/hello/...
 $ go build ./cmd/...
-cmd\main\main.go:3:8: cannot find package "person" in any of:
-        c:\go\src\person (from $GOROOT)
-        d:\my\gopath\src\person (from $GOPATH)
-```
 
-To fix build error you have to use modules.
-
-```bash
-$ go mod init iamslash.com/a
-$ cat go.mod
-module iamslash.com/a
-
-go 1.13
-
-$ vim go.mod
-$ cat go.mod
-module iamslash.com/a
-
-go 1.13
-
-replace iamslash.com/a => ./
-
-$ go build ./...
-$ ./out
+$ ./main
 $ go run ./cmd/main/main.go
 ```
 
@@ -2073,7 +2061,16 @@ $ go mod tidy
 
 ### local modules
 
-* [go build](#go-build)
+Use replace in `go.mod`.
+
+```bash
+$ cat go.mod
+module iamslash.com/a
+
+go 1.13
+
+replace iamslash.com/a => ./
+```
 
 ### bazel
 
@@ -2188,3 +2185,7 @@ func main() {
 //     ServeHTTP(w http.ResponseWriter, r *http.Request)
 // }
 ```
+
+## gRPC Server
+
+* [gRPC Basics - Go](https://grpc.io/docs/tutorials/basic/go/)

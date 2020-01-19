@@ -1,12 +1,13 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
+- [Tips](#tips)
 - [Go Examples](#go-examples)
   - [Hello binary](#hello-binary)
   - [Hello binary with library](#hello-binary-with-library)
   - [gazelle](#gazelle)
-  - [go get](#go-get)
-  - [protobuf](#protobuf)
-  - [grpc](#grpc)
+  - [Library Dependency](#library-dependency)
+  - [Protobuf](#protobuf)
+  - [gRPC](#grpc)
   - [go docker image](#go-docker-image)
 
 ----
@@ -22,6 +23,16 @@ Bazel is a build, test application.
 * [Building Go Services With Bazel @ youtube](https://www.youtube.com/watch?v=v7EAdff-YXQ) 
   * bazel with go 
 * [si-you/bazel-golang-examples @ github](https://github.com/si-you/bazel-golang-examples)
+
+# Tips
+
+* "`no package error`"
+
+```bash
+$ bazel run //:gazelle -- update-repos github.com/grpc-ecosystem/go-grpc-prometheus
+$ bazel run //:gazelle
+$ bazel build //...
+```
 
 # Go Examples
 
@@ -91,8 +102,8 @@ func main() {
 $ bazel build -c opt //:hello
 
 # run
-$ ./bazel-bin/../hello
-$ bazel run -c opt :hello
+$ ./bazel-bin/darwin_amd64_stripped/hello
+$ bazel run -c opt //:hello
 ```
 
 ## Hello binary with library
@@ -103,7 +114,6 @@ $ bazel build //cmd:hello
 
 ```
 .
-├── BUILD
 ├── WORKSPACE
 ├── cmd
 │   ├── BUILD
@@ -113,20 +123,7 @@ $ bazel build //cmd:hello
     └── hello.go
 ```
 
-* BUILD
-
-```py
-load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
-
-go_binary(
-  name = "hello",
-  srcs = ["hello.go"],
-  deps = [
-  ],
-)
-```
-
-* WORKSPACE
+* `WORKSPACE`
 
 ```py
 workspace(name = "hello")
@@ -148,7 +145,7 @@ go_rules_dependencies()
 go_register_toolchains()
 ```
 
-* cmd/BUILD
+* `cmd/BUILD`
 
 ```py
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
@@ -161,7 +158,7 @@ go_binary(
   ],
 )
 ```
-* cmd/hello.go
+* `cmd/hello.go`
 
 ```go
 package main
@@ -176,7 +173,7 @@ func main() {
 }
 ```
 
-* hello/BUILD
+* `hello/BUILD`
 
 ```py
 package(default_visibility=["//visibility:public"])
@@ -192,7 +189,7 @@ go_library(
 )
 ```
 
-* hello/hello.go
+* `hello/hello.go`
 
 ```go
 package hello
@@ -202,22 +199,69 @@ func Message() string {
 }
 ```
 
+* build & run
+
+```bash
+# build
+$ bazel build -c opt //...
+
+# run
+$ ./bazel-bin/cmd/darwin_amd64_stripped/hello
+$ bazel run -c opt //cmd:hello
+```
+
 ## gazelle
 
 gazelle generates BUILD.bazel files.
 
 * origin directories
 
-  ```
-  .
-  ├── BUILD.bazel
-  ├── WORKSPACE
-  └── src
-      └── hello
-          ├── cmd
-          │   └── main.go
-          └── hello.go
-  ```
+```
+.
+├── BUILD.bazel
+├── WORKSPACE
+└── src
+    └── hello
+        ├── cmd
+        │   └── main.go
+        └── hello.go
+```
+
+* WORKSPACE
+
+```py
+workspace(name = "hello")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "io_bazel_rules_go",
+    sha256 = "842ec0e6b4fbfdd3de6150b61af92901eeb73681fd4d185746644c338f51d4c0",
+    urls = [
+        "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/rules_go/releases/download/v0.20.1/rules_go-v0.20.1.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.20.1/rules_go-v0.20.1.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "bazel_gazelle",
+    sha256 = "41bff2a0b32b02f20c227d234aa25ef3783998e5453f7eade929704dcff7cd4b",
+    urls = [
+        "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/bazel-gazelle/releases/download/v0.19.0/bazel-gazelle-v0.19.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.19.0/bazel-gazelle-v0.19.0.tar.gz",
+    ],
+)
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains()
+
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
+
+gazelle_dependencies()
+```
 
 * BUILD.bazel
 
@@ -230,13 +274,7 @@ gazelle generates BUILD.bazel files.
   )
   ```
 
-* WORKSPACE
-
-  ```py
-
-  ```
-
-* src/hello/hello.go
+* `src/hello/hello.go`
 
   ```go
   package hello
@@ -246,7 +284,7 @@ gazelle generates BUILD.bazel files.
   }
   ```
 
-* src/hello/cmd/main.go
+* `src/hello/cmd/main.go`
 
   ```go
   package main
@@ -272,7 +310,6 @@ gazelle generates BUILD.bazel files.
   ```
   .
   ├── BUILD.bazel
-  ├── README.md
   ├── WORKSPACE
   └── src
       ├── BUILD.bazel
@@ -282,53 +319,55 @@ gazelle generates BUILD.bazel files.
               └── main.go
   ```
 
-* src/BUILD.bazel
+* `src/BUILD.bazel`
 
-  ```py
-  load("@io_bazel_rules_go//go:def.bzl", "go_library")
+```py
+# gazelle:prefix
+```
 
-  go_library(
-      name = "go_default_library",
-      srcs = ["hello.go"],
-      importpath = "",
-      visibility = ["//visibility:public"],
-  )
-  ```
+* `src/hello/BUILD.bazel`
 
-* src/hello/cmd/BUILD.bazel
+```py
+load("@io_bazel_rules_go//go:def.bzl", "go_library")
 
-  ```py
-  load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+go_library(
+    name = "go_default_library",
+    srcs = ["hello.go"],
+    importpath = "hello",
+    visibility = ["//visibility:public"],
+)
+```
 
-  go_library(
-      name = "go_default_library",
-      srcs = ["main.go"],
-      importpath = "hello/cmd",
-      visibility = ["//visibility:private"],
-  )
+* `src/hello/cmd/BUILD.bazel`
 
-  go_binary(
-      name = "cmd",
-      embed = [":go_default_library"],
-      visibility = ["//visibility:public"],
-  )
-  ```
+```py
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+    name = "go_default_library",
+    srcs = ["main.go"],
+    importpath = "hello/cmd",
+    visibility = ["//visibility:private"],
+    deps = ["//src/hello:go_default_library"],
+)
+
+go_binary(
+    name = "cmd",
+    embed = [":go_default_library"],
+    visibility = ["//visibility:public"],
+)
+```
 
 * build
 
-  ```bash
-  $ bazel build //hello/main:cmd
-  ```
-
-* "`no package error`"
-
 ```bash
-$ bazel run //:gazelle -- update-repos github.com/grpc-ecosystem/go-grpc-prometheus
-$ bazel run //:gazelle
+$ bazel build //src/hello/cmd:cmd
 $ bazel build //...
+$ bazel run //src/hello/cmd:cmd
+$ ./bazel-bin/src/hello/cmd/darwin_amd64_stripped/cmd
 ```
 
-## go get
+## Library Dependency
 
 * origin structure
 
@@ -339,42 +378,7 @@ $ bazel build //...
 └── redis.go
 ```
 
-* build
-
-```bash
-$ bazel build //:redis --incompatible_disable_deprecated_attr_params=false
-```
-
-* WORKSPACE
-
-```py
-load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
-http_archive(
-    name = "io_bazel_rules_go",
-    urls = ["https://github.com/bazelbuild/rules_go/releases/download/0.13.0/rules_go-0.13.0.tar.gz"],
-    sha256 = "ba79c532ac400cefd1859cbc8a9829346aa69e3b99482cd5a54432092cbc3933",
-)
-http_archive(
-    name = "bazel_gazelle",
-    urls = ["https://github.com/bazelbuild/bazel-gazelle/releases/download/0.13.0/bazel-gazelle-0.13.0.tar.gz"],
-    sha256 = "bc653d3e058964a5a26dcad02b6c72d7d63e6bb88d94704990b908a1445b8758",
-)
-load("@io_bazel_rules_go//go:def.bzl", "go_rules_dependencies", "go_register_toolchains")
-go_rules_dependencies()
-go_register_toolchains()
-load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
-gazelle_dependencies()
-
-# Repos for radix.
-go_repository(
-  name = "com_github_mediocregopher_radix_v2",
-  # remote = "https://github.com/mediocregopher/radix.v2",
-  importpath = "github.com/mediocregopher/radix.v2",
-  commit = "596a3ed684d9390f4831d6800dffd6a6067933d5",
-)
-```
-
-* BUILD
+* `BUILD`
 
 ```py
 load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library", "go_test")
@@ -388,7 +392,63 @@ go_binary(
 )
 ```
 
-* redis.go
+* `WORKSPACE`
+
+```py
+workspace(name = "hello")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
+
+http_archive(
+    name = "com_google_protobuf",
+    sha256 = "7c99ddfe0227cbf6a75d1e75b194e0db2f672d2d2ea88fb06bdc83fe0af4c06d",
+    strip_prefix = "protobuf-3.9.2",
+    urls = ["https://github.com/protocolbuffers/protobuf/releases/download/v3.9.2/protobuf-all-3.9.2.tar.gz"],
+)
+
+load("@com_google_protobuf//:protobuf_deps.bzl", "protobuf_deps")
+
+protobuf_deps()
+
+http_archive(
+    name = "io_bazel_rules_go",
+    sha256 = "842ec0e6b4fbfdd3de6150b61af92901eeb73681fd4d185746644c338f51d4c0",
+    urls = [
+        "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/rules_go/releases/download/v0.20.1/rules_go-v0.20.1.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.20.1/rules_go-v0.20.1.tar.gz",
+    ],
+)
+
+http_archive(
+    name = "bazel_gazelle",
+    sha256 = "41bff2a0b32b02f20c227d234aa25ef3783998e5453f7eade929704dcff7cd4b",
+    urls = [
+        "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/bazel-gazelle/releases/download/v0.19.0/bazel-gazelle-v0.19.0.tar.gz",
+        "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.19.0/bazel-gazelle-v0.19.0.tar.gz",
+    ],
+)
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains()
+
+load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies", "go_repository")
+
+gazelle_dependencies()
+
+# Repos for radix.
+go_repository(
+  name = "com_github_mediocregopher_radix_v2",
+  # remote = "https://github.com/mediocregopher/radix.v2",
+  importpath = "github.com/mediocregopher/radix.v2",
+  commit = "596a3ed684d9390f4831d6800dffd6a6067933d5",
+)
+```
+
+* `redis.go`
 
 ```go
 package main
@@ -426,7 +486,13 @@ func main() {
 }
 ```
 
-## protobuf
+* build & run
+
+```bash
+$ bazel build //...
+```
+
+## Protobuf
 
 * origin structure
 
@@ -534,7 +600,7 @@ $ bazel build //hello:cmd
     └── greet.proto
 ```
 
-## grpc
+## gRPC
 
 TODO
 
