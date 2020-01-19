@@ -60,7 +60,7 @@
     - [mod](#mod)
       - [Simple](#simple)
       - [Advanced](#advanced)
-    - [local modules](#local-modules)
+      - [local modules](#local-modules)
     - [bazel](#bazel)
     - [gazel](#gazel)
     - [go-wrk](#go-wrk)
@@ -2059,7 +2059,7 @@ $ go test ./...
 $ go mod tidy
 ```
 
-### local modules
+#### local modules
 
 Use replace in `go.mod`.
 
