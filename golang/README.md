@@ -54,7 +54,7 @@
     - [Channel Axioms](#channel-axioms)
 - [Advanced Usages](#advanced-usages)
   - [Tools](#tools-1)
-    - [go](#go)
+    - [go commands](#go-commands)
     - [go build](#go-build)
     - [go test](#go-test)
     - [mod](#mod)
@@ -1762,9 +1762,7 @@ func doStuff(channelOut, channelIn chan int) {
 
 ## Tools
 
-### go
-
-주로 사용하는 command는 다음과 같다. 도움말은 go help를 이용하자.
+### go commands
 
 ```
 go run
@@ -1773,9 +1771,14 @@ go install
 go get
 go fmt
 go vet
+go help build
 ```
 
 ### go build
+
+* [Command go](https://golang.org/cmd/go/)
+
+----
 
 ```bash
 $ tree .
@@ -1787,7 +1790,58 @@ $ tree .
     └── person
         ├── person.go
         └── person_test.go
+```
 
+* `main.go`
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+    p1 := Person{18}
+    p2 := Person{19}
+    fmt.Println(p1.older(p2))
+}
+```
+
+* `person.go`
+
+```go
+package person
+
+type Person struct {
+	age  int64
+}
+
+func (p *Person) older(other *Person) bool {
+	return p.age > other.age
+}
+```
+
+* `person_test.go`
+
+```go
+package person
+
+import (
+	"fmt"
+	"testing"
+)
+
+func TestOlder(t *testing.T) {
+	p1 := &Person{21}
+	p2 := &Person{22}
+
+	if !p1.older(p2) {
+		t.Fatalf(fmt.Sprintf("Expected %d > %d", p1.age, p2.age))
+	}
+}
+```
+
+```bash
+$ go build ./...
 $ go build cmd/main/main.go
 $ go build internal/person/person.go
 ```
@@ -1943,11 +1997,11 @@ Updating...
 
 ### bazel
 
-[bazel](/bazel/README.md)
+* [bazel](/bazel/README.md)
 
 ### gazel
 
-[gazel](/gazelle/README.md)
+* [gazel](/gazelle/README.md)
 
 ### go-wrk
 
