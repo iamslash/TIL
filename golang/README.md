@@ -53,19 +53,18 @@
   - [Channels](#channels)
     - [Channel Axioms](#channel-axioms)
 - [Advanced Usages](#advanced-usages)
-  - [Tools](#tools-1)
-    - [go commands](#go-commands)
+  - [go commands](#go-commands)
     - [go build](#go-build)
     - [go test](#go-test)
-    - [mod](#mod)
+    - [go mod](#go-mod)
       - [Simple](#simple)
       - [Advanced](#advanced)
       - [local modules](#local-modules)
-    - [bazel](#bazel)
-    - [gazel](#gazel)
     - [go-wrk](#go-wrk)
     - [go-torch](#go-torch)
-    - [present](#present)
+  - [bazel](#bazel)
+  - [gazel](#gazel)
+  - [present](#present)
   - [Debug](#debug)
   - [Test](#test)
   - [Benchmarks](#benchmarks)
@@ -1761,9 +1760,7 @@ func doStuff(channelOut, channelIn chan int) {
 
 # Advanced Usages
 
-## Tools
-
-### go commands
+## go commands
 
 ```
 go run
@@ -1879,7 +1876,7 @@ $ go test -v -run Testxxx_xxx
 $ go test -v -run ^Testxxx_xxx$
 ```
 
-### mod
+### go mod
 
 * [Using Go Modules](https://blog.golang.org/using-go-modules)
 * [[Go] Go Modules 살펴보기](https://velog.io/@kimmachinegun/Go-Go-Modules-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0-7cjn4soifk)
@@ -2072,14 +2069,6 @@ go 1.13
 replace iamslash.com/a => ./
 ```
 
-### bazel
-
-* [bazel](/bazel/README.md)
-
-### gazel
-
-* [gazel](/gazelle/README.md)
-
 ### go-wrk
 
 an HTTP benchmarking tool
@@ -2094,7 +2083,16 @@ Tool for stochastically profiling Go programs. Collects stack traces
 and synthesizes them into a flame graph. Uses Go's built in pprof
 library.
 
-### present
+## bazel
+
+* [bazel](/bazel/README.md)
+
+## gazel
+
+* [gazel](/gazelle/README.md)
+
+
+## present
 
 [present](https://godoc.org/golang.org/x/tools/present) is a tool for a slide. You can install like this.
 
