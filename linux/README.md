@@ -366,6 +366,9 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * `-z` : 데이터 전송 안한다.
     * `-w` : 최대 1 초의 연결 시간
     * `1-1023` : TCP 를 사용해서 1-1023 사이의 포트를 스캔한다.
+* `ssh-keygen`
+  * https://www.ssh.com/ssh/keygen
+  * `ssh-keygen -t rsa -b 2048`
 * `ssh`
   * OpenSSH SSH client
   * `ssh iamslash@a.b.com`
