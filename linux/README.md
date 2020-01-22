@@ -372,7 +372,10 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `ssh`
   * OpenSSH SSH client
   * `ssh iamslash@a.b.com`
-  * `ssh iamslash@a.b.com ls /tmp/doc`
+  * `ssh iamslash@a.b.com ls /tmp/doc` Just execute command without allocating terminal
+  * `ssh -i ~/.ssh/id_rsa.iamslash iamslash@a.b.com` Use specific private key file
+  * `ssh -p 122 iamslash@a.b.com` Use specific port
+  * `ssh -T iamslash@a.b.com` Just test without allocating terminal
 * `ssh-add`
   * [ssh-copy-id](https://www.ssh.com/ssh/copy-id)
   * 인증 에이전트에게 비밀키를 추가해 놓자.
