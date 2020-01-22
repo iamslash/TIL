@@ -376,6 +376,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `ssh -i ~/.ssh/id_rsa.iamslash iamslash@a.b.com` Use specific private key file
   * `ssh -p 122 iamslash@a.b.com` Use specific port
   * `ssh -T iamslash@a.b.com` Just test without allocating terminal
+  * `ssh -p 122 -o StrictHostKeyChecking=no iamslash@a.b.com` Without yes/no of checking host
 * `ssh-add`
   * [ssh-copy-id](https://www.ssh.com/ssh/copy-id)
   * 인증 에이전트에게 비밀키를 추가해 놓자.
