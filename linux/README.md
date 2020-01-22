@@ -367,19 +367,20 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * `-w` : 최대 1 초의 연결 시간
     * `1-1023` : TCP 를 사용해서 1-1023 사이의 포트를 스캔한다.
 * `ssh-keygen`
-  * https://www.ssh.com/ssh/keygen
+  * [ssh-keygen](https://www.ssh.com/ssh/keygen]
   * `ssh-keygen -t rsa -b 2048`
 * `ssh`
   * OpenSSH SSH client
   * `ssh iamslash@a.b.com`
   * `ssh iamslash@a.b.com ls /tmp/doc`
 * `ssh-add`
+  * [ssh-copy-id](https://www.ssh.com/ssh/copy-id)
   * 인증 에이전트에게 비밀키를 추가해 놓자.
   * `eval $(ssh-agent -s)`
   * `ssh-add ~/.ssh/id_rsa` 암호 입력을 매번 하지 않기 위해 키체인에 등록하자
 * `ssh-copy-id`
   * public key 를 remote 에 복사한다.
-  * `ssh-copy-id -p 122 admin@xxx.xxx.xxx.xxx`
+  * `ssh-copy-id -p 122 -i ~.ssh/id_rsa.pub admin@xxx.xxx.xxx.xxx`
 * `sftp`
   * secure file transfer program
   * `sftp iamslash@a.b.com` `cd a` `lcd a` `put a.txt` 
