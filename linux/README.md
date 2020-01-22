@@ -375,7 +375,8 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `ssh iamslash@a.b.com ls /tmp/doc`
 * `ssh-add`
   * 인증 에이전트에게 비밀키를 추가해 놓자.
-  * `ssh-add -K ~/.ssh/id_rsa` 암호 입력을 매번 하지 않기 위해 키체인에 등록하자
+  * `eval $(ssh-agent -s)`
+  * `ssh-add ~/.ssh/id_rsa` 암호 입력을 매번 하지 않기 위해 키체인에 등록하자
 * `sftp`
   * secure file transfer program
   * `sftp iamslash@a.b.com` `cd a` `lcd a` `put a.txt` 
