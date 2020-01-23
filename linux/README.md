@@ -383,7 +383,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `eval $(ssh-agent -s)`
   * `ssh-add ~/.ssh/id_rsa` 암호 입력을 매번 하지 않기 위해 키체인에 등록하자
 * `ssh-copy-id`
-  * public key 를 remote 에 복사한다.
+  * public key 를 remote 에 복사한다. remote `/etc/ssh/sshd_config` should include `PasswordAuthentication yes`.
   * `ssh-copy-id -p 122 -i ~.ssh/id_rsa.pub admin@xxx.xxx.xxx.xxx`
 * `sftp`
   * secure file transfer program
