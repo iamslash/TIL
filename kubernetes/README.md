@@ -66,6 +66,8 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
   * [A container networking overview](https://jvns.ca/blog/2016/12/22/container-networking/)
 * [Kubernetes in Action](http://acornpub.co.kr/book/k8s-in-action)
   * [src](https://github.com/luksa/kubernetes-in-action?files=1)
+* [Comprehensive Guide to EKS Worker Nodes ](https://blog.gruntwork.io/comprehensive-guide-to-eks-worker-nodes-94e241092cbe)
+  * About kernetes worker node management
 * [CNCF @ youtube](https://www.youtube.com/channel/UCvqbFHwN-nwalWPjPUKpvTA)
   * Cloud Native Computing Foundation
 * [Kubernetes Blog](https://kubernetes.io/blog/)
