@@ -37,11 +37,11 @@
   - [Launch LoadBalancer](#launch-loadbalancer)
     - [Launch Simple LoadBalancer](#launch-simple-loadbalancer)
     - [????](#)
-    - [???](#)
-    - [???](#1)
+    - [???](#-1)
+    - [???](#-2)
   - [Launch Ingress](#launch-ingress)
     - [Launch Simple Ingress](#launch-simple-ingress)
-    - [????](#1)
+    - [????](#-3)
   - [Launch Horizontal Pod Autoscaler](#launch-horizontal-pod-autoscaler)
     - [Launch Simple Horizontal Pod Autoscaler](#launch-simple-horizontal-pod-autoscaler)
   - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
@@ -58,6 +58,12 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 # Materials
 
+* [A few things I've learned about Kubernetes](https://jvns.ca/blog/2017/06/04/learning-about-kubernetes/)
+  * [What even is a kubelet?](http://kamalmarhubi.com/blog/2015/08/27/what-even-is-a-kubelet/#n2)
+  * [Kubernetes from the ground up: the API server](http://kamalmarhubi.com/blog/2015/09/06/kubernetes-from-the-ground-up-the-api-server/)
+  * [Kubernetes from the ground up: the scheduler](http://kamalmarhubi.com/blog/2015/11/17/kubernetes-from-the-ground-up-the-scheduler/)
+  * [Authenticating](https://kubernetes.io/docs/reference/access-authn-authz/authentication/)
+  * [A container networking overview](https://jvns.ca/blog/2016/12/22/container-networking/)
 * [Kubernetes in Action](http://acornpub.co.kr/book/k8s-in-action)
   * [src](https://github.com/luksa/kubernetes-in-action?files=1)
 * [CNCF @ youtube](https://www.youtube.com/channel/UCvqbFHwN-nwalWPjPUKpvTA)
@@ -1421,7 +1427,6 @@ spec:
   * [[토크ON세미나] 쿠버네티스 살펴보기 7강 - Kubernetes(쿠버네티스) 실습 2 | T아카데미](https://www.youtube.com/watch?v=v6TUgqfV3Fo&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=7)
 
 ----
-
 
 ### Launch Simple Horizontal Pod Autoscaler
 
