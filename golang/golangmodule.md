@@ -10,6 +10,9 @@
 - [Advanced Usages](#advanced-usages)
   - [Cmd, Internal structure](#cmd-internal-structure)
   - [local modules](#local-modules)
+- [How to publish go modules](#how-to-publish-go-modules)
+- [How to update with v2](#how-to-update-with-v2)
+- [How to migrate to Go modules](#how-to-migrate-to-go-modules)
 
 ----
 
@@ -461,3 +464,15 @@ go 1.13
 
 replace iamslash.com/a => ./
 ```
+
+# How to publish go modules
+
+Updating...
+
+# How to update with v2
+
+Updating...
+
+# How to migrate to Go modules
+
+Updating...
