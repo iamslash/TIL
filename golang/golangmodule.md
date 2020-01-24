@@ -11,8 +11,14 @@
   - [Cmd, Internal structure](#cmd-internal-structure)
   - [local modules](#local-modules)
 - [How to publish go modules](#how-to-publish-go-modules)
+  - [Project setup](#project-setup)
+  - [Semantic versions and modules](#semantic-versions-and-modules)
+  - [v0: the initial, unstable version](#v0-the-initial-unstable-version)
+  - [v1: the first stable version](#v1-the-first-stable-version)
 - [How to update with v2](#how-to-update-with-v2)
-- [How to migrate to Go modules](#how-to-migrate-to-go-modules)
+  - [Major versions and module paths](#major-versions-and-module-paths)
+  - [Major version strategies](#major-version-strategies)
+  - [Publishing v2 and beyond](#publishing-v2-and-beyond)
 
 ----
 
@@ -467,12 +473,98 @@ replace iamslash.com/a => ./
 
 # How to publish go modules
 
-Updating...
+* [Publishing Go Modules](https://blog.golang.org/publishing-go-modules)
+
+## Project setup
+
+```bash
+$ tree .
+.
+├── cmd
+│   └── main
+│       └── main.go
+└── internal
+    └── hello
+        ├── hello.go
+        └── hello_test.go
+
+$ go mod init iamslash.com/alpha
+$ git init
+$ git add LICENSE go.mod go.sum hello.go hello_test.go
+$ git commit -m "hello: initial commit"
+```
+
+## Semantic versions and modules
+
+The version is consisted of `vMAJOR.MINOR.PATCH`. 
+
+* MAJOR : update with backward incompatability
+* MINOR : update with backward compatability
+* PATCH : update with bug fix 
+
+The version of pre-release is like `v1.0.1-alpha` or `v2.2.2-beta.2`
+
+## v0: the initial, unstable version
+
+```bash
+$ go mod tidy
+$ go test ./...
+ok      iamslash.com/alpha       0.015s
+$ git add go.mod go.sum hello.go hello_test.go
+$ git commit -m "hello: changes for v0.1.0"
+$ git tag v0.1.0
+$ git push origin v0.1.0
+```
+
+## v1: the first stable version
+
+```bash
+$ go mod tidy
+$ go test ./...
+ok      example.com/hello       0.015s
+$ git add go.mod go.sum hello.go hello_test.go
+$ git commit -m "hello: changes for v1.0.0"
+$ git tag v1.0.0
+$ git push origin v1.0.0
+$
+```
 
 # How to update with v2
 
-Updating...
+[Go Modules: v2 and Beyond](https://blog.golang.org/v2-go-modules)
 
-# How to migrate to Go modules
+## Major versions and module paths
 
-Updating...
+v2 of `github.com/googleapis/gax-go` should be `github.com/googleapis/gax-go/v2`.
+
+## Major version strategies
+
+```
+github.com/googleapis/gax-go @ master branch
+/go.mod    → module github.com/googleapis/gax-go
+/v2/go.mod → module github.com/googleapis/gax-go/v2
+```
+
+## Publishing v2 and beyond
+
+```bash
+$ git clone github.com/googleapis/gax-go
+$ cd gax-go
+$ mkdir v2
+$ cp *.go v2/
+$ cp go.mod v2/go.mod
+$ go mod edit -module github.com/googleapis/gax-go/v2 v2/go.mod
+
+# modify reference
+$ find . -type f \
+    -name '*.go' \
+    -exec sed -i -e 's,github.com/my/project,github.com/my/project/v2,g' {} \;
+
+$ git tag v2.0.0-alpha.1
+
+$ git push origin v2.0.0-alpha.1
+
+$ git tag v2.0.0
+
+$ git push origin v2.0.0
+```
