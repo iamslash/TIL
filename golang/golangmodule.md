@@ -360,8 +360,6 @@ $ go test
 
 ## Cmd, Internal structure
 
-This does not build 2020.01.24.
-
 ```bash
 $ tree .
 .
@@ -382,13 +380,12 @@ package main
 import (
 	"fmt"
 
-	"iamslash.com/hello"
+	"iamslash.com/alpha/internal/hello"
 )
 
 func main() {
 	fmt.Println(hello.Hello())
 }
-
 ```
 
 * `hello.go`
@@ -409,37 +406,46 @@ package hello
 import "testing"
 
 func TestHello(t *testing.T) {
-    want := "Hello, world."
-    if got := Hello(); got != want {
-        t.Errorf("Hello() = %q, want %q", got, want)
-    }
+	want := "Hello, world."
+	if got := Hello(); got != want {
+		t.Errorf("Hello() = %q, want %q", got, want)
+	}
 }
 ```
 
+* run
+  * There is no use of `replace` in go.mod to use local module.
+
 ```bash
-$ go mod init iamslash.com/hello
+$ go mod init iamslash.com/alpha
 
 $ cat go.mod
-module iamslash.com/hello
+module iamslash.com/alpha
 
 go 1.13
 
 # Show final versions that will be used in a build for all direct and indirect dependencies
 $ go list -m all
-iamslash.com/hello
+iamslash.com/alpha
 
 # Show available minor and patch upgrades for all direct and indirect dependencies
 $ go list -u -m all
-iamslash.com/hello
+iamslash.com/alpha
 
 # Update all direct and indirect dependencies to latest minor or patch upgrades
 $ go get -u or go get -u=patch
+go get or: malformed module path "or": missing dot in first path element
+go get go: no Go source files
+go get get: malformed module path "get": missing dot in first path element
+go get -u=patch: malformed module path "-u=patch": leading dash
 
 $ go build ./...
 
 $ go test ./...
-# Prune any no-longer-needed dependencies from go.mod and add any dependencies needed for other combinations of OS, architecture, and build tags
+?   	iamslash.com/alpha/cmd/main	[no test files]
+ok  	iamslash.com/alpha/internal/hello	0.006s
 
+# Prune any no-longer-needed dependencies from go.mod and add any dependencies needed for other combinations of OS, architecture, and build tags
 $ go mod tidy
 ```
 
