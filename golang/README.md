@@ -1895,9 +1895,9 @@ library.
 
 * [bazel](/bazel/README.md)
 
-## gazel
+## gazelle
 
-* [gazel](/gazelle/README.md)
+* [gazelle](/gazelle/README.md)
 
 
 ## present
@@ -1944,13 +1944,13 @@ This is a major present format.
 
 VS Code를 사용한다면 debug mode로 launch하자.
 
-## Test
+## Testify
 
-tests from VS Code
+* [testify](https://github.com/stretchr/testify)
 
-code coverage
+## Gomock
 
-table driven tests
+* [gomock](https://github.com/golang/mock)
 
 ## Benchmarks
 
