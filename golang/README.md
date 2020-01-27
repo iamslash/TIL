@@ -60,12 +60,14 @@
     - [go-wrk](#go-wrk)
     - [go-torch](#go-torch)
   - [bazel](#bazel)
-  - [gazel](#gazel)
+  - [gazelle](#gazelle)
   - [present](#present)
   - [Debug](#debug)
-  - [Test](#test)
+  - [Testify](#testify)
+  - [Gomock](#gomock)
   - [Benchmarks](#benchmarks)
   - [Profile](#profile)
+  - [Packer](#packer)
 - [Snippets](#snippets)
   - [HTTP Server](#http-server)
   - [gRPC Server](#grpc-server)
@@ -1950,7 +1952,7 @@ VS Code를 사용한다면 debug mode로 launch하자.
 
 ## Gomock
 
-* [gomock](https://github.com/golang/mock)
+* [gomock](gomock.md)
 
 ## Benchmarks
 
@@ -1961,6 +1963,14 @@ go test-bench
 ## Profile
 
 go-torch
+
+## Packer
+
+* [packr](https://github.com/gobuffalo/packr)
+
+----
+
+Includes files in go-binary.
 
 # Snippets
 
