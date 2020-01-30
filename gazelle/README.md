@@ -172,6 +172,9 @@ $ bazel run //cmd/main:main
 * update dependencies
 
 ```bash
+# change WORKSPACE with a dep
+$ bazel run //:gazelle -- update-repos gopkg.in/yaml.v2
+
 # change WORKSPACE with deps of go.mod
 $ bazel run //:gazelle -- update-repos -from_file=go.mod
 ```
