@@ -51,7 +51,7 @@ func HelloWorld() string {
 
 ```bash
 $ go mod init iamslash.com
-$ go guild ./...
+$ go build ./...
 $ go generate
 Hello World
 ```

@@ -2050,12 +2050,11 @@ func main() {
     $ cd internal/resource_manager/provision
     $ go run assets_generate.go
     ```
-  * remove `assets_generate.go`
   * why `go generate` does not work ???
   * why `vfsgendev` does not work ???
 
-* read from `assets_vfsdata.go`
-  * `template_builder.go`
+* `internal/resource_manager/provision/template_builder.go`
+  * read from `assets_vfsdata.go`
   
 ```go
 package provision
@@ -2079,6 +2078,13 @@ func ReadFiles() {
 	strData := string(b)
 	fmt.Println(strData)
 }
+```
+
+* build
+
+```bash
+$ go build ./...
+$ go build cmd/main/main.go
 ```
 
 # Snippets
