@@ -2014,10 +2014,10 @@ func main() {
 ```
 
 * generate `assets_vfsdata.go`
+  * How to use vfsgendev ???
 
 ```bash
 $ cd internal/resource_manager/provision
-$ 
 ```
 
 * read from `assets_vfsdata.go`
