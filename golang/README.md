@@ -57,6 +57,7 @@
     - [go build](#go-build)
     - [go test](#go-test)
     - [go mod](#go-mod)
+    - [go generate](#go-generate)
     - [go-wrk](#go-wrk)
     - [go-torch](#go-torch)
   - [bazel](#bazel)
@@ -67,7 +68,7 @@
   - [Gomock](#gomock)
   - [Benchmarks](#benchmarks)
   - [Profile](#profile)
-  - [Packer](#packer)
+  - [Vfsgen](#vfsgen)
 - [Snippets](#snippets)
   - [HTTP Server](#http-server)
   - [gRPC Server](#grpc-server)
@@ -1879,6 +1880,10 @@ $ go test -v -run ^Testxxx_xxx$
 
 [go mod](golangmodule.md)
 
+### go generate
+
+[go generate](gogenerate.md)
+
 ### go-wrk
 
 an HTTP benchmarking tool
@@ -1964,13 +1969,83 @@ go test-bench
 
 go-torch
 
-## Packer
+## Vfsgen
 
-* [packr](https://github.com/gobuffalo/packr)
+[vfsgen](https://github.com/shurcooL/vfsgen) takes an http.FileSystem and generates Go code that statically implements the provided http.FileSystem.
 
-----
+[vfsgen](https://github.com/shurcooL/vfsgen) is bettern than [packr](https://github.com/gobuffalo/packr). Because of the simple dependecy.
 
-Includes files in go-binary.
+* directory
+
+```
+.
+├── cmd
+│   └── main
+│       └── main.go
+├── go.mod
+├── go.sum
+└── internal
+    └── resource_manager
+        └── provision
+            ├── assets_vfsdata.go
+            ├── template_builder.go
+            └── templates
+                ├── a.yaml
+                ├── b.yaml
+                ├── c.yaml
+                ├── d.yaml
+                ├── e.yaml
+                └── f.yaml
+```
+
+* `cmd/main/main.go`
+
+```go
+package main
+
+import (
+	"iamslash.com/alpha/internal/resource_manager/provision"
+)
+
+func main() {
+	provision.ReadFiles()
+	//fmt.Println("Hello World !!!")
+}
+```
+
+* generate `assets_vfsdata.go`
+
+```bash
+$ cd internal/resource_manager/provision
+$ 
+```
+
+* read from `assets_vfsdata.go`
+  * `template_builder.go`
+  
+```go
+package provision
+
+import (
+	"fmt"
+	"log"
+	"net/http"
+	"os"
+
+	"github.com/shurcooL/httpfs/vfsutil"
+)
+
+func ReadFiles() {
+	var fs http.FileSystem = assets
+
+	b, err := vfsutil.ReadFile(fs, "/a.yaml")
+	if err != nil {
+		panic(err)
+	}
+	strData := string(b)
+	fmt.Println(strData)
+}
+```
 
 # Snippets
 
