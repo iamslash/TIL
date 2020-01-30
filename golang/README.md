@@ -1987,6 +1987,7 @@ go-torch
 └── internal
     └── resource_manager
         └── provision
+            ├── assets_generate.go
             ├── assets_vfsdata.go
             ├── template_builder.go
             └── templates
@@ -2013,12 +2014,45 @@ func main() {
 }
 ```
 
-* generate `assets_vfsdata.go`
-  * How to use vfsgendev ???
+* `internal/reousrce_manager/provision/assets_generate.go`
 
-```bash
-$ cd internal/resource_manager/provision
+```go
+// +build ignore
+//go:generate go run assets_generate.go
+
+package main
+
+import (
+	"log"
+	"net/http"
+
+	"github.com/shurcooL/vfsgen"
+)
+
+func main() {
+
+	var fs http.FileSystem = http.Dir("templates")
+
+	err := vfsgen.Generate(fs, vfsgen.Options{
+		PackageName:  "provision",
+		// BuildTags:    "!dev",
+		VariableName: "Assets",
+	})
+	if err != nil {
+		log.Fatalln(err)
+	}
+}
 ```
+
+* generate `assets_vfsdata.go`
+  * run generate go file
+    ```bash
+    $ cd internal/resource_manager/provision
+    $ go run assets_generate.go
+    ```
+  * remove `assets_generate.go`
+  * why `go generate` does not work ???
+  * why `vfsgendev` does not work ???
 
 * read from `assets_vfsdata.go`
   * `template_builder.go`
