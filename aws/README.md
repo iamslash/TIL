@@ -892,6 +892,9 @@ VPC 를 다른 AWS branch (S3) 와 private link 할 수 있다.
 
 # AWS-CLI
 
+* [bash-my-aws @ github](bash-my-aws https://github.com/bash-my-aws/bash-my-aws)
+  * simplified AWS CLI
+
 ## Install
 
 ### Install awscli on macOS
