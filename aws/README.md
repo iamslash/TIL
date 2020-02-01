@@ -95,6 +95,7 @@
   - [S3](#s3)
     - [Commands](#commands)
     - [CRR (Cross Region Replication)](#crr-cross-region-replication)
+  - [SAML login](#saml-login)
 
 ----
 
@@ -961,4 +962,6 @@ $ aws s3 cp /tmp/foo/ s3://bucket/ --recursive \
 
 replications between regions
 
+## SAML login
 
+* [How can I use the AWS CLI to call and store SAML credentials?](https://aws.amazon.com/ko/premiumsupport/knowledge-center/aws-cli-call-store-saml-credentials/)
