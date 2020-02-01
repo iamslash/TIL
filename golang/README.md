@@ -1878,7 +1878,7 @@ $ go test -v -run ^Testxxx_xxx$
 
 ### go mod
 
-[go mod](golangmodule.md)
+* [go mod](golangmodule.md)
 
 ### go generate
 
