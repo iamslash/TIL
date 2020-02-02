@@ -10,6 +10,11 @@
 
 # Examples
 
+* [AWS Quick Start](https://github.com/aws-quickstart)
+  * CloudFomration examples including GitHub Enterprise, Consul, MySQL, etc...
+  * [quickstart-github-enterprise](https://github.com/aws-quickstart/quickstart-github-enterprise)
+  * [quickstart-hashicorp-consul](https://github.com/aws-quickstart/quickstart-hashicorp-consul)
+  * [quickstart-amazon-aurora-mysql](https://github.com/aws-quickstart/quickstart-amazon-aurora-mysql)
 * [Free Templates for AWS Cloudformation](https://templates.cloudonaut.io/en/stable/)
   * Have [jenkins](https://templates.cloudonaut.io/en/stable/jenkins/) CloudFormation templates
 * [GitHub on AWS](https://enterprise.github.com/trial/boot?download_token=5750bba5e67c99905804)
