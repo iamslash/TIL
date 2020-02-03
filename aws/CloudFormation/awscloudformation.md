@@ -23,3 +23,28 @@
 
 # Basic Usages
 
+# Tips
+
+## Disable rollback
+
+* CloudFormation Stack 제작을 실패했을 때 기본적으로 RollBack 해버린다. 디버깅을 위해서 다음과 같은 옵션으로 RollBack 을 꺼둘 수 있다.
+
+  ```bash
+  $   aws cloudformation create-stack \
+  --disable-rollback \
+  --region "${AWS_REGION}" \
+  --stack-name "${CF_STACK_NAME}" \
+  --template-body "${TEMPLATE_BODY}" \
+  --capabilities "${CAPABILITIES}" \
+  --parameters \
+  ...
+  ```
+
+## Cloud-init output log
+
+* EC2 instance 를 생성한다면 user-data 를 디버깅할 필요가 있다. 다음과 같은 로그를 참고하자.
+
+  ```bash
+  $ vim /var/log/cloud-init.log
+  $ vim /var/log/cloud-init-output.log  
+  ```
