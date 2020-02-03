@@ -14,7 +14,7 @@ ADMIN_USER=\"$1\"
 
 #EC2_IP=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
 EC2_IP=$(hostname -I | awk '{print $1}')
-
+echo "private IP is ${EC2_IP}"
 
 ##########################################
 # Check status function

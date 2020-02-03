@@ -27,6 +27,7 @@ fi
 AWS_CMD='/usr/local/bin/aws'
 #EC2_IP=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
 EC2_IP=$(hostname -I | awk '{print $1}')
+echo "private IP is ${EC2_IP}"
 
 # ARGS for script
 # 1: GHE_CONSOLE_PASSWORD
