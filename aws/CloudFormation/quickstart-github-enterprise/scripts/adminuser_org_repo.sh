@@ -8,12 +8,13 @@
 # 3: GHE_ADMINUSER_PASSWD
 # 4: GHE_ORG
 # 5: GHE_REPO
+# 6: ec2 private ip
 
 ORG=\"$4\"
 ADMIN_USER=\"$1\"
 
-EC2_IP=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
-EC2_IP='localhost'
+#EC2_IP=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
+EC2_IP=$6
 
 
 ##########################################
@@ -47,24 +48,24 @@ fi
     grep "< Set-Cookie: logged_in=yes;" $TEMPDIR/github-curl.out
     rm -rf $TEMPDIR
 
-MAKE_ORG=$(curl -i -k -L -H "Content-Type: application/json" --write-out '%{http_code}' --silent -d "{\"login\": ${ORG}, \"admin\": ${ADMIN_USER}}" -X POST https://$1:$3@${EC2_IP}/api/v3/admin/organizations)
+# MAKE_ORG=$(curl -i -k -L -H "Content-Type: application/json" --write-out '%{http_code}' --silent -d "{\"login\": ${ORG}, \"admin\": ${ADMIN_USER}}" -X POST https://$1:$3@${EC2_IP}/api/v3/admin/organizations)
 
-RETURN_MAKE_ORG=`echo ${MAKE_ORG} | awk -F' ' '{print $NF}'`
-echo "The Make Org HTTP status code: " ${RETURN_MAKE_ORG}
+# RETURN_MAKE_ORG=`echo ${MAKE_ORG} | awk -F' ' '{print $NF}'`
+# echo "The Make Org HTTP status code: " ${RETURN_MAKE_ORG}
 
-# Checking status, creation of an Organization should return a 201 on success
-chkstatus $RETURN_MAKE_ORG
-echo $?
+# # Checking status, creation of an Organization should return a 201 on success
+# chkstatus $RETURN_MAKE_ORG
+# echo $?
 
-MAKE_REPO=$(curl -i -k -L -H "Content-Type: application/json" --write-out '%{http_code}' --silent -d "{\"name\": \"$5\", \"private\": \"true\", \"auto_init\": \"true\"}" -X POST https://$1:$3@${EC2_IP}/api/v3/orgs/$4/repos)
-# The above is supposed to return a 201
-RETURN_MAKE_REPO=`echo ${MAKE_REPO} | awk -F' ' '{print $NF}'`
-echo "The Make Repo HTTP status code: " ${RETURN_MAKE_REPO}
+# MAKE_REPO=$(curl -i -k -L -H "Content-Type: application/json" --write-out '%{http_code}' --silent -d "{\"name\": \"$5\", \"private\": \"true\", \"auto_init\": \"true\"}" -X POST https://$1:$3@${EC2_IP}/api/v3/orgs/$4/repos)
+# # The above is supposed to return a 201
+# RETURN_MAKE_REPO=`echo ${MAKE_REPO} | awk -F' ' '{print $NF}'`
+# echo "The Make Repo HTTP status code: " ${RETURN_MAKE_REPO}
 
-# Checking status, creation of an Organization should return a 201 on success
-chkstatus $RETURN_MAKE_REPO
-echo "The below is the exit code"
-echo $?
+# # Checking status, creation of an Organization should return a 201 on success
+# chkstatus $RETURN_MAKE_REPO
+# echo "The below is the exit code"
+# echo $?
 
 #rm -f ${ADMININFO}
-echo "Finished AWSQuickStart Bootstraping"
+echo "Finished GitHub Enterprise Bootstraping"
