@@ -8,13 +8,12 @@
 # 3: GHE_ADMINUSER_PASSWD
 # 4: GHE_ORG
 # 5: GHE_REPO
-# 6: ec2 private ip
 
 ORG=\"$4\"
 ADMIN_USER=\"$1\"
 
 #EC2_IP=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
-EC2_IP=$6
+EC2_IP=$(hostname -I | awk '{print $1}')
 
 
 ##########################################

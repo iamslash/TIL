@@ -26,13 +26,12 @@ fi
 
 AWS_CMD='/usr/local/bin/aws'
 #EC2_IP=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
-EC2_IP=$4
+EC2_IP=$(hostname -I | awk '{print $1}')
 
 # ARGS for script
 # 1: GHE_CONSOLE_PASSWORD
 # 2: GHE_S3_BUCKET
 # 3: GHE_LICENSE
-# 4: ec2 private ip
 
 
 # Copy down the license file from the S3 Bucket
