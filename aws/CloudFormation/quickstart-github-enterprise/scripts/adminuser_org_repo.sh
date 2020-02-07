@@ -66,5 +66,5 @@ curl -k -v -L -c $TEMPDIR/cookies https://$EC2_IP/login > $TEMPDIR/github-curl.o
 # echo "The below is the exit code"
 # echo $?
 
-rm -f ${ADMININFO}
+# rm -f ${ADMININFO}
 echo "Finished GitHub Enterprise Bootstraping"

@@ -69,6 +69,7 @@
   - [Benchmarks](#benchmarks)
   - [Profile](#profile)
   - [Vfsgen](#vfsgen)
+  - [IntelliJ IDEA](#intellij-idea)
 - [Snippets](#snippets)
   - [HTTP Server](#http-server)
   - [gRPC Server](#grpc-server)
@@ -2086,6 +2087,11 @@ func ReadFiles() {
 $ go build ./...
 $ go build cmd/main/main.go
 ```
+
+## IntelliJ IDEA
+
+* use plugins such as "Protobuf Support", "Go", "File Watchers".
+* set [File Watcher](https://tech.flyclops.com/posts/2016-06-14-goimports-intellij.html) for goimports.
 
 # Snippets
 
