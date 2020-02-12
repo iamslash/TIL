@@ -24,6 +24,7 @@
   - [디버깅](#%eb%94%94%eb%b2%84%ea%b9%85)
   - [압축](#%ec%95%95%ec%b6%95)
   - [에디터](#%ec%97%90%eb%94%94%ed%84%b0)
+  - [Files](#files)
   - [데몬 관리](#%eb%8d%b0%eb%aa%ac-%ea%b4%80%eb%a6%ac)
   - [Disk](#disk)
   - [Automation](#automation)
@@ -1374,6 +1375,13 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 ## 에디터
 
 * `vi, vim, emacs, nano, ed`
+
+## Files
+
+* rsync
+  * [sync 사용법 - data backup 포함](https://www.lesstif.com/pages/viewpage.action?pageId=12943658)
+  * `rsync -n -avrc /abc/home/sample1/* server2:/abc/home/sample2/` rsync dry-run
+  * `rsync -avz --progress -e 'ssh -p 10022' iamslash@example.com:/home/hello /home/world`
 
 ## 데몬 관리
 
