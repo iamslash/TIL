@@ -188,11 +188,13 @@ class Person implements Serializable {
 * core interfaces in Collections
 
 ```
+             Iterable
+                |
             Collection                Map
-         /    |    |    \              |
-       Set List  Queue Deque       SortedMap 
-        |
-       SortedSet
+         /    |    |                   |
+       Set List  Queue             SortedMap 
+        |          | 
+       SortedSet Deque
 ```
 
 * core classes in Collections
