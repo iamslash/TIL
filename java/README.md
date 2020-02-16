@@ -164,35 +164,35 @@ class Person implements Serializable {
 
 ## Collections compared c++ container
 
-| c++                  | java                            |
-|:---------------------|:--------------------------------|
-| `if, else`           | `if, else`                      |
-| `for, while`         | `for, while`                    |
-| `array`              | `Collections.unmodifiableList`  |
-| `vector`             | `Vector, ArrayList`             |
-| `deque`              | `Deque, ArrayDeque`             |
-| `forward_list`       | ``                              |
-| `list`               | `List, LinkedList`              |
+| c++                  | java                                   |
+| :------------------- | :------------------------------------- |
+| `if, else`           | `if, else`                             |
+| `for, while`         | `for, while`                           |
+| `array`              | `Collections.unmodifiableList`         |
+| `vector`             | `Vector, ArrayList`                    |
+| `deque`              | `Deque, ArrayDeque`                    |
+| `forward_list`       | ``                                     |
+| `list`               | `List, LinkedList`                     |
 | `stack`              | `Stack, Deque, ArrayDeque, LinkedList` |
-| `queue`              | `Queue, LinkedList`             |
-| `priority_queue`     | `Queue, PriorityQueue`          |
-| `set`                | `SortedSet, TreeSet`       |
-| `multiset`           | ``                              |
-| `map`                | `SortedMap, TreeMap`       |
-| `multimap`           | ``                              |
-| `unordered_set`      | `Set, HashSet`                  |
-| `unordered_multiset` | ``                              |
-| `unordered_map`      | `Map, HashMap`                  |
-| `unordered_multimap` | ``                              |
+| `queue`              | `Queue, LinkedList`                    |
+| `priority_queue`     | `Queue, PriorityQueue`                 |
+| `set`                | `SortedSet, TreeSet`                   |
+| `multiset`           | ``                                     |
+| `map`                | `SortedMap, TreeMap`                   |
+| `multimap`           | ``                                     |
+| `unordered_set`      | `Set, HashSet`                         |
+| `unordered_multiset` | ``                                     |
+| `unordered_map`      | `Map, HashMap`                         |
+| `unordered_multimap` | ``                                     |
 
 * core interfaces in Collections
 
 ```
              Iterable
                 |
-            Collection                Map
-         /    |    |                   |
-       Set List  Queue             SortedMap 
+            Collection        Map
+         /    |    |           |
+       Set List  Queue     SortedMap 
         |          | 
        SortedSet Deque
 ```
@@ -507,15 +507,18 @@ for (int i = 0; i < m; ++i) {
 - [Java Collection Framework Technote](https://docs.oracle.com/javase/8/docs/technotes/guides/collections/)
 - [Outline of the Collections Framework](http://docs.oracle.com/javase/8/docs/technotes/guides/collections/reference.html)
 - [Collection Framework](https://upload.wikimedia.org/wikibooks/en/thumb/c/ca/Java_collection_implementation.jpg/700px-Java_collection_implementation.jpg)
+- [Collections in Java](https://www.javatpoint.com/collections-in-java)
+
+![](img/java-collection-hierarchy.png)
 
 ## Collection Implementations
 
-| Interface | Hash Table         | Resizable Array                 | Balanced Tree | Linked List        | Hash Table + Linked List        |
-| :-------- | :----------------- | :-----------------------------: | :--------     | :----------------- | :-----------------------------: |
-| Set       | HashSet           |                                 | TreeSet       |                    | LinkedHashSet                   |
-| List      |                    | ArrayList                       |               | LinkedList         |                                 |
-| Deque     |                    | ArrayDeque                      |               | LinkedList         |                                 |
-| Map       | HashMap            |                                 | TreeMap       |                    | LinkedHashMap                   |
+| Interface | Hash Table | Resizable Array | Balanced Tree | Linked List | Hash Table + Linked List |
+| :-------- | :--------- | :-------------: | :------------ | :---------- | :----------------------: |
+| Set       | HashSet    |                 | TreeSet       |             |      LinkedHashSet       |
+| List      |            |    ArrayList    |               | LinkedList  |                          |
+| Deque     |            |   ArrayDeque    |               | LinkedList  |                          |
+| Map       | HashMap    |                 | TreeMap       |             |      LinkedHashMap       |
 
 
 ## Data Types
@@ -540,11 +543,11 @@ String a = "\u001";
 ```java
 //// if
 int x = 30;
-if(x == 10) {
+if (x == 10) {
    System.out.print("Value of X is 10");
-} else if( x == 20 ) {
+} else if ( x == 20 ) {
    System.out.print("Value of X is 20");
-} else if( x == 30 ) {
+} else if ( x == 30 ) {
    System.out.print("Value of X is 30");
 } else {
    System.out.print("This is else statement");
@@ -552,7 +555,7 @@ if(x == 10) {
 //// switch
 // char grade = args[0].charAt(0);
 char grade = 'C';
-switch(grade) {
+switch (grade) {
    case 'A' :
       System.out.println("Excellent!"); 
       break;
@@ -576,13 +579,13 @@ System.out.println("Your grade is " + grade);
 ```java
 //// while
 int x = 10;
-while(x < 20) {
+while (x < 20) {
    System.out.print("value of x : " + x );
    x++;
    System.out.print("\n");
 }
 //// for
-for(int x = 10; x < 20; x = x + 1) {
+for (int x = 10; x < 20; x = x + 1) {
    System.out.print("value of x : " + x );
    System.out.print("\n");
 }
@@ -619,7 +622,7 @@ for(int x : numbers) {
 }
 System.out.print("\n");
 String [] names = {"James", "Larry", "Tom", "Lacy"};
-for( String name : names) {
+for(String name : names) {
    System.out.print( name );
    System.out.print(",");
 }
@@ -733,20 +736,20 @@ runMe(() -> System.out.println( "Run!" ));
 
 ## Anonymous Classes
 
-anonymous function 처럼 interface 를 구현한 클래스를 이름없이 생성할 수 있다. 다음은 `Runnable` 인터페이스를 상속받는 클래스를 이름없이 생성하는 예이다.
+anonymous function 처럼 interface 를 구현한 class 의 instance 를 이름없이 생성할 수 있다. 다음은 `Runnable` interface 를 상속받는 class 의 instance 를 이름없이 생성하는 예이다.
 
 ```java
 public class AnonymousClass {
-   public static void main( String[] args ) {
-      new Thread(
-         new Runnable() {
-            @Override
-            public void run() {
-               // Implementation here
-            }
-         }
-      ).start();
-   }
+  public static void main( String[] args ) {
+    new Thread(
+      new Runnable() {
+        @Override
+        public void run() {
+          // Implementation here
+        }
+      }
+    ).start();
+  }
 }
 ```
 
@@ -927,18 +930,18 @@ public int aaa;
 
 다음은 builtin annotation 들이다.
 
-| name | desc | type |
-|:-----|:-----|:-----|
-| `@Deprecated` | something deprecated | |
-| `@Override` | overrided method | |
-| `@SuppressWarnings` | suppress compile warnings | |
-| `@SafeVarargs` | suppress variable arguments warning | |
-| `@Retention` | retention of annotation | `SOURCE, CLASS, RUNTIME` |
-| `@Target` | target of annotation | `ANNOTATION_TYPE, CONSTRUCTOR, FIELD, LOCAL_VARIABLE, METHOD, PACKAGE, PARAMETER, TYPE, TYPE_PARAMETER, TYPE_USE` |
-| `@Documented` | documented in javadoc | |
-| `@Inherited` | this annotation will be inherited | |
-| `@FunctionalInterface` | for functional interface | |
-| `@Repeatable` | repeatable annotation | |
+| name                   | desc                                | type                                                                                                              |
+| :--------------------- | :---------------------------------- | :---------------------------------------------------------------------------------------------------------------- |
+| `@Deprecated`          | something deprecated                |                                                                                                                   |
+| `@Override`            | overrided method                    |                                                                                                                   |
+| `@SuppressWarnings`    | suppress compile warnings           |                                                                                                                   |
+| `@SafeVarargs`         | suppress variable arguments warning |                                                                                                                   |
+| `@Retention`           | retention of annotation             | `SOURCE, CLASS, RUNTIME`                                                                                          |
+| `@Target`              | target of annotation                | `ANNOTATION_TYPE, CONSTRUCTOR, FIELD, LOCAL_VARIABLE, METHOD, PACKAGE, PARAMETER, TYPE, TYPE_PARAMETER, TYPE_USE` |
+| `@Documented`          | documented in javadoc               |                                                                                                                   |
+| `@Inherited`           | this annotation will be inherited   |                                                                                                                   |
+| `@FunctionalInterface` | for functional interface            |                                                                                                                   |
+| `@Repeatable`          | repeatable annotation               |                                                                                                                   |
 
 `@Target` 를 사용하면 다음과 같이 annotation 의 대상이 되는 자료형을 정할 수 있다.
 
