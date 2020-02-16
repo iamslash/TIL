@@ -556,6 +556,56 @@ SELECT A.CustomerName AS CustomerName1, B.CustomerName AS CustomerName2, A.City
 
 ## Union
 
+* [UNION과 UNION ALL 의 차이 및 주의 사항](http://intomysql.blogspot.com/2011/01/union-union-all.html)
+
+
+`UNION` 은 `UNION DISTINCT` 와 같다.
+
+```sql
+mysql> SELECT id, name FROM A;
++------+--------+
+| id   | name   |
++------+--------+
+|    1 | foo    |
+|    2 | bar    |
++------+--------+
+
+mysql> SELECT id, name FROM B;
++------+--------+
+| id   | name   |
++------+--------+
+|    1 | foo    |
+|    2 | bar    |
++------+--------+
+
+mysql> SELECT id, name FROM (
+  SELECT id, name FROM A
+  UNION ALL
+  SELECT id, name FROM B
+) x;
++------+--------+
+| id   | name   |
++------+--------+
+|    1 | foo    |
+|    2 | bar    |
+|    1 | foo    |
+|    2 | bar    |
++------+--------+
+
+
+mysql> SELECT id, name FROM (
+  SELECT id, name FROM A
+  UNION
+  SELECT id, name FROM B
+) x;
++------+--------+
+| id   | name   |
++------+--------+
+|    1 | foo    |
+|    2 | bar    |
++------+--------+
+```
+
 ```sql
 SELECT City FROM Customers
   UNION
