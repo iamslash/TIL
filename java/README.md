@@ -28,6 +28,7 @@
 - [Advanced Usage](#advanced-usage)
   - [jvm architecture](#jvm-architecture)
   - [jvm garbage collector](#jvm-garbage-collector)
+  - [Stream](#stream)
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
@@ -1274,6 +1275,37 @@ String result = valueOpt.orElseThrow(CustomException::new).toUpperCase();
 jvm 의 gc 는 크게 `Young Generation, Old Generation, Permanent Generation` 으로 나누어 진다. 영원히 보존해야 되는 것들은 `Permanent Generation` 으로 격리된다. `Young Generation` 에서 `minor collect` 할때 마다 살아남은 녀석들중 나이가 많은 녀석들은 `Old Generation` 으로 격리된다. 
 
 `Young Generation` 은 다시 `eden, S0, S1` 으로 나누어 진다. `eden` 이 꽉 차면 `minor collect` 이벤트가 발생하고 `eden, S0` 혹은 `eden, S1` 의 `unreferenced object` 는 소멸되고 `referenced object` 는 나이가 하나 증가하여 `S1` 혹은 `S0` 으로 옮겨진다. 나이가 많은 녀석들은 `Old Genration` 으로 옮겨진다. `eden, S0` 과 `eden, S1` 이 교대로 사용된다.
+
+## Stream
+
+* [자바8 스트림 API 소개](https://www.slideshare.net/madvirus/8-api)
+* [Java 8 Parallel Streams Examples](https://mkyong.com/java8/java-8-parallel-streams-examples/)
+
+`Stream::parallelStream` 을 이용하면 병렬연산을 쉽게 할 수 있다.
+
+```java
+public class Solution {
+	private Stream<String> crawlMulti(String startUrl, HtmlParser htmlParser,
+													String hostname, Set<String> seen) {
+		Stream<String> stream = htmlParser.getUrls(startUrl)
+				.parallelStream()
+				.filter(url -> url.substring(7, url.length()).startsWith(hostname))
+				.filter(url -> seen.add(url))
+				.flatMap(url -> crawlMulti(url, htmlParser, hostname, seen));
+		return Stream.concat(Stream.of(startUrl), stream);
+	}
+	private String getHostname(String url) {
+		return url.substring(7).split("/")[0];
+	}
+	public List<String> crawl(String startUrl, HtmlParser htmlParser) {
+		String hostname = getHostname(startUrl);
+		Set<String> seen = ConcurrentHashMap.newKeySet();
+		seen.add(startUrl);
+		return crawlMulti(startUrl, htmlParser, hostname, seen)
+				.collect(Collectors.toList());
+	}	
+}
+```
 
 # Quiz
 
