@@ -173,7 +173,7 @@ class Person implements Serializable {
 | `deque`              | `Deque, ArrayDeque`             |
 | `forward_list`       | ``                              |
 | `list`               | `List, LinkedList`              |
-| `stack`              | `Stack, Deque`                  |
+| `stack`              | `Stack, Deque, ArrayDeque, LinkedList` |
 | `queue`              | `Queue, LinkedList`             |
 | `priority_queue`     | `Queue, PriorityQueue`          |
 | `set`                | `SortedSet, TreeSet`       |
@@ -510,7 +510,7 @@ for (int i = 0; i < m; ++i) {
 
 | Interface | Hash Table         | Resizable Array                 | Balanced Tree | Linked List        | Hash Table + Linked List        |
 | :-------- | :----------------- | :-----------------------------: | :--------     | :----------------- | :-----------------------------: |
-| Set       | HashSset           |                                 | TreeSet       |                    | LinkedHashSet                   |
+| Set       | HashSet           |                                 | TreeSet       |                    | LinkedHashSet                   |
 | List      |                    | ArrayList                       |               | LinkedList         |                                 |
 | Deque     |                    | ArrayDeque                      |               | LinkedList         |                                 |
 | Map       | HashMap            |                                 | TreeMap       |                    | LinkedHashMap                   |
