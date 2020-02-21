@@ -1136,6 +1136,17 @@ public void interate( final Collection<? super Integer> objects) {
 }
 ```
 
+Wildcard declaration 은 [Difference between <? super T> and <? extends T> in Java @ stackoverflow](https://stackoverflow.com/questions/4343202/difference-between-super-t-and-extends-t-in-java) 을 참고하여 이해하자. 항상 PECS: "Producer Extends, Consumer Super" 를 기억해야 함.
+
+```java
+public class Collections { 
+  public static <T> void copy(List<? super T> dest, List<? extends T> src) {
+      for (int i = 0; i < src.size(); i++) 
+        dest.set(i, src.get(i)); 
+  } 
+}
+```
+
 ## Concurrency
 
 * [Java Concurrency and Multithreading Tutorial](http://tutorials.jenkov.com/java-concurrency)
