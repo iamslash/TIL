@@ -12,6 +12,9 @@
 - [Spring REST API](#spring-rest-api)
 - [Spring Security](#spring-security)
 - [Spring Batch](#spring-batch)
+- [Tips](#tips)
+  - [Http requests logging](#http-requests-logging)
+  - [Http responses logging](#http-responses-logging)
 
 ----
 
@@ -21,6 +24,8 @@
 
 # Materials
 
+- [baeldung spring](https://www.baeldung.com/start-here)
+  - 킹왕짱 튜토리얼
 - [예제로 배우는 스프링 입문 (개정판) @ inflearn](https://www.inflearn.com/course/spring_revised_edition#)
   - [spring-petclinic @ github](https://github.com/spring-projects/spring-petclinic)
 - [백기선의 Spring 완전 정복 로드맵 - 에이스 개발자가 되자! @ inflearn](https://www.inflearn.com/roadmaps/8)
@@ -123,3 +128,57 @@ batch job 을 spring library 를 이용해서 만들어 보자.
   * [src](https://github.com/spring-guides/gs-batch-processing)
 * [2. Spring Batch 가이드 - Batch Job 실행해보기](https://jojoldu.tistory.com/325)
 * [Spring Batch](https://spring.io/projects/spring-batch)
+
+# Tips
+
+## Http requests logging
+
+* [Spring – Log Incoming Requests](https://www.baeldung.com/spring-http-logging)
+
+* `src/main/java/com.iamslash.alpha.common.RequestLoggingFilterConfig.java`
+
+```java
+package org.springframework.security.oauth.samples.common;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.CommonsRequestLoggingFilter;
+
+@Configuration
+public class RequestLoggingFilterConfig {
+
+  @Bean
+  public CommonsRequestLoggingFilter logFilter() {
+    CommonsRequestLoggingFilter filter
+            = new CommonsRequestLoggingFilter();
+    filter.setIncludeQueryString(true);
+    filter.setIncludePayload(true);
+    filter.setMaxPayloadLength(10000);
+    filter.setIncludeHeaders(true);
+    filter.setAfterMessagePrefix("REQUEST DATA : \n");
+    return filter;
+  }
+}
+```
+
+* `src/main/resources/application.yaml`
+
+```yaml
+server:
+  port: 8092
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+    org.springframework.web.filter: DEBUG
+    org.springframework.web.filter.CommonsRequestLoggingFilter: DEBUG
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: INFO
+#    org.springframework.boot.autoconfigure: DEBUG
+```
+
+## Http responses logging
+
+* [Logging Spring WebClient Calls](https://www.baeldung.com/spring-log-webclient-calls)
+
