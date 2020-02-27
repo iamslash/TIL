@@ -25,9 +25,13 @@
     - [closure](#closure)
     - [IIFE(Immediately-invoked function expression)](#iifeimmediately-invoked-function-expression)
     - [arrow function (ES6)](#arrow-function-es6)
+  - [Method](#method)
   - [hoisting](#hoisting)
   - [scope](#scope)
+  - [this](#this)
   - [execution context](#execution-context)
+  - [Prototype](#prototype)
+  - [Class](#class)
   - [event loop](#event-loop)
   - [background](#background)
   - [task queue](#task-queue)
@@ -637,7 +641,9 @@ var a = function f(a, b) {
 
 ### closure
 
-자신이 생성될때의 스코프에서 알 수 있었던 변수를 기억하는 함수
+함수와 함수가 선언된 환경의 조합
+
+A closure is the combination of a function and the lexical environment within which that function was declared.
 
 ```js
 var counter = function() {
@@ -682,9 +688,27 @@ var b = (a, b) => {
 }
 ```
 
+## Method
+
+`.` 뒤의 함수는 method 이다.
+
+```js
+var obj = {
+  a: 1,
+  b: function foo() {
+    console.log(this);
+  };
+  c: function() {
+    console.log(this.a);
+  }
+}
+obj.b(); // b is a method
+obj.c(); // c is a method
+```
+
 ## hoisting
 
-변수를 선언하고 초기화했을때 선언부분이 최상단으로 끌어올려지는 현상
+변수를 선언하고 초기화했을때 선언부분이 최상단으로 끌어올려지는 현상. 함수가 실행되면 hoisting 및 this binding 을 하고 함수의 코드를 하나씩 실행한다.
 
 ```js
 console.log(zero); // 에러가 아니라 undefined
@@ -722,7 +746,7 @@ function sayWow() { // (2) 선언과 동시에 초기화(호이스팅)
 
 ## scope
 
-lexical scoping
+함수가 실행되면 scope 이 만들어 지고 execution context 가 생성된다.
 
 ```js
 var name = 'zero';
@@ -750,11 +774,344 @@ function wrapper() {
 wrapper(); // zero
 ```
 
+## this
+
+* 전역공간에서 `this` 는 `window/global` 이다. 
+* 함수내부에서 `this` 는 `window/global 이다.`
+* 메소드 호출시 `this` 는 `.` 앞의 객체이다.
+* callback 에서 `this` 는 함수내부에서와 같다.
+
+
+```js
+function a(x, y, z) {
+  console.log(this, x, y, z);
+}
+var b = {
+  c: 'eee'
+}
+a.call(b, 1, 2, 3)
+a.apply(b, [1, 2, 3])
+var c = a.bind(b);
+c(1, 2, 3);
+var d = a.bind(b, 1, 2);
+d(3);
+```
+
+* 생성자함수에서 `this` 는 인스턴스이다.
+
+```js
+function Person(n, a) {
+  this.name = n;
+  this.age = a;
+}
+var foo = new Person('Foo', 30);
+console.log(foo);
+```
+
 ## execution context
 
 `global context` 생성후 함수 호출 할때 마다 `execution context` 가
 생성된다. `execution context` 는 `arguments, variable, scope chain, this` 가 저장된다. 함수가 실행될때 그 함수의 `execution context` 에 변수가 없다면 `scope
 chain` 을 따라 올라가며 검색한다. 함수 실행이 종료되면 `execution context` 는 사라진다.
+
+## Prototype
+
+Contructor function 이 있을 때 new 연산자를 사용하여 instance 를 생성했다고 해보자. 이때 Constructor function 의 prototype 과 instance 의 `__prototype__` 은 같은 객체를 가리킨다. 
+
+`Array` constructor 로 new 연산자를 사용하여 `[1, 2, 3]` 을 생성했다고 해보자. 이때, `Array` 는 `from(), isArray(), of(), arguments, length, name, prototype` 의 property 를 갖고 있다. 이때 `Array.prototype` 은 `[1, 2, 3].__prototype__` 과 같다. `Array.prototype` 은 다시 `concat(), filter(), forEach(), map(), push(), pop()` 등의 property 를 갖는다.
+
+또한 `__prototype__` 은 생략 가능하다. 따라서 다음의 표현은 모두 같다.
+
+```js
+[construct].prototype
+[instance].__proto__
+[instance]
+Object.getPrototypeOf([instance])
+```
+
+또한 생성자 함수는 다음과 같은 방법으로 접근 가능하다.
+
+```js
+[CONSTRUCTOR]
+[CONSTRUCTOR].prototype.constructor
+(Object.getPrototypeOf([instance])).constructor
+[instance].__proto__.constructor
+[instance].constructor
+```
+
+`prototype` 을 이용하여 메소드를 상속해 보자. 다음과 같이 Person constructor 를 선언하자.
+
+```js
+function Person(n, a) {
+  this.name = n;
+  this.age = a;
+}
+var foo = new Person('Foo', 30);
+var bar = new Person('Bar', 25);
+foo.setOlder = function() {
+  this.age += 1;
+}
+foo.getAge = function() {
+  return this.age;
+}
+bar.setOlder = function() {
+  this.age += 1;
+}
+bar.getAge = function() {
+  return this.age;
+}
+```
+
+`prototype` 을 이용하여 setOlder, getAge 와 같은 duplicates 를 제거해보자.
+
+```js
+function Person(n, a) {
+  this.name = n;
+  this.age = a;
+}
+Person.prototype.setOlder = function() {
+  this.age += 1;
+}
+Person.prototype.getAge = function() {
+  return this.age;
+}
+var foo = new Person('Foo', 30);
+var bar = new Person('Bar', 25);
+```
+
+`foo.__proto__.setOlder(), foo.__proto__.getAge()` 는 NaN 이다. this 가 `__proto__` 이기 때문이다. `foo.setOlder(); foo.getOlder();` 는 정상이다.
+
+이번에는 prototype chaining 을 활용하는 예를 살펴보자.
+
+```js
+var arr = [1, 2, 3];
+console.log(arr.toString()); 
+// 1,2,3
+```
+
+출력의 형태를 바꾸기 위해 다음과 같이 수정한다.
+
+```js
+var arr = [1, 2, 3];
+arr.toString = function() {
+  return this.join('_');
+}
+console.log(arr.toString());
+// 1_2_3
+```
+
+call 함수를 사용하여 this 를 바꾸어 실행해보자.
+
+```js
+var arr = [1, 2, 3];
+arr.toString = function() {
+  return this.join('_');
+}
+console.log(arr.toString());
+// 1_2_3
+console.log(arr.__proto__.toString.call(arr));
+// 1,2,3
+console.log(arr.__proto__.__proto__.toString.call(arr));
+// [object Array]
+```
+
+이번에는 Array.prototype 에 toString 을 정의하자.
+
+```js
+var arr = [1, 2, 3];
+Array.prototype.toString = function() {
+  return '[' + this.join(', ') + ']';
+}
+console.log(arr.toString());
+// [1, 2, 3]
+console.log(arr.__proto__.toString.call(arr));
+// [1, 2, 3]
+console.log(arr.__proto__.__proto__.toString.call(arr));
+// [object Array]
+```
+
+## Class
+
+Array 는 class 이다. Array 를 new 연산자를 이용하여 생성한 `[1, 2, 3]` 은 instance 이다. Array 는 다음과 같이 static methods, static properties, methods 로 구성된다.
+
+```
+Array.from()                -- static methods
+     .isArray()             -- static methods
+     .of()                  -- static methods
+
+     .arguments             -- static properties
+     .length                -- static properties
+     .name                  -- static properties
+     
+     .prototype.concat()    -- prototype methods
+               .filter()    -- prototype methods
+               .forEach()   -- prototype methods
+               .map()       -- prototype methods
+               .push()      -- prototype methods
+               .pop()       -- prototype methods
+```
+
+다음과 같이 Person 을 정의해 보자.
+
+```js
+function Person(n, a) {
+  this._name = n;
+  this._age = a;
+}
+// static methods
+Person.getInformations = function(instance) {
+  return {
+    name: instance._name;
+    age: instance._age;
+  }
+}
+// prototype method
+Person.prototype.getName = function() {
+  return this._name;
+}
+// prototype method
+Person.prototype.getAge = function() {
+  return this._age;
+}
+```
+
+다음은 prototype chaining 을 활용하여 Person, Employee  의 상속을 구현한 것이다.
+
+```js
+function Person(n, a) {
+  this.name = n || 'noname';
+  this.age = a || 'unknown';
+}
+Person.prototype.getName = function() {
+  return this.name;
+}
+Person.prototype.getAge = function() {
+  return this.age;
+}
+function Employee(n, a, p) {
+  this.name = n || 'noname';
+  this.age = a || 'unknown';
+  this.position = p || 'unknown';
+}
+// 다음은 상속 구현의 핵심이다.
+Employee.prototype = new Person();
+Employee.prototype.constructor = Employee;
+Employee.prototype.getPosition = function() {
+  return this.position;
+}
+
+var foo = new Employee('Foo', 30, 'CEO');
+console.dir(foo);
+```
+
+그러나 `Person.prototype` 은 `name, age` prototype 을 갖고 있다. 이것을 `Bridge` constructor 를 만들어서 해결해보자.
+
+```js
+function Person(n, a) {
+  this.name = n || 'noname';
+  this.age = a || 'unknown';
+}
+Person.prototype.getName = function() {
+  return this.name;
+}
+Person.prototype.getAge = function() {
+  return this.age;
+}
+function Employee(n, a, p) {
+  this.name = n || 'noname';
+  this.age = a || 'unknown';
+  this.position = p || 'unknown';
+}
+function Bridge() {}
+Bridge.prototype = Person.prototype;
+Employee.prototype = new Bridge();
+Employee.prototype.constructor = Employee;
+Employee.prototype.getPosition = function() {
+  return this.position;
+}
+```
+
+위의 방법은 ES5 에서 자주 등장한다. 더글라스는 extendClass 함수를 사용하여 재활용할 것을 제안했다.
+
+```js
+var extendClass = (function() {
+  function Bridge(){}
+  return function(Parent, Child) {
+    Bridge.prototype = Parent.prototype;
+    Child.protype = new Bridge();
+    Child.prototype.constructor = Child;
+  }
+})();
+extendClass(Person, Employee);
+Employee.prototype.getPosition = function() {
+  return this.position;
+}
+```
+
+이번에는 superClass 를 이용하여 `name, age` 의 duplicates 를 해결해 보자.
+
+```js
+function Person(n, a) {
+  this.name = n || 'noname';
+  this.age = a || 'unknown';
+}
+Person.prototype.getName = function() {
+  return this.name;
+}
+Person.prototype.getAge = function() {
+  return this.age;
+}
+function Employee(n, a, p) {
+  this.superClass(n, a); // ***
+  this.position = p || 'unknown';
+}
+function Bridge() {}
+Bridge.prototype = Person.prototype;
+Employee.prototype = new Bridge();
+Employee.prototype.constructor = Employee;
+Employee.prototype.getPosition = function() {
+  return this.position;
+}
+var extendClass = (function() {
+  function Bridge(){}
+  return function(Parent, Child) {
+    Bridge.prototype = Parent.prototype;
+    Child.protype = new Bridge();
+    Child.prototype.constructor = Child;
+    Child.prototype.superClass = Parent; // ***
+  }
+})();
+extendClass(Person, Employee);
+Employee.prototype.getPosition = function() {
+  return this.position;
+}
+```
+
+그러나 ECMA6 에서는 extends 를 활용하여 더욱 간단히 상속을 구현할 수 있다.
+
+```js
+class Person {
+  constuctor(n, a) {
+    this.name = n || 'noname';
+    this.age = a || 'unknown';
+  }
+  getName() {
+    return this.name;
+  }
+  getAge() {
+    return this.age;
+  }
+}
+class Employee extends Person {
+  constructor(n, a, p) {
+    super(n, a);
+    this.position = p || 'noposition';
+  }
+  getPosition() {
+    return this.position;
+  }
+}
+```
 
 ## event loop
 
