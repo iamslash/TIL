@@ -26,8 +26,9 @@
     - [IIFE(Immediately-invoked function expression)](#iifeimmediately-invoked-function-expression)
     - [arrow function (ES6)](#arrow-function-es6)
   - [Method](#method)
-  - [hoisting](#hoisting)
   - [scope](#scope)
+  - [hoisting](#hoisting)
+  - [TDZ (Temporal Dead Zone)](#tdz-temporal-dead-zone)
   - [this](#this)
   - [execution context](#execution-context)
   - [Prototype](#prototype)
@@ -51,6 +52,12 @@ java script에 대해 정리한다.
 
 # Essentials
 
+* [Javascript 핵심 개념 알아보기 - JS Flow](https://www.inflearn.com/course/%ED%95%B5%EC%8B%AC%EA%B0%9C%EB%85%90-javascript-flow/dashboard)
+  * inflearn 유료 강좌 흐름
+* [Javascript ES6+ 제대로 알아보기 - 초급](https://www.inflearn.com/course/ecmascript-6-flow/dashboard)
+  * inflearn 유료 강좌 기초
+* [Javascript ES6+ 제대로 알아보기 - 중급](https://www.inflearn.com/course/es6-2#)
+  * inflearn 유료 강좌 중급
 * [JavaScript 재입문하기 (JS ​튜토리얼)](https://developer.mozilla.org/ko/docs/A_re-introduction_to_JavaScript)
   * Custom Objects (new 다음에 function) 이 어떻게 동작하는지 알 수 있다.  
 * [learn javascript in Y minutes](https://learnxinyminutes.com/docs/javascript/)
@@ -706,9 +713,40 @@ obj.b(); // b is a method
 obj.c(); // c is a method
 ```
 
+## scope
+
+변수의 유효범위를 말한다. 함수가 정의 되면 scope 가 만들어진다. ES6 부터는 block 역시 scope 를 생성한다.
+
+```js
+var name = 'zero';
+function log() {
+  console.log(name);
+}
+
+function wrapper() {
+  name = 'nero';
+  log();
+}
+wrapper(); // nero
+```
+
+```js
+var name = 'zero';
+function log() {
+  console.log(name);
+}
+
+function wrapper() {
+  var name = 'nero';
+  log();
+}
+wrapper(); // zero
+```
+
+
 ## hoisting
 
-변수를 선언하고 초기화했을때 선언부분이 최상단으로 끌어올려지는 현상. 함수가 실행되면 hoisting 및 this binding 을 하고 함수의 코드를 하나씩 실행한다.
+function scope, block scope 에서 변수를 선언하고 초기화하면 1) 선언부분이 맨 위로 끌어올려지고 2) undefined 가 할당된다. 함수가 실행되면 scope, execution context 가 생성되고 hoisting 및 this binding 을 한다. 그리고 함수의 코드를 하나씩 실행한다. ES6 의 hoisting 은 1) 만 하고 2) 는 없다.
 
 ```js
 console.log(zero); // 에러가 아니라 undefined
@@ -744,35 +782,9 @@ function sayWow() { // (2) 선언과 동시에 초기화(호이스팅)
 }
 ```
 
-## scope
+## TDZ (Temporal Dead Zone)
 
-함수가 실행되면 scope 이 만들어 지고 execution context 가 생성된다.
-
-```js
-var name = 'zero';
-function log() {
-  console.log(name);
-}
-
-function wrapper() {
-  name = 'nero';
-  log();
-}
-wrapper(); // nero
-```
-
-```js
-var name = 'zero';
-function log() {
-  console.log(name);
-}
-
-function wrapper() {
-  var name = 'nero';
-  log();
-}
-wrapper(); // zero
-```
+...
 
 ## this
 
@@ -1512,11 +1524,3 @@ async function fooAsync() {
 }
 await fooAsync().then(() => console.log("done"));
 ```
-
-
-
-
-
-
-
-
