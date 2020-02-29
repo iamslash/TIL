@@ -22,6 +22,29 @@ Java SE 7 Edition](https://docs.oracle.com/javase/specs/jvms/se7/html/index.html
 
 ![](jvm.png)
 
+# Class Loader
+
+class loader 는 AppClassloader, PlatformClassLoader, BootstrapClassLoader 와 같이 3 가지가 존재한다.
+
+```java
+public class App {
+  public static void main(String[] args) {
+    ClassLoad classLoader = App.class.getClassLoader();
+    System.out.println(classLoader);
+    System.out.println(classLoader.getParent());
+    System.out.println(classLoader.getParent().getParent()); // null
+  }
+}
+```
+
+Class Loader 의 Linking 은 다음과 같이 3 단계로 구성된다.
+
+* Verify: .class 가 유효한가?
+* Prepare: allocate memory for class variables, static variables
+* Resolve: exchange symbolic memory references with real memory references in method area
+
+Initialization 은 static variables 의 값을 할당한다. static block 도 실행한다.
+
 # Example
 
 다음은 `Foo.java, Main.java` 를 작성하여 `javac Foo.java Main.java` 와 

@@ -21,6 +21,7 @@
   - [Annotation](#annotation)
   - [Generics](#generics)
   - [Concurrency](#concurrency)
+  - [Test](#test)
   - [What's new Java8](#whats-new-java8)
     - [Interface Default and Static Methods](#interface-default-and-static-methods)
     - [Method References](#method-references)
@@ -29,6 +30,9 @@
   - [jvm architecture](#jvm-architecture)
   - [jvm garbage collector](#jvm-garbage-collector)
   - [Stream](#stream)
+  - [Java code coverage library](#java-code-coverage-library)
+  - [Java Byte Code Manipulation library](#java-byte-code-manipulation-library)
+  - [Java Lombok](#java-lombok)
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
@@ -908,91 +912,7 @@ public class DaysOfTheWeek extends Enum<DaysOfTheWeek> {
 
 ## Annotation
 
-annotation 은 특수한 interface 이다. `@interface` 를 이용하여 다음과 같이 선언한다. class, method, field 등등에 `key=value` 형태의 추가정보를 주입할 수 있다.
-
-```java
-public @interface SimpleAnnotation {
-}
-
-public @interface SimpleAnnotationWithAttributes {
-   String name();
-   int order() default 0;
-}
-```
-
-예를 들어 다음과 같이 `SimpleAnnotationWithValue` 를 선언하고 field `aaa` 에 사용하면 `aaa` 에 `value=new annotation` 가 추가된다.
-
-```java
-public @interface SimpleAnnotationWithValue {
-   String value();
-}
-
-@SimpleAnnotationWithValue("new annotation")
-public int aaa;
-```
-
-다음은 builtin annotation 들이다.
-
-| name                   | desc                                | type                                                                                                              |
-| :--------------------- | :---------------------------------- | :---------------------------------------------------------------------------------------------------------------- |
-| `@Deprecated`          | something deprecated                |                                                                                                                   |
-| `@Override`            | overrided method                    |                                                                                                                   |
-| `@SuppressWarnings`    | suppress compile warnings           |                                                                                                                   |
-| `@SafeVarargs`         | suppress variable arguments warning |                                                                                                                   |
-| `@Retention`           | retention of annotation             | `SOURCE, CLASS, RUNTIME`                                                                                          |
-| `@Target`              | target of annotation                | `ANNOTATION_TYPE, CONSTRUCTOR, FIELD, LOCAL_VARIABLE, METHOD, PACKAGE, PARAMETER, TYPE, TYPE_PARAMETER, TYPE_USE` |
-| `@Documented`          | documented in javadoc               |                                                                                                                   |
-| `@Inherited`           | this annotation will be inherited   |                                                                                                                   |
-| `@FunctionalInterface` | for functional interface            |                                                                                                                   |
-| `@Repeatable`          | repeatable annotation               |                                                                                                                   |
-
-`@Target` 를 사용하면 다음과 같이 annotation 의 대상이 되는 자료형을 정할 수 있다.
-
-```java
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
-@Target({ElementType.FIELD, ElementType.METHOD})
-public @interface AnnotationWithTarget {
-}
-```
-
-annotation 은 기본적으로 상속되지 않는다. 그러나 `@Inherited` 를 사용하면 상속된다.
-
-```java
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Inherited
-@interface InheritableAnnotation {
-}
-
-@InheritableAnnotation
-public class Parent {
-}
-
-public class Child extends Parent {
-}
-```
-
-다음은 `@Repeatable` 를 사용한 예이다.
-
-```java
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface RepeatableAnnotations {
-   RepeatableAnnotation[] value();
-}
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@Repeatable(RepeatableAnnotations.class)
-public @interface RepeatableAnnotation {
-   String value();
-};
-@RepeatableAnnotation("repeatition 1")
-@RepeatableAnnotation("repeatition 2")
-public void performAction() {
-   // Some code here
-}
-```
+* [Java Annotation](javaannotation.md)
 
 ## Generics
 
@@ -1158,6 +1078,10 @@ public class Collections {
 
 TODO
 
+## Test
+
+* [java test](javatest.md)
+
 ## What's new Java8
 
 * [What's New in JDK 8 @ oracle](https://www.oracle.com/technetwork/java/javase/8-whats-new-2157071.html)
@@ -1320,6 +1244,33 @@ public class Solution {
 }
 ```
 
+## Java code coverage library
+
+test code 가 어느정도 코드를 covering 하고 있는지 보여주는 library 이다.
+
+* [JaCoCo Java Code Coverage Library](https://www.eclemma.org/jacoco/)
+
+## Java Byte Code Manipulation library
+
+java byte code 를 수정할 수 있는 library 이다. 
+
+* [Byte Buddy](https://bytebuddy.net)
+  * Byte Buddy 는 [ASM](https://asm.ow2.io/) 보다 쉽다.
+
+## Java Lombok
+
+* [Project Lombok](https://projectlombok.org/)
+
+class 에 `@Getter, @Setter` 와 같은 Annotation 만 추가하면 getter, setter 와 같은 boiler plate 코드를 생성해준다.
+
+```java
+@Getter @Setter @EqualsAndHashCode
+public class Foo {
+   private String name;
+   private int age;
+}
+```
+ 
 # Quiz
 
 * Private Constructor
