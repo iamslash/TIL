@@ -6,7 +6,7 @@
   * react class
 * [reactjs @ inflearn](https://www.inflearn.com/course/reactjs-web/)
   * react class for beginner
-* [](https://github.com/nitishdayal/cra_closer_look)
+* [Create-React-App: A Closer Look](https://github.com/nitishdayal/cra_closer_look)
   * stuffs in create-react-app in detail
 
 # Basic
