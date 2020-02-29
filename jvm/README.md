@@ -4,6 +4,7 @@ jvm 에 대해 적는다.
 
 # Materials
 
+* [더 자바, 코드를 조작하는 다양한 방법 by 백기선](https://www.inflearn.com/course/the-java-code-manipulation/dashboard)
 * [The JVM Architecture Explained](https://dzone.com/articles/jvm-architecture-explained)
 * [The Java® Virtual Machine Specification
 Java SE 7 Edition](https://docs.oracle.com/javase/specs/jvms/se7/html/index.html)
