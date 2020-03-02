@@ -1343,7 +1343,7 @@ b = 'world'; // ERROR
 
 `Promise` object 의 `then()` 혹은 `catch()`을 호출하면 `Promise` object 는 resolved 상태로 된다.
 
-`Promise` 의 function argument 는 `resolve, rejectr` 를 argument 로 하는 함수이다. `resolve` 를 호출하면 `then()` 의 function arg 가 호출되고 `reject` 를 호출하면 `catch()` 의 function arg 가 호출된다. 곧 `then()` 의 function arg 가 `resolve` 이고 `catch()` 의 function arg 가 `reject` 이다.
+`Promise` 의 function argument 는 `resolve, reject` 를 argument 로 하는 함수이다. `resolve` 를 호출하면 `then()` 의 function arg 가 호출되고 `reject` 를 호출하면 `catch()` 의 function arg 가 호출된다. 곧 `then()` 의 function arg 가 `resolve` 이고 `catch()` 의 function arg 가 `reject` 이다.
 
 `promise` 를 `then()` 의 function arg 에서 정상처리를 하고 `catch()` 의 function arg 에서 오류처리를 한다고 생각하자.
 
