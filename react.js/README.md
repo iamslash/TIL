@@ -16,6 +16,9 @@
   - [Updating Movie](#updating-movie)
   - [CSS for Movie](#css-for-movie)
   - [Building for Production](#building-for-production)
+  - [Redux](#redux)
+  - [To Do List](#to-do-list)
+  - [React Redux](#react-redux)
 
 ----
 
@@ -735,4 +738,329 @@ $ yarn add --dev gh-pages
 
 ```bash
 $ yarn run deploy
+```
+
+## Redux
+
+* [초보자를 위한 리덕스 101](https://academy.nomadcoders.co/courses/235420/lectures/13817530)
+  * [src](https://github.com/nomadcoders/vanilla-redux)
+
+Redux 는 state 를 관리하기 위한 거대한 event loop 이다. Action 은 event 를 말하고 Reducer 는 event handler 이다. Store 는 Application 의 state 이다. [리덕스(Redux)란 무엇인가?](https://voidsatisfaction.github.io/2017/02/24/what-is-redux/)
+
+Redux 는 다음과 같은 흐름으로 처리된다.
+
+* Store 의 dispatch 함수를 호출하여 action 을 발생한다.
+* Store 에 등록된 Reducer 가 호출된다. 
+* Reducer 는 state 를 변경하여 return 한다.
+* 변경된 state 가 Store 에 subscribe 된 Component 에게 전달된다.
+
+```js
+import { createStore } from "redux";
+
+const add = document.getElementById("add");
+const minus = document.getElementById("minus");
+const number = document.querySelector("span");
+
+number.innerText = 0;
+
+const ADD = "ADD";
+const MINUS = "MINUS";
+
+const countModifier = (count = 0, action) => {
+  switch (action.type) {
+    case ADD:
+      return count + 1;
+    case MINUS:
+      return count - 1;
+    default:
+      return count;
+  }
+};
+
+const countStore = createStore(countModifier);
+
+const onChange = () => {
+  number.innerText = countStore.getState();
+};
+
+countStore.subscribe(onChange);
+
+const handleAdd = () => {
+  countStore.dispatch({ type: ADD });
+};
+
+const handleMinus = () => {
+  countStore.dispatch({ type: MINUS });
+};
+
+add.addEventListener("click", handleAdd);
+minus.addEventListener("click", handleMinus);
+```
+
+## To Do List
+
+Redux 를 이용하여 간단한 To Do list 를 구현해 본다.
+
+* [Vanilla-redux To Do List by nomad coders](https://github.com/nomadcoders/vanilla-redux/blob/794f2a3eb7d169de7ca240b163e481a22653f7bd/src/index.js)
+
+```js
+import { createStore } from "redux";
+const form = document.querySelector("form");
+const input = document.querySelector("input");
+const ul = document.querySelector("ul");
+
+const ADD_TODO = "ADD_TODO";
+const DELETE_TODO = "DELETE_TODO";
+
+const addToDo = text => {
+  return {
+    type: ADD_TODO,
+    text
+  };
+};
+
+const deleteToDo = id => {
+  return {
+    type: DELETE_TODO,
+    id
+  };
+};
+
+const reducer = (state = [], action) => {
+  switch (action.type) {
+    case ADD_TODO:
+      const newToDoObj = { text: action.text, id: Date.now() };
+      return [newToDoObj, ...state];
+    case DELETE_TODO:
+      const cleaned = state.filter(toDo => toDo.id !== action.id);
+      return cleaned;
+    default:
+      return state;
+  }
+};
+
+const store = createStore(reducer);
+
+store.subscribe(() => console.log(store.getState()));
+
+const dispatchAddToDo = text => {
+  store.dispatch(addToDo(text));
+};
+
+const dispatchDeleteToDo = e => {
+  const id = parseInt(e.target.parentNode.id);
+  store.dispatch(deleteToDo(id));
+};
+
+const paintToDos = () => {
+  const toDos = store.getState();
+  ul.innerHTML = "";
+  toDos.forEach(toDo => {
+    const li = document.createElement("li");
+    const btn = document.createElement("button");
+    btn.innerText = "DEL";
+    btn.addEventListener("click", dispatchDeleteToDo);
+    li.id = toDo.id;
+    li.innerText = toDo.text;
+    li.appendChild(btn);
+    ul.appendChild(li);
+  });
+};
+
+store.subscribe(paintToDos);
+
+const onSubmit = e => {
+  e.preventDefault();
+  const toDo = input.value;
+  input.value = "";
+  dispatchAddToDo(toDo);
+};
+
+form.addEventListener("submit", onSubmit);
+```
+
+## React Redux
+
+앞서 제작한 To Do List App 을 React Redux 를 사용하여 더욱 효율적으로 구현해보자.
+
+* [Vanilla-redux react-redux by nomad coders](https://github.com/nomadcoders/vanilla-redux/tree/ccaa1acd081f27239f2cc8ad3c571bd0a9923f73/src)
+
+React-Router 는 url path 에 따라 routing 기능을 지원하는 library 이다. url `/` 은 `Home` component, `/:id` 는 `Detail` component 로 routing 된다.
+
+```js
+import React from "react";
+import { HashRouter as Router, Route } from "react-router-dom";
+import Home from "../routes/Home";
+import Detail from "../routes/Detail";
+
+function App() {
+  return (
+    <Router>
+      <Route path="/" exact component={Home}></Route>
+      <Route path="/:id" component={Detail}></Route>
+    </Router>
+  );
+}
+
+export default App;
+```
+
+react-redux 의 Provider 는 state 변경사항을 자손에게 전달할 수 있게 해준다.
+
+```js
+import React from "react";
+import ReactDOM from "react-dom";
+import App from "./components/App";
+import { Provider } from "react-redux";
+import store from "./store";
+
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById("root")
+);
+```
+
+`connect` 를 이용하면 props 와 component 를 연결할 수 있다. 즉, state 가 변경되면 `mapStateToProps` 가 호출되고 state 가 포함된 props 를 리턴한다. 리턴된 props 는 component 에게 전달된다. 
+
+```js
+import React, { useState } from "react";
+import { connect } from "react-redux";
+
+function Home({ toDos }) {
+  const [text, setText] = useState("");
+  function onChange(e) {
+    setText(e.target.value);
+  }
+  function onSubmit(e) {
+    e.preventDefault();
+    setText("");
+  }
+  return (
+    <>
+      <h1>To Do</h1>
+      <form onSubmit={onSubmit}>
+        <input type="text" value={text} onChange={onChange} />
+        <button>Add</button>
+      </form>
+      <ul>{JSON.stringify(toDos)}</ul>
+    </>
+  );
+}
+
+function mapStateToProps(state) {
+  return { toDos: state };
+}
+
+export default connect(mapStateToProps)(Home);
+```
+
+`connect` 의 두번째 argument 는 dispatch function 을 넘겨줄 수 있다. `mapDispatchToProps` 는 dispatch function 을 props 에 담아서 리턴한다. 리턴된 props 는 `connect` 에 연결된 component 에 전달된다. component 는 특정 시점에 dispatch function 을 호출하고 특정한 action 이 발생된다. 그리고 reducer 가 호출된다.
+
+```js
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import { actionCreators } from "../store";
+
+function Home({ toDos, addToDo }) {
+  const [text, setText] = useState("");
+  function onChange(e) {
+    setText(e.target.value);
+  }
+  function onSubmit(e) {
+    e.preventDefault();
+    addToDo(text);
+    setText("");
+  }
+  return (
+    <>
+      <h1>To Do</h1>
+      <form onSubmit={onSubmit}>
+        <input type="text" value={text} onChange={onChange} />
+        <button>Add</button>
+      </form>
+      <ul>{JSON.stringify(toDos)}</ul>
+    </>
+  );
+}
+
+function mapStateToProps(state) {
+  return { toDos: state };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    addToDo: text => dispatch(actionCreators.addToDo(text))
+  };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
+```
+
+다음은 `connect` 에 두번째 argument 로 `mapDispatchToProps` 를 전달하고 `ToDo` component 와 연결한다. `ToDo` component 의 button 이 click 되면 `ToDo` component 에 전달된 props 의 두번째 요소인 dispatch function 이 호출된다. dispatch function 에 해당하는 `onBtnClick` 이 호출되면 `DELETE` action 이 발생하고 Reducer 가 호출된다.
+
+```js
+import React from "react";
+import { connect } from "react-redux";
+import { actionCreators } from "../store";
+
+function ToDo({ text, onBtnClick }) {
+  return (
+    <li>
+      {text} <button onClick={onBtnClick}>DEL</button>
+    </li>
+  );
+}
+
+function mapDispatchToProps(dispatch, ownProps) {
+  return {
+    onBtnClick: () => dispatch(actionCreators.deleteToDo(ownProps.id))
+  };
+}
+
+export default connect(null, mapDispatchToProps)(ToDo);
+```
+
+`Reducer` 에서 `DELETE` 을 처리한다. `filter` 를 이용하여 특정 id 를 제거한 목록을 변경된 state 로 리턴한다.
+
+```js
+import { createStore } from "redux";
+
+const ADD = "ADD";
+const DELETE = "DELETE";
+
+const addToDo = text => {
+  return {
+    type: ADD,
+    text
+  };
+};
+
+const deleteToDo = id => {
+  return {
+    type: DELETE,
+    id: parseInt(id)
+  };
+};
+
+const reducer = (state = [], action) => {
+  switch (action.type) {
+    case ADD:
+      return [{ text: action.text, id: Date.now() }, ...state];
+    case DELETE:
+      return state.filter(toDo => toDo.id !== action.id);
+    default:
+      return state;
+  }
+};
+
+const store = createStore(reducer);
+
+export const actionCreators = {
+  addToDo,
+  deleteToDo
+};
+
+export default store;
 ```
