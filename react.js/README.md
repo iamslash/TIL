@@ -1,3 +1,24 @@
+- [Materials](#materials)
+- [Basic](#basic)
+  - [Create React App](#create-react-app)
+  - [Create React Components with JSX](#create-react-components-with-jsx)
+  - [Data flow with Props](#data-flow-with-props)
+  - [Lists with .maps](#lists-with-maps)
+  - [Validating Props with Prop Types](#validating-props-with-prop-types)
+  - [Component Lifecycle](#component-lifecycle)
+  - [Thinking in React Component State](#thinking-in-react-component-state)
+  - [Practicing this setState](#practicing-this-setstate)
+  - [Loading states](#loading-states)
+  - [Smart vs Dumb](#smart-vs-dumb)
+  - [AJAX on React](#ajax-on-react)
+  - [Promises](#promises)
+  - [Async Await](#async-await)
+  - [Updating Movie](#updating-movie)
+  - [CSS for Movie](#css-for-movie)
+  - [Building for Production](#building-for-production)
+
+----
+
 # Materials
 
 * [create react app](https://github.com/facebook/create-react-app)
@@ -6,6 +27,8 @@
   * react class
 * [reactjs @ inflearn](https://www.inflearn.com/course/reactjs-web/)
   * react class for beginner
+  * [src](https://github.com/nomadcoders/movie_app)
+  * [src 2019 update](https://github.com/nomadcoders/movie_app_2019)
 * [Create-React-App: A Closer Look](https://github.com/nitishdayal/cra_closer_look)
   * stuffs in create-react-app in detail
 
@@ -672,5 +695,44 @@ export default Movie;
 
 ## CSS for Movie
 
+[react.js fundamentals src 2019 update](https://github.com/nomadcoders/movie_app_2019)
+
+[kakao-clone-v2 @ github](git@github.com:nomadcoders/kakao-clone-v2.git) 를 통해 css 를 더욱 배울 수 있다.
+
 ## Building for Production
 
+지금까지 제작한 react.js app 을 `github` 에 publishing 해보자.
+
+`npm run build` 혹은 `yarn build` 를 수행하면 `build` 디렉토리가 만들어진다. `build` 에는 압축된 static files 들이 만들어 진다.
+
+`gh-pages` module 을 추가해 보자.
+
+```bash
+$ yarn add --dev gh-pages
+```
+
+`package.json` 의 "`homepage, predploy, deploy`" 을 다음과 같이 수정한다.
+
+```js
+  ...
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build -r git@github.com:iamslash/examplesofweb.git"
+  },
+  ...
+  "homepage": "https://iamslash.github.io/examplesofweb",
+  "devDependencies": {
+    "gh-pages": "^2.2.0"
+  }
+  ...
+```
+
+이제 배포해 본다.
+
+```bash
+$ yarn run deploy
+```
