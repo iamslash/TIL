@@ -303,9 +303,9 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `touch`
   * 파일의 최종 수정 날짜를 바꾸자
   * `touch a.txt`
-* `diff`
-  * 두개의 파일들을 줄 단위로 비교하자.
-  * `diff a.txt b.txt`
+* [diff](/diff/README.md)
+  * `diff a.txt b.txt` 두개의 파일 비교
+  * `diff -r /tmp/foo /tmp/bar` 두개의 디렉토리를 비교
 * `which`
   * command 위치는 어디있어?
   * `which ls`
