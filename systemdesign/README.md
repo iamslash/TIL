@@ -459,6 +459,7 @@ TODO
 ### REST (REpresentational State Transfer) API 
 
 * [1) Rest API란? @ edwith](https://www.edwith.org/boostcourse-web/lecture/16740/)
+* [HTTP 응답코드 메소드 정리 GET, POST, PUT, PATCH, DELETE, TRACE, OPTIONS](https://javaplant.tistory.com/18)
 
 ----
 
