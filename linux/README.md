@@ -34,6 +34,7 @@
   - [root 소유의 setuid, setgid 파일 검색 후 퍼미션 조정하기](#root-%ec%86%8c%ec%9c%a0%ec%9d%98-setuid-setgid-%ed%8c%8c%ec%9d%bc-%ea%b2%80%ec%83%89-%ed%9b%84-%ed%8d%bc%eb%af%b8%ec%85%98-%ec%a1%b0%ec%a0%95%ed%95%98%ea%b8%b0)
 - [System Monitoring](#system-monitoring)
   - [swapin, swapout](#swapin-swapout)
+- [Kernel Parameters](#kernel-parameters)
 
 -------------------------------------------------------------------------------
 
@@ -1550,3 +1551,24 @@ swap-in 이라고 한다. 물리 메모리에서 디스크로 프로세스를 �
 swap-out 이라고 한다.
 
 swap-in, swap-ou 의 횟수가 많다면 물리 메모리가 부족하다는 의미이다.
+
+
+# Kernel Parameters
+
+* `net.ipv4.tcp_tw_reuse`
+  * [tcp_tw_reuse and tcp_tw_recycle](https://brunch.co.kr/@alden/3)
+  * time wait 상태의 socket 을 재사용할 수 있게 해준다.
+* `net.core.somaxconn`
+  * [리눅스 서버의 TCP 네트워크 성능을 결정짓는 커널 파라미터 이야기 - 2편](https://meetup.toast.com/posts/54)
+  * accept() 을 기다리는 ESTABLISHED 상태의 소켓 (connection completed) 을 위한 queue
+* `net.ipv4.tcp_max_syn_backlog`
+  * SYN_RECEIVED 상태의 소켓(connection incompleted)을 위한 queue
+* `net.core.netdev_max_backlog`
+  * 각 네트워크 장치 별로 커널이 처리하도록 쌓아두는 queue 의 크기. 커널의 패킷 처리 속도가 상대적으로 느리다면 queue 에 패킷이 쌓일 것이고 queue 에 추가되지 못한 패킷들은 버려진다. 적당히 설정해야 함.
+
+```bash
+echo "net.core.netdev_max_backlog = 65536" >> /etc/sysctl.conf
+echo "net.core.somaxconn = 65536" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_max_syn_backlog = 65536" >> /etc/sysctl.conf
+echo "net.ipv4.tcp_tw_reuse = 1" >> /etc/sysctl.conf
+```
