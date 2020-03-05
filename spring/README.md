@@ -14,6 +14,7 @@
 - [Spring Batch](#spring-batch)
 - [Tips](#tips)
   - [Active profile](#active-profile)
+  - [ConfigurationProperties](#configurationproperties)
   - [Http requests logging](#http-requests-logging)
   - [Http responses logging](#http-responses-logging)
 
@@ -141,6 +142,62 @@ Spring application 을 시작할 때 JVM option 으로 profile 을 선택할 수
 ```bash
 -Dspring.profiles.active=local
 -Dspring.profiles.active=local,develop
+```
+
+## ConfigurationProperties
+
+* [스프링 부트 커스텀 설정 프로퍼티 클래스 사용하기](https://javacan.tistory.com/entry/springboot-configuration-properties-class)
+
+`application.properties` 에 설정 값을 저장하고 java 에서 읽어 들이자.
+
+```
+iamslash.authcookie: HelloWorld
+iamslash.authcookieSalt: HelloWorld
+```
+
+다음은 `application.properties` 의 Mapping class 이다.
+
+```java
+@ConfigurationProperties(prefix = "iamslash")
+public class FooSetting {
+  private String authcookie;
+  private String authcookieSalt;
+  public String getAuthcookie() {
+    return authcookie;
+  }
+  public void setAuthcookie(String authcookie) {
+    this.authcookie = authcookie;
+  }
+  public String getAuthcookieSalt() {
+    return authcookieSalt;
+  }
+  public void setAuthcookieSalt(String authcookieSalt) {
+    this.authcookieSalt = authcookieSalt;
+  }
+}
+```
+
+`FooSetting` 을 `@EnableConfigurationProperties` 을 사용하여 Bean 으로 등록하고 값을 복사해 온다.
+
+```java
+@SpringBootApplication
+@EnableConfigurationProperties(FooSetting.class)
+public class Application { ... }
+```
+
+또는 `FooSetting` 에 `@Configuration` 을 추가하면 Bean 으로 등록된다. 그리고 다음과 같이 `@AutoWired` 을 사용하여 DI 할 수 있다.
+
+```java
+@Configuration
+public class SecurityConfig {
+  @Autowired
+  private FooSetting fooSetting;
+  @Bean
+  public Encryptor encryptor() {
+    Encryptor encryptor = new Encryptor();
+    encryptor.setSalt(fooSetting.getAuthcookieSalt());
+    ...
+  }
 ```
 
 ## Http requests logging
