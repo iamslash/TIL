@@ -1344,16 +1344,154 @@ java byte code 를 수정할 수 있는 library 이다.
 ## Java Lombok
 
 * [Project Lombok](https://projectlombok.org/)
+* [lombok을 잘 써보자! (1)](http://wonwoo.ml/index.php/post/1607)
 
-class 에 `@Getter, @Setter` 와 같은 Annotation 만 추가하면 getter, setter 와 같은 boiler plate 코드를 생성해준다.
+Class 에 Annotation 을 추가하면 getter, setter, toString, hasCode, equals, constructor 를 생성한다.
+
+* `@Data` 
+  * `staticConstructor` 속성을 이용하면 static constructor 를 생성해 준다.
+  * `canEuqal` 도 생성해준다. 이것은 instanceof 와 같다.  
 
 ```java
-@Getter @Setter @EqualsAndHashCode
-public class Foo {
-   private String name;
-   private int age;
+@Data(staticConstructor = "of")
+public class DataObject {
+  private final Long id;
+  private String name;
 }
 ```
+
+다음과 같이 사용할 수 있다.
+
+```java
+DataObject dataObject = DataObject.of(1L);
+```
+
+그러나 다음과 같이 생성할 수는 없다.
+
+```java
+DataObject dataObject = new DataObject();
+```
+
+* `XXXXArgsConstroctor`
+  * `NoArgsConstructor`
+    * Default constructor 를 생성해 준다.
+  * `AllArgsConstructor`
+    * 모든 필드의 생성자를 생성해 준다. 
+  * `RequiredArgsConstructor`
+    * Required constructor (필수생성자) 를 생성해 준다.
+    * final field 의 constructor 를 만들어 준다???
+
+  * `staticName` 속성은 static constructor 를 만들어 준다.
+  * `access` 속성은 접근제한을 할 수 있다.
+  * ``onConstructor` constructor 에 annotation 을 달아준다.
+  
+```java
+@RequiredArgsConstructor(staticName = "of", onConstructor = @__(@Inject))
+public class Foo {
+  private final Long id;
+  private final String name;
+}
+```
+
+이 코드는 Annotation process 가 수행되면 다음과 같은 코드가 만들어 진다.
+
+```java
+class Foo {
+  private final Long id;
+  private final String name;
+
+  @Inject
+  private Foo(Long id, String name) {
+    this.id = id;
+    this.name = name;
+  }
+  public static Foo of(Long id, String name) {
+    return new Foo(id, name);
+  }
+}
+```
+
+* `@Getter, @Setter`
+  * getter, setter 를 만들어 준다.
+  * `value` 속성은 접근을 제한할 수 있다.
+  * `onMethod` 속성은 method 에 annotation 을 달 수 있다.
+
+```java
+public class Foo {
+  @Getter(value = AccessLevel.PACKAGE, onMethod = @__({@NonNull, @Id}))
+  private Long id;
+}
+```
+
+의 코드는 Annotatoin process 가 수행되면 다음과 같은 코드를 생성한다.
+
+```java
+class Foo {
+  private Long id;
+
+  @Id
+  @NonNull
+  Long getId() {
+    return id;
+  }
+}
+```
+
+`@Getter` 는 `lazy` 속성을 갖는다. `@Setter` 는 `onParam` 속성을 갖는다.
+
+```java
+@Getter(value = AccessLevel.PUBLIC, lazy = true)
+private final String name = bar();
+
+private String bar() {
+  return "BAR";
+}
+```
+
+final field 에만 `lazy=true` 를 적용할 수 있다. `lazy=false` 이면 Object 를 생성할 때 `bar()` 를 호출한다. 그러나 `lazy=true` 이면 `getName()` 를 호출할 때 `bar()` 를 호출한다.
+
+다음은 `@Setter` 의 `onParam` 이다.
+
+```java
+@Setter(onParam = @__(@NotNull))
+private Long id;
+```
+
+Annotation process 가 수행되면 다음과 같은 코드가 만들어 진다.
+
+```java
+class Baz {
+  private Long id;
+
+  public void setId(@NotNull Long id) {
+    this.id = id;
+  }
+}
+```
+
+Parameter 에 Annotaion 을 달아준다.
+
+* `@EqualsAndHashCode, @ToString`
+  * `@EqualsAndHashCode` 는 `hashcode, equals` 를 생성한다.
+  * `@ToString` 은 `toString()` 을 생성한다.
+  * `exclude` 속성은 특정 field 를 제외한다.
+  * `of` 속성은 특정 field 를 포함한다.
+  * `callSuper` 속성은 상위 클래스의 호출여부를 정한다.
+  * `doNotUseGetters` 속성은 getter 사용여부를 정한다.
+
+다음의 코드는 `id` 만 `hashCode, equals, toString` 을 생성한다. 
+
+```java
+@EqualsAndHashCode(of = "id")
+@ToString(exclude = "name")
+public class Foo {
+  private Long id;
+  private String name;
+}
+```
+
+
+
 
 ## JVM Options
 
