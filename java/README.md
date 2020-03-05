@@ -21,6 +21,7 @@
   - [Annotation](#annotation)
   - [Generics](#generics)
   - [Concurrency](#concurrency)
+  - [Static Class](#static-class)
   - [Test](#test)
   - [What's new Java8](#whats-new-java8)
     - [Interface Default and Static Methods](#interface-default-and-static-methods)
@@ -33,6 +34,7 @@
   - [Java code coverage library](#java-code-coverage-library)
   - [Java Byte Code Manipulation library](#java-byte-code-manipulation-library)
   - [Java Lombok](#java-lombok)
+  - [JVM Options](#jvm-options)
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
@@ -1078,6 +1080,88 @@ public class Collections {
 
 TODO
 
+## Static Class
+
+* [Static class in Java](https://www.geeksforgeeks.org/static-class-in-java/)
+
+Nested Class 는 static 혹은 non-static class 일 수 있다. non-static class 를 특별히 Inner class 라고도 한다. Nested class 를 품고 있는 것을 Outer class 라고 하자. static Nested class 의 instance 는 Outer class instance 없이 생성할 수 있다. 그러나 non-static Nested class 의 instance 는 반드시 Outer class 의 instance 를 생성한 후에 만들 수 있다.
+
+```java
+// Java program to demonstrate how to 
+// implement static and non-static 
+// classes in a Java program. 
+class OuterClass { 
+	private static String msg = "GeeksForGeeks"; 
+
+	// Static nested class 
+	public static class NestedStaticClass { 
+
+		// Only static members of Outer class 
+		// is directly accessible in nested 
+		// static class 
+		public void printMessage() 
+		{ 
+
+			// Try making 'message' a non-static 
+			// variable, there will be compiler error 
+			System.out.println( 
+				"Message from nested static class: "
+				+ msg); 
+		} 
+	} 
+
+	// Non-static nested class - 
+	// also called Inner class 
+	public class InnerClass { 
+
+		// Both static and non-static members 
+		// of Outer class are accessible in 
+		// this Inner class 
+		public void display() 
+		{ 
+			System.out.println( 
+				"Message from non-static nested class: "
+				+ msg); 
+		} 
+	} 
+} 
+class Main { 
+	// How to create instance of static 
+	// and non static nested class? 
+	public static void main(String args[]) 
+	{ 
+
+		// Create instance of nested Static class 
+		OuterClass.NestedStaticClass printer 
+			= new OuterClass.NestedStaticClass(); 
+
+		// Call non static method of nested 
+		// static class 
+		printer.printMessage(); 
+
+		// In order to create instance of 
+		// Inner class we need an Outer class 
+		// instance. Let us create Outer class 
+		// instance for creating 
+		// non-static nested class 
+		OuterClass outer = new OuterClass(); 
+		OuterClass.InnerClass inner 
+			= outer.new InnerClass(); 
+
+		// Calling non-static method of Inner class 
+		inner.display(); 
+
+		// We can also combine above steps in one 
+		// step to create instance of Inner class 
+		OuterClass.InnerClass innerObject 
+			= new OuterClass().new InnerClass(); 
+
+		// Similarly we can now call Inner class method 
+		innerObject.display(); 
+	} 
+} 
+```
+
 ## Test
 
 * [java test](javatest.md)
@@ -1270,6 +1354,19 @@ public class Foo {
    private int age;
 }
 ```
+
+## JVM Options
+
+* `-XX:+UseG1GC`
+  * [JVM 메모리 구조와 GC](https://johngrib.github.io/wiki/jvm-memory/)
+
+* `-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=${BASEPATH}/heapdump_$(date '+%Y%m%d%H%M').hprof"`
+  * JVM 이 OutOfMemoryError 로 종료되었을 때 지정된 경로로 heap dump 가 생성된다.
+  * [Java Memory Analysis](https://kwonnam.pe.kr/wiki/java/memory)
+
+* `-Xms1024m -Xmx1024m`
+  * memory start size and memory max size
+  * [JVM 메모리 관련 설정](https://epthffh.tistory.com/entry/JVM-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EA%B4%80%EB%A0%A8-%EC%84%A4%EC%A0%95)
  
 # Quiz
 
