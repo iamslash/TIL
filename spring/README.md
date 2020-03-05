@@ -13,6 +13,7 @@
 - [Spring Security](#spring-security)
 - [Spring Batch](#spring-batch)
 - [Tips](#tips)
+  - [Active profile](#active-profile)
   - [Http requests logging](#http-requests-logging)
   - [Http responses logging](#http-responses-logging)
 
@@ -130,6 +131,17 @@ batch job 을 spring library 를 이용해서 만들어 보자.
 * [Spring Batch](https://spring.io/projects/spring-batch)
 
 # Tips
+
+## Active profile
+
+* [spring profile 을 사용하여 환경에 맞게 deploy 하기](https://www.lesstif.com/pages/viewpage.action?pageId=18220309)
+
+Spring application 을 시작할 때 JVM option 으로 profile 을 선택할 수 있다. 두개 이상을 선택해도 됨.
+
+```bash
+-Dspring.profiles.active=local
+-Dspring.profiles.active=local,develop
+```
 
 ## Http requests logging
 
