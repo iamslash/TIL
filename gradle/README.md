@@ -1,12 +1,13 @@
 # Abstract
 
-java진영의 build tool인 gradle에 대해 정리한다. gradle은 maven보다
-성능이 좋다.
+Gradle 은 task runner 이다. Gradle 은 maven 보다 성능이 좋다.
 
 # Materials
-
-* [gradle DSL reference](https://docs.gradle.org/current/dsl/)
-* [Creating New Gradle Builds](https://guides.gradle.org/creating-new-gradle-builds/)
+ 
+* [Command-Line Interface @ Gradle](https://docs.gradle.org/current/userguide/command_line_interface.html)
+* [gradle DSL reference @ Gradle](https://docs.gradle.org/current/dsl/)
+* [Creating New Gradle Builds @ Gradle](https://guides.gradle.org/creating-new-gradle-builds/)
+* [Chapter 01 그레이드의 시작 - 1. 그레이들이란? @ youtube](https://www.youtube.com/watch?v=s-XZ5B15ZJ0&list=PL7mmuO705dG2pdxCYCCJeAgOeuQN1seZz)
 
 # Basic
 
@@ -148,7 +149,7 @@ include 'backend'
 include 'frontend'
 ```
 
-다음은 생성된 `build.graddle` 이다. 
+다음은 생성된 `build.gradle` 이다. 
 
 ```groovy
 plugins {
@@ -194,8 +195,28 @@ test {
 다음과 같이 `gradle build` 를 실행하면 수행되는 task 들을 알 수 있다.
 
 ```bash
-$ bradle build
+$ gradle build -i
 
+Initialized native services in: /Users/davidsun/.gradle/native
+The client will now receive all logging from the daemon (pid: 89198). The daemon log file: /Users/davidsun/.gradle/daemon/6.1.1/daemon-89198.out.log
+Starting 8th build in daemon [uptime: 2 mins 42.693 secs, performance: 99%, non-heap usage: 15% of 268.4 MB]
+Using 16 worker leases.
+Starting Build
+Settings evaluated using settings file '/Users/davidsun/my/gradle/my-app/settings.gradle'.
+Projects loaded. Root project using build file '/Users/davidsun/my/gradle/my-app/build.gradle'.
+Included projects: [root project 'my-app']
+
+> Configure project :
+Evaluating root project 'my-app' using build file '/Users/davidsun/my/gradle/my-app/build.gradle'.
+All projects evaluated.
+Selected primary task 'build' from project :
+Tasks to be executed: [task ':compileJava', task ':processResources', task ':classes', task ':jar', task ':startScripts', task ':distTar', task ':distZip', task ':assemble', task ':compileTestJava', task ':processTestResources', task ':testClasses', task ':test', task ':check', task ':build']
+:compileJava (Thread[Execution worker for ':',5,main]) started.
+
+...
+
+BUILD SUCCESSFUL in 602ms
+7 actionable tasks: 7 up-to-date
 ```
 
 다음과 같이 새로운 task 를 기존의 task graph 에 삽입할 수 있다. 
@@ -217,60 +238,3 @@ task integrationTest(type: Test) {
 ```
 
 
-# Tutorial
-
-## Hello World
-
-```bash
-$ make Hello
-$ cd Hello
-$ gradle init
-
-├── build.gradle  
-├── gradle
-│   └── wrapper
-│       ├── gradle-wrapper.jar  
-│       └── gradle-wrapper.properties  
-├── gradlew  
-├── gradlew.bat  
-└── settings.gradle  
-
-# build.gradle : Gradle build script for configuring the current project
-# gradle-wrapper.java : Gradle Wrapper executable JAR
-# gradle-wrapper.properties : Gradle Wrapper configuration properties
-# gradlew : Gradle Wrapper script for Unix-based systems
-# gradlew.bat : Gradle Wrapper script for Windows
-# settings.gradle : Gradle settings script for configuring the Gradle build
-```
-
-* create a task
-
-```groovy
-task copy(type: Copy, group: "Custom", description: "Copies sources to the dest directory") {
-    from "src"
-    into "dest"
-}
-```
-
-```bash
-$ gradle copy
-```
-
-* apply a plugin
-
-```groovy
-plugins {
-    id "base"
-}
-...
-task zip(type: Zip, group: "Archive", description: "Archives sources in a zip file") {
-    from "src"
-    setArchiveName "basic-demo-1.0.zip"
-}
-```
-
-```bash
-$ gradlew zip
-$ gradlew tasks
-$ gradlew properties
-```
