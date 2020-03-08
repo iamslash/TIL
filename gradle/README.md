@@ -238,3 +238,27 @@ task integrationTest(type: Test) {
 ```
 
 
+# Advanced 
+
+## `compile` vs `implementation`
+
+* [What's the difference between implementation and compile in Gradle? @ stackoverflow](https://stackoverflow.com/questions/44493378/whats-the-difference-between-implementation-and-compile-in-gradle)
+
+다음의 것들은 각각 변경되었다.
+
+| previous             | now                         |
+| -------------------- | --------------------------- |
+| `compile`            | `implementation`            |
+| `testCompile`        | `testImplementation`        |
+| `debugCompile`       | `debugImplementation`       |
+| `androidTestCompile` | `androidTestImplementation` |
+
+## `implementation` vs `api`
+
+다음과 같이 라이브러리의 의존성이 설정되어 있다고 해보자.
+
+```
+A(implementation) -> B -> C -> D
+```
+
+만약 `A` library 의 코드가 수정되어 rebuild 된다면 `implementation` 의 경우는 `A, B` 만 rebuild 된다. 그러나 `api` 의 경우는 `A, B, C, D` 모두 rebuild 된다.
