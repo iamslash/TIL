@@ -25,6 +25,7 @@
   - [Test](#test)
   - [What's new Java8](#whats-new-java8)
     - [Interface Default and Static Methods](#interface-default-and-static-methods)
+    - [Functional Interfaces](#functional-interfaces-1)
     - [Method References](#method-references)
     - [Optional<T>](#optionalt)
 - [Advanced Usage](#advanced-usage)
@@ -1210,7 +1211,71 @@ class A {
 }
 ```
 
+### Functional Interfaces
+
+* [Java8#02. 함수형 인터페이스(Functional Interface)](https://multifrontgarden.tistory.com/125?category=471239)
+
+```java
+// Runnable
+// arguments void return void
+Runnable r = () -> System.out.println("Hello World");
+r.run();
+
+// Supplier<T>
+// arguments void return T
+Supplier<String> s = () -> "hello supplier";
+String result = s.get();
+
+// Consumer<T>
+// arguments T return void
+Consumer<String> c = str -> System.out.println(str);
+c.accept("hello consumer");
+
+// Function<T, R>
+// arguments T return R
+Function<String, Integer> f = str -> Integer.parseInt(str);
+Integer result = f.apply("1");
+
+// Predicate<T>
+// arguments T return boolean
+Predicate<String> p = str -> str.isEmpty();
+boolean result = p.test("hello");
+
+// UnaryOperator<T>
+// arguments T return T
+UnaryOperator<String> u = str -> str + " operator";
+String result = u.apply("hello unary");
+
+// BinaryOperator<T>
+// arguments T, T return T
+BinaryOperator<String> b = (str1, str2) -> str1 + " " + str2;
+String result = b.apply("hello", "binary");
+
+// BiPredicate<T, U>
+// arguments T, U return boolean
+BiPredicate<String, Integer> bp = (str, num) -> str.equals(Integer.toString(num));
+boolean result = bp.test("1", 1);
+
+// BiConsumer<T, U>
+// arguments T, U return void
+BiConsumer<String, Integer> bc = (str, num) -> System.out.println(str + " :: " + num);
+bc.accept("숫자", 5);
+
+// BiFunction<T, U, R> 
+// arguments T, U return R
+BiFunction<Integer, String, String> bf = (num, str) -> String.valueOf(num) + str;
+String result = bf.apply(5, "999");
+
+// Comparator<T>
+Comparator<String> c = (str1, str2) -> str1.compareTo(str2);
+int result = c.compare("foo", "bar");
+```
+
 ### Method References
+
+If you use method references you can reduce the size of code.
+
+* [Java8#03. 메서드 레퍼런스(Method Reference)](https://multifrontgarden.tistory.com/126?category=471239)
 
 ```java
 //// Reference to a Static Method
@@ -1226,6 +1291,33 @@ long count = list.stream().filter(String::isEmpty).count();
 
 //// Reference to a Constructor
 Stream<User> stream = list.stream().map(User::new);
+
+// Reference to a lambda method
+// You will make it simpler than before with method refereces.
+Function<String, Integer> f = str -> Integer.parseInt(str);
+
+// Reference to a instance method of an object of a particular type
+Function<String, Integer> f = Integer::parseInt;
+Integer result = f.apply("123");
+
+// Reference to a instance method of an object of a particular type
+Function<String, Boolean> f = String::isEmpty;
+Boolean result = f.apply("123");
+
+// Reference to a static method
+Function<String, Integer> f = Integer::parseInt;
+Integer result = f.apply("123");
+
+// Reference to a constructor
+Supplier<String> s = String::new;
+
+// Reference to a instance method
+String str = "hello";
+Predicate<String> p = str::equals;
+p.test("world");
+
+// Reference to a instance method of an object of a particular type
+Comparator<String> c = String::compareTo;
 ```
 
 ### Optional<T>
