@@ -217,3 +217,12 @@ $ consul intention delete web socat
 # Try the connection again, and it will succeed.
 $ nc 127.0.0.1 9191
 ```
+
+# Prometheus metrics
+
+* [View Metrics](https://www.consul.io/api/agent.html#view-metrics)
+
+```bash
+$ curl \
+    http://127.0.0.1:8500/v1/agent/metrics
+```
