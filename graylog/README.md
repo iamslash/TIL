@@ -1,10 +1,56 @@
-# graylog intro
+# Abstraction
 
 - opensource log management 애플리케이션이다.
 - mongodb, elasticsearch, graylog-server, graylog-web으로 구성되어 있다.
 - docker-compose 를 이용하면 간단히 설치 및 실행할 수 있다. 
 - mongodb는 메타데이터 저장용이다.
 - elasticsearch는 로그데이터 저장용이다. full text search를 지원한다.
+
+# Query
+
+* [Searching](https://docs.graylog.org/en/3.1/pages/queries.html)
+
+```bash
+# Messages that include the term ssh:
+> ssh
+
+# 
+> ssh login
+
+> "ssh login"
+
+> type:ssh
+
+> type:(ssh OR login)
+
+> type:"ssh login"
+
+> _exists_:type
+
+> NOT _exists_:type
+
+# Messages that match regular expression
+> /ethernet[0-9]+/
+
+# By default all terms or phrases are OR connected so all messages that have at least one hit are returned. You can use Boolean operators and groups for control over this:
+> "ssh login" AND source:example.org
+
+> "ssh login" AND NOT source:example.org
+
+# Note that AND, OR, and NOT are case sensitive and must be typed in all upper-case.
+
+# Wildcards: Use ? to replace a single character or * to replace zero or more characters:
+> source:*.org
+> source:exam?le.org
+> source:exam?le.*
+
+# Note that leading wildcards are disabled to avoid excessive memory consumption! You can enable them in your Graylog configuration file:
+allow_leading_wildcard_searches = true
+
+# ???
+> ssh logni~
+> source:example.org~
+```
 
 # graylog install
 
