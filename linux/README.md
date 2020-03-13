@@ -1427,6 +1427,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 ## Disk
 
 * [Ubuntu 14.04에 새로운 하드디스크 추가 및 포맷후 자동 마운트 설정](http://reachlab-kr.github.io/linux/2015/10/03/Ubuntu-fstab.html)
+* [Amazon EBS 볼륨을 Linux에서 사용할 수 있도록 만들기](https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/ebs-using-volumes.html)
 
 ----
 
@@ -1443,12 +1444,15 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     tmpfs          1000M     0 1000M   0% /proc/acpi
     tmpfs          1000M     0 1000M   0% /sys/firmware`
     ```
+  * `df -hi` show disk inodes.
 * `resize2fs`
+  * EBS volume 을 추가하고 EC2 instace 에서 디스크 크기를 증가한다.
   * `resize2fs /dev/sdb` resize `/dev/sdb`
 * `fdisk`
   * `fdisk -l` show hard disk partitions
   * `fdisk /dev/sdb` create partition
 * `mkfs`
+  * file system 을 생성한다.
   * `mkfs -t ext4 /dev/sdb1` format `/dev/sdb1`
 * `blkid` 
   * `blkid` list properties of block devices including UUID for mount
@@ -1457,9 +1461,11 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `mount -t ext4 auto /dev/sdb1 /mnt/dir1`
   * `mount -a`  mount all filesystems mentioned in fstab
   * `vim /etc/fstab` add mount automatically
+    * Linux mount with reading `/etc/fstab` everytime it boots.
 * `umount`
   * `umount /mnt/dir1` unmount `/mnt/dir1`
 * `lsblk`
+  * EBS volume 을 추가하고 EC2 instane 에서 확인할 수 있다.
   * `lsblk` list block devices
 
 ## Automation
