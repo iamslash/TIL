@@ -328,14 +328,15 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `ps axjf` show processes with the tree.
   * `ps axms` show processes with threads.
 * `kill`
-  * 번호를 이용하여 특정 프로세스에게 시글널을 보내자.
+  * [How to kill Processes in Linux using kill, killall and pkill](https://www.thegeekdiary.com/how-to-kill-processes-in-linux-using-kill-killall-and-pkill/)
+  * The kill command sends signal 15, the terminate signal, by default.
   * `kill -l`
     * 가능한 시글널 목록을 보여다오
   * `kill -9 123`
     * 123 프로세스에게 SIGKILL 보내다오
 * `killall`
-  * 이름을 이용하여 특정 프로세스에게 시그널을 보내자.
-  * `killall -9 a.sh`
+  * 이름을 이용하여 특정 프로세스에게 SIGTERM 을 보내자.
+  * `killall a.sh`
 * `pgrep`
   * 프로세스 번호를 프로세스 이름을 grep하여 찾아다오
   * `pgrep -u root aaa`
