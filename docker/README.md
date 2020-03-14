@@ -199,6 +199,7 @@ distribution/registry:2.6.0
 > docker ps -a
 # list containers with format
 > docker ps -a --format "table {{.ID}}\t{{.Status}}\t{{.Names}}"
+> docker ps -a --no-trunc --format "table {{.Names}}\t{{.Command}}"
 # start container
 > docker start <container-name>
 # restart container
@@ -261,7 +262,7 @@ RUN ["apt-get", "install", "-y", "nginx"]
 RUN ["/user/local/bin/hello", "--help"]
 
 ## CMD
-# 컨테이너를 시작할때 스크립트 혹은 명령을 실행
+# 컨테이너를 시작할때 스크립트 혹은 명령을 실행한다. 딱 한번만 사용 가능하다.
 # /bin/sh 로 실행
 CMD touch /home/hello/hello.txt
 # shell 없이 실행
@@ -269,7 +270,7 @@ CMD ["redis-server"]
 CMD ["mysqld", "--datadir=/var/lib/mysql", "--user=mysql"]
 
 ## ENTRYPOINT
-# 컨테이너가 시작되었을 때 스크립트 혹은 명령을 실행
+# 컨테이너를 시작할때 스크립트 혹은 명령을 실행한다. 딱 한번만 사용 가능하다.
 # ENTRYPOINT 에 설정한 명령에 매개 변수를 전달하여 실행
 # ENTRYPOINT 와 CMD 를 동시에 사용하면 CMD 는 agument 역할만 한다
 ENTRYPOINT ["echo"]
@@ -498,6 +499,8 @@ $ docker pause hello
 # 컨테이너 목록을 출력
 # docker ps <옵션>
 $ docker ps -a
+# --no-trunc: 정보가 끊기지 않고 모두 출력
+$ docker ps -a --no-trunc
 
 ## pull
 #  Docker 레지스트리에서 이미지를 다운로드
