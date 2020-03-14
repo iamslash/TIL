@@ -972,4 +972,3 @@ replications between regions
 * [How can I use the AWS CLI to call and store SAML credentials?](https://aws.amazon.com/ko/premiumsupport/knowledge-center/aws-cli-call-store-saml-credentials/)
 * [saml2aws](https://github.com/Versent/saml2aws)
   * aws saml login utility made by golang
-

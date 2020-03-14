@@ -897,9 +897,9 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `du -ah --time /home/iamslash` last modified time 도 보여줘
 * `df`
   * `df -h` human readable format
-  * `df -ah` 모두 보여다오
-  * `df -ih` i-node 정보좀 털어봐라
-  * `df -Th` 파일 시스템 타입좀
+  * `df -ah` 모두 알려다오
+  * `df -ih` i-node 정보와 함께 알려다오
+  * `df -Th` 파일 시스템타입과 함께 알려다오
   * `df -th ext3` ext3 포함해서 알려줘
   * `df -xh ext3` ext3 빼고 알려줘
 * `netstat`
@@ -1380,8 +1380,13 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 ## Files
 
-* rsync
+* `file`
+  * `file a.txt` 파일종류좀 알려줘
+  * `sudo file -s /dev/xvdf/` 특별한 파일 즉 디스크좀 알려줘. 포맷되었는지 확인할 수 있다.
+* `rsync`
   * [sync 사용법 - data backup 포함](https://www.lesstif.com/pages/viewpage.action?pageId=12943658)
+    * [Rsync](https://www.lesstif.com/display/1STB/rsync)
+  * `--progress` option: 진행상황 확인 
   * `rsync -n -avrc /abc/home/sample1/* server2:/abc/home/sample2/` rsync dry-run
   * `rsync -avz --progress -e 'ssh -p 10022' iamslash@example.com:/home/hello /home/world`
 
@@ -1454,14 +1459,14 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `fdisk /dev/sdb` create partition
 * `mkfs`
   * file system 을 생성한다.
-  * `mkfs -t ext4 /dev/sdb1` format `/dev/sdb1`
+  * `mkfs -t ext4 /dev/sdb1` format `/dev/sdb1` with ext4 type
 * `blkid` 
   * `blkid` list properties of block devices including UUID for mount
 * `mount`
   * `mount` show all mounts
   * `mount -t ext4 auto /dev/sdb1 /mnt/dir1`
   * `mount -a`  mount all filesystems mentioned in fstab
-  * `vim /etc/fstab` add mount automatically
+  * `vim /etc/fstab` add mount information and mount automatically.
     * Linux mount with reading `/etc/fstab` everytime it boots.
 * `umount`
   * `umount /mnt/dir1` unmount `/mnt/dir1`
