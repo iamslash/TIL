@@ -922,11 +922,12 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `du -ah --time /home/iamslash` last modified time 도 보여줘
 * `df`
   * `df -h` human readable format
-  * `df -ah` 모두 알려다오
-  * `df -ih` i-node 정보와 함께 알려다오
-  * `df -Th` 파일 시스템타입과 함께 알려다오
-  * `df -th ext3` ext3 포함해서 알려줘
-  * `df -xh ext3` ext3 빼고 알려줘
+  * `df -ha` 모두 알려다오
+  * `df -hi` i-node 정보와 함께 알려다오.
+    * Disk 가 꽉 차지 않았음에도 i-node 가 모두 사용되어 "creating `xxx.txt’: No spacse left on device" error 가 발생될 수 있다.
+  * `df -hT` 파일 시스템타입과 함께 알려다오
+  * `df -ht ext3` ext3 포함해서 알려줘
+  * `df -hx ext3` ext3 빼고 알려줘
 * `netstat`
   * `apt install net-tools`
   * 네트워크 상태좀 알려다오
