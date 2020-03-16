@@ -612,6 +612,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `pidstat 1`
   * `iostat -xz 1`
   * `free -m`
+    * Total 과 available 를 주목하자. available 이 얼만큼인지가 중요하다.
   * `sar -n DEV 1`
   * `sar -n TCP,ETCP 1`
   * `top`
