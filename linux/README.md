@@ -538,6 +538,30 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `tcpdump -A port 3389` show only port 3389 and print packets in ASCII
   * `tcpdump src port 3389` show only src port 3389
   * `tcpdump dst port 3389` show only dst port 3389
+* `su`
+  * [리눅스 su, sudo 명령어 사용법 정리 (root 권한 획득 방법)](https://withcoding.com/106)
+  * switch user
+  * 로그인 하지 않고  다른 계정으로 전환한다.
+  * `su` root user 로 전환
+  * `su iamslash` iamslash user 로 전환
+  * `su - iamslash` SHELL, home directory 도 전환
+  * `whoami` 나는 누구인가?
+  * `logout` 전환되기 이전 계정으로 돌아온다.
+  * `su -c 'apt-get update'` root 권한으로 command line 실행. sudo 와 비슷하다.
+* `sudo`
+  * [리눅스 su, sudo 명령어 사용법 정리 (root 권한 획득 방법)](https://withcoding.com/106)
+  * root 권한을 이용하여 command line 실행
+  * `sudo apt-get update`
+  * `sudo -s` su 처럼 root user 로 전환한다. home directory 는 유지.
+  * `sudo -i` su 처럼 root user 로 전환한다. home directory 도 전환. 
+  * `/etc/sudoers` 파일에 지정된 사용자만 sudo 명령을 사용할 수 있다.
+    * `sudo visudo` `/etc/sudoers` 를 수정한다.
+  
+      ```
+      # User privilege specification
+      root    ALL=(ALL:ALL) ALL
+      iamslash  ALL=(ALL:ALL) ALL
+      ```
 
 ## Process management
 
@@ -612,7 +636,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `pidstat 1`
   * `iostat -xz 1`
   * `free -m`
-    * Total 과 available 를 주목하자. available 이 얼만큼인지가 중요하다.
+    * available / Total 을 보고 scale up 판단을 한다.
   * `sar -n DEV 1`
   * `sar -n TCP,ETCP 1`
   * `top`
