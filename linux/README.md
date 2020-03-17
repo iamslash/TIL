@@ -1150,8 +1150,11 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `ls | head -5`
 * `awk`
   * [awk](/awk/README.md)
+  * [리눅스 awk 사용법](https://zzsza.github.io/development/2017/12/20/linux-6/)
   * `cat a.txt | awk '{print $4}'`
     * a.txt 를 읽어서 매 줄마다 4 번 째 컬럼만 출력하라
+  * `cat a.txt | awk -F, '{print $2, $4}`
+    * a.txt 를 읽어서 매 줄마다 `,` 를 구분자로 해서 2, 4 번 째 컬럼만 출력하라. 
 * `uniq`
   * `uniq a.txt` 유일한 라인만 출력
   * `uniq -c a.txt` 중복된 라인의 개수를 출력
