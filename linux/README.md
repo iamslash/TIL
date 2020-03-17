@@ -1509,6 +1509,15 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 ## oneline commands
 
+* 파일을 읽고 "hello" 혹은 "world" 를 가진 라인들을 고른다. 그리고 적절히 필터링 한다.
+
+```bash
+$ cat a.csv | \
+      grep -e hello \
+       -e world \
+       | awk '{print $1, $12}' | awk -F, '{print $7}' | grep foo | sed 's/"//g' | sort | uniq
+```
+
 * 파일의 내용을 정렬하고 집합연산해 보자.
 
 ```bash
