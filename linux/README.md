@@ -1493,7 +1493,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `blkid` list properties of block devices including UUID for mount
 * `mount`
   * `mount` show all mounts
-  * `mount -t ext4 auto /dev/sdb1 /mnt/dir1`
+  * `mount -t ext4 /dev/sdb1 /mnt/dir1`
   * `mount -a`  mount all filesystems mentioned in fstab
   * `vim /etc/fstab` add mount information and mount automatically.
     * Linux mount with reading `/etc/fstab` everytime it boots.
