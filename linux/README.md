@@ -1183,6 +1183,13 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `wc -c a.txt` 바이트수 보여도
   * `wc -m a.txt` 바이트수 보여도
   * `wc -L a.txt` 가장 길이가 긴 행의 문자개수
+* `lnav`
+  * [lnav](http://lnav.org/)
+  * 괜찮은 text syslog viewer
+* `journalctl`
+  * [[Linux] journalctl을 이용해 systemd 로그 확인하기](https://twpower.github.io/171-journalctl-usage-and-examples)
+  * systemd log 확인
+
 
 ## 텍스트
 
