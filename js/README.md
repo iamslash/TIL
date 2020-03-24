@@ -1283,42 +1283,75 @@ document.cookie = "key1 = value1;key2 = value2;expires = date";
 
 ## var, let, const
 
+* [var, let, const 차이점은?](https://gist.github.com/LeoHeo/7c2a2a6dbcf80becaaa1e61e90091e5d)
+
+----
+
 * var 는 function-scoped 이고 let, const 는 block-scoped 이다.
 * var 는 함수를 기준으로 hoisting 이 발생한다.
 
 ```js
-// 잘된다.
-for (var i = 0; i < 5; ++i)
-  console.log(i);
-console.log(i);
+// i is hoisted.
+for (var i = 0; i < 10; i++) {
+  console.log('i', i)
+}
+console.log('after loop i is ', i) // after loop i is 10
 
-// 안된다.
-for (j = 0; j < 5; ++j)
-  console.log(j);
-console.log(j);
-//Thrown:
-//ReferenceError: k is not defined
+// i is hoisted in a function. So error happens.
+function counter () {
+  for(var i=0; i<10; i++) {
+    console.log('i', i)
+  }
+}
+counter()
+console.log('after loop i is', i) // ReferenceError: i is not defined
 ```
 
 * IIFE 를 사용하면 var 를 선언한 것처럼 hoisting 된다.
 
 ```js
-// "var i" 가 선언된 것 같다.
 (function() {
-  for(i = 0; i < 5; i++) {
-    console.log(i)
+  // i is hoisted in a function.
+  for(var i = 0; i < 10; i++) {
+    console.log('i', i)
   }
 })()
-console.log(i) 
+console.log('after loop i is', i) // ReferenceError: i is not defined
+```
 
-// 그러나 use strict 를 사용하면 불가하다.
+```js
+// This is ok. because i is hoisted in global.
+(function() {
+  for(i = 0; i < 10; i++) {
+    console.log('i', i)
+  }
+})()
+console.log('after loop i is', i) // after loop i is 10
+```
+
+This is same as follow.
+
+```js
+var i
+(function() {
+  for(i = 0; i < 10; i++) {
+    console.log('i', i)
+  }
+})()
+console.log('after loop i is', i) // after loop i is 10
+```
+
+To prevent hoisting in IIFE, just use strict
+
+```js
+// Error will happen.
 (function() {
   'use strict'
-  for(i = 0; i < 5; i++) {
-    console.log(i)
+  for(i=0; i<10; i++) {
+    console.log('i', i)
   }
 })()
-console.log(i) 
+console.log('after loop i is', i) // ReferenceError: i is not defined
 ```
 
 * let, const 는 변수재선언이 불가능하다. const 는 immutable 하다.
