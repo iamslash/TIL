@@ -1397,6 +1397,104 @@ jvm 의 gc 는 크게 `Young Generation, Old Generation, Permanent Generation` �
 
 ----
 
+다음은 legacy code 를 stream 을 사용하여 compact 하게 만든 예이다.
+
+```java
+// Legacy
+List<String> names = Arrays.asList("foo", "bar", "baz");
+long cnt = 0;
+for (String name : names) {
+   if (name.contains("f")) {
+      cnt++;
+   }
+}
+System.out.println("Count is " + cnt);
+// Stream
+cnt = 0;
+cnt = names.stream().filter(x -> x.contains("f")).count();
+System.out.println("Count is " + cnt);
+```
+
+다음은 stream 을 생성하는 방법의 예이다.
+
+```java
+// Stream 은 주로 Collection, Arrays 에서 생성한다.
+// I/o resources(ex, File), Generators, Stream ranges, Pattern 등에서도 생성할 수 있다.
+List<string> names = Arrays.asList("foo", "bar", "baz");
+names.stream();
+
+// Array 에서 stream 생성
+Double[] d = {3.1, 3.2, 3.3};
+Arrays.stream(d);
+
+// 직접 stream 생성
+Stream<Intger> str = Stream.of(1, 2);
+```
+
+Stream 은 스트림생성, 중개연산, 최종연산 과 같이 3 가지로 구분한다. 마치 `스트림생성().중개연산().최종연산()` 과 같은 모양이다.
+
+다음은 중개연산의 예이다.
+
+```java
+// Filter
+List<string> names = Arrays.asList("foo", "bar", "baz");
+Stream<String> a = names.stream().filter(x -> x.contains("f"));
+
+// Map
+names.parallelStream().map(x -> return x.concat("s")).forEach(x -> System.out.println(x));
+
+// Peek
+names.stream().peek(System.out::println);
+
+// Sorted
+names.stream().sorted().peek(System.out::println);
+
+// Limit
+names.stream().filter(x -> return x.contains("f")).limit(1);
+
+// Distinct
+names.stream().distinct().peek(System.out::println);
+
+// Skip
+names.stream().skip(1).peek(System.out::println);
+
+// mapToInt, mapToLong, mapToDouble
+List<string> nums = Arrays.asList("1", "2", "3");
+nums.stream().mapToInt().peek(System.out::println); 
+```
+
+다음은 최종연산의 예이다.
+
+```java
+// count, min, max, sum, average
+List<Integer> nums = Arrays.asList(1, 2, 3);
+System.out.println(nums.stream().count());
+System.out.println(nums.stream().min());
+System.out.println(nums.stream().max());
+System.out.println(nums.stream().sum());
+System.out.println(nums.stream().average());
+
+// reduce
+System.out.println(nums.stream().reduce());
+
+// forEach
+nums.stream().forEach(x -> System.out.println(x));
+
+// collect
+Set<Integer> set = nums.stream().collect(Collectors.toSet());
+
+// iterator
+Iterator<String> it = nums.stream().iterator();
+while(it.hasNext()) {
+   System.out.println(iter.next());
+}
+
+// noneMatch, anyMatch, allMatch
+System.out.println(nums.stream().noneMatch(x -> x > 10)); //false
+System.out.println(nums.stream().anyMatch(x -> x > 10)); //false
+System.out.println(nums.stream().allMatch(x -> x > 10)); //false
+```
+
 `Stream::parallelStream` 을 이용하면 병렬연산을 쉽게 할 수 있다.
 
 ```java
