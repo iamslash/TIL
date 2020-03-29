@@ -11,6 +11,7 @@
   - [Advanced Docker Commands](#advanced-docker-commands)
 - [Advanced](#advanced)
   - [Network](#network)
+  - [User of docker container](#user-of-docker-container)
 
 ----
 
@@ -766,4 +767,8 @@ $ docker exec web04 ip addr show
   * [Access MacOS host from a docker container](https://medium.com/@balint_sera/access-macos-host-from-a-docker-container-e0c2d0273d7f)
   * use `host.docker.internal` as ip addr in a container
 
+
+## User of docker container
+
+* [How to set user of Docker container](https://codeyarns.com/2017/07/21/how-to-set-user-of-docker-container/)
 
