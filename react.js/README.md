@@ -21,6 +21,7 @@
   - [React Redux](#react-redux)
 - [Redux Toolkit](#redux-toolkit)
 - [Redux SAGA](#redux-saga)
+- [Redux Debugger in Chrome](#redux-debugger-in-chrome)
 
 ----
 
@@ -1090,4 +1091,10 @@ createSlice 는 action, reducer 생성을 쉽게 해준다.
 
 # Redux SAGA
 
-???
+* [redux-saga](https://github.com/redux-saga/redux-saga)
+  * [한글](https://mskims.github.io/redux-saga-in-korean/)
+
+# Redux Debugger in Chrome
+
+* [ #4.3 configureStore](https://academy.nomadcoders.co/courses/235420/lectures/14735315)
+
