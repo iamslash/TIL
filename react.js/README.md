@@ -19,6 +19,8 @@
   - [Redux](#redux)
   - [To Do List](#to-do-list)
   - [React Redux](#react-redux)
+- [Redux Toolkit](#redux-toolkit)
+- [Redux SAGA](#redux-saga)
 
 ----
 
@@ -31,6 +33,7 @@
 * [reactjs @ inflearn](https://www.inflearn.com/course/reactjs-web/)
   * react class for beginner
   * [src](https://github.com/nomadcoders/movie_app)
+* [ReactJS로 웹 서비스 만들기](https://academy.nomadcoders.co/p/reactjs-fundamentals)
   * [src 2019 update](https://github.com/nomadcoders/movie_app_2019)
 * [Create-React-App: A Closer Look](https://github.com/nitishdayal/cra_closer_look)
   * stuffs in create-react-app in detail
@@ -286,7 +289,7 @@ class App extends Component {
 
 ## Thinking in React Component State
 
-`App` component 에 state 를 선언하고 `render()` 에서 바꿔보자. 반드시 `this.setState()` 함수를 이용해야 한다.
+`App` component 에 state 를 선언하고 `render()` 에서 바꿔보자. `this.setState()` 함수를 호출하면 `render()` 가 호출된다. `state` 를 바꾸고 `this.setState()` 를 호출하여 화면을 업데이트한다. 
 
 ```js
 class App extends Component {
@@ -745,11 +748,17 @@ $ yarn run deploy
 * [초보자를 위한 리덕스 101](https://academy.nomadcoders.co/courses/235420/lectures/13817530)
   * [src](https://github.com/nomadcoders/vanilla-redux)
 
-Redux 는 state 를 관리하기 위한 거대한 event loop 이다. Action 은 event 를 말하고 Reducer 는 event handler 이다. Store 는 Application 의 state 이다. [리덕스(Redux)란 무엇인가?](https://voidsatisfaction.github.io/2017/02/24/what-is-redux/)
+Redux 는 state 를 관리하기 위한 거대한 event loop 이다. Action 은 event 를 말하고 Reducer 는 event handler 이다. 즉, Reducer 는 함수이고 변경된 state 를 return 한다. Reducer 의 첫번째 argument 는 state 이고 두번째 argument 는 action 이다.
+
+Store 는 Application 의 state 이다. Store 를 생성하기 위해서는 Reducer 가 필요하다. Store instance 의 getState() 를 호출하면 현재 state 를 얻어올 수 있다. Store instance 의 dispatch() 를 특정 action 과 함께 호출하면 Store instance 에 등록된 Reducer 가 그 action 을 두번째 argument 로 호출된다. 
+
+또한 Store instance 의 subscribe() 를 함수와 함께 호출하면 Store 가 변경될 때 마다 그 함수가 호출된다. 그 함수에서 Store instance 의 getState() 를 호출하면 변경된 state 를 얻어올 수 있다.
+
+[리덕스(Redux)란 무엇인가?](https://voidsatisfaction.github.io/2017/02/24/what-is-redux/)
 
 Redux 는 다음과 같은 흐름으로 처리된다.
 
-* Store 의 dispatch 함수를 호출하여 action 을 발생한다.
+* Store 의 dispatch 함수를 특정 action 을 argument 로 호출한다.
 * Store 에 등록된 Reducer 가 호출된다. 
 * Reducer 는 state 를 변경하여 return 한다.
 * 변경된 state 가 Store 에 subscribe 된 Component 에게 전달된다.
@@ -922,7 +931,7 @@ ReactDOM.render(
 );
 ```
 
-`connect` 를 이용하면 props 와 component 를 연결할 수 있다. 즉, state 가 변경되면 `mapStateToProps` 가 호출되고 state 가 포함된 props 를 리턴한다. 리턴된 props 는 component 에게 전달된다. 
+`connect` 를 `mapStateToProps` 와 함께 호출하면 특정 Component 를 연결할 수 있다. 즉, state 가 변경되면 `mapStateToProps` 가 호출된다. `mapStateToProps` 는 state 가 포함된 props 를 리턴한다. 리턴된 props 는 component 에게 전달된다. 
 
 ```js
 import React, { useState } from "react";
@@ -1064,3 +1073,17 @@ export const actionCreators = {
 
 export default store;
 ```
+
+# Redux Toolkit
+
+createAction 은 Action 생성을 쉽게 해준다.
+
+createReducer 는 Reducer 생성을 쉽게 해준다.
+
+configureStore 는 ???
+
+createSlice 는 action, reducer 생성을 쉽게 해준다.
+
+# Redux SAGA
+
+???
