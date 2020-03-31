@@ -35,6 +35,8 @@
   * [src](https://github.com/nomadcoders/movie_app)
 * [ReactJS로 웹 서비스 만들기](https://academy.nomadcoders.co/p/reactjs-fundamentals)
   * [src 2019 update](https://github.com/nomadcoders/movie_app_2019)
+* [초보자를 위한 리덕스 101](https://academy.nomadcoders.co/courses/235420/lectures/13817530)
+  * [src](https://github.com/nomadcoders/vanilla-redux)
 * [Create-React-App: A Closer Look](https://github.com/nitishdayal/cra_closer_look)
   * stuffs in create-react-app in detail
 
@@ -758,10 +760,12 @@ Store 는 Application 의 state 이다. Store 를 생성하기 위해서는 Redu
 
 Redux 는 다음과 같은 흐름으로 처리된다.
 
-* Store 의 dispatch 함수를 특정 action 을 argument 로 호출한다.
+* Store 에 Component 를 subscribe 한다.
+* User 가 button 을 click 하면 Store 의 dispatch 함수가 특정 action 을 argument 로 호출된다.
 * Store 에 등록된 Reducer 가 호출된다. 
 * Reducer 는 state 를 변경하여 return 한다.
-* 변경된 state 가 Store 에 subscribe 된 Component 에게 전달된다.
+* Store 에 미리 subscribe 된 Component 에게 변경된 state 가 전달된다.
+* Component 는 변경된 state 를 rendering 한다.
 
 ```js
 import { createStore } from "redux";

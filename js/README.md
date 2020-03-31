@@ -43,6 +43,7 @@
   - [var, let, const](#var-let-const)
   - [promise](#promise)
   - [async, await](#async-await)
+  - [import from](#import-from)
 
 -------------------------------------------------------------------------------
 
@@ -1556,4 +1557,60 @@ async function fooAsync() {
   }
 }
 await fooAsync().then(() => console.log("done"));
+```
+
+## import from
+
+* [When should I use curly braces for ES6 import?](https://stackoverflow.com/questions/36795819/when-should-i-use-curly-braces-for-es6-import)
+
+----
+
+default export
+
+```js
+// B.js, This is default import.
+import A from './A'
+// A.js, A.js should has default export.
+export default 42
+
+// B.js, This doen't matter what name you assign to.
+// Because it will always resolve to whatever is the default export of A.
+import A from './A'
+import MyA from './A'
+import Something from './A'
+```
+
+named export
+
+```js
+// B.js, This is named import called A.
+import { A } from './A'
+// A.js, This should has named export called A.
+export const A = 42
+
+// B.js, You should use specific names when import from A.
+import { A } from './A'
+import { myA } from './A' // Doesn't work!
+import { Something } from './A' // Doesn't work!
+
+// A.js, If you use those names, you have to export corresponding names.
+export const A = 42
+export const myA = 43
+export const Something = 44
+```
+
+multiple named import
+
+```js
+// B.js, A module can only have one default export and
+// as many named exports as you'd like. You can import them all together:
+import A, { myA, Something } from './A'
+
+// A.js
+export default 42
+export const myA = 43
+export const Something = 44
+
+// B.js, We can assign them all different names.
+import X, { myA as myX, Something as XSomething } from './A'
 ```
