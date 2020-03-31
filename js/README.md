@@ -44,6 +44,7 @@
   - [promise](#promise)
   - [async, await](#async-await)
   - [import from](#import-from)
+  - [Generator function, function*](#generator-function-function)
 
 -------------------------------------------------------------------------------
 
@@ -1613,4 +1614,20 @@ export const Something = 44
 
 // B.js, We can assign them all different names.
 import X, { myA as myX, Something as XSomething } from './A'
+```
+
+## Generator function, function*
+
+* [function*](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Statements/function*)
+  
+```js
+function* generator(i) {
+  yield i;
+  yield i + 10;
+}
+const gen = generator(10);
+console.log(gen.next().value);
+// expected output: 10
+console.log(gen.next().value);
+// expected output: 20
 ```
