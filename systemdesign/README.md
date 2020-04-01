@@ -70,6 +70,7 @@
 # Materials
 
 - [aws @ TIL](/aws/README.md)
+- [Mastering Chaos - A Netflix Guide to Microservices](https://www.youtube.com/watch?v=CZ3wIuvmHeM)
 - [A pattern language for microservices](https://microservices.io/patterns/index.html)
   - microservices 의 기본개념
 - [cracking the coding interview](http://www.crackingthecodinginterview.com/)

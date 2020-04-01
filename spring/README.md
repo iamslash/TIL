@@ -17,6 +17,7 @@
   - [ConfigurationProperties](#configurationproperties)
   - [Http requests logging](#http-requests-logging)
   - [Http responses logging](#http-responses-logging)
+  - [Sprint Boot Test](#sprint-boot-test)
 
 ----
 
@@ -252,4 +253,18 @@ logging:
 ## Http responses logging
 
 * [Logging Spring WebClient Calls](https://www.baeldung.com/spring-log-webclient-calls)
+
+## Sprint Boot Test
+
+* [Spring Boot Test](https://cheese10yun.github.io/spring-boot-test/#null)
+
+----
+
+* Spring Boot Test
+* @WebMvcTest
+* @DataJpaTest
+* @RestClientTest
+* @JsonTest
+
+
 
