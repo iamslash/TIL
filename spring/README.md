@@ -18,6 +18,7 @@
   - [Http requests logging](#http-requests-logging)
   - [Http responses logging](#http-responses-logging)
   - [Sprint Boot Test](#sprint-boot-test)
+  - [Spring Boot Exception Handling](#spring-boot-exception-handling)
 
 ----
 
@@ -266,5 +267,8 @@ logging:
 * @RestClientTest
 * @JsonTest
 
+## Spring Boot Exception Handling
 
-
+* [(Spring Boot)오류 처리에 대해](https://supawer0728.github.io/2019/04/04/spring-error-handling/)
+* [스프링부트 : REST어플리케이션에서 예외처리하기](https://springboot.tistory.com/33)
+* [Error Handling for REST with Spring](https://www.baeldung.com/exception-handling-for-rest-with-spring)
