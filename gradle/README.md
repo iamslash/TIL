@@ -4,7 +4,7 @@ Gradle 은 task runner 이다. Gradle 은 maven 보다 성능이 좋다.
 
 # Materials
  
-* [Gradle for Android and Java](https://classroom.udacity.com/courses/ud867) 
+* [Gradle for Android and Java @ udacity](https://classroom.udacity.com/courses/ud867) 
   * [src](https://github.com/udacity/ud867)
 * [Command-Line Interface @ Gradle](https://docs.gradle.org/current/userguide/command_line_interface.html)
 * [gradle DSL reference @ Gradle](https://docs.gradle.org/current/dsl/)
