@@ -28,6 +28,7 @@
 
 # Materials
 
+* [learn groovy in minutes](https://learnxinyminutes.com/docs/groovy/)
 * [Groovy](https://code-maven.com/groovy)
   * Groovy Tutotial for Jenkins Pipeline.
 * [groovy  Documentation](http://groovy-lang.org/documentation.html)
