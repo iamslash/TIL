@@ -5,6 +5,7 @@ Gradle 은 task runner 이다. Gradle 은 maven 보다 성능이 좋다.
 # Materials
  
 * [Gradle for Android and Java @ udacity](https://classroom.udacity.com/courses/ud867) 
+  * Great materials
   * [src](https://github.com/udacity/ud867)
 * [Command-Line Interface @ Gradle](https://docs.gradle.org/current/userguide/command_line_interface.html)
 * [gradle DSL reference @ Gradle](https://docs.gradle.org/current/dsl/)
@@ -21,6 +22,7 @@ $ cd my-app
 
 # Generates gradlew, gradlew.bat, .gradle, gradle
 # Those are for system Gradle is not installed on. 
+# Those should be tracked by SCM.
 $ gradle wrapper
 $ tree -a .
 .
@@ -238,6 +240,142 @@ task integrationTest(type: Test) {
 	classpath = sourceSets.integrationTest.runtimeClasspath
 }
 ```
+
+gradle deamon 은 gradle task 수행 속도를 빠르게 도와 준다. `gradle --stop` 은 gradle daemon 을 멈춘다.
+
+`println` 은 `System.out.println` 의 shortcut 이다. groovy 에서 `closure` 는 anonymous block of code 를 말한다. 다음은 `closure` 의 예이다.
+
+```groovy
+task groovy {}
+
+def foo = "One million dollars"
+def myClosure = {
+    println "Hello from a closure"
+    println "The value of foo is $foo"
+}
+
+myClosure()
+def bar = myClosure
+def baz = bar
+baz()
+```
+
+`closure` 의 delegate 을 특정 instance 로 assign 하면 `closure` 의 variables, methods 들은 `closure.delegate` 의 variables, methods 와 같다.
+
+```groovy
+class GroovyGreeter {
+    String greeting = "Default greeting"
+    def printGreeting() { println "Greeting: $greeting" }
+}
+def myGroovyGreeter = new GroovyGreeter()
+
+myGroovyGreeter.printGreeting()
+myGroovyGreeter.greeting = "My custom greeting"
+myGroovyGreeter.printGreeting()
+
+def greetingClosure = {
+  greeting = "Setting the greeting from a closure"
+  printGreeting()
+}
+
+// greetingClosure() // This doesn't work, because `greeting` isn't defined
+greetingClosure.delegate = myGroovyGreeter
+greetingClosure() // This works as `greeting` is a property of the delegate
+```
+
+`-b` option 은 특정 build file 을 실행한다.
+
+```bash
+$ gradle -b a.gradle HelloWorld
+```
+
+closure 가 delgate 을 가질 수 있는 것 처럼 build.gradle 은 project 가 delegate 이다. 
+
+```groovy
+// 
+project.task("myTask1")
+// This is same with above
+task("myTask2")
+// We can leave off the parentheses.
+task "myTask3"
+```
+
+다음은 task object 의 properties 인 description, group, doLast 를 assign 하는 예이다.
+
+```groovy
+task myTask7 {
+    description("Description") // Function call works
+    //description "Description" // This is identical to the line above
+    group = "Some group" // Assignment also works
+    doLast { // We can also omit the parentheses, because Groovy syntax
+        println "Here's the action"
+    }
+}
+```
+
+또한 다음과 같이 task object 의 properties 를 argument 로 assign 할 수도 있다.
+
+```groovy
+task myTask8(description: "Another description") {
+    doLast {
+        println "Doing something"
+    }
+}
+```
+
+task 들은 `dependsOn`, `finalizedBy`, `mustRunAfter` 를 통해서 의존관계를 형성할 수 있다.
+
+```groovy
+
+task putOnSocks {
+    doLast {
+        println "Putting on Socks."
+    }
+}
+
+task putOnShoes {
+    dependsOn "putOnSocks"
+    doLast {
+        println "Putting on Shoes."
+    }
+}
+```
+
+`$ gradle tasks` 는 putOnSocks 를 보여주지는 않는다. 그러나 `$ gradle tasks --all` 을 통해 볼 수 있다.
+
+```groovy
+
+task eatBreakfast {
+    finalizedBy "brushYourTeeth"
+    doLast{
+        println "Om nom nom breakfast!"
+    }
+}
+
+task brushYourTeeth {
+    doLast {
+        println "Brushie Brushie Brushie."
+    }
+}
+```
+
+`gradle putOnFragrance takeShower` 를 실행하면 `takeShower` task 를 실행하고 `putOnFragrance` task 를 실행한다.
+
+```grooyv
+task takeShower {
+    doLast {
+        println "Taking a shower."
+    }
+}
+
+task putOnFragrance {
+    shouldRunAfter "takeShower"
+    doLast{
+        println "Smellin' fresh!"
+    }
+}
+```
+
 
 
 # Advanced 

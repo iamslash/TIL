@@ -2,6 +2,7 @@
 - [Install](#install)
   - [Install on Windows 10](#install-on-windows-10)
   - [Install on OSX](#install-on-osx)
+- [REPL](#repl)
 - [DSL (Domain Specific Language)](#dsl-domain-specific-language)
 - [Basic](#basic)
   - [Compile, Run](#compile-run)
@@ -45,18 +46,24 @@
 ## Install on Windows 10
 
 ```
-choco install groovy
+$ choco install groovy
 ```
 
 ## Install on OSX
 
 ```bash
-brew install groovy
+$ brew install groovy
+```
+
+# REPL
+
+```bash
+$ groovysh
 ```
 
 # DSL (Domain Specific Language)
 
-groovy 의 top level statement 는 argument 주변의 `()` 와 function call 사이의 `.` 를 생략할 수 있다. 이것을 `command chain` 이라고 한다.
+groovy 의 top level statement 는 argument 주변의 "`()`" 와 function call 사이의 "`.`" 를 생략할 수 있다. 이것을 `command chain` 이라고 한다.
 
 ```groovy
 // equivalent to: turn(left).then(right)
@@ -122,6 +129,10 @@ EmailDsl.make {
    body "How are things? We are doing well. Take care" 
 }
 ```
+
+closure 를 argument 로 static function `EmailDs1.make` 을 호출한다. `EmailDs1.make` 는 closure 의 delegate 를 EmailDs1 instance 로 assign 한다. 그리고 `closure()` 를 호출한다.
+
+이후 `closure` 에 포함된 function 들이 호출된다. 이것은 미리 assign 된 EmailDs1 instance 의 function 들이 호출되는 것과 같다.
 
 # Basic 
 
@@ -368,12 +379,12 @@ static void sum(int a, int b) {
   println(c);
 }
 // default parameter
-static void sum(int a,int b = 5) { 
+static void sum(int a, int b = 5) { 
   int c = a + b; 
   println(c); 
 } 
 // return value
-static int sum(int a,int b = 5) {
+static int sum(int a, int b = 5) {
   int c = a + b;
   return c;
 } 
@@ -505,13 +516,13 @@ TODO
 ```groovy
 // Introspection, know all the details about classes :
 // List all constructors of a class
-String.constructors.each{println it}
+String.constructors.each{ println it }
 
 // List all interfaces implemented by a class
-String.interfaces.each{println it}
+String.interfaces.each{ println it }
 
 // List all methods offered by a class
-String.methods.each{println it}
+String.methods.each{ println it }
 
 // Just list the methods names
 String.methods.name
