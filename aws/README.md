@@ -76,6 +76,7 @@
   - [KMS (Key Management Service)](#kms-key-management-service)
   - [Lightsail](#lightsail)
   - [EKS](#eks)
+  - [Document DB](#document-db)
 - [Advanced](#advanced)
   - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
 - [Best Practices](#best-practices)
@@ -782,6 +783,15 @@ docker pull XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/repo-test:latest
   * [slide](https://www.slideshare.net/awskorea/aws-kubernetes-aws-aws-devday2018)
 * [EKS workshop](https://eksworkshop.com/)
   * EKS practice
+
+## Document DB
+
+* [Amazon DocumentDB deep dive (PDF / Youtube)](https://www.portal.reinvent.awsevents.com/connect/sessionDetail.ww?SESSION_ID=95808&csrftkn=YVO2-1H1W-JC8E-L8IZ-O020-0FKT-PI4P-5CKC)
+* [Migrating your databases to Amazon DocumentDB (PDF, Youtube)](https://www.portal.reinvent.awsevents.com/connect/sessionDetail.ww?SESSION_ID=98290&tclass=popup&csrftkn=C8ZW-MBSA-Q80N-YFKO-2VJD-6280-1EPV-23A1)
+* [DocumentDB Workshop about migration](http://d310sl6n0pru7e.cloudfront.net/intro_0.html)
+* [Best practices for Amazon DocumentDB (PDF)](https://www.portal.reinvent.awsevents.com/connect/sessionDetail.ww?SESSION_ID=98288&tclass=popup&csrftkn=C8ZW-MBSA-Q80N-YFKO-2VJD-6280-1EPV-23A1)
+* [Amazon DocumentDB noew supports database auditing with Amazon CloudWatch Logs](https://aws.amazon.com/about-aws/whats-new/2019/02/amazon-documentdb-now-supports-database-auditing-with-amazon-cloudwatch-logs/)
+* [Logging and Monitoring in Amazon DocumentDB](https://docs.aws.amazon.com/documentdb/latest/developerguide/logging-and-monitoring.html)
 
 ----
 
