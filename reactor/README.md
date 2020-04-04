@@ -25,12 +25,16 @@ Flux is a publisher which implements Publisher.
         Flux<String> flux = Flux.just("foo", "bar", "baz");
         flux.map(a -> a + " hello");
         flux.subscribe(System.out::println);
+        // Flux from empty
         Flux<String> flux = Flux.empty();
+        // Flux from String
         Flux<String> flux = Flux.just("foo", "bar", "baz");
+        // Flux from Iterable
         Flux<String> flux = Flux.fromIterable(Arrays.asList("foo", "bar", "baz"));
         Flux.fromIterable(Arrays.asList("foo", "bar", "baz"))
                 .doOnNext(System.out::println)
                 .blockLast();
+        // take 10 elements of Flux and cancel
         Flux.interval(Duration.ofMillis(100))
                 .take(10)
                 .subscribe(System.out::println);
@@ -95,7 +99,7 @@ You can validate Mono, Flux with StepVerifier.
         StepVerifier.create(take10)
                 .expectNextCount(10)
                 .verifyComplete();
-         Use VirtualTimer when test big Flux.
+        // Use VirtualTimer when test big Flux.
         StepVerifier.withVirtualTime(() -> Mono.delay(Duration.ofHours(3)))
                 .expectSubscription()
                 .expectNoEvent(Duration.ofHours(2))
