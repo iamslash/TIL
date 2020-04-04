@@ -1,6 +1,6 @@
 # Abstract
 
-Gradle 은 task runner 이다. Gradle 은 maven 보다 성능이 좋다.
+Gradle 은 task runner 이다. Gradle 은 maven 보다 성능이 좋다. 먼저 [Groovy DSL](/groovy/README.md) 을 학습하여 closure, delegate 개념을 이해해야 한다.
 
 # Materials
  
@@ -10,7 +10,6 @@ Gradle 은 task runner 이다. Gradle 은 maven 보다 성능이 좋다.
 * [Command-Line Interface @ Gradle](https://docs.gradle.org/current/userguide/command_line_interface.html)
 * [gradle DSL reference @ Gradle](https://docs.gradle.org/current/dsl/)
 * [Creating New Gradle Builds @ Gradle](https://guides.gradle.org/creating-new-gradle-builds/)
-* [Chapter 01 그레이드의 시작 - 1. 그레이들이란? @ youtube](https://www.youtube.com/watch?v=s-XZ5B15ZJ0&list=PL7mmuO705dG2pdxCYCCJeAgOeuQN1seZz)
 
 # Basic
 
@@ -192,7 +191,7 @@ test {
 }
 ```
 
-`build.gradle` 의 내용은 단순하다. 그러나 Gradle 은 기본적으로 다음과 같은 task graph 를 생성해 준다.
+java, application plugin 을 사용하면 다음과 같은 task graph 가 생성된다.
 
 ![](img/javaPluginTasks.png)
 
@@ -289,10 +288,10 @@ greetingClosure() // This works as `greeting` is a property of the delegate
 $ gradle -b a.gradle HelloWorld
 ```
 
-closure 가 delgate 을 가질 수 있는 것 처럼 build.gradle 은 project 가 delegate 이다. 
+closure 가 delgate 을 가질 수 있는 것 처럼 build.gradle 은 project 가 곧 delegate 이다. 
 
 ```groovy
-// 
+// project 의 task method
 project.task("myTask1")
 // This is same with above
 task("myTask2")
@@ -300,7 +299,7 @@ task("myTask2")
 task "myTask3"
 ```
 
-다음은 task object 의 properties 인 description, group, doLast 를 assign 하는 예이다.
+다음은 task object 의 descdription method 를 호출하고 group, doLast properties 를 assign 하는 예이다. doLast 에 closure 를 assign 했다.
 
 ```groovy
 task myTask7 {
@@ -376,7 +375,360 @@ task putOnFragrance {
 }
 ```
 
+다음은 file copy task 의 예이다.
 
+```groovy
+task copyImages(type: Copy) {
+    from 'images'
+    into 'build'
+}
+```
+
+include function 을 사용하여 복사 대상을 handle 할 수 있다.
+
+```groovy
+task copyJpegs(type: Copy) {
+    from 'images'
+    include '*.jpg'
+    into 'build'
+}
+```
+
+또한 multi source copy 도 가능하다.
+
+```groovy
+task copyImageFolders(type: Copy) {
+    from('images') {
+        include '*.jpg'
+        into 'jpeg'
+    }
+
+    from('images') {
+        include '*.gif'
+        into 'gif'
+    }
+
+    into 'build'
+}
+```
+
+다음은 `images/` 를 `build/images.zip` 으로 압축하는 예이다.
+
+```groovy
+task zipImages(type: Zip) {
+    baseName = 'images'
+    destinationDir = file('build')
+    from 'images'
+}
+```
+
+다음은 `images/*.jpg,*.gif` 를 압축한다.
+
+```groovy
+
+task zipImageFolders(type: Zip) {
+    baseName = 'images'
+    destinationDir = file('build')
+
+    from('images') {
+        include '*.jpg'
+        into 'jpeg'
+    }
+
+    from('images') {
+        include '*.gif'
+        into 'gif'
+    }
+}
+```
+
+이제 `build/` 를 지우는 예이다.
+
+```groovy
+task deleteBuild(type: Delete) {
+    delete 'build'
+}
+```
+
+property value 를 전달하는 방법은 `gradle.poperties, command line, ext properties` 와 같이 3 가지가 존재한다. 
+
+* 다음은 `gradle.properties, build.gradle` 의 예이다.
+
+  ```
+  greeting = "Hello from a properties file"
+  ```
+
+  ```groovy
+  task printGreeting {
+    doLast {
+    println greeting
+    }
+  }
+  ```
+
+* 다음은 command line 으로 properties 를 전달하는 예이다.
+  ```bash
+  $ gradle -Pgreeting="Hello from the command line" printGreeting
+  $ gradle -Pgreeting="Hello from the command line" pG
+  ```
+
+* 다음은 `project.ext` property 에 closure 를 assign 하여 전달하는 예이다.
+  ```groovy
+  ext {
+    greeting = "Hello from inside the build script"
+  }
+  ```
+
+`class` 를 정의하여 task type 으로 사용할 수 있다.
+
+```groovy
+class MyTask extends DefaultTask {}
+```
+
+`HelloTask` 를 정의하여 task type 으로 사용해 보자. 새로운 class 는 DefaultTask 를 extends 하고 @TaskAction 을 사용한 function 을 정의해야 한다.  
+
+```groovy
+class HelloTask extends DefaultTask {
+    @TaskAction
+    void doAction() {
+        println 'Hello World'
+    }
+}
+
+task hello(type: HelloTask)
+```
+
+`task class` 에 property 도 사용할 수도 있다.
+
+```groovy
+class HelloNameTask extends DefaultTask {
+    String firstName
+
+    @TaskAction
+    void doAction() {
+        println "Hello, $firstName"
+    }
+}
+
+task helloName(type: HelloNameTask) {
+    firstName = 'Jeremy'
+}
+```
+
+다음과 같이 logger 를 사용하여 logging 해보자.
+
+```groovy
+task hello(type: HelloTask)
+
+class HelloTask extends DefaultTask {
+    @TaskAction
+    void doAction() {
+        logger.info 'Start HelloTask Action'
+        logger.lifecycle 'Hello World'
+        logger.info 'End HelloTask Action'
+    }
+}
+```
+
+logger.debug 를 사용하려면 `gradle --debug HelloTask` 와 같이 `--debug` option 을 사용해야 한다.
+
+```groovy
+logger.debug "Catch me if you can"
+```
+
+`build.gradle` 에 다음과 같이 java plugin 을 사용하면 `assemble, buile, check, clean` 등등의 task 들이 생겨난다. `$ gradle tasks --all` 을 실행하여 확인할 수 있다.
+
+```groovy
+apply plugin: "java"
+```
+
+그렇다면 gradle 은 어떻게 java application 을 실행하는 걸까? 다음과 같은 JavaExec type 의 task 가 이미 선언되어 있기 때문에 가능하다.
+
+```groovy
+
+task execute(type: JavaExec) {
+    main = "com.udacity.gradle.Person"
+    // We'll talk about this shortly
+    classpath = sourceSets.main.runtimeClasspath
+}
+```
+
+다음은 java plugin 을 사용했을 때 source 디렉토리를 추가하고 jar 를 생성할 때 attribute 를 추가하는 예이다.
+
+```groovy
+apply plugin: 'java' // 1. Apply the Java plugin to the project
+
+sourceSets {
+    main {
+        java {
+            srcDir 'java' // 3. Add 'java' directory as a source directory
+        }
+    }
+}
+
+jar {
+    manifest {
+        attributes 'Implementation-Version': '1.0' // 2. Add manifest attribute
+    }
+}
+```
+
+다음과 같이 repositories code block 을 이용하여 특정 directory 를 library dependency 로 설정할 수 있다.
+
+```groovy
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+```
+}
+
+또한 maven central, mave local, jcenter 와 같은 remote repositories 를 설정할 수도 있다.
+
+```groovy
+repositories {
+    mavenCentral()
+    mavenLocal()
+    jcenter()
+}
+```
+
+다음과 같이 remote repository 를 credential 과 함께 설정할 수도 있다.
+
+```groovy
+repositories {
+    ivy {
+        url 'https://repo.foo.org/ivy'
+        credentials {
+            username 'user'
+            password 'secret'
+        }
+    }
+}
+```
+
+다음은 java plugin 을 사용했을 때 library dependency 를 `group:name:version` 형식으로 설정한 예이다.
+
+```groovy
+dependencies {
+    compile 'com.google.guava:guava:18.0'
+}
+```
+
+또한 다음과 같이 key value 형태로 설정할 수도 있다.
+
+```groovy
+dependencies {
+    compile group: 'com.google.guava', name: 'guava', version: '18.0'
+}
+```
+
+다음은 local jar 를 library dependency 설정한 예이다.
+
+```groovy
+dependencies {
+    compile files('libs/foo.jar', 'libs/bar.jar')
+}
+```
+
+다음과 같이 FileTree 를 사용하여 directory 의 file 들을 libary dependency 설정할 수도 있다.
+
+```groovy
+dependencies {
+    compile fileTree(dir: 'libs', include: '*.jar')
+}
+```
+
+다음과 같이 java plugin 을 이용하여 `dependency {}` 을 설정했다고 해보자. `$ gradle dependencies` 를 실행하면 dependency graph 를 확인할 수 있다.
+
+```groovy
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.springframework:spring-core:4.1.1.RELEASE'
+}
+```
+
+만약 특정한 configuration 과 함께 dependency 를 확인하고 싶다면 `$ gradle dependencies --configuration runtime` 를 실행한다.
+
+만약 특정한 library 의 version conflict 를 알고 싶다면 `$ gradle dependencyInsight --dependency commons-logging` 를 실행하여 확인한다. 예를 들어 다음과 같은 경우 `commons-logging` 은 `1.2` 로 선언되어 있기 때문에 `commons-logging` 을 `1.2` 로 업데이트 한다. 그러나 `spring-core` 는 `1.1.3` 과 match 이다. 이때 `$ gradle dependencyInsight --dependency commons-logging` 를 실행하여 conflict 를 확인할 수 있다.
+
+```groovy
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.springframework:spring-core:4.1.1.RELEASE'
+    compile 'commons-logging:commons-logging:1.2'
+}
+```
+
+dependency 들은 configuration 으로 grouping 된다. `compile, testCompile` 등을 configuration 이라고 한다.
+
+```groovy
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'commons-logging:commons-logging:1.1.3'
+    testCompile 'junit:junit:4.12'
+}
+```
+
+하나의 configuration 은 다른 configuration 을 extends 할 수 있다. 예를 들어 `testCompile` configuration 은 `compile` configuration 을 확장한 것이다. 또한 `configurations {}` 를 이용하여 custom configuration 을 만들 수 있다. `$ gradle dependencies` 를 실행하여 custom configuration 을 확인할 수 있다.
+
+```groovy
+configurations {
+    custom
+}
+
+dependencies {
+    custom 'com.google.guava:guava:18.0'
+}
+```
+
+configuration 은 file collection 이다. 다음과 같이 file 들의 모음을 이용하여 copy 를 손쉽게 실행할 수 있다.
+
+```groovy
+task copyDependencies(type: Copy) {
+    from configurations.custom
+    into 'build/libs'
+}
+```
+
+java plugin 을 사용했을 때 test 를 하는 것은 간단하다. `$ gradle test` 를 실행하면 된다. 그리고 test repost 는 `$ open build/reports/tests/index.html` 를 실행하여 확인할 수 있다. 다음은 `junit` 을 test framework depdency library 로 설정한 예이다.
+
+```groovy
+apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+```
+
+gradle wrapper 는 특정 gradle version 을 지원하기 위해 필요하다. repository 를 clone 하고 처음으로 `$ ./gradlew tasks` 를 실행하면 해당 version 의 gradle 을 download 한다. 또한 `build.gradle` 의 wrapper task 에 gradle wrapper version 을 설정할 수도 있다.
+
+```groovy
+wrapper {
+    gradleVersion = '2.2'
+}
+```
+
+`$ ./gradlew --version` 를 실행하면 gradle wrapper version 을 알 수 있다. 이것은 `./gradle/wrapper/gradle-wrapper.properties` 에 저장된다. 이것을 수정하면 gradle wrapper version 을 변경할 수 있다.
 
 # Advanced 
 
@@ -402,3 +754,7 @@ A(implementation) -> B -> C -> D
 ```
 
 만약 `A` library 의 코드가 수정되어 rebuild 된다면 `implementation` 의 경우는 `A, B` 만 rebuild 된다. 그러나 `api` 의 경우는 `A, B, C, D` 모두 rebuild 된다.
+
+## How to debug gradle
+
+* [How to debug Gradle Plugins with IntelliJ](https://medium.com/grandcentrix/how-to-debug-gradle-plugins-with-intellij-eef2ef681a7b)

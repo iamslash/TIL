@@ -24,6 +24,7 @@
 - [Advanced](#advanced)
   - [Introspection](#introspection)
   - [Traits](#traits)
+  - [owner, delgate, this](#owner-delgate-this)
 
 ----
 
@@ -535,3 +536,42 @@ d.properties.each{ println(it) }
 ## Traits
 
 TODO
+
+## owner, delgate, this
+
+```groovy
+class SpecialMeanings{
+  String prop1 = "prop1"
+  def closure = {
+    String prop1 = "inner_prop1"  
+    // this refers to SpecialMeanings instance
+    println this.class.name // SpecialMeanings
+    println this.prop1 // prop1
+    // owner indicates Owner of the surrounding closure which is SpecialMeaning
+    println owner.prop1 // prop1
+    // delegate indicates the object on which the closure is invoked 
+    // here Delegate of closure is SpecialMeaning
+    println delegate.prop1 // prop1
+    // This is where prop1 from the closure itself in referred
+    println prop1 // inner_prop1
+  }
+}
+
+def closure = new SpecialMeanings().closure
+closure()
+// SpecialMeanings
+// prop1
+// prop1
+// prop1
+// inner_prop1
+println "----------------"
+// Example of modifying the delegate to the script itself
+prop1 = "PROPERTY FROM SCRIPT"
+closure.delegate = this
+closure()
+// SpecialMeanings
+// prop1
+// prop1
+// PROPERTY FROM SCRIPT
+// inner_prop1
+```
