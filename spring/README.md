@@ -258,6 +258,7 @@ logging:
 ## Sprint Boot Test
 
 * [Spring Boot Test](https://cheese10yun.github.io/spring-boot-test/#null)
+* [Spring Boot에서 테스트를 - 1](https://hyper-cube.io/2017/08/06/spring-boot-test-1/)
 
 ----
 
