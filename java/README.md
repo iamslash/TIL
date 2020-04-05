@@ -261,12 +261,13 @@ class Person implements Serializable {
 
 ```java
    Deque<Integer> deque = new ArrayDeque<>();
-   deque.push(10);
-   deque.push(500);
-   deque.push(1000);
-   int peekResult = deque.peek();
-   int popResult = deque.pop();
-   popResult = deque.pop();
+   int n     = deque.size();
+   int first = deque.getFirst();
+   int last  = deque.getLast();
+   deque.addFirst(3);
+   deque.addLast(4);
+   deque.pollFirst();
+   deque.pollLast();
 ```
 
 * List, LinkedList
@@ -294,14 +295,20 @@ class Person implements Serializable {
 
 ```java
    Queue<Integer> queue = new ArrayDeque<>();
-   queue.add(1);
-   queue.add(100);
-   queue.add(0);
-   queue.add(1000);
-   int peeked = queue.peek();
+   // Add element and throw IllegalStateException if no space available.
+   boolean bAdd = queue.add(1);
+   // Add element.
+   boolean bOffer = queue.offer(2);
+   // Return head of queue or null if empty.
+   int peeked = queue.peek(); 
+   // Return head of queue.
+   int a = queue.element();
    while (queue.size() > 0) {
-   int polled = queue.poll();
-   System.out.println(polled);
+      // Retrieves and remove or return null if queue is empty.
+      int polled = queue.poll(); 
+      // Retrieves and remove.
+      int remove = queue.remove();
+      System.out.println(polled);
    }
 ```
 
