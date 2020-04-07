@@ -631,7 +631,7 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
 | [Designing Twitter](grokking/DesigningTwitter.md) |
 | [Designing Youtube or Netflix]() |
 | [Designing Typeahead Suggestion]() |
-| [Designing an API Rate Limiter]() |
+| [Designing an API Rate Limiter](grokking/DesigningAnApiRateLimiter.md) |
 | [Designing Twitter Search](grokking/DesigningTwitterSearch.md) |
 | [Designing a Web Crawler]() |
 | [Designing Facebook’s Newsfeed](grokking/DesigningFacebooksNewsfeed.md) |
