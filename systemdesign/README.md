@@ -69,6 +69,8 @@
 
 # Materials
 
+* [Here are some of the favorite posts on HighScalability...](http://highscalability.com/all-time-favorites/)
+  * great case studies
 - [aws @ TIL](/aws/README.md)
 - [Mastering Chaos - A Netflix Guide to Microservices](https://www.youtube.com/watch?v=CZ3wIuvmHeM)
 - [A pattern language for microservices](https://microservices.io/patterns/index.html)
