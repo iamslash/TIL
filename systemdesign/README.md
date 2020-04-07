@@ -595,23 +595,8 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
 
 # Grokking the System Design Interview Practices
 
-| Question | |
+| Basic | |
 |---|---|
-| [Designing a URL Shortening service like TinyURL](Designing_a_URL_Shortening_service_like_TinyURL.md) |
-| [Designing Pastebin](DesigningPastebin.md) |
-| [Designing Instagram]() |
-| [Designing Dropbox]() |
-| [Designing Facebook Messenger]() |
-| [Designing Twitter](DesigningTwitter.md) |
-| [Designing Youtube or Netflix]() |
-| [Designing Typeahead Suggestion]() |
-| [Designing an API Rate Limiter]() |
-| [Designing Twitter Search](DesigningTwitterSearch.md) |
-| [Designing a Web Crawler]() |
-| [Designing Facebook’s Newsfeed](DesigningFacebooksNewsfeed.md) |
-| [Designing Yelp or Nearby Friends]() |
-| [Designing Uber backend]() |
-| [Design Ticketmaster]() |
 | [Dynamo](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) - Highly Available Key-value Store |
 | [Kafka](http://notes.stephenholiday.com/Kafka.pdf) - A Distributed Messaging System for Log Processing |
 | [Consistent Hashing](https://www.akamai.com/es/es/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf) - Original paper |
@@ -623,16 +608,34 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
 | [MapReduce](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf) - Simplified Data Processing on Large Clusters |
 | [Hadoop](http://storageconference.us/2010/Papers/MSST/Shvachko.pdf) - A Distributed File System [hadoop @ TIL](/hadoop/README.md) |
 | [Key Characteristics of Distributed Systems](Key_Characteristics_of_Distributed_Systems.md) |
-| [Load Balancing](LoadBalancing.md) |
-| [Caching](Caching.md) |
-| [Data Partitioning](DataPartitioning.md) |
-| [Indexes](Indexes.md) |
-| [Proxies](Proxies.md) |
-| [Redundancy and Replication](RedundancyandReplication.md) |
-| [SQL vs. NoSQL](SQLvsNoSQL.md) |
-| [CAP Theorem](CAPTheorem.md) |
-| [Consistent Hashing](ConsistentHashing.md) |
-| [Long-Polling vs WebSockets vs Server-Sent Events](Long-PollingvsWebSocketsvsServer-SentEvents.md) |
+| [Load Balancing](grokking/LoadBalancing.md) |
+| [Caching](grokking/Caching.md) |
+| [Data Partitioning](grokking/DataPartitioning.md) |
+| [Indexes](grokking/Indexes.md) |
+| [Proxies](grokking/Proxies.md) |
+| [Redundancy and Replication](grokking/RedundancyandReplication.md) |
+| [SQL vs. NoSQL](grokking/SQLvsNoSQL.md) |
+| [CAP Theorem](grokking/CAPTheorem.md) |
+| [Consistent Hashing](grokking/ConsistentHashing.md) |
+| [Long-Polling vs WebSockets vs Server-Sent Events](grokking/Long-PollingvsWebSocketsvsServer-SentEvents.md) |
+
+| Design | |
+|---|---|
+| [Designing a URL Shortening service like TinyURL](grokking/Designing_a_URL_Shortening_service_like_TinyURL.md) |
+| [Designing Pastebin](grokking/DesigningPastebin.md) |
+| [Designing Instagram]() |
+| [Designing Dropbox]() |
+| [Designing Facebook Messenger]() |
+| [Designing Twitter](grokking/DesigningTwitter.md) |
+| [Designing Youtube or Netflix]() |
+| [Designing Typeahead Suggestion]() |
+| [Designing an API Rate Limiter]() |
+| [Designing Twitter Search](grokking/DesigningTwitterSearch.md) |
+| [Designing a Web Crawler]() |
+| [Designing Facebook’s Newsfeed](grokking/DesigningFacebooksNewsfeed.md) |
+| [Designing Yelp or Nearby Friends]() |
+| [Designing Uber backend]() |
+| [Design Ticketmaster]() |
 
 # System Design Primer Practices
 
