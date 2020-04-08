@@ -66,23 +66,25 @@
   * aws architcture diagram tool
 * [draw.io](https://www.draw.io/)
   * architecture 를 포함한 다양한 diagram tool
+* [webwhiteboard](https://www.webwhiteboard.com/)
+  * web white board for system design interview 
 
 # Materials
 
-* [Here are some of the favorite posts on HighScalability...](http://highscalability.com/all-time-favorites/)
-  * great case studies
-- [aws @ TIL](/aws/README.md)
-- [Mastering Chaos - A Netflix Guide to Microservices](https://www.youtube.com/watch?v=CZ3wIuvmHeM)
-- [A pattern language for microservices](https://microservices.io/patterns/index.html)
+* [A pattern language for microservices](https://microservices.io/patterns/index.html)
   - microservices 의 기본개념
-- [cracking the coding interview](http://www.crackingthecodinginterview.com/)
-* [Designing Data-Intensive Applications](https://dataintensive.net/)
+* [system deisgn primer](https://github.com/donnemartin/system-design-primer#federation)
+  - 킹왕짱 내가 다시 정리할 필요성을 못 느낀다.
 * [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
   - 유료 시스템 디자인 인터뷰
 * [Grokking the Object Oriented Design Interview](https://www.educative.io/collection/5668639101419520/5692201761767424)
   - 유료 OOD 인터뷰 
-- [system deisgn primer](https://github.com/donnemartin/system-design-primer#federation)
-  - 킹왕짱 내가 다시 정리할 필요성을 못 느낀다.
+* [Here are some of the favorite posts on HighScalability...](http://highscalability.com/all-time-favorites/)
+  * great case studies
+* [AWS @ TIL](/aws/README.md)
+* [Mastering Chaos - A Netflix Guide to Microservices](https://www.youtube.com/watch?v=CZ3wIuvmHeM)
+* [cracking the coding interview](http://www.crackingthecodinginterview.com/)
+* [Designing Data-Intensive Applications](https://dataintensive.net/)
 - [Azure Cloud Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
   - [infographic](https://azure.microsoft.com/en-us/resources/infographics/cloud-design-patterns/)
 - [AWS Architect](https://aws.amazon.com/ko/architecture/)
@@ -637,7 +639,7 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
 | [Designing Facebook’s Newsfeed](grokking/DesigningFacebooksNewsfeed.md) |
 | [Designing Yelp or Nearby Friends]() |
 | [Designing Uber backend]() |
-| [Design Ticketmaster]() |
+| [Designing Ticketmaster]() |
 
 # System Design Primer Practices
 
