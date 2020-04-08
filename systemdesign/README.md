@@ -401,19 +401,19 @@ nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은
   * Cache-Aside
     * 응용프로그램이 직접 cache를 제어한다.
 
-```python
-# reading values
-v = cache.get(k)
-if (v == null) {
-  v = sor.get(k)
-  cache.put(k, v)
-}
+      ```python
+      # reading values
+      v = cache.get(k)
+      if (v == null) {
+        v = sor.get(k)
+        cache.put(k, v)
+      }
 
-# writing values
-v = newV
-sor.put(k, v)
-cache.put(k, v)
-```
+      # writing values
+      v = newV
+      sor.put(k, v)
+      cache.put(k, v)
+      ```
   * Read-through
     * `cache` 에 읽기 요청하면 `cache` 가 판단해서 자신이 가지고 있는 값 혹은
       `SOR(system of record)` 로 부터 읽어들인 값을 응답으로 전달한다.
