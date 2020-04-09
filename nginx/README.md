@@ -1,3 +1,8 @@
+# Materials
+
+* [NGINX Reverse Proxy](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#)
+* [proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
+
 # Install on ubuntu
 
 * [[Nginx] Ubuntu에서 apt-get을 통해 Nginx 설치하기 및 간단한 정리](https://twpower.github.io/39-install-nginx-on-ubuntu-by-using-apt-get-and-brief-explanation)
