@@ -1952,12 +1952,19 @@ def baz():
 
 ## virtual environment
 
+* [Installing and using virtualenv with Python 2](https://help.dreamhost.com/hc/en-us/articles/215489338-Installing-and-using-virtualenv-with-Python-2)
+* [Installing and using virtualenv with Python 3](https://help.dreamhost.com/hc/en-us/articles/115000695551-Installing-and-using-virtualenv-with-Python-3)
+
 다음과 같이 설치하고 사용한다.
 
 ```bash
 $ pip install virtualenv
+
+# create myproject/bin,include,lib directory
 $ virtualenv myproject
+
 $ source myproject/bin/activate
+
 $ deactivate
 ```
 
