@@ -14,6 +14,7 @@
 - [Spring Batch](#spring-batch)
 - [Tips](#tips)
   - [Active profile](#active-profile)
+  - [Test Active profile](#test-active-profile)
   - [ConfigurationProperties](#configurationproperties)
   - [Http requests logging](#http-requests-logging)
   - [Http responses logging](#http-responses-logging)
@@ -146,6 +147,19 @@ Spring application 을 시작할 때 JVM option 으로 profile 을 선택할 수
 ```bash
 -Dspring.profiles.active=local
 -Dspring.profiles.active=local,develop
+```
+
+## Test Active profile
+
+test class 를 작성할 때 `application.yaml` 대신 `application-test.yaml` 을 사용하고 싶다면 다음과 같이 `@ActiveProfiles("test")` 를 사용한다.
+
+```java
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+public class PostControllerTest {
+}
 ```
 
 ## ConfigurationProperties
