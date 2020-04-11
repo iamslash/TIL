@@ -371,16 +371,23 @@ class Person implements Serializable {
 ```
 
 * Map, HashMap
+  * [자바 HashMap을 효과적으로 사용하는 방법](http://tech.javacafe.io/2018/12/03/HashMap/)
 
 ```java
    Map<String, String> map = new HashMap<>();
    map.put(".com", "International");
-   map.put(".us", "United States");
-   map.put(".uk", "United Kingdom");
-   map.put(".jp", "Japan");
+   map.putIfAbset("aaa", "bbb");
+   map.computeIfAbset("aaa", key -> "bbb");
    map.put(".au", map.getOrDefault(".au", "Australia"));
    System.out.println(map);
    System.out.println(map.get(".au"));
+   map.forEach(key -> System.out.println(key));
+   Collection<String> values = map.values();
+   values.forEach(val -> System.out.println(val));  
+   map.forEach((key, val) -> {
+      System.out.print("key: "+ key);
+      System.out.println(", val: "+ val);
+   });    
 ```
 
 * Set, LinkedHashSet
