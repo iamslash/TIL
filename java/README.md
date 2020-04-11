@@ -4,6 +4,7 @@
   - [Compile, Execution](#compile-execution)
   - [Reserved Words](#reserved-words)
   - [Useful Keywords](#useful-keywords)
+  - [String](#string)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collection Examples](#collection-examples)
   - [Multi dimensional array](#multi-dimensional-array)
@@ -170,6 +171,15 @@ class Person implements Serializable {
         String s = serializeTest(p);
         deSerializeTest(s);
     }
+```
+
+## String
+
+```java
+s = s.substring(0, s.length() - 1);
+StringBuilder sb = new StringBuilder();
+sb.append("a");
+sb.deleteCharAt(sb.length()-1);
 ```
 
 ## Collections compared c++ container
