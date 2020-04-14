@@ -284,6 +284,188 @@ logging:
 * @RestClientTest
 * @JsonTest
 
+* Dependencies of `build.gradle` 
+
+  ```groovy
+  dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+      exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+  }
+  ```
+
+* Test Class
+  * @SpringBootTest 의 WebEnvironment 는 기본값이 SpringBootTest.WebEnvironment.MOCK 이다.
+  * Mock Dispatcher 가 실행되어 Controller 를 test 할 수 있다.
+
+  ```java
+  @RunWith(SpringRunner.class)
+  @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+  @AutoConfigureMockMvc
+  public class DemoTest {
+    @Autowired
+    MockMvc mockMvc;
+    @Test
+    public void hello() throws Exception {
+      mockMvc.perform(get("/hello"))
+        .andExpect(status().isOk())
+        .andExpect(content().string("hello"))
+        .andDo(print());
+    }
+  }
+  ```
+
+* RandomPort 를 사용하면 Servlet Container 가 실행된다. 
+  * mockMvc 대신 TestRestTemplate 를 사용해야 한다.
+
+  ```java
+  @RunWith(SpringRunner.class)
+  @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+  public class DemoTest {
+    @Autowired
+    TestRestTemplate testRestTemplate;
+    @Test
+    public void hello() throws Exception {
+      String result = testRestTemplate.getForObject("/hello", String.class);
+      assertThat(result).isEqualTo("hello");
+    }
+  }
+  ```
+
+* Service 를 mocking 해보자.
+  
+  ```java
+  @RunWith(SpringRunner.class)
+  @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+  public class DemoTest {
+    @Autowired
+    TestRestTemplate testRestTemplate;
+    @MockBean
+    HelloService mockHelloService;
+    @Test
+    public void hello() throws Exception {
+      when(mockHelloService.getName()).thenReturn("hello");
+
+      mockMvc.perform(get("/hello"))
+        .andExpect(status().isOk())
+        .andExpect(content().string("hello"))
+        .andDo(print());
+    }
+  }
+  ```
+
+* WebTestClient 를 사용하면 Asynchronous http client 를 사용할 수 있다.
+
+  ```groovy
+  dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+      exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+  }
+  ```
+
+  ```java
+  @RunWith(SpringRunner.class)
+  @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+  public class DemoTest {
+    @Autowired
+    WebTestClient webTestClient;
+    @MockBean
+    HelloService mockHelloService;
+    @Test
+    public void hello() throws Exception {
+      when(mockHelloService.getName()).thenReturn("hello");
+
+      webTestClient.get().uri("/hello").exchange()
+        .expectStatus().isOk()
+        .expectBody(String.class)
+        .isEqualTo("hell");
+    }
+  }
+  ```
+
+* Json 만 lightweight 하게 test 할 수 있다.
+
+  ```java
+  @RunWith(SpringRunner.class)
+  @JsonTest
+  public class DemoTest {
+    ...
+  }
+  ```
+
+* Controller 하나만 테스트 할 수 있다. 특정 Controller 만 Bean 으로 등록되고 나머지는 Bean 으로 등록이 안된다. 사용을 원한다면 수동으로 등록해야 한다.
+
+  ```java
+  @RunWith(SpringRunner.class)
+  @WebMvcTest(DemoController.class)
+  public class DemoControllerTest {
+    @MockBean
+    DemoService demoService;
+
+    @Autowired
+    MockMvc mockMbc
+
+    @Test
+    public void hello() throws Exception {
+      when(mockHelloService.getName()).thenReturn("hello");
+
+      webTestClient.get().uri("/hello").exchange()
+        .expectStatus().isOk()
+        .expectBody(String.class)
+        .isEqualTo("hello");
+    }
+  }
+  ```
+
+* OutputCapture 를 이용하면 log message 를 test 할 수 있다.
+
+  ```java
+  @RestController
+  public class DemoController {
+    Logger logger = LoggerFactory.getLogger(DemoController.class);
+    @Autowired
+    private DemoService demoService;
+
+    @GetMapping("/hello")
+    public String hello() {
+      logger.info("Foo");
+      System.out.println("Bar");
+      return "hello";
+    }
+  }
+  ```
+
+  ```java
+  @RunWith(SpringRunner.class)
+  @WebMvcTest(DemoController.class)
+  public class DemoControllerTest {
+    @Rule
+    public OutputCapture outputCapture = new OutputCapture();
+
+    @MockBean
+    DemoService demoService;
+
+    @Autowired
+    MockMvc mockMbc
+
+    @Test
+    public void hello() throws Exception {
+      when(mockHelloService.getName()).thenReturn("hello");
+
+      mockMvc.perform(get("/hello"))
+        .andExpect(content().string("hello"));
+
+      assertThat(outputCapture.toString())
+        .contains("Foo")
+        .contains("Bar");        
+    }
+  }
+  ```
+
 ## Spring Boot Exception Handling
 
 * [(Spring Boot)오류 처리에 대해](https://supawer0728.github.io/2019/04/04/spring-error-handling/)
