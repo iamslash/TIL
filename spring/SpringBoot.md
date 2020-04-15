@@ -688,11 +688,481 @@ dependency {
 ```
 
 ## 스프링 데이터 5 부: 스프링 데이터 JPA 소개
+
 ## 스프링 데이터 6 부: 스프링 데이터 JPA 연동
+
+다음과 같이 build.gradle 에 dependency 를 추가한다.
+
+```groovy
+dependency {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+}
+```
+
+다음과 같이 Account Entity Class 를 제작한다.
+
+```java
+@Entity
+public class Account {
+	@Id @GeneratedValue
+	private Long id;
+	private String username;
+	private String password;
+}
+```
+
+다음과 같이 Account Repository Interface 를 제작한다.
+
+```java
+public intervace AccountRepository extends JpaRepository<Account, Long> {
+
+}
+```
+
+H2 를 build.gradle 의 test dependency 에 추가한다.
+
+```groovy
+dependency {
+	testImplementation 'com.h2database:h2'
+}
+```
+
+다음과 같이 build.gradle 에 dependency 를 설정한다.
+
+```groovy
+dependency {
+	implementation 'org.postgresql:postgresql'
+}
+```
+
+postgresql 를 실행한다.
+
+```bash
+$ docker run -p 5432:5432 --name postgres_boot -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=iamslash -e POSTGRES_DB=springboot --name postgres_boot -d postgres
+$ docker ps
+$ docker exec -it postgres_boot /bin/bash
+$ su - postgres
+$ psql springboot
+```
+
+다음과 같이 `application.yml` 에 DBCP 설정을 한다.
+
+```
+spring.datasource.hikari.maximum-pool-size=4
+spring.datasource.url=jdbc:postgresql://localhost:3306/springboot?userSSL=false
+spring.datasource.username=iamslash
+spring.datasource.password=pass
+```
+
+다음과 같이 slicing test class 를 제작한다.
+
+```java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class AccountRepositoryTest {
+	@Autowired
+	DataSource dataSource;
+
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+
+	@Autowired
+	AccountRepository accountRepository;
+
+	@Test
+	public void di() {
+		try (Connection connection = dataSource.getConnection()) {
+			DatabaseMetaData metaData = conneciton.getMetaData();
+			System.out.println(metaData.getURL());
+			System.out.println(metaData.getDriverName());
+			System.out.println(metaData.getUserName());			
+		}
+	}
+
+	@Test
+	public void account() {
+		Account account = new Account();
+		account.setUsername("iamslash");
+		account.setPassword("password");
+		Accont newAccount = accountRepository.save(account);
+		assertThat(newAccount).isNotNull();
+		
+		Account existingAccount = accountRepository.findByUserName(newAccount.getUsername());
+		assertThat(ExistingAccount).isNotNull();
+
+		Account nonExistingAccount = accountRepository.findByUserName("iamslash");
+		assertThat(nonExistingAccount).isNotNull();
+	}
+}
+```
+
+Application 을 실행하면 postgresql 를 사용하고 test 를 실행하면 H2 를 사용한다.
+`@DataJpaTest` 대신 `@SpringBootTest` 를 사용하면 postgresql 를 사용한다.
+다음과 같이 AccountRepository Repository Interface 에 findByUserName 의 선언을 추가한다.
+JPA 가 findByUserName 의 구현을 해준다.
+
+```java
+public interface AccountRepository extends JpaRepository<Account, Long> {
+	Account findByUserName(String username);
+}
+```
+
+다음과 같이 AccountRepository Repository Interface 에 Optional 을 사용해보자.
+
+```java
+public interface AccountRepository extends JpaRepository<Account, Long> {
+	Optional<Account> findByUserName(String username);
+}
+```
+
+이제 AccountRepositoryTest class 역시 Optional 을 사용해 본다.
+
+```java
+```java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class AccountRepositoryTest {
+	@Autowired
+	DataSource dataSource;
+
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+
+	@Autowired
+	AccountRepository accountRepository;
+
+	@Test
+	public void di() {
+		try (Connection connection = dataSource.getConnection()) {
+			DatabaseMetaData metaData = conneciton.getMetaData();
+			System.out.println(metaData.getURL());
+			System.out.println(metaData.getDriverName());
+			System.out.println(metaData.getUserName());			
+		}
+	}
+
+	@Test
+	public void account() {
+		Account account = new Account();
+		account.setUsername("iamslash");
+		account.setPassword("password");
+		Accont newAccount = accountRepository.save(account);
+		assertThat(newAccount).isNotNull();
+		
+		Optional<Account> existingAccount = accountRepository.findByUserName(newAccount.getUsername());
+		assertThat(ExistingAccount).isNotEmpty();
+
+		Optional<Account> nonExistingAccount = accountRepository.findByUserName("iamslash");
+		assertThat(nonExistingAccount).isEmpty();
+	}
+}
+```
+
 ## 스프링 데이터 7 부: 데이터베이스 초기화
+
+spring application 이 실행될때 기존의 Data Base 에 table 이 없다면 table 을 생성해 보자. table 의 column 의 이름을
+바꾼다 해도 column 이 추가될 뿐 alter 가 되지는 않는다.
+
+```
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.generate-ddl=true
+spring.jpa.show-sql=true
+```
+
+spring application 이 실행될때 기존의 Data Base 의 table 을 삭제하고 생성해 보자.
+
+```
+spring.jpa.hibernate.ddl-auto=create
+spring.jpa.generate-ddl=true
+spring.jpa.show-sql=true
+```
+
+spring application 이 실행될때 기존의 Data Base 의 schema 를 validation 한다. 주로 production 에서 사용한다.
+
+```
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.generate-ddl=true
+spring.jpa.show-sql=true
+```
+
+`src/main/resources/shcema.sql` 을 추가해서 Data Base 를 초기화할 수도 있다.
+
 ## 스프링 데이터 8 부: 데이터베이스 마이그레이션
+
+Flyway 를 사용한다. Database schema 와 Data 를 versioning 할 수 있다.
+
+다음과 같이 build.gradle 에 dependency 를 추가한다.
+
+```groovy
+dependency {
+	implementation 'org.flywaydb:flyway-core'
+}
+```
+
+`src/main/resources/db/migration` 에 `V숫자__이름.sql` 의 파일을 저장한다. 
+`V` 는 대문자이고 `_` 가 두개임을 주의하자.
+
+* `V1__init.sql`
+
+```sql
+drop table if exists account;
+drop sequence if exists hibernate_sequence;
+create sequence hibernate_sequence start with 1 increment by 1;
+create table account (id bigint not null, email varchar(255), password varchar(255), username varchar(255), primary key (id));
+```
+
+spring application 이 실행될때 기존의 Data Base 의 schema 를 validation 한다. 주로 production 에서 사용한다.
+
+```
+spring.datasource.url=jdbc:postgresql://localhost:5432/springboot
+spring.datasource.username=iamslash
+spring.datasource.password=pass
+
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_create=true
+
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.generate-ddl=true
+spring.jpa.show-sql=true
+```
+
+만약 schema 를 변경하고 싶다면 `V2__add_active.sql` 를 제작한다.
+
+```sql
+ALTER TABLE account ADD COLUMN active BOOLEAN;
+```
+
+Flyway 는 `flyway_schema_history` table 를 이용해서 versionning 한다.
+
 ## 스프링 데이터 9 부: Redis
+
+다음과 같이 build.gradle 에 dependency 를 추가한다.
+
+```groovy
+dependency {
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+}
+```
+
+redis 를 실행한다.
+
+```bash
+$ docker run -p 6379:6379 --name redis_boot -d redis
+$ docker exec -it redis_boot redis-cli
+```
+
+RedisRunner 를 제작한다.
+
+```java
+@Component
+public class RedisRunner implements ApplicationRunner {
+	@Autowired
+	StringRedisTemplate redisTemplate;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		ValueOperations<String, String> values = redisTemplate.opsForValue();
+		values.set("Foo", "Bar");
+		values.set("springboot", "2.0");
+		values.set("Hello", "World");
+	}
+}
+```
+
+redis-cli 로 test 한다.
+
+```bash
+> keys *
+> get Foo
+> get springboot
+> get Hello
+```
+
+redis 는 `application.yml` 을 에서 설정한다.
+
+```
+spring.redis.
+```
+
+Account Entity Class 를 제작한다.
+
+```java
+@RedisHash("accounts")
+public class Account {
+	@Id
+	private String id;
+	private String username;
+	private String email;
+}
+```
+
+Redis Repository Interface 를 제작한다.
+
+```java
+public interface AccountRepository extends CrudRepository<Acount, String> {
+
+}
+```
+
+RedisRunner 를 수정한다.
+
+```java
+@Component
+public class RedisRunner implements ApplicationRunner {
+	@Autowired
+	StringRedisTemplate redisTemplate;
+
+	@Autowired
+	AccountRepository accountRepository;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		ValueOperations<String, String> values = redisTemplate.opsForValue();
+		values.set("Foo", "Bar");
+		values.set("springboot", "2.0");
+		values.set("Hello", "World");
+
+		Account account = new Account();
+		account.setEmail("iamslash@gmail.com");
+		account.setUsername("iamslash");
+
+		accountRepository.save(account);
+
+		Optional<Account> byId = accountRepository.findById(account.getId());
+		System.out.println(byId.get().getUsername());
+		System.out.println(byId.get().getEmail());
+	}
+}
+```
+
+```bash
+> get accounts:bcsdljfdjisildifjsldfillsidfij
+> hget accounts:bcsdljfdjisildifjsldfillsidfij email
+> hgetall accounts:bcsdljfdjisildifjsldfillsidfij email
+```
+
 ## 스프링 데이터 10 부: MongoDB
+
+다음과 같이 build.gradle 에 dependency 를 추가한다.
+
+```groovy
+dependency {
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+}
+```
+
+mongoDB 를 실행한다.
+
+```bash
+$ docker run -p 27017:27017 --name mongo_boot -d mongo
+$ docker exec -it mongo_boot bash
+$ mongo
+```
+
+다음과 같이 Application class 에 ApplicationRunner 를 구현한다.
+
+```java
+@SpringBootApplication
+public class SpringbootmongoApplication {
+
+	@Autowired
+	MongoTemplate mongoTemplate;
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringbootmongoApplication.class, args);
+	}
+
+	@Bean
+	public ApplicationRunner applicationRunner() {
+		return args -> {
+			Account account = new Account();
+			account.setEmail("iamslash@gmail.com");
+			account.setUsername("iamslash");
+			mongoTemplate.insert(account);
+		}
+	}
+}
+```
+
+다음과 같이 Account Document Class 를 제작한다.
+
+```java
+@Document(collection = "accounts")
+public class Account {
+
+}
+```
+
+다음과 같이 mongo 를 이용하여 테스트해본다.
+
+```bash
+$ mongo
+> db
+> use test
+> db.accounts.find({})
+```
+
+MongoTemplate 대신 Account Repository Interface 를 정의하여 mongoDB 를 접근할 수도 있다.
+
+```java
+public interface AccountRepository extends MongoRepository<Account, String> {
+}
+```
+
+```java
+@SpringBootApplication
+public class SpringbootmongoApplication {
+
+	@Autowired
+	AccountRepository accountRepository;
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringbootmongoApplication.class, args);
+	}
+
+	@Bean
+	public ApplicationRunner applicationRunner() {
+		return args -> {
+			Account account = new Account();
+			account.setEmail("iamslash@gmail.com");
+			account.setUsername("iamslash");
+			accountRepository.insert(account);
+		}
+	}
+}
+```
+
+Mongo DB Test class 를 제작해보자. 내장형 mongoDB 를 사용한다.
+
+```groovy
+dependency {
+	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo'
+}
+```
+
+```java
+@RunWith(SpringRunner.class)
+@DataMongoTest
+public class ACcountRepositoryTest {
+	@Autowired
+	AccountRepository accountRepository;
+
+	@Test
+	public void findByEmail() {
+		Account account = new Account();
+		account.setUsername("iamslash");
+		account.setEmail("iamslash@gmail.com");
+		accountRepository.save(account);
+
+		Optional<Account> byId = accountRepository.findById(account.getId());
+		assertThat(byId).isNotEmpty();
+
+		Optional<Account> byEmail = accountRepository.findByEmail(account.getEmail());
+		assertThat(byEmail).isNotEmpty();
+		assertThat(byEmail.get().getUsername()).isEqualTo("iamslash");
+	}
+}
+```
+
 ## 스프링 데이터 11 부: Neo4J
 ## 스프링 데이터 12 부: 정리
 
