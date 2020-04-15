@@ -85,12 +85,281 @@ public class A {
 ## Spring-Boot-Devtools
 ## 스프링 웹 MVC 1 부: 소개
 ## 스프링 웹 MVC 2 부: HttpMessageconverters
+
+* HelloController.java
+
+```java
+@RestController
+public class HelloController {
+	
+	@GetMapping("/hello")
+	public String hello() {
+		return "hello";
+	}
+}
+```
+
+* UserControllerTest.java
+
+```java
+@RunWith(SpringRunner.class)
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
+
+	@Autowired 
+	MockMvc mockMvc;
+
+	@Test
+	public void createUser_JSON() {
+		String userJson = "{\"username\":\"iamslash\", \"password\":\"world\"}";
+		mockMvc.perform(post("/users/create")
+		    .contentType(MediaType.APPLICATION_JSON_UTF8)
+			  .accept(MediaType.APPLICATION_JSON_UTF8)
+			  .content(userJson))
+			.andExpect(status().isOk())
+			.andExpect(jsonPath("$.username", is(euqalTo("iamslash"))))
+	}
+}
+```
+
+* UserController.java
+
+```java
+@RestController
+public class UserController {
+	@PostMapping("/users/create")
+	public User create(@RequesetBody user) {
+		return user;
+	}
+}
+```
+
+* User.java
+
+```java
+public class User {
+  private Logn id;
+	private String username;
+	private STring password;
+	...
+}
+```
+
 ## 스프링 웹 MVC 3 부: ViewResolve
+
+ContentNegotiatingViewResolver 는 Client 가 보내온 Accept Header 를 보고 Client 가 원하는 format 을 결정한다. 
+
+다음은 Client 가 xml 형식을 원할 때 xml 을 보내 주는 예이다.
+
+* build.gradle
+
+```groovy
+dependency {
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.6'
+}
+```
+
+* User.java
+  * same with before
+* UserController.java
+  * same with before
+* UserControllerTest.java
+
+```java
+@RunWith(SpringRunner.class)
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
+
+	@Autowired 
+	MockMvc mockMvc;
+
+	@Test
+	public void createUser_XML() {
+		String userJson = "{\"username\":\"iamslash\", \"password\":\"world\"}";
+		mockMvc.perform(post("/users/create")
+		    .contentType(MediaType.APPLICATION_JSON_UTF8)
+			  .accept(MediaType.APPLICATION_XML)
+			  .content(userJson))
+			.andExpect(status().isOk())
+			.andExpect(xpath("/User/username", is(euqalTo("iamslash"))))
+	}
+}
+```
+
 ## 스프링 웹 MVC 4 부: 정적 리소스 지원
+
+* 다음의 경로에 static resources 들을 복사한다.
+* 이후 `/**` 로 request 가 가능하다.
+
+```
+classpath:/static
+classpath:/public
+classpath:/resources
+classpath:/META-INF/resources/
+```
+
+* `spring.mvc-static-path-pattern=/static/**` 로 수정하면 `/static/**` 로 request 가 가능하다.
+
+* WebMvcConfigure 를 상속받은 class 를 정의하면 static resource path 를 추가할 수 있다. `/m/` 는 `/` 으로 끝남을 주의하자.
+
+```java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/m/**")
+		  .addResourceLocations("classpath:/m/")
+			.setCachePeriod(20);
+	}
+}
+```
+
 ## 스프링 웹 MVC 5 부: 웹 JAR
+
+client 에서 사용하는 javascript library 를 web jar 에 포함시켜 배포할 수 있다.
+
+* build.gradle
+
+```groovy
+dependency {
+	implementation 'org.webjars.bower:jqeury:3.3.1'
+}
+```
+
+* hello.html
+
+```html
+<script src="/webjars/jquery/3.3.1/dist/jqeury.min.js"></script>
+<script>
+  $(function(){
+		alert("hello");
+	});
+</script>
+```
+
+webjars-locator-core 를 build.gradle 에 추가하면 hello.html 에서 jquery 의 version 을 생략할 수 있다.
+
+
+* build.gradle
+
+```groovy
+dependency {
+	implementation 'org.webjars:webjars-locator-core:0.35'
+}
+```
+
+* hello.html
+
+```html
+<script src="/webjars/jquery/dist/jqeury.min.js"></script>
+<script>
+  $(function(){
+		alert("hello");
+	});
+</script>
+```
+
 ## 스프링 웹 MVC 6 부: index 페이지와 파비콘
+
+다음과 같은 위치에 `index.html` 을 위치하면 된다.
+
+```
+classpath:/static
+classpath:/public
+classpath:/resources
+classpath:/META-INF/resources/
+```
+
+favicon.io 에서 favicon.ico 를 다운로드 받아 앞서 언급한 static resource directory 에 복사한다. 그러나 caching 되기 때문에 favicon.ico 를 request 해보고 browser 를 껐다 켜야 한다.
+
 ## 스프링 웹 MVC 7 부: Thymeleaf
+
+* build.gradle 에 dpendency 를 추가한다.
+
+```groovy
+dependency {
+	implementation 'spring-boot-starter-thymeleaf'
+}
+```
+
+* HelloControllerTest.java
+
+```java
+@RunWith(SpringRunner.class)
+@WebMvcTest(HelloController.class)
+public class HelloControllerTest {
+	@Autowired
+	MockMvc mockMvc;
+
+	@Test
+	public void hello() throws Exception {
+		mocMvc.perform(get("/"))
+		  .andExpect(status().isOk())
+			.andExpect(view().name("hello"))
+			.andExpect(model().attribute("name", is("iamslash")));
+	}
+}
+```
+
+* HelloController.java
+
+```java
+@Controller
+public class HelloController {
+	@GetMapping("/hello")
+	public String hello(Mode model) {
+		model.addAttribute("name", "iamslash");
+		return "hello";
+	}
+}
+```
+
+* `src/main/resources/templates/hello.html` 을 작성한다.
+
+```html
+<!DOCTYPE HTML>
+<HTML LANG="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<h1 th:test="${name}"></h1>
+</body>
+</html>
+```
+
 ## 스프링 웹 MVC 8 부: HtmlUnit
+
+html 을 unit test 하기 위한 library
+
+* build.gradle 에 dependency 추가
+
+```groovy
+dependency {
+	testImplementation 'org.seleniumhq.selenium:htmlunit-driver'
+	testImplementation 'net.sourceforge.htmlunit:htmlunit'
+}
+```
+
+* HelloControllerTest.java
+
+```java
+@RunWith(SpringRunner.class)
+@WebMvcTest(HelloController.class)
+public class HelloControllerTest {
+	@Autowired
+	WebClient webClient;
+
+	@Test
+	public void hello() throws Exception {
+		HtmlPage page = webClient.getPage("/hello");
+		Object firstByXPath = page.getFirstByXPath("//h1");
+		assertThat(h1.getTextConent()).isEqualToIgnoreCase("iamslash");
+	}
+}
+```
+
 ## 스프링 웹 MVC 9 부: ExceptionHandler
 ## 스프링 웹 MVC 10 부: Spring HATEOAS
 ## 스프링 웹 MVC 11 부: CORS

@@ -20,6 +20,7 @@
   - [Http responses logging](#http-responses-logging)
   - [Sprint Boot Test](#sprint-boot-test)
   - [Spring Boot Exception Handling](#spring-boot-exception-handling)
+  - [Spring WebMvcConfigure](#spring-webmvcconfigure)
 
 ----
 
@@ -397,7 +398,7 @@ logging:
   }
   ```
 
-* Controller 하나만 테스트 할 수 있다. 특정 Controller 만 Bean 으로 등록되고 나머지는 Bean 으로 등록이 안된다. 사용을 원한다면 수동으로 등록해야 한다.
+* `@SpringBootTest` 에는 많은 test annotation 들이 포함되어 있다. 그것을 각각 이용하면 layer 별로 test 할 수 있다. 이것을 slicing test 라고 한다. `@WebMvcTest` 를 이용하여 특정 Controller 만 사용해 보자.
 
   ```java
   @RunWith(SpringRunner.class)
@@ -471,3 +472,40 @@ logging:
 * [(Spring Boot)오류 처리에 대해](https://supawer0728.github.io/2019/04/04/spring-error-handling/)
 * [스프링부트 : REST어플리케이션에서 예외처리하기](https://springboot.tistory.com/33)
 * [Error Handling for REST with Spring](https://www.baeldung.com/exception-handling-for-rest-with-spring)
+
+## Spring WebMvcConfigure
+
+spring Web Mvc 는 다음과 같은 설정들 덕분에 사용가능하다.
+
+`org.springframework.boot:spring-boot-autoconfigure` 에 Web Mvc 설정이 포함되어 있다.
+
+* `META-INF/spring.factories` 에 WebMvcAutoConfiguration 가 enable 되어 있다.
+
+```
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+...
+org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration,\
+...
+```
+
+* `org.springframework.boot.autoconfigure/web/servlet/WebMvcAutoConfiguration` 에 `@Configuration` 이 첨부되어 있다.
+
+```java
+@Configuration(proxyBeanMethods = false)
+@ConditionalOnWebApplication(type = Type.SERVLET)
+@ConditionalOnClass({ Servlet.class, DispatcherServlet.class, WebMvcConfigurer.class })
+@ConditionalOnMissingBean(WebMvcConfigurationSupport.class)
+@AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
+@AutoConfigureAfter({ DispatcherServletAutoConfiguration.class, TaskExecutionAutoConfiguration.class,
+		ValidationAutoConfiguration.class })
+public class WebMvcAutoConfiguration {
+  ...
+```
+
+* `org.springframework.boot.autoconfigure/web.servlet/WebMvcProperties` 에 `spring.mvc` 로 시작하는 properties 들이 포함된다.
+
+```java
+@ConfigurationProperties(prefix = "spring.mvc")
+public class WebMvcProperties {
+  ...
+```
