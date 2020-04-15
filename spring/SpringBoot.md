@@ -361,13 +361,332 @@ public class HelloControllerTest {
 ```
 
 ## 스프링 웹 MVC 9 부: ExceptionHandler
+
+기본적으로 `org.springframework.boot.autoconfigure.web.servlet.BasicErrorController` 에 구현되어 있다.
+
+```java
+@Controller
+@RequestMapping("${server.error.path:${error.path:/error}}")
+public class BasicErrorController extends AbstractErrorController {
+
+	private final ErrorProperties errorProperties;
+```
+
+`${server.error.path}` 가 정의되어 있지 않다면 `${error.path:/error}` 를 사용한다???
+
+다음과 같이 특정 Controller 에 대해 ExceptionHandler 를 구현할 수 있다.
+
+```java
+public class HelloException extends RuntimeException {
+
+}
+```
+
+```java
+@Controller
+public class HelloController {
+	@GetMapping("/hello")
+	public String hello() {
+		throw new HelloException;
+	}
+
+	@ExceptionHandler(HelloException.class)
+	public @ResponseBody AppError helloError(HelloException e) {
+		AppError appError = new AppError();
+		appError.setMessage("error.app.key");
+		appError.setResponse("Hello Wrror")
+		return appError
+	}
+}
+```
+
+```java
+public class AppError {
+	String message;
+	String response;
+}
+```
+
+error code 에 따라 다른 page 를 보여주자.
+
+```
+src/main/resources/static.error/5xx.html
+src/main/resources/static.error/404.html
+```
+
+ErrorViewResolver 를 구현하면 더욱 customizing 할 수 있다.
+
 ## 스프링 웹 MVC 10 부: Spring HATEOAS
+
+Hypermedia As The Engine Of Applicaiton State
+
+REST API 를 만들 때 Resource 와 연관된 link 정보까지 같이 전달한다.
+
+예를 들어 다음과 같은 reponse 를 전달한다.
+
+```json
+{
+	"name": "iamslash",
+	"links": [{
+		"rel": "self",
+		"href": "http://localhost:8080/hello",
+	}]
+}
+```
+
+다음과 같이 biuld.gradle 을 수정한다.
+
+```groovy
+dependency {
+	implementation 'org.springframework.boot:spring-boot-starter-hateoas'
+}
+```
+
+```java
+@RunWith(SpringRunner.calss)
+@WebMvcTest(HelloController.class)
+public class HelloControllerTest {
+	@Autowired
+	MockMvc mockMvc;
+
+	@Test
+	public void hello() {
+		mockMvc.perform(get("/hello"))
+		  .andExpect(status().isOk())
+			.andExpect(JsonPath("$._links.self").exists());
+	}
+}
+```
+
+```java
+@RestController
+public class HelloController {
+	@GetMapping("/hello")
+	public Hello hello() {
+		Hello hello = new Hello();
+		hello.setPrefx("Hey,");
+		hello.setName("iamslash");
+
+		Resource<Hello> helloResource = new Resource<>(hello);
+		helloResource.add(linkTo(methodOn(HelloController.class).hello())).withSelfRel();
+
+		return helloResource;
+	}
+}
+```
+
+```java
+public class Hello {
+	private String prefix;
+	private String name;
+	...
+}
+```
+
 ## 스프링 웹 MVC 11 부: CORS
+
+Cross Origin Resource Sharing 의 약자이다. Single-Origin Policy 는 하나의 origin 의 request 를 허용하는 것이고 Cross-Origin Resource Sharing 은 서로 다른 Origin 의 request 를 허용하는 것이다.
+
+A spring boot application 은 8080 port 에서 service 한다. B spring boot application 은 1080 port 에서 service 한다. `http://localhost:1080/index.html` 울 request 하면 client 는 A application 에게 Ajax 로 request 를 한다. CrossOrigin 이 설정되어 있지 않으면 error 가 발생한다.
+
+```java
+@RestController
+public class HelloController {
+	@GetMapping("/hello")
+	public String hello() {
+		return "Hello";
+	}
+}
+```
+
+다음은 client 의 Ajax 예이다. `src/main/resources/static/index.html`
+
+```html
+<!DOCTYPE HTML>
+<HTML LANG="en">
+<head>
+  <meta charset="UTF-8">
+	<title>Title</title>
+</head>
+<body>
+<script src="/webjars/jquery/3.3.1/dist/jquery.min.js"></script>
+<script>
+  $(function() {
+		$.ajax("http://localhost:8080/hello")
+		  .done(function(msg) {
+				alert(msg);
+			})
+			.fail(function() {
+				alert("fail");
+			});
+	})
+</script>
+</body>
+</html>
+```
+
+다음과 같이 `$CrossOrigin` 을 이용하면 여러 origin 을 허용할 수 있다.
+
+```java
+@RestController
+public class HelloController {
+	@CrossOrigin(origins = "http://localhost:1080")
+	@GetMapping("/hello")
+	public String hello() {
+		return "Hello";
+	}
+}
+```
+
+다음과 같이 WebMvcConfigurer 를 이용하면 CrossOrigin 을 global 하게 설정할 수 있다.
+
+```java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/hello")
+		  .allowedOrigins("http://localhost:1080");
+	}
+}
+```
 
 ## 스프링 데이터 1 부: 소개
 ## 스프링 데이터 2 부: 인메모리 데이터베이스
+
+H2 를 이용한다.
+
+다음과 같이 build.gradle 을 설정한다.
+
+```groovy
+dependency {
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'com.h2database:h2'
+}
+```
+
+다음과 같이 `H2Runner.java` 를 작성한다.
+
+```java
+@Component
+public class H2Runner implements ApplicationRunner {
+	@Autowired
+	DataSource dataSource;
+
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		try (Connection connection = dataSource.getConnection()) {
+			System.out.println(connection.getMetaData().getURL());
+			System.out.println(connection.getMetaData9).getUserName());
+
+			Statement statement = connection.createStatement();
+			String sql = "CREATE TABLE USER(ID INTEGER NOT NULL, name VARCHAR(255), PRIMARY KEY(id))";
+			statement.executeUpdate(sql);
+		}
+
+		jdbcTemplate.execute("INSERT INTO USER VALUES(1, 'iamslash')");
+	}
+}
+```
+
+Open browser with `localhost:8080/h2-console/login.do`.
+
 ## 스프링 데이터 3 부: MySQL
+
+docker 를 사용하여 mysql 를 설치 실행한다.
+
+```bash
+$ docker run -p3306:3306 --name mysql_boot -e MYSQL_ROOT_PASSWORD=1 -e MYSQL_DATABASE=springboot -e MYSQL_USER=iamslash -e MYSQL_PASSWORD=pas -d mysql
+$ docker ps
+$ docker exec -it mysql_boot /bin/bash
+$ mysql -u iamslash -p
+mysql> show databases
+mysql> use springboot
+```
+
+spring boot 는 주로 Data Base Connection Pool 로 HikariCP 를 사용한다.
+
+다음과 같이 `application.yml` 에 DBCP 설정을 한다.
+
+```
+spring.datasource.hikari.maximum-pool-size=4
+spring.datasource.url=jdbc:mysql://localhost:3306/springboot?userSSL=false
+spring.datasource.username=iamslash
+spring.datasource.password=pass
+```
+
+다음과 같이 build.gradle 에 dependency 를 설정한다.
+
+```
+dependency {
+	implementation 'mysql:mysql-connector-java'
+}
+```
+
+```java
+@Component
+public class MysqlRunner implements ApplicationRunner {
+	@Autowired
+	DataSource dataSource;
+
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		try (Connection connection = dataSource.getConnection()) {
+			System.out.println(connection.getMetaData().getURL());
+			System.out.println(connection.getMetaData9).getUserName());
+
+			Statement statement = connection.createStatement();
+			String sql = "CREATE TABLE USER(ID INTEGER NOT NULL, name VARCHAR(255), PRIMARY KEY(id))";
+			statement.executeUpdate(sql);
+		}
+
+		jdbcTemplate.execute("INSERT INTO USER VALUES(1, 'iamslash')");
+	}
+}
+```
+
+```bash
+mysql> SELECT * FROM USER
+```
+
 ## 스프링 데이터 4 부: PostgreSQL
+
+docker 를 사용하여 postresql 를 설치 실행한다.
+
+```bash
+$ docker run -p 5432:5432 --name postgres_boot -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=iamslash -e POSTGRES_DB=springboot --name postgres_boot -d postgres
+$ docker ps
+$ docker exec -it postgres_boot /bin/bash
+$ su - postgres
+$ psql springboot
+> \list
+> \dt
+> SELECT * FROM account;
+```
+
+다음과 같이 `application.yml` 에 DBCP 설정을 한다.
+
+```
+spring.datasource.hikari.maximum-pool-size=4
+spring.datasource.url=jdbc:postgresql://localhost:3306/springboot?userSSL=false
+spring.datasource.username=iamslash
+spring.datasource.password=pass
+```
+
+다음과 같이 build.gradle 에 dependency 를 설정한다.
+
+```
+dependency {
+	implementation 'org.postgresql:postgresql'
+}
+```
+
 ## 스프링 데이터 5 부: 스프링 데이터 JPA 소개
 ## 스프링 데이터 6 부: 스프링 데이터 JPA 연동
 ## 스프링 데이터 7 부: 데이터베이스 초기화
