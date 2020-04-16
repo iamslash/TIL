@@ -990,6 +990,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
     * `sudo vi /etc/cron.d/sysstat` `* * * * * root command -v debian-sa1 > /dev/null && debian-sa1 1 1` 매분마다 해볼까
 
 * `ifconfig`
+  * [네트워크 인터페이스 다루기](https://thebook.io/006718/part01/ch03/06/01/)
   * network interface parameter설정하기
   * `ifconfig eth0`
   * `ifconfig -a` disable된 network interface까지 몽땅 보여다오
@@ -1515,8 +1516,11 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 ## Network
 
-* `route`
+* [route](/route/README.md)
   * [라우팅 테이블 다루기](https://thebook.io/006718/part01/ch03/06/02/)
+  * `route` route 목록을 보여다오
+    * `netstat -nr` 과 같다. macos 에서 가능.
+  * `sudo route add default gw 192.168.0.1` default 목적지에 Gateway 를 추가해 다오
 
 ## Automation
 
