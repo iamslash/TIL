@@ -1,5 +1,5 @@
 - [Abstract](#abstract)
-- [References](#references)
+- [Materials](#materials)
 - [Permissions](#permissions)
   - [mode](#mode)
     - [setuid](#setuid)
@@ -27,6 +27,7 @@
   - [Files](#files)
   - [데몬 관리](#%eb%8d%b0%eb%aa%ac-%ea%b4%80%eb%a6%ac)
   - [Disk](#disk)
+  - [Network](#network)
   - [Automation](#automation)
   - [oneline commands](#oneline-commands)
   - [Tips](#tips)
@@ -51,8 +52,10 @@ $ docker run -d --name systemd-ubuntu --privileged jrei/systemd-ubuntu
 $ docker exec -it systemd-ubuntu bash
 ```
 
-# References
+# Materials
 
+* [리눅스 서버를 다루는 기술](https://thebook.io/006718/)
+  * 최고의 ubuntu 입문서
 * [The Art of Command Line @ github](https://github.com/jlevy/the-art-of-command-line/blob/master/README-ko.md)
   * 킹왕짱 커맨드 라인
 * [Most Important Penetration Testing commands Cheat Sheet for Linux Machine](https://techincidents.com/important-penetration-testing-cheat-sheet/)
@@ -1509,6 +1512,11 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 * `lsblk`
   * EBS volume 을 추가하고 EC2 instane 에서 확인할 수 있다.
   * `lsblk` list block devices
+
+## Network
+
+* `route`
+  * [라우팅 테이블 다루기](https://thebook.io/006718/part01/ch03/06/02/)
 
 ## Automation
 
