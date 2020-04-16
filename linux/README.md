@@ -1522,6 +1522,11 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `route` route 목록을 보여다오
     * `netstat -nr` 과 같다. macos 에서 가능.
   * `sudo route add default gw 192.168.0.1` default 목적지에 Gateway 를 추가해 다오
+* `ufw`
+  * [ufw firewall deny outgoing but allow browser](https://askubuntu.com/questions/1005312/ufw-firewall-deny-outgoing-but-allow-browser)
+  * `sudo ufw status verbose` Show lists of rules 
+  * `sudo ufw allow out to any port 443` allow outbound 443
+    * `sudo ufw reload` Should reload ufw
 
 ## Automation
 
