@@ -1,3 +1,59 @@
+- [Materials](#materials)
+	- [Tutorial of STS](#tutorial-of-sts)
+	- [Tutorial of springboot](#tutorial-of-springboot)
+- [스프링 부트 원리](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ec%9b%90%eb%a6%ac)
+	- [의존성 관리 이해](#%ec%9d%98%ec%a1%b4%ec%84%b1-%ea%b4%80%eb%a6%ac-%ec%9d%b4%ed%95%b4)
+	- [의존성 관리 응용](#%ec%9d%98%ec%a1%b4%ec%84%b1-%ea%b4%80%eb%a6%ac-%ec%9d%91%ec%9a%a9)
+	- [자동 설정 이해](#%ec%9e%90%eb%8f%99-%ec%84%a4%ec%a0%95-%ec%9d%b4%ed%95%b4)
+	- [자동설정 만들기 1 부 : Starter 와 AutoConfigure](#%ec%9e%90%eb%8f%99%ec%84%a4%ec%a0%95-%eb%a7%8c%eb%93%a4%ea%b8%b0-1-%eb%b6%80--starter-%ec%99%80-autoconfigure)
+	- [자동설정 만들기 2 부 : @ConfigurationProperties](#%ec%9e%90%eb%8f%99%ec%84%a4%ec%a0%95-%eb%a7%8c%eb%93%a4%ea%b8%b0-2-%eb%b6%80--configurationproperties)
+	- [내장 웹 서버 이해](#%eb%82%b4%ec%9e%a5-%ec%9b%b9-%ec%84%9c%eb%b2%84-%ec%9d%b4%ed%95%b4)
+	- [내장 웹 서버 응용 1 부: 컨테이너와 포트](#%eb%82%b4%ec%9e%a5-%ec%9b%b9-%ec%84%9c%eb%b2%84-%ec%9d%91%ec%9a%a9-1-%eb%b6%80-%ec%bb%a8%ed%85%8c%ec%9d%b4%eb%84%88%ec%99%80-%ed%8f%ac%ed%8a%b8)
+	- [내장 웹 서버 응용 2 부: HTTPS 와 HTTP2](#%eb%82%b4%ec%9e%a5-%ec%9b%b9-%ec%84%9c%eb%b2%84-%ec%9d%91%ec%9a%a9-2-%eb%b6%80-https-%ec%99%80-http2)
+	- [톰캣 HTTP2](#%ed%86%b0%ec%ba%a3-http2)
+	- [독립적으로 실행가능한 JAR](#%eb%8f%85%eb%a6%bd%ec%a0%81%ec%9c%bc%eb%a1%9c-%ec%8b%a4%ed%96%89%ea%b0%80%eb%8a%a5%ed%95%9c-jar)
+	- [스프링 부트 원리 정리](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ec%9b%90%eb%a6%ac-%ec%a0%95%eb%a6%ac)
+- [스프링 부트 활용](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ed%99%9c%ec%9a%a9)
+	- [스프링 부트 활용 소개](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ed%99%9c%ec%9a%a9-%ec%86%8c%ea%b0%9c)
+	- [SpringApplication 1 부](#springapplication-1-%eb%b6%80)
+	- [SpringApplication 2 부](#springapplication-2-%eb%b6%80)
+	- [외부 설정 1 부](#%ec%99%b8%eb%b6%80-%ec%84%a4%ec%a0%95-1-%eb%b6%80)
+	- [외부 설정 2 부 (1)](#%ec%99%b8%eb%b6%80-%ec%84%a4%ec%a0%95-2-%eb%b6%80-1)
+	- [외부 설정 2 부 (2)](#%ec%99%b8%eb%b6%80-%ec%84%a4%ec%a0%95-2-%eb%b6%80-2)
+	- [프로파일](#%ed%94%84%eb%a1%9c%ed%8c%8c%ec%9d%bc)
+	- [로깅 1부 : 스프링 부트 기본 로거설정](#%eb%a1%9c%ea%b9%85-1%eb%b6%80--%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ea%b8%b0%eb%b3%b8-%eb%a1%9c%ea%b1%b0%ec%84%a4%ec%a0%95)
+	- [로깅 2부 : 커스터마이징](#%eb%a1%9c%ea%b9%85-2%eb%b6%80--%ec%bb%a4%ec%8a%a4%ed%84%b0%eb%a7%88%ec%9d%b4%ec%a7%95)
+	- [테스트](#%ed%85%8c%ec%8a%a4%ed%8a%b8)
+	- [테스트 유틸](#%ed%85%8c%ec%8a%a4%ed%8a%b8-%ec%9c%a0%ed%8b%b8)
+	- [Spring-Boot-Devtools](#spring-boot-devtools)
+	- [스프링 웹 MVC 1 부: 소개](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-1-%eb%b6%80-%ec%86%8c%ea%b0%9c)
+	- [스프링 웹 MVC 2 부: HttpMessageconverters](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-2-%eb%b6%80-httpmessageconverters)
+	- [스프링 웹 MVC 3 부: ViewResolve](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-3-%eb%b6%80-viewresolve)
+	- [스프링 웹 MVC 4 부: 정적 리소스 지원](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-4-%eb%b6%80-%ec%a0%95%ec%a0%81-%eb%a6%ac%ec%86%8c%ec%8a%a4-%ec%a7%80%ec%9b%90)
+	- [스프링 웹 MVC 5 부: 웹 JAR](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-5-%eb%b6%80-%ec%9b%b9-jar)
+	- [스프링 웹 MVC 6 부: index 페이지와 파비콘](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-6-%eb%b6%80-index-%ed%8e%98%ec%9d%b4%ec%a7%80%ec%99%80-%ed%8c%8c%eb%b9%84%ec%bd%98)
+	- [스프링 웹 MVC 7 부: Thymeleaf](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-7-%eb%b6%80-thymeleaf)
+	- [스프링 웹 MVC 8 부: HtmlUnit](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-8-%eb%b6%80-htmlunit)
+	- [스프링 웹 MVC 9 부: ExceptionHandler](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-9-%eb%b6%80-exceptionhandler)
+	- [스프링 웹 MVC 10 부: Spring HATEOAS](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-10-%eb%b6%80-spring-hateoas)
+	- [스프링 웹 MVC 11 부: CORS](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-11-%eb%b6%80-cors)
+	- [스프링 데이터 1 부: 소개](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-1-%eb%b6%80-%ec%86%8c%ea%b0%9c)
+	- [스프링 데이터 2 부: 인메모리 데이터베이스](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-2-%eb%b6%80-%ec%9d%b8%eb%a9%94%eb%aa%a8%eb%a6%ac-%eb%8d%b0%ec%9d%b4%ed%84%b0%eb%b2%a0%ec%9d%b4%ec%8a%a4)
+	- [스프링 데이터 3 부: MySQL](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-3-%eb%b6%80-mysql)
+	- [스프링 데이터 4 부: PostgreSQL](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-4-%eb%b6%80-postgresql)
+	- [스프링 데이터 5 부: 스프링 데이터 JPA 소개](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-5-%eb%b6%80-%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-jpa-%ec%86%8c%ea%b0%9c)
+	- [스프링 데이터 6 부: 스프링 데이터 JPA 연동](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-6-%eb%b6%80-%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-jpa-%ec%97%b0%eb%8f%99)
+- [open url lcoalhost:7474/browser/](#open-url-lcoalhost7474browser)
+	- [스프링 REST 클라이언트 1 부: RestTemplate vs WebClient](#%ec%8a%a4%ed%94%84%eb%a7%81-rest-%ed%81%b4%eb%9d%bc%ec%9d%b4%ec%96%b8%ed%8a%b8-1-%eb%b6%80-resttemplate-vs-webclient)
+	- [스프링 REST 클라이언트 2 부: Customizing](#%ec%8a%a4%ed%94%84%eb%a7%81-rest-%ed%81%b4%eb%9d%bc%ec%9d%b4%ec%96%b8%ed%8a%b8-2-%eb%b6%80-customizing)
+	- [그밖에 다양한 기술 연동](#%ea%b7%b8%eb%b0%96%ec%97%90-%eb%8b%a4%ec%96%91%ed%95%9c-%ea%b8%b0%ec%88%a0-%ec%97%b0%eb%8f%99)
+- [스프링 부트 운영](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ec%9a%b4%ec%98%81)
+	- [스프링 부트 Actuator 1 부: 소개](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-actuator-1-%eb%b6%80-%ec%86%8c%ea%b0%9c)
+	- [스프링 부트 Actuator 2 부: JMX 와 HTTP](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-actuator-2-%eb%b6%80-jmx-%ec%99%80-http)
+	- [스프링 부트 Actuator 3 부: 스프링 부트 어드민](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-actuator-3-%eb%b6%80-%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ec%96%b4%eb%93%9c%eb%af%bc)
+
+-----
+
 # Materials
 
 * [스프링 부트 개념과 활용 @ inflearn](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8)
@@ -1164,13 +1220,446 @@ public class ACcountRepositoryTest {
 ```
 
 ## 스프링 데이터 11 부: Neo4J
+
+Neo4J 는 Graph Data Base 이다.
+
+다음과 같이 build.gradle 에 dependency 를 추가한다.
+
+```groovy
+dependency {
+	implementation 'org.springframework.boot:spring-boot-starter-data-neo4j'
+}
+```
+
+다음과 같이 Neo4J 를 실행한다.
+
+```bash
+$ docker run -p 7474:7474 -p 7687:7687 -d --name neo4j_boot neo4j
+# open url lcoalhost:7474/browser/
+```
+
+다음과 같이 application.properties 를 수정한다.
+
+```
+spring.data.neo4j.password=1111
+spring.data.neo4j.password=neo4j
+```
+
+다음과 같이 Runner, Account 를 제작한다.
+
+```java
+@Commponent
+public class Neo4jRunner implements ApplicationRunner {
+
+	@Autowired
+	SessionFactory sessionFactory;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		Account account = new Account();
+		account.setEmail("iamslash@gmail.com");
+		account.setUserName("iamslash");
+
+		Session session = sessionFactory.openSession();
+		session.save();
+		sessionFactory.close();
+
+		System.out.println("finished");
+	}
+}
+
+@NodeEntity
+public class Account{
+	@Id @GeneratedValue
+	private Long id;
+	private String username;
+	private String password;
+	...
+}
+```
+
 ## 스프링 데이터 12 부: 정리
 
 ## 스프링 시큐리티 1 부: StarterSecurity
+
+먼저 build.gradle 에 thymleaf dependency 를 추가한다.
+
+```groovy
+dependency {
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+}
+```
+
+다음과 같이 HomeController 를 추가한다.
+
+```java
+@Controller
+public class HomeController {
+	@GetMapping("/hello")
+	public String hello() {
+		return "hello";
+	} 
+
+	@GetMapping("/my")
+	public String my() {
+		return "my";
+	}
+}
+```
+
+다음과 같이 index.html, hello.html, my.html 을 `resources/templates` 에 작성한다.
+
+* index.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+	<title>Title</title>
+</head>	
+<body>
+<h1>Welcome</h1>
+<a href="/hello">hello</a>
+<a herf="/my">my page</a>
+</body>
+</html>
+```
+
+* hello.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+	<title>Title</title>
+</head>	
+<body>
+<h1>Hello</h1>
+</body>
+</html>
+```
+
+* my.html
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+	<title>Title</title>
+</head>	
+<body>
+<h1>Hello</h1>
+</body>
+</html>
+```
+
+다음과 같이 HelloControllerTest 를 작성한다.
+
+```java
+@RunWith(SpringRunner.class)
+@WebMvcTest(HomeController.class)
+public class HomeControllerTest {
+
+	@Autowired
+	MockMvc mockMvc;
+
+	@Test
+	public void hello() {
+		mockMvc.perform(get("/hello"))
+		  .andDo(print())
+		  .andExpect(status().isOk())
+			.ansExpect(view().name("hello"));
+	}
+
+	@Test
+	public void my() {
+		mockMvc.perform(get("/my"))
+		  .andDo(print())
+		  .andExpect(status().isOk())
+			.ansExpect(view().name("my"));
+	}
+}
+```
+
+이제 Spring Security 를 추가해서 인증한 사람만 my.html 을 볼 수 있도록 하자.
+
+build.gradle 에 spring security dependency 를 추가하자.
+
+```groovy
+dependency {
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+}
+```
+
+이제 HelloControllerTest 는 test 를 실패한다. Spring Security 가 적용되어 모든 Request 는 Authentication 이 되어야 성공할 수 있다. 만약 `localhost:8080` 을 브라우저로 접근하면 form login 이 보여진다. username 은 `user` 이고 password 는 Spring Application 의 log 에 보여진다.
+
+```java
+@RunWith(SpringRunner.class)
+@WebMvcTest(HomeController.class)
+public class HomeControllerTest {
+
+	@Autowired
+	MockMvc mockMvc;
+
+	@Test
+	public void hello() {
+		mockMvc.perform(get("/hello").accept(MediaType.TEXT_HTML))
+		  .andDo(print())
+		  .andExpect(status().isOk())
+			.ansExpect(view().name("hello"));
+	}
+
+	@Test
+	public void my() {
+		mockMvc.perform(get("/my"))
+		  .andDo(print())
+		  .andExpect(status().isOk())
+			.ansExpect(view().name("my"));
+	}
+}
+```
+
+다음과 같이 WebSecurityConfig 를 제작하면 Spring Security 가 기본적으로 제공하는 기능과 동일한 기능을 제공할 수 있다.
+
+```java
+@Configuration
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+}
+```
+
+Spring Security 가 적용된 HelloControllerTest 의 test 를 통과시켜보자.
+
+먼저 build.gradle 에 dependency 를 추가하자.
+
+```groovy
+dependency {
+	testImplementation 'org.springframework.security:spring-security-test:${spring-security.version}'
+}
+```
+
+`@WithMockUser` 를 이용하면 가상으로 로그인이 되었다고 설정할 수 있다.
+
+```java
+@RunWith(SpringRunner.class)
+@WebMvcTest(HomeController.class)
+public class HomeControllerTest {
+
+	@Autowired
+	MockMvc mockMvc;
+
+	@Test
+	@WithMockUser
+	public void hello() {
+		mockMvc.perform(get("/hello").accept(MediaType.TEXT_HTML))
+		  .andDo(print())
+		  .andExpect(status().isOk())
+			.ansExpect(view().name("hello"));
+	}
+
+	@Test
+	public void hello_withoutUser() throws Exception {
+		mockMvc.perform(get("/hello").
+		  .andExpect(status().isUnauthorized());
+	}
+
+	@Test
+	@WithMockUser
+	public void my() {
+		mockMvc.perform(get("/my"))
+		  .andDo(print())
+		  .andExpect(status().isOk())
+			.ansExpect(view().name("my"));
+	}
+}
+```
+
 ## 스프링 시큐리티 2 부: 시큐리티 설정 커스터마이징
 
+다음과 같이 WebSecurityConfig 를 정의한다. `/, /hello` 를 제외한 request 는 Authentication 이 필요하다.
+
+```java
+@Configuration
+public class WebSecurityConfig extends WebSecurityConfigureAdapter {
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests()
+				.andMatchers("/", "/hello").permialAll()
+				.anyRequest().authenticated()
+				.and()
+			.formLogin()
+			  .and()
+			.httpBasic();
+	}
+}
+```
+
+이제 user 설정을 customize 해보자.
+
+먼저 Account 를 제작한다.
+
+```java
+@Entity
+public class Account {
+	@Id @GeneratedValue
+	private Long id;
+	private String password;
+	private String email;
+	...
+}
+```
+
+이제 UserDetailsService 를 구현해 보자.
+
+build.gralde 에 jpa dependency 를 추가한다.
+
+```groovy
+dependency {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'com.h2database:h2'
+}
+```
+
+Account Repository 를 제작한다.
+
+```java
+public interface AccountRepository extends JpaRepository<Account, Long> {
+	Optional<Account> findByUsername(String username);
+}
+```
+
+AccountService 는 반드시 Bean 이어야 하고 UserDetialsService 를 상속받아야 한다. 그래야
+Spring Security 는 기본적인 user 를 제공하지 않는다. loadUserByUsername 은 입력한 password 
+를 검증할 때 호출된다. Spring Security 는 기본적으로 UserDetails 를 구현한 User class 를 제공한다.
+
+```java
+@Service
+public class AccountService implements UserDetailsService {
+	@Autowired
+	private AccountRepository accountRepository;
+
+	public Account createAccount(String username, String password) {
+		Account account = new Account();
+		account.setUsername(username);
+		account.setPassword(password);
+		return accontRepository.save(account);
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Optional<Account> byUsername = accountRespository.findByUsername(username);
+		Account account = byUsername.orEleseThrow(()->new UsernameNotFoundException(username))
+		return new User(account.getUsername(), account.getPassword(), authorites());
+	}
+
+	private Collection<? extends GrantedAuthority> authroties() {
+		return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+	}
+}
+```
+
+로그인할 User 를 Runner 를 이용하여 만들어 보자.
+
+```java
+@Component
+public class AccountRunner implements ApplicationRunner {
+	@Autowired
+	AccountService accountService;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		accountService.createAccount("iamslash", "1234");
+	}
+}
+```
+
+password 를 DB 에 그대로 저장하기 때문에 login 이 되지 않는다. `There is no PasswordEncoder mapped for the id "null"`.
+
+가장 간단하게 해결할 수 있는 방법은 NoOpPasswordEncoder 를 Bean 으로 제공하는 것이다. 그러나
+password 를 DB 에 그대로 저자하기 때문에 매우 안 좋은 방법이다.
+
+```java
+@Configuration
+public class WebSecurityConfig extends WebSecurityConfigureAdapter {
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests()
+				.andMatchers("/", "/hello").permialAll()
+				.anyRequest().authenticated()
+				.and()
+			.formLogin()
+			  .and()
+			.httpBasic();
+	}
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return NoOpPasswordEncoder.getInstance();
+	}
+}
+```
+
+Spring Security 는 `PasswordEncoderFactories.createDelegatingPasswordEncoder()` 를 권장한다.
+
+```java
+@Configuration
+public class WebSecurityConfig extends WebSecurityConfigureAdapter {
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http.authorizeRequests()
+				.andMatchers("/", "/hello").permialAll()
+				.anyRequest().authenticated()
+				.and()
+			.formLogin()
+			  .and()
+			.httpBasic();
+	}
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	}
+}
+```
+
+그럼 PasswordEncoder 를 AccountService 에 적용하여 password 를 encoding 하여 저장한다.
+
+```java
+@Service
+public class AccountService implements UserDetailsService {
+	@Autowired
+	private AccountRepository accountRepository;
+	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	public Account createAccount(String username, String password) {
+		Account account = new Account();
+		account.setUsername(username);
+		account.setPassword(passwordEncoder.encode(pssword));
+		return accontRepository.save(account);
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Optional<Account> byUsername = accountRespository.findByUsername(username);
+		Account account = byUsername.orEleseThrow(()->new UsernameNotFoundException(username))
+		return new User(account.getUsername(), account.getPassword(), authorites());
+	}
+
+	private Collection<? extends GrantedAuthority> authroties() {
+		return Arrays.asList(new SimpleGrantedAuthority("ROLE_USER"));
+	}
+}
+```
+
 ## 스프링 REST 클라이언트 1 부: RestTemplate vs WebClient
+
+
 ## 스프링 REST 클라이언트 2 부: Customizing
+
+
 ## 그밖에 다양한 기술 연동
 
 # 스프링 부트 운영
