@@ -24,3 +24,15 @@ macOS 에 ldapsearch 가 기본적으로 설치되어 있고 ldap 조회를 실�
 # cn 이 David 로 시작하는 object 검색해서 cn 를 리턴
 $ ldapsearch -H ldap://xxx.xxx.xxx.xxx -x -D iamslash@com.iamslash.net -y passwd.txt -b "DC=corp,DC=iamslash,DC=net" "(cn=David*)" cn
 ```
+
+# LDAP query
+
+* [ldap query 기본](http://www.dreamy.pe.kr/zbxe/CodeClip/164860)
+
+| Query | Description |
+|--|--|
+| `"(objectClass=*)"`	| All objects. |
+| `"(&(objectCategory=person)(objectClass=user)(!cn=andy))"` |	All user objects but "andy". |
+| `"(sn=sm*)"`	| All objects with a surname that starts with "sm". |
+| `"(&(objectCategory=person)(objectClass=contact)(|(sn=Smith)(sn=Johnson)))"`	| All contacts with a surname equal to "Smith" or "Johnson". |
+```
