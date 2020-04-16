@@ -1,5 +1,8 @@
 # Materials
 
+* [라우팅 테이블 다루기](https://thebook.io/006718/part01/ch03/06/02/)
+* [Ubnutu route 설정](https://xmlangel.github.io/ubuntu-route/)
+
 # How to reoute packets
 
 현재 route table 목록을 조회한다.

@@ -1518,6 +1518,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 
 * [route](/route/README.md)
   * [라우팅 테이블 다루기](https://thebook.io/006718/part01/ch03/06/02/)
+  * [Ubnutu route 설정](https://xmlangel.github.io/ubuntu-route/)
   * `route` route 목록을 보여다오
     * `netstat -nr` 과 같다. macos 에서 가능.
   * `sudo route add default gw 192.168.0.1` default 목적지에 Gateway 를 추가해 다오
