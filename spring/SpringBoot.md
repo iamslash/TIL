@@ -44,12 +44,6 @@
 	- [스프링 데이터 5 부: 스프링 데이터 JPA 소개](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-5-%eb%b6%80-%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-jpa-%ec%86%8c%ea%b0%9c)
 	- [스프링 데이터 6 부: 스프링 데이터 JPA 연동](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-6-%eb%b6%80-%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-jpa-%ec%97%b0%eb%8f%99)
 - [open url lcoalhost:7474/browser/](#open-url-lcoalhost7474browser)
-	- [스프링 REST 클라이언트 1 부: RestTemplate vs WebClient](#%ec%8a%a4%ed%94%84%eb%a7%81-rest-%ed%81%b4%eb%9d%bc%ec%9d%b4%ec%96%b8%ed%8a%b8-1-%eb%b6%80-resttemplate-vs-webclient)
-	- [스프링 REST 클라이언트 2 부: Customizing](#%ec%8a%a4%ed%94%84%eb%a7%81-rest-%ed%81%b4%eb%9d%bc%ec%9d%b4%ec%96%b8%ed%8a%b8-2-%eb%b6%80-customizing)
-	- [그밖에 다양한 기술 연동](#%ea%b7%b8%eb%b0%96%ec%97%90-%eb%8b%a4%ec%96%91%ed%95%9c-%ea%b8%b0%ec%88%a0-%ec%97%b0%eb%8f%99)
-- [스프링 부트 운영](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ec%9a%b4%ec%98%81)
-	- [스프링 부트 Actuator 1 부: 소개](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-actuator-1-%eb%b6%80-%ec%86%8c%ea%b0%9c)
-	- [스프링 부트 Actuator 2 부: JMX 와 HTTP](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-actuator-2-%eb%b6%80-jmx-%ec%99%80-http)
 	- [스프링 부트 Actuator 3 부: 스프링 부트 어드민](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-actuator-3-%eb%b6%80-%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ec%96%b4%eb%93%9c%eb%af%bc)
 
 -----
@@ -1656,9 +1650,80 @@ public class AccountService implements UserDetailsService {
 
 ## 스프링 REST 클라이언트 1 부: RestTemplate vs WebClient
 
+RestTemplateBuilder 혹은 WebClientBuilder 를 Bean 으로 주입받아서 사용한다.
+
+RestTemplate 는 Synchronous, WebClient 는 Asynchronous API 이다.
+
+다음은 RestTemplate 을 사용하는 예이다.
+
+```java
+@Component
+public class RestRunner implements ApplicationRunner {
+	@Autowired
+	RestTemplateBuilder restTemplateBuilder;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		RestTemplate restTemplate = restTemplateBuilder.build();
+
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+
+		String helloResult = restTemplate.getForObject("http://localhost:8080/hello");
+		System.out.println(helloResult);
+
+		String worldResult = restTemplate.getForObject("http://localhost:8080/world");
+		System.out.println(worldResult);
+
+		stopWatch.stop();
+		System.out.println(stopWatch.prettyPrint());
+	}
+}
+```
+
+다음은 WebClient 을 사용하는 예이다. 먼저 webflux 를 build.gradle 에 추가해야 한다.
+
+
+```java
+@Component
+public class RestRunner implements ApplicationRunner {
+	@Autowired
+	WebClient.Builder builder;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		WebClient webClient = builder.build();
+
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		
+		Mono<String> helloMono = webClient.get().uri("http://localhost:8080/hello")
+		  .retrieve()
+			.bodyToMono(String.class)
+		helloMono.subscribe(s -> {
+				System.out.println(s);
+				if (stopWatch.isRunning()) {
+					stopWatch.stop();
+				}
+				System.out.println(stopWatch.prettyPrint());
+				stopWatch.start();
+			});
+		Mono<String> worldMono = webClient.get().uri("http://localhost:8080/world")
+		  .retrieve()
+			.bodyToMono(String.class)
+		worldMono.subscribe(s -> {
+				System.out.println(s);
+				if (stopWatch.isRunning()) {
+					stopWatch.stop();
+				}
+				System.out.println(stopWatch.prettyPrint());
+				stopWatch.start();
+			});
+	}
+}
+```
 
 ## 스프링 REST 클라이언트 2 부: Customizing
-
 
 ## 그밖에 다양한 기술 연동
 
@@ -1666,7 +1731,51 @@ public class AccountService implements UserDetailsService {
 
 ## 스프링 부트 Actuator 1 부: 소개
 
+Actuator 는 운영을 위한 여러 정보를 endpoint 들을 통해 제공해 준다.
+
+Actuator 를 사용하기 위해 다음과 같이 build.gradle 에 dependency 를 추가한다.
+
+```groovy
+dependency {
+	implemnentation 'org.springframework.boot:spring-boot-starter-actuator'
+}
+```
+
+open browser `http://localhost:8080/actuator`
+
+다음과 같이 application.properties 에서 endpoint 를 활성화 할 수 있다. 반드시 expose 를 해야 browser 에서 볼 수 있다.
+
+```
+management.endpoint.shutdown.enabled=true
+```
+
+다음과 같이 application.properties 에서 endpoint 를 expose 한다.
+
+```
+management.endpoints.jmx.exposure.include=health,info
+```
+
 ## 스프링 부트 Actuator 2 부: JMX 와 HTTP
+
+JMX 는 `jconsole` 로 확인 가능하다. 그러나 불편하다.
+
+`jvisualvm` 이 훨씬 좋다. 그러나 설치를 해야한다.
+
+만약 browser 에서 모두 보고 싶다면 다음과 같이 application.properties 를
+수정한다.
+
+```
+management.endpoints.web.exposure.include=*
+management.endpoints.web.exposure.exclude=env.beans
+```
+
+open url `http://localhost:8080/actuator/beans` 
+
+그러나 가독성이 떨어지는 것은 똑같다. Spring Security 를 이용하면 endpoint 를
+인증된 유저만 볼 수 있게 할 수 있다.
 
 ## 스프링 부트 Actuator 3 부: 스프링 부트 어드민
 
+[Spring boot admin](https://github.com/codecentric/spring-boot-admin) 은 JMX 의 UI 이다. opensource 이다.
+
+prometheus, grafana 를 사용하겠다.
