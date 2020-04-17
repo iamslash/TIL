@@ -443,7 +443,7 @@ int[] A = new int[]{5, 4, 3, 2, 1};
 Arrays.sort(A);
 
 // Create a list of strings 
-ArrayList<String> al = new ArrayList<String>(); 
+List<String> al = new ArrayList<String>(); 
 al.add("Geeks For Geeks"); 
 al.add("Friends"); 
 al.add("Dear"); 
@@ -470,6 +470,29 @@ Collections.sort(rec, new Comparator() {
       return a.compareTo(b);
    }
 });
+```
+
+* Arrays
+
+```java
+int[] A = new int[10];
+Arrays.fill(A, 0);
+Arrays.sort(A);
+int a = Arrays.binarySearch(A, 437);
+int[] b = Arrays.copyOf(A, 3);
+int[] c = Arrays.copyOfRange(A, 2, 4);
+```
+
+* Collections
+
+```java
+List<String> A = new ArrayList<String>(); 
+Collections.fill(A, "Foo");
+Collections.sort(A); 
+Collections.sort(A, Collections.reverseOrder()); 
+Collections.sort(A, (a, b) -> String.compareTo(a, b));
+Collections.reverse(A);
+String s = Collections.min(A);
 ```
 
 ## Multi dimensional array
