@@ -18,6 +18,7 @@
   - [Reverse proxy](#reverse-proxy)
   - [Application layer](#application-layer)
     - [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
+    - [Service Mesh](#service-mesh)
     - [Service discovery](#service-discovery)
   - [Database](#database)
   - [Cache](#cache)
@@ -43,9 +44,6 @@
 - [Company Architectures](#company-architectures)
 - [company engineering blog](#company-engineering-blog)
 - [System Design Pattern](#system-design-pattern)
-  - [aws cloud design pattern](#aws-cloud-design-pattern)
-  - [azure cloud design pattern](#azure-cloud-design-pattern)
-  - [google cloud design pattern](#google-cloud-design-pattern)
 - [Cracking The Coding Interview Quiz](#cracking-the-coding-interview-quiz)
 
 ----
@@ -335,6 +333,10 @@ nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은
 하나의 서비스를 느슨하게 연결된 작은 서비스들로 구성하여 구축하는 software development technique 중 하나이다.
 
 모듈화도 되고 여러 팀이 독립적으로 개발할 수도 있다. 그러나 너무 많은 서비스들의 수때문에 많은 프로토콜을 구현해야 하고 유지보수가 용이하지 않다.
+
+### Service Mesh
+
+* [서비스 메쉬란 무엇일까요?](https://www.redhat.com/ko/topics/microservices/what-is-a-service-mesh)
 
 ### Service discovery
 
@@ -784,17 +786,7 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
 
 # System Design Pattern
 
-## aws cloud design pattern
-
-TODO
-
-## azure cloud design pattern
-
-TODO
-
-## google cloud design pattern
-
-TODO
+* [Cloud Design Patterns](clouddesignpattern.md)
 
 # Cracking The Coding Interview Quiz
 

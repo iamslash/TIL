@@ -391,6 +391,7 @@ sb.deleteCharAt(sb.length()-1);
    map.put(".au", map.getOrDefault(".au", "Australia"));
    System.out.println(map);
    System.out.println(map.get(".au"));
+   System.out.println(map.containsKey(".au"));
    map.forEach(key -> System.out.println(key));
    Collection<String> values = map.values();
    values.forEach(val -> System.out.println(val));  
