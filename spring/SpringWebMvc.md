@@ -216,14 +216,22 @@ XML converter 를 사용하고 싶다면 JacksonXML 혹은 JAXB 를 dependency �
 
 ## 핸들러 메소드 17부 정리 및 과제
 
+* [spring-petclinic](https://github.com/spring-projects/spring-petclinic)
+
 ## 모델 @ModelAttribute
+
+* [@ModelAttribute Method](https://github.com/keesun/demo-web-mvc/commit/f8d87bc70d558d87694cdff8b881d796eb72a64c)
 
 ## 데이터바인더 @InitBinder
 
+* [WebDataBinder @InitBinder](https://github.com/keesun/demo-web-mvc/commit/ccb7ceb63b17546e8b3695ba4e7b744820d6f95c)
+
 ## 예외 처리 핸들러  @ExceptionHandler
+
+* [@ExceptionHandler](https://github.com/keesun/demo-web-mvc/commit/176f9b6d86ae7db8f509dccfe56495146fbc5ee8)
 
 ## 전역 컨트롤러 @ControllerAdvice
 
+* [@ControllerAdvice](https://github.com/keesun/demo-web-mvc/commit/c6b95af66da2749f2c7a92f1ad4ff566982bf2fa)
+
 ## 스프링 MVC 강좌 마무리
-
-
