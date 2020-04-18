@@ -1,6 +1,7 @@
 # Materials
 
 * [스프링 프레임워크 핵심 기술 @ inflearn](https://www.inflearn.com/course/spring-framework_core/)
+  * [src](https://github.com/keesun/study/tree/master/rest-api-with-spring)
 
 # REST API 및 프로젝트 소개
 
