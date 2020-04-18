@@ -1,3 +1,25 @@
+- [Materials](#materials)
+- [History](#history)
+- [Spring Cloud VS Kubernetes](#spring-cloud-vs-kubernetes)
+- [Pattern](#pattern)
+  - [Application architecture patterns](#application-architecture-patterns)
+  - [Decomposition](#decomposition)
+  - [Refactoring to microservices](#refactoring-to-microservices)
+  - [Data management](#data-management)
+  - [Transactional messaging](#transactional-messaging)
+  - [Testing](#testing)
+  - [Deployment patterns](#deployment-patterns)
+  - [Cross cutting concerns](#cross-cutting-concerns)
+  - [Communication style](#communication-style)
+  - [External API](#external-api)
+  - [Service discovery](#service-discovery)
+  - [Reliability](#reliability)
+  - [Security](#security)
+  - [Observability](#observability)
+  - [UI patterns](#ui-patterns)
+
+----
+
 # Materials
 
 * [MSA 제대로 이해하기 -(1) MSA의 기본 개념](https://velog.io/@tedigom/MSA-%EC%A0%9C%EB%8C%80%EB%A1%9C-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-1-MSA%EC%9D%98-%EA%B8%B0%EB%B3%B8-%EA%B0%9C%EB%85%90-3sk28yrv0e)
@@ -32,4 +54,98 @@ microservices 의 대표적인 implementation 중 Spring Cloud 와 Kubernetes �
  
 # Pattern
 
-TODO
+## Application architecture patterns
+
+Monolithic architecture
+Microservice architecture
+
+## Decomposition
+
+Decompose by business capability
+Decompose by subdomain
+Self-contained Service
+Service per team
+
+## Refactoring to microservices
+
+Strangler Application
+Anti-corruption layer
+
+## Data management
+
+Database per Service
+Shared database
+Saga
+API Composition
+CQRS
+Domain event
+Event sourcing
+
+## Transactional messaging
+
+Transactional outbox
+Transaction log tailing
+Polling publisher
+
+## Testing
+
+Service Component Test
+Consumer-driven contract test
+Consumer-side contract test
+
+## Deployment patterns
+
+Multiple service instances per host
+Service instance per host
+Service instance per VM
+Service instance per Container
+Serverless deployment
+Service deployment platform
+
+## Cross cutting concerns
+
+Microservice chassis
+Externalized configuration
+
+## Communication style
+
+Remote Procedure Invocation
+Messaging
+Domain-specific protocol
+Idempotent Consumer
+
+## External API
+
+API gateway
+Backend for front-end
+
+## Service discovery
+
+Client-side discovery
+Server-side discovery
+Service registry
+Self registration
+3rd party registration
+
+## Reliability
+
+Circuit Breaker
+
+## Security
+
+Access Token
+
+## Observability
+
+Log aggregation
+Application metrics
+Audit logging
+Distributed tracing
+Exception tracking
+Health check API
+Log deployments and changes
+
+## UI patterns
+
+Server-side page fragment composition
+Client-side UI composition
