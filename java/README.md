@@ -451,6 +451,8 @@ al.add("Is");
 al.add("Superb"); 
 Collections.sort(al); 
 Collections.sort(al, Collections.reverseOrder()); 
+// sort by length ascending
+Collections.sort(a1, (a, b) -> Integer.valueOf(a.length()).compareTo(b.length()));
 
 // comparator class
 class CompDsc implements Comparator<Integer> 
