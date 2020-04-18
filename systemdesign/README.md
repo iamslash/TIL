@@ -43,7 +43,7 @@
 - [Real World Architecture](#real-world-architecture)
 - [Company Architectures](#company-architectures)
 - [company engineering blog](#company-engineering-blog)
-- [System Design Pattern](#system-design-pattern)
+- [Cloud Design Patterns](#cloud-design-patterns)
 - [Cracking The Coding Interview Quiz](#cracking-the-coding-interview-quiz)
 
 ----
@@ -330,13 +330,21 @@ nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은
 
 ### MSA (Micro Service Architecture)
 
+* [Micro Service Architecture](msa.md)
+
+-----
+
 하나의 서비스를 느슨하게 연결된 작은 서비스들로 구성하여 구축하는 software development technique 중 하나이다.
 
 모듈화도 되고 여러 팀이 독립적으로 개발할 수도 있다. 그러나 너무 많은 서비스들의 수때문에 많은 프로토콜을 구현해야 하고 유지보수가 용이하지 않다.
 
+[A pattern language for microservices](https://microservices.io/patterns/index.html) 를 참고하여 pattern 들을 파악하자.
+
 ### Service Mesh
 
 * [서비스 메쉬란 무엇일까요?](https://www.redhat.com/ko/topics/microservices/what-is-a-service-mesh)
+
+Service Mesh 는 MSA 를 위한 기술중 하나이다. network 부분을 담당하고 sidecar proxy 와 함께 구현된다.
 
 ### Service discovery
 
@@ -784,9 +792,13 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
 * [Yelp Engineering Blog](http://engineeringblog.yelp.com/)
 * [Zynga Engineering Blog](https://www.zynga.com/blogs/engineering)
 
-# System Design Pattern
+# Cloud Design Patterns
 
 * [Cloud Design Patterns](clouddesignpattern.md)
+
+----
+
+MSA 의 pattern 들과 거의 유사하다.
 
 # Cracking The Coding Interview Quiz
 
@@ -798,3 +810,4 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
 * Sales Rank
 * Personal Financial Manager
 * Pastebin
+
