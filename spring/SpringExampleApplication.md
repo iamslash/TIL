@@ -521,19 +521,50 @@ infra package 에서 module package 사용하지 않기. 모듈간에 cyclic ref
 * [StudyCreatedEvent handling](https://github.com/hackrslab/studyolle/commit/4ca56b1f9bb347a7e6aad6afe47d5d51877083bb)
 
 ## 78.	알림 아이콘 변경
+
+* [Notification icon](https://github.com/hackrslab/studyolle/commit/7f07cc3aa1eb44f8fe2075d15ad87c66b20a3fa6)
+
 ## 79.	알림 목록 조회 및 삭제
+
+* [Notification list](https://github.com/hackrslab/studyolle/commit/6b1ad8e70388145946ae7337ab9a8de7712dace8)
+
 ## 80.	관심있는 스터디 변경 알림
+
+* [Notification for study updates](https://github.com/hackrslab/studyolle/commit/ac3ca1a26d8884011d42e8b7710fc10501eba65d)
+
 ## 81.	모임 관련 알림
+
+* [Event notifications](https://github.com/hackrslab/studyolle/commit/ec4f24102d42787f647964ea18fb16f3d5a5ff99)
 
 # Search 
 
 ## 82.	검색 기능 미리보기
+
 ## 83.	검색 기능 구현
+
+* [Search study by keyword](https://github.com/hackrslab/studyolle/commit/ccf045182c2913b3f088d3964aa6e3f11b7ee71e)
+
 ## 84.	N+1 Select 문제 해결
+
+* [Solve n+1 select](https://github.com/hackrslab/studyolle/commit/1dca6ab3bef487b667d050a2e5b1dc6e2018485f)
+
 ## 85.	페이징 적용
+
+* [Apply Pageable](https://github.com/hackrslab/studyolle/commit/426618f5df9faf9df4daf585e0db239c513550a3)
+
 ## 86.	검색 뷰 개선
+
+* [Search view](https://github.com/hackrslab/studyolle/commit/2459891d1eed9cb4efe67ccb03f48788535114e1)
+* [Replace study.members.size to memberCount](https://github.com/hackrslab/studyolle/commit/858c35e0c2bba9cca0b1e77ea69a89a66853c0e9)
+* [add style for index page](https://github.com/hackrslab/studyolle/commit/abf01f455998d26a13c67fb8d7136b54fdba1cc8)
+
 ## 87.	로그인 전 첫 페이지
+
+* [home page without login](https://github.com/hackrslab/studyolle/commit/f801062eb4c9dc0b2184b4e8bc78c68769a2aece)
+
 ## 88.	로그인 후 첫 페이지
+
+* [home page after login](https://github.com/hackrslab/studyolle/commit/05c72a25e757407468d2db74148b1111284bd493)
 
 # Handling errors and Deployment
 
