@@ -133,11 +133,171 @@ HTML template 에 다음과 같이 xmlns:nec 를 html 의 attribute 로 추가�
 
 * [Added @currentuser](https://github.com/hackrslab/studyolle/commit/390b0b10b39ee3e5767c3cd029bf4f833916c394)
 
+## 18.	가입 확인 이메일 재전송
 
+* [Resend confirm email](https://github.com/hackrslab/studyolle/commit/18276fffcbf0aa8ecf5a0de236d7ab8cff8d50c7)
+
+## 19.	로그인 / 로그아웃
+
+* [Login and Logout](https://github.com/hackrslab/studyolle/commit/fa7e83a6259b4d1215c62d1c84d04c513d37252e)
+
+## 20.	로그인 / 로그아웃 테스트
+
+* [Login and Logout test](https://github.com/hackrslab/studyolle/commit/fb43cf720bb7c83cbb488eb0b8f55d86893fed4e)
+
+테스트 코드를 작성할 때 Test Reqeust 에 CSRF token 을 포함시키기 위해`csrf()` 를 꼭 추가해야 한다.
+
+```java
+    @DisplayName("이메일로 로그인 성공")
+    @Test
+    void login_with_email() throws Exception {
+        mockMvc.perform(post("/login")
+                .param("username", "keesun@email.com")
+                .param("password", "12345678")
+                .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/"))
+                .andExpect(authenticated().withUsername("keesun"));
+    }
+```
+
+## 21.	로그인 기억하기 (RememberMe)
+
+* [Support RememberMe](https://github.com/hackrslab/studyolle/commit/6aa99e82436a216cbcd8d3d8d7e05953b09112f1)
+
+## 22.	프로필 뷰
+
+* [Profile view](https://github.com/hackrslab/studyolle/commit/f573b43a5f8abf039e2b2eb65928e0d451e6d920)
+
+## 23.	Open EntityManager (또는 Session) In View 필터
+
+* [Bug fix for checking email token](https://github.com/hackrslab/studyolle/commit/e98b3f3233dd643a58cc24b9c7912cb0cc1a7d81)
 
 # 계정설정
 
+## 24.	프로필 수정 폼
+
+* [Profile update form](https://github.com/hackrslab/studyolle/commit/dabd12e4b5df6646b260f705c5b555a33d0208e0)
+
+## 25.	프로필 수정 처리
+
+* [Update Profile](https://github.com/hackrslab/studyolle/commit/3492f156446312b59e3c97679d3ee8bb2bbf14c3)
+
+## 26.	프로필 수정 테스트
+
+* [Testing update profile](https://github.com/hackrslab/studyolle/commit/6e6c1571e51176590acb44a2d13e911582430036)
+
+----
+
+인증된 사용자를 `@WithAccount` 으로 mocking 할 수 없다. 실제 DB 에 저장된 정보와 같은 Authentication 이 필요하기 때문이다.
+
+다음과 같은 방법으로 Mocking 한다.
+
+* `@WithAccount` 를 제작한다.
+
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@WithSecurityContext(factory = WithAccountSecurityContextFacotry.class)
+public @interface WithAccount {
+  String value();
+}
+```
+
+* SecurityContextFactory 를 implement 한 `WithAccountSecurityContextFactory` 를 구현한다..
+
+```java
+@RequiredArgsConstructor
+public class WithAccountSecurityContextFacotry implements WithSecurityContextFactory<WithAccount> {
+
+  private final AccountService accountService;
+
+  @Override
+  public SecurityContext createSecurityContext(WithAccount withAccount) {
+    String nickname = withAccount.value();
+
+    SignUpForm signUpForm = new SignUpForm();
+    signUpForm.setNickname(nickname);
+    signUpForm.setEmail(nickname + "@email.com");
+    signUpForm.setPassword("12345678");
+    accountService.processNewAccount(signUpForm);
+
+    UserDetails principal = accountService.loadUserByUsername(nickname);
+    Authentication authentication = new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities());
+    SecurityContext context = SecurityContextHolder.createEmptyContext();
+    context.setAuthentication(authentication);
+    return context;
+  }
+}
+```
+
+* 테스트 코드에서 `@WithAccount` 를 사용한다.
+
+```java
+    @WithAccount("keesun")
+    @DisplayName("프로필 수정 폼")
+    @Test
+    void updateProfileForm() throws Exception {
+        mockMvc.perform(get(SettingsController.SETTINGS_PROFILE_URL))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("account"))
+                .andExpect(model().attributeExists("profile"));
+    }
+```
+
+## 27.	프로필 이미지 변경
+
+* [Updat profile image](https://github.com/hackrslab/studyolle/commit/518789bba4a0bcff726494a9af52d67b0a4f429e)
+
+## 28.	패스워드 수정
+
+* [Update password](https://github.com/hackrslab/studyolle/commit/7b964084be8234022f52bea52137bcfd03a09de6)
+
+## 29.	패스워드 수정 테스트 
+
+* [Update password test](https://github.com/hackrslab/studyolle/commit/db8e04574329a1dc851976a6a068e125fa590bc2)
+
+## 30.	알림 설정
+
+* [Update notifications](https://github.com/hackrslab/studyolle/commit/d24b4181f04b5de850b91764353c0b4aef2df2a0)
+
+----
+
+다음은 [Thymeleaf 의 5 가지 expression](https://www.thymeleaf.org/doc/articles/standarddialect5minutes.html) 이다.
+
+* `${...}` : Variable expressions. These are OGNL expressions (or Spring EL if you have spring integrated)
+* `*{...}` : Selection expressions. Same as above, excepted it will be executed on a previously selected object only
+* `#{...}` : Message (i18n) expressions. Used to retrieve locale-specific messages from external sources
+* `@{...}` : Link (URL) expressions. Used to build URLs
+* `~{...}` : Fragment expressions. Represent fragments of markup and move them around templates
+
+## 31.	ModelMapper 적용
+
+* [Apply ModelMapper](https://github.com/hackrslab/studyolle/commit/7d80e2802bd4d59a5cb2be38a078ec10a4cd6580)
+* [Refactoring](https://github.com/hackrslab/studyolle/commit/3de4df955d19e202a86b3b7c8f770af5852349f3)
+
+----
+
+`org.modelmapper:modelmapper` 는 object 의 properties 를 다른 object 의 properties 로 mapping 해준다.
+
+## 32.	닉네임 수정
+
+* [Update nickname](https://github.com/hackrslab/studyolle/commit/c17d1c83b6fe982285d6e8c67a5320be42214d85)
+
+## 33.	패스워드를 잊어버렸습니다
+
+* [Forgot password](https://github.com/hackrslab/studyolle/commit/d655c1652469bf8f7320b30a6847909510d63a30)
+
 # 관심주제와 지역정보
+
+
+
+
+
+
+
+
+
+
 
 # DB 와 Email 설정
 
