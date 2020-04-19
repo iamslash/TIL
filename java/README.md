@@ -236,35 +236,35 @@ sb.deleteCharAt(sb.length()-1);
 * unmodifiableList
 
 ```java
-      // create array list
-      List<Character> list = new ArrayList<Character>();
+   // create array list
+   List<Character> list = new ArrayList<Character>();
 
-      // populate the list
-      list.add('X');
-      list.add('Y');
+   // populate the list
+   list.add('X');
+   list.add('Y');
 
-      System.out.println("Initial list: "+ list);
+   System.out.println("Initial list: "+ list);
 
-      // make the list unmodifiable
-      List<Character> immutablelist = Collections.unmodifiableList(list);
+   // make the list unmodifiable
+   List<Character> immutablelist = Collections.unmodifiableList(list);
 ```
 
 * Vector
 
 ```java
-    Vector<Integer> D = new Vector<Integer>(Collections.nCopies(N,  1));
-    Integer a = D.get(0);
-    D.set(0, 1);
-    D.add(1);
+   Vector<Integer> D = new Vector<Integer>(Collections.nCopies(N,  1));
+   Integer a = D.get(0);
+   D.set(0, 1);
+   D.add(1);
 ```
 
 * List, ArrayList
 
 ```java
-    List<Integer> D = new ArrayList<Integer>(Collections.nCopies(N,  1));
-    Integer a = D.get(0);
-    D.set(0, 1);
-    D.add(1);
+   List<Integer> D = new ArrayList<Integer>(Collections.nCopies(N,  1));
+   Integer a = D.get(0);
+   D.set(0, 1);
+   D.add(1);
 ```
 
 * Deque, ArrayDeque
@@ -370,12 +370,15 @@ sb.deleteCharAt(sb.length()-1);
 ```java
    Set<String> set = new HashSet<String>();
    set.add("perls");
+   System.out.println(set.add("perls")); // return false for same key
+   System.out.println(set.contains("perls")); // true
+   System.out.println(set.isEmpty()); // false 
    set.add("net");
    set.add("dot");
    set.add("sam");
-   set.remove("sam");
-   for (String val : set) // ... Alphabetical order.
-   {
+   set.remove("sam"); // true
+   set.remove("Alice"); // false
+   for (String val : set) {  // ... Alphabetical order.
       System.out.println(val);
    }    
 ```
