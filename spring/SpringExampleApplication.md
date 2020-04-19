@@ -289,27 +289,188 @@ public class WithAccountSecurityContextFacotry implements WithSecurityContextFac
 
 # 관심주제와 지역정보
 
+## 34.	관심 주제와 지역 정보 관리 기능 미리보기
 
+## 35.	관심 주제 도메인
 
+## 36.	관심 주제 등록 뷰
 
+## 37.	관심 주제 등록 기능 구현
 
+* [Add tag](https://github.com/hackrslab/studyolle/commit/511ab7d87c757dcab47942c35673284bc4a88ede)
 
+다음과 같이 develop 단계의 DB 설정을 application.properties 에 설정한다.
 
+```conf
+spring.profiles.active=local
 
+# 개발할 때에만 create-drop 또는 update를 사용하고 운영 환경에서는 validate를 사용합니다.
+spring.jpa.hibernate.ddl-auto=create-drop
 
+# 개발시 SQL 로깅을 하여 어떤 값으로 어떤 SQL이 실행되는지 확인합니다.
+spring.jpa.properties.hibernate.format_sql=true
+logging.level.org.hibernate.SQL=DEBUG
+logging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE
+```
 
+## 38.	관심 주제 조회
+
+* [Read Tag](https://github.com/hackrslab/studyolle/commit/2f6fe2174940cedda2c1efd72773f80b15d4af96)
+
+## 39.	관심 주제 삭제
+
+* [Remove Tag](https://github.com/hackrslab/studyolle/commit/18f4091300e894f4c067ba861777acc0e06cfa6e)
+
+## 40.	관심 주제 자동완성
+
+* [Tag suggestion](https://github.com/hackrslab/studyolle/commit/3c95d0d13739353410a9da19594e134f11b35ae2)
+
+## 41.	관심 주제 테스트
+
+* [Test updating tags](https://github.com/hackrslab/studyolle/commit/3a6bfc286847b06aa248563fc80a15f125262f79)
+
+## 42.	 지역 도메인
+
+* [Zone domain and init data](https://github.com/hackrslab/studyolle/commit/411b7f030e10b735711487183346f919782ead5d)
+* [URL mapping refactoring](https://github.com/hackrslab/studyolle/commit/fd5c16f60789007b56f25bf8106b4ea7b5bd3fc2)
+* [Update CurrentUser to CurrentAccount](https://github.com/hackrslab/studyolle/commit/cd6fe53531892490f31bc2d66ebc8e4b92a55c73)
+
+## 43.	 지역 정보 추가/삭제/테스트
+
+* [Read, Add, Remove and Test Zones](https://github.com/hackrslab/studyolle/commit/3d94d3bd3ca23efef3be0b7da0ccbae51851cba0)
 
 # DB 와 Email 설정
 
+## 44.	PostgreSQL 설치 및 설정
+
+## 45.	인텔리J 데이터베이스 탭
+
+## 46.	SMTP 설정
+
+Gmail 을 SMTP server 로 사용
+
+* application.properties
+
+```conf
+spring.mail.host=smtp.gmail.com
+spring.mail.port=587
+spring.mail.username=iamslash@gmail.com
+spring.mail.password=xxxxxxxx
+spring.mail.properties.mail.smtp.auth=true
+spring.mail.properties.mail.smtp.timeout=5000
+spring.mail.properties.mail.smtp.starttls.enable=true
+```
+
+## 47.	EmailService 추상화
+
+* [Design and implmented EmailService](https://github.com/hackrslab/studyolle/commit/55325fb0f71b11cfeaa81afcad71e4d359feb25f)
+
+## 48.	HTML 이메일 전송하기
+
+* [Sending HTML email](https://github.com/hackrslab/studyolle/commit/caae965ce8076c9ad1a67059185da58966537fae)
+
 # Study
+
+## 49.	스터디 관기 기능 미리보기
+## 50.	스터디 도메인
+
+* [Study domain](https://github.com/hackrslab/studyolle/commit/309b0611effafa9ef0b292035058f8fab9c5188f)
+* [JPA 까먹지 말자! (2)](http://wonwoo.ml/index.php/post/category/jpa)
+  * @Basic LAZY, EAGER 참고
+  
+## 51.	스터디 개설
+
+* [Add Study](https://github.com/hackrslab/studyolle/commit/3d0e258bf89ab856fa53e17510ba4586ca8d672f)
+* [[Spring] Transactional 정리 및 예제](https://goddaehee.tistory.com/167)
+  * isolation 참고
+  
+## 52.	스터디 조회
+
+* [View Study](https://github.com/hackrslab/studyolle/commit/1a5abcf6725d8482b97c90d62935c88aaf9d893e)
+* [Added tests for creating and querying study](https://github.com/hackrslab/studyolle/commit/09113e70a098e13a9812ebd2b3d147da4ba49df1)
+* [[Spring JPA #23] Spring JPA EntityGraph](https://engkimbs.tistory.com/835)
+  * EntityGraph 참고
+
+Fetch strategy 를 grouping 해서 적용할 수 있다.
+
+## 53.	스터디 구성원 조회
+
+* [View study members](https://github.com/hackrslab/studyolle/commit/bc92f41c8cb2f3b6d11c47cc700c97a50fdae4b1)
+
+## 54.	스터디 설정 - 소개 수정
+
+* [Study settings - description](https://github.com/hackrslab/studyolle/commit/a00c9aac49e80e645104538364bb9c52a860dec3)
+
+## 55.	스터디 설정 - 배너
+
+* [Study settings - banner](https://github.com/hackrslab/studyolle/commit/920185dcf2e0004dce20df8a9cc334749efe28cb)
+
+## 56.	스터디 설정 - 태그/지역
+
+* [Study settings - tags and zones](https://github.com/hackrslab/studyolle/commit/4afe1c31d4954cc97812033ab797a696709cd95a)
+
+## 57.	스터디 설정 - 상태 변경
+
+* [Study settings - status](https://github.com/hackrslab/studyolle/commit/9921038977c2e10dc2c9353ea84b34f4b930d763)
+
+## 58.	스터디 설정 - 경로 및 이름 수정
+
+* [Study settings - path and title](https://github.com/hackrslab/studyolle/commit/31b0caa9756bf3c42b021a38eca187c5ed3177a0)
+
+## 59.	스터디 삭제
+
+* [Study delete](https://github.com/hackrslab/studyolle/commit/05525b6b52b735456219f848fdd0370c3c4870f1)
+
+## 60.	스터디 참여 및 탈퇴
+
+* [Study join and leave](https://github.com/hackrslab/studyolle/commit/a7b6aec37d410c624c52f9a3c2a798cf18b72824)
+* [Add tests for StudyControllers](https://github.com/hackrslab/studyolle/commit/a7cb861c9cf3a7995a28a0ea76531c0176046762)
 
 # Meetup
 
+## 61.	모임 관리 기능 미리보기
+## 62.	모임 도메인
+
+
+
+## 63.	모임 만들기 뷰
+## 64.	모임 만들기 폼 서브밋
+## 65.	모임 조회
+## 66.	모임 목록 조회
+## 67.	모임 수정
+## 68.	모임 취소
+## 69.	모임 참가 신청 및 취소
+## 70.	모임 참가 신청 수락 취소 및 출석 체크
+
 # Package and Refactoring
+
+## 71.	패키지 구조 정리
+## 72.	테스트 클래스 정리
+## 73.	테스트 DB를 PostgreSQL로 전환
 
 # Notification
 
+## 74.	알림 기능 미리보기
+## 75.	알림 도메인
+## 76.	알림 인프라 설정
+## 77.	스터디 개설 알림
+## 78.	알림 아이콘 변경
+## 79.	알림 목록 조회 및 삭제
+## 80.	관심있는 스터디 변경 알림
+## 81.	모임 관련 알림
+
 # Search 
 
+## 82.	검색 기능 미리보기
+## 83.	검색 기능 구현
+## 84.	N+1 Select 문제 해결
+## 85.	페이징 적용
+## 86.	검색 뷰 개선
+## 87.	로그인 전 첫 페이지
+## 88.	로그인 후 첫 페이지
+
 # Handling errors and Deployment
+
+## 89.	에러 핸들러 및 뷰 추가
+## 90.	배포시 고려할 것
 

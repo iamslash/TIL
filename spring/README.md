@@ -21,6 +21,7 @@
   - [Sprint Boot Test](#sprint-boot-test)
   - [Spring Boot Exception Handling](#spring-boot-exception-handling)
   - [Spring WebMvcConfigure](#spring-webmvcconfigure)
+  - [Transactional](#transactional)
 
 ----
 
@@ -509,3 +510,72 @@ public class WebMvcAutoConfiguration {
 public class WebMvcProperties {
   ...
 ```
+
+## Transactional
+
+* [[Spring] Transactional 정리 및 예제](https://goddaehee.tistory.com/167)
+  *  isolation 참고
+
+-----
+
+Transaction problems 는 다음과 같다.
+
+* Dirty Read
+  * A transaction 이 값을 1 에서 2 로 수정하고 아직 commit 하지 않았다. B transaction 은 값을 2 로 읽어들인다. 만약 A transaction 이 rollback 되면 B transaction 은 잘못된 값을 읽게 된다.
+* Non-Repeatable Read
+  * A non-repeatable read occurs, when during the course of a transaction, a row is retrieved twice and the values within the row differ between reads.
+* Phantom Read
+  * A phantom read occurs when, in the course of a transaction, two identical queries are executed, and the collection of rows returned by the second query is different from the first.
+
+위와 같은 Transactinal problems 를 해결하기 위해 다음과 같은 방법을 사용해 보자.
+
+* Isolation
+  * DEFAULT
+    * DB 의 isolation level 을 따른다.
+  * READ_UNCOMMITED (level 0)
+    * Commit 되지 않은 데이터 읽기가 가능하다.
+    * Dirty Read 가 발생한다.
+  * READ_COMMITED (level 1)
+    * Transaction 이 Commit 된 데이터만 읽기가 가능하다.
+    * Dirty Read 를 해결한다.
+  * REPEATABLE_READ (level 2)
+    * new rows can be inserted into the dataset.
+    * Dirty Read, Non-Repeatable Read 를 해결한다.
+  * SERIALIZABLE (level 3)
+    * all the rows are locked for the duration of the transaction, no insert, update or delete is allowed.
+    * Dirty Read, Non-Repeatable Read, Phantom Read 를 해결한다.
+
+* Propagation
+  * REQUIRED
+    * Parent Transaction 에서 실행한다. Parent Transaction 이 없을 경우 새로운 Transaction 을 생성한다. Default
+  * SUPPORTS
+    * 이미 시작된 Transaction 이 있으면 참여하고 그렇지 않으면 Transaction 없이 실행한다.
+  * REQUIRES_NEW
+    * Parent Transaction 을 부시하고 새로운 Transaction 을 생성한다.
+  * MANDATORY
+    * 이미 시작된 Transaction 이 있다면 참여한다. 그렇지 않으면 Exception 을 발생한다. 혼자서는 Transaction 을 진행하면 안되는 경우다.
+  * NOT_SUPPORTED
+    * 이미 시작된 Transaction 을 사용하지 않는다. 기다린다???
+  * NEVER
+    * Transaction 을 사용하지 않도록 한다. 이미 진행중인 Transaction 이 있다면 Exception 을 발생한다.
+  * NESTED
+    * 이미 진행중인 Transaction 이 있다면 중첩된 Transaction 을 시작한다.
+    * REQUIRES_NEW 처럼 독립적인 Transaction 을 생성하는 것과는 다르다.
+    * Nested Transaction 은 Parent Transaction 의 Commit, Rollback 에 영향을 받는다. 그러나 자신의 Transaction 은 Parent Transaction 에게 양향을 주지는 않는다.
+    * NESTED Transaction 은 JDBC 3.0 의 savepoint 와 DataSourceTransactionManager 를 이용할 경우에 가능하다.
+
+* readOnley property
+  * Transaction 을 읽기 전용으로 설정한다.
+  * `@Transactional(readOnly = true)`
+
+* Transaction Rollback Exception
+  * Runtime Exception 이 발생하면 Rollback 된다. Checked Exception 이 발생하면 Commit 된다.
+  * `rollbackFor` 를 이용하여 특정 Exception 에 대해 Rollback 할 수 있다.
+    * `@Transactional(rollbackFor=Exception.class)`
+  * `noRollbackFor` 를 이용하여 특정 Exception 에 대해 Rollback 되지 않게 할 수 있다.
+    * `@Transactional(noRollbackFor=Exception.class)`
+
+* timeout property
+  * 지정한 시간내에 메소드 수행이 완료되지 않으면 rollback 을 수행한다. (Default = -1)
+  * `@Transactional(timeout=10)`
+
