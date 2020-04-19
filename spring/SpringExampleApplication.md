@@ -431,29 +431,95 @@ Fetch strategy 를 grouping 해서 적용할 수 있다.
 ## 61.	모임 관리 기능 미리보기
 ## 62.	모임 도메인
 
-
+* [Event domain](https://github.com/hackrslab/studyolle/commit/7c602d7b14fdcd97262fb407fbfbc878f65a9d3c)
 
 ## 63.	모임 만들기 뷰
+
+* [63.	모임 만들기 뷰](https://github.com/hackrslab/studyolle/commit/feb5cd5d5c4e4b173c0e6a1c65c2ad9487d2822b)
+
 ## 64.	모임 만들기 폼 서브밋
 ## 65.	모임 조회
+
+* [Event view](https://github.com/hackrslab/studyolle/commit/8c2487863833b94b6b825c0a2e2f53865e98dd69)
+
 ## 66.	모임 목록 조회
+
+* [Event list view](https://github.com/hackrslab/studyolle/commit/dc6d42a600c72f6ee2767a48aa0657b573e70419)
+
+`@NamedEntityGraph, @EntityGraph` 를 이용하여 N+1 Query 를 N Query 로 줄이자.
+
+```java
+@NAmedEntityGraph(
+  name = "Event.withEnrollments",
+  attributeNodes = @NamedAttributeNode("enrollments")
+)
+@Entity
+@Getter @Setter @EualsAndHashCode(of = "id")
+public class Event {
+  ...
+}
+```
+
+```java
+@Transactional(readOnly = true)
+public interface EventRepository extends JpaRepository<Event, Long> {
+  @EntityGraph(value = "Event.withEnrollments", type = EntityGraph.EntityGraphType.LOAD)
+  List<Event> findByStudyOrderByStartDateTime(Study study);
+}
+```
+
 ## 67.	모임 수정
+
+* [Event edit](https://github.com/hackrslab/studyolle/commit/9b63110a9e5ee82a4d7be81abe2748c2f0d79f4e)
+
 ## 68.	모임 취소
+
+* [Event cancel](https://github.com/hackrslab/studyolle/commit/a0f4a52af6db6d4049ce1c188b3ce79a29266534)
+
 ## 69.	모임 참가 신청 및 취소
+
+* [Enrollment and disenrollment](https://github.com/hackrslab/studyolle/commit/b9b2411ceba22c3855e67fb011422a0292805c40)
+
 ## 70.	모임 참가 신청 수락 취소 및 출석 체크
+
+* [Enrollment accept/reject and checkin](https://github.com/hackrslab/studyolle/commit/e0b5c764a39c3934bf11bbd210ca8a9a069bbb06)
 
 # Package and Refactoring
 
 ## 71.	패키지 구조 정리
+
+* [Polish packages](https://github.com/hackrslab/studyolle/commit/f8e94e381c7c11c01724b889482e09605ab1b972)
+
+----
+
+infra package 에서 module package 사용하지 않기. 모듈간에 cyclic reference 있는지 확인.
+
 ## 72.	테스트 클래스 정리
+
+* [Polish tests](https://github.com/hackrslab/studyolle/commit/93cce210005475a3c6ec63397c0856d7b077a502)
+
 ## 73.	테스트 DB를 PostgreSQL로 전환
+
+* [Apply TestContainers](https://github.com/hackrslab/studyolle/commit/a2a9a730370e7eb1bd65ce26e012a291331c07df)
+
+[Testcontainers](https://www.testcontainers.org/) 를 사용하면 test code 를 실행할 때 docker container 를 실행할 수 있다.
+모든 Test Class 에서 Testcontainers 를 loading 하는 것 보다는 AbstractContainerBase class 를 만들어서 한번만 Testcontainers 를 실행하도록 한다.
 
 # Notification
 
 ## 74.	알림 기능 미리보기
 ## 75.	알림 도메인
+
+* [Notification entity](https://github.com/hackrslab/studyolle/commit/9f2f3796c1515c8b3ba5114a386fd2c34b8e5aca)
+  
 ## 76.	알림 인프라 설정
+
+* [Notification infra](https://github.com/hackrslab/studyolle/commit/4e982ec1b0b6ecc07453b7cbcd4fdd317cacab9b)
+
 ## 77.	스터디 개설 알림
+
+* [StudyCreatedEvent handling](https://github.com/hackrslab/studyolle/commit/4ca56b1f9bb347a7e6aad6afe47d5d51877083bb)
+
 ## 78.	알림 아이콘 변경
 ## 79.	알림 목록 조회 및 삭제
 ## 80.	관심있는 스터디 변경 알림
@@ -472,5 +538,8 @@ Fetch strategy 를 grouping 해서 적용할 수 있다.
 # Handling errors and Deployment
 
 ## 89.	에러 핸들러 및 뷰 추가
+
+* [Error handling](https://github.com/hackrslab/studyolle/commit/09c986102f3de130b6850092d00500106d444880)
+
 ## 90.	배포시 고려할 것
 
