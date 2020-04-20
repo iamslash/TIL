@@ -611,6 +611,9 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `passwd iamslash`
 * `deluser`
   * `deluser iamslash`
+* `pam_tally2`
+  * [[LINUX] LINUX 계정 패스워드 잠김 해제](https://habiis.tistory.com/36)
+  * `sudo pam_tally2 -u iamslash --reset` 계정잠김 풀어주기
 
 ## 파일 권한
 
