@@ -2,14 +2,21 @@
 - [Materials](#materials)
 - [Basics](#basics)
   - [Permission](#permission)
+  - [Install](#install)
+  - [Versioning](#versioning)
+  - [Making a image](#making-a-image)
+  - [Dockderizing moniwiki](#dockderizing-moniwiki)
+  - [Upload to Docker Hub](#upload-to-docker-hub)
   - [Hello Docker](#hello-docker)
-  - [How to build a image](#how-to-build-a-image)
-  - [Dockerhub](#dockerhub)
   - [Private docker registry](#private-docker-registry)
+  - [Dockerizing again](#dockerizing-again)
+  - [How to build a image](#how-to-build-a-image)
   - [Basic Docker Commands](#basic-docker-commands)
   - [Dockerfile Instruction](#dockerfile-instruction)
   - [Advanced Docker Commands](#advanced-docker-commands)
 - [Advanced](#advanced)
+  - [Process ID of Docker container is 1](#process-id-of-docker-container-is-1)
+  - [Useful commands](#useful-commands)
   - [Network](#network)
   - [User of docker container](#user-of-docker-container)
 
@@ -22,6 +29,12 @@ vmware, virtualbox 보다 훨씬 성능이 좋은 가상화 기술이다.
 # Materials
 
 - [도커(Docker) 입문편 컨테이너 기초부터 서버 배포까지](https://www.44bits.io/ko/post/easy-deploy-with-docker#%EC%8B%A4%EC%A0%84-%EB%8F%84%EC%BB%A4-%EC%9D%B4%EB%AF%B8%EC%A7%80%EB%A1%9C-%EC%84%9C%EB%B2%84-%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0)
+  - [도커 컨테이너는 가상머신인가요? 프로세스인가요?](https://www.44bits.io/ko/post/is-docker-container-a-virtual-machine-or-a-process)
+  - [컨테이너 기초 - chroot를 사용한 프로세스의 루트 디렉터리 격리](https://www.44bits.io/ko/post/change-root-directory-by-using-chroot)
+  - [정적 링크 프로그램을 chroot와 도커(Docker) scratch 이미지로 실행하기](https://www.44bits.io/ko/post/static-compile-program-on-chroot-and-docker-scratch-image)
+  - [만들면서 이해하는 도커(Docker) 이미지의 구조,도커 이미지 빌드 원리와 Overayfs](https://www.44bits.io/ko/post/how-docker-image-work)
+  - [도커 컴포즈를 활용하여 완벽한 개발 환경 구성하기, 컨테이너 시대의 Django 개발환경 구축하기](https://www.44bits.io/ko/post/almost-perfect-development-environment-with-docker-and-docker-compose)
+  - [아마존 엘라스틱 컨테이너 서비스(ECS) 입문, 도커(Docker) 컨테이너 오케스트레이션](https://www.44bits.io/ko/post/container-orchestration-101-with-docker-and-aws-elastic-container-service)
 - [초보를 위한 도커 안내서 - 이미지 만들고 배포하기](https://subicura.com/2017/02/10/docker-guide-for-beginners-create-image-and-deploy.html)
   - building image, docker registry, deployment
 - [도커 Docker 기초 확실히 다지기](https://futurecreator.github.io/2018/11/16/docker-container-basics/index.html)
@@ -45,7 +58,218 @@ sudo usermod -aG docker $USER
 sudo usermod -aG docker iamslash
 ```
 
+## Install
+
+* [도커(Docker) 입문편 컨테이너 기초부터 서버 배포까지](https://www.44bits.io/ko/post/easy-deploy-with-docker#%EC%8B%A4%EC%A0%84-%EB%8F%84%EC%BB%A4-%EC%9D%B4%EB%AF%B8%EC%A7%80%EB%A1%9C-%EC%84%9C%EB%B2%84-%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0)
+
+----
+
+```bash
+$ curl -s https://get.docker.com | sudo sh
+$ docker -v
+$ cat /etc/apt/sources.list.d/docker.list
+$ dpkg --get-selections | grep docker
+```
+
+docker 는 docker-ce, docker-ce-cli 로 구성된다. ce 는 community edition 을 의미한다. docker-ce 는 server 이고 REST api 도 제공한다. command line 은 docker-ce-cli 가 실행한다. docker-ce-cli 는 docker-ce server 와 통신한다.
+
+```bash
+$ docker ps
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.40/containers/json: dial unix /var/run/docker.sock: connect: permission denied
+
+# To prevent error use sudo
+# If you want to use docker without sudo, Add $USER to docker group.
+$ sudo docker ps
+$ sudo usermod -aG docker $USER
+$ sudo su - $USER
+$ docker ps
+
+# Find out registry
+$ docker info | grep Registry
+ Registry: https://index.docker.io/v1/
+```
+
+한가지 명심할 것은  이미지는 파일들의 집합이고, 컨테이너는 이 파일들의 집합 위에서 실행된 특별한 프로세스이다. 즉, Docker container 는 process 이다.
+
+## Versioning
+
+Docker container 의 변경사항을 image 에 반영할 수 있다.
+
+```bash
+$ docker pull ubuntu:bionic
+$ docker run -it --rm ubuntu:bionic bash
+> git --version
+```
+
+Host OS 의 shell 에서 docker 의 변경사항을 확인해 보자.
+
+```bash
+$ docker ps
+$ docker diff 3bc6d0c2d284
+...
+```
+
+Guest OS 의 shell 에서 git 을 설치해보자.
+
+```bash
+$ apt update
+$ apt install -y git
+$ git --version
+```
+
+다시 Host OS 의 shell 에서 docker 의 변경사항을 확인해 보자.
+
+```bash
+$ docker diff 3bc6d0c2d284 | head
+...
+# Let's commit modification
+$ docker commit 65d60d3dd306 ubuntu:git
+
+$ docker run -it --rm ubuntu:git bash
+> git --version
+> exit
+$ docker rmi ubuntu:git
+```
+
+## Making a image
+
+먼저 Dockerfile 을 만들어 보자.
+
+```bash
+$ mkdir A
+$ cd A
+$ vim Dockerfile
+FROM ubuntu:bionic
+RUN apt-get update
+RUN apt-get install -y git
+
+$ docker build -t ubuntu:git-from-dockerfile .
+$ docker run -it ubuntu:git-from-dockerfile bash
+> git --version
+```
+
+## Dockderizing moniwiki
+
+```bash
+$ git clone https://github.com/nacyot/docker-moniwiki.git
+$ cd docker-moniwiki/moniwiki
+$ cat Dockerfile
+FROM ubuntu:14.04
+
+RUN apt-get update &&\
+  apt-get -qq -y install git curl build-essential apache2 php5 libapache2-mod-php5 rcs
+
+WORKDIR /tmp
+RUN \
+  curl -L -O https://github.com/wkpark/moniwiki/archive/v1.2.5p1.tar.gz &&\
+  tar xf /tmp/v1.2.5p1.tar.gz &&\
+  mv moniwiki-1.2.5p1 /var/www/html/moniwiki &&\
+  chown -R www-data:www-data /var/www/html/moniwiki &&\
+  chmod 777 /var/www/html/moniwiki/data/ /var/www/html/moniwiki/ &&\
+  chmod +x /var/www/html/moniwiki/secure.sh &&\
+  /var/www/html/moniwiki/secure.sh
+
+RUN a2enmod rewrite
+
+ENV APACHE_RUN_USER www-data
+ENV APACHE_RUN_GROUP www-data
+ENV APACHE_LOG_DIR /var/log/apache2
+
+EXPOSE 80
+
+CMD bash -c "source /etc/apache2/envvars && /usr/sbin/apache2 -D FOREGROUND"
+
+$ docker build -t iamslash/moniwiki:latest .
+$ docker run -d -p 9999:80 iamslash/moniwiki:latest
+# http://127.0.0.1:9999/moniwiki/monisetup.php
+
+# docker 를 build 하는 과정에서 생성된 중간 image 들을 확인할 수 있다.
+$ docker hisotry moniwiki:latest
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+408c35f3d162        7 hours ago         /bin/sh -c #(nop)  CMD ["/bin/sh" "-c" "bash...   0B
+f68911b22856        7 hours ago         /bin/sh -c #(nop)  EXPOSE 80                    0B
+df4bd9e4dd7e        7 hours ago         /bin/sh -c #(nop)  ENV APACHE_LOG_DIR=/var/l...   0B
+dee2cb60f1cc        7 hours ago         /bin/sh -c #(nop)  ENV APACHE_RUN_GROUP=www-...   0B
+a1f1247b98cb        7 hours ago         /bin/sh -c #(nop)  ENV APACHE_RUN_USER=www-d...   0B
+98a0ed3df283        7 hours ago         /bin/sh -c a2enmod rewrite                      30B
+48926b3b3da0        7 hours ago         /bin/sh -c curl -L -O https://github.com/wkp...   7.32MB
+dbdc86a08299        7 hours ago         /bin/sh -c #(nop) WORKDIR /tmp                  0B
+becdcac5d788        7 hours ago         /bin/sh -c apt-get update &&  apt-get -qq -y...   184MB
+6e4f1fe62ff1        3 months ago        /bin/sh -c #(nop)  CMD ["/bin/bash"]            0B
+<missing>           3 months ago        /bin/sh -c mkdir -p /run/systemd && echo 'do...   7B
+<missing>           3 months ago        /bin/sh -c set -xe   && echo '#!/bin/sh' > /...   195kB
+<missing>           3 months ago        /bin/sh -c [ -z "$(apt-get indextargets)" ]     0B
+<missing>           3 months ago        /bin/sh -c #(nop) ADD file:276b5d943a4d284f8...   196MB
+```
+
+images 가 <missing> 인 것은 base image 의 내용이다. 중간 image 는 local machine 에서 build 한 것만 확인할 수 있다.
+
+## Upload to Docker Hub
+
+먼저 docker registry 를 확인해 본다.
+
+```bash
+$ docker info | grep Registry
+ Registry: https://index.docker.io/v1/
+```
+
+`https://index.docker.io/v1/` 가 docker-hub 의 API server 주소이다. image 의 full-name 에는 docker registry 의 주소가 포함되어 있따. 예를들어 `ubuntu:bionic` image 의 full-name 은 `docker.io/library/ubuntu:bionic` 이다. 
+
+```bash
+$ docker pull docker.io.library/ubuntu:bionic
+```
+
+image 의 full-name 은 다음과 같이 4 부분으로 구성된다.
+
+* docker-hub api server address `docker.io`
+* name-space `library`
+* image name `ubuntu`
+* tag `bionic`
+
+docker push 를 하려면 docker registry 에 login 해야 한다.
+
+```bash
+$ docker login
+# change image name including namespace
+$ docker tag likechad/moniwiki:latest iamslash/miniwiki:latest
+
+# push it
+$ docker push iamslash/moniwiki:latest
+```
+
 ## Hello Docker
+
+다음은 간단한 command line 으로 centos 에서 bash 를 실행하는 방법이다.
+
+```bash
+$ docker run -it --rm centos:latest bash
+Unable to find image 'centos:latest' locally
+latest: Pulling from library/centos
+8d30e94188e7: Pull complete
+Digest: sha256:2ae0d2c881c7123870114fb9cc7afabd1e31f9888dac8286884f6cf59373ed9b
+Status: Downloaded newer image for centos:latest
+
+# show centos version
+$ cat /etc/redhat-release
+CentOS Linux release 8.1.1911 (Core)
+```
+
+## Private docker registry
+
+dockerhub 는 private repository 가 유료이다. 무료 private docker registry 를 운영해보자.
+
+```bash
+> docker run -d \
+-v c:\my\dockerregistry:/var/lib/registry \
+-p 5000:5000 \
+distribution/registry:2.6.0
+
+> docker tag app localhost:5000/iamslash/iamslash-app:1
+> docker push localhost:5000/iamslash/iamslash-app:1
+> tree c:\my\docker\registry
+```
+
+## Dockerizing again
 
 Sinatra 를 사용한 ruby web app 을 docker 로 실행해보자. 먼저 `~/my/ruby/a` 에 `Gemfile, app.rb` 를 제작한다.
 
@@ -148,36 +372,6 @@ docker run --rm \
 -p 4567:4567 \
 --name my-app
 app 
-```
-
-## Dockerhub 
-
-docker image 를 dockerhub 에 push 해보자.
-
-```bash
-> docker login
-# image file specification:
-#   [registry url]/[user id]/[image name]:[tag] 
-# rename name and tag
-# > docker src_image_name[:TAG] dst_image_name[:TAG]
-docker tag app iamslash/iamslash-app:1
-# push image
-docker push iamslash/iamslash-app:1
-```
-
-## Private docker registry
-
-dockerhub 는 private repository 가 유료이다. 무료 private docker registry 를 운영해보자.
-
-```bash
-> docker run -d \
--v c:\my\dockerregistry:/var/lib/registry \
--p 5000:5000 \
-distribution/registry:2.6.0
-
-> docker tag app localhost:5000/iamslash/iamslash-app:1
-> docker push localhost:5000/iamslash/iamslash-app:1
-> tree c:\my\docker\registry
 ```
 
 ## Basic Docker Commands
@@ -626,6 +820,23 @@ $ docker wait hello
 ```
 
 # Advanced
+
+## Process ID of Docker container is 1
+
+```bash
+$ echo $$
+5673
+
+$ docker run -it --rm ubuntu:latest bash
+> echo $$
+> 1
+# Can't kill process 1 in container
+> kill -9 1
+>
+```
+
+
+## Useful commands
 
 ```bash
 # remove containers which stopped
