@@ -867,6 +867,7 @@ CREATE TABLE Persons (
 
 ALTER TABLE Persons
   ADD UNIQUE (ID);
+ALTER table Persons DROP INDEX ID;
 
 ALTER TABLE Persons
   ADD CONSTRAINT UC_Person UNIQUE (ID,LastName);
