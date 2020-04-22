@@ -19,6 +19,7 @@
   - [Useful commands](#useful-commands)
   - [Network](#network)
   - [User of docker container](#user-of-docker-container)
+  - [Multiprocess in adocker container](#multiprocess-in-adocker-container)
 
 ----
 
@@ -984,3 +985,30 @@ $ docker exec web04 ip addr show
 
 * [How to set user of Docker container](https://codeyarns.com/2017/07/21/how-to-set-user-of-docker-container/)
 
+## Multiprocess in adocker container
+
+* [Choosing an init process for multi-process containers](https://ahmet.im/blog/minimal-init-process-for-containers/)
+* [tini](https://github.com/krallin/tini)
+
+----
+
+보통 docker container 하나에 하나의 process 를 실행한다. 그러나 하나의 container 에 여러 process 를 손쉽게 실행할 수도 있다. 여러 process 중 하나라도 오류가 발생하여 실행이 중지되면 docker container 가 실행 중지하도록 한다. 그렇다면 docker daemon 이 다시 실행할 것이다.
+
+제일 맘에 드는 것은 `tini + bash4` 이다.
+
+다음과 같이 `entrypoint.sh` 를 작성한다.
+
+```bash
+#!/usr/bin/env bash
+set -e
+
+program1 &
+program2 &
+wait -n
+```
+
+그리고 다음과 같이 `Dockerfile` 의 `ENTRYPOINT` 를 수정한다.
+
+```Dockerfile
+ENTRYPOINT ["/bin/tini", "--", "entrypoint.sh"]
+```
