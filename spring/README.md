@@ -515,17 +515,37 @@ public class WebMvcProperties {
 
 * [[Spring] Transactional 정리 및 예제](https://goddaehee.tistory.com/167)
   *  isolation 참고
+* [Isolation Levels in Database Management Systems](https://www.youtube.com/watch?v=-gxyut1VLcs)
+* [Why do We Have Repeatable Read and Serializable Isolation Levels?](https://www.youtube.com/watch?v=xR70UlE_xbo)
 
 -----
 
 Transaction problems 는 다음과 같다.
 
 * Dirty Read
-  * A transaction 이 값을 1 에서 2 로 수정하고 아직 commit 하지 않았다. B transaction 은 값을 2 로 읽어들인다. 만약 A transaction 이 rollback 되면 B transaction 은 잘못된 값을 읽게 된다.
-* Non-Repeatable Read
-  * A non-repeatable read occurs, when during the course of a transaction, a row is retrieved twice and the values within the row differ between reads.
+  * A transaction 이 값을 1 에서 2 로 수정하고 아직 commit 하지 않았다. B transaction 은 값을 2 로 읽어들인다. 만약 A transaction 이 rollback 되면 B transaction 은 잘못된 값 2 을 읽게 된다.
+
+* Non-repeatable Read
+  * A transaction 이 한번 읽어온다. B transaction 이 Update 한다. A transaction 이 다시 한번 읽어온다. 이때 처음 읽었던 값과 다른 값을 읽어온다.
+  
+    ```
+    BEGIN TRAN
+      SELECT SUM(Revenue) AS Total FROM Data;
+      --another tran updates a row
+      SELECT Revenue AS Detail FROM Data;
+    COMMIT  
+    ```
+
 * Phantom Read
-  * A phantom read occurs when, in the course of a transaction, two identical queries are executed, and the collection of rows returned by the second query is different from the first.
+  * A transaction 이 한번 읽어온다. B transaction 이 insert 한다. A transaction 이 다시 한번 읽어온다. 이때 처음 읽었던 record 들에 하나 더 추가된 혹은 하나 삭제된 record 들을 읽어온다.
+
+    ```
+    BEGIN TRAN
+      SELECT SUM(Revenue) AS Total FROM Data;
+      --another tran inserts/deletes a row
+      SELECT Revenue AS Detail FROM Data;
+    COMMIT  
+    ```
 
 위와 같은 Transactinal problems 를 해결하기 위해 다음과 같은 방법을 사용해 보자.
 
@@ -534,16 +554,25 @@ Transaction problems 는 다음과 같다.
     * DB 의 isolation level 을 따른다.
   * READ_UNCOMMITED (level 0)
     * Commit 되지 않은 데이터 읽기가 가능하다.
-    * Dirty Read 가 발생한다.
+    * Dirty Read, Non-repeatable Read, Phantom Read 가 발생한다.
   * READ_COMMITED (level 1)
     * Transaction 이 Commit 된 데이터만 읽기가 가능하다.
-    * Dirty Read 를 해결한다.
+    * Dirty Read 를 해결한다. 그러나 Nonrepeatable REad, Phatom Read 가 여전히 발생한다.
   * REPEATABLE_READ (level 2)
     * new rows can be inserted into the dataset.
     * Dirty Read, Non-Repeatable Read 를 해결한다.
+    * Phantom Read 가 여전히 발생한다.
   * SERIALIZABLE (level 3)
     * all the rows are locked for the duration of the transaction, no insert, update or delete is allowed.
+    * This reduces the performance.
     * Dirty Read, Non-Repeatable Read, Phantom Read 를 해결한다.
+
+| Isolation level | Dirty Read | Non-repeatable Read | Phantom Read |
+| --------------- | ---------- | ------------------- | ------------ |
+| Read uncommited | O          | O                   | O            |
+| Read commited   | X          | O                   | O            |
+| Repeatable Read | X          | X                   | O            |
+| Serializable    | X          | X                   | X            |
 
 * Propagation
   * REQUIRED
@@ -578,4 +607,3 @@ Transaction problems 는 다음과 같다.
 * timeout property
   * 지정한 시간내에 메소드 수행이 완료되지 않으면 rollback 을 수행한다. (Default = -1)
   * `@Transactional(timeout=10)`
-
