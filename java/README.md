@@ -37,6 +37,7 @@
   - [Java Byte Code Manipulation library](#java-byte-code-manipulation-library)
   - [Java Lombok](#java-lombok)
   - [JVM Options](#jvm-options)
+  - [Thread Dump](#thread-dump)
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
@@ -1736,9 +1737,6 @@ public class Foo {
 }
 ```
 
-
-
-
 ## JVM Options
 
 * `-XX:+UseG1GC`
@@ -1751,7 +1749,15 @@ public class Foo {
 * `-Xms1024m -Xmx1024m`
   * memory start size and memory max size
   * [JVM 메모리 관련 설정](https://epthffh.tistory.com/entry/JVM-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EA%B4%80%EB%A0%A8-%EC%84%A4%EC%A0%95)
- 
+
+## Thread Dump
+
+* [스레드 덤프 분석하기](https://d2.naver.com/helloworld/10963)
+
+----
+
+[Visual VM](https://visualvm.github.io/) 을 이용하면 JMX 로 Thread Dump 를 확인 가능하다.
+
 # Quiz
 
 * Private Constructor
