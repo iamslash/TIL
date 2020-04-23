@@ -959,6 +959,8 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `netstat --statistics --raw` 아주 심한 통계를 보여달라
   * `netstat -anv | grep 8080` 8080 포트 사용하는 process id 는?
     * `ps aux | grep xxxx`
+    * [How to Find the Process Listening to Port on Mac OS X](https://www.btaz.com/mac-os-x/find-the-process-listening-to-port-on-mac-os-x/)
+    * [3 Ways to Find Out Which Process Listening on a Particular Port](https://www.tecmint.com/find-out-which-process-listening-on-a-particular-port/)
 * `ss`
   * socket statistics. netstat 과 옵션의 의미가 유사하다.
   * `ss -plat` tcp 로 리스닝하는 프로세스들 보여줘
