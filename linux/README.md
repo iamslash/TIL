@@ -957,6 +957,8 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `netstat --verbose`
   * `netstat -ap | grep http`
   * `netstat --statistics --raw` 아주 심한 통계를 보여달라
+  * `netstat -anv | grep 8080` 8080 포트 사용하는 process id 는?
+    * `ps aux | grep xxxx`
 * `ss`
   * socket statistics. netstat 과 옵션의 의미가 유사하다.
   * `ss -plat` tcp 로 리스닝하는 프로세스들 보여줘
