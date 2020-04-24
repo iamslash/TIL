@@ -306,19 +306,13 @@ sb.deleteCharAt(sb.length()-1);
 
 ```java
    Queue<Integer> queue = new ArrayDeque<>();
-   // Add element and throw IllegalStateException if no space available.
-   boolean bAdd = queue.add(1);
-   // Add element.
-   boolean bOffer = queue.offer(2);
-   // Return head of queue or null if empty.
-   int peeked = queue.peek(); 
-   // Return head of queue.
-   int a = queue.element();
+   boolean bOffer = queue.offer(2); // Add element.
+   boolean bAdd = queue.add(1); // Add element and throw IllegalStateException if no space available.
+   int peeked = queue.peek(); // Return head of queue or null or 0 if empty.
+   int a = queue.element(); // Return head of queue. it throws an exception if this queue is empty.
    while (queue.size() > 0) {
-      // Retrieves and remove or return null if queue is empty.
-      int polled = queue.poll(); 
-      // Retrieves and remove.
-      int remove = queue.remove();
+      int polled = queue.poll(); // Retrieves and remove or return null or 0 if queue is empty.
+      int remove = queue.remove(); // Retrieves and remove. only in that it throws an exception if this queue is empty.
       System.out.println(polled);
    }
 ```
