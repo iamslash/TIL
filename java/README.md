@@ -320,7 +320,8 @@ sb.deleteCharAt(sb.length()-1);
 * Queue, PriorityQueue
 
 ```java
-   Queue<Integer> queue = new PriorityQueue<>();
+   // Descending order
+   Queue<Integer> queue = new PriorityQueue<>((a,b) -> b - a);
    queue.add(1);
    queue.add(100);
    queue.add(0);
