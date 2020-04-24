@@ -37,7 +37,7 @@
   - [Java Byte Code Manipulation library](#java-byte-code-manipulation-library)
   - [Java Lombok](#java-lombok)
   - [JVM Options](#jvm-options)
-  - [Thread Dump](#thread-dump)
+  - [Thread Dump, Heap Dump](#thread-dump-heap-dump)
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
@@ -1750,13 +1750,33 @@ public class Foo {
   * memory start size and memory max size
   * [JVM 메모리 관련 설정](https://epthffh.tistory.com/entry/JVM-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EA%B4%80%EB%A0%A8-%EC%84%A4%EC%A0%95)
 
-## Thread Dump
+## Thread Dump, Heap Dump
 
 * [스레드 덤프 분석하기](https://d2.naver.com/helloworld/10963)
+* [THREAD DUMP, HEAP DUMP 생성 및 분석 방법](https://yenaworldblog.wordpress.com/2018/05/09/thread-dump-%EC%83%9D%EC%84%B1-%EB%B0%8F-%EB%B6%84%EC%84%9D-%EB%B0%A9%EB%B2%95/)
 
 ----
 
-[Visual VM](https://visualvm.github.io/) 을 이용하면 JMX 로 Thread Dump 를 확인 가능하다.
+Java application 이 느려졌다면 thread 들이 dead lock 인지 waiting 상태인지 확인해 보아야 한다.
+thread dump 를 확인해 보자. [Visual VM](https://visualvm.github.io/) 을 이용하면 JMX 를 이용하여
+remote application 의 Thread Dump 를 실시간으로 확인 가능하다. 물론 snapshot 도 가능하다.
+
+다음은 jcmd 로 thread dump 를 확인하는 방법이다.
+
+```bash
+$ sudo ps -aux | grep java
+$ jcmd ${pid} Thread.print > a.txt
+```
+
+Java application 의 Heap 상태를 보고 싶다면 heap dump 를 확인해 보자. 역시 [Visual VM](https://visualvm.github.io/)
+를 이용하면 JMX 를 이용하여 Heap Dump 의 snapshot 을 확인할 수 있다.
+
+다음은 jamp 으로 heap dump file 을 생성하는 방법이다. [7 Ways to Capture Java Heap Dumps](https://dzone.com/articles/how-to-capture-java-heap-dumps-7-options)
+
+```bash
+# jmap -dump:format=b,file=<file-path> <pid>
+$ jmap -dump:format=b,file=/home/iamslash/tmp/heapdump.bin 1111
+```
 
 # Quiz
 
