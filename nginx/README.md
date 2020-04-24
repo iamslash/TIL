@@ -1,5 +1,7 @@
 # Materials
 
+* [[Nginx] Overview & Install](https://velog.io/@minholee_93/Nginx-Overview-Install)
+  * 킹왕짱 시리즈 
 * [Proxy에 대하여 @ joinc](https://www.joinc.co.kr/w/man/12/proxy)
 * [NGINX Reverse Proxy](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#)
 * [proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
