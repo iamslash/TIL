@@ -1,3 +1,13 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Basic](#basic)
+- [Advanced](#advanced)
+  - [`compile` vs `implementation`](#compile-vs-implementation)
+  - [`implementation` vs `api`](#implementation-vs-api)
+  - [How to debug gradle](#how-to-debug-gradle)
+
+----
+
 # Abstract
 
 Gradle 은 task runner 이다. Gradle 은 maven 보다 성능이 좋다. 먼저 [Groovy DSL](/groovy/README.md) 을 학습하여 closure, delegate 개념을 이해해야 한다.
@@ -10,6 +20,8 @@ Gradle 은 task runner 이다. Gradle 은 maven 보다 성능이 좋다. 먼저 
 * [Command-Line Interface @ Gradle](https://docs.gradle.org/current/userguide/command_line_interface.html)
 * [gradle DSL reference @ Gradle](https://docs.gradle.org/current/dsl/)
 * [Creating New Gradle Builds @ Gradle](https://guides.gradle.org/creating-new-gradle-builds/)
+* [Writing Build Scripts](https://docs.gradle.org/current/userguide/writing_build_scripts.html)
+* [Project](https://docs.gradle.org/current/dsl/org.gradle.api.Project.html)
 
 # Basic
 
@@ -288,7 +300,7 @@ greetingClosure() // This works as `greeting` is a property of the delegate
 $ gradle -b a.gradle HelloWorld
 ```
 
-closure 가 delgate 을 가질 수 있는 것 처럼 build.gradle 은 project 가 곧 delegate 이다. 
+closure 가 delgate 을 가질 수 있는 것 처럼 build.gradle 은 project 가 곧 delegate 이다. [Project](https://docs.gradle.org/current/dsl/org.gradle.api.Project.html)
 
 ```groovy
 // project 의 task method
@@ -299,7 +311,7 @@ task("myTask2")
 task "myTask3"
 ```
 
-다음은 task object 의 descdription method 를 호출하고 group, doLast properties 를 assign 하는 예이다. doLast 에 closure 를 assign 했다.
+다음은 task object 의 descdription method 를 호출하고 group, doLast properties 를 assign 하는 예이다. doLast 에 closure 를 assign 했다. [Tasks](https://docs.gradle.org/current/dsl/org.gradle.api.Task.html)
 
 ```groovy
 task myTask7 {

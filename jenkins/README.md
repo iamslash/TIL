@@ -714,3 +714,5 @@ cmd 를 입력하면 Evaluation 이 Console output 으로 출력된다.
 
 ![](JenkinsConsoleOutput.png)
 
+`http://local.iamslash.com:8080/scriptApproval/` 에서 `Eval.x` 를 approve 해주어야 한다.
+
