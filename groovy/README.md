@@ -64,6 +64,11 @@ $ groovysh
 
 # DSL (Domain Specific Language)
 
+* [Domain-Specific Languages](http://docs.groovy-lang.org/docs/latest/html/documentation/core-domain-specific-languages.html)
+* [Writing Build Scripts](https://docs.gradle.org/current/userguide/writing_build_scripts.html)
+
+----
+
 groovy 의 top level statement 는 argument 주변의 "`()`" 와 function call 사이의 "`.`" 를 생략할 수 있다. 이것을 `command chain` 이라고 한다.
 
 ```groovy
@@ -84,6 +89,14 @@ select all unique() from names
 // equivalent to: take(3).cookies
 // and also this: take(3).getCookies()
 take 3 cookies
+
+// Closures as the last parameter in a method
+// There are all same.
+repositories {
+   println "in a closure"
+}
+repositories() { println "in a closure" }
+repositories({ println "in a closure" })
 ```
 
 다음은 `EmailDs1` 을 DSL 에서 사용하기 위한 구현이다. [Groovy - DSLS @ tutorialpoint](https://www.tutorialspoint.com/groovy/groovy_dsls.htm)
