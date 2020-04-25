@@ -354,16 +354,50 @@ sb.deleteCharAt(sb.length()-1);
 ```
 
 * SortedMap, TreeMap
+  * [SortedMap Interface in Java with Examples](https://www.geeksforgeeks.org/sortedmap-java-examples/)
 
 ```java
    SortedMap<String, String> map = new TreeMap<>();
    map.put(".com", "International");
    map.put(".us", "United States");
-   map.put(".uk", "United Kingdom");
-   map.put(".jp", "Japan");
-   map.put(".au", "Australia");
-   System.out.println(map);
    System.out.println(map.get(".au"));
+   map.remove(".us");
+   System.out.println(map.containsKey(".au"));
+   System.out.println(map.containsValue("International"));
+   System.out.println(map);
+
+   SortedMap<String, String> map2 = new TreeMap<>();
+   map2.put(".net", "iamslash");
+   map.putAll(map2);
+   Set<String> keySet = map.keySet();
+
+   String firstKey = map.firstKey();
+   String lastKey = map.lastKey();
+   List<String> values = new ArrayList<>(map.values());
+
+   Comparator comp = sotreemap.comparator();
+   System.out.println(comp); // null
+   SortedMap<String, String> map2 = new TreeMap<Integer, String>(Collections.reverseOrder()); 
+   comp = sotreemap.comparator();   
+   System.out.println(comp); // 
+
+   // Constructor with lambda
+   SortedMap<Integer, Integer> cnts =
+      new TreeMap<Integer, Integer>(
+            (a, b) -> {
+               return a - b;
+            });
+
+   // Loops
+   // import java.util.Map.Entry
+   Set<Entry<Integer,Integer>> sss = map.entrySet();
+   Set sst = map.entrySet();
+   Iterator it = sst.iterator();
+   while (it.hasNext()) {
+      Map.Entry m = (Map.Entry)it.next();
+      String key = (String)m.getKey();
+      String val = (String)m.getValue();
+   }
 ```
 
 * Set, HashSet

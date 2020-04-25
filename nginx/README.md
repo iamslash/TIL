@@ -3,6 +3,8 @@
 * [Proxy에 대하여 @ joinc](https://www.joinc.co.kr/w/man/12/proxy)
 * [NGINX Reverse Proxy](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#)
 * [proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
+* [[Nginx] Configuration](https://velog.io/@minholee_93/Nginx-Configuration-ntk600tiut)
+* [Nginx Fundamentals: High Performance Servers from Scratch](https://www.udemy.com/course/nginx-fundamentals/)
 
 # Install on ubuntu
 
