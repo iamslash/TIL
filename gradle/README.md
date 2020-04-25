@@ -769,4 +769,8 @@ A(implementation) -> B -> C -> D
 
 ## How to debug gradle
 
-* [How to debug Gradle Plugins with IntelliJ](https://medium.com/grandcentrix/how-to-debug-gradle-plugins-with-intellij-eef2ef681a7b)
+* [How to debug a Gradle build.gradle file (in a debugger, with breakpoints)?
+](https://stackoverflow.com/questions/28437636/how-to-debug-a-gradle-build-gradle-file-in-a-debugger-with-breakpoints)
+
+![](img/DebugGradleIntelliJ.png)
+
