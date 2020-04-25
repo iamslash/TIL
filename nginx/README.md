@@ -27,7 +27,8 @@
   - [Let's Encrypt - SSL Certificates](#lets-encrypt---ssl-certificates)
   - [Reverse Proxy](#reverse-proxy)
   - [Load Balancer](#load-balancer)
-  - [With Confd](#with-confd)
+  - [Templating with Confd](#templating-with-confd)
+  - [Resolver](#resolver)
 
 ----
 
@@ -613,7 +614,7 @@ http {
 ```
 
 
-## With Confd
+## Templating with Confd
 
 * [confd](/confd/README.md)
 
@@ -629,4 +630,25 @@ confd 와 함께 사용하면 configuration 을 환경변수 등등을 templatin
 
         {{ getenv "IAMSLASH_ASSET" }}
     }
+```
+
+## Resolver
+
+* [Nginx resolver explained](https://distinctplace.com/2017/04/19/nginx-resolver-explained/)
+* [Nginx를 ELB Reverse Proxy로 사용할때 주의 점](http://tech.kkung.net/blog/nginx-with-elb/)
+
+----
+
+resolver 는 DNS server 이다. Nginx 는 configuration 을 읽을 때 DNS에 대한 IP 변환(resolve)를 수행한다. 다음과 같이 resolver 를 설정하면 runtime 에 upstream server 의 IP 가 바뀌어도 configuration 을 reloading 하지 않고 IP 를 resolving 할 수 있다.
+
+```
+resolver 172.16.0.23 valid=5s;
+
+set $ep "http://elb-test.ap-northeast-1.elb.amazonaws.com";
+location @beat-api {
+    proxy_pass http://$ep;
+    proxy_set_header   Host $host;
+    proxy_set_header   X-Real-IP $remote_addr;
+    proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+}
 ```

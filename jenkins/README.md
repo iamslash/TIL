@@ -25,6 +25,8 @@
   - [How to backup](#how-to-backup)
   - [How to install](#how-to-install)
 - [Jenkins with Docker](#jenkins-with-docker)
+- [Advanced](#advanced)
+  - [How to debug Jenkins Pipeline Script](#how-to-debug-jenkins-pipeline-script)
 
 ----
 
@@ -670,3 +672,45 @@ pipeline {
   }
 }
 ```
+
+# Advanced
+
+## How to debug Jenkins Pipeline Script 
+
+* [Debugging Jenkins pipeline](https://notes.asaleh.net/posts/debugging-jenkins-pipeline/)
+
+-----
+
+Replay 를 선택하면 특정 Job 을 다시 실행할 수 있다. 
+
+다음과 같은 code snippet 을 삽입하면 break point 를 흉내낼 수 있다.
+
+```groovy
+input 'stop'
+```
+
+또한 다음과 같은 code snippet 을 삽입하면 repl 이 가능하다.
+
+```groovy
+while (true) {
+  def cmd = input message: 'What to run:', parameters: [string(defaultValue: '', description: '', name: 'cmd')]
+  try {
+      print Eval.x(this, cmd)
+  } catch (e) {
+      print e
+  }
+}
+```
+
+Replay 를 실행하고 Console output 을 선택하면 다음과 같다.
+
+![](JenkinsInputRequested.png)
+
+Input requested 를 선택하면 다음과 같이 cmd 를 입력할 수 있다. `Hello World` 라고 입력하자.
+
+![](JenkinsWhatToRun.png)
+
+cmd 를 입력하면 Evaluation 이 Console output 으로 출력된다.
+
+![](JenkinsConsoleOutput.png)
+
