@@ -269,6 +269,21 @@ sb.deleteCharAt(sb.length()-1);
 ```
 
 * Deque, ArrayDeque
+  
+| Queue Method | Equivalent Deque Method | Throws Exception |
+| ------------ | ----------------------- | ---------------- |
+| add(e)       | addLast(e)              |                  |
+| offer(e)     | offerLast(e)            |                  |
+| remove()     | removeFirst()           |                  |
+| poll()       | pollFirst()             | x                |
+| element()    | getfirst()              |                  |
+| peek()       | peekFirst()             | x                |
+
+| Stack Method | Equivalent Deque Method | Throws Exception |
+| ------------ | ----------------------- | ---------------- |
+| push(e)      | addFirst(e)             |                  |
+| pop(e)       | removeFirst(e)          |                  |
+| peek(e)      | peekFirst(e)            | x                |
 
 ```java
    Deque<Integer> deque = new ArrayDeque<>();
