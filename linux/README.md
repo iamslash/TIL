@@ -1534,6 +1534,18 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `sudo ufw status verbose` Show lists of rules 
   * `sudo ufw allow out to any port 443` allow outbound 443
     * `sudo ufw reload` Should reload ufw
+* `socat`
+  * socket + cat
+  * 주로 특정 socket 으로 수집된 데이터를 다른 곳으로 relay 할 때 사용한다.
+  * [socat 을 이용해 소켓 조작하기](https://blog.naver.com/parkjy76/220630685718)
+  * [socat(1) - Linux man page](https://linux.die.net/man/1/socat)
+  * `socat -v tcp-listen : 8080 system : cat` 8080 port tp listen, cat standard-out
+    * `telnet localhost 8080`
+  * `socat -v tcp-listen : 8080 fork system : cat` Fork every connecion.
+  * `socat -v tcp-listen : 8080 fork system : cat` launch server
+    * `socat -v unix-listen : proxysocket, reuseaddr, fork tcp-connect : localhost : 8080` launch proxy
+      * `socat STDIN unix-connect : proxysocket` launch client
+  * `socat -v TCP-LISTEN:80,fork TCP:iamslash.com:8000` foward local:80 to iamslash.com:8080
 
 ## Automation
 
