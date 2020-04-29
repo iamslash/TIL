@@ -22,6 +22,8 @@
   - [Annotation](#annotation)
   - [Generics](#generics)
   - [Concurrency](#concurrency)
+    - [ReentrantLock](#reentrantlock)
+    - [Semaphore](#semaphore)
     - [CountDownLatch](#countdownlatch)
   - [Static Class](#static-class)
   - [Test](#test)
@@ -1173,10 +1175,20 @@ public class Collections {
 
 ## Concurrency
 
+* [동시성](https://github.com/Yooii-Studios/Clean-Code/blob/master/Chapter%2013%20-%20%EB%8F%99%EC%8B%9C%EC%84%B1.md)
+  * [blog](https://nesoy.github.io/articles/2018-04/CleanCode-ConCurrency)
 * [Java Concurrency and Multithreading Tutorial](http://tutorials.jenkov.com/java-concurrency)
   * Java 의 Concurrency 에 대해 기가 막히게 설명한 글
 
 ----
+
+### ReentrantLock
+
+WIP
+
+### Semaphore
+
+WIP
 
 ### CountDownLatch
 
