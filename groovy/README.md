@@ -290,6 +290,20 @@ A -= 3
 A *= 3
 A /= 3
 A %= 3
+
+//// Elvis Operators
+// http://www.groovy-lang.org/operators.html#_elvis_operator
+// These three code snippets mean the same thing. 
+// If x is true according to groovy truth return x else return y
+x ?: y
+
+x ? x : y  // Standard ternary operator.
+
+if (x) {
+  return x
+} else {
+  return y
+}
 ```
 
 ## Collections compared to c++ containers
