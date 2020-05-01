@@ -29,17 +29,19 @@
   - [Load Balancer](#load-balancer)
   - [Templating with Confd](#templating-with-confd)
   - [Resolver](#resolver)
+- [Advanced](#advanced)
+  - [Cache setting](#cache-setting)
 
 ----
 
 # Materials
 
+* [Nginx @ joinc](https://www.joinc.co.kr/w/man/12/nginx)
 * [[Nginx] Overview & Install](https://velog.io/@minholee_93/Nginx-Overview-Install)
   * [Nginx fundamentals @ udemy](https://www.udemy.com/course/nginx-fundamentals/)
   * 킹왕짱 시리즈 
 * [Chapter “nginx” in “The Architecture of Open Source Applications”](http://www.aosabook.org/en/nginx.html)
   * nginx internals
-* [Proxy에 대하여 @ joinc](https://www.joinc.co.kr/w/man/12/proxy)
 * [NGINX Reverse Proxy](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/#)
 * [proxy_pass](http://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_pass)
 * [[Nginx] Configuration](https://velog.io/@minholee_93/Nginx-Configuration-ntk600tiut)
@@ -654,3 +656,15 @@ location @beat-api {
     proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
 }
 ```
+
+# Advanced
+
+## Cache setting
+
+* [[Nginx] 설정 Cache 기능 정리](https://blog.kjslab.com/175)
+* [NginX를 이용한 static 컨텐츠 서비스](https://www.joinc.co.kr/w/man/12/nginx/static)
+
+------
+
+예를 들어 S3 에 static contents 를 저장하고 nginx 로 caching 할 수 있다.
+
