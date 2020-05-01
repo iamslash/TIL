@@ -4,6 +4,16 @@
 
 # Materials
 
+* [Lecture 1. LaTeX 시작하기: 기본적인 글쓰기부터 @ youtube](https://www.youtube.com/watch?v=HDqO2dz1GFw)
+  * 아주 훌륭한 LaTeX 강의
+  * [blog](http://willkwon.dothome.co.kr/index.php/latex-lecture)
+  * [ppt1 - LaTeX 시작하기: 기본적인 글쓰기부터](http://willkwon.dothome.co.kr/wp-content/uploads/2018/01/lecture1.pdf)
+    * [src](http://willkwon.dothome.co.kr/wp-content/uploads/2018/01/Lecture1example.zip)
+  * [ppt2 - 수식쓰기 A to Z](http://willkwon.dothome.co.kr/wp-content/uploads/2018/01/lecture2.pdf)
+  * [ppt3 - 표와 그림의 시작](http://willkwon.dothome.co.kr/wp-content/uploads/2018/01/lecture3.pdf)
+  * [ppt4 - 텍으로 레포트 만들기](http://willkwon.dothome.co.kr/wp-content/uploads/2018/01/lecture4.pdf)
+* [LaTeX Tutorial @ youtube](https://www.youtube.com/watch?v=VhmkLrOjLsw)
+  * 1 시간 분량으로 LaTeX 사용법을 강의
 * [A simple guide to LaTeX - Step by Step](https://www.latex-tutorial.com/tutorials/)
   * 간결한 튜토리얼 
 * [LaTeX로 논문 쓰기 - 입문편](http://t-robotics.blogspot.com/2016/02/latex.html)
