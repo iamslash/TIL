@@ -345,6 +345,9 @@ SELECT AVG(Price)
   FROM Products;
 SELECT SUM(Quantity)
   FROM OrderDetails;
+-- It's possible to use condition inside SUM
+SELECT ROUND(100 * SUM(order_date = customer_pref_delivery_date) / COUNT(delivery_id), 2)
+  AS immediate_percentage FROM Delivery;  
 ```
 
 ## Like
