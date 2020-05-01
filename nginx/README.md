@@ -349,6 +349,74 @@ location = /greet/minho {
 }
 ```
 
+rewrite flag 는 last, break, redirect, permanent 가 있다. [nginx rewrite 플래그의 차이점: last 와 break](https://ohgyun.com/541), [ngx_http_rewrite_module](http://nginx.org/en/docs/http/ngx_http_rewrite_module.html)
+
+* last
+  * stops processing the current set of ngx_http_rewrite_module directives and starts a search for a new location matching the changed URI;
+* break
+  * stops processing the current set of ngx_http_rewrite_module directives as with the break directive;
+* redirect
+  * returns a temporary redirect with the 302 code; used if a replacement string does not start with “http://”, “https://”, or “$scheme”;
+* permanent
+  * returns a permanent redirect with the 301 code.
+
+다음과 같은 configuration 를 살펴보고 last, break 를 이해해 보자.
+
+```
+A0   location /a {
+A1     rewrite ^ /b;
+A2     rewrite ^ /c;
+A3     add_header x-a a;
+A4     proxy_set_header foo foo;
+A5     proxy_pass http://localhost:3000;
+A6   }
+
+B0   location /b { # B
+B1     add_header x-b b;
+B2     proxy_pass http://localhost:3000;
+B3   }
+
+C0   location /c { # C
+C1     rewrite ^ /d;
+C2     add_header x-c c;
+C3     proxy_pass http://localhost:3000;
+C4   }
+
+D0   location /d { # D
+D1     add_header x-d d;
+D2     proxy_pass http://localhost:3000;
+D3   }
+```
+
+* `/a` request 가 접수되면 nginx 은 다음과 같은 순서대로 처리한다. 
+  * `A0 -> A1 -> A2 -> C0 -> C1 -> D0 -> D1 -> D2`
+
+```
+A0   location /a {
+A1     rewrite ^ /b last;
+A2     rewrite ^ /c;
+A3     add_header x-a a;
+A4     proxy_set_header foo foo;
+A5     proxy_pass http://localhost:3000;
+A6   }
+```
+
+* 위와 같이 last 를 사용하고 `/a` request 가 접수되면 nginx 은 다음과 같은 순서대로 처리한다. 
+  * `A0 -> A1 -> B0 -> B1 -> B2`
+
+```
+A0   location /a {
+A1     rewrite ^ /b break;
+A2     rewrite ^ /c;
+A3     add_header x-a a;
+A4     proxy_set_header foo foo;
+A5     proxy_pass http://localhost:3000;
+A6   }
+```
+
+* 위와 같이 break 를 사용하고 `/a` request 가 접수되면 nginx 은 다음과 같은 순서대로 처리한다. 
+  * `A0 -> A1 -> A3 -> A4 -> A5`
+
 ## Try Files & Named Location
 
 * [[Nginx] Try Files & Named Location](https://velog.io/@minholee_93/Nginx-Try-Files-Named-Location-dkk60lodj0)
