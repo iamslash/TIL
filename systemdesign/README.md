@@ -37,6 +37,8 @@
     - [CORS (Cross Origin Resource Sharing)](#cors-cross-origin-resource-sharing)
   - [Database Primary Key](#database-primary-key)
   - [Idempotency](#idempotency)
+  - [80/20 rule](#8020-rule)
+  - [70% Capacity model](#70-capacity-model)
 - [Grokking the System Design Interview Practices](#grokking-the-system-design-interview-practices)
 - [System Design Primer Practices](#system-design-primer-practices)
 - [Additional System Design Interview Questions](#additional-system-design-interview-questions)
@@ -619,6 +621,18 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
 ## Idempotency
 
 * [RESTful API](https://lifeisgift.tistory.com/entry/Restful-API-%EA%B0%9C%EC%9A%94)
+
+## 80/20 rule
+
+어떠한 데이터의 20% 만 자주사용한다는 규칙이다. 주로 Cache data size 를 estimate 할 때 사용한다. 예를 들어 total data size 가 100GB 이면 cache data size 는 20GB 로 예측한다. 
+
+## 70% Capacity model
+
+estimated data size 는 total data size 의 70% 라는 규칙이다. 예를 들어 estimated data size 가 70GB 이면 total data size 는 100GB 이면 충분하다고 예측한다.
+
+```
+total data size : estimated data size = 100 : 70
+```
 
 ----
 
