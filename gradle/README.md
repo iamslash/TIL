@@ -5,6 +5,7 @@
   - [`compile` vs `implementation`](#compile-vs-implementation)
   - [`implementation` vs `api`](#implementation-vs-api)
   - [How to debug gradle](#how-to-debug-gradle)
+  - [Multiple projects](#multiple-projects)
 
 ----
 
@@ -776,4 +777,9 @@ A(implementation) -> B -> C -> D
 ](https://stackoverflow.com/questions/28437636/how-to-debug-a-gradle-build-gradle-file-in-a-debugger-with-breakpoints)
 
 ![](img/DebugGradleIntelliJ.png)
+
+## Multiple projects
+
+* [Gradle 에서 Multi 프로젝트 만들기](https://yookeun.github.io/java/2017/10/07/gradle-multi/)
+
 
