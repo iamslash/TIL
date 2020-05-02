@@ -31,7 +31,7 @@ Gradle 은 task runner 이다. Gradle 은 maven 보다 성능이 좋다. 먼저 
 
 * [2. Gradle의 기본 구조 살펴보기](https://gmind.tistory.com/entry/Gradle%EC%9D%98-%EA%B8%B0%EB%B3%B8-%EA%B8%B0%EB%8A%A5-%EB%A7%9B%EB%B3%B4%EA%B8%B0?category=655027)
 
-```bash
+```console
 $ gradle version
 $ cd my-app
 
@@ -258,7 +258,7 @@ task integrationTest(type: Test) {
 
 gradle deamon 은 gradle task 수행 속도를 빠르게 도와 준다. `gradle --stop` 은 gradle daemon 을 멈춘다.
 
-`println` 은 `System.out.println` 의 shortcut 이다. groovy 에서 `closure` 는 anonymous block of code 를 말한다. 다음은 `closure` 의 예이다.
+`println` 은 `System.out.println` 의 shortcut 이다. groovy 에서 ][closure](/groovy/README.md#closure) 는 anonymous block of code 를 말한다. 다음은 `closure` 의 예이다.
 
 ```groovy
 task groovy {}

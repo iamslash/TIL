@@ -30,11 +30,12 @@
 
 # Materials
 
+* [groovy  Documentation](http://groovy-lang.org/documentation.html)
+  * [Differences with Java](http://groovy-lang.org/differences.html)
+  * [Domain-Specific Languages](https://groovy-lang.org/dsls.html)
 * [learn groovy in minutes](https://learnxinyminutes.com/docs/groovy/)
 * [Groovy](https://code-maven.com/groovy)
   * Groovy Tutotial for Jenkins Pipeline.
-* [groovy  Documentation](http://groovy-lang.org/documentation.html)
-  * [Differences with Java](http://groovy-lang.org/differences.html)
 * [GROOVY TUTORIAL](http://www.newthinktank.com/2016/04/groovy-tutorial/)
   * 한 페이지로 배우는 groovy
 * [Groovy Tutorial @ tutorial point](https://www.tutorialspoint.com/groovy/index.htm)
@@ -58,13 +59,63 @@ $ brew install groovy
 
 # REPL
 
-```bash
+* [GroovyShell](http://groovy-lang.org/groovysh.html)
+* [How you can benefit from Groovy Shell](https://www.mscharhag.com/groovy/groovy-shell)
+
+----
+
+program counter 가 0 보다 큰 상황에서 buffer 를 취소하고 싶다면 `:clear` 로 program counter, buffer 를 초기화한다.
+
+variables, classes, imports, preferences 를 초기화 하고 싶다면 `:purge all` 를 사용한다.
+
+```groovy
 $ groovysh
+groovy:000> def a = 3
+// show help
+groovy:000> :help
+// display current buffer
+groovy:000> :display
+// clear current buffer
+groovy:000> :clear
+// show variables, classes, interfaces, preferences
+groovy:000> :show all
+// Purge variables, classes, imports or preferences
+groovy:000> :purge all
+// set preferences (:=)
+groovy:000> :set
+```
+
+`def` 는 local variable 을 선언한다. 따라서 `def a = 1` 을 실행하고 `a` 를 참조하면 unknown property error 가 발생한다. `a = 1` 을 실행하면 shell variable 을 선언한다. 이후 `a` 를 사용할 수 있다. [참고](https://stackoverflow.com/questions/26716995/groovy-console-cant-remember-any-variables-always-says-unknown-property)
+
+```groovy
+Groovy Shell (2.5.7, JVM: 1.8.0_31)
+Type ':help' or ':h' for help.
+-------------------------------------------------------------------------------
+groovy:000> def a = 1
+groovy:000> a
+Unknown property: a
+groovy:000> b = 2
+===> 2
+groovy:000> b
+===> 2
+```
+
+`:= interpreterMode` 를 실행하면 unknown property error 를 피할 수 있다.
+
+```groovy
+Groovy Shell (2.5.7, JVM: 1.8.0_31)
+Type ':help' or ':h' for help.
+-------------------------------------------------------------------------------
+groovy:000> := interpreterMode
+groovy:000> def x = 1
+===> 1
+groovy:000> x
+===> 1
 ```
 
 # DSL (Domain Specific Language)
 
-* [Domain-Specific Languages](http://docs.groovy-lang.org/docs/latest/html/documentation/core-domain-specific-languages.html)
+* [Domain-Specific Languages](https://groovy-lang.org/dsls.html)
 * [Writing Build Scripts](https://docs.gradle.org/current/userguide/writing_build_scripts.html)
 
 ----
@@ -439,9 +490,32 @@ TODO
 
 ## Closure
 
-A closure is a short anonymous block of code.
+A closure is a short anonymous block of code. whose syntax is like this.
 
 ```groovy
+{ [closureParameters -> ] statements }
+```
+
+These are valid examples of closure.
+
+```groovy
+
+{ item++ }                                          
+{ -> item++ }                                      
+//  A closure using an implicit parameter (it)
+{ println it }                                      
+{ it -> println it }                                
+{ name -> println name }                            
+// A closure accepting two typed parameters
+{ String x, int y ->                                
+    println "hey ${x} the value is ${y}"
+}
+// A closure can contain multiple statements
+{ reader ->                                         
+    def line = reader.readLine()
+    line.trim()
+}
+
 //// basic closure
 class Example {
   static void main(String[] args) {
