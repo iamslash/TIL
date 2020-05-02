@@ -622,6 +622,10 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
 
 * [RESTful API](https://lifeisgift.tistory.com/entry/Restful-API-%EA%B0%9C%EC%9A%94)
 
+----
+
+한글로 멱등성이라고 한다. RESTful API 에서 같은 호출을 여러번 해도 동일한 결과를 리턴하는 것을 말한다.
+
 ## 80/20 rule
 
 어떠한 데이터의 20% 만 자주사용한다는 규칙이다. 주로 Cache data size 를 estimate 할 때 사용한다. 예를 들어 total data size 가 100GB 이면 cache data size 는 20GB 로 예측한다. 
@@ -633,10 +637,6 @@ estimated data size 는 total data size 의 70% 라는 규칙이다. 예를 들�
 ```
 total data size : estimated data size = 100 : 70
 ```
-
-----
-
-한글로 멱등성이라고 한다. RESTful API 에서 같은 호출을 여러번 해도 동일한 결과를 리턴하는 것을 말한다.
 
 # Grokking the System Design Interview Practices
 
