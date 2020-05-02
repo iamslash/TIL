@@ -94,9 +94,130 @@ public class A {
 
 ## 자동 설정 이해
 
+`@SpringBootApplication` 은 `@ComponentScan, @EnableAutoConfiguration` 을 포함한다.
+
+`@ComponentScan` 은 `@Component, @Configuration, @Repository, @Service, @Controller, @RestController` 가 attatch 된 Class 들을 검색하여 Bean 으로 등록한다.
+
+`@Configuration` 은 Bean 을 등록하는 설정파일이다.
+
+`@EnableAutoConfiguration` 은 `org.springframework.boot:spring-boot-autoconfigure/META-INF/spring.factories` 의 `org.springframework.boot.autoconfigure.EnableAutoConfiguration` 의 value 에 해당하는 class 들을 순회하면서 Bean 을 등록한다. 이 class 들은 모두 `@Configuration` 이 attatch 되어 있다. 그러나 `@ConditionalOnWebApplication, @ConditionalOnClass, @ConditionalOnMissingBean` 등에 의해 조건에 따라 Bean 이 등록될 수도 있고 등록되지 않을수도 있다.
+
 ## 자동설정 만들기 1 부 : Starter 와 AutoConfigure
 
+`xxx-spring-boot-autoconfigure` module 은 자동설정을 담당한다. `xxx-spring-boot-starter` module 은 의존성 관리를 담당한다.
+
+* `src/main/java/com.iamslash/User.java`
+
+```java
+public class User {
+	String name;
+	int age;
+}
+```
+
+* `src/main/java/com.iamslash/UserConfiguration.java`
+
+```java
+@Configuration
+public class UserConfiguration {
+	@Bean
+	public User user() {
+		User user = new User();
+		user.setAge(10);
+		user.setName("David");
+		return user;
+	}
+}
+```
+
+* `src/main/resources/META-INF/spring.factories`
+
+```conf
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+  com.iamslash.UserConfiguration
+```
+
+`@EnableAutoConfiguration` 이 실행되면 `com.iamslash.UserConfiguration` 의 `@Configuration` 이 처리된다.
+
+그러나 다음과 같이 `DemoApplication` 에서 `User` Bean 을 생성하는 경우 `spring.factories` 에서 생성된 `User` Bean 이 over write 한다.
+
+```java
+@SpringBootApplication
+public class DemoApplication {
+	public static void main(String[] args) {
+		SpringApplication application = new SpringApplication(Application.class);
+		application.setWebApplicationType(WebApplicationType.NONE);
+		application.run(args);
+	}
+
+	@Bean
+	public User user() {
+		User user = new User();
+		user.setName("Richard");
+		user.setAge(20);
+		return user;
+	}
+}
+```
+
 ## 자동설정 만들기 2 부 : @ConfigurationProperties
+
+다음과 같이 `@ConditionalOnMissingBean` 을 `src/main/java/com.iamslash/UserConfiguration.java` 에 attatch 해주면 `DemoApplication` 의 `@ComponentScan` 에 의한 Bean 을 우선시 할 수 있다.
+
+* `src/main/java/com.iamslash/UserConfiguration.java`
+
+```java
+@Configuration
+public class UserConfiguration {
+	@Bean
+	@ConditionalOnMissingBean
+	public User user() {
+		User user = new User();
+		user.setAge(10);
+		user.setName("David");
+		return user;
+	}
+}
+```
+
+이번에는 `application.properties` 에 Bean 의 properties 를 삽입하고 그것을 기반으로 Bean 을 만들어 보자.
+
+* `src/main/resources/appilcation.properties` 
+
+```conf
+user.name=Hello
+user.age=30
+```
+
+* `src/main/java/com.iamslash/UserConfiguration.java`
+
+```java
+@Configuration
+@EnableConfigurationProperties(UserProperties.class)
+public class UserConfiguration {
+	@Bean
+	@ConditionalOnMissingBean
+	public User user(UserProperties properties) {
+		User user = new User();
+		user.setAge(properties.getAge());
+		user.setName(properties.getName());
+		return user;
+	}
+}
+```
+
+* `src/main/java/com.iamslash/UserProperties.java`
+
+```java
+@ConfigurationProperties("user")
+public class UserProperties {
+	private String name;
+	private int age;
+	...
+}
+```
+
+User Bean 을 등록하려면 반드시 gradle task 중 Install 을 실행해야 한다.
 
 ## 내장 웹 서버 이해
 
@@ -128,7 +249,58 @@ public class A {
 
 ## 로깅 1부 : 스프링 부트 기본 로거설정
 
+결국 SLF4j 를 사용하여 구현하면 LogBack 이 logging 한다.
+
+* build.gradle
+
+```gradle
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-logging'
+}
+```
+
+다음과 같이 log file 의 경로와 level 을 설정한다.
+
+* application.properties
+
+```conf
+logging.path=logs
+logging.level.com.iamslash.demo=DEBUG
+```
+
+* `src/main/java/com.iamslash.demo/SampleRunner.java`
+
+```java 
+@Component
+public class SampleRunner implements ApplicationRunner {
+	private Logger logger = LoggerFactory.getLogger(SampleRunner.class);
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		logger.info("===================");
+		logger.info("This is inside run");
+		logger.info("===================");
+	}
+}
+```
+
 ## 로깅 2부 : 커스터마이징
+
+* [4. Logging](https://docs.spring.io/spring-boot/docs/2.2.6.RELEASE/reference/html/spring-boot-features.html#boot-features-logging)
+
+----
+
+logback 을 다음과 같이 customizing 해보자.
+
+* `src/main/resources/logback-spring.xml` 
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <logger name="com.iamslash" level="DEBUG"/>
+</configuration>
+```
 
 ## 테스트
 ## 테스트 유틸
