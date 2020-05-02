@@ -315,7 +315,7 @@ task("myTask2")
 task "myTask3"
 ```
 
-다음은 task object 의 descdription method 를 호출하고 group, doLast properties 를 assign 하는 예이다. doLast 에 closure 를 assign 했다. [Tasks](https://docs.gradle.org/current/dsl/org.gradle.api.Task.html)
+다음은 task object 의 description method 를 호출하고 group 을 assign 하고 doLast 를 호출하는 예이다. doLast 에 closure 를 parameter 로 넘겨줬다. [Tasks](https://docs.gradle.org/current/dsl/org.gradle.api.Task.html)
 
 ```groovy
 task myTask7 {
@@ -356,7 +356,7 @@ task putOnShoes {
 }
 ```
 
-`$ gradle tasks` 는 putOnSocks 를 보여주지는 않는다. 그러나 `$ gradle tasks --all` 을 통해 볼 수 있다.
+"`$ gradle tasks`" 는 putOnSocks 를 보여주지는 않는다. 그러나 "`$ gradle tasks --all`" 을 통해 볼 수 있다.
 
 ```groovy
 
@@ -470,25 +470,27 @@ property value 를 전달하는 방법은 `gradle.poperties, command line, ext p
 
 * 다음은 `gradle.properties, build.gradle` 의 예이다.
 
-  ```
+  ```groovy
   greeting = "Hello from a properties file"
   ```
 
   ```groovy
   task printGreeting {
     doLast {
-    println greeting
+      println greeting
     }
   }
   ```
 
 * 다음은 command line 으로 properties 를 전달하는 예이다.
+
   ```bash
   $ gradle -Pgreeting="Hello from the command line" printGreeting
   $ gradle -Pgreeting="Hello from the command line" pG
   ```
 
 * 다음은 `project.ext` property 에 closure 를 assign 하여 전달하는 예이다.
+
   ```groovy
   ext {
     greeting = "Hello from inside the build script"
@@ -501,7 +503,7 @@ property value 를 전달하는 방법은 `gradle.poperties, command line, ext p
 class MyTask extends DefaultTask {}
 ```
 
-`HelloTask` 를 정의하여 task type 으로 사용해 보자. 새로운 class 는 DefaultTask 를 extends 하고 @TaskAction 을 사용한 function 을 정의해야 한다.  
+`HelloTask` 를 정의하여 task type 으로 사용해 보자. 새로운 class 는 DefaultTask 를 extends 하고 `@TaskAction` 을 사용한 function 을 정의해야 한다.  
 
 ```groovy
 class HelloTask extends DefaultTask {
@@ -531,7 +533,7 @@ task helloName(type: HelloNameTask) {
 }
 ```
 
-다음과 같이 logger 를 사용하여 logging 해보자.
+다음과 같이 logger 를 사용하여 logging 해보자. `gradle -b a.gradle --info hello`
 
 ```groovy
 task hello(type: HelloTask)
@@ -552,7 +554,7 @@ logger.debug 를 사용하려면 `gradle --debug HelloTask` 와 같이 `--debug`
 logger.debug "Catch me if you can"
 ```
 
-`build.gradle` 에 다음과 같이 java plugin 을 사용하면 `assemble, buile, check, clean` 등등의 task 들이 생겨난다. `$ gradle tasks --all` 을 실행하여 확인할 수 있다.
+`build.gradle` 에 다음과 같이 java plugin 을 사용하면 `assemble, build, check, clean` 등등의 task 들이 생겨난다. `$ gradle tasks --all` 을 실행하여 확인할 수 있다.
 
 ```groovy
 apply plugin: "java"
