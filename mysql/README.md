@@ -1,14 +1,27 @@
-# abstract
+# Abstract
 
-- mysqld에 대해 적어보자.
+- mysqld 에 대해 적어보자.
 - msyql 의 HELP를 주로 사용하자.
 
-# learning materials
+# Materials
 
 - [이곳](https://www.percona.com/resources/videos)에
   쓸만한 webinar동영상들이 있다.
 
-# tip
+# Install with docker
+
+```console
+$ docker run -p3306:3306 --rm --name my-mysql -e MYSQL_ROOT_PASSWORD=1 -e MYSQL_DATABASE=foo -e MYSQL_USER=iamslash -e MYSQL_PASSWORD=1 -d mysql
+
+$ docker ps
+$ docker exec -it my-mysql /bin/bash
+
+$ mysql -u iamslash -p
+mysql> show databases
+mysql> use foo
+```
+
+# Tip
 
 ## how to reset password
 
