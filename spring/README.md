@@ -18,7 +18,8 @@
   - [ConfigurationProperties](#configurationproperties)
   - [Http requests logging](#http-requests-logging)
   - [Http responses logging](#http-responses-logging)
-  - [Sprint Boot Test](#sprint-boot-test)
+  - [Sprint Boot Test with JUnit](#sprint-boot-test-with-junit)
+  - [Spring Boot Test with Spock](#spring-boot-test-with-spock)
   - [Spring Boot Exception Handling](#spring-boot-exception-handling)
   - [Spring WebMvcConfigure](#spring-webmvcconfigure)
   - [Transactional](#transactional)
@@ -33,6 +34,7 @@
 
 - [Spring Guides](https://spring.io/guides)
   - Topics Guides are very useful.
+- [spring-examples by iamslash](https://github.com/iamslash/spring-examples)
 - [baeldung spring](https://www.baeldung.com/start-here)
   - 킹왕짱 튜토리얼
   - [src](https://github.com/eugenp/tutorials)
@@ -273,7 +275,7 @@ logging:
 
 * [Logging Spring WebClient Calls](https://www.baeldung.com/spring-log-webclient-calls)
 
-## Sprint Boot Test
+## Sprint Boot Test with JUnit
 
 * [Spring Boot Test](https://cheese10yun.github.io/spring-boot-test/#null)
 * [Spring Boot에서 테스트를 - 1](https://hyper-cube.io/2017/08/06/spring-boot-test-1/)
@@ -467,6 +469,167 @@ logging:
     }
   }
   ```
+
+## Spring Boot Test with Spock
+
+* [Spock Primer](http://spockframework.org/spock/docs/1.0/spock_primer.html)
+* [exspock](https://github.com/iamslash/spring-examples/tree/master/exspock)
+* [SpringBoot 환경에서 Spock 사용하기](https://jojoldu.tistory.com/229)
+  * [src](https://github.com/jojoldu/blog-code/tree/master/spring-boot-spock)
+* [Testing with Spring and Spock](https://www.baeldung.com/spring-spock-testing)
+* [Introduction to Testing with Spock and Groovy](https://www.baeldung.com/groovy-spock)
+
+----
+
+다음과 같이 build.gradle 을 설정한다.
+
+```gradle
+plugins {
+	id 'org.springframework.boot' version '2.2.6.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+	id 'groovy'
+}
+
+group = 'com.iamslash'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation('org.junit.jupiter:junit-jupiter:5.4.0')
+	testImplementation('org.spockframework:spock-core:1.1-groovy-2.4')
+	testImplementation('org.spockframework:spock-spring:1.1-groovy-2.4')
+}
+
+test {
+	useJUnitPlatform()
+}
+```
+
+다음과 같이 UserControllerTest.java 를 작성한다.
+
+```java
+@WebMvcTest(UserController.class)
+class UserControllerTest extends Specification {
+
+    @Autowired
+    MockMvc mockMvc;
+
+    def "one plus one should equal two"() {
+        expect:
+        1 + 1 == 2
+    }
+
+    def "Should be able to remove from list"() {
+        given:
+        def list = [1, 2, 3, 4]
+
+        when:
+        list.remove(0)
+
+        then:
+        list == [2, 3, 4]
+    }
+
+    def "Should get an index out of bounds when removing a non-existent item"() {
+        given:
+        def list = [1, 2, 3, 4]
+
+        when:
+        list.remove(20)
+
+        then:
+        thrown(IndexOutOfBoundsException)
+        list.size() == 4
+    }
+
+    def "numbers to the power of two"(int a, int b, int c) {
+        expect:
+        Math.pow(a, b) == c
+
+        where:
+        a | b | c
+        1 | 2 | 1
+        2 | 2 | 4
+        3 | 2 | 9
+    }
+
+    def "CreateUser"() {
+        given:
+        String userJson = "{\"username\":\"iamslash\", \"password\":\"world\"}";
+
+        expect:
+        mockMvc.perform(post("/api/v1/user")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(userJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("\$.username", is(equalTo("iamslash"))));
+    }
+}
+```
+
+IntelliJ 2020.1 에서 test methods 들이 실행되지 않을 수 있다. 다음과 같이 `Run tests using` 을 `Gralde` 에서 `IntelliJ IDEA` 로 바꾼다.
+
+![](img/IntelliJRunTestsUsing.png)
+
+spock 은 다음과 같은 feature method 들이 있다.
+
+* given (setup) : 테스트 하기 위한 기본 설정
+* when : 테스트할 대상 코드를 실행
+* then : 테스트할 대상 코드의 결과 검증 
+* expect : 테스트할 대상 코드를 실행 및 검증 (when + then)
+* where : feature 메소드를 파라미터로 삼아 실행.
+
+다음은 feature method 들의 lifecycle 이다.
+
+![](img/spocklifecycle.png)
+
+다음과 같이 mock object 를 생성할 수 있다.
+
+```groovy
+def mockService = Mock(FooService)
+// same as above
+FooService mockService = Mock()
+```
+
+다음과 같이 `>>` 를 사용하여 method 를 mocking 하거나 exception 을 throw 할 수 있다.
+
+```groovy
+mockService.findName(1) >> "iamslash"
+
+mockService.validate() >> { throw new ResourceNotFoundException }
+```
+
+다음과 같이 method 호출의 횟수를 검증할 수도 있다.
+
+```groovy
+then:
+// 2 times exactly
+2 * mockService.savePoint(customer, point) 
+
+// 3 times at least 
+(3.._) * mockService.savePoint(customer, point) 
+
+// 3 times at most
+(_..3) * mockService.savePoint(customer, point) 
+
+// 2 times at most with any parameters
+(_..2) * mockService.savePoint(_, _)
+```
+
+다음은 spock 과 junit 을 비교한 것이다.
+
+![](img/spock_vs_junit.png)
 
 ## Spring Boot Exception Handling
 
