@@ -6,6 +6,7 @@
   - [`implementation` vs `api`](#implementation-vs-api)
   - [How to debug gradle](#how-to-debug-gradle)
   - [Multiple projects](#multiple-projects)
+  - [Using plugins](#using-plugins)
 
 ----
 
@@ -785,3 +786,34 @@ A(implementation) -> B -> C -> D
 * [Gradle 에서 Multi 프로젝트 만들기](https://yookeun.github.io/java/2017/10/07/gradle-multi/)
 
 
+## Using plugins
+
+* [Using Gradle Plugins](https://docs.gradle.org/current/userguide/plugins.html)
+
+----
+
+plugin 의 종류는 script plugin, binary plugin 과 같이 2 가지가 있다. 
+
+보통 plugin 은 resolve, apply 2 단계로 적용된다. 
+
+script plugin 의 경우 다음과 같이 특정 script plugin 을 download (resolve) 하고 현재 project 에 apply (apply) 한다.
+
+```gradle
+apply from: 'http://iamslash.com/foo.gradle'
+```
+
+```gradle
+buildscript {
+	ext {
+		gradleUrl="http://gradle.iamslash.com/foo.gradle"
+	}
+	apply from: gradleUrl, to: it
+```
+
+binary plugin 은 다음과 같이 사용한다. [gradle plugins portal](https://plugins.gradle.org/) 에서 public plugins 의 `id` 를 알 수 있다.
+
+```gradle
+plugins {
+  id "io.reconquest.gradle-android-eclipse" version "1.1"
+}
+```
