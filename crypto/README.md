@@ -1,3 +1,14 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [대칭키 암호화 (Symmetric-key algorithm)](#%eb%8c%80%ec%b9%ad%ed%82%a4-%ec%95%94%ed%98%b8%ed%99%94-symmetric-key-algorithm)
+- [비대칭키 암호화 (Asymmetric-key algorithm)](#%eb%b9%84%eb%8c%80%ec%b9%ad%ed%82%a4-%ec%95%94%ed%98%b8%ed%99%94-asymmetric-key-algorithm)
+- [RSA](#rsa)
+- [인증서](#%ec%9d%b8%ec%a6%9d%ec%84%9c)
+- [Digital Signing](#digital-signing)
+- [How to save password safely](#how-to-save-password-safely)
+
+----
+
 # Abstract
 
 암호화에 대해 적는다.
@@ -195,3 +206,29 @@ Root 인증서는 무조건 신뢰할 수 있다는 가정하에 사용된다. R
 이제 크래커 입장에서 생각해 보자. `iamslash` 인증서를 발급한 발급자는 인증서의 주체가 `iamslash` 인 인증서를 발급해 주지 않을 것이다. 그렇다면 주체가 `iamslash` 인 인증서를 변조해야 한다. 그러나 발급자의 개인키가 없기 때문에 서명을 제대로 기록할 수 없다.   
 
 그렇다면 크래커가 발급자도 사칭 할 수 있다. 곧, 크래커가 직접 사설 인증 기관을 만든 후에 `iamslash` 를 사칭하여 인증서를 발급하는 것이다. 그러나 인증서 체인 때문에 발급자를 사칭하게 되면 상위 발급자도 사칭을 해야 하며 결국 최상위 기관인 Root 발급자까지 사칭해야만 한다. 그러나 위에서도 말했듯이 Root 인증서는 Microsoft 가 관리하며 이미 시스템 내부에 포함되어 있기 때문에 모든 PC 의 사칭은 불가능하다. 그렇다면 특정 PC 는 가능한 건가???
+
+# How to save password safely
+
+* [안전한 패스워드 저장](https://d2.naver.com/helloworld/318732)
+
+----
+
+보통 단방향 해쉬함수를 사용한다. 그러나 단방향 해쉬함수는 인식가능성(Recognizability) 와 속도 (Speed) 의 문제점이 있다. 그래서 Salting 과 Key stretching 으로 문제를 해결할 수 있다.
+
+Adaptive key derivation function은 다이제스트를 생성할 때 솔팅과 키 스트레칭을 반복한다.
+
+adaptive key derivation function 중 주요한 key derivation function은 PBKDF2, bcrypt, scrypt 등이 있다.
+
+PBKDF2(Password-Based Key Derivation Function) 는 NIST(National Institute of Standards and Technology, 미국표준기술연구소) 에서 승인되었고 가장 많이 사용된다. 다음은 PBKDF2 의 prototype 이다.
+
+```c
+DIGEST = PBKDF2(PRF, Password, Salt, c, DLen)  
+```
+
+* `PRF`: 난수(예: HMAC)
+* `Password`: 패스워드
+* `Salt`: 암호학 솔트
+* `c`: 원하는 iteration 반복 수
+* `DLen`: 원하는 다이제스트 길이
+
+결론적으로 PBKDF2-HMAC-SHA-256/SHA-512 을 사용하면 된다.
