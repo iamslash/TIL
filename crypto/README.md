@@ -9,6 +9,7 @@
 * [SSL이란 무엇이며 인증서(Certificate)란 무엇인가?](https://wiki.kldp.org/HOWTO/html/SSL-Certificates-HOWTO/x70.html)
 * [[Windows] 디지털서명의 구조와 원리](https://code13.tistory.com/165)
 * [네이버 애플리케이션의 전자 서명 원리](https://d2.naver.com/helloworld/744920)
+* [안전한 패스워드 저장](https://d2.naver.com/helloworld/318732)
 
 # 대칭키 암호화 (Symmetric-key algorithm)
 
