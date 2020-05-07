@@ -1532,6 +1532,7 @@ jvm 의 gc 는 크게 `Young Generation, Old Generation, Permanent Generation` �
 
 ## Stream
 
+* [Guide to Java 8’s Collectors](https://www.baeldung.com/java-8-collectors)
 * [자바 스트림(Stream) API 정리, 스트림을 이용한 가독성 좋은 코드 만들기(feat. 자바 람다, 함수형 프로그래밍, 자바8)](https://jeong-pro.tistory.com/165)
 * [자바8 스트림 API 소개](https://www.slideshare.net/madvirus/8-api)
 * [Java 8 Parallel Streams Examples](https://mkyong.com/java8/java-8-parallel-streams-examples/)
