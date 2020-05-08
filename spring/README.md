@@ -139,7 +139,8 @@ batch job 을 spring library 를 이용해서 만들어 보자.
 
 * [Creating a Batch Service](https://spring.io/guides/gs/batch-processing/)
   * [src](https://github.com/spring-guides/gs-batch-processing)
-* [2. Spring Batch 가이드 - Batch Job 실행해보기](https://jojoldu.tistory.com/325)
+* [1. Spring Batch 가이드 - 배치 어플리케이션이란?](https://jojoldu.tistory.com/324?category=902551)
+  * [2. Spring Batch 가이드 - Batch Job 실행해보기](https://jojoldu.tistory.com/325)
 * [Spring Batch](https://spring.io/projects/spring-batch)
 
 # Tips
