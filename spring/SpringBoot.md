@@ -51,7 +51,8 @@
 # Materials
 
 * [스프링 부트 개념과 활용 @ inflearn](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8)
-  * [src blog](https://ict-nroo.tistory.com/category/ICT%20Eng/Spring?page=3)
+  * [src blog ict-nroo](https://ict-nroo.tistory.com/category/ICT%20Eng/Spring?page=3)
+  * [src blog engkimbs](https://engkimbs.tistory.com/category/Spring/Spring%20Boot?page=3)
 
 ## Tutorial of STS
 
