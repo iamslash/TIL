@@ -776,5 +776,62 @@ Transaction problems 는 다음과 같다.
 
 ## Spring with flyway
 
-* [flyway](/flyway/README.md)
 * [spring-examples/exflyway](https://github.com/iamslash/spring-examples/exflyway)
+* [Flyway](/flyway/README.md)
+* [Flyway gradle plugin](https://flywaydb.org/documentation/gradle/#tasks)
+
+-----
+
+[Flyway](/flyway/README.md) 를 참고하여 `src/main/resources/db/migration` 에 `V*__*.sql` 을 작성한다.
+
+다음과 같이 build.gradle 을 설정한다.
+
+```gradle
+plugins {
+	id 'org.springframework.boot' version '2.2.7.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+	id "org.flywaydb.flyway" version "6.4.1"
+}
+
+group = 'com.iamslash'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'mysql:mysql-connector-java'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+flyway {
+	url = 'jdbc:mysql://localhost:3306/foo'
+	user = 'iamslash'
+	password = '1'
+}
+
+test {
+	useJUnitPlatform()
+}
+```
+
+다음과 같이 flyway command 를 실행할 수 있다.
+
+```console
+$ ./gradlew flywayValidate
+
+$ ./gradlew flywayInfo
+
+$ ./gradlew flywayClean
+
+$ ./gradlew flywayMigrate
+```
