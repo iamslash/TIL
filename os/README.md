@@ -29,7 +29,7 @@
 - [Page Management](#page-management)
 - [Processor Cache Management](#processor-cache-management)
 - [Windows Cache Management](#windows-cache-management)
-- [Userlevel and Kernellevel](#userlevel-and-kernellevel)
+- [User mode, Kernel mode](#user-mode-kernel-mode)
 - [Virtual Memory Control](#virtual-memory-control)
 - [Heap Control](#heap-control)
 - [MMF (Memory Mapped File)](#mmf-memory-mapped-file)
@@ -1583,7 +1583,9 @@ file 의 내용은
 
 ![](cache_system_cache.png)
 
-# Userlevel and Kernellevel
+# User mode, Kernel mode
+
+* [커널 모드와 유저 모드](https://www.youtube.com/watch?v=4y5BgddMY7o&list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc&index=32&t=0s)
 
 TODO
 
