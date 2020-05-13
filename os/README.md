@@ -872,7 +872,7 @@ kernel level thread 는 kernel level 에서 scheduling 된다. 따라서 하나�
 
 user level thread 는 user level 에서 scheduling 된다. kernel 은 user level thread 를 포함한 process 단위로 scheduling 한다. kernel 은 user level thread 를 알 수 없다. 따라서 user level thread 중 하나가 I/O 블록이 되면 kernel 은 그 thread 를 소유한 process 의 상태를 running 에서 ready 로 바꾼다. user level thread 는 context switching 될 때 O/S 가 user level 에서 kernel level 로 전환할 필요가 없다. 따라서 user level thread 는 context switching 이 kernel level thread 보다 빠르다.
 
-multithreading model 은 user level thread 와 kernel level thread 의 mapping 방법에 따라 `1:1`, `1:N`, `N:M` 방법이 있다. c++ 의 pthread, JVM 은 `1:1` 이다??? goroutine 은 `N:M` 이다??? [참고](https://classroom.udacity.com/courses/ud923/lessons/3065538763/concepts/34341886380923)
+multithreading model 은 user level thread 와 kernel level thread 의 mapping 방법에 따라 `1:1`, `N:1`, `N:M` 방법이 있다. c++ 의 pthread, JVM 은 `1:1` 이다??? goroutine 은 `N:M` 이다??? [참고](https://classroom.udacity.com/courses/ud923/lessons/3065538763/concepts/34341886380923)
 
 Linux kernel 은 2.6 이전에 process 단위로 scheduling 되었다. [참고](https://en.wikipedia.org/wiki/Native_POSIX_Thread_Library). pthread 는 NPTL (Native Posix Thread Library) 이다. 따라서 1:1 thread library 이고 `pthread_create` 을 통해서 kernel level thread 를 만들어 낼 수 있다.
 
@@ -1586,8 +1586,15 @@ file 의 내용은
 # User mode, Kernel mode
 
 * [커널 모드와 유저 모드](https://www.youtube.com/watch?v=4y5BgddMY7o&list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc&index=32&t=0s)
+* [User Mode vs Kernel Mode](https://www.tutorialspoint.com/User-Mode-vs-Kernel-Mode)
 
-TODO
+----
+
+application 이 실행하면 32bit OS 는 virtual memory 4 GB 를 할당한다. 2 GB 는 user space 이고 2 GB 는 kernel space 이다. user space 에는 application 의 instruction 들이 저장된다. kernel space 에는 OS 의 instruction 들이 저장된다.  정확하게 얘기하면 mapping 정보가 저장된다. 여러 application 들은 각각의 virtual memeory 의 kenrnel space 에 OS instruction 들을 중복해서 들고 있는 것이 아니고 OS instruction 들을 가리키고 있는 것이다. virtual memeory 에는 instruction 만 저장되는 것은 아니다. data 를 포함한 여러가지가 저장된다.
+
+OS 가 특정 application 의 instruction 들을 하나씩 실행하는 경우를 생각해 보자. virtual memory 의 user space 의 instruction 들을 fetch, decode, execute 하다가 kernel space 의 instruction 들을 fetch, decode, execute 하고 다시 user space 의 instruction 들을 fetch, decode, execute 할 것이다. 이것을 OS 가 application 을 user mode, kernel mode, user mode 로 실행된다고 말한다. 이때 user space 의 instruction 에서 kernel space 를 접근할 수 있다면 얼마든지 system 을 엉망으로 만들 수 있다. 따라서 OS 는 user space 의 instruction 은 kernel space 를 접근할 수 없도록 통제해야한다. 그러나 kernel space 의 instruction 들은 user space 를 접근할 수 있다.
+
+또한 OS 가 user mode, kernel mode 를 전환할 때 register 들을 바꿔치는 것을 포함해서 CPU 에게 상당한 부담이다. 앞서 언급한 Threading model 에서 `1:1` 의 경우 thread 가 context switching 이 될때 마다 user mode, kernel mode 의 전환이 필요하기 때문에 CPU 에 부담이 된다. `N:1` 의 경우는 process 의 context switching 이 될때만 user mode, kernel mode 의 전환이 필요하다. 따라서 user level thread 가 얼마든지 context switching 이 되더라도 빠르다. 그러나 process 의 thread 중 하나라도 I/O block 이 되는 경우 process 가 통째로 block 된다.
 
 # Virtual Memory Control
 
