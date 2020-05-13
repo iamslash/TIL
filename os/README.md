@@ -87,6 +87,8 @@
   * 메모리 관리를 잘 정리한 블로그
 * [High Performance Computer Architecture @ udacity](https://www.udacity.com/course/high-performance-computer-architecture--ud007)
   * 체계적인 인강 그러나 virtual address to physical address translation 은 설명이 부족하다.
+* [Introduction to Operating Systems](https://classroom.udacity.com/courses/ud923)
+  * Process vs Thread 가 정말 좋았음
 * [Windows 구조와 원리](http://www.hanbit.co.kr/store/books/look.php?p_code=B6822670083)
   * 오래전에 출간되어 절판되었지만 한글로 된 책들중 최강이다.
 * [Write Great Code I](http://www.plantation-productions.com/Webster/www.writegreatcode.com/)
@@ -869,6 +871,8 @@ typedef struct _KTHREAD
 kernel level thread 는 kernel level 에서 scheduling 된다. 따라서 하나의 process 가 두개 이상의 kernel level thread 를 소유하고 있을 때 그 중 하나가 I/O block 되더라도 다른 thread 는 계속 실행할 수 있다. 또한 kernel 에서 직접 제공해주기 때문에 안전성과 기능의 다양성이 장점이다. 그러나 O/S 가 kernel level thread 를 context switching 하기 위해서는 user level 에서 kernel level 로 전환되야 하기 때문에 느리다. 
 
 user level thread 는 user level 에서 scheduling 된다. kernel 은 user level thread 를 포함한 process 단위로 scheduling 한다. kernel 은 user level thread 를 알 수 없다. 따라서 user level thread 중 하나가 I/O 블록이 되면 kernel 은 그 thread 를 소유한 process 의 상태를 running 에서 ready 로 바꾼다. user level thread 는 context switching 될 때 O/S 가 user level 에서 kernel level 로 전환할 필요가 없다. 따라서 user level thread 는 context switching 이 kernel level thread 보다 빠르다.
+
+multithreading model 은 user level thread 와 kernel level thread 의 mapping 방법에 따라 `1:1`, `1:N`, `N:M` 방법이 있다. c++ 의 pthread, JVM 은 `1:1` 이다??? goroutine 은 `N:M` 이다??? [](https://classroom.udacity.com/courses/ud923/lessons/3065538763/concepts/34341886380923)
 
 Linux kernel 은 2.6 이전에 process 단위로 scheduling 되었다. [참고](https://en.wikipedia.org/wiki/Native_POSIX_Thread_Library). pthread 는 NPTL (Native Posix Thread Library) 이다. 따라서 1:1 thread library 이고 `pthread_create` 을 통해서 kernel level thread 를 만들어 낼 수 있다.
 
