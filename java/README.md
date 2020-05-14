@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Basic Usages](#basic-usages)
   - [Compile, Execution](#compile-execution)
@@ -48,6 +49,11 @@
 # Abstract
 
 java 를 정리한다.
+
+# References
+
+* [Java magazine](https://blogs.oracle.com/javamagazine/issue-archives)
+  * [Java magazine - Reactive programming](file:///Users/davidsun/Documents/java-magazine-jan-feb-2018.pdf) 
 
 # Materials
 

@@ -774,6 +774,65 @@ A(implementation) -> B -> C -> D
 
 만약 `A` library 의 코드가 수정되어 rebuild 된다면 `implementation` 의 경우는 `A, B` 만 rebuild 된다. 그러나 `api` 의 경우는 `A, B, C, D` 모두 rebuild 된다.
 
+또한 `A` library 에서 `B` 를 `api` 로 dependency 설정하는 경우 `A` 를 사용하는 host application 에서 `B` library 를 이용할 수 있다. [참고](https://stackoverflow.com/questions/44413952/gradle-implementation-vs-api-configuration/44419574#44419574)
+
+예를 들어 다음과 같이 `InternalLibrary` library 와 `MyLibrary` library 가 있다고 하자. `MyLibrary` 는
+`InternalLibrary` 를 사용한다.
+
+```java
+    // 'InternalLibrary' module
+    public class InternalLibrary {
+        public static String giveMeAString(){
+            return "hello";
+        }
+    }
+```
+
+```java
+    // 'MyLibrary' module
+    public class MyLibrary {
+        public String myString(){
+            return InternalLibrary.giveMeAString();
+        }
+    }
+```
+
+그리고 `MyLibrary` library 의 build.gradle 이 다음과 같다.
+
+```gradle
+dependencies {
+    api project(':InternalLibrary')
+}
+```
+
+그리고 host application 의 build.gradle 은 다음과 같다.
+
+```gradle
+dependencies {
+    implementation project(':MyLibrary')
+}
+```
+
+이제 host application 에서 `InternalLibrary` 를 다음과 같이 사용할 수 있다.
+
+```java
+// Access 'MyLibrary' (granted)
+MyLibrary myLib = new MyLibrary();
+System.out.println(myLib.myString());
+
+// Can ALSO access the internal library too (and you shouldn't)
+System.out.println(InternalLibrary.giveMeAString());
+```
+
+그러나 `MyLibrary` 의 build.gradle 을 다음과 같이 수정하면 host application 에서 
+`InternalLibrary` 를 사용할 수 없다.
+
+```gradle
+dependencies {
+    implementation project(':InternalLibrary')
+}
+```
+
 ## How to debug gradle
 
 * [How to debug a Gradle build.gradle file (in a debugger, with breakpoints)?

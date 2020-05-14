@@ -29,7 +29,7 @@
 - [Page Management](#page-management)
 - [Processor Cache Management](#processor-cache-management)
 - [Windows Cache Management](#windows-cache-management)
-- [Userlevel and Kernellevel](#userlevel-and-kernellevel)
+- [User mode, Kernel mode](#user-mode-kernel-mode)
 - [Virtual Memory Control](#virtual-memory-control)
 - [Heap Control](#heap-control)
 - [MMF (Memory Mapped File)](#mmf-memory-mapped-file)
@@ -87,6 +87,9 @@
   * 메모리 관리를 잘 정리한 블로그
 * [High Performance Computer Architecture @ udacity](https://www.udacity.com/course/high-performance-computer-architecture--ud007)
   * 체계적인 인강 그러나 virtual address to physical address translation 은 설명이 부족하다.
+* [Introduction to Operating Systems](https://classroom.udacity.com/courses/ud923)
+  * Kernel. vs User-level threads 가 정말 좋았음
+  * [wiki](https://www.udacity.com/wiki/ud923)
 * [Windows 구조와 원리](http://www.hanbit.co.kr/store/books/look.php?p_code=B6822670083)
   * 오래전에 출간되어 절판되었지만 한글로 된 책들중 최강이다.
 * [Write Great Code I](http://www.plantation-productions.com/Webster/www.writegreatcode.com/)
@@ -861,6 +864,9 @@ typedef struct _KTHREAD
 # User Level Thread vs Kernel Level Thread
 
 * [11장. 커널 레벨 쓰레드와 유저 레벨 쓰레드 @ youtube](https://www.youtube.com/watch?v=sOt80Kw0Ols&list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc&index=30)
+* [Lesson 3: 11. OS Protection Boundary](https://classroom.udacity.com/courses/ud923/lessons/3014898657/concepts/30606385900923)
+* [Lesson 3: 12. OS System Call Flowchart](https://classroom.udacity.com/courses/ud923/lessons/3014898657/concepts/34183989490923)
+* [Lesson 3: 13. Crossing the OS Boundary](https://classroom.udacity.com/courses/ud923/lessons/3014898657/concepts/34183989500923)
 
 ----
 
@@ -869,6 +875,8 @@ typedef struct _KTHREAD
 kernel level thread 는 kernel level 에서 scheduling 된다. 따라서 하나의 process 가 두개 이상의 kernel level thread 를 소유하고 있을 때 그 중 하나가 I/O block 되더라도 다른 thread 는 계속 실행할 수 있다. 또한 kernel 에서 직접 제공해주기 때문에 안전성과 기능의 다양성이 장점이다. 그러나 O/S 가 kernel level thread 를 context switching 하기 위해서는 user level 에서 kernel level 로 전환되야 하기 때문에 느리다. 
 
 user level thread 는 user level 에서 scheduling 된다. kernel 은 user level thread 를 포함한 process 단위로 scheduling 한다. kernel 은 user level thread 를 알 수 없다. 따라서 user level thread 중 하나가 I/O 블록이 되면 kernel 은 그 thread 를 소유한 process 의 상태를 running 에서 ready 로 바꾼다. user level thread 는 context switching 될 때 O/S 가 user level 에서 kernel level 로 전환할 필요가 없다. 따라서 user level thread 는 context switching 이 kernel level thread 보다 빠르다.
+
+multithreading model 은 user level thread 와 kernel level thread 의 mapping 방법에 따라 `1:1`, `N:1`, `N:M` 방법이 있다. c++ 의 pthread, JVM 은 `1:1` 이다??? goroutine 은 `N:M` 이다??? [참고](https://classroom.udacity.com/courses/ud923/lessons/3065538763/concepts/34341886380923)
 
 Linux kernel 은 2.6 이전에 process 단위로 scheduling 되었다. [참고](https://en.wikipedia.org/wiki/Native_POSIX_Thread_Library). pthread 는 NPTL (Native Posix Thread Library) 이다. 따라서 1:1 thread library 이고 `pthread_create` 을 통해서 kernel level thread 를 만들어 낼 수 있다.
 
@@ -1579,9 +1587,18 @@ file 의 내용은
 
 ![](cache_system_cache.png)
 
-# Userlevel and Kernellevel
+# User mode, Kernel mode
 
-TODO
+* [커널 모드와 유저 모드](https://www.youtube.com/watch?v=4y5BgddMY7o&list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc&index=32&t=0s)
+* [User Mode vs Kernel Mode](https://www.tutorialspoint.com/User-Mode-vs-Kernel-Mode)
+
+----
+
+application 이 실행하면 32bit OS 는 virtual memory 4 GB 를 할당한다. 2 GB 는 user space 이고 2 GB 는 kernel space 이다. user space 에는 application 의 instruction 들이 저장된다. kernel space 에는 OS 의 instruction 들이 저장된다.  정확하게 얘기하면 mapping 정보가 저장된다. 여러 application 들은 각각의 virtual memeory 의 kenrnel space 에 OS instruction 들을 중복해서 들고 있는 것이 아니고 OS instruction 들을 가리키고 있는 것이다. virtual memeory 에는 instruction 만 저장되는 것은 아니다. data 를 포함한 여러가지가 저장된다.
+
+OS 가 특정 application 의 instruction 들을 하나씩 실행하는 경우를 생각해 보자. virtual memory 의 user space 의 instruction 들을 fetch, decode, execute 하다가 kernel space 의 instruction 들을 fetch, decode, execute 하고 다시 user space 의 instruction 들을 fetch, decode, execute 할 것이다. 이것을 OS 가 application 을 user mode, kernel mode, user mode 로 실행된다고 말한다. 이때 user space 의 instruction 에서 kernel space 를 접근할 수 있다면 얼마든지 system 을 엉망으로 만들 수 있다. 따라서 OS 는 user space 의 instruction 은 kernel space 를 접근할 수 없도록 통제해야한다. 그러나 kernel space 의 instruction 들은 user space 를 접근할 수 있다.
+
+또한 OS 가 user mode, kernel mode 를 전환할 때 register 들을 바꿔치는 것을 포함해서 CPU 에게 상당한 부담이다. 앞서 언급한 Threading model 에서 `1:1` 의 경우 thread 가 context switching 이 될때 마다 user mode, kernel mode 의 전환이 필요하기 때문에 CPU 에 부담이 된다. `N:1` 의 경우는 process 의 context switching 이 될때만 user mode, kernel mode 의 전환이 필요하다. 따라서 user level thread 가 얼마든지 context switching 이 되더라도 빠르다. 그러나 process 의 thread 중 하나라도 I/O block 이 되는 경우 process 가 통째로 block 된다.
 
 # Virtual Memory Control
 
@@ -1618,11 +1635,33 @@ Windows 는 `default heap` 을 제공한다. 그러나 별도의 heap 을 사용
 
 # MMF (Memory Mapped File)
 
-TODO
+Virtual memory 에 mapping 한 FILE 을 MMF (Memory Mapped File) 이라 한다.
+mapping 된 Virtual memory 에 write 하면 mapping 된 File 에 쓰기가 된다.
+
+아주 큰 파일의 내용을 sorting 한다고 해보자. 먼저 Memory 로 FILE 을 읽어 들이고
+sorting 한 다음 다시 FILE 에 써야 한다. 이때 FILE I/O 가 발생한다. 그러나
+MMF 를 사용하면 Virtual memory 의 내용을 sorting 하기만 하면 된다.
+
+Windows 에서 다음과 같은 순서대로 MMF 를 생성한다.
+
+```cpp
+// Create file
+HANDLE hFile = CreateFile(...);
+
+// Create mapped file object
+HANDLE hMapFile = CreateFileMapping(hFile, ...);
+
+// Map the file to virtual memory
+TCHAR* pWrite = (TCHAR*)MapViewOfFile(hMapFile, ...);
+``` 
 
 # DLL (Dynamic Link Library)
 
-TODO
+A.exe 와 B.exe 가 a.lib 을 static library link 를 했다면 A.exe 도 a.lib 을 가지고 있고 B.exe 도 a.lib 를 가지고 있다. A.exe 의 virtual memory 가 만들어지고 physical memory 에 paging in 될때 a.lib 역시 같이 포함된다. B.exe 의 virtual memory 가 만들어지고 physical memory 에 paging in 될 때 역시 a.lib 역시 같이 포함된다. 똑같은 a.lib 이지만 각각 paging in 된다. 비효율적이다.
+
+A.exe 와 B.exe 가 a.dll 을 dynamic libary link 를 했다면 A.exe 의 virtual memory 가 만들어지고 physcial memory 에 paging in 될때 a.dll 가 어딘가에 paging in 되고 mapping 정보가 A.exe 의 virtual memory 에 저장된다. 이때 B.exe 의 virtual memory 가 만들어지고 physical memory 에 paging in 될때 a.dll 은 이미 어딘가에 paging in 되어 있고 mapping 정보가 B.exe 의 virtual memory 에 저장된다. 
+
+A.exe 에서 B.exe 로 process context switching 이 발생해도 a.dll 은 physical memory 혹은 swap disk 에서 load 되어있고 unload 되지 않는다.
 
 # Execution file and Loader
 
