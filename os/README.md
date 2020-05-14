@@ -1631,7 +1631,25 @@ Windows 는 `default heap` 을 제공한다. 그러나 별도의 heap 을 사용
 
 # MMF (Memory Mapped File)
 
-TODO
+Virtual memory 에 mapping 한 FILE 을 MMF (Memory Mapped File) 이라 한다.
+mapping 된 Virtual memory 에 write 하면 mapping 된 File 에 쓰기가 된다.
+
+아주 큰 파일의 내용을 sorting 한다고 해보자. 먼저 Memory 로 FILE 을 읽어 들이고
+sorting 한 다음 다시 FILE 에 써야 한다. 이때 FILE I/O 가 발생한다. 그러나
+MMF 를 사용하면 Virtual memory 의 내용을 sorting 하기만 하면 된다.
+
+Windows 에서 다음과 같은 순서대로 MMF 를 생성한다.
+
+```cpp
+// Create file
+HANDLE hFile = CreateFile(...);
+
+// Create mapped file object
+HANDLE hMapFile = CreateFileMapping(hFile, ...);
+
+// Map the file to virtual memory
+TCHAR* pWrite = (TCHAR*)MapViewOfFile(hMapFile, ...);
+``` 
 
 # DLL (Dynamic Link Library)
 
