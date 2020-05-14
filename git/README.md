@@ -2,7 +2,7 @@
 - [Git Overview](#git-overview)
 - [Git 설정](#git-%ec%84%a4%ec%a0%95)
 - [Git Basic](#git-basic)
-- [.gitignore](#gitignore)
+- [`.gitignore`](#gitignore)
 - [Git log](#git-log)
 - [Git edit commit](#git-edit-commit)
 - [Git revert](#git-revert)
@@ -29,6 +29,7 @@
   - [git diff output](#git-diff-output)
   - [git diff](#git-diff)
   - [git blame](#git-blame)
+  - [git reflog expire --expire=now --all](#git-reflog-expire---expirenow---all)
 
 # Materials
 
@@ -2108,4 +2109,12 @@ git diff <a>..<b>
 
 ```bash
 git blame a.py
+```
+
+## 접근할 수 없는 커밋제거하기
+
+* [접근할수없는 커밋제거 및 용량확보](https://jc01rho.tistory.com/entry/git-%EC%A0%91%EA%B7%BC%ED%95%A0%EC%88%98-%EC%97%86%EB%8A%94-%EC%BB%A4%EB%B0%8B-%EC%A0%9C%EA%B1%B0%EB%A1%9C-%EC%9A%A9%EB%9F%89-%ED%99%95%EB%B3%B4%ED%95%98%EA%B8%B0)
+
+```console
+$ git reflog expire --expire=now --all && git gc --prune=now --aggressive
 ```

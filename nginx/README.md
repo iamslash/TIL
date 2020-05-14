@@ -31,6 +31,7 @@
   - [Resolver](#resolver)
 - [Advanced](#advanced)
   - [Cache setting](#cache-setting)
+  - [How to log real-ip](#how-to-log-real-ip)
 
 ----
 
@@ -735,4 +736,9 @@ location @beat-api {
 ------
 
 예를 들어 S3 에 static contents 를 저장하고 nginx 로 caching 할 수 있다.
+
+## How to log real-ip
+
+* [Proxy(프락시) 환경에서 client IP 를 얻기 위한 X-Forwarded-For(XFF) http header](https://www.lesstif.com/pages/viewpage.action?pageId=20775886)
+* [How to log real user’s IP address with Nginx in log files](https://www.cyberciti.biz/faq/linux-unix-nginx-access-file-log-real-ip-address-of-visitor/)
 
