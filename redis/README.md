@@ -1,3 +1,28 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Features](#features)
+- [Install with docker](#install-with-docker)
+- [Sentinel](#sentinel)
+- [Cluster](#cluster)
+- [Commands](#commands)
+  - [Client/Server](#clientserver)
+  - [Database](#database)
+  - [Scripts](#scripts)
+  - [HyperL­ogLogs](#hyperl%c2%adoglogs)
+  - [Strings](#strings)
+  - [Lists](#lists)
+  - [Sets](#sets)
+  - [Sorted Sets](#sorted-sets)
+  - [Hashes](#hashes)
+  - [Common](#common)
+  - [Geo](#geo)
+  - [Pub/Sub](#pubsub)
+  - [Streams](#streams)
+- [Advanced](#advanced)
+  - [How to debug](#how-to-debug)
+
+----
+
 # Abstract
 
 redis 에 대해 정리한다.
@@ -188,3 +213,10 @@ Pub 으로 message 를 보내고 Sub 으로 message 를 받는다.
 ## Streams
 
 로그 데이터를 처리하기 위해서 5.0 에 도입된 데이터 타입이다.
+
+# Advanced
+
+## How to debug
+
+* [redis debugging in vscode](https://github.com/wenfh2020/youtobe/blob/master/redis-debug.md)
+
