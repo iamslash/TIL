@@ -1653,7 +1653,9 @@ TCHAR* pWrite = (TCHAR*)MapViewOfFile(hMapFile, ...);
 
 # DLL (Dynamic Link Library)
 
-TODO
+A.exe 와 B.exe 가 a.lib 을 static library link 를 했다면 A.exe 도 a.lib 을 가지고 있고 B.exe 도 a.lib 를 가지고 있다. A.exe 의 virtual memory 가 만들어질 때 a.lib 역시 같이 포함된다. B.exe 의 virtual memory 가 만들어질 때 a.lib 역시 같이 포함된다. A.exe 에서 B.exe 로 process context switching 이 일어나면 a.lib 역시 같은 내용이지만 교체된다.
+
+A.exe 와 B.exe 가 a.dll 을 dynamic libary link 를 했다면 A.exe 의 virtual memory 가 만들어질 때 a.dll 가 mapping 된다. B.exe 로 process context switching 이 일어나면 a.dll 는 그대로 있고 B.exe 만 교체된다. 
 
 # Execution file and Loader
 
