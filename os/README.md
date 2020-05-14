@@ -89,6 +89,7 @@
   * 체계적인 인강 그러나 virtual address to physical address translation 은 설명이 부족하다.
 * [Introduction to Operating Systems](https://classroom.udacity.com/courses/ud923)
   * Kernel. vs User-level threads 가 정말 좋았음
+  * [wiki](https://www.udacity.com/wiki/ud923)
 * [Windows 구조와 원리](http://www.hanbit.co.kr/store/books/look.php?p_code=B6822670083)
   * 오래전에 출간되어 절판되었지만 한글로 된 책들중 최강이다.
 * [Write Great Code I](http://www.plantation-productions.com/Webster/www.writegreatcode.com/)
@@ -863,6 +864,9 @@ typedef struct _KTHREAD
 # User Level Thread vs Kernel Level Thread
 
 * [11장. 커널 레벨 쓰레드와 유저 레벨 쓰레드 @ youtube](https://www.youtube.com/watch?v=sOt80Kw0Ols&list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc&index=30)
+* [Lesson 3: 11. OS Protection Boundary](https://classroom.udacity.com/courses/ud923/lessons/3014898657/concepts/30606385900923)
+* [Lesson 3: 12. OS System Call Flowchart](https://classroom.udacity.com/courses/ud923/lessons/3014898657/concepts/34183989490923)
+* [Lesson 3: 13. Crossing the OS Boundary](https://classroom.udacity.com/courses/ud923/lessons/3014898657/concepts/34183989500923)
 
 ----
 
@@ -1653,9 +1657,11 @@ TCHAR* pWrite = (TCHAR*)MapViewOfFile(hMapFile, ...);
 
 # DLL (Dynamic Link Library)
 
-A.exe 와 B.exe 가 a.lib 을 static library link 를 했다면 A.exe 도 a.lib 을 가지고 있고 B.exe 도 a.lib 를 가지고 있다. A.exe 의 virtual memory 가 만들어질 때 a.lib 역시 같이 포함된다. B.exe 의 virtual memory 가 만들어질 때 a.lib 역시 같이 포함된다. A.exe 에서 B.exe 로 process context switching 이 일어나면 a.lib 역시 같은 내용이지만 교체된다.
+A.exe 와 B.exe 가 a.lib 을 static library link 를 했다면 A.exe 도 a.lib 을 가지고 있고 B.exe 도 a.lib 를 가지고 있다. A.exe 의 virtual memory 가 만들어지고 physical memory 에 paging in 될때 a.lib 역시 같이 포함된다. B.exe 의 virtual memory 가 만들어지고 physical memory 에 paging in 될 때 역시 a.lib 역시 같이 포함된다. 똑같은 a.lib 이지만 각각 paging in 된다. 비효율적이다.
 
-A.exe 와 B.exe 가 a.dll 을 dynamic libary link 를 했다면 A.exe 의 virtual memory 가 만들어질 때 a.dll 가 mapping 된다. B.exe 로 process context switching 이 일어나면 a.dll 는 그대로 있고 B.exe 만 교체된다. 
+A.exe 와 B.exe 가 a.dll 을 dynamic libary link 를 했다면 A.exe 의 virtual memory 가 만들어지고 physcial memory 에 paging in 될때 a.dll 가 어딘가에 paging in 되고 mapping 정보가 A.exe 의 virtual memory 에 저장된다. 이때 B.exe 의 virtual memory 가 만들어지고 physical memory 에 paging in 될때 a.dll 은 이미 어딘가에 paging in 되어 있고 mapping 정보가 B.exe 의 virtual memory 에 저장된다. 
+
+A.exe 에서 B.exe 로 process context switching 이 발생해도 a.dll 은 physical memory 혹은 swap disk 에서 load 되어있고 unload 되지 않는다.
 
 # Execution file and Loader
 
