@@ -136,14 +136,16 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 
 # Spring Batch
 
-batch job 을 spring library 를 이용해서 만들어 보자.
-
 * [Creating a Batch Service](https://spring.io/guides/gs/batch-processing/)
   * [src](https://github.com/spring-guides/gs-batch-processing)
 * [1. Spring Batch 가이드 - 배치 어플리케이션이란?](https://jojoldu.tistory.com/324?category=902551)
   * [2. Spring Batch 가이드 - Batch Job 실행해보기](https://jojoldu.tistory.com/325)
   * [src](https://github.com/jojoldu/spring-batch-in-action)
 * [Spring Batch](https://spring.io/projects/spring-batch)
+
+----
+
+[Spring Batch](SpringBatch.md)
 
 # Tips
 
