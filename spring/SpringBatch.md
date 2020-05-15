@@ -5,6 +5,9 @@
 	- [Simple Spring Batch with mysql](#simple-spring-batch-with-mysql)
 	- [Spring Batch Meta Data](#spring-batch-meta-data)
 	- [Run specific Job, next, on, from, decide](#run-specific-job-next-on-from-decide)
+	- [JobScope, StepScope](#jobscope-stepscope)
+	- [Program Arguments vs Job Parameters](#program-arguments-vs-job-parameters)
+	- [ChunkOrientedTasklet](#chunkorientedtasklet)
 
 ----
 
@@ -549,7 +552,7 @@ step1 이 성공하면 다음과 같은 flow 를 갖는다.
 step1 -> step2 -> step3 -> end
 ```
 
-이번에는 decider 를 이용하여 flow control 해 보자. 다음과 같이 `` 를 작성한다.
+이번에는 decider 를 이용하여 flow control 해 보자. 다음과 같이 `com.iamslash.exbatch.deciderjob.DeciderJobConfiguration` 를 작성한다.
 
 ```java
 
@@ -626,5 +629,66 @@ public class DeciderJobConfiguration {
       }
     }
   }
+}
+```
+
+## JobScope, StepScope
+
+`@JobScope` 이 사용된 Bean 은 Job 이 실행될 때 Bean 으로 만들어 진다. `@JobScope` 은 `Step` method 에서 사용할 수 있다.
+
+`@StepScope` 이 사용된 Bean 은 Step 이 실행될 때 Bean 으로 만들어 진다. `@StepScope` 은 `Tasklet, ItemReader, ItemWriter, ItemProcessor` method 에서 사용할 수 있다.
+
+다음과 같이 `SimpleJobConfiguration` 를 살펴보자. `return obBuilderFactory.get(JOB_NAME).start(simpleStep1(null)).build();` 에서 null 을 전달하고 있다. `simpleStep1` 의 `requestDate` 은 Job 이 실행될 때 spEL 을 통해 binding 된다.
+
+
+```java
+@Slf4j
+@RequiredArgsConstructor
+@Configuration
+public class SimpleJobConfiguration {
+  public static final String JOB_NAME = "simpleJob";
+  private final JobBuilderFactory jobBuilderFactory;
+  private final StepBuilderFactory stepBuilderFactory;
+
+  @Bean
+  public Job simpleJob() {
+    return jobBuilderFactory.get(JOB_NAME)
+        .start(simpleStep1(null))
+        .build();
+  }
+
+  @Bean
+  @JobScope
+  public Step simpleStep1(@Value("#{jobParameters[requestDate]}") String requestDate) {
+    return stepBuilderFactory.get("simpleStep1")
+        .tasklet((contribution, chunkContext) -> {
+          log.info(">>>>> This is simpleStep1");
+          return RepeatStatus.FINISHED;
+        })
+        .build();
+  }
+}
+```
+
+## Program Arguments vs Job Parameters
+
+다음과 같은 이유때문에 Job Paramter 를 사용해야 좋다.
+
+* Job Parameters 를 사용해야 Parameter 가 달라질 때 Job 실행이 되도록 할 수 있다.
+* `@JobScope, @StepScope` 을 사용하여 Late Binding 을 할 수 있다.
+
+## ChunkOrientedTasklet
+
+Chunk 는 덩어리이다. ChunkOrientedTasklet 은 Chunk 단위로 transaction 처리를 수행한다. Reader, Processor 에서는 1 건씩 처리하고 하나의 Chunk 가 만들어지면 Write 를 수행한다. 이것을 code 로 표현하면 다음과 같다.
+
+```java
+for(int i=0; i<totalSize; i+=chunkSize) {
+    List items = new Arraylist();
+    for(int j = 0; j < chunkSize; j++){
+        Object item = itemReader.read()
+        Object processedItem = itemProcessor.process(item);
+        items.add(processedItem);
+    }
+    itemWriter.write(items);
 }
 ```
