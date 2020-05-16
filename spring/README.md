@@ -11,13 +11,16 @@
 - [Spring Data JPA](#spring-data-jpa)
 - [Spring REST API](#spring-rest-api)
 - [Spring Security](#spring-security)
+- [Spring Example Application](#spring-example-application)
 - [Spring Batch](#spring-batch)
 - [Tips](#tips)
   - [Active profile](#active-profile)
   - [Test Active profile](#test-active-profile)
-  - [ConfigurationProperties](#configurationproperties)
+  - [@ConfigurationProperties](#configurationproperties)
+  - [Test of `@EnableConfigurationProperties`](#test-of-enableconfigurationproperties)
   - [Http requests logging](#http-requests-logging)
   - [Http responses logging](#http-responses-logging)
+  - [Slf4J logging](#slf4j-logging)
   - [Sprint Boot Test with JUnit](#sprint-boot-test-with-junit)
   - [Spring Boot Test with Spock](#spring-boot-test-with-spock)
   - [Spring Boot Exception Handling](#spring-boot-exception-handling)
@@ -29,7 +32,7 @@
 
 # Abstract
 
-- spring framework에 대해 적는다.
+- spring framework 에 대해 정리한다.
 
 # Materials
 
@@ -134,6 +137,10 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 
 [Spring Security](SpringSecurity.md)
 
+# Spring Example Application
+
+[Spring JPA Example](SpringExampleApplication.md)
+
 # Spring Batch
 
 * [Creating a Batch Service](https://spring.io/guides/gs/batch-processing/)
@@ -173,24 +180,46 @@ public class PostControllerTest {
 }
 ```
 
-## ConfigurationProperties
+## @ConfigurationProperties
 
-* [스프링 부트 커스텀 설정 프로퍼티 클래스 사용하기](https://javacan.tistory.com/entry/springboot-configuration-properties-class)
+* [exconfig src @ spring-examples](https://github.com/iamslash/spring-examples/tree/master/exconfig)
+* [Guide to @ConfigurationProperties in Spring Boot](https://www.baeldung.com/configuration-properties-in-spring-boot)
+  * [src](https://github.com/eugenp/tutorials/tree/master/spring-boot-modules/spring-boot-properties)
+* [Testing Spring Boot @ConfigurationProperties @ baeldung](https://www.baeldung.com/spring-boot-testing-configurationproperties)
+  * [src](https://github.com/eugenp/tutorials/tree/master/spring-boot-modules/spring-boot-testing)
+* [23. Externalized Configuration @ spring-boot 1.2.2](https://docs.spring.io/spring-boot/docs/1.2.2.RELEASE/reference/html/boot-features-external-config.html)
 
-`application.properties` 에 설정 값을 저장하고 java 에서 읽어 들이자.
+----
+
+This is Externalized Configuration order.
+
+* Command line arguments.
+* JNDI attributes from java:comp/env.
+* Java System properties (System.getProperties()).
+* OS environment variables.
+* A RandomValuePropertySource that only has properties in random.*.
+* Profile-specific application properties outside of your packaged jar (application-{profile}.properties and YAML variants)
+* Profile-specific application properties packaged inside your jar (application-{profile}.properties and YAML variants)
+* Application properties outside of your packaged jar (application.properties and YAML variants).
+* Application properties packaged inside your jar (application.properties and YAML variants).
+* @PropertySource annotations on your @Configuration classes.
+* Default properties (specified using SpringApplication.setDefaultProperties).
+
+Create a `src/main/resources/application-develop.properties`
 
 ```
 iamslash.authcookie: HelloWorld
 iamslash.authcookieSalt: HelloWorld
 ```
 
-다음은 `application.properties` 의 Mapping class 이다.
+Create a mapping class `src/main/java/com/iamslash/exconfig/config/FooSetting.java`
 
 ```java
 @ConfigurationProperties(prefix = "iamslash")
-public class FooSetting {
+public class AuthConfigProperties {
   private String authcookie;
   private String authcookieSalt;
+
   public String getAuthcookie() {
     return authcookie;
   }
@@ -206,28 +235,63 @@ public class FooSetting {
 }
 ```
 
-`FooSetting` 을 `@EnableConfigurationProperties` 을 사용하여 Bean 으로 등록하고 값을 복사해 온다.
+Add `@EnableConfiguration` to `src/main/java/com/iamslash/exconfig/ExApplication`.
 
 ```java
 @SpringBootApplication
-@EnableConfigurationProperties(FooSetting.class)
+@EnableConfigurationProperties(AuthConfigProperties.class)
 public class Application { ... }
 ```
 
-또는 `FooSetting` 에 `@Configuration` 을 추가하면 Bean 으로 등록된다. 그리고 다음과 같이 `@AutoWired` 을 사용하여 DI 할 수 있다.
+And Use `AuthConfigProperties` with `@Autowired`.
 
 ```java
-@Configuration
-public class SecurityConfig {
-  @Autowired
-  private FooSetting fooSetting;
-  @Bean
-  public Encryptor encryptor() {
-    Encryptor encryptor = new Encryptor();
-    encryptor.setSalt(fooSetting.getAuthcookieSalt());
-    ...
-  }
+@SpringBootApplication
+@EnableConfigurationProperties(AuthConfigProperties.class)
+public class ExconfigApplication {
+
+	@Autowired
+	AuthConfigProperties authConfigProperties;
+
+	public static void main(String[] args) {
+		SpringApplication.run(ExconfigApplication.class, args);
+	}
+
+	@PostConstruct
+	public void print() {
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		System.out.println("iamslash.authcookie: " + authConfigProperties.getAuthcookie());
+		System.out.println("iamslash.authcookiesalt: " + authConfigProperties.getAuthcookieSalt());
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+	}
+
+}
 ```
+
+
+## Test of `@EnableConfigurationProperties`
+
+Add `src/test/java/com.iamslash.exconfig.config.AuthConfigPropertiesTest.java`
+
+```java
+@ExtendWith(SpringExtension.class)
+@EnableConfigurationProperties(value=AuthConfigProperties.class)
+@TestPropertySource("classpath:application-develop.properties")
+class AuthConfigPropertiesTest {
+
+  @Autowired
+  private AuthConfigProperties authConfigProperties;
+
+  @Test
+  void getAuthcookie() {
+    assertEquals("HelloWorld", authConfigProperties.getAuthcookie());
+  }
+}
+```
+
+* @ExtendWith – integrates Spring's TestContext framework with JUnit5
+* @EnableConfigurationProperties – enables support for @ConfigurationProperties beans (in this case, the AuthConfigProperties bean)
+* @TestPropertySource – specifies a testing file that overrides the default application.properties file
 
 ## Http requests logging
 
@@ -279,6 +343,48 @@ logging:
 ## Http responses logging
 
 * [Logging Spring WebClient Calls](https://www.baeldung.com/spring-log-webclient-calls)
+
+## Slf4J logging
+
+`@Slf4J` is defined in lombok. Update build.gradle dependencies.
+
+```gradle
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-logging'
+	implementation 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+}
+```
+
+Add `@Slf4J` on classes.
+
+```java
+
+@Slf4j
+@SpringBootApplication
+@EnableConfigurationProperties(AuthConfigProperties.class)
+public class ExconfigApplication {
+
+//	private static final Logger log = LoggerFactory.getLogger(ExconfigApplication.class);
+
+	@Autowired
+	AuthConfigProperties authConfigProperties;
+
+	public static void main(String[] args) {
+		SpringApplication.run(ExconfigApplication.class, args);
+	}
+
+	@PostConstruct
+	public void print() {
+		log.info("");
+		log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		log.info("iamslash.authcookie: " + authConfigProperties.getAuthcookie());
+		log.info("iamslash.authcookiesalt: " + authConfigProperties.getAuthcookieSalt());
+		log.info("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+	}
+
+}
+```
 
 ## Sprint Boot Test with JUnit
 
