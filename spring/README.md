@@ -17,7 +17,7 @@
   - [Active profile](#active-profile)
   - [Test Active profile](#test-active-profile)
   - [@ConfigurationProperties](#configurationproperties)
-  - [Test of `@EnableConfigurationProperties`](#test-of-enableconfigurationproperties)
+  - [Test of `@ConfigurationProperties`](#test-of-configurationproperties)
   - [Http requests logging](#http-requests-logging)
   - [Http responses logging](#http-responses-logging)
   - [Slf4J logging](#slf4j-logging)
@@ -160,6 +160,8 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 
 * [spring profile 을 사용하여 환경에 맞게 deploy 하기](https://www.lesstif.com/pages/viewpage.action?pageId=18220309)
 
+----
+
 Spring application 을 시작할 때 JVM option 으로 profile 을 선택할 수 있다. 두개 이상을 선택해도 됨.
 
 ```bash
@@ -169,7 +171,7 @@ Spring application 을 시작할 때 JVM option 으로 profile 을 선택할 수
 
 ## Test Active profile
 
-test class 를 작성할 때 `application.yaml` 대신 `application-test.yaml` 을 사용하고 싶다면 다음과 같이 `@ActiveProfiles("test")` 를 사용한다.
+test class 를 작성할 때 `application.yml` 대신 `application-test.yml` 을 사용하고 싶다면 다음과 같이 `@ActiveProfiles("test")` 를 사용한다.
 
 ```java
 @RunWith(SpringRunner.class)
@@ -182,7 +184,7 @@ public class PostControllerTest {
 
 ## @ConfigurationProperties
 
-* [exconfig src @ spring-examples](https://github.com/iamslash/spring-examples/tree/master/exconfig)
+* [spring-examples/exconfigproperties](https://github.com/iamslash/spring-examples/tree/master/exconfig)
 * [Guide to @ConfigurationProperties in Spring Boot](https://www.baeldung.com/configuration-properties-in-spring-boot)
   * [src](https://github.com/eugenp/tutorials/tree/master/spring-boot-modules/spring-boot-properties)
 * [Testing Spring Boot @ConfigurationProperties @ baeldung](https://www.baeldung.com/spring-boot-testing-configurationproperties)
@@ -268,8 +270,7 @@ public class ExconfigApplication {
 }
 ```
 
-
-## Test of `@EnableConfigurationProperties`
+## Test of `@ConfigurationProperties`
 
 Add `src/test/java/com.iamslash.exconfig.config.AuthConfigPropertiesTest.java`
 
@@ -394,14 +395,14 @@ public class ExconfigApplication {
 ----
 
 * Spring Boot Test
-* @WebMvcTest
-* @DataJpaTest
-* @RestClientTest
-* @JsonTest
+* `@WebMvcTest`
+* `@DataJpaTest`
+* `@RestClientTest`
+* `@JsonTest`
 
 * Dependencies of `build.gradle` 
 
-  ```groovy
+  ```gradle
   dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -411,12 +412,12 @@ public class ExconfigApplication {
   ```
 
 * Test Class
-  * @SpringBootTest 의 WebEnvironment 는 기본값이 SpringBootTest.WebEnvironment.MOCK 이다.
-  * Mock Dispatcher 가 실행되어 Controller 를 test 할 수 있다.
+  * `@SpringBootTest` 의 `WebEnvironment` 는 기본값이 `SpringBootTest.WebEnvironment.MOCK` 이다.
+  * `Mock Dispatcher` 가 실행되어 Controller 를 test 할 수 있다.
 
   ```java
   @RunWith(SpringRunner.class)
-  @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+  @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.MOCK)
   @AutoConfigureMockMvc
   public class DemoTest {
     @Autowired
@@ -436,10 +437,12 @@ public class ExconfigApplication {
 
   ```java
   @RunWith(SpringRunner.class)
-  @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+  @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
   public class DemoTest {
+
     @Autowired
     TestRestTemplate testRestTemplate;
+    
     @Test
     public void hello() throws Exception {
       String result = testRestTemplate.getForObject("/hello", String.class);
@@ -452,12 +455,15 @@ public class ExconfigApplication {
   
   ```java
   @RunWith(SpringRunner.class)
-  @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+  @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
   public class DemoTest {
+
     @Autowired
     TestRestTemplate testRestTemplate;
+    
     @MockBean
     HelloService mockHelloService;
+    
     @Test
     public void hello() throws Exception {
       when(mockHelloService.getName()).thenReturn("hello");
@@ -472,7 +478,7 @@ public class ExconfigApplication {
 
 * WebTestClient 를 사용하면 Asynchronous http client 를 사용할 수 있다.
 
-  ```groovy
+  ```gradle
   dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-webflux'
@@ -484,12 +490,15 @@ public class ExconfigApplication {
 
   ```java
   @RunWith(SpringRunner.class)
-  @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+  @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT)
   public class DemoTest {
+
     @Autowired
     WebTestClient webTestClient;
+    
     @MockBean
     HelloService mockHelloService;
+    
     @Test
     public void hello() throws Exception {
       when(mockHelloService.getName()).thenReturn("hello");
@@ -522,7 +531,7 @@ public class ExconfigApplication {
     DemoService demoService;
 
     @Autowired
-    MockMvc mockMbc
+    MockMvc mockMvc
 
     @Test
     public void hello() throws Exception {
@@ -584,7 +593,7 @@ public class ExconfigApplication {
 ## Spring Boot Test with Spock
 
 * [Spock Primer](http://spockframework.org/spock/docs/1.0/spock_primer.html)
-* [exspock](https://github.com/iamslash/spring-examples/tree/master/exspock)
+* [spring-examples/exspock](https://github.com/iamslash/spring-examples/tree/master/exspock)
 * [SpringBoot 환경에서 Spock 사용하기](https://jojoldu.tistory.com/229)
   * [src](https://github.com/jojoldu/blog-code/tree/master/spring-boot-spock)
 * [Testing with Spring and Spock](https://www.baeldung.com/spring-spock-testing)
