@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basic Usages](#basic-usages)
+  - [abs vs fabs](#abs-vs-fabs)
   - [virtual function](#virtual-function)
   - [vector vs deque vs list](#vector-vs-deque-vs-list)
   - [vector](#vector)
@@ -56,6 +57,10 @@ c++에 대해 정리한다.
 - [c++11FAQ](http://pl.pusan.ac.kr/~woogyun/cpp11/C++11FAQ_ko.html)
 
 # Basic Usages
+
+## abs vs fabs
+
+`abs(int n)` 는 `cstdlib` 에 정의되어 있고 `fabs(double n)` 는 `cmath` 에 정의되어 있다.
 
 ## virtual function
 
