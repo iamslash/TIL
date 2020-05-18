@@ -59,6 +59,10 @@ java 를 정리한다.
 
 * [더 자바, 코드를 조작하는 다양한 방법 by 백기선](https://www.inflearn.com/course/the-java-code-manipulation/dashboard)
 * [더 자바, 애플리케이션을 테스트하는 다양한 방법 by 백기선](https://www.inflearn.com/course/the-java-application-test)
+* [Parallel, Concurrent, and Distributed Programming in Java Specialization @ coursera](https://www.coursera.org/specializations/pcdp)
+  * [Parallel Programming in Java](https://www.coursera.org/learn/parallel-programming-in-java)
+  * [Concurrent Programming in Java](https://www.coursera.org/learn/concurrent-programming-in-java#syllabus)
+  * [Distributed Programming in Java](https://www.coursera.org/learn/distributed-programming-in-java)
 * [자바 프로그래밍 언어 코딩 규칙](https://myeonguni.tistory.com/1596)
 * [Advanced Java](http://enos.itcollege.ee/~jpoial/allalaadimised/reading/Advanced-java.pdf)
   * java 의 고급내용
