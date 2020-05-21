@@ -159,26 +159,36 @@ This is about spring-boot-2.2.6
 
 
 ```java
-		private void loadForFileExtension(PropertySourceLoader loader, String prefix, String fileExtension,
-				Profile profile, DocumentFilterFactory filterFactory, DocumentConsumer consumer) {
-			DocumentFilter defaultFilter = filterFactory.getDocumentFilter(null);
-			DocumentFilter profileFilter = filterFactory.getDocumentFilter(profile);
-			if (profile != null) {
-				// Try profile-specific file & profile section in profile file (gh-340)
-				String profileSpecificFile = prefix + "-" + profile + fileExtension;
-				load(loader, profileSpecificFile, profile, defaultFilter, consumer);
-				load(loader, profileSpecificFile, profile, profileFilter, consumer);
-				// Try profile specific sections in files we've already processed
-				for (Profile processedProfile : this.processedProfiles) {
-					if (processedProfile != null) {
-						String previouslyLoaded = prefix + "-" + processedProfile + fileExtension;
-						load(loader, previouslyLoaded, profile, profileFilter, consumer);
-					}
+
+public class ConfigFileApplicationListener implements EnvironmentPostProcessor, SmartApplicationListener, Ordered {
+
+	private static final String DEFAULT_PROPERTIES = "defaultProperties";
+
+	// Note the order is from least to most specific (last one wins)
+	private static final String DEFAULT_SEARCH_LOCATIONS = "classpath:/,classpath:/config/,file:./,file:./config/";
+
+	private static final String DEFAULT_NAMES = "application";
+...
+	private void loadForFileExtension(PropertySourceLoader loader, String prefix, String fileExtension,
+			Profile profile, DocumentFilterFactory filterFactory, DocumentConsumer consumer) {
+		DocumentFilter defaultFilter = filterFactory.getDocumentFilter(null);
+		DocumentFilter profileFilter = filterFactory.getDocumentFilter(profile);
+		if (profile != null) {
+			// Try profile-specific file & profile section in profile file (gh-340)
+			String profileSpecificFile = prefix + "-" + profile + fileExtension;
+			load(loader, profileSpecificFile, profile, defaultFilter, consumer);
+			load(loader, profileSpecificFile, profile, profileFilter, consumer);
+			// Try profile specific sections in files we've already processed
+			for (Profile processedProfile : this.processedProfiles) {
+				if (processedProfile != null) {
+					String previouslyLoaded = prefix + "-" + processedProfile + fileExtension;
+					load(loader, previouslyLoaded, profile, profileFilter, consumer);
 				}
 			}
-			// Also try the profile-specific section (if any) of the normal file
-			load(loader, prefix + fileExtension, profile, profileFilter, consumer);
 		}
+		// Also try the profile-specific section (if any) of the normal file
+		load(loader, prefix + fileExtension, profile, profileFilter, consumer);
+	}
 ```
 
 * org/springframework/boot/context/config/ConfigFileApplicationListener::load
