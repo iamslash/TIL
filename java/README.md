@@ -1158,15 +1158,18 @@ void persist(final T object) {
 }
 ```
 
-다음은 method 의 argument 에 generic type 을 사용한 예이다.
+다음은 method 의 argument 에 wildcard declaration 과 함께 generic type 을 사용한 예이다.
 
 ```java
+// objects's type is a Collection<T> and T is Serializable or T extends Serializable.
 public void store(final Collection<? extends Serializable> objects) {
    // Some implementation here
 }
+// objects's type is a Collection<T> and T is anything.
 public void store( final Collection<?> objects) {
    // Some implementation here
 }
+// objects's type is a Collection<T> and T is Integer or Integer extends T.
 public void interate( final Collection<? super Integer> objects) {
    // Some implementation here
 }
@@ -1182,6 +1185,30 @@ public class Collections {
   } 
 }
 ```
+
+예를 들어 다음과 같이 Zoo 및 Zoo 의 Actual Type 으로 사용할 수 있는 class 들의 diagram 이 있다고 하자. [[Java] 제네릭(generic) - 제한된 타입 파라미터, 와일드카드 타입](https://palpit.tistory.com/668)
+
+```java
+public class Zoo<T> {
+  private String name;
+  private T[] animals;
+  ...
+}
+```
+
+```
+        Animal
+          |
+        ------
+       |      |
+    Predator Herbivore
+              |
+             Rabbit
+```
+
+* `Zoo<?>` 는 Animal, Predator, Herbivore, Rabbit, Dog 이 가능하다. 아무거나 가능하다. 
+* `Zoo<? extends Herbivore>` 는 Herbivore, Rabbit 만 가능하다.
+* `Zoo<? super Predator` 는 Predator, Animal 만 가능하다.
 
 ## Concurrency
 
