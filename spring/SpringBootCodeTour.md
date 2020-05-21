@@ -6,7 +6,7 @@
 - [How to register beans](#how-to-register-beans)
 - [How to read spring.factories](#how-to-read-springfactories)
 - [How to autoconfigure works](#how-to-autoconfigure-works)
-- [How to read 'bootstrap.yml'](#how-to-read-bootstrapyml)
+- [How to read bootstrap.yml](#how-to-read-bootstrapyml)
 
 ----
 
@@ -156,7 +156,6 @@ This is about spring-boot-2.2.6
 ```
 
 * org/springframework/boot/context/config/ConfigFileApplicationListener::loadForFileExtension
-
 
 ```java
 
@@ -624,6 +623,165 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 ```java
 ```
 
-# How to read 'bootstrap.yml'
+# How to read bootstrap.yml
 
+* Should have spring-cloud-commons-2.2.2.RELEASE.jar
+
+* org.springframework.cloud.bootstrap.BootstrapApplicationListener
+
+```java
+public class BootstrapApplicationListener
+		implements ApplicationListener<ApplicationEnvironmentPreparedEvent>, Ordered {
+
+	/**
+	 * Property source name for bootstrap.
+	 */
+	public static final String BOOTSTRAP_PROPERTY_SOURCE_NAME = "bootstrap";
+
+	/**
+	 * The default order for this listener.
+	 */
+	public static final int DEFAULT_ORDER = Ordered.HIGHEST_PRECEDENCE + 5;
+
+	/**
+	 * The name of the default properties.
+	 */
+	public static final String DEFAULT_PROPERTIES = "springCloudDefaultProperties";
+
+	private int order = DEFAULT_ORDER;
+```
+
+* org.springframework.boot.SpringApplication::run
+
+```java
+	public ConfigurableApplicationContext run(String... args) {
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		ConfigurableApplicationContext context = null;
+		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
+		configureHeadlessProperty();
+		SpringApplicationRunListeners listeners = getRunListeners(args);
+		listeners.starting();
+		try {
+			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
+```
+
+* org.springframework.cloud.bootstrap.BootstrapApplicationListener::onApplicationEvent
+
+```java
+	@Override
+	public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
+		ConfigurableEnvironment environment = event.getEnvironment();
+		if (!environment.getProperty("spring.cloud.bootstrap.enabled", Boolean.class,
+				true)) {
+			return;
+		}
+		// don't listen to events in a bootstrap context
+		if (environment.getPropertySources().contains(BOOTSTRAP_PROPERTY_SOURCE_NAME)) {
+			return;
+		}
+		ConfigurableApplicationContext context = null;
+		String configName = environment
+				.resolvePlaceholders("${spring.cloud.bootstrap.name:bootstrap}");
+		for (ApplicationContextInitializer<?> initializer : event.getSpringApplication()
+				.getInitializers()) {
+			if (initializer instanceof ParentContextApplicationContextInitializer) {
+				context = findBootstrapContext(
+						(ParentContextApplicationContextInitializer) initializer,
+						configName);
+			}
+		}
+		if (context == null) {
+			context = bootstrapServiceContext(environment, event.getSpringApplication(),
+					configName);
+			event.getSpringApplication()
+					.addListeners(new CloseContextOnFailureApplicationListener(context));
+		}
+
+		apply(context, event.getSpringApplication(), environment);
+	}
+```
+
+* org.springframework.cloud.bootstrap.BootstrapApplicationListener::bootstrapServiceContext
+
+```java
+	private ConfigurableApplicationContext bootstrapServiceContext(
+			ConfigurableEnvironment environment, final SpringApplication application,
+			String configName) {
+		StandardEnvironment bootstrapEnvironment = new StandardEnvironment();
+		MutablePropertySources bootstrapProperties = bootstrapEnvironment
+				.getPropertySources();
+		for (PropertySource<?> source : bootstrapProperties) {
+			bootstrapProperties.remove(source.getName());
+		}
+		String configLocation = environment
+				.resolvePlaceholders("${spring.cloud.bootstrap.location:}");
+		String configAdditionalLocation = environment
+				.resolvePlaceholders("${spring.cloud.bootstrap.additional-location:}");
+		Map<String, Object> bootstrapMap = new HashMap<>();
+		bootstrapMap.put("spring.config.name", configName);
+		// if an app (or test) uses spring.main.web-application-type=reactive, bootstrap
+		// will fail
+		// force the environment to use none, because if though it is set below in the
+		// builder
+		// the environment overrides it
+		bootstrapMap.put("spring.main.web-application-type", "none");
+		if (StringUtils.hasText(configLocation)) {
+			bootstrapMap.put("spring.config.location", configLocation);
+		}
+		if (StringUtils.hasText(configAdditionalLocation)) {
+			bootstrapMap.put("spring.config.additional-location",
+					configAdditionalLocation);
+		}
+		bootstrapProperties.addFirst(
+				new MapPropertySource(BOOTSTRAP_PROPERTY_SOURCE_NAME, bootstrapMap));
+		for (PropertySource<?> source : environment.getPropertySources()) {
+			if (source instanceof StubPropertySource) {
+				continue;
+			}
+			bootstrapProperties.addLast(source);
+		}
+		// TODO: is it possible or sensible to share a ResourceLoader?
+		SpringApplicationBuilder builder = new SpringApplicationBuilder()
+				.profiles(environment.getActiveProfiles()).bannerMode(Mode.OFF)
+				.environment(bootstrapEnvironment)
+				// Don't use the default properties in this builder
+				.registerShutdownHook(false).logStartupInfo(false)
+				.web(WebApplicationType.NONE);
+		final SpringApplication builderApplication = builder.application();
+		if (builderApplication.getMainApplicationClass() == null) {
+			// gh_425:
+			// SpringApplication cannot deduce the MainApplicationClass here
+			// if it is booted from SpringBootServletInitializer due to the
+			// absense of the "main" method in stackTraces.
+			// But luckily this method's second parameter "application" here
+			// carries the real MainApplicationClass which has been explicitly
+			// set by SpringBootServletInitializer itself already.
+			builder.main(application.getMainApplicationClass());
+		}
+		if (environment.getPropertySources().contains("refreshArgs")) {
+			// If we are doing a context refresh, really we only want to refresh the
+			// Environment, and there are some toxic listeners (like the
+			// LoggingApplicationListener) that affect global static state, so we need a
+			// way to switch those off.
+			builderApplication
+					.setListeners(filterListeners(builderApplication.getListeners()));
+		}
+		builder.sources(BootstrapImportSelectorConfiguration.class);
+		final ConfigurableApplicationContext context = builder.run();
+		// gh-214 using spring.application.name=bootstrap to set the context id via
+		// `ContextIdApplicationContextInitializer` prevents apps from getting the actual
+		// spring.application.name
+		// during the bootstrap phase.
+		context.setId("bootstrap");
+		// Make the bootstrap context a parent of the app context
+		addAncestorInitializer(application, context);
+		// It only has properties in it now that we don't want in the parent so remove
+		// it (and it will be added back later)
+		bootstrapProperties.remove(BOOTSTRAP_PROPERTY_SOURCE_NAME);
+		mergeDefaultProperties(environment.getPropertySources(), bootstrapProperties);
+		return context;
+	}
+```
 
