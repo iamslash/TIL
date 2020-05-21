@@ -70,7 +70,7 @@ public class BookRepository {
 }
 ```
 
-IOC 의 핵심은 [BeanFactory interface](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html) 이다. 다음과 같이 Bean 의 lifecycle 을 이해할 수 있다. 
+IOC 의 핵심은 [BeanFactory interface](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html) 이다. 다음과 같이 `*Aware` 를 구현한 class 들의 `override method` 의 호출시점을 참고하면 Bean 의 lifecycle 을 이해할 수 있다. 
 
 * BeanNameAware's setBeanName
 * BeanClassLoaderAware's setBeanClassLoader
@@ -88,6 +88,8 @@ IOC 의 핵심은 [BeanFactory interface](https://docs.spring.io/spring-framewor
 * postProcessAfterInitialization methods of BeanPostProcessors
 
 [ApplicationContext](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html) 는 가장 많이 사용하는 [BeanFactory](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html) 이다.
+
+Spring Boot Application 이 실행되고 bean 을 등록하는 흐름은 [SpringBootCodeTour#how-to-register-beans](SpringBootCodeTour.md) 를 참고한다.
 
 ## Application Context and Setting Bean
 
