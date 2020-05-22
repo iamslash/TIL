@@ -4,6 +4,7 @@
 - [Prerequisites](#prerequisites)
 - [Principles](#principles)
   - [How to approach a system design interview question](#how-to-approach-a-system-design-interview-question)
+  - [Distributed System](#distributed-system)
   - [Scalability](#scalability)
   - [Performance vs scalability](#performance-vs-scalability)
   - [Latency vs throughput](#latency-vs-throughput)
@@ -172,6 +173,10 @@ Notes
 * Create a high level design
 * Design core components
 * Scale the design
+
+## Distributed System
+
+* [Distributed System](/distributedsystem/README.md)
 
 ## Scalability
 
