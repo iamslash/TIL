@@ -42,6 +42,7 @@
   - [70% Capacity model](#70-capacity-model)
 - [Grokking the System Design Interview Practices](#grokking-the-system-design-interview-practices)
 - [System Design Primer Practices](#system-design-primer-practices)
+- [Essential Micro Services](#essential-micro-services)
 - [Additional System Design Interview Questions](#additional-system-design-interview-questions)
 - [Real World Architecture](#real-world-architecture)
 - [Company Architectures](#company-architectures)
@@ -105,7 +106,7 @@
 | 10^3  | Thousand    | K         | Killo-    |
 | 10^6  | Million     | M         | Mega-     |
 | 10^9  | Trillion    | G         | Giga-     |
-| 10^12 | Quadrillion  | T         | Tera-     |
+| 10^12 | Quadrillion | T         | Tera-     |
 | 10^15 | Quintillion | P         | Peta-     |
 | 10^18 | Sextillion  | E         | Exa-      |
 | 10^21 | Septillion  | Z         | Zeta-     |
@@ -700,6 +701,18 @@ total data size : estimated data size = 100 : 70
 | Design a key-value store for a search engine                                                  | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/query_cache/README.md)  |
 | Design Amazon's sales ranking by category feature                                             | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/sales_rank/README.md)   |
 | Design a system that scales to millions of users on AWS                                       | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/scaling_aws/README.md)  |
+
+# Essential Micro Services
+
+| Service         |
+| --------------- |
+| [CMDB](essentials/CMDB.md) |
+| [Api Gateway](essentials/ApiGateway.md) |
+| [Deployment System](essentials/Deployment.md) |
+| [LogViewer](essentials/LogViewer.md) |
+| [Monitoring](essentials/Monitoring.md) |
+| [Alterting](essentials/Alterting.md) |
+| [ABTesting](essentials/ABTesting.md) |
 
 # Additional System Design Interview Questions
 
