@@ -41,7 +41,6 @@
 	- [스프링 데이터 4 부: PostgreSQL](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-4-%eb%b6%80-postgresql)
 	- [스프링 데이터 5 부: 스프링 데이터 JPA 소개](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-5-%eb%b6%80-%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-jpa-%ec%86%8c%ea%b0%9c)
 	- [스프링 데이터 6 부: 스프링 데이터 JPA 연동](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-6-%eb%b6%80-%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-jpa-%ec%97%b0%eb%8f%99)
-- [open url lcoalhost:7474/browser/](#open-url-lcoalhost7474browser)
 	- [스프링 부트 Actuator 3 부: 스프링 부트 어드민](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-actuator-3-%eb%b6%80-%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ec%96%b4%eb%93%9c%eb%af%bc)
 
 -----
@@ -729,7 +728,231 @@ logback 을 다음과 같이 customizing 해보자.
 
 ## 테스트
 
+build.gradle 의 dependency 에 `org.springframework.boot:spring-boot-starter-test` 를 추가한다.
+
+```gradle
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-parent:2.2.6.RELEASE'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+```
+
+`org.springframework.boot:spring-boot-starter-test` 에 종속적인 library 들의 version 관리는 `org.springframework.boot:spring-boot-starter-parent` 가 해준다.
+
+
+그리고 다음과 같이 `src/main/java/com.iamslash.exbasic.HelloController` 및 `src/main/java/com.iamslash.exbasic.HelloService` 를 제작한다.
+
+```java
+@RestController
+public class HelloController {
+	@AutoWired
+	private HelloService helloService;
+
+	@GetMapping("/hello")
+	public String hello() {
+		return "hello " + helloService.getName();
+	}
+}
+```
+
+```java
+@Service
+public class HelloService{
+	public String getName() {
+		return "iamslash";
+	}
+}
+```
+
+그리고 다음과 같이 `src/test/java/com.iamslash.exbasic.HelloControllerTest` 를 제작한다.
+
+```java
+@RunWith(SpringRunner.class)
+@SpringBootTest(WebEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@AutoConfigureMockMbc
+public class HelloControllerTest {
+
+	@Autowired
+	MockMvc mockMvc;
+
+	@Test
+	public void hello() {
+		mockMvc.perform(get("/hello"))
+		  .andExpect(status().isOk())
+			.andExpect(content().string("hello world"))
+			.andDo(print());
+	}
+}
+```
+
+`@SpringBootTest(WebEnvironment = SpringBootTest.WebEnvironment.MOCK)` 는 Servlet 를 mocking 해준다. 반드시 `MockMvc` 를 이용해서 client 를 작성해야 한다. `@AutoConfigureMockMbc` 를 추가하고 `MockMvc` 를 AutoWired 해야 한다.
+
+이제 Servlet 를 mocking 하지 않고 실제로 띄워서 테스트 해보자. 반드시 `TestRestTemplate` 를 이용해서 client 를 작성해야 한다.
+
+```java
+@RunWith(SpringRunner.class)
+@SpringBootTest(WebEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class HelloControllerTest {
+
+	@Autowired
+	TestRestTemplate testRestTemplate;
+
+	@Test
+	public void hello() {
+		String response = testRestTemplate.getForObject("/hello", String.class);
+		assertThat(response).isEqualTo("hello world");
+	}
+}
+```
+
+만약 test 를 Controller 까지만 수행하고 HelloService 는 제외시키고 싶다면 `@MockBean` 을 이용하여 Service 를 mocking 한다.
+
+```java
+@RunWith(SpringRunner.class)
+@SpringBootTest(WebEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class HelloControllerTest {
+
+	@Autowired
+	TestRestTemplate testRestTemplate;
+
+	@MockBean
+	HelloService mockHelloSerivce;
+
+	@Test
+	public void hello() {
+
+		when(mockHelloService.getName()).thenReturn("iamslash");
+
+		String response = testRestTemplate.getForObject("/hello", String.class);
+		assertThat(response).isEqualTo("hello iamslash");
+	}
+}
+```
+
+만약 Asyncronous 한 client 를 사용하여 테스트하고 싶다면 `WebTestClient` 를 사용하자.
+
+build.gradle 의 dependency 에 `org.springframework.boot:spring-boot-starter-webflux` 를 추가한다.
+
+```gradle
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
+}
+```
+
+`WebTestClient` 를 다음과 같이 사용한다. method chaining 이 되기도 하고 performance 가 `TestRestTemplate` 보다 좋다.
+
+```java
+@RunWith(SpringRunner.class)
+@SpringBootTest(WebEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+public class HelloControllerTest {
+
+	@Autowired
+	WebTestClient webTestClient;
+
+	@MockBean
+	HelloService mockHelloSerivce;
+
+	@Test
+	public void hello() {
+
+		when(mockHelloService.getName()).thenReturn("iamslash");
+
+		webTestClient.get().url("/hello").exchange()
+		  .expectStatus().isOk()
+		  .expectBody(String.class)
+			.isEqualTo("hello iamslash");
+	}
+}
+```
+
+`@SpringBootTest` 를 사용하면 모든 Bean 들이 등록되기 때문에 비효율적이다. `@WebMvcTest, @JsonTest, @WebFluxTest, @DataJpaTest` 등을 이용하여 특정 Bean 들만 등록해서 test 를 할 수 있다.
+
+다음은 `@WebMvcTest` 를 사용하여 `HelloController` 를 test 한 예이다. `@WebMvcTest` 를 사용하면 반드시 `MockMvc` 로 client를 작성해야 한다.
+
+```java
+@RunWith(SpringRunner.class)
+@WebMvcTest(HelloController.class)
+public class HelloControllerTest {
+
+	@MockBean
+	HelloService mockHelloService;
+
+	@Autowired
+	MockMvc mockMvc;
+
+	@Test
+	public void hello() {
+
+		when(mockHelloService.getName()).thenReturn("iamslash");
+
+		mockMvc.perform(get("/hello"))
+		  .andExpect(status().isOk())
+			.andExpect(content().string("hello iamslash"))
+			.andDo(print());
+	}
+}
+```
+
+`@SpringBooTest` 는 integration test 에서 사용하고 `@WebMvcTest` 는 unit test 에서 사용한다.
+
 ## 테스트 유틸
+
+`@OutputCapture` 를 사용하면 log message 를 test 할 수 있다.
+
+다음과 같이 logging 한다.
+
+```java
+@RestController
+public class HelloController {
+
+	Logger logger = LoggerFactory.getLogger(HelloController.class);
+
+	@AutoWired
+	private HelloService helloService;
+
+	@GetMapping("/hello")
+	public String hello() {
+		logger.info("iamslash");
+		System.out.println("hello");
+		return "hello " + helloService.getName();
+	}
+}
+```
+
+이제 `OutputCapture` 를 사용하여 log message 를 테스트해 보자.
+
+```java
+@RunWith(SpringRunner.class)
+@WebMvcTest(HelloController.class)
+public class HelloControllerTest {
+
+	@Rule
+	public OutputCapture outputCapture = new OutputCapture();
+
+	@MockBean
+	HelloService mockHelloService;
+
+	@Autowired
+	MockMvc mockMvc;
+
+	@Test
+	public void hello() {
+
+		when(mockHelloService.getName()).thenReturn("iamslash");
+
+		mockMvc.perform(get("/hello"))
+		  .andExpect(status().isOk())
+			.andExpect(content().string("hello iamslash"))
+			.andDo(print());
+
+		assertThat(outputCapture.toString())
+		  .contains("iamslash")
+			.contains("hello");
+	}
+}
+```
 
 ## Spring-Boot-Devtools
 
@@ -1828,10 +2051,11 @@ dependency {
 
 다음과 같이 Neo4J 를 실행한다.
 
-```bash
+```console
 $ docker run -p 7474:7474 -p 7687:7687 -d --name neo4j_boot neo4j
-# open url lcoalhost:7474/browser/
 ```
+
+browser 로 lcoalhost:7474/browser/ 를 접근한다.
 
 다음과 같이 application.properties 를 수정한다.
 
