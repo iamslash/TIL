@@ -1,6 +1,4 @@
 - [Materials](#materials)
-	- [Tutorial of STS](#tutorial-of-sts)
-	- [Tutorial of springboot](#tutorial-of-springboot)
 - [스프링 부트 원리](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ec%9b%90%eb%a6%ac)
 	- [의존성 관리 이해](#%ec%9d%98%ec%a1%b4%ec%84%b1-%ea%b4%80%eb%a6%ac-%ec%9d%b4%ed%95%b4)
 	- [의존성 관리 응용](#%ec%9d%98%ec%a1%b4%ec%84%b1-%ea%b4%80%eb%a6%ac-%ec%9d%91%ec%9a%a9)
@@ -54,40 +52,6 @@
   * [src blog ict-nroo](https://ict-nroo.tistory.com/category/ICT%20Eng/Spring?page=3)
   * [src blog engkimbs](https://engkimbs.tistory.com/category/Spring/Spring%20Boot?page=3)
 
-## Tutorial of STS
-
-- [Spring Tool Suite](https://spring.io/tools)를 설치한다.
-- STS를 시작하고 File | New | Spring Starter Project를 선택하고 적당히 설정하자.
-  - com.iamslash.firstspring
-- 다음과 같은 파일을 com.iamslash.firstspring에 추가하자.
-
-```java
-package com.iamslash.firstspring;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-@RestController
-public class A {
-	@RequestMapping("/")
-	public String index() {
-		return "helloworld!";
-	}
-}
-```
-- firstspring을 R-click후에 Run As | Spring Boot App선택해서 실행하자.
-- 브라우저를 이용하여 http://localhost:8080으로 접속하자.
-
-## Tutorial of springboot 
-
-- [springboot manual installation](https://docs.spring.io/spring-boot/docs/current/reference/html/getting-started-installing-spring-boot.html#getting-started-manual-cli-installation)
-  에서 zip을 다운받아 `d:\local\src\`에 압축을 해제하자.
-- 환경설정변수 SPRING_HOME을 만들자. `d:\local\src\D:\local\src\spring-1.5.6.RELEASE`
-- 환경설정변수 PATH에 `%SPRING_HOME%\bin`을 추가하자.
-- command shell에서 `spring version`을 실행한다.
-- command shell에서 `spring init'을 이용하여 새로운 프로젝트를 제작할 수 있다.
-
-
 # 스프링 부트 원리
 
 ## 의존성 관리 이해
@@ -100,13 +64,17 @@ public class A {
 
 `@ComponentScan` 은 `@Component, @Configuration, @Repository, @Service, @Controller, @RestController` 가 attatch 된 Class 들을 검색하여 Bean 으로 등록한다.
 
-`@Configuration` 은 Bean 을 등록하는 설정파일이다.
+`@Configuration` 은 `@Bean` 이 부착된 method 들을 순회하고 return 된 Bean 을 IOC container 에 등록한다.
 
-`@EnableAutoConfiguration` 은 `org.springframework.boot:spring-boot-autoconfigure/META-INF/spring.factories` 의 `org.springframework.boot.autoconfigure.EnableAutoConfiguration` 의 value 에 해당하는 class 들을 순회하면서 Bean 을 등록한다. 이 class 들은 모두 `@Configuration` 이 attatch 되어 있다. 그러나 `@ConditionalOnWebApplication, @ConditionalOnClass, @ConditionalOnMissingBean` 등에 의해 조건에 따라 Bean 이 등록될 수도 있고 등록되지 않을수도 있다.
+`@EnableAutoConfiguration` 은 `org.springframework.boot:spring-boot-autoconfigure/META-INF/spring.factories` 를 포함한 `spring.factories` 파일들을 읽고 `org.springframework.boot.autoconfigure.EnableAutoConfiguration` 의 value 에 해당하는 class 들을 순회하면서 Bean 으로 등록한다. 이 class 들은 모두 `@Configuration` 이 attatch 되어 있다. 그러나 `@ConditionalOnWebApplication, @ConditionalOnClass, @ConditionalOnMissingBean` 등에 의해 조건에 따라 Bean 이 등록될 수도 있고 등록되지 않을수도 있다.
+
+host application 에서 library 들을 `@ComponentScan` 할 수는 없기 때문에 `@EnableAutoConfiguration` 은 매우 유용하다.
 
 ## 자동설정 만들기 1 부 : Starter 와 AutoConfigure
 
-`xxx-spring-boot-autoconfigure` module 은 자동설정을 담당한다. `xxx-spring-boot-starter` module 은 의존성 관리를 담당한다.
+`xxx-spring-boot-autoconfigure` module 은 자동설정을 담당한다. `xxx-spring-boot-starter` module 은 의존성 관리를 담당한다. 주로 `POM.xml` 만을 포함한다.
+
+두가지를 합쳐서 `xxx-spring-boot-starter` 에 저장하기도 한다.
 
 * `src/main/java/com.iamslash/User.java`
 
@@ -139,9 +107,11 @@ org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
   com.iamslash.UserConfiguration
 ```
 
+`xxx-spring-boot-autoconfigure` 혹은 `xxx-spring-boot-starter` 가 완성되면 반드시 `$ mvn install` 를 이용하여 설치해야 host application 에서 사용할 수 있다.
+
 `@EnableAutoConfiguration` 이 실행되면 `com.iamslash.UserConfiguration` 의 `@Configuration` 이 처리된다.
 
-그러나 다음과 같이 `DemoApplication` 에서 `User` Bean 을 생성하는 경우 `spring.factories` 에서 생성된 `User` Bean 이 over write 한다.
+그러나 다음과 같이 `DemoApplication` 에서 `User` Bean 을 생성하는 경우 `spring.factories` 에서 생성된 `User` Bean 이 over write 한다. over write 을 막기 위해서는 `@ConditionalOnMissingBean` 등을 활용하여 Bean 등록을 제어할 수 있다.
 
 ```java
 @SpringBootApplication
@@ -182,7 +152,7 @@ public class UserConfiguration {
 }
 ```
 
-이번에는 `application.properties` 에 Bean 의 properties 를 삽입하고 그것을 기반으로 Bean 을 만들어 보자.
+위와 같이 동일한 Bean 을 여러곳에서 정의하는 것보다 편리한 방법을 찾아보자.  `application.properties` 에 Bean 의 properties 를 삽입하고 그것을 기반으로 Bean 을 만들어 보자.
 
 * `src/main/resources/appilcation.properties` 
 
@@ -239,15 +209,468 @@ User Bean 을 등록하려면 반드시 gradle task 중 Install 을 실행해야
 
 ## SpringApplication 1 부
 
+VM optoin `-Ddebug` 혹은 program arguments `--debug` 을 사용하여 IntelliJ 에서 실행하면 debug mode 로 logging 이 가능하다.
+
+FailureAnalyzer 는 fail 출력을 pretty print 해준다.
+
+`src/main/resources/banner.txt` 를 작성하면 banner 를 customizing 할 수 있다. 혹은 application.properties 에서 `spring.banner.location` 의 값으로 banner.txt 의 경로를 설정할 수 있다.
+
+다음과 같이 code 로 banner 를 출력할 수도 있다.
+
+```java
+@SpringBootApplication
+public class ExbasicApplication {
+
+	public static void main(String[] args) {
+		SpringApplication app = new SpringApplication(ExbasicApplication.class);
+		app.setBanner(((environment, sourceClass, out) -> {
+			out.println("==================================================");
+			out.println("I' am david sun.");
+			out.println("==================================================");
+		}));
+		app.setBannerMode(Banner.Mode.CONSOLE);
+		app.run(args);
+	}
+
+}
+```
+
+Spring Application 은 SpringApplicationBuilder 를 통해 실행할 수도 있다. SpringApplication.run 은 customizing 할 수가 없다.
+
+```java
+@SpringBootApplication
+public class ExbasicApplication {
+
+	public static void main(String[] args) {
+//		SpringApplication app = new SpringApplication(ExbasicApplication.class);
+//		app.setBanner(((environment, sourceClass, out) -> {
+//			out.println("==================================================");
+//			out.println("I' am david sun.");
+//			out.println("==================================================");
+//		}));
+//		app.setBannerMode(Banner.Mode.CONSOLE);
+//		app.run(args);
+		new SpringApplicationBuilder()
+				.sources(ExbasicApplication.class)
+				.run(args);
+	}
+
+}
+```
+
 ## SpringApplication 2 부
+
+ApplicationLister 를 implement 하면 Spring Application Event 를 handling 할 수 있다.
+
+```java
+@Component
+public class HelloListener implements ApplicationListener<ApplicationStartingEvent> {
+
+	@Override
+	public void onApplicationEvent(ApplicationStartingEvent applicationStartingEvent) {
+		System.out.println("I got you.");
+	}
+}
+```
+
+그러나 ApplicationStartingEvent 는 ApplitionContext 가 init 되기전에 발생한다. ApplicationContext 가 init 되야 HelloListener Bean 이 생성이 될 것이다. 따라서 onApplicationEvent 는 호출되지 않는다.
+
+다음과 같이 직접 HelloLitsener 를 등록해야 한다. HelloListener 는 Bean 일 필요가 없다.
+
+```java
+@SpringBootApplication
+public class ExbasicApplication {
+	public static void main(String[] args) {
+		SpringApplication app = new SpringApplication(ExbasicApplication.class);
+		app.addListeners(new HelloListener());
+		app.run(args);
+	}
+}
+```
+
+ApplicationstartedEvent 는 ApplicationContext 가 init 되고 나서 발생한다.
+
+```java
+@Component
+public class HelloListener implements ApplicationListener<ApplicationStartedEvent> {
+
+	@Override
+	public void onApplicationEvent(ApplicationStartedEvent applicationStartingEvent) {
+		System.out.println("I got you.");
+	}
+}
+```
+
+SpringApplication 의 동작 방식을 다음과 같이 조정할 수 있다. `SERVLET, REACTIVE, NONE` 등이 가능하다. 예를 들어 WebMvc, WebFlux 가 둘다 포함되어 있다면 `SERVLET` 혹은 `REACTIVE` 를 선택해야 한다.
+
+```java
+@SpringBootApplication
+public class ExbasicApplication {
+	public static void main(String[] args) {
+		SpringApplication app = new SpringApplication(ExbasicApplication.class);
+		app.setWebApplicationType(WebApplicationType.REACTIVE);
+		app.run(args);
+	}
+}
+```
+
+SpringApplication 의 arguments 를 HelloListener 로 전달해 보자. VM option `-Dfoo` 와 Program arguements `--bar` 와 함께 실행해보자. `--bar` 만 args 에 담겨온다. `-Dfoo` 는 ApplicationArguements 가 아니다.
+
+```java
+@Component
+public class HelloListener {
+	public HelloListener(ApplicationArguements args) {
+		System.out.println("foo: " + args.containsOption("foo"));
+		System.out.println("bar: " + args.containsOption("bar"));
+	}
+}
+```
+
+SpringApplication 이 실행되고 추가로 뭔가 실행하고 싶다면 ApplicationRunner 를 구현한다. 이번에도 `--bar` 만 출력된다.
+
+```java
+@Component
+public class HelloRunner implements ApplicationRunner {
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+	}
+}
+```
+
+또한 `@Order` 를 사용하여 여러 ApplicationRunner 의 순서를 조정할 수 있다.
+
+```java
+@Component
+@Order(1)
+public class HelloRunner implements ApplicationRunner {
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+	}
+}
+```
 
 ## 외부 설정 1 부
 
+application.properties 에 SpringApplication 의 설정들을 `key=value` 형태로 저장할 수 있다. 
+
+```
+iamslash.name = davidsun
+```
+
+그리고 다음과 같이 `@Value` 이용하여 Binding 할 수 있다.
+
+```java
+@Component
+public class HelloRunner implements ApplicationRunner {
+	@Value("${iamslash.name}")
+	private String iamslashName;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		System.out.println("==============================");
+		System.out.println(iamslashName);
+		System.out.println("==============================");
+	}
+}
+```
+
+Properties 의 우선순위는 다음과 같다. [4.2. Externalized Configuration](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-external-config)
+
+1. Devtools global settings properties in the $HOME/.config/spring-boot directory when devtools is active.
+2. @TestPropertySource annotations on your tests.
+3. properties attribute on your tests. Available on @SpringBootTest and the test annotations for testing a particular slice of your application.
+4. Command line arguments.
+5. Properties from SPRING_APPLICATION_JSON (inline JSON embedded in an environment variable or system property).
+6. ServletConfig init parameters.
+7. ServletContext init parameters.
+8. JNDI attributes from java:comp/env.
+9. Java System properties (System.getProperties()).
+10. OS environment variables.
+11. A RandomValuePropertySource that has properties only in random.*.
+12. Profile-specific application properties outside of your packaged jar (application-{profile}.properties and YAML variants).
+13. Profile-specific application properties packaged inside your jar (application-{profile}.properties and YAML variants).
+14. Application properties outside of your packaged jar (application.properties and YAML variants).
+15. Application properties packaged inside your jar (application.properties and YAML variants).
+16. @PropertySource annotations on your @Configuration classes. Please note that such property sources are not added to the Environment until the application context is being refreshed. This is too late to configure certain properties such as logging.* and spring.main.* which are read before refresh begins.
+17. Default properties (specified by setting SpringApplication.setDefaultProperties).
+
+또한 다음과 같이 Environment 를 이용하여 Properties 를 읽어볼 수 있다.
+
+```java
+@RunWith(SpringRunnger.class)
+@SpringBootTest
+public class ExbasicApplicationTests {
+
+	@Autowired
+	Environment environment;
+
+	@Test
+	public void contextLoads() {
+		assertThat(environment.getProperty("iamslash.name"))
+			.isEqualTo("davidsun");
+	}
+}
+```
+
+Test 전용의 `src/test/resources/application.properties` 를 추가할 수도 있다. InteliJ 에서 module 에 등록해야 한다. compile 이 되면 `src/main/**` 를 먼저 compile 하고 `src/test/**` 를 compile 한다. 따라서 `src/main/resources/application.properties` 가 `src/test/resources/application.properties` 로 overwritting 된다. overriding 이 아니라서 문제가 된다. 
+
+그러나 `src/main/resources/application.properties` 의 내용이 `src/main/resources/application.properties` 와 다르다면 문제가 될 수 있다.
+
+예를 들어 `src/main/resources/application.properties` 는 다음과 같다.
+
+```
+iamslash.name = davidsun
+iamslash.age = ${random.int}
+server.pot = 0
+```
+
+그리고 `src/test/resources/application.properties` 는 다음과 같다.
+
+```
+iamslash.name = davidsun
+```
+
+또한 `src/main/java/com.iamslash.exbasic/HelloRunner.java` 를 다음과 같이 수정한다.
+
+```java
+@Component
+public class HelloRunner implements ApplicationRunner {
+	@Value("${iamslash.name}")
+	private String iamslashName;
+
+	@Value("${iamslash.age}")
+	private String iamslashAge;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		System.out.println("==============================");
+		System.out.println(iamslashName);
+		System.out.println(iamslashAge);
+		System.out.println("==============================");
+	}
+}
+```
+
+다음과 같이 `contextLoads` 가 실행할 때 `src/mmain/java/**` 에서 필요한 age 가 없으므로 error 가 발생한다.
+
+```java
+@RunWith(SpringRunnger.class)
+@SpringBootTest
+public class ExbasicApplicationTests {
+
+	@Autowired
+	Environment environment;
+
+	@Test
+	public void contextLoads() {
+		assertThat(environment.getProperty("iamslash.name"))
+			.isEqualTo("davidsun");
+	}
+}
+```
+
+`ExbasicApplicationTests` 를 다음과 같이 수정하여 임의의 Properties 를 주입할 수 있다.
+
+```java
+@RunWith(SpringRunnger.class)
+@SpringBootTest(properties = "iamslash.Age=30")
+public class ExbasicApplicationTests {
+
+	@Autowired
+	Environment environment;
+
+	@Test
+	public void contextLoads() {
+		assertThat(environment.getProperty("iamslash.name"))
+			.isEqualTo("davidsun");
+	}
+}
+```
+
+또한 `@TestPropertySource` 를 이용하여 Properties 들을 overriding 할 수도 있다.
+
+```java
+@RunWith(SpringRunnger.class)
+@TestPropertySource(properties = {"iamslash.name=likechad,iamslash.Age=35"})
+@SpringBootTest
+public class ExbasicApplicationTests {
+
+	@Autowired
+	Environment environment;
+
+	@Test
+	public void contextLoads() {
+		assertThat(environment.getProperty("iamslash.name"))
+			.isEqualTo("davidsun");
+	}
+}
+```
+
+`@TestPropertySource` 의 항목이 너무 많다면 `src/test/resources/test.properties` 를 만들고 `@TestPropertySource` 를 이용하여 경로를 설정한다.
+
+```java
+@RunWith(SpringRunnger.class)
+@TestPropertySource(locations = "classpath:/test.properties")
+@SpringBootTest
+public class ExbasicApplicationTests {
+
+	@Autowired
+	Environment environment;
+
+	@Test
+	public void contextLoads() {
+		assertThat(environment.getProperty("iamslash.name"))
+			.isEqualTo("davidsun");
+	}
+}
+```
+
+`@TestPropertySource` 는 Properties 우선순위가 2 위이다. 매우 높다. home directory 의 `spring-boot-dev-tools.properties` 가 우선순위가 1 위이다. 그러나 잘 사용하지 않는다.
+
+`application.properties` 는 여러 곳에 제작할 수 있고 우선순위는 다음과 같다.
+
+1. `file:./config/`
+2. `file:./`
+3. `classpath:/config`
+4. `classpath:/`
+
+application.properties 에 random value 가 가능하다.
+
+```conf
+iamslash.age = ${random.int}
+```
+
 ## 외부 설정 2 부 (1)
+
+Properties 를 묶어서 Bean 으로 Binding 할 수 있다.
+
+예를 들어 `src/main/resources/application.properties` 를 다음과 같이 작성한다.
+
+```
+iamslash.name = davidsun
+iamslash.age = ${random.int(0,100)}
+iamslash.fullname = ${iamslash.name} runs
+server.pot = 0
+```
+
+다음과 같이 `@ConfigurationProperties("iamslash")` 을 사용하여 Mapping 할 Bean 을 정의한다.
+
+```java
+@Component
+@ConfigurationProperties("iamslash")
+public class IamslashProperties {
+	private String name;
+	private Integer age;
+	private String fullName;
+	...
+}
+```
+
+그리고 `@EnableConfigurationProperties` 를 SpringApplication 에 attach 한다.
+
+```java
+@SpringBootApplication
+@EnableConfigurationProperties(IamslashProperties.class)
+public class ExbasicApplication {
+	public static void main(String[] args) {
+		SpringApplication app = new SpringApplication(ExbasicApplication.class);
+		app.setWebApplicationType(WebApplicationType.REACTIVE);
+		app.run(args);
+	}
+}
+```
+
+이제 `IamslashProperties` 를 `@Autowired` 해서 사용하자.
+
+```java
+@Component
+public class HelloRunner implements ApplicationRunner {
+
+	@Autowired
+	IamslashProperties iamslashProperties;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		System.out.println("==============================");
+		System.out.println(iamslashProperties.getName());
+		System.out.println(iamslashProperties.getAge());
+		System.out.println("==============================");
+	}
+}
+```
 
 ## 외부 설정 2 부 (2)
 
+Properties class 를 사용하면 type safe 를 지킬 수 있다.
+
+Properties 의 key 는 `iamslash.full_name` 혹은 `iamslash.full-name` 및 `iamslash.fullName` 이 가능하다. 각 kebab, underscore, camel case 라고 한다. 이것을 Relaxed Binding 이라고 한다.
+
+시간을 Mapping 하기 위해서는 다음과 같이 `@DurationUnit` 을 사용한다.
+
+```java
+public class AppSystemProperties {
+	@DurationUnit(ChronoUnit.SECONDS)
+	private Duration sessionTimeout = Duration.ofSeconds(30);
+	...
+}
+```
+
+`@DurationUnit` 을 사용하지 않고 `application.properties` 에 postfix 를 사용하면 시간으로 Binding 할 수 있다.
+
+```conf
+iamslash.settionTimeout=25s
+```
+
+`@Validated, @NotEmpty` 를 사용하면 `JSR-303` 를 이용하여 검증이 가능하다.
+
+```java
+@Component
+@ConfigurationProperties("iamslash")
+@Validated
+public class IamslashProperties {
+	@NotEmpty
+	private String name;
+	...
+}
+```
+
+이때 `@NotEmpty` 에 의해 발생되는 `must not empty` 를 포함한 error message 는 Failure Analyzer Bean 에 의해 출력된다.
+
+`@Value` 는 SpEL 이 가능하다. 그러나 다른 annotation 은 불가능하다.
+
 ## 프로파일
+
+`@Profile` 을 이용하여 특정 profile 에 대해 active 시킬 수 있다. `@Configuration, @Component` 에 사용할 수 있다.
+
+다음과 같이 두개의 Configuration class 를 제작한다.
+
+```java
+@Profile("production")
+@Configuration
+public class BaseConfiguration {
+
+	@Bean
+	public String hello() {
+		return "Hello Production";
+	}
+}
+```
+
+```java
+@Profile("local")
+@Configuration
+public class LocalConfiguration {
+
+	@Bean
+	public String hello() {
+		return "Hello Local";
+	}
+}
+```
+
+그리고 Program arguments `--spring.profiles.active=production` 과 함께 실행하면 profile 에 따라 Bean 생성을 핸들링할 수 있다.
+
+또한 Program arguements `--spring.profiles.include=proddb` 와 함께 실행하면 `application-production.properties` 와 함께 `application-proddb.properties` 도 사용할 수 있다.
 
 ## 로깅 1부 : 스프링 부트 기본 로거설정
 
@@ -305,9 +728,13 @@ logback 을 다음과 같이 customizing 해보자.
 ```
 
 ## 테스트
+
 ## 테스트 유틸
+
 ## Spring-Boot-Devtools
+
 ## 스프링 웹 MVC 1 부: 소개
+
 ## 스프링 웹 MVC 2 부: HttpMessageconverters
 
 * HelloController.java

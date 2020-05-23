@@ -12,11 +12,11 @@
 
 # Abstract
 
-This is about spring-boot-2.2.6
+This is about code tour of spring-boot-2.2.6.
 
 # How to run SpringApplication
 
-* /org/springframework/boot/SpringApplication.class::run
+* `/org/springframework/boot/SpringApplication.class::run`
 
 ```java
 	/**
@@ -69,7 +69,7 @@ This is about spring-boot-2.2.6
 
 # How to read application.yml
 
-* org/springframework/boot/SpringApplication::run
+* `org/springframework/boot/SpringApplication::run`
 
 ```java
 	public ConfigurableApplicationContext run(String... args) {
@@ -86,7 +86,7 @@ This is about spring-boot-2.2.6
 
 ```
 
-* org/springframework/boot/context/config/ConfigFileApplicationListener::onApplicationEvent
+* `org/springframework/boot/context/config/ConfigFileApplicationListener::onApplicationEvent`
 
 ```java
 	@Override
@@ -100,7 +100,7 @@ This is about spring-boot-2.2.6
 	}
 ```
 
-* org/springframework/boot/context/config/ConfigFileApplicationListener::load
+* `org/springframework/boot/context/config/ConfigFileApplicationListener::load`
 
 ```java
 		void load() {
@@ -127,7 +127,7 @@ This is about spring-boot-2.2.6
 		}
 ```
 
-* org/springframework/boot/context/config/ConfigFileApplicationListener::load
+* `org/springframework/boot/context/config/ConfigFileApplicationListener::load`
 
 ```java
 		private void load(String location, String name, Profile profile, DocumentFilterFactory filterFactory,
@@ -155,7 +155,7 @@ This is about spring-boot-2.2.6
 		}
 ```
 
-* org/springframework/boot/context/config/ConfigFileApplicationListener::loadForFileExtension
+* `org/springframework/boot/context/config/ConfigFileApplicationListener::loadForFileExtension`
 
 ```java
 
@@ -190,7 +190,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 	}
 ```
 
-* org/springframework/boot/context/config/ConfigFileApplicationListener::load
+* `org/springframework/boot/context/config/ConfigFileApplicationListener::load`
 
 ```java
 		private void load(PropertySourceLoader loader, String location, Profile profile, DocumentFilter filter,
@@ -249,7 +249,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 # How to event handler works
 
-* org/springframework/boot/SpringApplication::run
+* `org/springframework/boot/SpringApplication::run`
 
 ```java
 	public ConfigurableApplicationContext run(String... args) {
@@ -265,7 +265,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 	}
 ```
 
-* /org/springframework/boot/context/event/EventPublishingRunListener::running
+* `/org/springframework/boot/context/event/EventPublishingRunListener::running`
 
 ```java
 	@Override
@@ -274,7 +274,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 	}
 ```
 
-* org.springframework.context.event.ApplicationListenerMethodAdapter::onApplicationEvent
+* `org.springframework.context.event.ApplicationListenerMethodAdapter::onApplicationEvent`
 
 ```java
 	@Override
@@ -285,7 +285,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 # How to ApplicationRunner works
 
-* org/springframework/boot/SpringApplication::run
+* `org/springframework/boot/SpringApplication::run`
 
 ```java
 	public ConfigurableApplicationContext run(String... args) {
@@ -294,7 +294,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 			callRunners(context, applicationArguments);
 ```
 
-* org/springframework/boot/SpringApplication::callRunners
+* `org/springframework/boot/SpringApplication::callRunners`
 
 ```java
 	private void callRunners(ApplicationContext context, ApplicationArguments args) {
@@ -315,7 +315,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 # How to register beans
 
-* org.springframework.boot.SpringApplication::refresh
+* `org.springframework.boot.SpringApplication::refresh`
 
 ```java
 	public ConfigurableApplicationContext run(String... args) {
@@ -338,7 +338,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 			refreshContext(context);
 ```
 
-* org.springframework.boot.SpringApplication::refreshContext
+* `org.springframework.boot.SpringApplication::refreshContext`
 
 ```java
 	private void refreshContext(ConfigurableApplicationContext context) {
@@ -354,7 +354,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 	}
 ```
 
-* org.springframework.boot.SpringApplication::refresh
+* `org.springframework.boot.SpringApplication::refresh`
 
 ```java
 	@Override
@@ -423,7 +423,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 	}
 ```
 
-* org.springframework.context.support.AbstractApplicationContext::refresh
+* `org.springframework.context.support.AbstractApplicationContext::refresh`
 
 ```java
 
@@ -495,7 +495,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 # How to read spring.factories
 
-* org.springframework.boot.SpringApplication::SpringApplication
+* `org.springframework.boot.SpringApplication::SpringApplication`
 
 ```java
 	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
@@ -509,7 +509,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 	}
 ```
 
-* org.springframework.boot.SpringApplication::getSpringFactoriesInstances
+* `org.springframework.boot.SpringApplication::getSpringFactoriesInstances`
 
 ```java
 	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
@@ -522,7 +522,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 	}
 ```
 
-* org.springframework.core.io.support.SpringFactoriesLoader::loadSpringFactories
+* `org.springframework.core.io.support.SpringFactoriesLoader::loadSpringFactories`
 
 ```java
 	private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader) {
@@ -559,7 +559,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 # How to autoconfigure works
 
-* org.springframework.boot.SpringApplication::run
+* `org.springframework.boot.SpringApplication::run`
 
 ```java
 	public ConfigurableApplicationContext run(String... args) {
@@ -582,7 +582,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 ```
 
-* org.springframework.boot.SpringApplication::prepareContext
+* `org.springframework.boot.SpringApplication::prepareContext`
 
 ```java
 	private void prepareContext(ConfigurableApplicationContext context, ConfigurableEnvironment environment,
@@ -592,7 +592,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 		applyInitializers(context);
 ```
 
-* org.springframework.boot.SpringApplication::applyInitializers
+* `org.springframework.boot.SpringApplication::applyInitializers`
 
 ```java
 	protected void applyInitializers(ConfigurableApplicationContext context) {
@@ -605,7 +605,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 	}
 ```
 
-* org.springframework.boot.context.config.DelegatingApplicationContextInitializer::initialize
+* `org.springframework.boot.context.config.DelegatingApplicationContextInitializer::initialize`
 
 ```java
 	@Override
@@ -618,16 +618,11 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 	}
 ```
 
-* ::
-
-```java
-```
-
 # How to read bootstrap.yml
 
 * Should have spring-cloud-commons-2.2.2.RELEASE.jar
 
-* org.springframework.cloud.bootstrap.BootstrapApplicationListener
+* `org.springframework.cloud.bootstrap.BootstrapApplicationListener`
 
 ```java
 public class BootstrapApplicationListener
@@ -651,7 +646,7 @@ public class BootstrapApplicationListener
 	private int order = DEFAULT_ORDER;
 ```
 
-* org.springframework.boot.SpringApplication::run
+* `org.springframework.boot.SpringApplication::run`
 
 ```java
 	public ConfigurableApplicationContext run(String... args) {
@@ -667,7 +662,7 @@ public class BootstrapApplicationListener
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
 ```
 
-* org.springframework.cloud.bootstrap.BootstrapApplicationListener::onApplicationEvent
+* `org.springframework.cloud.bootstrap.BootstrapApplicationListener::onApplicationEvent`
 
 ```java
 	@Override
@@ -703,7 +698,7 @@ public class BootstrapApplicationListener
 	}
 ```
 
-* org.springframework.cloud.bootstrap.BootstrapApplicationListener::bootstrapServiceContext
+* `org.springframework.cloud.bootstrap.BootstrapApplicationListener::bootstrapServiceContext`
 
 ```java
 	private ConfigurableApplicationContext bootstrapServiceContext(
