@@ -7,6 +7,7 @@
   - [How to debug gradle](#how-to-debug-gradle)
   - [Multiple projects](#multiple-projects)
   - [Using plugins](#using-plugins)
+  - [How to make a custom gradle plugin](#how-to-make-a-custom-gradle-plugin)
 
 ----
 
@@ -875,4 +876,33 @@ binary plugin 은 다음과 같이 사용한다. [gradle plugins portal](https:/
 plugins {
   id "io.reconquest.gradle-android-eclipse" version "1.1"
 }
+```
+
+## How to make a custom gradle plugin
+
+* [Developing Custom Gradle Plugins](https://docs.gradle.org/current/userguide/custom_plugins.html)
+
+----
+
+This is a `build.gradle` with basic plugin.
+
+```gradle
+class GreetingPlugin implements Plugin<Project> {
+    void apply(Project project) {
+        project.task('hello') {
+            doLast {
+                println 'Hello from the GreetingPlugin'
+            }
+        }
+    }
+}
+
+// Apply the plugin
+apply plugin: GreetingPlugin
+```
+
+Let's run it.
+
+```console
+$ gradle -q hello
 ```
