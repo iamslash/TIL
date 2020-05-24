@@ -1091,7 +1091,79 @@ If you didn't use [Java Gradle Plugin Development Plugin](https://docs.gradle.or
 
 ### Precompiled script plugins
 
+You can make standalone plugin with precompiled script using Groovy or Kotlin DSLs in `src/main/groovy/*.gradle` or `src/main/kotlin/*.gradle.kts`. Precompiled script plugins are compiled into class files and packaged into a jar. 
 
+the script `src/main/groovy/java-library-convention.gradle` would have a plugin ID of `java-library-convention`. Likewise, `src/main/groovy/my.java-library-convention.gradle` would result in a plugin ID of `my.java-library-convention`.
+
+At first, you need to write `buildSrc/build.gradle`.
+
+```gradle
+plugins {
+    id 'groovy-gradle-plugin'
+}
+```
+And you need to make empty `buildSrc/settings.gradle` file.
+
+And you need to make `java-library-convention.gradle` file in the `buildSrc/src/main/groovy`.
+
+```gradle
+plugins {
+    id 'java-library'
+    id 'checkstyle'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
+
+checkstyle {
+    maxWarnings = 0
+    // ...
+}
+
+tasks.withType(JavaCompile) {
+    options.warnings = true
+    // ...
+}
+
+dependencies {
+    testImplementation("junit:junit:4.12")
+    // ...
+}
+```
+
+And host application need a `build.gradle` like this.
+
+```gradle
+plugins {
+    id 'java-library-convention'
+}
+```
+
+What if you need to apply external plugin in a precompiled script plugin, you need to write `buildSrc/build.gradle` like this.
+
+```gradle
+plugins {
+    id 'groovy-gradle-plugin'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    implementation 'com.bmuschko:gradle-docker-plugin:6.4.0'
+}
+```
+
+And you need to apply that plugin like this.
+
+```gradle
+plugins {
+    id 'com.bmuschko.docker-remote-api'
+}
+```
 
 ### Writing tests for your plugin
 
