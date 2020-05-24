@@ -55,6 +55,50 @@
 
 ## 의존성 관리 이해
 
+* [Spring Boot Gradle Plugin(1)](https://brunch.co.kr/@springboot/186)
+* [Spring Boot Gradle Plugin Reference Guide](https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/html/)
+  * [spring boot gradle plugin @ github](https://github.com/spring-projects/spring-boot/blob/master/spring-boot-project/spring-boot-tools/spring-boot-gradle-plugin)
+* [Dependency Management Plugin](https://docs.spring.io/dependency-management-plugin/docs/current/reference/html/)
+  * [dependency-management-plugin @ github](https://github.com/spring-gradle-plugins/dependency-management-plugin)
+
+----
+
+spring boot gradle plugin 은 spring boot dependency, application packaging 등을 지원한다. 'io.spring.dependency-management' plugin 은 spring boot dependency 를 담당한다. 이것은 spring boot gradle plugin 의 build.gradle 에 dependencies 설정되어 있다.
+
+```gradle
+
+dependencies {
+	api(platform(project(":spring-boot-project:spring-boot-dependencies")))
+...
+	implementation("io.spring.gradle:dependency-management-plugin")
+...
+}
+```
+
+[spring-projects/spring-boot/spring-boot-project/spring-boot-dependencies/pom.xml](https://github.com/spring-projects/spring-boot/blob/2.2.x/spring-boot-project/spring-boot-dependencies/pom.xml) 을 살펴보면 sprint-boot 2.2.x version 의 dpenencies 를 확인할 수 있다.
+
+spring boot gradle plugin 을 이용하려면 다음과 같이 build.gradle 을 설정한다.
+
+```gradle
+plugins {
+	id 'org.springframework.boot' version '2.2.6.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+}
+```
+
+이제 build.gradle 의 dependencies 에 version 을 명시하지 않아도 library 가 import 된다.
+
+```gradle
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+```
+
 ## 의존성 관리 응용
 
 ## 자동 설정 이해
