@@ -8,6 +8,13 @@
   - [Multiple projects](#multiple-projects)
   - [Using plugins](#using-plugins)
   - [How to make a custom gradle plugin](#how-to-make-a-custom-gradle-plugin)
+    - [Writing a simple plugin](#writing-a-simple-plugin)
+    - [Making the plugin configurable](#making-the-plugin-configurable)
+    - [Working with files in custom tasks and plugins](#working-with-files-in-custom-tasks-and-plugins)
+    - [Mapping extension properties to task properties](#mapping-extension-properties-to-task-properties)
+    - [A standalone project](#a-standalone-project)
+    - [Precompiled script plugins](#precompiled-script-plugins)
+    - [Writing tests for your plugin](#writing-tests-for-your-plugin)
 
 ----
 
@@ -884,6 +891,8 @@ plugins {
 
 ----
 
+### Writing a simple plugin
+
 This is a `build.gradle` with basic plugin.
 
 ```gradle
@@ -906,3 +915,15 @@ Let's run it.
 ```console
 $ gradle -q hello
 ```
+
+### Making the plugin configurable
+
+### Working with files in custom tasks and plugins
+
+### Mapping extension properties to task properties
+
+### A standalone project
+
+### Precompiled script plugins
+
+### Writing tests for your plugin
