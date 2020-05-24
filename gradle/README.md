@@ -15,6 +15,7 @@
     - [A standalone project](#a-standalone-project)
     - [Precompiled script plugins](#precompiled-script-plugins)
     - [Writing tests for your plugin](#writing-tests-for-your-plugin)
+    - [Behind the secnes](#behind-the-secnes)
 
 ----
 
@@ -918,12 +919,202 @@ $ gradle -q hello
 
 ### Making the plugin configurable
 
+You can configure with the class. Actually This class will make extention object. And you can set them up with properties.
+
+This is custom plugin extention.
+
+```gradle
+class GreetingPluginExtension {
+    String message = 'Hello from GreetingPlugin'
+}
+
+class GreetingPlugin implements Plugin<Project> {
+    void apply(Project project) {
+        // Add the 'greeting' extension object
+        def extension = project.extensions.create('greeting', GreetingPluginExtension)
+        // Add a task that uses configuration from the extension object
+        project.task('hello') {
+            doLast {
+                println extension.message
+            }
+        }
+    }
+}
+
+apply plugin: GreetingPlugin
+
+// Configure the extension
+greeting.message = 'Hi from Gradle'
+```
+
+Let's run it.
+
+```console
+$ gradle -q hello
+```
+
+Also you can configure with configuration block.
+
+```gradle
+class GreetingPluginExtension {
+    String message
+    String greeter
+}
+
+class GreetingPlugin implements Plugin<Project> {
+    void apply(Project project) {
+        def extension = project.extensions.create('greeting', GreetingPluginExtension)
+        project.task('hello') {
+            doLast {
+                println "${extension.message} from ${extension.greeter}"
+            }
+        }
+    }
+}
+
+apply plugin: GreetingPlugin
+
+// Configure the extension using a DSL block
+greeting {
+    message = 'Hi'
+    greeter = 'Gradle'
+}
+```
+
+Let's run it.
+
+```console
+$ gradle -q hello
+```
+
 ### Working with files in custom tasks and plugins
+
+You can handle file i/o with `project.file(java.lang.Object)`.
+
+```gradle
+class GreetingToFileTask extends DefaultTask {
+
+    def destination
+
+    @OutputFile
+    File getDestination() {
+        project.file(destination)
+    }
+
+    @TaskAction
+    def greet() {
+        def file = getDestination()
+        file.parentFile.mkdirs()
+        file.write 'Hello!'
+    }
+}
+
+task greet(type: GreetingToFileTask) {
+    destination = { project.greetingFile }
+}
+
+task sayGreeting(dependsOn: greet) {
+    doLast {
+        println file(greetingFile).text
+    }
+}
+
+ext.greetingFile = "$buildDir/hello.txt"
+```
+
+Let's run it.
+
+```console
+$ gradle -q sayGreeting
+```
 
 ### Mapping extension properties to task properties
 
+???
+
 ### A standalone project
+
+If you want to release you standalone plugin. You'd better use [Java Gradle Plugin Development Plugin](https://docs.gradle.org/current/userguide/java_gradle_plugin.html#java_gradle_plugin). This plugin will automatically apply the [Java Plugin](https://docs.gradle.org/current/userguide/java_plugin.html#java_plugin), add the gradleApi() dependency to the implementation configuration, generate the required plugin descriptors in the resulting JAR file and configure the Plugin Marker Artifact to be used when publishing. Here is a simple build script for the project.
+
+This is a build script for the standalone plugin project.
+
+```java
+plugins {
+    id 'java-gradle-plugin'
+}
+
+gradlePlugin {
+    plugins {
+        simplePlugin {
+            id = 'org.samples.greeting'
+            implementationClass = 'org.gradle.GreetingPlugin'
+        }
+    }
+}
+```
+
+You can release your plugin internally in [Ivy](https://docs.gradle.org/current/userguide/publishing_ivy.html#publishing_ivy), [Maven](https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven). Or you can release you plugin publicly in [Gradle Plugin Portal](https://plugins.gradle.org/). And pelase refer [Publishing Plugins to the Gradle Plugin Portal](https://guides.gradle.org/publishing-plugins-to-gradle-plugin-portal/).
+
+You can use your plugin in a build script with `pluginManagement {}` block.
+
+This is a `settings.gradle` of the host application.
+
+```gradle
+pluginManagement {
+    repositories {
+        maven {
+            url = uri(repoLocation)
+        }
+    }
+}
+```
+
+And this is a `build.gradle` of the host application.
+
+```gradle
+plugins {
+    id 'org.samples.greeting' version '1.0-SNAPSHOT'
+}
+```
+
+If you didn't use [Java Gradle Plugin Development Plugin](https://docs.gradle.org/current/userguide/java_gradle_plugin.html#java_gradle_plugin), You need to add `resolutionStrategy` section to the `pluginManagement {}` block in `setting.gradle`.
+
+```gradle
+    resolutionStrategy {
+        eachPlugin {
+            if (requested.id.namespace == 'org.samples') {
+                useModule("org.gradle:customPlugin:${requested.version}")
+            }
+        }
+    }
+```
 
 ### Precompiled script plugins
 
+
+
 ### Writing tests for your plugin
+
+You can use the [ProjectBuilder](https://docs.gradle.org/current/javadoc/org/gradle/testfixtures/ProjectBuilder.html) class to create [Project](https://docs.gradle.org/current/dsl/org.gradle.api.Project.html) instances when you test your plugin.
+
+```java
+public class GreetingPluginTest {
+    @Test
+    public void greeterPluginAddsGreetingTaskToProject() {
+        Project project = ProjectBuilder.builder().build();
+        project.getPluginManager().apply("org.samples.greeting");
+
+        assertTrue(project.getTasks().getByName("hello") instanceof GreetingTask);
+    }
+}
+```
+
+### Behind the secnes
+
+Gradle find the [Plugin](https://docs.gradle.org/current/javadoc/org/gradle/api/Plugin.html) implementation with a properties file in the JAR's `META-INF/gradle-plugins` directory.
+
+This is a `src/main/resources/META-INF/gradle-plugins/org.samples.greeting.properties` file of `greeting` plugin.
+
+```conf
+implementation-class=org.gradle.GreetingPlugin
+```
