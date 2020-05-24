@@ -4,8 +4,8 @@
 - [Computer System Architecture Overview](#computer-system-architecture-overview)
 - [Stored Program Concept](#stored-program-concept)
 - [Bus Overview](#bus-overview)
-- [문자셋의 종류와 특징](#%eb%ac%b8%ec%9e%90%ec%85%8b%ec%9d%98-%ec%a2%85%eb%a5%98%ec%99%80-%ed%8a%b9%ec%a7%95)
-- [MBCS, WBCS 동시 지원](#mbcs-wbcs-%eb%8f%99%ec%8b%9c-%ec%a7%80%ec%9b%90)
+- [문자셋의 종류와 특징](#문자셋의-종류와-특징)
+- [MBCS, WBCS 동시 지원](#mbcs-wbcs-동시-지원)
 - [32Bit vs 64Bit](#32bit-vs-64bit)
 - [Design minimal CPU instruction set](#design-minimal-cpu-instruction-set)
 - [Direct Address Mode and Indirect Address Mode](#direct-address-mode-and-indirect-address-mode)
@@ -35,6 +35,7 @@
 - [MMF (Memory Mapped File)](#mmf-memory-mapped-file)
 - [DLL (Dynamic Link Library)](#dll-dynamic-link-library)
 - [Execution file and Loader](#execution-file-and-loader)
+- [File System](#file-system)
 - [Quiz](#quiz)
 
 ----
@@ -214,10 +215,10 @@ TCHAR arr[10] => CHAR arr[10] => char arr[10]
 
 64bit application 을 제작하더라도 32bit application 을 코딩할 때와 별 차이가 없다. 대신 데이터 모델을 유의하자. CPU, OS 에 다음과 같이 데이터 모델이 달라진다. [참고](https://dojang.io/mod/page/view.php?id=737)
 
-| 데이터 모델 | short | int | long | long long | pointer | CPU, OS |
-|----|----|----|----|----|----|----|
-| LLP64 / IL32P64 | 2 | 4 | 4 | 8 | 8 | x86_64: Windows |
-| LP64 / I32LP64 | 2 | 4 | 8 | 8 | 8 | x86_64: UNIX, Linux, SUN OS, BSD, OSX | 
+| 데이터 모델     | short | int | long | long long | pointer | CPU, OS                               |
+| --------------- | ----- | --- | ---- | --------- | ------- | ------------------------------------- |
+| LLP64 / IL32P64 | 2     | 4   | 4    | 8         | 8       | x86_64: Windows                       |
+| LP64 / I32LP64  | 2     | 4   | 8    | 8         | 8       | x86_64: UNIX, Linux, SUN OS, BSD, OSX |
 
 # Design minimal CPU instruction set
 
@@ -265,19 +266,19 @@ compiler 는 linker 에게 산출물을 전달할 때 함수, 변수 등의 이�
 
 다음은 다양한 calling convention 들을 비교한 것이다.
 
-| Segment word size | Calling Convention | Parameters in registers | Parameter order on stack | Stack cleanup by |
-|---|---|---|---|---|
-| 32bit | `__cdecl` | | `C` | `Caller` |
-|       | `__stdcall` |  | `C` | `Callee` |
-|       | `__fastcall` | `ecx, edx` | `C` | `Callee` |
-|       | `__thiscall` | `ecx` | `C` | `Callee` |
-| 64bit | Windows(MS, Intel) | `rcx/xmm0` | `C` | `Caller` |
-|       |  | `rdx/xmm1` | `C` | `Caller` |
-|       |  | `r8/xmm2` | `C` | `Caller` |
-|       |  | `r9/xmm3` | `C` | `Caller` |
-|       | Linux, BSD (GNU, Intel) | `rdi, rsi` | `C` | `Caller` |
-|       | | `rdx, rcx, r8` | `C` | `Caller` |
-|       | | `r9, xmm0-7` | `C` | `Caller` |
+| Segment word size | Calling Convention      | Parameters in registers | Parameter order on stack | Stack cleanup by |
+| ----------------- | ----------------------- | ----------------------- | ------------------------ | ---------------- |
+| 32bit             | `__cdecl`               |                         | `C`                      | `Caller`         |
+|                   | `__stdcall`             |                         | `C`                      | `Callee`         |
+|                   | `__fastcall`            | `ecx, edx`              | `C`                      | `Callee`         |
+|                   | `__thiscall`            | `ecx`                   | `C`                      | `Callee`         |
+| 64bit             | Windows(MS, Intel)      | `rcx/xmm0`              | `C`                      | `Caller`         |
+|                   |                         | `rdx/xmm1`              | `C`                      | `Caller`         |
+|                   |                         | `r8/xmm2`               | `C`                      | `Caller`         |
+|                   |                         | `r9/xmm3`               | `C`                      | `Caller`         |
+|                   | Linux, BSD (GNU, Intel) | `rdi, rsi`              | `C`                      | `Caller`         |
+|                   |                         | `rdx, rcx, r8`          | `C`                      | `Caller`         |
+|                   |                         | `r9, xmm0-7`            | `C`                      | `Caller`         |
 
 # Process and Thread
 
@@ -429,59 +430,59 @@ typedef struct _EPROCESS
 
 EPROCESS의 중요한 멤버는 다음과 같다.
 
-| member field | description |
-|:------------|:-----------|
-| DirectoryTableBase | 가상 메모리의 CR3 레지스터값 |
-| LdtDescriptor | 16비트 애플리케이션에서 사용되는 LDT 디스크립터 |
-| Int21Descriptor | 16비트 애플리케이션에서 인터럽트 21의 디스크립터 |
-| IopmOffset | IO 허용 비트의 Offset |
-| Iopl | IO 특권레벨 (0일 경우 커널모드만 허용, 3일 경우 유저모드까지 허용 |
-| ActiveProcessors | 현재 활성화 되어있는 CPU 개수 |
-| KernelTime | 이 프로세스가 커널레벨에서 소비한 시간 단위 개수 |
-| UserTime | 이 프로세스가 유저레벨에서 소비한 시간 단위 개수 |
-| ReadyListHead | 현재 준비 상태에 있는 쓰레드의 리스트 |
-| SwapListEntry | 현재 스와핑이 되고 있는 쓰레드의 리스트 |
-| ThreadListHead | 이 프로세스가 가지고 있는 쓰레드 목록 |
-| ProcessLock | 이 프로세스가 접근시 사용하는 동기화 객체 |
-| Affinity | 멀티 코어 CPU 에서 이 프로세스의 Affinity |
-| StackCount | 이 프로세스에서 사용하는 스택 개수 |
-| BasePriority | 프로세스 우선순위 (0~15) |
-| ThreadQuantum | 이 프로세스에서 생성되는 쓰레드의 기본 퀀텀 값 |
-| CreateTime | 이 프로세스의 생성 시간 |
-| UniqueProcessId | 이 프로세스의 고유 아이디 |
-| ActiveProcessLinks | 모든 프로세스의 목록 |
-| CommitCharge | 이 프로세스가 사용하는 물리 메모리 크기 |
-| PeakPagefileUsage | 최고 페이지파일 사용 크기 |
-| PeakVirtualSize | 최고 가상 메모리 크기 |
-| VirtualSize | 가상 메모리 크기 |
-| WorkingSetSize | 이 프로세스의 워킹세트 크기 |
-| DebugPort | 디버깅 상태일 때 LPC 포트 |
-| Token | 프로세스의 토큰 정보 |
-| WorkingSetLock | Working Set 조정 시 사용되는 Lock |
-| WorkingSetPage | Working Set에 의한 Page 개수 |
-| AddressCreationLock | 이 프로세스에서 메모리 생성시 사용되는 Lock |
-| VadRoot | 유저 메모리 영역을 설명하는 VAD pointer |
-| NumberOfPriatePages | 이 프로세스의 프라이빗 페이지 개수 |
-| NumberOfLockedPages | 락 되어진 페이지 개수 |
-| Peb | Process Environment Block |
-| SectionBaseAddress | 프로세스 세션 베이스 주소, 주로 이미지의 베이스 주소 |
-| WorkingSetWatch | 페이지 폴트 발생 시 저장되는 히스토리 |
-| Win32WindowStation | 현재 실행되는 프로세스의 Window Station ID |
-| InheritedFromUniqueProcessId | 부모 프로세스의 ID |
-| LdtInformation | 이 프로세스의 LDT 정보를 지시 |
-| VdmObjects | 16비트 프로그램일 때 사용됨 |
-| DeviceMap | 이 프로세스에서 사용할 수 있는 DOS의 디바이스 맵 |
-| SessionId | 터미널 서비스의 세션 ID |
-| ImageFileName | 이 프로세스의 이름 |
-| PriorityClass | 이 프로세스의 우선순위 |
-| SubSystemMinorVersion | 서브시스템의 마이너 버전 |
-| SubSystemMajorVersion | 서브시스템의 메이저 버전 |
-| SubSystemVersion | 서브시스템 버전 |
-| LockedPageList | 이 페이지에서 락 되어진 페이지의 리스트 |
-| ReadOperationCount | I/O Read 개수 |
-| WriteOperationCount | I/O Write 개수 |
-| CommitChargeLimit | 최대로 사용할 수 있는 물리 메모리 크기 |
-| CommitChargePeak | 최대로 사용된 물리 메모리 크기 |
+| member field                 | description                                                       |
+| :--------------------------- | :---------------------------------------------------------------- |
+| DirectoryTableBase           | 가상 메모리의 CR3 레지스터값                                      |
+| LdtDescriptor                | 16비트 애플리케이션에서 사용되는 LDT 디스크립터                   |
+| Int21Descriptor              | 16비트 애플리케이션에서 인터럽트 21의 디스크립터                  |
+| IopmOffset                   | IO 허용 비트의 Offset                                             |
+| Iopl                         | IO 특권레벨 (0일 경우 커널모드만 허용, 3일 경우 유저모드까지 허용 |
+| ActiveProcessors             | 현재 활성화 되어있는 CPU 개수                                     |
+| KernelTime                   | 이 프로세스가 커널레벨에서 소비한 시간 단위 개수                  |
+| UserTime                     | 이 프로세스가 유저레벨에서 소비한 시간 단위 개수                  |
+| ReadyListHead                | 현재 준비 상태에 있는 쓰레드의 리스트                             |
+| SwapListEntry                | 현재 스와핑이 되고 있는 쓰레드의 리스트                           |
+| ThreadListHead               | 이 프로세스가 가지고 있는 쓰레드 목록                             |
+| ProcessLock                  | 이 프로세스가 접근시 사용하는 동기화 객체                         |
+| Affinity                     | 멀티 코어 CPU 에서 이 프로세스의 Affinity                         |
+| StackCount                   | 이 프로세스에서 사용하는 스택 개수                                |
+| BasePriority                 | 프로세스 우선순위 (0~15)                                          |
+| ThreadQuantum                | 이 프로세스에서 생성되는 쓰레드의 기본 퀀텀 값                    |
+| CreateTime                   | 이 프로세스의 생성 시간                                           |
+| UniqueProcessId              | 이 프로세스의 고유 아이디                                         |
+| ActiveProcessLinks           | 모든 프로세스의 목록                                              |
+| CommitCharge                 | 이 프로세스가 사용하는 물리 메모리 크기                           |
+| PeakPagefileUsage            | 최고 페이지파일 사용 크기                                         |
+| PeakVirtualSize              | 최고 가상 메모리 크기                                             |
+| VirtualSize                  | 가상 메모리 크기                                                  |
+| WorkingSetSize               | 이 프로세스의 워킹세트 크기                                       |
+| DebugPort                    | 디버깅 상태일 때 LPC 포트                                         |
+| Token                        | 프로세스의 토큰 정보                                              |
+| WorkingSetLock               | Working Set 조정 시 사용되는 Lock                                 |
+| WorkingSetPage               | Working Set에 의한 Page 개수                                      |
+| AddressCreationLock          | 이 프로세스에서 메모리 생성시 사용되는 Lock                       |
+| VadRoot                      | 유저 메모리 영역을 설명하는 VAD pointer                           |
+| NumberOfPriatePages          | 이 프로세스의 프라이빗 페이지 개수                                |
+| NumberOfLockedPages          | 락 되어진 페이지 개수                                             |
+| Peb                          | Process Environment Block                                         |
+| SectionBaseAddress           | 프로세스 세션 베이스 주소, 주로 이미지의 베이스 주소              |
+| WorkingSetWatch              | 페이지 폴트 발생 시 저장되는 히스토리                             |
+| Win32WindowStation           | 현재 실행되는 프로세스의 Window Station ID                        |
+| InheritedFromUniqueProcessId | 부모 프로세스의 ID                                                |
+| LdtInformation               | 이 프로세스의 LDT 정보를 지시                                     |
+| VdmObjects                   | 16비트 프로그램일 때 사용됨                                       |
+| DeviceMap                    | 이 프로세스에서 사용할 수 있는 DOS의 디바이스 맵                  |
+| SessionId                    | 터미널 서비스의 세션 ID                                           |
+| ImageFileName                | 이 프로세스의 이름                                                |
+| PriorityClass                | 이 프로세스의 우선순위                                            |
+| SubSystemMinorVersion        | 서브시스템의 마이너 버전                                          |
+| SubSystemMajorVersion        | 서브시스템의 메이저 버전                                          |
+| SubSystemVersion             | 서브시스템 버전                                                   |
+| LockedPageList               | 이 페이지에서 락 되어진 페이지의 리스트                           |
+| ReadOperationCount           | I/O Read 개수                                                     |
+| WriteOperationCount          | I/O Write 개수                                                    |
+| CommitChargeLimit            | 최대로 사용할 수 있는 물리 메모리 크기                            |
+| CommitChargePeak             | 최대로 사용된 물리 메모리 크기                                    |
 
 윈도우즈의 커널레벨 프로세스는 다음과 같이 KPROCESS 로 구현한다. [참고](https://www.nirsoft.net/kernel_struct/vista/KPROCESS.html)
 
@@ -641,40 +642,40 @@ typedef struct _ETHREAD
 
 ETHREAD 의 중요한 멤버는 다음과 같다.
 
-| member field | description |
-|:------------|:-----------|
-| InitialStack | 커널 스택의 낮은 주소 |
-| StackLimit | 커널 스택의 높은 주소 |
-| Kernel Stack | 커널 모드에서 현재 스택 포인터 (ESP) |
-| DebugActive | 디버깅 중인가? |
-| State | 현재 쓰레드 상태 |
-| Iopl | IOPL |
-| NpxState | Floating Point 상태 정보 |
-| Priority | 우선순위 |
-| ContextSwitches | 쓰레드 스위칭 횟수 |
-| WaitIrql | 현재 Wait 상태에서 IRQL |
-| WaitListEntry | 현재 상태가 Wait인 쓰레드 목록 |
-| BasePriority | 이 쓰레드의 베이스 우선순위 |
-| Quantum | 이 쓰레드의 퀀컴 값 |
-| ServiceTable | 서비스 테이블 |
-| Affinity | 커널에서의 쓰레드 Affinity |
-| Preempted | 선점 여부 |
-| KernelStackResident | 쓰레드 커널 스택이 쓰레드 종료 후에도 메모리에 있는가 |
-| NextProcessor | 스케줄러에 의해 결정된 다음번 실행시 사용될 CPU |
-| TrapFrame | Exception 발생시 사용될 트랩 프레임 포인터 |
-| PreviousMode | 이전의 모드가 유저모드인가 커널모드인가, 시스템 함수 호출에서 유효성을 체크하는데 사용되어진다. |
-| KernelTime | 커널모드에서 이 쓰레드가 수행된 시간 |
-| UserTime | 유저모드에서 이 쓰레드가 수행된 시간 |
-| Alertable | Alertable 상태 |
-| StackBase | 이 쓰레드의 스택 베이스 주소 |
-| ThreadListEntry | 프로세서가 가지고 있는 모든 쓰레드들의 목록 |
-| CreateTime | 생성시간 |
-| ExitTime | 종료시간 |
-| ExitStatus | exit status |
-| PostBlockList | 이 쓰레드가 참조하는 모든 Object들의 리스트 |
-| ActiveTimerListHead | 이 쓰레드에 활성화된 타이머 리스트 |
-| UniqueThread | 이 쓰레드의 고유한 번호 |
-| ImpersonationInfo | 임퍼스네이션 정보 |
+| member field        | description                                                                                     |
+| :------------------ | :---------------------------------------------------------------------------------------------- |
+| InitialStack        | 커널 스택의 낮은 주소                                                                           |
+| StackLimit          | 커널 스택의 높은 주소                                                                           |
+| Kernel Stack        | 커널 모드에서 현재 스택 포인터 (ESP)                                                            |
+| DebugActive         | 디버깅 중인가?                                                                                  |
+| State               | 현재 쓰레드 상태                                                                                |
+| Iopl                | IOPL                                                                                            |
+| NpxState            | Floating Point 상태 정보                                                                        |
+| Priority            | 우선순위                                                                                        |
+| ContextSwitches     | 쓰레드 스위칭 횟수                                                                              |
+| WaitIrql            | 현재 Wait 상태에서 IRQL                                                                         |
+| WaitListEntry       | 현재 상태가 Wait인 쓰레드 목록                                                                  |
+| BasePriority        | 이 쓰레드의 베이스 우선순위                                                                     |
+| Quantum             | 이 쓰레드의 퀀컴 값                                                                             |
+| ServiceTable        | 서비스 테이블                                                                                   |
+| Affinity            | 커널에서의 쓰레드 Affinity                                                                      |
+| Preempted           | 선점 여부                                                                                       |
+| KernelStackResident | 쓰레드 커널 스택이 쓰레드 종료 후에도 메모리에 있는가                                           |
+| NextProcessor       | 스케줄러에 의해 결정된 다음번 실행시 사용될 CPU                                                 |
+| TrapFrame           | Exception 발생시 사용될 트랩 프레임 포인터                                                      |
+| PreviousMode        | 이전의 모드가 유저모드인가 커널모드인가, 시스템 함수 호출에서 유효성을 체크하는데 사용되어진다. |
+| KernelTime          | 커널모드에서 이 쓰레드가 수행된 시간                                                            |
+| UserTime            | 유저모드에서 이 쓰레드가 수행된 시간                                                            |
+| Alertable           | Alertable 상태                                                                                  |
+| StackBase           | 이 쓰레드의 스택 베이스 주소                                                                    |
+| ThreadListEntry     | 프로세서가 가지고 있는 모든 쓰레드들의 목록                                                     |
+| CreateTime          | 생성시간                                                                                        |
+| ExitTime            | 종료시간                                                                                        |
+| ExitStatus          | exit status                                                                                     |
+| PostBlockList       | 이 쓰레드가 참조하는 모든 Object들의 리스트                                                     |
+| ActiveTimerListHead | 이 쓰레드에 활성화된 타이머 리스트                                                              |
+| UniqueThread        | 이 쓰레드의 고유한 번호                                                                         |
+| ImpersonationInfo   | 임퍼스네이션 정보                                                                               |
 
 다음은 커널 쓰레드를 구현한 KTHREAD 이다. [참고](https://www.nirsoft.net/kernel_struct/vista/KTHREAD.html)
 
@@ -1670,6 +1671,167 @@ A.exe 에서 B.exe 로 process context switching 이 발생해도 a.dll 은 phys
 
 * [Elf](/elf/README.md)
   * 리눅스의 실행파일 포맷
+
+# File System
+
+* [유닉스 파일시스템과 i-node 구조체](https://jiming.tistory.com/359)
+
+----
+
+ext4 file system 의 [i-node structure](https://github.com/torvalds/linux/blob/d2f8825ab78e4c18686f3e1a756a30255bb00bf3/fs/ext4/ext4.h) 는 다음과 같다.
+
+```c
+/*
+ * Structure of an inode on the disk
+ */
+struct ext4_inode {
+	__le16	i_mode;		/* File mode */
+	__le16	i_uid;		/* Low 16 bits of Owner Uid */
+	__le32	i_size_lo;	/* Size in bytes */
+	__le32	i_atime;	/* Access time */
+	__le32	i_ctime;	/* Inode Change time */
+	__le32	i_mtime;	/* Modification time */
+	__le32	i_dtime;	/* Deletion Time */
+	__le16	i_gid;		/* Low 16 bits of Group Id */
+	__le16	i_links_count;	/* Links count */
+	__le32	i_blocks_lo;	/* Blocks count */
+	__le32	i_flags;	/* File flags */
+	union {
+		struct {
+			__le32  l_i_version;
+		} linux1;
+		struct {
+			__u32  h_i_translator;
+		} hurd1;
+		struct {
+			__u32  m_i_reserved1;
+		} masix1;
+	} osd1;				/* OS dependent 1 */
+	__le32	i_block[EXT4_N_BLOCKS];/* Pointers to blocks */
+	__le32	i_generation;	/* File version (for NFS) */
+	__le32	i_file_acl_lo;	/* File ACL */
+	__le32	i_size_high;
+	__le32	i_obso_faddr;	/* Obsoleted fragment address */
+	union {
+		struct {
+			__le16	l_i_blocks_high; /* were l_i_reserved1 */
+			__le16	l_i_file_acl_high;
+			__le16	l_i_uid_high;	/* these 2 fields */
+			__le16	l_i_gid_high;	/* were reserved2[0] */
+			__le16	l_i_checksum_lo;/* crc32c(uuid+inum+inode) LE */
+			__le16	l_i_reserved;
+		} linux2;
+		struct {
+			__le16	h_i_reserved1;	/* Obsoleted fragment number/size which are removed in ext4 */
+			__u16	h_i_mode_high;
+			__u16	h_i_uid_high;
+			__u16	h_i_gid_high;
+			__u32	h_i_author;
+		} hurd2;
+		struct {
+			__le16	h_i_reserved1;	/* Obsoleted fragment number/size which are removed in ext4 */
+			__le16	m_i_file_acl_high;
+			__u32	m_i_reserved2[2];
+		} masix2;
+	} osd2;				/* OS dependent 2 */
+	__le16	i_extra_isize;
+	__le16	i_checksum_hi;	/* crc32c(uuid+inum+inode) BE */
+	__le32  i_ctime_extra;  /* extra Change time      (nsec << 2 | epoch) */
+	__le32  i_mtime_extra;  /* extra Modification time(nsec << 2 | epoch) */
+	__le32  i_atime_extra;  /* extra Access time      (nsec << 2 | epoch) */
+	__le32  i_crtime;       /* File Creation time */
+	__le32  i_crtime_extra; /* extra FileCreationtime (nsec << 2 | epoch) */
+	__le32  i_version_hi;	/* high 32 bits for 64-bit version */
+	__le32	i_projid;	/* Project ID */
+};
+```
+
+`i_mode` 는 16 bit 로 다음과 같은 구조를 갖는다.
+
+```
+ bit:      4 1 1 1 1 1 1 1 1 1 1 1
+desc: type u g s r w x r w x r w x
+```
+
+다음은 type (4 bit) 의 종류이다.
+
+| ls 표기 | 종류       | Value    |
+| ------- | ---------- | -------- |
+| `-`     | 정규파일   | S_IFREG  |
+| d       | 디렉터리   | S_IFDIR  |
+| c       | 문자장치   | S_IFCHR  |
+| b       | 블록장치   | S_IFBLK  |
+| l       | 링크파일   | S_IFLNK  |
+| p       | 파이프파일 | S_IFFIFO |
+| s       | 소켓파일   | S_IFSOCK |
+
+다음은 그 다음 3 bit `u g r` 의 내용이다.
+
+|     | 종류       | Value | 내용 |
+| --- | ---------- | ----- | ---- |
+| u   | SETUID     | 4000  | EUID (유효 사용자 아이디)가 RUID (실행 사용자 아이디)에서 파일의 소유자 아이디로 변경된다.  |
+| g   | SETGID     | 2000  | EGID (유효 그룹 아이디)가 RGID (실행 그룹 아이디)에서 파일의 소유 그룹 아이디로 변경된다. |
+| s   | Sticky Bit | 1000  | file, directory permission handling ??? |
+
+`EXT4_N_BLOCKS` 는 [linux/fs/ext4/ext4.h](https://github.com/torvalds/linux/blob/d2f8825ab78e4c18686f3e1a756a30255bb00bf3/fs/ext4/ext4.h) 에 다음과 같이 정의되어 있다.
+
+```c
+/*
+ * Constants relative to the data blocks
+ */
+#define	EXT4_NDIR_BLOCKS		12
+#define	EXT4_IND_BLOCK			EXT4_NDIR_BLOCKS
+#define	EXT4_DIND_BLOCK			(EXT4_IND_BLOCK + 1)
+#define	EXT4_TIND_BLOCK			(EXT4_DIND_BLOCK + 1)
+#define	EXT4_N_BLOCKS			(EXT4_TIND_BLOCK + 1)
+```
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Ext2-inode.svg/1024px-Ext2-inode.svg.png)
+
+하나의 data block 의 크기는 page frame 과 동일하다. 일반적으로 4 KB 이다. direct block 는 12 개 뿐이다. 따라서 하나의 i-node 에서 direct block 만으로는 48 KB 밖에 저장할 수 없다.
+
+single indirect block 을 사용하여 더욱 많은 data block 을 하나의 i-node 에 저장할 수 있다. 하나의 주소는 4 byte 라고 하자. 하나의 data block 이 4 KB 이므로 하나의 block 으로 1 K (1024) 개의 포인터를 저장할 수 있다. 
+
+따라서 하나의 i-node 에서 single indirect block 으로 `4 KB * 1 K = 4 MB` 를 저장할 수 있다. double indirect block 으로는 `4 MB * 1 K = 4 GB` 를 저장할 수 있다. triple indirect block 으로는 `4 GB * 1 K = 4 TB` 를 저장할 수 있다.
+
+결국 하나의 i-node 로 저장할 수 있는 data block 은 다음과 같다.
+
+```
+         direct blocks: 48 KB
+single indirect blocks:  4 MB
+double indirect blocks:  4 GB
+triple indirect blocks:  4 TB ------------------------------------
+          Total blocks:  4 TB
+```
+
+그러나 32-bit linux 에서는 4 GB 만 지원한다. linux kernel 의 file function 들이 사용하느 variable, argument 들이 32 bit 로 구현되어 있기 때문이다.
+
+Hard Disk 의 하나의 sector 는 512 byte 이다. i-node 의 하나의 block 은 4 KB 일 때 이것은 8 개의 sector 에 대응한다.
+
+![](https://upload.wikimedia.org/wikipedia/commons/thumb/a/ae/Disk-structure2.svg/800px-Disk-structure2.svg.png)
+
+ext4 file system 의 경우 하나의 파일 혹은 디렉토리는 `ext4_dir_entry` structure 로 다음과 같이 표현한다.
+
+```c
+/*
+ * Structure of a directory entry
+ */
+#define EXT4_NAME_LEN 255
+
+struct ext4_dir_entry {
+	__le32	inode;			/* Inode number */
+	__le16	rec_len;		/* Directory entry length */
+	__le16	name_len;		/* Name length */
+	char	name[EXT4_NAME_LEN];	/* File name */
+};
+```
+
+`rec_len, name_len` 를 제외한 세부적인 정보는 `inode` 가 가리키는 `ext4_inode` structure 를 이용한다.
+
+[ext4 disk layout](https://ext4.wiki.kernel.org/index.php/Ext4_Disk_Layout) 을 참고하면 하나의 disk 가 어떻게 구성되어 있는지 알 수 있다.
+* [INODE STRUCTURE IN EXT4 FILESYSTEM](https://selvamvasu.wordpress.com/2014/08/01/inode-vs-ext4/)
+
+![](https://selvamvasu.files.wordpress.com/2014/08/ext4.jpg)
 
 # Quiz
 
