@@ -42,7 +42,7 @@
 
 # Abstract
 
-운영체제 (Operating System) 에 대해 정리한다. [Computer System Architecture](/csa/README.md) 의 내용을 먼저 이해해야 한다. [osimpl](/osimpl/README.md) 에서 실제로 구현해본다.
+운영체제 (Operating System) 에 대해 정리한다. [Computer System Architecture](/csa/README.md) 의 내용을 먼저 이해해야 한다.  [linux kernal](/linux/README.md) 에서 linux kernel 을 정리한다. [osimpl](/osimpl/README.md) 에서 실제로 구현해본다.
 
 # Materials
 

@@ -25,3 +25,4 @@ os 를 구현해보자. [fourbucks @ github](https://github.com/iamslash/fourbuc
 * [NASM](https://www.nasm.us/)
 * qemu
 * Intel_Architecture_Software_Developers_Manual_Volume_3_Sys.pdf
+
