@@ -1,9 +1,11 @@
 # Abstract
 
-대용량 데이터를 분산 처리할 수 있는 자바 기반의 오픈 소스 프레임워크이다. 구글이 논문으로 발표한 GFS(Google File System) 과 맵리듀스(MapReduce) 를 2005 년 더그커팅이 구현한 구현체이다.
+대용량 데이터를 분산 처리할 수 있는 자바 기반의 오픈 소스 프레임워크이다. 구글이 논문으로 발표한 GFS(Google File System) 과 맵리듀스(MapReduce) 를 2005 년 더그커팅이 제작한 구현체이다.
 
 # Materials
 
+* [Intro to Hadoop and MapReduce @ udacity](https://classroom.udacity.com/courses/ud617)
+  * [src](https://github.com/ShanLu1984/Hadoop-and-MapReduce)
 * [하둡(Hadoop) 소개 및 기본 구성요소 설명 @ opentutorials](https://opentutorials.org/module/2926/17055)
 * [하둡 에코시스템(Hadoop-Ecosystem)이란?](https://over153cm.tistory.com/entry/%ED%95%98%EB%91%A1-%EC%97%90%EC%BD%94%EC%8B%9C%EC%8A%A4%ED%85%9CHadoopEcosystem%EC%9D%B4%EB%9E%80)
 
@@ -11,7 +13,7 @@
 
 ![](img/main-qimg-a6b8a29bdce2393e5687343905baa0e7-c.jpg)
 
-## YARN(Yet Another Resource Nagotiator) ##
+## YARN (Yet Another Resource Nagotiator) ##
 
 하둡 2.0 부터 제공되는 리소스 관리 플랫폼.
 
