@@ -17,6 +17,16 @@ This is about Distributed System.
 * [MapReduce: Simplified Data Processing on Large Clusters](https://pdos.csail.mit.edu/6.824/papers/mapreduce.pdf)
 * [lab](https://pdos.csail.mit.edu/6.824/labs/lab-mr.html)
 
+----
+
+* [hadoop @ TIL](/hadoop/REDME.md)
+* [Intro to Hadoop and MapReduce @ udacity](https://classroom.udacity.com/courses/ud617)
+  * [src](https://github.com/ShanLu1984/Hadoop-and-MapReduce)
+* [Flume](http://taewan.kim/post/flume_images/)
+  * Very big gathering log system.
+* [Colossus](https://www.systutorials.com/storage-architecture-and-challenges/)
+  * Replaced GFS.
+  
 # Lecture 2: RPC and Threads
 
 * [text](https://pdos.csail.mit.edu/6.824/notes/l-rpc.txt)
