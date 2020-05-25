@@ -34,6 +34,7 @@
     - [Method References](#method-references)
     - [Optional<T>](#optionalt)
 - [Advanced Usage](#advanced-usage)
+  - [ArrayList vs CopyOnWriteArrayList](#arraylist-vs-copyonwritearraylist)
   - [jvm architecture](#jvm-architecture)
   - [jvm garbage collector](#jvm-garbage-collector)
   - [Stream](#stream)
@@ -1552,6 +1553,17 @@ String result = valueOpt.orElseThrow(CustomException::new).toUpperCase();
 ```
 
 # Advanced Usage
+
+## ArrayList vs CopyOnWriteArrayList
+
+* [Java List 인터페이스 중 CopyOnWriteArrayList 소개](https://wedul.site/350)
+
+----
+
+ArrayList 와 CopyOnWriteArrayList 는 둘다 List interface 를 implement 한다.
+CopyOnWriteArrayList 는 내용이 update 되면 instance 를 복제하여 update 한다.
+따라서 thread 에 argument 로 전달될때 복제본이 전달되기 때문에 thread safety 가
+해결된다.
 
 ## jvm architecture
 
