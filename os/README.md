@@ -48,6 +48,7 @@
 
 * [Kernel of LInux 강의노트](https://books-and-cows.gitbook.io/-linux-kernel-lecture-note/)
   * [video](https://olc.kr/course/course_online_view.jsp?id=35&s_keyword=kernel&x=0&y=0)
+  * [pdf](https://olc.kr/classroom/library.jsp?cuid=283080)
 * [뇌를 자극하는 윈도우즈 시스템 프로그래밍 @ youtube](https://www.youtube.com/playlist?list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc)
   * 쉽게 설명하는 동영상 강좌 
 * [linux 0.01](https://github.com/zavg/linux-0.01)
