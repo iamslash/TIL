@@ -36,5 +36,22 @@ public class UserConfiguration {
 
 # @TestPropertySource
 
+`@TestPropertySource` 를 이용하여 Properties 들을 overriding 할 수도 있다.
 
+```java
+@RunWith(SpringRunnger.class)
+@TestPropertySource(properties = {"iamslash.name=likechad,iamslash.Age=35"})
+@SpringBootTest
+public class ExbasicApplicationTests {
+
+	@Autowired
+	Environment environment;
+
+	@Test
+	public void contextLoads() {
+		assertThat(environment.getProperty("iamslash.name"))
+			.isEqualTo("davidsun");
+	}
+}
+```
 
