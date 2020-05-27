@@ -3,6 +3,8 @@
 - [@EnableConfigurationProperties](#enableconfigurationproperties)
 - [@TestPropertySource](#testpropertysource)
 - [@Autowired](#autowired)
+- [@ExceptionHandler](#exceptionhandler)
+- [@ControllerAdvice, @RestControllerAdvice](#controlleradvice-restcontrolleradvice)
 
 -----
 
@@ -175,3 +177,38 @@ public class BookService {
 	}
 }
 ```
+
+# @ExceptionHandler
+
+* [@ControllerAdvice, @ExceptionHandler를 이용한 예외처리 분리, 통합하기(Spring에서 예외 관리하는 방법, 실무에서는 어떻게?)](https://jeong-pro.tistory.com/195)
+
+----
+
+You can handle exceptions in a Controller class. It just works in `@Controller, @RestController` class. It doesn't work in `@Service` class.
+
+```java
+@RestController
+public class HelloController {
+	...
+	@ExceptionHandler(NullPointerException.class)
+	public Object nullex(Exception e) {
+		System.err.println(e.getClass());
+		return "helloService";
+	}
+}
+```
+
+# @ControllerAdvice, @RestControllerAdvice
+
+You can handle global exceptions with `@ControllerAdvice`.
+
+```java
+@RestControllerAdvice
+public class HelloAdvice {
+	@ExceptionHandler(CustomException.class)
+	public String custom() {
+		return "hello custom";
+	}
+}
+```
+
