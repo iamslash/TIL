@@ -1,3 +1,11 @@
+- [Abstract](#abstract)
+- [@ConfigurationProperties](#configurationproperties)
+- [@EnableConfigurationProperties](#enableconfigurationproperties)
+- [@TestPropertySource](#testpropertysource)
+- [@Autowired](#autowired)
+
+-----
+
 # Abstract
 
 This is about annotations of Spring Boot Framework.
@@ -55,3 +63,115 @@ public class ExbasicApplicationTests {
 }
 ```
 
+# @Autowired
+
+* [Autowired 분석](https://galid1.tistory.com/512)
+
+----
+
+`@Autowired` injects a bean.
+
+You can inject a bean in the field.
+
+```java
+// BookService.java
+@Service
+public class BookService { 
+  @Autowired(required = false)
+  BookRepository bookRepository;
+}
+// BookRepository.java
+@Repository
+public class BookRepository {  
+}
+
+// DemoApplication.java
+```
+
+You can inject a bean in the constructor. `bookRepository` is injected without `@Autowired`. 
+
+```java
+// BookService.java
+@Service
+public class BookService {
+  BookRepository bookRepository;
+  
+  @Autowired
+  public BookService(BookRepository bookRepository) {
+    this.bookRepository = bookRepository;
+  }
+}
+// BookRepository.java
+@Repository
+public class BookRepository {  
+}
+```
+
+You can inject a bean in the setter. `required = false` means bookRepository can not be registered as a bean.
+
+```java
+// BookService.java
+@Service
+public class BookService {
+  BookRepository bookRepository;
+  
+  @Autowired(required = false)
+  public setBookRepository(BookRepository bookRepository) {
+    this.bookRepository = bookRepository;
+  }
+}
+// BookRepository.java
+@Repository
+public class BookRepository {  
+}
+```
+
+You can inject a bean with the priority. The targeted bean  class with `@Primary` will be injected.
+
+```java
+@Repository
+@Primary
+public class HelloBook implements BookRepository {
+
+}
+
+@Repository
+public class WorldBook implements BookRepository {
+
+}
+
+@Service
+public class BookService {
+	@Autowired
+	private BookRepository bookRepository;
+}
+```
+
+You can inject a bean with the bean id.
+
+```java
+@Service
+public class BookService {
+	@Autowired
+	@Qualifier("HelloBook")
+	private BookRepository bookRepository;
+
+	public void printBookRepository() {
+		System.out.println(bookRepository.getClass());
+	}
+}
+```
+
+You can inject beans as list<beans>.
+
+```java
+@Service
+public class BookService {
+	@Autowired
+	private List<BookRepository> bookRespositories;
+
+	public void printBookRepositories() {
+		this.bookRepositories.forEach(System.out::println);
+	}
+}
+```

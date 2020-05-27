@@ -2,7 +2,7 @@
 - [IoC Container and Bean](#ioc-container-and-bean)
   - [Spring IoC Container and Bean](#spring-ioc-container-and-bean)
   - [Application Context and Setting Bean](#application-context-and-setting-bean)
-  - [@Autowire](#autowire)
+  - [@Autowired](#autowired)
   - [@Component and Component Scan](#component-and-component-scan)
   - [Scope of Bean](#scope-of-bean)
   - [Environment Profile](#environment-profile)
@@ -170,9 +170,9 @@ public class DemoApplication {
 }
 ```
 
-## @Autowire
+## @Autowired
 
-Bean 의 constructor 에 `@Autowire` 를 사용하여 DI 해보자.
+Bean 의 constructor 에 `@Autowired` 를 사용하여 DI 해보자.
 
 ```java
 // BookService.java
