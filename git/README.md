@@ -1,6 +1,6 @@
 ﻿- [Materials](#materials)
 - [Git Overview](#git-overview)
-- [Git 설정](#git-%ec%84%a4%ec%a0%95)
+- [Git 설정](#git-설정)
 - [Git Basic](#git-basic)
 - [`.gitignore`](#gitignore)
 - [Git log](#git-log)
@@ -19,17 +19,18 @@
 - [Git merge](#git-merge)
 - [Git LFS](#git-lfs)
 - [Advanced](#advanced)
-  - [내 작업에 서명하기](#%eb%82%b4-%ec%9e%91%ec%97%85%ec%97%90-%ec%84%9c%eb%aa%85%ed%95%98%ea%b8%b0)
-  - [고급 Merge](#%ea%b3%a0%ea%b8%89-merge)
+  - [내 작업에 서명하기](#내-작업에-서명하기)
+  - [고급 Merge](#고급-merge)
   - [Rerere](#rerere)
-  - [Git으로 버그 찾기](#git%ec%9c%bc%eb%a1%9c-%eb%b2%84%ea%b7%b8-%ec%b0%be%ea%b8%b0)
-  - [서브모듈](#%ec%84%9c%eb%b8%8c%eb%aa%a8%eb%93%88)
+  - [Git으로 버그 찾기](#git으로-버그-찾기)
+  - [서브모듈](#서브모듈)
+  - [Merge remote repositories](#merge-remote-repositories)
 - [Git Tips](#git-tips)
   - [use cat instead of pager](#use-cat-instead-of-pager)
   - [git diff output](#git-diff-output)
   - [git diff](#git-diff)
   - [git blame](#git-blame)
-  - [git reflog expire --expire=now --all](#git-reflog-expire---expirenow---all)
+  - [접근할 수 없는 커밋제거하기](#접근할-수-없는-커밋제거하기)
 
 # Materials
 
@@ -2052,6 +2053,32 @@ $ git pull
 ## 서브모듈 Foreach 여행???
 ## 유용한 Alias???
 ## 서브모듈 사용할 때 주의할 점들???
+```
+
+## Merge remote repositories
+
+* [Git 저장소를 병합하는 방법(How to merge repositories in Git)](https://mansoo-sw.blogspot.com/2017/08/git-repository-merge.html)
+
+-----
+
+예를 들어 foo, bar, baz 라는 각각의 git repo 를 foo 로 merge 해본다.
+
+```console
+$ cd prj/foo
+
+$ git remote add bar ../bar
+$ git fetch bar
+$ git merge --allow-unrelated-histories bar/master # 또는 브렌치 이름
+$ git remote remove bar
+$ git commit -m 'Merge bar into project1'
+$ git push
+
+$ git remote add baz ../baz
+$ git fetch baz
+$ git merge --allow-unrelated-histories baz/master # 또는 브렌치 이름
+$ git remote remove baz
+$ git commit -m 'Merge baz into project1'
+$ git push
 ```
 
 # Git Tips
