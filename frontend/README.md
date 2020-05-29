@@ -10,8 +10,12 @@ HTML, CSS, JavaScript 에 대해 정리한다.
   * html, css, javascript examples
 * [초보자를 위한 JavaScript 200제](http://www.infopub.co.kr/new/include/detail.asp?sku=05000265)
   * [src](http://www.infopub.co.kr/new/include/detail.asp?sku=05000265)
+
+
 # Materials
 
+* [프론트엔드 개발환경의 이해: NPM](http://jeonghwan-kim.github.io/series/2019/12/09/frontend-dev-env-npm.html)
+  * 최고의 front-end blog
 * [30 Seconds of CSS](https://30-seconds.github.io/30-seconds-of-css/)
   * 유용한 CSS 팁모음
 * [learn query](https://github.com/infinum/learnQuery)
@@ -26,3 +30,4 @@ HTML, CSS, JavaScript 에 대해 정리한다.
 * [jQuery api documentation](http://api.jquery.com/category/selectors/)
 * [google fonts](https://fonts.google.com/)
   * 글자를 입력하고 폰트미리보기를 할 수 있다.
+
