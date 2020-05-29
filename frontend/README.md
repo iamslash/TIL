@@ -783,6 +783,421 @@ $ NODE_ENV=production npm run build
 
 ## Webpack Deep Dive
 
+webpack-dev-server 는 development 환경에서 원활한 test 를 하도록 server 를 실행해 준다. 이제 browser 로 file 을 직접 읽을 필요가 없다.
+
+다음과 같이 webpack-dev-server 를 설치한다.
+
+```console
+$ npm i -D webpack-dev-server
+```
+
+다음과 같이 package.json 을 수정한다.
+
+```js
+{
+  "scripts": {
+    "start": "webpack-dev-server"
+  }
+}
+```
+
+이제 `$ npm start` 를 이용하여 webpack-dev-server 를 실행한다. browser 로 `http://localhost:8080` 에 접근해 본다. `./dist` 를 접근할 수 있다.
+
+webpack-dev-server 의 option 을 변경하기 위해서 webpack.config.js 를 다음과 같이 수정한다.
+
+```js
+// webpack.config.js:
+module.exports = {
+  devServer: {
+    contentBase: path.join(__dirname, "dist"), 
+    publicPath: "/", 
+    host: "dev.domain.com",
+    overlay: true,
+    port: 8081,
+    stats: "errors-only",
+    historyApiFallback: true,
+  }
+}
+```
+
+* contentBase: 정적파일을 제공할 경로. 기본값은 웹팩 아웃풋이다.
+* publicPath: 브라우져를 통해 접근하는 경로. 기본값은 ‘/’ 이다.
+* host: 개발환경에서 도메인을 맞추어야 하는 상황에서 사용한다. 예를들어 쿠기 기반의 인증은 인증 서버와 동일한 도메인으로 개발환경을 맞추어야 한다. 운영체제의 호스트 파일에 해당 도메인과 127.0.0.1 연결한 추가한 뒤 host 속성에 도메인을 설정해서 사용한다.
+* overlay: 빌드시 에러나 경고를 브라우져 화면에 표시한다.
+* port: 개발 서버 포트 번호를 설정한다. 기본값은 8080.
+* stats: ‘none’, ‘errors-only’, ‘minimal’, ‘normal’, ‘verbose’ 로 메세지 수준을 조절한다.
+* historyApiFallBack: 404가 발생하면 index.html로 리다이렉트한다.
+
+`--progress` option 을 설정하면 build progress 를 확인할 수 있다. 다음과 같이 package.js 를 수정한다.
+
+```js
+{
+  "scripts": {
+    "start": "webpack-dev-server --progress"
+  }
+}
+```
+
+server 에 api 를 구현하고 test 해보자. 다음과 같이 express.js 를 이용하여 webpack.config.js 를 작성한다.
+
+```js
+// webpack.config.js
+module.exports = {
+  devServer: {
+    before: (app, server, compiler) => {
+      app.get('/api/keywords', (req, res) => {
+        res.json([
+          { keyword: '이탈리아' },
+          { keyword: '세프의요리' }, 
+          { keyword: '제철' }, 
+          { keyword: '홈파티'}
+        ])
+      })
+    }
+  }
+}
+```
+
+`$ npm start` 로 실행하고 다음과 같이 curl 로 요청한다.
+
+```console
+$ curl localhost:8080/api/keywords
+[{"keyword":"이탈리아"},{"keyword":"세프의요리"},{"keyword":"제철"},{"keyword":"홈파티"}]
+```
+
+이제 HTTP request 를 axoi 를 이용하여 js 에서 해보자. 먼저 `$ npm install axios` 를 실행하여 axio 를 설치한다. 그리고 다음과 같이 `src/model.js` 를 작성한다.
+
+```js
+// src/model.js:
+import axios from 'axios'
+
+// const data = [
+//   {keyword: '이탈리아'}, 
+//   {keyword: '세프의요리'}, 
+//   {keyword: '제철'}, 
+//   {keyword: '홈파티'},
+// ]
+
+const model = {
+  async get() {
+    // return data
+    
+    const result = await axios.get('/api/keywords');
+    return result.data;
+  }
+}
+
+export default model;
+```
+
+mockup api 를 위해 connect-api-mocker 를 설치한다. `$ npm install -D connect-api-mocker`
+
+mockup response 를 위해 `mocks/api/keywords/GET.json` 를 작성한다.
+
+```json
+[
+  { "keyword": "이탈리아" }, 
+  { "keyword": "세프의요리" }, 
+  { "keyword": "제철" }, 
+  { "keyword": "홈파티 " }
+]
+```
+
+다음과 같이 `webpack.config.js` 를 수정한다. `/api` 의 요청을 `mocks/api` 의 요청으로 전달한다.
+
+```js
+// webpack.config.js:
+const apiMocker = require('connect-api-mocker')
+
+module.exports = {
+  devServer: {
+    before: (app, server, compiler) => {
+      app.use(apiMocker('/api', 'mocks/api'))
+    },
+  }
+}
+```
+
+이제 mockup api 이 아닌 real api 를 위해 server 를 실행해 본다. 다음과 같이 `src/model.js` 를 수정한다.
+
+```js
+// src/model.js
+const model = {
+  async get() {
+    // const result = await axios.get('/api/keywords');
+
+    // 직접 api 서버로 요청한다.
+    const { data } = await axios.get('http://localhost:8081/api/keywords'); 
+    return data;
+  }
+}
+```
+
+그러나 CORS error 가 발생한다. HTTP request header 에 `Access-control-Allow-Origin` header 가 없다는 message 도 등장한다.
+
+CORS (Cross Origin Resource Sharing) 은 browser 가 최초로 접속한 서버에서만 ajax 요청을 할 수 있다는 정책이다. 해결방법은 여러가지가 있다. 첫째, server 의 HTTP response header 에 `Access-Control-Allow-Origiin: *` 를 추가한다.
+
+```js
+// server/index.js
+app.get('/api/keywords', (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*"); // 헤더를 추가한다 
+  res.json(keywords)
+})
+```
+
+둘째, webpack-dev-server 에서 api server 로 proxing 한다.
+
+```js
+// webpack.config.js
+module.exports = {
+  devServer: {
+    proxy: {
+      '/api': 'http://localhost:8081', // 프록시
+    }
+  }
+}
+```
+
+이제 `src/model.js` 를 `/api` 를 HTTP request 하도록 수정한다.
+
+```js
+// src/model.js
+const model = {
+  async get() {
+    // const { data } = await axios.get('http://localhost:8081/api/keywords');
+
+    const { data } = await axios.get('/api/keywords');
+    return data;
+  }
+}
+```
+
+source 를 수정했을 때 전체 화면을 업데이트하지 않고 수정된 module 만 업데이트 해보자. 다음과 같이 webpack.config.js 의 hot module replacement 를 설정한다.
+
+```js
+// webpack.config.js:
+module.exports = {
+  devServer = {
+    hot: true,
+  },
+}
+```
+
+다음은 `src/modle.js, src/view.js` 를 이용하는 `src/controller.js` 이다.
+
+```js
+// src/controller.js
+import model from "./model";
+import view from "./view";
+
+const controller = {
+  async init(el) {
+    this.el = el
+    view.render(await model.get(), this.el);
+  }
+}
+
+export default controller;
+```
+
+hot module replacement 를 위해 `src/controller.js` 를 다음과 같이 수정한다.
+
+```js
+// src/controller.js
+import model from "./model";
+import view from "./view";
+
+const controller = {
+  async init(el) {
+    this.el = el
+    view.render(await model.get(), this.el);
+  }
+}
+
+export default controller;
+
+if (module.hot) {
+  module.hot.accept('./view', async () => {
+    view.render(await model.get(), controller.el); // 변경된 모듈로 교체 
+  }) 
+}
+```
+
+DefinePlugin 을 사용하여 process.env.NODE_ENV 가 development 일 경우 다음과 같은 두가지 plugin 을 사용하여 optimization 한다.
+
+* NamedChunksPlugin
+* NamedModulesPlugin
+
+한편 process.env.NODE_ENV 가 production 일 셩우 다음과 같이 일곱개의 plugin 을 사용하여 optimization 한다.
+
+* FlagDependencyUsagePlugin
+* FlagIncludedChunksPlugin
+* ModuleConcatenationPlugin
+* NoEmitOnErrorsPlugin
+* OccurrenceOrderPlugin
+* SideEffectsFlagPlugin
+* TerserPlugin
+
+NODE_ENV 의 값에 따라 mode 를 설정하도록 webpack.config.js 를 수정한다.
+
+```js
+// webpack.config.js:
+const mode = process.env.NODE_ENV || 'development'; // 기본값을 development로 설정
+
+module.exports = {
+  mode,
+}
+```
+
+build 할 때 production mode 로 수행되도록 package.json 을 수정한다.
+
+```json
+{
+  "scripts": {
+    "start": "webpack-dev-server --progress",
+    "build": "NODE_ENV=production webpack --progress"
+  }
+}
+```
+
+optimize-css-assets-webpack-plugin 은 css 파일들을 optimization 해준다. 먼저 optimize-css-assets-webpack-plugin 을 설치하자.
+
+```console
+$ npm i -D optimize-css-assets-webpack-plugin
+```
+
+webpack.config.js 를 수정하자.
+
+```js
+// webpack.config.js:
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+
+module.exports = {
+  optimization: {
+    minimizer: mode === 'production' ? [
+      new OptimizeCSSAssetsPlugin(),
+    ] : [],
+  },
+}
+```
+
+TerserWebpackPlugin 은 obfuscation 을 수행한다. 먼저 를 설치하자.
+
+```console
+$ npm i -D terser-webpack-plugin
+```
+
+webpack.config.js 를 수정한다.
+
+```js
+// webpack.config.js:
+const TerserPlugin = require('terser-webpack-plugin');
+
+module.exports = {
+  optimization: {
+    minimizer: mode === 'production' ? [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true, // 콘솔 로그를 제거한다 
+          }
+        }
+      }),
+    ] : [],
+  },
+}
+```
+
+하나의 큰 파일보다는 작은 여러파일로 나누면 download 속도를 향상할 수 있다. 다음과 같이 webpack.config.js 를 수정한다.
+
+```js
+// webpack.config.js
+module.exports = {
+  entry: {
+    main: "./src/app.js",
+    controller: "./src/controller.js",
+  }
+}
+```
+
+axios 는 `src/app.js` 와 `src/controller.js` 에서 각각 사용되기 때문에 webpacking 후 duplicates 가 존재한다. SplitChucksPlugin 은 duplicates 를 제거한다. 다음과 같이 webpack.config.js 를 수정하자.
+
+```js
+// webpack.config.js:
+module.exports = {
+  optimization: {
+    splitChunks: {
+      chunks: 'all',
+    },
+  },
+}
+```
+
+dynamic import 로 bundle 을 split 할 수 있다. 다음은 import/from 으로 controller 를 import 하는 예이다.
+
+```js
+import controller from './controller';
+
+document.addEventListener('DOMContentLoaded', () => {
+  controller.init(document.querySelector('#app'))
+})
+```
+
+이것을 dynamic import 로 변환하자.
+
+```js
+function getController() {
+  return import(/* webpackChunkName: "controller" */ './controller').then(m=> {
+    return m.default
+  })
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  getController().then(controller => {
+    controller.init(document.querySelector('#app'))
+  })
+})
+```
+
+`/* webpackChunkName: "controller" */` 를 때문에 chuck 가 분리된다.
+
+axois 와 같은 third party library 는 이미 build, optimize 가 되어 있기 때문에 application build 에서 제외해야 한다. externals 를 이용하여 제외하자.
+
+```js
+// webpack.config.js:
+module.exports = {
+  externals: {
+    axios: 'axios',
+  },
+}
+```
+
+axios 는 이미 node_modules 에 있기 때문에 이것을 webpack output folder 로 옮기고 index.html 에서 loading 해야 한다. CopyWebpackPlugin 을 이용하자. `$ npm i -D copy-webpack-plugin`
+
+다음과 같이 webpack.config.js 를 수정한다.
+
+```js
+const CopyPlugin = require('copy-webpack-plugin');
+
+module.exports = {
+  plugins: [
+    new CopyPlugin([{
+      from: './node_modules/axios/dist/axios.min.js',
+      to: './axios.min.js' // 목적지 파일에 들어간다
+    }])
+  ]
+}
+```
+
+마지막으로 index.html 에서 axios 를 loading 하자.
+
+```html
+<!-- src/index.html -->
+  <script type="text/javascript" src="axios.min.js"></script>
+</body>
+</html>
+```
+
 ## Babel
 
 ToDo
