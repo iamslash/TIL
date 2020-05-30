@@ -15,12 +15,12 @@
   - [Pipeline pattern](#pipeline-pattern)
   - [Fan out](#fan-out)
   - [Fan in](#fan-in)
-  - [distribute](#distribute)
+  - [Distributed processing](#distributed-processing)
   - [select](#select)
-  - [Stop pipeline](#stop-pipeline)
   - [context.Context](#contextcontext)
   - [Paring request, response](#paring-request-response)
   - [Assemble go routine dynamically](#assemble-go-routine-dynamically)
+  - [Goroutine tips](#goroutine-tips)
 
 -----
 
@@ -468,22 +468,392 @@ func ExamplePlusOne() {
 }
 ```
 
+다음과 같은 function type 을 선언하면 더욱 간단하게 pipeline 을 구성할 수 있다.
+다음은 PluginOne 을 두개 pipelining 해서 PlusTwo 를 만든 예이다.
+
+```go
+type IntPipe func(<-chan int) <-chan int
+
+func Chain(ps ...IntPipe) IntPipe {
+	return func(in <-chan int) <-chan int {
+		c := in
+		for _, p := range ps {
+			c = p(c)
+		}
+		return c
+	}
+}
+
+func ExamplePlusTwo() {
+	PlusTwo := Chain(PlusOne, PlusOne)
+	c := make(chan int)
+	go func() {
+		defer close(c)
+		c <- 5
+		c <- 3
+		c <- 8
+	}()
+	for num := range PlusTwo(c) {
+		fmt.Println(num)
+	}
+	// Output:
+	// 7
+	// 5
+	// 10
+}
+```
+
+pipeline 과 같이 function 이 여러개 중첩되는 경우 복잡해 보일 수 있다.
+그러나 function 의 input, output arguement 의 type 이 무엇인지를 확실히 이해하고
+top to the bottom 방향으로 이해하면 수월하게 접근할 수 있다. 항상 high level 에서 먼저
+이해하는 것이 중요하다.
+
 ## Fan out
+
+하나의 출력이 여러 입력으로 흘러가는 형태를 Fan out 이라고 한다. 다음은 하나의 출력을
+3 개의 goroutine 의 입력으로 흘러가서 각각 출력되는 예이다. context switching 을 위해 time.Sleep 을 사용했다. goroutine 에서 input argument 로 i 를 넘기지 않고 lexical binding 한 i 를 사용하면 race condition 이 발생되어 잘 못된 i 를 출력하게 된다. 반드시 host code 의 local variable 을 lexical binding 하지 않고 goroutine 에 input argument 로 전달하도록 하자.
+
+```go
+func main() {
+	c := make(chan int)
+	for i := 0; i < 3; i++ {
+		go func(i int) {
+			for n := range c {
+				time.Sleep(1)
+				fmt.Println(i, n)
+			}
+		}(i)
+	}
+	for i := 0; i < 10; i++ {
+		c <- i
+	}
+	close(c)
+}
+
+// Output
+// 1 2
+// 2 1
+// 0 0
+// 1 3
+// 2 4
+// 1 6
+// 0 5
+// 2 7
+```
 
 ## Fan in
 
-## distribute
+여러개의 출력을 하나의 입력으로 흘러가는 형태를 Fan in 이라고 한다.
+
+```go
+func FanIn(ins ...<-chan int) <-chan int {
+	out := make(chan int)
+	var wg sync.WaitGroup
+	wg.Add(len(ins))
+	for _, in := range ins {
+		go func(in <-chan int) {
+			defer wg.Done()
+			for num := range in {
+				out <- num
+			}
+		}(in)
+	}
+	go func() {
+		wg.Wait()
+		close(out)
+	}()
+	return out
+}
+```
+
+## Distributed processing
+
+하나의 출력을 Fan out 하고 Fan in 하는 것을 Distributed processing 이라고 한다.
+
+```go
+func Distribute(p IntPipe, n int) IntPipe {
+	return func(in <-chan int) <-chan int {
+		cs := make([]<-chan int, n)
+		for i := 0; i < n; i++ {
+			cs[i] = p(in)
+		}
+		return FanIn(cs...)
+	}
+}
+```
+
+Distribute 와 Chain 을 이용하면 다양한 pipeline 을 구성할 수 있다.
+
+```go
+out := Chain(Cut, Distribute(Chain(Draw, Paint, Decorate), 10), Box)(in)
+```
+
+위와 같이 하면 in 으로 들어온 data 가 다음의 흐름을 거친다.
+
+* 하나의 Cut goroutine 을 거친다. (1)
+* 10 개로 나누어져 각각 Draw, Paint, Decorate 의 pipeline 을 거친다. (30)
+* 하나의 Box goroutine 으로 합쳐진다. (1)
+
+goroutine 의 개수는 대략 32 개가 된다.
+
+다음은 또 다른 pipeline 이다.
+
+```go
+out := Chain(Cut, Distribute(Draw, 6), Distribute(Paint, 10), Distribute(Decorate, 3), Box)(in)
+```
+
+위와 같이 하면 in 으로 들어온 data 가 다음의 흐름을 거친다.
+
+* 하나의 Cut goroutine 을 거친다. (1)
+* 6 개의 Draw goroutine 으로 Fan out 했다가 Fan in 한다. (6)
+* 10 개의 Paint goroutine 으로 Fan out 했다가 Fan in 한다. (10)
+* 3 개의 Decorate goroutine 으로 Fan out 했다가 Fan in 한다. (3)
+* 하나의 Box goroutine 을 거친다. (1)
+
+goroutine 의 개수는 대략 21 개이다.
+
+goroutine 은 user level thread 이다. context switching 의 부담이 적다. 많이 사용해도 된다.
 
 ## select
 
-## Stop pipeline
+select 를 이용하면 동시에 여러 channel 과 통신할 수 있다.
+
+```go
+package main
+
+import (
+  "fmt"
+  "time"
+)
+
+func main() {
+  c1 := make(chan string)
+  c2 := make(chan string)
+
+  go func() {
+    time.Sleep(1 * time.Second)
+    c1 <- "one"
+  }()
+  go func() {
+    time.Sleep(2 * time.Second)
+    c2 <- "two"
+  }()
+
+  for i := 0; i < 2; i++ {
+    select {
+    case msg1 := <-c1:
+      fmt.Println("received", msg1)
+    case msg2 := <-c2:
+      fmt.Println("received", msg2)
+    }
+  }
+}
+```
+
+앞서 구현한 Fan in 을 여러개의 goroutine 을 사용하지 않고 select 로 구현해 보자.
+
+```go
+package main
+
+import "fmt"
+
+func FanIn3(in1, in2, in3 <-chan int) <-chan int {
+	out := make(chan int)
+	openCnt := 3
+	closeChan := func(c *<-chan int) bool {
+		*c = nil
+		openCnt--
+		return openCnt == 0
+	}
+	go func() {
+		defer close(out)
+		for {
+			select {
+			case n, ok := <-in1:
+				if ok {
+					out <- n
+				} else if closeChan(&in1) {
+					return
+				}
+			case n, ok := <-in2:
+				if ok {
+					out <- n
+				} else if closeChan(&in2) {
+					return
+				}
+			case n, ok := <-in3:
+				if ok {
+					out <- n
+				} else if closeChan(&in3) {
+					return
+				}
+			}
+		}
+	}()
+	return out
+}
+
+func main() {
+	c1, c2, c3 := make(chan int), make(chan int), make(chan int)
+	sendInts := func(c chan<- int, begin, end int) {
+		defer close(c)
+		for i := begin; i < end; i++ {
+			c <- i
+		}
+	}
+	go sendInts(c1, 11, 14)
+	go sendInts(c2, 21, 23)
+	go sendInts(c3, 31, 35)
+	for n := range FanIn3(c1, c2, c3) {
+		fmt.Println(n, ",")
+	}
+}
+```
+
+닫힌 채널은 nil 로 저장했다. nil 채널은 보내기 및 받기가 모두 blocking 된다.
+
+또한 default 를 이용하여 select 를 non-blocking 으로 구현할 수 있다.
+
+```go
+select {
+  case n := <-c:
+    fmt.Println(n)
+  default:
+    fmt.Println("Data is not ready. Skipping...")
+}
+```
+
+time.After 를 이용하면 일정시간동안 기다리게 할 수도 있다.
+
+```golang
+timeout := time.After(5 * time.Second)
+for {
+  select {
+    case n := <-recv:
+      fmt.Println(n)
+    case send <- 1:
+      fmt.Println("sent 1")
+    case <-timeout:
+      fmt.Println("Communication wasn't finisehd in 5 sec.")
+      return
+  }
+}
+```
 
 ## context.Context
 
+* [Go Concurrency Patterns: Context](https://blog.golang.org/context)
+
+-----
+
+context.Cotext 를 이용하면 goroutine 을 중지시킬 수 있다. 다음과 같이 context.Context 를 설치한다.
+
+```console
+$ go get golang.org/x/net/context
+```
+
+다음은 context.Context 를 이용하여 goroutine 을 취소할 수 있는 예이다.
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+)
+
+func PlusOne(ctx context.Context, in <-chan int) <-chan int {
+	out := make(chan int)
+	go func() {
+		defer close(out)
+		for num := range in {
+			select {
+			case out <- num + 1:
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
+	return out
+}
+
+func main() {
+	c := make(chan int)
+	go func() {
+		defer close(c)
+		for i := 3; i < 103; i += 10 {
+			c <- i
+		}
+	}()
+	ctx, cancel := context.WithCancel(context.Background())
+	nums := PlusOne(ctx, PlusOne(ctx, PlusOne(ctx, PlusOne(ctx, c))))
+	for num := range nums {
+		fmt.Println(num)
+		if num == 17 {
+			cancel()
+			break
+		}
+	}
+}
+// Output
+// 7
+// 17
+```
+
 ## Paring request, response
+
+특정한 request, response 를 짝지어 주기 위해서는 request, response 에 id field 가 필요하다.
+
+다음은 request, response 를 Request, Response struct 를 이용하여 구현했다. 물론 각각 id field 를 포함한다.
+
+```go
+package main
+
+import (
+	"fmt"
+	"sync"
+)
+
+type Request struct {
+	Num  int
+	Resp chan Response
+}
+type Response struct {
+	Num      int
+	WorkerId int
+}
+
+func PlusOneService(reqs <-chan Request, workerID int) {
+	for req := range reqs {
+		go func(req Request) {
+			defer close(req.Resp)
+			req.Resp <- Response{req.Num + 1, workerID}
+		}(req)
+	}
+}
+
+func main() {
+	reqs := make(chan Request)
+	defer close(reqs)
+	for i := 0; i < 3; i++ {
+		go PlusOneService(reqs, i)
+	}
+	var wg sync.WaitGroup
+	for i := 3; i < 53; i += 10 {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			resps := make(chan Response)
+			reqs <- Request{i, resps}
+			fmt.Println(i, "=>", <-resps)
+		}(i)
+	}
+	wg.Wait()
+}
+```
 
 ## Assemble go routine dynamically
 
-
+## Goroutine tips
 
 
