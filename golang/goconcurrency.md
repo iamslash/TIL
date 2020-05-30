@@ -19,8 +19,8 @@
   - [select](#select)
   - [context.Context](#contextcontext)
   - [Paring request, response](#paring-request-response)
-  - [Assemble go routine dynamically](#assemble-go-routine-dynamically)
-  - [Goroutine tips](#goroutine-tips)
+  - [Assemble goroutine dynamically](#assemble-goroutine-dynamically)
+  - [Anti pattern of goroutine](#anti-pattern-of-goroutine)
 
 -----
 
@@ -852,8 +852,168 @@ func main() {
 }
 ```
 
-## Assemble go routine dynamically
+## Assemble goroutine dynamically
 
-## Goroutine tips
+* [A concurrent prime sieve](https://golang.org/doc/play/sieve.go)
 
+----
 
+sieve of eratosthenes 를 goroutine 으로 구현해 보자. 다음은 goroutine 을 동적으로 이어 붙여서 소수를 찾는 예이다.
+
+```go
+// A concurrent prime sieve
+
+package main
+
+import "fmt"
+
+// Send the sequence 2, 3, 4, ... to channel 'ch'.
+func Generate(ch chan<- int) {
+	for i := 2; ; i++ {
+		ch <- i // Send 'i' to channel 'ch'.
+	}
+}
+
+// Copy the values from channel 'in' to channel 'out',
+// removing those divisible by 'prime'.
+func Filter(in <-chan int, out chan<- int, prime int) {
+	for {
+		i := <-in // Receive value from 'in'.
+		if i%prime != 0 {
+			out <- i // Send 'i' to 'out'.
+		}
+	}
+}
+
+// The prime sieve: Daisy-chain Filter processes.
+func main() {
+	ch := make(chan int) // Create a new channel.
+	go Generate(ch)      // Launch Generate goroutine.
+	for i := 0; i < 10; i++ {
+		prime := <-ch
+		fmt.Println(prime)
+		ch1 := make(chan int)
+		go Filter(ch, ch1, prime)
+		ch = ch1
+	}
+}
+```
+
+이제 generator, context.Context 등을 이용하여 prime number generator 를 만들어 보자.
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+)
+
+type IntPipe func(ctx context.Context, in <-chan int) <-chan int
+
+func Range(ctx context.Context, start, step int) <-chan int {
+	out := make(chan int)
+	go func() {
+		defer close(out)
+		for i := start; ; i += step {
+			select {
+			case out <- i:
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
+	return out
+}
+
+func FilterMultiple(n int) IntPipe {
+	return func(ctx context.Context, in <-chan int) <-chan int {
+		out := make(chan int)
+		go func() {
+			defer close(out)
+			for x := range in {
+				if x%n == 0 {
+					continue
+				}
+				select {
+				case out <- x:
+				case <-ctx.Done():
+					return
+				}
+			}
+		}()
+		return out
+	}
+}
+
+func Primes(ctx context.Context) <-chan int {
+	out := make(chan int)
+	go func() {
+		defer close(out)
+		c := Range(ctx, 2, 1)
+		for {
+			select {
+			case i := <-c:
+				c = FilterMultiple(i)(ctx, c)
+				select {
+				case out <- i:
+				case <-ctx.Done():
+					return
+				}
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
+	return out
+}
+
+func PrintPrimes(max int) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	for prime := range Primes(ctx) {
+		if prime > max {
+			break
+		}
+		fmt.Print(prime, " ")
+	}
+	fmt.Println()
+}
+
+func main() {
+	PrintPrimes(100)
+}
+```
+
+## Anti pattern of goroutine
+
+다음의 예에서 두번째 goroutine 은 consumer 이다. 두번째 goroutine 은 끝나지 않는다. 이 코드가 반복적으로 실행되면 goroutine 은 무한히 증가할 것이다.
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+func NeverStop() {
+	c := make(chan int)
+	done := make(chan bool)
+	go func() {
+		for i := 0; i < 10; i++ {
+			c <- i
+		}
+		done <- true
+	}()
+	go func() {
+		for {
+			fmt.Println(<-c)
+		}
+	}()
+	<-done
+}
+
+func main() {
+	NeverStop()
+}
+```
