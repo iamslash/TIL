@@ -46,6 +46,12 @@ This is about Distributed System.
 * [6.824 Spring 2020 Paper Questions](https://pdos.csail.mit.edu/6.824/questions.html?q=q-gfs&lec=3)
 * [lab](https://pdos.csail.mit.edu/6.824/labs/lab-raft.html)
 
+-----
+
+* [Designs, Lessons and Advice from Building Large Distributed Systems - Jeff Dean](https://research.cs.cornell.edu/ladis2009/talks/dean-keynote-ladis2009.pdf)
+  * Clossus presentation
+  * [video](https://www.youtube.com/watch?v=modXC5IWTJI)
+
 # Lecture 4: Primary-Backup Replication
 
 * [text](https://pdos.csail.mit.edu/6.824/notes/l-vm-ft.txt)
