@@ -51,6 +51,8 @@ This is about Distributed System.
 * [Designs, Lessons and Advice from Building Large Distributed Systems - Jeff Dean](https://research.cs.cornell.edu/ladis2009/talks/dean-keynote-ladis2009.pdf)
   * Clossus presentation
   * [video](https://www.youtube.com/watch?v=modXC5IWTJI)
+* [#001 구글 파일 시스템 분산환경](http://www.starstory.us/?p=452)
+  * [The Google File System](https://pdos.csail.mit.edu/6.824/papers/gfs.pdf) 번역
 
 # Lecture 4: Primary-Backup Replication
 
