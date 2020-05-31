@@ -7,6 +7,7 @@ java 에서 사용할 만한 DB migration tool
 * [Flyway 개념 & 사용법](https://bkim.tistory.com/2)
 * [Flyway getting started](https://flywaydb.org/getstarted/firststeps/commandline.html)
 * [SpringBoot and Database migrations with FlyWay](https://www.youtube.com/watch?v=_7BuLOCRJc4)
+* [Flyway 공부](http://chanwookpark.github.io/dbmigration/flyway/2016/08/23/flyway/)
 
 # Install
 
