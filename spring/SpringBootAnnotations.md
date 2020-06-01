@@ -5,6 +5,7 @@
 - [@Autowired](#autowired)
 - [@ExceptionHandler](#exceptionhandler)
 - [@ControllerAdvice, @RestControllerAdvice](#controlleradvice-restcontrolleradvice)
+- [@Import](#import)
 
 -----
 
@@ -212,3 +213,51 @@ public class HelloAdvice {
 }
 ```
 
+# @Import
+
+* [[Spring] @Import 어노테이션 사용](https://hilucky.tistory.com/244)
+* [4.3.  Aggregating @Configuration classes with @Import](https://docs.spring.io/spring-javaconfig/docs/1.0.0.M4/reference/html/ch04s03.html)
+
+----
+
+`@Configuration` class 에서 또 다른 `@Configuration` bean 을 생성할 수 있다. 예를 들어 다음과 같이 AppConfig 를 bean 으로 등록하면 DataSource 도 bean 으로 등록된다.
+
+```java
+@Configuration
+public class DataSourceConfig {
+    @Bean
+    public DataSource dataSource() {
+        return new DriverManagerDataSource(...);
+    }
+}
+
+@Configuration
+@AnnotationDrivenConfig
+@Import(DataSourceConfig.class)
+public class AppConfig extends ConfigurationSupport {
+    @Autowired DataSourceConfig dataSourceConfig;
+
+    @Bean
+    public void TransferService transferService() {
+        return new TransferServiceImpl(dataSourceConfig.dataSource());
+    }
+}
+
+public class Main {
+	public static void main(String[] args) {
+		JavaConfigApplicationContext ctx =
+				new JavaConfigApplicationContext(AppConfig.class);
+		...
+	}
+}
+```
+
+다음과 같이 다수의 class 들을 `@Import` 할 수도 있다.
+
+```java
+@Configuration
+@Import({ DataSourceConfig.class, TransactionConfig.class })
+public class AppConfig extends ConfigurationSupport {
+	// @Bean methods here can reference @Bean methods in DataSourceConfig or TransactionConfig
+}
+```
