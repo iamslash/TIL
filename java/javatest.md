@@ -524,13 +524,30 @@ public class FindSlowTestExtention implements BeforeTestExecutionCallback, After
 
 ## JUnit 5 migration
 
-* [14. Migration](https://github.com/keesun/inflearn-the-java-test/commits/master)
+* [14. Migration](https://github.com/keesun/inflearn-the-java-test/commit/189276f2566e73e035da1f241a65ba7b130294c2)
 
 ----
 
+`junit-vintage-engine` 을 build.gradle 의 dependency 에 추가하면 JUnit5 의 junit-platform 으로 JUnit 3, 4 로 작성된 test code 를 실행할 수 있다.
+
+`@Rule` 은 기본적으로 지원하지 않는다. `junit-jupiter-migrationsupport` module 의 `@EnableRuleMigrationSupport` 를 사용하면 다음 타입의 Rule 을 지원한다.
+
+* `ExternalResource`
+* `Verifier`
+* `ExpectedException`
+
+다음은 JUnit4 와 JUnit5 가 지원하는 annotation 을 비교해 놓은 것이다.
+
+| JUnit 4            | JUnit 5        |
+| ------------------ | -------------- |
+| `@Category(Class)` | `@Tag(String)` |
+| `@RunWith, @Rule, @ClassRule` | `@ExtendWith, @RegisterExtension` |
+| `@Ignore` | `@Disabled` |
+| `@Before, @After, @BeforeClass, @AfterClass` | `@BeforeEach, @AfterEach, @BeforeAll, @AfterAll` |
+
 ## Junit 5 연습문제
 
-* [15. Test](https://github.com/keesun/inflearn-the-java-test/commits/master)
+* [15. Test](https://github.com/keesun/inflearn-the-java-test/commit/fd1eed1457c6d84a9e7d9d14cec90fc5dbe00855)
 
 ----
 
