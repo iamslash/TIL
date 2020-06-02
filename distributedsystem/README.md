@@ -26,6 +26,7 @@ This is about Distributed System.
   * Very big gathering log system.
 * [Colossus](https://www.systutorials.com/storage-architecture-and-challenges/)
   * Replaced GFS.
+* [Map Reduce Paper - Distributed data processing @ youtube](https://www.youtube.com/watch?v=MAJ0aW5g17c)
   
 # Lecture 2: RPC and Threads
 
@@ -53,6 +54,8 @@ This is about Distributed System.
   * [video](https://www.youtube.com/watch?v=modXC5IWTJI)
 * [#001 구글 파일 시스템 분산환경](http://www.starstory.us/?p=452)
   * [The Google File System](https://pdos.csail.mit.edu/6.824/papers/gfs.pdf) 번역
+* [Google File System - Paper that inspired Hadoop @ youtube](https://www.youtube.com/watch?v=eRgFNW4QFDc)
+* [GFS paper 불확실한 요약](http://blog.syszone.co.kr/2323)
 
 # Lecture 4: Primary-Backup Replication
 
