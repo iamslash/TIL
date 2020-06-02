@@ -561,7 +561,14 @@ public class FindSlowTestExtention implements BeforeTestExecutionCallback, After
 
 ## Mockito 시작하기
 
-* []()
+다음과 같이 build.gradle 에 dependencies 설정을 하면 `org.mockito.mockito-core` 가 import 된다.
+
+```gradle
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter-test'
+  implementation 'org.mockito:mockito-junit-jupiter'
+}
+```
 
 ----
 
@@ -570,6 +577,58 @@ public class FindSlowTestExtention implements BeforeTestExecutionCallback, After
 * [18. Creating mocks](https://github.com/keesun/inflearn-the-java-test/commit/4f626230a716b3d438bdd17e54879e8b9065fa29)
 
 ----
+
+다음과 같이 `HelloServiceTest` 를 작성해 보자.
+
+```java
+class HelloServiceTest {
+  
+  @Test
+  void createHelloService() {
+    MemberService memberService = mock(MemberService.class);
+    HelloService helloService = mock(HelloService.class);
+    HelloService helloService = new HelloService(memberService, HelloRepository);
+    assertNotNull(helloService);
+  }
+}
+```
+
+`@Mock, @ExtendWith(MockitoExtension.class)` 을 사용하여 더욱 간결하게 만들어 보자.
+
+```java
+@ExtendWith(MockitoExtension.class)
+class HelloServiceTest {
+
+  @Mock
+  MemberService memberService;
+
+  @Mock
+  HelloService helloService;  
+  
+  @Test
+  void createHelloService() {
+
+    HelloService helloService = new HelloService(memberService, HelloRepository);
+    assertNotNull(helloService);
+  }
+}
+```
+
+Mock object 를 method 의 arguement 로 주입하자.
+
+
+```java
+@ExtendWith(MockitoExtension.class)
+class HelloServiceTest {
+  
+  @Test
+  void createHelloService(@Mock MemberService memberService, @Mock HelloService helloService;) {
+
+    HelloService helloService = new HelloService(memberService, HelloRepository);
+    assertNotNull(helloService);
+  }
+}
+```
 
 ## Mock 객체 Stubbing
 
