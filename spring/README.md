@@ -27,6 +27,7 @@
   - [Spring WebMvcConfigure](#spring-webmvcconfigure)
   - [Transactional](#transactional)
   - [Spring with flyway](#spring-with-flyway)
+  - [Custom Data Binder in Spring MVC](#custom-data-binder-in-spring-mvc)
 
 ----
 
@@ -952,4 +953,73 @@ $ ./gradlew flywayInfo
 $ ./gradlew flywayClean
 
 $ ./gradlew flywayMigrate
+```
+
+## Custom Data Binder in Spring MVC
+
+* [A Custom Data Binder in Spring MVC](https://www.baeldung.com/spring-mvc-custom-data-binder)
+
+----
+
+There are 3 more Spring's Data Binding mechanism including Binding Individual Objects to Request Parameters, Binding a Hierarchy of Objects, Binding Domain Objects. This is a Binding Domain Objects. For a instance, You can map specific HTTP header to Object.
+
+1. Custom Argument Resolver
+
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.PARAMETER)
+public @interface Version {
+}
+```
+
+2. Implement a custom `HandlerMethodArgumentResolver`.
+
+```java
+public class HeaderVersionArgumentResolver
+  implements HandlerMethodArgumentResolver {
+ 
+    @Override
+    public boolean supportsParameter(MethodParameter methodParameter) {
+        return methodParameter.getParameterAnnotation(Version.class) != null;
+    }
+ 
+    @Override
+    public Object resolveArgument(
+      MethodParameter methodParameter, 
+      ModelAndViewContainer modelAndViewContainer, 
+      NativeWebRequest nativeWebRequest, 
+      WebDataBinderFactory webDataBinderFactory) throws Exception {
+  
+        HttpServletRequest request 
+          = (HttpServletRequest) nativeWebRequest.getNativeRequest();
+ 
+        return request.getHeader("Version");
+    }
+}
+```
+
+3. Letting Spring know where to search for them.
+
+```java
+@Configuration
+public class WebConfig implements WebMvcConfigurer {
+ 
+    //...
+ 
+    @Override
+    public void addArgumentResolvers(
+      List<HandlerMethodArgumentResolver> argumentResolvers) {
+        argumentResolvers.add(new HeaderVersionArgumentResolver());
+    }
+}
+```
+
+4. Use it in a controller.
+
+```java
+@GetMapping("/version/{id}")
+public ResponseEntity getVersion(
+  @PathVariable Long id, @Version String version) {
+    return ...;
+}
 ```
