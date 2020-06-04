@@ -193,6 +193,95 @@ Using JPA is better than Using JDBC.
 
 ## Spring Data JPA: Auditing
 
+* [Auditing with JPA, Hibernate, and Spring Data JPA](https://www.baeldung.com/database-auditing-jpa)
+
+----
+
+There 3 ways for Auditing including Auditing With JPA, Hibernate Envers, Spring Data JPA in Spring. This is a Auditing using Spring Data JPA.
+
+0. Enableing JPA Auditing. 
+
+just add @EnableJpaAuditing on your @Configuration class.
+
+```java
+@Configuration
+@EnableTransactionManagement
+@EnableJpaRepositories
+@EnableJpaAuditing
+public class PersistenceConfig { ... }
+```
+
+1. Adding Spring's Entity Callback Listener.
+
+```java
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+public class Hello { ... }
+```
+
+2. Tracking Created and Last Modified Date.
+
+```java
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+public class Hello {     
+    //...     
+    @Column(name = "created_date", nullable = false, updatable = false)
+    @CreatedDate
+    private long createdDate;
+ 
+    @Column(name = "modified_date")
+    @LastModifiedDate
+    private long modifiedDate;     
+    //...     
+}
+```
+
+3. Auditing the Author of Changes With Spring Security.
+
+```java
+@Entity
+@EntityListeners(AuditingEntityListener.class)
+public class Bar {     
+    //...     
+    @Column(name = "created_by")
+    @CreatedBy
+    private String createdBy;
+ 
+    @Column(name = "modified_by")
+    @LastModifiedBy
+    private String modifiedBy;     
+    //...     
+}
+```
+
+4. Getting the author from SecurityContext's Authentication.
+
+```java
+public class AuditorAwareImpl implements AuditorAware<String> {
+  
+    @Override
+    public String getCurrentAuditor() {
+        // your custom logic
+    }
+ 
+}
+```
+
+5. Configuring to use AuditorAwareImpl to look up the current principal.
+
+```java
+@EnableJpaAuditing(auditorAwareRef="auditorProvider")
+public class PersistenceConfig {     
+    //...     
+    @Bean
+    AuditorAware<String> auditorProvider() {
+        return new AuditorAwareImpl();
+    }     
+    //...    
+}
+```
+
 ## Spring Data JPA: Summary
 
 
