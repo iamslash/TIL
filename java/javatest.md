@@ -633,6 +633,64 @@ class HelloServiceTest {
 
 ----
 
+mockito object 의 행동을 조정하는 것을 stubbing 이라고 한다. 다음과 같이 `memberService.findById` 를 stubbing 해보자.
+
+```java
+@ExtendWith(MockitoExtension.class)
+class HelloServiceTest {
+  
+  @Test
+  void createHelloService(@Mock MemberService memberService, @Mock HelloService helloService;) {
+    HelloService helloService = new HelloService(memberService, HelloRepository);    
+    assertNotNull(helloService);
+
+    Member member = new Member();
+    member.setId(1L);
+    member.setEmail("iamslash@gmail.com");
+
+    // when(memberService.findById(any()).thenReturn(Optional.of(member));
+    when(memberService.findById(1L)).thenReturn(Optional.of(member));
+    Study study = new Study(10, "java");
+    
+    Optional<Member> findById = memberService.findById(1L);
+    assertEquals("iamslash@gmail.com", findById.get().getEmail());
+  }
+}
+```
+
+`any()` 와 같은 [Argument matchers](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#argument_matchers) 를 이용하면 임의의 값을 사용해도 좋다.
+
+```java
+    when(memberService.findById(any()).thenReturn(Optional.of(member));
+    Study study = new Study(10, "java");
+```
+
+`validate(1L)` 이 호출되면 Exception 을 발생하도록 stubbing 해보자.
+
+```java
+  doThrow(new IllegalArgumentException()).when(memberService).validate(1L);
+
+  assertThrows(IllegalArgumentException.class, () -> {
+    memberService.validate(1L);
+  })  
+```
+
+`memberService.findById()` 를 여러번 호출할 경우를 stubbing 해보자.
+
+```java
+  when(memberService.findById(any()))
+      .thenReturn(Optional.of(member))
+      .thenThrow(new RuntimeException())
+      .thenReturn(Optional.empty());
+  Optional<Member> byId = memberService.findById(1L);
+  assertEquals("iamslash@gmail.com", byId.get().getEmail());
+
+  assertThrows(RuntimeException.class, () -> {
+    memberService.findById(2L);
+  })
+  assertEquals(Option.empty(), memberService.findById(3L));
+```
+
 ## Mock 객체 Stubbing 연습 문제
 
 * [Prepare quiz for stubbing](https://github.com/keesun/inflearn-the-java-test/commit/216112f5706fef76f56c735faed200f311b8d919)
