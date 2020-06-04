@@ -570,8 +570,6 @@ dependencies {
 }
 ```
 
-----
-
 ## Mock 객체 만들기
 
 * [18. Creating mocks](https://github.com/keesun/inflearn-the-java-test/commit/4f626230a716b3d438bdd17e54879e8b9065fa29)
@@ -615,7 +613,6 @@ class HelloServiceTest {
 ```
 
 Mock object 를 method 의 arguement 로 주입하자.
-
 
 ```java
 @ExtendWith(MockitoExtension.class)
