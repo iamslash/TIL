@@ -698,11 +698,129 @@ class HelloServiceTest {
 
 ----
 
+다음 코드의 `TODO` 를 채워보자.
+
+```java
+Study study = new Study(10, "Test");
+
+// TODO: memberService object 의 findById method 를 1L 값으로 호출하면 member object 를 return 하도록 stubbing 한다.
+// TODO: studyRepository object 의 save method 를 study object 로 호출하면 study object 를 return 하도록 stubbing 한다.
+studyService.createNewStudy(1L, study);
+
+assertNotNull(study.getOwner());
+assertEquals(member, study.getOwner());
+```
+
+```java
+@ExtendWith(MockitoExtension.class)
+class StudyServiceTest {
+
+  @Mock MemberService memberService;
+  @Mock StudyRepository studyRepository;
+
+  @Test
+  void createNewStudy() {
+    Study study = new Study(10, "Test");
+
+    when(memberService.findById(1L)).thenReturn(Optional.of(member));
+    when(studyRepository.save()).thenReturn(study);
+
+    studyService.createNewStudy(1L, study);
+
+    assertNotNull(study.getOwner());
+    assertEquals(member, study.getOwner());
+  }
+}
+```
+
 ## Mock 객체 확인
 
 * [21. Verifying](https://github.com/keesun/inflearn-the-java-test/commit/7bff7b1d29ae6a5fd79e4c42d699358a75539df3)
+* [verification in order](https://javadoc.io/static/org.mockito/mockito-core/3.3.3/org/mockito/Mockito.html#in_order_verification)
+  * 순서대로 호출되는 것을 테스트
+* [verification in timeout](https://javadoc.io/static/org.mockito/mockito-core/3.3.3/org/mockito/Mockito.html#verification_timeout)
+  * 제한된 시간내에 호출되는 것을 테스트
+* [verifying exact number of invocations](https://javadoc.io/static/org.mockito/mockito-core/3.3.3/org/mockito/Mockito.html#exact_verification)
+  * 제한된 횟수로 호출되는 것을 테스트
+* [Finding redundant invocations](https://javadoc.io/doc/org.mockito/mockito-core/latest/org/mockito/Mockito.html#finding_redundant_invocations)
+  * 호출이 더이상 안되는 것을 테스트
 
 ----
+
+* MemberService.java
+
+```java
+public interface MemberService {
+
+  Optional<Member> findById(Long memberId);
+  void validate(Long memberId);
+  void notify(Study newstudy);
+  void notify(Member member);
+}
+```
+
+* StudyService.java
+
+```java
+public class StudyService {
+
+    private final MemberService memberService;
+    private final StudyRepository repository;
+
+    public StudyService(MemberService memberService, StudyRepository repository) {
+        assert memberService != null;
+        assert repository != null;
+        this.memberService = memberService;
+        this.repository = repository;
+    }
+
+    public Study createNewStudy(Long memberId, Study study) {
+        Optional<Member> member = memberService.findById(memberId);
+        study.setOwner(member.orElseThrow(() -> new IllegalArgumentException("Member doesn't exist for id: '" + memberId + "'")));
+        Study newstudy = repository.save(study);
+        memberService.notify(newstudy);
+        return newstudy;
+    }
+
+}
+```
+
+이제 verify 를 이용하여 memberService.study 가 호출되었는지 확인해 보자.
+또한 verifyNoMoreInteractions 를 이용하여 더이상 호출이 되지 않았는지 확인해 보자.
+
+* StudyServiceTest.java
+
+```java
+@ExtendWith(MockitoExtension.class)
+class StudyServiceTest {
+
+    @Mock MemberService memberService;
+    @Mock StudyRepository studyRepository;
+
+    @Test
+    void createNewStudy() {
+        StudyService studyService = new StudyService(memberService, studyRepository);
+        assertNotNull(studyService);
+
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("keesun@email.com");
+
+        Study study = new Study(10, "테스트");
+
+        when(memberService.findById(1L)).thenReturn(Optional.of(member));
+        when(studyRepository.save(study)).thenReturn(study);
+
+        studyService.createNewStudy(1L, study);
+
+        assertEquals(member, study.getOwner());
+
+        verify(memberService, times(1)).notify(study);
+        verifyNoMoreInteractions(memberService);
+    }
+
+}
+```
 
 ## BDD 스타일 Mockito API
 
@@ -710,12 +828,89 @@ class HelloServiceTest {
 
 ----
 
+BDD 는 Behavioral Driven Test 이다. 다음과 같은 형식으로 Test code 를 작성한다.
+
+* Title
+* Narrative 
+  * As a / I want / so that
+* Acceptatnce criteria
+  * Given / When / Then
+
+when 대신 given, verify 대신 then 을 사용한다.
+
+```java
+@ExtendWith(MockitoExtension.class)
+class StudyServiceTest {
+
+    @Mock MemberService memberService;
+    @Mock StudyRepository studyRepository;
+
+    @Test
+    void createNewStudy() {
+        // Given
+        StudyService studyService = new StudyService(memberService, studyRepository);
+        assertNotNull(studyService);
+
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("keesun@email.com");
+
+        Study study = new Study(10, "테스트");
+
+        given(memberService.findById(1L)).willReturn(Optional.of(member));
+        given(studyRepository.save(study)).willReturn(study);
+
+        // When
+        studyService.createNewStudy(1L, study);
+
+        // Then
+        assertEquals(member, study.getOwner());
+        then(memberService).should(times(1)).notify(study);
+        then(memberService).shouldHaveNoMoreInteractions();
+    }
+
+}
+```
+
 ## Mockito 연습문제
 
 * [Prepare Mockto quiz](https://github.com/keesun/inflearn-the-java-test/commits/master)
 * [23. Mockito answers](https://github.com/keesun/inflearn-the-java-test/commit/952b4b9deb0cb8aca60c4dfcf1c50df12b8d2e99)
 
 ----
+
+`StudyService.java` 는 다음과 같다.
+
+```java
+public Study openStudy(Study study) {
+  study.open();
+  Study openedStudy = repository.save(study);
+  memberService.notify(openedStudy);
+  return openedStudy;
+}
+```
+
+`StudyServiceTest.java` 를 작성해 보자.
+
+```java
+  @DisplayName("Open Study")
+  @Test
+  void openStudy() {
+    // Given
+    StudyService studyService = new StudyService(memberService, studyRepository);
+    Study study = new Study(10, "헬로우 테스트");
+    assertNull(study.getOpenedDateTime());
+    given(studyRepository.save(study)).willReturn(study);
+
+    // When
+    studyService.openStudy(study);
+
+    // Then
+    assertEquals(StudyStatus.OPENED, study.getStatus());
+    assertNotNull(study.getOPenedDateTime());
+    then(memberService).should().notify(study);
+  }
+```
 
 # Docker and Test
 
