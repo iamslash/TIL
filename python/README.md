@@ -2408,7 +2408,8 @@ Let's test it.
 
 ```bash
 # test all
-$ python -m unitest tests/
+$ cd tests
+$ python -m unitest 
 
 # test specific module
 $ python -m unitest tests/test_a.py
