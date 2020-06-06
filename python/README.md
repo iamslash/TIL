@@ -48,6 +48,7 @@
   - [numpy](#numpy)
   - [pandas](#pandas)
   - [click](#click)
+  - [unittest](#unittest)
   - [pytest](#pytest)
   - [urwid](#urwid)
   - [fabric](#fabric)
@@ -2379,6 +2380,38 @@ def main(count, name):
 
 if __name__ == "__main__":
     main()
+```
+
+## unittest
+
+* [unittest와 함께하는 파이썬 테스트](https://www.holaxprogramming.com/2017/06/17/python-with-test/)
+
+----
+
+Create a file class TestArray which extends unitest.TestCase in `tests/test_a.py`.
+
+```py
+import unittest
+from algorithms import array
+
+class TestArray(unittest.TestCase):
+    """
+    Test that the result sum of all numbers
+    """
+    def test_sum(self):
+        instance = array.Array()
+        result = instance.sum(6, '1 2 3 4 10 11')
+        self.assertEqual(result, 31)
+```
+
+Let's test it.
+
+```bash
+# test all
+$ python -m unitest tests/
+
+# test specific module
+$ python -m unitest tests/test_a.py
 ```
 
 ## pytest

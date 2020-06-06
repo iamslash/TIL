@@ -114,6 +114,7 @@ This is about Distributed System.
 * [Raft 분산 합의 알고리즘과 Python에서의 활용 @ NAVERD2](https://d2.naver.com/helloworld/5663184)
   * [The Raft Consensus Algorithm](https://raft.github.io/)
   * [raft scope animation](https://raft.github.io/raftscope/index.html)
+  * [pyraft](https://github.com/lynix94/pyraft)
 
 # Lecture 7: Fault Tolerance: Raft(2)
 
