@@ -81,6 +81,12 @@ This is about Distributed System.
 * [FAQ](https://pdos.csail.mit.edu/6.824/papers/raft-faq.txt)
 * [6.824 Spring 2020 Paper Questions](https://pdos.csail.mit.edu/6.824/questions.html?q=q-raft&lec=6)
 
+----
+
+* [Raft 분산 합의 알고리즘과 Python에서의 활용 @ NAVERD2](https://d2.naver.com/helloworld/5663184)
+  * [The Raft Consensus Algorithm](https://raft.github.io/)
+  * [raft scope animation](https://raft.github.io/raftscope/index.html)
+
 # Lecture 7: Fault Tolerance: Raft(2)
 
 * [text](https://pdos.csail.mit.edu/6.824/notes/l-raft2.txt)
