@@ -54,6 +54,7 @@
   - [Dates](#dates)
   - [Views](#views)
   - [CASE](#case)
+  - [Session Variables](#session-variables)
   - [Functions (MySQL)](#functions-mysql)
   - [Operators](#operators)
   - [Data Types (MySQL)](#data-types-mysql)
@@ -1100,6 +1101,20 @@ SELECT
       THEN 2 
   END;
 # NULL
+```
+
+## Session Variables
+
+* [9.4 User-Defined Variables](https://dev.mysql.com/doc/refman/8.0/en/user-variables.html)
+* [MySQL: @variable vs. variable. What's the difference? @ stackoverflow](https://stackoverflow.com/questions/1009954/mysql-variable-vs-variable-whats-the-difference)
+
+-----
+
+You can store a value in a user-defined variable in one statement and refer to it later in another statement.
+
+```sql
+SET @var1 = 1
+SELECT @var2 := 2
 ```
 
 ## Functions (MySQL)
