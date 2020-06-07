@@ -1103,6 +1103,19 @@ SELECT
 # NULL
 ```
 
+* Table Ads 에서 ad_id 별로 action 이 `Clicked, Viewed, Ignored` 인 것들의 개수를 구해보자.
+  * [Ads Performance @ learntocode](https://github.com/iamslash/learntocode/blob/eb707563f91238f6cd20b0de2d2889554fce8278/leetcode2/AdsPerformance/README.md)
+
+```sql
+SELECT 
+  ad_id, 
+  SUM(CASE WHEN action='Clicked' THEN 1 ELSE 0 END) AS cnt_clicked, 
+  SUM(CASE WHEN action='Viewed' THEN 1 ELSE 0 END) AS cnt_viewed, 
+  SUM(CASE WHEN action='Ignored' THEN 1 ELSE 0 END) AS cnt_ignored 
+FROM Ads
+GROUP BY ad_id;
+```
+
 ## Session Variables
 
 * [9.4 User-Defined Variables](https://dev.mysql.com/doc/refman/8.0/en/user-variables.html)

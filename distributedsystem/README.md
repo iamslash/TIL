@@ -115,6 +115,7 @@ This is about Distributed System.
   * [The Raft Consensus Algorithm](https://raft.github.io/)
   * [raft scope animation](https://raft.github.io/raftscope/index.html)
   * [pyraft](https://github.com/lynix94/pyraft)
+* [Raft Consensus Algorithm](https://swalloow.github.io/raft-consensus/)
 
 # Lecture 7: Fault Tolerance: Raft(2)
 
