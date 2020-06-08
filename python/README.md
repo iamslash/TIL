@@ -1959,13 +1959,22 @@ def baz():
 다음과 같이 설치하고 사용한다.
 
 ```bash
+# pip3 install virtualenv
 $ pip install virtualenv
 
 # create myproject/bin,include,lib directory
-$ virtualenv myproject
+$ cd ~/my/py
+$ virtualenv myprj
+$ source myprj/bin/activate
+$ deactivate
+```
 
-$ source myproject/bin/activate
+You can create virtual environment with specific python.
 
+```console
+$ cd ~/my/py
+$ virtualenv -p /usr/local/Cellar/python/3.7.6_1/bin/python3 venv3.7
+$ source venv3.7/bin/activate
 $ deactivate
 ```
 
