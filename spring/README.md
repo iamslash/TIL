@@ -13,6 +13,15 @@
 - [Spring Security](#spring-security)
 - [Spring Example Application](#spring-example-application)
 - [Spring Batch](#spring-batch)
+- [Examples](#examples)
+  - [Spring Elasticsearch](#spring-elasticsearch)
+  - [Spring Kafka](#spring-kafka)
+  - [Spring MongoDB](#spring-mongodb)
+  - [Spring MySQL](#spring-mysql)
+  - [Spring Postgres](#spring-postgres)
+  - [Spring memcached](#spring-memcached)
+  - [Spring redis](#spring-redis)
+  - [Spring ldap](#spring-ldap)
 - [Tips](#tips)
   - [Active profile](#active-profile)
   - [Test Active profile](#test-active-profile)
@@ -154,6 +163,40 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 ----
 
 [Spring Batch](SpringBatch.md)
+
+# Examples
+
+## Spring Elasticsearch
+
+* [exelasticsearch](https://github.com/iamslash/spring-examples/tree/master/exelasticsearch/)
+
+## Spring Kafka
+
+* [exkafka](https://github.com/iamslash/spring-examples/tree/master/kafka/)
+
+## Spring MongoDB
+
+* [exmongodb]()
+
+## Spring MySQL
+
+* [exmysql]()
+
+## Spring Postgres
+
+* [expostgresql]()
+
+## Spring memcached
+
+* [exmemcached]()
+
+## Spring redis
+
+* [exredis]()
+
+## Spring ldap
+
+* [exldap]()
 
 # Tips
 
