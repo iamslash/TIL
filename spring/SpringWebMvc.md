@@ -21,6 +21,10 @@
 
 * [2. Servlet Listener and filter](https://github.com/keesun/javaservletdemo/commit/c998afe114442244f9c0cc0c3d7a001cb5828174)
 
+This is an architecture of filter, interceptor. [SPRING MVC REQUEST LIFE CYCLE](https://justforchangesake.wordpress.com/2014/05/07/spring-mvc-request-life-cycle/)
+
+![](https://justforchangesake.files.wordpress.com/2014/05/spring-request-lifecycle.jpg)
+
 ## 스프링 IoC 컨테이너 연동
 
 ## 스프링 MVC 연동
