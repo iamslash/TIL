@@ -1,3 +1,21 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Install with docker](#install-with-docker)
+- [Basic Elastic Search](#basic-elastic-search)
+  - [Elastic _cat api](#elastic-_cat-api)
+  - [Elastic Search vs RDBMS](#elastic-search-vs-rdbms)
+  - [CRUD](#crud)
+  - [Update](#update)
+  - [Bulk](#bulk)
+  - [Mapping](#mapping)
+  - [Search](#search)
+  - [Metric Aggregation](#metric-aggregation)
+  - [Bucket Aggregation](#bucket-aggregation)
+- [Basic Kibana](#basic-kibana)
+- [Basic Logstash](#basic-logstash)
+
+----
+
 # Abstract
 
 OLAP (Online Analytical Processing) soution 중 하나인 ELK 에 대해 정리한다.
@@ -36,6 +54,40 @@ curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/_bulk?pretty
 ```
 
 # Basic Elastic Search
+
+## Elastic _cat api
+
+* [[elasticsearch5] cat API 간단 설명과 유용한 cat API 예제](https://knight76.tistory.com/entry/elasticsearch-5-cat-API)
+
+-----
+
+```bash
+$ curl -X GET http://localhost:9200/_cat
+
+# show health
+$ curl -XGET 'localhost:9200/_cat/health'
+
+# show health with columns
+$ curl -XGET 'localhost:9200/_cat/health?v'
+
+# show headers of health
+$ curl -XGET 'localhost:9200/_cat/health?help'
+
+# show specific headers of health
+$ curl -XGET 'localhost:9200/_cat/health?h=cluster,status'
+
+# show indices
+$ curl -XGET 'localhost:9200/_cat/indices'
+
+# show indices with bytes
+$ curl -XGET 'localhost:9200/_cat/indices?bytes=b'
+
+# show master node
+$ curl -XGET 'localhost:9200/_cat/master?v'
+
+# show name, role, load, uptime of nodes
+$ curl -XGET 'localhost:9200/_cat/nodes?v&h=name,node.role,load,uptime'
+```
 
 ## Elastic Search vs RDBMS
 
