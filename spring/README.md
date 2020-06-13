@@ -16,10 +16,10 @@
 - [Examples](#examples)
   - [Spring Elasticsearch](#spring-elasticsearch)
   - [Spring Kafka](#spring-kafka)
+  - [Spring memcached](#spring-memcached)
   - [Spring MongoDB](#spring-mongodb)
   - [Spring MySQL](#spring-mysql)
   - [Spring Postgres](#spring-postgres)
-  - [Spring memcached](#spring-memcached)
   - [Spring redis](#spring-redis)
   - [Spring ldap](#spring-ldap)
 - [Tips](#tips)
@@ -172,7 +172,11 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 
 ## Spring Kafka
 
-* [exkafka](https://github.com/iamslash/spring-examples/tree/master/kafka/)
+* [exkafka](https://github.com/iamslash/spring-examples/tree/master/exkafka/)
+
+## Spring memcached
+
+* [exmemcached](https://github.com/iamslash/spring-examples/tree/master/exmemcached/)
 
 ## Spring MongoDB
 
@@ -185,10 +189,6 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 ## Spring Postgres
 
 * [expostgresql]()
-
-## Spring memcached
-
-* [exmemcached]()
 
 ## Spring redis
 

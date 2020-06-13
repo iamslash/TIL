@@ -34,11 +34,11 @@ OLAP (Online Analytical Processing) soution 중 하나인 ELK 에 대해 정리�
 
 * [Elasticsearch, Logstash, Kibana (ELK) Docker image](https://hub.docker.com/r/sebp/elk) docker image 를 설치한다.
 
-```bash
-docker search elk
-docker pull sebp/elk
-docker run -p 5601:5601  -p 9200:9200 -p 5000:5000 -it --name my-elk sebp/elk
-docker exec -it my-elk /bin/bash
+```console
+$ docker search elk
+$ docker pull sebp/elk
+$ docker run -p 5601:5601 -p 9200:9200 -p 5000:5000 -it --name my-elk sebp/elk
+$ docker exec -it my-elk /bin/bash
 ```
 
 * browser 를 이용하여 `localhost:5601` (kibana) 에 접속한다.
