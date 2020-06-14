@@ -24,7 +24,7 @@
   - [Apache Hadoop](#apache-hadoop)
   - [HDFS (Hadoop Distributed FileSystem)](#hdfs-hadoop-distributed-filesystem)
   - [MapReduce](#mapreduce)
-  - [공개키 암호화](#%ea%b3%b5%ea%b0%9c%ed%82%a4-%ec%95%94%ed%98%b8%ed%99%94)
+  - [공개키 암호화](#공개키-암호화)
 - [Basic](#basic)
   - [VPC (Virtual Private Cloud)](#vpc-virtual-private-cloud-1)
     - [VPC](#vpc)
@@ -619,6 +619,8 @@ $ cd ..
 $ zip -r bs4.zip .
 # upload AWS Lambda Layer 
 ```
+
+AWS Lambda 는 [serverless framework @ TIL](/serverless/README.md) 를 이용하면 build, deployment 가 수월하다.
 
 ## API Gateway
 
