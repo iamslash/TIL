@@ -97,6 +97,7 @@
     - [Commands](#commands)
     - [CRR (Cross Region Replication)](#crr-cross-region-replication)
   - [SAML login](#saml-login)
+  - [How to handle egress control](#how-to-handle-egress-control)
 
 ----
 
@@ -984,3 +985,7 @@ replications between regions
 * [How can I use the AWS CLI to call and store SAML credentials?](https://aws.amazon.com/ko/premiumsupport/knowledge-center/aws-cli-call-store-saml-credentials/)
 * [saml2aws](https://github.com/Versent/saml2aws)
   * aws saml login utility made by golang
+
+## How to handle egress control
+
+* [CONTROLLING VPC EGRESS TRAFFIC @ AWS](https://d0.awsstatic.com/aws-answers/Controlling_VPC_Egress_Traffic.pdf)
