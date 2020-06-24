@@ -9,14 +9,61 @@
 
 ## Install on Ubuntu
 
-* [](https://www.digitalocean.com/community/tutorials/how-to-install-apache-kafka-on-ubuntu-18-04)
+* [How To Install Apache Kafka on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-apache-kafka-on-ubuntu-18-04)
 
 ## Install with docker
 
 * [kafka-stack-docker-compose](https://github.com/simplesteph/kafka-stack-docker-compose)
-  * zookeeper, kafaka cluter
+  * zookeeper, kafka cluter
 
 ```console
+$ git clone git@github.com:simplesteph/kafka-stack-docker-compose.git
+```
+
+### Single Zookeeper / Single Kafka
+
+```console
+$ docker-compose -f zk-single-kafka-single.yml up
+$ docker-compose -f zk-single-kafka-single.yml down
+```
+
+### Single Zookeeper / Multiple Kafka
+
+```console
+$ docker-compose -f zk-single-kafka-multiple.yml up
+$ docker-compose -f zk-single-kafka-multiple.yml down
+```
+
+### Multiple Zookeeper / Single Kafka
+
+```console
+$ docker-compose -f zk-multiple-kafka-single.yml up
+$ docker-compose -f zk-multiple-kafka-single.yml down
+```
+
+### Multiple Zookeeper / Multiple Kafka
+
+```console
+$ docker-compose -f zk-multiple-kafka-multiple.yml up
+$ docker-compose -f zk-multiple-kafka-multiple.yml down
+```
+
+### Full stack
+
+* Single Zookeeper: $DOCKER_HOST_IP:2181
+* Single Kafka: $DOCKER_HOST_IP:9092
+* Kafka Schema Registry: $DOCKER_HOST_IP:8081
+* Kafka Schema Registry UI: $DOCKER_HOST_IP:8001
+* Kafka Rest Proxy: $DOCKER_HOST_IP:8082
+* Kafka Topics UI: $DOCKER_HOST_IP:8000
+* Kafka Connect: $DOCKER_HOST_IP:8083
+* Kafka Connect UI: $DOCKER_HOST_IP:8003
+* KSQL Server: $DOCKER_HOST_IP:8088
+* Zoonavigator Web: $DOCKER_HOST_IP:8004
+
+```console
+$ docker-compose -f full-stack.yml up
+$ docker-compose -f full-stack.yml down
 ```
 
 # Feature
