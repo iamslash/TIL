@@ -675,6 +675,7 @@ DNS server 이다. Simple, Weighted, Latency, Failover, GeoLocation, Multivalue 
 ## CloudTrail
 
 * [AWS에서 보안 감사 및 이상징후 탐지](https://woowabros.github.io/security/2019/01/18/aws-cloudtrail-security.html)
+  * CloudTrail logs 를 Elasticsearch 에 삽입해서 monitoring 하는 방법
 
 Show AWS console logging. 
 
