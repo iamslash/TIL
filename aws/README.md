@@ -676,8 +676,15 @@ DNS server 이다. Simple, Weighted, Latency, Failover, GeoLocation, Multivalue 
 
 * [AWS에서 보안 감사 및 이상징후 탐지](https://woowabros.github.io/security/2019/01/18/aws-cloudtrail-security.html)
   * CloudTrail logs 를 Elasticsearch 에 삽입해서 monitoring 하는 방법
+* [CloudTrail Event Name list 확인](https://medium.com/@eunsu.shin/cloudtrail-event-name-list-%ED%99%95%EC%9D%B8-20b45b6e8329)
 
-Show AWS console logging. 
+----
+
+This is a [CloudTrail Record Contents](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-record-contents.html).
+
+There are 3 kinds of `eventType` such as "AwsApiCall, [AwsServiceEvent](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/non-api-aws-service-events.html), [AwsConsoleSignin](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aws-console-sign-in-events.html)".
+
+You can find out event names from [AWS Documentation](https://docs.aws.amazon.com/#lang%2Fko_kr) with API reference. 
 
 ## Elastics Beanstalk
 

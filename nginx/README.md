@@ -2,13 +2,14 @@
 - [Install](#install)
   - [Install with Docker](#install-with-docker)
   - [Install on ubuntu](#install-on-ubuntu)
-  - [* How To Install Nginx on Ubuntu 18.04](#ul-lihow-to-install-nginx-on-ubuntu-1804li-ul)
+  - [* How To Install Nginx on Ubuntu 18.04](#ullihow-to-install-nginx-on-ubuntu-1804liul)
 - [Architecture](#architecture)
 - [Starting, Stopping, Reloading Configuration](#starting-stopping-reloading-configuration)
 - [Logs](#logs)
 - [Basic](#basic)
   - [Configuration Files' Structure](#configuration-files-structure)
   - [Hello NginX](#hello-nginx)
+  - [Server Block](#server-block)
   - [Location Block & Variables](#location-block--variables)
   - [Redirect & Rewrite](#redirect--rewrite)
   - [Try Files & Named Location](#try-files--named-location)
@@ -176,6 +177,10 @@ http {
 ```
 
 다음과 같이 테스트 한다. `curl http://local.iamslash.com/nginx.png`
+
+## Server Block
+
+* [Server Block Examples @ nginx](https://www.nginx.com/resources/wiki/start/topics/examples/server_blocks/)
 
 ## Location Block & Variables
 
@@ -712,7 +717,11 @@ confd 와 함께 사용하면 configuration 을 환경변수 등등을 templatin
 
 ----
 
-resolver 는 DNS server 이다. Nginx 는 configuration 을 읽을 때 DNS에 대한 IP 변환(resolve)를 수행한다. 다음과 같이 resolver 를 설정하면 runtime 에 upstream server 의 IP 가 바뀌어도 configuration 을 reloading 하지 않고 IP 를 resolving 할 수 있다.
+resolver 는 DNS server 이다. `172.16.0.23` 은 AWS DNS server 이다. Nginx 는 configuration 을 읽을 때 DNS에 대한 IP 변환(resolve)를 수행한다. 
+
+다음과 같이 resolver 를 설장하고 `proxy_pass` 에 config variable 을 사용하면 runtime 에 `@ep` 의 real ip 를 resolver 를 통해서 얻어온다.
+
+따라서 upstream server 의 IP 가 바뀌어도 configuration 을 reloading 하지 않고 IP 를 resolving 할 수 있다.
 
 ```
 resolver 172.16.0.23 valid=5s;
