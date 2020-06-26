@@ -30,6 +30,12 @@ $ docker-compose up -d
 $ curl localhost:9200/_cat 
 ```
 
+```console
+$ docker run -d --rm --name my-es -p 9200:9200 -e "discovery.type=single-node" elasticsearch:7.6.2
+
+$ curl localhost:9200/_cat
+```
+
 # Sample Data
 
 * [샘플 데이터 로드](https://www.elastic.co/guide/kr/kibana/current/tutorial-load-dataset.html)
@@ -44,7 +50,6 @@ curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/_bulk?pretty
 # Integration with Spring
 
 * [spring-examples/exelasticsearch @ github](https://github.com/iamslash/spring-examples/blob/master/exelasticsearch/README.md)
-
 
 # Basic
 
@@ -100,13 +105,15 @@ $ curl -XGET 'localhost:9200/_cat/nodes?v&h=name,node.role,load,uptime'
 | DELETE | DELETE |
 
 ```bash
-curl -XGET localhost:9200/classes/class/1
+$ curl -XGET localhost:9200/classes/class/1
 # SELECT * FROM class WHERE id = 1
-curl -XPOST localhost:9200/classes/class/1 -d '{XXX}'
+
+$ curl -XPOST localhost:9200/classes/class/1 -d '{XXX}'
 # INSERT * INTO class VALUES(XXX)
-curl -XPOST localhost:9200/classes/class/1 -d '{XXX}'
+$ curl -XPOST localhost:9200/classes/class/1 -d '{XXX}'
 # UPDATE class SET XXX WHERE id = 1
-curl -XDELTE localhost:9200/classes/class/1
+
+$ curl -XDELTE localhost:9200/classes/class/1
 # DELETE FROM class WHERE id = 1
 ```
 
@@ -115,95 +122,94 @@ curl -XDELTE localhost:9200/classes/class/1
 ```bash
 
 ## try to get something
-curl -XGET http://localhost:9200/classes
-# {
-#   "error" : {
-#     "root_cause" : [
-#       {
-#         "type" : "index_not_found_exception",
-#         "reason" : "no such index [classes]",
-#         "resource.type" : "index_or_alias",
-#         "resource.id" : "classes",
-#         "index_uuid" : "_na_",
-#         "index" : "classes"
-#       }
-#     ],
-#     "type" : "index_not_found_exception",
-#     "reason" : "no such index [classes]",
-#     "resource.type" : "index_or_alias",
-#     "resource.id" : "classes",
-#     "index_uuid" : "_na_",
-#     "index" : "classes"
-#   },
-#   "status" : 404
-# }
+$ curl -XGET http://localhost:9200/classes
+{
+  "error" : {
+    "root_cause" : [
+      {
+        "type" : "index_not_found_exception",
+        "reason" : "no such index [classes]",
+        "resource.type" : "index_or_alias",
+        "resource.id" : "classes",
+        "index_uuid" : "_na_",
+        "index" : "classes"
+      }
+    ],
+    "type" : "index_not_found_exception",
+    "reason" : "no such index [classes]",
+    "resource.type" : "index_or_alias",
+    "resource.id" : "classes",
+    "index_uuid" : "_na_",
+    "index" : "classes"
+  },
+  "status" : 404
+}
 
 ## create index classes
-curl -XPUT http://localhost:9200/classes?pretty
-# {
-#   "acknowledged" : true,
-#   "shards_acknowledged" : true,
-#   "index" : "classes"
-# }
+$ curl -XPUT http://localhost:9200/classes?pretty
+{
+  "acknowledged" : true,
+  "shards_acknowledged" : true,
+  "index" : "classes"
+}
 
 ## delete index classes
 curl -XDELETE http://localhost:9200/classes?pretty
-# {
-#   "acknowledged" : true
-# }
+{
+  "acknowledged" : true
+}
 
 ## create document but fail
 curl -XPUT http://localhost:9200/classes/class/1?pretty -d '{"title": "Algorithm", "professor": "John"}'
-# {
-#   "error" : "Content-Type header [application/x-www-form-urlencoded] is not supported",
-#   "status" : 406
-# }
+{
+  "error" : "Content-Type header [application/x-www-form-urlencoded] is not supported",
+  "status" : 406
+}
 
 ## create document with header
 curl -H 'Content-Type: application/json' -XPUT http://localhost:9200/classes/class/1?pretty -d '{"title": "Algorithm", "professor": "John"}'
-# {
-#   "_index" : "classes",
-#   "_type" : "class",
-#   "_id" : "1",
-#   "_version" : 1,
-#   "result" : "created",
-#   "_shards" : {
-#     "total" : 2,
-#     "successful" : 1,
-#     "failed" : 0
-#   },
-#   "_seq_no" : 0,
-#   "_primary_term" : 1
-# }
+{
+  "_index" : "classes",
+  "_type" : "class",
+  "_id" : "1",
+  "_version" : 1,
+  "result" : "created",
+  "_shards" : {
+    "total" : 2,
+    "successful" : 1,
+    "failed" : 0
+  },
+  "_seq_no" : 0,
+  "_primary_term" : 1
+}
 
 ## create document with file
 curl -H 'Content-type: application/json' -XPUT http://localhost:9200/classes/class/1?pretty -d @a.json
-#
-# a.json
-# {"title": "Programming Language", "professor": "Tom"}
-#
-# {
-#   "_index" : "classes",
-#   "_type" : "class",
-#   "_id" : "1",
-#   "_version" : 2,
-#   "result" : "updated",
-#   "_shards" : {
-#     "total" : 2,
-#     "successful" : 1,
-#     "failed" : 0
-#   },
-#   "_seq_no" : 1,
-#   "_primary_term" : 2
-# }
 
+a.json
+{"title": "Programming Language", "professor": "Tom"}
+
+{
+  "_index" : "classes",
+  "_type" : "class",
+  "_id" : "1",
+  "_version" : 2,
+  "result" : "updated",
+  "_shards" : {
+    "total" : 2,
+    "successful" : 1,
+    "failed" : 0
+  },
+  "_seq_no" : 1,
+  "_primary_term" : 2
+}
 ```
 
 ## Update
 
 ```bash
 ## update document 1
-# curl -H 'Content-type: application/json' -XPOST http://localhost:9200/classes/class/1/_update?pretty -d '{"doc":{"unit":1}}'
+$ curl -H 'Content-type: application/json' -XPOST http://localhost:9200/classes/class/1/_update?pretty -d '{"doc":{"unit":1}}'
 # {
 #   "_index" : "classes",
 #   "_type" : "class",
@@ -220,7 +226,7 @@ curl -H 'Content-type: application/json' -XPUT http://localhost:9200/classes/cla
 # }
 
 ## get document 1
-curl -H 'Content-type: application/json' -XGET http://localhost:9200/classes/class/1?pretty
+$ curl -H 'Content-type: application/json' -XGET http://localhost:9200/classes/class/1?pretty
 # {
 #   "_index" : "classes",
 #   "_type" : "class",
@@ -237,7 +243,7 @@ curl -H 'Content-type: application/json' -XGET http://localhost:9200/classes/cla
 # }
 
 ## update with script
-curl -H 'Content-type: application/json' -XPOST http://localhost:9200/classes/class/1/_update?pretty -d '{"script":"ctx._source.unit += 5"}'
+$ curl -H 'Content-type: application/json' -XPOST http://localhost:9200/classes/class/1/_update?pretty -d '{"script":"ctx._source.unit += 5"}'
 # {
 #   "_index" : "classes",
 #   "_type" : "class",
@@ -254,7 +260,7 @@ curl -H 'Content-type: application/json' -XPOST http://localhost:9200/classes/cl
 # }
 
 ## get document 1
-curl -H 'Content-type: application/json' -XGET http://localhost:9200/classes/class/1?pretty
+$ curl -H 'Content-type: application/json' -XGET http://localhost:9200/classes/class/1?pretty
 # {
 #   "_index" : "classes",
 #   "_type" : "class",
@@ -287,7 +293,7 @@ RDBMS 의 schema 와 같다. 필드의 타입이 정해져야 kibana 에서 시�
 
 ```bash
 ## put maping 그러나 elasticsearch 8.0 에서 안된다. bulk 로 입력하면 이미 mapping 이 설정되어 있다.
-curl -H 'Content-type: application/json' -XPUT 'http://localhost:9200/classes/_mapping?pretty' -d @classesRating_mapping.json
+$ curl -H 'Content-type: application/json' -XPUT 'http://localhost:9200/classes/_mapping?pretty' -d @classesRating_mapping.json
 # classesRating_mapping.json
 # {
 #         "class" : {
@@ -343,9 +349,9 @@ curl -H 'Content-type: application/json' -XPUT 'http://localhost:9200/classes/_m
 ## Search
 
 ```bash
-curl -H 'Content-type: application/json' -XPOST http://localhost:9200/_bulk?pretty --data-binary @simple_basketball.json
+$ curl -H 'Content-type: application/json' -XPOST http://localhost:9200/_bulk?pretty --data-binary @simple_basketball.json
 
-curl -H 'Content-type: application/json' -XGET 'http://localhost:9200/basketball/record/_search?pretty'
+$ curl -H 'Content-type: application/json' -XGET 'http://localhost:9200/basketball/record/_search?pretty'
 {
   "took" : 2,
   "timed_out" : false,
@@ -395,7 +401,7 @@ curl -H 'Content-type: application/json' -XGET 'http://localhost:9200/basketball
 }
 
 # search with uri
-curl -H 'Content-type: application/json' -XGET 'http://localhost:9200/basketball/record/_search?q=points:30&pretty'
+$ curl -H 'Content-type: application/json' -XGET 'http://localhost:9200/basketball/record/_search?q=points:30&pretty'
 {
   "took" : 15,
   "timed_out" : false,
@@ -431,7 +437,7 @@ curl -H 'Content-type: application/json' -XGET 'http://localhost:9200/basketball
 }
 
 # search with request body
-curl -H 'Content-type: application/json' -XGET http://localhost:9200/basketball/record/_search?pretty -d '{"query": {"term": {"points": 30}}}'
+$ curl -H 'Content-type: application/json' -XGET http://localhost:9200/basketball/record/_search?pretty -d '{"query": {"term": {"points": 30}}}'
 ```
 
 ## Metric Aggregation
@@ -440,7 +446,7 @@ aggregation 은 document 의 field 들을 조합하여 어떠한 값을 도출�
 Metric Aggregation 은 평균, 최소, 최대값과 같은 산술연산을 통해 조합하는 방법이다.
 
 ```bash
-curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pretty --data-binary @avg_points_aggs.json
+$ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pretty --data-binary @avg_points_aggs.json
 # avg_points_aggs.json
 # {
 #         "size" : 0,
@@ -453,7 +459,7 @@ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pre
 #         }
 # }
 
-curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pretty --data-binary @max_points_aggs.json
+$ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pretty --data-binary @max_points_aggs.json
 # max_points_aggs.json
 # {
 #         "size" : 0,
@@ -466,7 +472,7 @@ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pre
 #         }
 # }
 
-curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pretty --data-binary @min_points_aggs.json
+$ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pretty --data-binary @min_points_aggs.json
 # min_points_aggs.json
 # {
 #         "size" : 0,
@@ -479,7 +485,7 @@ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pre
 #         }
 # }
 
-curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pretty --data-binary @min_points_aggs.json
+$ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pretty --data-binary @min_points_aggs.json
 # stats_points_aggs.json
 # {
 #         "size" : 0,
@@ -498,8 +504,8 @@ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pre
 Bucket Aggregation 은 RDBMS 의 group by 와 비슷하다. document 를 group 으로 묶는다.
 
 ```bash
-curl -H 'Content-type: application/json' -XPOST http://localhost:9200/_bulk?pretty --data-binary @twoteam_basketball.json
+$ curl -H 'Content-type: application/json' -XPOST http://localhost:9200/_bulk?pretty --data-binary @twoteam_basketball.json
 
 # 안된다???
-curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pretty --data-binary @stats_by_team.json
+$ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pretty --data-binary @stats_by_team.json
 ```
