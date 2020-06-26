@@ -684,7 +684,11 @@ This is a [CloudTrail Record Contents](https://docs.aws.amazon.com/awscloudtrail
 
 There are 3 kinds of `eventType` such as "AwsApiCall, [AwsServiceEvent](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/non-api-aws-service-events.html), [AwsConsoleSignin](https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-event-reference-aws-console-sign-in-events.html)".
 
-You can find out event names from [AWS Documentation](https://docs.aws.amazon.com/#lang%2Fko_kr) with API reference. 
+You can find out event names like this.
+
+* go to [AWS Documentation](https://docs.aws.amazon.com/#lang%2Fko_kr) 
+* go to AWS Service API reference
+* The list of Actions is same with event names of CloudTrail recrod.
 
 ## Elastics Beanstalk
 
