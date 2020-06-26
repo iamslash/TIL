@@ -26,6 +26,8 @@
 $ git clone git@github.com:ahnjunwoo/elasticsearchDockerExam.git
 $ cd elasticsearchDockerExam
 $ docker-compose up -d
+
+$ curl localhost:9200/_cat 
 ```
 
 # Sample Data
