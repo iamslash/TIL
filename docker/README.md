@@ -1,11 +1,13 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Basics](#basics)
+- [Basic](#basic)
   - [Permission](#permission)
-  - [Install](#install)
+  - [Install on Linux](#install-on-linux)
+  - [Docker Toolbox vs Docker for Mac](#docker-toolbox-vs-docker-for-mac)
+  - [Containers](#containers)
   - [Versioning](#versioning)
   - [Making a image](#making-a-image)
-  - [Dockderizing moniwiki](#dockderizing-moniwiki)
+  - [Dockerizing moniwiki](#dockerizing-moniwiki)
   - [Upload to Docker Hub](#upload-to-docker-hub)
   - [Hello Docker](#hello-docker)
   - [Private docker registry](#private-docker-registry)
@@ -29,7 +31,10 @@ vmware, virtualbox 보다 훨씬 성능이 좋은 가상화 기술이다.
 
 # Materials
 
-- [도커(Docker) 입문편 컨테이너 기초부터 서버 배포까지](https://www.44bits.io/ko/post/easy-deploy-with-docker#%EC%8B%A4%EC%A0%84-%EB%8F%84%EC%BB%A4-%EC%9D%B4%EB%AF%B8%EC%A7%80%EB%A1%9C-%EC%84%9C%EB%B2%84-%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0)
+- [시작하세요! 도커/쿠버네티스 - YES24](http://www.yes24.com/Product/Goods/84927385)
+  - [src](https://github.com/alicek106/start-docker-kubernetes)
+  - 최고의 Docker/Kubernetes 입문서
+- [도커(Docker) 입문편 컨테이너 기초부터 서버 배포까지 @ 44bits](https://www.44bits.io/ko/post/easy-deploy-with-docker#%EC%8B%A4%EC%A0%84-%EB%8F%84%EC%BB%A4-%EC%9D%B4%EB%AF%B8%EC%A7%80%EB%A1%9C-%EC%84%9C%EB%B2%84-%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0)
   - [도커 컨테이너는 가상머신인가요? 프로세스인가요?](https://www.44bits.io/ko/post/is-docker-container-a-virtual-machine-or-a-process)
   - [컨테이너 기초 - chroot를 사용한 프로세스의 루트 디렉터리 격리](https://www.44bits.io/ko/post/change-root-directory-by-using-chroot)
   - [정적 링크 프로그램을 chroot와 도커(Docker) scratch 이미지로 실행하기](https://www.44bits.io/ko/post/static-compile-program-on-chroot-and-docker-scratch-image)
@@ -44,7 +49,7 @@ vmware, virtualbox 보다 훨씬 성능이 좋은 가상화 기술이다.
   - 쉬운 한글 책
   - [src](https://github.com/pyrasis/dockerbook)
 
-# Basics
+# Basic
 
 ## Permission
 
@@ -59,11 +64,22 @@ sudo usermod -aG docker $USER
 sudo usermod -aG docker iamslash
 ```
 
-## Install
+## Install on Linux
 
 * [도커(Docker) 입문편 컨테이너 기초부터 서버 배포까지](https://www.44bits.io/ko/post/easy-deploy-with-docker#%EC%8B%A4%EC%A0%84-%EB%8F%84%EC%BB%A4-%EC%9D%B4%EB%AF%B8%EC%A7%80%EB%A1%9C-%EC%84%9C%EB%B2%84-%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0)
 
 ----
+
+리눅스에서 도커를 설치하기 위해 다음과 같은 사항을 유의하자.
+
+* 최신 버전의 커널인가? 최소 3.10 버전 이상이 되어야 함
+
+  ```console
+  $ uname -r
+  ```
+* 지원 기간 내에 있는 배포인가?
+* 64 비트 OS 인가? Docker 는 64 비트에 최적화 되어 있음.
+* sudo 혹은 root 권한을 소유한 계정에서 설치해야 함.
 
 ```bash
 $ curl -s https://get.docker.com | sudo sh
@@ -78,12 +94,15 @@ docker 는 docker-ce, docker-ce-cli 로 구성된다. ce 는 community edition �
 $ docker ps
 Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.40/containers/json: dial unix /var/run/docker.sock: connect: permission denied
 
-# To prevent error use sudo
+# use sudo to prevent error. 
 # If you want to use docker without sudo, Add $USER to docker group.
 $ sudo docker ps
 $ sudo usermod -aG docker $USER
 $ sudo su - $USER
 $ docker ps
+
+# show info
+$ docker info
 
 # Find out registry
 $ docker info | grep Registry
@@ -91,6 +110,34 @@ $ docker info | grep Registry
 ```
 
 한가지 명심할 것은  이미지는 파일들의 집합이고, 컨테이너는 이 파일들의 집합 위에서 실행된 특별한 프로세스이다. 즉, Docker container 는 process 이다.
+
+## Docker Toolbox vs Docker for Mac
+
+Docker Toolbox 는 Linux virtual machine 을 하나 생성하고 Docker 를 설치한다. Virtual Network 가 2 개이다. 따라서 외부에서 container 에 접근하기 위해 호스트와 container 사이에 포트 포워딩이 2 분 필요하다.
+
+Docker for Mac 은 자체 가상화 기술로 리눅스 환경을 만들고 컨테이너를 생성한다. 외부에서 container 에 접근하기 위해 호스트와 가상 머신 사이에 포트 포워딩이 한번만 필요하다.
+
+## Containers
+
+```bash
+# show version
+$ docker -v
+Docker version 19.03.4, build 9013bf5
+
+# run container
+$ docker run -it ubuntu:14.04
+
+# pull image
+$ docker pull centos:7
+
+# show images
+$ docker images
+
+# just create a image. 
+$ docker create -it --name my-centos centos:7
+$ docker start my-centos
+$ docker attach my-centos
+```
 
 ## Versioning
 
@@ -113,9 +160,9 @@ $ docker diff 3bc6d0c2d284
 Guest OS 의 shell 에서 git 을 설치해보자.
 
 ```bash
-$ apt update
-$ apt install -y git
-$ git --version
+> apt update
+> apt install -y git
+> git --version
 ```
 
 다시 Host OS 의 shell 에서 docker 의 변경사항을 확인해 보자.
@@ -149,7 +196,7 @@ $ docker run -it ubuntu:git-from-dockerfile bash
 > git --version
 ```
 
-## Dockderizing moniwiki
+## Dockerizing moniwiki
 
 ```bash
 $ git clone https://github.com/nacyot/docker-moniwiki.git
@@ -157,7 +204,7 @@ $ cd docker-moniwiki/moniwiki
 $ cat Dockerfile
 FROM ubuntu:14.04
 
-RUN apt-get update &&\
+RUN apt-get update && \
   apt-get -qq -y install git curl build-essential apache2 php5 libapache2-mod-php5 rcs
 
 WORKDIR /tmp
@@ -203,7 +250,7 @@ becdcac5d788        7 hours ago         /bin/sh -c apt-get update &&  apt-get -q
 <missing>           3 months ago        /bin/sh -c #(nop) ADD file:276b5d943a4d284f8...   196MB
 ```
 
-images 가 <missing> 인 것은 base image 의 내용이다. 중간 image 는 local machine 에서 build 한 것만 확인할 수 있다.
+images 가 `<missing>` 인 것은 base image 의 내용이다. 중간 image 는 local machine 에서 build 한 것만 확인할 수 있다.
 
 ## Upload to Docker Hub
 
@@ -260,14 +307,14 @@ CentOS Linux release 8.1.1911 (Core)
 dockerhub 는 private repository 가 유료이다. 무료 private docker registry 를 운영해보자.
 
 ```bash
-> docker run -d \
+$ docker run -d \
 -v c:\my\dockerregistry:/var/lib/registry \
 -p 5000:5000 \
 distribution/registry:2.6.0
 
-> docker tag app localhost:5000/iamslash/iamslash-app:1
-> docker push localhost:5000/iamslash/iamslash-app:1
-> tree c:\my\docker\registry
+$ docker tag app localhost:5000/iamslash/iamslash-app:1
+$ docker push localhost:5000/iamslash/iamslash-app:1
+$ tree c:\my\docker\registry
 ```
 
 ## Dockerizing again
@@ -835,7 +882,6 @@ $ docker run -it --rm ubuntu:latest bash
 > kill -9 1
 >
 ```
-
 
 ## Useful commands
 
