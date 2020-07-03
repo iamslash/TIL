@@ -4,7 +4,26 @@
   - [Permission](#permission)
   - [Install on Linux](#install-on-linux)
   - [Docker Toolbox vs Docker for Mac](#docker-toolbox-vs-docker-for-mac)
-  - [Containers](#containers)
+  - [Docker Containers](#docker-containers)
+  - [Expose Docker Container](#expose-docker-container)
+  - [Docker Container Application](#docker-container-application)
+  - [Docker Volume](#docker-volume)
+  - [Docker Network Overview](#docker-network-overview)
+  - [Docker Bridge Network](#docker-bridge-network)
+  - [Docker Host Network](#docker-host-network)
+  - [Docker None Network](#docker-none-network)
+  - [Docker Container Network](#docker-container-network)
+  - [Docker Bridge Network and --net-alias](#docker-bridge-network-and---net-alias)
+  - [MacVLAN Network](#macvlan-network)
+  - [Docker Container logging with json-file](#docker-container-logging-with-json-file)
+  - [Docker Container logging with syslog](#docker-container-logging-with-syslog)
+  - [Docker Container logging with fluentd](#docker-container-logging-with-fluentd)
+  - [Docker Container logging with AWS CloudWatch](#docker-container-logging-with-aws-cloudwatch)
+  - [Container Resource Limits](#container-resource-limits)
+  - [Docker Image](#docker-image)
+  - [Dockerfile](#dockerfile)
+  - [Docker Daemon](#docker-daemon)
+- [Advanced](#advanced)
   - [Versioning](#versioning)
   - [Making a image](#making-a-image)
   - [Dockerizing moniwiki](#dockerizing-moniwiki)
@@ -16,7 +35,6 @@
   - [Basic Docker Commands](#basic-docker-commands)
   - [Dockerfile Instruction](#dockerfile-instruction)
   - [Advanced Docker Commands](#advanced-docker-commands)
-- [Advanced](#advanced)
   - [Process ID of Docker container is 1](#process-id-of-docker-container-is-1)
   - [Useful commands](#useful-commands)
   - [Network](#network)
@@ -117,27 +135,344 @@ Docker Toolbox 는 Linux virtual machine 을 하나 생성하고 Docker 를 설�
 
 Docker for Mac 은 자체 가상화 기술로 리눅스 환경을 만들고 컨테이너를 생성한다. 외부에서 container 에 접근하기 위해 호스트와 가상 머신 사이에 포트 포워딩이 한번만 필요하다.
 
-## Containers
+## Docker Containers
 
 ```bash
-# show version
+# Show version
 $ docker -v
 Docker version 19.03.4, build 9013bf5
 
-# run container
+# Run container
 $ docker run -it ubuntu:14.04
 
-# pull image
+# Pull image
 $ docker pull centos:7
 
-# show images
+# Show images
 $ docker images
 
-# just create a image. 
+# Just create a image. 
 $ docker create -it --name my-centos centos:7
 $ docker start my-centos
 $ docker attach my-centos
 ```
+
+* run vs create
+  * run: docker pull, docker create, docker start, docker attach (with `-it` option)
+  * create: docker pull, docker create
+
+```bash
+# Show running containers
+$ docker ps
+
+# Show all containers
+$ docker ps -a
+
+# Show running containers with specific columns
+$ docker ps --format "table {{.ID}}\t{{.Status}}\t{{.Image}}"
+$ docker ps --format "table {{.ID}}\t{{.Status}}\t{{.Image}}\t{{.Names}}"
+
+# Remove container
+$ docker rm my-centos
+
+# Stop container
+$ docker stop my-centos
+
+# Remove container with foroce option
+$ docker rm -f my-centos 
+
+# Remove all stopped containers
+$ docker container prune
+
+# Show all container ids
+$ docker ps -a -q
+
+# Stop containers and remove containers
+$ docker stop $(docker ps -a -q)
+$ docker rm $(docker ps -a -q)
+```
+
+## Expose Docker Container
+
+```bash
+# expose 80 of container to 80 of host
+$ docker run -it --name my-webserver -p 80:80 ubuntu:14.04
+
+# expose 3306 of container to 3306 of host, 80 of container to 192.168.0.100:7777 of host
+$ docker run -it -p 3306:3306 -p 192.168.0.100:7777:80 ubuntu:14.04
+> apt-get update
+> apt-get install apache2 -y
+> service apache2 start
+```
+
+## Docker Container Application
+
+```bash
+# Run mysql container
+$ docker run -d --name my-wordpress-db \
+  -e MYSQL_ROOT_PASSWORD=password \
+  -e MYSQL_DATABASE=wordpress \
+  mysql:5.7
+
+# Run wordpress container
+$ docker run -d --name my-wordpress \
+  --link my-wordpress-db:mysql \
+  -p 80 wordpress
+
+# Check ports
+$ docker ps
+$ docker port my-wordpress
+80/tcp -> 0.0.0.0:32769
+
+# Execute command using mysql alias of (--link my-wordpress-db:mysqls)
+$ docker exec my-wordpress curl mysql:3306 --silent
+
+$ docker stop my-wordpress my-wordpress-db
+```
+
+## Docker Volume
+
+```bash
+# Run mysql conatiner with volume
+$ docker run -d --name my-wordpress-db-hostvolume \
+  -e MYSQL_ROOT_PASSWORD=password \
+  -e MYSQL_DATABASE=wordpress \
+  -v /home/wordpress_db:/var/lib/mysql \
+  mysql:5.7
+
+# Run wordpress container with volume
+$ docker run -d --name my-wordpress-hostvolume \
+  -e WORDPRESS_DB_PASSWORD=password \
+  --link my-wordpress-hostvolume:mysql \
+  -p 80 \
+  wordpress
+
+# Show host volume
+$ ls /home/wordpress_db
+
+# Stop containers
+$ docker stop my-wordpress-hostvolume my-wordpress-db-hostvolume
+
+# Remove containers
+$ docker rm my-wordpress-hostvolume my-wordpress-db-hostvolume
+
+# They remains same after removing containers
+$ ls /home/wordpress_db
+
+# Run volume_dummy container
+$ docker run -it --name volume_dummy alicek106/volume_test
+> ls /home/testdir_2/
+test
+
+# Run volume_override and mount host's /home/wordpress_db to guest's /home/testdir_2
+$ docker run -it --name volume_override \
+  -v /home/wordpress_db:/home/testdir_2 \
+  alicek106/volume_test
+> ls /home/testdir_2
+...
+
+# Run volumes_from_container with volumes of volume_override container
+$ docker run -it --name volumes_from_container \
+  --volumes-from volume_override \
+  ubuntu:14.04
+> ls /home/testdir_2
+...
+
+# Create docker volume in host
+$ docker volume create --name my-volume 
+
+# Show host's docker volumes
+$ docker volume ls
+
+# Run my-volume_1 with docker volume
+$ docker run -it --name my-volume_1 \
+  -v my-volume:/root/ \
+  ubuntu:14.04
+
+# Show my-volume in detail
+$ docker inspect --type volume my-volume
+[
+  {
+    "Driver": "local",
+    "Labels": {},
+    "Mountpoint": "/var/lib/docker/volumes/my-volume/_data",
+    "Name" : "my-volume",
+    "Options" : {},
+    "Scope": "local"
+  }
+]
+
+# Create docker volume with automation
+$ docker run -it --name my-volume-auto \
+  -v /root \
+  ubuntu:14.04
+
+# Check created docker volume with automation
+$ docker volume ls
+DRIVER        VOLUME NAME
+local         dae1b3f3io3i
+local         my-volume
+
+# Show my-volume-auto in detail
+$ docker container inspect my-volume-auto
+
+# Remove unused volumes
+$ docker volume prune
+
+# Run container with mount option, docker volume
+$ docker run -it --name mount_option_1 \
+  --mount type=volume,source=my-volume,target=/root \
+  ubuntu:14.04
+
+# Run container with mount option, host volume
+$ docker run -it --name mount_option_2 \
+  --mount type=bind,source=/home/wordpress_db,target=/home/testdir \
+  ubuntu:14.04
+```
+
+## Docker Network Overview
+
+```bash
+# Check network interfaces eth0, lo, veth0xxx, docker0
+$ ifconfig
+
+# Check which is linked with docker0 bridge
+$ brctl show docker0
+```
+
+`vethxxxx` is virtual ethernet which is linked with `docker0` bridge.
+
+![](docker_network_arch.png)
+
+```bash
+# Show docker networks
+$ docker network ls
+
+# Show docker network bridge in detail
+$ docker network inspect bridge
+
+$ 
+```
+
+## Docker Bridge Network
+
+```bash
+# Create new docker bridge network as mybridge
+$ docker network create --driver bridge mybridge
+
+# Run container with mybridge network
+$ docker run -it --name mynetwork_container \
+  --net mybridge \
+  ubuntu:14.04
+# Check eth0 ip
+> ifconfig
+
+# Disconnect bridge network
+$ docker network disconnect mybridge mynetwork_container
+
+# Connect bridge network
+$ docker network connect mybridge mynetwork_container
+
+# Create bridge network with subnet, ip-range, gateway
+# subnet and ip-range should be same bandwith.
+$ docker network create --driver=bridge \
+  --subnet=172.72.0.0/16 \
+  --ip-range=172.72.0.0/24 \
+  --gateway=172.72.0.1 \
+  my_custom_network
+```
+
+## Docker Host Network
+
+```bash
+# Run container with host network
+# Container uses same network with host.
+$ docker run -it --name network_host \
+  --net host \
+  ubuntu:14.04
+> ifconfig
+```
+
+## Docker None Network
+
+```bash
+# Run container with none network
+$ docker run -it --name network_none \
+  --net none \
+  ubuntu:14.04
+> ifconfig
+```
+
+## Docker Container Network
+
+```bash
+# Run container
+$ docker run -it -d --name network_container_1 ubuntu:14.04
+
+# Run container with container network of network_container_1
+$ docker run -it -d --name network_container_2 \
+  --net container:network_container_1 \
+  ubuntu:14.04
+
+# Execute ifconfig
+$ docker exec network_container_1 ifconfig
+```
+
+![](docker_container_network_arch.png)
+
+## Docker Bridge Network and --net-alias
+
+You can proxy multiple containers with one alias.
+
+```bash
+# Run multiple containers with same --net-alias
+$ docker run -it -d --name network_alias_container_1 \
+  --net mybridge \
+  --net-alias iamslash ubuntu:14.04
+$ docker run -it -d --name network_alias_container_2 \
+  --net mybridge \
+  --net-alias iamslash ubuntu:14.04
+$ docker run -it -d --name network_alias_container_3 \
+  --net mybridge \
+  --net-alias iamslash ubuntu:14.04
+
+$ docker inspect network_alias_container1 | grep IPAddress
+
+# You can find out multiple ips whenever you ping with same alias.
+# There is a docker DNS inside which use round-robin algorithm.
+$ docker run -it --name network_alias_ping \
+  --net mybridge ubuntu:14.04
+> ping -c 1 iamslash
+> ping -c 1 iamslash
+> ping -c 1 iamslash
+```
+
+## MacVLAN Network
+
+WIP...
+
+## Docker Container logging with json-file
+
+```bash
+```
+
+## Docker Container logging with syslog
+
+## Docker Container logging with fluentd
+
+## Docker Container logging with AWS CloudWatch
+
+## Container Resource Limits
+
+## Docker Image
+
+## Dockerfile
+
+## Docker Daemon
+
+
+# Advanced
+
 
 ## Versioning
 
@@ -866,8 +1201,6 @@ $ docker version
 $ docker run -d --name hello redis:latest
 $ docker wait hello
 ```
-
-# Advanced
 
 ## Process ID of Docker container is 1
 
