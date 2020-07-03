@@ -20,6 +20,9 @@
   - [Docker Container logging with fluentd](#docker-container-logging-with-fluentd)
   - [Docker Container logging with AWS CloudWatch](#docker-container-logging-with-aws-cloudwatch)
   - [Container Resource Limits](#container-resource-limits)
+    - [Memory](#memory)
+    - [CPU](#cpu)
+  - [Block I/O](#block-io)
   - [Docker Image](#docker-image)
   - [Dockerfile](#dockerfile)
   - [Docker Daemon](#docker-daemon)
@@ -454,15 +457,197 @@ WIP...
 ## Docker Container logging with json-file
 
 ```bash
+# Run container
+$ docker run -d --name mysql \
+  -e MYSQL_ROOT_PASSWORD=1234 \
+  mysql:5.7
+
+# Show logs
+$ docker logs mysql
+$ docker logs --tail 2 mysql
+$ docker logs --since 1474765979 mysql
+$ docker logs -f -t mysql
+
+# Docker container logs are saved in host's directory with json format
+$ cat /var/lib/docker/containers/${container-id}/${container-id}-json.log
+
+# Run container with log options
+$ docker run -it \
+  --log-opt max-size=10k --log-opt max-file=3 \
+  --name log-test ubuntu:14.04
+
+# Chane logging driver
+$ export DOCKER_OPTS="--log-driver=syslog"
+$ export DOCKER_OPTS="--log-opt max-size=10k --log-opt max-file=3"
 ```
 
 ## Docker Container logging with syslog
 
+```bash
+# Run container with log-driver syslog 
+$ docker run -d --name syslog_container \
+  --log-driver=syslog \
+  ubuntu:14.04 \
+  echo syslogtest
+> tail /var/log/syslog
+
+# Run server container with syslog, Update rsyslog.conf, restart rsyslog
+$ docker run -it -h rsyslog \
+  --name rsyslog_server \
+  -p 514:514 -p 514:514/udp \
+  ubuntu:14.04
+> vi /etc/rsyslog.conf
+# provides UDP syslog reception
+$ModLoad imudp
+$UDPServerRun 514
+
+# provides TCP syslog reception
+$ModLoad imtcp
+$InputTCPServerRun 514
+> service rsyslog restart
+
+# Run client container with tcp
+$ docker run -it \
+  --log-driver=syslog \
+  --log-opt syslog-address=tcp://192.168.0.100:514 \
+  --log-opt tag="mylog" \
+  ubuntu:14.04
+
+# Run client container with udp
+$ docker run -it \
+  --log-driver=syslog \
+  --log-opt syslog-address=udp://192.168.0.100:514 \
+  --log-opt tag="mylog" \
+  ubuntu:14.04
+
+# Execute tail on server container
+> tail /var/log/syslog
+
+# You can change syslog logging file
+$ docker run -it \
+  --log-driver=syslog \
+  --log-opt syslog-address=tcp://192.168.0.100:514 \
+  --log-opt tag="maillog" \
+  --log-opt syslog-facility="mail" \
+  ubuntu:14.04
+
+# You can find out mail.log files on server container
+> ls /var/log/
+```
+
 ## Docker Container logging with fluentd
+
+WIP
 
 ## Docker Container logging with AWS CloudWatch
 
+1. Create IAM role for CloudWatch
+2. Create Log Group on CloudWatch as mylogs
+3. Create Log Stream on CloudWatch as mylogstream
+4. Create EC2 instance with IAM role for CloudWatch
+5. Run container like this
+
+```bash
+$ docker run -it \
+  --log-driver=awslogs \
+  --log-opt awslogs-region=ap-northeast-2 \
+  --log-opt awslogs-group=mylogs \
+  --log-opt awslogs-stream=mylogstream \
+  ubuntu:14.04
+```
+
 ## Container Resource Limits
+
+### Memory
+
+```bash
+# Update resource limits
+$ docker update --cpuset-cpus=1 centos ubuntu
+
+# Limit memory
+$ docker run -d --memory="1g" --name memory_1g nginx
+$ docker inspect memory_1g | grep \"Memory\"
+
+# Limit swap
+$ docker run -it --name swap_500m \
+  --memory=200m \
+  --memory-swap=500m \
+  ubuntu:14.04
+```
+
+### CPU
+
+```bash
+# Run container with --cpu-shares
+# --cpu-shares is relative value for sharing cpu, default is 1024.
+$ docker run -it --name cpu_share \
+  --cpu-shares=1024 \
+  ubuntu:14.04
+
+# Run multiple containers with --cpu-shares
+# --cpu-shares is relative value for sharing cpu, default is 1024.
+$ docker run -it --name cpu_1024 \
+  --cpu-shares=1024 \
+  alicek106/stress \
+  stress --cpu 1
+$ docker run -it --name cpu-512 \ 
+  --cpu-shares=512 \
+  alicek106/stress \
+  stress --cpu 1
+$ ps aux | grep stress
+
+# Run container with using specific cpu
+$ docker run -d --name cpuset_2 \
+  --cpuset-cpu=2 \
+  alicek106/stress \
+  stress --cpu 1
+$ apt-get install htop
+$ htop
+
+# Allocate cpu allocation time
+# 100000 means 100ms
+# 25000/100000 = 1/4
+# Docker will allocate 1/4 cpu time 
+$ docker run -d --name quota_1_4 \
+  --cpu-period=100000 \
+  --cpu-quota=25000 \
+  alicek106/stress \
+  stress --cpu 1
+$ ps aux | grep stress
+
+# 0.5 is same with --cpu-period=100000 --cpu-quota=50000.
+$ docker run -d --name cpu_container \
+  --cpus=0.5 \
+  alicek106/stress \
+  stress --cpu 1
+```
+
+## Block I/O
+
+```bash
+# Limit write blocks per second
+# --device-write-bps, --device-read-bps
+$ docker run -it \
+  --device-write-bps /dev/xvda:1mb \
+  ubuntu:14.04
+# Write 10MB file with Direct I/O
+> dd if=/dev/zero of=test.out bs=1M count=10 oflag=direct
+
+# Limit write io per second
+# 5 is relative value
+# --device-write-iops, --device-read-iops
+$ docker run -it \
+  --device-write-iops /dev/xvda:5 \
+  ubuntu:14.04
+> dd if=/dev/zero of=test.out bs=1M count=10 oflag=direct
+.. 5.2 MB/s
+
+$ docker run -it \
+  --device-write-iops /dev/xvda:10 \
+  ubuntu:14.04
+> dd if=/dev/zero of=test.out bs=1M count=10 oflag=direct
+.. 10.3 MB/s
+```
 
 ## Docker Image
 
@@ -470,9 +655,7 @@ WIP...
 
 ## Docker Daemon
 
-
 # Advanced
-
 
 ## Versioning
 
