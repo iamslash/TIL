@@ -10,10 +10,13 @@
   - WiredTiger는 document level lock을 한다.
   - granularity locking은 [이곳](http://www.mysqlkorea.com/sub.html?mcode=manual&scode=01&m_no=21879&cat1=14&cat2=422&cat3=444&lang=k) 을 참고해서 이해하자.
 
-# install
+# Install with Docker
 
-- brew install mongodb
-
+```console
+$ docker run --rm -p 27017:27017 --name my-mongo -d mongo
+$ docker exec -it my-mongo bash
+$ mongo
+```
 
 # terms and definition
 
