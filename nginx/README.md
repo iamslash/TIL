@@ -569,6 +569,63 @@ http {
 ## Basic Auth
 ## Hardening Nginx
 ## Let's Encrypt - SSL Certificates
+
+Self signed root certificates 를 만들고 domain certificates 를 만든다.
+그리고 nginx.conf 를 적당히 설정하여 CA 를 등록한다.
+
+```bash
+$ cd ~/tmp
+$ mkdir certs
+# Create root's private key
+$ openssl genrsa -out ./certs/ca.key 2048
+# Create root's self signed root certificates
+$ openssl req -x509 -new -key ./certs/ca.key -days 10000 -out ./certs/ca.crt
+# Create domain's private key
+$ openssl genrsa -out ./certs/domain.key 2048
+# Create domain's certificate signing request
+$ openssl req -name -key ./certs/domain.key -subj /CN=${DOCKER_HOST_IP} -out ./certs/domain.csr
+# Create domain's certificates
+$ openssl x509 -req -in ./certs/domain.csr -CA ./certs/ca.crt -CAkey ./certs/ca.key \
+  -CAcreateserial -out ./certs/domain.crt -days 10000 -extfile extfile.cnf
+
+# Create login password for iamslash when login to private registry container
+$ htpasswd -c htpasswd iamslash
+# You might install htpasswd with 'apt-get install apache2-utils'
+$ mv htpasswd certs/
+
+# Create nginx.conf file
+$ vim certs/nginx.conf
+upstream docker-registry {
+  server registry:5000
+}
+
+server {
+  listen 443;
+  server_name ${DOCKER_HOST_IP};
+  ssl on;
+  ssl_certificate /etc/nginx/conf.d/domain.crt;
+  ssl_certificate_key /etc/nginx/conf.d/domain.key;
+  client_max_body_size 0;
+  chunked_transfer_encoding on;
+
+  location /v2/ {
+    if ($http_user_agent ~ "^(docker\/1\.(3|4|5(?|\.[0-9]-dev))|Go ).*$") {
+      return 404;
+    }
+    auth_basic "registry.localhost";
+    auth_basic_user_file /etc/nginx/conf.d/htpasswd;
+    add_header 'Docker-Distribution-Api-Version' 'registry/2.0' always;
+
+    proxy_pass                            http://docker-registry;
+    proxy_set_header  Host                $http_host;
+    proxy_set_header  X-Real-IP           $remote_addr;
+    proxy_set_header  X-Forwarded-For     $proxy_add_x_forwarded_for;
+    proxy_set_header  X-Forwarded-Proto   $scheme;
+    proxy_read_timeout                    900;
+  }
+}
+```
+
 ## Reverse Proxy
 
 다음과 같이 `http://local.iamslash.com/php` 에 대해 `http://localhost:9999` 로 forwarding 해보자. proxy_pass 의 parameter 는 반드시 `/` 로 끝나야 한다. 만약 uri 가 `http://local.iamslash.com/php/hello` 라면 `http://localhost:9999/hello` 로 forwarding 된다.

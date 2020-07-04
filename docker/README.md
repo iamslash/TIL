@@ -24,8 +24,14 @@
     - [CPU](#cpu)
   - [Block I/O](#block-io)
   - [Docker Image](#docker-image)
+  - [Docker private registry](#docker-private-registry)
+  - [Docker private registry authentication with nginx](#docker-private-registry-authentication-with-nginx)
+  - [Docker private registry REST API](#docker-private-registry-rest-api)
   - [Dockerfile](#dockerfile)
+  - [Dockerfile Commands](#dockerfile-commands)
   - [Docker Daemon](#docker-daemon)
+  - [Docker Daemon Storage Driver](#docker-daemon-storage-driver)
+  - [Docker Daemon Monitoring](#docker-daemon-monitoring)
 - [Advanced](#advanced)
   - [Versioning](#versioning)
   - [Making a image](#making-a-image)
@@ -42,7 +48,7 @@
   - [Useful commands](#useful-commands)
   - [Network](#network)
   - [User of docker container](#user-of-docker-container)
-  - [Multiprocess in adocker container](#multiprocess-in-adocker-container)
+  - [Multiprocess in a docker container](#multiprocess-in-a-docker-container)
 
 ----
 
@@ -651,9 +657,276 @@ $ docker run -it \
 
 ## Docker Image
 
+```bash
+# Check registry
+$ docker info | grep Registry
+ Registry: https://index.docker.io/v1/
+
+# Search ubuntu images from index.docker.io/ubuntu
+$ docker search ubuntu
+
+# Add text to first file, Commit
+$ docker run -it --name commit_test ubuntu:14.04
+> echo test_first !!! >> first
+$ docker commit -a "iamslash" -m "kick off" \
+  commit_test commit_test:first
+$ docker images
+REPOSITORY    TAG     IMAGE_ID      CREATED         SIZE
+commit_test   first   sde23e23e     3 minutes aogo  188 MB
+ubuntu        14.04   kji3io3ie     12 days ago     188 MB
+
+# Add text to second file, Commit
+$ docker run -it --name commit_test2 ubuntu:14.04
+> echo test_second !!! >> second
+$ docker commit -a "iamslash" -m "second commit" \
+  commit_test2 commit_test:second
+$ docker images
+REPOSITORY    TAG     IMAGE_ID      CREATED         SIZE
+commit_test   second  ssf33f23f     1 minutes aogo  188 MB
+commit_test   first   sde23e23e     3 minutes aogo  188 MB
+ubuntu        14.04   kji3io3ie     12 days ago     188 MB
+
+# Show images in detail
+$ docker inspect ubuntu:14.04
+$ docker inspect commit_test:first
+$ docker inspect commit_test:second
+
+# Remove commit_test:first, Error will happen, 
+# because commit_test2 is referencing it.
+$ docker rmi commit_test:first
+
+# Stop, remove commit_test2 and remove commit_test:first image
+# It will work
+$ docker stop commit_test2 && docker rm commit_test2
+# This doesn't remove image but just name of layer, 
+# Because commit_test:second image is referencing it.
+$ docker rmi commit_test:first
+Untagged: commit_test:first
+
+# Show danglinged images
+$ docker images -f dangling=true
+
+# Remove danglined images
+$ docker image prune
+
+# Remove commit_test:second image
+$ docker rmi commit_test:second
+Untagged: commit_test:second
+Deleted: sha256:ijo4ijo4ij4ij4ijo4ijoi4jij4ji4
+Deleted: sha256:didi3oijji3ij3io3ioj3ij3j3j3ji
+Deleted: sha256:ij4jio4ioj4ijo4ji4jioio4jij44j
+Deleted: sha256:nhdhui3g2iug34gui2iu34ugigu234
+
+# Save image to tar file
+$ docker save -o ubuntu_14_04.tar ubuntu:14.04
+
+# Load tar file to image
+$ docker load -i ubuntu_14_04.tar
+
+# Export mycontainer to tar file
+$ docker export -o rootFS.tar mycontainer
+
+# Import tar file to image
+$ docker import rootFS.tar myimage:0.0
+
+# Run container and commit, change tag
+$ docker run -it --name commit_container1 ubuntu:14.04
+$ docker commit commit_container1 my-image-name:0.0
+$ docker tag my-image-name:0.0 iamslash/my-image-name:0.0
+$ docker images
+# Login to hub.docker.com, This will be saved to ~/.docker/config.json
+$ docker login
+$ docker push iamslash/my-image-name:0.0
+$ docker pull iamslash/my-image-name:0.0
+```
+
+## Docker private registry
+
+```bash
+# Run private registry container
+#   --restart=always: If the container stopped, Docker engine will restart it always
+#   --restart=on-failure: If the container stopped with not 0 exit code, Docker engine will restart it
+#   --restart=unless-stopped: If the container stopped with not docker stop command, Docker engine will restart it
+$ docker run -d --name my-registry -p 5000:5000 --restart=always registry:2.6
+$ curl localhost:5000/v2/
+{}
+
+# Change tag
+$ docker tag my-image-name:0.0 ${DOCKER_HOST_IP}:5000/my-image-name:0.0
+
+# Push image, Error will happen
+# Basically private registry container need HTTPS not HTTP
+$ docker push 192.168.99.101:5000/my-image-name:0.0
+The push refers to a repository [192.168.99.101:5000/my-image-name]
+Get https://192.168.99.101/v2/: http: server gave HTTP response to HTTPS client
+
+# Set --insecure-registry option
+$ export DOCKER_OPTS="--insecure-registry=192.168.99.101:5000"
+
+# Push image, This will work
+$ docker push 192.168.99.101:5000/my-image-name:0.0
+
+# Pull image
+$ docker pull 192.168.99.101:5000/my-image-name:0.0
+
+# Private regsitry container will make docker volume
+# When you need to remove private registry container
+# You need to remove docker volume like this
+$ docker rm --volumes my-registry
+```
+
+## Docker private registry authentication with nginx
+
+If you have CA, private key, you can implement authentication to docker private registry.
+But you can do it for free with self-signed root certificate authority, private key.
+
+```bash
+$ cd ~/tmp
+$ mkdir certs
+# Create root's private key
+$ openssl genrsa -out ./certs/ca.key 2048
+# Create root's self signed root certificates
+$ openssl req -x509 -new -key ./certs/ca.key -days 10000 -out ./certs/ca.crt
+# Create domain's private key
+$ openssl genrsa -out ./certs/domain.key 2048
+# Create domain's certificate signing request
+$ openssl req -name -key ./certs/domain.key -subj /CN=${DOCKER_HOST_IP} -out ./certs/domain.csr
+# Create domain's certificates
+$ openssl x509 -req -in ./certs/domain.csr -CA ./certs/ca.crt -CAkey ./certs/ca.key \
+  -CAcreateserial -out ./certs/domain.crt -days 10000 -extfile extfile.cnf
+
+# Create login password for iamslash when login to private registry container
+$ htpasswd -c htpasswd iamslash
+# You might install htpasswd with 'apt-get install apache2-utils'
+$ mv htpasswd certs/
+
+# Create nginx.conf file
+$ vim certs/nginx.conf
+upstream docker-registry {
+  server registry:5000
+}
+
+server {
+  listen 443;
+  server_name ${DOCKER_HOST_IP};
+  ssl on;
+  ssl_certificate /etc/nginx/conf.d/domain.crt;
+  ssl_certificate_key /etc/nginx/conf.d/domain.key;
+  client_max_body_size 0;
+  chunked_transfer_encoding on;
+
+  location /v2/ {
+    if ($http_user_agent ~ "^(docker\/1\.(3|4|5(?|\.[0-9]-dev))|Go ).*$") {
+      return 404;
+    }
+    auth_basic "registry.localhost";
+    auth_basic_user_file /etc/nginx/conf.d/htpasswd;
+    add_header 'Docker-Distribution-Api-Version' 'registry/2.0' always;
+
+    proxy_pass                            http://docker-registry;
+    proxy_set_header  Host                $http_host;
+    proxy_set_header  X-Real-IP           $remote_addr;
+    proxy_set_header  X-Forwarded-For     $proxy_add_x_forwarded_for;
+    proxy_set_header  X-Forwarded-Proto   $scheme;
+    proxy_read_timeout                    900;
+  }
+}
+
+$ docker stop my-registry
+$ docker rm my-registry
+$ docker run -d --name nginx_frontend \
+  -p 443:443 \
+  --link my-registry:registry \
+  -v $(pwd)/certs/:/etc/nginx/conf.d \
+  nginx:1.9
+$ docker ps --format "table {{.ID}}\t{{.Image}}\t{{Ports}}"
+# Error will happen, you need to register self-singed CA to trusted one.
+$ docker login https://192.168.99.100
+# Copy ca.cert file to trusted CA list
+$ cp certs/ca.cert /usr/local/share/ca-certificates/
+# Restart nginx container
+$ service docker restart
+$ docker start nginx_frontend
+# This will work
+$ docker login https://192.168.99.100
+$ docker tag my-image-name:0.0 192.168.99.100/my-image-name:0.0
+$ docker push 192.168.99.100/my-image-name:0.0
+```
+
+## Docker private registry REST API
+
+```bash
+# Show images
+$ curl -u iamslash:mypassword https://192.168.99.100/v2/_catalog
+$ curl 192.168.99.100:5000/v2/_catalog
+
+# Show specific image's tags
+$ curl 192.168.99.100:5000/v2/my-image-name/tags/list
+
+# Show specific image's detail
+$ curl -i \
+  --header "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+  192.168.99.100:5000/v2/my-image-name/manifests/0.0
+
+# If you want to delete a image,
+# You need to delete manifest and image file
+# But Error will happend
+# You need to set delete images possible
+$ curl --header "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+  -X DELETE \ 
+  192.168.99.100:5000/v2/my-image-name/manifests/sha256:cski3i32o3ih4...
+$ docker run -d --name registry_delete_enabled \
+  -p 5001:5000 \
+  --restart=always \
+  -e REGISTRY_STORAGE_DELETE_ENABLED=true \
+  regsitry:2.6
+$ docker tag my-image-name:0.0 localhost:5001/my-image-name:0.0
+$ docker push localhost:5001/my-image/name:0.0
+# Delete manifest
+$ curl --header "Accept: application/vnd.docker.distribution.manifest.v2+json" \
+  -X DELETE \ 
+  192.168.99.100:5001/v2/my-image-name/manifests/sha256:cski3i32o3ih4...
+# Delete digest
+$ curl \
+  -X DELETE \ 
+  192.168.99.100:5001/v2/my-image-name/blobs/sha256:hoihio3ih3ih4i4hih...
+
+# You can set configs with environment variables
+$ docker run -d -p 5000:5000 --name registry_delete_enabled --restart=always \
+  -e REGISTRY_STORAGE_DELETE_ENABLED=true \
+  -e REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY=/var/lib/mydocker \
+  ...
+  registry:2.6
+
+# You can set configs with config.yml file
+$ docker exec registry_delete_enabled cat /etc/docker/registry/config.yml
+version: 0.1
+log:
+  level: info
+storage:
+  filesystem:
+    rootdirectory: /registry_data
+  delete:
+    enabled: true
+http:
+  addr: 0.0.0.0:5000
+
+$ docker run -d --name yml_registry \
+  -p 5002:5000 \
+  --restart=always \
+  -v $(PWD)/config.yml:/etc/docker/registry/config.yml \
+  registry:2.6
+```
+
 ## Dockerfile
 
+## Dockerfile Commands
+
 ## Docker Daemon
+
+## Docker Daemon Storage Driver
+
+## Docker Daemon Monitoring
 
 # Advanced
 
@@ -1547,7 +1820,7 @@ $ docker exec web04 ip addr show
 
 * [How to set user of Docker container](https://codeyarns.com/2017/07/21/how-to-set-user-of-docker-container/)
 
-## Multiprocess in adocker container
+## Multiprocess in a docker container
 
 * [Choosing an init process for multi-process containers](https://ahmet.im/blog/minimal-init-process-for-containers/)
 * [tini](https://github.com/krallin/tini)
