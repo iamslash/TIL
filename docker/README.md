@@ -29,7 +29,12 @@
   - [Docker private registry REST API](#docker-private-registry-rest-api)
   - [Dockerfile](#dockerfile)
   - [Dockerfile Commands](#dockerfile-commands)
+    - [ENV, VOLUME, ARG, USER](#env-volume-arg-user)
+    - [Onbuild, Stopsignal, Healthcheck, Shell](#onbuild-stopsignal-healthcheck-shell)
+    - [ADD, COPY](#add-copy)
+    - [ENTRYPOINT, CMD](#entrypoint-cmd)
   - [Docker Daemon](#docker-daemon)
+  - [Docker Daemon --tlsverify](#docker-daemon---tlsverify)
   - [Docker Daemon Storage Driver](#docker-daemon-storage-driver)
   - [Docker Daemon Monitoring](#docker-daemon-monitoring)
 - [Advanced](#advanced)
@@ -920,13 +925,351 @@ $ docker run -d --name yml_registry \
 
 ## Dockerfile
 
+```bash
+$ mkdir dockerfile && cd dockerfile
+$ echo test >> test.html
+$ vi Dockerfile
+FROM ubuntu:14.04
+MAINTAINER iamslash
+LABEL "purpose=practice"
+RUN apt-get update
+RUN apt-get install apache -y
+ADD test.html /var/www/html
+WORKDIR /var/www/html
+RUN ["/bin/bash", "-c", "echo hello >> test2.html"]
+EXPOSE 80
+CMD apachectl -DFOREGROUND
+
+$ docker build -t mybuild:0.0 ./
+
+# Run container
+# -P option means map host's available port to congtainer's exposed port  
+$ docker run -d -P --name myserver mybuild:0.0
+
+# Check host port
+$ docker port myserver
+80/tcp -> 0.0.0.0:32769
+
+# Show images with --filter option
+$ docker images --filter "label=purpose=practice"
+
+# You can ignore files when you build Dockerfile
+$ vi .dockerignore
+test2.html
+*.html
+*/*.html
+
+# Build golang image
+$ vi Dockerfile
+FROM golang
+ADD main.go /root
+WORKDIR /root
+RUN go build -o /root/mainApp /root/main.go
+CMD ["./mainApp"]
+
+$ docker build . -t go_helloworld
+$ docker images
+
+# Optimize using multistages
+$ vi Dockerfile
+FROM golang
+ADD main.go /root
+WORKDIR /root
+RUN go build -o /root/mainApp /root/main.go
+
+FROM alpine:latest
+WORKDIR /root
+COPY --from=0 /root/mainApp .
+CMD ["./mainApp"]
+
+$ docker build . -t go_helloworld:multi-stage
+$ docker images
+```
+
+These are multi-staged Dockerfile examples
+
+```Dockerfile
+FROM golang
+ADD main.go /root
+WORKDIR /root
+RUN go build -o /root/mainApp /root/main.go
+
+FROM golang
+ADD main2.go /root
+WORKDIR /root
+RUN go build -o /root/mainApp2 /root/main2.go
+
+FROM alpine:latest
+WORKDIR /root
+COPY --from=0 /root/mainApp .
+COPY --from=1 /root/mainApp2 .
+```
+
+```Dockerfile
+FROM golang as builder
+ADD main.go /root
+WORKDIR /root
+RUN go build -o /root/mainApp /root/main.go
+
+FROM alpine:latest
+WORKDIR /root
+COPY --from=builder /root/mainApp .
+CMD ["./mainApp"]
+```
+
 ## Dockerfile Commands
+
+### ENV, VOLUME, ARG, USER
+
+```bash
+$ vi Dockerfile
+FROM ubuntu:14.04
+ENV test /home
+WORKDIR $test
+RUN touch $test/mytouchfile
+
+$ docker build -t myenv:0.0 ./
+$ docker run -it --name env_test_override \
+  -e test=myvalue \
+  myenv:0.0 /bin/bash
+> echo $test
+myvalue
+```
+
+```console
+$ vi Dockerfile
+FROM ubuntu:14.04
+RUN mkdir /home/volume
+RUN echo test >> /home/volume/testfile
+VOLUME /home/volume
+
+$ docker build -t myvolume:0.0 .
+$ docker run -it -d --name volume_test myvolume:0.0
+$ docker volume ls
+```
+
+```console
+$ vi Dockerfile
+FROM ubuntu:14.04
+ARG my_arg
+ARG my_arg_2=value2
+RUN touch ${my_arg}/mytouch
+
+$ docker build --build-arg my_arg=/home -t myarg:0.0 ./
+$ docker run -it --name arg_test myarg:0.0
+> ls /home/mytouch
+/home/mytouch
+```
+
+### Onbuild, Stopsignal, Healthcheck, Shell
+
+```console
+$ vi Dockerfile
+FROM ubuntu:14.04
+RUN echo "This is onbuild test"
+ONBUILD RUN echo "onbuild!" >> /onbuild_file
+
+$ docker build ./ -t onbuild_test:0/0
+...
+Step 3/3 : ONBUILD run echo "onbuild!" >> /onbuild_file
+...
+
+$ docker run -it --rm onbuild_test:0.0 ls /
+
+$ vi Dockerfile2
+FROM onbuild_test:0.0
+RUN echo "This is child image"
+
+$ docker build -f ./Dockerfile2 ./ -t onbuild_test:0.1
+...
+# Excecuting 1 build trigger...
+Step 1/1 : RUN echo "onbuild!" >> /onbuild_file
+...
+
+$ docker run -it --rm onbuild_test:0.1 ls /
+```
+
+This is a maven image with using ONBUILD
+
+```Dockerfile
+FROM maven:3-jdk-8-alpine
+RUN mkdir -p /usr/src/app
+WORKDIR /usr/src/app
+ONBUILD ADD . /usr/src/app
+ONBUILD RUN mvn install
+```
+
+```bash
+# Basically SIGTERM will stop docker container
+# But you can stop with specific SIGNAL using STOPSIGNAL command.
+$ vi Dockerfile
+FROM ubuntu:14.04
+STOPSIGNAL SIGKILL
+
+$ docker build . -t stopsignal:0.0
+$ docker -itd --name stopsignal_container stopsignal:0.0
+$ docker inspect stopsignal_container | grep Stop
+      "StopSignal": "SIGKILL"
+```
+
+```bash
+# You can healthcheck with HEALTHCHECK command.
+$ vi Dockerfile
+FROM nginx
+RUN apt-get update -y && apt-get install curl -y
+HEALTHCHECK --interval=1m --timeout=3s --retries=3 CMD curl -f http://localhost || exit 1
+
+# Run container and find out STATUS column
+$ docker build ./ -t nginx:healthcheck
+$ docker run -dP nginx:healthcheck
+$ docker ps
+```
+
+```bash
+# SHELL will execute command with "/bin/sh -c" on linux
+#                                 "cmd /S /C" on windows
+$ vi Dockerfile
+FROM node
+RUN echo "hello, node!"
+SHELL ["/usr/local/bin/node"]
+RUN -v
+
+$ docker build ./ -t nodetest
+```
+
+### ADD, COPY
+
+`COPY` can copy just local files, But `ADD` can copy URL, tar file. It's better to use `COPY` instead of `ADD`.
+
+```bash
+$ vi Dockerfile
+ADD https://raw.githubusercontent.com/iamslahs/mydockerrepo/master/test.html /home
+ADD test.tar /home
+```
+
+### ENTRYPOINT, CMD
+
+When you use ENTRYPOINT and CMD, CMD will be arguments of ENTRYPOINT.
+
+```bash
+$ vi Dockerfile
+FROM ubuntu:14.04
+RUN apt-get update
+RUN apt-get install apache2 -y
+ADD entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/bin/bash", "/entrypoint.sh"]
+
+$ vi entrypoint.sh
+echo $1 $2
+apachectl -DFOREGROUND
+
+$ docker build -t entrypoint_image:0.0 ./
+$ docker run -d --name entrypoint_apache_server entrypoint_image:0.0 first second
+$ docker logs entrypoint_apache_server
+```
 
 ## Docker Daemon
 
+```bash
+$ service docker start
+$ service docker stop
+$ systemctl enable docker
+
+# Run dockerd by command
+$ service docker stop
+$ dockerd
+
+# Run dockerd with --insecure-registry option
+$ dockerd --insecure-registry=192.168.99.100:5000
+
+# Run dockerd with options
+# -H option means provide REST API
+$ dockerd -H tcp://0.0.0.0:2375 --insecure-registry=192.168.100.99:5000 --tls=false
+
+# You can configure with config file
+$ vi /etc/default/docker
+
+# Run dockerd with -H option
+$ dockerd -H tcp://0.0.0.0:2375 
+$ dockerd -H unix:///var/run/docker.sock -H tcp://0.0.0.0:2375
+$ curl 192.168.99.100:2375/version --silent | python -m json.tool
+
+# Run docker version command with DOCKER_HOST env
+$ export DOCKER_HOST="tcp://192.168.99.100:2375"
+$ docker version
+# Run docker -H option to request REST API
+$ docker -H tcp://192.168.99.100:2375 version
+```
+
+
+## Docker Daemon --tlsverify
+
+This is a architecture for authentication docker daemon and docker client.
+
+| Docker Daemon   | Docker Client | description      |
+| --------------- | ------------- | ---------------- |
+| ca.pem          | ca.pem        | public key file  |
+| server-cert.pem | cert.pem      | certificate file |
+| server-key.pem  | key.pem       | private key file |
+
+```bash
+$ mkdir keys && cd keys
+
+# Create private key file for server certificate file
+$ openssl genrsa -aes256 -out ca-key.pem 4096
+# Create public key file for server certificate file
+$ openssl req -new -x509 -days 10000 -key ca-key.pem -sha256 -out ca.pem
+# Create private key file for server
+$ openssl genrsa -out server-key.pem 4096
+# Create csr (certificate signing request) for server
+$ openssl req -subj "/CN=$HOST" -sha256 -new -key server-key.pem -out server.csr
+# Create extfile.cnf with ips for connecting
+$ echo subjectAltName = IP:$HOST,IP:127.0.0.1 > extfile.cnf
+# Create certificate file for server
+$ openssl x509 -req -days 365 -sha256 -in server.csr -CA ca.pem -CAKey ca-key.pem \
+  -CAcreateserial -out server-cert.pem -extfile extfile.cnf
+
+# Create private key file for client
+$ openssl genrsa -out key.pem 4096
+# Create csr (certificate signing request) for client
+$ openssl req -subj "/CN=client" -new -key key.pem -out client.csr
+# Create extfile.cnf with ips for connecting
+$ echo extendedKeyUsage = clientAuth > extfile.cnf
+# Create certificate file for client
+$ openssl x509 -req -days 30000 -sha256 -in client.csr -CA ca.pem -CAKey ca-key.pem \
+  -CAcreateserial -out cert.pem -extfile extfile.cnf
+$ chmod -v 0400 ca-key.pem key.pem server-key.pem ca.pem server-cert.pem cert.pem
+$ cp {ca,server-cert,server-key,sert,key}.pem ~/.docker
+
+$ dockerd --tlsverify \
+  --tlscacert=/root/.docker/ca.pem \
+  --tlscert=/root/.docker/server-cert.pem \
+  --tlskey=/root/.docker/server-key.pem \
+  -H=0.0.0.0:2376 \
+  -H unix:///var/run/docker.sock
+# Error will happend need to set arguments for tls
+$ docker -H 192.168.99.100:2376 version
+# This will work 
+$ docker -H 192.168.99.100:2376 \
+  --tlscacert=/root/.docker/ca.pem \
+  --tlscert=/root/.docker/cert.pem \
+  --tlskey=/root/.docker/key.pem \
+  --tlsverify version
+
+# Or using envs
+$ export DOCKER_CERT_PATH="/root/.docker"
+$ export DOCKER_TLS_VERIFY=1
+$ docker -H 192.168.99.100:2376 version
+```
+
 ## Docker Daemon Storage Driver
 
+WIP...
+
 ## Docker Daemon Monitoring
+
+WIP...
 
 # Advanced
 
