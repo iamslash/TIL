@@ -11,14 +11,14 @@
 # Install with docker
 
 ```console
-$ docker run -p3306:3306 --rm --name my-mysql -e MYSQL_ROOT_PASSWORD=1 -e MYSQL_DATABASE=foo -e MYSQL_USER=iamslash -e MYSQL_PASSWORD=1 -d mysql
+$ docker run -p3306:3306 --rm --name my-mysql -e MYSQL_ROOT_PASSWORD=1 -e MYSQL_DATABASE=hello -e MYSQL_USER=iamslash -e MYSQL_PASSWORD=1 -d mysql
 
 $ docker ps
 $ docker exec -it my-mysql /bin/bash
 
 $ mysql -u iamslash -p
 mysql> show databases
-mysql> use foo
+mysql> use hello
 ```
 
 # Tip

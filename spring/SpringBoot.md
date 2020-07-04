@@ -1,47 +1,61 @@
 - [Materials](#materials)
-- [스프링 부트 원리](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ec%9b%90%eb%a6%ac)
-	- [의존성 관리 이해](#%ec%9d%98%ec%a1%b4%ec%84%b1-%ea%b4%80%eb%a6%ac-%ec%9d%b4%ed%95%b4)
-	- [의존성 관리 응용](#%ec%9d%98%ec%a1%b4%ec%84%b1-%ea%b4%80%eb%a6%ac-%ec%9d%91%ec%9a%a9)
-	- [자동 설정 이해](#%ec%9e%90%eb%8f%99-%ec%84%a4%ec%a0%95-%ec%9d%b4%ed%95%b4)
-	- [자동설정 만들기 1 부 : Starter 와 AutoConfigure](#%ec%9e%90%eb%8f%99%ec%84%a4%ec%a0%95-%eb%a7%8c%eb%93%a4%ea%b8%b0-1-%eb%b6%80--starter-%ec%99%80-autoconfigure)
-	- [자동설정 만들기 2 부 : @ConfigurationProperties](#%ec%9e%90%eb%8f%99%ec%84%a4%ec%a0%95-%eb%a7%8c%eb%93%a4%ea%b8%b0-2-%eb%b6%80--configurationproperties)
-	- [내장 웹 서버 이해](#%eb%82%b4%ec%9e%a5-%ec%9b%b9-%ec%84%9c%eb%b2%84-%ec%9d%b4%ed%95%b4)
-	- [내장 웹 서버 응용 1 부: 컨테이너와 포트](#%eb%82%b4%ec%9e%a5-%ec%9b%b9-%ec%84%9c%eb%b2%84-%ec%9d%91%ec%9a%a9-1-%eb%b6%80-%ec%bb%a8%ed%85%8c%ec%9d%b4%eb%84%88%ec%99%80-%ed%8f%ac%ed%8a%b8)
-	- [내장 웹 서버 응용 2 부: HTTPS 와 HTTP2](#%eb%82%b4%ec%9e%a5-%ec%9b%b9-%ec%84%9c%eb%b2%84-%ec%9d%91%ec%9a%a9-2-%eb%b6%80-https-%ec%99%80-http2)
-	- [톰캣 HTTP2](#%ed%86%b0%ec%ba%a3-http2)
-	- [독립적으로 실행가능한 JAR](#%eb%8f%85%eb%a6%bd%ec%a0%81%ec%9c%bc%eb%a1%9c-%ec%8b%a4%ed%96%89%ea%b0%80%eb%8a%a5%ed%95%9c-jar)
-	- [스프링 부트 원리 정리](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ec%9b%90%eb%a6%ac-%ec%a0%95%eb%a6%ac)
-- [스프링 부트 활용](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ed%99%9c%ec%9a%a9)
-	- [스프링 부트 활용 소개](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ed%99%9c%ec%9a%a9-%ec%86%8c%ea%b0%9c)
-	- [SpringApplication 1 부](#springapplication-1-%eb%b6%80)
-	- [SpringApplication 2 부](#springapplication-2-%eb%b6%80)
-	- [외부 설정 1 부](#%ec%99%b8%eb%b6%80-%ec%84%a4%ec%a0%95-1-%eb%b6%80)
-	- [외부 설정 2 부 (1)](#%ec%99%b8%eb%b6%80-%ec%84%a4%ec%a0%95-2-%eb%b6%80-1)
-	- [외부 설정 2 부 (2)](#%ec%99%b8%eb%b6%80-%ec%84%a4%ec%a0%95-2-%eb%b6%80-2)
-	- [프로파일](#%ed%94%84%eb%a1%9c%ed%8c%8c%ec%9d%bc)
-	- [로깅 1부 : 스프링 부트 기본 로거설정](#%eb%a1%9c%ea%b9%85-1%eb%b6%80--%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ea%b8%b0%eb%b3%b8-%eb%a1%9c%ea%b1%b0%ec%84%a4%ec%a0%95)
-	- [로깅 2부 : 커스터마이징](#%eb%a1%9c%ea%b9%85-2%eb%b6%80--%ec%bb%a4%ec%8a%a4%ed%84%b0%eb%a7%88%ec%9d%b4%ec%a7%95)
-	- [테스트](#%ed%85%8c%ec%8a%a4%ed%8a%b8)
-	- [테스트 유틸](#%ed%85%8c%ec%8a%a4%ed%8a%b8-%ec%9c%a0%ed%8b%b8)
+- [스프링 부트 원리](#스프링-부트-원리)
+	- [의존성 관리 이해](#의존성-관리-이해)
+	- [의존성 관리 응용](#의존성-관리-응용)
+	- [자동 설정 이해](#자동-설정-이해)
+	- [자동설정 만들기 1 부 : Starter 와 AutoConfigure](#자동설정-만들기-1-부--starter-와-autoconfigure)
+	- [자동설정 만들기 2 부 : @ConfigurationProperties](#자동설정-만들기-2-부--configurationproperties)
+	- [내장 웹 서버 이해](#내장-웹-서버-이해)
+	- [내장 웹 서버 응용 1 부: 컨테이너와 포트](#내장-웹-서버-응용-1-부-컨테이너와-포트)
+	- [내장 웹 서버 응용 2 부: HTTPS 와 HTTP2](#내장-웹-서버-응용-2-부-https-와-http2)
+	- [톰캣 HTTP2](#톰캣-http2)
+	- [독립적으로 실행가능한 JAR](#독립적으로-실행가능한-jar)
+	- [스프링 부트 원리 정리](#스프링-부트-원리-정리)
+- [스프링 부트 활용](#스프링-부트-활용)
+	- [스프링 부트 활용 소개](#스프링-부트-활용-소개)
+	- [SpringApplication 1 부](#springapplication-1-부)
+	- [SpringApplication 2 부](#springapplication-2-부)
+	- [외부 설정 1 부](#외부-설정-1-부)
+	- [외부 설정 2 부 (1)](#외부-설정-2-부-1)
+	- [외부 설정 2 부 (2)](#외부-설정-2-부-2)
+	- [프로파일](#프로파일)
+	- [로깅 1부 : 스프링 부트 기본 로거설정](#로깅-1부--스프링-부트-기본-로거설정)
+	- [로깅 2부 : 커스터마이징](#로깅-2부--커스터마이징)
+	- [테스트](#테스트)
+	- [테스트 유틸](#테스트-유틸)
 	- [Spring-Boot-Devtools](#spring-boot-devtools)
-	- [스프링 웹 MVC 1 부: 소개](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-1-%eb%b6%80-%ec%86%8c%ea%b0%9c)
-	- [스프링 웹 MVC 2 부: HttpMessageconverters](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-2-%eb%b6%80-httpmessageconverters)
-	- [스프링 웹 MVC 3 부: ViewResolve](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-3-%eb%b6%80-viewresolve)
-	- [스프링 웹 MVC 4 부: 정적 리소스 지원](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-4-%eb%b6%80-%ec%a0%95%ec%a0%81-%eb%a6%ac%ec%86%8c%ec%8a%a4-%ec%a7%80%ec%9b%90)
-	- [스프링 웹 MVC 5 부: 웹 JAR](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-5-%eb%b6%80-%ec%9b%b9-jar)
-	- [스프링 웹 MVC 6 부: index 페이지와 파비콘](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-6-%eb%b6%80-index-%ed%8e%98%ec%9d%b4%ec%a7%80%ec%99%80-%ed%8c%8c%eb%b9%84%ec%bd%98)
-	- [스프링 웹 MVC 7 부: Thymeleaf](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-7-%eb%b6%80-thymeleaf)
-	- [스프링 웹 MVC 8 부: HtmlUnit](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-8-%eb%b6%80-htmlunit)
-	- [스프링 웹 MVC 9 부: ExceptionHandler](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-9-%eb%b6%80-exceptionhandler)
-	- [스프링 웹 MVC 10 부: Spring HATEOAS](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-10-%eb%b6%80-spring-hateoas)
-	- [스프링 웹 MVC 11 부: CORS](#%ec%8a%a4%ed%94%84%eb%a7%81-%ec%9b%b9-mvc-11-%eb%b6%80-cors)
-	- [스프링 데이터 1 부: 소개](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-1-%eb%b6%80-%ec%86%8c%ea%b0%9c)
-	- [스프링 데이터 2 부: 인메모리 데이터베이스](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-2-%eb%b6%80-%ec%9d%b8%eb%a9%94%eb%aa%a8%eb%a6%ac-%eb%8d%b0%ec%9d%b4%ed%84%b0%eb%b2%a0%ec%9d%b4%ec%8a%a4)
-	- [스프링 데이터 3 부: MySQL](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-3-%eb%b6%80-mysql)
-	- [스프링 데이터 4 부: PostgreSQL](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-4-%eb%b6%80-postgresql)
-	- [스프링 데이터 5 부: 스프링 데이터 JPA 소개](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-5-%eb%b6%80-%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-jpa-%ec%86%8c%ea%b0%9c)
-	- [스프링 데이터 6 부: 스프링 데이터 JPA 연동](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-6-%eb%b6%80-%ec%8a%a4%ed%94%84%eb%a7%81-%eb%8d%b0%ec%9d%b4%ed%84%b0-jpa-%ec%97%b0%eb%8f%99)
-	- [스프링 부트 Actuator 3 부: 스프링 부트 어드민](#%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-actuator-3-%eb%b6%80-%ec%8a%a4%ed%94%84%eb%a7%81-%eb%b6%80%ed%8a%b8-%ec%96%b4%eb%93%9c%eb%af%bc)
+	- [스프링 웹 MVC 1 부: 소개](#스프링-웹-mvc-1-부-소개)
+	- [스프링 웹 MVC 2 부: HttpMessageconverters](#스프링-웹-mvc-2-부-httpmessageconverters)
+	- [스프링 웹 MVC 3 부: ViewResolve](#스프링-웹-mvc-3-부-viewresolve)
+	- [스프링 웹 MVC 4 부: 정적 리소스 지원](#스프링-웹-mvc-4-부-정적-리소스-지원)
+	- [스프링 웹 MVC 5 부: 웹 JAR](#스프링-웹-mvc-5-부-웹-jar)
+	- [스프링 웹 MVC 6 부: index 페이지와 파비콘](#스프링-웹-mvc-6-부-index-페이지와-파비콘)
+	- [스프링 웹 MVC 7 부: Thymeleaf](#스프링-웹-mvc-7-부-thymeleaf)
+	- [스프링 웹 MVC 8 부: HtmlUnit](#스프링-웹-mvc-8-부-htmlunit)
+	- [스프링 웹 MVC 9 부: ExceptionHandler](#스프링-웹-mvc-9-부-exceptionhandler)
+	- [스프링 웹 MVC 10 부: Spring HATEOAS](#스프링-웹-mvc-10-부-spring-hateoas)
+	- [스프링 웹 MVC 11 부: CORS](#스프링-웹-mvc-11-부-cors)
+	- [스프링 데이터 1 부: 소개](#스프링-데이터-1-부-소개)
+	- [스프링 데이터 2 부: 인메모리 데이터베이스](#스프링-데이터-2-부-인메모리-데이터베이스)
+	- [스프링 데이터 3 부: MySQL](#스프링-데이터-3-부-mysql)
+	- [스프링 데이터 4 부: PostgreSQL](#스프링-데이터-4-부-postgresql)
+	- [스프링 데이터 5 부: 스프링 데이터 JPA 소개](#스프링-데이터-5-부-스프링-데이터-jpa-소개)
+	- [스프링 데이터 6 부: 스프링 데이터 JPA 연동](#스프링-데이터-6-부-스프링-데이터-jpa-연동)
+	- [스프링 데이터 7 부: 데이터베이스 초기화](#스프링-데이터-7-부-데이터베이스-초기화)
+	- [스프링 데이터 8 부: 데이터베이스 마이그레이션](#스프링-데이터-8-부-데이터베이스-마이그레이션)
+	- [스프링 데이터 9 부: Redis](#스프링-데이터-9-부-redis)
+	- [스프링 데이터 10 부: MongoDB](#스프링-데이터-10-부-mongodb)
+	- [스프링 데이터 11 부: Neo4J](#스프링-데이터-11-부-neo4j)
+	- [스프링 데이터 12 부: 정리](#스프링-데이터-12-부-정리)
+	- [스프링 시큐리티 1 부: StarterSecurity](#스프링-시큐리티-1-부-startersecurity)
+	- [스프링 시큐리티 2 부: 시큐리티 설정 커스터마이징](#스프링-시큐리티-2-부-시큐리티-설정-커스터마이징)
+	- [스프링 REST 클라이언트 1 부: RestTemplate vs WebClient](#스프링-rest-클라이언트-1-부-resttemplate-vs-webclient)
+	- [스프링 REST 클라이언트 2 부: Customizing](#스프링-rest-클라이언트-2-부-customizing)
+	- [그밖에 다양한 기술 연동](#그밖에-다양한-기술-연동)
+- [스프링 부트 운영](#스프링-부트-운영)
+	- [스프링 부트 Actuator 1 부: 소개](#스프링-부트-actuator-1-부-소개)
+	- [스프링 부트 Actuator 2 부: JMX 와 HTTP](#스프링-부트-actuator-2-부-jmx-와-http)
+	- [스프링 부트 Actuator 3 부: 스프링 부트 어드민](#스프링-부트-actuator-3-부-스프링-부트-어드민)
 
 -----
 
@@ -1517,30 +1531,31 @@ Open browser with `localhost:8080/h2-console/login.do`.
 docker 를 사용하여 mysql 를 설치 실행한다.
 
 ```bash
-$ docker run -p3306:3306 --name mysql_boot -e MYSQL_ROOT_PASSWORD=1 -e MYSQL_DATABASE=springboot -e MYSQL_USER=iamslash -e MYSQL_PASSWORD=pas -d mysql
+$ docker run -p3306:3306 --name my-mysql -e MYSQL_ROOT_PASSWORD=1 -e MYSQL_DATABASE=hello -e MYSQL_USER=iamslash -e MYSQL_PASSWORD=1 -d mysql
 $ docker ps
-$ docker exec -it mysql_boot /bin/bash
+$ docker exec -it my-mysql /bin/bash
 $ mysql -u iamslash -p
 mysql> show databases
-mysql> use springboot
+mysql> use hello
 ```
 
 spring boot 는 주로 Data Base Connection Pool 로 HikariCP 를 사용한다.
 
-다음과 같이 `application.yml` 에 DBCP 설정을 한다.
+다음과 같이 `application.properties` 에 DBCP 설정을 한다.
 
 ```
 spring.datasource.hikari.maximum-pool-size=4
-spring.datasource.url=jdbc:mysql://localhost:3306/springboot?userSSL=false
+spring.datasource.url=jdbc:mysql://localhost:3306/hello?userSSL=false
 spring.datasource.username=iamslash
-spring.datasource.password=pass
+spring.datasource.password=1
 ```
 
 다음과 같이 build.gradle 에 dependency 를 설정한다.
 
-```
+```gradle
 dependency {
-	implementation 'mysql:mysql-connector-java'
+  implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+  implementation 'mysql:mysql-connector-java'
 }
 ```
 
@@ -1557,7 +1572,7 @@ public class MysqlRunner implements ApplicationRunner {
 	public void run(ApplicationArguments args) throws Exception {
 		try (Connection connection = dataSource.getConnection()) {
 			System.out.println(connection.getMetaData().getURL());
-			System.out.println(connection.getMetaData9).getUserName());
+			System.out.println(connection.getMetaData().getUserName());
 
 			Statement statement = connection.createStatement();
 			String sql = "CREATE TABLE USER(ID INTEGER NOT NULL, name VARCHAR(255), PRIMARY KEY(id))";
@@ -1578,30 +1593,57 @@ mysql> SELECT * FROM USER
 docker 를 사용하여 postresql 를 설치 실행한다.
 
 ```bash
-$ docker run -p 5432:5432 --name postgres_boot -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=iamslash -e POSTGRES_DB=springboot --name postgres_boot -d postgres
+$ docker run -p 5432:5432 -d -e POSTGRES_PASSWORD=1 -e POSTGRES_USER=iamslash -e POSTGRES_DB=hello --rm --name my-postgres postgres
 $ docker ps
 $ docker exec -it postgres_boot /bin/bash
+
 $ su - postgres
-$ psql springboot
+$ psql -U iamslash -W hello
 > \list
 > \dt
 > SELECT * FROM account;
 ```
 
-다음과 같이 `application.yml` 에 DBCP 설정을 한다.
+다음과 같이 `application.perperties` 에 DBCP 설정을 한다.
 
 ```
 spring.datasource.hikari.maximum-pool-size=4
-spring.datasource.url=jdbc:postgresql://localhost:3306/springboot?userSSL=false
+spring.datasource.url=jdbc:postgresql://localhost:5432/hello?userSSL=false
 spring.datasource.username=iamslash
-spring.datasource.password=pass
+spring.datasource.password=1
 ```
 
 다음과 같이 build.gradle 에 dependency 를 설정한다.
 
-```
+```gradle
 dependency {
+  implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.postgresql:postgresql'
+}
+```
+
+```java
+@Component
+public class PostgresRunner implements ApplicationRunner {
+	@Autowired
+	DataSource dataSource;
+
+	@Autowired
+	JdbcTemplate jdbcTemplate;
+
+	@Override
+	public void run(ApplicationArguments args) throws Exception {
+		try (Connection connection = dataSource.getConnection()) {
+			System.out.println(connection.getMetaData().getURL());
+			System.out.println(connection.getMetaData().getUserName());
+
+			Statement statement = connection.createStatement();
+			String sql = "CREATE TABLE USER(ID INTEGER NOT NULL, name VARCHAR(255), PRIMARY KEY(id))";
+			statement.executeUpdate(sql);
+		}
+
+		jdbcTemplate.execute("INSERT INTO USER VALUES(1, 'iamslash')");
+	}
 }
 ```
 
@@ -1971,33 +2013,34 @@ dependency {
 mongoDB 를 실행한다.
 
 ```bash
-$ docker run -p 27017:27017 --name mongo_boot -d mongo
-$ docker exec -it mongo_boot bash
-$ mongo
+$ docker run -d -p 27017:27017 --rm --name my-mongo -d mongo
+
+$ docker exec -it my-mongo bash
+> mongo
 ```
 
 다음과 같이 Application class 에 ApplicationRunner 를 구현한다.
 
 ```java
 @SpringBootApplication
-public class SpringbootmongoApplication {
+public class ExmongoApplication {
 
-	@Autowired
-	MongoTemplate mongoTemplate;
+    @Autowired
+    MongoTemplate mongoTemplate;
 
-	public static void main(String[] args) {
-		SpringApplication.run(SpringbootmongoApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(ExmongoApplication.class, args);
+    }
 
-	@Bean
-	public ApplicationRunner applicationRunner() {
-		return args -> {
-			Account account = new Account();
-			account.setEmail("iamslash@gmail.com");
-			account.setUsername("iamslash");
-			mongoTemplate.insert(account);
-		}
-	}
+    @Bean
+    public ApplicationRunner applicationRunner() {
+        return args -> {
+            Account account = new Account();
+            account.setEmail("iamslash@gmail.com");
+            account.setUsername("iamslash");
+            mongoTemplate.insert(account);
+        };
+    }
 }
 ```
 
@@ -2006,7 +2049,7 @@ public class SpringbootmongoApplication {
 ```java
 @Document(collection = "accounts")
 public class Account {
-
+...
 }
 ```
 
