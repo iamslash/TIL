@@ -47,6 +47,7 @@
   - [Generator function, function*](#generator-function-function)
   - [Shorthand property names](#shorthand-property-names)
   - [Duplicate property names](#duplicate-property-names)
+  - [Decorator](#decorator)
 
 -------------------------------------------------------------------------------
 
@@ -1673,4 +1674,55 @@ When using the same name for your properties, the second property will overwrite
 ```js
 let a = {x: 1, x: 2}
 console.log(a) // {x: 2}
+```
+
+## Decorator
+
+* [The @ symbol is in fact a JavaScript expression currently proposed to signify decorators:](https://stackoverflow.com/questions/32646920/whats-the-at-symbol-in-the-redux-connect-decorator)
+
+It's only used with Babel.
+
+Without decorators.
+
+```js
+import React from 'react';
+import * as actionCreators from './actionCreators';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+function mapStateToProps(state) {
+  return { todos: state.todos };
+}
+
+function mapDispatchToProps(dispatch) {
+  return { actions: bindActionCreators(actionCreators, dispatch) };
+}
+
+class MyApp extends React.Component {
+  // ...define your main app here
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyApp);
+```
+
+With decorators.
+
+```js
+import React from 'react';
+import * as actionCreators from './actionCreators';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+function mapStateToProps(state) {
+  return { todos: state.todos };
+}
+
+function mapDispatchToProps(dispatch) {
+  return { actions: bindActionCreators(actionCreators, dispatch) };
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
+export default class MyApp extends React.Component {
+  // ...define your main app here
+}
 ```
