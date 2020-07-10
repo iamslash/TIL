@@ -45,6 +45,7 @@
   - [async, await](#async-await)
   - [import from](#import-from)
   - [Generator function, function*](#generator-function-function)
+  - [Shorthand property names](#shorthand-property-names)
 
 -------------------------------------------------------------------------------
 
@@ -1630,4 +1631,34 @@ console.log(gen.next().value);
 // expected output: 10
 console.log(gen.next().value);
 // expected output: 20
+```
+
+## Shorthand property names
+
+* [Object initializer @ MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer)
+
+```js
+let a = 'foo', 
+    b = 42,
+    c = {};
+
+let o = { 
+  a: a,
+  b: b,
+  c: c
+}
+```
+
+ECMAScript 2015 supports shorter notation like this.
+
+```js
+let a = 'foo', 
+    b = 42, 
+    c = {};
+
+// Shorthand property names (ES2015)
+let o = {a, b, c}
+
+// In other words,
+console.log((o.a === {a}.a)) // true
 ```
