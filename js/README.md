@@ -46,6 +46,7 @@
   - [import from](#import-from)
   - [Generator function, function*](#generator-function-function)
   - [Shorthand property names](#shorthand-property-names)
+  - [Duplicate property names](#duplicate-property-names)
 
 -------------------------------------------------------------------------------
 
@@ -1661,4 +1662,15 @@ let o = {a, b, c}
 
 // In other words,
 console.log((o.a === {a}.a)) // true
+```
+
+## Duplicate property names
+
+* [Object initializer @ MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer)
+
+When using the same name for your properties, the second property will overwrite the first.
+
+```js
+let a = {x: 1, x: 2}
+console.log(a) // {x: 2}
 ```
