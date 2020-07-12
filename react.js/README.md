@@ -33,13 +33,14 @@
   * react class
 * [reactjs @ inflearn](https://www.inflearn.com/course/reactjs-web/)
   * react class for beginner
-  * [src](https://github.com/nomadcoders/movie_app)
+  * [src movie app](https://github.com/nomadcoders/movie_app)
 * [ReactJS로 웹 서비스 만들기](https://academy.nomadcoders.co/p/reactjs-fundamentals)
-  * [src 2019 update](https://github.com/nomadcoders/movie_app_2019)
+  * [src movie app 2019 update](https://github.com/nomadcoders/movie_app_2019)
 * [초보자를 위한 리덕스 101](https://academy.nomadcoders.co/courses/235420/lectures/13817530)
   * [src](https://github.com/nomadcoders/vanilla-redux)
 * [Create-React-App: A Closer Look](https://github.com/nitishdayal/cra_closer_look)
   * stuffs in create-react-app in detail
+* [아마 이게 제일 이해하기 쉬울걸요? React + Redux 플로우의 이해](https://medium.com/@ca3rot/%EC%95%84%EB%A7%88-%EC%9D%B4%EA%B2%8C-%EC%A0%9C%EC%9D%BC-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-%EC%89%AC%EC%9A%B8%EA%B1%B8%EC%9A%94-react-redux-%ED%94%8C%EB%A1%9C%EC%9A%B0%EC%9D%98-%EC%9D%B4%ED%95%B4-1585e911a0a6)
 
 # Basic
 
@@ -65,7 +66,8 @@ $ npm start
 <div id="root"></div>
 ```
 
-`src/index.js` 는 `App` component 를 `id="root"` 인 `div` 에 rendering 하고 있다.
+`src/index.js` 는 `App` component 를 `id="root"` 인 `div` 에 rendering 하고 있다. `<App />` 는 JSX 이다. 
+JSX 는 pure javascript 로 transpile 된다.
 
 ```js
 ReactDOM.render(<App />, document.getElementById('root'));
@@ -123,6 +125,8 @@ export default Movie;
 ```
 
 ## Data flow with Props
+
+![](https://miro.medium.com/max/1540/0*NLC2HyJRjh0_3r0e.)
 
 data 를 `src/App.js` 에 선언해 보자. 그리고 `Movie` component 에게 props 형태로 전달한다.
 
@@ -183,7 +187,7 @@ class MoviePoster extends Component {
 ...
 ```
 
-JSX 를 이용하여 각 component 의 props 를 rendering 한다.
+JSX 를 이용하여 각 component 의 props 를 rendering 한다. 
 
 ## Lists with .maps
 
@@ -323,7 +327,7 @@ class App extends Component {
 
 ## Practicing this setState
 
-`App` component 의 `state` 으로 title, poster 를 옮기자. 그리고 일정 시간 이후에 `state` 을 변경해 보자. `...this.state.movies` 를 이용하면 기존의 array 에 새로운 원소들을 추가할 수 있다.
+`App` component 의 `state` 으로 title, poster 를 옮기자. 그리고 일정 시간 이후에 `state` 을 변경해 보자. `...this.state.movies` 를 이용하면 기존의 array 에 `this.state.movies` 를 unwind 해서 추가할 수 있다.
 
 ```js
 class App extends Component {
@@ -751,11 +755,11 @@ $ yarn run deploy
 * [초보자를 위한 리덕스 101](https://academy.nomadcoders.co/courses/235420/lectures/13817530)
   * [src](https://github.com/nomadcoders/vanilla-redux)
 
-Redux 는 state 를 관리하기 위한 거대한 event loop 이다. Action 은 event 를 말하고 Reducer 는 event handler 이다. 즉, Reducer 는 함수이고 변경된 state 를 return 한다. Reducer 의 첫번째 argument 는 state 이고 두번째 argument 는 action 이다.
+Redux 는 state 를 관리하기 위한 거대한 event loop 이다. Action 은 event 를 말하고 Reducer 는 event handler 이다. 즉, Reducer 는 함수이고 변경된 state 를 return 한다. 변경된 state 가 return 되면 rendering 된다??? Reducer 의 첫번째 argument 는 state 이고 두번째 argument 는 action 이다.
 
-Store 는 Application 의 state 이다. Store 를 생성하기 위해서는 Reducer 가 필요하다. Store instance 의 getState() 를 호출하면 현재 state 를 얻어올 수 있다. Store instance 의 dispatch() 를 특정 action 과 함께 호출하면 Store instance 에 등록된 Reducer 가 그 action 을 두번째 argument 로 호출된다. 
+Store 는 Application 의 state 이다. Store 를 생성하기 위해서는 Reducer 가 필요하다. Store instance 의 `getState()` 를 호출하면 현재 state 를 얻어올 수 있다. Store instance 의 `dispatch()` 를 특정 `action` 과 함께 호출하면 Store instance 에 등록된 Reducer 가 그 action 을 두번째 argument 로 호출된다. 
 
-또한 Store instance 의 subscribe() 를 함수와 함께 호출하면 Store 가 변경될 때 마다 그 함수가 호출된다. 그 함수에서 Store instance 의 getState() 를 호출하면 변경된 state 를 얻어올 수 있다.
+또한 Store instance 의 `subscribe()` 를 함수와 함께 호출하면 Store 가 변경될 때 마다 그 함수가 호출된다. 그 함수에서 Store instance 의 `getState()` 를 호출하면 변경된 state 를 얻어올 수 있다.
 
 [리덕스(Redux)란 무엇인가?](https://voidsatisfaction.github.io/2017/02/24/what-is-redux/)
 
@@ -1093,8 +1097,8 @@ createSlice 는 action, reducer 생성을 쉽게 해준다.
 
 * [redux-saga](https://github.com/redux-saga/redux-saga)
   * [한글](https://mskims.github.io/redux-saga-in-korean/)
+* [redux-saga에서 비동기 처리 싸움](https://qiita.com/kuy/items/716affc808ebb3e1e8ac)
 
 # Redux Debugger in Chrome
 
 * [ #4.3 configureStore](https://academy.nomadcoders.co/courses/235420/lectures/14735315)
-
