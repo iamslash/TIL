@@ -2,17 +2,22 @@
 - [Materials](#materials)
 - [Hadoop Echosystem](#hadoop-echosystem)
   - [YARN (Yet Another Resource Nagotiator)](#yarn-yet-another-resource-nagotiator)
+  - [Spark](#spark)
+  - [HUE (Hadoop User Experience)](#hue-hadoop-user-experience)
+  - [Zeppelin](#zeppelin)
 - [Basic Usages](#basic-usages)
   - [Install with docker](#install-with-docker)
   - [Commands](#commands)
-- [Advanced](#advanced)
-  - [HUE (Hadoop User Experience)](#hue-hadoop-user-experience)
 
 ----
 
 # Abstract
 
 대용량 데이터를 분산 처리할 수 있는 자바 기반의 오픈 소스 프레임워크이다. 구글이 논문으로 발표한 GFS(Google File System) 과 맵리듀스(MapReduce) 를 2005 년 더그커팅이 제작한 구현체이다.
+
+[네이버에서 제공하는 Cloud Hadoop](https://docs.ncloud.com/ko/hadoop/chadoop-1.html) 의 구조를 참고하면 Hadoop Echo system 을 쉽게 이해할 수 있다.
+
+![](https://docs.ncloud.com/ko/hadoop/images/chadoop-1-1-01.png)
 
 # Materials
 
@@ -28,6 +33,18 @@
 ## YARN (Yet Another Resource Nagotiator) ##
 
 하둡 2.0 부터 제공되는 리소스 관리 플랫폼.
+
+## Spark
+
+* [spark](/spark/README.md)
+
+## HUE (Hadoop User Experience)
+
+* [hue](/hue/README.md)
+
+## Zeppelin
+
+* [zeppelin](/zeppelin/README.md)
 
 # Basic Usages
 
@@ -115,14 +132,3 @@ hadoop fs -text [source path]
 # merge everything under remote path and copy to local path
 hadoop fs -getmerge hdfs:// /tmp/a.txt
 ```
-
-
-# Advanced
-
-## HUE (Hadoop User Experience)
-
-* [Hue 사용하기 @ NAVER](https://docs.ncloud.com/ko/hadoop/chadoop-4-3.html)
-
-----
-
-Apache Hadoop 클러스터와 함께 사용되는 웹 기반 사용자 인터페이스이다. Hive 작업 및 Spark Job 등을 실행할 수 있습니다.
