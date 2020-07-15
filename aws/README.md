@@ -633,7 +633,7 @@ HTTP URL 을 routing 할 수 있다. 예를 들어 `HTTP GET /user` 를 수신�
 
 ## DynamoDB
 
-key value DB 이다.
+* [dynamodb @ TIL](/dynamodb/README.md)
 
 ## ElasticSearch Service
 
