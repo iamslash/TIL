@@ -449,7 +449,7 @@ sb.deleteCharAt(sb.length()-1);
 ```java
    Map<String, String> map = new HashMap<>();
    map.put(".com", "International");
-   map.putIfAbset("aaa", "bbb");
+   map.putIfAbsent("aaa", "bbb");
    map.computeIfAbset("aaa", key -> "bbb");
    map.put(".au", map.getOrDefault(".au", "Australia"));
    System.out.println(map);
