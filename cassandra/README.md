@@ -1,13 +1,11 @@
 # Materials
 
+* [Apache Cassandra Documentation](https://cassandra.apache.org/doc/latest/)
+  * This is mandatory.
 * [Cassnadra 의 기본 특징 정리](https://nicewoong.github.io/development/2018/02/11/cassandra-feature/)
 * [Apache Cassandra 톺아보기 - 1편](https://meetup.toast.com/posts/58)
   * [Apache Cassandra 톺아보기 - 2편](https://meetup.toast.com/posts/60)
   * [Apache Cassandra 톺아보기 - 3편](https://meetup.toast.com/posts/65)
-* [Cassandra(카산드라) 내부 구조](https://nicewoong.github.io/development/2018/02/11/cassandra-internal/)
-* [아파치 분산 데이타 베이스 Cassandra 소개 @ bcho](https://bcho.tistory.com/440)
-  * [Cassandra Node CRUD Architecture @ bcho](https://bcho.tistory.com/657?category=431286)
-  * []()
 * [How To Install Cassandra and Run a Single-Node Cluster on Ubuntu 14.04 @ digitalocean](https://www.digitalocean.com/community/tutorials/how-to-install-cassandra-and-run-a-single-node-cluster-on-ubuntu-14-04)
 
 # Install with Docker
@@ -97,6 +95,32 @@ Keyspace 를 생성할 때 Replication 의 배치전략, 복제개수, 위치등
 
 * Cassandra 는 update request 를 수신하면 `delete` process 를 수행하고 `write` process 를 수행한다.
 
+### Light-weight transaction
+
+### Secondary Index
+
+### Batch
+
+### Collection
+
+## Good Pattern
+
+### Time Sequencial Data
+
+### Denormalize
+
+### Paging
+
+## Anti Pattern
+
+### Unbounded Data
+
+### Secondary Index
+
+### Delete Data
+
+### Memory Overflow
+
 ## Useful Queries 
 
 * [Cassandra @ tutorialpoint](https://www.tutorialspoint.com/cassandra/index.htm)
@@ -155,3 +179,4 @@ INSERT INTO iamslash.person (code, location, sequence, description ) VALUES ('N3
 
 * [Basic Rules of Cassandra Data Modeling](https://www.datastax.com/blog/2015/02/basic-rules-cassandra-data-modeling)
 * [Data Modeling in Cassandra @ baeldung](https://www.baeldung.com/cassandra-data-modeling)
+* [Data Modeling @ Cassandra](https://cassandra.apache.org/doc/latest/data_modeling/index.html)
