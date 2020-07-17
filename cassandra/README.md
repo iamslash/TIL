@@ -59,24 +59,43 @@ Keyspace 를 생성할 때 Replication 의 배치전략, 복제개수, 위치등
 * Client 는 임의의 Cassandra node 에게 Write request 한다. 이때 Write request 를 수신한 node 를 Coordinator 라고 한다.
 * Coordinator 는 수신한 data 의 Row key 를 token 으로 변환하고 어떤 node 에 data 를 write 해야 하는지 판단한다. 그리고 Query 에 저장된 Consistency level 에 따라 몇 개의 node 에 write 할지 참고하여 data 를 write 할 node 들의 status 를 확인한다.
 * 이때 특정한 node 의 status 가 정상이 아니라면 consistency level 에 따라 coordinator 의 `hint hand off` 라는 local 의 임시 저장공간에 write 할 data 를 저장한다.
-  * 만약 후에 비정상인 node 의 상태가 정상으로 회복되면 Coordinator 가 data 를 write 해줄 수 있다.
-  * `hint hand off` 에 저장하고 coordinator 가 죽어버리면 방법이 없다.
-* Coordinator 는 `hint and off` 에 data 를 backup 하고 Cassandra 의 topology 를 확인하여 어느 데이터 센터의 어느 렉에 있는 노드에 먼저 접근할 것인지 결정한다. 그리고 그 node 에 Write request 한다.
+  * `hint and off` 덕분에 Coordinator 는 비정상이었던 target node 의 상태가 정상으로 회복되면 write request 를 다시 보낼 수 있다.
+  * 그러나 `hint hand off` 에 저장하고 coordinator 가 죽어버리면 방법이 없다.
+* Coordinator 는 `hint and off` 에 data 를 backup 하고 Cassandra 의 topology 를 확인하여 어느 데이터 센터의 어느 렉에 있는 노드에 먼저 접근할 것인지 결정한다. 그리고 그 node 에 write request 한다.
 
 ![](cassandra_data_write_2.png)
 
-* Target node 는 Coordinator 로 부터 Write request 를 수신하면 `CommitLog` 라는 local disk 에 저장한다. 
-* Target node 는 `MemTable` 이라는 memory 에 data 를 write 하고 reponse 를 Coordinator 에게 보낸다.
+* Target node 는 Coordinator 로 부터 write request 를 수신하면 `CommitLog` 라는 local disk 에 저장한다. 
+* Target node 는 `MemTable` 이라는 memory 에 data 를 write 하고 response 를 Coordinator 에게 보낸다.
 * Target node 는 `MemTable` 에 data 가 충분히 쌓이면 `SSTable` 이라는 local disk 에 data 를 flush 한다.
   * `SSTable` 은 immutalbe 하고 sequential 하다.
-  * Cassandra 는 다수의 `SSTable` 을 정기적으로 Compaction 한다. 예를 들어 n 개의 `SSTable` 에 `a` 하는 데이터가 존재한다면 Compaction 할 때 가장 최신의 버전으로 merge 한다.
+  * Cassandra 는 다수의 `SSTable` 을 정기적으로 Compaction 한다. 예를 들어 n 개의 `SSTable` 에 `a` 라는 데이터가 여러개 존재한다면 Compaction 할 때 가장 최신의 버전으로 merge 한다.
 
 ### How to read data
 
 ![](cassandra_data_read.png)
 
+* Client 는 임의의 Cassandra node 에게 read request 한다. 이때 read request 를 수신한 node 를 Coordinator 라고 한다.
+* Coordinator 는 수신한 data 의 Row key 를 token 으로 변환하고 어떤 node 에 data 를 read 해야 하는지 판단한다. 그리고 Query 에 저장된 Consistency level 에 따라 몇 개의 Replication 을 확인할지 결정한다. 그리고 data 가 있는 가장 가까운 node 에 data request 를 보내고 그 다음 가까운 node 들에게는 data digest request 를 보낸다.
+* Coordinator 는 이렇게 가져온 data response 와 data digest response 를 참고하여 data 가 일치하지 않으면 일치하지 않는 node 들로 부터 full data 를 가져와서 그들 중 가장 최신 버전의 data 를 client 에게 보낸다. 
+  * 그리고 그 data 를 이용하여 target node 들의 data 를 보정한다.
+
+![](cassandra_data_read_2.png)
+
+* Target node 는 read request 를 수신하면 가장 먼저 `MemTable` 을 확인한다. 
+* 만약 없다면 `SSTable` 을 확인해야 한다. 그러나 그 전에 `SStable` 과 짝을 이루는 `Bloom Filter` 와 `Index` 를 먼저 확인 한다.
+  * `Bloom Filter` 는 확률적 자료구조이다. 데이터가 없는 걸 있다고 거짓말 할 수 있지만 있는 걸 없다고 거짓말 하지는 못한다.
+  * `Bloom Filter` 가 있다고 하면 `SSTable` 에 반드시 데이터가 있으을 의미한다.
+* `Bloom Filter` 를 통해 `SSTable` 에 data 가 있다는 것을 알았다면 메모리에 저장되어 있는 `Summary Index` 를 통해 disk 에 저장되어 있는 원본 index 를 확인하여 `SSTable` 의 data 위치에 대한 offset 을 알게된다. 그리고 `SSTable` 에서 원하는 data 를 가져올 수 있다.
+  * 이러한 과정은 최근에 생성된 `SSTable` 부터 차례대로 이루어진다.
+
+### How to delete data
+
+* Cassandra 는 delete 을 바로 수행하지 않는다. 모든 data 는 `Tombstone` 이라는 marker 를 갖는다. delete request 를 수신하면 그 data 의 `Tombstone` 에 marking 을 하고 주기적인 `Garbage Collection` 이나 `SSTable` 의 compaction 등이 발생할 때 data 를 삭제한다.
+
 ### How to update data
 
+* Cassandra 는 update request 를 수신하면 `delete` process 를 수행하고 `write` process 를 수행한다.
 
 ## Useful Queries 
 
