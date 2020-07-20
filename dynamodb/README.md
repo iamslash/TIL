@@ -1,3 +1,25 @@
+- [Materials](#materials)
+- [Install with docker](#install-with-docker)
+- [Basic](#basic)
+  - [Features](#features)
+    - [Data Types](#data-types)
+    - [Table Index](#table-index)
+    - [Secondary Index](#secondary-index)
+    - [Consistency](#consistency)
+    - [Provisioned Throughput](#provisioned-throughput)
+    - [Read Data](#read-data)
+  - [AWS CLI commands](#aws-cli-commands)
+  - [Examples of Schema Design](#examples-of-schema-design)
+    - [Fruits](#fruits)
+      - [Fruits](#fruits-1)
+      - [Query](#query)
+    - [Weekly Rank](#weekly-rank)
+      - [UsersLeaderboard](#usersleaderboard)
+      - [FriendsLeaderboard](#friendsleaderboard)
+      - [Query](#query-1)
+
+-------
+
 # Materials
 
 * [DynamoDB의 데이터 모델 @ pyrasis](http://pyrasis.com/book/TheArtOfAmazonWebServices/Chapter14/01)
@@ -24,22 +46,22 @@ $ docker run -d -p 8000:8000 --rm --name my-dynamodb amazon/dynamodb-local
 
 ----
 
-Scala Data Types are Number, String, Binary.
-Multi Valued Types are Number Set, String Set, Binary Set.
+* **Scala Data Types** : Number, String, Binary.
+* **Multi Valued Types** : Number Set, String Set, Binary Set.
 
-### Index
+### Table Index
 
-Primary Key 로 Index 를 생성한다. Primary Key 는 Hash key, Range key 두가지가 있다. 
+Table Index 는 Primary Key 와 같다. Primary Key 는 Hash key, Hash-Range key 두가지가 있다. 
 
-* **Hash Key** : 속성하나를 기본 키로 사용한다. Primary Key 의 값은 Scala Data 만 가능하다. Multi Value 는 불가능하다.
-* **Hash, Range Key** : 속성 두개를 기본 키로 사용한다. 첫번째 속성은 기본 키로 사용하고 두번째 속성은 범위 기본키로 사용하여 복합적으로 사용한다.
+* **Hash Key** : Attribute 하나를 Key 로 사용한다. Scala Data Type 만 가능하다. Multi Valued Type 은 불가능하다.
+* **Hash-Range Key** : Attribute 두개를 Key 로 사용한다. 첫번째 속성은 Hash Key 로 사용하고 두번째 속성은 Range Key 로 사용한다. Hash Key 와 Range Key 를 합한 것이다.
 
 ### Secondary Index
 
-Primary Key 이외의 index 를 Secondary Index 라고 한다. Primary Key 만으로는 검색이능이 부족하다. Secondary Index 는 사용이 빈번하기 때문에 성능을 위해 읽기/쓰기 용량 유닛을 따로 설정할 수 있다.
+Primary Key 이외의 Index 를 Secondary Index 라고 한다. Primary Key 만으로는 검색기능이 부족하다. Secondary Index 는 사용이 빈번하기 때문에 성능을 위해 읽기/쓰기 용량 유닛을 따로 설정할 수 있다. Local Secondary Index 와 Global Secondary Index 가 있다.
 
-* **Local Secondary Index** : hash key 는 Table index 의 hash key 와 같다. range key 는 다르게 설정한다. Table 당 5 개 까지 가능하다. Table 이 생성될 때 생성해야 한다. Table 이 생성된 후 추가, 수정, 삭제가 불가능하다. Table 에서 hash key, range key 를 사용할 때만 생성할 수 있다.
-* **Global Secondary Index** :  hash key, range key 모두 Table 의 index 와 다르게 설정한 것이다. range key 는 생략가능하다. Table 당 5 개 까지 가능하다. Table 이 생성될 때 생성해야 한다. Table 이 생성된 후 추가, 수정, 삭제가 불가능하다. 
+* **Local Secondary Index** : 하나의 Partition 에서만 유효한 Index 이다. Hash key 는 Table Index 의 Hash Key 와 같다. Range key 는 다르게 설정한다. Table 당 5 개 까지 가능하다. Table 이 생성될 때 생성해야 한다. Table 이 생성된 후 추가, 수정, 삭제가 불가능하다. Table 의 Index 설정화면에서 Hash and Range Key 를 선택할 때만 생성할 수 있다.
+* **Global Secondary Index** : 여러개의 Partition 에 걸쳐서 유효한 Index 이다. Hash Key, Range Key 모두 Table Index 와 다르게 설정한 것이다. Range Key 는 생략가능하다. Table 당 5 개 까지 가능하다. Table 이 생성될 때 생성해야 한다. Table 이 생성된 후 추가, 수정, 삭제가 불가능하다. 
 
 ### Consistency
 
@@ -52,12 +74,11 @@ DynamoDB provides 2 kinds of consistency.
 
 DynamoDB provides 2 kinds of provisioned throughputs.
 
-* Read Capacity Units: 초당 읽은 아이템 수 x KB 단위 아이템 크기(반올림) (Eventually Consistent Read 를 사용하는 경우 초당 읽은 아이템 용량은 두 배가됩니다.)
-* Write Capacity Units: 초당 쓴 아이템 수 x KB 단위 아이템 크기(반올림)
+* Read Capacity Units: 초당 1KB 단위로 읽을 수 있는 능력 (Eventually Consistent Read 는 Stronly Consistent Read 보다 2 배이다.)
+* Write Capacity Units: 초당 1KB 단위로 쓸 수 있는 능력
 
 예) 512 바이트 (1KB 로 반올림) 를 초당 200 개 항목을 읽으면(쓰면), 1KB x 200 = 200 유닛
 예) 1.5 KB (2KB로 반올림 됨) 를 초당 200 개 항목을 읽으면(쓰면), 2KB x 200 = 400 유닛
-
 예) Strongly Consistent Read 는 1000 읽기 용량 유닛으로 1KB 짜리 아이템을 초당 1000 번 읽을 수 있으며 Eventually Consistent Read 는 500 읽기 용량 유닛으로 1KB 짜리 아이템을 1000 번 읽을 수 있습니다.
 
 ### Read Data
@@ -65,9 +86,9 @@ DynamoDB provides 2 kinds of provisioned throughputs.
 dynamoDB provides 2 ways to read data and they limit the result as 1 MB.
 
 * Scan: Gather all data without condition.
-* Query: Gather data with hash type key, range type key conditions. range type key can be removed.
+* Query: Gather data with Hash Key, Range Key conditions. Range Key can be removed.
 
-# AWS CLI commands
+## AWS CLI commands
 
 * [Amazon DynamoDB 로컬 환경에서 사용하기 (feat. Docker)](https://medium.com/@byeonggukgong/using-amazon-dynamodb-in-local-environment-feat-docker-fafbb420e161)
 
@@ -122,11 +143,23 @@ $ aws dynamodb delete-table \
     --endpoint-url http://localhost:8000    
 ```
 
-# Examples of Schema Design
+## Examples of Schema Design
 
-## Fruits
+### Fruits
 
 * [AWS CLI로 DynamoDB 다루기](https://www.daleseo.com/aws-cli-dynamodb/)
+
+----
+
+#### Fruits
+
+| Name  | Data-type | Table Index | Local Secondary Index | Global Secondary Index |
+| ----- | --------- | ----------- | --------------------- | ---------------------- |
+| Id    | Number    | Hash Key    |                       |                        |
+| Name  | String    |             |                       |                        |
+| Price | Number    |             |                       |                        |
+
+#### Query
 
 ```bash
 # Create table
@@ -234,24 +267,27 @@ $ aws dynamodb delete-table --table-name Fruits   \
   --endpoint-url http://localhost:8000          
 ```
 
-## Weekly Rank
+### Weekly Rank
 
-### UsersLeaderboard
+#### UsersLeaderboard
+
+| Name     | Data-type | Table Index | Local Secondary Index | Global Secondary Index |
+| -------- | --------- | ----------- | --------------------- | ---------------------- |
+| Id       | Number    | Hash Key    | Hash Key              |                        |
+| Name     | String    |             |                       |                        |
+| TopScore | Number    |             |                       | Range Key              |
+| Week     | String    | Range Key   | Range Key             | Hash Key               |
 	 	 	 	 
-| 키 이름(값 형식)   | Id(Number)   | Name(String) | TopScore(Number) | Week(String) |
-| ------------------ | ------------ | ------------ | ---------------- | ------------ |
-| 테이블 인덱스      | 해시 기본 키 |              |                  | 범위 기본 키 |
-| 로컬 보조 인덱스   | 해시 키      |              |                  | 범위 키      |
-| 글로벌 보조 인덱스 |              |              | 범위 키          | 해시 키      |
+#### FriendsLeaderboard	 
 
-### FriendsLeaderboard	 
-
-| 키 이름(값 형식)   | Id(Number)   | Name(String) | Score(Number) | FriendIdAndWeek(String) |
-| ------------------ | ------------ | ------------ | ------------- | ----------------------- |
-| 테이블 인덱스      | 해시 기본 키 |              |               | 범위 기본 키            |
-| 글로벌 보조 인덱스 |              |              | 범위 키       | 해시 키                 |
-
-### Query
+| Name            | Data-type | Table Index | Local Secondary Index | Global Secondary Index |
+| --------------- | --------- | ----------- | --------------------- | ---------------------- |
+| Id              | Number    | Hash Key    |                       |                        |
+| Name            | String    |             |                       |                        |
+| Score           | Number    |             |                       | Range Key              |
+| FriendIdAndWeek | String    | Range Key   |                       | Hash Key               |
+	 	 	 	 
+#### Query
 
 ```bash
 $ aws dynamodb create-table \
