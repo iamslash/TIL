@@ -398,14 +398,16 @@ $ kubectl config view
 * api-resources
 
 ```bash
-# show all objects including node, pod, replicaset, deployemnt,
+# Show all objects including node, pod, replicaset, deployemnt,
 # service, loadbalancer, ingress, volume, configmap, secret,
 # namespace
 $ kubectl api-resources
+# Show server, client version
 $ kubectl api-versions
+# Show deploy object in detail
 $ kubectl explain deploy
 $ kubectl explain deploy --api-version apps/v1
-kubectl api-resources | awk '{print $3}' | sort | uniq
+$ kubectl api-resources | awk '{print $3}' | sort | uniq
 APIGROUP
 Binding
 PodTemplate
@@ -430,7 +432,7 @@ workload.coupang.com
 * inspecting clusters
 
 ```bash
-# check curretn cluster
+# check current cluster
 $ kubectl config view
 # check namespaces
 $ kubectl get namespaces
@@ -501,6 +503,7 @@ $ k get pods --namespace kube-system
 * describe
 
 ```bash
+# Show k8s object in detail
 # kubectl describe type/name
 # kubectl describe type name
 kubectl describe node <node name>
@@ -522,6 +525,12 @@ kubectl delete -f <FILENAME>
 ```bash
 # Create my-nginx-* pod and my-nginx deployment
 > kubectl run my-nginx --image nginx --port=80
+# Create "debug" pod and run bash
+> kubectl run -i --tty --rm debug --image=alicek106/ubuntu:curl --restart=Never bash
+# Execute bash on my-nginx pod.
+> kubectl exec -it my-ngnix bash
+# Show logs of my-nginx pod.
+> kubectl logs my-nginx
 # Show running pods
 > kubectl get pods
 # Show deployments. Deployment is a specification for deploying pods.
