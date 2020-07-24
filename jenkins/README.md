@@ -5,7 +5,7 @@
   - [Install Jenkins 2.190.1 with docker on macOS](#install-jenkins-21901-with-docker-on-macos)
   - [Install Jenkins 2.190.1 on macOS](#install-jenkins-21901-on-macos)
 - [Basic](#basic)
-  - [jenkin_home structure](#jenkinhome-structure)
+  - [jenkin_home structure](#jenkin_home-structure)
     - [directories](#directories)
     - [files](#files)
   - [Build Now Process](#build-now-process)
@@ -27,6 +27,7 @@
 - [Jenkins with Docker](#jenkins-with-docker)
 - [Advanced](#advanced)
   - [How to debug Jenkins Pipeline Script](#how-to-debug-jenkins-pipeline-script)
+  - [Password injection](#password-injection)
 
 ----
 
@@ -716,3 +717,26 @@ cmd 를 입력하면 Evaluation 이 Console output 으로 출력된다.
 
 `http://local.iamslash.com:8080/scriptApproval/` 에서 `Eval.x` 를 approve 해주어야 한다.
 
+## Password injection
+
+* [Injecting Secrets into Jenkins Build Jobs](https://support.cloudbees.com/hc/en-us/articles/203802500-Injecting-Secrets-into-Jenkins-Build-Jobs)
+* [credentials-plugin @ github](https://github.com/jenkinsci/credentials-plugin/blob/master/docs/user.adoc)
+
+-----
+
+You have to install credential plugin but it is almost default plugin. Just make a credentials. There are several types of credentials.
+
+For an example, Make a username-password credential and import in pipeline block.
+
+```groovy
+withCredentials([usernamePassword(credentialsId: 'iamslash-foo', passwordVariable: 'pass', usernameVariable: 'user')]) {
+
+}
+```
+
+For an example, Make a secret-text credential and import in xxecute shell block.
+
+```bash
+set +x
+echo "My secret is $IAMSLASH_SECRET"
+```
