@@ -2369,6 +2369,10 @@ with open_file('foo') as f:
 
 ## regex
 
+* [11.2 텍스트 처리 @ 파이썬 프로그래밍 입문서 (가제)](https://python.bakyeono.net/chapter-11-2.html#1122-%ED%85%8D%EC%8A%A4%ED%8A%B8-%ED%8C%A8%ED%84%B4)
+
+----
+
 ```python
 import re
 p = re.compile(r'(?P<word>\b\w*\b)')
