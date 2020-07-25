@@ -32,13 +32,14 @@
     - [Launch Simple Deployment](#launch-simple-deployment)
     - [Launch Deployment with RollingUpdate](#launch-deployment-with-rollingupdate)
   - [Launch Service](#launch-service)
-    - [Launch Simple Service](#launch-simple-service)
-    - [Launch Service with NodePort](#launch-service-with-nodeport)
-  - [Launch LoadBalancer](#launch-loadbalancer)
-    - [Launch Simple LoadBalancer](#launch-simple-loadbalancer)
+    - [Launch Simple Service with ClusterIp type](#launch-simple-service-with-clusterip-type)
+    - [Launch Service with NodePort type](#launch-service-with-nodeport-type)
+    - [Launch Service with LoadBalaner](#launch-service-with-loadbalaner)
     - [????](#)
     - [???](#-1)
     - [???](#-2)
+    - [externalTrafficPolicy](#externaltrafficpolicy)
+    - [ExternalName](#externalname)
   - [Launch Ingress](#launch-ingress)
     - [Launch Simple Ingress](#launch-simple-ingress)
     - [????](#-3)
@@ -751,6 +752,8 @@ $ kubectl delete -f ./
 
 ----
 
+동일한 spec 의 pod 를 여러개 실행할 수 있게 해준다. Replicaset 이 없다면 동일한 spec 을 여러번 작성해야 한다. yml 의 `spec.template` 이하가 pod 의 spec 이다. `spec.replicas, spec.selector` 는 ReplicaSet 의 spec 이다.
+
 ### Launch Simple Replicaset
 
 We use Deployment more than Replicaset. ReplicaSet is used in Deployment.
@@ -877,16 +880,16 @@ spec:
 * launch
 
 ```bash
-$ kubectl apply -f whoami-deploy.yml
+$ kubectl apply -f whoami-deploy.yml --record
 # set image and rollout
-$ kubectl set image deploy/whoami-deploy whoami=subicura/whoami:2
+$ kubectl set image deploy/whoami-deploy whoami=subicura/whoami:2 --record
 # rollout with files
 $ kubectl apply -f whoami-deploy.yml
 # get replicaset and watch continuously
 $ kubectl get rs -w
-# describe deploy
+# Show Deployment in detail.
 $ kubectl describe deploy/whoami-deploy
-# show history
+# Show history. If you used --record before, you can find out command.
 $ kubectl rollout history deploy/whoami-deploy
 $ kubectl rollout history -f whoami-deploy.yml
 $ kubectl set image deploy/whoami-deploy whoami=subicura/whoami:1 --record=true
@@ -940,10 +943,12 @@ spec:
 * launch
 
 ```bash
-$ kubectl apply -f whoami-deploy-strategy
+$ kubectl apply -f whoami-deploy-strategy --record
 $ kubectl describe deploy/whoami-deploy
-$ kubectl set image deploy/whoami-deploy whoami=subicura/whoami:2
+$ kubectl set image deploy/whoami-deploy whoami=subicura/whoami:2 --record
 $ kubectl get rs -w
+# Delete everything including Pod, ReplicaSet, Deployment
+$ kubectl delete deployment,pod,rs --all
 ```
 
 ## Launch Service
@@ -954,10 +959,17 @@ $ kubectl get rs -w
 
 ----
 
-* ClusterIP is used for internal communication.
-* NodePort is used for external communication???
+There are 3 kinds of Service typs.
 
-### Launch Simple Service
+* ClusterIP type is used for internal communication.
+* NodePort type is used for external communication.
+* LoadBalancer type is used for external communication with provision of load balancer in Cloud such as AWS, GCP. LoadBalancer is similar with NodePort except provision of load blanacer.
+
+Service will make Endpoint object. You can find out Endpoints with `$ kubectl get endpoints` or `$ kubectl get ep`.
+
+But we use Ingress object more than Service object. Because Service object is lack of SSL, routing config.
+
+### Launch Simple Service with ClusterIp type
 
 * redis-app.yml
 
@@ -1032,7 +1044,9 @@ spec:
 ```bash
 $ kubectl apply -f redis-app.yml
 $ kubectl apply -f whoami.yml
+# Show endpoints
 $ kubectl get ep
+$ kubectl get endpoints
 $ kubectl exec -it whoami-<xxxxx> sh
   apk add curl busybox-extras # install telnet
   curl localhost:4567
@@ -1045,7 +1059,7 @@ $ kubectl exec -it whoami-<xxxxx> sh
     quit
 ```
 
-### Launch Service with NodePort
+### Launch Service with NodePort type
 
 * whoami-svc.yml
 
@@ -1064,18 +1078,17 @@ spec:
     service: whoami
 ```
 
-## Launch LoadBalancer
+### Launch Service with LoadBalaner
 
 * [workshop-k8s-basic/guide/guide-03/task-06.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-05/task-06.md)
   * [[토크ON세미나] 쿠버네티스 살펴보기 7강 - Kubernetes(쿠버네티스) 실습 2 | T아카데미](https://www.youtube.com/watch?v=v6TUgqfV3Fo&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=7)
 
 ----
 
-### Launch Simple LoadBalancer
-
-* whoami-app.yml
+* `whoami-svc-lb.yml`
   * If you launch this on AWS, ELB will attached to service.
-  * NodePort is just a external port of Node But LoadBalancer is external reousrce to load balances.
+  * NodePort is just a external port of Node But LoadBalancer is a external resource to load balancers.
+  * You need to use this just with AWS not on-premise.
 
 ```yml
 apiVersion: apps/v1beta2
@@ -1158,6 +1171,11 @@ spec:
 * launch
 
 ```bash
+$ kubectl apply -f whoami-svc-lb.yml --record
+$ kubectl get svc
+# Check load balancing.
+$ curl a5f81...ap-northeast-2.elb.amazonaws.com --slient
+$ curl a5f81...ap-northeast-2.elb.amazonaws.com --slient
 ```
 
 ### ????
@@ -1274,6 +1292,51 @@ spec:
 * launch
 
 ```bash
+```
+
+### externalTrafficPolicy
+
+* `hostname-svc-lb-local.yaml`
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: hostname-svc-lb-local
+spec:
+  externalTrafficPolicy: Local
+  ports:
+    - name: web-port
+      port: 80
+      targetPort: 80
+  selector:
+    app: webserver
+  type: LoadBalancer
+```
+
+* launch
+
+```bash
+$ kubectl apply -f hostname-svc-lb-local.yaml
+$ kubectl scale --replicas=1 deployment hostname-deployment
+$ kubectl get deploy
+$ kubectl get pods -o wide
+```
+
+### ExternalName
+
+ExternalName routes to `externalName`.
+
+* `external-svc.yaml`
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: externalname-svc
+spec:
+  type: ExternalName
+  externalName: my.database.com
 ```
 
 ## Launch Ingress
