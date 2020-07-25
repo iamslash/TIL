@@ -369,7 +369,7 @@ public class YourBookRepository implements BookRepository {
 
 그렇다면 `@Autowired` 는 어떤 시점에 object 를 생성하여 DI 를 하는 것인가? 
 
-`BeanFactory` 가 `BeanPostProcessor` 를 검색한다. `AutowiredAnnotationBeanPostProcess` 이미 등록되어 있는 `BeanPostProcessor` 이다. `BeanFactory` 는 `AutowiredAnnotationBeanPostProcess` Bean 을 검색하여 다른 Bean 들을 순회하고 그 Bean 의 initialization 전에 `AutowiredAnnotationBeanPostProcess` 의 logic 즉 DI 를 수행한다. 
+`BeanFactory` 가 `BeanPostProcessor` 를 검색한다. `AutowiredAnnotationBeanPostProcessor` 는 이미 등록되어 있는 `BeanPostProcessor` 이다. `BeanFactory` 는 `AutowiredAnnotationBeanPostProcessor` Bean 을 검색하여 다른 Bean 들을 순회하고 그 Bean 의 initialization 전에 `AutowiredAnnotationBeanPostProcess` 의 logic 즉 DI 를 수행한다. 
 
 다음과 같이 `@PostConstruct` 를 사용하면 `myBookRepository` 가 이미 DI 되었음을 알 수 있다.
 
@@ -404,7 +404,7 @@ public class MyRunner implements ApplicationRunner {
 
 ## @Component and Component Scan
 
-annotation 은 Spring 3.1 부터 도입되었다. `@Compoent` 를 포함하여 그것을 상속한 `@Repository, @Service, @Controller, @Configuration` 을 선언하면 component scan 의 대상이된다.
+annotation 은 Spring 3.1 부터 도입되었다. `@Component` 를 포함하여 그것을 상속한 `@Repository, @Service, @Controller, @Configuration` 을 선언하면 component scan 의 대상이된다.
 
 `DemoApplication` class 에 `@SpringBootApplication` 이 선언되었다.  `SpringBootApplication.java` 를 살펴보면 `@ComponentScan` 을 선언하여 component scan 을 실행한다. 이때 필터설정을 통하여 특정 bean 들을 exclude 할수도 있다. 
 
@@ -578,6 +578,7 @@ public class TestBookRepository implements BookRepository {
 ```
 
 다음과 같이 logic expression 을 사용할 수도 있다.
+
 ```java
 //TestBookRepository.java
 @Repository

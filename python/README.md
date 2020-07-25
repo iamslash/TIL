@@ -1,5 +1,4 @@
-﻿
-- [Abstract](#abstract)
+﻿- [Abstract](#abstract)
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Basic](#basic)
@@ -24,7 +23,7 @@
   - [pdb](#pdb)
   - [async, await](#async-await)
   - [performance check](#performance-check)
-  - [`__slots__`](#slots)
+  - [`__slots__`](#__slots__)
   - [enumerate](#enumerate)
   - [object introspection](#object-introspection)
   - [metaclass](#metaclass)

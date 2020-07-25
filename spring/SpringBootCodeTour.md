@@ -1,5 +1,7 @@
 - [Abstract](#abstract)
+- [Class diagrams of Beans Processing](#class-diagrams-of-beans-processing)
 - [How to run SpringApplication](#how-to-run-springapplication)
+- [How to gather WebApplicationInitializer and run them](#how-to-gather-webapplicationinitializer-and-run-them)
 - [How to read application.yml](#how-to-read-applicationyml)
 - [How to event handler works](#how-to-event-handler-works)
 - [How to ApplicationRunner works](#how-to-applicationrunner-works)
@@ -13,6 +15,65 @@
 # Abstract
 
 This is about code tour of spring-boot-2.2.6.
+
+# Class diagrams of Beans Processing
+
+* [Spring IoC Container를 까보자 #Bean 등록은 어떻게 될까?](https://blog.woniper.net/336?category=699184)
+
+-----
+
+Bean Processing 을 이해하기 위해 먼저 class diagram 을 파악한다.
+
+![](img/classdiagrambeans.png)
+
+```plantuml
+@startuml
+class BeanDefinitionHolder
+BeanDefinitionHolder "1" *-- "1" BeanDefinition
+DefaultListableBeanFactory .. BeanDefinitionHolder : create
+
+interface AliasRegistry {}
+interface BeanDefinitionRegistry implements AliasRegistry {}
+
+interface BeanDefinitionRegistry {}
+
+interface BeanFactory {}
+
+interface ListableBeanFactory extends BeanFactory {}
+
+interface ApplicationContext extends ListableBeanFactory {}
+
+interface BeanDefinition 
+
+ApplicationContext "1" --* "1" AbstractApplicationContext
+class AbstractApplicationContext extends DefaultResourceLoader
+
+BeanDefinitionRegistry "1" --* "1" AnnotatedBeanDefinitionReader
+AnnotatedBeanDefinitionReader "1" --* "1" AnnotationConfigApplicationContext
+
+class SimpleAliasRegistry implements AliasRegistry
+interface SingletonBeanRegistry
+
+class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry
+
+abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanRegistry
+
+abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory
+
+abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory
+
+class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory implements BeanDefinitionRegistry
+DefaultListableBeanFactory "1" --* "1" GenericApplicationContext
+
+class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {}
+
+' AnnotationConfigApplicationContext
+interface AnnotationConfigRegistry {}
+
+class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {}
+
+@enduml
+```
 
 # How to run SpringApplication
 
@@ -64,6 +125,52 @@ This is about code tour of spring-boot-2.2.6.
 			throw new IllegalStateException(ex);
 		}
 		return context;
+	}
+```
+
+# How to gather WebApplicationInitializer and run them
+
+`WebApplicationInitiliazer` 를 extend 하는 class 를 정의하면 어떤 원리에 의해 실행되는지 정리한다.
+
+* `org.springframework.web.SpringServletContainerInitializer::onStartup`
+  * `webAppInitializerClasses` argument 로 `WebApplicationInitializer` class 들을 가져온다.
+  * `WebApplicationInitializer` instace 들을 생성한다.
+  * `WebApplicationInitializer` instace 들을 순회하면서 하나씩 실행한다.
+
+```java
+	@Override
+	public void onStartup(@Nullable Set<Class<?>> webAppInitializerClasses, ServletContext servletContext)
+			throws ServletException {
+
+		List<WebApplicationInitializer> initializers = new LinkedList<>();
+
+		if (webAppInitializerClasses != null) {
+			for (Class<?> waiClass : webAppInitializerClasses) {
+				// Be defensive: Some servlet containers provide us with invalid classes,
+				// no matter what @HandlesTypes says...
+				if (!waiClass.isInterface() && !Modifier.isAbstract(waiClass.getModifiers()) &&
+						WebApplicationInitializer.class.isAssignableFrom(waiClass)) {
+					try {
+						initializers.add((WebApplicationInitializer)
+								ReflectionUtils.accessibleConstructor(waiClass).newInstance());
+					}
+					catch (Throwable ex) {
+						throw new ServletException("Failed to instantiate WebApplicationInitializer class", ex);
+					}
+				}
+			}
+		}
+
+		if (initializers.isEmpty()) {
+			servletContext.log("No Spring WebApplicationInitializer types detected on classpath");
+			return;
+		}
+
+		servletContext.log(initializers.size() + " Spring WebApplicationInitializers detected on classpath");
+		AnnotationAwareOrderComparator.sort(initializers);
+		for (WebApplicationInitializer initializer : initializers) {
+			initializer.onStartup(servletContext);
+		}
 	}
 ```
 

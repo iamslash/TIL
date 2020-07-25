@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [@Configuration](#configuration)
 - [@ConfigurationProperties](#configurationproperties)
 - [@EnableConfigurationProperties](#enableconfigurationproperties)
 - [@TestPropertySource](#testpropertysource)
@@ -13,9 +14,51 @@
 
 This is about annotations of Spring Boot Framework.
 
+# @Configuration
+
+특정 Bean 들을 생성할 때 필요한 설정들을 구현한 class 를 `Configuration Bean Class` 혹은 간단히 `Configuration Class` 라고 하자. `Configuration Class` 는 역시 또 다른 Bean 으로 등록하기 위해 `@Configuration` 을 부착한다. Spring Framework 는 Component Scan 할 때 `@Configuration` 이 부착된 `Configuration Class` 를 읽는다. 그리고 그 Class 의 함수들중 `@Bean` 이 부착된 method 를 실행하여 Bean 을 생성한다.
+
+예를 들어 다음과 같이 `MyBean, MyBeanImpl, MyConfig` 를 참고하자. `MyConfig` 라는 `Configuration Class` 를 통해 `MyBean` 이라는 Bean 을 생성한다.
+
+```java
+@Configuration
+public class MyConfig {
+	@Bean
+	public MyBean getBean() {
+		return new MyBeanImpl();
+	}	
+}
+
+...
+
+public interface MyBean {
+	public String getBeanName();
+}
+
+...
+
+public class MyBeanImpl implements MyBean {
+	public String getBeanName() {
+		return "My Bean";
+	}
+}
+
+...
+
+public class AppMain {
+	public static void main(String[] args) {
+		AnnotationConfigApplicationContexet context = new AnnotationConfigApplicationContexet(MyConfig.class);
+		MyBean bean = context.getBean(MyBean.class);
+		System.out.println(bean.getBeanName());
+		context.close(0);
+	}
+}
+
+```
+
 # @ConfigurationProperties
 
-특정 Bean 은 Configuration class 를 이용하여 생성한다. 이때 그 Bean 의 설정을 넘겨줘야 한다. 이 설정을 Properties class 라고 한다. `@ConfigurationProperties` 는 Properties class 에 생성할 Bean 의 이름과 함께 attach 한다.
+특정 Bean 은 Configuration Class 를 이용하여 생성한다. 이때 그 Bean 의 설정을 넘겨줘야 한다. 이 설정을 `ConfigurationProperties Class` 라고 한다. `@ConfigurationProperties` 는 `ConfigurationProperties Class` 에 생성할 Bean 의 이름과 함께 attach 한다.
 
 ```java
 @ConfigurationProperties("user")
@@ -28,7 +71,7 @@ public class UserProperties {
 
 # @EnableConfigurationProperties
 
-Configuration class 에 생성할 Bean 의 Properties class 를 넘겨줘야 한다. `@EnableConfigurationProperties` 는 Configuration class 에 넘겨줄 Properties class 와 함께 attach 한다.
+`Configuration Class` 에 생성할 Bean 의 `ConfigurationProperties Class` 를 넘겨줘야 한다. `@EnableConfigurationProperties` 는 `Configuration Class` 에 넘겨줄 `ConfigurationProperties Class` 와 함께 attach 한다.
 
 ```java
 @Configuration
@@ -47,7 +90,7 @@ public class UserConfiguration {
 
 # @TestPropertySource
 
-`@TestPropertySource` 를 이용하여 Properties 들을 overriding 할 수도 있다.
+`@TestPropertySource` 를 이용하여 Properties 를 overriding 할 수도 있다.
 
 ```java
 @RunWith(SpringRunnger.class)
@@ -129,7 +172,7 @@ public class BookRepository {
 }
 ```
 
-You can inject a bean with the priority. The targeted bean  class with `@Primary` will be injected.
+You can inject a bean with the priority. The targeted bean class with `@Primary` will be injected.
 
 ```java
 @Repository
@@ -220,7 +263,9 @@ public class HelloAdvice {
 
 ----
 
-`@Configuration` class 에서 또 다른 `@Configuration` bean 을 생성할 수 있다. 예를 들어 다음과 같이 AppConfig 를 bean 으로 등록하면 DataSource 도 bean 으로 등록된다.
+`Component Scan` 이 없다면 모든 `@Configuration class` 들은 Bean 으로 등록될 수 없다. 이때 하나의 `@Configuration class` 를 bean 으로 등록한다면 `@Import` 와 함께 사용된 다른 `@Configuration class` 들이 bean 으로 등록된다.
+
+`@Configuration class` 에서 또 다른 `@Configuration class` 를 bean 으로 등록할 수 있다. 예를 들어 다음과 같이 `AppConfig` 를 bean 으로 등록하면 `DataSource` 도 bean 으로 등록된다. 
 
 ```java
 @Configuration
@@ -252,7 +297,7 @@ public class Main {
 }
 ```
 
-다음과 같이 다수의 class 들을 `@Import` 할 수도 있다.
+다음과 같이 다수의 `@Configuration class` 들을 `@Import` 할 수도 있다.
 
 ```java
 @Configuration
