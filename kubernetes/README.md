@@ -40,9 +40,14 @@
     - [???](#-2)
     - [externalTrafficPolicy](#externaltrafficpolicy)
     - [ExternalName](#externalname)
+  - [Launch Namespace](#launch-namespace)
+  - [Launch Configmap](#launch-configmap)
+  - [Launch Secret](#launch-secret)
   - [Launch Ingress](#launch-ingress)
     - [Launch Simple Ingress](#launch-simple-ingress)
     - [????](#-3)
+  - [Launch Persistent Volume, Persistent Claim](#launch-persistent-volume-persistent-claim)
+  - [Launch ServiceAccount, RBAC](#launch-serviceaccount-rbac)
   - [Launch Horizontal Pod Autoscaler](#launch-horizontal-pod-autoscaler)
     - [Launch Simple Horizontal Pod Autoscaler](#launch-simple-horizontal-pod-autoscaler)
   - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
@@ -1339,6 +1344,14 @@ spec:
   externalName: my.database.com
 ```
 
+## Launch Namespace
+
+
+## Launch Configmap
+
+
+## Launch Secret
+
 ## Launch Ingress
 
 * [workshop-k8s-basic/guide/guide-03/bonus.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-05/bonus.md)
@@ -1497,6 +1510,11 @@ spec:
     service: whoami
     version: v2
 ```
+
+
+## Launch Persistent Volume, Persistent Claim
+
+## Launch ServiceAccount, RBAC
 
 ## Launch Horizontal Pod Autoscaler
 
