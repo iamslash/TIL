@@ -2,7 +2,7 @@
 - [Abstract](#abstract)
 - [Essentials](#essentials)
 - [Materials](#materials)
-- [Basic Usages](#basic-usages)
+- [Basic](#basic)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
   - [Multidimensional Array](#multidimensional-array)
@@ -32,7 +32,7 @@
   - [memory leak](#memory-leak)
   - [gc](#gc)
   - [dependencies](#dependencies)
-- [Advanced Usages](#advanced-usages)
+- [Advanced](#advanced)
   - [open function](#open-function)
   - [Builtin functions](#builtin-functions)
   - [Decorator](#decorator)
@@ -59,7 +59,7 @@
 
 # Abstract
 
-python3에 대해 정리한다.
+python3 에 대해 정리한다.
 
 # Essentials
 
@@ -84,37 +84,36 @@ python3에 대해 정리한다.
 * [python package index](https://pypi.python.org/pypi)
   * library검색이 용이하다.
 
-# Basic Usages
+# Basic
 
 ## Collections Compared to c++ containers
 
-| c++                  | python             | 
-|:---------------------|:-------------------|
-| `if, else`           | `if, elif, else`   |
-| `for, while`         | `for, while`       |
-| `array`              | `tuple`            |
-| `vector`             | `list`             |
-| `deque`              | `deque`            |
-| `forward_list`       | `list`             |
-| `list`               | `deque`            |
-| `stack`              | `list`             |
-| `queue`              | `deque`            |
-| `priority_queue`     | `heapq`            |
-| `set`                | ``                 |
-| `multiset`           | ``                 |
-| `map`                | ``                 |
-| `multimap`           | ``                 |
-| `unordered_set`      | `set`              |
-| `unordered_multiset` | `Counter`          |
-| `unordered_map`      | `dict`             |
-| `unordered_multimap` | `defaultdict(list)`|
+| c++                  | python                |
+| :------------------- | :-------------------- |
+| `if, else`           | `if, elif, else`      |
+| `for, while`         | `for, while`          |
+| `array`              | `tuple`               |
+| `vector`             | `list`                |
+| `deque`              | `deque`               |
+| `forward_list`       | `list`                |
+| `list`               | `deque`               |
+| `stack`              | `list`                |
+| `queue`              | `deque`               |
+| `priority_queue`     | `heapq`               |
+| `set`                | ``                    |
+| `multiset`           | ``                    |
+| `map`                | ``                    |
+| `multimap`           | ``                    |
+| `unordered_set`      | `set`                 |
+| `unordered_multiset` | `collections.Counter` |
+| `unordered_map`      | `dict`                |
+| `unordered_multimap` | `collections.defaultdict(list)`   |
 
 ## Collections
 
 * tuple
 
-tuple은 list와 비슷하지만 원소를 추가, 갱신, 삭제가 불가한 immutable
-type 이다.
+tuple은 list와 비슷하지만 원소를 추가, 갱신, 삭제가 불가한 immutable type 이다.
 
 ```python
 >>> t = ("A", 1, False)
@@ -291,7 +290,31 @@ set()
 {1, 2}
 ```
 
-* Counter
+* dict
+
+```python
+>>> s = {"a": 1, "b": 2, "c": 3}
+>>> type(s)
+<class 'dict'>
+>>> s["a"] = 100
+>>> s
+{'a': 100, 'b': 2, 'c': 3}
+>>> dict([('a', 2), ('b', 4), ('c', 5)])
+{'a': 2, 'b': 4, 'c': 5}
+>>> dict(a=2, b=4, c=5)
+{'a': 2, 'b': 4, 'c': 5}
+>>> for key in s:
+...     s[key]
+...
+100
+2
+3
+>>> s.update({'a':-1, 'b':-1})
+>>> s
+{'a': -1, 'b': -1, 'c': 3}
+```
+
+* collections.Counter
 
 dict 의 subclass 이다. 리스트 입력 데이터로 부터 값과 출현횟수를 각각
 key 와 value 로 하는 dict 이다.
@@ -340,31 +363,7 @@ with open('filename', 'rb') as f:
 print(line_count)
 ```
 
-* dict
-
-```python
->>> s = {"a": 1, "b": 2, "c": 3}
->>> type(s)
-<class 'dict'>
->>> s["a"] = 100
->>> s
-{'a': 100, 'b': 2, 'c': 3}
->>> dict([('a', 2), ('b', 4), ('c', 5)])
-{'a': 2, 'b': 4, 'c': 5}
->>> dict(a=2, b=4, c=5)
-{'a': 2, 'b': 4, 'c': 5}
->>> for key in s:
-...     s[key]
-...
-100
-2
-3
->>> s.update({'a':-1, 'b':-1})
->>> s
-{'a': -1, 'b': -1, 'c': 3}
-```
-
-* defaultdict
+* collections.defaultdict
 
 dict 의 subclass 이다. 기본값을 지정할 수 있는 dict 이다.  기본값은
 callable 하거나 None 이어야 한다.
@@ -412,7 +411,7 @@ print(json.dumps(some_dict))
 # Output: {"colours": {"favourite": "yellow"}}
 ```
 
-* namedtuple
+* collections.namedtuple
 
 tuple 의 subclass 이다. tuple 은 index 로만 접근 가능하지만
 namedtuple 은 index, name 으로 접근 가능하다.
@@ -432,7 +431,7 @@ Vector(x=11, y=22)
 11 22
 ```
 
-* ChainMap
+* collections.ChainMap
 
 dict 의 subclass 이다. 여러 개의 dict 를 모아서 하나의 dict 처럼 사용한다.
 여러개의 dict 를 이용하여 하나의 dict 를 생성하거나 update 를 사용하는
@@ -459,7 +458,7 @@ ChainMap({}, {'b': 2})
 2
 ```
 
-* OrderedDict
+* collections.OrderedDict
 
 dict 의 subclass 이다. 순서가 보장되는 dict 이다.
 
@@ -524,10 +523,22 @@ Species.cat
 * sort
   
 ```py
-l = [5, 4, 3, 2, 1]
-l.sort()
-l.sort(reverse=True)
+> l = [5, 4, 3, 2, 1]
+> l.sort()
+> l.sort(reverse=True)
 ```
+
+* sorted
+
+```py
+> l = [5, 4, 3, 2, 1]
+> r = sorted(l)
+> r = sorted(l, key = lambda x: x*x)
+```
+
+* sort vs sorted
+
+sort() modify the object but sorted() create the new one.
 
 ## Multidimensional Array
 
@@ -751,13 +762,13 @@ list1, list2 = map(lambda t: list(t), zip(*data))
 
 파이썬은 다음과 같이 5 가지 underscore 문법을 가지고 있다.
 
-| pattern | example | desc |
-|:--------|:--------|:-----|
-| Single Leading Underscore | `_foo` | 개발자끼리 약속한 internal use |
-| Single Trailing Underscore | `foo_` | 파이썬 키워드와 이름충돌을 피하기 위함 |
-| Double Leading Underscore | `__foo` | 파이썬 인터프리터가 강제로 이름을 바꿔 버린다. `dir(a)` 이용하여 확인할 수 있다. |
-| Double Leading and Trailing Underscore | `__foo__` | 파이썬 인터프리터가 내부적으로 사용하는 이름들. dunder members |
-| Single Underscore | `_` | 신경쓰지 않아도되는 오브젝트들 |
+| pattern                                | example   | desc                                                                             |
+| :------------------------------------- | :-------- | :------------------------------------------------------------------------------- |
+| Single Leading Underscore              | `_foo`    | 개발자끼리 약속한 internal use                                                   |
+| Single Trailing Underscore             | `foo_`    | 파이썬 키워드와 이름충돌을 피하기 위함                                           |
+| Double Leading Underscore              | `__foo`   | 파이썬 인터프리터가 강제로 이름을 바꿔 버린다. `dir(a)` 이용하여 확인할 수 있다. |
+| Double Leading and Trailing Underscore | `__foo__` | 파이썬 인터프리터가 내부적으로 사용하는 이름들. dunder members                   |
+| Single Underscore                      | `_`       | 신경쓰지 않아도되는 오브젝트들                                                   |
 
 ```bash
 >>> class A:
@@ -1671,7 +1682,7 @@ tossi==0.0.1
 
 
 
-# Advanced Usages
+# Advanced 
 
 ## open function
 
@@ -2496,4 +2507,3 @@ type                       163
 >>> len(xs)
 99
 ```
-
