@@ -5,6 +5,9 @@
     - [Ingress with SSL/TLS](#ingress-with-ssltls)
     - [Ingress with many Ingress Controllers](#ingress-with-many-ingress-controllers)
   - [Launch Persistent Volume, Persistent Claim](#launch-persistent-volume-persistent-claim)
+    - [Local Volume : hostPath, emptyDir](#local-volume--hostpath-emptydir)
+    - [Network Volume](#network-volume)
+    - [PV, PVC](#pv-pvc)
   - [Launch ServiceAccount, RBAC](#launch-serviceaccount-rbac)
   - [Launch Horizontal Pod Autoscaler](#launch-horizontal-pod-autoscaler)
     - [Launch Simple Horizontal Pod Autoscaler](#launch-simple-horizontal-pod-autoscaler)
@@ -261,6 +264,74 @@ $ kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/m
 ```
 
 ## Launch Persistent Volume, Persistent Claim
+
+Kubernetes supports NFS, AWS EBS, Ceph, GlusterFS as Network Persistent Volumes
+
+### Local Volume : hostPath, emptyDir
+
+* `hostpath-pod.yaml`
+  * worker node's `/tmp` mount to pod's `/etc/data`.
+  * This is useful for specific pod to run on specific worker-node like CAdvisor.
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hostpath-pod
+spec:
+  containers:
+    - name: my-container
+      image: busybox
+      args: [ "tail", "-f", "/dev/null" ]
+      volumeMounts:
+      - name: my-hostpath-volume
+        mountPath: /etc/data
+  volumes:
+    - name: my-hostpath-volume
+      hostPath:
+        path: /tmp
+```
+
+```bash
+$ kubectl apply -f hostpath-pod.yaml
+$ kubectl exec -it hostpath-pod touch /etc/data/mydata/
+# After connecting to worker-node
+$ ls /tmp/mydata
+```
+
+* `emptydir-pod.yaml`
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: emptydir-pod
+spec:
+  containers:
+  - name: content-creator
+    image: alicek106/alpine-wget:latest
+    args: ["tail", "-f", "/dev/null"]
+    volumeMounts:
+    - name: my-emptydir-volume
+      mountPath: /data                      # 1. 이 컨테이너가 /data 에 파일을 생성하면
+
+  - name: apache-webserver
+    image: httpd:2
+    volumeMounts:
+    - name: my-emptydir-volume
+      mountPath: /usr/local/apache2/htdocs/  # 2. 아파치 웹 서버에서 접근 가능합니다.
+
+  volumes:
+    - name: my-emptydir-volume
+      emptyDir: {}                             # 포드 내에서 파일을 공유하는 emptyDir
+```
+
+```bash
+```
+
+### Network Volume
+
+### PV, PVC
 
 ## Launch ServiceAccount, RBAC
 
