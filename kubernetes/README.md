@@ -1346,8 +1346,111 @@ spec:
 
 ## Launch Namespace
 
+Namespace 는 Kubernetes 의 resource 를 논리적으로 묶을 수 있는 단위이다. 가상 클러스터처럼 사용할 수 있다. 각 Namespace 의 resource 들은 논리적으로 구분이 되어있을 뿐이지 물리적으로 격리된 것은 아니다. 예를 들어 서로 다른 Namespace 에서 생성된 pods 가 같은 node 에 존재할 수 있다.
+
+Linux 의 Namespace 는 container 의 격리된 공간을 생성하기 위해 kernel 에서 지원하는 기능이다. 주로 network, mmount, process namespace 를 의미한다. Kubernetes 의 Namespace 와는 다르다.
+
+* commands
+
+```bash
+# Show namespaces objects
+$ kubectl get namespaces
+$ kubectl get ns
+# Show pods objects with specific namespace
+$ kubectl get pods --namespace default
+$ kubectl get pods -n kube-system
+$ kubectl get service -n kube-system
+# Namespace is different with label
+$ kubectl get pods -l app=webserver
+```
+
+* `production-namespace.yml`
+
+```yml
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: production
+```
+
+* launch `production-namespace.yml`
+
+```bash
+$ kubectl apply -f production-namespace.yaml
+$ kubectl create namespace production
+$ kubectl get ns | grep production
+```
+
+* `hostname-deploy-svc-ns.yaml`
+  * Launch Deployment, Service in production namespace.
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hostname-deployment-ns
+  namespace: production
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: webserver
+  template:
+    metadata:
+      name: my-webserver
+      labels:
+        app: webserver
+    spec:
+      containers:
+      - name: my-webserver
+        image: alicek106/rr-test:echo-hostname
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hostname-svc-clusterip-ns
+  namespace: production
+spec:
+  ports:
+    - name: web-port
+      port: 8080
+      targetPort: 80
+  selector:
+    app: webserver
+  type: ClusterIP
+```
+
+* launch `hostname-deploy-svc-ns.yaml`
+
+```bash
+$ kubectl apply -f hostname-deploy-svc-ns.yaml
+$ kubectl get pods, services -n production
+$ kubectl get pods --all-namespaces
+
+$ kubectl run -i --tty --rm debug --image=alicek106/ubuntu:curl --restart=Never -- bash
+# ERROR
+> curl hostname-svc-clusterip-ns:8080
+# OK, You need to add Namespace like <service-name><namespace-name>.svc.cluster.local
+> curl hostname-svc-clusterip-ns.production.svc:8080 --silent
+
+# Delete Namespace with included all resources.
+$ kubectl delete namespace production
+```
+
+* Namespaced resources, un-namespased resources
+  * Node, Namespace are un-namespaced resources.
+
+```bash
+# Show namespaced resources
+$ kubectl api-resources --namespaced=true
+# Show un-namespaced resources
+$ kubectl api-resources --namespaced=false
+```
 
 ## Launch Configmap
+
 
 
 ## Launch Secret

@@ -172,6 +172,10 @@ This is about Distributed System.
 * [6.824 Project](https://pdos.csail.mit.edu/6.824/project.html)
 * [6.824 Lab 4: Sharded Key/Value Service](https://pdos.csail.mit.edu/6.824/labs/lab-shard.html)
 
+----
+
+* [마이크로 서비스에서 분산 트랜잭션 @ medium](https://medium.com/@giljae/%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A1%9C-%EC%84%9C%EB%B9%84%EC%8A%A4%EC%97%90%EC%84%9C-%EB%B6%84%EC%82%B0-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-347af5136c87)
+
 # Mid-term Exam
 
 * [6.824 - Spring 2020 Past Exams](https://pdos.csail.mit.edu/6.824/quizzes.html)
@@ -184,6 +188,11 @@ This is about Distributed System.
 * [6.824 Spanner FAQ](https://pdos.csail.mit.edu/6.824/papers/spanner-faq.txt)
 * [6.824 Spring 2020 Paper Questions](https://pdos.csail.mit.edu/6.824/questions.html?q=q-spanner&lec=13)
 
+-----
+
+* [글로벌 분산 데이터베이스 Spanner @ NAVERD2](https://d2.naver.com/helloworld/216593)
+
+
 # Lecture 14: Optimistic Concurrency Control
 
 * [6.824 2020 Lecture 14: FaRM, Optimistic Concurrency Control](https://pdos.csail.mit.edu/6.824/notes/l-farm.txt)
@@ -191,6 +200,11 @@ This is about Distributed System.
 * [No compromises: distributed transactions with consistency, availability, and performance](https://pdos.csail.mit.edu/6.824/papers/farm-2015.pdf)
 * [FAQ FaRM](https://pdos.csail.mit.edu/6.824/papers/farm-faq.txt)
 * [6.824 Spring 2020 Paper Questions](https://pdos.csail.mit.edu/6.824/questions.html?q=q-farm&lec=14)
+
+----
+
+* [JPA에서 Optimistic Lock과 Pessimistic Lock @ tistory](https://skasha.tistory.com/49)
+* [14. [JPA] Lock - 잠금 @ medium](https://lng1982.tistory.com/289)
 
 # Lecture 15: Big Data: Spark
 
