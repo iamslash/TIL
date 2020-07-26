@@ -1611,7 +1611,226 @@ $ kubectl apply -f my-configmap.yaml
 
 ## Launch Secret
 
+This is very similar with ConfigMap except data are credntials.
 
+* commands
+
+```bash
+$ kubectl create secret generic \
+  my-password --from-literal password=iamslash
+$ echo mypassword > pw1 && echo yourpassword > pw2
+$ kubectl create secret generic \
+  out-password --from-file pw1 --from-file pw2
+$ kubectl get secrets
+$ kubectl describe secret my-password
+# Password is encoded with base64
+$ kubectl get secret my-password -o yaml
+$ echo WXEydzNlNHI= | base64 -d
+
+$ kubectl create secret generic \
+  my-password --from-literal password=iamslash \
+  --dry-run -o yaml
+```
+
+* `env-from-secret.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-env-example
+spec:
+  containers:
+    - name: my-container
+      image: busybox
+      args: ['tail', '-f', '/dev/null']
+      envFrom:
+      - secretRef:
+          name: my-password
+```
+
+* `selective-env-from-secret.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: selective-secret-env-example
+spec:
+  containers:
+  - name: my-container
+    image: busybox
+    args: ['tail', '-f', '/dev/null']
+    env:
+    - name: YOUR_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: our-password
+          key: pw2
+```
+
+* `volume-mount-secret.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: secret-volume-pod
+spec:
+  containers:
+    - name: my-container
+      image: busybox
+      args: [ "tail", "-f", "/dev/null" ]
+      volumeMounts:
+      - name: secret-volume          #  volumes에서 정의한 시크릿 볼륨 이름
+        mountPath: /etc/secret             # 시크릿의 데이터가 위치할 경로
+  volumes:
+  - name: secret-volume            # 시크릿 볼륨 이름
+    secret:
+      secretName: our-password                  # 키-값 쌍을 가져올 컨피그맵 이름
+```
+
+* `selective-mount-secret.yaml`
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: selective-volume-pod
+spec:
+  containers:
+  - name: my-container
+    image: busybox
+    args: [ "tail", "-f", "/dev/null" ]
+    volumeMounts:
+    - name: secret-volume
+      mountPath: /etc/secret
+  volumes:
+  - name: secret-volume
+    secret:
+      secretName: our-password          # our-password 라는 시크릿을 사용
+      items:                       # 시크릿에서 가져올 키-값의 목록
+      - key: pw1                    # pw1라는 키에 대응하는 값이 사용됨.
+        path: password1           # 최종 파일은 /etc/config/password1이 됨
+```
+
+* launch
+
+```bash
+$ kubectl apply -f selective-mount-secret.yaml
+$ kubectl exec selective-volume-pod cat /etc/secret/password1
+```
+
+* Using docker-registry type secrets
+
+```bash
+$ kubectl get secrets
+$ kubectl create secret generic my-password --from-literal password=iamslash
+
+$ kubectl create secret generic registry-auth \
+  --from-file=.dockerconfigjson=/root/.docker/config.json \
+  --type=kubernetes.io/dockerfonigjson
+
+# Create docker-registry type secret with docker.io.
+$ kubectl create secret docker-registry registry-auth-by-cmd \
+  --docker-username=iamslash \
+  --docker-password=iamslash  
+
+$ kubectl create secret docker-registry registry-auth-registry \
+  --docker-username=iamslash \
+  --docker-password=iamslash \
+  --docker-server=iamslash.registry.com
+
+$ kubectl get secrets
+```
+
+* `deployment-from-private-repo.yaml`
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-from-prvate-repo
+spec:
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      name: mypod
+      labels:
+        app: myapp
+    spec:
+      containers:
+      - name: test-container
+        image: alicek106.ipdisk.co.kr/busybox:latest
+        args: ['tail', '-f', '/dev/null']
+      imagePullSecrets:
+      - name: registry-auth-registry
+```
+
+* Using TLS type secrets
+
+```bash
+# Create key pairs
+$ openssl req -new -newkey rsa:4096 -days 365 -nodes \
+  -x509 -subj "/CN=example.com" -keyout cert.key -out cert.crt
+$ ls
+cert.crt cert.key
+$ kubectl create secret tls my-tls-secret \
+  --cert cert.crt --key cert.key
+
+$ kubectl get secrets my-tls-secret
+$ kubectl get secrets my-tls-secret -o yaml
+```
+
+* Distributing Secret
+
+If you want to distribute Secrets with YAML file, you need to save Secret data in YAML file. But it is very unconvinent if Secret data are big. Use kustomize.
+
+```bash
+$ kubectl create secret tls my-tls-secret --cert cert.crt --key cert.key --dry-run -o yaml
+```
+
+* `kustomization.yaml` with secretGenerator
+  * kubsomize generate Secret yaml file.
+
+```yml
+secretGenerator:                # 시크릿을 생성하기 위한 지시문
+- name: kustomize-secret
+  type: kubernetes.io/tls       # tls 타입의 시크릿을 생성 
+  files:
+  - tls.crt=cert.crt            # tls.crt 라는 키에 cert.crt 파일의 내용을 저장
+  - tls.key=cert.key            # tls.key 라는 키에 cert.key 파일의 내용을 저장
+```
+
+```bash
+$ kubectl kustomize ./
+
+$ ls
+$ kubectl apply -k ./
+$ kubectl delete -k ./
+```
+
+* `kustomization.yaml` with configMapGenerator
+  * kubsomize generate ConfigMap yaml file.
+
+```yml
+configMapGenerator:                # 시크릿을 생성하기 위한 지시문
+- name: kustomize-configmap
+  files:
+  - tls.crt=cert.crt            # tls.crt 라는 키에 cert.crt 파일의 내용을 저장
+  - tls.key=cert.key            # tls.key 라는 키에 cert.key 파일의 내용을 저장
+```
+
+* Updating application cofigs with ConfigMap, Scret
+
+```bash
+$ cat my-configmap.yaml
+$ kubectl appy -f -my-configmap.yaml
+$ sed -i -e 's/myvalue/yourvalue/g' my-configmap.yaml
+$ kubectl appy -f my-configmap.yaml
+```
 
 ## Launch Ingress
 
