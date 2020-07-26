@@ -1,11 +1,17 @@
 - [Abstract](#abstract)
-- [Class diagrams of Beans Processing](#class-diagrams-of-beans-processing)
 - [How to run SpringApplication](#how-to-run-springapplication)
 - [How to gather WebApplicationInitializer and run them](#how-to-gather-webapplicationinitializer-and-run-them)
 - [How to read application.yml](#how-to-read-applicationyml)
 - [How to event handler works](#how-to-event-handler-works)
 - [How to ApplicationRunner works](#how-to-applicationrunner-works)
+- [Beans Processing](#beans-processing)
+	- [Summary](#summary)
+	- [Class Diagram](#class-diagram)
 - [How to register beans](#how-to-register-beans)
+	- [Summary](#summary-1)
+	- [Sequences](#sequences)
+- [How to instantiate Bean](#how-to-instantiate-bean)
+	- [Summary](#summary-2)
 - [How to read spring.factories](#how-to-read-springfactories)
 - [How to autoconfigure works](#how-to-autoconfigure-works)
 - [How to read bootstrap.yml](#how-to-read-bootstrapyml)
@@ -15,65 +21,6 @@
 # Abstract
 
 This is about code tour of spring-boot-2.2.6.
-
-# Class diagrams of Beans Processing
-
-* [Spring IoC Container를 까보자 #Bean 등록은 어떻게 될까?](https://blog.woniper.net/336?category=699184)
-
------
-
-Bean Processing 을 이해하기 위해 먼저 class diagram 을 파악한다.
-
-![](img/classdiagrambeans.png)
-
-```plantuml
-@startuml
-class BeanDefinitionHolder
-BeanDefinitionHolder "1" *-- "1" BeanDefinition
-DefaultListableBeanFactory .. BeanDefinitionHolder : create
-
-interface AliasRegistry {}
-interface BeanDefinitionRegistry implements AliasRegistry {}
-
-interface BeanDefinitionRegistry {}
-
-interface BeanFactory {}
-
-interface ListableBeanFactory extends BeanFactory {}
-
-interface ApplicationContext extends ListableBeanFactory {}
-
-interface BeanDefinition 
-
-ApplicationContext "1" --* "1" AbstractApplicationContext
-class AbstractApplicationContext extends DefaultResourceLoader
-
-BeanDefinitionRegistry "1" --* "1" AnnotatedBeanDefinitionReader
-AnnotatedBeanDefinitionReader "1" --* "1" AnnotationConfigApplicationContext
-
-class SimpleAliasRegistry implements AliasRegistry
-interface SingletonBeanRegistry
-
-class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry
-
-abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanRegistry
-
-abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory
-
-abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory
-
-class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory implements BeanDefinitionRegistry
-DefaultListableBeanFactory "1" --* "1" GenericApplicationContext
-
-class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {}
-
-' AnnotationConfigApplicationContext
-interface AnnotationConfigRegistry {}
-
-class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {}
-
-@enduml
-```
 
 # How to run SpringApplication
 
@@ -419,8 +366,79 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 		}
 	}
 ```
+# Beans Processing
+
+* [Spring IoC Container를 까보자 #Bean 등록은 어떻게 될까?](https://blog.woniper.net/336?category=699184)
+
+-----
+
+## Summary
+
+* Register Bean Definition to `Map<String, BeanDefinition`.
+* getBean instantiate Bean with BeanDefinition and save to `Map<String, Object` for cache.
+
+## Class Diagram
+
+Bean Processing 을 이해하기 위해 먼저 class diagram 을 파악한다.
+
+![](img/classdiagrambeans.png)
+
+```plantuml
+@startuml
+class BeanDefinitionHolder
+BeanDefinitionHolder "1" *-- "1" BeanDefinition
+DefaultListableBeanFactory .. BeanDefinitionHolder : create
+
+interface AliasRegistry {}
+interface BeanDefinitionRegistry implements AliasRegistry {}
+
+interface BeanDefinitionRegistry {}
+
+interface BeanFactory {}
+
+interface ListableBeanFactory extends BeanFactory {}
+
+interface ApplicationContext extends ListableBeanFactory {}
+
+interface BeanDefinition 
+
+ApplicationContext "1" --* "1" AbstractApplicationContext
+class AbstractApplicationContext extends DefaultResourceLoader
+
+BeanDefinitionRegistry "1" --* "1" AnnotatedBeanDefinitionReader
+AnnotatedBeanDefinitionReader "1" --* "1" AnnotationConfigApplicationContext
+
+class SimpleAliasRegistry implements AliasRegistry
+interface SingletonBeanRegistry
+
+class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry
+
+abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanRegistry
+
+abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory
+
+abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory
+
+class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory implements BeanDefinitionRegistry
+DefaultListableBeanFactory "1" --* "1" GenericApplicationContext
+
+class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {}
+
+' AnnotationConfigApplicationContext
+interface AnnotationConfigRegistry {}
+
+class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {}
+
+@enduml
+```
 
 # How to register beans
+
+## Summary
+
+* `DefaultListableBeanFactory.registerBeanDefinition` register bean-name, bean-definition to `Map<String, BeanDefinition>`.
+
+## Sequences
 
 * `org.springframework.boot.SpringApplication::refresh`
 
@@ -599,6 +617,13 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 		}
 	}
 ```
+
+# How to instantiate Bean
+
+## Summary
+
+* `AnnotationConfigApplicationContext::getBean` starts to instantiate Bean.
+* `AbstractBeanFactory.doGetBean` instantiate Bean.
 
 # How to read spring.factories
 
