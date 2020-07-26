@@ -1451,9 +1451,167 @@ $ kubectl api-resources --namespaced=false
 
 ## Launch Configmap
 
+configmap 은 설정값의 모음이다. key, value 가 많다면 volume 을 활용하여 configmap 을 사용하는 것이 좋다.
 
+* commands
+
+```bash
+# kubectl create configmap <config-name> <config-key=value>
+$ kubectl create configmap log-level-configmap --form-literal LOG_LEVEL=DEBUG
+$ kubectl create configmap start-k8s --from-linteral k8s=kubernetes \
+  --from-literal container=docker
+$ kubectl get cm
+$ kubectl get configmap
+$ kubectl get configmap log-level-configmap -o yaml
+```
+
+* `all-evn-from-configmap.yaml`
+  * configmap 의 모든 key-value 들을 environment variables 으로 읽어온다.
+  * `envFrom`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: container-env-example
+spec:
+  containers:
+    - name: my-container
+      image: busybox
+      args: ['tail', '-f', '/dev/null']
+      envFrom:
+      - configMapRef:
+          name: log-level-configmap
+      - configMapRef:
+          name: start-k8s
+```
+
+```bash
+$ kubectl apply -f all-env-from-configmap.yaml
+$ kubectl exec container-env-example env
+```
+
+* `selective-env-from-configmap.yaml`
+  * configmap 의 일부 key-value 들을 environment variables 으로 읽어온다.
+  * `valueFrom, configMapKeyRef`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: container-selective-env-example
+spec:
+  containers:
+    - name: my-container
+      image: busybox
+      args: ['tail', '-f', '/dev/null']
+      env:
+      - name: ENV_KEYNAME_1     # (1.1) 컨테이너에 새롭게 등록될 환경 변수 이름
+        valueFrom: 
+          configMapKeyRef:
+            name: log-level-configmap
+            key: LOG_LEVEL
+      - name: ENV_KEYNAME_2  # (1.2) 컨테이너에 새롭게 등록될 환경 변수 이름
+        valueFrom: 
+          configMapKeyRef:
+            name: start-k8s      # (2) 참조할 컨피그맵의 이름
+            key: k8s             # (3) 가져올 데이터 값의 키
+                                 # 최종 결과 -> ENV_KEYNAME_2=$(k8s 키에 해당하는 값)
+                                 #              ENV_KEYNAME_2=kubernetes
+```
+
+```bash
+$ kubectl apply -f selective-env-from-configmap.yaml
+$ kubectl exec container-selective-env-example env | grep ENV
+```
+
+* `volume-mount-configmap.yaml` 
+  * `spec.volumes` 는 Volume resource ???
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: configmap-volume-pod
+spec:
+  containers:
+    - name: my-container
+      image: busybox
+      args: [ "tail", "-f", "/dev/null" ]
+      volumeMounts:
+      - name: configmap-volume          # volumes에서 정의한 컨피그맵 볼륨 이름 
+        mountPath: /etc/config             # 컨피그맵의 데이터가 위치할 경로
+
+  volumes:
+    - name: configmap-volume            # 컨피그맵 볼륨 이름
+      configMap:
+        name: start-k8s
+```
+
+```bash
+$ kubectl apply -f volume-mount-configmap.yaml
+$ kubectl exec configmap-volume-pod ls /etc/config
+```
+
+* `selective-volume-configmap.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: selective-cm-volume-pod 
+spec:
+  containers:
+    - name: my-container
+      image: busybox
+      args: [ "tail", "-f", "/dev/null" ]
+      volumeMounts:
+      - name: configmap-volume
+        mountPath: /etc/config       # 마운트되는 위치는 변경되지 않았습니다.
+  volumes:
+    - name: configmap-volume
+      configMap:
+        name: start-k8s
+        items:                       # 컨피그맵에서 가져올 키-값의 목록을 나열합니다.
+        - key: k8s                    # k8s라는 키에 대응하는 값을 가져옵니다.
+          path: k8s_fullname         # 최종 파일 이름은 k8s_fullname이 됩니다
+```
+
+```bash
+$ kubectl apply -f selective-volume-configmap.yaml
+$ kubectl exec selective-cm-volume-pod ls /etc/config
+$ kubectl exec selective-cm-volume-pod cat /etc/config/k8s_fullname
+```
+
+* Create configmap from file
+
+```bash
+# kubectl create configmap <configmap-name> --from-file <file-name> ...
+$ echo Hello, world! >> index.html
+$ kubectl create configmap index-file --from-file index.html
+$ kubectl describe configmap index-file
+# Create configmap with specific key-value
+$ kubectl create configmap index-file-customkey --from-file myindex=index.html
+
+$ cat multiple-keyvalue.env
+key1=val1
+key2=val2
+key3=val3
+$ kubectl create configmap from-envfile --from-env-file multiple-keyvalue.env
+$ kubectl get cm from-envfile -o yaml
+```
+
+* Define configmap with yaml file
+
+```bash
+$ kubectl create configmap -my-configmap \
+  --from-literal mykey=myvalue --dry-run -o yaml > my-configmap.yaml
+$ kubectl apply -f my-configmap.yaml   
+```
 
 ## Launch Secret
+
+
 
 ## Launch Ingress
 
