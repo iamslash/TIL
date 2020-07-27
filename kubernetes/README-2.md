@@ -9,8 +9,12 @@
     - [Network Volume](#network-volume)
     - [PV, PVC](#pv-pvc)
   - [Launch ServiceAccount, RBAC](#launch-serviceaccount-rbac)
+  - [Requests, Limits of Pods](#requests-limits-of-pods)
+  - [Kubernetes Scheduling](#kubernetes-scheduling)
+  - [Kubernetes Application Status, Deployment](#kubernetes-application-status-deployment)
   - [Launch Horizontal Pod Autoscaler](#launch-horizontal-pod-autoscaler)
     - [Launch Simple Horizontal Pod Autoscaler](#launch-simple-horizontal-pod-autoscaler)
+- [Advanced](#advanced)
   - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
 - [Dive Deep](#dive-deep)
   - [controller](#controller)
@@ -335,6 +339,18 @@ spec:
 
 ## Launch ServiceAccount, RBAC
 
+ServiceAccount, Role, RoleBinding, ClusterRole, ClusterRoleBinding
+
+## Requests, Limits of Pods
+
+Reqeust, Limit, 
+Guaranteed, BestEffort, Bursatable, 
+ResourceQuota, LimitRanger
+
+## Kubernetes Scheduling
+
+## Kubernetes Application Status, Deployment
+
 ## Launch Horizontal Pod Autoscaler
 
 * [workshop-k8s-basic/guide/guide-03/task-06.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-05/task-06.md)
@@ -401,6 +417,8 @@ spec:
     name: hpa-example-deploy
   targetCPUUtilizationPercentage: 10
 ```
+
+# Advanced
 
 ## Launch Kubernetes Dashboard
 
