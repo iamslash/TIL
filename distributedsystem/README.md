@@ -191,7 +191,7 @@ This is about Distributed System.
 -----
 
 * [글로벌 분산 데이터베이스 Spanner @ NAVERD2](https://d2.naver.com/helloworld/216593)
-
+* [Transactions @ Spanner](https://cloud.google.com/spanner/docs/transactions)
 
 # Lecture 14: Optimistic Concurrency Control
 
