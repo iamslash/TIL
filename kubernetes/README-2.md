@@ -7,11 +7,40 @@
   - [Launch Persistent Volume, Persistent Claim](#launch-persistent-volume-persistent-claim)
     - [Local Volume : hostPath, emptyDir](#local-volume--hostpath-emptydir)
     - [Network Volume](#network-volume)
-    - [PV, PVC](#pv-pvc)
+    - [Volume management with PV, PVC](#volume-management-with-pv-pvc)
   - [Launch ServiceAccount, RBAC](#launch-serviceaccount-rbac)
-  - [Requests, Limits of Pods](#requests-limits-of-pods)
+    - [Process of Authentication, Authorization](#process-of-authentication-authorization)
+    - [Service Account, Role, Cluster Role](#service-account-role-cluster-role)
+    - [Access to Kubernetes API server](#access-to-kubernetes-api-server)
+    - [Setting Secrets on Service Account for Image Registry](#setting-secrets-on-service-account-for-image-registry)
+    - [kubeconfig](#kubeconfig)
+    - [User, Group](#user-group)
+    - [User authentication with X509](#user-authentication-with-x509)
+  - [Resource Limit of Pods](#resource-limit-of-pods)
+    - [Limit](#limit)
+    - [Request](#request)
+    - [CPU Limit](#cpu-limit)
+    - [QoS class, Memory Limit](#qos-class-memory-limit)
+    - [ResourceQuota](#resourcequota)
+    - [LimitRange](#limitrange)
+    - [Admission Controller](#admission-controller)
   - [Kubernetes Scheduling](#kubernetes-scheduling)
+    - [NodeSelector, Node Affinity, Pod Affinity](#nodeselector-node-affinity-pod-affinity)
+    - [Taints, Tolerations](#taints-tolerations)
+    - [Cordon, Drain, PodDistributionBudget](#cordon-drain-poddistributionbudget)
+    - [Custom Scheduler](#custom-scheduler)
   - [Kubernetes Application Status, Deployment](#kubernetes-application-status-deployment)
+    - [Rolling update with Deployment](#rolling-update-with-deployment)
+    - [BlueGreen update](#bluegreen-update)
+    - [LifeCyle](#lifecyle)
+    - [LivenessProbe, ReadinessProbe](#livenessprobe-readinessprobe)
+    - [Terminating status](#terminating-status)
+  - [Custom Resource Definition](#custom-resource-definition)
+  - [Kubernetes Objects using Pod Objects](#kubernetes-objects-using-pod-objects)
+    - [Jobs](#jobs)
+    - [CronJobs](#cronjobs)
+    - [DaemonSets](#daemonsets)
+    - [StatefulSets](#statefulsets)
   - [Launch Horizontal Pod Autoscaler](#launch-horizontal-pod-autoscaler)
     - [Launch Simple Horizontal Pod Autoscaler](#launch-simple-horizontal-pod-autoscaler)
 - [Advanced](#advanced)
@@ -335,21 +364,91 @@ spec:
 
 ### Network Volume
 
-### PV, PVC
+### Volume management with PV, PVC
+
 
 ## Launch ServiceAccount, RBAC
 
 ServiceAccount, Role, RoleBinding, ClusterRole, ClusterRoleBinding
 
-## Requests, Limits of Pods
+
+### Process of Authentication, Authorization
+
+### Service Account, Role, Cluster Role
+
+### Access to Kubernetes API server
+
+### Setting Secrets on Service Account for Image Registry
+
+### kubeconfig
+
+### User, Group
+
+### User authentication with X509
+
+## Resource Limit of Pods
 
 Reqeust, Limit, 
 Guaranteed, BestEffort, Bursatable, 
 ResourceQuota, LimitRanger
 
+### Limit
+
+### Request
+
+### CPU Limit
+
+### QoS class, Memory Limit
+
+### ResourceQuota
+
+### LimitRange
+
+### Admission Controller
+
 ## Kubernetes Scheduling
 
+### NodeSelector, Node Affinity, Pod Affinity
+
+nodeAffinity, podAffinity, topologyKey, reqruiedDuringSchedulingIgnoredDuringExecution, preferredDuringSchedulingIgnoredDuringExecution
+
+### Taints, Tolerations
+
+### Cordon, Drain, PodDistributionBudget
+
+### Custom Scheduler
+
 ## Kubernetes Application Status, Deployment
+
+### Rolling update with Deployment
+
+### BlueGreen update 
+
+### LifeCyle
+
+### LivenessProbe, ReadinessProbe
+
+### Terminating status
+
+## Custom Resource Definition
+
+## Kubernetes Objects using Pod Objects
+
+### Jobs
+
+Job 은 batch 와 같이 수행후 종료하는 Kubernetes object 이다.
+
+### CronJobs
+
+CronJob 은 주기적으로 실행되는 Kubernetes object 이다.
+
+### DaemonSets
+
+DaemonSet 은 모든 Node 에 동일한 Pod 를 하나씩 생성하는 Kubernetes object 이다.
+
+### StatefulSets
+
+StatefulSet 은 state 를 갖는 Pod 를 관리하는 Kubernetes object 이다.
 
 ## Launch Horizontal Pod Autoscaler
 
