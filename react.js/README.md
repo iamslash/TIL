@@ -19,6 +19,7 @@
   - [Redux](#redux)
   - [To Do List](#to-do-list)
   - [React Redux](#react-redux)
+  - [Rednering Sequences](#rednering-sequences)
 - [Redux Toolkit](#redux-toolkit)
 - [Redux SAGA](#redux-saga)
 - [Redux Debugger in Chrome](#redux-debugger-in-chrome)
@@ -302,7 +303,7 @@ class App extends Component {
 
 ## Thinking in React Component State
 
-`App` component 에 state 를 선언하고 `render()` 에서 바꿔보자. `this.setState()` 함수를 호출하면 `render()` 가 호출된다. `state` 를 바꾸고 `this.setState()` 를 호출하여 화면을 업데이트한다. 
+`App` component 에 `state` 를 선언하고 `componentDidMount()` 에서 바꿔보자. `this.setState()` 함수를 호출하면 `render()` 가 호출된다. `state` 를 바꾸고 `this.setState()` 를 호출하여 화면을 업데이트한다. 
 
 ```js
 class App extends Component {
@@ -946,7 +947,8 @@ ReactDOM.render(
 );
 ```
 
-`connect` 를 `mapStateToProps` 와 함께 호출하면 특정 Component 를 연결할 수 있다. 즉, state 가 변경되면 `mapStateToProps` 가 호출된다. `mapStateToProps` 는 state 가 포함된 props 를 리턴한다. 리턴된 props 는 component 에게 전달된다. 
+`connect` 를 호출하여 `mapStateToProps` 와 함께 특정 Component 를 연결할 수 있다. `mapStateToProps` 는 state 가 주어지면 state 를 포함한 props 를 리턴하는 함수이다. 
+즉, state 가 변경되면 `mapStateToProps` 가 호출된다. 그리고 `mapStateToProps` 는 state 가 포함된 props 를 리턴한다. 리턴된 props 는 component 의 render 함수로 전달된다. 렌더 함수안에서 props 를 통해서 변경된 state 를 읽어올 수 있다. 
 
 ```js
 import React, { useState } from "react";
@@ -980,7 +982,7 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps)(Home);
 ```
 
-`connect` 의 두번째 argument 는 dispatch function 을 넘겨줄 수 있다. `mapDispatchToProps` 는 dispatch function 을 props 에 담아서 리턴한다. 리턴된 props 는 `connect` 에 연결된 component 에 전달된다. component 는 특정 시점에 dispatch function 을 호출하고 특정한 action 이 발생된다. 그리고 reducer 가 호출된다.
+`connect` 를 호출하여 `mapDispatchToProps` 와 함께 특정 Component 를 연결할 수 있다. `mapDispatchToProps` 는 dispatch function 이 주어지면 dispatch function 을 포함한 props 를 리턴하는 함수이다. 리턴된 props 는 `connect` 에 연결된 component 의 render 함수로 전달된다. render 함수안에서 props 를 통해 dispatch function 을 읽어올 수 있다. 특정 dispatch function 을 호출하면 특정 reducer 를 호출할 수 있다.
 
 ```js
 import React, { useState } from "react";
@@ -1022,7 +1024,7 @@ function mapDispatchToProps(dispatch) {
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
 ```
 
-다음은 `connect` 에 두번째 argument 로 `mapDispatchToProps` 를 전달하고 `ToDo` component 와 연결한다. `ToDo` component 의 button 이 click 되면 `ToDo` component 에 전달된 props 의 두번째 요소인 dispatch function 이 호출된다. dispatch function 에 해당하는 `onBtnClick` 이 호출되면 `DELETE` action 이 발생하고 Reducer 가 호출된다.
+다음은 `connect` 에 두번째 argument 로 `mapDispatchToProps` 를 전달하고 `ToDo` component 와 연결한다. `ToDo` component 의 button 이 click 되면 `ToDo` component 에 전달된 props 의 두번째 요소인 dispatch function 이 호출된다. dispatch function 에 해당하는 `onBtnClick` 이 호출되면 `DELETE` action 이 발생하고 Reducer 가 호출된다. reducer 는 변경된 state 를 리턴하고 `ToDo` component 의 render function 이 변경된 state argument 와 함께 호출된다.
 
 ```js
 import React from "react";
@@ -1088,6 +1090,14 @@ export const actionCreators = {
 
 export default store;
 ```
+
+## Rednering Sequences
+
+Component 가 rendering 되는 경우들을 생각해 보자. 
+
+먼저 부모 Component 가 rendering 될때 자식 Component 의 render functino 이 props 와 함께 호출되는 경우가 있다.
+
+또한  Component 의 user event 혹은 timer event 에 의해 dispatch function 이 호출된다. reducer 는 변경된 state 를 리턴한다. 그리고 그 component 의 render function 이 호출된다. redner function 에서 props 를 통해 state 를 접근할 수 있다.
 
 # Redux Toolkit
 
