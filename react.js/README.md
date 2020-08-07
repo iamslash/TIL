@@ -28,6 +28,10 @@
 
 # Materials
 
+* [React 적용 가이드 - React와 Redux @ NaverD2](https://d2.naver.com/helloworld/1848131)
+  * [src](https://github.com/naver/react-sample-code)
+  * [React 적용 가이드 - React 작동 방법 @ NaverD2](https://d2.naver.com/helloworld/9297403)
+  * [React 적용 가이드 - 네이버 메일 모바일 웹 적용기 @ NaverD2](https://d2.naver.com/helloworld/4966453)
 * [create react app](https://github.com/facebook/create-react-app)
   * react app wizard
 * [nomad academy](https://academy.nomadcoders.co/courses/category/KR)
@@ -67,6 +71,10 @@ $ npm start
 
 ## Create React Components with JSX
 
+* [Create React App, Creating lists with .map @ src](https://github.com/nomadcoders/movie_app/commit/98dab5bb5e881c43fc2fc16f8dbc395632a715b3)
+
+------
+
 `public/index.html` 에 `id="root"` 인 `div` 가 있다.
 
 ```html
@@ -101,7 +109,7 @@ class App extends Component {
 export default App;
 ```
 
-`src/App.js` 는 `Movie` component 를 rednering 하고 있다. `Movie` component 는 다시 `MoviePoser` component 를 rendering 하고 있다.
+`src/App.js` 는 `Movie` component 를 rednering 하고 있다. `Movie` component 는 다시 `MoviePoster` component 를 rendering 하고 있다.
 
 `src/Movie.js` 는 `Movie, MoviePoster` component 가 정의되어 있다.
 
@@ -444,6 +452,10 @@ class App extends Component {
 
 ## Smart vs Dumb
 
+* [Loading states + Smart vs Dumb Components @ src](https://github.com/nomadcoders/movie_app/commit/9cc9cf90d3c21dfea9c04c455f59aab7440018c4)
+
+-------
+
 Smart component 는 state 이 있는 component 이다. Dumb component 는 state 이 없는 component 이다. props 만 있다.
 Dumb component 를 stateless 혹은 functional component 라고도 한다. Dumb component 는 state 가 필요없을 때 간결한 코드를 만들기 위해 사용한다.
 그러나 state 가 없기도 하고 componentDidMount, componentWillMount 와 같은 함수들을 사용할 수 없다.
@@ -486,6 +498,10 @@ MoviePoster.propTypes = {
 
 ## AJAX on React
 
+* [Added CORS to Fetch Request @ src](https://github.com/nomadcoders/movie_app/commit/a5e045ecee069b2cb332892cb60061e8b5b22bd5)
+
+----
+
 AJAX 는 Asynchrous JavaScript and XML 이다. 그러나 XML 은 사용하지 않고 JSON 을 사용한다. AJAJ 로 바뀌어야 한다???
 다음은 fetch 함수를 이용하여 XHR (XML HTTP Request) 를 실행한 것이다.
 
@@ -513,6 +529,10 @@ class App extends Component {
 ```
 
 ## Promises
+
+* [Async Await / Promises / Ajax / <Movie /> extended @ src](https://github.com/nomadcoders/movie_app/commit/8a8761cbf54382f791807018c2dfadb3c1545759)
+
+----
 
 [javascript proxy](/js/README.md#promise) 를 참고하여 이해하자. 다음은 앞서 작성한 XHR 의 handler 를 추가한 것이다.
 
@@ -619,6 +639,10 @@ class App extends Component {
 ```
 
 ## Updating Movie
+
+* [Updated URL](https://github.com/nomadcoders/movie_app/commit/33f4c4029c714a37c1226ffd4298283191eb87a5)
+
+----
 
 이제 XHR 을 통해 얻어온 json 데이터를 화면에서 업데이트해 보자.
 
