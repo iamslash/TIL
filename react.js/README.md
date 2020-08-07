@@ -1141,4 +1141,5 @@ createSlice 는 action, reducer 생성을 쉽게 해준다.
 
 # Redux Debugger in Chrome
 
-* [ #4.3 configureStore](https://academy.nomadcoders.co/courses/235420/lectures/14735315)
+* [React Redux Tutorials - 24 - Redux Devtool Extension @ youtube](https://www.youtube.com/watch?v=IlM7497j6LY)
+* [#4.3 configureStore @ nomad](https://academy.nomadcoders.co/courses/235420/lectures/14735315)
