@@ -32,6 +32,7 @@
   * [src](https://github.com/naver/react-sample-code)
   * [React 적용 가이드 - React 작동 방법 @ NaverD2](https://d2.naver.com/helloworld/9297403)
   * [React 적용 가이드 - 네이버 메일 모바일 웹 적용기 @ NaverD2](https://d2.naver.com/helloworld/4966453)
+* [Redux 문서(한글)](https://ko.redux.js.org/)
 * [create react app](https://github.com/facebook/create-react-app)
   * react app wizard
 * [nomad academy](https://academy.nomadcoders.co/courses/category/KR)
