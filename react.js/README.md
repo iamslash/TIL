@@ -821,7 +821,7 @@ $ yarn run deploy
 * [초보자를 위한 리덕스 101](https://academy.nomadcoders.co/courses/235420/lectures/13817530)
   * [src](https://github.com/nomadcoders/vanilla-redux)
 
-Redux 는 state 를 관리하기 위한 거대한 event loop 이다. Action 은 event 를 말하고 Reducer 는 event handler 이다. 즉, Reducer 는 함수이고 변경된 state 를 return 한다. 변경된 state 가 return 되면 rendering 된다??? Reducer 의 첫번째 argument 는 state 이고 두번째 argument 는 action 이다.
+Redux 는 state 를 관리하기 위한 거대한 event loop 이다. Action 은 event 를 말하고 Reducer 는 event handler 이다. 즉, Reducer 는 함수이고 변경된 state 를 return 한다. 변경된 state 가 return 되면 rendering 된다. Reducer 의 첫번째 argument 는 state 이고 두번째 argument 는 action 이다.
 
 Store 는 Application 의 state 이다. Store 를 생성하기 위해서는 Reducer 가 필요하다. Store instance 의 `getState()` 를 호출하면 현재 state 를 얻어올 수 있다. Store instance 의 `dispatch()` 를 특정 `action` 과 함께 호출하면 Store instance 에 등록된 Reducer 가 그 action 을 두번째 argument 로 호출된다. 
 
