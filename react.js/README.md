@@ -73,6 +73,7 @@ $ npm start
 ## Create React Components with JSX
 
 * [Create React App, Creating lists with .map @ src](https://github.com/nomadcoders/movie_app/commit/98dab5bb5e881c43fc2fc16f8dbc395632a715b3)
+* [Create React Components with JSX @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/64003c94750148411d308e6fd2d295d34eead9b3)
 
 ------
 
@@ -142,6 +143,10 @@ export default Movie;
 
 ## Data flow with Props
 
+[Data flow with Props @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/6f48b1beba844107a6c785d6c954ff55c7bf75be)
+
+------
+
 ![](https://miro.medium.com/max/1540/0*NLC2HyJRjh0_3r0e.)
 
 data 를 `src/App.js` 에 선언해 보자. 그리고 `Movie` component 에게 props 형태로 전달한다.
@@ -207,6 +212,10 @@ JSX 를 이용하여 각 component 의 props 를 rendering 한다.
 
 ## Lists with .maps
 
+[Lists with .maps @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/bbf7905c5affb019a19bf8076ed685325574ee9a)
+
+----
+
 `movies` 배열을 만들고 `App` component 를 `.map` function 을 활용하여 구현해보자.
 
 ```js
@@ -243,6 +252,10 @@ class App extends Component {
 ```
 
 ## Validating Props with Prop Types
+
+[Validating Props with Prop Types @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/07162e660791bd182794261743cf62057d4d988f)
+
+----
 
 `static propTypes` 를 선언하여 props 의 값을 제어할 수 있다. 이때 PropTypes module 이 설치되어야 한다. `yarn add PropTypes`
 
@@ -283,6 +296,10 @@ export default Movie;
 
 ## Component Lifecycle
 
+[Component Lifecycle @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/05b83c5c2b9d778fdf0194a602524076d735ecf0)
+
+----
+
 하나의 component 는 다음과 같은 순서로 `Render, Update` 가 수행된다. Override function 의 순서를 주의하자.
 
 ```js
@@ -311,6 +328,10 @@ class App extends Component {
 ```
 
 ## Thinking in React Component State
+
+[Thinking in React Component State @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/8915cfe21228044db9c9c1a43b0ffd0465694c58)
+
+----
 
 `App` component 에 `state` 를 선언하고 `componentDidMount()` 에서 바꿔보자. `this.setState()` 함수를 호출하면 `render()` 가 호출된다. `state` 를 바꾸고 `this.setState()` 를 호출하여 화면을 업데이트한다. 
 
@@ -342,6 +363,10 @@ class App extends Component {
 ```
 
 ## Practicing this setState
+
+[Practicing this setState @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/f0137ac872a477e0aff88a633e863831a9f2e7d3)
+
+----
 
 `App` component 의 `state` 으로 title, poster 를 옮기자. 그리고 일정 시간 이후에 `state` 을 변경해 보자. `...this.state.movies` 를 이용하면 기존의 array 에 `this.state.movies` 를 unwind 해서 추가할 수 있다.
 
@@ -400,6 +425,10 @@ class App extends Component {
 이 방법을 이용하면 스크롤을 아래로 내렸을 때 infinite scroll 을 구현할 수 있다.
 
 ## Loading states
+
+[Loading states @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/c822239549b2ea678195536b213d4fa54e1f149b)
+
+----
 
 loading screen 을 구현해 보자. `App` component 에 rendering 을 시작하자 마자 `Loading...` 을 출력하고 일정 시간이 지나면 state 을 업데이트하여 movies 가 rendering 되도록 해보자.
 
@@ -598,6 +627,10 @@ class App extends Component {
 
 ## Async Await
 
+* [Async Await @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/57f9424c781fc54b710d3ba950e03f6376609792)
+
+----
+
 [JavaScript async](/js/README.md#async) 를 참고하여 이해하자. promise 는 then() 의 남용으로 Call Back 함수가 많아져서 code 의 readability 를 떨어뜨린다. async, await 을 이용하면 call back functions 을 줄일 수 있고 code 의 readability 를 끌어 올릴 수 있다.
 
 `async` 로 function 을 선언하면 function 안에서 `await` 로 기다릴 수 있다. `await` 로 기다리는 것은 `promise` 이다.
@@ -641,7 +674,8 @@ class App extends Component {
 
 ## Updating Movie
 
-* [Updated URL](https://github.com/nomadcoders/movie_app/commit/33f4c4029c714a37c1226ffd4298283191eb87a5)
+* [Updated URL @ src](https://github.com/nomadcoders/movie_app/commit/33f4c4029c714a37c1226ffd4298283191eb87a5)
+* [Updating Movie @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/196217c3322ad7648cede13b5e1571f7d5b89155)
 
 ----
 
@@ -851,7 +885,7 @@ minus.addEventListener("click", handleMinus);
 
 Redux 를 이용하여 간단한 To Do list 를 구현해 본다.
 
-* [Vanilla-redux To Do List by nomad coders](https://github.com/nomadcoders/vanilla-redux/blob/794f2a3eb7d169de7ca240b163e481a22653f7bd/src/index.js)
+* [Vanilla-redux To Do List by nomad coders @ src](https://github.com/nomadcoders/vanilla-redux/blob/794f2a3eb7d169de7ca240b163e481a22653f7bd/src/index.js)
 
 ```js
 import { createStore } from "redux";
@@ -933,7 +967,7 @@ form.addEventListener("submit", onSubmit);
 
 앞서 제작한 To Do List App 을 React Redux 를 사용하여 더욱 효율적으로 구현해보자.
 
-* [Vanilla-redux react-redux by nomad coders](https://github.com/nomadcoders/vanilla-redux/tree/ccaa1acd081f27239f2cc8ad3c571bd0a9923f73/src)
+* [Vanilla-redux react-redux by nomad coders @ src](https://github.com/nomadcoders/vanilla-redux/tree/ccaa1acd081f27239f2cc8ad3c571bd0a9923f73/src)
 
 React-Router 는 url path 에 따라 routing 기능을 지원하는 library 이다. url `/` 은 `Home` component, `/:id` 는 `Detail` component 로 routing 된다.
 
