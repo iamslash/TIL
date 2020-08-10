@@ -28,6 +28,7 @@
 - [Advanced](#advanced)
   - [How to debug Jenkins Pipeline Script](#how-to-debug-jenkins-pipeline-script)
   - [Password injection](#password-injection)
+  - [Job Scheduling](#job-scheduling)
 
 ----
 
@@ -740,3 +741,26 @@ For an example, Make a secret-text credential and import in xxecute shell block.
 set +x
 echo "My secret is $IAMSLASH_SECRET"
 ```
+
+## Job Scheduling
+
+* [Jenkins 빌드 스케쥴 설정하기](https://khie74.tistory.com/1169521477)
+
+----
+
+* `0 * * * * `
+  * 매시각
+* `H * * * *`
+  * 한시간 간격. Jenkins 가 시간을 정해서 한시간 간격을 보장한다.    
+* `H H * * *`
+  * 하루 간격
+* `H/20 * * * *`
+  * 20 분 간격    
+* `00 23 * * 0`
+  * 일요일 밤 23 시    
+* `H(0-29)/10 * * * *`
+  * 매 시간 전반 30 분에 10 분 간격. 범위와 간격을 동시에 정한다.
+* `H 9-16/2 * * 1-5`
+  * 월요일부터 금요일까지 오전 9시 부터 오후 4시 까지 2 시간 간격
+* `H H 1,15 1-11 *`
+  * 1 월 부터 11 월까지 각 월의 1 일과 15 일 하루 한번    
