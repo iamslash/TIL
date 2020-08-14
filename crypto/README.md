@@ -1,9 +1,10 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [대칭키 암호화 (Symmetric-key algorithm)](#%eb%8c%80%ec%b9%ad%ed%82%a4-%ec%95%94%ed%98%b8%ed%99%94-symmetric-key-algorithm)
-- [비대칭키 암호화 (Asymmetric-key algorithm)](#%eb%b9%84%eb%8c%80%ec%b9%ad%ed%82%a4-%ec%95%94%ed%98%b8%ed%99%94-asymmetric-key-algorithm)
+- [대칭키 암호화 (Symmetric-key algorithm)](#대칭키-암호화-symmetric-key-algorithm)
+- [비대칭키 암호화 (Asymmetric-key algorithm)](#비대칭키-암호화-asymmetric-key-algorithm)
 - [RSA](#rsa)
-- [인증서](#%ec%9d%b8%ec%a6%9d%ec%84%9c)
+- [인증서](#인증서)
+- [인증서 병합하기](#인증서-병합하기)
 - [Digital Signing](#digital-signing)
 - [How to save password safely](#how-to-save-password-safely)
 
@@ -132,6 +133,39 @@ https://wiki.kldp.org/HOWTO/html/SSL-Certificates-HOWTO/x70.html
 다음은 크롬브라우저에서 구글에 접속했을 때 사용한 인증서이다.
 
 ![](certificate_sample.png)
+
+# 인증서 병합하기
+
+* [SSL 인증서 합치기](https://garyj.tistory.com/8)
+
+----
+
+domain 인증서 `domain.crt` 와 root 인증서 `root_ca.crt` 가 있을 때 
+다음과 같은 방법으로 병합한다.
+
+```bash
+$ cat domain.crt > my.crt
+$ cat root_ca.crt >> my.crt
+```
+
+my.crt 의 내용은 domain.crt, root_ca.crt 의 순서대로
+합쳐있다. 다음과 같이 검증한다.
+
+```bash
+$ openssl verify -verbose -purpose sslserver -CAfile root_ca.crt my.crt
+```
+
+다음과 같이 인증서 만료일을 확인할 수 있다.
+
+```bash
+$ openssl x509 -in domain.crt -noout -dates
+```
+
+인증서 변경이 정상적으로 적용되었는지 확인할 수 있다.
+
+```bash
+$ openssl s_client -connect www.iamslash.com:443 | openssl x509 -noout -dates
+```
 
 # Digital Signing
 
