@@ -6,6 +6,7 @@
   - [Select](#select)
   - [Select Distinct](#select-distinct)
   - [Select subquery](#select-subquery)
+  - [WITH](#with)
   - [Where](#where)
   - [And, Or, Not](#and-or-not)
   - [Order By](#order-by)
@@ -219,6 +220,25 @@ HAVING
     ORDER BY COUNT(project_id) DESC
     LIMIT 1
   )
+```
+
+## WITH
+
+subquery 를 특정 table 에 할당한다. 이후 여러군데서
+그 table 을 이용할 수 있다. CTE (common table expressions)
+라고도 한다.
+
+* [Difference between WITH clause and subquery?](https://stackoverflow.com/questions/30078464/difference-between-with-clause-and-subquery)
+
+The WITH query_name clause lets you assign a name to a subquery block. You can then reference the subquery block multiple places in the query by specifying query_name. Oracle Database optimizes the query by treating the query name as either an inline view or as a temporary table.
+
+```sql
+WITH max_budget (value) 
+  AS (SELECT max(budget) 
+        FROM department) 
+SELECT dept_name 
+  FROM department, max_budget 
+ WHERE department.budget = max_budget.value;
 ```
 
 ## Where
