@@ -56,6 +56,7 @@
   - [Views](#views)
   - [CASE](#case)
   - [Session Variables](#session-variables)
+  - [ROW_NUMBER() OVER()](#row_number-over)
   - [Functions (MySQL)](#functions-mysql)
   - [Operators](#operators)
   - [Data Types (MySQL)](#data-types-mysql)
@@ -1148,6 +1149,44 @@ You can store a value in a user-defined variable in one statement and refer to i
 ```sql
 SET @var1 = 1
 SELECT @var2 := 2
+```
+
+## ROW_NUMBER() OVER()
+
+* [ROW_NUMBER() over_clause](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_row-number)
+* [12.21.2 Window Function Concepts and Syntax](https://dev.mysql.com/doc/refman/8.0/en/window-functions-usage.html)
+
+줄 번호를 부여한 컬럼을 제작한다.
+
+```sql
+
+mysql> SELECT
+         year, country, product, profit,
+         ROW_NUMBER() OVER() AS row_num
+       FROM sales;
+
+mysql> SELECT
+         year, country, product, profit,
+         ROW_NUMBER() OVER(PARTITION BY country) AS row_num1,
+         ROW_NUMBER() OVER(PARTITION BY country ORDER BY year, product) AS row_num2
+       FROM sales;
++------+---------+------------+--------+----------+----------+
+| year | country | product    | profit | row_num1 | row_num2 |
++------+---------+------------+--------+----------+----------+
+| 2000 | Finland | Computer   |   1500 |        2 |        1 |
+| 2000 | Finland | Phone      |    100 |        1 |        2 |
+| 2001 | Finland | Phone      |     10 |        3 |        3 |
+| 2000 | India   | Calculator |     75 |        2 |        1 |
+| 2000 | India   | Calculator |     75 |        3 |        2 |
+| 2000 | India   | Computer   |   1200 |        1 |        3 |
+| 2000 | USA     | Calculator |     75 |        5 |        1 |
+| 2000 | USA     | Computer   |   1500 |        4 |        2 |
+| 2001 | USA     | Calculator |     50 |        2 |        3 |
+| 2001 | USA     | Computer   |   1500 |        3 |        4 |
+| 2001 | USA     | Computer   |   1200 |        7 |        5 |
+| 2001 | USA     | TV         |    150 |        1 |        6 |
+| 2001 | USA     | TV         |    100 |        6 |        7 |
++------+---------+------------+--------+----------+----------+
 ```
 
 ## Functions (MySQL)
