@@ -19,13 +19,13 @@
   - [Pipeline as a code](#pipeline-as-a-code)
   - [Declaritive pipeline](#declaritive-pipeline)
   - [Scripted pipeline](#scripted-pipeline)
-- [How to make a Jenkins-plugin](#how-to-make-a-jenkins-plugin)
-- [Script Console](#script-console)
-- [How to backup and install plugins](#how-to-backup-and-install-plugins)
-  - [How to backup](#how-to-backup)
-  - [How to install](#how-to-install)
-- [Jenkins with Docker](#jenkins-with-docker)
 - [Advanced](#advanced)
+  - [How to make a Jenkins-plugin](#how-to-make-a-jenkins-plugin)
+  - [Script Console](#script-console)
+  - [How to backup and install plugins](#how-to-backup-and-install-plugins)
+    - [How to backup](#how-to-backup)
+    - [How to install](#how-to-install)
+  - [Jenkins with Docker](#jenkins-with-docker)
   - [How to debug Jenkins Pipeline Script](#how-to-debug-jenkins-pipeline-script)
   - [Password injection](#password-injection)
   - [Job Scheduling](#job-scheduling)
@@ -427,8 +427,9 @@ node {
     archiveArtifacts artifacts: 'output/*.txt', excludes: 'output/*.md'
 }
 ```
+# Advanced
 
-# How to make a Jenkins-plugin
+## How to make a Jenkins-plugin
 
 * [IntelliJ setup for Jenkins Plugin Development](https://medium.com/@baymac/setting-up-intellij-idea-for-jenkins-plugin-development-66a074bbe4a9)
 
@@ -482,7 +483,7 @@ $ cd <artiface-id>
 $ idea pom.xml
 ```
 
-* Add run/debug configuration
+* Install, run/debug plugin
 
 ```bash
 $ mvn install
@@ -502,7 +503,7 @@ $ idea pom.xml
   * Stapler
   * Jenkins Control Plugin
 
-# Script Console
+## Script Console
 
 * [Jenkins World 2017: Mastering the Jenkins Script Console](https://www.youtube.com/watch?v=qaUPESDcsGg)
 * [Jenkins Area Meetup - Hacking on Jenkins Internals - Jenkins Script Console](https://www.youtube.com/watch?v=T1x2kCGRY1w)
@@ -568,9 +569,9 @@ job.nextBuildNumber = 1
 job.save()
 ```
 
-# How to backup and install plugins
+## How to backup and install plugins
 
-## How to backup
+### How to backup
 
 save plugin names into plugins.txt. don't need to add version because want to install latest versions.
 
@@ -604,7 +605,7 @@ workflow-api
 ...
 ```
 
-## How to install
+### How to install
 
 install plugins using `/usr/local/bin/install-plugins.sh`.
 
@@ -616,7 +617,7 @@ RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
 ...
 ```
 
-# Jenkins with Docker
+## Jenkins with Docker
 
 * [Jenkins Building Docker Image and Sending to Registry](https://medium.com/@gustavo.guss/jenkins-building-docker-image-and-sending-to-registry-64b84ea45ee9)
 * [Using Docker with Pipeline](https://jenkins.io/doc/book/pipeline/docker/)
@@ -674,8 +675,6 @@ pipeline {
   }
 }
 ```
-
-# Advanced
 
 ## How to debug Jenkins Pipeline Script 
 
