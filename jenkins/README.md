@@ -432,6 +432,7 @@ node {
 ## How to make a Jenkins-plugin
 
 * [IntelliJ setup for Jenkins Plugin Development](https://medium.com/@baymac/setting-up-intellij-idea-for-jenkins-plugin-development-66a074bbe4a9)
+* [Writing a Jenkins Plugin @ baeldung](https://www.baeldung.com/jenkins-custom-plugin)
 
 ----
 
