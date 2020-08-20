@@ -1,18 +1,21 @@
 - [Materials](#materials)
 - [Basic](#basic)
-	- [Concept](#concept)
-	- [Simple Spring Batch](#simple-spring-batch)
-	- [Simple Spring Batch with mysql](#simple-spring-batch-with-mysql)
-	- [Spring Batch Meta Data](#spring-batch-meta-data)
-	- [Run specific Job, next, on, from, decide](#run-specific-job-next-on-from-decide)
-	- [JobScope, StepScope](#jobscope-stepscope)
-	- [Program Arguments vs Job Parameters](#program-arguments-vs-job-parameters)
-	- [ChunkOrientedTasklet](#chunkorientedtasklet)
+  - [Concept](#concept)
+  - [Simple Spring Batch](#simple-spring-batch)
+  - [Simple Spring Batch with mysql](#simple-spring-batch-with-mysql)
+  - [Spring Batch Meta Data](#spring-batch-meta-data)
+  - [Run specific Job, next, on, from, decide](#run-specific-job-next-on-from-decide)
+  - [JobScope, StepScope](#jobscope-stepscope)
+  - [Program Arguments vs Job Parameters](#program-arguments-vs-job-parameters)
+  - [ChunkOrientedTasklet](#chunkorientedtasklet)
 
 ----
 
 # Materials
 
+* [Spring Batch – Tasklets vs Chunks](https://www.baeldung.com/spring-batch-tasklet-chunk)
+  * [src](https://github.com/eugenp/tutorials/tree/master/spring-batch)
+* [Spring Batch - Reference Documentation](https://docs.spring.io/spring-batch/docs/current/reference/html/index.html)
 * Jojoldu Spring Batch Guide
   * [src](https://github.com/jojoldu/spring-batch-in-action)
   * [1. Spring Batch 가이드 - 배치 어플리케이션이란?](https://jojoldu.tistory.com/324?category=902551)
@@ -37,13 +40,11 @@
   * [Spring Batch 관리 도구로서의 Jenkins](https://jojoldu.tistory.com/489?category=902551)
   * [JobParameter 활용 방법 (feat. LocalDate 파라미터 사용하기)](https://jojoldu.tistory.com/490?category=902551)
 
-* [Spring Batch - Reference Documentation](https://docs.spring.io/spring-batch/docs/current/reference/html/index.html)
-
 # Basic
 
 ## Concept
 
-Spring batch 는 job 과 step 으로 구성된다. 하나의 job 은 여러 step 들로 구성된다. 하나의 step 은 여러 tasklet 으로 구성된다. 특히 ChuckOrientedTasklet 은 chuck 단위로 처리하고 ItemReader, ItemWriter, ItemProcessor 로 구성된다. 이때 ItemProcessor 는 생략할 수 있다.
+Spring batch 는 job 과 step 으로 구성된다. 하나의 job 은 여러 step 들로 구성된다. 하나의 step 은 여러 tasklet 으로 구성된다. 특히 ChuckOrientedTasklet 은 chunk 단위로 처리하고 ItemReader, ItemWriter, ItemProcessor 로 구성된다. 이때 ItemProcessor 는 생략할 수 있다.
 
 ![](img/spring-batch-reference-model.png)
 
