@@ -419,6 +419,9 @@ Service Mesh 는 MSA 를 위한 기술중 하나이다. network 부분을 담당
   * Document store
   * Wide solumn store
   * Graph database
+* Schema Design
+  * Document DB (embedded data model, normalized data model)
+    * Schema Design in MongoDB vs Schema Design in MySQL](https://www.percona.com/blog/2013/08/01/schema-design-in-mongodb-vs-schema-design-in-mysql/)
 
 ## Cache
 

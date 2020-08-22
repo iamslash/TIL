@@ -96,10 +96,14 @@ $ mongo
 
 ## Data Models
 
+* Schema Design in MongoDB vs Schema Design in MySQL](https://www.percona.com/blog/2013/08/01/schema-design-in-mongodb-vs-schema-design-in-mysql/)
+
+----
+
 - mongodb는 기본적으로 schemaless하다. 하지만 validator를 이용해서
   document의 schema를 검사 할 수 있다.
 - mongodb는 기본적으로 embedded data model과 normalized data model등
-  두가지 data model을 갖는다. embedded ddata model은 특정 document에서
+  두가지 data model을 갖는다. embedded data model은 특정 document에서
   다른 document를 내부에서 소유하는 것이고 normlized data model은 다른
   document의 _id만 소유하는 것이다.
 
