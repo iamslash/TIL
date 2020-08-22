@@ -57,96 +57,96 @@ microservices 의 대표적인 implementation 중 Spring Cloud 와 Kubernetes �
 
 ## Application architecture patterns
 
-Monolithic architecture
-Microservice architecture
+* Monolithic architecture
+* Microservice architecture
 
 ## Decomposition
 
-Decompose by business capability
-Decompose by subdomain
-Self-contained Service
-Service per team
+* Decompose by business capability
+* Decompose by subdomain
+* Self-contained Service
+* Service per team
 
 ## Refactoring to microservices
 
-Strangler Application
-Anti-corruption layer
+* Strangler Application
+* Anti-corruption layer
 
 ## Data management
 
-Database per Service
-Shared database
-Saga
-API Composition
-CQRS
-Domain event
-Event sourcing
+* Database per Service
+* Shared database
+* Saga
+* API Composition
+* CQRS
+* Domain event
+* Event sourcing
 
 ## Transactional messaging
 
-Transactional outbox
-Transaction log tailing
-Polling publisher
+* Transactional outbox
+* Transaction log tailing
+* Polling publisher
 
 ## Testing
 
-Service Component Test
-Consumer-driven contract test
-Consumer-side contract test
+* Service Component Test
+* Consumer-driven contract test
+* Consumer-side contract test
 
 ## Deployment patterns
 
-Multiple service instances per host
-Service instance per host
-Service instance per VM
-Service instance per Container
-Serverless deployment
-Service deployment platform
+* Multiple service instances per host
+* Service instance per host
+* Service instance per VM
+* Service instance per Container
+* Serverless deployment
+* Service deployment platform
 
 ## Cross cutting concerns
 
-Microservice chassis
-Externalized configuration
+* Microservice chassis
+* Externalized configuration
 
 ## Communication style
 
-Remote Procedure Invocation
-Messaging
-Domain-specific protocol
-Idempotent Consumer
+* Remote Procedure Invocation
+* Messaging
+* Domain-specific protocol
+* Idempotent Consumer
 
 ## External API
 
-API gateway
-Backend for front-end
+* API gateway
+* Backend for front-end
 
 ## Service discovery
 
-Client-side discovery
-Server-side discovery
-Service registry
-Self registration
-3rd party registration
+* Client-side discovery
+* Server-side discovery
+* Service registry
+* Self registration
+* 3rd party registration
 
 ## Reliability
 
-Circuit Breaker
+* Circuit Breaker
 
 ## Security
 
-Access Token
+* Access Token
 
 ## Observability
 
-Log aggregation
-Application metrics
-Audit logging
-Distributed tracing
-Exception tracking
-Health check API
-Log deployments and changes
+* Log aggregation
+* Application metrics
+* Audit logging
+* Distributed tracing
+* Exception tracking
+* Health check API
+* Log deployments and changes
 
 ## UI patterns
 
-Server-side page fragment composition
-Client-side UI composition
+* Server-side page fragment composition
+* Client-side UI composition
