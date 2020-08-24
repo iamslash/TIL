@@ -7,6 +7,7 @@
   - [Select Distinct](#select-distinct)
   - [Select subquery](#select-subquery)
   - [WITH](#with)
+  - [RANK](#rank)
   - [Where](#where)
   - [And, Or, Not](#and-or-not)
   - [Order By](#order-by)
@@ -242,6 +243,144 @@ SELECT dept_name
  WHERE department.budget = max_budget.value;
 ```
 
+## RANK
+
+* [MySQL RANK Function](https://www.mysqltutorial.org/mysql-window-functions/mysql-rank-function/)
+
+-----
+
+This is syntax of `RANK()`
+
+```sql
+RANK() OVER (
+    PARTITION BY <expression>[{,<expression>...}]
+    ORDER BY <expression> [ASC|DESC], [{,<expression>...}]
+)
+```
+
+This is a schema of table `t`.
+
+```sql
+CREATE TABLE t (
+    val INT
+);
+
+INSERT INTO t(val)
+VALUES(1),(2),(2),(3),(4),(4),(5);
+
+SELECT * FROM t;
+```
+
+This is a simple example of `RANK()`.
+
+```sql
+SELECT
+    val,
+    RANK() OVER (
+        ORDER BY val
+    ) my_rank
+FROM
+    t;
+```
+
+| val | my_rank |
+| --- | ------- |
+| 1   | 1       |
+| 2   | 2       |
+| 2   | 2       |
+| 3   | 4       |
+| 4   | 5       |
+| 4   | 5       |
+| 5   | 7       |
+
+This is a schema of table `sales`.
+
+```sql
+CREATE TABLE IF NOT EXISTS sales(
+    sales_employee VARCHAR(50) NOT NULL,
+    fiscal_year INT NOT NULL,
+    sale DECIMAL(14,2) NOT NULL,
+    PRIMARY KEY(sales_employee,fiscal_year)
+);
+ 
+INSERT INTO sales(sales_employee,fiscal_year,sale)
+VALUES('Bob',2016,100),
+      ('Bob',2017,150),
+      ('Bob',2018,200),
+      ('Alice',2016,150),
+      ('Alice',2017,100),
+      ('Alice',2018,200),
+       ('John',2016,200),
+      ('John',2017,150),
+      ('John',2018,250);
+ 
+SELECT * FROM sales;
+```
+
+| sales_employee | fiscal_year | sale |
+| -------------- | ----------- | ---- |
+| Bob            | 2016        | 100  |
+| Bob            | 2017        | 150  |
+| Bob            | 2018        | 200  |
+| Alice          | 2016        | 150  |
+| Alice          | 2017        | 200  |
+| Alice          | 2018        | 200  |
+| John           | 2016        | 200  |
+| John           | 2017        | 150  |
+| John           | 2018        | 250  |
+
+You can select ranks partitioned by fiscal_year.
+
+```sql
+SELECT
+    sales_employee,
+    fiscal_year,
+    sale,
+    RANK() OVER (PARTITION BY
+                     fiscal_year
+                 ORDER BY
+                     sale DESC
+                ) sales_rank
+FROM
+    sales;
+```
+
+You can use CTE (Common Table Expression) with `RANK()`.
+
+```sql
+WITH order_values AS(
+    SELECT 
+        orderNumber, 
+        YEAR(orderDate) order_year,
+        quantityOrdered*priceEach AS order_value,
+        RANK() OVER (
+            PARTITION BY YEAR(orderDate)
+            ORDER BY quantityOrdered*priceEach DESC
+        ) order_value_rank
+    FROM
+        orders
+    INNER JOIN orderDetails USING (orderNumber)
+)
+SELECT 
+    * 
+FROM 
+    order_values
+WHERE 
+    order_value_rank <=3;
+```
+
+| orderNumber | order_year | order_value | order_value_rank |
+| ----------- | ---------- | ----------- | ---------------- |
+| 10196       | 2003       | 9571.08     | 1                |
+| 10206       | 2003       | 9568.73     | 2                |
+| 10201       | 2003       | 9394.28     | 3                |
+| 10312       | 2004       | 10286.40    | 1                |
+| 10348       | 2004       | 9974.40     | 2                |
+| 10304       | 2004       | 9467.68     | 3                |
+| 10403       | 2005       | 11503.14    | 1                |
+| 10405       | 2005       | 11170.52    | 2                |
+| 10407       | 2005       | 10723.60    | 3                |
+
 ## Where
 
 ```sql
@@ -251,17 +390,17 @@ SELECT * FROM Customers
   WHERE CustomerID=1;
 ```
 
-| Operator | Description                                      |
-|:--------:|:------------------------------------------------:|
-| =        | Equal                                            |
-| <>       | Not Equal                                        |
-| >        | Greater than                                     |
-| <        | Less than                                        |
-| >=       | Greater than or equal                            |
-| <=       | Less than or equal                               |
-| BETWEEN  | Between an inclusive range                       |
-| LIKE     | Search for a pattern                             |
-| IN       | To specify multiple possible values for a column |
+| Operator |                   Description                    |
+| :------: | :----------------------------------------------: |
+|    =     |                      Equal                       |
+|    <>    |                    Not Equal                     |
+|    >     |                   Greater than                   |
+|    <     |                    Less than                     |
+|    >=    |              Greater than or equal               |
+|    <=    |                Less than or equal                |
+| BETWEEN  |            Between an inclusive range            |
+|   LIKE   |               Search for a pattern               |
+|    IN    | To specify multiple possible values for a column |
 
 ## And, Or, Not
 
@@ -2219,59 +2358,59 @@ mysql> SELECT VERSION();
 * Arithmetic
 
 | Operator | Description |
-|:--------:|:-----------:|
-| +        | Add         |
-| -        | Sub         |
-| *        | Mul         |
-| /        | Div         |
-| %        | Modulo      |
+| :------: | :---------: |
+|    +     |     Add     |
+|    -     |     Sub     |
+|    *     |     Mul     |
+|    /     |     Div     |
+|    %     |   Modulo    |
 
 * Bitwise
 
 | Operator | Description |
-|:--------:|:-----------:|
-| &        | AND         |
-|          | OR          |
-| ^        | XOR         |
+| :------: | :---------: |
+|    &     |     AND     |
+|          |     OR      |
+|    ^     |     XOR     |
 
 * Comparison
 
-| Operator | Description           |
-|:--------:|:---------------------:|
-| =        | Equal                 |
-| <>       | Not Equal             |
-| >        | Greater than          |
-| <        | Less than             |
-| >=       | Greater than or equal |
-| <=       | Less than or equal    |
+| Operator |      Description      |
+| :------: | :-------------------: |
+|    =     |         Equal         |
+|    <>    |       Not Equal       |
+|    >     |     Greater than      |
+|    <     |       Less than       |
+|    >=    | Greater than or equal |
+|    <=    |  Less than or equal   |
 
 * Compound
 
-| Operator | Description    |
-|:--------:|:--------------:|
-| +=       | Add equals     |
-| -=       | Sub equals     |
-| *=       | multiply equal |
-| /=       | div equal      |
-| %=       | modulo equal   |
-| &=       | AND equal      |
-| ^-=      | XOR equal      |
-|          | OR equal       |
+| Operator |  Description   |
+| :------: | :------------: |
+|    +=    |   Add equals   |
+|    -=    |   Sub equals   |
+|    *=    | multiply equal |
+|    /=    |   div equal    |
+|    %=    |  modulo equal  |
+|    &=    |   AND equal    |
+|   ^-=    |   XOR equal    |
+|          |    OR equal    |
 
 * Logical
 
-| Operator | Description                                                  |
-|:--------:|:------------------------------------------------------------:|
-| ALL      | TRUE if all of the subquery values meet the condition        |
-| AND      | TRUE if all the conditions separated by AND is TRUE          |
-| ANY      | TRUE if any of the subquery values meet the condition        |
-| BETWEEN  | TRUE if the operand is within the range of comparisons       |
-| EXISTS   | TRUE if the subquery returns one or more records             |
-| IN       | TRUE if the operand is equal to one of a list of expressions |
-| LIKE     | TRUE if the operand matches a pattern                        |
-| NOT      | Displays a record if the condition(s) is NOT TRUE            |
-| OR       | TRUE if any of the conditions separated by OR is TRUE        |
-| SOME     | TRUE if any of the subquery values meet the condition        |
+| Operator |                         Description                          |
+| :------: | :----------------------------------------------------------: |
+|   ALL    |    TRUE if all of the subquery values meet the condition     |
+|   AND    |     TRUE if all the conditions separated by AND is TRUE      |
+|   ANY    |    TRUE if any of the subquery values meet the condition     |
+| BETWEEN  |    TRUE if the operand is within the range of comparisons    |
+|  EXISTS  |       TRUE if the subquery returns one or more records       |
+|    IN    | TRUE if the operand is equal to one of a list of expressions |
+|   LIKE   |            TRUE if the operand matches a pattern             |
+|   NOT    |      Displays a record if the condition(s) is NOT TRUE       |
+|    OR    |    TRUE if any of the conditions separated by OR is TRUE     |
+|   SOME   |    TRUE if any of the subquery values meet the condition     |
 
 ## Data Types (MySQL)
 
@@ -2279,32 +2418,32 @@ mysql> SELECT VERSION();
 
 ### Text
 
-| Data type                   | storage                                                                                                                     | Description                                                                                                                                                                                                                                                                                        |
-|:---------------------------:|:---------------------------------------------------------------------------------------------------------------------------:|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| CHAR(M)                     | M × w bytes, 0 <= M <= 255, where w is the number of bytes required for the maximum-length character in the character set. | Holds a fixed length string (can contain letters, numbers, and special characters). The fixed size is specified in parenthesis. Can store up to 255 characters                                                                                                                                     |
-| VARCHAR(M)                  | L + 1 bytes if column values require 0 − 255 bytes, L + 2 bytes if values may require more than 255 bytes1                  | Holds a variable length string (can contain letters, numbers, and special characters). The maximum size is specified in parenthesis. Can store up to 255 characters. Note: If you put a greater value than 255 it will be converted to a TEXT type                                                 |
-| TINYTEXT                    | L + 1 bytes, where L < 2^8                                                                                                  | Holds a string with a maximum length of 255 characters                                                                                                                                                                                                                                             |
-| TEXT                        | L + 2 bytes, where L < 2^16                                                                                                 | Holds a string with a maximum length of 65,535 characters                                                                                                                                                                                                                                          |
-| BLOB                        | L + 2 bytes, where L < 2^16                                                                                                 | For BLOBs (Binary Large OBjects). Holds up to 65,535 bytes of data                                                                                                                                                                                                                                 |
-| MEDIUMTEXT                  | L + 3 bytes, where L < 2^24                                                                                                 | Holds a string with a maximum length of 16,777,215 characters                                                                                                                                                                                                                                      |
-| MEDIUMBLOB                  | L + 3 bytes, where L < 2^24                                                                                                 | For BLOBs (Binary Large OBjects). Holds up to 16,777,215 bytes of data                                                                                                                                                                                                                             |
-| LONGTEXT                    | L + 4 bytes, where L < 2^32                                                                                                 | Holds a string with a maximum length of 4,294,967,295 characters                                                                                                                                                                                                                                   |
-| LONGBLOB                    | L + 4 bytes, where L < 2^32                                                                                                 | For BLOBs (Binary Large OBjects). Holds up to 4,294,967,295 bytes of data                                                                                                                                                                                                                          |
-| ENUM('value1','value2',...) | 1 or 2 bytes, depending on the number of enumeration values (65,535 values maximum)                                         | Let you enter a list of possible values. You can list up to 65535 values in an ENUM list. If a value is inserted that is not in the list, a blank value will be inserted. Note: The values are sorted in the order you enter them. You enter the possible values in this format: ENUM('X','Y','Z') |
-| SET('value1','value2',...)  | 1, 2, 3, 4, or 8 bytes, depending on the number of set members (64 members maximum)                                         | Similar to ENUM except that SET may contain up to 64 list items and can store more than one choice                                                                                                                                                                                                 |
+|          Data type          |                                                          storage                                                           |                                                                                                                                            Description                                                                                                                                             |
+| :-------------------------: | :------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|           CHAR(M)           | M × w bytes, 0 <= M <= 255, where w is the number of bytes required for the maximum-length character in the character set. |                                                                   Holds a fixed length string (can contain letters, numbers, and special characters). The fixed size is specified in parenthesis. Can store up to 255 characters                                                                   |
+|         VARCHAR(M)          |         L + 1 bytes if column values require 0 − 255 bytes, L + 2 bytes if values may require more than 255 bytes1         |                         Holds a variable length string (can contain letters, numbers, and special characters). The maximum size is specified in parenthesis. Can store up to 255 characters. Note: If you put a greater value than 255 it will be converted to a TEXT type                         |
+|          TINYTEXT           |                                                 L + 1 bytes, where L < 2^8                                                 |                                                                                                                       Holds a string with a maximum length of 255 characters                                                                                                                       |
+|            TEXT             |                                                L + 2 bytes, where L < 2^16                                                 |                                                                                                                     Holds a string with a maximum length of 65,535 characters                                                                                                                      |
+|            BLOB             |                                                L + 2 bytes, where L < 2^16                                                 |                                                                                                                 For BLOBs (Binary Large OBjects). Holds up to 65,535 bytes of data                                                                                                                 |
+|         MEDIUMTEXT          |                                                L + 3 bytes, where L < 2^24                                                 |                                                                                                                   Holds a string with a maximum length of 16,777,215 characters                                                                                                                    |
+|         MEDIUMBLOB          |                                                L + 3 bytes, where L < 2^24                                                 |                                                                                                               For BLOBs (Binary Large OBjects). Holds up to 16,777,215 bytes of data                                                                                                               |
+|          LONGTEXT           |                                                L + 4 bytes, where L < 2^32                                                 |                                                                                                                  Holds a string with a maximum length of 4,294,967,295 characters                                                                                                                  |
+|          LONGBLOB           |                                                L + 4 bytes, where L < 2^32                                                 |                                                                                                             For BLOBs (Binary Large OBjects). Holds up to 4,294,967,295 bytes of data                                                                                                              |
+| ENUM('value1','value2',...) |                    1 or 2 bytes, depending on the number of enumeration values (65,535 values maximum)                     | Let you enter a list of possible values. You can list up to 65535 values in an ENUM list. If a value is inserted that is not in the list, a blank value will be inserted. Note: The values are sorted in the order you enter them. You enter the possible values in this format: ENUM('X','Y','Z') |
+| SET('value1','value2',...)  |                    1, 2, 3, 4, or 8 bytes, depending on the number of set members (64 members maximum)                     |                                                                                                 Similar to ENUM except that SET may contain up to 64 list items and can store more than one choice                                                                                                 |
 
 ### Number
 
-| Data type    | storage                                           | Description                                                                                                                                                                                                                           |
-|:------------:|:-------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| TINYINT(M)   | 1                                                 | -128 to 127 normal. 0 to 255 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                                                                                                   |
-| SMALLINT(M)  | 2                                                 | -32768 to 32767 normal. 0 to 65535 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                                                                                             |
-| MEDIUMINT(M) | 3                                                 | -8388608 to 8388607 normal. 0 to 16777215 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                                                                                      |
-| INT(M)       | 4                                                 | -2147483648 to 2147483647 normal. 0 to 4294967295 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                                                                              |
-| BIGIINT(M)   | 8                                                 | -9223372036854775808 to 9223372036854775807 normal. 0 to 18446744073709551615 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                                                  |
-| FLOAT(M,d)   | 4 bytes if 0 <= p <= 24, 8 bytes if 25 <= p <= 53 | A small number with a floating decimal point. The maximum number of digits may be specified in the size parameter. The maximum number of digits to the right of the decimal point is specified in the d parameter                     |
-| DOUBLE(M,d)  | 8                                                 | A large number with a floating decimal point. The maximum number of digits may be specified in the size parameter. The maximum number of digits to the right of the decimal point is specified in the d parameter                     |
-| DECIMAL(M,d) | total M digits, fraction d digits                 | A DOUBLE stored as a string , allowing for a fixed decimal point. The maximum number of digits may be specified in the size parameter. The maximum number of digits to the right of the decimal point is specified in the d parameter |
+|  Data type   |                      storage                      |                                                                                                              Description                                                                                                              |
+| :----------: | :-----------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|  TINYINT(M)  |                         1                         |                                                                  -128 to 127 normal. 0 to 255 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                                  |
+| SMALLINT(M)  |                         2                         |                                                               -32768 to 32767 normal. 0 to 65535 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                               |
+| MEDIUMINT(M) |                         3                         |                                                           -8388608 to 8388607 normal. 0 to 16777215 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                            |
+|    INT(M)    |                         4                         |                                                       -2147483648 to 2147483647 normal. 0 to 4294967295 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                        |
+|  BIGIINT(M)  |                         8                         |                                         -9223372036854775808 to 9223372036854775807 normal. 0 to 18446744073709551615 UNSIGNED. The maximum number of digits may be specified in parenthesis                                          |
+|  FLOAT(M,d)  | 4 bytes if 0 <= p <= 24, 8 bytes if 25 <= p <= 53 |           A small number with a floating decimal point. The maximum number of digits may be specified in the size parameter. The maximum number of digits to the right of the decimal point is specified in the d parameter           |
+| DOUBLE(M,d)  |                         8                         |           A large number with a floating decimal point. The maximum number of digits may be specified in the size parameter. The maximum number of digits to the right of the decimal point is specified in the d parameter           |
+| DECIMAL(M,d) |         total M digits, fraction d digits         | A DOUBLE stored as a string , allowing for a fixed decimal point. The maximum number of digits may be specified in the size parameter. The maximum number of digits to the right of the decimal point is specified in the d parameter |
 
 * The integer types have an extra option called UNSIGNED. Normally,
   the integer goes from an negative to positive value. Adding the
@@ -2313,13 +2452,13 @@ mysql> SELECT VERSION();
 
 ### Date
 
-| Data type | storage | Description                                                                                                                                                                                                                         |
-|:---------:|:-------:|:-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| DATE      | 3       | A date. Format: YYYY-MM-DD, The supported range is from '1000-01-01' to '9999-12-31'                                                                                                                                                |
-| DATETIME  | 8       | A date and time combination. Format: YYYY-MM-DD HH:MI:SS, The supported range is from '1000-01-01 00:00:00' to '9999-12-31 23:59:59'                                                                                                |
-| TIMESTAMP | 4       | A timestamp. TIMESTAMP values are stored as the number of seconds since the Unix epoch ('1970-01-01 00:00:00' UTC). Format: YYYY-MM-DD HH:MI:SS, The supported range is from '1970-01-01 00:00:01' UTC to '2038-01-09 03:14:07' UTC |
-| TIME      | 3       | A time. Format: HH:MI:SS, The supported range is from '-838:59:59' to '838:59:59'                                                                                                                                                   |
-| YEAR      | 1       | A year in two-digit or four-digit format., Values allowed in four-digit format: 1901 to 2155. Values allowed in two-digit format: 70 to 69, representing years from 1970 to 2069                                                    |
+| Data type | storage |                                                                                                             Description                                                                                                             |
+| :-------: | :-----: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
+|   DATE    |    3    |                                                                        A date. Format: YYYY-MM-DD, The supported range is from '1000-01-01' to '9999-12-31'                                                                         |
+| DATETIME  |    8    |                                                A date and time combination. Format: YYYY-MM-DD HH:MI:SS, The supported range is from '1000-01-01 00:00:00' to '9999-12-31 23:59:59'                                                 |
+| TIMESTAMP |    4    | A timestamp. TIMESTAMP values are stored as the number of seconds since the Unix epoch ('1970-01-01 00:00:00' UTC). Format: YYYY-MM-DD HH:MI:SS, The supported range is from '1970-01-01 00:00:01' UTC to '2038-01-09 03:14:07' UTC |
+|   TIME    |    3    |                                                                          A time. Format: HH:MI:SS, The supported range is from '-838:59:59' to '838:59:59'                                                                          |
+|   YEAR    |    1    |                          A year in two-digit or four-digit format., Values allowed in four-digit format: 1901 to 2155. Values allowed in two-digit format: 70 to 69, representing years from 1970 to 2069                           |
 
 * Even if DATETIME and TIMESTAMP return the same format, they work
   very differently. In an INSERT or UPDATE query, the TIMESTAMP
@@ -2340,4 +2479,4 @@ mysql> SELECT VERSION();
 * Joins
 * Denormalization
 * Entity-Relationship Diagram
-* Design Grade Database
+* Design Grade Database| | | |
