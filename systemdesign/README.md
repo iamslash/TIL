@@ -18,7 +18,6 @@
   - [Load balancer](#load-balancer)
   - [Reverse proxy](#reverse-proxy)
   - [Application layer](#application-layer)
-    - [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
     - [Service Mesh](#service-mesh)
     - [Service discovery](#service-discovery)
   - [Database](#database)
@@ -47,6 +46,7 @@
 - [Real World Architecture](#real-world-architecture)
 - [Company Architectures](#company-architectures)
 - [company engineering blog](#company-engineering-blog)
+    - [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
 - [Cloud Design Patterns](#cloud-design-patterns)
 - [Cracking The Coding Interview Quiz](#cracking-the-coding-interview-quiz)
 
@@ -351,19 +351,6 @@ nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은
 </p>
 
 서비스의 성격에 따라 layer 를 두면 SPOF (Single Point of Failure) 를 해결할 수 있다.
-
-
-### MSA (Micro Service Architecture)
-
-* [Micro Service Architecture](msa.md)
-
------
-
-하나의 서비스를 느슨하게 연결된 작은 서비스들로 구성하여 구축하는 software development technique 중 하나이다.
-
-모듈화도 되고 여러 팀이 독립적으로 개발할 수도 있다. 그러나 너무 많은 서비스들의 수때문에 많은 프로토콜을 구현해야 하고 유지보수가 용이하지 않다.
-
-[A pattern language for microservices](https://microservices.io/patterns/index.html) 를 참고하여 pattern 들을 파악하자.
 
 ### Service Mesh
 
@@ -843,6 +830,18 @@ total data size : estimated data size = 100 : 70
 * [Yahoo Engineering Blog](http://yahooeng.tumblr.com/)
 * [Yelp Engineering Blog](http://engineeringblog.yelp.com/)
 * [Zynga Engineering Blog](https://www.zynga.com/blogs/engineering)
+
+### MSA (Micro Service Architecture)
+
+* [Micro Service Architecture @ TIL](msa.md)
+
+-----
+
+하나의 서비스를 느슨하게 연결된 작은 서비스들로 구성하여 구축하는 software development technique 중 하나이다.
+
+모듈화도 되고 여러 팀이 독립적으로 개발할 수도 있다. 그러나 너무 많은 서비스들의 수때문에 많은 프로토콜을 구현해야 하고 유지보수가 용이하지 않다.
+
+[A pattern language for microservices](https://microservices.io/patterns/index.html) 를 참고하여 pattern 들을 파악하자.
 
 # Cloud Design Patterns
 
