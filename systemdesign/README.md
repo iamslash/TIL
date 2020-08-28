@@ -46,7 +46,7 @@
 - [Real World Architecture](#real-world-architecture)
 - [Company Architectures](#company-architectures)
 - [company engineering blog](#company-engineering-blog)
-    - [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
+- [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
 - [Cloud Design Patterns](#cloud-design-patterns)
 - [Cracking The Coding Interview Quiz](#cracking-the-coding-interview-quiz)
 
@@ -831,7 +831,7 @@ total data size : estimated data size = 100 : 70
 * [Yelp Engineering Blog](http://engineeringblog.yelp.com/)
 * [Zynga Engineering Blog](https://www.zynga.com/blogs/engineering)
 
-### MSA (Micro Service Architecture)
+# MSA (Micro Service Architecture)
 
 * [Micro Service Architecture @ TIL](msa.md)
 
