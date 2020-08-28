@@ -90,7 +90,7 @@
 * [cracking the coding interview](http://www.crackingthecodinginterview.com/)
 * [Designing Data-Intensive Applications](https://dataintensive.net/)
 - [Azure Cloud Patterns](https://docs.microsoft.com/en-us/azure/architecture/patterns/)
-  - [infographic](https://azure.microsoft.com/en-us/resources/infographics/cloud-design-patterns/)
+  - [infographic](https://techcommunity.microsoft.com/t5/educator-developer-blog/getting-started-with-azure-design-patterns-and-azure-arm-quick/ba-p/378609?lightbox-message-images-378609=94372i2134F7E89D8BF452)
 - [AWS Architect](https://aws.amazon.com/ko/architecture/)
 - [GCP Solutions](https://cloud.google.com/solutions/)
 
