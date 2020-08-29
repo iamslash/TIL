@@ -29,6 +29,7 @@
     - [RPC](#rpc)
     - [REST (REpresentational State Transfer) API](#rest-representational-state-transfer-api)
     - [RPC VS REST](#rpc-vs-rest)
+    - [HTTP 1.x vs HTTP 2.0](#http-1x-vs-http-20)
   - [Security](#security)
     - [WAF (Web Application Fairewall)](#waf-web-application-fairewall)
     - [XSS (Cross Site Scripting)](#xss-cross-site-scripting)
@@ -528,6 +529,17 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 | Add an item to a person’s items | **POST** /addItemToUsersItemsList<br/>{<br/>"personid": "1234";<br/>"itemid": "456"<br/>} | **POST** /persons/1234/items<br/>{<br/>"itemid": "456"<br/>} |
 | Update an item                  | **POST** /modifyItem<br/>{<br/>"itemid": "456";<br/>"key": "value"<br/>}                  | **PUT** /items/456<br/>{<br/>"key": "value"<br/>}            |
 | Delete an item                  | **POST** /removeItem<br/>{<br/>"itemid": "456"<br/>}                                      | **DELETE** /items/456                                        |
+
+### HTTP 1.x vs HTTP 2.0
+
+* [HTTP/2 소개](https://developers.google.com/web/fundamentals/performance/http2/?hl=ko)
+* [HTTP1.1 vs HTTP2.0 차이점 간단히 살펴보기](https://medium.com/@shlee1353/http1-1-vs-http2-0-%EC%B0%A8%EC%9D%B4%EC%A0%90-%EA%B0%84%EB%8B%A8%ED%9E%88-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0-5727b7499b78)
+
+----
+
+HTTP 1.1 은 1999 년에 출시되었다. 하나의 TCP 연결에 하나의 Request, Response 를 처리한다. 속도와 성능 이슈를 가지고 있다. 따라서 HOL (Head of Line) Blocking 특정 응답 지연, RTT (Round Trip Time) 증가, 무거운 Header 구조라는 문제점을 가지고 있었다. 또한 이런 문제들을 해결하기 위해 개발자들은 image sprinte, domain sharding, CSS/JavaScript compression, Data URI 등을 이용하였다.
+
+HTTP 2 는 속도와 성능이 개선되었다. **Multiplexed Streams** (하나의 TCP 연결에 여러개의 Request, Response 처리), **Stream Prioritization** (Request resource 들 간에 의존관계를 설정), **Server Push**, **Header Compression** (Header 를 HPACK 압축) 의 특징을 갖는다.
 
 ## Security
 
