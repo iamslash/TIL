@@ -535,10 +535,13 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 * [나만 모르고 있던 - HTTP/2](https://www.popit.kr/%EB%82%98%EB%A7%8C-%EB%AA%A8%EB%A5%B4%EA%B3%A0-%EC%9E%88%EB%8D%98-http2/)
 * [HTTP/2 소개](https://developers.google.com/web/fundamentals/performance/http2/?hl=ko)
 * [HTTP1.1 vs HTTP2.0 차이점 간단히 살펴보기](https://medium.com/@shlee1353/http1-1-vs-http2-0-%EC%B0%A8%EC%9D%B4%EC%A0%90-%EA%B0%84%EB%8B%A8%ED%9E%88-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0-5727b7499b78)
+* [SPDY는 무엇인가?](https://d2.naver.com/helloworld/140351)
+* [Hypertext Transfer Protocol Version 2 (HTTP/2) @ RFC](https://tools.ietf.org/html/rfc7540)
+* [What is HTTP/2 – The Ultimate Guide](https://kinsta.com/learn/what-is-http2/)
 
 ----
 
-HTTP 1.1 은 1999 년에 출시되었다. 하나의 TCP 연결에 하나의 Request, Response 를 처리한다. 속도와 성능 이슈를 가지고 있다. 따라서 HOL (Head of Line) Blocking 특정 응답 지연, RTT (Round Trip Time) 증가, 무거운 Header 구조라는 문제점을 가지고 있었다. 또한 이런 문제들을 해결하기 위해 개발자들은 image sprinte, domain sharding, CSS/JavaScript compression, Data URI 등을 이용하였다.
+HTTP 1.1 은 1999 년에 출시되었다. 하나의 TCP 연결에 하나의 Request, Response 를 처리한다. 속도와 성능 이슈를 가지고 있다. 따라서 HOL (Head of Line) Blocking - 특정 응답 지연, RTT (Round Trip Time) 증가, 무거운 Header 구조 (Big Cookies) 라는 문제점을 가지고 있었다. 또한 이런 문제들을 해결하기 위해 개발자들은 image sprinte, domain sharding, CSS/JavaScript compression, Data URI 등을 이용하였다. 또한 google 은 SPDY 라는 프로토콜을 만들어서 HTTP 1.1 의 제약사항을 극복하려 했지만 Deprecate 되었다.
 
 HTTP 2 는 속도와 성능이 개선되었다. **Multiplexed Streams** (하나의 TCP 연결에 여러개의 Request, Response 처리), **Stream Prioritization** (Request resource 들 간에 의존관계를 설정), **Server Push**, **Header Compression** (Header 를 HPACK 압축) 의 특징을 갖는다.
 
