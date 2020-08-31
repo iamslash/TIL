@@ -7,6 +7,7 @@
   - [Select Distinct](#select-distinct)
   - [Select subquery](#select-subquery)
   - [WITH](#with)
+  - [Select `Year-Month`](#select-year-month)
   - [RANK](#rank)
   - [Where](#where)
   - [And, Or, Not](#and-or-not)
@@ -241,6 +242,13 @@ WITH max_budget (value)
 SELECT dept_name 
   FROM department, max_budget 
  WHERE department.budget = max_budget.value;
+```
+
+## Select `Year-Month`
+
+```sql
+SELECT LEFT(order_date, 7) AS month 
+FROM Orders;
 ```
 
 ## RANK
