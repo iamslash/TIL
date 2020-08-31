@@ -1,3 +1,15 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Install with docker](#install-with-docker)
+- [Basic](#basic)
+  - [Bin Log](#bin-log)
+- [Advanced](#advanced)
+  - [how to reset password](#how-to-reset-password)
+  - [how to run multiple mysqld instances](#how-to-run-multiple-mysqld-instances)
+  - [XA](#xa)
+
+----
+
 # Abstract
 
 - mysqld 에 대해 적어보자.
@@ -21,7 +33,19 @@ mysql> show databases
 mysql> use hello
 ```
 
-# Tip
+# Basic
+
+## Bin Log
+
+* [Binary Log(binlog) 사용하기](https://systemv.tistory.com/52)
+
+-----
+
+`bin log` 는 PIT (Point In Time) restore 혹은 replication 에 꼭 필요하다.
+
+
+
+# Advanced
 
 ## how to reset password
 

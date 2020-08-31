@@ -39,6 +39,7 @@
   - [Idempotency](#idempotency)
   - [80/20 rule](#8020-rule)
   - [70% Capacity model](#70-capacity-model)
+  - [SLA, SLO, SLI](#sla-slo-sli)
 - [Grokking the System Design Interview Practices](#grokking-the-system-design-interview-practices)
 - [System Design Primer Practices](#system-design-primer-practices)
 - [Essential Micro Services](#essential-micro-services)
@@ -634,6 +635,16 @@ estimated data size 는 total data size 의 70% 라는 규칙이다. 예를 들�
 ```
 total data size : estimated data size = 100 : 70
 ```
+
+## SLA, SLO, SLI
+
+* [The Difference between SLI, SLO, and SLA](https://enqueuezero.com/the-difference-between-sli-slo-and-sla.html)
+
+-----
+
+* SLA (Service Level Agreement) is a contract that the service provider promises customers on service availability, performance, etc.
+* SLO (Service Level Objective) is a goal that service provider wants to reach.
+* SLI (Service Level Indicator) is a measurement the service provider uses for the goal.
 
 # Grokking the System Design Interview Practices
 
