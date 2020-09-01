@@ -8,6 +8,7 @@
   - [Component Lifecycle](#component-lifecycle)
   - [Thinking in React Component State](#thinking-in-react-component-state)
   - [Practicing this setState](#practicing-this-setstate)
+  - [SetState Caveats](#setstate-caveats)
   - [Loading states](#loading-states)
   - [Smart vs Dumb](#smart-vs-dumb)
   - [AJAX on React](#ajax-on-react)
@@ -364,7 +365,7 @@ class App extends Component {
 
 ## Practicing this setState
 
-[Practicing this setState @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/f0137ac872a477e0aff88a633e863831a9f2e7d3)
+* [Practicing this setState @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/f0137ac872a477e0aff88a633e863831a9f2e7d3)
 
 ----
 
@@ -423,6 +424,18 @@ class App extends Component {
 ```
 
 이 방법을 이용하면 스크롤을 아래로 내렸을 때 infinite scroll 을 구현할 수 있다.
+
+## SetState Caveats
+
+  // Render:  -> render() -> componentDidMount()
+  //
+  // Update: componentWillReceiveProps() -> shouldComponentUpdate() -> 
+  // componentWillUpate() -> render() -> componentDidUpdate()
+
+setState 를 component lifecycle event handler (`render, componentWillMount, componentWillReceiveProps, shouldComponentUpdate, componentWillUpate, componentDidUpdate`) 에서 호출할 때 주의해야 한다.
+
+* [React setState usage and gotchas](https://itnext.io/react-setstate-usage-and-gotchas-ac10b4e03d60)
+  * [Boost your React with State Machines](https://www.freecodecamp.org/news/boost-your-react-with-state-machines-1e9641b0aa43/)
 
 ## Loading states
 
