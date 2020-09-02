@@ -1206,7 +1206,7 @@ navigational components
 
 ## Ant Design
 
-* [Ant Design](https://ant.design/)
+* [Ant Design](https://ant.design/components/overview/)
   * [src](https://github.com/ant-design/ant-design)
 
 -----
