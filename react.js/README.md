@@ -22,6 +22,7 @@
   - [React Redux](#react-redux)
   - [Rednering Sequences](#rednering-sequences)
 - [Redux Toolkit](#redux-toolkit)
+- [Redux-action](#redux-action)
 - [Redux SAGA](#redux-saga)
 - [Redux Debugger in Chrome](#redux-debugger-in-chrome)
 
@@ -834,7 +835,9 @@ $ yarn run deploy
 * [초보자를 위한 리덕스 101](https://academy.nomadcoders.co/courses/235420/lectures/13817530)
   * [src](https://github.com/nomadcoders/vanilla-redux)
 
-Redux 는 state 를 관리하기 위한 거대한 event loop 이다. Action 은 event 를 말하고 Reducer 는 event handler 이다. 즉, Reducer 는 함수이고 변경된 state 를 return 한다. 변경된 state 가 return 되면 rendering 된다. Reducer 의 첫번째 argument 는 state 이고 두번째 argument 는 action 이다.
+Redux 는 state 를 관리하기 위한 거대한 event loop 이다. 여기서 말하는 state 는 redux state 혹은 global state 이다. React Component 의 component state 혹은 local state 와는 다르다.
+
+Action 은 event 를 말하고 Reducer 는 event handler 이다. 즉, Reducer 는 함수이고 변경된 redux state 를 return 한다. 변경된 redux state 가 return 되면 react component 에게 props 형태로 전달되고 react component 의 render() 가 호출된다. 즉, rendering 된다. Reducer 의 첫번째 argument 는 state 이고 두번째 argument 는 action 이다.
 
 Store 는 Application 의 state 이다. Store 를 생성하기 위해서는 Reducer 가 필요하다. Store instance 의 `getState()` 를 호출하면 현재 state 를 얻어올 수 있다. Store instance 의 `dispatch()` 를 특정 `action` 과 함께 호출하면 Store instance 에 등록된 Reducer 가 그 action 을 두번째 argument 로 호출된다. 
 
@@ -847,9 +850,9 @@ Redux 는 다음과 같은 흐름으로 처리된다.
 * Store 에 Component 를 subscribe 한다.
 * User 가 button 을 click 하면 Store 의 dispatch 함수가 특정 action 을 argument 로 호출된다.
 * Store 에 등록된 Reducer 가 호출된다. 
-* Reducer 는 state 를 변경하여 return 한다.
-* Store 에 미리 subscribe 된 Component 에게 변경된 state 가 전달된다.
-* Component 는 변경된 state 를 rendering 한다.
+* Reducer 는 redux state 를 변경하여 return 한다.
+* Store 에 미리 subscribe 된 Component 에게 변경된 redux state 가 props 형태로 전달된다.
+* Component 는 props 에서 변경된 redux state 를 이용하여 rendering 한다.
 
 ```js
 import { createStore } from "redux";
@@ -1180,6 +1183,12 @@ createReducer 는 Reducer 생성을 쉽게 해준다.
 configureStore 는 ???
 
 createSlice 는 action, reducer 생성을 쉽게 해준다.
+
+# Redux-action
+
+* [redux-actions](https://redux-actions.js.org/api/createaction)
+
+createActions 는 Action 들을 쉽게 생성할 수 있도록 한다. handleActions 는 Reducer 들을 쉽게 생성할 수 있도록 한다. combineActions 는 ???
 
 # Redux SAGA
 
