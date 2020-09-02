@@ -700,6 +700,36 @@ var b = (a, b) => {
 }
 ```
 
+`=> ()` is same with `=> {return()}`. [Arrow functions and the use of parentheses () or {} or ({})](https://stackoverflow.com/questions/49425755/arrow-functions-and-the-use-of-parentheses-or-or)
+
+```js
+const FilterLink = ({ filter, children }) => ( // <-- implicit return 
+  <NavLink
+    to={filter === 'SHOW_ALL' ? '/' : `/${ filter }`}
+    activeStyle={ {
+      textDecoration: 'none',
+      color: 'black'
+    }}
+  >
+    {children}
+  </NavLink>
+)
+
+const FilterLink = ({ filter, children }) => {
+   return (
+      <NavLink
+        to={filter === 'SHOW_ALL' ? '/' : `/${ filter }`}
+        activeStyle={ {
+          textDecoration: 'none',
+          color: 'black'
+        }}
+      >
+        {children}
+      </NavLink>
+    )
+}
+```
+
 ## Method
 
 `.` 뒤의 함수는 method 이다.
