@@ -50,6 +50,7 @@
 - [company engineering blog](#company-engineering-blog)
 - [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
 - [Cloud Design Patterns](#cloud-design-patterns)
+- [DDD](#ddd)
 - [Cracking The Coding Interview Quiz](#cracking-the-coding-interview-quiz)
 
 ----
@@ -877,6 +878,10 @@ total data size : estimated data size = 100 : 70
 ----
 
 MSA 의 pattern 들과 거의 유사하다.
+
+# DDD
+
+* [DDD @ TIL](/domaindrivendesign/README.md)
 
 # Cracking The Coding Interview Quiz
 
