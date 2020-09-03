@@ -29,6 +29,7 @@
   - [How to debug Jenkins Pipeline Script](#how-to-debug-jenkins-pipeline-script)
   - [Password injection](#password-injection)
   - [Job Scheduling](#job-scheduling)
+  - [How to extract password from credentials](#how-to-extract-password-from-credentials)
 
 ----
 
@@ -764,3 +765,19 @@ echo "My secret is $IAMSLASH_SECRET"
   * 월요일부터 금요일까지 오전 9시 부터 오후 4시 까지 2 시간 간격
 * `H H 1,15 1-11 *`
   * 1 월 부터 11 월까지 각 월의 1 일과 15 일 하루 한번    
+
+## How to extract password from credentials
+
+* [Extract passphrase from Jenkins' credentials.xml](https://stackoverflow.com/questions/37683143/extract-passphrase-from-jenkins-credentials-xml)
+
+-----
+
+Find the encrypted password with chrome debugger.
+
+`{Axxxx....xxxxT}`
+
+Execute this with the encrypted password.
+
+```
+println( hudson.util.Secret.decrypt("{Axxxx....xxxxT}") )
+```
