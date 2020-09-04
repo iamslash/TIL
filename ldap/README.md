@@ -10,7 +10,7 @@ Entry 는 모두 모여 Hierarchical data structure 를 구성한다. 이것을 
 
 대표적인 클라이언트 구현체로 [Apache Directory Studio](https://directory.apache.org/studio/) 가 있다. [이곳](https://directory.apache.org/studio/users-guide/2.0.0.v20180908-M14/ldap_browser/tools_search_dialog.html) 를 참고하면 [Apache Directory Studio](https://directory.apache.org/studio/) 를 이용한 검색방법을 알 수 있다. 
 
-macOS 에 ldapsearch 가 기본적으로 설치되어 있고 ldap 조회를 실행할 수 있다. password 는 `-W` 옵션을 주고 매번 입력하거나 `passwd.txt` 에 저장하여 매번 입력하지 않을 수 있다.
+macOS 에 ldapsearch 가 기본적으로 설치되어 있고 ldap 조회를 실행할 수 있다. password 는 `-w` 옵션과 함게 입력하거나 `passwd.txt` 에 저장하여 매번 입력하지 않을 수 있다.
 
 `/etc/openldap/ldap.conf` 는 openldap client 의 설정파일이다. `/etc/openldap/slapd.conf` 는 openldap server 의 설정파일이다. 설정파일 사용법은 나중에 정리한다.
 
