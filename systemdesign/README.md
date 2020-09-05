@@ -622,16 +622,18 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
   * 그렇다면 `eml_id` 는 필요할까? `{receiver_id}_{mail_id}` 만으로도 eml file 의 key 로 사용할 수 있기 때문이다. 조금 더 key 를 잘 설계할 수는 없을까???
 * UUID (Universally Unique Identifier)
   * id 에 시간 정보가 반영되어 있다. id 를 오름차순으로 정렬하면 시간순 으로 데이터를 정렬할 수 있다.
-  * 16B (128b), 36 characters 이다. 너무 크다.
+  * 16 bytes (128 bit), 36 characters 이다. 너무 크다.
   * 적은 바이트로 시간 정보를 저장할 수 있었으면 좋겠다.
-* `{timestamp:52bit}_{sequence:12bit}` 8 bytes
+* `{timestamp: 52 bits}_{sequence: 12bits}` 8 bytes
   * 샤드 아이디도 저장되었으면 좋겠다.
-  * timestamp 는 4 bytes 이다. 단, `1970/01/01` 부터 `2016/02/07/06/28` 까지만 표현 가능하다.  
-* `{timestamp:52bit}_{shard_id:12bit}_{sequence:12bit}` 8 bytes 
+  * timestamp 는 4 bytes 를 모두 사용하면 `1970/01/01` 부터 `2106/02/07 06:28` 까지만 표현 가능하다.  
+* `{timestamp: 52 bits}_{shard_id: 12 bits}_{sequence:12 bits}` 8 bytes 
   * IDC 정보도 반영되었으면 좋겠다.
-* `{timestamp:42bits}_{datacenter_id:5bits}_{worker_id:5bits}_{sequence:12bits}` 8 bytes
+* `{timestamp: 42 bits}_{datacenter_id: 5 bits}_{worker_id: 5 bits}_{sequence: 1 2bits}` 8 bytes
   * 이것은 twitter 의 id 이다.
-* `{timetamp:4B}_{machine_id:3B}_{process_id:2B}_{counter:3B}` 12 bytes
+* `{timestamp: 41 bits}_{Logical Shard ID: 13 its}_{Auto Increment/1024: 10 bites}` 8 bytes
+  * 이것은 Instagram 의 id 이다.
+* `{timetamp: 4 bytes}_{machine_id:3 bytes}_{process_id:2 bytes}_{counter:3 bytes}` 12 bytes
   * 이것은 mongoDB 의 ID 이다. 
 * `{timestamp}_{shard_id}_{type}_{sequence}` 8 bytes
 
