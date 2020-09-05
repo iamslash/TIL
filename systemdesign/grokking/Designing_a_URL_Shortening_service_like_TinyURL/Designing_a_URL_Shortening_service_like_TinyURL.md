@@ -114,6 +114,10 @@ If we use Key-DB, we can recycle short URLs.
 
 ## Data Partitioning and Replication
 
+* [Amazon Aurora Connection Management](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.Endpoints.html)
+
+------
+
 * Range-based partitioning 
   * Partitioning for first letter.
   * This will make unbalanced partitioning.
@@ -124,11 +128,18 @@ If we use Key-DB, we can recycle short URLs.
 
 ## Cache
 
+* [Auto Discovery 작동 방법 @ AWS](https://docs.aws.amazon.com/ko_kr/AmazonElastiCache/latest/mem-ug/AutoDiscovery.HowAutoDiscoveryWorks.html)
+* [Choosing Your Node Size](https://docs.aws.amazon.com/ko_kr/AmazonElastiCache/latest/mem-ug/nodes-select-size.html)
+
+------
+
 Redis cluster is a good solution. It will cache 170 GB, 20% of daily traffics.
 
 ## Load Balancer (LB)
 
-Between Clients and Application servers with DNS round-robin.
+* Between Clients and Application servers with DNS round-robin.
+* Between Application servers and DBMS.
+* Between Application servers and Cache Servers.
 
 # Components to research
 
