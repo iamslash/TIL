@@ -159,3 +159,4 @@ Redis cluster is a good solution. It will cache 170 GB, 20% of daily traffics.
 * [URL shortener system design | tinyurl system design | bitly system design @ youtube](https://www.youtube.com/watch?v=JQDHz72OA3c)
 * [Url Shortener with Zookeeper](https://medium.com/@souravgupta14/url-shortener-with-zookeeper-aa38174c598b)
 * [How a URL Shortening Application Works](https://dzone.com/articles/how-a-url-shortening-application-works)
+* [URL Shortener Design Doc](https://github.com/helkey/url-shorten/tree/e0d2712f74a3c108491e5b86367197e3f40e62da)
