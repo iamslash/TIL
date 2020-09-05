@@ -143,5 +143,12 @@ Redis cluster is a good solution. It will cache 170 GB, 20% of daily traffics.
 
 # Components to research
 
+* [memcached](/memcached/README.md)
 * [redis](/redis/README.md)
 * [mysql](/mysql/README.md)
+* AWS Elasticache memcached
+* AWS Elasticache redis
+* AWS Aurora mysql
+* [AWS Elasticache memcached and redis](https://docs.aws.amazon.com/ko_kr/AmazonElastiCache/latest/mem-ug/SelectEngine.html)
+* [AWS Aurora 도입전에 알아야 할 몇가지 사실](https://medium.com/hbsmith/aws-aurora-%EB%8F%84%EC%9E%85%EC%97%90-%EB%8C%80%ED%95%9C-%EB%AA%87%EA%B0%80%EC%A7%80-%EC%82%AC%EC%8B%A4-45eb602bad58)
+* [Amazon Aurora Connection Management](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.Endpoints.html) 
