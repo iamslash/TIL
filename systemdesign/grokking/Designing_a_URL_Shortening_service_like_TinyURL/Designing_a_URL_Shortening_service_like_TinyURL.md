@@ -16,7 +16,7 @@
 - [System Extention](#system-extention)
   - [Cache](#cache)
   - [Load Balancer (LB)](#load-balancer-lb)
-- [Components to research](#components-to-research)
+- [References](#references)
 
 ----
 
@@ -141,14 +141,21 @@ Redis cluster is a good solution. It will cache 170 GB, 20% of daily traffics.
 * Between Application servers and DBMS.
 * Between Application servers and Cache Servers.
 
-# Components to research
+# References
 
 * [memcached](/memcached/README.md)
 * [redis](/redis/README.md)
 * [mysql](/mysql/README.md)
+* [zookeeper](/zookeeper/README.md)
+* [mongodb](/mongodb/README.md)
+* [dynamodb](/dynamodb/README.md)
+* [cassandra](/cassandra/README.md)
 * AWS Elasticache memcached
 * AWS Elasticache redis
 * AWS Aurora mysql
 * [AWS Elasticache memcached and redis](https://docs.aws.amazon.com/ko_kr/AmazonElastiCache/latest/mem-ug/SelectEngine.html)
 * [AWS Aurora 도입전에 알아야 할 몇가지 사실](https://medium.com/hbsmith/aws-aurora-%EB%8F%84%EC%9E%85%EC%97%90-%EB%8C%80%ED%95%9C-%EB%AA%87%EA%B0%80%EC%A7%80-%EC%82%AC%EC%8B%A4-45eb602bad58)
 * [Amazon Aurora Connection Management](https://docs.aws.amazon.com/AmazonRDS/latest/AuroraUserGuide/Aurora.Overview.Endpoints.html) 
+* [URL shortener system design | tinyurl system design | bitly system design @ youtube](https://www.youtube.com/watch?v=JQDHz72OA3c)
+* [Url Shortener with Zookeeper](https://medium.com/@souravgupta14/url-shortener-with-zookeeper-aa38174c598b)
+* [How a URL Shortening Application Works](https://dzone.com/articles/how-a-url-shortening-application-works)
