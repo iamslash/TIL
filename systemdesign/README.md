@@ -42,6 +42,8 @@
   - [70% Capacity model](#70-capacity-model)
   - [SLA, SLO, SLI](#sla-slo-sli)
 - [Grokking the System Design Interview Practices](#grokking-the-system-design-interview-practices)
+  - [Fundamentals](#fundamentals)
+  - [Design Practices](#design-practices)
 - [System Design Primer Practices](#system-design-primer-practices)
 - [Essential Micro Services](#essential-micro-services)
 - [Additional System Design Interview Questions](#additional-system-design-interview-questions)
@@ -665,6 +667,8 @@ total data size : estimated data size = 100 : 70
 
 # Grokking the System Design Interview Practices
 
+## Fundamentals
+
 | Basic                                                                                                                                                                                                                                                    |     |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
 | [Dynamo](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) - Highly Available Key-value Store                                                                                                                                       |
@@ -689,9 +693,11 @@ total data size : estimated data size = 100 : 70
 | [Consistent Hashing](grokking/ConsistentHashing.md)                                                                                                                                                                                                      |
 | [Long-Polling vs WebSockets vs Server-Sent Events](grokking/Long-PollingvsWebSocketsvsServer-SentEvents.md)                                                                                                                                              |
 
+## Design Practices
+
 | Design                                                                                                         | Implementation |
 | -------------------------------------------------------------------------------------------------------------- | -------------- |
-| [Designing a URL Shortening service like TinyURL](grokking/Designing_a_URL_Shortening_service_like_TinyURL.md) |                |
+| [Designing a URL Shortening service like TinyURL](grokking/Designing_a_URL_Shortening_service_like_TinyURL/Designing_a_URL_Shortening_service_like_TinyURL.md) |                |
 | [Designing Pastebin](grokking/DesigningPastebin.md)                                                            |                |
 | [Designing Instagram]()                                                                                        |                |
 | [Designing Dropbox]()                                                                                          |                |
