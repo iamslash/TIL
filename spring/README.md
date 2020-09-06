@@ -37,6 +37,7 @@
   - [Transactional](#transactional)
   - [Spring with flyway](#spring-with-flyway)
   - [Custom Data Binder in Spring MVC](#custom-data-binder-in-spring-mvc)
+  - [Caching in spring boot](#caching-in-spring-boot)
 
 ----
 
@@ -1066,3 +1067,14 @@ public ResponseEntity getVersion(
     return ...;
 }
 ```
+
+## Caching in spring boot
+
+* [A Guide To Caching in Spring @ baeldung](https://www.baeldung.com/spring-cache-tutorial)
+
+----
+
+* `@Caching`
+* `@CacheEvict`
+* `@Cacheable`
+* `@CacheConfig`
