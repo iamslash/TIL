@@ -700,7 +700,7 @@ total data size : estimated data size = 100 : 70
 | Design                                                                                                         | Implementation |
 | -------------------------------------------------------------------------------------------------------------- | -------------- |
 | [Designing a URL Shortening service like TinyURL](grokking/Designing_a_URL_Shortening_service_like_TinyURL/Designing_a_URL_Shortening_service_like_TinyURL.md) |                |
-| [Designing Pastebin](grokking/DesigningPastebin.md)                                                            |                |
+| [Designing Pastebin](grokking/DesigningPastebin/DesigningPastebin.md)                                                            |                |
 | [Designing Instagram]()                                                                                        |                |
 | [Designing Dropbox]()                                                                                          |                |
 | [Designing Facebook Messenger]()                                                                               |                |

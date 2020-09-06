@@ -1,4 +1,3 @@
-- [Why do we need URL shortening?](#why-do-we-need-url-shortening)
 - [Requirements](#requirements)
 - [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
   - [traffic estimates](#traffic-estimates)
@@ -10,19 +9,17 @@
 - [Low Level Architecture](#low-level-architecture)
   - [System APIs](#system-apis)
   - [Database Design](#database-design)
+  - [DataBase Schema](#database-schema)
   - [Encoding actual URL](#encoding-actual-url)
   - [Generating keys from DBMS](#generating-keys-from-dbms)
   - [Data Partitioning and Replication](#data-partitioning-and-replication)
 - [System Extention](#system-extention)
   - [Cache](#cache)
   - [Load Balancer (LB)](#load-balancer-lb)
+- [Q&A](#qa)
 - [References](#references)
 
 ----
-
-# Why do we need URL shortening?
-
-This provides a shortening URLs.
 
 # Requirements 
 
@@ -91,7 +88,13 @@ void      deleteUrl(api_key, short_url)
 
 ## Database Design
 
-mysql sharding with 16 instances (2 TB for one instance)
+Mongo DB sharding
+
+## DataBase Schema
+
+| shorturl | longurl | createdAt | accessedAt |
+|---|---|--|--|
+| 1x | http://www.google.com | 2019-09-03 09:00:00 | 2019-09-03 09:00:00 |
 
 ## Encoding actual URL
 
@@ -140,6 +143,15 @@ Redis cluster is a good solution. It will cache 170 GB, 20% of daily traffics.
 * Between Clients and Application servers with DNS round-robin.
 * Between Application servers and DBMS.
 * Between Application servers and Cache Servers.
+
+# Q&A
+
+* How to handle old data ???
+  * The batch application will delete old ones.
+  * Least recently used first.
+* How to handle global regions ???
+  * Operate clusters by global regions.
+  * There is no benefit for syncing data among global regions.
 
 # References
 

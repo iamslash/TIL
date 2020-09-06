@@ -1,25 +1,20 @@
-- [What is Pastebin?](#What-is-Pastebin)
-- [Requirements and Goals of the System](#Requirements-and-Goals-of-the-System)
-- [Some Design Considerations](#Some-Design-Considerations)
-- [Capacity Estimation and Constraints](#Capacity-Estimation-and-Constraints)
-- [System APIs](#System-APIs)
-- [Database Design](#Database-Design)
-- [High Level Design](#High-Level-Design)
-- [Component Design](#Component-Design)
-  - [Application Layer](#Application-Layer)
-  - [Datastore layer](#Datastore-layer)
-- [Purging or DB Cleanup](#Purging-or-DB-Cleanup)
-- [Data Partitioning and Replication](#Data-Partitioning-and-Replication)
-- [Cache and Load Balancer](#Cache-and-Load-Balancer)
-- [Security and Permissions](#Security-and-Permissions)
+- [Requirements](#requirements)
+- [Some Design Considerations](#some-design-considerations)
+- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
+- [System APIs](#system-apis)
+- [Database Design](#database-design)
+- [High Level Design](#high-level-design)
+- [Component Design](#component-design)
+  - [Application Layer](#application-layer)
+  - [Datastore layer](#datastore-layer)
+- [Purging or DB Cleanup](#purging-or-db-cleanup)
+- [Data Partitioning and Replication](#data-partitioning-and-replication)
+- [Cache and Load Balancer](#cache-and-load-balancer)
+- [Security and Permissions](#security-and-permissions)
 
 ----
 
-# What is Pastebin?
-
-데이터를 업로드하고 공유하는 서비스
-
-# Requirements and Goals of the System
+# Requirements
 
 * Functional Requirements
   * 유저는 데이터를 업로드하고 url 을 얻을 수 있다.
