@@ -23,6 +23,7 @@
   - [Rednering Sequences](#rednering-sequences)
 - [Advanced](#advanced)
   - [Redux Toolkit](#redux-toolkit)
+  - [react-redux](#react-redux-1)
   - [Redux-action](#redux-action)
   - [React-Router](#react-router)
   - [* React Router Introduction @ youtube](#ullireact-router-introduction--youtubeliul)
@@ -1189,6 +1190,55 @@ createReducer 는 Reducer 생성을 쉽게 해준다.
 configureStore 는 ???
 
 createSlice 는 action, reducer 생성을 쉽게 해준다.
+
+## react-redux
+
+* [What's the '@' (at symbol) in the Redux @connect decorator?](https://stackoverflow.com/questions/32646920/whats-the-at-symbol-in-the-redux-connect-decorator)
+
+-----
+
+`@connect` 는 decorator 이다. 다음의 두 코드는 같다.
+
+```js
+import React from 'react';
+import * as actionCreators from './actionCreators';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+function mapStateToProps(state) {
+  return { todos: state.todos };
+}
+
+function mapDispatchToProps(dispatch) {
+  return { actions: bindActionCreators(actionCreators, dispatch) };
+}
+
+class MyApp extends React.Component {
+  // ...define your main app here
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyApp);
+```
+
+```js
+import React from 'react';
+import * as actionCreators from './actionCreators';
+import { bindActionCreators } from 'redux';
+import { connect } from 'react-redux';
+
+function mapStateToProps(state) {
+  return { todos: state.todos };
+}
+
+function mapDispatchToProps(dispatch) {
+  return { actions: bindActionCreators(actionCreators, dispatch) };
+}
+
+@connect(mapStateToProps, mapDispatchToProps)
+export default class MyApp extends React.Component {
+  // ...define your main app here
+}
+```
 
 ## Redux-action
 
