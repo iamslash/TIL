@@ -22,10 +22,17 @@
   - [React Redux](#react-redux)
   - [Rednering Sequences](#rednering-sequences)
 - [Advanced](#advanced)
-  - [Redux Toolkit](#redux-toolkit)
+  - [redux-toolkit](#redux-toolkit)
+  - [redux](#redux-1)
+    - [`function combineReducers<S>(reducers: ReducersMapObject): Reducer<S>`](#function-combinereducerssreducers-reducersmapobject-reducers)
+    - [`function applyMiddleware(...middlewares: Middleware[]): GenericStoreEnhancer`](#function-applymiddlewaremiddlewares-middleware-genericstoreenhancer)
+    - [`createStore()`](#createstore)
   - [react-redux](#react-redux-1)
-  - [Redux-action](#redux-action)
-  - [React-Router](#react-router)
+  - [redux-actions](#redux-actions)
+    - [`function createActions(actionsMap)`](#function-createactionsactionsmap)
+    - [`function combineActions(...types)`](#function-combineactionstypes)
+    - [`function handleActions(handlers, defaultState)`](#function-handleactionshandlers-defaultstate)
+  - [react-router](#react-router)
   - [* React Router Introduction @ youtube](#ullireact-router-introduction--youtubeliul)
   - [Ant Design](#ant-design)
   - [Redux SAGA](#redux-saga)
@@ -60,6 +67,9 @@
   * [3. Immutable.js 익히기](https://velopert.com/3354)
   * [4. Ducks 구조와 react-actions 익히기](https://velopert.com/3358)
   * [5. 주소록에 Redux 끼얹기](https://velopert.com/3360)
+* [redux @ github](https://github.com/reduxjs/redux)
+  * [Getting Started with Redux](https://egghead.io/courses/getting-started-with-redux)
+  * [Building React Applications with Idiomatic Redux](https://egghead.io/courses/building-react-applications-with-idiomatic-redux)
 
 # Basic
 
@@ -1181,15 +1191,70 @@ Component 가 rendering 되는 경우들을 생각해 보자.
 
 # Advanced
 
-## Redux Toolkit
+## redux-toolkit
 
-createAction 은 Action 생성을 쉽게 해준다.
+* [createAction @ redux](https://redux-toolkit.js.org/api/createAction)
+* [createReducer @ redux](https://redux-toolkit.js.org/api/createReducer)
+* [configureStore @ redux](https://redux-toolkit.js.org/api/configureStore)
+* [createSlice @ redux](https://redux-toolkit.js.org/api/createSlice)
 
-createReducer 는 Reducer 생성을 쉽게 해준다.
+## redux
 
-configureStore 는 ???
+### `function combineReducers<S>(reducers: ReducersMapObject): Reducer<S>`
 
-createSlice 는 action, reducer 생성을 쉽게 해준다.
+* [combineReducers(reducers) @ redux](https://redux.js.org/api/combinereducers)
+
+----
+
+The combineReducers helper function turns an object whose values are different reducing functions into a single reducing function you can pass to createStore.
+
+### `function applyMiddleware(...middlewares: Middleware[]): GenericStoreEnhancer`
+
+* [applyMiddleware(...middleware)](https://redux.js.org/api/applymiddleware)
+
+----
+
+Middleware is the suggested way to extend Redux with custom functionality. Middleware lets you wrap the store's dispatch method for fun and profit. 
+
+This is an example of custom log middleware.
+
+```js
+import { createStore, applyMiddleware } from 'redux'
+import todos from './reducers'
+
+function logger({ getState }) {
+  return next => action => {
+    console.log('will dispatch', action)
+
+    // Call the next dispatch method in the middleware chain.
+    const returnValue = next(action)
+
+    console.log('state after dispatch', getState())
+
+    // This will likely be the action itself, unless
+    // a middleware further in chain changed it.
+    return returnValue
+  }
+}
+
+const store = createStore(todos, ['Use Redux'], applyMiddleware(logger))
+
+store.dispatch({
+  type: 'ADD_TODO',
+  text: 'Understand the middleware'
+})
+// (These lines will be logged by the middleware:)
+// will dispatch: { type: 'ADD_TODO', text: 'Understand the middleware' }
+// state after dispatch: [ 'Use Redux', 'Understand the middleware' ]
+```
+
+### `createStore()`
+
+* [createStore(reducer, [preloadedState], [enhancer])](https://redux.js.org/api/createstore)
+
+----
+
+Creates a Redux store that holds the complete state tree of your app. There should only be a single store in your app.
 
 ## react-redux
 
@@ -1240,13 +1305,33 @@ export default class MyApp extends React.Component {
 }
 ```
 
-## Redux-action
+## redux-actions
 
-* [redux-actions](https://redux-actions.js.org/api/createaction)
+### `function createActions(actionsMap)`
 
-createActions 는 Action 들을 쉽게 생성할 수 있도록 한다. handleActions 는 Reducer 들을 쉽게 생성할 수 있도록 한다. combineActions 는 ???
+* [createAction(s) @ redux-actions](https://redux-actions.js.org/api/createaction) 
 
-## React-Router
+----
+
+Returns an object mapping action types to action creators. 
+
+### `function combineActions(...types)`
+
+* [createAction(s) @ redux-actions](https://redux-actions.js.org/api/createaction) 
+
+----
+
+Combine any number of action types or action creators. 
+
+### `function handleActions(handlers, defaultState)`
+
+* [handleAction(s) @ redux-actions](https://redux-actions.js.org/api/handleaction) 
+
+----
+
+Creates multiple reducers using handleAction() and combines them into a single reducer that handles multiple actions.
+
+## react-router
 
 * [REACT ROUTER](https://reactrouter.com/)
   * [React Router Introduction @ youtube](https://www.youtube.com/watch?time_continue=542&v=cKnc8gXn80Q&feature=emb_logo)
