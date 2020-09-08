@@ -1,16 +1,26 @@
 - [Requirements](#requirements)
-- [Some Design Considerations](#some-design-considerations)
 - [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
-- [System APIs](#system-apis)
-- [Database Design](#database-design)
-- [High Level Design](#high-level-design)
-- [Component Design](#component-design)
+  - [traffic estimates](#traffic-estimates)
+  - [Storage estimates](#storage-estimates)
+  - [Bandwidth estimates](#bandwidth-estimates)
+  - [Memory estimates](#memory-estimates)
+  - [High-level estimates](#high-level-estimates)
+- [High Level Architecture](#high-level-architecture)
+- [Low Level Architecture](#low-level-architecture)
+  - [System APIs](#system-apis)
+  - [DataBase](#database)
+  - [DataBase Schema](#database-schema)
+    - [pastes](#pastes)
+    - [users](#users)
   - [Application Layer](#application-layer)
   - [Datastore layer](#datastore-layer)
-- [Purging or DB Cleanup](#purging-or-db-cleanup)
-- [Data Partitioning and Replication](#data-partitioning-and-replication)
-- [Cache and Load Balancer](#cache-and-load-balancer)
-- [Security and Permissions](#security-and-permissions)
+- [System Extention](#system-extention)
+  - [Purging or DB Cleanup](#purging-or-db-cleanup)
+  - [Data Partitioning and Replication](#data-partitioning-and-replication)
+  - [Cache and Load Balancer](#cache-and-load-balancer)
+  - [Security and Permissions](#security-and-permissions)
+- [Q&A](#qa)
+- [References](#references)
 
 ----
 
@@ -29,9 +39,6 @@
 * Extended Requirements
   * Analytics
   * provides REST APIs.
-
-# Some Design Considerations
-
 * [Designing a URL Shortening service like TinyURL](Designing_a_URL_Shortening_service_like_TinyURL.md) 과 비슷하다.
 * What should be the limit on the amount of text user can paste at a time?
   * 10 MB 이상은 업로드 불가
@@ -40,22 +47,62 @@
 
 # Capacity Estimation and Constraints
 
-* very read-heavy. 5:1 ratio between read and write.
-* Traffic estimates
-  * write `1 M pastes / day` read `5 M pastes day`
-  * write pastes `1 M / (24 hrs * 3600 sec) = 12 writes / sec`
-  * read pastes `5 M / (24 hrs * 3600 sec) = 58 reads / sec`
-* Storage estimates
-  * upload `10 MB` data. `10 KB texts / pastes`
-  * `1 M * 10 KB = 10 GB / day`
-  * `10 GB / day * 365 days * 10 years = 36 TB / 10 years`
-  * base64 encoding ([A-Za-z0-9.-]) url
-  * `64 ^ 6 = 68.7 B unique strings`
-  * `3.6 B * 6 = 22 GB`
-* Bandwidth estimates
-* Memory estimates
+## traffic estimates
 
-# System APIs
+| Number                                       | Description      |
+| -------------------------------------------- | ---------------- |
+| 5 : 1                                        | read/write ratio |
+| 1 M                                          | write per day    |
+| 5 M                                          | read per day     |
+| 1 M / (24 hrs * 3600 secs) = 12 writes / sec | write QPS        |
+| 5 M / (24 hrs * 3600 secs) = 58 reads / sec  | read QPS         |
+
+## Storage estimates
+
+| Number                                  | Description                                        |
+| --------------------------------------- | -------------------------------------------------- |
+| 10 KB                                   | data size per one write                            |
+| 1 M * 10 KB = 10 GB                     | data size per one day                              |
+| 10 GB * 365 days * 10 years = 36 TB     | data size for 10 years                             |
+| 1M * 365 days * 10 years = 3.6 B pastes | The number of pastes for 10 years                  |
+| 64 ^ 6 ~= 67.7 B unique strings         | The size of unique strings for base64 6 characters |
+| 3.6 B * 6 = 22 GB                       | data size of key for 10 years                      |
+| 36 TB * 100 / 70 = 51.4 TB              | total data size for 70 % capacity model            |
+
+## Bandwidth estimates
+
+| Number                | Description                   |
+| --------------------- | ----------------------------- |
+| 12 * 10 KB = 120 KB/s | incomming for writing per sec |
+| 58 * 10 KB = 0.6 MB/s | outgoing for readding per sec |
+
+## Memory estimates
+
+* **80-20 rule** : 20 % generates 80 % of traffics. Let's cache these 20% hot pastes.
+
+| Number               | Description                            |
+| -------------------- | -------------------------------------- |
+| 5 M * 10 KB != 50 GB | The number of request for read per day |
+| 0.2 * 50 GB = 10 GB  | The number of cache for read per day   |
+
+## High-level estimates
+
+| Number          | Description                       |
+| --------------- | --------------------------------- |
+| 12 writes/s | write per sec                     |
+| 58 reads/s  | read per sec                      |
+| 120 KB/s        | ingress data for writing per sec  |
+| 0.6 MB/s        | egress data for reading per sec   |
+| 36 TB           | Storage for 10 years              |
+| 10 GB           | The number of memory to be cached |
+
+# High Level Architecture
+
+![](architecture.png)
+
+# Low Level Architecture
+
+## System APIs
 
 ```c
 addPaste(api_dev_key, 
@@ -73,11 +120,22 @@ getPaste(api_dev_key, api_paste_key)
 deletePaste(api_dev_key, api_paste_key)
 ```
 
-# Database Design
+## DataBase
 
-# High Level Design
+Mongo DB sharding
 
-# Component Design
+## DataBase Schema
+
+### pastes
+
+| pasteId | content | createdAt | accessedAt |
+|---|---|--|--|
+| 1xx | abcdefhijilij | 2019-09-03 09:00:00 | 2019-09-03 09:00:00 |
+
+### users
+
+| userId | pasteId | createdAt | modifiedAt |
+
 
 ## Application Layer
 
@@ -91,18 +149,26 @@ deletePaste(api_dev_key, api_paste_key)
 * Metadata database: MySQL or Dynamo or Cassandra
 * Object storage: amazon s3
 
-# Purging or DB Cleanup
+# System Extention
 
-* [Designing a URL Shortening service like TinyURL](Designing_a_URL_Shortening_service_like_TinyURL.md)
+## Purging or DB Cleanup
 
-# Data Partitioning and Replication
+* [Designing a URL Shortening service like TinyURL](/systemdesign/grokking/Designing_a_URL_Shortening_service_like_TinyURL/Designing_a_URL_Shortening_service_like_TinyURL.md)
 
-* [Designing a URL Shortening service like TinyURL](Designing_a_URL_Shortening_service_like_TinyURL.md)
+## Data Partitioning and Replication
 
-# Cache and Load Balancer
+* [Designing a URL Shortening service like TinyURL](/systemdesign/grokking/Designing_a_URL_Shortening_service_like_TinyURL/Designing_a_URL_Shortening_service_like_TinyURL.md)
 
-* [Designing a URL Shortening service like TinyURL](Designing_a_URL_Shortening_service_like_TinyURL.md)
+## Cache and Load Balancer
 
-# Security and Permissions
+* [Designing a URL Shortening service like TinyURL](/systemdesign/grokking/Designing_a_URL_Shortening_service_like_TinyURL/Designing_a_URL_Shortening_service_like_TinyURL.md)
 
-* [Designing a URL Shortening service like TinyURL](Designing_a_URL_Shortening_service_like_TinyURL.md)
+## Security and Permissions
+
+* [Designing a URL Shortening service like TinyURL](/systemdesign/grokking/Designing_a_URL_Shortening_service_like_TinyURL/Designing_a_URL_Shortening_service_like_TinyURL.md)
+
+# Q&A
+
+
+# References
+
