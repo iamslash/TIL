@@ -20,10 +20,11 @@
 - [Algorithm vs Member Function](#algorithm-vs-member-function)
 - [Modifying In A Container](#modifying-in-a-container)
 - [Removing In A Container](#removing-in-a-container)
-- [shared_ptr](#sharedptr)
-- [weak_ptr](#weakptr)
-- [unique_ptr](#uniqueptr)
+- [shared_ptr](#shared_ptr)
+- [weak_ptr](#weak_ptr)
+- [unique_ptr](#unique_ptr)
 - [input output stream](#input-output-stream)
+- [random_device](#random_device)
 
 ----
 
@@ -1777,4 +1778,25 @@ int main(void)
 // word: goo
 // word: bar
 // word: baz
+```
+
+## random_device
+
+```cpp
+// random_device example
+#include <iostream>
+#include <random>
+
+int main ()
+{
+  std::random_device rd;
+
+  std::cout << "default random_device characteristics:" << std::endl;
+  std::cout << "minimum: " << rd.min() << std::endl;
+  std::cout << "maximum: " << rd.max() << std::endl;
+  std::cout << "entropy: " << rd.entropy() << std::endl;
+  std::cout << "a random number: " << rd() << std::endl;
+
+  return 0;
+}
 ```
