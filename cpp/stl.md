@@ -151,7 +151,7 @@ multiset<int> myset;
 ## map, multimap
 
 ```cpp
-map<char,int> mymap;
+map<char, int> mymap;
 mymap.insert ( pair<char,int>('a',100) );
 mymap.insert ( make_pair('z',200) );
 
@@ -159,6 +159,16 @@ map<char,int>::iterator it = mymap.begin();
 mymap.insert(it, pair<char,int>('b',300));  // "it" is a hint
 
 it = mymap.find('z');  // O(log(n))
+
+// map with descending order
+map<int, int, greater<int>> mymap;
+mymap.insert({10, 15});
+mymap.insert({20, 25});
+for (auto& pr : mymap) {
+  printf("[%d, %d] ", pr.first, pr.second);
+}
+printf("\n");
+// [20, 25] [10, 15]
 
 // showing contents:
 for ( it=mymap.begin() ; it != mymap.end(); it++ )
