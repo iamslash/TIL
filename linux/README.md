@@ -1437,6 +1437,10 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `--progress` option: 진행상황 확인 
   * `rsync -n -avrc /abc/home/sample1/* server2:/abc/home/sample2/` rsync dry-run
   * `rsync -avz --progress -e 'ssh -p 10022' iamslash@example.com:/home/hello /home/world`
+* `fuser`
+  * `fuser -m /etc/sshd/sshd_config` sshd_config 파일을 사용하는 프로세스의 PID 를 확인
+  * `fuser -k /usr/sbin/sshd` sshd 데몬을 사용하고 있는 프로세스를 모두 KILL
+  * `fuser -v /usr/sbin/sshd` 특정 프로세스(또는 데몬파일)가 실행 중에 사용한 user, pid, access 정보 
 
 ## 데몬 관리
 
