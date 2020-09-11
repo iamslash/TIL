@@ -19,16 +19,16 @@ Consensus 란 분산 시스템에서 노드 간의 상태를 공유하는 알고
 ----
 
 ```bash
-docker pull zookeeper
-docker run --name my-zookeeper -p 2181:2181 -p 2888:2888 -p 3888:3888 -p 8080:8080 --restart always -d zookeeper
+$ docker pull zookeeper
+$ docker run --rm --name my-zookeeper -p 2181:2181 -p 2888:2888 -p 3888:3888 -p 8080:8080 --restart always -d zookeeper
 # EXPOSE 2181 2888 3888 8080 (the zookeeper client port, follower port, election port, AdminServer port respectively)
-docker exec -it my-zookeeper /bin/bash
-cd bin
-./zkCli.sh
+$ docker exec -it my-zookeeper /bin/bash
+$ cd bin
+$ ./zkCli.sh
 # start zookeeper server
-#bin/zkServer.sh start
+# $ bin/zkServer.sh start
 # start zookeeper cli
-#bin/zkCli.sh
+# $ bin/zkCli.sh
 ```
 
 * browser 로 `http://localhost:8080/commands` 를 접속해 본다.
@@ -38,11 +38,22 @@ cd bin
 
 ## Create znodes (persistent, ephemeral, sequential)
 
-ephemeral node 를 등록한 client 가 접속이 끊어지면 phemeral node 는 사라진다. service discovery 에 이용할 수 있다. watch 를 등록해 두면 해당 데이터가 변경되었을 때 알림을 수신할 수 있다.
+node 는 File System 처럼 tree structure 이고 각 node 마다 meta data 를 갖는다.
+
+node 의 종류는 ephemeral, persistent 와 같이 두가지가 있다. 
+
+* Ephemeral: session 이 끊어지면 삭제되는 node 이다. Service Discovery 에 사용할 수 있다.
+* Persistent: session 이 끊어져도 삭제되지 않는 node 이다.
+
+또한 node 는 Sequential 속성을 가질 수 있다. Sequential 속성을 갖는 node 는 node 의 이름뒤에 4 byte 크기의 숫자가 부착된다. 이 숫자는 0 부터 2,147,483,647 개의 unique node 를 만들 수 있다.
 
 ```bash
+$ help
+
+$ ls /
+
 # create persistent znode
-create /FirstZnode "Myfirstzookeeper-app"
+$ create /FirstZnode "Myfirstzookeeper-app"
 
 # create sequential znode
 create -s /FirstZnode second-data
@@ -130,7 +141,7 @@ rmr /FirstZnode
 
 # Case Studies
 
-* 로비 서버가 유저에게 접근 가능한 게임서버 리스트를 동적으로 전달하고 싶다. 
+* 로비 서버가 게임서버 리스트를 유저에게 동적으로 전달하고 싶다. 
   * 게임 서버는 프로세스가 뜰 때 자신의 uid 를 생성한다.
   * `/servers/{uid}` 형태로 노드를 생성한다. 노드 data 에 자신의 ip, port 를 등록한다.
   * `/servers` 를 순회하면서 기존에 등록된 ip, port 들을 얻어낸다.
@@ -149,4 +160,3 @@ rmr /FirstZnode
 * 빈번히 갱신되는 데이터 저장소로 사용하면 절대 안된다.
   * concensus 는 비싼 연산이다. 특히 "쓰기"
   * Write bound job 은 zookeeper 를 이용하지 말자.
-
