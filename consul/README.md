@@ -1,16 +1,67 @@
 # Abstract
 
-consul 은 service discovery solution 이다.
+consul 은 다음과 같은 기능을 제공하는 application 이다. 주로 Service Discovery 에 사용한다.
+
+* Service Discovery
+* Health Checking
+* Key/Value Store
+* Multi Datacenter
+* Service Segmentation
 
 # Materials
 
-* [consul getting started @ hashicorp](https://learn.hashicorp.com/consul/getting-started/)
+* [consul getting started @ hashicorp](https://learn.hashicorp.com/consul)
+* [Consul @ joinc](https://www.joinc.co.kr/w/man/12/consul)
+* [Consul @ github](https://github.com/hashicorp/consul)
 
 # Install
+
+## Install 
 
 * [Download Consul](https://www.consul.io/downloads.html)
 
 Download and unzip and move to `/usr/local/bin`.
+
+## Install With Docker
+
+* [Consul with Containers](https://learn.hashicorp.com/tutorials/consul/docker-container-agents)
+
+```bash
+# Get the Docker image
+$ docker pull consul
+$ docker images -f 'reference=consul'
+
+# Configure and run agent as a Consul Server
+$ docker run --rm -d -p 8500:8500 -p 8600:8600/udp --name=badger consul agent -server -ui -node=server-1 -bootstrap-expect=1 -client=0.0.0.0
+
+# Discover the server IP address
+$ docker exec badger consul members
+Node      Address          Status  Type    Build  Protocol  DC   Segment
+server-1  172.17.0.2:8301  alive   server  1.8.4  2         dc1  <all>
+```
+
+```bash
+# Configure and run agent as a Consul client
+$ docker run --rm --name=fox consul agent -node=client-1 -join=172.17.0.2
+
+$ docker exec badger consul members
+server-1  172.17.0.2:8301  alive   server  1.8.4  2         dc1  <all>
+client-1  172.17.0.3:8301  alive   client  1.8.4  2         dc1  <default>
+```
+
+```bash
+# Register a service
+$ docker pull hashicorp/counting-service:0.0.2
+$ docker run --rm -p 9001:9001 -d --name=weasel hashicorp/counting-service:0.0.2
+$ docker exec fox /bin/sh -c "echo '{\"service\": {\"name\": \"counting\", \"tags\": [\"go\"], \"port\": 9001}}' >> /consul/config/counting.json"
+$ docker exec fox consul reload
+```
+
+```bash
+# Use Consul DNS to discover the counting service
+$ dig @127.0.0.1 -p 8600 counting.service.consul
+# Open browser http://localhost:8500
+```
 
 # Basic
 
