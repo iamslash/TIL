@@ -52,91 +52,114 @@ $ help
 
 $ ls /
 
-# create persistent znode
-$ create /FirstZnode "Myfirstzookeeper-app"
+# Create persistent node
+$ create /docker-cluster docker_cluster
+$ create /docker-cluster/0001 cluster_0001
+$ create /docker-cluster/0002 cluster_0002
 
-# create sequential znode
-create -s /FirstZnode second-data
-# [zk: localhost:2181(CONNECTED) 2] create -s /FirstZnode “second-data”
-# Created /FirstZnode0000000023
-
-# create ephemeral znode
-create -e /SecondZnode "Ephemeral-data"
+# Create sequential persistent node
+$ create -s /docker-cluster/0001/mynode node1
+Created /docker-cluster/0001/mynode0000000000
+$ create -s /docker-cluster/0001/mynode node2
+Created /docker-cluster/0001/mynode0000000001
 ```
 
 ## Get data
 
 ```bash
-get /FirstZnode
-# [zk: localhost:2181(CONNECTED) 1] get /FirstZnode
-# “Myfirstzookeeper-app”
-# cZxid = 0x7f
-# ctime = Tue Sep 29 16:15:47 IST 2015
-# mZxid = 0x7f
-# mtime = Tue Sep 29 16:15:47 IST 2015
-# pZxid = 0x7f
-# cversion = 0
-# dataVersion = 0
-# aclVersion = 0
-# ephemeralOwner = 0x0
-# dataLength = 22
-# numChildren = 0
-
-get /FirstZnode0000000023
-# [zk: localhost:2181(CONNECTED) 1] get /FirstZnode0000000023
-# “Second-data”
-# cZxid = 0x80
-# ctime = Tue Sep 29 16:25:47 IST 2015
-# mZxid = 0x80
-# mtime = Tue Sep 29 16:25:47 IST 2015
-# pZxid = 0x80
-# cversion = 0
-# dataVersion = 0
-# aclVersion = 0
-# ephemeralOwner = 0x0
-# dataLength = 13
-# numChildren = 0
+$ get -s /docker-cluster/0001/mynode0000000000
+node1
+cZxid = 0x10
+ctime = Sat Sep 12 11:27:15 UTC 2020
+mZxid = 0x10
+mtime = Sat Sep 12 11:27:15 UTC 2020
+pZxid = 0x10
+cversion = 0
+dataVersion = 0
+aclVersion = 0
+ephemeralOwner = 0x0
+dataLength = 5
+numChildren = 0
 ```
 
-## Watch znode for changes
-
-watch 는 get command 로 등록할 수 있다.
-
-```bash
-#get /FirstZnode watch 1 # deprecated
-get -w /FirstZnode
-```
-
-## Set data
-
-watch 가 등록되어 있다면 알림이 날아갈 것이다. 
-
-```bash
-set /SecondZnode Data-updated
-```
-
-## Create children of a znode
-
-```bash
-create /FirstZnode/Child1 firstchildren
-```
-
-## List children of a znode
-
-```bash
-ls /MyFirstZnode
-```
-
-## Check Status
-
-```bash
-stat /FirstZnode
-```
+| key            | description         |
+| -------------- | ------------------- |
+| data           | node's data         |
+| cZxid          | node created id     |
+| ctime          | node created time   |
+| mzXid          | node modified id    |
+| mtime          | node modified time  |
+| pZxid          |                     |
+| cversion       |                     |
+| dataVersion    | node data's version |
+| aclVersion     |                     |
+| ephemeralOwner |                     |
+| dataLength     |                     |
+| numChildren    | children's number   |
 
 ## Remove / Delete a znode
 
 ```bash
-rmr /FirstZnode
+$ delete /docker-cluster/0001/mynode0000000000
+```
+
+## Set data
+
+```bash
+$ set /docker-cluster/0001/mynode0000000001 iamslash
+$ get -s /docker-cluster/0001/mynode0000000001
+```
+
+## Watch znode for changes
+
+terminal b 을 실행해서 접속한다. 다음과 같이 `get -w` 를 이용해서 watch 를 등록한다.
+
+```bash
+$ get -w /docker-cluster/0001/mynode0000000001
+```
+
+terminal a 에서 다음을 실행한다.
+
+```console
+$ set /docker-cluster/0001/mynode0000000001 hello
+```
+
+watch event 는 한번 뿐이다. event 를 받고나서 다시 등록해야 한다.
+
+## Check Status
+
+```bash
+$ stat /docker-cluster/0001/mynode0000000001
+```
+
+## Ephemeral nodes
+
+terminal b 에서 다음을 실행하여 Ephermeral node 를 등록하자.
+
+```console
+$ create -e -s /docker-cluster/0001/mynode node2
+$ create -e -s /docker-cluster/0001/mynode node3
+$ ls /docker-cluster/0001
+[mynode0000000000, mynode0000000001, mynode0000000002, mynode0000000003]
+$ get -s /docker-cluster/0001/mynode0000000002
+cZxid = 0x1a
+ctime = Sat Sep 12 11:45:59 UTC 2020
+mZxid = 0x1a
+mtime = Sat Sep 12 11:45:59 UTC 2020
+pZxid = 0x1a
+cversion = 0
+dataVersion = 0
+aclVersion = 0
+ephemeralOwner = 0x10000da40f20005
+dataLength = 5
+numChildren = 0
+```
+
+terminal b 를 종료한다. 그리고 terminal a 에서 다음을 실행한다. 삭제되는데 시간이 걸릴 수 있다.
+
+```console
+$ ls /docker-cluster/0001
+[mynode0000000000, mynode0000000001]
 ```
 
 # Case Studies
