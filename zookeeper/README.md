@@ -1,6 +1,10 @@
 # Abstract
 
-consensus algorithm 중 하나인 zab 을 구현한 coordinator 이다.
+consensus algorithm 중 하나인 zab 을 구현한 coordinator 이다. 주로 다음과 같은 특징을 갖는다.
+
+* Strong Consistency 를 지원하므로 Global Locking 에 사용한다.
+* Configuration Management System 으로 이용한다. 예를 들어 A/B test 를 수행할 때 IOS client 를 한번 build 하고 configuration 의 내용에 따라 runtime 에 기능이 달라지도록 한다.
+* Strong Consistency 를 보장하기 때문에 Write 연산이 비싸다.
 
 Consensus 란 분산 시스템에서 노드 간의 상태를 공유하는 알고리즘을 말한다. 가장 유명한 알고리즘으로 `Paxos` 가 있다. `Raft` 는 이해하기 어려운 기존의 알고리즘과 달리 쉽게 이해하고 구현하기 위해 설계되었다.
 
@@ -181,5 +185,5 @@ $ ls /docker-cluster/0001
 # Caution
 
 * 빈번히 갱신되는 데이터 저장소로 사용하면 절대 안된다.
-  * concensus 는 비싼 연산이다. 특히 "쓰기"
+  * Concensus algorithm 덕분에 Strong Consistency 를 지원한다. Concensus algorithm 는 비싼 연산이다. 특히 "쓰기".
   * Write bound job 은 zookeeper 를 이용하지 말자.
