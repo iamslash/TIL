@@ -821,12 +821,15 @@ Managed Kubernetes Service
 
 * [Making requests using IAM user temporary credentials - AWS SDK for Java](https://docs.aws.amazon.com/AmazonS3/latest/dev/AuthUsingTempSessionTokenJava.html)
 * [Auto-refresh AWS Tokens Using IAM Role and boto3](https://dev.to/li_chastina/auto-refresh-aws-tokens-using-iam-role-and-boto3-2cjf)
+* [IAM Tutorial: Delegate access across AWS accounts using IAM roles](https://docs.aws.amazon.com/IAM/latest/UserGuide/tutorial_cross-account-with-roles.html)
+* [Class STSSessionCredentialsProvider](https://docs.aws.amazon.com/AWSJavaSDK/latest/javadoc/com/amazonaws/auth/STSSessionCredentialsProvider.html)
+  * `STSSessionCredentialsProvider::refresh()`
 
 ------
 
 A account 의 a IAM role 에서 B account 의 b IAM role 을 접근할 수 있다.
 
-* B account 의 b IAM role 에 trust relastion ship 을 설정한다. A account 의 a IAM role 을 등록
+* B account 의 b IAM role 에 trust relastion ship 을 설정한다. A account 의 a IAM role 을 등록.
 * Application 에서 STS 를 이용하여 Credential 을 만들어 접근한다. 
 
 ## How to use awscli on Windows
