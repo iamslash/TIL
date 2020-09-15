@@ -78,6 +78,7 @@
   - [EKS](#eks)
   - [Document DB](#document-db)
 - [Advanced](#advanced)
+  - [IAM role cross accounts](#iam-role-cross-accounts)
   - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
 - [Best Practices](#best-practices)
   - [Basic Web Service](#basic-web-service)
@@ -815,6 +816,18 @@ docker pull XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/repo-test:latest
 Managed Kubernetes Service
 
 # Advanced
+
+## IAM role cross accounts
+
+* [Making requests using IAM user temporary credentials - AWS SDK for Java](https://docs.aws.amazon.com/AmazonS3/latest/dev/AuthUsingTempSessionTokenJava.html)
+* [Auto-refresh AWS Tokens Using IAM Role and boto3](https://dev.to/li_chastina/auto-refresh-aws-tokens-using-iam-role-and-boto3-2cjf)
+
+------
+
+A account 의 a IAM role 에서 B account 의 b IAM role 을 접근할 수 있다.
+
+* B account 의 b IAM role 에 trust relastion ship 을 설정한다. A account 의 a IAM role 을 등록
+* Application 에서 STS 를 이용하여 Credential 을 만들어 접근한다. 
 
 ## How to use awscli on Windows
 
