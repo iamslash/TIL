@@ -1,6 +1,6 @@
 - [Requirements](#requirements)
 - [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
-  - [traffic estimates](#traffic-estimates)
+  - [Traffic estimates](#traffic-estimates)
   - [Storage estimates](#storage-estimates)
   - [Bandwidth estimates](#bandwidth-estimates)
   - [Memory estimates](#memory-estimates)
@@ -47,7 +47,7 @@
 
 # Capacity Estimation and Constraints
 
-## traffic estimates
+## Traffic estimates
 
 | Number                                       | Description      |
 | -------------------------------------------- | ---------------- |
@@ -135,7 +135,8 @@ Mongo DB sharding
 ### users
 
 | userId | pasteId | createdAt | modifiedAt |
-| 
+|---|---|--|--|
+| iamslash | sodifij | 2019-09-03 09:00:00 | 2019-09-03 09:00:00 |
 
 ## Application Layer
 
