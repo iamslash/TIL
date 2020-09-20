@@ -134,9 +134,9 @@ Mongo DB sharding
 
 ### users
 
-| userId | pasteId | createdAt | modifiedAt |
+| userId | userEmail | userName | createdAt | modifiedAt |
 |---|---|--|--|
-| iamslash | sodifij | 2019-09-03 09:00:00 | 2019-09-03 09:00:00 |
+| iamslash | iamslash@gmail.com | David Sun | 2019-09-03 09:00:00 | 2019-09-03 09:00:00 |
 
 ## Application Layer
 

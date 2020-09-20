@@ -698,18 +698,18 @@ total data size : estimated data size = 100 : 70
 
 | Design                                                                                                         | Implementation |
 | -------------------------------------------------------------------------------------------------------------- | -------------- |
-| [Designing a URL Shortening service like TinyURL](grokking/Designing_a_URL_Shortening_service_like_TinyURL/Designing_a_URL_Shortening_service_like_TinyURL.md) |                |
-| [Designing Pastebin](grokking/DesigningPastebin/DesigningPastebin.md)                                                            |                |
-| [Designing Instagram](grokking/DesigningInstagram/DesigningInstagram.md)                                                                                        |                |
+| [Designing a URL Shortening service like TinyURL](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md) |                |
+| [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md)                                                            |                |
+| [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md)                                                                                        |                |
 | [Designing Dropbox]()                                                                                          |                |
 | [Designing Facebook Messenger]()                                                                               |                |
-| [Designing Twitter](grokking/DesigningTwitter.md)                                                              |                |
+| [Designing Twitter](practices/DesigningTwitter.md)                                                              |                |
 | [Designing Youtube or Netflix]()                                                                               |                |
 | [Designing Typeahead Suggestion]()                                                                             |                |
-| [Designing an API Rate Limiter](grokking/DesigningAnApiRateLimiter.md)                                         |                |
-| [Designing Twitter Search](grokking/DesigningTwitterSearch.md)                                                 |                |
+| [Designing an API Rate Limiter](practices/DesigningAnApiRateLimiter.md)                                         |                |
+| [Designing Twitter Search](practices/DesigningTwitterSearch.md)                                                 |                |
 | [Designing a Web Crawler]()                                                                                    |                |
-| [Designing Facebook’s Newsfeed](grokking/DesigningFacebooksNewsfeed.md)                                        |
+| [Designing Facebook’s Newsfeed](practices/DesigningFacebooksNewsfeed.md)                                        |
 | [Designing Yelp or Nearby Friends]()                                                                           |                |
 | [Designing Uber backend]()                                                                                     |                |
 | [Designing Ticketmaster]()                                                                                     |                |
