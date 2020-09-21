@@ -8,6 +8,7 @@
     - [Primary Key](#primary-key)
     - [Unique Kye](#unique-kye)
     - [Foreign Key](#foreign-key)
+- [BIGINT(20) vs INT(20)](#bigint20-vs-int20)
 - [Advanced](#advanced)
   - [how to reset password](#how-to-reset-password)
   - [how to run multiple mysqld instances](#how-to-run-multiple-mysqld-instances)
@@ -75,6 +76,38 @@ Duplication 은 허용하지 않고 NULL 을 허용하는 Key 이다. Index 가 
 - SET NULL : 논리적 관계상 부모의 테이블, 즉 참조되는 테이블의 값이 변경 또는 삭제될 때 자식 테이블의 값을 NULL 로 만든다. UPDATE 쿼리로 인해 SET NULL 이 허용된 경우에만 동작한다.
 - NO ACTION : RESTRICT 옵션과 동작이 같지만, 체크를 뒤로 미룬다.
 - SET DEFAULT : 변경 또는 삭제 시에 값을 DEFAULT 값으로 세팅한다.
+
+# BIGINT(20) vs INT(20)
+
+* [mysql 에서 bigint(20), int(11) 의 의미](https://netmaid.tistory.com/42)
+  * [Types in MySQL: BigInt(20) vs Int(20)](https://stackoverflow.com/questions/3135804/types-in-mysql-bigint20-vs-int20)
+* [11.1.2 Integer Types (Exact Value) - INTEGER, INT, SMALLINT, TINYINT, MEDIUMINT, BIGINT @ mysql](https://dev.mysql.com/doc/refman/8.0/en/numeric-types.html)
+  
+------
+
+mysql `bigint(20)` 의 `20` 은 display hint 일 뿐이다. 실제 저장공간과는 상관없다. mysql 은 다음과 같은 Data Type Range 를 지원한다.
+
+| Type	| Storage (Bytes)	|Minimum Value Signed	|Minimum Value Unsigned	|Maximum Value Signed	|Maximum Value Unsigned |
+|--|--|--|--|--|--|
+|TINYINT |	1 |	-128	|0|	127|	255|
+|SMALLINT	|2|	-32768|	0|	32767|	65535|
+|MEDIUMINT	|3|	-8388608	|0	|8388607	|16777215|
+|INT	|4	|-2147483648|	0	|2147483647	|4294967295|
+|BIGINT	|8	|-2^63|	0|	2^63-1|	2^64-1|
+
+다음과 같이 `bigint(20) ZEROFILL` 을 수행하면 `1234` 의 값이 20 자리의 숫자로 표현된다.
+
+```
+CREATE TABLE foo ( bar INT(20) ZEROFILL );
+INSERT INTO foo (bar) VALUES (1234);
+SELECT bar from foo;
+
++----------------------+
+| bar                  |
++----------------------+
+| 00000000000000001234 |
++----------------------+
+```
 
 # Advanced
 
