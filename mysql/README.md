@@ -3,6 +3,7 @@
 - [Install with docker](#install-with-docker)
 - [Basic](#basic)
   - [Bin Log](#bin-log)
+  - [Types of Keys](#types-of-keys)
 - [Advanced](#advanced)
   - [how to reset password](#how-to-reset-password)
   - [how to run multiple mysqld instances](#how-to-run-multiple-mysqld-instances)
@@ -43,7 +44,9 @@ mysql> use hello
 
 `bin log` 는 PIT (Point In Time) restore 혹은 replication 에 꼭 필요하다.
 
+## Types of Keys
 
+* [MySQL 에서 사용하는 Key 의 정의와 종류들에 대하여](https://jins-dev.tistory.com/entry/MySQL-%EC%97%90%EC%84%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94-Key-%EC%9D%98-%EC%A0%95%EC%9D%98%EC%99%80-%EC%A2%85%EB%A5%98%EB%93%A4%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
 
 # Advanced
 
