@@ -1,6 +1,7 @@
 - [Materials](#materials)
 - [Basic](#basic)
   - [Concept](#concept)
+  - [How to run Spring Batch Application by command line](#how-to-run-spring-batch-application-by-command-line)
   - [Simple Spring Batch](#simple-spring-batch)
   - [Simple Spring Batch with mysql](#simple-spring-batch-with-mysql)
   - [Spring Batch Meta Data](#spring-batch-meta-data)
@@ -47,6 +48,17 @@
 Spring batch 는 job 과 step 으로 구성된다. 하나의 job 은 여러 step 들로 구성된다. 하나의 step 은 여러 tasklet 으로 구성된다. 특히 ChuckOrientedTasklet 은 chunk 단위로 처리하고 ItemReader, ItemWriter, ItemProcessor 로 구성된다. 이때 ItemProcessor 는 생략할 수 있다.
 
 ![](img/spring-batch-reference-model.png)
+
+## How to run Spring Batch Application by command line
+
+* [Spring Batch Command Line Job Runner](https://kwonnam.pe.kr/wiki/springframework/batch/commandlinejobrunner)
+
+```console
+java org.springframework.batch.core.launch.support.CommandLineJobRunner jobPath <options> jobIdentifier (jobParameters)
+ 
+# example
+java org.springframework.batch.core.launch.support.CommandLineJobRunner testJob.xml testJob schedule.date=2008/01/24 vendor.id=3902483920
+```
 
 ## Simple Spring Batch
 
