@@ -4,6 +4,10 @@
 - [Basic](#basic)
   - [Bin Log](#bin-log)
   - [Types of Keys](#types-of-keys)
+    - [Key](#key)
+    - [Primary Key](#primary-key)
+    - [Unique Kye](#unique-kye)
+    - [Foreign Key](#foreign-key)
 - [Advanced](#advanced)
   - [how to reset password](#how-to-reset-password)
   - [how to run multiple mysqld instances](#how-to-run-multiple-mysqld-instances)
@@ -47,6 +51,30 @@ mysql> use hello
 ## Types of Keys
 
 * [MySQL 에서 사용하는 Key 의 정의와 종류들에 대하여](https://jins-dev.tistory.com/entry/MySQL-%EC%97%90%EC%84%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EB%8A%94-Key-%EC%9D%98-%EC%A0%95%EC%9D%98%EC%99%80-%EC%A2%85%EB%A5%98%EB%93%A4%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC)
+
+-------
+
+### Key
+
+Duplication, NULL 을 허용한다. 그러나 NULL 은 performance issue 때문에 추천하지 않는다. Index 가 설정된다.
+
+### Primary Key
+
+Duplication, NULL 을 허용하지 않는 Key 이다. 즉, NOT NULL & UNIQUE option 이 포함된다. Index 가 설정된다.
+
+### Unique Kye
+
+Duplication 은 허용하지 않고 NULL 을 허용하는 Key 이다. Index 가 설정된다.
+
+### Foreign Key
+
+다른 Table 의 Primary Key 를 참조하는 Column 을 말한다. 다음과 같은 option 이 있다. 
+
+- RESTRICT : FK 관계를 맺고 있는 데이터 ROW 의 변경(UPDATE) 또는 삭제(DELETE) 를 막는다.
+- CASCADE : FK 관계를 맺을 때 가장 흔하게 접할 수 있는 옵션으로, FK 와 관계를 맺은 상대 PK 를 직접 연결해서 DELETE 또는 UPDATE 시, 상대 Key 값도 삭제 또는 갱신시킨다. 이 때에는 Trigger 가 발생하지 않으니 주의하자.
+- SET NULL : 논리적 관계상 부모의 테이블, 즉 참조되는 테이블의 값이 변경 또는 삭제될 때 자식 테이블의 값을 NULL 로 만든다. UPDATE 쿼리로 인해 SET NULL 이 허용된 경우에만 동작한다.
+- NO ACTION : RESTRICT 옵션과 동작이 같지만, 체크를 뒤로 미룬다.
+- SET DEFAULT : 변경 또는 삭제 시에 값을 DEFAULT 값으로 세팅한다.
 
 # Advanced
 
