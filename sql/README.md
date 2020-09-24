@@ -259,6 +259,8 @@ FROM Orders;
 
 -----
 
+특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 순위를 읽어온다.
+
 This is syntax of `RANK()`
 
 ```sql
