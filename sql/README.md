@@ -254,6 +254,8 @@ FROM Orders;
 ## RANK
 
 * [MySQL RANK Function](https://www.mysqltutorial.org/mysql-window-functions/mysql-rank-function/)
+* [The Most Frequently Ordered Products for Each Customer @ leetcode](https://leetcode.com/problems/the-most-frequently-ordered-products-for-each-customer/)
+  * [sol](https://github.com/iamslash/learntocode/tree/master/leetcode2/TheMostFrequentlyOrderedProductsforEachCustomer)
 
 -----
 
