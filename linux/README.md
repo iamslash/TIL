@@ -222,6 +222,12 @@ apt-cache search curl
 apt-cache show curl
 ```
 
+* [How to find out which versions of a package can I install on APT](https://superuser.com/questions/393681/how-to-find-out-which-versions-of-a-package-can-i-install-on-apt)
+
+```bash
+apt-cache madison vim
+```
+
 ## brew
 
 ```bash
@@ -352,6 +358,7 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `apt-get install psmisc`
   * 프로세스의 트리를 보여다오
   * `pstree -a`
+  * `pstree -s -p 19177` 19177 PID 의 부모를 보여다오
 * `telnet`
   * TELNET protocol client
 * `nc` netcat
