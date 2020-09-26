@@ -535,6 +535,16 @@ builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
   * `-d` 를 이용하여 `a.js` 를 읽어서 HTTP POST 데이터로 전송한다.
   * `-H` 를 이용하여 HTTP HEAD 를 설정한다. 여러개의 HEAD 를 전송하고 싶다면 `-H` 를 여러개 사용하라.
   * `--user-agent` 를 이용하여 BROWSER 를 설정한다.
+  * [Curl post multiline json data from stdin](https://www.darklaunch.com/curl-post-multiline-json-data-from-stdin.html)
+  
+```bash
+$ curl https://api.example.com/posts/create --data @- <<EOF
+  "title": "Hello world!",
+  "content": "This is my first post."
+}
+EOF
+```
+  
 * `wget`
   * web 에서 파일좀 내려받아다오
   * `wget ftp://a.b.com/a.msg`

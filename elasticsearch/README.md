@@ -13,6 +13,8 @@
   - [Search](#search)
   - [Metric Aggregation](#metric-aggregation)
   - [Bucket Aggregation](#bucket-aggregation)
+- [Advanced](#advanced)
+  - [Reindex](#reindex)
 
 ----
 
@@ -531,4 +533,54 @@ $ curl -H 'Content-type: application/json' -XPOST http://localhost:9200/_bulk?pr
 
 # 안된다???
 $ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pretty --data-binary @stats_by_team.json
+```
+
+# Advanced
+
+## Reindex
+
+* [ElasticSearch 에서 reindex 을 활용하는 방법](https://findstar.pe.kr/2018/07/07/elasticsearch-reindex/)
+* [Reindex API @ Elasticsearch](https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-reindex.html)
+* A Cluster 에서 A Cluster 혹은 A Cluster 에서 B Cluster 로 index 를 이동할 때 사용한다. 
+
+-----
+
+* Reindex from local.
+
+```bash
+$ curl -X POST "localhost:9200/_reindex?pretty" -H 'Content-Type: application/json' -d'
+{
+  "source": {
+    "index": "my-index-000001"
+  },
+  "dest": {
+    "index": "my-new-index-000001"
+  }
+}
+'
+```
+
+* Reindex from remote.
+
+```bash
+curl -X POST "localhost:9200/_reindex?pretty" -H 'Content-Type: application/json' -d'
+{
+  "source": {
+    "remote": {
+      "host": "http://otherhost:9200",
+      "username": "user",
+      "password": "pass"
+    },
+    "index": "my-index-000001",
+    "query": {
+      "match": {
+        "test": "data"
+      }
+    }
+  },
+  "dest": {
+    "index": "my-new-index-000001"
+  }
+}
+'
 ```
