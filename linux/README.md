@@ -10,6 +10,8 @@
 - [Speicial FileSystem](#speicial-filesystem)
 - [Package Managers](#package-managers)
   - [apt-get](#apt-get)
+  - [apt](#apt)
+  - [dpkg](#dpkg)
   - [brew](#brew)
   - [yum](#yum)
 - [Commands](#commands)
@@ -203,41 +205,102 @@ tmpfs          1000M     0 1000M   0% /sys/firmware
 ## apt-get
 
 * [apt-get(8) - Linux man page](https://linux.die.net/man/8/apt-get)
+* `/etc/apt/sources.list` 에 기재된 repo 이 packages 를 설치한다.
+  * `main` : Free SW Ubuntu officially supports
+  * `universe` : Free SW Ubuntu doesn't support
+  * `restricted` : Non-free SW Ubuntu officially supports 
+  * `multiverse` : Non-free SW Ubuntu doesn't support
+
+-----
 
 ```bash
-# update the list of packages
-apt-get update
-# upgrade every packages
-apt-get upgrade
-apt-get install curl
-apt-get --reinstall install curl
-apt-get remove curl
+# Update the list of packages from /etc/apt/sources.list
+$ apt-get update
+# Upgrade every packages
+$ apt-get upgrade
+$ apt-get install curl
+$ apt-get --reinstall install curl
+$ apt-get remove curl
 # remove curl package including config files
-apt-get --purge remove curl
-# download curl pakcage source
-apt-get source curl
-# search curl pakcage
-apt-cache search curl
-# show curl package informations
-apt-cache show curl
+$ apt-get --purge remove curl
+# Remove unused pakcages
+$ apt-get autoremove
+# Remove downloaded files
+$ apt-get clean/autoclean
+# Download curl pakcage source
+$ apt-get source curl
+
+# Search curl pakcage
+$ apt-cache search curl
+# Show curl package informations
+$ apt-cache show curl
+# Show installed package and the location
+$ apt-cache policy curl
+# Show dependencies of the package
+$ apt-cache depends curl
+# Show reversed dependencies of the package
+$ apt-cache rdepends curl
 ```
 
 * [How to find out which versions of a package can I install on APT](https://superuser.com/questions/393681/how-to-find-out-which-versions-of-a-package-can-i-install-on-apt)
 
 ```bash
-apt-cache madison vim
+$ apt-cache madison vim
+```
+
+## apt
+
+* [apt 와 apt-get 의 차이](https://jhhwang4195.tistory.com/69)
+
+-----
+
+`apt-get` 이 먼저 만들어지고 `apt-get, apt-cache` 를 하나의 command 로 처리하기 위해 탄생했음.
+
+```bash
+$ apt update/upgrade
+$ apt install
+$ apt remote
+$ apt autoremove
+$ apt autoclean
+$ apt clean
+# Show installed package
+$ apt show (=apt-cache show)
+# Search package in repo
+$ apt search
+# Show installed package and the location
+$ apt policy
+```
+
+## dpkg
+
+* [apt 와 dpkg 의 차이점](https://sung-studynote.tistory.com/78)
+* `dpkg` 는 package 의 dependency 를 처리하지 않는다. 그러나 `apt-get` 은 pakcage 의 dependency 를 처리하여 관련된 package 를 모두 설치하고 환경변수 또한 설정한다. 또한 `apt-get` 은 내부적으로 `dpkg` 를 사용한다. 
+
+-----
+
+```bash
+# Install package
+$ dpkg -i a.deb
+# Uninstall pakcage
+$ dpkg -r <pakcage-name>
+# Uninstall pakcage including env variables
+$ dpkg -P <pakcage-name>
+# Show installed pakcage information
+$ dpkg -l <pakcage-name>
+# Show file names of installed pakcage
+$ dpkg -L <pakcage-name>
 ```
 
 ## brew
 
 ```bash
-brew install curl
+$ brew install curl
 ```
 
 ## yum
 
 ```bash
-yum install curl
+$ yum install curl
 ```
 
 # Commands

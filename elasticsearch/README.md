@@ -1,4 +1,5 @@
 - [Materials](#materials)
+- [Install Elasticsearch 2.4.1 from the source](#install-elasticsearch-241-from-the-source)
 - [Install with Docker](#install-with-docker)
 - [Sample Data](#sample-data)
 - [Integration with Spring](#integration-with-spring)
@@ -19,6 +20,28 @@
 
 * [Spring and Elasticsearch @ github](https://github.com/ahnjunwoo/elasticsearchDockerExam)
 * [elk @ TIL](/elk/README.md)
+
+# Install Elasticsearch 2.4.1 from the source
+
+This is matched with Kibana 4.6.6. You can download from [Elastic past release](https://www.elastic.co/kr/downloads/past-releases).
+
+```bash
+$ wget https://download.elastic.co/elasticsearch/release/org/elasticsearch/distribution/tar/elasticsearch/2.4.1/elasticsearch-2.4.1.tar.gz
+$ tar xzvf elasticsearch-2.4.1.tar.gz
+$ cd elasticsearch-2.4.1
+
+$ vim config/elasticsearch.yml
+cluster.name: iamslash-es
+node.name: node-1
+path.data: /iamslash/service/es/data
+path.logs: /iamslash/logs/es
+network.host: _eth0_
+http.port: 19200
+mapper.allow_dots_in_name: true
+
+$ nohup /usr/bin/java -Xms256m -Xmx1g -Djava.awt.headless=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -XX:+DisableExplicitGC -Dfile.encoding=UTF-8 -Djna.nosys=true -Dmapper.allow_dots_in_name=true -Des.path.home=/home/coupang/elasticsearch-2.4.1 -cp /home/coupang/elasticsearch-2.4.1/lib/elasticsearch-2.4.1.jar:/home/coupang/elasticsearch-2.4.1/lib/* org.elasticsearch.bootstrap.Elasticsearch start -d & 
+# After exit terminal, systemd will be a parent process of /usr/bin/java
+```
 
 # Install with Docker
 
