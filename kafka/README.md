@@ -254,7 +254,7 @@ $ cat /usr/local/bin/kafka/logs/server.log
 
 # Advanced
 
-## Gurant order of messages, no duplicates
+## Gurantee order of messages, no duplicates
 
 * 하나의 Topic 에 하나의 Partition 을 구성한다.
 * Kafka 가 죽었다가 살아날 때 중복 소비를 방지하기 위해 `processing.guarantee=exactly_once` 를 설정한다.
