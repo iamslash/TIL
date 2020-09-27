@@ -119,7 +119,7 @@ Keyspace 를 생성할 때 Replication 의 배치전략, 복제개수, 위치등
 * Target node 는 read request 를 수신하면 가장 먼저 `MemTable` 을 확인한다. 
 * 만약 없다면 `SSTable` 을 확인해야 한다. 그러나 그 전에 `SStable` 과 짝을 이루는 `Bloom Filter` 와 `Index` 를 먼저 확인 한다.
   * `Bloom Filter` 는 확률적 자료구조이다. 데이터가 없는 걸 있다고 거짓말 할 수 있지만 있는 걸 없다고 거짓말 하지는 못한다.
-  * `Bloom Filter` 가 있다고 하면 `SSTable` 에 반드시 데이터가 있으을 의미한다.
+  * `Bloom Filter` 가 있다고 하면 `SSTable` 에 반드시 데이터가 있음을 의미한다.
 * `Bloom Filter` 를 통해 `SSTable` 에 data 가 있다는 것을 알았다면 메모리에 저장되어 있는 `Summary Index` 를 통해 disk 에 저장되어 있는 원본 index 를 확인하여 `SSTable` 의 data 위치에 대한 offset 을 알게된다. 그리고 `SSTable` 에서 원하는 data 를 가져올 수 있다.
   * 이러한 과정은 최근에 생성된 `SSTable` 부터 차례대로 이루어진다.
 
