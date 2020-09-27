@@ -1,7 +1,9 @@
+- [Abstract](#abstract)
 - [Materials](#materials)
 - [Install with docker](#install-with-docker)
 - [Basic](#basic)
   - [Features](#features)
+    - [Table Structure](#table-structure)
     - [Data Types](#data-types)
     - [Table Index](#table-index)
     - [Secondary Index](#secondary-index)
@@ -19,6 +21,12 @@
       - [Query](#query-1)
 
 -------
+
+# Abstract
+
+dynamoDB 는 10 밀리초 미만의 성능을 제공하는 key-value document DB 이다. 하루에 10 조개 이상의 요청을 처리할 수 있고, 초당 2,000 만개 이상의 피크 요청을 지원한다.
+
+Transaction 을 지원한다???
 
 # Materials
 
@@ -40,6 +48,14 @@ $ docker run -d -p 8000:8000 --rm --name my-dynamodb amazon/dynamodb-local
 # Basic
 
 ## Features
+
+### Table Structure
+
+* [효과적인 NoSQL (Elasticahe / DynamoDB) 디자인 및 활용 방안 (최유정 & 최홍식, AWS 솔루션즈 아키텍트) :: AWS DevDay2018](https://www.slideshare.net/awskorea/nosql-elasticahe-dynamodb-aws-aws-devday2018)
+
+-----
+
+![](table_structure.jpg)
 
 ### Data Types
 
@@ -73,7 +89,7 @@ DynamoDB provides 2 kinds of consistency.
 
 ### Provisioned Throughput
 
-DynamoDB provides 2 kinds of provisioned throughputs.
+DynamoDB provides 2 kinds of provisioned throughputs. RCU, WCU 는 비용과 관련이 있다.
 
 * Read Capacity Units: 초당 1KB 단위로 읽을 수 있는 능력 (Eventually Consistent Read 는 Stronly Consistent Read 보다 2 배이다.)
 * Write Capacity Units: 초당 1KB 단위로 쓸 수 있는 능력
