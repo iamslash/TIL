@@ -5,6 +5,7 @@
   - [Compile, Execution](#compile-execution)
   - [Reserved Words](#reserved-words)
   - [Useful Keywords](#useful-keywords)
+  - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collection Examples](#collection-examples)
@@ -187,6 +188,24 @@ class Person implements Serializable {
         String s = serializeTest(p);
         deSerializeTest(s);
     }
+```
+
+## Bit Manipulation
+
+* [Difference between >>> and >>](https://stackoverflow.com/questions/2811319/difference-between-and)
+
+----
+
+`>>` arithmatic bit shift vs `>>>` logical bit shift
+
+```java
+int a = -2; // 1111 1110
+
+// Arithmatic bit shift
+int b = a >> 1; // 1111 1111
+
+// Logical bit shift
+int c = a >>> 1; // 0111 1111
 ```
 
 ## String
