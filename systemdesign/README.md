@@ -769,8 +769,8 @@ total data size : estimated data size = 100 : 70
 
 # Real World Architecture
 
-| Type            | System                                                                                                               | Reference(s)                                                                                                                                   |
-| --------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Type  | System  | Reference(s) |
+| --------------- | ------- | ----- |
 | Data processing | **MapReduce** - Distributed data processing from Google                                                              | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/mapreduce-osdi04.pdf)                     |
 | Data processing | **Spark** - Distributed data processing from Databricks                                                              | [slideshare.net](http://www.slideshare.net/AGrishchenko/apache-spark-architecture)                                                             |
 | Data processing | **Storm** - Distributed data processing from Twitter                                                                 | [slideshare.net](http://www.slideshare.net/previa/storm-16094009)                                                                              |
@@ -782,12 +782,15 @@ total data size : estimated data size = 100 : 70
 | Data store      | **MongoDB** - Document-oriented database                                                                             | [slideshare.net](http://www.slideshare.net/mdirolf/introduction-to-mongodb)                                                                    |
 | Data store      | **Spanner** - Globally-distributed database from Google                                                              | [research.google.com](http://research.google.com/archive/spanner-osdi2012.pdf)                                                                 |
 | Data store      | **Memcached** - Distributed memory caching system                                                                    | [slideshare.net](http://www.slideshare.net/oemebamo/introduction-to-memcached)                                                                 |
-| Data store      | **Redis** - Distributed memory caching system with persistence and value types                                       | [slideshare.net](http://www.slideshare.net/dvirsky/introduction-to-redis)                                                                      |
-| Data store      | **Couchbase** - an open-source, distributed multi-model NoSQL document-oriented database                             | [couchbase.com](https://www.couchbase.com/)                                                                                                    |
-|                 |                                                                                                                      |                                                                                                                                                |
+| Data store      | **Redis** - Distributed memory caching system with persistence and value types                                       | [slideshare.net](http://www.slideshare.net/dvirsky/introduction-to-redis) |
+| Data store | **Couchbase** - an open-source, distributed multi-model NoSQL document-oriented database | [couchbase.com](https://www.couchbase.com/) |
+| Data store | **Elasticsearch** | [Elasticsearch @ TIL](/elasticsearch/README.md) |
 | File system     | **Google File System (GFS)** - Distributed file system                                                               | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/gfs-sosp2003.pdf)                         |
-| File system     | **Hadoop File System (HDFS)** - Open source implementation of GFS                                                    | [apache.org](https://hadoop.apache.org/docs/r1.2.1/hdfs_design.html)                                                                           |
-|                 |                                                                                                                      |                                                                                                                                                |
+| File system | **Hadoop File System (HDFS)** - Open source implementation of GFS  | [apache.org](https://hadoop.apache.org/docs/r1.2.1/hdfs_design.html) |
+| Monitoring | **Graylog** | [Gralog @ TIL](/graylog/README.md) |
+| Monitoring | **Prometheus** | [Prometheus @ TIL](/prometheus/README.md) |
+| Monitoring | **Grafana** | [Grafana @ TIL](/grafana/README.md) |
+| CI/CD | **Jenkins** | [Jenkins @ TIL](/jenkins/README.md) |
 | Misc            | **Chubby** - Lock service for loosely-coupled distributed systems from Google                                        | [research.google.com](http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/archive/chubby-osdi06.pdf) |
 | Misc            | **Dapper** - Distributed systems tracing infrastructure                                                              | [research.google.com](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36356.pdf)                                |
 | Misc            | **Kafka** - Pub/sub message queue from LinkedIn                                                                      | [slideshare.net](http://www.slideshare.net/mumrah/kafka-talk-tri-hug)                                                                          |
