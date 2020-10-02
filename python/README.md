@@ -5,6 +5,7 @@
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
   - [Multidimensional Array](#multidimensional-array)
+  - [Built-in Functions](#built-in-functions)
   - [round](#round)
   - [classes](#classes)
   - [lambdas](#lambdas)
@@ -42,6 +43,9 @@
   - [coroutine](#coroutine)
   - [function caches](#function-caches)
   - [context managers](#context-managers)
+  - [typing — Support for type hints @ python3](#typing--support-for-type-hints--python3)
+  - [itertools — Functions creating iterators for efficient looping](#itertools--functions-creating-iterators-for-efficient-looping)
+  - [functools — Higher-order functions and operations on callable objects](#functools--higher-order-functions-and-operations-on-callable-objects)
 - [Library](#library)
   - [regex](#regex)
   - [numpy](#numpy)
@@ -560,6 +564,10 @@ arr = [[0]*cols]*rows
 print(arr) 
 # [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]
 ```
+
+## Built-in Functions
+
+* [Built-in Functions](builtinfunctions.md)
 
 ## round
 
@@ -2364,6 +2372,31 @@ def open_file(name):
 with open_file('foo') as f:
     f.write('hola')
 ```
+
+## typing — Support for type hints @ python3
+
+* [typing — Support for type hints @ python3](https://docs.python.org/3/library/typing.html)
+
+----
+
+```py
+from typing import List
+Vector = List[float]
+
+def scale(scalar: float, vector: Vector) -> Vector:
+    return [scalar * num for num in vector]
+
+# typechecks; a list of floats qualifies as a Vector.
+new_vector = scale(2.0, [1.0, -4.2, 5.4])
+```
+
+## itertools — Functions creating iterators for efficient looping
+
+* [itertools](itertools.md)
+
+## functools — Higher-order functions and operations on callable objects
+
+* [functools](functools.md)
 
 # Library
 
