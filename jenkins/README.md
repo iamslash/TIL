@@ -30,6 +30,7 @@
   - [Password injection](#password-injection)
   - [Job Scheduling](#job-scheduling)
   - [How to extract password from credentials](#how-to-extract-password-from-credentials)
+  - [High Availability](#high-availability)
 
 ----
 
@@ -783,3 +784,12 @@ Execute this with the encrypted password.
 ```
 println( hudson.util.Secret.decrypt("{Axxxx....xxxxT}") )
 ```
+
+## High Availability
+
+* [Jenkins High Availability setup](https://skalable.net/blogs/technology/jenkins_ha.html)
+* [Installing CloudBees Jenkins Platform](https://docs.cloudbees.com/docs/cloudbees-jenkins-platform/latest/install-guide/#high-availability)
+
+----
+
+HaPoroxy, Samba
