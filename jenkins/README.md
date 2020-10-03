@@ -789,6 +789,8 @@ println( hudson.util.Secret.decrypt("{Axxxx....xxxxT}") )
 
 * [Jenkins High Availability setup](https://skalable.net/blogs/technology/jenkins_ha.html)
 * [Installing CloudBees Jenkins Platform](https://docs.cloudbees.com/docs/cloudbees-jenkins-platform/latest/install-guide/#high-availability)
+* [Jenkins HA in AWS — a proven architecture](https://medium.com/@sebolabs/jenkins-ha-aws-cd55d82057c8)
+  * [src](https://github.com/sebolabs/jenkins-bg-tf)
 
 ----
 
