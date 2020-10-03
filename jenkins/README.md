@@ -746,7 +746,9 @@ echo "My secret is $IAMSLASH_SECRET"
 ## Job Scheduling
 
 * [Jenkins 빌드 스케쥴 설정하기](https://khie74.tistory.com/1169521477)
-
+* [crontab guru](https://crontab.guru/)
+  * The quick and simple editor for cron schedule expressions by Cronitor
+  
 ----
 
 * `0 * * * * `
