@@ -128,7 +128,7 @@ $ /usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --from-begin
 
 ## Partition
 
-하나의 Topic 은 여러개의 Partition 으로 구성한다. Producer 는 여러개의 Partition 에 병렬로 메시지를 전송할 수 있다. Consumer 입장에서 Message 순서가 보장될 수 없다. Partition 의 개수는 한번 늘리면 줄일 수 없다.
+하나의 Topic 은 여러개의 Partition 으로 구성한다. Producer 는 여러개의 Partition 에 병렬로 메시지를 전송할 수 있다. Consumer 입장에서 Message 순서가 보장될 수 없다. Partition 의 개수는 한번 늘리면 줄일 수 없다. partition 과 consumer group 을 사용하면 topic 을 parallel 하게 처리하여 수행성능을 높일 수 있다.  
 
 Message 의 순서가 중요하다면 하나의 Topic 은 하나의 Partition 으로 구성한다.
 
