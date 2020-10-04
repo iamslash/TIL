@@ -395,7 +395,7 @@ Service Mesh 는 MSA 를 위한 기술중 하나이다. network 부분을 담당
 
 * Sharding
   * 수평분할 이라고도 한다. 하나의 테이블을 레코드별로 partitioning 한다.
-  * [consistent hashing @ TIL](/consistent_hasing/README.md)
+  * [consistent hashing @ TIL](/consistenthasing/README.md)
 
 <p align="center">
   <img src="http://i.imgur.com/wU8x5Id.png"/>
