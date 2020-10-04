@@ -1,3 +1,8 @@
+# Materials
+
+* [NoSQL DB 의 종류](http://www.incodom.kr/NoSQL_DB_%EC%9D%98_%EC%A2%85%EB%A5%98)
+* [와이드 컬럼 스토어 @ naverblog](https://m.blog.naver.com/PostView.nhn?blogId=gkenq&logNo=10184332901&proxyReferer=https:%2F%2Fwww.google.com%2F)
+
 # SQL
 
 MySQL, Oracle, MS SQL Server, SQLite, Postgres, and MariaDB.

@@ -615,7 +615,7 @@ XMLHttpRequest 가 cross-domain 을 요청할 수 있도록하는 방법이다. 
 | is_read     | boolean        | 읽었는가??             |
 | contents    | String         | 미리보기 (내용의 일부)      |
 
-eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다. 
+email file 은 AWS S3 에 저장하자. email file 의 key 를 마련해야 한다. 
 
 * `{receiver_id}_{mail_id}` 
   * `mail_id` 는 이미 shard 마다 중복해서 존재한다. 따라서 `receiver_id` 와 결합하여 사용하자.
@@ -629,9 +629,9 @@ eml 은 AWS S3 에 저장하자. eml file 의 key 를 마련해야 한다.
   * timestamp 는 4 bytes 를 모두 사용하면 `1970/01/01` 부터 `2106/02/07 06:28` 까지만 표현 가능하다.  
 * `{timestamp: 52 bits}_{shard_id: 12 bits}_{sequence:12 bits}` 8 bytes 
   * IDC 정보도 반영되었으면 좋겠다.
-* `{timestamp: 42 bits}_{datacenter_id: 5 bits}_{worker_id: 5 bits}_{sequence: 1 2bits}` 8 bytes
+* `{timestamp: 42 bits}_{datacenter_id: 5 bits}_{worker_id: 5 bits}_{sequence: 12bits}` 8 bytes
   * 이것은 twitter 의 id 이다.
-* `{timestamp: 41 bits}_{Logical Shard ID: 13 its}_{Auto Increment/1024: 10 bites}` 8 bytes
+* `{timestamp: 41 bits}_{Logical Shard ID: 13 its}_{Auto Increment/1024: 10 bits}` 8 bytes
   * 이것은 Instagram 의 id 이다.
 * `{timetamp: 4 bytes}_{machine_id:3 bytes}_{process_id:2 bytes}_{counter:3 bytes}` 12 bytes
   * 이것은 mongoDB 의 ID 이다. 
@@ -698,9 +698,9 @@ total data size : estimated data size = 100 : 70
 
 | Design                                                                                                         | Implementation |
 | -------------------------------------------------------------------------------------------------------------- | -------------- |
-| [Designing a URL Shortening service like TinyURL](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md) |                |
-| [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md)                                                            |                |
-| [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md)                                                                                        |                |
+| [Designing a URL Shortening service like TinyURL](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md) | |
+| [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md) | |
+| [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md) | |
 | [Designing Dropbox]()                                                                                          |                |
 | [Designing Facebook Messenger]()                                                                               |                |
 | [Designing Twitter](practices/DesigningTwitter.md)                                                              |                |
@@ -711,8 +711,10 @@ total data size : estimated data size = 100 : 70
 | [Designing a Web Crawler]()                                                                                    |                |
 | [Designing Facebook’s Newsfeed](practices/DesigningFacebooksNewsfeed.md)                                        |
 | [Designing Yelp or Nearby Friends]()                                                                           |                |
-| [Designing Uber backend]()                                                                                     |                |
-| [Designing Ticketmaster]()                                                                                     |                |
+| [Designing Uber Backend]()                                                                                     |                |
+| [Designing Ticketmaster]() | |
+| [Designing Podcast Backend]() | |
+| [Designing Email Service]() | |
 
 # System Design Primer Practices
 
