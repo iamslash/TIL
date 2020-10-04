@@ -13,6 +13,8 @@
   - [Search](#search)
   - [Metric Aggregation](#metric-aggregation)
   - [Bucket Aggregation](#bucket-aggregation)
+  - [Sub Aggregation](#sub-aggregation)
+  - [Pipeline Aggregation](#pipeline-aggregation)
 - [Advanced](#advanced)
   - [Reindex](#reindex)
 
@@ -467,6 +469,11 @@ $ curl -H 'Content-type: application/json' -XGET http://localhost:9200/basketbal
 
 ## Metric Aggregation
 
+* [입문 6장 ELASTICSEARCH -분석 & 집계](https://kazaana2009.tistory.com/7)
+* [8.1 메트릭 - Metrics Aggregations](https://esbook.kimjmin.net/08-aggregations/8.1-metrics-aggregations)
+
+-----
+
 aggregation 은 document 의 field 들을 조합하여 어떠한 값을 도출하는 방법이다.
 Metric Aggregation 은 평균, 최소, 최대값과 같은 산술연산을 통해 조합하는 방법이다.
 
@@ -526,6 +533,11 @@ $ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?p
 
 ## Bucket Aggregation
 
+* [입문 6장 ELASTICSEARCH -분석 & 집계](https://kazaana2009.tistory.com/7)
+* [8.2 버킷 - Bucket Aggregations](https://esbook.kimjmin.net/08-aggregations/8.2-bucket-aggregations)
+
+----
+
 Bucket Aggregation 은 RDBMS 의 group by 와 비슷하다. document 를 group 으로 묶는다.
 
 ```bash
@@ -534,6 +546,14 @@ $ curl -H 'Content-type: application/json' -XPOST http://localhost:9200/_bulk?pr
 # 안된다???
 $ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?pretty --data-binary @stats_by_team.json
 ```
+
+## Sub Aggregation
+
+* [8.3 하위 - sub-aggregations](https://esbook.kimjmin.net/08-aggregations/8.3-aggregations)
+
+## Pipeline Aggregation
+
+* [8.4 파이프라인 - Pipeline Aggregations](https://esbook.kimjmin.net/08-aggregations/8.4-pipeline-aggregations)
 
 # Advanced
 
