@@ -874,6 +874,8 @@ total data size : estimated data size = 100 : 70
 # MSA (Micro Service Architecture)
 
 * [Micro Service Architecture @ TIL](msa.md)
+* [ftgo monolith @ github](https://github.com/microservices-patterns/ftgo-monolith)
+  * [ftgo microservices @ github](https://github.com/microservices-patterns/ftgo-application)
 
 -----
 
