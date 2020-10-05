@@ -41,6 +41,7 @@
   - [80/20 rule](#8020-rule)
   - [70% Capacity model](#70-capacity-model)
   - [SLA, SLO, SLI](#sla-slo-sli)
+  - [Optimistic Lock vs Pessimistic Lock](#optimistic-lock-vs-pessimistic-lock)
 - [Grokking the System Design Interview Practices](#grokking-the-system-design-interview-practices)
   - [Fundamentals](#fundamentals)
   - [Design Practices](#design-practices)
@@ -666,6 +667,18 @@ total data size : estimated data size = 100 : 70
 * SLA (Service Level Agreement) is a contract that the service provider promises customers on service availability, performance, etc.
 * SLO (Service Level Objective) is a goal that service provider wants to reach.
 * SLI (Service Level Indicator) is a measurement the service provider uses for the goal.
+
+## Optimistic Lock vs Pessimistic Lock
+
+* [비관적 Lock, 낙관적 Lock 이해하기](https://medium.com/@jinhanchoi1/%EB%B9%84%EA%B4%80%EC%A0%81-lock-%EB%82%99%EA%B4%80%EC%A0%81-lock-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-1986a399a54)
+* [Optimistic Locking in JPA](https://www.baeldung.com/jpa-optimistic-locking)
+  * [src](https://github.com/eugenp/tutorials/tree/master/persistence-modules/hibernate-jpa)
+* [Pessimistic Locking in JPA](https://www.baeldung.com/jpa-pessimistic-locking)
+  * [src](https://github.com/eugenp/tutorials/tree/master/persistence-modules/hibernate-jpa)
+
+-----
+
+
 
 # Grokking the System Design Interview Practices
 
