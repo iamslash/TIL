@@ -678,7 +678,7 @@ total data size : estimated data size = 100 : 70
 
 -----
 
-
+Database 의 isolation level 보다 융통성있는 locking 방법
 
 # Grokking the System Design Interview Practices
 
