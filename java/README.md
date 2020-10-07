@@ -642,6 +642,12 @@ for (int i = 0; i < m; ++i) {
    }
    System.out.println("");
 }
+
+// initialization with one value
+int[][] C = new int[10][1024];
+for (int[] item : C) {
+   Arrays.fill(item, -1);
+}
 ```
 
 ## Collection Framework
