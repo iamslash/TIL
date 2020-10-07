@@ -1042,6 +1042,7 @@ EOF
     * `ps aux | grep xxxx`
     * [How to Find the Process Listening to Port on Mac OS X](https://www.btaz.com/mac-os-x/find-the-process-listening-to-port-on-mac-os-x/)
     * [3 Ways to Find Out Which Process Listening on a Particular Port](https://www.tecmint.com/find-out-which-process-listening-on-a-particular-port/)
+  * `netstat -nat | awk '{print $6}' | sort | uniq -c | sort -n` list tcp connected endpoints
 * `ss`
   * socket statistics. netstat 과 옵션의 의미가 유사하다.
   * `ss -plat` tcp 로 리스닝하는 프로세스들 보여줘
