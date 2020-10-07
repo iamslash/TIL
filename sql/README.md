@@ -2,6 +2,7 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Usage](#usage)
+  - [Show something](#show-something)
   - [Select statement order](#select-statement-order)
   - [Select](#select)
   - [Select Distinct](#select-distinct)
@@ -94,6 +95,13 @@
 * [sql @ w3schools](https://www.w3schools.com/sql/default.asp)
 
 # Usage
+
+## Show something
+
+```sql
+show full columns from users;
+show index from users;
+```
 
 ## Select statement order
 
