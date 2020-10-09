@@ -11,6 +11,7 @@
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collections](#collections)
   - [Multidimensional Array](#multidimensional-array)
+  - [template literals (template strings in ECMA 2015)](#template-literals-template-strings-in-ecma-2015)
   - [Sort](#sort)
   - [Variables](#variables)
   - [Operators](#operators)
@@ -359,6 +360,43 @@ names[1][2] = "Joe";
 print(names[1][2]); // display "Joe"
 var grades = [[89, 77, 78],[76, 82, 81],[91, 94, 89]];
 print(grades[2][2]); // displays 89
+```
+
+## template literals (template strings in ECMA 2015)
+
+* [Template literals](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Template_literals)
+* [템플릿 리터럴](https://poiemaweb.com/es6-template-literals)
+
+----
+
+Template literals are useful with backquote.
+
+```js
+// You can mix single, double quotes
+const template = `You can mix 'single quotes' "double quotes".`;
+console.log(template);
+
+// You can include carrage return in string
+const template = `<ul class="nav-items">
+  <li><a href="#home">Home</a></li>
+  <li><a href="#news">News</a></li>
+  <li><a href="#contact">Contact</a></li>
+  <li><a href="#about">About</a></li>
+</ul>`;
+console.log(template);
+
+// String interpolation is convenient
+const first = 'Ung-mo';
+const last = 'Lee';
+// ES5: 문자열 연결
+console.log('My name is ' + first + ' ' + last + '.');
+// "My name is Ung-mo Lee."
+// ES6: String Interpolation
+console.log(`My name is ${first} ${last}.`);
+// "My name is Ung-mo Lee."
+
+// ${} will be converted to string
+console.log(`1 + 1 = ${1 + 1}`); // "1 + 1 = 2"
 ```
 
 ## Sort

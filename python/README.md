@@ -563,6 +563,11 @@ arr = [[0]*cols]*rows
 # arr = [[0 for i in range(cols)] for j in range(rows)] 
 print(arr) 
 # [[0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]]
+
+# Init 2D with 0
+h, w = 10, 10
+C = [[0] * (w + 1) for _ in range(y + 1)]
+print(C)
 ```
 
 ## Built-in Functions
