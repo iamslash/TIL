@@ -22,6 +22,27 @@ database 를 만들어 보자.
 
 * [normalization](/normalization/README.md)
 
+# Transaction
+
+Transaction 은 ACID 특성이 있다.
+
+* Atomicity (원자성)
+  * 모든 작업이 반영되거나 모든 작업이 roll-back 되는 것을 보장해 준다.
+* Consistency (일관성)
+  * 데이터를 미리 정의된 규칙에 맞게 수정이 가능하다. 예를 들어 숫자 컬럼에 문자열 값이 저장되지 않도록 보장해 준다.
+* Isolation (고립성)
+  * A 와 B 두개의 transaction 이 실행되고 있다고 하자. A 의 작업들이 B 에게 보여지는 정도를 말한다. 보여지는 정도를 [Isolation level](/spring/README.md#transactional) 이라고도 하며 모두 4 개로 구성된다.
+
+    | Isolation level | Dirty Read | Non-repeatable Read | Phantom Read |
+    | --------------- | ---------- | ------------------- | ------------ |
+    | Read uncommited | O          | O                   | O            |
+    | Read commited   | X          | O                   | O            |
+    | Repeatable Read | X          | X                   | O            |
+    | Serializable    | X          | X                   | X            |
+
+* Durability (영구성)
+  * 한번 반영(commit) 된 transaction 은 영구히 적용되는 것을 보장해 준다.
+
 # SQL
 
 * [sql](/sql/README.md)
