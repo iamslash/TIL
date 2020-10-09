@@ -714,7 +714,7 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 | [Designing a URL Shortening service like TinyURL](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md) | |
 | [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md) | |
 | [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md) | |
-| [Designing Dropbox]()                                                                                          |                |
+| [Designing Dropbox](practices/DesigningDropbox/DesigningDropbox.md) | |
 | [Designing Facebook Messenger]()                                                                               |                |
 | [Designing Twitter](practices/DesigningTwitter.md)                                                              |                |
 | [Designing Youtube or Netflix]()                                                                               |                |
