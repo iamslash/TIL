@@ -8,6 +8,7 @@
   - [Select Distinct](#select-distinct)
   - [Select subquery](#select-subquery)
   - [WITH](#with)
+  - [WITH RECURSIVE](#with-recursive)
   - [Select `Year-Month`](#select-year-month)
   - [RANK](#rank)
   - [Where](#where)
@@ -251,6 +252,10 @@ SELECT dept_name
   FROM department, max_budget 
  WHERE department.budget = max_budget.value;
 ```
+
+## WITH RECURSIVE
+
+* [[MySQL] WITH RECURSIVE 구문을 이용한 Row Generator](https://oboki.net/workspace/database/mysql/with-recursive-row-generator/)
 
 ## Select `Year-Month`
 
