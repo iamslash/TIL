@@ -7,7 +7,21 @@
   - [Reserved Words](#reserved-words)
   - [Data types](#data-types)
   - [Print Formatted String](#print-formatted-string)
-  - [Global Objects](#global-objects)
+  - [Standard built-in objects (global objects)](#standard-built-in-objects-global-objects)
+    - [Value properties](#value-properties)
+    - [Function properties](#function-properties)
+    - [Fundamental objects](#fundamental-objects)
+    - [Error objects](#error-objects)
+    - [Numbers and dates](#numbers-and-dates)
+    - [Text processing](#text-processing)
+    - [Indexed collections](#indexed-collections)
+    - [Keyed collections](#keyed-collections)
+    - [Structured Data](#structured-data)
+    - [Control abstraction objects](#control-abstraction-objects)
+    - [Reflection](#reflection)
+    - [Internationalization](#internationalization)
+    - [WebAssembly](#webassembly)
+    - [Other](#other)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collections](#collections)
   - [Multidimensional Array](#multidimensional-array)
@@ -102,6 +116,11 @@ java script에 대해 정리한다.
 
 `node` 를 실행하고 `TAB` 을 누르면 리스트를 확인할 수 있다.
 
+```console
+$ node
+$ console. <TAB>
+```
+
 ## Documents
 
 * [JavaScript @ MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript)
@@ -172,6 +191,11 @@ console.log(symbol3.toString());
 // expected output: "Symbol(foo)"
 console.log(Symbol('foo') === Symbol('foo'));
 // expected output: false
+
+// parseInt to make int
+console.log(3/4);  // 0.75
+console.log(parseInt(3/4)) // 0
+console.log(parseInt(100, 2)) // 4, number whose base is 2
 ```
 
 ## Print Formatted String
@@ -193,27 +217,134 @@ String.prototype.format = function() {
 console.log("Hello, {0}!".format("World"))
 ```
 
-## Global Objects
+## Standard built-in objects (global objects)
+
+* [Standard built-in objects @ MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects)
+
+* global objects means objects in the global scope. It is different the global object.
+
+----
+
+### Value properties
+
+* Infinity
+* NaN
+* undefined
+* globalThis
+
+### Function properties
+
+* eval()
+* uneval() 
+* isFinite()
+* isNaN()
+* parseFloat()
+* parseInt()
+* encodeURI()
+* encodeURIComponent()
+* decodeURI()
+* decodeURIComponent()
+
+### Fundamental objects
+
+* Object
+* Function
+* Boolean
+* Symbol
+
+### Error objects
+
+* Error
+* AggregateError 
+* EvalError
+* InternalError
+* RangeError
+* ReferenceError
+* SyntaxError
+* TypeError
+* URIError
+
+### Numbers and dates
+
+* Number
+* BigInt
+* Math
+* Date
+
+### Text processing
+
+* String
+* RegExp
+
+### Indexed collections
 
 * Array
-* Boolean
-* Date
-* Error
-* Function
-* JSON
-* Math
-* Number
-* Object
-* RegExp
-* String
+* Int8Array
+* Uint8Array
+* Uint8ClampedArray
+* Int16Array
+* Uint16Array
+* Int32Array
+* Uint32Array
+* Float32Array
+* Float64Array
+* BigInt64Array
+* BigUint64Array
+
+### Keyed collections
+
 * Map
 * Set
 * WeakMap
 * WeakSet
 
-```js
-TODO
-```
+### Structured Data
+
+* ArrayBuffer
+* SharedArrayBuffer
+* Atomics
+* DataView
+* JSON
+
+### Control abstraction objects
+
+* Promise
+* Generator
+* GeneratorFunction
+* AsyncFunction
+* AsyncGenerator
+* AsyncGeneratorFunction
+
+### Reflection
+
+* Reflect
+* Proxy
+
+### Internationalization
+
+* Intl
+* Intl.PluralRules
+* Intl.collator
+* Intl.RelativeTimeFormat
+* Intl.DateTimeFormat
+* Intl.Locale
+* Intl.ListFormat
+* Intl.NumberFormat
+
+### WebAssembly
+
+* WebAssembly
+* WebAssembly.CompileError
+* WebAssembly.Module
+* WebAssembly.LinkError
+* WebAssembly.Instance 
+* WebAssembly.RuntimeError 
+* WebAssembly.Memory 
+* WebAssembly.Table 
+
+### Other
+
+* arguments
 
 ## Collections compared c++ container
 
@@ -255,11 +386,43 @@ console.log(a)
 ```
 
 * Array
+  * [Array @ MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
 
 ```js
+// Create an Array
 var fruits = ['사과', '바나나'];
-console.log(fruits.length);
-// 2
+console.log(fruits.length); // 2
+// Create 10 undefined elements
+var a = new Array(10);
+console.log(typeof(a[0]))
+// Update 10 elements with 1
+a.fill(1);
+// Loop over an Array
+fruits.forEach(function(item, index, array) {
+  console.log(item, index);
+});
+// Add an item to the end of an Array
+let b = fruits.push('Orange');
+// Remove an item from the end of an Array
+let last = fruits.pop();
+// Remove an item from the beginning of an Array
+let first = fruits.shift();  
+// Add an item to the beginning of an Array
+let newLength = fruits.unshift('Strawberry');  
+// Find the index of an item in the Array
+fruits.push('Mango');
+let pos = fruits.indexOf('Strawberry');
+// Remove an item by index position
+let removedItem = fruits.splice(pos, 1);
+// Remove items from an index position
+let vegetables = ['Cabbage', 'Turnip', 'Radish', 'Carrot'];
+console.log(vegetables);
+let pos = 1, let n = 2;
+let removedItems = vegetables.splice(pos, n);
+console.log(vegetables);
+console.log(removeditems);
+// Copy an Array
+let shallowCopy = fruits.slice(0;)
 ```
 
 * TypedArray
