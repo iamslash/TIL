@@ -8,6 +8,7 @@
   - [Select Distinct](#select-distinct)
   - [Select subquery](#select-subquery)
   - [WITH](#with)
+  - [WITH RECURSIVE](#with-recursive)
   - [Select `Year-Month`](#select-year-month)
   - [RANK](#rank)
   - [Where](#where)
@@ -250,6 +251,29 @@ WITH max_budget (value)
 SELECT dept_name 
   FROM department, max_budget 
  WHERE department.budget = max_budget.value;
+```
+
+## WITH RECURSIVE
+
+* [[MySQL] WITH RECURSIVE 구문을 이용한 Row Generator](https://oboki.net/workspace/database/mysql/with-recursive-row-generator/)
+
+-----
+
+WITH block 안의 query 를 재귀적으로 적용할 수 있다. 예를 들어 seed 1 을 이용하여 `[1..maxNum)` 영역의 번호가 저장된 table 을 생성할 수 있다. [Find the Missing IDs @ leetcode](https://leetcode.com/problems/find-the-missing-ids/)
+
+```sql
+WITH recursive t as (
+    SELECT 1 AS i
+     UNION ALL
+    SELECT i + 1
+      FROM t
+     WHERE i < (SELECT MAX(customer_id) from customers)
+)
+   SELECT t.i AS ids 
+     from t
+LEFT JOIN customers c 
+       ON c.customer_id = t.i
+    WHERE c.customer_id is null
 ```
 
 ## Select `Year-Month`
