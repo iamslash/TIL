@@ -2,8 +2,24 @@
 
 * [그라파이트와 그라파나로 메트릭스 모니터링 시스템 구축하기](https://www.44bits.io/ko/post/monitoring-system-with-graphite-and-grafana)
 * [Using Graphite in Grafana](https://grafana.com/docs/grafana/latest/features/datasources/graphite/)
+* [Intro to Dropwizard Metrics](https://www.baeldung.com/dropwizard-metrics)
+  * Metric types including Couter Meter, Gauge, Counter, Histogram and Timer, and Reporter to output metrics' values.
 
-# Basics
+# Metric Types
+
+## Meter
+
+## Gauge
+
+## Counter
+
+## Histogram
+
+## Timer
+
+## Reporter
+
+# Queries
 
 * CPU Usage Percentage
   * offset, absolute, aliasByNode
@@ -43,4 +59,3 @@
 ```js
 aliasByNode(sortByName(perSecond(hosts.*.$role.$host.system.netlink-<interface-name>.if_octets.rx)), 3, 5)
 ```
-  
