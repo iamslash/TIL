@@ -9,15 +9,27 @@
 
 ## Meter
 
+WIP
+
 ## Gauge
+
+매 순간 순간의 변하는 수치이다. 예를 들어 Tomcat Thread Count 같은 것들이 해당된다.
 
 ## Counter
 
+한번 태어나면 숫자가 평생 증가하는 수치이다. 만약 시간별로 증가한 수치를 보고싶다면 graphite 에서 `nonNegativeDerivative()` 를 이용해야 한다.
+
 ## Histogram
+
+Key 별로 수치가 존재한다. 분위수가 미리 계산된다. 예를 들어 API 의 Latency 가 해당된다.
 
 ## Timer
 
+WIP
+
 ## Reporter
+
+WIP
 
 # Queries
 
