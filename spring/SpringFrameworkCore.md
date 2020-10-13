@@ -21,6 +21,7 @@
   - [Overview](#overview)
   - [Proxy Based AOP](#proxy-based-aop)
   - [@AOP](#aop)
+  - [@AOP with Parameters](#aop-with-parameters)
 - [Null-Safty](#null-safty)
 
 ----
@@ -1323,10 +1324,10 @@ public void run(ApplicationArguements args) throws Exception {
 
 반복되는 코드를 분리해서 모듈화하는 프로그래밍 기법이다. 반복되는 코드를 `cross-cutting`, 분리된 모듈을 `aspect` 라고 한다. 따라서 AOP 를 적용하면 반복되는 코드를 줄일 수 있다. 이때 반복되는 코드와 같이 해야할 일들을 `advice`, 어디에 적용해야 하는지를 `pointcut`, 적용해야할 class 를 `target`, method 를 호출할 때 aspect 를 삽입하는 지점을 `joinpoint` 라고 한다. 
 
-AOP 는 언어별로 다양한 구현체가 있다. java 는 주로 AspectJ 를 사용한다. 또한 AOP 는 compile, load, run time 에 적용 가능하다. 만약 Foo 라는 class 에 A 라는 aspect 를 적용한다고 해보자. 
+AOP 는 언어별로 다양한 구현체가 있다. java 는 주로 AspectJ 를 사용한다. 또한 AOP 는 compile, load, run time 에 적용 가능하다. 만약 Foo 라는 class 에 A 라는 `aspect` 를 적용한다고 해보자. 
 
 * compile time 에 AOP 를 적용한다면 Foo 의 compile time 에 aspect 가 적용된 byte 코드를 생성한다. 그러나 compile time 이 느려진다.
-* load time 에 AOP 를 적용한다면 VM 이 Foo 를 load 할 때 aspect 가 적용된 Foo 를 메모리에 로드한다. 이것을 AOP weaving 이라고 한다. AOP weaving 을 위해서는 agent 를 포함하여 복잡한 설정을 해야 한다.
+* load time 에 AOP 를 적용한다면 VM 이 Foo 를 load 할 때 aspect 가 적용된 Foo 를 메모리에 로드한다. 이것을 `AOP weaving` 이라고 한다. `AOP weaving` 을 위해서는 agent 를 포함하여 복잡한 설정을 해야 한다.
 * rum time 에 AOP 를 적용한다면 VM 이 Foo 를 실행할 때 aspect 를 적용한다. 수행성능은 load time 과 비슷할 것이다. 대신 복잡한 설정이 필요없다.
 
 ## Proxy Based AOP
@@ -1431,6 +1432,10 @@ public class DemoApplication {
 
 ## @AOP
 
+* [Spring AOP (Aspect Oriented Programming)](SplitTwoStringstoMakePalindrome)
+
+----
+
 annotation 을 이용하여 AOP 를 구현해보자.
 
 pom.xml 에 dependency 를 입력한다.
@@ -1439,7 +1444,7 @@ pom.xml 에 dependency 를 입력한다.
 <dependencies>
   <dependency>
     <groupId>org.springframework.boot</groupId>
-    <artifactId>spring-boot-starter-app</artifactId>
+    <artifactId>spring-boot-starter-aop</artifactId>
   </dependency>
 ```
 
@@ -1499,6 +1504,54 @@ public class AService implements IService {
 ```
 
 advice 의 종류는 `@Around, @Before, @AfterReturning, @AfterThrowing` 이 있다. 
+
+## @AOP with Parameters
+
+* [Parameter AOP 설정하기 간단 팁](https://haviyj.tistory.com/36)
+
+------
+
+`AOP` 의 parameter 에 해당하는 `User` Annotation 을 정의한다.
+
+```java
+@Target(ElementType.PARAMETER)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface User {
+}
+```
+
+다음은 `AOP` 를 적용할 target class 이다.
+
+```java
+@Controller
+public class Controller {
+
+    @GetMapping(value = "/hello")
+    public String hello(@User User user, HttpSession session) {
+        ...
+        return "hello world";
+    }
+}
+```
+
+다음은 `Aspect` class 이다.
+
+```java
+@Component
+@Aspect
+public class UserAspect {
+
+    @Around("execution(* *(.., @User (*), ..))")
+    public Object convertUser(ProceedingJoinPoint  joinPoint) throws Throwable {
+        HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
+        User user = (User) session.getAttribute("user");
+        ...
+        Object[] args = Arrays.stream(joinPoint.getArgs()).map(data -> { if(data instanceof User) { data = user; } return data; }).toArray();
+
+        return joinPoint.proceed(args);
+    }
+}
+```
 
 # Null-Safty
 
