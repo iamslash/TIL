@@ -42,7 +42,7 @@
   - [70% Capacity model](#70-capacity-model)
   - [SLA, SLO, SLI](#sla-slo-sli)
   - [Optimistic Lock vs Pessimistic Lock](#optimistic-lock-vs-pessimistic-lock)
-- [Grokking the System Design Interview Practices](#grokking-the-system-design-interview-practices)
+- [System Design Interview](#system-design-interview)
   - [Fundamentals](#fundamentals)
   - [Design Practices](#design-practices)
 - [System Design Primer Practices](#system-design-primer-practices)
@@ -680,7 +680,7 @@ total data size : estimated data size = 100 : 70
 
 Database 의 isolation level 보다 융통성있는 locking 방법
 
-# Grokking the System Design Interview Practices
+# System Design Interview
 
 ## Fundamentals
 
