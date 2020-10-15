@@ -718,7 +718,7 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 | [Designing Facebook Messenger]()                                                                               |                |
 | [Designing Twitter](practices/DesigningTwitter.md)                                                              |                |
 | [Designing Youtube or Netflix]()                                                                               |                |
-| [Designing Typeahead Suggestion]()                                                                             |                |
+| [Designing Typeahead Suggestion](practices/DesigningTypeaheadSuggestion/DesigningTypeaheadSuggestion.md)| |
 | [Designing an API Rate Limiter](practices/DesigningAnApiRateLimiter.md)                                         |                |
 | [Designing Twitter Search](practices/DesigningTwitterSearch.md)                                                 |                |
 | [Designing a Web Crawler]()                                                                                    |                |
