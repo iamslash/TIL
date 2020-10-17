@@ -716,19 +716,19 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 | [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md) | |
 | [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md) | |
 | [Designing Dropbox](practices/DesigningDropbox/DesigningDropbox.md) | |
-| [Designing Facebook Messenger]()                                                                               |                |
-| [Designing Twitter](practices/DesigningTwitter.md)                                                              |                |
-| [Designing Youtube or Netflix]()                                                                               |                |
+| [Designing Facebook Messenger](practices/DesigningFacebookMessenger/DesigningFacebookMessenger.md) | |
+| [Designing Twitter](practices/DesigningTwitter/DesigningTwitter.md) ||
+| [Designing Youtube or Netflix](practices/DesigningYoutubeorNetflix/DesigningYoutubeorNetflix.md) | |
 | [Designing Typeahead Suggestion](practices/DesigningTypeaheadSuggestion/DesigningTypeaheadSuggestion.md)| |
-| [Designing an API Rate Limiter](practices/DesigningAnApiRateLimiter.md)                                         |                |
-| [Designing Twitter Search](practices/DesigningTwitterSearch.md)                                                 |                |
-| [Designing a Web Crawler]()                                                                                    |                |
-| [Designing Facebook’s Newsfeed](practices/DesigningFacebooksNewsfeed.md)                                        |
-| [Designing Yelp or Nearby Friends]()                                                                           |                |
-| [Designing Uber Backend]()                                                                                     |                |
-| [Designing Ticketmaster]() | |
-| [Designing Podcast Backend]() | |
-| [Designing Email Service]() | |
+| [Designing an API Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md) | |
+| [Designing Twitter Search](practices/DesigningTwitterSearch/DesigningTwitterSearch.md) | |
+| [Designing a Web Crawler](practices/DesigningaWebCrawler/DesigningaWebCrawler.md) | |
+| [Designing Facebook’s Newsfeed](practices/DesigningFacebooksNewsfeed/DesigningFacebooksNewsfeed.md) | |
+| [Designing Yelp or Nearby Friends](practices/DesigningYelporNearbyFriends/DesigningYelporNearbyFriends.md/) | |
+| [Designing Uber Backend](practices/DesigningUberBackend/DesigningUberBackend.md) | |
+| [Designing Ticketmaster](practices/DesigningTicketmaster/DesigningTicketmaster.md) | |
+| [Designing Podcast Backend](practices/DesigningPodcastBackend/DesigningPodcastBackend.md) | |
+| [Designing Email Service](practices/DesigningEmailService/DesigningEmailService.md) | |
 
 # System Design Primer Practices
 
