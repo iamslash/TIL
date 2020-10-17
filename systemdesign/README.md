@@ -86,6 +86,7 @@
   - 킹왕짱 내가 다시 정리할 필요성을 못 느낀다.
 * [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
   - 유료 시스템 디자인 인터뷰
+  - [System Design @ blogspot](https://learnsystemdesign.blogspot.com/)
 * [Grokking the Object Oriented Design Interview](https://www.educative.io/collection/5668639101419520/5692201761767424)
   - 유료 OOD 인터뷰 
 * [Here are some of the favorite posts on HighScalability...](http://highscalability.com/all-time-favorites/)
