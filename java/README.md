@@ -44,6 +44,7 @@
   - [Java Lombok](#java-lombok)
   - [JVM Options](#jvm-options)
   - [Thread Dump, Heap Dump](#thread-dump-heap-dump)
+  - [BigInteger](#biginteger)
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
@@ -1939,6 +1940,28 @@ Java application 의 Heap 상태를 보고 싶다면 heap dump 를 확인해 보
 ```bash
 # jmap -dump:format=b,file=<file-path> <pid>
 $ jmap -dump:format=b,file=/home/iamslash/tmp/heapdump.bin 1111
+```
+
+## BigInteger
+
+* [무한대 정수 BigInteger 사용하기](https://elena90.tistory.com/entry/JAVA-%EB%AC%B4%ED%95%9C%EB%8C%80-%EC%A0%95%EC%88%98-BigInteger-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0)
+
+-----
+
+long 은 64 bit 이다. long 보다 큰 숫자를 표현할 수 있다. 무한대임.
+
+```java
+BigInteger a = BigInteger.ZERO;
+BigInteger b = BigInteger.ONE;
+BigInteger c = BigInteger.TEN;
+BigInteger d = BigInteger.valueOf(1);
+
+BigInteger e = a.add(b);
+BigInteger f = a.subtract(b);
+BigInteger g = a.multiply(b);
+BigInteger h = a.divide(b);
+
+int i = e.intValue();
 ```
 
 # Quiz
