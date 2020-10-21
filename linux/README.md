@@ -622,6 +622,13 @@ EOF
   * `tcpdump -A port 3389` show only port 3389 and print packets in ASCII
   * `tcpdump src port 3389` show only src port 3389
   * `tcpdump dst port 3389` show only dst port 3389
+* `ngrep`
+  * [man of ngrep](https://linux.die.net/man/8/ngrep)
+    * `ngrep [옵션] [매칭할 패턴] [ BPF 스타일 Filter ]`
+  * `ngrep -qd eth0 port 80` eth0 인터페이스의 80 port 기록을 조용히 보여줘
+  * `ngrep -iqd eth0 port 80` 대소문자 구분없이 보여줘
+  * `ngrep -qd eth0 HTTP port 80` eth0 인터페이스의 HTTP 80 port 기록을 조용히 보여줘
+  * `ngrep -v -qt host <ip> and not port 80` 검색 조건을 거꾸로 해서 시간과 함께 보여줘
 * `su`
   * [리눅스 su, sudo 명령어 사용법 정리 (root 권한 획득 방법)](https://withcoding.com/106)
   * switch user
