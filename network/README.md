@@ -130,6 +130,166 @@ Network, Host 를 어떻게 나누는 가에 따라 A, B, C, D, E class 로 구�
 C 클래스의 기본 마스크 `255.255.255.0` 을 적용하면 Network part `211.168.83` 를 얻어낼 수 있다. 그리고 `211.168.83` 네트워크를 관리하는 라우터에게 패킷을 보낼 수 있다.
 해당 라우터는 Host Part `1` 에 해당하는 단말기에게 패킷을 보낸다.
 
+# TCP/IP programming
+
+## Major APIs
+
+* [Zero to Hero — How the Internet works & network programming in C/C++](https://medium.com/@idomagor/zero-to-hero-how-the-internet-works-network-programming-in-c-c-68582873730a)
+
+----
+
+* **socket(domain, type, protocol)**
+  
+  * Returns a file descriptor to a file inside the OS. With this fd(file descriptor in short) we make other calls for the OS, so it will know which file to read/write or any other operation.
+
+* **bind(sock_fd, address, address_length)**
+
+  * Binding the fd with a specific port in our OS. This step is important so only our socket will be able to receive data on that port, once data is arrived to the computer NIC. As you can see the port is important to distinguish between applications and protocols.
+
+* **accept(sock_fd, address, address_length)**
+  * For every fd there's a pending incoming connections queue to the computer for that fd. When we call accept() we are simply pop the first client whom entered the queue. If no clients present the accept() call will block.
+
+* **listen(sock_fd, backlog)**
+  * With listen() we can restrict the maximum number of pending incoming connections to our fd. connect(sock_fd, address, address_length) Tells the OS to connect to the address specified using the sock_fd that is on our system. 
+  * Meaning, the sock_fd will be for our use as a gateway to our NIC to send/receive messages from the address given to the connect().
+
+* **send/recv**
+  * As their name, they are both functions that allows us to send or receive data from the sock_fd 
+  * Note: We mentioned that the sockets are a file. So I'll let you on a little secret, you can also call write/read the functions for simple files :)
+
+* **shutdown(sock_fd, type)**
+  * Allows us to shutdown the socket for specific operations.
+  * type=1 => the socket will not receive data
+  * type=2 => the socket will not send data.* type=3 => the socket will not receive/send data.
+  * For any given value to the shutdown, if we try to send data after calling shutdown with type=2, we will receive an error.
+
+* **close(sock_fd)**
+  * Close is actually like calling shutdown(sock_fd, type=3).
+
+## Basic Server
+
+```cpp
+#include<stdio.h> 
+#include<sys/types.h> 
+#include<sys/socket.h> 
+#include<sys/un.h> 
+#include<string.h> 
+#include<netdb.h> 
+#include<netinet/in.h> 
+#include<arpa/inet.h> 
+#include<string.h> 
+
+#define SERVER_ADDR "10.1.2.3"
+int main() 
+{ 
+  char sendBuf[256], recvBuf[256]; 
+  int fd = socket(AF_INET, SOCK_STREAM, 0); 
+  if (fd < 0) 
+    printf("Error in server creating\n"); 
+  else
+    printf("Server Created\n"); 
+          
+  struct sockaddr_in serverAddr, peerAddr; 
+  serverAddr.sin_family = AF_INET; 
+  serverAddr.sin_addr.s_addr = INADDR_ANY; 
+  serverAddr.sin_addr.s_addr = inet_addr(SERVER_ADDR); 
+  serverAddr.sin_port = htons(12000); 
+  
+  if (bind(fd, (struct sockaddr*) &serverAddr, sizeof(serverAddr)) == 0) 
+    printf("Binded Correctly\n"); 
+  else
+    printf("Unable to bind\n"); 
+          
+  if (listen(fd, 3) == 0) 
+    printf("Listening ...\n"); 
+  else
+    printf("Unable to listen\n"); 
+      
+  socklen_t addr_size; 
+  addr_size = sizeof(struct sockaddr_in); 
+
+  char *ip; 
+      
+  while (1) 
+  { 
+    int acc = accept(fd, (struct sockaddr*) &peerAddr, &addr_size); 
+    printf("Connection Established\n"); 
+    char ip[INET_ADDRSTRLEN]; 
+    inet_ntop(AF_INET, &(peerAddr.sin_addr), ip, INET_ADDRSTRLEN); 
+
+    printf("connection established with IP : %s and PORT : %d\n",  
+           ip, ntohs(peerAddr.sin_port)); 
+  
+    recv(acc, recvBuf, 256, 0); 
+    printf("Client : %s\n", recvBuf); 
+    strcpy(sendBuf, "Hello"); 
+    send(acc, sendBuf, 256, 0); 
+  }  
+  return 0; 
+} 
+```
+
+## How to use custom port in client
+
+* [Explicitly assigning port number to client in Socket](https://www.geeksforgeeks.org/explicitly-assigning-port-number-client-socket/)
+
+-----
+
+```cpp
+#include<stdio.h> 
+#include<sys/types.h> 
+#include<sys/socket.h> 
+#include<sys/un.h> 
+#include<string.h> 
+#include<netdb.h> 
+#include<netinet/in.h> 
+#include<arpa/inet.h> 
+#include<stdlib.h> 
+
+#define SERVER_ADDR "10.1.2.3"
+#define CLIENT_ADDR "10.1.2.2"
+
+int main() 
+{ 
+  char recvBuf[256], sendBuf[256]; 
+  struct sockaddr_in serverAddr, clientAddr; 
+  int fd = socket(AF_INET, SOCK_STREAM, 0); 
+  if (fd < 0) 
+    printf("Error in client creating\n"); 
+  else
+    printf("Client Created\n"); 
+          
+  serverAddr.sin_family = AF_INET; 
+  serverAddr.sin_addr.s_addr = INADDR_ANY; 
+  serverAddr.sin_port = htons(12000); 
+  serverAddr.sin_addr.s_addr = inet_addr(SERVER_ADDR); 
+  
+  clientAddr.sin_family = AF_INET; 
+  clientAddr.sin_addr.s_addr = INADDR_ANY; 
+  clientAddr.sin_port = htons(12010); 
+
+  clientAddr.sin_addr.s_addr = inet_addr(CLIENT_ADDR); 
+  if (bind(fd, (struct sockaddr*) &clientAddr, sizeof(struct sockaddr_in)) == 0) 
+    printf("Binded Correctly\n"); 
+  else
+    printf("Unable to bind\n");
+
+  socklen_t addr_size = sizeof serverAddr;
+  int con = connect(fd, (struct sockaddr*) &serverAddr, sizeof serverAddr); 
+  if (con == 0) 
+    printf("Client Connected\n"); 
+  else
+    printf("Error in Connection\n"); 
+  
+  strcpy(sendBuf, "Hello World"); 
+  send(fd, sendBuf, 256, 0);  
+  recv(fd, recvBuf, 256, 0); 
+  printf("Received : %s\n", recvBuf); 
+  return 0; 
+} 
+
+```
+
 # Subnet Mask
 
 * [[홀인원 2.08.16] IPv4 - 서브넷 마스크](https://www.youtube.com/watch?v=o-NRjtQsJx4)
