@@ -723,6 +723,7 @@ EOF
 ## 시스템 모니터링
 
 * [Linux Performance Analysis in 60,000 Milliseconds](https://medium.com/netflix-techblog/linux-performance-analysis-in-60-000-milliseconds-accc10403c55)
+  * [리눅스 서버 60초안에 상황파악하기](https://b.luavis.kr/server/linux-performance-analysis?fbclid=IwAR1VgiDybzRFhFxSpH8iBH622UArIRxcyWlEXos0wSsb4Kra6e9YMiLJP9Y)
   * `uptime`
   * `dmesg | tail`
   * `vmstat -S M 1`
@@ -747,33 +748,44 @@ EOF
   * `dmesg | tail`
     * 마지막 커널의 메시지 버퍼 10 개를 보여다오
     * 치명적인 내용이 있는지 반드시 체크해야함
+   
+    ```console
+    $ dmesg | tail
+    [1880957.563150] perl invoked oom-killer: gfp_mask=0x280da, order=0, oom_score_adj=0
+    [...]
+    [1880957.563400] Out of memory: Kill process 18694 (perl) score 246 or sacrifice child
+    [1880957.563408] Killed process 18694 (perl) total-vm:1972392kB, anon-rss:1953348kB, file-rss:0kB
+    [2320864.954447] TCP: Possible SYN flooding on port 7001. Dropping request.  Check SNMP counters.
+    ``` 
+    * oom-killer(out of memory) 가 process 18694 를 kill 했다. TCP request 가 Drop 되었다.
+    
 * `vmstat`
   * [vmstat에 대한 고찰(성능) 1편](http://egloos.zum.com/sword33/v/5976684)
-  * [Vmstat에 대한 고찰(성능) 2편](http://egloos.zum.com/sword33/v/5997876)
+    * [Vmstat에 대한 고찰(성능) 2편](http://egloos.zum.com/sword33/v/5997876)
   * [vmstat(8) - Linux man page](https://linux.die.net/man/8/vmstat)
   * virtual memory 통계 보여조
 
-    | 범주   | 필드 이름 | 설명                                                                |
-    | ------ | --------- | ------------------------------------------------------------------- |
-    | procs  | r         | The number of processes waiting for run time                        |
-    |        | b         | The number of processes in uninterruptible sleep                    |
-    | memory | swpd      | the amount of virtual memory used in KB                             |
-    |        | free      | the amout of idle memory in KB                                      |
-    |        | buff      | the amout of memory used as buffers in KB                           |
-    |        | cache     | the amout of memory used as cache in KB                             |
-    |        | inact     | the amout of inactive memory in KB                                  |
-    |        | active    | the amout of active memory in KB                                    |
-    | swap   | si        | amount of memory swapped in from disk (/s)                          |
-    |        | so        | amount of memory swapped to disk (/s)                               |
-    | IO     | bi        | blocks received from a block device (blocks/s)                      |
-    |        | bo        | amount of memory swapped to disk (blocks/s)                         |
-    | system | in        | The number of interrupts per second. including the clock.           |
-    |        | cs        | The number of context switches per second.                          |
-    | CPU    | us        | Time spent running non-kernel code (user time, including nice time) |
-    |        | sy        | Time spent running kernel code (system time)                        |
-    |        | id        | Time spent idle, Prior to Linux 2.5.41, this inclues IO-wait time.  |
-    |        | wa        | Time spent waiting for IO, Prior to Linux 2.5.41, inclues in idle.  |
-    |        | st        | Time stolen from a virtual machine, Prior to Linux 2.5.41, unknown. |
+    | 범주 | 필드 이름 | 설명 |
+    | ------ | --------- | --- |
+    | procs  | r | The number of processes waiting for run time |
+    | | b | The number of processes in uninterruptible sleep |
+    | memory | swpd | the amount of virtual memory used in KB |
+    | | free | the amout of idle memory in KB |
+    | | buff | the amout of memory used as buffers in KB |
+    | | cache | the amout of memory used as cache in KB |
+    | | inact | the amout of inactive memory in KB |
+    | | active | the amout of active memory in KB |
+    | swap | si | amount of memory swapped in from disk (/s) |
+    | | so | amount of memory swapped to disk (/s)                               |
+    | IO | bi | blocks received from a block device (blocks/s) |
+    | | bo | amount of memory swapped to disk (blocks/s) |
+    | system | in | The number of interrupts per second. including the clock. |
+    | | cs | The number of context switches per second. |
+    | CPU | us | Time spent running non-kernel code (user time, including nice time) |
+    | | sy | Time spent running kernel code (system time) |
+    | | id | Time spent idle, Prior to Linux 2.5.41, this inclues IO-wait time. |
+    | | wa | Time spent waiting for IO, Prior to Linux 2.5.41, inclues in idle. |
+    | | st | Time stolen from a virtual machine, Prior to Linux 2.5.41, unknown. stolen time은 hypervisor가 가상 CPU를 서비스 하는 동안 실제 CPU를 차지한 시간을 이야기한다. |
 
   * `vmstat 1`
     * 1 초 마다 보여다오
@@ -832,7 +844,7 @@ EOF
 
 * `mpstat`
   * `apt-get install sysstat`
-  * CPU 상황을 자세히 모니터링한다.
+  * CPU 별로 CPU 상황을 모니터링한다.
 
     | name    | desc                                                                                                                                  |
     | ------- | ------------------------------------------------------------------------------------------------------------------------------------- |
