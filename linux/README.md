@@ -754,20 +754,20 @@ EOF
   * `sar -n DEV 1`
   * `sar -n TCP,ETCP 1`
   * `top`
-  * `cat /proc/meminfo`
-  
+  * `cat /proc/meminfo`  
 * `uptime`
-  * `13:24:20 up  3:18,  0 users,  load average: 0.00, 0.01, 0.00`
+  * `uptime`
+    ```console
+    $ uptime
+    13:24:20 up  3:18,  0 users,  load average: 0.00, 0.01, 0.00
+    ```
   * 시스템이 `13:24:20` 부터 `3:18` 동안 살아있어
-  * 1 분, 5 분, 15 분의 평균 load 를 보여줘
+  * 1 분, 5 분, 15 분의 average load 를 보여줘
   * load 는 process 들 중 run, block 인 것들의 숫자야
-  * `1 분 avg load > 5 분 avg load > 15 분 avg load` 이면 점점 load 가 늘어가는 추세이기 때문에 무언가 문제가 있다고 생각할 수 있다.
+  * `1 분 avg load > 5 분 avg load > 15 분 avg load` 이면 점점 load 가  늘어가는 추세이기 때문에 무언가 문제가 있다고 생각할 수 있다.
 * `dmesg`
   * 커널의 메시지 버퍼를 보여다오
   * `dmesg | tail`
-    * 마지막 커널의 메시지 버퍼 10 개를 보여다오
-    * 치명적인 내용이 있는지 반드시 체크해야함
-   
     ```console
     $ dmesg | tail
     [1880957.563150] perl invoked oom-killer: gfp_mask=0x280da, order=0, oom_score_adj=0
@@ -776,8 +776,9 @@ EOF
     [1880957.563408] Killed process 18694 (perl) total-vm:1972392kB, anon-rss:1953348kB, file-rss:0kB
     [2320864.954447] TCP: Possible SYN flooding on port 7001. Dropping request.  Check SNMP counters.
     ``` 
-    * oom-killer(out of memory) 가 process 18694 를 kill 했다. TCP request 가 Drop 되었다.
-    
+    * 마지막 커널의 메시지 버퍼 10 개를 보여다오
+    * 치명적인 내용이 있는지 반드시 체크해야함   
+    * oom-killer(out of memory) 가 process 18694 를 kill 했다. TCP request 가 Drop 되었다.    
 * `vmstat`
   * [vmstat에 대한 고찰(성능) 1편](http://egloos.zum.com/sword33/v/5976684)
     * [Vmstat에 대한 고찰(성능) 2편](http://egloos.zum.com/sword33/v/5997876)
@@ -806,17 +807,16 @@ EOF
     | | wa | Time spent waiting for IO, Prior to Linux 2.5.41, inclues in idle. |
     | | st | Time stolen from a virtual machine, Prior to Linux 2.5.41, unknown. stolen time은 hypervisor가 가상 CPU를 서비스 하는 동안 실제 CPU를 차지한 시간을 이야기한다. |
 
-  * `vmstat 1`
-    * 1 초 마다 보여다오
-    ```bash
+  * `vmstat 1` 1 초 마다 보여다오
+    ```console
+    $ vmstat 1
     procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
     r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
     6  0      0 376096  93376 788776    0    0    15    34  234   67  2  3 94  1  0
     ```
-  * `vmstat -S M 1`
-    * 1 초 마다 MB 단위로 보여다오
+  * `vmstat -S M 1` 1 초 마다 MB 단위로 보여다오
   * `total physical memory = free + buff + cache + used`
-    * buff 는 i-node 값 즉 파일들의 실제 주소를 보관한다. disk seek time 을 최소화 할 수 있다.
+    * buff 는 i-node 값 즉 파일들의 real address 를 cache 한다. disk seek time 을 향상시킬 수 있다.
     * cache 는 파일의 real data 를 cache 한다. disk read performance 를 향상시킬 수 있다.
     * free 가 부족하면 cache 에서 free 로 메모리가 옮겨갈 수도 있다. free 가 부족하다고 꼭 메모리가 부족한 상황은 아니다.
     * `/proc/sys/vm/vfs_cache_pressure` 가 buff 와 cache 의 비율을 설정하는 값이다. default 는 100 이다. 파일의 개수가 많아서 buff 가 중요한 시스템이라면 이 것을 높게 설정한다.
@@ -832,7 +832,8 @@ EOF
   * active memory are pages which have been accessed "recently", inactive memory are pages which have not been accessed "recently"
     * [Linux inactive memory @ stackexchange](https://unix.stackexchange.com/questions/305606/linux-inactive-memory)
   * `vmstat -s` 부트이후 통계
-    ```
+    ```console
+    $ vmstat -s
             1999 M total memory
              769 M used memory
              782 M active memory
@@ -860,10 +861,9 @@ EOF
         1573848951 boot time
               3959 forks
     ```
-
 * `mpstat`
   * `apt-get install sysstat`
-  * CPU 별로 CPU 상황을 모니터링한다.
+  * CPU 별로 CPU 의 점유율을 모니터링한다.
 
     | name    | desc                                                                                                                                  |
     | ------- | ------------------------------------------------------------------------------------------------------------------------------------- |
@@ -878,27 +878,26 @@ EOF
     | %guest  | percentage of time spent by the CPU or CPUs to run a virtual processor.                                                               |
     | %gnice  | percentage of time spent by the CPU or CPUs to run a niced guest.                                                                     |
     | %idle   | percentage of time that the CPU or CPUs were idle and the system did not have an outstanding disk I/O request.                        |
-  * `mpstat -P ALL 1`
-    * 1 초 마다 모든 CPU 에 대해 보여줘
+  * `mpstat -P ALL 1` 1 초 마다 모든 CPU 에 대해 보여줘
 
 * `pidstat`
-  * process 별로 CPU 의 점유율을 확인할 수 있다.
+  * process 별로 CPU 의 점유율을 모니터링한다.
   * `pidstat`
-    ```
+    ```console
+    $ pidstat
     Linux 4.9.184-linuxkit (86e6c5bfb041)   11/16/19        _x86_64_        (2 CPU)
 
     03:59:53      UID       PID    %usr %system  %guest   %wait    %CPU   CPU  Command
     03:59:53        0         1    0.0%    0.0%    0.0%    0.0%    0.0%     1  bash
     03:59:53        0        10    0.0%    0.0%    0.0%    0.0%    0.0%     1  bash    
     ```
-  * `pidstat 1`
-    * 1 초 마다 보여도
-
+  * `pidstat 1` 1 초 마다 보여도
 * `iostat`
-  * block device 별로 io 를 모니터링 하자.
+  * block device 별로 io 를 모니터링한다.
   * `man iostat`
   * `iostat`
-    ```
+    ```console
+    $ iostat
     Linux 4.9.184-linuxkit (86e6c5bfb041)   11/16/19        _x86_64_        (2 CPU)
 
     avg-cpu:  %user   %nice %system %iowait  %steal   %idle
@@ -910,24 +909,21 @@ EOF
     sr1               0.00         0.02         0.00         0.00        470          0          0
     sr2               0.05         3.52         0.00         0.00      98584          0          0    
     ``` 
-  * `iostat 1`
-    * 1 초마다 보여줘
+  * `iostat 1` 1 초마다 보여줘
   * `iostat -xz 1`
-    * `r/s, w/s, rkB/s, wkB/s` 는 각각 초당 읽기, 쓰기, kB읽기, kB 쓰기를 의미한다.
+    * `r/s, w/s, rkB/s, wkB/s` 는 각각 초당 읽기, 쓰기, kB 읽기, kB 쓰기를 의미한다.
     * `await` : The average time for the I/O in milliseconds.
     * `avgqu-sz` : The average number of requests issued to the device. 
     * `%util` : Device utilization. 
 * `free`
   * physical memory 와 swap memory 의 상태를 알려다오
     * `total physical memory = used + free + shared + buffers + cached`
-    * `buffers` : For the buffer cache, used for block device I/O, saves i-node data to reduce DISK seek time.
+    * `buffers` : For the buffer cache, used for block device I/O, saves i-node data (file address) to reduce DISK seek time.
     * `cached` : For the page cache, used by file systems, saves file data to reduce I/O.
     * `available` : include `free` and a part of `buff/cache`.
-  * `free -h`
-    * human readable 하게 보여줘
+  * `free -h` human readable 하게 보여줘
   * `free -ht` total 추가해조
   * `free -hts 5` 5초마다 갱신해서 보여줘
-
 * `sar`
   * network interface throughput
   * `Cannot open /var/log/sa/sa16: No such file or directory` error 해결 방법
@@ -987,7 +983,8 @@ EOF
     | Slab         |                       |
 
   * `cat /proc/meminfo`
-    ```    
+    ```console
+    $ cat /proc/meminfo
     MemTotal:        2047016 kB
     MemFree:          371632 kB
     MemAvailable:    1100604 kB
