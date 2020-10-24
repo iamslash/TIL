@@ -25,6 +25,7 @@
     - [Delete Data](#delete-data)
     - [Memory Overflow](#memory-overflow)
   - [Data Types](#data-types)
+  - [Primary, Partition, Composite, Clustering key](#primary-partition-composite-clustering-key)
   - [Useful Queries](#useful-queries)
   - [Basic Schema Design](#basic-schema-design)
 
@@ -49,7 +50,7 @@ Cassandra's write performance is good. It is perfect for write heavy jobs. For e
 * [cassandra @ docker-hub](https://hub.docker.com/_/cassandra)
 
 ```console
-$ docker run --name my-cassandra -d cassandra
+$ docker run --rm --name my-cassandra -d cassandra
 
 $ docker exec -it my-cassandra bash
 > cqlsh
@@ -153,6 +154,27 @@ Keyspace 를 생성할 때 Replication 의 배치전략, 복제개수, 위치등
 
 ### Secondary Index
 
+Secondary Index 는 Cassandra 7.0 이후 등장했다. Partition Key, Clustering Key 에 해당이 안되는 column 에 대해 검색방법이 없었다. 그러나 denormalization 을 활용해 이 문제를 해결했다.
+
+```bash
+cqlsh> SELECT * FROM iamslash.person WHERE description = 'foo';
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Cannot execute this query as it might involve data filtering and thus may have unpredictable performance. If you want to execute this query despite the performance unpredictability, use ALLOW FILTERING"
+```
+
+Secondary Index 를 다음과 같이 생성하면 검색을 할 수 있다.
+
+```bash
+cqlsh> CREATE INDEX description_idx ON iamslash.person (description);
+cqlsh> SELECT * FROM iamslash.person WHERE description = 'foo';
+
+ code | location | description | sequence
+------+----------+-------------+----------
+
+(0 rows)
+```
+
+그러나 `>` 와 같은 Range Query 는 동작하지 않는다. 여전히 denormalization 이 유용할 때가 있다.
+
 ### Delete Data
 
 ### Memory Overflow
@@ -164,6 +186,44 @@ Keyspace 를 생성할 때 Replication 의 배치전략, 복제개수, 위치등
 -----
 
 * `text` is a alias for `varchar.`
+
+## Primary, Partition, Composite, Clustering key
+
+[[cassandra] 키의 종류 - primary key, partition key, clustering key, composite(compound) key, composite partition key, secondary index](https://knight76.tistory.com/entry/cassandra-%ED%82%A4%EC%9D%98-%EC%A2%85%EB%A5%98-primary-key-partition-key-clustering-key-compositecompound-key-composite-partition-key)
+
+----
+
+* Primary Key
+  * RDBMS 의 Primary Key 와 비슷하다. row data 를 unique 하게 해준다.
+    ```
+    CREATE TABLE iamslash.person ( 
+      code text, 
+      location text, 
+      sequence text, 
+      description text, 
+      PRIMARY KEY (code, location)
+    );
+    ```
+  * `PRIMARY KEY(col1, col2, col3)` 와 같이 사용한다. 한개 이상의 col 이 필요하다.
+* Partition Key
+  * Primary Key 의 첫번째 col 즉, 첫번째 Key 를 의미한다. row data 를 어떤 node 에 저장할지 결정한다.
+* Composite (Compound) Key
+  * Partition Key 가 두개 이상일 때 Composite Key 라고 부른다.
+  * `PRIMARY KEY((col1, col2), col3)`
+* Clustering Key
+  * Primary Key 의 첫번째 col 즉, Parition Key 를 제외한 나머지 Key 를 Clustering Key 라고 한다.
+    ```
+    CREATE TABLE hotel.hotels_by_poi (
+    poi_name text,
+    hotel_id text,
+    name text,
+    phone text,
+    address frozen<address>,
+    PRIMARY KEY ((poi_name), hotel_id) )
+    WITH comment = ‘Q1. Find hotels near given poi’
+    AND CLUSTERING ORDER BY (hotel_id ASC) ;
+    ```
+  * `WITH CLUSTERING ORDER BY (hotel_id ASC)` 와 같이 사용한다.
 
 ## Useful Queries 
 
