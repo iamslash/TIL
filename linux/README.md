@@ -17,6 +17,7 @@
 - [Commands](#commands)
   - [메뉴얼](#메뉴얼)
   - [자주 사용](#자주-사용)
+  - [Job management](#job-management)
   - [Process management](#process-management)
   - [유저 관리](#유저-관리)
   - [파일 권한](#파일-권한)
@@ -57,6 +58,9 @@ $ docker exec -it systemd-ubuntu bash
 
 # Materials
 
+* [Site Reliability Engineer (SRE) Interview Preparation Guide](https://github.com/mxssl/sre-interview-prep-guide)
+* [리눅스 엔지니어 기술 면접 질문지](https://docs.google.com/document/u/0/d/1WE1V4uczxavqLY-nyr3qNqCxqzoOf8Vg6Z-Lf0c3DwU/mobilebasic)
+  * [리눅스 엔지니어 기술 면접 질문지 @ github](https://github.com/pjhwa/linux-engineers/wiki)
 * [리눅스 서버를 다루는 기술](https://thebook.io/006718/)
   * 최고의 ubuntu 입문서
 * [The Art of Command Line @ github](https://github.com/jlevy/the-art-of-command-line/blob/master/README-ko.md)
@@ -653,6 +657,21 @@ EOF
       root    ALL=(ALL:ALL) ALL
       iamslash  ALL=(ALL:ALL) ALL
       ```
+
+## Job management
+
+[Understanding the job control commands in Linux – bg, fg and CTRL+Z](https://www.thegeekdiary.com/understanding-the-job-control-commands-in-linux-bg-fg-and-ctrlz/)
+
+----
+
+* `jobs`
+  * `jobs` list all jobs
+* `fg`
+  * `fg % n` Brings the current or specified job into the foreground, where n is the job ID
+* `bg`
+  * `bg % n` Places the current or specified job in the background, where n is the job ID
+* `CTRL-Z`
+  * `CTRL-Z` Stops the foreground job and places it in the background as a stopped job
 
 ## Process management
 
@@ -1864,6 +1883,10 @@ $ sar
 
 ## swapin, swapout
 
+[An introduction to swap space on Linux systems](https://opensource.com/article/18/9/swap-space-linux-systems)
+
+----
+
 process 의 virtual memory 는 page(4KB) 단위로 잘게 나뉘 어져
 있다. page 들은 물리 메모리에 옮겨질때 꼭 연속적이지 않아도
 된다. pagetable 에 의해 logical address 가 physical address 로 잘
@@ -1877,7 +1900,6 @@ swap-in 이라고 한다. 물리 메모리에서 디스크로 프로세스를 �
 swap-out 이라고 한다.
 
 swap-in, swap-ou 의 횟수가 많다면 물리 메모리가 부족하다는 의미이다.
-
 
 # Kernel Parameters
 
