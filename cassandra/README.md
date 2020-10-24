@@ -33,7 +33,7 @@
 
 # Abstract
 
-Cassandra's write performance is good. It is perfect for write heavy jobs. For example, Messages, Logs by time. Cassandra's update performcne is bad. If you want to update records many times, consider to use MongoDB, dynamoDB.
+Cassandra's write performance is good. But it donen't support Join, Transaction RDBMS supports. It is perfect for write heavy jobs. For example, Messages, Logs by time. Cassandra's update performcne is bad. If you want to update records many times, consider to use MongoDB, dynamoDB.
 
 # Materials
 
