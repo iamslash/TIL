@@ -3,6 +3,7 @@
 - [Install with Docker](#install-with-docker)
 - [Basics](#basics)
   - [Features](#features)
+    - [Internal Data structure](#internal-data-structure)
     - [Partitioner](#partitioner)
     - [Data Consistency](#data-consistency)
     - [Data Replication](#data-replication)
@@ -28,6 +29,7 @@
   - [Primary, Partition, Composite, Clustering key](#primary-partition-composite-clustering-key)
   - [Useful Queries](#useful-queries)
   - [Basic Schema Design](#basic-schema-design)
+  - [Twitter Examples](#twitter-examples)
 
 ----
 
@@ -39,6 +41,8 @@ Cassandra's write performance is good. But it donen't support Join, Transaction 
 
 * [Apache Cassandra Documentation](https://cassandra.apache.org/doc/latest/)
   * This is mandatory.
+* [Learn Cassandra](https://teddyma.gitbooks.io/learncassandra/content/index.html)
+  * 개발자 입장에서 Cassandra 를 정리
 * [Cassnadra 의 기본 특징 정리](https://nicewoong.github.io/development/2018/02/11/cassandra-feature/)
 * [Apache Cassandra 톺아보기 - 1편](https://meetup.toast.com/posts/58)
   * [Apache Cassandra 톺아보기 - 2편](https://meetup.toast.com/posts/60)
@@ -54,11 +58,66 @@ $ docker run --rm --name my-cassandra -d cassandra
 
 $ docker exec -it my-cassandra bash
 > cqlsh
+
+cqlsh> help
+
+Documented shell commands:
+===========================
+CAPTURE  CLS          COPY  DESCRIBE  EXPAND  LOGIN   SERIAL  SOURCE   UNICODE
+CLEAR    CONSISTENCY  DESC  EXIT      HELP    PAGING  SHOW    TRACING
+
+CQL help topics:
+================
+AGGREGATES               CREATE_KEYSPACE           DROP_TRIGGER      TEXT
+ALTER_KEYSPACE           CREATE_MATERIALIZED_VIEW  DROP_TYPE         TIME
+ALTER_MATERIALIZED_VIEW  CREATE_ROLE               DROP_USER         TIMESTAMP
+ALTER_TABLE              CREATE_TABLE              FUNCTIONS         TRUNCATE
+ALTER_TYPE               CREATE_TRIGGER            GRANT             TYPES
+ALTER_USER               CREATE_TYPE               INSERT            UPDATE
+APPLY                    CREATE_USER               INSERT_JSON       USE
+ASCII                    DATE                      INT               UUID
+BATCH                    DELETE                    JSON
+BEGIN                    DROP_AGGREGATE            KEYWORDS
+BLOB                     DROP_COLUMNFAMILY         LIST_PERMISSIONS
+BOOLEAN                  DROP_FUNCTION             LIST_ROLES
+COUNTER                  DROP_INDEX                LIST_USERS
+CREATE_AGGREGATE         DROP_KEYSPACE             PERMISSIONS
+CREATE_COLUMNFAMILY      DROP_MATERIALIZED_VIEW    REVOKE
+CREATE_FUNCTION          DROP_ROLE                 SELECT
+CREATE_INDEX             DROP_TABLE                SELECT_JSON
 ```
 
 # Basics
 
 ## Features
+
+### Internal Data structure
+
+[Understanding How CQL3 Maps to Cassandra's Internal Data Structure](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
+
+-----
+
+![](cassandra_internal_datastore.png)
+
+![](cassandra_internal_row.png)
+
+![](cassandra_internal_table_1.png)
+
+![](cassandra_internal_table_2.png)
+
+![](cassandra_internal_table_3.png)
+
+![](cassandra_internal_table_set.png)
+
+![](cassandra_internal_table_list.png)
+
+![](cassandra_internal_table_map.png)
+
+* Partition Key 덕분에 Row 를 빠르게 찾을 수 있다.
+* Row 를 찾고나서 Col 을 빠르게 scan 할 수 있다. 정렬되어 있으니까?
+* Row 를 scan 하지는 않는다.
+* Set, List, Map 과 같이 3 종류의 Collection 을 지원한다. 
+* Collection 은 Primary Key 가 될 수 없다.
 
 ### Partitioner
 
@@ -89,6 +148,12 @@ Keyspace 를 생성할 때 Replication 의 배치전략, 복제개수, 위치등
 
 ### How to write data
 
+[Understanding How CQL3 Maps to Cassandra's Internal Data Structure](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
+
+![](cassandra_internal_write.png)
+
+-----
+
 ![](cassandra_data_write.png)
 
 * Client 는 임의의 Cassandra node 에게 Write request 한다. 이때 Write request 를 수신한 node 를 Coordinator 라고 한다.
@@ -107,6 +172,12 @@ Keyspace 를 생성할 때 Replication 의 배치전략, 복제개수, 위치등
   * Cassandra 는 다수의 `SSTable` 을 정기적으로 Compaction 한다. 예를 들어 n 개의 `SSTable` 에 `a` 라는 데이터가 여러개 존재한다면 Compaction 할 때 가장 최신의 버전으로 merge 한다.
 
 ### How to read data
+
+[Understanding How CQL3 Maps to Cassandra's Internal Data Structure](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
+
+![](cassandra_internal_write.png)
+
+-----
 
 ![](cassandra_data_read.png)
 
@@ -227,7 +298,10 @@ cqlsh> SELECT * FROM iamslash.person WHERE description = 'foo';
 
 ## Useful Queries 
 
-* [Cassandra @ tutorialpoint](https://www.tutorialspoint.com/cassandra/index.htm)
+[Cassandra @ tutorialpoint](https://www.tutorialspoint.com/cassandra/index.htm)
+[Understanding How CQL3 Maps to Cassandra's Internal Data Structure](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
+
+----
 
 ```bash
 # Create keyspace
@@ -394,4 +468,51 @@ CREATE TABLE reservation.guests (
   addresses map<text, frozen<address>,
   confirm_number text )
   WITH comment = ‘Q9. Find guest by ID’;
+```
+
+## Twitter Examples
+
+* [Twissandra @ github](https://github.com/twissandra/twissandra)
+
+-----
+
+```sql
+CREATE TABLE users (
+    username text PRIMARY KEY,
+    password text
+)
+
+CREATE TABLE friends (
+    username text,
+    friend text,
+    since timestamp,
+    PRIMARY KEY (username, friend)
+)
+
+CREATE TABLE followers (
+    username text,
+    follower text,
+    since timestamp,
+    PRIMARY KEY (username, follower)
+)
+
+CREATE TABLE tweets (
+    tweet_id uuid PRIMARY KEY,
+    username text,
+    body text
+)
+
+CREATE TABLE userline (
+    username text,
+    time timeuuid,
+    tweet_id uuid,
+    PRIMARY KEY (username, time)
+) WITH CLUSTERING ORDER BY (time DESC)
+
+CREATE TABLE timeline (
+    username text,
+    time timeuuid,
+    tweet_id uuid,
+    PRIMARY KEY (username, time)
+) WITH CLUSTERING ORDER BY (time DESC)
 ```

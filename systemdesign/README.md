@@ -209,6 +209,7 @@ Latency 는 어떤 action 을 수행하고 결과를 도출하는데 걸리는 �
 ### CAP (Consistency Availability Partition tolerance)
 
 * [CAP Theorem @ medium](https://medium.com/system-design-blog/cap-theorem-1455ce5fc0a0)
+* [The CAP Theorem](https://teddyma.gitbooks.io/learncassandra/content/about/the_cap_theorem.html)
 
 ----
 
@@ -217,11 +218,11 @@ Latency 는 어떤 action 을 수행하고 결과를 도출하는데 걸리는 �
 Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availability, Partition tolerance 중 3 가지 모두 만족할 수 없다. 2 가지만을 선택해야 한다.
 
 * Consistency
-  * 모든 클라이언트는 같은 데이터를 읽는다.
+  * all nodes see the same data at the same time
 * Availability
-  * 서버 노드중 일부가 고장나도 서비스의 지장이 없다.
+  * a guarantee that every request receives a response about whether it was successful or failed
 * Partition tolerance
-  * 노드들 끼리 전송하는 네트워크 패킷이 유실되거나 지연되더라도 서비스의 지장이 없다.
+  * the system continues to operate despite arbitrary message loss or failure of part of the system.
 
 ### PACELC (Partitioning Availability Consistency Else Latency Consistency)
 
