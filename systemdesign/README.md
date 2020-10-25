@@ -730,6 +730,7 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 | [Designing Ticketmaster](practices/DesigningTicketmaster/DesigningTicketmaster.md) | |
 | [Designing Podcast Backend](practices/DesigningPodcastBackend/DesigningPodcastBackend.md) | |
 | [Designing Email Service](practices/DesigningEmailService/DesigningEmailService.md) | |
+| [Designing Facebook Live Video](practices/DesigningFacebookLiveVideo/DesigningFacebookLiveVideo.md) | |
 
 # System Design Primer Practices
 

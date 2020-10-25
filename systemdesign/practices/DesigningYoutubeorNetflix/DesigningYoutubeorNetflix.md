@@ -33,3 +33,7 @@
 # Q&A
 
 # References
+
+* [Design Video Sharing Service System like Youtube](https://www.geeksforgeeks.org/design-video-sharing-system-like-youtube/)
+* [System Design Interview: Mini YouTube](https://medium.com/@eileen.code4fun/system-design-interview-mini-youtube-5cae5eedceae)
+* [Seattle Conference on Scalability: YouTube Scalability @ youtube](https://www.youtube.com/watch?v=w5WVu624fY8)

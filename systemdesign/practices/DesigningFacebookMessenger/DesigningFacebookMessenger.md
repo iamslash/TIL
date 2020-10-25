@@ -187,3 +187,6 @@ Cache recent messages (15 mins).
 # Q&A
 
 # References
+
+* [How Slack Works @ youtube](https://www.youtube.com/watch?v=WE9c9AZe-DY)
+* [Scaling Slack - The Good, the Unexpected, and the Road Ahead @ youtube](https://www.youtube.com/watch?v=_M-oHxknfnI)

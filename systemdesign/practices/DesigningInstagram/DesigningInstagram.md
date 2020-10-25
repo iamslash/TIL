@@ -195,3 +195,5 @@ What about using `{timestamp: 52 bits}{photo sequence: 12 bits}` ???
 # Q&A
 
 # References
+
+* [Scaling Instagram Infrastructure @ youtube](https://www.youtube.com/watch?v=hnpzNAPiC0E)
