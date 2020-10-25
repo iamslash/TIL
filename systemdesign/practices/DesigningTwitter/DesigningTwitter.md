@@ -158,7 +158,21 @@ CREATE TABLE timeline (
 
 ## TimelineGeneration
 
-* [Designing Facebook’s Newsfeed](DesigningFacebooksNewsfeed.md)
+* [Designing Facebook’s Newsfeed](/systemdesign/practices/DesigningFacebooksNewsfeed/DesigningFacebooksNewsfeed.md)
+
+-----
+
+When the system save A's tweet, 
+
+* Insert the tweet into `tweet`.
+* Insert tweet into the A's `userline`.
+* Insert tweet into the public `userline`.
+* Get the user's followers, and insert the tweet into all of their streams `timeline` with ``. A follows A.
+
+When the system read A's timeline,
+
+* Get followee of A's.
+* Get tweet from `timeline` with followee's username.
 
 ## Monitoring
   
@@ -202,8 +216,6 @@ read replication because of read-heavy and fault tolerance because of replicatio
 * Between Clients and Application Servers
 * Between Application servers and database replication servers
 * Between Aggregation servers and Cache server
-
-![](DesigningTwitterLoadBalancing.png)
 
 # Q&A
 

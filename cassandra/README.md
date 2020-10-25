@@ -33,6 +33,8 @@
   - [Useful Queries](#useful-queries)
   - [Basic Schema Design](#basic-schema-design)
   - [Twitter Examples](#twitter-examples)
+    - [Shcema](#shcema)
+    - [Queries](#queries)
 
 ----
 
@@ -738,6 +740,10 @@ CREATE TABLE reservation.guests (
 
 -----
 
+### Shcema
+
+`tweets\management\commands\sync_cassandra.py`
+
 ```sql
 CREATE TABLE users (
     username text PRIMARY KEY,
@@ -777,4 +783,79 @@ CREATE TABLE timeline (
     tweet_id uuid,
     PRIMARY KEY (username, time)
 ) WITH CLUSTERING ORDER BY (time DESC)
+```
+
+### Queries
+
+`~/cass.py`
+
+* SELECT
+
+```sql
+-- get timeline
+-- Given a username, get their tweet timeline (tweets from people they follow).
+> SELECT time, tweet_id FROM timeline WHERE username=%s {time_clause} LIMIT %s
+
+-- get userline
+-- Given a username, get their userline (their tweets).
+> SELECT time, tweet_id FROM userline WHERE username=%s {time_clause} LIMIT %s
+
+-- get tweet
+-- Given a tweet id, this gets the entire tweet record.
+> SELECT * FROM tweets WHERE tweet_id=?
+```
+
+* INSERT
+
+```py
+def save_tweet(tweet_id, username, tweet, timestamp=None):
+    """
+    Saves the tweet record.
+    """
+
+    global tweets_query
+    global userline_query
+    global timeline_query
+
+    # Prepare the statements required for adding the tweet into the various timelines
+    # Initialise only once, and then re-use by binding new values
+    if tweets_query is None:
+        tweets_query = session.prepare("""
+            INSERT INTO tweets (tweet_id, username, body)
+            VALUES (?, ?, ?)
+            """)
+
+    if userline_query is None:
+        userline_query = session.prepare("""
+            INSERT INTO userline (username, time, tweet_id)
+            VALUES (?, ?, ?)
+            """)
+
+    if timeline_query is None:
+        timeline_query = session.prepare("""
+            INSERT INTO timeline (username, time, tweet_id)
+            VALUES (?, ?, ?)
+            """)
+
+    if timestamp is None:
+        now = uuid1()
+    else:
+        now = _timestamp_to_uuid(timestamp)
+
+    # Insert the tweet
+    session.execute(tweets_query, (tweet_id, username, tweet,))
+    # Insert tweet into the user's timeline
+    session.execute(userline_query, (username, now, tweet_id,))
+    # Insert tweet into the public timeline
+    session.execute(userline_query, (PUBLIC_USERLINE_KEY, now, tweet_id,))
+
+    # Get the user's followers, and insert the tweet into all of their streams
+    futures = []
+    follower_usernames = [username] + get_follower_usernames(username)
+    for follower_username in follower_usernames:
+        futures.append(session.execute_async(
+            timeline_query, (follower_username, now, tweet_id,)))
+
+    for future in futures:
+        future.result()
 ```
