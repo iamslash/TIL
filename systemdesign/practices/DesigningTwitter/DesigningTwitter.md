@@ -108,44 +108,57 @@ returns: url to access that tweet
 
 # High Level Architecture
 
-![](DesigningTwitterHighLevelArch)
+![](DesigningTwitterHighLevelArch.png)
 
 # Low Level Architecture
 
 ## Database Schema
 
-|  | Table |  |
-|:-|:------|:-|
-|  | **Tweet**  |  |
-| PK | TweetID | int | 
-| | UserID | int |
-| | TweetLatitude | int |
-| | TweetLongitude | int |
-| | UserLatitude | int |
-| | USerLongitude | int |
-| | CreationDate | DateTime |
-| | NumFavorites | int |
-| | | |
-|  | **User**  |  |
-| PK | UserID | int |
-| | Name | varchar(20) |
-| | Email | varchar(32) |
-| | DateOfBirth | DateTime |
-| | CreationDate | DateTime |
-| | LastLogin | DateTime |
-| | | |
-|  | **UserFollow**  |  |
-| PK | UserID1 | int |
-| PK | UserID2 | int |
-| | | |
-|  | **Favorite**  |  |
-| PK | TweetID | int |
-| PK | UserID | int |
-| | CreationDate | DateTime |
+
+```sql
+CREATE TABLE users (
+    username text PRIMARY KEY,
+    password text
+)
+
+CREATE TABLE friends (
+    username text,
+    friend text,
+    since timestamp,
+    PRIMARY KEY (username, friend)
+)
+
+CREATE TABLE followers (
+    username text,
+    follower text,
+    since timestamp,
+    PRIMARY KEY (username, follower)
+)
+
+CREATE TABLE tweets (
+    tweet_id uuid PRIMARY KEY,
+    username text,
+    body text
+)
+
+CREATE TABLE userline (
+    username text,
+    time timeuuid,
+    tweet_id uuid,
+    PRIMARY KEY (username, time)
+) WITH CLUSTERING ORDER BY (time DESC)
+
+CREATE TABLE timeline (
+    username text,
+    time timeuuid,
+    tweet_id uuid,
+    PRIMARY KEY (username, time)
+) WITH CLUSTERING ORDER BY (time DESC)
+```
 
 ## TimelineGeneration
 
-[Designing Facebook’s Newsfeed](DesigningFacebooksNewsfeed.md)
+* [Designing Facebook’s Newsfeed](DesigningFacebooksNewsfeed.md)
 
 ## Monitoring
   
@@ -190,7 +203,7 @@ read replication because of read-heavy and fault tolerance because of replicatio
 * Between Application servers and database replication servers
 * Between Aggregation servers and Cache server
 
-![](img/DesigningTwitterLoadBalancing.png)
+![](DesigningTwitterLoadBalancing.png)
 
 # Q&A
 
