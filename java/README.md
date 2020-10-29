@@ -9,6 +9,7 @@
   - [String](#string)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collection Examples](#collection-examples)
+  - [Collection Conversions](#collection-conversions)
   - [Multi dimensional array](#multi-dimensional-array)
   - [Collection Framework](#collection-framework)
   - [Collection Implementations](#collection-implementations)
@@ -578,6 +579,53 @@ Collections.sort(A, Collections.reverseOrder());
 Collections.sort(A, (a, b) -> String.compareTo(a, b));
 Collections.reverse(A);
 String s = Collections.min(A);
+```
+
+## Collection Conversions
+
+* [Java - Set를 List로, List를 Set로 변환하는 방법](https://codechacha.com/ko/java-convert-set-to-list-and-list-to-set/)
+
+----
+
+```java
+// List to Set
+List<Integer> sourceList = Arrays.asList(0, 1, 2, 3, 4, 5);
+Set<Integer> targetSet = new HashSet<>(sourceList);
+
+// List to Set (Guava)
+List<Integer> sourceList = Lists.newArrayList(0, 1, 2, 3, 4, 5);
+Set<Integer> targetSet = Sets.newHashSet(sourceList);
+
+// Set to List
+Set<Integer> sourceSet = new HashSet<>(Arrays.asList(0, 1, 2, 3, 4, 5));
+List<Integer> targetList = new ArrayList<>(sourceSet);
+
+// Set to List (Guava)
+Set<Integer> sourceSet = Sets.newHashSet(0, 1, 2, 3, 4, 5);
+List<Integer> targetList = Lists.newArrayList(sourceSet);
+
+// Array to Set
+Integer[] array = {1, 2, 3};
+Set<Integer> set = Arrays.stream(array).collect(Collectors.toSet());
+System.out.println("Set: " + set);
+// Set: [1, 2, 3]
+
+// Set to Array
+Set<Integer> set = Sets.newHashSet(1, 2, 3);
+Integer[] array = new Integer[set.size()];
+
+set.toArray(array);
+System.out.println("Array: " + Arrays.toString(array));
+// Array: [1, 2, 3]
+
+// Array to List
+Integer[] array = {1, 2, 3};
+List<Integer> list = Arrays.stream(array)
+                           .collect(Collectors.toList());
+
+// List to Array
+List<Integer> list = Arrays.asList(1, 2, 3);
+list.toArray(new Integer[list.size()]);
 ```
 
 ## Multi dimensional array

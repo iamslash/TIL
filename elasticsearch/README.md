@@ -16,6 +16,7 @@
   - [Sub Aggregation](#sub-aggregation)
   - [Pipeline Aggregation](#pipeline-aggregation)
 - [Advanced](#advanced)
+  - [Rolling Restart](#rolling-restart)
   - [Rolling Upgrade](#rolling-upgrade)
   - [Reindex](#reindex)
 
@@ -559,6 +560,10 @@ $ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?p
 * [8.4 파이프라인 - Pipeline Aggregations](https://esbook.kimjmin.net/08-aggregations/8.4-pipeline-aggregations)
 
 # Advanced
+
+## Rolling Restart
+
+* [[Elasticsearch] 클러스터 rolling restarts](https://lng1982.tistory.com/315)
 
 ## Rolling Upgrade
 

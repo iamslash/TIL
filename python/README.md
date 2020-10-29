@@ -33,6 +33,7 @@
   - [gc](#gc)
   - [dependencies](#dependencies)
 - [Advanced](#advanced)
+  - [Pythonic Way](#pythonic-way)
   - [open function](#open-function)
   - [Builtin functions](#builtin-functions)
   - [Decorator](#decorator)
@@ -1696,6 +1697,10 @@ tossi==0.0.1
 
 
 # Advanced 
+
+## Pythonic Way
+
+* [Code Style¶](https://docs.python-guide.org/writing/style/)
 
 ## open function
 
