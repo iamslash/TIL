@@ -16,8 +16,10 @@
   - [Sub Aggregation](#sub-aggregation)
   - [Pipeline Aggregation](#pipeline-aggregation)
 - [Advanced](#advanced)
+  - [Adding and removing a node](#adding-and-removing-a-node)
   - [Rolling Restart](#rolling-restart)
   - [Rolling Upgrade](#rolling-upgrade)
+  - [Open vs close Index](#open-vs-close-index)
   - [Reindex](#reindex)
 
 ----
@@ -561,6 +563,20 @@ $ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?p
 
 # Advanced
 
+## Adding and removing a node
+
+* [Shar Allocation Filtering @ ES](https://www.elastic.co/guide/en/elasticsearch/reference/2.4/allocation-filtering.html)
+
+-----
+
+* Delete old indices as much as possible to save time for rebalancing.
+* Provision a new node.
+* Attach a new node and check all shard are rebalanced.
+* Attach a new node to Load Balancer.
+* Detach a old node from Load Balancer.
+* Exclude a old node and check all shards are rebalanced.
+* Shutdown a old node.
+
 ## Rolling Restart
 
 * [[Elasticsearch] 클러스터 rolling restarts](https://lng1982.tistory.com/315)
@@ -568,6 +584,10 @@ $ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?p
 ## Rolling Upgrade
 
 * [Rolling Upgrades @ ES](https://www.elastic.co/guide/en/elasticsearch/reference/current/rolling-upgrades.html)
+
+## Open vs close Index
+
+* [Open / Close Index API](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/indices-open-close.html)
 
 ## Reindex
 
