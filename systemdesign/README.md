@@ -805,6 +805,7 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 | Data store | **Elasticsearch** | [Elasticsearch @ TIL](/elasticsearch/README.md) |
 | File system     | **Google File System (GFS)** - Distributed file system                                                               | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/gfs-sosp2003.pdf)                         |
 | File system | **Hadoop File System (HDFS)** - Open source implementation of GFS  | [apache.org](https://hadoop.apache.org/docs/r1.2.1/hdfs_design.html) |
+| File system | **GlusterFS** - Distributed File System  | [GlusterFS](/GlusterFS/README.md) |
 | Monitoring | **Graylog** | [Gralog @ TIL](/graylog/README.md) |
 | Monitoring | **Prometheus** | [Prometheus @ TIL](/prometheus/README.md) |
 | Monitoring | **Grafana** | [Grafana @ TIL](/grafana/README.md) |
