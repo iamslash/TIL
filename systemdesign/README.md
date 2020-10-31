@@ -84,6 +84,8 @@
   - [src](https://github.com/gilbutITbook/007035) 
 * [system deisgn primer](https://github.com/donnemartin/system-design-primer#federation)
   - 킹왕짱 내가 다시 정리할 필요성을 못 느낀다.
+  - [System Design Primer Mindmap of XMind](https://drive.google.com/file/d/190mY7w8ea1jYpoUFJPsd8rk8YgaSvrAP/view?usp=sharing)
+    - XMind is free.
 * [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
   - 유료 시스템 디자인 인터뷰
   - [System Design @ blogspot](https://learnsystemdesign.blogspot.com/)

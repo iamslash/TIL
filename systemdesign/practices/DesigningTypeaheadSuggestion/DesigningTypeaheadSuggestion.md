@@ -12,6 +12,7 @@
 - [Low-level Architecture](#low-level-architecture)
 - [System Extentions](#system-extentions)
 - [Q&A](#qa)
+- [Implementations](#implementations)
 - [References](#references)
 
 -----
@@ -35,6 +36,12 @@
 # System Extentions
 
 # Q&A
+
+# Implementations
+
+* [Implementation: Autocomplete/Typeahead Suggestions System Design @ github](https://github.com/lopespm/autocomplete)
+  * [Learning to build an Autocomplete System. Part 1](https://medium.com/@iftimiealexandru/learning-to-build-an-autocomplete-system-2c2e9f423537)
+    * [Learning to build an Autocomplete System. Part 2](https://medium.com/@iftimiealexandru/learning-to-build-an-autocomplete-system-part-2-110c71c772aa) 
 
 # References
 
