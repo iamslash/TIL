@@ -110,6 +110,8 @@ streamVideo(api_key,
 
 # High-level Architecture
 
+![](DesigningYoutubeorNetflixHighLevelArch.png)
+
 # Low-level Architecture
 
 ## Components
@@ -131,7 +133,12 @@ CREATE TABLE user {
   name varchar(255), 
   email varchar(255), 
   address varchar(255), 
-  age int
+  age int,
+  deleted char(1),
+  created_at datetime,
+  created_by var(255),
+  updated_at datetime,
+  updated_by var(255)  
 };
 ```
 
@@ -147,7 +154,12 @@ CREATE TABLE video {
   uploader var(255),
   likes int,
   dislikes int,
-  views int
+  views int,
+  deleted char(1),
+  created_at datetime,
+  created_by var(255),
+  updated_at datetime,
+  updated_by var(255)  
 };
 
 CREATE TABLE comment {
@@ -155,6 +167,7 @@ CREATE TABLE comment {
   video_id int,
   user_id int,
   comment var(255),
+  deleted char(1),
   created_at datetime,
   created_by var(255),
   updated_at datetime,
