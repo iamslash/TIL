@@ -41,4 +41,6 @@
 * [A Complete Guide for Lighting Fast Autocomplete Search Suggestion](https://www.linkedin.com/pulse/complete-guide-lighting-fast-autocomplete-search-suggestion-arya/)
 * [Trie implementation as Redis module](https://arashtaher.wordpress.com/2019/06/07/trie-implementation-as-redis-module/)
   * [cmsc22000-project-2018/redis-tries @ github](https://github.com/cmsc22000-project-2018/redis-tries)
-
+* [Amazon interview question: System design / Architecture for auto suggestions | type ahead @ youtube](https://www.youtube.com/watch?v=xrYTjaK5QVM)
+* [System design : Design Autocomplete or Typeahead Suggestions for Google search @ youtube](https://www.youtube.com/watch?v=us0qySiUsGU)
+* [System design : Design Autocomplete or Typeahead Suggestions for Google search @ youtube](https://www.youtube.com/watch?v=us0qySiUsGU)
