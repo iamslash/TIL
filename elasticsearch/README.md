@@ -16,6 +16,7 @@
   - [Sub Aggregation](#sub-aggregation)
   - [Pipeline Aggregation](#pipeline-aggregation)
 - [Advanced](#advanced)
+  - [Delete old indices](#delete-old-indices)
   - [Adding and removing a node](#adding-and-removing-a-node)
   - [Rolling Restart](#rolling-restart)
   - [Rolling Upgrade](#rolling-upgrade)
@@ -562,6 +563,18 @@ $ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?p
 * [8.4 파이프라인 - Pipeline Aggregations](https://esbook.kimjmin.net/08-aggregations/8.4-pipeline-aggregations)
 
 # Advanced
+
+## Delete old indices
+
+* [curator @ github](https://github.com/elastic/curator)
+  * [install curator @ ES](https://www.elastic.co/guide/en/elasticsearch/client/curator/current/installation.html)
+  * [curator reference @ ES](https://www.elastic.co/guide/en/elasticsearch/client/curator/current/index.html)
+
+-----
+
+```console
+curator --host <IP> delete indices --older-than 30 --prefix "twitter-" --time-unit days  --timestring '%Y-%m-%d'
+```
 
 ## Adding and removing a node
 

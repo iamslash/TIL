@@ -598,33 +598,38 @@ XMLHttpRequest 가 cross-domain 을 요청할 수 있도록하는 방법이다. 
 
 ----
 
-예를 들어 이메일 시스템을 디자인한다고 해보자. User 와 Email 테이블의 스키마는 다음과 같다. 
+Sharding 을 고려하여 Primary Key 를 효율적으로 설계해 보자. 예를 들어 이메일 시스템을 디자인한다고 해보자. User 와 Email 테이블의 스키마는 다음과 같다. 
 
-| field           | type      | description                  |
-| --------------- | --------- | ---------------------------- |
-| user_id         | Long (8B) | unique id (각 DB 별)           |
-| email           | String    | 이메일 주소                       |
-| shard           | Long      | 자신의 메일 리스트를 저장한 DB server 번호 |
-| type            | int       | 활성화 유저인가??                   |
-| created_at      | timestamp | 계정 생성시간                      |
-| last_login_time | timestamp | 마지막 로그인 시간                   |
+* `User`
 
-| field       | type           | description        |
-| ----------- | -------------- | ------------------ |
-| mail_id     | Long (8B)      | unique id (각 DB 별) |
-| receiver    | String or Long | 수신자                |
-| sender      | String or Long | 송신자                |
-| subject     | String         | 메일제목               |
-| received_at | timestamp      | 수신시간               |
-| eml_id      | String or Long | 메일 본문 저장 id or url |
-| is_read     | boolean        | 읽었는가??             |
-| contents    | String         | 미리보기 (내용의 일부)      |
+  | field           | type      | description                  |
+  | --------------- | --------- | ---------------------------- |
+  | user_id         | Long (8B) | unique id (각 DB 별)           |
+  | email           | String    | 이메일 주소                       |
+  | shard           | Long      | 자신의 메일 리스트를 저장한 DB server 번호 |
+  | type            | int       | 활성화 유저인가??                   |
+  | created_at      | timestamp | 계정 생성시간                      |
+  | last_login_time | timestamp | 마지막 로그인 시간                   |
+
+* `Email`  
+
+  | field       | type           | description        |
+  | ----------- | -------------- | ------------------ |
+  | mail_id     | Long (8B)      | unique id (각 DB 별) |
+  | receiver    | String or Long | 수신자                |
+  | sender      | String or Long | 송신자                |
+  | subject     | String         | 메일제목               |
+  | received_at | timestamp      | 수신시간               |
+  | eml_id      | String or Long | 메일 본문 저장 id or url |
+  | is_read     | boolean        | 읽었는가??             |
+  | contents    | String         | 미리보기 (내용의 일부)      |
 
 email file 은 AWS S3 에 저장하자. email file 의 key 를 마련해야 한다. 
 
 * `{receiver_id}_{mail_id}` 
   * `mail_id` 는 이미 shard 마다 중복해서 존재한다. 따라서 `receiver_id` 와 결합하여 사용하자.
   * 그렇다면 `eml_id` 는 필요할까? `{receiver_id}_{mail_id}` 만으로도 eml file 의 key 로 사용할 수 있기 때문이다. 조금 더 key 를 잘 설계할 수는 없을까???
+* key 에 시간을 포함하면 시간에 따라 data 가 적절히 shard 로 분산된다.
 * UUID (Universally Unique Identifier)
   * id 에 시간 정보가 반영되어 있다. id 를 오름차순으로 정렬하면 시간순 으로 데이터를 정렬할 수 있다.
   * 16 bytes (128 bit), 36 characters 이다. 너무 크다.
@@ -641,6 +646,8 @@ email file 은 AWS S3 에 저장하자. email file 의 key 를 마련해야 한�
 * `{timetamp: 4 bytes}_{machine_id:3 bytes}_{process_id:2 bytes}_{counter:3 bytes}` 12 bytes
   * 이것은 mongoDB 의 ID 이다. 
 * `{timestamp}_{shard_id}_{type}_{sequence}` 8 bytes
+* 만약 select 의 형태가 특정 user 의 최근 10 분간 수신된 email data 만 얻어오는 형태라면 Primary Key 에 timebound 를 도입해 보는 것도 좋은 방법이다. 
+  * timebound 가 없다면 email data 는 모든 shard 로 골고루 분산될 것이다. Primary Key 를 `{timebound}_{shard_id}_{type}_{sequence}` 를 설정해보자. 그렇다면 특정 유저의 최근 1 시간동안 수신된 email 은 하나의 shard 에 저장된다. 따라서 특정유저의 email data 를 얻어올 때 모든 shard 에 query 할 필요가 없다.
 
 ## Idempotency
 
