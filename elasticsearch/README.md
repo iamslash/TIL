@@ -15,7 +15,11 @@
   - [Bucket Aggregation](#bucket-aggregation)
   - [Sub Aggregation](#sub-aggregation)
   - [Pipeline Aggregation](#pipeline-aggregation)
+- [Plugins](#plugins)
+  - [kopf](#kopf)
+  - [* 킹왕짱 web admin](#ulli킹왕짱-web-adminliul)
 - [Advanced](#advanced)
+  - [Cluster settings for concurrent rebalance](#cluster-settings-for-concurrent-rebalance)
   - [Delete old indices](#delete-old-indices)
   - [Adding and removing a node](#adding-and-removing-a-node)
   - [Rolling Restart](#rolling-restart)
@@ -187,11 +191,24 @@ $ curl -XPUT http://localhost:9200/classes?pretty
   "index" : "classes"
 }
 
+## Open, close index
+# Close a specific index
+curl -XPOST 'localhost:9200/my_index/_close'
+# Open a specific index
+curl -XPOST 'localhost:9200/my_index/_open'
+# Close all indices
+curl -XPOST 'localhost:9200/*/_close'
+# Open all indices
+curl -XPOST 'localhost:9200/_all/_close'
+
 ## delete index classes
-curl -XDELETE http://localhost:9200/classes?pretty
+$ curl -XDELETE 'http://localhost:9200/classes?pretty'
 {
   "acknowledged" : true
 }
+# Delete all indices
+$ curl -XDELETE 'http://localhost:9200/_all/'
+$ curl -XDELETE 'http://localhost:9200/*/'
 
 ## create document but fail
 curl -XPUT http://localhost:9200/classes/class/1?pretty -d '{"title": "Algorithm", "professor": "John"}'
@@ -562,7 +579,31 @@ $ curl -H 'Content-type: application/json' -XGET http://localhost:9200/_search?p
 
 * [8.4 파이프라인 - Pipeline Aggregations](https://esbook.kimjmin.net/08-aggregations/8.4-pipeline-aggregations)
 
+# Plugins
+
+## kopf
+
+* [web admin interface for elasticsearch](https://github.com/lmenezes/elasticsearch-kopf)
+  * 킹왕짱 web admin
+-----
+
+```bash
+$ ./elasticsearch/bin/plugin install lmenezes/elasticsearch-kopf/{branch|version}
+$ open http://localhost:9200/_plugin/kopf
+```
+
 # Advanced
+
+## Cluster settings for concurrent rebalance 
+
+* [Cluster-level shard allocation and routing settings](https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-cluster.html)
+
+----
+
+* `cluster.routing.allocation.cluster_concurrent_rebalance`
+  * total allowed count of shards for concurrent rebalance
+* `cluster.routing.allocation.node_concurrent_recoveries`
+
 
 ## Delete old indices
 
@@ -601,6 +642,24 @@ curator --host <IP> delete indices --older-than 30 --prefix "twitter-" --time-un
 ## Open vs close Index
 
 * [Open / Close Index API](https://www.elastic.co/guide/en/elasticsearch/reference/6.8/indices-open-close.html)
+* [[elasticsearch] open / close /delete index](https://kugancity.tistory.com/entry/elasticsearch-delete-open-close-index)
+
+-----
+
+A closed index is blocked for read/write. A closed index can be opened which will then go through the normal recovery process.
+
+If you want to reduce the overhead of an index while keeping it available for occasional searches, **freeze** the index instead. If you want to store an index outside of the cluster, use a **snapshot**.
+
+```bash
+# Close a specific index
+curl -XPOST 'localhost:9200/my_index/_close'
+# Open a specific index
+curl -XPOST 'localhost:9200/my_index/_open'
+# Close all indices
+curl -XPOST 'localhost:9200/*/_close'
+# Open all indices
+curl -XPOST 'localhost:9200/_all/_close'
+```
 
 ## Reindex
 
