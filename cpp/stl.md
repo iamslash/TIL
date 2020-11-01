@@ -65,6 +65,13 @@ vec2.swap(vec);   // vec2 becomes empty, and vec has 3 items.
 
 // Notes: No penalty of abstraction, very efficient.
 
+vector<int> a;
+vector<int> b;
+// Add range
+a.insert(a.end(), b.begin(), b.end();
+// Compare contens of two vector
+equal(a.begin(), a.end(), b.begin());
+
 /* Properties of Vector:
  * 1. fast insert/remove at the end: O(1)
  * 2. slow insert/remove at the begining or in the middle: O(n)
