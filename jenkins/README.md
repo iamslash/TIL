@@ -518,8 +518,7 @@ $ idea pom.xml
 * open browser with url `http://localhost:8080/script`
 
 * list methods on a class instance
-
-* [introspection @ TIL](/groovy/README.md#introspection)
+  * [introspection @ TIL](/groovy/README.md#introspection)
 
 ```groovy
 a.metaClass.methods*.name.sort().unique()
@@ -570,6 +569,20 @@ def job = Jenkins.instance.getItem(jobName)
 job.getBuilds().each { it.delete() }  
 job.nextBuildNumber = 1   
 job.save()
+```
+
+* Clear specific pending jobs
+
+```groovy
+import hudson.model.*
+def matchedJobs = Hudson.instance.queue.items.findAll { job ->
+    job.name =~ /my_regex_here/
+}
+    
+matchedJobs.each { job ->
+    println job.name
+    //job.delete()
+}
 ```
 
 ## How to backup and install plugins
