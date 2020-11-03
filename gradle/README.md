@@ -4,6 +4,7 @@
 - [Advanced](#advanced)
   - [`compile` vs `implementation`](#compile-vs-implementation)
   - [`implementation` vs `api`](#implementation-vs-api)
+  - [How to solve conflicts of dependencies](#how-to-solve-conflicts-of-dependencies)
   - [How to debug gradle](#how-to-debug-gradle)
   - [Multiple projects](#multiple-projects)
   - [Using plugins](#using-plugins)
@@ -839,6 +840,28 @@ System.out.println(InternalLibrary.giveMeAString());
 ```gradle
 dependencies {
     implementation project(':InternalLibrary')
+}
+```
+
+## How to solve conflicts of dependencies
+
+* [Gradle에서 Dependency Conflict 해결하기](https://medium.com/harrythegreat/gradle%EC%97%90%EC%84%9C-dependency-conflict-%ED%95%B4%EA%B2%B0%ED%95%98%EA%B8%B0-57dbba3a3231)
+
+----
+
+```groovy
+// exclude modules locally
+implementation("com.iamslash.hello:hello:1.0.0.RELEASE") {
+      exclude group: "com.iamslash.hello", module: 'world'
+}
+
+// resolve globally and forces to use specific version.
+// This might be dangerous, You need to be careful.
+configurations.all {
+    exclude group: 'com.iamslash.hello', module: 'world'
+    resolutionStrategy{
+        forcedModules = ['com.iamslash.hello:world:3.3.1.RELEASE']
+     }
 }
 ```
 
