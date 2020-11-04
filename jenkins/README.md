@@ -20,6 +20,7 @@
   - [Declaritive pipeline](#declaritive-pipeline)
   - [Scripted pipeline](#scripted-pipeline)
 - [Advanced](#advanced)
+  - [How to provision Jenkins with AWS Cloudformation](#how-to-provision-jenkins-with-aws-cloudformation)
   - [How to make a Jenkins-plugin](#how-to-make-a-jenkins-plugin)
   - [Script Console](#script-console)
   - [How to backup and install plugins](#how-to-backup-and-install-plugins)
@@ -430,6 +431,10 @@ node {
 }
 ```
 # Advanced
+
+## How to provision Jenkins with AWS Cloudformation
+
+* [Launching a Jenkins Master using AWS CloudFormation](http://beta.awsdocs.com/infrastructure_as_code/cloudformation/applications/jenkins_cf_deployment/)
 
 ## How to make a Jenkins-plugin
 
