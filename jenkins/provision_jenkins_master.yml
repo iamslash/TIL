@@ -1,0 +1,259 @@
+AWSTemplateFormatVersion: "2010-09-09"
+# Description of what this CloudFormation Template is going to produce
+Description: AWS CloudFormation Jenkins Template to create a Stand Alone Jenkins server stack using a single EC2 instance
+# Define Parameter Variables that will be used throughout this Cloudformation template.
+Parameters:
+  InstanceType:
+    Description: Type of EC2 instance to launch for the server. Only Compute type nodes are currently specified.
+    Type: String
+    Default: t2.medium
+    ConstraintDescription: Must be a valid EC2 instance type
+    AllowedValues: 
+      - t2.nano
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - t2.large
+      - t2.xlarge
+      - t2.2xlarge
+      - m4.large
+      - m4.xlarge
+      - m4.2xlarge
+      - m4.4xlarge
+      - m4.10xlarge
+      - m4.16xlarge
+      - m5.large
+      - m5.xlarge
+      - m5.2xlarge
+      - m5.4xlarge
+      - m5.12xlarge
+      - m5.24xlarge
+  VpcId:
+    Description: VPC ID that this stack will be launched in.
+    Type: AWS::EC2::VPC::Id
+    AllowedPattern: "[a-z0-9-]*"
+  SubnetId:
+    Description: VPC Subnet that this stack will be launched in.
+    Type: AWS::EC2::Subnet::Id
+    AllowedPattern: "[a-z0-9-]*"
+  KeyName:
+    Description: Name of an existing EC2 KeyPair to enable SSH access to the instance(s).
+    Type: AWS::EC2::KeyPair::KeyName
+    ConstraintDescription: Must be the name of an existing EC2 KeyPair
+  SSHLocation:
+    Description: The source IP address (/32) or source IP address range (x.x.x.x/x) that will be allowed to SSH to the EC2 instances
+    Type: String
+    MinLength: 9
+    MaxLength: 18
+    Default: 0.0.0.0/0
+    AllowedPattern: "(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})\\.(\\d{1,3})/(\\d{1,2})"
+    ConstraintDescription: Must be a valid IP CIDR range of the form x.x.x.x/x
+  JenkinsPort:
+    Description: The Port that will be used to access Jenkins (Must be port 1024 or above, unless changing jenkins user).
+    Type: Number
+    MinValue: 1024
+    MaxValue: 65535
+    Default: 8080
+  InstanceTagName:
+    Description: Instance Name tag that will be used to define the Name of the instance resource(s)
+    Type: String
+    Default: Jenkins
+
+# Create an easy mapping, simply mapping the region selected to the appropriate Amazon Linux 2 AMI
+# AMI ID's Updated 8/20/18
+Mappings: 
+  RegionMap: 
+    'us-east-1': 
+      AMI: 'ami-04681a1dbd79675a5'
+    'us-east-2': 
+      AMI: 'ami-0cf31d971a3ca20d6'
+    'us-west-1': 
+      AMI: 'ami-0782017a917e973e7'
+    'us-west-2': 
+      AMI: 'ami-6cd6f714'
+
+# Define Resources that will be launched via this template
+Resources:
+  # EC2 Server Instance Definition
+  JenkinsInstance:
+    Description: Jenkins Standalone EC2 Instance running Java 8, and Jenkins.
+    Type: AWS::EC2::Instance
+    Metadata:
+      AWS::CloudFormation::Init:
+        # configSets is used when there are multiple configs that you want to run, for multiple instances. If not needed then just config (default) is adequate.
+        configSets:
+          default: [mountVolume, config, jenkinsConfig]
+        # This configSet will define how we handle the additional EBS volume that we create with the Instance. We will mount the volume in /var/lib/Jenkins
+        mountVolume:
+          commands:
+            01_mkdir:
+              command: sudo mkdir -p /var/lib/jenkins
+            02_fdisk:
+              command: echo -e "o\nn\np\n1\n\n\nw" | sudo fdisk /dev/sdb
+            03_wait:
+              command: sleep 3
+            04_mkfs:
+              command: sudo mkfs.ext4 /dev/sdb1
+            05_disk_label:
+              command: e2label /dev/sdb1 JENKINS
+            06_fstab:
+              command: echo -e "LABEL=JENKINS     /var/lib/jenkins    ext4   defaults 0 0" >> /etc/fstab
+            07_mount:
+              command: mount -a
+
+        # This configSet will perform the actual installation of Jenkins
+        jenkinsConfig:
+          packages:
+            yum:
+              wget: []
+              java-1.8.0-openjdk: []
+              java-1.8.0-openjdk-devel: []
+              net-tools: []
+              git: []
+              jq: []
+          commands:
+            01_epel_repo:
+              command: sudo rpm -ivh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+            02_jenkins_repo:
+              command: sudo wget -O /etc/yum.repos.d/jenkins.repo http://pkg.jenkins-ci.org/redhat/jenkins.repo
+            03_yum_clean:
+              command: yum clean all
+            04_jenkins_key:
+              command: sudo rpm --import https://jenkins-ci.org/redhat/jenkins-ci.org.key
+            05_jenkins_dirs:
+              command: sudo mkdir -p /home/jenkins /var/lib/jenkins/.ssh /var/cache/jenkins/war /var/log/jenkins
+            06_jenkins_install:
+              command: sudo yum install -y jenkins
+            07_check_jenkins_login:
+              command: usermod -s /bin/bash jenkins
+            08_set_jenkins_port:
+              command: !Sub |
+                sudo sed -i "s/JENKINS_PORT=\"8080\"/JENKINS_PORT=\"${JenkinsPort}\"/g" /etc/sysconfig/jenkins
+            09_sshconfig:
+              command: sudo echo -e "Host *\n\tStrictHostKeyChecking no\n" >> /var/lib/jenkins/.ssh/config
+            10_ssh_keygen:
+              command: sudo ssh-keygen -t rsa -b 2048 -C jenkins@jenkins -N "" -f /var/lib/jenkins/.ssh/id_rsa; sudo cat /var/lib/jenkins/.ssh/id_rsa.pub > /var/lib/jenkins/.ssh/authorized_keys
+            11_set_permissions:
+              command: sudo chown -R jenkins:jenkins /home/jenkins /var/lib/jenkins /var/cache/jenkins /var/log/jenkins; sudo chmod 0700 /var/lib/jenkins/.ssh; sudo chmod 0600 /var/lib/jenkins/.ssh/*
+            12_firewall:
+              command: !Sub |
+                sudo firewall-cmd --permanent --add-service=ssh; sudo firewall-cmd --permanent --add-port='${JenkinsPort}'/tcp; sudo firewall-cmd --reload
+          services:
+            sysvinit:
+              jenkins:
+                enabled: true
+                ensureRunning: true
+
+        # Default Config, which handles installing the firewall, and CFN components to talk back to CloudFormation
+        config:
+          packages:
+            yum:
+              firewalld: []
+          commands:
+            01_update:
+              command: yum -y update
+          files:
+            '/etc/cfn/cfn-hup.conf':
+              content: !Sub |
+                [main]
+                stack=${AWS::StackId}
+                region=${AWS::Region}
+                interval=1
+              mode: '000400'
+              owner: root
+              group: root
+            '/etc/cfn/hooks.d/cfn-auto-reloader.conf':
+              content: !Sub |
+                [cfn-auto-reloader-hook]
+                triggers=post.update
+                path=Resources.JenkinsInstance.Metadata.AWS::CloudFormation::Init
+                action=/opt/aws/bin/cfn-init --verbose --stack=${AWS::StackName} --region=${AWS::Region} --resource=JenkinsInstance
+                runas=root
+          services:
+            sysvinit:
+              cfn-hup:
+                enabled: true
+                ensureRunning: true
+                files:
+                  - '/etc/cfn/cfn-hup.conf'
+                  - '/etc/cfn/hooks.d/cfn-auto-reloader.conf'
+              firewalld:
+                enabled: true
+                ensureRunning: true
+
+    # Properties of the Instance that we are launching. Here we define things like EBS volumes, SG's, The AMI used, etc..
+    Properties:
+      # Create the 25GB EBS volume that we will use for /var/lib/jenkins
+      BlockDeviceMappings:
+        - DeviceName: /dev/sdb
+          Ebs:
+            DeleteOnTermination: false
+            VolumeType: gp2
+            VolumeSize: 25
+      # Pull the Image or AMI from the RegionMap Map we defined earlier
+      ImageId: !FindInMap
+        - RegionMap
+        - !Ref 'AWS::Region'
+        - AMI
+      # Pull the Intance Type, Subnet, KeyName, etc from the Parameters we defined earlier
+      InstanceType: !Ref InstanceType
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: 0
+          DeleteOnTermination: true
+          SubnetId: !Ref SubnetId
+          # This defines the SG that we will place on the ENI, We will create the SG after the instance resource definition
+          GroupSet: 
+            - !Ref ServerSecurityGroup
+      KeyName: !Ref KeyName
+      Tags:
+       - Key: Name
+         Value: !Ref InstanceTagName
+      # Use the user data to instantiate the cfn service, which will report back to CloudFormaton once the instance is set up
+      UserData:
+        Fn::Base64: !Sub |     # No more Fn::Join needed
+          #!/bin/bash -x
+          /opt/aws/bin/cfn-init -v --stack ${AWS::StackName} --resource JenkinsInstance --region ${AWS::Region}
+          /opt/aws/bin/cfn-signal -e $? --region ${AWS::Region} --stack ${AWS::StackName} --resource JenkinsInstance
+    # Creation Policy will ensure that if the instance isn't complete within the specified window, that a rollback will occur
+    CreationPolicy:
+      ResourceSignal:
+        Count: '1'
+        Timeout: PT15M
+
+  # Define the Security Group that will be appended to the ENI of the Instance we are creating.  
+  ServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security Group that will be used for the Jenkins instance. Open ports 22, and the JenkinsPort
+      VpcId: !Ref VpcId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: !Ref SSHLocation
+        - IpProtocol: tcp
+          FromPort: !Ref JenkinsPort
+          ToPort: !Ref JenkinsPort
+          CidrIp: !Ref SSHLocation
+
+# Specify any outputs for the stack.
+Outputs:
+  TemplateID:
+    Description: 'Jenkins Single Server Template'
+    Value: 'Jenkins Single Server Template'
+  PublicIp:
+    Description: 'The Public IP address of the EC2 Instance'
+    Value: !GetAtt JenkinsInstance.PublicIp
+  ServerAddress:
+    Description: 'The public DNS address for this instance'
+    Value: !GetAtt JenkinsInstance.PublicDnsName
+  JenkinsPass:
+    Description: Jenkins One Time Install Password 
+    Value: !Sub "ssh ec2-user@${JenkinsInstance.PublicIp} sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
+  JenkinsKey:
+    Description: Jenkins SSH Public Key
+    Value: !Sub "ssh ec2-user@${JenkinsInstance.PublicIp} sudo cat /var/lib/jenkins/.ssh/id_rsa.pub"
+  InstanceID:
+    Description: 'The ID of the Jenkins instance that was launched'
+    Value: !Ref JenkinsInstance
