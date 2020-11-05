@@ -1592,11 +1592,16 @@ $ cat z.json | jq '.data | to_entries | map(select(.key | match("what a burger";
   * `file a.txt` 파일종류좀 알려줘
   * `sudo file -s /dev/xvdf/` 특별한 파일 즉 디스크좀 알려줘. 포맷되었는지 확인할 수 있다.
 * `rsync`
+  * [rsync @ man](https://linux.die.net/man/1/rsync)
   * [sync 사용법 - data backup 포함](https://www.lesstif.com/pages/viewpage.action?pageId=12943658)
     * [Rsync](https://www.lesstif.com/display/1STB/rsync)
-  * `--progress` option: 진행상황 확인 
   * `rsync -n -avrc /abc/home/sample1/* server2:/abc/home/sample2/` rsync dry-run
   * `rsync -avz --progress -e 'ssh -p 10022' iamslash@example.com:/home/hello /home/world`
+    * `--progress` option: 진행상황 확인 
+  * `rsync -am --include='config.xml' --include='*/' --prune-empty-dirs --exclude='*' $JENKINS_HOME/jobs/ $BUILD_ID/jobs/` rsync from old Jenkins job config files to new Jenkins job config files
+    * `--include=<PATTERN>` include `<PATTERN>`
+    * `--exclude=<PATTERN>` exclude `<PATTERN>`
+    * `-m, --prune-empty-dirs` Skip empty dirs for sync
 * `fuser`
   * `fuser -m /etc/sshd/sshd_config` sshd_config 파일을 사용하는 프로세스의 PID 를 확인
   * `fuser -k /usr/sbin/sshd` sshd 데몬을 사용하고 있는 프로세스를 모두 KILL
