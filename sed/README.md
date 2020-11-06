@@ -10,7 +10,8 @@
 - [Debugging](#debugging)
 - [References](#references)
 - [Tips](#tips)
-  - [두개의 패턴 사이의 내용을 지우자.](#%eb%91%90%ea%b0%9c%ec%9d%98-%ed%8c%a8%ed%84%b4-%ec%82%ac%ec%9d%b4%ec%9d%98-%eb%82%b4%ec%9a%a9%ec%9d%84-%ec%a7%80%ec%9a%b0%ec%9e%90)
+  - [Replace in files](#replace-in-files)
+  - [두개의 패턴 사이의 내용을 지우자.](#두개의-패턴-사이의-내용을-지우자)
 
 -------------------------------------------------------------------------------
 
@@ -107,6 +108,13 @@ EOF
 * [부록 B. Sed 와 Awk 에 대한 간단한 입문서](https://wiki.kldp.org/HOWTO/html/Adv-Bash-Scr-HOWTO/sedawk.html)
 
 # Tips
+
+## Replace in files
+
+```bash
+$ find . -type f -name 'config.xml' | xargs sed -i 's/<disabled>false<\/disabled>/<disabled>true<\/disabled>/g'
+$ find . -type f -name 'config.xml' | xargs grep '<disabled>false</disabled>'
+```
 
 ## 두개의 패턴 사이의 내용을 지우자.
 
