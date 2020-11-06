@@ -1,10 +1,12 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [TCC (Try-Confirm/Cancel), 2 Phase Commit](#tcc-try-confirmcancel-2-phase-commit)
+- [2 Phase Commit, TCC (Try-Confirm/Cancel)](#2-phase-commit-tcc-try-confirmcancel)
   - [Sequences](#sequences)
   - [Exceptions](#exceptions)
   - [Summary](#summary)
-- [Event driven, SAGA pattern](#event-driven-saga-pattern)
+- [SAGA pattern, Event driven](#saga-pattern-event-driven)
+  - [Choreography based SAGA](#choreography-based-saga)
+  - [Orchestration based SAGA](#orchestration-based-saga)
 - [Conclusion](#conclusion)
 
 -----
@@ -19,7 +21,7 @@ And there are 2 types of SAGAs including Choreography based SAGA, Orchestration 
 
 * [Eventuate Tram Sagas](https://eventuate.io/docs/manual/eventuate-tram/latest/getting-started-eventuate-tram-sagas.html)
   * [Managing data consistency in a microservice architecture using Sagas](https://eventuate.io/presentations.html)
-  * [orchestration-based-sagas example @ github](https://github.com/eventuate-tram/eventuate-tram-examples-customers-and-orders)
+  * [Choreography-based sagas example @ github](https://github.com/eventuate-tram/eventuate-tram-examples-customers-and-orders)
   * [orchestration-based-sagas example @ github](https://github.com/eventuate-tram/eventuate-tram-sagas-examples-customers-and-orders)
 * [REST 기반의 간단한 분산 트랜잭션 구현 – 1편 TCC 개관](https://www.popit.kr/rest-%EA%B8%B0%EB%B0%98%EC%9D%98-%EA%B0%84%EB%8B%A8%ED%95%9C-%EB%B6%84%EC%82%B0-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B5%AC%ED%98%84-1%ED%8E%B8/)
   * [src](https://github.com/YooYoungmo/article-tcc)
@@ -30,7 +32,7 @@ And there are 2 types of SAGAs including Choreography based SAGA, Orchestration 
 * [내 멋대로 구현한 이벤트 드리븐](https://www.popit.kr/%EB%82%B4-%EB%A9%8B%EB%8C%80%EB%A1%9C-%EA%B5%AC%ED%98%84%ED%95%9C-%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EB%93%9C%EB%A6%AC%EB%B8%90/)
 * [마이크로 서비스에서 분산 트랜잭션](https://medium.com/@giljae/%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A1%9C-%EC%84%9C%EB%B9%84%EC%8A%A4%EC%97%90%EC%84%9C-%EB%B6%84%EC%82%B0-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-347af5136c87)
 
-# TCC (Try-Confirm/Cancel), 2 Phase Commit
+# 2 Phase Commit, TCC (Try-Confirm/Cancel)
 
 * [REST 기반의 간단한 분산 트랜잭션 구현 – 1편 TCC 개관](https://www.popit.kr/rest-%EA%B8%B0%EB%B0%98%EC%9D%98-%EA%B0%84%EB%8B%A8%ED%95%9C-%EB%B6%84%EC%82%B0-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B5%AC%ED%98%84-1%ED%8E%B8/)
   * [src](https://github.com/YooYoungmo/article-tcc)
@@ -107,15 +109,17 @@ And there are 2 types of SAGAs including Choreography based SAGA, Orchestration 
 
 Order Service is a `Transaction Coordinator`. Kafka can handle Eventual Consistency.
 
-# Event driven, SAGA pattern
+# SAGA pattern, Event driven
 
-1. Success Case
+Choreography based SAGA, Orchestration based SAGA 와 같이 2 종류의 SAGA pattern 이 있다. Choreography based SAGA 는 transaction 성공여부 판단을 각 service 에서 나누어 한다. Orchestration based SAGA 는 transaction 성공여부 판단을 한 곳에서 한다.
 
-![](saga_success.png)
+## Choreography based SAGA
 
-2. Fail Case
+![](https://chrisrichardson.net/i/sagas/Create_Order_Saga.png)
 
-![](saga_fail.png)
+## Orchestration based SAGA
+
+![](https://chrisrichardson.net/i/sagas/Create_Order_Saga_Orchestration.png)
 
 # Conclusion
 

@@ -22,6 +22,7 @@ DDD (Domain Driven Design) 은 Domain 을 중심으로 System 을 Design 하는 
 * Blue Sticker : Command, Request to trigger, source of domain devent.
   * `Item Add to Cart`
 * Yellow Sticker : Aggregate, Object which has several attributes
+ 
   ```java
   @entity
   public class Item {
