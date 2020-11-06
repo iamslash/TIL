@@ -1982,19 +1982,21 @@ def baz():
 
 ## virtual environment
 
-* [Installing and using virtualenv with Python 2](https://help.dreamhost.com/hc/en-us/articles/215489338-Installing-and-using-virtualenv-with-Python-2)
-* [Installing and using virtualenv with Python 3](https://help.dreamhost.com/hc/en-us/articles/115000695551-Installing-and-using-virtualenv-with-Python-3)
-
-다음과 같이 설치하고 사용한다.
+다음은 python 2.x, 3.x 에서 virtualenv 사용법이다. [Python virtualenv 정리 (Linux/Windows)](https://dgkim5360.tistory.com/entry/python-virtualenv-on-linux-ubuntu-and-windows)
 
 ```bash
-# pip3 install virtualenv
-$ pip install virtualenv
+# python 2 
+$ python -m virtualenv venv 
+$ virtualenv venv --python=python 
+$ virtualenv venv --python=python2.7 
+$ source venv/activate
+$ deactivate
 
-# create myproject/bin,include,lib directory
-$ cd ~/my/py
-$ virtualenv myprj
-$ source myprj/bin/activate
+# python 3 
+$ python3 -m virtualenv venv 
+$ virtualenv venv --python=python3 
+$ virtualenv venv --python=python3.5
+$ source venv/activate
 $ deactivate
 ```
 
