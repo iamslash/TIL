@@ -23,9 +23,11 @@
   - [How to provision Jenkins with AWS Cloudformation](#how-to-provision-jenkins-with-aws-cloudformation)
   - [How to make a Jenkins-plugin](#how-to-make-a-jenkins-plugin)
   - [Script Console](#script-console)
-  - [How to backup and install plugins](#how-to-backup-and-install-plugins)
-    - [How to backup](#how-to-backup)
-    - [How to install](#how-to-install)
+  - [How to backup and restore](#how-to-backup-and-restore)
+    - [How to backup for configs](#how-to-backup-for-configs)
+    - [How to restore configs](#how-to-restore-configs)
+    - [How to backup plugins](#how-to-backup-plugins)
+    - [How to restore plugins](#how-to-restore-plugins)
   - [Jenkins with Docker](#jenkins-with-docker)
   - [How to debug Jenkins Pipeline Script](#how-to-debug-jenkins-pipeline-script)
   - [Password injection](#password-injection)
@@ -590,9 +592,46 @@ matchedJobs.each { job ->
 }
 ```
 
-## How to backup and install plugins
+## How to backup and restore
 
-### How to backup
+### How to backup for configs
+
+This is a backup Jenkins job for configurations.
+
+```groovy
+# Delete all files in the workspace
+rm -rf *
+# Create a directory for the job definitions
+mkdir -p $BUILD_ID/jobs
+# Copy global configuration files into the workspace
+cp $JENKINS_HOME/*.xml $BUILD_ID/
+# Copy keys and secrets into the workspace
+cp $JENKINS_HOME/identity.key.enc $BUILD_ID/
+cp $JENKINS_HOME/secret.key $BUILD_ID/
+cp $JENKINS_HOME/secret.key.not-so-secret $BUILD_ID/
+cp -r $JENKINS_HOME/secrets $BUILD_ID/
+# Copy user configuration files into the workspace
+cp -r $JENKINS_HOME/users $BUILD_ID/
+# Copy job definitions into the workspace
+rsync -am --include='config.xml' --include='*/' --prune-empty-dirs --exclude='*' $JENKINS_HOME/jobs/ $BUILD_ID/jobs/
+# Create an archive from all copied files (since the S3 plugin cannot copy folders recursively)
+tar czf $BUILD_ID.tar.gz $BUILD_ID/
+# Remove the directory so only the archive gets copied to S3
+rm -rf $BUILD_ID
+```
+
+### How to restore configs
+
+```bash
+$ tar xzf 333.tar.gz
+$ cp -r 333/* $JENKINS_HOME/
+```
+
+### How to backup plugins
+
+Sometimes you need to backup ~/plugins/* with `tar czf ~/tmp/plugins.tar.gz plugins` and restore it.
+
+* Plugins
 
 save plugin names into plugins.txt. don't need to add version because want to install latest versions.
 
@@ -626,7 +665,7 @@ workflow-api
 ...
 ```
 
-### How to install
+### How to restore plugins
 
 install plugins using `/usr/local/bin/install-plugins.sh`.
 
