@@ -79,6 +79,8 @@
 
 # Materials
 
+* [DreamOfTheRedChamber/system-design @ github](https://github.com/DreamOfTheRedChamber/system-design)
+  * 킹왕짱
 * [A pattern language for microservices](https://microservices.io/patterns/index.html)
   - microservices 의 기본개념
   - [src](https://github.com/gilbutITbook/007035) 
