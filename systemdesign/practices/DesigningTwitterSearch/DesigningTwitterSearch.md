@@ -1,34 +1,45 @@
-- [Twitter Search?](#Twitter-Search)
-- [Requirements and Goals of the System](#Requirements-and-Goals-of-the-System)
-- [Capacity Estimation and Contraints](#Capacity-Estimation-and-Contraints)
-- [System APIs](#System-APIs)
-- [High Level Design](#High-Level-Design)
-- [Detailed Component Design](#Detailed-Component-Design)
-- [Fault Tolerance](#Fault-Tolerance)
-- [Cache](#Cache)
-- [Load Balancing](#Load-Balancing)
-- [Rangking](#Rangking)
+- [Requirements](#requirements)
+  - [Twitter Search?](#twitter-search)
+- [Estimation](#estimation)
+  - [Traffic](#traffic)
+  - [Storage](#storage)
+- [System APIs](#system-apis)
+- [High Level Architecture](#high-level-architecture)
+- [Low Level Architecture](#low-level-architecture)
+  - [Fault Tolerance](#fault-tolerance)
+  - [Cache](#cache)
+  - [Load Balancing](#load-balancing)
+  - [Rangking](#rangking)
+- [Q&A](#qa)
+- [Implementation](#implementation)
+- [References](#references)
 
 -----
 
-# Twitter Search?
+# Requirements
+
+## Twitter Search?
 
 트윗을 검색할 수 있다.
 
-# Requirements and Goals of the System
+# Estimation
 
-* 1.5 B total users
-* 800 M DAU
-* 400 M tweets / day
-* 300 bytes / tweet
-* 500 M searches / day
-* the search query will consist of multiple words combined with AND/OR.
+## Traffic
 
-# Capacity Estimation and Contraints
+| Number                                       | Description      |
+| -------------------------------------------- | ---------------- |
+| 1.5 B  | RU    |
+| 800 M | DAU    |
+| 400 M tweets | tweets per day |
+| 300 bytes / tweet | data size of a tweet |
+| 500 M searches | searches per day |
 
-* Storage Capacity
-  * `400 M * 300 = 120 GB / day`
-  * `120 GB / 25 hrs / 3600 sec = 1.38 MB / sec`
+## Storage
+
+| Number                                       | Description      |
+| -------------------------------------------- | ---------------- |
+| 120 GB per day (400 M * 300)  | data size per day    |
+| 1.38 MB / sec (120 GB / 86600 sec) | data size per sec   |
 
 # System APIs
 
@@ -44,11 +55,11 @@ returns: (JSON)
   userID, name, tweet text, tweetID, creation time, number of likes
 ```
 
-# High Level Design
+# High Level Architecture
 
-![](img/DesigningTwitterSearchHighLevelDesign.md)
+![](DesigningTwitterSearchHighLevelArch.png)
 
-# Detailed Component Design
+# Low Level Architecture
 
 * Storage
   * `120 GB * 365 days * 5 years = 200 TB`
@@ -58,20 +69,29 @@ returns: (JSON)
 * Sharding based on Words
 * Sharding based on the tweet object
 
-# Fault Tolerance
+## Fault Tolerance
 
-# Cache
+* Replicated servers
+
+## Cache
 
 * In front of Database like [Memcached](https://en.wikipedia.org/wiki/Memcached).
 * LRU
 
-# Load Balancing
+## Load Balancing
 
 * Between Clients and Application servers
 * Between Application servers and Backend server
 
-# Rangking
+## Rangking
 
 * rank tweets by popularity
 * The aggregator server combines all these results and sorts them based on the popularity number
 
+# Q&A
+
+# Implementation
+
+* [scalable-twitter-search @ github](https://github.com/agconti/scalable-twitter-search)
+
+# References
