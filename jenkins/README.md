@@ -20,6 +20,7 @@
   - [Declaritive pipeline](#declaritive-pipeline)
   - [Scripted pipeline](#scripted-pipeline)
 - [Advanced](#advanced)
+  - [How to reload configs without restart](#how-to-reload-configs-without-restart)
   - [How to provision Jenkins with AWS Cloudformation](#how-to-provision-jenkins-with-aws-cloudformation)
   - [How to make a Jenkins-plugin](#how-to-make-a-jenkins-plugin)
   - [Script Console](#script-console)
@@ -433,6 +434,18 @@ node {
 }
 ```
 # Advanced
+
+## How to reload configs without restart
+
+* [](https://stackoverflow.com/questions/35405625/change-number-of-executors-on-existing-jenkins-node-by-script)
+
+----
+
+Execute this code in https://localhost/script.
+
+```groovy
+Jenkins.instance.reload()
+```
 
 ## How to provision Jenkins with AWS Cloudformation
 
