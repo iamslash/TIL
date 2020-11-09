@@ -515,30 +515,12 @@ wm.delete(job)
 ----
 
 ```js
-let a = Array.from(Array(10), x => Array(10))
-a[3][3] = 1
+let a = Array.from(Array(2), x => Array(2).fill(0))
 console.log(a)
-```
-
-```js
-Array.matrix = function(r, c, v) {
-   var arr = [];
-   for (var i = 0; i < r; ++i) {
-      var columns = [];
-      for (var j = 0; j < c; ++j) {
-         columns[j] = v;
-      }
-      arr[i] = columns;
-   }
-   return arr;
-}
-var nums = Array.matrix(5, 5, 0);
-print(nums[1][1]); // displays 0
-var names = Array.matrix(3, 3, "");
-names[1][2] = "Joe";
-print(names[1][2]); // display "Joe"
-var grades = [[89, 77, 78],[76, 82, 81],[91, 94, 89]];
-print(grades[2][2]); // displays 89
+// [ [ 0, 0 ], [ 0, 0 ] ]
+a[1][1] = 1
+console.log(a)
+// [ [ 0, 0 ], [ 0, 1 ] ]
 ```
 
 ## template literals (template strings in ECMA 2015)
