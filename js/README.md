@@ -387,6 +387,7 @@ console.log(a)
 
 * Array
   * [Array @ MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+    * [Array.from() @ MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/from)
 
 ```js
 // Create an Array
@@ -423,6 +424,15 @@ console.log(vegetables);
 console.log(removeditems);
 // Copy an Array
 let shallowCopy = fruits.slice(0;)
+
+// Array.from
+console.log(Array.from('foo'));
+// expected output: Array ["f", "o", "o"]
+console.log(Array.from([1, 2, 3], x => x + x));
+// expected output: Array [2, 4, 6]
+let a = Array.from(Array(10), x => Array(10))
+a[3][3] = 1
+console.log(a)
 ```
 
 * TypedArray
@@ -503,6 +513,12 @@ wm.delete(job)
 * [How to create multidimensional array](https://stackoverflow.com/questions/7545641/how-to-create-multidimensional-array)
 
 ----
+
+```js
+let a = Array.from(Array(10), x => Array(10))
+a[3][3] = 1
+console.log(a)
+```
 
 ```js
 Array.matrix = function(r, c, v) {
