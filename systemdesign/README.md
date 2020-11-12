@@ -750,7 +750,8 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 | [Designing Podcast Backend](practices/DesigningPodcastBackend/DesigningPodcastBackend.md) | |
 | [Designing Email Service](practices/DesigningEmailService/DesigningEmailService.md) | |
 | [Designing Facebook Live Video](practices/DesigningFacebookLiveVideo/DesigningFacebookLiveVideo.md) | |
-| [Designing E-commerce](practices/DesigningECommerce/DesigningECommerce.md) | |
+| [Designing online shopping system](practices/DesigningOnlineShoppingSystem/DesigningOnlineShoppingSystem.md) | |
+| [Designing online delivery system](practices/DesigningOnlineDeliverySystem/DesigningOnlineDeliverySystem.md) | |
 
 # System Design Primer Practices
 
