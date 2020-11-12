@@ -38,3 +38,7 @@
 * [fb-clone @ github](https://github.com/rOluochKe/fb-clone)
 
 # References
+
+* [System Design Mock Interview (Dropbox Software Engineer): Design Facebook Newsfeed @ youtube](https://www.youtube.com/watch?v=PDWD6IqU_nQ)
+* [Designing Instagram: System Design of News Feed @ youtube](https://www.youtube.com/watch?v=QmX2NPkJTKg)
+* [Twitter system design | twitter Software architecture | twitter interview questions @ youtube](https://www.youtube.com/watch?v=wYk0xPP_P_8)

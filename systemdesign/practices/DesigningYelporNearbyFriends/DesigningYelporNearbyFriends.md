@@ -16,6 +16,9 @@
 
 ## Functional Requirements
 
+* Facebook newsfeed is generated based on the posts from the people, pages, and groups.
+* Users follow other users, pages, groups.
+
 ## Non-functional Requirements
 
 ## Extended Requirements
@@ -33,3 +36,5 @@
 # Q&A
 
 # References
+
+* [Yelp system design | amazon interview question Yelp software architecture @ youtube](https://www.youtube.com/watch?v=TCP5iPy8xqo)
