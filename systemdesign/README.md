@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [References](#references)
 - [Materials](#materials)
+- [Design Tools](#design-tools)
 - [Prerequisites](#prerequisites)
 - [Principles](#principles)
   - [How to approach a system design interview question](#how-to-approach-a-system-design-interview-question)
@@ -70,17 +71,6 @@
 
 # References
 
-* [cloudcraft](https://cloudcraft.co/app)
-  * aws architcture diagram tool
-* [draw.io](https://www.draw.io/)
-  * architecture 를 포함한 다양한 diagram tool
-* [webwhiteboard](https://www.webwhiteboard.com/)
-  * web white board for system design interview 
-
-# Materials
-
-* [DreamOfTheRedChamber/system-design @ github](https://github.com/DreamOfTheRedChamber/system-design)
-  * 킹왕짱
 * [A pattern language for microservices](https://microservices.io/patterns/index.html)
   - microservices 의 기본개념
   - [src](https://github.com/gilbutITbook/007035) 
@@ -91,6 +81,13 @@
 * [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
   - 유료 시스템 디자인 인터뷰
   - [System Design @ blogspot](https://learnsystemdesign.blogspot.com/)
+* [incident @ TIL](/incident/README.md)
+  * incident case studies
+  
+# Materials
+
+* [DreamOfTheRedChamber/system-design @ github](https://github.com/DreamOfTheRedChamber/system-design)
+  * 킹왕짱
 * [Grokking the Object Oriented Design Interview](https://www.educative.io/collection/5668639101419520/5692201761767424)
   - 유료 OOD 인터뷰 
   - [Grokking the Object Oriented Design Interview @ github](https://github.com/tssovi/grokking-the-object-oriented-design-interview)
@@ -105,6 +102,16 @@
   - [infographic](https://techcommunity.microsoft.com/t5/educator-developer-blog/getting-started-with-azure-design-patterns-and-azure-arm-quick/ba-p/378609?lightbox-message-images-378609=94372i2134F7E89D8BF452)
 - [AWS Architect](https://aws.amazon.com/ko/architecture/)
 - [GCP Solutions](https://cloud.google.com/solutions/)
+
+# Design Tools
+
+* [Google Drawings](https://docs.google.com/drawings/)
+* [cloudcraft](https://cloudcraft.co/app)
+  * aws architcture diagram tool
+* [draw.io](https://www.draw.io/)
+  * architecture 를 포함한 다양한 diagram tool
+* [webwhiteboard](https://www.webwhiteboard.com/)
+  * web white board for system design interview 
 
 # Prerequisites
 
@@ -767,7 +774,7 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 | [Deployment System](essentials/Deployment.md) |
 | [LogViewer](essentials/LogViewer.md) |
 | [Monitoring](essentials/Monitoring.md) |
-| [Alterting](essentials/Alterting.md) |
+| [Alerting](essentials/Alerting.md) |
 | [ABTesting](essentials/ABTesting.md) |
 
 # Additional System Design Interview Questions
