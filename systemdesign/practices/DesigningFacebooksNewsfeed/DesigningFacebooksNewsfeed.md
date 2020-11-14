@@ -5,8 +5,19 @@
   - [Traffic Estimates](#traffic-estimates)
   - [Storage Estimates](#storage-estimates)
 - [System APIs](#system-apis)
+- [Database Schema](#database-schema)
 - [High-level Architecture](#high-level-architecture)
+  - [Components](#components)
+  - [Feed Generation](#feed-generation)
+  - [Feed Publishing](#feed-publishing)
 - [Low-level Architecture](#low-level-architecture)
+  - [Feed Generation](#feed-generation-1)
+  - [Feed Publishing](#feed-publishing-1)
+    - [Pull or Fand-out-on-load](#pull-or-fand-out-on-load)
+    - [Push or Fan-out-on-write](#push-or-fan-out-on-write)
+    - [Hybrid](#hybrid)
+  - [How to rank posts](#how-to-rank-posts)
+  - [Shard](#shard)
 - [System Extentions](#system-extentions)
 - [Q&A](#qa)
 - [Implementation](#implementation)
@@ -56,20 +67,149 @@
 get_user_feed(
   api_key,
   user_id,
-  since,
+  from_date,
+  to_date,
   per_page,
   page,
-  max_id,
   exclude_replies
   )
 
 since: from date time
+exlucde_replies: include replies or not
+```
 
+# Database Schema
+
+```sql
+CREATE TABLE user (
+    user_id int PRIMARY KEY,
+    username text,
+    password text,
+    email text,
+    dateofbirth timestamp,
+    created_at timestamp,
+    last_login timestamp
+);
+
+CREATE TABLE entity (
+    entity_id int PRIMARY KEY,
+    type int,
+    description text,
+    created_at timestamp,
+    category int,
+    phone text,
+    email text
+);
+
+CREATE TABLE user_follow (
+    user_id int,
+    entity_id int,
+    type int,
+    PRIMARY KEY (user_id, entity_id)
+);
+
+CREATE TABLE feed_item (
+    feed_item_id int PRIMARY KEY,
+    user_id int,
+    contents text,
+    entity_id int,
+    latitude int,
+    longitude int,
+    created_at timestamp,
+    likes int
+) WITH CLUSTERING ORDER BY (created_at DESC);
+
+CREATE TABLE feed_media (
+    feed_item_id int,
+    media_id int,
+    PRIMARY KEY (feed_item_id, media_id)
+);
+
+CREATE TABLE media (
+    media_id int PRIMARY KEY,
+    type int,
+    description text,
+    path text,
+    latitude int,
+    longitude int
+) WITH CLUSTERING ORDER BY (created_at DESC);
 ```
 
 # High-level Architecture
 
+![](DesigningFacebooksNewsfeed.png)
+
+## Components
+
+* Web servers
+* Application servers
+* Metadata DataBase and Cache
+* Posts DataBase and cache
+* Video and Photo Storage and cache
+* Newsfeed generation Service
+* Feed notification service
+
+## Feed Generation
+
+* Gather ids of all users and entities that Alice follows.
+* Gather latest, popular posts of users that Alice follows.
+* Rank those posts.
+* Store these feeds in the cache and return posts of one page.
+
+## Feed Publishing
+
+* When users that Alice follows post new one, the system notify those to Alice. 
+
 # Low-level Architecture
+
+## Feed Generation
+
+```
+SELECT feed_item_id 
+  FROM feed_item
+ WHERE entity_id in (
+   SELECT entity_id 
+     FROM user_follow 
+    WHERE user_id = <alice-user-id>
+ )
+```
+
+* In case of users have many followers, system have to store, merge, rank huge number of posts.
+* The system needs to pre-generate the timeline and store it in a memory.
+* We were supposed to store 500 posts for a user. But 
+most of users would check a few page so 200 posts are enough.
+* Most of users don't login every day. Let's keep it in cache with LRU eviction algorithm.
+
+## Feed Publishing
+
+* we need to limit max size of per_page with 100.
+* we need to default size of per_page with 20.
+
+### Pull or Fand-out-on-load
+
+* Clients will pull when they need feeds.
+* This dosn't update new feed without latency.
+
+### Push or Fan-out-on-write
+
+* Servers push to client when there is a new post.
+* There must be TCP connection servers.
+* TCP connections servers can make a lot of traffics.
+
+### Hybrid
+
+* Fan-out-on-load to users follow a lot of users.
+* Fan-out-on-write to users follow a few users.
+
+## How to rank posts
+
+* By created_at.
+* machine learning for relavance.
+
+## Shard
+
+* Meta DataBase by user_id. Consistent Hashing.
+* Posts DataBase by user_id. Consistent Hashing.
 
 # System Extentions
 
