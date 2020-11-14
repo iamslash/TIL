@@ -16,8 +16,6 @@
 
 ## Functional Requirements
 
-* Facebook newsfeed is generated based on the posts from the people, pages, and groups.
-* Users follow other users, pages, groups.
 
 ## Non-functional Requirements
 
