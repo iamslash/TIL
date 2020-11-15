@@ -90,6 +90,7 @@ Redis Slave 의 주소를 Redis Master 의 주소로 교체한다.
 * [레디스 클러스터 소개](http://redisgate.kr/redis/cluster/cluster_introduction.php)
 * [레디스 클러스터 구성](http://redisgate.kr/redis/cluster/cluster_configuration.php)
 * [[Redis Documentation #2] 레디스 클러스터 튜토리얼](https://medium.com/garimoo/redis-documentation-2-%EB%A0%88%EB%94%94%EC%8A%A4-%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0-%ED%8A%9C%ED%86%A0%EB%A6%AC%EC%96%BC-911ba145e63)
+* [Redis - Cluster 설정](https://daddyprogrammer.org/post/1601/redis-cluster/)
 
 ----
 
