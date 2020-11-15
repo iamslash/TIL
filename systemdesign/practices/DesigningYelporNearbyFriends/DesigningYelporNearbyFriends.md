@@ -14,7 +14,7 @@
   - [Search with dynamic size grids (QuardTree)](#search-with-dynamic-size-grids-quardtree)
   - [Sharding](#sharding)
     - [Based on region](#based-on-region)
-    - [Based on place_id](#based-on-place_id)
+    - [Based on capacity](#based-on-capacity)
   - [Replication and Fault Tolerance](#replication-and-fault-tolerance)
 - [System Extentions](#system-extentions)
 - [Q&A](#qa)
@@ -251,9 +251,9 @@ These are numbers for QuardTree cache. We need to divide nodes until one QuardTr
 
 * It is possible to have a hot QuardTree server because of hot locations.
 
-### Based on place_id
+### Based on capacity
 
-???
+* Quad Tree Build Server will allocate quard tree to quad tree server based on number of places.
 
 ## Replication and Fault Tolerance
 
