@@ -124,12 +124,12 @@
 | ----- | ----------- | --------- | --------- |
 | 10^3  | Thousand    | K         | Killo-    |
 | 10^6  | Million     | M         | Mega-     |
-| 10^9  | Trillion    | G         | Giga-     |
-| 10^12 | Quadrillion | T         | Tera-     |
-| 10^15 | Quintillion | P         | Peta-     |
-| 10^18 | Sextillion  | E         | Exa-      |
-| 10^21 | Septillion  | Z         | Zeta-     |
-| 10^24 | Octillion   | Y         | Yota-     |
+| 10^9  | Billion     | G         | Giga-     |
+| 10^12 | Trillion    | T         | Tera-     |
+| 10^15 | Quadrillion | P         | Peta-     |
+| 10^18 | Quintillion | E         | Exa-      |
+| 10^21 | Sextillion  | Z         | Zeta-     |
+| 10^24 | Septillion  | Y         | Yota-     |
 
 - powers of two table
 
@@ -612,27 +612,27 @@ Sharding 을 고려하여 Primary Key 를 효율적으로 설계해 보자. 예�
 
 * `User`
 
-  | field           | type      | description                  |
-  | --------------- | --------- | ---------------------------- |
-  | user_id         | Long (8B) | unique id (각 DB 별)           |
-  | email           | String    | 이메일 주소                       |
+  | field           | type      | description                                |
+  | --------------- | --------- | ------------------------------------------ |
+  | user_id         | Long (8B) | unique id (각 DB 별)                       |
+  | email           | String    | 이메일 주소                                |
   | shard           | Long      | 자신의 메일 리스트를 저장한 DB server 번호 |
-  | type            | int       | 활성화 유저인가??                   |
-  | created_at      | timestamp | 계정 생성시간                      |
-  | last_login_time | timestamp | 마지막 로그인 시간                   |
+  | type            | int       | 활성화 유저인가??                          |
+  | created_at      | timestamp | 계정 생성시간                              |
+  | last_login_time | timestamp | 마지막 로그인 시간                         |
 
 * `Email`  
 
-  | field       | type           | description        |
-  | ----------- | -------------- | ------------------ |
-  | mail_id     | Long (8B)      | unique id (각 DB 별) |
-  | receiver    | String or Long | 수신자                |
-  | sender      | String or Long | 송신자                |
-  | subject     | String         | 메일제목               |
-  | received_at | timestamp      | 수신시간               |
+  | field       | type           | description              |
+  | ----------- | -------------- | ------------------------ |
+  | mail_id     | Long (8B)      | unique id (각 DB 별)     |
+  | receiver    | String or Long | 수신자                   |
+  | sender      | String or Long | 송신자                   |
+  | subject     | String         | 메일제목                 |
+  | received_at | timestamp      | 수신시간                 |
   | eml_id      | String or Long | 메일 본문 저장 id or url |
-  | is_read     | boolean        | 읽었는가??             |
-  | contents    | String         | 미리보기 (내용의 일부)      |
+  | is_read     | boolean        | 읽었는가??               |
+  | contents    | String         | 미리보기 (내용의 일부)   |
 
 email file 은 AWS S3 에 저장하자. email file 의 key 를 마련해야 한다. 
 
@@ -705,53 +705,53 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 
 ## Fundamentals
 
-| Basic    |     |
-| -------- | --- |
-| [Dynamo @ TIL](/dynamodb/README.md) - Highly Available Key-value | [Dynamo: Amazon’s Highly Available Key-value Store](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) |
-| [Kafka @ TIL](/kafka/README.md) - A Distributed Messaging System for Log Processing | [Kafka: a Distributed Messaging System for Log Processing](http://notes.stephenholiday.com/Kafka.pdf) |
-| [Consistent Hashing @ TIL](/consistenthasing/README.md) | [Consistent Hashing and Random Trees:](https://www.akamai.com/es/es/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf) - Original paper |
-| [Paxos](https://www.microsoft.com/en-us/research/uploads/prod/2016/12/paxos-simple-Copy.pdf) - Protocol for distributed consensus | |
-| [Concurrency Controls](http://sites.fas.harvard.edu/~cs265/papers/kung-1981.pdf) - Optimistic methods for concurrency controls | |
-| [Gossip protocol](http://highscalability.com/blog/2011/11/14/using-gossip-protocols-for-failure-detection-monitoring-mess.html) - For failure detection and more. | |
-| [Chubby](http://static.googleusercontent.com/media/research.google.com/en/us/archive/chubby-osdi06.pdf) - Lock service for loosely-coupled distributed systems | |
-| [zookeeper @ TIL](/zookeeper/README.md) | [ZooKeeper](https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf) - Wait-free coordination for Internet-scale systems |
-| [MapReduce](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf) - Simplified Data Processing on Large Clusters | |
-| [hadoop @ TIL](/hadoop/README.md) | [Hadoop](http://storageconference.us/2010/Papers/MSST/Shvachko.pdf) - A Distributed File System  | |
-| [distributed system @ TIL](/distributedsystem/README.md) | [Key Characteristics of Distributed Systems](Key_Characteristics_of_Distributed_Systems.md) |
-| [Load Balancing](grokking/LoadBalancing.md) | | 
-| [Caching](grokking/Caching.md) | |
-| [Data Partitioning](grokking/DataPartitioning.md) | |
-| [Indexes](grokking/Indexes.md) | |
-| [Proxies](grokking/Proxies.md) | |
-| [Redundancy and Replication](grokking/RedundancyandReplication.md) | |
-| [SQL vs. NoSQL](grokking/SQLvsNoSQL.md) | |
-| [CAP Theorem](grokking/CAPTheorem.md) |
-| [Long-Polling vs WebSockets vs Server-Sent Events](grokking/Long-PollingvsWebSocketsvsServer-SentEvents.md) | |
+| Basic                                                                                                                                                             |                                                                                                                                                                                                                                                                            |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Dynamo @ TIL](/dynamodb/README.md) - Highly Available Key-value                                                                                                  | [Dynamo: Amazon’s Highly Available Key-value Store](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf)                                                                                                                                                 |
+| [Kafka @ TIL](/kafka/README.md) - A Distributed Messaging System for Log Processing                                                                               | [Kafka: a Distributed Messaging System for Log Processing](http://notes.stephenholiday.com/Kafka.pdf)                                                                                                                                                                      |
+| [Consistent Hashing @ TIL](/consistenthasing/README.md)                                                                                                           | [Consistent Hashing and Random Trees:](https://www.akamai.com/es/es/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf) - Original paper |
+| [Paxos](https://www.microsoft.com/en-us/research/uploads/prod/2016/12/paxos-simple-Copy.pdf) - Protocol for distributed consensus                                 |                                                                                                                                                                                                                                                                            |
+| [Concurrency Controls](http://sites.fas.harvard.edu/~cs265/papers/kung-1981.pdf) - Optimistic methods for concurrency controls                                    |                                                                                                                                                                                                                                                                            |
+| [Gossip protocol](http://highscalability.com/blog/2011/11/14/using-gossip-protocols-for-failure-detection-monitoring-mess.html) - For failure detection and more. |                                                                                                                                                                                                                                                                            |
+| [Chubby](http://static.googleusercontent.com/media/research.google.com/en/us/archive/chubby-osdi06.pdf) - Lock service for loosely-coupled distributed systems    |                                                                                                                                                                                                                                                                            |
+| [zookeeper @ TIL](/zookeeper/README.md)                                                                                                                           | [ZooKeeper](https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf) - Wait-free coordination for Internet-scale systems                                                                                                                                    |
+| [MapReduce](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf) - Simplified Data Processing on Large Clusters       |                                                                                                                                                                                                                                                                            |
+| [hadoop @ TIL](/hadoop/README.md)                                                                                                                                 | [Hadoop](http://storageconference.us/2010/Papers/MSST/Shvachko.pdf) - A Distributed File System                                                                                                                                                                            |  |
+| [distributed system @ TIL](/distributedsystem/README.md)                                                                                                          | [Key Characteristics of Distributed Systems](Key_Characteristics_of_Distributed_Systems.md)                                                                                                                                                                                |
+| [Load Balancing](grokking/LoadBalancing.md)                                                                                                                       |                                                                                                                                                                                                                                                                            |
+| [Caching](grokking/Caching.md)                                                                                                                                    |                                                                                                                                                                                                                                                                            |
+| [Data Partitioning](grokking/DataPartitioning.md)                                                                                                                 |                                                                                                                                                                                                                                                                            |
+| [Indexes](grokking/Indexes.md)                                                                                                                                    |                                                                                                                                                                                                                                                                            |
+| [Proxies](grokking/Proxies.md)                                                                                                                                    |                                                                                                                                                                                                                                                                            |
+| [Redundancy and Replication](grokking/RedundancyandReplication.md)                                                                                                |                                                                                                                                                                                                                                                                            |
+| [SQL vs. NoSQL](grokking/SQLvsNoSQL.md)                                                                                                                           |                                                                                                                                                                                                                                                                            |
+| [CAP Theorem](grokking/CAPTheorem.md)                                                                                                                             |
+| [Long-Polling vs WebSockets vs Server-Sent Events](grokking/Long-PollingvsWebSocketsvsServer-SentEvents.md)                                                       |                                                                                                                                                                                                                                                                            |
 
 ## Design Practices
 
-| Design                                                                                                         | Implementation |
-| -------------------------------------------------------------------------------------------------------------- | -------------- |
-| [Designing a URL Shortening service like TinyURL](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md) | |
-| [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md) | |
-| [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md) | |
-| [Designing Dropbox](practices/DesigningDropbox/DesigningDropbox.md) | |
-| [Designing Facebook Messenger](practices/DesigningFacebookMessenger/DesigningFacebookMessenger.md) | |
-| [Designing Twitter](practices/DesigningTwitter/DesigningTwitter.md) ||
-| [Designing Youtube or Netflix](practices/DesigningYoutubeorNetflix/DesigningYoutubeorNetflix.md) | |
-| [Designing Typeahead Suggestion](practices/DesigningTypeaheadSuggestion/DesigningTypeaheadSuggestion.md)| |
-| [Designing an API Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md) | |
-| [Designing Twitter Search](practices/DesigningTwitterSearch/DesigningTwitterSearch.md) | |
-| [Designing a Web Crawler](practices/DesigningaWebCrawler/DesigningaWebCrawler.md) | |
-| [Designing Facebook’s Newsfeed](practices/DesigningFacebooksNewsfeed/DesigningFacebooksNewsfeed.md) | |
-| [Designing Yelp or Nearby Friends](practices/DesigningYelporNearbyFriends/DesigningYelporNearbyFriends.md/) | |
-| [Designing Uber Backend](practices/DesigningUberBackend/DesigningUberBackend.md) | |
-| [Designing Ticketmaster](practices/DesigningTicketmaster/DesigningTicketmaster.md) | |
-| [Designing Podcast Backend](practices/DesigningPodcastBackend/DesigningPodcastBackend.md) | |
-| [Designing Email Service](practices/DesigningEmailService/DesigningEmailService.md) | |
-| [Designing Facebook Live Video](practices/DesigningFacebookLiveVideo/DesigningFacebookLiveVideo.md) | |
-| [Designing online shopping system](practices/DesigningOnlineShoppingSystem/DesigningOnlineShoppingSystem.md) | |
-| [Designing online delivery system](practices/DesigningOnlineDeliverySystem/DesigningOnlineDeliverySystem.md) | |
+| Design                                                                                                                      | Implementation |
+| --------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| [Designing a URL Shortening service like TinyURL](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md) |                |
+| [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md)                                                      |                |
+| [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md)                                                   |                |
+| [Designing Dropbox](practices/DesigningDropbox/DesigningDropbox.md)                                                         |                |
+| [Designing Facebook Messenger](practices/DesigningFacebookMessenger/DesigningFacebookMessenger.md)                          |                |
+| [Designing Twitter](practices/DesigningTwitter/DesigningTwitter.md)                                                         |                |
+| [Designing Youtube or Netflix](practices/DesigningYoutubeorNetflix/DesigningYoutubeorNetflix.md)                            |                |
+| [Designing Typeahead Suggestion](practices/DesigningTypeaheadSuggestion/DesigningTypeaheadSuggestion.md)                    |                |
+| [Designing an API Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md)                           |                |
+| [Designing Twitter Search](practices/DesigningTwitterSearch/DesigningTwitterSearch.md)                                      |                |
+| [Designing a Web Crawler](practices/DesigningaWebCrawler/DesigningaWebCrawler.md)                                           |                |
+| [Designing Facebook’s Newsfeed](practices/DesigningFacebooksNewsfeed/DesigningFacebooksNewsfeed.md)                         |                |
+| [Designing Yelp or Nearby Friends](practices/DesigningYelporNearbyFriends/DesigningYelporNearbyFriends.md/)                 |                |
+| [Designing Uber Backend](practices/DesigningUberBackend/DesigningUberBackend.md)                                            |                |
+| [Designing Ticketmaster](practices/DesigningTicketmaster/DesigningTicketmaster.md)                                          |                |
+| [Designing Podcast Backend](practices/DesigningPodcastBackend/DesigningPodcastBackend.md)                                   |                |
+| [Designing Email Service](practices/DesigningEmailService/DesigningEmailService.md)                                         |                |
+| [Designing Facebook Live Video](practices/DesigningFacebookLiveVideo/DesigningFacebookLiveVideo.md)                         |                |
+| [Designing online shopping system](practices/DesigningOnlineShoppingSystem/DesigningOnlineShoppingSystem.md)                |                |
+| [Designing online delivery system](practices/DesigningOnlineDeliverySystem/DesigningOnlineDeliverySystem.md)                |                |
 
 # System Design Primer Practices
 
@@ -768,15 +768,15 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 
 # Essential Micro Services
 
-| Service         |
-| --------------- |
-| [CMDB](essentials/CMDB.md) |
-| [Api Gateway](essentials/ApiGateway.md) |
+| Service                                       |
+| --------------------------------------------- |
+| [CMDB](essentials/CMDB.md)                    |
+| [Api Gateway](essentials/ApiGateway.md)       |
 | [Deployment System](essentials/Deployment.md) |
-| [LogViewer](essentials/LogViewer.md) |
-| [Monitoring](essentials/Monitoring.md) |
-| [Alerting](essentials/Alerting.md) |
-| [ABTesting](essentials/ABTesting.md) |
+| [LogViewer](essentials/LogViewer.md)          |
+| [Monitoring](essentials/Monitoring.md)        |
+| [Alerting](essentials/Alerting.md)            |
+| [ABTesting](essentials/ABTesting.md)          |
 
 # Additional System Design Interview Questions
 
@@ -808,64 +808,64 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 
 # Real World Architecture
 
-| Type  | System  | Reference(s) |
-| --------------- | ------- | ----- |
-| Data processing | **MapReduce** - Distributed data processing from Google | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/mapreduce-osdi04.pdf) |
-| Data processing | **Spark** - Distributed data processing from Databricks | [slideshare.net](http://www.slideshare.net/AGrishchenko/apache-spark-architecture) |
-| Data processing | **Storm** - Distributed data processing from Twitter | [slideshare.net](http://www.slideshare.net/previa/storm-16094009) |
-| | | |
-| Data store | **Bigtable** - Distributed column-oriented database from Google  | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/chang06bigtable.pdf) |
-| Data store | **HBase** - Open source implementation of Bigtable | [slideshare.net](http://www.slideshare.net/alexbaranau/intro-to-hbase) |
-| Data store | **Cassandra** - Distributed column-oriented database from Facebook | [slideshare.net](http://www.slideshare.net/planetcassandra/cassandra-introduction-features-30103666) |
-| Data store      | **DynamoDB** - Document-oriented database from Amazon | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/decandia07dynamo.pdf) |
+| Type            | System                                                                                                               | Reference(s)                                                                                                                                   |
+| --------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| Data processing | **MapReduce** - Distributed data processing from Google                                                              | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/mapreduce-osdi04.pdf)                     |
+| Data processing | **Spark** - Distributed data processing from Databricks                                                              | [slideshare.net](http://www.slideshare.net/AGrishchenko/apache-spark-architecture)                                                             |
+| Data processing | **Storm** - Distributed data processing from Twitter                                                                 | [slideshare.net](http://www.slideshare.net/previa/storm-16094009)                                                                              |
+|                 |                                                                                                                      |                                                                                                                                                |
+| Data store      | **Bigtable** - Distributed column-oriented database from Google                                                      | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/chang06bigtable.pdf)                                                    |
+| Data store      | **HBase** - Open source implementation of Bigtable                                                                   | [slideshare.net](http://www.slideshare.net/alexbaranau/intro-to-hbase)                                                                         |
+| Data store      | **Cassandra** - Distributed column-oriented database from Facebook                                                   | [slideshare.net](http://www.slideshare.net/planetcassandra/cassandra-introduction-features-30103666)                                           |
+| Data store      | **DynamoDB** - Document-oriented database from Amazon                                                                | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/decandia07dynamo.pdf)                                                   |
 | Data store      | **MongoDB** - Document-oriented database                                                                             | [slideshare.net](http://www.slideshare.net/mdirolf/introduction-to-mongodb)                                                                    |
 | Data store      | **Spanner** - Globally-distributed database from Google                                                              | [research.google.com](http://research.google.com/archive/spanner-osdi2012.pdf)                                                                 |
 | Data store      | **Memcached** - Distributed memory caching system                                                                    | [slideshare.net](http://www.slideshare.net/oemebamo/introduction-to-memcached)                                                                 |
-| Data store      | **Redis** - Distributed memory caching system with persistence and value types                                       | [slideshare.net](http://www.slideshare.net/dvirsky/introduction-to-redis) |
-| Data store | **Couchbase** - an open-source, distributed multi-model NoSQL document-oriented database | [couchbase.com](https://www.couchbase.com/) |
-| Data store | **Elasticsearch** | [Elasticsearch @ TIL](/elasticsearch/README.md) |
+| Data store      | **Redis** - Distributed memory caching system with persistence and value types                                       | [slideshare.net](http://www.slideshare.net/dvirsky/introduction-to-redis)                                                                      |
+| Data store      | **Couchbase** - an open-source, distributed multi-model NoSQL document-oriented database                             | [couchbase.com](https://www.couchbase.com/)                                                                                                    |
+| Data store      | **Elasticsearch**                                                                                                    | [Elasticsearch @ TIL](/elasticsearch/README.md)                                                                                                |
 | File system     | **Google File System (GFS)** - Distributed file system                                                               | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/gfs-sosp2003.pdf)                         |
-| File system | **Hadoop File System (HDFS)** - Open source implementation of GFS  | [apache.org](https://hadoop.apache.org/docs/r1.2.1/hdfs_design.html) |
-| File system | **GlusterFS** - Distributed File System  | [GlusterFS](/GlusterFS/README.md) |
-| Monitoring | **Graylog** | [Gralog @ TIL](/graylog/README.md) |
-| Monitoring | **Prometheus** | [Prometheus @ TIL](/prometheus/README.md) |
-| Monitoring | **Grafana** | [Grafana @ TIL](/grafana/README.md) |
-| CI/CD | **Jenkins** | [Jenkins @ TIL](/jenkins/README.md) |
-| Misc | **Chubby** - Lock service for loosely-coupled distributed systems from Google | [research.google.com](http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/archive/chubby-osdi06.pdf) |
-| Misc | **Dapper** - Distributed systems tracing infrastructure | [research.google.com](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36356.pdf) |
-| Misc | **Kafka** - Pub/sub message queue from LinkedIn | [slideshare.net](http://www.slideshare.net/mumrah/kafka-talk-tri-hug) |
-| Misc | **Zookeeper** - Centralized infrastructure and services enabling synchronization | [slideshare.net](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper) |
-| Misc | **ØMQ** - a high-performance asynchronous messaging library, aimed at use in distributed or concurrent applications. | [zeromq.org](http://zeromq.org/) |
-| Misc | **etcd** - A distributed, reliable key-value store for the most critical data of a distributed system. | [etcd docs](https://coreos.com/etcd/docs/latest/) |
-| Misc | **Mosquitto** - An open source MQTT broker. [MQTT](/mqtt/README.md) is a Standard for IoT Messaging | |
-| Misc | **Netty** - Netty is a NIO client server framework. | |
+| File system     | **Hadoop File System (HDFS)** - Open source implementation of GFS                                                    | [apache.org](https://hadoop.apache.org/docs/r1.2.1/hdfs_design.html)                                                                           |
+| File system     | **GlusterFS** - Distributed File System                                                                              | [GlusterFS](/GlusterFS/README.md)                                                                                                              |
+| Monitoring      | **Graylog**                                                                                                          | [Gralog @ TIL](/graylog/README.md)                                                                                                             |
+| Monitoring      | **Prometheus**                                                                                                       | [Prometheus @ TIL](/prometheus/README.md)                                                                                                      |
+| Monitoring      | **Grafana**                                                                                                          | [Grafana @ TIL](/grafana/README.md)                                                                                                            |
+| CI/CD           | **Jenkins**                                                                                                          | [Jenkins @ TIL](/jenkins/README.md)                                                                                                            |
+| Misc            | **Chubby** - Lock service for loosely-coupled distributed systems from Google                                        | [research.google.com](http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/archive/chubby-osdi06.pdf) |
+| Misc            | **Dapper** - Distributed systems tracing infrastructure                                                              | [research.google.com](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36356.pdf)                                |
+| Misc            | **Kafka** - Pub/sub message queue from LinkedIn                                                                      | [slideshare.net](http://www.slideshare.net/mumrah/kafka-talk-tri-hug)                                                                          |
+| Misc            | **Zookeeper** - Centralized infrastructure and services enabling synchronization                                     | [slideshare.net](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)                                                       |
+| Misc            | **ØMQ** - a high-performance asynchronous messaging library, aimed at use in distributed or concurrent applications. | [zeromq.org](http://zeromq.org/)                                                                                                               |
+| Misc            | **etcd** - A distributed, reliable key-value store for the most critical data of a distributed system.               | [etcd docs](https://coreos.com/etcd/docs/latest/)                                                                                              |
+| Misc            | **Mosquitto** - An open source MQTT broker. [MQTT](/mqtt/README.md) is a Standard for IoT Messaging                  |                                                                                                                                                |
+| Misc            | **Netty** - Netty is a NIO client server framework.                                                                  |                                                                                                                                                |
 
 # Company Architectures
 
-| Company        | Reference(s) |
-| -------------- | ------------ |
-| Amazon         | [Amazon architecture](http://highscalability.com/amazon-architecture) |
-| Cinchcast      | [Producing 1,500 hours of audio every day](http://highscalability.com/blog/2012/7/16/cinchcast-architecture-producing-1500-hours-of-audio-every-d. |
-| DataSift       | [Realtime datamining At 120,000 tweets per second](http://highscalability.com/blog/2011/11/29/datasift-architecture-realtime-datamining-at-120000-tweets-p. |
-| DropBox        | [How we've scaled Dropbox](https://www.youtube.com/watch?v=PE4gwstWhmc) |
-| ESPN           | [Operating At 100,000 duh nuh nuhs per second](http://highscalability.com/blog/2013/11/4/espns-architecture-at-scale-operating-at-100000-duh-nuh-nuhs.html) |
-| Google         | [Google architecture](http://highscalability.com/google-architecture) |
-| Instagram      | [14 million users, terabytes of photos](http://highscalability.com/blog/2011/12/6/instagram-architecture-14-million-users-terabytes-of-photos.html)<br/>[What powers Instagram](http://instagram-engineering.tumblr.com/post/13649370142/what-powers-instagram-hundreds-of-instances) |
-| Justin.tv      | [Justin.Tv's live video broadcasting architecture](http://highscalability.com/blog/2010/3/16/justintvs-live-video-broadcasting-architecture.html) |
-| Facebook       | [Scaling memcached at Facebook](https://cs.uwaterloo.ca/~brecht/courses/854-Emerging-2014/readings/key-value/fb-memcached-nsdi-2013.pdf)<br/>[TAO: Facebook’s distributed data store for the social graph](https://cs.uwaterloo.ca/~brecht/courses/854-Emerging-2014/readings/data-store/tao-facebook-distributed-datastore-atc-2013.pdf)<br/>[Facebook’s photo storage](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf) |
-| Flickr         | [Flickr architecture](http://highscalability.com/flickr-architecture) |
-| Mailbox        | [From 0 to one million users in 6 weeks](http://highscalability.com/blog/2013/6/18/scaling-mailbox-from-0-to-one-million-users-in-6-weeks-and-1.html) |
-| Pinterest      | [From 0 To 10s of billions of page views a month](http://highscalability.com/blog/2013/4/15/scaling-pinterest-from-0-to-10s-of-billions-of-page-views-a.html)<br/>[18 million visitors, 10x growth, 12 employees](http://highscalability.com/blog/2012/5/21/pinterest-architecture-update-18-million-visitors-10x-growth.html) |
-| Playfish       | [50 million monthly users and growing](http://highscalability.com/blog/2010/9/21/playfishs-social-gaming-architecture-50-million-monthly-user.html) |
-| PlentyOfFish   | [PlentyOfFish architecture](http://highscalability.com/plentyoffish-architecture) |
-| Salesforce     | [How they handle 1.3 billion transactions a day](http://highscalability.com/blog/2013/9/23/salesforce-architecture-how-they-handle-13-billion-transacti.html) |
-| Stack Overflow | [Stack Overflow architecture](http://highscalability.com/blog/2009/8/5/stack-overflow-architecture.html) |
-| TripAdvisor    | [40M visitors, 200M dynamic page views, 30TB data](http://highscalability.com/blog/2011/6/27/tripadvisor-architecture-40m-visitors-200m-dynamic-page-view.html) |
-| Tumblr         | [15 billion page views a month](http://highscalability.com/blog/2012/2/13/tumblr-architecture-15-billion-page-views-a-month-and-harder.html) |
+| Company        | Reference(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Amazon         | [Amazon architecture](http://highscalability.com/amazon-architecture)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Cinchcast      | [Producing 1,500 hours of audio every day](http://highscalability.com/blog/2012/7/16/cinchcast-architecture-producing-1500-hours-of-audio-every-d.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| DataSift       | [Realtime datamining At 120,000 tweets per second](http://highscalability.com/blog/2011/11/29/datasift-architecture-realtime-datamining-at-120000-tweets-p.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| DropBox        | [How we've scaled Dropbox](https://www.youtube.com/watch?v=PE4gwstWhmc)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ESPN           | [Operating At 100,000 duh nuh nuhs per second](http://highscalability.com/blog/2013/11/4/espns-architecture-at-scale-operating-at-100000-duh-nuh-nuhs.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| Google         | [Google architecture](http://highscalability.com/google-architecture)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Instagram      | [14 million users, terabytes of photos](http://highscalability.com/blog/2011/12/6/instagram-architecture-14-million-users-terabytes-of-photos.html)<br/>[What powers Instagram](http://instagram-engineering.tumblr.com/post/13649370142/what-powers-instagram-hundreds-of-instances)                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Justin.tv      | [Justin.Tv's live video broadcasting architecture](http://highscalability.com/blog/2010/3/16/justintvs-live-video-broadcasting-architecture.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Facebook       | [Scaling memcached at Facebook](https://cs.uwaterloo.ca/~brecht/courses/854-Emerging-2014/readings/key-value/fb-memcached-nsdi-2013.pdf)<br/>[TAO: Facebook’s distributed data store for the social graph](https://cs.uwaterloo.ca/~brecht/courses/854-Emerging-2014/readings/data-store/tao-facebook-distributed-datastore-atc-2013.pdf)<br/>[Facebook’s photo storage](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf)                                                                                                                                                                                                                                                                                           |
+| Flickr         | [Flickr architecture](http://highscalability.com/flickr-architecture)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Mailbox        | [From 0 to one million users in 6 weeks](http://highscalability.com/blog/2013/6/18/scaling-mailbox-from-0-to-one-million-users-in-6-weeks-and-1.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Pinterest      | [From 0 To 10s of billions of page views a month](http://highscalability.com/blog/2013/4/15/scaling-pinterest-from-0-to-10s-of-billions-of-page-views-a.html)<br/>[18 million visitors, 10x growth, 12 employees](http://highscalability.com/blog/2012/5/21/pinterest-architecture-update-18-million-visitors-10x-growth.html)                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Playfish       | [50 million monthly users and growing](http://highscalability.com/blog/2010/9/21/playfishs-social-gaming-architecture-50-million-monthly-user.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| PlentyOfFish   | [PlentyOfFish architecture](http://highscalability.com/plentyoffish-architecture)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Salesforce     | [How they handle 1.3 billion transactions a day](http://highscalability.com/blog/2013/9/23/salesforce-architecture-how-they-handle-13-billion-transacti.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| Stack Overflow | [Stack Overflow architecture](http://highscalability.com/blog/2009/8/5/stack-overflow-architecture.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| TripAdvisor    | [40M visitors, 200M dynamic page views, 30TB data](http://highscalability.com/blog/2011/6/27/tripadvisor-architecture-40m-visitors-200m-dynamic-page-view.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| Tumblr         | [15 billion page views a month](http://highscalability.com/blog/2012/2/13/tumblr-architecture-15-billion-page-views-a-month-and-harder.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 | Twitter        | [Making Twitter 10000 percent faster](http://highscalability.com/scaling-twitter-making-twitter-10000-percent-faster)<br/>[Storing 250 million tweets a day using MySQL](http://highscalability.com/blog/2011/12/19/how-twitter-stores-250-million-tweets-a-day-using-mysql.html)<br/>[150M active users, 300K QPS, a 22 MB/S firehose](http://highscalability.com/blog/2013/7/8/the-architecture-twitter-uses-to-deal-with-150m-active-users.html)<br/>[Timelines at scale](https://www.infoq.com/presentations/Twitter-Timeline-Scalability)<br/>[Big and small data at Twitter](https://www.youtube.com/watch?v=5cKTP36HVgI)<br/>[Operations at Twitter: scaling beyond 100 million users](https://www.youtube.com/watch?v=z8LU0Cj6BOU) |
-| Uber           | [How Uber scales their real-time market platform](http://highscalability.com/blog/2015/9/14/how-uber-scales-their-real-time-market-platform.html) |
-| WhatsApp | [The WhatsApp architecture Facebook bought for $19 billion](http://highscalability.com/blog/2014/2/26/the-whatsapp-architecture-facebook-bought-for-19-billion.html) |
-| YouTube | [YouTube scalability](https://www.youtube.com/watch?v=w5WVu624fY8) |
+| Uber           | [How Uber scales their real-time market platform](http://highscalability.com/blog/2015/9/14/how-uber-scales-their-real-time-market-platform.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| WhatsApp       | [The WhatsApp architecture Facebook bought for $19 billion](http://highscalability.com/blog/2014/2/26/the-whatsapp-architecture-facebook-bought-for-19-billion.html)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| YouTube        | [YouTube scalability](https://www.youtube.com/watch?v=w5WVu624fY8)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 # company engineering blog
 

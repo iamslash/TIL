@@ -2,10 +2,12 @@
   - [Functional Requirements](#functional-requirements)
   - [Non-functional Requirements](#non-functional-requirements)
 - [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
-  - [High Lvel Estimates](#high-lvel-estimates)
+  - [Traffic Estimates](#traffic-estimates)
+  - [Storage Estimates](#storage-estimates)
 - [System APIs](#system-apis)
 - [DataBase Schema](#database-schema)
 - [High-level Architecture](#high-level-architecture)
+  - [Components](#components)
 - [Low-level Architecture](#low-level-architecture)
   - [Search with Simple RDBMS SQL](#search-with-simple-rdbms-sql)
   - [Search with static size grids](#search-with-static-size-grids)
@@ -13,6 +15,7 @@
   - [Sharding](#sharding)
     - [Based on region](#based-on-region)
     - [Based on place_id](#based-on-place_id)
+  - [Replication and Fault Tolerance](#replication-and-fault-tolerance)
 - [System Extentions](#system-extentions)
 - [Q&A](#qa)
 - [References](#references)
@@ -34,13 +37,21 @@
 
 # Capacity Estimation and Constraints
 
-## High Lvel Estimates
+## Traffic Estimates
 
 | Number                                       | Description      |
 | -------------------------------------------- | ---------------- |
 | 500 M places | the number of places |
 | 100 K | queries per sec |
 | 20 % | growth of places, QPS each year |
+
+## Storage Estimates
+
+| Number                                       | Description      |
+| -------------------------------------------- | ---------------- |
+| 0.5 TB (500 M * 1 K) | storage for 1 year |
+| 2 Billion | places for 10 year |
+| 2 TB (2 Billion * 1 K) | storage for 10 year |
 
 # System APIs
 
@@ -121,11 +132,16 @@ CREATE TABLE review (
 
 ![](DesigningYelporNearbyFriendsHighLevelArch.png)
 
+## Components
+
+* QuardTree Server: subtree of QuardTree
+* QuardTree Build Server: Store `{quard_tree_server_id : [{place_id, latitude, longitude},...]}`.
+
 # Low-level Architecture
 
 ## Search with Simple RDBMS SQL
 
-This is too heavy.
+This is query will return huge search results.
 
 ```sql
 SELECT * 
@@ -153,7 +169,7 @@ Bottom-Left:  ([x1-10,x2-10], [y1+10,y2+10])
 Bottom-Right: ([x1+10,x2+10], [y1+10,y2+10])
 ```
 
-This sql improve the overall runtime perfomance.
+This sql improve the overall runtime perfomance. But in case of hot locations, this will return huge search results.
 
 ```sql
 SELECT * 
@@ -186,6 +202,8 @@ These are numbers for GRID cache.
 
 ## Search with dynamic size grids (QuardTree)
 
+If we use quard tree, we can make every grid has 500 places at most. And the number of search results will be small such as 500.
+
 ![](http://en.wikipedia.org/wiki/File:Point_quadtree.svg)
 
 ```java
@@ -207,10 +225,10 @@ Place getNearByPlaces(root, latitude, longitude, radius) {
         return places;
     }
     // Recursively append the places from the 4 quadrants
-    places.addAll(getPointsInRange(root.northEast, latitude, longitude, radius));
-    places.addAll(getPointsInRange(root.northWest, latitude, longitude, radius));
-    places.addAll(getPointsInRange(root.southEast, latitude, longitude, radius));
-    places.addAll(getPointsInRange(root.southWest, latitude, longitude, radius));
+    places.addAll(getNearByPlaces(root.northEast, latitude, longitude, radius));
+    places.addAll(getNearByPlaces(root.northWest, latitude, longitude, radius));
+    places.addAll(getNearByPlaces(root.southEast, latitude, longitude, radius));
+    places.addAll(getNearByPlaces(root.southWest, latitude, longitude, radius));
     return places;
 }
 ```
@@ -231,7 +249,18 @@ These are numbers for QuardTree cache. We need to divide nodes until one QuardTr
 
 ### Based on region
 
+* It is possible to have a hot QuardTree server because of hot locations.
+
 ### Based on place_id
+
+???
+
+## Replication and Fault Tolerance
+
+* What if primary and secondary Quad Tree Server die at the same time?
+  * Zookeeper catch the event and route it to Quad Tree Build Server
+  * Quad Tree Build Server will provision Quad Tree servers.
+  * Quad Tree Server will build quad tree after pulling data from Quad Tree Build Server.
 
 # System Extentions
 
@@ -242,3 +271,5 @@ These are numbers for QuardTree cache. We need to divide nodes until one QuardTr
 * [Yelp system design | amazon interview question Yelp software architecture @ youtube](https://www.youtube.com/watch?v=TCP5iPy8xqo)
 * [Design a proximity server like NearBy or Yelp Part — 1 @ medium](https://medium.com/swlh/design-a-proximity-server-like-nearby-or-yelp-part-1-c8fe2951c534)
   * [Design a proximity server like Yelp Part — 2 @ medium](https://codeburst.io/design-a-proximity-server-like-yelp-part-2-d430879203a5)
+* [Quad Tree @ geeksforgeeks](https://www.geeksforgeeks.org/quad-tree/)
+* [An interactive explanation of quadtrees.](https://jimkang.com/quadtreevis/)
