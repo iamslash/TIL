@@ -268,6 +268,7 @@ These are numbers for QuardTree cache. We need to divide nodes until one QuardTr
 
 # References
 
+* [GEOHASH @ joinc](https://www.joinc.co.kr/w/man/12/geohash)
 * [Yelp system design | amazon interview question Yelp software architecture @ youtube](https://www.youtube.com/watch?v=TCP5iPy8xqo)
 * [Design a proximity server like NearBy or Yelp Part — 1 @ medium](https://medium.com/swlh/design-a-proximity-server-like-nearby-or-yelp-part-1-c8fe2951c534)
   * [Design a proximity server like Yelp Part — 2 @ medium](https://codeburst.io/design-a-proximity-server-like-yelp-part-2-d430879203a5)

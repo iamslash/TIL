@@ -8,6 +8,7 @@
 - [System APIs](#system-apis)
 - [High-level Architecture](#high-level-architecture)
 - [Low-level Architecture](#low-level-architecture)
+  - [Process of a ride.](#process-of-a-ride)
 - [System Extentions](#system-extentions)
 - [Q&A](#qa)
 - [References](#references)
@@ -81,6 +82,8 @@ notify_driver_location(api_key)
 
 # High-level Architecture
 
+![](DesigningUberBackendHighLevelArch.png)
+
 # Low-level Architecture
 
 * The system should update Quad Tree every 10 seconds.
@@ -91,7 +94,17 @@ notify_driver_location(api_key)
   * Driver Location Server will hold DriverLocationHashTable.
 * Driver Notification Server will notify customers' location to drivers.
 * Customer Notification Server will notify drivers' location to customers.
-* 
+* Notification Server provide long polling or push.
+* when the customer opens a application, the customer will subscribe to drivers which place in the area of the customer.When a new driver comes in the area a customer is looking at, the customer will be subscribed to the new driver. 
+
+## Process of a ride.
+
+* The customer send a request for a ride.
+* The Application Server send a request to Quad Tree Server.
+* The Application Server gather nearby drivers and sort them and responds to the customer.
+* The Application Server notify a new ride to top 3 drivers.
+* The driver which accept the ride first will be assgined the ride. What if no driver accept the Application Server notify to other 3 drivers.
+* Once a driver accept a ride, the customer will be notified.
 
 # System Extentions
 
@@ -99,6 +112,8 @@ notify_driver_location(api_key)
 
 # References
 
+* [GEOHASH @ joinc](https://www.joinc.co.kr/w/man/12/geohash)
 * [UBER system design @ medium](https://medium.com/@narengowda/uber-system-design-8b2bc95e2cfe)
 * [System Design Interview: mini Uber @ medium](https://medium.com/@eileen.code4fun/system-design-interview-mini-uber-a48444258402)
-  
+* [Uber System Design | Ola System Design | System Design Interview Question - Grab, Lyft @ youtube](https://www.youtube.com/watch?v=Tp8kpMe-ZKw)
+  * [Uber System Design Diagram @ github](https://github.com/codekarle/system-design/blob/master/system-design-prep-material/architecture-diagrams/Uber%20System%20Design.png)
