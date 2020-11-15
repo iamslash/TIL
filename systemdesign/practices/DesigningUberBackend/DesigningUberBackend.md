@@ -65,19 +65,19 @@
 # System APIs
 
 ```
-view_drivers(api_key)
+view_drivers(api_key, customer_location)
 
-request_ride(api_key)
+request_ride(api_key, src_location, dst_location)
 
-accept_driver(api_key)
+accept_driver(api_key, driver_id)
 
-cancel_driver(api_key)
+cancel_driver(api_key, ride_id)
 ```
 
 ```
-accept_customer(api_key)
+accept_customer(api_key, customer_id)
 
-notify_driver_location(api_key)
+notify_driver_location(api_key, driver_location)
 ```
 
 # High-level Architecture
@@ -112,6 +112,8 @@ notify_driver_location(api_key)
 
 # References
 
+* [Build a Geospatial App with Redis 3.2- Andrew Bass, Coding House @ youtube](https://www.youtube.com/watch?v=94qOaGA31II)
+* [REDIS Geo API @ joinc](https://www.joinc.co.kr/w/man/12/REDIS/geo)
 * [GEOHASH @ joinc](https://www.joinc.co.kr/w/man/12/geohash)
 * [UBER system design @ medium](https://medium.com/@narengowda/uber-system-design-8b2bc95e2cfe)
 * [System Design Interview: mini Uber @ medium](https://medium.com/@eileen.code4fun/system-design-interview-mini-uber-a48444258402)
