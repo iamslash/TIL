@@ -58,6 +58,8 @@
   - [fabric](#fabric)
   - [flake8](#flake8)
   - [objgraph](#objgraph)
+- [Tip](#tip)
+  - [MySQL-python 1.2.5 on python2.7 build error, library not found for -lssl](#mysql-python-125-on-python27-build-error-library-not-found-for--lssl)
   
 ----
 
@@ -2555,4 +2557,20 @@ type                       163
 >>> xs = objgraph.by_type('Foo')
 >>> len(xs)
 99
+```
+
+# Tip
+
+## MySQL-python 1.2.5 on python2.7 build error, library not found for -lssl
+
+Use `--global-option`.
+
+```bash
+$ pip install MySQL-python==1.2.5
+...
+    gcc -bundle -undefined dynamic_lookup -arch x86_64 -g build/temp.macosx-10.9-x86_64-2.7/_mysql.o -L/usr/local/opt/mysql-client@5.7/lib -lmysqlclient -lssl -lcrypto -o build/lib.macosx-10.9-x86_64-2.7/_mysql.so
+    ld: library not found for -lssl
+...
+
+$ pip install --global-option=build_ext --global-option="-I/usr/local/opt/openssl@1.1/include" --global-option="-L/usr/local/opt/openssl@1.1/lib" MySQL-python==1.2.5
 ```
