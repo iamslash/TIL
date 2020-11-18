@@ -53,6 +53,8 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 # Materials
 
+* [쿠버네티스(kubernetes) 설치 및 환경 구성하기](https://medium.com/finda-tech/overview-8d169b2a54ff)
+  * 쿠버네티스 설치 Deep Dive
 * [시작하세요! 도커/쿠버네티스](http://www.yes24.com/Product/Goods/84927385)
   * [src](https://github.com/alicek106/start-docker-kubernetes)
   * 한글책 중 최고
