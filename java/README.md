@@ -7,6 +7,7 @@
   - [Useful Keywords](#useful-keywords)
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
+  - [Random](#random)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collection Examples](#collection-examples)
   - [Collection Conversions](#collection-conversions)
@@ -217,6 +218,15 @@ s = s.substring(0, s.length() - 1);
 StringBuilder sb = new StringBuilder();
 sb.append("a");
 sb.deleteCharAt(sb.length()-1);
+```
+
+## Random
+
+```java
+Random rnd = new Random();
+System.out.println(rnd.nextInt()); // 0~Integer.MAX_VALUE
+System.out.println(rnd.nextInt(10)); // 0~9
+System.out.println(rnd.nextFloat()); // 0.0~1.0
 ```
 
 ## Collections compared c++ container
