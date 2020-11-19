@@ -13,9 +13,9 @@
 
 # Abstract
 
-It's about Distributed Transactions. There are 2 methods for Distributed Transactions including 2 Phase Commit, SAGA. 
+It's about Distributed Transactions. There are 2 methods for Distributed Transactions including 2 Phase Commit, SAGAS. 
 
-And there are 2 types of SAGAs including Choreography based SAGA, Orchestration based SAGA. Choreography is distributed decision making and Orchestration is centralized decision making.
+And there are 2 types of SAGAS including Choreography based SAGA, Orchestration based SAGA. Choreography is distributed decision making and Orchestration is centralized decision making.
 
 # Materials
 

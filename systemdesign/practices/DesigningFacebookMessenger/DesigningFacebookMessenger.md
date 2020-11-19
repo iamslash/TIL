@@ -190,3 +190,8 @@ Cache recent messages (15 mins).
 
 * [How Slack Works @ youtube](https://www.youtube.com/watch?v=WE9c9AZe-DY)
 * [Scaling Slack - The Good, the Unexpected, and the Road Ahead @ youtube](https://www.youtube.com/watch?v=_M-oHxknfnI)
+* [WhatsApp-Engineering Inside-1](https://medium.com/codingurukul/whatsapp-engineering-inside-1-1ef4845ff784)
+  * [WhatsApp-Engineering Inside-2](https://medium.com/codingurukul/whatsapp-engineering-inside-2-bdd1ec354748)
+* [WhatsApp System Design](https://www.passionatestar.com/whatsapp-system-design/)
+* [How to Build a Chat Application with Amazon ElastiCache for Redis](https://aws.amazon.com/ko/blogs/database/how-to-build-a-chat-application-with-amazon-elasticache-for-redis/)
+  

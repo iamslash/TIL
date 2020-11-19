@@ -43,6 +43,8 @@
   - [70% Capacity model](#70-capacity-model)
   - [SLA, SLO, SLI](#sla-slo-sli)
   - [Optimistic Lock vs Pessimistic Lock](#optimistic-lock-vs-pessimistic-lock)
+  - [Control Plane, Data Plane, Management Plane](#control-plane-data-plane-management-plane)
+  - [Distributed Transaction](#distributed-transaction)
 - [System Design Interview](#system-design-interview)
   - [Fundamentals](#fundamentals)
   - [Design Practices](#design-practices)
@@ -700,6 +702,25 @@ total data size : estimated data size = 100 : 70
 -----
 
 Database 의 isolation level 보다 융통성있는 locking 방법
+
+## Control Plane, Data Plane, Management Plane
+
+* [Data plane](https://en.wikipedia.org/wiki/Data_plane)
+
+----
+
+* The data plane is the part of the software that processes the data requests.
+* The control plane is the part of the software that configures and shuts down the data plane.
+* The management plane is ???
+
+## Distributed Transaction
+
+* [distributed transaction @ TIL](/distributedtransaction/README.md)
+* [SAGAS](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf)
+
+----
+
+SAGAS is a long lived transaction that can be broken up into transactions.
 
 # System Design Interview
 
