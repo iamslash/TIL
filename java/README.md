@@ -480,6 +480,7 @@ System.out.println(rnd.nextFloat()); // 0.0~1.0
 ```java
    Map<String, String> map = new HashMap<>();
    map.put(".com", "International");
+   map.remove(".com");
    map.putIfAbsent("aaa", "bbb");
    map.computeIfAbset("aaa", key -> "bbb");
    map.put(".au", map.getOrDefault(".au", "Australia"));
@@ -492,7 +493,7 @@ System.out.println(rnd.nextFloat()); // 0.0~1.0
    map.forEach((key, val) -> {
       System.out.print("key: "+ key);
       System.out.println(", val: "+ val);
-   });    
+   });
 ```
 
 * Set, LinkedHashSet
