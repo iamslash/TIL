@@ -86,7 +86,11 @@ reserve_seats(
 
 # DataBase Schema
 
+![](schema.png)
+
 # High-level Architecture
+
+![](DesigningTicketmasterHighLevelArch.png)
 
 # Low-level Architecture
 
