@@ -163,7 +163,7 @@ upstream	git@github.com:davidsun/TIL.git (fetch)
 upstream	git@github.com:davidsun/TIL.git (push)
 
 # merge using mergetool
-$ $ git mergetool
+$ git mergetool
 
 # log of past HEAD
 $ git reflog
