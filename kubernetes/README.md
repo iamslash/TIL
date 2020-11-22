@@ -53,6 +53,7 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 # Materials
 
+* [Certified Kubernetes Administrator (CKA) with Practice Tests](https://kodekloud.com/p/certified-kubernetes-administrator-with-practice-tests/?coupon_code=KUBARCHYT50)
 * [쿠버네티스(kubernetes) 설치 및 환경 구성하기](https://medium.com/finda-tech/overview-8d169b2a54ff)
   * 쿠버네티스 설치 Deep Dive
 * [시작하세요! 도커/쿠버네티스](http://www.yes24.com/Product/Goods/84927385)
@@ -164,7 +165,7 @@ Node 는 초기에 미니언(minion) 이라고 불렀다. Node 는 **kubelet, ku
   * kubernetes 는 controller 들이 Pod 들을 관리한다. kube-controller-manager 는 controller 들을 실행한다.
 * cloud-controller-manager
   * 또 다른 cloud 와 연동할 때 사용한다. 
-  * Node Controller, Route Controller, Service Controller, Volume Controler 등이 관련되어 있다.
+  * Node Controller, Route Controller, Service Controller, Volume Controller 등이 관련되어 있다.
 
 ### Worker Node
 
