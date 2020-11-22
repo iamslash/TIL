@@ -5,15 +5,39 @@
 - [Install](#install)
   - [Install on osx](#install-on-osx)
   - [Install with docker](#install-with-docker)
-  - [Install with docker-compose](#install-with-docker-compose)
-- [Basic usages](#basic-usages)
+  - [Install Prometheus & Grafana docker-compose stack with docker-swarm](#install-prometheus--grafana-docker-compose-stack-with-docker-swarm)
+  - [Install GitHub Monitoring Stack with docker-compose](#install-github-monitoring-stack-with-docker-compose)
+- [Basic](#basic)
 - [PromQL](#promql)
+  - [Data Model](#data-model)
+  - [Time Series](#time-series)
+  - [Data Types](#data-types)
+  - [Examples](#examples)
+  - [Basics](#basics)
+    - [Time series Sslectors](#time-series-sslectors)
+      - [Instant vector selectors](#instant-vector-selectors)
+      - [Range Vector Selectors](#range-vector-selectors)
+      - [Time Duration](#time-duration)
+      - [Offset modifier](#offset-modifier)
+  - [Operators](#operators)
+    - [Binary operators](#binary-operators)
+      - [Arithmetic binary operators](#arithmetic-binary-operators)
+      - [Comparison binary operators](#comparison-binary-operators)
+      - [Logical/set binary operators](#logicalset-binary-operators)
+    - [Vector matching](#vector-matching)
+    - [Aggregation operators](#aggregation-operators)
+    - [Binary operator precedence](#binary-operator-precedence)
+  - [Functions](#functions)
+  - [HTTP API](#http-api)
+    - [Expression queries](#expression-queries)
+      - [Instance queries](#instance-queries)
+      - [Range queries](#range-queries)
   - [Histogram](#histogram)
     - [prometheus http request duration seconds](#prometheus-http-request-duration-seconds)
     - [grpc server handling seconds](#grpc-server-handling-seconds)
   - [Summary](#summary)
   - [Summary vs Histogram](#summary-vs-histogram)
-- [Client](#client)
+- [How to Develop Prometheus Client](#how-to-develop-prometheus-client)
   - [Simple Instrumentation](#simple-instrumentation)
   - [Metric types](#metric-types)
 
@@ -54,11 +78,11 @@ $ docker run \
     prom/prometheus
 ```
 
-## Install with docker-compose
+## Install Prometheus & Grafana docker-compose stack with docker-swarm
 
 * [A Prometheus & Grafana docker-compose stack](https://github.com/vegasbrianc/prometheus)
   * Prometheus, Grafana
-
+  
 ----
 
 ```bash
@@ -72,7 +96,26 @@ $ docker service ls
 $ docker service logs prom_<service_name>
 ```
 
-# Basic usages
+## Install GitHub Monitoring Stack with docker-compose
+
+* [github-monitoring](https://github.com/vegasbrianc/github-monitoring)
+  * [A Prometheus & Grafana docker-compose stack](https://github.com/vegasbrianc/prometheus) 를 이용한 project 이다.
+  * 특정 github repo 들을 등록하면 github 통계를 grafana 로 확인할 수 있다.
+  * github exporter, prometheus, grafana 로 구성된다.
+  
+----  
+
+```bash
+$ git clone git@github.com:vegasbrianc/github-monitoring.git
+$ cd github-monitoring
+# Create Private Access Token in GitHub and paste it to docker-compose.yml
+$ vim docker-compose.yml
+$ docker-compose up -d
+# Open browser http://localhost:3000 with admin / foobar
+$ docker-compose down 
+```
+
+# Basic
 
 - run prometheus
 
@@ -184,6 +227,7 @@ $ docker service logs prom_<service_name>
 
 # PromQL
 
+* [Prometheus Query(PromQL) 기본 이해하기](https://devthomas.tistory.com/15)
 * [QUERY EXAMPLES](https://prometheus.io/docs/prometheus/latest/querying/examples/)
 * [QUERYING PROMETHEUS](https://prometheus.io/docs/prometheus/latest/querying/basics/)
 * [Prometheus Blog Series (Part 2): Metric types](https://blog.pvincent.io/2017/12/prometheus-blog-series-part-2-metric-types/)
@@ -191,6 +235,50 @@ $ docker service logs prom_<service_name>
 * [TRACKING REQUEST DURATION WITH PROMETHEUS](https://povilasv.me/prometheus-tracking-request-duration/)
 
 ----
+
+## Data Model
+
+다음은 Prometheus 가 metric 을 춣력하는 형태이다.
+
+```
+http_requests_total{method="POST", handler="/hello"} 1037
+```
+
+다음과 같은 형식이다.
+
+```
+<metric-name>{<label-name>=<label-value>, ...} <metric-value> [<timestamp>]
+```
+
+## Time Series
+
+* Time series is a series of time and value. For example, `[[1m,0.1],[2m,0.2],[3m,0.3]]` is time series.
+* Sample is one of time series members. For example, `[1m,0.1]` is a sample.
+
+## Data Types
+
+* **Instant vector**
+  * a set of time series containing a single sample for each time series, all sharing the same timestamp
+  * multiple samples per one time slot.
+    ```c
+    http_requests_total{method="POST", handler="/messages"} 1037
+    http_requests_total{method="GET", handler="/messages"} 500
+    ```
+* **Range vector**
+  * a set of time series containing a range of data points over time for each time series
+  ```c
+  http_requests_total{method="POST", handler="/messages"}[5m]
+  [1037 @1551242271.728, 1038 @1551242331.728, 1040 @1551242391.728]
+
+  http_requests_total{method="GET", handler="/messages"}[5m]
+  [500 @1551242484.013, 501 @1551242544.013, 502 @1551242604.013]
+  ```
+* **Scalar**
+  * a simple numeric floating point value
+* **String (Deprecated)**
+  * a simple string value; currently unused
+
+## Examples
 
 * `http_request_total` 
   * return all time series with the metric.
@@ -274,6 +362,217 @@ $ docker service logs prom_<service_name>
 
 * `count by (app) (instance_cpu_time_ns)`
   * get the count of the running instances grouped by app
+
+## Basics
+
+### Time series Sslectors
+#### Instant vector selectors
+
+return instant vector
+
+```bash
+http_requests_total
+http_requests_total{job="prometheus",group="canary"}
+http_requests_total{environment=~"staging|testing|development",method!="GET"}
+{job=~".*"}              # Bad!
+{job=~".+"}              # Good!
+{job=~".*",method="get"} # Good!
+{__name__=~"job:.*"}
+on{} # Bad!
+{__name__="on"} # Good!
+```
+
+#### Range Vector Selectors
+
+return range vector
+
+```
+http_requests_total{job="prometheus"}[5m]
+```
+
+#### Time Duration
+
+```
+ms - milliseconds
+s - seconds
+m - minutes
+h - hours
+d - days - assuming a day has always 24h
+w - weeks - assuming a week has always 7d
+y - years - assuming a year has always 365d
+```
+
+```
+5h
+1h30m
+5m
+10s
+```
+
+#### Offset modifier
+
+```c
+http_requests_total offset 5m
+sum(http_requests_total{method="GET"} offset 5m) // GOOD.
+sum(http_requests_total{method="GET"}) offset 5m // INVALID.
+rate(http_requests_total[5m] offset 1w)
+```
+
+## Operators
+
+### Binary operators
+
+#### Arithmetic binary operators
+
+```
++ (addition)
+- (subtraction)
+* (multiplication)
+/ (division)
+% (modulo)
+^ (power/exponentiation)
+```
+
+#### Comparison binary operators
+
+```
+== (equal)
+!= (not-equal)
+> (greater-than)
+< (less-than)
+>= (greater-or-equal)
+<= (less-or-equal)
+```
+
+#### Logical/set binary operators
+
+```
+and (intersection)
+or (union)
+unless (complement)
+```
+
+### Vector matching
+
+???
+
+### Aggregation operators
+
+It is same with group by of SQL.
+
+* sum (calculate sum over dimensions)
+* min (select minimum over dimensions)
+* max (select maximum over dimensions)
+* avg (calculate the average over dimensions)
+* stddev (calculate population standard deviation over dimensions)
+* stdvar (calculate population standard variance over dimensions)
+* count (count number of elements in the vector)
+* count_values (count number of elements with the same value)
+* bottomk (smallest k elements by sample value)
+* topk (largest k elements by sample value)
+* quantile (calculate φ-quantile (0 ≤ φ ≤ 1) over dimensions)
+
+### Binary operator precedence
+
+```
+^
+*, /, %
++, -
+==, !=, <=, <, >=, >
+and, unless
+or
+```
+
+## Functions
+
+* `abs()`
+* `rate()`
+
+## HTTP API
+
+### Expression queries
+
+#### Instance queries
+
+```
+GET /api/v1/query
+POST /api/v1/query
+```
+
+`resultType` is `vector`.
+
+```console
+$ curl 'http://localhost:9090/api/v1/query?query=up&time=2015-07-01T20:10:51.781Z'
+{
+   "status" : "success",
+   "data" : {
+      "resultType" : "vector",
+      "result" : [
+         {
+            "metric" : {
+               "__name__" : "up",
+               "job" : "prometheus",
+               "instance" : "localhost:9090"
+            },
+            "value": [ 1435781451.781, "1" ]
+         },
+         {
+            "metric" : {
+               "__name__" : "up",
+               "job" : "node",
+               "instance" : "localhost:9100"
+            },
+            "value" : [ 1435781451.781, "0" ]
+         }
+      ]
+   }
+}
+```
+
+#### Range queries
+
+```
+GET /api/v1/query_range
+POST /api/v1/query_range
+```
+
+`resultType` is `matrix`.
+
+```
+$ curl 'http://localhost:9090/api/v1/query_range?query=up&start=2015-07-01T20:10:30.781Z&end=2015-07-01T20:11:00.781Z&step=15s'
+{
+   "status" : "success",
+   "data" : {
+      "resultType" : "matrix",
+      "result" : [
+         {
+            "metric" : {
+               "__name__" : "up",
+               "job" : "prometheus",
+               "instance" : "localhost:9090"
+            },
+            "values" : [
+               [ 1435781430.781, "1" ],
+               [ 1435781445.781, "1" ],
+               [ 1435781460.781, "1" ]
+            ]
+         },
+         {
+            "metric" : {
+               "__name__" : "up",
+               "job" : "node",
+               "instance" : "localhost:9091"
+            },
+            "values" : [
+               [ 1435781430.781, "0" ],
+               [ 1435781445.781, "0" ],
+               [ 1435781460.781, "1" ]
+            ]
+         }
+      ]
+   }
+}
+```
 
 ## Histogram
 
@@ -387,7 +686,7 @@ Usually measure the latency. Can adjust time period when make the range vector. 
 * Histogram can adjust time period when make the range vector. But Summary can't.
 * Histogram costs more than Summary in server-side.
 
-# Client
+# How to Develop Prometheus Client
 
 ## Simple Instrumentation
 
@@ -534,7 +833,7 @@ Usually measure the latency. Can adjust time period when make the range vector. 
 
 ----
 
-There 4 kinds of metric types such as Counter, Gauge, Histogram, Summary.
+There are 4 kinds of metric types such as Counter, Gauge, Histogram, Summary.
 
 **Counter**
 
