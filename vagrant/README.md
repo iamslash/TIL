@@ -2,6 +2,10 @@
 
 Local Machine 에서 VirtualBox 를 이용하여 provision 할 수 있는 application 이다.
 
+# References
+
+* [Vagrant Documentation @ vagrant](https://www.vagrantup.com/docs)
+
 # Materials
 
 * [Vagrant 설치 및 기초사용방법](https://ossian.tistory.com/86)
@@ -38,45 +42,37 @@ $ vagrant ssh
 $ vagrant provision
 ```
 
-## Vagrantfile
+## Tutorial
+
+```console
+$ mkdir ~/my/vagrant/a
+$ cd ~/my/vagrant/a
+$ vagrant init
+$ vim Vagrantfile
+```
 
 ```Vagrantfile
-IMAGE_NAME = "bento/ubuntu-16.04"
-N = 2
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
 
-Vagrant.configure("2") do |config|
-    config.ssh.insert_key = false
+Vagrant.configure("2") do |config|          # Vagrant Version
+  config.vm.define:"Vagrant-VM01" do |cfg|  # Vagrant Virtual Machine
+    cfg.vm.box = "centos/7"                 # Image name to download from Vagrant Cloud
+    cfg.vm.provider:virtualbox do |vb|      # Vagrant Provider
+      vb.name = "Vagrant-VM01"
+    end
+    cfg.vm.host_name = "Vagrant-VM01"       # hostname of CentOS
+    cfg.vm.synced_folder ".", "/vagrant", disabled: true # Don't use synced_folder
+    cfg.vm.network "public_network"         # Choose VirtualBox's NAT Interface, If there is no IP, this will use DHCP
+    cfg.vm.network "forwarded_port", guest: 22, host: 19201, auto_correct: false, id: "ssh" # Forward port from 19201 of host to 22 of guest
+  end
+end
+```
 
-    config.vm.provider "virtualbox" do |v|
-        v.memory = 1024
-        v.cpus = 2
-    end
-      
-    config.vm.define "k8s-master" do |master|
-        master.vm.box = IMAGE_NAME
-        master.vm.network "private_network", ip: "192.168.50.10"
-        master.vm.hostname = "k8s-master"
-        master.vm.provision "ansible" do |ansible|
-            ansible.playbook = "kubernetes-setup/master-playbook.yml"
-            ansible.extra_vars = {
-                node_ip: "192.168.50.10",
-            }
-        end
-    end
-
-    (1..N).each do |i|
-        config.vm.define "node-#{i}" do |node|
-            node.vm.box = IMAGE_NAME
-            node.vm.network "private_network", ip: "192.168.50.#{i + 10}"
-            node.vm.hostname = "node-#{i}"
-            node.vm.provision "ansible" do |ansible|
-                ansible.playbook = "kubernetes-setup/node-playbook.yml"
-                ansible.extra_vars = {
-                    node_ip: "192.168.50.#{i + 10}",
-                }
-            end
-        end
-    end
+```console
+$ vagrant up
+$ vagrant ssh
+$ vagrant destroy
 ```
 
 # Advanced
