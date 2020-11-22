@@ -5,7 +5,9 @@ M3 is a cluster for long-term logging solution.
 # Materials
 
 * [An introduction to M3](https://aiven.io/blog/an-introduction-to-m3)
-* [M3 and Prometheus, Monitoring at Planet Scale for Everyone - Rob Skillington, Uber](https://www.youtube.com/watch?v=EFutyuIpFXQ)
+* [M3 and Prometheus, Monitoring at Planet Scale for Everyone - Rob Skillington, Uber @ youtube](https://www.youtube.com/watch?v=EFutyuIpFXQ)
+  * [pdf](https://static.sched.com/hosted_files/kccnceu19/e0/M3%20and%20Prometheus%2C%20Monitoring%20at%20Planet%20Scale%20for%20Everyone.pdf)
+  * [event](https://kccnceu19.sched.com/event/MPbX)
 * [M3 Documentation](https://m3db.io/docs/)
 
 # Basic
