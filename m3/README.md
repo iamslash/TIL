@@ -33,3 +33,10 @@ $ ./stop_m3.sh
 # Open browser with xxx.xxx.xxx.xxx:3000 for grafana
 # Open browser with xxx.xxx.xxx.xxx:9090 for prometheus
 ```
+
+## setting up M3DB on Kubernetes
+
+* [m3db-operator @ github](https://github.com/m3db/m3db-operator)
+
+
+
