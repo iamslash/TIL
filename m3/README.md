@@ -17,13 +17,26 @@ M3 is a cluster for long-term logging solution.
 * [Creating a Single Node M3DB Cluster with Docker](https://m3db.io/docs/quickstart/docker/)
 
 ```bash
-
+$ docker run --rm -d -p 7201:7201 -p 7203:7203 --name m3db -v $(pwd)/m3db_data:/var/lib/m3db quay.io/m3db/m3dbnode:latest
 ```
 
 ## M3DB Cluster Deployment, Manually
 
 * [m3 stack](https://github.com/m3db/m3/tree/master/scripts/development/m3_stack)
-* [M3DB Cluster Deployment, Manually (The Hard Way)](https://m3db.github.io/m3/how_to/cluster_hard_way/)
 
 ```bash
+$ git clone https://github.com/m3db/m3.git
+$ cd m3/scripts/development/m3_stack/
+$ chmod 644 prometheus.yml
+$ ./start_m3.sh
+$ ./stop_m3.sh
+# Open browser with xxx.xxx.xxx.xxx:3000 for grafana
+# Open browser with xxx.xxx.xxx.xxx:9090 for prometheus
 ```
+
+## setting up M3DB on Kubernetes
+
+* [m3db-operator @ github](https://github.com/m3db/m3db-operator)
+
+
+
