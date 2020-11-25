@@ -315,6 +315,17 @@ System.out.println(rnd.nextFloat()); // 0.0~1.0
 ```
 
 * Deque, ArrayDeque
+  * [Deque @ java8](https://docs.oracle.com/javase/8/docs/api/java/util/Deque.html)
+  * Each of these methods exists in two forms: one throws an exception if the operation fails, the other returns a special value (either null or false, depending on the operation)
+
+| | First Element | | Last Element | |
+|--|--|--|--|--|
+|  | Throws exception | special value | Throws exception | special value |
+| Insert | addFirst(e) | offerFirst(e) | addLast(e) | offerLast(e) |
+| Remove | removeFirst() | pollFirst() | removeLast() | pollLast() |
+| Examine | getFirst() | peekFirst() | getLast() | peekLast() |
+
+* Comparison of Queue and Deque methods
   
 | Queue Method | Equivalent Deque Method | Throws Exception |
 | ------------ | ----------------------- | ---------------- |
@@ -324,6 +335,8 @@ System.out.println(rnd.nextFloat()); // 0.0~1.0
 | poll()       | pollFirst()             | x                |
 | element()    | getfirst()              |                  |
 | peek()       | peekFirst()             | x                |
+
+* Comparison of Stack and Deque methods
 
 | Stack Method | Equivalent Deque Method | Throws Exception |
 | ------------ | ----------------------- | ---------------- |
