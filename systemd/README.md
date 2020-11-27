@@ -1,3 +1,10 @@
+- [Materials](#materials)
+- [Simple Service](#simple-service)
+- [Advanced](#advanced)
+  - [Restart Periodically](#restart-periodically)
+
+----
+
 # Materials
 
 * [Creating systemd Service Files @ youtube](https://www.youtube.com/watch?v=fYQBvjYQ63U)
@@ -65,4 +72,32 @@ $ sudo systemctl daemon-reload
 $ sudo systemctl restart echotime
 $ sudo systemctl status echotime
 $ sudo systemctl edit echotime --full
+```
+
+# Advanced
+
+## Restart Periodically
+
+* [](https://stackoverflow.com/questions/31055194/how-can-i-configure-a-systemd-service-to-restart-periodically)
+
+----
+
+* `Type=notify`
+* `Restart=always`
+* `WatchdogSec=xx`, where xx is the time period in second you want to restart your service.
+
+```
+[Unit]
+.
+.
+[Service]
+Type=notify
+.
+.
+WatchdogSec=10
+Restart=always
+.
+.
+[Install]
+WantedBy= ....
 ```
