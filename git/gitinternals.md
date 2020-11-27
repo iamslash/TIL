@@ -36,6 +36,8 @@ This explains Git under the hood.
 
 # Materials
 
+* [How not to be afraid of GIT anymore](https://www.freecodecamp.org/news/how-not-to-be-afraid-of-git-anymore-fe1da7415286/)
+  * [Now that you’re not afraid of GIT anymore, here’s how to leverage what you know](https://www.freecodecamp.org/news/now-that-youre-not-afraid-of-git-anymore-here-s-how-to-leverage-what-you-know-11e710c7f37b/)
 * [10.2 Git의 내부 - Git 개체 @ progit](https://git-scm.com/book/ko/v2/Git%EC%9D%98-%EB%82%B4%EB%B6%80-Git-%EA%B0%9C%EC%B2%B4)
 * [Gerrit을 이용한 코드 리뷰 시스템 - Gerrit과 Git @ naverD2](https://d2.naver.com/helloworld/1859580)
 
