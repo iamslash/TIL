@@ -25,10 +25,28 @@ $ docker run --rm -d -p 7201:7201 -p 7203:7203 --name m3db -v $(pwd)/m3db_data:/
 * [m3 stack](https://github.com/m3db/m3/tree/master/scripts/development/m3_stack)
 
 ```bash
+# Install go
+#  https://www.systutorials.com/how-to-install-go-1-13-x-on-ubuntu-18-04/
+$ wget https://dl.google.com/go/go1.13.9.linux-amd64.tar.gz
+$ tar xf go1.13.9.linux-amd64.tar.gz
+$ sudo mv go /usr/local/go-1.13
+$ vim ~/.profile
+export GOROOT=/usr/local/go-1.13
+export PATH=$GOROOT/bin:$PATH
+ 
+# Clone
 $ git clone https://github.com/m3db/m3.git
-$ cd m3/scripts/development/m3_stack/
+ 
+# Build
+$ cd m3
+$ make m3dbnode
+ 
+# Start it
+$ cd scripts/development/m3_stack/
 $ chmod 644 prometheus.yml
 $ ./start_m3.sh
+ 
+# Stop it
 $ ./stop_m3.sh
 # Open browser with xxx.xxx.xxx.xxx:3000 for grafana
 # Open browser with xxx.xxx.xxx.xxx:9090 for prometheus
