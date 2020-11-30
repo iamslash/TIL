@@ -1,6 +1,10 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
+- [Install](#install)
+  - [Install with scoop on windows10](#install-with-scoop-on-windows10)
+- [Basic](#basic)
 - [Tips](#tips)
+- [Cpp Examples](#cpp-examples)
 - [Go Examples](#go-examples)
   - [Hello binary](#hello-binary)
   - [Hello binary with library](#hello-binary-with-library)
@@ -18,11 +22,29 @@ Bazel is a build, test application.
 
 # Materials
 
+* [example snippets and BUILD files for Bazel @ github](https://github.com/bazelbuild/examples/)
+* [Bazel 설치 사용법](https://hiseon.me/c/bazel-tutorial/)
 * [getting started @ bazel](https://docs.bazel.build/versions/master/getting-started.html)
   * [src](https://github.com/bazelbuild/examples)
 * [Building Go Services With Bazel @ youtube](https://www.youtube.com/watch?v=v7EAdff-YXQ) 
   * bazel with go 
 * [si-you/bazel-golang-examples @ github](https://github.com/si-you/bazel-golang-examples)
+
+# Install
+
+## Install with scoop on windows10
+
+* [Installing Bazel on Windows](https://docs.bazel.build/versions/master/install-windows.html#using-scoop)
+
+# Basic
+
+* WORKSPACE 
+  * This file includes information of workspace. Every workspace needs 1 WORKSPACE file at root.
+* BUILD
+  * This file includes how to build the target. Every target needs 1 BUILD file.
+* `$ bazel build //main:hello`
+  * `main` is a relative directory which has BUILD file.
+  * `hello` is a target name described in BUILD file.
 
 # Tips
 
@@ -34,12 +56,16 @@ $ bazel run //:gazelle
 $ bazel build //...
 ```
 
+# Cpp Examples
+
+* [cpp-tutorial @ github](https://github.com/bazelbuild/examples/tree/master/cpp-tutorial)
+
 # Go Examples
 
 ## Hello binary
 
 ```bash
-$ bazel build //main:hello
+$ bazel build //:hello
 ```
 
 ```
@@ -158,6 +184,7 @@ go_binary(
   ],
 )
 ```
+
 * `cmd/hello.go`
 
 ```go
