@@ -53,6 +53,7 @@
 
 # Materials
 
+* [Prometheus란?](https://medium.com/finda-tech/prometheus%EB%9E%80-cf52c9a8785f)
 * [Prometheus 를 알아보자](https://gompangs.tistory.com/entry/Prometheus-%EB%A5%BC-%EC%95%8C%EC%95%84%EB%B3%B4%EC%9E%90)
 * [오픈소스 모니터링 시스템 Prometheus #1](https://blog.outsider.ne.kr/1254)
   * [오픈소스 모니터링 시스템 Prometheus #2](https://blog.outsider.ne.kr/1255)
