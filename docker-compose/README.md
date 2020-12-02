@@ -20,6 +20,7 @@
 # Materials
 
 - [도커 컴포즈를 활용하여 완벽한 개발 환경 구성하기, 컨테이너 시대의 Django 개발환경 구축하기](https://www.44bits.io/ko/post/almost-perfect-development-environment-with-docker-and-docker-compose)
+- [Docker Compose 커맨드 사용법](https://www.daleseo.com/docker-compose/)
 
 # Basic Usage
 
