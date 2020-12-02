@@ -37,6 +37,7 @@
     - [grpc server handling seconds](#grpc-server-handling-seconds)
   - [Summary](#summary)
   - [Summary vs Histogram](#summary-vs-histogram)
+  - [irate vs rate](#irate-vs-rate)
 - [How to Develop Prometheus Client](#how-to-develop-prometheus-client)
   - [Simple Instrumentation](#simple-instrumentation)
   - [Metric types](#metric-types)
@@ -686,6 +687,10 @@ Usually measure the latency. Can adjust time period when make the range vector. 
 
 * Histogram can adjust time period when make the range vector. But Summary can't.
 * Histogram costs more than Summary in server-side.
+
+## irate vs rate
+
+* [Why irate from Prometheus doesn't capture spikes](https://valyala.medium.com/why-irate-from-prometheus-doesnt-capture-spikes-45f9896d7832)
 
 # How to Develop Prometheus Client
 
