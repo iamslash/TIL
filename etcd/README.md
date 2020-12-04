@@ -5,10 +5,14 @@ etcdctl 은 command line client 이다.
 
 # Materials
 
+* [etcd.io](https://etcd.io/docs/v3.4.0/)
+  * [demo @ etcd.io](https://etcd.io/docs/v3.4.0/demo/)
 * [etcd @ joinc](https://www.joinc.co.kr/w/man/12/etcd)
 * [etcd @ github](https://github.com/etcd-io/etcd)
 
-# Install with Docker
+# Install
+
+## Install with Docker
 
 * [Running etcd under Docker](https://etcd.io/docs/v2/docker_guide/)
 
@@ -67,4 +71,105 @@ $ docker run --rm -d -v /usr/share/ca-certificates/:/etc/ssl/certs -p 4001:4001 
  -initial-cluster-state new
 ```
 
+## Install with docker-compose
+
+* [bitnami/etcd @ dockerhub](https://hub.docker.com/r/bitnami/etcd/)
+
+-----
+
+* Run etcd cluster
+
+```bash
+$ curl -LO https://raw.githubusercontent.com/bitnami/bitnami-docker-etcd/master/docker-compose-cluster.yml
+$ docker-compose up
+
+$ docker exec -it a_etcd2_1 bash
+```
+
+* `docker-compose-cluster.yml`
+
+```yml
+version: '2'
+
+services:
+  etcd1:
+    networks:
+      - backend  
+    image: docker.io/bitnami/etcd:3-debian-10
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_NAME=etcd1
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd1:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd1:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+    expose:
+      - "2379"
+      - "2380"
+    ports:
+      - "0.0.0.0:2379:2379"
+      - "0.0.0.0:2380:2380"
+  etcd2:
+    networks:
+      - backend
+    image: docker.io/bitnami/etcd:3-debian-10
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_NAME=etcd2
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd2:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd2:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+  etcd3:
+    networks:
+      - backend
+    image: docker.io/bitnami/etcd:3-debian-10
+    environment:
+      - ALLOW_NONE_AUTHENTICATION=yes
+      - ETCD_NAME=etcd3
+      - ETCD_INITIAL_ADVERTISE_PEER_URLS=http://etcd3:2380
+      - ETCD_LISTEN_PEER_URLS=http://0.0.0.0:2380
+      - ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379
+      - ETCD_ADVERTISE_CLIENT_URLS=http://etcd3:2379
+      - ETCD_INITIAL_CLUSTER_TOKEN=etcd-cluster
+      - ETCD_INITIAL_CLUSTER=etcd1=http://etcd1:2380,etcd2=http://etcd2:2380,etcd3=http://etcd3:2380
+      - ETCD_INITIAL_CLUSTER_STATE=new
+networks:
+  backend:
+```
+
 # Basic
+
+## Client Usages
+
+* [etcd 기본사용](https://arisu1000.tistory.com/27782)
+* [api_grpc_gateway.md @ github](https://github.com/etcd-io/etcd/blob/master/Documentation/dev-guide/api_grpc_gateway.md)
+
+------
+
+Please use `-L` option to redirect to master server.
+
+```bash
+$ docker exec -it a_etcd2_1 bash
+
+# Health check
+$ curl -L http://localhost:2379/health
+{"health":"true"}
+$ etcdctl cluster-health
+
+# Version
+$ curl -L http://localhost:2379/version
+{"etcdserver":"3.4.14","etcdcluster":"3.4.0"}
+
+# Insert key
+$ curl -L http://localhost:2379/v3/kv/put -X POST -d '{"key": "Zm9v", "value": "YmFy"}'
+{"header":{"cluster_id":"10316109323310759371","member_id":"15168875803774599630","revision":"2","raft_term":"2"}}
+
+#
+```
