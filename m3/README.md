@@ -2,10 +2,23 @@
 - [Materials](#materials)
 - [Concepts](#concepts)
 - [Compoments](#compoments)
-- [Basic](#basic)
+- [Integrate with Prometheus](#integrate-with-prometheus)
+- [Resolution, Retention Strategies](#resolution-retention-strategies)
+- [Architecture](#architecture)
+  - [Query Engine Architecture](#query-engine-architecture)
+  - [Redesigning for the next order of magnitude](#redesigning-for-the-next-order-of-magnitude)
+  - [Data Storage](#data-storage)
+- [Install](#install)
   - [Creating a Single Node M3DB Cluster with Docker](#creating-a-single-node-m3db-cluster-with-docker)
   - [M3DB Cluster Deployment, Manually](#m3db-cluster-deployment-manually)
   - [setting up M3DB on Kubernetes](#setting-up-m3db-on-kubernetes)
+- [M3 stack infrastructure design](#m3-stack-infrastructure-design)
+  - [M3 Basic](#m3-basic)
+  - [M3 Namesspaces](#m3-namesspaces)
+  - [M3 Namespace shards](#m3-namespace-shards)
+  - [M3 Inside Single Node](#m3-inside-single-node)
+  - [M3 Multi-Zone Reliability](#m3-multi-zone-reliability)
+  - [M3 Multi-Region Reliability](#m3-multi-region-reliability)
 
 ----
 
@@ -13,15 +26,24 @@
 
 M3 is a cluster for long-term logging solution. As documentation for Prometheus states, it is limited by single nodes in its scalability and durability.
 
+M3 lets users see all operations of a specific type globally, and look at a longer retention to view historical trends in a single place.
+
+![](http://1fykyq3mdn5r21tpna3wkdyi-wpengine.netdna-ssl.com/wp-content/uploads/2018/08/image1-1.png)
+
 # Materials
 
-* [M3 Community Meetup - July 10, 2020 @ vimeo](https://vimeo.com/user120001164/review/440449118/00d5aa7216?sort=lastUserActionEventDate&direction=desc)
+* [M3: Uber’s Open Source, Large-scale Metrics Platform for Prometheus @ uber](https://eng.uber.com/m3/)
+* [The Billion Data Point Challenge: Building a Query Engine for High Cardinality Time Series Data @ uber](https://eng.uber.com/billion-data-point-challenge/)
+* [M3 Media @ m3db.io](https://m3db.io/docs/overview/media/)
+  * [M3 Community Meetup - July 10, 2020 @ vimeo](https://vimeo.com/user120001164/review/440449118/00d5aa7216?sort=lastUserActionEventDate&direction=desc)
 * [An introduction to M3](https://aiven.io/blog/an-introduction-to-m3)
 * [M3 and Prometheus, Monitoring at Planet Scale for Everyone - Rob Skillington, Uber @ youtube](https://www.youtube.com/watch?v=EFutyuIpFXQ)
   * [pdf](https://static.sched.com/hosted_files/kccnceu19/e0/M3%20and%20Prometheus%2C%20Monitoring%20at%20Planet%20Scale%20for%20Everyone.pdf)
   * [event](https://kccnceu19.sched.com/event/MPbX)
 * [M3 Documentation](https://m3db.io/docs/)
-* [M3 Media](https://m3db.io/docs/overview/media/)
+* [m3 proposals @ github](https://github.com/m3db/proposal)
+  * [m3 @ github](https://github.com/m3db/m3) 
+  * [m3 kubernetes operator @ github](https://github.com/m3db/m3db-operator)
 
 # Concepts
 
@@ -31,7 +53,7 @@ M3 is a cluster for long-term logging solution. As documentation for Prometheus 
 # Compoments 
 
 * [M3 Coordinator](m3coordinator.md)
-  * service that coordinates reads and writes between upstream systems, such as Prometheus, and M3DB.
+  * service that coordinates reads and writes between upstream systems, such as Prometheus, and M3DB. This is a Prometheus sidecar and also performs downsampling.
 * [M3DB](m3db.md)
   * distributed time series database that provides scalable storage and a reverse index of time series
 * [M3 Query](m3query.md)
@@ -39,7 +61,56 @@ M3 is a cluster for long-term logging solution. As documentation for Prometheus 
 * **M3 Aggregator**
   * a service that runs as a dedicated metrics aggregator and provides stream based downsampling, based on dynamic rules stored in etcd.
 
-# Basic
+# Integrate with Prometheus
+
+* Set up M3DB cluster
+* Set up M3Coordinator sidecard on Prometheus
+
+# Resolution, Retention Strategies
+
+| resolution | retention | example |
+|---|---|---|
+| 10 secs | 1 months | `{application : mobile_api, endpoint : signup}` |
+| 30 secs | 6 months | `{application : mobile_api, endpoint : signup}` |
+| 1 mins | 1 year | `{application : mobile_api, endpoint : signup}` |
+| 10 mins | 3 years | `{application : mobile_api, endpoint : signup}` |
+| 1 hour | 5 years | `{application : mobile_api, endpoint : signup}` |
+
+The M3 ingestion and storage pipeline begins by aggregating metrics at defined policies and then storing and indexing them on M3DB cluster storage nodes.
+
+![](http://1fykyq3mdn5r21tpna3wkdyi-wpengine.netdna-ssl.com/wp-content/uploads/2018/08/image2-1.png)
+
+# Architecture
+
+## Query Engine Architecture
+
+* [The Billion Data Point Challenge: Building a Query Engine for High Cardinality Time Series Data @ uber](https://eng.uber.com/billion-data-point-challenge/)
+
+----
+
+![](https://1fykyq3mdn5r21tpna3wkdyi-wpengine.netdna-ssl.com/wp-content/uploads/2018/12/image9.png)
+
+## Redesigning for the next order of magnitude
+
+* [The Billion Data Point Challenge: Building a Query Engine for High Cardinality Time Series Data @ uber](https://eng.uber.com/billion-data-point-challenge/)
+
+----
+
+ The memory footprint of sequential execution (Approach 1) is much greater than that of lazy execution (Approach 2).
+
+![](https://1fykyq3mdn5r21tpna3wkdyi-wpengine.netdna-ssl.com/wp-content/uploads/2018/12/image10.gif)
+
+## Data Storage
+
+* [The Billion Data Point Challenge: Building a Query Engine for High Cardinality Time Series Data @ uber](https://eng.uber.com/billion-data-point-challenge/)
+
+----
+
+A block structure allows us to work in parallel on different storage blocks, which greatly improves our computation speed.
+
+![](https://1fykyq3mdn5r21tpna3wkdyi-wpengine.netdna-ssl.com/wp-content/uploads/2018/12/image4.gif)
+
+# Install
 
 ## Creating a Single Node M3DB Cluster with Docker
 
@@ -229,3 +300,34 @@ $ helm install grafana grafana/grafana \
 #   https://www.eksworkshop.com/intermediate/240_monitoring/
 $ helm install prometheus prometheus-12.0.1.tgz --namespace prometheus --set alertmanager.persistentVolume.storageClass="gp2" --set server.persistentVolume.storageClass="gp2"
 ```
+
+# M3 stack infrastructure design
+
+* [M3 Community Meetup - July 10, 2020 @ vimeo](https://vimeo.com/user120001164/review/440449118/00d5aa7216?sort=lastUserActionEventDate&direction=desc)
+
+----
+
+## M3 Basic
+
+![](m3_basic.png)
+
+## M3 Namesspaces
+
+![](m3_namespaces.png)
+
+## M3 Namespace shards
+
+![](m3_namespace_shards.png)
+
+## M3 Inside Single Node
+
+![](m3_inside_single_node.png)
+
+## M3 Multi-Zone Reliability
+
+![](m3_multi_zone.png)
+
+## M3 Multi-Region Reliability
+
+![](m3_multi_region.png)
+
