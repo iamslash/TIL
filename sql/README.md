@@ -17,6 +17,7 @@
   - [Insert Into](#insert-into)
   - [Null Values](#null-values)
   - [Update](#update)
+  - [Update with Join](#update-with-join)
   - [Delete](#delete)
   - [Select Top](#select-top)
   - [Min, Max](#min-max)
@@ -503,6 +504,54 @@ UPDATE Customers
   WHERE Country='Mexico';
 UPDATE Customers
   SET ContactName='Juan';
+```
+
+## Update with Join
+
+* [Update with Join](http://www.gurubee.net/article/79308)
+
+-----
+
+```sql
+-- Oracle --
+-- 1. SubQuery 를 이용한 Update
+UPDATE emp e
+   SET e.dname = (SELECT d.dname FROM dept d WHERE d.deptno = e.deptno)
+ WHERE EXISTS (SELECT 0 FROM dept d WHERE d.deptno = e.deptno)
+;
+-- 2. Updatable Join View 이용
+--    단, d.deptno 가 반드시 PK 이어야 함
+--    10G 까지는 PK 아니더라도 힌트로 제어 가능(/*+ bypass_ujvc */)
+UPDATE /*+ bypass_ujvc */
+       (SELECT e.dname
+             , d.dname AS dname_new
+          FROM emp  e
+             , dept d
+         WHERE d.deptno = e.deptno
+        )
+   SET dname = dname_new
+;
+-- 3. Merge
+MERGE INTO emp e
+USING dept d
+ON (d.deptno = e.deptno)
+WHEN MATCHED THEN
+UPDATE SET e.dname = d.dname
+
+-- MSSQL - From 절 사용 조인 --
+UPDATE e
+   SET e.dname = d.dname
+  FROM emp e
+ INNER JOIN dept d
+    ON d.deptno = e.deptno
+
+-- MySQL - Update 절에서 바로 조인 --
+-- SET sql_safe_updates = 0;
+UPDATE emp e
+ INNER JOIN dept d
+    ON d.deptno = e.deptno
+   SET e.dname = d.dname
+;
 ```
 
 ## Delete
