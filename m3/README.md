@@ -2,16 +2,16 @@
 - [Materials](#materials)
 - [Concepts](#concepts)
 - [Compoments](#compoments)
-- [Integrate with Prometheus](#integrate-with-prometheus)
-- [Resolution, Retention Strategies](#resolution-retention-strategies)
 - [Architecture](#architecture)
+  - [Ports of m3db](#ports-of-m3db)
+  - [Ports of m3query](#ports-of-m3query)
   - [Query Engine Architecture](#query-engine-architecture)
   - [Redesigning for the next order of magnitude](#redesigning-for-the-next-order-of-magnitude)
   - [Data Storage](#data-storage)
 - [Install](#install)
   - [Creating a Single Node M3DB Cluster with Docker](#creating-a-single-node-m3db-cluster-with-docker)
-  - [M3DB Cluster Deployment, Manually](#m3db-cluster-deployment-manually)
-  - [setting up M3DB on Kubernetes](#setting-up-m3db-on-kubernetes)
+  - [M3DB Cluster Deployment with docker-compose](#m3db-cluster-deployment-with-docker-compose)
+  - [M3DB on Kubernetes](#m3db-on-kubernetes)
 - [M3 stack infrastructure design](#m3-stack-infrastructure-design)
   - [M3 Basic](#m3-basic)
   - [M3 Namesspaces](#m3-namesspaces)
@@ -19,6 +19,10 @@
   - [M3 Inside Single Node](#m3-inside-single-node)
   - [M3 Multi-Zone Reliability](#m3-multi-zone-reliability)
   - [M3 Multi-Region Reliability](#m3-multi-region-reliability)
+- [Operational Guides](#operational-guides)
+  - [Integrate with Prometheus](#integrate-with-prometheus)
+  - [Resolution, Retention Strategies](#resolution-retention-strategies)
+  - [Docker & Kernel Configuration](#docker--kernel-configuration)
 
 ----
 
@@ -61,26 +65,35 @@ M3 lets users see all operations of a specific type globally, and look at a long
 * **M3 Aggregator**
   * a service that runs as a dedicated metrics aggregator and provides stream based downsampling, based on dynamic rules stored in etcd.
 
-# Integrate with Prometheus
-
-* Set up M3DB cluster
-* Set up M3Coordinator sidecard on Prometheus
-
-# Resolution, Retention Strategies
-
-| resolution | retention | example |
-|---|---|---|
-| 10 secs | 1 months | `{application : mobile_api, endpoint : signup}` |
-| 30 secs | 6 months | `{application : mobile_api, endpoint : signup}` |
-| 1 mins | 1 year | `{application : mobile_api, endpoint : signup}` |
-| 10 mins | 3 years | `{application : mobile_api, endpoint : signup}` |
-| 1 hour | 5 years | `{application : mobile_api, endpoint : signup}` |
-
-The M3 ingestion and storage pipeline begins by aggregating metrics at defined policies and then storing and indexing them on M3DB cluster storage nodes.
-
-![](http://1fykyq3mdn5r21tpna3wkdyi-wpengine.netdna-ssl.com/wp-content/uploads/2018/08/image2-1.png)
-
 # Architecture
+
+## Ports of m3db
+
+* `src/cmd/tools/dtest/docker/harness/resources/config/m3dbnode.yml`
+
+```go
+  listenAddress: 0.0.0.0:9000
+  clusterListenAddress: 0.0.0.0:9001
+  httpNodeListenAddress: 0.0.0.0:9002
+  httpClusterListenAddress: 0.0.0.0:9003
+  debugListenAddress: 0.0.0.0:9004
+```
+
+## Ports of m3query
+
+* `src/cmd/services/m3query/config/config.go`
+
+```go
+		PrometheusReporter: &instrument.PrometheusConfiguration{
+			HandlerPath: "/metrics",
+			// Default to coordinator (until https://github.com/m3db/m3/issues/682 is resolved)
+			ListenAddress: "0.0.0.0:7203",
+    },   
+...
+	defaultListenAddress = "0.0.0.0:7201"
+
+	defaultCarbonIngesterListenAddress = "0.0.0.0:7204"
+```
 
 ## Query Engine Architecture
 
@@ -116,13 +129,102 @@ A block structure allows us to work in parallel on different storage blocks, whi
 
 * [Creating a Single Node M3DB Cluster with Docker](https://m3db.io/docs/quickstart/docker/)
 
+-----
+
 ```bash
-$ docker run --rm -d -p 7201:7201 -p 7203:7203 --name m3db -v $(pwd)/m3db_data:/var/lib/m3db quay.io/m3db/m3dbnode:latest
+# PUll
+$ docker pull quay.io/m3db/m3dbnode:latest
+# This run m3db with m3coordinator on one binary
+$ docker run --rm -d -p 7201:7201 -p 7203:7203 -p 9003:9003 --name m3db -v $(pwd)/m3db_data:/var/lib/m3db quay.io/m3db/m3dbnode:latest
+
+# Initialize placement and create namespace
+#  If a placement doesn't exist, it will create one based on the type argument, 
+#  otherwise if the placement already exists, it just creates the specified namespace.
+$ curl -X POST http://localhost:7201/api/v1/database/create -d '{
+  "type": "local",
+  "namespaceName": "default",
+  "retentionTime": "12h"
+}'
+
+# Show status of shards
+#  Once all of the shards become AVAILABLE, you should see your node complete bootstrapping!
+$ curl http://localhost:7201/api/v1/services/m3db/placement | jq .
+
+# Open browser with http://xxx.xxx.xxx.xxx:7201/api/v1/openapi
+
+# Write tagged metrics
+$ curl -sS -X POST http://localhost:9003/writetagged -d '{
+  "namespace": "default",
+  "id": "foo",
+  "tags": [
+    {
+      "name": "__name__",
+      "value": "user_login"
+    },
+    {
+      "name": "city",
+      "value": "new_york"
+    },
+    {
+      "name": "endpoint",
+      "value": "/request"
+    }
+  ],
+  "datapoint": {
+    "timestamp": '"$(date "+%s")"',
+    "value": 42.123456789
+  }
+}
+'
+
+# Read tagged metrics
+$ curl -sS -X POST http://localhost:9003/query -d '{
+  "namespace": "default",
+  "query": {
+    "regexp": {
+      "field": "city",
+      "regexp": ".*"
+    }
+  },
+  "rangeStart": 0,
+  "rangeEnd": '"$(date "+%s")"'
+}' | jq .
+
+{
+  "results": [
+    {
+      "id": "foo",
+      "tags": [
+        {
+          "name": "__name__",
+          "value": "user_login"
+        },
+        {
+          "name": "city",
+          "value": "new_york"
+        },
+        {
+          "name": "endpoint",
+          "value": "/request"
+        }
+      ],
+      "datapoints": [
+        {
+          "timestamp": 1527039389,
+          "value": 42.123456789
+        }
+      ]
+    }
+  ],
+  "exhaustive": true
+}
 ```
 
-## M3DB Cluster Deployment, Manually
+## M3DB Cluster Deployment with docker-compose
 
 * [m3 stack](https://github.com/m3db/m3/tree/master/scripts/development/m3_stack)
+
+----
 
 ```bash
 # Install go
@@ -130,7 +232,7 @@ $ docker run --rm -d -p 7201:7201 -p 7203:7203 --name m3db -v $(pwd)/m3db_data:/
 $ wget https://dl.google.com/go/go1.13.9.linux-amd64.tar.gz
 $ tar xf go1.13.9.linux-amd64.tar.gz
 $ sudo mv go /usr/local/go-1.13
-$ vim ~/.profile
+$ vim ~/.bashrc
 export GOROOT=/usr/local/go-1.13
 export PATH=$GOROOT/bin:$PATH
  
@@ -139,7 +241,7 @@ $ git clone https://github.com/m3db/m3.git
  
 # Build
 $ cd m3
-$ make m3dbnode
+$ make services
  
 # Start it
 $ cd scripts/development/m3_stack/
@@ -152,7 +254,7 @@ $ ./stop_m3.sh
 # Open browser with xxx.xxx.xxx.xxx:9090 for prometheus
 ```
 
-## setting up M3DB on Kubernetes
+## M3DB on Kubernetes
 
 * [M3DB on Kubernetes @ github](https://m3db.github.io/m3/how_to/kubernetes/)
 
@@ -331,3 +433,27 @@ $ helm install prometheus prometheus-12.0.1.tgz --namespace prometheus --set ale
 
 ![](m3_multi_region.png)
 
+# Operational Guides
+
+## Integrate with Prometheus
+
+* Set up M3DB cluster
+* Set up M3Coordinator sidecard on Prometheus
+
+## Resolution, Retention Strategies
+
+| resolution | retention | example |
+|---|---|---|
+| 10 secs | 1 months | `{application : mobile_api, endpoint : signup}` |
+| 30 secs | 6 months | `{application : mobile_api, endpoint : signup}` |
+| 1 mins | 1 year | `{application : mobile_api, endpoint : signup}` |
+| 10 mins | 3 years | `{application : mobile_api, endpoint : signup}` |
+| 1 hour | 5 years | `{application : mobile_api, endpoint : signup}` |
+
+The M3 ingestion and storage pipeline begins by aggregating metrics at defined policies and then storing and indexing them on M3DB cluster storage nodes.
+
+![](http://1fykyq3mdn5r21tpna3wkdyi-wpengine.netdna-ssl.com/wp-content/uploads/2018/08/image2-1.png)
+
+## Docker & Kernel Configuration
+
+* [Docker & Kernel Configuration](http://m3db.github.io/m3/operational_guide/kernel_configuration/)
