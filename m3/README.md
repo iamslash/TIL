@@ -246,7 +246,10 @@ $ make services
 # Start it
 $ cd scripts/development/m3_stack/
 $ chmod 644 prometheus.yml
+# Start single m3db node
 $ ./start_m3.sh
+# Start multi db nodes
+$ USE_MULTI_DB_NODES=true ./start_m3.sh
  
 # Stop it
 $ ./stop_m3.sh
