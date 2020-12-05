@@ -36,6 +36,7 @@ M3 lets users see all operations of a specific type globally, and look at a long
 
 # Materials
 
+* [M3DB, a distributed timeseries database (m3db.io) @ hackernews](https://news.ycombinator.com/item?id=22391270)
 * [M3: Uber’s Open Source, Large-scale Metrics Platform for Prometheus @ uber](https://eng.uber.com/m3/)
 * [The Billion Data Point Challenge: Building a Query Engine for High Cardinality Time Series Data @ uber](https://eng.uber.com/billion-data-point-challenge/)
 * [M3 Media @ m3db.io](https://m3db.io/docs/overview/media/)
@@ -48,6 +49,7 @@ M3 lets users see all operations of a specific type globally, and look at a long
 * [m3 proposals @ github](https://github.com/m3db/proposal)
   * [m3 @ github](https://github.com/m3db/m3) 
   * [m3 kubernetes operator @ github](https://github.com/m3db/m3db-operator)
+* [Awesome time series database](https://xephonhq.github.io/awesome-time-series-database/)
 
 # Concepts
 
