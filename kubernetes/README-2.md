@@ -8,10 +8,12 @@
     - [Local Volume : hostPath, emptyDir](#local-volume--hostpath-emptydir)
     - [Network Volume](#network-volume)
     - [Volume management with PV, PVC](#volume-management-with-pv-pvc)
-  - [Launch ServiceAccount, RBAC](#launch-serviceaccount-rbac)
-    - [Process of Authentication, Authorization](#process-of-authentication-authorization)
-    - [Service Account, Role, Cluster Role](#service-account-role-cluster-role)
-    - [Access to Kubernetes API server](#access-to-kubernetes-api-server)
+  - [Authorization](#authorization)
+  - [RBAC(Role-based access control)](#rbacrole-based-access-control)
+    - [Role](#role)
+    - [ClusterRole](#clusterrole)
+    - [RoleBinding](#rolebinding)
+    - [ClusterRoleBinding](#clusterrolebinding)
     - [Setting Secrets on Service Account for Image Registry](#setting-secrets-on-service-account-for-image-registry)
     - [kubeconfig](#kubeconfig)
     - [User, Group](#user-group)
@@ -366,17 +368,143 @@ spec:
 
 ### Volume management with PV, PVC
 
+## Authorization
 
-## Launch ServiceAccount, RBAC
+* [쿠버네티스 권한관리(Authorization)](https://arisu1000.tistory.com/27848)
 
-ServiceAccount, Role, RoleBinding, ClusterRole, ClusterRoleBinding
+------
 
+Kubernetes 는 ABAC(Attribute-based access control) 혹은 RBAC(Role-based access control) 를 이용하여 Authorization 을 수행할 수 있다. Master-Node 의 API 호출을 권한관리할 수 있다.
 
-### Process of Authentication, Authorization
+ABAC(Attribute-based access control) 는 사용자(user), 그룹(group), 요청 경로(request path), 요청 동사(request verb), namespace, 자원 등으로 권한을 설정한다. 설정은 파일로 관리한다. 설정이 변경될 때 마다 Master-Node 를 rebooting 해야 한다. 매우 불편하여 사용되지 않는다.
 
-### Service Account, Role, Cluster Role
+RBAC(Role-based access control) 는 사용자(user), 역할(role) 을 각각 선언하고 두가지를 묶어서(binding) 하여 사용자(user) 에게 권한을 부여해 준다. Master-Node 에 접근할 필요 없이 kubectl 혹은 API 로 권한 설정이 가능하다. 매우 유용하다.
 
-### Access to Kubernetes API server
+## RBAC(Role-based access control)
+
+### Role
+
+Role은 특정 API 혹은 리소스에 대한 권한들을 명시해둔 규칙들의 집합이다. 특정 namespace 만 적용된다.
+
+* `read-role.yml`
+
+```yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: read-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+```
+
+다음은 verbs 의 종류이다.
+
+| verbs | description|
+|---|--|
+| create | create resource |
+| get | get resource |
+| list | list resource |
+| update | update resource |
+| patch | patch resource  |
+| delete | delete resource |
+| deletecollection | delete resources |
+
+### ClusterRole
+
+ClusterRole은 역시 특정 API 혹은 리소스에 대한 권한들을 명시해둔 규칙들의 집합이다. 그러나 특정 namespace 가 아닌 전체 cluster 에 대해 적용된다.
+
+* `read-clusterrole.yml`
+
+```yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: read-clusterrole
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list"]
+```
+
+* `clusterrole-aggregation.yml`
+  * 다른 ClusterRole 들로 부터 label 이 `kubernetes.io/bootstrapping: rbac-defaults` 와 match 되는 것들의 rule 들을 가져온다.
+
+```yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: admin-aggregation
+aggregationRule:
+  clusterRoleSelectors:
+  - matchLabels:
+      kubernetes.io/bootstrapping: rbac-defaults
+rules: []
+```
+
+다음과 같이 url 에 대해 권한 설정을 할 수도 있다.
+
+```yml
+rules:
+- nonResourceURLs: ["/healthcheck”, “/metrics/*"]
+  verbs: [“get”, “post"]
+```
+
+### RoleBinding
+
+Role 과 User 를 묶어주는 역할을 한다. 특정 namespace 만 적용된다.
+
+* 다음과 같이 `serviceaccount-myuser.yaml` 를 선언하여 유저를 생성한다.
+
+```yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: myuser
+  namespace: default
+```
+
+* `read-rolebinding.yml`
+
+```yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: read-rolebinding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: myuser
+  apiGroup: ""
+roleRef:
+  kind: Role
+  name: read-role
+  apiGroup: rbac.authorization.k8s.io
+```
+
+### ClusterRoleBinding
+
+Role 과 User 를 묶어주는 역할을 한다. 특정 namespace 가 아닌 전체 cluster 에 적용된다.
+
+* `read-clusterrolebinding.yml`
+
+```yml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: read-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: myuser
+  namespace: default
+  apiGroup: ""
+roleRef:
+  kind: ClusterRole
+  name: read-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+```
 
 ### Setting Secrets on Service Account for Image Registry
 

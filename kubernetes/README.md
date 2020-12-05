@@ -6,7 +6,6 @@
     - [Master Node](#master-node)
     - [Worker Node](#worker-node)
     - [Addons](#addons)
-- [Authorization](#authorization)
 - [Install](#install)
   - [AWS EKS](#aws-eks)
   - [Google GCP](#google-gcp)
@@ -17,7 +16,7 @@
 - [Basic](#basic)
   - [Useful Commands](#useful-commands)
   - [Launch Single Pod](#launch-single-pod)
-  - [Lunach Pods with livnessprobe, readynessprobe](#lunach-pods-with-livnessprobe-readynessprobe)
+  - [Launch Pods with livnessprobe, readynessprobe](#launch-pods-with-livnessprobe-readynessprobe)
     - [key commands](#key-commands)
     - [Launch Simple Pod](#launch-simple-pod)
     - [Launch Simple Pod with LivenessProbe](#launch-simple-pod-with-livenessprobe)
@@ -96,6 +95,14 @@ Kubernetes cluster 는 Master-node, Workder-node 와 같이 두 가지 종류의
 * A Master-node type, which makes up the Control Plane, acts as the “brains” of the cluster.
 * A Worker-node type, which makes up the Data Plane, runs the actual container images (via pods).
 
+Master-Node 는 **etcd, kube-apiserver, kube-scheduler, kube-controller-manager, kubelet, kube-proxy, docker** 등이 실행된다. Master 장비 1 대에 앞서 언급한 프로세스들 한 묶음을 같이 실행하는게 일반적인 구성이다. Master-Node 는 일반적으로 High Availibility 를 위해 3 대 실행한다. 평소 1 대를 활성시키고 나머지 2 대는 대기시킨다.
+
+Worker-Node 는 초기에 미니언(minion) 이라고 불렀다. **kubelet, kube-proxy, docker** 등이 실행된다. 대부분의 컨테이너들은 Worker-Node 에서 실행된다.
+
+![](https://upload.wikimedia.org/wikipedia/commons/b/be/Kubernetes.png)
+
+위의 그림은 Kubernetes System Diagram 이다. Master-Node 와 여러개의 Worker-Node 들로 구성된다. Operator 는 오로지 Master-Node 의 API Server 와 통신한다. Worker-Node 들 역시 마찬가지이다.
+
 Kubernetes cluster 는 current state 을 object 로 표현한다. Kubernetes 는 current state 의 object 들을 예의 주시하다가 desired state 의 object 가 발견되면 지체 없이 current state object 들을 desired state state 으로 변경한다. 
 
 Kubernetes object 는 Pod, DaemonSet, Deployment, ReplicaSet, Job, Service, Label 등이 있다.
@@ -103,7 +110,7 @@ Kubernetes object 는 Pod, DaemonSet, Deployment, ReplicaSet, Job, Service, Labe
 * Pod
   * A thin wrapper around one or more containers
 * DaemonSet
-  * Implements a single instance of a pod on a worker node
+  * Implements a single instance of a pod on every worker node
 * Deployment
   * Details how to roll out (or roll back) across versions of your application
 * ReplicaSet
@@ -115,24 +122,24 @@ Kubernetes object 는 Pod, DaemonSet, Deployment, ReplicaSet, Job, Service, Labe
 * Label
   * Key/Value pairs used for association and filtering
 
-Kubernetes 는 Control Plane 과 Data Plane 으로 구성된다.
+Kubernetes 는 Control Plane 과 Data Plane 으로 나눌 수 있다.
 
 ![](img/KubernetesArchitecturalOverview.png)
 
-Ctonrol Plane 은 Scheduler, Controller Manager, API Server, etcd 등으로 구성된다.
+Ctonrol Plane 은 Master-Node 를 의미한다. Scheduler, Controller Manager, API Server, etcd 등이 실행된다.
 
 * One or More API Servers: Entry point for REST / kubectl
 * etcd: Distributed key/value store
 * Controller-manager: Always evaluating current vs desired state
 * Scheduler: Schedules pods to worker nodes
 
-Data Plane 은 kube-proxy, kubelet 등으로 구성된다.
+Data Plane 은 Worker-Node 를 의미한다. kube-proxy, kubelet 등이 실행된다.
 
 * Made up of worker nodes
 * kubelet: Acts as a conduit between the API server and the node
 * kube-proxy: Manages IP translation and routing
 
-Controller 의 종류는 **ReplicaSet, Deployment, StatefulSet, DaemonSet, Job** 등이 있다. Kubernetes 는 yaml 파일을 사용하여 설정한다.
+Kubernetes 는 yaml 파일을 사용하여 설정한다.
 
 ```yaml
 apiVersion : v1
@@ -140,16 +147,6 @@ Kind : Pod
 ```
 
 Kind 의 값에 따라 설정파일이 어떤 Object 혹은 controller 에 대한 작업인지 알 수 있다.
-
-Kubernetes Cluster 는 Master 와 Node 두가지 종류가 있다. 
-
-Master 는 **etcd, kube-apiserver, kube-scheduler, kube-controller-manager, kubelet, kube-proxy, docker** 등이 실행된다. Master 장비 1 대에 앞서 언급한 프로세스들 한 묶음을 같이 실행하는게 일반적인 구성이다. Master 는 일반적으로 High Availibility 를 위해 3 대 실행한다. 평소 1 대를 활성시키고 나머지 2 대는 대기시킨다.
-
-Node 는 초기에 미니언(minion) 이라고 불렀다. Node 는 **kubelet, kube-proxy, docker** 등이 실행된다. 대부분의 컨테이너들은 Node 에서 실행된다.
-
-![](https://upload.wikimedia.org/wikipedia/commons/b/be/Kubernetes.png)
-
-위의 그림은 Kubernetes System Diagram 이다. Master 와 여러개의 Node 들로 구성된다. Operator 는 오로지 Master 의 API Server 와 통신한다. Node 들 역시 마찬가지이다.
 
 ## Kubernetes Components
 
@@ -187,10 +184,6 @@ cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주�
 * Dashboard Addon
 * Container resource monitoring
 * cluster logging
-
-# Authorization
-
-* [쿠버네티스 권한관리(Authorization)](https://arisu1000.tistory.com/27848)
 
 # Install
 
@@ -396,9 +389,7 @@ $ kubectl config view
 * api-resources
 
 ```bash
-# Show all objects including node, pod, replicaset, deployemnt,
-# service, loadbalancer, ingress, volume, configmap, secret,
-# namespace
+# Show all objects
 $ kubectl api-resources
 # Show server, client version
 $ kubectl api-versions
@@ -430,11 +421,11 @@ workload.coupang.com
 * inspecting clusters
 
 ```bash
-# check current cluster
+# Check current cluster
 $ kubectl config view
-# check namespaces
+# Check namespaces
 $ kubectl get namespaces
-# get all resources
+# Get all resources
 $ kubectl get all --namespace kube-system 
 $ kubectl get nodes --namespace kube-system
 $ kubectl get pods --namespace kube-system
@@ -463,13 +454,21 @@ $ kubectl --namespace <ns> logs -f <pod-name> -c <container-name>
 
 # run
 $ kubectl --namespace <ns> run -it busybox --image=busybox -- sh
+
 # attach
 $ kubectl --namespace <ns> attach <pod-name> -i
+
 # forward port
 $ kubectl --namespace <ns> port-forward <pod-name> 5000:6000
+
+# Exec shell with interactive terminal
+$ kubectl --namespace <ns> exec -it <pod-name> -- /bin/bash
+$ kubectl --namespace <ns> exec -it <pod-name> -c <container-name> -- /bin/bash
+$ kubectl --namespace <ns> exec --stdin --tty <pod-name> -- /bin/bash
 # exec
 $ kubectl --namespace <ns> exec <pod-name> -- ls /
 $ kubectl --namespace <ns> exec <pod-name> -c <container-name> -- ls /
+
 $ kubectl top pod <pod-name> --containers
 ```
 
@@ -524,7 +523,7 @@ kubectl delete -f <FILENAME>
 # Create my-nginx-* pod and my-nginx deployment
 > kubectl run my-nginx --image nginx --port=80
 # Create "debug" pod and run bash
-> kubectl run -i --tty --rm debug --image=alicek106/ubuntu:curl --restart=Never bash
+> kubectl run -it --rm debug --image=alicek106/ubuntu:curl --restart=Never bash
 # Execute bash on my-nginx pod.
 > kubectl exec -it my-ngnix bash
 # Show logs of my-nginx pod.
@@ -547,7 +546,7 @@ kubectl delete -f <FILENAME>
 > kubectl delete service my-nginx
 ```
 
-## Lunach Pods with livnessprobe, readynessprobe
+## Launch Pods with livnessprobe, readynessprobe
 
 * [workshop-k8s-basic/guide/guide-03/task-02.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-02.md)
   * [[토크ON세미나] 쿠버네티스 살펴보기 6강 - Kubernetes(쿠버네티스) 실습 1 | T아카데미](https://www.youtube.com/watch?v=G0-VoHbunks&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=6)
@@ -598,6 +597,8 @@ $ kubectl apply -f whoami-pod.yml
 
 ### Launch Simple Pod with LivenessProbe
 
+컨테이너가 동작 중인지 여부를 나타낸다. 만약 liveness probe 에 실패하면 kubelet은 컨테이너를 정지하고, 해당 컨테이너는 재시작 정책의 대상이 된다. 만약 컨테이너가 liveness probe 를 제공하지 않는 경우, 기본 상태는 Success 이다.
+
 * whoami-pod-lp.yml
 
 ```yml
@@ -628,6 +629,8 @@ $ kubectl apply -f whoami-pod-lp.yml
 ```
 
 ### Launch Simple Pod with ReadinessProbe
+
+컨테이너가 요청을 처리할 준비가 되었는지 여부를 나타낸다. 만약 readiness probe가 실패하면, Endpoint Controller는 Pod에 연관된 모든 서비스들의 엔드포인트에서 Pods의 IP를 제거한다. rediness probe 의 초기값은 Failure 이다.만약 컨테이너가 Rediness Probe 를 지원하지 않는다면, 기본 상태는 Success 이다.
 
 * whoami-pod-rp.yml
 
