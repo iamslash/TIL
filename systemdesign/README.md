@@ -377,8 +377,11 @@ nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은
 ### Service Mesh
 
 * [서비스 메쉬란 무엇일까요?](https://www.redhat.com/ko/topics/microservices/what-is-a-service-mesh)
+* [Service Mesh Comparison](https://servicemesh.es/)
+  
+----
 
-Service Mesh 는 MSA 를 위한 기술중 하나이다. network 부분을 담당하고 sidecar proxy 와 함께 구현된다.
+A service mesh is a dedicated infrastructure layer for handling service-to-service communication.
 
 ### Service discovery
 
