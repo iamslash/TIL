@@ -382,6 +382,23 @@ RBAC(Role-based access control) 는 사용자(user), 역할(role) 을 각각 선
 
 ## RBAC(Role-based access control)
 
+* [INTRO TO RBAC @ eksworkshop](https://www.eksworkshop.com/beginner/090_rbac/)
+
+----
+
+RBAC 는 다음과 같은 논리적 요소들로 구성된다.
+
+* **Entity**
+  * Group, User, Service Account 와 같이 Kubernetes Resource 를 접근할 수 있는 권한의 주체이다.
+* **Resource**
+  * Pod, Service, Secret 과 같이 Entity 가 접근할 수 있는 Kubernetes 의 자원이다.
+* **Role**
+  * Action 의 Rule 들을 모아 놓은 것이다.
+* **RoleBinding**
+  * Role 과 Entity 의 묶음이다.
+* **Namespace**
+  * 하나의 Physical Cluster 를 Namespace 를 정하여 별도의 Virtual cluster 로 나누어 사용할 수 있다.
+
 ### Role
 
 Role은 특정 API 혹은 리소스에 대한 권한들을 명시해둔 규칙들의 집합이다. 특정 namespace 만 적용된다.
