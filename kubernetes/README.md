@@ -845,6 +845,9 @@ $ kubectl apply -f whoami-rs-scaled.yml
 
 ----
 
+Deployment is for deploying stateless applications. and StatefulSet is for deploying stateful applicaions.
+`template` of Deployment will include `metadata, spec` of Pod.
+
 ### Launch Simple Deployment
 
 * whoami-deploy.yml
