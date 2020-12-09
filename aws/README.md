@@ -654,8 +654,8 @@ kafka 를 이용할 수 있다.
 
 ----
 
-DNS server 이다. Simple, Weighted, Latency, Failover, GeoLocation, Multivalue Answer policy 를 지원한다.
-
+* [route53 @ TIL](route53.md) 
+  
 ## CloudWatch
 
 * [AWS CLOUD Gaming 5. CloudWatch 성능 모니터링과 신속한 대응을 위한 노하우 @ youtube](https://www.youtube.com/watch?v=PbUS0Lu-uAQ)
