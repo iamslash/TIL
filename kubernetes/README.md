@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Architecture](#architecture)
   - [Overview](#overview)
@@ -49,6 +50,11 @@
 # Abstract
 
 Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이다. 
+
+# References
+
+* [checkov @ github](https://github.com/bridgecrewio/checkov)
+  * Kubernetes manifest file 의 문법을 검사해줌
 
 # Materials
 
