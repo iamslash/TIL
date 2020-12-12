@@ -1403,12 +1403,24 @@ Linux 의 Namespace 는 container 의 격리된 공간을 생성하기 위해 ke
 # Show namespaces objects
 $ kubectl get namespaces
 $ kubectl get ns
+$ kubectl get ns --no-headers | wc -l
+
 # Show pods objects with specific namespace
 $ kubectl get pods --namespace default
 $ kubectl get pods -n kube-system
 $ kubectl get service -n kube-system
+
 # Namespace is different with label
 $ kubectl get pods -l app=webserver
+
+$ kubectl run redis --image=redis --dry-run=client -o yaml > pod.yaml
+$ vim pod.yaml
+$ kubectl apply -f pod.yaml
+$ kubectl -n finance get pod rdis
+
+$ kubectl get pods --all-namespaces | grep blue
+
+$ kubectl -n dev svc
 ```
 
 * `production-namespace.yml`
