@@ -31,6 +31,7 @@
   - [Launch Deployment](#launch-deployment)
     - [Launch Simple Deployment](#launch-simple-deployment)
     - [Launch Deployment with RollingUpdate](#launch-deployment-with-rollingupdate)
+  - [How to generate Deployment yaml files](#how-to-generate-deployment-yaml-files)
   - [Launch Service](#launch-service)
     - [Launch Simple Service with ClusterIp type](#launch-simple-service-with-clusterip-type)
     - [Launch Service with NodePort type](#launch-service-with-nodeport-type)
@@ -974,6 +975,32 @@ $ kubectl set image deploy/whoami-deploy whoami=subicura/whoami:2 --record
 $ kubectl get rs -w
 # Delete everything including Pod, ReplicaSet, Deployment
 $ kubectl delete deployment,pod,rs --all
+```
+
+
+## How to generate Deployment yaml files
+
+* [kubectl Usage Conventions](https://kubernetes.io/docs/reference/kubectl/conventions/)
+
+----
+
+```bash
+# Create an NGINX Pod
+$ kubectl run nginx --image=nginx
+
+# Generate POD Manifest YAML file (-o yaml). Don't create it(--dry-run)
+$ kubectl run nginx --image=nginx --dry-run=client -o yaml
+
+# Create a deployment
+$ kubectl create deployment --image=nginx nginx
+
+# Generate Deployment YAML file (-o yaml). Don't create it(--dry-run)
+$ kubectl create deployment --image=nginx nginx --dry-run=client -o yaml
+
+# Generate Deployment YAML file (-o yaml). Don't create it(--dry-run) with 4 Replicas (--replicas=4)
+$ kubectl create deployment --image=nginx nginx --dry-run=client -o yaml > nginx-deployment.yaml
+
+# Save it to a file, make necessary changes to the file (for example, adding more replicas) and then create the deployment.
 ```
 
 ## Launch Service
