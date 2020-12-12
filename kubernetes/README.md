@@ -771,7 +771,7 @@ $ kubectl delete -f ./
 
 ----
 
-동일한 spec 의 pod 를 여러개 실행할 수 있게 해준다. Replicaset 이 없다면 동일한 spec 을 여러번 작성해야 한다. yml 의 `spec.template` 이하가 pod 의 spec 이다. `spec.replicas, spec.selector` 는 ReplicaSet 의 spec 이다.
+동일한 spec 의 pod 를 여러개 실행할 수 있게 해준다. Replicaset 이 없다면 pod 의 metadata 및 spec 을 여러번 작성해야 한다. Replicaset 의 yml 의 spec 은 `spec.template, spec.replicas, spec.selector` 로 구성된다. `spec.template` 이하가 pod 의 `metadata, spec` 이다.
 
 ### Launch Simple Replicaset
 
@@ -855,6 +855,9 @@ spec:
 
 ```bash
 $ kubectl apply -f whoami-rs-scaled.yml
+$ kubectl replace -f whoami-rs-scaled.yml
+$ kubectl scale --replicas=6 -f whoami-rs-scaled.yml
+$ kubectl scale --replicas=6 replicaset whoami-rs
 ```
 
 ## Launch Deployment
