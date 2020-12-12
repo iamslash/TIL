@@ -1113,6 +1113,8 @@ $ kubectl exec -it whoami-<xxxxx> sh
 
 ### Launch Service with NodePort type
 
+![](img/kubernetes_service_nodeport.png)
+
 * whoami-svc.yml
 
 ```yml
