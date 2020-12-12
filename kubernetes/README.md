@@ -1023,6 +1023,8 @@ But we use Ingress object more than Service object. Because Service object is la
 
 ### Launch Simple Service with ClusterIp type
 
+![](img/kubernetes_service_clusterip.png)
+
 * redis-app.yml
 
 ```yml
