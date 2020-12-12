@@ -152,11 +152,16 @@ Data Plane 은 Worker-Node 를 의미한다. kube-proxy, kubelet 등이 실행�
 Kubernetes 는 yaml 파일을 사용하여 설정한다.
 
 ```yaml
-apiVersion : v1
-Kind : Pod
+apiVersion: v1
+Kind: Pod
+metadata:
+spec:
 ```
 
-Kind 의 값에 따라 설정파일이 어떤 Object 혹은 controller 에 대한 작업인지 알 수 있다.
+* **Kind**: Kubernetes Object 의 type 이다. Pod, Deployment, ReplicaSet, Service 등이 있다.
+* **apiVersion**: Kind 에 따라 다르다.
+* **metadata**: Kind type 의 Kubernetes Object 의 meta data 이다. name 등등이 해당된다.
+* **spec**: Kind type 의 Kubernetes Object 의 세부항목들이다. 당연히 Kind 에 따라 내용이 다르다.
 
 ## Kubernetes Components
 
@@ -394,6 +399,8 @@ Unable to connect to the server: dial tcp [::1]:8080: connectex: No connection c
 ```bash
 # show current cluster
 $ kubectl config view
+$ kubectl config get-contexts
+$ kubectl config use-context iamslash
 ```
 
 * api-resources
