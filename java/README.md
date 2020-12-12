@@ -580,6 +580,32 @@ Collections.sort(rec, new Comparator() {
       return a.compareTo(b);
    }
 });
+
+// sort characters of a string by frequency
+// Arrays.sort doen't support lambda function with 2 arguments
+class Solution {
+	public String frequencySort(String s) {
+		int[] freqs = new int[256];
+		for (int i = 0; i < s.length(); ++i) {
+			freqs[s.charAt(i)]++;
+		}
+		List<Character> charList = s
+				.chars()
+				.mapToObj(e->(char)e)
+				.collect(Collectors.toList());
+		Collections.sort(charList,
+										 (a, b) -> {
+											 if (freqs[a] == freqs[b]) {
+												 return -Integer.compare(a, b);
+											 }
+											 return -Integer.compare(freqs[a], freqs[b]);
+										 });
+		return charList
+				.stream()
+				.map(e->e.toString())
+				.collect(Collectors.joining());						
+	}
+}
 ```
 
 * Arrays
