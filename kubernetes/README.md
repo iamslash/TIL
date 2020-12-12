@@ -56,6 +56,8 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 * [checkov @ github](https://github.com/bridgecrewio/checkov)
   * Kubernetes manifest file 의 문법을 검사해줌
 * [Certified Kubernetes Administrator (CKA)](https://www.cncf.io/certification/cka/)
+  * [Certified Kubernetes Administrator (CKA) with Practice Tests @ udemy](https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests/)
+    * [Labs - Certified Kubernetes Administrator @ Kodcloud](https://kodekloud.com/courses/enrolled/675080)
   * [Open Source Curriculum for CNCF Certification Courses](https://github.com/cncf/curriculum)
   * [Linux Foundation Certification Exams: Candidate Handbook](https://docs.linuxfoundation.org/tc-docs/certification/lf-candidate-handbook)
   * [Important Instructions: CKA and CKAD](https://docs.linuxfoundation.org/tc-docs/certification/tips-cka-and-ckad)
