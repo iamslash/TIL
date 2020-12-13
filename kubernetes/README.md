@@ -1134,6 +1134,16 @@ spec:
     service: whoami
 ```
 
+```bash
+$ kubectl expose deployment simple-webapp-deployment --name=webapp-service --target-port=8080 --type=NodePort --port=8080 --dry-run=client -o yaml > svc.yaml
+
+$ vim svc.yaml
+spec:
+  ports:
+  - nodePort: 30080
+$ kubectl apply -f svc.yaml  
+```
+
 ### Launch Service with LoadBalaner
 
 * [workshop-k8s-basic/guide/guide-03/task-06.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-05/task-06.md)
