@@ -14,61 +14,85 @@ etcdctl 은 command line client 이다.
 
 ## Install with Docker
 
-* [Running etcd under Docker](https://etcd.io/docs/v2/docker_guide/)
+* [Run etcd clusters inside containers @ etcd.io](https://etcd.io/docs/v3.4.0/op-guide/container/)
+
+-----
+
+* `vim run_etcd.sh`
 
 ```bash
-# Running etcd in standalone mode
-$ export HostIP="192.168.12.50"
-$ docker run -d -v /usr/share/ca-certificates/:/etc/ssl/certs -p 4001:4001 -p 2380:2380 -p 2379:2379 \
- --name etcd quay.io/coreos/etcd:v2.3.8 \
- -name etcd0 \
- -advertise-client-urls http://${HostIP}:2379,http://${HostIP}:4001 \
- -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
- -initial-advertise-peer-urls http://${HostIP}:2380 \
- -listen-peer-urls http://0.0.0.0:2380 \
- -initial-cluster-token etcd-cluster-1 \
- -initial-cluster etcd0=http://${HostIP}:2380 \
- -initial-cluster-state new
-
-$ docker -it etcd bash
-> etcdctl -C http://192.168.12.50:2379 member list
-> etcdctl cluster-health
+#!/usr/bin/env bash
+if [[ $# -ne 2 ]]; then
+  echo "Invalid Arguments"
+  echo "  bash run_etcd.sh etcd-node-0 10.xxx.xxx.xxx"
+  echo "  bash run_etcd.sh etcd-node-1 10.yyy.yyy.yyy"
+  echo "  bash run_etcd.sh etcd-node-2 10.zzz.zzz.zzz"
+  exit 2
+fi
+ 
+THIS_NAME=$1
+THIS_IP=$2
+ 
+#echo $THIS_NAME
+#echo $THIS_IP
+#exit
+ 
+REGISTRY=quay.io/coreos/etcd
+ 
+# For each machine
+ETCD_VERSION=latest
+TOKEN=etcd-token
+CLUSTER_STATE=new
+NAME_1=etcd-node-0
+NAME_2=etcd-node-1
+NAME_3=etcd-node-2
+HOST_1=10.xxx.xxx.xxx
+HOST_2=10.yyy.yyy.yyy
+HOST_3=10.zzz.zzz.zzz
+CLUSTER=${NAME_1}=http://${HOST_1}:2380,${NAME_2}=http://${HOST_2}:2380,${NAME_3}=http://${HOST_3}:2380
+DATA_DIR=/var/lib/etcd
+ 
+docker run --rm -d \
+  -p 2379:2379 \
+  -p 2380:2380 \
+  --volume=${DATA_DIR}:/etcd-data \
+  --name etcd ${REGISTRY}:${ETCD_VERSION} \
+  /usr/local/bin/etcd \
+  --data-dir=/etcd-data --name ${THIS_NAME} \
+  --initial-advertise-peer-urls http://${THIS_IP}:2380 --listen-peer-urls http://0.0.0.0:2380 \
+  --advertise-client-urls http://${THIS_IP}:2379 --listen-client-urls http://0.0.0.0:2379 \
+  --initial-cluster ${CLUSTER} \
+  --initial-cluster-state ${CLUSTER_STATE} --initial-cluster-token ${TOKEN}
 ```
 
+* Run in each machine
+
 ```bash
-# Running a 3 node etcd cluster
-$ docker run --rm -d -v /usr/share/ca-certificates/:/etc/ssl/certs -p 4001:4001 -p 2380:2380 -p 2379:2379 \
- --name etcd quay.io/coreos/etcd:v2.3.8 \
- -name etcd0 \
- -advertise-client-urls http://192.168.12.50:2379,http://192.168.12.50:4001 \
- -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
- -initial-advertise-peer-urls http://192.168.12.50:2380 \
- -listen-peer-urls http://0.0.0.0:2380 \
- -initial-cluster-token etcd-cluster-1 \
- -initial-cluster etcd0=http://192.168.12.50:2380,etcd1=http://192.168.12.51:2380,etcd2=http://192.168.12.52:2380 \
- -initial-cluster-state new
+# Install etcd
+#   https://docs.openstack.org/ko_KR/install-guide/environment-etcd-ubuntu.html
+$ sudo apt-get update
+$ sudo apt-get install etcd
 
-$ docker run --rm -d -v /usr/share/ca-certificates/:/etc/ssl/certs -p 4001:4001 -p 2380:2380 -p 2379:2379 \
- --name etcd quay.io/coreos/etcd:v2.3.8 \
- -name etcd1 \
- -advertise-client-urls http://192.168.12.51:2379,http://192.168.12.51:4001 \
- -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
- -initial-advertise-peer-urls http://192.168.12.51:2380 \
- -listen-peer-urls http://0.0.0.0:2380 \
- -initial-cluster-token etcd-cluster-1 \
- -initial-cluster etcd0=http://192.168.12.50:2380,etcd1=http://192.168.12.51:2380,etcd2=http://192.168.12.52:2380 \
- -initial-cluster-state new
+# Run in machine 1
+$ vim run_etcd.sh
+$ chmod 755 run_etcd.sh
+$ ./run_etcd.sh etcd-node-0 10.xxx.xxx.xxx
+ 
+$ etcdctl --endpoints=http://localhost:2379 member list
 
-$ docker run --rm -d -v /usr/share/ca-certificates/:/etc/ssl/certs -p 4001:4001 -p 2380:2380 -p 2379:2379 \
- --name etcd quay.io/coreos/etcd:v2.3.8 \
- -name etcd2 \
- -advertise-client-urls http://192.168.12.52:2379,http://192.168.12.52:4001 \
- -listen-client-urls http://0.0.0.0:2379,http://0.0.0.0:4001 \
- -initial-advertise-peer-urls http://192.168.12.52:2380 \
- -listen-peer-urls http://0.0.0.0:2380 \
- -initial-cluster-token etcd-cluster-1 \
- -initial-cluster etcd0=http://192.168.12.50:2380,etcd1=http://192.168.12.51:2380,etcd2=http://192.168.12.52:2380 \
- -initial-cluster-state new
+# Run in machine 2
+$ vim run_etcd.sh
+$ chmod 755 run_etcd.sh
+$ ./run_etcd.sh etcd-node-0 10.yyy.yyy.yyy
+ 
+$ etcdctl --endpoints=http://localhost:2379 member list
+
+# Run in machine 3
+$ vim run_etcd.sh
+$ chmod 755 run_etcd.sh
+$ ./run_etcd.sh etcd-node-0 10.zzz.zzz.zzz
+ 
+$ etcdctl --endpoints=http://localhost:2379 member list
 ```
 
 ## Install with docker-compose
