@@ -569,6 +569,12 @@ kubectl delete -f <FILENAME>
 > kubectl delete service my-nginx
 ```
 
+* [Difference between Docker ENTRYPOINT and Kubernetes container spec COMMAND?](https://stackoverflow.com/questions/44316361/difference-between-docker-entrypoint-and-kubernetes-container-spec-command)
+  * [Define a Command and Arguments for a Container](https://kubernetes.io/docs/tasks/inject-data-application/define-command-argument-container/)
+  * If you do not supply command or args for a Container, the defaults defined in the Docker image are used.
+  * If you supply only args for a Container, the default Entrypoint defined in the Docker image is run with the args that you supplied.
+  * If you supply a command for a Container, only the supplied command is used. The default EntryPoint and the default Cmd defined in the Docker image are ignored. Your command is run with the args supplied (or no args if none supplied).
+
 ## Launch Pods with livnessprobe, readynessprobe
 
 * [workshop-k8s-basic/guide/guide-03/task-02.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-02.md)
