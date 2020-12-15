@@ -541,6 +541,7 @@ LinkedList 처럼 입력된 순서대로 저장
 ```
 
 * sort
+  * [Sorting in Java @ baeldung](https://www.baeldung.com/java-sorting)
 
 ```java
 // sort array ascending
