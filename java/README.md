@@ -582,7 +582,6 @@ Collections.sort(rec, new Comparator() {
 });
 
 // sort characters of a string by frequency
-// Arrays.sort doen't support lambda function with 2 arguments
 class Solution {
 	public String frequencySort(String s) {
 		int[] freqs = new int[256];
@@ -606,6 +605,27 @@ class Solution {
 				.collect(Collectors.joining());						
 	}
 }
+
+// Arrays.sort with labmda
+int n = 10;
+// Dosn't work. javac -Xdiags:verbose Solution.java
+//  method Arrays.sort(int[]) is not applicable
+//      (actual and formal argument lists differ in length)
+// Argument type of lambda should be object ???
+int[] A = new int[n];
+Arrays.sort(A, (a, b) -> Integer.compare(a, b)); // ERROR
+// Does work
+Integer[] A = new Integer[n];
+Arrays.sort(A, (a, b) -> Integer.compare(a, b));
+// serveral examples which work
+Integer[] B = {5, 3, 8, 1, 4, 6, 9};
+Arrays.sort(B, (Integer a, Integer b) -> Integer.compare(a, b));
+// Does work
+int[][] B  = new int[n][];
+Arrays.sort(B, (a, b) -> Integer.compare(a[0], b[0]));
+// Does work??? Why???
+int[][][] C  = new int[n][n][];
+Arrays.sort(B, (a, b) -> Integer.compare(a[0], b[0]));
 ```
 
 * Arrays
