@@ -1850,6 +1850,7 @@ $ echo "net.ipv4.tcp_tw_reuse = 1" >> /etc/sysctl.conf
 
 # File Kernel Parameters
 
+* [리눅스 최대 열수 있는 파일 갯수 수정하기(Linux increase the max open files per user)](https://www.lesstif.com/lpt/linux-increase-the-max-open-files-per-user-48103542.html)
 * [Docker & Kernel Configuration @ m3](https://m3db.github.io/m3/operational_guide/kernel_configuration/)
 * [Java, max user processes, open files](https://woowabros.github.io/experience/2018/04/17/linux-maxuserprocess-openfiles.html)
 
@@ -1876,4 +1877,14 @@ ubuntu	soft	nproc 		10000
 ubuntu	hard	nproc		10000
 ubuntu	soft 	nofile		3000000
 ubuntu	hard	nofile		3000000
+
+# Check "session required pam_limits.so" in /etc/pam.d/login
+$ sudo vim /etc/pam.d/login
+session required pam_limits.so
+
+# Check other limits in /etc/security/limits.d/*.conf
+$ sudo vim /etc/security/limits.d/*.conf
+
+# Check again after log-out and log-in again
+$ ulimit -a
 ```

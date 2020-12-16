@@ -12,6 +12,7 @@
   - [Creating a Single Node M3DB Cluster with Docker](#creating-a-single-node-m3db-cluster-with-docker)
   - [M3DB Cluster Deployment with docker-compose](#m3db-cluster-deployment-with-docker-compose)
   - [M3DB on Kubernetes](#m3db-on-kubernetes)
+  - [Install with Terraform and Ansible](#install-with-terraform-and-ansible)
 - [M3 stack infrastructure design](#m3-stack-infrastructure-design)
   - [M3 Basic](#m3-basic)
   - [M3 Namesspaces](#m3-namesspaces)
@@ -407,6 +408,12 @@ $ helm install grafana grafana/grafana \
 #   https://www.eksworkshop.com/intermediate/240_monitoring/
 $ helm install prometheus prometheus-12.0.1.tgz --namespace prometheus --set alertmanager.persistentVolume.storageClass="gp2" --set server.persistentVolume.storageClass="gp2"
 ```
+
+## Install with Terraform and Ansible
+
+* [AWS EC2 Instance Terraform module @ github](https://github.com/terraform-aws-modules/terraform-aws-ec2-instance)
+* [Provisioning a clustered, HA application on AWS, using Terraform and Ansible - Bastion version @ github](https://github.com/nicusX/etcd-terraform-ansible-aws-sample)
+* [ansible-role-m3db @ github](https://github.com/chaordic/ansible-role-m3db)
 
 # M3 stack infrastructure design
 
