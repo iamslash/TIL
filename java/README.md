@@ -394,6 +394,8 @@ System.out.println(rnd.nextFloat()); // 0.0~1.0
 * Queue, PriorityQueue
 
 ```java
+   // Ascending order
+   Queue<Integer> queue = new PriorityQueue<>();
    // Descending order
    Queue<Integer> queue = new PriorityQueue<>((a,b) -> b - a);
    queue.add(1);
