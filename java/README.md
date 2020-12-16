@@ -627,6 +627,25 @@ Arrays.sort(B, (a, b) -> Integer.compare(a[0], b[0]));
 // Does work??? Why???
 int[][][] C  = new int[n][n][];
 Arrays.sort(B, (a, b) -> Integer.compare(a[0], b[0]));
+
+// Arrays.sort with Lambda and Anonymous Comparator
+int[][] A = new int[n][];
+Arrays.sort(A, (a, b) -> {
+      if (a[0] != b[0])
+         return a[0] - b[0];
+      if (a[1] != b[1])
+         return a[1] - b[1];
+      return a[2] - b[2];
+   });
+Arrays.sort(A, new Comparator<int[]>() {
+   public int compare(int[] a, int[] b) {
+      if (a[0] != b[0])
+         return a[0] - b[0];
+      if (a[1] != b[1])
+         return a[1] - b[1];
+      return a[2] - b[2];
+   }
+});
 ```
 
 * Arrays
