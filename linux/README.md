@@ -1851,6 +1851,7 @@ $ echo "net.ipv4.tcp_tw_reuse = 1" >> /etc/sysctl.conf
 # File Kernel Parameters
 
 * [리눅스 최대 열수 있는 파일 갯수 수정하기(Linux increase the max open files per user)](https://www.lesstif.com/lpt/linux-increase-the-max-open-files-per-user-48103542.html)
+  * [Linux Increase The Maximum Number Of Open Files / File Descriptors (FD)](https://www.cyberciti.biz/faq/linux-increase-the-maximum-number-of-open-files/)
 * [Docker & Kernel Configuration @ m3](https://m3db.github.io/m3/operational_guide/kernel_configuration/)
 * [Java, max user processes, open files](https://woowabros.github.io/experience/2018/04/17/linux-maxuserprocess-openfiles.html)
 
