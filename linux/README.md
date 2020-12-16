@@ -39,7 +39,8 @@
 - [System Monitoring](#system-monitoring)
   - [Averge Load](#averge-load)
   - [swapin, swapout](#swapin-swapout)
-- [Kernel Parameters](#kernel-parameters)
+- [Network Kernel Parameters](#network-kernel-parameters)
+- [File Kernel Parameters](#file-kernel-parameters)
 
 -------------------------------------------------------------------------------
 
@@ -1827,7 +1828,7 @@ swap-out 이라고 한다.
 
 swap-in, swap-ou 의 횟수가 많다면 물리 메모리가 부족하다는 의미이다.
 
-# Kernel Parameters
+# Network Kernel Parameters
 
 * `net.ipv4.tcp_tw_reuse`
   * [tcp_tw_reuse and tcp_tw_recycle](https://brunch.co.kr/@alden/3)
@@ -1841,8 +1842,38 @@ swap-in, swap-ou 의 횟수가 많다면 물리 메모리가 부족하다는 의
   * 각 네트워크 장치 별로 커널이 처리하도록 쌓아두는 queue 의 크기. 커널의 패킷 처리 속도가 상대적으로 느리다면 queue 에 패킷이 쌓일 것이고 queue 에 추가되지 못한 패킷들은 버려진다. 적당히 설정해야 함.
 
 ```bash
-echo "net.core.netdev_max_backlog = 65536" >> /etc/sysctl.conf
-echo "net.core.somaxconn = 65536" >> /etc/sysctl.conf
-echo "net.ipv4.tcp_max_syn_backlog = 65536" >> /etc/sysctl.conf
-echo "net.ipv4.tcp_tw_reuse = 1" >> /etc/sysctl.conf
+$ echo "net.core.netdev_max_backlog = 65536" >> /etc/sysctl.conf
+$ echo "net.core.somaxconn = 65536" >> /etc/sysctl.conf
+$ echo "net.ipv4.tcp_max_syn_backlog = 65536" >> /etc/sysctl.conf
+$ echo "net.ipv4.tcp_tw_reuse = 1" >> /etc/sysctl.conf
+```
+
+# File Kernel Parameters
+
+* [Docker & Kernel Configuration @ m3](https://m3db.github.io/m3/operational_guide/kernel_configuration/)
+* [Java, max user processes, open files](https://woowabros.github.io/experience/2018/04/17/linux-maxuserprocess-openfiles.html)
+
+-----
+
+```bash
+# Read parameters 
+$ sudo sysctl -n fs.file-max
+$ sudo sysctl -n fs.nr_open-max
+
+# Read
+$ ulimit -a
+$ ulimit -Sn 3000000
+
+# Write parameters to /etc/sysctl.conf
+$ sudo echo "fs.file-max=3000000" >> /etc/sysctl.conf
+$ sudo echo "fs.nr_open=3000000" >> /etc/sysctl.conf
+# Load parameters
+$ sudo sysctl -p
+
+# Write parameters to /etc/security/limits.conf
+$ vim /etc/security/limits.conf
+ubuntu	soft	nproc 		10000
+ubuntu	hard	nproc		10000
+ubuntu	soft 	nofile		3000000
+ubuntu	hard	nofile		3000000
 ```
