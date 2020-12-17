@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basic Usages](#basic-usages)
+  - [min, max values](#min-max-values)
   - [abs vs fabs](#abs-vs-fabs)
   - [virtual function](#virtual-function)
   - [vector vs deque vs list](#vector-vs-deque-vs-list)
@@ -57,6 +58,20 @@ c++에 대해 정리한다.
 - [c++11FAQ](http://pl.pusan.ac.kr/~woogyun/cpp11/C++11FAQ_ko.html)
 
 # Basic Usages
+
+## min, max values
+
+```cpp
+// int
+printf("%d\n", INT_MAX);
+print("%d\n", std::numeric_limits<int>::max());
+printf("%d\n", INT_MIN);
+print("%d\n", std::numeric_limits<int>::min());
+
+// float
+print("%f\n", std::numeric_limits<float>::max());
+print("%f\n", std::numeric_limits<float>::min());
+```
 
 ## abs vs fabs
 

@@ -2,6 +2,7 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Basic](#basic)
+  - [min, max values](#min-max-values)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
   - [Multidimensional Array](#multidimensional-array)
@@ -92,6 +93,23 @@ python3 에 대해 정리한다.
   * library검색이 용이하다.
 
 # Basic
+
+## min, max values
+
+```py
+# python3 int is unbounded but it depends on wordsize
+print(sys.maxsize) # for signed int
+print(sys.maxsize * 2 + 1) # for unsigned int
+# python3 float
+print(float("inf"))
+import sys
+print(sys.float_info)
+print(sys.float_info.max)
+
+# python2
+print(sys.maxint)
+print(-sys.maxint - 1)
+```
 
 ## Collections Compared to c++ containers
 
