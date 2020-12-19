@@ -1,11 +1,20 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basic Usages](#basic-usages)
-  - [Hello World](#hello-world)
+  - [Compile, Execute](#compile-execute)
   - [REPL](#repl)
+  - [Hello World](#hello-world)
+  - [Reserved Words](#reserved-words)
+  - [Useful Keywords](#useful-keywords)
+  - [min, max values](#min-max-values)
+  - [abs, fabs](#abs-fabs)
+  - [Bit Manipulation](#bit-manipulation)
+  - [String](#string)
+  - [Random](#random)
+  - [Print Out](#print-out)
   - [Collections compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections by examples](#collections-by-examples)
-  - [Reserved Words](#reserved-words)
+  - [Reserved Words](#reserved-words-1)
   - [Syntax](#syntax)
   - [Classes and Objects](#classes-and-objects)
   - [Variables](#variables)
@@ -15,7 +24,6 @@
   - [Methods](#methods)
   - [Blocks](#blocks)
   - [Modules](#modules)
-  - [Strings](#strings)
   - [Arrays](#arrays)
   - [Hashes](#hashes)
   - [Date & Time](#date--time)
@@ -55,6 +63,18 @@
 
 # Basic Usages
 
+## Compile, Execute
+
+```bash
+$ ruby a.rb
+```
+
+## REPL
+
+```bash
+> irb
+```
+
 ## Hello World
 
 * a.rb
@@ -64,10 +84,246 @@ puts "hello world"
 # ruby a.rb
 ```
 
-## REPL
+## Reserved Words
 
-```bash
-> irb
+* [Keywords @ ruby.io](https://docs.ruby-lang.org/en/2.7.0/doc/keywords_rdoc.html)
+
+----
+
+```rb
+__ENCODING__
+# The script encoding of the current file. See Encoding.
+
+__LINE__
+# The line number of this keyword in the current file.
+
+__FILE__
+# The path to the current file.
+
+BEGIN
+# Runs before any other code in the current file. See miscellaneous syntax
+
+END
+# Runs after any other code in the current file. See miscellaneous syntax
+
+alias
+# Creates an alias between two methods (and other things). See modules and classes syntax
+
+and
+# Short-circuit Boolean and with lower precedence than &&
+
+begin
+# Starts an exception handling block. See exceptions syntax
+
+break
+# Leaves a block early. See control expressions syntax
+
+case
+# Starts a case expression. See control expressions syntax
+
+class
+# Creates or opens a class. See modules and classes syntax
+
+def
+# Defines a method. See methods syntax
+
+defined?
+# Returns a string describing its argument. See miscellaneous syntax
+
+do
+# Starts a block.
+
+else
+# The unhandled condition in case, if and unless expressions. See control expressions syntax
+
+elsif
+# An alternate condition for an if expression. See control expressions syntax
+
+end
+# The end of a syntax block. Used by classes, modules, methods, exception handling and control expressions.
+
+ensure
+# Starts a section of code that is always run when an exception is raised. See exceptions syntax
+
+false
+# Boolean false. See literals
+
+for
+# A loop that is similar to using the each method. See control expressions syntax
+
+if
+# Used for if and modifier if statements. See control expressions syntax
+
+in
+# Used to separate the iterable object and iterator variable in a for loop. See control expressions syntax
+
+module
+# Creates or opens a module. See modules and classes syntax
+
+next
+# Skips the rest of the block. See control expressions syntax
+
+nil
+# A false value usually indicating “no value” or “unknown”. See literals
+
+not
+# Inverts the following boolean expression. Has a lower precedence than !
+
+or
+# Boolean or with lower precedence than ||
+
+redo
+# Restarts execution in the current block. See control expressions syntax
+
+rescue
+# Starts an exception section of code in a begin block. See exceptions syntax
+
+retry
+# Retries an exception block. See exceptions syntax
+
+return
+# Exits a method. See methods syntax. If met in top-level scope, immediately stops interpretation of the current file.
+
+self
+# The object the current method is attached to. See methods syntax
+
+super
+# Calls the current method in a superclass. See methods syntax
+
+then
+# Indicates the end of conditional blocks in control structures. See control expressions syntax
+
+true
+# Boolean true. See literals
+
+undef
+# Prevents a class or module from responding to a method call. See modules and classes syntax
+
+unless
+# Used for unless and modifier unless statements. See control expressions syntax
+
+until
+# Creates a loop that executes until the condition is true. See control expressions syntax
+
+when
+# A condition in a case expression. See control expressions syntax
+
+while
+# Creates a loop that executes while the condition is true. See control expressions syntax
+
+yield
+# Starts execution of the block sent to the current method. See methods syntax
+```
+
+## Useful Keywords
+
+WIP
+
+## min, max values
+
+```rb
+class Integer
+  N_BYTES = [42].pack('i').size
+  N_BITS = N_BYTES * 16
+  MAX = 2 ** (N_BITS - 2) - 1
+  MIN = -MAX - 1
+end
+
+p Integer::MAX              #=> 4611686018427387903
+p Integer::MAX.class        #=> Fixnum
+p (Integer::MAX + 1).class  #=> Bignum
+```
+
+## abs, fabs
+
+```rb
+10.abs()     # 10
+-10.abs()    # 10
+-2.1.abs()   # 2.1
+```
+
+## Bit Manipulation
+
+WIP
+
+## String
+
+```rb
+## expression substitution
+x, y, z = 12, 36, 72
+puts "The value of x is #{ x }."
+puts "The sum of x and y is #{ x + y }."
+puts "The average was #{ (x + y + z)/3 }."
+# The value of x is 12.
+# The sum of x and y is 48.
+# The average was 40.
+
+## general delimited strings
+%{Ruby is fun.}  equivalent to "Ruby is fun."
+%Q{ Ruby is fun. } equivalent to " Ruby is fun. "
+%q[Ruby is fun.]  equivalent to a single-quoted string
+%x!ls! equivalent to back tick command output `ls`
+
+## character encoding
+$KCODE = 'u'
+# a : ASCII
+# e : EUC
+# n : same as ASCII
+# u : UTF-8
+
+## string built-in methods
+myStr = String.new("THIS IS TEST")
+foo = myStr.downcase
+puts "#{foo}"
+# this is test
+
+## string unpack directives
+"abc \0\0abc \0\0".unpack('A6Z6')   #=> ["abc", "abc "]
+"abc \0\0".unpack('a3a3')           #=> ["abc", " \000\000"]
+"abc \0abc \0".unpack('Z*Z*')       #=> ["abc ", "abc "]
+"aa".unpack('b8B8')                 #=> ["10000110", "01100001"]
+"aaa".unpack('h2H2c')               #=> ["16", "61", 97]
+"\xfe\xff\xfe\xff".unpack('sS')     #=> [-2, 65534]
+"now = 20is".unpack('M*')           #=> ["now is"]
+"whole".unpack('xax2aX2aX1aX2a')    #=> ["h", "e", "l", "l", "o"]
+```
+
+## Random
+
+* [Generating Random Numbers in Ruby](https://blog.appsignal.com/2018/07/31/generating-random-numbers-in-ruby.html)
+
+----
+
+```rb
+rand()         # (0..1)
+rand(10)       # [0..10)
+rand(1..10)    # [1..10]
+rand(1...10)   # (1..10)
+rand(1.5..3.0) # [1.5..3.0]
+rand(-5..-1)   # [-5..-1]
+
+srand(777)     # seed
+```
+
+## Print Out
+
+```rb
+time    = 5
+message = "Processing of the data has finished in %d seconds" % [time]
+puts message
+
+score = 78.5431
+puts "The average is %0.2f" % [score]
+puts "122 in HEX is %x" % [122]
+puts "The number is %04d" % [20]
+
+names_with_ages = [["john", 20], ["peter", 30], ["david", 40], ["angel", 24]]
+names_with_ages.each { |name, age| puts name.ljust(10) + age.to_s }
+# Prints the following table
+john      20
+david     30
+peter     40
+angel     24
 ```
 
 ## Collections compared to c++ containers
@@ -1056,48 +1312,6 @@ samp.a2
 samp.b1
 samp.b2
 samp.s1
-```
-
-## Strings
-
-```ruby
-## expression substitution
-x, y, z = 12, 36, 72
-puts "The value of x is #{ x }."
-puts "The sum of x and y is #{ x + y }."
-puts "The average was #{ (x + y + z)/3 }."
-# The value of x is 12.
-# The sum of x and y is 48.
-# The average was 40.
-
-## general delimited strings
-%{Ruby is fun.}  equivalent to "Ruby is fun."
-%Q{ Ruby is fun. } equivalent to " Ruby is fun. "
-%q[Ruby is fun.]  equivalent to a single-quoted string
-%x!ls! equivalent to back tick command output `ls`
-
-## character encoding
-$KCODE = 'u'
-# a : ASCII
-# e : EUC
-# n : same as ASCII
-# u : UTF-8
-
-## string built-in methods
-myStr = String.new("THIS IS TEST")
-foo = myStr.downcase
-puts "#{foo}"
-# this is test
-
-## string unpack directives
-"abc \0\0abc \0\0".unpack('A6Z6')   #=> ["abc", "abc "]
-"abc \0\0".unpack('a3a3')           #=> ["abc", " \000\000"]
-"abc \0abc \0".unpack('Z*Z*')       #=> ["abc ", "abc "]
-"aa".unpack('b8B8')                 #=> ["10000110", "01100001"]
-"aaa".unpack('h2H2c')               #=> ["16", "61", 97]
-"\xfe\xff\xfe\xff".unpack('sS')     #=> [-2, 65534]
-"now = 20is".unpack('M*')           #=> ["now is"]
-"whole".unpack('xax2aX2aX1aX2a')    #=> ["h", "e", "l", "l", "o"]
 ```
 
 ## Arrays

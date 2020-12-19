@@ -2,7 +2,7 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Basic](#basic)
-  - [Compile, Execution](#compile-execution)
+  - [Compile, Execute](#compile-execute)
   - [Reserved Words](#reserved-words)
   - [Useful keywords](#useful-keywords)
   - [min, max values](#min-max-values)
@@ -102,7 +102,7 @@ python3 에 대해 정리한다.
 
 # Basic
 
-## Compile, Execution
+## Compile, Execute
 
 ```bash
 $ python3 a.py
