@@ -286,6 +286,21 @@ puts "#{foo}"
 "\xfe\xff\xfe\xff".unpack('sS')     #=> [-2, 65534]
 "now = 20is".unpack('M*')           #=> ["now is"]
 "whole".unpack('xax2aX2aX1aX2a')    #=> ["h", "e", "l", "l", "o"]
+
+>> abc
+=> "abcd;;;;;efg=aaa:::::bbb"
+>> abc[0..1]
+=> "ab"
+>> abc[4..-1]
+=> ";;;;;efg=aaa:::::bbb"
+>> abc[0..-1]
+=> "abcd;;;;;efg=aaa:::::bbb"
+>> abc[0..-2]
+=> "abcd;;;;;efg=aaa:::::bb"
+>> abc[0..-1]
+=> "abcd;;;;;efg=aaa:::::bbb"
+>> abc[0..0]
+=> "a"
 ```
 
 ## Random
