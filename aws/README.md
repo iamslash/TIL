@@ -457,6 +457,7 @@ template 을 만들어서 EC2 를 쉽게 provisioning 할 수 있다. launch con
 
 ## ELB (Elastic Load Balancer)
 
+* [ELB @ TIL](elb.md)
 * [Elastic Load Balancing 심층 분석 (ALB을 중심으로) - 오길재 테크니컬 어카운트 매니저(AWS 코리아)](https://www.youtube.com/watch?v=yAzERx-HCPI)
   * [slide](https://www.slideshare.net/awskorea/6-elastic-load-balancing)
 * [EC2 Scalability - Scale Out (ELB) @ 생활코딩](https://opentutorials.org/course/2717/11332)
