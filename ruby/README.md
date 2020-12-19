@@ -14,7 +14,7 @@
   - [Print Out](#print-out)
   - [Collections compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections by examples](#collections-by-examples)
-  - [Reserved Words](#reserved-words-1)
+  - [Mult Dimensional Array](#mult-dimensional-array)
   - [Syntax](#syntax)
   - [Classes and Objects](#classes-and-objects)
   - [Variables](#variables)
@@ -516,20 +516,26 @@ reviews[book2] = 'Nice and compact!'
 reviews.length #=> 1
 ```
 
-## Reserved Words
+## Mult Dimensional Array
 
-```ruby
-BEGIN do next then
-END else nil true
-alias elsif not undef
-and end or unless
-begin ensure redo until
-break false rescue when
-case for retry while
-class if return while
-def in self __FILE__
-defined? module super __LINE__
+```rb
+A = Array.new(2) { Array.new(2, 0) }
+puts(A)
+# [[0, 0], [0, 0]]
+A[0][0] = 1
+puts(A)
+# [[1, 0], [0, 0]]
+A = Array.new(2) { Array.new(2) { |i| 0 } }
+puts(A)
+# [[0, 0], [0, 0]]
+A[0][0] = 1
+puts(A)
+# [[1, 0], [0, 0]]
+
+b = Array.new(2) { Array.new(3) { |index| index ** 2} } 
+#=> [[0, 1, 4], [0, 1, 4]]
 ```
+
 ## Syntax
 
 ```ruby
@@ -728,7 +734,8 @@ cust2.total_no_of_customers()
 # Total number of customers: 2
 
 ## Constants
-#    usually starts with a uppercase letter
+# usually starts with a uppercase letter
+# any variable whose name starts with a capital letter is a constant and you can only assign to it once. 
 class Example
    VAR1 = 100
    VAR2 = 200
