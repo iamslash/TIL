@@ -13,7 +13,7 @@
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collection Examples](#collection-examples)
   - [Collection Conversions](#collection-conversions)
-  - [Multi dimensional array](#multi-dimensional-array)
+  - [Multi Dimensional Array](#multi-dimensional-array)
   - [Collection Framework](#collection-framework)
   - [Collection Implementations](#collection-implementations)
   - [Data Types](#data-types)
@@ -715,6 +715,7 @@ String s = Collections.min(A);
 ## Collection Conversions
 
 * [Java - Set를 List로, List를 Set로 변환하는 방법](https://codechacha.com/ko/java-convert-set-to-list-and-list-to-set/)
+* [Initializing a List in Java](https://www.geeksforgeeks.org/initializing-a-list-in-java/)
 
 ----
 
@@ -759,13 +760,20 @@ List<Integer> list = Arrays.asList(1, 2, 3);
 list.toArray(new Integer[list.size()]);
 ```
 
-## Multi dimensional array
+## Multi Dimensional Array
 
 * [Multi Dimensional ArrayList in Java](https://www.baeldung.com/java-multi-dimensional-arraylist)
+* [Initializing a List in Java](https://www.geeksforgeeks.org/initializing-a-list-in-java/)
 
 ----
 
 ```java
+// init with values
+int[][] moves = {
+   {4, 6},
+   {6, 8},
+};
+
 // 2d Integer
 int vertexCount = 3;
 ArrayList<ArrayList<Integer>> graph = new ArrayList<>(vertexCount);
