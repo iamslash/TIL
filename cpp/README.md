@@ -1,8 +1,14 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basic Usages](#basic-usages)
+  - [Compile, Execution](#compile-execution)
+  - [Reserved Words](#reserved-words)
+  - [Useful Keywords](#useful-keywords)
   - [min, max values](#min-max-values)
   - [abs vs fabs](#abs-vs-fabs)
+  - [Bit Maniulation](#bit-maniulation)
+  - [String](#string)
+  - [Random](#random)
   - [virtual function](#virtual-function)
   - [vector vs deque vs list](#vector-vs-deque-vs-list)
   - [vector](#vector)
@@ -59,6 +65,123 @@ c++에 대해 정리한다.
 
 # Basic Usages
 
+## Compile, Execution
+
+```bash
+$ g++ -std=c++11 -o a.out a.cpp
+$ ./a.out
+```
+
+## Reserved Words
+
+* [c++ keywords](https://en.cppreference.com/w/cpp/keyword)
+  
+----
+
+```cpp
+alignas (since C++11)
+alignof (since C++11)
+and
+and_eq
+asm
+atomic_cancel (TM TS)
+atomic_commit (TM TS)
+atomic_noexcept (TM TS)
+auto (1)
+bitand
+bitor
+bool
+break
+case
+catch
+char
+char8_t (since C++20)
+char16_t (since C++11)
+char32_t (since C++11)
+class (1)
+compl
+concept (since C++20)
+const
+consteval (since C++20)
+constexpr (since C++11)
+constinit (since C++20)
+const_cast
+continue
+co_await (since C++20)
+co_return (since C++20)
+co_yield (since C++20)
+decltype (since C++11)
+default (1)
+delete (1)
+do
+double
+dynamic_cast
+else
+enum
+explicit
+export (1) (3)
+extern (1)
+false
+float
+for
+friend
+goto
+if
+inline (1)
+int
+long
+mutable (1)
+namespace
+new
+noexcept (since C++11)
+not
+not_eq
+nullptr (since C++11)
+operator
+or
+or_eq
+private
+protected
+public
+reflexpr (reflection TS)
+register (2)
+reinterpret_cast
+requires (since C++20)
+return
+short
+signed
+sizeof (1)
+static
+static_assert (since C++11)
+static_cast
+struct (1)
+switch
+synchronized (TM TS)
+template
+this
+thread_local (since C++11)
+throw
+true
+try
+typedef
+typeid
+typename
+union
+unsigned
+using (1)
+virtual
+void
+volatile
+wchar_t
+while
+xor
+xor_eq
+```
+
+## Useful Keywords
+
+WIP
+
 ## min, max values
 
 ```cpp
@@ -76,6 +199,28 @@ print("%f\n", std::numeric_limits<float>::min());
 ## abs vs fabs
 
 `abs(int n)` 는 `cstdlib` 에 정의되어 있고 `fabs(double n)` 는 `cmath` 에 정의되어 있다.
+
+## Bit Maniulation
+
+```cpp
+```
+
+## String
+
+```cpp
+string a = "Hello World";
+// Sub string
+string b = a.substr(0, 5); // Hello
+// Convert string, int
+int n = stoi("12");
+string s = to_string(n);
+```
+
+## Random
+
+```cpp
+int num = random();
+```
 
 ## virtual function
 

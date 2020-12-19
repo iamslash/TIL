@@ -5,6 +5,8 @@
   - [Compile, Execution](#compile-execution)
   - [Reserved Words](#reserved-words)
   - [Useful Keywords](#useful-keywords)
+  - [min, max values](#min-max-values)
+  - [abs vs fabs](#abs-vs-fabs)
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
@@ -193,6 +195,39 @@ class Person implements Serializable {
     }
 ```
 
+## min, max values
+
+```java
+// int
+System.out.println(Integer.MIN_VALUE);
+System.out.println(Integer.MAX_VALUE);
+System.out.println(Integer.MIN_VALUE - 1);
+System.out.println(Integer.MAX_VALUE + 1);
+
+// float
+System.out.println(Float.MIN_VALUE);
+System.out.println(Float.MAX_VALUE);
+```
+
+## abs vs fabs
+
+```java
+// abs
+int x = 175;
+int y = -184;
+System.out.println("Math.abs(" + x + ")=" + Math.abs(x));
+System.out.println("Math.abs(" + y + ")=" + Math.abs(y));
+System.out.println("Math.abs(-0)=" + Math.abs(-0));
+
+// fabs
+Integer a = -8;
+double d = -100;
+float f = -90;
+System.out.println(Math.abs(a));
+System.out.println(Math.abs(d));     
+System.out.println(Math.abs(f)); 
+```
+
 ## Bit Manipulation
 
 * [Difference between >>> and >>](https://stackoverflow.com/questions/2811319/difference-between-and)
@@ -214,10 +249,14 @@ int c = a >>> 1; // 0111 1111
 ## String
 
 ```java
+// Sub string
 s = s.substring(0, s.length() - 1);
 StringBuilder sb = new StringBuilder();
 sb.append("a");
 sb.deleteCharAt(sb.length()-1);
+// Convert String, Integer
+Integer n = Integer.parseInt("12");
+String s = Integer.toString(12);
 ```
 
 ## Random
