@@ -185,6 +185,8 @@ WIP
 
 ```js
 // Sub String
+var s = "Hello World"
+console.log(s.substring(0, 5))  // Hello
 // Convert Number to String
 var tt = 2
 tt += "";
