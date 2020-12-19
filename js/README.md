@@ -2,11 +2,19 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Basic Usages](#basic-usages)
+  - [Compile, Execute](#compile-execute)
+  - [Reserved Words](#reserved-words)
+  - [Useful Keywords](#useful-keywords)
+  - [Min, Max Values](#min-max-values)
+  - [abs, fabs](#abs-fabs)
+  - [Bit Manipulation](#bit-manipulation)
+  - [String](#string)
+  - [Random](#random)
+  - [Print Out](#print-out)
   - [Inspecting Functions](#inspecting-functions)
   - [Documents](#documents)
-  - [Reserved Words](#reserved-words)
+  - [Reserved Words](#reserved-words-1)
   - [Data types](#data-types)
-  - [Print Formatted String](#print-formatted-string)
   - [Standard built-in objects (global objects)](#standard-built-in-objects-global-objects)
     - [Value properties](#value-properties)
     - [Function properties](#function-properties)
@@ -112,6 +120,164 @@ java script에 대해 정리한다.
 
 # Basic Usages
 
+## Compile, Execute
+
+```js
+$ node a.js
+```
+
+## Reserved Words
+
+* [JavaScript Reserved Words](https://www.w3schools.com/js/js_reserved.asp)
+* [Reserved keywords in ES6 with example usage](https://medium.com/@wlodarczyk_j/reserved-keywords-in-es6-with-example-usage-ea0036f63fab)
+
+```js
+abstract	arguments	await*	boolean
+break	byte	case	catch
+char	class*	const	continue
+debugger	default	delete	do
+double	else	enum*	eval
+export*	extends*	false	final
+finally	float	for	function
+goto	if	implements	import*
+in	instanceof	int	interface
+let*	long	native	new
+null	package	private	protected
+public	return	short	static
+super*	switch	synchronized	this
+throw	throws	transient	true
+try	typeof	var	void
+volatile	while	with	yield
+```
+
+## Useful Keywords
+
+WIP
+
+## Min, Max Values
+
+```js
+console.log(Number.MAX_SAFE_INTEGER); //  9007199254740991
+console.log(Number.MIN_SAFE_INTEGER); // -9007199254740991
+
+console.log(Number.MAX_VALUE) // 1.7976931348623157e+308
+console.log(Number.MIN_VALUE) // 5e-324
+```
+
+## abs, fabs
+
+```js
+console.log(Math.abs(-23));     // 23
+console.log(Math.abs('-23'));   // 23
+console.log(Math.abs(-30 * 2)); // 60
+console.log(Math.abs(-2.3));    // 2.3
+```
+
+## Bit Manipulation
+
+WIP
+
+## String
+
+* [Javascript에서 String을 Number타입으로 바꾸기](https://blog.outsider.ne.kr/361)
+
+-----
+
+```js
+// Sub String
+// Convert Number to String
+var tt = 2
+tt += "";
+alert(typeof tt);   // Result : string
+console.log(tt)
+
+var tt = 2
+alert(typeof tt);    // Result : number
+tt = String(tt);
+alert(typeof tt);    // Result : string
+
+// Convert String to Number
+tt = "2"
+tt *= 1;
+alert(typeof tt);    // Result : number
+console.log(tt)
+
+tt = "2"
+alert(typeof tt);    // Result : string
+tt = Number(tt);
+alert(typeof tt);    // Result : number
+
+// parseInt, parseFloat
+var tt = "2"
+alert(typeof tt);    // Result : string
+tt = parseInt(tt);
+alert(typeof tt);    // Result : number
+            
+tt = "2"
+alert(typeof tt);    // Result : string
+tt = parseFloat(tt);
+alert(typeof tt);    // Result : number
+
+parseInt("123.456");        // 123
+parseInt("100mile");        // 100
+parseInt("w25");               // NaN
+parseInt("05");                  // 5
+parseInt("09");                  // 0
+parseInt("0x35");              // 53
+parseInt("1101", 2);         // 13
+parseInt("09", 10);            // 9
+parseInt("10", 8);              // 8
+
+parseFloat("123.456");       // 123.456
+parseFloat("100.5mile");    // 100.5
+parseFloat("w25");               // NaN
+parseFloat("05");                  // 5
+parseFloat("09");                  // 9
+parseFloat("0x35");              // 0
+```
+
+## Random
+
+```js
+// get random float between 0 and 1
+console.log(Math.random())
+
+// get random float from min, max
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
+console.log(getRandomArbitrary(1, 10))
+
+// get random int from min, max
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min; 
+}
+console.log(getRandomInt(1, 10))
+```
+
+## Print Out
+
+```js
+console.log('Hello World')
+// from ES6. focus on ` not '
+// string interpolation
+let a = 10;
+console.log(`This is ${a}.`);
+
+// format function
+// https://coderwall.com/p/flonoa/simple-string-format-in-javascript
+String.prototype.format = function() {
+  a = this;
+  for (k in arguments) {
+    a = a.replace("{" + k + "}", arguments[k])
+  }
+  return a
+}
+console.log("Hello, {0}!".format("World"))
+```
+
 ## Inspecting Functions
 
 `node` 를 실행하고 `TAB` 을 누르면 리스트를 확인할 수 있다.
@@ -196,25 +362,6 @@ console.log(Symbol('foo') === Symbol('foo'));
 console.log(3/4);  // 0.75
 console.log(parseInt(3/4)) // 0
 console.log(parseInt(100, 2)) // 4, number whose base is 2
-```
-
-## Print Formatted String
-
-```js
-// from ES6. focus on ` not '
-let a = 10;
-console.log(`This is ${a}.`);
-
-// format function
-// https://coderwall.com/p/flonoa/simple-string-format-in-javascript
-String.prototype.format = function() {
-  a = this;
-  for (k in arguments) {
-    a = a.replace("{" + k + "}", arguments[k])
-  }
-  return a
-}
-console.log("Hello, {0}!".format("World"))
 ```
 
 ## Standard built-in objects (global objects)

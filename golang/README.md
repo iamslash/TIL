@@ -12,11 +12,17 @@
   - [Logging](#logging)
   - [Encoding, JSON](#encoding-json)
 - [Basic Usages](#basic-usages)
-  - [Compile, Run](#compile-run)
+  - [Compile, Execution](#compile-execution)
   - [Hello World](#hello-world)
   - [Reserved Words](#reserved-words)
+  - [Useful Keywords](#useful-keywords)
+  - [min, max values](#min-max-values)
+  - [abs, fabs](#abs-fabs)
+  - [Bit Manipulation](#bit-manipulation)
+  - [String](#string)
+  - [Random](#random)
+  - [Print Out](#print-out)
   - [Data Types](#data-types)
-  - [Print Formatted String](#print-formatted-string)
   - [Control Flows](#control-flows)
     - [If](#if)
     - [Switch](#switch)
@@ -38,7 +44,6 @@
     - [Variadic Functions](#variadic-functions)
   - [Type Conversions](#type-conversions)
   - [Packages](#packages)
-  - [Strings](#strings)
   - [Arrays, Slices, Ranges](#arrays-slices-ranges)
     - [Arrays](#arrays)
     - [Slices](#slices)
@@ -184,11 +189,11 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 # Basic Usages
 
-## Compile, Run
+## Compile, Execution
 
 ```bash
-go build a.go
-go run a.go
+$ go build a.go
+$ go run a.go
 ```
 
 ## Hello World
@@ -214,6 +219,172 @@ const    fallthrough if     range     type
 continue for         import return    var
 ```
 
+## Useful Keywords
+
+WIP
+
+## min, max values
+
+```go
+// math package
+const (
+    MaxInt8   = 1<<7 - 1
+    MinInt8   = -1 << 7
+    MaxInt16  = 1<<15 - 1
+    MinInt16  = -1 << 15
+    MaxInt32  = 1<<31 - 1
+    MinInt32  = -1 << 31
+    MaxInt64  = 1<<63 - 1
+    MinInt64  = -1 << 63
+    MaxUint8  = 1<<8 - 1
+    MaxUint16 = 1<<16 - 1
+    MaxUint32 = 1<<32 - 1
+    MaxUint64 = 1<<64 - 1
+)
+
+fmt.Println(math.MaxInt32)
+fmt.Println(math.MinInt32)
+
+const (
+    MaxFloat32             = 3.40282346638528859811704183484516925440e+38  // 2**127 * (2**24 - 1) / 2**23
+    SmallestNonzeroFloat32 = 1.401298464324817070923729583289916131280e-45 // 1 / 2**(127 - 1 + 23)
+
+    MaxFloat64             = 1.797693134862315708145274237317043567981e+308 // 2**1023 * (2**53 - 1) / 2**52
+    SmallestNonzeroFloat64 = 4.940656458412465441765687928682213723651e-324 // 1 / 2**(1023 - 1 + 52)
+)
+
+fmt.Println(math.MaxFloat32)
+fmt.Println(math.SmallestNonzeroFloat32)
+fmt.Println(math.MaxFloat64)
+fmt.Println(math.SmallestNonzeroFloat64)
+
+const MaxUint = ^uint(0) 
+const MinUint = 0 
+const MaxInt = int(MaxUint >> 1) 
+const MinInt = -MaxInt - 1
+```
+
+## abs, fabs
+
+```go
+// Abs for int
+func Abs(x int64) int64 {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+fmt.Println(Abs(-2)) // -2
+
+// Abs for float
+// func Abs(x float64) float64
+import math
+fmt.Println(math.Abs(-2.0)) // -2.0
+```
+
+## Bit Manipulation
+
+WIP
+
+## String
+
+```go
+// Sub string
+s := "Hello World"
+s = s[0:5]
+
+// Convert string, int
+import strconv
+s, err := strconv.Itoa(12)
+n := strconv.Atoi("12")
+
+// creating strings
+var greeting =  "Hello world!"
+
+fmt.Printf("normal string: ")
+fmt.Printf("%s", greeting)
+fmt.Printf("\n")
+fmt.Printf("hex bytes: ")
+
+for i := 0; i < len(greeting); i++ {
+    fmt.Printf("%x ", greeting[i])
+}
+
+fmt.Printf("\n")
+const sampleText = "\xbd\xb2\x3d\xbc\x20\xe2\x8c\x98" 
+
+/*q flag escapes unprintable characters, with + flag it escapses non-ascii 
+characters as well to make output unambigous */
+fmt.Printf("quoted string: ")
+fmt.Printf("%+q", sampleText)
+fmt.Printf("\n") 
+// normal string: Hello world!
+// hex bytes: 48 65 6c 6c 6f 20 77 6f 72 6c 64 21 
+// quoted string: "\xbd\xb2=\xbc \u2318"
+
+// length
+var greeting =  "Hello world!"
+
+fmt.Printf("String Length is: ")
+fmt.Println(len(greeting))  
+// 
+// String Length is : 12
+
+// concatenating strings
+greetings :=  []string{"Hello","world!"}   
+fmt.Println(strings.Join(greetings, " "))
+// Hello world!
+
+// append strings
+a := "hello"
+b := "world"
+c := a + " " + b
+d := c + string(' ')
+e := a + b[0:1]
+fmt.Printf("%s, %s, %s\n", c, d, e)
+fmt.Printf("%T %T %d\n", a[0], a[0:1], len(a[0:1]))
+// hello world, hello world , hellow
+// uint8 string 1
+
+a := "hello world"
+for i, c := range a {
+  fmt.Printf("%d:%T %c:%T %t\n", i, c, i, c, c == ' ')
+}
+// 0:int32 h:int32 false
+// ...
+fmt.Printf("%T\n", ' ')
+// int32
+```
+
+## Random
+
+```go
+
+```
+
+## Print Out
+
+```go
+import fmt
+
+fmt.Println("Hello World")
+fmt.Printf("%d\n", 12)
+
+
+fmt.Println("Hello, 你好, नमस्ते, Привет, ᎣᏏᏲ") // basic print, plus newline
+p := struct { X, Y int }{ 17, 2 }
+fmt.Println( "My point:", p, "x coord=", p.X ) // print structs, ints, etc
+s := fmt.Sprintln( "My point:", p, "x coord=", p.X ) // print to string variable
+
+fmt.Printf("%d hex:%x bin:%b fp:%f sci:%e",17,17,17,17.0,17.0) // c-ish format
+s2 := fmt.Sprintf( "%d %f", 17, 17.0 ) // formatted print to string variable
+
+hellomsg := `
+ "Hello" in Chinese is 你好 ('Ni Hao')
+ "Hello" in Hindi is नमस्ते ('Namaste')
+` // multi-line string literal, using back-tick at beginning and end
+```
+
 ## Data Types
 
 ```go
@@ -231,24 +402,6 @@ rune // alias for int32 ~= a character (Unicode code point) - very Viking
 float32 float64
 
 complex64 complex128
-```
-
-
-## Print Formatted String
-
-```go
-fmt.Println("Hello, 你好, नमस्ते, Привет, ᎣᏏᏲ") // basic print, plus newline
-p := struct { X, Y int }{ 17, 2 }
-fmt.Println( "My point:", p, "x coord=", p.X ) // print structs, ints, etc
-s := fmt.Sprintln( "My point:", p, "x coord=", p.X ) // print to string variable
-
-fmt.Printf("%d hex:%x bin:%b fp:%f sci:%e",17,17,17,17.0,17.0) // c-ish format
-s2 := fmt.Sprintf( "%d %f", 17, 17.0 ) // formatted print to string variable
-
-hellomsg := `
- "Hello" in Chinese is 你好 ('Ni Hao')
- "Hello" in Hindi is नमस्ते ('Namaste')
-` // multi-line string literal, using back-tick at beginning and end
 ```
 
 ## Control Flows
@@ -1374,67 +1527,6 @@ u := uint(f)
 * Convention: package name == last name of import path (import path `math/rand` => package `rand`)
 * Upper case identifier: exported (visible from other packages)
 * Lower case identifier: private (not visible from other packages)
-
-## Strings
-
-```go
-// creating strings
-var greeting =  "Hello world!"
-
-fmt.Printf("normal string: ")
-fmt.Printf("%s", greeting)
-fmt.Printf("\n")
-fmt.Printf("hex bytes: ")
-
-for i := 0; i < len(greeting); i++ {
-    fmt.Printf("%x ", greeting[i])
-}
-
-fmt.Printf("\n")
-const sampleText = "\xbd\xb2\x3d\xbc\x20\xe2\x8c\x98" 
-
-/*q flag escapes unprintable characters, with + flag it escapses non-ascii 
-characters as well to make output unambigous */
-fmt.Printf("quoted string: ")
-fmt.Printf("%+q", sampleText)
-fmt.Printf("\n") 
-// normal string: Hello world!
-// hex bytes: 48 65 6c 6c 6f 20 77 6f 72 6c 64 21 
-// quoted string: "\xbd\xb2=\xbc \u2318"
-
-// length
-var greeting =  "Hello world!"
-
-fmt.Printf("String Length is: ")
-fmt.Println(len(greeting))  
-// 
-// String Length is : 12
-
-// concatenating strings
-greetings :=  []string{"Hello","world!"}   
-fmt.Println(strings.Join(greetings, " "))
-// Hello world!
-
-// append strings
-a := "hello"
-b := "world"
-c := a + " " + b
-d := c + string(' ')
-e := a + b[0:1]
-fmt.Printf("%s, %s, %s\n", c, d, e)
-fmt.Printf("%T %T %d\n", a[0], a[0:1], len(a[0:1]))
-// hello world, hello world , hellow
-// uint8 string 1
-
-a := "hello world"
-for i, c := range a {
-  fmt.Printf("%d:%T %c:%T %t\n", i, c, i, c, c == ' ')
-}
-// 0:int32 h:int32 false
-// ...
-fmt.Printf("%T\n", ' ')
-// int32
-```
 
 ## Arrays, Slices, Ranges
 
