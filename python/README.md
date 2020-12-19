@@ -2,7 +2,15 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Basic](#basic)
+  - [Compile, Execution](#compile-execution)
+  - [Reserved Words](#reserved-words)
+  - [Useful keywords](#useful-keywords)
   - [min, max values](#min-max-values)
+  - [abs, fabs](#abs-fabs)
+  - [Bit Manipulation](#bit-manipulation)
+  - [String](#string)
+  - [Random](#random)
+  - [Print Out](#print-out)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
   - [Multidimensional Array](#multidimensional-array)
@@ -94,6 +102,54 @@ python3 에 대해 정리한다.
 
 # Basic
 
+## Compile, Execution
+
+```bash
+$ python3 a.py
+```
+
+## Reserved Words
+
+```py
+and
+except
+lambda
+with
+as
+finally
+nonlocal
+while
+assert
+false
+None
+yield
+break
+for
+not
+class
+from
+or
+continue
+global
+pass
+def
+if
+raise
+del
+import
+return
+elif
+in
+True
+else
+is
+try
+```
+
+## Useful keywords
+
+WIP
+
 ## min, max values
 
 ```py
@@ -109,6 +165,72 @@ print(sys.float_info.max)
 # python2
 print(sys.maxint)
 print(-sys.maxint - 1)
+```
+
+## abs, fabs
+
+* [Python | fabs() vs abs()](https://www.geeksforgeeks.org/python-fabs-vs-abs/)
+
+```py
+# abs will return int or float depending upon the argument
+abs(-12) # 12
+abs(12)  # 12
+abs(-12.0) # 12.0
+abs(12.0)  # 12.0
+import math
+math.fabs(-12.0) # 12.0
+math.fabs(12.0)  # 12.0
+```
+
+## Bit Manipulation
+
+WIP
+
+## String
+
+```py
+# Sub string
+s = 'Hello World'
+print(s[0:5])
+
+# Convert string, int
+int('57')
+float('57')
+str(57)
+str(57.0)
+```
+
+## Random
+
+```py
+>>> import random
+# random
+>>> random.random()
+# randrange
+>>> random.randrange(1,7)
+>>> random.randrange(1,7)
+# shuffle
+>>> abc = ['a', 'b', 'c', 'd', 'e']
+>>> random.shuffle(abc)
+>>> abc
+['a', 'd', 'e', 'b', 'c']
+>>> random.shuffle(abc)
+>>> abc
+['e', 'd', 'a', 'c', 'b']
+# choice
+>>> random.choice(abc)
+'a'
+>>> random.choice(abc)
+'d'
+```
+
+## Print Out
+
+```py
+print('Hello World')
+a, b = 1, 2
+# f string, literal string interpolation
+print(f'a: {a}, b{b}')
 ```
 
 ## Collections Compared to c++ containers
