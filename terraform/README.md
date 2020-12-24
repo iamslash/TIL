@@ -3,6 +3,8 @@
 # Materials
 
 * [Learn Terraform](https://learn.hashicorp.com/terraform)
+* [AWS Provider Examples @ github](https://github.com/hashicorp/terraform-provider-aws/tree/master/examples)
+* [Basic Examples @ github](https://github.com/diodonfrost/terraform-aws-examples)
 
 # Basics
 
