@@ -9,6 +9,8 @@
   - [Bit Maniulation](#bit-maniulation)
   - [String](#string)
   - [Random](#random)
+  - [Sort](#sort)
+  - [Search](#search)
   - [virtual function](#virtual-function)
   - [vector vs deque vs list](#vector-vs-deque-vs-list)
   - [vector](#vector)
@@ -220,6 +222,27 @@ string s = to_string(n);
 
 ```cpp
 int num = random();
+```
+
+## Sort
+
+```cpp
+vector<int> a = {5, 4, 3, 2, 1};
+sort(a.begin(), a.end());  // 1 2 3 4 5
+sort(a.begin(), a.end(), [](int a, int b) {
+  return a < b;
+});  // 5 4 3 2 1
+```
+
+## Search
+
+```cpp
+// Search Position
+itr = lower_bound(vec.begin(), vec.end(), 9);  // vec[1]  
+// Find the first position where 9 could be inserted and still keep the sorting.
+
+itr = upper_bound(vec.begin(), vec.end(), 9);  // vec[4] 
+// Find the last position where 9 could be inserted and still keep the sorting.
 ```
 
 ## virtual function

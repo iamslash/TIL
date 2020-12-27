@@ -13,6 +13,8 @@
   - [Print Out](#print-out)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
+  - [Sort](#sort)
+  - [Search](#search)
   - [Multidimensional Array](#multidimensional-array)
   - [Built-in Functions](#built-in-functions)
   - [round](#round)
@@ -667,6 +669,8 @@ Species['cat']
 Species.cat
 ```
 
+## Sort
+
 * sort
   
 ```py
@@ -686,6 +690,36 @@ Species.cat
 * sort vs sorted
 
 sort() modify the object but sorted() create the new one.
+
+## Search
+
+```py
+# binary search
+from bisect import *
+
+a = [2, 4, 6, 8]
+>>> bisect_left(a, 4)
+1
+>>> bisect_left(a, 3)
+1
+>>> bisect_left(a, 2)
+0
+>>> bisect_left(a, 1)
+0
+>>> bisect_left(a, 8)
+3
+>>> bisect_left(a, 8, hi=2)
+2
+>>> bisect_right(a, 4)
+2
+>>> bisect_right(a, 5)
+2
+>>> bisect_right(a, 6)
+3
+>>> bisect_right(a, 6, hi=2)
+2
+# bisect is same with bisect_right
+```
 
 ## Multidimensional Array
 
