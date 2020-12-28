@@ -41,6 +41,8 @@
 - [How to Develop Prometheus Client](#how-to-develop-prometheus-client)
   - [Simple Instrumentation](#simple-instrumentation)
   - [Metric types](#metric-types)
+- [Advanced](#advanced)
+  - [How to reload configuration](#how-to-reload-configuration)
 
 ----
 
@@ -992,4 +994,16 @@ summary: <
     value: 41.9
   >
 >
+```
+
+# Advanced
+
+## How to reload configuration
+
+* [Reloading Prometheus’ Configuration](https://www.robustperception.io/reloading-prometheus-configuration)
+
+----
+
+```bash
+$ kill -HUP 1234
 ```
