@@ -43,6 +43,7 @@
   - [Metric types](#metric-types)
 - [Advanced](#advanced)
   - [How to reload configuration](#how-to-reload-configuration)
+  - [Prometheus High Availability](#prometheus-high-availability)
 
 ----
 
@@ -1007,3 +1008,11 @@ summary: <
 ```bash
 $ kill -HUP 1234
 ```
+
+## Prometheus High Availability
+
+* [Prometheus High Availability](https://ssup2.github.io/theory_analysis/Prometheus_High_Availability/)
+
+----
+
+multiple prometheus and ALB with sticky session
