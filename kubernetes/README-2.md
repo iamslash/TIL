@@ -31,6 +31,8 @@
     - [Taints, Tolerations](#taints-tolerations)
     - [Cordon, Drain, PodDistributionBudget](#cordon-drain-poddistributionbudget)
     - [Custom Scheduler](#custom-scheduler)
+    - [Static Pods vs DaemonSets](#static-pods-vs-daemonsets)
+    - [configuring Scheduler](#configuring-scheduler)
   - [Kubernetes Application Status, Deployment](#kubernetes-application-status-deployment)
     - [Rolling update with Deployment](#rolling-update-with-deployment)
     - [BlueGreen update](#bluegreen-update)
@@ -562,6 +564,57 @@ nodeAffinity, podAffinity, topologyKey, reqruiedDuringSchedulingIgnoredDuringExe
 ### Cordon, Drain, PodDistributionBudget
 
 ### Custom Scheduler
+
+### Static Pods vs DaemonSets
+
+Static pods 는 Kube-api server 를 이용하지 않고 kubelet 이 실행하는 pods 이다. 주로 Master Node 의 kube-system component 들이 해당된다. 주로 `/etc/kubernetes/manifests` 의 pod manifestfile 들을 실행한다. (`etcd.yaml`, `kube-apiserver.yaml`, `kube-controller-manager.yaml`, `kube-scheduler.yaml`)
+
+| Static PODs | DaemonSets |
+|--|--|
+| Created by the Kubelet | Created by Kube-API server (DaemonSet Controller) |
+| Deploy Control Plane components as Static Pods | Deploy Monitoring Agents, Logging Agents on nodes |
+| Ignored by the Kube-Scheuler | Ignored by the Kube-Scheuler |
+
+* `kubelet.service` 를 살펴보면 pods manifestfile 의 path 를 알 수 있다.
+
+```systemd
+ExecStart=/usr/local/bin/kubelet \\
+  --container-runtime=remote \\
+  --container-runtime-endpoint=unix://var/run/containerd/containerd.sock \\
+  --config=kubeconfig.yaml \\
+  --kubeconfig=/var/lib/kubelet/kubeconfig \\
+  --network-plugin=cni \\
+  --register-node=true \\
+  --v=2
+```
+
+* `kubeconfig.yaml`
+
+```yaml
+staticPodPath: /etc/kubernetes/manifests
+```
+
+### configuring Scheduler
+
+Deploy Additional Scheduler
+
+```bash
+$ wget https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/linux/amd64/kube-scheduler
+```
+
+* `kube-scheduler.service`
+  ```
+  ExecStart=/usr/local/bin/kube-scheduler \\
+    --config=/etc/kubernetes/config/kube-scheduler.yaml \\  
+    --scheduler-name= default-scheduler
+  ``` 
+
+* `my-custom-scheduler.service`
+  ```
+  ExecStart=/usr/local/bin/kube-scheduler \\
+    --config=/etc/kubernetes/config/kube-scheduler.yaml \\
+    --scheduler-name= my-custom-scheduler
+  ```
 
 ## Kubernetes Application Status, Deployment
 
