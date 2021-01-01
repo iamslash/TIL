@@ -1,3 +1,17 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Install](#install)
+  - [Install on Windows and connect from OSX](#install-on-windows-and-connect-from-osx)
+  - [Ubuntu](#ubuntu)
+- [Basic](#basic)
+  - [Terms](#terms)
+  - [How to run ansible](#how-to-run-ansible)
+    - [Ad-hoc commands](#ad-hoc-commands)
+    - [Playbooks](#playbooks)
+    - [Check Mode](#check-mode)
+
+----
+
 # Abstract
 
 ansible 은 infrastructure as code solution 이다. infra 를 code 로 manage 할 수 있다. palybook 을 제작해서 infra 를 구성한다.
@@ -5,8 +19,14 @@ ansible 은 infrastructure as code solution 이다. infra 를 code 로 manage �
 # Materials
 
 * [[DevOps] Windows 10에 ansible 이용하기](http://egloos.zum.com/mcchae/v/11315161)
+* [How Ansible works @ youtube](https://www.youtube.com/watch?v=St__HLMZ8qQ)
+  * [Introduction to Ansible Playbooks (and demonstration) @ youtube](https://www.youtube.com/watch?v=ZAdJ7CdN7DY)
+* [ansible @ ansible.com](https://docs.ansible.com/)
+  * [User Guide @ ansible.com](https://docs.ansible.com/ansible/latest/user_guide/index.html)
 
-# Install on Windows and connect from OSX
+# Install
+
+## Install on Windows and connect from OSX
 
 * [Windows Remote Management](https://docs.ansible.com/ansible/latest/user_guide/windows_winrm.html)
 
@@ -145,3 +165,79 @@ ansible-playbook -i hosts -v whoami.win32.yaml
     - name: Run calc.exe
       win_command: calc.exe
 ```
+
+## Ubuntu
+
+```bash
+$ sudo apt update
+$ sudo apt install software-properties-common
+$ sudo apt-add-repository --yes --update ppa:ansible/ansible
+$ sudo apt install ansible
+```
+
+# Basic
+
+## Terms
+
+* [[번역] Ansible(1) 서론, 시작하기, 아키텍처 @ velog](https://velog.io/@hanblueblue/%EB%B2%88%EC%97%AD-Ansible)
+  * [[번역] Ansible(2) inventory, Playbooks, Roles](https://velog.io/@hanblueblue/%EB%B2%88%EC%97%AD-Ansible2-%ED%94%8C%EB%A0%88%EC%9D%B4%EB%B6%81)
+
+----
+
+* **Control Node** : hosts which is installed ansible 
+* **Managed Node** : hosts which is to be installed by ansible
+* **Inventory** : Static lines of servers
+  ```
+  ---
+  [web]
+  web-1.iamslash.com
+  web-2.iamslash.com
+  ```
+
+* **Modules** : There are over 450 Ansible-provided modules that automate nearly every part of your environment
+  ```
+  mobule: directive1=value directve2=value
+  ```
+* **Task** :
+* **Playbook** : plain-text YAML files that describe the desired state of something
+  * **Playbooks** contain **plays**
+  * Plays contain **tasks**
+  * Tasks call **modules**
+  * Tasks run sequentially
+  * **Handlers** are triggered by **tasks**, and are run once, at the end of plays
+* **Role** : Special **kind of Playbook** that are **fully self-contained** with tasks, variables, configurations templates, and other supporting files.
+* **Ansible Tower** : Enterprise ansible framework
+* **Galaxy** : Source of community and vendor-provided Ansible Roles to help you get started faster.
+
+## How to run ansible
+
+* **Ad-Hoc** : `ansible <inventory> -m`
+* **Playbooks** : ansible-playbook
+* **Automation Framework** : Ansible Tower
+
+### Ad-hoc commands
+
+```bash
+$ ansible <inventory> <options>
+$ ansible web -a /bin/date
+$ ansible web -m ping
+$ ansible web -m yum -a "name=openssl state=latest"
+```
+
+### Playbooks
+
+```bash
+$ ansible-playbook <options>
+$ ansible-playbook my-playbook.yml
+```
+
+### Check Mode
+
+Dry-run with `-C` for ad-hoc commands and Playbooks.
+
+```bash
+$ ansible web -C -m yum -a "name=httpd state=latest"
+$ ansible-playbook -C my-playbook.yml
+```
+
+
