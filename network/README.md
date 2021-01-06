@@ -497,9 +497,12 @@ NAT (Network Address Translation) 장비는 사설망과 공유망의 주소를 
 
 # SSL Handshake
 
-* * [K15292: Troubleshooting SSL/TLS handshake failures](https://support.f5.com/csp/article/K15292)
+* [K15292: Troubleshooting SSL/TLS handshake failures](https://support.f5.com/csp/article/K15292)
 
 ----
 
 ![](img/SSL_flow2_10_08_18_updated.png)
 
+# TCP Handshake VS SSL Handshake
+
+* [Nuts and Bolts of Transport Layer Security (TLS)](https://medium.facilelogin.com/nuts-and-bolts-of-transport-layer-security-tls-2c5af298c4be)
