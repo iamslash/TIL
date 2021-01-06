@@ -493,3 +493,13 @@ NAT (Network Address Translation) 장비는 사설망과 공유망의 주소를 
     - local computer의 public side 포트가 12003이란 것은 어떻게 알아내지???
     - echo "udp hole" | nc -p 12003 -u l.l.l.l
   - 한번 만들어진 udp hole은 패킷왕래가 일어나지 않으면 닫혀진다.
+
+
+# SSL Handshake
+
+* * [K15292: Troubleshooting SSL/TLS handshake failures](https://support.f5.com/csp/article/K15292)
+
+----
+
+![](img/SSL_flow2_10_08_18_updated.png)
+
