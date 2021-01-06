@@ -12,7 +12,16 @@
 
 # TCP transition diagram
 
+* [TCP의 데이터 보장 원리에 대해 파헤쳐보기](https://velog.io/@jyongk/TCP%EC%9D%98-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B3%B4%EC%9E%A5%EC%84%B1-%EB%8C%80%ED%95%B4-%ED%8C%8C%ED%97%A4%EC%B3%90%EB%B3%B4%EC%9E%90-m0k4vchxup)
+
+------
+
 ![](tcp_state_trans.png)
+
+![](img/tcpstatetransitionsequence.png)
+
+
+
 
 # Packets
 
