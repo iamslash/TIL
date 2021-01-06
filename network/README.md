@@ -10,7 +10,7 @@
 
 ![](tcpipprotocols.png)
 
-# TCP transition diagram
+# TCP Transition Diagram
 
 * [TCP의 데이터 보장 원리에 대해 파헤쳐보기](https://velog.io/@jyongk/TCP%EC%9D%98-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EB%B3%B4%EC%9E%A5%EC%84%B1-%EB%8C%80%ED%95%B4-%ED%8C%8C%ED%97%A4%EC%B3%90%EB%B3%B4%EC%9E%90-m0k4vchxup)
 
@@ -20,8 +20,44 @@
 
 ![](img/tcpstatetransitionsequence.png)
 
+다음은 TCP Transition Diagram 의 Status 에 대한 설명이다.
 
+| Status	| Description |
+|---|---|
+| LISTEN	| 서버가 소켓을 bind 하고 클라이언트의 접속요청을 기다린다. |
+| SYN_SENT |	클라이언트가 서버로 접속 요청을 한다. 즉, `SYN` 을 보낸다. |
+| SYN_RCVD |	서버가 클라이언트로 부터 접속 요청을 받고 클라이언트에게 접속 요청 응답 한다. 즉, `SYN` 을 받고 `ACK,SYN` 를 보낸다. |
+| ESTABLISHED	| 클라이언트와 서버가 서로 세션 확립이 이루어졌다. 즉, `ACK` 혹은 `ACK,SYN`를 받는다. |
+| FIN_WAIT_1	| 접속을 끊기 위해 소켓을 close하고 close 요청을 한다. close 발생 주체는 서버가 될 수도있고 클라이언트가 될 수도 있다. 즉, `FIN` 을 보낸다. |
+| CLOSE_WAIT |	close 요청을 받고 응답을 보낸다. 즉, `FIN` 을 받고 `ACK,FIN` 을 보낸다. |
+| FIN_WAIT_2 |	close 요청에 대한 응답을 받고 최종 응답을 기다린다. 즉, `ACK` 를 받고 `ACK` 를 보낸다. |
+| LAST_ACK	| 소켓을 close를 하고 최종 close 응답을 한다. 즉, `FIN` 을 보낸다. |
+| TIME_WAIT |	최종 close 응답을 받고 미처 처리되지 못한 데이터를 처리하기 위해 일정시간 동안 유지된다. 즉, active close 의 경우 `FIN` 을 받는다. |
+| CLOSED | `ACK` 를 받거나 TIME_WAIT 에서 2 MSL (Maximum Segment Lifetime) 이후 CLOSED 로 전환된다. |
 
+Active Open 의 경우 `SYN_SENT, ESTABLISHED` 순서대로 상태가 변경된다. Passive Close 의 경우 `LISTEN, SYN_RCVD, ESTABLISHED` 순서대로 상태가 변경된다.
+
+Active Close 의 경우 `FIN_WAIT_1, FIN_WAIT_2, TIME_WAIT, CLOSED` 순서대로 상태가 변경된다. Passive Close 의 경우 `CLOSE_WAIT, LAST_ACK, CLOSED` 순서대로 상태가 변경된다.
+
+다음은 active open, passive open, active close, passive close 의 설명이다.
+
+| Term | Description |
+|---|---|
+| Active Open	| 먼저 socket connection 을 요청한다. 클라이언트가 포트를 개방하고 서버에 접속 요청을 하는 것을 예로 들 수 있다. |
+| Passive Open | socket connection 접속 요청을 대기한다. 서버가 포트를 개방하고 클라이언트의 접속 요청을 대기하는 것을 예로 들 수 있다. |
+| Active Close	| 먼저 socket close 를 요청한다. 클라이언트가 접속을 끊거나 서버가 접속을 끊는것을 예로 들 수 있다. |
+| Passive Open |	socket close 요청을 대기한다. 수동적으로 세션 해제에 대한 요청을 받는 과정으로 마찬가지로 서버가 될 수 도 있고 클라이언트가 될 수도있다. |
+
+다음은 TCP Header 의 Flag 에 대한 설명이다.
+
+| Flag | Description |
+|--|--|
+| SYN(Synchronize)	| 연결 시작, 회선 개설 요청에 사용되는 세그먼트이다. TCP 에서는 접속 요청을 하는 주체가 SYN 세그먼트를 전송하고 요청을 받는 주체는 여기에 값을 추가해서 응답한다. |
+| ACK(Acknowledgement) |	요청에 대한 응답 세그먼트이다. |
+| RST(Reset) |	연결 리셋에 대한 세그먼트로 유효하지 않은 연결에 대한 시도를 했다거나 통신의 연결 및 종료를 정상적으로 할 수 없을때 사용된다. |
+| FIN(Finish)	| 연결 해제, 회선 종결 요청에 사용되는 세그먼트이다. |
+| MTU(Maximum Transmission Unit)	| MTU는 그림에는 나와있지 않지만 MSS의 설명이 필요하기 때문에 언급하게 되었다. MTU란 TCP/IP 네트워크 등과 같은 패킷 또는 프레임 기반의 네트워크에서 한번에 전송될 수 있는 최대 크기의 패킷 또는 프레임을 말한다. 단위는 Byte이며 MTU 값은 네트워크 인터페이스나 대역폭 등 네트워크 환경에 따라 달라질 수 있는데 일반적으로 흔히 쓰이는 이더넷의 경우 MTU 값은 1500을 사용하고, FDDI는 4000, X.25는 576, Gigabit는 9000정도를 사용한다. |
+| MSS(Maximum Segment Size) |	MTU에서 헤더를 제외한 TCP상에서 전송 할 수 있는 사용자 데이터의 최대 크기에 해당하는 세그먼트이다. 위 그림에서는 처음 접속 요청시 1460바이트에 해당하는 MSS를 전송하고 있다. 이것은 이더넷과같은 환경에서 MTU를 1500으로 사용했을 때 여기에 IPv4 헤더의 20바이트와 TCP 헤더의 20바이트를 뺀 값이다. 그리고 응답시에는 1024바이트로 응답하는데 이것은 1024바이트의 크기의 단위로 데이터를 전송하겠다는것을 의미한다. |
 
 # Packets
 
@@ -30,6 +66,9 @@
 ## TCP
 
 * [TCP의 흐름제어, 오류제어, 혼잡제어 개념에 대한 개요](https://roka88.dev/114)
+* [TCP (Transmission Control Protocol) Segments and Fields](http://fiberbit.com.tw/tcp-transmission-control-protocol-segments-and-fields/)
+
+-----
 
 ```
  0                   1                   2                   3
@@ -48,6 +87,8 @@
 |                    Options                    |    Padding    |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ```
+
+![](img/TCP-segment.png)
 
 ## UDP
 
