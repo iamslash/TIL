@@ -506,3 +506,16 @@ NAT (Network Address Translation) 장비는 사설망과 공유망의 주소를 
 # TCP Handshake VS SSL Handshake
 
 * [Nuts and Bolts of Transport Layer Security (TLS)](https://medium.facilelogin.com/nuts-and-bolts-of-transport-layer-security-tls-2c5af298c4be)
+
+# SSL vs TLS
+
+* [SSL vs. TLS – What are differences?](https://www.ssl2buy.com/wiki/ssl-vs-tls)
+* [SSL vs. TLS - 차이점은 무엇인가?](https://smartits.tistory.com/209)
+
+----
+
+SSL refers to Secure Sockets Layer whereas TLS refers to Transport Layer Security.  Basically, they are one and the same, but, entirely different.
+
+How similar both are? SSL and TLS are cryptographic protocols that authenticate data transfer between servers, systems, applications and users. For example, a cryptographic protocol encrypts the data that is exchanged between a web server and a user.
+
+SSL was a first of its kind of cryptographic protocol. TLS on the other hand, was a recent upgraded version of SSL.
