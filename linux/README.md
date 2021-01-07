@@ -917,10 +917,12 @@ EOF
     * `avgqu-sz` : The average number of requests issued to the device. 
     * `%util` : Device utilization. 
 * `free`
+  * [리눅스 free 명령어로 메모리 상태 확인하기](https://www.whatap.io/ko/blog/37/)
+  * [[Linux] Memory 확인 방법 및 종류별 설명 (Free, Buffer, Cache, Swap Memory)](https://m.blog.naver.com/PostView.nhn?blogId=yhsterran&logNo=221607492403&proxyReferer=https:%2F%2Fwww.google.com%2F)
   * physical memory 와 swap memory 의 상태를 알려다오
     * `total physical memory = used + free + shared + buffers + cached`
     * `buffers` : For the buffer cache, used for block device I/O, saves i-node data (file address) to reduce DISK seek time.
-    * `cached` : For the page cache, used by file systems, saves file data to reduce I/O.
+    * `cached` : For the page cache and slabs, used by file systems, saves file data to reduce I/O. slab is a memory block managed by kernel and it is a part of the page cache.
     * `available` : include `free` and a part of `buff/cache`.
   * `free -h` human readable 하게 보여줘
   * `free -ht` total 추가해조
@@ -963,6 +965,7 @@ EOF
   * [리눅스 메모리 정보](https://classpath.tistory.com/306)
   * [[Linux] Cached Memory 비우고 Free Memory 늘리기](http://egloos.zum.com/mcchae/v/11217429)
   * [[Memory] 커널 메모리 관리](https://fmyson.tistory.com/212)
+  * [리눅스 free 명령어로 메모리 상태 확인하기](https://www.whatap.io/ko/blog/37/)
 
     | item         | desc                  |
     | ------------ | --------------------- |
