@@ -38,9 +38,10 @@
   - [Summary](#summary)
   - [Summary vs Histogram](#summary-vs-histogram)
   - [irate vs rate](#irate-vs-rate)
+- [Metric Types](#metric-types)
 - [How to Develop Prometheus Client](#how-to-develop-prometheus-client)
   - [Simple Instrumentation](#simple-instrumentation)
-  - [Metric types](#metric-types)
+  - [Metric types](#metric-types-1)
 - [Advanced](#advanced)
   - [How to reload configuration](#how-to-reload-configuration)
   - [Prometheus High Availability](#prometheus-high-availability)
@@ -331,17 +332,13 @@ http_requests_total{method="POST", handler="/hello"} 1037
 * `rate(http_requests_total[5m])`
   * Return the per-second rate for all time series with the http_requests_total metric name, as measured over the last 5 minutes.
 
-* `sum by (job) (
-  rate(http_requests_total[5m])
-)`
+* `sum by (job) (rate(http_requests_total[5m]))`
   * get sum of rates grouped by job
 
 * `(instance_memory_limit_bytes - instance_memory_usage_bytes) / 1024 / 1024`
   * get the unused memory in MiB for every instance
 
-* `sum by (app, proc) (
-  instance_memory_limit_bytes - instance_memory_usage_bytes
-) / 1024 / 1024`
+* `sum by (app, proc) (instance_memory_limit_bytes - instance_memory_usage_bytes) / 1024 / 1024`
   * get the sum of the unused memory grouped by app, proc
 
 * `topk(3, sum by (app, proc) (rate(instance_cpu_time_ns[5m])))`
@@ -694,6 +691,82 @@ Usually measure the latency. Can adjust time period when make the range vector. 
 ## irate vs rate
 
 * [Why irate from Prometheus doesn't capture spikes](https://valyala.medium.com/why-irate-from-prometheus-doesnt-capture-spikes-45f9896d7832)
+
+# Metric Types
+
+* [The 4 Types Of Prometheus Metrics](https://tomgregory.com/the-four-types-of-prometheus-metrics/)
+
+-----
+
+* Counter
+  * 오로지 늘어나기만 하는 수치
+  * `rate(request_count[5m])` 와 같이 `rate()` 을 사용할 수 있다.
+* Gauge
+  * 늘어나거나 줄어드는 수치
+  * `avg_over_time(queue_size[5m])` 와 같이 `avg_over_time()` 을 사용할 수 있다.
+* Histogram
+  * 미리 정한 bucket 에 수치를 담는다.
+  * 다음은 `4.467s, 9.213s, and 9.298s` 의 예이다.
+  ```
+  # HELP request_duration Time for HTTP request.
+  # TYPE request_duration histogram
+  request_duration_bucket{le="0.005",} 0.0
+  request_duration_bucket{le="0.01",} 0.0
+  request_duration_bucket{le="0.025",} 0.0
+  request_duration_bucket{le="0.05",} 0.0
+  request_duration_bucket{le="0.075",} 0.0
+  request_duration_bucket{le="0.1",} 0.0
+  request_duration_bucket{le="0.25",} 0.0
+  request_duration_bucket{le="0.5",} 0.0
+  request_duration_bucket{le="0.75",} 0.0
+  request_duration_bucket{le="1.0",} 0.0
+  request_duration_bucket{le="2.5",} 0.0
+  request_duration_bucket{le="5.0",} 1.0
+  request_duration_bucket{le="7.5",} 1.0
+  request_duration_bucket{le="10.0",} 3.0
+  request_duration_bucket{le="+Inf",} 3.0
+  request_duration_count 3.0
+  request_duration_sum 22.978489699999997
+  ```
+  * 다음과 같이 query 한다.
+
+  ```
+  rate(request_duration_sum[5m])
+  /
+  rate(request_duration_count[5m])  
+  ```
+  * `histogram_quantile(0.95, sum(rate(request_duration_bucket[5m])) by (le))` 와 같이 `historgram_quantile()` 을 사용가능하다.
+
+* Summary
+  * historgram 과 비슷하다. `histogram_quantile()` 을 사용할 수 없다.
+
+  ```
+  # HELP request_duration_summary Time for HTTP request.
+  # TYPE request_duration_summary summary
+  request_duration_summary{quantile="0.95",} 7.4632192
+  request_duration_summary_count 5.0
+  request_duration_summary_sum 27.338737899999998
+  ```
+  * 다음과 같이 query 한다.
+  
+  ```
+  rate(request_duration_summary_sum[5m])
+  /
+  rate(request_duration_summary_count[5m])
+  ```
+  
+**Metric Type Comparison Table**
+
+|	 |Counter |	Gauge |	Histogram |	Summary |
+|--|--|--|--|--|
+| **General**				| | | |  |
+| Can go up and down |	✗ |	✓ |	✓ |	✓ |
+| Is a complex type (publishes multiple values per metric)	| ✗ |	✗ |	✓ |	✓ |
+| Is an approximation	| ✗ |	✗ |	✓ |	✓ |
+| **Querying**		| | | |	|
+| Can query with rate function	| ✓	| ✗	| ✗	| ✗ |
+| Can calculate percentiles	| ✗	| ✗	| ✓	| ✓ |
+| Can query with histogram_quantile function	| ✗	| ✗	| ✓	| ✗ |
 
 # How to Develop Prometheus Client
 
