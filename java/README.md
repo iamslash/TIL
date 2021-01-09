@@ -43,6 +43,8 @@
 - [Advanced Usage](#advanced-usage)
   - [Exception](#exception)
   - [Dynamic Proxy](#dynamic-proxy)
+  - [AOP](#aop)
+  - [@Transactional and Dynamic Proxy](#transactional-and-dynamic-proxy)
   - [ArrayList vs CopyOnWriteArrayList](#arraylist-vs-copyonwritearraylist)
   - [jvm architecture](#jvm-architecture)
   - [jvm garbage collector](#jvm-garbage-collector)
@@ -1902,6 +1904,32 @@ csProxyInstance.length()
 // Executing get finished in 8891 ns 
 // Executing charAt finished in 11152 ns 
 // Executing length finished in 10087 ns
+```
+
+## AOP
+
+* [AOP (Aspect Oriented Programming) @ TIL](/spring/README.md#aop-aspect-oriented-programming)
+* [Introduction to Spring AOP](https://www.baeldung.com/spring-aop)
+* [Spring에서 AOP를 구현하는 방법과 Transactional](https://private-space.tistory.com/98)
+
+----
+
+python 의 decorator 와 비슷하다.
+
+JAVA 의 AOP 는 DynamicProxy 혹은 CGLIB 을 이용해서 구현한다.
+
+## @Transactional and Dynamic Proxy
+
+* [Spring에서 AOP를 구현하는 방법과 Transactional](https://private-space.tistory.com/98)
+
+----
+
+Spring Boot 는 기본적으로 AOP 로 구현된 `@Transactional` 실행시 CGLIB 을 사용한다. 그러나 다음과 같이 `application.yaml` 을 변경하면 CGLIB 대신 DynamicProxy 를 사용하여 실행한다.
+
+```yaml
+spring: 
+   aop: 
+      proxy-target-class: false
 ```
 
 ## ArrayList vs CopyOnWriteArrayList
