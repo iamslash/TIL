@@ -82,6 +82,7 @@ chidb>
 # Index
 
 * [SQL Unplugged 2013] 쉽고 재미있는 인덱스 이야기/ 씨퀄로 이장래](https://www.youtube.com/watch?v=TRfVeco4wZM)
+* [RDB index 정리](https://hyungjoon6876.github.io/jlog/2018/07/18/rdb-indexing.html)
 * [The chidb File Format](http://chi.cs.uchicago.edu/chidb/fileformat.html)
 
 ----
