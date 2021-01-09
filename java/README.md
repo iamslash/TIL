@@ -42,6 +42,7 @@
     - [Optional<T>](#optionalt)
 - [Advanced Usage](#advanced-usage)
   - [Exception](#exception)
+  - [Dynamic Proxy](#dynamic-proxy)
   - [ArrayList vs CopyOnWriteArrayList](#arraylist-vs-copyonwritearraylist)
   - [jvm architecture](#jvm-architecture)
   - [jvm garbage collector](#jvm-garbage-collector)
@@ -1839,6 +1840,69 @@ if (fileName == null || fileName.isEmpty())  {
 ![](img/java_arithmetic_exception.png)
 
 `java.lang.ArithmeticException` 은 `RuntimeException` 이다.
+
+## Dynamic Proxy
+
+* [Dynamic Proxies in Java @ baeldung](https://www.baeldung.com/java-dynamic-proxies)
+  * [src @ github](https://github.com/eugenp/tutorials/blob/master/core-java-modules/core-java-reflection/src/test/java/com/baeldung/dynamicproxy/DynamicProxyIntegrationTest.java)
+
+-----
+
+클래스 `HashMap` 가 있고 `HashMap.put()` 라는 Method 가 있다. `HashMap` 를 수청하지 않고 `HashMap.put()` 를 호출하기 전 혹은 후에 특별한 처리를 하고 싶다. 예를 들어서 `HashMap.put()` 가 처리되는 시간을 logging 하고 싶다. 어떻게 해야할 것인가?
+
+Proxy Class 를 만들어서 쉽게 해결할 수 있다.
+예를 들어 `TimingDynamicInvocationHandler` 를 만들어서 `HashMap.put` 대신 `TimingDynamicInvocationHandler.put` 의 Method 를 호출한다.
+
+```java
+public class TimingDynamicInvocationHandler implements InvocationHandler {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(
+      TimingDynamicInvocationHandler.class);
+    
+    private final Map<String, Method> methods = new HashMap<>();
+
+    private Object target;
+
+    public TimingDynamicInvocationHandler(Object target) {
+        this.target = target;
+
+        for(Method method: target.getClass().getDeclaredMethods()) {
+            this.methods.put(method.getName(), method);
+        }
+    }
+
+    @Override
+    public Object invoke(Object proxy, Method method, Object[] args) 
+      throws Throwable {
+        long start = System.nanoTime();
+        Object result = methods.get(method.getName()).invoke(target, args);
+        long elapsed = System.nanoTime() - start;
+
+        LOGGER.info("Executing {} finished in {} ns", method.getName(), 
+          elapsed);
+
+        return result;
+    }
+}
+....
+Map mapProxyInstance = (Map) Proxy.newProxyInstance(
+  DynamicProxyTest.class.getClassLoader(), new Class[] { Map.class }, 
+  new TimingDynamicInvocationHandler(new HashMap<>()));
+
+mapProxyInstance.put("hello", "world");
+
+CharSequence csProxyInstance = (CharSequence) Proxy.newProxyInstance(
+  DynamicProxyTest.class.getClassLoader(), 
+  new Class[] { CharSequence.class }, 
+  new TimingDynamicInvocationHandler("Hello World"));
+
+csProxyInstance.length()
+//
+// Executing put finished in 19153 ns 
+// Executing get finished in 8891 ns 
+// Executing charAt finished in 11152 ns 
+// Executing length finished in 10087 ns
+```
 
 ## ArrayList vs CopyOnWriteArrayList
 
