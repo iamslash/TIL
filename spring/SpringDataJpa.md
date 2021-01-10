@@ -39,7 +39,7 @@
   - [Spring Data JPA: Query by Example](#spring-data-jpa-query-by-example)
   - [Spring Data JPA: Transaction](#spring-data-jpa-transaction)
   - [Spring Data JPA: Auditing](#spring-data-jpa-auditing)
-  - [Spring Data JPA: Summary](#spring-data-jpa-summary)
+  - [JPA Cache](#jpa-cache)
 
 ----
 
@@ -283,8 +283,14 @@ public class PersistenceConfig {
 }
 ```
 
-## Spring Data JPA: Summary
+## JPA Cache
 
+* [JPA 캐시](https://gunju-ko.github.io/jpa/2019/01/14/JPA-2%EC%B0%A8%EC%BA%90%EC%8B%9C.html)
 
+-----
 
+JPA Cache 는 1-level Cache, 2-level Cache 가 있다.
 
+**1-level Cache** 는 Persistence Context 안에 존재한다. 하나의 HTTP Request 가 시작되고 종료될 때까지 발생하는 하나의 Transaction 동안 유지된다. 
+
+2-level Cache 는 Application 이 시작해서 종료될때까지 유지된다. Redis 와 같이 외부의 Cache 도 2-level Cache 이다???

@@ -1071,6 +1071,7 @@ public ResponseEntity getVersion(
 ## Caching in spring boot
 
 * [A Guide To Caching in Spring @ baeldung](https://www.baeldung.com/spring-cache-tutorial)
+* [JPA 캐시](https://gunju-ko.github.io/jpa/2019/01/14/JPA-2%EC%B0%A8%EC%BA%90%EC%8B%9C.html)
 
 ----
 
