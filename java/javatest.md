@@ -46,6 +46,7 @@
   - [ArchUnit 패키지 의존성 확인하기](#archunit-패키지-의존성-확인하기)
   - [ArchUnit JUnit 5 연동](#archunit-junit-5-연동)
   - [ArchUnit 클래스 의존성 확인하기](#archunit-클래스-의존성-확인하기)
+- [Stub, Mock, Spy](#stub-mock-spy)
 
 ----
 
@@ -1065,6 +1066,280 @@ class FooServiceTest {
     Lecture lecture = new Lecture(10, "java");
     Optional<Person> findId = barService.findById(1L);
     assertEquals("iamslash@gmail.com", findById.get().getEmail());
+  }
+}
+```
+
+# Stub, Mock, Spy
+
+* [Mockito @Mock @MockBean @Spy @SpyBean 차이점 정리](https://cobbybb.tistory.com/16)
+* [Test Double](https://kimkoungho.github.io//testing/test-double/)
+
+----
+
+테스트를 수행할 때 실제 객체를 대신에 사용하는 객체를 **Test Double** 이라고 한다.
+
+`@Spy` 는 실제 인스턴스를 사용해서 mocking 하고, `@Mock` 은 가상의 mock 인스턴스를 직접 만들어 사용한다. 예를 들어 `A` 에서 `A.Hello()` 라는 method 를 제외하고 mocking 하고 싶다면 `A` 의 Ojbect 는 `@Spy` 로 생성해야 한다.
+
+“마틴 파울러” 는 Mock 과 Stub 의 차이점을 객체 생성 방법의 차이점 과 검증 방법의 차이점 을 예로 들어 설명했다. [Mocks Aren't Stubs 번역](https://testing.jabberstory.net/)
+그러나 Spock 은 객체 생성 방법의 차이는 없고 검증 방법의 차이가 있다. Mock 은  상태 검증과 행위 검증을 모두 제공한다. Stub 은 상태 검증만 제공한다.
+또한 Mockito 는 stub 을 따로 제공하지 않는다. `@Spy, @Mock` 만 제공한다.
+
+다음은 테스트를 원하는 코드이다.
+
+```java
+@Service
+@RequiredArgsConstructor
+public class OrderService {
+
+    private final OrderRepository orderRepository;
+    private final NotificationClient notificationClient;
+
+    public void createOrder(Boolean isNotify){
+        List<Order> orderList = orderRepository.findOrderList();
+        if(orderList.size() > 0){
+            throw new OrderDuplicateException();
+        }
+
+        orderRepository.createOrder();
+
+        if(isNotify){
+            notificationClient.notifyToMobile();
+        }
+    }
+}
+...
+@Repository
+public class OrderRepository {
+    public List<Order> findOrderList(){
+        System.out.println("real OrderRepository findOrderList");
+        return Collections.emptyList();
+    }
+
+    public void createOrder(){
+        System.out.println("createOrder success");
+    }
+}
+...
+@Component
+public class NotificationClient {
+    public void notifyToMobile(){
+        System.out.println("notify to mobile success");
+    }
+}
+```
+
+다음은 `Mockito` 를 이용하여 작성한 테스트 코드이다.
+
+```java
+public class HelloTests {
+  private OrderService orderService;
+
+  @Test
+  public void createOrderTest() {
+    // given
+    OrderRepository orderRepository = Mockito.mock(OrderRepository.class);
+    NotificationClient notificationClient = Mockito.mock(NotificationClient.class);
+    orderService = new OrderService(orderRepository, notificationClient);
+
+    Mockito.when(orderRepository.findOrderList()).then(invocation -> {
+      System.out.println("I am mock orderRepository");
+      return Collections.emptyList();
+    })
+    Mockito.doAnswer(invocation -> {
+      System.out.println("I am mock notificationClient");
+      return null;
+    }).when(noticationClient).notifyToMobile();
+
+    // when
+    orderService.createOrder(true);
+
+    // then
+    Mockito.verify(orderRepository, Mockito.times(1)).createOrder();
+    Mockito.verify(notificationClient, Mockito.times(1)).notifyToMobile();
+  }
+}
+```
+
+`OrderRepository.creaetOrder()` 는 stubbing 이 되어 있지 않다. 그러나 `Mockito.mock` 으로 생성하였기 때문에 Default Method 로 mocking 되어 있다.
+
+다음은 `Mockito.mock` 대신 `@Mock` 으로 mocking 한 예이다.
+
+```java
+@ExtendWith(MockitoExtension.class)
+public class HelloTests {
+  @Mock
+  private OrderRepository orderRepository;
+
+  @Mock
+  private NotificationClient notificationClient;
+
+  private OrderService orderService;
+
+  @Test
+  public void createOrderTest() {
+    // given
+    orderService = new OrderService(orderRepository, notificationClient);
+
+    Mockito.when(orderRepository.findOrderList()).then(invocation -> {
+      System.out.println("I am mock orderRepository");
+      return Collections.emptyList();
+    })
+    Mockito.doAnswer(invocation -> {
+      System.out.println("I am mock notificationClient");
+      return null;
+    }).when(noticationClient).notifyToMobile();
+
+    // when
+    orderService.createOrder(true);
+
+    // then
+    Mockito.verify(orderRepository, Mockito.times(1)).createOrder();
+    Mockito.verify(notificationClient, Mockito.times(1)).notifyToMobile();
+  }
+}
+```
+
+다음은 `@InjectMock` 로 mocking 한 예이다. OrderService 와 의존성있는 객체들을 `@Mock` 이 부착된 Class 의 Object 로 설정한다.
+
+```java
+@ExtendWith(MockitoExtension.class)
+public class HelloTests {
+  @Mock
+  private OrderRepository orderRepository;
+
+  @Mock
+  private NotificationClient notificationClient;
+
+  @InjectMocks
+  private OrderService orderService;
+
+  @Test
+  public void createOrderTest() {
+    // given
+    Mockito.when(orderRepository.findOrderList()).then(invocation -> {
+      System.out.println("I am mock orderRepository");
+      return Collections.emptyList();
+    })
+    Mockito.doAnswer(invocation -> {
+      System.out.println("I am mock notificationClient");
+      return null;
+    }).when(noticationClient).notifyToMobile();
+
+    // when
+    orderService.createOrder(true);
+
+    // then
+    Mockito.verify(orderRepository, Mockito.times(1)).createOrder();
+    Mockito.verify(notificationClient, Mockito.times(1)).notifyToMobile();
+  }
+}
+```
+
+`OrderRepository.createOrder` 는 stub 하지 않고 실제 Method 를 쓰고 싶다. 다음과 같이 `@Spy` 를 사용하여 mocking 한다.
+
+```java
+@ExtendWith(MockitoExtension.class)
+public class HelloTests {
+  @Spy
+  private OrderRepository orderRepository;
+
+  @Spy
+  private NotificationClient notificationClient;
+
+  @InjectMocks
+  private OrderService orderService;
+
+  @Test
+  public void createOrderTest() {
+    // given
+    Mockito.when(orderRepository.findOrderList()).then(invocation -> {
+      System.out.println("I am mock orderRepository");
+      return Collections.emptyList();
+    })
+    Mockito.doAnswer(invocation -> {
+      System.out.println("I am mock notificationClient");
+      return null;
+    }).when(noticationClient).notifyToMobile();
+
+    // when
+    orderService.createOrder(true);
+
+    // then
+    Mockito.verify(orderRepository, Mockito.times(1)).createOrder();
+    Mockito.verify(notificationClient, Mockito.times(1)).notifyToMobile();
+  }
+}
+```
+
+다음과 같이 `@MockBean` 을 사용하면 선언된 Class 들은 Spring Context 에 Bean 으로 등록된다. 따라서 `@Autowired` Class Object 에 Bean 으로 등록된 Mock Object 를 DI 할 수 있다. 그러나 `@MockBean` 과 `@InjectMocks` 는 같이 사용할 수 없다.
+
+```java
+@ExtendWith(MockitoExtension.class)
+public class HelloTests {
+  @MockBean
+  private OrderRepository orderRepository;
+
+  @MockBean
+  private NotificationClient notificationClient;
+
+  @Autowired
+  private OrderService orderService;
+
+  @Test
+  public void createOrderTest() {
+    // given
+    Mockito.when(orderRepository.findOrderList()).then(invocation -> {
+      System.out.println("I am mock orderRepository");
+      return Collections.emptyList();
+    })
+    Mockito.doAnswer(invocation -> {
+      System.out.println("I am mock notificationClient");
+      return null;
+    }).when(noticationClient).notifyToMobile();
+
+    // when
+    orderService.createOrder(true);
+
+    // then
+    Mockito.verify(orderRepository, Mockito.times(1)).createOrder();
+    Mockito.verify(notificationClient, Mockito.times(1)).notifyToMobile();
+  }
+}
+```
+
+다음은 `@MockBean` 대신 `@SpyBean` 을 사용한 예이다.
+
+```java
+@ExtendWith(MockitoExtension.class)
+public class HelloTests {
+  @SpyBean
+  private OrderRepository orderRepository;
+
+  @SpyBean
+  private NotificationClient notificationClient;
+
+  @Autowired
+  private OrderService orderService;
+
+  @Test
+  public void createOrderTest() {
+    // given
+    Mockito.when(orderRepository.findOrderList()).then(invocation -> {
+      System.out.println("I am mock orderRepository");
+      return Collections.emptyList();
+    })
+    Mockito.doAnswer(invocation -> {
+      System.out.println("I am mock notificationClient");
+      return null;
+    }).when(noticationClient).notifyToMobile();
+
+    // when
+    orderService.createOrder(true);
+
+    // then
+    Mockito.verify(orderRepository, Mockito.times(1)).createOrder();
+    Mockito.verify(notificationClient, Mockito.times(1)).notifyToMobile();
   }
 }
 ```
