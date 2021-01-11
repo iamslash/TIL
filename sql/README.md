@@ -62,6 +62,7 @@
   - [CASE](#case)
   - [Session Variables](#session-variables)
   - [ROW_NUMBER() OVER()](#row_number-over)
+  - [Window Functions (LEAD, LAG)](#window-functions-lead-lag)
   - [Functions (MySQL)](#functions-mysql)
   - [Operators](#operators)
   - [Data Types (MySQL)](#data-types-mysql)
@@ -1419,6 +1420,32 @@ mysql> SELECT
 | 2001 | USA     | TV         |    150 |        1 |        6 |
 | 2001 | USA     | TV         |    100 |        6 |        7 |
 +------+---------+------------+--------+----------+----------+
+```
+
+## Window Functions (LEAD, LAG)
+
+* [12.21.1 Window Function Descriptions @ mysql](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_lead)
+
+----
+
+`LEAD(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 아래 `N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
+
+`LAG(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 위 `N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
+
+* [BiggestWindowBetweenVisits @ learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode2/BiggestWindowBetweenVisits/README.md)
+
+```sql
+SELECT user_id, MAX(diff) AS biggest_window
+  FROM (
+    SELECT user_id,
+           DATEDIFF(LEAD(visit_date, 1, '2021-01-01')
+                      OVER(PARTITION BY user_id 
+                           ORDER BY visit_date), 
+                    visit_date) AS diff
+      FROM userVisits
+  ) t
+ GROUP BY user_id
+ ORDER BY user_id
 ```
 
 ## Functions (MySQL)
