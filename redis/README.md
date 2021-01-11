@@ -1,7 +1,8 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Features](#features)
-- [Install with docker](#install-with-docker)
+- [Install](#install)
+  - [Install with docker](#install-with-docker)
 - [Sentinel](#sentinel)
 - [Cluster](#cluster)
 - [Commands](#commands)
@@ -55,17 +56,20 @@ redis 3.0 부터 cluster 기능을 지원한다.
 
 master 와 여러개의 slave 들로 read replica 구성을 할 수 있다.
 
-# Install with docker
+# Install
+
+## Install with docker
 
 ```bash
-docker pull redis
-docker run -p 6379:6379 --name my-redis -d redis
+$ docker pull redis
+$ docker run --rm -p 6379:6379 --name my-redis -d redis
 ## link volumf of local host
 # docker run --name my-redis -d -v /your/dir:/data redis redis-server --appendonly yes
 ## link volume of other container
 # docker run --name my-redis -d --volumes-from some-volume-container redis redis-server --appendonly yes
-docker exec -it my-redis /bin/bash
-redis-cli
+$ docker exec -it my-redis /bin/bash
+> redis-cli
+
 ```
 
 # Sentinel
@@ -95,15 +99,18 @@ Redis Slave 의 주소를 Redis Master 의 주소로 교체한다.
 ----
 
 * Redis 3 부터 cluster mode 를 지원한다.
-* Cluster Mode 에서는 Redis Sentinel 의 도움없이 Cluster 자체적으로 Failover 를 진행한다.
-* Cluster Mode 에서는 Master-Slave 노드 구조를 가질 수 있고, 노드 간 Replication 을 지원한다.
-* Cluster Mode 에서는 redis key 의 HashCode 에 대해 CRC16 의 16384 modules (key % 16384) 연산을 실행 Auto Sharding을 지원한다.
+* Cluster Mode 에서는 Redis Sentinel 의 도움없이 Cluster 자체적으로 Failover 를
+  진행한다.
+* Cluster Mode 에서는 Master-Slave 노드 구조를 가질 수 있고, 노드 간 Replication
+  을 지원한다.
+* Cluster Mode 에서는 redis key 의 HashCode 에 대해 CRC16 의 16384 modules (key
+  % 16384) 연산을 실행 Auto Sharding을 지원한다.
 * Application Sharding 이 필요없기 때문에, Spring-Data-Redis 사용이 가능하다.
 
 ```bash
-docker pull vishnunair/docker-redis-cluster:latest
-docker run -d -p 6000:6379 -p 6001:6380 -p 6002:6381 -p 6003:6382 -p 6004:6383 -p 6005:6384 --name my-redis-cluster vishnunair/docker-redis-cluster
-docker exec -it my-redis-cluster redis-cli
+$ docker pull vishnunair/docker-redis-cluster:latest
+$ docker run --rm -d -p 6000:6379 -p 6001:6380 -p 6002:6381 -p 6003:6382 -p 6004:6383 -p 6005:6384 --name my-redis-cluster vishnunair/docker-redis-cluster
+$ docker exec -it my-redis-cluster redis-cli
 # 127.0.0.1:6379> SET helloworld 1
 # OK
 # 127.0.0.1:6379> SET helloworld 2
@@ -170,11 +177,15 @@ key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Ha
 
 ## Sorted Sets
 
+* [Redis Sorted Set](https://jupiny.com/2020/03/28/redis-sorted-set/)
+
+------
+
 * SET: `ZADD`
 * GET: `ZRANGE, ZRANGEBYSCORE, ZRANGEBYLEX, ZREVRANGE, ZREVRANGEBYSCORE, ZREVRANGEBYLEX, ZRANK, ZREVRANK, ZSCORE, ZCARD, ZCOUNT, ZLEXCOUNT, ZSCAN`
 * POP: `ZPOPMIN, ZPOPMAX`
-* REM: `ZREM, ZREMRANGEBYRANK, ZREMRANGEBYSCORE, ZREMRANGEBYLEX
-INCR: ZINCRBY`
+* REM: `ZREM, ZREMRANGEBYRANK, ZREMRANGEBYSCORE, ZREMRANGEBYLEX`
+* INCR: `ZINCRBY`
 * 집합연산: `ZUNIONSTORE, ZINTERSTORE`
 
 ## Hashes

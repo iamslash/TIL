@@ -1,3 +1,16 @@
+- [Abstract](#abstract)
+- [Material](#material)
+- [Relational Algebra](#relational-algebra)
+- [Normalization](#normalization)
+- [Transaction](#transaction)
+- [SQL](#sql)
+- [SQL Optimization](#sql-optimization)
+- [Index](#index)
+- [Pages](#pages)
+- [Clustered Index vs Non-clustered Index](#clustered-index-vs-non-clustered-index)
+
+-----
+
 # Abstract
 
 database 를 만들어 보자.
@@ -119,3 +132,66 @@ CPU 는 disk 에서 데이터를 읽어들여 memeory 로 로드해야 한다. �
 너무 작지 않게 설정하여 L1, L2 Cache hit 가 이루어 지도록 해야 한다.
 
 참고로 chidb, sqlite 는 page 의 size 가 1K 이다.
+
+# Clustered Index vs Non-clustered Index
+
+* [Difference between Clustered and Non-clustered index](https://www.geeksforgeeks.org/difference-between-clustered-and-non-clustered-index/)
+
+----
+
+Index of `Roll_no is` is a **Clustered Index**.
+
+```sql
+create table Student
+( Roll_No int primary key, 
+Name varchar(50), 
+Gender varchar(30), 
+Mob_No bigint );
+
+insert into Student
+values (4, 'ankita', 'female', 9876543210 );
+
+insert into Student 
+values (3, 'anita', 'female', 9675432890 );
+
+insert into Student 
+values (5, 'mahima', 'female', 8976453201 ); 
+```
+
+There is no additional index data for `Roll_no`.
+
+| Roll_No | Name | 	Gender | 	Mob_No |
+|---|---|---|---|
+| 3 | 	anita |	female	| 9675432890 |
+| 4 |	ankita	| female |	9876543210 |
+| 5 |	mahima |	female |	8976453201 |
+
+Index of `Name` is a **Non-Clustered Index**.
+
+```sql
+create table Student
+( Roll_No int primary key, 
+Name varchar(50), 
+Gender varchar(30), 
+Mob_No bigint );
+
+insert into Student 
+values (4, 'afzal', 'male', 9876543210 );
+
+insert into Student 
+values (3, 'sudhir', 'male', 9675432890 );
+
+insert into Student 
+values (5, 'zoya', 'female', 8976453201 );
+
+create nonclustered index NIX_FTE_Name
+on Student (Name ASC); 
+```
+
+There is additional index data for `Name`. This needs record lookup.
+
+| Name |	Row address |
+|---|----|
+| Afzal |	3452 |
+| Sudhir |	5643 |
+| zoya |	9876 |
