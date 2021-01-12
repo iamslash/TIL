@@ -46,6 +46,7 @@
   - [How to reload configuration](#how-to-reload-configuration)
   - [Prometheus High Availability](#prometheus-high-availability)
   - [How to delete metrics](#how-to-delete-metrics)
+  - [How to drop metrics](#how-to-drop-metrics)
 
 ----
 
@@ -1118,4 +1119,28 @@ curl -X POST \
 
 # Let's do compaction right now
 curl -X POST -g 'http://localhost:9090/api/v1/admin/tsdb/clean_tombstones'
+```
+
+## How to drop metrics
+
+* [Dropping metrics at scrape time with Prometheus](https://www.robustperception.io/dropping-metrics-at-scrape-time-with-prometheus)
+
+-----
+
+Check top 10 metrics
+
+```yaml
+topk(20, count by (__name__, job)({__name__=~".+"}))
+```
+
+```yaml
+scrape_configs:
+ - job_name: 'my_job'
+   static_configs:
+     - targets:
+       - my_target:1234
+   metric_relabel_configs:
+   - source_labels: [ __name__ ]
+     regex: 'my_too_large_metric'
+     action: drop
 ```
