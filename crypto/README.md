@@ -113,6 +113,10 @@ TODO
      
 # 인증서
 
+* [154. [Security] SSL과 인증서 구조 이해하기 : CA (Certificate Authority) 를 중심으로 @ naverblog](https://blog.naver.com/alice_k106/221468341565)
+
+----
+
 인증서는 인증기관 (CA, Certificate Authority) 에서 발행한다.
 
 다음은 인증서에 포함된 정보들이다.
