@@ -45,6 +45,7 @@
 - [Advanced](#advanced)
   - [How to reload configuration](#how-to-reload-configuration)
   - [Prometheus High Availability](#prometheus-high-availability)
+  - [How to delete metrics](#how-to-delete-metrics)
 
 ----
 
@@ -1089,3 +1090,32 @@ $ kill -HUP 1234
 ----
 
 multiple prometheus and ALB with sticky session
+
+## How to delete metrics
+
+* [프로메테우스 시계열 데이터 삭제하기](https://kangwoo.github.io/devops/prometheus/delete-metrics-from-prometheus/)
+  
+-----
+
+You should turn on the argument `--web.enable-admin-api`.
+
+```bash
+# Delete metrics with specific labels
+curl -X POST \
+	-g 'http://localhost:9090/api/v1/admin/tsdb/delete_series?match[]={foo="bar"}'
+
+# Delete metrics with specific labels
+curl -X POST \
+	-g 'http://localhost:9090/api/v1/admin/tsdb/delete_series?match[]={job="node_exporter"}'
+
+# Delete metrics with specific labels
+curl -X POST \
+	-g 'http://localhost:9090/api/v1/admin/tsdb/delete_series?match[]={instance="172.22.0.1:9100"}'
+
+# Delete all metrics 
+curl -X POST \
+	-g 'http://localhost:9090/api/v1/admin/tsdb/delete_series?match[]={__name__=~".+"}'
+
+# Let's do compaction right now
+curl -X POST -g 'http://localhost:9090/api/v1/admin/tsdb/clean_tombstones'
+```
