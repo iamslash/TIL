@@ -114,6 +114,7 @@ TODO
 # 인증서
 
 * [154. [Security] SSL과 인증서 구조 이해하기 : CA (Certificate Authority) 를 중심으로 @ naverblog](https://blog.naver.com/alice_k106/221468341565)
+* [72. [Docker] Docker Daemon 에 보안 인증서 (TLS) 적용하기 @ naverblog](https://blog.naver.com/alice_k106/220743690397)
 
 ----
 
@@ -131,6 +132,10 @@ TODO
   * 인증서 정보에 대해 서명한 사람의 디지털 ID
 * Public Key
 * 해쉬(Hash)
+
+해쉬는 상위 인증기관의 공개키로 복호화해본다. 그리고 인증서가 변조되었는지 검사해본다. 상위 인증관의 공개키는 상위 인증기관의 인증서를 다운받아서 얻을 수 있다.
+
+최상위 인증서는 self signed 되어있다. 더이상의 상위 인증기관이 없기 때문이다.
 
 https://wiki.kldp.org/HOWTO/html/SSL-Certificates-HOWTO/x70.html
 
