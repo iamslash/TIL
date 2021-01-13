@@ -29,3 +29,80 @@ $ git branch feature/oldbranch xxxxxx
 # Git LFS
 
 [Git LFS @ TIL](/git#git-lfs)
+
+# Git Cancel
+
+* [[Git] git add 취소하기, git commit 취소하기, git push 취소하기](https://gmlwjd9405.github.io/2018/05/25/git-add-cancle.html)
+
+## Cancel git add
+
+```bash
+$ git add *
+$ git status
+$ git reset HEAD a.txt
+$ git status
+```
+
+## Cancel git commit
+
+```bash
+$ git log
+
+# 0. cancel commit, files in commit will be remained staged
+$ git reset --soft HEAD^
+
+# 1. cancel commit, files in commit will be remained unstaged
+#    mixed is default option of reset
+$ git reset --mixed HEAD^
+#    This is same with above
+$ git reset HEAD^
+#    cancel last 2 commits
+$ git reset HEAD~2
+
+# 2. cancel commit, files in commit will be deleted
+$ git reset --hard HEAD^
+
+# Update commit message
+$ git commit --amend
+
+# [WARN] Cancel everything and return to last commit 
+$ get reset --hard HEAD
+```
+
+This is options of reset
+
+| option | index | working dir |
+|---|---|----|
+| `-soft` | index 보존(add한 상태, staged 상태) | 워킹 디렉터리의 파일 보존. 즉 모두 보존. |
+| `-mixed` |  index 취소(add하기 전 상태, unstaged 상태) | 워킹 디렉터리의 파일 보존 (기본 옵션) |
+| `-hard` |  index 취소(add하기 전 상태, unstaged 상태) | 워킹 디렉터리의 파일 삭제. 즉 모두 취소. |
+
+## Cancel git push
+
+This is very dangerous. I think delete origin branch and push it again is better.
+
+```bash
+$ git reset HEAD^
+$ git reflog or $ git log -g
+$ git reset HEAD@{number} or $ git reset <commit-id>
+$ git commit -m "Born again"
+$ git push origin <branch-name> -f or $ git push origin +<branch-name>
+$ git push origin +master
+```
+
+## Delete untracked files
+
+```bash
+# Delete files not dirs
+$ git clean -f
+# Delete files, dirs
+$ git clean -f -d
+# Delete files, dirs, ignored files
+$ git clean -f -d -x
+# Dry run
+$ git clean -n -f -d -x
+```
+
+
+
+
