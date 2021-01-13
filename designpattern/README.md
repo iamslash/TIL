@@ -237,9 +237,10 @@ public class A {
     - 예를 들어 Strategy class `Video` 를 상속받은 Concrete Strategy class `MpegCompression, AviCompression, QuickTimeCompression` 가 있다고 해보자. 
     - 시간이 지나 Audio 압축을 지원하고자 한다. `MpegVideoCompression, MpegVideoCompression` 과 같이 중복해서 Concrete Strategy class 를 추가하는 것보다는 Visitor interface `IVisitor`  를 상속받은 Concrete Visitor `MpegCompression` 을 이용하는 것이 더욱 간단하다. 다음은 `MpegCompression` 의 vistor method 이다.
 
-```java
-   MpegCompression::compressVideo(Video object)MpegCompression::compressAudio(Audio object)
-```   
+      ```java
+      MpegCompression::compressVideo(Video object)
+      MpegCompression::compressAudio(Audio object)
+      ```   
   
 ---
 
@@ -490,7 +491,7 @@ public class A {
 
 - Message Channel
 
- - When two applications communicate using a messaging system they do
+  - When two applications communicate using a messaging system they do
    it by using logical addresses of the system, so called Message
    Channels.
  
@@ -656,7 +657,7 @@ public class A {
 
 ----
 
-TODO
+* [msa @ TIL](/systemdesign/msa.md)
 
 # Cloud Design Patterns
 
@@ -664,4 +665,5 @@ TODO
 
 ----
 
-TODO
+* [Cloud Deisgn Patterns @ TIL](/systemdesign/clouddesignpattern.md)
+  
