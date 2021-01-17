@@ -38,4 +38,39 @@ Let f(x) be a property of objects X of type T. Then f(y) should be true for obje
 
 # DIP
 
-One should depend upon **abstractions**, not on conretions. Rober C. Martin.
+One should depend upon **abstractions**, not on concretions. Rober C. Martin.
+
+Interface 를 사용하면 Dependency 를 Inversion 할 수 있다. 예를 들어 다음과 같은 경우를 살펴보자.
+
+![](img/solid_dip.png)
+
+Application 은 ServiceFactory 라는 Interface 의 makeSvc 를 호출하여 ConcreteImpl 을 생성하고 Service Interface type 으로 소유한다. concreteImple 이라는 conrete class 에 변경이 생겨도 Application 은 수정할 필요가 없다.
+
+만약 ServiceFactory 가 없었다고 해보자. Application 은 ConcretImpl 을 직접 생성해야 한다. 즉, ServiceFactory 라는 abstraction 에 의존하지 않고 ConcretImple 이라는 concret 에 의존하는 것이다.
+
+ConcreteImpl 의 기능이 수정되었다면 Application 역시 수정되야할 수도 있다. 
+
+따라서 ConcretImpl 과 같은 Concrete 에 의존하지 말고 ServiceFactory 와 같은 Abstraction 에 의존하라는 얘기이다.
+
+# IoC
+
+* [IoC, DI, DIP 개념 잡기](https://vagabond95.me/posts/about-ioc-dip-di/)
+
+---
+
+IoC 란 코드의 흐름을 제어하는 주체가 바뀌는 것을 의미한다. 
+
+예를 들어 Library 를 사용하면 Library 를 호출하는 Host 가 코드 흐름을 제어하는
+주체이다. 그러나 
+
+Framework 를 사용하면 Host 는 Framework 에서 제공하는 Handler 들을 정의한다.
+이것은 코드 흐름을 제어하는 주체가 Host 가 아닌 Framework 임을 의미한다. 이것이
+IoC 의 예이다.
+
+# IoC vs DIP vs DI
+
+IoC, DIP, DI 에 대한 의견이 많다. 다음과 같은 글을 참고해서 이해하자.
+
+* [IoC, DI, DIP 개념 잡기](https://vagabond95.me/posts/about-ioc-dip-di/)
+* [DIP in the Wild](https://martinfowler.com/articles/dipInTheWild.html#YouMeanDependencyInversionRight)
+* [A curry of Dependency Inversion Principle (DIP), Inversion of Control (IoC), Dependency Injection (DI) and IoC Container](https://www.codeproject.com/Articles/538536/A-curry-of-Dependency-Inversion-Principle-DIP-Inve#Dependency%20Inversion%20Principle%20(DIP))
