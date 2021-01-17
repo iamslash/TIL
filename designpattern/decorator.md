@@ -6,13 +6,13 @@
 
 다음과 같이 LibraryItem Class 를 상속받은 Video, Book Class 가 있다. Video, Book Class 에 대여기능을 추가하고 싶다. 
 
-![](realworld.png)
+![](img/decorator_env.png)
 
 Inheritance 를 이용하여 해결해 보자. VideoBorrowable, BookBorrowable 를 만들어야 한다. Concrete LibraryItem Class 가 늘어나면 매번 대여기능이 추가된 Class 들을 새로 정의해야 한다. 이것은 [SOLID @ TIL](/solid/README.md) 의 OCP (Open Closed Principal) 에 맞지 않는다.
 
 Inheritance 보다는 Composition 을 활용해보자. Decorator 를 도입해서 해결할 수 있다.
 
-![](decorator.png)
+![](img/decorator_sol.png)
 
 Decorator 는 LibraryItem instance 를 가지고 있다(has-a relationship).Borrowable Class 는 Decorator 를 상속받는다. Borrowable Class 하나 만으로 Video, Book instance 에 대해 대여기능을 추가할 수 있다. 만약 판매기능을 추가한다고 해보자. 마찬가지로 Decorator 를 상속한 Sellable Class 를 구현하면 여러 LibraryItem instance 들에 대해 판매기능을 추가할 수 있다. 
 

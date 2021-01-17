@@ -70,7 +70,7 @@
 
 # Class Diagram Relationship
 
-![](Uml_class_relation_arrows_en.svg.png)
+![](img/Uml_class_relation_arrows_en.svg.png)
 
 ## Inheritance
 
