@@ -35,6 +35,8 @@
     - [CountDownLatch](#countdownlatch)
   - [Static Class](#static-class)
   - [Test](#test)
+  - [Multithread](#multithread)
+  - [Effective Java Programming](#effective-java-programming)
   - [What's new Java8](#whats-new-java8)
     - [Interface Default and Static Methods](#interface-default-and-static-methods)
     - [Functional Interfaces](#functional-interfaces-1)
@@ -1269,7 +1271,7 @@ public class DaysOfTheWeek extends Enum<DaysOfTheWeek> {
 
 ## Annotation
 
-* [Java Annotation](javaannotation.md)
+* [Java Annotation @ TIL](javaannotation.md)
 
 ## Generics
 
@@ -1586,7 +1588,15 @@ class Main {
 
 ## Test
 
-* [java test](javatest.md)
+* [java test @ TIL](javatest.md)
+
+## Multithread
+
+* [java multithread @ TIL](javamultithread.md)
+
+## Effective Java Programming
+
+* [effective java @ TIL](effectivejava/README.md)
 
 ## What's new Java8
 
