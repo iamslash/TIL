@@ -162,6 +162,7 @@ public class A {
     - Component, Leaf, Composite
     - 트리형태의 자료구조를 표현한다.
   - [Decorator](https://www.dofactory.com/net/decorator-design-pattern)
+    - [decorator @ TIL](decorator.md)
     - Component, ConcreteComponent, Decorator, ConcreteDecorator,
     - Attach additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing for extending functionality.
     - subclassing 하지 않고 새로운 기능을 추가한다. 
