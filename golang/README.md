@@ -75,6 +75,7 @@
   - [Profile](#profile)
   - [Vfsgen](#vfsgen)
   - [IntelliJ IDEA](#intellij-idea)
+  - [Managing Multiple go versions](#managing-multiple-go-versions)
 - [Snippets](#snippets)
   - [HTTP Server](#http-server)
   - [gRPC Server](#grpc-server)
@@ -2184,6 +2185,19 @@ $ go build cmd/main/main.go
 
 * use plugins such as "Protobuf Support", "Go", "File Watchers".
 * set [File Watcher](https://tech.flyclops.com/posts/2016-06-14-goimports-intellij.html) for goimports.
+
+## Managing Multiple go versions
+
+export GOROOT, GOPATH, PATH with specific go version.
+
+```bash
+#!/usr/bin/env bash
+
+export GOPATH=$HOME/my/gopath-1.14.13
+export GOROOT=/Users/davidsun/sdk/go1.14.13
+export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
+echo "done..."
+```
 
 # Snippets
 
