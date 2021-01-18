@@ -1,7 +1,23 @@
+- [Materials](#materials)
+- [Start Thread](#start-thread)
+- [Runnable vs Thread](#runnable-vs-thread)
+- [Status of Thread](#status-of-thread)
+- [Kill Thread](#kill-thread)
+- [Atomic Variables](#atomic-variables)
+- [Syncronized](#syncronized)
+- [wait(), notify(), notifyAll()](#wait-notify-notifyall)
+- [Lock](#lock)
+- [Condition](#condition)
+- [CountDownLatch](#countdownlatch)
+- [Semaphore](#semaphore)
+
+-----
+
 # Materials
 
 * [Multithread design pattern @ slideshare](https://www.slideshare.net/ohyecloudy/multithread-design-pattern)
 * [Guide to java.util.concurrent.Locks @ baeldung](https://www.baeldung.com/java-concurrent-locks)
+* [Concurrency @ leetcode](https://leetcode.com/problemset/concurrency/)
 
 # Start Thread
 
@@ -871,5 +887,123 @@ public class ReentrantLockWithCondition {
             lock.unlock();
         }
     }
+}
+```
+
+
+# CountDownLatch
+
+* [Guide to CountDownLatch in Java](https://www.baeldung.com/java-countdown-latch)
+
+----
+
+When it's  been counted down to zero, it will wake-up blocked threads.
+
+```java
+public class Worker implements Runnable {
+    private List<String> outputScraper;
+    private CountDownLatch countDownLatch;
+
+    public Worker(List<String> outputScraper, CountDownLatch countDownLatch) {
+        this.outputScraper = outputScraper;
+        this.countDownLatch = countDownLatch;
+    }
+
+    @Override
+    public void run() {
+        doSomeWork();
+        outputScraper.add("Counted down");
+        countDownLatch.countDown();
+    }
+}
+
+@Test
+public void whenParallelProcessing_thenMainThreadWillBlockUntilCompletion()
+  throws InterruptedException {
+
+    List<String> outputScraper = Collections.synchronizedList(new ArrayList<>());
+    CountDownLatch countDownLatch = new CountDownLatch(5);
+    List<Thread> workers = Stream
+      .generate(() -> new Thread(new Worker(outputScraper, countDownLatch)))
+      .limit(5)
+      .collect(toList());
+
+      workers.forEach(Thread::start);
+      countDownLatch.await(); 
+      outputScraper.add("Latch released");
+
+      assertThat(outputScraper)
+        .containsExactly(
+          "Counted down",
+          "Counted down",
+          "Counted down",
+          "Counted down",
+          "Counted down",
+          "Latch released"
+        );
+    }
+```
+
+# Semaphore
+
+* [Semaphores in Java](https://www.baeldung.com/java-semaphore)
+
+------
+
+* `tryAcquire()` – return true if a permit is available immediately and acquire it otherwise return false, but acquire() acquires a permit and blocking until one is available
+* `release()` – release a permit
+* `availablePermits()` – return number of current permits available
+
+```java
+class LoginQueueUsingSemaphore {
+
+    private Semaphore semaphore;
+
+    public LoginQueueUsingSemaphore(int slotLimit) {
+        semaphore = new Semaphore(slotLimit);
+    }
+
+    boolean tryLogin() {
+        return semaphore.tryAcquire();
+    }
+
+    void logout() {
+        semaphore.release();
+    }
+
+    int availableSlots() {
+        return semaphore.availablePermits();
+    }
+
+}
+
+@Test
+public void givenLoginQueue_whenReachLimit_thenBlocked() {
+    int slots = 10;
+    ExecutorService executorService = Executors.newFixedThreadPool(slots);
+    LoginQueueUsingSemaphore loginQueue = new LoginQueueUsingSemaphore(slots);
+    IntStream
+      .range(0, slots)
+      .forEach(user -> executorService.execute(loginQueue::tryLogin));
+    executorService.shutdown();
+
+    assertEquals(0, loginQueue.availableSlots());
+    assertFalse(loginQueue.tryLogin());
+}
+
+@Test
+public void givenLoginQueue_whenLogout_thenSlotsAvailable() {
+    int slots = 10;
+    ExecutorService executorService = Executors.newFixedThreadPool(slots);
+    LoginQueueUsingSemaphore loginQueue = new LoginQueueUsingSemaphore(slots);
+    IntStream
+      .range(0, slots)
+      .forEach(user -> executorService.execute(loginQueue::tryLogin));
+    executorService.shutdown();
+    assertEquals(0, loginQueue.availableSlots());
+    loginQueue.logout();
+
+    assertTrue(loginQueue.availableSlots() > 0);
+    assertTrue(loginQueue.tryLogin());
 }
 ```
