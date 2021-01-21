@@ -778,7 +778,9 @@ Arrays.sort(A, new Comparator<int[]>() {
 int[] a = new int[]{2, 4, 6, 8};
 int i = Arrays.binarySearch(a, 4);
 int j = Arrays.binarySearch(a, 5);
-int k = ~j; // ~j means (-j) + 1
+// Bitwise complement (~): inverts ones and zeroes in a number
+//                     ~j: (-j) - 1
+int k = ~j; 
 System.out.printf("i: %d, j: %d, k: %d\n", i, j, k);
 // i: 1, j: -3, k: 2
 
