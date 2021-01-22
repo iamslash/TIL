@@ -57,6 +57,7 @@
   - [JVM Options](#jvm-options)
   - [Thread Dump, Heap Dump](#thread-dump-heap-dump)
   - [BigInteger](#biginteger)
+  - [Comparable vs Comparator](#comparable-vs-comparator)
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
@@ -2326,6 +2327,65 @@ BigInteger g = a.multiply(b);
 BigInteger h = a.divide(b);
 
 int i = e.intValue();
+```
+
+## Comparable vs Comparator
+
+* [Comparator and Comparable in Java](https://www.baeldung.com/java-comparator-comparable)
+
+----
+
+When you design a class and want to sort using `Collections.sort()` without `Comparator`, please implement `Comparable<T>`.
+
+```java
+public class Player implements Comparable<Player> {
+    @Override
+    public int compareTo(Player otherPlayer) {
+        return Integer.compare(getRanking(), otherPlayer.getRanking());
+    }
+}
+
+public static void main(String[] args) {
+    List<Player> footballTeam = new ArrayList<>();
+    Player player1 = new Player(59, "John", 20);
+    Player player2 = new Player(67, "Roger", 22);
+    Player player3 = new Player(45, "Steven", 24);
+    footballTeam.add(player1);
+    footballTeam.add(player2);
+    footballTeam.add(player3);
+
+    System.out.println("Before Sorting : " + footballTeam);
+    Collections.sort(footballTeam);
+    System.out.println("After Sorting : " + footballTeam);
+}
+```
+
+When you want to sort the collection of the class without implementing `Comparable`, please give the argument `Comparator<T>`. Or you can provide it with Lambda Function.
+
+```java
+public class PlayerRankingComparator implements Comparator<Player> {
+    @Override
+    public int compare(Player firstPlayer, Player secondPlayer) {
+       return Integer.compare(firstPlayer.getRanking(), secondPlayer.getRanking());
+    }
+}
+
+public class PlayerAgeComparator implements Comparator<Player> {
+    @Override
+    public int compare(Player firstPlayer, Player secondPlayer) {
+       return Integer.compare(firstPlayer.getAge(), secondPlayer.getAge());
+    }
+}
+
+PlayerRankingComparator playerComparator = new PlayerRankingComparator();
+Collections.sort(footballTeam, playerComparator);
+
+PlayerAgeComparator playerComparator = new PlayerAgeComparator();
+Collections.sort(footballTeam, playerComparator);
+
+Comparator byRanking = 
+  (Player player1, Player player2) -> Integer.compare(player1.getRanking(), player2.getRanking());
+Collections.sort(footballTeam, byRanking);
 ```
 
 # Quiz
