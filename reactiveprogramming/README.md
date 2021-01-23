@@ -16,3 +16,18 @@ On the other hand, in **reactive programming**, the value of `a` is automaticall
 # Concepts
 
 [Reactive Streams @ wikipedia](https://en.wikipedia.org/wiki/Reactive_Streams) is a JVM standard for asynchronous stream processing with non-blocking backpressure
+
+[Reacdtive manifesto](https://www.reactivemanifesto.org/ko)
+* Responsive
+* Resilient
+* Elastic
+* Message Driven
+
+# Why spring 5 was born???
+
+* [Reactive와 Spring 4 (C10K, 리액티브 선언문, 리액티브 스프링 등장 전)](https://sjh836.tistory.com/179)
+
+----
+
+To solve C 10K problems we needed reactive programming. That's why spring 5 was born with reactive framework.
+
