@@ -1,9 +1,19 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
 - [Basic](#basic)
   - [grpc status code](#grpc-status-code)
   - [grpc curl client](#grpc-curl-client)
-- [Materials](#materials)
 
 -----
+
+# Abstract
+
+gRPC is an open source remote procedure call (RPC) system initially developed at Google in 2015.
+
+# Materials
+
+* [gRPC On HTTP/2: Engineering a robust, high performance protocol](https://www.cncf.io/blog/2018/08/31/grpc-on-http-2-engineering-a-robust-high-performance-protocol/)
+* [gRPC 1 - gRPC란?](https://chacha95.github.io/2020-06-15-gRPC1/)
 
 # Basic
 
@@ -95,9 +105,3 @@ $ grpcurl -emit-defaults -plaintext \
   "oauthScope": ""
 }
 ```
-
-# Materials
-
-* [gRPC On HTTP/2: Engineering a robust, high performance protocol](https://www.cncf.io/blog/2018/08/31/grpc-on-http-2-engineering-a-robust-high-performance-protocol/)
-
-
