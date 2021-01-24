@@ -1,12 +1,13 @@
 
 - [Abstract](#abstract)
 - [Materials](#materials)
+- [How to build and run linux 0.01 remake](#how-to-build-and-run-linux-001-remake)
 - [System Call](#system-call)
 - [Process Management](#process-management)
 - [fork, exec](#fork-exec)
-- [MEM](#mem)
-- [DISK](#disk)
-- [NETWORK](#network)
+- [Memory Management](#memory-management)
+- [File System](#file-system)
+- [Network](#network)
 
 ----
 
@@ -30,6 +31,135 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
   * [Linux-0.01 kernel building on ubuntu hardy](https://mapopa.blogspot.com/2008/09/linux-0.html)
   * [linux 0.01 commentary](https://www.academia.edu/5267870/The_Linux_Kernel_0.01_Commentary)
   * [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
+
+# How to build and run linux 0.01 remake
+
+[linux-0.01-remake @ github](https://github.com/issamabd/linux-0.01-remake) 는 32bit 를 기준으로 Makefile 이 작성되어 있다.
+
+다음과 같이 build option 을 수정하여 64bit ubuntu 18.02 LTS 에서 build 해보자. [Compile for 32 bit or 64 bit @ stackoverflow](https://stackoverflow.com/questions/48964745/compile-for-32-bit-or-64-bit)
+
+```makefile
+AS      =as --32
+LD      =ld -melf_i386
+CFLAGS  =-fno-stack-protector -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer -fno-stack-protector
+```
+
+gcc 는 4.8 로 downgrade 해야함. [우분투 16.04LTS의 기본 gcc 버전을 변경하자!](https://m.blog.naver.com/PostView.nhn?blogId=chandong83&logNo=220752111090&proxyReferer=https:%2F%2Fwww.google.com%2F)
+
+```bash
+$ docker run -it --name my_ubuntu_2 ubuntu bash
+> apt-get update
+> apt-get install git vim wget bin86 unzip
+> apt-get install gcc-4.8 gcc-4.8-multilib
+> update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 60
+> update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 60
+
+> cd
+> mkdir -p my/c
+> git https://github.com/issamabd/linux-0.01-remake.git
+> cd linux-0.01-remake
+
+> find . -name Makefile
+./lib/Makefile
+./mm/Makefile
+./Makefile
+./kernel/Makefile
+./fs/Makefile
+
+> vim lib/Makefile
+> vim mm/Makefile
+> vim Makefile
+> vim kernel/Makefile
+> vim fs/Makefile
+> make all
+```
+
+`lib/Makefile`
+
+```makefile
+AR      =ar
+AS      =as --32
+LD      =ld -melf_i386
+LDFLAGS =-s -x
+CC      =gcc
+CFLAGS  =-fno-stack-protector -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer \
+        -finline-functions -nostdinc -I../include
+CPP     =gcc -E -nostdinc -I../include
+...
+```
+
+`mm/Makefile`
+
+```makefile
+CC      =gcc
+CFLAGS  =-fno-stack-protector -m32 -O -Wall -fstrength-reduce  -fomit-frame-pointer -finline-functions -nostdinc -I../include
+AS      =as --32
+AR      =ar
+LD      =ld -melf_i386
+CPP     =gcc -E -nostdinc -I../include
+...
+```
+
+`Makefile`
+
+```makefile
+AS86    =as86 -0
+CC86    =cc86 -0
+LD86    =ld86 -0
+
+AS      =as --32
+LD      =ld -melf_i386
+LDFLAGS =-s -x -M -Ttext 0 -e startup_32
+CC      =gcc
+CFLAGS  =-fno-stack-protector -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer
+CPP     =gcc -E -nostdinc -Iinclude
+
+ARCHIVES=kernel/kernel.o mm/mm.o fs/fs.o
+LIBS    =lib/lib.a
+...
+```
+
+`kernel/Makefile`
+
+```makefile
+AR      =ar
+AS      =as --32
+LD      =ld -melf_i386
+LDFLAGS =-s -x
+CC      =gcc
+CFLAGS  =-fno-stack-protector -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer  \
+        -finline-functions -nostdinc -I../include
+CPP     =gcc -E -nostdinc -I../include
+...
+```
+
+`fs/Makefile`
+
+```makefile
+AR      =ar
+AS      =as --32
+CC      =gcc
+LD      =ld -melf_i386
+CFLAGS  =-fno-stack-protector -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc -I../include
+CPP     =gcc -E -nostdinc -I../include
+...
+```
+
+몇가지 trouble shooting 이 필요함
+
+* [install as86](https://command-not-found.com/as86)
+* [-m32 옵션 컴파일시 bits/libc-header-start.h: No such file or directory 오류 발생하여 컴파일 불가능.](https://my-repo.tistory.com/12)
+
+
+build 를 성공하면 다음과 같이 qemu 를 이용하여 실행해 볼 수 있다. [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
+
+```bash
+> apt-get install qemu -y
+> wget http://draconux.free.fr/download/os-dev/linux0.01/Image/hd_oldlinux.img.zip
+> unzip hd_oldlinux.img.zip
+> qemu-system-i386 -fda Image -hdb hd_oldlinux.img -boot a -m 8
+
+```
 
 # System Call
 
@@ -168,10 +298,10 @@ int main(){
 
 **context_switch()** 은 현재 CPU state vector 를 은퇴하는 Process 를 선택하고 그것의 PCB 에 적당한 정보를 기록한다. 그리고 새로 등장한 Process 의 PCB 를 읽어오고 그 PCB 의 PC 로 부터 프로그램을 실행한다.
 
-# MEM
+# Memory Management
 
 * [Slab Allocator(슬랩 할당자)](https://wiki.kldp.org/wiki.php/slab_allocator)
 
-# DISK
+# File System
 
-# NETWORK
+# Network
