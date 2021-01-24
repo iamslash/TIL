@@ -162,7 +162,10 @@ $ docker cp my_ubuntu_2:/root/my/c/linux-0.01-remake/Image /tmp/a/Image
 
 $ wget http://draconux.free.fr/download/os-dev/linux0.01/Image/hd_oldlinux.img.zip
 $ unzip hd_oldlinux.img.zip
+# Fail
 $ qemu-system-i386 -fda Image -hdb hd_oldlinux.img -boot a -m 8
+# Fail
+$ qemu-system-i386 -drive format=raw,file=Image,index=0,if=floppy -hdb hd_oldlinux.img -boot a -m 8
 ```
 
 그러나 다음과 같이 hang 된다. (2021.01.25)
