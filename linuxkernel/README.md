@@ -21,6 +21,15 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
 * [Kernel of LInux 강의노트](https://books-and-cows.gitbook.io/-linux-kernel-lecture-note/)
   * [video](https://olc.kr/course/course_online_view.jsp?id=35&s_keyword=kernel&x=0&y=0)
   * [pdf](https://olc.kr/classroom/library.jsp?cuid=283080)
+* [linux 0.01](https://github.com/zavg/linux-0.01)
+  * 토발즈가 릴리즈한 최초 리눅스 커널
+  * gcc 1.x 에서 빌드가 된다.
+* [linux 0.01 remake](http://draconux.free.fr/os_dev/linux0.01_news.html)
+  * gcc 4.x 에서 빌드가 되도록 수정된 fork
+  * [src](https://github.com/issamabd/linux-0.01-remake)
+  * [Linux-0.01 kernel building on ubuntu hardy](https://mapopa.blogspot.com/2008/09/linux-0.html)
+  * [linux 0.01 commentary](https://www.academia.edu/5267870/The_Linux_Kernel_0.01_Commentary)
+  * [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
 
 # System Call
 
