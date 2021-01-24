@@ -151,15 +151,23 @@ CPP     =gcc -E -nostdinc -I../include
 * [-m32 옵션 컴파일시 bits/libc-header-start.h: No such file or directory 오류 발생하여 컴파일 불가능.](https://my-repo.tistory.com/12)
 
 
-build 를 성공하면 다음과 같이 qemu 를 이용하여 실행해 볼 수 있다. [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
+build 를 성공하면 다음과 같이 qemu 를 이용하여 실행해 볼 수 있다. 이때 qemu 는 Windows, Macos 와 같이 host machine 에서 실행해야 한다. DISPLAY 가 필요하기 때문에 Docker container 에서 실행할 수 없다. Docker container 에서 DISPLAY 없이 실행하는 방법이 있을 수도 있다. [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
 
 ```bash
-> apt-get install qemu -y
-> wget http://draconux.free.fr/download/os-dev/linux0.01/Image/hd_oldlinux.img.zip
-> unzip hd_oldlinux.img.zip
-> qemu-system-i386 -fda Image -hdb hd_oldlinux.img -boot a -m 8
+$ cd /tmp/a/
 
+$ docker start my_ubuntu_2
+$ docker exec -it my_ubuntu_2 bash
+$ docker cp my_ubuntu_2:/root/my/c/linux-0.01-remake/Image /tmp/a/Image
+
+$ wget http://draconux.free.fr/download/os-dev/linux0.01/Image/hd_oldlinux.img.zip
+$ unzip hd_oldlinux.img.zip
+$ qemu-system-i386 -fda Image -hdb hd_oldlinux.img -boot a -m 8
 ```
+
+그러나 다음과 같이 hang 된다. (2021.01.25)
+
+![](img/qemu_linux-0.0.1-remake.png)
 
 # System Call
 
