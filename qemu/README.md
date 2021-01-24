@@ -2,6 +2,17 @@
 
 * [alpine qemu](https://wiki.alpinelinux.org/wiki/Qemu)
 
+# Install
+
+## Install on windows
+
+* [Download QEMU @ qemu](https://www.qemu.org/download/#windows)
+
+Launch linux-0.0.1-remake. [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
+
+```bash
+```
+
 # Basic Usages
 
 ```bash
