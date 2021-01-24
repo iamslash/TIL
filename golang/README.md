@@ -79,6 +79,7 @@
 - [Snippets](#snippets)
   - [HTTP Server](#http-server)
   - [gRPC Server](#grpc-server)
+  - [metric](#metric)
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -2232,3 +2233,7 @@ func main() {
 ## gRPC Server
 
 * [gRPC Basics - Go](https://grpc.io/docs/tutorials/basic/go/)
+
+## metric
+
+* [go metric](gometric.md)

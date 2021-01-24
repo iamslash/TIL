@@ -1,4 +1,25 @@
-# Tips
+- [Materials](#materials)
+- [Basic](#basic)
+  - [.vimrc](#vimrc)
+- [Advanced](#advanced)
+  - [Split windows](#split-windows)
+
+-----
+
+# Materials
+
+* [vim_robin @ github](https://github.com/iamslash/vim_robin)
+
+# Basic
+
+## .vimrc
+
+```vimrc
+colorscheme desert
+set paste
+```
+
+# Advanced
 
 ## Split windows
 

@@ -13,12 +13,13 @@
   - [Protobuf](#protobuf)
   - [gRPC](#grpc)
   - [go docker image](#go-docker-image)
+  - [Stamp with Git Revision](#stamp-with-git-revision)
 
 ----
 
 # Abstract
 
-Bazel is a build, test application.
+**Bazel** is an open-source build and test tool similar to Make, Maven, and Gradle.
 
 # Materials
 
@@ -1114,4 +1115,103 @@ $ bazel build \
   cmd/main:hello_image.tar
 $ docker load -i bazel-bin/cmd/main/hello_image.tar
 $ docker run bazel/cmd/main:hello_image
+```
+
+## Stamp with Git Revision
+
+* [Defines and stamping](https://github.com/bazelbuild/rules_go/blob/master/go/core.rst#defines-and-stamping)
+
+-----
+
+**Directory Structure**
+
+```
+|-- BUILD
+|-- WORKSPACE
+|-- hello.go
+|-- version.go
+`-- version.sh
+```
+
+`WORKSPACE`
+
+```py
+workspace(name = "hello")
+
+load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
+http_archive(
+    name = "io_bazel_rules_go",
+    sha256 = "842ec0e6b4fbfdd3de6150b61af92901eeb73681fd4d185746644c338f51d4c0",
+    urls = [
+        "https://storage.googleapis.com/bazel-mirror/github.com/bazelbuild/rules_go/releases/download/v0.20.1/rules_go-v0.20.1.tar.gz",
+        "https://github.com/bazelbuild/rules_go/releases/download/v0.20.1/rules_go-v0.20.1.tar.gz",
+    ],
+)
+
+load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
+
+go_rules_dependencies()
+
+go_register_toolchains()
+```
+
+`BUILD`
+
+```py
+load("@io_bazel_rules_go//go:def.bzl", "go_binary", "go_library")
+
+go_library(
+  name = "go_default_library",
+  srcs = ["version.go"],
+  importpath = "version",
+  #x_defs = {"Version": "0.9"},
+)
+
+go_binary(
+  name = "hello",
+  srcs = ["hello.go"],
+  deps = ["//:go_default_library"],
+  x_defs = {"version.Version": "{STABLE_GIT_COMMIT}"},
+)
+```
+
+`hello.go`
+
+```py
+package main
+
+import "fmt"
+import "version"
+
+func main() {
+  fmt.Println("Hello World")
+  fmt.Println(version.Version)
+}
+```
+
+`version.go`
+
+```go
+package version
+
+var Version = "redacted"
+```
+
+`version.sh`
+
+```bash
+#!/usr/bin/env bash
+
+echo STABLE_GIT_COMMIT $(git rev-parse HEAD)
+```
+
+**Command line for build**
+
+```console
+$ bazel build --stamp --workspace_status_command=/root/my/go/a/version.sh //...
+$ bazel build --stamp --workspace_status_command=`readlink -f version.sh` //...
+$  ./bazel-bin/linux_amd64_stripped/hello
+Hello World
+4577d9b39ddb1353fbd3ddf9e00304ef2f1f3168
 ```
