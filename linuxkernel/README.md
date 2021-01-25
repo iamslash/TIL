@@ -174,6 +174,12 @@ $ qemu-system-i386 -drive format=raw,file=Image,index=0,if=floppy -hdb hd_oldlin
 
 ![](img/qemu_linux-0.0.1-remake.png)
 
+그래서 미리 build 된 image 를 다운로드 받아서 다시 실행해 보았다. 똑같은 현상이 발생한다. [Linux 0.01 IÃ¹age download](http://draconux.free.fr/os_dev/linux0.01_download.html)
+
+```bash
+$ qemu-system-i386 -fda linux0.01-3.5.img -hdb hd_oldlinux.img -boot a -m 8
+```
+
 # System Call
 
 내가 작성한 a.out 이라는 프로그램이 실행되면 A process 라는 형태로 OS 에 만들어 진다. 그리고 `printf` 를 

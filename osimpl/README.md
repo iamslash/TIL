@@ -26,8 +26,13 @@ os 를 구현해보자. [fourbucks @ github](https://github.com/iamslash/fourbuc
 * qemu
 * Intel_Architecture_Software_Developers_Manual_Volume_3_Sys.pdf
 
-# Build and run
+# Build and Run
 
-```bash
+## Windows
 
 ```
+```
+
+## MacOS
+
+
