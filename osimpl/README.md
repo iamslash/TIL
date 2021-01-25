@@ -20,9 +20,14 @@ os 를 구현해보자. [fourbucks @ github](https://github.com/iamslash/fourbuc
 * [iamroot](http://www.iamroot.org/)
   * 커널 오프라인 스터디
 
-# prerequisites
+# Prerequisites
 
 * [NASM](https://www.nasm.us/)
 * qemu
 * Intel_Architecture_Software_Developers_Manual_Volume_3_Sys.pdf
 
+# Build and run
+
+```bash
+
+```
