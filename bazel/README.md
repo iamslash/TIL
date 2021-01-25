@@ -1215,3 +1215,10 @@ $  ./bazel-bin/linux_amd64_stripped/hello
 Hello World
 4577d9b39ddb1353fbd3ddf9e00304ef2f1f3168
 ```
+
+It's possible not to make the script. [Set Bazel BUILD_EMBED_LABEL to git commit SHA with state of uncommitted changes](https://dev.to/techthumb/set-bazel-buildembedlabel-to-git-commit-sha-with-state-of-uncommitted-changes-55ja)
+
+```console
+$ bazel build --stamp --workspace_status_command='echo "STABLE_GIT_COMMIT `git rev-parse HEAD`"' //...
+$ bazel build --stamp --workspace_status_command='echo "STABLE_GIT_COMMIT `git describe --always --dirty`"' //...
+```
