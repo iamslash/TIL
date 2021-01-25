@@ -8,10 +8,8 @@
 
 * [Download QEMU @ qemu](https://www.qemu.org/download/#windows)
 
-Launch linux-0.0.1-remake. [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
+Launch linux-0.0.1-remake. [linux kernel @ TIL](/linuxkernel/README.md)
 
-```bash
-```
 
 # Basic Usages
 
