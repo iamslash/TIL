@@ -1,7 +1,10 @@
 
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [How to build and run linux 0.01 remake](#how-to-build-and-run-linux-001-remake)
+- [Build and run old linux](#build-and-run-old-linux)
+  - [oldlinux 0.12 (Success)](#oldlinux-012-success)
+  - [oldlinux 0.11 (Fail)](#oldlinux-011-fail)
+  - [linux 0.01 remake](#linux-001-remake)
 - [System Call](#system-call)
 - [Process Management](#process-management)
 - [fork, exec](#fork-exec)
@@ -27,18 +30,80 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
 * [linux 0.01](https://github.com/zavg/linux-0.01)
   * 토발즈가 릴리즈한 최초 리눅스 커널
   * gcc 1.x 에서 빌드가 된다.
+* [The old Linux kernel source ver 0.11/0.12 study. @ github](https://github.com/huawenyu/oldlinux)
+  * gcc 4.3 에서 빌드가 되도록 수정된 fork. 
+  * ubuntu 18.04 LTS 에서 gcc 4.8.5 으로 build 잘됨. 
+  * Windows 10 에서 2.3.6 으로 실행 잘됨.
+  * [Welcome to OldLinux](http://www.oldlinux.org/)
+    * [An old paper written by Linus: "Linux--a free unix-386 kernel"](http://www.oldlinux.org/Linus/index.html)
+    * [A Heavily Commented Linux kernel Source Code (Kernel 0.11) pdf](http://www.oldlinux.org/download/CLK-5.0-WithCover.pdf)
 * [linux 0.01 remake](http://draconux.free.fr/os_dev/linux0.01_news.html)
   * gcc 4.x 에서 빌드가 되도록 수정된 fork. 그러나 build 는 성공했지만 run 은 실패했다.
   * [src](https://github.com/issamabd/linux-0.01-remake)
   * [Linux-0.01 kernel building on ubuntu hardy](https://mapopa.blogspot.com/2008/09/linux-0.html)
   * [linux 0.01 commentary](https://www.academia.edu/5267870/The_Linux_Kernel_0.01_Commentary)
   * [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
-  * [old linux](http://www.oldlinux.org/)
-    * [A Heavily Commented Linux Kernel Source Code pdf](http://www.oldlinux.org/download/ECLK-5.0-WithCover.pdf)
-* [Linux-0.11](https://github.com/yuan-xy/Linux-0.11)
-  * gcc 4.3 에서 빌드가 되도록 수정된 fork. WIP
 
-# How to build and run linux 0.01 remake
+# Build and run old linux
+
+## oldlinux 0.12 (Success)
+
+Build is ok Run with **bochs** is ok.
+
+We need 2 files to launch the linux including boot image and root image.
+
+Build with gcc 4.8.5 on Ubuntu 18.04 LTS Docker Container
+
+```bash
+$ docker run -it --name my_ubuntu_2 ubuntu bash
+> apt-get update
+> apt-get install git vim wget bin86 unzip
+> apt-get install gcc-4.8 gcc-4.8-multilib
+> update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 60
+> update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 60
+
+> cd
+> mkdir -p my/c
+> git https://github.com/huawenyu/oldlinux.git
+> cd oldlinux/linux-0.11
+
+> make
+```
+
+Install bocks 2.3.6
+
+```bash
+$ mkdir -p tmp/a
+$ cd tmp/a
+$ wget http://oldlinux.org/Linux.old/bochs/linux-0.12-080324.zip
+# Install Bochs-2.3.6.exe
+```
+
+Edit bochs config
+
+```bash
+$ mkdir my/c/oldlinux-dist-0.12
+$ cd my/c/oldlinux-dist-0.12
+# Copy root image file
+$ cp tmp/a/linux-0.12-080324/rootimage-0.12-hd .
+$ cp tmp/a/linux-0.12-080324/diskb.img .
+$ cp tmp/a/linux-0.12-080324/bochsrc-0.12-hd.bxrc .
+$ docker cp my_ubuntu_2:/root/my/c/oldlinux/linux-0.11/Image bootimage-0.12-hd
+```
+
+Run with bochs 2.3.6 on Windows 10
+
+```bash
+$ "c:\Program Files (x86)\Bochs-2.3.6\bochs.exe" -q -f bochsrc-0.12-hd.bxrc
+```
+
+## oldlinux 0.11 (Fail)
+
+Build is ok Run with **bochs** is failed.
+
+## linux 0.01 remake
+
+Build is ok Run with **qemu** is failed.
 
 [linux-0.01-remake @ github](https://github.com/issamabd/linux-0.01-remake) 는 32bit 를 기준으로 Makefile 이 작성되어 있다.
 
