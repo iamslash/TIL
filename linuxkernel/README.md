@@ -33,6 +33,8 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
   * [Linux-0.01 kernel building on ubuntu hardy](https://mapopa.blogspot.com/2008/09/linux-0.html)
   * [linux 0.01 commentary](https://www.academia.edu/5267870/The_Linux_Kernel_0.01_Commentary)
   * [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
+  * [old linux](http://www.oldlinux.org/)
+    * [A Heavily Commented Linux Kernel Source Code pdf](http://www.oldlinux.org/download/ECLK-5.0-WithCover.pdf)
 
 # How to build and run linux 0.01 remake
 
