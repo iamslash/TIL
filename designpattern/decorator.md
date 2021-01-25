@@ -1,3 +1,10 @@
+# Abstract
+
+subclassing 하지 않고 새로운 기능을 추가한다. 새로운 기능을 추가하기 위해
+subclassing 을 사용한다면 모든 ConcreteComponent 를 수정해야 한다. 그러나
+decorator pattern 을 사용한다면 새로운 기능을 담고 있는 concreteDecorator 하나만
+추가하면 된다.
+
 # Materials
 
 * [Decorator](https://www.dofactory.com/net/decorator-design-pattern)

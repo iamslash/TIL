@@ -219,7 +219,8 @@ public class A {
     - Method	Defer the exact steps of an algorithm to a subclass
     - 추상 클래스에서 절차를 정의하고 구현 클래스에서 단위 절차들을 구현한다. template method 가 실행되면 실제 실행은 자식 클래스들로 지연되어 있다.
   - [Visitor](https://www.dofactory.com/net/visitor-design-pattern)
-    - Element, ConcreteElement, Visitor, ConcreteVisitor
+    - [visitor @ TIL](visitor.md)
+    - **Element**, **ConcreteElement**, **Visitor**, **ConcreteVisitor**
     - Defines a new operation to a class without change
     - 기능 (Visitor) 이 클래스 (Element) 와 분리되어 있다. 따라서 기존의 클래스 (Element) 를 변경하지 않고 새로운 기능 (Visitor) 을 정의할 수 있다.
     - 예를 들어 기능을 추가하기 위해 Element 를 변경하지 않고 ConcreteVisitor 를 하나 새로 제작한다.
@@ -230,19 +231,22 @@ public class A {
   - **Proxy vs Adapter difference???**
     - Proxy class 는 wrapping 하고 싶은 class 와 형제관계이다. Adapter class 는 wrapping 하고 싶은 class 와 형제관계가 아니다.
   - **Decorator is better than Subclassing???**
-    - IFruit 를 상속받은 Apple, Orange 가 있다고 해보자. 과일판매기능을 추가하고 싶다. Subclassing 을 이용한다면 Apple, Orange 를 각각 구현해 주어야 한다. 그러나 Decorator 를 이용하면 하나의 ConcreteDecorator 를 추가하여 더욱 간단히 구현할 수 있다.
+    - [decorator @ TIL](decorator.md)
+    - IFruit 를 상속받은 Apple, Orange 가 있다고 해보자. 과일판매기능을 추가하고 싶다. Subclassing 을 이용한다면 AppleSellable, OrangeSellable 를 각각 구현해 주어야 한다. 그러나 Decorator 를 이용하면 하나의 ConcreteDecorator Sellable 를 추가하여 더욱 간단히 구현할 수 있다.
   - **Bridge vs Strategy difference???**
     - Strategy 는 behavioral pattern 이다. 인스턴스 교체를 통해서 runtime 에 동작이 달라진다. Bridge pattern 은 structural pattern 이다. 추상과 구현이 분리된 구조이다. Strategy 는 추상과 구현이 분리되어 있지 않다. 따라서 Strategy 의 추상과 구현의 결합도가 Bridge 보다 높다.
   - **Strategy vs Visitor difference???**
     - Strategy 는 `1:many` 관계를 추상화한다. Visitor 는 `many:many` 관계를 추상화한다. 
+    - Strategy 는 Single Dispatch 를 이용한 것이고 Visitor 는 Double Dispatch 를 이용한 것이다.
     - 예를 들어 Strategy class `Video` 를 상속받은 Concrete Strategy class `MpegCompression, AviCompression, QuickTimeCompression` 가 있다고 해보자. 
-    - 시간이 지나 Audio 압축을 지원하고자 한다. `MpegVideoCompression, MpegVideoCompression` 과 같이 중복해서 Concrete Strategy class 를 추가하는 것보다는 Visitor interface `IVisitor`  를 상속받은 Concrete Visitor `MpegCompression` 을 이용하는 것이 더욱 간단하다. 다음은 `MpegCompression` 의 vistor method 이다.
+    - 시간이 지나 Audio 압축을 지원하고자 한다. `MpegVideoCompression, MpegAudioCompression` 과 같이 중복해서 Concrete Strategy class 를 추가하는 것보다는 Visitor interface `IVisitor`  를 상속받은 Concrete Visitor `MpegCompression` 을 이용하는 것이 더욱 간단하다. 다음은 `MpegCompression` 의 vistor method 이다.
 
       ```java
       MpegCompression::compressVideo(Video object)
       MpegCompression::compressAudio(Audio object)
-      ```   
-  
+      ```     
+  - **Strategy vs State difference???**
+    - Strategy 와 State 는 매우 비슷하다. State 는 Concrete State 들 끼리 서로 변신하는 상태전환의 개념을 포함한다. Strategy 는 Concrete Strategy 들 끼리 서로 관계가 없다.
 ---
 
 # [Game Programming Pattern](http://gameprogrammingpatterns.com/contents.html)
