@@ -28,13 +28,15 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
   * 토발즈가 릴리즈한 최초 리눅스 커널
   * gcc 1.x 에서 빌드가 된다.
 * [linux 0.01 remake](http://draconux.free.fr/os_dev/linux0.01_news.html)
-  * gcc 4.x 에서 빌드가 되도록 수정된 fork
+  * gcc 4.x 에서 빌드가 되도록 수정된 fork. 그러나 build 는 성공했지만 run 은 실패했다.
   * [src](https://github.com/issamabd/linux-0.01-remake)
   * [Linux-0.01 kernel building on ubuntu hardy](https://mapopa.blogspot.com/2008/09/linux-0.html)
   * [linux 0.01 commentary](https://www.academia.edu/5267870/The_Linux_Kernel_0.01_Commentary)
   * [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
   * [old linux](http://www.oldlinux.org/)
     * [A Heavily Commented Linux Kernel Source Code pdf](http://www.oldlinux.org/download/ECLK-5.0-WithCover.pdf)
+* [Linux-0.11](https://github.com/yuan-xy/Linux-0.11)
+  * gcc 4.3 에서 빌드가 되도록 수정된 fork. WIP
 
 # How to build and run linux 0.01 remake
 
