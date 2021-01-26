@@ -20,6 +20,8 @@ Kernel 은 OS 의 핵심이다. 주로 program 들을 지원하고 hardware (CPU
 
 Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
 
+[1st version of Linux Kernel @ github](https://github.com/kalamangga-net/linux-0.01) 와 [The old Linux kernel source ver 0.11/0.12 study. @ github](https://github.com/huawenyu/oldlinux) 를 비교해서 공부해보자.
+
 [osimpl @ TIL](/osimpl/README.md) 에서 직접 구현해 보자.
 
 # Materials
