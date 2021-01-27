@@ -13,9 +13,9 @@
 
 # Abstract
 
-It's about Distributed Transactions. There are 2 methods for Distributed Transactions including 2 Phase Commit, SAGAS. 
+It's about Distributed Transactions. There are 2 methods for Distributed Transactions including **2 Phase Commit**, **SAGAS**. 
 
-And there are 2 types of SAGAS including Choreography based SAGA, Orchestration based SAGA. Choreography is distributed decision making and Orchestration is centralized decision making.
+And there are 2 types of **SAGAS** including **Choreography based SAGA**, **Orchestration based SAGA**. **Choreography** is distributed decision making and **Orchestration** is centralized decision making.
 
 # Materials
 
@@ -111,13 +111,29 @@ Order Service is a `Transaction Coordinator`. Kafka can handle Eventual Consiste
 
 # SAGA pattern, Event driven
 
+* [Orchestration vs. Choreography](https://stackoverflow.com/questions/4127241/orchestration-vs-choreography)
+
+----
+
 Choreography based SAGA, Orchestration based SAGA 와 같이 2 종류의 SAGA pattern 이 있다. Choreography based SAGA 는 transaction 성공여부 판단을 각 service 에서 나누어 한다. Orchestration based SAGA 는 transaction 성공여부 판단을 한 곳에서 한다.
 
 ## Choreography based SAGA
 
+* [Choreography-based sagas example @ github](https://github.com/eventuate-tram/eventuate-tram-examples-customers-and-orders)
+  
+----  
+
+![](choreography_saga.jpg)
+
 ![](https://chrisrichardson.net/i/sagas/Create_Order_Saga.png)
 
 ## Orchestration based SAGA
+
+* [orchestration-based-sagas example @ github](https://github.com/eventuate-tram/eventuate-tram-sagas-examples-customers-and-orders)
+  
+----
+
+![](orchestration_saga.jpg)
 
 ![](https://chrisrichardson.net/i/sagas/Create_Order_Saga_Orchestration.png)
 
