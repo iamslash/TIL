@@ -153,17 +153,32 @@ $ docker-compose down --volume
 
 ## networks_mode host
 
+**But The host networking driver only works on Linux hosts**, and is not supported on Docker Desktop for Mac, Docker Desktop for Windows, or Docker EE for Windows Server. [Use host networking @ docker](https://docs.docker.com/network/host/)
+
 ```yml
-version: '3'
+version: "3"
 services:
   nginx:
     image: nginx:latest
-    ports:
-      - "80:80"
     network_mode: host
       
   ubuntu:
     image: ubuntu:latest
     network_mode: host
-    command: sh -c "while true; do sleep 30; done;"      
+    command: sh -c "while true; do sleep 30; done;"
+```
+
+Compose files that do not declare a version are considered “version 1”. There should not be `services` and use `net` instead of `network_mode`. [Version 1 @ docker](https://docs.docker.com/compose/compose-file/compose-versioning/#version-1)
+
+```yml
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    net: host
+
+  ubuntu:
+    image: ubuntu:latest
+    net: host
+    command: sh -c "while true; do sleep 30; done;"
 ```
