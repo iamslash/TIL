@@ -7,6 +7,7 @@
   - [After updating docker-compose.yml](#after-updating-docker-composeyml)
   - [After updating Dockerfile-dev](#after-updating-dockerfile-dev)
   - [Want to delete database with volumes](#want-to-delete-database-with-volumes)
+  - [networks_mode host](#networks_mode-host)
 
 ----
 
@@ -148,4 +149,21 @@ $ docker-compose up -d --build django
 
 ```bash
 $ docker-compose down --volume
+```
+
+## networks_mode host
+
+```yml
+version: '3'
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    network_mode: host
+      
+  ubuntu:
+    image: ubuntu:latest
+    network_mode: host
+    command: sh -c "while true; do sleep 30; done;"      
 ```
