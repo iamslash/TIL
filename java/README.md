@@ -360,6 +360,8 @@ System.out.println(rnd.nextFloat()); // 0.0~1.0
    Integer a = D.get(0);
    D.set(0, 1);
    D.add(1);
+   // remove last
+   D.remove(D.size()-1);
 ```
 
 * Deque, ArrayDeque
