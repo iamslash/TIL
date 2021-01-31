@@ -1,12 +1,17 @@
 # Abstract
 
-기능 (Visitor) 이 클래스 (Element) 와 분리되어 있다. 따라서 기존의 클래스 (Element) 를 변경하지 않고 새로운 기능 (Visitor) 을 정의할 수 있다.
+기능 (Visitor) 이 추상 (Element) 과 분리되어 있다. 따라서 기존의 추상 (Element) 를 변경하지 않고 새로운 기능 (Visitor) 을 추가할 수 있다. 
+
+그러나 새로운 추상 (Element) 가 추가된다면 기존의 코드를 수정할 수 밖에 없다.
+
+Concrete Visitor Class 는 `Accept(Visitor v)` Method 를 갖는다. Concret Element Class 는 `Visit(Element e)` Method 를 갖는다.
 
 # Materials
 
 * [방문자 패턴 - Visitor pattern](https://thecodinglog.github.io/design/2019/10/29/visitor-pattern.html)
 * [Visitor Design Pattern in Java @ baeldung](https://www.baeldung.com/java-visitor-pattern)
 * [Double Dispatch in DDD @ baeldung](https://www.baeldung.com/ddd-double-dispatch)
+* [Visitor](https://www.dofactory.com/net/visitor-design-pattern)
 
 # Idea
 
@@ -303,3 +308,5 @@ Visitor Pattern 을 이용했기 때문에 다음과 같은 특징들을 갖는�
 * 새로운 기능 즉 혜택 coupon 을 추가하기 위해 CouponBenefit 만 추가했다. 새로운 기능 추가를 위해 새로운 Class 만 추가했다.
 * Concret Element 가 추가된다면 Benefit 또한 변경되야 한다. 예를 들어 Green Clas 가 추가된다면 Benefit 및 Concret Benefit 이 모두 변경되야 한다. 대상 객체 즉 Element 가 잘 바뀌지 않고 알고리즘 즉, Visitor 가 추가될 가능성이 있을 때 사용한다.
 * Visitor Pattern 은 Double Dispatch 를 이용한 것이다. Double Dispatch 는 runtime 에 receiver, parameter type 과 같이 두가지를 고려해서 실행될 method 를 결정하는 것이다.
+* [Visitor @ dofactory](https://www.dofactory.com/net/visitor-design-pattern) 의 Real World Example 은 조금 특이하다. ConcretVisitor 의 Visit Method 는 Element Object 를 argument 로 한다. Concrete Element Object 를 argument 로 하지 않는다. Concrete Element Object 별로 다르게 business logic 을 다뤄야 하는 하는 경우를 처리할 수는 없다. Strategy Pattern 과 차이가 없는 것 같다.
+  
