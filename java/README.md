@@ -661,6 +661,12 @@ List<Integer> list = Arrays.stream(array)
 // List to Array
 List<Integer> list = Arrays.asList(1, 2, 3);
 list.toArray(new Integer[list.size()]);
+
+// List to array of int
+// https://www.techiedelight.com/convert-list-integer-array-int/
+int[] l = list.stream()
+  .mapToInt(Integer::intValue)
+  .toArray();
 ```
 
 ## Sort
