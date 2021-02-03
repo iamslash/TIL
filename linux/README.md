@@ -1321,7 +1321,7 @@ EOF
 * `journalctl`
   * [[Linux] journalctl을 이용해 systemd 로그 확인하기](https://twpower.github.io/171-journalctl-usage-and-examples)
   * systemd log 확인
-
+  * `journalctl -u <systemd-unit-name>`
 
 ## 텍스트
 

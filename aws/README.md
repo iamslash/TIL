@@ -226,7 +226,11 @@ routing prefix 는 `198.51.100.0/24` 와 같이 CIDR (Classless Inter-Domain Rou
 
 기존의 IP 주소 할당 방식이었던 네트워크 클래스를 대체하기 위해 IETF (Internet Engineering Task Force) 가 1993년 에 [RFC4632](https://tools.ietf.org/html/rfc4632) 라는 표준으로 개발한 IP 주소 할당 방법이다. 
 
-`198.51.100.0/24` 와 같이 표기한다. `/24` 는 routing prefix 비트의 개수를 의미한다.
+`198.51.100.0/24` 와 같이 표기한다. `/24` 는 routing prefix (Network) 비트의 개수를 의미한다.
+
+예를 들어 subnet 의 Network ACL 에 Source 가 `10.228.32.0/19` 인 rule 이 등록되어 있다고 하자. 그렇다면 `10.228.32.0/21`, `10.228.48.0/21` 은 접근이 가능하다.
+
+`10.228.32.0/19` 는 `10.228.32.0 ~ 10.228.63.0` 을 의미한다. `24 - 19 = 5` 이고 이것은 `2^5 = 32` 를 의미하기 때문이다.
 
 ## Private Network
 
