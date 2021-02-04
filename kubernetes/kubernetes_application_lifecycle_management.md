@@ -1,5 +1,18 @@
+- [Rolling updates and Rollbacks](#rolling-updates-and-rollbacks)
+- [Commands](#commands)
+- [Commands and Arguments](#commands-and-arguments)
+- [Configuring ConfigMaps in Applications](#configuring-configmaps-in-applications)
+- [Configure Secrets in Applications](#configure-secrets-in-applications)
+- [A note about Secrets!](#a-note-about-secrets)
+- [Scale Applications](#scale-applications)
+- [Multi Container PODs](#multi-container-pods)
+- [Multi-Container PODs Design Paterns](#multi-container-pods-design-paterns)
+- [InitContainers](#initcontainers)
+- [Self Healing Applications](#self-healing-applications)
 
-## Rolling updates and Rollbacks
+----
+
+# Rolling updates and Rollbacks
 
 ```bash
 $ kubectl create -f deployment.yml
@@ -10,7 +23,8 @@ $ kubectl rollout status deployment/myapp-deployment
 $ kubectl rollout history deployment/myapp-deployment
 $ kubectl rollout undo deployment/myapp-deployment
 ```
-## Commands
+
+# Commands
 
 ```bash
 $ docker build -t ubuntu-sleeper .
@@ -20,7 +34,7 @@ $ docker run ubuntu-sleeper 10
 $ docker run --entrypoint sleep unbuntu-sleeper 10
 ```
 
-## Commands and Arguments
+# Commands and Arguments
 
 ```bash
 $ kubectl create -f pod-definition.yml
@@ -41,7 +55,7 @@ spec:
       args: ["10"]
 ```
 
-## Configuring ConfigMaps in Applications
+# Configuring ConfigMaps in Applications
 
 ```bash
 $ docker run -e APP_COLOR=blue simple-webapp-color
@@ -144,16 +158,16 @@ data:
   APP_MODE: prod  
 ```
 
-## Configure Secrets in Applications
+# Configure Secrets in Applications
 
-## A note about Secrets!
+# A note about Secrets!
 
-## Scale Applications
+# Scale Applications
 
-## Multi Container PODs
+# Multi Container PODs
 
-## Multi-Container PODs Design Paterns
+# Multi-Container PODs Design Paterns
 
-## InitContainers
+# InitContainers
 
-## Self Healing Applications
+# Self Healing Applications

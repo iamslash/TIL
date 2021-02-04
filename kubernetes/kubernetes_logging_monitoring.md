@@ -1,5 +1,9 @@
+- [Monitor Cluster Components](#monitor-cluster-components)
+- [Managing Application Logs](#managing-application-logs)
 
-## Monitor Cluster Components
+----
+
+# Monitor Cluster Components
 
 Metrics Server
 
@@ -12,7 +16,7 @@ $ kubectl top node
 $ kubectl top pod
 ```
 
-## Managing Application Logs
+# Managing Application Logs
 
 * `event-sumulator.yaml` Single Container
 
