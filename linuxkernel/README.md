@@ -1,6 +1,7 @@
 
 - [Abstract](#abstract)
 - [Materials](#materials)
+- [Boot Process](#boot-process)
 - [Build and run old linux](#build-and-run-old-linux)
   - [oldlinux 0.12 (Success)](#oldlinux-012-success)
   - [oldlinux 0.11 (Fail)](#oldlinux-011-fail)
@@ -45,6 +46,17 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
   * [Linux-0.01 kernel building on ubuntu hardy](https://mapopa.blogspot.com/2008/09/linux-0.html)
   * [linux 0.01 commentary](https://www.academia.edu/5267870/The_Linux_Kernel_0.01_Commentary)
   * [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
+
+# Boot Process
+
+* [An introduction to the Linux boot and startup processes](https://opensource.com/article/17/2/linux-boot-and-startup)
+
+----
+
+* BIOS POST
+* Boot loader (GRUB2)
+* Kernel initialization
+* Start systemd, the parent of all processes.
 
 # Build and run old linux
 
