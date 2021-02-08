@@ -193,7 +193,8 @@ TCP/IP 통신을 위해서는 IP 와 MAC Address 를 알아야 한다. ARP 를 �
 
 ## Ethernet Frame
 
-* [Ethernet frame](https://en.wikipedia.org/wiki/Ethernet_frame)
+* [Ethernet frame @ wikipedia](https://en.wikipedia.org/wiki/Ethernet_frame)
+* [3.4 Ethernet Frame @ youtube](https://www.youtube.com/watch?v=SoTRqDLND6Y)
 
 --- 
 
