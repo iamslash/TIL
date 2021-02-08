@@ -1,3 +1,34 @@
+- [Abstract](#abstract)
+- [OSI 7 Layer](#osi-7-layer)
+- [TCP/IP Layer](#tcpip-layer)
+- [TCP Transition Diagram](#tcp-transition-diagram)
+- [TCP/IP Packet Structure](#tcpip-packet-structure)
+  - [TCP](#tcp)
+  - [UDP](#udp)
+  - [IPv4](#ipv4)
+  - [IPv6](#ipv6)
+  - [ARP](#arp)
+  - [Ethernet Frame](#ethernet-frame)
+- [IPv4 Address](#ipv4-address)
+- [TCP/IP programming](#tcpip-programming)
+  - [Major APIs](#major-apis)
+  - [Basic Server](#basic-server)
+  - [How to use custom port in client](#how-to-use-custom-port-in-client)
+- [Subnet Mask](#subnet-mask)
+- [IPv6 Address](#ipv6-address)
+- [DNS](#dns)
+- [NAT](#nat)
+  - [STUN](#stun)
+  - [TURN](#turn)
+  - [ICE](#ice)
+- [WebRTC](#webrtc)
+- [UDP Hole Punching](#udp-hole-punching)
+- [SSL Handshake](#ssl-handshake)
+- [TCP Handshake VS SSL Handshake](#tcp-handshake-vs-ssl-handshake)
+- [SSL vs TLS](#ssl-vs-tls)
+
+----
+
 # Abstract
 
 네트워크에 대해 정리한다.
@@ -59,7 +90,7 @@ Active Close 의 경우 `FIN_WAIT_1, FIN_WAIT_2, TIME_WAIT, CLOSED` 순서대로
 | MTU(Maximum Transmission Unit)	| MTU는 그림에는 나와있지 않지만 MSS의 설명이 필요하기 때문에 언급하게 되었다. MTU란 TCP/IP 네트워크 등과 같은 패킷 또는 프레임 기반의 네트워크에서 한번에 전송될 수 있는 최대 크기의 패킷 또는 프레임을 말한다. 단위는 Byte이며 MTU 값은 네트워크 인터페이스나 대역폭 등 네트워크 환경에 따라 달라질 수 있는데 일반적으로 흔히 쓰이는 이더넷의 경우 MTU 값은 1500을 사용하고, FDDI는 4000, X.25는 576, Gigabit는 9000정도를 사용한다. |
 | MSS(Maximum Segment Size) |	MTU에서 헤더를 제외한 TCP상에서 전송 할 수 있는 사용자 데이터의 최대 크기에 해당하는 세그먼트이다. 위 그림에서는 처음 접속 요청시 1460바이트에 해당하는 MSS를 전송하고 있다. 이것은 이더넷과같은 환경에서 MTU를 1500으로 사용했을 때 여기에 IPv4 헤더의 20바이트와 TCP 헤더의 20바이트를 뺀 값이다. 그리고 응답시에는 1024바이트로 응답하는데 이것은 1024바이트의 크기의 단위로 데이터를 전송하겠다는것을 의미한다. |
 
-# Packets
+# TCP/IP Packet Structure
 
 [protocol](https://github.com/luismartingarcia/protocol) 을 이용하여 ascii  로 출력하고 설명해본다.
 
@@ -150,6 +181,24 @@ Active Close 의 경우 `FIN_WAIT_1, FIN_WAIT_2, TIME_WAIT, CLOSED` 순서대로
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ```
 
+## ARP
+
+* [Address Resolution Protocol (ARP) Explained @ youtube](https://www.youtube.com/watch?v=xTOyZ6TWQdM)
+* [[정리] ARP의 기능과 패킷 구조 @ tistory](https://mr-zero.tistory.com/23)
+* [Address Resolution Protocol @ wikipedia](https://en.wikipedia.org/wiki/Address_Resolution_Protocol)
+
+----
+
+TCP/IP 통신을 위해서는 IP 와 MAC Address 를 알아야 한다. ARP 를 이용하면 IP 에 대응하는 MAC Address 를 얻어올 수 있다.
+
+## Ethernet Frame
+
+* [Ethernet frame](https://en.wikipedia.org/wiki/Ethernet_frame)
+
+--- 
+
+Data Link Layer 에서 만들어지는 packet 이다. Dat Link Layer 는 상위 layer 에서 만들어진 packet 을 받아 Ehternet Frame 의 형태로 변환하여 Physical Layer 에 전달한다.
+
 # IPv4 Address
 
 32 비트로 주소를 표현한다. 따라서 4,294,967,296 (2^32) 개의 주소를 표현할 수 있다.
@@ -180,10 +229,6 @@ Network, Host 를 어떻게 나누는 가에 따라 A, B, C, D, E class 로 구�
 C 클래스의 기본 마스크 `255.255.255.0` 을 적용하면 Network part `211.168.83` 를 얻어낼 수 있다. 그리고 `211.168.83` 네트워크를 관리하는 라우터에게 패킷을 보낼 수 있다.
 해당 라우터는 Host Part `1` 에 해당하는 단말기에게 패킷을 보낸다.
 
-# What happens when I type goole.com in a browser.
-
-[What happens when...](https://github.com/SantonyChoi/what-happens-when-KR)
-  * [...하면 생기는 일](https://github.com/SantonyChoi/what-happens-when-KR)
 
 # TCP/IP programming
 
@@ -410,7 +455,8 @@ subnet mask: 11111111 11111111 11111111 11000000
 
 # NAT
 
-[How NAT traversal works](https://tailscale.com/blog/how-nat-traversal-works/)
+* [Introduction to NAT and PAT @ youtube](https://www.youtube.com/watch?v=l_07u3QrmBU)
+* [How NAT traversal works](https://tailscale.com/blog/how-nat-traversal-works/)
 
 ----
 

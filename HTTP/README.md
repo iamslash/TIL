@@ -1,6 +1,15 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Basic](#basic)
+- [HTTP 1.1](#http-11)
+- [HTTP 2](#http-2)
+- [HTTP Flow](#http-flow)
+
+----
+
 # Abstract
 
-HTTP 1.1 은 1999 년에 출시되었다. 하나의 TCP 연결에 하나의 Request, Response 를 처리한다. 속도와 성능 이슈를 가지고 있다. 따라서 HOL (Head of Line) Blocking - 특정 응답 지연, RTT (Round Trip Time) 증가, 무거운 Header 구조 (Big Cookies) 라는 문제점을 가지고 있었다. 또한 이런 문제들을 해결하기 위해 개발자들은 image sprinte, domain sharding, CSS/JavaScript compression, Data URI 등을 이용하였다. 또한 google 은 SPDY 라는 프로토콜을 만들어서 HTTP 1.1 의 제약사항을 극복하려 했지만 HTTP 2 의 등장과 함께 Deprecate 되었다.
+HTTP 1.1 은 1999 년에 출시되었다. 하나의 TCP 연결에 하나의 Request, Response 를 처리한다. 속도와 성능 이슈를 가지고 있다. 따라서 HOL (Head of Line) Blocking - 특정 응답 지연, RTT (Round Trip Time) 증가, 무거운 Header 구조 (Big Cookies) 라는 문제점을 가지고 있었다. 또한 이런 문제들을 해결하기 위해 개발자들은 image sprite, domain sharding, CSS/JavaScript compression, Data URI 등을 이용하였다. 또한 google 은 SPDY 라는 프로토콜을 만들어서 HTTP 1.1 의 제약사항을 극복하려 했지만 HTTP 2 의 등장과 함께 Deprecate 되었다.
 
 # Materials
 
@@ -104,3 +113,70 @@ HTTP 2 는 속도와 성능이 개선되었다.
 | **Header Compression** | Header 를 HPACK 으로 압축한다. |
 | **Server Push** | Server 에서 JavaScript, CSS, Font, Image 등을 Client 으로 push 한다. |
 | **Stream Prioritization** | 웹페이지를 구성하는 파일들의 우선순위를 표기할 수 있다. |
+
+# HTTP Flow
+
+* [What happens when... @ github](https://github.com/alex/what-happens-when)
+  * [...하면 생기는 일 @ github](https://github.com/SantonyChoi/what-happens-when-KR)
+
+----
+
+**The "g" key is pressed**
+
+**The "enter" key bottoms out**
+
+**Interrupt fires [NOT for USB keyboards]**
+
+* "g" 키를 누르면 인터럽트가 발생합니다. 그리고 kernel 이 인터럽트 핸들러를 호출합니다.
+
+**(On Windows) A WM_KEYDOWN message is sent to the app**
+
+* kernel 이 WM_KEYDOWN 메시지를 Browser application 으로 전달합니다.
+
+**Parse URL**
+
+**Is it a URL or a search term?**
+
+* Browser application 은 URL 을 parsing 합니다. 그리고 protocol 혹은 valid domain name 이 아니면 default search engine 에게 HTTP Request 를 전송합니다.
+
+**Convert non-ASCII Unicode characters in hostname**
+
+* Browser application 은 URL 의 host name 에 `a-z, A-Z, 0-9, -, .` 아닌 문자열이 있는지 확인합니다. Unicode 가 있을 때는 [Punycode encoding](https://en.wikipedia.org/wiki/Punycode) 을 하기도 한다.
+
+**Check HSTS list**
+
+* Browser application 는 `HSTS (HTTP Strict Transport Security)` 에 URL 이 있는지 검사합니다. 있다면 HTTP 대신 HTTPS Request 를 해야합니다.
+
+**DNS lookup**
+
+* Browser application 은 Domain Cache 에 host name 이 있는지 검사합니다.
+  * Chrome 의 경우 `chrome://net-internals/#dns` 에서 DNS cache 를 확인할 수 있다.
+* DNS cache miss 가 발생하면 `gethostbyname` 을 호출합니다.
+* `gethostbyname` 은 `/etc/hosts` 를 검색합니다.
+* `/etc/hosts` 에 없다면 `gethostbyname` 은 DNS query 를 합니다.
+
+**ARP process**
+
+**Opening of a socket**
+
+**TLS handshake**
+
+**If a packet is dropped**
+
+**HTTP protocol**
+
+**HTTP Server Request Handle**
+
+**Behind the scenes of the Browser**
+
+**Browser**
+
+**HTML parsing**
+
+**CSS interpretation**
+
+**Page Rendering**
+
+**GPU Rendering**
+
+**Post-rendering and user-induced execution**
