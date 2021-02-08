@@ -675,12 +675,24 @@ int[] l = list.stream()
   * [Sorting in Java @ baeldung](https://www.baeldung.com/java-sorting)
 
 ```java
-// sort array ascending
-// It's not possible to sort descending with Arrays.sort 
-// use ArrayList instead of Arrays.sort
-int[] A = new int[]{5, 4, 3, 2, 1};
-// int[] A = {5, 4, 3, 2, 1};
+// Sort the array of primitive types ascending
+int[] A = new int[]{1, 4, 5, 3, 1};
 Arrays.sort(A);
+System.out.println(Arrays.toString(A));  // 1 2 3 4 5
+// It's not possible to sort the array of primitive types descending with Arrays.sort.
+// There 2 ways to sort the array of primitive types.
+// 0) You should convert the array of primitive types 
+//    to the array of wrapper class types to use Comparator.
+Integer[] B = new Integer[]{1, 4, 5, 3, 1};
+Arrays.sort(B, Collections.reverseOrder());
+System.out.println(Arrays.toString(B));  // 5 4 3 2 1
+// 1) You should use stream API.
+A = Arrays.stream(A)
+      .boxed()
+      .sorted(Collections.reverseOrder())
+      .mapToInt(Integer::intValue)
+      .toArray();
+System.out.println(Arrays.toString(A));  // 5 4 3 2 1
 
 // Create a list of strings 
 List<String> al = new ArrayList<String>(); 
