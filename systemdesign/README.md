@@ -31,6 +31,7 @@
     - [REST (REpresentational State Transfer) API](#rest-representational-state-transfer-api)
     - [RPC VS REST](#rpc-vs-rest)
     - [HTTP 1.x vs HTTP 2.0](#http-1x-vs-http-20)
+    - [HTTP Flow](#http-flow)
   - [Security](#security)
     - [WAF (Web Application Fairewall)](#waf-web-application-fairewall)
     - [XSS (Cross Site Scripting)](#xss-cross-site-scripting)
@@ -556,7 +557,11 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 
 ### HTTP 1.x vs HTTP 2.0
 
-* [HTTP @ TIL](/http/README.md)
+* [HTTP @ TIL](/HTTP/README.md)
+
+### HTTP Flow
+
+* [HTTP Flow @ TIL](/HTTP/README.md#http-flow)
 
 ## Security
 
