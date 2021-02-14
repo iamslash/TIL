@@ -4,9 +4,10 @@
 - [Materials](#materials)
 - [Install](#install)
   - [Install on osx](#install-on-osx)
-  - [Install with docker](#install-with-docker)
-  - [Install Prometheus & Grafana docker-compose stack with docker-swarm](#install-prometheus--grafana-docker-compose-stack-with-docker-swarm)
-  - [Install GitHub Monitoring Stack with docker-compose](#install-github-monitoring-stack-with-docker-compose)
+  - [Deploy with docker on OSX](#deploy-with-docker-on-osx)
+  - [Deploy with docker on Win32](#deploy-with-docker-on-win32)
+  - [Deploy Prometheus & Grafana docker-compose stack with docker-swarm](#deploy-prometheus--grafana-docker-compose-stack-with-docker-swarm)
+  - [Deploy GitHub Monitoring Stack with docker-compose](#deploy-github-monitoring-stack-with-docker-compose)
 - [Basic](#basic)
 - [PromQL](#promql)
   - [Data Model](#data-model)
@@ -47,6 +48,7 @@
   - [Prometheus High Availability](#prometheus-high-availability)
   - [How to delete metrics](#how-to-delete-metrics)
   - [How to drop metrics](#how-to-drop-metrics)
+  - [How to relabel](#how-to-relabel)
 
 ----
 
@@ -75,18 +77,55 @@
 $ brew install prometheus
 ```
 
-## Install with docker
+## Deploy with docker on OSX
 
 ```bash
 $ docker pull prom/prometheus
 $ vim ~/tmp/prometheus.yml
 $ docker run \
+    --rm \
+    --name my-prometheus \
     -p 9090:9090 \
     -v ~/tmp/prometheus.yml:/etc/prometheus/prometheus.yml \
     prom/prometheus
 ```
 
-## Install Prometheus & Grafana docker-compose stack with docker-swarm
+## Deploy with docker on Win32
+
+```console
+$ code D:\tmp\prometheus\prometheus.yml
+
+$ docker run --rm --name my-prometheus -p 9090:9090 -v D:\tmp\prometheus\prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
+
+# Open Browser http://localhost:9090
+```
+
+* `D:\tmp\prometheus\prometheus.yml`
+
+```yml
+global:
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  external_labels:
+    monitor: 'codelab-monitor'
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # Override the global default and scrape targets from this job every 5 seconds.
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: ['localhost:9090']
+      
+```
+
+## Deploy Prometheus & Grafana docker-compose stack with docker-swarm
 
 * [A Prometheus & Grafana docker-compose stack](https://github.com/vegasbrianc/prometheus)
   * Prometheus, Grafana
@@ -104,7 +143,7 @@ $ docker service ls
 $ docker service logs prom_<service_name>
 ```
 
-## Install GitHub Monitoring Stack with docker-compose
+## Deploy GitHub Monitoring Stack with docker-compose
 
 * [github-monitoring](https://github.com/vegasbrianc/github-monitoring)
   * [A Prometheus & Grafana docker-compose stack](https://github.com/vegasbrianc/prometheus) 를 이용한 project 이다.
@@ -1144,3 +1183,50 @@ scrape_configs:
      regex: 'my_too_large_metric'
      action: drop
 ```
+
+## How to relabel
+
+* [170. [Prometheus] 2편. PromQL 사용하기, k8s에서 Meta Label과 relabel을 활용한 기본 라벨 설정, 그 외의 이야기 @ naverblog](https://blog.naver.com/PostView.nhn?blogId=alice_k106&logNo=221535575875)
+* [relabel_config @ prometheus](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config)
+* [Prometheus Relabel Rules and the ‘action’ Parameter](https://blog.freshtracks.io/prometheus-relabel-rules-and-the-action-parameter-39c71959354a)
+
+----
+
+Prometheus 는 metric data 의 특정 label 을 보고 조건이 맞으면 metric data 를 keep 할 수도 있고 drop 할 수도 있다. 
+
+또한 metric data 의 label 을 교체 및 추가할 수도 있다. 이것을 relabel 이라고 한다.
+
+기본적으로 `__address__, job` 와 같은 label 은 `instance, job` 으로 relabel 된다. `__` 로 시작하는 label 은 meta label 이라고 한다.
+
+[relabel_config @ prometheus](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config) 참고하면 다양한 action 들을 확인할 수 있다.
+
+많이 사용하는 action 은 **replace** 와 **labelmap** 이다. **replace** 는 교체하는 것이고 **labelmap** 은 새로운 label 을 만들어서 값을 복사하는 것이다. **labelmap** 은 항상 처음에 와야 한다???
+
+relabel 되지 않은 meta label 들은 relabel process 후 제거된다.
+
+다음과 같이 `prometheus.yml` 을 만들어서 docker 를 이용하여 실험할 수 있다.
+
+```yml
+global:
+  scrape_interval:     15s # By default, scrape targets every 15 seconds.
+  external_labels:
+    monitor: 'codelab-monitor'
+
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__scheme__]
+        action: replace
+        target_label: hello
+      - action: labelmap
+        regex: __scheme__
+        replacement: world      
+```
+
+![](prometheus_target.png)
