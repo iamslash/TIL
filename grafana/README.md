@@ -28,3 +28,11 @@ $ docker-compose down
 
 * [grafana dashboards](https://grafana.com/grafana/dashboards) 에서 좋은 dashboard 를 골라서 import 해보고 학습한다.
 
+# Major Metrics
+
+## System
+
+## NginX
+
+## JVM
+

@@ -120,6 +120,26 @@ www.google.com.         266     IN      A       172.217.175.100
 
 # Prerequisite - CoreDNS
 
+* [Kubernetes DNS-Based Service Discovery](https://github.com/kubernetes/dns/blob/master/docs/specification.md)
+* [kubernetes plugin @ coredns](https://coredns.io/plugins/kubernetes/)
+
+----
+
+Core DNS is a open source DNS Server. It can use records using `/etc/hosts`. It listens on port **53**, which is the default port for a DNS server.
+
+```bash
+$ wget https://github.com/coredns/coredns/releases/download/v1.4.0/coredns_1.4.0_linux_amd64.tgz
+
+$ tar –xzvf coredns_1.4.0_linux_amd64.tgz
+
+$ ./coredns
+
+$ vim /etc/hosts
+192.168.1.10 web
+192.168.1.11  db
+192.168.1.12  nfs
+```
+
 # Prerequisite - Network Namespaces
 
 # Prerequisite - Docker Networking
