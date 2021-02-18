@@ -1172,16 +1172,20 @@ Check top 10 metrics
 topk(20, count by (__name__, job)({__name__=~".+"}))
 ```
 
+**metric_relabel_configs** 를 이용하면 metric data 를 drop 할 수 있다. **relabel_configs** 과 다름을 유의하자.
+
+다음의 설정은 metric data 의 이름이 `go_memstat_(.*)` 혹은 `prometheus_engine_(.*)` 인 것을 drop 하고 나머지는 keep 한다.
+
 ```yaml
 scrape_configs:
- - job_name: 'my_job'
-   static_configs:
-     - targets:
-       - my_target:1234
-   metric_relabel_configs:
-   - source_labels: [ __name__ ]
-     regex: 'my_too_large_metric'
-     action: drop
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+    metric_relabel_configs:
+    - source_labels: [__name__]
+      regex: 'go_memstats_(.*)|prometheus_engine_(.*)'
+      action: drop
 ```
 
 ## How to relabel
@@ -1194,15 +1198,57 @@ scrape_configs:
 
 ----
 
-Prometheus 는 metric data 의 특정 label 을 보고 조건이 맞으면 metric data 를 keep 할 수도 있고 drop 할 수도 있다. 
+metric data 의 label 을 교체 및 추가하는 것을 relabel 이라고 한다. relabel 의 조건이 맞으면 action 을 수행할 수 있다. relabel_configs 의 항목은 순서대로 처리되는 것 같다???
 
-또한 metric data 의 label 을 교체 및 추가할 수도 있다. 이것을 relabel 이라고 한다.
+많이 사용하는 action 은 **keep**, **drop**, **replace** 와 **labelmap** 이다. **replace** 는 교체하는 것이고 **labelmap** 은 새로운 label 을 만들어서 값을 복사하는 것이다. **labelmap** 은 항상 처음에 와야 한다???
+
+Prometheus 는 metric data 의 특정 label 을 보고 조건이 맞으면 metric data 를 **keep** 할 수도 있고 **drop** 할 수도 있다. 
+
+다음은 `must` 라는 label 의 값이 `foo` 인 metric data 를 keep 하고 나머지는 drop 하라는 의미이다.
+
+```yml
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+    relabel_configs:
+    - source_labels: [must]
+      regex: foo
+      action: keep
+```
+
+다음은 `__address__` 라는 label 이 있는 metric data 를 keep 하고 나머지는 drop 하라는 의미이다.
+
+```yml
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: (.*)
+      action: keep
+```
+
+다음은 `__address__` 라는 label 이 있는 metric data 를 drop 하고 나머지는 keep 하라는 의미이다.
+
+```yml
+scrape_configs:
+  - job_name: 'prometheus'
+    scrape_interval: 5s
+    static_configs:
+      - targets: ['localhost:9090']
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: (.*)
+      action: drop
+```
 
 기본적으로 `__address__, job` 와 같은 label 은 `instance, job` 으로 relabel 된다. `__` 로 시작하는 label 은 meta label 이라고 한다.
 
 [relabel_config @ prometheus](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config) 를 참고하면 다양한 action 들을 확인할 수 있다.
-
-많이 사용하는 action 은 **keep**, **drop**, **replace** 와 **labelmap** 이다. **replace** 는 교체하는 것이고 **labelmap** 은 새로운 label 을 만들어서 값을 복사하는 것이다. **labelmap** 은 항상 처음에 와야 한다???
 
 `__` 로 시작하는 label 을 meta label 이라고 한다. meta label 들은 relabel process 후 제거된다.
 
