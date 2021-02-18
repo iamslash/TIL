@@ -1189,6 +1189,7 @@ scrape_configs:
 * [170. [Prometheus] 2편. PromQL 사용하기, k8s에서 Meta Label과 relabel을 활용한 기본 라벨 설정, 그 외의 이야기 @ naverblog](https://blog.naver.com/PostView.nhn?blogId=alice_k106&logNo=221535575875)
 * [relabel_config @ prometheus](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config)
 * [Prometheus Relabel Rules and the ‘action’ Parameter](https://blog.freshtracks.io/prometheus-relabel-rules-and-the-action-parameter-39c71959354a)
+* [Life of a Label @ robustperception](https://www.robustperception.io/life-of-a-label)
 
 ----
 
@@ -1198,11 +1199,11 @@ Prometheus 는 metric data 의 특정 label 을 보고 조건이 맞으면 metri
 
 기본적으로 `__address__, job` 와 같은 label 은 `instance, job` 으로 relabel 된다. `__` 로 시작하는 label 은 meta label 이라고 한다.
 
-[relabel_config @ prometheus](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config) 참고하면 다양한 action 들을 확인할 수 있다.
+[relabel_config @ prometheus](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config) 를 참고하면 다양한 action 들을 확인할 수 있다.
 
-많이 사용하는 action 은 **replace** 와 **labelmap** 이다. **replace** 는 교체하는 것이고 **labelmap** 은 새로운 label 을 만들어서 값을 복사하는 것이다. **labelmap** 은 항상 처음에 와야 한다???
+많이 사용하는 action 은 **keep**, **drop**, **replace** 와 **labelmap** 이다. **replace** 는 교체하는 것이고 **labelmap** 은 새로운 label 을 만들어서 값을 복사하는 것이다. **labelmap** 은 항상 처음에 와야 한다???
 
-relabel 되지 않은 meta label 들은 relabel process 후 제거된다.
+`__` 로 시작하는 label 을 meta label 이라고 한다. meta label 들은 relabel process 후 제거된다.
 
 다음과 같이 `prometheus.yml` 을 만들어서 docker 를 이용하여 실험할 수 있다.
 
