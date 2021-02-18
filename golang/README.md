@@ -2189,7 +2189,9 @@ $ go build cmd/main/main.go
 
 ## Managing Multiple go versions
 
-export GOROOT, GOPATH, PATH with specific go version.
+export GOROOT, GOPATH, PATH with specific go version. execute this script with `$ source switch_go_1.14.13.sh`.
+
+* `switch_go_1.14.13.sh`
 
 ```bash
 #!/usr/bin/env bash
