@@ -1190,6 +1190,7 @@ scrape_configs:
 * [relabel_config @ prometheus](https://prometheus.io/docs/prometheus/latest/configuration/configuration/#relabel_config)
 * [Prometheus Relabel Rules and the ‘action’ Parameter](https://blog.freshtracks.io/prometheus-relabel-rules-and-the-action-parameter-39c71959354a)
 * [Life of a Label @ robustperception](https://www.robustperception.io/life-of-a-label)
+  * [PromCon 2016: Life of a Label - Brian Brazil @ youtube](https://www.youtube.com/watch?v=b5-SvvZ7AwI)
 
 ----
 
