@@ -1647,10 +1647,7 @@ EOF
 
 ## Automation
 
-* `expect`
-  * interactive job 을 프로그래밍할 수 있다.
-  * [expect 를 이용한 자동화 프로그래밍](https://www.joinc.co.kr/w/Site/JPerl/expect)
-  * [Hak5 - Automate Everything, Using Expect, Hak5 1023.1](https://www.youtube.com/watch?v=dlwqyMW5H5I)
+* [expect @ TIL](/expect/README.md)
 
 ## oneline commands
 
