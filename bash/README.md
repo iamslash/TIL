@@ -69,17 +69,17 @@
     - [Job Control Builtins](#job-control-builtins)
     - [Job Control Keys](#job-control-keys)
     - [Input and Output](#input-and-output)
-    - [Background job 은 subshell 에서 실행된다.](#background-job-%ec%9d%80-subshell-%ec%97%90%ec%84%9c-%ec%8b%a4%ed%96%89%eb%90%9c%eb%8b%a4)
-    - [Script 파일 실행 중에 background 로 실행](#script-%ed%8c%8c%ec%9d%bc-%ec%8b%a4%ed%96%89-%ec%a4%91%ec%97%90-background-%eb%a1%9c-%ec%8b%a4%ed%96%89)
-    - [SHELL 이 종료되면 background job 은 어떻게 되는가?](#shell-%ec%9d%b4-%ec%a2%85%eb%a3%8c%eb%90%98%eb%a9%b4-background-job-%ec%9d%80-%ec%96%b4%eb%96%bb%ea%b2%8c-%eb%90%98%eb%8a%94%ea%b0%80)
+    - [Background job 은 subshell 에서 실행된다.](#background-job-은-subshell-에서-실행된다)
+    - [Script 파일 실행 중에 background 로 실행](#script-파일-실행-중에-background-로-실행)
+    - [SHELL 이 종료되면 background job 은 어떻게 되는가?](#shell-이-종료되면-background-job-은-어떻게-되는가)
   - [Session and Process Group](#session-and-process-group)
-    - [조회하고 신호보내기](#%ec%a1%b0%ed%9a%8c%ed%95%98%ea%b3%a0-%ec%8b%a0%ed%98%b8%eb%b3%b4%eb%82%b4%ea%b8%b0)
-    - [실행중인 스크립트를 종료하는 방법](#%ec%8b%a4%ed%96%89%ec%a4%91%ec%9d%b8-%ec%8a%a4%ed%81%ac%eb%a6%bd%ed%8a%b8%eb%a5%bc-%ec%a2%85%eb%a3%8c%ed%95%98%eb%8a%94-%eb%b0%a9%eb%b2%95)
-    - [새로운 sid 로 실행하기](#%ec%83%88%eb%a1%9c%ec%9a%b4-sid-%eb%a1%9c-%ec%8b%a4%ed%96%89%ed%95%98%ea%b8%b0)
-    - [pgid 를 변경하여 child process 를 실행](#pgid-%eb%a5%bc-%eb%b3%80%ea%b2%bd%ed%95%98%ec%97%ac-child-process-%eb%a5%bc-%ec%8b%a4%ed%96%89)
+    - [조회하고 신호보내기](#조회하고-신호보내기)
+    - [실행중인 스크립트를 종료하는 방법](#실행중인-스크립트를-종료하는-방법)
+    - [새로운 sid 로 실행하기](#새로운-sid-로-실행하기)
+    - [pgid 를 변경하여 child process 를 실행](#pgid-를-변경하여-child-process-를-실행)
   - [Process State Codes](#process-state-codes)
   - [TTY](#tty)
-    - [입출력 장치 사용의 구분](#%ec%9e%85%ec%b6%9c%eb%a0%a5-%ec%9e%a5%ec%b9%98-%ec%82%ac%ec%9a%a9%ec%9d%98-%ea%b5%ac%eb%b6%84)
+    - [입출력 장치 사용의 구분](#입출력-장치-사용의-구분)
     - [Controlling Terminal](#controlling-terminal)
     - [`/dev/tty`](#devtty)
     - [Configuring TTY device](#configuring-tty-device)
@@ -89,7 +89,7 @@
     - [SIGHUP signal](#sighup-signal)
   - [Mutual Exclusion](#mutual-exclusion)
     - [flock](#flock)
-    - [flock 의 직접 명령 실행](#flock-%ec%9d%98-%ec%a7%81%ec%a0%91-%eb%aa%85%eb%a0%b9-%ec%8b%a4%ed%96%89)
+    - [flock 의 직접 명령 실행](#flock-의-직접-명령-실행)
     - [Lock propagation](#lock-propagation)
     - [Lock, lockfile](#lock-lockfile)
 - [Command Line Editing](#command-line-editing)
@@ -99,6 +99,7 @@
   - [signal list](#signal-list)
   - [kill](#kill)
   - [trap](#trap)
+- [heredoc](#heredoc)
 - [Shortcuts](#shortcuts)
 - [Problems](#problems)
 
@@ -3889,6 +3890,21 @@ process 가 정상종료될 때 handler 를 등록하려면 `HUP, INT, QUIT, TER
 ```bash 
 $ trap 'myhandler' HUP INT QUIT TERM
 $ myhandler() { ...;}
+```
+
+# heredoc
+
+* [Here Document And Here String @ baeldung](https://www.baeldung.com/linux/heredoc-herestring)
+
+------
+
+here document (also commonly referred to as heredoc) refers to a special block of code that contains multi-line strings that will be redirected to a command. here string is a simpler version of heredoc.
+
+```bash
+cat <<EOF
+Hello World
+Bye World
+EOF
 ```
 
 # Shortcuts
