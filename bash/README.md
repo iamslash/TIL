@@ -111,7 +111,7 @@ bash 에 대해 정리한다.
 
 # References
 
-* [Bash script](https://www.gitbook.com/book/mug896/shell-script/details)
+* [Bash script](https://mug896.github.io/bash-shell/index.html)
   * 한글 가이드
 * [bash reference manual @ gnu](https://www.gnu.org/software/bash/manual/bash.html)
 * [Advanced Bash-Scripting Guide](http://www.tldp.org/LDP/abs/html/index.html)
@@ -2159,7 +2159,7 @@ $ echo hello world | cat -
 
 ## List of Commands
 
-```
+```bash
 $ echo hello; echo world;
 $ make && make install
 $ echo "hello" || echo "world"
@@ -2174,7 +2174,9 @@ until test-commands; do consequent-commands; done
 while test-commands; do consequent-commands; done
 for name [ [in [words …] ] ; ] do commands; done
 for (( expr1 ; expr2 ; expr3 )) ; do commands ; done
+```
 
+```bash
 $ read -p "Enter Hostname: " hostname
 $ until ping -c 1 "$hostname" > /dev/null; do sleep 60; done; curl -O "$hostname"
 
@@ -2185,6 +2187,7 @@ $ for file in $(find -type f); do echo "$file"; done;
 
 $ for (( i = 0; i <= 5; i++ )) { echo $i; }
 ```
+
 ### Conditional Constructs
 
 ```bash
@@ -3346,7 +3349,11 @@ $ wget http://a.b.com/a.txt &
 [3] 1999
 ```
 
-job id 는 3 이고 process id 는 1999 이다. job 에 signal 을 보내고 싶다면 job spec `%3` 을 사용해야 한다. 
+Job 은 Process 들의 모음 즉 Process Group 을 표현한다. job id 는 `3` 이고 process id 는 `1999` 이다. job 에 signal 을 보내고 싶다면 job spec `%3` 을 사용해야 한다. 
+
+```console
+$ kill -9 %3
+```
 
 ### Jobspec vs Pid
 
@@ -3392,7 +3399,7 @@ $ ps axjf
 
 ### Job Control Keys
 
-* `Ctrl C`
+* `Ctrl c`
   * send the `SIGINT` signal to foreground job.
 * `Ctrl z`
   * send the `SIGTSTP` signal (suspend) to foreground job and make the background job the foreground job.
@@ -3406,7 +3413,7 @@ $ ps axjf
 
 ### Background job 은 subshell 에서 실행된다.
 
-```bash
+```console
 $ AA=100; echo $$ $BASHPID;
 15 15
 $ { AA=200; echo $$ $BASHPID; } &
@@ -3457,11 +3464,11 @@ root         0     1     1     1 bash
 
 ### 실행중인 스크립트를 종료하는 방법
 
-script 를 종료하고 싶다면 jobspec 혹은 pgid 를 이용하여 process group 에 signal 을 보낸다. `Ctrl C` 는 process group 에 signal 을 보내는 방법이다.
+script 를 종료하고 싶다면 jobspec 혹은 pgid 를 이용하여 process group 에 signal 을 보낸다. `Ctrl c` 는 process group 에 signal 을 보내는 방법이다.
 
 ### 새로운 sid 로 실행하기
 
-script 를 background 로 실행할 때 `setsid` 를 이용하면 새로운 sid, pgid 가 할당되고 ppid 도 init 으로 바뀐다. sid 가 바뀌기 때문에 controlling terminal 에서 분리되고 /dev/tty 도 사용하지 못한다. ppid 가 init 이 되기 때문에 script 를 daemon 으로 만들 수 있다.
+script 를 background 로 실행할 때 `setsid` 를 이용하면 새로운 sid, pgid 가 할당되고 ppid 도 init 으로 바뀐다. sid 가 바뀌기 때문에 controlling terminal 에서 분리되고 `/dev/tty` 도 사용하지 못한다. ppid 가 init 이 되기 때문에 script 를 daemon 으로 만들 수 있다.
 
 ```bash
 $ setsid a.sh > /dev/null 2>&1 < /dev/null
@@ -3471,7 +3478,7 @@ $ setsid a.sh > /dev/null 2>&1 < /dev/null
 
 script 를 `a.sh -> b.sh -> c.sh -> d.sh` 순서로 d.sh 에서 sleep 상태에 있다고 하자. `Ctrl c` 를 누를 경우 tty driver 에 의해 SIGINT 신호가 foreground process group 에 전달되어 4 개의 프로세스는 모두 종료한다. 만약, b.sh 에서 c.sh 를 실행할 때 pgid 를 변경하면 c.sh, d.sh 만 종료하고 a.sh, b.sh 는 실행되게 할 수 있다.
 
-shell 에서 setsid 를 사용하여 sid, pgid 를 변경할 수 있지만 setpgid 는 없다. 그러나 `set -o monitor` 옵션을 설정하여 다른 pgid 를 갖게 할 수 있다.
+shell 에서 `setsid` 를 사용하여 sid, pgid 를 변경할 수 있지만 `setpgid` 는 없다. 그러나 `set -o monitor` 옵션을 설정하여 다른 pgid 를 갖게 할 수 있다.
 
 * `b.sh`
 
@@ -3514,13 +3521,14 @@ additional information with BSD format
 
 ## TTY
 
-* [The TTY demystified](http://www.linusakesson.net/programming/tty/)
+> * [The TTY demystified](http://www.linusakesson.net/programming/tty/)
+> * [TTY](https://mug896.github.io/bash-shell/tty.html)
 
-tty 는 teletypewrite 혹은 terminal 을 의미한다.
+`tty` 는 **T**ele**TY**pewriter를 의미한다. 터미널을 의미한 단어이다. 1869 년 타자기와 비슷하게 생긴 Teletype Writer 라는 터미널이 있었다. telex 라는 network 에 연결되어 있었다고 한다.1970 년대에 비디오 장치가 달린 VT-100 이라는 터미널이 개발되었다. 지금은 physical teletype 혹은 video terminal 을 사용하지 않지만 linux kernel 안에 그 개념들이 숨어있다.
 
 ### 입출력 장치 사용의 구분
 
-* 외부 터미널 장치 연결
+> 외부 터미널 장치 연결
 
 ![](img/case1.png)
 
@@ -3530,21 +3538,21 @@ VT100 과 같은 외부 터미널 장치가 시리얼 라인을 통해 연결되
 
 `TTY driver`  는 session management 즉 job control 기능을 한다. `Ctrl z` 를 누르면 running job 을 suspend 시키고 user input 은 foreground job 에만 전달한다. background job 이 입력을 받으면 SIGTTIN 신호를 보내 suspend 시킨다.
 
-* linux virtual console
+> linux virtual console
 
 ![](img/case2.png)
 
 OS 에서 제공하는 virtual console 이다. `Ctrl - Alt - F1 ~ F6` 으로 전환한다. kernal 에서 terminal 을 emulation 한다. `외부 터미널 장치 연결` 과 비교해서 이해하자. `/dev/tty[num]` 파일을 사용한다.
 
-* pseudo TTY (xterm, gnome-terminal, telnet, ssh, etc...)
+> pseudo TTY (xterm, gnome-terminal, telnet, ssh, etc...)
   
 ![](img/case3.png)  
 
-user application 에서 terminal 을 emulation 하는 것이 PTY (Pseudo TTY) 이다. PTY 는 master/slave 로 이루어 진다. /dev/ptmx 파일을 open 하면 psedu terminal master 에 해당하는 file descriptor 가 생성되고 pseudo terminal slave (PTS) 에 해당하는 device 가 /dev/pts/ 디렉토리에 생성한다. ptm, pts 가 open 되면 `/dev/pts/[num]` 는 terminal 을 process 에 제공한다.
+user application 에서 terminal 을 emulation 하는 것이 PTY (Pseudo TTY) 이다. PTY 는 master/slave 로 이루어 진다. /dev/ptmx 파일을 open 하면 pseudo terminal master 에 해당하는 file descriptor 가 생성되고 pseudo terminal slave (PTS) 에 해당하는 device 가 `/dev/pts/` 디렉토리에 생성된다. `ptm`, `pts` 가 open 되면 `/dev/pts/[num]` 는 terminal 을 process 에 제공한다.
 
-ptm 에 write 한 data 는 pts 의 input 으로 pts 에 write 한 data 는 ptm 의 input 으로 사용된다. kernll 이 처리하는 layer 가 중간에 들어간 named pipe 와 비슷하다.
+ptm 에 write 한 data 는 pts 의 input 으로 pts 에 write 한 data 는 ptm 의 input 으로 사용된다. kernel 이 처리하는 layer 가 중간에 들어간 named pipe 와 비슷하다.
 
-xterm 에서 ls 를 입력하면 `ptm -> line discipline -> pts` 를 거쳐서 bash shell (user process) 에 전달되고 ls 의 결과가 `ptr -> line discipline -> ptm` 을 통해서 xterm 에 전달되면 xterm 은 terminal 과 같이 화면에 표시한다.
+xterm 에서 ls 를 입력하면 `ptm -> line discipline -> pts` 를 거쳐서 bash shell (user process) 에 전달되고 ls 의 결과가 `pts -> line discipline -> ptm` 을 통해서 xterm 에 전달되면 xterm 은 terminal 과 같이 화면에 표시한다.
 
 ![](img/case3_1.jpg)
 
@@ -3606,11 +3614,11 @@ isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt echo
 
 ### End of file
 
-`read` function 은 0 byte 를 읽으면 모두 읽었다고 판단하고 종료한다. 0 byte 가 곧 end of file 이다.
+`read` function 은 0 byte 를 읽으면 모두 읽었다고 판단하고 종료한다. 0 byte 가 곧 `end of file` 이다.
 
 ### Race condition
 
-두개의 프로세스가 stdout, stderror 에 출력을 수행한다면 race condition 이 발생한다. 다음은 `f()` 의 첫번째 `echo` 가 두번째 `echo` 와 경합을 벌여서 빨간색을 출력하는 경우이다.
+두개의 프로세스가 stdout, stderr 에 출력을 수행한다면 race condition 이 발생한다. 다음은 `f()` 의 첫번째 `echo` 가 두번째 `echo` 와 경합을 벌여서 빨간색을 출력하는 경우이다.
 
 ```bash
 f() {
