@@ -65,6 +65,7 @@
 - [Job Control](#job-control)
   - [Job Control](#job-control-1)
     - [Job Id and Job specification](#job-id-and-job-specification)
+    - [Session and Job](#session-and-job)
     - [Jobspec vs Pid](#jobspec-vs-pid)
     - [Job Control Builtins](#job-control-builtins)
     - [Job Control Keys](#job-control-keys)
@@ -83,6 +84,7 @@
     - [Controlling Terminal](#controlling-terminal)
     - [`/dev/tty`](#devtty)
     - [Configuring TTY device](#configuring-tty-device)
+    - [Reset Command](#reset-command)
     - [Control Keys](#control-keys)
     - [End of file](#end-of-file)
     - [Race condition](#race-condition)
@@ -3355,6 +3357,47 @@ Job 은 Process 들의 모음 즉 Process Group 을 표현한다. job id 는 `3`
 $ kill -9 %3
 ```
 
+### Session and Job
+
+다음과 같이 command line 을 실행해 보자.
+
+```bash
+$ cat
+hello
+hello
+^Z
+[1]+  Stopped       cat
+$ ls | sort
+```
+
+다음은 session, job, process 들의 상태를 그림으로 표현한 것이다. [The TTY demystified](https://www.linusakesson.net/programming/tty/) 참고
+
+![](img/examplediagram.png)
+
+다음은 tty driver (/dev/pts/0) 의 상태이다.
+
+```
+Size: 45x13
+Controlling process group: (101)
+Foreground process group: (103)
+UART configuration (ignored, since this is an xterm):
+  Baud rate, parity, word length and much more.
+Line discipline configuration:
+  cooked/raw mode, linefeed correction,
+  meaning of interrupt characters etc.
+Line discipline state:
+  edit buffer (currently empty),
+  cursor position within buffer etc.
+```
+
+다음은 `pipe0` 의 상태이다.
+
+```
+Readable end (connected to PID 104 as file descriptor 0)
+Writable end (connected to PID 103 as file descriptor 1)
+Buffer
+```
+
 ### Jobspec vs Pid
 
 pid 는 특정 프로세스를 의미하지만 job spec 은 파이프로 연결된 모든 프로세스를 의미한다.
@@ -3455,6 +3498,7 @@ $ ps jf
     0    15    15    15 pts/1       83 Ss       0   0:00 /bin/bash
    15    83    83    15 pts/1       83 R+       0   0:00  \_ ps jf
     0     1     1     1 pts/0        1 Ss+      0   0:00 /bin/bash
+
 $ ps fo user,ppid,pid,pgid,sid,comm
 USER      PPID   PID  PGID   SID COMMAND
 root         0    15    15    15 bash
@@ -3522,9 +3566,9 @@ additional information with BSD format
 ## TTY
 
 > * [The TTY demystified](http://www.linusakesson.net/programming/tty/)
-> * [TTY](https://mug896.github.io/bash-shell/tty.html)
+> * [TTY @ mug896](https://mug896.github.io/bash-shell/tty.html)
 
-`tty` 는 **T**ele**TY**pewriter를 의미한다. 터미널을 의미한 단어이다. 1869 년 타자기와 비슷하게 생긴 Teletype Writer 라는 터미널이 있었다. telex 라는 network 에 연결되어 있었다고 한다.1970 년대에 비디오 장치가 달린 VT-100 이라는 터미널이 개발되었다. 지금은 physical teletype 혹은 video terminal 을 사용하지 않지만 linux kernel 안에 그 개념들이 숨어있다.
+`tty` 는 **T**ele**TY**pewriter를 의미한다. 터미널을 의미하는 단어이다. 1869 년 타자기와 비슷하게 생긴 Teletype Writer 라는 장치가 있었다. 일종의 터미널이다. telex 라는 network 에 연결되어 있었다고 한다. 1970 년대에 비디오 장치가 달린 VT-100 이라는 터미널이 개발되었다. 지금은 physical teletype 혹은 video terminal 을 사용하지 않지만 linux kernel 안에 그 개념들이 숨어있다.
 
 ### 입출력 장치 사용의 구분
 
@@ -3532,43 +3576,63 @@ additional information with BSD format
 
 ![](img/case1.png)
 
-VT100 과 같은 외부 터미널 장치가 시리얼 라인을 통해 연결되는 경우이다. `getty` process 가 background 에서 line 을 모니터링하고 있다가 터미널 접속을 발견하면 login prompt 를 보여준다. `/dev/ttyS[number]` 파일을 사용한다. `UART driver` 는 bytes 를 전송하고 parity check 혹은 flow control 을 담당한다. `Line discipline` 라는 layer 를 하나 더 두면 같은 장치를 여러가지 용도로 사용할 수 있다.
+VT100 과 같은 외부 터미널 장치가 시리얼 라인을 통해 연결되는 경우이다. `getty` process 가 background 에서 line 을 모니터링하고 있다가 터미널 접속을 발견하면 login prompt 를 보여준다. `/dev/ttyS[number]` 파일이 사용된다. `UART driver` 는 bytes 를 전송하고 parity check 혹은 flow control 을 수행한다. `Line discipline` 라는 layer 를 두어서 `UART driver` 를 여러 다른 장치로 사용할 수 있다. baskspace, erase word, clear line, reprint 같은 line editing 기능을 standard line discipline 을 통해 제공한다.
 
 ![](img/line_discipline.png)
 
 `TTY driver`  는 session management 즉 job control 기능을 한다. `Ctrl z` 를 누르면 running job 을 suspend 시키고 user input 은 foreground job 에만 전달한다. background job 이 입력을 받으면 SIGTTIN 신호를 보내 suspend 시킨다.
 
-> linux virtual console
+> Linux Virtual Console
 
 ![](img/case2.png)
 
-OS 에서 제공하는 virtual console 이다. `Ctrl - Alt - F1 ~ F6` 으로 전환한다. kernal 에서 terminal 을 emulation 한다. `외부 터미널 장치 연결` 과 비교해서 이해하자. `/dev/tty[num]` 파일을 사용한다.
+OS 에서 제공하는 virtual console 이다. `Ctrl - Alt - F1 ~ F6` 으로 전환한다. kernal 에서 terminal 을 emulation 한다. `외부 터미널 장치 연결` 과 비교해서 이해하자. `/dev/tty[num]` 파일을 사용한다. Line discipline, TTY driver 의 기능은 위와같고 역시 백그라운드 `getty` 프로세스에의해 login prompt 가 제공된다. `/dev/tty[번호]` 파일이 사용된다.
 
-> pseudo TTY (xterm, gnome-terminal, telnet, ssh, etc...)
+> Pseudo TTY (xterm, gnome-terminal, telnet, ssh, etc...)
   
 ![](img/case3.png)  
 
-user application 에서 terminal 을 emulation 하는 것이 PTY (Pseudo TTY) 이다. PTY 는 master/slave 로 이루어 진다. /dev/ptmx 파일을 open 하면 pseudo terminal master 에 해당하는 file descriptor 가 생성되고 pseudo terminal slave (PTS) 에 해당하는 device 가 `/dev/pts/` 디렉토리에 생성된다. `ptm`, `pts` 가 open 되면 `/dev/pts/[num]` 는 terminal 을 process 에 제공한다.
+앞서 언급한 Linux Virtual Console 에서는 커널에서 터미널을 emulation 했다면, TTY driver 가 제공하는 session management 기능과 Line Discipline 을 그대로 사용하면서 사용자 프로그램에서 터미널을 emulation 하는것이 `PTY (Pseudo TTY)` 입니다.
 
-ptm 에 write 한 data 는 pts 의 input 으로 pts 에 write 한 data 는 ptm 의 input 으로 사용된다. kernel 이 처리하는 layer 가 중간에 들어간 named pipe 와 비슷하다.
+`PTY` 는 `master/slave` 로 이루어 진다. `/dev/ptmx` 파일을 open 하면 pseudo terminal master 에 해당하는 file descriptor 가 생성되고 pseudo terminal slave (PTS) 에 해당하는 device 가 `/dev/pts/` 디렉토리에 생성된다. `ptm` 과 `pts` 가 open 되면 `/dev/pts/[번호]` 는 실제 터미널과 같은 인터페이스를 프로세스에 제공합니다.
 
-xterm 에서 ls 를 입력하면 `ptm -> line discipline -> pts` 를 거쳐서 bash shell (user process) 에 전달되고 ls 의 결과가 `pts -> line discipline -> ptm` 을 통해서 xterm 에 전달되면 xterm 은 terminal 과 같이 화면에 표시한다.
+`ptm` 에 write 한 data 는 `pts` 의 input 으로 `pts` 에 write 한 data 는 `ptm` 의 input 으로 사용된다. kernel 이 처리하는 layer 가 중간에 들어간 named pipe 와 비슷하다.
+
+xterm 을 실행하거나 외부에서 ssh client 가 접속하면 `/dev/pts/` 에 device 파일이 새로 생성된다.
+
+![](img/pty.png)
+
+위의 그림은 xterm 을 실행한 경우를 나타낸다. xterm 에서 ls 를 입력하면 `ptm -> line discipline -> pts` 를 거쳐서 bash shell (user process) 에 전달되고 ls 의 결과가 `pts -> line discipline -> ptm` 을 통해서 xterm 에 전달되면 xterm 은 terminal 과 같이 화면에 표시한다.
 
 ![](img/case3_1.jpg)
+
+위의 그림은 telnet 을 실행하여 Server 의 telnetd 에 접속한 경우를 나타낸다. 터미널에서 ls 명령을 실행하면 telnet 명령의 입력으로 들어가고 네트웍을 거쳐 telnetd 에 전달되면 `ptm`, `pts` 를 거쳐 bash 프로세스에 전달된다. 명령의 실행결과는 다시 `pts`, `ptm` 을 거쳐서 telnetd 에 전달되고 네트웍을 거쳐 telnet 명령에 전달되면 터미널로 출력하게 된다.
+
+![](img/pseudo_terminal.png)
+
+위의 그림은 ssh 를 실행하여 Server 의 sshd 에 접속한 경우를 나타낸다. [Console & TTY Driver](http://jake.dothome.co.kr/tty/) 참고
 
 ### Controlling Terminal
 
 ![](img/session1.png)
 
-controlling terminal 은 session leader 에 의해 할당된다. 보통 `/dev/tty*` 혹은 `/dev/pts/*` 와 같은 terminal device 를 의미한다. 하나의 session 은 하나의 controlling terminal 만 가질 수 있다. controlling terminal 과 연결된 session leader 를 controlling process 라고 한다. session 은 하나의 foreground process group 과 다수의 background process groups 로 구성된다. `Ctrl-c` 를 누르면 `SIGINT` 가 foreground process group 에 전달된다. modem, network 가 끊기면 `SIGHUP` 이 controlling process (session leader) 에게 전달된다. `ps x` 의 결과중 두번째 tty 컬럼에 나오는 내용이 `controlling terminal (tty)` 이다. tty 를 갖지 않는 프로세스는 `?` 로 표시된다.
+Controlling Terminal 은 session leader 에 의해 할당되며 보통 `/dev/tty*` 혹은 `/dev/pts/*` 와 같은 terminal device 를 의미한다. 
+
+PID 와 SID 가 같은 프로세스를 session leader 라고 한다. session leader 만이 controlling terminal 을 획득할 수 있다. session leader 를 controlling process 라고도 한다. 하나의 session 은 하나의 controlling terminal 만 가질 수 있다. 
+
+세션은 하나의 foreground process group 과 여러개의 background process groups 로 구성된다. Ctrl-c 를 누르면 SIGINT 신호가 foreground process group 에 전달된다. modem (or network) 연결이 끊기면 SIGHUP 신호가 session leader 에 전달되고 session leader 는 같은 SID 를 갖는 프로세스들에게 전달한다.
+
+`$ ps x` 명령을 실행하였을때 두번째 TTY 컬럼에 나오는 내용이 controlling terminal (ctty) 이다. ctty 를 갖지 않는 프로세스는 `?` 로 표시 됩니다.
 
 ![](img/session2.png)
 
 ### `/dev/tty`
 
-`/dev/tty` 는 파일이고 process 의 controlling terminal 과 같다.
+`/dev/tty` 는 특수한 파일이고 process 의 controlling terminal 과 같다. 현재 ctty 가 `/dev/pts/12` 이라면 `/dev/tty` 도` /dev/pts/12` 와 같다고 할 수 있습니다
 
 ### Configuring TTY device
+
+`tty` 명령으로 현재 shell 의 tty device 를 조회할수 있고, `stty` 명령을 이용해 설정값을 변경할수 있다.
 
 ```bash
 # show current tty
@@ -3586,7 +3650,7 @@ opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
 isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt echoctl echoke -flusho -extproc
 ```
 
-`-` prefix 는 off 를 의미한다.
+"`-`" prefix 는 off 를 의미한다.
 
 | attribute       | description                                                                                                                                              |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -3598,14 +3662,24 @@ isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt echo
 
 자세한 것은 `man tty` 를 읽어보자.
 
+### Reset Command
+
+프로그램이 비정상 종료하여 터미널 설정이 정상적으로 복구되지 않았을 경우에는 `reset` command 를 이용하여 초기화할 수 있다. reset 명령은 다음과 같은 역할을 수행한다.
+
+* Set Cooked and Echo modes to on
+* Turn off cbreak and Raw modes
+* Turn on new-line translation
+* Restore special characters to a sensible state.
+* Any special character that is found to be NULL or -1 is reset to its default value.
+
 ### Control Keys
 
 | attribute   | description                                          |
 | ----------- | ---------------------------------------------------- |
-| `^M`        | Enter                                                |
-| `^C`        | SIGINT                                               |
+| `^M`        | Enter |
+| `^C`        | Send a SIGINT to foreground job|
 | `^D`        | End of file                                          |
-| `^\`        | SIGQUIT and core dump                                |
+| `^\`        | Send a SIGQUIT to foreground job and create core dump |
 | `^S`        | pause screen output                                  |
 | `^Q`        | resume screen output                                 |
 | `DEL or ^?` | erase last character                                 |
@@ -3614,7 +3688,7 @@ isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt echo
 
 ### End of file
 
-`read` function 은 0 byte 를 읽으면 모두 읽었다고 판단하고 종료한다. 0 byte 가 곧 `end of file` 이다.
+`read` function 은 0 byte 를 읽으면 모두 읽었다고 판단하고 종료한다. 0 byte 가 곧 `end of file` 이다. `Ctrl-D` 가 곧 EOF 를 의미한다.
 
 ### Race condition
 
@@ -3629,7 +3703,7 @@ f() {
 
 ### SIGHUP signal
 
-terminal 이 없어졌다는 것을 의미한다. interactive shell 이 `SIGHUP` 을 수신하면 stopped, running job 들도 `SIGHUP` 을 수신한다.
+terminal 이 없어졌다는 것을 의미한다. 터미널이 존재하지 않으면 명령을 입력할 수도, 결과를 출력할 수도 없다. remote login 에서 넷트웍, 모뎀 연결이 끊기거나 또는 사용자가 터미널 프로그램을 종료시키면 shell 에 SIGHUP 신호가 전달된다. interactive shell 이 `SIGHUP` 을 수신하면 stopped, running job 들도 `SIGHUP` 을 수신한다.
 
 ## Mutual Exclusion
 
