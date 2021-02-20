@@ -1159,153 +1159,49 @@ public class AnonymousClass {
 
 ## Enum
 
+> [java enum 의 뿌리를 찾아서 @ nextree](https://www.nextree.co.kr/p11686/)
+
 > [A Guide to Java Enums @ baeldung](https://www.baeldung.com/a-guide-to-java-enums)
 
-다음은 요일을 표현한 class 이다.
+Java 의 enum 은 특수한 class 와 같다. 예를 들어 다음은 요일은 추상화한 `Day` 라는 class 이다. class `Day` 의 instance 는 `switch` 에 사용할 수 없다.
 
 ```java
-public class DaysOfTheWeekConstants {
-   public static final int MONDAY = 0;
-   public static final int TUESDAY = 1;
-   public static final int WEDNESDAY = 2;
-   public static final int THURSDAY = 3;
-   public static final int FRIDAY = 4;
-   public static final int SATURDAY = 5;
-   public static final int SUNDAY = 6;
-}
-
-public boolean isWeekend(int day) {
-   return(day == SATURDAY || day == SUNDAY);
+class Day {
+   public final static Day MONDAY    = new Day();
+   public final static Day TUESDAY   = new Day();
+   public final static Day WEDNESDAY = new Day();
 }
 ```
 
-위의 예를 enum 을 사용하여 다음과 같이 간단히 구현할 수 있다. 
+이것은 다음과 같은 `enum` 으로 표현가능하다. enum `Day` 의 instance 는 `switch` 에 사용할 수 있다.
 
 ```java
-public enum DaysOfTheWeek {
-   MONDAY,
-   TUESDAY,
-   WEDNESDAY,
-   THURSDAY,
-   FRIDAY,
-   SATURDAY,
-   SUNDAY
-}
-
-public boolean isWeekend(DaysOfTheWeek day) {
-   return(day == SATURDAY || day == SUNDAY);
+enum Day {
+   MONDAY, TUESDAY, WEDNESDAY;
 }
 ```
 
-enum 은 특수한 class 이다. 다음과 같이 instance field, constructor, method 등을 갖을 수 있다.
+또한 java 의 `enum` 은 class 이기 때문에 field, method 등을 가질 수 있다.
 
 ```java
-public enum DaysOfTheWeekFields {
-   
-   MONDAY(false),
-   TUESDAY(false),
-   WEDNESDAY(false),
-   THURSDAY(false),
-   FRIDAY(false),
-   SATURDAY(true),
-   SUNDAY(true);
-
-   private final boolean isWeekend;
-
-   private DaysOfTheWeekFields(final boolean isWeekend) {
-      this.isWeekend = isWeekend;
+public enum PowerSwitch {
+   ON("turn on"),
+   OFF("turn off");
+   private String name;
+   private PowerSwitch() {}
+   private PowerSwitch(String name) {
+      this.name = name;
    }
-
-   public boolean isWeekend() {
-      return isWeekend;
+   public String getName() {
+      return name;
    }
-}
-
-public boolean isWeekend(DaysOfTheWeek day) {
-   return day.isWeekend();
-}
-```
-
-enum 은 class 이기 때문에 다음과 같이 interface 를 구현할 수도 있다.
-
-```java
-interface DayOfWeek {
-   boolean isWeekend();
-}
-
-public enum DaysOfTheWeekInterfaces implements DayOfWeek {
-   MONDAY() {
-      @Override
-      public boolean isWeekend() {
-         return false;
+   public PowerSiwtch opposite() {
+      if (this == PowerSwitch.ON) {
+         return PowerSwitch.OFF;
+      } else {
+         return PowerSwitch.ON;
       }
-   },
-   TUESDAY() {
-      @Override
-      public boolean isWeekend() {
-         return false;
-      }
-   },
-   WEDNESDAY() {
-      @Override
-      public boolean isWeekend() {
-         return false;
-      }
-   },
-   THURSDAY() {
-   @Override
-      public boolean isWeekend() {
-         return false;
-      }
-   },
-   FRIDAY() {
-      @Override
-      public boolean isWeekend() {
-         return false;
-      }
-   },
-   SATURDAY() {
-      @Override
-      public boolean isWeekend() {
-         return true;
-      }
-   },
-   SUNDAY() {
-      @Override
-      public boolean isWeekend() {
-         return true;
-      }
-   };
-}
-```
-
-위의 예를 `@Override` 를 하나 사용하여 더욱 간략히 구현할 수도 있다.
-
-```java
-public enum DaysOfTheWeekFieldsInterfaces implements DayOfWeek {
-   MONDAY( false ),
-   TUESDAY( false ),
-   WEDNESDAY( false ),
-   THURSDAY( false ),
-   FRIDAY( false ),
-   SATURDAY( true ),
-   SUNDAY( true );
-   private final boolean isWeekend;
-   private DaysOfTheWeekFieldsInterfaces(final boolean isWeekend) {
-      this.isWeekend = isWeekend;
    }
-   @Override
-   public boolean isWeekend() {
-      return isWeekend;
-   }
-}
-```
-
-컴파일러는 enum 을 다음과 같이 변환한다. 즉 `Enum<...>` generic 을 상속받는 class 로 변환된다.
-
-```java
-public class DaysOfTheWeek extends Enum<DaysOfTheWeek> {
-   // Other declarations here
 }
 ```
 
