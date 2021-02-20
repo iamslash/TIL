@@ -10,6 +10,7 @@
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
+  - [Print Out](#print-out)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collection Examples](#collection-examples)
   - [Collection Conversions](#collection-conversions)
@@ -58,22 +59,29 @@
   - [Thread Dump, Heap Dump](#thread-dump-heap-dump)
   - [BigInteger](#biginteger)
   - [Comparable vs Comparator](#comparable-vs-comparator)
+  - [Class literal, Type Token, Super Type Token](#class-literal-type-token-super-type-token)
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
 
 # Abstract
 
-java 를 정리한다.
+This is about JAVA.
 
 # References
+
+* [effective java @ TIL](/java/effectivejava/README.md)
+* [java annotation @ TIL](/java/javaannotation.md)
+* [java gc @ TIL](/java/javagc.md)
+* [java multithread @ TIL](/java/javamultithread.md)
+* [java test @ TIL](/java/javatest.md)
+* [jvm @ TIL](/jvm/README.md)
+
+# Materials
 
 * [Java magazine](https://blogs.oracle.com/javamagazine/issue-archives)
   * [Java magazine - Reactive programming](file:///Users/davidsun/Documents/java-magazine-jan-feb-2018.pdf) 
 * [java-examples](https://github.com/iamslash/java-examples)
-
-# Materials
-
 * [더 자바, 코드를 조작하는 다양한 방법 by 백기선](https://www.inflearn.com/course/the-java-code-manipulation/dashboard)
 * [더 자바, 애플리케이션을 테스트하는 다양한 방법 by 백기선](https://www.inflearn.com/course/the-java-application-test)
 * [Parallel, Concurrent, and Distributed Programming in Java Specialization @ coursera](https://www.coursera.org/specializations/pcdp)
@@ -239,9 +247,7 @@ System.out.println(Math.abs(f));
 
 ## Bit Manipulation
 
-* [Difference between >>> and >>](https://stackoverflow.com/questions/2811319/difference-between-and)
-
-----
+> [Difference between >>> and >>](https://stackoverflow.com/questions/2811319/difference-between-and)
 
 `>>` arithmatic bit shift vs `>>>` logical bit shift
 
@@ -275,6 +281,15 @@ Random rnd = new Random();
 System.out.println(rnd.nextInt()); // 0~Integer.MAX_VALUE
 System.out.println(rnd.nextInt(10)); // 0~9
 System.out.println(rnd.nextFloat()); // 0.0~1.0
+```
+
+## Print Out
+
+> [Formatting Numeric Print Output @ oracle](https://docs.oracle.com/javase/tutorial/java/data/numberformat.html)
+
+```java
+// %n means system dependent line breaks.
+System.out.printf("%s : %d%n", "age", 11);
 ```
 
 ## Collections compared c++ container
@@ -1144,6 +1159,8 @@ public class AnonymousClass {
 
 ## Enum
 
+> [A Guide to Java Enums @ baeldung](https://www.baeldung.com/a-guide-to-java-enums)
+
 다음은 요일을 표현한 class 이다.
 
 ```java
@@ -1158,7 +1175,7 @@ public class DaysOfTheWeekConstants {
 }
 
 public boolean isWeekend(int day) {
-   return( day == SATURDAY || day == SUNDAY );
+   return(day == SATURDAY || day == SUNDAY);
 }
 ```
 
@@ -1667,7 +1684,7 @@ class A {
 
 ### Functional Interfaces
 
-* [Java8#02. 함수형 인터페이스(Functional Interface)](https://multifrontgarden.tistory.com/125?category=471239)
+> [Java8#02. 함수형 인터페이스(Functional Interface)](https://multifrontgarden.tistory.com/125?category=471239)
 
 ```java
 // Runnable
@@ -2400,6 +2417,18 @@ Comparator byRanking =
   (Player player1, Player player2) -> Integer.compare(player1.getRanking(), player2.getRanking());
 Collections.sort(footballTeam, byRanking);
 ```
+
+## Class literal, Type Token, Super Type Token
+
+> [클래스 리터럴, 타입 토큰, 수퍼 타입 토큰](https://homoefficio.github.io/2016/11/30/%ED%81%B4%EB%9E%98%EC%8A%A4-%EB%A6%AC%ED%84%B0%EB%9F%B4-%ED%83%80%EC%9E%85-%ED%86%A0%ED%81%B0-%EC%88%98%ED%8D%BC-%ED%83%80%EC%9E%85-%ED%86%A0%ED%81%B0/)
+
+**Class Literal** is a literal like **String.class**, **Integer.class**. **Type Token** is a type of **Class Literal**. 
+
+The type of **String.class** is **Class<String>**, The type of **Integer.class** is **Class<Integer>**.
+
+`myMethod(Class<?> clazz)` is a method whose argument is the **Type Token**. We can call this like `method(String.class)`.
+
+Super Type Toke???
 
 # Quiz
 
