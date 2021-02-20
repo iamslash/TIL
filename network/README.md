@@ -23,9 +23,7 @@
   - [ICE](#ice)
 - [WebRTC](#webrtc)
 - [UDP Hole Punching](#udp-hole-punching)
-- [SSL Handshake](#ssl-handshake)
-- [TCP Handshake VS SSL Handshake](#tcp-handshake-vs-ssl-handshake)
-- [SSL vs TLS](#ssl-vs-tls)
+- [SSL/TLS](#ssltls)
 
 ----
 
@@ -541,28 +539,6 @@ NAT (Network Address Translation) 장비는 사설망과 공유망의 주소를 
     - echo "udp hole" | nc -p 12003 -u l.l.l.l
   - 한번 만들어진 udp hole은 패킷왕래가 일어나지 않으면 닫혀진다.
 
+# SSL/TLS
 
-# SSL Handshake
-
-* [K15292: Troubleshooting SSL/TLS handshake failures](https://support.f5.com/csp/article/K15292)
-
-----
-
-![](img/SSL_flow2_10_08_18_updated.png)
-
-# TCP Handshake VS SSL Handshake
-
-* [Nuts and Bolts of Transport Layer Security (TLS)](https://medium.facilelogin.com/nuts-and-bolts-of-transport-layer-security-tls-2c5af298c4be)
-
-# SSL vs TLS
-
-* [SSL vs. TLS – What are differences?](https://www.ssl2buy.com/wiki/ssl-vs-tls)
-* [SSL vs. TLS - 차이점은 무엇인가?](https://smartits.tistory.com/209)
-
-----
-
-SSL refers to Secure Sockets Layer whereas TLS refers to Transport Layer Security.  Basically, they are one and the same, but, entirely different.
-
-How similar both are? SSL and TLS are cryptographic protocols that authenticate data transfer between servers, systems, applications and users. For example, a cryptographic protocol encrypts the data that is exchanged between a web server and a user.
-
-SSL was a first of its kind of cryptographic protocol. TLS on the other hand, was a recent upgraded version of SSL.
+> [ssl/tls @ TIL](/ssltls/README.md)

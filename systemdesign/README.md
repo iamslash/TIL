@@ -38,6 +38,8 @@
     - [CSRF (Cross Site Request Forgery)](#csrf-cross-site-request-forgery)
     - [XSS vs CSRF](#xss-vs-csrf)
     - [CORS (Cross Origin Resource Sharing)](#cors-cross-origin-resource-sharing)
+    - [PKI (Public Key Infrastructure)](#pki-public-key-infrastructure)
+    - [SSL/TLS](#ssltls)
   - [Database Primary Key](#database-primary-key)
   - [Idempotency](#idempotency)
   - [80/20 rule](#8020-rule)
@@ -600,6 +602,14 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 ### CORS (Cross Origin Resource Sharing)
 
 XMLHttpRequest 가 cross-domain 을 요청할 수 있도록하는 방법이다. request 를 수신하는 Web Server 에서 설정해야 한다.
+
+### PKI (Public Key Infrastructure)
+
+> [pki @ TIL](/pki/README.md)
+
+### SSL/TLS
+
+> [ssl/tls @ TIL](/ssltls/README.md)
 
 ## Database Primary Key
 
