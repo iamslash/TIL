@@ -27,6 +27,8 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
 
 # Materials
 
+* [Linux Kernel Boot Process by 조만석 pdf](https://www.sosconhistory.net/2015/download/day28/ST3/S_28_1000_%EC%A1%B0%EB%A7%8C%EC%84%9D.pdf)
+* [리눅스 커널 부팅과정(Linux Kernel Booting Sequence) 분석](https://kkamagui.tistory.com/817)
 * [Kernel of LInux 강의노트](https://books-and-cows.gitbook.io/-linux-kernel-lecture-note/)
   * [video](https://olc.kr/course/course_online_view.jsp?id=35&s_keyword=kernel&x=0&y=0)
   * [pdf](https://olc.kr/classroom/library.jsp?cuid=283080)
