@@ -34,6 +34,7 @@
   - [Automation](#automation)
   - [oneline commands](#oneline-commands)
   - [Tips](#tips)
+- [Performance Monitoring](#performance-monitoring)
 - [Security](#security)
   - [root 소유의 setuid, setgid 파일 검색 후 퍼미션 조정하기](#root-소유의-setuid-setgid-파일-검색-후-퍼미션-조정하기)
 - [System Monitoring](#system-monitoring)
@@ -1712,6 +1713,24 @@ function taocl() {
 * execute muli-line commands on bash, zsh
   * `C-x C-e` 
   * [셸에서 여러줄의 명령어를 에디터로 편집하고 실행하기 @ 44bits](https://www.44bits.io/ko/post/editing-multiline-command-on-shell)
+
+# Performance Monitoring
+
+> [awesome performance testing @ github](https://github.com/andriisoldatenko/awesome-performance-testing)
+
+* [stress](https://linux.die.net/man/1/stress)
+  * `stress -c 4` Use 4 cores 100%
+  * `stress -vm 2 –vm-bytes 2048m` Use 2 process with 2048 memory
+  * `stress –hdd 3 -hdd-bytes 1034m` Use 3 hdds with 1034MB size
+  * `stress --cpu 8 --io 4 --vm 2 --vm-bytes 128M --timeout 10s`
+  * `info stress`
+* [stress-ng](https://kernel.ubuntu.com/~cking/stress-ng/)
+  * [src @ github](https://github.com/ColinIanKing/stress-ng)
+  * `ng` means new generation???
+  * `stress-ng --cpu 4 --vm 2 --hdd 1 --fork 8 --switch 4 --timeout 5m --metrics-brief` 
+  * `stress-ng --vm 32 --vm-bytes 64M --vm-stride 1K --vm-populate --page-in --metrics-brief --times --timeout 60s`
+  * `` 
+* [k6](https://github.com/loadimpact/k6)
 
 # Security
 
