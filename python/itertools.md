@@ -106,6 +106,17 @@ list(map(pow, range(10), repeat(2))) # [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
 
 ### zip_longest()
 
+```py
+>>> word1 = 'a'
+>>> word2 = 'bcd'
+>>> list(zip_longest(word1, word2, fillvalue='')
+[('a', 'b'), ('', 'c'), ('', 'd')]
+>>> [a + b for a, b in zip_longest(word1, word2, fillvalue='')]
+['ab', 'c', 'd']
+>>> ''.join(a + b for a, b in zip_longest(word1, word2, fillvalue='')
+'abcd'
+```
+
 ## Combinatoric iterators
 
 ### product()
