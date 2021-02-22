@@ -9,6 +9,7 @@ UNIX V6 의 source 를 분석한다.
   * [The Unix Tree](https://minnie.tuhs.org/cgi-bin/utree.pl)
   * [Unix V6 Manuals](http://man.cat-v.org/unix-6th/)
 * [Xv6, a simple Unix-like teaching operating system @ mit](https://pdos.csail.mit.edu/6.828/2012/xv6.html)
+  * unix v6 를 x86 실행환경으로 다시 개발한 것
   * `git clone git://github.com/mit-pdos/xv6-public.git`
   * [textbook/commentary pdf](https://pdos.csail.mit.edu/6.828/2012/xv6/book-rev7.pdf)
 * [Commentary on the Sixth Edition UNIX Operating System](http://www.lemis.com/grog/Documentation/Lions/)
