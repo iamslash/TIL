@@ -57,6 +57,7 @@
   - [Goroutines](#goroutines)
   - [Channels](#channels)
     - [Channel Axioms](#channel-axioms)
+  - [Type Assertion](#type-assertion)
 - [Advanced Usages](#advanced-usages)
   - [go commands](#go-commands)
     - [go build](#go-build)
@@ -1852,6 +1853,22 @@ func doStuff(channelOut, channelIn chan int) {
   }
   // 1 2 0
   ```
+
+## Type Assertion
+
+> * [What is the meaning of “dot parenthesis” syntax? [duplicate] @ stackoverflow](https://stackoverflow.com/questions/24492868/what-is-the-meaning-of-dot-parenthesis-syntax)
+> * [Type assertions @ go](https://golang.org/ref/spec#Type_assertions)
+
+```go
+var i interface{}
+i = int(42)
+
+a, ok := i.(int)
+// a == 42 and ok == true
+
+b, ok := i.(string)
+// b == "" (default value) and ok == false
+```
 
 # Advanced Usages
 
