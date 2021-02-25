@@ -1522,7 +1522,7 @@ $ jsonnet --tla-str prefix="Happy Hour " \
 ## Object-Orientation
 
 Objects (which we inherit from JSON)
-The object composition operator `+`, which merges two objects, choosing the right hand side when fields collide
+The object composition operator `+`, which merges two objects, choosing the right hand side when fields collide. Left side is the parent, Right side is the child.
 The `self` keyword, a reference to the current object
 
 Hidden fields, defined with `::`, which do not appear in generated JSON
