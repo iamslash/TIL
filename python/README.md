@@ -671,7 +671,7 @@ Species.cat
 
 ## Sort
 
-* sort
+> sort
   
 ```py
 > l = [5, 4, 3, 2, 1]
@@ -679,19 +679,29 @@ Species.cat
 > l.sort(reverse=True)
 ```
 
-* sorted
+> sorted
 
 ```py
-> l = [5, 4, 3, 2, 1]
-> r = sorted(l)
-> r = sorted(l, key = lambda x: x*x)
+>>> l = [5, 4, 3, 2, 1]
+>>> r = sorted(l)
+>>> r
+[1, 2, 3, 4, 5]
+>>> r = sorted(l, key=lambda x: x*x)
+>>> r
+[1, 2, 3, 4, 5]
+>>> r = sorted(l, key=lambda x: x*x, reverse=True)
+>>> r
+[5, 4, 3, 2, 1]
 ```
 
-* sort vs sorted
+> sort vs sorted
 
 sort() modify the object but sorted() create the new one.
 
 ## Search
+
+> * `bisect_left`: Locate the left most insertion point for x in a to maintain sorted order.
+> * `bisec_right`: Locate the right most insertion point for x in a to maintain sorted order.
 
 ```py
 # binary search
