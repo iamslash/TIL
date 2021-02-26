@@ -190,6 +190,8 @@ WIP
 
 ## String
 
+> * [Built-in Types | String Methods @ python](https://docs.python.org/3/library/stdtypes.html#string-methods)
+
 ```py
 # Sub string
 s = 'Hello World'
@@ -200,6 +202,22 @@ int('57')
 float('57')
 str(57)
 str(57.0)
+
+# Split
+>>> 'ab c\n\nde fg\rkl\r\n'.splitlines()
+['ab c', '', 'de fg', 'kl']
+>>> 'ab c\n\nde fg\rkl\r\n'.splitlines(keepends=True)
+['ab c\n', '\n', 'de fg\r', 'kl\r\n']
+# splitlines vs split
+#   splitlines returns an empty list for the empty string, and a terminal line break does not result in an extra line:
+>>> "".splitlines()
+[]
+>>> "One line\n".splitlines()
+['One line']
+>>> ''.split('\n')
+['']
+>>> 'Two lines\n'.split('\n')
+['Two lines', '']
 ```
 
 ## Random
