@@ -25,7 +25,7 @@
       - [Arithmetic binary operators](#arithmetic-binary-operators)
       - [Comparison binary operators](#comparison-binary-operators)
       - [Logical/set binary operators](#logicalset-binary-operators)
-    - [Vector matching](#vector-matching)
+    - [Vector matching (join)](#vector-matching-join)
     - [Aggregation operators](#aggregation-operators)
     - [Binary operator precedence](#binary-operator-precedence)
   - [Functions](#functions)
@@ -495,9 +495,80 @@ or (union)
 unless (complement)
 ```
 
-### Vector matching
+### Vector matching (join)
 
-???
+> * [Vector matching @ prometheus.io](https://prometheus.io/docs/prometheus/latest/querying/operators/#vector-matching)
+> * [Left joins in PromQL](https://www.robustperception.io/left-joins-in-promql)
+
+There are vector matching such as `one to one`. `one to many, many to one`. There is no `many to many`.
+
+**One-to-one vector matches**
+
+`ignoring(code) method:http_requests:rate5m` 는 `method:http_request:rate5m` 에서 `code` label 은 무시하고 `method_code:http_errors:rate5m` 과 label 이 모두 match 되는 것을 의미한다.
+
+```js
+Format:
+
+<vector expr> <bin-op> ignoring(<label list>) <vector expr>
+<vector expr> <bin-op> on(<label list>) <vector expr>
+
+Example Input:
+
+method_code:http_errors:rate5m{method="get", code="500"}  24
+method_code:http_errors:rate5m{method="get", code="404"}  30
+method_code:http_errors:rate5m{method="put", code="501"}  3
+method_code:http_errors:rate5m{method="post", code="500"} 6
+method_code:http_errors:rate5m{method="post", code="404"} 21
+
+method:http_requests:rate5m{method="get"}  600
+method:http_requests:rate5m{method="del"}  34
+method:http_requests:rate5m{method="post"} 120
+
+Example Query:
+
+method_code:http_errors:rate5m{code="500"} / ignoring(code) method:http_requests:rate5m
+
+Example Output:
+
+{method="get"}  0.04            //  24 / 600
+{method="post"} 0.05            //   6 / 120
+```
+
+**Many-to-one and one-to-many vector matches**
+
+데이터의 개수 즉 cardinality 가 많은 쪽이 many 이다. `group_left` 는 왼쪽이 cardinality 가 높다는 의미이다. `group_right` 는 오른쪽이 cardinality 가 높다는 의미이다. 이것을 잘못 사용하면 error 가 발생한다???
+
+```
+Format:
+
+<vector expr> <bin-op> ignoring(<label list>) group_left(<label list>) <vector expr>
+<vector expr> <bin-op> ignoring(<label list>) group_right(<label list>) <vector expr>
+<vector expr> <bin-op> on(<label list>) group_left(<label list>) <vector expr>
+<vector expr> <bin-op> on(<label list>) group_right(<label list>) <vector expr>
+
+Example Input:
+
+method_code:http_errors:rate5m{method="get", code="500"}  24
+method_code:http_errors:rate5m{method="get", code="404"}  30
+method_code:http_errors:rate5m{method="put", code="501"}  3
+method_code:http_errors:rate5m{method="post", code="500"} 6
+method_code:http_errors:rate5m{method="post", code="404"} 21
+
+method:http_requests:rate5m{method="get"}  600
+method:http_requests:rate5m{method="del"}  34
+method:http_requests:rate5m{method="post"} 120
+
+Example Query:
+
+method_code:http_errors:rate5m / ignoring(code) group_left method:http_requests:rate5m
+
+Example Output:
+
+{method="get", code="500"}  0.04            //  24 / 600
+{method="get", code="404"}  0.05            //  30 / 600
+{method="post", code="500"} 0.05            //   6 / 120
+{method="post", code="404"} 0.175           //  21 / 120
+```
 
 ### Aggregation operators
 

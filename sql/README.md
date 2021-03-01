@@ -63,6 +63,7 @@
   - [Session Variables](#session-variables)
   - [ROW_NUMBER() OVER()](#row_number-over)
   - [Window Functions (LEAD, LAG)](#window-functions-lead-lag)
+  - [Pivot](#pivot)
   - [Functions (MySQL)](#functions-mysql)
   - [Operators](#operators)
   - [Data Types (MySQL)](#data-types-mysql)
@@ -1446,6 +1447,54 @@ SELECT user_id, MAX(diff) AS biggest_window
   ) t
  GROUP BY user_id
  ORDER BY user_id
+```
+
+## Pivot
+
+> * [ProductsPriceforEachStore @ learntocode](https://github.com/iamslash/learntocode/tree/master/leetcode2/ProductsPriceforEachStore)
+> * [Case - PIVOT](https://velog.io/@ifyouseeksoomi/Mysql-Case-PIVOT)
+> * [MySQL Pivot: rotating rows to columns](https://linuxhint.com/mysql_pivot/)
+
+데이터의 row 를 colum 으로 전환하는 것을 pivot 이라고 한다.
+
+예를 들어 다음과 같이 Products table 의 데이터를 살펴보자. store column 의 값들에 해당하는 row 를 새로운 table 의 column 으로 회전해 보자.
+
+```sql
+SELECT product_id, store, price
+  FROM Products;
+
+Result:
++-------------+--------+-------+
+| product_id  | store  | price |
++-------------+--------+-------+
+| 0           | store1 | 95    |
+| 0           | store3 | 105   |
+| 0           | store2 | 100   |
+| 1           | store1 | 70    |
+| 1           | store3 | 80    |
++-------------+--------+-------+
+
+  SELECT product_id,
+         MAX(CASE 
+               WHEN store='store1' THEN price
+             END) AS store1,
+         MAX(CASE 
+               WHEN store='store2' THEN price
+             END) AS store2,
+         MAX(CASE 
+               WHEN store='store3' THEN price
+             END) AS store3
+    FROM Products 
+GROUP BY product_id;
+
+
+After pivot:
++-------------+--------+--------+--------+
+| product_id  | store1 | store2 | store3 |
++-------------+--------+--------+--------+
+| 0           | 95     | 100    | 105    |
+| 1           | 70     | null   | 80     |
++-------------+--------+--------+--------+
 ```
 
 ## Functions (MySQL)
