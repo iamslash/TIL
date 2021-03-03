@@ -3,6 +3,7 @@
 - [Materials](#materials)
 - [Kubernetes Addons](#kubernetes-addons)
 - [Architecture](#architecture)
+  - [Sequence Diagram](#sequence-diagram)
   - [Overview](#overview)
   - [Kubernetes Components](#kubernetes-components)
     - [Master Node](#master-node)
@@ -109,7 +110,15 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 # Architecture
 
+## Sequence Diagram
+
+> * [Exploring the Flexibility of Kubernetes @ medium](https://medium.com/cloud-heroes/exploring-the-flexibility-of-kubernetes-9f65db2360a0)
+
+![](img/kubernetes_sequence_diagram.png)
+
 ## Overview
+
+> * [Understanding Kubernetes Architecture With Diagrams](https://phoenixnap.com/kb/understanding-kubernetes-architecture-diagrams)
 
 Kubernetes cluster 는 Master-node, Workder-node 와 같이 두 가지 종류의 Node 를 갖는다. 
 
