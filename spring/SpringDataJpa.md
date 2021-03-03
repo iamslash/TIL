@@ -122,6 +122,15 @@ Using JPA is better than Using JDBC.
 
 ## JPA Programming: Setting JPA project
 
+> * [데이터베이스 초기화 @ TIL](https://github.com/iamslash/TIL/blob/3833c3dba5db0c33551741d9c9b8cc09954b86e2/spring/SpringBoot.md#%EC%8A%A4%ED%94%84%EB%A7%81-%EB%8D%B0%EC%9D%B4%ED%84%B0-7-%EB%B6%80-%EB%8D%B0%EC%9D%B4%ED%84%B0%EB%B2%A0%EC%9D%B4%EC%8A%A4-%EC%B4%88%EA%B8%B0%ED%99%94)
+
+> * [Show Hibernate/JPA SQL Statements from Spring Boot @ baeldung](https://www.baeldung.com/sql-logging-spring-boot)
+
+```conf
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+```
+
 ## JPA Programming: Entity mapping
 
 ## JPA Programming: Value type mapping
@@ -191,6 +200,8 @@ Using JPA is better than Using JDBC.
 ## Spring Data JPA: Query by Example
 
 ## Spring Data JPA: Transaction
+
+* [transactional @ TIL](https://github.com/iamslash/TIL/blob/3833c3dba5db0c33551741d9c9b8cc09954b86e2/spring/README.md#transactional)
 
 ## Spring Data JPA: Auditing
 
