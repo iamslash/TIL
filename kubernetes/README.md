@@ -116,6 +116,8 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 ![](img/kubernetes_sequence_diagram.png)
 
+> * [Graceful shutdown and zero downtime deployments in Kubernetes @ learnk8s.io](https://learnk8s.io/graceful-shutdown)
+
 ## Overview
 
 > * [Understanding Kubernetes Architecture With Diagrams](https://phoenixnap.com/kb/understanding-kubernetes-architecture-diagrams)

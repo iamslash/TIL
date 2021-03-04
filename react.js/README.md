@@ -1,3 +1,4 @@
+- [Templates](#templates)
 - [Materials](#materials)
 - [Basic](#basic)
   - [Create React App](#create-react-app)
@@ -33,12 +34,16 @@
     - [`function combineActions(...types)`](#function-combineactionstypes)
     - [`function handleActions(handlers, defaultState)`](#function-handleactionshandlers-defaultstate)
   - [react-router](#react-router)
-  - [* React Router Introduction @ youtube](#ullireact-router-introduction--youtubeliul)
+  - [* React Router Introduction @ youtube](#-react-router-introduction--youtube)
   - [Ant Design](#ant-design)
   - [Redux SAGA](#redux-saga)
   - [Redux Debugger in Chrome](#redux-debugger-in-chrome)
 
 ----
+
+# Templates
+
+* [gogo-react](https://gogo-react-docs.coloredstrategies.com/docs/gettingstarted/introduction)
 
 # Materials
 
