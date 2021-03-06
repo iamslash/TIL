@@ -9,6 +9,7 @@
   - [Babel](#babel)
   - [Lint](#lint)
   - [pm2](#pm2)
+  - [concurrently](#concurrently)
 
 ----
 
@@ -1226,3 +1227,10 @@ ToDo
 > * [PM2를 활용한 Node.js 무중단 서비스하기 @ line](https://engineering.linecorp.com/ko/blog/pm2-nodejs/)
 
 PM2 is a daemon process manager for node.js.
+
+## concurrently
+
+> * [Concurrently @ npm](https://www.npmjs.com/package/concurrently)
+> * [Concurrently @ velog](https://velog.io/@nam2350/Concurrently)
+
+Run multiple commands concurrently. Like npm run watch-js & npm run watch-less but better.
