@@ -30,6 +30,7 @@
   - [ternary operators](#ternary-operators)
   - [multiple return](#multiple-return)
   - [for else](#for-else)
+  - [for and if oneline](#for-and-if-oneline)
   - [exception](#exception)
   - [Dunder methods (Magic methods)](#dunder-methods-magic-methods)
   - [pdb](#pdb)
@@ -1209,6 +1210,13 @@ print(next(my_iter))
 # Output: 'Y'
 ```
 
+다음은 `()` 를 이용하여 간단히 generator 를 만들어내는 예이다. [PEP 289 -- Generator Expressions](https://www.python.org/dev/peps/pep-0289/)
+
+```py
+>>> (i for i in range(50))
+<generator object <genexpr> at 0x000001B42CD5B888>
+```
+
 ## Map, filter, reduce
 
 `map` 은 `map(function_to_apply, list_of_inputs)` 와 같이 사용한다. `map` 은 `map object` 를 리턴하기 때문에 `list` 가 필요할 때가 있다.
@@ -1410,6 +1418,8 @@ print(age)
 
 ## for else
 
+> * []()
+
 ```py
 for item in container:
     if search_something(item):
@@ -1428,6 +1438,74 @@ for n in range(2, 10):
     else:
         # loop fell through without finding a factor
         print(n, 'is a prime number')
+```
+
+## for and if oneline
+
+> * [[python] for문, if문 한 줄로 코딩하기 (for and if in one line)](https://leedakyeong.tistory.com/entry/python-for%EB%AC%B8-if%EB%AC%B8-%ED%95%9C-%EC%A4%84%EB%A1%9C-%EC%BD%94%EB%94%A9%ED%95%98%EA%B8%B0)
+
+```py
+# print one dimension list
+for a in A:
+  print(a)
+# one line
+>>> [a for a in A]
+print(" ".join(str(i) for a in A))
+
+# print two dimension list
+>>> A = [list(range(10), [10,11,12]]
+for a in A:
+  for b in a:
+    print(b)
+# one line
+>>> [b for a in A for b in a]
+
+# one condition
+if a < 5:
+  print(a)
+# one line
+a = 3
+if a < 5: print(a)
+# one line
+a = 3
+print(a if a < 5 else 1)
+
+# more than one condition
+if a < 5:
+  print(0)
+elif a < 10:
+  print(1)
+else:
+  print(2)  
+# one line
+a = 3
+print(0 if a < 5 else 1 if a < 10 else 2)
+
+# for and if
+A = list(range(10, 20))
+print(A)
+# legacy way
+for a in A:
+  if a == 0:
+    print(a)
+# oneline
+[a for a in A if a == 0]    
+
+# for and if and else
+# legacy
+for a in A:
+  if a == 0:
+    print(a)
+  else:
+    print("P")    
+# oneline
+[a if a == 0 else "P" for a in A]    
+# oneline error
+>>> [a if a > 0 for a in A]
+  File "<stdin>", line 1
+    [a if a > 0 for a in A]
+                  ^
+SyntaxError: invalid syntax
 ```
 
 ## exception
