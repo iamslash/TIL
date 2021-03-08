@@ -65,6 +65,23 @@ SR2
 
 # Assembly Syntax
 
+> * [The PDP-11 Addressing Modes](https://programmer209.wordpress.com/2011/08/03/the-pdp-11-assembly-language/)
+
+| Syntax | Mode | Action | Machine Code | Extra Word |
+|--|--|--|--|--|
+| Rn | Register | Data = Rn | 0n | - |
+| (Rn)+ | Autoincrement | Data = (Rn), Rn++ | 2n | - |
+| -(Rn) | Autodecrement | | | |
+| X(Rn) | Index | | | |
+| @Rn or (Rn) | Register Deferred | | | |
+| @(Rn)+ | Autoincrement Deferred | | | |
+| @-(Rn) | Autodecrement Deferred | | | |
+| @X(Rn) | Index Deferred | | | |
+| #n | Immediate | | | |
+| @#A | Immediate Deferred (Absolute) | | | |
+| A or X(PC) | Relative | | | |
+| @A or @X(PC) | Relative Deferred | | | |
+
 # fork systemcall
 
 > `source/s4/fork.s`
