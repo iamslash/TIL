@@ -690,7 +690,8 @@ total data size : estimated data size = 100 : 70
 
 ## SLA, SLO, SLI
 
-* [The Difference between SLI, SLO, and SLA](https://enqueuezero.com/the-difference-between-sli-slo-and-sla.html)
+> * [The Difference between SLI, SLO, and SLA](https://enqueuezero.com/the-difference-between-sli-slo-and-sla.html)
+> * [Uptime Calculation Web](https://uptime.is/)
 
 -----
 
