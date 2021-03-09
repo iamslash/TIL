@@ -67,20 +67,100 @@ SR2
 
 > * [The PDP-11 Addressing Modes](https://programmer209.wordpress.com/2011/08/03/the-pdp-11-assembly-language/)
 
+## Overview
+
 | Syntax | Mode | Action | Machine Code | Extra Word |
 |--|--|--|--|--|
 | Rn | Register | Data = Rn | 0n | - |
 | (Rn)+ | Autoincrement | Data = (Rn), Rn++ | 2n | - |
-| -(Rn) | Autodecrement | | | |
-| X(Rn) | Index | | | |
-| @Rn or (Rn) | Register Deferred | | | |
-| @(Rn)+ | Autoincrement Deferred | | | |
-| @-(Rn) | Autodecrement Deferred | | | |
-| @X(Rn) | Index Deferred | | | |
-| #n | Immediate | | | |
-| @#A | Immediate Deferred (Absolute) | | | |
-| A or X(PC) | Relative | | | |
-| @A or @X(PC) | Relative Deferred | | | |
+| -(Rn) | Autodecrement | Rn--, Data = (Rn) | 4n | - |
+| X(Rn) | Index | Offset address X = (PC), PC += 2, Base address = rn, Data = (Rn + X) | 6n | Yes |
+| @Rn or (Rn) | Register Deferred | Data = (Rn) | 1n | - |
+| @(Rn)+ | Autoincrement Deferred | Data =((Rn)), Rn++ | 3n | - |
+| @-(Rn) | Autodecrement Deferred | Rn–, Data =((Rn)) | 5n | - |
+| @X(Rn) | Index Deferred | Offset address X = (PC), PC += 2, Base address = Rn, Data = ((Rn + X)) | 7n | Yes |
+| #n | Immediate | Data = (PC) = n | 27 | Yes |
+| @#A | Immediate Deferred (Absolute) | Data = ((PC)) = (A) | 37 | Yes |
+| A or X(PC) | Relative | 	Offset address X = (PC), PC += 2, Data = (PC + X) = (A) | 67 | Yes |
+| @A or @X(PC) | Relative Deferred | Offset address X = (PC), PC += 2, Data = ((PC + X)) = ((A)) | 77 | Yes |
+
+## Register Mode
+
+```s
+mov r0 r1
+```
+
+## Register Deferred Mode
+
+```s
+# These are same
+MOV R0 @R1
+MOV R0 (R1)
+
+# These are same
+ADD @R0 @R1
+ADD (R0) (R1)
+add (r0) (r1)
+```
+
+## Autoincrement Mode
+
+```s
+movb r0 (r1)+
+
+mov r0 (r1)+
+
+# Copy the byte at the memory location pointed to by sp (r6)
+#   to the low byte of the register r0
+# Increment the contents of the register sp (r6) 2 bytes
+movb (sp)+ r0
+```
+
+## Autodecrement Mode
+
+```s
+```
+
+## Index Mode
+
+```s
+```
+
+
+## Autoincrement Deferred Mode
+
+```s
+```
+
+## Autodecrement Deferred
+
+```s
+```
+
+## Index Deferred
+
+```s
+```
+
+## Immediate
+
+```s
+```
+
+## Immediate Deferred (Absolute)
+
+```s
+```
+
+## Relative
+
+```s
+```
+
+## Relative Deferred
+
+```s
+```
 
 # fork systemcall
 
