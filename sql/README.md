@@ -893,6 +893,21 @@ SELECT 'Customer' As Type, ContactName, City, Country
   FROM Suppliers;  
 ```
 
+> * [Primary Department for Each Employee @ leetcode](https://leetcode.com/problems/primary-department-for-each-employee/)
+
+```sql
+  SELECT employee_id, 
+         department_id
+    FROM Employee
+   WHERE primary_flag = 'Y'
+   UNION
+  SELECT employee_id,
+         department_id
+    FROM employee
+GROUP BY employee_id
+  HAVING COUNT(employee_id) = 1
+```
+
 ## Group By
 
 ```sql

@@ -137,6 +137,13 @@ spring.jpa.properties.hibernate.format_sql=true
 
 ## JPA Programming: 1 to n mapping
 
+> * [[JPA] @ManyToMany, 다대다[N:M] 관계 @ tistory](https://ict-nroo.tistory.com/127)
+> * [Many-To-Many Relationship in JPA @ baeldung](https://www.baeldung.com/jpa-many-to-many)
+
+----------
+
+Many to Many relationship 은 anomolies 를 발생시킨다. 두 테이블 사이에 relation table 을 만들어서 Many to one, one to many 로 해결해야 한다. JPA 의 `@JoinTable` 을 이용해서 relation table 을 generate 할 수 있다. 그러나 JPA 가 만들어주는 naming convention 보다는 manual 하게 table 을 만들 것을 추천한다. 서비스를 운영하다 보면 직접 table 에 operation 을 할 수도 있기 때문이다.
+
 ## JPA Programming: Cascade
 
 ## JPA Programming: Fetch
