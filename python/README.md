@@ -411,6 +411,13 @@ deque(['c', 'b', 'a'])
 
 ```python
 >>> import heapq
+
+>>> b = [5,2,3,4,1]
+# make an heap with a legacy list
+>>> heapq.heapify(b)
+>>> b
+[1, 2, 3, 4, 5]
+
 >>> a = []
 >>> heapq.heappush(a, (5, 'write code'))
 >>> heapq.heappush(a, (7, 'release product'))
