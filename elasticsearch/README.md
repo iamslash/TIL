@@ -17,7 +17,7 @@
   - [Pipeline Aggregation](#pipeline-aggregation)
 - [Plugins](#plugins)
   - [kopf](#kopf)
-  - [* 킹왕짱 web admin](#ulli킹왕짱-web-adminliul)
+  - [* 킹왕짱 web admin](#-킹왕짱-web-admin)
 - [Advanced](#advanced)
   - [Cluster settings for concurrent rebalance](#cluster-settings-for-concurrent-rebalance)
   - [Delete old indices](#delete-old-indices)
@@ -31,6 +31,7 @@
 
 # Materials
 
+* [ElasticSearch Cheat Sheet 2.x, 7.x](https://elasticsearch-cheatsheet.jolicode.com/#es2)
 * [Spring and Elasticsearch @ github](https://github.com/ahnjunwoo/elasticsearchDockerExam)
 * [elk @ TIL](/elk/README.md)
 * [elasticsearch 실습 정리 @ github](https://github.com/itmare/es)
