@@ -407,30 +407,54 @@ IndexError: pop from an empty deque
 deque(['c', 'b', 'a'])
 ```
 
-* heapq
+* [heapq @ python3](https://docs.python.org/3.10/library/heapq.html)
 
 ```python
 >>> import heapq
 
->>> b = [5,2,3,4,1]
-# make an heap with a legacy list
->>> heapq.heapify(b)
->>> b
-[1, 2, 3, 4, 5]
+>>> a = [9, 7, 5, 3, 1]
+>>> import heapq
 
->>> a = []
->>> heapq.heappush(a, (5, 'write code'))
->>> heapq.heappush(a, (7, 'release product'))
->>> heapq.heappush(a, (1, 'write spec'))
->>> heapq.heappush(a, (3, 'create tests'))
+# make an heap with a legacy list in linear time
+>>> heapq.heapify(a)
+>>> a
+[1, 3, 5, 9, 7]
+
+# Push to heap
+>>> heapq.heappush(a, 12)
+>>> a
+[1, 3, 5, 9, 7, 12]
+
+# Pop from heap
 >>> heapq.heappop(a)
-(1, 'write spec')
->>> heapq.heappop(a)
-(3, 'create tests')
->>> heapq.heappop(a)
-(5, 'write code')
->>> heapq.heappop(a)
-(7, 'release product')
+1
+>>> a
+[3, 7, 5, 9, 12]
+
+# Pop and return the smallest item from the heap, 
+# and also push the new item. 
+>>> heapq.heapreplace(a, 6)
+3
+>>> a
+[5, 7, 6, 9, 12]
+
+# Return a list with the n largest elements
+>>> heapq.nlargest(2, a)
+[12, 9]
+>>> a
+[5, 7, 6, 9, 12]
+
+# Return a list with the n smallest elements
+>>> heapq.nsmallest(2, a)
+[5, 6]
+>>> a
+[5, 7, 6, 9, 12]
+
+# Merge multiple sorted inputs into a single sorted output
+>>> heapq.merge(a)
+<generator object merge at 0x000001176B5FBBA0>
+>>> list(heapq.merge(a))
+[5, 7, 6, 9, 12]
 ```
 
 * set
