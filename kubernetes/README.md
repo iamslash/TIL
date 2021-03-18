@@ -4,6 +4,7 @@
 - [Kubernetes Addons](#kubernetes-addons)
 - [Architecture](#architecture)
   - [Sequence Diagram](#sequence-diagram)
+  - [API Flow](#api-flow)
   - [Overview](#overview)
   - [Kubernetes Components](#kubernetes-components)
     - [Master Node](#master-node)
@@ -117,6 +118,14 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 ![](img/kubernetes_sequence_diagram.png)
 
 > * [Graceful shutdown and zero downtime deployments in Kubernetes @ learnk8s.io](https://learnk8s.io/graceful-shutdown)
+
+## API Flow
+
+![](https://d33wubrfki0l68.cloudfront.net/af21ecd38ec67b3d81c1b762221b4ac777fcf02d/7c60e/images/blog/2019-03-21-a-guide-to-kubernetes-admission-controllers/admission-controller-phases.png)
+
+`kubectl` 을 통해 `kube-api-server` 로 API Request 가 도착하면 위의 그림과 같이 `Authentication-Authorization-Mutating Admission-Validating Admission` 과정을 거치고 `etcd` 에 접근한다.
+
+만약 API Request 가 Write Operation 이면 `Mutating Admission` 단계에서 Custom Server 로 WebHook 을 보내 Kubernetes 를 Extending 할 수 있다. [Kubernetes Extension / Dynamic Admission Control @ TIL](kubernetes_extension.md#dynamic-admission-contro)
 
 ## Overview
 
