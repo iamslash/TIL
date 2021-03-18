@@ -7,7 +7,7 @@
 
 ![](https://docs.google.com/drawings/d/e/2PACX-1vQBRWyXLVUlQPlp7BvxvV9S1mxyXSM6rAc_cbLANvKlu6kCCf-kGTporTMIeG5GZtUdxXz1xowN7RmL/pub?w=960&h=720)
 
-# Admission Controller
+# Dynamic Admission Control
 
 > * [172. [Kubernetes] Admission Controller의 이해 및 Python으로 Mutate Webhook 작성 예제 @ naverblog](https://blog.naver.com/alice_k106/221546328906)
 
