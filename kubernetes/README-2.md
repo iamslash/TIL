@@ -49,10 +49,12 @@
     - [Launch Simple Horizontal Pod Autoscaler](#launch-simple-horizontal-pod-autoscaler)
 - [Advanced](#advanced)
   - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
+- [Process of Pod Termination](#process-of-pod-termination)
 - [Kubernetes Extension](#kubernetes-extension)
 - [Dive Deep](#dive-deep)
   - [API server](#api-server)
   - [Monitoring](#monitoring)
+- [Continue...](#continue)
 
 ------
 
@@ -906,6 +908,23 @@ spec:
     k8s-app: kubernetes-dashboard
 ```
 
+# Process of Pod Termination
+
+```
+preStop       SIGTERM             SIGKILL
+  |              |                   |
+  |              |                   |
+  |              |                   |
+------------------------------------------->  
+ t0              t1                  t2
+
+t0: Pod will execute preStop when deletionTimestamp is added to pod data of ETCD.
+t1: As soon as prestop is finished Pod will send SIGTERM to containers.
+t2: What if containers are not terminated after SIGTERM during terminationGracePeriodSeconds, pod will send SIGKILL.
+
+terminationGracePeriodSeconds's default value is 30s
+```
+
 # Kubernetes Extension
 
 * [Kubernees Extension @ TIL](kubernetes_extension.md)
@@ -919,3 +938,7 @@ spec:
 ## Monitoring
 
 * [Prometheus with Kubernetes](https://www.slideshare.net/jinsumoon33/kubernetes-prometheus-monitoring)
+
+# Continue...
+
+* [README-3.md](README-3.md)
