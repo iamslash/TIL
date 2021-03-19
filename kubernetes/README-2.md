@@ -29,7 +29,7 @@
   - [Kubernetes Scheduling](#kubernetes-scheduling)
     - [NodeSelector, Node Affinity, Pod Affinity](#nodeselector-node-affinity-pod-affinity)
     - [Taints, Tolerations](#taints-tolerations)
-    - [Cordon, Drain, PodDistributionBudget](#cordon-drain-poddistributionbudget)
+    - [Cordon, Drain, PodDisruptionBudget](#cordon-drain-poddisruptionbudget)
     - [Custom Scheduler](#custom-scheduler)
     - [Static Pods vs DaemonSets](#static-pods-vs-daemonsets)
     - [configuring Scheduler](#configuring-scheduler)
@@ -563,7 +563,7 @@ nodeAffinity, podAffinity, topologyKey, reqruiedDuringSchedulingIgnoredDuringExe
 
 ### Taints, Tolerations
 
-### Cordon, Drain, PodDistributionBudget
+### Cordon, Drain, PodDisruptionBudget
 
 ### Custom Scheduler
 

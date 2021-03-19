@@ -38,9 +38,6 @@
     - [Launch Simple Service with ClusterIp type](#launch-simple-service-with-clusterip-type)
     - [Launch Service with NodePort type](#launch-service-with-nodeport-type)
     - [Launch Service with LoadBalaner](#launch-service-with-loadbalaner)
-    - [????](#)
-    - [???](#-1)
-    - [???](#-2)
     - [externalTrafficPolicy](#externaltrafficpolicy)
     - [ExternalName](#externalname)
   - [Kubernetes Managing Commands](#kubernetes-managing-commands)
@@ -1043,8 +1040,8 @@ $ kubectl create deployment --image=nginx nginx --dry-run=true -o yaml > nginx-d
 
 There are 3 kinds of Service typs.
 
-* **ClusterIP** type is used for internal communication.
-* **NodePort** type is used for external communication.
+* **ClusterIP** type is used for internal communication. We can access pods just inside of  workder-node.
+* **NodePort** type is used for external communication. We can access pods from outside of workder-node.
 * **LoadBalancer** type is used for external communication with provision of load balancer in Cloud such as AWS, GCP. LoadBalancer is similar with **NodePort** except provision of load blanacer.
 
 Service will make Endpoint object. You can find out Endpoints with `$ kubectl get endpoints` or `$ kubectl get ep`.
@@ -1055,123 +1052,123 @@ But we use Ingress object more than Service object. Because Service object is la
 
 ![](img/kubernetes_service_clusterip.png)
 
-* redis-app.yml
+* deployment-hostname.yaml
 
 ```yml
-apiVersion: apps/v1beta2
+apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: redis
+  name: hostname-deployment
 spec:
+  replicas: 3
   selector:
     matchLabels:
-      type: db
-      service: redis
+      app: webserver
   template:
     metadata:
+      name: my-webserver
       labels:
-        type: db
-        service: redis
+        app: webserver
     spec:
       containers:
-      - name: redis
-        image: redis
+      - name: my-webserver
+        image: alicek106/rr-test:echo-hostname
         ports:
-        - containerPort: 6379
-          protocol: TCP
----
-# This is for ClusterIP
-# ClusterIP is used for internal communication
+        - containerPort: 80
+```
+
+* hostname-svc-clusterip.yaml
+
+```yml
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis
+  name: hostname-svc-clusterip
 spec:
   ports:
-  - port: 6379
-    protocol: TCP
+    - name: web-port
+      port: 8080
+      targetPort: 80
   selector:
-    type: db
-    service: redis
-```
-
-* whoami.yml
-
-```yml
-apiVersion: apps/v1beta2
-kind: Deployment
-metadata:
-  name: whoami
-spec:
-  selector:
-    matchLabels:
-      type: app
-      service: whoami
-  template:
-    metadata:
-      labels:
-        type: app
-        service: whoami
-    spec:
-      containers:
-      - name: whoami
-        image: subicura/whoami-redis:1
-        env:
-        - name: REDIS_HOST
-          value: "redis"
-        - name: REDIS_PORT
-          value: "6379"
+    app: webserver
+  type: ClusterIP
 ```
 
 * launch
 
 ```bash
-$ kubectl apply -f redis-app.yml
-$ kubectl apply -f whoami.yml
+$ kubectl apply -f deployment-hostname.yaml
+$ kubectl get pods -o wide
+$ kubectl run -it --rm debug \
+  --image=alicek106/ubuntu:curl --restart=Never curl 192.168.100.17 | grep hello
+$ kubectl exec -it hostname-deployment-c648cf85f-pnrzk -- bash
+> apt-get update && apt-get install curl -Y  
+
+$ kubectl apply -f hostname-svc-clusterip.yaml
 # Show endpoints
 $ kubectl get ep
 $ kubectl get endpoints
-$ kubectl exec -it whoami-<xxxxx> -- sh
-  apk add curl busybox-extras # install telnet
-  curl localhost:4567
-  curl localhost:4567
-  telnet localhost 6379
-  telnet redis 6379
-    dbsize
-    KEYS *
-    GET count
-    quit
+$ kubectl run -it --rm debug --image=alicek106/ubuntu:curl --restart=Never -- bash
+> curl 10.100.98.33:8080 --silent | grep hello
+> curl 10.100.98.33:8080 --silent | grep hello
+> curl 10.100.98.33:8080 --silent | grep hello
 ```
 
 ### Launch Service with NodePort type
 
 ![](img/kubernetes_service_nodeport.png)
 
-* whoami-svc.yml
+
+* deployment-hostname.yaml
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hostname-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webserver
+  template:
+    metadata:
+      name: my-webserver
+      labels:
+        app: webserver
+    spec:
+      containers:
+      - name: my-webserver
+        image: alicek106/rr-test:echo-hostname
+        ports:
+        - containerPort: 80
+```
+
+* hostname-svc-nodeport.yaml
 
 ```yml
 apiVersion: v1
 kind: Service
 metadata:
-  name: whoami
+  name: hostname-svc-nodeport
 spec:
-  type: NodePort
   ports:
-  - port: 4567
-    protocol: TCP
+    - name: web-port
+      port: 8080
+      targetPort: 80
   selector:
-    type: app
-    service: whoami
+    app: webserver
+  type: NodePort
 ```
 
-```bash
-$ kubectl expose deployment simple-webapp-deployment --name=webapp-service --target-port=8080 --type=NodePort --port=8080 --dry-run=client -o yaml > svc.yaml
+* launch
 
-$ vim svc.yaml
-spec:
-  ports:
-  - nodePort: 30080
-$ kubectl apply -f svc.yaml  
+```bash
+$ kubectl get services
+$ kubectl get nodes -o wide
+$ curl 10.43.0.30:31587 --slient | grep hello
+$ curl 10.43.0.31:31587 --slient | grep hello
+$ curl 10.43.0.32:31587 --slient | grep hello
 ```
 
 ### Launch Service with LoadBalaner
@@ -1274,122 +1271,6 @@ $ curl a5f81...ap-northeast-2.elb.amazonaws.com --slient
 $ curl a5f81...ap-northeast-2.elb.amazonaws.com --slient
 ```
 
-### ????
-
-* whoami-svc-v1-v2.yml
-
-```yml
-apiVersion: apps/v1beta2
-kind: Deployment
-metadata:
-  name: whoami-v1
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      type: app
-      service: whoami
-      version: v1
-  template:
-    metadata:
-      labels:
-        type: app
-        service: whoami
-        version: v1
-    spec:
-      containers:
-      - name: whoami
-        image: subicura/whoami:1
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 4567
-
----
-
-apiVersion: apps/v1beta2
-kind: Deployment
-metadata:
-  name: whoami-v2
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      type: app
-      service: whoami
-      version: v2
-  template:
-    metadata:
-      labels:
-        type: app
-        service: whoami
-        version: v2
-    spec:
-      containers:
-      - name: whoami
-        image: subicura/whoami:2
-        livenessProbe:
-          httpGet:
-            path: /
-            port: 4567
-```
-
-* launch
-
-```bash
-```
-
-### ???
-
-* whoami-svc-v1.yml
-
-```yml
-apiVersion: v1
-kind: Service
-metadata:
-  name: whoami
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 8000
-    targetPort: 4567
-    protocol: TCP
-  selector:
-    type: app
-    service: whoami
-    version: v1
-```
-
-* launch
-
-```bash
-```
-
-### ???
-
-* whoami-svc-all.yml
-
-```yml
-apiVersion: v1
-kind: Service
-metadata:
-  name: whoami
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 8000
-    targetPort: 4567
-    protocol: TCP
-  selector:
-    type: app
-    service: whoami
-```
-
-* launch
-
-```bash
-```
-
 ### externalTrafficPolicy
 
 * `hostname-svc-lb-local.yaml`
@@ -1421,7 +1302,7 @@ $ kubectl get pods -o wide
 
 ### ExternalName
 
-ExternalName routes to `externalName`.
+ExternalName routes to `externalName` for example `my.database.com`.
 
 * `external-svc.yaml`
 
