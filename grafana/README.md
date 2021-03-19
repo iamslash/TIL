@@ -137,4 +137,7 @@ sum(irate(container_network_receive_bytes_total{pod!="",namespace="$namespace"}[
 
 * Network TX
 sum(irate(container_network_transmit_bytes_total{pod!="",namespace="$namespace"}[1m])) by (pod)
+
+* Throttling
+rate(container_cpu_cfs_throttled_seconds_total{pod!="",namespace="$namespace"}[5m])
 ```
