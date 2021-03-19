@@ -37,26 +37,26 @@ WIP
   * offset, absolute, aliasByNode
 
     ```js
-    aliasByNode(absolute(offset(sortByName(hosts.$service.$role.$host.system.cpu.percent-idle), -100)), 3)
+    aliasByNode(absolute(offset(sortByName(hosts.$host.system.cpu.percent-idle), -100)), 3)
     ```
 
 * System Load Average
   * aliasSub, brace expansion
 
     ```js
-    aliasSub(aliasByNode(hosts.$service.$role.$host.system.load.load.{longterm,shortterm,midterm}, 3, 7), "xxooxxooxx", "")
+    aliasSub(aliasByNode(hosts.$host.system.load.load.{longterm,shortterm,midterm}, 3, 7), "xxooxxooxx", "")
     ```
 
 * Memory Usage Bytes
 
     ```js
-    aliasByNode(hosts.$service.$role.$host.system.memory.memory-used, 3, 6)
+    aliasByNode(hosts.$host.system.memory.memory-used, 3, 6)
     ```
 
 * Disk Usage Bytes (Root)
 
     ```js
-    aliasByNode(hosts.$service.$role.$host.system.disk.<disk-name>.root.{free,used}, 3, 8)
+    aliasByNode(hosts.$host.system.disk.<disk-name>.root.{free,used}, 3, 8)
     ```
 
 * Network Tx Bytes

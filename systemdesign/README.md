@@ -48,6 +48,7 @@
   - [Optimistic Lock vs Pessimistic Lock](#optimistic-lock-vs-pessimistic-lock)
   - [Control Plane, Data Plane, Management Plane](#control-plane-data-plane-management-plane)
   - [Distributed Transaction](#distributed-transaction)
+  - [Monitoring](#monitoring)
 - [System Design Interview](#system-design-interview)
   - [Fundamentals](#fundamentals)
   - [Design Practices](#design-practices)
@@ -730,6 +731,10 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 
 SAGAS is a long lived transaction that can be broken up into transactions.
 
+## Monitoring
+
+* [Monitoring @ TIL](essentials/Monitoring.md)
+
 # System Design Interview
 
 ## Fundamentals
@@ -803,7 +808,7 @@ SAGAS is a long lived transaction that can be broken up into transactions.
 | [Api Gateway](essentials/ApiGateway.md)       |
 | [Deployment System](essentials/Deployment.md) |
 | [LogViewer](essentials/LogViewer.md)          |
-| [Monitoring](essentials/Monitoring.md)        |
+| [Metric](essentials/Metric.md)        |
 | [Alerting](essentials/Alerting.md)            |
 | [ABTesting](essentials/ABTesting.md)          |
 

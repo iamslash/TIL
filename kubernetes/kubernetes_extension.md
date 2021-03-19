@@ -1,5 +1,6 @@
 - [Materials](#materials)
 - [Concept](#concept)
+- [Aggregation Layer](#aggregation-layer)
 - [Dynamic Admission Control](#dynamic-admission-control)
 - [Custom Controller](#custom-controller)
 - [Custom Scheduler](#custom-scheduler)
@@ -13,6 +14,10 @@
 # Concept
 
 ![](https://docs.google.com/drawings/d/e/2PACX-1vQBRWyXLVUlQPlp7BvxvV9S1mxyXSM6rAc_cbLANvKlu6kCCf-kGTporTMIeG5GZtUdxXz1xowN7RmL/pub?w=960&h=720)
+
+# Aggregation Layer
+
+> * [Extending the Kubernetes API with the aggregation layer @ kubernetes.io](https://kubernetes.io/docs/concepts/extend-kubernetes/api-extension/apiserver-aggregation/)
 
 # Dynamic Admission Control
 
