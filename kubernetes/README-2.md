@@ -49,9 +49,8 @@
     - [Launch Simple Horizontal Pod Autoscaler](#launch-simple-horizontal-pod-autoscaler)
 - [Advanced](#advanced)
   - [Launch Kubernetes Dashboard](#launch-kubernetes-dashboard)
-- [Process of Pod Termination](#process-of-pod-termination)
-- [Kubernetes Extension](#kubernetes-extension)
-- [Dive Deep](#dive-deep)
+  - [Process of Pod Termination](#process-of-pod-termination)
+  - [Kubernetes Extension](#kubernetes-extension)
   - [API server](#api-server)
   - [Monitoring](#monitoring)
 - [Continue...](#continue)
@@ -67,7 +66,7 @@
 
 ----
 
-Ingress maps DNS to Services and include settings such as TLS.
+Ingress maps DNS to Services, include settings such as TLS and rewrite HTTP URL.
 You need Ingress Controller to use Ingress such as Nginx Web Server Ingress Controller.
 
 ### Simple Ingress 
@@ -304,7 +303,13 @@ $ kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/m
 
 ## Launch Persistent Volume, Persistent Claim
 
-Kubernetes supports NFS, AWS EBS, Ceph, GlusterFS as Network Persistent Volumes
+PV (Persistent Volume) 은 POD 의 mount 대상이되는 physical volume 을 의미한다. PVC (Persistent Volume Claim) 은 POD 와 PV 를 연결해주는 역할을 한다. PVC 에 기록된 spec 에 맞는 PV 가 없다면 POD 는 physical volume 을 mount 할 수 없다.
+
+Kubernetes supports NFS, AWS EBS, Ceph, GlusterFS as Network Persistent Volumes.
+
+Storage Class 는 physical volume 의 dynamic provision 을 위해 필요하다. POD 와 함께 생성된 PVC 에 맞는 PV 가 없다면 Storage Class 에 미리 설정된 spec 대로 AWS EBS 를 하나 만들고 POD 는 그 physical volume 을 mount 할 수 있다.
+
+POD 가 worker-node 의 path 에 mount 하고 싶다면 `hostPath` 를 사용한다. 이것은 pod 가 delete 되도라도 보전된다. 그러나 pod 가 delete 됬을 때 보존이 필요 없다면 `emptyDir` 을 이용하여 임시디렉토리를 생성한다. 또한 모든 container 들이 공유할 수 있다.
 
 ### Local Volume : hostPath, emptyDir
 
@@ -365,10 +370,106 @@ spec:
       emptyDir: {}                             # 포드 내에서 파일을 공유하는 emptyDir
 ```
 
+* Launch
+
 ```bash
+$ kubectl apply -f emptydir-pod.yaml
+$ kubectl exec -it emptydir-pod -c content-creator sh
+> echo Hello World >> /data/test.html
+# exit
+$ kubectl describe pod emptydir-pod | grep IP
+$ kubectl run -it --rm debug --image=alicek106/ubuntu:curl --restart=Never -- curl 172.xx.0.8.test.html
 ```
 
 ### Network Volume
+
+* `nfs-deployment.yaml`
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nfs-server
+spec:
+  selector:
+    matchLabels:
+      role: nfs-server
+  template:
+    metadata:
+      labels:
+        role: nfs-server
+    spec:
+      containers:
+      - name: nfs-server
+        image: gcr.io/google_containers/volume-nfs:0.8
+        ports:
+          - name: nfs
+            containerPort: 2049
+          - name: mountd
+            containerPort: 20048
+          - name: rpcbind
+            containerPort: 111
+        securityContext:
+          privileged: true
+```
+
+* `nfs-service.yaml`
+
+```yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: nfs-service
+spec:
+  ports:
+  - name: nfs
+    port: 2049
+  - name: mountd
+    port: 20048
+  - name: rpcbind
+    port: 111
+  selector:
+    role: nfs-server
+```
+
+* Launch
+
+```bash
+$ kubectl apply -f nfs-deployment.yaml
+$ kubectl apply -f nfs-service.yaml
+```
+
+* `nfs-pod.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nfs-pod
+spec:
+  containers:
+    - name: nfs-mount-container
+      image: busybox
+      args: [ "tail", "-f", "/dev/null" ]
+      volumeMounts:
+      - name: nfs-volume
+        mountPath: /mnt           # 포드 컨테이너 내부의 /mnt 디렉터리에 마운트합니다.
+  volumes:
+  - name : nfs-volume
+    nfs:                            # NFS 서버의 볼륨을 포드의 컨테이너에 마운트합니다.
+      path: /
+      server: {NFS_SERVICE_IP}
+```
+
+* Launch
+
+```bash
+$ export NFS_CLUSTER_IP=$(kubectl get svc/nfs-service -o jsonpath='{.spec.clusterIP}')
+$ cat nfs-pod.yaml | sed "s/{NFS_SERVICE_IP}/$NFS_CLUSTER_IP/g" | kubectl apply -f
+$ kubectl get pod nfs-pod
+$ kubectl exec -it nfs-pod sh
+> df -h
+```
 
 ### Volume management with PV, PVC
 
@@ -908,7 +1009,7 @@ spec:
     k8s-app: kubernetes-dashboard
 ```
 
-# Process of Pod Termination
+## Process of Pod Termination
 
 ```
 preStop       SIGTERM             SIGKILL
@@ -925,11 +1026,9 @@ t2: What if containers are not terminated after SIGTERM during terminationGraceP
 terminationGracePeriodSeconds's default value is 30s
 ```
 
-# Kubernetes Extension
+## Kubernetes Extension
 
 * [Kubernees Extension @ TIL](kubernetes_extension.md)
-
-# Dive Deep
 
 ## API server
 

@@ -2,9 +2,9 @@
 - [References](#references)
 - [Materials](#materials)
 - [Architecture](#architecture)
+  - [Overview](#overview)
   - [Sequence Diagram](#sequence-diagram)
   - [API Flow](#api-flow)
-  - [Overview](#overview)
   - [Kubernetes Components](#kubernetes-components)
     - [Master Node](#master-node)
     - [Worker Node](#worker-node)
@@ -103,22 +103,6 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 # Architecture
 
-## Sequence Diagram
-
-> * [Exploring the Flexibility of Kubernetes @ medium](https://medium.com/cloud-heroes/exploring-the-flexibility-of-kubernetes-9f65db2360a0)
-
-![](img/kubernetes_sequence_diagram.png)
-
-> * [Graceful shutdown and zero downtime deployments in Kubernetes @ learnk8s.io](https://learnk8s.io/graceful-shutdown)
-
-## API Flow
-
-![](https://d33wubrfki0l68.cloudfront.net/af21ecd38ec67b3d81c1b762221b4ac777fcf02d/7c60e/images/blog/2019-03-21-a-guide-to-kubernetes-admission-controllers/admission-controller-phases.png)
-
-`kubectl` 을 통해 `kube-api-server` 로 API Request 가 도착하면 위의 그림과 같이 `Authentication-Authorization-Mutating Admission-Validating Admission` 과정을 거치고 `etcd` 에 접근한다.
-
-만약 API Request 가 Write Operation 이면  Kubernetes 를 Extending 할 수 있다. `Mutating Admission` 단계에서 Custom Server 로 WebHook 을 보내는 식으로 구현이 가능하다. [Kubernetes Extension / Dynamic Admission Control @ TIL](kubernetes_extension.md#dynamic-admission-contro)
-
 ## Overview
 
 > * [Understanding Kubernetes Architecture With Diagrams](https://phoenixnap.com/kb/understanding-kubernetes-architecture-diagrams)
@@ -185,6 +169,23 @@ spec:
 * **apiVersion**: Kind 에 따라 다르다.
 * **metadata**: Kind type 의 Kubernetes Object 의 meta data 이다. name 등등이 해당된다.
 * **spec**: Kind type 의 Kubernetes Object 의 세부항목들이다. 당연히 Kind 에 따라 내용이 다르다.
+
+
+## Sequence Diagram
+
+> * [Exploring the Flexibility of Kubernetes @ medium](https://medium.com/cloud-heroes/exploring-the-flexibility-of-kubernetes-9f65db2360a0)
+
+![](img/kubernetes_sequence_diagram.png)
+
+> * [Graceful shutdown and zero downtime deployments in Kubernetes @ learnk8s.io](https://learnk8s.io/graceful-shutdown)
+
+## API Flow
+
+![](https://d33wubrfki0l68.cloudfront.net/af21ecd38ec67b3d81c1b762221b4ac777fcf02d/7c60e/images/blog/2019-03-21-a-guide-to-kubernetes-admission-controllers/admission-controller-phases.png)
+
+`kubectl` 을 통해 `kube-api-server` 로 API Request 가 도착하면 위의 그림과 같이 `Authentication-Authorization-Mutating Admission-Validating Admission` 과정을 거치고 `etcd` 에 접근한다.
+
+만약 API Request 가 Write Operation 이면  Kubernetes 를 Extending 할 수 있다. `Mutating Admission` 단계에서 Custom Server 로 WebHook 을 보내는 식으로 구현이 가능하다. [Kubernetes Extension / Dynamic Admission Control @ TIL](kubernetes_extension.md#dynamic-admission-contro)
 
 ## Kubernetes Components
 
