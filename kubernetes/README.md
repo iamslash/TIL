@@ -1,7 +1,6 @@
 - [Abstract](#abstract)
 - [References](#references)
 - [Materials](#materials)
-- [Kubernetes Addons](#kubernetes-addons)
 - [Architecture](#architecture)
   - [Sequence Diagram](#sequence-diagram)
   - [API Flow](#api-flow)
@@ -20,7 +19,7 @@
 - [Basic](#basic)
   - [Useful Commands](#useful-commands)
   - [Launch Single Pod](#launch-single-pod)
-  - [Launch Pods with livnessprobe, readynessprobe](#launch-pods-with-livnessprobe-readynessprobe)
+  - [Launch Pods with livnessprobe, readinessprobe](#launch-pods-with-livnessprobe-readinessprobe)
     - [key commands](#key-commands)
     - [Launch Simple Pod](#launch-simple-pod)
     - [Launch Simple Pod with LivenessProbe](#launch-simple-pod-with-livenessprobe)
@@ -105,10 +104,6 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 * [A Practical Step-by-Step Guide to Understanding Kubernetes](https://medium.com/better-programming/a-practical-step-by-step-guide-to-understanding-kubernetes-d8be7f82e533)
   * Launch Django, PostgreSQL, Redis on Kubernetes.
 
-# Kubernetes Addons
-
-* [kubernetes addon @ TIL](kubernetes_addon.md)
-
 # Architecture
 
 ## Sequence Diagram
@@ -125,7 +120,7 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 `kubectl` 을 통해 `kube-api-server` 로 API Request 가 도착하면 위의 그림과 같이 `Authentication-Authorization-Mutating Admission-Validating Admission` 과정을 거치고 `etcd` 에 접근한다.
 
-만약 API Request 가 Write Operation 이면 `Mutating Admission` 단계에서 Custom Server 로 WebHook 을 보내 Kubernetes 를 Extending 할 수 있다. [Kubernetes Extension / Dynamic Admission Control @ TIL](kubernetes_extension.md#dynamic-admission-contro)
+만약 API Request 가 Write Operation 이면  Kubernetes 를 Extending 할 수 있다. `Mutating Admission` 단계에서 Custom Server 로 WebHook 을 보내는 식으로 구현이 가능하다. [Kubernetes Extension / Dynamic Admission Control @ TIL](kubernetes_extension.md#dynamic-admission-contro)
 
 ## Overview
 
@@ -136,7 +131,7 @@ Kubernetes cluster 는 Master-node, Workder-node 와 같이 두 가지 종류의
 * A Master-node type, which makes up the Control Plane, acts as the “brains” of the cluster.
 * A Worker-node type, which makes up the Data Plane, runs the actual container images (via pods).
 
-Master-Node 는 **etcd, kube-apiserver, kube-scheduler, kube-controller-manager, kubelet, kube-proxy, docker** 등이 실행된다. Master 장비 1 대에 앞서 언급한 프로세스들 한 묶음을 같이 실행하는게 일반적인 구성이다. Master-Node 는 일반적으로 High Availibility 를 위해 3 대 실행한다. 평소 1 대를 활성시키고 나머지 2 대는 대기시킨다.
+Master-Node 는 **etcd, kube-apiserver, kube-scheduler, kube-controller-manager, docker** 등이 실행된다. Master 장비 1 대에 앞서 언급한 프로세스들 한 묶음을 같이 실행하는게 일반적인 구성이다. Master-Node 는 일반적으로 High Availibility 를 위해 3 대 실행한다. 평소 1 대를 활성시키고 나머지 2 대는 대기시킨다.
 
 Worker-Node 는 초기에 미니언(minion) 이라고 불렀다. **kubelet, kube-proxy, docker** 등이 실행된다. 대부분의 컨테이너들은 Worker-Node 에서 실행된다.
 
@@ -180,7 +175,7 @@ Data Plane 은 Worker-Node 를 의미한다. kube-proxy, kubelet 등이 실행�
 * kubelet: Acts as a conduit between the API server and the node
 * kube-proxy: Manages IP translation and routing
 
-Kubernetes 는 yaml 파일을 사용하여 설정한다.
+Kubernetes 는 yaml 파일을 사용하여 설정한다. 다음은 yaml 파일의 기본구조이다.
 
 ```yaml
 apiVersion: v1
@@ -222,6 +217,8 @@ spec:
   * 리소스 사용, 성능 통계를 제공
 
 ### Addons
+
+> * [kubernetes addon @ TIL](kubernetes_addon.md)
 
 cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주로 Deployment Controller, Replication Controller 에 의해 관리된다. Addon 이 사용하는 namespace 는 kub-system 이다.
 
@@ -425,7 +422,7 @@ Unable to connect to the server: dial tcp [::1]:8080: connectex: No connection c
 
 ----
 
-* config
+> config
 
 ```bash
 # show current cluster
@@ -434,7 +431,7 @@ $ kubectl config get-contexts
 $ kubectl config use-context iamslash
 ```
 
-* api-resources
+> api-resources
 
 ```bash
 # Show all objects
@@ -466,7 +463,7 @@ true
 workload.coupang.com
 ```
 
-* inspecting clusters
+> inspecting clusters
 
 ```bash
 # Check current cluster
@@ -483,7 +480,7 @@ $ kubectl --namespace <ns> get pod/my-pod -o json # show pod's json
 # get nodes with all namespaces
 $ kubectl get nodes -A
 # describe nodes
-$ kubectl --namespace <ns> describe nodes <pn> 
+$ kubectl --namespace <ns> describe nodes <nn> 
 # dscribe pods
 $ kubectl --namespace <ns> describe pods <pn>
 # show manifest of resource
@@ -520,7 +517,7 @@ $ kubectl --namespace <ns> exec <pod-name> -c <container-name> -- ls /
 $ kubectl top pod <pod-name> --containers
 ```
 
-* get
+> get
 
 ```bash
 # show recent pod, replicaset, deployment, service not all
@@ -545,7 +542,7 @@ $ k get pods --all-namespace
 $ k get pods --namespace kube-system
 ```
 
-* describe
+> describe
 
 ```bash
 # Show k8s object in detail
@@ -555,7 +552,7 @@ kubectl describe node <node name>
 kubectl describe node/<node name>
 ```
 
-* etc
+> etc
 
 ```bash
 kubectl exec -it <POD_NAME>
@@ -582,7 +579,7 @@ kubectl delete -f <FILENAME>
 > kubectl get dployments
 # Scale out my-nginx deployment.
 > kubectl scale deploy my-nginx --replicas=2
-# Create a service to expose my-nginx pods. These are kinds of services. ClusterIP, NodePort, LoadBalancer, ExteralName
+# Create a service to expose my-nginx pods. These are kinds of services. ClusterIP, NodePort, LoadBalancer, ExternalName
 > kubectl expose deployment my-nginx --type=NodePort
 # show services
 > kubectl get services
@@ -600,7 +597,7 @@ kubectl delete -f <FILENAME>
   * If you supply only args for a Container, the default Entrypoint defined in the Docker image is run with the args that you supplied.
   * If you supply a command for a Container, only the supplied command is used. The default EntryPoint and the default Cmd defined in the Docker image are ignored. Your command is run with the args supplied (or no args if none supplied).
 
-## Launch Pods with livnessprobe, readynessprobe
+## Launch Pods with livnessprobe, readinessprobe
 
 * [workshop-k8s-basic/guide/guide-03/task-02.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-02.md)
   * [[토크ON세미나] 쿠버네티스 살펴보기 6강 - Kubernetes(쿠버네티스) 실습 1 | T아카데미](https://www.youtube.com/watch?v=G0-VoHbunks&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=6)
@@ -629,7 +626,7 @@ $ kubectl delete deployment/whoami
 
 ### Launch Simple Pod
 
-* whoami-pod.yml
+> whoami-pod.yml
    
 ```yml
 apiVersion: v1
@@ -643,7 +640,7 @@ spec:
   - name: app
     image: subicura/whoami:1
 ```
-* launch
+> launch
 
 ```bash
 $ kubectl apply -f whoami-pod.yml
@@ -651,7 +648,7 @@ $ kubectl apply -f whoami-pod.yml
 
 ### Launch Simple Pod with LivenessProbe
 
-컨테이너가 동작 중인지 여부를 나타낸다. 만약 liveness probe 에 실패하면 kubelet은 컨테이너를 정지하고, 해당 컨테이너는 재시작 정책의 대상이 된다. 만약 컨테이너가 liveness probe 를 제공하지 않는 경우, 기본 상태는 Success 이다.
+컨테이너가 동작 중인지 여부를 나타낸다. 만약 liveness probe 에 실패하면 kubelet 은 컨테이너를 정지하고, 해당 컨테이너는 재시작 정책의 대상이 된다. 만약 컨테이너가 liveness probe 를 제공하지 않는 경우, 기본 상태는 Success 이다.
 
 * whoami-pod-lp.yml
 
@@ -676,7 +673,7 @@ spec:
       failureThreshold: 1 # Defaults 3
 ```
 
-* launch
+> launch
 
 ```bash
 $ kubectl apply -f whoami-pod-lp.yml
@@ -684,7 +681,7 @@ $ kubectl apply -f whoami-pod-lp.yml
 
 ### Launch Simple Pod with ReadinessProbe
 
-컨테이너가 요청을 처리할 준비가 되었는지 여부를 나타낸다. 만약 readiness probe가 실패하면, Endpoint Controller는 Pod에 연관된 모든 서비스들의 엔드포인트에서 Pods의 IP를 제거한다. rediness probe 의 초기값은 Failure 이다.만약 컨테이너가 Rediness Probe 를 지원하지 않는다면, 기본 상태는 Success 이다.
+컨테이너가 요청을 처리할 준비가 되었는지 여부를 나타낸다. 만약 readiness probe 가 실패하면, Endpoint Controller 는 Pod 에 연관된 모든 Services 의 엔드포인트에서 Pods 의 IP 를 제거한다. rediness probe 의 초기값은 Failure 이다. 만약 컨테이너가 Rediness Probe 를 지원하지 않는다면, 기본 상태는 Success 이다.
 
 * whoami-pod-rp.yml
 
@@ -709,7 +706,7 @@ spec:
       failureThreshold: 1 # Defaults 3
 ```
 
-* launch
+> launch
 
 ```bash
 $ kubectl apply -f whoami-pod-rp.yml
@@ -740,7 +737,7 @@ spec:
         port: 4567
 ```
 
-* launch
+> launch
 
 ```bash
 $ kubectl apply -f whoami-pod-health.yml
@@ -748,7 +745,7 @@ $ kubectl apply -f whoami-pod-health.yml
 
 ### Launch Simple Pod with Multi Containers
 
-* whoami-pod-redis.yml
+> whoami-pod-redis.yml
 
 ```yml
 apiVersion: v1
@@ -768,7 +765,7 @@ spec:
     image: redis
 ```
 
-* launch
+> launch
 
 ```bash
 $ kubectl apply -f whoami-pod-redis.yml
@@ -842,7 +839,7 @@ spec:
             port: 4567
 ```
 
-* launch
+> launch
 
 ```bash
 $ kubectl apply -f whoami-rs.yml
@@ -1011,7 +1008,6 @@ $ kubectl get rs -w
 $ kubectl delete deployment,pod,rs --all
 ```
 
-
 ## How to generate Deployment yaml files
 
 * [kubectl Usage Conventions](https://kubernetes.io/docs/reference/kubectl/conventions/)
@@ -1023,16 +1019,16 @@ $ kubectl delete deployment,pod,rs --all
 $ kubectl run nginx --image=nginx
 
 # Generate POD Manifest YAML file (-o yaml). Don't create it(--dry-run)
-$ kubectl run nginx --image=nginx --dry-run=client -o yaml
+$ kubectl run nginx --image=nginx --dry-run=true -o yaml
 
 # Create a deployment
 $ kubectl create deployment --image=nginx nginx
 
 # Generate Deployment YAML file (-o yaml). Don't create it(--dry-run)
-$ kubectl create deployment --image=nginx nginx --dry-run=client -o yaml
+$ kubectl create deployment --image=nginx nginx --dry-run=true -o yaml
 
 # Generate Deployment YAML file (-o yaml). Don't create it(--dry-run) with 4 Replicas (--replicas=4)
-$ kubectl create deployment --image=nginx nginx --dry-run=client -o yaml > nginx-deployment.yaml
+$ kubectl create deployment --image=nginx nginx --dry-run=true -o yaml > nginx-deployment.yaml
 
 # Save it to a file, make necessary changes to the file (for example, adding more replicas) and then create the deployment.
 ```
@@ -1047,9 +1043,9 @@ $ kubectl create deployment --image=nginx nginx --dry-run=client -o yaml > nginx
 
 There are 3 kinds of Service typs.
 
-* ClusterIP type is used for internal communication.
-* NodePort type is used for external communication.
-* LoadBalancer type is used for external communication with provision of load balancer in Cloud such as AWS, GCP. LoadBalancer is similar with NodePort except provision of load blanacer.
+* **ClusterIP** type is used for internal communication.
+* **NodePort** type is used for external communication.
+* **LoadBalancer** type is used for external communication with provision of load balancer in Cloud such as AWS, GCP. LoadBalancer is similar with **NodePort** except provision of load blanacer.
 
 Service will make Endpoint object. You can find out Endpoints with `$ kubectl get endpoints` or `$ kubectl get ep`.
 
@@ -1135,7 +1131,7 @@ $ kubectl apply -f whoami.yml
 # Show endpoints
 $ kubectl get ep
 $ kubectl get endpoints
-$ kubectl exec -it whoami-<xxxxx> sh
+$ kubectl exec -it whoami-<xxxxx> -- sh
   apk add curl busybox-extras # install telnet
   curl localhost:4567
   curl localhost:4567
@@ -1988,5 +1984,3 @@ $ kubectl appy -f my-configmap.yaml
 # Continue...
 
 * [README-2.md](README-2.md)
-
-
