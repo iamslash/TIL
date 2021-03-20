@@ -511,6 +511,18 @@ System.out.printf("%s : %d%n", "age", 11);
    String lastKey = map.lastKey();
    List<String> values = new ArrayList<>(map.values());
 
+   TreeMap<Integer, Integer> map = new TreeMap<>();
+   map.put(1, 1);
+   map.put(5, 5);
+   // return a key-value mapping associated with the least key greater than 
+   // or equal to the given key, or null if there is no such key.
+   Map.Entry<Integer, Integer> hiFirst = map3.ceilingEntry(3);
+   System.out.println(hiFirst.getKey());  // 5
+   // return a key-value mapping associated with the greatest key less than 
+   // or equal to the given key, or null if there is no such key.
+   Map.Entry<Integer, Integer> loFirst = map3.floorEntry(3);
+   System.out.println(loFirst.getKey());  // 1
+
    Comparator comp = sotreemap.comparator();
    System.out.println(comp); // null
    SortedMap<String, String> map2 = new TreeMap<Integer, String>(Collections.reverseOrder()); 
