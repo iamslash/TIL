@@ -4,7 +4,6 @@
 - [Security](#security)
 - [Storage](#storage)
 - [Networking](#networking)
-- [MutatingWebhookConfiguration](#mutatingwebhookconfiguration)
 - [Design and Install a Kubernetes Cluster](#design-and-install-a-kubernetes-cluster)
 - [Install "Kubernetes the kubeadm way"](#install-kubernetes-the-kubeadm-way)
 - [End to End Tests on a Kubernetes Cluster](#end-to-end-tests-on-a-kubernetes-cluster)
@@ -38,14 +37,6 @@
 # Networking
 
 * [kubernetes network](kubernetes_network.md)
-
-# MutatingWebhookConfiguration
-
-* [[Kubernetes] Admission Controller의 이해 및 Python으로 Mutate Webhook 작성 예제](https://m.blog.naver.com/PostView.nhn?blogId=alice_k106&logNo=221546328906&proxyReferer=https:%2F%2Fwww.google.com%2F)
-
------
-
-TODO
 
 # Design and Install a Kubernetes Cluster
 
