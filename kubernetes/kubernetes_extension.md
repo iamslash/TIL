@@ -4,6 +4,7 @@
 - [Dynamic Admission Control](#dynamic-admission-control)
 - [Custom Controller](#custom-controller)
 - [Custom Scheduler](#custom-scheduler)
+- [Custom Metric Server](#custom-metric-server)
 
 -----
 
@@ -53,3 +54,10 @@
 > * [Advanced Scheduling in Kubernetes @ kubernetes.io](https://kubernetes.io/blog/2017/03/advanced-scheduling-in-kubernetes/)
 > * [Scheduling Framework @ kubernetes.io](https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/)
 > * [community/contributors/design-proposals/scheduling/scheduler_extender.md @ github](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/scheduling/scheduler_extender.md)
+
+# Custom Metric Server
+
+> * [Custom Metrics Adapter Server Boilerplate @ github](https://github.com/kubernetes-sigs/custom-metrics-apiserver)
+> * [Building Your Own Custom Metrics API for Kubernetes Horizontal Pod Autoscaler](https://medium.com/swlh/building-your-own-custom-metrics-api-for-kubernetes-horizontal-pod-autoscaler-277473dea2c1)
+
+HorizontalPodAutoscaler 에서 Custom Metric Server 와 통신하여 Custom Metric 에 대한 Scaling 을 수행할 수 있다.
