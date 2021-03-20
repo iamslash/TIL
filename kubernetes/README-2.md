@@ -473,6 +473,303 @@ $ kubectl exec -it nfs-pod sh
 
 ### Volume management with PV, PVC
 
+* Check legacy pv, pvc
+
+```bash
+$ kubectl get persistentvolume,persistentvolumeclaim
+$ kubectl get pv,pvc
+```
+
+* Create AWs EBS volume
+
+```bash
+$ export BOLUME_ID=$(aws ec2 create-volume --size 5 \
+  --region ap-northeast-2 \
+  --availability-zone ap-northeast-2a \
+  --volume-type gp2 \
+  --tag-specifications \
+  'ResourceType=volume,Tags=[{Key=KubernetesCluster,Value=mycluster.k8s.local}]' \
+  | jq '.VolumeId' -r)
+```
+
+* `ebs-pv.yaml`
+
+```yml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ebs-pv
+spec:
+  capacity:
+    storage: 5Gi         # 이 볼륨의 크기는 5G입니다.
+  accessModes:
+    - ReadWriteOnce    # 하나의 포드 (또는 인스턴스) 에 의해서만 마운트 될 수 있습니다.
+  awsElasticBlockStore:
+    fsType: ext4
+    volumeID: <VOLUME_ID>
+```
+
+* Launch
+
+```bash
+$ cat ebs-pv.yaml | sed "s/<VOLUME_ID>/$VOLUME_ID/G" | kubectl apply -f -
+$ kubectl get pv
+```
+
+* `ebs-pod-pvc.yaml`
+
+```yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-ebs-pvc                  # 1. my-ebs-pvc라는 이름의 pvc 를 생성합니다.
+spec:
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce       # 2.1 속성이 ReadWriteOnce인 퍼시스턴트 볼륨과 연결합니다.
+  resources:
+    requests:
+      storage: 5Gi          # 2.2 볼륨 크기가 최소 5Gi인 퍼시스턴트 볼륨과 연결합니다.
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ebs-mount-container
+spec:
+  containers:
+    - name: ebs-mount-container
+      image: busybox
+      args: [ "tail", "-f", "/dev/null" ]
+      volumeMounts:
+      - name: ebs-volume
+        mountPath: /mnt
+  volumes:
+  - name : ebs-volume
+    persistentVolumeClaim:
+      claimName: my-ebs-pvc    # 3. my-ebs-pvc라는 이름의 pvc를 사용합니다.
+```
+
+* Launch
+
+```bash
+$ kubectl apply -f ebs-pod-pvc.yaml
+$ kubectl get pv, pvc
+$ kubectl get pods
+$ kubectl exec ebs-mount-container -- df -h | grep /mnt
+```
+
+* ebs-pv-storageclass.yaml
+
+```yml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ebs-pv-custom-cs
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: my-ebs-volume
+  awsElasticBlockStore:
+    fsType: ext4
+    volumeID: <VOLUME_ID> # 여러분의 EBS 볼륨 ID로 대신합니다.
+    # volumeID: vol-0390f3a601e58ce9b
+```
+
+* ebs-pod-pvc-custom-sc.yaml
+
+```yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-ebs-pvc-custom-sc
+spec:
+  storageClassName: my-ebs-volume
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ebs-mount-container-custom-sc
+spec:
+  containers:
+    - name: ebs-mount-container
+      image: busybox
+      args: [ "tail", "-f", "/dev/null" ]
+      volumeMounts:
+      - name: ebs-volume
+        mountPath: /mnt
+  volumes:
+  - name : ebs-volume
+    persistentVolumeClaim:
+      claimName: my-ebs-pvc-custom-sc
+```
+
+* ebs-pv-label.yaml
+
+```yaml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ebs-pv-label
+  labels:
+    region: ap-northeast-2a
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  awsElasticBlockStore:
+    fsType: ext4
+    # volumeID: vol-025c52fbd39d35417
+    volumeID: <여러분의 VOLUME ID를 입력합니다> 
+```
+
+* ebs-pod-pvc-label-selector.yaml
+
+```yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-ebs-pvc-selector
+spec:
+  selector:
+    matchLabels:
+      region: ap-northeast-2a
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ebs-mount-container-label
+spec:
+  containers:
+    - name: ebs-mount-container
+      image: busybox
+      args: [ "tail", "-f", "/dev/null" ]
+      volumeMounts:
+      - name: ebs-volume
+        mountPath: /mnt
+  volumes:
+  - name : ebs-volume
+    persistentVolumeClaim:
+      claimName: my-ebs-pvc-selector
+```
+
+* `ebs-pv-delete.yaml`
+
+```yml
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: ebs-pv-delete
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  awsElasticBlockStore:
+    fsType: ext4
+    volumeID: <VOLUME_ID>
+  persistentVolumeReclaimPolicy: Delete
+```
+
+```bash
+$ cat ebs-pv-delete.yaml | sed "s/<VOLUME_ID>/$VOLUME_ID/g" | kubectl apply -f -
+$ kubectl get pv
+$ kubectl apply -f ebs-pod-pvc.yaml
+$ kubectl get pods
+$ kubectl get pv,pvc
+$ kubectl delete -f ebs-pod-pvc.yaml
+$ kubectl get pv,pvc
+```
+
+* `storageclass-slow.yaml`
+
+```yml
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: slow
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: st1
+  fsType: ext4
+  zones: ap-northeast-2a  # 여러분의 쿠버네티스 클러스터가 위치한 가용 영역을 입력합니다.
+```
+
+* `storageclass-fast.yaml`
+
+```yml
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: fast
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  fsType: ext4
+  zones: ap-northeast-2a # 여러분의 쿠버네티스 클러스터가 위치한 가용 영역을 입력합니다.
+```
+
+```bash
+$ kubectl apply -f storageclass-slow.yaml
+$ kubectl apply -f storageclass-fast.yaml
+$ kubectl get sc
+```
+
+* `pvc-fast-sc.yaml`
+
+```yml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-fast-sc
+spec:
+  storageClassName: fast
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+```
+
+```bash
+$ kubectl apply -f pvc-fast-sc.yaml
+$ kubectl get pv,pvc
+$ kubectl get sc fast -o yaml
+```
+
+* `storageclass-default.yaml`
+
+```yml
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: generic
+  annotations:
+    storageclass.kubernetes.io/is-default-class: "true"
+provisioner: kubernetes.io/aws-ebs
+parameters:
+  type: gp2
+  fsType: ext4
+  zones: ap-northeast-2a # 여러분의 쿠버네티스 클러스터가 위치한 가용 영역을 입력합니다.
+```
+
+```bash
+$ kubectl apply -f storageclass-default.yaml
+$ kubectl get storageclass
+```
+
 ## Authorization
 
 * [쿠버네티스 권한관리(Authorization)](https://arisu1000.tistory.com/27848)
