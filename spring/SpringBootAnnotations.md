@@ -7,6 +7,7 @@
 - [@ExceptionHandler](#exceptionhandler)
 - [@ControllerAdvice, @RestControllerAdvice](#controlleradvice-restcontrolleradvice)
 - [@Import](#import)
+- [@EnableAutoConfiguration](#enableautoconfiguration)
 
 -----
 
@@ -306,3 +307,9 @@ public class AppConfig extends ConfigurationSupport {
 	// @Bean methods here can reference @Bean methods in DataSourceConfig or TransactionConfig
 }
 ```
+
+# @EnableAutoConfiguration
+
+> * [[Spring Boot] 자동 설정 @EnableAutoConfiguration](https://velog.io/@max9106/Spring-Boot-EnableAutoConfiguration)
+
+`spring.factories` 에 Configuration 이 있다. 조건에 따라 Bean 을 등록한다.
