@@ -26,18 +26,26 @@ UNIX V6 의 source 를 분석한다.
 
 # PSW (Process Status Word)
 
+| bit | Description |
+|--|--|
+| 15-14 | 현재 모드 (00: 커널, 11:사용자) |
+| 13-12 | 이전 모드 (00: 커널, 11:사용자) |
+| 7-5 | 프로세서 우선순위 (7~0) |
+| 4 | trap bit |
+| 3 | N (negative) 명령어 실행 결과가 음수 |
+| 2 | Z (zero) 명령어 실행 결과가 0|
+| 1 | V (overflow) 명령어 실행 결과가 overflow |
+| 0 | C (carry) 명령어 실행 결과가 carry 발생 |
+
 # Global Registers
 
 | Name | Description |
 |--|--|
-| r0 | |
-| r1 | |
-| r2 | |
-| r3 | |
-| r4 | |
-| r5 | |
-| r6 | |
-| r7 | |
+| r0, r1 | 계산용, 함수의 리턴값 |
+| r2, r3, r4 | 로컬처리 |
+| r5 | 프레임 포인터, 환경포인터 |
+| r6 (sp) | 스택 포인터 |
+| r7 (pc) | 프로그램 카운터 |
 
 # Process Memory Structure
 
@@ -51,17 +59,239 @@ Data Segment
 
 # proc struct
 
+```c
+struct	proc
+{
+	char	p_stat;   
+	char	p_flag;
+	char	p_pri;		/* priority, negative is high */
+	char	p_sig;		/* signal number sent to this process */
+	char	p_uid;		/* user id, used to direct tty signals */
+	char	p_time;		/* resident time for scheduling */
+	char	p_cpu;		/* cpu usage for scheduling */
+	char	p_nice;		/* nice for scheduling */
+	int	p_ttyp;		/* controlling tty */
+	int	p_pid;		/* unique process id */
+	int	p_ppid;		/* process id of parent */
+	int	p_addr;		/* address of swappable image */
+	int	p_size;		/* size of swappable image (*64 bytes) */
+	int	p_wchan;	/* event process is awaiting */
+	int	*p_textp;	/* pointer to text structure */
+} proc[NPROC];
+
+/* stat codes */
+#define	SSLEEP	1		/* sleeping on high priority */
+#define	SWAIT	2		/* sleeping on low priority */
+#define	SRUN	3		/* running */
+#define	SIDL	4		/* intermediate state in process creation */
+#define	SZOMB	5		/* intermediate state in process termination */
+#define	SSTOP	6		/* process being traced */
+
+/* flag codes */
+#define	SLOAD	01		/* in core, in memory*/
+#define	SSYS	02		/* scheduling process */
+#define	SLOCK	04		/* process cannot be swapped */
+#define	SSWAP	010		/* process is being swapped out */
+#define	STRC	020		/* process is being traced */
+#define	SWTED	040		/* another tracing flag */
+```
+
 # user struct
+
+```c
+/*
+ * The user structure.
+ * One allocated per process.
+ * Contains all per process data
+ * that doesn't need to be referenced
+ * while the process is swapped.
+ * The user block is USIZE*64 bytes
+ * long; resides at virtual kernel
+ * loc 140000; contains the system
+ * stack per user; is cross referenced
+ * with the proc structure for the
+ * same process.
+ */
+struct user
+{
+	int	u_rsav[2];		/* save r5,r6 when exchanging stacks */
+	int	u_fsav[25];		/* save fp registers */
+					/* rsav and fsav must be first in structure */
+	char	u_segflg;		/* flag for IO; user or kernel space */
+	char	u_error;		/* return error code */
+	char	u_uid;			/* effective user id */
+	char	u_gid;			/* effective group id */
+	char	u_ruid;			/* real user id */
+	char	u_rgid;			/* real group id */
+	int	u_procp;		/* pointer to proc structure */
+	char	*u_base;		/* base address for IO */
+	char	*u_count;		/* bytes remaining for IO */
+	char	*u_offset[2];		/* offset in file for IO */
+	int	*u_cdir;		/* pointer to inode of current directory */
+	char	u_dbuf[DIRSIZ];		/* current pathname component */
+	char	*u_dirp;		/* current pointer to inode */
+	struct	{			/* current directory entry */
+		int	u_ino;
+		char	u_name[DIRSIZ];
+	} u_dent;
+	int	*u_pdir;		/* inode of parent directory of dirp */
+	int	u_uisa[16];		/* prototype of segmentation addresses */
+	int	u_uisd[16];		/* prototype of segmentation descriptors */
+	int	u_ofile[NOFILE];	/* pointers to file structures of open files */
+	int	u_arg[5];		/* arguments to current system call */
+	int	u_tsize;		/* text size (*64) */
+	int	u_dsize;		/* data size (*64) */
+	int	u_ssize;		/* stack size (*64) */
+	int	u_sep;			/* flag for I and D separation */
+	int	u_qsav[2];		/* label variable for quits and interrupts */
+	int	u_ssav[2];		/* label variable for swapping */
+	int	u_signal[NSIG];		/* disposition of signals */
+	int	u_utime;		/* this process user time */
+	int	u_stime;		/* this process system time */
+	int	u_cutime[2];		/* sum of childs' utimes */
+	int	u_cstime[2];		/* sum of childs' stimes */
+	int	*u_ar0;			/* address of users saved R0 */
+	int	u_prof[4];		/* profile arguments */
+	char	u_intflg;		/* catch intr from sys */
+					/* kernel stack per user
+					 * extends from u + USIZE*64
+					 * backward not to reach here
+					 */
+} u;
+
+/* u_error codes */
+#define	EFAULT	106
+#define	EPERM	1
+#define	ENOENT	2
+#define	ESRCH	3
+#define	EINTR	4
+#define	EIO	5
+#define	ENXIO	6
+#define	E2BIG	7
+#define	ENOEXEC	8
+#define	EBADF	9
+#define	ECHILD	10
+#define	EAGAIN	11
+#define	ENOMEM	12
+#define	EACCES	13
+#define	ENOTBLK	15
+#define	EBUSY	16
+#define	EEXIST	17
+#define	EXDEV	18
+#define	ENODEV	19
+#define	ENOTDIR	20
+#define	EISDIR	21
+#define	EINVAL	22
+#define	ENFILE	23
+#define	EMFILE	24
+#define	ENOTTY	25
+#define	ETXTBSY	26
+#define	EFBIG	27
+#define	ENOSPC	28
+#define	ESPIPE	29
+#define	EROFS	30
+#define	EMLINK	31
+#define	EPIPE	32
+```
 
 # Memory Management Status Regiters
 
-SR0
+MMU (Memory Management Unit) has 2 registers such as **SR0**, **SR2**. **SR0** 은 메모리 관리 유효화 플래그와 에러 정보를 포함한다. **SR2** 은 실행할 명령어의 16비트 가상 어드레스를 나타낸다.
 
-SR2
+**SR0**
+
+| bit | Description |
+|--|--|
+| 15 | 설정에 맞지 않는 페이지를 접근하려 했을 때 1 이 된다. |
+| 14 | PDR 이 표시하는 페이지 길이보다 바깥 영역을 엑세스했을 때 1 이 된다. |
+| 13 | 읽기 전용 영역에 값을 쓰려고 했을 때 1 이 된다. |
+| 8 | 유지보수 모드일 때 1 이 된다. |
+| 6~5 | 에러를 발생시킨 프로세스 모드 (00: 커널, 11:사용자) |
+| 3~1 | 페이지 번호, 에러를 발생시킨 페이지를 참조하려는 경우 사용된다. |
+| 0 | 1 이 되면 MMU 에서 메모리 관리를 활성화 한다. |
+
+**SR2**
+
+| bit | Description |
+|--|--|
+| 15-0 | 실행할 명령어의 가상 어드레스를 나타낸다. 명령어를 가져오는데 실패했다면 값이 업데이트되지 않는다. `SR0[15-13]` 에 어떤 값이라도 1 이면, 값이 업데이트되어 원래 값을 잃어 버린다. |
 
 # Virtual Address to Physical Address Translation
 
 # Pre K&R
+
+**Assignment**
+
+```c
+a =+ 1;
+a =- 1;
+a =* 1;
+a =/ 1;
+a =% 1;
+a =>> 1;
+a =<< 1;
+a =& 1;
+a =^ 1;
+a =| 1;
+```
+
+**Anonymous Struct**
+
+`PS` 는 `PSW` 에 대응하는 kernel space 의 memory address 이다. pre K&R C 는 cast operator 가 없다. 따라서 int integ 라는 anonymous struct 를 이용한다. 
+
+다음과 같이 `PS->integ` 를 사용하면 `PS` 가 가리키는 주소의 한 word 를 int type 으로 가져온다. 즉, PSW 를 가져온다.
+
+```c
+/* param.h */
+#define PS 01777776
+
+struct
+{
+	int integ;
+};
+
+/* ken/slp.c */
+/* in sleep() */
+s = PS->integ;
+```
+
+이번에는 `RKADDR->rkcs` 를 사용하면 `RKADDR` 이 가리키는 주소의 메모리에 접근한다. 즉, `0177400` 에 해당하는 RK 디시크 레지스터의 rkcs 레지스터에 접근한다.
+
+```c
+/* dmr/rk.c */
+#define RKADDR 0177400
+
+struct {
+	int rkds;
+	int rker;
+	int rkcs;
+	int rkwc;
+	int rkba;
+	int rkda;
+};
+
+/* in rkstart(0 */
+RKADDR->rkcs = RESET | GOl;
+```
+
+**32 bit data**
+
+pre K&R C 는 unsigned type 이 없다. 또한 최대 1 word(16 bit) 만 다룰 수 있다. 32 bit 를 다루고 싶다면 array 를 이용한다. 32 bit 를 다루는 함수는 `dpadd() 덧셈`, `dpcmp() 뺄셈` 가 있다.
+
+```c
+/* file.h */
+struct file
+{
+	char f_flag;
+	char f_count;
+	int f_inode;
+	char *f_offset[2];
+} file[NFILE]
+
+/* ken/sys2.c */
+/* in rdwr() */
+dpadd(fp->f_offset, u.u_arg[1] - u.u_count);
+```
 
 # Assembly Syntax
 
