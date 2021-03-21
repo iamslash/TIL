@@ -579,13 +579,32 @@ System.out.printf("%s : %d%n", "age", 11);
    System.out.println(map);
    System.out.println(map.get(".au"));
    System.out.println(map.containsKey(".au"));
+
+   // loop with forEach
    map.forEach(key -> System.out.println(key));
-   Collection<String> values = map.values();
+   Collection<String> values = map.values();  
    values.forEach(val -> System.out.println(val));  
    map.forEach((key, val) -> {
       System.out.print("key: "+ key);
       System.out.println(", val: "+ val);
    });
+   // loop with hasNext
+   Iterator<String> keys = map.keySet().iterator();
+   while (keys.hasNext()) {
+      String key = keys.next();
+      System.out.print("key: "+ key);
+      System.out.println(", val: "+ map.get(key));      
+   }
+   // loop with Map.Entry
+   for (Map.Entry<String, String> e : map.entrySet()) {
+      System.out.print("key: "+ e.getKey());
+      System.out.println(", val: "+ e.getValue();
+   }
+   // loop with keySet
+   for (String key : map.keySet()) {
+      System.out.print("key: "+ key);
+      System.out.println(", val: "+ map.get(key));
+   }
 ```
 
 * Set, LinkedHashSet
