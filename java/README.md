@@ -576,6 +576,7 @@ System.out.printf("%s : %d%n", "age", 11);
    map.putIfAbsent("aaa", "bbb");
    map.computeIfAbset("aaa", key -> "bbb");
    map.put(".au", map.getOrDefault(".au", "Australia"));
+   map.entrySet().removeIf(e -> e.getKey() == ".com");
    System.out.println(map);
    System.out.println(map.get(".au"));
    System.out.println(map.containsKey(".au"));
