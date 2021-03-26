@@ -34,6 +34,7 @@
   - [Automation](#automation)
   - [oneline commands](#oneline-commands)
   - [Tips](#tips)
+- [Exit codes](#exit-codes)
 - [Performance Monitoring](#performance-monitoring)
 - [Security](#security)
   - [root 소유의 setuid, setgid 파일 검색 후 퍼미션 조정하기](#root-소유의-setuid-setgid-파일-검색-후-퍼미션-조정하기)
@@ -1713,6 +1714,15 @@ function taocl() {
 * execute muli-line commands on bash, zsh
   * `C-x C-e` 
   * [셸에서 여러줄의 명령어를 에디터로 편집하고 실행하기 @ 44bits](https://www.44bits.io/ko/post/editing-multiline-command-on-shell)
+
+# Exit codes
+
+> * [Appendix E. Exit Codes With Special Meanings](https://tldp.org/LDP/abs/html/exitcodes.html)
+
+```
+137 = 128 + 9  (SIG KILL)
+143 = 128 + 15 (SIG TERM)
+```
 
 # Performance Monitoring
 
