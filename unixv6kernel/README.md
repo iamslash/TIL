@@ -1,3 +1,43 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Prerequisites](#prerequisites)
+- [PSW (Process Status Word)](#psw-process-status-word)
+- [Global Registers](#global-registers)
+- [Process Memory Structure](#process-memory-structure)
+- [proc struct](#proc-struct)
+- [user struct](#user-struct)
+- [Memory Management Status Regiters](#memory-management-status-regiters)
+- [Virtual Address to Physical Address Translation](#virtual-address-to-physical-address-translation)
+- [Pre K&R](#pre-kr)
+- [Assembly Syntax](#assembly-syntax)
+	- [Overview](#overview)
+	- [Register Mode](#register-mode)
+	- [Register Deferred Mode](#register-deferred-mode)
+	- [Autoincrement Mode](#autoincrement-mode)
+	- [Autodecrement Mode](#autodecrement-mode)
+	- [Index Mode](#index-mode)
+	- [Autoincrement Deferred Mode](#autoincrement-deferred-mode)
+	- [Autodecrement Deferred](#autodecrement-deferred)
+	- [Index Deferred](#index-deferred)
+	- [Immediate](#immediate)
+	- [Immediate Deferred (Absolute)](#immediate-deferred-absolute)
+	- [Relative](#relative)
+	- [Relative Deferred](#relative-deferred)
+- [fork systemcall](#fork-systemcall)
+- [Swap](#swap)
+- [Interupt](#interupt)
+- [Trap](#trap)
+- [Signal](#signal)
+- [Block Sub System](#block-sub-system)
+- [Block Device Driver](#block-device-driver)
+- [File System](#file-system)
+- [Pipe](#pipe)
+- [Character Device](#character-device)
+- [Terminal](#terminal)
+- [Boot Sequence](#boot-sequence)
+
+----
+
 # Abstract
 
 UNIX V6 의 source 를 분석한다.
@@ -26,6 +66,8 @@ UNIX V6 의 source 를 분석한다.
 
 # PSW (Process Status Word)
 
+**PSW**
+
 | bit | Description |
 |--|--|
 | 15-14 | 현재 모드 (00: 커널, 11:사용자) |
@@ -36,6 +78,12 @@ UNIX V6 의 source 를 분석한다.
 | 2 | Z (zero) 명령어 실행 결과가 0|
 | 1 | V (overflow) 명령어 실행 결과가 overflow |
 | 0 | C (carry) 명령어 실행 결과가 carry 발생 |
+
+**PSW** is defined as `PS` in `param.h`
+
+```c
+#define PS 01777776
+```
 
 # Global Registers
 
@@ -49,13 +97,9 @@ UNIX V6 의 source 를 분석한다.
 
 # Process Memory Structure
 
-Text Segment
+![](img/proc_mem_structure_0407.png)
 
-Data Segment 
-
-* PPDA (Per Process Data Area)
-* Data Area
-* Stack Area
+![](img/proc_mem_structure_0410.png)
 
 # proc struct
 
@@ -196,6 +240,23 @@ struct user
 
 # Memory Management Status Regiters
 
+MMU (Memory Management Unit) has **8 APR (Active Page Register)** per modes (kernal, user). and it is consisted of **PAR (Page Address Register), PDR (Page Description Register)**.
+
+**PAR**
+
+| bit | Description |
+|--|--|
+| 11~0 | base address (1 unit means 64 Bytes) |
+
+**PDR**
+
+| bit | Description |
+|--|--|
+| 14~8 | The number of page blocks |
+| 6 | Data bit, represents updates |
+| 3 | If the bit is 1. it means allocate memory low address to hi address. |
+| 2~1 | 00: no allocation, 01: read only, 11: write available |
+
 MMU (Memory Management Unit) has 2 registers such as **SR0**, **SR2**. **SR0** 은 메모리 관리 유효화 플래그와 에러 정보를 포함한다. **SR2** 은 실행할 명령어의 16비트 가상 어드레스를 나타낸다.
 
 **SR0**
@@ -217,6 +278,12 @@ MMU (Memory Management Unit) has 2 registers such as **SR0**, **SR2**. **SR0** �
 | 15-0 | 실행할 명령어의 가상 어드레스를 나타낸다. 명령어를 가져오는데 실패했다면 값이 업데이트되지 않는다. `SR0[15-13]` 에 어떤 값이라도 1 이면, 값이 업데이트되어 원래 값을 잃어 버린다. |
 
 # Virtual Address to Physical Address Translation
+
+The process has virtual address space **64 KBytes** because The process uses **16 bit** as an virtual memory address. `2^16 Bytes = 64 KBytes`.
+
+The system has physical address space **256 KBytes** because the system uses **18 bit** as an physical memory address. `2^18 Bytes = 256 KBytes`
+
+![](img/translate_virtual_to_physical.png)
 
 # Pre K&R
 
@@ -567,4 +634,24 @@ retry:
 }
 ```
 
+# Swap
 
+# Interupt
+
+# Trap
+
+# Signal
+
+# Block Sub System
+
+# Block Device Driver
+
+# File System
+
+# Pipe
+
+# Character Device 
+
+# Terminal
+
+# Boot Sequence
