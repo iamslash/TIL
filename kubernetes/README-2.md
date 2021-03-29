@@ -1,3 +1,4 @@
+- [Materials](#materials)
 - [Basic](#basic)
   - [Launch Ingress](#launch-ingress)
     - [Simple Ingress](#simple-ingress)
@@ -15,7 +16,7 @@
     - [RoleBinding](#rolebinding)
     - [ClusterRoleBinding](#clusterrolebinding)
     - [Setting Secrets on Service Account for Image Registry](#setting-secrets-on-service-account-for-image-registry)
-    - [kubeconfig](#kubeconfig)
+    - [Setting Secrets on kubeconfig](#setting-secrets-on-kubeconfig)
     - [User, Group](#user-group)
     - [User authentication with X509](#user-authentication-with-x509)
   - [Resource Limit of Pods](#resource-limit-of-pods)
@@ -56,6 +57,12 @@
 - [Continue...](#continue)
 
 ------
+
+# Materials
+
+* [시작하세요! 도커/쿠버네티스](http://www.yes24.com/Product/Goods/84927385)
+  * [src](https://github.com/alicek106/start-docker-kubernetes)
+  * 한글책 중 최고
 
 # Basic
 
@@ -927,11 +934,385 @@ roleRef:
 
 ### Setting Secrets on Service Account for Image Registry
 
-### kubeconfig
+`imagePullSecrets` 를 이용하면 Service Account 가 private docker registry 에서
+docker pull 할 때 Secret 을 사용할 수 있게 할 수 있다.
+
+* `sa-reg-auth.yaml`
+
+```yml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: reg-auth-iamslash
+  namespace: default
+imagePullSecrets:
+- name: registry-auth
+```
+
+```bash
+$ kubectl apply -f sa-reg-auth.yaml
+$ kubectl describe sa reg-auth-iamslash | grep Image
+```
+
+### Setting Secrets on kubeconfig
+
+kubeconfig file 은 일반 적으로 `~/.kube/config` 에 저장된다. `clusters, users`
+가 각각 정의되어 있다. `context` 는 `clusters, users` 를 짝지어 grouping 한
+것이다. `context` 를 바꿔가면서 다향한 `clusters, users` 설정을 이용할 수 있다.
+
+* `~/.kube/config`
+
+```yml
+apiVersion: v1
+clusters:
+- cluster:
+    certificate-authority-data: LS0t...
+    server: https://kubernetes.docker.internal:6443
+  name: docker-desktop
+contexts:
+- context:
+    cluster: docker-desktop
+    user: docker-desktop
+  name: docker-desktop
+- context:
+    cluster: docker-desktop
+    user: docker-desktop
+  name: docker-for-desktop
+current-context: docker-desktop
+kind: Config
+preferences: {}
+users:
+- name: docker-desktop
+  user:
+    client-certificate-data: LS0t...
+    client-key-data: LS0tL...
+```
+
+```bash
+$ kubectl get secrets
+$ export secret_name=iamslash-token-gfg41
+$ export decoded_token=$(kubectl get secret $secret_name -o jsonpath='{.data.token}' | base64 -d)
+$ kubectl config set-credentials iamslash-user --token=$decoded_token
+$ kubectl config get-clusters
+$ kubectl config set-context my-new-context --cluste=kubernetes --user=iamslash-user
+$ kubectl config get-contexts
+$ kubectl get deployment
+$ kubectl get pods
+$ kubectl get service
+$ kubectl config use-context kubernetes-admin@kubernetes
+```
 
 ### User, Group
 
+Kubernetes 는 `ServiceAccount` 말고도 `User, Group` 에 권한을 부여할 수 있다.
+예를 들어 `RoleBinding, ClusterRoleBinding` 에 다음과 같이 `ServiceAccount` 대신
+`User, Group` 을 사용할 수 있다.
+
+```yml
+...
+subjects:
+- kind: User
+  name: iamslash
+--  
+...
+subjects:
+- kind: Group
+  name: devops-team
+```
+
+이번에는 `iamslash` 라는 user 를 이용하여 `ServiceAccount` 를 만들어 사용해
+보자. `ServiceAccount` 형식은 `system:serviceaccount:<namespace>:<username>`
+의 형태이다.
+
+```bash
+$ kubectl get services --as system:serviceaccount:default:iamslash
+```
+
+다음과 같이 `RoleBinding` 에도 `user` 를 사용한 `ServiceAccount` 를 이용할 수
+있다.
+
+```yml
+...
+subjects:
+- kind: User
+  name: system:serviceaccount:default:iamslash
+  namespace: default
+roleRef:
+kind: Role
+...  
+```
+
+다음은 `Group` 을 사용한 `RoleBinding` 의 예이다.
+
+* `service-read-role-all-sa.yaml`
+
+```yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: service-reader-rolebinding
+subjects:
+- kind: Group
+  name: system:serviceaccounts
+roleRef:
+  kind: ClusterRole  # 클러스터 롤 바인딩에서 연결할 권한은 클러스터 롤이여야 합니다.
+  name: service-reader
+  apiGroup: rbac.authorization.k8s.io
+```
+
+Kubernetes 에서 `~/.kube/config` 를 이용하여 인증하는 것을 `X.509` 인증이라고
+한다. 별도의 `IDP` 를 이용하여 authentication 을 수행할 수 있다. [181. [Kubernetes] 쿠버네티스 인증 3편: Dex와 Github OAuth (OIDC) 를 이용한 사용자 인증하기 @ naverblog](https://blog.naver.com/alice_k106/221598325656)
+
 ### User authentication with X509
+
+kubenetes 는 master node 의 `/etc/ca-certificates` 에 certificates 가 설치된다.
+
+```bash
+C:\Users\iamslash\.kube>kubectl -n kube-system describe pod kube-apiserver-docker-desktop
+Name:               kube-apiserver-docker-desktop
+Namespace:          kube-system
+Priority:           2000000000
+PriorityClassName:  system-cluster-critical
+Node:               docker-desktop/192.168.65.3
+Start Time:         Fri, 26 Mar 2021 06:55:35 +0900
+Labels:             component=kube-apiserver
+                    tier=control-plane
+Annotations:        kubernetes.io/config.hash: b1dff398070b11d23d8d2653b78d430e
+                    kubernetes.io/config.mirror: b1dff398070b11d23d8d2653b78d430e
+                    kubernetes.io/config.seen: 2020-11-28T12:37:52.9356967Z
+                    kubernetes.io/config.source: file
+Status:             Running
+IP:                 192.168.65.3
+Containers:
+  kube-apiserver:
+    Container ID:  docker://0ef5c301524a57d15cae2330e7d7f51a94d3c5e0ac379b4975a1b5bf16d9a677
+    Image:         k8s.gcr.io/kube-apiserver:v1.14.8
+    Image ID:      docker-pullable://k8s.gcr.io/kube-apiserver@sha256:03cb15b3c4c7c5bca518bd07c1731ce939f8608d25d220af82e28e0ac447472a
+    Port:          <none>
+    Host Port:     <none>
+    Command:
+      kube-apiserver
+      --advertise-address=192.168.65.3
+      --allow-privileged=true
+      --authorization-mode=Node,RBAC
+      --client-ca-file=/run/config/pki/ca.crt
+      --enable-admission-plugins=NodeRestriction
+      --enable-bootstrap-token-auth=true
+      --etcd-cafile=/run/config/pki/etcd/ca.crt
+      --etcd-certfile=/run/config/pki/apiserver-etcd-client.crt
+      --etcd-keyfile=/run/config/pki/apiserver-etcd-client.key
+      --etcd-servers=https://127.0.0.1:2379
+      --insecure-port=0
+      --kubelet-client-certificate=/run/config/pki/apiserver-kubelet-client.crt
+      --kubelet-client-key=/run/config/pki/apiserver-kubelet-client.key
+      --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+      --proxy-client-cert-file=/run/config/pki/front-proxy-client.crt
+      --proxy-client-key-file=/run/config/pki/front-proxy-client.key
+      --requestheader-allowed-names=front-proxy-client
+      --requestheader-client-ca-file=/run/config/pki/front-proxy-ca.crt
+      --requestheader-extra-headers-prefix=X-Remote-Extra-
+      --requestheader-group-headers=X-Remote-Group
+      --requestheader-username-headers=X-Remote-User
+      --secure-port=6443
+      --service-account-key-file=/run/config/pki/sa.pub
+      --service-cluster-ip-range=10.96.0.0/12
+      --tls-cert-file=/run/config/pki/apiserver.crt
+      --tls-private-key-file=/run/config/pki/apiserver.key
+    State:          Running
+      Started:      Fri, 26 Mar 2021 06:55:37 +0900
+    Last State:     Terminated
+      Reason:       Error
+      Exit Code:    255
+      Started:      Thu, 25 Mar 2021 21:08:48 +0900
+      Finished:     Fri, 26 Mar 2021 06:55:22 +0900
+    Ready:          True
+    Restart Count:  21
+    Requests:
+      cpu:        250m
+    Liveness:     http-get https://192.168.65.3:6443/healthz delay=15s timeout=15s period=10s #success=1 #failure=8
+    Environment:  <none>
+    Mounts:
+      /etc/ca-certificates from etc-ca-certificates (ro)
+      /etc/ssl/certs from ca-certs (ro)
+      /run/config/pki from k8s-certs (ro)
+      /usr/local/share/ca-certificates from usr-local-share-ca-certificates (ro)
+      /usr/share/ca-certificates from usr-share-ca-certificates (ro)
+Conditions:
+  Type              Status
+  Initialized       True
+  Ready             True
+  ContainersReady   True
+  PodScheduled      True
+Volumes:
+  ca-certs:
+    Type:          HostPath (bare host directory volume)
+    Path:          /etc/ssl/certs
+    HostPathType:  DirectoryOrCreate
+  etc-ca-certificates:
+    Type:          HostPath (bare host directory volume)
+    Path:          /etc/ca-certificates
+    HostPathType:  DirectoryOrCreate
+  k8s-certs:
+    Type:          HostPath (bare host directory volume)
+    Path:          /run/config/pki
+    HostPathType:  DirectoryOrCreate
+  usr-local-share-ca-certificates:
+    Type:          HostPath (bare host directory volume)
+    Path:          /usr/local/share/ca-certificates
+    HostPathType:  DirectoryOrCreate
+  usr-share-ca-certificates:
+    Type:          HostPath (bare host directory volume)
+    Path:          /usr/share/ca-certificates
+    HostPathType:  DirectoryOrCreate
+QoS Class:         Burstable
+Node-Selectors:    <none>
+Tolerations:       :NoExecute
+Events:            <none>
+
+$ kubectl -n kube-system exec -it kube-apiserver-docker-desktop -c kube-apiserver -- sh
+
+> pwd
+/run/config/pki
+> ls -alh
+total 60K
+drwxr-xr-x 3 root root  340 Mar 26 07:13 .
+drwxr-xr-x 3 root root 4.0K Mar 25 21:55 ..
+-rw-r--r-- 1 root root 1.1K Mar 26 07:13 apiserver-etcd-client.crt
+-rw-r--r-- 1 root root 1.7K Mar 26 07:13 apiserver-etcd-client.key
+-rw-r--r-- 1 root root 1.1K Mar 26 07:13 apiserver-kubelet-client.crt
+-rw-r--r-- 1 root root 1.7K Mar 26 07:13 apiserver-kubelet-client.key
+-rw-r--r-- 1 root root 1.4K Mar 26 07:13 apiserver.crt
+-rw-r--r-- 1 root root 1.7K Mar 26 07:13 apiserver.key
+-rw-r--r-- 1 root root 1.1K Mar 26 07:13 ca.crt
+-rw-r--r-- 1 root root 1.7K Mar 26 07:13 ca.key
+drwxr-xr-x 2 root root  200 Mar 26 07:13 etcd
+-rw-r--r-- 1 root root 1.1K Mar 26 07:13 front-proxy-ca.crt
+-rw-r--r-- 1 root root 1.7K Mar 26 07:13 front-proxy-ca.key
+-rw-r--r-- 1 root root 1.1K Mar 26 07:13 front-proxy-client.crt
+-rw-r--r-- 1 root root 1.7K Mar 26 07:13 front-proxy-client.key
+-rw-r--r-- 1 root root 1.7K Mar 26 07:13 sa.key
+-rw-r--r-- 1 root root  451 Mar 26 07:13 sa.pub
+```
+
+`ca.key` 가 private key 이고 `ca.crt` 가 root certificate 이다. `apiserver.crt`
+는 `ca.crt` 로 부터 발급된 하위 인증서이다. kubernetes 는 user 는 하위 인증서를
+이용하여 인증할 수 있다. 하위 인증서를 만들어서 `~/.kube/config` 에 저장하여
+인증에 사용한다. 이것을 `x.509 Authentication` 이라고 한다.
+
+다음과 같이 root certificate 으로 부터 하위 certificate 를 만들어 보자. 
+
+```bash
+# Create private key for iamslash user
+$ openssl genrsa -out iamslash.key 2048
+
+# Create CSR (Certificate Signing Request) file
+# O means a group
+# CN means a user
+$ openssl req -new -key iamslash.key -out iamslash.csr -subj "/O=iamslash-org/CN=iamslash-cert"
+```
+
+kubeconfig file 에 기본적으로 설정된 인증서는 Organization 이 `system:master` 로
+설정되어 있다. `system:masters` group 에 `cluster-admin` Clusterrole 이 할당되어
+있기 때문이다. 
+
+```bash
+# kubenetes-admin.crt 는 kubeconfig 에 기본적으로 설정된 관리자 사용자의
+# 인증서를 base64 로 디코딩한 뒤 저장한 파일이다.
+$ openssl x509 -in kubernetes-admin.crt -noout -text
+
+# Show ClusterRoleBinding of cluster-admin
+$ kubectl describe clusterrolebinding cluster-admin
+Name:         cluster-admin
+Labels:       kubernetes.io/bootstrapping=rbac-defaults
+Annotations:  rbac.authorization.kubernetes.io/autoupdate: true
+Role:
+  Kind:  ClusterRole
+  Name:  cluster-admin
+Subjects:
+  Kind   Name            Namespace
+  ----   ----            ---------
+  Group  system:masters
+```
+
+이제 `iamslash.key` 라는 private key 로 `iamslash.csr` 에 서명하자. private key
+file 을 이용하는 것은 위험하다. api 를 이용하여 간접적으로 서명해보자. 다음과
+같이 `CerticateSigningRequest` object 를 만들어 본다.
+
+* `iamslash-csr.yaml`
+
+```yml
+apiVersion: certificates.k8s.io/v1beta1
+kind: CertificateSigningRequest
+metadata:
+  name: iamslash-csr
+spec:
+  groups:
+  - system:authenticated
+  request: <CSR>
+  usages:
+  - digital signature
+  - key encipherment
+  - client auth
+```
+
+`<CSR>` 에 `iamslash.csr` file 의 내용을 base64 encoding 해서 넣어보자.
+
+```bash
+$ export CSR=$(cat iamslash.csr | base64 | tr -d '\n')
+$ sed -i -o "s/<CSR>/$CSR/g" iamslash-csr.yaml
+```
+
+이제 `iamslash-csr.yaml` 을 apply 하자.
+
+```bash
+# Apply CSR
+$ kubectl apply -f iamslash-csr.yaml
+# CONDITION will be pending
+$ kubectl get csr
+# Approve CSR, then CONDITION will be Approved,Issued
+$ kubectl certificate approve iamslash-csr
+# Extract Sub Certificate from CSR
+$ kubectl get csr iamslash-csr -o jsonpath='{.status.certificate}' | base64 -d > iamslash.crt
+```
+
+이제 하위 인증서 `iamslash.crt` 를 추출했다. 하위 인증서와 비밀키로 새로운 user `iamslash-x509-user`
+를 kubeconfig 에 등록해 보자. 그리고 새로운 context 도 만들어 본다.
+
+```bash
+$ kubectl config set-credentials iamslash-x509-user --client-certificate=iamslash.crt --client-key=iamslash.key
+# Create context
+$ kubectl config get-clusters
+$ kubectl config set-context iamslash-x509-context --cluster kubernetes --user iamslash-x509-user
+$ kubectl config use-context iamslash-x509-context
+$ kubcctl get svc
+```
+
+그러나 permission error 발생할 것이다. 다음과 같이 RoleBinding 을 만들어 적용하자.
+
+* `x509-cert-rolebinding-user.yaml`
+
+```yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: service-reader-rolebinding-user
+  namespace: default
+subjects:
+- kind: User
+  name: iamslash-cert
+roleRef:
+  kind: Role
+  name: service-reader 
+  apiGroup: rbac.authorization.k8s.io
+```
+
+```bash
+$ kubectl config get-contexts
+# You should use other context such as kubernetes-admin@kubernetes
+# because iamslash-x509-context does not have permissions right now
+$ kubectl apply -f x509-cert-rolebinding-user.yaml --context kubernetes-admin@kubernetes
+$ kubectl get svc
+```
 
 ## Resource Limit of Pods
 
