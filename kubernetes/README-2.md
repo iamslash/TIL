@@ -20,6 +20,7 @@
     - [User, Group](#user-group)
     - [User authentication with X509](#user-authentication-with-x509)
   - [Resource Limit of Pods](#resource-limit-of-pods)
+  - [Major Kubernetes Objects](#major-kubernetes-objects)
     - [Limit](#limit)
     - [Request](#request)
     - [CPU Limit](#cpu-limit)
@@ -1316,23 +1317,395 @@ $ kubectl get svc
 
 ## Resource Limit of Pods
 
+## Major Kubernetes Objects
+
 Reqeust, Limit, 
 Guaranteed, BestEffort, Bursatable, 
-ResourceQuota, LimitRanger
+ResourceQuota, LimitRange
 
 ### Limit
 
+Limit 은 이 만큼의 자원이 컨테이너에게 제한된다는 것을 의미한다.
+
+다음은 docker 에서 resource 의 limit 을 설정하는 방법이다.
+
+```bash
+$ docker run -it --name memory_1gb --memory 1g ubuntu:16.04
+$ docker run -it --name cpu_1_alloc --cpu 1 ubuntu:16.04
+$ docker run -it --name cpu_shares_example --cpu-shares 1024 ubuntu:16.04
+# Unlimited
+$ docker run -it --name unlimited_blade ubuntu:16.04
+```
+
+다음은 Limit 의 예이다.
+
+* `resource-limit-pod.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resource-limit-pod
+  labels:
+    name: resource-limit-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    resources:
+      limits:
+        memory: "256Mi"
+        cpu: "1000m"
+```
+
+```bash
+$ kubectl apply -f resource-limit-pod.yaml
+$ kubectl get pods -o wide
+NAME                 READY   STATUS    RESTARTS   AGE    IP          NODE             NOMINATED NODE   READINESS GATES
+resource-limit-pod   1/1     Running   0          108s   10.1.1.86   docker-desktop   <none>           <none>
+$ kubectl describe node ip-xxx
+Non-terminated Pods:         (10 in total)
+  Namespace                  Name                                      CPU Requests  CPU Limits  Memory Requests  Memory Limits  AGE
+  ---------                  ----                                      ------------  ----------  ---------------  -------------  ---
+  default                    resource-limit-pod                        1 (50%)       1 (50%)     256Mi (13%)      256Mi (13%)    2m12s
+  docker                     compose-6c67d745f6-tzn4w                  0 (0%)        0 (0%)      0 (0%)           0 (0%)         121d
+  docker                     compose-api-57ff65b8c7-89rxs              0 (0%)        0 (0%)      0 (0%)           0 (0%)         121d
+  kube-system                coredns-6dcc67dcbc-gq8zk                  100m (5%)     0 (0%)      70Mi (3%)        170Mi (8%)     121d
+  kube-system                coredns-6dcc67dcbc-v8nh8                  100m (5%)     0 (0%)      70Mi (3%)        170Mi (8%)     121d
+  kube-system                etcd-docker-desktop                       0 (0%)        0 (0%)      0 (0%)           0 (0%)         121d
+  kube-system                kube-apiserver-docker-desktop             250m (12%)    0 (0%)      0 (0%)           0 (0%)         121d
+  kube-system                kube-controller-manager-docker-desktop    200m (10%)    0 (0%)      0 (0%)           0 (0%)         121d
+  kube-system                kube-proxy-t57rq                          0 (0%)        0 (0%)      0 (0%)           0 (0%)         121d
+  kube-system                kube-scheduler-docker-desktop             100m (5%)     0 (0%)      0 (0%)           0 (0%)         121d
+Allocated resources:
+  (Total limits may be over 100 percent, i.e., overcommitted.)
+  Resource           Requests     Limits
+  --------           --------     ------
+  cpu                1750m (87%)  1 (50%)
+  memory             396Mi (20%)  596Mi (31%)
+  ephemeral-storage  0 (0%)       0 (0%)
+Events:              <none>
+```
+
 ### Request
+
+Request 는 적어도 이 만큼의 자원은 컨테이너에게 보장돼야 하는 것을 의미한다.
+
+다음은 Request 의 예이다.
+
+* `resource-limit-with-request-pod.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resource-limit-with-request-pod
+  labels:
+    name: resource-limit-with-request-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    resources:
+      limits:
+        memory: "256Mi"
+        cpu: "1000m"
+      requests:
+        memory: "128Mi"
+        cpu: "500m"
+```
 
 ### CPU Limit
 
+> [185. [Kubernetes] CPU Affinity를 위한 CPU Manager 사용 방법, 구현 원리 Deep Dive @ naverblog](https://blog.naver.com/alice_k106/221633530545)
+
+특정 POD 가 특정 NODE 의 CPU 만을 이용하도록 제한하기 위해서는 CPU Manager 를
+이용해야 한다. CPU Manager 는 kubelet 의 실행옵션을 변경해야 한다.
+
 ### QoS class, Memory Limit
+
+Linux 에서 OOM (Out Of Memory) Killer 는 process 별로 점수를 매기고
+MemoryPressure 가 True 인 상황에 점수가 가장 높은 process 를 kill 한다. 다음과
+같이 process 별로 oom_score_adj 를 확인할 수 있다.
+
+```bash
+$ ps aux | grep dockerd
+$ ls /proc/1234/
+oom_adj  oom_score  oom_score_adj
+$ cat /proc/1234/oom_score_adj
+-999
+```
+
+kubernetes 는 pod 의 limit, request 값에 따라 pod 의 qos class 를 정한다. QoS
+class 는 BestEffort, Burstable, Guaranteed 와 같이 총 3 가지가 있다.
+
+Kubernetes 는 memory 가 부족하면 우선순위가 가장 낮은 POD 를 특정 node 에서
+퇴거시킨다. 만약 memory 가 갑작스럽게 높아지면 OOM Killer 가 oom_score_adj 가
+가장 낮은 process 를 강제로 종료한다. 그리고 pod 의 restart policy 에 의해 다시
+시작된다.
+
+pod 의 우선순위는 BestEffort, Burstable, Guaranteed 순으로 높아진다.
+
+**Guaranteed**
+
+Limit 과 Request 가 같은 POD 는 QosClass 가 Guaranteed 이다.
+
+* `resource-lmiit-pod.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resource-limit-pod
+  labels:
+    name: resource-limit-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    resources:
+      limits:
+        memory: "256Mi"
+        cpu: "1000m"
+```
+
+* `resource-limit-pod-guaranteed.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resource-limit-pod-guaranteed
+  labels:
+    name: resource-limit-pod-guaranteed
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    resources:
+      limits:
+        memory: "256Mi"
+        cpu: "1000m"
+      requests:
+        memory: "256Mi"
+        cpu: "1000m"
+```
+
+QoS class 가 Guaranteed 이면 oom_score_adj 가 -998 이다.
+
+**BestEffort**
+
+Request, Limit 을 설정하지 않는 POD 는 QoS class 가 BestEffort 이다.
+
+* `nginx-besteffort-pod.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-besteffort-pod
+spec:
+  containers:
+  - name: nginx-besteffort-pod
+    image: nginx:latest
+```
+
+node 에 존재하는 모든 자원을 사용할 수도 있지만 자원을 전혀 사용하지 못할 수도 있다.
+
+**Burstable**
+
+Request 가 Limit 보다 작은 POD 는 QoS class 가 Burstable 이다.
+
+* `resource-limit-with-request-pod.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: resource-limit-with-request-pod
+  labels:
+    name: resource-limit-with-request-pod
+spec:
+  containers:
+  - name: nginx
+    image: nginx:latest
+    resources:
+      limits:
+        memory: "256Mi"
+        cpu: "1000m"
+      requests:
+        memory: "128Mi"
+        cpu: "500m"
+```
 
 ### ResourceQuota
 
+ResourceQuota 는 namespace 의 resource (cpu, memory, pvc size,
+ephemeral-storage) 를 제한한다.
+
+```bash
+$ kubectl get quota
+$ kubectl get resourcequota
+```
+
+* `resource-quota.yaml`
+
+```yml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: resource-quota-example
+  namespace: default
+spec:
+  hard:
+    requests.cpu: "1000m"
+    requests.memory: "500Mi"
+    limits.cpu: "1500m"
+    limits.memory: "1000Mi"
+```
+
+```bash
+$ kubectl apply -f resource-quota.yaml
+$ kubectl describe quota
+Name:            resource-quota-example
+Namespace:       default
+Resource         Used  Hard
+--------         ----  ----
+limits.cpu       0     1500m
+limits.memory    0     1000Mi
+requests.cpu     0     1
+requests.memory  0     500Mi
+
+# This will fail to run
+$ kubectl run memory-over-pod --image=nginx --generator=run-pod/v1 --request='cpu=200m,memory=300Mi' --limmits='cpu=200m,memory=3000Mi'
+```
+
+다음은 ResourceQuota 를 이용하여 cpu, memory, pods count, services count 를 제한하는 예이다.
+
+* `quota-limit-pod-svc.yaml`
+
+```yml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: resource-quota-example
+  namespace: default
+spec:
+  hard:
+    requests.cpu: "1000m"
+    requests.memory: "500Mi"
+    limits.cpu: "1500m"
+    limits.memory: "1000Mi"
+    count/pods: 3
+    count/services: 5
+```
+
+다음은 ResourceQuota 를 이용하여 BestEffort Qos class 의 Pod 개수를 제한하는 예이다.
+
+* `quota-limit-besteffort.yaml`
+
+```yml
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: besteffort-quota
+  namespace: default
+spec:
+  hard:
+    count/pods: 1
+  scopes:
+    - BestEffort
+```
+
 ### LimitRange
 
+LimitRange 는 네임스페이스에 할당되는 resource 의 범위 또는 기본값등을 설정한다.
+
+다음은 LimitRange 의 예이다.
+
+* `limitrange-example.yaml`
+
+```yml
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: mem-limit-range
+spec:
+  limits:
+  - default:                # 1. 자동으로 설정될 기본 Limit 값
+      memory: 256Mi
+      cpu: 200m
+    defaultRequest:        # 2. 자동으로 설정될 기본 Request 값
+      memory: 128Mi
+      cpu: 100m
+    max:                   # 3. 자원 할당량의 최대값
+      memory: 1Gi
+      cpu: 1000m
+    min:                   # 4. 자원 할당량의 최소값
+      memory: 16Mi
+      cpu: 50m
+    type: Container        # 5. 각 컨테이너에 대해서 적용
+```
+
+```bash
+$ kubectl get limitranges
+$ kubectl get limits
+$ kubectl apply -f limitrange-example.yaml
+```
+
+다음은 value 대신 ratio 를 사용한 에이다.
+
+* `limitrange-ratio.yaml`
+
+```yml
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: limitrange-ratio
+spec:
+  limits:
+  - maxLimitRequestRatio:
+      memory: 1.5
+      cpu: 1
+    type: Container
+```
+
+다음은 pod 의 resource 범위를 제한하는 예이다. pod 의 resource usage
+는 모든 container resource usage 의 합과 같다.
+
+* `limitrange-example-pod.yaml`
+
+```yml
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: pod-limit-range
+spec:
+  limits:
+  - max:                   
+      memory: 1Gi
+    min:                   
+      memory: 200Mi
+    type: Pod       
+```
+
 ### Admission Controller
+
+다음은 Kubernetes API Flow 이다. Admission Controller 는 API 요청이 적절한지 검증하고 필요에 따라 API 요청을 변형한다. API 요청을 검증하는 것을 **Validating** 단계라고 한다. API 요청을 변형하는 것을 **Mutating** 단계라고 한다.
+
+![](https://d33wubrfki0l68.cloudfront.net/af21ecd38ec67b3d81c1b762221b4ac777fcf02d/7c60e/images/blog/2019-03-21-a-guide-to-kubernetes-admission-controllers/admission-controller-phases.png)
+
+ResourceQuota, LimitRange Admission Controller 는 다음과 같이 동작한다.
+
+* user 가 `kubectl apply -f pod.yaml` 를 수행한다.
+* x509 certificate, Service Account 등을 통해 Authentication 을 거친다.
+* Role, Clusterrole 등을 통해 Authorization 을 거친다.
+* ResourceQuota Admission Controller 는 POD 의 자원 할당 요청이 적절한지 Validating 한다. 만약 POD 로 인해서 해당 ResourceQuota 로 설정된 namespace resource 제한을 넘어선 다면 API 요청은 거절된다.
+* LimitRange Admission Controller 는 cpu, memory 할당의 기본값을 추가한다. 즉, 원래 API 요청을 변형한다.
+
+Custom Admission Controller 를 만들 수도 있다. [kubernetes extension @ TIL](kubernetes_extension.md). 예를 들어 nginx pod 을 생성할 때 실수로 적혀진 port number 를 Custom Admission Controller 에서 수정할 수도 있다.
+
+Istio 는 Admission Controller 를 통해서 pod 에 proxy side car container 를 Injection 한다.
 
 ## Kubernetes Scheduling
 
