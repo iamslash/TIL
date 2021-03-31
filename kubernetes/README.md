@@ -5,6 +5,7 @@
   - [Overview](#overview)
   - [Sequence Diagram](#sequence-diagram)
   - [API Flow](#api-flow)
+  - [How to schedule pod on worker node](#how-to-schedule-pod-on-worker-node)
   - [Kubernetes Components](#kubernetes-components)
     - [Master Node](#master-node)
     - [Worker Node](#worker-node)
@@ -186,6 +187,19 @@ spec:
 `kubectl` 을 통해 `kube-api-server` 로 API Request 가 도착하면 위의 그림과 같이 `Authentication-Authorization-Mutating Admission-Validating Admission` 과정을 거치고 `etcd` 에 접근한다.
 
 만약 API Request 가 Write Operation 이면  Kubernetes 를 Extending 할 수 있다. `Mutating Admission` 단계에서 Custom Server 로 WebHook 을 보내는 식으로 구현이 가능하다. [Kubernetes Extension / Dynamic Admission Control @ TIL](kubernetes_extension.md#dynamic-admission-contro)
+
+
+## How to schedule pod on worker node
+
+kube-scheduler 는 다음과 같은 순서로 worker-node 에 pod 를 scheduling 한다.
+
+* user 는 kube-apiserver 에 pod 을 만들어 달라고 request 한다.
+* kube-apiserver 는 ServiceAccount, RoleBinding 을 이용해 authentication, authorization 을 수행한다.
+* kube-apiserver 의 ResourceQuota, LimitRange Admission Controller 가 request 를 validing, mutating 한다.
+* kube-apiserver 는 request 를 etcd 에 기록한다. 즉 pod data 를 etcd 에 기록한다. 이때 pod data 의 `nodeName` 은 비어있다.
+  * pod 의 `nodeName` 은 `kubectl get pods mypod -o yaml | grep -F3 nodeName` 으로 확인할 수 있다.
+* kube-scheduler 는 kube-apiserver 를 watch 를 통해 polling 하다가 `nodeName` 이 비어있는 pod data 를 etcd 에서 발견한다. node filtering, node scoring 의 과정을 거쳐서 worker-node 를 선택한다. 그리고 etcd 의 pod data 의 `nodeName` 을 선택한 worker-node 로 채운다.
+* `nodeName` 에 해당하는 worker-node 에서 kubelet 이 실행되고 있다. 그 kubelet 은 kube-apiserver 를 watch 를 통해 polling 하다가 `nodeName` 이 채워진 pod data 를 etcd 에서 발견한다. 그리고 worker-node 에 pod 를 생성한다.
 
 ## Kubernetes Components
 

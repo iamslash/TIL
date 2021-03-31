@@ -29,7 +29,7 @@
     - [LimitRange](#limitrange)
     - [Admission Controller](#admission-controller)
   - [Kubernetes Scheduling](#kubernetes-scheduling)
-    - [NodeSelector, Node Affinity, Pod Affinity](#nodeselector-node-affinity-pod-affinity)
+    - [nodeName, nodeSelector, nodeAffinity, pod Affinity, podAntiAffinity](#nodename-nodeselector-nodeaffinity-pod-affinity-podantiaffinity)
     - [Taints, Tolerations](#taints-tolerations)
     - [Cordon, Drain, PodDisruptionBudget](#cordon-drain-poddisruptionbudget)
     - [Custom Scheduler](#custom-scheduler)
@@ -1709,9 +1709,192 @@ Istio 는 Admission Controller 를 통해서 pod 에 proxy side car container �
 
 ## Kubernetes Scheduling
 
-### NodeSelector, Node Affinity, Pod Affinity
+### nodeName, nodeSelector, nodeAffinity, pod Affinity, podAntiAffinity
 
-nodeAffinity, podAffinity, topologyKey, reqruiedDuringSchedulingIgnoredDuringExecution, preferredDuringSchedulingIgnoredDuringExecution
+kube-scheduler 는 node filtering, node scoring 의 과정을 통해 scheduling 한다. [kubernetes/pkg/scheduler/framework/plugins/ @ github](https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler/framework/plugins) 에서 filtering, scoring 의 code 를 확인할 수 있다.
+
+node scoring 은 customizing 할 이유가 거의 없다. node filtering 은 nodeName, nodeSelector, nodeAffinity, podAffinity 을 통해서 가능하다.
+
+가장 간단한 scheduling 방법은 nodeName 을 이용하는 것이다. 그러나 권장하지 않는다.
+
+* `nodename-nginx.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  nodeName: ip-10-43-0-30.ap-northeast-2.compute.internal
+  containers:
+  - name: nginx
+    image: nginx:latest
+```
+
+```bash
+$ kubectl apply -f nodename-nginx.yaml
+
+$ kubectl get pods -o wide
+```
+
+이번에는 NodeSelector 를 이용하여 특정 label 를 갖는 node 에 pod 를 할당하자. 
+
+* `nodeselector-nginx.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-nodeselector
+spec:
+  nodeSelector:
+    mylabel/disk: hdd
+  containers:
+  - name: nginx
+    image: nginx:latest
+```
+
+node 의 label 은 다음과 같은 방법으로 CRUD 할 수 있다.
+
+```bash
+$ kubectl get nodes --show-labels
+
+# Add the label to node
+$ kubectl label nodes xxx.xxx.xxx.xxx mylabel/disk=ssd
+$ kubectl label nodes xxx.xxx.xxx.xxx mylabel/disk=hdd
+
+# Del the label from node
+$ kubectl label nodes xxx.xxx.xxx.xxx mylabel/disk=hdd-
+```
+
+nodeAffinity 를 이용하면 nodeSelector 보다 조건을 정밀하게 설정할 수 있다.
+
+* `nodeaffinity-required.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-nodeaffinity-required
+spec:
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: mylabel/disk         
+            operator: In          # values의 값 중 하나만 만족하면 됩니다.
+            values:
+            - ssd
+            - hdd 
+  containers:
+  - name: nginx
+    image: nginx:latest
+```
+
+requiredDuringSchedulingIgnoredDuringExecution 은 scheduling 하기 전에는 필수로 적용하고 일단 scheduling 되고 나면 무시하라는 의미이다.
+
+preferredDuringSchedulingIgnoredDuringExecution 은 scheduling 하기 전에는 최대한 적용하고 일단 scheduling 되고 나면 무시하라는 의미이다. 적용안될 수도 있다.
+
+* `nodeaffinity-preferred.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-nodeaffinity-preferred
+spec:
+  affinity:
+    nodeAffinity:
+      preferredDuringSchedulingIgnoredDuringExecution:
+      - weight: 80               # 조건을 만족하는 노드에 1~100까지의 가중치를 부여
+        preference:
+          matchExpressions:
+          - key: mylabel/disk
+            operator: In
+            values:
+            - ssd
+  containers:
+  - name: nginx
+    image: nginx:latest
+```
+
+podAffinity 를 이용하여 조건을 만족하는 pod 와 함께 실행되게 할 수 있다.
+
+* `podaffinity-required.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod-antiaffinity
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: mylabel/database
+            operator: In
+            values:
+            - mysql
+        topologyKey: failure-domain.beta.kubernetes.io/zone
+  containers:
+  - name: nginx
+    image: nginx:latest
+```
+
+topologyKey 는 해당 라벨을 가지는 worker-node 에서 조건을 수행하라는 의미이다. 예를 들어 kubernetes.io/zone 은 같은 avilability zone 의 worker-node 에서 조건을 수행하라는 의미이다.
+
+topologyKey 를 `kubernetes.io/hostname` 으로 설정해 두면 matchExpressions 를 만족하는 worker-node 에서 pod 을 실행한다. 모든 worker-node 는 자신만의 hostname 을 갖기 때문이다.
+
+* `podaffinity-hostname-topology.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-podaffinity-hostname
+spec:
+  affinity:
+    podAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: mylabel/database
+            operator: In
+            values:
+            - mysql
+        topologyKey: kubernetes.io/hostname
+  containers:
+  - name: nginx
+    image: nginx:latest
+```
+
+podAntiAffinity 는 podAffinity 와 반대의 의미를 갖는다. 예를 들어 다음과 같은 경우 matchExpressions 조건을 만족하는 pod 가 위치한 node 와 다른 topology 의 node 에 pod 를 할당한다.
+
+* `pod-anitiaffinity-required.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-pod-antiaffinity
+spec:
+  affinity:
+    podAntiAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchExpressions:
+          - key: mylabel/database
+            operator: In
+            values:
+            - mysql
+        topologyKey: failure-domain.beta.kubernetes.io/zone
+  containers:
+  - name: nginx
+    image: nginx:latest
+```
 
 ### Taints, Tolerations
 
