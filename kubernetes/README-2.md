@@ -1711,9 +1711,9 @@ Istio 는 Admission Controller 를 통해서 pod 에 proxy side car container �
 
 ### nodeName, nodeSelector, nodeAffinity, pod Affinity, podAntiAffinity
 
-kube-scheduler 는 node filtering, node scoring 의 과정을 통해 scheduling 한다. [kubernetes/pkg/scheduler/framework/plugins/ @ github](https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler/framework/plugins) 에서 filtering, scoring 의 code 를 확인할 수 있다.
+kube-scheduler 는 node filtering, node scoring 의 과정을 통해 scheduling 한다. 즉, worker-node 에 pod 을 할당 한다. 이것은 etcd 에 저장된 pod data 의 nodeName 을 특정 worker-node 의 이름으로 변경하는 것을 의미한다. [kubernetes/pkg/scheduler/framework/plugins/ @ github](https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler/framework/plugins) 에서 filtering, scoring 의 code 를 확인할 수 있다.
 
-node scoring 은 customizing 할 이유가 거의 없다. node filtering 은 nodeName, nodeSelector, nodeAffinity, podAffinity 을 통해서 가능하다.
+node scoring 은 customizing 할 이유가 거의 없다. node filtering 은 nodeName, nodeSelector, nodeAffinity, podAffinity, taints, tolerations, cordon, drain 등을 통해서 가능하다.
 
 가장 간단한 scheduling 방법은 nodeName 을 이용하는 것이다. 그러나 권장하지 않는다.
 
@@ -1898,9 +1898,191 @@ spec:
 
 ### Taints, Tolerations
 
+kube-scheduler 는 taints, tolerations 을 통해 node filtering 을 수행할 수 있다. taints 는 node 에 표식을 하여 pod 이 할당되지 않게 하는 것이다. tolerations 는 node 의 taints 가 있음에도 불구하고 pod 가 할당되도록 하는 것이다.
+
+다음과 같은 방법으로 taints 를 설정할 수 있다.
+
+```bash
+# Create taint
+$ kubectl taint node xxx.xxx.xxx.xxx iamslash/my-taint=dirty:NoSchedule
+
+# Remove taint
+$ kubectl taint node xxx.xxx.xxx.xxx iamslash/my-tain:NoSchedule-
+```
+
+taint value 의 형식은 label 과 비슷하다. `<key>=<value>:<effect>` 이다.
+
+`<effect>` 는 `NoSchedule, NoExecute, PreferNoSchedule` 과 같이 3 가지가 있다.
+
+* **NoSchedule** : pod 를 스케줄하지 말자
+* **NoExecute** : pod 를 스케줄도 하지 말고 실행된 pod 이 있으면 퇴거 (evict) 시키자. 
+* **PreferNoSchedule** : 가능하면 pod 를 스케줄하지 말자
+
+이번에는 tolertaions 을 이용하여 taint 가 부착된 node 에 pod 을 할당해 보자.
+
+* `tolertation-test.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-toleration-test
+spec:
+  tolerations:
+  - key: iamslash/my-taint 
+    value: dirty              
+    operator: Equal          # iamslash/my-taint 키의 값이 dirty이며 (Equal)
+    effect: NoSchedule       # Taint 효과가 NoSchedule인 경우 해당 Taint를 용인합니다.
+  containers:
+  - name: nginx
+    image: nginx:latest
+```
+
+일반적으로 pod 는 master-node 에는 할당되지 않는다. worker-node 에 할당된다. 이것은 master-node 에 taint 가 있기 때문이다. master-node 의 taint 는 `<key>=<value>:<effect>` 형식에서 `=<value>` 가 생략되어 있음을 주의 하자. 이 경우는 `<value>` 가 비어 있는 것이다.
+
+```bash
+$ kubectl describe node <master-node-name>
+Taints:             node-role.kubernetes.io/master:NoSchedule
+Unschedulable:      false
+```
+
+다음은 master-node 의 taint 에도 불구하고 tolerations 를 이용하여 pod 를 할당하는 예이다.
+
+* `toleration-maser.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx-master-toleration
+spec:
+  tolerations:
+  - key: node-role.kubernetes.io/master  
+    effect: NoSchedule                  
+    operator: Equal
+    value: ""
+  nodeSelector:
+    node-role.kubernetes.io/master: ""   # 마스터 노드에서도 포드가 생성되도록 지정합니다.
+  containers:
+  - name: nginx
+    image: nginx:latest
+```
+
+그렇다면 master-node 에서 실행 중인 pod 는 어떤 tolerations 가 있는지 확인해 보자. `:NoExecute` 를 확인할 수 있다. taint 의 형식 `<key>=<value>:<effect>` 에서 `<effect>` 부분만 일치하는 taint 가 부착된 worker-node 에 pod 을 할당할 수 있다.
+
+```bash
+$ kubectl get pods -n kube-system | grep api
+$ kubectl -n kube-system describe pod kube-apiserver-docker-desktop
+QoS Class:         Burstable
+Node-Selectors:    <none>
+Tolerations:       :NoExecute
+Events:            <none>
+
+$ kubectl -n kube-system get pod kube-apiserver-docker-desktop -o yaml | grep -F2 toleration
+...
+  terminationGracePeriodSeconds: 30
+  tolerations:
+  - effect: NoExecute
+    operator: Exists
+...    
+```
+
+Kubernetes 는 worker-node 에 문제가 발생하면 taint 를 부착하여 pod 의 scheduling 을 막는다. 다음과 같은 taint 들이 있다. [Taint based Evictions @ kubernetes.io](https://kubernetes.io/docs/concepts/scheduling-eviction/taint-and-toleration/#taint-based-evictions)
+
+* **NotReady**: work-node 가 아직 준비되지 않은 상태
+* **Unreachable**: Network 가 불안한 상태
+* **Memory-Pressure**: Memory 가 부족한 상태
+* **Disk-Pressure**: Disk 가 부족한 상태
+
+또한 `tolerationSeconds: 300` 을 사용하면 taint 를 허용하는 시간을 정할 수 있다. 즉, `300 s` 가 지나도 taint 가 그대로 부착되어 있으면 pod 을 evict 한다.
+
+```
+$ kubectl get pod <pod-name> -o yaml | grep -F4 tolerationSeconds
+```
+
 ### Cordon, Drain, PodDisruptionBudget
 
+**cordon** 을 이용하면 worker-node 에 pod 을 scheduling 되지 않도록 할 수 있다.
+
+```bash
+$ kubectl cordon <node-name>
+$ kubectl uncordon <node-name>
+$ kubectl get nodes
+$ kubectl describe node <node-name>
+Taints:         node.kubernetes.io/unschedulable:NoSchedule
+Unschedulable:  true
+```
+
+cordon 을 수행한 worker-node 에 `node.kubernetes.io/unschedulable:NoSchedule`
+taint 와 `Unschedulable` 이 true 가 되어있다. `NoSchedule` 이기 때문에 실행중인
+pod 이 evict 되지는 않는다. 그러나 ingress 의 traffic 은 pod 으로 전달 되지 않는다.
+[kubectl cordon causes downtime of ingress(nginx) @ github](https://github.com/kubernetes/kubernetes/issues/65013)
+
+**drain** 은 scheduling 도 하지 않고 실행중인 pod 을 evict 한다.
+
+```bash
+$ kubectl drain <node-name>
+# If there are daemonsets, you need to use --ignore-daemonset option
+$ kubectl drain <node-name> --ignore-daemonsets
+$ kubectl get nodes
+```
+
+Deployment, ReplicaSet, Job, StatefulSet 에 의해 생성되지 않은 pod 가 있다면
+drain 은 실패한다. `--force` 옵션을 사용하면 drain 할 수 있다.
+
+**PodDisruptionBudget** 은 drain 이 수행되었을 때 evict 되는 pod 의 개수를
+조정하는 것이다. pod 제공하는 service 를 유지하면서 evict 할 수 있다.
+
+* `simple-pdb-example.yaml`
+
+```yml
+apiVersion: policy/v1beta1
+kind: PodDisruptionBudget
+metadata:
+  name: simple-pdb-example
+spec:
+maxUnavailable: 1        # 비활성화될 수 있는 포드의 최대 갯수 또는 비율 (%) 
+  # minAvailable: 2
+  selector:                 # PDB의 대상이 될 포드를 선택하는 라벨 셀렉터 
+    matchLabels:
+      app: webserver
+```
+
+PodDisruptionBudget 는 maxUnavailable 혹은 minAvailable 중 하나만 사용할 수
+있다. maxUnavilable 은 비활성화 될 수 있는 pod 의 최대 개수 혹은 비율이다.
+minAvailable 은 활성화 될 수 있는 pod 의 최소 개수 혹은 비율이다. maxUnavailable
+을 0% 혹은 minAvailable 을 100% 로 하면 evict 가 안된다.
+
+이때 select 의 lable 은 Deployment 의 label 이 아닌 pod 의 label 이어야 한다.
+
+* `deployment-pdb-test.yaml`
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-pdb-test
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webserver
+  template:
+    metadata:
+      name: my-webserver
+      labels:
+        app: webserver
+    spec:
+      containers:
+      - name: my-webserver
+        image: alicek106/rr-test:echo-hostname
+        ports:
+        - containerPort: 80
+```
+
 ### Custom Scheduler
+
+* [Custom Scheduler @ TIL](kubernetes_extension.md#custom-scheduler)
 
 ### Static Pods vs DaemonSets
 
