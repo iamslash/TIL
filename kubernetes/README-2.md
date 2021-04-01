@@ -2139,13 +2139,460 @@ $ wget https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/lin
 
 ### Rolling update with Deployment
 
+`--record` 를 이용하면 이전에 사용했던 replicaSet 이 deployment history 에
+기록된다.
+
+* `deployment-v1.yaml`
+
+```yml  
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.15
+        ports:
+        - containerPort: 80
+```
+
+* `deployment-v2.yaml`
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-recreate
+spec:
+  replicas: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.16
+        ports:
+        - containerPort: 80
+```
+
+```bash
+$ kubectl apply -f deployment-v1.yaml --record
+$ kubectl get pods
+$ kubectl apply -f deployment-v2.yaml --record
+$ kubectl rollout history deployment nginx-deployment
+```
+
+기본적으로 replicaSet 의 revision 은 10 개까지 저장된다. 그러나 revisionHistoryLimit
+을 설정하여 변경할 수 있다.
+
+* `deployment-history-limit.yaml`
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-history-limit
+spec:
+  revisionHistoryLimit: 3
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.17
+        ports:
+        - containerPort: 80
+```
+
+Recreate Strategy 를 이용하면 기존 pod 를 삭제하고 새로운 pod 를 생성하기 때문에
+서비스 중단이 발생할 수 있다.
+
+* `deployment-recreate-v1.yaml`
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-recreate
+spec:
+  replicas: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.15
+        ports:
+        - containerPort: 80
+```
+
+* `deployment-recreate-v2.yaml`
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-recreate
+spec:
+  replicas: 3
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.16
+        ports:
+        - containerPort: 80
+```
+
+```bash
+$ kubectl apply -f deployment-recreate-v1.yaml
+$ kubectl get pods
+$ kubectl apply -f deployment-recreate-v2.yaml
+$ kubectl get pods
+```
+
+RollingUpdate strategy 를 사용하면 서비스 중단 없이 pod 를 교체할 수 있다.
+
+* `deployment-rolling-update.yaml`
+
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-rolling-update
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 2
+      maxUnavailable: 2
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      name: nginx
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.15
+        ports:
+        - containerPort: 80
+```
+
+* maxUnavailable 은 rollingUpdate 도중 사용이 불가능한 pod 의 최대 개수 혹은
+  비율이다. 이때 replicas 의 수를 기준으로 비율이 계산된다. 소수점 값은
+  버려진다. 예를 들어 maxUnavailable 이 25% 이라면 75% 의 pod 는 서비스가
+  가능해야 한다.
+* maxSurge 는 rollingUpdate 도중 새롭게 생성된 pod 의 최대 개수 혹은 비율이다.
+  이때 replicas 의 수를 기준으로 비율이 계산된다. 소수점 값은 반올림된다. 예를
+  들어 maxSurge 가 25% 이라면 legacy pod, new pod 의 개수는 replicas 값 대비
+  최대 125% 까지 늘어날 수 있다.
+
 ### BlueGreen update 
+
+다음과 같은 방법으로 BlueGreen 배포를 사용한다.
+
+* 기존 버전(v1) 의 Deployment 가 생성되어 있다. 서비스는 v1 의 pod 로 Request 를
+  전달한다.
+* 새로운 버전(v2) 의 Deployment 를 생성한다.
+* Service 의 label 을 변경하여 Request 를 v2 의 pod 으로 전달한다.
+* v1 Deployment 를 삭제한다.
 
 ### LifeCyle
 
+다음은 pod 의 life cycle 이다.
+
+* **Pending**: kube-apiserver 로 pod 생성 request 가 도착했지만 아직 worker-node 에
+  생성되지 않았다.
+* **Running**: pod 의 container 들이 모두 생성되었다.
+* **Completed**: pod 의 container 들이 모두 실행되었다.
+* **Error**: pod 의 container 들중 몇몇이 정상적으로 종료되지 못했다.
+* **Terminating**: pod 가 delete 혹은 evict 되기 위해 머물러 있는 상태이다.
+
+다음은 pod 가 다시실행되는 경우이다.
+
+* restartPolicy 가 Always 이면 pod 가 Completed 일 때 다시 실행된다. 
+* restartPolicy 가 Always 혹은 OnFailure 이면 pod 가 Error 일 때 다시 실행된다.
+* 다시 실행될때는 Completed 혹은 Error 에서 CrashLoopBackOff 상태로 변한다.
+* 다시 실행될때 마다 CrashLoopBackOff 의 유지기간은 지수시간만큼 늘어난다.
+
+pod 는 init container, post start 가 제대로 실행이 완료되어야 Running 상태로 전환할 수 있다.
+
+* `init-container-example.yaml`
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-container-example
+spec:
+  initContainers: # 초기화 컨테이너를 이 항목에 정의합니다.
+  - name: my-init-container
+    image: busybox
+    command: ["sh", "-c", "echo Hello World!"]
+  containers: # 애플리케이션 컨테이너를 이 항목에 정의합니다.
+  - name: nginx
+    image: nginx
+```
+
+```bash
+$ kubectl apply -f init-container-example.yaml
+```
+
+pod 는 init container 를 이용하여 resource 의 dependency 를 설정할 수 있다.
+다음은 myservice 가 만들어질 때까지 pod 이 기다리는 예이다.
+
+* `init-container-uppercase.yaml`
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-container-usecase
+spec:
+  containers:
+  - name: nginx
+    image: nginx
+  initContainers:
+  - name: wait-other-service
+    image: busybox
+    command: ['sh', '-c', 'until nslookup myservice; do echo waiting..; sleep 1; done;']
+```
+
+postStart 는 container 가 시작하고 수행하는 hook 이다. 반면에 preStop 은 container 가
+종료되기 전에 수행하는 hook 이다. postStart 는 HTTP, Exec 가 가능하다.
+
+* `poststart-hook.yaml`
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: poststart-hook
+spec:
+  containers:
+  - name: poststart-hook
+    image: nginx
+    lifecycle:
+      postStart:
+        exec:
+          command: ["sh", "-c", "touch /myfile"]
+```
+
+```bash
+$ kubectl apply -f poststart-hook.yaml
+$ kubectl exec poststart-hook ls /myfile
+```
+
 ### LivenessProbe, ReadinessProbe
 
+LivenessProbe 는 container 가 살아있는지 검사하는 것이다. 실패하면 pod 의
+restartPolicy 에 의해 재시작한다. httpGet, exec, tcpSocket 이 가능하다.
+
+ReadinessProbe 는 container 가 준비되어있는지 검사하는 것이다. 실패하면 Service
+의 routing 대상에서 제외된다.
+
+다음은 livenessProbe 의 예이다.
+
+* `livenessprobe-pod.yaml`
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: livenessprobe-pod
+spec:
+  containers:
+  - name: livenessprobe-pod
+    image: nginx
+    livenessProbe:  # 이 컨테이너에 대해 livenessProbe를 정의합니다.
+      httpGet:      # HTTP 요청을 통해 애플리케이션의 상태를 검사합니다.
+        port: 80    # <포드의 IP>:80/ 경로를 통해 헬스 체크 요청을 보냅니다. 
+        path: /
+```
+
+```bash
+$ kubectl apply -f livenessprobe-pod.yaml
+$ kubectl get pods
+$ kubectl exec livenessprobe-pod -- rm /usr/share/nginx/html/index.html
+$ kubectl describe po livenessprobe-pod
+$ kubectl get events --sort-by=.metadata.creationTimestamp
+```
+
+다음은 readinessProbe 의 예이다.
+
+* `readinessprobe-pod-svc.yaml`
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: readinessprobe-pod
+  labels:
+    my-readinessprobe: test
+spec:
+  containers:
+  - name: readinessprobe-pod
+    image: nginx       # Nginx 서버 컨테이너를 생성합니다.
+    readinessProbe:    # <포드의 IP>:80/ 로 상태 검사 요청을 전송합니다.
+      httpGet:
+        port: 80
+        path: /
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: readinessprobe-svc
+spec:
+  ports:
+    - name: nginx
+      port: 80
+      targetPort: 80
+  selector:
+    my-readinessprobe: test
+  type: ClusterIP
+```
+
+```bash
+$ kubectl apply -f readinessprobe-pod-svc.yaml
+$ kubectl get pods -w
+$ kubectl run -it --rm debug --image=alicek106/ubuntu:curl --restart=Never -- curl readinessprobe-svc
+$ kubectl get endpoints
+$ kubectl exec readinessprobe-pod -- rm /usr/share/nginx/html/index.html
+$ kubectl get pods -w
+$ kubectl run -it --rm debug --image=alicek106/ubuntu:curl --restart=Never -- curl --connect-timeout 5 readinessprobe-svc
+$ kubectl get endpoints
+```
+
+readinessProbe 를 이용하기 어려운 경우는 minReadySeconds 를 이용하여 일정시간
+지난 다음 pod 을 delete 하거나 create 한다.
+
+* `minreadyseconds-v1.yaml`
+
+```yaml
+# Reference : https://github.com/kubernetes/kubernetes/issues/51671
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minreadyseconds-v1
+spec:
+  replicas: 1
+  minReadySeconds: 30
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: minready-test
+  template:
+    metadata:
+      labels:
+        app: minready-test
+    spec:
+      containers:
+      - name: minreadyseconds-v1
+        image: alicek106/rr-test:echo-hostname
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: myservice
+spec:
+  ports:
+  - name: web-port
+    port: 80
+    targetPort: 80
+  selector:
+    app: minready-test
+  type: NodePort
+```
+
+livenessProbe, readinessProbe 는 다음과 같은 option 들을 갖는다.
+
+* **periodSeconds**: 검사 주기. 기본값은 10 초이다.
+* **initialDelaySeconds**: 검사 전 대기시간. 기본값은 없다.
+* **timeoutSeconds**: 요청의 타임아웃 시간. 기본값은 1 초이다.
+* **successThreshold**: 검사가 성공하기 위한 횟수이다. 기본값은 1 이다.
+* **failureThreshold**: 검사가 실패하기 위한 횟수이다. 기본값은 3 이다.
+
+다음은 option 을 포함한 readinessProbe 의 예이다.
+
+* `probe-options.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: probe-options-example
+  labels:
+    my-readinessprobe: test
+spec:
+  containers:
+  - name: probe-options-example
+    image: nginx
+    readinessProbe:
+      httpGet:
+        port: 80
+        path: /
+      periodSeconds: 5
+      initialDelaySeconds: 10
+      timeoutSeconds: 1
+      successThreshold: 1
+      failureThreshold: 3
+```
+
 ### Terminating status
+
+* [Process of Pod Termination](#process-of-pod-termination)
 
 ## Custom Resource Definition
 

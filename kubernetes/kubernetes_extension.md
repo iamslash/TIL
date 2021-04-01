@@ -50,10 +50,51 @@
 
 # Custom Scheduler
 
-> * [start-docker-kubernetes/chapter11-2/custom-scheduler-python @ github](https://github.com/alicek106/start-docker-kubernetes/blob/master/chapter11-2/custom-scheduler-python/__main__.py)
-> * [Advanced Scheduling in Kubernetes @ kubernetes.io](https://kubernetes.io/blog/2017/03/advanced-scheduling-in-kubernetes/)
-> * [Scheduling Framework @ kubernetes.io](https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/)
-> * [community/contributors/design-proposals/scheduling/scheduler_extender.md @ github](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/scheduling/scheduler_extender.md)
+pod 의 schedulerName 을 확인하면 어떤 scheduler 를 사용하고 있는지 알 수 있다.
+`default-scheduler` 는 `kube-scheduler` 를 의미한다.
+
+```bash
+$ kubectl get pod <pod-name> -o yaml | grep scheduler
+schedulerName: default-scheduler
+```
+
+다음은 `default-schduler` 대신 custom scheduler 를 사용한 예이다.
+
+* `custom-scheduled-pod.yaml`
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: custom-scheduled-pod
+spec:
+  schedulerName: my-custom-scheduler
+  containers:
+  - name: nginx-container
+    image: nginx
+```
+
+custom scheduler 는 다음과 같은 것들을 차례로 구현해야 한다.
+
+* kube-apiserver 를 통해서 새롭게 생성된 pod data 를 가져온다.
+* pod data 중 nodeName 이 설정되어 있지 않으면 schedulerName 이 custom scheduler
+  와 일치하는지 검사한다.
+* node filtering, node scoring 등을 수행하고 kube-apiserver 를 통해서 pod data
+  의 nodeName 을 worker-node 의 이름으로 채운다.
+
+다음은 customer scheduler 의 예이다.
+
+* [custom-scheduler-python @ github](https://github.com/alicek106/start-docker-kubernetes/blob/master/chapter11-2/custom-scheduler-python/__main__.py)
+  * python 으로 제작한 예
+* [Advanced Scheduling in Kubernetes @ kubernetes.io](https://kubernetes.io/blog/2017/03/advanced-scheduling-in-kubernetes/)
+  * bash 로 제작한 예
+
+다음은 custom scheduler 의 개발 방법이다.
+
+* kube-scheduler 의 code 를 수정해서 build 할 수도 있다.
+* [Scheduling Framework @ kubernetes.io](https://kubernetes.io/docs/concepts/scheduling-eviction/scheduling-framework/) 를 사용해서 개발할 수도 있다.
+* [community/contributors/design-proposals/scheduling/scheduler_extender.md @ github](https://github.com/kubernetes/community/blob/master/contributors/design-proposals/scheduling/scheduler_extender.md) 를 이용해서
+  kube-scheduler 에 logic 을 추가할 수도 있다.
 
 # Custom Metric Server
 
