@@ -2,6 +2,7 @@
 - [Concept](#concept)
 - [Aggregation Layer](#aggregation-layer)
 - [Dynamic Admission Control](#dynamic-admission-control)
+- [Custom Resource](#custom-resource)
 - [Custom Controller](#custom-controller)
 - [Custom Scheduler](#custom-scheduler)
 - [Custom Metric Server](#custom-metric-server)
@@ -23,6 +24,72 @@
 # Dynamic Admission Control
 
 > * [172. [Kubernetes] Admission Controller의 이해 및 Python으로 Mutate Webhook 작성 예제 @ naverblog](https://blog.naver.com/alice_k106/221546328906)
+
+# Custom Resource
+
+`CustomResourceDefinition` 을 이용하여 Kubernetes 의 Resource 를 정의할수 있다.
+
+* `my-crd-example.yaml`
+
+```yml
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: alices.iamslash.com  # 1. CRD의 이름
+spec:
+  group: iamslash.com      # 2. 커스텀 리소스의 API 그룹
+  version: v1alpha1     #    커스텀 리소스의 API 버전
+  scope: Namespaced   #    커스텀 리소스가 네임스페이스에 속하는지 여부
+  names:
+    plural: alices        # 3. 커스텀 리소스의 이름 (복수형)
+    singular: alice      #    커스텀 리소스의 이름 (단수형)
+    kind: Alice         #    YAML 파일 등에서 사용될 커스텀 리소스의 Kind
+    shortNames: ["ac"] #    커스텀 리소스 이름의 줄임말
+  validation:
+    openAPIV3Schema:    # 4. 커스텀 리소스의 데이터를 정의
+      required: ["spec"]   #   커스텀 리소스에는 반드시 "spec" 이 존재해야 함.
+      properties:         #    커스텀 리소스에 저장될 데이터 형식을 정의
+        spec:
+          required: ["myvalue"]
+          properties:
+            myvalue:
+              type: "string"
+              minimum: 1
+```
+
+```bash
+$ kubectl apply -f my-crd-example.yaml
+$ kubectl get crds
+```
+
+이제 custom resource 를 적용해 보자.
+
+* `my-cr-example.yaml`
+
+```yml
+apiVersion: iamslash.com/v1alpha1
+kind: Alice
+metadata:
+  name: my-custom-resource
+spec:
+  myvalue: "This is my value"
+```
+
+```bash
+$ kubectl apply -f my-cr-example.yaml
+$ kubectl get alices
+$ kubectl get ac
+$ kubectl describe ac my-custom-resource
+```
+
+CustomResourceDefinition 을 정의하고 CustomResource 를 생성했다면 그것을
+Reconcile 할 수 있는 Custom Controller 가 필요하다.
+
+Reconcile 을 위해 CustomResourceDefinition 을 사용하고 Controller 를 구현하는
+방법을 Operator 패턴이라고 한다. [operatorhub.io](https://operatorhub.io/) 은
+다양한 Operator (CRD,Controller) 를 제공하고 있다.
+
+OperatorSDK 혹은 KubeBuilder 를 이용하여 Operator 를 구현할 수도 있다. [178. [Kubernetes] 2편: Operator SDK 기본 예제 및 활용 : Hadoop CRD를 통한 Hadoop 클러스터 구축하기 @ naverblog](https://blog.naver.com/alice_k106/221586279079)
 
 # Custom Controller
 

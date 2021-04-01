@@ -1338,7 +1338,13 @@ spec:
 
 ### Imperative Commands
 
-Sometimes you cat get one time tasks done quickly with imperative commands.
+Sometimes you cat get one time tasks done quickly with imperative commands. When
+you use imerprative commands, it does not use etcd, kube-controller-manager.
+
+```
+kubectl run ...      --->    kube-apiserver    --->   Create pod
+kubectl create -f                                     Create resource
+```
 
 ```bash
 ####################################
@@ -1370,6 +1376,14 @@ $ kubectl create service nodeport nginx --tcp=80:80 --node-port=30080 --dry-run=
 ```
 
 ### Declarative Commands
+
+When you use declarative commands, it uses etcd, kube-controller-manager.
+Kubernetes will try to keep desired-state. We call this process as **reconcile**.
+
+```
+kubectl apply -f ...  --->  kube-apiserver  ---> etcd  --->  kube-controller-manager  --->  Reconcile
+                                     
+```
 
 ```bash
 # Create Objects
