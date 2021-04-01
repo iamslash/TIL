@@ -59,40 +59,41 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 * [checkov @ github](https://github.com/bridgecrewio/checkov)
   * Kubernetes manifest file 의 문법을 검사해줌
+* [[토크ON세미나] 쿠버네티스 살펴보기 @ youtube](https://www.youtube.com/watch?v=xZ3tcFvbUGc&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=2)
+  * 한글로 설명한 자세한 강의
+  * [Workshop 개발 환경 셋팅하기 @ github](https://github.com/subicura/workshop-init)
+  * [kubernetes 기본 가이드 @ github](https://github.com/subicura/workshop-k8s-basic)
+* [시작하세요! 도커/쿠버네티스](http://www.yes24.com/Product/Goods/84927385)
+  * [src](https://github.com/alicek106/start-docker-kubernetes)
+  * 한글책 중 최고
 * [Certified Kubernetes Administrator (CKA)](https://www.cncf.io/certification/cka/)
   * [Certified Kubernetes Administrator (CKA) with Practice Tests @ udemy](https://www.udemy.com/course/certified-kubernetes-administrator-with-practice-tests/)
     * [Labs - Certified Kubernetes Administrator @ Kodcloud](https://kodekloud.com/courses/enrolled/675080)
   * [Open Source Curriculum for CNCF Certification Courses](https://github.com/cncf/curriculum)
   * [Linux Foundation Certification Exams: Candidate Handbook](https://docs.linuxfoundation.org/tc-docs/certification/lf-candidate-handbook)
   * [Important Instructions: CKA and CKAD](https://docs.linuxfoundation.org/tc-docs/certification/tips-cka-and-ckad)
-
+* [Kubernetes in Action](http://acornpub.co.kr/book/k8s-in-action)
+  * [src](https://github.com/luksa/kubernetes-in-action?files=1)
+* [Kubernetes Documentation](https://kubernetes.io/docs/home/)
+* [Kubernetes Blog](https://kubernetes.io/blog/)
+  
 # Materials
 
 * [Certified Kubernetes Administrator (CKA) with Practice Tests](https://kodekloud.com/p/certified-kubernetes-administrator-with-practice-tests/?coupon_code=KUBARCHYT50)
 * [쿠버네티스(kubernetes) 설치 및 환경 구성하기](https://medium.com/finda-tech/overview-8d169b2a54ff)
   * 쿠버네티스 설치 Deep Dive
-* [시작하세요! 도커/쿠버네티스](http://www.yes24.com/Product/Goods/84927385)
-  * [src](https://github.com/alicek106/start-docker-kubernetes)
-  * 한글책 중 최고
 * [A few things I've learned about Kubernetes](https://jvns.ca/blog/2017/06/04/learning-about-kubernetes/)
   * [What even is a kubelet?](http://kamalmarhubi.com/blog/2015/08/27/what-even-is-a-kubelet/#n2)
   * [Kubernetes from the ground up: the API server](http://kamalmarhubi.com/blog/2015/09/06/kubernetes-from-the-ground-up-the-api-server/)
   * [Kubernetes from the ground up: the scheduler](http://kamalmarhubi.com/blog/2015/11/17/kubernetes-from-the-ground-up-the-scheduler/)
   * [Authenticating](https://kubernetes.io/docs/reference/access-authn-authz/authentication/)
   * [A container networking overview](https://jvns.ca/blog/2016/12/22/container-networking/)
-* [Kubernetes in Action](http://acornpub.co.kr/book/k8s-in-action)
-  * [src](https://github.com/luksa/kubernetes-in-action?files=1)
 * [Comprehensive Guide to EKS Worker Nodes ](https://blog.gruntwork.io/comprehensive-guide-to-eks-worker-nodes-94e241092cbe)
   * About kernetes worker node management
 * [CNCF @ youtube](https://www.youtube.com/channel/UCvqbFHwN-nwalWPjPUKpvTA)
   * Cloud Native Computing Foundation
-* [Kubernetes Blog](https://kubernetes.io/blog/)
 * [EKS workshop](https://eksworkshop.com/010_introduction/basics/concepts_nodes/)
   * This explains about K8s
-* [[토크ON세미나] 쿠버네티스 살펴보기 @ youtube](https://www.youtube.com/watch?v=xZ3tcFvbUGc&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=2)
-  * 한글로 설명한 자세한 강의
-  * [Workshop 개발 환경 셋팅하기 @ github](https://github.com/subicura/workshop-init)
-  * [kubernetes 기본 가이드 @ github](https://github.com/subicura/workshop-k8s-basic)
 * [AWS Kubernetes 서비스 자세히 살펴보기 - 정영준 솔루션즈 아키텍트(AWS), 이창수 솔루션즈 아키텍트(AWS)](https://www.youtube.com/watch?v=iAP_pTrm4Eo)
   * [slide](https://www.slideshare.net/awskorea/aws-kubernetes-aws-aws-devday2018)
 * [Kubernetes Deconstructed: Understanding Kubernetes by Breaking It Down - Carson Anderson, DOMO](https://www.youtube.com/watch?v=90kZRyPcRZw&fbclid=IwAR0InYUnMQD-t-o8JhS5U5KRRaJvSQQc1fBDeBCb8cv6eRk62vsG2Si_Ijo)
