@@ -165,7 +165,5 @@ custom scheduler 는 다음과 같은 것들을 차례로 구현해야 한다.
 
 # Custom Metric Server
 
-> * [Custom Metrics Adapter Server Boilerplate @ github](https://github.com/kubernetes-sigs/custom-metrics-apiserver)
-> * [Building Your Own Custom Metrics API for Kubernetes Horizontal Pod Autoscaler](https://medium.com/swlh/building-your-own-custom-metrics-api-for-kubernetes-horizontal-pod-autoscaler-277473dea2c1)
+> [Custom Metric Server @ TIL](kubernetes_custom_metric_server.md)
 
-HorizontalPodAutoscaler 에서 Custom Metric Server 와 통신하여 Custom Metric 에 대한 Scaling 을 수행할 수 있다.
