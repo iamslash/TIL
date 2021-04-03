@@ -91,6 +91,8 @@ Reconcile 을 위해 CustomResourceDefinition 을 사용하고 Controller 를 �
 
 OperatorSDK 혹은 KubeBuilder 를 이용하여 Operator 를 구현할 수도 있다. [178. [Kubernetes] 2편: Operator SDK 기본 예제 및 활용 : Hadoop CRD를 통한 Hadoop 클러스터 구축하기 @ naverblog](https://blog.naver.com/alice_k106/221586279079)
 
+또한 [code-generator @ github](https://github.com/kubernetes/code-generator) 를 이용하면 go code 를 생성하여 Custom Controller 를 제작할 수 있다. [Kubernetes Deep Dive: Code Generation for CustomResources](https://www.openshift.com/blog/kubernetes-deep-dive-code-generation-customresources)
+
 # Custom Controller
 
 > * [178. [Kubernetes] 2편: Operator SDK 기본 예제 및 활용 : Hadoop CRD를 통한 Hadoop 클러스터 구축하기 @ naverblog](https://blog.naver.com/alice_k106/221586279079)
