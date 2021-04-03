@@ -59,28 +59,166 @@ $ kubectl get --raw /apis/metrics.k8s.io
 Error from server (NotFound): the server could not find the requested resource
 ```
 
-다음과 같이 설치한다. 클러스터 내에서 사용하는 인증서가 신뢰되지 않은 경우와 호스트 이름을 찾지 못하는 경우를 방지하기 위해 `metrics-server-deployment.yaml` 를 수정한다. [Metrics server issue with hostname resolution of kubelet and apiserver unable to communicate with metric-server clusterIP](https://github.com/kubernetes-sigs/metrics-server/issues/131)
+다음과 같이 metric-server 를 설치한다. 클러스터 내에서 사용하는 인증서가 신뢰되지 않은 경우와 호스트 이름을 찾지 못하는 경우를 방지하기 위해 `components.yaml` 에 `--kubelet-insecure-tls` 를 추가한다. [Metrics server issue with hostname resolution of kubelet and apiserver unable to communicate with metric-server clusterIP](https://github.com/kubernetes-sigs/metrics-server/issues/131)
 
 ```bash
-$ git clone https://github.com/kubernetes-incubator/metrics-server.git
+$ minikube start
 
-$ vim metrics-server/deploy/1.8+/metrics-server-deployment.yaml
+$ wget https://github.com/kubernetes-sigs/metrics-server/releases/latest/download/components.yaml
+$ vim components.yaml
 ...
-        emptyDir: {}
+    spec:
       containers:
-      - name: metrics-server
-        args:
+      - args:
+        - --cert-dir=/tmp
+        - --secure-port=4443
+        - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+        - --kubelet-use-node-status-port
         - --kubelet-insecure-tls
-        - --kubelet-preferred-address-types=InternalIP
-        image: k8s.gcr.io/metrics-server-amd64:v0.3.1
-        imagePullPolicy: Always
-        volumeMounts:
-        - name: tmp-dir
-          mountPath: /tmp
 ...
+
+$ kubectl apply -f components.yaml
+serviceaccount/metrics-server created
+clusterrole.rbac.authorization.k8s.io/system:aggregated-metrics-reader created
+clusterrole.rbac.authorization.k8s.io/system:metrics-server created
+rolebinding.rbac.authorization.k8s.io/metrics-server-auth-reader created
+clusterrolebinding.rbac.authorization.k8s.io/metrics-server:system:auth-delegator created
+clusterrolebinding.rbac.authorization.k8s.io/system:metrics-server created
+service/metrics-server created
+deployment.apps/metrics-server created
+apiservice.apiregistration.k8s.io/v1beta1.metrics.k8s.io created
+
+# Check metric api registered
+$ kubectl get --raw /apis/metrics.k8s.io | jq .
+{
+  "kind": "APIGroup",
+  "apiVersion": "v1",
+  "name": "metrics.k8s.io",
+  "versions": [
+    {
+      "groupVersion": "metrics.k8s.io/v1beta1",
+      "version": "v1beta1"
+    }
+  ],
+  "preferredVersion": {
+    "groupVersion": "metrics.k8s.io/v1beta1",
+    "version": "v1beta1"
+  }
+}
+
+$ kubectl top node
+NAME       CPU(cores)   CPU%   MEMORY(bytes)   MEMORY%
+minikube   321m         4%     781Mi           39%
+
+# The result is empty because there is nod pod yet.
+$ kubectl top pod
 ```
 
-WIP...
+이제 Deployment, Service, HPA 를 apply 해보자.
+
+> `deploy-normal`
+
+```yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: iamslash-blog
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: blog-service-label
+  template:
+    metadata:
+      labels:
+        app: blog-service-label
+    spec:
+      containers:
+      - name: flask-web-server
+        image: alicek106/flask-opencensus-example
+        ports:
+        - name: web-service
+          containerPort: 8080
+        - name: healthz-checker
+          containerPort: 8088
+        resources:
+          requests:
+            memory: "16Mi"
+            cpu: "64m"
+          limits:
+            memory: "256Mi"
+            cpu: "100m"
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: iamslash-blog
+  labels:
+    app: service-monitor-label
+spec:
+  selector:
+    app: blog-service-label # same to deployment selector
+  ports:
+  - name: web-service
+    port: 8080
+  - name: healthz-checker
+    port: 8088
+```
+
+> `hpa-normal.yaml`
+
+```yml
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: hpa-normal
+spec:
+  scaleTargetRef:
+    apiVersion: extensions/v1beta1
+    kind: Deployment
+    name: iamslash-blog
+  minReplicas: 1
+  maxReplicas: 4
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      targetAverageUtilization: 5
+  - type: Resource
+    resource:
+      name: memory
+      targetAverageValue: 200Mi
+```
+
+```bash
+$ kubectl apply -f deploy-normal.yaml,hpa-normal.yaml
+$ kubectl get hpa
+NAME         REFERENCE                  TARGETS                          MINPODS   MAXPODS   REPLICAS   AGE
+hpa-normal   Deployment/iamslash-blog   <unknown>/200Mi, <unknown>/50%   1         4         0          5m8s
+$ kubectl get pods
+NAME                            READY   STATUS    RESTARTS   AGE
+iamslash-blog-b499ddfc5-zb4hb   1/1     Running   0          2m26s
+$ kubectl top pod
+NAME                            CPU(cores)   MEMORY(bytes)
+iamslash-blog-b499ddfc5-zb4hb   1m           21Mi
+```
+
+이제 stress 를 이용해서 CPU 사용량을 늘려보자. 실패함.
+
+```bash
+$ kubectl exec -it iamslash-blog-b499ddfc5-zb4hb -c flask-web-server -- bash
+> apt-get install stress
+> stress
+
+# Check CPU usage in other session
+$ watch -n 1 kubectl top pod
+```
+
+이제 삭제하자.
+
+```bash
+$ kubectl delete -f deploy-normal.yaml,hpa-normal.yaml
+```
 
 # HPA with Custom Metric Server
 
