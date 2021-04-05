@@ -1,5 +1,6 @@
 - [Monitor Cluster Components](#monitor-cluster-components)
 - [Managing Application Logs](#managing-application-logs)
+- [Monitoring Pipeline](#monitoring-pipeline)
 
 ----
 
@@ -60,3 +61,9 @@ image: some-image-processor
 ```bash
 $ kubectl logs -f event-simulator-pod event-simulator
 ```
+
+# Monitoring Pipeline
+
+We can collect metrics using [prometheus](/prometheus/README.md) from `kube-apiservers`, `kubelet`, `kubelet/cadvisor`, [node-exporter](/node_exporter/README.md). kubelet includes cadvisor.
+
+[PromQL for overall metrics](/prometheus/README.md#promql-for-overall-metrics)
