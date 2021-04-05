@@ -1371,7 +1371,7 @@ count({__name__=~".+", job="cluster-autoscaler"}) by (__name__)
 count({__name__=~".+", job="kubernetes-apiservers"}) by (__name__)
 count({__name__=~".+", job="kubernetes-nodes-kubelet"}) by (__name__)
 count({__name__=~".+", job="kubernetes-nodes-cadvisor"}) by (__name__)
-count({__name__=~".+", job="kubernetes-service-endpoints"}) by (__name__)
+count({__name__=~".+", job="kubernetes-service-endpoints", kubernetes_name="kube-state-metrics"}) by (__name__)
 
 # Count of unique metrics by job, name
 count(count({__name__=~".+", job="cluster-autoscaler"}) by (__name__))
