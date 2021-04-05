@@ -49,6 +49,7 @@
   - [How to delete metrics](#how-to-delete-metrics)
   - [How to drop metrics](#how-to-drop-metrics)
   - [How to relabel](#how-to-relabel)
+- [PromQL for overall metrics](#promql-for-overall-metrics)
 
 ----
 
@@ -1349,3 +1350,29 @@ scrape_configs:
 ```
 
 ![](prometheus_target.png)
+
+# PromQL for overall metrics
+
+```bash
+# Count of timeseries
+count({__name__=~".+"}) 
+
+# Count of timeseries by job
+count({__name__=~".+"}) by (job)
+
+{job="cluster-autoscaler"}	5
+{job="kubernetes-apiservers"}	21797
+{job="kubernetes-nodes-kubelet"}	1413
+{job="kubernetes-nodes-cadvisor"}	2897
+{job="kubernetes-service-endpoints"}	1082
+
+# List of unique metrics by job, name
+count({__name__=~".+", job="cluster-autoscaler"}) by (__name__)
+count({__name__=~".+", job="kubernetes-apiservers"}) by (__name__)
+count({__name__=~".+", job="kubernetes-nodes-kubelet"}) by (__name__)
+count({__name__=~".+", job="kubernetes-nodes-cadvisor"}) by (__name__)
+count({__name__=~".+", job="kubernetes-service-endpoints"}) by (__name__)
+
+# Count of unique metrics by job, name
+count(count({__name__=~".+", job="cluster-autoscaler"}) by (__name__))
+```
