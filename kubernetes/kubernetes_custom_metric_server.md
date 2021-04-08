@@ -190,6 +190,22 @@ spec:
       targetAverageValue: 200Mi
 ```
 
+HPA 가 cpu 를 이용하여 어떻게 scaling 하는지 알아보자.
+
+`reousrces.requests.cpu == 64m` 이고 `resource.targetAverageUtilization == 5` 이다.
+`64m` 을 `100%` 라고 하면 `3.2` 은 `5%` 이다. HPA 는 주기적으로 메트릭값을 얻어온다. 그리고 
+desired-replica 개수를 계산하고 pod 의 개수를 desired-replica 개수 만큼 유지한다.
+
+desired-replica 개수는 다음과 같이 계산한다.
+
+```
+desiredReplicas = ceil[currentReplicas * ( currentMetricValue / desiredMetricValue )]
+```
+
+currentMetricValue 는 container 당 평균값이다. desiredMetricValue 는 HPA manifest 에
+표기한 값이다. 즉, pod 에 포함된 container 들의 cpu 사용량의
+평균이 `3.2` 를 넘어가면 scale-out 하고 `3.2` 보다 작으면 scale-in 하라는 의미이다.
+
 ```bash
 $ kubectl apply -f deploy-normal.yaml,hpa-normal.yaml
 $ kubectl get hpa
