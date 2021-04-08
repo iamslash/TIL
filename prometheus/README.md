@@ -49,7 +49,8 @@
   - [How to delete metrics](#how-to-delete-metrics)
   - [How to drop metrics](#how-to-drop-metrics)
   - [How to relabel](#how-to-relabel)
-- [PromQL for overall metrics](#promql-for-overall-metrics)
+  - [PromQL for overall metrics](#promql-for-overall-metrics)
+  - [PromQL for kubernetes](#promql-for-kubernetes)
 
 ----
 
@@ -1351,7 +1352,7 @@ scrape_configs:
 
 ![](prometheus_target.png)
 
-# PromQL for overall metrics
+## PromQL for overall metrics
 
 ```bash
 # Count of timeseries
@@ -1375,4 +1376,26 @@ count({__name__=~".+", job="kubernetes-service-endpoints", kubernetes_name="kube
 
 # Count of unique metrics by job, name
 count(count({__name__=~".+", job="cluster-autoscaler"}) by (__name__))
+```
+
+## PromQL for kubernetes
+
+> * CPU usage milicore
+
+```c
+// container 가 사용한 cpu 량을 milicore 로 보여다오.
+// 소수점 단위이다. (ex, 0.001)
+// 1 은 1000 milicore 를 의미한다.
+container_cpu_usage_seconds_total
+// 최근 2 분동안 container_cpu_usage_seconds_total 을 
+// 모아서 초당 증감을 보여다오.
+rate(container_cpu_usage_seconds_total[2m]
+// 값이 너무 작으니 적당히 100 을 곱하자.
+// 모든 팟 마다 rate(container_cpu_usage_seconds_total[2m]) * 100 의
+// 평균을 보여다오. 평균은 하나의 pod 에 포함된 container 들의 
+// rate(container_cpu_usage_seconds_total[2m]) * 100 를 모두 더하고
+// container 의 개수로 나눈 값이다.
+// 이 값이 90 을 넘으면 pod 이 cpu 를 많이 점유하고 있구나라고
+// 생각할 수 있다.
+avg(rate(container_cpu_usage_seconds_total[2m]) * 100) by (pod)
 ```
