@@ -22,6 +22,7 @@
 
 # Materials
 
+* [[토크ON세미나] 아파치 하둡 입문 1강 - 하둡의 탄생과 생태계의 활용 | T아카데미 @ youtube](https://www.youtube.com/watch?v=OPodJE1jYbg&list=RDCMUCtV98yyffjUORQRGTuLHomw&index=1)
 * [Intro to Hadoop and MapReduce @ udacity](https://classroom.udacity.com/courses/ud617)
   * [src](https://github.com/ShanLu1984/Hadoop-and-MapReduce)
 * [하둡(Hadoop) 소개 및 기본 구성요소 설명 @ opentutorials](https://opentutorials.org/module/2926/17055)

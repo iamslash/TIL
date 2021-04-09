@@ -1,5 +1,38 @@
+- [Materials](#materials)
+- [Install](#install)
+  - [Install on Ubuntu](#install-on-ubuntu)
+  - [Install with docker](#install-with-docker)
+    - [Single Zookeeper / Single Kafka](#single-zookeeper--single-kafka)
+    - [Single Zookeeper / Multiple Kafka](#single-zookeeper--multiple-kafka)
+    - [Multiple Zookeeper / Single Kafka](#multiple-zookeeper--single-kafka)
+    - [Multiple Zookeeper / Multiple Kafka](#multiple-zookeeper--multiple-kafka)
+    - [Full stack](#full-stack)
+- [Feature](#feature)
+  - [Overview](#overview)
+  - [Zero Copy](#zero-copy)
+  - [Zookeeper](#zookeeper)
+  - [Topic](#topic)
+  - [Partition](#partition)
+  - [Consumer Group](#consumer-group)
+  - [ACK](#ack)
+  - [Exactly once](#exactly-once)
+- [Basic](#basic)
+  - [Useful Commands](#useful-commands)
+- [Advanced](#advanced)
+  - [Gurantee order of messages, no duplicates](#gurantee-order-of-messages-no-duplicates)
+
+-----
+
 # Materials
 
+* [kafka 조금 아는 척하기 1 (개발자용) @ youtube](https://www.youtube.com/watch?v=0Ssx7jJJADI)
+  * [kafka 조금 아는 척하기 2 (개발자용) @ youtube](https://www.youtube.com/watch?v=geMtm17ofPY)
+  * [kafka 조금 아는 척하기 3 (개발자용) @ youtube](https://www.youtube.com/watch?v=xqrIDHbGjOY)
+* [토크ON 77차. 아파치 카프카 입문 1강 - Kafka 기본개념 및 생태계 | T아카데미 @ youtube](https://www.youtube.com/watch?v=VJKZvOASvUA)
+  * [유튜브 ™ 를위한 애드 블록 에 의해 청소 Share 토크ON 77차. 아파치 카프카 입문 2강 - Kafka 설치, 실행, CLI | T아카데미 @ youtube](https://www.youtube.com/watch?v=iUX6d14bvj0)
+  * [토크ON 77차. 아파치 카프카 입문 3강 - Kafka Producer application @ youtube](https://www.youtube.com/watch?v=dubFjEXuK6w)
+  * [토크ON 77차. 아파치 카프카 입문 4강 - Kafka Consumer application @ youtube](https://www.youtube.com/watch?v=oyNjiQ2q2CE)
+  * [토크ON 77차. 아파치 카프카 입문 5강 - Kafka 활용 실습 @ youtube](https://www.youtube.com/watch?v=3OPZ7_sHtWo)
 * [How To Install Apache Kafka on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-apache-kafka-on-ubuntu-18-04)
 * [kafka @ joinc](https://www.joinc.co.kr/w/man/12/Kafka)
 * [Core Concepts](https://kafka.apache.org/0110/documentation/streams/core-concepts)
@@ -128,11 +161,19 @@ $ /usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --from-begin
 
 ## Partition
 
-하나의 Topic 은 여러개의 Partition 으로 구성한다. Producer 는 여러개의 Partition 에 병렬로 메시지를 전송할 수 있다. Consumer 입장에서 Message 순서가 보장될 수 없다. Partition 의 개수는 한번 늘리면 줄일 수 없다. partition 과 consumer group 을 사용하면 topic 을 parallel 하게 처리하여 수행성능을 높일 수 있다.  
+하나의 Topic 은 여러개의 Partition 으로 구성한다. Partition 은 message 를
+저장하는 file 과 같다. 이것을 append only file 이라고 한다. Partition 의 message
+는 일정시간이 지나면 지워진다. 일정한 기간동안 보관된다.
+
+Producer 는 여러개의 Partition 에 병렬로 메시지를 전송할 수 있다. Consumer
+입장에서 Message 순서가 보장될 수 없다. Partition 의 개수는 한번 늘리면 줄일 수
+없다. partition 과 consumer group 을 사용하면 topic 을 parallel 하게 처리하여
+수행성능을 높일 수 있다.  
 
 Message 의 순서가 중요하다면 하나의 Topic 은 하나의 Partition 으로 구성한다.
 
-Message 순서에 대해 Deep Dive 해보자. 다음과 같이 8 개의 partition 에 my-topic-8 을 만들어 보자.
+Message 순서에 대해 Deep Dive 해보자. 다음과 같이 8 개의 partition 에 my-topic-8
+을 만들어 보자.
 
 ```console
 $ /usr/bin/kafka-topics --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 8 --topic my-topic-8
@@ -172,7 +213,9 @@ $ /usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --from-begin
 
 * [Kafka 운영자가 말하는 Kafka Consumer Group](https://www.popit.kr/kafka-consumer-group/)
 
-하나의 Consumer Group 은 여러개의 Consumer Instance 들로 구성된다. 하나의 Consumer Instance 는 특정한 Topic 의 특정 partition 에서 message 를 가져온다. 
+하나의 Consumer Group 은 여러개의 Consumer Instance 들로 구성된다. 하나의
+Consumer Instance 는 하나의 Partition 하고만 연결할 수 있다. 즉, 하나의 Consumer
+Instance 는 특정한 Topic 의 특정 partition 에서 message 를 가져온다.  
 
 하나의 partition 을 두개의 Consumer Instance 가 consuming 할 수는 없다. 하나의 Consumer Instance 가 두개의 partition 을 consuming 할 수는 있다.
 
