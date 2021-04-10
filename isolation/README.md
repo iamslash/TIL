@@ -233,4 +233,4 @@ mysql> use hello
 
 # Innodb Lock
 
-WIP...
+> [mysql Inno-db locks @ TIL](#inno-db-locks)
