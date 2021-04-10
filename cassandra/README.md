@@ -44,6 +44,8 @@ Cassandra's write performance is good. But it donen't support Join, Transaction 
 
 # Materials
 
+* [Introduction to Apache Cassandra Workshop @ youtube](https://www.youtube.com/watch?v=quBJDXAzlqM)
+  * [slides](https://github.com/DataStax-Academy/Intro-to-Cassandra-for-Developers)
 * [Apache Cassandra Documentation](https://cassandra.apache.org/doc/latest/)
   * This is mandatory.
 * [Learn Cassandra](https://teddyma.gitbooks.io/learncassandra/content/index.html)
