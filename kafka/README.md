@@ -13,6 +13,7 @@
   - [Zookeeper](#zookeeper)
   - [Topic](#topic)
   - [Partition](#partition)
+  - [Rebalance](#rebalance)
   - [Consumer Group](#consumer-group)
   - [ACK](#ack)
   - [Exactly once](#exactly-once)
@@ -28,7 +29,9 @@
 * [kafka 조금 아는 척하기 1 (개발자용) @ youtube](https://www.youtube.com/watch?v=0Ssx7jJJADI)
   * [kafka 조금 아는 척하기 2 (개발자용) @ youtube](https://www.youtube.com/watch?v=geMtm17ofPY)
   * [kafka 조금 아는 척하기 3 (개발자용) @ youtube](https://www.youtube.com/watch?v=xqrIDHbGjOY)
-* [토크ON 77차. 아파치 카프카 입문 1강 - Kafka 기본개념 및 생태계 | T아카데미 @ youtube](https://www.youtube.com/watch?v=VJKZvOASvUA)
+* [아파치 카프카 입문 @ Tacademy](https://tacademy.skplanet.com/live/player/onlineLectureDetail.action?seq=183)
+  * [src](https://github.com/AndersonChoi/tacademy-kafka)
+  * [토크ON 77차. 아파치 카프카 입문 1강 - Kafka 기본개념 및 생태계 | T아카데미 @ youtube](https://www.youtube.com/watch?v=VJKZvOASvUA)
   * [유튜브 ™ 를위한 애드 블록 에 의해 청소 Share 토크ON 77차. 아파치 카프카 입문 2강 - Kafka 설치, 실행, CLI | T아카데미 @ youtube](https://www.youtube.com/watch?v=iUX6d14bvj0)
   * [토크ON 77차. 아파치 카프카 입문 3강 - Kafka Producer application @ youtube](https://www.youtube.com/watch?v=dubFjEXuK6w)
   * [토크ON 77차. 아파치 카프카 입문 4강 - Kafka Consumer application @ youtube](https://www.youtube.com/watch?v=oyNjiQ2q2CE)
@@ -208,6 +211,10 @@ $ /usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --from-begin
 9
 0
 ```
+
+## Rebalance
+
+Kafka 가 partition 을 Consumer Instance 에 다시 할당하는 과정이다. 예를 들어 Consumer Group 의 특정 Consumer Instance 가 장애가 발생했다면 Kafka 는 잠깐 시간을 내어 살아있는 Consumer Instance 들에게 Partition 을 다시 할당한다.
 
 ## Consumer Group
 
