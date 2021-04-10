@@ -8,9 +8,10 @@
     - [Primary Key](#primary-key)
     - [Unique Kye](#unique-kye)
     - [Foreign Key](#foreign-key)
-- [BIGINT(20) vs INT(20)](#bigint20-vs-int20)
+  - [BIGINT(20) vs INT(20)](#bigint20-vs-int20)
 - [Advanced](#advanced)
   - [how to reset password](#how-to-reset-password)
+  - [Inno-db locks](#inno-db-locks)
   - [how to run multiple mysqld instances](#how-to-run-multiple-mysqld-instances)
   - [XA](#xa)
 
@@ -77,7 +78,7 @@ Duplication 은 허용하지 않고 NULL 을 허용하는 Key 이다. Index 가 
 - NO ACTION : RESTRICT 옵션과 동작이 같지만, 체크를 뒤로 미룬다.
 - SET DEFAULT : 변경 또는 삭제 시에 값을 DEFAULT 값으로 세팅한다.
 
-# BIGINT(20) vs INT(20)
+## BIGINT(20) vs INT(20)
 
 * [mysql 에서 bigint(20), int(11) 의 의미](https://netmaid.tistory.com/42)
   * [Types in MySQL: BigInt(20) vs Int(20)](https://stackoverflow.com/questions/3135804/types-in-mysql-bigint20-vs-int20)
@@ -120,8 +121,11 @@ mysqld
 mysql -u root
 > GRANT ALL PRIVILEGES ON *.* to 'root'@'localhost' WITH GRANT OPTION
 > FLUSH PRIVILEGES;
-
 ```
+
+## Inno-db locks
+
+> * [MySQL InnoDB lock & deadlock 이해하기](https://www.letmecompile.com/mysql-innodb-lock-deadlock/)
 
 ## how to run multiple mysqld instances
 
