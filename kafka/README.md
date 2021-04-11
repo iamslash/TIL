@@ -1,5 +1,6 @@
 - [Materials](#materials)
 - [Install](#install)
+  - [Recommended Options](#recommended-options)
   - [Install on Ubuntu](#install-on-ubuntu)
   - [Install with docker](#install-with-docker)
     - [Single Zookeeper / Single Kafka](#single-zookeeper--single-kafka)
@@ -8,7 +9,8 @@
     - [Multiple Zookeeper / Multiple Kafka](#multiple-zookeeper--multiple-kafka)
     - [Full stack](#full-stack)
 - [Feature](#feature)
-  - [Overview](#overview)
+  - [Core Concepts](#core-concepts)
+  - [Advantages](#advantages)
   - [Zero Copy](#zero-copy)
   - [Zookeeper](#zookeeper)
   - [Topic](#topic)
@@ -17,8 +19,15 @@
   - [Consumer Group](#consumer-group)
   - [ACK](#ack)
   - [Exactly once](#exactly-once)
+  - [Record Key](#record-key)
+  - [Consumer Lag](#consumer-lag)
+  - [Dead letter queue](#dead-letter-queue)
 - [Basic](#basic)
+  - [Usual configs of server.properties](#usual-configs-of-serverproperties)
   - [Useful Commands](#useful-commands)
+- [Producer application integration](#producer-application-integration)
+- [Consumer application integration](#consumer-application-integration)
+- [How to prevent Duplicated messages in consumer](#how-to-prevent-duplicated-messages-in-consumer)
 - [Advanced](#advanced)
   - [Gurantee order of messages, no duplicates](#gurantee-order-of-messages-no-duplicates)
 
@@ -26,9 +35,6 @@
 
 # Materials
 
-* [kafka 조금 아는 척하기 1 (개발자용) @ youtube](https://www.youtube.com/watch?v=0Ssx7jJJADI)
-  * [kafka 조금 아는 척하기 2 (개발자용) @ youtube](https://www.youtube.com/watch?v=geMtm17ofPY)
-  * [kafka 조금 아는 척하기 3 (개발자용) @ youtube](https://www.youtube.com/watch?v=xqrIDHbGjOY)
 * [아파치 카프카 입문 @ Tacademy](https://tacademy.skplanet.com/live/player/onlineLectureDetail.action?seq=183)
   * [src](https://github.com/AndersonChoi/tacademy-kafka)
   * [토크ON 77차. 아파치 카프카 입문 1강 - Kafka 기본개념 및 생태계 | T아카데미 @ youtube](https://www.youtube.com/watch?v=VJKZvOASvUA)
@@ -44,8 +50,26 @@
   * [Kafka 운영자가 말하는 Topic Replication](https://www.popit.kr/kafka-%EC%9A%B4%EC%98%81%EC%9E%90%EA%B0%80-%EB%A7%90%ED%95%98%EB%8A%94-topic-replication/) 
   * [Kafka 운영자가 말하는 TIP](https://www.popit.kr/kafka-%EC%9A%B4%EC%98%81%EC%9E%90%EA%B0%80-%EB%A7%90%ED%95%98%EB%8A%94-tip/) 
   * [Kafka 운영자가 말하는 Producer ACKS](https://www.popit.kr/kafka-%EC%9A%B4%EC%98%81%EC%9E%90%EA%B0%80-%EB%A7%90%ED%95%98%EB%8A%94-producer-acks/)
+* [kafka 조금 아는 척하기 1 (개발자용) @ youtube](https://www.youtube.com/watch?v=0Ssx7jJJADI)
+  * [kafka 조금 아는 척하기 2 (개발자용) @ youtube](https://www.youtube.com/watch?v=geMtm17ofPY)
+  * [kafka 조금 아는 척하기 3 (개발자용) @ youtube](https://www.youtube.com/watch?v=xqrIDHbGjOY)
 
 # Install
+
+## Recommended Options
+
+**Recommended Options from LinkedIn** 
+
+```bash
+-Xmx6g -Xms6g -XX:MetaspaceSize=96m -XX:+UseG1GC
+-XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=16M
+-XX:MinMetaspaceFreeRatio=50 -XX:MaxMetaspaceFreeRatio=80
+```
+
+60 대의 Broker, 5 만개의 Partition, Replication-factor 2 로 구성하면 다음과 같은 throughput 을 갖는다.
+
+* 300 MB/sec inbound
+* 1 GB/sec outbound
 
 ## Install on Ubuntu
 
@@ -110,14 +134,34 @@ $ docker-compose -f full-stack.yml down
 
 # Feature
 
-## Overview
+## Core Concepts
 
-Queue 와 Pub/Sub 을 지원하는 Message Queue 이다. scala 로 만들어 졌다. kafka 는 disk 에서 데이터를 caching 한다.
-따라서 저렴한 비용으로 대량의 데이터를 보관할 수 있다. 실제로 disk 에 random access 는 100 KB/sec 이지만
-linear writing 은 600 MB/sec 이다. 6000 배이다. 따라서 random access 보다 linear writing 을 많이 한다면 disk 를 이용해도 좋다.
+Kafka 는 Pub/Sub 을 지원하는 Message Queue 이다. scala 로 만들어 졌다. 
+
+![](https://linuxhint.com/wp-content/uploads/2018/04/kafka-broker-partition-replication.png)
+
+* **Broker**: Kafka Application Server
+* **Topic**: 분리된 Data 의 단위. 하나의 Topic 은 여러 Data 를 갖는다. 또한 여러 Partition 에 나누어 저장된다.
+* **Partition**: Record Data 이 저장된다. 하나의 Partition 은 여러개의 Segment file 들로 분리된다.
+* **Offset**: Partition 에서 Record Data 의 번호이다.
+* **Consumer**: Record Data 를 특정 Partition 에서 polling 하는 application 이다.
+* **Consumer Group**: 여러 Consumer Intsnace 들을 묶은 것이다.
+* **Consumer offset**: 특정 Consumer Instance 가 특정 Partition 에서 몇번째 Record Data 까지 읽었는지를 의미한다.
+* **Producer**: Record Data 를 Broker 에 저장하는 application 이다.
+* **Replication**: 특정 Partition 을 복제하는 기능이다.
+* **ISR (In Sync Replication)**: Replication 를 구성하는 Leader, Follower Partition 묶음
+* **Rack-awareness**: IDC 에서 하나의 server 에 장애가 생기면 보통 하나의 Server Rack 이 모두 장애가 생긴다. Server Rack Incident 를 주의해서 서로다른 Server Rack 에 application 들을 배치해야 한다.
+
+![](img/log_consumer.png)
+
+## Advantages
+
+kafka 는 disk 에서 데이터를 caching 한다. 따라서 저렴한 비용으로 대량의 데이터를
+보관할 수 있다. 실제로 disk 에 random access 는 100 KB/sec 이지만 linear writing
+은 600 MB/sec 이다. 6000 배이다. 따라서 random access 보다 linear writing 을
+많이 한다면 disk 를 이용해도 좋다.
 
 ![](http://deliveryimages.acm.org/10.1145/1570000/1563874/jacobs3.jpg)
-
 
 ## Zero Copy
 
@@ -131,11 +175,13 @@ linear writing 은 600 MB/sec 이다. 6000 배이다. 따라서 random access �
 
 ## Zookeeper
 
-zookeeper 는 kafka node 를 관리하고 topic 의 offset 을 저장한다.
+zookeeper 는 kafka node 를 관리하고 topic 의 offset 을 저장한다. 
+
+zookeeper 제거 작업이 진행중임. [KIP-500: Replace ZooKeeper with a Self-Managed Metadata Quorum](https://cwiki.apache.org/confluence/display/KAFKA/KIP-500:+Replace+ZooKeeper+with+a+Self-Managed+Metadata+Quorum)
 
 ## Topic
 
-topic 은 RDBMS 의 Table 과 같다. durability 를 위해 replication 개수를 정할 수 있고 partition 을 통해서 totpic 을 나눌 수 있다. `consumer_offsets` totpic 은 자동으로 생성되는 topic 이다.
+topic 은 RDBMS 의 Table 과 같다. 하나의 topic 에 저장된 Record  data 는 여러 partition 에 나누어 저장된다. `consumer_offsets` topic 은 자동으로 생성되는 topic 이다.
 
 ```bash
 ## Create the topic
@@ -164,16 +210,20 @@ $ /usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --from-begin
 
 ## Partition
 
-하나의 Topic 은 여러개의 Partition 으로 구성한다. Partition 은 message 를
-저장하는 file 과 같다. 이것을 append only file 이라고 한다. Partition 의 message
-는 일정시간이 지나면 지워진다. 일정한 기간동안 보관된다.
+> * [How Kafka’s Storage Internals Work](https://thehoard.blog/how-kafkas-storage-internals-work-3a29b02e026)
+
+![](img/segment.png)
+
+하나의 Topic 은 여러개의 Partition 으로 구성된다. 다시 하나의 Partition 은
+여러개의 segment file 로 구성된다. segment file 을 append only file 이라고 한다.
+Partition 의 message 는 일정시간이 지나면 지워진다. 일정한 기간동안 보관된다.
 
 Producer 는 여러개의 Partition 에 병렬로 메시지를 전송할 수 있다. Consumer
 입장에서 Message 순서가 보장될 수 없다. Partition 의 개수는 한번 늘리면 줄일 수
 없다. partition 과 consumer group 을 사용하면 topic 을 parallel 하게 처리하여
 수행성능을 높일 수 있다.  
 
-Message 의 순서가 중요하다면 하나의 Topic 은 하나의 Partition 으로 구성한다.
+Message 의 순서가 중요 하다면 하나의 Topic 은 하나의 Partition 으로 구성한다.
 
 Message 순서에 대해 Deep Dive 해보자. 다음과 같이 8 개의 partition 에 my-topic-8
 을 만들어 보자.
@@ -214,25 +264,21 @@ $ /usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --from-begin
 
 ## Rebalance
 
-Kafka 가 partition 을 Consumer Instance 에 다시 할당하는 과정이다. 예를 들어 Consumer Group 의 특정 Consumer Instance 가 장애가 발생했다면 Kafka 는 잠깐 시간을 내어 살아있는 Consumer Instance 들에게 Partition 을 다시 할당한다.
+Kafka 가 partition 을 Consumer Instance 에 다시 할당하는 과정이다. 예를 들어 Consumer Group 의 특정 Consumer Instance 가 장애가 발생했다면 Kafka 는 잠깐 시간을 내어 살아있는 Consumer Instance 들에게 Partition 을 다시 할당한다. 이때 Rebalance 도중에 Record Data 를 consumming 할 수 없다.
 
 ## Consumer Group
 
-* [Kafka 운영자가 말하는 Kafka Consumer Group](https://www.popit.kr/kafka-consumer-group/)
+> * [Kafka 운영자가 말하는 Kafka Consumer Group](https://www.popit.kr/kafka-consumer-group/)
 
-하나의 Consumer Group 은 여러개의 Consumer Instance 들로 구성된다. 하나의
-Consumer Instance 는 하나의 Partition 하고만 연결할 수 있다. 즉, 하나의 Consumer
-Instance 는 특정한 Topic 의 특정 partition 에서 message 를 가져온다.  
+![](img/consumer-groups.png)
 
-하나의 partition 을 두개의 Consumer Instance 가 consuming 할 수는 없다. 하나의 Consumer Instance 가 두개의 partition 을 consuming 할 수는 있다.
-
-Consumer Group 은 Consumer Instance 의 High Availability 를 위해 필요하다. 예를 들어 하나의 Consumer Group `Hello` 는 4 개의 Consumer Instance 로 구성되어 있다. `Hello` 는 `world-topic` 에서 message 를 가져온다. Consumer Instance 하나가 장애가 발생해도 서비스의 지장은 없다.
+하나의 Consumer Group 은 여러개의 Consumer Instance 들로 구성된다. Consumer Group 은 Consumer Instance 의 High Availability 를 위해 필요하다. 예를 들어 하나의 Consumer Group `Hello` 는 4 개의 Consumer Instance 로 구성되어 있다. `Hello` 는 `world-topic` 에서 message 를 가져온다. Consumer Instance 하나가 장애가 발생해도 서비스의 지장은 없다.
 
 ## ACK
 
-Kafka 는 하나의 leader 와 여러개의 follower 들로 구성된다. leader 가 Producer 로 부터 Message 를 넘겨 받으면 follower 에게 전송한다. 
+Producer application 의 설정이다.
 
-Producer config 의 ack 설정은 다음과 같다.
+Kafka 는 하나의 leader 와 여러개의 follower 들로 구성된다. leader 가 Producer 로 부터 Message 를 넘겨 받으면 follower 에게 전송한다. 
 
 * `ack=0`: producer 는 message 의 ack 를 필요로 하지 않는다.
 * `ack=1`: producer 는 leader 에게 Message 가 전송되었음을 보장한다. 
@@ -244,19 +290,72 @@ Producer config 의 ack 설정은 다음과 같다.
   * [PROCESSING GUARANTEES @ manual](https://kafka.apache.org/0110/documentation/streams/core-concepts)
   * In order to achieve exactly-once semantics when running Kafka Streams applications, users can simply set the processing.guarantee config value to exactly_once (default value is at_least_once). More details can be found in the Kafka Streams Configs section.
 
+## Record Key
+
+Message 를 구분하는 구분자이다. Record Data 는 key, Value 로 이루어진다. 같은
+Key 의 Record Data 는 같은 Partition 에 저장된다.
+
+예를 들어 `Key=주문/value=키보드` 와 `Key=주문/Value=마우스` 는 같은 Partition 에
+저장된다. 
+
+## Consumer Lag
+
+> * [Monitor Kafka Consumer Group Latency with Kafka Lag Exporter](https://www.lightbend.com/blog/monitor-kafka-consumer-group-latency-with-kafka-lag-exporter)
+
+![](img/consumer-lag.png)
+
+특정 Partition 에서 Producer 가 마지막으로 저장한 Record offset 과 Consumer 가 가져간 마지막 Record offset 의 차이이다. monitoring 해야한다. LAG 이 크다는 것은 consumming 이 제대로 되지 않고 있다는 것을 의미한다.
+
+## Dead letter queue
+
+> * [Kafka Connect Deep Dive – Error Handling and Dead Letter Queues](https://www.confluent.io/blog/kafka-connect-deep-dive-error-handling-dead-letter-queues/)
+
 # Basic
+
+## Usual configs of server.properties
+
+* `broker.id`: The id of broker
+* `listeners`: `host:port`
+* `advertised.listerners`: Kafka client 가 접속할 `host:port`
+* `log.dirs`: The directory of segment files
+* `log.segment.bytes`: The size of segment files
+* `log.retention.ms`: The retention of segment files
+* `zookeeper.connect`: zookeeper `host:port`
+* `auto.create.topics.enable`: ???
+* `num.partitions`: The default count of partitions
+* `message.max.bytes`: The max size of the message
 
 ## Useful Commands
 
-* [Apache Kafka CLI commands cheat sheet](https://medium.com/@TimvanBaarsen/apache-kafka-cli-commands-cheat-sheet-a6f06eac01b#09e8)
+> * [Apache Kafka CLI commands cheat sheet](https://medium.com/@TimvanBaarsen/apache-kafka-cli-commands-cheat-sheet-a6f06eac01b#09e8)
 
-----
+* kafka-topics.sh
+  * Create, read, update topics
+  * `--bootstrap-server`: Target broker `IP:port`
+  * `--replication-factor`: The count of replication. This should be equal or lesser than the count of brokers.
+  * `--partitions`: The count of partitions
+  * `--config`: `retentions.ms, segment.byte`
+  * `--create`: Create topic
+  * `--delete`: Delete topic
+  * `--describe`: Describe topic
+  * `--list`: Show list of topics
+  * `--version`: Show the version of the cluster
+* kafka-console-consumer.sh
+  * Read records from the topic
+* kafka-console-producer.sh
+  * Write records to the topic
+* kafka-consumer-groups.sh
+  * Read and update consumer groups, consumer offsets
+  * `--shift-by <Long>`: Move consumer offset with `+ <Long>` or `- <Long>`
+  * `--to-offset <Long>`: Update consumer offset with `<Long>`.
+  * `--to-latest`: ???
+  * `--to-earliest`: ???
 
 ```bash
 ## Start zookeeper, kafka server
 ## But You don't need this when you use docker-compose
-$ /usr/bin/zookeeper-server-start /etc/kafka/config/zookeeper.properties
-$ /usr/bin/kafka-server-start /etc/kafka/config/server.properties
+$ /usr/bin/zookeeper-server-start -daemon /etc/kafka/config/zookeeper.properties
+$ /usr/bin/kafka-server-start -daemon /etc/kafka/config/server.properties
 
 ## Connect kafka docker container
 $ docker exec -it kafka-stack-docker-compose_kafka1_1 bash
@@ -300,6 +399,135 @@ $ /usr/bin/kafka-topics --zookeeper zoo1:2181 --topic my-topic --describe
 
 ## server log check ???
 $ cat /usr/local/bin/kafka/logs/server.log 
+```
+
+# Producer application integration
+
+> * [src](https://github.com/AndersonChoi/tacademy-kafka)
+
+**Producer mandatory options**
+
+* `bootstrap.servers`: The list of brokers
+* `key.serializer`: Serialize Class
+* `value.serializer`: Deserialize Class
+
+**Producer secondary options**
+
+* `acks`: Record reliability
+* `compression.type`: `snappy, gzip, lz4`
+* `retries`: The count of retry
+* `buffer.memory`: The size of buffer
+* `batch.size`: The size of batch
+* `linger.ms`: Waiting time for current batch to be sended
+* `client.id`: The unique client id
+
+**Simple Producer**
+
+```java
+public class SimpleProducer {
+    private static String TOPIC_NAME = "test";
+    private static String BOOTSTRAP_SERVERS = "127.0.0.1:9092";
+
+    public static void main(String[] args) {
+        Properties configs = new Properties();
+        configs.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
+        configs.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        configs.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+
+        KafkaProducer<String, String> producer = new KafkaProducer<>(configs);
+
+        for (int index = 0; index < 10; index++) {
+            String data = "This is record " + index;
+            ProducerRecord<String, String> record = new ProducerRecord<>(TOPIC_NAME, data);
+            try {
+                producer.send(record);
+                System.out.println("Send to " + TOPIC_NAME + " | data : " + data);
+                Thread.sleep(1000);
+            } catch (Exception e) {
+                System.out.println(e);
+            }
+        }
+    }
+}
+```
+
+# Consumer application integration
+
+> * [src](https://github.com/AndersonChoi/tacademy-kafka)
+
+**Consumer mandatory options**
+
+* `bootstrap.servers`: The list of brokers
+* `key.serializer`: Serialize Class
+* `value.serializer`: Deserialize Class
+* `group.id`: consumer group id
+
+**Consumer secondary options**
+
+* `enable.auto.commit`: auto commit
+* `auto.commit.interval.ms`: auto commit interval time
+* `auto.offset.reset`: consumer offset for new consumer group
+* `client.id`: The unique client id
+* `max.poll.records`: The max count of records per one `poll()`
+* `session.timeout.ms`: The timeout of connection between broker and consumer
+
+**Simple Consumer**
+
+```java
+public class SimpleConsumer {
+    private static String TOPIC_NAME = "test";
+    private static String GROUP_ID = "testgroup";
+    private static String BOOTSTRAP_SERVERS = "127.0.0.1:9092";
+
+    public static void main(String[] args) {
+        Properties configs = new Properties();
+        configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BOOTSTRAP_SERVERS);
+        configs.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP_ID);
+        configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+        configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
+
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<>(configs);
+
+        consumer.subscribe(Arrays.asList(TOPIC_NAME));
+
+        while (true) {
+            ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(1));
+            for (ConsumerRecord<String, String> record : records) {
+                System.out.println(record.value());
+            }
+        }
+    }
+}
+```
+
+# How to prevent Duplicated messages in consumer
+
+Please use `commitSync(), commitAsync()` instead of `enable.auto.commit=true`.
+
+Please use `wakeup()` for graceful shutdown. SIGTERM will shutdown gracefully.
+SIGKILL will not shutdown gracefully.
+
+```java
+Runtime.getRuntime().addShutdownHook(new Thread() {
+  public void run() {
+    consumer.wakeup();
+  }
+});
+
+try {
+  while (true) {
+    ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(1));
+    for (ConsumerRecord<String, String> record : records) {
+      System.out.println(record.value());
+    } 
+    consumer.commitSync();
+  }
+} catch (WakeupException e) {
+  System.out.println("poll() method trigger WakeupException");
+}finally {
+  consumer.commitSync();
+  consumer.close();
+}
 ```
 
 # Advanced
