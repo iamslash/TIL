@@ -22,6 +22,7 @@
   - [list](#list)
     - [pros](#pros-2)
     - [cons](#cons-2)
+  - [priority_queue](#priority_queue)
   - [How to choose a container](#how-to-choose-a-container)
 - [Advanced Usages](#advanced-usages)
   - [RAII (Resource Acquisition Is Initialzation)](#raii-resource-acquisition-is-initialzation)
@@ -359,6 +360,43 @@ int main() {
 ### cons
 
 - index 로 접근 불가능하다. 
+
+## priority_queue
+
+`참이면 꼭대기이다` 를 기억하자.
+
+```cpp
+#include <cstdio>
+#include <queue>
+#include <string>
+
+using namespace std;
+
+struct Compare {
+  bool operator() (const pair<string, int>& a,
+                   const pair<string, int>& b) {
+    if (a.second == b.second) {
+      return a.first > b.first;
+    }
+    return a.second < b.second;
+  }
+};
+int main() {
+  priority_queue<pair<string, int>,
+                 vector<pair<string, int>>,
+                 Compare> pq;
+  pq.push({"Hello", 1});
+  pq.push({"World", 2});
+  pq.push({"Foo", 3});
+  pq.push({"Bar", 3});
+  // Bar Foo World Hello
+  while (!pq.empty()) {
+    printf("%s\n", pq.top().first.c_str());
+    pq.pop();
+  }
+  return 0;
+}
+```
 
 ## How to choose a container
 

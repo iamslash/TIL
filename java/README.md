@@ -458,20 +458,62 @@ System.out.printf("%s : %d%n", "age", 11);
 
 * Queue, PriorityQueue
 
+`작은 값이 꼭대기이다.` 를 기억하라. a, b 를 뒤집으면 `큰 값이 꼭대기이다.`
+참고로 [priority_queue of cpp](/cpp/README.md) 는 `참이 꼭대기이다.`.
+
 ```java
-   // Ascending order
-   Queue<Integer> queue = new PriorityQueue<>();
-   // Descending order
-   Queue<Integer> queue = new PriorityQueue<>((a,b) -> b - a);
-   queue.add(1);
-   queue.add(100);
-   queue.add(0);
-   queue.add(1000);
-   int peeked = queue.peek();
-   while (queue.size() > 0) {
-      int polled = queue.poll();
-      System.out.println(polled);
-   }
+		// Less top. 작은 값이 꼭대기다.
+		Queue<Integer> pqLess = new PriorityQueue<>();
+		// Great top. 큰 값이 꼭대기다
+		Queue<Integer> pqGreat = new PriorityQueue<>((a,b) -> b - a);
+		pqLess.offer(1);   pqGreat.offer(1);
+		pqLess.offer(10);  pqGreat.offer(10);
+		pqLess.offer(0);   pqGreat.offer(0);
+		pqLess.offer(100); pqGreat.offer(100);
+		// 0 1 10 100
+		System.out.println(pqLess.peek());
+		while (pqLess.size() > 0) {
+      System.out.println(pqLess.poll());
+		}
+		// 100 10 1 0
+		System.out.println(pqGreat.peek());
+		while (pqGreat.size() > 0) {
+      System.out.println(pqGreat.poll());
+		}		
+```
+
+```java
+class Pair {
+	String word;
+	Integer cnt;
+	public Pair(String s, int t) {
+		this.word = s;
+		this.cnt = t;
+	}
+}
+
+public class MainApp {
+  public static void main(String[] args) {
+		// Great cnt, less word top
+		Queue<Pair> pq = new PriorityQueue<>((a, b) -> {
+				if (a.cnt == b.cnt) {
+               // 사전순으로 작은 값이 꼭대기다.
+					return a.word.compareTo(b.word);
+				}
+            // a,b 를 뒤집었다.
+            // 큰 값이 꼭대기다.
+				return b.cnt - a.cnt;
+		});
+		pq.offer(new Pair("Hello", 1));
+		pq.offer(new Pair("World", 2));
+		pq.offer(new Pair("Foo", 3));
+		pq.offer(new Pair("Bar", 3));
+		// Bar Foo World Hello
+		while (!pq.isEmpty()) {
+			System.out.println(pq.poll().word);
+		}
+  }
+}
 ```
 
 * SortedSet, TreeSet
