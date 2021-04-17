@@ -1,9 +1,14 @@
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Install with Docker](#install-with-docker)
 - [Basics](#basics)
   - [Features](#features)
+    - [RDBMS vs Cassandra](#rdbms-vs-cassandra)
+    - [Primary, Partition, Composite, Clustering key](#primary-partition-composite-clustering-key)
     - [Internal Data structure](#internal-data-structure)
+    - [Collection](#collection)
+    - [Where is Data Stored](#where-is-data-stored)
     - [Partitioner](#partitioner)
     - [Data Consistency](#data-consistency)
     - [Data Replication](#data-replication)
@@ -14,25 +19,23 @@
     - [How to update data](#how-to-update-data)
     - [Light-weight transaction](#light-weight-transaction)
     - [Secondary Index](#secondary-index)
-    - [Secondary Index](#secondary-index-1)
     - [Batch](#batch)
-    - [Collection](#collection)
   - [Good Pattern](#good-pattern)
     - [Time Sequencial Data](#time-sequencial-data)
     - [Denormalize](#denormalize)
     - [Paging](#paging)
       - [Paging Columns of One Partition](#paging-columns-of-one-partition)
-        - [Paging Columns of Multiple Partitions](#paging-columns-of-multiple-partitions)
+      - [Paging Columns of Multiple Partitions](#paging-columns-of-multiple-partitions)
   - [Anti Pattern](#anti-pattern)
     - [Unbounded Data](#unbounded-data)
-    - [Secondary Index](#secondary-index-2)
+    - [Secondary Index](#secondary-index-1)
     - [Delete Data](#delete-data)
     - [Memory Overflow](#memory-overflow)
   - [Data Types](#data-types)
-  - [Primary, Partition, Composite, Clustering key](#primary-partition-composite-clustering-key)
-  - [Useful Queries](#useful-queries)
+  - [Useful CQL](#useful-cql)
+- [Exapmles](#exapmles)
   - [Basic Schema Design](#basic-schema-design)
-  - [Twitter Examples](#twitter-examples)
+  - [Twitter](#twitter)
     - [Shcema](#shcema)
     - [Queries](#queries)
 
@@ -40,22 +43,28 @@
 
 # Abstract
 
-Cassandra's write performance is good. But it donen't support Join, Transaction RDBMS supports. It is perfect for write heavy jobs. For example, Messages, Logs by time. Cassandra's update performcne is bad. If you want to update records many times, consider to use MongoDB, dynamoDB.
+Cassandra's write performance is good. But it donen't support Join, Transaction
+RDBMS supports. It is perfect for write heavy jobs. For example, Messages, Logs
+by time. Cassandra's update performcne is bad. If you want to update records
+many times, consider to use MongoDB, dynamoDB.
+
+# References
+
+* [Learn Cassandra](https://teddyma.gitbooks.io/learncassandra/content/index.html)
+  * 개발자 입장에서 Cassandra 를 정리. 킹왕짱.
+* [Apache Cassandra Documentation](https://cassandra.apache.org/doc/latest/)
+  * This is mandatory.
+* [Cassnadra 의 기본 특징 정리](https://nicewoong.github.io/development/2018/02/11/cassandra-feature/)
+* [Apache Cassandra 톺아보기 - 1편](https://meetup.toast.com/posts/58)
+  * [Apache Cassandra 톺아보기 - 2편](https://meetup.toast.com/posts/60)
+  * [Apache Cassandra 톺아보기 - 3편](https://meetup.toast.com/posts/65)
 
 # Materials
 
 * [Introduction to Apache Cassandra Workshop @ youtube](https://www.youtube.com/watch?v=quBJDXAzlqM)
   * [slides](https://github.com/DataStax-Academy/Intro-to-Cassandra-for-Developers)
-* [Apache Cassandra Documentation](https://cassandra.apache.org/doc/latest/)
-  * This is mandatory.
-* [Learn Cassandra](https://teddyma.gitbooks.io/learncassandra/content/index.html)
-  * 개발자 입장에서 Cassandra 를 정리
 * [Understanding How CQL3 Maps to Cassandra's Internal Data Structure @ slideshare](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
   * Cassandra 의 data 구조를 설명
-* [Cassnadra 의 기본 특징 정리](https://nicewoong.github.io/development/2018/02/11/cassandra-feature/)
-* [Apache Cassandra 톺아보기 - 1편](https://meetup.toast.com/posts/58)
-  * [Apache Cassandra 톺아보기 - 2편](https://meetup.toast.com/posts/60)
-  * [Apache Cassandra 톺아보기 - 3편](https://meetup.toast.com/posts/65)
 * [How To Install Cassandra and Run a Single-Node Cluster on Ubuntu 14.04 @ digitalocean](https://www.digitalocean.com/community/tutorials/how-to-install-cassandra-and-run-a-single-node-cluster-on-ubuntu-14-04)
 
 # Install with Docker
@@ -100,9 +109,57 @@ CREATE_INDEX             DROP_TABLE                SELECT_JSON
 
 ## Features
 
+### RDBMS vs Cassandra
+
+| RDBMS | Cassandra |
+|--|--|
+| DataBase | Keyspace |
+| Table | Column Family (CF) |
+| Primary Key | Row Key |
+| Column name | Column name/key |
+| Column value | Column value |
+
+
+### Primary, Partition, Composite, Clustering key
+
+> * [[cassandra] 키의 종류 - primary key, partition key, clustering key, composite(compound) key, composite partition key, secondary index](https://knight76.tistory.com/entry/cassandra-%ED%82%A4%EC%9D%98-%EC%A2%85%EB%A5%98-primary-key-partition-key-clustering-key-compositecompound-key-composite-partition-key)
+
+* Primary Key
+  * RDBMS 의 Primary Key 와 비슷하다. row data 를 unique 하게 해준다.
+    ```
+    CREATE TABLE iamslash.person ( 
+      code text, 
+      location text, 
+      sequence text, 
+      description text, 
+      PRIMARY KEY (code, location)
+    );
+    ```
+  * `PRIMARY KEY(col1, col2, col3)` 와 같이 사용한다. 한개 이상의 col 이 필요하다.
+* Partition Key
+  * Primary Key 의 첫번째 col 즉, 첫번째 Key 를 의미한다. row data 를 어떤 node 에 저장할지 결정한다.
+* Cluster Key
+  * Primary Key 의 첫번째 col 즉, Parition Key 를 제외한 나머지 Key 를 Cluster Key 라고 한다. 다음의 예에서 `hotel_id` 가 Cluster Key 이다.
+    ```sql
+    CREATE TABLE hotel.hotels_by_poi (
+    poi_name text,
+    hotel_id text,
+    name text,
+    phone text,
+    address frozen<address>,
+    PRIMARY KEY ((poi_name), hotel_id) )
+    WITH comment = ‘Q1. Find hotels near given poi’
+    AND CLUSTERING ORDER BY (hotel_id ASC) ;
+    ```
+  * `WITH CLUSTERING ORDER BY (hotel_id ASC)` 와 같이 사용한다.
+* Composite (Compound) Key
+  * Partition Key 가 두개 이상일 때 Composite Partition Key 라고 부른다.
+  * `PRIMARY KEY((col1, col2), col3)`
+  * Cluster Key 가 두개 이상일 때 Composite Cluster Key 라고 부른다.
+
 ### Internal Data structure
 
-[Understanding How CQL3 Maps to Cassandra's Internal Data Structure](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
+> * [Understanding How CQL3 Maps to Cassandra's Internal Data Structure](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
 
 -----
 
@@ -123,14 +180,194 @@ CREATE_INDEX             DROP_TABLE                SELECT_JSON
 ![](cassandra_internal_table_map.png)
 
 * Partition Key 덕분에 Row 를 빠르게 찾을 수 있다.
-* Row 를 찾고나서 Col 을 빠르게 scan 할 수 있다. 정렬되어 있으니까?
-* Row 를 scan 하지는 않는다.
+* Row 를 찾고나서 Columns 을 빠르게 scan 할 수 있다. Row 의 Columns 는 정렬되어 있다. 그래서 하나의 Row 를 a nested sorted map data structure 라고한다. Column Key 들의 숫자는 제한이 없다. 그래서 Wide Column Store 라고 부른다.
+  * `Map<RowKey, SortedMap<ColumnKey, ColumnValue>>`
+  * ![](sortedmap.jpg)
+* Row 를 scan 할 수는 없다.
 * Set, List, Map 과 같이 3 종류의 Collection 을 지원한다. 
 * Collection 은 Primary Key 가 될 수 없다.
 
+예를 들어 다음과 같이 CQL 를 실행해 보자.
+
+```sql
+CREATE TABLE example (
+    field1 int PRIMARY KEY,
+    field2 int,
+    field3 int);
+INSERT INTO example (field1, field2, field3) VALUES (1,2,3);
+INSERT INTO example (field1, field2, field3) VALUES (4,5,6);
+INSERT INTO example (field1, field2, field3) VALUES (7,8,9);
+```
+
+다음은 위의 Query 를 실행한후 internal data structure 의 구조이다.
+
+```
+RowKey: 1
+=> (column=, value=, timestamp=1374546754299000)
+=> (column=field2, value=00000002, timestamp=1374546754299000)
+=> (column=field3, value=00000003, timestamp=1374546754299000)
+-------------------
+RowKey: 4
+=> (column=, value=, timestamp=1374546757815000)
+=> (column=field2, value=00000005, timestamp=1374546757815000)
+=> (column=field3, value=00000006, timestamp=1374546757815000)
+-------------------
+RowKey: 7
+=> (column=, value=, timestamp=1374546761055000)
+=> (column=field2, value=00000008, timestamp=1374546761055000)
+=> (column=field3, value=00000009, timestamp=1374546761055000)
+```
+
+이번에는 Compound Primary Key, Compound Cluster Key 를 사용한 CQL 를 살펴보자.
+
+```sql
+CREATE TABLE example (
+    partitionKey1 text,
+    partitionKey2 text,
+    clusterKey1 text,
+    clusterKey2 text,
+    normalField1 text,
+    normalField2 text,
+    PRIMARY KEY (
+        (partitionKey1, partitionKey2),
+        clusterKey1, clusterKey2
+        )
+    );
+
+INSERT INTO example (
+    partitionKey1,
+    partitionKey2,
+    clusterKey1,
+    clusterKey2,
+    normalField1,
+    normalField2
+    ) VALUES (
+    'partitionVal1',
+    'partitionVal2',
+    'clusterVal1',
+    'clusterVal2',
+    'normalVal1',
+    'normalVal2');    
+```
+
+다음은 위의 Query 를 실행한후 internal data structure 의 구조이다.
+
+```
+RowKey: partitionVal1:partitionVal2
+=> (column=clusterVal1:clusterVal2:, value=, timestamp=1374630892473000)
+=> (column=clusterVal1:clusterVal2:normalfield1, value=6e6f726d616c56616c31, timestamp=1374630892473000)
+=> (column=clusterVal1:clusterVal2:normalfield2, value=6e6f726d616c56616c32, timestamp=1374630892473000)
+```
+
+이번에는 Map, List, Set 를 사용한 CQl 이다.
+
+```sql
+CREATE TABLE example (
+    key1 text PRIMARY KEY,
+    map1 map<text,text>,
+    list1 list<text>,
+    set1 set<text>
+    );
+
+INSERT INTO example (
+    key1,
+    map1,
+    list1,
+    set1
+    ) VALUES (
+    'john',
+    {'patricia':'555-4326','doug':'555-1579'},
+    ['doug','scott'],
+    {'patricia','scott'}
+    )
+```
+
+다음은 위의 Query 를 실행한후 internal data structure 의 구조이다.
+
+```
+RowKey: john
+=> (column=, value=, timestamp=1374683971220000)
+=> (column=map1:doug, value='555-1579', timestamp=1374683971220000)
+=> (column=map1:patricia, value='555-4326', timestamp=1374683971220000)
+=> (column=list1:26017c10f48711e2801fdf9895e5d0f8, value='doug', timestamp=1374683971220000)
+=> (column=list1:26017c12f48711e2801fdf9895e5d0f8, value='scott', timestamp=1374683971220000)
+=> (column=set1:'patricia', value=, timestamp=1374683971220000)
+=> (column=set1:'scott', value=, timestamp=1374683971220000)
+```
+
+
+### Collection
+
+> * [Creating collections @ cassandra](https://docs.datastax.com/en/cql-oss/3.3/cql/cql_using/useCollections.html)
+
+----
+
+Cassandra 는 set, list, map 과 같이 3 가지의 collection data type 을 지원한다.
+
+```sql
+cqlsh> CREATE TABLE cycling.cyclist_career_teams ( 
+  id UUID PRIMARY KEY, 
+  lastname text, 
+  teams set<text> );
+
+cqlsh> CREATE TABLE cycling.upcoming_calendar ( 
+  year int, 
+  month int, 
+  events list<text>, 
+  PRIMARY KEY ( year, month) );  
+
+cqlsh> CREATE TABLE cycling.cyclist_teams ( 
+  id UUID PRIMARY KEY, 
+  lastname text, 
+  firstname text, 
+  teams map<int,text> );  
+```
+
+![](cassandra_internal_table_set.png)
+
+![](cassandra_internal_table_list.png)
+
+![](cassandra_internal_table_map.png)
+
+### Where is Data Stored
+
+Cassandra 는 data 를 **memtable**, **commit log**, **SSTable** 에 저장한다.
+
+예를 들어 다음의 CQL 을 실행해보자.
+
+```sql
+INSERT INTO k1.t1 (c1) VALUES (v1);
+INSERT INTO k2.t1 (c1, c2) VALUES (v1, v2);
+INSERT INTO k1.t1 (c1, c3, c2) VALUES (v4, v3, v2);
+```
+
+위의 data 는 memtable 에 다음과 같이 저장된다.
+
+```
+k1 c1:v4 c2:v2 c3:v3
+k2 c1:v1 c2:v2
+```
+
+Disk 의 commit log 에 다음과 같이 저장된다.
+
+```
+k1, c1:v1
+k2, c1:v1 C2:v2
+k1, c1:v4 c3:v3 c2:v2
+```
+
+Cassandra 는 memtable 을 flushing 하면 Disk 의 SSTable 에 다음과 같이 저장한다.
+
+```
+k1 c1:v4 c2:v2 c3:v3
+k2 c1:v1 c2:v2
+```
+
+![](cassandra_data_write_2.png)
+
 ### Partitioner
 
-Partitioner is a module which transform "Row key" to "token". There are 3 partitioners such as "RandomPartitioner, Murmur3Partitioner, ByteOrderedPartitioner".
+Partitioner is a module which transform "Row key" to "token". There are 3 partitioners such as **RandomPartitioner**, **Murmur3Partitioner**, **ByteOrderedPartitioner**.
 
 `ByteOrderedPartitioner` can make hot spot situation.
 
@@ -142,8 +379,8 @@ Partitioner is a module which transform "Row key" to "token". There are 3 partit
 
 ### Data Consistency
 
-* [Switching snitches @ datastax](https://docs.datastax.com/en/archived/cassandra/3.0/cassandra/operations/opsSwitchSnitch.html)
-* [Data consistency @ datastax](https://docs.datastax.com/en/archived/cassandra/3.0/cassandra/dml/dmlDataConsistencyTOC.html)
+> * [Switching snitches @ datastax](https://docs.datastax.com/en/archived/cassandra/3.0/cassandra/operations/opsSwitchSnitch.html)
+> * [Data consistency @ datastax](https://docs.datastax.com/en/archived/cassandra/3.0/cassandra/dml/dmlDataConsistencyTOC.html)
 
 -----
 
@@ -159,7 +396,8 @@ Keyspace 를 생성할 때 Replication 의 배치전략, 복제개수, 위치등
 
 ### How to write data
 
-* [Understanding How CQL3 Maps to Cassandra's Internal Data Structure](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
+> * [Write Requests](https://teddyma.gitbooks.io/learncassandra/content/client/write_requests.html)
+> * [Understanding How CQL3 Maps to Cassandra's Internal Data Structure](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
 
 -----
 
@@ -169,24 +407,25 @@ Keyspace 를 생성할 때 Replication 의 배치전략, 복제개수, 위치등
 
 ![](cassandra_data_write.png)
 
-* Client 는 임의의 Cassandra node 에게 Write request 한다. 이때 Write request 를 수신한 node 를 Coordinator 라고 한다. Coordinator 를 통해 data 를 write 할 node 를 Target Node 하고 하자.
-* Coordinator 는 수신한 data 의 Row key 를 token 으로 변환하고 어떤 node 에 data 를 write 해야 하는지 판단한다. 그리고 Query 에 저장된 Consistency level 에 따라 몇 개의 node 에 write 할지 참고하여 data 를 write 할 node 들의 status 를 확인한다. 
-* 이때 특정한 node 의 status 가 정상이 아니라면 consistency level 에 따라 coordinator 의 `hint hand off` 라는 local 의 임시 저장공간에 write 할 data 를 저장한다.
-  * `hint and off` 덕분에 Coordinator 는 비정상이었던 target node 의 상태가 정상으로 회복되면 write request 를 다시 보낼 수 있다.
-  * 그러나 `hint hand off` 에 저장하고 coordinator 가 죽어버리면 방법이 없다.
-* Coordinator 는 `hint and off` 에 data 를 backup 하고 Cassandra 의 topology 를 확인하여 어느 데이터 센터의 어느 렉에 있는 노드에 먼저 접근할 것인지 결정한다. 그리고 그 node 에 write request 한다.
+* Client 는 임의의 Cassandra node 에게 Write request 한다. 이때 Write request 를 수신한 node 를 **Coordinator** 라고 한다. **Coordinator** 를 통해 data 를 write 할 node 를 **Target-node** 하고 하자.
+* Coordinator 는 수신한 data 의 Row key 를 **token** 으로 변환하고 어떤 node 에 data 를 write 해야 하는지 판단한다. 그리고 Query 에 저장된 Consistency level 에 따라 몇 개의 node 에 write 할지 참고하여 data 를 write 할 node 들의 status 를 확인한다. 
+* 이때 특정한 node 의 status 가 정상이 아니라면 consistency level 에 따라 **coordinator** 의 `hint hand off` 라는 local 의 임시 저장공간에 write 할 data 를 저장한다.
+  * `hint and off` 덕분에 **Coordinator** 는 비정상이었던 **Target-node** 의 상태가 정상으로 회복되면 write request 를 다시 보낼 수 있다.
+  * 그러나 `hint hand off` 에 저장하고 **coordinator** 가 죽어버리면 방법이 없다.
+* **Coordinator** 는 `hint and off` 에 data 를 backup 하고 Cassandra 의 topology 를 확인하여 어느 데이터 센터의 어느 렉에 있는 노드에 먼저 접근할 것인지 결정한다. 그리고 그 node 에 write request 한다.
 
 ![](cassandra_data_write_2.png)
 
-* Target node 는 Coordinator 로 부터 write request 를 수신하면 `CommitLog` 라는 local disk 에 저장한다. 
-* Target node 는 `MemTable` 이라는 memory 에 data 를 write 하고 response 를 Coordinator 에게 보낸다.
-* Target node 는 `MemTable` 에 data 가 충분히 쌓이면 `SSTable` 이라는 local disk 에 data 를 flush 한다.
+* **Target-node** 는 **Coordinator** 로 부터 write request 를 수신하면 `CommitLog` 라는 local disk 에 저장한다. 
+* **Target-node** 는 `MemTable` 이라는 memory 에 data 를 write 하고 response 를 **Coordinator** 에게 보낸다.
+* **Target-node** 는 `MemTable` 에 data 가 충분히 쌓이면 `SSTable` 이라는 local disk 에 data 를 flush 한다.
   * `SSTable` 은 immutable 하고 sequential 하다.
   * Cassandra 는 다수의 `SSTable` 을 정기적으로 Compaction 한다. 예를 들어 n 개의 `SSTable` 에 `a` 라는 데이터가 여러개 존재한다면 Compaction 할 때 가장 최신의 버전으로 merge 한다.
 
 ### How to read data
 
-[Understanding How CQL3 Maps to Cassandra's Internal Data Structure](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
+> * [Read Requests](https://teddyma.gitbooks.io/learncassandra/content/client/read_requests.html)
+> * [Understanding How CQL3 Maps to Cassandra's Internal Data Structure](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
 
 ![](cassandra_internal_write.png)
 
@@ -194,14 +433,14 @@ Keyspace 를 생성할 때 Replication 의 배치전략, 복제개수, 위치등
 
 ![](cassandra_data_read.png)
 
-* Client 는 임의의 Cassandra node 에게 read request 한다. 이때 read request 를 수신한 node 를 Coordinator 라고 한다. data 를 read 할 node 를 Target Node 라고 하자.
+* Client 는 임의의 Cassandra node 에게 read request 한다. 이때 read request 를 수신한 node 를 **Coordinator** 라고 한다. data 를 read 할 node 를 **Target-node** 라고 하자.
 * Coordinator 는 수신한 data 의 Row key 를 token 으로 변환하고 어떤 node 에 data 를 read 해야 하는지 판단한다. 그리고 Query 에 저장된 Consistency level 에 따라 몇 개의 Replication 을 확인할지 결정한다. 그리고 data 가 있는 가장 가까운 node 에 data request 를 보내고 그 다음 가까운 node 들에게는 data digest request 를 보낸다.
-* Coordinator 는 이렇게 가져온 data response 와 data digest response 를 참고하여 data 가 일치하지 않으면 일치하지 않는 node 들로 부터 full data 를 가져와서 그들 중 가장 최신 버전의 data 를 client 에게 보낸다. 
-  * 그리고 그 data 를 이용하여 target node 들의 data 를 보정한다.
+* **Coordinator** 는 이렇게 가져온 data response 와 data digest response 를 참고하여 data 가 일치하지 않으면 일치하지 않는 node 들로 부터 full data 를 가져와서 그들 중 가장 최신 버전의 data 를 client 에게 보낸다. 
+  * 그리고 그 data 를 이용하여 **Target-node** 들의 data 를 보정한다.
 
 ![](cassandra_data_read_2.png)
 
-* Target node 는 read request 를 수신하면 가장 먼저 `MemTable` 을 확인한다. 
+* **Target-node** 는 read request 를 수신하면 가장 먼저 `MemTable` 을 확인한다. 
 * 만약 없다면 `SSTable` 을 확인해야 한다. 그러나 그 전에 `SStable` 과 짝을 이루는 `Bloom Filter` 와 `Index` 를 먼저 확인 한다.
   * `Bloom Filter` 는 확률적 자료구조이다. 데이터가 없는 걸 있다고 거짓말 할 수 있지만 있는 걸 없다고 거짓말 하지는 못한다.
   * `Bloom Filter` 가 있다고 하면 `SSTable` 에 반드시 데이터가 있음을 의미한다???
@@ -210,7 +449,7 @@ Keyspace 를 생성할 때 Replication 의 배치전략, 복제개수, 위치등
 
 ### How to delete data
 
-* Cassandra 는 delete 을 바로 수행하지 않는다. 모든 data 는 `Tombstone` 이라는 marker 를 갖는다. delete request 를 수신하면 그 data 의 `Tombstone` 에 marking 을 하고 주기적인 `Garbage Collection` 이나 `SSTable` 의 compaction 등이 발생할 때 data 를 삭제한다.
+* Cassandra 는 delete 을 바로 수행하지 않는다. 모든 data 는 `Tombstone` 이라는 marker field 를 갖는다. delete request 를 수신하면 그 data 의 `Tombstone` 에 marking 을 하고 주기적인 `Garbage Collection` 이나 `SSTable` 의 compaction 등이 발생할 때 data 를 삭제한다.
 
 ### How to update data
 
@@ -238,9 +477,6 @@ cqlsh> UPDATE cycling.cyclist_name
 
 ### Secondary Index
 
-
-### Secondary Index
-
 Secondary Index 는 Cassandra 7.0 이후 등장했다. Partition Key, Clustering Key 에 해당이 안되는 column 에 대해 검색방법이 없었다. 그러나 denormalization 을 활용해 이 문제를 해결했다.
 
 ```sql
@@ -264,7 +500,7 @@ cqlsh> SELECT * FROM iamslash.person WHERE description = 'foo';
 
 ### Batch
 
-* [BATCH @ cassandra](https://docs.datastax.com/en/dse/6.0/cql/cql/cql_reference/cql_commands/cqlBatch.html)
+> * [BATCH @ cassandra](https://docs.datastax.com/en/dse/6.0/cql/cql/cql_reference/cql_commands/cqlBatch.html)
 
 -----
 
@@ -287,40 +523,6 @@ BEGIN BATCH USING TIMESTAMP 1481124356754405
 
 APPLY BATCH;
 ```
-
-### Collection
-
-* [Creating collections @ cassandra](https://docs.datastax.com/en/cql-oss/3.3/cql/cql_using/useCollections.html)
-
-----
-
-Cassandra 는 set, list, map 과 같이 3 가지의 collection data type 을 지원한다.
-
-```sql
-cqlsh> CREATE TABLE cycling.cyclist_career_teams ( 
-  id UUID PRIMARY KEY, 
-  lastname text, 
-  teams set<text> );
-
-cqlsh> CREATE TABLE cycling.upcoming_calendar ( 
-  year int, 
-  month int, 
-  events list<text>, 
-  PRIMARY KEY ( year, month) );  
-
-cqlsh> CREATE TABLE cycling.cyclist_teams ( 
-  id UUID PRIMARY KEY, 
-  lastname text, 
-  firstname text, 
-  teams map<int,text> );  
-```
-
-
-![](cassandra_internal_table_set.png)
-
-![](cassandra_internal_table_list.png)
-
-![](cassandra_internal_table_map.png)
 
 ## Good Pattern
 
@@ -411,10 +613,9 @@ cqlsh> SELECT * FROM iamslash.user WHERE class = 'junior' LIMIT 5;
 cqlsh> SELECT * FROM iamslash.user WHERE class = 'junior' AND name > 'elen' LIMIT 5;
 ```
 
-##### Paging Columns of Multiple Partitions
+#### Paging Columns of Multiple Partitions
 
 `TOKEN()` 함수를 이용하여 여러 Partitions 에서 수집한 data 를 paging 할 수 있다.
-
 
 ```sql
 cqlsh> CREATE KEYSPACE iamslash WITH replication = {
@@ -523,48 +724,10 @@ Cassandra 는 Keyspace 와 Table 에 대한 Metadata 를 JVM 메모리에 올려
 
 * `text` is a alias for `varchar.`
 
-## Primary, Partition, Composite, Clustering key
+## Useful CQL 
 
-[[cassandra] 키의 종류 - primary key, partition key, clustering key, composite(compound) key, composite partition key, secondary index](https://knight76.tistory.com/entry/cassandra-%ED%82%A4%EC%9D%98-%EC%A2%85%EB%A5%98-primary-key-partition-key-clustering-key-compositecompound-key-composite-partition-key)
-
-----
-
-* Primary Key
-  * RDBMS 의 Primary Key 와 비슷하다. row data 를 unique 하게 해준다.
-    ```
-    CREATE TABLE iamslash.person ( 
-      code text, 
-      location text, 
-      sequence text, 
-      description text, 
-      PRIMARY KEY (code, location)
-    );
-    ```
-  * `PRIMARY KEY(col1, col2, col3)` 와 같이 사용한다. 한개 이상의 col 이 필요하다.
-* Partition Key
-  * Primary Key 의 첫번째 col 즉, 첫번째 Key 를 의미한다. row data 를 어떤 node 에 저장할지 결정한다.
-* Composite (Compound) Key
-  * Partition Key 가 두개 이상일 때 Composite Key 라고 부른다.
-  * `PRIMARY KEY((col1, col2), col3)`
-* Clustering Key
-  * Primary Key 의 첫번째 col 즉, Parition Key 를 제외한 나머지 Key 를 Clustering Key 라고 한다.
-    ```
-    CREATE TABLE hotel.hotels_by_poi (
-    poi_name text,
-    hotel_id text,
-    name text,
-    phone text,
-    address frozen<address>,
-    PRIMARY KEY ((poi_name), hotel_id) )
-    WITH comment = ‘Q1. Find hotels near given poi’
-    AND CLUSTERING ORDER BY (hotel_id ASC) ;
-    ```
-  * `WITH CLUSTERING ORDER BY (hotel_id ASC)` 와 같이 사용한다.
-
-## Useful Queries 
-
-* [Cassandra @ tutorialpoint](https://www.tutorialspoint.com/cassandra/index.htm)
-* [Understanding How CQL3 Maps to Cassandra's Internal Data Structure](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
+> * [Cassandra @ tutorialpoint](https://www.tutorialspoint.com/cassandra/index.htm)
+> * [Understanding How CQL3 Maps to Cassandra's Internal Data Structure](https://www.slideshare.net/DataStax/understanding-how-cql3-maps-to-cassandras-internal-data-structure)
 
 ----
 
@@ -618,6 +781,8 @@ INSERT INTO iamslash.person (code, location, sequence, description ) VALUES ('N3
 -- Delete a row
 > Delete FROM iamslash.person WHERE code='N3';
 ```
+
+# Exapmles
 
 ## Basic Schema Design
 
@@ -736,9 +901,9 @@ CREATE TABLE reservation.guests (
   WITH comment = ‘Q9. Find guest by ID’;
 ```
 
-## Twitter Examples
+## Twitter
 
-* [Twissandra @ github](https://github.com/twissandra/twissandra)
+> * [Twissandra @ github](https://github.com/twissandra/twissandra)
 
 -----
 
@@ -791,7 +956,7 @@ CREATE TABLE timeline (
 
 `~/cass.py`
 
-* SELECT
+> * SELECT
 
 ```sql
 -- get timeline
@@ -807,7 +972,7 @@ CREATE TABLE timeline (
 > SELECT * FROM tweets WHERE tweet_id=?
 ```
 
-* INSERT
+> * INSERT
 
 ```py
 def save_tweet(tweet_id, username, tweet, timestamp=None):
