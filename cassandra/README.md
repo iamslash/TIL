@@ -72,7 +72,7 @@ many times, consider to use MongoDB, dynamoDB.
 * [cassandra @ docker-hub](https://hub.docker.com/_/cassandra)
 
 ```console
-$ docker run --rm --name my-cassandra -d cassandra
+$ docker run --rm -p 9042:9042 --name my-cassandra -d cassandra
 
 $ docker exec -it my-cassandra bash
 > cqlsh
