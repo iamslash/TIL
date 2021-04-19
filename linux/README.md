@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Permissions](#permissions)
   - [mode](#mode)
@@ -58,6 +59,11 @@ systemd 가 설치된 [ubuntu docker image](https://hub.docker.com/r/jrei/system
 $ docker run -d --name systemd-ubuntu --privileged jrei/systemd-ubuntu
 $ docker exec -it systemd-ubuntu bash
 ```
+
+# References
+
+* [DevOps와 SE를 위한 리눅스 커널 이야기 @ gitbooks](https://jihooyim1.gitbooks.io/linuxbasic/content/)
+  * DevOps 를 위한 linux kernel 지식
 
 # Materials
 
