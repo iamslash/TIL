@@ -124,22 +124,44 @@ Worker-Node 는 초기에 미니언(minion) 이라고 불렀다. **kubelet, kube
 
 Kubernetes cluster 는 current state 을 object 로 표현한다. Kubernetes 는 current state 의 object 들을 예의 주시하다가 desired state 의 object 가 발견되면 지체 없이 current state object 들을 desired state state 으로 변경한다. 
 
-Kubernetes object 는 Pod, DaemonSet, Deployment, ReplicaSet, Job, Service, Label 등이 있다.
+다음은 Kubernetes object 들 중 많이 사용되는 것들이다.
 
+* ConfigMap
+* Endpoints
+* Event
+* LimitRange
+* Namespace
+* Node
+* PersistentVolumeClaim
+* PersistenVolume
 * Pod
   * A thin wrapper around one or more containers
+* PodTemplate
+* ResourceQuota
+* Secret
+* ServiceAccount
+* Service
+  * Maps a fixed IP address to a logical group of pods
+* APIService
 * DaemonSet
   * Implements a single instance of a pod on every worker node
 * Deployment
   * Details how to roll out (or roll back) across versions of your application
 * ReplicaSet
   * Ensures a defined number of pods are always running
+* StatefulSet
+* HorizontalPodAutoscaler
+* CronJob
 * Job
   * Ensures a pod properly runs to completion
-* Service
-  * Maps a fixed IP address to a logical group of pods
-* Label
-  * Key/Value pairs used for association and filtering
+* CertificateSigningRequest
+* Ingress
+* PodDisruptionBudget
+* ClusterRoleBinding
+* ClusterRole
+* RoleBinding
+* Role
+* StorageClass
 
 Kubernetes 는 Control Plane 과 Data Plane 으로 나눌 수 있다.
 
@@ -172,7 +194,6 @@ spec:
 * **metadata**: Kind type 의 Kubernetes Object 의 meta data 이다. name 등등이 해당된다.
 * **spec**: Kind type 의 Kubernetes Object 의 세부항목들이다. 당연히 Kind 에 따라 내용이 다르다.
 
-
 ## Sequence Diagram
 
 > * [Exploring the Flexibility of Kubernetes @ medium](https://medium.com/cloud-heroes/exploring-the-flexibility-of-kubernetes-9f65db2360a0)
@@ -188,7 +209,6 @@ spec:
 `kubectl` 을 통해 `kube-api-server` 로 API Request 가 도착하면 위의 그림과 같이 `Authentication-Authorization-Mutating Admission-Validating Admission` 과정을 거치고 `etcd` 에 접근한다.
 
 만약 API Request 가 Write Operation 이면  Kubernetes 를 Extending 할 수 있다. `Mutating Admission` 단계에서 Custom Server 로 WebHook 을 보내는 식으로 구현이 가능하다. [Kubernetes Extension / Dynamic Admission Control @ TIL](kubernetes_extension.md#dynamic-admission-contro)
-
 
 ## How to schedule pod on worker node
 
@@ -462,7 +482,6 @@ Secret
 apiextensions.k8s.io
 apps
 autoscaling
-awslb.coupang.com
 batch
 certificates.k8s.io
 events.k8s.io
@@ -473,7 +492,6 @@ policy
 scheduling.k8s.io
 storage.k8s.io
 true
-workload.coupang.com
 ```
 
 > inspecting clusters
