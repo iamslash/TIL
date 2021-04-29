@@ -1,3 +1,4 @@
+- [Abstract](#abstract)
 - [Templates](#templates)
 - [Materials](#materials)
 - [Basic](#basic)
@@ -40,6 +41,10 @@
   - [Redux Debugger in Chrome](#redux-debugger-in-chrome)
 
 ----
+
+# Abstract
+
+react.js 는 view library 이다. redux 와 다르다는 것을 주의하자. redux 는 A Predictable State Container for JS Apps 이다. 매우 작다. (2KB)
 
 # Templates
 
