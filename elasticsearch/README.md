@@ -55,7 +55,7 @@ network.host: _eth0_
 http.port: 19200
 mapper.allow_dots_in_name: true
 
-$ nohup /usr/bin/java -Xms256m -Xmx1g -Djava.awt.headless=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -XX:+DisableExplicitGC -Dfile.encoding=UTF-8 -Djna.nosys=true -Dmapper.allow_dots_in_name=true -Des.path.home=/home/coupang/elasticsearch-2.4.1 -cp /home/coupang/elasticsearch-2.4.1/lib/elasticsearch-2.4.1.jar:/home/coupang/elasticsearch-2.4.1/lib/* org.elasticsearch.bootstrap.Elasticsearch start -d & 
+$ nohup /usr/bin/java -Xms256m -Xmx1g -Djava.awt.headless=true -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=75 -XX:+UseCMSInitiatingOccupancyOnly -XX:+HeapDumpOnOutOfMemoryError -XX:+DisableExplicitGC -Dfile.encoding=UTF-8 -Djna.nosys=true -Dmapper.allow_dots_in_name=true -Des.path.home=/home/iamslash/elasticsearch-2.4.1 -cp /home/iamslash/elasticsearch-2.4.1/lib/elasticsearch-2.4.1.jar:/home/iamslash/elasticsearch-2.4.1/lib/* org.elasticsearch.bootstrap.Elasticsearch start -d & 
 # After exit terminal, systemd will be a parent process of /usr/bin/java
 ```
 

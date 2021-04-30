@@ -2053,7 +2053,7 @@ This is a major present format.
 #.play scmmig/a.go
 #.image scmmig/a.png
 #.background scmmig/a.png
-#.iframe http://www.coupang.com 560 960
+#.iframe http://www.iamslash.com 560 960
 #.link http://www.google.co.kr Google
 #.html scmmig/a.html
 #.caption _Gopher_ by [[https://www.instagram.com/reneefrench/][Renée French]]
