@@ -35,6 +35,8 @@
 
 ## Spring IoC Container and Bean
 
+* [excore @ spring-examples](https://github.com/iamslash/spring-examples/commit/2f782e8913592fa4596608a4a8e9eddaefc81145)
+
 IOC Container 가 관리하는 객체를 Bean 이라고 한다. 마치 MS 의 COM 과 비슷한 것 같다. IOC Container 가 생성하고 다른 class 에 DI (Dependency Injection) 한다. Bean 은 주로 Singleton 이다.
 
 다음은 `BookService` Bean 의 구현이다. `@service` 를 사용해서 Bean 이 되었다. `@Autowired` 를 사용해서 IOC Container 가 생성한 `BookRepository` Bean 을 얻어올 수 있다. `BookRepository` Bean 을 Dependency Injection 에 의해 constructor 에서 argument 로 전달받는다. `@PostConstruct` 를 사용해서 `BookService` Bean 이 생성된 후 함수가 실행되도록 구현했다.
@@ -166,7 +168,22 @@ public class ApplicationConfig {
 @SpringBootApplication
 public class DemoApplication {
   public static void main(String[] args) {
+    ApplicationContext ctx = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+    String[] names = ctx.getBeanDefinitionNames();
+    System.out.println(Arrays.toString(names));
+    BookService bookService = (BookService) ctx.getBean(s:"bookService");
+    System.out.println(bookService.bookRepository != null);    
+  }
+}
+```
 
+`@SpringBootApplication` 을 사용하면 `ApplicationConfig` class 와 `ApplicationContext` 를 사용할 필요가 없다.
+
+```java
+@SpringBootApplication
+public class DemoApplication {
+  public static void main(String[] args) {
+    ...
   }
 }
 ```
