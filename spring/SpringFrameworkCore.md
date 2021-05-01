@@ -30,6 +30,7 @@
 
 * [스프링 프레임워크 핵심 기술 @ inflearn](https://www.inflearn.com/course/spring-framework_core/)
 * [스프링 프레임워크 핵심 기술 정리 (백기선님 인프런 강좌)](https://academey.github.io/spring/2019/03/15/sprign-framework-core.html)
+* [excore @ spring-examples](https://github.com/iamslash/spring-examples/tree/master/excore)
 
 # IoC Container and Bean
 
@@ -39,7 +40,7 @@
 
 IOC Container 가 관리하는 객체를 Bean 이라고 한다. 마치 MS 의 COM 과 비슷한 것 같다. IOC Container 가 생성하고 다른 class 에 DI (Dependency Injection) 한다. Bean 은 주로 Singleton 이다.
 
-다음은 `BookService` Bean 의 구현이다. `@service` 를 사용해서 Bean 이 되었다. `@Autowired` 를 사용해서 IOC Container 가 생성한 `BookRepository` Bean 을 얻어올 수 있다. `BookRepository` Bean 을 Dependency Injection 에 의해 constructor 에서 argument 로 전달받는다. `@PostConstruct` 를 사용해서 `BookService` Bean 이 생성된 후 함수가 실행되도록 구현했다.
+다음은 `BookService` Bean 의 구현이다. `@service` 를 사용해서 Bean 이 되었다. `@Autowired` 를 사용해서 IOC Container 가 생성한 `BookRepository` Bean 을 얻어올 수 있다. `BookRepository` Bean 을 Dependency Injection 에 의해 constructor 에서 argument 로 전달받는다. `@PostConstruct` 를 사용했기 때문에 `BookService` Bean 이 생성된 후 `postConstruct` 함수가 실행된다.
 
 ```java
 @service
@@ -72,7 +73,7 @@ public class BookRepository {
 }
 ```
 
-IOC 의 핵심은 [BeanFactory interface](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html) 이다. 다음과 같이 `*Aware` 를 구현한 class 들의 `override method` 의 호출시점을 참고하면 Bean 의 lifecycle 을 이해할 수 있다. 
+IOC 의 핵심은 [BeanFactory](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html) interface 이다. 다음과 같이 `*Aware` 를 구현한 class 들의 `override method` 의 호출시점을 참고하면 Bean 의 lifecycle 을 이해할 수 있다. 
 
 * BeanNameAware's setBeanName
 * BeanClassLoaderAware's setBeanClassLoader
@@ -89,7 +90,7 @@ IOC 의 핵심은 [BeanFactory interface](https://docs.spring.io/spring-framewor
 * a custom init-method definition
 * postProcessAfterInitialization methods of BeanPostProcessors
 
-[ApplicationContext](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html) 는 가장 많이 사용하는 [BeanFactory](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html) 이다.
+[ApplicationContext](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html) 는 가장 많이 사용하는 [BeanFactory](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html) 이다. [ApplicationContext](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html) 는 [BeanFactory](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html) 를 상속한다.
 
 Spring Boot Application 이 실행되고 bean 을 등록하는 흐름은 [SpringBootCodeTour#how-to-register-beans](SpringBootCodeTour.md) 를 참고한다.
 
@@ -100,6 +101,7 @@ Bean 을 생성하는 방법크게 xml 혹은 class 를 이용하는 방법이 �
 먼저 xml 에 생성하고자 하는 Bean 을 모두 표기해보자. `bookService` 에서 `bookRepository` 를 DI 해야한다. 따라서 `bookRepository` Bean 을 reference 하기 위해 `property` 가 사용되었음을 주목하자. Bean 이 늘어날 때 마다 application.xml 에 모두 등록해야 한다. 상당히 귀찮다.
 
 ```xml
+<!-- application.xml -->
 <bean id="bookService" 
       class="..."
       autowire="default">
@@ -121,13 +123,13 @@ public class DemoApplication {
 }
 ```
 
-또 다른 방법은 application.xml 에 component scan 을 사용하여 간단히 Bean 설정할 수 있다. Bean class 들은 `@Component` 를 사용해야 한다. `@Bean, @Service, @Repository` 는 `@Component` 를 확장한 annotation 이다. DI 를 위해 `@Autowired` 를 사용한다.
+또 다른 방법은` application.xml` 에 component scan 을 사용하여 간단히 Bean 을 등록할 수 있다. Bean class 들은 `@Component` 를 사용해야 한다. `@Bean, @Service, @Repository` 는 `@Component` 를 상속한 annotation 이다. DI 를 위해 `@Autowired` 를 사용한다.
 
 ```xml
 <context:component-scan base-package="..."/>
 ```
 
-ApplicationConfig class 를 사용해서 Bean 을 등록할 수 있다. 여전히 component scan 은 xml 에서 수행한다.
+`ApplicationConfig` class 를 사용해서 Bean 을 등록할 수 있다. 여전히 component scan 은 xml 에서 수행한다.
 
 ```java
 @Configuration
@@ -186,6 +188,17 @@ public class DemoApplication {
     ...
   }
 }
+...
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@SpringBootConfiguration
+@EnableAutoConfiguration
+@ComponentScan(excludeFilters = { @Filter(type = FilterType.CUSTOM, classes = TypeExcludeFilter.class),
+		@Filter(type = FilterType.CUSTOM, classes = AutoConfigurationExcludeFilter.class) })
+public @interface SpringBootApplication {
+...
 ```
 
 ## @Autowired
@@ -491,7 +504,8 @@ public class Single {
 }
 
 // Proto.java
-@Component @Scope("prototype")
+@Component 
+@Scope("prototype")
 public class Proto {
 }
 
@@ -527,7 +541,8 @@ public class AppRunner implements ApplicationRunner {
 
 ```java
 // Proto.java
-@Component @Scope("prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
+@Component 
+@Scope("prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class Proto {
 }
 ```
@@ -550,7 +565,7 @@ public class Single {
 
 ## Environment Profile
 
-ApplicationContext 는 EnvironmentCapable 를 구현한다. Component 를 `test, stage, production` 과 같은 특정 환경에서만 등록할 수 있다.
+`ApplicationContext` 는 `EnvironmentCapable` 를 구현한다. Component 를 `test, stage, production` 과 같은 특정 환경에서만 등록할 수 있다.
 
 먼저 다음과 같이 현재의 프로파일을 출력해보자.
 
@@ -570,7 +585,7 @@ public class AppRunner implements ApplicationRunner {
 }
 ```
 
-VM option 으로 `-Dspring.profiles.active="test"` 을 삽입하여 profile 을 설정할 수 있다. 그리고 다음과 같이 configuration class 를 제작하자.
+VM option 으로 `-Dspring.profiles.active="test"` 을 삽입하여 profile 을 설정할 수 있다. 그리고 다음과 같이 Configuration class 를 `@Profile` 과 함께 제작하자.
 
 ```java
 //TestConfiguration
@@ -591,7 +606,7 @@ public class TestConfiguration {
 @Repository
 @Profile("test")
 public class TestBookRepository implements BookRepository {
-
+...
 }
 ```
 
@@ -602,7 +617,7 @@ public class TestBookRepository implements BookRepository {
 @Repository
 @Profile("!prod")
 public class TestBookRepository implements BookRepository {
-
+...
 }
 ```
 
@@ -630,7 +645,7 @@ public class AppRunner implements ApplicationRunner {
 }
 ```
 
-또한 app.properties 를 만들고 다음과 같이 읽어올 수 있다.
+또한 `@PropertyeSource` 를 사용하여 `app.properties` 를 읽어올 수 있다.
 
 ```java
 // app.properties
@@ -649,7 +664,7 @@ app.properties 보다는 VM option 이 우선순위가 높다.
 
 ## MessageSource
 
-ApplicationContext 는 MessageSource 를 구현한다. MessageSource 를 field 로 DI 하면 i18n 을 처리할 수 있다.
+`ApplicationContext` 는 `MessageSource` 를 구현한다. `MessageSource` 를 field 로 DI 하면 i18n 을 처리할 수 있다.
 
 ```java
 //messages.properties
@@ -673,7 +688,7 @@ public class AppRunner implements ApplicationRunner {
 
 ## ApplicationEventPublisher
 
-ApplicationContext 는 ApplicationEventPublisher 를 구현한다. ApplicationContext 가 field 로 DI 되면 event 를 보내고 처리할 수 있다. 
+`ApplicationContext` 는 `ApplicationEventPublisher` 를 구현한다. `ApplicationContext` 가 field 로 DI 되면 event 를 보내고 처리할 수 있다. 
 
 ```java
 // MyEvent.java
@@ -716,7 +731,7 @@ public class MyEventHandler implements ApplicationListener<MyEvent> {
 }
 ```
 
-그러나 Spring 4.2 부터는 MyEvent 가 ApplicationEvent 를 상속할 필요가 없고 MyEventHandler 가 ApplicationListener 를 상속 할 필요가 없다. 더욱 POJO 스러운 코드를 만들 수 있다.
+그러나 Spring 4.2 부터는 `MyEvent` 가 `ApplicationEvent` 를 상속할 필요가 없고 `MyEventHandler` 가 `ApplicationListener` 를 상속 할 필요가 없다. 더욱 POJO 스러운 코드를 만들 수 있다.
 
 ```java
 // MyEvent.java
@@ -788,7 +803,7 @@ public class DemoApplication {
 }
 ```
 
-이번에는 ApplicationContext 가 제공하는 이벤트를 핸들링 해보자.
+이번에는 `ApplicationContext` 가 제공하는 이벤트를 핸들링 해보자.
 
 ```java
 @Component
@@ -818,7 +833,7 @@ public class MyEventHandler {
 
 ## ResourceLoader
 
-ApplicationContext 는 ResourceLoader 를 구현한다. ApplicationContext 가 field 로 DI 되면 resource 를 접근할 수 있다. 예를 들어 `~/src/main/resources/a.txt` 를 만들고 build 하면 `~/classpath/a.txt` 로 이동한다. 이것을 java 에서 접근해 보자.
+`ApplicationContext` 는 `ResourceLoader` 를 구현한다. `ApplicationContext` 가 field 로 DI 되면 resource 를 접근할 수 있다. 예를 들어 `~/src/main/resources/a.txt` 를 만들고 build 하면 `~/classpath/a.txt` 로 이동한다. 이것을 java 에서 접근해 보자.
 
 ```java
 // AppRunner.java
@@ -841,7 +856,7 @@ public class AppRunner implements ApplicationRunner {
 
 ## Resource Abstraction
 
-`java.net.URL` 를 `org.springfamework.core.io.Resource` 로 추상화 했다. 즉, 모든 resource 를 `Resource` 로 접근할 수 있다. Resource 의 구현체는 `UrlResource, ClassPathResource, FileSystemResource, ServletContextResource` 를 주목할 만 하다.
+`java.net.URL` 를 `org.springfamework.core.io.Resource` 로 추상화 했다. 즉, 모든 resource 를 `Resource` 로 접근할 수 있다. `Resource` 의 구현체는 `UrlResource, ClassPathResource, FileSystemResource, ServletContextResource` 를 주목할 만 하다.
 
 resource string 에 `classpath, file` 과 같은 prefix 를 사용하는 것이 좋다.
 
@@ -913,7 +928,7 @@ public class AppRunner implements ApplicationRunner {
     EventValidator evtValidator = new EventValidator();
     Error errors = new BeanPropertyBindingResult(evt, "event");
 
-    evtValidtor.validate(evt, errors);
+    evtValidator.validate(evt, errors);
     System.out.println(erros.hasErrors());
     errors.getAllErrors().forEach(e -> {
       System.out.println("===== error code =====");
@@ -934,7 +949,8 @@ public class Event {
   @NotEmpty
   String title;
 
-  @NotNull @Min(0)
+  @NotNull 
+  @Min(0)
   Integer limit;
 
   @Email
@@ -963,7 +979,7 @@ public class AppRunner implements ApplicationRunner {
 
   @Override
   public void run(ApplicationArguements args) throws Exception {
-    System.out.println(validate.getClass());
+    System.out.println(validator.getClass());
 
     Event evt = new Event();
     evt.setLimit(-1);
@@ -987,7 +1003,7 @@ public class AppRunner implements ApplicationRunner {
 
 ## PropertyEditor
 
-사용자가 입력한 값을 object 로 binding 하는 것을 data binding 이라 한다. 예를 들어 xml, *.perperties 파일에서 값을 읽어서 object 로 binding 하는 것을 포함한다. 
+사용자가 입력한 값을 object 로 binding 하는 것을 data binding 이라 한다. 예를 들어 xml, *.properties 파일에서 값을 읽어서 object 로 binding 하는 것을 포함한다. 
 
 Spring 은 PropertyEditor 를 제공하여 data binding 을 할 수 있게 해준다. PropertyEditor 를 구현하면 많은 method 를 구현해야 한다. PropertyEditorSupport 는 PropertyEditor 를 상속한다. PropertyEditorSuport 를 상속하면 보다 적은 method 를 구현하여 data binding 을 할 수 있다.
 
@@ -1039,7 +1055,7 @@ public class FooController {
 // FooControllerTest.java
 @RunWith(SpringRunner.class)
 @WebMvcTest
-public class FoocontrollerTest {  
+public class FooControllerTest {  
   @Autowired
   MockMvc mockMvc;
 
@@ -1213,9 +1229,9 @@ public class AppRunner implements ApplicationRunner {
 }
 ```
 
-PropertyEditor 는 DataBinder 를 통해서 변환업무를 수행한다. Converter, Formatter 는 ConversionService 를 통해서 변환업무를 수행한다.  DefaultFormattingConversionService 는 ConversionService 의 구현체이다. 그리고 DefaultFormattingConversionService 는 FormatterRegistry, Converter Registry 도 구현한다.
+`PropertyEditor` 는 `DataBinder` 를 통해서 변환업무를 수행한다. `Converter, Formatter` 는 `ConversionService` 를 통해서 변환업무를 수행한다.  `DefaultFormattingConversionService` 는 `ConversionService` 의 구현체이다. 그리고 `DefaultFormattingConversionService` 는 `FormatterRegistry, Converter Registry` 도 구현한다.
 
-다음은 ConversionService 의 class diagram 이다.
+다음은 `ConversionService` 의 class diagram 이다.
 
 ![](img/conversionserviceclassdiagram.png)
 
@@ -1267,7 +1283,7 @@ public class AppRunner implements ApplicationRunner {
 }
 ```
 
-다음은 `${}` 을 이용하여 properties 의 값을 얻어오는 구현이다.
+다음은 `${}` 을 이용하여 `application.properties` 파일에서 값을 읽어 온다.
 
 ```java
 // application.properties
@@ -1324,7 +1340,7 @@ public class AppRunner implements ApplicationRunner {
 }
 ```
 
-SpEL 은 ExpressionParser 를 사용하여 evaluation 한다. 다음은 ExpressionParser 를 사용하여 직접 evaluation 하는 예이다.
+SpEL 은 `ExpressionParser` 를 사용하여 evaluation 한다. 다음은 `ExpressionParser` 를 사용하여 직접 evaluation 하는 예이다.
 
 ```java
 public void run(ApplicationArguements args) throws Exception {
@@ -1449,7 +1465,7 @@ public class DemoApplication {
 
 ## @AOP
 
-* [Spring AOP (Aspect Oriented Programming)](SplitTwoStringstoMakePalindrome)
+* [Spring AOP (Aspect Oriented Programming)](https://engkimbs.tistory.com/746)
 
 ----
 
@@ -1490,7 +1506,7 @@ public class PerfAspect {
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.CLASS)
 public @interface PerfLogging {
-
+...
 }
 
 // AService
@@ -1595,9 +1611,9 @@ public class ARunner implements ApplicationRunner {
 }
 ```
 
-또한 package 위에 `@NonNull` 을 사용하면 그 패키지에서 사용하는 모든 methods 의 parameter, return value 가 notnullable 인지 IDE 를 통해서 검증할 수 있다.
+또한 package 위에 `@NonNullApi` 을 사용하면 그 패키지에서 사용하는 모든 methods 의 parameter, return value 가 notnullable 인지 IDE 를 통해서 검증할 수 있다.
 
 ```java
-@NonNullApi
+@NonNullApi 
 package com.iamslash.A
 ```
