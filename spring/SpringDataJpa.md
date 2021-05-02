@@ -65,13 +65,13 @@
 * run postgres
 
 ```bash
-$ docker run -p 5432:5432 -e POSTGRES_PASSWORD=xxxx -e POSTGRES_USER=iamslash -e POSTGRES_DB=basicdb --name my-postgres -d postgres
+$ docker run -p 5432:5432 -e POSTGRES_PASSWORD=1 -e POSTGRES_USER=iamslash -e POSTGRES_DB=iamslash --name my-postgres -d postgres
 
 $ docker exec -i -t my-postgres
 
 $ su - postgres
 
-$ psql basicdb
+$ psql iamslash
 \list
 \dt
 SELECT * FROM account;
@@ -82,9 +82,9 @@ SELECT * FROM account;
 ```java
 public class Appliation {
   public static void main(String[] args) throws SQLException {
-    String url = "jdbc:postgresql://localhost:5432/basicdb";
+    String url = "jdbc:postgresql://localhost:5432/iamslash";
     String username = "iamslash";
-    String password = "xxxx";
+    String password = "1";
 
     try (Connection connection = DriverManager.getConnection(url, username, password)) {
       System.out.println("Connection created: " + connection);
@@ -133,26 +133,289 @@ spring.jpa.properties.hibernate.format_sql=true
 
 ## JPA Programming: Entity mapping
 
+> * [Defining JPA Entities @ baeldung](https://www.baeldung.com/jpa-entities)
+
+----
+
+> `@Entity`
+
+This is nothing but POJOs representing data that can be persisted to the database. 
+
+```java
+@Entity
+public class Student {    
+}
+```
+
+> `@Table`
+
+the name of the table in the database and the name of the entity will not be the same.
+
+```java
+@Entity
+@Table(name="STUDENT")
+public class Student {    
+}
+```
+
+> `@Id`
+
+the primary key
+
+> `@GeneratedValue`
+
+We can generate the identifiers in different ways which are specified by the @GeneratedValue annotation.
+
+```java
+@Entity
+public class Student {
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Long id;    
+    private String name;
+}
+```
+
+> `@Column`
+
+the details of a column in the table.
+
+```java
+@Entity
+@Table(name="STUDENT")
+public class Student {
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Long id;
+    
+    @Column(name="STUDENT_NAME", length=50, nullable=false, unique=false)
+    private String name;
+}
+```
+
+> `@Temporal`
+
+we may have to save temporal values in our table
+
+```java
+@Entity
+@Table(name="STUDENT")
+public class Student {
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Long id;
+    
+    @Column(name="STUDENT_NAME", length=50, nullable=false, unique=false)
+    private String name;
+    
+    @Transient
+    private Integer age;
+    
+    @Temporal(TemporalType.DATE)
+    private Date birthDate;
+}
+```
+
+> `@Transient`
+
+It specifies that the field will not be persisted.
+
+```java
+@Entity
+@Table(name="STUDENT")
+public class Student {
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private Long id;
+    
+    @Column(name="STUDENT_NAME", length=50, nullable=false)
+    private String name;
+    
+    @Transient
+    private Integer age;
+}
+```
+
+> application.properties
+
+```conf
+spring.jp.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+```
+
 ## JPA Programming: Value type mapping
+
+> * [JPA @Embedded And @Embeddable @ baeldung](https://www.baeldung.com/jpa-embedded-embeddable)
+
+----
+
+> `@Embeddable`
+
+a class will be embedded by other entities.
+
+```java
+@Embeddable
+public class ContactPerson {
+    private String firstName;
+    private String lastName;
+    private String phone;
+}
+```
+
+> `@Embedded`
+
+embed a type into another entity.
+
+```java
+@Entity
+public class Company {
+
+    @Id
+    @GeneratedValue
+    private Integer id;
+
+    private String name;
+
+    private String address;
+
+    private String phone;
+
+    @Embedded
+    private ContactPerson contactPerson;
+}
+```
+
+> `@AttributeOverrides, @AttributeOverride`
+
+override the column properties of our embedded type.
+
+```java
+@Embedded
+@AttributeOverrides({
+  @AttributeOverride( name = "firstName", column = @Column(name = "contact_first_name")),
+  @AttributeOverride( name = "lastName", column = @Column(name = "contact_last_name")),
+  @AttributeOverride( name = "phone", column = @Column(name = "contact_phone"))
+})
+private ContactPerson contactPerson;
+```
 
 ## JPA Programming: 1 to n mapping
 
 > * [[JPA] @ManyToMany, 다대다[N:M] 관계 @ tistory](https://ict-nroo.tistory.com/127)
 > * [Many-To-Many Relationship in JPA @ baeldung](https://www.baeldung.com/jpa-many-to-many)
+> * [Hibernate One to Many Annotation Tutorial @ baeldung](https://www.baeldung.com/hibernate-one-to-many)
 
 ----------
 
 Many to Many relationship 은 anomolies 를 발생시킨다. 두 테이블 사이에 relation table 을 만들어서 Many to one, one to many 로 해결해야 한다. JPA 의 `@JoinTable` 을 이용해서 relation table 을 generate 할 수 있다. 그러나 JPA 가 만들어주는 naming convention 보다는 manual 하게 table 을 만들 것을 추천한다. 서비스를 운영하다 보면 직접 table 에 operation 을 할 수도 있기 때문이다.
 
+This is an example of schema.
+
+```sql
+CREATE TABLE `Cart` (
+  `cart_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`cart_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+CREATE TABLE `Items` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `cart_id` int(11) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `cart_id` (`cart_id`),
+  CONSTRAINT `items_ibfk_1` FOREIGN KEY (`cart_id`) REFERENCES `Cart` (`cart_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+```
+
+This is an example of `@OneToMany`
+
+ `@OneToMany` annotation is used to define the property in Items class that will be used to map the mappedBy variable. That is why we have a property named `cart` in the Items class
+
+ It's also important to note that the `@ManyToOne` annotation is associated with the Cart class variable. `@JoinColumn` annotation references the mapped column.
+
+```java
+@Entity
+@Table(name="CART")
+public class Cart {
+
+    //...
+    @OneToMany(mappedBy="cart")
+    private Set<Items> items;	
+    // getters and setters
+}
+...
+@Entity
+@Table(name="ITEMS")
+public class Items {
+    
+    //...
+    @ManyToOne
+    @JoinColumn(name="cart_id", nullable=false)
+    private Cart cart;
+
+    public Items() {}    
+    // getters and setters
+}
+```
+
 ## JPA Programming: Cascade
 
+* [Overview of JPA/Hibernate Cascade Types @ baeldung](https://www.baeldung.com/jpa-cascade-types)
+* [JPA’s 4 Lifecycle States](https://thorben-janssen.com/entity-lifecycle-model/)
+
+----
+
+When we perform some action on the target entity, the same action will be applied to the associated entity.
+
+* ALL
+* PERSIST
+* MERGE
+* REMOVE
+* REFRESH
+* DETACH
+
+![](https://thorben-janssen.com/wp-content/uploads/2020/07/Lifecycle-Model-1024x576.webp)
+
 ## JPA Programming: Fetch
+
+* `@OneToMany`: Lazy Fetch
+* `@ManyToOne`: Eager Fetch
 
 ## JPA Programming: Query
 
 ## Introduction of JPA
 
+* [Introduction to Spring Data JPA @ baeldung](https://www.baeldung.com/the-persistence-layer-with-spring-data-jpa)
+
+-----
+
+`@EnableJpaRepositories` makes the Spring JPA repository support and specify the
+package that contains the DAO interfaces.
+
+`@EnableJpaRepositories` 
+
+```java
+@EnableJpaRepositories(basePackages = "com.baeldung.spring.data.persistence.repository") 
+public class PersistenceConfig { 
+}
+```
+
+`@Repository` 가 없어도 Bean 으로 등록해준다.
+
+```java
+public interface IFooDAO extends JpaRepository<Foo, Long> {
+    Foo findByName(String name);
+}
+```
+
 ## Core concepts
+
+This is an application.properties for debugging.
+
+```conf
+# application.properties
+logging.level.org.hibernate.SQL=debug
+logging.level.org.hibernate.type.descriptor.sql=trace
+```
 
 # Advanced
 
