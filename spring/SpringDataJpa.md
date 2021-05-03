@@ -423,7 +423,198 @@ logging.level.org.hibernate.type.descriptor.sql=trace
 
 ## Spring Data Common: Repository
 
+`@NoRepositoryBean` 은 Repository Bean 이지만 Bean 으로 등록하지 않기 위해
+사용한다. 주로 `Respository` 를 상속한 중간의 Repository interface 들에
+부착한다. 참고로 `Respository` interface 는 Marker interface 이다.
+
+```java
+// com.iamslash.exjpa.AppRunner
+@Component
+@Transactional
+public class AppRunner implements ApplicationRunner {
+  @Autowired
+  PostRepository postRepository;
+
+  @Override
+  public void run(ApplicationArguments args) throws Exception {
+    Post post = new Post();
+    post.setTitle("spring");
+
+    Comment comment = new Comment();
+    comment.setComment("hello");
+
+    postRepository.save(post);
+  }
+}
+
+// com.iamslash.exjpa.PostRepository
+public interface PostRepository extends JpaRepository<Post, Long> {
+...
+}
+
+// org\springframework\data\jpa\repository\JpaRepository.java
+@NoRepositoryBean
+public interface JpaRepository<T, ID> extends PagingAndSortingRepository<T, ID>, QueryByExampleExecutor<T> {
+...  
+}
+
+// org\springframework\data\repository\PagingAndSortingRepository.java
+@NoRepositoryBean
+public interface PagingAndSortingRepository<T, ID> extends CrudRepository<T, ID> {
+...
+}
+
+// org\springframework\data\repository\CrudRepository.java
+@NoRepositoryBean
+public interface CrudRepository<T, ID> extends Repository<T, ID> {
+...
+}
+
+// org\springframework\data\repository\Repository.java
+@Indexed
+public interface Repository<T, ID> {
+...  
+}
+```
+
+다음은 `PostRepository` 의 unit test 구현이다. `@DataJpaTest` 를 사용하면 in
+memory db 인 `h2` 를 사용한다. `build.gradle` 의 dependency 에 `h2` 를 추가해야
+한다.
+
+```java
+// src/test/java/com.iamslash.exjpa.ExjpaApplication.PostRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class PostRepositoryTest {
+  
+  @Autowired
+  PostRepository postRepository;
+
+  @Test
+  public void crudRepository() {
+    // Given
+    Post pos = new Post();
+    post.setTitle("Hello world");
+    assertThat(post.getId()).isNull();
+
+    // When
+    Post newPost = postRepository.save(post);
+
+    // Then
+    assertThat(newPost.getId()).isNotNull();
+
+    // When
+    List<Post> posts = postRepository.findAll();
+
+    // Then
+    assertThat(posts.size()).is(1);
+    assertThat(posts).contains(newPost);
+
+    // When
+    Page<Post> page = postRepository.findAll(PageRequest.of(0, 10));
+    assertThat(page.getTotalElements()).isEqualTo(1);
+    assertThat(page.getNumber()).isEqualsTo(0);
+    assertThat(page.getSize()).isEqualTo(10);
+    assertThat(page.getNumberOfElements()).isEqualsTo(1);
+
+    // When
+    page = postRepository.findByTitleContains("spring", PageRequest.of(0, 10));
+    // Then
+    assertThat(page.getTotalElements()).isEqualTo(1);
+    assertThat(page.getNumber()).isEqualsTo(0);
+    assertThat(page.getSize()).isEqualTo(10);
+    assertThat(page.getNumberOfElements()).isEqualsTo(1);
+
+    // When
+    long spring = postRepository.countByTitleContains("spring");
+    // Then
+    assertThat(spring).isEqualTo(1);
+  }
+}
+```
+
+위에서 사용한 `findByTitleContains` 는 `PostRepository` 에 다음과 같이 선언해야
+한다. JPA 는 method name 을 보고 query 를 생성해 준다.
+
+```java
+public interface PostRepository extends JpaRepository<Post, Long> {
+  Page<Post> findByTitleContains(String title, Pageable pageable);
+  long countByTitleContains(String title);
+}
+```
+
 ## Spring Data Common: Repository Interface
+
+`JpaRepository` 가 제공하는 method 들을 모두 사용하지 않고 꼭 필요한 method 만
+사용하고 싶다. `JpaRepository` 를 상속하지 않고 Repository interface 를 제작해
+보자.
+
+```java
+// src/main/java/com.iamslash.exjpa/CommentRepository.java
+@RepositoryDefinition(domainClass = Comment.class, idClass = Long.class)
+public interface CommentRepository {
+  Comment save(Comment comment);
+  List<Comment> findAll();
+}
+
+// src/test/java/com.iamslash.exjpa/CommentRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class CommentRepositoryTest {
+
+  @Autowired
+  CommentRepository commentRepository;
+
+  @Test
+  public void crud() {
+    Comment comment = new Comment();
+    comment.setComment("Hello Comment");
+    commentRepository.save(comment);
+
+    List<Comment> all = commentRepository.findAll();
+    assertThat(all.size()).isEqualTo(1);
+  }
+}
+```
+
+이번에는 Repository interface 를 만들고 그것을 상속하는 CommentRepository 를
+제작해 보자.
+
+```java
+// src/main/java/com.iamslash.exjpa/MyRepository
+@NoRepositoryBean
+public interface MyRepository<T, Id extends Serializable> extends Repository<T, Id> {
+  <E extends T> E save(E entity);
+  List<T> findAll();
+  long count();
+}
+
+// src/main/java/com.iamslash.exjpa/CommentRepository
+public interface CommentRepository implement MyRepository {
+}
+
+// src/test/java/com.iamslash.exjpa/CommentRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class CommentRepositoryTest {
+
+  @Autowired
+  CommentRepository commentRepository;
+
+  @Test
+  public void crud() {
+    Comment comment = new Comment();
+    comment.setComment("Hello Comment");
+    commentRepository.save(comment);
+
+    List<Comment> all = commentRepository.findAll();
+    assertThat(all.size()).isEqualTo(1);
+
+    long count = commentRepository.findAll();
+    assertThat(count).isEqualTo(1);
+  }
+}
+```
 
 ## Spring Data Common: Handling Null
 
