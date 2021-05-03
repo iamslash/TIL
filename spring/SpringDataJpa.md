@@ -618,6 +618,30 @@ public class CommentRepositoryTest {
 
 ## Spring Data Common: Handling Null
 
+`@NonNull, @Nullable` 를 이용하면 annotation 만으로 Null 을 check 하는 코드를
+생성할 수 있다.
+
+```java
+// src/main/java/com.iamslash.exjpa/MyRepository
+@NoRepositoryBean
+public interface MyRepository<T, Id extends Serializable> extends Repository<T, Id> {
+  <E extends T> E save(@NonNull E entity);
+  
+  List<T> findAll();
+  
+  long count();
+  
+  @Nullable
+  <E extends T> E findById(Id id);
+}
+```
+
+IntelliJ 에서 `@NonNull, @Nullable` 에 대한 intelli sense 를 원한다면 다음과 같이 spring 의 nonnull, nonnullable 을 추가한다.
+
+![](img/preferences_compile.png)
+
+![](img/preferences_compile_configuration.png)
+
 ## Spring Data Common: Making a query
 
 ## Spring Data Common: Async Query
