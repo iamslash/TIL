@@ -1223,8 +1223,17 @@ reverse_copy(vec.begin()+1, vec.end()-1, vec2.begin());
 
 
 // 2. Rotate
+// 이해하기 어렵다. http://www.cplusplus.com/reference/algorithm/rotate/?kw=rotate
+// template <class ForwardIterator>
+//   ForwardIterator rotate (ForwardIterator first, ForwardIterator middle,
+//                           ForwardIterator last);
+// [first, last) 가 회전영역이다.
+// first 부터 middle 까지 한 문자씩 왼쪽으로 회전한다.
+// 이때 first 에 위치한 문자는 왼쪽으로 회전할 때 last-1 로 이동한다.
 rotate(vec.begin(), vec.begin()+3, vec.end());
-// vec: {8,45,87,90,9,60,70};     // 7 items
+// vec: {8,45,87,90,9,60,70};     
+rotate(vec.begin(), vec.begin()+3, vec.begin()+5);
+// vec: {8,70,9,87,45,60,90};     
 
 rotate_copy(vec.begin(), vec.begin()+3, vec.end(),  // Source
 		 vec2.begin());                               // Destination
@@ -1233,9 +1242,9 @@ rotate_copy(vec.begin(), vec.begin()+3, vec.end(),  // Source
 
 // 3. Permute
 next_permutation(vec.begin(), vec.end()); 
-                           //Lexicographically next greater permutation
+// Lexicographically next greater permutation
 prev_permutation(vec.begin(), vec.end()); 
-                           //Lexicographically next smaller permutation
+// Lexicographically next smaller permutation
 // {1,2,3,5} < {1,2,4,4}
 // {1,2}     < {1,2,3}
 
