@@ -15,7 +15,7 @@
 
 # Abstract
 
-HTML, CSS, JavaScript 에 대해 정리한다.
+HTML, CSS, JavaScript 등 front-end 개발에 필요한 tech stack 에 대해 정리한다. front-end view library 로 [react.js](/react.js/README.md) 를 주로 사용한다.
 
 # Essentials
 
@@ -25,7 +25,6 @@ HTML, CSS, JavaScript 에 대해 정리한다.
   * html, css, javascript examples
 * [초보자를 위한 JavaScript 200제](http://www.infopub.co.kr/new/include/detail.asp?sku=05000265)
   * [src](http://www.infopub.co.kr/new/include/detail.asp?sku=05000265)
-
 
 # Materials
 

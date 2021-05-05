@@ -20,10 +20,10 @@
   - [CSS for Movie](#css-for-movie)
   - [Building for Production](#building-for-production)
   - [Redux](#redux)
-  - [To Do List](#to-do-list)
-  - [React Redux](#react-redux)
-  - [Rednering Sequences](#rednering-sequences)
-- [Advanced](#advanced)
+  - [To Do List with redux](#to-do-list-with-redux)
+  - [react-redux](#react-redux)
+  - [rendering Sequences](#rendering-sequences)
+- [react libraries](#react-libraries)
   - [redux-toolkit](#redux-toolkit)
   - [redux](#redux-1)
     - [`function combineReducers<S>(reducers: ReducersMapObject): Reducer<S>`](#function-combinereducerssreducers-reducersmapobject-reducers)
@@ -37,14 +37,14 @@
   - [react-router](#react-router)
   - [* React Router Introduction @ youtube](#-react-router-introduction--youtube)
   - [Ant Design](#ant-design)
-  - [Redux SAGA](#redux-saga)
+  - [redux-saga](#redux-saga)
   - [Redux Debugger in Chrome](#redux-debugger-in-chrome)
 
 ----
 
 # Abstract
 
-react.js 는 view library 이다. redux 와 다르다는 것을 주의하자. redux 는 A Predictable State Container for JS Apps 이다. 매우 작다. (2KB)
+react.js 는 view library 이다. redux 와 다르다는 것을 주의하자. redux 는 A Predictable State Container for JS Apps 이다. 그리고 매우 작다(2KB). react.js 와 함께 사용할 front-end library 들은 [react libraries](#react-libraries) 를 참고해서 이해하자.
 
 # Templates
 
@@ -52,6 +52,9 @@ react.js 는 view library 이다. redux 와 다르다는 것을 주의하자. re
 
 # Materials
 
+* [리액트를 다루는 기술(개정판) -16.8버전](https://www.gilbut.co.kr/book/view?bookcode=BN002496)
+  * [src](https://github.com/velopert/learning-react)
+  * [벨로퍼트와 함께하는 모던 리액트](https://react.vlpt.us/)
 * [React 적용 가이드 - React와 Redux @ NaverD2](https://d2.naver.com/helloworld/1848131)
   * [src](https://github.com/naver/react-sample-code)
   * [React 적용 가이드 - React 작동 방법 @ NaverD2](https://d2.naver.com/helloworld/9297403)
@@ -87,7 +90,7 @@ react.js 는 view library 이다. redux 와 다르다는 것을 주의하자. re
 
 [Webpack](https://webpack.js.org/) 은 ES6 를 browser 가 이해할 수 있는 code 로 transpile 한다.
 
-create-react-app 으로 startup-repo 를 생성할 수 있다. create-react-app 은 Webpack 을 포함한다.
+create-react-app 으로 startup-repo 를 생성할 수 있다. create-react-app 은 Webpack, babel 을 포함한다.
 
 ```bash
 $ brew install node.js
@@ -138,7 +141,7 @@ class App extends Component {
 export default App;
 ```
 
-`src/App.js` 는 `Movie` component 를 rednering 하고 있다. `Movie` component 는 다시 `MoviePoster` component 를 rendering 하고 있다.
+`src/App.js` 는 `Movie` component 를 rendering 하고 있다. `Movie` component 는 다시 `MoviePoster` component 를 rendering 하고 있다.
 
 `src/Movie.js` 는 `Movie, MoviePoster` component 가 정의되어 있다.
 
@@ -334,7 +337,7 @@ class App extends Component {
   // Render: componentWillMount() -> render() -> componentDidMount()
   //
   // Update: componentWillReceiveProps() -> shouldComponentUpdate() -> 
-  // componentWillUpate() -> render() -> componentDidUpdate()
+  //         componentWillUpate() -> render() -> componentDidUpdate()
   componentWillMount() {
     console.log("componentWillMount");
   }
@@ -360,7 +363,10 @@ class App extends Component {
 
 ----
 
-`App` component 에 `state` 를 선언하고 `componentDidMount()` 에서 바꿔보자. `this.setState()` 함수를 호출하면 `render()` 가 호출된다. `state` 를 바꾸고 `this.setState()` 를 호출하여 화면을 업데이트한다. 
+`App` component 에 `state` 를 선언하고 `componentDidMount()` 에서 바꿔보자.
+`this.setState()` 함수를 호출하면 `render()` 가 호출된다. `state` 를 바꾸고
+`this.setState()` 를 호출하여 화면을 업데이트한다. 여기서 언급한 `state` 는
+redux 의 `state` 과는 다르다는 것을 주의하자. [React State vs. Redux State: When and Why?](https://spin.atomicobject.com/2017/06/07/react-state-vs-redux-state/)
 
 ```js
 class App extends Component {
@@ -456,7 +462,7 @@ class App extends Component {
   // Render:  -> render() -> componentDidMount()
   //
   // Update: componentWillReceiveProps() -> shouldComponentUpdate() -> 
-  // componentWillUpate() -> render() -> componentDidUpdate()
+  //         componentWillUpate() -> render() -> componentDidUpdate()
 
 setState 를 component lifecycle event handler (`render, componentWillMount, componentWillReceiveProps, shouldComponentUpdate, componentWillUpate, componentDidUpdate`) 에서 호출할 때 주의해야 한다.
 
@@ -922,7 +928,7 @@ add.addEventListener("click", handleAdd);
 minus.addEventListener("click", handleMinus);
 ```
 
-## To Do List
+## To Do List with redux
 
 Redux 를 이용하여 간단한 To Do list 를 구현해 본다.
 
@@ -1004,7 +1010,7 @@ const onSubmit = e => {
 form.addEventListener("submit", onSubmit);
 ```
 
-## React Redux
+## react-redux
 
 앞서 제작한 To Do List App 을 React Redux 를 사용하여 더욱 효율적으로 구현해보자.
 
@@ -1191,15 +1197,15 @@ export const actionCreators = {
 export default store;
 ```
 
-## Rednering Sequences
+## rendering Sequences
 
 Component 가 rendering 되는 경우들을 생각해 보자. 
 
-먼저 부모 Component 가 rendering 될때 자식 Component 의 render functino 이 props 와 함께 호출되는 경우가 있다.
+먼저 부모 Component 가 rendering 될때 자식 Component 의 render function 이 props 와 함께 호출되는 경우가 있다.
 
 또한  Component 의 user event 혹은 timer event 에 의해 dispatch function 이 호출된다. reducer 는 변경된 state 를 리턴한다. 그리고 그 component 의 render function 이 호출된다. redner function 에서 props 를 통해 state 를 접근할 수 있다.
 
-# Advanced
+# react libraries
 
 ## redux-toolkit
 
@@ -1358,7 +1364,7 @@ navigational components
 
 React ui library
 
-## Redux SAGA
+## redux-saga
 
 * [redux-saga](https://github.com/redux-saga/redux-saga)
   * [한글](https://mskims.github.io/redux-saga-in-korean/)
@@ -1368,3 +1374,14 @@ React ui library
 
 * [React Redux Tutorials - 24 - Redux Devtool Extension @ youtube](https://www.youtube.com/watch?v=IlM7497j6LY)
 * [#4.3 configureStore @ nomad](https://academy.nomadcoders.co/courses/235420/lectures/14735315)
+
+----
+
+```js
+import { composeWithDevTools } from 'redux-devtools-extension';
+...
+const store = createStore(
+  rootReducer,
+  composeWithDevTools(applyMiddleware(logger, ReduxThunk, sagaMiddleware))
+);
+```
