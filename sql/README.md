@@ -2150,6 +2150,11 @@ mysql> SELECT '2005-03-32' + INTERVAL 1 MONTH;
         
 mysql> SELECT DATE_FORMAT('2009-10-04 22:23:00', '%W %M %Y');
         -> 'Sunday October 2009'
+mysql> SELECT DATE_FORMAT('2009-10-04 22:23:00', '%W %M %d %Y');
+        -> 'Sunday October 04 2009'
+mysql> SELECT DATE_FORMAT('2009-10-04 22:23:00', '%W %M %e %Y');
+        -> 'Sunday October 4 2009'
+        
 mysql> SELECT DATE_FORMAT('2007-10-04 22:23:00', '%H:%i:%s');
         -> '22:23:00'
 mysql> SELECT DATE_FORMAT('1900-10-04 22:23:00',
