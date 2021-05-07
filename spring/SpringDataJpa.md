@@ -644,9 +644,210 @@ IntelliJ 에서 `@NonNull, @Nullable` 에 대한 intelli sense 를 원한다면 
 
 ## Spring Data Common: Making a query
 
+Spring Data 가 Repository interface 의 Method 이름을 읽고 Query 를 생성한다. 만약 Method 이름에 문제가 있다면 실행할 때 error 가 발생할 것이다. 반드시 Repository interface 의 unit test 를 만들어 method 이름에 문제가 없는지 검증한다.
+
+```java
+// src/main/java/com.iamslash.exjpa/CommentRepository
+public interface CommentRepository extends MyRepository<Comment, Long> {
+  @Query("SELECT c FROM Comment AS c", nativeQuery = true)
+  List<Comment> findByCommentContains(String keyword);
+
+  Page<Comment> findbyLikeCountGreaterThanAndPost(int likeCount, Post post, Pageable pageable)
+}
+...
+//src/main/java/com.iamslash.exjpa/ExjpaApplication.java
+@SpringBootApplication
+@EnableJpaRepositories(queryLookupStrategy = QueryLookupStrategy.Key.CREATE)
+publi class ExjpaApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(ExjpaApplication.class);
+  }
+}
+```
+
+Query 를 선택하는 전략은 다음과 같이 3 가지가 있다. `@EnableJpaRepositories` 에
+`queryLookupStrategy` 의 value 로 설정할 수 있다.
+
+* CREATE
+* USE_DECLARED_QUERY
+* CREATE_IF_NOT_FOUND (default)
+
+Query Method 의 형식은 다음과 같다.
+
+```
+리턴타입 {접두어}{도입부}By{프로퍼티 표현식}{조건식}
+  [{And|Or}{프로퍼티 표현식}{조건식}]{정렬조건}{매개변수}
+```
+
+| Part | Examples |
+|----|----|
+| 접두어 | Find, Get, Query, Count, etc... |
+| 도입부 | Distinct, First(N), Top(N) |
+| 프로퍼티 표현식 | Person, Address, ZipCode => find{Person}ByAddress_ZipCode(...) |
+| 조건식 | IgnoreCase, Between, LessThan, GreaterThan, LIke, Contains, etc... |
+| 정렬조건 | OrderBy{프로퍼티}Asc|Desc |
+| 리턴타입 | E, Optional<E>, List<E>, Page<E>, Slice<E>, Stream<E> |
+| 매개변수 | Pageable, Sort |
+
+다음은 Query Method 의 예이다.
+
+```java
+/// basic
+List<Person> findByEmailAddressAndLastname(EmailAddress emailAddress, String lastname);
+// distinct
+List<Person> findDistinctPeopleByLastnameOrFirstname(String lastname, String firstname);
+List<Person> findPeopleDistinctByLastnameOrFirstname(String lastname, String firstname);
+// ignoring case
+List<Person> findByLastnameIgnoreCase(String lastname);
+// ignoring case
+List<Person> findByLastnameAndFirstnameAllIgnoreCase(String lastname, String firstname);
+
+/// sort
+List<Person> findByLastnameOrderByFirstnameAsc(String lastname);
+List<Person> findByLastnameOrderByFirstnameDesc(String lastname);
+
+/// page
+Page<User> findByLastname(String lastname, Pageable pageable);
+Slice<User> findByLastname(String lastname, Pageable pageable);
+List<User> findByLastname(String lastname, Sort sort);
+List<User> findByLastname(String lastname, Pageable pageable);
+
+/// stream
+// try-with-resource 를 사용하자.
+// stream 은 사용을 마치고 close() 해야 한다.
+Stream<User> readAllByFirstnameNotNull();
+```
+
+`Page` 는 `Slice` 를 extend 한다. `Slice` 는 바로 이전 혹은 다음 데이터 모음이 있는지 알 수 있다. `Page` 는 전체 데이터가 몇개의  모음인지 알수 있다.
+
+다음은 Query Method 의 basic unit test 일부이다.
+
+```java
+// test/java/com.iamslash.exjpa/CommentRepositoryTest.java
+import java.util.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class CommentRepositoryTest {
+  
+  @Autowired
+  CommentRepository commentRepository;
+
+  @Test
+  public void crud() {
+    // Given
+    Comment comment = new Comment();
+    comment.setLikeCount(1);
+    comment.setComment("spring data jpa");
+    commentRepository.save(comment);
+
+    // Then
+    List<Comment> comments = commentRepository.findByCommentContainsIgnoreCase("Spring");
+    assertThat(comments.size()).isEqualTo(0);
+  }
+}
+```
+
+다음은 Query Method 의 page unit test 일부이다.
+
+```java
+import java.util.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class CommentRepositoryTest {
+  
+  @Autowired
+  CommentRepository commentRepository;
+
+  @Test
+  public void crud() {
+    this.createComment(100, "spring data jpa");
+    this.createComment(55, "HIBERNATE SPRING");
+
+    PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "LikeCount");
+
+    Page<Comment> comments = commentRepository.findByCommentContainsIgnoreCase()
+    assertThat(comments.getNumberOfElements()).isEqualTo(2);
+    assertThat(comments).first().hasFieldOrPropertyWithValue("likeCount", 55);
+  }
+
+  private void createComment(int likeCount, String comment) {
+    // Given
+    Comment newComment = new Comment();
+    comment.setLikeCount(likecount);
+    comment.setComment(comment);
+    commentRepository.save(newComment);
+  }
+}
+```
+
+다음은 Query Method 의 stream unit test 일부이다.
+
+```java
+import java.util.*;
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class CommentRepositoryTest {
+  
+  @Autowired
+  CommentRepository commentRepository;
+
+  @Test
+  public void crud() {
+    this.createComment(100, "spring data jpa");
+    this.createComment(55, "HIBERNATE SPRING");
+
+    PageRequest pageRequest = PageRequest.of(0, 10, Sort.Direction.DESC, "LikeCount");
+
+    try (Stream<Comment> comments = commentRepository.findByCommentContainsIgnoreCase("Spring", pageRequest)) {
+      Comment firstComment = comment.findFirst().get();
+      assertThat(firstComment.getLikeCount()).isEqualTo(100);
+    }
+  }
+
+  private void createComment(int likeCount, String comment) {
+    // Given
+    Comment newComment = new Comment();
+    comment.setLikeCount(likecount);
+    comment.setComment(comment);
+    commentRepository.save(newComment);
+  }
+}
+```
+
 ## Spring Data Common: Async Query
 
+`@Async` 를 부착하여 Async Query 를 사용할 수 있다. 그러나 추천하지 않는다.
+
 ## Spring Data Common: Custom Repository
+
+다음과 같이 `application.properties` 를 설정한다.
+
+```conf
+spring.datasource.url=jdbc:postgresql://localhost:5432/iamslash
+spring.datasource.username=iamslash
+spring.datasource.password=1
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.jdbc.lob.non_contextual_create=true
+
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+logging.level.org.hibernate.type.descriptor.sql=trace
+```
+
+다음과 같이 `Post` Entity Class 를 제작한다.
+
+다음과 같이 `PostRepository` Repository interface 를 제작한다.
+
+다음과 같이 `PostCustomRepository` Custom repository interface 를 제작한다.
+
+다음과 같이 `PostCustomRepositoryImpl` Custom repositoryImpl class 를 제작한다.
 
 ## Spring Data Common: Basic Repository Customizing
 
