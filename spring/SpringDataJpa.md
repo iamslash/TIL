@@ -843,13 +843,264 @@ logging.level.org.hibernate.type.descriptor.sql=trace
 
 다음과 같이 `Post` Entity Class 를 제작한다.
 
+```java
+// src/main/java/com.iamslash.exjpa/Post.java
+@Entity
+public class Post {
+  @Id @GeneratedValue
+  private Long id;
+
+  private String title;
+
+  // length is greater than 255
+  @Lob
+  private String content;
+
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date created;
+
+  // getters, setters
+  ...
+}
+```
+
 다음과 같이 `PostRepository` Repository interface 를 제작한다.
+
+```java
+// src/main/java/com.iamslash.exjpa/PostRepository.java
+public interface PostRespository extends JpaRepository<Post, Long> {
+
+}
+```
+
+다음과 같이 `PostRepositoryTest` Repository test class 를 제작한다. Test class 에서 `spring.jpa.show-sql=true` 는 기본이다.
+
+```java
+// src/test/java/com.iamslash.exjpa/PostRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class PostRepositoryTest {
+  @Autowired
+  PostRepository postRepository;
+
+  @Test
+  public void crud() {
+
+  }
+}
+```
 
 다음과 같이 `PostCustomRepository` Custom repository interface 를 제작한다.
 
-다음과 같이 `PostCustomRepositoryImpl` Custom repositoryImpl class 를 제작한다.
+```java
+// src/main/java/com.iamslash.exjpa/PostCustomRepository.java
+public interface PostCustomRespository {
+
+}
+```
+
+다음과 같이 `PostCustomRepositoryImpl` Custom repositoryImpl class 를 제작한다. `Impl` 이라는 suffix 를 사용해야 한다.
+
+```java
+// src/main/java/com.iamslash.exjpa/PostCustomRepository.java
+@Repository
+@Transactional
+public interface PostCustomRespositoryImpl implements PostCustomRepository {
+
+  @Autowired
+  EntityManager entityManager;
+
+  @Override
+  public List<Post> findMyPost() {
+    System.out.println("custom findMyPost");
+    return entityManager.createQuery("SELECT p FROM Post AS p", Post.class).getResultList();
+  }
+}
+```
+
+이제 `PostRepository` Repository interface 를 수정하여 PostCustomRepository 를 상속하자.
+
+```java
+// src/main/java/com.iamslash.exjpa/PostRepository.java
+public interface PostRespository extends JpaRepository<Post, Long>, PostCustomRepository {
+
+}
+```
+
+`PostRepositoryTest` Repository test class 에서 `PostCustomRepository` 를 사용해 보자.
+
+```java
+// src/test/java/com.iamslash.exjpa/PostRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class PostRepositoryTest {
+  @Autowired
+  PostRepository postRepository;
+
+  @Test
+  public void crud() {
+    postRepository.findMyPost();
+  }
+}
+```
+
+한편 `SimpleJpaRepository.java` 를 확인하면 `delete` 이 비효율적으로 구현되어 있다. entity 가 entityManager 에 없다면 굳이 merge 하고 remove 하는 것은 비효율적이다.
+
+```java
+@Transactional
+public void delete(T entity) {
+  Assert.notNull(entity, "The entity must not be null");
+  em.remove(em.contains(entity) ? entity : em.merge(entity));
+}
+```
+
+다음과 같이 delete 를 개선해 보자. 
+
+```java
+// src/main/java/com.iamslash.exjpa/PostCustomRepository.java
+public interface PostCustomRespository<T> {
+  
+  List<Post> findMyPost();
+
+  void delete(T entity);
+}
+
+// src/main/java/com.iamslash.exjpa/PostCustomRepository.java
+@Repository
+@Transactional
+public interface PostCustomRespositoryImpl implements PostCustomRepository {
+
+  @Autowired
+  EntityManager entityManager;
+
+  @Override
+  public List<Post> findMyPost() {
+    System.out.println("custom findMyPost");
+    return entityManager.createQuery("SELECT p FROM Post AS p", Post.class).getResultList();
+  }
+
+  @Override
+  public void delete(Post entity) {
+    System.out.println("custom delete");
+    entityManager.remove(entity);
+  }
+}
+
+// src/test/java/com.iamslash.exjpa/PostRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class PostRepositoryTest {
+
+  @Autowired
+  PostRepository postRepository;
+
+  @Test
+  public void crud() {
+    postRepository.findMyPost();
+    Post pos = new Post();
+    post.setTitle("Hello World");
+    postRepository.save(post);
+    postRepositoty.findMyPost(); // send Insert Query
+
+    postRepositoty.delete(post);
+    postRepositoty.flush(); // send Delete Query
+  }
+}
+```
+
+`@Test` 가 부착된 Method 는 `@Transactional` 이 적용된다. 그리고 Method 가 실행된 후 RollBack 된다. 따라서 flush 가 수행되지 않을 수도 있다. 예를 들어 다음과 같이 `crud` 를 작성하면 Insert, Delete Query 는 수행되지 않는다.
+
+```java
+  @Test
+  public void crud() {
+    postRepository.findMyPost();
+    Post pos = new Post();
+    post.setTitle("Hello World");
+    postRepository.save(post);
+    postRepositoty.delete(post);
+  }
+```
+
+`Impl` suffix 를 수정하고 싶다면 `@EnableJpaRepository` 를 다음과 같이 수정한다.
+
+```java
+// src/main/java/com.iamslash.exjpa/ExjpaApplication.java
+@SpringBootApplication
+@EnableJpaRepositories(repositoryImplementationPostfix = "Default")
+public class Application {
+  public static void main(String[] args) {
+    SpringApplication.run(ExjpaApplication.class);
+  }
+}
+```
 
 ## Spring Data Common: Basic Repository Customizing
+
+이번에는 모든 entity 에 대해 적용할 수 있는 Custom Repository 를 만들어 보자.
+
+```java
+// src/main/java/com.iamslash.exjpa/MyRepository.java
+// Bean 등록은 필요 없다.
+@NoRepositoryBean
+public interface MyRepository<T, ID extends Serializable> extends JpaRepository<T, ID> {
+  boolean contains(T entity);
+}
+
+// src/main/java/com.iamslash.exjpa/SimpleMyRepository.java
+public class SimpleMyRepository<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements MyRepository<T, ID> {
+  
+  private EntityManager entityManager;
+
+  public SimpleMyRepositoty(JpaEntityInformation<T, ?> entityInformation, EntityManager entityManager) {
+    super(entityInformation, entityManager);
+    this.entityManager = entityManager;
+  }
+
+  @Override
+  public boolean contains(T entity) {
+    return entityManager.contains(entity);
+  }
+}
+
+// src/main/java/com.iamslash.exjpa/ExjpaApplication.java
+@SpringBootApplication
+@EnableJpaRepositories(repositoryBaseClass = SimpleMyRepository.class)
+public class Application {
+  public static void main(String[] args) {
+    SpringApplication.run(ExjpaApplication.class);
+  }
+}
+
+// src/main/java/com.iamslash.exjpa/PostRepository.java
+public interface PostRespository extends MyRepository<Post, Long> {
+
+}
+
+// src/test/java/com.iamslash.exjpa/PostRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class PostRepositoryTest {
+
+  @Autowired
+  PostRepository postRepository;
+
+  @Test
+  public void crud() {
+    postRepository.findMyPost();
+    Post pos = new Post();
+    post.setTitle("Hello World");
+
+    assertThat(postRepository.contains(post)).isFalse();
+    
+    postRepository.save(post);
+
+    assertThat(postRepository.contains(post)).isTrue();
+    
+    postRepositoty.delete(post);
+    postRepositoty.flush(); // send Delete Query
+  }
+}
+```
 
 ## Spring Data Common: Domain Event
 
