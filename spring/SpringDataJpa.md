@@ -1104,7 +1104,194 @@ public class PostRepositoryTest {
 
 ## Spring Data Common: Domain Event
 
+Domain Event 를 publish 하고 listener 에서 handle 해보자. 예를 들어 `Post` 가 하나 만들어 지고 publish 라는 event 가 발생하면 DB 에 저장하도록 구현해 보자. 먼저 `ApplicationContext` 를 이용하여 Event 를 publish 해보자.
+
+```java
+// src/main/java/com.iamslash.exjpa/PostPublishedEvent.java
+public class PostPublishedEvent extends ApplicationEvent {
+
+  private final Post post;
+
+  public PostPublishedEvent(Object source) {
+    super(source);
+    this.post = (Post) source;
+  }
+
+  public Post getPost() {
+    return post;
+  }
+}
+
+// src/main/java/com.iamslash.exjpa/PostListener.java
+public class PostListener implements ApplicationListener<PostPublishedEvent> {
+
+  @Override
+  public void onApplicationEvent(PostPublishedEvent event) {
+    System.out.println("----------");
+    System.out.println("event.getPost() + is published!!");
+    System.out.println("----------");
+  }
+}
+
+// src/test/java/com.iamslash.exjpa/PostRepositoryTestConfig.java
+// PostRepositoryTest 는 slicing test 이다. PostRepositoryTest 에
+// @Import(PostRepositoryTestConfig) 를 부착해야 PostListener 가
+// Bean 으로 등록된다.
+@Configuration
+public class PostRepositoryTestConfig {
+
+  @Bean
+  public PostListener postListener {
+    return new PostListener();
+  }
+}
+
+// src/test/java/com.iamslash.exjpa/PostRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+@Import(PostRepositotyTestConfig.class)
+public class PostRepositoryTest {
+
+  @Autowired
+  PostRepository postRepository;
+
+  @Autowired
+  ApplicationContext applicationContext;
+
+  @Test
+  public void event() {
+    Post post = new Post();
+    post.setTitle("event");
+    PostPublishedEvent event = new PostPublishedEvent(post);
+
+    applicationContext.publishEvent(event);
+  }
+}
+```
+
+`@EventListener` 를 이용하면 `PostListener` 를 더욱 간단히 구현할 수 있다.
+
+```java
+// src/main/java/com.iamslash.exjpa/PostListener.java
+public class PostListener {
+
+  @EventListener
+  public void onApplicationEvent(PostPublishedEvent event) {
+    System.out.println("----------");
+    System.out.println(event.getPost().getTitle() + " is published");
+    System.out.println("----------");
+  }
+}
+```
+
+또한 다음과 같이 `PostRepositoryTestConfig` 에 Listener 를 구현하면 `PostListener` 는 더이상 필요 없다.
+
+```java
+@configuration
+public class PostRepositoryTestConfig {
+
+  @Bean
+  public ApplicationListener<PostPublishedEvent> postListener() {
+    return new ApplicationListener<PostPublishedEvent>() {
+      @Overide
+      public void onApplicationEvent(PostPublishedEvent event) {
+        System.out.println("-----------");
+        System.out.println(event.getPost().getTitle() + " is published");
+        System.out.println("-----------");
+      }
+    }
+  }
+}
+```
+
+이번에는 `Post` 가 `AbstractAggregateRoot<E>` 를 상속하여 Domain Event 를 더욱 간단히 구현해 보자. `ApplicationContext` 는 더이상 필요 없다. `entityManager.save()` 를 호출할 때 등록되어 있던 Domain Event 가 publish 된다.
+
+```java
+// src/main/java/com.iamslash.exjpa/PostPublishedEvent.java
+public class PostPublishedEvent extends ApplicationEvent {
+  ...
+}
+
+// src/main/java/com.iamslash.exjpa/PostListener.java
+public class PostListener {
+
+  @EventListener
+  public void onApplicationEvent(PostPublishedEvent event) {
+    System.out.println("----------");
+    System.out.println(event.getPost().getTitle() + " is published");
+    System.out.println("----------");
+  }
+}
+
+@Configuration
+public class PostRepositoryTestConfig {
+
+  @Bean
+  public PostListener postListener {
+    return new PostListener();
+  }
+}
+
+// src/main/java/com.iamslash.exjpa/Post.java
+@Entity
+public class Post extends AbstractAggregateRoot<Post> {
+  ...
+  public Post publish() {
+    this.registerEvent(new PostPublishedEvent(this));
+    return this;
+  }
+}
+
+// src/test/java/com.iamslash.exjpa/PostRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+@Import(PostRepositotyTestConfig.class)
+public class PostRepositoryTest {
+
+  @Autowired
+  PostRepository postRepository;
+
+  @Test
+  public void evcrudent() {
+    Post post = new Post();
+    post.setTitle("event");
+
+    assertThat(postRepository.contains(post)).isFalse();
+    postRepository.save(post.publish());
+    assertThat(postRepositoty.contains(post)).isTrue();
+  }
+}
+```
+
+`AbstractAggregateRoot.java` 를 살펴보면 다음과 같은 함수들을 확인할 수 있다.
+
+* `registerEvent` : 이벤트를 등록한다.
+* `clearDomainEvents` : 등록된 이벤트를 모두 삭제한다. `@AfterDomainEventPublication` 사용.
+* `domainEvents` : 등록된 이벤트를 리턴한다. `DomainEvents` 사용
+
+```java
+// AbstractAggregateRoot.java
+protected <T> T registerEvent(T event) {
+  Assert.notNull(event, "Domain event must not be null!");
+
+  this.domainEvents.add(event);
+  return event;
+}
+
+@AfterDomainEventPublication
+protected void clearDomainEvents() {
+  this.domainEvents.clear();
+}
+
+@DomainEvents
+protected Collection<Object> domainEvent() {
+  return collections.unmodifiableList(domainEvents);
+}
+```
+
 ## Spring Data Common: QueryDSL
+
+QueryDSL 은 조건문을 표현하는 방법이 type-safe 하다.
 
 ## Spring Data Common: Web: Web Support Features
 
