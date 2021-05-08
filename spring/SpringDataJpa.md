@@ -1291,7 +1291,242 @@ protected Collection<Object> domainEvent() {
 
 ## Spring Data Common: QueryDSL
 
-QueryDSL 은 조건문을 표현하는 방법이 type-safe 하다.
+Repository interface 의 `findByFirstNameIngoreCaseAndLastNameStartsWithIgnoreCase(String firstName, String lastName)` 와 같은 Method 는 readability 가 떨어진다. QueryDSL 을 사용하면 type-safe 한 조건문 (predicate) 을 만들어서 Query 를 구현할 수 있다. 또한 readability 가 개선된다.
+
+예를 들어 다음과 같이 사용한다.
+
+```java
+QAccount acccount = QAccount.account;
+Predicate predicate = ...;
+Optional<Account> one = accountRepository.findOne(predicate);
+```
+
+QueryDSL 를 사용하기 위해 다음과 같은 dependency 들을 `build.gradle` 에 추가한다.
+
+```groovy
+buildscript {
+	ext {
+		queryDslVersion = "4.4.0"
+	}
+}
+
+plugins {
+	id "org.springframework.boot" version "2.4.0-SNAPSHOT"
+	id "io.spring.dependency-management" version "1.0.9.RELEASE"
+	id "java"
+}
+group = "com.iamslash.exjpa"
+version = "0.0.1-SNAPSHOT"
+sourceCompatibility = "1.8"
+
+repositories {
+	mavenCentral()
+	maven { url "https://repo.spring.io/milestone" }
+	maven { url "https://repo.spring.io/snapshot" }
+}
+
+dependencies {
+	implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+	implementation "org.springframework.boot:spring-boot-starter-web"
+	implementation "org.springframework.boot:spring-boot-devtools"
+  // QueryDSL
+	implementation ("com.querydsl:querydsl-jpa:${queryDslVersion}")
+	annotationProcessor ("com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+	testImplementation ("com.querydsl:querydsl-jpa:${queryDslVersion}")
+	testAnnotationProcessor ("com.querydsl:querydsl-apt:${queryDslVersion}:jpa")
+  // Lombok
+	implementation "org.projectlombok:lombok"
+	annotationProcessor ("org.projectlombok:lombok")
+	testImplementation ("org.projectlombok:lombok")
+	testAnnotationProcessor ("org.projectlombok:lombok")
+	
+  runtimeOnly "com.h2database:h2"
+	
+  testImplementation "org.springframework.boot:spring-boot-starter-test"
+}
+test {
+	useJUnitPlatform()
+}
+```
+
+spring data jpa debugging 을 위해 `application.properties` 를 다음과 같이 수정한다.
+
+```conf
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+logging.level.org.hibernate.type.descriptor.sql=trace
+```
+
+그리고 다음과 같이 구현한다.
+
+```java
+// src/main/java/com.iamslash.exjpa/Application.java
+
+// src/main/java/com.iamslash.exjpa/Account/Account.java
+@Entity
+public class Account {
+  
+  @Id
+  @GeneratedValue
+  private Log id;
+
+  private String username;
+
+  private String firstname;
+
+  private String lastName;
+
+  ...
+}
+
+// src/main/java/com.iamslash.exjpa/Account/AccountRepository.java
+public interface AccountRepository extends JpaRepository<Account, Long>, QuerydslPredicateExecutor<Account> {
+}
+
+// src/test/java/com.iamslash.exjpa/Account/AccountRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class AccountRepositoryTest {
+
+  @Autowired
+  AccountRepository accountRepository;
+
+  @Test
+  public void crud() {
+    QAccount account = QAccount.account;
+    Predicate predicate = account
+      .firstName.containsIgnoreCase("iamslash")
+      .and(QAccount.account.lastname.startsWith("iamslash"));
+    Optional<Account> one = accountRepository.findOne(predicate);
+    assertThat(one).isEmpty();
+  }
+}
+```
+
+이번에는 모든 entity 에 대해 적용할 수 있는 Custom Repository 를 QueryDSL 을 이용하여 만들어 보자.
+
+```java
+// src/main/java/com.iamslash.exjpa/SimpleMyRepository.java
+// Bean 등록은 필요 없다.
+@NoRepositoryBean
+public class SimpleMyRepository<T, ID extends Serializable> extends QuerydslJpaRepository<T, ID> implements MyRepository<T, ID> {
+  
+  private EntityManager entityManager;
+
+  public SimpleMyRepositoty(JpaEntityInformation<T, Id> entityInformation, EntityManager entityManager) {
+    super(entityInformation, entityManager);
+    this.entityManager = entityManager;
+  }
+
+  @Override
+  public boolean contains(T entity) {
+    return entityManager.contains(entity);
+  }
+}
+
+// src/main/java/com.iamslash.exjpa/ExjpaApplication.java
+@SpringBootApplication
+@EnableJpaRepositories(repositoryBaseClass = SimpleMyRepository.class)
+public class Application {
+  public static void main(String[] args) {
+    SpringApplication.run(ExjpaApplication.class);
+  }
+}
+
+// src/main/java/com.iamslash.exjpa/PostRepository.java
+public interface PostRespository extends MyRepository<Post, Long>, QuerydslPredicateExecutor<Post> {
+
+}
+
+// src/test/java/com.iamslash.exjpa/PostRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class PostRepositoryTest {
+
+  @Autowired
+  PostRepository postRepository;
+
+  @Test
+  public void crud() {
+    postRepository.findMyPost();
+    Post pos = new Post();
+    post.setTitle("Hello World");
+
+    Predicate predicate = QPost.post
+      .title.containsIgnoreCase("iam");
+    Optional<Post> one = postRepository.findOne(predicate);
+    assertThat(one).isNotEmpty();
+  }
+}
+```
+
+이번에는 Book Entity class 를 QueryDSL 을 이용하여 구현해 본다.
+
+```java
+// src/main/java/com.iamslash.exjpa/Application.java
+@SpringBootApplication
+public class ExjpaApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(ExjpaApplication.class);
+  }
+}
+
+// src/main/java/com.iamslash.exjpa/Book.java
+@Data
+@Entity
+public class Book {
+
+  @Id
+  @GeneratedValue
+  private Long id;
+
+  private String title;
+
+  @Lob
+  private String content;
+
+  ...
+}
+
+// src/main/java/com.iamslash.exjpa/BookRepository.java
+public interface BookRepository extends JpaRepository<Book, Long>, QuerydslPredicateExecutor<Book> {
+
+}
+
+// src/test/java/com.iamslash.exjpa/BookRepositoryTest.java
+@DataJpaTest
+class BookRepositoryTest {
+
+  @Autowired 
+  BookRepository bookRepository;
+
+  @Test
+  void test() {
+    Book book = new Book();
+    book.setTitle("spring");
+    book.setContent("data");
+    bookRepository.save(book);
+
+    assertEquals(1, bookRepository.findAll().size());
+
+    Optional<Book> one = bookRepository.findOne(QBook.book.title.contains("iam"));
+    assertTrue(one.isPresent());
+    Optional<Book> two = bookRepository.findOne(QBook.book.title.contains("jpa"));
+    assertTrue(two.isEmpty());
+  }
+}
+```
+
+QuerydslJpaRepository 는 deprecated 되었다. 대신 SimpleJpaRepository 를 사용하도록 한다.
+
+```java
+// src/main/java/com.iamslash.exjpa/SimpleMyRepository.java
+// Bean 등록은 필요 없다.
+@NoRepositoryBean
+public class SimpleMyRepository<T, ID extends Serializable> extends SimpleJpaRepository<T, ID> implements MyRepository<T, ID> {
+...  
+}
+```
 
 ## Spring Data Common: Web: Web Support Features
 
