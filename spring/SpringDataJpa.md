@@ -26,7 +26,6 @@
   - [Spring Data Common: Web: DomainClassConverter](#spring-data-common-web-domainclassconverter)
   - [Spring Data Common: Web: Pageable and Sort Parameters](#spring-data-common-web-pageable-and-sort-parameters)
   - [Spring Data Common: Web: HATEOAS](#spring-data-common-web-hateoas)
-  - [Spring Data Common: Summary](#spring-data-common-summary)
   - [Spring Data JPA: JPA Repository](#spring-data-jpa-jpa-repository)
   - [Spring Data JPA: Saving Entity](#spring-data-jpa-saving-entity)
   - [Spring Data JPA: Query method](#spring-data-jpa-query-method)
@@ -1530,15 +1529,386 @@ public class SimpleMyRepository<T, ID extends Serializable> extends SimpleJpaRep
 
 ## Spring Data Common: Web: Web Support Features
 
+`@SpringBootApplication` 를 사용한다면 특별히 설정할 것이 없다.
+`@SpringBootApplication` 를 사용하지 않는 다면 다음과 같이
+`@EnableSpringDataWebSupport` 를 `WebConfiguration` class 에 부착한다.
+
+```java
+@EnableWebMvc
+@EnableSpringDataWebSupport
+class WebConfiguration {
+
+}
+```
+
+`@EnableSpringDataWebSupport` 를 부착하면 다음과 같은 기능들을 제공한다. 그러나 Domain Class Converter 와 `Pageable, Sort` 만 유용할 뿐이다.
+
+* DomainClassConverter
+* `Pageable, Sort` parameters
+* HATEOAS
+  * PagedResourcesAssembler
+  * PagedResource
+* Payload Projection
+  * `@ProjectedPayload, @XBRead, @JsonPath`
+
 ## Spring Data Common: Web: DomainClassConverter
+
+다음은 `getPost` 에서 `id` 를 `Post` 로 변환하는 예이다.
+
+```java
+// src/main/java/com.iamslash.exjpa/Application.java
+@SpringBootApplication
+public class Application {
+
+  public static void main(String[] args) {
+    SpringApplication.run(Application.class, args);
+  }
+}
+
+// src/main/java/com.iamslash.exjpa/post/Post.java
+Entity
+public class Post {
+  @Id @GeneratedValue
+  private Long id;
+
+  private String title;
+
+  // length is greater than 255
+  @Lob
+  private String content;
+
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date created;
+
+  // getters, setters
+  ...
+}
+
+// src/main/java/com.iamslash.exjpa/post/PostRepository.java
+public interface PostRepository extends JpaRepository<Post, Long> {
+...
+}
+
+// src/main/java/com.iamslash.exjpa/post/PostController.java
+@RestController
+public class PostController {
+
+  @Autowired
+  PostRepository postRepository;
+
+  @GetMapping("/post/{id}")
+  public Post getPost(@PathVariable Long id) {
+    Optional<Post> byId = postRepository.findById(id);
+    Post post = byId.get();
+    return post.getTitle();
+  }
+}
+
+// src/test/resources/application-test.properties
+spring.jp.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+logging.level.org.hibernate.type.descriptor.sql=trace
+
+// src/test/java/com.iamslash.exjpa/post/PostController.java
+// Integration Test
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+public class PostControllerTest {
+
+  @Autowired
+  MockMvc mockMvc;
+
+  @Autowired
+  PostRepository postRepository
+
+  @Test
+  public void getPost() {
+    Post post = new Post();
+    post.setTitle("jpa");
+    postRepository.save(post);
+
+    mockMvc.perform(get("/posts/1"))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(content().string("jpa"));
+  }
+
+}
+```
+
+`DomainClassConverter` class 덕분에 argument 에서 `id` 가 `Post` 로 변환된다.
+
+```java
+  @GetMapping("/post/{id}")
+  public Post getPost(@PathVariable("id") Post post) {
+    return post.getTitle();
+  }
+```
+
+`DomainClassConverter` class 에서 다음과 같은 부분을 주목하자.
+
+```java
+public class DomainClassConverter<T extends ConversionService & ConverterRegistry>
+  implements ConditionalGenericConverter, ApplicationContextAware {
+
+  }
+  // id 가 주어지면 Entity 로 변환
+  private class ToEntityConverter implements ConditionalGenericConverter {
+
+  }
+  // Entity 가 주어지면 id 로 변환
+  private class ToIdConverter implements ConditionalGenericConverter {
+
+  }
+```
 
 ## Spring Data Common: Web: Pageable and Sort Parameters
 
+Spring MVC 의 [HandlerMethodArgumentResolver](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/method/support/HandlerMethodArgumentResolver.html) 를 구현한 class 들을 Rest api 의  paramter 로 이용하면 다양한 기능들을 구현할 수 있다. 특히 `Pageable` 이 유용하다.
+
+```java
+// src/main/java/com.iamslash.exjpa/Application.java
+@SpringBootApplication
+public class Application {
+
+  public static void main(String[] args) {
+    SpringApplication.run(Application.class, args);
+  }
+}
+
+// src/main/java/com.iamslash.exjpa/post/Post.java
+Entity
+public class Post {
+  @Id @GeneratedValue
+  private Long id;
+
+  private String title;
+
+  // length is greater than 255
+  @Lob
+  private String content;
+
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date created;
+
+  // getters, setters
+  ...
+}
+
+// src/main/java/com.iamslash.exjpa/post/PostRepository.java
+public interface PostRepository extends JpaRepository<Post, Long> {
+...
+}
+
+// src/main/java/com.iamslash.exjpa/post/PostController.java
+@RestController
+public class PostController {
+
+  @Autowired
+  PostRepository postRepository;
+
+  @GetMapping("/post/{id}")
+  public Post getPost(@PathVariable Long id) {
+    Optional<Post> byId = postRepository.findById(id);
+    Post post = byId.get();
+    return post.getTitle();
+  }
+
+  @GetMapping("/posts")
+  public Page<Post> getPosts(Pageable pageable) {
+    return postRepository.findAll(pageable);
+  }
+}
+
+// src/test/resources/application-test.properties
+spring.jp.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+logging.level.org.hibernate.type.descriptor.sql=trace
+
+// src/test/java/com.iamslash.exjpa/post/PostController.java
+// Integration Test
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+public class PostControllerTest {
+
+  @Autowired
+  MockMvc mockMvc;
+
+  @Autowired
+  PostRepository postRepository
+
+  @Test
+  public void getPost() {
+    Post post = new Post();
+    post.setTitle("jpa");
+    postRepository.save(post);
+
+    mockMvc.perform(get("/posts/1"))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(content().string("jpa"));
+  }
+
+  @Test
+  public void getPosts() {
+    Post post = new Post();
+    post.setTitle("jpa");
+    postRepository.save(post);
+
+    mockMvc.perform(get("/posts")
+        .param("page", "0")
+        .param("size", "10")
+        .param("sort", "created,desc")
+        .param("sort", "title"))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(jsonpath("$.content[0].title", is("jpa")));
+  }
+
+}
+```
+
 ## Spring Data Common: Web: HATEOAS
 
-## Spring Data Common: Summary
+* [An Intro to Spring HATEOAS](https://www.baeldung.com/spring-hateoas-tutorial)
+
+----
+
+The Spring HATEOAS project is a library of APIs that we can use to easily create REST representations that follow the principle of HATEOAS (Hypertext as the Engine of Application State).
+
+쉽게 얘기하면 HTTP API 의 Response Body 에 link 를 포함한 것이다.
+
+다음과 같은 dependency 를 build.gradle 에 선언한다.
+
+```groovy
+implementation("org.springframework.boot:spring-boot-starter-hateoas:2.1.4.RELEASE")
+```
+
+```java
+// src/main/java/com.iamslash.exjpa/Application.java
+@SpringBootApplication
+public class Application {
+
+  public static void main(String[] args) {
+    SpringApplication.run(Application.class, args);
+  }
+}
+
+// src/main/java/com.iamslash.exjpa/post/Post.java
+Entity
+public class Post {
+  @Id @GeneratedValue
+  private Long id;
+
+  private String title;
+
+  // length is greater than 255
+  @Lob
+  private String content;
+
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date created;
+
+  // getters, setters
+  ...
+}
+
+// src/main/java/com.iamslash.exjpa/post/PostRepository.java
+public interface PostRepository extends JpaRepository<Post, Long> {
+...
+}
+
+// src/main/java/com.iamslash.exjpa/post/PostController.java
+@RestController
+public class PostController {
+
+  @Autowired
+  PostRepository postRepository;
+
+  @GetMapping("/post/{id}")
+  public Post getPost(@PathVariable Long id) {
+    Optional<Post> byId = postRepository.findById(id);
+    Post post = byId.get();
+    return post.getTitle();
+  }
+
+  @GetMapping("/posts")
+  public PagedResources<Resource<Post>> getPosts(Pageable pageable, PagedResourcesAssembler<Post> assembler) {
+    Page<Post> all = postRepository.findAll(pageable);
+    return assmbler.toResource(postRepository.findAll(all));
+  }
+}
+
+// src/test/resources/application-test.properties
+spring.jp.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+logging.level.org.hibernate.type.descriptor.sql=trace
+
+// src/test/java/com.iamslash.exjpa/post/PostController.java
+// Integration Test
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+@ActiveProfiles("test")
+public class PostControllerTest {
+
+  @Autowired
+  MockMvc mockMvc;
+
+  @Autowired
+  PostRepository postRepository
+
+  @Test
+  public void getPost() {
+    Post post = new Post();
+    post.setTitle("jpa");
+    postRepository.save(post);
+
+    mockMvc.perform(get("/posts/1"))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(content().string("jpa"));
+  }
+
+  @Test
+  public void getPosts() {
+    Post post = new Post();
+    post.setTitle("jpa");
+    postRepository.save(post);
+
+    mockMvc.perform(get("/posts")
+        .param("page", "0")
+        .param("size", "10")
+        .param("sort", "created,desc")
+        .param("sort", "title"))
+      .andDo(print())
+      .andExpect(status().isOk())
+      .andExpect(jsonpath("$.content[0].title", is("jpa")));
+  }
+
+  private void createPosts() {
+    int postsCount = 100;
+    while (postsCount-- > 0) {
+      Post = new Post();
+      post.setTitle("jpa");
+      postRepository.save(post);      
+    }
+  }
+
+}
+```
 
 ## Spring Data JPA: JPA Repository
+
+`@SpringBootApplication` 을 사용한다면 `@EnableJpaRepositories` 를 부착할 필요가 없다.
+
+`@Repository` 는 부착하지 않아도 된다. 부착한다고 별 문제가 되지는 않는다.
+
+`@Repository` 가 부착된다면 `SQLExcpetion` 또는 JPA Exception 을 Spring 의 DataAccessException 으로 변환한다???
 
 ## Spring Data JPA: Saving Entity
 
