@@ -1912,9 +1912,234 @@ public class PostControllerTest {
 
 ## Spring Data JPA: Saving Entity
 
+`SimpleJpaRepository::save` class 는 다음과 같이 구현되어 있다. 즉, entity 가 Transient status 이면 persist 를 호출하고 entity 가 Detached status 이면 merge 를 호출한다.
+
+```java
+@Transactional
+public <S extends T> S save(S entity) {
+  if (entityInformation.isNew(entity)) {
+    em.persist(entity);
+    return entity;
+  } else {
+    return em.merge(entity);
+  }
+}
+```
+
+`em.persist` 는 entity 를 persistent context 에 caching 한다. 이후 entity 에 변화가 생기면 DataBase 와 sync 한다. `em.merge` 는 entity 의 복사본을 만들고 그 복사본을 persistent context 에 caching 하고 return 한다. 이후 copied entity 에 변화가 생기면 DataBase 와 sync 한다.
+
+```java
+// src/test/java/com.iamslash.exjpa/post/PostController.java
+// Integration Test
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class PostControllerTest {
+
+  @Autowired
+  PostRepository postRepository
+
+  @PersistenceContext
+  private EntityManager entityManager;
+
+  @Test
+  public void save() {
+    Post post = new Post();
+    post.setTitle("jpa");
+    Post savedPost = postRepository.save(post); // persist
+
+    assertThat(entityManager.contains(post)).isTrue();
+
+    Post postUpdate = new Post();
+    postUpdate.setId(post.getId());
+    postUpdate.setTitle("hibernate");
+    postRepository.save(postUpdate); // merge
+
+    List<Post> all = postRepository.findAll();
+    assertThat(all.size()).isEqualTo(1);
+  }
+}
+```
+
+`entityReturn = postRepository.save(entityArg)` 를 호출하고 나서는 반드시 return 된 post 를 사용하는 것이 bug free 하다. entityArg 가 transient status 혹은 detached status 일 때 entityReturn 는 항상 persistent status 임이 보장되기 때문이다.
+
 ## Spring Data JPA: Query method
 
+* [6.3.2. Query Creation @ spring.io](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#jpa.query-methods.query-creation)
+
+----
+
+다음과 같은 KeyWord 를 이용하여 Repository interface 의 Query method 생성이 가능하다.
+
+* And, Or
+* Is, Equals
+* LessThan, LessThanEqual, GreaterThan, GreaterThanEqual
+* After, Before
+* IsNull, IsNotNull, NotNull
+* Like, NotLike
+* StartingWith, EndingWith, Containing
+* OrderBy
+* Not, In, NotIn
+* True, False
+* IgnoreCase
+
+다음과 같이 Entity 에 `@NamedQuery` 를 부착하자. Repository interface 의 Query Method 중 matchiing 된 것이 있을 때 `@NamedQeury` 의 `query` 가 실행된다.
+
+```java
+// src/main/java/com.iamslash.exjpa/post/Post.java
+@Entity
+@NamedQuery(name = "Post.findByTitle", query = "SELECT p FROM Post AS p WHERE p.title = ?1")
+public class Post {
+  @Id @GeneratedValue
+  private Long id;
+
+  private String title;
+
+  // length is greater than 255
+  @Lob
+  private String content;
+
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date created;
+
+  // getters, setters
+  ...
+}
+
+// src/main/java/com.iamslash.exjpa/post/PostRepository.java
+public interface PostRepository extends JpaRepository<Post, Long> {
+  List<Post> findByTitle(String title);
+}
+
+// src/test/java/com.iamslash.exjpa/post/PostController.java
+// Integration Test
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class PostControllerTest {
+
+  @Autowired
+  PostRepository postRepository
+
+  @PersistenceContext
+  private EntityManager entityManager;
+
+  private void savePost() {
+    Post post = new Post();
+    post.setTitle("Spring");
+    postRepository.save(post);
+  }
+
+  @Test
+  public void findByTitle() {
+    savePost();
+    List<Post> all = postRepository.findByTitle("Spring");
+    assertThat(all.size()).isEqualTo(1);
+  }
+}
+```
+
+또한 다음과 같이 `@Query` 를 Repository interface 에 부착하여 Custom query 를 사용할 수 있다.
+
+```java
+// src/main/java/com.iamslash.exjpa/post/Post.java
+@Entity
+public class Post {
+  @Id @GeneratedValue
+  private Long id;
+
+  private String title;
+
+  // length is greater than 255
+  @Lob
+  private String content;
+
+  @Temporal(TemporalType.TIMESTAMP)
+  private Date created;
+
+  // getters, setters
+  ...
+}
+
+// src/main/java/com.iamslash.exjpa/post/PostRepository.java
+public interface PostRepository extends JpaRepository<Post, Long> {
+  @Query("SELECT p FROM post AS p WHERE p.title = ?1")
+  List<Post> findByTitle(String title);
+}
+
+// src/test/java/com.iamslash.exjpa/post/PostController.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class PostControllerTest {
+
+  @Autowired
+  PostRepository postRepository
+
+  @PersistenceContext
+  private EntityManager entityManager;
+
+  private void savePost() {
+    Post post = new Post();
+    post.setTitle("Spring");
+    postRepository.save(post);
+  }
+
+  @Test
+  public void findByTitle() {
+    savePost();
+    List<Post> all = postRepository.findByTitle("Spring");
+    assertThat(all.size()).isEqualTo(1);
+  }
+}
+```
+
+만약 jpql 대신 nativeQuery 를 사용하고 싶다면 `@Query` 에 다음을 추가한다. 
+
+```java
+// src/main/java/com.iamslash.exjpa/post/PostRepository.java
+public interface PostRepository extends JpaRepository<Post, Long> {
+  @Query("SELECT p FROM post AS p WHERE p.title = ?1", nativeQuery = true)
+  List<Post> findByTitle(String title);
+}
+```
+
 ## Spring Data JPA: Query method Sort
+
+`@Query` 를 사용하여 Sort 를 수행할 때 한가지 제약사항이 있다. `Sort.by()` 의
+매개변수로 사용한 문자열은 Entity 의 property 혹은 alias 이어야 한다.
+
+```java
+// src/test/java/com.iamslash.exjpa/post/PostController.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class PostControllerTest {
+
+  @Autowired
+  PostRepository postRepository
+
+  @PersistenceContext
+  private EntityManager entityManager;
+
+  private void savePost() {
+    Post post = new Post();
+    post.setTitle("Spring");
+    postRepository.save(post);
+  }
+
+  @Test
+  public void findByTitle() {
+    savePost();
+    // title is a property of the entity
+    List<Post> all = postRepository.findByTitle("Spring", Sort.by("title");
+    assertThat(all.size()).isEqualTo(1);
+  }
+}
+
+// src/main/java/com.iamslash.exjpa/post/PostRepository.java
+public interface PostRepository extends JpaRepository<Post, Long> {
+  // title is a alias of the entity
+  @Query("SELECT p, p.title AS title FROM post AS p WHERE p.title = ?1")
+  List<Post> findByTitle(String title, Sort sort);
+}    
+```
 
 ## Spring Data JPA: Named Parameter and SpEL
 
