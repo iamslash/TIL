@@ -195,4 +195,5 @@ Cache recent messages (15 mins).
 * [WhatsApp System Design](https://www.passionatestar.com/whatsapp-system-design/)
 * [How to Build a Chat Application with Amazon ElastiCache for Redis @ aws](https://aws.amazon.com/ko/blogs/database/how-to-build-a-chat-application-with-amazon-elasticache-for-redis/)
   * [src](https://github.com/aws-samples/elasticache-refarch-chatapp)
-  
+* [Spring websocket chatting server(3) – 여러대의 채팅서버간에 메시지 공유하기 by Redis pub/sub](https://daddyprogrammer.org/post/4731/spring-websocket-chatting-server-redis-pub-sub/)
+  * [src](https://github.com/codej99/websocket-chat-server/tree/feature/redis-pub-sub)
