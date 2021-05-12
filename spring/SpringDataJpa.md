@@ -2143,11 +2143,225 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
 ## Spring Data JPA: Named Parameter and SpEL
 
+다음과 같이 `?1` 대신 `:title` 을 사용할 수 있다. 이것을 named parameter 라고 한다. `@Param("title")` 을
+paramter 로 추가해야 한다.
+
+```java
+// src/main/java/com.iamslash.exjpa/post/PostRepository.java
+public interface PostRepository extends JpaRepository<Post, Long> {
+  // title is a alias of the entity
+  @Query("SELECT p, p.title AS title FROM post AS p WHERE p.title = :title")
+  List<Post> findByTitle(@Param("title") String title, Sort sort);
+}    
+```
+
+다음과 같이 `FROM post` 대신 `FROM #{#entityName}` 을 사용할 수 있다. SpEL
+`#{#entityName}` 은 Repository interface 의 Post 를 의미한다. Post entity class
+의 entity 이름이 바뀌어도 `@Query` 의 Table 이름을 수정할 필요가 없다.
+
+```java
+// src/main/java/com.iamslash.exjpa/post/PostRepository.java
+public interface PostRepository extends JpaRepository<Post, Long> {
+  // title is a alias of the entity
+  @Query("SELECT p, p.title AS title FROM #{#entityName} AS p WHERE p.title = :title")
+  List<Post> findByTitle(@Param("title") String title, Sort sort);
+}    
+```
+
 ## Spring Data JPA: Update query method
+
+Persistent context 에 caching 된 entity 를 변경하면 적당한 시점에 flushing 되고
+DBMS 에 Update query 가 전송된다. 굳이 Update query 를 manual 하게 사용하고
+싶다면 다음과 같이 `@Modifying @Query` 와 함께 구현한다. 
+
+```java
+// src/main/java/com.iamslash.exjpa/post/PostRepository.java
+public interface PostRepository extends JpaRepository<Post, Long> {
+  // title is a alias of the entity
+  @Query("SELECT p, p.title AS title FROM #{#entityName} AS p WHERE p.title = :title")
+  List<Post> findByTitle(@Param("title") String title, Sort sort);
+
+  @Modifying
+  @Query("UPDATE Post p Set p.title = ?1 WHERE p.id = ?2")
+  int updateTitle(String title, Long id);
+}    
+
+// src/test/java/com.iamslash.exjpa/PostRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class PostRepositoryTest {
+
+  @Autowired
+  PostRepository postRepository;
+
+  @Test
+  public void updateTitle() {
+    Post spring = savePost();
+
+    String hibernate = "hibernate";
+    int update = postRepository.updateTitle(hibernate, spring.getId());
+    assertThat(update).isEqualTo(1);
+
+    Optional<Post> byId = postRepository.findById(spring.getid());
+    assertThat(byId.get().getTitle()).isEqualTo(hibernate);
+  }
+}
+```
+
+그러나 `@Modifying @Query` 는 추천하지 않는다. 위의 `updateTitle()` 은 실패하기 때문이다. SELECT query 가 DBMS 로 전송되지 않고 Persistent context 에 caching 된 entity 가 byId 에 저장된다.
+
+다음과 같이 `@Modifying(clearAutomatically = true)` 를 사용하면 `updateTitle()` 은 성공한다. Update query 이후에 Persistent context 의 cache 를 clear 하기 때문에 byId 에 새로 읽어온 entity 가 저장된다. 즉, SELECT query 가 DBMS 로 전송된다.
+
+```java
+// src/main/java/com.iamslash.exjpa/post/PostRepository.java
+public interface PostRepository extends JpaRepository<Post, Long> {
+  // title is a alias of the entity
+  @Query("SELECT p, p.title AS title FROM #{#entityName} AS p WHERE p.title = :title")
+  List<Post> findByTitle(@Param("title") String title, Sort sort);
+
+  @Modifying(clearAutomatically = true)
+  @Query("UPDATE Post p Set p.title = ?1 WHERE p.id = ?2")
+  int updateTitle(String title, Long id);
+}    
+```
+
+그러나 위의 방법들은 모두 추천하지 않는다. Persistent context 의 entity 를 변경하고 적당한 시점에 flushing 되는 방식이 깔끔하다.
+
+```java
+// src/main/java/com.iamslash.exjpa/post/PostRepository.java
+public interface PostRepository extends JpaRepository<Post, Long> {
+  // title is a alias of the entity
+  @Query("SELECT p, p.title AS title FROM #{#entityName} AS p WHERE p.title = :title")
+  List<Post> findByTitle(@Param("title") String title, Sort sort);
+}    
+
+// src/test/java/com.iamslash.exjpa/PostRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class PostRepositoryTest {
+
+  @Autowired
+  PostRepository postRepository;
+
+  private Post savePost() {
+    Post post = new Post();
+    post.setTitle("Spring");
+    return postRepository.save(post); // persist
+  }
+
+  @Test
+  public void updateTitle() {
+    Post spring = savePost();
+    spring.setTitle("hibernate");
+
+    List<Post> all = postRepository.findAll();
+    assertThat(all.get(0).getTitle()).isEqualTo("hibernate");
+  }
+}
+```
 
 ## Spring Data JPA: EntityGraph
 
+Fetch mode 에는 Eager 와 Lazy 가 있다. `Eager` 는 바로 가져오는 것이고 `Lazy` 는 필요할 때 가져오는 것이다. `@ManyToOne` 는 `Eager` 이다. `@OneToMany` 는 `Lazy` 이다.
+
+다음은 `@ManyToOne` 을 사용했기 때문에 Post 를 `Eager` fetch 한다.
+
+```java
+// src/main/java/com.iamslash.exjpa/Comment.java
+@Entity
+public class Comment {
+
+  @Id
+  @GeneratedValue
+  private Long id;
+
+  private String comment;
+
+  @ManyToOne
+  private Post post;
+}
+
+// src/main/java/com.iamslash.exjpa/CommentRepository.java
+public interface CommentRepository extends JpaRepository<Comment> {
+
+}
+
+// src/test/java/com.iamslash.exjpa/CommentRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class CommentRepositoryTest {
+
+  @Autowired
+  CommentRepository commentRepository;
+
+  @Test
+  public void getComment() {
+    commentRepository.findById(1l);
+  }
+}
+```
+
+다음과 같이 `@ManyToOne(fetch = FetchType.LAZY)` 를 사용하면 Post 를 `Lazy` fetch 한다.
+
+```java
+// src/main/java/com.iamslash.exjpa/Comment.java
+@Entity
+public class Comment {
+...
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Post post;
+...   
+}
+```
+
+다음과 같이 `@NamedEntityGraph` 를 사용하면 `Eager` Fetch 이다.
+
+```java
+// src/main/java/com.iamslash.exjpa/Comment.java
+@NamedEntityGraph(name = "Comment.post",
+      attributeNodes = @NamedAttributeNode("post"))
+@Entity
+public class Comment {
+
+  @Id
+  @GeneratedValue
+  private Long id;
+
+  private String comment;
+
+  @ManyToOne
+  private Post post;
+}
+
+// src/main/java/com.iamslash.exjpa/CommentRepository.java
+public interface CommentRepository extends JpaRepository<Comment> {
+
+  @EntityGraph(value = "Comment.post")
+  Optional<Comment> getById(Long id);
+}
+
+// src/test/java/com.iamslash.exjpa/CommentRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class CommentRepositoryTest {
+
+  @Autowired
+  CommentRepository commentRepository;
+
+  @Test
+  public void getComment() {
+    commentRepository.getById(1l);
+
+    System.out.println("==========");
+
+    commentRepository.findById(1l);
+  }
+}
+```
+
 ## Spring Data JPA: Projection
+
+Entity 의 일부 field 만 가져오는 것을 Projection 이라고 한다.
 
 ## Spring Data JPA: Specifications
 
