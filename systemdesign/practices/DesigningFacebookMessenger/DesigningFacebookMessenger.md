@@ -193,5 +193,6 @@ Cache recent messages (15 mins).
 * [WhatsApp-Engineering Inside-1](https://medium.com/codingurukul/whatsapp-engineering-inside-1-1ef4845ff784)
   * [WhatsApp-Engineering Inside-2](https://medium.com/codingurukul/whatsapp-engineering-inside-2-bdd1ec354748)
 * [WhatsApp System Design](https://www.passionatestar.com/whatsapp-system-design/)
-* [How to Build a Chat Application with Amazon ElastiCache for Redis](https://aws.amazon.com/ko/blogs/database/how-to-build-a-chat-application-with-amazon-elasticache-for-redis/)
+* [How to Build a Chat Application with Amazon ElastiCache for Redis @ aws](https://aws.amazon.com/ko/blogs/database/how-to-build-a-chat-application-with-amazon-elasticache-for-redis/)
+  * [src](https://github.com/aws-samples/elasticache-refarch-chatapp)
   
