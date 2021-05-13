@@ -2262,7 +2262,7 @@ public class PostRepositoryTest {
 
 ## Spring Data JPA: EntityGraph
 
-Fetch mode 에는 Eager 와 Lazy 가 있다. `Eager` 는 바로 가져오는 것이고 `Lazy` 는 필요할 때 가져오는 것이다. `@ManyToOne` 는 `Eager` 이다. `@OneToMany` 는 `Lazy` 이다.
+Fetch mode 에는 Eager 와 Lazy 가 있다. `Eager` 는 바로 가져오는 것이고 `Lazy` 는 필요할 때 가져오는 것이다. `@ManyToOne` 는 `Eager` 이다. `@OneToMany` 는 `Lazy` 이다. EntityGraph 는 Fetch mode 를 유연하게 설정할 수 있게 해준다.
 
 다음은 `@ManyToOne` 을 사용했기 때문에 Post 를 `Eager` fetch 한다.
 
@@ -2363,9 +2363,196 @@ public class CommentRepositoryTest {
 
 Entity 의 일부 field 만 가져오는 것을 Projection 이라고 한다.
 
+다음은 `Comment` entity 의 Open projection 을 구현한 것이다. 즉, `Comment`
+entity 의 모든 field 를 가져오는 SELECT Query 를 수행한다.
+
+```java
+// src/main/java/com.iamslash.exjpa/Comment.java
+@Entity
+public class Comment {
+
+  @Id
+  @GeneratedValue
+  private Long id;
+
+  private String comment;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Post post;
+
+  private int up;
+
+  private int down;
+
+  private boolean best; 
+  
+  ...
+}
+
+// src/main/java/com.iamslash.exjpa/CommentSummary.java
+public interface CommentSummary {
+
+  String getcomment();
+
+  int getUp();
+
+  int getDown();
+}
+
+// src/main/java/com.iamslash.exjpa/CommentRepository.java
+public interface CommentRepository extends JpaRepository<Comment, Long> {
+
+  @EntityGraph(attributePaths = "post")
+  Optional<Comment> getById(Long id);
+
+  List<Comment> findByPost_Id(Long id);
+}
+
+// src/test/java/com.iamslash.exjpa/CommentRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class CommentRepositoryTest {
+
+  @Autowired
+  CommentRepository comments;
+
+  @Test
+  public void getComment() {
+    comments.findByPost_Id(1l);
+  }
+
+}
+```
+
+다음은 `Comment` entity 의 Close projection 을 구현한 것이다. 즉, `Comment`
+entity 의 일부 field 를 가져오는 SELECT Query 를 수행한다.
+
+```java
+// src/main/java/com.iamslash.exjpa/CommentRepository.java
+public interface CommentRepository extends JpaRepository<Comment, Long> {
+
+  @EntityGraph(attributePaths = "post")
+  Optional<Comment> getById(Long id);
+
+  List<CommentSummary> findByPost_Id(Long id);
+}
+```
+
+`@Value` 과 SpEL 를 이용하면 다양한 값들을 얻어올 수 있다.
+
+```java
+// src/main/java/com.iamslash.exjpa/CommentSummary.java
+public interface CommentSummary {
+
+  String getcomment();
+
+  int getUp();
+
+  int getDown();
+
+  @Value("${target.up + ' ' + target.down}")
+  String getVotes();
+}
+```
+
+java8 interface 의 default metthod 를 이용하여 구현할 수도 있다.
+
+```java
+// src/main/java/com.iamslash.exjpa/CommentSummary.java
+public interface CommentSummary {
+
+  String getcomment();
+
+  int getUp();
+
+  int getDown();
+
+  default String getVotes() {
+    return getUp() + " " + getDown();
+  }
+}
+```
+
+`CommentSummary` 와 `CommentOnly` 를 둘다 지원하는 Repository interface 의 `findByPost_Id` method 는 다음과 같이 Generic 을 사용하여 구현한다. 두개의 Repository interface 가 필요 없다.
+
+```java
+// src/main/java/com.iamslash.exjpa/CommentSummary.java
+public interface CommentSummary {
+
+  String getcomment();
+
+  int getUp();
+
+  int getDown();
+
+  default String getVotes() {
+    return getUp() + " " + getDown();
+  }
+}
+
+// src/main/java/com.iamslash.exjpa/CommentOnly.java
+public interface CommentSummary {
+
+  String getcomment();
+
+}
+
+// src/main/java/com.iamslash.exjpa/CommentRepository.java
+public interface CommentRepository extends JpaRepository<Comment, Long> {
+
+  @EntityGraph(attributePaths = "post")
+  Optional<Comment> getById(Long id);
+
+  <T> List<T> findByPost_Id(Long id, Class<T> type);
+}
+
+// src/test/java/com.iamslash.exjpa/CommentRepositoryTest.java
+@RunWith(SpringRunner.class)
+@DataJpaTest
+public class CommentRepositoryTest {
+
+  @Autowired
+  CommentRepository comments;
+
+  @Autowired
+  CommentRepository posts;
+
+  @Test
+  public void getComment() {
+    Post post = new Post();
+    post.setTitle("jpa");
+    Post savedPost = posts.save(post);
+
+    Comment comment = new Comment();
+    comment.setPost(savedPost);
+    comment.setUp(10);
+    comment.setDown(1);
+    comments.save(comment);
+
+    comments.findByPost_Id(savedPost.getId(), CommentSummary.class).forEach(c -> {
+      System.out.println("==========");
+      System.out.println(c.getVotes());
+    });
+  }
+
+}
+```
+
 ## Spring Data JPA: Specifications
 
+* [REST Query Language with Spring Data JPA Specifications @ baeldung](https://www.baeldung.com/rest-api-search-language-spring-data-specifications)
+
+-----
+
+QueryDSL 의 Predicate 과 비슷하다. 사용법이 번거롭다. 추천하지 않는다.
+
 ## Spring Data JPA: Query by Example
+
+* [Spring Data JPA Query by Example](https://www.baeldung.com/spring-data-query-by-example)
+
+----
+
+interface 를 통해 dynamic 하게 query 를 만들어내는 기술이다. 무슨 말임??? 추천하지 않는다.
 
 ## Spring Data JPA: Transaction
 
