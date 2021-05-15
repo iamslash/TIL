@@ -264,14 +264,18 @@ int c = a >>> 1; // 0111 1111
 ## String
 
 ```java
+// StringBuffer is thread-safe but StringBuilder is not thread-safe
 // Sub string
 s = s.substring(0, s.length() - 1);
 StringBuilder sb = new StringBuilder();
 sb.append("a");
 sb.deleteCharAt(sb.length()-1);
+sb.setCharAt(0, '*');
 // Convert String, Integer
 Integer n = Integer.parseInt("12");
 String s = Integer.toString(12);
+// Remove string
+s.replaceAll("\\*", "");
 ```
 
 ## Random
