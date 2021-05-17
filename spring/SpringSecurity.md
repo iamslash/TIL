@@ -66,16 +66,38 @@ bcrypt PasswordEncoder Bean 을 생성하여 password 를 bcrypt 로 암호화�
 # 스프링 시큐리티: 아키텍처
 
 ## SecurityContextHolder와 Authentication
+
 ## AuthenticationManager와 Authentication
+
 ## ThreadLocal
+
 ## Authentication과 SecurityContextHodler
+
 ## 스프링 시큐리티 필터와 FilterChainProxy
+
 ## DelegatingFilterProxy와 FilterChainProxy
+
 ## AccessDecisionManager 1부
+
 ## AccessDecisionManager 2부
+
 ## FilterSecurityInterceptor
+
 ## ExceptionTranslationFilter
+
 ## 스프링 시큐리티 아키텍처 정리
+
+* [Spring Security Architecture @ spring.io](https://spring.io/guides/topicals/spring-security-architecture)
+* [8. Architecture and Implementation @ Spring Security Reference](https://docs.spring.io/spring-security/site/docs/5.1.5.RELEASE/reference/htmlsingle/#overall-architecture)
+
+----
+
+* **SecurityContextHolder**, to provide access to the **SecurityContext**.
+* **SecurityContext**, to hold the **Authentication** and possibly request-specific security information.
+* **Authentication**, to represent the principal in a Spring Security-specific manner.
+* **GrantedAuthority**, to reflect the application-wide permissions granted to a principal.
+* **UserDetails**, to provide the necessary information to build an **Authentication** object from your application’s DAOs or other source of security data.
+* **UserDetailsService**, to create a **UserDetails** when passed in a String-based username (or certificate ID or the like).
 
 # 웹 애플리케이션 시큐리티
 
