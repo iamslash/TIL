@@ -67,6 +67,19 @@ bcrypt PasswordEncoder Bean 을 생성하여 password 를 bcrypt 로 암호화�
 
 ## SecurityContextHolder와 Authentication
 
+* **SecurityContextHolder**
+  * **SecurityContext** 를 제공한다.
+* **SecurityContext**
+  * **Authentication** 을 제공한다.
+* **Authentication**
+  * **Principal**, **GrantedAuthority** 를 제공한다.
+* **Principal**
+  * 누구에 해당하는 정보이다. **UserDetailsService** 에서 return 한 객체이다. 즉, **UserDetails** 와 같다.
+* **GrantedAuthority**
+  * **Principal** 이 가지고 있는 권한을 나타낸다. 예를 들어 "ROLE_USER, ROLE_ADMIN" 등이 있다.
+* **UserDetailsService** 
+  * **UserDetails** 를 return 하는 DAO interface 이다.
+
 ## AuthenticationManager와 Authentication
 
 ## ThreadLocal
