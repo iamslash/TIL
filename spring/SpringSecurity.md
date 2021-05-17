@@ -17,20 +17,51 @@
 * `/dashboard` : 인증이 되어야만 볼 수 있다. 인증이 되어있지 않으면 login 화면이 등장한다.
 * `/admin` : admin 권한이 있어야만 볼 수 있다.
 
-
 ## 스프링 웹 프로젝트 만들기
 
 * [Created web project @ github](https://github.com/keesun/spring-security-basic/commit/9592611b3c297c476c4d17ee6aea74ab1a7c0ccf)
 
+## 스프링 시큐리티 연동
+
+* [Add Spring Security @ github](https://github.com/keesun/spring-security-basic/commit/ca7fc00e43e4bbe63957b071a6dce05a71075fcc)
+
+## 스프링 시큐리티 설정하기
+
+* [Add Spring Security Config @ github](https://github.com/keesun/spring-security-basic/commit/eb52f4cf88d7369a8503b200ea7955b3727f0f23)
+
+## 스프링 시큐리티 커스터마이징: 인메모리 유저 추가
+
+* [Add InMemory Users](https://github.com/keesun/spring-security-basic/commit/858354ef00218d482fd2185230e3304f7a09f1c0)
+
+---
+
+spring security 가 제공해주는 `user / xxxx` 의 password 는 매번 바뀐다. userid, password 를 hard coding 해보자.
+
+## 스프링 시큐리티 커스터마이징: JPA 연동
+
+* [Integrate JPA @ github](https://github.com/keesun/spring-security-basic/commit/9a242cc045c45f8e04fef121451f5c2f7e83c43f)
+
 ----
 
-## 스프링 시큐리티 연동
-## 스프링 시큐리티 설정하기
-## 스프링 시큐리티 커스터마이징: 인메모리 유저 추가
-## 스프링 시큐리티 커스터마이징: JPA 연동
+Account entity 를 정의하고 JPA 를 통해 읽어오자.
+
 ## 스프링 시큐리티 커스터마이징: PasswordEncoder
-## 스프링 시큐리티 테스트 1부
-## 스프링 시큐리티 테스트 2부
+
+* [Add password encoder @ github](https://github.com/keesun/spring-security-basic/commit/e60160e42fafa8d8b5ef4045487748e9a93f5658)
+
+-----
+
+bcrypt PasswordEncoder Bean 을 생성하여 password 를 bcrypt 로 암호화하여 저장하자.
+
+## 스프링 시큐리티 테스트 1부, 2부
+
+* [Spring Security Test @ github](https://github.com/keesun/spring-security-basic/commit/6e3cf6ec62300e1b5a999cd89d1655c506ac6c0f)
+
+----
+
+`@RunWith(SpringRunner.class) @SpringBootTest @AutoConfigureMockMvc` 를 이용하여 spring security test code 를 작성한다.
+
+`@WithMockUser(username = "iamslash", roles = "USER")` 가 반복되서 사용된다면 `public @interface WithUser` 를 정의하여 code duplicates 를 피할 수 있다.
 
 # 스프링 시큐리티: 아키텍처
 
