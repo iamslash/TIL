@@ -115,7 +115,38 @@ bcrypt PasswordEncoder Bean 을 생성하여 password 를 bcrypt 로 암호화�
 # 웹 애플리케이션 시큐리티
 
 ## 스프링 시큐리티 ignoring() 1부
+
+* [Ingoring() @ github](https://github.com/keesun/spring-security-basic/commit/6b8396a11117f313549cb74dc02ba3d4bfde9662)
+
+----
+
+`https://www.iamslash.com/favicon.ico` 와 같은 static resource 들은 authentication 의 대상이 되지 않도록 하자. spring security filter 가 전혀 적용되지 않는다.
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    ...
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
+    ...
+}    
+```
+
 ## 스프링 시큐리티 ignoring() 2부
+
+다음과 같이 `http.authorizeRequests()` 를 이용하면 spring security filter 가 적용된다.
+
+```java
+http.authorizeRequests()
+.requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+```
+
+* dynamic resource 는 `http.authorizeRequests()` 를 이용하자.
+* static resource 는 `web.ignoring()` 를 이용하자.
+
 ## Async 웹 MVC를 지원하는 필터: WebAsyncManagerIntegrationFilter
 ## 스프링 시큐리티와 @Async
 ## SecurityContext 영속화 필터: SecurityContextPersistenceFilter
