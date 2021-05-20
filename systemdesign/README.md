@@ -121,10 +121,10 @@
 
 # Prerequisites
 
-- Numbers
-  - [Names of large numbers](https://en.wikipedia.org/wiki/Names_of_large_numbers)
-  - [SI 기본 단위](https://ko.wikipedia.org/wiki/SI_%EA%B8%B0%EB%B3%B8_%EB%8B%A8%EC%9C%84)
-  - SI 는 System International 의 줄임말로 국제 단위
+> Numbers
+> * [Names of large numbers](https://en.wikipedia.org/wiki/Names_of_large_numbers)
+> * [SI 기본 단위](https://ko.wikipedia.org/wiki/SI_%EA%B8%B0%EB%B3%B8_%EB%8B%A8%EC%9C%84)
+> * SI 는 System International 의 줄임말로 국제 단위
   
 | Value | short-scale | SI-symbol | SI-prefix |
 | ----- | ----------- | --------- | --------- |
@@ -137,7 +137,7 @@
 | 10^21 | Sextillion  | Z         | Zeta-     |
 | 10^24 | Septillion  | Y         | Yota-     |
 
-- powers of two table
+> powers of two table
 
 ```
 Power           Exact Value         Approx Value        Bytes
@@ -152,7 +152,7 @@ Power           Exact Value         Approx Value        Bytes
 40              1,099,511,627,776   1 trillion           1 TB
 ```
 
-- latency numbers every programmer should know
+> latency numbers every programmer should know
 
 ```
 Latency Comparison Numbers
@@ -182,7 +182,7 @@ Notes
 
 ![](img/latency_numbers_every_programmer_should_know.png)
 
-- time
+> time
 
 | years | days | hours |    mins |       secs |
 | ----: | ---: | ----: | ------: | ---------: |
@@ -190,6 +190,17 @@ Notes
 |       |    1 |    24 |   1,440 |     86,400 |
 |       |      |     1 |      60 |      3,600 |
 |       |      |       |       1 |         60 |
+
+> Availability
+> * [Uptime and downtime with 99.9 % SLA](https://uptime.is/)
+
+| Availability % | Downtime per year |
+|---:|---:|
+| 99% | 3.65 days |
+| 99.9% | 8.77 hours |
+| 99.99% | 52.60 mins |
+| 99.999% | 5.26 mins |
+| 99.9999% | 31.56 secs |
 
 # Principles
 
