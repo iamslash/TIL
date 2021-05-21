@@ -1876,8 +1876,268 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 ```
 
 ## 세션 관리 필터: SessionManagementFilter
+
+`SessionManagementFilter` 는 다음과 같은 기능들을 제공한다.
+
+* [Session Fixation Attack](https://owasp.org/www-community/attacks/Session_fixation) 을 방지한다. 즉, Session 이 조작되는 것을 방지한다.
+* 동시에 접근가능한 Client 의 숫자를 제어한다.
+* Session 생성 전략 (sessionCreationPolicy) 을 제어한다.
+
+[Session Fixation Attacks](https://secureteam.co.uk/articles/web-application-security-articles/understanding-session-fixation-attacks/) 은 다음과 같은 과정으로 이루어진다.
+
+![](https://secureteam.co.uk/gage/wp-content/uploads/2018/03/image1-768x650.png)
+
+1. Attacker 가 Server 에 log-in 한다.
+2. Server 는 sessionid 를 Cookie 에 저장하여 Attacker 에게 전송한다.
+3. Attacker 는 Victim 에게 hijacking link 를 보내준다.
+4. Victim 은 hijacking link 를 선택하고 hijacking link 에 저장된 sessionid 를 이용하여 Server 에 login 한다.
+5. Attacker 는 sessionid 를 이용하여 Victim 의 resource 들을 접근할 수 있다.
+
+다음과 같이 `SecurityConfig::configure(HttpSecurity http)` 에서 `http.sessionManagement()` 호출 하여 설정할 수 있다.
+
+```java
+// src/main/java/com/iamslash/exsecurity/config/SecurityConfig.java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+...
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .mvcMatchers("/", "/info", "/account/**").permitAll()
+                .mvcMatchers("/admin").hasRole("ADMIN")
+                .mvcMatchers("/user").hasRole("USER")
+                .anyRequest().authenticated()
+                .expressionHandler(expressionHandler());
+        http.formLogin();
+        http.httpBasic();
+
+        http.sessionManagement()
+				    .sessionFixation()
+						.changeSessionId()
+						.invalidSessionUrl("/login");
+
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+
+}
+```
+
+다음과 같이 `maxSessionPreventsLogin(false)` 를 호출하면 같은 user 에대해 최대 동시 session 은 1 개로 제한한다. 또한 새로운 user 는 login 할 수 있고 기존 user 의 session 은 제거된다. 기존 user 는 다시 login 할 수 있다. 만약 `maxSessionPreventsLogin(true)` 를 호출하면 새로운 user 는 login 할 수 없다.
+
+```java
+// src/main/java/com/iamslash/exsecurity/config/SecurityConfig.java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+...
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+			...
+        http.sessionManagement()
+				    .sessionFixation()
+						.changeSessionId()
+						.maximumSession(1)
+						.maxSessionPreventsLogin(false);
+			...
+		}
+...								
+}
+```
+
+다음과 같이 `sessionCreationPolicy(SessionCreationPolicy.STATELESS)` 를 호출하면 session 을 사용하지 않는다. api 호출할 때마다 login 해야 한다. `RequestCacheAwareFilter` 역시 previous http request 를 session 에 caching 한다. 따라서 `/login` 하고 `/dashboard` 로 이동하는 logic 은 동작하지 않는다.
+
+```java
+// src/main/java/com/iamslash/exsecurity/config/SecurityConfig.java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+...
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+			...
+        http.sessionManagement()
+				    .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+			...
+		}
+...								
+}
+
+// org\springframework\security\config\http\SessionCreationPolicy.java
+public enum SessionCreationPolicy {
+	/** Always create an {@link HttpSession} */
+	ALWAYS,
+	/**
+	 * Spring Security will never create an {@link HttpSession}, but will use the
+	 * {@link HttpSession} if it already exists
+	 */
+	NEVER,
+	/** Spring Security will only create an {@link HttpSession} if required */
+	IF_REQUIRED,
+	/**
+	 * Spring Security will never create an {@link HttpSession} and it will never use it
+	 * to obtain the {@link SecurityContext}
+	 */
+	STATELESS
+}
+```
+
 ## 인증/인가 예외 처리 필터: ExceptionTranslationFilter
+
+* [ExceptionTranslatorFilter](https://github.com/keesun/spring-security-basic/commit/38ebb45a3ab68ff89f1809d035957c25fbc4af47)
+
+----
+
+* `ExceptionTranslationFilter` 는 `FilterSecurityInterceptor` 전에 처리된다.
+* `ExceptionTranslationFilter` 는 `AuthenticationException, AccessDeniedException` 을 처리한다.
+* `FilterSecurityInterceptor` 는 `AccessDecisionManager, AffirmativeBased` 를 이용하여 Authorization 을 처리한다.
+* `AuthenticationException` 는 `AuthenticationEntryPoint, Http403ForbiddenEntryPoint` 에서 처리된다.
+* `AccessDeniedException` 는 `AccessDeniedHandler, ` 에서 처리된다.
+
+```java
+// org\springframework\security\web\access\ExceptionTranslationFilter.java
+public class ExceptionTranslationFilter extends GenericFilterBean {
+...
+	private AccessDeniedHandler accessDeniedHandler = new AccessDeniedHandlerImpl();
+	private AuthenticationEntryPoint authenticationEntryPoint;
+	private AuthenticationTrustResolver authenticationTrustResolver = new AuthenticationTrustResolverImpl();
+	private ThrowableAnalyzer throwableAnalyzer = new DefaultThrowableAnalyzer();
+
+	private RequestCache requestCache = new HttpSessionRequestCache();
+
+	private final MessageSourceAccessor messages = SpringSecurityMessageSource.getAccessor();
+...  
+
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
+...
+				handleSpringSecurityException(request, response, chain, ase);
+...  
+	}
+...
+	private void handleSpringSecurityException(HttpServletRequest request,
+			HttpServletResponse response, FilterChain chain, RuntimeException exception)
+			throws IOException, ServletException {
+		if (exception instanceof AuthenticationException) {
+			logger.debug(
+					"Authentication exception occurred; redirecting to authentication entry point",
+					exception);
+
+			sendStartAuthentication(request, response, chain,
+					(AuthenticationException) exception);
+		}
+		else if (exception instanceof AccessDeniedException) {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			if (authenticationTrustResolver.isAnonymous(authentication) || authenticationTrustResolver.isRememberMe(authentication)) {
+				logger.debug(
+						"Access is denied (user is " + (authenticationTrustResolver.isAnonymous(authentication) ? "anonymous" : "not fully authenticated") + "); redirecting to authentication entry point",
+						exception);
+
+				sendStartAuthentication(
+						request,
+						response,
+						chain,
+						new InsufficientAuthenticationException(
+							messages.getMessage(
+								"ExceptionTranslationFilter.insufficientAuthentication",
+								"Full authentication is required to access this resource")));
+			}
+			else {
+				logger.debug(
+						"Access is denied (user is not anonymous); delegating to AccessDeniedHandler",
+						exception);
+
+				accessDeniedHandler.handle(request, response,
+						(AccessDeniedException) exception);
+			}
+		}
+	}
+...
+}
+
+// org\springframework\security\web\AuthenticationEntryPoint.java
+public interface AuthenticationEntryPoint {
+	void commence(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException authException) throws IOException, ServletException;
+}
+
+// org\springframework\security\web\authentication\Http403ForbiddenEntryPoint.java
+public class Http403ForbiddenEntryPoint implements AuthenticationEntryPoint {
+	private static final Log logger = LogFactory.getLog(Http403ForbiddenEntryPoint.class);
+	public void commence(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException arg2) throws IOException {
+		if (logger.isDebugEnabled()) {
+			logger.debug("Pre-authenticated entry point called. Rejecting access");
+		}
+		response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied");
+	}
+}
+
+// org\springframework\security\web\access\AccessDeniedHandler.java
+public interface AccessDeniedHandler {
+	void handle(HttpServletRequest request, HttpServletResponse response,
+			AccessDeniedException accessDeniedException) throws IOException,
+			ServletException;
+}
+
+// org\springframework\security\web\session\InvalidSessionAccessDeniedHandler.java
+public final class InvalidSessionAccessDeniedHandler implements AccessDeniedHandler {
+	private final InvalidSessionStrategy invalidSessionStrategy;
+
+	public InvalidSessionAccessDeniedHandler(InvalidSessionStrategy invalidSessionStrategy) {
+		Assert.notNull(invalidSessionStrategy, "invalidSessionStrategy cannot be null");
+		this.invalidSessionStrategy = invalidSessionStrategy;
+	}
+
+	public void handle(HttpServletRequest request, HttpServletResponse response,
+			AccessDeniedException accessDeniedException) throws IOException,
+			ServletException {
+		invalidSessionStrategy.onInvalidSessionDetected(request, response);
+	}
+}
+```
+
 ## 인가 처리 필터: FilterSecurityInterceptor
+
+`FilterSecurityInterceptor` 는 `AccessDecisionManager, AffirmativeBased` 를 이용하여 Authorization 을 처리한다.
+
+다음과 같이 `http.authorizeRequests()` 를 호출하여 autorization 을 설정할 수 있다. `mvcMatchers(), regexMachers()` 등을 이용하여 url 을 제어할 수 있다. 
+
+* `permitAll()` 을 이용하여 특정 url 에 대해 모든 권한을 허용할 수 있다. `hasRole()` 을 이용하여 특정 url 에 대해 일부 권한을 허용할 수 있다. 
+* `hashAuthority("ROLE_USEr")` 는 `ROLE_` prefix 를 사용해야 하는 것을 제외하고 `hasRole()` 과 같다.
+* `anyRequest().anonymous()` 는 특정 url 에 대해 authenticated 가 되지 않아야 접근이 가능하다.
+* `anyRequest().authenticated()` 는 특정 url 에 대해 authenticated 되어야 접근이 가능하다.
+* `anyRequest().rememberMe()` 는 특정 url 에 대해 rememberMe() 로 authenticated 되어야 접근이 가능하다.
+* `anyRequest().fullyAuthentiated()` 는 특정 url 에 대해 rememberMe() 로 authenticated 된 user 가 다시 login 해야 접근이 가능하다.
+
+```java
+// src/main/java/com/iamslash/exsecurity/config/SecurityConfig.java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+...
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .mvcMatchers("/", "/info", "/account/**").permitAll()
+                .mvcMatchers("/admin").hasRole("ADMIN")
+                .mvcMatchers("/user").hasRole("USER")
+                .anyRequest().authenticated()
+                .expressionHandler(expressionHandler());
+        http.formLogin();
+        http.httpBasic();
+
+        http.sessionManagement()
+				    .sessionFixation()
+						.changeSessionId()
+						.invalidSessionUrl("/login");
+
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+
+}
+```
+
 ## 토큰 기반 인증 필터 : RememberMeAuthenticationFilter
 ## 커스텀 필터 추가하기
 
