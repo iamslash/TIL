@@ -1376,12 +1376,505 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 ```
 
 ## 폼 인증 처리 필터: UsernamePasswordAuthenticationFilter
+
+`UsernamePasswordAuthenticationFilter` filter 는 form authentication 을 처리한다. 
+* `UsernamePasswordAuthenticationFilter` 는 `AbstractAuthenticationProcessingFilter` 를 상속한다. 
+* `AbstractAuthenticationProcessingFilter` 는 `AuthenticationManager authenticationManager` 를 갖는다.
+* `ProviderManager` 는 `AuthenticationManager` 를 상속한다.
+* `ProviderManager` 는 `List<AuthenticationProvider> providers` 를 갖는다.
+* `DaoAuthenticationProvider` 는 `AuthenticationProvider` 를 상속한다.
+* `DaoAuthenticationProvider` 는 `UserDetailsService userDetailsService` 를 갖는다.
+* `AuthenticationManager::authenticate` 는 인증을 마치고 `Authenticate` object 를 리턴한다.  
+* `AuthenticationManager::authenticate` 에 의해 리턴된 `Authentication` object 를 `SecurityContextHolder` 에 저장한다.
+
+```java
+// org\springframework\security\web\authentication\AbstractAuthenticationProcessingFilter.java
+public abstract class AbstractAuthenticationProcessingFilter extends GenericFilterBean
+		implements ApplicationEventPublisherAware, MessageSourceAware {
+	protected ApplicationEventPublisher eventPublisher;
+	protected AuthenticationDetailsSource<HttpServletRequest, ?> authenticationDetailsSource = new WebAuthenticationDetailsSource();
+	private AuthenticationManager authenticationManager;			
+}
+
+// org\springframework\security\web\authentication\UsernamePasswordAuthenticationFilter.java
+public class UsernamePasswordAuthenticationFilter extends
+		AbstractAuthenticationProcessingFilter {
+	public Authentication attemptAuthentication(HttpServletRequest request,
+			HttpServletResponse response) throws AuthenticationException {
+		if (postOnly && !request.getMethod().equals("POST")) {
+			throw new AuthenticationServiceException(
+					"Authentication method not supported: " + request.getMethod());
+		}
+
+		String username = obtainUsername(request);
+		String password = obtainPassword(request);
+
+		if (username == null) {
+			username = "";
+		}
+
+		if (password == null) {
+			password = "";
+		}
+
+		username = username.trim();
+
+		UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(
+				username, password);
+
+		// Allow subclasses to set the "details" property
+		setDetails(request, authRequest);
+
+		return this.getAuthenticationManager().authenticate(authRequest);
+	}  
+}      
+
+// org\springframework\security\authentication\AuthenticationManager.java
+public interface AuthenticationManager {
+	Authentication authenticate(Authentication authentication)
+			throws AuthenticationException;
+}
+
+// org\springframework\security\authentication\ProviderManager.java
+public class ProviderManager implements AuthenticationManager, MessageSourceAware,
+		InitializingBean {
+	private static final Log logger = LogFactory.getLog(ProviderManager.class);
+	private AuthenticationEventPublisher eventPublisher = new NullEventPublisher();
+	private List<AuthenticationProvider> providers = Collections.emptyList();
+...	
+}	
+
+// org\springframework\security\authentication\AuthenticationProvider.java
+public interface AuthenticationProvider {
+	Authentication authenticate(Authentication authentication)
+			throws AuthenticationException;
+...
+}
+
+// org\springframework\security\authentication\dao\DaoAuthenticationProvider.java
+public class DaoAuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
+...	
+	private UserDetailsService userDetailsService;
+	public void setUserDetailsService(UserDetailsService userDetailsService) {
+		this.userDetailsService = userDetailsService;
+	}
+...	
+}
+```
+
 ## 로그인/로그아웃 폼 페이지 생성해주는 필터: DefaultLogin/LogoutPageGeneratingFilter
+
+`DefaultLoginPageGeneratingFilter` 는 login page 를 rendering 해준다. `DefaultLogoutPageGeneratingFilter` 는 logout page 를 rendering 해준다. `http.formLogin().loginPage("/login")` 를 호출하면 `DefaultLoginPageGeneratingFilter, DefaultLogoutPageGeneratingFilter` 는 Filter chain 에서 사라진다.
+
+```java
+// org\springframework\security\web\authentication\ui\DefaultLoginPageGeneratingFilter.java
+public class DefaultLoginPageGeneratingFilter extends GenericFilterBean {
+...
+
+	private String generateLoginPageHtml(HttpServletRequest request, boolean loginError,
+			boolean logoutSuccess) {
+		String errorMsg = "Invalid credentials";
+
+		if (loginError) {
+			HttpSession session = request.getSession(false);
+
+			if (session != null) {
+				AuthenticationException ex = (AuthenticationException) session
+						.getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+				errorMsg = ex != null ? ex.getMessage() : "Invalid credentials";
+			}
+		}
+
+		StringBuilder sb = new StringBuilder();
+
+		sb.append("<!DOCTYPE html>\n"
+				+ "<html lang=\"en\">\n"
+				+ "  <head>\n"
+				+ "    <meta charset=\"utf-8\">\n"
+				+ "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">\n"
+				+ "    <meta name=\"description\" content=\"\">\n"
+				+ "    <meta name=\"author\" content=\"\">\n"
+				+ "    <title>Please sign in</title>\n"
+				+ "    <link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M\" crossorigin=\"anonymous\">\n"
+				+ "    <link href=\"https://getbootstrap.com/docs/4.0/examples/signin/signin.css\" rel=\"stylesheet\" crossorigin=\"anonymous\"/>\n"
+				+ "  </head>\n"
+				+ "  <body>\n"
+				+ "     <div class=\"container\">\n");
+
+		String contextPath = request.getContextPath();
+		if (this.formLoginEnabled) {
+			sb.append("      <form class=\"form-signin\" method=\"post\" action=\"" + contextPath + this.authenticationUrl + "\">\n"
+					+ "        <h2 class=\"form-signin-heading\">Please sign in</h2>\n"
+					+ createError(loginError, errorMsg)
+					+ createLogoutSuccess(logoutSuccess)
+					+ "        <p>\n"
+					+ "          <label for=\"username\" class=\"sr-only\">Username</label>\n"
+					+ "          <input type=\"text\" id=\"username\" name=\"" + this.usernameParameter + "\" class=\"form-control\" placeholder=\"Username\" required autofocus>\n"
+					+ "        </p>\n"
+					+ "        <p>\n"
+					+ "          <label for=\"password\" class=\"sr-only\">Password</label>\n"
+					+ "          <input type=\"password\" id=\"password\" name=\"" + this.passwordParameter + "\" class=\"form-control\" placeholder=\"Password\" required>\n"
+					+ "        </p>\n"
+					+ createRememberMe(this.rememberMeParameter)
+					+ renderHiddenInputs(request)
+					+ "        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Sign in</button>\n"
+					+ "      </form>\n");
+		}
+
+		if (openIdEnabled) {
+			sb.append("      <form name=\"oidf\" class=\"form-signin\" method=\"post\" action=\"" + contextPath + this.openIDauthenticationUrl + "\">\n"
+					+ "        <h2 class=\"form-signin-heading\">Login with OpenID Identity</h2>\n"
+					+ createError(loginError, errorMsg)
+					+ createLogoutSuccess(logoutSuccess)
+					+ "        <p>\n"
+					+ "          <label for=\"username\" class=\"sr-only\">Identity</label>\n"
+					+ "          <input type=\"text\" id=\"username\" name=\"" + this.openIDusernameParameter + "\" class=\"form-control\" placeholder=\"Username\" required autofocus>\n"
+					+ "        </p>\n"
+					+ createRememberMe(this.openIDrememberMeParameter)
+					+ renderHiddenInputs(request)
+					+ "        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Sign in</button>\n"
+					+ "      </form>\n");
+		}
+
+		if (oauth2LoginEnabled) {
+			sb.append("<h2 class=\"form-signin-heading\">Login with OAuth 2.0</h2>");
+			sb.append(createError(loginError, errorMsg));
+			sb.append(createLogoutSuccess(logoutSuccess));
+			sb.append("<table class=\"table table-striped\">\n");
+			for (Map.Entry<String, String> clientAuthenticationUrlToClientName : oauth2AuthenticationUrlToClientName.entrySet()) {
+				sb.append(" <tr><td>");
+				String url = clientAuthenticationUrlToClientName.getKey();
+				sb.append("<a href=\"").append(contextPath).append(url).append("\">");
+				String clientName = HtmlUtils.htmlEscape(clientAuthenticationUrlToClientName.getValue());
+				sb.append(clientName);
+				sb.append("</a>");
+				sb.append("</td></tr>\n");
+			}
+			sb.append("</table>\n");
+		}
+
+		if (this.saml2LoginEnabled) {
+			sb.append("<h2 class=\"form-signin-heading\">Login with SAML 2.0</h2>");
+			sb.append(createError(loginError, errorMsg));
+			sb.append(createLogoutSuccess(logoutSuccess));
+			sb.append("<table class=\"table table-striped\">\n");
+			for (Map.Entry<String, String> relyingPartyUrlToName : saml2AuthenticationUrlToProviderName.entrySet()) {
+				sb.append(" <tr><td>");
+				String url = relyingPartyUrlToName.getKey();
+				sb.append("<a href=\"").append(contextPath).append(url).append("\">");
+				String partyName = HtmlUtils.htmlEscape(relyingPartyUrlToName.getValue());
+				sb.append(partyName);
+				sb.append("</a>");
+				sb.append("</td></tr>\n");
+			}
+			sb.append("</table>\n");
+		}
+		sb.append("</div>\n");
+		sb.append("</body></html>");
+
+		return sb.toString();
+	}
+...
+}	
+
+// org\springframework\security\web\authentication\ui\DefaultLogoutPageGeneratingFilter.java
+public class DefaultLogoutPageGeneratingFilter extends OncePerRequestFilter {
+	private RequestMatcher matcher = new AntPathRequestMatcher("/logout", "GET");
+...
+
+	private void renderLogout(HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
+		String page =  "<!DOCTYPE html>\n"
+				+ "<html lang=\"en\">\n"
+				+ "  <head>\n"
+				+ "    <meta charset=\"utf-8\">\n"
+				+ "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">\n"
+				+ "    <meta name=\"description\" content=\"\">\n"
+				+ "    <meta name=\"author\" content=\"\">\n"
+				+ "    <title>Confirm Log Out?</title>\n"
+				+ "    <link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M\" crossorigin=\"anonymous\">\n"
+				+ "    <link href=\"https://getbootstrap.com/docs/4.0/examples/signin/signin.css\" rel=\"stylesheet\" crossorigin=\"anonymous\"/>\n"
+				+ "  </head>\n"
+				+ "  <body>\n"
+				+ "     <div class=\"container\">\n"
+				+ "      <form class=\"form-signin\" method=\"post\" action=\"" + request.getContextPath() + "/logout\">\n"
+				+ "        <h2 class=\"form-signin-heading\">Are you sure you want to log out?</h2>\n"
+				+ renderHiddenInputs(request)
+				+ "        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Log Out</button>\n"
+				+ "      </form>\n"
+				+ "    </div>\n"
+				+ "  </body>\n"
+				+ "</html>";
+
+		response.setContentType("text/html;charset=UTF-8");
+		response.getWriter().write(page);
+	}
+...
+}
+```
+
 ## 로그인/로그아웃 폼 커스터마이징
+
+* [Custom login/logout page @ github](https://github.com/keesun/spring-security-basic/commit/bd7e867f547fb648cc2be3a20eb633eafafc717a)
+
+----
+
+login, logout page 를 customizing 해보자. `login.html` 에서 submit 를 하면 Spring boot application 의 `UsernamePasswordAuthenticationFilter` 에서 login 처리 즉 `authenticate` 를 처리한다. `logout.html` 에서 submit 를 하면 Spring boot application 의 `LogoutFilter` 에서 logout 처리를 한다.
+
+```java
+// src/main/java/com/iamslash/exsecurity/account/LogInOutController.java
+@Controller
+public class LogInOutController {
+
+    @GetMapping("/login")
+    public String loginForm() {
+        return "login";
+    }
+
+    @GetMapping("/logout")
+    public String logoutForm() {
+        return "logout";
+    }
+
+}
+
+//src/main/java/com/iamslash/exsecurity/config/SecurityConfig.java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .mvcMatchers("/", "/info", "/account/**", "/signup").permitAll()
+                .mvcMatchers("/admin").hasRole("ADMIN")
+                .mvcMatchers("/user").hasRole("USER")
+                .anyRequest().authenticated()
+                .expressionHandler(expressionHandler());
+        http.formLogin()
+                .loginPage("/login")
+                .permitAll();
+        http.httpBasic();
+
+        http.logout()
+				        .logoutSuccessUrl("/");
+
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+}
+```
+
 ## Basic 인증 처리 필터: BasicAuthenticationFilter
+
+* [The 'Basic' HTTP Authentication Scheme @ rfc](https://datatracker.ietf.org/doc/html/rfc7617)
+
+----
+
+`BasicAuthenticationFilter` 는 Basic authentication 을 지원한다. Basic authentication 은 `Authorization: Basic QWxhZGRpbjpPcGVuU2VzYW1l` 와 같은 Header 를 이용하여 authentication 을 처리한다. `QWxhZGRpbjpPcGVuU2VzYW1l` 은 username, password 를 base64 encoding 한 것이다. 보안에 매우 취약하다. HTTPS 를 사용해야 한다.
+`SecurityConfig` class 의 `void configure()` 에서 `http.httpBasic()` 를 호출하여 BasicAuthenticationFilter 를 추가한다.
+
+Basic authentication 은 HTTP request 할 때 마다 HTTP header `Authorization: Basic QWxhZGRpbjpPcGVuU2VzYW1l` 를 전송해야 한다.
+
+```java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    ...
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .mvcMatchers("/", "/info", "/account/**", "/signup").permitAll()
+                .mvcMatchers("/admin").hasRole("ADMIN")
+                .mvcMatchers("/user").hasRole("USER")
+                .anyRequest().authenticated()
+                .expressionHandler(expressionHandler());
+        http.formLogin();
+        http.httpBasic();
+
+        http.logout().logoutSuccessUrl("/");
+
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+    ...
+}    
+```
+
 ## 요청 캐시 필터: RequestCacheAwareFilter
+
+`RequestCacheAwareFilter` 는 HTTP Request 를 caching 한다. 예를 들어 `/dashboard` 를 request 했을 때 login 이 되지 않은 상태이면 Spring boot application 은 `/login` page 를 rendering 한다. username, password 를 입력후 submit 하면 Spring boot application 은 이전에 caching 되있던 `/dashboard` request 를 이용한다.
+
+```java
+// org\springframework\security\web\savedrequest\RequestCacheAwareFilter.java
+public class RequestCacheAwareFilter extends GenericFilterBean {
+
+	private RequestCache requestCache;
+
+	public RequestCacheAwareFilter() {
+		this(new HttpSessionRequestCache());
+	}
+
+	public RequestCacheAwareFilter(RequestCache requestCache) {
+		Assert.notNull(requestCache, "requestCache cannot be null");
+		this.requestCache = requestCache;
+	}
+
+	public void doFilter(ServletRequest request, ServletResponse response,
+			FilterChain chain) throws IOException, ServletException {
+
+		HttpServletRequest wrappedSavedRequest = requestCache.getMatchingRequest(
+				(HttpServletRequest) request, (HttpServletResponse) response);
+
+		chain.doFilter(wrappedSavedRequest == null ? request : wrappedSavedRequest,
+				response);
+	}
+
+}
+```
+
 ## 시큐리티 관련 서블릿 스팩 구현 필터: SecurityContextHolderAwareRequestFilter
+
+`SecurityContextHolderAwareRequestFilter` 는 Servlet API 구현한다???
+
+```java
+// org\springframework\security\web\servletapi\SecurityContextHolderAwareRequestFilter.java
+public class SecurityContextHolderAwareRequestFilter extends GenericFilterBean {
+	private String rolePrefix = "ROLE_";
+	private HttpServletRequestFactory requestFactory;
+	private AuthenticationEntryPoint authenticationEntryPoint;
+	private AuthenticationManager authenticationManager;
+	private List<LogoutHandler> logoutHandlers;
+	private AuthenticationTrustResolver trustResolver = new AuthenticationTrustResolverImpl();
+
+	public void setRolePrefix(String rolePrefix) {
+		Assert.notNull(rolePrefix, "Role prefix must not be null");
+		this.rolePrefix = rolePrefix;
+		updateFactory();
+	}
+
+	public void setAuthenticationEntryPoint(
+			AuthenticationEntryPoint authenticationEntryPoint) {
+		this.authenticationEntryPoint = authenticationEntryPoint;
+	}
+
+	public void setAuthenticationManager(AuthenticationManager authenticationManager) {
+		this.authenticationManager = authenticationManager;
+	}
+
+	public void setLogoutHandlers(List<LogoutHandler> logoutHandlers) {
+		this.logoutHandlers = logoutHandlers;
+	}
+
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
+		chain.doFilter(this.requestFactory.create((HttpServletRequest) req,
+				(HttpServletResponse) res), res);
+	}
+
+	@Override
+	public void afterPropertiesSet() throws ServletException {
+		super.afterPropertiesSet();
+		updateFactory();
+	}
+
+	private void updateFactory() {
+		String rolePrefix = this.rolePrefix;
+		this.requestFactory = createServlet3Factory(rolePrefix);
+	}
+
+	public void setTrustResolver(AuthenticationTrustResolver trustResolver) {
+		Assert.notNull(trustResolver, "trustResolver cannot be null");
+		this.trustResolver = trustResolver;
+		updateFactory();
+	}
+
+	private HttpServletRequestFactory createServlet3Factory(String rolePrefix) {
+		HttpServlet3RequestFactory factory = new HttpServlet3RequestFactory(rolePrefix);
+		factory.setTrustResolver(this.trustResolver);
+		factory.setAuthenticationEntryPoint(this.authenticationEntryPoint);
+		factory.setAuthenticationManager(this.authenticationManager);
+		factory.setLogoutHandlers(this.logoutHandlers);
+		return factory;
+	}
+
+}
+```
+
 ## 익명 인증 필터: AnonymousAuthenticationFilter
+
+`AnonymousAuthenticationFilter` 는 `Authentication` object 가 null 이면 Anonymous Authentication object 를 만들어 Security Context 에 넣어준다. null 이 아니면 아무일도 하지 않는다.
+
+```java
+// org\springframework\security\web\authentication\AnonymousAuthenticationFilter.java
+public class AnonymousAuthenticationFilter extends GenericFilterBean implements
+		InitializingBean {
+...
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
+
+		if (SecurityContextHolder.getContext().getAuthentication() == null) {
+			SecurityContextHolder.getContext().setAuthentication(
+					createAuthentication((HttpServletRequest) req));
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Populated SecurityContextHolder with anonymous token: '"
+						+ SecurityContextHolder.getContext().getAuthentication() + "'");
+			}
+		}
+		else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("SecurityContextHolder not populated with anonymous token, as it already contained: '"
+						+ SecurityContextHolder.getContext().getAuthentication() + "'");
+			}
+		}
+
+		chain.doFilter(req, res);
+	}
+	protected Authentication createAuthentication(HttpServletRequest request) {
+		AnonymousAuthenticationToken auth = new AnonymousAuthenticationToken(key,
+				principal, authorities);
+		auth.setDetails(authenticationDetailsSource.buildDetails(request));
+
+		return auth;
+	}
+...
+}
+
+// src/main/java/com/iamslash/exsecurity/config/SecurityConfig.java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    public SecurityExpressionHandler expressionHandler() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
+        DefaultWebSecurityExpressionHandler handler = new DefaultWebSecurityExpressionHandler();
+        handler.setRoleHierarchy(roleHierarchy);
+        return handler;
+    }
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .mvcMatchers("/", "/info", "/account/**").permitAll()
+                .mvcMatchers("/admin").hasRole("ADMIN")
+                .mvcMatchers("/user").hasRole("USER")
+                .anyRequest().authenticated()
+                .expressionHandler(expressionHandler());
+        http.formLogin();
+        http.httpBasic();
+
+        http.anonymous()
+						.principal()
+						.authorities()
+						.key()
+
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+
+}
+```
+
 ## 세션 관리 필터: SessionManagementFilter
 ## 인증/인가 예외 처리 필터: ExceptionTranslationFilter
 ## 인가 처리 필터: FilterSecurityInterceptor
