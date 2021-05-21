@@ -890,11 +890,491 @@ public class SampleController {
 ```
 
 ## 스프링 시큐리티와 @Async
+
+`@Async` 를 Method 에 부착하면 Async Method 를 호출할 수 있다. `@EnableAsync` 를 `ExsecurityApplication` class 에 부착해야 한다. `@Async` 가 부착된 Method 는 다른 thread 에서 실행될 것이다. `SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);` 를 호출하여 다른 thread 에 SecurityContext 가 공유되게 해야 한다.
+
+```java
+// src/main/java/com/iamslash/exsecurity/ExsecurityApplication.java
+@SpringBootApplication
+@EnableAsync
+public class ExsecurityApplication {
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	}
+	public static void main(String[] args) {
+		SpringApplication.run(ExsecurityApplication.class, args);
+	}
+}
+
+// src/main/java/com/iamslash/exsecurity/config/SecurityConfig.java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    public SecurityExpressionHandler expressionHandler() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
+        DefaultWebSecurityExpressionHandler handler = new DefaultWebSecurityExpressionHandler();
+        handler.setRoleHierarchy(roleHierarchy);
+        return handler;
+    }
+    @Override
+    public void configure(WebSecurity web) throws Exception {
+        web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+    }
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .mvcMatchers("/", "/info", "/account/**").permitAll()
+                .mvcMatchers("/admin").hasRole("ADMIN")
+                .mvcMatchers("/user").hasRole("USER")
+                .anyRequest().authenticated()
+                .expressionHandler(expressionHandler());
+        http.formLogin();
+        http.httpBasic();
+
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+
+}
+
+// src/main/java/com/iamslash/exsecurity/form/SampleController.java
+@Controller
+public class SampleController {
+    @Autowired SampleService sampleService;
+    @Autowired AccountRepository accountRepository;
+    @GetMapping("/async-service")
+    @ResponseBody
+    public String asyncService() {
+        SecurityLogger.log("MVC, before async service");
+        sampleService.asyncService();
+        SecurityLogger.log("MVC, after async service");
+        return "Async Service";
+    }		
+}
+
+// src/main/java/com/iamslash/exsecurity/form/SampleService.java
+@Service
+public class SampleService {
+    public void dashboard() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        System.out.println("===============");
+        System.out.println(authentication);
+        System.out.println(userDetails.getUsername());
+    }
+
+    @Async
+    public void asyncService() {
+        SecurityLogger.log("Async Service");
+        System.out.println("Async service is called.");
+    }
+}
+```
+
 ## SecurityContext 영속화 필터: SecurityContextPersistenceFilter
+
+SecurityContext 는 `SecurityContextPersistenceFilter` 에 의해 `SecurityContextRepository` object 에 저장된다. `HttpSessionSecurityContextRepository` 는 `SecurityContextRepository` 를 구현한다.
+
+```java
+// org\springframework\security\web\context\SecurityContextPersistenceFilter.java
+public class SecurityContextPersistenceFilter extends GenericFilterBean {
+	static final String FILTER_APPLIED = "__spring_security_scpf_applied";
+
+	private SecurityContextRepository repo;
+
+	private boolean forceEagerSessionCreation = false;	
+...
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
+...
+		try {
+			SecurityContextHolder.setContext(contextBeforeChainExecution);
+
+			chain.doFilter(holder.getRequest(), holder.getResponse());
+
+		}
+		finally {
+			SecurityContext contextAfterChainExecution = SecurityContextHolder
+					.getContext();
+			// Crucial removal of SecurityContextHolder contents - do this before anything
+			// else.
+			SecurityContextHolder.clearContext();
+			repo.saveContext(contextAfterChainExecution, holder.getRequest(),
+					holder.getResponse());
+			request.removeAttribute(FILTER_APPLIED);
+
+			if (debug) {
+				logger.debug("SecurityContextHolder now cleared, as request processing completed");
+			}
+		}
+	}  
+  ...
+}
+
+// org\springframework\security\web\context\SecurityContextRepository.java
+public interface SecurityContextRepository {
+	SecurityContext loadContext(HttpRequestResponseHolder requestResponseHolder);
+	void saveContext(SecurityContext context, HttpServletRequest request,
+			HttpServletResponse response);
+	boolean containsContext(HttpServletRequest request);
+}
+
+// org\springframework\security\web\context\HttpSessionSecurityContextRepository.java
+public class HttpSessionSecurityContextRepository implements SecurityContextRepository {
+	public static final String SPRING_SECURITY_CONTEXT_KEY = "SPRING_SECURITY_CONTEXT";
+
+	protected final Log logger = LogFactory.getLog(this.getClass());
+...
+	public void saveContext(SecurityContext context, HttpServletRequest request,
+			HttpServletResponse response) {
+		SaveContextOnUpdateOrErrorResponseWrapper responseWrapper = WebUtils
+				.getNativeResponse(response,
+						SaveContextOnUpdateOrErrorResponseWrapper.class);
+		if (responseWrapper == null) {
+			throw new IllegalStateException(
+					"Cannot invoke saveContext on response "
+							+ response
+							+ ". You must use the HttpRequestResponseHolder.response after invoking loadContext");
+		}
+		if (!responseWrapper.isContextSaved()) {
+			responseWrapper.saveContext(context);
+		}
+	}
+...
+}
+```
+
 ## 시큐리티 관련 헤더 추가하는 필터: HeaderWriterFilter
+
+`HeaderWriterFilter` 는 HTTP Security Header 를 추가해 준다. 다음의 class 들운 `HeaderWriter` interface 를 구현한다.
+
+* CacheControlHeaderWriter
+  * Cache History Vulnerability 방어
+  * `Cache-Control: no-cache, no-store, max-age=0, must-revalidate`
+  * `Expires: 0`
+  * `Pragma: no-cache`
+* ClearSiteDataHeaderWriter
+* CompositeHeaderWriter
+* ContentSecurityPolicyHeaderWriter
+* DelegatingRequestMatcherHeaderWriter
+* FeaturePolicyHeaderWriter
+* HpkpHeaderWriter
+* HstsHeaderWriter
+  * HTTPS only
+* ReferrerPolicyHeaderWriter
+* StaticHeadersWriter
+* XContentTypeOptionsHeaderWriter
+  * Mime-type Sniffing 방어
+  * `X-Content-Type-Options: nosniff`
+* XXssProtectionHeaderWriter
+  * Browser 의 XSS Filter 사용
+  * `X-XSS-Protection: 1; mode=block`
+* XFrameOptionsHeaderWriter
+  * ClickJacking 방어
+  * `X-Frame-Options: DENY`
+
+```java
+// org\springframework\security\web\header\HeaderWriterFilter.java
+public class HeaderWriterFilter extends OncePerRequestFilter {
+	private final List<HeaderWriter> headerWriters;
+
+// org\springframework\security\web\header\HeaderWriter.java
+public interface HeaderWriter {
+	void writeHeaders(HttpServletRequest request, HttpServletResponse response);
+}
+
+// org\springframework\security\web\header\writers\XContentTypeOptionsHeaderWriter.java
+public final class XContentTypeOptionsHeaderWriter extends StaticHeadersWriter {
+	public XContentTypeOptionsHeaderWriter() {
+		super("X-Content-Type-Options", "nosniff");
+	}
+}
+
+// org\springframework\security\web\header\writers\XXssProtectionHeaderWriter.java
+public final class XXssProtectionHeaderWriter implements HeaderWriter {
+	private static final String XSS_PROTECTION_HEADER = "X-XSS-Protection";
+...
+	private void updateHeaderValue() {
+		if (!enabled) {
+			this.headerValue = "0";
+			return;
+		}
+		this.headerValue = "1";
+		if (block) {
+			this.headerValue += "; mode=block";
+		}
+	}
+...
+}
+
+// org\springframework\security\web\header\writers\CacheControlHeadersWriter.java
+public final class CacheControlHeadersWriter implements HeaderWriter {
+	private static final String EXPIRES = "Expires";
+	private static final String PRAGMA = "Pragma";
+	private static final String CACHE_CONTROL = "Cache-Control";
+
+	private final HeaderWriter delegate;
+...
+	private static List<Header> createHeaders() {
+		List<Header> headers = new ArrayList<>(3);
+		headers.add(new Header(CACHE_CONTROL,
+				"no-cache, no-store, max-age=0, must-revalidate"));
+		headers.add(new Header(PRAGMA, "no-cache"));
+		headers.add(new Header(EXPIRES, "0"));
+		return headers;
+	}
+...
+}	
+
+// org\springframework\security\web\header\writers\frameoptions\XFrameOptionsHeaderWriter.java
+public final class XFrameOptionsHeaderWriter implements HeaderWriter {
+
+	public static final String XFRAME_OPTIONS_HEADER = "X-Frame-Options";
+
+	private final AllowFromStrategy allowFromStrategy;
+	private final XFrameOptionsMode frameOptionsMode;
+...
+
+...
+}
+```
+
 ## CSRF 어택 방지 필터: CsrfFilter
+
+`CsrfFilter` 는 [CSRF (Cross Site Request Forgery)](#csrf-cross-site-request-forgery) Attack 을 방어한다.
+
+Spring boot application 은 `<input name="_csrf" type="hidden" value="a-b-c-d-e"` 를 포함한 HTML 을 HTTP Reponse 로 전송한다. Browser 에서 form 을 전송할 때 Spring boot application 은 CsrfFilter 에서 `_csrf` 의 값을 validte 한다.
+
+```java
+// org\springframework\security\web\csrf\CsrfFilter.java
+public final class CsrfFilter extends OncePerRequestFilter {
+	public static final RequestMatcher DEFAULT_CSRF_MATCHER = new DefaultRequiresCsrfMatcher();
+...
+	@Override
+	protected void doFilterInternal(HttpServletRequest request,
+			HttpServletResponse response, FilterChain filterChain)
+					throws ServletException, IOException {
+		request.setAttribute(HttpServletResponse.class.getName(), response);
+
+		CsrfToken csrfToken = this.tokenRepository.loadToken(request);
+		final boolean missingToken = csrfToken == null;
+		if (missingToken) {
+			csrfToken = this.tokenRepository.generateToken(request);
+			this.tokenRepository.saveToken(csrfToken, request, response);
+		}
+		request.setAttribute(CsrfToken.class.getName(), csrfToken);
+		request.setAttribute(csrfToken.getParameterName(), csrfToken);
+
+		if (!this.requireCsrfProtectionMatcher.matches(request)) {
+			filterChain.doFilter(request, response);
+			return;
+		}
+
+		String actualToken = request.getHeader(csrfToken.getHeaderName());
+		if (actualToken == null) {
+			actualToken = request.getParameter(csrfToken.getParameterName());
+		}
+		if (!csrfToken.getToken().equals(actualToken)) {
+			if (this.logger.isDebugEnabled()) {
+				this.logger.debug("Invalid CSRF token found for "
+						+ UrlUtils.buildFullRequestUrl(request));
+			}
+			if (missingToken) {
+				this.accessDeniedHandler.handle(request, response,
+						new MissingCsrfTokenException(actualToken));
+			}
+			else {
+				this.accessDeniedHandler.handle(request, response,
+						new InvalidCsrfTokenException(csrfToken, actualToken));
+			}
+			return;
+		}
+
+		filterChain.doFilter(request, response);
+	}
+
+...
+}
+```
+
 ## CSRF 토큰 사용 예제
+
+* [CSRF example /signup @ github](https://github.com/keesun/spring-security-basic/commit/5cd43f0cd36b4447c46d8cdf277f0207e1042907)
+
+----
+
+CSRF 를 사용한 `SignUpController` class 를 정의하고 `SignUpControllerTest` class 를 작성해 보자. CSRF 는 `csrf()` 를 주입하자.
+
+```java
+// src/main/java/com/iamslash/exsecurity/account/SignUpController.java
+@Controller
+@RequestMapping("/signup")
+public class SignUpController {
+
+    @Autowired AccountService accountService;
+
+    @GetMapping
+    public String signupForm(Model model) {
+        model.addAttribute("account", new Account());
+        return "signup";
+    }
+
+    @PostMapping
+    public String processSignUp(@ModelAttribute Account account) {
+        account.setRole("USER");
+        accountService.createNew(account);
+        return "redirect:/";
+    }
+
+}
+
+// src/test/java/com/iamslash/exsecurity/account/SignUpControllerTest.java
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureMockMvc
+public class SignUpControllerTest {
+
+    @Autowired
+    MockMvc mockMvc;
+
+    @Test
+    public void signUpForm() throws Exception {
+        mockMvc.perform(get("/signup"))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("_csrf")));
+    }
+
+    @Test
+    public void processSignUp() throws Exception {
+        mockMvc.perform(post("/signup")
+                .param("username", "keesun")
+                .param("password", "123")
+                .with(csrf()))
+                .andDo(print())
+                .andExpect(status().is3xxRedirection());
+    }
+
+} 
+```
+
 ## 로그아웃 처리 필터: LogoutFilter
+
+* [LogoutFilter @ github](https://github.com/keesun/spring-security-basic/commit/736beda713b58138bc56c76ab3851ac04d7adfac)
+
+----
+
+`LogoutFilter` 는 logout 처리를 한다. `LogoutHandler handler` 는 logout 를 처리한다. `LogoutSuccessHandler logoutSuccessHandler` 는 logout 성공 후 처리를 한다.
+
+```java
+// org\springframework\security\web\authentication\logout\LogoutFilter.java
+public class LogoutFilter extends GenericFilterBean {
+	private RequestMatcher logoutRequestMatcher;
+	private final LogoutHandler handler;
+	private final LogoutSuccessHandler logoutSuccessHandler;
+...
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
+		HttpServletRequest request = (HttpServletRequest) req;
+		HttpServletResponse response = (HttpServletResponse) res;
+
+		if (requiresLogout(request, response)) {
+			Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+			if (logger.isDebugEnabled()) {
+				logger.debug("Logging out user '" + auth
+						+ "' and transferring to logout destination");
+			}
+
+			this.handler.logout(request, response, auth);
+
+			logoutSuccessHandler.onLogoutSuccess(request, response, auth);
+
+			return;
+		}
+
+		chain.doFilter(request, response);
+	}
+...
+}
+```
+
+별다른 설정이 없다면 logout page 는 `DefaultLogoutPageGeneratingFilter` 가 rendering 해준다.
+
+```java
+// org\springframework\security\web\authentication\ui\DefaultLogoutPageGeneratingFilter.java
+public class DefaultLogoutPageGeneratingFilter extends OncePerRequestFilter {
+	private RequestMatcher matcher = new AntPathRequestMatcher("/logout", "GET");
+...
+	@Override
+	protected void doFilterInternal(HttpServletRequest request,
+			HttpServletResponse response, FilterChain filterChain)
+			throws ServletException, IOException {
+		if (this.matcher.matches(request)) {
+			renderLogout(request, response);
+		} else {
+			filterChain.doFilter(request, response);
+		}
+	}
+
+	private void renderLogout(HttpServletRequest request, HttpServletResponse response)
+			throws IOException {
+		String page =  "<!DOCTYPE html>\n"
+				+ "<html lang=\"en\">\n"
+				+ "  <head>\n"
+				+ "    <meta charset=\"utf-8\">\n"
+				+ "    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1, shrink-to-fit=no\">\n"
+				+ "    <meta name=\"description\" content=\"\">\n"
+				+ "    <meta name=\"author\" content=\"\">\n"
+				+ "    <title>Confirm Log Out?</title>\n"
+				+ "    <link href=\"https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M\" crossorigin=\"anonymous\">\n"
+				+ "    <link href=\"https://getbootstrap.com/docs/4.0/examples/signin/signin.css\" rel=\"stylesheet\" crossorigin=\"anonymous\"/>\n"
+				+ "  </head>\n"
+				+ "  <body>\n"
+				+ "     <div class=\"container\">\n"
+				+ "      <form class=\"form-signin\" method=\"post\" action=\"" + request.getContextPath() + "/logout\">\n"
+				+ "        <h2 class=\"form-signin-heading\">Are you sure you want to log out?</h2>\n"
+				+ renderHiddenInputs(request)
+				+ "        <button class=\"btn btn-lg btn-primary btn-block\" type=\"submit\">Log Out</button>\n"
+				+ "      </form>\n"
+				+ "    </div>\n"
+				+ "  </body>\n"
+				+ "</html>";
+
+		response.setContentType("text/html;charset=UTF-8");
+		response.getWriter().write(page);
+	}
+...
+}
+```
+
+다음과 같이 `http.logout().logoutSuccessUrl("/")` 를 호출하여 logout 후에 특정 url 로 이동시킬 수 있다.
+
+```java
+// src/main/java/com/iamslash/exsecurity/config/SecurityConfig.java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .mvcMatchers("/", "/info", "/account/**", "/signup").permitAll()
+                .mvcMatchers("/admin").hasRole("ADMIN")
+                .mvcMatchers("/user").hasRole("USER")
+                .anyRequest().authenticated()
+                .expressionHandler(expressionHandler());
+        http.formLogin();
+        http.httpBasic();
+
+        http.logout().logoutSuccessUrl("/");
+
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+}
+```
+
 ## 폼 인증 처리 필터: UsernamePasswordAuthenticationFilter
 ## 로그인/로그아웃 폼 페이지 생성해주는 필터: DefaultLogin/LogoutPageGeneratingFilter
 ## 로그인/로그아웃 폼 커스터마이징
