@@ -48,7 +48,6 @@
 	- [메소드 시큐리티](#메소드-시큐리티)
 	- [@AuthenticationPrincipal](#authenticationprincipal)
 	- [스프링 데이터 연동](#스프링-데이터-연동)
-	- [스프링 시큐리티 마무리](#스프링-시큐리티-마무리)
 
 ----
 
@@ -58,7 +57,6 @@
   * [src](https://github.com/keesun/spring-security-basic)
 * [Spring boot - Spring Security(스프링 시큐리티) 란? 완전 해결!](https://coding-start.tistory.com/153)
 * [Spring Security 를 유닛테스트 하기](https://velog.io/@jj362/Spring-Security-%EB%A5%BC-%EC%9C%A0%EB%8B%9B%ED%85%8C%EC%8A%A4%ED%8A%B8-%ED%95%98%EA%B8%B0)
-
 
 # 스프링 시큐리티: 폼 인증
 
@@ -2139,13 +2137,361 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 ```
 
 ## 토큰 기반 인증 필터 : RememberMeAuthenticationFilter
+
+* [RememberMeAuthenticationFilter @ github](https://github.com/keesun/spring-security-basic/commit/397955014faeb515595b7cb3c2121bd6055742c4)
+
+----
+
+`RememberMeAuthenticationFilter` 는 cookie 를 이용해서 authentication 을 기억하는 기능을 제공한다. [EditThisCookie @ crhome](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=ko) 을 chrome 에 설치하면 cookie 를 편집하여 debugging 이 가능하다.
+
+`http.rememberMe()` 없이 Spring boot application 을 실행하고 login 해보자. `JSESSIONID` 가 cookie 에 저장되어 있을 것이다. [EditThisCookie @ crhome](https://chrome.google.com/webstore/detail/editthiscookie/fngmhnnpilhplaeedifhccceomclgfbg?hl=ko) 로 `JSESSIONID` 를 지워보자. 다시 login 해야 한다.
+
+``http.rememberMe()` 를 포함해서  Spring boot application 을 실행하고 login 해보자. `JSESSIONID, remember-me` 가 cookie 에 저장되어 있을 것이다. `JSESSIONID` 를 지우고 인증이 필요한 page 를 request 해보자. 다시 login 할 필요가 없다. `remember-me` 에 의해 `JSESSIONID` 가 다시 cookie 에 저장된다.
+
+```java
+// src/main/java/com/iamslash/exsecurity/config/SecurityConfig.java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+...
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .mvcMatchers("/", "/info", "/account/**").permitAll()
+                .mvcMatchers("/admin").hasRole("ADMIN")
+                .mvcMatchers("/user").hasRole("USER")
+                .anyRequest().authenticated()
+                .expressionHandler(expressionHandler());
+        http.formLogin();
+        http.httpBasic();
+
+        http.rememberMe()
+                .userDetailsService(accountService)
+                .key("remember-me");
+
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+
+}
+
+
+// org\springframework\security\web\authentication\rememberme\RememberMeAuthenticationFilter.java
+public class RememberMeAuthenticationFilter extends GenericFilterBean implements
+		ApplicationEventPublisherAware {
+...
+	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
+			throws IOException, ServletException {
+		HttpServletRequest request = (HttpServletRequest) req;
+		HttpServletResponse response = (HttpServletResponse) res;
+
+		if (SecurityContextHolder.getContext().getAuthentication() == null) {
+			Authentication rememberMeAuth = rememberMeServices.autoLogin(request,
+					response);
+
+			if (rememberMeAuth != null) {
+				// Attempt authenticaton via AuthenticationManager
+				try {
+					rememberMeAuth = authenticationManager.authenticate(rememberMeAuth);
+
+					// Store to SecurityContextHolder
+					SecurityContextHolder.getContext().setAuthentication(rememberMeAuth);
+
+					onSuccessfulAuthentication(request, response, rememberMeAuth);
+
+					if (logger.isDebugEnabled()) {
+						logger.debug("SecurityContextHolder populated with remember-me token: '"
+								+ SecurityContextHolder.getContext().getAuthentication()
+								+ "'");
+					}
+
+					// Fire event
+					if (this.eventPublisher != null) {
+						eventPublisher
+								.publishEvent(new InteractiveAuthenticationSuccessEvent(
+										SecurityContextHolder.getContext()
+												.getAuthentication(), this.getClass()));
+					}
+
+					if (successHandler != null) {
+						successHandler.onAuthenticationSuccess(request, response,
+								rememberMeAuth);
+
+						return;
+					}
+
+				}
+				catch (AuthenticationException authenticationException) {
+					if (logger.isDebugEnabled()) {
+						logger.debug(
+								"SecurityContextHolder not populated with remember-me token, as "
+										+ "AuthenticationManager rejected Authentication returned by RememberMeServices: '"
+										+ rememberMeAuth
+										+ "'; invalidating remember-me token",
+								authenticationException);
+					}
+
+					rememberMeServices.loginFail(request, response);
+
+					onUnsuccessfulAuthentication(request, response,
+							authenticationException);
+				}
+			}
+
+			chain.doFilter(request, response);
+		}
+		else {
+			if (logger.isDebugEnabled()) {
+				logger.debug("SecurityContextHolder not populated with remember-me token, as it already contained: '"
+						+ SecurityContextHolder.getContext().getAuthentication() + "'");
+			}
+
+			chain.doFilter(request, response);
+		}
+	}
+...	
+}
+```
+
 ## 커스텀 필터 추가하기
+
+* [LoggingFilter @ github](https://github.com/keesun/spring-security-basic/commit/e2642defe5ad5d40e225b34c75e09392ef4b8a24)
+
+----
+
+`LoggingFilter` 를 만들어서 Filter chain 에 추가해 보자.
+
+```java
+// src/main/java/com/iamslash/exsecurity/common/LoggingFilter.java
+public class LoggingFilter extends GenericFilterBean {
+
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
+
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+        StopWatch stopWatch = new StopWatch();
+        stopWatch.start(((HttpServletRequest)request).getRequestURI());
+
+        chain.doFilter(request, response);
+
+        stopWatch.stop();
+        logger.info(stopWatch.prettyPrint());
+    }
+}
+
+// src/main/java/com/iamslash/exsecurity/config/SecurityConfig.java
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.addFilterBefore(new LoggingFilter(), WebAsyncManagerIntegrationFilter.class);
+				...
+		}
+```
 
 # 스프링 시큐리티 그밖에
 
 ## 타임리프 스프링 시큐리티 확장팩
+
+`thymeleaf-extras-springsecurity5` 를 이용하면 thymeleaf 의 다양한 기능을 이용할 수 있다. `build.gradle` 에 다음과 같은 dependency 를 추가한다.
+
+```groovy
+implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5'
+```
+
+authentication 이 처리된 상태에 따라 `/logout` 혹은 `/login` link 가 보여진다. 그러나 `"${#authorization.expr('isAuthenticated()')}"` type-safe 하지 못하다. 실행해야 오류를 발견할 수 있다.
+
+```html
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<body>
+    <h1 th:text="${message}">Hello</h1>
+    <div th:if="${#authorization.expr('isAuthenticated()')}">
+        <h2 th:text="${#authentication.name}">Name</h2>
+        <a href="/logout" th:href="@{/logout}">Logout</a>
+    </div>
+    <div th:unless="${#authorization.expr('isAuthenticated()')}">
+        <a href="/login" th:href="@{/login}">Login</a>
+    </div>
+</body>
+</html> 
+```
+
 ## sec 네임스페이스
+
+`xmlns:sec="http://www.thymeleaf.org/extras/spring-security"` 를 추가하면 type-safe 하게 작성할 수 있다. IntelliJ ultimate version 의 경우 intelli-sense 를 지원한다.
+
+```html
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Index</title>
+</head>
+<body>
+    <h1 th:text="${message}">Hello</h1>
+    <div th:if="${#authorization.expr('isAuthenticated()')}">
+        <h2 th:text="${#authentication.name}">Name</h2>
+        <a href="/logout" th:href="@{/logout}">Logout</a>
+    </div>
+    <div th:unless="${#authorization.expr('isAuthenticated()')}">
+        <a href="/login" th:href="@{/login}">Login</a>
+    </div>
+</body>
+</html> 
+```
+
+```html
+<div sec:authorize="isAuthenticated()">
+<h2 sec:authentication="name">Name</h2>
+<a href="/logout" th:href="@{/logout}">Logout</a>
+</div>
+<div sec:authorize="!isAuthenticated()">
+<a href="/login" th:href="@{/login}">Login</a>
+</div>
+```
+
 ## 메소드 시큐리티
+
+* [Method Security @ github](https://github.com/keesun/spring-security-basic/commit/a7c6ccc52dfe53c8f92ce601152dc693800337f6)
+
+-----
+
+Service 의 Method 에 `@Secured, @RolesAllowed` 등을 사용하여 Authorization 을 수행할 수 있다. 즉, 인가된 user 만 Method 를 호출할 수 있다.
+
+```java
+// src/main/java/com/iamslash/exsecurity/config/MethodSecurityConfig.java
+@Configuration
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true, jsr250Enabled = true)
+public class MethodSecurityConfig extends GlobalMethodSecurityConfiguration {
+
+    @Override
+    protected AccessDecisionManager accessDecisionManager() {
+        RoleHierarchyImpl roleHierarchy = new RoleHierarchyImpl();
+        roleHierarchy.setHierarchy("ROLE_ADMIN > ROLE_USER");
+        AffirmativeBased accessDecisionManager = (AffirmativeBased) super.accessDecisionManager();
+        accessDecisionManager.getDecisionVoters().add(new RoleHierarchyVoter(roleHierarchy));
+        return accessDecisionManager;
+    }
+}
+
+// src/main/java/com/iamslash/exsecurity/config/SecurityConfig.java
+// src/main/java/com/iamslash/exsecurity/config/SecurityConfig.java
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+...
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+                .mvcMatchers("/", "/info", "/account/**").permitAll()
+                .mvcMatchers("/admin").hasRole("ADMIN")
+                .mvcMatchers("/user").hasRole("USER")
+                .anyRequest().authenticated()
+                .expressionHandler(expressionHandler());
+        http.formLogin();
+        http.httpBasic();
+
+        http.rememberMe()
+                .userDetailsService(accountService)
+                .key("remember-me");
+
+        SecurityContextHolder.setStrategyName(SecurityContextHolder.MODE_INHERITABLETHREADLOCAL);
+    }
+
+    @Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+}
+
+// src/main/java/com/iamslash/exsecurity/form/SampleService.java
+@Service
+public class SampleService {
+
+    @Secured({"ROLE_USER", "ROLE_ADMIN"})
+    public void dashboard() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
+// src/test/java/com/iamslash/exsecurity/form/SampleServiceTest.java				
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class SampleServiceTest {
+
+    @Autowired
+    SampleService sampleService;
+
+    @Autowired
+    AccountService accountService;
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Test
+    public void dashboard() {
+        Account account = new Account();
+        account.setRole("ADMIN");
+        account.setUsername("keesun");
+        account.setPassword("123");
+        accountService.createNew(account);
+
+        UserDetails userDetails = accountService.loadUserByUsername("keesun");
+
+        UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, "123");
+        Authentication authentication = authenticationManager.authenticate(token);
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        sampleService.dashboard();
+    }
+
+} 
+```
+
 ## @AuthenticationPrincipal
+
+* [@AuthenticationPrincipal @ github](https://github.com/keesun/spring-security-basic/commit/863d4bbe009e4ea1fcf385fdb5775bd19ab64eb8)
+
+-----
+
+`@AuthenticationPrincipal` 을 Controller class 의 Method 에 argument 로 사용하자. Spring security 의 Principal object 를 argument 로 전달받을 수 있다.
+
+```java
+// src/main/java/com/iamslash/exsecurity/form/SampleController.java
+@Controller
+public class SampleController {
+	@GetMapping("/")
+	public String index(Mode model, @AuthenticationPrincipal UserAccount userAccount) {
+		if (userAccount == null) {
+			model.addAttribute("message", "Hello Spring Security");
+		} else {
+			model.addAttribute("message", "Hello, " + userAccount.getUserName());
+		}
+		return "index";
+	}
+}
+```
+
 ## 스프링 데이터 연동
-## 스프링 시큐리티 마무리
+
+* [Spring Security Data @ github](https://github.com/keesun/spring-security-basic/commit/4ed44a25712c442141f8876a0494e018ab6733ed)
+
+----
+
+`spring-security-data` 를 이용하면 다양한 Spring security data 기능을 이용할 수 있다. 
+
+다음과 같이 `build.gradle` 에 dependency 를 추가한다.
+
+```groovy
+implementation 'org.springframework.security:spring-security-data'
+```
+
+`@Query` 에서 `SpEL` 로 principal 을 접근한다.
+
+```java
+@Query("select b from Book b where b.author.id = ?#{principal.account.id}")
+List<Book> findCurrentUserBooks();
+```
