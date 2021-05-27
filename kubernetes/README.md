@@ -11,6 +11,7 @@
     - [Worker Node](#worker-node)
     - [Addons](#addons)
 - [Install](#install)
+  - [minikube](#minikube)
   - [AWS EKS](#aws-eks)
   - [Google GCP](#google-gcp)
   - [Microsoft AZURE](#microsoft-azure)
@@ -107,14 +108,14 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 ## Overview
 
-> * [Understanding Kubernetes Architecture With Diagrams](https://phoenixnap.com/kb/understanding-kubernetes-architecture-diagrams)
+> [Understanding Kubernetes Architecture With Diagrams](https://phoenixnap.com/kb/understanding-kubernetes-architecture-diagrams)
 
 Kubernetes cluster 는 Master-node, Workder-node 와 같이 두 가지 종류의 Node 를 갖는다. 
 
-* A Master-node type, which makes up the Control Plane, acts as the “brains” of the cluster.
+* A Master-node type, which makes up the Control Plane, acts as the "brains" of the cluster.
 * A Worker-node type, which makes up the Data Plane, runs the actual container images (via pods).
 
-Master-Node 는 **etcd, kube-apiserver, kube-scheduler, kube-controller-manager, docker** 등이 실행된다. Master 장비 1 대에 앞서 언급한 프로세스들 한 묶음을 같이 실행하는게 일반적인 구성이다. Master-Node 는 일반적으로 High Availibility 를 위해 3 대 실행한다. 평소 1 대를 활성시키고 나머지 2 대는 대기시킨다.
+Master-Node 는 **etcd, kube-apiserver, kube-scheduler, kube-controller-manager, docker** 등이 실행된다. Master 장비 1 대에 앞서 언급한 프로세스들 한 묶음을 같이 실행하는게 일반적인 구성이다. Master-Node 는 High Availibility 를 위해 3 대 실행한다. 평소 1 대를 활성시키고 나머지 2 대는 대기시킨다.
 
 Worker-Node 는 초기에 미니언(minion) 이라고 불렀다. **kubelet, kube-proxy, docker** 등이 실행된다. 대부분의 컨테이너들은 Worker-Node 에서 실행된다.
 
@@ -124,44 +125,44 @@ Worker-Node 는 초기에 미니언(minion) 이라고 불렀다. **kubelet, kube
 
 Kubernetes cluster 는 current state 을 object 로 표현한다. Kubernetes 는 current state 의 object 들을 예의 주시하다가 desired state 의 object 가 발견되면 지체 없이 current state object 들을 desired state state 으로 변경한다. 
 
-다음은 Kubernetes object 들 중 많이 사용되는 것들이다.
+다음은 Kubernetes object 들 중 많이 사용되는 resource 들이다.
 
-* ConfigMap
-* Endpoints
-* Event
-* LimitRange
-* Namespace
-* Node
-* PersistentVolumeClaim
-* PersistenVolume
 * Pod
   * A thin wrapper around one or more containers
-* PodTemplate
-* ResourceQuota
+* ReplicaSet
+  * Ensures a defined number of pods are always running
+* Deployment
+  * Details how to roll out (or roll back) across versions of your application
+* DaemonSet
+  * Implements a single instance of a pod on every worker node
+* ConfigMap
 * Secret
 * ServiceAccount
 * Service
   * Maps a fixed IP address to a logical group of pods
-* APIService
-* DaemonSet
-  * Implements a single instance of a pod on every worker node
-* Deployment
-  * Details how to roll out (or roll back) across versions of your application
-* ReplicaSet
-  * Ensures a defined number of pods are always running
-* StatefulSet
-* HorizontalPodAutoscaler
-* CronJob
-* Job
-  * Ensures a pod properly runs to completion
-* CertificateSigningRequest
 * Ingress
-* PodDisruptionBudget
-* ClusterRoleBinding
-* ClusterRole
 * RoleBinding
 * Role
 * StorageClass
+* ClusterRoleBinding
+* ClusterRole
+* StatefulSet
+* PodTemplate
+* Namespace
+* PersistenVolume
+* PersistentVolumeClaim
+* Endpoints
+* LimitRange
+* ResourceQuota
+* HorizontalPodAutoscaler
+* PodDisruptionBudget
+* Job
+  * Ensures a pod properly runs to completion
+* CronJob
+* APIService
+* Event
+* Node
+* CertificateSigningRequest
 
 Kubernetes 는 Control Plane 과 Data Plane 으로 나눌 수 있다.
 
@@ -169,16 +170,16 @@ Kubernetes 는 Control Plane 과 Data Plane 으로 나눌 수 있다.
 
 Ctonrol Plane 은 Master-Node 를 의미한다. Scheduler, Controller Manager, API Server, etcd 등이 실행된다.
 
-* One or More API Servers: Entry point for REST / kubectl
-* etcd: Distributed key/value store
-* Controller-manager: Always evaluating current vs desired state
-* Scheduler: Schedules pods to worker nodes
+* **One or More API Servers**: Entry point for REST / kubectl
+* **etcd**: Distributed key/value store
+* **Controller-manager**: Always evaluating current vs desired state
+* **Scheduler**: Schedules pods to worker nodes
 
 Data Plane 은 Worker-Node 를 의미한다. kube-proxy, kubelet 등이 실행된다.
 
 * Made up of worker nodes
-* kubelet: Acts as a conduit between the API server and the node
-* kube-proxy: Manages IP translation and routing
+* **kubelet**: Acts as a conduit between the API server and the node
+* **kube-proxy**: Manages IP translation and routing
 
 Kubernetes 는 yaml 파일을 사용하여 설정한다. 다음은 yaml 파일의 기본구조이다.
 
@@ -189,30 +190,34 @@ metadata:
 spec:
 ```
 
-* **Kind**: Kubernetes Object 의 type 이다. Pod, Deployment, ReplicaSet, Service 등이 있다.
-* **apiVersion**: Kind 에 따라 다르다.
-* **metadata**: Kind type 의 Kubernetes Object 의 meta data 이다. name 등등이 해당된다.
-* **spec**: Kind type 의 Kubernetes Object 의 세부항목들이다. 당연히 Kind 에 따라 내용이 다르다.
+* **Kind**: Kubernetes Object 의 type 이다. 즉, resource 를 말한다. Pod, Deployment, ReplicaSet, Service 등이 있다.
+* **apiVersion**: `group/version` 으로 구성되어있다. `group` 이 비어 있다면 core group 을 의미한다.
+* **metadata**: Kubernetes object 의 meta data 이다. name, label 등등이 해당된다.
+* **spec**: Kubernetes object 의 세부항목이다.
 
 ## Sequence Diagram
 
-> * [Exploring the Flexibility of Kubernetes @ medium](https://medium.com/cloud-heroes/exploring-the-flexibility-of-kubernetes-9f65db2360a0)
+> [Exploring the Flexibility of Kubernetes @ medium](https://medium.com/cloud-heroes/exploring-the-flexibility-of-kubernetes-9f65db2360a0)
 
 ![](img/kubernetes_sequence_diagram.png)
 
-> * [Graceful shutdown and zero downtime deployments in Kubernetes @ learnk8s.io](https://learnk8s.io/graceful-shutdown)
+controller-manager 에 포함된 각종 controller 들은 자신들이 담당하고 있는 Kubernetes object 들을 kube-api-server 를 통해서 감시한다. 특정한 Kubernetes object 에 대해 current state 을 desired state 로 변경해야 한다면 해당 controller 가 logic 을 수행한다. 그리고 scheduler, kubelet 역시 controller 과 비슷한 방식으로 동작한다.
+
+> [Graceful shutdown and zero downtime deployments in Kubernetes @ learnk8s.io](https://learnk8s.io/graceful-shutdown)
+
+Kubernetes 의 Pod 을 graceful shutdown 하기 위한 방법이 중요하다???
 
 ## API Flow
 
 ![](https://d33wubrfki0l68.cloudfront.net/af21ecd38ec67b3d81c1b762221b4ac777fcf02d/7c60e/images/blog/2019-03-21-a-guide-to-kubernetes-admission-controllers/admission-controller-phases.png)
 
-`kubectl` 을 통해 `kube-api-server` 로 API Request 가 도착하면 위의 그림과 같이 `Authentication-Authorization-Mutating Admission-Validating Admission` 과정을 거치고 `etcd` 에 접근한다.
+`kubectl` 을 통해 `kube-api-server` 로 API Request 가 도착하면 위의 그림과 같이 `Authentication - Authorization - Mutating Admission - Validating Admission` 과정을 거치고 `etcd` 에 접근한다.
 
 만약 API Request 가 Write Operation 이면  Kubernetes 를 Extending 할 수 있다. `Mutating Admission` 단계에서 Custom Server 로 WebHook 을 보내는 식으로 구현이 가능하다. [Kubernetes Extension / Dynamic Admission Control @ TIL](kubernetes_extension.md#dynamic-admission-contro)
 
 ## How to schedule pod on worker node
 
-kube-scheduler 는 다음과 같은 순서로 worker-node 에 pod 를 scheduling 한다.
+**kube-scheduler** 는 다음과 같은 순서로 worker-node 에 pod 를 scheduling 한다.
 
 * user 는 kube-apiserver 에 pod 을 만들어 달라고 request 한다.
 * kube-apiserver 는 ServiceAccount, RoleBinding 을 이용해 authentication, authorization 을 수행한다.
@@ -220,7 +225,7 @@ kube-scheduler 는 다음과 같은 순서로 worker-node 에 pod 를 scheduling
 * kube-apiserver 는 request 를 etcd 에 기록한다. 즉 pod data 를 etcd 에 기록한다. 이때 pod data 의 `nodeName` 은 비어있다.
   * pod 의 `nodeName` 은 `kubectl get pods mypod -o yaml | grep -F3 nodeName` 으로 확인할 수 있다.
 * kube-scheduler 는 kube-apiserver 를 watch 를 통해 polling 하다가 `nodeName` 이 비어있는 pod data 를 etcd 에서 발견한다. node filtering, node scoring 의 과정을 거쳐서 worker-node 를 선택한다. 그리고 etcd 의 pod data 의 `nodeName` 을 선택한 worker-node 로 채운다.
-* `nodeName` 에 해당하는 worker-node 에서 kubelet 이 실행되고 있다. 그 kubelet 은 kube-apiserver 를 watch 를 통해 polling 하다가 `nodeName` 이 채워진 pod data 를 etcd 에서 발견한다. 그리고 worker-node 에 pod 를 생성한다.
+* `nodeName` 에 해당하는 worker-node 에서 kubelet 이 실행되고 있다. 그 kubelet 은 kube-apiserver 를 watch 를 통해 polling 하다가 `nodeName` 이 자신이 실행되고 있는 worker-node 이름으로 채워진 pod data 를 etcd 에서 발견한다. 그리고 그 worker-node 에 pod 를 생성한다.
 
 ## Kubernetes Components
 
@@ -262,6 +267,14 @@ cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주�
 * cluster logging
 
 # Install
+
+## minikube
+
+* [minikube start](https://minikube.sigs.k8s.io/docs/start/)
+
+----
+
+minikube is local Kubernetes, focusing on making it easy to learn and develop for Kubernetes.
 
 ## AWS EKS
 
@@ -414,11 +427,11 @@ AWS EKS cluster 가 만들어지고 나면 다음과 같이 kubectl 을 통해 A
 
 ## Google GCP
 
-Updating...
+WIP...
 
 ## Microsoft AZURE
 
-Updating...
+WIP...
 
 ## Install on Win64
 

@@ -172,4 +172,3 @@ custom scheduler 는 다음과 같은 것들을 차례로 구현해야 한다.
 # Custom Metric Server
 
 > [Custom Metric Server @ TIL](kubernetes_custom_metric_server.md)
-
