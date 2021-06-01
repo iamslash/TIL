@@ -3,6 +3,7 @@
 - [Getting Started](#getting-started)
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
+  - [Formatted String](#formatted-string)
 - [Basics](#basics)
   - [Basic types](#basic-types)
   - [Packages and Imports](#packages-and-imports)
@@ -262,6 +263,16 @@ val triangle = Triangle(3.0, 4.0, 5.0)
 ```
 
 ## Idioms
+
+## Formatted String
+
+```kt
+val pi = 3.14159265358979323
+val fi = "pi = %.2f".format(pi)
+
+println("pi is ${pi}")
+println("fi is ${fi}")
+```
 
 # Basics
 
