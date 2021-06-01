@@ -1,4 +1,5 @@
 - [Materials](#materials)
+- [Install on windows 10](#install-on-windows-10)
 - [Getting Started](#getting-started)
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
@@ -39,7 +40,24 @@
 
 * [Kotlin Playground](https://play.kotlinlang.org/#eyJ2ZXJzaW9uIjoiMS40LjEwIiwicGxhdGZvcm0iOiJqYXZhIiwiYXJncyI6IiIsImpzQ29kZSI6IiIsIm5vbmVNYXJrZXJzIjp0cnVlLCJ0aGVtZSI6ImlkZWEiLCJjb2RlIjoiLyoqXG4gKiBZb3UgY2FuIGVkaXQsIHJ1biwgYW5kIHNoYXJlIHRoaXMgY29kZS4gXG4gKiBwbGF5LmtvdGxpbmxhbmcub3JnIFxuICovXG5cbmZ1biBtYWluKCkge1xuICAgIHByaW50bG4oXCJIZWxsbywgd29ybGQhISFcIilcbn0ifQ==)
 * [Kotlin Reference](https://kotlinlang.org/docs/reference/)
-* [Basic Syntax @ Kotlin](https://kotlinlang.org/docs/reference/basic-syntax.html)
+* [Learning materials overview](https://kotlinlang.org/docs/learning-materials-overview.html)
+  * [Basic Syntax @ Kotlin](https://kotlinlang.org/docs/reference/basic-syntax.html)
+  * [Idioms @ kotlin](https://kotlinlang.org/docs/idioms.html)
+  * [Kotlin Koans @ kotlin](https://kotlinlang.org/docs/koans.html)
+  * [Kotlin by example @ kotlin](https://play.kotlinlang.org/byExample/overview?_gl=1*1ch7m8k*_ga*MTU0MzU1NjQ4My4xNjIyNTAwNzUy*_ga_J6T75801PF*MTYyMjUzMDg0OC4yLjEuMTYyMjUzMTg2NS4zMg..&_ga=2.220493660.593975675.1622500752-1543556483.1622500752)
+  * [Kotlin books @ kotlin](https://kotlinlang.org/docs/books.html)
+  * [Kotlin hands-on tutorials @ kotline](https://play.kotlinlang.org/hands-on/overview?_gl=1*1ch7m8k*_ga*MTU0MzU1NjQ4My4xNjIyNTAwNzUy*_ga_J6T75801PF*MTYyMjUzMDg0OC4yLjEuMTYyMjUzMTg2NS4zMg..&_ga=2.220493660.593975675.1622500752-1543556483.1622500752)
+
+# Install on windows 10
+
+* Install JDK 1.8.
+* Install IntelliJ Community Edition.
+* Register `C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2019.2.2\plugins\Kotlin\kotlinc\bin` to `Path`.
+
+```bash
+$ kotlinc a.kt -include-runtime -d a.jar
+$ java -jar a.jar
+```
 
 # Getting Started
 
@@ -59,7 +77,7 @@ fun main() {
 
 ///////////////////////////////////////////////////////
 // Functions
-fun sum(a: Int, b: Int) Int {
+fun sum(a: Int, b: Int): Int {
   return a + b
 }
 // functions with an expression body and inferred return type
