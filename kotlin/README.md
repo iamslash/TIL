@@ -4,6 +4,8 @@
 - [Getting Started](#getting-started)
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
+  - [Sort](#sort)
+  - [min max](#min-max)
   - [Formatted String](#formatted-string)
 - [Basics](#basics)
   - [Basic types](#basic-types)
@@ -74,6 +76,28 @@ $ java -jar a.jar
 ## Idioms
 
 * [Idioms @ kotlin](https://kotlinlang.org/docs/idioms.html)
+
+## Sort
+
+* [Guide to Sorting in Kotlin @ baeldung](https://www.baeldung.com/kotlin/sort)
+
+## min max
+
+* [Kotlin pi, 절댓값, 대소 비교 - PI, abs, max, min](https://notepad96.tistory.com/entry/Kotlin-pi-%EC%A0%88%EB%8C%93%EA%B0%92-%EB%8C%80%EC%86%8C-%EB%B9%84%EA%B5%90-PI-abs-max-min)
+
+----
+
+```kt
+import kotlin.math.*
+
+fun main(args : Array<String>) {
+    var a = 10
+    var b = 30
+    var c = 40
+    println("max val is ${max(a, b)}")    // kotlin.math.max
+    println("min val is ${min(c, b)}")   // kotlin.math.min
+}
+```
 
 ## Formatted String
 
