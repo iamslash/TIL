@@ -312,19 +312,19 @@ System.out.printf("%s : %d%n", "age", 11);
 | `array`              | `Collections.unmodifiableList`         |
 | `vector`             | `Vector, ArrayList`                    |
 | `deque`              | `Deque, ArrayDeque`                    |
-| `forward_list`       | ``                                     |
-| `list`               | `List, LinkedList`                     |
+| `forward_list`       | `List, LinkedList` |
+| `list`               |                      |
 | `stack`              | `Stack, Deque, ArrayDeque, LinkedList` |
 | `queue`              | `Queue, LinkedList`                    |
 | `priority_queue`     | `Queue, PriorityQueue`                 |
 | `set`                | `SortedSet, TreeSet`                   |
-| `multiset`           | ``                                     |
+| `multiset`           |                                      |
 | `map`                | `SortedMap, TreeMap`                   |
-| `multimap`           | ``                                     |
+| `multimap`           |                                      |
 | `unordered_set`      | `Set, HashSet`                         |
-| `unordered_multiset` | ``                                     |
+| `unordered_multiset` |                                      |
 | `unordered_map`      | `Map, HashMap`                         |
-| `unordered_multimap` | ``                                     |
+| `unordered_multimap` |                                      |
 
 * core interfaces in Collections
 

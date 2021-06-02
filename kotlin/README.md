@@ -62,7 +62,26 @@ $ java -jar a.jar
 
 ## Collections compared to c++
 
-WIP...
+| c++                  | java                                   |
+| :------------------- | :------------------------------------- |
+| `if, else`           | `if, else`                             |
+| `for, while`         | `for, while`                           |
+| `array`              | `Collections.unmodifiableList`         |
+| `vector`             | `java.util.Vector, java.util.ArrayList` |
+| `deque`              | `java.util.Deque, java.util.ArrayDeque` |
+| `forward_list`       | ``                                     |
+| `list`               | `List, MutableList, java.util.LinkedList` |
+| `stack`              | `java.util.Stack, java.util.Deque, java.util.ArrayDeque, java.util.LinkedList` |
+| `queue`              | `java.util.Queue, java.util.LinkedList` |
+| `priority_queue`     | `java.util.Queue, java.util.PriorityQueue` |
+| `set`                | `java.util.SortedSet, java.util.TreeSet` |
+| `multiset`           | ``                                     |
+| `map`                | `java.util.SortedMap, java.util.TreeMap` |
+| `multimap`           | ``                                     |
+| `unordered_set`      | `Set, MutableSet, java.util.HashSet`  |
+| `unordered_multiset` | ``                                     |
+| `unordered_map`      | `Map, MutableMap, java.util.HashMap` |
+| `unordered_multimap` | ``                                     |
 
 ## Collections
 
