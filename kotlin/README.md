@@ -8,6 +8,7 @@
   - [Collections](#collections)
   - [Collection Conversions](#collection-conversions)
   - [Init Array](#init-array)
+  - [Lazy Initialization](#lazy-initialization)
   - [Sort](#sort)
   - [min max](#min-max)
   - [Formatted String](#formatted-string)
@@ -150,6 +151,21 @@ for (i in array.indices) {
 // Generate values with indices
 val generatedArray = IntArray(10) { i -> i * i }
 val generatedStringArray = Array(10) { i -> "Number of index: $i"  }
+```
+
+## Lazy Initialization
+
+```kt
+// Init later
+lateinit var p: String
+p = "Hello"
+
+// Init just once
+val q: String by lazy {
+    "World"
+}
+println(p)
+println(q)
 ```
 
 ## Sort
