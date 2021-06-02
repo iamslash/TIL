@@ -10,9 +10,6 @@
   - [WITH](#with)
   - [WITH RECURSIVE](#with-recursive)
   - [Select `Year-Month`](#select-year-month)
-  - [RANK](#rank)
-  - [Where](#where)
-  - [And, Or, Not](#and-or-not)
   - [Order By](#order-by)
   - [Insert Into](#insert-into)
   - [Null Values](#null-values)
@@ -62,6 +59,10 @@
   - [CASE](#case)
   - [Session Variables](#session-variables)
   - [ROW_NUMBER() OVER()](#row_number-over)
+  - [RANK() OVER()](#rank-over)
+  - [DENSE_RANK() OVER()](#dense_rank-over)
+  - [Where](#where)
+  - [And, Or, Not](#and-or-not)
   - [Window Functions (LEAD, LAG)](#window-functions-lead-lag)
   - [Pivot](#pivot)
   - [Functions (MySQL)](#functions-mysql)
@@ -284,184 +285,6 @@ LEFT JOIN customers c
 ```sql
 SELECT LEFT(order_date, 7) AS month 
 FROM Orders;
-```
-
-## RANK
-
-* [MySQL RANK Function](https://www.mysqltutorial.org/mysql-window-functions/mysql-rank-function/)
-* [The Most Frequently Ordered Products for Each Customer @ leetcode](https://leetcode.com/problems/the-most-frequently-ordered-products-for-each-customer/)
-  * [sol](https://github.com/iamslash/learntocode/tree/master/leetcode2/TheMostFrequentlyOrderedProductsforEachCustomer)
-
------
-
-특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 순위를 읽어온다.
-
-This is syntax of `RANK()`
-
-```sql
-RANK() OVER (
-    PARTITION BY <expression>[{,<expression>...}]
-    ORDER BY <expression> [ASC|DESC], [{,<expression>...}]
-)
-```
-
-This is a schema of table `t`.
-
-```sql
-CREATE TABLE t (
-    val INT
-);
-
-INSERT INTO t(val)
-VALUES(1),(2),(2),(3),(4),(4),(5);
-
-SELECT * FROM t;
-```
-
-This is a simple example of `RANK()`.
-
-```sql
-SELECT
-    val,
-    RANK() OVER (
-        ORDER BY val
-    ) my_rank
-FROM
-    t;
-```
-
-| val | my_rank |
-| --- | ------- |
-| 1   | 1       |
-| 2   | 2       |
-| 2   | 2       |
-| 3   | 4       |
-| 4   | 5       |
-| 4   | 5       |
-| 5   | 7       |
-
-This is a schema of table `sales`.
-
-```sql
-CREATE TABLE IF NOT EXISTS sales(
-    sales_employee VARCHAR(50) NOT NULL,
-    fiscal_year INT NOT NULL,
-    sale DECIMAL(14,2) NOT NULL,
-    PRIMARY KEY(sales_employee,fiscal_year)
-);
- 
-INSERT INTO sales(sales_employee,fiscal_year,sale)
-VALUES('Bob',2016,100),
-      ('Bob',2017,150),
-      ('Bob',2018,200),
-      ('Alice',2016,150),
-      ('Alice',2017,100),
-      ('Alice',2018,200),
-       ('John',2016,200),
-      ('John',2017,150),
-      ('John',2018,250);
- 
-SELECT * FROM sales;
-```
-
-| sales_employee | fiscal_year | sale |
-| -------------- | ----------- | ---- |
-| Bob            | 2016        | 100  |
-| Bob            | 2017        | 150  |
-| Bob            | 2018        | 200  |
-| Alice          | 2016        | 150  |
-| Alice          | 2017        | 200  |
-| Alice          | 2018        | 200  |
-| John           | 2016        | 200  |
-| John           | 2017        | 150  |
-| John           | 2018        | 250  |
-
-You can select ranks partitioned by fiscal_year.
-
-```sql
-SELECT
-    sales_employee,
-    fiscal_year,
-    sale,
-    RANK() OVER (PARTITION BY
-                     fiscal_year
-                 ORDER BY
-                     sale DESC
-                ) sales_rank
-FROM
-    sales;
-```
-
-You can use CTE (Common Table Expression) with `RANK()`.
-
-```sql
-WITH order_values AS(
-    SELECT 
-        orderNumber, 
-        YEAR(orderDate) order_year,
-        quantityOrdered*priceEach AS order_value,
-        RANK() OVER (
-            PARTITION BY YEAR(orderDate)
-            ORDER BY quantityOrdered*priceEach DESC
-        ) order_value_rank
-    FROM
-        orders
-    INNER JOIN orderDetails USING (orderNumber)
-)
-SELECT 
-    * 
-FROM 
-    order_values
-WHERE 
-    order_value_rank <=3;
-```
-
-| orderNumber | order_year | order_value | order_value_rank |
-| ----------- | ---------- | ----------- | ---------------- |
-| 10196       | 2003       | 9571.08     | 1                |
-| 10206       | 2003       | 9568.73     | 2                |
-| 10201       | 2003       | 9394.28     | 3                |
-| 10312       | 2004       | 10286.40    | 1                |
-| 10348       | 2004       | 9974.40     | 2                |
-| 10304       | 2004       | 9467.68     | 3                |
-| 10403       | 2005       | 11503.14    | 1                |
-| 10405       | 2005       | 11170.52    | 2                |
-| 10407       | 2005       | 10723.60    | 3                |
-
-## Where
-
-```sql
-SELECT * FROM Customers
-  WHERE Country='Mexico';
-SELECT * FROM Customers
-  WHERE CustomerID=1;
-```
-
-| Operator |                   Description                    |
-| :------: | :----------------------------------------------: |
-|    =     |                      Equal                       |
-|    <>    |                    Not Equal                     |
-|    >     |                   Greater than                   |
-|    <     |                    Less than                     |
-|    >=    |              Greater than or equal               |
-|    <=    |                Less than or equal                |
-| BETWEEN  |            Between an inclusive range            |
-|   LIKE   |               Search for a pattern               |
-|    IN    | To specify multiple possible values for a column |
-
-## And, Or, Not
-
-```sql
-SELECT * FROM Customers
-  WHERE Country='Germany' AND City='Berlin';
-SELECT * FROM Customers
-  WHERE City='Berlin' OR City='München';
-SELECT * FROM Customers
-  WHERE NOT Country='Germany';
-SELECT * FROM Customers
-  WHERE Country='Germany' AND (City='Berlin' OR City='München');
-SELECT * FROM Customers
-  WHERE NOT Country='Germany' AND NOT Country='USA';
 ```
 
 ## Order By
@@ -1451,7 +1274,9 @@ SELECT @var2 := 2
 * [ROW_NUMBER() over_clause](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_row-number)
 * [12.21.2 Window Function Concepts and Syntax](https://dev.mysql.com/doc/refman/8.0/en/window-functions-usage.html)
 
-줄 번호를 부여한 컬럼을 제작한다.
+----
+
+특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 줄번호를 부여한다.
 
 ```sql
 
@@ -1482,6 +1307,96 @@ mysql> SELECT
 | 2001 | USA     | TV         |    150 |        1 |        6 |
 | 2001 | USA     | TV         |    100 |        6 |        7 |
 +------+---------+------------+--------+----------+----------+
+```
+
+## RANK() OVER()
+
+* [MySQL RANK Function](https://www.mysqltutorial.org/mysql-window-functions/mysql-rank-function/)
+* [The Most Frequently Ordered Products for Each Customer @ leetcode](https://leetcode.com/problems/the-most-frequently-ordered-products-for-each-customer/)
+  * [sol](https://github.com/iamslash/learntocode/tree/master/leetcode2/TheMostFrequentlyOrderedProductsforEachCustomer)
+
+-----
+
+특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 순위를 읽어온다. 순위에 공백이 있음을 주의하자.
+
+```sql
+SELECT val,
+       RANK() OVER(ORDER BY val) my_rank
+  FROM t;
+```
+
+```
+val     my_rank
+  1     1
+  2     2
+  2     2
+  3     4
+  4     5
+  4     5
+  5     7
+```
+
+## DENSE_RANK() OVER()
+
+* [MySQL | ROW_NUMBER(), RANK(), DENSE_RANK() 윈도우 함수](https://it-mi.tistory.com/58)
+* [Group Employees of the Same Salary @ learntocode](https://github.com/iamslash/learntocode/blob/b925ae90c1adf1c7367d6e59442e3b5ffc936561/leetcode2/GroupEmployeesoftheSameSalary/README.md)
+
+----
+
+특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 순위를 읽어온다.
+`RANK()` 와 달리 순위의 공백이 없다.
+
+```sql
+SELECT val,
+       DENSE_RANK() OVER(ORDER BY val) my_rank
+  FROM t;
+```
+
+```
+val     my_rank
+  1     1
+  2     2
+  2     2
+  3     3
+  4     4
+  4     4
+  5     5
+```
+
+## Where
+
+```sql
+SELECT * FROM Customers
+  WHERE Country='Mexico';
+SELECT * FROM Customers
+  WHERE CustomerID=1;
+```
+
+| Operator |                   Description                    |
+| :------: | :----------------------------------------------: |
+|    =     |                      Equal                       |
+|    <>    |                    Not Equal                     |
+|    >     |                   Greater than                   |
+|    <     |                    Less than                     |
+|    >=    |              Greater than or equal               |
+|    <=    |                Less than or equal                |
+| BETWEEN  |            Between an inclusive range            |
+|   LIKE   |               Search for a pattern               |
+|    IN    | To specify multiple possible values for a column |
+
+## And, Or, Not
+
+```sql
+SELECT * FROM Customers
+  WHERE Country='Germany' AND City='Berlin';
+SELECT * FROM Customers
+  WHERE City='Berlin' OR City='München';
+SELECT * FROM Customers
+  WHERE NOT Country='Germany';
+SELECT * FROM Customers
+  WHERE Country='Germany' AND (City='Berlin' OR City='München');
+SELECT * FROM Customers
+  WHERE NOT Country='Germany' AND NOT Country='USA';
 ```
 
 ## Window Functions (LEAD, LAG)
