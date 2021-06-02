@@ -1,38 +1,15 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Install on windows 10](#install-on-windows-10)
-- [Getting Started](#getting-started)
+- [Basic](#basic)
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
+  - [Collections compared to c++](#collections-compared-to-c)
+  - [Collections](#collections)
+  - [Collection Conversions](#collection-conversions)
   - [Sort](#sort)
   - [min max](#min-max)
   - [Formatted String](#formatted-string)
-- [Basics](#basics)
-  - [Basic types](#basic-types)
-  - [Packages and Imports](#packages-and-imports)
-  - [Control Flow](#control-flow)
-  - [Returns and Jumps](#returns-and-jumps)
-- [Classes and Objects](#classes-and-objects)
-  - [Classes and Inheritance](#classes-and-inheritance)
-  - [Properties and Fields](#properties-and-fields)
-  - [Interfaces](#interfaces)
-  - [Functional (SAM) Interfaces](#functional-sam-interfaces)
-  - [Extensions](#extensions)
-  - [Data Classes](#data-classes)
-  - [Sealed Classes](#sealed-classes)
-  - [Generics](#generics)
-  - [Nested Classes](#nested-classes)
-  - [Enum Classes](#enum-classes)
-  - [Objects](#objects)
-  - [Type Aliases](#type-aliases)
-  - [Delegation](#delegation)
-  - [Delegated Properties](#delegated-properties)
-- [Functions and Lambdas](#functions-and-lambdas)
-  - [Functions](#functions)
-  - [Lambdas](#lambdas)
-  - [inline Functions](#inline-functions)
-- [Collections](#collections)
-  - [Colections Overview](#colections-overview)
 - [Advanced](#advanced)
   - [Passing trailing lambdas](#passing-trailing-lambdas)
   - [map vs flatmap](#map-vs-flatmap)
@@ -67,7 +44,7 @@ $ kotlinc a.kt -include-runtime -d a.jar
 $ java -jar a.jar
 ```
 
-# Getting Started
+# Basic
 
 ## Basic Syntax
 
@@ -76,6 +53,78 @@ $ java -jar a.jar
 ## Idioms
 
 * [Idioms @ kotlin](https://kotlinlang.org/docs/idioms.html)
+
+## Collections compared to c++
+
+WIP...
+
+## Collections
+
+* array
+
+* list
+
+* deque
+
+* stack
+  
+* queue
+
+* set
+
+* map
+
+```kt
+// immutable map
+val map = mapOf("Vanilla" to 24)
+assertEquals(24, map.get("Vanilla"))
+assertEquals(24, map["Vanilla"])
+
+// mutable map
+val iceCreamSales = mutableMapOf<String, Int>()
+iceCreamSales.put("Chocolate", 1)
+iceCreamSales["Vanilla"] = 2
+iceCreamSales.putAll(setOf("Strawberry" to 3, "Rocky Road" to 2))
+iceCreamSales += mapOf("Maple Walnut" to 1, "Mint Chocolate" to 4)
+val iceCreamSales = mutableMapOf("Chocolate" to 2)
+iceCreamSales.merge("Chocolate", 1, Int::plus)
+assertEquals(3, iceCreamSales["Chocolate"])
+
+// Remove entries
+val map = mutableMapOf("Chocolate" to 14, "Strawberry" to 9)
+map.remove("Strawberry")
+map -= "Chocolate"
+assertNull(map["Strawberry"])
+assertNull(map["Chocolate"])
+
+// Filter
+val inventory = mutableMapOf(
+  "Vanilla" to 24,
+  "Chocolate" to 14,
+  "Strawberry" to 9,
+)
+val lotsLeft = inventory.filterValues { qty -> qty > 10 }
+assertEquals(setOf("Vanilla", "Chocolate"), lotsLeft.keys)
+
+// Mapping
+val asStrings = inventory.map { (flavor, qty) -> "$qty tubs of $flavor" }
+assertTrue(asStrings.containsAll(setOf("24 tubs of Vanilla", "14 tubs of Chocolate", "9 tubs of Strawberry")))
+assertEquals(3, asStrings.size)
+
+// forEach
+val sales = mapOf("Vanilla" to 7, "Chocolate" to 4, "Strawberry" to 5)
+val shipments = mapOf("Chocolate" to 3, "Strawberry" to 7, "Rocky Road" to 5)
+with(inventory) {
+    sales.forEach { merge(it.key, it.value, Int::minus) }
+    shipments.forEach { merge(it.key, it.value, Int::plus) }
+}
+assertEquals(17, inventory["Vanilla"]) // 24 - 7 + 0
+assertEquals(13, inventory["Chocolate"]) // 14 - 4 + 3
+assertEquals(11, inventory["Strawberry"]) // 9 - 5 + 7
+assertEquals(5, inventory["Rocky Road"]) // 0 - 0 + 5
+```
+
+## Collection Conversions
 
 ## Sort
 
@@ -108,58 +157,6 @@ val fi = "pi = %.2f".format(pi)
 println("pi is ${pi}")
 println("fi is ${fi}")
 ```
-
-# Basics
-
-## Basic types
-
-## Packages and Imports
-
-## Control Flow
-
-## Returns and Jumps
-
-# Classes and Objects 
-
-## Classes and Inheritance
-
-## Properties and Fields
-
-## Interfaces
-
-## Functional (SAM) Interfaces
-
-## Extensions
-
-## Data Classes
-
-## Sealed Classes
-
-## Generics
-
-## Nested Classes
-
-## Enum Classes
-
-## Objects
-
-## Type Aliases
-
-## Delegation
-
-## Delegated Properties
-
-# Functions and Lambdas
-
-## Functions
-
-## Lambdas
-
-## inline Functions
-
-# Collections
-
-## Colections Overview
 
 # Advanced
 
