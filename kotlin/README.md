@@ -4,6 +4,7 @@
 - [Getting Started](#getting-started)
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
+  - [Init Array](#init-array)
   - [Sort](#sort)
   - [min max](#min-max)
   - [Formatted String](#formatted-string)
@@ -55,6 +56,10 @@ kotlin 에 대해 정리한다. kotlin 은 종합백화점같다. 없는게 없�
   * [Kotlin by example @ kotlin](https://play.kotlinlang.org/byExample/overview?_gl=1*1ch7m8k*_ga*MTU0MzU1NjQ4My4xNjIyNTAwNzUy*_ga_J6T75801PF*MTYyMjUzMDg0OC4yLjEuMTYyMjUzMTg2NS4zMg..&_ga=2.220493660.593975675.1622500752-1543556483.1622500752)
   * [Kotlin books @ kotlin](https://kotlinlang.org/docs/books.html)
   * [Kotlin hands-on tutorials @ kotline](https://play.kotlinlang.org/hands-on/overview?_gl=1*1ch7m8k*_ga*MTU0MzU1NjQ4My4xNjIyNTAwNzUy*_ga_J6T75801PF*MTYyMjUzMDg0OC4yLjEuMTYyMjUzMTg2NS4zMg..&_ga=2.220493660.593975675.1622500752-1543556483.1622500752)
+* [Kotlin @ baeldung](https://www.baeldung.com/kotlin/)
+  * [Kotlin Basics @ baeldung](https://www.baeldung.com/kotlin/category/kotlin)
+  * [Collections @ baeldung](https://www.baeldung.com/kotlin/category/kotlin)
+  * [Patterns @ baeldung](https://www.baeldung.com/kotlin/category/patterns)
 
 # Install on windows 10
 
@@ -77,9 +82,71 @@ $ java -jar a.jar
 
 * [Idioms @ kotlin](https://kotlinlang.org/docs/idioms.html)
 
+## Init Array
+
+* [Initializing Arrays in Kotlin](https://www.baeldung.com/kotlin/initialize-array)
+
+----
+
+```kt
+// String array
+val strings = arrayOf("January", "February", "March")
+// Primitive array
+val integers = intArrayOf(1, 2, 3, 4)
+// Late Initialize. the array is initialized with nulls
+val array = arrayOfNulls<Number>(5)
+for (i in array.indices) {
+    array[i] = i * i
+}
+// Generate values with indices
+val generatedArray = IntArray(10) { i -> i * i }
+val generatedStringArray = Array(10) { i -> "Number of index: $i"  }
+```
+
 ## Sort
 
 * [Guide to Sorting in Kotlin @ baeldung](https://www.baeldung.com/kotlin/sort)
+* [Kotlin sortedWith syntax and lambda examples](https://alvinalexander.com/source-code-kotlin-sortedWith-syntax-lambda-examples/)
+
+-----
+
+```kt
+// Sort primitive array
+val integers = intArrayOf(1, 2, 3, 4)
+integers.sort()
+integers.sortDescending()
+
+// Sort with comparator
+val list = listOf(7,3,5,9,1,3)
+list.sortedWith(Comparator<Int>{ a, b ->
+    when {
+        a > b -> 1
+        a < b -> -1
+        else -> 0
+    }
+})
+// list: [1, 3, 3, 5, 7, 9]
+
+// Sort string
+val names = listOf("kim", "julia", "jim", "hala")
+names.sortedWith(Comparator<String>{ a, b ->
+    when {
+        a > b -> 1
+        a < b -> -1
+        else -> 0
+    }
+})
+// names: [hala, jim, julia, kim]
+// Sort string by length
+names.sortedWith(Comparator<String>{ a, b ->
+    when {
+        a.length > b.length -> 1
+        a.length < b.length -> -1
+        else -> 0
+    }
+})
+// names: [kim, jim, hala, julia]
+```
 
 ## min max
 
