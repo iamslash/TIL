@@ -13,6 +13,7 @@
   - [Sort](#sort)
   - [min max](#min-max)
   - [Formatted String](#formatted-string)
+  - [delegate pattern with by](#delegate-pattern-with-by)
 - [Advanced](#advanced)
   - [Passing trailing lambdas](#passing-trailing-lambdas)
   - [map vs flatmap](#map-vs-flatmap)
@@ -317,6 +318,109 @@ val fi = "pi = %.2f".format(pi)
 
 println("pi is ${pi}")
 println("fi is ${fi}")
+```
+
+## delegate pattern with by
+
+* [Kotlin - by로 Delegate Pattern 쉽게 구현하기](https://codechacha.com/ko/kotlin-deligation-using-by/)
+
+-----
+
+`by` 를 사용하면 delegate boiler plate code 들을 생성해준다.
+
+```kotlin
+// AS-IS
+interface IWindow {
+    fun getWidth() : Int
+    fun getHeight() : Int
+}
+open class TransparentWindow : IWindow {
+    override fun getWidth(): Int {
+        return 100
+    }
+
+    override fun getHeight() : Int{
+        return 150
+    }
+}
+class UI(window: IWindow) : IWindow {
+    val mWindow: IWindow = window
+
+    override fun getWidth(): Int {
+        return mWindow.getWidth()
+    }
+
+    override fun getHeight(): Int {
+        return mWindow.getHeight()
+    }
+}
+fun main(args: Array<String>) {
+    val window: IWindow = TransparentWindow()
+    val ui = UI(window)
+    System.out.println("Width : ${ui.getWidth()}, height: ${ui.getHeight()}")
+}
+
+// TO-BE
+interface IWindow {
+    fun getWidth() : Int
+    fun getHeight() : Int
+}
+open class TransparentWindow() : IWindow {
+    override fun getWidth(): Int {
+        return 100
+    }
+
+    override fun getHeight() : Int{
+        return 150
+    }
+}
+class UI(window: IWindow) : IWindow by window {
+}
+fun main(args: Array<String>) {
+    val window: IWindow = TransparentWindow()
+    val ui = UI(window)
+    System.out.println("Width : ${ui.getWidth()}, height: ${ui.getHeight()}")
+}
+
+// Generated code
+public interface IWindow {
+   int getWidth();
+   int getHeight();
+}
+public class TransparentWindow implements IWindow {
+   public int getWidth() {
+      return 100;
+   }
+
+   public int getHeight() {
+      return 150;
+   }
+}
+public final class UI implements IWindow {
+   private final IWindow $$delegate_0;
+
+   public UI(@NotNull IWindow window) {
+      Intrinsics.checkParameterIsNotNull(window, "window");
+      super();
+      this.$$delegate_0 = window;
+   }
+
+   public int getHeight() {
+      return this.$$delegate_0.getHeight();
+   }
+
+   public int getWidth() {
+      return this.$$delegate_0.getWidth();
+   }
+}
+public final class Kotlin20Kt {
+   public static final void main(@NotNull String[] args) {
+      Intrinsics.checkParameterIsNotNull(args, "args");
+      IWindow window = (IWindow)(new TransparentWindow());
+      UI ui = new UI(window);
+      System.out.println("Width : " + ui.getWidth() + ", height: " + ui.getHeight());
+   }
+}
 ```
 
 # Advanced
