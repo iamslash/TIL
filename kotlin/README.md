@@ -29,6 +29,7 @@ kotlin 에 대해 정리한다. kotlin 은 종합백화점같다. 없는게 없�
 
 * [Kotlin Playground](https://play.kotlinlang.org/#eyJ2ZXJzaW9uIjoiMS40LjEwIiwicGxhdGZvcm0iOiJqYXZhIiwiYXJncyI6IiIsImpzQ29kZSI6IiIsIm5vbmVNYXJrZXJzIjp0cnVlLCJ0aGVtZSI6ImlkZWEiLCJjb2RlIjoiLyoqXG4gKiBZb3UgY2FuIGVkaXQsIHJ1biwgYW5kIHNoYXJlIHRoaXMgY29kZS4gXG4gKiBwbGF5LmtvdGxpbmxhbmcub3JnIFxuICovXG5cbmZ1biBtYWluKCkge1xuICAgIHByaW50bG4oXCJIZWxsbywgd29ybGQhISFcIilcbn0ifQ==)
 * [Kotlin Reference](https://kotlinlang.org/docs/reference/)
+* [Atomic Kotlin](https://www.atomickotlin.com/atomickotlin/)
 * [Learning materials overview](https://kotlinlang.org/docs/learning-materials-overview.html)
   * [Basic Syntax @ Kotlin](https://kotlinlang.org/docs/reference/basic-syntax.html)
   * [Idioms @ kotlin](https://kotlinlang.org/docs/idioms.html)
