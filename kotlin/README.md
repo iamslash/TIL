@@ -6,6 +6,7 @@
   - [Idioms](#idioms)
   - [Collections compared to c++](#collections-compared-to-c)
   - [Collections](#collections)
+  - [Collection APIs](#collection-apis)
   - [Collection Conversions](#collection-conversions)
   - [Init Array](#init-array)
   - [Lazy Initialization](#lazy-initialization)
@@ -149,7 +150,65 @@ assertEquals(11, inventory["Strawberry"]) // 9 - 5 + 7
 assertEquals(5, inventory["Rocky Road"]) // 0 - 0 + 5
 ```
 
+## Collection APIs
+
+* [Collections @ kotlin Koans](https://play.kotlinlang.org/koans/Collections/Introduction/Task.kt)
+
+----
+
+kotlin 은 [functional programming](/fp/REAME.md) 의 function combinator 를 통해 간결한 coding 을 할 수 있다.
+
+```kt
+// Shop.kt
+data class Shop(val name: String, val customers: List<Customer>)
+data class Customer(val name: String, val city: City, val orders: List<Order>) {
+  override fun toString() = "${name} from ${city.name}"
+}
+data class Order(val products: List<Product>, val isDelivered: Boolean)
+data class Product(val name: String, val price: Double) {
+  override fun toString() = "'${name}' for ${price}"
+}
+data class city(val name: String) {
+  override fun toString() = name
+}
+
+// Make set
+fun Shop.getSetOfCustomers(): Set<Customer> = customers.toSet()
+
+// Sort
+fun Shop.getCustomersSortedByNumberOfOrders(): List<Customer> = customers.sortedBy { it.orders.size }
+
+// Filter  map
+fun Shop.getCitiesCustomersAreFrom(): Set<City> = customers.map { it.city }.toSet()
+fun Shop.getCustomersFrom(city: City): List<Customer> = cusotmers.filter { it.city == city }
+
+// All Any and other predicates
+
+// Max min
+
+// Sum
+
+// Associate
+
+// GroupBy
+
+// Partition
+
+// FlatMap
+
+// Fold
+
+// Compound tasks
+
+// Sequences
+
+// Getting used to new style
+
+```
+
 ## Collection Conversions
+
+WIP
 
 ## Init Array
 
