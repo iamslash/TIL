@@ -7,6 +7,29 @@
   - [Keywords](#keywords)
   - [Collections compared to c++](#collections-compared-to-c)
   - [Collections](#collections)
+    - [List](#list)
+    - [Set](#set)
+    - [Map](#map)
+    - [filter](#filter)
+    - [map](#map-1)
+    - [any, all, none](#any-all-none)
+    - [find, findLast](#find-findlast)
+    - [first, last](#first-last)
+    - [count](#count)
+    - [associateBy, groupBy](#associateby-groupby)
+    - [partition](#partition)
+    - [flatMap](#flatmap)
+    - [minOrNull, maxOrNull](#minornull-maxornull)
+    - [sorted](#sorted)
+    - [Map Element Access](#map-element-access)
+    - [zip](#zip)
+    - [getOrElse](#getorelse)
+  - [Scope Functions](#scope-functions)
+    - [let](#let)
+    - [run](#run)
+    - [with](#with)
+    - [apply](#apply)
+    - [also](#also)
   - [Collection APIs](#collection-apis)
   - [Collection Conversions](#collection-conversions)
   - [Init Array](#init-array)
@@ -16,12 +39,29 @@
   - [Classes](#classes)
   - [Generics](#generics)
   - [Inheritance](#inheritance)
+  - [Control Flow](#control-flow)
+    - [When](#when)
+    - [Loops](#loops)
+    - [Ranges](#ranges)
+    - [Equality Checks](#equality-checks)
+  - [Special Classes](#special-classes)
+    - [Data Classes](#data-classes)
+    - [Enum classes](#enum-classes)
+    - [Sealed Classes](#sealed-classes)
+    - [Object Keyword](#object-keyword)
+  - [Functional](#functional)
+    - [Higher-Order Functions](#higher-order-functions)
+    - [Lambda Functions](#lambda-functions)
+    - [Extension Functions and Properties](#extension-functions-and-properties)
+  - [Delegation](#delegation)
+    - [Delegation Pattern](#delegation-pattern)
+    - [Delegated Properties](#delegated-properties)
   - [Lazy Initialization](#lazy-initialization)
   - [Sort](#sort)
   - [min max](#min-max)
   - [Formatted String](#formatted-string)
-  - [delegate pattern with by](#delegate-pattern-with-by)
 - [Advanced](#advanced)
+  - [delegate pattern with by](#delegate-pattern-with-by)
   - [Passing trailing lambdas](#passing-trailing-lambdas)
   - [map vs flatmap](#map-vs-flatmap)
   - [fold](#fold)
@@ -100,21 +140,91 @@ $ java -jar a.jar
 
 ## Collections
 
-* array
+![](https://kotlinlang.org/docs/images/collections-diagram.png)
 
-* list
+### List
 
-* deque
+* [Concepts.Standard Library.Collections.Overview](https://kotlinlang.org/docs/collections-overview.html)
 
-* stack
-  
-* queue
+-----
 
-* set
+A **List** is an ordered collection of items. **List** is immutable, **MutableList** is mutable.
 
-* map
+```kotlin
+val systemUsers: MutableList<Int> = mutableListOf(1, 2, 3)        
+val sudoers: List<Int> = systemUsers                              
+fun addSystemUser(newUser: Int) {                 
+    systemUsers.add(newUser)                      
+}
+fun getSysSudoers(): List<Int> {                  
+    return sudoers
+}
+fun main() {
+    addSystemUser(4)                               
+    println("Tot sudoers: ${getSysSudoers().size}")
+    getSysSudoers().forEach {                      
+        i -> println("Some useful info on user $i")
+    }
+    // getSysSudoers().add(5) <- Error!            
+}
+```
 
-```kt
+### Set
+
+* [Concepts.Standard Library.Collections.Overview](https://kotlinlang.org/docs/collections-overview.html)
+
+----
+
+A **set** is an unordered collection that does not support duplicates. **Set** is immutable, **MutableSet** is mutable.
+
+```kotlin
+val openIssues: MutableSet<String> = mutableSetOf("uniqueDescr1", "uniqueDescr2", "uniqueDescr3")
+fun addIssue(uniqueDesc: String): Boolean {
+    return openIssues.add(uniqueDesc)
+}
+fun getStatusLog(isAdded: Boolean): String {
+    return if (isAdded) "registered correctly." else "marked as duplicate and rejected."
+}
+fun main() {
+    val aNewIssue: String = "uniqueDescr4"
+    val anIssueAlreadyIn: String = "uniqueDescr2" 
+
+    println("Issue $aNewIssue ${getStatusLog(addIssue(aNewIssue))}")                              
+    println("Issue $anIssueAlreadyIn ${getStatusLog(addIssue(anIssueAlreadyIn))}")                 
+}
+```
+
+### Map
+
+A map is a collection of key/value pairs. **Map** is immutable, **MutableMap** is mutable.
+
+```kotlin
+//
+const val POINTS_X_PASS: Int = 15
+val EZPassAccounts: MutableMap<Int, Int> = mutableMapOf(1 to 100, 2 to 100, 3 to 100)   
+val EZPassReport: Map<Int, Int> = EZPassAccounts                                        
+fun updatePointsCredit(accountId: Int) {
+    if (EZPassAccounts.containsKey(accountId)) {                                        
+        println("Updating $accountId...")                                               
+        EZPassAccounts[accountId] = EZPassAccounts.getValue(accountId) + POINTS_X_PASS  
+    } else {
+        println("Error: Trying to update a non-existing account (id: $accountId)")
+    } 
+}
+fun accountsReport() {
+    println("EZ-Pass report:")
+    EZPassReport.forEach {                                                              
+        k, v -> println("ID $k: credit $v")
+    }
+}
+fun main() {
+    accountsReport()                                                                    
+    updatePointsCredit(1)                                                               
+    updatePointsCredit(1)                                                               
+    updatePointsCredit(5)                                                                
+    accountsReport()                                                                    
+}
+
 // immutable map
 val map = mapOf("Vanilla" to 24)
 assertEquals(24, map.get("Vanilla"))
@@ -162,6 +272,290 @@ assertEquals(17, inventory["Vanilla"]) // 24 - 7 + 0
 assertEquals(13, inventory["Chocolate"]) // 14 - 4 + 3
 assertEquals(11, inventory["Strawberry"]) // 9 - 5 + 7
 assertEquals(5, inventory["Rocky Road"]) // 0 - 0 + 5
+```
+
+### filter
+
+```kotlin
+val numbers = listOf(1, -2, 3, -4, 5, -6)      
+val positives = numbers.filter { x -> x > 0 }  
+val negatives = numbers.filter { it < 0 }      
+```
+
+### map
+
+```kotlin
+val numbers = listOf(1, -2, 3, -4, 5, -6)     
+val doubled = numbers.map { x -> x * 2 }      
+val tripled = numbers.map { it * 3 }          
+```
+
+### any, all, none
+
+```kotlin
+// any
+val numbers = listOf(1, -2, 3, -4, 5, -6)     
+val anyNegative = numbers.any { it < 0 }      
+val anyGT6 = numbers.any { it > 6 }         
+
+// all
+val numbers = listOf(1, -2, 3, -4, 5, -6)            
+val allEven = numbers.all { it % 2 == 0 }            
+val allLess6 = numbers.all { it < 6 }                
+
+// none
+val numbers = listOf(1, -2, 3, -4, 5, -6)            
+val allEven = numbers.none { it % 2 == 1 }           
+val allLess6 = numbers.none { it > 6 }               
+```
+
+### find, findLast
+
+```kotlin
+val words = listOf("Lets", "find", "something", "in", "collection", "somehow")
+val first = words.find { it.startsWith("some") }
+val last = words.findLast { it.startsWith("some") }
+val nothing = words.find { it.contains("nothing") }
+```
+
+### first, last
+
+```kotlin
+// first, last
+val numbers = listOf(1, -2, 3, -4, 5, -6)
+val first = numbers.first()              
+val last = numbers.last()                
+val firstEven = numbers.first { it % 2 == 0 }
+val lastOdd = numbers.last { it % 2 != 0 }
+
+// first, last with null
+val words = listOf("foo", "bar", "baz", "faz")         
+val empty = emptyList<String>()                        
+val first = empty.firstOrNull()                        
+val last = empty.lastOrNull()                          
+val firstF = words.firstOrNull { it.startsWith('f') }  
+val firstZ = words.firstOrNull { it.startsWith('z') }  
+val lastF = words.lastOrNull { it.endsWith('f') }      
+val lastZ = words.lastOrNull { it.endsWith('z') }      
+```
+
+### count
+
+```kotlin
+val numbers = listOf(1, -2, 3, -4, 5, -6)            
+val totalCount = numbers.count()                     
+val evenCount = numbers.count { it % 2 == 0 }        
+```
+
+### associateBy, groupBy
+
+* [associateBy @ kotlin](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/associate-by.html)
+* [groupBy @ kotlin](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/group-by.html)
+
+----
+
+```kotlin
+data class Person(val name: String, val city: String, val phone: String) 
+val people = listOf(                                                     
+    Person("John", "Boston", "+1-888-123456"),
+    Person("Sarah", "Munich", "+49-777-789123"),
+    Person("Svyatoslav", "Saint-Petersburg", "+7-999-456789"),
+    Person("Vasilisa", "Saint-Petersburg", "+7-999-123456"))
+val phoneBook = people.associateBy { it.phone }                // {phone: person}
+val cityBook = people.associateBy(Person::phone, Person::city) // {phone: city}
+val peopleCities = people.groupBy(Person::city, Person::name)  // {city: [name,...]}          
+val lastPersonCity = people.associateBy(Person::city, Person::name) // {city, name}
+
+```
+
+### partition
+
+```kotlin
+val numbers = listOf(1, -2, 3, -4, 5, -6)                
+// [[-2,-4,-6],[1,3,5]]
+val evenOdd = numbers.partition { it % 2 == 0 }          
+// Destructuring declaration
+val (positives, negatives) = numbers.partition { it > 0 } 
+```
+
+### flatMap
+
+```kotlin
+val fruitsBag = listOf("apple","orange","banana","grapes")  
+val clothesBag = listOf("shirts","pants","jeans")           
+val cart = listOf(fruitsBag, clothesBag)                    
+val mapBag = cart.map { it }                                
+val flatMapBag = cart.flatMap { it }                        
+```
+
+### minOrNull, maxOrNull
+
+```kotlin
+val numbers = listOf(1, 2, 3)
+val empty = emptyList<Int>()
+val only = listOf(3)
+println("Numbers: $numbers, min = ${numbers.minOrNull()} max = ${numbers.maxOrNull()}")
+println("Empty: $empty, min = ${empty.minOrNull()}, max = ${empty.maxOrNull()}")
+println("Only: $only, min = ${only.minOrNull()}, max = ${only.maxOrNull()}")
+```
+
+### sorted
+
+```kotlin
+val shuffled = listOf(5, 4, 2, 1, 3, -10)                   
+val natural = shuffled.sorted()                             
+val inverted = shuffled.sortedBy { -it }                    
+val descending = shuffled.sortedDescending()                
+val descendingBy = shuffled.sortedByDescending { abs(it)  } 
+```
+
+### Map Element Access
+
+```kotlin
+val map = mapOf("key" to 42)
+val value1 = map["key"]                                     
+val value2 = map["key2"]                                    
+val value3: Int = map.getValue("key")                       
+val mapWithDefault = map.withDefault { k -> k.length }
+val value4 = mapWithDefault.getValue("key2")                
+try {
+    map.getValue("anotherKey")                              
+} catch (e: NoSuchElementException) {
+    println("Message: $e")
+}
+```
+
+### zip
+
+```kotlin
+val A = listOf("a", "b", "c")                  
+val B = listOf(1, 2, 3, 4)                     
+val resultPairs = A zip B                      
+val resultReduce = A.zip(B) { a, b -> "$a$b" } 
+```
+
+### getOrElse
+
+```kotlin
+val list = listOf(0, 10, 20)
+println(list.getOrElse(1) { 42 })  // 42  
+println(list.getOrElse(10) { 42 }) // 10
+
+val map = mutableMapOf<String, Int?>()
+println(map.getOrElse("x") { 1 })       
+map["x"] = 3
+println(map.getOrElse("x") { 1 })       
+map["x"] = null
+println(map.getOrElse("x") { 1 })       
+```
+
+## Scope Functions
+
+Scope functions 는 code block 을 실행하는 함수이다.
+
+### let
+
+* [Concepts.Standard library.Scope functions.let](https://kotlinlang.org/docs/scope-functions.html#let)
+
+-----
+
+**let** executes the given block of code and returns the result of its last expression. The object is accessible inside the block by the reference **it** (by default) or a custom name.
+
+```kotlin
+val empty = "test".let {               
+    customPrint(it)                    
+    it.isEmpty()                       
+}
+println(" is empty: $empty")
+fun printNonNull(str: String?) {
+    println("Printing \"$str\":")
+
+    str?.let {                         
+        print("\t")
+        customPrint(it)
+        println()
+    }
+}
+fun printIfBothNonNull(strOne: String?, strTwo: String?) {
+    strOne?.let { firstString ->        
+        strTwo?.let { secondString ->
+            customPrint("$firstString : $secondString")
+            println()
+        }
+    }
+}
+printNonNull(null)
+printNonNull("my string") 
+printIfBothNonNull("First","Second") 
+```
+
+### run
+
+* [Concepts.Standard library.Scope functions.run](https://kotlinlang.org/docs/scope-functions.html#run)
+
+-----
+**let** is same with **run** but the difference is that inside run the object is accessed by **this**. 
+
+```kotlin
+fun getNullableLength(ns: String?) {
+    println("for \"$ns\":")
+    ns?.run {                                                  // 1
+        println("\tis empty? " + isEmpty())                    // 2
+        println("\tlength = $length")                           
+        length                                                 // 3
+    }
+}
+getNullableLength(null)
+getNullableLength("")
+getNullableLength("some string with Kotlin")
+```
+
+### with
+
+* [Concepts.Standard library.Scope functions.with](https://kotlinlang.org/docs/scope-functions.html#with)
+
+-----
+
+**with** 의 argument 로 사용된 instance 의 member 를 간단히 접근할 때 사용한다.
+
+```kotlin
+with(configuration) {
+    println("$host:$port")
+}
+// instead of:
+println("${configuration.host}:${configuration.port}")  
+```
+
+### apply
+
+* [Concepts.Standard library.Scope functions.apply](https://kotlinlang.org/docs/scope-functions.html#apply)
+
+-----
+
+**apply** executes a block of code on an object and returns the object itself. Inside the block, the object is referenced by **this**.
+
+```kotlin
+val jake = Person()
+val stringDescription = jake.apply {
+    name = "Jake"                   
+    age = 30
+    about = "Android developer"
+}.toString()                        
+```
+
+### also
+
+* [Concepts.Standard library.Scope functions.also](https://kotlinlang.org/docs/scope-functions.html#also)
+
+-----
+
+**also** works like apply: it executes a given block and returns the object called. Inside the block, the object is referenced by **it**
+
+```kotlin
+val jake = Person("Jake", 30, "Android developer")   
+    .also {                                           
+        writeCreationLog(it)                         
+    }
 ```
 
 ## Collection APIs
@@ -422,6 +816,483 @@ fun main() {
 }
 ```
 
+## Control Flow
+
+### When
+
+```kotlin
+fun main() {
+    cases("Hello")
+    cases(1)
+    cases(0L)
+    cases(MyClass())
+    cases("hello")
+}
+fun cases(obj: Any) {                                
+    when (obj) {                                      
+        1 -> println("One")                          
+        "Hello" -> println("Greeting")               
+        is Long -> println("Long")                   
+        !is String -> println("Not a string")        
+        else -> println("Unknown")                   
+    }   
+}
+class MyClass
+
+fun main() {
+    println(whenAssign("Hello"))
+    println(whenAssign(3.4))
+    println(whenAssign(1))
+    println(whenAssign(MyClass()))
+}
+
+fun whenAssign(obj: Any): Any {
+    val result = when (obj) {                  
+        1 -> "one"                              
+        "Hello" -> 1                            
+        is Long -> false                        
+        else -> 42                              
+    }
+    return result
+}
+
+class MyClass
+```
+
+### Loops
+
+```kotlin
+// for
+val cakes = listOf("carrot", "cheese", "chocolate")
+for (cake in cakes) {                               
+    println("Yummy, it's a $cake cake!")
+}
+
+// while, do-while
+fun eatACake() = println("Eat a Cake")
+fun bakeACake() = println("Bake a Cake")
+fun main(args: Array<String>) {
+    var cakesEaten = 0
+    var cakesBaked = 0
+    while (cakesEaten < 5) {                    
+        eatACake()
+        cakesEaten ++
+    }
+    do {                                        
+        bakeACake()
+        cakesBaked++
+    } while (cakesBaked < cakesEaten)
+}
+
+// iterators
+class Animal(val name: String)
+class Zoo(val animals: List<Animal>) {
+    operator fun iterator(): Iterator<Animal> {             
+        return animals.iterator()                           
+    }
+}
+fun main() {
+    val zoo = Zoo(listOf(Animal("zebra"), Animal("lion")))
+    for (animal in zoo) {                                   
+        println("Watch out, it's a ${animal.name}")
+    }
+}
+```
+
+### Ranges
+
+```kotlin
+// int ranges
+for(i in 0..3) {             
+    print(i)
+}
+print(" ")
+for(i in 0 until 3) {        
+    print(i)
+}
+print(" ")
+for(i in 2..8 step 2) {      
+    print(i)
+}
+print(" ")
+for (i in 3 downTo 0) {      
+    print(i)
+}
+print(" ")
+
+// char ranges
+for (c in 'a'..'d') {
+    print(c)
+}
+print(" ")
+for (c in 'z' downTo 's' step 2) { 
+    print(c)
+}
+print(" ")
+
+// ranges with if statements
+val x = 2
+if (x in 1..5) {            
+    print("x is in range from 1 to 5")
+}
+println()
+if (x !in 6..10) {          
+    print("x is not in range from 6 to 10")
+}
+```
+
+### Equality Checks
+
+* `==` for structural comparison
+  * `if (a == null) b == null else a.equals(b)`
+* `===` for referential comparison
+
+```kotlin
+val authors = setOf("Shakespeare", "Hemingway", "Twain")
+val writers = setOf("Twain", "Shakespeare", "Hemingway")
+println(authors == writers)   // true
+println(authors === writers)  // false
+```
+
+## Special Classes
+
+### Data Classes
+
+* [Data classes](https://kotlinlang.org/docs/data-classes.html)
+
+-----
+
+```kotlin
+data class User(val name: String, val id: Int) {           
+    override fun equals(other: Any?) =
+        other is User && other.id == this.id               
+}
+fun main() {
+    val user = User("Alex", 1)
+    println(user)                                          
+
+    val secondUser = User("Alex", 1)
+    val thirdUser = User("Max", 2)
+
+    println("user == secondUser: ${user == secondUser}")   
+    println("user == thirdUser: ${user == thirdUser}")
+
+    // hashCode() function
+    println(user.hashCode())                               
+    println(secondUser.hashCode())
+    println(thirdUser.hashCode())
+
+    // copy() function
+    println(user.copy())                                   
+    println(user === user.copy())                          
+    println(user.copy("Max"))                              
+    println(user.copy(id = 3))                             
+
+    println("name = ${user.component1()}")                 
+    println("id = ${user.component2()}")
+}
+```
+
+### Enum classes
+
+* [Enum classes](https://kotlinlang.org/docs/reference/enum-classes.html)
+
+----
+
+```kotlin
+enum class State {
+    IDLE, RUNNING, FINISHED                           
+}
+fun main() {
+    val state = State.RUNNING                         
+    val message = when (state) {                      
+        State.IDLE -> "It's idle"
+        State.RUNNING -> "It's running"
+        State.FINISHED -> "It's finished"
+    }
+    println(message)
+}
+
+enum class Color(val rgb: Int) {                      
+    RED(0xFF0000),                                    
+    GREEN(0x00FF00),
+    BLUE(0x0000FF),
+    YELLOW(0xFFFF00);
+
+    fun containsRed() = (this.rgb and 0xFF0000 != 0)
+}
+fun main() {
+    val red = Color.RED
+    println(red)                                      
+    println(red.containsRed())                        
+    println(Color.BLUE.containsRed())                 
+    println(Color.YELLOW.containsRed())               
+}
+```
+
+### Sealed Classes
+
+* [Concepts.Classes and objects.Sealed classes](https://kotlinlang.org/docs/sealed-classes.html)
+
+----
+
+`sealed class` 는 같은 file 이 아니면 inheritance 할 수 없다.
+
+```kotlin
+sealed class Mammal(val name: String)                                                   
+class Cat(val catName: String) : Mammal(catName)                                        
+class Human(val humanName: String, val job: String) : Mammal(humanName)
+fun greetMammal(mammal: Mammal): String {
+    when (mammal) {                                                                     
+        is Human -> return "Hello ${mammal.name}; You're working as a ${mammal.job}"    
+        is Cat -> return "Hello ${mammal.name}"                                              
+    }                                                                                   
+}
+fun main() {
+    println(greetMammal(Cat("Snowy")))
+}
+```
+
+### Object Keyword
+
+* [Concepts.Classes and objects.Object expressions and declarations](https://kotlinlang.org/docs/object-declarations.html)
+
+-----
+
+`object` 는 lazy single ton instance 를 생성한다.
+
+```kotlin
+// traditional ways of classes, objects
+import java.util.Random
+class LuckDispatcher {                  
+    fun getNumber() {                    
+        var objRandom = Random()
+        println(objRandom.nextInt(90))
+    }
+}
+fun main() {
+    val d1 = LuckDispatcher()             
+    val d2 = LuckDispatcher()
+    
+    d1.getNumber()                        
+    d2.getNumber()
+}
+
+// object expression is similar with anonymous class instance of java
+fun rentPrice(standardDays: Int, festivityDays: Int, specialDays: Int): Unit {  
+    val dayRates = object {                                                     
+        var standard: Int = 30 * standardDays
+        var festivity: Int = 50 * festivityDays
+        var special: Int = 100 * specialDays
+    }
+    val total = dayRates.standard + dayRates.festivity + dayRates.special
+    print("Total price: $$total")
+}
+fun main() {
+    rentPrice(10, 2, 1)
+}
+
+// object declaration
+object DoAuth {                                                 
+    fun takeParams(username: String, password: String) {         
+        println("input Auth parameters = $username:$password")
+    }
+}
+fun main(){
+    DoAuth.takeParams("foo", "qwerty")                          
+}
+
+// Companion Objects
+// it's similar to the static methods in Java
+// If you plan to use a companion object in Kotlin, 
+// consider using a package-level function instead.
+class BigBen {                                  
+    companion object Bonger {                   
+        fun getBongs(nTimes: Int) {             
+            for (i in 1 .. nTimes) {
+                print("BONG ")
+            }
+        }
+    }
+}
+fun main() {
+    BigBen.getBongs(12) 
+}
+```
+
+## Functional
+
+### Higher-Order Functions
+
+* [Concepts.Functions.High-order functions and lambdas](https://kotlinlang.org/docs/lambdas.html)
+
+----
+
+higer-order function 은 다른 function 을 argument 로 받거나 다른 function 을 리턴하는 함수이다.
+
+```kotlin
+// Taking Functions as Parameters
+fun calculate(x: Int, y: Int, operation: (Int, Int) -> Int): Int {
+    return operation(x, y)
+}
+fun sum(x: Int, y: Int) = x + y                          
+fun main() {
+    val sumResult = calculate(4, 5, ::sum)
+    val mulResult = calculate(4, 5) { a, b -> a * b }               
+    println("sumResult $sumResult, mulResult $mulResult")
+}
+
+// Returning Functions
+fun operation(): (Int) -> Int {
+    return ::square
+}
+fun square(x: Int) = x * x
+fun main() {
+    val func = operation()
+    println(func(2))
+}
+```
+
+### Lambda Functions
+
+* [Concepts.Functions.High-order functions and lambdas](https://kotlinlang.org/docs/lambdas.html)
+
+-----
+
+lambda function 은 **type inference** 와 **it** 덕분에 다양한 방법으로 간결히 표현할 수 있다.
+
+```kotlin
+val upperCase1: (String) -> String = { str: String -> str.toUpperCase() } 
+val upperCase2: (String) -> String = { str -> str.toUpperCase() }         
+val upperCase3 = { str: String -> str.toUpperCase() }
+// val upperCase4 = { str -> str.toUpperCase() }
+val upperCase5: (String) -> String = { it.toUpperCase() }
+val upperCase6: (String) -> String = String::toUpperCase
+println(upperCase1("hello"))
+println(upperCase2("hello"))
+println(upperCase3("hello"))
+println(upperCase5("hello"))
+println(upperCase6("hello"))
+```
+
+### Extension Functions and Properties
+
+* [Concepts.Functions.Extensions](https://kotlinlang.org/docs/extensions.html)
+
+-----
+
+임의의 class 에 extension function 혹은 extension property 를 추가할 수 있다. 
+
+```kotlin
+data class Item(val name: String, val price: Float)                                         
+data class Order(val items: Collection<Item>)  
+// extension functions
+fun Order.maxPricedItemValue(): Float = this.items.maxByOrNull { it.price }?.price ?: 0F 
+fun Order.maxPricedItemName() = this.items.maxByOrNull { it.price }?.name ?: "NO_PRODUCTS"
+// extension properties
+val Order.commaDelimitedItemNames: String
+    get() = items.map { it.name }.joinToString()
+fun main() {
+    val order = Order(listOf(Item("Bread", 25.0F), Item("Wine", 29.0F), Item("Water", 12.0F)))
+    println("Max priced item name: ${order.maxPricedItemName()}")
+    println("Max priced item value: ${order.maxPricedItemValue()}")
+    println("Items: ${order.commaDelimitedItemNames}")
+}
+```
+
+## Delegation
+
+### Delegation Pattern
+
+* [Concepts.Classes and objects.Delegation](https://kotlinlang.org/docs/delegation.html)
+
+----
+
+임의의 class 에 `by` 로 delegate object 를 선언한다. 그 class 의 function 을 호출하면 delegate object 의 
+function 을 호출한다.
+
+```kotlin
+interface SoundBehavior {                                                          // 1
+    fun makeSound()
+}
+class ScreamBehavior(val n:String): SoundBehavior {                                // 2
+    override fun makeSound() = println("${n.toUpperCase()} !!!")
+}
+class RockAndRollBehavior(val n:String): SoundBehavior {                           // 2
+    override fun makeSound() = println("I'm The King of Rock 'N' Roll: $n")
+}
+
+// Tom Araya is the "singer" of Slayer
+class TomAraya(n:String): SoundBehavior by ScreamBehavior(n)                       // 3
+// You should know ;)
+class ElvisPresley(n:String): SoundBehavior by RockAndRollBehavior(n)              // 3
+fun main() {
+    val tomAraya = TomAraya("Thrash Metal")
+    tomAraya.makeSound()                                                           // 4
+    val elvisPresley = ElvisPresley("Dancin' to the Jailhouse Rock.")
+    elvisPresley.makeSound()
+}
+```
+
+### Delegated Properties
+
+* [Concepts.Classes and objects.Delegated properties](https://kotlinlang.org/docs/delegated-properties.html)
+
+-----
+
+```kotlin
+// deletegated properties
+import kotlin.reflect.KProperty
+class Example {
+    var p: String by Delegate()                                               // 1
+    override fun toString() = "Example Class"
+}
+class Delegate() {
+    operator fun getValue(thisRef: Any?, prop: KProperty<*>): String {        // 2     
+        return "$thisRef, thank you for delegating '${prop.name}' to me!"
+    }
+    operator fun setValue(thisRef: Any?, prop: KProperty<*>, value: String) { // 2
+        println("$value has been assigned to ${prop.name} in $thisRef")
+    }
+}
+fun main() {
+    val e = Example()
+    println(e.p)
+    e.p = "NEW"
+}
+
+// Standard delegates
+// lazy is delegates from the standard library
+class LazySample {
+    init {
+      println("created!")
+    }
+    val lazyStr: String by lazy {
+        println("computed!")          
+        "my lazy"
+    }
+}
+fun main() {
+    val sample = LazySample()         
+    println("lazyStr = ${sample.lazyStr}")
+    println(" = ${sample.lazyStr}")  
+}
+
+// Property delegation can be used for storing properties in a map. 
+// This is handy for tasks like parsing JSON or doing other "dynamic" stuff.
+class User(val map: Map<String, Any?>) {
+    val name: String by map                
+    val age:  Int    by map                
+}
+fun main() {
+    val user = User(mapOf(
+            "name" to "John Doe",
+            "age"  to 25
+    ))
+    println("name = ${user.name}, age = ${user.age}")
+}
+```
+
 ## Lazy Initialization
 
 ```kotlin
@@ -509,6 +1380,8 @@ val fi = "pi = %.2f".format(pi)
 println("pi is ${pi}")
 println("fi is ${fi}")
 ```
+
+# Advanced
 
 ## delegate pattern with by
 
@@ -612,8 +1485,6 @@ public final class Kotlin20Kt {
    }
 }
 ```
-
-# Advanced
 
 ## Passing trailing lambdas
 
