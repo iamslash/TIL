@@ -4,11 +4,18 @@
 - [Basic](#basic)
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
+  - [Keywords](#keywords)
   - [Collections compared to c++](#collections-compared-to-c)
   - [Collections](#collections)
   - [Collection APIs](#collection-apis)
   - [Collection Conversions](#collection-conversions)
   - [Init Array](#init-array)
+  - [Infix Functions](#infix-functions)
+  - [Operator Functions](#operator-functions)
+  - [Functions with vararg Parameters](#functions-with-vararg-parameters)
+  - [Classes](#classes)
+  - [Generics](#generics)
+  - [Inheritance](#inheritance)
   - [Lazy Initialization](#lazy-initialization)
   - [Sort](#sort)
   - [min max](#min-max)
@@ -62,6 +69,11 @@ $ java -jar a.jar
 ## Idioms
 
 * [Idioms @ kotlin](https://kotlinlang.org/docs/idioms.html)
+
+## Keywords
+
+```kotlin
+```
 
 ## Collections compared to c++
 
@@ -233,9 +245,186 @@ val generatedArray = IntArray(10) { i -> i * i }
 val generatedStringArray = Array(10) { i -> "Number of index: $i"  }
 ```
 
+## Infix Functions
+
+* [Concepts.functions.Functions.Functions usage.infix notation](https://kotlinlang.org/docs/functions.html#infix-notation)
+
+-----
+
+하나의 parameter 를 갖는 member functions, extensions 을 `infix` 를 이용하여 정의하면  infix function 으로 사용할 수 있다.
+
+```kotlin
+fun main() {
+
+  infix fun Int.times(str: String) = str.repeat(this)        
+  println(2 times "Bye ")                                    
+
+  val pair = "Ferrari" to "Katrina"                          
+  println(pair)
+
+  infix fun String.onto(other: String) = Pair(this, other)   
+  val myPair = "McLaren" onto "Lucas"
+  println(myPair)
+
+  val sophia = Person("Sophia")
+  val claudia = Person("Claudia")
+  sophia likes claudia                                       
+}
+
+class Person(val name: String) {
+  val likedPeople = mutableListOf<Person>()
+  infix fun likes(other: Person) { likedPeople.add(other) }  
+}
+```
+
+## Operator Functions
+
+* [concepts.DSL.Operator overloading](https://kotlinlang.org/docs/operator-overloading.html)
+
+-----
+
+Unity operations, Binary opertaions 들을 functions 으로 overloading 할 수 있다. overloading 은 function 의 이름은 같고 protoype 을 다르게 해서 정의하는 것이다.
+
+```kotlin
+operator fun Int.times(str: String) = str.repeat(this)       // 1
+println(2 * "Bye ")                                          // 2
+
+operator fun String.get(range: IntRange) = substring(range)  // 3
+val str = "Always forgive your enemies; nothing annoys them so much."
+println(str[0..14])
+```
+
+## Functions with vararg Parameters
+
+* [Concepts.functions.Functions.Functions usage.Variable number of arguments (Varargs)](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs)
+
+----
+
+```kotlin
+fun printAll(vararg messages: String) {                           
+    for (m in messages) {
+        println(m)
+    }
+}
+printAll("Hello", "Hallo", "Salut", "Hola", "你好")               
+
+fun printAllWithPrefix(vararg messages: String, prefix: String) { 
+    for (m in messages) {
+        println(prefix + m)
+    }
+}
+printAllWithPrefix(
+    "Hello", "Hallo", "Salut", "Hola", "你好",
+    prefix = "Greeting: "                                          
+)
+
+fun log(vararg entries: String) {
+    printAll(*entries)
+}
+```
+
+## Classes
+
+* [Concepts.Classes and objects.Classes](https://kotlinlang.org/docs/classes.html#classes)
+
+-----
+
+Class 는 name, header, body 로 구성된다. header 는 properties, primary constructor 를 의미한다. body 는 curly braces 로 둘러쌓인다. header, body 는 생략할 수 있다. body 의 내용이 없다면 curly braces 도 생략할 수 있다.
+
+```kotlin
+class Customer                           
+
+// Declares a class with two properties: immutable id and mutable email
+// and a constructor with two parameters id and email.
+class Contact(val id: Int, var email: String) 
+
+fun main() {
+
+    val customer = Customer()    
+    val contact = Contact(1, "foo@gmail.com")
+    println(contact.id)                       
+    contact.email = "iamslash@gmail.com"          
+}
+```
+
+## Generics
+
+* [Concepts.Classes and objects.Generics: in, out, where](https://kotlinlang.org/docs/generics.html)
+
+-----
+
+Generic classes, functions 를 이용하면 특정 type 에 종속적이지 않는 code 를
+만들어 낼 수 있다.
+
+```kotlin
+// Generic classes
+class MutableStack<E>(vararg items: E) {              
+
+  private val elements = items.toMutableList()
+  fun push(element: E) = elements.add(element)        
+  fun peek(): E = elements.last()                     
+  fun pop(): E = elements.removeAt(elements.size - 1)
+  fun isEmpty() = elements.isEmpty()
+  fun size() = elements.size
+  override fun toString() = "MutableStack(${elements.joinToString()})"
+}
+
+// Generic functions
+fun <E> mutableStackOf(vararg elements: E) = MutableStack(*elements)
+fun main() {
+  val stack = mutableStackOf(0.62, 3.14, 2.7)
+  println(stack)
+}
+```
+
+## Inheritance
+
+open class 는 subclassing 할 수 있다. open fun 은 override 할 수 있다.
+
+```kotlin
+open class Dog {                
+    open fun sayHello() {       
+        println("wow wow!")
+    }
+}
+class Yorkshire : Dog() {       
+    override fun sayHello() {   
+        println("wif wif!")
+    }
+}
+fun main() {
+    val dog: Dog = Yorkshire()
+    dog.sayHello()
+}
+
+// Inheritance with Parameterized Constructor
+open class Tiger(val origin: String) {
+    fun sayHello() {
+        println("A tiger from $origin says: grrhhh!")
+    }
+}
+class SiberianTiger : Tiger("Siberia")
+fun main() {
+    val tiger: Tiger = SiberianTiger()
+    tiger.sayHello()
+}
+
+// Passing Constructor Arguments to Superclass
+open class Lion(val name: String, val origin: String) {
+    fun sayHello() {
+        println("$name, the lion from $origin says: graoh!")
+    }
+}
+class Asiatic(name: String) : Lion(name = name, origin = "India") 
+fun main() {
+    val lion: Lion = Asiatic("Rufo")                              
+    lion.sayHello()
+}
+```
+
 ## Lazy Initialization
 
-```kt
+```kotlin
 // Init later
 lateinit var p: String
 p = "Hello"
