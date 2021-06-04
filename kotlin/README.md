@@ -38,6 +38,7 @@
   - [Functions with vararg Parameters](#functions-with-vararg-parameters)
   - [Classes](#classes)
   - [Generics](#generics)
+  - [Generics in,out,*](#generics-inout)
   - [Inheritance](#inheritance)
   - [Control Flow](#control-flow)
     - [When](#when)
@@ -770,6 +771,36 @@ fun <E> mutableStackOf(vararg elements: E) = MutableStack(*elements)
 fun main() {
   val stack = mutableStackOf(0.62, 3.14, 2.7)
   println(stack)
+}
+```
+
+## Generics in,out,*
+
+* [[Kotlin] in/out 키워드 및 .. 연산자와 범위 표현식](https://csjung.tistory.com/239)
+
+----
+
+* `out`: Foo<sub-type> 을 Foo<super-type> 에 assign 할 수 있다.
+  * up-casting
+* `in`: Bar<super-type> 을 Bar<sub-type> 에 assign 할 수 있다.
+  * down-casting
+* `*`: 무엇이든 assign 할 수 있다.
+
+```kotlin
+class Foo<out T>
+class Bar<in T>
+
+fun main(args: Array<String>) {
+    // up-casting
+    val fooSub = Foo<Int>()
+    val fooSuper: Foo<Any> = fooSub
+
+    // down-casting
+    val barSuper = Bar<Any>()
+    val barSub: Bar<Int> = barSuper
+
+    // any-casting
+    val star: Foo<*> = fooSub
 }
 ```
 
