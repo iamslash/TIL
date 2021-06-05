@@ -2,7 +2,7 @@
 - [Material](#material)
 - [Relational Algebra](#relational-algebra)
 - [Normalization](#normalization)
-- [Transaction](#transaction)
+- [ACID Behavior](#acid-behavior)
 - [SQL](#sql)
 - [SQL Optimization](#sql-optimization)
 - [Index](#index)
@@ -35,16 +35,16 @@ database 를 만들어 보자.
 
 * [normalization](/normalization/README.md)
 
-# Transaction
+# ACID Behavior
 
-Transaction 은 ACID 특성이 있다.
+RDBMS 는 다음과 같은 ACID Behavior 를 지원한다.
 
-* Atomicity (원자성)
-  * 모든 작업이 반영되거나 모든 작업이 roll-back 되는 것을 보장해 준다.
-* Consistency (일관성)
-  * 데이터를 미리 정의된 규칙에 맞게 수정이 가능하다. 예를 들어 숫자 컬럼에 문자열 값이 저장되지 않도록 보장해 준다.
-* Isolation (고립성)
-  * A 와 B 두개의 transaction 이 실행되고 있다고 하자. A 의 작업들이 B 에게 보여지는 정도를 말한다. 보여지는 정도를 [Isolation level](/spring/README.md#transactional) 이라고도 하며 모두 4 개로 구성된다.
+* **Atomicity** (원자성)
+  * Transaction 은 완전히 실행되거나 실행되지 않는 성질을 말한다. all-or-nothing 이라고 한다.
+* **Consistency** (일관성)
+  * Transaction 이 commit 되면 data 는 주어진 schema 에 맞게 저장되는 성질을 말한다.
+* **Isolation** (고립성)
+  * Transaction 의 concurrency 가 보장되는 성질을 말한다. A 와 B 두개의 transaction 이 실행되고 있다고 하자. A 의 작업들이 B 에게 보여지는 정도를 [Isolation level](/spring/README.md#transactional) 이라고도 하며 모두 4 개로 구성된다.
 
     | Isolation level | Dirty Read | Non-repeatable Read | Phantom Read |
     | --------------- | ---------- | ------------------- | ------------ |
@@ -52,9 +52,8 @@ Transaction 은 ACID 특성이 있다.
     | Read commited   | X          | O                   | O            |
     | Repeatable Read | X          | X                   | O            |
     | Serializable    | X          | X                   | X            |
-
-* Durability (영구성)
-  * 한번 반영(commit) 된 transaction 은 영구히 적용되는 것을 보장해 준다.
+* **Durability** (영구성)
+  * 장애가 발생했을 때 data 를 recover 할 수 있는 성질을 말한다. Transaction 은 logging 된다. 따라서 Transaction 은 replay 될 수 있다. DataBase 가 제대로 backup 되고 있다면 언제든지 recover 할 수 있다.
 
 # SQL
 

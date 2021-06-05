@@ -19,14 +19,17 @@ MySQL, Oracle, MS SQL Server, SQLite, Postgres, and MariaDB.
 | Subject | SQL | NoSQL |
 |:--------|:----|:------|
 | Storage | | |
-| Schema  | | |
-| Querying  | SQL | UnSQL (Unstructured SQL) |
-| Scalability | | |
-| Reliability or ACID Compliancy (Atomicity, Consistency, Isolation, Durability) | | |
+| Schema  | Strict schema | schema or schemaless |
+| Querying  | SQL | some of SQL or UnSQL (Unstructured SQL) |
+| Scalability | scale-up | scale-out |
+| Reliability or ACID Compliancy (Atomicity, Consistency, Isolation, Durability) | Stric ACID | Some of ACID |
 
 # SQL VS. NoSQL - Which one to use?
 
 ## Reasons to use SQL database
 
+Transaction is important?
+
 ## Reasons to use NoSQL database
 
+Scalability is important?
