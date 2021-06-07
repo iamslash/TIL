@@ -33,6 +33,20 @@
     - [Index and Attribute Limits](#index-and-attribute-limits)
     - [API Limits](#api-limits)
   - [Error Handling in DynamoDB](#error-handling-in-dynamodb)
+  - [DynamoDB best practices](#dynamodb-best-practices)
+    - [Uniform Data Access](#uniform-data-access)
+    - [Write Sharding](#write-sharding)
+    - [Time Series Data](#time-series-data)
+    - [Burst Capacity](#burst-capacity)
+    - [DynamoDB Adaptive Capacity](#dynamodb-adaptive-capacity)
+    - [Temporary Substantial Capacity Scaling](#temporary-substantial-capacity-scaling)
+    - [Use Shorter yest Intuitive Attribute Names](#use-shorter-yest-intuitive-attribute-names)
+    - [One-to-Many Relationships](#one-to-many-relationships)
+    - [Handling Large Item Attributes](#handling-large-item-attributes)
+    - [Split Large Attributes Across Items](#split-large-attributes-across-items)
+    - [Best Practices for Read Operations](#best-practices-for-read-operations)
+    - [Best practices for LSIs](#best-practices-for-lsis)
+    - [Best Practices for GSIs](#best-practices-for-gsis)
   - [Ways to Lower DynamoDB Costs](#ways-to-lower-dynamodb-costs)
 
 -------
@@ -580,5 +594,58 @@ customer = "John" and country_state_city BEGINS_WITH "US | CA |"
   * Provisioned Throughput Exceeded Exception
     * Error Retries
     * Exponential Backoff
-  
+
+## DynamoDB best practices
+
+* [Best Practices for Designing and Architecting with DynamoDB @ aws](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/best-practices.html)
+
+### Uniform Data Access
+
+### Write Sharding
+
+### Time Series Data
+
+### Burst Capacity
+
+* 300 seconds
+* For Occasional Spike
+* Not to be relied upon
+
+### DynamoDB Adaptive Capacity
+
+* For Non-uniform Workloads
+* Works Automatically
+* No Guarantees
+* 5 to 30 minutes of delay
+
+### Temporary Substantial Capacity Scaling
+
+### Use Shorter yest Intuitive Attribute Names
+
+### One-to-Many Relationships
+
+### Handling Large Item Attributes
+
+### Split Large Attributes Across Items
+
+### Best Practices for Read Operations
+
+* Avoid Scans
+* Avoid Filters
+* Use Eventual Consistency
+
+### Best practices for LSIs
+
+* Use LSIs Sparingly
+* Project Fewer Attributes
+* Use Sparse Indexes
+* Watch for Expanding Item Collections
+
+### Best Practices for GSIs
+
+* Design for Uniform Workloads
+* Use Sparse Indexes
+* Project Fewer Attributes
+* Eventually Consistent Read Replicas
+
 ## Ways to Lower DynamoDB Costs
