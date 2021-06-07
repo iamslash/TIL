@@ -19,6 +19,18 @@
       - [UsersLeaderboard](#usersleaderboard)
       - [FriendsLeaderboard](#friendsleaderboard)
       - [Query](#query-1)
+- [DynamoDB Data Modeling & Best Practices](#dynamodb-data-modeling--best-practices)
+  - [Design Patterns](#design-patterns)
+    - [One-to-one](#one-to-one)
+    - [One-to-Many](#one-to-many)
+    - [Many-to-Many](#many-to-many)
+    - [Hierarchical Data Structures](#hierarchical-data-structures)
+      - [Table items](#table-items)
+      - [JSON Documents](#json-documents)
+  - [Multi-value Sorts and Filters](#multi-value-sorts-and-filters)
+  - [DynamoDB Limits](#dynamodb-limits)
+  - [Error Handling in DynamoDB](#error-handling-in-dynamodb)
+  - [Ways to Lower DynamoDB Costs](#ways-to-lower-dynamodb-costs)
 
 -------
 
@@ -325,3 +337,142 @@ $ aws dynamodb describe-table
     --table-name UsersLeaderboard \
     --endpoint-url http://localhost:8000   
 ```
+
+# DynamoDB Data Modeling & Best Practices
+
+## Design Patterns
+
+One-to-One, One-to-Many, Many-to-Many, Hierarchical Data Structures 의 경우에 대해 생각해 보자.
+
+| Relationship | description |
+|---|---|
+| One-to-One | Simple keys on both entities |
+| One-to-Many | Simple Keys on one entity and composite key on the other |
+| Many-to-Many | Composite keys or indexes on both entities |
+
+### One-to-one
+
+예를 들어 다음과 같은 Users 테이블이 있다.
+
+| user_id | name | email | SSN |
+|---|---|---|---|
+| A | John | john@abc.com | 123 |
+| B | Mary | mary@abc.com | 124 |
+| C | Bill | bill@abc.com | 125 |
+
+예를 들어 다음과 같이 Students, Grades Table 이 있다. Students.student_id, Grades.student_id 는 Primary Key 이다. 
+
+| student_id | name | email | SSN |
+|---|---|---|---|
+| 1001 | John | john@abc.com | 123 |
+| 1002 | Mary | mary@abc.com | 124 |
+| 1003 | Bill | bill@abc.com | 125 |
+
+| student_id | grade |
+|---|---|
+| 1001 | A |
+| 1002 | A+ |
+| 1003 | A |
+
+예를 들어 다음과 같이 Students, Grades Table 이 있다. Students.student_id, Grades.dept_id 는 Primary Key 이다. Grades.student_id 는 GSI (global Secondary Index) 이다.
+
+| student_id | name | email | SSN |
+|---|---|---|---|
+| 1001 | John | john@abc.com | 123 |
+| 1002 | Mary | mary@abc.com | 124 |
+| 1003 | Bill | bill@abc.com | 125 |
+
+| dept_id | student_id | grade |
+|---|---|---|
+| D1 | 1001 | A |
+| D2 | 1002 | A+ |
+| D3 | 1003 | A |
+
+### One-to-Many
+
+예를 들어 다음과 같이 Students, Subjects Table 이 있다. Students.student_id 는 Primary key 이다. Subjets.student_id, Subjets.subject 는 composite Primary Key 이다.
+
+| student_id | name | email | SSN |
+|---|---|---|---|
+| 1001 | John | john@abc.com | 123 |
+| 1002 | Mary | mary@abc.com | 124 |
+| 1003 | Bill | bill@abc.com | 125 |
+
+| student_id | subject |
+|---|---|
+| 1001 | Math |
+| 1002 | Physics |
+| 1003 | Economics |
+
+다음과 같이 Subjects table 를 refactoring 한다. Subjects.subject 는 Primary Partition Key 이다. Subjects.student_id 는 Primary Sort Key 이다. Subjects.student_id 는 GSI Partition Key 이다.
+
+| subject_id | student_id | subject |
+|---|---|---|
+| S001 | 1001 | Math |
+| S002 | 1001 | Physics |
+| S003 | 1003 | Economics |
+
+또한 다음과 같이 Subjects table 를 Set 을 사용하여 refactoring 할 수 있다.
+
+| student_id | name | email | SSN | subjects |
+|---|---|---|---|---|
+| 1001 | John | john@abc.com | 123 | {Math, Physics} |
+| 1002 | Mary | mary@abc.com | 124 | {Economics, Civics} |
+| 1003 | Bill | bill@abc.com | 125 | {Computer Science, Math} |
+
+다음과 같이 Sort Keys/Composite Keys 혹은 Set Types 를 언제 사용하면 좋은지 정리해 보자.
+
+| Sort Keys/Composite Keys | Set Types |
+|---|---|
+| Larget item sizes | Small item sizes |
+| If querying multiple items whthin a partition key is required | If querying individual item attributes in Sets is NOT needed |
+
+### Many-to-Many
+
+예를 들어 다음과 같이 Students Table 을 살펴보자. student_id 와 subject_id 는 many-to-many 이다. Students.student_id 는 Primary Partition Key 로 한다. Students.subject_id 는 Primary Sort Key 로 한다. Students.student_id 는 GSI Sort Key 로 한다. Students.subject_id 는 GSI Partition Key 로 한다.
+
+| student_id | subject_id | subject |
+|---|---|---|
+| 1001 | S001 | Math | 
+| 1001 | S002 | Physics | 
+| 1003 | S003 | Economics | 
+| 1003 | S001 | Math | 
+
+### Hierarchical Data Structures
+
+Table items 과 JSON Documents 를 이용하여 표현할 수 있다.
+
+#### Table items
+
+예를 들어 다음과 같이 Curriculum table 이 있다. Curriculum.curriculum_id 는 Partition Key 이다. Curriculum.type 은 Sort Key 이다.
+
+| curriculum_id | type | attributes_1 | ... | attributes_n |
+|----|---|---|---|---|
+| Medical | Radiology | ... | ... | ... |
+| Medical | Dentistry | ... | ... | ... |
+| Medical | ... | ... | ... | ... |
+| Engineering | Computer Science | ... | ... | ... |
+| Engineering | Electronics | ... | ... | ... |
+| Engineering | Mechanical Engineering | ... | ... | ... |
+| Engineering | ... | ... | ... | ... |
+| Journalism | Newspaper Journalism | ... | ... | ... |
+| Journalism | Investigative Journalism | ... | ... | ... |
+| Journalism | Sports Journalism | ... | ... | ... |
+| Journalism | ... | ... | ... | ... |
+
+#### JSON Documents
+
+예를 들어 다음과 같이 Products table 이 있다. Products.product_id 는 Partition Key 이다. metadata 는 key value 의 모음을 JSON 으로 저장하고 있다.
+
+| product_id | metadata |
+| P001 | `{type: "Electronics", model: "PQR", weith: "1.05"}` |
+| P002 | `{publisher: "ABC", type: "Electronics", model: "PQR", weith: "1.05"}` |
+
+## Multi-value Sorts and Filters
+
+
+## DynamoDB Limits
+
+## Error Handling in DynamoDB
+
+## Ways to Lower DynamoDB Costs
