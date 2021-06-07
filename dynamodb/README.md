@@ -29,6 +29,9 @@
       - [JSON Documents](#json-documents)
   - [Multi-value Sorts and Filters](#multi-value-sorts-and-filters)
   - [DynamoDB Limits](#dynamodb-limits)
+    - [Capacity and Throught Limits](#capacity-and-throught-limits)
+    - [Index and Attribute Limits](#index-and-attribute-limits)
+    - [API Limits](#api-limits)
   - [Error Handling in DynamoDB](#error-handling-in-dynamodb)
   - [Ways to Lower DynamoDB Costs](#ways-to-lower-dynamodb-costs)
 
@@ -470,9 +473,112 @@ Table items 과 JSON Documents 를 이용하여 표현할 수 있다.
 
 ## Multi-value Sorts and Filters
 
+Sort Key 를 이용하면 하나의 Partition 안에서 Sort Key 로 rows 를 정렬할 수 있다. 
+
+만약 여러 column 을 기준으로 정렬해야 하는 경우를 살펴보자. 다음과 같은 Address table 이 있다. country, state, city 를 기준으로 정렬을 해보자.
+
+| customer | addr_id | country | state | city | zip |street | 
+|--|--|--|--|--|--|--|
+| John | 1 | US | CA | San Francisco | ... | ... | ... |
+| Tom | 1 | US | CA | San Diego | ... | ... | ... |
+| John | 2 | US | CA | San Diego | ... | ... | ... |
+| Sara | 1 | US | FL | Miami | ... | ... | ... |
+
+첫번 째 방법은 다음과 같이 GSI 3 개를 설정하는 것이다.
+
+* GSI 1
+  * Address.customer: GSI 1 Partition Key
+  * Address.country: GSI 1 Sort Key
+* GSI 2
+  * Address.customer: GSI 2 Partition Key
+  * Address.state: GSI 2 Sort Key
+* GSI 3
+  * Address.customer: GSI 3 Partition Key
+  * Address.city: GSI 3 Sort Key
+
+다음과 같이 Query 한다. 이렇게 여러개의 Sort Key 를 사용하려 filtering 하는 것을 Multi-valoue Filters 라고 한다.
+
+```
+Filter On:
+state = "CA" and city = "San Diego"
+```
+
+한편 다음과 같이 sort key 를 design 하면 성능을 개선할 수 있다.
+
+| customer | addr_id | country_state_city | zip |street | 
+|--|--|--|--|--|--|
+| John | 1 | US `|` CA `|` San Francisco | ... | ... |
+| Tom | 1 | US `|` CA `|` San Diego | ... | ... | 
+| John | 2 | US `|` CA `|` San Diego | ... | ... |
+| Sara | 1 | US `|` FL `|` Miami | ... | ... | 
+
+다음과 같이 Query 한다. 이렇게 하나의 column 에 multi-value 를 사용하고 Sort key 로 설정한 것을 Multi-value Sorts 라고 한다.
+
+```
+Query On:
+customer = "John" and country_state_city BEGINS_WITH "US | CA |"
+```
 
 ## DynamoDB Limits
 
+* [Service, Account, and Table Quotas in Amazon DynamoDB @ aws](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/Limits.html)
+
+###  Capacity and Throught Limits
+
+* 4KB per RCU
+* 1KB per WCU
+* 10GB per partition
+* 3000 RCUs or 1000 WCUs per partition
+* Minimum 1 RCU and 1 WCU per table or index
+
+* Max 40,000 RCUs and WCUs each per table (US East region)
+* Max 10,000 RCUs and WCUs each per table (Other regions)
+* Max 80,000 RCUs and WCUs each per account (US East region)
+* Max 20,000 RCUs and WCUs each per account (Other regions)
+* Max limits are soft limits and can be increase on request
+
+* No limit on scaling up table capacity
+* Max scale downs limited to 4 times per calendar day (UTC timezone)
+* Additional 1 scale down if no scale downs in last 4 hours
+* Effectively 9 scale downs per day
+* Max 256 tables per region (soft limit)
+
+### Index and Attribute Limits
+
+* 5 local secondary indexes per table
+* 5 global secondary indexes per table
+* Max 20 user-specified projected attributes across all secondary indexes of the table
+* Max size of partition key = 2 KB
+* Max size of sort key = 1 KB
+* Max size of all items per partition key = 10 GB (including all LSIs)
+* Max size of a table item = 400 KB
+* For nested attributes, max possible nesting is 32 levels deep
+
+### API Limits
+
+* Max 10 simultaneous requests for table-level operations (CreateTable, UpdateTable and DeleteTable)
+* Max 100 items (up to 16 MB in size) returned per **BatchGetItem** request
+* Max 25 PutItem or DeleteItem requests (up to 16 MB in size) per **BatchWriteItem** request
+* Max 1 MB data returned per query or scan request
+
 ## Error Handling in DynamoDB
 
+* HTTP 400
+  * Error in our request
+  * Error Authentication failure
+  * Missing required parameters
+* HTTP 500
+  * 500 Server Side Error
+  * 503 Service not available
+* Exceptions
+  * Access Denied Exception
+  * Conditional Check Failed Exception
+  * Item Collection Size Limit Exceeded Exception
+  * Limit Exceeded Exception
+  * Resource In use Exception
+  * Validation Exception
+  * Provisioned Throughput Exceeded Exception
+    * Error Retries
+    * Exponential Backoff
+  
 ## Ways to Lower DynamoDB Costs
