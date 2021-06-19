@@ -60,6 +60,8 @@ Transaction 을 지원한다???
 # Materials
 
 * [What is DynamoDB?](https://www.dynamodbguide.com/what-is-dynamo-db/)
+* [How to Build a Reactive Microservice API with Spring Boot, Spring Webflux and DynamoDB Using Kotlin](https://medium.com/swlh/how-to-build-a-reactive-microservice-api-with-spring-boot-spring-webflux-and-dynamodb-using-kotlin-e1be3e99b15e)
+  * [src](https://github.com/billydh/dynamodemo)
 * [DynamoDB의 데이터 모델 @ pyrasis](http://pyrasis.com/book/TheArtOfAmazonWebServices/Chapter14/01)
   * [DynamoDB에 맞는 데이터 구조 설계하기 @ pyrasis](http://pyrasis.com/book/TheArtOfAmazonWebServices/Chapter14/02)
   * [DynamoDB 테이블 생성하기 @ pyrasis](http://pyrasis.com/book/TheArtOfAmazonWebServices/Chapter14/03)
