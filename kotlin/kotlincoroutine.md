@@ -8,6 +8,8 @@
   - [Structured concurrency](#structured-concurrency)
   - [Coroutines ARE light-weight](#coroutines-are-light-weight)
   - [Handling Exceptions](#handling-exceptions)
+  - [Suspend](#suspend)
+  - [Continuation](#continuation)
 
 ----
 
@@ -29,6 +31,7 @@ suspend function 은 coroutine 혹은 또 다른 suspend function 에서만 호�
   * [kor, 코틀린 코루틴 소개](https://blog.burt.pe.kr/posts/everything-you-need-to-know-about-kotlin-coroutines/)
   * [Coroutine Context and Scope @ medium](https://elizarov.medium.com/coroutine-context-and-scope-c8b255d59055)
   * [Notes on structured concurrency, or: Go statement considered harmful](https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/)
+  * [KotlinConf 2017 - Deep Dive into Coroutines on JVM by Roman Elizarov @ youtube](https://www.youtube.com/watch?v=YrrUCSi72E8)
 
 # Basic
 
@@ -50,53 +53,59 @@ fun main() = runBlocking { // this: CoroutineScope
 
 다음과 같은 특징들을 생각할 수 있다.
 
-* [runBlocking](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/run-blocking.html) 는 coroutine builder 이다. code block 을 입력으로 받아서 coroutine 을 생성한다. main thread 는 그 coroutine 이 모두 실행될 때까지 blocking 된다.
-* [launch](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/launch.html) 역시 coroutine builder 이다. code block 을 입력으로 받아서 coroutine 을 생성한다. main thread 는 blocking 되지 않고 `launch` block 의 다음줄 부터 실행한다.
+* [runBlocking](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/run-blocking.html) 는 coroutine builder 이다. suspend code block 을 입력으로 받아서 coroutine 을 생성한다. 즉, CoroutineScope, Job instance 를 생성한다. main thread 는 Job instance 가 실행될 때까지 blocking 된다.
+* [launch](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/launch.html) 역시 coroutine builder 이다. suspend code block 을 입력으로 받아서 coroutine 을 생성한다. main thread 는 blocking 되지 않고 `launch` block 의 다음줄 부터 바로 실행한다.
 * `delay` 는 suspend function 이다. coroutine 에서 실행된 suspend function 은 실행의 흐름이 완료될 때까지 return 되지 않는다.
 
-이번에는 `doWorld` 라는 suspend function 으로 refactoring 해보자. 다음과 같은 특징들을 생각할 수 있다.
+이번에는 `launch` block 을 `doWorld` 라는 suspend function 으로 refactoring 해보자. 다음과 같은 특징들을 생각할 수 있다.
 
-* `doWorld` 는 suspend function 이다. coroutine 에서 suspend function 은 실행의 흐름이 완료될 때까지 return 되지 않는다.
-
+* `doWorld` 는 suspend function 이다. `Hello` 가 출력되고 한참 후에 `World!`, `Done` 이 출력된다.
+  
 ```kotlin
 import kotlinx.coroutines.*
 
 fun main() = runBlocking { // this: CoroutineScope
-	doWorld()
+    println("Hello")
+    doWorld()
 //  launch { doWorld() }
-    println("Hello")
+    println("Done")
 }
 
 // this is your first suspending function
 suspend fun doWorld() {
-    delay(1000L)
+    delay(5000L)
     println("World!")
 }
-// World!
+// Outputs:
 // Hello
+// World!
+// Done
 ```
 
-만약 다음과 같이 `launch` 에서 `doWorld` 를 실행하면 위의 code 와 출력 순서가 달라진다. `launch` 에 의해 자식 coroutine 을 생성하고 바로 실행의 흐름을 이어간다. `doWorld()` 는 자식 coroutine 에서 실행된다.
+만약 다음과 같이 `launch` 에서 `doWorld` 를 실행하면 위의 code 와 출력 순서가 달라진다. `launch` 에 의해 자식 coroutine 을 생성하고 바로 실행의 흐름을 바로 이어간다. `doWorld()` 는 자식 coroutine 에서 실행된다.
 
 ```kotlin
 import kotlinx.coroutines.*
 
 fun main() = runBlocking { // this: CoroutineScope
-//	doWorld()
-    launch { doWorld() }
     println("Hello")
+//  doWorld()
+    launch { doWorld() }
+    println("Done")
 }
 
 // this is your first suspending function
 suspend fun doWorld() {
-    delay(1000L)
+    delay(5000L)
     println("World!")
 }
+// Outputs:
 // Hello
+// Done
 // World!
 ```
 
-이번에는 susend function 을 여러개 호출하는 경우를 살펴보자. `doWorld()` 는 suspend function 이다. coroutine 안에서 실행되었으므로 실행의 흐름이 완료될 때까지 return 되지 않는다. `doHello()` 는 suspend function 이다. suspend function 에서 실행이 되었으므로 실행의 흐름이 완료될 때까지 return 되지 않는다.
+이번에는 susend function 을 여러개 호출하는 경우를 살펴보자. `doWorld()` 는 suspend function 이다. `doWorld(), doHello()` 가 모두 완료되면 return 된다.
 
 ```kotlin
 import kotlinx.coroutines.*
@@ -280,7 +289,7 @@ public interface CoroutineContext {
 
 coroutine builder 는 coroutine 을 만들어낼 수 있는 function 이다. coroutine 을 만든다는 것은 Job instance 를 생성한다는 것과 같다. `launch, async, runBlocking, withContext` 등이 있다. 
 
-[launch](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/launch.html) 는 Job instance 를 생성하고 return 한다. 멈추지 않고 바로 다음 줄을 실행한다. 이후 return 된 job instance 를 cancel, join 할 수 있다. 
+[launch](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/launch.html) 는 Job instance 를 생성하고 return 한다. 멈추지 않고 바로 다음 줄을 실행한다. 이후 return 된 job instance 를 cancel, join 할 수 있다. 주로 return 할 value 가 없을 때 사용한다.
 
 `context` argument 는 현재 coroutineContext 에 추가할 context 를 의미한다. `start` argument 는 생성된 Job instance 가 언제 실행될지에 관한 것이다. `CoroutineStart.DEFAULT` 이면 바로 실행되고 `CoroutineStart.LAZY` 이면 나중에 실행한다. `block` argument 는 coroutine 에서 실행할 suspend code block 이다.
 
@@ -304,15 +313,89 @@ job.join() // wait until child coroutine completes
 println("Done") 
 ```
 
+[async](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/async.html) 는 Deferred instance 를 생성하고 return 한다. Deferred 는 Job 를 상속한다. 멈추지 않고 바로 다음 줄을 실행한다. 이후 return 된 Deferred instance 를 cancel, join, await 할 수 있다. 주로 return 할 value 가 있을 때 사용한다. await 를 사용하여 return value 를 얻어온다.
+
+```kotlin
+public fun <T> CoroutineScope.async(
+  context: CoroutineContext = EmptyCoroutineContext,
+  start: CoroutineStart = CoroutineStart.DEFAULT,
+  block: suspend CoroutineScope.() -> T
+): Deferred<T>
+```
+
+[withContext](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/with-context.html) 는 suspend code block 이 모두 완료될 때까지 기다린다. Dispatcher 를 argument 로 넘겨서 서로 다른 thread pool 에서 실행시키고 싶을 때 사용한다.
+
+```kotlin
+suspend fun <T> withContext(
+    context: CoroutineContext,
+    block: suspend CoroutineScope.() -> T
+): T (source)
+```
+
+다음은 [withContext](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/with-context.html) 의 사용예이다. 첫번째 `println` 은 Default Dispatcher 의 thread 에서 실행된다. 두번째 `println` 은 `withContext(Dispatchers.IO)` 덕분에 IO Dispatcher 의 thread 에서 실행된다. Default Dispatcher 와 IO Dispatcher 는 서로 thread 를 공유한다. 이렇게 하면 context switching cost 를 아낄 수 있다. 
+
+그러나 두번째 `println` 의 샐행을 마치면 마지막에 실행된 `DefaultDispatcher-worker-1` thread 는 IO thread 로 분류되어 thread pool 에서 제거 된다. 따라서 세번째 `println` 은 Default Dispatcher 의 thread 에서 실행되는데 thread 이름은 다르다.
+
+```kotlin
+// 1. create new coroutine scope with default dispatcher
+val scope = CoroutineScope(Dispatchers.Default)
+
+scope.launch {
+    // 2. do some cpu bound operations, runs on Default thread pool
+    println("${Thread.currentThread().name} doing CPU work...")
+
+    // 3. shifts to IO thread pool
+    withContext(Dispatchers.IO) {
+        // 4. do some io operations like file read, network calls  etc
+        println("${Thread.currentThread().name} doing IO work...")
+    }
+
+    // 5. shifts back to Default thread pool
+    println("${Thread.currentThread().name} back to doing CPU work...")
+}
+// Outputs:
+// DefaultDispatcher-worker-1 @coroutine#1 doing CPU work...
+// DefaultDispatcher-worker-1 @coroutine#1 doing IO work...
+// DefaultDispatcher-worker-2 @coroutine#1 back to doing CPU work...
+```
+
+[runBlocking](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/run-blocking.html) 은 다음과 같다. suspend code block 의 실행이 종료될 때까지 blocking 된다. coroutine 에서 호출할 수 없다. 주로 main, test function 에서 사용한다.
+
+```kotlin
+fun <T> runBlocking(
+    context: CoroutineContext = EmptyCoroutineContext,
+    block: suspend CoroutineScope.() -> T
+): T (source)
+```
+
+다음은 [runBlocking](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines/run-blocking.html) 의 사용예이다.
+
+```kotlin
+// ==== SUT: System Under Test ====
+var counter = 0
+suspend fun incrment() {
+    delay(10)
+    counter += 1
+}
+// ================================
+
+@Test
+fun `should able to increment counter`() = runBlocking {
+    repeat(50) { incrment() }
+    println("counter = $counter")
+    assert(counter == 50) { "Assertion failed, expected=50 but actual=$counter" }
+}
+// Outputs:
+// counter = 50
+```
+
 ## Structured concurrency
 
-kotlin 의 coroutine 은 structured concurrency 를 따른다. 부모 coroutine 은 특정 CoroutineScope 에서 자식 coroutine 을 만들 수 있다. 그리고 자식 coroutine 들이 모두 완료되야 부모 coroutine 이 흐름을 완료할 수 있다.
+![](structured_concurrency.png)
 
-다음과 같은 예를 살펴보자. `runBlocking` 은 code block 을 입력으로 받아서 coroutine 을 생성한다. `doWorld()` 는 suspend function 이다. 실행의 흐름이 suspend/resume 될 수 있다. 
+kotlin 의 coroutine 은 다음과 같은 규칙을 따른다. coroutine 이 생성되면 Job instance 가 만들어 진다. coroutine builder 에 의해 다시 Job instance 가 만들어지면 이것은 처음 만들어진 Job instance 의 자식으로 등록된다. 자식 Job instance 들의 실행이 완료되야 부로 Job instance 의 실행이 완료된다.
 
-`coroutineScope` 을 이용하여 code block 을 입력으로 받아 coroutine 을 생성한다. `coroutineScope` 은 `runBlocking` 처럼 생성한 coroutine 이 모두 완료될 때까지 기다린다. 그러나 `runBlocking` 처럼 main thread 가 block 되지는 않는다. 단지 suspend 된다. 
-
-`launch` 로 두개의 자식 coroutine 을 생성한다. 두개의 자식 coroutine 이 모두 완료되기 전까지 `doWorld` 는 return 되지 않는다.
+만약 자식 Job instance 중 하나가 CancellationException 이외의 Exception 을 throw 하면 부모 Job instnace 를 포함한 자식 Job instance 들이 모두 취소된다. CancellationException 는 정상적으로 취소된 것으로 생각한다. 따라서 부모 Job instance 가 자식 Job instance 들에게 CancellationException 를 전달하지는 않는다. 이와 같은 규칙을 structured concurrency 라고 한다.
 
 ```kotlin
 import kotlinx.coroutines.*
@@ -335,6 +418,94 @@ suspend fun doWorld() = coroutineScope { // this: CoroutineScope
     }
     println("Hello")
 }
+// Outputs:
+// Hello
+// World 1
+// World 2
+// Done
+```
+
+다음은 CancellationException 을 throw 하는 예이다. 부모 Job instance 가 자식 Job instance 들을 취소하지 않는다.
+
+```kotlin
+import kotlinx.coroutines.*
+
+// Sequentially executes doWorld followed by "Done"
+fun main() = runBlocking {
+    doWorld()
+    println("Done")
+}
+
+// Concurrently executes both sections
+suspend fun doWorld() = coroutineScope { // this: CoroutineScope
+    launch {
+        delay(2000L)
+        println("World 2")
+    }
+    val a = launch {
+        delay(1000L)
+        println("World 1")
+    }
+    println("Hello")
+    a.cancelAndJoin()
+}
+// Outputs:
+// Hello
+// World 2
+// Done
+```
+
+다음은 MyException 을 throw 하는 예이다. 부모 Job instance 가 자식 Job instance 들을 취소한다.
+
+```kotlin
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+
+class MyException(message:String): Exception(message)
+
+// Sequentially executes doWorld followed by "Done"
+fun main() = runBlocking {
+    doWorld()
+    println("Done")
+}
+
+// Concurrently executes both sections
+suspend fun doWorld() = coroutineScope { // this: CoroutineScope
+    launch {
+        delay(2000L)
+        println("World 2")
+    }
+    launch {
+        delay(1000L)
+        println("World 1")
+        throw MyException("I got it")
+    }
+    println("Hello")
+}
+// Outputs:
+// Hello
+// World 1
+// Exception in thread "main" MyException: I got it
+// 	at MainKt$doWorld$2$2.invokeSuspend(main.kt:23)
+// 	at kotlin.coroutines.jvm.internal.BaseContinuationImpl.resumeWith(ContinuationImpl.kt:33)
+// 	at kotlinx.coroutines.DispatchedTaskKt.resume(DispatchedTask.kt:175)
+// 	at kotlinx.coroutines.DispatchedTaskKt.dispatch(DispatchedTask.kt:111)
+// 	at kotlinx.coroutines.CancellableContinuationImpl.dispatchResume(CancellableContinuationImpl.kt:308)
+// 	at kotlinx.coroutines.CancellableContinuationImpl.resumeImpl(CancellableContinuationImpl.kt:318)
+// 	at kotlinx.coroutines.CancellableContinuationImpl.resumeUndispatched(CancellableContinuationImpl.kt:400)
+// 	at kotlinx.coroutines.EventLoopImplBase$DelayedResumeTask.run(EventLoop.common.kt:489)
+// 	at kotlinx.coroutines.EventLoopImplBase.processNextEvent(EventLoop.common.kt:274)
+// 	at kotlinx.coroutines.BlockingCoroutine.joinBlocking(Builders.kt:84)
+// 	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking(Builders.kt:59)
+// 	at kotlinx.coroutines.BuildersKt.runBlocking(Unknown Source)
+// 	at kotlinx.coroutines.BuildersKt__BuildersKt.runBlocking$default(Builders.kt:38)
+// 	at kotlinx.coroutines.BuildersKt.runBlocking$default(Unknown Source)
+// 	at MainKt.main(main.kt:9)
+// 	at MainKt.main(main.kt)
+
+// Process finished with exit code 1
 ```
 
 ## Coroutines ARE light-weight
@@ -358,5 +529,29 @@ fun main() = runBlocking {
 
 ## Handling Exceptions
 
+* [Coroutine exceptions handling](https://kotlinlang.org/docs/exception-handling.html)
 
+## Suspend
 
+suspend function 은 coroutine 혹은 또 다른 suspend function 에서만 호출될 수 있다. subroutine 에서 suspend function 을 호출할 수는 없다. suspend function 은 JVM Byte Code 로 compile 되면 Continuation argument 를 넘겨받는 함수와 같다.
+
+다은은 `updateUserInfo` 가 JVM byte code 로 compile 되었을 때의 prototype 이다. `Continuation<User>` argument 가 추가되었음을 주의하자. `Continuation` 은 단지 implicit callback 이다. thread 에서 resume 할 때 필요한 정보가 포함되어 있다.
+
+```kotlin
+// kotlin
+suspend fun updateUserInfo(name: String, id: Long): User
+// JVM
+public final Object updateUserInfo(String name, long id, Continuation<User> $completion)
+```
+
+## Continuation
+
+[Continuation](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.coroutines/-continuation/) 은 `resumeWith` function 을 갖는 interface 이다. `resumeWith` 는 `Result<T>` [monad](/monad/README.md) 를 argument 로 전달한다. [Continuation](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.coroutines/-continuation/) 는 thread 에서 실행하기 위한 callback interface 일 뿐이다. [KotlinConf 2017 - Deep Dive into Coroutines on JVM by Roman Elizarov @ youtube](https://www.youtube.com/watch?v=YrrUCSi72E8)
+
+```kotlin
+// kotlin\coroutines\Continuation.kt
+public interface Continuation<in T> {
+    public val context: CoroutineContext
+    public fun resumeWith(result: Result<T>)
+}
+```
