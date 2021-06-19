@@ -5,6 +5,7 @@
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
   - [Keywords](#keywords)
+  - [Null safety](#null-safety)
   - [Collections compared to c++](#collections-compared-to-c)
   - [Collections](#collections)
     - [List](#list)
@@ -67,6 +68,7 @@
   - [map vs flatmap](#map-vs-flatmap)
   - [fold](#fold)
   - [coroutine](#coroutine)
+  - [Null safety](#null-safety-1)
 
 ----
 
@@ -117,6 +119,32 @@ $ java -jar a.jar
 ## Keywords
 
 ```kotlin
+```
+
+## Null safety
+
+* [Null safety @ kotlin](https://kotlinlang.org/docs/null-safety.html#the-operator)
+
+----
+
+```kotlin
+// safe call operator ?.
+val b: String? = null
+println(b?.length)
+
+// Elivis operator ?: which looks like elvis' hair
+val l: b?.length ?: -1
+
+// not-null assertion operator !! 
+// if b is null NPE will be thrown.
+val l = b!!.length
+
+// safe casts
+val aInt: Int? = a as? Int
+
+// filter not nullable elements
+val nullablelist: List<Int?> = listOf(1, 2, null, 5)
+val intList: List<Int> = nullableList.filterNotNull()
 ```
 
 ## Collections compared to c++
@@ -1584,3 +1612,7 @@ fun main(args: Array<String>) {
 ## coroutine
 
 * [kotlin coroutine](/kotlin/kotlincoroutine.md)
+
+## Null safety
+
+`?.`
