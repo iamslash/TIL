@@ -44,6 +44,7 @@
     - [Method References](#method-references)
     - [Optional<T>](#optionalt)
 - [Advanced Usage](#advanced-usage)
+  - [Integer.valueOf vs Integer.parseInt](#integervalueof-vs-integerparseint)
   - [Exception](#exception)
   - [Dynamic Proxy](#dynamic-proxy)
   - [AOP](#aop)
@@ -1825,6 +1826,59 @@ String result = valueOpt.orElseThrow(CustomException::new).toUpperCase();
 ```
 
 # Advanced Usage
+
+## Integer.valueOf vs Integer.parseInt
+
+* [Integer.valueOf() vs Integer.parseInt() with Examples @ geeksforgeeks](https://www.geeksforgeeks.org/integer-valueof-vs-integer-parseint-with-examples/)
+
+-----
+
+```java
+// 1. Integer.valueOf() returns an Integer object while Integer.parseInt() returns a primitive int.
+        String s = "77";
+  
+        // Primitive int is returned
+        int str = Integer.parseInt(s);
+        System.out.print(str);
+  
+        // Integer object is returned
+        int str1 = Integer.valueOf(s);
+        System.out.print(str1);
+        
+// 2. Both String and integer can be passed a parameter to Integer.valueOf() whereas only a String can be passed as parameter to Integer.parseInt().
+        int val = 99;
+  
+        try {
+            // It can take int as a parameter
+            int str1 = Integer.valueOf(val);
+            System.out.print(str1);
+  
+            // It cannot take an int as a parameter
+            // Hence will throw an exception
+            int str = Integer.parseInt(val);
+            System.out.print(str);
+        }
+        catch (Exception e) {
+            System.out.print(e);
+        }
+
+// 3. Integer.valueOf() can take a character as parameter and will return its corresponding unicode value whereas Integer.parseInt() will produce an error on passing a character as parameter.
+        char val = 'A';
+  
+        try {  
+            // It can take char as a parameter
+            int str1 = Integer.valueOf(val);
+            System.out.print(str1);
+  
+            // It cannot take char as a parameter
+            // Hence will throw an exception
+            int str = Integer.parseInt(val);
+            System.out.print(str);
+        }
+        catch (Exception e) {
+            System.out.print(e);
+        }
+```
 
 ## Exception
 
