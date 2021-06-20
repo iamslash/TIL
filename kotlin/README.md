@@ -118,7 +118,125 @@ $ java -jar a.jar
 
 ## Keywords
 
+* [Keywords and operators](https://kotlinlang.org/docs/keyword-reference.html#operators-and-special-symbols)
+
 ```kotlin
+// Hard keywords
+//   always interpreted as keywords and cannot be used as identifiers
+as        
+as?
+break
+class
+continue
+do
+else
+false
+for
+fun
+
+if
+in
+!in
+interface
+is
+!is
+null
+object
+package
+return
+
+super
+this
+throw
+true
+try
+typealias
+typeof
+val
+var
+when
+while
+
+// Soft keywords
+//   can be used as identifiers in other contexts
+by
+catch
+constructor
+delegate
+dynamic
+field
+file
+finally
+get
+import
+init
+param
+property
+receiver
+set
+setparam
+value
+where
+
+// Modifier keywords
+//   modifier lists of declarations and can be used as identifiers in other contexts
+actual
+abstract
+annotation
+companion
+const
+crossinline
+data
+enum
+expect
+external
+final
+infix
+inline
+inner
+internal
+lateinit
+noinline
+open
+operator
+out
+override
+private
+protected
+public 
+reified
+sealed
+suspend
+tailrec
+vararg
+
+// Special keywords
+//   are defined by the compiler in specific contexts and can be used as regular identifiers in other contexts
+field
+it
+
+// Operators and special simbols
++, -, *, /, %
+=
++=, -=, *=, /=, %=
+++, --
+&&, ||, !
+==, !=
+===, !==
+<, >, <=, >=
+[, ]
+!!
+?.
+?:
+::
+..
+:
+?
+->
+@
+;
+$
+_
 ```
 
 ## Null safety
