@@ -1,3 +1,4 @@
+- [Abstract](#abstract)
 - [Materials](#materials)
 - [Asynchronous VS non-blocking](#asynchronous-vs-non-blocking)
 - [Basic](#basic)
@@ -12,8 +13,14 @@
   - [Others Operations](#others-operations)
   - [Reactive to Blocking](#reactive-to-blocking)
   - [Blocking to Reactive](#blocking-to-reactive)
+- [Advanced](#advanced)
+  - [map vs flatMap](#map-vs-flatmap)
 
 ----
+
+# Abstract
+
+[Reactor](https://projectreactor.io/) 는 Reactive Streams 의 implementation 중 하나이다. Spring Webflux 는 [Reactor](https://projectreactor.io/) 를 이용하여 구현되었다.
 
 # Materials
 
@@ -454,3 +461,41 @@ public class Part11BlockingToReactive {
 	}
 }
 ```
+
+# Advanced
+
+## map vs flatMap
+
+* [Project Reactor: map() vs flatMap() @ baeldung](https://www.baeldung.com/java-reactor-map-flatmap)
+
+----
+
+The map operator applies a **one-to-one** transformation to stream elements, while flatMap does **one-to-many**.
+
+```java
+// this mapper means map function argument
+Function<String, String> mapper = String::toUpperCase;
+Flux<String> inFlux = Flux.just("baeldung", ".", "com");
+Flux<String> outFlux = inFlux.map(mapper);
+StepVerifier.create(outFlux)
+  .expectNext("BAELDUNG", ".", "COM")
+  .expectComplete()
+  .verify();
+
+// this mapper means flatMap function argument
+Function<String, Publisher<String>> mapper = s -> Flux.just(s.toUpperCase().split(""));  
+Flux<String> inFlux = Flux.just("baeldung", ".", "com");
+Flux<String> outFlux = inFlux.flatMap(mapper);
+List<String> output = new ArrayList<>();
+outFlux.subscribe(output::add);
+assertThat(output).containsExactlyInAnyOrder("B", "A", "E", "L", "D", "U", "N", "G", ".", "C", "O", "M");
+```
+
+> **map**: Transform the items emitted by this Flux by applying asynchronous function to each item
+
+> **flatMap**: Transform the elements emitted by this Flux asynchronously into Publishers
+
+map is a **synchronous** operator – it's simply a method that converts one value to another. This method executes in the same thread as the caller.
+
+flatMap is **asynchronous** – is not that clear. In fact, the transformation of elements into Publishers can be either synchronous or asynchronous.
+
