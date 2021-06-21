@@ -28,6 +28,7 @@
   * [sol](https://gist.github.com/kjs850/a29addc92b98b51ea05a09587be34071)
 * [[리액터] 리액티브 프로그래밍 1부 리액티브 프로그래밍 소개 @ youtube](https://www.youtube.com/watch?v=VeSHa_Xsd2U&list=PLfI752FpVCS9hh_FE8uDuRVgPPnAivZTY)
 * [reactor reference](https://projectreactor.io/docs/core/release/reference/)
+  * [kor](https://godekdls.github.io/Reactor%20Core/contents/)
 
 # Asynchronous VS non-blocking
 
