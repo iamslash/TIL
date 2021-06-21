@@ -20,7 +20,7 @@
 
 # Abstract
 
-[Reactor](https://projectreactor.io/) 는 Reactive Streams 의 implementation 중 하나이다. Spring Webflux 는 [Reactor](https://projectreactor.io/) 를 이용하여 구현되었다.
+[Reactor](https://projectreactor.io/) 는 [Reactive Streams @ TIL](/reactivestreams/README.md) 의 implementation 중 하나이다. Spring Webflux 는 [Reactor](https://projectreactor.io/) 를 이용하여 구현되었다.
 
 # Materials
 
