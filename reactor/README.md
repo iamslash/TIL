@@ -28,6 +28,9 @@
   * [sol](https://gist.github.com/kjs850/a29addc92b98b51ea05a09587be34071)
 * [[리액터] 리액티브 프로그래밍 1부 리액티브 프로그래밍 소개 @ youtube](https://www.youtube.com/watch?v=VeSHa_Xsd2U&list=PLfI752FpVCS9hh_FE8uDuRVgPPnAivZTY)
 * [reactor reference](https://projectreactor.io/docs/core/release/reference/)
+  * [kor](https://godekdls.github.io/Reactor%20Core/contents/)
+  * [Appendix A: Which operator do I need?](https://projectreactor.io/docs/core/release/reference/index.html#which-operator)
+  * [Appendix B: How to read marble diagrams?](https://projectreactor.io/docs/core/release/reference/index.html#howtoReadMarbles)
 
 # Asynchronous VS non-blocking
 
