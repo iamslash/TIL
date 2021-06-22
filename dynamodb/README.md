@@ -228,7 +228,7 @@ $ aws dynamodb create-table \
 }    
 
 // Describe table
-$ aws dynamodb describe-table
+$ aws dynamodb describe-table \
     --table-name <table-name> \
     --endpoint-url http://localhost:8000   
 $ aws dynamodb describe-table \
@@ -386,6 +386,126 @@ $ aws dynamodb delete-item \
         "ItemCollectionKey": {
             "Artist": {
                 "S": "No One You Know"
+            }
+        },
+        "SizeEstimateRangeGB": [
+            0.0,
+            1.0
+        ]
+    }
+}
+
+// Scan table
+// expression-attribute-names.json
+{
+    "#ST": "SongTitle",
+    "#AT":"AlbumTitle"
+}
+// expression-attribute-values.json
+{
+    ":a": {"S": "No One You Know"}
+}
+$ aws dynamodb scan \
+    --table-name MusicCollection \
+    --filter-expression "Artist = :a" \
+    --projection-expression "#ST, #AT" \
+    --expression-attribute-names file://expression-attribute-names.json \
+    --expression-attribute-values file://expression-attribute-values.json
+{
+    "Items": [
+        {
+            "SongTitle": {
+                "S": "Call Me Today"
+            },
+            "AlbumTitle": {
+                "S": "Greatest Hits"
+            }
+        }
+    ],
+    "Count": 1,
+    "ScannedCount": 1,
+    "ConsumedCapacity": null
+}
+
+// Query table
+// expression-attributes.json
+{
+    ":v1": {"S": "No One You Know"}
+}
+$ aws dynamodb query \
+    --table-name MusicCollection \
+    --projection-expression "SongTitle" \
+    --key-condition-expression "Artist = :v1" \
+    --expression-attribute-values file://expression-attributes.json \
+    --return-consumed-capacity TOTAL \
+    --endpoint-url http://localhost:8000    
+{
+    "Items": [
+        {
+            "SongTitle": {
+                "S": "Call Me Today"
+            }
+        }
+    ],
+    "Count": 1,
+    "ScannedCount": 1,
+    "ConsumedCapacity": {
+        "TableName": "MusicCollection",
+        "CapacityUnits": 0.5
+    }
+}
+
+// Update item
+// key.json
+{
+    "Artist": {"S": "Acme Band"},
+    "SongTitle": {"S": "Happy Day"}
+}
+// expression-attribute-names.json
+{
+    "#Y":"Year", "#AT":"AlbumTitle"
+}
+// expression-attribute-values.json
+{
+    ":y":{"N": "2015"},
+    ":t":{"S": "Louder Than Ever"}
+}
+$ aws dynamodb update-item \
+    --table-name MusicCollection \
+    --key file://key.json \
+    --update-expression "SET #Y = :y, #AT = :t" \
+    --expression-attribute-names file://expression-attribute-names.json \
+    --expression-attribute-values file://expression-attribute-values.json  \
+    --return-values ALL_NEW \
+    --return-consumed-capacity TOTAL \
+    --return-item-collection-metrics SIZE \
+    --endpoint-url http://localhost:8000    
+{
+    "Attributes": {
+        "AlbumTitle": {
+            "S": "Louder Than Ever"
+        },
+        "Awards": {
+            "N": "10"
+        },
+        "Artist": {
+            "S": "Acme Band"
+        },
+        "Year": {
+            "N": "2015"
+        },
+        "SongTitle": {
+            "S": "Happy Day"
+        }
+    },
+    "ConsumedCapacity": {
+        "TableName": "MusicCollection",
+        "CapacityUnits": 3.0
+    },
+    "ItemCollectionMetrics": {
+        "ItemCollectionKey": {
+            "Artist": {
+                "S": "Acme Band"
             }
         },
         "SizeEstimateRangeGB": [
