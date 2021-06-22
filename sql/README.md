@@ -426,12 +426,28 @@ SELECT SUM(Quantity)
   FROM OrderDetails;
 ```
 
-**condition inside SUM**
+**condition inside SUM, COUNT** [Using Condition Inside COUNT() In SQL Server](https://www.mytecbits.com/microsoft/sql-server/using-condition-inside-count)
+
+`WHERE` 를 사용하지 못하면 COUNT, SUM 과 같은 aggregate function 에 condition 을 argument 로 전달할 수 있다. 단, `COUNT` 는 0 대신 NULL 을 사용해야한다.
 
 ```sql
--- 
-SELECT ROUND(100 * SUM(order_date = customer_pref_delivery_date) / COUNT(delivery_id), 2)
-  AS immediate_percentage FROM Delivery;  
+-- followings are same
+   SELECT 'Low Salary' AS category, 
+          SUM(CASE WHEN income < 20000 THEN 1 ELSE 0 END) AS accounts_count
+     FROM accounts; 
+   
+   SELECT 'Low Salary' AS category, 
+          SUM(income < 20000) AS accounts_count
+     FROM accounts;
+
+   SELECT 'Low Salary' AS category, 
+          COUNT(CASE WHEN income < 20000 THEN 1 ELSE NULL END) AS accounts_count
+     FROM accounts; 
+
+   SELECT 'Low Salary' AS category, 
+          COUNT(*) AS accounts_count
+     FROM accounts
+    WHERE income < 20000;
 ```
 
 **CASE WHEN THEN ELSE inside SUM**
