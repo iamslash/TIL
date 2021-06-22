@@ -870,7 +870,7 @@ Sort Key 를 이용하면 하나의 Partition 안에서 Sort Key 로 rows 를 �
   * Address.customer: GSI 3 Partition Key
   * Address.city: GSI 3 Sort Key
 
-다음과 같이 Query 한다. 이렇게 여러개의 Sort Key 를 사용하려 filtering 하는 것을 Multi-valoue Filters 라고 한다.
+다음과 같이 Query 한다. 이렇게 여러개의 Sort Key 를 사용하려 filtering 하는 것을 Multi-value Filters 라고 한다.
 
 ```
 Filter On:
@@ -1824,7 +1824,142 @@ on n1.user_id=n2.user_id and n1.timestamp = n2.timestamp
 
 # Demo - Querying DynamoDB with Apache Hive on EMR
 
+* Querying DynamoDB with Apache Hive 
+  * EMR => Elastic MapReduce / Managed Hadoop Cluster
+
+This is an sql example from Apache Hive.
+
+```sql
+create external table td_notes_test_hive
+(
+  user_id string,
+  tstamp bigint,
+  cat string,
+  title string,
+  content string,
+  note_id string,
+  username string
+)
+stored by 'org.apache.hadoop.hive.dynamodb.DynamoDBStorageHandler'
+tblproperties (
+  "dynamodb.table.name" = "td_notes_test",
+  "dynamodb.column.mapping" = "user_id:user_id,tstamp:timestamp,cat:cat,title:title,content:content,note_id:note_id,username:username" 
+);
+
+create external table td_notes_test_hive_2
+(
+  user_id string,
+  tstamp bigint,
+  cat string,
+  title string,
+  content string,
+  note_id string,
+  username string
+)
+stored by 'org.apache.hadoop.hive.dynamodb.DynamoDBStorageHandler'
+tblproperties (
+  "dynamodb.table.name" = "td_notes_test",
+  "dynamodb.column.mapping" = "user_id:user_id,tstamp:timestamp,cat:cat,title:title,content:content,note_id:note_id,username:username" 
+);
+
+select * from td_notes_test_hive;
+
+select user_id, count(note_id) from td_notes_test_hive 
+group by user_id;
+
+select n1.user_id as n1_user_id, n2.*
+from td_notes_test_hive n1 
+inner join td_notes_test_hive_2 n2
+on n1.user_id=n2.user_id and n1.tstamp = n2.tstamp
+;
+```
+
 # Demo - Full Text Search with CloudSearch
+
+* Full Text Search with CloudSearch
+  * DynamoDB - Amazon CloudSearch
+  * You should load DynamoDB data in Amazon CloudSearch
+
+* Performing Searches using CloudSearch API
+
+This is an example of using CloudSearch API.
+
+```js
+const AWS = require("aws-sdk");
+AWS.config.update({ region: 'us-west-2' });
+
+const csd = new AWS.CloudSearchDomain({
+    endpoint: 'search-td-notes-search-fl6g4mlngcdmbjejvkzocu5qbq.us-west-2.cloudsearch.amazonaws.com'
+});
+
+csd.search({
+    query: "mobile usb"
+}, (err, data)=>{
+    if(err) {
+        console.log(err);
+    } else {
+        console.log(JSON.stringify(data, null, 2));
+    }
+});
+```
+
+* Updating CloudSearch Index on the fly
+  * DynamoDB -> DynamoDB streams -> AWs Lambda Trigger -> AWS CloudSearch 
+
+This is an example of AWS Lambda for uploading documents to AWs CloudSearch on the fly.
+
+```js
+const AWS = require("aws-sdk");
+AWS.config.update({ region: 'us-west-2' });
+
+const async = require("async");
+
+const csd = new AWS.CloudSearchDomain({
+    endpoint: 'doc-td-notes-search-fl6g4mlngcdmbjejvkzocu5qbq.us-west-2.cloudsearch.amazonaws.com'
+});
+
+exports.handler = (event, context, callback) => {
+    async.map(event.Records, (record, callbackMap)=>{
+        let user_id = record.dynamodb.Keys.user_id.S;
+        let timestamp = record.dynamodb.Keys.timestamp.N;
+        let id = user_id + '_' + timestamp;
+        if(record.eventName == 'REMOVE') {
+            callbackMap(null, {
+                type: 'delete',
+                id: id
+            });
+        } else {
+            let newImage = record.dynamodb.NewImage;
+            callbackMap(null, {
+                type: 'add',
+                id: id,
+                fields: {
+                    user_id: newImage.user_id.S,
+                    timestamp: newImage.timestamp.N,
+                    cat: newImage.cat.S,
+                    title: newImage.title.S,
+                    content: newImage.content.S,
+                    note_id: newImage.note_id.S,
+                    user_name: newImage.user_name.S,
+                    expires: newImage.expires.N
+                }
+            });
+        }
+    }, (err, results)=>{
+        csd.uploadDocuments({
+            contentType: 'application/json',
+            documents: JSON.stringify(results)
+        }, (err, data)=>{
+            if(err) {
+                console.log(err);
+            } else {
+                console.log(data);
+            }
+        });
+        callback(null, "Execution Completed");
+    });
+}
+```
 
 # Demo - Monitoring DynamoDB with CloudWatch
 
