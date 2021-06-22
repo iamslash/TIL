@@ -1302,7 +1302,380 @@ exports.handler = (event, context, callback) => {
 
 # Demo - Handling Large Items in DynamoDB
 
+This is an example of data-comperssion.
+
+```js
+// data-compression.js
+const AWS = require("aws-sdk");
+AWS.config.update({ region: 'us-west-2' });
+
+const docClient = new AWS.DynamoDB.DocumentClient();
+
+const faker = require('faker');
+const moment = require('moment');
+const zlib = require('zlib');
+
+generateNotesItem((item)=>{
+    console.log("Uncompressed Item", item);
+    putNotesItem(item, (err, data)=>{
+        if(err) {
+            console.log(err);
+        } else {
+            // console.log(data);
+            console.log("Compressed Item", item);
+            getNotesItem({
+                user_id: item.user_id,
+                timestamp: item.timestamp
+            }, (err, data)=>{
+                if(err) {
+                    console.log(err);
+                } else {
+                    console.log("Uncompressed Read", data.Item);
+                }
+            });
+        }
+    });
+});
+
+function generateNotesItem(callback) {
+    callback({
+        user_id: faker.random.uuid(),
+        timestamp: moment().unix(),
+        cat: faker.random.word(),
+        title: faker.company.catchPhrase(),
+        content: faker.hacker.phrase(),
+        note_id: faker.random.uuid(),
+        user_name: faker.internet.userName(),
+        expires: moment().unix() + 600
+    });
+}
+
+function putNotesItem(item, callback) {
+    if(item.content.length > 35) {
+        zlib.gzip(item.content, (e, content_b)=>{
+            item.content_b = content_b;
+            item.content = undefined;
+            docClient.put({
+                TableName: "global_td_notes",
+                Item: item
+            }, callback);
+        });
+    } else {
+        docClient.put({
+            TableName: "global_td_notes",
+            Item: item
+        }, callback);
+    }
+}
+
+function getNotesItem(key, callback) {
+    docClient.get({
+        TableName: "global_td_notes",
+        Key: key
+    }, (err, data)=>{
+        if(err) {
+            callback(err);
+        } else {
+            if(data.Item.content) {
+                callback(null, data);
+            } else {
+                zlib.gunzip(data.Item.content_b, (err, content)=> {
+                    if(err) {
+                        callback(err);
+                    } else {
+                        data.Item.content = content.toString();
+                        data.Item.content_b = undefined;
+                        callback(null, data);
+                    }
+                });
+            }
+        }
+    });
+}
+```
+
+This is an example of uploading s3 for larger data.
+
+```js
+// larger-items-s3.js
+const AWS = require("aws-sdk");
+AWS.config.update({ region: 'us-west-2' });
+
+const docClient = new AWS.DynamoDB.DocumentClient();
+const s3 = new AWS.S3();
+
+const faker = require('faker');
+const moment = require('moment');
+const zlib = require('zlib');
+
+generateNotesItem((item)=>{
+    console.log("Original Item", item);
+    putNotesItemS3(item, (err, data)=>{
+        if(err) {
+            console.log(err);
+        } else {
+            // console.log(data);
+            console.log("Stored Item", item);
+            getNotesItemS3({
+                user_id: item.user_id,
+                timestamp: item.timestamp
+            }, (err, data)=>{
+                if(err) {
+                    console.log(err);
+                } else {
+                    console.log("Retrieved Item", data.Item);
+                }
+            });
+        }
+    });
+});
+
+function generateNotesItem(callback) {
+    callback({
+        user_id: faker.random.uuid(),
+        timestamp: moment().unix(),
+        cat: faker.random.word(),
+        title: faker.company.catchPhrase(),
+        content: faker.hacker.phrase(),
+        note_id: faker.random.uuid(),
+        user_name: faker.internet.userName(),
+        expires: moment().unix() + 600
+    });
+}
+
+function putNotesItemS3(item, callback) {
+    if(item.content.length > 35) {
+        var params = {
+            Bucket: 'td-notes-content',
+            Key: item.user_id + '|' + item.timestamp,
+            Body: item.content
+        };
+
+        s3.upload(params, (err, data)=>{
+            if(err) {
+                callback(err);
+            } else {
+                item.content_s3 = data.Location;
+                item.content = undefined;
+                docClient.put({
+                    TableName: "global_td_notes",
+                    Item: item
+                }, callback);
+            }
+        });
+    } else {
+        docClient.put({
+            TableName: "global_td_notes",
+            Item: item
+        }, callback);
+    }
+}
+
+function getNotesItemS3(key, callback) {
+    docClient.get({
+        TableName: "global_td_notes",
+        Key: key
+    }, (err, data)=>{
+        if(err) {
+            callback(err);
+        } else {
+            if(data.Item.content) {
+                callback(null, data);
+            } else {
+                var params = {
+                    Bucket: 'td-notes-content',
+                    Key: key.user_id + '|' + key.timestamp
+                };
+
+                s3.getObject(params, (err, content_s3)=>{
+                    if(err) {
+                        callback(err);
+                    } else {
+                        data.Item.content = content_s3.Body.toString();
+                        data.Item.content_s3 = undefined;
+                        callback(null, data);
+                    }
+                });
+            }
+        }
+    });
+}
+```
+
 # Demo - Caching with DAX (DynamoDB Accelerator)
+
+This is an example of dax.
+
+```js
+// read-ops-dax.js
+const AWS = require("aws-sdk");
+AWS.config.update({ region: 'us-west-2' });
+
+const AmazonDaxClient = require("amazon-dax-client");
+const dynamodb = new AmazonDaxClient({
+    endpoints: ['dax-notes-app.hllvre.clustercfg.dax.usw2.cache.amazonaws.com:8111'],
+    region: 'us-west-2'
+});
+
+// const dynamodb = new AWS.DynamoDB();
+dynamodb.getItem({
+    TableName: "td_notes_test",
+    Key: {
+        user_id: {
+            S: "A"
+        },
+        timestamp: {
+            N: "1"
+        }
+    }
+}, (err, data)=>{
+    if(err) {
+        console.log(err);
+    } else {
+        console.log(data);
+    }
+});
+
+// const docClient = new AWS.DynamoDB.DocumentClient();
+
+// docClient.get({
+//     TableName: 'td_notes_test',
+//     Key: {
+//         user_id: 'A',
+//         timestamp: 1
+//     }
+// }, (err, data)=>{
+//     if(err) {
+//         console.log(err);
+//     } else {
+//         console.log(data);
+//     }
+// });
+
+// docClient.query({
+//     TableName: 'td_notes_test',
+//     KeyConditionExpression: "user_id = :uid",
+//     ExpressionAttributeValues: {
+//         ":uid": "A"
+//     }
+// }, (err, data)=>{
+//     if(err) {
+//         console.log(err);
+//     } else {
+//         console.log(data);
+//     }
+// });
+
+// docClient.scan({
+//     TableName: 'td_notes_test',
+//     FilterExpression: "cat = :cat",
+//     ExpressionAttributeValues: {
+//         ":cat": "general"
+//     }
+// }, (err, data)=>{
+//     if(err) {
+//         console.log(err);
+//     } else {
+//         console.log(data);
+//     }
+// });
+
+
+// docClient.batchGet({
+//     RequestItems: {
+//         'td_notes_test': {
+//           Keys: [
+//             {
+//                user_id: 'A',
+//                timestamp: 1
+//             },
+//             {
+//                 user_id: 'B',
+//                 timestamp: 2
+//             }
+//           ]
+//         },
+//         'td_notes_sdk': {
+//           Keys: [
+//             { 
+//                 user_id: '11',
+//                 timestamp: 1
+//             }
+//           ]
+//         }
+//     }
+// }, (err, data)=>{
+//     if(err) {
+//         console.log(err);
+//     } else {
+//         console.log(JSON.stringify(data, null, 2));
+//     }
+// });
+```
+
+This is an example of AWS LAmbda
+
+```js
+// docclient.js
+const AWS = require("aws-sdk");
+AWS.config.update({ region: 'us-west-2' });
+
+const AmazonDaxClient = require("amazon-dax-client");
+const dax = new AmazonDaxClient({
+    endpoints: ['dax-notes-app.hllvre.clustercfg.dax.usw2.cache.amazonaws.com:8111'],
+    region: 'us-west-2'
+});
+
+const docClient = new AWS.DynamoDB.DocumentClient({
+    service: dax
+});
+
+exports.handler = (event, context, callback) => {
+    docClient.get({
+        TableName: 'td_notes_test',
+        Key: {
+            user_id: event.user_id,
+            timestamp: parseInt(event.timestamp)
+        }
+    }, (err, data)=>{
+        if(err) {
+            callback(err);
+        } else {
+            callback(null, data);
+        }
+    });
+};
+
+// dynamodb.js
+const AWS = require("aws-sdk");
+AWS.config.update({ region: 'us-west-2' });
+
+const AmazonDaxClient = require("amazon-dax-client");
+const dax = new AmazonDaxClient({
+    endpoints: ['dax-notes-app.hllvre.clustercfg.dax.usw2.cache.amazonaws.com:8111'],
+    region: 'us-west-2'
+});
+
+exports.handler = (event, context, callback) => {
+    dax.getItem({
+        TableName: "td_notes_test",
+        Key: {
+            user_id: {
+                S: event.user_id.toString()
+            },
+            timestamp: {
+                N: event.timestamp.toString()
+            }
+        }
+    }, (err, data)=>{
+        if(err) {
+            callback(err);
+        } else {
+            callback(null, data);
+        }
+    });
+};
+```
 
 # Demo - Backup and Restore with DynamoDB
 
