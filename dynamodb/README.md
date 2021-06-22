@@ -48,6 +48,25 @@
     - [Best practices for LSIs](#best-practices-for-lsis)
     - [Best Practices for GSIs](#best-practices-for-gsis)
   - [Ways to Lower DynamoDB Costs](#ways-to-lower-dynamodb-costs)
+- [Advanced DynamoDB](#advanced-dynamodb)
+- [Hands-on Demos and Projects - An Overview](#hands-on-demos-and-projects---an-overview)
+- [Demo - Cross Region Replication in DynamoDB using Global Tables](#demo---cross-region-replication-in-dynamodb-using-global-tables)
+- [Demo - Auto Scaling in DynamoDB](#demo---auto-scaling-in-dynamodb)
+- [Demo - Auto-Archiving using TTL and Lambda](#demo---auto-archiving-using-ttl-and-lambda)
+- [Demo - Handling Large Items in DynamoDB](#demo---handling-large-items-in-dynamodb)
+- [Demo - Caching with DAX (DynamoDB Accelerator)](#demo---caching-with-dax-dynamodb-accelerator)
+- [Demo - Backup and Restore with DynamoDB](#demo---backup-and-restore-with-dynamodb)
+- [Demo - Server-Side Encryption in DynamoDB](#demo---server-side-encryption-in-dynamodb)
+- [Demo - Logging DynamoDB API Calls With AWS CloudTrail](#demo---logging-dynamodb-api-calls-with-aws-cloudtrail)
+- [Demo - Importing and Exporting DynamoDB Data using Data Pipeline](#demo---importing-and-exporting-dynamodb-data-using-data-pipeline)
+- [Demo - Querying DynamoDB with Redshift](#demo---querying-dynamodb-with-redshift)
+- [Demo - Querying DynamoDB with Apache Hive on EMR](#demo---querying-dynamodb-with-apache-hive-on-emr)
+- [Demo - Full Text Search with CloudSearch](#demo---full-text-search-with-cloudsearch)
+- [Demo - Monitoring DynamoDB with CloudWatch](#demo---monitoring-dynamodb-with-cloudwatch)
+- [Demo - Fine Grained Access Control in DynamoDB using IAM](#demo---fine-grained-access-control-in-dynamodb-using-iam)
+- [Course Project - Part 1 - Build REST API to interact with DynamoDB](#course-project---part-1---build-rest-api-to-interact-with-dynamodb)
+- [Course Project - Part 2 - Integrate Web App (SPA) with DynamoDB Backend](#course-project---part-2---integrate-web-app-spa-with-dynamodb-backend)
+- [Course Project - Part 3 - Integrate Mobile Apps with DynamoDB Backend](#course-project---part-3---integrate-mobile-apps-with-dynamodb-backend)
 
 -------
 
@@ -140,9 +159,19 @@ dynamoDB provides 2 ways to read data and they limit the result as 1 MB.
 
 * [Amazon DynamoDB 로컬 환경에서 사용하기 (feat. Docker)](https://medium.com/@byeonggukgong/using-amazon-dynamodb-in-local-environment-feat-docker-fafbb420e161)
 
-```console
+```bash
+// List tables
 $ aws dynamodb list-tables --endpoint-url http://localhost:8000
+{
+    "TableNames": [
+        "Forum",
+        "ProductCatalog",
+        "Reply",
+        "Thread"
+    ]
+}
 
+// Create table
 $ aws dynamodb create-table \
     --table-name <table-name> \
     --attribute-definitions \
@@ -154,11 +183,93 @@ $ aws dynamodb create-table \
     --provisioned-throughput \
         ReadCapacityUnits=1,WriteCapacityUnits=1 \
     --endpoint-url http://localhost:8000
+$ aws dynamodb create-table \
+    --table-name MusicCollection \
+    --attribute-definitions AttributeName=Artist,AttributeType=S AttributeName=SongTitle,AttributeType=S \
+    --key-schema AttributeName=Artist,KeyType=HASH AttributeName=SongTitle,KeyType=RANGE \
+    --provisioned-throughput ReadCapacityUnits=5,WriteCapacityUnits=5 \
+    --tags Key=Owner,Value=blueTeam \
+    --endpoint-url http://localhost:8000
+{
+    "TableDescription": {
+        "AttributeDefinitions": [
+            {
+                "AttributeName": "Artist",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "SongTitle",
+                "AttributeType": "S"
+            }
+        ],
+        "ProvisionedThroughput": {
+            "NumberOfDecreasesToday": 0,
+            "WriteCapacityUnits": 5,
+            "ReadCapacityUnits": 5
+        },
+        "TableSizeBytes": 0,
+        "TableName": "MusicCollection",
+        "TableStatus": "CREATING",
+        "KeySchema": [
+            {
+                "KeyType": "HASH",
+                "AttributeName": "Artist"
+            },
+            {
+                "KeyType": "RANGE",
+                "AttributeName": "SongTitle"
+            }
+        ],
+        "ItemCount": 0,
+        "CreationDateTime": "2020-05-26T16:04:41.627000-07:00",
+        "TableArn": "arn:aws:dynamodb:us-west-2:123456789012:table/MusicCollection",
+        "TableId": "a1b2c3d4-5678-90ab-cdef-EXAMPLE11111"
+    }
+}    
 
+// Describe table
 $ aws dynamodb describe-table
     --table-name <table-name> \
     --endpoint-url http://localhost:8000   
+$ aws dynamodb describe-table \
+    --table-name MusicCollection \
+    --endpoint-url http://localhost:8000        
+{
+    "Table": {
+        "AttributeDefinitions": [
+            {
+                "AttributeName": "Artist",
+                "AttributeType": "S"
+            },
+            {
+                "AttributeName": "SongTitle",
+                "AttributeType": "S"
+            }
+        ],
+        "ProvisionedThroughput": {
+            "NumberOfDecreasesToday": 0,
+            "WriteCapacityUnits": 5,
+            "ReadCapacityUnits": 5
+        },
+        "TableSizeBytes": 0,
+        "TableName": "MusicCollection",
+        "TableStatus": "ACTIVE",
+        "KeySchema": [
+            {
+                "KeyType": "HASH",
+                "AttributeName": "Artist"
+            },
+            {
+                "KeyType": "RANGE",
+                "AttributeName": "SongTitle"
+            }
+        ],
+        "ItemCount": 0,
+        "CreationDateTime": 1421866952.062
+    }
+}
 
+// Put item
 $ aws dynamodb put-item
     --table-name <table-name> \
     --item \
@@ -167,7 +278,37 @@ $ aws dynamodb put-item
             ... \
         }' \
     --endpoint-url http://localhost:8000     
+// item.json
+{
+    "Artist": {"S": "No One You Know"},
+    "SongTitle": {"S": "Call Me Today"},
+    "AlbumTitle": {"S": "Greatest Hits"}
+}    
+$ aws dynamodb put-item \
+    --table-name MusicCollection \
+    --item file://item.json \
+    --return-consumed-capacity TOTAL \
+    --return-item-collection-metrics SIZE \
+    --endpoint-url http://localhost:8000           
+{
+    "ConsumedCapacity": {
+        "TableName": "MusicCollection",
+        "CapacityUnits": 1.0
+    },
+    "ItemCollectionMetrics": {
+        "ItemCollectionKey": {
+            "Artist": {
+                "S": "No One You Know"
+            }
+        },
+        "SizeEstimateRangeGB": [
+            0.0,
+            1.0
+        ]
+    }
+}
 
+// Get item
 $ aws dynamodb get-item \
     --table-name <table-name> \
     --key \
@@ -176,7 +317,35 @@ $ aws dynamodb get-item \
             ... \
         }' \
     --endpoint-url http://localhost:8000   
+// key.json
+{
+    "Artist": {"S": "Acme Band"},
+    "SongTitle": {"S": "Happy Day"}
+}    
+$ aws dynamodb get-item \
+    --table-name MusicCollection \
+    --key file://key.json \
+    --return-consumed-capacity TOTAL \
+    --endpoint-url http://localhost:8000   
+{
+    "Item": {
+        "AlbumTitle": {
+            "S": "Songs About Life"
+        },
+        "SongTitle": {
+            "S": "Happy Day"
+        },
+        "Artist": {
+            "S": "Acme Band"
+        }
+    },
+    "ConsumedCapacity": {
+        "TableName": "MusicCollection",
+        "CapacityUnits": 0.5
+    }
+}
 
+// Delete item
 $ aws dynamodb delete-item \
     --table-name <table-name> \
     --key \
@@ -185,10 +354,67 @@ $ aws dynamodb delete-item \
             ... \
         }'
     --endpoint-url http://localhost:8000    
+// key.json
+{
+    "Artist": {"S": "No One You Know"},
+    "SongTitle": {"S": "Scared of My Shadow"}
+}    
+$ aws dynamodb delete-item \
+    --table-name MusicCollection \
+    --key file://key.json \
+    --return-values ALL_OLD \
+    --return-consumed-capacity TOTAL \
+    --return-item-collection-metrics SIZE \
+    --endpoint-url http://localhost:8000           
+{
+    "Attributes": {
+        "AlbumTitle": {
+            "S": "Blue Sky Blues"
+        },
+        "Artist": {
+            "S": "No One You Know"
+        },
+        "SongTitle": {
+            "S": "Scared of My Shadow"
+        }
+    },
+    "ConsumedCapacity": {
+        "TableName": "MusicCollection",
+        "CapacityUnits": 2.0
+    },
+    "ItemCollectionMetrics": {
+        "ItemCollectionKey": {
+            "Artist": {
+                "S": "No One You Know"
+            }
+        },
+        "SizeEstimateRangeGB": [
+            0.0,
+            1.0
+        ]
+    }
+}
 
+// Delete table
 $ aws dynamodb delete-table \
     --table-name <table-name> \
     --endpoint-url http://localhost:8000    
+$ aws dynamodb delete-table \
+    --table-name MusicCollection \
+    --endpoint-url http://localhost:8000    
+{
+    "TableDescription": {
+        "TableStatus": "DELETING",
+        "TableSizeBytes": 0,
+        "ItemCount": 0,
+        "TableName": "MusicCollection",
+        "ProvisionedThroughput": {
+            "NumberOfDecreasesToday": 0,
+            "WriteCapacityUnits": 5,
+            "ReadCapacityUnits": 5
+        }
+    }
+}        
 ```
 
 ## Examples of Schema Design
@@ -651,3 +877,42 @@ customer = "John" and country_state_city BEGINS_WITH "US | CA |"
 * Eventually Consistent Read Replicas
 
 ## Ways to Lower DynamoDB Costs
+
+# Advanced DynamoDB
+
+# Hands-on Demos and Projects - An Overview
+
+# Demo - Cross Region Replication in DynamoDB using Global Tables
+
+# Demo - Auto Scaling in DynamoDB
+
+# Demo - Auto-Archiving using TTL and Lambda
+
+# Demo - Handling Large Items in DynamoDB
+
+# Demo - Caching with DAX (DynamoDB Accelerator)
+
+# Demo - Backup and Restore with DynamoDB
+
+# Demo - Server-Side Encryption in DynamoDB
+
+# Demo - Logging DynamoDB API Calls With AWS CloudTrail
+
+# Demo - Importing and Exporting DynamoDB Data using Data Pipeline
+
+# Demo - Querying DynamoDB with Redshift
+
+# Demo - Querying DynamoDB with Apache Hive on EMR
+
+# Demo - Full Text Search with CloudSearch
+
+# Demo - Monitoring DynamoDB with CloudWatch
+
+# Demo - Fine Grained Access Control in DynamoDB using IAM
+
+# Course Project - Part 1 - Build REST API to interact with DynamoDB
+
+# Course Project - Part 2 - Integrate Web App (SPA) with DynamoDB Backend
+
+# Course Project - Part 3 - Integrate Mobile Apps with DynamoDB Backend
+
