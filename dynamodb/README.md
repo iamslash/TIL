@@ -1108,7 +1108,53 @@ customer = "John" and country_state_city BEGINS_WITH "US | CA |"
 # Demo - Cross Region Replication in DynamoDB using Global Tables
 
 * Cross Region Replicationw with Global Tables
-* 
+
+This is an example to put, get of global tables.
+  
+```js
+const AWS = require("aws-sdk");
+AWS.config.update({ region: 'us-west-2' });
+
+const docClient = new AWS.DynamoDB.DocumentClient();
+const newRegion = 'eu-central-1';
+const docClient_2 = new AWS.DynamoDB.DocumentClient({region: newRegion});
+
+docClient.put({
+    TableName: 'global_td_notes',
+    Item: {
+        user_id: 'ABC',
+        timestamp: 5,
+        title: 'ABC title',
+        content: 'ABC content'
+    }
+}, (err, data)=>{
+    if(err) {
+        console.log(err);
+    } else {
+        console.log(data);
+        console.log('Put operation successful in', AWS.config.region);
+
+        setTimeout(()=>{
+            // AWS.config.update({ region: 'eu-central-1' });
+
+            docClient_2.get({
+                TableName: "global_td_notes",
+                Key: {
+                    user_id: 'ABC',
+                    timestamp: 5
+                }
+            }, (err, data)=>{
+                if(err) {
+                    console.log(err);
+                } else {
+                    console.log('Getting the item from', newRegion);
+                    console.log(data);
+                }
+            });
+        }, 3000);
+    }
+});
+```
 
 # Demo - Auto Scaling in DynamoDB
 
