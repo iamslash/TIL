@@ -270,6 +270,7 @@ $ aws dynamodb describe-table \
 }
 
 // Put item
+// Put item will delete and add item
 $ aws dynamodb put-item
     --table-name <table-name> \
     --item \
@@ -456,6 +457,7 @@ $ aws dynamodb query \
 }
 
 // Update item
+// Update item will update some of attributes
 // key.json
 {
     "Artist": {"S": "Acme Band"},
