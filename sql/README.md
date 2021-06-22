@@ -19,6 +19,7 @@
   - [Select Top](#select-top)
   - [Min, Max](#min-max)
   - [Count, Avg, Sum](#count-avg-sum)
+  - [Conditional Aggregate Functions](#conditional-aggregate-functions)
   - [Like](#like)
   - [Wildcards](#wildcards)
   - [In](#in)
@@ -426,7 +427,13 @@ SELECT SUM(Quantity)
   FROM OrderDetails;
 ```
 
-**condition inside SUM, COUNT** [Using Condition Inside COUNT() In SQL Server](https://www.mytecbits.com/microsoft/sql-server/using-condition-inside-count)
+## Conditional Aggregate Functions
+
+* [CONDITIONAL AGGREGATE FUNCTIONS MAGIC IN MYSQL](https://www.sobstel.org/blog/conditional-aggregate-functions-magic-in-mysql/)
+* [12.20.1 Aggregate Function Descriptions @ mysql](https://dev.mysql.com/doc/refman/8.0/en/aggregate-functions.html)
+* [Using Condition Inside COUNT() In SQL Server](https://www.mytecbits.com/microsoft/sql-server/using-condition-inside-count)
+
+----
 
 `WHERE` 를 사용하지 못하면 COUNT, SUM 과 같은 aggregate function 에 condition 을 argument 로 전달할 수 있다. 단, `COUNT` 는 0 대신 NULL 을 사용해야한다.
 
@@ -441,7 +448,15 @@ SELECT SUM(Quantity)
      FROM accounts;
 
    SELECT 'Low Salary' AS category, 
+          SUM(IF(income < 20000, 1, 0)) AS accounts_count
+     FROM accounts;
+
+   SELECT 'Low Salary' AS category, 
           COUNT(CASE WHEN income < 20000 THEN 1 ELSE NULL END) AS accounts_count
+     FROM accounts; 
+
+   SELECT 'Low Salary' AS category, 
+          COUNT(NULLIF(income >= 20000, 1)) AS accounts_count
      FROM accounts; 
 
    SELECT 'Low Salary' AS category, 
