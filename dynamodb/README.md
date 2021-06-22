@@ -50,7 +50,11 @@
     - [Best Practices for GSIs](#best-practices-for-gsis)
   - [Ways to Lower DynamoDB Costs](#ways-to-lower-dynamodb-costs)
 - [Advanced DynamoDB](#advanced-dynamodb)
-- [Hands-on Demos and Projects - An Overview](#hands-on-demos-and-projects---an-overview)
+  - [Auto Scaling in DynamoDB](#auto-scaling-in-dynamodb)
+  - [DynamoDB Accelerator (DAX)](#dynamodb-accelerator-dax)
+  - [DynamoDB Streams and DynamoDB Triggers with AWS Lambda](#dynamodb-streams-and-dynamodb-triggers-with-aws-lambda)
+  - [Time to Live (TTL) in DynamoDB](#time-to-live-ttl-in-dynamodb)
+  - [Global Tables in DynamoDB](#global-tables-in-dynamodb)
 - [Demo - Cross Region Replication in DynamoDB using Global Tables](#demo---cross-region-replication-in-dynamodb-using-global-tables)
 - [Demo - Auto Scaling in DynamoDB](#demo---auto-scaling-in-dynamodb)
 - [Demo - Auto-Archiving using TTL and Lambda](#demo---auto-archiving-using-ttl-and-lambda)
@@ -1006,11 +1010,105 @@ customer = "John" and country_state_city BEGINS_WITH "US | CA |"
 
 ## Ways to Lower DynamoDB Costs
 
+* DynamoDB Pricing
+  * Provisioned Throughput (RCU, WCU)
+  * Data Storage
+  * Data Transfer
+  * Global Tables
+  * Backups
+  * DAX
+  * Streams
+
+* Optimizing DynamoDB Costs
+  * Use Sparse Indexes
+  * Project Fewer Attributes
+  * Design for Uniform Workloads
+  * Use Compression
+  * Avoid Scans and Filters
+  * Archive Old Data
+  * Use Eventual Consistency
+  * Choose Low-Cost Region
+  * Use Auto-Scaling
+  * Leverage Reserved Capacity
+
 # Advanced DynamoDB
 
-# Hands-on Demos and Projects - An Overview
+## Auto Scaling in DynamoDB
+
+## DynamoDB Accelerator (DAX)
+
+* DaynamoDB Accelerator (DAX)
+  * In-Memory Caching
+  * Microsecond Latency
+
+* Benefits of DAX
+  * Cost Savings
+  * Microsecond Latency
+  * Helps Prevent Hot Partitions
+  * Minimum Code Changes
+
+* Limitations of DAX
+  * Only Eventual Consistency
+  * Not for Write-Heavy Applications
+
+* DAX Cluster
+
+* DAX Caches
+  * Item Cache
+    * Index Reads: GetItem, BatchGetItem
+    * Default TTL: 5 Min
+  * Query Cache
+    * Reads: Query, Scan
+    * Default TTL: 5 Min
+
+* "Write-through" Approach
+* "Write-around" Approach
+
+## DynamoDB Streams and DynamoDB Triggers with AWS Lambda
+
+* DynamoDB Streams
+  * Item 에 변화가 생기면 그 item 의 event 를 처리할 수 있다. 예를 들어 AWS Lambda 에서 event 를 처리할 수 있다.
+  * 24 Hours Time-ordered Log
+  * Replication
+  * Archival
+  * Notifications
+  * Logging
+
+* DynamoDB Streams Integration
+  * Kinesis Adapter + KCL
+  * DynamoDB Streams SDK
+  * AWs Lambda Triggers
+
+## Time to Live (TTL) in DynamoDB
+
+* Time to Live (TTL)
+  * Defines expiry timestamp of the table item (EPOCH or UNIX  timestamp)
+  * Items marked for deletion on expiry
+  * Expired items are removed from the table and indexes within about 48 hrs
+  * Application should use filter operations to exclude items marked for deletion
+
+* Time Series Data
+  * TTL 을 유용하게 사용할 수 있다.
+  * 지워진 data 는 AWs Lambda 를 이용하여 다른 table 로 backup 할 수 있다.
+
+## Global Tables in DynamoDB
+
+* Global Tables provide an automatic multi master cross region replication to aid diverse regions the world.
+  * Tables must be empty across regions
+  * Only one replica per region
+  * Same table name and keys across regions
+  * Streams enabled with new and old images
+  * Internal use attribute prefix `aws:rep:`
+  * Near real-time replication
+  * Eventual consistency for cross-region reads
+  * Strong consistency for same region reads
+  * "Last writer wins" approach for conflict resolution
+  * identical settings for Table and indexes across regions
 
 # Demo - Cross Region Replication in DynamoDB using Global Tables
+
+* Cross Region Replicationw with Global Tables
+* 
 
 # Demo - Auto Scaling in DynamoDB
 
