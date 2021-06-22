@@ -1679,13 +1679,148 @@ exports.handler = (event, context, callback) => {
 
 # Demo - Backup and Restore with DynamoDB
 
+* DynamoDB On-Demand Backup and Restore
+  * Encrypted
+  * Cataloged
+  * Discoverable
+  * Highly Scalable
+  * No Capacity Consumption
+
+* Scheduled Periodic Backups in DynamoDB
+  * CloudWatch Triggers -> AWS Lambda
+
+This is an example of AWS Lambda for periodic backup.
+
+```js
+// index.js
+const AWS = require("aws-sdk");
+AWS.config.update({ region: 'us-west-2' });
+
+const _ = require("underscore");
+const moment = require("moment");
+
+const dynamodb = new AWS.DynamoDB();
+
+exports.handler = (event, context, callback) => {
+    event.Records.forEach((record)=>{
+        dynamodb.listBackups({
+            TableName: record.TableName
+        }, (err, data)=>{
+            if(err) {
+                console.log(err);
+            } else {
+                let backups = _.sortBy(data.BackupSummaries, 'BackupCreationDateTime');
+                let backupsToRemove = record.RetentionCount - 1;
+                backups.splice(-backupsToRemove, backupsToRemove);
+
+                backups.forEach((backup)=>{
+                    dynamodb.deleteBackup({
+                        BackupArn: backup.BackupArn
+                    }, (err, data)=>{
+                        if(err) {
+                            console.log(err);
+                        } else {
+                            console.log(data);
+                        }
+                    });
+                });
+
+                dynamodb.createBackup({
+                    TableName: record.TableName,
+                    BackupName: record.TableName + '_' + moment().unix()
+                }, (err, data)=>{
+                    if(err) {
+                        console.log(err);
+                    } else {
+                        console.log(data);
+                    }
+                });
+            }
+        });
+    });
+    callback(null, "Execution Successful");
+}
+```
+
+* Continuous Backups with Point-in-Time Recovery
+
 # Demo - Server-Side Encryption in DynamoDB
+
+* Server-Side Encryption at Rest
+  * dynamoDB uses 256-encryption key provided by AWs KMS.
+  * If you once enabled encryption, you can not rollback it.
 
 # Demo - Logging DynamoDB API Calls With AWS CloudTrail
 
+* Logging DynamoDB API Calls with AWS CloudTrail
+
+You can check decryption with AWS KMS after making a CloudTrail.
+
 # Demo - Importing and Exporting DynamoDB Data using Data Pipeline
 
+* Exporting DynamoDB Data using Data Pipeline
+  * AWS Data Pipeline -> Amazon S3
+  * AWS Data Pipeline internally use EMR
+
+* Importing DynamoDB Data using Data Pipeline
+  * AWS Data Pipeline <- Amazon S3
+  * AWS Data Pipeline internally use EMR
+ 
 # Demo - Querying DynamoDB with Redshift
+
+* Querying DynamoDB with Redshift
+  * dynamoDB - Amazon Redshift - SQL WORKBENCH
+  * This is not a way for realtime query.
+  * You can use Apache HIVE on EMR for realtime query.
+
+This is an SQL example from Redshift.
+
+```sql
+select * from information_schema.tables;
+
+create table td_notes_test_rs (
+  user_id varchar(50),
+  timestamp int,
+  cat varchar(20),
+  title varchar(50),
+  content varchar(300),
+  note_id varchar(50),
+  username varchar(50)
+);
+
+select * from td_notes_test_rs;
+
+copy td_notes_test_rs from 'dynamodb://td_notes_test'
+readratio 100
+iam_role 'PUT_REDSHIFT_DYNAMODB_ROLE_ARN_HERE'
+;
+
+select * from td_notes_test_rs;
+
+select user_id, count(note_id) from td_notes_test_rs 
+group by user_id;
+
+create table td_notes_test_rs_2 (
+  user_id varchar(50),
+  timestamp int,
+  cat varchar(20),
+  title varchar(50),
+  content varchar(300),
+  note_id varchar(50),
+  user_name varchar(50)
+);
+
+copy td_notes_test_rs_2 from 'dynamodb://td_notes_test'
+readratio 100
+iam_role 'PUT_REDSHIFT_DYNAMODB_ROLE_ARN_HERE'
+;
+
+select n1.user_id as n1_user_id, n2.*
+from td_notes_test_rs as n1 
+inner join td_notes_test_rs_2 as n2
+on n1.user_id=n2.user_id and n1.timestamp = n2.timestamp
+;
+```
 
 # Demo - Querying DynamoDB with Apache Hive on EMR
 
