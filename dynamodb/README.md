@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Install with docker](#install-with-docker)
 - [Basic](#basic)
@@ -75,6 +76,11 @@
 dynamoDB 는 10 밀리초 미만의 성능을 제공하는 key-value document DB 이다. 하루에 10 조개 이상의 요청을 처리할 수 있고, 초당 2,000 만개 이상의 피크 요청을 지원한다.
 
 Transaction 을 지원한다???
+
+# References
+
+* [AWS DynamoDB - The Complete Guide (Build 18+ Hands On Demos) @ udemy](https://www.udemy.com/course/dynamodb/)
+  * 최고의 유료 강좌
 
 # Materials
 
