@@ -867,11 +867,113 @@ $ aws dynamodb describe-table
 
 ## Architecture
 
+* DynamoDB Partitions
+  * 1 partition : 10 GB SSD, 3000 RCUs, 1000 WCUs
+* Automatic Synchronous Replication
+  * 3 copies of data within a region
+  * Act as independent Failure Domains
+  * Near Real-time Replication
+* [Consistent Hashing](/consistenthasing/README.md)
+  * `hash = f(Partition Key, Size)`
+
 ## Partition in Depth
+
+* DynamoDB Partitions
+  * 1 partition : 10 GB SSD, 3000 RCUs, 1000 WCUs
+  * `P_T = Round up [(RCUs/3000) + (WCUs/1000)]`
+  * `P_S = Round up [(Storage Required in GB / 10 GB)]`
+  * `P = max(P_T, P_S)`
+* Example 1
+  * `1000 RCUs, 500 WCUs, 5 GB`
+  * `P_T = Round up [(1000/3000) + (500/1000)]`
+  * `P_T = 1`
+  * `P_S = Round up [(5GB/10GB)]`
+  * `P_S = Round up [0.5]`
+  * `P_S = 1`
+  * `P = max(1, 1)`
+  * `P = 1`
+* Example 2
+  * `1000 RCUs, 500 WCUs, 50 GB`
+  * `P_T = Round up [(1000/3000) + (500/1000)]`
+  * `P_T = 1`
+  * `P_S = Round up [(50 GB/10 GB)]`
+  * `P_S = Round up [5]`
+  * `P_S = 5`
+  * `P = max(1, 5)`
+  * `P = 5`
+* Example 3
+  * `1000 RCUs, 500 WCUs, 500 GB`
+  * `P_T = Round up [(1000/3000) + (500/1000)]`
+  * `P_T = 1`
+  * `P_S = Round up [(500 GB/10 GB)]`
+  * `P_S = Round up [50]`
+  * `P_S = 50`
+  * `P = max(1, 50)`
+  * `P = 50`
+  * The cost is very high. We need to seperate tables for cost effectiveness.
 
 ## Efficient Key Design
 
+* DynamoDB Keys
+  * Simple Keys: Partition Key
+  * Composite Keys: Partition Key + Sort Key
+  * They are should be scala types (String, Number, Binary)
+* Efficient Key Design
+  * Data Distribution
+    * Ensure uniform distribution of data across partitions
+    * Use as many unique values for partition key as possible
+  * Read/Write patterns
+    * RCUs and WCUs get equally distributed between the partitions
+    * Prevent hot partitions
+    * Ensure uniform utilization of RCUs and WCUs
+  * Time Series Data
+    * Segragate hot and cold data in to separate tables
+  * Scan Operations and Filters
+    * Always prefer query operations
+    * Choose keys and indexes so as to avoid scan operations and filters
+* Secondary Indexes
+  * Local Secondary Indexes
+    * Same Partition Key as the Table Index
+    * Use Table Throughput (Capacity Units)
+    * Max Limit = 5
+  * Global Secondary Indexes
+    * Different Partition Key than the Table Indexes
+    * Uses its own Throughput (Capacity Units)
+    * Max Limit = 5
+* When to choose?
+  * Local Secondary Indexes
+    * When application needs **same partition key** as the table
+    * When you need to **avoid additional costs**
+    * When appliation needs **strongly consistent index reads**
+  * Global Secondary Indexes
+    * When appliation needs **different or same partition key** as the table
+    * When application needs **finer throughput control**
+    * When application only needs **eventually consistent index reads**
+* Item Size
+  * Max size per Item = 400 KB
+  * Prefer Shorter (yet intuitive) attribute names over long and descriptive ones
+* Index Attribute Size for string and binary data types
+  * Max size of simple partition key = 2 KB
+  * Max size of composite partition key = 1 KB
+  * Max size of sort key = 1 KB
+* Summary
+  * Partition key should have many unique values
+  * Uniform distribution of Read/Write operations across partitions
+  * Store hot and cold data in separate tables
+  * Consider all possible query patterns to eliminate use of scan operations and filters
+  * Choose sort key depending on your application's needs
+  * Use indexes based on when your application's query patterns
+  * Use primary key or local secondary indexes when strong consistency is desired
+  * Use global secondary index for finer control over throughput or when your application needs to query using a different partition key
+  * Use shorter attribute names
+
 ## Hot Partitions
+
+특정 Partition 으로 data 가 집중될 때 그 partition 을 hot partition 이라고 한다.
+
+예를 들어 timestamp 를 partition key 로 설정한 경우를 살펴보자. 최근 timestamp 를 더욱 많이 접근할 테니 hot partition 이 발생한다. 이때 한달 단위로 table 을 나눈다면 hot partition 을 해결할 수 있다. 혹은 DAX 를 이용한 cache 가 해결책이 될 수 있다.
+
+* Write Sharding??
 
 ## Design Patterns
 
@@ -998,6 +1100,7 @@ Table items 과 JSON Documents 를 이용하여 표현할 수 있다.
 예를 들어 다음과 같이 Products table 이 있다. Products.product_id 는 Partition Key 이다. metadata 는 key value 의 모음을 JSON 으로 저장하고 있다.
 
 | product_id | metadata |
+|--|--|
 | P001 | `{type: "Electronics", model: "PQR", weith: "1.05"}` |
 | P002 | `{publisher: "ABC", type: "Electronics", model: "PQR", weith: "1.05"}` |
 
