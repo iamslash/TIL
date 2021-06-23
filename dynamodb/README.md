@@ -1984,5 +1984,8 @@ Implement back-end api server with node.js.
 
 # Course Project - Part 3 - Integrate Mobile Apps with DynamoDB Backend
 
-Implement fron-end mobile app with ionic.
-
+* Implement fron-end mobile app with ionic.
+* Implement Authentication with FireBase, AWS Cognito.
+  * Register IDC Provider in AWS IAM.
+  * Register IDC Provider in AWS Cognito.
+  * Now you can authenticate with one id thanks to AWS Cognito.
