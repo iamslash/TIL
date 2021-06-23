@@ -959,7 +959,7 @@ $ aws dynamodb describe-table
 
 예를 들어 timestamp 를 partition key 로 설정한 경우를 살펴보자. 최근 timestamp 를 더욱 많이 접근할 테니 hot partition 이 발생한다. 이때 한달 단위로 table 을 나눈다면 hot partition 을 해결할 수 있다. 혹은 DAX 를 이용한 cache 가 해결책이 될 수 있다.
 
-* Write Sharding??
+[Write Sharding](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-sharding.html) 을 이용하여 data 들이 partition 들에 공평하게 분포되도록 한다.
 
 ## Design Patterns
 
@@ -1209,7 +1209,7 @@ customer = "John" and country_state_city BEGINS_WITH "US | CA |"
 * Uniform Data Access
   * We should design our tables and access patterns so as to prevent hot partitions
 * Time Series Data
-* Write Sharding
+* [Write Sharding](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/bp-partition-key-sharding.html)
 * Burst Capacity
   * 300 seconds
   * For occasional spikes
@@ -1232,23 +1232,23 @@ customer = "John" and country_state_city BEGINS_WITH "US | CA |"
 
 * Best Practices for Read Operations
 
-* Avoid Scans
-* Avoid Filters
-* Use Eventual Consistency
+  * Avoid Scans
+  * Avoid Filters
+  * Use Eventual Consistency
 
 * Best practices for LSIs
 
-* Use LSIs Sparingly
-* Project Fewer Attributes
-* Use Sparse Indexes
-* Watch for Expanding Item Collections
+  * Use LSIs Sparingly
+  * Project Fewer Attributes
+  * Use Sparse Indexes
+  * Watch for Expanding Item Collections
 
 * Best Practices for GSIs
 
-* Design for Uniform Workloads
-* Use Sparse Indexes
-* Project Fewer Attributes
-* Eventually Consistent Read Replicas
+  * Design for Uniform Workloads
+  * Use Sparse Indexes
+  * Project Fewer Attributes
+  * Eventually Consistent Read Replicas
 
 * Ways to Lower DynamoDB Costs
 
