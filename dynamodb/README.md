@@ -1963,11 +1963,26 @@ exports.handler = (event, context, callback) => {
 
 # Demo - Monitoring DynamoDB with CloudWatch
 
+Use AWS CloudWatch for monitoring DynamoDB.
+
 # Demo - Fine Grained Access Control in DynamoDB using IAM
+
+Use AWS IAM for handling access control.
 
 # Course Project - Part 1 - Build REST API to interact with DynamoDB
 
+Implement back-end api server with node.js.
+
 # Course Project - Part 2 - Integrate Web App (SPA) with DynamoDB Backend
 
+* Implement front-end SPA with angular.js.
+* Implement Authentication with Google API Server, AWS Cognito. 
+  * AWs Cognito will manage user, credentials.
+* Implement Authorization with AWS Cognito, AWS IAM roles.
+  * Make an AWs IAM role with custom policies which prevent to access other user's contents.
+* Deploy node.js back-end, front-end on AWs Elastic BeansTalk.
+
 # Course Project - Part 3 - Integrate Mobile Apps with DynamoDB Backend
+
+Implement fron-end mobile app with ionic.
 
