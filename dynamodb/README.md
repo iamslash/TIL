@@ -2,15 +2,19 @@
 - [References](#references)
 - [Materials](#materials)
 - [Install with docker](#install-with-docker)
-- [Basic](#basic)
+- [Background Concepts - SQL, NoSQL](#background-concepts---sql-nosql)
+  - [Basics of NoSQL Databases](#basics-of-nosql-databases)
+  - [Types of NoSQL DataBases](#types-of-nosql-databases)
+- [Basics](#basics)
   - [Features](#features)
     - [Table Structure](#table-structure)
     - [Data Types](#data-types)
     - [Table Index](#table-index)
     - [Secondary Index](#secondary-index)
     - [Consistency](#consistency)
-    - [Provisioned Throughput](#provisioned-throughput)
+    - [Capacity Units](#capacity-units)
     - [Read Data](#read-data)
+    - [Partitions](#partitions)
   - [AWS CLI commands](#aws-cli-commands)
   - [Examples of Schema Design](#examples-of-schema-design)
     - [Fruits](#fruits)
@@ -21,6 +25,10 @@
       - [FriendsLeaderboard](#friendsleaderboard)
       - [Query](#query-1)
 - [DynamoDB Data Modeling & Best Practices](#dynamodb-data-modeling--best-practices)
+  - [Architecture](#architecture)
+  - [Partition in Depth](#partition-in-depth)
+  - [Efficient Key Design](#efficient-key-design)
+  - [Hot Partitions](#hot-partitions)
   - [Design Patterns](#design-patterns)
     - [One-to-one](#one-to-one)
     - [One-to-Many](#one-to-many)
@@ -105,7 +113,71 @@ $ docker pull amazon/dynamodb-local
 $ docker run -d -p 8000:8000 --rm --name my-dynamodb amazon/dynamodb-local
 ```
 
-# Basic
+# Background Concepts - SQL, NoSQL
+
+## Basics of NoSQL Databases
+
+* [SQL vs NoSQL @ TIL](/systemdesign/practices/SQLvsNoSQL.md)
+
+----
+
+* NoSQL Databases
+  * Not-Only-SQL
+  * Non-relational in nature
+  * Support unstructured data
+  * Well suited for big data applications
+
+* Big Data has 3 Vs.
+  * Volume: Large volumes of data
+  * Veocity: a huge number of concurrent read/write operations in real time.
+  * Variety: largely unstructured or semi structured data.
+
+* Data Model comparison
+  * SQL
+    * Strict Schema
+    * Predefined Set of Columns
+    * Each record has some number of columns
+  * NoSQL
+    * Flexible Schema
+    * Unstructured data
+    * Different records can have different number of columns
+
+* ACID Behavior [ACID Behavior @ TIL](/database/README.md#acid-behavior)
+  * Atomicity
+  * Consistency
+  * Isolation
+  * Durability
+
+* ACID Behavior comparison
+  * SQL
+    * Enforces strict ACID properties
+    * Loss of flexibility
+  * NoSQL
+    * Trades some ACID properties
+    * Flexible data model
+
+* Scaling comparison
+  * SQL
+    * Vertical Scaling
+    * Scale by adding more power. ex) faster hardward, CPU, RAM, etc...
+  * NoSQL 
+    * Horizontal Scaling
+    * Scale by adding more machines. ex) partitions, low cost hardware.
+
+* Interaction APIs
+  * SQL 
+    * Uses SQL (Structured Query Language).
+  * NoSQL
+    * Uses Object-bases APIs.
+
+## Types of NoSQL DataBases
+
+* Wide-Column Databases : Cassandra, HBase
+* Key-Value Stores : Redis, Voldemort, **DynamoDB**
+* Graph Databases : Neo4J, InfiniteGraph
+* Document Databases : CouchDB, MongoDB, **DynamoDB**
+
+# Basics
 
 ## Features
 
@@ -128,17 +200,32 @@ $ docker run -d -p 8000:8000 --rm --name my-dynamodb amazon/dynamodb-local
 
 ### Table Index
 
-Table Index 는 Primary Key 와 같다. Primary Key 는 Hash key, Hash-Range key 두가지가 있다. 
-
+* Manadatory Primary Key - Either simple or composite
+* Simple Primary Key -> Only Partition or Hash Key
+* Composite Primary Key -> Partition Key + Sort or Range Key
+* Partition or Hash Key decides the target partition
 * **Hash Key** : Attribute 하나를 Key 로 사용한다. Scala Data Type 만 가능하다. Multi Valued Type 은 불가능하다.
 * **Hash-Range Key** : Attribute 두개를 Key 로 사용한다. 첫번째 속성은 Hash Key 로 사용하고 두번째 속성은 Range Key 로 사용한다. Hash Key 와 Range Key 를 합한 것이다.
 
 ### Secondary Index
 
-Primary Key 이외의 Index 를 Secondary Index 라고 한다. Primary Key 만으로는 검색기능이 부족하다. Secondary Index 는 사용이 빈번하기 때문에 성능을 위해 읽기/쓰기 용량 유닛을 따로 설정할 수 있다. Local Secondary Index 와 Global Secondary Index 가 있다.
+Primary Key 이외의 Index 를 Secondary Index 라고 한다. Primary Key 만으로는 검색기능이 부족하다. **Local Secondary Index** 와 **Global Secondary Index** 가 있다.
 
-* **Local Secondary Index** : 하나의 Partition 에서만 유효한 Index 이다. Hash key 는 Table Index 의 Hash Key 와 같다. Range key 는 다르게 설정한다. Table 당 5 개 까지 가능하다. Table 이 생성될 때 생성해야 한다. Table 이 생성된 후 추가, 수정, 삭제가 불가능하다. Table 의 Index 설정화면에서 Hash and Range Key 를 선택할 때만 생성할 수 있다.
-* **Global Secondary Index** : 여러개의 Partition 에 걸쳐서 유효한 Index 이다. Hash Key, Range Key 모두 Table Index 와 다르게 설정한 것이다. Range Key 는 생략가능하다. Table 당 5 개 까지 가능하다. Table 이 생성될 때 생성해야 한다. Table 이 생성된 후 추가, 수정, 삭제가 불가능하다. 
+* **Local Secondary Index** : 하나의 Partition 에서만 유효한 Index 이다.   
+  * Hash key 는 Table Index 의 Hash Key 와 같다. Range key 는 다르게 설정한다. 
+  * Table 당 5 개 까지 가능하다. 
+  * Table 이 생성될 때 생성해야 한다. Table 이 생성된 후 추가, 수정, 삭제가 불가능하다. 
+  * Eventual Consistent Read, Strong Consistent Read 를 지원한다. 
+  * Table 의 Index 설정화면에서 Hash and Range Key 를 선택할 때만 생성할 수 있다.
+  * RCUs, WCUs 는 Table 과 공유한다.
+* **Global Secondary Index** : 여러개의 Partition 에 걸쳐서 유효한 Index 이다.
+  * Hash Key, Range Key 모두 Table Index 와 다르게 설정한 것이다. Range Key 는 생략가능하다. 
+  * Table 당 5 개 까지 가능하다. 
+  * Table 이 생성된 후 추가, 수정, 삭제가 가능하다??? 
+  * Eventual Consistent Read 만 지원한다. 
+  * RCUs, WCUs 는 Table 과 달리 별도로 지정할 수 있다.
+  * Table 에 item 이 추가되면 Asynchronously 하게 Global Secondary Index 가 만들어진다. 즉, Background 에서 Indexing 한다.
+  * Global Secondary Partition Key 는 중복될 수 있다.
 
 ### Consistency
 
@@ -147,16 +234,52 @@ DynamoDB provides 2 kinds of consistency.
 * **Strongly Consistent Read** : 최근 완료된 쓰기결과가 모두 반영된 데이터를 읽는다.
 * **Eventually Consistent Read** : 최근 완료된 쓰기결과가 반영되지 못했을 수 있다. 쓰기가 데이터의 모든 복사본에 반영되는 것은 1 초 내에 이루어진다. 최신 데이터를 읽으려면 짧은 시간 내에 읽기를 반복해야 한다.
 
-### Provisioned Throughput
+### Capacity Units
 
-DynamoDB provides 2 kinds of provisioned throughputs. RCU, WCU 는 비용과 관련이 있다.
+* [Read/Write Capacity Mode @ DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadWriteCapacityMode.html)
 
-* Read Capacity Units: 초당 1KB 단위로 읽을 수 있는 능력 (Eventually Consistent Read 는 Stronly Consistent Read 보다 2 배이다.)
+----
+
+DynamoDB 는 RCU, WCU 를 이용하여 비용을 정한다. 
+
+* Read Capacity Units: 초당 4KB 단위로 읽을 수 있는 능력 (Eventually Consistent Read 는 Stronly Consistent Read 보다 2 배이다.)
 * Write Capacity Units: 초당 1KB 단위로 쓸 수 있는 능력
 
-예) 512 바이트 (1KB 로 반올림) 를 초당 200 개 항목을 읽으면(쓰면), 1KB x 200 = 200 유닛
-예) 1.5 KB (2KB로 반올림 됨) 를 초당 200 개 항목을 읽으면(쓰면), 2KB x 200 = 400 유닛
-예) Strongly Consistent Read 는 1000 읽기 용량 유닛으로 1KB 짜리 아이템을 초당 1000 번 읽을 수 있으며 Eventually Consistent Read 는 500 읽기 용량 유닛으로 1KB 짜리 아이템을 1000 번 읽을 수 있습니다.
+billing option 은 On-Demand Mode, Provisioned Mode 두가지가 있다. 24 시간에 딱 한번 billing option 을 바꿀 수 있다.
+
+* On-Demand Mode: 사용한 만큼만 지불한다.
+* Provisioned mode: RCUs, WCUs 를 미리 정한다. 이 수치는 Auto Scaling 으로 조절할 수 있다.
+
+다음은 RCUs, WCUs 의 예이다.
+
+* Example 1
+  * Average Item Size: 10KB
+  * Provisioned Capacity: 10 RCUs and 10 WCUs
+  * Read throughput with strong consistency = `4KB * 10 = 40KB/sec`
+  * Read throughput = `2(4KB * 10) = 80KB/sec`
+  * Write throughput = `1KB * 10 = 10KB/sec`
+
+* Example 2
+  * RCUs to read 10KB of data per second with strong consistency = `10KB/4KB = 2.5 => rounded up => 3 RCUs`
+  * RCUs to read 10KB of data per second = `3 RCUs * 0.5 = 1.5 RCUs`
+  * WCUs to write 10KB of data per second = `10KB / 1KB = 10 WCUs`
+  * WCUs to write 1.5KB of data per second = `1.5KB / 1KB = 1.5 => rounded up => 2 WCUs`
+
+DynamoDB 는 Traffic Spike 가 발생하면 Burst Capacity 를 적용한다.
+
+* Burst Capacity
+  * To provide for occasional bursts or spikes
+  * 5 minutes of 300 seconds of unused read and write capacity
+  * Can get consumed quickly
+  * Must not be relied upon
+
+Capacity Units 는 Scaling 될 수 있다. Table 이 아닌 Partition 에 적용된다.
+
+* Scaling
+  * Scaling Up: As and when needed
+  * Scaling Down: Up to 4 times in a day
+  * **Affects partition behavior**
+  * 1 partition supports up to **3000 RCUs and 1000 WCUs**.
 
 ### Read Data
 
@@ -164,6 +287,31 @@ dynamoDB provides 2 ways to read data and they limit the result as 1 MB.
 
 * Scan: Gather all data without condition.
 * Query: Gather data with Hash Key, Range Key conditions. Range Key can be removed.
+
+### Partitions
+
+* Overview
+  * Store DynamoDB table data
+  * A table can have multiple partitions
+  * Number of table partitions depend on its size and provisioned capacity
+  * Managed internally by DynamoDB
+  * 1 partition = **10 GB** of data
+  * 1 partition = **3000 RCUs or 1000 WCUs**
+
+* Example 1
+  * Provisioned Capacity: 500 RCUs and 500 WCus
+  * Number of Paritions  
+    ```  
+    P_T = (500 RCUs / 3000 + 500 WCUs)
+        = 0.67 => rounded up => 1 partition
+    ```    
+* Example 2
+  * Provisioned Capacity: 1000 RCUs and 1000 WCUs
+  * Number of Partitions
+    ```  
+    P_T = (1000 RCUs / 3000 + 1000 WCUs)
+        = 1.33 => rounded up => 2 partition
+    ```
 
 ## AWS CLI commands
 
@@ -716,6 +864,14 @@ $ aws dynamodb describe-table
 ```
 
 # DynamoDB Data Modeling & Best Practices
+
+## Architecture
+
+## Partition in Depth
+
+## Efficient Key Design
+
+## Hot Partitions
 
 ## Design Patterns
 
