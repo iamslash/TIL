@@ -43,20 +43,6 @@
     - [API Limits](#api-limits)
   - [Error Handling in DynamoDB](#error-handling-in-dynamodb)
   - [DynamoDB best practices](#dynamodb-best-practices)
-    - [Uniform Data Access](#uniform-data-access)
-    - [Write Sharding](#write-sharding)
-    - [Time Series Data](#time-series-data)
-    - [Burst Capacity](#burst-capacity)
-    - [DynamoDB Adaptive Capacity](#dynamodb-adaptive-capacity)
-    - [Temporary Substantial Capacity Scaling](#temporary-substantial-capacity-scaling)
-    - [Use Shorter yest Intuitive Attribute Names](#use-shorter-yest-intuitive-attribute-names)
-    - [One-to-Many Relationships](#one-to-many-relationships)
-    - [Handling Large Item Attributes](#handling-large-item-attributes)
-    - [Split Large Attributes Across Items](#split-large-attributes-across-items)
-    - [Best Practices for Read Operations](#best-practices-for-read-operations)
-    - [Best practices for LSIs](#best-practices-for-lsis)
-    - [Best Practices for GSIs](#best-practices-for-gsis)
-  - [Ways to Lower DynamoDB Costs](#ways-to-lower-dynamodb-costs)
 - [Advanced DynamoDB](#advanced-dynamodb)
   - [Auto Scaling in DynamoDB](#auto-scaling-in-dynamodb)
   - [DynamoDB Accelerator (DAX)](#dynamodb-accelerator-dax)
@@ -1039,7 +1025,7 @@ One-to-One, One-to-Many, Many-to-Many, Hierarchical Data Structures 의 경우�
 | 1002 | Physics |
 | 1003 | Economics |
 
-다음과 같이 Subjects table 를 refactoring 한다. Subjects.subject 는 Primary Partition Key 이다. Subjects.student_id 는 Primary Sort Key 이다. Subjects.student_id 는 GSI Partition Key 이다.
+다음과 같이 Subjects table 를 refactoring 한다. Subjects.subject 는 Primary Partition Key 이다. Subjects.student_id 는 Primary Sort Key 이다. Subjects.student_id 는 Primary Sort Keys, GSI Partition Key 이다.
 
 | subject_id | student_id | subject |
 |---|---|---|
@@ -1064,7 +1050,7 @@ One-to-One, One-to-Many, Many-to-Many, Hierarchical Data Structures 의 경우�
 
 ### Many-to-Many
 
-예를 들어 다음과 같이 Students Table 을 살펴보자. student_id 와 subject_id 는 many-to-many 이다. Students.student_id 는 Primary Partition Key 로 한다. Students.subject_id 는 Primary Sort Key 로 한다. Students.student_id 는 GSI Sort Key 로 한다. Students.subject_id 는 GSI Partition Key 로 한다.
+예를 들어 다음과 같이 Students Table 을 살펴보자. student_id 와 subject_id 는 many-to-many 이다. Students.student_id 는 Primary Partition Key, GSI Sort Key 로 한다. Students.subject_id 는 Primary Sort Key, GSI Partition Key 로 한다.
 
 | student_id | subject_id | subject |
 |---|---|---|
@@ -1218,56 +1204,53 @@ customer = "John" and country_state_city BEGINS_WITH "US | CA |"
 
 * [Best Practices for Designing and Architecting with DynamoDB @ aws](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/best-practices.html)
 
-### Uniform Data Access
+------
 
-### Write Sharding
-
-### Time Series Data
-
-### Burst Capacity
-
-* 300 seconds
-* For Occasional Spike
-* Not to be relied upon
-
-### DynamoDB Adaptive Capacity
-
+* Uniform Data Access
+  * We should design our tables and access patterns so as to prevent hot partitions
+* Time Series Data
+* Write Sharding
+* Burst Capacity
+  * 300 seconds
+  * For occasional spikes
+  * not to be relied upon
+* DynamoDB Adaptive Capacity
 * For Non-uniform Workloads
 * Works Automatically
 * No Guarantees
 * 5 to 30 minutes of delay
 
-### Temporary Substantial Capacity Scaling
+* Temporary Substantial Capacity Scaling
 
-### Use Shorter yest Intuitive Attribute Names
+* Use Shorter yest Intuitive Attribute Names
 
-### One-to-Many Relationships
+* One-to-Many Relationships
 
-### Handling Large Item Attributes
+* Handling Large Item Attributes
 
-### Split Large Attributes Across Items
+* Split Large Attributes Across Items
 
-### Best Practices for Read Operations
+* Best Practices for Read Operations
 
 * Avoid Scans
 * Avoid Filters
 * Use Eventual Consistency
 
-### Best practices for LSIs
+* Best practices for LSIs
 
 * Use LSIs Sparingly
 * Project Fewer Attributes
 * Use Sparse Indexes
 * Watch for Expanding Item Collections
 
-### Best Practices for GSIs
+* Best Practices for GSIs
 
 * Design for Uniform Workloads
 * Use Sparse Indexes
 * Project Fewer Attributes
 * Eventually Consistent Read Replicas
 
-## Ways to Lower DynamoDB Costs
+* Ways to Lower DynamoDB Costs
 
 * DynamoDB Pricing
   * Provisioned Throughput (RCU, WCU)
