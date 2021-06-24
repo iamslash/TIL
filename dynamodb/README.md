@@ -79,6 +79,9 @@ Transaction 을 지원한다???
 
 * [AWS DynamoDB - The Complete Guide (Build 18+ Hands On Demos) @ udemy](https://www.udemy.com/course/dynamodb/)
   * 최고의 유료 강좌
+* [The dynamoDB Book](https://www.dynamodbbook.com/?preview=true)
+  * good for data modeling
+* [DynamoDB Guide](https://www.dynamodbguide.com/)
 
 # Materials
 
@@ -89,6 +92,8 @@ Transaction 을 지원한다???
   * [DynamoDB에 맞는 데이터 구조 설계하기 @ pyrasis](http://pyrasis.com/book/TheArtOfAmazonWebServices/Chapter14/02)
   * [DynamoDB 테이블 생성하기 @ pyrasis](http://pyrasis.com/book/TheArtOfAmazonWebServices/Chapter14/03)
 * [dynamoDB CLI @ AWS](https://docs.aws.amazon.com/cli/latest/reference/dynamodb/index.html)
+* [AWS re:Invent 2019: Data modeling with Amazon DynamoDB (CMY304) @ youtube](https://www.youtube.com/watch?v=DIQVJqiSUkE)
+  * [pdf](https://d1.awsstatic.com/events/reinvent/2019/Data_modeling_with_Amazon_DynamoDB_CMY304.pdf)
 
 # Install with docker
 
