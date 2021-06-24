@@ -32,6 +32,10 @@ suspend function 은 coroutine 혹은 또 다른 suspend function 에서만 호�
   * [Coroutine Context and Scope @ medium](https://elizarov.medium.com/coroutine-context-and-scope-c8b255d59055)
   * [Notes on structured concurrency, or: Go statement considered harmful](https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/)
   * [KotlinConf 2017 - Deep Dive into Coroutines on JVM by Roman Elizarov @ youtube](https://www.youtube.com/watch?v=YrrUCSi72E8)
+* [Non-Blocking Spring Boot with Kotlin Coroutines @ baeldung](https://www.baeldung.com/kotlin/spring-boot-kotlin-coroutines)
+* [Going Reactive with Spring, Coroutines and Kotlin Flow @ spring.io](https://spring.io/blog/2019/04/12/going-reactive-with-spring-coroutines-and-kotlin-flow)
+* [코틀린(kotlin) + 스프링부트(springboot) + 웹플럭스(webflux) + 코루틴(coroutine) - 웹플럭스에서 코루틴 사용해보기](https://appleg1226.tistory.com/16)
+
 
 # Basic
 
