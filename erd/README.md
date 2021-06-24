@@ -36,5 +36,8 @@ Conceptual ERD 와 Physical ERD 가 사용하는 Symbol 은 다르다.
 * **Cardinality** : Cardinality defines the possible number of occurrences in one entity which is associated with the number of occurrences in another. ex) one-to-many, many-to-many.
   * ![](crowfeet.png)
 
-* 실선 : 엔터티의 PK 가 다른 엔터티의 PK 중 일부이다.
-* 점선 : 엔터티의 PK 가 다른 엔터티의 PK 가 아니다. FK 혹은 일반 attribute 이다.
+* **실선** : 엔터티의 PK 가 다른 엔터티의 PK 중 일부이다.
+* **점선** : 엔터티의 PK 가 다른 엔터티의 PK 가 아니다. FK 혹은 일반 attribute 이다.
+
+* **Bridge Entity** : 두개의 엔터티의 cardinality 가 `n : n` 일 때 엔터티를 하나 추가해서 cardinality 를 `1 : n, n: 1` 로 해결해 준다. 이때 추가한 entity 를 bridge entity 라고 한다.
+  
