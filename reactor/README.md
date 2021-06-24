@@ -31,6 +31,7 @@
   * [kor](https://godekdls.github.io/Reactor%20Core/contents/)
   * [Appendix A: Which operator do I need?](https://projectreactor.io/docs/core/release/reference/index.html#which-operator)
   * [Appendix B: How to read marble diagrams?](https://projectreactor.io/docs/core/release/reference/index.html#howtoReadMarbles)
+* [Testing Reactive Streams Using StepVerifier and TestPublisher @ baeldung](https://www.baeldung.com/reactive-streams-step-verifier-test-publisher)
 
 # Asynchronous VS non-blocking
 
