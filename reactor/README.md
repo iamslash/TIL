@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Asynchronous VS non-blocking](#asynchronous-vs-non-blocking)
 - [Basic](#basic)
@@ -21,6 +22,11 @@
 # Abstract
 
 [Reactor](https://projectreactor.io/) 는 [Reactive Streams @ TIL](/reactivestreams/README.md) 의 implementation 중 하나이다. Spring Webflux 는 [Reactor](https://projectreactor.io/) 를 이용하여 구현되었다.
+
+# References
+
+* [reactor-core/reactor-core/src/test/java/reactor/core/publisher/](https://github.com/reactor/reactor-core/tree/main/reactor-core/src/test/java/reactor/core/publisher)
+  * rector-core publisher 의 test code
 
 # Materials
 
