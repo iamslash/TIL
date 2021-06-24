@@ -33,6 +33,7 @@
   * [Appendix B: How to read marble diagrams?](https://projectreactor.io/docs/core/release/reference/index.html#howtoReadMarbles)
 * [Testing Reactive Streams Using StepVerifier and TestPublisher @ baeldung](https://www.baeldung.com/reactive-streams-step-verifier-test-publisher)
   * [Combining Publishers in Project Reactor @ baeldung](https://www.baeldung.com/reactor-combine-streams)
+* [Error handling with reactive streams](https://kalpads.medium.com/error-handling-with-reactive-streams-77b6ec7231ff)
 
 # Asynchronous VS non-blocking
 
