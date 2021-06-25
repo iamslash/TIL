@@ -27,11 +27,11 @@
 
 * [reactor-core/reactor-core/src/test/java/reactor/core/publisher/](https://github.com/reactor/reactor-core/tree/main/reactor-core/src/test/java/reactor/core/publisher)
   * rector-core publisher 의 test code
+* [Reactive Programming with Reactor 3 @ tech.io](https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Intro)
+  * [sol](https://gist.github.com/kjs850/a29addc92b98b51ea05a09587be34071)
 
 # Materials
 
-* [Reactive Programming with Reactor 3 @ tech.io](https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Intro)
-  * [sol](https://gist.github.com/kjs850/a29addc92b98b51ea05a09587be34071)
 * [[리액터] 리액티브 프로그래밍 1부 리액티브 프로그래밍 소개 @ youtube](https://www.youtube.com/watch?v=VeSHa_Xsd2U&list=PLfI752FpVCS9hh_FE8uDuRVgPPnAivZTY)
 * [reactor reference](https://projectreactor.io/docs/core/release/reference/)
   * [kor](https://godekdls.github.io/Reactor%20Core/contents/)
@@ -52,30 +52,46 @@ Blocking 과 Non-blocking 의 관심사는 function 이다. 즉, A function 이 
 
 # Basic
 
+* [reactor-examples @ github](https://github.com/iamslash/reactor-examples)
+
 ## Flux
 
 Flux is a publisher which implements Publisher.
 
 ```java
-//        Flux is a publisher which implements Publisher
-//        basic Flux
-        Flux<String> flux = Flux.just("foo", "bar", "baz");
-        flux.map(a -> a + " hello");
-        flux.subscribe(System.out::println);
-        // Flux from empty
-        Flux<String> flux = Flux.empty();
-        // Flux from String
-        Flux<String> flux = Flux.just("foo", "bar", "baz");
-        // Flux from Iterable
-        Flux<String> flux = Flux.fromIterable(Arrays.asList("foo", "bar", "baz"));
-        Flux.fromIterable(Arrays.asList("foo", "bar", "baz"))
-                .doOnNext(System.out::println)
-                .blockLast();
-        // take 10 elements of Flux and cancel
-        Flux.interval(Duration.ofMillis(100))
-                .take(10)
-                .subscribe(System.out::println);
-        Flux.error(new IllegalStateException());
+        Flux<String> flux = Flux.just("foo", "bar");
+        // empty
+        StepVerifier.create(Flux.empty())
+            .expectNextCount(0)
+            .verifyComplete();
+        // never
+        StepVerifier.create(Flux.never())
+            .thenCancel()
+            .verify();
+        // just
+        StepVerifier.create(flux)
+            .expectNext("foo")
+            .expectNext("bar")
+            .verifyComplete();
+        // fromIterable
+        List<String> l = Arrays.asList("foo", "bar");
+        StepVerifier.create(Flux.fromIterable(l))
+            .expectNext("foo")
+            .expectNext("bar")
+            .verifyComplete();
+        // error
+        StepVerifier.create(Flux.error(new RuntimeException()))
+            .expectError(RuntimeException.class)
+            .verify();
+        // interval, take
+        StepVerifier
+            .withVirtualTime(() -> Flux.interval(Duration.ofSeconds(1)).take(2))
+            .expectSubscription()
+            .expectNoEvent(Duration.ofSeconds(1))
+            .expectNext(0L)
+            .thenAwait(Duration.ofSeconds(1))
+            .expectNext(1L)
+            .verifyComplete();
 ```
 
 ## Mono
@@ -83,30 +99,31 @@ Flux is a publisher which implements Publisher.
 Mono is a publisher which implements Publisher.
 
 ```java
-        // Mono is a publisher which implements Publisher
-        // basic Mono
         Mono<String> mono = Mono.just("foo");
-        mono.map(a -> a + " bar baz");
-        mono.subscribe(System.out::println);
-
-        Mono<Long> delay = Mono.delay(Duration.ofMillis(100));
-        Mono.just(1l)
-                .map(i -> i * 2)
-                .or(delay)
-                .subscribe(System.out::println);
-
-        Mono.just(1)
-                .map(i -> i * 2)
-                .or(Mono.just(100))
-                .subscribe(System.out::println);
-
-        Mono<String> mono = Mono.empty();
-
-        Mono<String> mono = Mono.never();
-
-        Mono<String> mono = Mono.just("foo");
-
-        Mono.error(new IllegalStateException());
+        // empty
+        StepVerifier.create(Mono.empty())
+                .expectNextCount(0)
+                .verifyComplete();
+        // never
+        StepVerifier.create(Mono.never())
+                .thenCancel()
+                .verify();
+        // just
+        StepVerifier.create(mono)
+            .expectNext("foo")
+            .verifyComplete();
+        // error
+        StepVerifier.create(Mono.error(new RuntimeException()))
+                .expectError(RuntimeException.class)
+                .verify();
+        // map
+        StepVerifier.create(mono.map(s -> s.toUpperCase()))
+            .expectNext("FOO")
+            .verifyComplete();
+        // flatMap
+        StepVerifier.create(mono.flatMap(s -> Mono.just(s.toUpperCase())))
+            .expectNext("FOO")
+            .verifyComplete();
 ```
 
 ## StepVerifier
@@ -161,71 +178,96 @@ flatMapSequential supports sequnce with parallel.
 ![](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/doc-files/marbles/flatMapSequential.svg)
 
 ```java
-        Flux<String> flux = Flux.just("a", "b", "c", "d", "e", "f", "g", "h", "i");
-        flux
-                .map(a -> a + " 0")
-                .doOnNext(System.out::println)
-                .blockLast();
-        flux
-                .flatMap(a -> Mono.just(a + " 0"))
-                .doOnNext(System.out::println)
-                .blockLast();
-        flux
-                .window(3)
-                .flatMap(a -> a.map(this::toUpperCase))
-                .doOnNext(System.out::println)
-                .blockLast();
-        // parallel support parallel
-        flux
-                .window(3)
-                .flatMap(a -> a.map(this::toUpperCase))
-                .subscribeOn(parallel())
-                .doOnNext(System.out::println)
-                .blockLast();
-        // concatMap support sequence so parallel is no use
-        flux
-                .window(3)
-                .concatMap(a -> a.map(this::toUpperCase))
-                .subscribeOn(parallel())
-                .doOnNext(System.out::println)
-                .blockLast();
-        // flaflatMapSequential tMap support sequence with parallel.
-        flux
-                .window(3)
-                .flatMapSequential(a -> a.map(this::toUpperCase))
-                .subscribeOn(parallel())
-                .doOnNext(System.out::println)
-                .blockLast();
-
-    private List<String> toUpperCase(String s) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return Arrays.asList(s.toUpperCase(), Thread.currentThread().getName());
-    }
+        Flux<String> flux = Flux.just("foo", "bar");
+        // map
+        StepVerifier.create(flux.map(s -> s.toUpperCase()))
+            .expectNext("FOO")
+            .expectNext("BAR")
+            .verifyComplete();
+        // flatMap
+        StepVerifier.create(flux.flatMap(s -> Mono.just(s.toUpperCase())))
+            .expectNext("FOO")
+            .expectNext("BAR")
+            .verifyComplete();
+        StepVerifier.create(flux.flatMap(s -> Flux.just(s.toUpperCase())))
+            .expectNext("FOO")
+            .expectNext("BAR")
+            .verifyComplete();
 ```
 
 ## Merge
 
 ```java
-        Flux<Long> flux1 = Flux.interval(Duration.ofMillis(100)).take(10);
-        Flux<Long> flux2 = Flux.just(100l, 101l, 102l);
-        // mergeWith
-        flux1.mergeWith(flux2)
-                .doOnNext(System.out::println)
-                .blockLast();
-        // concatWith
-        flux1.concatWith(flux2)
-                .doOnNext(System.out::println)
-                .blockLast();
+        // Combining Publishers in Project Reactor
+        // https://www.baeldung.com/reactor-combine-streams
+        int min = 1, max = 5;
+        Flux<Integer> evenNumbers = Flux
+            .range(min, max)
+            .filter(x -> x % 2 == 0); // i.e. 2, 4
+        Flux<Integer> oddNumbers = Flux
+            .range(min, max)
+            .filter(x -> x % 2 > 0);  // ie. 1, 3, 5
         // concat
-        Mono<Integer> mono1 = Mono.just(1);
-        Mono<Integer> mono2 = Mono.just(2);
-        Flux.concat(mono1, mono2)
-                .doOnNext(System.out::println)
-                .blockLast();
+        StepVerifier.create(Flux.concat(evenNumbers, oddNumbers))
+            .expectNext(2, 4, 1, 3, 5)
+            .verifyComplete();
+        // concatWith
+        StepVerifier.create(evenNumbers.concatWith(oddNumbers))
+            .expectNext(2, 4, 1, 3, 5)
+            .verifyComplete();
+        // combineLatest
+        Flux<Integer> fluxOfIntegers = Flux.combineLatest(
+            evenNumbers,
+            oddNumbers,
+            (a, b) -> a + b);
+        StepVerifier.create(fluxOfIntegers)
+            .expectNext(5)  // 4 + 1
+            .expectNext(7)  // 4 + 3
+            .expectNext(9)  // 4 + 5
+            .expectComplete()
+            .verify();
+        // merge
+        // If there is no delay, interleaving will not happen.
+        StepVerifier.create(Flux.merge(evenNumbers, oddNumbers))
+            .expectNext(2, 4, 1, 3, 5)
+            .verifyComplete();
+        Flux<Integer> fluxOfDelayedIntegers = Flux.merge(
+            evenNumbers.delayElements(Duration.ofMillis(500L)),
+            oddNumbers.delayElements(Duration.ofMillis(300L))
+        );
+        StepVerifier.create(fluxOfDelayedIntegers)
+            .expectNext(1, 2, 3, 5, 4)
+            .verifyComplete();
+        // mergeSequential
+        Flux<Integer> fluxOfMergeSequentialIntegers = Flux.mergeSequential(
+            evenNumbers,
+            oddNumbers);
+        StepVerifier.create(fluxOfMergeSequentialIntegers)
+            .expectNext(2, 4, 1, 3, 5)
+            .verifyComplete();
+        // mergeDelayError
+        Flux<Integer> fluxOfMergeDelayErrorIntegers = Flux.mergeDelayError(
+            1,
+            evenNumbers.delayElements(Duration.ofMillis(500L)),
+            oddNumbers.delayElements(Duration.ofMillis(300L))
+        );
+        StepVerifier.create(fluxOfMergeDelayErrorIntegers)
+            .expectNext(1, 2, 3, 5, 4)
+            .verifyComplete();
+        // mergeWith
+        StepVerifier.create(evenNumbers.mergeWith(oddNumbers)) // .doOnNext(System.out::println)
+            .expectNext(2, 4, 1, 3, 5)
+            .verifyComplete();
+        // zip
+        Flux<Integer> fluxOfZipIntegers = Flux.zip(evenNumbers, oddNumbers, (a, b) -> a + b);
+        StepVerifier.create(fluxOfZipIntegers)
+            .expectNext(3, 7)
+            .verifyComplete();
+        // zipWith
+        Flux<Integer> fluxOfZipWithIntegers = evenNumbers.zipWith(oddNumbers, (a, b) -> a + b);
+        StepVerifier.create(fluxOfZipWithIntegers)
+            .expectNext(3, 7)
+            .verifyComplete();
 ```
 
 ## Request
@@ -325,6 +367,29 @@ Publisher 가 제공한 data 를 Subscriber 가 throttling 하는 것을 Back pr
 
                     }
                 });
+
+        Flux<Integer> flux = Flux
+            .range(1, 10)
+            .filter(x -> x % 2 == 0); // i.e. 2, 4, 6, 8, 10
+        // thenRequest
+        StepVerifier.create(flux)
+            .thenRequest(Long.MAX_VALUE)
+            .expectNextCount(5)
+            .verifyComplete();
+        // thenCancel
+        StepVerifier.create(flux)
+            .thenRequest(1)
+            .expectNext(2)
+            .thenRequest(1)
+            .expectNext(4)
+            .thenCancel();
+        // doOnSubscribe, doOnNext, doOnComplete
+        StepVerifier.create(flux
+                            .doOnSubscribe(i -> System.out.println("Started"))
+                            .doOnNext(i -> System.out.printf("%d\n", i))
+                            .doOnComplete(() -> System.out.println("Ended")))
+            .expectNextCount(5)
+            .verifyComplete();                
 ```
 
 ## Error
@@ -351,43 +416,58 @@ Publisher 가 제공한 data 를 Subscriber 가 throttling 하는 것을 Back pr
                 .onErrorResume(e -> Mono.just(2))
                 .doOnNext(System.out::println)
                 .subscribe();
-        // answer 1
-        return mono.onErrorResume(e -> Mono.just(User.SAUL));
-        // answer 2
-        return flux.onErrorResume(e -> Flux.just(User.SAUL, User.JESSE));
-        // answer 3
-        // GetOutOfHereException is checked exception because it is not decendant of RuntimeException.
-        // You can propagate the checked exception switching with the runtime exception.
-        return flux.map(u -> {
-            try {
-                return capitalizedUser(u);
-            }
-            catch (GetOutOfHereException e) {
-                throw Exceptions.propagate(e);
-            }
-        });
-        User capitalizeUser(User user) throws GetOutOfHereException {
-            if (user.equals(User.SAUL)) {
-                throw new GetOutOfHereException();
-            }
-            return new User(user.getUsername(), user.getFirstname(), user.getLastname());
-        }
-        protected final class GetOutOfHereException extends Exception {
-        }
-        Mono.just("Foo")
-                .log()
-                .map(s -> {
-                    int val = 0;
-                    try {
-                        Integer.parseInt(s);
-                    } catch (Exception e) {
-                        throw Exceptions.propagate(e);
+        // Error handling with reactive streams.
+        // https://kalpads.medium.com/error-handling-with-reactive-streams-77b6ec7231ff
+        // onErrorReturn
+        Flux<String> fluxOnErrorReturn = Flux.just("A", "B")
+            .map(a -> {
+                if (a.equals("B")) {
+                    throw new RuntimeException("ERROR");
+                }
+                return a;
+            })
+            .onErrorReturn("C");
+        StepVerifier.create(fluxOnErrorReturn)
+            .expectSubscription()
+            .expectNext("A", "C")
+            .verifyComplete();
+        // onErrorResume
+        Flux<String> fluxOnErrorResume = Flux.just("A", "B")
+            .map(a -> {
+                if (a.equals("B")) {
+                    throw new RuntimeException("ERROR");
+                }
+                return a;
+            })
+            .onErrorResume(v -> Flux.just("C"));
+        StepVerifier.create(fluxOnErrorResume)
+            .expectSubscription()
+            // expect the fallback value
+            .expectNext("A", "C")
+            .verifyComplete();
+        // Exceptions.propagate
+        Flux<String> fluxExceptionsPropagate = Flux.just("A", "B", "C")
+            .log()
+            .map(element -> {
+                try {
+                    if (element.equals("C")) {
+                        throw new IOException("Failed IO");
                     }
-                    return val;
-                })
-                .onErrorReturn(200)
-                .doOnNext(System.out::println)
-                .subscribe();
+                    return element;
+                } catch (IOException e) {
+                    // convert the checked exception to runtime (unchecked exception)
+                    throw Exceptions.propagate(e);
+                }
+            });
+        fluxExceptionsPropagate.subscribe(
+            event -> System.out.printf("event received %s\n", event.toString()),
+            error -> {
+                if (Exceptions.unwrap(error) instanceof IOException) {
+                    System.out.println("Something went wrong during I/O operation");
+                } else {
+                    System.out.println("Something went wrong");
+                }
+            });
 ```
 
 ## Adapt
@@ -420,38 +500,56 @@ Rxjava 2 와 Reactor 3 를 switching 한다. 즉, Flux 와 Flowable 를 switchin
 ## Others Operations
 
 ```java
-        // zip
-        Flux<Integer> f1 = Flux.range(0, 10);
-        Flux<Integer> f2 = Flux.range(11, 20);
-        Flux<Integer> f3 = Flux.range(21, 30);
-        Flux.zip(f1, f2, f3)
-                .map(tuple -> tuple.getT1());
-        // answer 1
-        Flux.zip(usernameFlux, firstnameFlux, lastnameFlux)
-                .map((tuple) -> new User(tuple.getT1(), tuple.getT2(), tuple.getT3()));
-        // answer 2
-        Mono.first(ono1,mono2);
-        // answer 3
-        Flux.first(flux1, flux2);
-        // answer 4
-        flux.then();
-        // answer 5
-        Mono.justOrEmpty(user);
-        // answer 6
-        mono.defaultIfEmpty(User.SKLER);
+        // https://tech.kakao.com/2018/05/29/reactor-programming/
+        // zip with Function
+        Flux<String> fooFlux = Flux.just("foo");
+        Flux<String> barFlux = Flux.just("bar");
+        Flux<String> bazFlux = Flux.just("baz");
+        StepVerifier.create(Flux.zip(arr -> (String)arr[0] + " " + (String)arr[1] + " " + (String)arr[2],
+            fooFlux, barFlux, bazFlux))
+            .expectNext("foo bar baz")
+            .verifyComplete();
+        // firstWithSignal
+        Mono<String> fooMono = Mono.just("foo");
+        Mono<String> barMono = Mono.just("bar");
+        StepVerifier.create(Mono.firstWithSignal(fooMono, barMono))
+            .expectNext("foo")
+            .verifyComplete();
+        StepVerifier.create(Flux.firstWithSignal(fooFlux, barFlux))
+            .expectNext("foo")
+            .verifyComplete();
+        // then
+        StepVerifier.create(fooMono.then())
+            .verifyComplete();
+        // justOrEmpty
+        StepVerifier.create(Mono.justOrEmpty(null))
+            .verifyComplete();
+        // defaultIfEmpty
+        StepVerifier.create(Mono.justOrEmpty(null).defaultIfEmpty("foo"))
+            .expectNext("foo")
+            .verifyComplete();
+        // collectList
+        Mono<List<Integer>> listMono = Flux.range(1, 5).collectList();
+        StepVerifier.create(listMono)
+            .expectNext(Arrays.asList(1, 2, 3, 4, 5))
+            .verifyComplete();
+        // groupBy
+        // concatMap
+        // reduce
 ```
 
 ## Reactive to Blocking
 
 ```java
-public class Part10ReactiveToBlocking {
-        User monoToValue(Mono<User> mono) {
-                return mono.block();
-        }
-        Iterable<User> fluxToValues(Flux<User> flux) {
-                return flux.toIterable();
-        }
-}
+        // block
+        Mono<String> fooMono = Mono.just("foo");
+        assertEquals(fooMono.block(), "foo");
+        // toIterable
+        Flux<String> listFlux = Flux.just("foo", "bar", "baz");
+        Iterable<String> nameBlockingIterable = listFlux.toIterable();
+        List<String> nameList = new ArrayList<>();
+        nameBlockingIterable.forEach(a -> nameList.add(a));
+        assertThat(nameList).contains("foo", "bar", "baz");
 ```
 
 ## Blocking to Reactive
@@ -462,17 +560,22 @@ subscribeOn run subscribe, onSubscribe and request on a specified Scheduler's Sc
 publishOn run onComplete and onError on a supplied Scheduler Worker. This operator influences the treading context where the rest of the operators in the chain below it will execute, up to a new occurence of publishOn.
 
 ```java
-public class Part11BlockingToReactive {
-	Flux<User> blockingRepositoryToFlux(BlockingRepository<User> repository) {
-		return Flux.defer(() -> Flux.fromIterable(repository.findAll()))
-                        .subscribeOn(Schedulers.elastic());
-	}
-	Mono<Void> fluxToBlockingRepository(Flux<User> flux, BlockingRepository<User> repository) {
-		return flux.publishOn(Schedulers.elastic())
-                        .doOnNext(repository::save)
-                        .then();
-	}
-}
+        // subscribeOn
+        // Run subscribe, onSubscribe and request on a specified scheduler
+        Flux<String> subscribeOnFlux = Flux.just("red", "white", "blue")
+//            .log()
+            .map(String::toUpperCase)
+            .subscribeOn(Schedulers.parallel());
+        StepVerifier.create(subscribeOnFlux)
+            .expectNext("RED", "WHITE", "BLUE")
+            .verifyComplete();
+        // publishOn
+        // Run onNext, onComplete and onError on a supplied scheduler
+        Flux<String> publishOnFlux =  Flux.just("red", "white", "blue")
+            .publishOn(Schedulers.boundedElastic());
+        StepVerifier.create(publishOnFlux)
+            .expectNext("red", "white", "blue")
+            .verifyComplete();
 ```
 
 # Advanced
@@ -511,4 +614,3 @@ assertThat(output).containsExactlyInAnyOrder("B", "A", "E", "L", "D", "U", "N", 
 map is a **synchronous** operator – it's simply a method that converts one value to another. This method executes in the same thread as the caller.
 
 flatMap is **asynchronous** – is not that clear. In fact, the transformation of elements into Publishers can be either synchronous or asynchronous.
-
