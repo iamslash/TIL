@@ -5,6 +5,7 @@
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
   - [Keywords](#keywords)
+  - [min max values](#min-max-values)
   - [Null safety](#null-safety)
   - [Collections compared to c++](#collections-compared-to-c)
   - [Collections](#collections)
@@ -237,6 +238,20 @@ it
 ;
 $
 _
+```
+
+## min max values
+
+```kotlin
+// int
+println(Int.MIN_VALUE);
+println(Int.MAX_VALUE);
+println(Int.MIN_VALUE - 1);
+println(Int.MAX_VALUE + 1);
+
+// float
+println(Float.MIN_VALUE);
+println(Float.MAX_VALUE);
 ```
 
 ## Null safety
