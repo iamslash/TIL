@@ -5,6 +5,7 @@
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
   - [Keywords](#keywords)
+  - [Coding Convention](#coding-convention)
   - [min max values](#min-max-values)
   - [Null safety](#null-safety)
   - [Collections compared to c++](#collections-compared-to-c)
@@ -158,7 +159,9 @@ val
 var
 when
 while
+```
 
+```kotlin
 // Soft keywords
 //   can be used as identifiers in other contexts
 by
@@ -217,7 +220,7 @@ vararg
 field
 it
 
-// Operators and special simbols
+// Operators and special symbols
 +, -, *, /, %
 =
 +=, -=, *=, /=, %=
@@ -240,6 +243,10 @@ it
 $
 _
 ```
+
+## Coding Convention
+
+* [Coding conventions](https://kotlinlang.org/docs/coding-conventions.html#verify-that-your-code-follows-the-style-guide)
 
 ## min max values
 
