@@ -2042,6 +2042,7 @@ CopyOnWriteArrayList 는 내용이 update 되면 instance 를 복제하여 updat
 * [자바 스트림(Stream) API 정리, 스트림을 이용한 가독성 좋은 코드 만들기(feat. 자바 람다, 함수형 프로그래밍, 자바8)](https://jeong-pro.tistory.com/165)
 * [자바8 스트림 API 소개](https://www.slideshare.net/madvirus/8-api)
 * [Java 8 Parallel Streams Examples](https://mkyong.com/java8/java-8-parallel-streams-examples/)
+* [[Java8] 스트림(Stream) 중간 연산자 @ velog](https://velog.io/@sa833591/Java8-%EC%8A%A4%ED%8A%B8%EB%A6%BCStream-%EC%A4%91%EA%B0%84-%EC%97%B0%EC%82%B0%EC%9E%90)
 
 ----
 
@@ -2089,13 +2090,53 @@ List<string> names = Arrays.asList("foo", "bar", "baz");
 Stream<String> a = names.stream().filter(x -> x.contains("f"));
 
 // Map
+// 기존 데이터를 수정한다.
 names.parallelStream().map(x -> return x.concat("s")).forEach(x -> System.out.println(x));
 
+// flatMap
+// 중첩 구조를 한 단계 제거하고, 단일 컬렉션으로 만들어준다.
+		String[][] namesArray = new String[][] {
+			{"foo", "hello"},
+			{"bar", "world"},
+			{"baz", "bye"},
+			{"hey", "past"}
+		};
+		Arrays.stream(namesArray)
+				.flatMap(innerArray -> Arrays.stream(innerArray))
+				.filter(name -> name.length() <= 3 )
+				.collect(Collectors.toList())
+				.forEach(System.out::println);
+// Output:		
+// foo
+// bar
+// baz
+// bye
+// hey
+
 // Peek
+// 원소 하나 처리할 때 마다 수행한다. 주로 debug 용
 names.stream().peek(System.out::println);
+		IntStream intStream1 = IntStream.of(7,5,5,2,1,2,3,5,4,6);
+		intStream1
+				.skip(2) 
+				.peek(s -> System.out.println("After skip(2): " + s)) 
+        .limit(5)
+        .forEach(n -> System.out.println(n));
+// Outputs:
+// After skip(2): 5
+// 5
+// After skip(2): 2
+// 2
+// After skip(2): 1
+// 1
+// After skip(2): 2
+// 2
+// After skip(2): 3
+// 3
 
 // Sorted
 names.stream().sorted().peek(System.out::println);
+names.stream().sorted(Comparator.reverseOrder(0)).peek(System.out::println);
 
 // Limit
 names.stream().filter(x -> return x.contains("f")).limit(1);
@@ -2107,6 +2148,7 @@ names.stream().distinct().peek(System.out::println);
 names.stream().skip(1).peek(System.out::println);
 
 // mapToInt, mapToLong, mapToDouble
+// map returns Stream object, mapToInt returns IntStream object
 List<string> nums = Arrays.asList("1", "2", "3");
 nums.stream().mapToInt().peek(System.out::println); 
 ```
