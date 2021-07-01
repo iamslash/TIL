@@ -5,9 +5,11 @@
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
   - [Keywords](#keywords)
+  - [Coding Convention](#coding-convention)
   - [min max values](#min-max-values)
   - [Null safety](#null-safety)
   - [Collections compared to c++](#collections-compared-to-c)
+  - [Multi Dimensional Array](#multi-dimensional-array)
   - [Collections](#collections)
     - [List](#list)
     - [Set](#set)
@@ -157,7 +159,9 @@ val
 var
 when
 while
+```
 
+```kotlin
 // Soft keywords
 //   can be used as identifiers in other contexts
 by
@@ -216,7 +220,7 @@ vararg
 field
 it
 
-// Operators and special simbols
+// Operators and special symbols
 +, -, *, /, %
 =
 +=, -=, *=, /=, %=
@@ -239,6 +243,10 @@ it
 $
 _
 ```
+
+## Coding Convention
+
+* [Coding conventions](https://kotlinlang.org/docs/coding-conventions.html#verify-that-your-code-follows-the-style-guide)
 
 ## min max values
 
@@ -302,6 +310,44 @@ val intList: List<Int> = nullableList.filterNotNull()
 | `unordered_multiset` | ``                                     |
 | `unordered_map`      | `Map, MutableMap, java.util.HashMap` |
 | `unordered_multimap` | ``                                     |
+
+## Multi Dimensional Array
+
+```kotlin
+    // 1d array
+    val a = Array(3, {i -> 0})
+    val b = Array(3, {0})
+    val c = IntArray(3, {i -> 0})
+    val d = IntArray(3, {0})
+    val e = arrayOf(1, 2, 3)
+    val f = intArrayOf(1, 2, 3)
+    // late initialization
+    val h = arrayOfNulls<Number>(3)
+    for (i in h.indices) {
+        h[i] = i * i
+    }
+
+    // 2d array
+    val aa = Array(3, {Array(3, {i -> 0})})
+    val bb = Array(3, {Array(3, {0})})
+    val cc = Array(3, {IntArray(3, {i -> 0})})
+    val dd = Array(3, {IntArray(3, {0})})
+    val ee = Array(3, {arrayOf(1, 2, 3)})
+    val ff = Array(3, {intArrayOf(1, 2, 3)})
+    // late initialization
+    val hh = Array(3, {arrayOfNulls<Number>(3)})
+    for (i in hh.indices) {
+        for (j in hh[0].indices) {
+            hh[i][j] = i * j
+        }
+    }
+    for (i in 0 until 3) {
+        for (j in 0 until 3) {
+            hh[i][j] = i * j
+        }
+    }
+
+```
 
 ## Collections
 
