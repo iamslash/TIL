@@ -228,11 +228,11 @@ it
 &&, ||, !
 ==, !=
 ===, !==
-<, >, <=, >=
+<, >, <=, >=         comparison op
 [, ]
-!!
+!!                   non-null assertion op
 ?.
-?:
+?:                   elvis op
 ::
 ..
 :
@@ -313,7 +313,11 @@ val intList: List<Int> = nullableList.filterNotNull()
 
 ## Multi Dimensional Array
 
+* `Array<Int>` is same with `Integer[]` of java.
+* `IntArray` is same with `int[]` of java.
+
 ```kotlin
+    
     // 1d array
     val a = Array(3, {i -> 0})
     val b = Array(3, {0})
@@ -347,6 +351,10 @@ val intList: List<Int> = nullableList.filterNotNull()
         }
     }
 
+    // 3d array
+    // thanks to type infer
+    val aaa = Array(3, {Array(3, {Array(3, {i -> 0})})})
+    val bbb = Array(3, {Array(3, {IntArray(3, {i -> 0})})})
 ```
 
 ## Collections
@@ -772,6 +780,7 @@ val jake = Person("Jake", 30, "Android developer")
 ## Collection APIs
 
 * [Collections @ kotlin Koans](https://play.kotlinlang.org/koans/Collections/Introduction/Task.kt)
+* [Collection @ kotlin](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-collection/#kotlin.collections.Collection)
 
 ----
 
