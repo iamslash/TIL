@@ -810,28 +810,68 @@ fun Shop.getCustomersSortedByNumberOfOrders(): List<Customer> = customers.sorted
 fun Shop.getCitiesCustomersAreFrom(): Set<City> = customers.map { it.city }.toSet()
 fun Shop.getCustomersFrom(city: City): List<Customer> = cusotmers.filter { it.city == city }
 
+var l = listOf(1, 2, 3, 4, 5)
+// sortedBy
+l.sortedBy { it * -1 }.forEach { println(it) }
+l.sortedByDescending { it * -1 }.forEach { println(it) }
+// sortedWith
+l.sortedWith(Comparator<Int>{ a, b ->
+    when {
+        a < b -> -1
+        a > b -> 1
+        else -> 0
+    }
+}).forEach { println(it) }
+
+// map, flatMap
+l.map { it * it }.forEach { println(it) }
+l.flatMap { listOf(it, it) }.forEach { println(it) }
+
 // All Any and other predicates
+println(l.all { it > 0 })  // false
+println(l.any { it > 0 })  // true
 
 // Max min
+println(l.maxOrNull())
+println(l.maxByOrNull { it * -1})
 
 // Sum
+println(l.sum())
 
 // Associate
+l.associate { Pair(it, it * it) }.forEach { t, u -> println("${t}: ${u}") }
+l.associateBy { it * it }.forEach { t, u -> println("${t}: ${u}")}
+l.associateWith { it * it}.forEach { t, u -> println("${t}: ${u}")}
 
 // GroupBy
+l.groupBy { it % 2 }.forEach { (t, u) -> println("key: ${t}"); u.forEach { println(it)} }
 
 // Partition
-
-// FlatMap
+l.partition { (it % 2) == 0 }.first.forEach { println(it) }
 
 // Fold
+println(l.fold(0) { a, b -> a + b })
 
 // Compound tasks
+var customer = Customer("John", City("Seoul"), listOf())
+println(customer
+        .orders
+        .filter(Order::isDelivered)
+        .flatMap(Order::products)
+        .maxBy(Product::price))
+val customers = listOf(Customer("John", City("Seoul"), listOf()),
+        Customer("Michael", City("Busan"), listOf()))
 
 // Sequences
+println(listOf(1, 2, 3, 4)
+        .map { it * it }
+        .find { it > 3 })
+println(listOf(1, 2, 3, 4)
+        .asSequence()
+        .map { it * it }
+        .find { it > 3 })
 
 // Getting used to new style
-
 ```
 
 ## Collection Conversions
