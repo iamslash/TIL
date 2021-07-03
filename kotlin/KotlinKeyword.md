@@ -154,3 +154,208 @@ fun main() {
         return list.filter { it > threshold }.map { it.toString() }
     }
 ```
+
+```kotlin
+
+annotation class Fancy
+
+class MyClass {
+    companion object Factory {
+        val kick: String = "kick 1"
+        fun create(): MyClass = MyClass()
+    }
+}
+class MyClass2 {
+    companion object {
+        val kick: String = "kick 2"
+        fun create(): MyClass2 = MyClass2()
+    }
+}
+inline fun inlined(block: () -> Unit) {
+    println("hi!")
+}
+fun foo() {
+    inlined {
+        return // OK: the lambda is inlined
+    }
+}
+inline fun inlined2(crossinline block: () -> Unit) {
+    println("hi!!!!!")
+}
+fun bar() {
+    inlined2 {
+        //return
+    }
+}
+enum class Direction {
+    NORTH, SOUTH, WEST, EAST
+}
+// // nested class
+// class Outer {
+//     private val bar: Int = 3
+//     class Nested {
+//         fun foo(): Int = 2
+//     }
+// }
+class Outer {
+    private val bar: Int = 3
+    inner class Inner {
+        fun foo(): Int = bar
+    }
+}
+internal val internalA = 3
+interface IndexedContainer {
+    operator fun get(index: Int)
+}
+class OrdersList: IndexedContainer {
+    override fun get(index: Int) {}
+}
+// reified
+inline fun <reified T> foo(s: String) {
+    val a = s as T
+    println(a)
+}
+
+fun main() {
+
+    Modifier Keywords
+    // actual
+    expect fun randomUUID(): String
+    actual fun randomUUID() = UUID.randomUUID().toString()
+     
+    // abstract
+    open class Polygon() {
+        open fun draw() { println("draw Polygon") }
+    }
+    class Triangle: Polygon() {
+        override fun draw() { println("draw Triangle") }
+    }
+    abstract class Rectangle: Polygon() {
+        abstract override fun draw()
+    }
+    
+    // annotation
+	@Fancy class Hello
+    
+    companion
+    val m = MyClass.create()
+    val n = MyClass.Factory.create()
+    val f = MyClass.Factory.kick
+    val k = MyClass.kick
+    println(f.toString())
+    val m = MyClass2.create()
+    val n = MyClass2.Companion.create()
+    val f = MyClass2.Companion.kick
+    val k = MyClass2.kick
+    println(f.toString())
+
+    // crossinline
+	foo()
+    bar()
+    
+    data
+    // enum
+	println(Direction.NORTH)
+	println(Direction.SOUTH)
+
+    // infix
+	infix fun Int.foo(num: Int): String = "foo"
+    val s = 3 foo 3
+    val ss = 3.foo(3)
+    println(s)
+    fun Int.bar(num: Int): String = "bar"
+    val t = 3.bar(3)
+    println(t)
+    
+       // nested
+       val n = Outer.Nested().foo()
+       println(n)
+
+    // inner
+	class Outer {
+        private val bar: Int = 3
+        inner class Inner {
+            fun foo(): Int = bar
+        }
+    }
+    val o = Outer().Inner().foo()
+    
+   	
+    // internal
+	println(internalA)
+
+    // lateinit
+	class Foo {
+        lateinit var foo: String
+    }
+    var f = Foo()
+    f.foo = "Hello"
+    println("${f.foo}")
+        
+    // operator
+    val o = OrdersList()
+    println(o[3])
+
+    // tailrec
+    val eps = 1E-10 // "good enough", could be 10^-15
+    tailrec fun findFixPoint(x: Double = 1.0): Double =
+        if (Math.abs(x - Math.cos(x)) < eps) x else findFixPoint(Math.cos(x))    
+
+    // vararg
+    fun <T> asList(vararg ts: T): List<T> {
+        val result = ArrayList<T>()
+        for (t in ts) // ts is an Array
+            result.add(t)
+        return result
+    }  
+    val l = asList(1, 2, 3)
+    l.forEach { println(it) }
+
+    // field
+    class Foo {
+        var age: Int = 3
+        	get() = field
+    }
+    val f = Foo()
+    println("${f.age}")
+    
+    // it
+    val l = listOf(1, 2, 3)
+    l.forEach { println(it) }
+
+    // *
+    fun <T> asList(vararg ts: T): List<T> {
+        val result = ArrayList<T>()
+        for (t in ts) // ts is an Array
+            result.add(t)
+        return result
+    }  
+    val ll= arrayOf(1, 2, 3)
+    val l = asList(*ll)
+    l.forEach { println(it) }
+	// @	
+    loop@ for (i in 1..100) {
+        for (j in 1..100) {
+            if (true) break@loop
+        }
+    }
+
+    // destructuring param
+    data class Person(val name: String, val age: Int)
+    val person = Person("chacha", 10)
+    val (name, age) = person
+    println("${name} ${age}")
+    
+    multi value return
+    fun getPair(): Pair<Int, Int> {
+        return Pair(3, 4)
+    }
+    val (a, b) = getPair()
+    println("${a} ${b}")
+    fun getTriple(): Triple<Int, Int, Int> {
+        return Triple(3, 4, 5)
+    }
+    val (a, b, c) = getTriple()
+    println("${a} ${b} ${c}")
+}
+```
