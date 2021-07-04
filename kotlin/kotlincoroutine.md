@@ -28,6 +28,7 @@ suspend function 은 coroutine 혹은 또 다른 suspend function 에서만 호�
 # Materials
 
 * [Kotlin 강좌 #최종화 - 코루틴을 통한 비동기 처리 @ youtube](https://www.youtube.com/watch?v=Lpieg1zrKdg)
+* [[NHN FORWARD 2020] Kotlin과 Coroutine으로 만들어 보는 Non-Blocking API @ youtube](https://www.youtube.com/watch?v=ZUksSDu8C0c)
 * [Everything you need to know about kotlin coroutines @ medium](https://medium.com/swlh/everything-you-need-to-know-about-kotlin-coroutines-b3d94f2bc982)
   * [kor, 코틀린 코루틴 소개](https://blog.burt.pe.kr/posts/everything-you-need-to-know-about-kotlin-coroutines/)
   * [Coroutine Context and Scope @ medium](https://elizarov.medium.com/coroutine-context-and-scope-c8b255d59055)
