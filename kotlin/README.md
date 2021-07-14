@@ -1591,15 +1591,20 @@ fun main() {
 
 ```kotlin
 // Init later
+//  var 에만 사용
+//  null 값으로 초기화 할 수 없다.
+//  초기화 전에는 변수를 사용할 수 없다.
+//  Int, Long, Double, Float 에는 사용할 수 없다. 
 lateinit var p: String
 p = "Hello"
 
 // Init just once
+//  val 에만 사용
 val q: String by lazy {
     "World"
 }
-println(p)
-println(q)
+println(p)  // 초기화
+println(q)  
 ```
 
 ## Sort
