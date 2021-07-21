@@ -769,7 +769,7 @@ wrapper {
 
 | previous             | now                         |
 | -------------------- | --------------------------- |
-| `compile`            | `implementation`            |
+| `compile`            | `api`            |
 | `testCompile`        | `testImplementation`        |
 | `debugCompile`       | `debugImplementation`       |
 | `androidTestCompile` | `androidTestImplementation` |
