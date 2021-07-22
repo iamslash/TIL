@@ -25,7 +25,8 @@
 Gradle 은 task runner 이다. Gradle 은 maven 보다 성능이 좋다. 먼저 [Groovy DSL](/groovy/README.md) 을 학습하여 closure, delegate 개념을 이해해야 한다.
 
 # Materials
- 
+
+* [gradle multi module](https://jahyun-dev.github.io/posts/gradle-1/)
 * [Gradle Dependency 분리하기](https://medium.com/@jsuch2362/gradle-dependency-%EB%B6%84%EB%A6%AC%ED%95%98%EA%B8%B0-eb0c7c794b9c)
   * 하나의 build.gradle 을 refactoring 하는 tutorial 
   * [src](https://github.com/ZeroBrain/DataBind-MVVM-Sample)
