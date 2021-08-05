@@ -8,6 +8,7 @@
     - [Deploying your service](#deploying-your-service)
 - [Advanced](#advanced)
   - [Get environment variables](#get-environment-variables)
+  - [Invoke local with data](#invoke-local-with-data)
 
 ----
 
@@ -287,4 +288,16 @@ module.exports.resetPassword = (event, context, callback) => {
 
   callback(null, response);
 };
+```
+
+## Invoke local with data
+
+* [How to pass parameters to serverless invoke local](https://stackoverflow.com/questions/52251075/how-to-pass-parameters-to-serverless-invoke-local)
+
+`serverless invoke local --data` 를 이용하면 local 에서 test data 와 함께 실행할 수 있다.
+
+```bash
+$ serverless invoke local --function=handler --data '{ "queryStringParameters": {"id":"P50WXIl6PUlonrSH"}}'
+
+$ serverless invoke local --function=handler --path a.json
 ```
