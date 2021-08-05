@@ -30,6 +30,8 @@
 - [How to prevent Duplicated messages in consumer](#how-to-prevent-duplicated-messages-in-consumer)
 - [Advanced](#advanced)
   - [Gurantee order of messages, no duplicates](#gurantee-order-of-messages-no-duplicates)
+  - [How many partitions ???](#how-many-partitions-)
+- [Monitoring Kafka](#monitoring-kafka)
 
 -----
 
@@ -536,3 +538,35 @@ try {
 
 * 하나의 Topic 에 하나의 Partition 을 구성한다.
 * Kafka 가 죽었다가 살아날 때 중복 소비를 방지하기 위해 `processing.guarantee=exactly_once` 를 설정한다.
+
+## How many partitions ???
+
+* [Kafka Optimization — How many partitions are needed?](https://dattell.com/data-architecture-blog/kafka-optimization-how-many-partitions-are-needed/)
+
+Partition 의 개수는 어떻게 계산해야 하는지 정리해 본다.
+
+하나의 Consumer Instance 는 하나의 partition 과 mapping 된다. Partition 의 개수가 2 인데 Consumer 의 개수가 3 개이면 한개는 일 안하는 건가?
+
+Partition 의 개수가 많으면 throughput 이 높아진다. 동시에 많은 수의 Consumer 들이 message 를 consumming 할 수 있기 때문이다. 그러나 replication latency 가 늘어날 수 있다.
+
+보통 하나의 Partition 은 `10 MB/s` 의 속도로 수행된다. 이것을 기반으로 다음과 같이 희망하는 Partition 의 개수를 계산해 보자.
+
+```
+Partition Count = Desired Throughput / Partition Speed
+
+Partition Speed = 10 MB / s
+
+A Single Kafka Topic runs at 10 MB / s
+```
+
+예를 들어 `5 TB/day` 를 원한다고 해보자. 이것은 `58 MB/s` 와 같다. 즉 `58 MB/s / 10 MB/ = 6s` 이므로 `6` 개의 partition 이 필요하다.
+
+`6` 개의 partition 으로 topic 을 생성해 보자.
+
+```bash
+$ bin/kafka-topics.sh –zookeeper ip_addr_of_zookeeper:2181 –create –topic my-topic –partitions 6 –replication-factor 3 –config max.message.bytes=64000 –config flush.messages=1
+```
+
+# Monitoring Kafka
+
+* [Kafka Monitoring With Elasticsearch and Kibana](https://dattell.com/data-architecture-blog/kafka-monitoring-with-elasticsearch-and-kibana/)
