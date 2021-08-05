@@ -22,6 +22,7 @@
   - [Record Key](#record-key)
   - [Consumer Lag](#consumer-lag)
   - [Dead letter queue](#dead-letter-queue)
+  - [Batch](#batch)
 - [Basic](#basic)
   - [Usual configs of server.properties](#usual-configs-of-serverproperties)
   - [Useful Commands](#useful-commands)
@@ -311,6 +312,12 @@ Key 의 Record Data 는 같은 Partition 에 저장된다.
 ## Dead letter queue
 
 > * [Kafka Connect Deep Dive – Error Handling and Dead Letter Queues](https://www.confluent.io/blog/kafka-connect-deep-dive-error-handling-dead-letter-queues/)
+
+## Batch
+
+* [[Kafka] Producer Config 정리](https://devidea.tistory.com/90)
+
+Producer 는 record 를 batch 로 묶어서 보낸다. `batch.size` 를 설정하여 batch 의 크기를 조정한다. 
 
 # Basic
 
