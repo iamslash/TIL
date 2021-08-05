@@ -1,3 +1,16 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Install serverless](#install-serverless)
+- [Basic](#basic)
+  - [Simple python3 AWS Lambda Function](#simple-python3-aws-lambda-function)
+    - [Initial Setup](#initial-setup)
+    - [Creating your service locally](#creating-your-service-locally)
+    - [Deploying your service](#deploying-your-service)
+- [Advanced](#advanced)
+  - [Get environment variables](#get-environment-variables)
+
+----
+
 # Abstract
 
 Develop, deploy, monitor and secure serverless applications on any cloud.
@@ -5,6 +18,7 @@ Develop, deploy, monitor and secure serverless applications on any cloud.
 # Materials
 
 * [serverless](https://www.serverless.com/)
+  * [examples](https://github.com/serverless/examples)
 * [Serverless에서 Python Lambda 생성 및 배포하기](https://velog.io/@_gyullbb/Serverless%EC%97%90%EC%84%9C-Python-Lambda-%EC%83%9D%EC%84%B1-%EB%B0%8F-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0-5)
 * [How to Handle your Python packaging in Lambda with Serverless plugins](https://www.serverless.com/blog/serverless-python-packaging/)
 
@@ -195,3 +209,82 @@ END RequestId: b32af7a8-52fb-4145-9e85-5985a0f64fe4
 REPORT RequestId: b32af7a8-52fb-4145-9e85-5985a0f64fe4	Duration: 0.52 ms	Billed Duration: 100 ms 	Memory Size: 1024 MB	Max Memory Used: 37 MB
 ```
 
+# Advanced
+
+## Get environment variables
+
+* [Serverless Environment Variables Usage](https://github.com/serverless/examples/tree/master/aws-node-env-variables)
+
+serverless.yml 에서 환경변수를 설정하고 handler.js 에서 불러온다.
+
+```yml
+# serverless.yml
+service: function-with-environment-variables
+
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  environment:
+    EMAIL_SERVICE_API_KEY: KEYEXAMPLE1234
+
+functions:
+  createUser:
+    handler: handler.createUser
+    environment:
+      PASSWORD_ITERATIONS: 4096
+      PASSWORD_DERIVED_KEY_LENGTH: 256
+
+  resetPassword:
+    handler: handler.resetPassword
+```
+
+```js
+// handler.js
+'use strict';
+
+module.exports.createUser = (event, context, callback) => {
+  // logs `4096`
+  console.log('PASSWORD_ITERATIONS: ', process.env.PASSWORD_ITERATIONS);
+  // logs `256`
+  console.log('PASSWORD_DERIVED_KEY_LENGTH: ', process.env.PASSWORD_DERIVED_KEY_LENGTH);
+  // logs `KEYEXAMPLE1234`
+  console.log('EMAIL_SERVICE_API_KEY: ', process.env.EMAIL_SERVICE_API_KEY);
+
+  // In this case could use the env vars to generate a secure password hash.
+  // const passwordHash = PBKDF2(
+  //   passphrase,
+  //   salt,
+  //   process.env.PASSWORD_ITERATIONS,
+  //   process.env.PASSWORD_DERIVED_KEY_LENGTH
+  // );
+
+  // The email service api key would be used to send a verfication email to the user.
+
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: 'User created',
+    }),
+  };
+
+  callback(null, response);
+};
+
+module.exports.resetPassword = (event, context, callback) => {
+  // logs `KEYEXAMPLE1234`
+  console.log('EMAIL_SERVICE_API_KEY: ', process.env.EMAIL_SERVICE_API_KEY);
+
+  // The email service api key would be used to send a reset password email.
+
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: 'Password sent.',
+    }),
+  };
+
+  callback(null, response);
+};
+```
