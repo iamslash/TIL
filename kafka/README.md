@@ -32,7 +32,8 @@
 - [Advanced](#advanced)
   - [Gurantee order of messages, no duplicates](#gurantee-order-of-messages-no-duplicates)
   - [How many partitions ???](#how-many-partitions-)
-- [Monitoring Kafka](#monitoring-kafka)
+  - [Monitoring Kafka](#monitoring-kafka)
+  - [Kafka Connect](#kafka-connect)
 
 -----
 
@@ -552,7 +553,7 @@ try {
 
 Partition 의 개수는 어떻게 계산해야 하는지 정리해 본다.
 
-하나의 Consumer Instance 는 하나의 partition 과 mapping 된다. Partition 의 개수가 2 인데 Consumer 의 개수가 3 개이면 한개는 일 안하는 건가?
+하나의 Consumer Instance 는 하나의 partition 과 mapping 된다. Partition 의 개수가 1 인데 Consumer 의 개수가 4 개이면 3 개는 일을 하지 않는다. 이때 Partition 의 개수가 4개로 증가한다면, consumer 는 리밸런싱이 일어나서 4 개의 컨슈머가 4 개의 Partition 을 `1 : 1` 로 처리한다. 
 
 Partition 의 개수가 많으면 throughput 이 높아진다. 동시에 많은 수의 Consumer 들이 message 를 consumming 할 수 있기 때문이다. 그러나 replication latency 가 늘어날 수 있다.
 
@@ -574,6 +575,12 @@ A Single Kafka Topic runs at 10 MB / s
 $ bin/kafka-topics.sh –zookeeper ip_addr_of_zookeeper:2181 –create –topic my-topic –partitions 6 –replication-factor 3 –config max.message.bytes=64000 –config flush.messages=1
 ```
 
-# Monitoring Kafka
+## Monitoring Kafka
 
 * [Kafka Monitoring With Elasticsearch and Kibana](https://dattell.com/data-architecture-blog/kafka-monitoring-with-elasticsearch-and-kibana/)
+
+## Kafka Connect
+
+* [# Kafka Connect란?](https://scorpio-mercury.tistory.com/30)
+
+Kafka Connect는 데이터소스와 Kafka를 연결해준다. Connector를 이용하여 데이터소스와 연결한다. 즉, Kafka Connector가 Producer와 Consumer 역할을 한다. **Producer** 역할을 하는 Kafka Connector를 **Source Connector**라 하고, **Consumer** 역할을 하는 Kafka Connector를 **Sink Connector**라 한다.
