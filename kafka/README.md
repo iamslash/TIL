@@ -1,3 +1,4 @@
+- [References](#references)
 - [Materials](#materials)
 - [Install](#install)
   - [Recommended Options](#recommended-options)
@@ -26,9 +27,9 @@
 - [Basic](#basic)
   - [Usual configs of server.properties](#usual-configs-of-serverproperties)
   - [Useful Commands](#useful-commands)
-- [Producer application integration](#producer-application-integration)
-- [Consumer application integration](#consumer-application-integration)
-- [How to prevent Duplicated messages in consumer](#how-to-prevent-duplicated-messages-in-consumer)
+  - [Producer application integration](#producer-application-integration)
+  - [Consumer application integration](#consumer-application-integration)
+  - [How to prevent Duplicated messages in consumer](#how-to-prevent-duplicated-messages-in-consumer)
 - [Advanced](#advanced)
   - [Gurantee order of messages, no duplicates](#gurantee-order-of-messages-no-duplicates)
   - [How many partitions ???](#how-many-partitions-)
@@ -36,6 +37,11 @@
   - [Kafka Connect](#kafka-connect)
 
 -----
+
+# References
+
+* [DOCUMENTATION](https://kafka.apache.org/documentation/)
+  * [src](https://github.com/apache/kafka)
 
 # Materials
 
@@ -411,7 +417,7 @@ $ /usr/bin/kafka-topics --zookeeper zoo1:2181 --topic my-topic --describe
 $ cat /usr/local/bin/kafka/logs/server.log 
 ```
 
-# Producer application integration
+## Producer application integration
 
 > * [src](https://github.com/AndersonChoi/tacademy-kafka)
 
@@ -461,7 +467,7 @@ public class SimpleProducer {
 }
 ```
 
-# Consumer application integration
+## Consumer application integration
 
 > * [src](https://github.com/AndersonChoi/tacademy-kafka)
 
@@ -510,7 +516,7 @@ public class SimpleConsumer {
 }
 ```
 
-# How to prevent Duplicated messages in consumer
+## How to prevent Duplicated messages in consumer
 
 Please use `commitSync(), commitAsync()` instead of `enable.auto.commit=true`.
 
