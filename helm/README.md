@@ -27,10 +27,11 @@ $ helm completion bash >> ~/.bash_completion
 . /etc/profile.d/bash_completion.sh
 . ~/.bash_completion
 source <(helm completion bash)
-
 ```
 
 # Basic
+
+# Basic Commands
 
 ```bash
 # first, add the default repository, then update
@@ -66,4 +67,9 @@ $ helm uninstall mywebserver
 # No longer available
 $ kubectl get pods -l app.kubernetes.io/name=nginx
 $ kubectl get service mywebserver-nginx -o wide
+```
+
+# Basic helm
+
+```bash
 ```

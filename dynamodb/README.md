@@ -110,6 +110,12 @@ $ docker pull amazon/dynamodb-local
 $ docker run -d -p 8000:8000 --rm --name my-dynamodb amazon/dynamodb-local
 ```
 
+[AWS NoSQL Workbench](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/workbench.html) 로 접속하기 위해서는 다음과 같이 실행한다. [Can not find table using NoSQL Workbench for DynamoDB when connecting to DynamoDB Docker @ stackoverflow](https://stackoverflow.com/questions/63835658/can-not-find-table-using-nosql-workbench-for-dynamodb-when-connecting-to-dynamod)
+
+```console
+$ docker run --rm -p 8000:8000 -d amazon/dynamodb-local -jar DynamoDBLocal.jar -sharedDb -dbPath .
+```
+
 # Background Concepts - SQL, NoSQL
 
 ## Basics of NoSQL Databases
