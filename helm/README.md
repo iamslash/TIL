@@ -89,11 +89,78 @@ NAME 	NAMESPACE	REVISION	UPDATED                             	STATUS  	CHART    
 mypkg	default  	1       	2021-08-09 09:41:26.028545 +0900 KST	deployed	myhelm-0.1.0	1.16.0
 ```
 
+설치가 된 상태에서 manifest 를 얻어올 수도 있다.
+
+```bash
+$ helm get manifest mypkg
+---
+# Source: myhelm/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mychart-configmap
+data:
+  myvalue: "Hello World"
+```
+
 이제 mypkg 을 uninstall 해보자.
 
 ```bash
 $ helm uninstall mypkg
 release "mypkg" uninstalled
+```
+
+또한 다음과 같이 dry-run install 할 수 있다.
+
+```bash
+$ helm install --dry-run mypkg myhelm
+NAME: mypkg
+LAST DEPLOYED: Mon Aug  9 09:58:35 2021
+NAMESPACE: default
+STATUS: pending-install
+REVISION: 1
+TEST SUITE: None
+HOOKS:
+MANIFEST:
+---
+# Source: myhelm/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mychart-configmap
+data:
+  myvalue: "Hello World"
+```
+
+또한 다음과 같이 debug 과 함께 dry-run install 할 수 있다. 
+
+```bash
+$ helm install --dry-run --debug mypkg myhelm
+install.go:173: [debug] Original chart version: ""
+install.go:190: [debug] CHART PATH: /Users/david.s/my/helm/myhelm
+
+NAME: mypkg
+LAST DEPLOYED: Mon Aug  9 10:00:01 2021
+NAMESPACE: default
+STATUS: pending-install
+REVISION: 1
+TEST SUITE: None
+USER-SUPPLIED VALUES:
+{}
+
+COMPUTED VALUES:
+{}
+
+HOOKS:
+MANIFEST:
+---
+# Source: myhelm/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mychart-configmap
+data:
+  myvalue: "Hello World"
 ```
 
 # Basic
@@ -193,3 +260,20 @@ data:
   * [Controlling Whitespace](https://helm.sh/docs/chart_template_guide/control_structures/#controlling-whitespace)
   * 오른쪽의 whitespaces 를 제거한다. newline 도 포함이다.
 
+# Advanced
+
+## Render manifests from helm chart
+
+* [schelm @ github](https://github.com/databus23/schelm)
+
+```bash
+$ go get -u github.com/databus23/schelm
+
+$ helm install --dry-run mypkg myhelm | schelm myhelm_output
+
+$ tree myhelm_output
+myhelm_output
+└── myhelm
+    └── templates
+        └── configmap.yaml
+```
