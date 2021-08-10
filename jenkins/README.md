@@ -4,6 +4,7 @@
   - [Install with 2.190.1 docker on windows10](#install-with-21901-docker-on-windows10)
   - [Install Jenkins 2.190.1 with docker on macOS](#install-jenkins-21901-with-docker-on-macos)
   - [Install Jenkins 2.190.1 on macOS](#install-jenkins-21901-on-macos)
+  - [Install Jenkins Operator with minikube](#install-jenkins-operator-with-minikube)
 - [Basic](#basic)
   - [jenkin_home structure](#jenkin_home-structure)
     - [directories](#directories)
@@ -85,6 +86,55 @@ $ brew install jenkins
 $ brew services start jenkins
 $ brew services stop jenkins
 $ brew remove jenkins
+```
+
+## Install Jenkins Operator with minikube
+
+* [[ Kube 82 ] Kubernetes Jenkins Operator to manage Jenkins instances @ youtube](https://www.youtube.com/watch?v=0x-vgNagfw0)
+* [Instsall Jenkins Operator](https://jenkinsci.github.io/kubernetes-operator/docs/installation/)
+
+```bash
+# Install Jenkins Custom Resource Definition
+$ kubectl apply -f https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/config/crd/bases/jenkins.io_jenkins.yaml 
+
+# Install Jenkins operator using helm
+$ helm repo add jenkins https://raw.githubusercontent.com/jenkinsci/kubernetes-operator/master/chart
+$ helm install jenkins-operator jenkins/jenkins-operator
+NAME: jenkins-operator
+LAST DEPLOYED: Tue Aug 10 19:27:51 2021
+NAMESPACE: default
+STATUS: deployed
+REVISION: 1
+TEST SUITE: None
+NOTES:
+1. Watch Jenkins instance being created:
+$ kubectl --namespace default get pods -w
+
+2. Get Jenkins credentials:
+$ kubectl --namespace default get secret jenkins-operator-credentials-jenkins -o 'jsonpath={.data.user}' | base64 -d
+$ kubectl --namespace default get secret jenkins-operator-credentials-jenkins -o 'jsonpath={.data.password}' | base64 -d
+
+3. Connect to Jenkins (actual Kubernetes cluster):
+$ kubectl --namespace default port-forward jenkins-jenkins 8080:8080
+
+Now open the browser and enter http://localhost:8080
+
+# Export jenkins-operator-values
+$ helm show values jenkins/jenkins-operator > ~/tmp/jenkins-operator-values.yaml
+$ code ~/tmp/jenkins-operator-values.yaml
+
+# Upgrade jenkins-operator-values
+$ code ~/tmp/jenkins-operator-values.yaml
+...
+  # image: jenkins/jenkins:2.277.4-lts-alpine
+  image: jenkins/jenkins:2.289.1-lts-alpine
+...
+
+# How can I restore data from backup container???
+$ helm upgrade -f ~/tmp/jenkins-operator-values.yaml jenkins-operator jenkins/jenkins-operator
+
+# Uninstall
+$ helm uninstall jenkins-operator
 ```
 
 # Basic
