@@ -2614,6 +2614,8 @@ DaemonSet 은 모든 Node 에 동일한 Pod 를 하나씩 생성하는 Kubernete
 
 StatefulSet 은 state 를 갖는 Pod 를 관리하는 Kubernetes object 이다.
 
+* [1 스테이트풀셋(Statefulset)이란? @ naverblog](https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=isc0304&logNo=221885403537)
+
 ## Launch Horizontal Pod Autoscaler
 
 * [workshop-k8s-basic/guide/guide-03/task-06.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-05/task-06.md)
