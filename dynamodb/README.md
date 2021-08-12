@@ -66,6 +66,8 @@
 - [Course Project - Part 1 - Build REST API to interact with DynamoDB](#course-project---part-1---build-rest-api-to-interact-with-dynamodb)
 - [Course Project - Part 2 - Integrate Web App (SPA) with DynamoDB Backend](#course-project---part-2---integrate-web-app-spa-with-dynamodb-backend)
 - [Course Project - Part 3 - Integrate Mobile Apps with DynamoDB Backend](#course-project---part-3---integrate-mobile-apps-with-dynamodb-backend)
+- [FAQ](#faq)
+  - [DynamoDB can decrease partitions?](#dynamodb-can-decrease-partitions)
 
 -------
 
@@ -2248,3 +2250,13 @@ Implement back-end api server with node.js.
   * Register IDC Provider in AWS IAM.
   * Register IDC Provider in AWS Cognito.
   * Now you can authenticate with one id thanks to AWS Cognito.
+
+# FAQ
+
+## DynamoDB can decrease partitions?
+
+* [Beware of dilution of DynamoDB throughput due to excessive scaling](https://hackernoon.com/beware-of-dilution-of-dynamodb-throughput-due-to-excessive-scaling-4df51063edae)
+
+-----
+
+If you reduce the amount of provisioned throughput for your table, DynamoDB will not decrease the number of partitions
