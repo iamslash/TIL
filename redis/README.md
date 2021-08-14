@@ -49,7 +49,7 @@ redis 는 REmote dIctionary System 의 약자이다.
 
 redis 는 disk 에 데이터를 저장할 수 있다. RDB (snapshot), AOF (append olny file) 의 방법이 있다. RDB 는 한번에 메모리의 데이터를 디스크로 저장하는 방법이다. AOF 는 조금씩 디스크에 저장하는 방법이다. 두가지 방법을 적절히 혼합하여 사용하면 좋다. [참고](http://redisgate.kr/redis/configuration/redis_overview.php)
 
-string, set, sorted set, hash, list 등의 datatype 을 지원한다.
+string, set, sorted set, hash, list 등의 datatype 을 지원한다. collection data type (set, sorted set, hash, list) 의 경우 그 개수는 10,000 개 이하가 좋다.
 
 Sentinel 은 redis monitoring tool 이다. redis 의 master, slave 들을 지켜보고 있다가 장애처리를 해준다. `> redis-sentinel sentinel.conf` 와 같이 실행한다.
 
