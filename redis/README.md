@@ -20,6 +20,11 @@
   - [Pub/Sub](#pubsub)
   - [Streams](#streams)
 - [Caveats](#caveats)
+  - [Prevent O(N) command](#prevent-on-command)
+  - [redis.conf](#redisconf)
+  - [Fail Over](#fail-over)
+  - [Monitoring](#monitoring)
+  - [Redis for Cache or Persistent Store](#redis-for-cache-or-persistent-store)
 - [Advanced](#advanced)
   - [How to debug](#how-to-debug)
 
@@ -231,11 +236,50 @@ Pub 으로 message 를 보내고 Sub 으로 message 를 받는다.
 
 # Caveats
 
+## Prevent O(N) command
+
 O(N) command 는 피하자.
 
 Redis 는 single thread 이다. 한번에 하나의 command 를 처리한다. 따라서 하나의 command 를 수행하는데 시간이 오래걸린다면 그 뒤의 command 는 latency 가 증가된다.
 
 예를 들어 list 의 모든 데이터를 지운다고 해보자. 아이템의 개수가 많다면 system 의 latency 가 증가할 수 밖에 없다. 
+
+## redis.conf
+
+* Maxclient 는 50,000
+* RDB/AOF 는 끄자. 보다 안정적이다.
+* keys command 는 사용못하게 하자. AWS 는 이미 그렇게 하고 있다. 
+* 99% 의 서비스가 keys 혹은 RDB/AOF 때문에 발생한다. 그래도 RDB/AOF 가 필요하다면 replica 만 켠다.
+* client-output-buffer-limit
+  * Redis 는 buffer limit 이 넘어간 client 의 접속을 끊는다. 
+
+## Fail Over
+
+* coordinator (zookeeper, etcd, consul) 에 redis 를 등록해두고 fail over 처리한다. 특정 redis 가 죽으면 coordinator 가 application server 에게 notify 해준다. 
+* 특정 vip 를 redis primary 에 할당한다. redis primary 가 fail 하면 다른 redis 에 그 vip 를 할당한다.
+* 특정 vip 를 redis primary 에 할당한다. redis primary 가 fail 하면 다른 redis 에 그 DNS 를 할당한다. DNS caching 을 유의해야 한다. AWS 는 DNS 기반으로 Fail Over 하고 있다.
+
+## Monitoring
+
+RedisInfo 를 통해서 얻을 수 있다.
+
+* RSS (Resident Segment Set) : Physical Memory Size
+* Used Memory
+* Connection Number
+  * Redis 는 Single Thread Server 이다. 접속을 자주 끊고 맺는지 확인해야 한다.
+* 초당 처리수
+
+그 밖의 기본 정보. 
+
+* CPU
+* Disk
+* Network RX/TX
+
+## Redis for Cache or Persistent Store
+
+Redis 를 Cache 로 사용한다면 대부분 큰 문제는 없다. Redis 가 죽어도 서비스의 지장은 없기 때문이다.
+
+Redis 를 Persistent Store 로 사용한다면 얘기가 달라진다. Replica 들은 RDB/AOF 를 적용해서 backup 해야 한다.
 
 # Advanced
 
