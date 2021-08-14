@@ -19,6 +19,7 @@
   - [Geo](#geo)
   - [Pub/Sub](#pubsub)
   - [Streams](#streams)
+- [Caveats](#caveats)
 - [Advanced](#advanced)
   - [How to debug](#how-to-debug)
 
@@ -227,6 +228,14 @@ Pub 으로 message 를 보내고 Sub 으로 message 를 받는다.
 ## Streams
 
 로그 데이터를 처리하기 위해서 5.0 에 도입된 데이터 타입이다.
+
+# Caveats
+
+O(N) command 는 피하자.
+
+Redis 는 single thread 이다. 한번에 하나의 command 를 처리한다. 따라서 하나의 command 를 수행하는데 시간이 오래걸린다면 그 뒤의 command 는 latency 가 증가된다.
+
+예를 들어 list 의 모든 데이터를 지운다고 해보자. 아이템의 개수가 많다면 system 의 latency 가 증가할 수 밖에 없다. 
 
 # Advanced
 
