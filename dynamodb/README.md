@@ -49,25 +49,28 @@
   - [DynamoDB Streams and DynamoDB Triggers with AWS Lambda](#dynamodb-streams-and-dynamodb-triggers-with-aws-lambda)
   - [Time to Live (TTL) in DynamoDB](#time-to-live-ttl-in-dynamodb)
   - [Global Tables in DynamoDB](#global-tables-in-dynamodb)
-- [Demo - Cross Region Replication in DynamoDB using Global Tables](#demo---cross-region-replication-in-dynamodb-using-global-tables)
-- [Demo - Auto Scaling in DynamoDB](#demo---auto-scaling-in-dynamodb)
-- [Demo - Auto-Archiving using TTL and Lambda](#demo---auto-archiving-using-ttl-and-lambda)
-- [Demo - Handling Large Items in DynamoDB](#demo---handling-large-items-in-dynamodb)
-- [Demo - Caching with DAX (DynamoDB Accelerator)](#demo---caching-with-dax-dynamodb-accelerator)
-- [Demo - Backup and Restore with DynamoDB](#demo---backup-and-restore-with-dynamodb)
-- [Demo - Server-Side Encryption in DynamoDB](#demo---server-side-encryption-in-dynamodb)
-- [Demo - Logging DynamoDB API Calls With AWS CloudTrail](#demo---logging-dynamodb-api-calls-with-aws-cloudtrail)
-- [Demo - Importing and Exporting DynamoDB Data using Data Pipeline](#demo---importing-and-exporting-dynamodb-data-using-data-pipeline)
-- [Demo - Querying DynamoDB with Redshift](#demo---querying-dynamodb-with-redshift)
-- [Demo - Querying DynamoDB with Apache Hive on EMR](#demo---querying-dynamodb-with-apache-hive-on-emr)
-- [Demo - Full Text Search with CloudSearch](#demo---full-text-search-with-cloudsearch)
-- [Demo - Monitoring DynamoDB with CloudWatch](#demo---monitoring-dynamodb-with-cloudwatch)
-- [Demo - Fine Grained Access Control in DynamoDB using IAM](#demo---fine-grained-access-control-in-dynamodb-using-iam)
-- [Course Project - Part 1 - Build REST API to interact with DynamoDB](#course-project---part-1---build-rest-api-to-interact-with-dynamodb)
-- [Course Project - Part 2 - Integrate Web App (SPA) with DynamoDB Backend](#course-project---part-2---integrate-web-app-spa-with-dynamodb-backend)
-- [Course Project - Part 3 - Integrate Mobile Apps with DynamoDB Backend](#course-project---part-3---integrate-mobile-apps-with-dynamodb-backend)
+- [Demo](#demo)
+  - [Demo - Cross Region Replication in DynamoDB using Global Tables](#demo---cross-region-replication-in-dynamodb-using-global-tables)
+  - [Demo - Auto Scaling in DynamoDB](#demo---auto-scaling-in-dynamodb)
+  - [Demo - Auto-Archiving using TTL and Lambda](#demo---auto-archiving-using-ttl-and-lambda)
+  - [Demo - Handling Large Items in DynamoDB](#demo---handling-large-items-in-dynamodb)
+  - [Demo - Caching with DAX (DynamoDB Accelerator)](#demo---caching-with-dax-dynamodb-accelerator)
+  - [Demo - Backup and Restore with DynamoDB](#demo---backup-and-restore-with-dynamodb)
+  - [Demo - Server-Side Encryption in DynamoDB](#demo---server-side-encryption-in-dynamodb)
+  - [Demo - Logging DynamoDB API Calls With AWS CloudTrail](#demo---logging-dynamodb-api-calls-with-aws-cloudtrail)
+  - [Demo - Importing and Exporting DynamoDB Data using Data Pipeline](#demo---importing-and-exporting-dynamodb-data-using-data-pipeline)
+  - [Demo - Querying DynamoDB with Redshift](#demo---querying-dynamodb-with-redshift)
+  - [Demo - Querying DynamoDB with Apache Hive on EMR](#demo---querying-dynamodb-with-apache-hive-on-emr)
+  - [Demo - Full Text Search with CloudSearch](#demo---full-text-search-with-cloudsearch)
+  - [Demo - Monitoring DynamoDB with CloudWatch](#demo---monitoring-dynamodb-with-cloudwatch)
+  - [Demo - Fine Grained Access Control in DynamoDB using IAM](#demo---fine-grained-access-control-in-dynamodb-using-iam)
+- [Course Project](#course-project)
+  - [Course Project - Part 1 - Build REST API to interact with DynamoDB](#course-project---part-1---build-rest-api-to-interact-with-dynamodb)
+  - [Course Project - Part 2 - Integrate Web App (SPA) with DynamoDB Backend](#course-project---part-2---integrate-web-app-spa-with-dynamodb-backend)
+  - [Course Project - Part 3 - Integrate Mobile Apps with DynamoDB Backend](#course-project---part-3---integrate-mobile-apps-with-dynamodb-backend)
 - [FAQ](#faq)
   - [DynamoDB can decrease partitions?](#dynamodb-can-decrease-partitions)
+  - [Transaction](#transaction)
 
 -------
 
@@ -79,12 +82,20 @@ Transaction 을 지원한다???
 
 # References
 
+* [Best Practices for Designing and Architecting with DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/best-practices.html)
 * [AWS DynamoDB - The Complete Guide (Build 18+ Hands On Demos) @ udemy](https://www.udemy.com/course/dynamodb/)
   * 최고의 유료 강좌
 * [The dynamoDB Book](https://www.dynamodbbook.com/?preview=true)
   * good for data modeling
 * [DynamoDB Guide](https://www.dynamodbguide.com/)
+  * alex debrie's website 
 * [awsesome DynamoDB @ github](https://github.com/alexdebrie/awesome-dynamodb)
+  * DynamoDB curated list
+* [Introducing enhanced DynamoDB client in the AWS SDK for Java v2](https://aws.amazon.com/ko/blogs/developer/introducing-enhanced-dynamodb-client-in-the-aws-sdk-for-java-v2/)
+  * ORM 을 지원하는 enhanced DynamoDB client
+* [Amazon DynamoDB Java code examples](https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/javav2/example_code/dynamodb)
+* [Amazon DynamoDB Asynchronous Java code examples](https://github.com/awsdocs/aws-doc-sdk-examples/tree/master/javav2/example_code/dynamodbasync)
+
 
 # Materials
 
@@ -1368,7 +1379,9 @@ customer = "John" and country_state_city BEGINS_WITH "US | CA |"
   * "Last writer wins" approach for conflict resolution
   * identical settings for Table and indexes across regions
 
-# Demo - Cross Region Replication in DynamoDB using Global Tables
+# Demo
+
+## Demo - Cross Region Replication in DynamoDB using Global Tables
 
 * Cross Region Replicationw with Global Tables
 
@@ -1420,7 +1433,7 @@ docClient.put({
 });
 ```
 
-# Demo - Auto Scaling in DynamoDB
+## Demo - Auto Scaling in DynamoDB
 
 This is an example of bulk-write for wcu auto-scaling. "faker" is for random contents. "moment" is for time.
 
@@ -1527,7 +1540,7 @@ async.doWhilst(
 );
 ```
 
-# Demo - Auto-Archiving using TTL and Lambda
+## Demo - Auto-Archiving using TTL and Lambda
 
 This is an example of auto-archiving Lambda.
 
@@ -1563,7 +1576,7 @@ exports.handler = (event, context, callback) => {
 };
 ```
 
-# Demo - Handling Large Items in DynamoDB
+## Demo - Handling Large Items in DynamoDB
 
 This is an example of data-comperssion.
 
@@ -1765,7 +1778,7 @@ function getNotesItemS3(key, callback) {
 }
 ```
 
-# Demo - Caching with DAX (DynamoDB Accelerator)
+## Demo - Caching with DAX (DynamoDB Accelerator)
 
 This is an example of dax.
 
@@ -1940,7 +1953,7 @@ exports.handler = (event, context, callback) => {
 };
 ```
 
-# Demo - Backup and Restore with DynamoDB
+## Demo - Backup and Restore with DynamoDB
 
 * DynamoDB On-Demand Backup and Restore
   * Encrypted
@@ -2007,19 +2020,19 @@ exports.handler = (event, context, callback) => {
 
 * Continuous Backups with Point-in-Time Recovery
 
-# Demo - Server-Side Encryption in DynamoDB
+## Demo - Server-Side Encryption in DynamoDB
 
 * Server-Side Encryption at Rest
   * dynamoDB uses 256-encryption key provided by AWs KMS.
   * If you once enabled encryption, you can not rollback it.
 
-# Demo - Logging DynamoDB API Calls With AWS CloudTrail
+## Demo - Logging DynamoDB API Calls With AWS CloudTrail
 
 * Logging DynamoDB API Calls with AWS CloudTrail
 
 You can check decryption with AWS KMS after making a CloudTrail.
 
-# Demo - Importing and Exporting DynamoDB Data using Data Pipeline
+## Demo - Importing and Exporting DynamoDB Data using Data Pipeline
 
 * Exporting DynamoDB Data using Data Pipeline
   * AWS Data Pipeline -> Amazon S3
@@ -2029,7 +2042,7 @@ You can check decryption with AWS KMS after making a CloudTrail.
   * AWS Data Pipeline <- Amazon S3
   * AWS Data Pipeline internally use EMR
  
-# Demo - Querying DynamoDB with Redshift
+## Demo - Querying DynamoDB with Redshift
 
 * Querying DynamoDB with Redshift
   * dynamoDB - Amazon Redshift - SQL WORKBENCH
@@ -2085,7 +2098,7 @@ on n1.user_id=n2.user_id and n1.timestamp = n2.timestamp
 ;
 ```
 
-# Demo - Querying DynamoDB with Apache Hive on EMR
+## Demo - Querying DynamoDB with Apache Hive on EMR
 
 * Querying DynamoDB with Apache Hive 
   * EMR => Elastic MapReduce / Managed Hadoop Cluster
@@ -2137,7 +2150,7 @@ on n1.user_id=n2.user_id and n1.tstamp = n2.tstamp
 ;
 ```
 
-# Demo - Full Text Search with CloudSearch
+## Demo - Full Text Search with CloudSearch
 
 * Full Text Search with CloudSearch
   * DynamoDB - Amazon CloudSearch
@@ -2224,19 +2237,21 @@ exports.handler = (event, context, callback) => {
 }
 ```
 
-# Demo - Monitoring DynamoDB with CloudWatch
+## Demo - Monitoring DynamoDB with CloudWatch
 
 Use AWS CloudWatch for monitoring DynamoDB.
 
-# Demo - Fine Grained Access Control in DynamoDB using IAM
+## Demo - Fine Grained Access Control in DynamoDB using IAM
 
 Use AWS IAM for handling access control.
 
-# Course Project - Part 1 - Build REST API to interact with DynamoDB
+# Course Project
+
+## Course Project - Part 1 - Build REST API to interact with DynamoDB
 
 Implement back-end api server with node.js.
 
-# Course Project - Part 2 - Integrate Web App (SPA) with DynamoDB Backend
+## Course Project - Part 2 - Integrate Web App (SPA) with DynamoDB Backend
 
 * Implement front-end SPA with angular.js.
 * Implement Authentication with Google API Server, AWS Cognito. 
@@ -2245,7 +2260,7 @@ Implement back-end api server with node.js.
   * Make an AWs IAM role with custom policies which prevent to access other user's contents.
 * Deploy node.js back-end, front-end on AWs Elastic BeansTalk.
 
-# Course Project - Part 3 - Integrate Mobile Apps with DynamoDB Backend
+## Course Project - Part 3 - Integrate Mobile Apps with DynamoDB Backend
 
 * Implement fron-end mobile app with ionic.
 * Implement Authentication with FireBase, AWS Cognito.
@@ -2262,3 +2277,19 @@ Implement back-end api server with node.js.
 -----
 
 If you reduce the amount of provisioned throughput for your table, DynamoDB will not decrease the number of partitions
+
+## Transaction
+
+* [What is a DynamoDB Transaction? @ youtube](https://www.youtube.com/watch?v=Mm1XmTc63hg)
+  * `TransactConflictException` 이 발생하면 retry 하라고 함
+* [Building Modern Apps Using Amazon DynamoDB Transactions @ youtube](https://www.youtube.com/watch?v=IgFvWaSQaeg)
+
+-----
+
+DynamoDB 는 transaction 처리를 위해 `transact_write_item, transact_get_item` 등의 API 를 제공한다.
+
+DynamoDB 의 transaction 은 lock 을 지원하지는 않는다. 동일한 record 에 대해 `transact_write_item` 이 호출되면 두번째 호출은 `TransactConflictException` 을 발생한다. 첫번째 호출이 tansaction 을 완료할 때까지 두번째 호출은 retry 하는 방식으로 처리한다. DynamoDB 의 transaction 은 all or nothing 만 지원한다. 참고로 `batch_write_item` 은 `transact_write_item` 과 달리 all or nothing 을 지원하지 않는다.
+
+`transact_write_item` 은 처리해야할 API 의 WCU 보다 2 배의 비용을 소모한다. 마찬가지로 `transact_read_item` 은 처리해야할 API 의 RCU 보다 2 배의 비용을 소모한다.
+
+DynamoDB 의 transaction API 는 ClientRequestToken 을 이용해서 idempotency 를 보장한다. ClientRequestToken 는 10 분간 유효하다고 함.
