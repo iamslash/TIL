@@ -28,6 +28,9 @@ HTML, CSS, JavaScript 등 front-end 개발에 필요한 tech stack 에 대해 �
 
 # Materials
 
+
+* [Tasks, microtasks, queues and schedules](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/) 
+  * callback queue 가 micro-task-queue, task-queue, animation-frame-queue 와 같이 3 가지가 있다는 것을 알 수 있다.
 * 프론트엔드 개발환경의 이해
   * 최고의 front-end blog
   * [프론트엔드 개발환경의 이해: NPM](http://jeonghwan-kim.github.io/series/2019/12/09/frontend-dev-env-npm.html)

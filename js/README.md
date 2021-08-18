@@ -944,6 +944,8 @@ document.write ("Exiting from the loop!");
 
 ![](https://cdn-images-1.medium.com/max/800/1*4lHHyfEhVB0LnQ3HlhSs8g.png)
 
+[Tasks, microtasks, queues and schedules](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/) 을 참고하면 callback queue 가 micro-task-queue, task-queue, animation-frame-queue 와 같이 3 가지가 있다는 것을 알 수 있다.
+
 ## Functions
 
 ### curly braces
