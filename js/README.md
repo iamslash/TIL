@@ -2,6 +2,7 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Javascript Runtime Architecture](#javascript-runtime-architecture)
+- [JavaScript Engine How to work](#javascript-engine-how-to-work)
 - [Basic Usages](#basic-usages)
   - [Compile, Execute](#compile-execute)
   - [Reserved Words](#reserved-words)
@@ -152,6 +153,10 @@ event-loop 알고리즘은 다음과 같다.
 2. micro-taskqueue 를 비울때까지 실행한다.
 3. 렌더링한다.
 4. 매크로태스크 큐가 비어있으면 기다린다.
+
+# JavaScript Engine How to work
+
+* [JavaScript Visualized: the JavaScript Engine](https://dev.to/lydiahallie/javascript-visualized-the-javascript-engine-4cdf)
 
 # Basic Usages
 
@@ -1158,7 +1163,11 @@ wrapper(); // zero
 
 ## hoisting
 
-function scope, block scope 에서 변수를 선언하고 초기화하면 1) 선언부분이 맨 위로 끌어올려지고 2) undefined 가 할당된다. 함수가 실행되면 scope, execution context 가 생성되고 hoisting 및 this binding 을 한다. 그리고 함수의 코드를 하나씩 실행한다. ES6 의 hoisting 은 1) 만 하고 2) 는 없다.
+* [JavaScript Visualized: Hoisting](https://dev.to/lydiahallie/javascript-visualized-hoisting-478h)
+
+-----
+
+function scope, block scope 에서 변수를 선언하고 초기화하면 "1) 선언부분이 맨 위로 끌어올려지고" "2) undefined" 가 할당된다. 함수가 실행되면 scope, execution context 가 생성되고 hoisting 및 this binding 을 한다. 그리고 함수의 코드를 하나씩 실행한다. ES6 의 hoisting 은 "1)" 만 하고 "2)" 는 없다.
 
 ```js
 console.log(zero); // 에러가 아니라 undefined
@@ -1234,11 +1243,19 @@ console.log(foo);
 
 ## execution context
 
+* [JavaScript Visualized: Scope (Chain)](https://dev.to/lydiahallie/javascript-visualized-scope-chain-13pd)
+
+-----
+
 `global context` 생성후 함수 호출 할때 마다 `execution context` 가
 생성된다. `execution context` 는 `arguments, variable, scope chain, this` 가 저장된다. 함수가 실행될때 그 함수의 `execution context` 에 변수가 없다면 `scope
 chain` 을 따라 올라가며 검색한다. 함수 실행이 종료되면 `execution context` 는 사라진다.
 
 ## Prototype
+
+* [JavaScript Visualized: Prototypal Inheritance](https://dev.to/lydiahallie/javascript-visualized-prototypal-inheritance-47co)
+
+-----
 
 Contructor function 이 있을 때 new 연산자를 사용하여 instance 를 생성했다고 해보자. 이때 Constructor function 의 prototype 과 instance 의 `__prototype__` 은 같은 객체를 가리킨다. 
 
@@ -1780,6 +1797,7 @@ b = 'world'; // ERROR
 
 ## promise
 
+* [JavaScript Visualized: Promises & Async/Await](https://dev.to/lydiahallie/javascript-visualized-promises-async-await-5gke)
 * [Promises in JavaScript](https://zellwk.com/blog/js-promises/)
 
 ----
@@ -1894,6 +1912,7 @@ promiseBar('jane', bar)
 
 ## async, await
 
+* [JavaScript Visualized: Promises & Async/Await](https://dev.to/lydiahallie/javascript-visualized-promises-async-await-5gke)
 * [JavaScript async and await](https://zellwk.com/blog/async-await/)
 * [JavaScript async and await in loops](https://zellwk.com/blog/async-await-in-loops/)
 
@@ -2028,8 +2047,11 @@ import X, { myA as myX, Something as XSomething } from './A'
 
 ## Generator function, function*
 
+* [JavaScript Visualized: Generators and Iterators](https://dev.to/lydiahallie/javascript-visualized-generators-and-iterators-e36)
 * [function*](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Statements/function*)
-  
+
+----
+
 ```js
 function* generator(i) {
   yield i;
