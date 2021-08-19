@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [Essentials](#essentials)
 - [Materials](#materials)
+- [Javascript Runtime Architecture](#javascript-runtime-architecture)
 - [Basic Usages](#basic-usages)
   - [Compile, Execute](#compile-execute)
   - [Reserved Words](#reserved-words)
@@ -39,7 +40,6 @@
   - [Operators](#operators)
   - [Control Flow](#control-flow)
   - [Loops](#loops)
-  - [Javascript Runtime Architecture](#javascript-runtime-architecture)
   - [Functions](#functions)
     - [curly braces](#curly-braces)
     - [parenthese](#parenthese)
@@ -117,6 +117,41 @@ java script에 대해 정리한다.
 * [실행 컨텍스트](https://www.zerocho.com/category/Javascript/post/5741d96d094da4986bc950a0)
 * [Underscore.js](http://underscorejs.org/)
   * functional programming helper
+
+# Javascript Runtime Architecture
+
+* [어쨌든 이벤트 루프는 무엇입니까? | Philip Roberts | JSConf EU @ youtube](https://www.youtube.com/watch?v=8aGhZQkoFbQ)
+  * [loupe](latentflip.com/loupe)
+    * js even-loop
+  * [loupe @ github](https://github.com/latentflip/loupe)
+* [[JS] Event Loop : 마이크로태스크(Microtask)와 매크로태스크(Macrotask) 알아보기 @ velog](https://velog.io/@dami/JS-Microtask-Queue)
+* [Tasks, microtasks, queues and schedules](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/)
+  * callback queue 가 micro-task-queue, task-queue, animation-frame-queue 와 같이 3 가지가 있다는 것을 알 수 있다.
+  
+----
+
+js runtime engine 는 single threaded 이다. 기본적으로 web-browser 의 main thread 에서 js 가 실행된다. 따라서 js code 가 blocking 되면 ui 는 rendering 될 수 없다. 그렇다면 어떻게 aync 를 지원하는지 알아보자.
+
+web-browser 는 js engine 이 제공하지 못하는 WebApi 를 제공한다. WebApi 를 이용하면 aync 구현이 가능하다. [JavaScript Visualized: Event Loop](https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif)
+
+![](img/js-event-loop.gif)
+
+위의 그림은 `v8` 과 같은 interpreter engine 의 구조이다. micro-task-queue 는 macro-task-queue 보다 우선순위가 높다.
+
+`process.nextTickm, Promise, Object.observe, MutationObserver` 는 argument 로 전달된 call back 을 micro-task-queue 에 삽입한다. 
+
+`setTimeout, setInterval, setImmediate, requestAnimationFrame, I/O, UI 렌더링` 는 argument 로 전달된 call back 을 macro-task-queue 에 삽입한다.
+
+아래 그림의 회색 박스는 `v8` 와 같은 interpreter engine 이고 나머지는 `chrome` 과 같은 browser 라고 생각하자. callback queue 가 하나로 표현되어 있음을 주의 하자.
+
+![](https://cdn-images-1.medium.com/max/800/1*4lHHyfEhVB0LnQ3HlhSs8g.png)
+
+event-loop 알고리즘은 다음과 같다. 
+
+1. macro-task-queue 에서 가장 오래된 태스크를 꺼내 실행한다.
+2. micro-taskqueue 를 비울때까지 실행한다.
+3. 렌더링한다.
+4. 매크로태스크 큐가 비어있으면 기다린다.
 
 # Basic Usages
 
@@ -937,14 +972,6 @@ for (aProperty in navigator) {
 }
 document.write ("Exiting from the loop!");
 ```
-
-## Javascript Runtime Architecture
-
-아래 그림의 회색 박스는 `v8` 와 같은 interpreter engine 이고 나머지는 `chrome` 과 같은 browser 라고 생각하자.
-
-![](https://cdn-images-1.medium.com/max/800/1*4lHHyfEhVB0LnQ3HlhSs8g.png)
-
-[Tasks, microtasks, queues and schedules](https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/) 을 참고하면 callback queue 가 micro-task-queue, task-queue, animation-frame-queue 와 같이 3 가지가 있다는 것을 알 수 있다.
 
 ## Functions
 
