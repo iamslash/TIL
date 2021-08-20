@@ -217,10 +217,12 @@ class Person implements Serializable {
 
 ```java
 // int
-System.out.println(Integer.MIN_VALUE); // -2^31
-System.out.println(Integer.MAX_VALUE); // 2^31 - 1
-System.out.println(Integer.MAX_VALUE == ((1 << 31)-1));
-System.out.println(Integer.MIN_VALUE == (1 << 31));
+System.out.println(Integer.MIN_VALUE); // -2,147,483,648  -2^31
+System.out.println(Integer.MAX_VALUE); // 2,147,483,647   2^31 - 1
+System.out.println(Integer.MAX_VALUE == ((1 << 31)-1)); // 0111 1111 ...
+System.out.println(Integer.MIN_VALUE == (1 << 31));     // 1000 0000 ...
+System.out.println(Integer.MIN_VALUE - 1); // 2,147,483,647  2^31 - 1
+System.out.println(Integer.MAX_VALUE + 1); // -2,147,483,648   -2^31
 
 // float
 System.out.println(Float.MIN_VALUE);
