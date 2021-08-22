@@ -1,5 +1,12 @@
 - [References](#references)
 - [Materials](#materials)
+- [Operators](#operators)
+  - [map](#map)
+  - [mapTo](#mapto)
+  - [merge](#merge)
+  - [mergeAll](#mergeall)
+  - [mergeMap](#mergemap)
+  - [mergeMapTo](#mergemapto)
 
 ---
 
@@ -19,3 +26,19 @@
 * [rx.js @ udemy](https://matchgroup.udemy.com/course/rxjs-course/learn/lecture/10897630#reviews)
 * [reactive how](https://reactive.how/)
   * reactive 시각화
+
+# Operators
+
+## map
+
+## mapTo
+
+## merge
+
+## mergeAll
+
+## mergeMap
+
+## mergeMapTo
+
+
