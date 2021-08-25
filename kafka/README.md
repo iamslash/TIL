@@ -17,6 +17,7 @@
   - [Topic](#topic)
   - [Partition](#partition)
   - [Rebalance](#rebalance)
+  - [Producer](#producer)
   - [Consumer Group](#consumer-group)
   - [ACK](#ack)
   - [Exactly once](#exactly-once)
@@ -24,6 +25,7 @@
   - [Consumer Lag](#consumer-lag)
   - [Dead letter queue](#dead-letter-queue)
   - [Batch](#batch)
+  - [Kafka GUI](#kafka-gui)
 - [Basic](#basic)
   - [Usual configs of server.properties](#usual-configs-of-serverproperties)
   - [Useful Commands](#useful-commands)
@@ -35,6 +37,7 @@
   - [How many partitions ???](#how-many-partitions-)
   - [Monitoring Kafka](#monitoring-kafka)
   - [Kafka Connect](#kafka-connect)
+  - [Kafka Streams](#kafka-streams)
 
 -----
 
@@ -42,6 +45,8 @@
 
 * [DOCUMENTATION](https://kafka.apache.org/documentation/)
   * [src](https://github.com/apache/kafka)
+* [카프카, 데이터 플랫폼의 최강자](http://www.yes24.com/Product/goods/59789254)
+  * [src](https://github.com/onlybooks/kafka)
 
 # Materials
 
@@ -276,6 +281,17 @@ $ /usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --from-begin
 
 Kafka 가 partition 을 Consumer Instance 에 다시 할당하는 과정이다. 예를 들어 Consumer Group 의 특정 Consumer Instance 가 장애가 발생했다면 Kafka 는 잠깐 시간을 내어 살아있는 Consumer Instance 들에게 Partition 을 다시 할당한다. 이때 Rebalance 도중에 Record Data 를 consumming 할 수 없다.
 
+## Producer
+
+> * [KafkaProducer Client Internals @ naver.d2](https://d2.naver.com/helloworld/6560422)
+> * [Kafka producer overview @ linkedin](https://www.linkedin.com/pulse/kafka-producer-overview-sylvester-daniel)
+
+![](https://media-exp1.licdn.com/dms/image/C5112AQFrqGK9hVlKuQ/article-cover_image-shrink_600_2000/0/1557073363826?e=1635379200&v=beta&t=WPTTCMgfoTBO4x9amAVdHBckOl1kOUJIwZSfrlennAo)
+
+Producer 는 Kafka Broker 에게 message 를 공급하는 application 이다. 
+
+Producer Record 가 만들어지면 Serializer, Partitioner, Compression 과정을 지나 하나의 Batch 를 구성한다. 그리고 Batch 단위로 특정 Kafka Broker Partition 으로 전송된다.
+
 ## Consumer Group
 
 > * [Kafka 운영자가 말하는 Kafka Consumer Group](https://www.popit.kr/kafka-consumer-group/)
@@ -325,6 +341,11 @@ Key 의 Record Data 는 같은 Partition 에 저장된다.
 * [[Kafka] Producer Config 정리](https://devidea.tistory.com/90)
 
 Producer 는 record 를 batch 로 묶어서 보낸다. `batch.size` 를 설정하여 batch 의 크기를 조정한다. 
+
+## Kafka GUI
+
+* [CMAK (Cluster Manager for Apache Kafka, previously known as Kafka Manager)](https://github.com/yahoo/CMAK#deployment)
+  * yahoo 에서 개발한 Web GUI
 
 # Basic
 
@@ -540,7 +561,7 @@ try {
   }
 } catch (WakeupException e) {
   System.out.println("poll() method trigger WakeupException");
-}finally {
+} finally {
   consumer.commitSync();
   consumer.close();
 }
@@ -589,4 +610,23 @@ $ bin/kafka-topics.sh –zookeeper ip_addr_of_zookeeper:2181 –create –topic 
 
 * [# Kafka Connect란?](https://scorpio-mercury.tistory.com/30)
 
+![](img/kafka_connect_streams.jpg)
+
 Kafka Connect는 데이터소스와 Kafka를 연결해준다. Connector를 이용하여 데이터소스와 연결한다. 즉, Kafka Connector가 Producer와 Consumer 역할을 한다. **Producer** 역할을 하는 Kafka Connector를 **Source Connector**라 하고, **Consumer** 역할을 하는 Kafka Connector를 **Sink Connector**라 한다.
+
+## Kafka Streams
+
+* [[Kafka 101] 카프카 스트림즈 (Kafka Streams)](https://always-kimkim.tistory.com/entry/kafka101-streams)
+
+![](img/kafka_connect_streams.jpg)
+
+Kafka Streams Application 은 Kafka Sreams API 를 사용한 Application 이다. Kafka Streams Application 은 Kafka Cluster 의 특정 topic 을 consume 한 것을 가공한다. 그리고 다른 topic 으로 produce 한다.
+
+주로 message 를 실시간으로 처리할 때 사용한다. 즉, 잠깐 훔쳐서 가공하고 다시 보낸다. 
+
+다음과 같은 경우 사용하면 좋다.
+
+* message 를 masking 한다.
+* message 를 규격화 한다.
+* 5 분간격으로 특정 message 를 수신했는지 검사한다.
+* message 에 특정한 값이 있다면 새로운 pipeline 으로 보낸다.
