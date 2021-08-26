@@ -2286,6 +2286,8 @@ If you reduce the amount of provisioned throughput for your table, DynamoDB will
 
 -----
 
+[App.java](https://gist.github.com/espozbob/12df181f22a6f61e7fbac806b9589ae9) 은 transact_write_item 을 이용한 java 예제이다.
+
 DynamoDB 는 transaction 처리를 위해 `transact_write_item, transact_get_item` 등의 API 를 제공한다.
 
 DynamoDB 의 transaction 은 lock 을 지원하지는 않는다. 동일한 record 에 대해 `transact_write_item` 이 호출되면 두번째 호출은 `TransactConflictException` 을 발생한다. 첫번째 호출이 tansaction 을 완료할 때까지 두번째 호출은 retry 하는 방식으로 처리한다. DynamoDB 의 transaction 은 all or nothing 만 지원한다. 참고로 `batch_write_item` 은 `transact_write_item` 과 달리 all or nothing 을 지원하지 않는다.
