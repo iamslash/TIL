@@ -6,6 +6,12 @@
   - [Install with docker](#install-with-docker)
 - [Sentinel](#sentinel)
 - [Cluster](#cluster)
+- [Redis Data Types](#redis-data-types)
+  - [Strings in Redis](#strings-in-redis)
+  - [Lists in Redis](#lists-in-redis)
+  - [Sets in Redis](#sets-in-redis)
+  - [Hashes in Redis](#hashes-in-redis)
+  - [Sorted sets in Redis](#sorted-sets-in-redis)
 - [Commands](#commands)
   - [Client/Server](#clientserver)
   - [Database](#database)
@@ -131,6 +137,38 @@ $ docker exec -it my-redis-cluster redis-cli
 # 127.0.0.1:6379> GET helloworld
 # "2"
 ```
+
+# Redis Data Types
+
+## Strings in Redis
+
+* [1.2.1 Strings in Redis](https://redis.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/1-2-1-strings-in-redis/)
+
+![](img/strings_in_redis.png)
+
+## Lists in Redis
+
+* [1.2.2 Lists in Redis](https://redis.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/1-2-2-lists-in-redis/)
+
+![](img/lists_in_redis.png)
+
+## Sets in Redis
+
+* [1.2.3 Sets in Redis](https://redis.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/1-2-3-sets-in-redis/)
+
+![](img/sets_in_redis.png)
+
+## Hashes in Redis
+
+* [1.2.4 Hashes in Redis](https://redis.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/1-2-4-hashes-in-redis/)
+
+![](img/hashes_in_redis.png)
+
+## Sorted sets in Redis
+
+* [1.2.5 Sorted sets in Redis](https://redis.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/1-2-5-sorted-sets-in-redis/)
+
+![](img/sorted_sets_in_redis.png)
 
 # Commands
 
