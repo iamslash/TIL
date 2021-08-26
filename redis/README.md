@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Features](#features)
 - [Install](#install)
@@ -33,6 +34,11 @@
 # Abstract
 
 redis 에 대해 정리한다.
+
+# References
+
+* [Redis in Action @ manning](https://www.manning.com/books/redis-in-action)
+  * [src](git@github.com:josiahcarlson/redis-in-action.git)
 
 # Materials
 
