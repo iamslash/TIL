@@ -1669,11 +1669,30 @@ func main() {
 ```
 
 **Anonymous structs:**  
+
 Cheaper and safer than using `map[string]interface{}`.
+
 ```go
 point := struct {
 	X, Y int
 }{1, 2}
+```
+
+**struct tags**
+
+> [Custom struct field tags in Golang](https://sosedoff.com/2016/07/16/golang-struct-tags.html)
+
+struct 의 field 에 tag 를 달아두고 Runtime 에 얻어올 수 있다. tag 는 field 의 추가 정보이다.
+
+```go
+type User struct {
+  Id        int       `json:"id"`
+  Name      string    `json:"name"`
+  Bio       string    `json:"about,omitempty"`
+  Active    bool      `json:"active"`
+  Admin     bool      `json:"-"`
+  CreatedAt time.Time `json:"created_at"`
+}
 ```
 
 ## Pointers
