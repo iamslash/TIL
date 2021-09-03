@@ -13,6 +13,7 @@
   - [Conditional and Boolean Operators](#conditional-and-boolean-operators)
   - [Mathematical and Aggregate Operators](#mathematical-and-aggregate-operators)
 - [Advanced](#advanced)
+  - [Higher-order observable](#higher-order-observable)
   - [merge vs mergeAll vs mergeMap vs mergeMapTo](#merge-vs-mergeall-vs-mergemap-vs-mergemapto)
 
 ---
@@ -193,6 +194,67 @@
 - reduce
 
 # Advanced
+
+## Higher-order observable
+
+observable 은 value 가 element 이다. higher observable 은 또 다른 observable 이 element 이다.
+
+예를 들어 다음은 0 부터 숫자를 만들어내는 observable 이다.
+
+```js
+const { interval, of } = Rx;
+const { partition, groupBy, mergeAll, concatAll, switchAll, exhaustMap, mergeMap } = RxOperators;
+
+interval(500).pipe(
+)
+```
+
+이것을 marble diagram 으로 표현하면 다음과 같다. 
+
+![](img/interval_observable.png)
+
+다음은 0 부터 짝수를 만들어내는 observable 과 홀수를 만들어내는 observable 를 element 로 하는 higher observable 이다.
+
+```js
+const { interval, of } = Rx;
+const { partition, groupBy, mergeAll, concatAll, switchAll, exhaustMap, mergeMap } = RxOperators;
+
+interval(1000).pipe(
+  groupBy(n => n % 2),
+)
+```
+
+이것을 marble diagram 으로 표현하면 다음과 같다. higher observable 의 element 개수는 2 개임을 주의하자.
+
+![](img/interval_groupby_observable.png)
+
+mergeAll() 를 사용하면 higher observable 의 element 를 합쳐서 다시 observable 로 만들 수 있다.
+
+```js
+const { interval, of } = Rx;
+const { partition, groupBy, mergeAll, concatAll, switchAll, exhaustMap, mergeMap } = RxOperators;
+
+interval(1000).pipe(
+  groupBy(n => n % 2),
+  mergeAll()
+)
+```
+
+![](img/interval_groupby_mergeall_observable.png)
+
+mergeMap() 를 사용해서 higher-order observable 의 element 인 observable 의 element 를 하나 늘려서 합치고 다시 observable 로 만들자.
+
+```js
+const { interval, of } = Rx;
+const { map, partition, groupBy, mergeAll, concatAll, switchAll, exhaustMap, mergeMap } = RxOperators;
+
+interval(1000).pipe(
+  groupBy(n => n % 2),
+  mergeMap(o$ => o$.pipe(map(a => a + 1))),
+)
+```
+
+![](img/interval_groupby_mergemap_observable.png)
 
 ## merge vs mergeAll vs mergeMap vs mergeMapTo
 
