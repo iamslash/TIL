@@ -1724,6 +1724,40 @@ func (foo Foo) Awesomize() string {
 }
 ```
 
+**empty interface**
+
+> [The Go Empty Interface Explained](https://flaviocopes.com/go-empty-interface/)
+
+`interface {}` 는 마치 `c` 의 `void*` 와 같다. [Type Assertion](#type-assertion) 을 사용하여
+type casting 할 수 있다. `switch` 와 함께 `.(type)` 을 사용하면 type 별로 business logic 을 처리할 수 있다. 
+
+```go
+// basic empty interface
+t := []int{1, 2, 3, 4}
+s := make([]interface{}, len(t))
+for i, v := range t {
+    s[i] = v
+}
+
+// [Type Assertion](#type-assertion)
+
+// switch with type assertion
+var t interface{}
+t = functionOfSomeType()
+switch t := t.(type) {
+default:
+    fmt.Printf("unexpected type %T\n", t)     // %T prints whatever type t has
+case bool:
+    fmt.Printf("boolean %t\n", t)             // t has type bool
+case int:
+    fmt.Printf("integer %d\n", t)             // t has type int
+case *bool:
+    fmt.Printf("pointer to boolean %t\n", *t) // t has type *bool
+case *int:
+    fmt.Printf("pointer to integer %d\n", *t) // t has type *int
+}
+```
+
 ## Embedding
 
 There is no subclassing in Go. Instead, there is interface and struct embedding.
