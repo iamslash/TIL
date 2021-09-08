@@ -59,6 +59,7 @@
     - [Channel Axioms](#channel-axioms)
   - [Type Assertion](#type-assertion)
 - [Advanced Usages](#advanced-usages)
+  - [Go memory ballast](#go-memory-ballast)
   - [go commands](#go-commands)
     - [go build](#go-build)
     - [go test](#go-test)
@@ -1924,6 +1925,23 @@ b, ok := i.(string)
 ```
 
 # Advanced Usages
+
+## Go memory ballast
+
+> [Go memory ballast: How I learnt to stop worrying and love the heap](https://blog.twitch.tv/ko-kr/2019/04/10/go-memory-ballast-how-i-learnt-to-stop-worrying-and-love-the-heap-26c2462549a2/)
+
+다음과 같이 아주 큰 heap 을 할당해 두자. Virtual Memory 에 10 GB Heap 이 할당된다. Page Fault 가 발생되기 전까지 Physical Memory 를 소모하지는 않는다. 아주 큰 Heap 이 미리 할당되었으므로 GC 를 위한 CPU utilization 은 낮다. 따라서 CPU utilization 을 API 처리에 더욱 사용할 수 있다. API Latency 는 더욱 낮아진다.
+
+```go
+func main() {
+
+	// Create a large heap allocation of 10 GiB
+	ballast := make([]byte, 10<<30)
+
+	// Application execution continues
+	// ...
+}
+```
 
 ## go commands
 
