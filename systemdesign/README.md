@@ -87,6 +87,8 @@
 * [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
   - 유료 시스템 디자인 인터뷰
   - [System Design @ blogspot](https://learnsystemdesign.blogspot.com/)
+* [System Design Interview – An insider's guide, Second Edition](https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF)
+  * [links](https://github.com/alex-xu-system/bytecode/blob/main/system_design_links.md)
 * [incident @ TIL](/incident/README.md)
   * incident case studies
   
@@ -295,7 +297,7 @@ Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availa
 * Availabilty in numbers
   * availability 는 uptime 혹은 downtime 을 percent 단위로 표현된다. 예를 들어 99.9% (three 9s) 혹은 99.99% (four 9s) 등으로 표기한다.
 
-* 99.9% availability - three 9s
+> 99.9% availability - three 9s
 
 | Duration           | Acceptable downtime |
 | ------------------ | ------------------- |
@@ -304,7 +306,7 @@ Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availa
 | Downtime per week  | 10m 4.8s            |
 | Downtime per day   | 1m 26.4s            |
 
-* 99.99% availability - four 9s
+> 99.99% availability - four 9s
 
 | Duration           | Acceptable downtime |
 | ------------------ | ------------------- |
@@ -377,7 +379,7 @@ Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availa
 
 forward proxy 는 HTTP req 를 인터넷에 전달한다. reverse proxy 는 HTTP 를 요청을 인터넷으로부터 HTTP req 를 받아서 back-end 서버들에게 전달한다. L4, L7 스위치도 reverse proxy 라고 할 수 있다. reverse 라는 말은 왜 사용되었을까???
 
-nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은 `SPOF (single point failure)` 를 위해 사용된다.
+nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은 `SPOF (single point failure)` 해결을 위해 사용된다.
 
 ## Application layer
 
@@ -464,7 +466,7 @@ A service mesh is a dedicated infrastructure layer for handling service-to-servi
 * Database caching
 * Application caching
 * Caching at the database query level
-* CAching at the object level
+* Caching at the object level
 * When to update the cache
   * Cache-Aside
     * 응용프로그램이 직접 cache를 제어한다.
@@ -861,12 +863,12 @@ SAGAS is a long lived transaction that can be broken up into transactions.
 |                 |                                                                                                                      |                                                                                                                                                |
 | Data store      | **Bigtable** - Distributed column-oriented database from Google                                                      | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/chang06bigtable.pdf)                                                    |
 | Data store      | **HBase** - Open source implementation of Bigtable                                                                   | [slideshare.net](http://www.slideshare.net/alexbaranau/intro-to-hbase)                                                                         |
-| Data store      | **Cassandra** - Distributed column-oriented database from Facebook                                                   | [slideshare.net](http://www.slideshare.net/planetcassandra/cassandra-introduction-features-30103666)                                           |
-| Data store      | **DynamoDB** - Document-oriented database from Amazon                                                                | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/decandia07dynamo.pdf)                                                   |
-| Data store      | **MongoDB** - Document-oriented database                                                                             | [slideshare.net](http://www.slideshare.net/mdirolf/introduction-to-mongodb)                                                                    |
+| Data store      | **[Cassandra](/cassandra/README.md)** - Distributed column-oriented database from Facebook                                                   | [slideshare.net](http://www.slideshare.net/planetcassandra/cassandra-introduction-features-30103666)                                           |
+| Data store      | **[DynamoDB](/dynamodb/README.md)** - Document-oriented database from Amazon                                                                | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/decandia07dynamo.pdf)                                                   |
+| Data store      | **[MongoDB](/mongodb/README.md)** - Document-oriented database                                                                             | [slideshare.net](http://www.slideshare.net/mdirolf/introduction-to-mongodb)                                                                    |
 | Data store      | **Spanner** - Globally-distributed database from Google                                                              | [research.google.com](http://research.google.com/archive/spanner-osdi2012.pdf)                                                                 |
-| Data store      | **Memcached** - Distributed memory caching system                                                                    | [slideshare.net](http://www.slideshare.net/oemebamo/introduction-to-memcached)                                                                 |
-| Data store      | **Redis** - Distributed memory caching system with persistence and value types                                       | [slideshare.net](http://www.slideshare.net/dvirsky/introduction-to-redis)                                                                      |
+| Data store      | **[Memcached](/memcached/README.md)** - Distributed memory caching system                                                                    | [slideshare.net](http://www.slideshare.net/oemebamo/introduction-to-memcached)                                                                 |
+| Data store      | **[Redis](/redis/README.md)** - Distributed memory caching system with persistence and value types                                       | [slideshare.net](http://www.slideshare.net/dvirsky/introduction-to-redis)                                                                      |
 | Data store      | **Couchbase** - an open-source, distributed multi-model NoSQL document-oriented database                             | [couchbase.com](https://www.couchbase.com/)                                                                                                    |
 | Data store      | **Elasticsearch**                                                                                                    | [Elasticsearch @ TIL](/elasticsearch/README.md)                                                                                                |
 | File system     | **Google File System (GFS)** - Distributed file system                                                               | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/gfs-sosp2003.pdf)                         |
@@ -874,14 +876,14 @@ SAGAS is a long lived transaction that can be broken up into transactions.
 | File system     | **GlusterFS** - Distributed File System                                                                              | [GlusterFS](/GlusterFS/README.md)                                                                                                              |
 | Monitoring      | **Graylog**                                                                                                          | [Graylog @ TIL](/graylog/README.md)                                                                                                             |
 | Monitoring      | **Prometheus**                                                                                                       | [Prometheus @ TIL](/prometheus/README.md)                                                                                                      |
-| Monitoring      | **Grafana**                                                                                                          | [Grafana @ TIL](/grafana/README.md)                                                                                                            |
-| CI/CD           | **Jenkins**                                                                                                          | [Jenkins @ TIL](/jenkins/README.md)                                                                                                            |
+| Monitoring      | **[Grafana](/grafana/README.md)**                                                                                                          | [Grafana @ TIL](/grafana/README.md)                                                                                                            |
+| CI/CD           | **[Jenkins](/jenkins/README.md)**                                                                                                          | [Jenkins @ TIL](/jenkins/README.md)                                                                                                            |
 | Misc            | **Chubby** - Lock service for loosely-coupled distributed systems from Google                                        | [research.google.com](http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/archive/chubby-osdi06.pdf) |
 | Misc            | **Dapper** - Distributed systems tracing infrastructure                                                              | [research.google.com](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36356.pdf)                                |
-| Misc            | **Kafka** - Pub/sub message queue from LinkedIn                                                                      | [slideshare.net](http://www.slideshare.net/mumrah/kafka-talk-tri-hug)                                                                          |
-| Misc            | **Zookeeper** - Centralized infrastructure and services enabling synchronization                                     | [slideshare.net](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)                                                       |
+| Misc            | **[Kafka](/kafka/README.md)** - Pub/sub message queue from LinkedIn                                                                      | [slideshare.net](http://www.slideshare.net/mumrah/kafka-talk-tri-hug)                                                                          |
+| Misc            | **[Zookeeper](/zookeeper/README.md)** - Centralized infrastructure and services enabling synchronization                                     | [slideshare.net](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)                                                       |
 | Misc            | **ØMQ** - a high-performance asynchronous messaging library, aimed at use in distributed or concurrent applications. | [zeromq.org](http://zeromq.org/)                                                                                                               |
-| Misc            | **etcd** - A distributed, reliable key-value store for the most critical data of a distributed system.               | [etcd docs](https://coreos.com/etcd/docs/latest/)                                                                                              |
+| Misc            | **[etcd](/etcd/README.md)** - A distributed, reliable key-value store for the most critical data of a distributed system.               | [etcd docs](https://coreos.com/etcd/docs/latest/)                                                                                              |
 | Misc            | **Mosquitto** - An open source MQTT broker. [MQTT](/mqtt/README.md) is a Standard for IoT Messaging                  |                                                                                                                                                |
 | Misc            | **Netty** - Netty is a NIO client server framework.                                                                  |                                                                                                                                                |
 
