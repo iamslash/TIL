@@ -503,6 +503,8 @@ class MyContinuation(override val context: CoroutineContext = EmptyCoroutineCont
 
 # Croutines context and dispatchers
 
+> [What is CoroutineContext and how does it work?](https://kt.academy/article/cc-coroutine-context)
+
 ```kotlin
 // https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-core/jvm/test/guide/example-context-01.kt
 fun main() = runBlocking<Unit> {
