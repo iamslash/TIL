@@ -506,6 +506,172 @@ class MyContinuation(override val context: CoroutineContext = EmptyCoroutineCont
 > [What is CoroutineContext and how does it work?](https://kt.academy/article/cc-coroutine-context)
 
 ```kotlin
+// CoroutineScope.launch 의 prototype 이다. CoroutineContext 를 argument 로 전달할 수 있다.
+public fun CoroutineScope.launch(
+    context: CoroutineContext = EmptyCoroutineContext,
+    start: CoroutineStart = CoroutineStart.DEFAULT,
+    block: suspend CoroutineScope.() -> Unit
+): Job {
+    ...
+}
+
+// CoroutineScope 은 CoroutineContext 를 member field 로 갖는다.
+// CoroutineContext 는 CoroutineScope 의 환경정보를 의미한다.
+public interface CoroutineScope {
+    public val coroutineContext: CoroutineContext
+} 
+
+// Continuation 은 CoroutineContext 를 member field 로 갖는다.
+// Continuation 이 전달된다는 것은 CoroutineContext 도 함께 전달 되는 것과 같다.
+public interface Continuation<in T> {
+    public val context: CoroutineContext
+    public fun resumeWith(result: Result<T>)
+}
+
+// CoroutineName, Job 은 CoroutineContext 이다.
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.Job
+import kotlin.coroutines.CoroutineContext
+//sampleStart
+fun main() {
+    val name: CoroutineName = CoroutineName("A name")
+    val element: CoroutineContext.Element = name
+    val context: CoroutineContext = element
+
+    val job: Job = Job()
+    val jobElement: CoroutineContext.Element = job
+    val jobContext: CoroutineContext = jobElement
+}
+
+// CoroutineContext 는 type 을 key 로하는 map 이다.
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.Job
+import kotlin.coroutines.CoroutineContext
+fun main() {
+    val ctx: CoroutineContext = CoroutineName("A name")
+
+    val coroutineName: CoroutineName? = ctx[CoroutineName]
+    println(coroutineName?.name) // A name
+    val job: Job? = ctx[Job] // or ctx.get(Job)
+    println(job) // null
+}
+
+// CoroutineName 의 prototype 은 다음과 같다.
+data class CoroutineName(
+    val name: String
+) : AbstractCoroutineContextElement(CoroutineName) {
+    override fun toString(): String = "CoroutineName($name)"
+    companion object Key : CoroutineContext.Key<CoroutineName>
+}
+
+// 2 개의 CoroutineContext 더해서 1 개의 CoroutineContext 를 만들 수 있다. 
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.Job
+import kotlin.coroutines.CoroutineContext
+//sampleStart
+fun main() {
+    val ctx1: CoroutineContext = CoroutineName("Name1")
+    println(ctx1[CoroutineName]?.name) // Name1
+    println(ctx1[Job]?.isActive) // null
+
+    val ctx2: CoroutineContext = Job()
+    println(ctx2[CoroutineName]?.name) // null
+    println(ctx2[Job]?.isActive) // true
+
+    val ctx3 = ctx1 + ctx2
+    println(ctx3[CoroutineName]?.name) // Name1
+    println(ctx3[Job]?.isActive) // true
+}
+
+// 같은 CoroutineContext 를 더하면 덮어씌어진다.
+import kotlinx.coroutines.CoroutineName
+import kotlin.coroutines.CoroutineContext
+
+//sampleStart
+fun main() {
+    val ctx1: CoroutineContext = CoroutineName("Name1")
+    println(ctx1[CoroutineName]?.name) // Name1
+
+    val ctx2: CoroutineContext = CoroutineName("Name2")
+    println(ctx2[CoroutineName]?.name) // Name2
+
+    val ctx3 = ctx1 + ctx2
+    println(ctx3[CoroutineName]?.name) // Name2
+}
+
+// CoroutineContext 를 뺄 수도 있다.
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.Job
+//sampleStart
+fun main() {
+    val ctx = CoroutineName("Name1") + Job()
+    println(ctx[CoroutineName]?.name) // Name1
+    println(ctx[Job]?.isActive) // true
+
+    val ctx2 = ctx.minusKey(CoroutineName)
+    println(ctx2[CoroutineName]?.name) // null
+    println(ctx2[Job]?.isActive) // true
+
+    val ctx3 = (ctx + CoroutineName("Name2"))
+        .minusKey(CoroutineName)
+    println(ctx3[CoroutineName]?.name) // null
+    println(ctx3[Job]?.isActive) // true
+}
+
+// CoroutineContext 를 하나로 이어보자.
+import kotlinx.coroutines.CoroutineName
+import kotlinx.coroutines.Job
+import kotlin.coroutines.CoroutineContext
+//sampleStart
+fun main() {
+    val ctx = CoroutineName("Name1") + Job()
+    ctx.fold("") { acc, element -> "$acc$element " }
+        .also(::println) // CoroutineName(Name1) JobImpl{Active}@dbab622e
+    ctx.fold(emptyList<CoroutineContext>()) { acc, element -> acc + element }
+        .joinToString()
+        .also(::println) // CoroutineName(Name1), JobImpl{Active}@dbab622e
+}
+
+// 부모 CoroutineScope 의 CoroutineContext 는 자식 ScoroutineScope 로 상속된다.
+import kotlinx.coroutines.*
+//sampleStart
+fun CoroutineScope.log(msg: String) =
+    println("[${coroutineContext[CoroutineName]?.name}] $msg")
+
+fun main() = runBlocking(CoroutineName("main")) {
+    log("Started") // [main] Started
+    val v1 = async {
+        delay(500)
+        log("Running async") // [main] Running async
+        42
+    }
+    launch {
+        delay(1000)
+        log("Running launch") // [main] Running launch
+    }
+    log("The answer is ${v1.await()}") // [main] The answer is 42
+}
+
+// 자식 CoroutineScope 에서 CoroutineContext 를 덮어쓰기할 수 있다.
+import kotlinx.coroutines.*
+
+//sampleStart
+fun CoroutineScope.log(msg: String) =
+    println("[${coroutineContext[CoroutineName]?.name}] $msg")
+fun main() = runBlocking(CoroutineName("main")) {
+    log("Started") // [main] Started
+    val v1 = async(CoroutineName("c1")) {
+        delay(500)
+        log("Running async") // [c1] Running async
+        42
+    }
+    launch(CoroutineName("c2")) {
+        delay(1000)
+        log("Running launch") // [c2] Running launch
+    }
+    log("The answer is ${v1.await()}") // [main] The answer is 42
+}
+
 // https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-core/jvm/test/guide/example-context-01.kt
 fun main() = runBlocking<Unit> {
     launch { // context of the parent, main runBlocking coroutine
