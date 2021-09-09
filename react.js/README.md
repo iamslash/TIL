@@ -46,6 +46,8 @@
 
 react.js 는 view library 이다. redux 와 다르다는 것을 주의하자. redux 는 A Predictable State Container for JS Apps 이다. 그리고 매우 작다(2KB). react.js 와 함께 사용할 front-end library 들은 [react libraries](#react-libraries) 를 참고해서 이해하자.
 
+props 는 function parameter 와 유사하다. immutable 이다. state 는 local variable of function 과 같다. mutable 이다. [[React] Props와  State의 차이](https://singa-korean.tistory.com/37) 참고.
+
 # Templates
 
 * [gogo-react](https://gogo-react-docs.coloredstrategies.com/docs/gettingstarted/introduction)
