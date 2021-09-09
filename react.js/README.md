@@ -48,6 +48,8 @@ react.js 는 view library 이다. redux 와 다르다는 것을 주의하자. re
 
 props 는 function parameter 와 유사하다. immutable 이다. state 는 local variable of function 과 같다. mutable 이다. [[React] Props와  State의 차이](https://singa-korean.tistory.com/37) 참고.
 
+react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다. [https://reactjs.org/docs/getting-started.html](https://reactjs.org/docs/getting-started.html) 
+
 # Templates
 
 * [gogo-react](https://gogo-react-docs.coloredstrategies.com/docs/gettingstarted/introduction)
