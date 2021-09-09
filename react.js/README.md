@@ -53,6 +53,7 @@ react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다. [https:/
 # Templates
 
 * [gogo-react](https://gogo-react-docs.coloredstrategies.com/docs/gettingstarted/introduction)
+* [react-admin](https://github.com/marmelab/react-admin)
 
 # Materials
 
