@@ -770,6 +770,17 @@ list.toArray(new Integer[list.size()]);
 int[] l = list.stream()
   .mapToInt(Integer::intValue)
   .toArray();
+
+// List to array of int[]
+// https://docs.oracle.com/javase/8/docs/api/java/util/List.html#toArray-T:A-
+// new String[0] 은 empty array 를 생성한다.
+// List::toArray 는 argument 로 전달된 new String[0] 가 비어있더라도 List<String> 의
+//   개수만큼 확장하고 채운다. 
+List<String> x = Arrays.asList("Hello", "World");
+String[] y = x.toArray(new String[0]);
+String[] z = x.toArray(new String[5]);
+System.out.println(y.length); // 2
+System.out.println(z.length); // 5
 ```
 
 ## Sort
