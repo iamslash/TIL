@@ -64,6 +64,7 @@
   - [Cookies](#cookies)
   - [HTML DOM](#html-dom)
 - [Advanced Usages](#advanced-usages)
+  - [Computed property names](#computed-property-names)
   - [var, let, const](#var-let-const)
   - [promise](#promise)
   - [async, await](#async-await)
@@ -1709,6 +1710,26 @@ document.cookie = "key1 = value1;key2 = value2;expires = date";
 ![](https://www.tutorialspoint.com/javascript/images/html-dom.jpg)
 
 # Advanced Usages
+
+## Computed property names
+
+> [Computed property names](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer#computed_property_names)
+
+Object 의 property name 을 runtime 에 수정하여 property value 를 저장할 수 있다.
+
+```js
+// Computed property names (ES2015)
+let i = 0
+let a = {
+  ['foo' + ++i]: i,
+  ['foo' + ++i]: i,
+  ['foo' + ++i]: i
+}
+
+console.log(a.foo1) // 1
+console.log(a.foo2) // 2
+console.log(a.foo3) // 3
+```
 
 ## var, let, const
 
