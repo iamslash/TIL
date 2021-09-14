@@ -61,7 +61,7 @@
   - [Delegation](#delegation)
     - [Delegation Pattern](#delegation-pattern)
     - [Delegated Properties](#delegated-properties)
-  - [Lazy Initialization](#lazy-initialization)
+  - [Lazy Initialization (lateinit vs by lazy)](#lazy-initialization-lateinit-vs-by-lazy)
   - [Sort](#sort)
   - [min max](#min-max)
   - [Formatted String](#formatted-string)
@@ -1587,25 +1587,28 @@ fun main() {
 }
 ```
 
-## Lazy Initialization
+## Lazy Initialization (lateinit vs by lazy)
 
 ```kotlin
-// Init later
-//  var 에만 사용
-//  null 값으로 초기화 할 수 없다.
-//  초기화 전에는 변수를 사용할 수 없다.
-//  Int, Long, Double, Float 에는 사용할 수 없다. 
+// lateinit: Init later
+//   var 에만 사용
+//   null 값으로 초기화 할 수 없다.
+//   초기화 전에는 변수를 사용할 수 없다.
+//   Int, Long, Double, Float 에는 사용할 수 없다. 
 lateinit var p: String
 p = "Hello"
 
-// Init just once
-//  val 에만 사용
+// by lazy: Init just once
+//   val 에만 사용. 그래서 한번 초기화하면 다시 저장할 수 없다.
 val q: String by lazy {
     "World"
 }
 println(p)  // 초기화
 println(q)  
 ```
+
+* `lateinit` 은 초기화 이후 값이 변할 수 있는 변수 에 사용한다. 
+* `by lazy` 는 초기화 이후 읽기만 할 변수에 사용한다.
 
 ## Sort
 
