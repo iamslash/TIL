@@ -72,6 +72,7 @@
   - [fold](#fold)
   - [coroutine](#coroutine)
   - [Null safety](#null-safety-1)
+  - [inline, noinline, crossinline, reified](#inline-noinline-crossinline-reified)
 
 ----
 
@@ -1856,3 +1857,7 @@ fun main(args: Array<String>) {
 ## Null safety
 
 `?.`
+
+## inline, noinline, crossinline, reified
+
+> [[Kotlin] inline에 대하여 - inline, noinline, crossinline, reified](https://leveloper.tistory.com/171)
