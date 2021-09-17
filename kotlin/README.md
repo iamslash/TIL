@@ -57,6 +57,8 @@
   - [Functional](#functional)
     - [Higher-Order Functions](#higher-order-functions)
     - [Lambda Functions](#lambda-functions)
+    - [Anonymous Functions](#anonymous-functions)
+    - [Inline Functions](#inline-functions)
     - [Extension Functions and Properties](#extension-functions-and-properties)
   - [Delegation](#delegation)
     - [Delegation Pattern](#delegation-pattern)
@@ -72,7 +74,6 @@
   - [fold](#fold)
   - [coroutine](#coroutine)
   - [Null safety](#null-safety-1)
-  - [inline, noinline, crossinline, reified](#inline-noinline-crossinline-reified)
 
 ----
 
@@ -1470,6 +1471,91 @@ println(upperCase5("hello"))
 println(upperCase6("hello"))
 ```
 
+### Anonymous Functions
+
+* [Lambdas | Anonymous functions @ kotlin.io](https://kotlinlang.org/docs/lambdas.html#anonymous-functions)
+
+Anonymous Function 은 return type 표기가 가능하다. 한편 Lambda 는 return type 을 표기할 수 없다.
+
+```kotlin
+val a = { x: Int, y: Int -> x + y }
+val b = fun(x: Int, y: Int) -> Int {
+    return x + y
+}
+```
+
+### Inline Functions
+
+> [[Kotlin] inline에 대하여 - inline, noinline, crossinline, reified](https://leveloper.tistory.com/171)
+
+Higher-order function 은 runtime 에 희생이 따른다. Function interface object 를 생성하고 closure 도 캡처한다. runtime 에 memory 를 더욱 사용한다. closure 는 function body 에서 접근하는 function body 밖의 변수를 말한다. 
+
+이때 Higher-order function 에 inline 을 추가하면 runtime overhead 를 제거할 수 있다. 
+
+```kotlin
+inline fun <T> lock(lock: Lock, body: () -> T): T { ... }
+
+l.lock()
+try {
+    foo()
+} finally {
+    l.unlock()
+}
+```
+
+만약 inline function 의 function argument 중 inline 을 원하지 않는 function argument 가 있다면 **noinline** 을 사용하자.
+
+```kotlin
+inline fun foo(inlined: () -> Unit, noinline notInlined: () -> Unit) { ... }
+```
+
+한편 inline function 의 function argument 를 inline function body 안의 local object 혹은 nested function 에서 호출하는 것은 허락되지 않는다. crossline 을 사용하면 허락된다.
+
+```kotlin
+inline fun f(crossline body: () -> Unit) {
+    val g = object: Runnable {
+        override fun run() = body()
+    }
+}
+```
+
+또한 type parameter 를 inline function body 에서 사용하고 싶다면 type parameter 에 **reified** 를 추가한다.
+
+```kotlin
+// clazz 는 굳이 필요하지 않다.
+fun <T> TreeNode.findParentOfType(clazz: Class<T>): T? {
+    var p = parent
+    while (p != null && !clazz.isInstance(p)) {
+        p = p.parent
+    }
+    @Suppress("UNCHECKED_CAST")
+    return p as T?
+}
+
+// 이렇게 호출해야 한다.
+treeNode.findParentOfType(MyTreeNode::class.java)
+
+// 이렇게 호출하고 싶다. type parameter 를 이용해서 findParentOfType 을 
+// refactoring 해보자. 
+treeNode.findParentOfType<MyTreeNode>()
+
+// T 에 reified 를 추가해야 한다.
+inline fun <reified T> TreeNode.findParentOfType(): T? {
+    var p = parent
+    while (p != null && p !is T) {
+        p = p.parent
+    }
+    return p as T?
+}
+
+// 이번에는 type paremeter T 를 이용하여 reflection 해보자.
+inline fun <reified T> membersOf() = T::class.members
+
+fun main(s: Array<String>) {
+    println(membersOf<StringBuilder>().joinToString("\n"))
+}
+```
+
 ### Extension Functions and Properties
 
 * [Concepts.Functions.Extensions](https://kotlinlang.org/docs/extensions.html)
@@ -1857,7 +1943,3 @@ fun main(args: Array<String>) {
 ## Null safety
 
 `?.`
-
-## inline, noinline, crossinline, reified
-
-> [[Kotlin] inline에 대하여 - inline, noinline, crossinline, reified](https://leveloper.tistory.com/171)
