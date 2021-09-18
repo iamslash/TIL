@@ -61,6 +61,10 @@
   - [BigInteger](#biginteger)
   - [Comparable vs Comparator](#comparable-vs-comparator)
   - [Class literal, Type Token, Super Type Token](#class-literal-type-token-super-type-token)
+  - [CompletableFuture](#completablefuture)
+  - [Caffeine](#caffeine)
+  - [Cache2k](#cache2k)
+  - [JCache](#jcache)
 - [Quiz](#quiz)
 
 -------------------------------------------------------------------------------
@@ -2519,6 +2523,22 @@ The type of **String.class** is **Class<String>**, The type of **Integer.class**
 `myMethod(Class<?> clazz)` is a method whose argument is the **Type Token**. We can call this like `method(String.class)`.
 
 Super Type Toke???
+
+## CompletableFuture
+
+* [CompletableFuture](java_completable_future.md)
+
+## Caffeine
+
+* [Caffeine](java_caffeine.md)
+
+## Cache2k
+
+* [Cache2k](java_cache2k.md)
+
+## JCache
+
+* [JCache](java_jcache.md)
 
 # Quiz
 
