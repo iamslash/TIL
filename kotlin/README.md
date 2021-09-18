@@ -1043,24 +1043,25 @@ fun main() {
 
 ----
 
-* `out`: Foo<sub-type> 을 Foo<super-type> 에 assign 할 수 있다.
-  * up-casting
 * `in`: Bar<super-type> 을 Bar<sub-type> 에 assign 할 수 있다.
   * down-casting
+* `out`: Foo<sub-type> 을 Foo<super-type> 에 assign 할 수 있다.
+  * up-casting
 * `*`: 무엇이든 assign 할 수 있다.
+  * any-casting
 
 ```kotlin
-class Foo<out T>
 class Bar<in T>
+class Foo<out T>
 
 fun main(args: Array<String>) {
-    // up-casting
-    val fooSub = Foo<Int>()
-    val fooSuper: Foo<Any> = fooSub
-
     // down-casting
     val barSuper = Bar<Any>()
     val barSub: Bar<Int> = barSuper
+
+    // up-casting
+    val fooSub = Foo<Int>()
+    val fooSuper: Foo<Any> = fooSub
 
     // any-casting
     val star: Foo<*> = fooSub
