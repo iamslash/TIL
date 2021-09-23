@@ -12,3 +12,27 @@ Caffeine is a high-performance caching library for Java.
 
 
 
+```markdown
+// kafka topic: queing.ml.custombot.notify.0
+
+```js
+// method:
+//   RESULT_CREATE_CUSTOMBOT
+//   RESULT_UPDATE_CUSTOMBOT
+//   RESULT_DELTE_CUSTOMBOT
+
+// RESULT_CREATE_CUSTOMBOT
+{
+  version: "1",
+  timestamp; "",
+  serviceCode: "matrix",
+  method: "RESULT_CREATE_CUSTOMBOT",
+  args: {
+    customBotId: "1",
+    customBotStatus: "SUCCESS" // SUCCESS | FAIL
+  }
+}
+
+```
+```
+

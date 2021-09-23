@@ -44,6 +44,7 @@
     - [Method References](#method-references)
     - [Optional<T>](#optionalt)
 - [Advanced Usage](#advanced-usage)
+  - [arraycopy](#arraycopy)
   - [Integer.valueOf vs Integer.parseInt](#integervalueof-vs-integerparseint)
   - [Exception](#exception)
   - [Dynamic Proxy](#dynamic-proxy)
@@ -1843,6 +1844,14 @@ String result = valueOpt.orElseThrow(CustomException::new).toUpperCase();
 ```
 
 # Advanced Usage
+
+## arraycopy
+
+```java
+char[] src = new char[16];
+char[] dst = new char[16];
+System.arraycopy(arc, 0, dst, 0, 4);
+```
 
 ## Integer.valueOf vs Integer.parseInt
 
