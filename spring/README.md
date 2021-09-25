@@ -38,6 +38,8 @@
   - [Spring with flyway](#spring-with-flyway)
   - [Custom Data Binder in Spring MVC](#custom-data-binder-in-spring-mvc)
   - [Caching in spring boot](#caching-in-spring-boot)
+- [Spring Libraries](#spring-libraries)
+  - [Problem](#problem)
 
 ----
 
@@ -1079,3 +1081,11 @@ public ResponseEntity getVersion(
 * `@CacheEvict`
 * `@Cacheable`
 * `@CacheConfig`
+
+# Spring Libraries
+
+## Problem
+
+Exception 을 Json 으로 변환해서 HTTP Reponse 로 보내주는 Library 이다. 
+
+* [ex-problem](https://github.com/iamslash/spring-ex/tree/master/ex-problem)
