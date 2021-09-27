@@ -80,7 +80,7 @@ This is about JAVA.
 * [java annotation @ TIL](/java/javaannotation.md)
 * [java gc @ TIL](/java/javagc.md)
 * [java multithread @ TIL](/java/javamultithread.md)
-* [java test @ TIL](/java/javatest.md)
+* [java test @ TIL](/java/java_test.md)
 * [jvm @ TIL](/jvm/README.md)
 
 # Materials
@@ -1628,7 +1628,7 @@ class Main {
 
 ## Test
 
-* [java test @ TIL](javatest.md)
+* [java test @ TIL](java_test.md)
 
 ## Multithread
 
