@@ -14,7 +14,7 @@ client libraries 를 생성할 수 있다.
 
 ## How to generate codes from the specification?
 
-`server/template/kotlin/*.mustache` 파일을 만들고 kotlin template 을 작성한다.
+`server/template/kotlin/*.mustache` 파일을 만들고 kotlin template 을 작성한다. [kotlin-spring mustache template files @ github](https://github.com/OpenAPITools/openapi-generator/tree/master/modules/openapi-generator/src/main/resources/kotlin-spring)
 
 `config.yml` 를 만들고 configuration 을 작성한다.
 
