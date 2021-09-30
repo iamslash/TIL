@@ -8,6 +8,8 @@
 - [@ControllerAdvice, @RestControllerAdvice](#controlleradvice-restcontrolleradvice)
 - [@Import](#import)
 - [@EnableAutoConfiguration](#enableautoconfiguration)
+- [@DynamicInsert, @DynamicUpdate](#dynamicinsert-dynamicupdate)
+- [@Validation](#validation)
 
 -----
 
@@ -489,3 +491,13 @@ public void insert_test() {
     assertThat(profile.getFriendsCount(), Is.is(0));
 }
 ```
+
+# @Validation
+
+* [Java Bean Validation 제대로 알고 쓰자](https://kapentaz.github.io/java/Java-Bean-Validation-%EC%A0%9C%EB%8C%80%EB%A1%9C-%EC%95%8C%EA%B3%A0-%EC%93%B0%EC%9E%90/#)
+* [Package javax.validation.constraints @ java](https://docs.oracle.com/javaee/7/api/javax/validation/constraints/package-summary.html)
+* [Validation in Spring Boot](https://www.baeldung.com/spring-boot-bean-validation)
+
+----
+
+값의 제한 조건 constraint 를 annotation 으로 달아둔다. constraint 를 어기는 값이 저장되면 Exception 을 던진다.
