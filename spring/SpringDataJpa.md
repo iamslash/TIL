@@ -1,3 +1,4 @@
+- [Abstract](#abstract)
 - [Materials](#materials)
 - [Basics](#basics)
   - [RDBMS and Java](#rdbms-and-java)
@@ -41,6 +42,10 @@
   - [JPA Cache](#jpa-cache)
 
 ----
+
+# Abstract
+
+JPA 는 specification 이고 Hibernate 는 JPA 의 implementation 이다. Spring Data JPA 는 JPA 의 facade 이다. 즉, 쉽게 사용할 수 있게 도와주는 library 이다. [JPA, Hibernate, 그리고 Spring Data JPA의 차이점](https://suhwan.dev/2019/02/24/jpa-vs-hibernate-vs-spring-data-jpa/) 참고.
 
 # Materials
 
