@@ -27,6 +27,7 @@
   - [Test Active profile](#test-active-profile)
   - [@ConfigurationProperties](#configurationproperties)
   - [Test of `@ConfigurationProperties`](#test-of-configurationproperties)
+  - [Filter vs Interceptor](#filter-vs-interceptor)
   - [Http requests logging](#http-requests-logging)
   - [Http responses logging](#http-responses-logging)
   - [Slf4J logging](#slf4j-logging)
@@ -340,6 +341,11 @@ class AuthConfigPropertiesTest {
 * @ExtendWith – integrates Spring's TestContext framework with JUnit5
 * @EnableConfigurationProperties – enables support for @ConfigurationProperties beans (in this case, the AuthConfigProperties bean)
 * @TestPropertySource – specifies a testing file that overrides the default application.properties file
+
+## Filter vs Interceptor
+
+* [[Spring] 필터(Filter) vs 인터셉터(Interceptor) 차이 및 용도](https://mangkyu.tistory.com/173)
+* [HandlerInterceptors vs. Filters in Spring MVC @ baeldung](https://www.baeldung.com/spring-mvc-handlerinterceptor-vs-filter)
 
 ## Http requests logging
 
