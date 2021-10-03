@@ -68,6 +68,7 @@
   - [min max](#min-max)
   - [Formatted String](#formatted-string)
 - [Advanced](#advanced)
+  - [Show kotlin decompile](#show-kotlin-decompile)
   - [delegate pattern with by](#delegate-pattern-with-by)
   - [Passing trailing lambdas](#passing-trailing-lambdas)
   - [map vs flatmap](#map-vs-flatmap)
@@ -1772,6 +1773,12 @@ println("fi is ${fi}")
 ```
 
 # Advanced
+
+## Show kotlin decompile
+
+kotlin 의 code 를 java 의 code 로 transpile 해보는 습관을 갖자. kotlin syntax 를 보다 명확히 이해할 수 있다. 
+
+![](img/show_kotlin_decompile.png)
 
 ## delegate pattern with by
 
