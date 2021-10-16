@@ -54,6 +54,7 @@
   - [Network](#network)
   - [User of docker container](#user-of-docker-container)
   - [Multiprocess in a docker container](#multiprocess-in-a-docker-container)
+  - [multi-stage builds](#multi-stage-builds)
 
 ----
 
@@ -2191,4 +2192,64 @@ wait -n
 
 ```Dockerfile
 ENTRYPOINT ["/bin/tini", "--", "entrypoint.sh"]
+```
+
+## multi-stage builds
+
+* [Use multi-stage builds](https://docs.docker.com/develop/develop-images/multistage-build/)
+
+하나의 Dockerfile 에서 build-time image 와 run-time image 를 bake 하는 방법이다.
+
+multi-stage build 를 지원하지 않는다면 다음과 같이 2 개의 Dockerfile 과 하나의 bash script 가 필요하다.
+
+```Dockerfile
+// Dockerfile.build
+# syntax=docker/dockerfile:1
+FROM golang:1.16
+WORKDIR /go/src/github.com/alexellis/href-counter/
+COPY app.go ./
+RUN go get -d -v golang.org/x/net/html \
+  && CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
+
+// Dockerfile
+# syntax=docker/dockerfile:1
+FROM alpine:latest  
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY app ./
+CMD ["./app"]  
+```
+
+```bash
+#!/bin/sh
+echo Building alexellis2/href-counter:build
+
+docker build --build-arg https_proxy=$https_proxy --build-arg http_proxy=$http_proxy \  
+    -t alexellis2/href-counter:build . -f Dockerfile.build
+
+docker container create --name extract alexellis2/href-counter:build  
+docker container cp extract:/go/src/github.com/alexellis/href-counter/app ./app  
+docker container rm -f extract
+
+echo Building alexellis2/href-counter:latest
+
+docker build --no-cache -t alexellis2/href-counter:latest .
+rm ./app
+```
+
+이것을 multi-stage build 로 간단히 Dockerfile 을 작성해 보자.
+
+```Dockerfile
+# syntax=docker/dockerfile:1
+FROM golang:1.16
+WORKDIR /go/src/github.com/alexellis/href-counter/
+RUN go get -d -v golang.org/x/net/html  
+COPY app.go ./
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o app .
+
+FROM alpine:latest  
+RUN apk --no-cache add ca-certificates
+WORKDIR /root/
+COPY --from=0 /go/src/github.com/alexellis/href-counter/app ./
+CMD ["./app"]  
 ```
