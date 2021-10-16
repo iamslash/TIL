@@ -83,7 +83,9 @@
   * [src @ github](https://github.com/aspnetrun/run-aspnetcore-microservices)
 * [A pattern language for microservices](https://microservices.io/patterns/index.html)
   - microservices 의 기본개념
-  - [src](https://github.com/gilbutITbook/007035) 
+  - [ftgo-monolith src](https://github.com/microservices-patterns/ftgo-monolith)
+  - [ftgo-msa src](https://github.com/microservices-patterns/ftgo-application)
+  - [ftgo-msa src from gilbut](https://github.com/gilbutITbook/007035) 
 * [system deisgn primer](https://github.com/donnemartin/system-design-primer#federation)
   - 킹왕짱 내가 다시 정리할 필요성을 못 느낀다.
   - [System Design Primer Mindmap of XMind](https://drive.google.com/file/d/190mY7w8ea1jYpoUFJPsd8rk8YgaSvrAP/view?usp=sharing)
@@ -525,11 +527,11 @@ A service mesh is a dedicated infrastructure layer for handling service-to-servi
 
 ### TCP
 
-TODO
+[tcp](/network/README.md#tcp)
 
 ### UDP
 
-TODO
+[udp](/network/README.md#udp)
 
 ### RPC
 
@@ -966,8 +968,8 @@ SAGAS is a long lived transaction that can be broken up into transactions.
 # MSA (Micro Service Architecture)
 
 * [Micro Service Architecture @ TIL](msa.md)
-* [ftgo monolith @ github](https://github.com/microservices-patterns/ftgo-monolith)
-  * [ftgo microservices @ github](https://github.com/microservices-patterns/ftgo-application)
+  * [ftgo monolith src @ github](https://github.com/microservices-patterns/ftgo-monolith)
+  * [ftgo msa src @ github](https://github.com/microservices-patterns/ftgo-application)
 
 -----
 
