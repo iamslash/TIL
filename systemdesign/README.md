@@ -77,6 +77,10 @@
 
 # References
 
+* [Design Microservices Architecture with Patterns & Principles @ udemy](https://www.udemy.com/course/design-microservices-architecture-with-patterns-principles/)
+  * 유료이다. 실용적인 패턴만 정리. distributed transaction 설명
+  * [slide @ github](https://github.com/mehmetozkaya/Design-Microservices-Architecture-with-Patterns-Principles)
+  * [src @ github](https://github.com/aspnetrun/run-aspnetcore-microservices)
 * [A pattern language for microservices](https://microservices.io/patterns/index.html)
   - microservices 의 기본개념
   - [src](https://github.com/gilbutITbook/007035) 
@@ -113,11 +117,13 @@
 
 # Design Tools
 
+* [draw.io](https://www.draw.io/)
+  * architecture 를 포함한 다양한 diagram tool
+* [diagrams.net](https://www.diagrams.net/)
+  * draw.io standalone application download
 * [Google Drawings](https://docs.google.com/drawings/)
 * [cloudcraft](https://cloudcraft.co/app)
   * aws architcture diagram tool
-* [draw.io](https://www.draw.io/)
-  * architecture 를 포함한 다양한 diagram tool
 * [webwhiteboard](https://www.webwhiteboard.com/)
   * web white board for system design interview 
 
