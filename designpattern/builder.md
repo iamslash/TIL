@@ -12,7 +12,7 @@ constructor 만으로 object 를 생성하는 것은 다음과 같은 이유 때
 
 # Implementation
 
-## Java Builable interface
+## Java Buildable interface
 
 ```java
 public interface Buildable {
@@ -118,7 +118,7 @@ Person person = new Person.builder("AABBCCDD", "123456")
                           .build();
 ```
 
-## Kotlin
+## Kotlin Builder class
 
 ```kotlin
 data class Person private constructor(val builder: Builder) {
@@ -169,4 +169,29 @@ fun main() {
         .build()
     println(person)
 }
+```
+
+## Kotlin @JvmOverloads
+
+* [@JvmOverloads](/kotiln/README.md#jvmoverloads)
+
+```kotlin
+data class Person @JvmOverloads constructor(
+    val id: String,
+    val pw: String,
+    var name: String? = "",
+    var address: String? = "",
+    var email: String? = "",
+)
+
+fun main() {
+    val person = Person(
+        id = "AABBCCDD", 
+        pw = "123456",
+        name = "iamslash",
+        address = "Irving Ave",
+        email = "iamslash@gmail.com",
+    )
+    println(person)
+}    
 ```

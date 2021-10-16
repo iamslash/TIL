@@ -75,6 +75,7 @@
   - [fold](#fold)
   - [coroutine](#coroutine)
   - [Null safety](#null-safety-1)
+  - [@JvmOverloads](#jvmoverloads)
 
 ----
 
@@ -1951,3 +1952,21 @@ fun main(args: Array<String>) {
 ## Null safety
 
 `?.`
+
+## @JvmOverloads
+
+* [Learn in 2 minutes: @JvmOverloads in Kotlin.](https://medium.com/android-news/demystifying-the-jvmoverloads-in-kotlin-10dd098e6f72)
+* [Creating multiple constructors for Data classes in Kotlin](https://proandroiddev.com/creating-multiple-constructors-for-data-classes-in-kotlin-32ad27e58cac)
+
+constructor 혹은 funtion 에 @JvmOverloads 를 사용하면 multiple overload functions 가 생성된다.
+
+```kotlin
+@JvmOverloads fun bar(a: Int = 0, b: Double = 0.0, c: String = "default value"){
+    println("a=$a , b=$b ,c = $c")
+}
+
+data class Event @JvmOverloads constructor (var name: String? = "", var date: Date? = Date(), var isPrivate: Boolean = false)
+```
+
+```java
+```
