@@ -22,11 +22,15 @@
 
 # Materials
 
-* [MSA 제대로 이해하기 -(1) MSA의 기본 개념](https://velog.io/@tedigom/MSA-%EC%A0%9C%EB%8C%80%EB%A1%9C-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-1-MSA%EC%9D%98-%EA%B8%B0%EB%B3%B8-%EA%B0%9C%EB%85%90-3sk28yrv0e)
-* [Microservices @ wikipedia](https://en.wikipedia.org/wiki/Microservices)
 * [A pattern language for microservices](https://microservices.io/patterns/index.html)
   - microservices 의 기본개념
-  - [src](https://github.com/gilbutITbook/007035)
+  - [ftgo-monolith src](https://github.com/microservices-patterns/ftgo-monolith)
+  - [ftgo-msa src](https://github.com/microservices-patterns/ftgo-application)
+  - [ftgo-msa src from gilbut](https://github.com/gilbutITbook/007035) 
+  - [eventuate-tram src @ github](https://eventuate.io/abouteventuatetram.html)
+    - sagas, CQRS, transactional outbox 등을 지원하는 library 이다. ftgo 에 사용되었다.
+* [MSA 제대로 이해하기 -(1) MSA의 기본 개념](https://velog.io/@tedigom/MSA-%EC%A0%9C%EB%8C%80%EB%A1%9C-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-1-MSA%EC%9D%98-%EA%B8%B0%EB%B3%B8-%EA%B0%9C%EB%85%90-3sk28yrv0e)
+* [Microservices @ wikipedia](https://en.wikipedia.org/wiki/Microservices)
   
 # History
 
@@ -103,10 +107,11 @@ microservices 의 대표적인 implementation 중 Spring Cloud 와 Kubernetes �
 ## Transactional messaging
 
 * **Transactional outbox**
-  * RDBMS 의 outbox table 을 사용하여 message 를 message broker 에 전송하는 것을 local transaction 에 포함하는 pattern 
+  * RDBMS 의 outbox table 을 사용하여 message 를 message broker 에 전송하는 것을 local transaction 에 포함하는 pattern. outbox table 에 message 가 저장되면 message relay component 가 그것을 polling 하고 있다가 message broker 에게 전송한다. 때로는 message table 을 polling 하지 않고 DB transaction log 를 tailing 하다가 message 를 전송할 수도 있다. 이것을 Transaction log tailing 이라고 한다.
   * message 전송과 business logic 을 하나의 transaction 으로 관리할 수 있다.
 * **Transaction log tailing**
   * outbox table 을 polling 하지 않고 transaction log 를 plling 하다가 message 가 삽입되면 message broker 에 전달하는 pattern
+  * DynamoDB Streams 가 해당된다.
   * Polling publisher 와 차이는???
 * **Polling publisher**
   * outbox 를 polling 하다가 message 가 삽입되면 message broker 에 전달하는 pattern 을 말한다.
