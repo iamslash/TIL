@@ -825,6 +825,7 @@ SELECT Shippers.ShipperName, COUNT(Orders.OrderID) AS NumberOfOrders FROM Orders
 
 ## Having
 
+* Having 다음은 aggregate function 만 사용한다. aggregate function 에 condition 을 삽입할 수도 있다. [Conditional Aggregate Functions](#conditional-aggregate-functions) 참고.
 * The HAVING clause was added to SQL because the WHERE keyword could
   not be used with aggregate functions.
 
