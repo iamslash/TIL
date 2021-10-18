@@ -90,6 +90,8 @@
     - sagas, CQRS, transactional outbox 등을 지원하는 framework 이다. ftgo 에 사용되었다.
   - [eventuate-local](https://eventuate.io/usingeventuate.html)
     - event sourcing 을 지원하는 framework 이다. ftgo 에 사용되었다.
+  - [eventuate-foundation](https://github.com/orgs/eventuate-foundation/repositories)
+    - eventuate-tram 이 사용하는 library
 * [system deisgn primer](https://github.com/donnemartin/system-design-primer#federation)
   - 킹왕짱 내가 다시 정리할 필요성을 못 느낀다.
   - [System Design Primer Mindmap of XMind](https://drive.google.com/file/d/190mY7w8ea1jYpoUFJPsd8rk8YgaSvrAP/view?usp=sharing)
