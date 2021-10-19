@@ -19,6 +19,7 @@
   - [The embedded Kotlin](#the-embedded-kotlin)
 - [Advanced](#advanced)
   - [Maven BOM, POM](#maven-bom-pom)
+  - [Publish Plugin](#publish-plugin)
 
 ----
 
@@ -957,3 +958,7 @@ Spring 의 경우는 다음과 같이 `<dependencyManagement>` 를 이용하여 
     </dependency>
 <dependencies>
 ```
+
+## Publish Plugin
+
+* [publish plugin](publish-plugin.md)
