@@ -12,6 +12,7 @@ Maven Plugin 을 publish 하는 방법을 정리한다.
 
 * [Publishing a project as module @ gradle](https://docs.gradle.org/current/userguide/publishing_setup.html)
 * [Maven Publish Plugin](https://docs.gradle.org/current/userguide/publishing_maven.html)
+* [오픈소스 라이브러리 Maven Central Repository에 배포하기 (#1) @ tistory](https://sw-architect.tistory.com/10)
 
 # Basics
 

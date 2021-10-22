@@ -106,6 +106,8 @@
   
 # Materials
 
+* [The Software Architecture Chronicles](https://herbertograca.com/2017/07/03/the-software-architecture-chronicles/)
+  * Software Architecture 의 역사
 * [DreamOfTheRedChamber/system-design @ github](https://github.com/DreamOfTheRedChamber/system-design)
   * 킹왕짱
 * [Grokking the Object Oriented Design Interview](https://www.educative.io/collection/5668639101419520/5692201761767424)
