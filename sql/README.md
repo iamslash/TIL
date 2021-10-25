@@ -258,6 +258,36 @@ SELECT dept_name
  WHERE department.budget = max_budget.value;
 ```
 
+다음은 WITH 를 이용하여 2 개의 table 을 생성하는 예이다. [The Category of Each Member in the Store @ leetcode](https://leetcode.com/problems/the-category-of-each-member-in-the-store/)
+
+```sql
+WITH MemberVisitPurchase AS(
+   SELECT m.member_id, m.name, v.visit_id, p.charged_amount
+     FROM Members m
+LEFT JOIN Visits v
+       ON m.member_id = v.member_id
+LEFT JOIN Purchases p
+       ON v.visit_id = p.visit_id
+),
+VisitPurchaseCount AS(
+  SELECT member_id, 
+         name, 
+         COUNT(visit_id) AS v_count,
+         COUNT(charged_amount) AS p_count
+    FROM MemberVisitPurchase 
+GROUP BY member_id  
+)
+    SELECT member_id, name,
+      CASE
+        WHEN v_count = 0 THEN "Bronze"
+        WHEN p_count/v_count*100 < 50 THEN "Silver"
+        WHEN p_count/v_count*100 < 80 THEN "Gold"
+        ELSE "Diamond"
+      END AS category
+    FROM VisitPurchaseCount
+ORDER BY member_id ASC;
+```
+
 ## WITH RECURSIVE
 
 * [[MySQL] WITH RECURSIVE 구문을 이용한 Row Generator](https://oboki.net/workspace/database/mysql/with-recursive-row-generator/)
