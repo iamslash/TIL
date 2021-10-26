@@ -28,7 +28,8 @@
   - [Kafka GUI](#kafka-gui)
 - [Basic](#basic)
   - [Usual configs of server.properties](#usual-configs-of-serverproperties)
-  - [Useful Commands](#useful-commands)
+  - [Useful Client Commands](#useful-client-commands)
+  - [Useful Server Commands](#useful-server-commands)
   - [Producer application integration](#producer-application-integration)
   - [Consumer application integration](#consumer-application-integration)
   - [How to prevent Duplicated messages in consumer](#how-to-prevent-duplicated-messages-in-consumer)
@@ -362,7 +363,20 @@ Producer 는 record 를 batch 로 묶어서 보낸다. `batch.size` 를 설정�
 * `num.partitions`: The default count of partitions
 * `message.max.bytes`: The max size of the message
 
-## Useful Commands
+## Useful Client Commands
+
+```bash
+# Show version
+$ docker run --rm -it confluentinc/cp-kafka:latest sh -c "kafka-topics --bootstrap-server kafka.iamslash.com --version" 
+
+# List topics
+$ 
+
+# Describe topic
+$ 
+```
+
+## Useful Server Commands
 
 > * [Apache Kafka CLI commands cheat sheet](https://medium.com/@TimvanBaarsen/apache-kafka-cli-commands-cheat-sheet-a6f06eac01b#09e8)
 
