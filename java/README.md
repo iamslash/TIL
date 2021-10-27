@@ -2412,6 +2412,13 @@ public class Foo {
   * memory start size and memory max size
   * [JVM 메모리 관련 설정](https://epthffh.tistory.com/entry/JVM-%EB%A9%94%EB%AA%A8%EB%A6%AC-%EA%B4%80%EB%A0%A8-%EC%84%A4%EC%A0%95)
 
+* `-XX:InitialRAMPercentage / -XX:MaxRAMPercentage`
+  * System available memory 중 init heap percentage / max heap percentage
+  * `-XX:+UseContainerSupport` 가 포함되어 있다면 System available memory 가 Container available memory 로 바뀐다.
+  * `-Xms, -Xmx` 가 설정되었다면 무시된다.
+  * [JVM Parameters InitialRAMPercentage, MinRAMPercentage, and MaxRAMPercentage](https://www.baeldung.com/java-jvm-parameters-rampercentage)
+  * [-XX:InitialRAMPercentage / -XX:MaxRAMPercentage](https://www.eclipse.org/openj9/docs/xxinitialrampercentage/)
+
 ## Thread Dump, Heap Dump
 
 * [스레드 덤프 분석하기](https://d2.naver.com/helloworld/10963)
