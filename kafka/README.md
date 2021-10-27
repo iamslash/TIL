@@ -370,10 +370,10 @@ Producer 는 record 를 batch 로 묶어서 보낸다. `batch.size` 를 설정�
 $ docker run --rm -it confluentinc/cp-kafka:latest sh -c "kafka-topics --bootstrap-server kafka.iamslash.com --version" 
 
 # List topics
-$ 
+$ docker run --rm -it confluentinc/cp-kafka:latest sh -c "kafka-topics --list --bootstrap-server kafka.iamslash.com" 
 
 # Describe topic
-$ 
+$ docker run --rm -it confluentinc/cp-kafka:latest sh -c "kafka-topics --describe --topic basictopic --bootstrap-server kafka.iamslash.com" 
 ```
 
 ## Useful Server Commands
