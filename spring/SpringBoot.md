@@ -2643,6 +2643,8 @@ public class RestRunner implements ApplicationRunner {
 
 ## 스프링 부트 Actuator 1 부: 소개
 
+* [Spring Boot Actuator](https://www.baeldung.com/spring-boot-actuators)
+
 Actuator 는 운영을 위한 여러 정보를 endpoint 들을 통해 제공해 준다.
 
 Actuator 를 사용하기 위해 다음과 같이 build.gradle 에 dependency 를 추가한다.
@@ -2657,13 +2659,13 @@ open browser `http://localhost:8080/actuator`
 
 다음과 같이 application.properties 에서 endpoint 를 활성화 할 수 있다. 반드시 expose 를 해야 browser 에서 볼 수 있다.
 
-```
+```conf
 management.endpoint.shutdown.enabled=true
 ```
 
 다음과 같이 application.properties 에서 endpoint 를 expose 한다.
 
-```
+```conf
 management.endpoints.jmx.exposure.include=health,info
 ```
 
@@ -2676,7 +2678,7 @@ JMX 는 `jconsole` 로 확인 가능하다. 그러나 불편하다.
 만약 browser 에서 모두 보고 싶다면 다음과 같이 application.properties 를
 수정한다.
 
-```
+```conf
 management.endpoints.web.exposure.include=*
 management.endpoints.web.exposure.exclude=env.beans
 ```
