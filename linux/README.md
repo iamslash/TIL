@@ -42,6 +42,7 @@
 - [System Monitoring](#system-monitoring)
   - [Averge Load](#averge-load)
   - [swapin, swapout](#swapin-swapout)
+  - [Memory](#memory)
 - [Network Kernel Parameters](#network-kernel-parameters)
 - [File Kernel Parameters](#file-kernel-parameters)
 
@@ -1862,6 +1863,80 @@ swap-in 이라고 한다. 물리 메모리에서 디스크로 프로세스를 �
 swap-out 이라고 한다.
 
 swap-in, swap-ou 의 횟수가 많다면 물리 메모리가 부족하다는 의미이다.
+
+## Memory
+
+* [How to calculate system memory usage from /proc/meminfo (like htop) @ stackoverflow](https://stackoverflow.com/questions/41224738/how-to-calculate-system-memory-usage-from-proc-meminfo-like-htop)
+
+메모리의 세부사항은 `/proc/meminfo` 을 참고해서 이해하자. [E.2.18. /PROC/MEMINFO](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/s2-proc-meminfo)
+
+```bash
+$ cat /proc/meminfo 
+MemTotal:        8152552 kB
+MemFree:         2477540 kB
+MemAvailable:    5761592 kB
+Buffers:          425932 kB
+Cached:          3361588 kB
+SwapCached:          144 kB
+Active:          1145288 kB
+Inactive:        4202472 kB
+Active(anon):      75088 kB
+Inactive(anon):  1842108 kB
+Active(file):    1070200 kB
+Inactive(file):  2360364 kB
+Unevictable:           0 kB
+Mlocked:               0 kB
+SwapTotal:       1048572 kB
+SwapFree:        1047536 kB
+Dirty:               128 kB
+Writeback:             0 kB
+AnonPages:       1557084 kB
+Mapped:           252760 kB
+Shmem:            412440 kB
+KReclaimable:     190612 kB
+Slab:             260228 kB
+SReclaimable:     190612 kB
+SUnreclaim:        69616 kB
+KernelStack:       11168 kB
+PageTables:         8180 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     5124848 kB
+Committed_AS:    6654472 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       13800 kB
+VmallocChunk:          0 kB
+Percpu:             9984 kB
+AnonHugePages:      2048 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:      229376 kB
+DirectMap2M:     8159232 kB
+DirectMap1G:     2097152 kB
+```
+
+![](img/../image/htop.png)
+
+다음은 htop 에서 보여주는 내용을 요약한 것이다. 
+
+[htop/linux/LinuxProcessList.c](https://github.com/hishamhm/htop/blob/8af4d9f453ffa2209e486418811f7652822951c6/linux/LinuxProcessList.c#L802-L833) 
+
+[htop/linux/Platform.c](https://github.com/hishamhm/htop/blob/1f3d85b6174f690a7e354bbadac19404d5e75e78/linux/Platform.c#L198-L208)
+
+* Total used memory = MemTotal - MemFree
+* Non cache/buffer memory (green) = Total used memory - (Buffers + Cached memory)
+* Buffers (blue) = Buffers
+* Cached memory (yellow) = Cached + SReclaimable - Shmem
+* Swap = SwapTotal - SwapFree
 
 # Network Kernel Parameters
 
