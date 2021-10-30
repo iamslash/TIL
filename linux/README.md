@@ -45,6 +45,7 @@
   - [Memory](#memory)
 - [Network Kernel Parameters](#network-kernel-parameters)
 - [File Kernel Parameters](#file-kernel-parameters)
+- [cgroup](#cgroup)
 
 -------------------------------------------------------------------------------
 
@@ -929,10 +930,25 @@ EOF
   * [리눅스 free 명령어로 메모리 상태 확인하기](https://www.whatap.io/ko/blog/37/)
   * [[Linux] Memory 확인 방법 및 종류별 설명 (Free, Buffer, Cache, Swap Memory)](https://m.blog.naver.com/PostView.nhn?blogId=yhsterran&logNo=221607492403&proxyReferer=https:%2F%2Fwww.google.com%2F)
   * physical memory 와 swap memory 의 상태를 알려다오
-    * `total physical memory = used + free + shared + buffers + cached`
-    * `buffers` : For the buffer cache, used for block device I/O, saves i-node data (file address) to reduce DISK seek time.
-    * `cached` : For the page cache and slabs, used by file systems, saves file data to reduce I/O. slab is a memory block managed by kernel and it is a part of the page cache.
-    * `available` : include `free` and a part of `buff/cache`.
+    ```bash
+    $ free -h
+                  total        used        free      shared  buff/cache   available
+    Mem:           7.8G        1.6G        2.4G        402M        3.7G        5.5G
+    Swap:          1.0G        1.0M        1.0G
+    ```
+    * `total` : `used + free + shared + buff/cache`
+    * `used` : `total - free - shared - buff/cache`
+    * `free` : 누구도 점유하지 않은 Physical Memory
+    * `shared` : tmpfs(메모리 파일 시스템), rmpfs 으로 사용되는 메모리.
+      * 여러 프로세스에서 공유한다.
+    * `buff` : For the buffer cache, used for block device I/O, saves i-node data (file address) to reduce DISK seek time.
+    * `cache` : For the page cache and slabs, used by file systems, saves file data to reduce I/O. slab is a memory block managed by kernel and it is a part of the page cache.
+    * `available` : 새로운 application 이 실행될 때 swapping 없이 사용할 수 있는 Physical memory 를 말한다. 
+      * `available` : `MemFree + SReclaimable + the file LRU lists + the low watermarks in each zone` 
+      * 시스템이 예측해서 계산한 것이다. 정확하다고 볼 수 없다.
+    * `slab` : Kernel Object 를 저장하는 단위이다. 
+      * Kernel 은 Page 보다 작은 Slab 단위로 메모리를 사용한다. 하나의 Page 에 여러 Slab 들이 거주할 수 있다.
+      * `i-node, dentry` 정보들을 캐싱한다.
   * `free -h` human readable 하게 보여줘
   * `free -ht` total 추가해조
   * `free -hts 5` 5초마다 갱신해서 보여줘
@@ -969,82 +985,6 @@ EOF
   * `SHIFT + m` 메모리 사용량이 큰 순서대로 정렬
   * `SHIFT + p` cpu 사용량이 큰 순서대로 정렬
   * `SHIFT + t` 실행시간이 큰 순서대로 정렬
-
-* meminfo
-  * [리눅스 메모리 정보](https://classpath.tistory.com/306)
-  * [[Linux] Cached Memory 비우고 Free Memory 늘리기](http://egloos.zum.com/mcchae/v/11217429)
-  * [[Memory] 커널 메모리 관리](https://fmyson.tistory.com/212)
-  * [리눅스 free 명령어로 메모리 상태 확인하기](https://www.whatap.io/ko/blog/37/)
-
-    | item         | desc                  |
-    | ------------ | --------------------- |
-    | MemTotal     | total physical memory |
-    | MemFree      |                       |
-    | Buffers      |                       |
-    | Cached       |                       |
-    | SwapCache    |                       |
-    | Active       |                       |
-    | Inactive     |                       |
-    | HighTotal    |                       |
-    | LowTotal     |                       |
-    | LowFree      |                       |
-    | SwapTotal    |                       |
-    | SwapFree     |                       |
-    | Dirty        |                       |
-    | Writeback    |                       |
-    | Committed_AS |                       |
-    | Slab         |                       |
-
-  * `cat /proc/meminfo`
-    ```console
-    $ cat /proc/meminfo
-    MemTotal:        2047016 kB
-    MemFree:          371632 kB
-    MemAvailable:    1100604 kB
-    Buffers:           96416 kB
-    Cached:           741020 kB
-    SwapCached:            0 kB
-    Active:           804832 kB
-    Inactive:         731148 kB
-    Active(anon):     554092 kB
-    Inactive(anon):   145844 kB
-    Active(file):     250740 kB
-    Inactive(file):   585304 kB
-    Unevictable:           0 kB
-    Mlocked:               0 kB
-    SwapTotal:       1048572 kB
-    SwapFree:        1048572 kB
-    Dirty:                 8 kB
-    Writeback:             0 kB
-    AnonPages:        695892 kB
-    Mapped:           282732 kB
-    Shmem:              1396 kB
-    Slab:              71876 kB
-    SReclaimable:      49464 kB
-    SUnreclaim:        22412 kB
-    KernelStack:        6688 kB
-    PageTables:         3672 kB
-    NFS_Unstable:          0 kB
-    Bounce:                0 kB
-    WritebackTmp:          0 kB
-    CommitLimit:     2072080 kB
-    Committed_AS:    3489592 kB
-    VmallocTotal:   34359738367 kB
-    VmallocUsed:           0 kB
-    VmallocChunk:          0 kB
-    AnonHugePages:     10240 kB
-    ShmemHugePages:        0 kB
-    ShmemPmdMapped:        0 kB
-    HugePages_Total:       0
-    HugePages_Free:        0
-    HugePages_Rsvd:        0
-    HugePages_Surp:        0
-    Hugepagesize:       2048 kB
-    DirectMap4k:       32052 kB
-    DirectMap2M:     2064384 kB
-    DirectMap1G:           0 kB    
-    ```
-
 * `du`
   * `du -h /home/iamslash` human readable format
   * `du -sh /home/iamslash` 요약해서 알려줘
@@ -1867,45 +1807,53 @@ swap-in, swap-ou 의 횟수가 많다면 물리 메모리가 부족하다는 의
 ## Memory
 
 * [How to calculate system memory usage from /proc/meminfo (like htop) @ stackoverflow](https://stackoverflow.com/questions/41224738/how-to-calculate-system-memory-usage-from-proc-meminfo-like-htop)
+* [E.2.18. /PROC/MEMINFO](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/s2-proc-meminfo)
 
-메모리의 세부사항은 `/proc/meminfo` 을 참고해서 이해하자. [E.2.18. /PROC/MEMINFO](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/6/html/deployment_guide/s2-proc-meminfo)
+----
+
+`/proc` directory 는 process 들의 정보를 담고 있다. [proc @ kernel](https://www.kernel.org/doc/Documentation/filesystems/proc.txt) 참고. [The /proc Filesystem @ kernel](https://www.kernel.org/doc/html/latest/filesystems/proc.html?highlight=meminfo) 은 좀더 보기 편하다.
+
+특히 `/proc/meminfo` 는 Linux Kernel 의 memory 정보가 저장되어 있다. `free` 를 포함한
+대부분의 메모리 조회 application 들은 `/proc/meminfo` 의 내용을 참고한다.
 
 ```bash
-$ cat /proc/meminfo 
+$ docker run --rm -it ubuntu:18.04
+
+$ cat /proc/meminfo
 MemTotal:        8152552 kB
-MemFree:         2477540 kB
-MemAvailable:    5761592 kB
+MemFree:         2532460 kB
+MemAvailable:    5761976 kB
 Buffers:          425932 kB
-Cached:          3361588 kB
+Cached:          3307452 kB
 SwapCached:          144 kB
-Active:          1145288 kB
-Inactive:        4202472 kB
-Active(anon):      75088 kB
-Inactive(anon):  1842108 kB
-Active(file):    1070200 kB
-Inactive(file):  2360364 kB
+Active:          1099632 kB
+Inactive:        4194012 kB
+Active(anon):      75120 kB
+Inactive(anon):  1841580 kB
+Active(file):    1024512 kB
+Inactive(file):  2352432 kB
 Unevictable:           0 kB
 Mlocked:               0 kB
 SwapTotal:       1048572 kB
 SwapFree:        1047536 kB
-Dirty:               128 kB
+Dirty:                12 kB
 Writeback:             0 kB
-AnonPages:       1557084 kB
-Mapped:           252760 kB
+AnonPages:       1557008 kB
+Mapped:           252812 kB
 Shmem:            412440 kB
-KReclaimable:     190612 kB
-Slab:             260228 kB
-SReclaimable:     190612 kB
-SUnreclaim:        69616 kB
-KernelStack:       11168 kB
-PageTables:         8180 kB
+KReclaimable:     188784 kB
+Slab:             257616 kB
+SReclaimable:     188784 kB
+SUnreclaim:        68832 kB
+KernelStack:       11104 kB
+PageTables:         8128 kB
 NFS_Unstable:          0 kB
 Bounce:                0 kB
 WritebackTmp:          0 kB
 CommitLimit:     5124848 kB
-Committed_AS:    6654472 kB
+Committed_AS:    6654600 kB
 VmallocTotal:   34359738367 kB
-VmallocUsed:       13800 kB
+VmallocUsed:       13744 kB
 VmallocChunk:          0 kB
 Percpu:             9984 kB
 AnonHugePages:      2048 kB
@@ -1924,16 +1872,83 @@ DirectMap2M:     8159232 kB
 DirectMap1G:     2097152 kB
 ```
 
+[/fs/proc/meminfo.c](https://elixir.bootlin.com/linux/v4.15/source/fs/proc/meminfo.c#L46) 를 참고하면 주요지표들이 어떻게 계산되는지 알 수 있다.
+
+다음은 주요지표를 요약한 것이다.
+
+```
+    MemTotal: Total usable ram (i.e. physical ram minus a few reserved
+              bits and the kernel binary code)
+     MemFree: The sum of LowFree+HighFree
+MemAvailable: An estimate of how much memory is available for starting new
+              applications, without swapping. Calculated from MemFree,
+              SReclaimable, the size of the file LRU lists, and the low
+              watermarks in each zone.
+              The estimate takes into account that the system needs some
+              page cache to function well, and that not all reclaimable
+              slab will be reclaimable, due to items being in use. The
+              impact of those factors will vary from system to system.
+     Buffers: Relatively temporary storage for raw disk blocks
+              shouldn't get tremendously large (20MB or so)
+      Cached: in-memory cache for files read from the disk (the
+              pagecache).  Doesn't include SwapCached
+  SwapCached: Memory that once was swapped out, is swapped back in but
+              still also is in the swapfile (if memory is needed it
+              doesn't need to be swapped out AGAIN because it is already
+              in the swapfile. This saves I/O)
+      Active: Memory that has been used more recently and usually not
+              reclaimed unless absolutely necessary.
+    Inactive: Memory which has been less recently used.  It is more
+              eligible to be reclaimed for other purposes
+   HighTotal:
+    HighFree: Highmem is all memory above ~860MB of physical memory
+              Highmem areas are for use by userspace programs, or
+              for the pagecache.  The kernel must use tricks to access
+              this memory, making it slower to access than lowmem.
+    LowTotal:
+     LowFree: Lowmem is memory which can be used for everything that
+              highmem can be used for, but it is also available for the
+              kernel's use for its own data structures.  Among many
+              other things, it is where everything from the Slab is
+              allocated.  Bad things happen when you're out of lowmem.
+   SwapTotal: total amount of swap space available
+    SwapFree: Memory which has been evicted from RAM, and is temporarily
+              on the disk
+       Dirty: Memory which is waiting to get written back to the disk
+   Writeback: Memory which is actively being written back to the disk
+   AnonPages: Non-file backed pages mapped into userspace page tables
+HardwareCorrupted: The amount of RAM/memory in KB, the kernel identifies as
+	      corrupted.
+AnonHugePages: Non-file backed huge pages mapped into userspace page tables
+      Mapped: files which have been mmaped, such as libraries
+       Shmem: Total memory used by shared memory (shmem) and tmpfs
+ShmemHugePages: Memory used by shared memory (shmem) and tmpfs allocated
+              with huge pages
+ShmemPmdMapped: Shared memory mapped into userspace with huge pages
+KReclaimable: Kernel allocations that the kernel will attempt to reclaim
+              under memory pressure. Includes SReclaimable (below), and other
+              direct allocations with a shrinker.
+        Slab: in-kernel data structures cache
+SReclaimable: Part of Slab, that might be reclaimed, such as caches
+  SUnreclaim: Part of Slab, that cannot be reclaimed on memory pressure              
+```
+
+* **MemAvailable** : 새로운 application 이 실행될 때 swapping 없이 사용할 수 있는 Physical memory 를 말한다. **MemFree**, **SReclaimable**, **the file LRU lists**, **the low watermarks in each zone** 으로 구성된다.
+  * [/mm/page_alloc.c](https://elixir.bootlin.com/linux/v4.15/source/mm/page_alloc.c#L4564) 를 참고하면 MemAvailable 이 어떻게 계산되는지 알 수 있다.
+* Inactive(anon), Inactive(file), SReclaimable 은 사용된지 오래된 메모리들의 모임이다. swap out 될 수 있다. 
+  * Inactive(anon) : Anonymous Memory 중 사용된지 오래된 메모리이다. (malloc 으로 할당한 것???)
+  * Inactive(file) : Page cache 중 사용된지 오래된 메모리이다.
+  * SReclaimable : Slab 중 다시 할당하는 것이 가능한 것들이다. 
+
+[htop](https://htop.dev/) 은 개선된 top 이다. top 보다 직관적이다. [htop](https://htop.dev/) 의 주요 지표들을 해석해 보자.
+
 ![](img/../image/htop.png)
 
-다음은 htop 에서 보여주는 내용을 요약한 것이다. 
-
-[htop/linux/LinuxProcessList.c](https://github.com/hishamhm/htop/blob/8af4d9f453ffa2209e486418811f7652822951c6/linux/LinuxProcessList.c#L802-L833) 
-
-[htop/linux/Platform.c](https://github.com/hishamhm/htop/blob/1f3d85b6174f690a7e354bbadac19404d5e75e78/linux/Platform.c#L198-L208)
+>* [htop/linux/LinuxProcessList.c](https://github.com/hishamhm/htop/blob/8af4d9f453ffa2209e486418811f7652822951c6/linux/LinuxProcessList.c#L802-L833) 
+>* [htop/linux/Platform.c](https://github.com/hishamhm/htop/blob/1f3d85b6174f690a7e354bbadac19404d5e75e78/linux/Platform.c#L198-L208)
 
 * Total used memory = MemTotal - MemFree
-* Non cache/buffer memory (green) = Total used memory - (Buffers + Cached memory)
+* Non cache/buffer used memory (green) = Total used memory - (Buffers + Cached memory)
 * Buffers (blue) = Buffers
 * Cached memory (yellow) = Cached + SReclaimable - Shmem
 * Swap = SwapTotal - SwapFree
@@ -1998,4 +2013,42 @@ $ sudo vim /etc/security/limits.d/*.conf
 
 # Check again after log-out and log-in again
 $ ulimit -a
+```
+
+# cgroup
+
+* [cgroups](https://hwwwi.tistory.com/12)
+
+프로세스들을 하나의 그룹으로 묶는다. 그리고 cpu, memory, network, device, I/O 등등의 자원을 그룹별로 제한할 수 있다. [Docker](/docker/README.md) 와 같은 container 기술의 기반이 된다. 
+
+cgroup 은 다음과 같은 방법으로 설정할 수 있다.
+
+* /sys/fs/cgroup 을 직접 편집
+* cgmanager
+* cgroup-tools
+
+다음은 cgroup-tools 를 이용하여 control group 을 만들고 cpu 를 제한하는 예이다.
+
+```bash
+$ sudo cgcreate -a hwi -g cpu:mycgroup
+$ ls -al /sys/fs/cgroup/cpu/ | grep mycgroup
+drwxr-xr-x  2 hwi root   0 10월 20 18:00 mycgroup
+```
+
+cpu 를 제한하기 위해 mtcgroup 이라는 control group 을 생성했다. 소유자는 hwi 이다. control cgroup 을 생성하면 제한하고자 하는 subsystem 의 디렉토리에 cgroup directory 가 만들어 진다. 
+
+이제 테스트 해보자.
+
+```bash
+$ stress -c 1
+$ top
+$ sudo cgset -r cpu.cfs_quota_us=30000 mycgroup
+$ sudo cgexec -g cpu:mycgroup stress -c 1
+```
+
+이제 cgroup 을 삭제해 보자.
+
+```
+$ sudo cgdelete cpu:mycgroup
+$ ls -al /sys/fs/cgroup/cpu/ | grep mycgroup
 ```

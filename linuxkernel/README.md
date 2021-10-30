@@ -21,6 +21,8 @@ Kernel 은 OS 의 핵심이다. 주로 program 들을 지원하고 hardware (CPU
 
 Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
 
+[The Linux Kernel documentation](https://www.kernel.org/doc/html/latest/) 에 최고의 문서들이 있다. [Index of /doc/Documentation/ @ kernel](https://www.kernel.org/doc/Documentation/) 이 것은 source 로 보인다.
+
 [UNIX V6](/unixv6kernel/README.md) 코드를 먼저 공부해 본다.
 
 [1st version of Linux Kernel @ github](https://github.com/kalamangga-net/linux-0.01) 와 [The old Linux kernel source ver 0.11/0.12 study. @ github](https://github.com/huawenyu/oldlinux) 를 비교해서 공부해보자.
@@ -36,6 +38,8 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
 * [linux 0.01](https://github.com/zavg/linux-0.01)
   * 토발즈가 릴리즈한 최초 리눅스 커널
   * gcc 1.x 에서 빌드가 된다.
+* [](https://elixir.bootlin.com/linux/v4.15/source/mm/page_alloc.c#L4564)
+  * Linux Kernel 의 source code 를 Web 에서 살펴볼 수 있다.
 * [The old Linux kernel source ver 0.11/0.12 study. @ github](https://github.com/huawenyu/oldlinux)
   * gcc 4.3 에서 빌드가 되도록 수정된 fork. 
   * ubuntu 18.04 LTS 에서 gcc 4.8.5 으로 build 잘됨. 
@@ -272,12 +276,12 @@ $ qemu-system-i386 -fda linux0.01-3.5.img -hdb hd_oldlinux.img -boot a -m 8
 실행할 때 다음과 같은 일들이 벌어진다.
 
 * A process 는 write 을 호출한다. write 는 system call 을 호출하는 Wrapper routine 이다.
-* $0x80 이라는 Interrupt 가 발생한다. 이것은 HW trap 을 의미한다.
+* `$0x80` 이라는 Interrupt 가 발생한다. 이것은 HW trap 을 의미한다.
 * HW 는 CPU mode 를 user mode 에서 kernel mode 로 바꾼다.
-* HW 는 sys_call() 을 실행한다. sys_call() 은 kernel 에 존재하는 assembly function 이다.
-* EAX register 에 채워진 system call 번호가 제대로 인지 검증한다. 이것은 sys_write() 과 같다.
-* 그 번호에 맞는 system call address 즉, sys_write() 의 address 를 table 에서 읽어온다.
-* table 에서 읽어온 sys_write() address 를 실행한다.
+* HW 는 `sys_call()` 을 실행한다. `sys_call()` 은 kernel 에 존재하는 assembly function 이다.
+* EAX register 에 채워진 system call 번호가 제대로 인지 검증한다. 이것은 `sys_write()` 과 같다.
+* 그 번호에 맞는 system call address 즉, `sys_write()` 의 address 를 table 에서 읽어온다.
+* table 에서 읽어온 `sys_write()` address 를 실행한다.
 * 실행을 마치면 HW 의 PC 를 처음 `printf` 다음줄로 조정한다.
 
 # Process Management
@@ -404,6 +408,10 @@ int main(){
 **context_switch()** 은 현재 CPU state vector 를 은퇴하는 Process 를 선택하고 그것의 PCB 에 적당한 정보를 기록한다. 그리고 새로 등장한 Process 의 PCB 를 읽어오고 그 PCB 의 PC 로 부터 프로그램을 실행한다.
 
 # Memory Management
+
+`/proc/meminfo` 의 주요지표가 어덯게 계산 되는지 [/fs/proc/meminfo.c @ kernel](https://elixir.bootlin.com/linux/v4.15/source/fs/proc/meminfo.c#L46) 를 보고 이해하자.
+
+MemAvailable 이 어떻게 계산되는지 [/mm/page_alloc.c @ kernel](https://elixir.bootlin.com/linux/v4.15/source/mm/page_alloc.c#L4564) 을 보고 이해하자.
 
 * [Slab Allocator(슬랩 할당자)](https://wiki.kldp.org/wiki.php/slab_allocator)
 
