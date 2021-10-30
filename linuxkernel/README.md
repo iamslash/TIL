@@ -46,6 +46,10 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
 
 # Materials
 
+* videos
+  * [Linux Internals @ youtube](https://www.youtube.com/watch?v=xHu7qI1gDPA&list=PLX1h5Ah4_XcfL2NCX9Tw4Hm9RcHhC14vs)
+  * [Unix System Calls @ youtube](https://www.youtube.com/watch?v=xHu7qI1gDPA&list=PL993D01B05C47C28D)
+  * [Unix Terminals and Shells @ youtube](https://www.youtube.com/watch?v=07Q9oqNLXB4&list=PLFAC320731F539902)
 * [DevOps와 SE를 위한 리눅스 커널 이야기](http://www.yes24.com/Product/Goods/44376723)
   * DevOps 에게 필요한 Kernel 지식
 * [리눅스 커널 부팅과정(Linux Kernel Booting Sequence) 분석](https://kkamagui.tistory.com/817)
