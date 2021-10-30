@@ -40,7 +40,7 @@
 - [Security](#security)
   - [root 소유의 setuid, setgid 파일 검색 후 퍼미션 조정하기](#root-소유의-setuid-setgid-파일-검색-후-퍼미션-조정하기)
 - [System Monitoring](#system-monitoring)
-  - [Averge Load](#averge-load)
+  - [Load Average](#load-average)
   - [swapin, swapout](#swapin-swapout)
   - [Memory](#memory)
 - [Network Kernel Parameters](#network-kernel-parameters)
@@ -1701,88 +1701,9 @@ find / -user root -perm 4000 -print
 
 # System Monitoring
 
-## Averge Load
+## Load Average
 
-* [서버에 걸리는 부하, 추측하지 말고 계측하자](https://injae-kim.github.io/dev/2020/07/09/how-to-check-single-server-load-average.html)
-* [[라즈베리파이] 스케줄링: 프로세스 상태 관리](http://egloos.zum.com/rousalome/v/9990651)
-
-
-```console
-$ uptime
-..., load averages: 3.79 3.30 3.20
-```
-
-top, uptime 등을 실행하면 1 분, 5 분, 15 분의 평균 load 를 알 수 있다. load 는 상태가 running, blocking 인 것들의 개수이다. process 가 running 인 것은 CPU bound job 이고 blocking 인 것은 I/O bound job 이다. 따라서 average load 를 이용해서는 process 들이 CPU bound 인지 I/O bound 인지 알 수 없다. 이 것은 kernel 의 코드를 이해하면 더욱 확실히 알 수 있다.
-
-process 는 다음과 같은 status를 갖는다.
-
-![](image/process_state.jpg)
-
-다음은 kernel 에 정의된 process 의 status 이다.
-
-| status               | description                                        |
-| -------------------- | -------------------------------------------------- |
-| TASK_RUNNING         | 실행을 기다리는 상태 혹은 실행중인 상태            |
-| TASK_INTERRUPTIBLE   |                                                    |
-| TASK_UNINTERRUPTIBLE | 특정한 조건이 되지 않으면 interrupt 되지 않는 상태. 예를 들면 I/O 가 완료되기를 기다린다. I/O 가 완료되면 TASK_RUNNING 으로 변경된다.                         |
-| TASK_STOPPED         |                                                    |
-| TASK_ZOMBIE          | 자식 프로세스가 부모 프로세스로 반환되지 않은 상태 |
-
-다음은 linux kernel 의 `timer.c` 이다. krenel 의 timer interrupt 가 발생할 때 마다 `calc_load` 가 호출된다. CentOs 5 의 경우 4ms 간격으로 timer interrupt 가 발생한다. `calc_load` 는 `EXP_1, EXP_5, EXP_15` 별로 active_tasks 를 계산에 이용하고 있다. active_tasks 는 count_active_tasks 가 return 한 값이다.
-
-active_tasks 는 process 의 상태가 `TASK_RUNNING` 혹은 `TASK_UNINTERRUPTIBLE` 인 것들의 개수이다. 즉 상태가 running 혹은 blocking 인 process 의 개수와 같다.
-
-```cpp
-unsigned long avenrun[3];
-
-static inline void calc_load(unsigned long ticks)
-{
-	unsigned long active_tasks; /* fixed-point */
-	static int count = LOAD_FREQ;
-
-	count -= ticks;
-	if (count < 0) {
-		count += LOAD_FREQ;
-		active_tasks = count_active_tasks();
-		CALC_LOAD(avenrun[0], EXP_1, active_tasks);
-		CALC_LOAD(avenrun[1], EXP_5, active_tasks);
-		CALC_LOAD(avenrun[2], EXP_15, active_tasks);
-	}
-}
-
-...
-
-/*
- * Nr of active tasks - counted in fixed-point numbers
- */
-static unsigned long count_active_tasks(void)
-{
-	struct task_struct *p;
-	unsigned long nr = 0;
-
-	read_lock(&tasklist_lock);
-	for_each_task(p) {
-		if ((p->state == TASK_RUNNING ||
-		     (p->state & TASK_UNINTERRUPTIBLE)))
-			nr += FIXED_1;
-	}
-	read_unlock(&tasklist_lock);
-	return nr;
-}
-```
-
-sar 를 이용하면 CPU, I/O usage 를 구분해서 알 수 있다. 한가지 유의할 점이 있다. I/O bound job 이 실행되는 경우 core 하나만 점유한다는 사실이다. core 가 2 개이더라도 I/O device 는 하나이기 때문이다.
-
-```
-$ sar
-00:00:01       CPU     %user     %nice   %system   %iowait     %idle
-00:10:01       all     0.10      0.00     17.22      22.31     	58.87
-00:10:01       	 0     0.28      0.00     34.34      45.56     	29.10
-00:10:01       	 1     0.01      0.00      0.50       0.15     	99.42
-00:20:01       all     0.15      0.00     16.50      22.31     	61.01
-00:20:01       	 0     0.30      0.00     31.61      45.59     	22.51
-00:20:01       	 1     0.01      0.00      0.38       0.11     	99.48
-```
+[System Load](/linuxkernel/README.md#losystem-load)
 
 ## swapin, swapout
 
@@ -1942,7 +1863,7 @@ SReclaimable: Part of Slab, that might be reclaimed, such as caches
 
 [htop](https://htop.dev/) 은 개선된 top 이다. top 보다 직관적이다. [htop](https://htop.dev/) 의 주요 지표들을 해석해 보자.
 
-![](img/../image/htop.png)
+![](img/htop.png)
 
 >* [htop/linux/LinuxProcessList.c](https://github.com/hishamhm/htop/blob/8af4d9f453ffa2209e486418811f7652822951c6/linux/LinuxProcessList.c#L802-L833) 
 >* [htop/linux/Platform.c](https://github.com/hishamhm/htop/blob/1f3d85b6174f690a7e354bbadac19404d5e75e78/linux/Platform.c#L198-L208)
