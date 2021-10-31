@@ -36,7 +36,11 @@ Kernel 은 OS 의 핵심이다. 주로 program 들을 지원하고 hardware (CPU
 
 Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
 
-[The Linux Kernel documentation](https://www.kernel.org/doc/html/latest/) 에 최고의 문서들이 있다. [Index of /doc/Documentation/ @ kernel](https://www.kernel.org/doc/Documentation/) 이 것은 source 로 보인다.
+* [Linux Kernel documentation](https://www.kernel.org/doc/)
+  * 옛날 버전인가???
+  * [Understanding the Linux Virtual Memory Manager](https://www.kernel.org/doc/gorman/html/understand/) 은 Memory Management 를 다룬 책이다. Memory Management source code 를 commentary 함.
+* [The Linux Kernel documentation](https://www.kernel.org/doc/html/latest/) 에 최고의 문서들이 있다. 
+  * [Index of /doc/Documentation/ @ kernel](https://www.kernel.org/doc/Documentation/) 이 것은 source 로 보인다.
 
 [UNIX V6](/unixv6kernel/README.md) 코드를 먼저 공부해 본다.
 
@@ -761,6 +765,8 @@ int main() {
 **context_switch()** 은 현재 CPU state vector 를 은퇴하는 Process 를 선택하고 그것의 PCB 에 적당한 정보를 기록한다. 그리고 새로 등장한 Process 의 PCB 를 읽어오고 그 PCB 의 PC 로 부터 프로그램을 실행한다.
 
 # Memory Management
+
+* [Understanding the Linux Virtual Memory Manager](https://www.kernel.org/doc/gorman/html/understand/) 은 Memory Management 를 다룬 책이다. source code 도 설명한다.
 
 `/proc/meminfo` 의 주요지표가 어덯게 계산 되는지 [/fs/proc/meminfo.c @ kernel](https://elixir.bootlin.com/linux/v4.15/source/fs/proc/meminfo.c#L46) 를 보고 이해하자.
 
