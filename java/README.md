@@ -575,6 +575,8 @@ public class MainApp {
    TreeMap<Integer, Integer> map = new TreeMap<>();
    map.put(1, 1);
    map.put(5, 5);
+   Integer key0 = map.ceilingKey(2); // 5
+   Integer key1 = map.floorKey(2);   // 1
    // return a key-value mapping associated with the least key greater than 
    // or equal to the given key, or null if there is no such key.
    Map.Entry<Integer, Integer> hiFirst = map3.ceilingEntry(3);
