@@ -77,6 +77,7 @@
   - [Lightsail](#lightsail)
   - [EKS](#eks)
   - [Document DB](#document-db)
+  - [EventBridge](#eventbridge)
 - [Advanced](#advanced)
   - [IAM role cross accounts](#iam-role-cross-accounts)
   - [How to use awscli on Windows](#how-to-use-awscli-on-windows)
@@ -807,6 +808,10 @@ docker pull XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/repo-test:latest
 * [EKS workshop](https://eksworkshop.com/)
   * EKS practice
 
+----
+
+Managed Kubernetes Service
+
 ## Document DB
 
 * [Amazon DocumentDB deep dive (PDF / Youtube)](https://www.portal.reinvent.awsevents.com/connect/sessionDetail.ww?SESSION_ID=95808&csrftkn=YVO2-1H1W-JC8E-L8IZ-O020-0FKT-PI4P-5CKC)
@@ -816,9 +821,11 @@ docker pull XXXXXXXX.dkr.ecr.us-east-1.amazonaws.com/repo-test:latest
 * [Amazon DocumentDB noew supports database auditing with Amazon CloudWatch Logs](https://aws.amazon.com/about-aws/whats-new/2019/02/amazon-documentdb-now-supports-database-auditing-with-amazon-cloudwatch-logs/)
 * [Logging and Monitoring in Amazon DocumentDB](https://docs.aws.amazon.com/documentdb/latest/developerguide/logging-and-monitoring.html)
 
-----
+## EventBridge
 
-Managed Kubernetes Service
+AWS 에서 제공하는 다양한 event 를 이용하여 [Event Driven Architecture](/designpattern/README.md) 을 구현할 수 있다. event 의 source 와 event 의 destination 을 설정하면 특정 event 가 발생했을 때 미리 설정한 곳으로 라우팅한다.
+
+예를 들어 EventBridge 에서 rule 을 하나 생성한다. 그 rule 은 event source 를 AWS S3 로 해 놓고 event destination 을 AWS Lambda 로 해 놓는다. S3 에 이미지 파일 하나가 업로드되면 AWS Lambda 가 호출된다. 
 
 # Advanced
 
