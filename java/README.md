@@ -626,7 +626,17 @@ public class MainApp {
    set.remove("Alice"); // false
    for (String val : set) {  // ... Alphabetical order.
       System.out.println(val);
-   }    
+   }
+
+   // Set<int[]> 는 같은 값을 갖는 int[] 가 삽입된다.
+   // Set<List<Integer>> 는 같은 값을 갖는 List<Integer> 가 삽입되지 못한다.
+   // Set<List<Integer>> 를 사용해야 한다.
+   Set<int[]> aSet = new HashSet();
+   Set<List<Integer>> bSet = new HashSet();
+   aSet.add(new int[]{1, 2, 3});
+   System.out.println(aSet.add(new int[]{1, 2, 3})); // true
+   bSet.add(List.of(1, 2, 3));
+   System.out.println(bSet.add(List.of(1, 2, 3)));   // false
 ```
 
 * Map, HashMap
