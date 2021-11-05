@@ -24,6 +24,7 @@
   - [Record Key](#record-key)
   - [Consumer Lag](#consumer-lag)
   - [Dead letter queue](#dead-letter-queue)
+  - [>   * src](#----src)
   - [Batch](#batch)
   - [Kafka GUI](#kafka-gui)
 - [Basic](#basic)
@@ -336,6 +337,38 @@ Key 의 Record Data 는 같은 Partition 에 저장된다.
 ## Dead letter queue
 
 > * [Kafka Connect Deep Dive – Error Handling and Dead Letter Queues](https://www.confluent.io/blog/kafka-connect-deep-dive-error-handling-dead-letter-queues/)
+> * [Spring Kafka Non-Blocking Retries and Dead Letter Topics](https://evgeniy-khist.github.io/spring-kafka-non-blocking-retries-and-dlt/)
+>   * [src](https://github.com/evgeniy-khist/spring-kafka-non-blocking-retries-and-dlt)
+----
+
+Kafka Topic `orders, orders-retry-0, orders-retry-1, orders-retry-2, orders-dlt` 을 생성한다. `orders` 에서 consuming 한 후 처리하다가 에러가 발생하면 `orders-retry-0` 으로 보낸다. `orders-retry-0` 에서 consuming 한 후 처리하다가 에러가 발생하면 `orders-retry-1` 로 보낸다. `orders-retry-1` 에서 consuming 한 후 처리하다가 에러가 발생하면 `orders-retry-2` 로 보낸다. `orders-retry-2` 에서 처리하다가 에러가 발생하면 `orders-dlt` 로 보낸다. 
+
+이것은 [Spring Retry](/spring/springretry.md) 를 통해 쉽게 구현할 수 있다. [src](https://github.com/evgeniy-khist/spring-kafka-non-blocking-retries-and-dlt) 참고
+
+```java
+@Component
+@Slf4j
+public class RetryableKafkaListener {
+
+  @RetryableTopic(
+      attempts = "4",
+      backoff = @Backoff(delay = 1000, multiplier = 2.0),
+      autoCreateTopics = "false",
+      topicSuffixingStrategy = TopicSuffixingStrategy.SUFFIX_WITH_INDEX_VALUE)
+  @KafkaListener(topics = "orders")
+  public void listen(String in, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    log.info(in + " from " + topic);
+    throw new RuntimeException("test");
+  }
+
+  @DltHandler
+  public void dlt(String in, @Header(KafkaHeaders.RECEIVED_TOPIC) String topic) {
+    log.info(in + " from " + topic);
+  }
+}
+```
+
+이후 `orders-dlt` 의 message 들을 `orders` 로 보내거나 batch 에서 처리한다. 
 
 ## Batch
 
@@ -374,6 +407,12 @@ $ docker run --rm -it confluentinc/cp-kafka:latest sh -c "kafka-topics --list --
 
 # Describe topic
 $ docker run --rm -it confluentinc/cp-kafka:latest sh -c "kafka-topics --describe --topic basictopic --bootstrap-server kafka.iamslash.com" 
+
+# Produce messages interactively
+$ docker run --rm -it --network host confluentinc/cp-kafka:latest sh -c "kafka-console-producer --broker-list localhost:9092 --topic orders"
+
+# Consume message interactively
+$ docker run --rm -it --network host confluentinc/cp-kafka:latest sh -c "kafka-console-consumer --bootstrap-server localhost:9092 --from-beginning --partition 1 --topic orders"
 ```
 
 ## Useful Server Commands
