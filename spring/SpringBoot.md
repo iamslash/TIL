@@ -117,13 +117,15 @@ dependencies {
 
 ## 자동 설정 이해
 
+> * [How autoconfigure works @ TIL](SpringBootCodeTour.md#how-autoconfigure-works)
+
 `@SpringBootApplication` 은 `@ComponentScan, @EnableAutoConfiguration` 을 포함한다.
 
 `@ComponentScan` 은 `@Component, @Configuration, @Repository, @Service, @Controller, @RestController` 가 attatch 된 Class 들을 검색하여 Bean 으로 등록한다.
 
 `@Configuration` 은 `@Bean` 이 부착된 method 들을 순회하고 return 된 Bean 을 IOC container 에 등록한다.
 
-`@EnableAutoConfiguration` 은 `org.springframework.boot:spring-boot-autoconfigure/META-INF/spring.factories` 를 포함한 `spring.factories` 파일들을 읽고 `org.springframework.boot.autoconfigure.EnableAutoConfiguration` 의 value 에 해당하는 class 들을 순회하면서 Bean 으로 등록한다. 이 class 들은 모두 `@Configuration` 이 attatch 되어 있다. 그러나 `@ConditionalOnWebApplication, @ConditionalOnClass, @ConditionalOnMissingBean` 등에 의해 조건에 따라 Bean 이 등록될 수도 있고 등록되지 않을수도 있다.
+Spring Framework 는 `org.springframework.boot:spring-boot-autoconfigure/META-INF/spring.factories` 를 포함한 `spring.factories` 파일들을 읽는다. `@EnableAutoConfiguration` 은 `org.springframework.boot:spring-boot-autoconfigure/META-INF/spring.factories` 에 존재하는 `org.springframework.boot.autoconfigure.EnableAutoConfiguration` key 의 value 에 해당하는 class 들을 Import 한다. 이 class 들은 모두 `@Configuration` 이 attatch 되어 있다. 그러나 `@ConditionalOnWebApplication, @ConditionalOnClass, @ConditionalOnMissingBean` 등에 의해 조건에 따라 `@Configuration Class` 가 Import 될 수도 있고 되지 않을 수도 있다. `@Configuration Class` 가 Import 되면 `@Bean` 이 부착된 method 가 실행되면서 Bean 이 등록된다.
 
 host application 에서 library 들을 `@ComponentScan` 할 수는 없기 때문에 `@EnableAutoConfiguration` 은 매우 유용하다.
 

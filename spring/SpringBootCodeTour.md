@@ -13,7 +13,7 @@
 - [How to instantiate Bean](#how-to-instantiate-bean)
 	- [Summary](#summary-2)
 - [How to read spring.factories](#how-to-read-springfactories)
-- [How to autoconfigure works](#how-to-autoconfigure-works)
+- [How autoconfigure works](#how-autoconfigure-works)
 	- [Summary](#summary-3)
 	- [Sequences](#sequences-1)
 - [How to read bootstrap.yml](#how-to-read-bootstrapyml)
@@ -691,13 +691,13 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 	}
 ```
 
-# How to autoconfigure works
+# How autoconfigure works
 
 ## Summary
 
-`@SpringBootApplication` 은 `@EnableAutoConfiguration` 을 포함하고 있다. `@SpringBootApplication` 이 사용되었다면 `spring-boot-autoconfigure-*/META-INF/spring.factories` 을 읽어 들이고 `org.springframework.boot.autoconfigure.EnableAutoConfiguration` 의 값에 해당하는 Configuration Class 들을 모아서 Spring Bean 을 load 할 것이다. 즉, 각 Configuration class 에 `@Bean` 이 부착된 method 들을 실행하여 Spring Bean 을 load 할 것이다. 어떻게 load 하는 거지?
+Spring Framework 는 classpath 에 존재하는 모든 `spring.factories` 파일들을 읽어들인다.
 
-참고로 classpath 에 `spring.factories` 는 여러개 있을 수 있다.
+`@SpringBootApplication` 은 `@EnableAutoConfiguration` 을 포함하고 있다. `@SpringBootApplication` 이 사용되었다면 `spring-boot-autoconfigure-*/META-INF/spring.factories` 에 존재하는 `org.springframework.boot.autoconfigure.EnableAutoConfiguration` key 의 value 에 해당하는 `@Configuration Class` 들을 모아서 조건에 따라 Import 한다. 즉, 각 `@Configuration Class` 에 `@Bean` 이 부착된 method 들을 실행하여 Spring Bean 을 등록할 것이다.
 
 ```conf
 # Auto Configure

@@ -74,7 +74,7 @@ public class UserProperties {
 
 # @EnableConfigurationProperties
 
-`Configuration Class` 에 생성할 Bean 의 `ConfigurationProperties Class` 를 넘겨줘야 한다. `@EnableConfigurationProperties` 는 `Configuration Class` 에 넘겨줄 `ConfigurationProperties Class` 와 함께 attach 한다.
+`Configuration Class` 에 생성할 Bean 의 `ConfigurationProperties Class` 를 넘겨줘야 한다. `@EnableConfigurationProperties` 를 `ConfigurationProperties Class` 와 함께 `Configuration Class` 에 attach 한다.
 
 ```java
 @Configuration
@@ -312,9 +312,8 @@ public class AppConfig extends ConfigurationSupport {
 
 # @EnableAutoConfiguration
 
-> * [[Spring Boot] 자동 설정 @EnableAutoConfiguration](https://velog.io/@max9106/Spring-Boot-EnableAutoConfiguration)
-
-`spring.factories` 에 Configuration 이 있다. 조건에 따라 Bean 을 등록한다.
+* [자동 설정 이해 @ TIL](SpringBoot.md#자동-설정-이해)
+* [How autoconfigure works @ TIL](SpringBootCodeTour.md#how-autoconfigure-works)
 
 # @DynamicInsert, @DynamicUpdate
 
