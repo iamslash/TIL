@@ -129,7 +129,7 @@ host application 에서 library 들을 `@ComponentScan` 할 수는 없기 때문
 
 ## 자동설정 만들기 1 부 : Starter 와 AutoConfigure
 
-`xxx-spring-boot-autoconfigure` module 은 자동설정을 담당한다. `xxx-spring-boot-starter` module 은 의존성 관리를 담당한다. 주로 `POM.xml` 만을 포함한다.
+`xxx-spring-boot-autoconfigure` module 은 자동설정을 담당한다. 주로 `/META-INF/spring.factories` 를 포함한다. `xxx-spring-boot-starter` module 은 의존성 관리를 담당한다. 주로 `POM.xml` 만을 포함한다.
 
 두가지를 합쳐서 `xxx-spring-boot-starter` 에 저장하기도 한다.
 

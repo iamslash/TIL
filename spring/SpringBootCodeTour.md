@@ -14,6 +14,8 @@
 	- [Summary](#summary-2)
 - [How to read spring.factories](#how-to-read-springfactories)
 - [How to autoconfigure works](#how-to-autoconfigure-works)
+	- [Summary](#summary-3)
+	- [Sequences](#sequences-1)
 - [How to read bootstrap.yml](#how-to-read-bootstrapyml)
 
 ----
@@ -691,63 +693,64 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 
 # How to autoconfigure works
 
-* `org.springframework.boot.SpringApplication::run`
+## Summary
+
+`@SpringBootApplication` 은 `@EnableAutoConfiguration` 을 포함하고 있다. `@SpringBootApplication` 이 사용되었다면 `spring-boot-autoconfigure-*/META-INF/spring.factories` 을 읽어 들이고 `org.springframework.boot.autoconfigure.EnableAutoConfiguration` 의 값에 해당하는 Configuration Class 들을 모아서 Spring Bean 을 load 할 것이다. 즉, 각 Configuration class 에 `@Bean` 이 부착된 method 들을 실행하여 Spring Bean 을 load 할 것이다. 어떻게 load 하는 거지?
+
+참고로 classpath 에 `spring.factories` 는 여러개 있을 수 있다.
+
+```conf
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
+org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
+org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,\
+org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration,\
+org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration,\
+```
+
+## Sequences
+
+`FACTORIES_RESOURCE_LOCATION` 에 `spring.factories` 파일 경로가 hard coding 되어 있다.
 
 ```java
-	public ConfigurableApplicationContext run(String... args) {
-		StopWatch stopWatch = new StopWatch();
-		stopWatch.start();
-		ConfigurableApplicationContext context = null;
-		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
-		configureHeadlessProperty();
-		SpringApplicationRunListeners listeners = getRunListeners(args);
-		listeners.starting();
+// org.springframework.core.io.support.SpringFactoriesLoader
+public final class SpringFactoriesLoader {
+
+	/**
+	 * The location to look for factories.
+	 * <p>Can be present in multiple JAR files.
+	 */
+	public static final String FACTORIES_RESOURCE_LOCATION = "META-INF/spring.factories";
+
+...
+}
+```
+
+`loadFactoryNames` 에서 classpath 에 포함된 `spring.factories` 파일들을 로딩한다.
+ 
+```java
+// org.springframework.core.io.support.SpringFactoriesLoader
+public final class SpringFactoriesLoader {
+...	
+	public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader) {
+		ClassLoader classLoaderToUse = classLoader;
+		if (classLoaderToUse == null) {
+			classLoaderToUse = SpringFactoriesLoader.class.getClassLoader();
+		}
+		String factoryTypeName = factoryType.getName();
+		return loadSpringFactories(classLoaderToUse).getOrDefault(factoryTypeName, Collections.emptyList());
+	}
+
+	private static Map<String, List<String>> loadSpringFactories(ClassLoader classLoader) {
+		Map<String, List<String>> result = cache.get(classLoader);
+		if (result != null) {
+			return result;
+		}
+
+		result = new HashMap<>();
 		try {
-			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
-			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
-			configureIgnoreBeanInfo(environment);
-			Banner printedBanner = printBanner(environment);
-			context = createApplicationContext();
-			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
-					new Class[] { ConfigurableApplicationContext.class }, context);
-			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
-
-```
-
-* `org.springframework.boot.SpringApplication::prepareContext`
-
-```java
-	private void prepareContext(ConfigurableApplicationContext context, ConfigurableEnvironment environment,
-			SpringApplicationRunListeners listeners, ApplicationArguments applicationArguments, Banner printedBanner) {
-		context.setEnvironment(environment);
-		postProcessApplicationContext(context);
-		applyInitializers(context);
-```
-
-* `org.springframework.boot.SpringApplication::applyInitializers`
-
-```java
-	protected void applyInitializers(ConfigurableApplicationContext context) {
-		for (ApplicationContextInitializer initializer : getInitializers()) {
-			Class<?> requiredType = GenericTypeResolver.resolveTypeArgument(initializer.getClass(),
-					ApplicationContextInitializer.class);
-			Assert.isInstanceOf(requiredType, context, "Unable to call initializer.");
-			initializer.initialize(context);
-		}
-	}
-```
-
-* `org.springframework.boot.context.config.DelegatingApplicationContextInitializer::initialize`
-
-```java
-	@Override
-	public void initialize(ConfigurableApplicationContext context) {
-		ConfigurableEnvironment environment = context.getEnvironment();
-		List<Class<?>> initializerClasses = getInitializerClasses(environment);
-		if (!initializerClasses.isEmpty()) {
-			applyInitializerClasses(context, initializerClasses);
-		}
-	}
+			Enumeration<URL> urls = classLoader.getResources(FACTORIES_RESOURCE_LOCATION);
 ```
 
 # How to read bootstrap.yml
