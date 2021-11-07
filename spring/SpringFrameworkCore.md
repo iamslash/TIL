@@ -92,7 +92,7 @@ IOC 의 핵심은 [BeanFactory](https://docs.spring.io/spring-framework/docs/cur
 
 [ApplicationContext](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html) 는 가장 많이 사용하는 [BeanFactory](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html) 이다. [ApplicationContext](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/context/ApplicationContext.html) 는 [BeanFactory](https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/beans/factory/BeanFactory.html) 를 상속한다.
 
-Spring Boot Application 이 실행되고 bean 을 등록하는 흐름은 [SpringBootCodeTour#how-to-register-beans](SpringBootCodeTour.md) 를 참고한다.
+Spring Boot Application 이 실행되고 bean 을 등록하는 흐름은 [How to register bean @ TIL](SpringBootCodeTour.md#how-to-register-beans) 를 참고한다.
 
 ## Application Context and Setting Bean
 

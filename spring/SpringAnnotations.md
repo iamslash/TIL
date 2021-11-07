@@ -15,7 +15,7 @@
 
 # Abstract
 
-This is about annotations of Spring Boot Framework.
+This is about annotations of Spring Framework.
 
 # @Configuration
 

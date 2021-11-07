@@ -23,7 +23,7 @@
   - [Exactly once](#exactly-once)
   - [Record Key](#record-key)
   - [Consumer Lag](#consumer-lag)
-  - [Dead letter queue](#dead-letter-queue)
+  - [Dead Letter Queue](#dead-letter-queue)
   - [>   * src](#----src)
   - [Batch](#batch)
   - [Kafka GUI](#kafka-gui)
@@ -334,7 +334,7 @@ Key 의 Record Data 는 같은 Partition 에 저장된다.
 
 특정 Partition 에서 Producer 가 마지막으로 저장한 Record offset 과 Consumer 가 가져간 마지막 Record offset 의 차이이다. monitoring 해야한다. LAG 이 크다는 것은 consumming 이 제대로 되지 않고 있다는 것을 의미한다.
 
-## Dead letter queue
+## Dead Letter Queue
 
 > * [Kafka Connect Deep Dive – Error Handling and Dead Letter Queues](https://www.confluent.io/blog/kafka-connect-deep-dive-error-handling-dead-letter-queues/)
 > * [Spring Kafka Non-Blocking Retries and Dead Letter Topics](https://evgeniy-khist.github.io/spring-kafka-non-blocking-retries-and-dlt/)

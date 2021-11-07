@@ -12,11 +12,11 @@
 	- [Sequences](#sequences)
 - [How to instantiate Bean](#how-to-instantiate-bean)
 	- [Summary](#summary-2)
-- [How to read spring.factories](#how-to-read-springfactories)
 - [How autoconfigure works](#how-autoconfigure-works)
 	- [Summary](#summary-3)
 	- [Sequences](#sequences-1)
 - [How to read bootstrap.yml](#how-to-read-bootstrapyml)
+- [How to process HTTP request](#how-to-process-http-request)
 
 ----
 
@@ -376,8 +376,8 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 ## Summary
 
-* Register Bean Definition to `Map<String, BeanDefinition`.
-* getBean instantiate Bean with BeanDefinition and save to `Map<String, Object` for cache.
+* Register Bean Definition to `Map<String, BeanDefinition>`.
+* `getBean` instantiate Bean with `BeanDefinition` and save to `Map<String, Object>` for cache.
 
 ## Class Diagram
 
@@ -627,70 +627,6 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 * `AnnotationConfigApplicationContext::getBean` starts to instantiate Bean.
 * `AbstractBeanFactory.doGetBean` instantiate Bean.
 
-# How to read spring.factories
-
-* `org.springframework.boot.SpringApplication::SpringApplication`
-
-```java
-	public SpringApplication(ResourceLoader resourceLoader, Class<?>... primarySources) {
-		this.resourceLoader = resourceLoader;
-		Assert.notNull(primarySources, "PrimarySources must not be null");
-		this.primarySources = new LinkedHashSet<>(Arrays.asList(primarySources));
-		this.webApplicationType = WebApplicationType.deduceFromClasspath();
-		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
-		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
-		this.mainApplicationClass = deduceMainApplicationClass();
-	}
-```
-
-* `org.springframework.boot.SpringApplication::getSpringFactoriesInstances`
-
-```java
-	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
-		ClassLoader classLoader = getClassLoader();
-		// Use names and ensure unique to protect against duplicates
-		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader));
-		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names);
-		AnnotationAwareOrderComparator.sort(instances);
-		return instances;
-	}
-```
-
-* `org.springframework.core.io.support.SpringFactoriesLoader::loadSpringFactories`
-
-```java
-	private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader) {
-		MultiValueMap<String, String> result = cache.get(classLoader);
-		if (result != null) {
-			return result;
-		}
-
-		try {
-			Enumeration<URL> urls = (classLoader != null ?
-					classLoader.getResources(FACTORIES_RESOURCE_LOCATION) :
-					ClassLoader.getSystemResources(FACTORIES_RESOURCE_LOCATION));
-			result = new LinkedMultiValueMap<>();
-			while (urls.hasMoreElements()) {
-				URL url = urls.nextElement();
-				UrlResource resource = new UrlResource(url);
-				Properties properties = PropertiesLoaderUtils.loadProperties(resource);
-				for (Map.Entry<?, ?> entry : properties.entrySet()) {
-					String factoryTypeName = ((String) entry.getKey()).trim();
-					for (String factoryImplementationName : StringUtils.commaDelimitedListToStringArray((String) entry.getValue())) {
-						result.add(factoryTypeName, factoryImplementationName.trim());
-					}
-				}
-			}
-			cache.put(classLoader, result);
-			return result;
-		}
-		catch (IOException ex) {
-			throw new IllegalArgumentException("Unable to load factories from location [" +
-					FACTORIES_RESOURCE_LOCATION + "]", ex);
-		}
-	}
-```
-
 # How autoconfigure works
 
 ## Summary
@@ -915,3 +851,6 @@ public class BootstrapApplicationListener
 	}
 ```
 
+# How to process HTTP request
+
+WIP
