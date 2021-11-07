@@ -41,6 +41,7 @@
   - [Caching in spring boot](#caching-in-spring-boot)
 - [Spring Libraries](#spring-libraries)
   - [Problem](#problem)
+  - [Spring Retry](#spring-retry)
 
 ----
 
@@ -52,7 +53,6 @@
 
 - [Spring Guides](https://spring.io/guides)
   - Topics Guides are very useful.
-- [spring-examples by iamslash](https://github.com/iamslash/spring-examples)
 - [baeldung spring](https://www.baeldung.com/start-here)
   - 킹왕짱 튜토리얼
   - [src](https://github.com/eugenp/tutorials)
@@ -166,7 +166,7 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 
 ----
 
-[Spring Batch](SpringBatch.md)
+[Spring Batch @ TIL](SpringBatch.md)
 
 # Examples
 
@@ -662,7 +662,7 @@ public class ExconfigApplication {
 
 다음과 같이 build.gradle 을 설정한다.
 
-```gradle
+```groovy
 plugins {
 	id 'org.springframework.boot' version '2.2.6.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
@@ -963,7 +963,7 @@ Transaction problems 는 다음과 같다.
 
 다음과 같이 build.gradle 을 설정한다.
 
-```gradle
+```groovy
 plugins {
 	id 'org.springframework.boot' version '2.2.7.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
@@ -1101,3 +1101,7 @@ public ResponseEntity getVersion(
 Exception 을 Json 으로 변환해서 HTTP Reponse 로 보내주는 Library 이다. 
 
 * [ex-problem](https://github.com/iamslash/spring-ex/tree/master/ex-problem)
+
+## Spring Retry
+
+* [Spring Retry @ TIL](springretry.md)

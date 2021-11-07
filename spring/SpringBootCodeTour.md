@@ -17,6 +17,7 @@
 	- [Sequences](#sequences-1)
 - [How to read bootstrap.yml](#how-to-read-bootstrapyml)
 - [How to process HTTP request](#how-to-process-http-request)
+- [How to process Exceptions](#how-to-process-exceptions)
 
 ----
 
@@ -852,5 +853,9 @@ public class BootstrapApplicationListener
 ```
 
 # How to process HTTP request
+
+WIP
+
+# How to process Exceptions
 
 WIP
