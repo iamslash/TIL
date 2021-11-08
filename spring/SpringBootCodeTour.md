@@ -1,20 +1,23 @@
 - [Abstract](#abstract)
 - [How to run SpringApplication](#how-to-run-springapplication)
+	- [Summary](#summary)
+	- [* 너무 오래됬지만 Spring Framework 의 BeanFactory 등을 설명한다.](#-너무-오래됬지만-spring-framework-의-beanfactory-등을-설명한다)
+	- [Sequences](#sequences)
 - [How to gather WebApplicationInitializer and run them](#how-to-gather-webapplicationinitializer-and-run-them)
 - [How to read application.yml](#how-to-read-applicationyml)
 - [How to event handler works](#how-to-event-handler-works)
 - [How to ApplicationRunner works](#how-to-applicationrunner-works)
 - [Beans Processing](#beans-processing)
-	- [Summary](#summary)
+	- [Summary](#summary-1)
 	- [Class Diagram](#class-diagram)
 - [How to register beans](#how-to-register-beans)
-	- [Summary](#summary-1)
-	- [Sequences](#sequences)
-- [How to instantiate Bean](#how-to-instantiate-bean)
 	- [Summary](#summary-2)
-- [How autoconfigure works](#how-autoconfigure-works)
-	- [Summary](#summary-3)
 	- [Sequences](#sequences-1)
+- [How to instantiate Bean](#how-to-instantiate-bean)
+	- [Summary](#summary-3)
+- [How autoconfigure works](#how-autoconfigure-works)
+	- [Summary](#summary-4)
+	- [Sequences](#sequences-2)
 - [How to read bootstrap.yml](#how-to-read-bootstrapyml)
 - [How to process HTTP request](#how-to-process-http-request)
 - [How to process Exceptions](#how-to-process-exceptions)
@@ -27,7 +30,31 @@ This is about code tour of spring-boot-2.2.6.
 
 # How to run SpringApplication
 
-* `/org/springframework/boot/SpringApplication.class::run`
+## Summary
+
+* [How Spring Boot works internally @ youtube](https://www.youtube.com/watch?v=2K9ZtPL5r6A)
+* [It's a kind of magic: under the covers of Spring Boot by Stéphane Nicoll & Andy Wilkinson @ youtube](https://www.youtube.com/watch?v=uof5h-j0IeE)
+  * [It's a Kind of Magic: Under the Covers of Spring Boot - Brian Clozel, Stéphane Nicoll @ youtube](https://www.youtube.com/watch?v=jDchAEHIht0)
+* [Spring Framework](https://www.youtube.com/playlist?list=PLC97BDEFDCDD169D7)
+  * 너무 오래됬지만 Spring Framework 의 BeanFactory 등을 설명한다.
+-----
+
+`SpringApplication::run` 은 Spring Application 을 실행한다. 그리고 다음과 같은 것들을 순서대로 처리한다.
+
+* StopWatch begins
+* Prepares environment
+* Print banner
+* Start the IOC container
+* Refresh context
+* StopWatch ends
+* Tigger Listeners
+* Trigger Runners
+* Loop
+* Return ApplicationContext reference (IOC container)
+
+## Sequences
+
+* `/org/springframework/boot/SpringApplication::run`
 
 ```java
 	/**
@@ -631,6 +658,11 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 # How autoconfigure works
 
 ## Summary
+
+* [How Spring Boot works internally @ youtube](https://www.youtube.com/watch?v=2K9ZtPL5r6A)
+  * `spring-kafka` 가 어떻게 `autoconfigure` 되는지 설명함.
+
+-----
 
 Spring Framework 는 classpath 에 존재하는 모든 `spring.factories` 파일들을 읽어들인다.
 

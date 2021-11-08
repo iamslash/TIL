@@ -13,6 +13,8 @@ Monad 에 대해 정리한다.
 
 # Materials
 
+* [[10분 테코톡] 🍩도넛의 함수형 프로그래밍 @ youtube](https://www.youtube.com/watch?v=ii5hnSCE6No)
+  * monad 를 Category theory 와 함께 설명함.
 * [Monad란 무엇인가? @ youtube](https://www.youtube.com/watch?v=jI4aMyqvpfQ)
 * [모나드와 함수형 아키텍처 1장. 시작하기](https://blog.burt.pe.kr/series/monad-and-functional-architecture-part-1/)
   * [모나드와 함수형 아키텍처 2장. 프로그래밍 패러다임](https://blog.burt.pe.kr/series/monad-and-functional-architecture-part-2/)
