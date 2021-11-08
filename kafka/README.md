@@ -40,6 +40,7 @@
   - [Monitoring Kafka](#monitoring-kafka)
   - [Kafka Connect](#kafka-connect)
   - [Kafka Streams](#kafka-streams)
+  - [ksqlDB](#ksqldb)
 
 -----
 
@@ -683,3 +684,14 @@ Kafka Streams Application 은 Kafka Sreams API 를 사용한 Application 이다.
 * message 를 규격화 한다.
 * 5 분간격으로 특정 message 를 수신했는지 검사한다.
 * message 에 특정한 값이 있다면 새로운 pipeline 으로 보낸다.
+
+## ksqlDB
+
+* [ksqlDB Quickstart](https://ksqldb.io/quickstart.html)
+* [[Kafka 101] KSQL (KSqlDB)](https://always-kimkim.tistory.com/entry/kafka101-ksql)
+
+----
+
+ksqkDB 는 Kafka stream 으로 읽어들인 data 를 KSQL 로 분석할 수 있게 해주는 application 이다. 
+
+data 분석용으로 사용할 만 하다.
