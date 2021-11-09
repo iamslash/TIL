@@ -20,8 +20,10 @@
 	- [Sequences](#sequences-2)
 - [How to read bootstrap.yml](#how-to-read-bootstrapyml)
 - [How to process HTTP request](#how-to-process-http-request)
-- [How to process Exceptions](#how-to-process-exceptions)
 	- [Summary](#summary-5)
+	- [Sequences](#sequences-3)
+- [How to process Exceptions](#how-to-process-exceptions)
+	- [Summary](#summary-6)
 
 ----
 
@@ -887,7 +889,32 @@ public class BootstrapApplicationListener
 
 # How to process HTTP request
 
-WIP
+## Summary
+
+* [SPRING MVC REQUEST LIFE CYCLE](https://justforchangesake.wordpress.com/2014/05/07/spring-mvc-request-life-cycle/)
+
+----
+
+다음은 Spring Framework 가 어떻게 HTTP Request 를 처리하는지를 표현한 그림이다.
+
+![](https://justforchangesake.files.wordpress.com/2014/05/spring-request-lifecycle.jpg)
+
+다음과 같은 Component 들을 먼저 이해하는 것이 중요하다.
+
+* **Filter**:  
+* **Dispatcher servlet**: The servlet analyzes the requests and dispatches them to the appropriate controller for processing. 
+* **Common services**: The common services will apply to every request to provide supports including i18n, theme, file upload, and so on. Their configuration is defined in the DispatcherServlet’s WebApplicationContext. 
+* **Handler mapping**: This maps the request to the handler (a method within a Spring MVC controller class). Since Spring 2.5, in most situations the configuration is not 
+required because Spring MVC will automatically register theorg.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping class that maps handlers based on HTTP paths expressed through the @RequestMapping annotation at the type or method level within controller classes. 
+* **Handler interceptor**: In Spring MVC, you can register interceptors for the handlers for implementing common checking or logic. For example, a handler interceptor can check and ensure that only the handlers can be invoked during office hours. 
+* **Handler exception resolver**: In Spring MVC, the HandlerExceptionResolver interface (under the packageorg.springframework.web.servlet) is designed to deal with unexpected exceptions thrown during request processing by handlers. 
+By default, the DispatcherServlet registers the DefaultHandlerExceptionResolver class (under the packageorg.springframework.web.servlet.mvc.support). This resolver handles certain standard Spring MVC exceptions by setting a specific response status code. You can also implement your own exception handler by annotating a controller method with the @ExceptionHandler annotation and passing in the exception type as the attribute. 
+* **View Resolver**: Spring MVC’s ViewResolver interface (under the package org.springframework.web.servlet) supports view resolution based on a logical name returned by the controller. 
+
+## Sequences
+
+```java
+```
 
 # How to process Exceptions
 

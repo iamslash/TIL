@@ -62,6 +62,7 @@
   - [ROW_NUMBER() OVER()](#row_number-over)
   - [RANK() OVER()](#rank-over)
   - [DENSE_RANK() OVER()](#dense_rank-over)
+  - [SUM() OVER()](#sum-over)
   - [Where](#where)
   - [And, Or, Not](#and-or-not)
   - [Window Functions (LEAD, LAG)](#window-functions-lead-lag)
@@ -1423,6 +1424,22 @@ val     my_rank
   4     4
   4     4
   5     5
+```
+
+## SUM() OVER()
+
+* [AccountBalance @ learntocode](https://github.com/iamslash/learntocode/tree/master/leetcode3/AccountBalance#readme)
+
+-----
+
+특정 PARTITION FIELD 로 그루핑하고 특정 ORDER FIELD 로 정렬하고 PARTITION FIELD 를 누적합산 한다.
+
+```sql
+SELECT account_id,
+       day,
+       SUM(CASE WHEN type='Deposit' THEN amount ELSE -amount END) 
+         OVER(PARTITION BY account_id ORDER BY day) AS balance
+  FROM Transactions;
 ```
 
 ## Where
