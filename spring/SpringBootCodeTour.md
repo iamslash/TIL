@@ -21,6 +21,7 @@
 - [How to read bootstrap.yml](#how-to-read-bootstrapyml)
 - [How to process HTTP request](#how-to-process-http-request)
 - [How to process Exceptions](#how-to-process-exceptions)
+	- [Summary](#summary-5)
 
 ----
 
@@ -890,4 +891,98 @@ WIP
 
 # How to process Exceptions
 
-WIP
+## Summary
+
+`DispatcherServlet::doDispatch()` 는 HTTP Request 를 처리한다. `Controller` 의 `HTTP handle method` 가 실행 중 Exception 이 발생되면 `DispatcherServlet::processDispatchResult()` 에서 Exception 이 처리된다.
+
+```java
+public class DispatcherServlet extends FrameworkServlet {
+...
+	protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		HttpServletRequest processedRequest = request;
+		HandlerExecutionChain mappedHandler = null;
+		boolean multipartRequestParsed = false;
+
+		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
+
+		try {
+			ModelAndView mv = null;
+			Exception dispatchException = null;
+
+			try {
+				processedRequest = checkMultipart(request);
+				multipartRequestParsed = (processedRequest != request);
+
+				// Determine handler for the current request.
+				mappedHandler = getHandler(processedRequest);
+				if (mappedHandler == null) {
+					noHandlerFound(processedRequest, response);
+					return;
+				}
+
+				// Determine handler adapter for the current request.
+				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
+
+				// Process last-modified header, if supported by the handler.
+				String method = request.getMethod();
+				boolean isGet = "GET".equals(method);
+				if (isGet || "HEAD".equals(method)) {
+					long lastModified = ha.getLastModified(request, mappedHandler.getHandler());
+					if (new ServletWebRequest(request, response).checkNotModified(lastModified) && isGet) {
+						return;
+					}
+				}
+
+				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
+					return;
+				}
+
+				// Actually invoke the handler.
+				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
+
+				if (asyncManager.isConcurrentHandlingStarted()) {
+					return;
+				}
+
+				applyDefaultViewName(processedRequest, mv);
+				mappedHandler.applyPostHandle(processedRequest, response, mv);
+			}
+			catch (Exception ex) {
+				dispatchException = ex;
+			}
+			catch (Throwable err) {
+				// As of 4.3, we're processing Errors thrown from handler methods as well,
+				// making them available for @ExceptionHandler methods and other scenarios.
+				dispatchException = new NestedServletException("Handler dispatch failed", err);
+			}
+			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
+	}
+...
+}
+```
+
+`DispatcherServlet::handlerExceptionResolvers` 를 `resolver` 로 순회하면서 `resolver.resolveException()` 을 호출한다. 
+
+```java
+public class DispatcherServlet extends FrameworkServlet {
+...
+	@Nullable
+	protected ModelAndView processHandlerException(HttpServletRequest request, HttpServletResponse response,
+			@Nullable Object handler, Exception ex) throws Exception {
+
+		// Success and error responses may use different content types
+		request.removeAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);
+
+		// Check registered HandlerExceptionResolvers...
+		ModelAndView exMv = null;
+		if (this.handlerExceptionResolvers != null) {
+			for (HandlerExceptionResolver resolver : this.handlerExceptionResolvers) {
+				exMv = resolver.resolveException(request, response, handler, ex);
+				if (exMv != null) {
+					break;
+				}
+			}
+		}
+...
+}		
+```
