@@ -33,7 +33,7 @@ Conceptual ERD 와 Physical ERD 가 사용하는 Symbol 은 다르다.
 
 # Physical ERD Symbols and Notations
 
-* **Cardinality** : Cardinality defines the possible number of occurrences in one entity which is associated with the number of occurrences in another. ex) one-to-many, many-to-many.
+* **Cardinality** : Cardinality refers to the number of unique items in a set. Cardinality defines the possible number of occurrences in one entity which is associated with the number of occurrences in another. ex) one-to-many, many-to-many.
   * ![](crowfeet.png)
 
 * **실선** : 엔터티의 PK 가 다른 엔터티의 PK 중 일부이다.
