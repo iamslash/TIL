@@ -1,3 +1,4 @@
+- [Materials](#materials)
 - [Requirements](#requirements)
   - [What is a Rate Limiter?](#what-is-a-rate-limiter)
   - [Why do we need API rate limiting?](#why-do-we-need-api-rate-limiting)
@@ -25,6 +26,10 @@
 - [References](#references)
 
 ----
+
+# Materials
+
+* [서비스 가용성 확보에 필요한 Rate Limiting Algorithm에 대해](https://www.mimul.com/blog/about-rate-limit-algorithm/)
 
 # Requirements
 
