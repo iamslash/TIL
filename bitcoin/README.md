@@ -2,6 +2,7 @@
 **Table of Contents**
 
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Fundamentals](#fundamentals)
   - [Digital Signatures](#digital-signatures)
@@ -10,7 +11,6 @@
   - [Simplified payment verification](#simplified-payment-verification)
   - [vulnerability](#vulnerability)
     - [51% attack](#51-attack)
-- [References](#references)
 
 <!-- markdown-toc end -->
 
@@ -19,6 +19,15 @@
 # Abstract
 
 bitcoin에 대해 정리한다.
+
+# References
+
+* [How does bitcoin work (internals)](https://medium.com/ascentic-technology/how-does-bitcoin-work-internals-c2450793a0db)
+  * bitcoin 의 under the hood 를 잘 설명한 글
+* [block explorer](https://blockexplorer.com/)
+  * bitcoin의 block을 구경할 수 있다.
+* [bitcoin reference implementation](https://github.com/bitcoin/bitcoin)
+  * bitcoin 구현체
 
 # Materials
 
@@ -84,11 +93,3 @@ void CConnman::ThreadDNSAddressSeed()
 ### 51% attack
 
 51%에 해당하는 노드들이 합의 한다면???
-
-
-# References
-
-* [block explorer](https://blockexplorer.com/)
-  * bitcoin의 block을 구경할 수 있다.
-* [bitcoin reference implementation](https://github.com/bitcoin/bitcoin)
-  * bitcoin 구현체
