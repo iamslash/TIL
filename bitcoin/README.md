@@ -7,10 +7,12 @@
 - [Fundamentals](#fundamentals)
   - [Digital Signatures](#digital-signatures)
   - [Peer Discovery](#peer-discovery)
+  - [POW (Proof of Work)](#pow-proof-of-work)
   - [Consensus algorithm](#consensus-algorithm)
   - [Simplified payment verification](#simplified-payment-verification)
   - [vulnerability](#vulnerability)
     - [51% attack](#51-attack)
+- [Code Tour](#code-tour)
 
 <!-- markdown-toc end -->
 
@@ -78,6 +80,17 @@ void CConnman::ThreadDNSAddressSeed()
 }
 ```
 
+## POW (Proof of Work)
+
+Block 의 Header 는 Difficulty 와 Nonce, Hash 등을 가지고 있다. Diffculty 는 256 bit 이고 0 들의 모음으로 시작한다. 또한 Nonce 빼고
+나머지는 고정된 값이다.
+
+새로운 Block 의 Hash 는 Nonce 를 바꾸어 가면서 생성한다. 반드시 Hash 는
+Difficulty 보다 작아야 한다. 즉, Difficulty 를 시작하는 0 의 개수보다 
+Hash 를 시작하는 0 의 개수가 작아야 한다.
+
+이렇게 Block 의 Difficulty 보다 작은 Hash 를 생성하는 과정을 POW 라고 한다.
+
 ## Consensus algorithm
 
 길이가 제일 긴 블록체인을 따라 새로운 블록을 추가하는 것은 모든
@@ -93,3 +106,7 @@ void CConnman::ThreadDNSAddressSeed()
 ### 51% attack
 
 51%에 해당하는 노드들이 합의 한다면???
+
+# Code Tour
+
+* [bitcoin code tour](bitcoin_codetour.md)
