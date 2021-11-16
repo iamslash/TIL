@@ -4,3 +4,4 @@ logs
 MNIST_data
 .vscode
 *.out
+.metals

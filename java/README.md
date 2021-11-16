@@ -278,6 +278,13 @@ StringBuilder sb = new StringBuilder();
 sb.append("a");
 sb.deleteCharAt(sb.length()-1);
 sb.setCharAt(0, '*');
+
+// StringBuilder right trim
+int last = sb.length()-1;
+while (last >= 0 && sb.charAt(last) == ' ') {
+   sb.deleteCharAt(last--);
+}
+
 // substring(int beginIndex)
 // substring(int beginIndex, int endIndex)
 "hamburger".substring(4, 8) // "urge"
