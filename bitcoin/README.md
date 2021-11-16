@@ -1,14 +1,15 @@
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
 
+**Table of Contents**
 - [Abstract](#abstract)
 - [References](#references)
 - [Materials](#materials)
 - [Fundamentals](#fundamentals)
   - [Overview](#overview)
   - [Block Structure](#block-structure)
+  - [Transaction Structure](#transaction-structure)
   - [UTXO (Unspent Transaction Outputs)](#utxo-unspent-transaction-outputs)
-  - [Transaction](#transaction)
+  - [Wallet Application](#wallet-application)
   - [BitCoin Scripts](#bitcoin-scripts)
   - [Digital Signatures](#digital-signatures)
   - [Peer Discovery](#peer-discovery)
@@ -111,14 +112,91 @@ Serialized Block 은 다음과 같이 구성된다. [Serialized Blocks @ bitcoin
 
 Serialized Block 의 크기는 1MB 이하여야 한다. 1MB 를 넘어서면 Invalid Block 이다.
 
+## Transaction Structure
+
+다음은 Serialized Transaction 이다. [Raw Transaction Format @ bitcoin](https://developer.bitcoin.org/reference/transactions.html#raw-transaction-format)
+
+| Bytes | Name | Data Type |
+| ---:|:----|-----|
+| 4 | version | `int32_t` |
+| varies | tx_in count | `compactSize uint` |
+| varies | tx_in | `txIn` |
+| varies | tx_out count | `compactSize uint` |
+| varies | tx_out | `txOut` |
+| 4 | lock_time | `uint32_t` |
+
+다음은 Serialized txIn 이다. (non-coinbase) 
+
+| Bytes | Name | Data Type |
+| ---:|:----|-----|
+| 36 | previous_output | `outpoint` |
+| varies | script bytes | `compactSize uint` |
+| varies | signature script | `char[]` |
+| 4 | sequence | `uint32_t` |
+
+다음은 Serialized Outpoint 이다. Outpoint 는 previous_output 과 같다.
+
+| Bytes | Name | Data Type |
+| ---:|:----|-----|
+| 32 | hash | `char[32]` |
+| 4 | index | `uint32_t` |
+
+다음은 Serialized txOut 이다. 
+
+| Bytes | Name | Data Type |
+| ---:|:----|-----|
+| 8 | value | `int64_t` |
+| `1+` | pk_script bytes | `compactSize uint` |
+| varies | pk_script | char[] |
+
+다음은 
+
+```
+01000000 ................................... Version
+
+01 ......................................... Number of inputs
+|
+| 7b1eabe0209b1fe794124575ef807057
+| c77ada2138ae4fa8d6c4de0398a14f3f ......... Outpoint TXID
+| 00000000 ................................. Outpoint index number
+|
+| 49 ....................................... Bytes in sig. script: 73
+| | 48 ..................................... Push 72 bytes as data
+| | | 30450221008949f0cb400094ad2b5eb3
+| | | 99d59d01c14d73d8fe6e96df1a7150de
+| | | b388ab8935022079656090d7f6bac4c9
+| | | a94e0aad311a4268e082a725f8aeae05
+| | | 73fb12ff866a5f01 ..................... [Secp256k1][secp256k1] signature
+|
+| ffffffff ................................. Sequence number: UINT32_MAX
+
+01 ......................................... Number of outputs
+| f0ca052a01000000 ......................... Satoshis (49.99990000 BTC)
+|
+| 19 ....................................... Bytes in pubkey script: 25
+| | 76 ..................................... OP_DUP
+| | a9 ..................................... OP_HASH160
+| | 14 ..................................... Push 20 bytes as data
+| | | cbc20a7664f2f69e5355aa427045bc15
+| | | e7c6c772 ............................. PubKey hash
+| | 88 ..................................... OP_EQUALVERIFY
+| | ac ..................................... OP_CHECKSIG
+
+00000000 ................................... locktime: 0 (a block height)
+```
+
 ## UTXO (Unspent Transaction Outputs)
 
 B 라는 유저가 A 라는 유저로부터 bitcoin 을 받고 아직 쓰지 않았다면 그것은 UTXO(Unspect Transaction Outputs) 이다. 이후 B 유저는 UTXO 의 일부를 다른 유저에게 보낼 수 있다.
 
 Wallet Application 은 UTXO 를 모아서 balance 를 보여준다.
 
-## Transaction 
+## Wallet Application
 
+Wallet Application 은 지갑기능을 구현한 Application 이다. 유저가 지갑을 하나
+만들면 public, private key 가 만들어진다. A 유저는 B 유저에게 bt 를 보낼 때
+그 Transaction 을 B 유저의 publick key 로 sign 해서 보낸다. B 유저는 자신의
+private key 로 그 Transaction 을 복호화할 수 있다.
 
 ## BitCoin Scripts
 
