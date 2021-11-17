@@ -112,6 +112,10 @@ Serialized Block 은 다음과 같이 구성된다. [Serialized Blocks @ bitcoin
 
 Serialized Block 의 크기는 1MB 이하여야 한다. 1MB 를 넘어서면 Invalid Block 이다.
 
+다음은 Block Chain 을 나타낸 그림이다.
+
+![](img/bitcoin_pow_chain.png)
+
 ## Transaction Structure
 
 다음은 Serialized Transaction 이다. [Raw Transaction Format @ bitcoin](https://developer.bitcoin.org/reference/transactions.html#raw-transaction-format)
