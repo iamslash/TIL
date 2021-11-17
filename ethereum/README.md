@@ -23,7 +23,9 @@ bitcoin 은 UTXO (Unspect transaction output) 으로 유저의 balance 를 계�
 
 # Block Structure
 
-* [Ethereum block architecture @ stackexchange](https://ethereum.stackexchange.com/questions/268/ethereum-block-architecture)
+> * [Ethereum block architecture @ stackexchange](https://ethereum.stackexchange.com/questions/268/ethereum-block-architecture)
+> * [Merkling in Ethereum](https://blog.ethereum.org/2015/11/15/merkling-in-ethereum/)
+>   * merkle tree structure
 
 ![](img/ethereum_block_structure.png)
 
