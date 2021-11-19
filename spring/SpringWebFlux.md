@@ -20,6 +20,9 @@ Spring WebFlux 에 대해 정리한다.
   * event-loop 를 당당하는 single thread 가 blocking 되면 Reactor meltdown 을 일으킨다. 그것을 해결하는 방법을 제시한다. 
   * [pdf](https://t1.kakaocdn.net/service_if_kakao_prod/file/file-1636524397590)
   * [src](https://github.com/beryh/event-loop-demo)
+* [내가 만든 WebFlux가 느렸던 이유 @ nhn](https://forward.nhn.com/session/26)
+  * [pdf](https://rlxuc0ppd.toastcdn.net/presentation/%5BNHN%20FORWARD%202020%5D%EB%82%B4%EA%B0%80%20%EB%A7%8C%EB%93%A0%20WebFlux%EA%B0%80%20%EB%8A%90%EB%A0%B8%EB%8D%98%20%EC%9D%B4%EC%9C%A0.pdf)
+* [Spring WebFlux @ 권남](https://kwonnam.pe.kr/wiki/springframework/webflux)
 * [스프링 부트 실전 활용 마스터 @ yes24](http://www.yes24.com/Product/Goods/101803558)
   * [src](https://github.com/onlybooks/spring-boot-reactive)
 * [Guide to Spring 5 WebFlux @ baeldung](https://www.baeldung.com/spring-webflux)
