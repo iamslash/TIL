@@ -5,6 +5,8 @@
   - [Example Application](#example-application)
 - [Advanced](#advanced)
   - [Reactor MeltDown](#reactor-meltdown)
+  - [Spring MVC vs Spring WebFlux](#spring-mvc-vs-spring-webflux)
+  - [Why WebFlux Slow](#why-webflux-slow)
 
 ----
 
@@ -16,6 +18,7 @@ Spring WebFlux 에 대해 정리한다.
 
 * [Webflux로 막힘없는 프로젝트 만들기 @ ifkakao2021](https://if.kakao.com/session/107)
   * event-loop 를 당당하는 single thread 가 blocking 되면 Reactor meltdown 을 일으킨다. 그것을 해결하는 방법을 제시한다. 
+  * [pdf](https://t1.kakaocdn.net/service_if_kakao_prod/file/file-1636524397590)
   * [src](https://github.com/beryh/event-loop-demo)
 * [스프링 부트 실전 활용 마스터 @ yes24](http://www.yes24.com/Product/Goods/101803558)
   * [src](https://github.com/onlybooks/spring-boot-reactive)
@@ -38,12 +41,15 @@ Spring WebFlux 는 내부적으로 [reactor @ TIL](/reactor/README.md) 를 사�
 ## Reactor MeltDown
 
 * [Webflux로 막힘없는 프로젝트 만들기 @ ifkakao2021](https://if.kakao.com/session/107)
-
+  * event-loop 를 당당하는 single thread 가 blocking 되면 Reactor meltdown 을 일으킨다. 그것을 해결하는 방법을 제시한다. 
+  * [pdf](https://t1.kakaocdn.net/service_if_kakao_prod/file/file-1636524397590)
+  * [src](https://github.com/beryh/event-loop-demo)
+  
 ----
 
-Netty 의 Event-Loop 는 Single Thread 으로 동작한다. Single Thread 가 blocking 되면 Reactor MeltDown 을 일으킨다. 즉, Event-Loop 가 멈춘다. blocking call 은 모두 제거해야 한다.
+Netty 의 Event-Loop 는 Single Thread 으로 동작한다. Single Thread 가 blocking 되면 Reactor MeltDown 을 일으킨다. 즉, Event-Loop 가 멈춘다. 따라서 blocking call 은 모두 제거해야 한다.
 
-[Block Hound](https://github.com/reactor/BlockHound) 를 이용하여 run-time 에 blocking call 을 발견하자. [Block Hound](https://github.com/reactor/BlockHound) 는 별도의 agent 에서 동작한다. byte code 를 조작한다. 따라서 production profile 에서 사용하지 말자. test 에서만 사용하자. [Block Hound](https://github.com/reactor/BlockHound) 는 다음과 같이 간단히 실행할 수 있다.
+[Block Hound](https://github.com/reactor/BlockHound) 를 이용하여 run-time 에 blocking call 을 발견하자. [Block Hound](https://github.com/reactor/BlockHound) 는 별도의 agent 에서 동작한다. byte code 를 조작한다. 따라서 production profile 에서 사용하지 말자. test profile 에서만 사용하자. [Block Hound](https://github.com/reactor/BlockHound) 는 다음과 같이 간단히 실행할 수 있다.
 
 ```java
 // 
@@ -65,6 +71,148 @@ class EventLoopDemoTest {
 }
 ```
 
+다음은 blocking 을 일으키는 code 이다. Reactor Meltdown 이 발생하여 `health()` 가 hang 되는 것을 확인할 수 있다.
 
+```java
+@RestController
+public class EventLoopDemoController {
+    @GetMapping(value = "/sleep", produces = MediaType.TEXT_PLAIN_VALUE)
+    public Mono<String> sleep() {
+        return Mono.fromSupplier(() -> blockingFunction(10_000L));
+    }
 
+    private String blockingFunction(long sleepMs) {
+        try {
+            Thread.sleep(sleepMs);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return "OK";
+    }
 
+    @GetMapping(value = "/ok", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String health() {
+        return "OK";
+    }
+}
+```
+
+blocking 을 일으키는 code 는 `subscribeOn()` 을 사용하여 별도의 thread 에서 실행되도록 하자.
+
+```java
+@RestController
+public class EventLoopDemoController {
+    @GetMapping(value = "/sleep", produces = MediaType.TEXT_PLAIN_VALUE)
+    public Mono<String> sleep() {
+        return Mono.fromSupplier(() -> blockingFunction(10_000L))
+                .subscribeOn(Schedulers.boundedElastic());
+    }
+
+    private String blockingFunction(long sleepMs) {
+        try {
+            Thread.sleep(sleepMs);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return "OK";
+    }
+
+    @GetMapping(value = "/ok", produces = MediaType.TEXT_PLAIN_VALUE)
+    public String health() {
+        return "OK";
+    }
+}
+```
+
+`Schedulers` 의 종류는 다음과 같다. comment 와 같이 blocking call 은 `Schedulers.boundedElastic()` 에서 실행하는 것이 좋다.
+
+```java
+Schedulers.single();          // for low-latency
+Schedulers.parellel();        // for fast & non-blocking
+Schedulers.immediate();       // immediately run instead of scheduling 
+Schedulers.boundedElastic();  // for long, an alternative for blocking tasks
+```
+
+다음의 code 를 보자. `method1(), method2()` 는 synchronous method 이다. `method3()` 는 asynchronous method 이다. synchronous method 는 호출하는 쪽에서 blocking 되지 않도록 해야 한다. 즉, `subscribeOn(Schedulers.boundedElastic())` 을 사용하여 별도의 thread 에서 실행해야 한다.  `method3()` 는 `method3()` 를 작성하는 쪽에서 blocking 처리를 해야 한다. 
+
+```java
+Result method1() throws InterruptedException;
+Result method2();
+Mono<Result> method3();
+```
+
+`method1()` 는 `InterruptedException` 를 던지고 있다. method signiture 만으로 blocking call 있는지 구분할 수 있다. `method2()` 는 synchronous method 이므로 blocking call 이 있을만 하다. code 를 확인하기 전까지는 알 수 없다. `method3()` 는 asynchronous method 이다. 그러나 `method3()` 작성자가 blocking 되지 않게 작성했다고 확신할 수 없다.
+
+무엇보다 [Block Hound](https://github.com/reactor/BlockHound) 를 이용하여 blocking code 를 미리 발견하는 것이 중요하다.
+
+## Spring MVC vs Spring WebFlux
+
+* [SpringMVC vs WebFlux @ velog](https://velog.io/@minsuk/SpringMVC-vs-WebFlux)
+
+Spring MVC 는 하나의 request 를 하나의 thread 가 처리한다. 기본적으로 Spring MVC 는 200 개의 thread 를 thread pool 에서 생성한다. 200 개의 thread 가 4 개 혹은 8 개의 CPU core 를 두고 경합하는 것은 많은 context switching 을 발생시킨다. 비효율적이다.
+
+Spring WebFlux 는 하나의 thread 가 event-loop 을 처리한다. 그리고 몇개의 worker-thread 가 있다. thread 의 개수가 적기 때문에 context switching overhead 가 적다. 또한 4 개 혹은 8 개의 CPU core 를 두고 경합하는 thread 의 수도 적다. 효율적이다.
+
+![](https://media.vlpt.us/images/minsuk/post/b62e9387-1c38-42c0-9f23-2e5fb900e1a3/%EC%BA%A1%EC%B2%98.PNG)
+
+## Why WebFlux Slow
+
+* [내가 만든 WebFlux가 느렸던 이유 @ nhn](https://forward.nhn.com/session/26)
+  * [pdf](https://rlxuc0ppd.toastcdn.net/presentation/%5BNHN%20FORWARD%202020%5D%EB%82%B4%EA%B0%80%20%EB%A7%8C%EB%93%A0%20WebFlux%EA%B0%80%20%EB%8A%90%EB%A0%B8%EB%8D%98%20%EC%9D%B4%EC%9C%A0.pdf)
+
+------
+
+```java
+public class AdHandler {
+    public Mono<ServerResponse> fetchByAdRequest(ServerRequest serverRequest) {
+        return serverRequest.bodyToMono(AdRequest.class)
+            .log()
+            .map(AdRequest::getCode)
+            .map(AdCodeId::of)
+            .map(adCodeId -> {
+                    log.warn("Requested AdCodeId = {}", adCodeId.toKeyString());
+                    return adCodeId;
+                })
+            .map(adCodeId -> cacheStorageAdapter.getAdValue(adCodeId))
+            .flatMap(adValue ->
+                     ServerResponse.ok().contentType(MediaType.APPLICATION_JSON)
+                     .body(adValue, adValue.class)
+                     );
+    }
+}
+```
+
+위의 코드는 다음과 같은 이유로 performance 가 좋지 않다.
+
+* `log()` 는 blocking I/O 를 일으킨다. 성능이 좋지 않다.
+* `map()` 호출이 너무 많다. immutable object instance 생성이 많다. GC 의 연산량이 증가한다.
+* `map()` 은 synchronous 함수이다. 동기식으로 처리된다. `flatmap()` 은 asynchronous 함수이다. 비동기식으로 처리된다. non-blocking 함수를 `map()` 에서 사용하는 것은 효율적이지 못하다. `map()` 를 실행하는 thread 는 blocking 되기 때문이다. 
+  * **map**: Transform the items emitted by this Flux by applying asynchronous function to each item
+  * **flatMap**: Transform the elements emitted by this Flux asynchronously into Publishers
+* blocking call 은 별도의 scheduler 에서 실행하자.
+  * `publishOn` 은 method chaining 에서 다음 method 를 별도의 scheduler 에서 실행한다.
+  * `subscribeOn` 은 전체 method 를 별도의 scheduler 에서 실행한다.
+
+`log()` 는 제거해야 한다.
+
+`cacheStorageAdapter.getAdValue(adCodeId)` 는 non-blocking method 이다. 그러나 `map()` 에서 사용하고 있다. `flatmap()` 에서 사용하자.
+
+너무 많은 `map()` 을 사용하지 않도록 하자.
+
+```java
+public class AdHandler {
+    public Mono<ServerResponse> fetchByAdRequest(ServerRequest serverRequest) {
+        Mono<AdValue> adValueMono = serverRequest.bodyToMono(AdRequest.class)
+            .publishOn(Schedulers.boundedElastic())
+            .map(adRequest -> {
+                    AdCodeId adCodeId = AdCodeId.of(AdRequest.getCode());
+                    log.warn("Requested AdCodeId = {}", adCodeId.toKeyString());
+                    return adCodeId;
+                })
+            .flatMap(adCodeId -> cacheStorageAdapter.getAdValue(adCodeId));
+        return ServerResponse.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(adValueMono, AdValue.class);
+    }
+}
+```
