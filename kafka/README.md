@@ -24,7 +24,6 @@
   - [Record Key](#record-key)
   - [Consumer Lag](#consumer-lag)
   - [Dead Letter Queue](#dead-letter-queue)
-  - [>   * src](#----src)
   - [Batch](#batch)
   - [Kafka GUI](#kafka-gui)
 - [Basic](#basic)
@@ -35,6 +34,9 @@
   - [Consumer application integration](#consumer-application-integration)
   - [How to prevent Duplicated messages in consumer](#how-to-prevent-duplicated-messages-in-consumer)
 - [Advanced](#advanced)
+  - [Kafka Storage Internals](#kafka-storage-internals)
+  - [Log Compacted Topics](#log-compacted-topics)
+  - [Kafka Delete Internals](#kafka-delete-internals)
   - [Gurantee order of messages, no duplicates](#gurantee-order-of-messages-no-duplicates)
   - [How many partitions ???](#how-many-partitions-)
   - [Monitoring Kafka](#monitoring-kafka)
@@ -50,6 +52,8 @@
   * [src](https://github.com/apache/kafka)
 * [카프카, 데이터 플랫폼의 최강자](http://www.yes24.com/Product/goods/59789254)
   * [src](https://github.com/onlybooks/kafka)
+* [Jocko @ github](https://github.com/travisjeffery/jocko)
+  * Kafka 를 go 로 구현함. Zookeeper 의존성이 없다. 
 
 # Materials
 
@@ -78,6 +82,10 @@
 
 **Recommended Options from LinkedIn** 
 
+* [Kafka Optimization](https://dattell.com/data-architecture-blog/apache-kafka-optimization/)
+
+----
+
 ```bash
 -Xmx6g -Xms6g -XX:MetaspaceSize=96m -XX:+UseG1GC
 -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=16M
@@ -86,8 +94,8 @@
 
 60 대의 Broker, 5 만개의 Partition, Replication-factor 2 로 구성하면 다음과 같은 throughput 을 갖는다.
 
-* 300 MB/sec inbound
-* 1 GB/sec outbound
+* `300 MB/sec` inbound
+* `1 GB/sec` outbound
 
 ## Install on Ubuntu
 
@@ -159,16 +167,16 @@ Kafka 는 Pub/Sub 을 지원하는 Message Queue 이다. scala 로 만들어 졌
 ![](https://linuxhint.com/wp-content/uploads/2018/04/kafka-broker-partition-replication.png)
 
 * **Broker**: Kafka Application Server
-* **Topic**: 분리된 Data 의 단위. 하나의 Topic 은 여러 Data 를 갖는다. 또한 여러 Partition 에 나누어 저장된다.
-* **Partition**: Record Data 이 저장된다. 하나의 Partition 은 여러개의 Segment file 들로 분리된다.
+* **Topic**: RDBMS 의 Table 과 같다. data 의 logical 모음이다. 하나의 Topic 은 여러 Data 를 갖는다. 여러 Data 는 여러 Partition 에 나누어 저장된다.
+* **Partition**: data 의 physical 모음이다. 하나의 Partition 은 여러개의 Segment file 들로 나누어진다.
 * **Offset**: Partition 에서 Record Data 의 번호이다.
 * **Consumer**: Record Data 를 특정 Partition 에서 polling 하는 application 이다.
 * **Consumer Group**: 여러 Consumer Intsnace 들을 묶은 것이다.
 * **Consumer offset**: 특정 Consumer Instance 가 특정 Partition 에서 몇번째 Record Data 까지 읽었는지를 의미한다.
 * **Producer**: Record Data 를 Broker 에 저장하는 application 이다.
-* **Replication**: 특정 Partition 을 복제하는 기능이다.
+* **Replication**: 하나의 Partition 를 여러개로 복제하는 것이다. Leader Partition 한개와 여러개의 Follower Partition 으로 나누어진다.
 * **ISR (In Sync Replication)**: Replication 를 구성하는 Leader, Follower Partition 묶음
-* **Rack-awareness**: IDC 에서 하나의 server 에 장애가 생기면 보통 하나의 Server Rack 이 모두 장애가 생긴다. Server Rack Incident 를 주의해서 서로다른 Server Rack 에 application 들을 배치해야 한다.
+* **Rack-awareness**: IDC 에서 하나의 server 에 장애가 생기면 보통 하나의 Server Rack 이 모두 장애가 생긴다. Server Rack Incident 를 막기 위해 서로다른 Server Rack 에 application 들을 배치해야 한다.
 
 ![](img/log_consumer.png)
 
@@ -195,11 +203,13 @@ kafka 는 disk 에서 데이터를 caching 한다. 따라서 저렴한 비용으
 
 zookeeper 는 kafka node 를 관리하고 topic 의 offset 을 저장한다. 
 
-zookeeper 제거 작업이 진행중임. [KIP-500: Replace ZooKeeper with a Self-Managed Metadata Quorum](https://cwiki.apache.org/confluence/display/KAFKA/KIP-500:+Replace+ZooKeeper+with+a+Self-Managed+Metadata+Quorum)
+zookeeper 제거 작업이 진행중이다. [KIP-500: Replace ZooKeeper with a Self-Managed Metadata Quorum](https://cwiki.apache.org/confluence/display/KAFKA/KIP-500:+Replace+ZooKeeper+with+a+Self-Managed+Metadata+Quorum)
 
 ## Topic
 
-topic 은 RDBMS 의 Table 과 같다. 하나의 topic 에 저장된 Record  data 는 여러 partition 에 나누어 저장된다. `consumer_offsets` topic 은 자동으로 생성되는 topic 이다.
+topic 은 RDBMS 의 Table 과 같다. 하나의 topic 에 저장된 Record data 는 여러 partition 에 나누어 저장된다. `consumer_offsets` topic 은 자동으로 생성되는 topic 이다.
+
+다음과 같이 토픽을 생성하고 토픽의 목록을 조회할 수 있다.
 
 ```bash
 ## Create the topic
@@ -214,7 +224,7 @@ my-topic
 
 다음과 같이 메시지를 전송할 수 있다.
 
-```console
+```bash
 $ /usr/bin/kafka-console-producer --broker-list localhost:9092 --topic my-topic
 > Hello
 > World
@@ -226,14 +236,18 @@ $ /usr/bin/kafka-console-producer --broker-list localhost:9092 --topic my-topic
 $ /usr/bin/kafka-console-consumer --bootstrap-server localhost:9092 --from-beginning --topic my-topic
 ```
 
+topic 과 관련된 여러 설정들이 있다. [3.2 Topic-Level Configs @ kafka](https://kafka.apache.org/documentation/#topicconfigs)
+
 ## Partition
 
 > * [How Kafka’s Storage Internals Work](https://thehoard.blog/how-kafkas-storage-internals-work-3a29b02e026)
+> * [A Practical Introduction to Kafka Storage Internals @ medium](https://medium.com/@durgaswaroop/a-practical-introduction-to-kafka-storage-internals-d5b544f6925f)
+
+-----
 
 ![](img/segment.png)
 
-하나의 Topic 은 여러개의 Partition 으로 구성된다. 다시 하나의 Partition 은
-여러개의 segment file 로 구성된다. segment file 을 append only file 이라고 한다.
+하나의 Topic 은 여러개의 Partition 으로 나누어 저장된다. 다시 하나의 Partition 은 여러개의 segment file 로 나누어 저장된다. segment file 을 append only file 이라고 한다.
 Partition 의 message 는 일정시간이 지나면 지워진다. 일정한 기간동안 보관된다.
 
 Producer 는 여러개의 Partition 에 병렬로 메시지를 전송할 수 있다. Consumer
@@ -241,10 +255,9 @@ Producer 는 여러개의 Partition 에 병렬로 메시지를 전송할 수 있
 없다. partition 과 consumer group 을 사용하면 topic 을 parallel 하게 처리하여
 수행성능을 높일 수 있다.  
 
-Message 의 순서가 중요 하다면 하나의 Topic 은 하나의 Partition 으로 구성한다.
+Message 의 순서가 중요 하다면 하나의 Topic 을 하나의 Partition 으로 구성한다.
 
-Message 순서에 대해 Deep Dive 해보자. 다음과 같이 8 개의 partition 에 my-topic-8
-을 만들어 보자.
+Message 순서에 대해 Deep Dive 해보자. 다음과 같이 8 개의 partition 에 my-topic-8 을 만들어 보자.
 
 ```console
 $ /usr/bin/kafka-topics --create --bootstrap-server localhost:9092 --replication-factor 1 --partitions 8 --topic my-topic-8
@@ -289,11 +302,15 @@ Kafka 가 partition 을 Consumer Instance 에 다시 할당하는 과정이다. 
 > * [KafkaProducer Client Internals @ naver.d2](https://d2.naver.com/helloworld/6560422)
 > * [Kafka producer overview @ linkedin](https://www.linkedin.com/pulse/kafka-producer-overview-sylvester-daniel)
 
+-----
+
 ![](https://media-exp1.licdn.com/dms/image/C5112AQFrqGK9hVlKuQ/article-cover_image-shrink_600_2000/0/1557073363826?e=1635379200&v=beta&t=WPTTCMgfoTBO4x9amAVdHBckOl1kOUJIwZSfrlennAo)
 
 Producer 는 Kafka Broker 에게 message 를 공급하는 application 이다. 
 
 Producer Record 가 만들어지면 Serializer, Partitioner, Compression 과정을 지나 하나의 Batch 를 구성한다. 그리고 Batch 단위로 특정 Kafka Broker Partition 으로 전송된다.
+
+Producer 와 관련된 여러 설정들을 확인할 수 있다. [3.3 Producer Configs @ kafka](https://kafka.apache.org/documentation/#producerconfigs)
 
 ## Consumer Group
 
@@ -303,14 +320,16 @@ Producer Record 가 만들어지면 Serializer, Partitioner, Compression 과정�
 
 하나의 Consumer Group 은 여러개의 Consumer Instance 들로 구성된다. Consumer Group 은 Consumer Instance 의 High Availability 를 위해 필요하다. 예를 들어 하나의 Consumer Group `Hello` 는 4 개의 Consumer Instance 로 구성되어 있다. `Hello` 는 `world-topic` 에서 message 를 가져온다. Consumer Instance 하나가 장애가 발생해도 서비스의 지장은 없다.
 
+Consumer 와 관련된 여러 설정들을 확인할 수 있다. [3.4 Consumer Configs @ kafka](https://kafka.apache.org/documentation/#consumerconfigs)
+
 ## ACK
 
 Producer application 의 설정이다.
 
-Kafka 는 하나의 leader 와 여러개의 follower 들로 구성된다. leader 가 Producer 로 부터 Message 를 넘겨 받으면 follower 에게 전송한다. 
+Kafka Partitions 는 replication factor 만큼 하나의 leader partition 와 여러개의 follower partition 들로 구성된다. leader 가 Producer 로 부터 Message 를 넘겨 받으면 follower 들은 leader partition 에게서 데이터를 가져와 동기화 한다. 
 
 * `ack=0`: producer 는 message 의 ack 를 필요로 하지 않는다.
-* `ack=1`: producer 는 leader 에게 Message 가 전송되었음을 보장한다. 
+* `ack=1`: producer 는 leader partition 에게 Message 가 전송되었음을 보장한다. 
 * `ack=all(-1)`: producer 는 leader 및 follower 에게 모두 Message 가 전송되었음을 보장한다. 
 
 ## Exactly once
@@ -339,7 +358,8 @@ Key 의 Record Data 는 같은 Partition 에 저장된다.
 
 > * [Kafka Connect Deep Dive – Error Handling and Dead Letter Queues](https://www.confluent.io/blog/kafka-connect-deep-dive-error-handling-dead-letter-queues/)
 > * [Spring Kafka Non-Blocking Retries and Dead Letter Topics](https://evgeniy-khist.github.io/spring-kafka-non-blocking-retries-and-dlt/)
->   * [src](https://github.com/evgeniy-khist/spring-kafka-non-blocking-retries-and-dlt)
+> * [src](https://github.com/evgeniy-khist/spring-kafka-non-blocking-retries-and-dlt)
+
 ----
 
 Kafka Topic `orders, orders-retry-0, orders-retry-1, orders-retry-2, orders-dlt` 을 생성한다. `orders` 에서 consuming 한 후 처리하다가 에러가 발생하면 `orders-retry-0` 으로 보낸다. `orders-retry-0` 에서 consuming 한 후 처리하다가 에러가 발생하면 `orders-retry-1` 로 보낸다. `orders-retry-1` 에서 consuming 한 후 처리하다가 에러가 발생하면 `orders-retry-2` 로 보낸다. `orders-retry-2` 에서 처리하다가 에러가 발생하면 `orders-dlt` 로 보낸다. 
@@ -622,6 +642,22 @@ try {
 ```
 
 # Advanced
+
+## Kafka Storage Internals
+
+* [Kafka Storage Internals](kafka_storage_internals.md)
+
+## Log Compacted Topics
+
+* [Kafka Log Compacted Topics Internals](kafka_log_compacted_topic.md)
+
+## Kafka Delete Internals
+
+> * [Deleting records in Kafka (aka tombstones) @ medium](https://medium.com/@damienthomlutz/deleting-records-in-kafka-aka-tombstones-651114655a16)
+
+특정 key 를 갖는 Kafka Record Data 는 어떻게 지울 수 있을까? 동일한 key 를 갖고 payload 가 0 인 Kafka Record Data 를 보내면 된다. 이러한 Data 를 Tombstone 이라고 한다.나머지는 Kafka 가 알아서 지운다.
+
+반드시 Tombstone 이 지우고 싶은 Kafka Record Data 와 같은 Topic, Partition 에 보내져야 한다. 이것은 log compacted mechanism 에 의해 지워진다. [Kafka Log Compacted Topics Internals](kafka_log_compacted_topic.md) 참고.
 
 ## Gurantee order of messages, no duplicates
 
