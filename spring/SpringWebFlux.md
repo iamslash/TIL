@@ -97,7 +97,7 @@ public class EventLoopDemoController {
 }
 ```
 
-blocking 을 일으키는 code 는 `subscribeOn()` 을 사용하여 별도의 thread 에서 실행되도록 하자.
+blocking 을 일으키는 code 는 `subscribeOn()` 을 사용하여 별도의 Scheduler Work 즉, Thread Pool 에서 실행되도록 하자.
 
 ```java
 @RestController
@@ -124,7 +124,7 @@ public class EventLoopDemoController {
 }
 ```
 
-`Schedulers` 의 종류는 다음과 같다. comment 와 같이 blocking call 은 `Schedulers.boundedElastic()` 에서 실행하는 것이 좋다.
+`Scheduler Worker` 의 종류는 다음과 같다. comment 와 같이 blocking call 은 `Schedulers.boundedElastic()` 에서 실행하는 것이 좋다.
 
 ```java
 Schedulers.single();          // for low-latency
@@ -133,7 +133,7 @@ Schedulers.immediate();       // immediately run instead of scheduling
 Schedulers.boundedElastic();  // for long, an alternative for blocking tasks
 ```
 
-다음의 code 를 보자. `method1(), method2()` 는 synchronous method 이다. `method3()` 는 asynchronous method 이다. synchronous method 는 호출하는 쪽에서 blocking 되지 않도록 해야 한다. 즉, `subscribeOn(Schedulers.boundedElastic())` 을 사용하여 별도의 thread 에서 실행해야 한다.  `method3()` 는 `method3()` 를 작성하는 쪽에서 blocking 처리를 해야 한다. 
+다음의 code 를 보자. `method1(), method2()` 는 synchronous method 이다. `method3()` 는 asynchronous method 이다. synchronous method 는 호출하는 쪽에서 blocking 되지 않도록 해야 한다. 즉, `subscribeOn(Schedulers.boundedElastic())` 을 사용하여 별도의 thread 에서 실행해야 한다. `method3()` 는 `method3()` 를 작성하는 쪽에서 blocking 처리를 해야 한다. 
 
 ```java
 Result method1() throws InterruptedException;
@@ -141,7 +141,7 @@ Result method2();
 Mono<Result> method3();
 ```
 
-`method1()` 는 `InterruptedException` 를 던지고 있다. method signiture 만으로 blocking call 있는지 구분할 수 있다. `method2()` 는 synchronous method 이므로 blocking call 이 있을만 하다. code 를 확인하기 전까지는 알 수 없다. `method3()` 는 asynchronous method 이다. 그러나 `method3()` 작성자가 blocking 되지 않게 작성했다고 확신할 수 없다.
+`method1()` 는 `InterruptedException` 를 던지고 있다. method signature 만으로 blocking call 있는지 구분할 수 있다. `method2()` 는 synchronous method 이므로 blocking call 이 있을만 하다. code 를 확인하기 전까지는 알 수 없다. `method3()` 는 asynchronous method 이다. 그러나 `method3()` 작성자가 blocking 되지 않게 작성했다고 확신할 수 없다.
 
 무엇보다 [Block Hound](https://github.com/reactor/BlockHound) 를 이용하여 blocking code 를 미리 발견하는 것이 중요하다.
 
@@ -187,18 +187,19 @@ public class AdHandler {
 * `log()` 는 blocking I/O 를 일으킨다. 성능이 좋지 않다.
 * `map()` 호출이 너무 많다. immutable object instance 생성이 많다. GC 의 연산량이 증가한다.
 * `map()` 은 synchronous 함수이다. 동기식으로 처리된다. `flatmap()` 은 asynchronous 함수이다. 비동기식으로 처리된다. non-blocking 함수를 `map()` 에서 사용하는 것은 효율적이지 못하다. `map()` 를 실행하는 thread 는 blocking 되기 때문이다. 
-  * **map**: Transform the items emitted by this Flux by applying asynchronous function to each item
-  * **flatMap**: Transform the elements emitted by this Flux asynchronously into Publishers
-* blocking call 은 별도의 scheduler 에서 실행하자.
-  * `publishOn` 은 method chaining 에서 다음 method 를 별도의 scheduler 에서 실행한다.
-  * `subscribeOn` 은 전체 method 를 별도의 scheduler 에서 실행한다.
+  * **map** : Transform the item emitted by this Mono by applying a **synchronous** function to it.
+  * **flatMap** : Transform the item emitted by this Mono **asynchronously**, returning the value emitted by another Mono (possibly changing the value type).
+* blocking call 은 별도의 Scheduler Worker 에서 실행하자. `publishOn()` 은 method chaining 에서 `publishOn()` 의 다음 method 부터 별도의 Scheduler Worker 에서 실행한다. 이것은 다음 `publishOn()` 이 호출될 때까지 유지된다. `subscribeOn` 은 전체 method 를 별도의 Scheduler Worker 에서 실행한다. 역시 다음 `publishOn()` 이 호출될 때까지 유지된다.
+  * **publishOn** : Run **onNext**, **onComplete** and **onError** on a supplied Scheduler Worker. This operator influences the threading context where the rest of the operators in the chain below it will execute, up to a new occurrence of publishOn.
+  * **subscribeOn** : Run **subscribe**, **onSubscribe** and **request** on a specified Scheduler's Scheduler.Worker. As such, placing this operator anywhere in the chain will also impact the execution context of **onNext/onError/onComplete** signals from the beginning of the chain up to the next occurrence of a publishOn.
 
-`log()` 는 제거해야 한다.
+다음과 같이 수정하자.
 
-`cacheStorageAdapter.getAdValue(adCodeId)` 는 non-blocking method 이다. 그러나 `map()` 에서 사용하고 있다. `flatmap()` 에서 사용하자.
-
-너무 많은 `map()` 을 사용하지 않도록 하자.
-
+* `log()` 는 제거해야 한다.
+* `cacheStorageAdapter.getAdValue(adCodeId)` 는 non-blocking method 이다. 그러나 `map()` 에서 사용하고 있다. `flatmap()` 에서 사용하자.
+* 너무 많은 `map()` 을 사용하지 않도록 하자.
+* `AdRequest.getCode()` 를 포함한 `map()` 은 blocking call 이다. 별도의 Scheduler Worker 즉, 별도의 Thread Pool 에서 실행하자.
+ 
 ```java
 public class AdHandler {
     public Mono<ServerResponse> fetchByAdRequest(ServerRequest serverRequest) {
@@ -214,5 +215,52 @@ public class AdHandler {
             .contentType(MediaType.APPLICATION_JSON)
             .body(adValueMono, AdValue.class);
     }
+}
+```
+
+Lettuce 를 사용하여 Redis 를 접근한다면 다음과 같이 `factory.setValidateConnection(true)` 호출을 피해야 한다.
+
+```java
+@Bean(name = "redisConnectionFactory")
+public ReactiveRedisConnectionFactory connectionFactory() {
+...
+    RedisStandaloneConfiguration redisConfig
+        = new RedisStandaloneConfiguration(redisHost,
+                                           Integer.valueOf(redisPort));
+    LettuceConnectionFactory factory
+        = new LettuceConnectionFactory(redisConfig, clientConfig);
+    factory.setValidateConnection(true);
+    factory.setShareNativeConnection(true);
+    return factory;
+}
+```
+
+`factory.setValidateConnection(true)` 가 호출되면 Redis Command 를 전송할 때 마다 Connection Validation 을 수행한다.
+이때 Redis Command 를 보낼 때마다 Ping Command 를 보내는 데 이것이 `sync().ping()` 호출에 이해 이루어 진다.
+그러나 `sync().ping()` 은 blocking call 이다. 이 것을 피하면 성능을 향상할 수 있다.
+
+```java
+public class LettuceConnectionFactory {
+    void validateConnection() { 
+...
+        synchronized(this.connectionMonitor) {
+            boolean valid = false;
+            if (this.connection != null && this.connection.isOpen()) {
+                try {
+                    if (this.connection instanceof StatefulRedisConnection) {
+                        ((StatefulRedisConnection)this.connection).sync().ping();
+                    }
+...
+                }
+            }
+        }
+    }
+}
+
+public class StatefulRedisConnectionImpl<K, V> extends RedisChannelHandler<K, V> implements StatefulRedisConnection<K, V> {
+    protected final RedisCodec<K, V> codec;
+    protected final RedisCommands<K, V> sync;
+    protected final RedisAsyncCommandsImpl<K, V> async; protected final RedisReactiveCommandsImpl<K, V> reactive;
+    // 중략
 }
 ```
