@@ -3,6 +3,7 @@
 - [Materials](#materials)
 - [Asynchronous VS non-blocking](#asynchronous-vs-non-blocking)
 - [Basic](#basic)
+  - [Marble Diagram](#marble-diagram)
   - [Flux](#flux)
   - [Mono](#mono)
   - [StepVerifier](#stepverifier)
@@ -31,6 +32,7 @@
   * rector-core publisher 의 test code
 * [Reactive Programming with Reactor 3 @ tech.io](https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Intro)
   * [sol](https://gist.github.com/kjs850/a29addc92b98b51ea05a09587be34071)
+* [ex-reactor @ github](https://github.com/iamslash/java-ex/tree/master/ex-reactor)
 
 # Materials
 
@@ -54,7 +56,9 @@ Blocking 과 Non-blocking 의 관심사는 function 이다. 즉, A function 이 
 
 # Basic
 
-* [reactor-examples @ github](https://github.com/iamslash/reactor-examples)
+## Marble Diagram
+
+* [Understanding Marble Diagrams for Reactive Streams @ medium](https://medium.com/@jshvarts/read-marble-diagrams-like-a-pro-3d72934d3ef5#c162)
 
 ## Flux
 
