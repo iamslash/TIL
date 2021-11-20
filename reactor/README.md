@@ -1,9 +1,11 @@
 - [Abstract](#abstract)
 - [References](#references)
 - [Materials](#materials)
-- [Asynchronous VS non-blocking](#asynchronous-vs-non-blocking)
 - [Basic](#basic)
+  - [Asynchronous VS non-blocking](#asynchronous-vs-non-blocking)
+  - [Overview](#overview)
   - [Marble Diagram](#marble-diagram)
+  - [map vs flatMap](#map-vs-flatmap)
   - [Flux](#flux)
   - [Mono](#mono)
   - [StepVerifier](#stepverifier)
@@ -15,8 +17,6 @@
   - [Others Operations](#others-operations)
   - [Reactive to Blocking](#reactive-to-blocking)
   - [Blocking to Reactive](#blocking-to-reactive)
-- [Advanced](#advanced)
-  - [map vs flatMap](#map-vs-flatmap)
 
 ----
 
@@ -46,7 +46,9 @@
 * [Error handling with reactive streams](https://kalpads.medium.com/error-handling-with-reactive-streams-77b6ec7231ff)
 * [사용하면서 알게 된 Reactor, 예제 코드로 살펴보기](https://tech.kakao.com/2018/05/29/reactor-programming/)
 
-# Asynchronous VS non-blocking
+# Basic
+
+## Asynchronous VS non-blocking
 
 * [Blocking-NonBlocking-Synchronous-Asynchronous](https://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/)
 
@@ -54,11 +56,268 @@ Synchronous 와 Asynchronous 의 관심사는 job 이다. 즉, 어떤 A job, B j
 
 Blocking 과 Non-blocking 의 관심사는 function 이다. 즉, A function 이 B function 을 호출할 때 B function 이 리턴할 때까지 A function 이 기다린다면 Blocking 이다. 그러나 B function 이 리턴하기 전에 A function 이 수행할 수 있다면 Non-blocking 이다.
 
-# Basic
+## Overview
+
+[Reactor](https://projectreactor.io/) 는 [Reactive Streams @ TIL](/reactivestreams/README.md) 의 implementation 이다. 
+즉, 다음과 같은 interface 들을 잘 구현했다는 의미이다. 
+
+```java
+public interface Publisher<T> {
+    public void subscribe(Subscriber<? super T> s);
+}
+
+public interface Subscriber<T> {
+    public void onSubscribe(Subscription s);
+    public void onNext(T t);
+    public void onError(Throwable t);
+    public void onComplete();
+}
+
+public interface Subscription {
+    public void request(long n);
+    public void cancel();
+}
+
+public interface Processor<T, R> extends Subscriber<T>, Publisher<R> {
+}
+```
+
+[Reactor](https://projectreactor.io/) 의 세계관에서 꼭 기억해야할 2
+가지 주체가 있다.  바로 **Publisher** 와 **Subscriber** 이다. Publisher 는
+data 를 공급하는 쪽이고 Subscriber 는 data 를 소비하는 쪽이다.  Mono,
+Flux 는 Publisher 를 구현한다. 곧, Publisher 이다.
+
+또한 element, stream 을 잘 기억하자. element 는 datum (하나의 데이터) 을 의미하고
+stream 은 element 의 모음이다. 그리고 lazy 하다. 즉, evaulate
+될때 마다 element 를 만들어 낸다. Mono, Flux 는 stream 이라고 할 수
+있다.
+
+Mono 는 element 가 하나인 stream 이다. Flux 는 element 가 여러개인 
+stream 이다.
+
+다음과 같이 Mono instance 를 생성하자. 하나의 element 를 갖는 하나의 stream 이 만들어 졌다. 
+
+```java
+Mono<String> mono = Mono.jst("Hello World");
+```
+
+steam 이 만들어졌으니 이제 stream 을 소비해 보자. `mono.subscribe()` 에
+`Subscriber` instance 를 전달해야 한다. 다음과 같이 Lambda funtion 을 
+전달해 보자. 
+
+```java
+mono.subscribe(a -> {
+                System.out.println(a);
+});
+```
+
+다음은 `Mono::subscribe()` 의 code 이다. 
+
+```java
+// reactor/core/publisher/Mono.java
+	public final Disposable subscribe(Consumer<? super T> consumer) {
+		Objects.requireNonNull(consumer, "consumer");
+		return subscribe(consumer, null, null);
+	}
+// reactor/core/publisher/Mono.java
+	public final Disposable subscribe(
+			@Nullable Consumer<? super T> consumer,
+			@Nullable Consumer<? super Throwable> errorConsumer,
+			@Nullable Runnable completeConsumer) {
+		return subscribe(consumer, errorConsumer, completeConsumer, (Context) null);
+	}
+// reactor/core/publisher/Mono.java
+	public final Disposable subscribe(
+			@Nullable Consumer<? super T> consumer,
+			@Nullable Consumer<? super Throwable> errorConsumer,
+			@Nullable Runnable completeConsumer,
+			@Nullable Context initialContext) {
+		return subscribeWith(new LambdaMonoSubscriber<>(consumer, errorConsumer,
+				completeConsumer, null, initialContext));
+	}  
+
+// reactor/core/publisher/LambdaMonoSubscriber.java
+final class LambdaMonoSubscriber<T> implements InnerConsumer<T>, Disposable {
+
+	final Consumer<? super T>            consumer;
+	final Consumer<? super Throwable>    errorConsumer;
+	final Runnable                       completeConsumer;
+	final Consumer<? super Subscription> subscriptionConsumer;
+	final Context                        initialContext;
+
+	volatile Subscription subscription;
+...    
+	LambdaMonoSubscriber(@Nullable Consumer<? super T> consumer,
+			@Nullable Consumer<? super Throwable> errorConsumer,
+			@Nullable Runnable completeConsumer,
+			@Nullable Consumer<? super Subscription> subscriptionConsumer,
+			@Nullable Context initialContext) {
+		this.consumer = consumer;
+		this.errorConsumer = errorConsumer;
+		this.completeConsumer = completeConsumer;
+		this.subscriptionConsumer = subscriptionConsumer;
+		this.initialContext = initialContext == null ? Context.empty() : initialContext;
+	}
+...
+}    
+```
+
+Functional Interface 인
+`Consumer` instance 가 전달되어 `LambdaMonoSubscriber<>` 의
+constructor 로 전달된다.  `LambdaMonoSubscriber<>` 는 `Subscriber`
+interface 를 implement 한다.  즉, `LambdaMonoSubscriber<>` 는
+`Subscriber` 이다. 처음 전달된 `Consumer` instance 의 `accept()` 는
+`Subscriber` 의 `onNext()` 에서 호출된다.
+
+정리하면 `Mono::subscribe()` 를 호출하여 stream 을 소비했다. 어떻게 소비하는지 
+Lambda function 에 정의했다.
 
 ## Marble Diagram
 
+reactor 의 operator 들을 이해하기 위해서는 marble diagram 을 해석할 수 있어야 한다.
+
 * [Understanding Marble Diagrams for Reactive Streams @ medium](https://medium.com/@jshvarts/read-marble-diagrams-like-a-pro-3d72934d3ef5#c162)
+
+예를 들어 `Flux::map()` 의 marble diagram 을 살펴보자.
+
+![](img/mapForFlux.png)
+
+중간에 네모상자는 mapper 를 의미한다. 동그라미 element 를 받아서 네모 element 를 return 한다. 맨 윗줄의 동그라미는 직선위에 늘어서 있다. 직선이 곧 stream 이다. 맨 아랫줄의 네모는 mapper 에 의해 변형된 element 를 의미한다. 역시 stream 에 늘어서 있다.
+
+이번에는 `Flux::flatMap()` 의 marble diagram 을 살펴보자.
+ 
+![](img/flatMapForFlux.png)
+
+중간에 네모상자는 mapper 를 의미한다. 동그라미 element 를 받아서 네모들이 포함된 stream 을 return 한다. 네모 상자 안의 두개의 inner stream 들을 주목하자. 각각 동그라미 element 를 입력으로 받아 inner stream 을 return 한다. 두개의 inner stream 들은 각각 펼쳐져서 맨 아랫줄의 stream 에 섞여서 merge 된다. 
+
+## map vs flatMap
+
+Mono, Flux 의 operator 중 `map(), flatmap()` 이 중요하다. 
+
+![](img/mapForMono.png)
+
+`Mono::map()` 은 Lambda function `mapper` 를 argument 로 받는다. `mapper` 는 
+element 를 arguement 로 받아서 element 를 return 한다. `Mono::map()` 은
+stream 의 하나 뿐인 element 를 새로운 element 로 교체한다. 
+
+```java
+// reactor/core/publisher/Mono.java
+public abstract class Mono<T> implements CorePublisher<T> {
+...
+	public final <R> Mono<R> map(Function<? super T, ? extends R> mapper) {
+		if (this instanceof Fuseable) {
+			return onAssembly(new MonoMapFuseable<>(this, mapper));
+		}
+		return onAssembly(new MonoMap<>(this, mapper));
+	}
+...
+}
+```
+
+![](img/flatMapForMono.png)
+
+`Mono::flatMap()` 은 Lambda function `transformer` 를 argument 로 받는다. `transformer`
+는 element 를 arguement 로 받아서 변형한 다음 새로운 stream 에 담아서 return 한다. 즉, 
+새로운 `Mono` instance 를 return 한다.
+`Mono::flatMap()` 은 `transformer` 가 return 한 stream 을 펼친 다음
+element 를 새로운 stream 에 삽입한다. `Mono` 는 element 가 하나뿐인 stream 이기 때문에
+결과적으로 `Mono::map()` 과 `Mono::flatMap()` 이 stream 에 수행한 결과는 같다.
+
+```java
+// reactor/core/publisher/Mono.java
+public abstract class Mono<T> implements CorePublisher<T> {
+...
+	public final <R> Mono<R> flatMap(Function<? super T, ? extends Mono<? extends R>>
+			transformer) {
+		return onAssembly(new MonoFlatMap<>(this, transformer));
+	}
+...
+}
+```
+
+![](img/mapForFlux.png)
+
+`Flux::map()` 은 Lambda function `mapper` 를 argument 로 받는다. `mapper` 는 
+element 를 arguement 로 받아서 element 를 return 한다. `Mono::map()` 은
+stream 의 여러 element 들을 새로운 element 들로 교체한다.
+
+```java
+// reactor/core/publisher/Flux.java
+public abstract class Flux<T> implements CorePublisher<T> {
+...
+	public final <V> Flux<V> map(Function<? super T, ? extends V> mapper) {
+		if (this instanceof Fuseable) {
+			return onAssembly(new FluxMapFuseable<>(this, mapper));
+		}
+		return onAssembly(new FluxMap<>(this, mapper));
+	}
+...
+}
+```
+
+![](img/flatMapForFlux.png)
+
+`Flux::flatMap()` 은 Lambda function `mapper` 를 argument 로 받는다. `mapper`
+는 element 를 arguement 로 받아서 변형한 다음 새로운 stream 에 담아서 return 한다. 즉, 
+새로운 `Flux` instance 를 return 한다.
+`Flux::flatMap()` 은 `mapper` 가 return 한 stream 들을 펼친 다음
+element 들을 새로운 stream 에 삽입한다. 여러 stream 들이 하나의 stream 에 merge
+되는 것과 같다.
+
+```java
+// reactor/core/publisher/Flux.java
+public abstract class Flux<T> implements CorePublisher<T> {
+...
+	public final <R> Flux<R> flatMap(Function<? super T, ? extends Publisher<? extends R>> mapper) {
+		return flatMap(mapper, Queues.SMALL_BUFFER_SIZE, Queues
+				.XS_BUFFER_SIZE);
+	}
+...
+}
+```
+
+다음은 `Flux::map()` 과 `Flux::flatMap()` 예이다. [Project Reactor: map() vs flatMap() @ baeldung](https://www.baeldung.com/java-reactor-map-flatmap) 참고.
+
+
+```java
+// this mapper means map function argument
+Function<String, String> mapper = String::toUpperCase;
+Flux<String> inFlux = Flux.just("baeldung", ".", "com");
+Flux<String> outFlux = inFlux.map(mapper);
+StepVerifier.create(outFlux)
+  .expectNext("BAELDUNG", ".", "COM")
+  .expectComplete()
+  .verify();
+
+// this mapper means flatMap function argument
+Function<String, Publisher<String>> mapper = s -> Flux.just(s.toUpperCase().split(""));  
+Flux<String> inFlux = Flux.just("baeldung", ".", "com");
+Flux<String> outFlux = inFlux.flatMap(mapper);
+List<String> output = new ArrayList<>();
+outFlux.subscribe(output::add);
+assertThat(output).containsExactlyInAnyOrder("B", "A", "E", "L", "D", "U", "N", "G", ".", "C", "O", "M");
+```
+
+`Flux::map()` 은 synchronous function 이다. 다음은 `Flux::map()` 의 comment 이다.
+
+* Transform the items emitted by this Flux by applying a synchronous function to each item. [map() for Flux](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#map-java.util.function.Function-)
+
+![](img/mapForFlux.png)
+
+따라서 `Flux::map()` 을 호출하는 thread 는 blocking 될 것이다. non-blocking method 를 `Flux::map()` 의 mapper
+에 호출하는 것은 소용없는 일이다. `Flux::map()` 은 `Flux::publishOn(), Flux::subscribeOn()` 를 이용하여
+별도의 thread pool 즉, Schedule Worker 에서 실행하는 것이 좋다. 그렇지 않으면 event-loop thread 가 blocking 될 수 있다.
+이 것을 Reactor Meltdown 이라고 한다.
+
+`Flux::flatMap()` 은 asynchronous function 이다. 다음은  `Flux::flatMap()` 의 comment 이다.
+
+* Transform the elements emitted by this Flux asynchronously into Publishers, then flatten these inner publishers into a single Flux through merging, which allow them to interleave. [flatMap() for Flux](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#flatMap-java.util.function.Function-)
+
+![](img/flatMapForFlux.png)
+
+따라서 `Flux::flatMap()` 을 호출하는 thread 는 blocking 되지 않을 것이다. 또한 `Flux::flatMap()` 여러 stream 들의 element 들이 서로 섞여서 새로운 stream 에 merging 된다. 이 것은 mapper 가 blocking 되지 않아서 여러 stream 들이 제 각각 element 들을 새로운 stream 으로 공급하기 때문이다.
+
+왜 `Flux::map()` 은 blocking 될까??? 
 
 ## Flux
 
@@ -280,7 +539,7 @@ flatMapSequential supports sequnce with parallel.
 
 * [Spring’s WebFlux / Reactor Parallelism and Backpressure](https://www.e4developer.com/2018/04/28/springs-webflux-reactor-parallelism-and-backpressure/)
 
-Publisher 가 제공한 data 를 Subscriber 가 throttling 하는 것을 Back pressure 하고 한다. 즉, Subscriber 가 요청한 만큼만 data 가 넘어온다. request() 를 통해 back pressure 를 할 수 있다. 그러나 request() 는 기본적으로 unbounded 이다. Subscriber class 를 통해 back pressure 할 수 있다. 
+Publisher 가 제공한 data 를 Subscriber 가 throttling 하는 것을 Back pressure 하고 한다. 즉, Subscriber 가 요청한 만큼만 data 가 넘어온다. `request()` 를 통해 back pressure 를 할 수 있다. 그러나 request() 는 기본적으로 unbounded 이다. Subscriber class 를 통해 back pressure 할 수 있다. 
 
 ![](https://i1.wp.com/www.e4developer.com/wp-content/uploads/2018/04/backpressure-handling.jpg?w=1680&ssl=1)
 
@@ -560,10 +819,10 @@ Rxjava 2 와 Reactor 3 를 switching 한다. 즉, Flux 와 Flowable 를 switchin
 
 ## Blocking to Reactive
 
-The subscribeOn method allow to isolate a sequence from the start on a provided Scheduler.
-subscribeOn run subscribe, onSubscribe and request on a specified Scheduler's Scheduler.Worker.
+The `subscribeOn()` method allow to isolate a sequence from the start on a provided Scheduler.
+`subscribeOn()` run `subscribe()`, `onSubscribe` and request on a specified Scheduler's Scheduler.Worker.
 
-publishOn run onComplete and onError on a supplied Scheduler Worker. This operator influences the treading context where the rest of the operators in the chain below it will execute, up to a new occurence of publishOn.
+`publishOn()` run `onComplete()` and `onError()` on a supplied Scheduler Worker. This operator influences the treading context where the rest of the operators in the chain below it will execute, up to a new occurence of `publishOn()`.
 
 ```java
         // subscribeOn
@@ -583,40 +842,3 @@ publishOn run onComplete and onError on a supplied Scheduler Worker. This operat
             .expectNext("red", "white", "blue")
             .verifyComplete();
 ```
-
-# Advanced
-
-## map vs flatMap
-
-* [Project Reactor: map() vs flatMap() @ baeldung](https://www.baeldung.com/java-reactor-map-flatmap)
-
-----
-
-The map operator applies a **one-to-one** transformation to stream elements, while flatMap does **one-to-many**.
-
-```java
-// this mapper means map function argument
-Function<String, String> mapper = String::toUpperCase;
-Flux<String> inFlux = Flux.just("baeldung", ".", "com");
-Flux<String> outFlux = inFlux.map(mapper);
-StepVerifier.create(outFlux)
-  .expectNext("BAELDUNG", ".", "COM")
-  .expectComplete()
-  .verify();
-
-// this mapper means flatMap function argument
-Function<String, Publisher<String>> mapper = s -> Flux.just(s.toUpperCase().split(""));  
-Flux<String> inFlux = Flux.just("baeldung", ".", "com");
-Flux<String> outFlux = inFlux.flatMap(mapper);
-List<String> output = new ArrayList<>();
-outFlux.subscribe(output::add);
-assertThat(output).containsExactlyInAnyOrder("B", "A", "E", "L", "D", "U", "N", "G", ".", "C", "O", "M");
-```
-
-> **map**: Transform the items emitted by this Flux by applying asynchronous function to each item
-
-> **flatMap**: Transform the elements emitted by this Flux asynchronously into Publishers
-
-map is a **synchronous** operator – it's simply a method that converts one value to another. This method executes in the same thread as the caller.
-
-flatMap is **asynchronous** – is not that clear. In fact, the transformation of elements into Publishers can be either synchronous or asynchronous.
