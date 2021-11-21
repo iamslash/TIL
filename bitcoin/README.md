@@ -15,6 +15,7 @@
   - [Peer Discovery](#peer-discovery)
   - [POW (Proof of Work)](#pow-proof-of-work)
   - [Consensus algorithm](#consensus-algorithm)
+  - [Hard Fork](#hard-fork)
   - [Simplified payment verification](#simplified-payment-verification)
   - [ETC](#etc)
 - [Questions](#questions)
@@ -249,6 +250,20 @@ void CConnman::ThreadDNSAddressSeed()
 
 길이가 제일 긴 블록체인을 따라 새로운 블록을 추가하는 것은 모든
 노드들의 51% 동의를 얻는 것과 같은 의미 일까?
+
+## Hard Fork
+
+* [블록체인 비호환 변경 a.k.a 하드 포크](https://tv.kakao.com/channel/3693125/cliplink/423595997)
+
+----
+
+block chain repo 를 수정하여 새로운 logic 으로 block 을 생성하는 것을 말한다. 
+
+특정 block (hard-fork block) 부터
+새로운 logic 으로 block 을 생성한다. hard-fork block 이전까지 block 은
+예전 logic 으로 block 을 생성한다.
+
+예를 들어 gas fee 를 새롭게 변경하는 경우가 해당된다.
 
 ## Simplified payment verification
 
