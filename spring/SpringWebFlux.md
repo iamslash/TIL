@@ -7,6 +7,8 @@
   - [Reactor MeltDown](#reactor-meltdown)
   - [Spring MVC vs Spring WebFlux](#spring-mvc-vs-spring-webflux)
   - [Why WebFlux Slow](#why-webflux-slow)
+- [Question](#question)
+  - [map vs flatMap for async function](#map-vs-flatmap-for-async-function)
 
 ----
 
@@ -265,3 +267,30 @@ public class StatefulRedisConnectionImpl<K, V> extends RedisChannelHandler<K, V>
     // 중략
 }
 ```
+
+# Question
+
+## map vs flatMap for async function
+
+`cacheStorageAdapter.getAdValue(adCodeId)` 는 non-blocking function 이다. 다음의 code 에서 `flatMap(adCodeId -> cacheStorageAdapter.getAdValue(adCodeId))` 과 `map(adCodeId -> cacheStorageAdapter.getAdValue(adCodeId))` 은 어떤 차이가 있는 걸까?
+
+```java
+public class AdHandler {
+    public Mono<ServerResponse> fetchByAdRequest(ServerRequest serverRequest) {
+        Mono<AdValue> adValueMono = serverRequest.bodyToMono(AdRequest.class)
+            .publishOn(Schedulers.boundedElastic())
+            .map(adRequest -> {
+                    AdCodeId adCodeId = AdCodeId.of(AdRequest.getCode());
+                    log.warn("Requested AdCodeId = {}", adCodeId.toKeyString());
+                    return adCodeId;
+                })
+            .flatMap(adCodeId -> cacheStorageAdapter.getAdValue(adCodeId));
+        return ServerResponse.ok()
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(adValueMono, AdValue.class);
+    }
+}
+```
+
+`Mono::map` 의 mapper 는 `AdValue` 를 return 할 테고 `Mono::flatMap` 의 mapper 는 `Mono<AdValue>` 를 
+return 할 것이다. `Mono::map()` 과 `Mono::flatMap` 를 바꿔가면서 사용할 수 있는 것인가?
