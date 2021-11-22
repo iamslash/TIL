@@ -196,6 +196,8 @@ reactor 의 operator 들을 이해하기 위해서는 marble diagram 을 해석�
 
 Mono, Flux 의 operator 중 `map(), flatmap()` 이 중요하다. 
 
+다음은 `Mono::map()` 의 marble diagram 이다.
+
 ![](img/mapForMono.png)
 
 `Mono::map()` 은 Lambda function `mapper` 를 argument 로 받는다. `mapper` 는 
@@ -215,6 +217,8 @@ public abstract class Mono<T> implements CorePublisher<T> {
 ...
 }
 ```
+
+다음은 `Mono::flatMap()` 의 marble diagram 이다.
 
 ![](img/flatMapForMono.png)
 
@@ -236,6 +240,7 @@ public abstract class Mono<T> implements CorePublisher<T> {
 ...
 }
 ```
+다음은 `Flux::map()` 의 marble diagram 이다.
 
 ![](img/mapForFlux.png)
 
@@ -256,6 +261,8 @@ public abstract class Flux<T> implements CorePublisher<T> {
 ...
 }
 ```
+
+다음은 `Flux::flatMap()` 의 marble diagram 이다.
 
 ![](img/flatMapForFlux.png)
 
@@ -319,7 +326,7 @@ assertThat(output).containsExactlyInAnyOrder("B", "A", "E", "L", "D", "U", "N", 
 
 따라서 `Flux::flatMap()` 을 호출하는 thread 는 blocking 되지 않을 것이다. 또한 `Flux::flatMap()` 여러 stream 들의 element 들이 서로 섞여서 새로운 stream 에 merging 된다. 이 것은 mapper 가 blocking 되지 않아서 여러 stream 들이 제 각각 element 들을 새로운 stream 으로 공급하기 때문이다.
 
-왜 `Flux::map()` 은 blocking 될까??? 
+`Flux::map()` 은 왜 blocking 될까??? 
 
 ## Flux
 
