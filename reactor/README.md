@@ -285,6 +285,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 }
 ```
 
+이제 `Flux::map()` 과 `Flux::flatMap()` 의 차이를 성능면에서 생각해 보자.
 다음은 `Flux::map()` 과 `Flux::flatMap()` 예이다. [Project Reactor: map() vs flatMap() @ baeldung](https://www.baeldung.com/java-reactor-map-flatmap) 참고.
 
 
