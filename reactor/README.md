@@ -5,6 +5,7 @@
   - [Asynchronous VS non-blocking](#asynchronous-vs-non-blocking)
   - [Overview](#overview)
   - [Marble Diagram](#marble-diagram)
+  - [map and flatMap](#map-and-flatmap)
   - [map vs flatMap](#map-vs-flatmap)
   - [Flux](#flux)
   - [Mono](#mono)
@@ -192,7 +193,7 @@ reactor 의 operator 들을 이해하기 위해서는 marble diagram 을 해석�
 
 중간에 네모상자는 mapper 를 의미한다. 동그라미 element 를 받아서 네모들이 포함된 stream 을 return 한다. 네모 상자 안의 두개의 inner stream 들을 주목하자. 각각 동그라미 element 를 입력으로 받아 inner stream 을 return 한다. 두개의 inner stream 들은 각각 펼쳐져서 맨 아랫줄의 stream 에 섞여서 merge 된다. 
 
-## map vs flatMap
+## map and flatMap
 
 Mono, Flux 의 operator 중 `map(), flatmap()` 이 중요하다. 
 
@@ -284,6 +285,13 @@ public abstract class Flux<T> implements CorePublisher<T> {
 ...
 }
 ```
+
+## map vs flatMap
+
+* [Reactor map, flatMap method는 언제 써야할까?](https://luvstudy.tistory.com/95)
+* [Project Reactor: map() vs flatMap() @ baeldung](https://www.baeldung.com/java-reactor-map-flatmap)
+
+----
 
 이제 `Flux::map()` 과 `Flux::flatMap()` 의 차이를 성능면에서 생각해 보자.
 다음은 `Flux::map()` 과 `Flux::flatMap()` 예이다. [Project Reactor: map() vs flatMap() @ baeldung](https://www.baeldung.com/java-reactor-map-flatmap) 참고.

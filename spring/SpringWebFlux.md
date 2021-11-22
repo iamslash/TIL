@@ -189,7 +189,7 @@ public class AdHandler {
 
 * `log()` 는 blocking I/O 를 일으킨다. 성능이 좋지 않다.
 * `map()` 호출이 너무 많다. immutable object instance 생성이 많다. GC 의 연산량이 증가한다.
-* `map()` 은 synchronous 함수이다. 동기식으로 처리된다. `flatmap()` 은 asynchronous 함수이다. 비동기식으로 처리된다. non-blocking 함수를 `map()` 에서 사용하는 것은 효율적이지 못하다. `map()` 를 실행하는 thread 는 blocking 되기 때문이다. 
+* `map()` 은 synchronous 함수이다. 동기식으로 처리된다. `flatmap()` 은 asynchronous 함수이다. 비동기식으로 처리된다. non-blocking 함수를 `map()` 에서 사용하는 것은 효율적이지 못하다??? `map()` 를 실행하는 thread 는 blocking 되기 때문이다??? 
   * **map** : Transform the item emitted by this Mono by applying a **synchronous** function to it.
   * **flatMap** : Transform the item emitted by this Mono **asynchronously**, returning the value emitted by another Mono (possibly changing the value type).
 * blocking call 은 별도의 Scheduler Worker 에서 실행하자. `publishOn()` 은 method chaining 에서 `publishOn()` 의 다음 method 부터 별도의 Scheduler Worker 에서 실행한다. 이것은 다음 `publishOn()` 이 호출될 때까지 유지된다. `subscribeOn` 은 전체 method 를 별도의 Scheduler Worker 에서 실행한다. 역시 다음 `publishOn()` 이 호출될 때까지 유지된다.
@@ -201,7 +201,7 @@ public class AdHandler {
 * `log()` 는 제거해야 한다.
 * `cacheStorageAdapter.getAdValue(adCodeId)` 는 non-blocking method 이다. 그러나 `map()` 에서 사용하고 있다. `flatmap()` 에서 사용하자.
 * 너무 많은 `map()` 을 사용하지 않도록 하자.
-* `AdRequest.getCode()` 를 포함한 `map()` 은 blocking call 이다. 별도의 Scheduler Worker 즉, 별도의 Thread Pool 에서 실행하자.
+* `AdRequest.getCode()` 는 blocking call 이다. event-loop 가 blocking 될 수 있다. 별도의 Scheduler Worker 즉, 별도의 Thread Pool 에서 실행하자.
  
 ```java
 public class AdHandler {
