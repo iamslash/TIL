@@ -100,7 +100,7 @@ public class EventLoopDemoController {
 }
 ```
 
-blocking 을 일으키는 code 는 `subscribeOn()` 을 사용하여 별도의 Scheduler Work 즉, Thread Pool 에서 실행되도록 하자.
+blocking 을 일으키는 code 는 `subscribeOn()` 을 사용하여 별도의 thread-pool 즉, Scheduler Work 에서 실행되도록 하자.
 
 ```java
 @RestController
@@ -144,15 +144,15 @@ Result method2();
 Mono<Result> method3();
 ```
 
-`method1()` 는 `InterruptedException` 를 던지고 있다. method signature 만으로 blocking call 있는지 구분할 수 있다. `method2()` 는 synchronous method 이므로 blocking call 이 있을만 하다. code 를 확인하기 전까지는 알 수 없다. `method3()` 는 asynchronous method 이다. 그러나 `method3()` 작성자가 blocking 되지 않게 작성했다고 확신할 수 없다.
+`method1()` 는 `InterruptedException` 를 던지고 있다. method signature 만으로 blocking call 이 있는지 구분할 수 있다. `method2()` 는 synchronous method 이므로 blocking call 이 있을만 하다. code 를 확인하기 전까지는 알 수 없다. `method3()` 는 asynchronous method 이다. 그러나 `method3()` 작성자가 blocking 되지 않게 작성했다고 확신할 수 없다.
 
-무엇보다 [Block Hound](https://github.com/reactor/BlockHound) 를 이용하여 blocking code 를 미리 발견하는 것이 중요하다.
+code 를 모두 확인하지 않고 blocking call 을 알아낼 수는 없을까? [Block Hound](https://github.com/reactor/BlockHound) 를 이용하여 blocking code 를 발견할 수 있다.
 
 ## Spring MVC vs Spring WebFlux
 
 * [SpringMVC vs WebFlux @ velog](https://velog.io/@minsuk/SpringMVC-vs-WebFlux)
 
-Spring MVC 는 하나의 request 를 하나의 thread 가 처리한다. 기본적으로 Spring MVC 는 200 개의 thread 를 thread pool 에서 생성한다. 200 개의 thread 가 4 개 혹은 8 개의 CPU core 를 두고 경합하는 것은 많은 context switching 을 발생시킨다. 비효율적이다.
+Spring MVC 는 하나의 request 를 하나의 thread 가 처리한다. 별도의 설정이 없다면 Spring MVC 는 200 개의 thread 를 thread pool 에서 생성한다. 200 개의 thread 가 4 개 혹은 8 개의 CPU core 를 두고 경합하는 것은 많은 context switching 을 발생시킨다. 비효율적이다.
 
 Spring WebFlux 는 하나의 thread 가 event-loop 을 처리한다. 그리고 몇개의 worker-thread 가 있다. thread 의 개수가 적기 때문에 context switching overhead 가 적다. 또한 4 개 혹은 8 개의 CPU core 를 두고 경합하는 thread 의 수도 적다. 효율적이다.
 
@@ -189,9 +189,7 @@ public class AdHandler {
 
 * `log()` 는 blocking I/O 를 일으킨다. 성능이 좋지 않다.
 * `map()` 호출이 너무 많다. immutable object instance 생성이 많다. GC 의 연산량이 증가한다.
-* `map()` 은 synchronous 함수이다. 동기식으로 처리된다. `flatmap()` 은 asynchronous 함수이다. 비동기식으로 처리된다. non-blocking 함수를 `map()` 에서 사용하는 것은 효율적이지 못하다??? 
-  * **map** : Transform the item emitted by this Mono by applying a **synchronous** function to it.
-  * **flatMap** : Transform the item emitted by this Mono **asynchronously**, returning the value emitted by another Mono (possibly changing the value type).
+* `Mono::map()` 은 동기식으로 동작한다. `Mono::flatMap()` 은 비동기식으로 동작한다. `cacheStorageAdapter.getAdValue(adCodeId)` 은 비동기식 method 이다. `Mono::flatMap()` 에서 사용해야 한다. 왜지??? 
 * blocking call 은 별도의 Scheduler Worker 에서 실행하자. `publishOn()` 은 method chaining 에서 `publishOn()` 의 다음 method 부터 별도의 Scheduler Worker 에서 실행한다. 이것은 다음 `publishOn()` 이 호출될 때까지 유지된다. `subscribeOn` 은 전체 method 를 별도의 Scheduler Worker 에서 실행한다. 역시 다음 `publishOn()` 이 호출될 때까지 유지된다.
   * **publishOn** : Run **onNext**, **onComplete** and **onError** on a supplied Scheduler Worker. This operator influences the threading context where the rest of the operators in the chain below it will execute, up to a new occurrence of publishOn.
   * **subscribeOn** : Run **subscribe**, **onSubscribe** and **request** on a specified Scheduler's Scheduler.Worker. As such, placing this operator anywhere in the chain will also impact the execution context of **onNext/onError/onComplete** signals from the beginning of the chain up to the next occurrence of a publishOn.
@@ -199,9 +197,9 @@ public class AdHandler {
 다음과 같이 수정하자.
 
 * `log()` 는 제거해야 한다.
-* `cacheStorageAdapter.getAdValue(adCodeId)` 는 non-blocking method 이다. 그러나 `map()` 에서 사용하고 있다. `flatmap()` 에서 사용하자.
 * 너무 많은 `map()` 을 사용하지 않도록 하자.
-* `AdRequest.getCode()` 는 blocking call 이다. event-loop 가 blocking 될 수 있다. 별도의 Scheduler Worker 즉, 별도의 Thread Pool 에서 실행하자.
+* `cacheStorageAdapter.getAdValue(adCodeId)` 는 asynchronous method 이다. 그러나 `map()` 에서 사용하고 있다. `flatMap()` 에서 해야한다. 왜지???
+* `AdRequest.getCode()` 는 blocking call 이다. event-loop 가 blocking 될 수 있다. 별도의 thread-pool 즉, 별도의 Scheduler Worker 에서 실행하자.
  
 ```java
 public class AdHandler {

@@ -288,54 +288,37 @@ public abstract class Flux<T> implements CorePublisher<T> {
 
 ## map vs flatMap
 
+* [map vs flatMap in reactor](https://newbedev.com/map-vs-flatmap-in-reactor)
 * [Reactor map, flatMap method는 언제 써야할까?](https://luvstudy.tistory.com/95)
 * [Project Reactor: map() vs flatMap() @ baeldung](https://www.baeldung.com/java-reactor-map-flatmap)
 
 ----
 
-이제 `Flux::map()` 과 `Flux::flatMap()` 의 차이를 성능면에서 생각해 보자.
-다음은 `Flux::map()` 과 `Flux::flatMap()` 예이다. [Project Reactor: map() vs flatMap() @ baeldung](https://www.baeldung.com/java-reactor-map-flatmap) 참고.
+`Flux::map()` 과 `Flux::flatMap()` 차이가 무엇인지 생각해 보자. 다음과 같이 요약할 수 있다.
 
+* `Flux::map()` 은 synchronous, non-blocking, 1 to 1 transformation 처리를 위해 사용한다.
+* `Flux::flatMap()` 은 asynchronous, non-blocking, 1 to N transformation 처리를 위해 사용한다.
 
-```java
-// this mapper means map function argument
-Function<String, String> mapper = String::toUpperCase;
-Flux<String> inFlux = Flux.just("baeldung", ".", "com");
-Flux<String> outFlux = inFlux.map(mapper);
-StepVerifier.create(outFlux)
-  .expectNext("BAELDUNG", ".", "COM")
-  .expectComplete()
-  .verify();
+transformation 처리는 [map and flatMap](#map-and-flatmap) 에서 살펴보았다. 다음과 같이 요약해 보자.
 
-// this mapper means flatMap function argument
-Function<String, Publisher<String>> mapper = s -> Flux.just(s.toUpperCase().split(""));  
-Flux<String> inFlux = Flux.just("baeldung", ".", "com");
-Flux<String> outFlux = inFlux.flatMap(mapper);
-List<String> output = new ArrayList<>();
-outFlux.subscribe(output::add);
-assertThat(output).containsExactlyInAnyOrder("B", "A", "E", "L", "D", "U", "N", "G", ".", "C", "O", "M");
-```
+* `Flux::map()` 은 `Function<T, U>` instance 를 arguement 로 받아서 `Flux<U>` 를 return 한다.
+* `Flux::flatMap` 은 `Function<T, Publisher<T, V>>` instance 를 argument 로 받아서 `Flux<V>` 를 return 한다. inner `Flux<V>` 들 즉, `Flux<Publisher<V>>` 을 펼치고 하나의 `Flux<V>` 에 merge 한다.
 
-`Flux::map()` 은 synchronous function 이다. 다음은 `Flux::map()` 의 comment 이다.
+`Flux::map()` 은 각 item 에 synchronous function 을 적용한다. 예를 들어 `1, 2, 3, 4, 5` 를 갖는 `Flux<Integer>` 가 있다고 해보자. `Flux::map()` 은 arguement 로 전달된 mapper 를 모든 item 에 적용을 완료할 때 까지 다른 thread 가 끼어들 수 없다는 의미인 것 같다.  
 
 * Transform the items emitted by this Flux by applying a synchronous function to each item. [map() for Flux](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#map-java.util.function.Function-)
 
 ![](img/mapForFlux.png)
 
-따라서 `Flux::map()` 을 호출하는 thread 는 blocking 될 것이다. non-blocking method 를 `Flux::map()` 의 mapper
-에 호출하는 것은 소용없는 일이다. `Flux::map()` 은 `Flux::publishOn(), Flux::subscribeOn()` 를 이용하여
-별도의 thread pool 즉, Schedule Worker 에서 실행하는 것이 좋다. 그렇지 않으면 event-loop thread 가 blocking 될 수 있다.
-이 것을 Reactor Meltdown 이라고 한다.
+만약 `Flux::map()` 의 mapper 에 blocking call 있다면 main-thread 가 blocking 되어 event-loop 가 멈추는 현상을 일으킬 수 있다. 이것을 Reactor Meltdown 이라고 한다. 그때는 `Flux::publishOn(), Flux::subscribeOn()` 를 이용하여 `Flux::map()` 을 별도의 thread-pool 즉, Scheduler Worker 에서 실행하도록 격리한다.
 
-`Flux::flatMap()` 은 asynchronous function 이다. 다음은  `Flux::flatMap()` 의 comment 이다.
+`Flux::flatMap()` 은 asynchronously 하게  이다. 다음은  `Flux::flatMap()` 의 comment 이다.
 
 * Transform the elements emitted by this Flux asynchronously into Publishers, then flatten these inner publishers into a single Flux through merging, which allow them to interleave. [flatMap() for Flux](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#flatMap-java.util.function.Function-)
 
 ![](img/flatMapForFlux.png)
 
-따라서 `Flux::flatMap()` 을 호출하는 thread 는 blocking 되지 않을 것이다. 또한 `Flux::flatMap()` 여러 stream 들의 element 들이 서로 섞여서 새로운 stream 에 merging 된다. 이 것은 mapper 가 blocking 되지 않아서 여러 stream 들이 제 각각 element 들을 새로운 stream 으로 공급하기 때문이다.
-
-`Flux::map()` 은 왜 blocking 될까??? 
+`Flux::flatMap()` 를 수행하면 여러 stream 들의 element 들이 서로 섞여서 새로운 stream 에 merging 된다. 이 것은 여러 stream 들이 여러 thread 들에서 처리되어 각 thread 가 처리하는 stream 의 element 가 새로운 stream 으로 섞여서 공급되기 때문이다. 여러 thread 인지 하나의 thread 인지는 확실하지 않다.
 
 ## Flux
 
