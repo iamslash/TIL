@@ -228,6 +228,7 @@ key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Ha
 
 ## Sorted Sets
 
+* [ZSETS internals](redis_code_tour.md#zsets-internals)
 * [Redis Sorted Set](https://jupiny.com/2020/03/28/redis-sorted-set/)
 
 ------

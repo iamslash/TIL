@@ -3,6 +3,7 @@
 - [Set up vscode debug](#set-up-vscode-debug)
 - [Mostly Single Threaded](#mostly-single-threaded)
 - [RedisFork](#redisfork)
+- [ZSETS internals](#zsets-internals)
 
 ----
 
@@ -115,3 +116,13 @@ int rdbSaveBackground(char *filename, rdbSaveInfo *rsi) {
 ...    
 }
 ```
+
+# ZSETS internals
+
+* [Redis SKIP List of  ZSETS (SORTED SETS) @ redisgate](http://redisgate.kr/redis/configuration/internal_skiplist.php)
+* [DesignSkiplist @ learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode2/DesignSkiplist/README.md)
+  * Designing Skip List 
+
+---
+
+Redis 의 ZSETS 는 Skip List 를 이용하여 구현함. WIP...
