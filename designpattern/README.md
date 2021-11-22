@@ -332,7 +332,7 @@ public class A {
   - Allow an application to equally be driven by users, programs,
     automated test or batch scripts, and to be developed and tested in
     isolation from its eventual run-time devices and databases.
-  - ???
+  - [Hexagonal Architecture @ TIL](/hexagonalarchitecture/README.md)
 
 - Layers
 
