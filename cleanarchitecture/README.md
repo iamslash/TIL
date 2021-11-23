@@ -7,6 +7,8 @@ Clean Architecture 는 Robert C. Martin 에 의해 발명되었다.
 # Materials
 
 * [The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+* [DDD, Hexagonal, Onion, Clean, CQRS, … How I put it all together](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
+  * Architecture 총정리
 
 # Clean Architecture Overview
 

@@ -61,6 +61,7 @@
 - [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
 - [Cloud Design Patterns](#cloud-design-patterns)
 - [DDD](#ddd)
+- [Architecture](#architecture)
 - [Cracking The Coding Interview Quiz](#cracking-the-coding-interview-quiz)
 
 ----
@@ -1004,6 +1005,10 @@ MSA 의 pattern 들과 거의 유사하다.
 # DDD
 
 * [DDD @ TIL](/domaindrivendesign/README.md)
+
+# Architecture
+
+* [Architecture @ TIL](/architecture/README.md)
 
 # Cracking The Coding Interview Quiz
 
