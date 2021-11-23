@@ -43,6 +43,7 @@
   - [Classes](#classes)
   - [Generics](#generics)
   - [Generics in,out,*](#generics-inout)
+  - [Notation for platform types](#notation-for-platform-types)
   - [Inheritance](#inheritance)
   - [Control Flow](#control-flow)
     - [When](#when)
@@ -1045,10 +1046,10 @@ fun main() {
 
 ----
 
-* `in`: Bar<super-type> 을 Bar<sub-type> 에 assign 할 수 있다.
+* `in`: `Foo<? super Bar> becomes Foo<in Bar!>!`
   * down-casting
-* `out`: Foo<sub-type> 을 Foo<super-type> 에 assign 할 수 있다.
-  * up-casting
+* `out`: `Foo<? extends Bar> becomes Foo<out Bar!>!`
+  * up-casting  
 * `*`: 무엇이든 assign 할 수 있다.
   * any-casting
 
@@ -1069,6 +1070,16 @@ fun main(args: Array<String>) {
     val star: Foo<*> = fooSub
 }
 ```
+
+## Notation for platform types
+
+* [Notation for platform types﻿](https://kotlinlang.org/docs/java-interop.html#notation-for-platform-types)
+
+-----
+
+* `T! means "T or T?"`
+  * `(Mutable)Collection<T>! means "Java collection of T may be mutable or not, may be nullable or not"`
+  * `Array<(out) T>! means "Java array of T (or a subtype of T), nullable or not"`
 
 ## Inheritance
 
