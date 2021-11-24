@@ -68,7 +68,8 @@
   - [Course Project - Part 1 - Build REST API to interact with DynamoDB](#course-project---part-1---build-rest-api-to-interact-with-dynamodb)
   - [Course Project - Part 2 - Integrate Web App (SPA) with DynamoDB Backend](#course-project---part-2---integrate-web-app-spa-with-dynamodb-backend)
   - [Course Project - Part 3 - Integrate Mobile Apps with DynamoDB Backend](#course-project---part-3---integrate-mobile-apps-with-dynamodb-backend)
-- [FAQ](#faq)
+- [Advanced](#advanced)
+  - [Optimistic Locking](#optimistic-locking)
   - [DynamoDB can decrease partitions?](#dynamodb-can-decrease-partitions)
   - [Transaction](#transaction)
 
@@ -2268,7 +2269,11 @@ Implement back-end api server with node.js.
   * Register IDC Provider in AWS Cognito.
   * Now you can authenticate with one id thanks to AWS Cognito.
 
-# FAQ
+# Advanced
+
+## Optimistic Locking
+
+* [Optimistic Locking with Version Number @ amazon](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBMapper.OptimisticLocking.html)
 
 ## DynamoDB can decrease partitions?
 
