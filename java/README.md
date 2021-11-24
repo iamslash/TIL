@@ -44,6 +44,7 @@
     - [Method References](#method-references)
     - [Optional<T>](#optionalt)
 - [Advanced Usage](#advanced-usage)
+  - [Instant, ZonedDateTime](#instant-zoneddatetime)
   - [arraycopy](#arraycopy)
   - [Integer.valueOf vs Integer.parseInt](#integervalueof-vs-integerparseint)
   - [Exception](#exception)
@@ -1863,6 +1864,18 @@ String result = valueOpt.orElseThrow(CustomException::new).toUpperCase();
 ```
 
 # Advanced Usage
+
+## Instant, ZonedDateTime
+
+* [What's the difference between Instant and LocalDateTime? @ stackoverflow](https://stackoverflow.com/questions/32437550/whats-the-difference-between-instant-and-localdatetime)
+* [(Java8) 날짜와 시간 API](https://perfectacle.github.io/2018/09/26/java8-date-time/)
+
+----
+
+**Instant** and **LocalDateTime** are two entirely different animals: One represents a moment, the other does not.
+
+**Instant** represents a moment, a specific point in the timeline.
+**LocalDateTime** represents a date and a time-of-day. But lacking a time zone or offset-from-UTC, this class cannot represent a moment. It represents potential moments along a range of about 26 to 27 hours, the range of all time zones around the globe. A **LocalDateTime** value is inherently ambiguous.
 
 ## arraycopy
 
