@@ -18,6 +18,8 @@
   - [Others Operations](#others-operations)
   - [Reactive to Blocking](#reactive-to-blocking)
   - [Blocking to Reactive](#blocking-to-reactive)
+- [Advanced](#advanced)
+  - [retry strategy](#retry-strategy)
 
 ----
 
@@ -39,6 +41,10 @@
 
 # Materials
 
+* [Reactive Hardcore. How to build a Publisher and implement own Project Reactor - Oleh Dokuka [1/3] @ youtube](https://www.youtube.com/watch?v=OdSZ6mOQDcY)
+  * Project Reactor Internals
+  * [Reactive Hardcore. How to build a Publisher and implement own Project Reactor - Oleh Dokuka [2/3] @ youtube](https://www.youtube.com/watch?v=noeWdjO4fyU)
+  * [Reactive Hardcore. How to build a Publisher and implement own Project Reactor - Oleh Dokuka [3/3] @ youtube](https://www.youtube.com/watch?v=cVKhFPiebSs&t=1633s)
 * [[리액터] 리액티브 프로그래밍 1부 리액티브 프로그래밍 소개 @ youtube](https://www.youtube.com/watch?v=VeSHa_Xsd2U&list=PLfI752FpVCS9hh_FE8uDuRVgPPnAivZTY)
 * [reactor reference](https://projectreactor.io/docs/core/release/reference/)
   * [kor](https://godekdls.github.io/Reactor%20Core/contents/)
@@ -843,3 +849,10 @@ The `subscribeOn()` method allow to isolate a sequence from the start on a provi
             .expectNext("red", "white", "blue")
             .verifyComplete();
 ```
+
+# Advanced
+
+## retry strategy
+
+* [Spring WebFlux에서 Error 처리와 Retry 전략](https://medium.com/@odysseymoon/spring-webflux%EC%97%90%EC%84%9C-error-%EC%B2%98%EB%A6%AC%EC%99%80-retry-%EC%A0%84%EB%9E%B5-a6bd2c024f6f)
+  * [src](https://github.com/Odysseymoon/spring-webflux-retry)
