@@ -22,6 +22,9 @@
   - [Filter Expressions for Query](#filter-expressions-for-query)
   - [Paginating Table Query Results](#paginating-table-query-results)
 - [Working with Scans](#working-with-scans)
+  - [Filter Expressions for Scan](#filter-expressions-for-scan)
+  - [Paginating the Results](#paginating-the-results)
+  - [Counting the Items in the Results](#counting-the-items-in-the-results)
 - [Working with Transactions](#working-with-transactions)
 
 ----
@@ -874,9 +877,41 @@ b'{"Count":5,"Items":[{"title":{"S":"A Bronx Tale"}},
 
 # Working with Scans
 
-```bash
+## Filter Expressions for Scan 
 
+```bash
+$ aws dynamodb scan \
+    --endpoint-url http://localhost:8000 \
+     --table-name Thread \
+     --filter-expression "LastPostedBy = :name" \
+     --expression-attribute-values '{":name":{"S":"User A"}}'
 ```
+
+## Paginating the Results
+
+```bash
+$ aws dynamodb scan \
+    --table-name Movies \
+    --projection-expression "title" \
+    --filter-expression 'contains(info.genres,:gen)' \
+    --expression-attribute-values '{":gen":{"S":"Sci-Fi"}}' \
+    --page-size 100  \
+    --debug
+2017-07-07 12:19:14,389 - MainThread - botocore.parsers - DEBUG - Response body:
+b'{"Count":7,"Items":[{"title":{"S":"Monster on the Campus"}},{"title":{"S":"+1"}},
+{"title":{"S":"100 Degrees Below Zero"}},{"title":{"S":"About Time"}},{"title":{"S":"After Earth"}},
+{"title":{"S":"Age of Dinosaurs"}},{"title":{"S":"Cloudy with a Chance of Meatballs 2"}}],
+"LastEvaluatedKey":{"year":{"N":"2013"},"title":{"S":"Curse of Chucky"}},"ScannedCount":100}'
+
+# The reponse of the last page. There is no LastEvaluatedKey
+2017-07-07 12:19:17,830 - MainThread - botocore.parsers - DEBUG - Response body:
+b'{"Count":1,"Items":[{"title":{"S":"WarGames"}}],"ScannedCount":6}'
+```
+
+## Counting the Items in the Results
+
+* **ScannedCount** — The number of items evaluated, before any ScanFilter is applied. A high ScannedCount value with few, or no, Count results indicates an inefficient Scan operation. If you did not use a filter in the request, ScannedCount is the same as Count.
+* **Count** — The number of items that remain, after a filter expression (if present) was applied.
 
 # Working with Transactions
 
