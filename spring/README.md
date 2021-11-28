@@ -51,6 +51,7 @@
 
 # Materials
 
+- [[LIVE 다시보기] 어디 가서 코프링 매우 알은 체하기! : 9월 우아한테크세미나 @ youtube](https://www.youtube.com/watch?v=ewBri47JWII)
 - [Spring Guides](https://spring.io/guides)
   - Topics Guides are very useful.
 - [baeldung spring](https://www.baeldung.com/start-here)

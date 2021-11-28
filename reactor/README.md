@@ -43,6 +43,7 @@
 
 * [Reactive Hardcore. How to build a Publisher and implement own Project Reactor - Oleh Dokuka [1/3] @ youtube](https://www.youtube.com/watch?v=OdSZ6mOQDcY)
   * Project Reactor Internals
+  * [src](https://github.com/CollaborationInEncapsulation/reactive-hardcore)
   * [Reactive Hardcore. How to build a Publisher and implement own Project Reactor - Oleh Dokuka [2/3] @ youtube](https://www.youtube.com/watch?v=noeWdjO4fyU)
   * [Reactive Hardcore. How to build a Publisher and implement own Project Reactor - Oleh Dokuka [3/3] @ youtube](https://www.youtube.com/watch?v=cVKhFPiebSs&t=1633s)
 * [[리액터] 리액티브 프로그래밍 1부 리액티브 프로그래밍 소개 @ youtube](https://www.youtube.com/watch?v=VeSHa_Xsd2U&list=PLfI752FpVCS9hh_FE8uDuRVgPPnAivZTY)
