@@ -26,6 +26,12 @@
   - [Paginating the Results](#paginating-the-results)
   - [Counting the Items in the Results](#counting-the-items-in-the-results)
 - [Working with Transactions](#working-with-transactions)
+  - [TransactWriteItems API](#transactwriteitems-api)
+  - [TransactGetItems API](#transactgetitems-api)
+  - [Isolation Levels for DynamoDB Transactions](#isolation-levels-for-dynamodb-transactions)
+  - [Transaction Conflict Handling in DynamoDB](#transaction-conflict-handling-in-dynamodb)
+  - [Best Practices for Transactions](#best-practices-for-transactions)
+  - [Using Transactional APIs with Global Tables](#using-transactional-apis-with-global-tables)
 
 ----
 
@@ -915,6 +921,48 @@ b'{"Count":1,"Items":[{"title":{"S":"WarGames"}}],"ScannedCount":6}'
 
 # Working with Transactions
 
-```bash
+## TransactWriteItems API
 
-```
+25 개 까지의 write action (Put, Update, Delete, Condition Check) 들을 atomicity (all-or-nothing) 을 보장해준다.
+
+Client Token 을 이용하면 Idempotency 가 보장된다.
+
+## TransactGetItems API
+
+25 개 까지의 read action (Get) 들의 synchronous 을 보장해준다. 읽어온 결과는 4MB 를 초과할 수는
+없다. 
+
+## Isolation Levels for DynamoDB Transactions
+
+Operation Summary. `*` 은 해당 Isolation Level 이 unit 으로 적용될 때를 말한다.
+개별 operation 의 Isolation Level 은 serializable 하다.
+
+| Operation | Isolation Level |
+|---|---|
+| DeleteItem |  Serializable |
+| PutItem  | Serializable  |
+| UpdateItem  | Serializable  |
+| GetItem |  Serializable |
+| BatchGetItem  | Read-committed*  |
+| BatchWriteItem  | NOT Serializable*  |
+| Query  |  Read-committed* |
+| Scan  | Read-committed*  |
+| Other transactional operation  | Serializable  |
+
+## Transaction Conflict Handling in DynamoDB
+
+* TransactWriteItems 진행중인 item 에 대하여 **PutItem**, **UpdateItem** 혹은 **DeleteItem** 을 요청했을 때
+* TransactWriteItems 진행중인 item 에 대하여 **TransactWriteItems** 을 요청했을 때
+* TransactWriteItems, BatchWriteItem, PutItem, UpdateItem 혹은 DeleteItem 진행중인 item 에 대하여 **TransactGetItems** 을 요청했을 때
+
+## Best Practices for Transactions
+
+## Using Transactional APIs with Global Tables
+
+하나의 Table 을 여러 region 에 Replication 하는 것을 Global Tables 이라 한다. 
+Global Tables 을 이용하는 경우는 하나의 Region 에서 TransactWriteItems 를 수행하면
+다른 Region 으로 propagation 되는 방식이다.
+
+예를 들어 Global Tables 를 US East (Ohio), US West (Oregon) regions 에 운영한다고 해보자.
+US East (Ohio) 에서 TransactWriteItems 를 수행한다고 하자. 그 Transaction 이 commit 되야
+US West (Oregon) 에 replication 된다.
