@@ -15,11 +15,10 @@
   - [Request](#request)
   - [Error](#error)
   - [Adapt](#adapt)
+  - [Retry](#retry)
   - [Others Operations](#others-operations)
   - [Reactive to Blocking](#reactive-to-blocking)
   - [Blocking to Reactive](#blocking-to-reactive)
-- [Advanced](#advanced)
-  - [retry strategy](#retry-strategy)
 
 ----
 
@@ -31,11 +30,12 @@
 
 # References
 
+* [ex-reactor in java @ github](https://github.com/iamslash/java-ex/tree/master/ex-reactor)
+* [ex-reactor in kt @ github](https://github.com/iamslash/kotlin-ex/tree/master/ex-reactor)
 * [reactor-core/reactor-core/src/test/java/reactor/core/publisher/](https://github.com/reactor/reactor-core/tree/main/reactor-core/src/test/java/reactor/core/publisher)
   * rector-core publisher 의 test code
 * [Reactive Programming with Reactor 3 @ tech.io](https://tech.io/playgrounds/929/reactive-programming-with-reactor-3/Intro)
   * [sol](https://gist.github.com/kjs850/a29addc92b98b51ea05a09587be34071)
-* [ex-reactor @ github](https://github.com/iamslash/java-ex/tree/master/ex-reactor)
 * [Java Asynchronous & Non Blocking programming With Reactor @ udemy](https://matchgroup.udemy.com/course/complete-java-reactive-programming/learn/lecture/24545814#overview)
   * [src](https://github.com/vinsguru/java-reactive-programming-course)
 
@@ -743,6 +743,149 @@ Publisher 가 제공한 data 를 Subscriber 가 throttling 하는 것을 Back pr
             });
 ```
 
+```kotlin
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.jupiter.api.Test
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
+
+internal class ErrorAppTest {
+
+    private val errorApp: ErrorApp = mockk(relaxed = true)
+
+    @Test
+    fun `onErrorReturn should return fallBack value when error has occurred`() {
+        // given
+        every { errorApp.getPost(1) }.returnsMany(Mono.just("1"), Mono.just("2"))
+        every { errorApp.getPost(2) } throws RuntimeException()
+        // when
+        val flux: Flux<String> = Flux.just(1, 2, 3)
+            .flatMap { postId -> errorApp.getPost(postId) }
+            .onErrorReturn("22")
+        // then
+        StepVerifier.create(flux)
+            .expectNext("1")
+            .expectNext("22")
+            .verifyComplete()
+    }
+
+    @Test
+    fun `onErrorResume should resume new publisher when error has occurred`() {
+        // given
+        every { errorApp.getPost(1) }.returns(Mono.just("a"))
+        every { errorApp.getPost(2) } throws RuntimeException("onErrorResume Exception")
+        every { errorApp.getPost(3) } returns Mono.just("c")
+        // when
+        val flux: Flux<String> = Flux.just(1, 2, 3, 4)
+            .flatMap { postId -> errorApp.getPost(postId) }
+            .onErrorResume { e ->
+                println(e.localizedMessage)
+                return@onErrorResume Flux.just("bb", "cc")
+            }
+        // then
+        StepVerifier.create(flux)
+            .expectNext("a", "bb", "cc")
+            .verifyComplete()
+    }
+
+    @Test
+    fun `onErrorResume should resume new publisher when error of specific type has occurred`() {
+        // given
+        every { errorApp.getPost(1) }.returns(Mono.just("a"))
+        every { errorApp.getPost(2) } throws RuntimeException("onErrorResume Exception")
+        every { errorApp.getPost(3) } returns Mono.just("c")
+        // when
+        val flux: Flux<String> = Flux.just(1, 2, 3, 4)
+            .flatMap { postId -> errorApp.getPost(postId) }
+            .onErrorResume(java.lang.RuntimeException::class.java) { e ->
+                println(e.localizedMessage)
+                return@onErrorResume Flux.just("bb", "cc")
+            }
+        // then
+        StepVerifier.create(flux)
+            .expectNext("a", "bb", "cc")
+            .verifyComplete()
+    }
+
+    @Test
+    fun `onErrorResume should resume new publisher when predicated error has occurred`() {
+        // given
+        every { errorApp.getPost(1) }.returns(Mono.just("a"))
+        every { errorApp.getPost(2) } throws RuntimeException("onErrorResume Exception")
+        every { errorApp.getPost(3) } returns Mono.just("c")
+        // when
+        val flux: Flux<String> = Flux.just(1, 2, 3, 4)
+            .flatMap { postId -> errorApp.getPost(postId) }
+            .onErrorResume({ e -> e.localizedMessage.contains("Exception") }) { e ->
+                println(e.localizedMessage)
+                return@onErrorResume Flux.just("bb", "cc")
+            }
+        // then
+        StepVerifier.create(flux)
+            .expectNext("a", "bb", "cc")
+            .verifyComplete()
+    }
+
+
+    @Test
+    fun `onErrorContinue should continue when error has occurred`() {
+        // given
+        every { errorApp.getPost(1) }.returns(Mono.just("a"))
+        every { errorApp.getPost(2) } throws RuntimeException("onErrorContinue Exception")
+        every { errorApp.getPost(3) } returns Mono.just("c")
+        // when
+        val flux: Flux<String> = Flux.just(1, 2, 3)
+            .flatMap { postId -> errorApp.getPost(postId) }
+            .onErrorContinue { e, o ->
+                println("Error has occurred at $o with ${e.localizedMessage}")
+            }
+        // then
+        StepVerifier.create(flux)
+            .expectNext("a", "c")
+            .verifyComplete()
+    }
+
+    @Test
+    fun `onErrorContinue should continue when error of specific type has occurred`() {
+        // given
+        every { errorApp.getPost(1) }.returns(Mono.just("a"))
+        every { errorApp.getPost(2) } throws RuntimeException("onErrorContinue Exception")
+        every { errorApp.getPost(3) } returns Mono.just("c")
+        // when
+        val flux: Flux<String> = Flux.just(1, 2, 3)
+            .flatMap { postId -> errorApp.getPost(postId) }
+            .onErrorContinue(RuntimeException::class.java) { e, o ->
+                println("Error has occurred at $o with ${e.localizedMessage}")
+            }
+        // then
+        StepVerifier.create(flux)
+            .expectNext("a", "c")
+            .verifyComplete()
+    }
+
+    @Test
+    fun `onErrorContinue should continue when predicated error has occurred`() {
+        // given
+        every { errorApp.getPost(1) }.returns(Mono.just("a"))
+        every { errorApp.getPost(2) } throws RuntimeException("onErrorContinue Exception")
+        every { errorApp.getPost(3) } returns Mono.just("c")
+        // when
+        val flux: Flux<String> = Flux.just(1, 2, 3)
+            .flatMap { postId -> errorApp.getPost(postId) }
+            .onErrorContinue({ e: Throwable -> e.localizedMessage.contains("Exception") }) { e, o ->
+                println("Error has occurred at $o with ${e.localizedMessage}")
+            }
+
+        // then
+        StepVerifier.create(flux)
+            .expectNext("a", "c")
+            .verifyComplete()
+    }
+}
+```
+
 ## Adapt
 
 Rxjava 2 와 Reactor 3 를 switching 한다. 즉, Flux 와 Flowable 를 switching 한다.
@@ -768,6 +911,112 @@ Rxjava 2 와 Reactor 3 를 switching 한다. 즉, Flux 와 Flowable 를 switchin
        Mono<String> mono = Mono.just("Hello").map(s -> s.toUpperCase());
        Mono.fromFuture(future);
        mono.toFuture();
+```
+
+## Retry
+
+* [Spring WebFlux에서 Error 처리와 Retry 전략](https://medium.com/@odysseymoon/spring-webflux%EC%97%90%EC%84%9C-error-%EC%B2%98%EB%A6%AC%EC%99%80-retry-%EC%A0%84%EB%9E%B5-a6bd2c024f6f)
+  * [src](https://github.com/Odysseymoon/spring-webflux-retry)
+
+----
+
+```kotlin
+
+import io.mockk.every
+import io.mockk.mockk
+import org.junit.jupiter.api.Test
+import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
+import reactor.test.StepVerifier
+import reactor.util.retry.Retry
+import java.time.Duration
+
+internal class RetryAppTest {
+
+    private val retryApp: RetryApp = mockk(relaxed = true)
+
+    @Test
+    fun `retry should retry from the first forever when error has occurred`() {
+        // given
+        every { retryApp.getPost(1) } returns(Mono.just("a"))
+        every { retryApp.getPost(2) } throws RuntimeException() andThen (Mono.just("b"))
+        every { retryApp.getPost(3) } returns(Mono.just("c"))
+        // when
+        val flux: Flux<String> = Flux.just(1, 2, 3)
+            .flatMap { postId -> retryApp.getPost(postId) }
+            .retry()
+        // then
+        StepVerifier.create(flux)
+            .expectNext("a", "a", "b", "c")
+            .verifyComplete()
+    }
+
+    @Test
+    fun `retry should retry from the first n times when error has occurred`() {
+        // given
+        every { retryApp.getPost(1) } returns(Mono.just("a"))
+        every { retryApp.getPost(2) } throws RuntimeException() andThenThrows RuntimeException() andThen (Mono.just("b"))
+        every { retryApp.getPost(3) } returns(Mono.just("c"))
+        // when
+        val flux: Flux<String> = Flux.just(1, 2, 3)
+            .flatMap { postId -> retryApp.getPost(postId) }
+            .log()
+            .retry(2)
+        // then
+        StepVerifier.create(flux)
+            .expectNext("a", "a", "a","b", "c")
+            .verifyComplete()
+    }
+
+    @Test
+    fun `retry should retry from the first Retry max times when error has occurred`() {
+        // given
+        every { retryApp.getPost(1) } returns(Mono.just("a"))
+        every { retryApp.getPost(2) } throws RuntimeException() andThenThrows RuntimeException() andThen (Mono.just("b"))
+        every { retryApp.getPost(3) } returns(Mono.just("c"))
+        // when
+        val flux: Flux<String> = Flux.just(1, 2, 3)
+            .flatMap { postId -> retryApp.getPost(postId) }
+            .retryWhen(Retry.max(2))
+        // then
+        StepVerifier.create(flux)
+            .expectNext("a", "a", "a","b", "c")
+            .verifyComplete()
+    }
+
+    @Test
+    fun `retry should retry from the first fixed delay when error has occurred`() {
+        // given
+        every { retryApp.getPost(1) } returns(Mono.just("a"))
+        every { retryApp.getPost(2) } throws RuntimeException() andThenThrows RuntimeException() andThen (Mono.just("b"))
+        every { retryApp.getPost(3) } returns(Mono.just("c"))
+        // when
+        val flux: Flux<String> = Flux.just(1, 2, 3)
+            .flatMap { postId -> retryApp.getPost(postId) }
+            .retryWhen(Retry.fixedDelay(2, Duration.ofMillis(200)))
+        // then
+        StepVerifier.create(flux)
+            .expectNext("a", "a", "a","b", "c")
+            .verifyComplete()
+    }
+
+    @Test
+    fun `retry should retry from the first backoff when error has occurred`() {
+        // given
+        every { retryApp.getPost(1) } returns(Mono.just("a"))
+        every { retryApp.getPost(2) } throws RuntimeException() andThenThrows RuntimeException() andThen (Mono.just("b"))
+        every { retryApp.getPost(3) } returns(Mono.just("c"))
+        // when
+        val flux: Flux<String> = Flux.just(1, 2, 3)
+            .flatMap { postId -> retryApp.getPost(postId) }
+            .retryWhen(Retry.backoff(2, Duration.ofMillis(200)))
+        // then
+        StepVerifier.create(flux)
+            .expectNext("a", "a", "a","b", "c")
+            .verifyComplete()
+    }
+
+}
 ```
 
 ## Others Operations
@@ -850,10 +1099,3 @@ The `subscribeOn()` method allow to isolate a sequence from the start on a provi
             .expectNext("red", "white", "blue")
             .verifyComplete();
 ```
-
-# Advanced
-
-## retry strategy
-
-* [Spring WebFlux에서 Error 처리와 Retry 전략](https://medium.com/@odysseymoon/spring-webflux%EC%97%90%EC%84%9C-error-%EC%B2%98%EB%A6%AC%EC%99%80-retry-%EC%A0%84%EB%9E%B5-a6bd2c024f6f)
-  * [src](https://github.com/Odysseymoon/spring-webflux-retry)
