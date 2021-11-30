@@ -6,7 +6,8 @@
   - [Overview](#overview)
   - [Marble Diagram](#marble-diagram)
   - [map and flatMap](#map-and-flatmap)
-  - [map vs flatMap](#map-vs-flatmap)
+  - [map vs flatMap based asynchronous processing](#map-vs-flatmap-based-asynchronous-processing)
+  - [map vs flatMap based on return types](#map-vs-flatmap-based-on-return-types)
   - [Flux](#flux)
   - [Mono](#mono)
   - [StepVerifier](#stepverifier)
@@ -19,6 +20,8 @@
   - [Others Operations](#others-operations)
   - [Reactive to Blocking](#reactive-to-blocking)
   - [Blocking to Reactive](#blocking-to-reactive)
+- [Advanced](#advanced)
+  - [How to make a Publisher](#how-to-make-a-publisher)
 
 ----
 
@@ -293,7 +296,7 @@ public abstract class Flux<T> implements CorePublisher<T> {
 }
 ```
 
-## map vs flatMap
+## map vs flatMap based asynchronous processing
 
 * [map vs flatMap in reactor](https://newbedev.com/map-vs-flatmap-in-reactor)
 * [Reactor map, flatMap method는 언제 써야할까?](https://luvstudy.tistory.com/95)
@@ -301,7 +304,8 @@ public abstract class Flux<T> implements CorePublisher<T> {
 
 ----
 
-`Flux::map()` 과 `Flux::flatMap()` 차이가 무엇인지 생각해 보자. 다음과 같이 요약할 수 있다.
+`Flux::map()` 는 동기적으로 처리되고 `Flux::flatMap()` 는 비동기적으로 처리된다. 이것의
+의미를 다음과 같이 차례 차례 살펴보자.
 
 * `Flux::map()` 은 synchronous, non-blocking, 1 to 1 transformation 처리를 위해 사용한다.
 * `Flux::flatMap()` 은 asynchronous, non-blocking, 1 to N transformation 처리를 위해 사용한다.
@@ -319,13 +323,69 @@ transformation 처리는 [map and flatMap](#map-and-flatmap) 에서 살펴보았
 
 만약 `Flux::map()` 의 mapper 에 blocking call 있다면 main-thread 가 blocking 되어 event-loop 가 멈추는 현상을 일으킬 수 있다. 이것을 Reactor Meltdown 이라고 한다. 그때는 `Flux::publishOn(), Flux::subscribeOn()` 를 이용하여 `Flux::map()` 을 별도의 thread-pool 즉, Scheduler Worker 에서 실행하도록 격리한다.
 
-`Flux::flatMap()` 은 asynchronously 하게  이다. 다음은  `Flux::flatMap()` 의 comment 이다.
+`Flux::flatMap()` 은 asynchronously 하게 동작한다. 다음은  `Flux::flatMap()` 의 comment 이다.
 
 * Transform the elements emitted by this Flux asynchronously into Publishers, then flatten these inner publishers into a single Flux through merging, which allow them to interleave. [flatMap() for Flux](https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#flatMap-java.util.function.Function-)
 
 ![](img/flatMapForFlux.png)
 
 `Flux::flatMap()` 를 수행하면 여러 stream 들의 element 들이 서로 섞여서 새로운 stream 에 merging 된다. 이 것은 여러 stream 들이 여러 thread 들에서 처리되어 각 thread 가 처리하는 stream 의 element 가 새로운 stream 으로 섞여서 공급되기 때문이다. 여러 thread 인지 하나의 thread 인지는 확실하지 않다.
+
+## map vs flatMap based on return types
+
+* [map vs flatMap in reactor @ stackoverflow](https://stackoverflow.com/questions/49115135/map-vs-flatmap-in-reactor)
+
+-----
+
+또한 `Mono.map()` 과 `Mono.flatMap()` 은 return type 의 차이가 있다. 경우에 
+따라 `Mono.flatMap()` 를 사용하여 더욱 간결히 구현할 수 있다.
+
+예를 들어 다음과 같이 `HttpClient.get()` 의 사용예를 살펴보자. `HttpClient.get()`
+은 `Mono` 를 리턴한다. 따라서 `Mono.map()` 에서 `HttpClient.get()` 를 호출하면 `Mono<Mono<>>` 
+가 리턴된다. 이것보다는 `Mono.flatMap()` 에서 `HttpClient.get()` 를 호출해보자. `Mono<>`
+가 리턴된다. return type 이 단순해 졌다.
+
+```java
+// Signature of the HttpClient.get method
+Mono<JsonObject> get(String url);
+
+// The two urls to call
+String firstUserUrl = "my-api/first-user";
+String userDetailsUrl = "my-api/users/details/"; // needs the id at the end
+
+// Example with map
+Mono<Mono<JsonObject>> result = HttpClient.get(firstUserUrl).
+  map(user -> HttpClient.get(userDetailsUrl + user.getId()));
+// This results with a Mono<Mono<...>> because HttpClient.get(...)
+// returns a Mono
+
+// Same example with flatMap
+Mono<JsonObject> bestResult = HttpClient.get(firstUserUrl).
+  flatMap(user -> HttpClient.get(userDetailsUrl + user.getId()));
+// Now the result has the type we expected
+```
+
+또한 `Mono.flatMap()` 을 사용하면 보다 정확하게 error 처리가 가능하다. 
+
+```java
+public UserApi {
+  
+  private HttpClient httpClient;
+    
+  Mono<User> findUser(String username) {
+    String queryUrl = "http://my-api-address/users/" + username;
+    
+    return Mono.fromCallable(() -> httpClient.get(queryUrl)).
+      flatMap(response -> {
+        if (response.statusCode == 404) return Mono.error(new NotFoundException("User " + username + " not found"));
+        else if (response.statusCode == 500) return Mono.error(new InternalServerErrorException());
+        else if (response.statusCode != 200) return Mono.error(new Exception("Unknown error calling my-api"));
+        return Mono.just(response.data);
+      });
+  }
+                                           
+}
+```
 
 ## Flux
 
@@ -1099,3 +1159,17 @@ The `subscribeOn()` method allow to isolate a sequence from the start on a provi
             .expectNext("red", "white", "blue")
             .verifyComplete();
 ```
+
+# Advanced
+
+## How to make a Publisher
+
+* [Reactive Hardcore. How to build a Publisher and implement own Project Reactor - Oleh Dokuka [1/3] @ youtube](https://www.youtube.com/watch?v=OdSZ6mOQDcY)
+  * Project Reactor Internals
+  * [src](https://github.com/CollaborationInEncapsulation/reactive-hardcore)
+  * [Reactive Hardcore. How to build a Publisher and implement own Project Reactor - Oleh Dokuka [2/3] @ youtube](https://www.youtube.com/watch?v=noeWdjO4fyU)
+  * [Reactive Hardcore. How to build a Publisher and implement own Project Reactor - Oleh Dokuka [3/3] @ youtube](https://www.youtube.com/watch?v=cVKhFPiebSs&t=1633s)
+
+-----
+
+Publisher 를 잘 구현한다. [이 곳](https://github.com/reactive-streams/reactive-streams-jvm/tree/v1.0.3/examples/src/main/java/org/reactivestreams/example/unicast) 을 참고한다.. 그리고 [Reactive Streams TCK (Technology Compatibility Kit)](https://github.com/reactive-streams/reactive-streams-jvm/tree/v1.0.3/tck) 으로 검증한다. 
