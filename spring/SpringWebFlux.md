@@ -272,6 +272,8 @@ public class StatefulRedisConnectionImpl<K, V> extends RedisChannelHandler<K, V>
 ## Reactive Cache
 
 * [Spring Webflux Cache @ tistory](https://dreamchaser3.tistory.com/17)
+* [[webflux] 이미지 조회 Cache 처리 @ tistory](https://devmingsa.tistory.com/81)
+* [Using Multiple Cache Managers in Spring @ baeldung](https://www.baeldung.com/spring-multiple-cache-managers)
 
 ----
 

@@ -1047,9 +1047,11 @@ fun main() {
 ----
 
 * `in`: `Foo<? super Bar> becomes Foo<in Bar!>!`
-  * down-casting
+  * Bar 의 부모들
+  * Bar 로 down-casting
 * `out`: `Foo<? extends Bar> becomes Foo<out Bar!>!`
-  * up-casting  
+  * Bar 의 자식들  
+  * Bar 로 up-casting
 * `*`: 무엇이든 assign 할 수 있다.
   * any-casting
 
