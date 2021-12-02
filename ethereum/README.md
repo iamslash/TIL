@@ -44,6 +44,10 @@ Contract Account 는 code 를 소유한다. transaction 을 EOA 로 부터 받�
 
 # Smart Contract
 
+* [solidity @ TIL](/solidity/README.md)
+
+-----
+
 Smart Contract 는 script 로 작성한 code 를 말한다. code 는 Transaction 에 byte code 형태로 포함된다. Transaction 은 다시 Block 에 포함된다. Smart Contract 는 Block Chain 에서 고유한 Address 를 갖는다.
 
 code 를 포함하는 Block 이 confirm 되면 다른 Transaction 에서 그 code 를 실행할 수 있다. code 가 실행되면 state 를 바꾸거나 또 다른 trasaction 을 생성할 수 있다. 
