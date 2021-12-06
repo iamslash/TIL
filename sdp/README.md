@@ -51,7 +51,7 @@ time description 은 한개 이상일 수 있다. media description 은 0 개 �
     r=* (zero or more repeat times)
 ```
 
-다음은 media description 의 format 이다.
+다음은 media description 의 format 이다. media 별로 address 가 포함될 수도 있다.
 
 ```
     m=  (media name and transport address)
