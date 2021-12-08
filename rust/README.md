@@ -8,18 +8,21 @@
   - [Build and Run](#build-and-run)
   - [Useful Keywords](#useful-keywords)
   - [Ownership](#ownership)
+  - [Copy vs Clone](#copy-vs-clone)
   - [Crate](#crate)
   - [Module](#module)
+  - [Control Flows](#control-flows)
   - [Struct](#struct)
   - [Enum](#enum)
-  - [Loop](#loop)
+  - [Generic](#generic)
+  - [Trait](#trait)
   - [Tuple](#tuple)
   - [Match](#match)
-  - [Trait](#trait)
   - [Array](#array)
   - [Formatted Print](#formatted-print)
   - [Custom Errors](#custom-errors)
   - [Advanced Error Handling](#advanced-error-handling)
+  - [String Conversions](#string-conversions)
   - [String Loops](#string-loops)
   - [if let](#if-let)
   - [Lifetime](#lifetime)
@@ -42,6 +45,7 @@ Rust 에 대해 정리한다.
 * [Rust](https://www.rust-lang.org/learn)
   * [Crate std reference](https://doc.rust-lang.org/stable/std/index.html)
 * [The Rust Programming Language](https://doc.rust-lang.org/book/index.html) 
+  * [한글](https://rinthel.github.io/rust-lang-book-ko/)
 * [Learn Rust by Building Real Applications](https://www.udemy.com/course/rust-fundamentals/)
   * [src](https://github.com/gavadinov/Learn-Rust-by-Building-Real-Applications)
   
@@ -132,35 +136,24 @@ while - loop conditionally based on the result of an expression
 
 ## Ownership
 
-```rs
-    // Immutable Borrow, Immutable Borrow is ok
-    let mut a = String::new();
-    a.push_str("Hello World");
+**Ownership Rules**
 
-    let b = &a; // Immutable Borrow
-    let c = &a; // Immutable Borrow
+* Each value in Rust has a variable that’s called its owner.
+* There can only be one owner at a time.
+* When the owner goes out of scope, the value will be dropped.
 
-    println!("b : {}, c : {}", b, c);
+## Copy vs Clone
 
-    // Mutable Borrow, Mutable Borrow is error
-    let mut a = String::new();
-    a.push_str("Hello World");
+Copy trait means shallow copy, Clone trait means deep copy.
 
-    let b = &mut a; // Mutable Borrow
-    let c = &a; // Immutable Borrow
+Here are some of the types that implement Copy:
 
-    println!("b : {}, c : {}", b, c);
-error[E0502]: cannot borrow `a` as immutable because it is also borrowed as mutable
-  --> src/main.rs:34:13
-   |
-33 |     let b = &mut a; // Mutable Borrow
-   |             ------ mutable borrow occurs here
-34 |     let c = &a; // Immutable Borrow
-   |             ^^ immutable borrow occurs here
-35 | 
-36 |     println!("b : {}, c : {}", b, c);
-   |                                - mutable borrow later used here
-```
+* All the integer types, such as **u32**.
+* The Boolean type, bool, with values true and **false**.
+* All the floating point types, such as **f64**.
+* The character type, **char**.
+* **Tuples**, if they only contain types that also implement Copy. For example, (i32, i32) implements Copy, but (i32, String) does not.
+
 ## Crate
 
 create 은 build 된 binary 의 단위이다. 실행파일 혹은 라이브러리로 구분할 수 있다. 
@@ -257,9 +250,25 @@ fn main() {
 
 `use crate::server::Server;` 의 `crate` 는 root module 을 말한다.
 
+## Control Flows
+
+if, let-if, loop, while, for
+
+```rs
+// if
+
+// let-if
+
+// loop
+
+// while
+
+// for
+```
+
 ## Struct
 
-golang 의 struct 와 같다. `struct` 로 정의하고 `impl` 로 구현한다. **instant function** 은 첫번째 arguement 가 self 이다. **static function** 은 첫번째 arguement 가 self 가 아니다.
+golang 의 struct 와 같다. `struct` 로 정의하고 `impl` 로 구현한다. **instant function** 은 첫번째 arguement 가 self 이다. **associate function** (static function) 은 첫번째 arguement 가 self 가 아니다. 
 
 ```rs
 // server.rs
@@ -356,26 +365,33 @@ fn main() {
 }
 ```
 
-## Loop
+## Generic
+
+## Trait
+
+Something like interface in Java. `PartialOrd + Copy` is a **trait bound**.
 
 ```rs
-// Traditional while loop
-while true {
+use std::cmp::PartialOrd;
 
+fn largest<T: PartialOrd + Copy>(list: &[T]) -> T {
+    let mut largest = list[0];
+    for &item in list.iter() {
+        if item > largest {
+            largest = item;
+        }
+    }
+    largest
 }
 
-// Inifinite loop
-loop true {
-   continue;
-   break;
+fn main() {
+    let numbers = vec![34, 50, 25, 100, 65];
+    let result = largest(&numbers);
+    println!("The largest number is {}", result);
+    let chars = vec!['y', 'm', 'a', 'q'];
+    let result = largest(&chars);
+    println!("The largest char is {}", result);
 }
-
-// Loop with label
-'foo loop {
-   loop {
-      break 'foo;
-   }
-} 
 ```
 
 ## Tuple
@@ -387,13 +403,6 @@ let t = (1, "abc", 2.5);
 ## Match
 
 Something like switch statement in C.
-
-## Trait
-
-Something like interface in Java.
-
-```rs
-```
 
 ## Array
 
@@ -442,6 +451,51 @@ impl From<Utf8Error> fro ParseError {
 }
 ```
 
+## String Conversions
+
+* [string-conversion.rs](https://gist.github.com/jimmychu0807/9a89355e642afad0d2aeda52e6ad2424)
+
+----
+
+```rust
+  // -- FROM: vec of chars --
+  let src1: Vec<char> = vec!['j','{','"','i','m','m','y','"','}'];
+  // to String
+  let string1: String = src1.iter().collect::<String>();
+  // to str
+  let str1: &str = &src1.iter().collect::<String>();
+  // to vec of byte
+  let byte1: Vec<u8> = src1.iter().map(|c| *c as u8).collect::<Vec<_>>();
+  println!("Vec<char>:{:?} | String:{:?}, str:{:?}, Vec<u8>:{:?}", src1, string1, str1, byte1);
+
+  // -- FROM: vec of bytes --
+  // in rust, this is a slice
+  // b - byte, r - raw string, br - byte of raw string
+  let src2: Vec<u8> = br#"e{"ddie"}"#.to_vec();
+  // to String
+  // from_utf8 consume the vector of bytes
+  let string2: String = String::from_utf8(src2.clone()).unwrap();
+  // to str
+  let str2: &str = str::from_utf8(&src2).unwrap();
+  // to vec of chars
+  let char2: Vec<char> = src2.iter().map(|b| *b as char).collect::<Vec<_>>();
+  println!("Vec<u8>:{:?} | String:{:?}, str:{:?}, Vec<char>:{:?}", src2, string2, str2, char2);
+
+  // -- FROM: String --
+  let src3: String = String::from(r#"o{"livia"}"#);
+  let str3: &str = &src3;
+  let char3: Vec<char> = src3.chars().collect::<Vec<_>>();
+  let byte3: Vec<u8> = src3.as_bytes().to_vec();
+  println!("String:{:?} | str:{:?}, Vec<char>:{:?}, Vec<u8>:{:?}", src3, str3, char3, byte3);
+
+  // -- FROM: str --
+  let src4: &str = r#"g{'race'}"#;
+  let string4 = String::from(src4);
+  let char4: Vec<char> = src4.chars().collect();
+  let byte4: Vec<u8> = src4.as_bytes().to_vec();
+  println!("str:{:?} | String:{:?}, Vec<char>:{:?}, Vec<u8>:{:?}", src4, string4, char4, byte4);
+```
+
 ## String Loops
 
 ```rs
@@ -485,6 +539,8 @@ if let Some(i) = path.find('?') {
 ```
 
 ## Lifetime
+
+Lifetime 의 목적은 dangling reference 를 방지하는 것이다.
 
 ## Attributes
 
