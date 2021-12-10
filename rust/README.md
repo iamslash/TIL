@@ -14,6 +14,7 @@
   - [Control Flows](#control-flows)
   - [Struct](#struct)
   - [Enum](#enum)
+  - [Box](#box)
   - [Generic](#generic)
   - [Trait](#trait)
   - [Tuple](#tuple)
@@ -362,6 +363,22 @@ fn main() {
    let job_code = 8;
    let job = create_job(job_code);
    check_job(job);
+}
+```
+
+## Box
+
+* [Box<T>는 힙에 있는 데이터를 가리키고 알려진 크기를 갖습니다](https://rinthel.github.io/rust-lang-book-ko/ch15-01-box.html)
+
+----
+
+Box 는 특정 데이터를 heap 에 보관하고 싶을 때 쓴다. 크기가 큰 데이터가 stack 에 보관되는 경우
+ownership 이 옮겨질 때 데이터의 이동시간이 길 수 있다.
+
+```rs
+fn main() {
+    let b = Box::new(5);
+    println!("b = {}", b);
 }
 ```
 
