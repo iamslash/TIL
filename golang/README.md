@@ -90,6 +90,8 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 # Materials
 
+* [디스커버리 Go 언어](http://www.yes24.com/Product/Goods/24759320)
+  * [src](https://github.com/jaeyeom/gogo)
 * [GoForCPPProgrammers](https://github.com/golang/go/wiki/GoForCPPProgrammers)
 * [learn go in Y minutes](https://learnxinyminutes.com/docs/go/)
 * [go @ tutorialspoint](https://www.tutorialspoint.com/go/)

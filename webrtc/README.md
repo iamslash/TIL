@@ -24,6 +24,8 @@
   - [WebRTC 구현하기(1:N SFU)](https://millo-l.github.io/WebRTC-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0-1-N-SFU/)
     - [src](https://github.com/millo-L/Typescript-ReactJS-WebRTC-1-N-SFU)
   - [WebRTC 성능 비교(P2P vs SFU)](https://millo-l.github.io/WebRTC-%EC%84%B1%EB%8A%A5%EB%B9%84%EA%B5%90-P2P-vs-SFU/)
+- [WebRTC: The secret power you didn't know Go has | Sean DuBois | Conf42: Golang 2021 @ youtube](https://www.youtube.com/watch?v=4kdU9_a-gII)
+  - pion contributor 가 알려주는 WebRTC API from pion
 - [Getting started with WebRTC](https://webrtc.org/getting-started/overview)
   - 킹왕짱
   - [samples](https://webrtc.github.io/samples/)
