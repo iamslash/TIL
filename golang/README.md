@@ -11,7 +11,7 @@
   - [Map, Slice](#map-slice)
   - [Logging](#logging)
   - [Encoding, JSON](#encoding-json)
-- [Basic Usages](#basic-usages)
+- [Basic](#basic)
   - [Compile, Execution](#compile-execution)
   - [Hello World](#hello-world)
   - [Reserved Words](#reserved-words)
@@ -58,7 +58,7 @@
   - [Channels](#channels)
     - [Channel Axioms](#channel-axioms)
   - [Type Assertion](#type-assertion)
-- [Advanced Usages](#advanced-usages)
+- [Advanced](#advanced)
   - [Go memory ballast](#go-memory-ballast)
   - [go commands](#go-commands)
     - [go build](#go-build)
@@ -100,14 +100,10 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
   * [src](https://github.com/pyrasis/golangbook)
 * [1ambda golang](https://github.com/1ambda/golang)
   * 유용한 go links
-* [effective go](https://golang.org/doc/effective_go.html)
-  * [한글](https://gosudaweb.gitbooks.io/effective-go-in-korean/content/)
 * [Go Bootcamp](http://www.golangbootcamp.com/book/collection_types)
   * 예제위주의 책
 * [예제로 배우는 GO프로그래밍](http://golang.site/)
   * 최고의 한글 예제들
-* [go by example](https://gobyexample.com/)
-  * 최고의 예제들
 * [golang cheatsheet](https://github.com/a8m/go-lang-cheat-sheet)
   * 최고의 요약
 * [A Tour of Go video](https://research.swtch.com/gotour)
@@ -121,6 +117,14 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 # References
 
+* [A Tour of Go](https://go.dev/tour/welcome/1)
+* [How to Write Go Code](https://go.dev/doc/code)
+* [effective go](https://golang.org/doc/effective_go.html)
+  * [한글](https://gosudaweb.gitbooks.io/effective-go-in-korean/content/)
+* [upspin @ github](https://github.com/upspin/upspin)
+  * Rob Pike 의 repo 이다. 배울 것이 많다.
+* [go by example](https://gobyexample.com/)
+  * 최고의 예제들
 * [golang doc](https://golang.org/doc/)
 
 ## Tools
@@ -193,7 +197,7 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 - [JSON, interface, and go generate](https://www.youtube.com/watch?v=YgnD27GFcyA)
 
-# Basic Usages
+# Basic
 
 ## Compile, Execution
 
@@ -1926,7 +1930,7 @@ b, ok := i.(string)
 // b == "" (default value) and ok == false
 ```
 
-# Advanced Usages
+# Advanced
 
 ## Go memory ballast
 
