@@ -189,11 +189,9 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 
 `&` 는 Value 앞에 올 수 있다. `&V` 는 `address of V value` 를 의미한다.
 
+Pointers to structs 의 경우 explicit pionter 를 생략할 수 있다. 즉, `(*p).X` 대신 `p.X` 가 가능하다.
+
 ```go
-package main
-
-import "fmt"
-
 func main() {
 	i, j := 42, 2701
 
@@ -205,6 +203,20 @@ func main() {
 	p = &j         // point to j
 	*p = *p / 37   // divide j through the pointer
 	fmt.Println(j) // see the new value of j
+}
+
+type Vertex struct {
+	X int
+	Y int
+}
+
+func main() {
+	v := Vertex{1, 2}
+	p := &v
+	p.X = 1e9
+	fmt.Println(v)  // {1e+09 2}
+  (*p).X = 333
+  fmt.Println(v)  // {333 2}
 }
 ```
 
@@ -1479,6 +1491,8 @@ var x, str = returnMulti2()
 ```
 
 ### Functions As Values And Closures
+
+A closure is a function value that references variables from outside its body. [Function closures](https://go.dev/tour/moretypes/25) 참고.
 
 ```go
 func main() {

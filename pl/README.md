@@ -66,6 +66,12 @@
 
 ## Closure
 
+* [Function closures @ A Tour of Go](https://go.dev/tour/moretypes/25)
+
+----
+
+ A closure is a function value that references variables from outside its body.
+
 ## Lambda
 
 ## Exception
