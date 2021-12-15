@@ -182,6 +182,32 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 - [Dave Cheney: Go has both make and new functions, what gives?](https://dave.cheney.net/2014/08/17/go-has-both-make-and-new-functions-what-gives)
 - [Dave Cheney: Should methods be declared on T or *T](https://dave.cheney.net/2016/03/19/should-methods-be-declared-on-t-or-t)
 
+----
+
+`*` 은 Type 과 Value 앞에 올 수 있다. `*T` 는 `pointer of T type` 를 의미한다. `*V` 는
+`dereference of V value` 를 의미한다. `V` 는 pointer type value 이다.
+
+`&` 는 Value 앞에 올 수 있다. `&V` 는 `address of V value` 를 의미한다.
+
+```go
+package main
+
+import "fmt"
+
+func main() {
+	i, j := 42, 2701
+
+	p := &i         // point to i
+	fmt.Println(*p) // read i through the pointer
+	*p = 21         // set i through the pointer
+	fmt.Println(i)  // see the new value of i
+
+	p = &j         // point to j
+	*p = *p / 37   // divide j through the pointer
+	fmt.Println(j) // see the new value of j
+}
+```
+
 ## Map, Slice
 
 - [Go Blog: Map in Action](https://blog.golang.org/go-maps-in-action)
