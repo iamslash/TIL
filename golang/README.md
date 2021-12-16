@@ -86,7 +86,7 @@
 
 # Abstract
 
-golang에 대해 정리한다. IDE는 VScode가 좋다.
+오랜만에 go 를 다시 사용해야 한다면 [go wiki](https://github.com/golang/go/wiki) 를 다시 읽어보자.
 
 # Materials
 
@@ -121,6 +121,9 @@ golang에 대해 정리한다. IDE는 VScode가 좋다.
 * [How to Write Go Code](https://go.dev/doc/code)
 * [effective go](https://golang.org/doc/effective_go.html)
   * [한글](https://gosudaweb.gitbooks.io/effective-go-in-korean/content/)
+* [go wiki](https://github.com/golang/go/wiki)
+  * [CodeReviewComments](https://github.com/golang/go/wiki/CodeReviewComments)
+  * [TestComments](https://github.com/golang/go/wiki/TestComments)
 * [upspin @ github](https://github.com/upspin/upspin)
   * Rob Pike 의 repo 이다. 배울 것이 많다.
 * [go by example](https://gobyexample.com/)
@@ -513,6 +516,10 @@ func main() {
 ```
 
 ### select
+
+* [[이더리움에서 배우는 Go언어] select 의 거의 모든 패턴들](https://hamait.tistory.com/1017)
+
+----
 
 ```go
 // select {
