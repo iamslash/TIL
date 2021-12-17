@@ -120,6 +120,7 @@
 
 * [A Tour of Go](https://go.dev/tour/welcome/1)
 * [How to Write Go Code](https://go.dev/doc/code)
+* [The Go Programming Language Specification](https://go.dev/ref/spec)
 * [effective go](https://golang.org/doc/effective_go.html)
   * [한글](https://gosudaweb.gitbooks.io/effective-go-in-korean/content/)
 * [go wiki](https://github.com/golang/go/wiki)
