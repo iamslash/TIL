@@ -59,6 +59,7 @@
     - [Channel Axioms](#channel-axioms)
   - [Type Assertion](#type-assertion)
 - [Advanced](#advanced)
+  - [Go Examples](#go-examples)
   - [Go memory ballast](#go-memory-ballast)
   - [go commands](#go-commands)
     - [go build](#go-build)
@@ -1978,6 +1979,14 @@ b, ok := i.(string)
 ```
 
 # Advanced
+
+## Go Examples
+
+* [go example](goexample.md)
+
+-----
+
+go doc 의 example code 는 어떻게 만들어지는가???
 
 ## Go memory ballast
 
