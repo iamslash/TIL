@@ -13,16 +13,16 @@
   - [Logging](#logging)
   - [Encoding, JSON](#encoding-json)
 - [Basic](#basic)
-  - [Compile, Execution](#compile-execution)
+  - [Build and Run](#build-and-run)
   - [Hello World](#hello-world)
   - [Reserved Words](#reserved-words)
-  - [Useful Keywords](#useful-keywords)
   - [min, max values](#min-max-values)
   - [abs, fabs](#abs-fabs)
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
   - [Print Out](#print-out)
+  - [Declarations](#declarations)
   - [Data Types](#data-types)
   - [Control Flows](#control-flows)
     - [If](#if)
@@ -36,9 +36,16 @@
     - [Other](#other)
   - [Collections compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections by examples](#collections-by-examples)
+    - [array](#array)
+    - [slice](#slice)
+    - [map](#map)
+    - [Nested Maps](#nested-maps)
+    - [heap](#heap)
+    - [list](#list)
+    - [ring](#ring)
+    - [sort](#sort)
+    - [search](#search)
   - [Multidimensional Array](#multidimensional-array)
-  - [Declarations](#declarations)
-  - [Nested Maps](#nested-maps)
   - [Constants](#constants)
   - [Functions](#functions)
     - [Functions As Values And Closures](#functions-as-values-and-closures)
@@ -197,44 +204,6 @@
 - [Dave Cheney: Go has both make and new functions, what gives?](https://dave.cheney.net/2014/08/17/go-has-both-make-and-new-functions-what-gives)
 - [Dave Cheney: Should methods be declared on T or *T](https://dave.cheney.net/2016/03/19/should-methods-be-declared-on-t-or-t)
 
-----
-
-`*` 은 Type 과 Value 앞에 올 수 있다. `*T` 는 `pointer of T type` 를 의미한다. `*V` 는
-`dereference of V value` 를 의미한다. `V` 는 pointer type value 이다.
-
-`&` 는 Value 앞에 올 수 있다. `&V` 는 `address of V value` 를 의미한다.
-
-Pointers to structs 의 경우 explicit pionter 를 생략할 수 있다. 즉, `(*p).X` 대신 `p.X` 가 가능하다.
-
-```go
-func main() {
-	i, j := 42, 2701
-
-	p := &i         // point to i
-	fmt.Println(*p) // read i through the pointer
-	*p = 21         // set i through the pointer
-	fmt.Println(i)  // see the new value of i
-
-	p = &j         // point to j
-	*p = *p / 37   // divide j through the pointer
-	fmt.Println(j) // see the new value of j
-}
-
-type Vertex struct {
-	X int
-	Y int
-}
-
-func main() {
-	v := Vertex{1, 2}
-	p := &v
-	p.X = 1e9
-	fmt.Println(v)  // {1e+09 2}
-  (*p).X = 333
-  fmt.Println(v)  // {333 2}
-}
-```
-
 ## Map, Slice
 
 - [Go Blog: Map in Action](https://blog.golang.org/go-maps-in-action)
@@ -252,11 +221,13 @@ func main() {
 
 # Basic
 
-## Compile, Execution
+## Build and Run
 
 ```bash
 $ go build a.go
+$ go build ./cmd/basic/...
 $ go run a.go
+$ go run ./cmd/basic/...
 ```
 
 ## Hello World
@@ -281,10 +252,6 @@ chan     else        goto   package   switch
 const    fallthrough if     range     type
 continue for         import return    var
 ```
-
-## Useful Keywords
-
-WIP
 
 ## min, max values
 
@@ -421,8 +388,30 @@ fmt.Printf("%T\n", ' ')
 
 ## Random
 
-```go
+* [Crypto Rand](https://github.com/golang/go/wiki/CodeReviewComments#crypto-rand)
 
+-----
+
+Do not use package `math/rand` to generate keys, even throwaway ones. Instead, use `crypto/rand's Reader`, and if you need text, print to hexadecimal or base64
+
+```go
+import (
+	"crypto/rand"
+	// "encoding/base64"
+	// "encoding/hex"
+	"fmt"
+)
+
+func Key() string {
+	buf := make([]byte, 16)
+	_, err := rand.Read(buf)
+	if err != nil {
+		panic(err)  // out of randomness, should never happen
+	}
+	return fmt.Sprintf("%x", buf)
+	// or hex.EncodeToString(buf)
+	// or base64.StdEncoding.EncodeToString(buf)
+}
 ```
 
 ## Print Out
@@ -446,6 +435,19 @@ hellomsg := `
  "Hello" in Chinese is 你好 ('Ni Hao')
  "Hello" in Hindi is नमस्ते ('Namaste')
 ` // multi-line string literal, using back-tick at beginning and end
+```
+
+## Declarations
+
+타입은 변수이름 뒤에 위치한다.
+
+```go
+var foo int // declaration without initialization
+var foo int = 42 // declaration with initialization
+var foo, bar int = 42, 1302 // declare and init multiple vars at once
+var foo = 42 // type omitted, will be inferred
+foo := 42 // shorthand, only in func bodies, omit var keyword, type is always implicit
+const constant = "This is a constant"
 ```
 
 ## Data Types
@@ -700,7 +702,7 @@ for i, c := range "Hello, 世界" {
 
 ## Collections by examples
 
-* array
+### array
 
 ```go
 // In Go, an _array_ is a numbered sequence of elements of a
@@ -754,7 +756,7 @@ func main() {
 // 2d:  [[0 1 2] [1 2 3]]
 ```
 
-* slice
+### slice
 
 ```go
 // _Slices_ are a key data type in Go, giving a more
@@ -848,7 +850,7 @@ func main() {
 // 2d:  [[0] [1 2] [2 3 4]]
 ```
 
-* map
+### map
 
 ```go
 // _Maps_ are Go's built-in [associative data type](http://en.wikipedia.org/wiki/Associative_array)
@@ -926,7 +928,22 @@ func main() {
 // map: map[foo:1 bar:2]
 ```
 
-* heap
+### Nested Maps
+
+```go
+var data = map[string]map[string]string{}
+
+data["a"] = map[string]string{}
+data["b"] = make(map[string]string)
+data["c"] = make(map[string]string)
+
+data["a"]["w"] = "x"
+data["b"]["w"] = "x"
+data["c"]["w"] = "x"
+fmt.Println(data)
+```
+
+### heap
 
 ```go
 // Copyright 2012 The Go Authors. All rights reserved.
@@ -1028,7 +1045,7 @@ func Example_priorityQueue() {
 }
 ```
 
-* list
+### list
 
 ```go
 // Copyright 2013 The Go Authors. All rights reserved.
@@ -1063,7 +1080,7 @@ func Example() {
 }
 ```
 
-* ring
+### ring
 
 ```go
 // Copyright 2017 The Go Authors. All rights reserved.
@@ -1261,7 +1278,7 @@ func ExampleRing_Unlink() {
 }
 ```
 
-* sort
+### sort
 
   * [The 3 ways to sort in Go](https://yourbasic.org/golang/how-to-sort-in-go/)
   * [golang.org/src/sort/example_test.go](https://golang.org/src/sort/example_test.go)
@@ -1343,7 +1360,7 @@ for _, k := range keys {
 // Cecil 1
 ```
 
-* search
+### search
 
 ```go
 // binary search
@@ -1395,34 +1412,6 @@ for i := range C[0] {
 }
 fmt.Println(C)
 // [[1 1 1 1] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
-```
-
-## Declarations
-
-타입은 변수이름 뒤에 위치한다.
-
-```go
-var foo int // declaration without initialization
-var foo int = 42 // declaration with initialization
-var foo, bar int = 42, 1302 // declare and init multiple vars at once
-var foo = 42 // type omitted, will be inferred
-foo := 42 // shorthand, only in func bodies, omit var keyword, type is always implicit
-const constant = "This is a constant"
-```
-
-## Nested Maps
-
-```go
-var data = map[string]map[string]string{}
-
-data["a"] = map[string]string{}
-data["b"] = make(map[string]string)
-data["c"] = make(map[string]string)
-
-data["a"]["w"] = "x"
-data["b"]["w"] = "x"
-data["c"]["w"] = "x"
-fmt.Println(data)
 ```
 
 ## Constants
@@ -1506,7 +1495,6 @@ func returnMulti2() (n int, s string) {
     return
 }
 var x, str = returnMulti2()
-
 ```
 
 ### Functions As Values And Closures
@@ -1763,6 +1751,47 @@ type User struct {
 
 ## Pointers
 
+
+----
+
+`*` 은 Type 과 Value 앞에 올 수 있다. `T` 를 type, `V` 를 value 라고 하자. 
+
+`*T` 는 `pointer of T type` 를 의미한다. `*V` 는
+`dereference of V value` 를 의미한다. `V` 는 pointer type value 이다.
+
+`&` 는 Value 앞에 올 수 있다. `&V` 는 `address of V value` 를 의미한다.
+
+Pointers to structs 의 경우 explicit pionter 를 생략할 수 있다. 즉, `(*p).X` 대신 `p.X` 가 가능하다.
+
+```go
+func main() {
+	i, j := 42, 2701
+
+	p := &i         // point to i
+	fmt.Println(*p) // read i through the pointer
+	*p = 21         // set i through the pointer
+	fmt.Println(i)  // see the new value of i
+
+	p = &j         // point to j
+	*p = *p / 37   // divide j through the pointer
+	fmt.Println(j) // see the new value of j
+}
+
+type Vertex struct {
+	X int
+	Y int
+}
+
+func main() {
+	v := Vertex{1, 2}
+	p := &v
+	p.X = 1e9
+	fmt.Println(v)  // {1e+09 2}
+  (*p).X = 333
+  fmt.Println(v)  // {333 2}
+}
+```
+
 ```go
 p := Vertex{1, 2}  // p is a Vertex
 q := &p            // q is a pointer to a Vertex
@@ -2010,6 +2039,11 @@ func main() {
 
 ## go commands
 
+* [go tool](https://pkg.go.dev/cmd/go)
+  * the standard way to fetch, build, and install Go modules, packages, and commands.
+
+----
+
 ```
 go run
 go build
@@ -2154,7 +2188,6 @@ library.
 
 * [gazelle](/gazelle/README.md)
 
-
 ## present
 
 [present](https://godoc.org/golang.org/x/tools/present) is a tool for a slide. You can install like this.
@@ -2197,7 +2230,7 @@ This is a major present format.
 
 ## Debug
 
-VS Code를 사용한다면 debug mode로 launch하자.
+IntelliJ 는 `^D` 로 debugging 시작.
 
 ## Testify
 
@@ -2358,6 +2391,7 @@ echo "done..."
 # Snippets
 
 ## HTTP Server
+
 ```go
 package main
 
