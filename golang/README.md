@@ -119,18 +119,26 @@
 # References
 
 * [A Tour of Go](https://go.dev/tour/welcome/1)
-* [How to Write Go Code](https://go.dev/doc/code)
-* [The Go Programming Language Specification](https://go.dev/ref/spec)
+  * 따라하기를 통해 Go 의 대부분을 익힐 수 있다.
 * [effective go](https://golang.org/doc/effective_go.html)
   * [한글](https://gosudaweb.gitbooks.io/effective-go-in-korean/content/)
+* [How to Write Go Code](https://go.dev/doc/code)
+  * module, package 를 작성하는 방법을 설명한다.
 * [go wiki](https://github.com/golang/go/wiki)
   * [CodeReviewComments](https://github.com/golang/go/wiki/CodeReviewComments)
   * [TestComments](https://github.com/golang/go/wiki/TestComments)
+* [go blog](https://go.dev/blog/)
+  * [Testable Examples in Go](https://go.dev/blog/examples)
+* [go tool](https://pkg.go.dev/cmd/go)
+  * the standard way to fetch, build, and install Go modules, packages, and commands.
+* [The Go Programming Language Specification](https://go.dev/ref/spec)
+  * Go 언어의 spec 을 확인한다.
 * [upspin @ github](https://github.com/upspin/upspin)
   * Rob Pike 의 repo 이다. 배울 것이 많다.
 * [go by example](https://gobyexample.com/)
   * 최고의 예제들
 * [golang doc](https://golang.org/doc/)
+* [go src](https://go.dev/src/)
 
 ## Tools
 
