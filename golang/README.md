@@ -1,6 +1,7 @@
 ﻿- [Abstract](#abstract)
 - [Materials](#materials)
 - [References](#references)
+- [Articles](#articles)
   - [Tools](#tools)
   - [Best Practices](#best-practices)
   - [Concurrency](#concurrency)
@@ -59,7 +60,6 @@
     - [Channel Axioms](#channel-axioms)
   - [Type Assertion](#type-assertion)
 - [Advanced](#advanced)
-  - [Go Examples](#go-examples)
   - [Go memory ballast](#go-memory-ballast)
   - [go commands](#go-commands)
     - [go build](#go-build)
@@ -139,6 +139,8 @@
   * 최고의 예제들
 * [golang doc](https://golang.org/doc/)
 * [go src](https://go.dev/src/)
+
+# Articles
 
 ## Tools
 
@@ -1988,14 +1990,6 @@ b, ok := i.(string)
 ```
 
 # Advanced
-
-## Go Examples
-
-* [go example](goexample.md)
-
------
-
-go doc 의 example code 는 어떻게 만들어지는가???
 
 ## Go memory ballast
 
