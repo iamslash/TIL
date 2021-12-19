@@ -140,6 +140,8 @@
   * the standard way to fetch, build, and install Go modules, packages, and commands.
 * [The Go Programming Language Specification](https://go.dev/ref/spec)
   * Go 언어의 spec 을 확인한다.
+* [uber-go style guide](https://github.com/uber-go/guide)
+  * uber 의 go style guide 이다. 참고할만한 것이 많다.
 * [upspin @ github](https://github.com/upspin/upspin)
   * Rob Pike 의 repo 이다. 배울 것이 많다.
 * [go by example](https://gobyexample.com/)
