@@ -1931,6 +1931,11 @@ func main() {
 
 ## Channels
 
+* [How to Gracefully Close Channels](https://go101.org/article/channel-closing.html)
+  * 안전하게 보내는 방법도 있다.
+
+-----
+
 ```go
 ch := make(chan int) // create a channel of type int
 ch <- 42             // Send a value to the channel ch.
@@ -1963,6 +1968,18 @@ func doStuff(channelOut, channelIn chan int) {
     case <-time.After(time.Second * 1):
         fmt.Println("timeout")
     }
+}
+
+//
+func SafeSend(ch chan T, value T) (closed bool) {
+	defer func() {
+		if recover() != nil {
+			closed = true
+		}
+	}()
+
+	ch <- value  // panic if ch is closed
+	return false // <=> closed = false; return
 }
 ```
 
