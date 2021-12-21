@@ -11,6 +11,7 @@
   - [Pointer](#pointer)
   - [Map, Slice](#map-slice)
   - [Logging](#logging)
+  - [Docker image](#docker-image)
   - [Encoding, JSON](#encoding-json)
 - [Basic](#basic)
   - [Build and Run](#build-and-run)
@@ -148,6 +149,9 @@
   * 최고의 예제들
 * [golang doc](https://golang.org/doc/)
 * [go src](https://go.dev/src/)
+* [Scheduling In Go : Part I - OS Scheduler](https://www.ardanlabs.com/blog/2018/08/scheduling-in-go-part1.html)
+  * [Scheduling In Go : Part II - Go Scheduler](https://www.ardanlabs.com/blog/2018/08/scheduling-in-go-part2.html)
+  * [Scheduling In Go : Part III - Concurrency](https://www.ardanlabs.com/blog/2018/12/scheduling-in-go-part3.html)
 
 # Articles
 
@@ -216,6 +220,10 @@
 - [The Hunt for a Logger Interface](http://go-talks.appspot.com/github.com/ChrisHines/talks/structured-logging/structured-logging.slide#1)
 - [Logging v. instrumentation](https://peter.bourgon.org/blog/2016/02/07/logging-v-instrumentation.html)
 - [Dave Cheney: Let’s talk about logging](https://dave.cheney.net/2015/11/05/lets-talk-about-logging)
+
+## Docker image
+
+- [Reducing Docker Image Size with UPX in Golang Projects](https://suaybsimsek58.medium.com/reducing-spring-native-and-golang-docker-image-size-by-70-with-upx-daf84e4f9227)
 
 ## Encoding, JSON
 
@@ -1992,6 +2000,7 @@ func SafeSend(ch chan T, value T) (closed bool) {
   c <- "Hello, World!"
   // fatal error: all goroutines are asleep - deadlock!
   ```
+
 - A receive from a nil channel blocks forever
 
   ```go
@@ -1999,6 +2008,7 @@ func SafeSend(ch chan T, value T) (closed bool) {
   fmt.Println(<-c)
   // fatal error: all goroutines are asleep - deadlock!
   ```
+
 - A send to a closed channel panics
 
   ```go
@@ -2008,6 +2018,7 @@ func SafeSend(ch chan T, value T) (closed bool) {
   c <- "Hello, Panic!"
   // panic: send on closed channel
   ```
+  
 - A receive from a closed channel returns the zero value immediately
 
   ```go
