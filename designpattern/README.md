@@ -326,6 +326,9 @@ public class A {
     for transactional data, and maintain full audit trails and history
     that can enable compensating actions.
   - [eventsourcing & cqrs demo project for springcamp 2017](https://github.com/jaceshim/springcamp2017)
+  - [이벤트 소싱 원리와 구현 @ youtube](https://www.youtube.com/watch?v=Yd7TXUdcaUQ)
+  - [스프링캠프 2017 [Day2 A2] : 이벤트 소싱 소개 (이론부) @ youtube](https://www.youtube.com/watch?v=TDhknOIYvw4)
+    - [스프링캠프 2017 [Day2 A3] : Implementing EventSourcing & CQRS (구현부) @ youtube](https://www.youtube.com/watch?v=12EGxMB8SR8)
 
 - Hexagonal Architecture
 
