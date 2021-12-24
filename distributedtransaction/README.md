@@ -19,6 +19,7 @@ And there are 2 types of **SAGAS** including **Choreography based SAGA**, **Orch
 
 # Materials
 
+* [SAGAS](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf)
 * [Eventuate Tram Sagas](https://eventuate.io/docs/manual/eventuate-tram/latest/getting-started-eventuate-tram-sagas.html)
   * [Managing data consistency in a microservice architecture using Sagas](https://eventuate.io/presentations.html)
   * [Choreography-based sagas example @ github](https://github.com/eventuate-tram/eventuate-tram-examples-customers-and-orders)

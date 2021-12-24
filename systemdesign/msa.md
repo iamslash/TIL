@@ -99,7 +99,7 @@ microservices 의 대표적인 implementation 중 Spring Cloud 와 Kubernetes �
 * **API Composition**
   * 하나의 request 를 다수의 reqeust 로 나누고 결과를 합하여 response 로 돌려주는 pattern 을 말한다.
 * **CQRS**
-  * 읽기 전용 뷰를 사용하는 pattern 을 말한다.
+  * 쓰기와 읽기를 분리해서 구현하는 pattern 을 말한다.
 * **Domain event**
   * 여러개의 domain service 들 event 를 주고받도록 구현한 pattern 을 말한다.
   * Domain event 는 [DDD](/domaindrivendesign/README.md) 에서 Business Logic 을 위해 발생한 어떤 것을 말한다.
