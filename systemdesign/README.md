@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [References](#references)
 - [Materials](#materials)
+- [Articles](#articles)
 - [Design Tools](#design-tools)
 - [Prerequisites](#prerequisites)
 - [Principles](#principles)
@@ -127,6 +128,10 @@
   - [infographic](https://techcommunity.microsoft.com/t5/educator-developer-blog/getting-started-with-azure-design-patterns-and-azure-arm-quick/ba-p/378609?lightbox-message-images-378609=94372i2134F7E89D8BF452)
 - [AWS Architect](https://aws.amazon.com/ko/architecture/)
 - [GCP Solutions](https://cloud.google.com/solutions/)
+
+# Articles
+
+* [Spotify System Architecture](https://medium.com/interviewnoodle/spotify-system-architecture-6bb418db6084)
 
 # Design Tools
 
