@@ -13,6 +13,7 @@
   - [Logging](#logging)
   - [Docker image](#docker-image)
   - [Encoding, JSON](#encoding-json)
+  - [Profile](#profile)
 - [Basic](#basic)
   - [Build and Run](#build-and-run)
   - [Hello World](#hello-world)
@@ -83,7 +84,7 @@
   - [Testify](#testify)
   - [Gomock](#gomock)
   - [Benchmarks](#benchmarks)
-  - [Profile](#profile)
+  - [Profile](#profile-1)
   - [Vfsgen](#vfsgen)
   - [IntelliJ IDEA](#intellij-idea)
   - [Managing Multiple go versions](#managing-multiple-go-versions)
@@ -228,6 +229,11 @@
 ## Encoding, JSON
 
 - [JSON, interface, and go generate](https://www.youtube.com/watch?v=YgnD27GFcyA)
+
+## Profile
+
+* [High Performance Go Workshop](https://dave.cheney.net/high-performance-go-workshop/dotgo-paris.html)
+  * [번역](https://ziwon.github.io/post/high-performance-go-workshop/)
 
 # Basic
 
