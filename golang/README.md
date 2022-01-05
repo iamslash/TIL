@@ -233,6 +233,7 @@
 ## Profile
 
 * [High Performance Go Workshop](https://dave.cheney.net/high-performance-go-workshop/dotgo-paris.html)
+  * [video](https://www.youtube.com/watch?v=nok0aYiGiYA)
   * [src](https://github.com/davecheney/high-performance-go-workshop)
   * [번역](https://ziwon.github.io/post/high-performance-go-workshop/)
 
@@ -2285,7 +2286,7 @@ go test-bench
 
 ## Profile
 
-go-torch
+[go profile](goprofile.md)
 
 ## Vfsgen
 
