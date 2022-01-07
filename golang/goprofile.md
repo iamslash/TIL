@@ -25,6 +25,10 @@ pprof 사용법을 정리한다.
 다음과 같이 go code 를 추가한다.
 
 ```go
+import (
+	"github.com/pkg/profile"
+)
+
 defer profile.Start(profile.CPUProfile).Stop()
 ```
 
