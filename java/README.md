@@ -299,6 +299,14 @@ s.replaceAll("\\*", "");
 // Join string
 String[] words = new String[]{"Hello", "World"};
 String s = String.join(" ", words);
+
+// Remove not words and split as lower case letters
+// \W : not word. same as [^_[:alnum:]]
+// \s : not whitespace. sam as [[:space:]]
+s = "Foo. Bar, BAz";
+String[] words = s.replaceAll("\\W+", " ")
+                  .toLowerCase()
+                  .split("\\s+");
 ```
 
 ## Random
@@ -741,6 +749,12 @@ Collections.sort(A, Collections.reverseOrder());
 Collections.sort(A, (a, b) -> String.compareTo(a, b));
 Collections.reverse(A);
 String s = Collections.min(A);
+
+Map<String, Integer> wordMap = new HashMap<>();
+wordMap("foo", 1);
+wordMap("bar", 2);
+wordMap("baz", 3);
+int maxWord = Collections.max(wordMap.entrySet(), Map.Entry.comparingByValue()).getKey();
 ```
 
 ## Collection Conversions

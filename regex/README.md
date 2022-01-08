@@ -39,7 +39,7 @@
 | `\s`                | whitespace                                    | same as `[[:space:]]`                                                                                                                     |
 | `\S`                | not whitespace                                | same as `[^[:space:]]`                                                                                                                    |
 | `\w`                | word. an alphanumeric or underscore character | same as `[_[:alnum:]]`                                                                                                                    |
-| `\W`                | not word. same as `[^_[:alnum:]]`             |                                                                                                                                           |
+| `\W`                | not word.            | same as `[^_[:alnum:]]`   |
 | `\`<i>character</i> | escaped character                             | Needed for ` ^ $ \ . * + ? ( ) [ ] { } |`                                                                                                 |
 | `[class]`           | character class                               | `[abc]+` matches '<u>a</u> <u>bb</u> <u>ccc</u>'                                                                                          |
 | `[^class]`          | negated character class                       | `[^abc]+` matches '<u>Anything </u>b<u>ut </u>abc<u>.</u>'                                                                                |
