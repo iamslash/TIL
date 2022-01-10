@@ -307,6 +307,10 @@ s = "Foo. Bar, BAz";
 String[] words = s.replaceAll("\\W+", " ")
                   .toLowerCase()
                   .split("\\s+");
+
+// Convert char[] to String
+char[] chars = words.split("\\s+");
+String s = String.valueOf(chars);                   
 ```
 
 ## Random
