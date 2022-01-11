@@ -26,4 +26,10 @@ Architecture 들에 대해 정리한다.
 
 * [Emerging Architectures for Modern Data Infrastructure](https://future.a16z.com/emerging-architectures-modern-data-infrastructure/)
 * [최신 데이터 인프라 이해하기 @ youtube](https://www.youtube.com/watch?v=g_c742vW8dQ&list=PLL-_zEJctPoJ92HmbGxFv1Pv_ugsggGD2)
+
+----
+
+Data 를 기반으로 의사결정을 하기 위해 Data Infrastructure 가 필요하다 (Data-Driven Decision Making). 아래 그림의 용어들을 모두 이해해 보자.
+
+![](img/unified_data_infrastructure_architecture.png)
   
