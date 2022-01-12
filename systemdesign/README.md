@@ -419,10 +419,24 @@ nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은
 
 * [서비스 메쉬란 무엇일까요?](https://www.redhat.com/ko/topics/microservices/what-is-a-service-mesh)
 * [Service Mesh Comparison](https://servicemesh.es/)
+* [[아코디언v2 시리즈 웨비나] Series 5. MSA와 Service mesh @ youtube](https://www.youtube.com/watch?v=mvEvPXaey50)
   
 ----
 
-A service mesh is a dedicated infrastructure layer for handling service-to-service communication.
+A service mesh is a dedicated infrastructure layer for handling service-to-service communication. [Istio](/istio/README.md) 는 대표적인 Service Mesh Solution 이다.
+
+service mesh 의 주요기능은 다음과 같다. 
+
+* Service Discovery
+* Load Balancing
+* Dynamic Request Routing
+* Circuit Breaking
+* Retry and Timeout
+* TLS
+* Distributed Tracing
+* Metrics Collecting
+
+API Gate Way 와 Service Mesh 의 차이는 무엇일까? 
 
 ### Service discovery
 

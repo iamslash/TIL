@@ -6,6 +6,8 @@ NAT 장비를 사이에 두고 peer 끼리 통신하는 방법중 하나이다.
 
 * [RFC 5128, State of Peer-to-Peer (P2P) Communication across Network Address Translators (NATs)](https://tools.ietf.org/html/rfc5128)
 * [http://www.sysnet.pe.kr/2/0/1226](홀펀칭실습)
+* [[UDP] 홀 펀칭 (Hole Punching)](https://elky.tistory.com/259?category=621735)
+  * [[UDP] Reliable UDP](https://elky.tistory.com/258?category=621735)
 
 # UDP Hole Punching
 
