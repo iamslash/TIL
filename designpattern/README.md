@@ -10,6 +10,33 @@
   - [Composition](#composition)
   - [Aggregation vs Composition](#aggregation-vs-composition)
 - [GOF Pattern](#gof-pattern)
+  - [Creational Pattern](#creational-pattern)
+    - [Abstract Factory](#abstract-factory)
+    - [Builder](#builder)
+    - [Factory Method](#factory-method)
+    - [Prototype](#prototype)
+    - [Singleton](#singleton)
+  - [Structural Pattern](#structural-pattern)
+    - [Adapter](#adapter)
+    - [Bridge](#bridge)
+    - [Composite](#composite)
+    - [Decorator](#decorator)
+    - [Facade](#facade)
+    - [Flyweight](#flyweight)
+    - [Proxy](#proxy)
+  - [Behaviorial Pattern](#behaviorial-pattern)
+    - [Chain of Resp.](#chain-of-resp)
+    - [Command](#command)
+    - [Interpreter](#interpreter)
+    - [Iterator](#iterator)
+    - [Mediator](#mediator)
+    - [Memento](#memento)
+    - [Observer](#observer)
+    - [State](#state)
+    - [Strategy](#strategy)
+    - [Template](#template)
+    - [Visitor](#visitor)
+- [WIP...](#wip)
 - [Game Programming Pattern](#game-programming-pattern)
 - [Design patterns implemented in Java](#design-patterns-implemented-in-java)
   - [Architectural](#architectural)
@@ -133,53 +160,40 @@ public class A {
 자동차와 클래스와 카뷰레터 클래스가 있다고 하자. 카뷰레터는 자동차의 부품이다. 자동차가 파괴되면 카뷰레터 역시 파괴된다. 자동차 클래스와 카뷰레터 클래스는 Composition 관계이다.
 
 # [GOF Pattern](http://www.dofactory.com/net/design-patterns)
-  
-- Creational Pattern
-  - [Abstract Factory](https://www.dofactory.com/net/abstract-factory-design-pattern)
-    - AbstractFactory, ConcreteFactory1, ConcreteFactory2, AbstractProductA, ConcreteProductA1, ConcreteProductA2, AbstractProductB, ConcreteProductB1, ConcreteProductB2
-    - 다양한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다. 예를 들어 LG부품 인터페이스를 상속받는 LG키보드, LG마우스 클래스의 생성방법과 MS부품 인터페이스를 상속받는 MS키보드, MS마우스 클래스의 생성방법을 추상화한다. 
-    - Factory Method 는 한가지 분류를 생성하지만 Abstract Factory 는 두가지 이상의 분류를 생성한다. 따라서 Factory Method 가 두개이상이다.
 
-  - [Builder](builder.md)
-    - Director, Builder, ConcreteBuilder, Product
-    - 생성 절차를 다양하게 하여 타겟 오브젝트 인스턴스를 생성한다.
-    - Director 는 생성절차를 다양하게 호출할 수 있다. 생성절차를 Builder 안으로 포함한다면 Factory Method 와 다를게 없다.
-  - [Factory Method](https://www.dofactory.com/net/factory-method-design-pattern)
-    - ConcreteProduct, Creator, ConcreateCreator
-    - 동일한 분류의 오브젝트 생성방법을 추상화하여 타겟 인스턴스를 생성한다. 예를 들어 부품 인터페이스를 상속받는 키보드, 마우스 클래스의 생성방법을 추상화한다.
-  - [Prototype](https://www.dofactory.com/net/prototype-design-pattern)
-    - Prototype, ConcretePrototype
-    - 복제를 통해 타겟 오브젝트 인스턴스를 생성한다.
-  - [Singleton](https://www.dofactory.com/net/singleton-design-pattern)
-    - Singleton
-    - 하나의 타겟 오브젝트 인스턴스만 생성한다.
+## Creational Pattern
 
-- Structural Pattern
-  - [Adapter](https://www.dofactory.com/net/adapter-design-pattern)
-    - Target, Adapter, Adaptee
-    - 서로 다른 클래스의 인터페이스를 어울릴 수 있도록 맞춘다. 
-  - [Bridge](https://www.dofactory.com/net/bridge-design-pattern)
-    - Abstract, RefinedAbstract, Implementor, ConcreteImplementor
-    - 구현과 추상을 분리한다.
-  - [Composite](https://www.dofactory.com/net/composite-design-pattern)
-    - Component, Leaf, Composite
-    - 트리형태의 자료구조를 표현한다.
-  - [Decorator](https://www.dofactory.com/net/decorator-design-pattern)
-    - [decorator @ TIL](decorator.md)
-    - Component, ConcreteComponent, Decorator, ConcreteDecorator,
-    - Attach additional responsibilities to an object dynamically. Decorators provide a flexible alternative to subclassing for extending functionality.
-    - subclassing 하지 않고 새로운 기능을 추가한다. 
-    - 새로운 기능을 추가하기 위해 subclassing 을 사용한다면 모든 ConcreteComponent 를 수정해야 한다. 그러나 decorator pattern 을 사용한다면 새로운 기능을 담고 있는 concreteDecorator 하나만 추가하면 된다.
-  - [Facade](https://www.dofactory.com/net/facade-design-pattern)
-    - Facade
-    - 복잡한 기능을 단순한 인터페이스로 추상화한다.
-  - [Flyweight](https://www.dofactory.com/net/flyweight-design-pattern)
-    - FlyweightFactory, Flyweight, UnsharedConcreteFlyweight, concreteFlyweight
-    - 인스턴스 공유를 추상화한다.
-  - [Proxy](https://www.dofactory.com/net/proxy-design-pattern)
-    - Subject, RealSubject, Proxy
-    - 노출되지 않은 형제 클래스에 접근할 수 있도록 한다.
-    - 형제 클래스에 접근한다는 점이 Adapter 와 다르다.
+### [Abstract Factory](abstractfactory/abstractfactory.md)
+### [Builder](builder/builder.md)
+### [Factory Method](factorymethod/factorymethod.md)
+### [Prototype](prototype/prototype.md)
+### [Singleton](singleton/singleton.md)
+
+## Structural Pattern
+
+### [Adapter](adapter/adapter.md)
+### [Bridge](bridge/bridge.md)
+### [Composite](composite/composite.md)
+### [Decorator](decorator/decorator.md)
+### [Facade](facade/facade.md)
+### [Flyweight](flyweight/flyweight.md)
+### [Proxy](proxy/proxy.md)
+
+## Behaviorial Pattern
+
+### [Chain of Resp.](chainofresp/chainofresp.md)
+### [Command](command/command.md)
+### [Interpreter](interpreter/interpreter.md)
+### [Iterator](iterator/iterator.md)
+### [Mediator](mediator/mediator.md)
+### [Memento](memento/memento.md)
+### [Observer](observer/observer.md)
+### [State](state/state.md)
+### [Strategy](strategy/strategy.md)
+### [Template](template/template.md)
+### [Visitor](visitor/visitor.md)
+
+# WIP...
 
 - Behaviorial Pattern
   - [Chain of Resp.](https://www.dofactory.com/net/chain-of-responsibility-design-pattern)
