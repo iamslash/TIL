@@ -47,6 +47,8 @@ bitcoin에 대해 정리한다.
 
 # Materials
 
+* [crypto reading list](https://github.com/JumpCrypto/crypto-reading-list)
+  * A curated list for getting up to speed on crypto and decentralized networks.
 * [awsome blockchain @ github](https://github.com/yunho0130/awesome-blockchain-kor/tree/master/whitepapers)
   * 모두를 위한 블록체인
 * [Ever wonder how Bitcoin (and other cryptocurrencies) actually work?](https://www.youtube.com/watch?v=bBC-nXj3Ng4)
