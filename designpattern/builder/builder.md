@@ -1,8 +1,21 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Concept Class Diagram](#concept-class-diagram)
+- [Real World Examples](#real-world-examples)
+  - [Go](#go)
+  - [Java](#java)
+    - [Java Buildable interface](#java-buildable-interface)
+    - [Java Lombok](#java-lombok)
+  - [Kotlin](#kotlin)
+    - [Kotlin Builder class](#kotlin-builder-class)
+    - [Kotlin @JvmOverloads](#kotlin-jvmoverloads)
+
+---
+
 # Abstract
 
-- Director, Builder, ConcreteBuilder, Product
-- 생성 절차를 다양하게 하여 타겟 오브젝트 인스턴스를 생성한다.
-- Director 는 생성절차를 다양하게 호출할 수 있다. 생성절차를 Builder 안으로 포함한다면 Factory Method 와 다를게 없다.
+* 생성 절차를 다양하게 하여 타겟 오브젝트 인스턴스를 생성한다.
+* Director 는 생성절차를 다양하게 호출할 수 있다. 생성절차를 Builder 안으로 포함한다면 Factory Method 와 다를게 없다.
 
 constructor 만으로 object 를 생성하는 것은 다음과 같은 이유 때문에 불편하다. 그러나 Builder pattern 을 사용하면 이러한 불편함을 해결할 수 있다. 
 
@@ -13,6 +26,7 @@ constructor 만으로 object 를 생성하는 것은 다음과 같은 이유 때
 
 * [Builder @ dofactory](https://www.dofactory.com/net/builder-design-pattern)
 * [[Design Pattern] Builder Pattern](https://beomseok95.tistory.com/240)
+* [Builder @ refactoringguru](https://refactoring.guru/design-patterns/builder)
 
 # Concept Class Diagram
 
@@ -20,7 +34,13 @@ constructor 만으로 object 를 생성하는 것은 다음과 같은 이유 때
 
 # Real World Examples
 
-## Java Buildable interface
+## Go
+
+* [Builder by go](/golang/designpattern/builder.md)
+
+## Java
+
+### Java Buildable interface
 
 ```java
 public interface Buildable {
@@ -105,7 +125,7 @@ Person person = new Person.Builder("AABBCCDD", "123456")
                           .build();
 ```
 
-## Java Lombok
+### Java Lombok
 
 ```java
 @Builder
@@ -126,7 +146,9 @@ Person person = new Person.builder("AABBCCDD", "123456")
                           .build();
 ```
 
-## Kotlin Builder class
+## Kotlin
+
+### Kotlin Builder class
 
 ```kotlin
 data class Person private constructor(val builder: Builder) {
@@ -179,7 +201,7 @@ fun main() {
 }
 ```
 
-## Kotlin @JvmOverloads
+### Kotlin @JvmOverloads
 
 * [@JvmOverloads](/kotiln/README.md#jvmoverloads)
 
