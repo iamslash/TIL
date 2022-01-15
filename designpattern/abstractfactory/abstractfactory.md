@@ -9,6 +9,8 @@ Abstract Factory 는 Factory 를 생성하고 그 Factory 는 다시 Product 를
 
 # Concept Class Diagram
 
+> [src](abstractfactory.puml)
+
 ![](abstractfactory.png)
 
 # Real World Examples

@@ -1,0 +1,28 @@
+@startuml
+together {
+  abstract class Product
+  class ConcreteProduct
+  abstract class Creator
+  class ConcreteCreator
+}
+
+ConcreteCreator .left.> ConcreteProduct
+Product <|-- ConcreteProduct
+Creator <|-- ConcreteCreator
+
+abstract class Creator {
+  +FactoryMethod()
+  +AnyOperation()
+}
+class ConcreteCreator {
+  +FactoryMethod()
+}
+
+note left of Creator::"FactoryMethod"
+  product = FactoryMethod()
+end note
+note left of ConcreteCreator::"FactoryMethod"
+  return new ConcreteProduct()
+end note
+
+@enduml

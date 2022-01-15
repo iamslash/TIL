@@ -9,4 +9,10 @@
 
 # Concep Class Diagram
 
+> [src](factorymethod.puml)
+
+![](factorymethod.png)
+
 # Examples
+
+* [Factory Method by go](/golang/designpattern/factorymethod.md)
