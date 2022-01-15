@@ -311,6 +311,13 @@ String[] words = s.replaceAll("\\W+", " ")
 // Convert char[] to String
 char[] chars = words.split("\\s+");
 String s = String.valueOf(chars);                   
+
+// convert char[], int[] to String
+char[] chars = new char[]{'H','E','L','L','O'};
+int[] cells = new int[]{0,0,1,1};
+System.out.println(String.valueOf(cells));  // [I@59f95c5d
+System.out.println(Arrays.toString(cells)); // [0, 0, 1, 1]
+System.out.println(String.valueOf(chars));  // HELLO
 ```
 
 ## Random
