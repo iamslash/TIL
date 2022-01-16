@@ -1,0 +1,15 @@
+@startuml
+
+class Facade {
+}
+package Subsystem {
+    class Foo
+    class Bar
+    class Baz
+}
+
+Facade --> Foo
+Facade --> Bar
+Facade --> Baz
+
+@enduml

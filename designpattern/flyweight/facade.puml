@@ -1,0 +1,38 @@
+@startuml
+class FlyweightFactory
+class Client
+abstract class Flyweight
+class UnsharedConcreteFlyweight
+class ConcreteFlyweight
+
+Client --> FlyweightFactory
+FlyweightFactory o--> Flyweight
+Flyweight <|-- UnsharedConcreteFlyweight
+Flyweight <|-- ConcreteFlyweight
+Client --> UnsharedConcreteFlyweight
+Client --> ConcreteFlyweight
+
+class FlyweightFactory {
+    +GetFlyweight(key)
+}
+abstract class Flyweight {
+  +Operation(extrinsicState)
+}
+class UnsharedConcreteFlyweight {
+    -intrinsicState
+    +Operation(extrinsicState)
+}
+class ConcreteFlyweight {
+    -allState
+    +Operation(extrinsicState)
+}
+
+note left of FlyweightFactory::"GetFlyweight"
+    if flyweights[key] exists
+        return existing flyweight
+    else
+        create new flyweight
+        add to pool of flyweights
+        return new flyweight
+end note
+@enduml

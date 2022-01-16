@@ -1,1 +1,23 @@
-c
+@startuml
+class Director
+together {
+  abstract class Builder
+  class ConcreteBuilder
+  class Product
+}
+
+Director -right-> Builder
+Builder <|-- ConcreteBuilder
+ConcreteBuilder .right.> Product
+
+class Director {
+  +Construct()
+}
+abstract class Builder {
+  +BuildPart()
+}
+class ConcreteBuilder {
+  +BuildPart()
+  +GetResult()
+}
+@enduml

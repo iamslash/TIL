@@ -1,0 +1,33 @@
+@startuml
+
+class Client
+abstract class Component
+class Leaf
+class Composite
+
+Client -right-> Component
+Component <|-- Leaf
+Component <|-- Composite
+Composite "1" o--> Component
+
+abstract class Component {
+  +Operation()
+  +Add(Component c)
+  +REmove(Componentc)
+  +GetChild(int idx)
+}
+class Leaf {
+  +Operation()
+}
+class Composite {
+  +Operation()
+  +Add(Component c)
+  +REmove(Componentc)
+  +GetChild(int idx)
+}
+
+note left of Composite::"Operation"
+  foreach child in children
+    child.Operation()
+end note
+@enduml
