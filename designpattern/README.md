@@ -190,7 +190,7 @@ public class A {
 
 ## Association
 
-A 클래스가 B 클래스를 소유할 때 둘의 관계는 Association 이다. (has-a)
+A 클래스가 B 클래스를 소유할 때 둘의 관계는 Association 이다. (**has-a**)
 
 ```cs
 public class A {
@@ -200,7 +200,7 @@ public class A {
 
 ## Aggregation
 
-A 클래스가 B 클래스를 소유하고 B 클래스는 A 클래스를 구성하는 부분일 때 둘의 관계는 Aggregation 이다. (has-a, whole-part)
+A 클래스가 B 클래스를 소유하고 B 클래스는 A 클래스를 구성하는 부분일 때 둘의 관계는 Aggregation 이다. (**has-a, whole-part**)
 
 ```cs
 public class A {
@@ -210,7 +210,7 @@ public class A {
 
 ## Composition
 
-A 클래스가 B 클래스를 소유하고 B 클래스는 A 클래스를 구성하는 부분이며 A 클래스가 파괴되면 B 클래스 역시 파괴될 때 둘의 관계는 Aggregation 이다. (has-a, whole-part, ownership)
+A 클래스가 B 클래스를 소유하고 B 클래스는 A 클래스를 구성하는 부분이며 A 클래스가 파괴되면 B 클래스 역시 파괴될 때 둘의 관계는 Aggregation 이다. (**has-a, whole-part, ownership**)
 
 ```cs
 public class A {
