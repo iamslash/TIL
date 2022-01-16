@@ -1,10 +1,18 @@
 # Abstract
 
-  - [Command](https://www.dofactory.com/net/command-design-pattern)
-    - Command, ConcreteCommand
-    - Encapsulate a command request as an object
-    - 명령을 추상화 한다.
+명령을 추상화 한다.
+
+# Materials
+
+* [Command](https://www.dofactory.com/net/command-design-pattern)
 
 # Concept Class Diagram
 
-# Real World Examples
+> [src](command.puml)
+
+![](command.png)
+
+# Examples
+
+* [Command by go](/golang/designpattern/command.md)
+
