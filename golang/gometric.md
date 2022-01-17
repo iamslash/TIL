@@ -8,6 +8,7 @@ Metric 에 관련된 내용들을 정리한다.
 
 * [INSTRUMENTING A GO APPLICATION FOR PROMETHEUS @ prometheus](https://prometheus.io/docs/guides/go-application/)
 * [Prometheus instrumentation library for Go applications @ github](https://github.com/prometheus/client_golang)
+* [Prometheus Go언어 Metric label @ tistory](https://stdhsw.tistory.com/entry/Metric-label)
 
 ----
 
