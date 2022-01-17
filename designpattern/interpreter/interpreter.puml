@@ -1,0 +1,23 @@
+@startuml
+class Context
+class Client
+abstract class AbstractExpr
+class TerminalExpr
+class NonTerminalExpr
+
+Client -left-> Context
+Client -right-> AbstractExpr
+AbstractExpr <|-- TerminalExpr
+AbstractExpr <|-- NonTerminalExpr
+AbstractExpr <--o NonTerminalExpr
+
+abstract class AbstractExpr {
+  +Interpret(Context ctx)
+}
+class TerminalExpr {
+  +Interpret(Context ctx)
+}
+class NonTerminalExpr {
+  +Interpret(Context ctx)
+}
+@enduml
