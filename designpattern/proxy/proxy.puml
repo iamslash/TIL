@@ -1,0 +1,27 @@
+@startuml
+abstract class Subject
+class RealSubject
+class Proxy
+class Client
+
+Client -right-> Subject
+Subject <|-- RealSubject
+Subject <|-- Proxy
+RealSubject <-- Proxy
+
+class Client {
+}
+abstract class Subject {
+  +Request()
+}
+class RealSubject {
+  +Request()
+}
+class Proxy {
+  +Request()
+}
+
+note right of Proxy::"Request"
+  realSubject.Request()
+end note
+@enduml
