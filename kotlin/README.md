@@ -77,6 +77,7 @@
   - [coroutine](#coroutine)
   - [Null safety](#null-safety-1)
   - [@JvmOverloads](#jvmoverloads)
+  - [`@JvmStatic` vs Companion](#jvmstatic-vs-companion)
 
 ----
 
@@ -1983,3 +1984,49 @@ N 개의 인자를 받는 method 가 있다고 하자. 그 중 M 개가 default 
 
 data class Event @JvmOverloads constructor (var name: String? = "", var date: Date? = Date(), var isPrivate: Boolean = false)
 ```
+
+## `@JvmStatic` vs Companion
+
+* [Why use @JvmStatic rather than Companion](https://swatiomar09.medium.com/why-use-jvmstatic-rather-than-companion-919eb3407408)
+
+----
+
+```kotlin
+class DemoClass {
+    companion object {
+        @JvmStatic
+        fun callStatic() {
+        }
+
+        fun callNonStatic() {}
+    }
+}
+```
+
+`DemoClass` 를 Decompile 해보자.
+
+```java
+public final class DemoClass {
+   @NotNull
+   public static final DemoClass.Companion Companion = new DemoClass.Companion((DefaultConstructorMarker)null);
+
+    @JvmStatic
+   public static final void callStatic() {
+      Companion.callStatic();
+   }
+   
+   public static final class Companion {
+      @JvmStatic
+      public final void callStatic() {
+      }
+
+      public final void callNonStatic() {
+      }
+
+      private Companion() {
+      }
+   }
+}
+```
+
+Java 에서 Kotlin class 의 static method 를 호출한다고 하자. Kotlin class 의 method 에 `@JvmStatic` 을 사용하자. Companion class 가 만들어지지 않아서 효율적이다.
