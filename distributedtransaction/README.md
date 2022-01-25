@@ -19,6 +19,8 @@ And there are 2 types of **SAGAS** including **Choreography based SAGA**, **Orch
 
 # Materials
 
+* [Distributed Transactions in Microservices with Kafka Streams and Spring Boot](https://piotrminkowski.com/2022/01/24/distributed-transactions-in-microservices-with-kafka-streams-and-spring-boot/)
+  * [src](https://github.com/piomin/sample-spring-kafka-microservices) 
 * [SAGAS](https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf)
 * [Eventuate Tram Sagas](https://eventuate.io/docs/manual/eventuate-tram/latest/getting-started-eventuate-tram-sagas.html)
   * [Managing data consistency in a microservice architecture using Sagas](https://eventuate.io/presentations.html)
