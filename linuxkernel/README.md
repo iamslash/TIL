@@ -1,5 +1,6 @@
 
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Boot Process](#boot-process)
 - [Build and run old linux](#build-and-run-old-linux)
@@ -15,10 +16,17 @@
 - [Process](#process)
   - [Process Information](#process-information)
   - [Process Management](#process-management)
-- [System Load](#system-load)
+- [Interrupt](#interrupt)
+- [Kernel Timer](#kernel-timer)
+- [Kernel Synchronization](#kernel-synchronization)
+- [Process Scheduling](#process-scheduling)
 - [System Call](#system-call)
-- [fork, exec](#fork-exec)
+- [Signal](#signal)
+- [Virtual File System](#virtual-file-system)
 - [Memory Management](#memory-management)
+- [System Load](#system-load)
+- [fork, exec](#fork-exec)
+- [Memory Management](#memory-management-1)
 - [Swap](#swap)
 - [Numa](#numa)
 - [TIME_WAIT](#time_wait)
@@ -34,7 +42,17 @@
 
 Kernel 은 OS 의 핵심이다. 주로 program 들을 지원하고 hardware (CPU, Memory, Disk, TTY) 를 관리한다.
 
-Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
+Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보다 [디버깅을 통해 배우는 리눅스 커널의 구조와 원리 1 라즈베리 파이로 따라하면서 쉽게 이해할 수 있는 리눅스 커널 @ yes24](http://www.yes24.com/Product/Goods/90085976) 를 읽고 정리한다. 
+
+다음의 부분들은 Arch 별로 구현이 다르다.
+
+* 컨텍스트스위칭 
+* 익셉션벡터 
+* 시스템콜 
+* 시그널핸들러 
+* 메모리관리(mmu)
+
+초기버전은 나중에 보자. 아래는 초기버전 공부에 대한 계획이다.
 
 * [Linux Kernel documentation](https://www.kernel.org/doc/)
   * 옛날 버전인가???
@@ -47,6 +65,17 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다.
 [1st version of Linux Kernel @ github](https://github.com/kalamangga-net/linux-0.01) 와 [The old Linux kernel source ver 0.11/0.12 study. @ github](https://github.com/huawenyu/oldlinux) 를 비교해서 공부해보자.
 
 [osimpl @ TIL](/osimpl/README.md) 에서 직접 구현해 보자.
+
+# References
+
+* [디버깅을 통해 배우는 리눅스 커널의 구조와 원리 1 라즈베리 파이로 따라하면서 쉽게 이해할 수 있는 리눅스 커널 @ yes24](http://www.yes24.com/Product/Goods/90085976)
+  * [디버깅을 통해 배우는 리눅스 커널의 구조와 원리 2 라즈베리 파이로 따라하면서 쉽게 이해할 수 있는 리눅스 커널 @ yes24](http://www.yes24.com/Product/Goods/90087307)
+  * [blog](http://rousalome.egloos.com/v/10015971)
+  * [src](https://github.com/wikibook/linux-kernel)
+* [The Linux Kernel Archives](https://www.kernel.org/)
+  * Linux Kernel 의 버전을 파악할 수 있다. longterm 은 LTS (Long Term Support) 를 의미한다.
+* [Linux Kernel Networking: Implementation and Theory (Expert's Voice in Open Source) 1st ed.](https://www.amazon.com/Linux-Kernel-Networking-Implementation-Experts/dp/143026196X)
+  * Linux Kernel 의 Network 부분을 자세히 설명한다.
 
 # Materials
 
@@ -562,6 +591,48 @@ Kernel 은 Process Meta Data 를 PCB (Process Control Block) 이라는 형태로
 
 Process 는 CPU 로 부터 대기표를 뽑고 자기 순서를 기다린다. 기다리는 Process 들은 ready queue 에 저장된다. 역시 DIsk 로 부터 대기표를 뽑고 자기 순서를 기다린다. 기다리는 Process 들은 Disk wait queue 에 저장된다.
 
+# Interrupt
+
+WIP...
+
+# Kernel Timer
+
+WIP...
+
+# Kernel Synchronization
+
+WIP...
+
+# Process Scheduling
+
+WiP...
+
+# System Call
+
+내가 작성한 a.out 이라는 프로그램이 실행되면 A process 라는 형태로 OS 에 만들어 진다. 그리고 `printf` 를 
+실행할 때 다음과 같은 일들이 벌어진다.
+
+* A process 는 write 을 호출한다. write 는 system call 을 호출하는 Wrapper routine 이다.
+* `$0x80` 이라는 Interrupt 가 발생한다. 이것은 HW trap 을 의미한다.
+* HW 는 CPU mode 를 user mode 에서 kernel mode 로 바꾼다.
+* HW 는 `sys_call()` 을 실행한다. `sys_call()` 은 kernel 에 존재하는 assembly function 이다.
+* EAX register 에 채워진 system call 번호가 제대로 인지 검증한다. 이것은 `sys_write()` 과 같다.
+* 그 번호에 맞는 system call address 즉, `sys_write()` 의 address 를 table 에서 읽어온다.
+* table 에서 읽어온 `sys_write()` address 를 실행한다.
+* 실행을 마치면 HW 의 PC 를 처음 `printf` 다음줄로 조정한다.
+
+# Signal
+
+WIP...
+
+# Virtual File System
+
+WIP...
+
+# Memory Management
+
+WIP...
+
 # System Load
 
 * [서버에 걸리는 부하, 추측하지 말고 계측하자](https://injae-kim.github.io/dev/2020/07/09/how-to-check-single-server-load-average.html)
@@ -645,20 +716,6 @@ $ sar
 00:20:01       	 0     0.30      0.00     31.61      45.59     	22.51
 00:20:01       	 1     0.01      0.00      0.38       0.11     	99.48
 ```
-
-# System Call
-
-내가 작성한 a.out 이라는 프로그램이 실행되면 A process 라는 형태로 OS 에 만들어 진다. 그리고 `printf` 를 
-실행할 때 다음과 같은 일들이 벌어진다.
-
-* A process 는 write 을 호출한다. write 는 system call 을 호출하는 Wrapper routine 이다.
-* `$0x80` 이라는 Interrupt 가 발생한다. 이것은 HW trap 을 의미한다.
-* HW 는 CPU mode 를 user mode 에서 kernel mode 로 바꾼다.
-* HW 는 `sys_call()` 을 실행한다. `sys_call()` 은 kernel 에 존재하는 assembly function 이다.
-* EAX register 에 채워진 system call 번호가 제대로 인지 검증한다. 이것은 `sys_write()` 과 같다.
-* 그 번호에 맞는 system call address 즉, `sys_write()` 의 address 를 table 에서 읽어온다.
-* table 에서 읽어온 `sys_write()` address 를 실행한다.
-* 실행을 마치면 HW 의 PC 를 처음 `printf` 다음줄로 조정한다.
 
 # fork, exec
 
