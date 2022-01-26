@@ -605,9 +605,17 @@ WIP...
 
 Linux Kernel 은 주로 spin lock 과 mutex 를 이용하여 동기화처리를 한다.
 
-spin lock 은 process 가 critical section 을 기다릴 때 다른일을 하지 않고 기다린다. mutex 은 process 가 임계영역을 기다릴 때 context switching 을 하면서 다른일을 할 수 있다.
+spin lock 은 다음과 같이 사용된다. CPU0 이 critical section (임계영역) 에
+해당하는 instruction 을 실행한다고 하자. CPU1 은 CPU0 이 critical section 의
+instruction 을 모두 실행할 때까지 기다린다. context switching 을 하지 않는다.
 
-임계영역이 짧을 때는 spin lock 을 사용한다. mutex 는 context siwtching 비용때문에 짧은 임계영역에 사용하지 않는다. 임계영역이 길다면 mutex 를 사용한다.
+mutex 는 다음과 같이 사용된다. CPU0 이 critical section 의 instruction 들을
+실행한다고 하자. CPU1 은 CPU0 이 critical section 의 instruction 들을 모두
+실행할 동안 context switching 을 하며 다른 일들을 처리한다. 그러나 context
+switching 의 비용은 크다. 몇 cycle 일까???
+
+임계영역이 짧을 때는 spin lock 을 사용한다. 임계영역이 길다면 mutex 를
+사용한다.
 
 # Process Scheduling
 
