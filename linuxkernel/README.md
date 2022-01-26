@@ -603,7 +603,11 @@ WIP...
 
 # Kernel Synchronization
 
-WIP...
+Linux Kernel 은 주로 spin lock 과 mutex 를 이용하여 동기화처리를 한다.
+
+spin lock 은 process 가 critical section 을 기다릴 때 다른일을 하지 않고 기다린다. mutex 은 process 가 임계영역을 기다릴 때 context switching 을 하면서 다른일을 할 수 있다.
+
+임계영역이 짧을 때는 spin lock 을 사용한다. mutex 는 context siwtching 비용때문에 짧은 임계영역에 사용하지 않는다. 임계영역이 길다면 mutex 를 사용한다.
 
 # Process Scheduling
 
