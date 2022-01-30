@@ -16,6 +16,8 @@
 - [Process](#process)
   - [Process Information](#process-information)
   - [Process Management](#process-management)
+  - [task_struct](#task_struct)
+  - [thread_info](#thread_info)
 - [Interrupt](#interrupt)
 - [Kernel Timer](#kernel-timer)
 - [Kernel Synchronization](#kernel-synchronization)
@@ -42,7 +44,7 @@
 
 Kernel 은 OS 의 핵심이다. 주로 program 들을 지원하고 hardware (CPU, Memory, Disk, TTY) 를 관리한다.
 
-Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보다 [디버깅을 통해 배우는 리눅스 커널의 구조와 원리 1 라즈베리 파이로 따라하면서 쉽게 이해할 수 있는 리눅스 커널 @ yes24](http://www.yes24.com/Product/Goods/90085976) 를 읽고 정리한다. 
+Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보다 [디버깅을 통해 배우는 리눅스 커널의 구조와 원리 1 라즈베리 파이로 따라하면서 쉽게 이해할 수 있는 리눅스 커널 @ yes24](http://www.yes24.com/Product/Goods/90085976) 를 읽고 정리한다. 저자가 강의한 [video](https://www.youtube.com/watch?v=AOmawzOYkcQ&list=PLRrUisvYoUw9-cTYgkbTbr9f9CpbGdq4F) 도 있다.
 
 다음의 부분들은 Arch 별로 구현이 다르다.
 
@@ -71,6 +73,7 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
 * [디버깅을 통해 배우는 리눅스 커널의 구조와 원리 1 라즈베리 파이로 따라하면서 쉽게 이해할 수 있는 리눅스 커널 @ yes24](http://www.yes24.com/Product/Goods/90085976)
   * [디버깅을 통해 배우는 리눅스 커널의 구조와 원리 2 라즈베리 파이로 따라하면서 쉽게 이해할 수 있는 리눅스 커널 @ yes24](http://www.yes24.com/Product/Goods/90087307)
   * [blog](http://rousalome.egloos.com/v/10015971)
+  * [video](https://www.youtube.com/watch?v=AOmawzOYkcQ&list=PLRrUisvYoUw9-cTYgkbTbr9f9CpbGdq4F)
   * [src](https://github.com/wikibook/linux-kernel)
 * [The Linux Kernel Archives](https://www.kernel.org/)
   * Linux Kernel 의 버전을 파악할 수 있다. longterm 은 LTS (Long Term Support) 를 의미한다.
@@ -576,7 +579,7 @@ error:
 
 ## Process Management
 
-Kernel 은 Process Meta Data 를 PCB (Process Control Block) 이라는 형태로 저장한다. 다음과 같은 항목들이 존재한다.
+Kernel 은 Process Meta Data 를 PCB (Process Control Block) 이라는 형태로 저장한다. Linux Kernel 의 `task_struct` 에 해당한다. 다음과 같은 항목들이 존재한다.
 
 * PID (Process Identifier)
 * Priority
@@ -592,6 +595,71 @@ Kernel 은 Process Meta Data 를 PCB (Process Control Block) 이라는 형태로
 * execution time
 
 Process 는 CPU 로 부터 대기표를 뽑고 자기 순서를 기다린다. 기다리는 Process 들은 ready queue 에 저장된다. 역시 DIsk 로 부터 대기표를 뽑고 자기 순서를 기다린다. 기다리는 Process 들은 Disk wait queue 에 저장된다.
+
+## task_struct
+
+* [struct task_struct v4.19.30 arm src](https://elixir.bootlin.com/linux/v4.19.30/source/include/linux/sched.h#L593)
+
+----
+
+```cpp
+struct task_struct {
+#ifdef CONFIG_THREAD_INFO_IN_TASK
+  /*
+   * For reasons of header soup (see current_thread_info()), this
+   * must be the first element of task_struct.
+   */
+  struct thread_info		thread_info;
+#endif
+  /* -1 unrunnable, 0 runnable, >0 stopped: */
+  volatile long			state;
+
+  /*
+   * This begins the randomizable portion of task_struct. Only
+   * scheduling-critical items should be added above here.
+   */
+  randomized_struct_fields_start
+
+  void				*stack;
+  atomic_t			usage;
+  /* Per task flags (PF_*), defined further below: */
+  unsigned int			flags;
+  unsigned int			ptrace;
+```
+
+## thread_info
+
+* [[리눅스 커널의 구조와 원리] 4.9.2 thread_info 구조체 분석 @ youtube](https://www.youtube.com/watch?v=USPtSWRz9wI)
+* [struct thread_info v4.19.30 arm src](https://elixir.bootlin.com/linux/v4.19.30/source/arch/arm/include/asm/thread_info.h)
+
+----
+
+```cpp
+/*
+ * low level task data that entry.S needs immediate access to.
+ * __switch_to() assumes cpu_context follows immediately after cpu_domain.
+ */
+struct thread_info {
+  unsigned long		flags;		/* low level flags */
+  int			preempt_count;	/* 0 => preemptable, <0 => bug */
+  mm_segment_t		addr_limit;	/* address limit */
+  struct task_struct	*task;		/* main task structure */
+  __u32			cpu;		/* cpu */
+  __u32			cpu_domain;	/* cpu domain */
+  struct cpu_context_save	cpu_context;	/* cpu context */
+  __u32			syscall;	/* syscall number */
+  __u8			used_cp[16];	/* thread used copro */
+  unsigned long		tp_value[2];	/* TLS registers */
+#ifdef CONFIG_CRUNCH
+  struct crunch_state	crunchstate;
+#endif
+  union fp_state		fpstate __attribute__((aligned(8)));
+  union vfp_state		vfpstate;
+#ifdef CONFIG_ARM_THUMBEE
+  unsigned long		thumbee_state;	/* ThumbEE Handler Base register */
+#endif
+};
+```
 
 # Interrupt
 
