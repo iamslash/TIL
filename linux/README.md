@@ -46,6 +46,7 @@
 - [Network Kernel Parameters](#network-kernel-parameters)
 - [File Kernel Parameters](#file-kernel-parameters)
 - [cgroup](#cgroup)
+- [Slab](#slab)
 
 -------------------------------------------------------------------------------
 
@@ -952,6 +953,9 @@ EOF
   * `free -h` human readable 하게 보여줘
   * `free -ht` total 추가해조
   * `free -hts 5` 5초마다 갱신해서 보여줘
+* `slabtop`
+  * slab 의 사용내역을 알려다오. `c` 를 누르면 CACHE SIZE 내림차순으로 보여준다.
+  * [Linux Memory Slab 관리](https://lascrea.tistory.com/66)
 * `sar`
   * network interface throughput
   * `Cannot open /var/log/sa/sa16: No such file or directory` error 해결 방법
@@ -1972,4 +1976,24 @@ $ sudo cgexec -g cpu:mycgroup stress -c 1
 ```
 $ sudo cgdelete cpu:mycgroup
 $ ls -al /sys/fs/cgroup/cpu/ | grep mycgroup
+```
+
+# Slab
+
+* [slabtop @ tistory](https://ssup2.github.io/command_tool/slabtop/)
+
+Slab 은 Kernel object 를 caching 한다. 다수의 slab 으로 구성된다. 하나의 slab 은
+page size (4K) 와 같다. 하나의 slab 은 여러 kernel object 들로 구성된다. 
+
+다음과 같은 수식이 성립한다.
+
+* `4KB * SLABS = CACHE SIZE`
+* `OBJ/SLAB * OBJ SIZE < 4KB`
+
+다음과 같이 slab 을 flushing 할 수도 있다.
+
+```bash
+$ echo 1 > /proc/sys/vm/drop_caches # Page cache
+$ echo 2 > /proc/sys/vm/drop_caches # inode, dentry cache
+$ echo 3 > /proc/sys/vm/drop_caches # Page, inode, dentry cache
 ```
