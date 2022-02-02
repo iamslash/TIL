@@ -7,7 +7,7 @@
   - [Select](#select)
   - [Select Distinct](#select-distinct)
   - [Select subquery](#select-subquery)
-  - [WITH](#with)
+  - [WITH AS](#with-as)
   - [WITH RECURSIVE](#with-recursive)
   - [Select `Year-Month`](#select-year-month)
   - [Order By](#order-by)
@@ -240,11 +240,10 @@ HAVING
   )
 ```
 
-## WITH
+## WITH AS
 
-subquery 를 특정 table 에 할당한다. 이후 여러군데서
-그 table 을 이용할 수 있다. CTE (common table expressions)
-라고도 한다.
+subquery 를 특정 table 에 할당한다. 이후 여러군데서 그 table 을 이용할 수 있다.
+CTE (common table expressions) 라고도 한다.
 
 * [Difference between WITH clause and subquery?](https://stackoverflow.com/questions/30078464/difference-between-with-clause-and-subquery)
 
