@@ -953,6 +953,34 @@ Arrays.sort(A, new Comparator<int[]>() {
       return a[2] - b[2];
    }
 });
+
+// Sort Map.Entry<String, Integer>
+class Solution {
+    public List<String> topKFrequent(String[] words, int k) {
+        Map<String, Integer> freqMap = new HashMap<>();
+        for (String word : words) {
+            freqMap.put(word, freqMap.getOrDefault(word, 0) + 1);
+        }
+        List<Map.Entry<String, Integer>> wordList = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : freqMap.entrySet()) {
+            wordList.add(entry);
+        }
+        Collections.sort(wordList, (a, b) -> {
+                if (a.getValue() == b.getValue()) {
+                    return a.getKey().compareTo(b.getKey());
+                }
+                return b.getValue() - a.getValue();
+            });
+        List<String> ans = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : wordList) {
+            ans.add(entry.getKey());
+            if (--k <= 0) {
+                break;
+            }
+        }
+        return ans;
+    }
+}
 ```
 
 ## Search
