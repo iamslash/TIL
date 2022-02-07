@@ -4,6 +4,10 @@
   - [Features](#features)
   - [WebRTC Overview](#webrtc-overview)
   - [WebRTC Sequence](#webrtc-sequence)
+  - [WebRTC Architecture](#webrtc-architecture)
+    - [Mesh](#mesh)
+    - [SFU (Selective Forwarding Unit)](#sfu-selective-forwarding-unit)
+    - [MCU (Multi Control Unit)](#mcu-multi-control-unit)
 
 ---
 
@@ -187,3 +191,29 @@ peerConnection.addEventListener('track', async (event) => {
 ----
 
 code 를 중심으로 흐름을 이해하자.
+
+## WebRTC Architecture
+
+* [WebRTC-Mesh, MCU, SFU architecture](https://www.programmersought.com/article/40593543499/)
+
+-----
+
+WebRTC 의 Architecture 는 구현방법에 따라 Mesh, SFU, MCU 로 구분할 수 있다. network bandwith 만 문제 없다면 SFU 가 가장 적당하다.
+
+### Mesh
+
+![](img/webrtc_mesh.png)
+
+uplink, downlink pressure
+
+### SFU (Selective Forwarding Unit)
+
+![](img/webrtc_mesh.png)
+
+downlink pressure
+
+### MCU (Multi Control Unit)
+
+![](img/webrtc_mesh.png)
+
+CPU pressure for encoding, decoding, mixing
