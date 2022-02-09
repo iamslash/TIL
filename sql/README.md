@@ -1338,7 +1338,7 @@ SELECT @var2 := 2
 
 ----
 
-특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 줄번호를 부여한다.
+특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 줄번호를 부여한다. OVER() 에 PARTITION BY, ORDER BY 를 사용할 수 있다.
 
 ```sql
 
@@ -1379,7 +1379,7 @@ mysql> SELECT
 
 -----
 
-특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 순위를 읽어온다. 순위에 공백이 있음을 주의하자.
+특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 순위를 읽어온다. 순위에 공백이 있음을 주의하자. OVER() 에 PARTITION BY, ORDER BY 를 사용할 수 있다.
 
 ```sql
 SELECT val,
@@ -1406,7 +1406,7 @@ val     my_rank
 ----
 
 특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 순위를 읽어온다.
-`RANK()` 와 달리 순위의 공백이 없다.
+`RANK()` 와 달리 순위의 공백이 없다. OVER() 에 PARTITION BY, ORDER BY 를 사용할 수 있다.
 
 ```sql
 SELECT val,
