@@ -1,5 +1,6 @@
 - [Basic](#basic)
   - [Open Files Limit](#open-files-limit)
+  - [lsof](#lsof)
 
 ----
 
@@ -37,4 +38,24 @@ sudo chown root:wheel /Library/LaunchDaemons/limit.maxproc.plist
 
 sudo launchctl load -w /Library/LaunchDaemons/limit.maxfiles.plist
 sudo launchctl load -w /Library/LaunchDaemons/limit.maxproc.plist
+```
+
+## lsof
+
+* [Who is listening on a given TCP port on Mac OS X? @ stackoverflow](https://stackoverflow.com/questions/4421633/who-is-listening-on-a-given-tcp-port-on-mac-os-x)
+
+```bash
+# List tcp
+$ sudo lsof -itcp
+# Without port no convertion to name 
+$ sudo lsof -itcp -P
+# List tcp with specific port
+$ sudo lsof -itcp:8080
+
+# List udp
+$ sudo lsof -iudp
+# Without port no convertion to name 
+$ sudo lsof -iudp -P
+# List udp with specific port
+$ sudo lsof -iudp:54997
 ```
