@@ -206,6 +206,7 @@ mongoDB 는 Master-Slave, Replica set, Sharded cluster 와 같이 3 가지 방�
 
 ## Data Models
 
+* [MongoDB Schema Design Best Practices](https://www.mongodb.com/developer/article/mongodb-schema-design-best-practices/)
 * [NoSQL강의) mongoDB에서 data 모델링하는 방법. 예제포함.](https://blog.voidmainvoid.net/241)
 * [Schema Design in MongoDB vs Schema Design in MySQL](https://www.percona.com/blog/2013/08/01/schema-design-in-mongodb-vs-schema-design-in-mysql/)
 
