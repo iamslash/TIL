@@ -68,6 +68,8 @@
   - [Channels](#channels)
     - [Channel Axioms](#channel-axioms)
   - [Type Assertion](#type-assertion)
+  - [Context](#context)
+  - [* src](#-src)
 - [Advanced](#advanced)
   - [Go memory ballast](#go-memory-ballast)
   - [go commands](#go-commands)
@@ -2056,6 +2058,123 @@ a, ok := i.(int)
 
 b, ok := i.(string)
 // b == "" (default value) and ok == false
+```
+
+## Context
+
+* [Using Context in Golang - Cancellation, Timeouts and Values (With Examples)](https://www.sohamkamani.com/golang/context-cancellation-and-values/)
+  * [src](https://github.com/sohamkamani/blog-example-go-context-cancellation)
+----
+
+여러 go routine 들을 하나의 Context 로 묶는다. Context 를 취소하면 모든 go
+routine 들이 취소된다. 
+
+```go
+// Open browser and exit broser. This will cancel Context.
+func main() {
+	// Create an HTTP server that listens on port 8000
+	http.ListenAndServe(":8010", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		ctx := r.Context()
+		// This prints to STDOUT to show that processing has started
+		fmt.Fprint(os.Stdout, "processing request\n")
+		// We use `select` to execute a peice of code depending on which
+		// channel receives a message first
+		select {
+		case <-time.After(2 * time.Second):
+			// If we receive a message after 2 seconds
+			// that means the request has been processed
+			w.Write([]byte("request processed"))
+		case <-ctx.Done():
+			// If the request gets cancelled, log it
+			// to STDERR
+			fmt.Fprint(os.Stderr, "request cancelled\n")
+		}
+	}))
+}
+
+// Create Context with timeout.
+func main() {
+	// Create a new context
+	// With a deadline of 100 milliseconds
+	ctx := context.Background()
+	ctx, _ = context.WithTimeout(ctx, 100*time.Millisecond)
+
+	// Make a request, that will call the google homepage
+	req, _ := http.NewRequest(http.MethodGet, "http://google.com", nil)
+	// Associate the cancellable context we just created to the request
+	req = req.WithContext(ctx)
+
+	// Create a new HTTP client and execute the request
+	client := &http.Client{}
+	res, err := client.Do(req)
+	// If the request failed, log to STDOUT
+	if err != nil {
+		fmt.Println("Request failed:", err)
+		return
+	}
+	// Print the statuscode if the request succeeds
+	fmt.Println("Response received, status code:", res.StatusCode)
+}
+
+// Call cancel function to cancel the Context.
+func operation1(ctx context.Context) error {
+	// Let's assume that this operation failed for some reason
+	// We use time.Sleep to simulate a resource intensive operation
+	time.Sleep(100 * time.Millisecond)
+	return errors.New("failed")
+}
+func operation2(ctx context.Context) {
+	// We use a similar pattern to the HTTP server
+	// that we saw in the earlier example
+	select {
+	case <-time.After(500 * time.Millisecond):
+		fmt.Println("done")
+	case <-ctx.Done():
+		fmt.Println("halted operation2")
+	}
+}
+func main() {
+	// Create a new context
+	ctx := context.Background()
+	// Create a new context, with its cancellation function
+	// from the original context
+	ctx, cancel := context.WithCancel(ctx)
+
+	// Run two operations: one in a different go routine
+	go func() {
+		err := operation1(ctx)
+		// If this operation returns an error
+		// cancel all operations using this context
+		if err != nil {
+			cancel()
+		}
+	}()
+
+	// Run operation2 with the same context we use for operation1
+	operation2(ctx)
+}
+
+// Write key, value to the Context.
+// we need to set a key that tells us where the data is stored
+const keyID = "id"
+func main() {
+	rand.Seed(time.Now().Unix())
+	ctx := context.WithValue(context.Background(), keyID, rand.Int())
+	operation1(ctx)
+}
+func operation1(ctx context.Context) {
+	// do some work
+
+	// we can get the value from the context by passing in the key
+	log.Println("operation1 for id:", ctx.Value(keyID), " completed")
+	operation2(ctx)
+}
+func operation2(ctx context.Context) {
+	// do some work
+
+	// this way, the same ID is passed from one function call to the next
+	log.Println("operation2 for id:", ctx.Value(keyID), " completed")
+}
 ```
 
 # Advanced
