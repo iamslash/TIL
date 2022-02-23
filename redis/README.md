@@ -26,6 +26,7 @@
   - [Geo](#geo)
   - [Pub/Sub](#pubsub)
   - [Streams](#streams)
+  - [Transaction](#transaction)
 - [Caveats](#caveats)
   - [Prevent O(N) command](#prevent-on-command)
   - [redis.conf](#redisconf)
@@ -283,6 +284,146 @@ Pub 으로 message 를 보내고 Sub 으로 message 를 받는다.
 ## Streams
 
 로그 데이터를 처리하기 위해서 5.0 에 도입된 데이터 타입이다.
+
+## Transaction
+
+* [[redis] 트랜잭션(Transaction) - 이론편](https://sabarada.tistory.com/177)
+
+----
+
+Redis 의 Transaction 은 `MULTI, ..., EXEC` 로 사용한다. Roll Back 을 지원하지 않는다.
+
+```r
+# Normal transaction
+>> MULTI
+"OK"
+>> SET SABARADA BLOG
+"QUEUED"
+>> SET KAROL BLOG
+"QUEUED"
+>> GET SABARADA # GET will be queued
+"QUEUED"
+>> EXEC         # Execute queued commands
+1) "OK"
+2) "OK"
+3) "BLOG"       # Get was executed
+```
+
+`MULTI, ..., DISCARD` 를 사용하면 queued commands 를 취소할 수 있다.
+
+```r
+>> MULTI
+"OK"
+>> SET SABARADA BLOG
+"QUEUED"
+>> SET KAROL BLOG
+"QUEUED"
+>> GET SABARADA
+"QUEUED"
+>> DISCARD
+"OK"
+```
+
+queued commands 중 일부가 지원하지 않는 command 라면 Discard 된다.
+
+```r
+>> MULTI
+"OK"
+>> SET SABARADA 4
+"QUEUED"
+>> HSET SABARADA 2 3
+"QUEUED"
+>> DD HKD
+(error) unknown command `DD`, with args beginning with: `HKD`, 
+>> EXEC
+(error) Transaction discarded because of previous errors.
+```
+
+잘못된 Data Type 의 command 를 사용한 경우는 잘 못된 부분을 제외하고 실행된다.
+`SABARADA` 는 strings type 이기 때문에 `HSET SABARADA 2 3` 는 건너뛴다.
+
+```r
+>> MULTI
+"OK"
+>> HSET SABARADA 2 3
+"QUEUED"
+>> SET SABARADA 4
+"QUEUED"
+>> EXEC
+ERROR: Something went wrong.
+```
+
+`WATCH` 를 이용하면 특정 변수에 lock 을 설정할 수 있다.
+
+```r
+>> WATCH SABARADA
+"OK"
+>> MULTI
+"OK"
+>> SET SABARADA 3
+"QUEUED"
+>> EXEC
+1) "OK"
+```
+
+`WATCH` 를 특정 변수에 사용하고 그 변수를 변경했다면 
+이후 Transaction 에서 그 변수를 변경할 수 없다.
+
+```r
+>> WATCH KAROL
+"OK"
+>> SET KAROL 7
+"OK"
+>> MULTI
+"OK"
+>> SET KAROL 5
+"QUEUED"
+>> EXEC
+(nil)
+```
+
+`WATCH` 를 특정 변수에 사용하고 그 변수를 변경한다.
+그리고 `UNWATCH` 를 사용한다. 이후 Transaction 에서
+그 변수를 변경할 수 있다.
+
+```r
+>> WATCH KAROL
+"OK"
+>> SET KAROL 8
+"OK"
+>> UNWATCH
+"OK"
+>> MULTI
+"OK"
+>> SET KAROL 4
+"QUEUED"
+>> EXEC 
+1) "OK"
+```
+
+`WATCH` 를 특정 변수에 사용하고 그 변수를 변경한다.
+이후 첫번째 Transaction 에서 그 변수를 변경하는 것을 실패한다.
+이때 `UNWATCH` 가 묵시적으로 호출된다.
+이후 두번째 Transaction 에서 그 변수를 변경할 수 있다.
+
+```r
+>> WATCH KAROL
+"OK"
+>> SET KAROL 22
+"OK"
+>> MULTI
+"OK"
+>> SET KAROL 11
+"QUEUED"
+>> EXEC
+(nil)
+>> MULTI
+"OK"
+>> SET KAORL 11
+"QUEUED"
+>> EXEC
+1) "OK"
+```
 
 # Caveats
 
