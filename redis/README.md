@@ -205,6 +205,10 @@ HyperLogLog 는 집합의 원소의 개수를 추정하는 방법으로 2.8.9 �
 
 ## Strings
 
+* [STRINGS Intro](http://redisgate.kr/redis/command/strings.php)
+
+----
+
 key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Hashes 는 일 대 다 관계이다.
 
 * SET: `SET, SETNX, SETEX, SETPEX, MSET, MSETNX, APPEND, SETRANGE`
