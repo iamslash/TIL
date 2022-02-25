@@ -80,6 +80,8 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
   
 # Materials
 
+* [MSA 샘플 애플리케이션 (12종)](https://gasidaseo.notion.site/MSA-12-382799b72d5d49a9a15dcafd123c1aa8)
+  * 다양한 Application 들을 Kubernetes 에 배포하는 실습
 * [Certified Kubernetes Administrator (CKA) with Practice Tests](https://kodekloud.com/p/certified-kubernetes-administrator-with-practice-tests/?coupon_code=KUBARCHYT50)
 * [쿠버네티스(kubernetes) 설치 및 환경 구성하기](https://medium.com/finda-tech/overview-8d169b2a54ff)
   * 쿠버네티스 설치 Deep Dive
