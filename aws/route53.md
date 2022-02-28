@@ -19,7 +19,6 @@ Amazon Route 53 is a highly available and scalable Domain Name System (DNS) web 
   * 동일한 `hello.iamslash.com` 에 여러 RECORD type 을 생성할 수 있다.
 * DNS query 는 cache 가 문제이다. Route 53 에서 TTL 을 짧게 설정한다고 해도 local machine 의 DNS cache 가 expire 되지 않는 이상 바뀐 값은 빨리 적용되지 않는다.
 
-
 # Advanced
 
 ## How to update CNAME RECORD by command line
