@@ -8,6 +8,8 @@
 # Materials
 
 * [AWS Application Load Balancer](https://jayendrapatil.com/tag/alb/)
+* [AWS Load Balancers - How they work and differences between them](http://chinomsoikwuagwu.com/2020/02/14/AWS-Load-Balancers_How-they-work-and-differences-between-them/)
+  * ELB Dive Deep 
 
 # CLB vs NLB vs ALB
 

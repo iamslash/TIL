@@ -78,6 +78,7 @@
   - [Null safety](#null-safety-1)
   - [@JvmOverloads](#jvmoverloads)
   - [`@JvmStatic` vs Companion](#jvmstatic-vs-companion)
+- [Effective Kotlin](#effective-kotlin)
 
 ----
 
@@ -87,6 +88,9 @@ kotlin 에 대해 정리한다. kotlin 은 종합백화점같다. 없는게 없�
 
 # Materials
 
+* [Effective Kotlin](https://kt.academy/book/effectivekotlin)
+  * [Effective Kotlin @ amazon](https://www.amazon.com/Effective-Kotlin-practices-Marcin-Moskala/dp/8395452837)
+  * [Moskala Marcin](https://marcinmoskala.com/#page-top)
 * [Kotlin Playground](https://play.kotlinlang.org/#eyJ2ZXJzaW9uIjoiMS40LjEwIiwicGxhdGZvcm0iOiJqYXZhIiwiYXJncyI6IiIsImpzQ29kZSI6IiIsIm5vbmVNYXJrZXJzIjp0cnVlLCJ0aGVtZSI6ImlkZWEiLCJjb2RlIjoiLyoqXG4gKiBZb3UgY2FuIGVkaXQsIHJ1biwgYW5kIHNoYXJlIHRoaXMgY29kZS4gXG4gKiBwbGF5LmtvdGxpbmxhbmcub3JnIFxuICovXG5cbmZ1biBtYWluKCkge1xuICAgIHByaW50bG4oXCJIZWxsbywgd29ybGQhISFcIilcbn0ifQ==)
 * [Kotlin Reference](https://kotlinlang.org/docs/reference/)
 * [Kotlin Books](https://kotlinlang.org/docs/books.html)
@@ -2030,3 +2034,7 @@ public final class DemoClass {
 ```
 
 Java 에서 Kotlin class 의 static method 를 호출한다고 하자. Kotlin class 의 method 에 `@JvmStatic` 을 사용하자. Companion class 가 만들어지지 않아서 효율적이다.
+
+# Effective Kotlin
+
+* [Effective Kotlin](/kotlin/effectivekotlin.md)
