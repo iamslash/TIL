@@ -147,11 +147,222 @@ fun sendEmail(person: Person, text: String) {
 ```
 
 ### Item 6: Prefer standard errors to custom ones
+
+```kotlin
+// Exception 은 만들지 말고 있는 거 써라.
+// 원하는 Exception 이 없을 때만 만들어 써라.
+// 다음은 JsonParsingException 를 만들어 쓴 예이다.
+inline fun <reified T> String.readObject(): T {
+  //...
+  if (incorrectSign) {
+    throw JsonParsingException()
+  }
+  //...
+  return result
+}
+
+// Standard Exceptions
+// IllegalArgumentException
+// IllegalStatusException
+// IndexOutOfBoundsException
+// ConcurrentModificationException
+// UnsupportedOperationException
+// NoSuchElementException
+```
+
 ### Item 7: Prefer null or Failure result when the lack of result is possible
+
+```kotlin
+// 함수가 오류를 발생했을 때 Exception 을 던지는 것보다는
+// null, Failure result 를 리턴하는 편이 좋다.
+// Exception 은 효율적이지 못하고 함수를 이용하는 입장에서
+// 처리를 하지 않을 수도 있다. kotlin 의 Exception 은 
+// unchecked Exception 이다. 즉, 그 함수를 호출하는 쪽에서 처리하지 않아도 
+// compile 된다.
+//
+// 오류를 예측할 수 있다면 null, Failure result 를
+// 리턴하는 것이 더욱 명시적이다. 예측할 수 없는 오류라면
+// Exception 을 던지자.
+//
+// 일반적인 경우 null 을 리턴한다. 추가 정보를 포함하고 싶다면
+// Failure Result 를 리턴한다.
+inline fun <reified T> String.readObjectOrNull(): T? {
+  //...
+  if (incorrectSign) {
+    return null
+  }
+  //...
+  return result
+}
+inline fun <reified T> String.readObjectOrNull(): Result<T> {
+  //...
+  if (incorrectSign) {
+    return Failure(JsonParsingException())
+  }
+  //...
+  return Success(result)
+}
+sealed class Result<out T>
+class Success<out T>(val result: T) Result<T>()
+class Failure<val throwable: Throwable>: Result<Nothing>()
+class JsonParsingException: Exception()
+
+// null 을 사용한다면 Elvis operator 로 오류처리를 간결하게 구현할 수 있다. 
+val age = userText.readObjectOrNull<Person>()?.age ?: -1
+
+// Failure result 를 사용한다면 when 으로 오류처리를 간결하게 구현할 수 있다.
+val person = userText.readObjectOrNull<Person>()
+val age = when(person) {
+  is Success -> person.age
+  is Failure -> -1
+}
+
+// 무언가 null 을 리턴할 수 있는 함수는 get 보다는 getOrNull 이라고
+// 이름짓는 것이 더욱 명시적이다. 
+```
+
 ### Item 8: Handle nulls properly
+
+```kotlin
+// nullable type 을 제대로 다루는 방법은 다음과 같이 있다.
+// * ?., smart cast, ?:, !!
+// * throw Exception
+// * lateinit, notNull delegate
+
+// As Is
+// nullable type 은 그대로 사용할 수 없다.
+val printer: Printer? = getPrinter()
+printer.print() // compile error
+// To Be
+// ?., smart cast, ?:, !! 를 사용해야 한다.
+printer?.print()  // ?.
+if (printer != null) {
+  printer.print() // smart cast
+}
+printer!!.print() // Not-null assertion
+
+// throw, !!, requireNotNull, checkNotNull 등을 활용하여
+// Exception 을 던지자.
+fun process(user: User) {
+  requireNotNull(user.name)
+  val context = checkNotNull(context)
+  val networkService = getNetworkService(context) ?:
+    throw NoInternetConnection()
+  networkService.getData { data, userData ->
+    show(data!!, userData!!)
+  }
+}
+
+// not-null assertion 은 꼭 필요할 때만 쓰자.
+// 문제가 발생할 수 있다??? 가독성을 떨어뜨린다.
+
+// As Is
+class UserControllerTest {
+  private var dao: UserDao? = null
+  private var controller: UserController? = null
+
+  @BeforeEach
+  fun init() {
+    dao = mockk()
+    controller = UserController(dao!!)
+  }
+
+  @Test
+  fun test() {
+    controller!!.doSomething()
+  }
+}
+// To Be
+// lateinit property 를 사용하면 나중에 초기화 하겠다는 의미이다.
+// 초기화 하지 않고 사용하면 Exception 을 던진다. 
+// not-null assertion 을 사용할 필요가 없다. 의미가 명확하다.
+class UserControllerTest {
+  private lateinit var dao: UserDao
+  private lateinit var controller: UserController
+
+  @BeforeEach
+  fun init() {
+    dao = mockk()
+    controller = UserController(dao)
+  }
+
+  @Test
+  fun test() {
+    controller.doSomething()
+  }
+}
+
+// JVM 의 Int, Long, Double, Boolean 과 같은 Primary type 은
+// lateinit 을 사용할 수 없다. Delegates.notNull 을 사용한다.
+// lateinit 보다는 느리다.
+class DoctorActivity: Activity() {
+  private var doctorId: Int by Delegates.notNull()
+  private var fromNotification: Boolean by Delegates.notNull()
+  override fun onCreate(savedInstanceState: Bundle?) {
+    super.onCreate(savedInstanceState)
+    doctorId = intent.extras.getInt(DOCTOR_ID_ARG)
+    fromNotification = intent.extras.getBoolean(FROM_NOTIFICATION_ARG)
+  }
+}
+// Delegates.notNull() 대신 property delegation 을 사용할 수도 있다???
+class DoctorActivity: Activity() {
+  private var doctorId: Int by arg(DOCTOR_ID_ARG)
+  private var fromNotification: Boolean by arg(FROM_NOTIFICATION_ARG)
+}
+```
+
 ### Item 9: Close resources with use
+
+```kotlin
+// Closeable interface 를 구현한 Object 라면 use function 을 사용하여
+// 자동으로 close() 를 호출하도록 하자.
+
+// 다음의 리소스들은 AutoCloseable interface 을 상속받는 Closeable interface
+// 를 구현한 것들이다.
+// * InputStream, OutputStream 
+// * java.sql.Connection
+// * java.io.Reader(FileReader, BufferedReader, CSSParser)
+// * java.new.Socket, java.util.Scanner
+
+// As Is
+// 명시적으로 close() 를 호출해야 한다. try, catch 를 사용하여
+// 가독성이 떨어진다.
+fun countCharactersInFile(path: String): Int {
+  val reader = BufferedReader(FileReader(path))
+  try {
+    return reader.lineSequence().sumBy { it.length }
+  } finally {
+    reader.close()
+  }
+}
+// To Be
+// user 를 사용한다. 자동으로 close() 가 호출된다.
+fun countCharactersInFile(path: String): Int {
+  val reader = BufferedReader(FileReader(path))
+  reader.use {
+    return reader.lineSequence().sumBy { it.length }
+  }
+}
+// lambda 를 사용해도 좋다.
+fun countCharactersInFile(path: String): Int {
+  BufferedReader(FileReader(path)).use { reader ->
+    return reader.lineSequence().sumBy { it.length }
+  }
+}
+// useLines() 를 사용하여 file 를 통째로 읽지 않고 한줄씩 읽게 해보자.
+fun countCharactersInFile(path: String): Int {
+  File(path).useLines { lines ->
+    return lines.sumBy { it.length }
+  }
+}
+```
+
 ### Item 10: Write unit tests
+
+[Kotlin Test @ TIL](/kotlin/kotlin_test.md)
+
 ## Chapter 2: Readability
+
 ### Item 11: Design for readability
 ### Item 12: Operator meaning should be clearly consistent with its function name
 ### Item 13: Avoid returning or operating on Unit?
@@ -160,8 +371,11 @@ fun sendEmail(person: Person, text: String) {
 ### Item 16: Properties should represent state, not behavior
 ### Item 17: Consider naming arguments
 ### Item 18: Respect coding conventions
+
 # Part 2: Code design
+
 ## Chapter 3: Reusability
+
 ### Item 19: Do not repeat knowledge
 ### Item 20: Do not repeat common algorithms
 ### Item 21: Use property delegation to extract common property patterns
@@ -174,11 +388,15 @@ fun sendEmail(person: Person, text: String) {
 ### Item 27: Minimize elements visibility
 ### Item 28: Define contract with documentation
 ### Item 29: Respect abstraction contracts
+
 ## Chapter 5: Object creation
+
 ### Item 30: Consider factory functions instead of constructors
 ### Item 31: Consider a primary constructor with named optional arguments
 ### Item 32: Consider defining a DSL for complex object creation
+
 ## Chapter 6: Class design
+
 ### Item 33: Prefer composition over inheritance
 ### Item 34: Use the data modifier to represent a bundle of data
 ### Item 35: Use function types instead of interfaces to pass operations and actions
@@ -188,13 +406,18 @@ fun sendEmail(person: Person, text: String) {
 ### Item 39: Respect the contract of compareTo
 ### Item 40: Consider extracting non-essential parts of your API into extensions
 ### Item 41: Avoid member extensions
+
 # Part 3: Efficiency
+
 ## Chapter 7: Make it cheap
+
 ### Item 42: Avoid unnecessary object creation
 ### Item 43: Use inline modifier for functions with parameters of functional types
 ### Item 44: Consider using inline classes
 ### Item 45: Eliminate obsolete object references
+
 ## Chapter 8: Efficient collection processing
+
 ### Item 46: Prefer Sequence for big collections with more than one processing step
 ### Item 47: Limit number of operations
 ### Item 48: Consider Arrays with primitives for performance-critical processing
