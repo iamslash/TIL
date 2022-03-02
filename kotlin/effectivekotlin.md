@@ -81,7 +81,71 @@ This is about how to use kotlin effectively.
 ### Item 2: Minimize the scope of variables
 ### Item 3: Eliminate platform types as soon as possible
 ### Item 4: Do not expose inferred types
+
+```kotlin
+// As is
+// 다음과 같이 interface 의 return type 을 생략하지 말아라.
+// CarFactory 를 구현한 Class 들은 Fiat126P 밖에 생산할 수 밖에 없다.
+// CarFactory interface 가 우리가 수정할 수 없는 library 에
+// 있다면 문제를 해결할 수 없다.  
+interface CarFactory {
+  func produce() = Fiat126P()
+}
+
+// To Be
+interface CarFactory {
+  func product(): Car = Fiat126P()
+}
+```
+
 ### Item 5: Specify your expectations on arguments and state
+
+```kotlin
+// require, check, assert, elivis operator 를 이용하면 
+// 제한사항을 깔끔하게 구현할 수 있다.
+
+//////////////////////////////////////////////////
+// require, check , assert
+// require 는 조건을 만족하지 못할 때 IllegalArgumentException 을 던진다.
+// check 는 조건을 만족하지 못할 때 IllegalStatusException 을 던진다.
+// assert 는 조건을 만족하지 못할 때 AssertionError 를 던진다.
+// assert 는 실행시 "-ea JVM" 을 사용해야 작동한다. 주로 test 실행시 활성화 된다. 
+fun pop(num: Int = 1): List<T> {
+  require(num <= size) {
+    "Cannot remove more elements than current size"
+  }
+  check(isOpen) {
+    "Cannot pop from closed stack"
+  }
+  var ret = collection.take(num)
+  collection = collection.drop(num)
+  assert(ret.size == num)
+  return ret
+}
+
+// require, check 를 사용해서 조건이 참이라면
+// 이후 smart cast 를 수행할 수 있다???
+fun changeDress(person: Person) {
+  require(person.outfit is Dress)
+  val dress: Dress = person.outfit
+}
+
+//////////////////////////////////////////////////
+// elvis operator
+// person.email 이 null 이면 바로 return 이 가능하다.
+fun sendEmail(person: Person, text: String) {
+  val email: String = person.email ?: return
+}
+// run scope function 을 사용하면 logic 을 추가하고
+// 바로 return 이 가능하다.
+fun sendEmail(person: Person, text: String) {
+  val email: String = person.email ?: run {
+    log("Email not sent, no email address")
+    return
+  }
+}
+```
+
 ### Item 6: Prefer standard errors to custom ones
 ### Item 7: Prefer null or Failure result when the lack of result is possible
 ### Item 8: Handle nulls properly
