@@ -567,9 +567,116 @@ class Node(val name: String) {
 }
 ```
 
+```java
+// DSL 의 경우 다음처럼 label 사용이 가능하다???
+table {
+  tr {
+    td { +"Column 1" }
+    td { +"Column 2" }
+    this@table.tr {
+      td { +"Value 1" }
+      td { +"Value 2" }
+    }
+  }
+}
+```
+
 ### Item 16: Properties should represent state, not behavior
+
+```java
+// class 에서 상태는 property 를 이용하자. 동작은 method 를 이용하자.
+// 다음은 일반적인 property 의 예이다. custom get(), set(value) 를
+// 정의할 수 있다. field 는 backing field 의 reference 이다.
+var name: String? = null
+  get() = field?.toUpperCase()
+  set(value) {
+    if (!value.isNullOrBlank()) {
+      field = value
+    }
+  }
+// readonly property 는 val 을 이용하여 선언한다. field 가 만들어
+// 지지 않는다.
+val fullName: String
+  get() = "$name $surname"
+
+// property 는 override 할 수 있다.
+open class Supercomputer {
+  open val theAnswer: Long = 42
+}
+class AppleComputer: Supercomputer() {
+  override val theAnswer: Long = 1_800_275_2273
+}
+// property 를 위임할 수도 있다???
+val db: Database by lazy { connectToDb() }
+
+// extention property 도 만들 수 있다.
+val Context.preference: SharedPreferences
+  get() = PreferenceManager
+    .getDefaultSharedPreferences(this)
+val Context.infalter: LayoutInflater
+  get() = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+val Context.notificationManager: NotificationManager
+  get() = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+// class 의 동작은 method 로 구현한다. property 를 사용하자. 말자.
+// AsIs:
+val Tree<Int>.sum: Int
+  get() = when (this) {
+    is Leaf -> value
+    is None -> left.sum + right.sum
+  }
+// ToBe:
+fun Tree<Int>.sum(): Int = when (this) {
+  is Leaf -> value
+  is Node -> left.sum() + right.sum()
+}
+```
+
 ### Item 17: Consider naming arguments
+
+```kotlin
+// named arguments 를 사용하면 더욱 명확하다.
+// AsIs:
+val text = (1..10).joinToString("|")
+// ToBe:
+val text = (1..10).joinToString(separator = "|")
+
+// function arguments 의 경우 주로 마지막으로 두자.
+thread {
+  //...
+}
+
+// 두 개 이상의 function arguments 의 경우 named arguments
+// 를 이용하면 더욱 명확하다.
+// AsIs:
+// 다음은 Java code 이다. 가독성을 높이기 위해 comment 를 사용했다.
+observable.getUsers()
+  .subscribe((List<User> users) -> { // onNext
+    //...
+  }, (Throwable throwable) -> {      // onError
+    //...
+  }, () -> {                         // onCompleted
+    //...
+  });
+// ToBe:
+// 다음은 Kotlin code 이다. named arguments 를 사용해서 명확하다.
+observable.getUsers()
+  .subscribeBy(
+    onNext = { users: List<User> -> 
+      //... 
+    }, 
+    onError = { throwable: Throwable ->
+      //...
+    },
+    onCompleted = {
+      //...
+    })
+  )
+```
+
 ### Item 18: Respect coding conventions
+
+* [Coding conventions @ Kotlin](https://kotlinlang.org/docs/coding-conventions.html)
 
 # Part 2: Code design
 
