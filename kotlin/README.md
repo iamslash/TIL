@@ -79,6 +79,7 @@
   - [@JvmOverloads](#jvmoverloads)
   - [`@JvmStatic` vs Companion](#jvmstatic-vs-companion)
 - [Effective Kotlin](#effective-kotlin)
+- [Design Pattern](#design-pattern)
 
 ----
 
@@ -137,7 +138,7 @@ $ java -jar a.jar
 
 [Kotlin Keywords @ TIL](KotlinKeyword.md)
 
-```kotlin
+```java
 // Hard keywords
 //   always interpreted as keywords and cannot be used as identifiers
 as        
@@ -175,7 +176,7 @@ when
 while
 ```
 
-```kotlin
+```java
 // Soft keywords
 //   can be used as identifiers in other contexts
 by
@@ -2038,3 +2039,7 @@ Java 에서 Kotlin class 의 static method 를 호출한다고 하자. Kotlin cl
 # Effective Kotlin
 
 * [Effective Kotlin](/kotlin/effectivekotlin.md)
+
+# Design Pattern
+
+* [Kotlin Design Pattern](/kotlin/kotlin_design_pattern.md)
