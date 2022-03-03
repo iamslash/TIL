@@ -364,10 +364,209 @@ fun countCharactersInFile(path: String): Int {
 ## Chapter 2: Readability
 
 ### Item 11: Design for readability
+
+```kotlin
+// 읽기 쉬운 코드를 작성하자. 적절한 관용구 사용은 좋다.
+// 무엇이 적절한 관용구인지는 팀의 컨벤션을 따른다.
+
+// 구현 A 가 구현 B 보다 읽기 쉽다.
+// 구현 A
+if (person != null && person.isAdult) {
+  view.showPerson(person)
+} else {
+  view.showError()
+}
+// 구현 B
+person?.takeIf { it.Adult }
+  ?.let(view::showPerson)
+  ?: view.showError()
+
+// 다음의 코드는 적절한 관용구를 사용했다고 할 수 있다.
+students
+  .filter { it.result => 50}
+  .joinToString(separator = "\n") {
+    "${it.name} ${it.surname}, ${it.result}"
+  }
+  .let(::print)
+var obj = FileIntputStream("/file.gz")
+  .let(::BufferedInputStream)
+  .let(::ZipInputStream)
+  .let(::ObjectInputStream)
+  .readObject() as SomeObject
+```
+
 ### Item 12: Operator meaning should be clearly consistent with its function name
+
+```kotlin
+// operator function 을 overload 해서 사용할 때 의미가 명확해야 한다.
+// Good:
+// 예를 들어 다음과 같은 factorial extention function 을 살펴보자.
+fun Int.factorial(): Int = (1..this).product()
+fun Iterable<Int>.product(): Int = fold(1) { acc, i -> acc * i }
+print(10 * 6.factorial())  // 7200
+// Bad:
+// 10 * 6! 을 Int object 의 factorial() 을 호출하여 깔끔하게 구현했다.
+// 이번에는 not() operator function 을 overload 하여 factorial 을 구현해보자.
+operator fun Int.not() = factorial()
+print(10 * 6!)  // 7200
+// 답은 7200 으로 같지만 ! 은 not 의미가 아니므로 명확하지 않다.
+
+// 다음은 Kotlin 에서 제공하는 oeprator function 의 목록이다.
+// +a     a.unaryPlus()
+// -a     a.unaryMinus()
+// !a     a.not()
+// ++a    a.inc()
+// --a    a.dec()
+// a+b    a.plus(b)
+// a-b    a.minus(b)
+// a*b    a.times(b)
+// a/b    a.div(b)
+// a..b   a.rangeTo(b)
+// a in b a.contains(b)
+// a += b a.plusAssign(b)
+// a -= b a.minusAssign(b)
+// a *= b a.timesAssign(b)
+// a /= b a.divAssign(b)
+// a == b a.equals(b)
+// a > b  a.compareTo(b) > 0
+// a < b  a.compareTo(b) < 0
+// a >= b a.compareTo(b) >= 0
+// a <= b a.compareTo(b) <= 0
+
+// 함수의 이름은 의미가 명확행야 한다.
+// 예를 들어 다음과 같은 코드를 살펴보자.
+operator fun Int.times(operations: () -> Unit): ()->Unit = 
+  { repeat(this) { operattion() } }
+val tripledHello = 3 * { print("Hello") }
+tripledHello()  // Output: HelloHelloHello
+// times operator function 을 overload 한 것보다는 
+// timesRepeated 라는 extention function 을 사용하는 것이
+// 의미가 명확하다.
+infix fun Int.timesRepeated(operation: ()->Unit) = {
+  repeat(this) { operation() }
+}
+val tripledHello = 3 timesRepeated { print("Hello") }
+tripledHello()  // Output: HelloHelloHello
+// 혹은 top level function 을 그대로 사용해도 좋다.
+repeat(3) { print("Hello") }
+// 이 것은 적당한 예는 아닌 것 같음. repeat() 을 감싸는 또 다른 함수를 만들 필요가 있는가?
+// 정리하면 함수의 이름을 의미가 명확하게 만들자는 얘기다.
+```
+
 ### Item 13: Avoid returning or operating on Unit?
+
+```kotlin
+// Unit? 대신 Boolean 을 리턴하도록 하자. 그것이 더욱 명확하다.
+// Unit? 를 리턴하고 Evlis operator 를 사용하는 것은
+// 가독성을 떨어뜨린다.
+
+// AsIs:
+// 예를 들어 다음과 같은 코드를 보자.
+// ?: 를 사용하기 위해 Unit? 를 리턴했다.
+fun verifyKey(key: String): Unit? = { ... }
+  verifyKey(key) ?: return
+// ToBe:
+// 다음과 같이 개선하자. 가독성이 더욱 좋다.
+fun keyIsCorrect(key: String): Boolean = { ... }
+if (!keyIsCorrect(key)) return
+
+// AsIs:
+// 읽기 어렵다.
+getData()?.let{ view.showData(it) } ?: view.showError()
+// ToBe:
+// 읽기 쉽다.
+if (person != null && person.isAdult) {
+  view.showPerson(person)
+} else {
+  view.showError()
+}
+```
+
 ### Item 14: Specify the variable type when it is not clear
+
+```kotlin
+// type 은 상황에 따라 명시하는 것이 명확하다.
+// AsIs:
+val data = getSomeData()
+// ToBe:
+val data: UserData = getSomeData()
+// custom type 의 경우는 명시하는 것이 좋을 것 같다.
+```
+
 ### Item 15: Consider referencing receivers explicitly
+
+```java
+// 명확한 구현을 위해 receiver 를 명시하자.
+
+// 예를 들어 다음과 같이 사용하는 quickSort() 를 Extension Function
+// 으로 구현해 보자.
+listOf(3, 2, 5, 1, 6).quickSort()  // [1, 2, 3, 4, 5]
+listOf("C", "D", "A", "B").quickSort()  // [A, B, C, D]
+// AsIs:
+// 명확하지 못하다.
+fun <T : Comparable<T>> List<T>.quickSort(): List<T> {
+  if (size < 2) {
+    return this
+  }
+  val pivot = first()
+  val (smaller, bigger) = drop(1).partition { it < pivot }
+  return smaller.quickSort() + pivot + bigger.quickSort()
+}
+// ToBe:
+// 명확하다. this.first(), this.drop(1)
+fun <T : Comparable<T>> List<T>.quickSort(): List<T> {
+  if (size < 2) {
+    return this
+  }
+  val pivot = this.first()
+  val (smaller, bigger) = this.drop(1).partition { it < pivot }
+  return smaller.quickSort() + pivot + bigger.quickSort()
+}
+
+// receiver 가 여러개 일 경우 꼭 명시하자.
+// 예를 들어 다음처럼 사용하는 Node 를 구현해 보자.
+fun main() {
+  val node = Node("parent")
+  node.makeChild("child")
+}
+// AsIs:
+// "Created parent" 가 출력된다. 오류이다.
+class Node(val name: String) {
+  fun makeChild(childName: String) =
+    create("$name.$childName")
+      .apply { print("Created ${name}") }
+  fun create(name: String): Node? = Node(name)
+}
+// ToBe:
+// "Created parent.child" 가 출력된다. 정상이다. ${this?.name}
+class Node(val name: String) {
+  fun makeChild(childName: String) =
+    create("$name.$childName")
+      .apply { print("Created ${this?.name}") }
+  fun create(name: String): Node? = Node(name)
+}
+// ToBe:
+// apply 는 receiver 가 this 이다. Object 의 this 와 
+// 구분이 되지 않는다. 그것보다 also, let 을 사용하는 것이 좋다. 
+// receiver 가 it 이다. nullable receiver 를 다룰 때 편리하다.
+class Node(val name: String) {
+  fun makeChild(childName: String) =
+    create("$name.$childName")
+      .also { print("Created ${it?.name}") }
+  fun create(name: String): Node? = Node(name)
+}
+// ToBe:
+// 레이블을 이용한 receiver 를 사용해도 좋다. 레이블을 생략하면
+// 가장 가까운 receiver 를 의미한다.
+class Node(val name: String) {
+  fun makeChild(childName: String) =
+    create("$name.$childName")
+      .apply { print("Created ${this?.name} in " +
+        " ${this@Node.name}") }
+  fun create(name: String): Node? = Node(name)
+}
+```
+
 ### Item 16: Properties should represent state, not behavior
 ### Item 17: Consider naming arguments
 ### Item 18: Respect coding conventions
@@ -380,7 +579,9 @@ fun countCharactersInFile(path: String): Int {
 ### Item 20: Do not repeat common algorithms
 ### Item 21: Use property delegation to extract common property patterns
 ### Item 22: Reuse between different platforms by extracting common modules
+
 ### Chapter 4: Abstraction design
+
 ### Item 23: Each function should be written in terms of a single level of abstraction
 ### Item 24: Use abstraction to protect code against changes
 ### Item 25: Specify API stability
