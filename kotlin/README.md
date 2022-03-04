@@ -1611,7 +1611,7 @@ fun main() {
 
 ----
 
-임의의 class 에 `by` 로 delegate object 를 선언한다. 그 class 의 function 을 호출하면 delegate object 의 
+임의의 class 에 `by` 로 `delegate class` 를 선언한다. 그 class 의 function 을 호출하면 delegate object 의 
 function 을 호출한다.
 
 ```kotlin
@@ -1631,9 +1631,9 @@ class TomAraya(n:String): SoundBehavior by ScreamBehavior(n)                    
 class ElvisPresley(n:String): SoundBehavior by RockAndRollBehavior(n)              // 3
 fun main() {
     val tomAraya = TomAraya("Thrash Metal")
-    tomAraya.makeSound()                                                           // 4
+    tomAraya.makeSound() // ScreamBehavior object 의 makeSound() 를 호출한다.          // 4
     val elvisPresley = ElvisPresley("Dancin' to the Jailhouse Rock.")
-    elvisPresley.makeSound()
+    elvisPresley.makeSound() // RockAndRollBehavior object 의 makeSound() 호출한다.
 }
 ```
 
@@ -1642,6 +1642,8 @@ fun main() {
 * [Concepts.Classes and objects.Delegated properties](https://kotlinlang.org/docs/delegated-properties.html)
 
 -----
+
+`property` 에 `by` 와 `delegate class` 를 선언한다. `val property` 의 경우 `getValue()` 가 호출되면 `delegate object` 의 `getValue()` 가 호출된다. `var property` 의 경우 `getValue(), setValue()` 가 호출되면 `delegate object` 의 `getValue(), setValue()` 가 호출된다.
 
 ```kotlin
 // deletegated properties

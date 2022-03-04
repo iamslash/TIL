@@ -683,8 +683,154 @@ observable.getUsers()
 ## Chapter 3: Reusability
 
 ### Item 19: Do not repeat knowledge
+
+같은 code 를 반복해서 작성하지 말자. 추출해서 공통 code 로 만들자.
+
 ### Item 20: Do not repeat common algorithms
+
+직접 만들지 말고 [stdlib @ Kotlin](https://kotlinlang.org/api/latest/jvm/stdlib/) 을 사용하자. [stdlib @ Kotlin](https://kotlinlang.org/api/latest/jvm/stdlib/) 은 공부할 만 하다.
+
+```java
+// 직접 공통 code 를 만든다면 다음을 유의하자.
+// top level function 보다는 extention method 가 좋다.
+// AsIs:
+TextUtils.isEmpty("Text")
+// ToBe:
+"Text".isEmpty()
+```
+
 ### Item 21: Use property delegation to extract common property patterns
+
+```kotlin
+// property delegation 을 사용하면 boiler plate code 를 제거할 수 있다.
+// property delegation 은 by 와 delegate 를 이용하여 동작을 전달하는 것이다.
+// 이때 delegate 는 val 의 경우 getValue, set 의 경우 getValue, setValue 가
+// 정의되야 한다.
+
+// lazy property 는 선언된 이후 처음 사용될 때 초기화되는 property 를 말한다.
+// Kotlin 은 stdlib 의 lazy function 으로 lazy property 기능을 제공한다.
+val value by lazy { createValue() }
+// stdlib 의 Delegates.observable() 을 이용하여 observable pattern 을
+// 손 쉽게 구현할 수 있다. 
+var items: List<Item> by
+  Delegates.observable(listOf()) { _, _, _ ->
+    notifyDataSetChanged()
+  }
+var key: String? by
+  Delgeates.observable(null) { _, old, new ->
+    Log.e("key changed from $old to $new")
+  }
+
+// 다음은 property delegation 을 활용한 예이다.
+// Android에서 뷰와 리소스 바인딩
+private val button: button by bindView(R.id.button)
+private val textSize by bindDimension(R.dimen.font_size)
+private val doctor: Doctor by argExra(DOCTOR_ARG)
+// Koin 에서 종속성 주입
+// Koin 은 jinjection library 이다.
+private val presenter: MainPresenter by inject()
+private val repository: NetworkRepository by inject()
+private val vm: MainViewModel by viewModel()
+// 데이터 바인딩
+private val port by bindconfiguration("port")
+private val token: String by preferences.bind(TOKEN_KEY)
+
+// property delegate 를 만들어 보자.
+// AsIs:
+// get(), set(value) 는 boiler plate 이다.
+var token: String? = null
+  get() {
+    print("token returned value $field")
+    return field
+  }
+  set(value) {
+    print("token changed from $field to $value")
+    field = value
+  }
+var attempts: Int = 0
+  get() {
+    print("attempts returned value $field")
+    return field
+  }
+  set(value) {
+    print("attempts changed from $field to $value")
+    field = value
+  }
+// ToBe:
+var token: String? by LoggingProperty(null)
+var attempts: Int by LoggingProperty(0)
+private class LoggingProperty<T>(var value: T) {
+  operator fun getValue(
+    thisRef: Any?,
+    prop: KProperty<*>
+  ): T {
+    print("${prop.name} returned value $value")
+    return value
+  }
+  operator fun setValue(
+    thisRef: Any?,
+    prop: KProperty<*>,
+    newValue: T
+  ) {
+    val name = prop.name
+    print("$name changed from $value to $newValue")
+    value = newValue
+  }
+}
+// token 은 다음과 같이 compile 될 것이다.
+@JvmField
+private val 'token$delegate' = LoggingProperty<String?>(null)
+var token: String?
+  get() = 'token$delegate'.gateValue(this, ::token)
+  set(value) {
+    'token$delegate'.setValue(this, ::token, value)
+  }
+
+// getValue, setValue 가 여러개 있는 delegate 를 만들어 보자.
+class SwipeRefreshBinderDelegate(val id: Int) {
+  private var cache: SwipeRefreshLayout? = null
+  operator fun getValue(
+    activity: Activity,
+    prop: KProperty<*>
+  ): SwipeRefreshLayout {
+    return cache ?: activity
+      .findViewById<SwipeRefreshLayout>(id)
+      .also { cache = it }
+  }
+  operator fun getValue(
+    fragment: Fragment,
+    prop: KProperty<*>
+  ): SwipeRefreshLayout {
+    return cache ?: fragment.view
+    .findViewById<SwipeRefreshLayout>(id)
+    .also { cache = it }
+  }
+}
+
+// property delegation 을 위해서 delegate 가 필요하다.
+// delegate 는 val 의 경우 getValue(), var 의 경우 getValue(), setValue()
+// 가 필요하다. stdlib 의 extention method 를 이용해서 property delegation 을
+// 구현해 보자.
+val map: Map<String, Any> = mapOf(
+  "name" to "David", 
+  "programmer" to true,
+)
+val name by map
+print(name)  // Output: David
+// 다음과 같은 extention method 가 stdlib 에 정의되어 있다. 
+inline operator fun <V, V1 : V> Map<in String, V>
+  .getValue(
+    thisRef: Any?,
+    property: KProperty<*>
+  ): V1 = getOrImplicitDefault(property.name) as V1
+
+// stdlib 의 다음과 같은 property delegate 는 자주 사용할 만 하다.
+// lazy
+// Delegates.observable
+// Delegates.vetoable
+// Delegates.notNull
+```
+
 ### Item 22: Reuse between different platforms by extracting common modules
 
 ### Chapter 4: Abstraction design
