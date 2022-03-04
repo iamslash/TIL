@@ -1053,29 +1053,39 @@ fun main() {
 
 ----
 
-* `in`: `Foo<? super Bar> becomes Foo<in Bar!>!`
-  * Bar 의 부모들
-  * Bar 로 down-casting
-* `out`: `Foo<? extends Bar> becomes Foo<out Bar!>!`
-  * Bar 의 자식들  
-  * Bar 로 up-casting
-* `*`: 무엇이든 assign 할 수 있다.
-  * any-casting
+variance 는 invariant, covariant, contravariant 가 있다. 다음의
+그림을 참고하여 이해하자.
+
+![](img/kotlin_variance.png)
+
+* `Int` 는 `Number` 의 자식이다. `Int` instance 는 `Number` 로 casting 이 가능하다.
+* `class Box<T>` 로 선언했다. `Box<Number>` instance 는 `Box<Int>` 로 casting 될
+  수 없다. 반대도 불가하다. 둘은 전혀 관계가 없다. 이 것을 invariant 라고 한다.
+* `class Box<out T>` 로 선언했다. `Box<Int>` instance 는 `Box<Number>` 로 casting 될
+  수 있다. 즉, up-casting 이 가능하다. 이 것을 covariant 라고 한다.
+* `class Box<in T>` 로 선언했다. `Box<Number>` instance 는 `Box<Int>` 로 casting 될
+  수 있다. 즉, down-casting 이 가능하다. 이 것을 contravariant 라고 한다.
+
+이 것을 다음과 같이 정리할 수도 있다.
+
+* `in`: down-casting
+* `out`: up-casting
+* `*`: any-casting
 
 ```kotlin
 class Bar<in T>
 class Foo<out T>
 
 fun main(args: Array<String>) {
-    // down-casting
+    // in, down-casting
     val barSuper = Bar<Any>()
     val barSub: Bar<Int> = barSuper
 
-    // up-casting
+    // out, up-casting
     val fooSub = Foo<Int>()
     val fooSuper: Foo<Any> = fooSub
 
-    // any-casting
+    // *, any-casting
     val star: Foo<*> = fooSub
 }
 ```
