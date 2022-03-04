@@ -85,7 +85,8 @@
 
 # Abstract
 
-kotlin 에 대해 정리한다. kotlin 은 종합백화점같다. 없는게 없다. 문서의 완성도가 너무 높아서 대부분의 내용은 link 로 대신한다.
+kotlin 에 대해 정리한다. kotlin 은 종합백화점같다. 없는게 없다. Documentation,
+[Effective Kotlin](kotlin_effective.md), [Design Pattern](kotlin_design_pattern.md), [stdlib](kotlin_stdlib.md) 을 차례로 공부하자.
 
 # Materials
 
@@ -2040,7 +2041,7 @@ Java 에서 Kotlin class 의 static method 를 호출한다고 하자. Kotlin cl
 
 # Effective Kotlin
 
-* [Effective Kotlin](/kotlin/effectivekotlin.md)
+* [Effective Kotlin](/kotlin/kotlin_effective.md)
 
 # Design Pattern
 
