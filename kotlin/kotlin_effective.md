@@ -929,13 +929,11 @@ class Forest<T: Tree> {
 
 ### Item 24: Consider variance for generic types
 
-```kotlin
-```
+매우 어렵다. [generics, int, out @ TIL](README.md##generics-inout) 를 이해하고 다시 정리하자.
 
 ### Item 25: Reuse between different platforms by extracting common modules
 
-```kotlin
-```
+Kotlin 은 다양한 platform 을 지원한다. 공통 코드를 잘 만들어 두고 `Kotlin/JVM, Kotlin/Natitive, Kotlin/JS` 등에서 사용하자.
 
 ## Chapter 4: Abstraction design
 
