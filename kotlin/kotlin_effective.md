@@ -938,6 +938,41 @@ Kotlin 은 다양한 platform 을 지원한다. 공통 코드를 잘 만들어 �
 ## Chapter 4: Abstraction design
 
 ### Item 26: Each function should be written in terms of a single level of abstraction
+
+[Layered Architecture](/ddd/README.md#layered-architecture) 를 기반으로 설계하는 것이 유지보수가 용이하기 때문에 좋다. code 를 작성할 때 layer level 을 신경써서 작성하자. 이 것을 추상화 level 이라고도 한다.
+
+```kotlin
+// AsIs:
+class CoffeeMachine {
+  fun makeCoffee() {
+    // 수백 개의 변수를 선언한다.
+    // 복잡한 로직을 처리한다.
+    // 낮은 수준의 최적화도 여기서 한다.
+  }
+}
+// ToBe:
+// Layer level 에 맞게 추상화 되었다.
+class CoffeeMachine {
+  fun makeCoffee() {
+    boilWater()
+    brewCoffee()
+    pourCoffee()
+    pourMilk()
+  }
+  private fun boilWater() { /*...*/ }
+  private fun brewCoffee() { /*...*/ }
+  private fun pourCoffee() { /*...*/ }
+  private fun pourMil() { /*...*/ }
+}
+// 만약 ExpressoCoffee 를 만들고 싶다면 
+// 다음과 같이 손쉽게 구현할 수 있다.
+fun makeEspressoCoffee() {
+  boilWater()
+  brewCoffee()
+  pourCoffee()
+}
+```
+
 ### Item 27: Use abstraction to protect code against changes
 ### Item 28: Specify API stability
 ### Item 29: Consider wrapping external API
