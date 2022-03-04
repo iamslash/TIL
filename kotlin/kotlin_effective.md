@@ -26,40 +26,47 @@
     - [Item 19: Do not repeat knowledge](#item-19-do-not-repeat-knowledge)
     - [Item 20: Do not repeat common algorithms](#item-20-do-not-repeat-common-algorithms)
     - [Item 21: Use property delegation to extract common property patterns](#item-21-use-property-delegation-to-extract-common-property-patterns)
-    - [Item 22: Reuse between different platforms by extracting common modules](#item-22-reuse-between-different-platforms-by-extracting-common-modules)
-    - [Chapter 4: Abstraction design](#chapter-4-abstraction-design)
-    - [Item 23: Each function should be written in terms of a single level of abstraction](#item-23-each-function-should-be-written-in-terms-of-a-single-level-of-abstraction)
-    - [Item 24: Use abstraction to protect code against changes](#item-24-use-abstraction-to-protect-code-against-changes)
-    - [Item 25: Specify API stability](#item-25-specify-api-stability)
-    - [Item 26: Consider wrapping external API](#item-26-consider-wrapping-external-api)
-    - [Item 27: Minimize elements visibility](#item-27-minimize-elements-visibility)
-    - [Item 28: Define contract with documentation](#item-28-define-contract-with-documentation)
-    - [Item 29: Respect abstraction contracts](#item-29-respect-abstraction-contracts)
+    - [Item 22: Use generics when implementing common algorithms](#item-22-use-generics-when-implementing-common-algorithms)
+    - [Item 23: Avoid shadowing type parameters](#item-23-avoid-shadowing-type-parameters)
+    - [Item 24: Consider variance for generic types](#item-24-consider-variance-for-generic-types)
+    - [Item 25: Reuse between different platforms by extracting common modules](#item-25-reuse-between-different-platforms-by-extracting-common-modules)
+  - [Chapter 4: Abstraction design](#chapter-4-abstraction-design)
+    - [Item 26: Each function should be written in terms of a single level of abstraction](#item-26-each-function-should-be-written-in-terms-of-a-single-level-of-abstraction)
+    - [Item 27: Use abstraction to protect code against changes](#item-27-use-abstraction-to-protect-code-against-changes)
+    - [Item 28: Specify API stability](#item-28-specify-api-stability)
+    - [Item 29: Consider wrapping external API](#item-29-consider-wrapping-external-api)
+    - [Item 30: Minimize elements visibility](#item-30-minimize-elements-visibility)
+    - [Item 31: Define contract with documentation](#item-31-define-contract-with-documentation)
+    - [Item 32: Respect abstraction contracts](#item-32-respect-abstraction-contracts)
   - [Chapter 5: Object creation](#chapter-5-object-creation)
-    - [Item 30: Consider factory functions instead of constructors](#item-30-consider-factory-functions-instead-of-constructors)
-    - [Item 31: Consider a primary constructor with named optional arguments](#item-31-consider-a-primary-constructor-with-named-optional-arguments)
-    - [Item 32: Consider defining a DSL for complex object creation](#item-32-consider-defining-a-dsl-for-complex-object-creation)
+    - [Item 33: Consider factory functions instead of constructors](#item-33-consider-factory-functions-instead-of-constructors)
+    - [Item 34: Consider a primary constructor with named optional arguments](#item-34-consider-a-primary-constructor-with-named-optional-arguments)
+    - [Item 35: Consider defining a DSL for complex object creation](#item-35-consider-defining-a-dsl-for-complex-object-creation)
   - [Chapter 6: Class design](#chapter-6-class-design)
-    - [Item 33: Prefer composition over inheritance](#item-33-prefer-composition-over-inheritance)
-    - [Item 34: Use the data modifier to represent a bundle of data](#item-34-use-the-data-modifier-to-represent-a-bundle-of-data)
-    - [Item 35: Use function types instead of interfaces to pass operations and actions](#item-35-use-function-types-instead-of-interfaces-to-pass-operations-and-actions)
-    - [Item 36: Prefer class hierarchies to tagged classes](#item-36-prefer-class-hierarchies-to-tagged-classes)
-    - [Item 37: Respect the contract of equals](#item-37-respect-the-contract-of-equals)
-    - [Item 38: Respect the contract of hashCode](#item-38-respect-the-contract-of-hashcode)
-    - [Item 39: Respect the contract of compareTo](#item-39-respect-the-contract-of-compareto)
-    - [Item 40: Consider extracting non-essential parts of your API into extensions](#item-40-consider-extracting-non-essential-parts-of-your-api-into-extensions)
-    - [Item 41: Avoid member extensions](#item-41-avoid-member-extensions)
+    - [Item 36: Prefer composition over inheritance](#item-36-prefer-composition-over-inheritance)
+    - [Item 37: Use the data modifier to represent a bundle of data](#item-37-use-the-data-modifier-to-represent-a-bundle-of-data)
+    - [Item 38: Use function types or functional interfaces to pass operations and actions](#item-38-use-function-types-or-functional-interfaces-to-pass-operations-and-actions)
+    - [Item 39: Use sealed classes and interfaces to express restricted hierarchies](#item-39-use-sealed-classes-and-interfaces-to-express-restricted-hierarchies)
+    - [Item 40: Prefer class hierarchies to tagged classes](#item-40-prefer-class-hierarchies-to-tagged-classes)
+    - [Item 41: Use enum to represent a list of values](#item-41-use-enum-to-represent-a-list-of-values)
+    - [Item 42: Respect the contract of equals](#item-42-respect-the-contract-of-equals)
+    - [Item 43: Respect the contract of hashCode](#item-43-respect-the-contract-of-hashcode)
+    - [Item 44: Respect the contract of compareTo](#item-44-respect-the-contract-of-compareto)
+    - [Item 45: Consider extracting non-essential parts of your API into extensions](#item-45-consider-extracting-non-essential-parts-of-your-api-into-extensions)
+    - [Item 46: Avoid member extensions](#item-46-avoid-member-extensions)
 - [Part 3: Efficiency](#part-3-efficiency)
   - [Chapter 7: Make it cheap](#chapter-7-make-it-cheap)
-    - [Item 42: Avoid unnecessary object creation](#item-42-avoid-unnecessary-object-creation)
-    - [Item 43: Use inline modifier for functions with parameters of functional types](#item-43-use-inline-modifier-for-functions-with-parameters-of-functional-types)
-    - [Item 44: Consider using inline classes](#item-44-consider-using-inline-classes)
-    - [Item 45: Eliminate obsolete object references](#item-45-eliminate-obsolete-object-references)
+    - [Item 47: Avoid unnecessary object creation](#item-47-avoid-unnecessary-object-creation)
+    - [Item 48: Use inline modifier for functions with parameters of functional types](#item-48-use-inline-modifier-for-functions-with-parameters-of-functional-types)
+    - [Item 49: Consider using inline value classes](#item-49-consider-using-inline-value-classes)
+    - [Item 50: Eliminate obsolete object references](#item-50-eliminate-obsolete-object-references)
   - [Chapter 8: Efficient collection processing](#chapter-8-efficient-collection-processing)
-    - [Item 46: Prefer Sequence for big collections with more than one processing step](#item-46-prefer-sequence-for-big-collections-with-more-than-one-processing-step)
-    - [Item 47: Limit number of operations](#item-47-limit-number-of-operations)
-    - [Item 48: Consider Arrays with primitives for performance-critical processing](#item-48-consider-arrays-with-primitives-for-performance-critical-processing)
-    - [Item 49: Consider using mutable collections](#item-49-consider-using-mutable-collections)
+    - [Item 51: Prefer Sequence for big collections with more than one processing step](#item-51-prefer-sequence-for-big-collections-with-more-than-one-processing-step)
+    - [Item 52: Consider associating elements to a map](#item-52-consider-associating-elements-to-a-map)
+    - [Item 53: Consider using groupingBy instead of groupBy](#item-53-consider-using-groupingby-instead-of-groupby)
+    - [Item 54: Limit the number of operations](#item-54-limit-the-number-of-operations)
+    - [Item 55: Consider Arrays with primitives for performance-critical processing](#item-55-consider-arrays-with-primitives-for-performance-critical-processing)
+    - [Item 56: Consider using mutable collections](#item-56-consider-using-mutable-collections)
 
 ----
 
@@ -831,48 +838,44 @@ inline operator fun <V, V1 : V> Map<in String, V>
 // Delegates.notNull
 ```
 
-### Item 22: Reuse between different platforms by extracting common modules
-
-### Chapter 4: Abstraction design
-
-### Item 23: Each function should be written in terms of a single level of abstraction
-### Item 24: Use abstraction to protect code against changes
-### Item 25: Specify API stability
-### Item 26: Consider wrapping external API
-### Item 27: Minimize elements visibility
-### Item 28: Define contract with documentation
-### Item 29: Respect abstraction contracts
-
+### Item 22: Use generics when implementing common algorithms
+### Item 23: Avoid shadowing type parameters
+### Item 24: Consider variance for generic types
+### Item 25: Reuse between different platforms by extracting common modules
+## Chapter 4: Abstraction design
+### Item 26: Each function should be written in terms of a single level of abstraction
+### Item 27: Use abstraction to protect code against changes
+### Item 28: Specify API stability
+### Item 29: Consider wrapping external API
+### Item 30: Minimize elements visibility
+### Item 31: Define contract with documentation
+### Item 32: Respect abstraction contracts
 ## Chapter 5: Object creation
-
-### Item 30: Consider factory functions instead of constructors
-### Item 31: Consider a primary constructor with named optional arguments
-### Item 32: Consider defining a DSL for complex object creation
-
+### Item 33: Consider factory functions instead of constructors
+### Item 34: Consider a primary constructor with named optional arguments
+### Item 35: Consider defining a DSL for complex object creation
 ## Chapter 6: Class design
-
-### Item 33: Prefer composition over inheritance
-### Item 34: Use the data modifier to represent a bundle of data
-### Item 35: Use function types instead of interfaces to pass operations and actions
-### Item 36: Prefer class hierarchies to tagged classes
-### Item 37: Respect the contract of equals
-### Item 38: Respect the contract of hashCode
-### Item 39: Respect the contract of compareTo
-### Item 40: Consider extracting non-essential parts of your API into extensions
-### Item 41: Avoid member extensions
-
+### Item 36: Prefer composition over inheritance
+### Item 37: Use the data modifier to represent a bundle of data
+### Item 38: Use function types or functional interfaces to pass operations and actions
+### Item 39: Use sealed classes and interfaces to express restricted hierarchies
+### Item 40: Prefer class hierarchies to tagged classes
+### Item 41: Use enum to represent a list of values
+### Item 42: Respect the contract of equals
+### Item 43: Respect the contract of hashCode
+### Item 44: Respect the contract of compareTo
+### Item 45: Consider extracting non-essential parts of your API into extensions
+### Item 46: Avoid member extensions
 # Part 3: Efficiency
-
 ## Chapter 7: Make it cheap
-
-### Item 42: Avoid unnecessary object creation
-### Item 43: Use inline modifier for functions with parameters of functional types
-### Item 44: Consider using inline classes
-### Item 45: Eliminate obsolete object references
-
+### Item 47: Avoid unnecessary object creation
+### Item 48: Use inline modifier for functions with parameters of functional types
+### Item 49: Consider using inline value classes
+### Item 50: Eliminate obsolete object references
 ## Chapter 8: Efficient collection processing
-
-### Item 46: Prefer Sequence for big collections with more than one processing step
-### Item 47: Limit number of operations
-### Item 48: Consider Arrays with primitives for performance-critical processing
-### Item 49: Consider using mutable collections
+### Item 51: Prefer Sequence for big collections with more than one processing step
+### Item 52: Consider associating elements to a map
+### Item 53: Consider using groupingBy instead of groupBy
+### Item 54: Limit the number of operations
+### Item 55: Consider Arrays with primitives for performance-critical processing
+### Item 56: Consider using mutable collections
