@@ -839,10 +839,106 @@ inline operator fun <V, V1 : V> Map<in String, V>
 ```
 
 ### Item 22: Use generics when implementing common algorithms
+
+```kotlin
+// Generics 를 사용하면 type-safe algorithm, generic class
+// 를 구현할 수 있다.
+
+// Type arguments 를 사용하는 함수를 Generic function 이라고 한다.
+// stdlib 의 filter 는 대표적인 Generic function 이다.
+inline fun <T> Iterable<T>.filter(
+  predicate: (T) -> Boolean
+): List<T> {
+  val destination = ArrayList<T>()
+  for (element in this) {
+    if (predicate(element)) {
+      destination.add(element)
+    }
+  }
+  return destination
+}
+
+// Type 을 제한할 수 도 있다. Type 제한은 어렵다. 특히 in, out 을 유의하자.
+fun <T: Comparable<T>> Iterable<T>.sorted(): List<T> {
+  //...
+}
+fun <T, C: MutableCollection<in T>> Iterable<T>.toCollection(destination: C): C {
+  //...
+}
+class ListAdapter<T : ItemAdapter>(/*...*/) { /*...*/ }
+// Any 는 nullable 이 아닌 type 을 나타낸다.
+inline fun <T, R: Any> Iterable<T>.mapNotNull(
+  transform: (T) -> R?
+): List<R> {
+  return mapNotNullTo(ArrayList<R>(), transform)
+}
+// 하나의 type 에 2개 이상의 제한을 걸 수도 있다.
+fun <T: Animal> pet(animal: T) where T: GoodTempered {
+  //...
+}
+fun <T> pet(animal: T) where T: Animal, T: GoodTempered {
+  //...
+}
+```
+
 ### Item 23: Avoid shadowing type parameters
+
+```kotlin
+// type parameter shadowing 은 피하자.
+
+// addTree 의 parameter 인 name 이 Forest class 의 property
+// 인 name 을 가린다. 즉, shadowing 한다. 명확하지 못하다.
+class Forest(val name: String) {
+  fun addTree(name: String) {
+    //...
+  }
+}
+
+// AsIs:
+// Forest 의 T 가 addTree 의 T 와 이름이 같다. 명확하지 못하다.
+interface Tree
+class Birch: Tree
+class Spruce: Tree
+class Forest<T: Tree> {
+  fun <T: Tree> addTree(tree: T) {
+    //...
+  }
+} 
+val forest = Forest<Birch>()
+forest.addTree(Birch())
+forest.addTree(Spruce())
+// AsIs:
+// addTree 는 Forest 의 type parameter T 를 사용한다.
+// ERROR 가 발생한다.
+class Forest<T: Tree> {
+  fun <T: Tree> addTree(tree: T) {
+    //...
+  }
+} 
+val forest = Forest<Birch>()
+forest.addTree(Birch())
+forest.addTree(Spruce())  // ERROR, type mismatch
+// ToBe:
+// 차라리 addTree 는 다른 type parameter 를 사용하자. 명확하다.
+class Forest<T: Tree> {
+  fun <ST: T> addTree(tree: ST) {
+    //...
+  }
+}
+```
+
 ### Item 24: Consider variance for generic types
+
+```kotlin
+```
+
 ### Item 25: Reuse between different platforms by extracting common modules
+
+```kotlin
+```
+
 ## Chapter 4: Abstraction design
+
 ### Item 26: Each function should be written in terms of a single level of abstraction
 ### Item 27: Use abstraction to protect code against changes
 ### Item 28: Specify API stability
