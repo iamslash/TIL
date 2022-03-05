@@ -974,6 +974,34 @@ fun makeEspressoCoffee() {
 ```
 
 ### Item 27: Use abstraction to protect code against changes
+
+컴퓨터 프로그래밍에서의
+[추상화](https://developer.mozilla.org/ko/docs/Glossary/Abstraction)란 복잡한
+소프트웨어 시스템을 효율적으로 설계하고 구현할 수 있는 방법입니다.
+[추상화](https://developer.mozilla.org/ko/docs/Glossary/Abstraction)는 뒷편
+시스템의 기술적 복잡함을 단순한 API 뒤에 숨깁니다. 
+
+```kotlin
+// 상수, 함수, 클래스, 인터페이스, ID 추출을 통해 추상화를 할 수 있다.
+
+// 상수 추상화
+// AsIS:
+fun isPasswordValid(text: String): Boolean {
+  if (text.length < 7) return false
+  //...
+}
+// ToBe:
+const val MIN_PASSWORD_LENGTH = 7
+fun isPasswordValid(text: String): Boolean {
+  if (text.length < MIN_PASSWORD_LENGTH) return false
+}
+
+// 함수 추상화
+Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+// AsIs:
+
+```
+
 ### Item 28: Specify API stability
 ### Item 29: Consider wrapping external API
 ### Item 30: Minimize elements visibility
