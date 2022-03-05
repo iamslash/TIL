@@ -988,6 +988,7 @@ class Solution {
 * [Binary Search Algorithm in Java @ baeldung](https://www.baeldung.com/java-binary-search)
 
 ```java
+// binary search int
 int[] a = new int[]{2, 4, 6, 8};
 int i = Arrays.binarySearch(a, 4);
 int j = Arrays.binarySearch(a, 5);
@@ -1003,6 +1004,23 @@ j = Collections.binarySearch(b, 5);
 k = ~j; // ~j means (-j) + 1
 System.out.printf("i: %d, j: %d, k: %d\n", i, j, k);
 // i: 1, j: -3, k: 2
+
+// binary search String
+String[] products = {"mobile","mouse","moneypot","monitor","mousepad"};
+String searchWord = "mouse";
+Arrays.sort(products);
+dump(products);
+for (int i = 1; i <= searchWord.length(); ++i) {
+   String word = searchWord.substring(0, i);
+   System.out.printf("%2d: %s\n",
+                     Arrays.binarySearch(products, word), word);
+// Output:
+// mobile moneypot monitor mouse mousepad 
+// -1: m
+// -1: mo
+// -4: mou
+// -4: mous
+//  3: mouse
 ```
 
 ## Multi Dimensional Array
