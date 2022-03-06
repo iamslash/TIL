@@ -347,8 +347,8 @@ System.out.printf("%s : %d%n", "age", 11);
 | `array`              | `Collections.unmodifiableList`         |
 | `vector`             | `Vector, ArrayList`                    |
 | `deque`              | `Deque, ArrayDeque`                    |
-| `forward_list`       | `List, LinkedList` |
-| `list`               |                      |
+| `forward_list`       |  |
+| `list`               | `List, LinkedList`                     |
 | `stack`              | `Stack, Deque, ArrayDeque, LinkedList` |
 | `queue`              | `Queue, LinkedList`                    |
 | `priority_queue`     | `Queue, PriorityQueue`                 |
@@ -470,9 +470,16 @@ System.out.printf("%s : %d%n", "age", 11);
 
 ```java
    List<Integer> D = new LinkedList<Integer>(Collections.nCopies(N,  1));
-   Integer a = D.get(0);
    D.set(0, 1);
    D.add(1);
+   D.addFirst(2);
+   D.addLast(3);
+   Integer a = D.get(0);
+   Integer b = D.getFirst();
+   Integer c = D.getLast();
+   D.remove(0);
+   D.removeFirst();
+   D.removeLast();
 ```
 
 * Stack
