@@ -720,16 +720,18 @@ public class MainApp {
 LinkedList 처럼 입력된 순서대로 저장
 
 ```java
-   Set<String> set = new LinkedHashSet<String>();
-   set.add("perls");
-   set.add("net");
-   set.add("dot");
-   set.add("sam");
-   set.remove("sam");
-   for (String val : set)
-   {
-      System.out.println(val);
-   }
+Set<String> set = new LinkedHashSet<String>();
+set.add("perls");
+set.add("net");
+set.add("dot");
+set.add("sam");
+set.remove("sam");
+for (String val : set)
+{
+   System.out.println(val);
+}
+// get first element
+String first = set.iterator().next();
 ```
 
 * Map, LinkedHashMap
@@ -737,13 +739,43 @@ LinkedList 처럼 입력된 순서대로 저장
 LinkedList 처럼 입력된 순서대로 저장
 
 ```java
-   Map<String, String> map = new LinkedHashMap<>();
-   map.put(".com", "International");
-   map.put(".us", "United States");
-   map.put(".uk", "United Kingdom");
-   map.put(".jp", "Japan");
-   map.put(".au", "Australia");
-   System.out.println(map.get(".au"));
+Map<String, String> map = new LinkedHashMap<>();
+map.put(".com", "International");
+map.put(".us", "United States");
+map.put(".uk", "United Kingdom");
+map.put(".jp", "Japan");
+map.put(".au", "Australia");
+System.out.println(map.get(".au"));
+```
+
+`protected boolean removeEldestEntry(Map.Entry eldest)` 를 override 하면
+오래된 값을 지울 때를 조정할 수 있다. 이것을 이용해 [LRUCache](https://github.com/iamslash/learntocode/blob/master/leetcode/LRUCache/README.md) 를 간단히 구현할 수 있다.
+
+```java
+class LRUCache extends LinkedHashMap<Integer, Integer> {
+  private int cap;
+
+  public LRUCache(int capacity) {
+    // public LinkedHashMap(int initialCapacity,
+    //                      float loadFactor,
+    //                      boolean accessOrder)
+    //    initialCapacity - the initial capacity
+    //         loadFactor - the load factor
+    //        accessOrder - the ordering mode - true for access-order, false for insertion-order
+    super(capacity, 0.75f, true);
+    this.cap = capacity;
+  }
+
+  public int get(int key) {
+    Integer val = super.get(key);
+    return val == null ? -1 : val;
+  }
+
+  @Override
+  protected boolean removeEldestEntry(Map.Entry eldest) {
+    return size() > cap;
+  }
+}
 ```
 
 * Arrays
