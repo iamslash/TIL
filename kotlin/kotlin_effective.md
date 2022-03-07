@@ -981,6 +981,8 @@ fun makeEspressoCoffee() {
 [추상화](https://developer.mozilla.org/ko/docs/Glossary/Abstraction)는 뒷편
 시스템의 기술적 복잡함을 단순한 API 뒤에 숨깁니다. 
 
+지나친 추상화는 좋지 않다. [FizzBuzzEnterpriseEdition @ github](https://github.com/EnterpriseQualityCoding/FizzBuzzEnterpriseEdition) 는 지나친 추상화를 한 예이다. 10 줄 이면 구현할 내용을 61 개의 클래스와 26 개의 인터페이스로 구현했다.
+
 ```kotlin
 // 상수, 함수, 클래스, 인터페이스, ID 추출을 통해 추상화를 할 수 있다.
 
@@ -999,10 +1001,104 @@ fun isPasswordValid(text: String): Boolean {
 // 함수 추상화
 Toast.makeText(this, message, Toast.LENGTH_LONG).show()
 // AsIs:
+// 다음과 같이 extention method 로 구현할 수 있다.
+fun Context.toast(
+  message: String,
+  duration: Int = Toast.LENGTH_LONG
+) {
+  Toast.makeText(this, message, duration).show()
+}
+// 일반적으로 사용
+context.toast(message)
+// Activity, Context 의 sub class 에서 사용
+toast(message)
+// snack bar 도 필요하게 되어 다음과 같이 구현했다.
+fun Context.snackbar(
+  message: String,
+  duration: Int = Toast.LENGTH_LONG
+) {
+  //...
+}
+// ToBe:
+// toast, snackbar 를 추출하여 showMessage 로 구현했다.
+fun Context.showMessage(
+  message: String,
+  duration: MessageLength = MessageLength.LONG
+) {
+  val toastDuration = when(duration) {
+    SHORT -> Length.LENGTH_SHORT
+    LONG -> Length.LENGTH_LONG
+  }
+  Toast.makeText(this, message, toastDuration).show()
+}
+enum class MessageLength { SHORT, LONG }
 
+// 클래스 추상화
+// ToBe:
+// 이전의 메시지 출력을 클래스로 추상화 해보자. 클래스로 만들면
+// 많은 함수를 가질 수 있고 상태도 가질 수 있다.
+class MessageDisplay(val context: Context) {
+  fun show(
+    message: String,
+    duration: MessageLength = MessageLength.LONG
+  ) {
+    val toastDuration = when(duration) {
+      SHORT -> Length.LENGTH_SHORT
+      LONG -> Length.LENGTH_LONG
+    }
+    Toast.makeText(this, message, toastDuration).show()
+  }
+}
+enum class MessageLength { SHORT, LONG }
+// 사용
+val messageDisplay = messageDisplay(context)
+messageDisplay.show("Message")
+
+// 인터페이스 추상화
+// ToBe:
+interface MessageDisplay(
+  fun show(
+    message: String,
+    duration: MessageLength = LONG
+  )
+)
+class ToastMessageDisplay(val context: Context): MessageDisplay {
+  override fun show(
+    message: String,
+    duration: MessageLength
+  ) {
+    val toastDuration = when(duration) {
+      SHORT -> Length.LENGTH_SHORT
+      LONG -> Length.LENGTH_LONG
+    }
+    Toast.makeText(this, message, toastDuration).show()
+  }
+}
+enum class MessageLength { SHORT, LONG }
+// 사용
+val messageDisplay: MessageDisplay = ToastMessageDisplay()
+
+// ID 만들기 추상화
+// AsIs:
+// thread-safe 하지 못하다.
+var nextId: Int = 0
+val newId = nextId++
+// ToBe:
+// 함수로 추상화한다. 나중에 함수를 thread-safe 하게 구현할 수 있다.
+private var nextId: Int = 0
+fun getNextId(): Int = nextId++
+val newId = getNextId()
+// ToBe:
+// data class 로 추상화한다. 나중에 id 의 type 을 바꿀 수 있다.
+data class Id(private val id: Int)
+private var nextId: Int = 0
+fun getNextId(): Id = Id(nextId++)
 ```
 
 ### Item 28: Specify API stability
+
+
+
 ### Item 29: Consider wrapping external API
 ### Item 30: Minimize elements visibility
 ### Item 31: Define contract with documentation
