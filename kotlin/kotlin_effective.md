@@ -1097,12 +1097,156 @@ fun getNextId(): Id = Id(nextId++)
 
 ### Item 28: Specify API stability
 
+annotation 을 이용해서 public API 들을 유지보수 하자.
 
+```java
+@Experimental(level = Experimental.level.WARNING)
+annotation class ExperimentalNewApi
+
+@ExperimentalNewApi
+suspend fun getUsers(): List<User> {
+  //...
+}
+
+@Deprecated("Use suspending getUsers instead")
+fun getUsers(callback: (List<User>)->Unit) {
+  //...
+}
+
+@Deprecated("Use suspending getUsers instead",
+  ReplaceWith("getUsers()"))
+fun getUsers(callback: (List<User>)->Unit) {
+  //...
+}
+```
 
 ### Item 29: Consider wrapping external API
+
+API 도 믿을 수 없으니 layer 하나 만들어 API 를 wrapping 하자.
+
 ### Item 30: Minimize elements visibility
+
+[Visibility modifiers](https://kotlinlang.org/docs/visibility-modifiers.html) 의 종류는 다음과 같다. 
+
+* private
+* protected
+* internal
+* public (default)
+
+[Visibility modifiers](https://kotlinlang.org/docs/visibility-modifiers.html) 의 수준은 항상 최소로 하자.
+
+Packages, Classes 별로 의미가 다르다.
+
+| visibility | Packages | Classes |
+|--|--|--|
+| public | any package | any class |
+| private | same file | same class |
+| internal | same module | same module |
+| proteted | not available | same class, sub class |
+
+다음은 Packages 의 Visibility modifiers 의 예이다.
+
+```kotlin
+// file name: example.kt
+package foo
+private fun foo() { /*...*/ } // visible inside example.kt
+public var bar: Int = 5 // property is visible everywhere
+    private set         // setter is visible only in example.kt
+internal val baz = 6    // visible inside the same module
+```
+
+다음은 Classes 의 Visibility modifieres 의 예이다.
+
+```kotlin
+open class Outer {
+    private val a = 1
+    protected open val b = 2
+    internal open val c = 3
+    val d = 4  // public by default
+
+    protected class Nested {
+        public val e: Int = 5
+    }
+}
+
+class Subclass : Outer() {
+    // a is not visible
+    // b, c and d are visible
+    // Nested and e are visible
+    override val b = 5   // 'b' is protected
+    override val c = 7   // 'c' is internal
+}
+
+class Unrelated(o: Outer) {
+    // o.a, o.b are not visible
+    // o.c and o.d are visible (same module)
+    // Outer.Nested is not visible, and Nested::e is not visible either
+}
+```
+
 ### Item 31: Define contract with documentation
+
+* [Document Kotlin code: KDoc and Dokka](https://kotlinlang.org/docs/kotlin-doc.html)
+
+---
+
+Kotlin 의 document 를 표현한 language 를 KDoc 이라고 한다. [dokka](https://github.com/Kotlin/dokka) 는 Kotlin code 에서 Kotlin documentation 을 뽑아낸다. 
+
+기본적인 문법은 다음과 같다. 
+
+```kotlin
+/**
+ * A group of *members*.
+ *
+ * This class has no useful logic; it's just a documentation example.
+ *
+ * @param T the type of a member in this group.
+ * @property name the name of this group.
+ * @constructor Creates an empty group.
+ */
+class Group<T>(val name: String) {
+    /**
+     * Adds a [member] to this group.
+     * @return the new size of the group.
+     */
+    fun add(member: T): Int { ... }
+}
+```
+
+다음은 주요 block tags 이다.
+
+| tag | description |
+|--|--|
+| `@param` | |
+| `@return` | |
+| `@constructor` | |
+| `@receiver` | |
+| `@property name` | |
+| `@throws class, @exception class` | |
+| `@sample identifier` | 사용예  |
+| `@see` | see also |
+| `@author` | |
+| `@since` | |
+| `@suppress` | 특정 버전의 문서에 포함시키지 않는다. |
+
+KDoc 은 `@deprecated` 를 지원하지 않는다. `@Deprecated` 를 사용해야 함.
+
 ### Item 32: Respect abstraction contracts
+
+class 가 제공하는 의도를 잘 파악해서 사용하자. 예를 들어 `equals` 를
+의도와 다르게 구현했다면 문제가 발생한다.
+
+```kotlin
+class Id(val id: Int) {
+  override fun equals(other: Any?) =
+    other is Id && other.id == id
+}
+val set = mutableSetOf(Id(1))
+set.add(Id(1))
+set.add(Id(1))
+println(set.size) // Output: 3
+```
+
 ## Chapter 5: Object creation
 ### Item 33: Consider factory functions instead of constructors
 ### Item 34: Consider a primary constructor with named optional arguments
