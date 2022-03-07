@@ -80,12 +80,13 @@
   - [`@JvmStatic` vs Companion](#jvmstatic-vs-companion)
 - [Effective Kotlin](#effective-kotlin)
 - [Design Pattern](#design-pattern)
+- [Coding Convention](#coding-convention-1)
 
 ----
 
 # Abstract
 
-kotlin 에 대해 정리한다. kotlin 은 종합백화점같다. 없는게 없다. Documentation,
+kotlin 에 대해 정리한다. kotlin 은 종합백화점같다. 없는게 없다. Documentation,  [Coding conventions](https://kotlinlang.org/docs/coding-conventions.html), 
 [Effective Kotlin](kotlin_effective.md), [Design Pattern](kotlin_design_pattern.md), [stdlib](kotlin_stdlib.md) 을 차례로 공부하자.
 
 # Materials
@@ -2060,3 +2061,7 @@ Java 에서 Kotlin class 의 static method 를 호출한다고 하자. Kotlin cl
 # Design Pattern
 
 * [Kotlin Design Pattern](/kotlin/kotlin_design_pattern.md)
+
+# Coding Convention
+
+* [Coding conventions @ Kotlin](https://kotlinlang.org/docs/coding-conventions.html)
