@@ -1251,8 +1251,17 @@ println(set.size) // Output: 3
 ### Item 33: Consider factory functions instead of constructors
 ### Item 34: Consider a primary constructor with named optional arguments
 ### Item 35: Consider defining a DSL for complex object creation
+
+* [Building DSLs in Kotlin @ baeldung](https://www.baeldung.com/kotlin/dsl)
+
+-----
+
 ## Chapter 6: Class design
+
 ### Item 36: Prefer composition over inheritance
+
+composition 은 재사용하기 쉽고, 더 많은 유연성을 제공해 준다. 
+
 ### Item 37: Use the data modifier to represent a bundle of data
 ### Item 38: Use function types or functional interfaces to pass operations and actions
 ### Item 39: Use sealed classes and interfaces to express restricted hierarchies
@@ -1263,13 +1272,18 @@ println(set.size) // Output: 3
 ### Item 44: Respect the contract of compareTo
 ### Item 45: Consider extracting non-essential parts of your API into extensions
 ### Item 46: Avoid member extensions
+
 # Part 3: Efficiency
+
 ## Chapter 7: Make it cheap
+
 ### Item 47: Avoid unnecessary object creation
 ### Item 48: Use inline modifier for functions with parameters of functional types
 ### Item 49: Consider using inline value classes
 ### Item 50: Eliminate obsolete object references
+
 ## Chapter 8: Efficient collection processing
+
 ### Item 51: Prefer Sequence for big collections with more than one processing step
 ### Item 52: Consider associating elements to a map
 ### Item 53: Consider using groupingBy instead of groupBy
