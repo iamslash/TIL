@@ -6,7 +6,6 @@
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
   - [Keywords](#keywords)
-  - [Coding Convention](#coding-convention)
   - [min max values](#min-max-values)
   - [Null safety](#null-safety)
   - [Collections compared to c++](#collections-compared-to-c)
@@ -83,7 +82,7 @@
   - [`@JvmStatic` vs Companion](#jvmstatic-vs-companion)
 - [Effective Kotlin](#effective-kotlin)
 - [Design Pattern](#design-pattern)
-- [Coding Convention](#coding-convention-1)
+- [Coding Convention](#coding-convention)
 
 ----
 
@@ -276,10 +275,6 @@ it
 $
 _
 ```
-
-## Coding Convention
-
-* [Coding conventions](https://kotlinlang.org/docs/coding-conventions.html#verify-that-your-code-follows-the-style-guide)
 
 ## min max values
 
