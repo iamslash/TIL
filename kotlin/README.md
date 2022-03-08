@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Install on windows 10](#install-on-windows-10)
 - [Basic](#basic)
@@ -91,22 +92,29 @@
 kotlin 에 대해 정리한다. kotlin 은 종합백화점같다. 없는게 없다. Documentation,  [Coding conventions](https://kotlinlang.org/docs/coding-conventions.html), 
 [Effective Kotlin](kotlin_effective.md), [Design Pattern](kotlin_design_pattern.md), [stdlib](kotlin_stdlib.md) 을 차례로 공부하자.
 
-# Materials
+# References
 
-* [Effective Kotlin](https://kt.academy/book/effectivekotlin)
-  * [Effective Kotlin @ amazon](https://www.amazon.com/Effective-Kotlin-practices-Marcin-Moskala/dp/8395452837)
-  * [Moskala Marcin](https://marcinmoskala.com/#page-top)
-* [Kotlin Playground](https://play.kotlinlang.org/#eyJ2ZXJzaW9uIjoiMS40LjEwIiwicGxhdGZvcm0iOiJqYXZhIiwiYXJncyI6IiIsImpzQ29kZSI6IiIsIm5vbmVNYXJrZXJzIjp0cnVlLCJ0aGVtZSI6ImlkZWEiLCJjb2RlIjoiLyoqXG4gKiBZb3UgY2FuIGVkaXQsIHJ1biwgYW5kIHNoYXJlIHRoaXMgY29kZS4gXG4gKiBwbGF5LmtvdGxpbmxhbmcub3JnIFxuICovXG5cbmZ1biBtYWluKCkge1xuICAgIHByaW50bG4oXCJIZWxsbywgd29ybGQhISFcIilcbn0ifQ==)
-* [Kotlin Reference](https://kotlinlang.org/docs/reference/)
-* [Kotlin Books](https://kotlinlang.org/docs/books.html)
-  * [Atomic Kotlin](https://www.atomickotlin.com/atomickotlin/)
 * [Learning materials overview](https://kotlinlang.org/docs/learning-materials-overview.html)
   * [Basic Syntax @ Kotlin](https://kotlinlang.org/docs/reference/basic-syntax.html)
   * [Idioms @ kotlin](https://kotlinlang.org/docs/idioms.html)
   * [Kotlin Koans @ kotlin](https://kotlinlang.org/docs/koans.html)
   * [Kotlin by example @ kotlin](https://play.kotlinlang.org/byExample/overview?_gl=1*1ch7m8k*_ga*MTU0MzU1NjQ4My4xNjIyNTAwNzUy*_ga_J6T75801PF*MTYyMjUzMDg0OC4yLjEuMTYyMjUzMTg2NS4zMg..&_ga=2.220493660.593975675.1622500752-1543556483.1622500752)
   * [Kotlin books @ kotlin](https://kotlinlang.org/docs/books.html)
-  * [Kotlin hands-on tutorials @ kotline](https://play.kotlinlang.org/hands-on/overview?_gl=1*1ch7m8k*_ga*MTU0MzU1NjQ4My4xNjIyNTAwNzUy*_ga_J6T75801PF*MTYyMjUzMDg0OC4yLjEuMTYyMjUzMTg2NS4zMg..&_ga=2.220493660.593975675.1622500752-1543556483.1622500752)
+    * [Atomic Kotlin](https://www.atomickotlin.com/atomickotlin/)
+  * [Kotlin hands-on tutorials @ kotlin](https://play.kotlinlang.org/hands-on/overview?_gl=1*1ch7m8k*_ga*MTU0MzU1NjQ4My4xNjIyNTAwNzUy*_ga_J6T75801PF*MTYyMjUzMDg0OC4yLjEuMTYyMjUzMTg2NS4zMg..&_ga=2.220493660.593975675.1622500752-1543556483.1622500752)
+* [Kotlin Reference](https://kotlinlang.org/docs/reference/)
+* [Effective Kotlin](https://kt.academy/book/effectivekotlin)
+  * [Effective Kotlin @ amazon](https://www.amazon.com/Effective-Kotlin-practices-Marcin-Moskala/dp/8395452837)
+  * [Moskala Marcin](https://marcinmoskala.com/#page-top)
+* [The Joy of Kotlin](https://livebook.manning.com/book/the-joy-of-kotlin/about-this-book/8)
+  * [src](https://github.com/pysaumont/fpinkotlin)
+* [코틀린을 다루는 기술](http://www.yes24.com/Product/Goods/89564200)
+  * [The Joy of Kotlin](https://livebook.manning.com/book/the-joy-of-kotlin/about-this-book/8) 의 한글 번역서
+  * [src](https://github.com/gilbutITbook/080208)
+
+# Materials
+
+* [Kotlin Playground](https://play.kotlinlang.org/#eyJ2ZXJzaW9uIjoiMS40LjEwIiwicGxhdGZvcm0iOiJqYXZhIiwiYXJncyI6IiIsImpzQ29kZSI6IiIsIm5vbmVNYXJrZXJzIjp0cnVlLCJ0aGVtZSI6ImlkZWEiLCJjb2RlIjoiLyoqXG4gKiBZb3UgY2FuIGVkaXQsIHJ1biwgYW5kIHNoYXJlIHRoaXMgY29kZS4gXG4gKiBwbGF5LmtvdGxpbmxhbmcub3JnIFxuICovXG5cbmZ1biBtYWluKCkge1xuICAgIHByaW50bG4oXCJIZWxsbywgd29ybGQhISFcIilcbn0ifQ==)
 * [Kotlin @ baeldung](https://www.baeldung.com/kotlin/)
   * [Kotlin Basics @ baeldung](https://www.baeldung.com/kotlin/category/kotlin)
   * [Collections @ baeldung](https://www.baeldung.com/kotlin/category/kotlin)
@@ -120,8 +128,14 @@ kotlin 에 대해 정리한다. kotlin 은 종합백화점같다. 없는게 없�
 * Register `C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2019.2.2\plugins\Kotlin\kotlinc\bin` to `Path`.
 
 ```bash
+# kotlinc is alias of kotlinc-jvm
+# build with kotlinc run with java
 $ kotlinc a.kt -include-runtime -d a.jar
 $ java -jar a.jar
+
+# build with kotlinc run with kotlin
+$ kotlinc a.kt
+$ kotlin AKt
 ```
 
 # Basic
