@@ -480,4 +480,6 @@ Redis 를 Persistent Store 로 사용한다면 얘기가 달라진다. Replica �
 
 ## Redis Clients
 
+* [Medis @ apple](https://apps.apple.com/kr/app/medis-2-gui-for-redis/id1579200037?mt=12)
+  * 추천. Applestore 에서 다운로드할 수 있음.
 * [RedisInsight](https://github.com/RedisInsight/RedisInsight)
