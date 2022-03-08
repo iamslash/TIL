@@ -70,6 +70,8 @@
   - [Formatted String](#formatted-string)
 - [Advanced](#advanced)
   - [Show kotlin decompile](#show-kotlin-decompile)
+  - [Smart casts](#smart-casts)
+  - [Parameter vs Argument](#parameter-vs-argument)
   - [delegate pattern with by](#delegate-pattern-with-by)
   - [Passing trailing lambdas](#passing-trailing-lambdas)
   - [map vs flatmap](#map-vs-flatmap)
@@ -1526,7 +1528,13 @@ val b = fun(x: Int, y: Int) -> Int {
 
 > [[Kotlin] inline에 대하여 - inline, noinline, crossinline, reified](https://leveloper.tistory.com/171)
 
-Higher-order function 은 runtime 에 희생이 따른다. Function interface object 를 생성하고 closure 도 캡처한다. runtime 에 memory 를 더욱 사용한다. closure 는 function body 에서 접근하는 function body 밖의 변수를 말한다. 
+----
+
+함수를 인자로 받는 함수를 Higher-order function 이라고 한다. Higher-order
+function 은 runtime 에 희생이 따른다. 인자로 넘겨받는 함수때문에 Function
+interface object 를 생성하고 closure 도 캡처한다. runtime 에 memory 를 많이
+사용한다. closure 는 function body 에서 접근하는 function body 밖의 변수를
+말한다. 
 
 이때 Higher-order function 에 inline 을 추가하면 runtime overhead 를 제거할 수 있다. 
 
@@ -1817,6 +1825,53 @@ println("fi is ${fi}")
 kotlin 의 code 를 java 의 code 로 transpile 해보는 습관을 갖자. kotlin syntax 를 보다 명확히 이해할 수 있다. 
 
 ![](img/show_kotlin_decompile.png)
+
+## Smart casts
+
+다음과 같이 type 을 check 하고 나서 그 type 으로 casting 되는 것을 [Smart
+casts](https://kotlinlang.org/docs/typecasts.html#smart-casts) 이라고 한다.
+주로 `if, when` 에서 가능함.
+
+```kotlin
+// smart casts in if
+fun demo(x: Any) {
+    if (x is String) {
+        print(x.length) // x is automatically cast to String
+    }
+}
+// smart casts in when
+when (x) {
+    is Int -> print(x + 1)
+    is String -> print(x.length + 1)
+    is IntArray -> print(x.sum())
+}
+```
+
+## Parameter vs Argument
+
+**parameter** 는 함수로 전달되는 입력의 변수이름이다. **argument** 는 실제로 전달되는
+값이다. 
+
+예를 들어 다음의 경우 `length` 가 **parameter** 이고 `10` 이 **argument** 이다.
+
+```kotlin
+fun randomString(length: Int): String {
+    //...
+}
+randomString(10)
+```
+
+다음과 같이 generic 의 경우 `T` 가 **type parameter** 이고 `String` 이
+**type argument** 이다.
+
+```kotlin
+inline fun <reified T> printName() {
+    print(T::class.simpleName)
+}
+fun main() {
+    printName<String>()  // Output: String
+}
+```
 
 ## delegate pattern with by
 
