@@ -15,6 +15,7 @@
 # Abstract
 
 * 생성 절차를 다양하게 하여 타겟 오브젝트 인스턴스를 생성한다.
+* Assembler pattern 이라고도 한다.
 * Director 는 생성절차를 다양하게 호출할 수 있다. 생성절차를 Builder 안으로 포함한다면 Factory Method 와 다를게 없다.
 
 constructor 만으로 object 를 생성하는 것은 다음과 같은 이유 때문에 불편하다. 그러나 Builder pattern 을 사용하면 이러한 불편함을 해결할 수 있다. 
