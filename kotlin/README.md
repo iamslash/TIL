@@ -1859,12 +1859,17 @@ fun main(args : Array<String>) {
 
 ## Formatted String
 
-```kt
+```kotlin
+// Double
 val pi = 3.14159265358979323
 val fi = "pi = %.2f".format(pi)
-
 println("pi is ${pi}")
 println("fi is ${fi}")
+
+// String
+val name = "iamslash"
+val msg = "Hello World"
+println("${String.format("%10s", name)}: Sending Message= $msg")
 ```
 
 # Advanced
