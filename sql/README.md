@@ -37,7 +37,7 @@
   - [Having](#having)
   - [Exists](#exists)
   - [Any, All](#any-all)
-  - [SElect Into](#select-into)
+  - [Select Into](#select-into)
   - [Insert Into Select](#insert-into-select)
   - [Null Functions](#null-functions)
   - [Comments](#comments)
@@ -63,9 +63,9 @@
   - [RANK() OVER()](#rank-over)
   - [DENSE_RANK() OVER()](#dense_rank-over)
   - [SUM() OVER()](#sum-over)
+  - [LEAD() OVER(), LAG() OVER()](#lead-over-lag-over)
   - [Where](#where)
   - [And, Or, Not](#and-or-not)
-  - [Window Functions (LEAD, LAG)](#window-functions-lead-lag)
   - [Pivot](#pivot)
   - [Functions (MySQL)](#functions-mysql)
   - [Operators](#operators)
@@ -911,7 +911,7 @@ SELECT ProductName
   WHERE ProductID = ALL (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
 ```
 
-## SElect Into
+## Select Into
 
 ```sql
 SELECT * INTO CustomersBackup2017
@@ -1441,6 +1441,34 @@ SELECT account_id,
   FROM Transactions;
 ```
 
+
+## LEAD() OVER(), LAG() OVER()
+
+* [12.21.1 Window Function Descriptions @ mysql](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_lead)
+* [MySQL LAG Function](https://www.mysqltutorial.org/mysql-window-functions/mysql-lag-function/)
+
+----
+
+`LEAD(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 아래 `N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
+
+`LAG(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 위 `N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
+
+* [BiggestWindowBetweenVisits @ learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode2/BiggestWindowBetweenVisits/README.md)
+
+```sql
+SELECT user_id, MAX(diff) AS biggest_window
+  FROM (
+    SELECT user_id,
+           DATEDIFF(LEAD(visit_date, 1, '2021-01-01')
+                      OVER(PARTITION BY user_id 
+                           ORDER BY visit_date), 
+                    visit_date) AS diff
+      FROM userVisits
+  ) t
+ GROUP BY user_id
+ ORDER BY user_id
+```
+
 ## Where
 
 ```sql
@@ -1475,32 +1503,6 @@ SELECT * FROM Customers
   WHERE Country='Germany' AND (City='Berlin' OR City='München');
 SELECT * FROM Customers
   WHERE NOT Country='Germany' AND NOT Country='USA';
-```
-
-## Window Functions (LEAD, LAG)
-
-* [12.21.1 Window Function Descriptions @ mysql](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_lead)
-
-----
-
-`LEAD(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 아래 `N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
-
-`LAG(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 위 `N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
-
-* [BiggestWindowBetweenVisits @ learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode2/BiggestWindowBetweenVisits/README.md)
-
-```sql
-SELECT user_id, MAX(diff) AS biggest_window
-  FROM (
-    SELECT user_id,
-           DATEDIFF(LEAD(visit_date, 1, '2021-01-01')
-                      OVER(PARTITION BY user_id 
-                           ORDER BY visit_date), 
-                    visit_date) AS diff
-      FROM userVisits
-  ) t
- GROUP BY user_id
- ORDER BY user_id
 ```
 
 ## Pivot
