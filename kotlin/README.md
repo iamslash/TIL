@@ -6,6 +6,7 @@
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
   - [Keywords](#keywords)
+  - [Basic types](#basic-types)
   - [min max values](#min-max-values)
   - [Null safety](#null-safety)
   - [Collections compared to c++](#collections-compared-to-c)
@@ -274,6 +275,28 @@ it
 ;
 $
 _
+```
+
+## Basic types
+
+* [Basic types](https://kotlinlang.org/docs/basic-types.html)
+
+----
+
+```kotlin
+// Byte, Short, Int, Long
+val one = 1 // Int
+val threeBillion = 3000000000 // Long
+val oneLong = 1L // Long
+val oneByte: Byte = 1
+
+// Float, Double
+val pi = 3.14 // Double
+// val one: Double = 1 // Error: type mismatch
+val oneDouble = 1.0 // Double
+
+val e = 2.7182818284 // Double
+val eFloat = 2.7182818284f // Float, actual value is 2.7182817
 ```
 
 ## min max values
