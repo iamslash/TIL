@@ -7,6 +7,7 @@
   - [Idioms](#idioms)
   - [Keywords](#keywords)
   - [Basic types](#basic-types)
+  - [String](#string)
   - [min max values](#min-max-values)
   - [Null safety](#null-safety)
   - [Collections compared to c++](#collections-compared-to-c)
@@ -298,6 +299,14 @@ val oneDouble = 1.0 // Double
 
 val e = 2.7182818284 // Double
 val eFloat = 2.7182818284f // Float, actual value is 2.7182817
+```
+
+## String
+
+```kotlin
+val sb: StringBuilder() = StringBuilder()
+sb.append('a' + 1) // OK
+sb.append(1 + 'a') // ERROR
 ```
 
 ## min max values
@@ -1279,22 +1288,22 @@ fun main() {
 
 ```kotlin
 // int ranges
-for(i in 0..3) {             
-    print(i)
+for (i in 0..3) {  // Output: 0 1 2 3             
+    print("$i ")
 }
-print(" ")
-for(i in 0 until 3) {        
-    print(i)
+println()
+for (i in 0 until 3) {  // Output: 0 1 2
+    print("$i ")
 }
-print(" ")
-for(i in 2..8 step 2) {      
-    print(i)
+println()
+for(i in 2..8 step 2) { // Output: 2 4 6 8 
+    print("$i ")
 }
-print(" ")
-for (i in 3 downTo 0) {      
-    print(i)
+println()
+for (i in 3 downTo 0) { // Output: 3 2 1 0
+    print("$i ")
 }
-print(" ")
+println()
 
 // char ranges
 for (c in 'a'..'d') {
