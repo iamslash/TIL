@@ -1,6 +1,6 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Basic Usages](#basic-usages)
+- [Basic](#basic)
   - [Compile, Execution](#compile-execution)
   - [Reserved Words](#reserved-words)
   - [Useful Keywords](#useful-keywords)
@@ -24,7 +24,7 @@
     - [cons](#cons-2)
   - [priority_queue](#priority_queue)
   - [How to choose a container](#how-to-choose-a-container)
-- [Advanced Usages](#advanced-usages)
+- [Advanced](#advanced)
   - [RAII (Resource Acquisition Is Initialzation)](#raii-resource-acquisition-is-initialzation)
   - [Compiler Generated Code](#compiler-generated-code)
   - [Disallow the use of compiler generated functions](#disallow-the-use-of-compiler-generated-functions)
@@ -38,12 +38,14 @@
   - [ADL(Argument Dependent Lookup)](#adlargument-dependent-lookup)
   - [typename vs class in template](#typename-vs-class-in-template)
   - [size() infinite loop](#size-infinite-loop)
+  - [Concurrent Programming](#concurrent-programming)
+  - [C++ Unit Test](#c-unit-test)
+  - [Boost Library](#boost-library)
+- [Quiz](#quiz)
 - [STL](#stl)
 - [C++11](#c11)
-- [Concurrent Programming](#concurrent-programming)
-- [C++ Unit Test](#c-unit-test)
-- [Boost Library](#boost-library)
-- [Quiz](#quiz)
+- [Effective CPP](#effective-cpp)
+- [Design Patterns](#design-patterns)
 
 -----
 
@@ -66,7 +68,7 @@ c++에 대해 정리한다.
 - [cplusplus.com](https://www.cplusplus.com)
 - [c++11FAQ](http://pl.pusan.ac.kr/~woogyun/cpp11/C++11FAQ_ko.html)
 
-# Basic Usages
+# Basic
 
 ## Compile, Execution
 
@@ -404,7 +406,7 @@ int main() {
 
 ![](img/containerchoice.png)
 
-# Advanced Usages
+# Advanced
 
 ## RAII (Resource Acquisition Is Initialzation)
 
@@ -1423,23 +1425,15 @@ class Demonstration {
   }
 ```
 
-# STL
+## Concurrent Programming
 
-* [stl](stl.md)
+* [concurrent programming](cpp_concurrent.md)
 
-# C++11
-
-* [c++11](cpp11.md)
-
-# Concurrent Programming
-
-* [concurrent programming](concurrent.md)
-
-# C++ Unit Test
+## C++ Unit Test
 
 ...
 
-# Boost Library
+## Boost Library
 
 ...
 
@@ -1456,3 +1450,19 @@ class Demonstration {
 * Smart Pointer
 * Malloc
 * 20 Alloc
+
+# STL
+
+* [stl](cpp_stl.md)
+
+# C++11
+
+* [c++11](cpp_cpp11.md)
+
+# Effective CPP
+
+* [Effective Cpp](cpp_effective.md)
+
+# Design Patterns
+
+* [Design Patterns in Cpp](cpp_design_pattern.md)

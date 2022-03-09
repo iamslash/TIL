@@ -1,6 +1,6 @@
 ﻿- [Abstract](#abstract)
-- [Materials](#materials)
 - [References](#references)
+- [Materials](#materials)
 - [Articles](#articles)
   - [Tools](#tools)
   - [Best Practices](#best-practices)
@@ -70,6 +70,7 @@
   - [Type Assertion](#type-assertion)
   - [Context](#context)
   - [* src](#-src)
+  - [module](#module)
 - [Advanced](#advanced)
   - [Go memory ballast](#go-memory-ballast)
   - [go commands](#go-commands)
@@ -90,44 +91,13 @@
   - [Vfsgen](#vfsgen)
   - [IntelliJ IDEA](#intellij-idea)
   - [Managing Multiple go versions](#managing-multiple-go-versions)
-- [Snippets](#snippets)
-  - [HTTP Server](#http-server)
-  - [gRPC Server](#grpc-server)
-  - [metric](#metric)
+- [Effective Go](#effective-go)
+- [Design Patterns](#design-patterns)
 -------------------------------------------------------------------------------
 
 # Abstract
 
 오랜만에 go 를 다시 사용해야 한다면 [go wiki](https://github.com/golang/go/wiki) 를 다시 읽어보자.
-
-# Materials
-
-* [Golang Design Patterns in Kubernetes](https://aly.arriqaaq.com/golang-design-patterns/?fbclid=IwAR20DyiTILpa3cMe0wt4JwF_Ll83Dluwnq6QPQpXyA3rkvELGZEmwDxsNoA)
-* [DESIGN PATTERNS in GO](https://refactoring.guru/design-patterns/go)
-* [디스커버리 Go 언어](http://www.yes24.com/Product/Goods/24759320)
-  * [src](https://github.com/jaeyeom/gogo)
-* [GoForCPPProgrammers](https://github.com/golang/go/wiki/GoForCPPProgrammers)
-* [learn go in Y minutes](https://learnxinyminutes.com/docs/go/)
-* [go @ tutorialspoint](https://www.tutorialspoint.com/go/)
-* [가장 빨리 만나는 Go 언어](http://pyrasis.com/go.html)
-  * 킹왕짱 golang 기본문법
-  * [src](https://github.com/pyrasis/golangbook)
-* [1ambda golang](https://github.com/1ambda/golang)
-  * 유용한 go links
-* [Go Bootcamp](http://www.golangbootcamp.com/book/collection_types)
-  * 예제위주의 책
-* [예제로 배우는 GO프로그래밍](http://golang.site/)
-  * 최고의 한글 예제들
-* [golang cheatsheet](https://github.com/a8m/go-lang-cheat-sheet)
-  * 최고의 요약
-* [A Tour of Go video](https://research.swtch.com/gotour)
-  * interface, concurrency 에 관한 screencast
-* [Rob Pike: Simplicity is Complicated](https://www.youtube.com/watch?v=rFejpH_tAHM)
-* [Rob Pike: Go at Google](https://www.infoq.com/presentations/Go-Google)
-  * [Article](https://talks.golang.org/2012/splash.article)
-* [Golang FAQ: Design](https://golang.org/doc/faq#Design)
-* [Golang FAQ: Types](https://golang.org/doc/faq#types)
-* [Campoy: Functional Go?](https://www.youtube.com/watch?v=ouyHp2nJl0I)
 
 # References
 
@@ -158,6 +128,35 @@
   * [Scheduling In Go : Part II - Go Scheduler](https://www.ardanlabs.com/blog/2018/08/scheduling-in-go-part2.html)
   * [Scheduling In Go : Part III - Concurrency](https://www.ardanlabs.com/blog/2018/12/scheduling-in-go-part3.html)
 
+# Materials
+
+* [Golang Design Patterns in Kubernetes](https://aly.arriqaaq.com/golang-design-patterns/?fbclid=IwAR20DyiTILpa3cMe0wt4JwF_Ll83Dluwnq6QPQpXyA3rkvELGZEmwDxsNoA)
+* [DESIGN PATTERNS in GO](https://refactoring.guru/design-patterns/go)
+* [디스커버리 Go 언어](http://www.yes24.com/Product/Goods/24759320)
+  * [src](https://github.com/jaeyeom/gogo)
+* [GoForCPPProgrammers](https://github.com/golang/go/wiki/GoForCPPProgrammers)
+* [learn go in Y minutes](https://learnxinyminutes.com/docs/go/)
+* [go @ tutorialspoint](https://www.tutorialspoint.com/go/)
+* [가장 빨리 만나는 Go 언어](http://pyrasis.com/go.html)
+  * 킹왕짱 golang 기본문법
+  * [src](https://github.com/pyrasis/golangbook)
+* [1ambda golang](https://github.com/1ambda/golang)
+  * 유용한 go links
+* [Go Bootcamp](http://www.golangbootcamp.com/book/collection_types)
+  * 예제위주의 책
+* [예제로 배우는 GO프로그래밍](http://golang.site/)
+  * 최고의 한글 예제들
+* [golang cheatsheet](https://github.com/a8m/go-lang-cheat-sheet)
+  * 최고의 요약
+* [A Tour of Go video](https://research.swtch.com/gotour)
+  * interface, concurrency 에 관한 screencast
+* [Rob Pike: Simplicity is Complicated](https://www.youtube.com/watch?v=rFejpH_tAHM)
+* [Rob Pike: Go at Google](https://www.infoq.com/presentations/Go-Google)
+  * [Article](https://talks.golang.org/2012/splash.article)
+* [Golang FAQ: Design](https://golang.org/doc/faq#Design)
+* [Golang FAQ: Types](https://golang.org/doc/faq#types)
+* [Campoy: Functional Go?](https://www.youtube.com/watch?v=ouyHp2nJl0I)
+
 # Articles
 
 ## Tools
@@ -177,6 +176,7 @@
 
 ## Concurrency
 
+* [go concurrency @ TIL](go_concurrency.md)
 * [Rob Pike: Concurrency is not Parallelism @ youtube](https://www.youtube.com/watch?v=B9lP-E4J_lc)
   * [Slide](https://talks.golang.org/2012/waza.slide)
 * [Go Concurrency Patterns](https://www.youtube.com/watch?v=f6kdp27TYZs)
@@ -2177,6 +2177,10 @@ func operation2(ctx context.Context) {
 }
 ```
 
+## module
+
+* [go module @ TIL](go_module.md)
+
 # Advanced
 
 ## Go memory ballast
@@ -2319,11 +2323,11 @@ $ go test -v -run ^Testxxx_xxx$
 
 ### go mod
 
-* [go mod](golangmodule.md)
+* [go mod](go_module.md)
 
 ### go generate
 
-[go generate](gogenerate.md)
+[go generate](go_generate.md)
 
 ### go-wrk
 
@@ -2407,7 +2411,7 @@ go test-bench
 
 ## Profile
 
-[go profile](goprofile.md)
+[go profile](go_profile.md)
 
 ## Vfsgen
 
@@ -2547,41 +2551,11 @@ export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 echo "done..."
 ```
 
-# Snippets
+# Effective Go
 
-## HTTP Server
+* [effective go](https://golang.org/doc/effective_go.html)
+  * [한글](https://gosudaweb.gitbooks.io/effective-go-in-korean/content/)
 
-```go
-package main
+# Design Patterns
 
-import (
-    "fmt"
-    "net/http"
-)
-
-// define a type for the response
-type Hello struct{}
-
-// let that type implement the ServeHTTP method (defined in interface http.Handler)
-func (h Hello) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-    fmt.Fprint(w, "Hello!")
-}
-
-func main() {
-    var h Hello
-    http.ListenAndServe("localhost:4000", h)
-}
-
-// Here's the method signature of http.ServeHTTP:
-// type Handler interface {
-//     ServeHTTP(w http.ResponseWriter, r *http.Request)
-// }
-```
-
-## gRPC Server
-
-* [gRPC Basics - Go](https://grpc.io/docs/tutorials/basic/go/)
-
-## metric
-
-* [go metric](gometric.md)
+* [Design Patterns in Go](go_design_pattern.md)

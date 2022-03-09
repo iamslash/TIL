@@ -68,6 +68,8 @@
   - [Cache2k](#cache2k)
   - [JCache](#jcache)
 - [Quiz](#quiz)
+- [Effective Java](#effective-java)
+- [Design Patterns](#design-patterns)
 
 -------------------------------------------------------------------------------
 
@@ -77,10 +79,10 @@ This is about JAVA.
 
 # References
 
-* [effective java @ TIL](/java/effectivejava/README.md)
-* [java annotation @ TIL](/java/javaannotation.md)
-* [java gc @ TIL](/java/javagc.md)
-* [java multithread @ TIL](/java/javamultithread.md)
+* [effective java @ TIL](java_effective.md)
+* [java annotation @ TIL](java_annotation.md)
+* [java gc @ TIL](java_gc.md)
+* [java multithread @ TIL](/java/java_multithread.md)
 * [java test @ TIL](/java/java_test.md)
 * [jvm @ TIL](/jvm/README.md)
 
@@ -1445,7 +1447,7 @@ public enum PowerSwitch {
 
 ## Annotation
 
-* [Java Annotation @ TIL](javaannotation.md)
+* [Java Annotation @ TIL](java_annotation.md)
 
 ## Generics
 
@@ -1766,11 +1768,11 @@ class Main {
 
 ## Multithread
 
-* [java multithread @ TIL](javamultithread.md)
+* [java multithread @ TIL](java_multithread.md)
 
 ## Effective Java Programming
 
-* [effective java @ TIL](effectivejava/README.md)
+* [effective java @ TIL](java_effective.md)
 
 ## What's new Java8
 
@@ -2206,7 +2208,7 @@ CopyOnWriteArrayList 는 내용이 update 되면 instance 를 복제하여 updat
 
 ## jvm garbage collector
 
-* [java garbage collector](javagc.md)
+* [java garbage collector](java_gc.md)
 
 ## Stream
 
@@ -2712,3 +2714,11 @@ Super Type Toke???
 * Object Reflection
 * Lambda Expressions
 * Lambda Random
+
+# Effective Java
+
+* [Effective Java](effectivejava/README.md)
+
+# Design Patterns
+
+* [Design Patterns in java](java_design_pattern.md)
