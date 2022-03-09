@@ -6,11 +6,12 @@ Defines a new operation to a class without change.
 
 그러나 새로운 추상 (Element) 가 추가된다면 기존의 코드를 수정할 수 밖에 없다.
 
-Concrete Visitor Class 는 `Accept(Visitor v)` Method 를 갖는다. Concret Element Class 는 `Visit(Element e)` Method 를 갖는다.
+Concrete Visitor Class 는 `Visit(Element e)` Method 를 갖는다. Concret Element Class 는 `Accept(Visitor v)` Method 를 갖는다.
 
 # Materials
 
-* [Visitor](https://www.dofactory.com/net/visitor-design-pattern)
+* [Visitor @ dofactory](https://www.dofactory.com/net/visitor-design-pattern)
+* [Visitor @ refactoring.guru](https://refactoring.guru/design-patterns/visitor)
 * [방문자 패턴 - Visitor pattern](https://thecodinglog.github.io/design/2019/10/29/visitor-pattern.html)
 * [Visitor Design Pattern in Java @ baeldung](https://www.baeldung.com/java-visitor-pattern)
 * [Double Dispatch in DDD @ baeldung](https://www.baeldung.com/ddd-double-dispatch)
@@ -321,5 +322,6 @@ Visitor Pattern 을 이용했기 때문에 다음과 같은 특징들을 갖는�
 # Examples
 
 * [Visitor by go](/golang/designpattern/visitor.md)
-
-
+* [Visitor by java](/java/designpattern/visitor.md)
+* [Visitor by kotlin](/kotlin/designpattern/visitor.md)
+* [Visitor by cpp](/cpp/designpattern/visitor.md)
