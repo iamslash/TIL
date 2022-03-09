@@ -15,6 +15,7 @@
     - [List](#list)
     - [Set](#set)
     - [Map](#map)
+    - [PriorityQueue](#priorityqueue)
     - [filter](#filter)
     - [map](#map-1)
     - [any, all, none](#any-all-none)
@@ -542,6 +543,13 @@ assertEquals(17, inventory["Vanilla"]) // 24 - 7 + 0
 assertEquals(13, inventory["Chocolate"]) // 14 - 4 + 3
 assertEquals(11, inventory["Strawberry"]) // 9 - 5 + 7
 assertEquals(5, inventory["Rocky Road"]) // 0 - 0 + 5
+```
+
+### PriorityQueue
+
+```kotlin
+// IntArray PriorityQueue with comparator
+val pq: PriorityQueue<IntArray> = PriorityQueue<IntArray>(0, { a, b -> b[0] - a[0] })
 ```
 
 ### filter
