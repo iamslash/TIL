@@ -1,7 +1,7 @@
 - [Abstract](#abstract)
 - [Material](#material)
 - [References](#references)
-- [Basic Usages](#basic-usages)
+- [Basic](#basic)
   - [Hello World](#hello-world)
   - [Reserved Words](#reserved-words)
   - [Contextual Keywords](#contextual-keywords)
@@ -11,16 +11,17 @@
   - [Constants](#constants)
   - [Preprocessor Directives](#preprocessor-directives)
   - [Concurrencies](#concurrencies)
-- [Advanced Usages](#advanced-usages)
+- [Advanced](#advanced)
   - [Atrributes](#atrributes)
   - [CIL runtime architecture](#cil-runtime-architecture)
-- [Tips](#tips)
-  - [volatile을 사용하자.](#volatile%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%98%EC%9E%90)
-  - [var를 잘 사용하자.](#var%EB%A5%BC-%EC%9E%98-%EC%82%AC%EC%9A%A9%ED%95%98%EC%9E%90)
-  - [const 보다 readonly가 좋다.](#const-%EB%B3%B4%EB%8B%A4-readonly%EA%B0%80-%EC%A2%8B%EB%8B%A4)
-  - [캐스트보다 is, as가 더 좋다.](#%EC%BA%90%EC%8A%A4%ED%8A%B8%EB%B3%B4%EB%8B%A4-is-as%EA%B0%80-%EB%8D%94-%EC%A2%8B%EB%8B%A4)
-  - [[c#6.0] string.Format()을 보간 문자열로 대체하자.](#c60-stringformat%EC%9D%84-%EB%B3%B4%EA%B0%84-%EB%AC%B8%EC%9E%90%EC%97%B4%EB%A1%9C-%EB%8C%80%EC%B2%B4%ED%95%98%EC%9E%90)
-  - [IEnumerable<T>와 IQueryable<T>를 구분해서 사용하자.](#ienumerablet%EC%99%80-iqueryablet%EB%A5%BC-%EA%B5%AC%EB%B6%84%ED%95%B4%EC%84%9C-%EC%82%AC%EC%9A%A9%ED%95%98%EC%9E%90)
+- [Effective CSharp](#effective-csharp)
+  - [volatile을 사용하자.](#volatile을-사용하자)
+  - [var를 잘 사용하자.](#var를-잘-사용하자)
+  - [const 보다 readonly가 좋다.](#const-보다-readonly가-좋다)
+  - [캐스트보다 is, as가 더 좋다.](#캐스트보다-is-as가-더-좋다)
+  - [[c#6.0] string.Format()을 보간 문자열로 대체하자.](#c60-stringformat을-보간-문자열로-대체하자)
+  - [IEnumerable<T>와 IQueryable<T>를 구분해서 사용하자.](#ienumerablet와-iqueryablet를-구분해서-사용하자)
+- [Design Patterns](#design-patterns)
 
 ------
 
@@ -41,7 +42,7 @@ c#에 대해 정리한다.
 * [coreclr @ github](https://github.com/dotnet/coreclr)
 * [mono @ github](https://github.com/mono/mono)
 
-# Basic Usages
+# Basic
 
 ## Hello World
 
@@ -383,7 +384,7 @@ thread pool 을 사용하면 thread 를 효과적으로 관리할 수 있다. `T
     }
 ```
 
-# Advanced Usages
+# Advanced
 
 ## Atrributes
 
@@ -659,7 +660,7 @@ namespace BugFixApplication {
 
 * [dotnet](/dotnet/README.md)
 
-# Tips
+# Effective CSharp
 
 ## volatile을 사용하자.
 
@@ -726,8 +727,6 @@ if (i != null)
 
 ## [c#6.0] string.Format()을 보간 문자열로 대체하자. 
 
-
-
 ## IEnumerable<T>와 IQueryable<T>를 구분해서 사용하자.
 
 IEnumerable<T>를 이용한 경우 해당 테이블의 데이터를 모두 받아온 후
@@ -751,3 +750,7 @@ var finalAnswer = from c in q
                     orderby c.Name
                     select c;
 ```
+
+# Design Patterns
+
+* [Design Patterns in CSharp](csharp_design_pattern.md)
