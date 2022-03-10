@@ -5,14 +5,14 @@
   
 # Materials
 
-* [Strategy](https://www.dofactory.com/net/strategy-design-pattern)
+* [Strategy @ dofactory](https://www.dofactory.com/net/strategy-design-pattern)
 
-# Concept Class Diagram
+# UML Class Diagram
 
-> [src](strategy.puml)
+![](strategy.drawio.png)
 
 ![](strategy.png)
 
 # Examples
 
-* [Strategy by go](/golang/designpattern/strategy.md)
+* [Strategy in kotlin](/kotlin/kotlin_design_pattern/strategy.md)

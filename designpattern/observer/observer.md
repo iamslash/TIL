@@ -6,17 +6,12 @@
   
 # Materials
 
-* [Observer](https://www.dofactory.com/net/observer-design-pattern)
+* [Observer @ dofactory](https://www.dofactory.com/net/observer-design-pattern)
 
-# Concept Class Diagram
+# UML Class Diagram
 
-> [src](observer.puml)
-
-![](observer.png)
+![](observer.drawio.png)
 
 # Examples
 
-* [Observer by go](/golang/designpattern/observer.md)
-* [Observer by java](/java/designpattern/observer.md)
-* [Observer by kotlin](/kotlin/designpattern/observer.md)
-* [Observer by cpp](/cpp/designpattern/observer.md)
+* [Observer in kotlin](/kotlin/kotlin_design_pattern/observer.md)

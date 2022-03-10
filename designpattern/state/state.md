@@ -5,15 +5,12 @@
   
 # Materials
 
-* [State](https://www.dofactory.com/net/state-design-pattern)
+* [State @ dofactory](https://www.dofactory.com/net/state-design-pattern)
 
-# Concept Class Diagram
+# UML Class Diagram
 
-> [src](state.puml)
-
-![](state.png)
+![](state.drawio.png)
 
 # Examples
 
-* [State by go](/golang/designpattern/state.md)
-
+* [State in kotlin](/kotlin/kotlin_design_pattern/state.md)
