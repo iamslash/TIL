@@ -1,18 +1,16 @@
 # Abstract
 
-- Defines simplified communication between classes
-- 인스턴스 멤버들의 중재를 추상화 한다.
+* 인스턴스 멤버들의 중재를 추상화 한다.
+* Defines simplified communication between classes
   
 # Materials
 
-* [Mediator](https://www.dofactory.com/net/mediator-design-pattern)
+* [Mediator @ dofactory](https://www.dofactory.com/net/mediator-design-pattern)
 
-# Concept Class Diagram
+# UML Class Diagram
 
-> [src](mediator.puml)
-
-![](mediator.png)
+![](mediator.drawio.png)
 
 # Examples
 
-* [Mediator by go](/golang/designpattern/mediator.md)
+* [Mediator in kotlin](/kotlin/kotlin_design_pattern/mediator.md)
