@@ -2,12 +2,12 @@
 - [Materials](#materials)
 - [References](#references)
 - [Class Diagram Relationship](#class-diagram-relationship)
+  - [Association](#association)
+  - [Dependency](#dependency)
   - [Inheritance](#inheritance)
   - [Realization](#realization)
-  - [Dependency](#dependency)
-  - [Association](#association)
-  - [Aggregation](#aggregation)
   - [Composition](#composition)
+  - [Aggregation](#aggregation)
   - [Aggregation vs Composition](#aggregation-vs-composition)
 - [GOF Pattern](#gof-pattern)
   - [Creational Pattern](#creational-pattern)
@@ -170,23 +170,11 @@
 
 ![](img/Uml_class_relation_arrows_en.svg.png)
 
-## Inheritance
+끝이 빈 화살표이면 Association 혹은 Dependency 이다. 실선은 점선보다 강하다. 실선은 **Association**, 점선은 **Dependency** 이다.
 
-B 클래스가 A 클래스를 상속할 때 둘의 관계는 Inheritance 이다. 
+끝이 삼각 화살표이면 Inheritance 혹은 Implementation 이다. 실선은 점선보다 강하다. 실선은 **Inheritance**, 점선으 **Implementation** 이다. 
 
-## Realization
-
-B 클래스가 A 인터페이스를 구현할 때 둘의 관계는 Realization 이다.
-
-## Dependency
-
-A 클래스가 B 클래스를 함수의 인자 혹은 리턴값 으로 사용할 때 둘의 관계는 Dependency 이다.
-
-```cs
-public class A {
-    public void enroll(B b){}
-}
-```
+끝이 다이아 화살표이면 Composition 혹은 Aggregation 이다. 다이가 채워진 것이 빈 것보다 강하다. 다이아가 채워진 것은 **Composition**, 다이아가 비워진 것은 **Aggregation** 이다.
 
 ## Association
 
@@ -198,15 +186,23 @@ public class A {
 }
 ```
 
-## Aggregation
+## Dependency
 
-A 클래스가 B 클래스를 소유하고 B 클래스는 A 클래스를 구성하는 부분일 때 둘의 관계는 Aggregation 이다. (**has-a, whole-part**)
+A 클래스가 B 클래스를 함수의 인자 혹은 리턴값 으로 사용할 때 둘의 관계는 Dependency 이다.
 
 ```cs
 public class A {
-    private List<B> b;
+    public void enroll(B b){}
 }
 ```
+
+## Inheritance
+
+B 클래스가 A 클래스를 상속할 때 둘의 관계는 Inheritance 이다. 
+
+## Realization
+
+B 클래스가 A 인터페이스를 구현할 때 둘의 관계는 Realization 이다.
 
 ## Composition
 
@@ -218,6 +214,16 @@ public class A {
     public A() {
        b = new B();
     }
+}
+```
+
+## Aggregation
+
+A 클래스가 B 클래스를 소유하고 B 클래스는 A 클래스를 구성하는 부분일 때 둘의 관계는 Aggregation 이다. (**has-a, whole-part**)
+
+```cs
+public class A {
+    private List<B> b;
 }
 ```
 
