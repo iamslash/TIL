@@ -5,14 +5,12 @@
   
 # Materials
 
-* [Memento](https://www.dofactory.com/net/memento-design-pattern)
+* [Memento @ dofactory](https://www.dofactory.com/net/memento-design-pattern)
 
 # Concept Class Diagram
 
-> [src](memento.puml)
-
-![](memento.png)
+![](memento.drawio.png)
 
 # Examples
 
-* [Memento by go](/golang/designpattern/memento.md)
+* [Memento in kotlin](/kotlin/kotlin_design_pattern/memento.md)
