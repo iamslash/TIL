@@ -1,12 +1,15 @@
 # Abstract
 
-Defines a new operation to a class without change.
+`기능 (visitor)` 이 `추상 (visitable, element)` 과 분리되어 있다. 기존의 `추상 (visitable, element)` 를 변경하지 않고 새로운 `기능 (visitor)` 을 추가할 수 있다. 
 
-기능 (Visitor) 이 추상 (Element) 과 분리되어 있다. 따라서 기존의 추상 (Element) 를 변경하지 않고 새로운 기능 (Visitor) 을 추가할 수 있다. 
+runtime 에 `receiver (visitable, element)`, `parameter (visitor)` 과 같이 두가지를 고려해서 실행될 method 를 결정한다.
 
-그러나 새로운 추상 (Element) 가 추가된다면 기존의 코드를 수정할 수 밖에 없다.
+그러나 새로운 `추상 (visitable, element)` 가 추가된다면 기존의 코드를 수정할 수 밖에 없다.
 
-Concrete Visitor Class 는 `Visit(Element e)` Method 를 갖는다. Concret Element Class 는 `Accept(Visitor v)` Method 를 갖는다.
+`Concrete Visitor Class` 는 `Visit(Element e)` Method 를 갖는다. `Concrete Element Class` 는 `Accept(Visitor v)` Method 를 갖는다. 
+
+`Concrete Element` 의 `Accept(visitor v)` 가 호출되면 `receiver` 는 `Concrete Element` 이고 `parameter` 는 `Concrete Visitor` 이다. 그리고 `v.visit(Element e)` 가
+호출되면 `Concrete Visitor, Concrete Element` 를 고려한 business logic 이 실행된다. 잘 생각해 보면 전체 business logic 의 개수는 `Concrete Element 개수 * Concrete Visitor 개수` 와 같다.
 
 # Materials
 
@@ -18,9 +21,7 @@ Concrete Visitor Class 는 `Visit(Element e)` Method 를 갖는다. Concret Elem
   
 # Concept Class Diagram
 
-> [src](visitor.puml)
-
-![](visitor.png)
+![](visitor.drawio.png)
 
 # Idea
 
@@ -321,7 +322,7 @@ Visitor Pattern 을 이용했기 때문에 다음과 같은 특징들을 갖는�
 
 # Examples
 
-* [Visitor by go](/golang/designpattern/visitor.md)
-* [Visitor by java](/java/designpattern/visitor.md)
-* [Visitor by kotlin](/kotlin/designpattern/visitor.md)
-* [Visitor by cpp](/cpp/designpattern/visitor.md)
+* [Visitor by go](/golang/go_design_pattern/visitor.md)
+* [Visitor by java](/java/java_design_pattern/visitor.md)
+* [Visitor by kotlin](/kotlin/kotlin_design_pattern/visitor.md)
+* [Visitor by cpp](/cpp/cpp_design_pattern/visitor.md)

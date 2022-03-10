@@ -4,15 +4,12 @@
 
 # Materials
 
-* [Chain of Resp.](https://www.dofactory.com/net/chain-of-responsibility-design-pattern)
+* [Chain of Resp. @ dofactory](https://www.dofactory.com/net/chain-of-responsibility-design-pattern)
 
-# Concept Class Diagram
+# UML Class Diagram
 
-> [src](chainofresp.puml)
-
-![](chainofresp.png)
+![](chain_of_resp.drawio.png)
 
 # Examples
 
-* [Chain of Resp. by go](/golang/designpattern/chainofresp.md)
-
+* [Chain of Resp. in kotlin](/kotlin/kotlin_design_pattern/chainofresp.md)

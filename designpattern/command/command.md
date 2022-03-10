@@ -4,15 +4,12 @@
 
 # Materials
 
-* [Command](https://www.dofactory.com/net/command-design-pattern)
+* [Command @ dofactory](https://www.dofactory.com/net/command-design-pattern)
 
 # Concept Class Diagram
 
-> [src](command.puml)
-
-![](command.png)
+![](command.drawio.png)
 
 # Examples
 
-* [Command by go](/golang/designpattern/command.md)
-
+* [Command by kotlin](/kotlin/kotlin_design_pattern/command.md)
