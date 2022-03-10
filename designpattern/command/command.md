@@ -6,7 +6,7 @@
 
 * [Command @ dofactory](https://www.dofactory.com/net/command-design-pattern)
 
-# Concept Class Diagram
+# UML Class Diagram
 
 ![](command.drawio.png)
 

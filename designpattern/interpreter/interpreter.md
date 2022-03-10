@@ -1,18 +1,16 @@
 # Abstract
 
-- A way to include language elements in a program
-- 해석을 추상화 한다.
+* 해석을 추상화 한다.
+* A way to include language elements in a program
 
 # Materials
 
-* [Interpreter](https://www.dofactory.com/net/interpreter-design-pattern)
+* [Interpreter @ dofactory](https://www.dofactory.com/net/interpreter-design-pattern)
 
-# Concept Class Diagram
+# UML Class Diagram
 
-> [src](interpreter.puml)
-
-![](interpreter.png)
+![](interpreter.drawio.png)
 
 # Examples
 
-* [Interpreter by go](/golang/designpattern/interpreter.md)
+* [Interpreter in go](/golang/go_design_pattern/interpreter.md)
