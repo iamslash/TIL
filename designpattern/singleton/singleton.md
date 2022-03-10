@@ -4,14 +4,12 @@
 
 # Materials
 
-* [Singleton](https://www.dofactory.com/net/singleton-design-pattern)
+* [Singleton @ dofactory](https://www.dofactory.com/net/singleton-design-pattern)
 
-# Concept Class Diagram
-
-> [src](singleton.puml)
+# UML Class Diagram
 
 ![](singleton.png)
 
 # Examples
 
-* [Singleton by go](/golang/designpattern/singleton.md)
+* [Singleton in kotlin](/kotlin/kotlin_design_pattern/singleton.md)

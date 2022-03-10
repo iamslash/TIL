@@ -4,14 +4,12 @@
 
 # Materials
 
-* [Prototype](https://www.dofactory.com/net/prototype-design-pattern)
+* [Prototype @ dofactory](https://www.dofactory.com/net/prototype-design-pattern)
 
-# Concept Class Diagram
+# UML Class Diagram
 
-> [src](prototype.puml)
-
-![](prototype.png)
+![](prototype.drawio.png)
 
 # Examples
 
-* [Prototype by go](/golang/designpattern/prototype.md)
+* [Prototype in kotlin](/kotlin/kotlin_design_pattern/prototype.md)

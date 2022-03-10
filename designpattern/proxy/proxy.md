@@ -5,14 +5,12 @@
 
 # Materials
 
-* [Proxy](https://www.dofactory.com/net/proxy-design-pattern)
+* [Proxy @ dofactory](https://www.dofactory.com/net/proxy-design-pattern)
 
-# Concept Class Diagram
+# UML Class Diagram
 
-> [src](proxy.puml)
-
-![](proxy.png)
+![](proxy.drawio.png)
 
 # Examples
 
-* [Proxy by go](/golang/designpattern/proxy.md)
+* [Proxy in kotlin](/kotlin/kotlin_design_pattern/proxy.md)

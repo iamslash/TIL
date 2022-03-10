@@ -1,6 +1,6 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Concept Class Diagram](#concept-class-diagram)
+- [UML Class Diagram](#uml-class-diagram)
 - [Idea](#idea)
 - [Examples](#examples)
 
@@ -15,13 +15,11 @@ decorator pattern 을 사용한다면 새로운 기능을 담고 있는 concrete
 
 # Materials
 
-* [Decorator](https://www.dofactory.com/net/decorator-design-pattern)
+* [Decorator @ dofactory](https://www.dofactory.com/net/decorator-design-pattern)
 
-# Concept Class Diagram
+# UML Class Diagram
 
-> [src](decorator.puml)
-
-![](decorator.png)
+![](decorator_sol.png)
 
 # Idea
 
@@ -97,4 +95,4 @@ Decorator 는 LibraryItem instance 를 가지고 있다(has-a relationship).Borr
 
 # Examples
 
-* [Decorator by go](/golang/designpattern/decorator.md)
+* [Decorator in kotlin](/kotlin/kotlin_design_pattern/decorator.md)

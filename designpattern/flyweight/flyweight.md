@@ -4,14 +4,12 @@
 
 # Materials
 
-* [Flyweight](https://www.dofactory.com/net/flyweight-design-pattern)
+* [Flyweight @ dofactory](https://www.dofactory.com/net/flyweight-design-pattern)
 
-# Concept Class Diagram
+# UML Class Diagram
 
-> [src](facade.puml)
-
-![](facade.png)
+![](flyweight.drawio.png)
 
 # Examples
 
-* [Facade by go](/golang/designpattern/facade.md)
+* [Facade in kotlin](/kotlin/kotlin_design_pattern/flyweight.md)

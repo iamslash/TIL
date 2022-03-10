@@ -7,12 +7,10 @@
 * [Factory Method @ dofactory](https://www.dofactory.com/net/factory-method-design-pattern)
 * [Factory Method @ ractoring.guru](https://refactoring.guru/design-patterns/factory-method)
 
-# Concep Class Diagram
-
-> [src](factorymethod.puml)
+# UML Class Diagram
 
 ![](factorymethod.png)
 
 # Examples
 
-* [Factory Method by go](/golang/designpattern/factorymethod.md)
+* [Factory Method in kotlin](/kotlin/kotlin_design_pattern/factorymethod.md)

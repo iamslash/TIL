@@ -9,9 +9,7 @@ Abstract Factory 는 Factory 를 생성하고 그 Factory 는 다시 Product 를
 
 # UML Class Diagram
 
-> [src](abstractfactory.puml)
-
-![](abstractfactory.png)
+![](abstract_factory.drawio.png)
 
 # Implements
 

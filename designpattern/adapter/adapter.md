@@ -4,15 +4,13 @@
 
 # Materials
 
-* [Adapter](https://www.dofactory.com/net/adapter-design-pattern)
+* [Adapter @ dofactory](https://www.dofactory.com/net/adapter-design-pattern)
 
-# Concept Class Diagram
+# UML Class Diagram
 
-> [src](adapter.puml)
-
-![](adapter.png)
+![](adapter.drawio.png)
 
 # Examples
 
-* [Adapter by go](/golang/designpattern/adapter.md)
+* [Adapter in kotlin](/kotlin/kotlin_design_pattern/adapter.md)
 

@@ -4,14 +4,12 @@
 
 # Materials
 
-* [Composite](https://www.dofactory.com/net/composite-design-pattern)
+* [Composite @ dofactory](https://www.dofactory.com/net/composite-design-pattern)
 
 # Concept Class Diagram
 
-> [src](composite.puml)
-
-![](composite.png)
+![](composite.drawio.png)
 
 # Examples
 
-* [Composite by go](/golang/designpattern/composite.md)
+* [Composite in kotlin](/kotlin/kotlin_design_pattern/composite.md)

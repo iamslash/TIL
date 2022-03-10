@@ -4,14 +4,12 @@
 
 # Materials
 
-* [Facade](https://www.dofactory.com/net/facade-design-pattern)
+* [Facade @ dofactory](https://www.dofactory.com/net/facade-design-pattern)
 
-# Concept Class Diagram
-
-> [src](facade.puml)
+# UML Class Diagram
 
 ![](facade.png)
 
 # Examples
 
-* [Facade by go](/golang/designpattern/facade.md)
+* [Facade in kotlin](/kotlin/kotlin_design_pattern/facade.md)
