@@ -7,6 +7,7 @@
 - [Principles](#principles)
   - [How to approach a system design interview question](#how-to-approach-a-system-design-interview-question)
   - [Distributed System](#distributed-system)
+  - [Software Design Principle](#software-design-principle)
   - [Scalability](#scalability)
   - [Performance vs scalability](#performance-vs-scalability)
   - [Latency vs throughput](#latency-vs-throughput)
@@ -240,6 +241,10 @@ Notes
 ## Distributed System
 
 * [Distributed System](/distributedsystem/README.md)
+
+## Software Design Principle
+
+* [design principle](/designprinciple/README.md)
 
 ## Scalability
 
