@@ -4,7 +4,7 @@
   - [Architectural](#architectural)
     - [API Gateway](#api-gateway)
     - [Aggregator Microservices](#aggregator-microservices)
-    - [CQRS (command query responsibility segregation](#cqrs-command-query-responsibility-segregation)
+    - [CQRS (command query responsibility segregation)](#cqrs-command-query-responsibility-segregation)
     - [Data Bus](#data-bus)
     - [Data Transfer Object](#data-transfer-object)
     - [Event Driven Architecture](#event-driven-architecture)
@@ -179,7 +179,7 @@
     other microservices.
   - similar to APIGateway
 
-### CQRS (command query responsibility segregation
+### CQRS (command query responsibility segregation)
   - CQRS Command Query Responsibility Segregation - Separate the query
     side from the command side.
 
