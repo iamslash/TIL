@@ -5,4 +5,4 @@ MNIST_data
 .vscode
 *.out
 .metals
-.DS_Store
+**/.DS_Store
