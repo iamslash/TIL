@@ -158,7 +158,7 @@
 * [Java Design Patterns](https://java-design-patterns.com/)
   * [src](https://github.com/iluwatar/java-design-patterns.git)
 
-# [Java Design Patterns](http://java-design-patterns.com/)
+# Java Design Patterns
 
 ## Architectural
 

@@ -253,6 +253,7 @@ public class A {
 # Java Design Patterns
 
 * [Java Design Pattern](/java/java_design_pattern.md)
+  * 디자인 패턴의 끝판왕임
 
 # Microservice Patterns
 
