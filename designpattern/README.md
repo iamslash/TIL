@@ -70,6 +70,48 @@
     - [Partial Response](#partial-response)
     - [Service Layer](#service-layer)
   - [Behavioral](#behavioral)
+    - [Acyclic Visitor](#acyclic-visitor)
+    - [Bytecode](#bytecode-1)
+    - [Caching](#caching)
+    - [Chain of responsibility](#chain-of-responsibility)
+    - [Circuit Breaker](#circuit-breaker)
+    - [Command](#command-1)
+    - [Data Locality](#data-locality-1)
+    - [Dirty Flag](#dirty-flag-1)
+    - [Double Buffer](#double-buffer-1)
+    - [Extension objects](#extension-objects)
+    - [Feature Toggle](#feature-toggle)
+    - [Game Loop](#game-loop-1)
+    - [Intercepting Filter](#intercepting-filter)
+    - [Interpreter](#interpreter-1)
+    - [Iterator](#iterator-1)
+    - [Leader Election](#leader-election)
+    - [Mediator](#mediator-1)
+    - [Memento](#memento-1)
+    - [Null Object](#null-object)
+    - [Observer](#observer-1)
+    - [Parameter Object](#parameter-object)
+    - [Partial Response](#partial-response-1)
+    - [Pipeline](#pipeline)
+    - [Poison Pill](#poison-pill)
+    - [Presentation](#presentation)
+    - [Priority Queue Pattern](#priority-queue-pattern)
+    - [Retry](#retry)
+    - [Servant](#servant)
+    - [Sharding](#sharding)
+    - [Spatial Partition](#spatial-partition-1)
+    - [Special Case](#special-case)
+    - [Specification](#specification)
+    - [State](#state-1)
+    - [Strategy](#strategy-1)
+    - [Subclass Sandbox](#subclass-sandbox-1)
+    - [Template method](#template-method)
+    - [Throttling](#throttling)
+    - [Trampoline](#trampoline)
+    - [Transaction Script](#transaction-script)
+    - [Type-Object](#type-object-1)
+    - [Update Method](#update-method-1)
+    - [Visitor](#visitor-1)
   - [Business Tier](#business-tier)
     - [Business Delegate](#business-delegate)
   - [Concurrency](#concurrency)
@@ -106,7 +148,7 @@
   - [Testing](#testing)
     - [Page Object](#page-object)
   - [Other](#other)
-    - [Caching](#caching)
+    - [Caching](#caching-1)
     - [Callback](#callback)
     - [Double Dispatch](#double-dispatch)
     - [Execute Around](#execute-around)
@@ -114,7 +156,7 @@
     - [Lazy Loading](#lazy-loading)
     - [Monad](#monad)
     - [Mute Idiom](#mute-idiom)
-    - [Poison Pill](#poison-pill)
+    - [Poison Pill](#poison-pill-1)
     - [Private Class Data](#private-class-data)
     - [Queue based load leveling](#queue-based-load-leveling)
     - [Resource Acquisition is Initialization](#resource-acquisition-is-initialization)
@@ -407,7 +449,50 @@ public class A {
     application to access and manipulate its data and invoke its
     business logic. The Service Layer fulfills this role.
 
-## [Behavioral](#gof-pattern)
+## Behavioral
+
+### Acyclic Visitor
+### Bytecode
+### Caching
+### Chain of responsibility 
+### Circuit Breaker
+### Command 
+### Data Locality
+### Dirty Flag
+### Double Buffer
+### Extension objects 
+### Feature Toggle 
+### Game Loop
+### Intercepting Filter 
+### Interpreter 
+### Iterator 
+### Leader Election
+### Mediator 
+### Memento 
+### Null Object 
+### Observer
+### Parameter Object 
+### Partial Response 
+### Pipeline 
+### Poison Pill
+### Presentation 
+### Priority Queue Pattern
+### Retry
+### Servant 
+### Sharding
+### Spatial Partition
+### Special Case
+### Specification
+### State
+### Strategy
+### Subclass Sandbox
+### Template method  
+### Throttling  
+### Trampoline 
+### Transaction Script
+### Type-Object
+### Update Method
+### Visitor
 
 ## Business Tier
 
