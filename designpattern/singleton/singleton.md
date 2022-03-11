@@ -13,3 +13,4 @@
 # Examples
 
 * [Singleton in kotlin](/kotlin/kotlin_design_pattern/singleton.md)
+* [Singleton in go](/golang/go_design_pattern/singleton.md)

@@ -13,3 +13,5 @@
 # Examples
 
 * [Bridge in java](/java/java_design_pattern/bridge.md)
+* [Bridge in kotlin](/kotlin/kotlin_design_pattern/bridge.md)
+* [Bridge in go](/golang/go_design_pattern/bridge.md)

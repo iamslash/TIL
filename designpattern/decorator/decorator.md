@@ -96,3 +96,4 @@ Decorator 는 LibraryItem instance 를 가지고 있다(has-a relationship).Borr
 # Examples
 
 * [Decorator in kotlin](/kotlin/kotlin_design_pattern/decorator.md)
+* [Decorator in go](/golang/go_design_pattern/decorator.md)

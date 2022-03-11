@@ -13,3 +13,4 @@
 # Examples
 
 * [Facade in kotlin](/kotlin/kotlin_design_pattern/facade.md)
+* [Facade in go](/golang/go_design_pattern/facade.md)

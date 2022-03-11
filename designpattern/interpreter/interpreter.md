@@ -12,5 +12,3 @@
 ![](interpreter.drawio.png)
 
 # Examples
-
-* [Interpreter in go](/golang/go_design_pattern/interpreter.md)

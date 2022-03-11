@@ -13,4 +13,4 @@
 # Examples
 
 * [Adapter in kotlin](/kotlin/kotlin_design_pattern/adapter.md)
-
+* [Adapter in go](/golang/go_design_pattern/adapter.md)

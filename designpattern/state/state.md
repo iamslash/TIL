@@ -14,3 +14,4 @@
 # Examples
 
 * [State in kotlin](/kotlin/kotlin_design_pattern/state.md)
+* [State in go](/golang/go_design_pattern/state.md)

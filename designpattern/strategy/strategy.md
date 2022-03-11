@@ -16,3 +16,4 @@
 # Examples
 
 * [Strategy in kotlin](/kotlin/kotlin_design_pattern/strategy.md)
+* [Strategy in go](/golang/go_design_pattern/strategy.md)

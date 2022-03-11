@@ -14,3 +14,4 @@
 # Examples
 
 * [Memento in kotlin](/kotlin/kotlin_design_pattern/memento.md)
+* [Memento in go](/golang/go_design_pattern/memento.md)

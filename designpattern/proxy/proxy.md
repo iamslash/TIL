@@ -14,3 +14,4 @@
 # Examples
 
 * [Proxy in kotlin](/kotlin/kotlin_design_pattern/proxy.md)
+* [Proxy in go](/golang/go_design_pattern/proxy.md)

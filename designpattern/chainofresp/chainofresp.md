@@ -13,3 +13,4 @@
 # Examples
 
 * [Chain of Resp. in kotlin](/kotlin/kotlin_design_pattern/chainofresp.md)
+* [Chain of Resp. in go](/golang/go_design_pattern/chainofresp.md)

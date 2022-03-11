@@ -14,3 +14,4 @@
 # Examples
 
 * [Template in kotlin](/kotlin/kotlin_design_pattern/template.md)
+* [Template in go](/golang/go_design_pattern/template.md)

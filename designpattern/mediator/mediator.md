@@ -14,3 +14,4 @@
 # Examples
 
 * [Mediator in kotlin](/kotlin/kotlin_design_pattern/mediator.md)
+* [Mediator in go](/golang/go_design_pattern/mediator.md)

@@ -15,3 +15,4 @@
 # Examples
 
 * [Observer in kotlin](/kotlin/kotlin_design_pattern/observer.md)
+* [Observer in go](/golang/go_design_pattern/observer.md)

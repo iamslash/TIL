@@ -12,4 +12,5 @@
 
 # Examples
 
-* [Command by kotlin](/kotlin/kotlin_design_pattern/command.md)
+* [Command in kotlin](/kotlin/kotlin_design_pattern/command.md)
+* [Command in go](/golang/go_design_pattern/command.md)

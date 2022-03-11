@@ -13,3 +13,4 @@
 # Examples
 
 * [Prototype in kotlin](/kotlin/kotlin_design_pattern/prototype.md)
+* [Prototype in go](/golang/go_design_pattern/prototype.md)

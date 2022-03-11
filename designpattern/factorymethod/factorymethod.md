@@ -14,3 +14,4 @@
 # Examples
 
 * [Factory Method in kotlin](/kotlin/kotlin_design_pattern/factorymethod.md)
+* [Factory Method in go](/golang/go_design_pattern/factorymethod.md)

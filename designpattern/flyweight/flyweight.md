@@ -13,3 +13,4 @@
 # Examples
 
 * [Facade in kotlin](/kotlin/kotlin_design_pattern/flyweight.md)
+* [Facade in go](/golang/go_design_pattern/flyweight.md)

@@ -13,3 +13,4 @@
 # Examples
 
 * [Composite in kotlin](/kotlin/kotlin_design_pattern/composite.md)
+* [Composite in go](/golang/go_design_pattern/composite.md)
