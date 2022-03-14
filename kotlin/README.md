@@ -1821,11 +1821,12 @@ println(q)
 val a = intArrayOf(5, 4, 3, 2, 1)
 val sortList = a.sort()
 val sortDescending = a.sortDescending()
+// There are no sortBy, sortByDescending, sortWith for intArray
 
 val sorted = a.sorted()
 val sortedBy = a.sortedBy { kotlin.math.abs(it) }
 val sortedDescending = a.sortedDescending()
-// val sortedByDescending = a.sortedByDescending { kotlin.math.abs(it) }
+val sortedByDescending = a.sortedByDescending { kotlin.math.abs(it) }
 val sortedWith = a.sortedWith { a, b ->
     when {
         a < b -> -1
@@ -1834,6 +1835,20 @@ val sortedWith = a.sortedWith { a, b ->
     }
 }
 
+// sort vs sorted, sort is faster than sorted
+// sort of a.sort()
+public actual fun IntArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+// sorted of a.sorted()
+// sorted needs converting from intArray to Array<Int> 
+public fun IntArray.sorted(): List<Int> {
+    return toTypedArray().apply { sort() }.asList()
+}
+public expect fun IntArray.toTypedArray(): Array<Int>
+```
+
+```java
 // Sort Array<Int>
 val l = mutableListOf<Int>(5, 4, 3, 2, 1)
 val sortList = l.sort()
@@ -1859,7 +1874,7 @@ val sortedWith = l.sortedWith { a, b ->
     }
 }
 
-// Sort string
+// Sort Array<String>
 val names = listOf("kim", "julia", "jim", "hala")
 names.sortedWith(Comparator<String>{ a, b ->
     when {
