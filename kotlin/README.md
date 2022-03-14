@@ -944,7 +944,22 @@ println(listOf(1, 2, 3, 4)
 
 ## Collection Conversions
 
-WIP
+```kotlin
+// Convert Set to List
+// https://codechacha.com/ko/kotlin-convert-set-to-list/
+fun main(args: Array<String>) {
+    val mySet: Set<String> = setOf("1", "2", "3")
+    val myList: List<String> = mySet.toList()
+    println(myList)
+}
+// Convert Set to Mutable List
+fun main(args: Array<String>) {
+    val mySet: MutableSet<String> = mutableSetOf("1", "2", "3")
+    val myList: MutableList<String> = mySet.toMutableList()
+    myList.add("6")
+    println(myList)
+}
+```
 
 ## Init Array
 
@@ -952,7 +967,7 @@ WIP
 
 ----
 
-```kt
+```kotlin
 // String array
 val strings = arrayOf("January", "February", "March")
 // Primitive array
@@ -1801,7 +1816,7 @@ println(q)
 
 -----
 
-```kt
+```kotlin
 // Sort primitive array
 val integers = intArrayOf(1, 2, 3, 4)
 integers.sort()
