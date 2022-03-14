@@ -133,6 +133,10 @@ Active Close 의 경우 `FIN_WAIT_1, FIN_WAIT_2, TIME_WAIT, CLOSED` 순서대로
 
 ## IPv4
 
+* [IP헤더 형식과 의미 요약 @ youtube](https://www.youtube.com/watch?v=9MPzEwZrRqo&list=PLXvgR_grOs1BFH-TuqFsfHqbh-gpMbFoy&index=16)
+
+----
+
 ```
  0                   1                   2                   3
  0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
@@ -150,6 +154,10 @@ Active Close 의 경우 `FIN_WAIT_1, FIN_WAIT_2, TIME_WAIT, CLOSED` 순서대로
 |                    Options                    |    Padding    |
 +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
 ```
+
+* `Time to Live`
+  * Ip Packet 이 Router 를 하나 지날 때 마다 `Time to Live` 가 하나씩 감소한다.
+    `0` 이 되면 Router 가 Ip Packet 을 파괴한다.
 
 ## IPv6
 
@@ -227,7 +235,6 @@ Network, Host 를 어떻게 나누는 가에 따라 A, B, C, D, E class 로 구�
 `211.168.83.1` 은 C 클래스 주소이다. Network part 는 3 byte 이기 때문에
 C 클래스의 기본 마스크 `255.255.255.0` 을 적용하면 Network part `211.168.83` 를 얻어낼 수 있다. 그리고 `211.168.83` 네트워크를 관리하는 라우터에게 패킷을 보낼 수 있다.
 해당 라우터는 Host Part `1` 에 해당하는 단말기에게 패킷을 보낸다.
-
 
 # TCP/IP programming
 
