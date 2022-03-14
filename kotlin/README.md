@@ -854,7 +854,7 @@ val jake = Person("Jake", 30, "Android developer")
 
 kotlin 은 [functional programming](/fp/REAME.md) 의 function combinator 를 통해 간결한 coding 을 할 수 있다.
 
-```kt
+```kotlin
 // Shop.kt
 data class Shop(val name: String, val customers: List<Customer>)
 data class Customer(val name: String, val city: City, val orders: List<Order>) {
@@ -1816,22 +1816,48 @@ println(q)
 
 -----
 
-```kotlin
-// Sort primitive array
-val integers = intArrayOf(1, 2, 3, 4)
-integers.sort()
-integers.sortDescending()
+```java
+// Sort intArray
+val a = intArrayOf(5, 4, 3, 2, 1)
+val sortList = a.sort()
+val sortDescending = a.sortDescending()
 
-// Sort with comparator
-val list = listOf(7,3,5,9,1,3)
-list.sortedWith(Comparator<Int>{ a, b ->
+val sorted = a.sorted()
+val sortedBy = a.sortedBy { kotlin.math.abs(it) }
+val sortedDescending = a.sortedDescending()
+// val sortedByDescending = a.sortedByDescending { kotlin.math.abs(it) }
+val sortedWith = a.sortedWith { a, b ->
     when {
-        a > b -> 1
         a < b -> -1
+        a > b -> 1
         else -> 0
     }
-})
-// list: [1, 3, 3, 5, 7, 9]
+}
+
+// Sort Array<Int>
+val l = mutableListOf<Int>(5, 4, 3, 2, 1)
+val sortList = l.sort()
+val sortDescending = l.sortDescending()
+val sortByList = l.sortBy { kotlin.math.abs(it) }
+val sortByDescending = l.sortByDescending { kotlin.math.abs(it) }
+val sortWith = l.sortWith { a, b ->
+    when {
+        a < b -> -1
+        a > b -> 1
+        else -> 0
+    }
+}
+val sorted = l.sorted()
+val sortedBy = l.sortedBy { kotlin.math.abs(it) }
+val sortedDescending = l.sortedDescending()
+val sortedByDescending = l.sortedByDescending { kotlin.math.abs(it) }
+val sortedWith = l.sortedWith { a, b ->
+    when {
+        a < b -> -1
+        a > b -> 1
+        else -> 0
+    }
+}
 
 // Sort string
 val names = listOf("kim", "julia", "jim", "hala")
