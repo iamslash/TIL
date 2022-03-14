@@ -14,9 +14,13 @@ SSL/TLS 에 대해 적는다.
 # Materials
 
 > * [SSL (1) - SSL에 대한 소개](https://m.blog.naver.com/nttkak/20130246203)
-> * [SSL (2) - SSL 프로토콜 알기 @ naverblog](https://m.blog.naver.com/nttkak/20130246501)
-> * [SSL (3) - 기본 적인 SSL 통신 하기](https://m.blog.naver.com/nttkak/20130246586)
-> * [SSL (4) - 상대방 인증 하면서 SSL 통신 하기](https://m.blog.naver.com/nttkak/20130246706)
+>   * [SSL (2) - SSL 프로토콜 알기 @ naverblog](https://m.blog.naver.com/nttkak/20130246501)
+>   * [SSL (3) - 기본 적인 SSL 통신 하기](https://m.blog.naver.com/nttkak/20130246586)
+>   * [SSL (4) - 상대방 인증 하면서 SSL 통신 하기](https://m.blog.naver.com/nttkak/20130246706)
+> * [비대칭키가 인터넷 환경에서 사용되는 기본 원리](https://www.youtube.com/watch?v=jyZ7TQaFy_o&t=202s)
+>   * [인터넷 키교환 시스템의 구조](https://www.youtube.com/watch?v=0bggPYjCnlE)
+>   * [비대칭키 시스템을 해킹하는 원리](https://www.youtube.com/watch?v=ewjpVxKXGxg)
+>   * [인증 시스템이 포함된 SSL 통신 및 인증서 검증원리](https://www.youtube.com/watch?v=FeNBIqD9BAU&t=64s)
 
 # SSL Handshake
 
