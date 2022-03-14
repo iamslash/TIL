@@ -12,6 +12,7 @@ PKI (Public Key Infrastructure) 에 대해 적는다.
 
 # Materials
 
+* [비대칭키 작동구조와 코인의 실체 @ youtube](https://www.youtube.com/watch?v=z5RN8XKLDd8)
 * [PKI, 공개키 기반구조, 인증서 (1) - PKI 의 기본 구조 @ naverblog](https://m.blog.naver.com/nttkak/20130244568)
   * [PKI, 공개키 기반구조, 인증서 (2) - 공개키 인증서 ( Public Key Certificate ) @ naverblog](https://m.blog.naver.com/nttkak/20130244771)
   * [PKI, 공개키 기반구조, 인증서 (3) - 인증서의 인증 구조 @ naverblog](https://m.blog.naver.com/nttkak/20130245218)
@@ -134,7 +135,6 @@ Root 인증서는 무조건 신뢰할 수 있다는 가정하에 사용된다. R
 이제 크래커 입장에서 생각해 보자. `iamslash` 인증서를 발급한 발급자는 인증서의 주체가 `iamslash` 인 인증서를 발급해 주지 않을 것이다. 그렇다면 주체가 `iamslash` 인 인증서를 변조해야 한다. 그러나 발급자의 개인키가 없기 때문에 서명을 제대로 기록할 수 없다.   
 
 그렇다면 크래커가 발급자도 사칭 할 수 있다. 곧, 크래커가 직접 사설 인증 기관을 만든 후에 `iamslash` 를 사칭하여 인증서를 발급하는 것이다. 그러나 인증서 체인 때문에 발급자를 사칭하게 되면 상위 발급자도 사칭을 해야 하며 결국 최상위 기관인 Root 발급자까지 사칭해야만 한다. 그러나 위에서도 말했듯이 Root 인증서는 Microsoft 가 관리하며 이미 시스템 내부에 포함되어 있기 때문에 모든 PC 의 사칭은 불가능하다. 그렇다면 특정 PC 는 가능한 건가???
-
 
 # 인증서 병합하기
 
