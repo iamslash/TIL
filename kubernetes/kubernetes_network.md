@@ -162,12 +162,6 @@ $ vim /etc/hosts
 
 # CoreDNS in Kubernetes
 
+* [[K8S] CoreDNS의 동작 흐름 @ tistory](https://ba-reum.tistory.com/39?fbclid=IwAR3r2W_jOocKKDPWwlRFhcmeIwC1hoy1IlEqPFW6IwQA_WQENKIkdyxH9dc)
+
 # Ingress
-
-
-
-
-
-
-
-
