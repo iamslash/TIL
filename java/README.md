@@ -278,12 +278,14 @@ int c = a >>> 1; // 0111 1111
 // append char to String
 char c = 'K', d = '1';
 String s = "" + c + d;
+String s = "U".repeat(10); // since java11
 
 // StringBuffer is thread-safe but StringBuilder is not thread-safe
 StringBuffer sb = new StringBuffer();
 StringBuilder sb = new StringBuilder();
 sb.append("a");
 sb.deleteCharAt(sb.length()-1);
+sb.setLength(sb.length()-1);
 sb.setCharAt(0, '*');
 
 // StringBuilder right trim
