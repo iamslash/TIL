@@ -29,7 +29,7 @@
     - [LimitRange](#limitrange)
     - [Admission Controller](#admission-controller)
   - [Kubernetes Scheduling](#kubernetes-scheduling)
-    - [nodeName, nodeSelector, nodeAffinity, pod Affinity, podAntiAffinity](#nodename-nodeselector-nodeaffinity-pod-affinity-podantiaffinity)
+    - [nodeName, nodeSelector, nodeAffinity, podAffinity, podAntiAffinity](#nodename-nodeselector-nodeaffinity-podaffinity-podantiaffinity)
     - [Taints, Tolerations](#taints-tolerations)
     - [Cordon, Drain, PodDisruptionBudget](#cordon-drain-poddisruptionbudget)
     - [Custom Scheduler](#custom-scheduler)
@@ -1709,7 +1709,7 @@ Istio 는 Admission Controller 를 통해서 pod 에 proxy side car container �
 
 ## Kubernetes Scheduling
 
-### nodeName, nodeSelector, nodeAffinity, pod Affinity, podAntiAffinity
+### nodeName, nodeSelector, nodeAffinity, podAffinity, podAntiAffinity
 
 kube-scheduler 는 node filtering, node scoring 의 과정을 통해 scheduling 한다. 즉, worker-node 에 pod 을 할당 한다. 이것은 etcd 에 저장된 pod data 의 nodeName 을 특정 worker-node 의 이름으로 변경하는 것을 의미한다. [kubernetes/pkg/scheduler/framework/plugins/ @ github](https://github.com/kubernetes/kubernetes/tree/master/pkg/scheduler/framework/plugins) 에서 filtering, scoring 의 code 를 확인할 수 있다.
 
@@ -1717,7 +1717,7 @@ node scoring 은 customizing 할 이유가 거의 없다. node filtering 은 nod
 
 가장 간단한 scheduling 방법은 nodeName 을 이용하는 것이다. 그러나 권장하지 않는다.
 
-* `nodename-nginx.yaml`
+> `nodename-nginx.yaml`
 
 ```yml
 apiVersion: v1
@@ -1739,7 +1739,7 @@ $ kubectl get pods -o wide
 
 이번에는 NodeSelector 를 이용하여 특정 label 를 갖는 node 에 pod 를 할당하자. 
 
-* `nodeselector-nginx.yaml`
+> `nodeselector-nginx.yaml`
 
 ```yml
 apiVersion: v1
@@ -1769,7 +1769,7 @@ $ kubectl label nodes xxx.xxx.xxx.xxx mylabel/disk=hdd-
 
 nodeAffinity 를 이용하면 nodeSelector 보다 조건을 정밀하게 설정할 수 있다.
 
-* `nodeaffinity-required.yaml`
+> `nodeaffinity-required.yaml`
 
 ```yml
 apiVersion: v1
@@ -1796,7 +1796,7 @@ requiredDuringSchedulingIgnoredDuringExecution 은 scheduling 하기 전에는 �
 
 preferredDuringSchedulingIgnoredDuringExecution 은 scheduling 하기 전에는 최대한 적용하고 일단 scheduling 되고 나면 무시하라는 의미이다. 적용안될 수도 있다.
 
-* `nodeaffinity-preferred.yaml`
+> `nodeaffinity-preferred.yaml`
 
 ```yml
 apiVersion: v1
@@ -1821,7 +1821,7 @@ spec:
 
 podAffinity 를 이용하여 조건을 만족하는 pod 와 함께 실행되게 할 수 있다.
 
-* `podaffinity-required.yaml`
+> `podaffinity-required.yaml`
 
 ```yml
 apiVersion: v1
@@ -1848,7 +1848,7 @@ topologyKey 는 해당 라벨을 가지는 worker-node 에서 조건을 수행�
 
 topologyKey 를 `kubernetes.io/hostname` 으로 설정해 두면 matchExpressions 를 만족하는 worker-node 에서 pod 을 실행한다. 모든 worker-node 는 자신만의 hostname 을 갖기 때문이다.
 
-* `podaffinity-hostname-topology.yaml`
+> `podaffinity-hostname-topology.yaml`
 
 ```yml
 apiVersion: v1
@@ -1873,7 +1873,7 @@ spec:
 
 podAntiAffinity 는 podAffinity 와 반대의 의미를 갖는다. 예를 들어 다음과 같은 경우 matchExpressions 조건을 만족하는 pod 가 위치한 node 와 다른 topology 의 node 에 pod 를 할당한다.
 
-* `pod-anitiaffinity-required.yaml`
+> `pod-anitiaffinity-required.yaml`
 
 ```yml
 apiVersion: v1
@@ -1898,7 +1898,9 @@ spec:
 
 ### Taints, Tolerations
 
-kube-scheduler 는 taints, tolerations 을 통해 node filtering 을 수행할 수 있다. taints 는 node 에 표식을 하여 pod 이 할당되지 않게 하는 것이다. tolerations 는 node 의 taints 가 있음에도 불구하고 pod 가 할당되도록 하는 것이다.
+kube-scheduler 는 taints, tolerations 을 통해 node filtering 을 수행할 수 있다.
+taints 는 node 에 표식을 하여 pod 이 할당되지 않게 하는 것이다. tolerations 는
+node 의 taints 가 있음에도 불구하고 pod 가 할당되도록 하는 것이다.
 
 다음과 같은 방법으로 taints 를 설정할 수 있다.
 
@@ -1920,7 +1922,7 @@ taint value 의 형식은 label 과 비슷하다. `<key>=<value>:<effect>` 이�
 
 이번에는 tolertaions 을 이용하여 taint 가 부착된 node 에 pod 을 할당해 보자.
 
-* `tolertation-test.yaml`
+> `tolertation-test.yaml`
 
 ```yml
 apiVersion: v1
@@ -1948,7 +1950,7 @@ Unschedulable:      false
 
 다음은 master-node 의 taint 에도 불구하고 tolerations 를 이용하여 pod 를 할당하는 예이다.
 
-* `toleration-maser.yaml`
+> `toleration-maser.yaml`
 
 ```yml
 apiVersion: v1
