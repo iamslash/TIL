@@ -1,3 +1,8 @@
+# Abstract
+
+Kotlin 의 경우 builder pattern, DSL pattern 을 이용하여 객체를 생성하는 것보다
+primary constructor 를 이용하는 편이 좋다. [Item 34: Consider a primary constructor with named optional arguments](#item-34-consider-a-primary-constructor-with-named-optional-arguments)
+
 # Real World Example
 
 ```kotlin

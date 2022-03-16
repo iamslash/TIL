@@ -1690,14 +1690,254 @@ Kotlin 에서 builder pattern, DSL pattern 을 이용하여 객체를 생성하�
 
 -----
 
+복잡하다. 과연 사용할 일이 많을까? 그때 정리해야 겠다.
+
 ## Chapter 6: Class design
 
 ### Item 36: Prefer composition over inheritance
 
-composition 은 재사용하기 쉽고, 더 많은 유연성을 제공해 준다. 
+composition 은 필요한 기능을 제공하는 class 를 member 로 갖는 것이다.
+compoisition 이 inheritance 보다 더욱 명확하다.
+
+```kotlin
+// AsIs: ProfileLoader, ImageLoader 가 있다.
+class ProfileLoader {
+  fun load() {
+    // Show progress bar
+    // Read profile
+    // Hide progress bar
+  }
+}
+class ImageLoader {
+  fun load() {
+    // Show progress bar
+    // Read image
+    // Hide progress bar
+  }
+}
+// AsIs: ProfileLoader, ImageLoader 는 LoaderWithProgress 를 상속 받도록 하자.
+// 다음과 같은 단점들이 있다.
+// * 상속은 하나의 클래스만을 대상으로 할 수 있다. 추출을 해야 하므로 BaseXXX 라는 것이
+//   생기고 뚱둥해진다.
+// * 상속은 클래스의 모든 것을 가져온다. 자식 class 입장에서 부모로 부터 사용하지 않는 method,
+//   variable 을 가져온다.
+// * 상속은 이해하기 어렵다. 복잡한 hierarchy 는 가독성을 떨어뜨린다.
+abstract class LoaderWithProgress {
+  fun load() {
+    // Show progress bar
+    innerLoad()
+    // Hide progress bar
+  }
+}
+
+class ProfileLoader: LoaderWithProgress {
+  override fun innerLoad()
+}
+
+class ImageLoader: LoaderWithProgress {
+  override fun innserLoad()
+}
+
+// ToBe: composition 이 더욱 갈끔하다.
+class Progress {
+  fun showProgress() { /* Show progress */ }
+  fun hideProgress() { /* hide progress */ }
+}
+
+class ProfielLoader {
+  val progress = Progress()
+  fun load() {
+    progress.showProgress()
+    // read profile
+    progress.hideProgress()
+  }
+}
+
+class ImageLoader {
+  val progress = Progress()
+  fun load() {
+    progress.showProgress()
+    // read profile
+    progress.hideProgress()
+  }
+}
+```
 
 ### Item 37: Use the data modifier to represent a bundle of data
+
+```kotlin
+// Kotlin 에서 data class 는 매우 유용하다.
+// data class 는 다음과 같은 method 를 자동으로 만들어 준다.
+// * toString
+// * equals
+// * hashCode
+// * copy
+// * componentN(component1, component2, etc...)
+data class Player(
+  val id: Int,
+  val name: String,
+  val points: Int
+)
+val player = Player(0, "Gecko", 9999)
+
+// toString
+print(player)  // Player(id=0, name=Gecko, points=9999)
+// equals
+player == Player(0, "Gecko", 9999)  // true
+player == Player(0, "Ross", 9999)   // false
+// copy, this is shallow copy not deep copy
+val newObj = player.copy(name = "Thor")
+print(newObj)  // Player(id=0, name=Thor, points=9999)
+// copy should be implemented like this
+fun copy(
+  id: Int = this.id,
+  name: String = this.name,
+  points: Int = this.points
+) = Player(id, name, points)
+// componentN makes destructuring possible 
+val (id, name, points) = player
+// this is after compiled
+val id: Int = player.component1()
+val name: String = plyer.component2()
+val points: Int = player.component3()
+// omponentN is convenient for collection
+val visited = listOf("china", "Russia", "India")
+val (first, second, third) = visited
+println("$first $second $third")
+// China Russia India
+val trip = mapOf(
+  "China" to "Tianjiin",
+  "Russia" to "Petersburg",
+  "India" to "Rishikesh"
+)
+for ((country, city) in trip) {
+  println("We loved $city in $country")
+  // We loved Tianjin in China
+  // We loved Petersburg in Russia
+  // We loved Rishikesh in Indea
+}
+```
+
+Tuple 을 사용하지 말고 Data Class 를 사용하라.
+
+```kotlin
+// Pair, Triple 은 Kotlin 에 남은 유일한 Tuple 이다.
+public data class Pair<out A, out B>(
+  public val first: A,
+  public val second: B
+): Serializable {
+  public override fun toString(): String = 
+    "($first, $second)"
+}
+public data class Triple<out A, out B, out C>(
+  public val first: A,
+  public val second: B,
+  public val third: C,
+): Serializable {
+  public override fun toString(): String = 
+    "($first, $second, $third)"
+}
+// 다음은 Pair, Triple 의 사용예이다.
+val (description, color) = when {
+  degrees < 5 -> "cold" to Color.BLUE
+  degrees < 23 -> "mild" to Color.YELLOW
+  else -> "hot" to Color.RED
+}
+val (odd, even) = numbers.partition { it % 2 == 1 }
+val map = mapOf(1 to "San Francisco", 2 to "Seoul")
+// 이런 경우들을 제외하고는 무조건 data class 를 사용하는 것이 좋다.
+```
+
+Tuple 보다 Data Class 가 더욱 명확한 경우를 살펴보자. 
+
+```kotlin
+// AsIs: firstName 이 첫번째 인지 두번째 인지 명확하지 않다.
+fun String.parseName(): Pair<String, String>? {
+  val indexOfLastSpace = this.trim().lastIndexOf(' ')
+  if (indexOfLastSpace < 0) {
+    return null
+  }
+  val firstName = this.take(indexOfLastSpace)
+  val lastName = this.take(indexOfLastSpace)
+  return Pair(firstName, lastName)
+} 
+val fullName = "David Sun"
+val (firstName, lastName) = fullName.parseName() ?: return
+print("His name is $firstName") // His name is David
+// ToBe: firstName, lastName 의 위치가 명확하다.
+data class FullName(
+  val firstName: String,
+  val lastName: String
+)
+fun String.parseName(): FullName? {
+  val indexOfLastSpace = this.trim().lastIndexOf(' ')
+  if (indexOfLastSpace < 0) {
+    return null
+  }
+  val firstName = this.take(indexOfLastSpace)
+  val lastName = this.take(indexOfLastSpace)
+  return FullName(firstName, lastName)
+} 
+val fullName = "David Sun"
+val (firstName, lastName) = fullName.parseName() ?: return
+```
+
 ### Item 38: Use function types or functional interfaces to pass operations and actions
+
+action 을 함수에 전할 때 세가지 방법이 있다.
+* SAM (Single Abstract Method) 
+  * function 이 하나인 interface
+  * functional interface 라고도 한다.
+* Function Types
+* Method Reference
+
+SAM 대신 Function Types, Method Reference 를 사용하자.
+
+```java
+// AsIs: SAM
+interface OnClick {
+  fun clicked(view: View)
+}
+fun setOnClickListener(listener: OnLick) {
+  //...
+}
+setOnClickListener(object: OnClick {
+  override fun clicked(view: View) {
+    //...
+  }
+})
+// ToBe: Function Types, Method Reference 가 더욱 깔끔하다.
+fun setOnClickListener(listener: (View) -> Unit) {
+  //...
+}
+// Lambda Function
+setOnClickListener { /*...*/ }
+// Anonymous Function which represent return type
+setOnClickListener(fun(view) { /*...*/ })
+// Method Reference
+setOnClickListener(::println)
+setOnClickListener(this::showUsers)
+```
+
+JAVA 에서 사용할 API 를 Kotlin 으로 제공할 때는 SAM 을 사용하자.
+Java 에서는 interface 가 더욱 명확하다. IntelliJ 의 지원을 받을 수 있다.
+100% 이해 못함.
+
+```kotlin
+// Kotlin
+class CalendarView() {
+  var onDateClicked: ((data: Date) -> Unit)? = null)
+  var onPageChanged: OnDateClicked? = null
+}
+interface OnDateClicked {
+  fun onClick(date: Date)
+}
+// Java
+CalendarView c = new CalendarView();
+c.setOnDateClicked(date -> Unit.INSTANCE);
+c.setOnPageChanged(date -> {});
+```
+
 ### Item 39: Use sealed classes and interfaces to express restricted hierarchies
 ### Item 40: Prefer class hierarchies to tagged classes
 ### Item 41: Use enum to represent a list of values

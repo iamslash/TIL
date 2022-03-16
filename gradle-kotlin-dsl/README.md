@@ -808,7 +808,7 @@ tasks.create("myTask") {
 
 Kotlin DSL Plugin 은 다음과 같이 사용한다. plugin 의 version 은 가급적 사용하지 않는다. Gradle version 과 호환되는 Kotlin DSL version 이 사용될 것이다.
 
-```kotlin
+```gradle
 plugins {
     `kotlin-dsl`
 }
