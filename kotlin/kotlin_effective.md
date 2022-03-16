@@ -40,6 +40,11 @@
     - [Item 32: Respect abstraction contracts](#item-32-respect-abstraction-contracts)
   - [Chapter 5: Object creation](#chapter-5-object-creation)
     - [Item 33: Consider factory functions instead of constructors](#item-33-consider-factory-functions-instead-of-constructors)
+      - [Companion Object Factory Method](#companion-object-factory-method)
+      - [Extention Factory Method](#extention-factory-method)
+      - [Top-Level Factory Method](#top-level-factory-method)
+      - [Face Factory Method](#face-factory-method)
+      - [Factory Class Method](#factory-class-method)
     - [Item 34: Consider a primary constructor with named optional arguments](#item-34-consider-a-primary-constructor-with-named-optional-arguments)
     - [Item 35: Consider defining a DSL for complex object creation](#item-35-consider-defining-a-dsl-for-complex-object-creation)
   - [Chapter 6: Class design](#chapter-6-class-design)
@@ -1249,6 +1254,148 @@ println(set.size) // Output: 3
 
 ## Chapter 5: Object creation
 ### Item 33: Consider factory functions instead of constructors
+
+```kotlin
+// 생성자를 이용하여 객체를 생성하지 말고 팩토리 함수를 이용하여 객체를 생성하자.
+// AsIs: 생성자를 이용하여 객체를 생성한다.
+class ListNode<T> {
+  val head: T,
+  val tail: ListNode<T>?
+}
+val list = ListNode(1, ListNode(2, null))
+// ToBe: 책토리 함수를 이용하여 객체를 생성한다.
+fun <T> ListNodeOf(
+  vararg elements: T
+): ListNode<T>? {
+  if (elements.isEmpty()) {
+    return null
+  }
+  val head = elements.first()
+  val elementsTail = elements.copyOfRange(1, elements.size)
+  val tail = ListNodeOf(*elementsTail)
+  return ListNode(head, tail)
+}
+val list = ListNodeOf(1, 2)
+```
+
+다음은 [factory method](/designpattern/factorymethod/factorymethod.md) 를 이용할 때 얻을 수 있는 장점이다.
+
+* 함수에 이름을 붙일 수 있다. 이름을 보고 생성절차에 대해 알 수 있다.
+* 함수가 원하는 타입을 리턴할 수 있다. 다른 객체를 생성할 때 좋다.
+* 호출될 때 마다 새 객체를 만들 필요가 없다. 예를 들어 싱글톤 객체를 리턴할 수도
+  있고 null 을 리턴할 수도 있다.
+* 아직 존재하지 않는 객체를 리턴할 수도 있다.
+* 가시성을 조절할 수 있다. factory method 를 top level function 으로 만들어 같은
+  파일 혹은 같은 모듈에서만 접근하게 할 수도 있다.
+* inline function 으로 만들 수 있다. type parameter 를 reified 으로 만들 수도
+  있다.
+* 생성자는 부모 클래스 또는 기본 생성자를 호출해야 한다. 팩토리 함수는 원하는
+  때에 생성자를 호출 할 수 있다.
+  ```kotlin
+  fun makeListView(config: Config): ListView {
+    val items = // Read something from config
+    return ListView(items) // Call real constructor
+  }
+  ```
+* 한 가지 단점이 있다. 서브클래스 생성에는 슈퍼클래스의 생성자가 필요가 하기
+  때문에 서브클래스를 만들어낼 수 없다.
+  ```kotlin
+  class IntListNode: ListNode<T>() {
+    // ListNode 가 open 이라면
+    constructor(vararg ints: Int): ListNodeOf(*ints)
+    // ERROR
+  }
+  ```
+* 그러나 팩토리 함수로 슈퍼클래스를 만들기로 했다면 그 서브클래스에도 팩토리 함수를 만들면 된다.
+  ```kotlin
+  class IntListNode(head: Int, tail: IntListNode?): ListNode<Int>(head, tail)
+
+  fun IntListNodeOf(vararg elements: Int): IntListNode? {
+    if (elements.isEmpty()) {
+      return null
+    }
+    val head = elements.first()
+    val elementsTail = elements.copyOfRange(1, lements.size)
+    val tail = IntListNodeOf(*elementsTail)
+    return IntListNode(head, tail)
+  }
+  ```
+
+다음은 Kotlin 에서 구현할 수 있는 [factory method](/designpattern/factorymethod/factorymethod.md) 의 종류이다.
+
+* companion 객체 팩토리 함수
+* 확장 팩토리 함수
+* 톱레벨 팩토리 함수
+* 가짜 생성자
+* 팩토리 클래스의 메서드
+
+#### Companion Object Factory Method
+
+```kotlin
+// Java 의 static factory function 과 같다.
+class MyLinkedListNode<T> (
+  val head: T,
+  val tail: MyLinkedListNode<T>?
+) {
+  companion object {
+    fun <T> of(vararg elements: T): MyLinkedListNode<T>? {
+
+    }
+  }
+}
+val list = MyLinkedListNode.of(1, 2)
+
+// interface 에도 구현할 수 있다.
+class MyLinkedListNode<T> {
+  val head: T,
+  val tail: MyLinkedListNode<T>?
+}: MyListNode<T> {
+  //...
+}
+interface MyListNode<T> {
+  //...
+  companion object {
+    fun <T> of(vararg elements: T): MyListNode<T>? {
+      //...
+    }
+  }
+}
+val list = MyListNode.of(1, 2)
+```
+
+```kotlin
+// 주로 다음과 같은 이름들을 factory method 의 이름으로 사용합니다.
+
+// from: 파라미터를 하나 받고 같은 타입의 인스턴스 하나를 리턴
+val date: Date = Date.from(instant)
+
+// of: 파라미터를 여러개 받고 이것을 합친 인스턴스를 생성
+val faceCards: Set<Rank> = EnumSet.of(JACK, QUEEN, KING)
+
+// valueOf: from 또는 of 와 비슷하다.
+val prime: BigInteger = BigInteger.valueOf(Integer.MAX_VALUE)
+
+// instance or getInstance: singleton instance 를 리턴한다.
+val luke: StackWalker = StackWalker.getInstance(options)
+
+// createInstance or newInstance: 호출될 때 마다 새로운 instance 를 리턴한다.
+val newArray = Array.newInstance(classObject, arrayLen)
+
+// getType: getInstance 와 같다. 팩토리 함수가 다른 클래스에 있을 때 사용한다.
+val fs: FileStore = Files.getFileStore(path)
+
+// newType: newInstance 와 같다. 팩토리 함수가 다른 클래스에 있을 때 사용한다.
+val br: bufferedReader = Files.newBufferedReader(path)
+```
+
+#### Extention Factory Method
+
+#### Top-Level Factory Method
+
+#### Face Factory Method
+
+#### Factory Class Method
+
 ### Item 34: Consider a primary constructor with named optional arguments
 ### Item 35: Consider defining a DSL for complex object creation
 
