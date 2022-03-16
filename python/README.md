@@ -735,23 +735,30 @@ Species.cat
 > sort
   
 ```py
-> l = [5, 4, 3, 2, 1]
+> l = [5, -4, 3, -2, 1]
 > l.sort()
+> print(l)
+[-4, -2, 1, 3, 5]
 > l.sort(reverse=True)
+> print(l)
+[5, 3, 1, -2, -4]
+> l.sort(key=lambda x: x*x)
+> print(l)
+[1, -2, 3, -4, 5]
+> l.sort(key=lambda x: x*x, reverse=True)
+> print(l)
+[5, -4, 3, -2, 1]
 ```
 
 > sorted
 
 ```py
 >>> l = [5, 4, 3, 2, 1]
->>> r = sorted(l)
->>> r
+>>> sorted(l)
 [1, 2, 3, 4, 5]
->>> r = sorted(l, key=lambda x: x*x)
->>> r
+>>> sorted(l, key=lambda x: x*x)
 [1, 2, 3, 4, 5]
->>> r = sorted(l, key=lambda x: x*x, reverse=True)
->>> r
+>>> sorted(l, key=lambda x: x*x, reverse=True)
 [5, 4, 3, 2, 1]
 ```
 
