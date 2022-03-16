@@ -1940,12 +1940,320 @@ c.setOnPageChanged(date -> {});
 
 ### Item 39: Use sealed classes and interfaces to express restricted hierarchies
 ### Item 40: Prefer class hierarchies to tagged classes
+
+상수 모드를 tag 라고한다. tag 를 포함한 class 를 tagged class 라고 부른다.
+아래의 예에서 ValueMatcher 가 tagged class 이다. matcher 가 상수 모드를 갖는다.
+
+```kotlin
+// AsIs: 다음과 같은 단점 들이 있다.
+// * 한 클래스에 여러 모드를 처리하기 위해 boiler plate code 가 필요하다.
+// * property 의 목적이 일관되지 못하다. value 는 LIST_EMPTY, LIST_NOT_EMPTY 에 필요 없다.
+// * 일관성 정확성면에서 부족하다???
+// * 팩토리 메서드를 사용해야 한다.
+class ValueMatcher<T> private constructor(
+  private val value: T? = null,
+  private val matcher: Matcher
+) {
+  fun match(value: T?) = when(matcher) {
+    Matcher.EQUAL -> value == this.value
+    Matcher.NOT_EQUAL -> value != this.value
+    Matcher.LIST_EMPTY -> value is List<*> && value.isEmpty()
+    Matcher.LIST_NOT_EMPTY -> value is List<*> && value.isNotEmpty()
+  }
+  enum class Matcher {
+    EUQAL,
+    NOT_EQUAL,
+    LIST_EMPTY,
+    LIST_NO_EMPTY
+  }
+  companion object {
+    fun <T> equal(value: T) =
+      ValueMatcher<T>(value=value, matcher=Matcher.EQUAL)
+    fun <T> noEqual(value: T) =
+      ValueMatcher<T>(value=value, matcher=Matcher.NOT_EQUAL)
+    fun <T> emptyList() =
+      ValueMatcher<T>(matcher=Matcher.LIST_EMPTY)
+    fun <T> notEmptyList() =
+      ValueMatcher<T>(matcher=Matcher.LIST_NOT_EMPTY)      
+  }
+}
+// ToBe: 상수 모드를 모두 class 로 정규화 하자. 무엇이 개선된건가???
+// sealed 사용했기 때문에 다른 곳에서 mode 를 추가할 수 없다.
+sealed class ValueMatcher<T> {
+  abstract fun match(value: T): Boolean
+  class Equal<T>(val value: T): ValueMatcher<T>() {
+    override fun match(value: T): Boolean =
+      value == this.value
+  }
+  class NotEqual<T>(val value: T): ValueMatcher<t>() {
+    override fun match(value: T): Boolean =
+      value != this.value
+  }
+  class EmptyList<T>(): ValueMatcher<t>() {
+    override fun match(value: T): Boolean =
+      value is List<*> && value.isEmpty()
+  }
+  class NotEmptyList<T>(): ValueMatcher<t>() {
+    override fun match(value: T): Boolean =
+      value is List<*> && value.isNotEmpty()
+  }
+}
+```
+
 ### Item 41: Use enum to represent a list of values
+
 ### Item 42: Respect the contract of equals
+
+Kotlin 의 Any 는 다음과 같은 method 를 갖는다.
+
+* `equals`
+* `hashCode`
+* `toString`
+
+Kotlin 은 두가지 종류의 equality 가 있다.
+
+* 구조적 동등성 `structural equality`
+  * `a == b`
+* 레퍼런스적 동등성 `referential equality`
+  * `a === b`
+
+```kotlin
+open class Animal
+class Book
+Animal() == Book()  // ERROR: can't use == for Animal, Book
+Animal() === Book() // ERROR: can't use === for Animal, Book
+
+class Cat: Animal()
+Animal() == Cat()   // OK
+Animal() === Cat()  // OK
+
+class Name(val name: String)
+val name1 = Name("David")
+val name2 = Name("David")
+val name1Ref = name1
+name1 == name1     // true
+name1 == name2     // false
+name1 == name1Ref  // true
+name1 === name1    // true
+name1 === name2    // false
+name1 === name1Ref // true
+```
+
+`equals()` 를 직접 구현해야할 경우는 거의 없다. data class 를 주로 사용하자.
+그러나 다음의 경우에 구현할 필요가 있다.
+
+* 기본적으로 제공되는 동작과 다른 동작을 해야 하는 경우
+* 일부 프로퍼티만 비교해야하는 경우
+* data 한정자를 붙이는 것을 원하지 않거나, 비교해야 하는 프로퍼티가 기본생성자에 없는 경우
+
+```kotlin
+// AsIs: DateTime 에 equals() 를 구현했다. data class 를 사용하면 구현할
+// 필요가 없다. 
+class DateTime(
+  private var millis: Long = 0L,
+  private var timeZone: TimeZone? = null
+) {
+  private var asStringCache = ""
+  private var changed = false
+
+  override fun equals(other: Any?): Boolean = 
+    other is DateTime &&
+      other.millis == millis &&
+      other.timeZone == timeZone
+}
+// ToBe: data class 를 사용해 보자. 
+// asStringCache, changed 의 비교대상이 아니다.
+data class DateTime(
+  private var millis: Long = 0L,
+  private var timeZone: TimeZone? = null
+) {
+  private var asStringCache = ""
+  private var changed = false
+}
+```
+
+`equals()` 를 구현한다면 다음의 규칙을 충족해야 한다.
+
+* 반사성 (reflexive)
+  * `x != null` 이면 `x.equals(x) == ture` 이어야 한다.
+* 대칭성 (symmetric)
+  * `x != null && y != null` 이면 `x.equals(y) == y.equals(x)` 이어야 한다.
+* 연속성 (transitive)
+  * `x != null && y != null && z != null` 이라고 하자. `x.equals(y) ==
+    y.equals(z)` 이면 `x.equals(z)` 이다. 
+* 일관성 (consistent)
+  * `x != null && y != null` 이라고 하자. `x.equals(y)` 는 여러번 실행해도 결과는 같다.
+* null 과 관련된 동작
+  * `x != null` 이면 `x.equals(null) == false` 이다.
+
 ### Item 43: Respect the contract of hashCode
+
+`hashCode()` 를 구현한다면 다음과 같은 규칙을 충족해야 한다.
+
+* 어떤 객체를 변경하지 않았다면 `hashCode()` 를 여러번 호출해도 항상 같은 값이
+  나와야 한다.
+* `equals()` 로 서로 같은 객체가 있다면 `hashCode()` 역시 같은 값이 나와야 한다.
+
+`hashCode()` 는 `equals()` 처러 직접 구현할 일이 별로 없다. data class 를
+사용하자.
+
+다음은 `equals(), hashCode()` 의 구현예이다.
+
+```kotlin
+class DateTime(
+  private var millis: Long = 0L,
+  private var timeZone: TimeZone? = null
+) {
+  private var asStringCache = ""
+  private var changed = false
+
+  override fun equals(other: Any?): Boolean =
+    other is DateTime &&
+      other.millis == millis &&
+      other.timeZone == timeZone
+
+  override fun hashCode(): Int {
+    var result = millis.hashCode()
+    // 관례적으로 31 을 사용한다. prime number???
+    result = result * 31 + timeZone.hashCode()
+    return result
+  }
+}
+```
+
 ### Item 44: Respect the contract of compareTo
+
+다음과 같은 연산들이 `compareTo()` 를 호출한다. `compareTo()` 는 
+`Comparable<T> interface` 에도 들어 있다.
+
+```kotlin
+a > b  // a.compareTo(b) > 0
+a < b  // a.compareTo(b) < 0
+a >= b // a.compareTo(b) >= 0
+a <= b // a.compareTo(b) <= 0
+```
+
+`compareTo()` 를 구현한다면 다음의 규칙을 충족해야 한다.
+
+* 비대칭성
+  * `a >= b && b >= a` 이면 `a == b` 이다.
+* 연속성
+  * `a >= b && b >= c` 이면 `a >= c` 이다.
+* 코넥스성 (connex relation)
+  * a, b 에 대해 `a >= b` 혹은 `b >= a` 중 적어도 하나는 항상 true 여야 한다.
+
 ### Item 45: Consider extracting non-essential parts of your API into extensions
+
+Extention method 는 member method 에 비해 다음과 같은 차이가 있다.
+
+* Extention method 는 읽어 들어야 한다.
+* Extention method 는 virtual 이 아니다.
+* Member method 의 우선순위가 높다.
+* Extention method 는 class 가 아니라 type 위에 만들어 진다.
+  * Generic Type 에 Extention method 를 정의할 수도 있다.
+* Extention method 는 class 의 reference 에 나오지 않는다.
+  * Extention method 는 annotation processor 의 대상이 되지 않는다. 
+
+```kotlin
+// Member method, Extention method 는 정말 비슷하다.
+// Member method
+class Workshop() {
+  fun makeEvent(date: DateTime): Event = //...
+  val permalink
+    get() = "/workshop/$name"
+}
+// Extention method
+class Workshop() {
+}
+fun Workshop.makeEvent(date: DateTime): Event = //...
+val Workshop.permalink
+  get() = "/workshop/$name"
+// usage
+fun useWorkshop(workshop: Workshop) {
+  val event = workshop.makeEvent(date)
+  val permalink = workshop.permalink
+  val makeEventRef = Workshop::makeEvent
+  val permalinkPropRef = Workshop::permalink
+}
+
+// Extention method 는 virtual 이 아니다. 상속을 해야한다면
+// Extention method 는 사용하면 안된다.
+// Extention method 는 첫번째 인자로 리시버가 들어가는 함수이다.
+open class C
+class D: C()
+fun C.foo() = "c"  // fun foo('this$receiver': C) = "c"
+fun D.foo() = "d"  // fun foo('this$receiver': C) = "d"
+
+// usage
+fun main() {
+  val d = D()
+  print(d.foo()) // d
+  val c: C = d
+  print(c.foo()) // c
+  print(D().foo()) // d
+  print((D() as C).foo()) // c
+}
+
+// Extention method 는 class 가 아닌 type 에 정의하는 것이다.
+// 따라서 nullable 혹은 Concrete Generic type 에도 구현할 수 있다.
+inline fun CharSequence?.isNullOrBlank(): Boolean {
+  contract {
+    returns(false) implies (this@isNullOrBlank != null)
+  }
+  return this == null || this.isBlank()
+}
+
+public fun Iterable<Int>.sum(): Int {
+  var sum: Int = 0
+  for (element in this) {
+    sum += element
+  }
+  return sum
+}
+```
+
 ### Item 46: Avoid member extensions
+
+Extention method 는 class 의 member 로 두지 말자. 혼란스럽다.
+
+```kotlin
+// 다음은 Extention method 이다.
+fun String.isPhoneNumber(): Boolean {
+  length == 7 && all { it.isDigit() }
+}
+// compile 되면 다음과 같이 변한다.
+fun isPhoneNumber('$this': String): Boolean {
+  '$this'.length == 7 && '$this'.all { it.isDigit() }
+}
+
+// 따라서 다음과 같이 interface 혹은 class 의 member 로 
+// Extention method 를 정의할 수 있다. 이 것은 매우 좋지 않다.
+interface PhoneBook {
+  fun String.isPhoneNumber(): Boolean
+}
+class Fizz: PhoneBook {
+  override fun String.isPhoneNumber(): Boolean =
+    length == 7 && all { it.isDigit() }
+}
+class PhoneBookIncorrect {
+  fun String.isPhoneNumber() = 
+    length == 7 && all { it.isDigit() }
+}
+
+// 가시성 때문에 이러헥 하고 싶다면 top level Extention method 에
+// access modifier 를 추가하라.
+private fun String.isPhoneNumber() = 
+  length == 7 && all { it.isDigit() }
+
+// reference 를 지원하지 않는다.
+val ref = String::isPhoneNumber
+val sr = "1234567890"
+val boundedRef = str::isPhoneNumber
+
+val refX = PhoneBookIncorrect::isPhoneNumber // ERROR
+val book = PhoneBookIncorrect()
+val boundedRefX = book::isPhoneNumber // ERRPR
+```
 
 # Part 3: Efficiency
 
