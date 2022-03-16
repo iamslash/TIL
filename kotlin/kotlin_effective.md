@@ -43,9 +43,11 @@
       - [Companion Object Factory Method](#companion-object-factory-method)
       - [Extention Factory Method](#extention-factory-method)
       - [Top-Level Factory Method](#top-level-factory-method)
-      - [Face Factory Method](#face-factory-method)
+      - [Fake Constructor](#fake-constructor)
       - [Factory Class Method](#factory-class-method)
     - [Item 34: Consider a primary constructor with named optional arguments](#item-34-consider-a-primary-constructor-with-named-optional-arguments)
+      - [Telescoping Constructor Pattern](#telescoping-constructor-pattern)
+      - [Builder pattern](#builder-pattern)
     - [Item 35: Consider defining a DSL for complex object creation](#item-35-consider-defining-a-dsl-for-complex-object-creation)
   - [Chapter 6: Class design](#chapter-6-class-design)
     - [Item 36: Prefer composition over inheritance](#item-36-prefer-composition-over-inheritance)
@@ -1437,11 +1439,251 @@ ToolcreateBigTool()
 
 #### Top-Level Factory Method
 
-#### Face Factory Method
+```kotlin
+// Intent object 를 companion factory method 를 이용하여 생성해보자.
+class MainActivity: Activity {
+  companion object {
+    fun getIntent(context: Context) =
+      Intent(context, MainActivity::class.java)
+  }
+}
+// top level factory method 를 만들어 사용하자. 이름이 더욱 쉽다.
+intentFor<MainActivity>()
+intentFor<MainActivity>("page" to 2, "row" to 10)
+// listOf(1, 2, 3) 이 List.of(1, 2, 3) 보다 가독성이 높다.s
+```
+
+#### Fake Constructor
+
+fake constructor 를 제작하는 방법은 다음과 같이 2 가지가 있다.
+
+* top level function
+* companion object with invoke function
+
+일반 function 이지만 역할은 constructor 와 같은 것을 facke factory method
+라고 한다. 생성자는 아니지만 생성자처럼 동작한다. 다음과 같은 경우 사용한다.
+
+* 인터페이스를 위한 생성자를 만들고 싶을 때
+* retified type argument 를 갖게 하고 싶을 때
+
+다음은 top level function 으로 fake constructor 를 구현한 것이다.
+
+```kotlin
+// AsIs: normal constructor
+class A
+val a = A()
+val reference: ()->A = ::A
+// ToBe: face constructor
+List(4) { "User$it" } // [User0, User1, User2, User3]
+// List, MutableList are fake constructors defined in stdlib since kotlin 1.1
+public inline fun <T> List(
+  size: Int,
+  init: (index: int) -> T
+): List<T> = MutableList(size, init)
+
+public inline fun <T> MutableList(
+  size: Int,
+  init: (index: int) -> T
+): MutableList<T> {
+  val list = ArrayList<T>(size)
+  repeat(size) { index -> list.add(init(index)) }
+  return list
+}
+```
+
+다음은 companion object 에 invoke 를 정의하여 fake constructor 를
+사용하는 방법이다.
+
+```kotlin
+class Tree<T> {
+  companion object {
+    operator fun <T> invoke(size: Int, generator: (Int) -> T): Tree<T> {
+      //...
+    }
+  }
+}
+Tree(10) { "$it" }
+```
+
+companion object with invoke function 은 복잡하다. 가급적 top level function 을
+이용하여 fake constructor 를 정의하자.
+
+```kotlin
+// constructor
+val f: () -> Tree = ::Tree
+// top level function fake constructor
+val f: () -> Tree = ::Tree
+// companion object fake constructor
+val f: () -> Tree = Tree.Companion::invoke
+```
 
 #### Factory Class Method
 
+Factory Class 는 Factory Method 와 달리 상태를 가질 수 있다. 
+
+```kotlin
+data class Student(
+  val id: Int,
+  val name: String,
+  val surname: String
+)
+
+class StudentsFactory {
+  var nextId = 0
+  fun next(name: String, surname: String) =
+    Student(nextId++, name, surname)
+}
+
+val factory = StudentsFactory()
+val s1 = factory.next("david", "sun")
+println(s1) // Student(id=0, name=david, surname=sun)
+val s2 = factory.next("hello", "world")
+println(s2) // Student(id=1, name=hello, surname=world)
+```
+
 ### Item 34: Consider a primary constructor with named optional arguments
+
+Kotlin 에서 객체를 생성할 때 주로 primary constructor 를 이용한다.
+
+```kotlin
+// primary constructor of normal class
+class User(var name: String, var surname: String)
+val user = User("David", "Sun")
+
+// primary constructor of data class
+data class Studen(
+  val name: String,
+  val surname: String,
+  val age: Int
+)
+```
+
+primary constructor 에 property 를 추가할 수도 있다. 이 방법은
+복잡하다.
+
+```kotlin
+class QuotationPresenter(
+  private val view: QuotationView,
+  private val repo: QuotationRepository
+) {
+  private var nextQuoteId = -1
+  fun onStart() {
+    onNext()
+  }
+  fun onNext() {
+    nextQuoteId = (nextQuoteId + 1) % repo.quotesNumber
+    val quote = repo.getQuote(nextQuoteId)
+    view.showQuote(quote)
+  }
+}
+```
+
+constructor 에 option arguments 전달하는 방법은 다음과 같이 2 가지가 있다.
+
+* 점층적 생성자 패턴 (telescoping constructor pattern)
+* 빌더 패턴 (builder pattern)
+
+#### Telescoping Constructor Pattern
+
+telescoping constructor pattern 은 다양한 arguments 를 갖는
+여러 생성자를 정의하는 방식이다.
+
+```kotlin
+// AsIs: telescoping constructor pattern 을 이용했다. 그러나 보기 좋지 않다.
+class Pizza {
+  val size: String
+  val cheese: Int
+  val olives: Int
+  val bacon: Int
+
+  constructor(size: String, cheese: Int, olives: Int, bacon: Int) {
+    this.size = size
+    this.cheese = cheese
+    this.olives = olives
+    this.bacon = bacon
+  }
+
+  constructor(size: String, cheese: Int, olives: Int): this(size, cheese, olives, 0)
+  constructor(size: String, cheese: Int): this(size, cheese, 0)
+  constructor(size: String): this(size, 0)
+}
+// ToBe: default arguments 를 이용하는 편이 더욱 명확하다.
+// baned arguments 와 함께 더욱 깔끔해 졌다.
+class Pize(
+  val size: String,
+  val cheese: Int = 0,
+  val olives: Int = 0,
+  val bacon: Int = 0
+)
+val myFavorite = Pizza("L", olives = 3)
+val myFavorite = Pizza("L", olives = 3, cheese = 1)
+```
+
+#### Builder pattern
+
+> [builder pattern](/designpattern/builder/builder.md)
+
+Java 의 경우 builder pattern 이 유용하다. 그러나 kotlin 의 경우는 builder
+pattern 보다 primary constructor with default arguments 를 이용하는 편이 더욱
+좋다.
+
+* 더 짧다.
+* 더 명확하다.
+* 더 쉽다.
+* 동시성 문제가 없다. builder pattern 의 function 은 thread-safe 하게 구현해야
+  한다. 대부분 mutable property 를 사용하기 때문이다.
+
+그러나 Kotlin 에서도 primary constructor 보다 builder pattern 이 유용한 경우가
+있다.
+
+```kotlin
+// AsIs: primary constructor 를 이용했더니 복잡하다.
+val dialog = Alertdialog(context,
+  message = R.string.fire_missiles,
+  positiveButtonDescription = ButtonDescription(R.string.fire, { d, id ->
+    // launch missiles
+  }),
+  negativeButtonDescription = ButtonDescription(R.string.cancel, { d, id ->
+    // cancel missiles
+  }))
+val router = Router(
+  routes = listOf(
+    Route("/hone", ::showHome),
+    Route("/users", ::showUsers)
+  )
+)
+// ToBe: builder pattern 을 이용하는 것이 더욱 깔끔하다.
+val dialog = AlertDialog.Builder(context)
+  .showMessage(R.string.fire_missiles)
+  .setPositiveButton(R.string.fire, { d, id ->
+    // launch missiles
+  })
+  .setNegativeButton(R.string.cancel, { d, id ->
+    // cancel missiles
+  })
+  .create()
+val router = Router.Builder()
+  .addRoute(path = "/home", ::showHome)
+  .addRoute(path = "/users", ::showUsers)
+  .create()
+// ToBe: DSL 을 이용하는 것이 더욱 깔끔하다.
+val dialog = context.alert(R.string.fire_missiles) {
+  positiveButton(R.string.fire) {
+    // launch missiles
+  }
+  negativeButton {
+    // cancel missiles
+  }
+}
+val route = {
+  "/home" directsTo ::showHome
+  "/users" directsTo ::showUsers
+}
+```
+
+Kotlin 에서 builder pattern, DSL pattern 을 이용하여 객체를 생성하는 방법은
+피하자. primary constructor 를 이용하자.
+
 ### Item 35: Consider defining a DSL for complex object creation
 
 * [Building DSLs in Kotlin @ baeldung](https://www.baeldung.com/kotlin/dsl)
