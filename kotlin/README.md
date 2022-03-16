@@ -2198,7 +2198,7 @@ public final class DemoClass {
    @NotNull
    public static final DemoClass.Companion Companion = new DemoClass.Companion((DefaultConstructorMarker)null);
 
-    @JvmStatic
+   @JvmStatic
    public static final void callStatic() {
       Companion.callStatic();
    }
@@ -2217,7 +2217,9 @@ public final class DemoClass {
 }
 ```
 
-Java 에서 Kotlin class 의 static method 를 호출한다고 하자. Kotlin class 의 method 에 `@JvmStatic` 을 사용하자. Companion class 가 만들어지지 않아서 효율적이다.
+Java 에서 Kotlin class 의 static method 를 호출한다고 하자. Kotlin class 의
+method 에 `@JvmStatic` 을 사용하자. Companion class 가 만들어지지 않아서
+효율적이다.
 
 # Effective Kotlin
 

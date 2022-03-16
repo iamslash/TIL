@@ -1388,7 +1388,52 @@ val fs: FileStore = Files.getFileStore(path)
 val br: bufferedReader = Files.newBufferedReader(path)
 ```
 
+companion object 는 interface 를 구현할 수 있고 또한 클래스를 상속받을 수도
+있다.
+
+```kotlin
+abstract class AcivityFactory {
+  abstract fun getIntent(context: Context): Intent
+
+  fun start(context: Context) {
+    val intent = getIntent(context)
+    context.startActivity(intent)
+  }
+
+  fun startForResult(activity: Activity, requestCode: Int) {
+    val intent = getIntent(activity)
+    activity.startActivityForResult(intent, requestCode)
+  }
+}
+
+class MainActivity: AppCompatActivity() {
+  //...
+  companion object: ActivityFactory() {
+    override fun getIntent(context: Context): Intent =
+      Intent(context, MainActivity::class.java)
+  }
+}
+
+val intent = MainActivity.getIntent(context)
+MainActivity.start(context)
+MainActivity.startForResult(activity, requestCode)
+```
+
 #### Extention Factory Method
+
+이미 companion object 가 존재할 때 이 객체의 함수처럼 사용할 팩토리 함수를 만들어 보자.
+
+```kotlin
+// Tool 의 코드를 수정할 수 없는 상황이다.
+interface Tool {
+  companion object { /*...*/ }
+}
+// companion object 의 extention method 를 이용하여 factory method 를 만들자.
+fun Tool.Companion.createBigTool(): BigTool {
+  //...
+}
+ToolcreateBigTool()
+```
 
 #### Top-Level Factory Method
 
