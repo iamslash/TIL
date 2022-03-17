@@ -254,15 +254,51 @@
 ## Behavioral
 
 ### Acyclic Visitor
+
+* Allow new functions to be added to existing class hierarchies without affecting those hierarchies, and without creating the troublesome dependency cycles that are inherent to the GoF Visitor Pattern.
+
 ### Bytecode
+
+* Allows encoding behavior as instructions for a virtual machine.
+
 ### Caching
+
+* The caching pattern avoids expensive re-acquisition of resources by not releasing them immediately after use. The resources retain their identity, are kept in some fast-access storage, and are re-used to avoid having to acquire them again.
+
 ### [Chain of responsibility](chainofresp/chainofresp.md)
+
+* Avoid coupling the sender of a request to its receiver by giving more than one object a chance to handle the request. Chain the receiving objects and pass the request along the chain until an object handles it.
+
 ### Circuit Breaker
+
+* Handle costly remote service calls in such a way that the failure of a single service/component cannot bring the whole application down, and we can reconnect to the service as soon as possible.
+
 ### [Command](command/command.md) 
+
+* Encapsulate a request as an object, thereby letting you parameterize clients with different requests, queue or log requests, and support undoable operations.
+
 ### Data Locality
+
+* Accelerate memory access by arranging data to take advantage of CPU caching.
+
 ### Dirty Flag
+
+* To avoid expensive re-acquisition of resources. The resources retain their identity, are kept in some fast-access storage, and are re-used to avoid having to acquire them again.
+
 ### Double Buffer
+
+* Double buffering is a term used to describe a device that has two buffers. The
+  usage of multiple buffers increases the overall throughput of a device and
+  helps prevents bottlenecks. This example shows using double buffer pattern on
+  graphics. It is used to show one image or frame while a separate frame is
+  being buffered to be shown next. This method makes animations and games look
+  more realistic than the same done in a single buffer mode.
+
 ### Extension objects 
+
+* Anticipate that an object’s interface needs to be extended in the future.
+  Additional interfaces are defined by extension objects.
+
 ### Feature Toggle 
 ### Game Loop
 ### Intercepting Filter 
