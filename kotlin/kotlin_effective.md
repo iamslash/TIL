@@ -2756,6 +2756,156 @@ collector 가 회수할 것이다.
 
 ### Item 54: Limit the number of operations
 
+collection 의 operation function 을 최소로 사용하자.
+
+```kotlin
+class Student(val name: String?)
+// AsIs
+fun List<Student>.getNames(): List<String> = this
+  .map { it.name }
+  .filter { it != null }
+  .map { it!! }
+// ToBe
+fun List<Student>.getNames(): List<String> = this
+  .map { it.name }
+  .filterNotNull()
+// ToBe
+fun List<Student>.getNames(): List<String> = this
+  .mapNotNull { it.name }
+```
+
+다음은 복잡한 operation function 을 최적화 하는 방법이다.
+
+```kotlin
+// AsIs:
+// .filter { it != null }
+// .map { it!! }
+// ToBe:
+// .filterNotNull()
+
+// AsIs:
+// .map { <Transformation> }
+// .filterNotNull()
+// ToBe:
+// .mapNotNull { <Transformation> }
+
+// AsIs:
+// .map { <Transformation> }
+// .joinToString()
+// ToBe:
+// .joinToString { <Transformation> }
+
+// AsIs:
+// .filter { <Predicate 1> }
+// .filter { <Predicate 2> }
+// ToBe:
+// .filter { <Predicat 1> && <Predicate 2> }
+
+// AsIs:
+// .filter { it is Type }
+// .map { it as Type }
+// ToBe:
+// .filterIsInstance<Type>()
+
+// AsIs:
+// .sortedBy { <Key 2> }
+// .sortedBy { <Key 1> }
+// ToBe:
+// .sortedWith( compareBy({ <Key 1> }, { <Key 2> }))
+
+// AsIs:
+// listOf(..)
+// .filterNotNull()
+// ToBe:
+// listOfNotNull(...)
+
+// AsIs:
+// .withIndex()
+// .filter { (index, elem) ->
+//   <Predicate using index>
+// }
+// .map { it.value }
+// ToBe:
+// .filterIndexed { index, elem ->
+//   <Predicate using index>
+// }
+```
+
 ### Item 55: Consider Arrays with primitives for performance-critical processing
 
+성능이 중요하다면 primitive array 를 사용하라.
+
+다음은 Kotlin 과 Java 의 중요타입을 비교한 것이다.
+
+| Kotlin | Java |
+|--|--|
+| `Int` | `int` |
+| `List<Int>` | `List<Integer>` |
+| `Array<Int>` | `Integer[]` |
+| `IntArray` | `int[]` |
+
+
+```kotlin
+open class InlineFilterBenchmark {
+  lateinit var list: List<Int>
+  lateinit var array: IntArray
+
+  @Setup
+  fun init() {
+    list = List(1_000_000) { it }
+    array = IntArray(1_000_000) { it }
+  }
+
+  // 1,260,593 ns in average
+  @Benchmark
+  fun averageOnIntList(): Double {
+    return list.average()
+  }
+
+  // 868,509 ns in average
+  @Benchmark
+  fun averageOnIntArray(): Double {
+    return array.average()
+  }
+}
+```
+
 ### Item 56: Consider using mutable collections
+
+immutable collection 은 객체 생성을 자주한다. mutable collection 은 객체 생성을
+한번만 한다. thread-safety 가 문제되지 않는다면 mutable cllection 을 사용하자.
+
+```kotlin
+// ArrayList<T> object 가 생성된다. 비효율적이다.
+operator fun <T> Iterable<T>.plus(element: T): List<t> {
+  if (this is Collection) {
+    return this.plus(element)
+  }
+  val result = ArrayList<T>()
+  result.addAll(this)
+  result.add(element)
+  return result
+}
+
+// AsIs: immutable collection 을 사용하는 것은 비효율적이다.
+inline fun <T, R> Iterable<T>.map(
+  transform: (T) -> R
+): List<R> {
+  val destination = listOf<R>()
+  for (item in this) {
+    destination.add(transform(item))
+  }
+  return destination
+}
+// ToBe: stdlib 의 map 은 mutable collection 을 사용한다.
+inline fun <T, R> Iterable<T>.map(
+  transform: (T) -> R
+): List<R> {
+  val size = if (this is Collection<*>) this.size else 10
+  val destination = ArrayList<R>(size)
+  for (item in this) {
+    destination.add(transform(item))
+  }
+  return destination
+}
+```
