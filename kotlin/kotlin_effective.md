@@ -2260,6 +2260,56 @@ val boundedRefX = book::isPhoneNumber // ERRPR
 ## Chapter 7: Make it cheap
 
 ### Item 47: Avoid unnecessary object creation
+
+객체는 최대한 생성하지 말자. 
+
+Kotlin 에서 `Int` 는 `int` 로 `Int?` 는 `Integer` 로 compile 된다. Kotlin 은
+문자열 혹은 `[-127,127]` 의 Int 를 caching 한다.
+
+```kotlin
+val a = "Hello World"
+val b = "Hello World"
+print(a == b)  // true
+print(a === b) // true
+
+val a: Int? = 1
+val b: Int? = 1
+print(a == b)  // true
+print(a === b) // true
+
+val a: Int? = 1234
+val b: Int? = 1234
+print(a == b)  // true
+print(a === b) // false
+```
+
+객체를 하나 선언해서 재활용해보자.
+
+```kotlin
+// AsIs: Empty() 를 매번 생성한다. 비효율적이다.
+sealed class LinkedList<T>
+class Node<T>(
+  val head: T,
+  val tail: LinkedList<T>
+): LinkedList<T>
+class Empty<T>: LinkedList<T>
+val list1: LinkedList<Int> = 
+  Node(1, Node(2, Node(3, Empty())))
+val list2: LinkedList<Int> =
+  Node("A", Node("B", Empty()))
+// ToBe: 
+sealed class LinkedList<out T>
+class Node<out T>(
+  val head: T,
+  val tail: LinkedList<T>
+): LinkedList<T>()
+object Empty: LinkedList<Nothing>()
+val list1: LinkedList<Int> = 
+  Node(1, Node(2, Node(3, Empty())))
+val list2: LinkedList<Int> =
+  Node("A", Node("B", Empty()))
+```
+
 ### Item 48: Use inline modifier for functions with parameters of functional types
 ### Item 49: Consider using inline value classes
 ### Item 50: Eliminate obsolete object references

@@ -8,6 +8,8 @@
   - [Keywords](#keywords)
   - [Basic types](#basic-types)
   - [String](#string)
+  - [Int vs Int?](#int-vs-int)
+  - [Any, Unit, Nothing](#any-unit-nothing)
   - [min max values](#min-max-values)
   - [Null safety](#null-safety)
   - [Collections compared to c++](#collections-compared-to-c)
@@ -308,6 +310,45 @@ val sb: StringBuilder() = StringBuilder()
 sb.append('a' + 1) // OK
 sb.append(1 + 'a') // ERROR
 ```
+
+## Int vs Int?
+
+Kotlin 에서 `Int` 는 `int` 로 `Int?` 는 `Integer` 로 compile 된다.
+Kotlin 은 문자열 혹은 `[-127,127]` 의 Int 를 caching 한다.
+
+```kotlin
+val a = "Hello World"
+val b = "Hello World"
+print(a == b)  // true
+print(a === b) // true
+
+val a: Int? = 1
+val b: Int? = 1
+print(a == b)  // true
+print(a === b) // true
+
+val a: Int? = 1234
+val b: Int? = 1234
+print(a == b)  // true
+print(a === b) // false
+```
+
+## Any, Unit, Nothing
+
+> [[Kotlin] 헷갈리는 "Nothing" 확실하게 이해하기(feat. Any, Unit)](https://readystory.tistory.com/143)
+
+* `Any` 는 모든 Type 의 조상이다. Java 의 `Object` 와 같다.
+  ```kotlin
+  val greeting: Any = "Hello World"
+  // After compliing
+  public final Object greeting = "Hello World";
+  ```
+* `Nothing` 은 모든 Type 의 자식이다.
+* `Unit` 은 Java 의 `void` 와 같다. `Unit` 은 single tone instance 이다.
+  ```kotlin
+  val unit: Unit = Unit
+  val unit: Any = Unit
+  ```
 
 ## min max values
 
