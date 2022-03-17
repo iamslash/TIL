@@ -2427,14 +2427,335 @@ public fun <T: Comparable<T>> Iterable<T>.max(): T? {
 ```
 
 ### Item 48: Use inline modifier for functions with parameters of functional types
+
+funtional type parameter 를 사용한다면 inline 을 추가하자. inline function 은 functional type argument 의 body 를 그대로 붙여넣는다.
+
+```kotlin
+inline fun repeat(times: Int, action: (Int) -> Unit) {
+  for (index in 0 until times) {
+    action(index)
+  }
+}
+// This will be compiled
+repeat(10) {
+  print(it)
+}
+// like this
+for (index in 0 until 10) {
+  action(index)
+}
+```
+
+inline function 은 다음과 같은 장점이 있다.
+
+* type argument 에 reified 를 붙일 수 있다.
+* functional type parameter 를 사용하는 함수의 경우 더 빠르다.
+* non-local return 을 사용할 수 있다.
+
+inline function 은 다음과 같은 단점이 있다.
+
+* code 를 붙여넣기 하기 때문에 code 가 커질 수 있다.
+
+하나씩 깊게 들어가 보자.
+
+type argument 에 reified 를 붙일 수 있다. reified 를 붙이면 type parameter 를
+사용한 부분이 type argument 로 대체 된다.
+
+```kotlin
+inline fun <reified T> printTypeName() {
+  print(T::class.simpleName)
+}
+// 이 것이 대체된다.
+printTypeName<Int>()    // Int
+printTypeName<Char>()   // Char
+printTypeName<String>() // String
+// 이렇게
+print(Int::class.simpleName) // Int
+print(Char::class.simpleName) // Char
+print(String::class.simpleName) // String
+
+// filterIsInstance 는 reified 가 포함되어 정의되었다.
+class Worker
+class Manager
+val employees: List<Any> =
+  listOf(Worker(), Manager(), Worker())
+val workers: List<Worker> =
+  employees.filterIsInstance<Worker>()
+```
+
+functional type parameter 를 사용하는 함수의 경우 더 빠르다.
+
+```kotlin
+// 다음은 inline 을 부착하더라도 이득이 없다. IntelliJ 가 warning 을 보여줄 것임
+inline fun print(msg: Any?) {
+  System.out.print(msg)
+}
+
+// Kotlin/JVM 에서 Lambda Expression 은 Class 로 compile 된다.
+val lambda: () -> Unit = {
+  //...
+}
+Function0<Unit> lamda = new Function0<Unit>() {
+  public Unit invoke() {
+    //...
+  }
+}
+```
+
+다음은 kotlin 의 각 함수와 컴파일된 Java Class 이다.
+
+| Kotlin | Java |
+|--|--|
+| `() -> Unit` | `Function0<Unit>` |
+| `() -> Int` | `Function0<Int>` |
+| `(Int) -> Int` | `Function1<Int, Int>` |
+| `(Int, Int) -> Int` | `Function2<Int, Int, Int>` |
+
+non-local return 을 사용할 수 있다.
+
+```kotlin
+// AsIs
+if (value != null) {
+  print(value)
+}
+for (i in 1..10) {
+  print(i)
+}
+repeatNoninline(10) {
+  print(it)
+}
+fun main() {
+  repeatNoninline(10) {
+    print(it)
+    return // ERROR: not allowed
+  }
+}
+// ToBe: repeat 은 inline function 이다.
+fun main() {
+  rpeat(10) {
+    print(it)
+    return // OK
+  }
+}
+// 아래 코드는 non-local return 을 사용하기 때문에 자연스럽다.
+fun getSomeMoney(): Money? {
+  repeat(100) {
+    val money = searchForMoney()
+    if (money != null) {
+      return money
+    }
+  }
+  return null
+}
+```
+
+inline function 으로 만들고 싶다. 일부 functional type parameter 는
+inline 으로 받고 싶지 않다. 그럴 때 **crossinline, noninline** 을 사용하자.
+
+```kotlin
+inline fun requestNewToken(
+  hasToken: Boolean,
+  crossinline onRefresh: () -> Unit,
+  noinline onGenerate: () -> Unit
+) {
+  if (hasToken) {
+    httpCall("get-token", onGenerate)
+    // inline function argument 를 받고 싶지 않을 때
+    // noinline 을 사용한다.
+  } else [
+    httpCall("refresh-token") {
+      onRefresh()
+      // non-local return 이 허용되지 않는 context 에서
+      // inline function argument 를 사용하고 싶다면
+      // crossinline 을 사용한다. 
+      onGenerate()
+    } 
+  ]
+}
+fun httpCall(url: String, callback: () -> Unit) {
+  //...
+}
+```
+
 ### Item 49: Consider using inline value classes
+
+inline function 뿐만 아니라 inline class 도 가능하다. inline class 는 object 를
+새로 만들지 않기 때문에 overhead 가 없다.
+
+```kotlin
+// inline class 를 정의한다.
+inline class Name(private val value: String) {
+  //...
+}
+
+val name: Name = Name("David")
+// 위 코드는 컴파일되면 아래와 같다.
+val name: String = "David"
+
+// inline class 의 method 는 static method 이다.
+inline class Name(private val value: String) {
+  fun greet() {
+    print("Hello I am $value")
+  }
+}
+
+val name: Name = Name("David")
+name.greet()
+// 위의 코드가 컴파일되면 아래와 같다.
+val name: String = "David")
+Name.'greet-impl'(name)
+```
+
+inline class 는 주로 다음과 같은 경우에 사용한다.
+
+* 측정 단위를 표현할 때
+* 타입 오용으로 발생하는 문제를 막을 때
+
+하나씩 깊게 들어가보자.
+
+특정 단위를 표현할 때
+
+```kotlin
+// AsIs: time 은 millis 인가??? minute인가??? second인가???
+interface Timer {
+  fun callAfter(time: Int, callback: () -> Unit)
+}
+// ToBe: named argument 를 사용하면 더 명확하다. 그러나 강제하고 싶다.
+// named return 은 지원되지 않는다.
+interface Timer {
+  fun callAfter(timeMillis: Int, callback: () -> Unit)
+}
+
+// AsIs:
+interface User {
+  fun decideAboutTime(): Int
+  fun wakeUp()
+}
+interface Timer {
+  fun callAfter(timeMillis: Int, callback: () -> Unit)
+}
+fun setUpUserWakeUpUser(user: User, timer: Timer) {
+  val time: Int = user.decideAboutTime()
+  timer.callAfter(time) {
+    user.wakeUp()
+  }
+}
+// ToBe: 타입에 제한을 걸자
+inline class Minutes(val minutes: Int) {
+  fun toMillis(): Millis = Millis(minutes * 60 * 1000)
+}
+inline class Millis(val milliseconds: Int) {
+  //...
+}
+interface User {
+  fun decideAboutTime(): Minutes
+  fun wakeUp()
+}
+interface Timer {
+  fun callAfter(timeMillis: Miilis, callback: () -> Unit)
+}
+fun setUpUserWakeUpUser(user: User, timer: Timer) {
+  val time: Minutes = user.decideAboutTime()
+  timer.callAfter(time.toMillis()) {
+    user.wakeUp()
+  }
+}
+```
+
+타입 오용으로 발생하는 문제를 막을 때
+
+```kotlin
+// AsIs: type 이 강제되지 않고 있다. 잘못된 숫자가 들어가도
+// 동작한다.
+@Entity(tableName = "grades")
+class Grades(
+  @ColumnInfo(name = "studentId")
+  val studentId: Int,
+  @ColumnInfo(name = "teacherId")
+  val teacherId: Int,
+  @ColumnInfo(name = "schoolId")
+  val schoolId: Int,
+)
+// ToBe: type 을 강제하고 있다. 잘못된 숫자가 들어갈 수 없다.
+inline class StudentId(val studentId: Int)
+inline class TeacherId(val teacherId: Int)
+inline class SchoolId(val schoolId: Int)
+@Entity(tableName = "grades")
+class Grades(
+  @ColumnInfo(name = "studentId")
+  val studentId: StudentId,
+  @ColumnInfo(name = "teacherId")
+  val teacherId: TeacherId,
+  @ColumnInfo(name = "schoolId")
+  val schoolId: SchoolId,
+)
+```
+
+inline class 는 interface 를 구현할 수도 있다. incline class 는 더이상 inline 으로 동작하지 않는다. 따라서 아무런 장점이 없다.
+
+```kotlin
+interface TimeUnit {
+  val millis: Long
+}
+inline class Minutes(val minutes: Long): TimeUnit {
+  override val millis: Long get() = minutes * 60 * 1000
+}
+inline class Millis(val milliseconds: Long): TimeUnit {
+  override val millis: Long get() = milliseconds
+}
+fun setUpTimer(time: TimeUnit) {
+  val millis = time.millis
+}
+setUpTimer(Minutes(123))
+setUpTimer(Millis(456789))
+```
+
+typealias 를 이용하면 type 에 새로운 이름을 붙여 줄 수 있다. 그러나 안전하지
+않다.
+
+```kotlin
+// 다음과 같이 사용한다.
+typealias NewName = Int
+val n: NewName = 10
+
+// 이렇게 반복적으로 사용할 type 을 정의하면 편하다.
+typealias ClickListener = 
+  (view: View, event: Event) -> Unit
+class View {
+  fun addclickListener(listener: ClickListener) {}
+  fun removeClickListener(listener: ClickListener) {}
+  //...
+}
+
+// typealias 를 사용하면 type 안전하지 못하다. 그냥 class 써라. 
+typealias Seconds = Int
+typealias Millis = Int
+
+fun getTime(): Millis = 10
+fun setUpTimer(time: Seconds) {}
+
+fun main() {
+  val seconds: Seconds = 10
+  val millis: Millis = seconds // ERROR 가 아니라니 !!!
+  setUpTimer(getTime())
+}
+```
+
 ### Item 50: Eliminate obsolete object references
+
+사용하지 않는 객체의 레퍼런스를 null 로 저장해두자. garbage 
+collector 가 회수할 것이다.
 
 ## Chapter 8: Efficient collection processing
 
 ### Item 51: Prefer Sequence for big collections with more than one processing step
+
 ### Item 52: Consider associating elements to a map
+
 ### Item 53: Consider using groupingBy instead of groupBy
+
 ### Item 54: Limit the number of operations
+
 ### Item 55: Consider Arrays with primitives for performance-critical processing
+
 ### Item 56: Consider using mutable collections
