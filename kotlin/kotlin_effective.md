@@ -2261,7 +2261,13 @@ val boundedRefX = book::isPhoneNumber // ERRPR
 
 ### Item 47: Avoid unnecessary object creation
 
-객체는 최대한 생성하지 말자. 
+객체는 최대한 생성하지 말자. 주로 다음과 같은 방법들이 있다.
+
+* 객체를 하나 선언해서 재활용한다.
+* 캐시를 이용하는 팩토리 함수를 이용한다.
+* 무거운 객체는 외부로 보내자.
+* 무거운 객체는 lazy init 하자.
+* primitive type 을 사용하자.
 
 Kotlin 에서 `Int` 는 `int` 로 `Int?` 는 `Integer` 로 compile 된다. Kotlin 은
 문자열 혹은 `[-127,127]` 의 Int 를 caching 한다.
@@ -2308,6 +2314,116 @@ val list1: LinkedList<Int> =
   Node(1, Node(2, Node(3, Empty())))
 val list2: LinkedList<Int> =
   Node("A", Node("B", Empty()))
+```
+
+캐시를 이용하는 팩토리 함수를 사용하자.
+
+```kotlin
+// connection 을 caching 한다. 객체를 재활용한다.
+private val connections 
+  = mutableMapOf<String, Connection>()
+fun getConnection(host: String) =
+  connections.getOrPut(host) { createConnection(host) }
+
+// fibonacci 를 memoization 을 이용해 구현한다. 객체를 재활용한다.
+private val FIB_CACHE = mutableMapOf<Int, BigInteger>()
+fun fib(n: Int): BigInteger = FIB_CACHE.getOrPut(n) {
+  if (n <= 1) BigIntger.ONE else fib(n - 1) + fib(n - 2)
+}
+```
+
+무거운 객체는 외부 스코프로 보내보자. 
+
+```kotlin
+// AsIs: 매번 this.max() 가 호출된다.
+fun <T: Comparable<T>> Iterable<T>.countMax(): Int = 
+  count { it == this.max() }
+// ToBe: 한번 this.max() 가 호출된다.
+fun <T: Comparable<T>> Iterable<T>.countMax(): Int {
+  val max = this.max()
+  return count { it == max }
+}
+
+// AsIs: 매번 matches() 를 호출한다.
+fun String.isValidIpAddress(): Boolean {
+  return this.matches("\\A(?:(?:25[0-5]|2[0-4][0-9]
+|[01]?[0-9][0-9]?)\\.){3}(?:25[0-25]|2[0-4]
+[0-9]|[01]?[0-9][0-9]?\\z".toRegex())
+}
+print("5.173.80.254".isValidIpAddress())  // true
+// ToBe: 한번 matches() 를 호출한다.
+private val IS_VALID_EMAIL_REGEX = "\\A(?:(?:25[0-5]|2[0-4][0-9]
+|[01]?[0-9][0-9]?)\\.){3}(?:25[0-25]|2[0-4]
+[0-9]|[01]?[0-9][0-9]?\\z".toRegex()
+fun String.isValidIpAddress(): Boolean = 
+  matches(IS_VALID_EMAIL_REGEX)
+// ToBe: lazy init 
+private val IS_VALID_EMAIL_REGEX by lazy {
+"\\A(?:(?:25[0-5]|2[0-4][0-9]
+|[01]?[0-9][0-9]?)\\.){3}(?:25[0-25]|2[0-4]
+[0-9]|[01]?[0-9][0-9]?\\z".toRegex()
+}
+```
+
+무거운 객체는 lazy init 를 하자.
+
+```kotlin
+// AsIs: B, C, D 는 무거운 class 라고 하자.
+class A {
+  val b = B()
+  val c = C()
+  val d = D()
+}
+// ToBe:
+class A {
+  val b by lazy { B() } 
+  val c by lazy { C() } 
+  val d by lazy { D() } 
+}
+```
+
+primitive type 을 이용하라.
+
+```kotlin
+// AsIs: 
+// 매번 Elvis 연산을 사용해야 한다.
+// Int? 는 Integer 와 같다. primitive type 이 더욱 좋다. 
+fun Iterable<Int>.maxOrNull(): Int? {
+  var max: Int? = null
+  for (i in this) }{
+    max = if (i > (max ?: Int.MIN_VALUE)) i else max
+  }
+  return max
+}
+// ToBe
+fun Iterable<T>.maxOrNull(): Int? {
+  val iterator = iterator()
+  if (!iterator.hasNext()) {
+    return null
+  }
+  var max: Int = iterator.next()
+  while (iterator.hasNext()) {
+    val e = iterator.next()
+    if (max < e) {
+      max = e
+    }
+  }
+}
+// ToBe: Extention method 로 제작해 보자.
+public fun <T: Comparable<T>> Iterable<T>.max(): T? {
+  val iterator = iterator()
+  if (!iterator.hasNext()) {
+    return null
+  }
+  var max = iterator.next()
+  while (iterator.hasNext()) {
+    val e = iterator.next()
+    if (max < e) {
+      max = e
+    }
+  }
+  return max
+}
 ```
 
 ### Item 48: Use inline modifier for functions with parameters of functional types

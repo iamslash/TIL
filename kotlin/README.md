@@ -313,7 +313,16 @@ sb.append(1 + 'a') // ERROR
 
 ## Int vs Int?
 
-Kotlin 에서 `Int` 는 `int` 로 `Int?` 는 `Integer` 로 compile 된다.
+다음은 Kotlin 과 Java 의 주요 type 비교이다.
+
+| Kotlin | Java |
+|--|--|
+| `Int` | `int` |
+| `Int?` | `Integer` |
+| `List<Int>` | `List<Integer>` |
+| `IntArray` | `int[]` |
+| `Array<Int>` | `Integer[]` |
+  
 Kotlin 은 문자열 혹은 `[-127,127]` 의 Int 를 caching 한다.
 
 ```kotlin
