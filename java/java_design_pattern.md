@@ -525,11 +525,11 @@
 
 ### Flux
 
-  - Flux eschews MVC in favor of a unidirectional data flow. When a
-    user interacts with a view, the view propagates an action through
-    a central dispatcher, to the various stores that hold the
-    application's data and business logic, which updates all of the
-    views that are affected.
+* Flux eschews MVC in favor of a unidirectional data flow. When a user interacts
+  with a view, the view propagates an action through a central dispatcher, to
+  the various stores that hold the application's data and business logic, which
+  updates all of the views that are affected.
+* 데이터가 변경되면 단방향으로 뷰를 업데이트한다.
 
 ### Front Controller
 
