@@ -2750,6 +2750,259 @@ collector 가 회수할 것이다.
 
 ### Item 51: Prefer Sequence for big collections with more than one processing step
 
+다음은 Iterable 과 Sequence 의 차이이다.
+
+* Iterable 은 operator function 이 수행될 때 마다 실행된다.
+* Sequence 는 중간 연산이 모여졌다가 `toList(), count()` 와 같은 최종 연산이 수행될 때
+  모여진 operator function 이 수행된다.
+
+```kotlin
+// Iterable 과 Sequence 는 정의가 비슷하다.
+interface Iterable<out T> {
+  operator fun iterator(): Iterator<T>
+}
+interface Sequence<out T> {
+  operator fun iterator(): Iterator<T>
+}
+
+// Iterable
+public inline fun <T> Iterable<T>.filter(
+  predicate: (T) -> Boolean
+): List<T> {
+  return filterTo(ArrayList<T>(), predicate)
+}
+// Sequence
+public inline fun <T> Iterable<T>.filter(
+  predicate: (T) -> Boolean
+): Sequence<T> {
+  return filteringSequence(this, true, predicate)
+}
+
+// Iterable
+val list = listOf(1, 2, 3)
+val listFiltered = list
+  .filter { print("f$it "); it % 2 == 1 }
+// f1 f2 f3
+println(listFiltered) // [1, 2, 3]
+
+// Sequence
+val seq = sequenceOf(1, 2, 3)
+val filtered = seq.filter { print("f$it "); it % 2 == 1 }
+println(filtered)  // FilterinSgSequence@...
+
+val asList = filtered.toList()
+// f1 f2 f3
+println(asList)  // [1, 2, 3]
+```
+
+Iterable 과 Sequence 는 연산의 처리방식이 다르다.
+
+* `element-by-element order (lazy order)`
+  * element 에 모여진 연산을 적용한다.
+* `step-by-step order (eager order)`
+  * 모든 element 에 대해 연산을 하나씩 적용한다.
+
+```kotlin
+// Sequence
+sequenceOf(1, 2, 3)
+  .filter { print("F$it, "); it % 2 == 1 }
+  .map { print("M$it, "); it * 2 }
+  .forEach { print("E$it, ") }
+// Output:
+// F1, M1, E2, F2, F3, M3, M6
+
+// Iterable
+listOf(1, 2, 3)
+  .filter { print("F$it, "); it % 2 == 1 }
+  .map { print("M$it, "); it * 2 }
+  .forEach { print("E$it, ") }
+// Output:
+// F1, F2, F3, M1, M3, E2, E6
+
+// Not using collection operators and it is same with Sequence
+// lazy order
+for (e in listOf(1, 2, 3)) {
+  print("F$e, ")
+  if (e % 2 == 1) {
+    print("M$e, ")
+    val mapped = e * 2
+    print("E$mapped, ")
+  }
+}
+// Output:
+// F1, M1, E2, F2, F3, M3, M6
+```
+
+필요한 것을 찾고 싶을 때 Squence 를 사용하자. 필요한 연산만 수행할 수 있다.
+`find()` 를 사용하면 찾을 때까지 중간 연산을 수행한다.
+
+```kotlin
+// Sequence
+(1..10).asSequence()
+  .filter { print("F$it, "); it % 2 == 1 }
+  .map { print("M$it, "); it * 2 }
+  .find { it > 5 }
+// Output:
+// F1, M1, F2, F3, M3
+
+// Iterable
+(1..10)
+  .filter { print("F$it, "); it % 2 == 1 }
+  .map { print("M$it, "); it * 2 }
+  .find { it > 5 }
+// Output:
+// F1, F2, F3, F4, F5, F6, F7, F8, F9, F10,
+// M1, M3, M5, M7, M9
+```
+
+다음과 같은 방법으로 Infinite Sequence 를 구현할 수 있다.
+
+* `generateSequence()`
+* `sequence()`
+
+Initinite Sequence 를 사용할 때는 무한 loop 를 조심하자.
+
+```kotlin
+// generateSequence 로 Infinite Sequence 를 만들자.
+// 첫번째 element 를 만들어내는 방법과 두번째 element 를
+// 만들어내는 방법이 필요하다.
+generateSequence(1) { it + 1 }
+  .map { it * 2 }
+  .take(10)
+  .forEach { print("$it, ") }
+// Output:
+// 2, 4, 6, 8, 10, 12, 14, 16, 18, 20,
+
+// sequence 로 Infinite Sequence 를 만들자.
+// yield 를 이용한다.
+val fibonacci = sequence {
+  yield(1)
+  var current = 1
+  var prev = 1
+  while (true) {
+    yield(current)
+    val temp = prev
+    prev = current
+    current += temp
+  }
+}
+```
+
+Sequence 는 중간 연산에서 collection 을 만들어 내지 않는다.
+
+```kotlin
+// Iterable
+members
+  .filter { it % 10 == 0 } // Create collection
+  .map { it * 2 }          // Create collection
+  .sum()
+// Sequence
+members
+  .asSequence()
+  .filter { it % 10 == 0 }
+  .map { it * 2 }         
+  .sum()
+
+// AsIs: 큰 파일의 경우 Iterable 은 OutOfMemory 를 발생시킨다.
+// "ChicagoCrimes.csv" is 1.53GB
+File("ChicagoCrimes.csv").readLines() // List<String>
+  .drop(1) // remove column row
+  .mapNotNull { it.split(",").getOrNull(6) }
+  .filter { "CANNABIS" in it }
+  .count()
+  .let(::println)
+// ToBe:
+File("ChicagoCrimes.csv").useLines() // Sequence<String>
+  .drop(1) // remove column row
+  .mapNotNull { it.split(",").getOrNull(6) }
+  .filter { "CANNABIS" in it }
+  .count()
+  .let(::println)
+
+// 중간 연산이 하나이면 큰 차이가 없다.
+fun singleStepListProcessing(): List<Product> {
+  return productsList.filter { it.bought }
+}
+fun singleStepSequenceProcessin(): List<Product> {
+  return productsList.asSequence()
+    .filter { it.brought }
+    .toList()
+}
+
+// 중간 연산이 두개 이상이면 차이가 많다.
+fun twoStepListProcessing(): List<Double> {
+  return productsList
+    .filter { it.bought }
+    .map { it.price }
+}
+fun twoStepSequenceProcessing(): List<Double> {
+  return productsList.asSequence()
+    .filter { it.bought }
+    .map { it.price }
+    .toList()
+}
+fun threeStepListProcessing(): Double {
+  return productsList
+    .filter { it.bought }
+    .map { it.price }
+    .average()
+}
+fun threeStepSequenceProcessing(): Double {
+  return productsList.asSequence()
+    .filter { it.bought}
+    .map { it.price }
+    .average
+}
+
+// twoStepListProcessing        81,095 ns
+// twoStepSequenceProcessing    55,685 ns
+// threeStepListProcessing      83,307 ns
+// threeStepSequenceProcessing   6,928 ns
+```
+
+`sorted()` 의 경우는 Sequence 보다 Iterable 이 더 빠르다. Sequence 의 경우
+Iterable 로 변환하고 정렬하기 때문이다. 중간연산이 두개 이상이면 Sequence 가 더
+빠르다.
+
+```kotlin
+// AsIs: 150,482 ns 
+fun productsSortAndProcessingList(): Double {
+  return productsList
+    .sortedBy { it. price }
+    .filter { it. bought }
+    .map { it.price }
+    .average()
+}
+// ToBe: 96,811 ns
+fun productsSortAndProcessingSequence(): Double {
+  return productsList.asSequence()
+    .sortedBy { it. price }
+    .filter { it. bought }
+    .map { it.price }
+    .average()
+}
+```
+
+Java Stream 은 Sequence 와 비슷하다. 다음과 같은 차이가 있다.
+
+* Kotlin/JVM 만 지원한다.
+* Kotlin 의 Sequence 보다 처리함수가 적다.
+* 병렬 함수를 사용해서 병렬 모드로 실행할 수 있다.
+
+```kotlin
+// Sequence
+productsList.asSequence()
+  .filter { it.bought }
+  .map { it.price }
+  .average()
+// Stream
+productsList.stream()
+  .filter { it.bought }
+  .map { it.price }
+  .average()
+  .orElese(0.0)
+```
+
 ### Item 52: Consider associating elements to a map
 
 ### Item 53: Consider using groupingBy instead of groupBy
