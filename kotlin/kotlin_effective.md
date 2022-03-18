@@ -2989,7 +2989,7 @@ Java Stream 은 Sequence 와 비슷하다. 다음과 같은 차이가 있다.
 * Kotlin 의 Sequence 보다 처리함수가 적다.
 * 병렬 함수를 사용해서 병렬 모드로 실행할 수 있다.
 
-```kotlin
+```kotlin-
 // Sequence
 productsList.asSequence()
   .filter { it.bought }
