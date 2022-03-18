@@ -15,6 +15,16 @@
   - [Collections](#collections)
     - [tuple](#tuple)
     - [list](#list)
+    - [deque](#deque)
+    - [heapq @ python3](#heapq--python3)
+    - [set](#set)
+    - [dict](#dict)
+    - [collections.Counter](#collectionscounter)
+    - [collections.defaultdict](#collectionsdefaultdict)
+    - [collections.namedtuple](#collectionsnamedtuple)
+    - [collections.ChainMap](#collectionschainmap)
+    - [collections.OrderedDict](#collectionsordereddict)
+    - [enum (python 3.4+)](#enum-python-34)
   - [Sort](#sort)
   - [Search](#search)
   - [Multidimensional Array](#multidimensional-array)
@@ -28,7 +38,7 @@
   - [comprehension](#comprehension)
   - [generator](#generator)
   - [Map, filter, reduce](#map-filter-reduce)
-  - [set](#set)
+  - [set](#set-1)
   - [ternary operators](#ternary-operators)
   - [multiple return](#multiple-return)
   - [for else](#for-else)
@@ -366,7 +376,7 @@ TypeError: 'tuple' object does not support item assignment
 [0, 9, 36, 81]
 ```
 
-* deque
+### deque
 
 list와 유사하다. 왼쪽 오른쪽으로 원소를 추가 삭제할 수 있다.
 
@@ -418,7 +428,7 @@ IndexError: pop from an empty deque
 deque(['c', 'b', 'a'])
 ```
 
-* [heapq @ python3](https://docs.python.org/3.10/library/heapq.html)
+### [heapq @ python3](https://docs.python.org/3.10/library/heapq.html)
 
 ```python
 >>> import heapq
@@ -468,7 +478,7 @@ deque(['c', 'b', 'a'])
 [5, 7, 6, 9, 12]
 ```
 
-* set
+### set
 
 ```python
 >>> s = {1, 1, 1, 1, 2}
@@ -507,7 +517,7 @@ False
 True 
 ```
 
-* dict
+### dict
 
 ```python
 >>> s = {"a": 1, "b": 2, "c": 3}
@@ -531,7 +541,7 @@ True
 {'a': -1, 'b': -1, 'c': 3}
 ```
 
-* collections.Counter
+### collections.Counter
 
 dict 의 subclass 이다. 리스트 입력 데이터로 부터 값과 출현횟수를 각각
 key 와 value 로 하는 dict 이다.
@@ -584,7 +594,7 @@ with open('filename', 'rb') as f:
 print(line_count)
 ```
 
-* collections.defaultdict
+### collections.defaultdict
 
 dict 의 subclass 이다. 기본값을 지정할 수 있는 dict 이다.  기본값은
 callable 하거나 None 이어야 한다.
@@ -632,7 +642,7 @@ print(json.dumps(some_dict))
 # Output: {"colours": {"favourite": "yellow"}}
 ```
 
-* collections.namedtuple
+### collections.namedtuple
 
 tuple 의 subclass 이다. tuple 은 index 로만 접근 가능하지만
 namedtuple 은 index, name 으로 접근 가능하다.
@@ -652,7 +662,7 @@ Vector(x=11, y=22)
 11 22
 ```
 
-* collections.ChainMap
+### collections.ChainMap
 
 dict 의 subclass 이다. 여러 개의 dict 를 모아서 하나의 dict 처럼 사용한다.
 여러개의 dict 를 이용하여 하나의 dict 를 생성하거나 update 를 사용하는
@@ -679,7 +689,7 @@ ChainMap({}, {'b': 2})
 2
 ```
 
-* collections.OrderedDict
+### collections.OrderedDict
 
 dict 의 subclass 이다. 순서가 보장되는 dict 이다.
 
@@ -696,7 +706,7 @@ odict_keys(['a', 'c', 'd', 'e', 'b'])
 OrderedDict([('b', None), ('a', None), ('c', None), ('d', None), ('e', None)])
 ```
 
-* enum (python 3.4+)
+### enum (python 3.4+)
 
 c# 의 enum 과 같다.
 
