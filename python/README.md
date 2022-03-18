@@ -13,6 +13,8 @@
   - [Print Out](#print-out)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
+    - [tuple](#tuple)
+    - [list](#list)
   - [Sort](#sort)
   - [Search](#search)
   - [Multidimensional Array](#multidimensional-array)
@@ -278,7 +280,7 @@ print(f'a: {a}, b{b}')
 
 ## Collections
 
-* tuple
+### tuple
 
 tuple은 list와 비슷하지만 원소를 추가, 갱신, 삭제가 불가한 immutable type 이다.
 
@@ -313,9 +315,11 @@ TypeError: 'tuple' object does not support item assignment
 'Kim'
 ```
 
-* list
+### list
 
 ```python
+# append, clear, copy, count, extend, index, insert, 
+# pop, remove, reverse, sort
 >>> a = []
 >>> a = [1, True, "Hello"]
 >>> x = a[1]
@@ -330,6 +334,13 @@ TypeError: 'tuple' object does not support item assignment
 >>> x
 [7, 9]
 >>> a.append(11)
+>>> a.pop()
+11
+>>> a
+[1, 3, 5, 7, 9]
+>>> a.append(11)
+>>> a
+[1, 3, 5, 7, 9, 11]
 >>> a[1] = 33
 >>> a
 [1, 33, 5, 7, 9, 11]
