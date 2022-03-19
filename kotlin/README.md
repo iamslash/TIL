@@ -8,6 +8,7 @@
   - [Keywords](#keywords)
   - [Basic types](#basic-types)
   - [String](#string)
+  - [Print type](#print-type)
   - [Int vs Int?](#int-vs-int)
   - [Any, Unit, Nothing](#any-unit-nothing)
   - [min max values](#min-max-values)
@@ -18,7 +19,8 @@
     - [List](#list)
     - [Set](#set)
     - [Map](#map)
-    - [PriorityQueue](#priorityqueue)
+    - [Deque, ArrayDeque](#deque-arraydeque)
+    - [Queue, PriorityQueue](#queue-priorityqueue)
     - [filter](#filter)
     - [map](#map-1)
     - [any, all, none](#any-all-none)
@@ -288,6 +290,10 @@ _
 ----
 
 ```kotlin
+// Char
+val c: Char = 'a'
+println(c.javaClass.name) // char
+
 // Byte, Short, Int, Long
 val one = 1 // Int
 val threeBillion = 3000000000 // Long
@@ -309,6 +315,16 @@ val eFloat = 2.7182818284f // Float, actual value is 2.7182817
 val sb: StringBuilder() = StringBuilder()
 sb.append('a' + 1) // OK
 sb.append(1 + 'a') // ERROR
+```
+
+## Print type
+
+```java
+val obj: Double = 5.0
+
+println(obj.javaClass.name)                 // double
+println(obj.javaClass.kotlin)               // class kotlin.Double
+println(obj.javaClass.kotlin.qualifiedName) // kotlin.Double
 ```
 
 ## Int vs Int?
@@ -604,11 +620,57 @@ assertEquals(11, inventory["Strawberry"]) // 9 - 5 + 7
 assertEquals(5, inventory["Rocky Road"]) // 0 - 0 + 5
 ```
 
-### PriorityQueue
+### Deque, ArrayDeque
+
+```kotlin
+val deq: Deque<Char> = ArrayDeque<Char>()
+val n     = deq.size;
+val first = deq.getFirst()
+val last  = deq.getLast()
+deq.addFirst('a');
+deq.addLast('b');
+deq.pollFirst();
+deq.pollLast();
+```
+
+### Queue, PriorityQueue
 
 ```kotlin
 // IntArray PriorityQueue with comparator
-val pq: PriorityQueue<IntArray> = PriorityQueue<IntArray>(0, { a, b -> b[0] - a[0] })
+val pq: Queue<IntArray> = PriorityQueue<IntArray>(0, { a, b -> b[0] - a[0] })
+```
+
+`작은 값이 꼭대기이다.` 를 기억하라. a, b 를 뒤집으면 `큰 값이 꼭대기이다.`
+참고로 [priority_queue of cpp](/cpp/README.md) 는 `참이 꼭대기이다.`.
+
+```kotlin
+import java.util.*
+fun main() {
+    // Less top. 작은 값이 꼭대기다.
+    val pqLess: Queue<Int> = PriorityQueue<Int>()
+    // Great top. 큰 값이 꼭대기다
+    val pqGreat: Queue<Int> = PriorityQueue<Int>({ a, b -> b - a})
+    pqLess.offer(1)   
+    pqLess.offer(10)  
+    pqLess.offer(0)   
+    pqLess.offer(100) 
+    // 0
+    println(pqLess.peek())
+    // 0 1 10 100
+    while (pqLess.size > 0) {
+	    println(pqLess.poll())
+    }
+    pqGreat.offer(1)
+    pqGreat.offer(10)
+    pqGreat.offer(0)
+    pqGreat.offer(100)
+    // 100
+    println(pqGreat.peek())
+    // 100 10 1 0
+    while (pqGreat.size > 0) {
+    	println(pqGreat.poll())
+    }
+}		
 ```
 
 ### filter

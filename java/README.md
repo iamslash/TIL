@@ -13,6 +13,22 @@
   - [Print Out](#print-out)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collection Examples](#collection-examples)
+    - [unmodifiableList](#unmodifiablelist)
+    - [Vector](#vector)
+    - [List, ArrayList](#list-arraylist)
+    - [Deque, ArrayDeque](#deque-arraydeque)
+    - [List, LinkedList](#list-linkedlist)
+    - [Stack](#stack)
+    - [Queue, ArrayDeque](#queue-arraydeque)
+    - [Queue, PriorityQueue](#queue-priorityqueue)
+    - [SortedSet, TreeSet](#sortedset-treeset)
+    - [SortedMap, TreeMap](#sortedmap-treemap)
+    - [Set, HashSet](#set-hashset)
+    - [Map, HashMap](#map-hashmap)
+    - [Set, LinkedHashSet](#set-linkedhashset)
+    - [Map, LinkedHashMap](#map-linkedhashmap)
+    - [Arrays](#arrays)
+    - [Collections](#collections)
   - [Collection Conversions](#collection-conversions)
   - [Sort](#sort)
   - [Search](#search)
@@ -397,7 +413,7 @@ System.out.printf("%s : %d%n", "age", 11);
 
 ## Collection Examples
 
-* unmodifiableList
+### unmodifiableList
 
 ```java
    // create array list
@@ -413,7 +429,7 @@ System.out.printf("%s : %d%n", "age", 11);
    List<Character> immutablelist = Collections.unmodifiableList(list);
 ```
 
-* Vector
+### Vector
 
 ```java
    Vector<Integer> D = new Vector<Integer>(Collections.nCopies(N,  1));
@@ -422,7 +438,7 @@ System.out.printf("%s : %d%n", "age", 11);
    D.add(1);
 ```
 
-* List, ArrayList
+### List, ArrayList
 
 ```java
    List<Integer> D = new ArrayList<Integer>(Collections.nCopies(N,  1));
@@ -433,9 +449,10 @@ System.out.printf("%s : %d%n", "age", 11);
    D.remove(D.size()-1);
 ```
 
-* Deque, ArrayDeque
-  * [Deque @ java8](https://docs.oracle.com/javase/8/docs/api/java/util/Deque.html)
-  * Each of these methods exists in two forms: one throws an exception if the operation fails, the other returns a special value (either null or false, depending on the operation)
+### Deque, ArrayDeque
+
+> * [Deque @ java8](https://docs.oracle.com/javase/8/docs/api/java/util/Deque.html)
+> * Each of these methods exists in two forms: one throws an exception if the operation fails, the other returns a special value (either null or false, depending on the operation)
 
 | | First Element | | Last Element | |
 |--|--|--|--|--|
@@ -444,7 +461,7 @@ System.out.printf("%s : %d%n", "age", 11);
 | Remove | removeFirst() | pollFirst() | removeLast() | pollLast() |
 | Examine | getFirst() | peekFirst() | getLast() | peekLast() |
 
-* Comparison of Queue and Deque methods
+> * Comparison of Queue and Deque methods
   
 | Queue Method | Equivalent Deque Method | Throws Exception |
 | ------------ | ----------------------- | ---------------- |
@@ -455,7 +472,7 @@ System.out.printf("%s : %d%n", "age", 11);
 | element()    | getfirst()              |                  |
 | peek()       | peekFirst()             | x                |
 
-* Comparison of Stack and Deque methods
+> * Comparison of Stack and Deque methods
 
 | Stack Method | Equivalent Deque Method | Throws Exception |
 | ------------ | ----------------------- | ---------------- |
@@ -474,7 +491,7 @@ System.out.printf("%s : %d%n", "age", 11);
    deque.pollLast();
 ```
 
-* List, LinkedList
+### List, LinkedList
 
 ```java
    List<Integer> D = new LinkedList<Integer>(Collections.nCopies(N,  1));
@@ -490,7 +507,7 @@ System.out.printf("%s : %d%n", "age", 11);
    D.removeLast();
 ```
 
-* Stack
+### Stack
 
 ```java
    Stack<String> stack = new Stack<>();
@@ -502,7 +519,7 @@ System.out.printf("%s : %d%n", "age", 11);
    popResult = stack.pop();
 ```
 
-* Queue, ArrayDeque
+### Queue, ArrayDeque
 
 ```java
    Queue<Integer> queue = new ArrayDeque<>();
@@ -517,7 +534,7 @@ System.out.printf("%s : %d%n", "age", 11);
    }
 ```
 
-* Queue, PriorityQueue
+### Queue, PriorityQueue
 
 `작은 값이 꼭대기이다.` 를 기억하라. a, b 를 뒤집으면 `큰 값이 꼭대기이다.`
 참고로 [priority_queue of cpp](/cpp/README.md) 는 `참이 꼭대기이다.`.
@@ -577,7 +594,7 @@ public class MainApp {
 }
 ```
 
-* SortedSet, TreeSet
+### SortedSet, TreeSet
 
 ```java
    SortedSet<String> set = new TreeSet<String>();
@@ -592,7 +609,7 @@ public class MainApp {
    }    
 ```
 
-* SortedMap, TreeMap
+### SortedMap, TreeMap
   * [SortedMap Interface in Java with Examples](https://www.geeksforgeeks.org/sortedmap-java-examples/)
 
 ```java
@@ -653,7 +670,7 @@ public class MainApp {
    }
 ```
 
-* Set, HashSet
+### Set, HashSet
 
 ```java
    Set<String> set = new HashSet<String>();
@@ -681,7 +698,7 @@ public class MainApp {
    System.out.println(bSet.add(List.of(1, 2, 3)));   // false
 ```
 
-* Map, HashMap
+### Map, HashMap
   * [자바 HashMap을 효과적으로 사용하는 방법](http://tech.javacafe.io/2018/12/03/HashMap/)
 
 ```java
@@ -723,7 +740,7 @@ public class MainApp {
    }
 ```
 
-* Set, LinkedHashSet
+### Set, LinkedHashSet
 
 LinkedList 처럼 입력된 순서대로 저장
 
@@ -742,7 +759,7 @@ for (String val : set)
 String first = set.iterator().next();
 ```
 
-* Map, LinkedHashMap
+### Map, LinkedHashMap
 
 LinkedList 처럼 입력된 순서대로 저장
 
@@ -786,7 +803,7 @@ class LRUCache extends LinkedHashMap<Integer, Integer> {
 }
 ```
 
-* Arrays
+### Arrays
 
 ```java
 int[] A = new int[10];
@@ -797,7 +814,7 @@ int[] b = Arrays.copyOf(A, 3);
 int[] c = Arrays.copyOfRange(A, 2, 4);
 ```
 
-* Collections
+### Collections
 
 ```java
 List<String> A = new ArrayList<String>(); 
