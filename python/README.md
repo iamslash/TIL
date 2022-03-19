@@ -16,7 +16,8 @@
     - [tuple](#tuple)
     - [list](#list)
     - [deque](#deque)
-    - [heapq @ python3](#heapq--python3)
+    - [PriorityQueue](#priorityqueue)
+    - [heapq](#heapq)
     - [set](#set)
     - [dict](#dict)
     - [collections.Counter](#collectionscounter)
@@ -278,7 +279,7 @@ print(f'a: {a}, b{b}')
 | `list`               | `deque`               |
 | `stack`              | `list`                |
 | `queue`              | `deque`               |
-| `priority_queue`     | `heapq`               |
+| `priority_queue`     | `PriorityQueue, heapq` |
 | `set`                | ``                    |
 | `multiset`           | ``                    |
 | `map`                | ``                    |
@@ -428,7 +429,52 @@ IndexError: pop from an empty deque
 deque(['c', 'b', 'a'])
 ```
 
-### [heapq @ python3](https://docs.python.org/3.10/library/heapq.html)
+### PriorityQueue
+
+thread-safe 한 priority queue 이다. heapq 로 구현되어 있다. `put(), get()` 을 기억하자.
+
+다음은 꼭대기 값이 작은 PriorityQueue 이다. 
+
+```python
+>>> from queue import PriorityQueue
+>>> pq = PriorityQueue()
+>>> pq.put(1)
+>>> pq.put(3)
+>>> pq.put(5)
+>>> pq.get()
+1
+>>> pq.get()
+3
+>>> pq.get()
+5
+```
+
+다음은 꼭대기 값이 큰 `PriorityQueue` 이다. element 로 tuple 을
+사용한다. tuple 의 첫번째 값은 우선순위를 담당한다. 음수로 하자.
+
+```python
+>>> from queue import PriorityQueue
+>>> pq = PriorityQueue()
+>>> pq.put((-1, 1))
+>>> pq.put((-3, 3))
+>>> pq.put((-5, 5))
+>>> pq.get()[1]
+5
+>>> pq.get()[1]
+3
+>>> pq.get()[1]
+1
+```
+
+### heapq
+
+> * [heapq @ python3](https://docs.python.org/3.10/library/heapq.html)
+
+thread-safe 하지 않은 priority queue 이다.
+
+`heapq.heapify(), heapq.heappush(), heapq.heappop()` 을 기억하자.
+
+다음은 꼭대기 값이 작은 heapq 이다.
 
 ```python
 >>> import heapq
@@ -476,6 +522,24 @@ deque(['c', 'b', 'a'])
 <generator object merge at 0x000001176B5FBBA0>
 >>> list(heapq.merge(a))
 [5, 7, 6, 9, 12]
+```
+
+다음은 꼭대기 값이 큰 heapq 이다. element 로 tuple 을
+사용한다. tuple 의 첫번째 값은 우선순위를 담당한다. 음수로 하자.
+
+```python
+>>> import heapq
+>>> a = []
+>>> heapq.heapify(a)
+>>> heapq.heappush(a, (-1, 1))
+>>> heapq.heappush(a, (-3, 3))
+>>> heapq.heappush(a, (-5, 5))
+>>> heapq.heappop(a)[1]
+5
+>>> heapq.heappop(a)[1]
+3
+>>> heapq.heappop(a)[1]
+1
 ```
 
 ### set

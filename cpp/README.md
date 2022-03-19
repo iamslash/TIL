@@ -367,9 +367,9 @@ int main() {
 
 다음의 내용을 기억한다.
 
-* `less<int>` 이면 큰 값이 꼭대기 값이다. 기본으로 사용한다.
-* `greater<int>` 이면 작은 값이 꼭대기 값이다.
-* `Comparator 의 결과가 참이면 아래값이다` 를 기억하자.
+* `Comparator 의 operator() 가 참을 리턴하면 아래값이다` 를 기억하자.
+* `less<int>` 이면 작은 값이 아래 값이다. 기본으로 사용한다.
+* `greater<int>` 이면 큰 값이 아래 값이다.
 
 다음은 `int` 가 element 이고 element 에 `-` 부호를 사용한 경우이다.
 
@@ -418,6 +418,7 @@ public:
 다음은 `int` 가 element 이고 `Comparator` 를 정의한 경우이다.
 
 ```cpp
+// greater<int>
 struct Comparator {
   bool operator() (int a, int b) {
     return a > b;
