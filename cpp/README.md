@@ -365,7 +365,84 @@ int main() {
 
 ## priority_queue
 
-`참이면 꼭대기이다` 를 기억하자.
+다음의 내용을 기억한다.
+
+* `less<int>` 이면 큰 값이 꼭대기 값이다. 기본으로 사용한다.
+* `greater<int>` 이면 작은 값이 꼭대기 값이다.
+* `Comparator 의 결과가 참이면 아래값이다` 를 기억하자.
+
+다음은 `int` 가 element 이고 element 에 `-` 부호를 사용한 경우이다.
+
+```cpp
+class Solution {
+public:
+  int connectSticks(vector<int>& sticks) {
+    priority_queue<int> pq;
+    for (int len : sticks) {
+      pq.push(-len);
+    }
+    int ans = 0;
+    while (pq.size() > 1) {
+      int sum = -pq.top(); pq.pop();
+      sum += -pq.top(); pq.pop();
+      ans += sum;
+      pq.push(-sum);
+    }
+    return ans;
+  }
+};
+```
+
+다음은 `int` 가 element 이고 `greater<int>` 를 사용한 경우이다.
+
+```cpp
+class Solution {
+public:
+  int connectSticks(vector<int>& sticks) {
+    priority_queue<int, vector<int>, greater<int>> pq;
+    for (int len : sticks) {
+      pq.push(len);
+    }
+    int ans = 0;
+    while (pq.size() > 1) {
+      int sum = pq.top(); pq.pop();
+      sum += pq.top(); pq.pop();
+      ans += sum;
+      pq.push(sum);
+    }
+    return ans;
+  }
+};
+```
+
+다음은 `int` 가 element 이고 `Comparator` 를 정의한 경우이다.
+
+```cpp
+struct Comparator {
+  bool operator() (int a, int b) {
+    return a > b;
+  }
+};
+class Solution {
+public:
+  int connectSticks(vector<int>& sticks) {
+    priority_queue<int, vector<int>, Comparator> pq;
+    for (int len : sticks) {
+      pq.push(len);
+    }
+    int ans = 0;
+    while (pq.size() > 1) {
+      int sum = pq.top(); pq.pop();
+      sum += pq.top(); pq.pop();
+      ans += sum;
+      pq.push(sum);
+    }
+    return ans;
+  }
+};
+```
+
+다음은 `pair<string, int>` 가 element 인 경우이다.
 
 ```cpp
 #include <cstdio>

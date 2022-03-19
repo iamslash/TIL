@@ -627,8 +627,14 @@ val deq: Deque<Char> = ArrayDeque<Char>()
 val n     = deq.size;
 val first = deq.getFirst()
 val last  = deq.getLast()
+
 deq.addFirst('a');
 deq.addLast('b');
+deq.removeFirst();
+deq.removeLast();
+
+deq.offerFirst('a');
+deq.offerLast('b');
 deq.pollFirst();
 deq.pollLast();
 ```
