@@ -291,6 +291,12 @@ int c = a >>> 1; // 0111 1111
 ## String
 
 ```java
+// Join string
+String[] sArr = new String[]{"foo", "bar", "baz"};
+List<String> sList = Arrays.asList("foo", "bar", "baz");
+System.out.println(String.join(" ", sArr));
+System.out.println(String.join(" ", sList));
+
 // append char to String
 char c = 'K', d = '1';
 String s = "" + c + d;
@@ -315,14 +321,13 @@ while (last >= 0 && sb.charAt(last) == ' ') {
 "hamburger".substring(4, 8) // "urge"
 "smiles".substring(1, 5) // "mile"
 s = s.substring(0, s.length() - 1);
+
 // Convert String, Integer
 Integer n = Integer.parseInt("12");
 String s = Integer.toString(12);
+
 // Remove string
 s.replaceAll("\\*", "");
-// Join string
-String[] words = new String[]{"Hello", "World"};
-String s = String.join(" ", words);
 
 // Remove not words and split as lower case letters
 // \W : not word. same as [^_[:alnum:]]
