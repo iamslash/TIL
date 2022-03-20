@@ -441,12 +441,23 @@ System.out.printf("%s : %d%n", "age", 11);
 ### List, ArrayList
 
 ```java
+   // Integer List
    List<Integer> D = new ArrayList<Integer>(Collections.nCopies(N,  1));
    Integer a = D.get(0);
    D.set(0, 1);
    D.add(1);
    // remove last
    D.remove(D.size()-1);
+
+   // String List
+   List<String> wordList = new ArrayList<>();
+   wordList.add("Hello")
+   wordList.add("World")
+   // Removes the element at the specified position 
+   String word = wordList.remove(wordList.size() - 1)
+   // remove first occurred element
+   boolean deleted = wordList.remove("Hello")
+   boolean found = worldList.contains("Hello")
 ```
 
 ### Deque, ArrayDeque
