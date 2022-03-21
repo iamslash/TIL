@@ -11,6 +11,10 @@
   - [String](#string)
   - [Random](#random)
   - [Print Out](#print-out)
+  - [Data Types](#data-types)
+  - [Decision Making](#decision-making)
+  - [Loops](#loops)
+  - [for and if oneline](#for-and-if-oneline)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
     - [tuple](#tuple)
@@ -42,8 +46,6 @@
   - [set](#set-1)
   - [ternary operators](#ternary-operators)
   - [multiple return](#multiple-return)
-  - [for else](#for-else)
-  - [for and if oneline](#for-and-if-oneline)
   - [exception](#exception)
   - [Dunder methods (Magic methods)](#dunder-methods-magic-methods)
   - [pdb](#pdb)
@@ -264,6 +266,178 @@ print('Hello World')
 a, b = 1, 2
 # f string, literal string interpolation
 print(f'a: {a}, b{b}')
+```
+
+## Data Types
+
+> [Built-in Types @ python3](https://docs.python.org/3/library/stdtypes.html)
+
+Numeric Type 은 `int, float, complex` 가 있다.
+String Type 은 `str` 이 있다. 
+
+```py
+>>> type(3)
+<class 'int'>
+>>> type(3.3)
+<class 'float'>
+>>> type(complex(2, 3))
+<class 'complex'>
+>>> type("Hello")
+<class 'str'>
+```
+
+Data Type 의 크기는 다음과 같다. [Python의 데이터 타입 크기 및 기억 범위](https://ilikemediumrare.tistory.com/5)
+
+| Category | Data Type | Data Limit | Data Range |
+|---|---|---|---|
+| String | `str` | Infinite | Infinite |
+| Integer | `int` | Infinite | Infinite |
+| Real | `float` | 8 byte | `4.9×10^-324~1.8×10^308` |
+|      | `complex` | 16 byte | `4.9×10^-324~1.8×10^308` |
+
+## Decision Making
+
+* [4. More Control Flow Tools @ python3](https://docs.python.org/3/tutorial/controlflow.html)
+
+```py
+if x < 0:
+    x = 0
+    print('Negative changed to zero')
+elif x == 0:
+    print('Zero')
+elif x == 1:
+    print('Single')
+else:
+    print('More')
+```
+
+## Loops
+
+> [Python For Loops @ w3schools](https://www.w3schools.com/python/python_for_loops.asp)
+
+```py
+# basic
+fruits = ["apple", "banana", "cherry"]
+for x in fruits:
+  print(x)
+
+# Looping Through a String
+for x in "banana":
+  print(x)
+
+# The break Statement
+fruits = ["apple", "banana", "cherry"]
+for x in fruits:
+  print(x)
+  if x == "banana":
+    break
+
+# The continue Statement
+fruits = ["apple", "banana", "cherry"]
+for x in fruits:
+  if x == "banana":
+    continue
+  print(x)
+
+# range(start, exclusive end, step), [0..5]
+for x in range(6):
+  print(x)
+# [2..5]
+for x in range(2, 6):
+  print(x)
+# [2, 5]
+for x in range(2, 6, 3):
+  print(x)
+# reverse range(), [5..0]
+for x in range(5, -1, -1):
+  print(x)
+else:
+  print("Finally finished!")
+
+# Else in For Loop. print a message when the loop has ended.
+for x in range(6):
+  print(x)
+else:
+  print("Finally finished!")
+
+# Nested Loops
+adj = ["red", "big", "tasty"]
+fruits = ["apple", "banana", "cherry"]
+for x in adj:
+  for y in fruits:
+    print(x, y)
+
+# The pass Statement
+for x in [0, 1, 2]:
+  pass
+```
+
+## for and if oneline
+
+> * [[python] for문, if문 한 줄로 코딩하기 (for and if in one line)](https://leedakyeong.tistory.com/entry/python-for%EB%AC%B8-if%EB%AC%B8-%ED%95%9C-%EC%A4%84%EB%A1%9C-%EC%BD%94%EB%94%A9%ED%95%98%EA%B8%B0)
+
+```py
+# print one dimension list
+for a in A:
+  print(a)
+# one line
+>>> [a for a in A]
+print(" ".join(str(i) for a in A))
+
+# print two dimension list
+>>> A = [list(range(10), [10,11,12]]
+for a in A:
+  for b in a:
+    print(b)
+# one line
+>>> [b for a in A for b in a]
+
+# one condition
+if a < 5:
+  print(a)
+# one line
+a = 3
+if a < 5: print(a)
+# one line
+a = 3
+print(a if a < 5 else 1)
+
+# more than one condition
+if a < 5:
+  print(0)
+elif a < 10:
+  print(1)
+else:
+  print(2)  
+# one line
+a = 3
+print(0 if a < 5 else 1 if a < 10 else 2)
+
+# for and if
+A = list(range(10, 20))
+print(A)
+# legacy way
+for a in A:
+  if a == 0:
+    print(a)
+# oneline
+[a for a in A if a == 0]    
+
+# for and if and else
+# legacy
+for a in A:
+  if a == 0:
+    print(a)
+  else:
+    print("P")    
+# oneline
+[a if a == 0 else "P" for a in A]    
+# oneline error
+>>> [a if a > 0 for a in A]
+  File "<stdin>", line 1
+    [a if a > 0 for a in A]
+                  ^
+SyntaxError: invalid syntax
 ```
 
 ## Collections Compared to c++ containers
@@ -1537,98 +1711,6 @@ print(name)
 # Danny
 print(age)
 #31
-```
-
-## for else
-
-> * []()
-
-```py
-for item in container:
-    if search_something(item):
-        # Found it!
-        process(item)
-        break
-else:
-    # Didn't find anything..
-    not_found_in_container()
- 
-for n in range(2, 10):
-    for x in range(2, n):
-        if n % x == 0:
-            print( n, 'equals', x, '*', n/x)
-            break
-    else:
-        # loop fell through without finding a factor
-        print(n, 'is a prime number')
-```
-
-## for and if oneline
-
-> * [[python] for문, if문 한 줄로 코딩하기 (for and if in one line)](https://leedakyeong.tistory.com/entry/python-for%EB%AC%B8-if%EB%AC%B8-%ED%95%9C-%EC%A4%84%EB%A1%9C-%EC%BD%94%EB%94%A9%ED%95%98%EA%B8%B0)
-
-```py
-# print one dimension list
-for a in A:
-  print(a)
-# one line
->>> [a for a in A]
-print(" ".join(str(i) for a in A))
-
-# print two dimension list
->>> A = [list(range(10), [10,11,12]]
-for a in A:
-  for b in a:
-    print(b)
-# one line
->>> [b for a in A for b in a]
-
-# one condition
-if a < 5:
-  print(a)
-# one line
-a = 3
-if a < 5: print(a)
-# one line
-a = 3
-print(a if a < 5 else 1)
-
-# more than one condition
-if a < 5:
-  print(0)
-elif a < 10:
-  print(1)
-else:
-  print(2)  
-# one line
-a = 3
-print(0 if a < 5 else 1 if a < 10 else 2)
-
-# for and if
-A = list(range(10, 20))
-print(A)
-# legacy way
-for a in A:
-  if a == 0:
-    print(a)
-# oneline
-[a for a in A if a == 0]    
-
-# for and if and else
-# legacy
-for a in A:
-  if a == 0:
-    print(a)
-  else:
-    print("P")    
-# oneline
-[a if a == 0 else "P" for a in A]    
-# oneline error
->>> [a if a > 0 for a in A]
-  File "<stdin>", line 1
-    [a if a > 0 for a in A]
-                  ^
-SyntaxError: invalid syntax
 ```
 
 ## exception

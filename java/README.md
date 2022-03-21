@@ -11,6 +11,9 @@
   - [String](#string)
   - [Random](#random)
   - [Print Out](#print-out)
+  - [Data Types](#data-types)
+  - [Decision Making](#decision-making)
+  - [Loops](#loops)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collection Examples](#collection-examples)
     - [unmodifiableList](#unmodifiablelist)
@@ -35,9 +38,6 @@
   - [Multi Dimensional Array](#multi-dimensional-array)
   - [Collection Framework](#collection-framework)
   - [Collection Implementations](#collection-implementations)
-  - [Data Types](#data-types)
-  - [Decision Making](#decision-making)
-  - [Loops](#loops)
   - [Inner Classes](#inner-classes)
   - [java 8 Interface Changes](#java-8-interface-changes)
   - [Marker Interfaces](#marker-interfaces)
@@ -365,6 +365,113 @@ System.out.println(rnd.nextFloat()); // 0.0~1.0
 ```java
 // %n means system dependent line breaks.
 System.out.printf("%s : %d%n", "age", 11);
+```
+
+## Data Types
+
+```java
+// 
+byte short int long float double
+boolean char
+
+// Literals
+byte a = 68;
+char a = 'A';
+int decimal = 100;
+int octal = 0144;
+int hexa  = 0x64;
+char a = '\u001';
+String a = "\u001";
+```
+
+## Decision Making
+
+```java
+//// if
+int x = 30;
+if (x == 10) {
+   System.out.print("Value of X is 10");
+} else if ( x == 20 ) {
+   System.out.print("Value of X is 20");
+} else if ( x == 30 ) {
+   System.out.print("Value of X is 30");
+} else {
+   System.out.print("This is else statement");
+}
+//// switch
+// char grade = args[0].charAt(0);
+char grade = 'C';
+switch (grade) {
+   case 'A' :
+      System.out.println("Excellent!"); 
+      break;
+   case 'B' :
+   case 'C' :
+      System.out.println("Well done");
+      break;
+   case 'D' :
+      System.out.println("You passed");
+   case 'F' :
+      System.out.println("Better try again");
+      break;
+   default :
+      System.out.println("Invalid grade");
+}
+System.out.println("Your grade is " + grade);
+```
+
+## Loops
+
+```java
+//// while
+int x = 10;
+while (x < 20) {
+   System.out.print("value of x : " + x );
+   x++;
+   System.out.print("\n");
+}
+//// for
+for (int x = 10; x < 20; x = x + 1) {
+   System.out.print("value of x : " + x );
+   System.out.print("\n");
+}
+//// do while 
+int x = 10;
+do {
+   System.out.print("value of x : " + x );
+   x++;
+   System.out.print("\n");
+} while ( x < 20 );
+//// break
+int [] numbers = {10, 20, 30, 40, 50};
+for (int x : numbers) {
+   if( x == 30 ) {
+      break;
+   }
+   System.out.print( x );
+   System.out.print("\n");
+}
+//// continue
+int [] numbers = {10, 20, 30, 40, 50};
+for (int x : numbers) {
+   if( x == 30 ) {
+      continue;
+   }
+   System.out.print( x );
+   System.out.print("\n");
+}
+//// range based for
+int [] numbers = {10, 20, 30, 40, 50};
+for(int x : numbers) {
+   System.out.print( x );
+   System.out.print(",");
+}
+System.out.print("\n");
+String [] names = {"James", "Larry", "Tom", "Lacy"};
+for(String name : names) {
+   System.out.print( name );
+   System.out.print(",");
+}
 ```
 
 ## Collections compared c++ container
@@ -1198,114 +1305,6 @@ for (int[] item : C) {
 | List      |            |    ArrayList    |               | LinkedList  |                          |
 | Deque     |            |   ArrayDeque    |               | LinkedList  |                          |
 | Map       | HashMap    |                 | TreeMap       |             |      LinkedHashMap       |
-
-
-## Data Types
-
-```java
-// 
-byte short int long float double
-boolean char
-
-// Literals
-byte a = 68;
-char a = 'A';
-int decimal = 100;
-int octal = 0144;
-int hexa  = 0x64;
-char a = '\u001';
-String a = "\u001";
-```
-
-## Decision Making
-
-```java
-//// if
-int x = 30;
-if (x == 10) {
-   System.out.print("Value of X is 10");
-} else if ( x == 20 ) {
-   System.out.print("Value of X is 20");
-} else if ( x == 30 ) {
-   System.out.print("Value of X is 30");
-} else {
-   System.out.print("This is else statement");
-}
-//// switch
-// char grade = args[0].charAt(0);
-char grade = 'C';
-switch (grade) {
-   case 'A' :
-      System.out.println("Excellent!"); 
-      break;
-   case 'B' :
-   case 'C' :
-      System.out.println("Well done");
-      break;
-   case 'D' :
-      System.out.println("You passed");
-   case 'F' :
-      System.out.println("Better try again");
-      break;
-   default :
-      System.out.println("Invalid grade");
-}
-System.out.println("Your grade is " + grade);
-```
-
-## Loops
-
-```java
-//// while
-int x = 10;
-while (x < 20) {
-   System.out.print("value of x : " + x );
-   x++;
-   System.out.print("\n");
-}
-//// for
-for (int x = 10; x < 20; x = x + 1) {
-   System.out.print("value of x : " + x );
-   System.out.print("\n");
-}
-//// do while 
-int x = 10;
-do {
-   System.out.print("value of x : " + x );
-   x++;
-   System.out.print("\n");
-} while ( x < 20 );
-//// break
-int [] numbers = {10, 20, 30, 40, 50};
-for (int x : numbers) {
-   if( x == 30 ) {
-      break;
-   }
-   System.out.print( x );
-   System.out.print("\n");
-}
-//// continue
-int [] numbers = {10, 20, 30, 40, 50};
-for (int x : numbers) {
-   if( x == 30 ) {
-      continue;
-   }
-   System.out.print( x );
-   System.out.print("\n");
-}
-//// range based for
-int [] numbers = {10, 20, 30, 40, 50};
-for(int x : numbers) {
-   System.out.print( x );
-   System.out.print(",");
-}
-System.out.print("\n");
-String [] names = {"James", "Larry", "Tom", "Lacy"};
-for(String name : names) {
-   System.out.print( name );
-   System.out.print(",");
-}
-```
 
 ## Inner Classes
 
