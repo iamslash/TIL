@@ -1,7 +1,8 @@
 
+- [](#)
 - [nullptr](#nullptr)
 - [enum class](#enum-class)
-- [static_assert](#staticassert)
+- [static_assert](#static_assert)
 - [Delegating Contructor](#delegating-contructor)
 - [override](#override)
 - [final](#final)
@@ -27,7 +28,7 @@
 - [timer](#timer)
 - [regex](#regex)
 - [random](#random)
-- [to_string](#tostring)
+- [to_string](#to_string)
 - [convert string](#convert-string)
 - [Variadic Template](#variadic-template)
 - [Template Alias](#template-alias)
@@ -35,6 +36,31 @@
 - [chrono](#chrono)
 
 ----
+
+## Fixed width integer types
+
+> [Fixed width integer types (since C++11)](https://en.cppreference.com/w/cpp/types/integer)
+
+```cpp
+#include <cstdint>
+
+int main()
+{
+    std::printf("%zu\n", sizeof(std::int64_t));
+    std::printf("%s\n", PRId64);
+    std::printf("%+" PRId64 "\n", INT64_MIN);
+    std::printf("%+" PRId64 "\n", INT64_MAX);
+ 
+    std::int64_t n = 7;
+    std::printf("%+" PRId64 "\n", n);
+}
+// Output:
+// 8
+// lld
+// -9223372036854775808
+// +9223372036854775807
+// +7
+```
 
 ## nullptr
 
