@@ -1,8 +1,16 @@
+# Abstract
+
+GoMock is a mocking framework for the Go programming language.
+
 # Materials
 
 * [gomock](https://github.com/golang/mock)
 
-# Basic Usages
+# Basic
+
+WIP...
+
+# Advanced
 
 ## Make AWS Cloudformation mock.go
 

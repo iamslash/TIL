@@ -2401,7 +2401,7 @@ IntelliJ 는 `^D` 로 debugging 시작.
 
 ## Gomock
 
-* [gomock](gomock.md)
+* [gomock](go_mock.md)
 
 ## Benchmarks
 
