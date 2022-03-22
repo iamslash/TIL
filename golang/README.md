@@ -2073,7 +2073,7 @@ b, ok := i.(string)
 routine 들이 취소된다. 
 
 ```go
-// Open browser and exit broser. This will cancel Context.
+// Open browser and exit browser. This will cancel Context.
 func main() {
 	// Create an HTTP server that listens on port 8000
 	http.ListenAndServe(":8010", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
