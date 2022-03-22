@@ -13,17 +13,12 @@
   - [Formatted String](#formatted-string)
   - [Search](#search)
   - [virtual function](#virtual-function)
-  - [vector vs deque vs list](#vector-vs-deque-vs-list)
-  - [vector](#vector)
-    - [pros](#pros)
-    - [cons](#cons)
-  - [deque (double ended queue)](#deque-double-ended-queue)
-    - [pros](#pros-1)
-    - [cons](#cons-1)
-  - [list](#list)
-    - [pros](#pros-2)
-    - [cons](#cons-2)
-  - [priority_queue](#priority_queue)
+  - [Containers](#containers)
+    - [vector vs deque vs list](#vector-vs-deque-vs-list)
+    - [vector](#vector)
+    - [deque (double ended queue)](#deque-double-ended-queue)
+    - [list](#list)
+    - [priority_queue](#priority_queue)
   - [How to choose a container](#how-to-choose-a-container)
 - [Advanced](#advanced)
   - [RAII (Resource Acquisition Is Initialzation)](#raii-resource-acquisition-is-initialzation)
@@ -350,7 +345,9 @@ int main() {
 }
 ```
 
-## vector vs deque vs list
+## Containers
+
+### vector vs deque vs list
 
 |     | vector | deque | list |
 |:---:|:---:|:---:|:---:|
@@ -358,21 +355,21 @@ int main() {
 | 확장방법 | 전체재할당 | chunk 추가할당 | 불필요 |
 | 중간삽입 | O(n) | O(n) | O(1)|
 
-## vector
+### vector
 
-### pros
+> pros
 
 - 동적으로 확장 및 축소가 가능하다. dynamic array 로 구현되어 있다. 재할당 방식이다. 메모리가 연속으로 할당되어 있어 포인터 연산이 가능하다.
 - index로 접근 가능하다. O(1)
 
-### cons
+> cons
 
 - 끝이 아닌 위치에 삽입 및 제거시 성능이 떨어진다.
 - 동적으로 확장 및 축소할때 전체를 재할당 하므로 비용이 크다.
 
-## deque (double ended queue)
+### deque (double ended queue)
 
-### pros
+> pros
 
 - index로 접근 가능하다. O(1)
 - 끝이 아닌 위치에 삽입 및 제거시 성능이 좋다. O(1)
@@ -380,21 +377,21 @@ int main() {
   저장 원소가 많거나 원소의 크기가 클때 즉 메모리 할당이 큰 경우 
   vector 에 비해 확장 비용이 적다.
 
-### cons
+> cons
 
 - 메모리가 연속으로 할당되어 있지 않아 vector 와 달리 포인터 연산이 불가능하다.
 
-## list
+### list
 
-### pros
+> pros
 
 - vector, deque와 달리 임의의 위치에 삽입 및 제거시 성능이 좋다. `O(1)`
 
-### cons
+> cons
 
 - index 로 접근 불가능하다. 
 
-## priority_queue
+### priority_queue
 
 다음의 내용을 기억한다.
 

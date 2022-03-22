@@ -7,6 +7,9 @@
 - [Associative Array](#associative-array)
 - [array](#array)
 - [Container Adaptor](#container-adaptor)
+- [Stack](#stack)
+- [Queue](#queue)
+- [Priority Queue](#priority-queue)
 - [Iterators](#iterators)
 - [Iterator Adaptor (Predefined Iterator)](#iterator-adaptor-predefined-iterator)
 - [Functors (Function Objects)](#functors-function-objects)
@@ -286,6 +289,110 @@ array<int, 4> b = {3, 4, 5};
  *  3. priority queue: first item always has the greatest priority
  *                   push(), pop(), top()
  */
+```
+
+## Stack
+
+> [std::stack::stack](https://www.cplusplus.com/reference/stack/stack/)
+
+```cpp
+// constructing stacks
+#include <iostream>       // std::cout
+#include <stack>          // std::stack
+#include <vector>         // std::vector
+#include <deque>          // std::deque
+
+int main ()
+{
+  std::deque<int> mydeque (3, 100);          // deque with 3 elements
+  std::vector<int> myvector (2, 200);        // vector with 2 elements
+
+  std::stack<int> first;                    // empty stack
+  std::stack<int> second (mydeque);         // stack initialized to copy of deque
+
+  std::stack<int, std::vector<int> > third;  // empty stack using vector
+  std::stack<int, std::vector<int> > fourth (myvector);
+
+  std::cout << "size of first: " << first.size() << '\n';
+  std::cout << "size of second: " << second.size() << '\n';
+  std::cout << "size of third: " << third.size() << '\n';
+  std::cout << "size of fourth: " << fourth.size() << '\n';
+
+  return 0;
+}
+```
+
+## Queue
+
+> [std::queue::queue](https://www.cplusplus.com/reference/queue/queue/queue/)
+
+```cpp
+// constructing queues
+#include <iostream>       // std::cout
+#include <deque>          // std::deque
+#include <list>           // std::list
+#include <queue>          // std::queue
+
+int main ()
+{
+  std::deque<int> mydeck (3,100);        // deque with 3 elements
+  std::list<int> mylist (2,200);         // list with 2 elements
+
+  std::queue<int> first;                 // empty queue
+  std::queue<int> second (mydeck);       // queue initialized to copy of deque
+
+  std::queue<int,std::list<int> > third; // empty queue with list as underlying container
+  std::queue<int,std::list<int> > fourth (mylist);
+
+  std::cout << "size of first: " << first.size() << '\n';
+  std::cout << "size of second: " << second.size() << '\n';
+  std::cout << "size of third: " << third.size() << '\n';
+  std::cout << "size of fourth: " << fourth.size() << '\n';
+
+  return 0;
+}
+```
+
+## Priority Queue
+
+> [std::priority_queue::priority_queue](https://www.cplusplus.com/reference/queue/priority_queue/priority_queue/)
+
+```cpp
+// constructing priority queues
+#include <iostream>       // std::cout
+#include <queue>          // std::priority_queue
+#include <vector>         // std::vector
+#include <functional>     // std::greater
+
+class mycomparison
+{
+  bool reverse;
+public:
+  mycomparison(const bool& revparam=false)
+    {reverse=revparam;}
+  bool operator() (const int& lhs, const int&rhs) const
+  {
+    if (reverse) return (lhs>rhs);
+    else return (lhs<rhs);
+  }
+};
+
+int main ()
+{
+  int myints[]= {10,60,50,20};
+
+  std::priority_queue<int> first;
+  std::priority_queue<int> second (myints,myints+4);
+  std::priority_queue<int, std::vector<int>, std::greater<int> >
+                            third (myints,myints+4);
+  // using mycomparison:
+  typedef std::priority_queue<int, std::vector<int>, mycomparison> mypq_type;
+
+  mypq_type fourth;                       // less-than comparison
+  mypq_type fifth (mycomparison(true));   // greater-than comparison
+
+  return 0;
+}
 ```
 
 ## Iterators
