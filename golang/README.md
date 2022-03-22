@@ -69,7 +69,6 @@
     - [Channel Axioms](#channel-axioms)
   - [Type Assertion](#type-assertion)
   - [Context](#context)
-  - [* src](#-src)
   - [module](#module)
 - [Advanced](#advanced)
   - [Go memory ballast](#go-memory-ballast)
@@ -2062,8 +2061,12 @@ b, ok := i.(string)
 
 ## Context
 
-* [Using Context in Golang - Cancellation, Timeouts and Values (With Examples)](https://www.sohamkamani.com/golang/context-cancellation-and-values/)
-  * [src](https://github.com/sohamkamani/blog-example-go-context-cancellation)
+> * [Using Context in Golang - Cancellation, Timeouts and Values (With Examples)](https://www.sohamkamani.com/golang/context-cancellation-and-values/)
+>   * [src](https://github.com/sohamkamani/blog-example-go-context-cancellation)
+> * [Go Concurrency Patterns: Context @ go blog](https://go.dev/blog/context)
+> * [Discover Packages | Standard library | context](https://pkg.go.dev/context)
+> * [Contexts and structs @ go blog](https://go.dev/blog/context-and-structs)
+
 ----
 
 여러 go routine 들을 하나의 Context 로 묶는다. Context 를 취소하면 모든 go
