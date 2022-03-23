@@ -1,10 +1,11 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basic](#basic)
-  - [Standard Usage](#standard-usage)
-  - [Foo](#foo)
+	- [Standard Usage](#standard-usage)
+	- [Foo Example](#foo-example)
+	- [DiveDeep Example](#divedeep-example)
 - [Advanced](#advanced)
-  - [Make AWS Cloudformation mock.go](#make-aws-cloudformation-mockgo)
+	- [Make AWS Cloudformation mock.go](#make-aws-cloudformation-mockgo)
 
 ----
 
@@ -40,7 +41,7 @@ mocking 의 대상은 **interface** 이다. struct 는 mocking 할 수 없다.
       }
 ```
 
-## Foo
+## Foo Example
 
 > directory
 
@@ -220,6 +221,181 @@ func TestFooBar(t *testing.T) {
 
 ```bash
 $ go test ./...
+```
+
+## DiveDeep Example
+
+> directory
+
+```
+divedeep
+├── divedeep.go
+├── divedeep_test.go
+└── mock_divedeep_test.go
+```
+
+> `divedeep.go`
+
+```go
+package divedeep
+
+//go:generate mockgen -destination mock_divedeep_test.go -package divedeep_test github.com/iamslash/go-ex/go-ex-mock/divedeep Diver
+
+type Diver interface {
+	Swim(a int) int
+	Breathe(l []int)
+	Talk(a interface{})
+	Sleep(a *int)
+}
+```
+
+> generate `mock_divedeep_test.go`
+
+```bash
+$ go generate ./...
+```
+
+> `divedeep_test.go`
+
+```bash
+package divedeep_test
+
+import (
+	"testing"
+
+	"github.com/golang/mock/gomock"
+)
+
+func TestDiverSwimTimes(t *testing.T) {
+	t.Run("times", func(t *testing.T) {
+		// given
+		ctrl := gomock.NewController(t)
+		mockDiver := NewMockDiver(ctrl)
+
+		// when
+		mockDiver.EXPECT().Swim(1).Times(2)
+
+		// then
+		mockDiver.Swim(1)
+		mockDiver.Swim(1)
+		//mockDiver.Swim(1)
+	})
+	t.Run("min times", func(t *testing.T) {
+		// given
+		ctrl := gomock.NewController(t)
+		mockDiver := NewMockDiver(ctrl)
+
+		// when
+		mockDiver.EXPECT().Swim(1).MinTimes(2)
+
+		// then
+		mockDiver.Swim(1)
+		mockDiver.Swim(1)
+		//mockDiver.Swim(1)
+	})
+	t.Run("max times", func(t *testing.T) {
+		// given
+		ctrl := gomock.NewController(t)
+		mockDiver := NewMockDiver(ctrl)
+
+		// when
+		mockDiver.EXPECT().Swim(1).MaxTimes(2)
+
+		// then
+		mockDiver.Swim(1)
+		mockDiver.Swim(1)
+		//mockDiver.Swim(1)
+	})
+	t.Run("any times", func(t *testing.T) {
+		// given
+		ctrl := gomock.NewController(t)
+		mockDiver := NewMockDiver(ctrl)
+
+		// when
+		mockDiver.EXPECT().Swim(1).AnyTimes()
+
+		// then
+		mockDiver.Swim(1)
+		mockDiver.Swim(1)
+		mockDiver.Swim(1)
+	})
+}
+
+func TestDiverSwimDo(t *testing.T) {
+	t.Run("do", func(t *testing.T) {
+		// given
+		ctrl := gomock.NewController(t)
+		mockDiver := NewMockDiver(ctrl)
+
+		// when
+		mockDiver.EXPECT().Swim(1).Do(
+			func(x int) {
+			})
+
+		// then
+		mockDiver.Swim(1)
+	})
+	t.Run("do and return", func(t *testing.T) {
+		// given
+		ctrl := gomock.NewController(t)
+		mockDiver := NewMockDiver(ctrl)
+
+		// when
+		mockDiver.EXPECT().Swim(1).DoAndReturn(
+			func(x int) int {
+				return x
+			})
+
+		// then
+		mockDiver.Swim(1)
+	})
+}
+
+func TestDiverSwimCall(t *testing.T) {
+	// given
+	ctrl := gomock.NewController(t)
+	mockDiver := NewMockDiver(ctrl)
+
+	// when
+	callFirst := mockDiver.EXPECT().Swim(1).Return(1)
+	callSecond := mockDiver.EXPECT().Sleep(gomock.Any()).SetArg(0, 2)
+	callSecond.After(callFirst)
+	gomock.InOrder(callFirst, callSecond)
+
+	// then
+	mockDiver.Swim(1)
+	outInt := 0
+	mockDiver.Sleep(&outInt)
+	if outInt != 2 {
+		t.Errorf("invalid outInt")
+	}
+}
+
+func TestDiverSwimMatcher(t *testing.T) {
+	// given
+	ctrl := gomock.NewController(t)
+	mockDiver := NewMockDiver(ctrl)
+
+	// when
+	mockDiver.EXPECT().Swim(gomock.Eq(1))
+	mockDiver.EXPECT().Swim(gomock.Any())
+	mockDiver.EXPECT().Breathe(gomock.Len(2))
+	mockDiver.EXPECT().Breathe(gomock.All(gomock.Len(2), gomock.Eq([]int{1, 2}))).AnyTimes()
+	mockDiver.EXPECT().Breathe(gomock.Nil())
+	mockDiver.EXPECT().Swim(gomock.Not(1))
+	mockDiver.EXPECT().Talk(gomock.AssignableToTypeOf(1))
+	mockDiver.EXPECT().Breathe(gomock.InAnyOrder([]int{1, 2, 3}))
+
+	//then
+	mockDiver.Swim(1)
+	mockDiver.Swim(7)
+	mockDiver.Breathe([]int{1, 2})
+	mockDiver.Breathe([]int{1, 2})
+	mockDiver.Breathe(nil)
+	mockDiver.Swim(0)
+	mockDiver.Talk(2)
+	mockDiver.Breathe([]int{3, 2, 1})
+}
 ```
 
 # Advanced
