@@ -201,18 +201,17 @@ func TestImplBar(t *testing.T) {
 }
 
 func TestFooBar(t *testing.T) {
+	// setup
 	ctrl := gomock.NewController(t)
-
-	// given
 	mockFoo := NewMockFoo(ctrl)
 
-	// when
+	// given
 	mockFoo.
 		EXPECT().
 		Bar(1).
 		Return(1)
 
-	// then
+	// when, then
 	mockFoo.Bar(1)
 }
 ```
@@ -257,7 +256,7 @@ $ go generate ./...
 
 > `divedeep_test.go`
 
-```bash
+```go
 package divedeep_test
 
 import (
@@ -268,53 +267,53 @@ import (
 
 func TestDiverSwimTimes(t *testing.T) {
 	t.Run("times", func(t *testing.T) {
-		// given
+		// setup
 		ctrl := gomock.NewController(t)
 		mockDiver := NewMockDiver(ctrl)
 
-		// when
+		// given
 		mockDiver.EXPECT().Swim(1).Times(2)
 
-		// then
+		// when, then
 		mockDiver.Swim(1)
 		mockDiver.Swim(1)
 		//mockDiver.Swim(1)
 	})
 	t.Run("min times", func(t *testing.T) {
-		// given
+		// setup
 		ctrl := gomock.NewController(t)
 		mockDiver := NewMockDiver(ctrl)
 
-		// when
+		// given
 		mockDiver.EXPECT().Swim(1).MinTimes(2)
 
-		// then
+		// when, then
 		mockDiver.Swim(1)
 		mockDiver.Swim(1)
 		//mockDiver.Swim(1)
 	})
 	t.Run("max times", func(t *testing.T) {
-		// given
+		// setup
 		ctrl := gomock.NewController(t)
 		mockDiver := NewMockDiver(ctrl)
 
-		// when
+		// given
 		mockDiver.EXPECT().Swim(1).MaxTimes(2)
 
-		// then
+		// when, then
 		mockDiver.Swim(1)
 		mockDiver.Swim(1)
 		//mockDiver.Swim(1)
 	})
 	t.Run("any times", func(t *testing.T) {
-		// given
+		// setup
 		ctrl := gomock.NewController(t)
 		mockDiver := NewMockDiver(ctrl)
 
-		// when
+		// given
 		mockDiver.EXPECT().Swim(1).AnyTimes()
 
-		// then
+		// when, then
 		mockDiver.Swim(1)
 		mockDiver.Swim(1)
 		mockDiver.Swim(1)
@@ -323,46 +322,46 @@ func TestDiverSwimTimes(t *testing.T) {
 
 func TestDiverSwimDo(t *testing.T) {
 	t.Run("do", func(t *testing.T) {
-		// given
+		// setup
 		ctrl := gomock.NewController(t)
 		mockDiver := NewMockDiver(ctrl)
 
-		// when
+		// given
 		mockDiver.EXPECT().Swim(1).Do(
 			func(x int) {
 			})
 
-		// then
+		// when, then
 		mockDiver.Swim(1)
 	})
 	t.Run("do and return", func(t *testing.T) {
-		// given
+		// setup
 		ctrl := gomock.NewController(t)
 		mockDiver := NewMockDiver(ctrl)
 
-		// when
+		// given
 		mockDiver.EXPECT().Swim(1).DoAndReturn(
 			func(x int) int {
 				return x
 			})
 
-		// then
+		// when, then
 		mockDiver.Swim(1)
 	})
 }
 
 func TestDiverSwimCall(t *testing.T) {
-	// given
+	// setup
 	ctrl := gomock.NewController(t)
 	mockDiver := NewMockDiver(ctrl)
 
-	// when
+	// given
 	callFirst := mockDiver.EXPECT().Swim(1).Return(1)
 	callSecond := mockDiver.EXPECT().Sleep(gomock.Any()).SetArg(0, 2)
 	callSecond.After(callFirst)
 	gomock.InOrder(callFirst, callSecond)
 
-	// then
+	// when, then
 	mockDiver.Swim(1)
 	outInt := 0
 	mockDiver.Sleep(&outInt)
@@ -372,11 +371,11 @@ func TestDiverSwimCall(t *testing.T) {
 }
 
 func TestDiverSwimMatcher(t *testing.T) {
-	// given
+	// setup
 	ctrl := gomock.NewController(t)
 	mockDiver := NewMockDiver(ctrl)
 
-	// when
+	// given
 	mockDiver.EXPECT().Swim(gomock.Eq(1))
 	mockDiver.EXPECT().Swim(gomock.Any())
 	mockDiver.EXPECT().Breathe(gomock.Len(2))
@@ -386,7 +385,7 @@ func TestDiverSwimMatcher(t *testing.T) {
 	mockDiver.EXPECT().Talk(gomock.AssignableToTypeOf(1))
 	mockDiver.EXPECT().Breathe(gomock.InAnyOrder([]int{1, 2, 3}))
 
-	//then
+	// when, then
 	mockDiver.Swim(1)
 	mockDiver.Swim(7)
 	mockDiver.Breathe([]int{1, 2})
