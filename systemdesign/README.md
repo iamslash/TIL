@@ -768,6 +768,14 @@ total data size : estimated data size = 100 : 70
 
 Database 의 isolation level 보다 융통성있는 locking 방법
 
+원리는 다음과 같다.
+
+* table 에 `version` field 가 있어야 한다.
+* A Client 가 원하는 record 를 `version` 을 포함하여 읽어온다. `version` 은 `v0` 이라고 하자. 
+* 그 record 의 내용을 변경하여 `version` 은 `v0` 으로 다시 저장하자. 실패할 수
+  있다. 만약 B client 가 그 record 의 내용을 변경했다면 `version` 은 `v1`
+  으로 바뀌어 있을 것이기 때문이다.  
+
 ## Control Plane, Data Plane, Management Plane
 
 * [Data plane](https://en.wikipedia.org/wiki/Data_plane)
