@@ -55,3 +55,4 @@ sqlline> SELECT * FROM COUNTRY LIMIT 100;
 
 * [Data Partitioning](https://ignite.apache.org/docs/latest/data-modeling/data-partitioning)
 * [Data Distribution in Apache Ignite](https://www.gridgain.com/resources/blog/data-distribution-in-apache-ignite)
+  * [pdf](https://go.gridgain.com/rs/491-TWR-806/images/2019-03-12-AI-meetup-Affinity.pdf)
