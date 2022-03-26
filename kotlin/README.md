@@ -1937,7 +1937,7 @@ println(q)
 ```java
 // Sort intArray
 val a = intArrayOf(5, 4, 3, 2, 1)
-val sortList = a.sort()
+val sortList = a.sort()  // a is also sorted 
 val sortDescending = a.sortDescending()
 // There are no sortBy, sortByDescending, sortWith for intArray
 
@@ -1969,7 +1969,7 @@ public expect fun IntArray.toTypedArray(): Array<Int>
 ```java
 // Sort Array<Int>
 val l = mutableListOf<Int>(5, 4, 3, 2, 1)
-val sortList = l.sort()
+val sortList = l.sort()  // l is also sorted 
 val sortDescending = l.sortDescending()
 val sortByList = l.sortBy { kotlin.math.abs(it) }
 val sortByDescending = l.sortByDescending { kotlin.math.abs(it) }
