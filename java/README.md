@@ -1858,6 +1858,8 @@ class A {
 > [Using Pairs in Java | baeldung](https://www.baeldung.com/java-pairs)
 
 ```java
+import javafx.util.*;
+
 Pair<Integer, String> pair = new Pair<>(1, "One");
 Integer key = pair.getKey();
 String value = pair.getValue();
