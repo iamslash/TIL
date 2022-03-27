@@ -2815,6 +2815,7 @@ with open_file('foo') as f:
 ----
 
 ```py
+# List type hints
 from typing import List
 Vector = List[float]
 
@@ -2823,6 +2824,20 @@ def scale(scalar: float, vector: Vector) -> Vector:
 
 # typechecks; a list of floats qualifies as a Vector.
 new_vector = scale(2.0, [1.0, -4.2, 5.4])
+
+# class type hints
+class Foo:
+    x: int
+    y: int
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    def __str__(self):
+        return '({}, {})'.format(self.x, self.y)
+
+if __name__ == "__main__":
+    foo = Foo(1, 2)
+    print(foo)
 ```
 
 ## itertools — Functions creating iterators for efficient looping
