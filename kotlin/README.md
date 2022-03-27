@@ -542,7 +542,7 @@ fun main() {
 
 ### Map
 
-A map is a collection of key/value pairs. **Map** is immutable, **MutableMap** is mutable.
+A map is a collection of `key/value` pairs. **Map** is immutable, **MutableMap** is mutable.
 
 ```kotlin
 //
@@ -618,6 +618,11 @@ assertEquals(17, inventory["Vanilla"]) // 24 - 7 + 0
 assertEquals(13, inventory["Chocolate"]) // 14 - 4 + 3
 assertEquals(11, inventory["Strawberry"]) // 9 - 5 + 7
 assertEquals(5, inventory["Rocky Road"]) // 0 - 0 + 5
+
+// map whose type of value is list
+val valsMap = mutableMapOf<Integer, MutableList<Int>>
+val vals = valsMap.getOrPut(0, { mutableListOf<Int>() })
+valsMap.putIfAbsent(1, mutableListOf<Int>())
 ```
 
 ### Deque, ArrayDeque
