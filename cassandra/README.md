@@ -384,7 +384,28 @@ Partitioner is a module which transform "Row key" to "token". There are 3 partit
 
 -----
 
-몇개의 Replication 을 통해서 어느 정도 수준의 데이터 일관성을 확보할 것인지 설정할 수 있다.
+`A, B, C` 와 같이 3 개의 node 가 있다고 해보자. 그리고 다음과 같은 `user_account` table 이 있다. 
+
+```sql
+CREATE TABLE iamslash.worker ( 
+name TEXT PRIMARY KEY , 
+job TEXT
+);
+```
+
+Client_1 이 다음과 같은 query 를 수행한다.
+
+```sql
+UPDATE iamslash.person 
+   SET job='reporter' WHERE name='david';
+```
+
+이 query 가 모든 node 에게 전파되기 전에 Client_2 가 읽었다고 해보자. 
+inconsistent 하다. 앞서 언급한 query 가 모든 node 에게 전파된 후
+Client_2 가 읽을 있으면 consistent 하다.
+
+Cassandra 는 몇개의 Replication 을 통해서 어느 정도 수준의 데이터 일관성을
+확보할 것인지 설정할 수 있다.
 
 ### Data Replication
 

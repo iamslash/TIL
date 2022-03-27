@@ -109,10 +109,6 @@ Feature Comparison: Redis](https://go.gridgain.com/rs/491-TWR-806/images/GridGai
 
 Ignite Cluster 에 새로운 Node 가 참여하거나 기존의 Node 가 빠져나갔을 때 Partition 이 재배치 되는 것을 말한다.
 
-## Performing Transactions
-
-> [Performing Transactions](https://ignite.apache.org/docs/latest/key-value-api/transactions)
-
 ## Baseline Topology
 
 > [Baseline Topology](https://ignite.apache.org/docs/latest/clustering/baseline-topology)
@@ -132,3 +128,21 @@ Partition Awareness 가 없는 Thin Client 는 모든 Query 를 하나의 Proxy 
 Partition Areness 가 있는 Thin Client 는 모든 Query 를 Partition 이 배치된 Node 들에게 나눠 보낸다. 병목현상이 없다.
 
 ![](img/partitionawareness02.png)
+
+## Consistency
+
+> [Apache Cassandra vs. Apache Ignite: Strong Consistency and Transactions](https://www.gridgain.com/resources/blog/apache-cassandra-vs-apache-ignite-strong-consistency-and-transactions)
+
+Distributed System 은 Consistency issue 가 중요하다. [cassandra data consistency](/cassandra/README.md#data-consistency) 를 참고하여 consistency 가 왜 깨지는지 이해하자.
+
+> [Atomicity Modes](https://ignite.apache.org/docs/latest/configuring-caches/atomicity-modes)
+
+Ignite 는 cache 마다 `atomicityMode` 를 설정할 수 있다. 
+
+* `ATOMIC`: record 하나의 `atoicity (all or nothing)` 을 보장한다. 만약 `putAll(), removeAll()` 이 실패한다면 `CachePartialUpdateException` 이 발생한다. 그리고 실패한 key 들의 리스트가 포함된다.
+* `TRANSACTIONAL`: `Key-Value transaction` 에 대해서 ACID-compliant transactions 을 지원한다. `SQL transaction` 은 아니다.
+* `TRANSACTIONAL_SNAPSHOT`: key-value transactions, SQL transactions 에 대해 multiversion concurrency control (MVCC) 를 지원한다. 그러나 `2.12` 부터 Deprecated 되었다.  
+  
+## Performing Transactions
+
+> [Performing Transactions](https://ignite.apache.org/docs/latest/key-value-api/transactions)
