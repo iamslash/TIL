@@ -56,6 +56,7 @@
   - [Effective Java Programming](#effective-java-programming)
   - [What's new Java8](#whats-new-java8)
     - [Interface Default and Static Methods](#interface-default-and-static-methods)
+  - [Pair Class](#pair-class)
     - [Functional Interfaces](#functional-interfaces-1)
     - [Method References](#method-references)
     - [Optional<T>](#optionalt)
@@ -1850,6 +1851,16 @@ class A {
     String overview = v.getOverview();
   }
 }
+```
+
+## Pair Class
+
+> [Using Pairs in Java | baeldung](https://www.baeldung.com/java-pairs)
+
+```java
+Pair<Integer, String> pair = new Pair<>(1, "One");
+Integer key = pair.getKey();
+String value = pair.getValue();
 ```
 
 ### Functional Interfaces
