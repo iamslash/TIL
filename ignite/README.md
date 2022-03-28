@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basic](#basic)
+  - [IgniteConfiguration](#igniteconfiguration)
   - [Run](#run)
   - [Use Cases](#use-cases)
   - [Data Modeling](#data-modeling)
@@ -16,6 +17,7 @@
   - [Concurrent Modes and Isolation Levels](#concurrent-modes-and-isolation-levels)
   - [Performing Transactions](#performing-transactions)
   - [Read Consistency](#read-consistency)
+  - [Ignite Persistence](#ignite-persistence)
 
 -----
 
@@ -29,6 +31,12 @@ Apache Ignite 에 대해 정리한다.
   * [src](https://github.com/GridGain-Demos/ignite-learning-by-examples)
 
 # Basic
+
+## IgniteConfiguration
+
+* [Class IgniteConfiguration](https://ignite.apache.org/releases/latest/javadoc/org/apache/ignite/configuration/IgniteConfiguration.html)
+
+설정이 너무 많다.
 
 ## Run
 
@@ -97,8 +105,8 @@ Logical level 에서 Data Set 은 **Key-Value Cache** 혹은 **SQL Tables** 로 
 |--|--|--|
 | `name` | cache name | |
 | `cacheMode` | `PARTITIONED, REPLICATED` | `PARTITIONED` |
-| `writeSynchronizationMode` | sync 를 어느정도 로 할 것인가? `FULL_SYNC, FULL_ASYNC, PRIMARY_SYNC` | `PRIMARY_SYNC` |
-| `rebalanceMode` | `SYNC, ASYNC, NONE` | `ASYNC` |
+| `writeSynchronizationMode` | sync 의 정도. `FULL_SYNC, FULL_ASYNC, PRIMARY_SYNC` | `PRIMARY_SYNC` |
+| `rebalanceMode` | rebalance 의 정도. `SYNC, ASYNC, NONE` | `ASYNC` |
 | `backups` | The number of backup partitions for the cache. | 0 |
 | `partitionLossPolicy` | ??? | `IGNORE` |
 | `readFromBackup` | 읽기를 Backup Partition 에서 할 것인가? | `true` |
@@ -204,8 +212,7 @@ Partition Areness 가 있는 Thin Client 는 모든 Query 를 Partition 이 배�
 > [Atomicity Modes](https://ignite.apache.org/docs/latest/configuring-caches/atomicity-modes)
 
 기본적으로 Ignite 는 하나의 record 에 대해 Atomic Operation 을 제공한다. 또한
-[Atomicity
-Modes](https://ignite.apache.org/docs/latest/configuring-caches/atomicity-modes)
+[Atomicity Modes](https://ignite.apache.org/docs/latest/configuring-caches/atomicity-modes)
 를 `Transactional` 로 설정하면 ACID-compliant transaction 을 사용할 수 있다.
 
 [Atomicity Modes](https://ignite.apache.org/docs/latest/configuring-caches/atomicity-modes) 의 종류는 다음과 같다.
@@ -268,3 +275,35 @@ SERIALIZABLE` 로 가능하다.
 `OPTIMISTIC` concurrent mode 에서는 `OPTIMISTIC SERIALIZABLE` 으로 Full Read
 Consistency 를 구현할 수 있다. `TransactionOptimisticException` 이 발생하면 다시
 시도한다. 
+
+## Ignite Persistence
+
+* [Ignite Persistence](https://ignite.apache.org/docs/latest/persistence/native-persistence)
+
+Ignite 는 Native Persistence 를 제공한다. 즉, 모든 Data 를 Disk 에 쓸 수 있다.
+메모리는 RAM 의 capacity 만큼 Data 를 로딩한다. 
+
+예를 들어 100 개의 Data
+가 있다고 하자. RAM 의 capacity 는 20 이다. 그렇다면 Disk 에는 100 개가 저장되고
+RAM 에는 20 개가 저장된다.
+
+다음과 같이 활성화 한다.
+
+```xml
+<bean class="org.apache.ignite.configuration.IgniteConfiguration">
+    <property name="dataStorageConfiguration">
+        <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+            <property name="defaultDataRegionConfiguration">
+                <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                    <property name="persistenceEnabled" value="true"/>
+                </bean>
+            </property>
+        </bean>
+    </property>
+</bean>
+```
+
+> [Write-Ahead Log](https://ignite.apache.org/docs/latest/persistence/native-persistence#write-ahead-log)
+
+Write-Ahead Log (WAL) 은 일종의 commit-log 이다. write, delete operation 들을
+로깅한다. RAM 의 page 가 update 되면 Partition 에 바로 기록되지 않고 일단 WAL 에 추가된다.
