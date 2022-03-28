@@ -38,6 +38,7 @@
   - [How to debug](#how-to-debug)
   - [Redis Clients](#redis-clients)
   - [Online resharding and shard rebalancing for Redis (cluster mode enabled)](#online-resharding-and-shard-rebalancing-for-redis-cluster-mode-enabled)
+  - [Redis Enterprise](#redis-enterprise)
 
 ----
 
@@ -471,3 +472,19 @@ ElastiCache for Redis 는 cluster mode enabled 이면 downtime 없이 resharding
 Shards 는 `Primary Node + Replication Nodes` 를 말한다.
 
 ![](img/ElastiCacheClusters-CSN-RedisShards.png)
+
+## Redis Enterprise
+
+> * [Redis Enterprise Software](https://docs.redis.com/latest/rs/)
+
+Redis Enterprise 는 유료이다. 다음과 같은 특징을 갖는다. 관심은 많다.
+
+* Linear Scalability
+* High Availability
+* Data Durability
+  * AOF + RDB (1 or 6 or 12 hours)
+* High Performance
+* Dedicated Databases
+* User Interface
+  * Full-featured UI for setting-up, configuring, monitoring, alerting.
+* 24/7 Support
