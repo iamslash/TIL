@@ -1,41 +1,43 @@
 - [Abstract](#abstract)
 - [References](#references)
 - [Materials](#materials)
-- [Features](#features)
-- [Install](#install)
-  - [Install with docker](#install-with-docker)
-- [Sentinel](#sentinel)
-- [Cluster](#cluster)
-- [Redis Data Types](#redis-data-types)
-  - [Strings in Redis](#strings-in-redis)
-  - [Lists in Redis](#lists-in-redis)
-  - [Sets in Redis](#sets-in-redis)
-  - [Hashes in Redis](#hashes-in-redis)
-  - [Sorted sets in Redis](#sorted-sets-in-redis)
-- [Commands](#commands)
-  - [Client/Server](#clientserver)
-  - [Database](#database)
-  - [Scripts](#scripts)
-  - [HyperL­ogLogs](#hyperloglogs)
-  - [Strings](#strings)
-  - [Lists](#lists)
-  - [Sets](#sets)
-  - [Sorted Sets](#sorted-sets)
-  - [Hashes](#hashes)
-  - [Common](#common)
-  - [Geo](#geo)
-  - [Pub/Sub](#pubsub)
-  - [Streams](#streams)
-  - [Transaction](#transaction)
-- [Caveats](#caveats)
-  - [Prevent O(N) command](#prevent-on-command)
-  - [redis.conf](#redisconf)
-  - [Fail Over](#fail-over)
-  - [Monitoring](#monitoring)
-  - [Redis for Cache or Persistent Store](#redis-for-cache-or-persistent-store)
+- [Basic](#basic)
+  - [Features](#features)
+  - [Install](#install)
+    - [Install with docker](#install-with-docker)
+  - [Sentinel](#sentinel)
+  - [Cluster](#cluster)
+  - [Redis Data Types](#redis-data-types)
+    - [Strings in Redis](#strings-in-redis)
+    - [Lists in Redis](#lists-in-redis)
+    - [Sets in Redis](#sets-in-redis)
+    - [Hashes in Redis](#hashes-in-redis)
+    - [Sorted sets in Redis](#sorted-sets-in-redis)
+  - [Commands](#commands)
+    - [Client/Server](#clientserver)
+    - [Database](#database)
+    - [Scripts](#scripts)
+    - [HyperL­ogLogs](#hyperloglogs)
+    - [Strings](#strings)
+    - [Lists](#lists)
+    - [Sets](#sets)
+    - [Sorted Sets](#sorted-sets)
+    - [Hashes](#hashes)
+    - [Common](#common)
+    - [Geo](#geo)
+    - [Pub/Sub](#pubsub)
+    - [Streams](#streams)
+    - [Transaction](#transaction)
+  - [Caveats](#caveats)
+    - [Prevent O(N) command](#prevent-on-command)
+    - [redis.conf](#redisconf)
+    - [Fail Over](#fail-over)
+    - [Monitoring](#monitoring)
+    - [Redis for Cache or Persistent Store](#redis-for-cache-or-persistent-store)
 - [Advanced](#advanced)
   - [How to debug](#how-to-debug)
   - [Redis Clients](#redis-clients)
+  - [Online resharding and shard rebalancing for Redis (cluster mode enabled)](#online-resharding-and-shard-rebalancing-for-redis-cluster-mode-enabled)
 
 ----
 
@@ -63,23 +65,23 @@ redis 에 대해 정리한다.
 * [hiredis](https://github.com/redis/hiredis)
   * minimal redis client
 
-# Features
+# Basic
+
+## Features
 
 redis 는 REmote dIctionary System 의 약자이다. 
 
-redis 는 disk 에 데이터를 저장할 수 있다. RDB (snapshot), AOF (append olny file) 의 방법이 있다. RDB 는 한번에 메모리의 데이터를 디스크로 저장하는 방법이다. AOF 는 조금씩 디스크에 저장하는 방법이다. 두가지 방법을 적절히 혼합하여 사용하면 좋다. [참고](http://redisgate.kr/redis/configuration/redis_overview.php)
+redis 는 disk 에 데이터를 저장할 수 있다. `RDB (snapshot), AOF (append olny file)` 의 방법이 있다. `RDB` 는 한번에 메모리의 데이터를 디스크로 저장하는 방법이다. `AOF` 는 조금씩 디스크에 저장하는 방법이다. 두가지 방법을 적절히 혼합하여 사용하면 좋다. [참고](http://redisgate.kr/redis/configuration/redis_overview.php)
 
-string, set, sorted set, hash, list 등의 datatype 을 지원한다. collection data type (set, sorted set, hash, list) 의 경우 그 개수는 10,000 개 이하가 좋다.
+`string, set, sorted set, hash, list` 등의 datatype 을 지원한다. `collection data type (set, sorted set, hash, list)` 의 경우 그 개수는 10,000 개 이하가 좋다.
 
 Sentinel 은 redis monitoring tool 이다. redis 의 master, slave 들을 지켜보고 있다가 장애처리를 해준다. `> redis-sentinel sentinel.conf` 와 같이 실행한다.
 
-redis 3.0 부터 cluster 기능을 지원한다.
+redis 3.0 부터 cluster 기능을 지원한다. master 와 여러개의 slave 들로 read replica 구성을 할 수 있다.
 
-master 와 여러개의 slave 들로 read replica 구성을 할 수 있다.
+## Install
 
-# Install
-
-## Install with docker
+### Install with docker
 
 ```bash
 $ docker pull redis
@@ -93,7 +95,7 @@ $ docker exec -it my-redis /bin/bash
 
 ```
 
-# Sentinel
+## Sentinel
 
 * [sentinel](http://redisgate.kr/redis/sentinel/sentinel.php)
 * [twemproxy를 이용한 redis failover @ youtube](https://www.youtube.com/watch?v=xMSVlUnBy6c)
@@ -108,93 +110,65 @@ sentinel 은 twemproxy 와 같은 machine 에서 실행해야 한다.
 만약 Redis Mater 가 죽으면 twemproxy 의 설정파일을 수정하여
 Redis Slave 의 주소를 Redis Master 의 주소로 교체한다.
 
-# Cluster
+## Cluster
 
-* [Docker기반 Redis 구축하기 - (10) Redis Cluster Mode 설정하기](https://jaehun2841.github.io/2018/12/03/2018-12-03-docker-10/#docker-entrypointsh)
-* [vishnunair/docker-redis-cluster](https://hub.docker.com/r/vishnunair/docker-redis-cluster/)
-* [레디스 클러스터 소개](http://redisgate.kr/redis/cluster/cluster_introduction.php)
-* [레디스 클러스터 구성](http://redisgate.kr/redis/cluster/cluster_configuration.php)
-* [[Redis Documentation #2] 레디스 클러스터 튜토리얼](https://medium.com/garimoo/redis-documentation-2-%EB%A0%88%EB%94%94%EC%8A%A4-%ED%81%B4%EB%9F%AC%EC%8A%A4%ED%84%B0-%ED%8A%9C%ED%86%A0%EB%A6%AC%EC%96%BC-911ba145e63)
-* [Redis - Cluster 설정](https://daddyprogrammer.org/post/1601/redis-cluster/)
+[redis cluster](redis_cluster.md)
 
-----
+## Redis Data Types
 
-* Redis 3 부터 cluster mode 를 지원한다.
-* Cluster Mode 에서는 Redis Sentinel 의 도움없이 Cluster 자체적으로 Failover 를
-  진행한다.
-* Cluster Mode 에서는 Master-Slave 노드 구조를 가질 수 있고, 노드 간 Replication
-  을 지원한다.
-* Cluster Mode 에서는 redis key 의 HashCode 에 대해 CRC16 의 16384 modules (key
-  % 16384) 연산을 실행 Auto Sharding을 지원한다.
-* Application Sharding 이 필요없기 때문에, Spring-Data-Redis 사용이 가능하다.
-
-```bash
-$ docker pull vishnunair/docker-redis-cluster:latest
-$ docker run --rm -d -p 6000:6379 -p 6001:6380 -p 6002:6381 -p 6003:6382 -p 6004:6383 -p 6005:6384 --name my-redis-cluster vishnunair/docker-redis-cluster
-$ docker exec -it my-redis-cluster redis-cli
-# 127.0.0.1:6379> SET helloworld 1
-# OK
-# 127.0.0.1:6379> SET helloworld 2
-# OK
-# 127.0.0.1:6379> GET helloworld
-# "2"
-```
-
-# Redis Data Types
-
-## Strings in Redis
+### Strings in Redis
 
 * [1.2.1 Strings in Redis](https://redis.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/1-2-1-strings-in-redis/)
 
 ![](img/strings_in_redis.png)
 
-## Lists in Redis
+### Lists in Redis
 
 * [1.2.2 Lists in Redis](https://redis.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/1-2-2-lists-in-redis/)
 
 ![](img/lists_in_redis.png)
 
-## Sets in Redis
+### Sets in Redis
 
 * [1.2.3 Sets in Redis](https://redis.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/1-2-3-sets-in-redis/)
 
 ![](img/sets_in_redis.png)
 
-## Hashes in Redis
+### Hashes in Redis
 
 * [1.2.4 Hashes in Redis](https://redis.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/1-2-4-hashes-in-redis/)
 
 ![](img/hashes_in_redis.png)
 
-## Sorted sets in Redis
+### Sorted sets in Redis
 
 * [1.2.5 Sorted sets in Redis](https://redis.com/ebook/part-1-getting-started/chapter-1-getting-to-know-redis/1-2-what-redis-data-structures-look-like/1-2-5-sorted-sets-in-redis/)
 
 ![](img/sorted_sets_in_redis.png)
 
-# Commands
+## Commands
 
-## Client/Server
+### Client/Server
 
 | Command | Description | Exapmle |
 |---------|-------------|---------|
 | `SELECT`  | Set current database by index | `> SELECT 8` |
 
-## Database
+### Database
 
 | Command | Description | Exapmle |
 |---------|-------------|---------|
 | `DUMP` | Serialise item | |
 | `RESTORE` | Deseri­alise | |
 
-## Scripts
+### Scripts
 
 | Command | Description | Exapmle |
 |---------|-------------|---------|
 | `EVAL` | Run | |
 | `EVALSHA` | Run cached | |
 
-## HyperL­ogLogs
+### HyperL­ogLogs
 
 HyperLogLog 는 집합의 원소의 개수를 추정하는 방법으로 2.8.9 에 추가되었다.
 
@@ -204,7 +178,7 @@ HyperLogLog 는 집합의 원소의 개수를 추정하는 방법으로 2.8.9 �
 | `PFCOUNT` | get counts of key | `> PFCOUNT k1` |
 | `PFMERGE` | merge keys | `> PFMERGE dstkey k1 k2` |
 
-## Strings
+### Strings
 
 * [STRINGS Intro](http://redisgate.kr/redis/command/strings.php)
 
@@ -216,7 +190,7 @@ key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Ha
 * GET: `GET, MGET, GETRANGE, STRLEN`
 * INCR: `INCR, DECR, INCRBY, DECRBY, INCRBYFLOAT`
 
-## Lists
+### Lists
 
 * SET (PUSH): `LPUSH, RPUSH, LPUSHX, RPUSHX, LSET, LINSERT, RPOPLPUSH`
 * GET: `LRANGE, LINDEX, LLEN`
@@ -224,7 +198,7 @@ key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Ha
 * REM: `LREM, LTRIM`
 * BLOCK: `BLPOP, BRPOP, BRPOPLPUSH`
 
-## Sets
+### Sets
 
 * SET: `SADD, SMOVE`
 * GET: `SMEMBERS, SCARD, SRANDMEMBER, SISMEMBER, SSCAN`
@@ -232,7 +206,7 @@ key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Ha
 * REM: `SREM`
 * 집합연산: `SUNION, SINTER, SDIFF, SUNIONSTORE, SINTERSTORE, SDIFFSTORE`
 
-## Sorted Sets
+### Sorted Sets
 
 * [ZSETS internals](redis_code_tour.md#zsets-internals)
 * [Redis Sorted Set](https://jupiny.com/2020/03/28/redis-sorted-set/)
@@ -246,14 +220,14 @@ key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Ha
 * INCR: `ZINCRBY`
 * 집합연산: `ZUNIONSTORE, ZINTERSTORE`
 
-## Hashes
+### Hashes
 
 * SET: `HSET, HMSET, HSETNX`
 * GET: `HGET, HMGET, HLEN, HKEYS, HVALS, HGETALL, HSTRLEN, HSCAN, HEXISTS`
 * REM: `HDEL`
 * INCR: `HINCRBY, HINCRBYFLOAT`
 
-## Common
+### Common
 
 5 가지 Data type 에 관계없이 모든 Key 적용되는 명령이다.
 
@@ -264,7 +238,7 @@ key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Ha
 * 샘플링: `RANDOMKEY`
 * Data 이동: `MOVE, DUMP, RESTORE, MIGRATE`
 
-## Geo
+### Geo
 
 3.2 에 도입된 기능이다. 두 지점/도시의 경도(세로선/longitude)와 위도(가로선/latitude)를 입력해서 두 지점의 거리를 구한다.
 
@@ -277,15 +251,15 @@ key 와 value 가 일 대 일 관계이다. 한편, Lists, Sets, Sorted Sets, Ha
 * 삭제 조회: `ZREM`
 * 개수 조회: `ZCARD`
 
-## Pub/Sub
+### Pub/Sub
 
 Pub 으로 message 를 보내고 Sub 으로 message 를 받는다.
 
-## Streams
+### Streams
 
 로그 데이터를 처리하기 위해서 5.0 에 도입된 데이터 타입이다.
 
-## Transaction
+### Transaction
 
 * [[redis] 트랜잭션(Transaction) - 이론편](https://sabarada.tistory.com/177)
 
@@ -425,9 +399,9 @@ ERROR: Something went wrong.
 1) "OK"
 ```
 
-# Caveats
+## Caveats
 
-## Prevent O(N) command
+### Prevent O(N) command
 
 O(N) command 는 피하자.
 
@@ -435,7 +409,7 @@ Redis 는 single thread 이다. 한번에 하나의 command 를 처리한다. �
 
 예를 들어 list 의 모든 데이터를 지운다고 해보자. 아이템의 개수가 많다면 system 의 latency 가 증가할 수 밖에 없다. 
 
-## redis.conf
+### redis.conf
 
 * Maxclient 는 50,000
 * RDB/AOF 는 끄자. 보다 안정적이다.
@@ -444,13 +418,13 @@ Redis 는 single thread 이다. 한번에 하나의 command 를 처리한다. �
 * client-output-buffer-limit
   * Redis 는 buffer limit 이 넘어간 client 의 접속을 끊는다. 
 
-## Fail Over
+### Fail Over
 
 * coordinator (zookeeper, etcd, consul) 에 redis 를 등록해두고 fail over 처리한다. 특정 redis 가 죽으면 coordinator 가 application server 에게 notify 해준다. 
 * 특정 vip 를 redis primary 에 할당한다. redis primary 가 fail 하면 다른 redis 에 그 vip 를 할당한다.
 * 특정 vip 를 redis primary 에 할당한다. redis primary 가 fail 하면 다른 redis 에 그 DNS 를 할당한다. DNS caching 을 유의해야 한다. AWS 는 DNS 기반으로 Fail Over 하고 있다.
 
-## Monitoring
+### Monitoring
 
 RedisInfo 를 통해서 얻을 수 있다.
 
@@ -462,15 +436,15 @@ RedisInfo 를 통해서 얻을 수 있다.
 
 그 밖의 기본 정보. 
 
-* CPU
-* Disk
-* Network RX/TX
+* `CPU`
+* `Disk`
+* `Network RX/TX`
 
-## Redis for Cache or Persistent Store
+### Redis for Cache or Persistent Store
 
 Redis 를 Cache 로 사용한다면 대부분 큰 문제는 없다. Redis 가 죽어도 서비스의 지장은 없기 때문이다.
 
-Redis 를 Persistent Store 로 사용한다면 얘기가 달라진다. Replica 들은 RDB/AOF 를 적용해서 backup 해야 한다.
+Redis 를 Persistent Store 로 사용한다면 얘기가 달라진다. Replica 들은 `RDB/AOF` 를 적용해서 backup 해야 한다.
 
 # Advanced
 
@@ -483,3 +457,17 @@ Redis 를 Persistent Store 로 사용한다면 얘기가 달라진다. Replica �
 * [Medis @ apple](https://apps.apple.com/kr/app/medis-2-gui-for-redis/id1579200037?mt=12)
   * 추천. Applestore 에서 다운로드할 수 있음.
 * [RedisInsight](https://github.com/RedisInsight/RedisInsight)
+
+## Online resharding and shard rebalancing for Redis (cluster mode enabled)
+
+> * [Online resharding and shard rebalancing for Redis (cluster mode enabled)](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/redis-cluster-resharding-online.html#redis-cluster-resharding-online-rebalance)
+> * [Best practices: Online cluster resizing](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/best-practices-online-resharding.html)
+> * [Working with shards](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/Shards.html)
+> * [Redis nodes and shards](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.NodeGroups.html)
+
+ElastiCache for Redis 는 cluster mode enabled 이면 downtime 없이 resharding 을 할 수 있다.
+즉, **Scale out , Scale in, Rebalance** 이 가능하다.
+
+Shards 는 `Primary Node + Replication Nodes` 를 말한다.
+
+![](img/ElastiCacheClusters-CSN-RedisShards.png)
