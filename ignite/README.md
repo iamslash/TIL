@@ -97,10 +97,10 @@ Logical level 에서 Data Set 은 **Key-Value Cache** 혹은 **SQL Tables** 로 
 |--|--|--|
 | `name` | cache name | |
 | `cacheMode` | `PARTITIONED, REPLICATED` | `PARTITIONED` |
-| `writeSynchronizationMode` | `FULL_SYNC, FULL_ASYNC, PRIMARY_SYNC` | `PRIMARY_SYNC` |
+| `writeSynchronizationMode` | sync 를 어느정도 로 할 것인가? `FULL_SYNC, FULL_ASYNC, PRIMARY_SYNC` | `PRIMARY_SYNC` |
 | `rebalanceMode` | `SYNC, ASYNC, NONE` | `ASYNC` |
 | `backups` | The number of backup partitions for the cache. | 0 |
-| `partitionLossPolicy` | | `IGNORE` |
+| `partitionLossPolicy` | ??? | `IGNORE` |
 | `readFromBackup` | 읽기를 Backup Partition 에서 할 것인가? | `true` |
 | `queryPrallelism` | The number of threads in a single node to process a SQL query executed on the cache. | `1` |
 
@@ -238,8 +238,7 @@ Ignite 는 다음과 같은 Concurrent Modes 를 제공한다.
 
 > [Performing Transactions](https://ignite.apache.org/docs/latest/key-value-api/transactions)
 
-Ignite 는 [Atomicity
- Modes](https://ignite.apache.org/docs/latest/configuring-caches/atomicity-modes)
+Ignite 는 [Atomicity Modes](https://ignite.apache.org/docs/latest/configuring-caches/atomicity-modes)
  가 `Transactional` 이면 `Concurrent Modes` 와 `Isolation Levels` 의 조합에 따라
  다양한 방법의 Transaction 을 제공한다.
 
