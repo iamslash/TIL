@@ -275,16 +275,20 @@ Latency 는 어떤 action 을 수행하고 결과를 도출하는데 걸리는 �
 
 ![](/aws/img/1_rxTP-_STj-QRDt1X9fdVlA.jpg)
 
-Brewer's theorem 이라고도 한다. Distributed System 은 Consistency, Availability, Partition tolerance 중 2 가지만 만족할 수 있다.  
+Brewer's theorem 이라고도 한다. Distributed System 은 **Consistency,Availability, Partition tolerance** 중 2 가지만 만족할 수 있다. 2 가지를
+만족시키기 위해 1 가지를 희생해야 한다는 의미와 같다.
 
 * Consistency
   * all nodes see the same data at the same time
+  * 모든 node 가 같은 시간에 같은 data 를 갖는다.
 * Availability
   * a guarantee that every request receives a response about whether it was successful or failed
+  * 일부 node 에 장애가 발생해도 서비스에 지장이 없다.
 * Partition tolerance
   * the system continues to operate despite arbitrary message loss or failure of part of the system.
+  * node 간에 네트워크가 단절되었을 때 서비스에 지장이 없다.
 
-MySQL 은 Distribute System 이 아니다. CAP 적용할 수 없다.
+MySQL 은 Distribute System 이 아니다. CAP 를 적용할 수 없다.
 
 ### PACELC (Partitioning Availability Consistency Else Latency Consistency)
 

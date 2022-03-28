@@ -178,8 +178,22 @@ uni-cast 를 통해서 missing data 를 주고 받는다. 각 Node 는 결과를
 
 > [GridGain In-Memory Computing Platform Feature Comparison: Redis](https://go.gridgain.com/rs/491-TWR-806/images/GridGain-Feature-Comparison-Redis-Final.pdf)
 
-Redis Cluster 를 사용하여 Cash Layer, Main DB 로 사용한다면 Ignite 와 차이가
-뭘까? Redis Cluster 역시 Perfect Consistency 를 제공해 주지는 못한다.
+Ignite 를 Primary DB 로 사용했을 때 Redis 와 비교하여 장단점을 정리해 본다.
+
+**pros**
+
+* Cache Layer, Main DB 가 하나로 합쳐져 있다. Simplification.
+  * `Redis (Cache Layer) + cassanra (Primary DB)` 는 복잡도가 높다.
+* Native Persistency 를 지원한다. 그러나 Performance 가 떨어진다. Durability.
+  * Redis Enterprise 역시 Durability 를 지원한다고 함.
+* SQL-99 를 지원한다.
+* Cache (Table) 별로 Atomicity Modes, Concurrent Modes, Isolation Level 에 따라
+  Transaction 을 지원한다.
+
+**cons**
+
+* Ignite 는 Memory 를 주로 사용한다. 비싸다. Write operation 이 많다면 [cassandra](/cassandra/README.md) 혹은 [scylla](/scylla/README.md) 가 비용면에서 유리하다.
+* 서비스가 Eventual Consistency 라면 굳이 Ignite 를 사용할 이유가 없다. 역시 [cassandra](/cassandra/README.md) 혹은 [scylla](/scylla/README.md) 가 비용면에서 유리하다.
 
 ## Data Rebalancing
 
