@@ -4,6 +4,7 @@
   - [Run](#run)
   - [Use Cases](#use-cases)
   - [Data Modeling](#data-modeling)
+  - [Cache Configuration](#cache-configuration)
   - [Data Partitioning](#data-partitioning)
   - [Distributed Joins](#distributed-joins)
   - [Affinity Colocation](#affinity-colocation)
@@ -11,8 +12,10 @@
   - [Data Rebalancing](#data-rebalancing)
   - [Baseline Topology](#baseline-topology)
   - [Partition Awareness](#partition-awareness)
-  - [Consistency](#consistency)
+  - [Atomicity Modes](#atomicity-modes)
+  - [Concurrent Modes and Isolation Levels](#concurrent-modes-and-isolation-levels)
   - [Performing Transactions](#performing-transactions)
+  - [Read Consistency](#read-consistency)
 
 -----
 
@@ -84,11 +87,55 @@ Logical level 에서 Data Set 은 **Key-Value Cache** 혹은 **SQL Tables** 로 
 
 ![](img/cache_table.png)
 
+## Cache Configuration
+
+> * [Cache Configuration](https://ignite.apache.org/docs/latest/configuring-caches/configuration-overview#configuration-example)
+
+다음과 같은 값들을 설정할 수 있다.
+
+| Parameter | Description | Default Value |
+|--|--|--|
+| `name` | cache name | |
+| `cacheMode` | `PARTITIONED, REPLICATED` | `PARTITIONED` |
+| `writeSynchronizationMode` | `FULL_SYNC, FULL_ASYNC, PRIMARY_SYNC` | `PRIMARY_SYNC` |
+| `rebalanceMode` | `SYNC, ASYNC, NONE` | `ASYNC` |
+| `backups` | The number of backup partitions for the cache. | 0 |
+| `partitionLossPolicy` | | `IGNORE` |
+| `readFromBackup` | 읽기를 Backup Partition 에서 할 것인가? | `true` |
+| `queryPrallelism` | The number of threads in a single node to process a SQL query executed on the cache. | `1` |
+
+아래는 xml 예제이다.
+
+```xml
+<bean class="org.apache.ignite.configuration.IgniteConfiguration">
+    <property name="cacheConfiguration">
+        <bean class="org.apache.ignite.configuration.CacheConfiguration">
+            <property name="name" value="myCache"/>
+            <property name="cacheMode" value="PARTITIONED"/>
+            <property name="backups" value="2"/>
+            <property name="rebalanceMode" value="SYNC"/>
+            <property name="writeSynchronizationMode" value="FULL_SYNC"/>
+            <property name="partitionLossPolicy" value="READ_ONLY_SAFE"/>
+            <!-- Other parameters -->
+        </bean>
+    </property>
+</bean>
+```
+
 ## Data Partitioning
 
-* [Data Partitioning](https://ignite.apache.org/docs/latest/data-modeling/data-partitioning)
-* [Data Distribution in Apache Ignite](https://www.gridgain.com/resources/blog/data-distribution-in-apache-ignite)
-  * [pdf](https://go.gridgain.com/rs/491-TWR-806/images/2019-03-12-AI-meetup-Affinity.pdf)
+> * [Data Partitioning](https://ignite.apache.org/docs/latest/data-modeling/data-partitioning)
+> * [Data Distribution in Apache Ignite](https://www.gridgain.com/resources/blog/data-distribution-in-apache-ignite)
+>   * [pdf](https://go.gridgain.com/rs/491-TWR-806/images/2019-03-12-AI-meetup-Affinity.pdf)
+
+Ignite 는 다음과 같은 Cache Mode 를 제공한다.
+
+* `PARTITIONED`: Data Sets 을 Partition 으로 나누어서 Node 들에게 분배한다.
+  Update Operation 이 많은 경우 유용하다.
+  * Cache Configuration 을 수정하여 Backup Partition 의 개수를 설정할 수 있다.
+* `REPLICATED`: 모든 node 에 하나의 Primary Parition 과 Backup Partition 들이
+  배치된다. Availability 는 좋지만 Performance 가 좋지 않다. Read Operation 이
+  80% 정도이면 유용하다.
 
 ## Distributed Joins
 
@@ -152,16 +199,16 @@ Partition Areness 가 있는 Thin Client 는 모든 Query 를 Partition 이 배�
 
 ![](img/partitionawareness02.png)
 
-## Consistency
-
-> [Apache Cassandra vs. Apache Ignite: Strong Consistency and Transactions](https://www.gridgain.com/resources/blog/apache-cassandra-vs-apache-ignite-strong-consistency-and-transactions)
-
-Distributed System 은 Consistency issue 가 중요하다. [cassandra data consistency](/cassandra/README.md#data-consistency) 를 
-참고하여 consistency 가 왜 깨지는지 이해하자.
+## Atomicity Modes
 
 > [Atomicity Modes](https://ignite.apache.org/docs/latest/configuring-caches/atomicity-modes)
 
-Ignite 는 cache 마다 `atomicityMode` 를 설정할 수 있다. 
+기본적으로 Ignite 는 하나의 record 에 대해 Atomic Operation 을 제공한다. 또한
+[Atomicity
+Modes](https://ignite.apache.org/docs/latest/configuring-caches/atomicity-modes)
+를 `Transactional` 로 설정하면 ACID-compliant transaction 을 사용할 수 있다.
+
+[Atomicity Modes](https://ignite.apache.org/docs/latest/configuring-caches/atomicity-modes) 의 종류는 다음과 같다.
 
 * `ATOMIC`: record 하나의 `atoicity (all or nothing)` 을 보장한다. 만약
   `putAll(), removeAll()` 이 실패한다면 `CachePartialUpdateException` 이
@@ -171,7 +218,54 @@ Ignite 는 cache 마다 `atomicityMode` 를 설정할 수 있다.
 * `TRANSACTIONAL_SNAPSHOT`: `key-value transactions, SQL transactions` 에 대해
   `multiversion concurrency control (MVCC)` 를 지원한다. 그러나 `2.12` 부터
   Deprecated 되었다.  
+
+## Concurrent Modes and Isolation Levels
+
+> [Concurrency Modes and Isolation Levels](https://ignite.apache.org/docs/latest/key-value-api/transactions#concurrency-modes-and-isolation-levels)
+
+Ignite 는 다음과 같은 Concurrent Modes 를 제공한다.
+
+* `OPTIMISTIC`
+* `PESSIMISTIC`
+
+또한 다음과 같은 Isolation Levels 을 제공한다.
+
+* `READ_COMMITTED`
+* `REPEATABLE_READ`
+* `SERIALIZABLE`
   
 ## Performing Transactions
 
 > [Performing Transactions](https://ignite.apache.org/docs/latest/key-value-api/transactions)
+
+Ignite 는 [Atomicity
+ Modes](https://ignite.apache.org/docs/latest/configuring-caches/atomicity-modes)
+ 가 `Transactional` 이면 `Concurrent Modes` 와 `Isolation Levels` 의 조합에 따라
+ 다양한 방법의 Transaction 을 제공한다.
+
+* `PESSIMISTIC`
+  * `READ_COMMITTED`: Data is read without a lock and is never cached in the
+    transaction itself.
+  * `REPEATABLE_READ`: Entry lock is acquired and data is fetched from the
+    primary node on the first read or write access and stored in the local
+    transactional map.
+  * `SERIALIZABLE`: same as `REPEATABLE_READ`.
+* `OPTIMISTIC`
+  * `READ_COMMITTED`: Changes that should be applied to the cache are collected
+    on the originating node and applied upon the transaction commit.
+  * `REPEATABLE_READ`: similar with `READ_COMMITTED`. 
+  * `SERIALIZABLE`: 첫번째 읽을 때 저장한다. 이것을 변경해 보자. 첫번째 읽었을
+    때와 같다면 성공이다. 다르다면 `TransactionOptimisticException` 을 던지고
+    roll-back 한다. Client 는 다시시도 할 것이다.
+
+제대로 이해하지 못했다. code 를 보아야할 것 같다.
+
+## Read Consistency
+
+Full Read Consistency 를 위해서는 Read Lock 이 필요하다. `PESSIMISTIC`
+concurrent mode 에서는 `PESSIMISTIC REPEATABLE_READ` 혹은 `PESSIMISTIC
+SERIALIZABLE` 로 가능하다.
+
+`OPTIMISTIC` concurrent mode 에서는 `OPTIMISTIC SERIALIZABLE` 으로 Full Read
+Consistency 를 구현할 수 있다. `TransactionOptimisticException` 이 발생하면 다시
+시도한다. 

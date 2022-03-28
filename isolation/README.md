@@ -12,7 +12,7 @@
 
 # Abstract
 
-mysql 을 이용하여 isolation level 을 실습해 본다. [transaction @ TIL](/spring/README.md#transactional)
+mysql 을 이용하여 Isolation Level 을 실습해 본다. [Transaction](/spring/README.md#transactional)
 
 # Materials
 

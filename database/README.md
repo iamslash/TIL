@@ -2,7 +2,7 @@
 - [Material](#material)
 - [Relational Algebra](#relational-algebra)
 - [Normalization](#normalization)
-- [ACID Behavior](#acid-behavior)
+- [ACID](#acid)
 - [SQL](#sql)
 - [SQL Optimization](#sql-optimization)
 - [Index](#index)
@@ -35,25 +35,39 @@ database 를 만들어 보자.
 
 * [normalization](/normalization/README.md)
 
-# ACID Behavior
+# ACID
 
-RDBMS 는 다음과 같은 ACID Behavior 를 지원한다.
+Transaction 이 안전하게 수행된다는 것을 보장하기 위한 성질이다. James Nicholas
+"Jim" Gray 가 1970년대 말에 신뢰할 수 있는 트랜잭션 시스템의 특성들을 정의하고
+개발했다.
 
 * **Atomicity** (원자성)
-  * Transaction 은 완전히 실행되거나 실행되지 않는 성질을 말한다. all-or-nothing 이라고 한다.
+  * Transaction 은 완전히 실행되거나 실행되지 않는 성질을 말한다. all-or-nothing
+    이라고 한다.
 * **Consistency** (일관성)
-  * Transaction 이 commit 되면 data 는 주어진 schema 에 맞게 저장되는 성질을 말한다.
+  * Transaction 이 완료되면 일관성 있는 데이터베이스 상태로 유지하는 것을
+    의미한다. 모든 계좌는 잔고가 있어야 하는 무결성 제약이 있다면 이를 위반하는
+    Transaction 은 중단된다.
 * **Isolation** (고립성)
-  * Transaction 의 concurrency 가 보장되는 성질을 말한다. A 와 B 두개의 transaction 이 실행되고 있다고 하자. A 의 작업들이 B 에게 보여지는 정도를 [Isolation level](/spring/README.md#transactional) 이라고도 하며 모두 4 개로 구성된다.
+  * Transaction 의 concurrency 가 보장되는 성질을 말한다. A 와 B 두개의
+    Transaction 이 실행되고 있다고 하자. A 의 작업들이 B 에게 보여지는 정도를
+    [Isolation Level](/spring/README.md#transactional) 이라고 하며 모두 4
+    가지로 구성된다.
 
-    | Isolation level | Dirty Read | Non-repeatable Read | Phantom Read |
+    | Isolation Level | Dirty Read | Non-repeatable Read | Phantom Read |
     | --------------- | ---------- | ------------------- | ------------ |
     | Read uncommited | O          | O                   | O            |
     | Read commited   | X          | O                   | O            |
     | Repeatable Read | X          | X                   | O            |
     | Serializable    | X          | X                   | X            |
+
 * **Durability** (영구성)
-  * 장애가 발생했을 때 data 를 recover 할 수 있는 성질을 말한다. Transaction 은 logging 된다. 따라서 Transaction 은 replay 될 수 있다. DataBase 가 제대로 backup 되고 있다면 언제든지 recover 할 수 있다.
+  * 성공적으로 수행된 Transaction 영원히 반영되어야 한다. 장애가
+    발생했을 때 data 를 recover 할 수 있다. Transaction 은 logging 된다. 따라서
+    Transaction 은 replay 될 수 있다. DataBase 가 제대로 backup 되고 있다면
+    언제든지 recover 할 수 있다.
+
+[Isolation](/isolation/README.md) 에서 MySQL 실습을 확인할 수 있다.
 
 # SQL
 

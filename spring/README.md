@@ -892,7 +892,7 @@ Transaction problems 는 다음과 같다.
 
 위와 같은 Transactinal problems 를 해결하기 위해 다음과 같은 방법을 사용해 보자.
 
-* Isolation
+* Isolation Level
   * DEFAULT
     * DB 의 isolation level 을 따른다.
   * READ_UNCOMMITED (level 0)
