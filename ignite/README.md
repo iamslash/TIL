@@ -1,3 +1,21 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Basic](#basic)
+  - [Run](#run)
+  - [Use Cases](#use-cases)
+  - [Data Modeling](#data-modeling)
+  - [Data Partitioning](#data-partitioning)
+  - [Distributed Joins](#distributed-joins)
+  - [Affinity Colocation](#affinity-colocation)
+  - [Ignite vs Redis](#ignite-vs-redis)
+  - [Data Rebalancing](#data-rebalancing)
+  - [Baseline Topology](#baseline-topology)
+  - [Partition Awareness](#partition-awareness)
+  - [Consistency](#consistency)
+  - [Performing Transactions](#performing-transactions)
+
+-----
+
 # Abstract
 
 Apache Ignite 에 대해 정리한다.
@@ -78,19 +96,22 @@ Logical level 에서 Data Set 은 **Key-Value Cache** 혹은 **SQL Tables** 로 
 
 Distributed Joins 는 **Colocated Joins** 와 **Non-colocated Joins** 와 같이 2 가지가 있다.
 
-If the tables are joined on the partitioning column (affinity key), the join is called a colocated join. Otherwise, it is called a non-colocated join.
+If the tables are joined on the partitioning column (affinity key), the join is called a **colocated join**. Otherwise, it is called a **non-colocated join**.
 
 affinity key 를 설정해 두면 가까운 Data Entry 들은 같은 Partition 으로 배치된다.
 
 **Colocated Joins**
 
-Client 는 Ignite Cluster Node 들에게 Query 를 보낸다. 각 Node 는 Query 를 실행하고 결과를 Client 에게 돌려준다. Client 는 결과를 모은다.
+Client 는 Ignite Cluster Node 들에게 Query 를 보낸다. 각 Node 는 Query 를
+실행하고 결과를 Client 에게 돌려준다. Client 는 결과를 모은다.
 
 ![](img/collocated_joins.png)
 
 **Non-colocated Joins**
 
-Client 는 Ignite Cluster Node 들에게 Query 를 보낸다. 각 Node 는 broad-cast, uni-cast 를 통해서 missing data 를 주고 받는다. 각 Node 는 결과를 Client 에게 돌려준다. Client 는 결과를 모은다.
+Client 는 Ignite Cluster Node 들에게 Query 를 보낸다. 각 Node 는 broad-cast,
+uni-cast 를 통해서 missing data 를 주고 받는다. 각 Node 는 결과를 Client 에게
+돌려준다. Client 는 결과를 모은다.
 
 ![](img/non_collocated_joins.png)
 
@@ -100,8 +121,10 @@ Client 는 Ignite Cluster Node 들에게 Query 를 보낸다. 각 Node 는 broad
 
 ## Ignite vs Redis
 
-> [GridGain In-Memory Computing Platform
-Feature Comparison: Redis](https://go.gridgain.com/rs/491-TWR-806/images/GridGain-Feature-Comparison-Redis-Final.pdf)
+> [GridGain In-Memory Computing Platform Feature Comparison: Redis](https://go.gridgain.com/rs/491-TWR-806/images/GridGain-Feature-Comparison-Redis-Final.pdf)
+
+Redis Cluster 를 사용하여 Cash Layer, Main DB 로 사용한다면 Ignite 와 차이가
+뭘까? Redis Cluster 역시 Perfect Consistency 를 제공해 주지는 못한다.
 
 ## Data Rebalancing
 
@@ -133,15 +156,21 @@ Partition Areness 가 있는 Thin Client 는 모든 Query 를 Partition 이 배�
 
 > [Apache Cassandra vs. Apache Ignite: Strong Consistency and Transactions](https://www.gridgain.com/resources/blog/apache-cassandra-vs-apache-ignite-strong-consistency-and-transactions)
 
-Distributed System 은 Consistency issue 가 중요하다. [cassandra data consistency](/cassandra/README.md#data-consistency) 를 참고하여 consistency 가 왜 깨지는지 이해하자.
+Distributed System 은 Consistency issue 가 중요하다. [cassandra data consistency](/cassandra/README.md#data-consistency) 를 
+참고하여 consistency 가 왜 깨지는지 이해하자.
 
 > [Atomicity Modes](https://ignite.apache.org/docs/latest/configuring-caches/atomicity-modes)
 
 Ignite 는 cache 마다 `atomicityMode` 를 설정할 수 있다. 
 
-* `ATOMIC`: record 하나의 `atoicity (all or nothing)` 을 보장한다. 만약 `putAll(), removeAll()` 이 실패한다면 `CachePartialUpdateException` 이 발생한다. 그리고 실패한 key 들의 리스트가 포함된다.
-* `TRANSACTIONAL`: `Key-Value transaction` 에 대해서 ACID-compliant transactions 을 지원한다. `SQL transaction` 은 아니다.
-* `TRANSACTIONAL_SNAPSHOT`: key-value transactions, SQL transactions 에 대해 multiversion concurrency control (MVCC) 를 지원한다. 그러나 `2.12` 부터 Deprecated 되었다.  
+* `ATOMIC`: record 하나의 `atoicity (all or nothing)` 을 보장한다. 만약
+  `putAll(), removeAll()` 이 실패한다면 `CachePartialUpdateException` 이
+  발생한다. 그리고 실패한 key 들의 리스트가 Exception 에 포함된다.
+* `TRANSACTIONAL`: `Key-Value transaction` 에 대해서 `ACID-compliant transactions`
+  을 지원한다. `SQL transaction` 은 아니다.
+* `TRANSACTIONAL_SNAPSHOT`: `key-value transactions, SQL transactions` 에 대해
+  `multiversion concurrency control (MVCC)` 를 지원한다. 그러나 `2.12` 부터
+  Deprecated 되었다.  
   
 ## Performing Transactions
 
