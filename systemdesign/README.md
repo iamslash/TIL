@@ -9,6 +9,7 @@
   - [Distributed System](#distributed-system)
   - [Software Design Principle](#software-design-principle)
   - [Scalability](#scalability)
+  - [Read Heavy vs Write Heavy](#read-heavy-vs-write-heavy)
   - [Performance vs scalability](#performance-vs-scalability)
   - [Latency vs throughput](#latency-vs-throughput)
   - [Availability vs consistency](#availability-vs-consistency)
@@ -255,6 +256,14 @@ Notes
 - database replication
 - database partitioning
 - asynchronism
+
+## Read Heavy vs Write Heavy
+
+* Read Heavy Service
+  * Traffic 의 대부분이 Read Operation 이라면 Cache 를 사용한다. Read Replica 도 좋다.
+* Write Heavy Service
+  * Traffic 의 대부분이 Write Operation 이라면 Distributed Storagae 를 사용한다. 성능과 비용면에서 좋다.
+  * [Cassandra](/cassandra/README.md) 혹은 [Scylla](/scylla/README.md) 가 좋다.
 
 ## Performance vs scalability
 
