@@ -14,6 +14,8 @@ A **service mesh** is a dedicated infrastructure layer for handling service-to-s
 
 # Materials
 
+* [Istio 트래픽 흐름 @ youtube](https://www.youtube.com/playlist?list=PLDoAIZhHTMvPIY7PHDtMaqbUUWEbE6-6H)
+  * [Istio 🌶️ 트래픽 흐름 Life of a packet @ notion](https://gasidaseo.notion.site/Istio-Life-of-a-packet-6ad9808e14594296bf854dcc203cab71)
 * [Getting Started @ istio.io](https://istio.io/latest/docs/setup/getting-started/)
 * [Service Mesh Comparison](https://servicemesh.es/)
   * comparison of Istio, Linkerd, Kuma
