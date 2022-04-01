@@ -17,6 +17,8 @@
     - [Request from POD to External Server](#request-from-pod-to-external-server)
     - [Response from External to POD](#response-from-external-to-pod)
     - [Optimization Of Traffics](#optimization-of-traffics)
+      - [Merbridge](#merbridge)
+      - [Cilium CNI](#cilium-cni)
 
 ----
 
@@ -243,13 +245,55 @@ istio 를 적용한 bookinfo example 의 network traffic 흐름은 다음과 같
 
 > * [Istio 트래픽 흐름 @ youtube](https://www.youtube.com/playlist?list=PLDoAIZhHTMvPIY7PHDtMaqbUUWEbE6-6H)
 >   * [Istio 🌶️ 트래픽 흐름 Life of a packet @ notion](https://gasidaseo.notion.site/Istio-Life-of-a-packet-6ad9808e14594296bf854dcc203cab71)
+> * [How eBPF will solve Service Mesh - Goodbye Sidecars](https://isovalent.com/blog/post/2021-12-08-ebpf-servicemesh)
+> * [Try eBPF-powered Cilium Service Mesh - join the beta program!](https://cilium.io/blog/2021/12/01/cilium-service-mesh-beta)
+
+다음은 Kubernetes Node 의 Traffic 흐름을 표현한 것이다. Node 의 `eth0` network
+interface 으로 넘어온 패킷이 `veth, veth, loopback` network interface 를 거쳐
+app 으로 전달된다. 많은 수의 Network Interface 를 지나기 때문에 비효율적이다.
+
+![](img/service_mesh_traffics.png)
+
+다음은 Kubernetes Node 의 POD 에서 외부로 Request 를 요청했을 때 Traffic 의 흐름이다. 역시 많은 수의 Network Interface 를 지나기 때문에 비효율적이다.
+
+![](img/cost_of_sidecar_injection.png)
 
 ### Request from Client to POD
 
+* [1.1 클라이언트(요청) → 파드(인입)](https://gasidaseo.notion.site/Istio-Life-of-a-packet-6ad9808e14594296bf854dcc203cab71#5ed7095cfbf74fe3b89d8c96f66d780b)
+
 ### Response from POD to Client
+
+* [1.2 파드(리턴 트래픽) → 클라이언트](https://gasidaseo.notion.site/Istio-Life-of-a-packet-6ad9808e14594296bf854dcc203cab71#710f224348d2435e806bb1bc4d14a5f5)
 
 ### Request from POD to External Server
 
+* [2.1 파드(요청) → 외부 웹서버](https://gasidaseo.notion.site/Istio-Life-of-a-packet-6ad9808e14594296bf854dcc203cab71#d51cdb24177c4c25952e08f4486132b7)
+
 ### Response from External to POD
 
+* [2.2 외부 웹서버(리턴 트래픽) → 파드](https://gasidaseo.notion.site/Istio-Life-of-a-packet-6ad9808e14594296bf854dcc203cab71#97bfb642beea4cdab6daa87b4c962763)
+
 ### Optimization Of Traffics
+
+#### Merbridge
+
+[Merbridge](https://istio.io/latest/blog/2022/merbridge/) 를 사용하면 [eBPF](/bpf/README.md) 을 이용하여 Traffic 을 최적화 할 수 있다고 한다.
+
+아래는 [Merbridge](https://istio.io/latest/blog/2022/merbridge/) 를 사용하기 전의 모습이다.
+
+![](img/merbridge_iptables.png)
+
+아래는 [Merbridge](https://istio.io/latest/blog/2022/merbridge/) 를 사용한 모습이다.
+
+![](img/merbridge_ebpf.png)
+
+아래는 [Merbridge](https://istio.io/latest/blog/2022/merbridge/) 를 사용하고 같은 Node 위에서 실행된 POD 들의 모습이다.
+
+![](img/merbridge_ebpf_same_machine.png)
+
+#### Cilium CNI
+
+[Cilium CNI](https://cilium.io/blog/2021/12/01/cilium-service-mesh-beta) 을 사용하면 다음과 같이 sidecar 없이 traffic routing 이 가능하다고 한다. [Cilium CNI](https://cilium.io/blog/2021/12/01/cilium-service-mesh-beta) 은 [eBPF](/bpf/README.md) 를 이용한다.
+
+![](img/service_mesh_sidecarless.png)
