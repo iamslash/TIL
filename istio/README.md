@@ -1,3 +1,25 @@
+- [Abstract](#abstract)
+- [References](#references)
+- [Materials](#materials)
+- [Basic](#basic)
+  - [Install](#install)
+  - [Architecture](#architecture)
+  - [Traffic Management](#traffic-management)
+    - [Virtual services](#virtual-services)
+    - [Destination rules](#destination-rules)
+    - [Gateways](#gateways)
+    - [Service entries](#service-entries)
+    - [Sidecars](#sidecars)
+  - [Bookinfo Application](#bookinfo-application)
+  - [Dive Deep Into Istio Traffics](#dive-deep-into-istio-traffics)
+    - [Request from Client to POD](#request-from-client-to-pod)
+    - [Response from POD to Client](#response-from-pod-to-client)
+    - [Request from POD to External Server](#request-from-pod-to-external-server)
+    - [Response from External to POD](#response-from-external-to-pod)
+    - [Optimization Of Traffics](#optimization-of-traffics)
+
+----
+
 # Abstract
 
 **Istio** is a completely open source service mesh that layers transparently onto existing distributed applications.
@@ -6,6 +28,33 @@ A **service mesh** is a dedicated infrastructure layer for handling service-to-s
 
 * The **data plane** is composed of a set of **intelligent proxies (Envoy)** deployed as sidecars.
 * The **control plane** manages and configures the proxies to route traffic.
+
+Istio provides these features. [Feature Status](https://istio.io/latest/docs/releases/feature-stages/)
+
+* Traffic Management
+  * Request Routing
+  * Fault Injection
+  * Traffic Shifting
+  * TCP Traffic Shifting
+  * Request Timeouts
+  * Circuit Breaking
+  * Mirroring
+  * Locality Load Balancing
+  * Ingress
+  * Egress
+* Security
+  * Certificate Management
+  * Authentication
+  * Authorization
+* Observability
+  * Telemetry API
+  * Metrics
+  * Logs
+  * Distributed Tracing
+  * Visualizing Your Mesh
+  * Remotely Accessing Telemetry Addons 
+* Extensibility
+  * WebAssembly
 
 # References
 
@@ -22,11 +71,34 @@ A **service mesh** is a dedicated infrastructure layer for handling service-to-s
 * [istio @ eksworkshop](https://www.eksworkshop.com/advanced/310_servicemesh_with_istio/)
 * [Istio Service Mesh](https://daddyprogrammer.org/post/13721/istio-service-mesh/)
 
-# Install
+# Basic
+
+## Install
 
 [Getting Started @ istio.io](https://istio.io/latest/docs/setup/getting-started/) 를 참고하여 minikube 에 install 해보자.
 
-# Basic
+## Architecture
+
+> [Architecture](https://istio.io/latest/docs/ops/deployment/architecture/)
+
+![](img/istio_arch.png)
+
+## Traffic Management
+
+Istio 가 제공하는 기능중 Traffic Management 는 기본적인 것이다. 잘 알아두자.
+Istio 는 Traffic Management 를 위해 다음과 같은 Resource 들을 이용한다.
+
+* Virtual services
+* Destination rules
+* Gateways
+* Service entries
+* Sidecars
+
+### Virtual services
+### Destination rules
+### Gateways
+### Service entries
+### Sidecars
 
 ## Bookinfo Application
 
@@ -49,7 +121,7 @@ istio 를 적용하기 전 system architecture 는 다음과 같다.
 
 [samples/bookinfo/platform/kube/bookinfo.yaml](https://raw.githubusercontent.com/istio/istio/release-1.10/samples/bookinfo/platform/kube/bookinfo.yaml) 을 이용하여 Service, Deployment 를 설치한다.
 
-[samples/bookinfo/networking/bookinfo-gateway.yaml](https://raw.githubusercontent.com/istio/istio/release-1.10/samples/bookinfo/networking/bookinfo-gateway.yaml) 을 이용하여 Gateway, VirtualService 를 설치한다. 이제 외부 트래픽을 Pod 에서 받을 수 있다.
+[samples/bookinfo/networking/bookinfo-gateway.yaml](https://raw.githubusercontent.com/istio/istio/release-1.10/samples/bookinfo/networking/bookinfo-gateway.yaml) 을 이용하여 **Gateway, VirtualService** 를 설치한다. 이제 외부 트래픽을 Pod 에서 받을 수 있다.
 
 ```yml
 # samples/bookinfo/networking/bookinfo-gateway.yaml
@@ -96,7 +168,7 @@ spec:
           number: 9080
 ```
 
-[samples/bookinfo/networking/destination-rule-all.yaml](https://raw.githubusercontent.com/istio/istio/release-1.10/samples/bookinfo/networking/destination-rule-all.yaml) 을 이용하여 DestinationRule 을 설치한다. version 에 따라 traffic 을 management 하는 rule 을 생성할 수 있다.
+[samples/bookinfo/networking/destination-rule-all.yaml](https://raw.githubusercontent.com/istio/istio/release-1.10/samples/bookinfo/networking/destination-rule-all.yaml) 을 이용하여 **DestinationRule** 을 설치한다. version 에 따라 traffic 을 management 하는 rule 을 생성할 수 있다.
 
 ```yaml
 apiVersion: networking.istio.io/v1alpha3
@@ -166,3 +238,18 @@ spec:
 istio 를 적용한 bookinfo example 의 network traffic 흐름은 다음과 같다.
 
 ![](img/bookinfo_network_traffic.png)
+
+## Dive Deep Into Istio Traffics
+
+> * [Istio 트래픽 흐름 @ youtube](https://www.youtube.com/playlist?list=PLDoAIZhHTMvPIY7PHDtMaqbUUWEbE6-6H)
+>   * [Istio 🌶️ 트래픽 흐름 Life of a packet @ notion](https://gasidaseo.notion.site/Istio-Life-of-a-packet-6ad9808e14594296bf854dcc203cab71)
+
+### Request from Client to POD
+
+### Response from POD to Client
+
+### Request from POD to External Server
+
+### Response from External to POD
+
+### Optimization Of Traffics
