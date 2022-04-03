@@ -103,7 +103,17 @@ Istio 는 Traffic Management 를 위해 다음과 같은 Resource 들을 이용�
 * Sidecars
 
 ### Virtual services
+
+Protocol (http/tls/tcp) 별로 Traffic Route Rule 을 정의한다.
+
 ### Destination rules
+
+subset 별로 Traffic Policy Rule 을 정의한다.
+
+* Load-Balancing
+* Connection-Pool
+* Pool 에서 Unhealty 한 서비스 발견 및 제거
+
 ### Gateways
 
 ## Basic Istio Traffic Routing
@@ -176,6 +186,10 @@ pod/hello-server-v2   2/2     Running   0          20m
 
 ### Kubernetes Service, RoundRobin
 
+`svc-hello` Service 는 `app: hello` Label 이 부착된 POD 들에게 Traffic 을 Round Robin 한다.
+
+![](img/istio_traffic_1.png)
+
 다음과 같이 Service 를 설치한다.
 
 ```bash
@@ -219,11 +233,105 @@ Hello server - v1
 
 ### Kubernetes Service, spec.selector
 
+`svc-hello` Service 의 Label 설정을 바꾸어서 Traffic 을 `version: v1` 이 부착된 POD 으로 보내거나 `version: v2` 가 부착된 POD 으로 보낸다.
+
+![](img/istio_traffic_2.png)
+
+다음과 같이 Service 를 설치한다.
+
+```bash
+$ kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-hello
+  labels:
+    app: hello
+spec:
+  selector:
+    app: hello
+    version: v1
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+EOF
+```
+
+다음과 같이 endpoints 를 확인한다.
+
+```bash
+$ kubectl get endpoints -l app=hello
+
+NAME        ENDPOINTS                         AGE
+svc-hello      172.17.0.5:8080                   92m
+```
+
+다음과 같이 Traffic 을 전달하자. 모두 `version: v1` 이 부착된 POD 으로 전달되었다.
+
+```bash
+$ for i in {1..5}; do kubectl exec -it httpbin -c httpbin -- curl http://svc-hello.default.svc.cluster.local:8080; sleep 0.5; done
+
+Hello server - v1
+Hello server - v1
+Hello server - v1
+Hello server - v1
+Hello server - v1
+```
+
+이제 다음과 같이 Service 를 수정한다.
+
+```bash
+$ kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-hello
+  labels:
+    app: hello
+spec:
+  selector:
+    app: hello
+    version: v2
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+EOF
+```
+
+다음과 같이 endpoints 를 확인한다.
+
+```bash
+$ kubectl get endpoints -l app=hello
+
+NAME        ENDPOINTS                         AGE
+svc-hello      172.17.0.6:8080                   92m
+```
+
+다음과 같이 Traffic 을 전달한다. 모두 `version: v2` 가 부착된 POD 으로 전달되었다.
+
+```bash
+$ for i in {1..5}; do kubectl exec -it httpbin -c httpbin -- curl http://svc-hello.default.svc.cluster.local:8080; sleep 0.5; done
+
+Hello server - v2
+Hello server - v2
+Hello server - v2
+Hello server - v2
+Hello server - v2
+```
+
 ### Istio VirtualService
+
+![](img/istio_traffic_3.png)
 
 ### Istio VirtualService, weight
 
+![](img/istio_traffic_4.png)
+
 ### Istio VirtualService, DestinationRule
+
+![](img/istio_traffic_5.png)
 
 ## BookInfo Examples
 
