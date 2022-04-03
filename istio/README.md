@@ -8,9 +8,13 @@
     - [Virtual services](#virtual-services)
     - [Destination rules](#destination-rules)
     - [Gateways](#gateways)
-    - [Service entries](#service-entries)
-    - [Sidecars](#sidecars)
-  - [Bookinfo Application](#bookinfo-application)
+  - [Basic Istio Traffic Routing](#basic-istio-traffic-routing)
+    - [Kubernetes Service, RoundRobin](#kubernetes-service-roundrobin)
+    - [Kubernetes Service, spec.selector](#kubernetes-service-specselector)
+    - [Istio VirtualService](#istio-virtualservice)
+    - [Istio VirtualService, weight](#istio-virtualservice-weight)
+    - [Istio VirtualService, DestinationRule](#istio-virtualservice-destinationrule)
+  - [BookInfo Examples](#bookinfo-examples)
   - [Dive Deep Into Istio Traffics](#dive-deep-into-istio-traffics)
     - [Request from Client to POD](#request-from-client-to-pod)
     - [Response from POD to Client](#response-from-pod-to-client)
@@ -65,6 +69,8 @@ Istio provides these features. [Feature Status](https://istio.io/latest/docs/rel
 
 # Materials
 
+* [간단한 예제로 보는 Istio VirtualService와 Destination 을 활용한 Istio Traffic Routing의 이해](https://itnp.kr/post/istio-routing-api)
+  * 킹왕짱 설명
 * [Istio 트래픽 흐름 @ youtube](https://www.youtube.com/playlist?list=PLDoAIZhHTMvPIY7PHDtMaqbUUWEbE6-6H)
   * [Istio 🌶️ 트래픽 흐름 Life of a packet @ notion](https://gasidaseo.notion.site/Istio-Life-of-a-packet-6ad9808e14594296bf854dcc203cab71)
 * [Getting Started @ istio.io](https://istio.io/latest/docs/setup/getting-started/)
@@ -99,147 +105,127 @@ Istio 는 Traffic Management 를 위해 다음과 같은 Resource 들을 이용�
 ### Virtual services
 ### Destination rules
 ### Gateways
-### Service entries
-### Sidecars
 
-## Bookinfo Application
+## Basic Istio Traffic Routing
 
-* [Bookinfo Application @ istio.io](https://istio.io/latest/docs/examples/bookinfo/)
-  * [src](https://github.com/istio/istio/tree/master/samples/bookinfo) 
+> [간단한 예제로 보는 Istio VirtualService와 Destination 을 활용한 Istio Traffic Routing의 이해](https://itnp.kr/post/istio-routing-api)
 
-[Bookinfo Application @ istio.io](https://istio.io/latest/docs/examples/bookinfo/) 를 참고로 중요한 manifest file 을 익혀본다.
+Kubernetes, Istio Traffic Routing 은 복잡하다. 다음과 같은 예를 하나씩
+살펴보면서 Kubernetes, Istio Traffic Routing 을 이해해보자.
 
-istio 를 적용하기 전 system architecture 는 다음과 같다. 
+* Kubernetes Service 를 이용한다.
+  * endpoints 가 여러개인 경우 Round Robin 으로 traffic 을 분배한다.
+* Kubernetes Service, sepc.selector 를 이용한다.
+  * Manual Routing Rule 
+* Istio Virtual Service 를 이용
+  * `match` for Routing Rule
+* Istio Virtual Service, weight 를 이용
+  * `weight` for Routing Rule
+* Istio Virtual Service, DestinationRule 을 이용
+  * `subset` for Routing Rule
 
-![](img/bookinfo_architecture_without_istio.png)
+먼저 다음과 같이 Pod 들을 설치하자. 2 개의 Pod 는 Server 이고 1 개의 Pod 는 
+Client 이다.
 
-다음은 istio 를 적용한 system architecture 이다. 
-
-![](img/bookinfo_architecture_with_istio.png)
-
-각 POD 에 istio proxy conntainer 가 side 로 inject 되어 있다. 이렇게 istio proxy container 가 포함된 POD 들을 **data plane** 이라고 한다. 또한 istiod 와 같이 istio proxy 와 통신하면서 service mesh 의 control tower 역할을 하는 것을 **control plane** 이라고 한다.
-
-이제 [Bookinfo Application @ istio.io](https://istio.io/latest/docs/examples/bookinfo/)를 참고하여 bookinfo service 를 설치해보자.
-
-[samples/bookinfo/platform/kube/bookinfo.yaml](https://raw.githubusercontent.com/istio/istio/release-1.10/samples/bookinfo/platform/kube/bookinfo.yaml) 을 이용하여 Service, Deployment 를 설치한다.
-
-[samples/bookinfo/networking/bookinfo-gateway.yaml](https://raw.githubusercontent.com/istio/istio/release-1.10/samples/bookinfo/networking/bookinfo-gateway.yaml) 을 이용하여 **Gateway, VirtualService** 를 설치한다. 이제 외부 트래픽을 Pod 에서 받을 수 있다.
-
-```yml
-# samples/bookinfo/networking/bookinfo-gateway.yaml
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
+```bash
+$ kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Pod
 metadata:
-  name: bookinfo-gateway
+  name: hello-server-v1
+  labels:
+    app: hello
+    version: v1
+spec:
+  containers:
+  - image: docker.io/honester/hello-server:v1
+    imagePullPolicy: IfNotPresent
+    name: hello-server-v1
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: hello-server-v2
+  labels:
+    app: hello
+    version: v2
+spec:
+  containers:
+  - image: docker.io/honester/hello-server:v2
+    imagePullPolicy: IfNotPresent
+    name: hello-server-v2
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: httpbin
+  labels:
+    app: httpbin
+spec:
+  containers:
+  - image: docker.io/honester/httpbin:latest
+    imagePullPolicy: IfNotPresent
+    name: httpbin
+EOF
+
+$ kubectl get all -l app=hello
+NAME                  READY   STATUS    RESTARTS   AGE
+pod/hello-server-v1   2/2     Running   0          20m
+pod/hello-server-v2   2/2     Running   0          20m
+```
+
+### Kubernetes Service, RoundRobin
+
+다음과 같이 Service 를 설치한다.
+
+```bash
+$ kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-hello
+  labels:
+    app: hello
 spec:
   selector:
-    istio: ingressgateway # use istio default controller
-  servers:
-  - port:
-      number: 80
-      name: http
-      protocol: HTTP
-    hosts:
-    - "*"
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: bookinfo
-spec:
-  hosts:
-  - "*"
-  gateways:
-  - bookinfo-gateway
-  http:
-  - match:
-    - uri:
-        exact: /productpage
-    - uri:
-        prefix: /static
-    - uri:
-        exact: /login
-    - uri:
-        exact: /logout
-    - uri:
-        prefix: /api/v1/products
-    route:
-    - destination:
-        host: productpage
-        port:
-          number: 9080
+    app: hello
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+EOF
 ```
 
-[samples/bookinfo/networking/destination-rule-all.yaml](https://raw.githubusercontent.com/istio/istio/release-1.10/samples/bookinfo/networking/destination-rule-all.yaml) 을 이용하여 **DestinationRule** 을 설치한다. version 에 따라 traffic 을 management 하는 rule 을 생성할 수 있다.
+다음과 같이 endpoint 를 확인하자.
 
-```yaml
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: productpage
-spec:
-  host: productpage
-  subsets:
-  - name: v1
-    labels:
-      version: v1
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: reviews
-spec:
-  host: reviews
-  subsets:
-  - name: v1
-    labels:
-      version: v1
-  - name: v2
-    labels:
-      version: v2
-  - name: v3
-    labels:
-      version: v3
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: ratings
-spec:
-  host: ratings
-  subsets:
-  - name: v1
-    labels:
-      version: v1
-  - name: v2
-    labels:
-      version: v2
-  - name: v2-mysql
-    labels:
-      version: v2-mysql
-  - name: v2-mysql-vm
-    labels:
-      version: v2-mysql-vm
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: details
-spec:
-  host: details
-  subsets:
-  - name: v1
-    labels:
-      version: v1
-  - name: v2
-    labels:
-      version: v2
----
+```bash
+$ kubectl get endpoints -l app=hello
+
+NAME           ENDPOINTS                         AGE
+svc-hello      172.17.0.5:8080,172.17.0.6:8080   92m
 ```
 
-istio 를 적용한 bookinfo example 의 network traffic 흐름은 다음과 같다.
+다음과 같이 트래픽을 전달해 보자.
 
-![](img/bookinfo_network_traffic.png)
+```bash
+$ for i in {1..5}; do kubectl exec -it httpbin -c httpbin -- curl http://svc-hello.default.svc.cluster.local:8080; sleep 0.5; done
+
+Hello server - v2
+Hello server - v1
+Hello server - v2
+Hello server - v1
+Hello server - v1
+```
+
+### Kubernetes Service, spec.selector
+
+### Istio VirtualService
+
+### Istio VirtualService, weight
+
+### Istio VirtualService, DestinationRule
+
+## BookInfo Examples
 
 ## Dive Deep Into Istio Traffics
 
