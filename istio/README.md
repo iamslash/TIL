@@ -14,6 +14,7 @@
     - [Istio VirtualService](#istio-virtualservice)
     - [Istio VirtualService, weight](#istio-virtualservice-weight)
     - [Istio VirtualService, DestinationRule](#istio-virtualservice-destinationrule)
+    - [Clean Up](#clean-up)
   - [BookInfo Examples](#bookinfo-examples)
   - [Dive Deep Into Istio Traffics](#dive-deep-into-istio-traffics)
     - [Request from Client to POD](#request-from-client-to-pod)
@@ -104,7 +105,13 @@ Istio 는 Traffic Management 를 위해 다음과 같은 Resource 들을 이용�
 
 ### Virtual services
 
-Protocol (http/tls/tcp) 별로 Traffic Route Rule 을 정의한다.
+Protocol (http/tls/tcp) 별로 Traffic Route Rule 을 정의한다. 
+
+url 에 따라 목적지를 다르게 할 수 있다. 예를 들어 url 이 `internal` 로 시작하면
+특별한 목적지로 traffic 을 routing 할 수 있다.
+
+목적지 별로 routing traffic 의 weight 를 줄 수 있다. 예를 들어 A 목적지는 90%, B
+목적지는 10% 로 traffic 을 전달 할 수 있다.
 
 ### Destination rules
 
@@ -115,6 +122,8 @@ subset 별로 Traffic Policy Rule 을 정의한다.
 * Pool 에서 Unhealty 한 서비스 발견 및 제거
 
 ### Gateways
+
+???
 
 ## Basic Istio Traffic Routing
 
@@ -323,15 +332,250 @@ Hello server - v2
 
 ### Istio VirtualService
 
+이제 `vs-hello` VirtualService 를 생성하자.
+
+`svc-hello` Service 를 만들어 `vs-hello` VirtualService 로 Traffics 을 routing
+한다. `svc-hello-v1` Service 를 만들어 `app=hello, version=v1` Label 이 부착된
+POD 으로 Traffic 을 routing 한다. 또한 `svc-hello-v2` Service 를 만들어
+`app=hello, version=v2` Label 이 부착된 POD 으로 Traffic 을 routing 한다.
+
+`vs-hello` 는 url 규칙에 따라 `svc-hello-v1` Service 혹은 `svc-hello-v2` Service 로 
+traffic 을 routing 한다.
+
 ![](img/istio_traffic_3.png)
+
+VirtualService 의 주요 항목은 다음과 같다.
+
+* `spec.hosts` 는 Traffic Routing 의 대상이 되는 Service 를 말한다. 즉,
+  `svc-hello` Service 가 대상이다.
+* `spec.http.match.*` Traffic Routing 조건들의 모음이다. 순서대로 적용된다.
+* `spec.http.route.destination` 은 `spec.http.match.*` 에 해당되지 않는 Traffic 의 목적지이다.
+* `spec.*.destination.host` 은 목적지 Service 이다.
+
+다음과 같이 VritualService, Service 들을 설치한다.
+
+```bash
+$ kubectl apply -f - <<EOF
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-hello
+  labels:
+    app: hello
+spec:
+  selector:
+    app: hello
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-hello-v1
+  labels:
+    app: hello
+spec:
+  selector:
+    app: hello
+    version: v1
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-hello-v2
+  labels:
+    app: hello
+spec:
+  selector:
+    app: hello
+    version: v2
+  ports:
+  - name: http
+    protocol: TCP
+    port: 8080
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: vs-hello
+spec:
+  hosts:
+  - "svc-hello.default.svc.cluster.local"
+  http:
+  - match:
+    - uri:
+        prefix: /v2
+    route:
+    - destination:
+        host: "svc-hello-v2.default.svc.cluster.local"
+  - route:
+    - destination:
+        host: "svc-hello-v1.default.svc.cluster.local"
+EOF
+```
+
+다음과 같이 endpoints 를 확인한다. `svc-hello` Service 는 2 개의 POD 를 바라보고
+있다. `svc-hello-v1, svc-hello-v2` 는 각각 1 개의 POD 를 바라보고 있다.
+
+```bash
+$ kubectl get endpoints -l app=hello
+
+NAME           ENDPOINTS                         AGE
+svc-hello      172.17.0.5:8080,172.17.0.6:8080   101m
+svc-hello-v1   172.17.0.5:8080                   11m
+svc-hello-v2   172.17.0.6:8080                   9m13s
+```
+
+다음과 같이 traffic 을 전달해 본다. url 은 `/v2` 로 시작하지 않는다.
+
+```bash
+$ for i in {1..5}; do kubectl exec -it httpbin -c httpbin -- curl http://svc-hello.default.svc.cluster.local:8080; sleep 0.5; done
+
+Hello server - v1
+Hello server - v1
+Hello server - v1
+Hello server - v1
+Hello server - v1
+```
+
+다음과 같이 traffic 을 전달해 보자. url 은 `v2` 로 시작한다.
+
+```bash
+$ for i in {1..5}; do kubectl exec -it httpbin -c httpbin -- curl http://svc-hello.default.svc.cluster.local:8080/v2; sleep 0.5; done
+
+Hello server - v2 (uri=/v2)
+Hello server - v2 (uri=/v2)
+Hello server - v2 (uri=/v2)
+Hello server - v2 (uri=/v2)
+Hello server - v2 (uri=/v2)
+```
 
 ### Istio VirtualService, weight
 
+VirtualService 에 traffic routing 의 weight 를 줄 수 있다. 
+
 ![](img/istio_traffic_4.png)
+
+다음과 같이 VirtualService 를 수정하자.
+
+```bash
+$ kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: vs-hello
+spec:
+  hosts:
+  - "svc-hello.default.svc.cluster.local"
+  http:
+  - route:
+    - destination:
+        host: "svc-hello-v1.default.svc.cluster.local"
+      weight: 90
+    - destination:
+        host: "svc-hello-v2.default.svc.cluster.local"
+      weight: 10
+EOF
+```
+
+다음과 같이 traffic 을 전달해 보자.
+
+```bash
+$ for i in {1..20}; do kubectl exec -it httpbin -c httpbin -- curl http://svc-hello.default.svc.cluster.local:8080; sleep 0.5; done
+
+Hello server - v1
+Hello server - v1
+Hello server - v1
+Hello server - v1
+Hello server - v1
+...
+Hello server - v2
+....
+Hello server - v1
+```
 
 ### Istio VirtualService, DestinationRule
 
+`svc-hello-v1, svc-hello-v2` Service 를 제거하고 DestinationRule 을 만들어
+똑같은 효과를 구현할 수 있다. 
+
 ![](img/istio_traffic_5.png)
+
+DestinationRule 은 subset 을 정의한다. `v1` subset 은 `version: v1` 이 부착된
+POD 을 바라본다. `v2` subset 은 `version: v2` 가 부착된 POD 을 바라본다.
+
+VirtualService 는 DestinationRule 의 subset 을 목적지로 사용한다.
+
+ß또한 VirtualService, DestinationRule 은 `svc-hello` Service 를 사용한다. VirtualService 가
+Service, DestinationRule 을 바라보고 DestinationRule 은 Service 를 바라보는 형태이다.
+
+다음과 같이 VirtualService, DestinationRule 을 설치한다.
+
+```bash
+$ kubectl apply -f - <<EOF
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: dr-hello
+spec:
+  host: svc-hello.default.svc.cluster.local
+  subsets:
+  - name: v1
+    labels:
+      version: v1
+  - name: v2
+    labels:
+      version: v2
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: vs-hello
+spec:
+  hosts:
+  - "svc-hello.default.svc.cluster.local"
+  http:
+  - route:
+    - destination:
+        host: "svc-hello.default.svc.cluster.local"
+        subset: v1
+      weight: 90
+    - destination:
+        host: "svc-hello.default.svc.cluster.local"
+        subset: v2
+      weight: 10
+EOF
+```
+
+다음과 같이 traffic 을 전달해 보자.
+
+```bash
+$ for i in {1..10}; do kubectl exec -it httpbin -c httpbin -- curl http://svc-hello.default.svc.cluster.local:8080; sleep 0.5; done
+
+Hello server - v1
+Hello server - v1
+Hello server - v1
+Hello server - v1
+Hello server - v1
+...
+Hello server - v2
+....
+Hello server - v1
+```
+
+### Clean Up
+
+이제 모두 지운다.
+
+```bash
+$ kubectl delete pod/httpbin pod/hello-server-v1 pod/hello-server-v2 service/svc-hello service/svc-hello-v1 service/svc-hello-v2 vs/vs-hello dr/dr-hello
+```
 
 ## BookInfo Examples
 
