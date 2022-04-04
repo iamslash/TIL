@@ -22,6 +22,8 @@ $ sudo systemctl start kibana.service
 
 ## Useful Queries
 
+> [Kibana Query Language](https://www.elastic.co/guide/en/kibana/master/kuery-query.html)
+
 ```
 # Search name is foo with date range.
 > person.name:foo AND billing.dt:[now-2d/d TO now-2d/d+1h]
