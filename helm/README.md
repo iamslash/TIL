@@ -233,6 +233,10 @@ $ helm install --dry-run --generate-name myhelm
 
 # Get template
 $ helm template myhelm
+
+# Render template with external values
+# mytemplate is a template directory
+$ helm template mytemplate --values ~/prj/github/iamslash/values.yaml
 ```
 
 ## Basic Templates
@@ -241,34 +245,34 @@ $ helm template myhelm
   * [Controlling Whitespace](https://helm.sh/docs/chart_template_guide/control_structures/#controlling-whitespace)
   * 왼쪽의 whitespaces 를 제거한다. newline 도 포함이다.
 
-```yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: {{ .Release.Name }}-configmap
-data:
-  myvalue: "Hello World"
-  drink: {{ .Values.favorite.drink | default "tea" | quote }}
-  food: {{ .Values.favorite.food | upper | quote }}
-  {{- if eq .Values.favorite.drink "coffee" }}
-  mug: "true"
-  {{- end }}
-```
+    ```yaml
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: {{ .Release.Name }}-configmap
+    data:
+      myvalue: "Hello World"
+      drink: {{ .Values.favorite.drink | default "tea" | quote }}
+      food: {{ .Values.favorite.food | upper | quote }}
+      {{- if eq .Values.favorite.drink "coffee" }}
+      mug: "true"
+      {{- end }}
+    ```
 
-위의 yaml 은 templating 후 아래와 같이 변환된다.
+    위의 yaml 은 templating 후 아래와 같이 변환된다.
 
-```yaml
-# Source: mychart/templates/configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: clunky-cat-configmap
-data:
-  myvalue: "Hello World"
-  drink: "coffee"
-  food: "PIZZA"
-  mug: "true"
-```
+    ```yaml
+    # Source: mychart/templates/configmap.yaml
+    apiVersion: v1
+    kind: ConfigMap
+    metadata:
+      name: clunky-cat-configmap
+    data:
+      myvalue: "Hello World"
+      drink: "coffee"
+      food: "PIZZA"
+      mug: "true"
+    ```
 
 * ` -}}`
   * [Controlling Whitespace](https://helm.sh/docs/chart_template_guide/control_structures/#controlling-whitespace)
