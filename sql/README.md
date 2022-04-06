@@ -1449,11 +1449,12 @@ SELECT account_id,
 
 ----
 
+`LEAD` 는 특정 record 보다 아래에 위치하는 record 를 가져올 때 사용한다. `LAG`
+는 특정 record 보다 위에 위치하는 record 를 가져올 때 사용한다.
+
 `LEAD(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 아래 `N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
 
-`LAG(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 위 `N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
-
-* [BiggestWindowBetweenVisits @ learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode2/BiggestWindowBetweenVisits/README.md)
+> [BiggestWindowBetweenVisits @ learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode2/BiggestWindowBetweenVisits/README.md)
 
 ```sql
 SELECT user_id, MAX(diff) AS biggest_window
@@ -1467,6 +1468,19 @@ SELECT user_id, MAX(diff) AS biggest_window
   ) t
  GROUP BY user_id
  ORDER BY user_id
+```
+
+> [UsersWithTwoPurchasesWithinSevenDays @ learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode3/UsersWithTwoPurchasesWithinSevenDays/README.md)
+
+```sql
+SELECT DISTINCT user_id 
+  FROM (
+    SELECT user_id, 
+           purchase_date AS cur_date,
+           LAG(purchase_date) OVER(PARTITION BY user_id ORDER BY purchase_date) AS prv_date
+      FROM Purchases
+  ) t
+ WHERE DATEDIFF(cur_date, prv_date) <= 7 
 ```
 
 ## Where
