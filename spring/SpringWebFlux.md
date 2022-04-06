@@ -8,6 +8,8 @@
   - [Spring MVC vs Spring WebFlux](#spring-mvc-vs-spring-webflux)
   - [Why WebFlux Slow](#why-webflux-slow)
   - [Reactive Cache](#reactive-cache)
+  - [From Imperative to Reactor](#from-imperative-to-reactor)
+  - [From Reactor to Coroutines](#from-reactor-to-coroutines)
 - [Question](#question)
   - [map vs flatMap for async function](#map-vs-flatmap-for-async-function)
 
@@ -278,6 +280,116 @@ public class StatefulRedisConnectionImpl<K, V> extends RedisChannelHandler<K, V>
 ----
 
 WIP...
+
+## From Imperative to Reactor
+
+> [Migrating from Imperative to Reactive](https://hazelcast.com/blog/migrating-from-imperative-to-reactive/)
+
+## From Reactor to Coroutines
+
+> [From Reactor to Coroutines](https://blog.frankel.ch/reactor-to-coroutines/)
+
+Reactor code 를 Kotlin coroutine 으로 migration 해보자.
+
+Reactor code 는 다음과 같다.
+
+```kotlin
+class Person                                                           
+
+interface PersonRepository : ReactiveSortingRepository<Person, Long>   
+
+@Configuration
+class PersonRoutes {
+
+  @Bean
+  fun router(repository: PersonRepository) = router {
+    val handler = PersonHandler(repository)
+    GET("/person", handler::getAll)
+  }
+}
+
+class PersonHandler(private val repository: PersonRepository) {
+  fun getAll(req: ServerRequest): Mono<ServerResponse> {
+    val flux = repository.findAll(Sort.by("lastName", "firstName"))    
+    return ok().body<Person>(flux)                                     
+  }
+}
+```
+
+Repository 를 `ReactiveSortingRepository` 에서 `CoroutineCrudRepository` 로 migration 하자.
+
+pom.xml 에 다음을 추가한다.
+
+```xml
+<dependency>
+  <groupId>org.jetbrains.kotlinx</groupId>
+  <artifactId>kotlinx-coroutines-reactor</artifactId>
+</dependency>
+```
+
+Respository 를 수정한다.
+
+```kotlin
+interface PersonRepository : CoroutineCrudRepository<Person, Long>
+```
+
+이제 Handler 를 수정하자. 
+
+* `Mono<ServerResponse>` -> `ServerResponse` 
+* `flux` -> `flow`
+
+```kotlin
+class PersonHandler(private val repository: PersonRepository) {
+  suspend fun getAll(req: ServerRequest): ServerResponse {              
+    val flow = repository.findAll(Sort.by("lastName", "firstName"))
+    return ok().bodyAndAwait(flow)                                     
+  }
+}
+```
+
+Route 를 수정하자.
+
+```kotlin
+@Configuration
+class PersonRoutes {
+
+  @Bean
+  fun router(repository: PersonRepository) = coRouter {                
+    val handler = PersonHandler(repository)
+    GET("/person", handler::getAll)
+  }
+}
+```
+
+다음은 HazelCast 를 사용하는 Reactor code 를 Kotlin coroutine code 로 바꾸는 예이다.
+
+```java
+// AsIs
+class CachingService(
+  private val cache: IMap<Long, Person>,
+  private val repository: PersonRepository
+) {
+  fun findById(id: Long) = Mono.fromCompletionStage { cache.getAsync(id) }    
+    .switchIfEmpty(                                                          
+      repository.findById(id)
+        .doOnNext { cache.putAsync(it.id, it) }                              
+    )
+}
+
+// ToBe
+<dependency>
+  <groupId>org.jetbrains.kotlinx</groupId>
+  <artifactId>kotlinx-coroutines-reactor</artifactId>
+</dependency>
+
+class CachingService(
+  private val cache: IMap<Long, Person>,
+  private val repository: PersonRepository
+) {
+    suspend fun findById(id: Long) = cache.getAsync(id).await()             
+        ?: repository.findById(id)?.also { cache.putAsync(it.id, it)
+}
+```
 
 # Question
 
