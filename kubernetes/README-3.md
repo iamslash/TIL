@@ -4,13 +4,6 @@
 - [Security](#security)
 - [Storage](#storage)
 - [Networking](#networking)
-- [Design and Install a Kubernetes Cluster](#design-and-install-a-kubernetes-cluster)
-- [Install "Kubernetes the kubeadm way"](#install-kubernetes-the-kubeadm-way)
-- [End to End Tests on a Kubernetes Cluster](#end-to-end-tests-on-a-kubernetes-cluster)
-- [Troubleshooting](#troubleshooting)
-- [Other Topics](#other-topics)
-- [Lightning Labs](#lightning-labs)
-- [Mock Exams](#mock-exams)
 
 -----
 
@@ -37,17 +30,3 @@
 # Networking
 
 * [kubernetes network](kubernetes_network.md)
-
-# Design and Install a Kubernetes Cluster
-
-# Install "Kubernetes the kubeadm way"
-
-# End to End Tests on a Kubernetes Cluster
-
-# Troubleshooting
-
-# Other Topics
-
-# Lightning Labs
-
-# Mock Exams

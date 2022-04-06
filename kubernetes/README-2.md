@@ -55,6 +55,7 @@
   - [Kubernetes Extension](#kubernetes-extension)
   - [API server](#api-server)
   - [Monitoring](#monitoring)
+  - [Pause Container](#pause-container)
 - [Continue...](#continue)
 
 ------
@@ -2904,6 +2905,18 @@ terminationGracePeriodSeconds's default value is 30s
 ## Monitoring
 
 * [Prometheus with Kubernetes](https://www.slideshare.net/jinsumoon33/kubernetes-prometheus-monitoring)
+
+## Pause Container
+
+> [Pause Container](https://eddie.ee/170)
+
+Pod 은 **Pause Container** 를 항상 실행한다. User 가 Manifest File 에 명시하지 않아도
+실행되는 container 이다. 
+
+**Pause Container** 는 Network Interface eth0 을 생성한다. **Pause Container** 가 포함된 Pod 이 실행되는 Node 는 veth0 을 생성하여 **Pause Container** 가 생성한 eth0 과 연결한다. 이제 Pod 에서 실행되는 다른 Container 들은 pause Container 의 eth0 과 Node 의 veth0 를 거쳐 Network 을 이용할 수 있게 된다. 
+
+Pod 에 A, B container 들이 있다고 해보자. A container 가 80 port 를 listen 하고
+있다고 하자. B container 는 80 port 를 이용할 수 없다. A, B container 둘다 **Pause Container** 의 Network Interface eth0 에 연결되어 있기 때문이다. 
 
 # Continue...
 

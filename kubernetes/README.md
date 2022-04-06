@@ -272,11 +272,7 @@ cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주�
 
 ## minikube
 
-* [minikube start](https://minikube.sigs.k8s.io/docs/start/)
-
-----
-
-minikube is local Kubernetes, focusing on making it easy to learn and develop for Kubernetes.
+[minikube](/minikube/README.md)
 
 ## AWS EKS
 
