@@ -13,10 +13,6 @@
 - [Install](#install)
   - [minikube](#minikube)
   - [AWS EKS](#aws-eks)
-  - [Google GCP](#google-gcp)
-  - [Microsoft AZURE](#microsoft-azure)
-  - [Install on Win64](#install-on-win64)
-  - [Install on macOS](#install-on-macos)
 - [AWS EKS Basic](#aws-eks-basic)
 - [Basic](#basic)
   - [Useful Commands](#useful-commands)
@@ -112,18 +108,28 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
 
 > [Understanding Kubernetes Architecture With Diagrams](https://phoenixnap.com/kb/understanding-kubernetes-architecture-diagrams)
 
-Kubernetes cluster 는 Master-node, Workder-node 와 같이 두 가지 종류의 Node 를 갖는다. 
+Kubernetes cluster 는 Master-node, Worker-node 와 같이 두 가지 종류의 Node 를 갖는다. 
 
 * A Master-node type, which makes up the Control Plane, acts as the "brains" of the cluster.
 * A Worker-node type, which makes up the Data Plane, runs the actual container images (via pods).
 
 Master-Node 는 **etcd, kube-apiserver, kube-scheduler, kube-controller-manager, docker** 등이 실행된다. Master 장비 1 대에 앞서 언급한 프로세스들 한 묶음을 같이 실행하는게 일반적인 구성이다. Master-Node 는 High Availibility 를 위해 3 대 실행한다. 평소 1 대를 활성시키고 나머지 2 대는 대기시킨다.
 
+* **One or More API Servers**: Entry point for REST / kubectl
+* **etcd**: Distributed key/value store
+* **Controller-manager**: Always evaluating current vs desired state
+* **Scheduler**: Schedules pods to worker nodes
+
 Worker-Node 는 초기에 미니언(minion) 이라고 불렀다. **kubelet, kube-proxy, docker** 등이 실행된다. 대부분의 컨테이너들은 Worker-Node 에서 실행된다.
+
+* **kubelet**: Acts as a conduit between the API server and the node
+* **kube-proxy**: Manages IP translation and routing
 
 ![](https://upload.wikimedia.org/wikipedia/commons/b/be/Kubernetes.png)
 
-위의 그림은 Kubernetes System Diagram 이다. Master-Node 와 여러개의 Worker-Node 들로 구성된다. Operator 는 오로지 Master-Node 의 API Server 와 통신한다. Worker-Node 들 역시 마찬가지이다.
+![](img/KubernetesArchitecturalOverview.png)
+
+위의 그림은 Kubernetes System Diagram 이다. Master-Node 와 여러개의 Worker-Node 들로 구성된다. Operator 는 오로지 Master-Node 의 API Server 와 통신한다. Worker-Node 들은 Master-Node 와 통신하기도 하지만 Users 들과 통신하기도 한다.
 
 Kubernetes cluster 는 current state 을 object 로 표현한다. Kubernetes 는 current state 의 object 들을 예의 주시하다가 desired state 의 object 가 발견되면 지체 없이 current state object 들을 desired state state 으로 변경한다. 
 
@@ -151,7 +157,7 @@ Kubernetes cluster 는 current state 을 object 로 표현한다. Kubernetes 는
 * StatefulSet
 * PodTemplate
 * Namespace
-* PersistenVolume
+* PersistentVolume
 * PersistentVolumeClaim
 * Endpoints
 * LimitRange
@@ -166,35 +172,18 @@ Kubernetes cluster 는 current state 을 object 로 표현한다. Kubernetes 는
 * Node
 * CertificateSigningRequest
 
-Kubernetes 는 Control Plane 과 Data Plane 으로 나눌 수 있다.
-
-![](img/KubernetesArchitecturalOverview.png)
-
-Ctonrol Plane 은 Master-Node 를 의미한다. Scheduler, Controller Manager, API Server, etcd 등이 실행된다.
-
-* **One or More API Servers**: Entry point for REST / kubectl
-* **etcd**: Distributed key/value store
-* **Controller-manager**: Always evaluating current vs desired state
-* **Scheduler**: Schedules pods to worker nodes
-
-Data Plane 은 Worker-Node 를 의미한다. kube-proxy, kubelet 등이 실행된다.
-
-* Made up of worker nodes
-* **kubelet**: Acts as a conduit between the API server and the node
-* **kube-proxy**: Manages IP translation and routing
-
 Kubernetes 는 yaml 파일을 사용하여 설정한다. 다음은 yaml 파일의 기본구조이다.
 
 ```yaml
 apiVersion: v1
-Kind: Pod
+kind: Pod
 metadata:
 spec:
 ```
 
 * **Kind**: Kubernetes Object 의 type 이다. 즉, resource 를 말한다. Pod, Deployment, ReplicaSet, Service 등이 있다.
-* **apiVersion**: `group/version` 으로 구성되어있다. `group` 이 비어 있다면 core group 을 의미한다.
-* **metadata**: Kubernetes object 의 meta data 이다. name, label 등등이 해당된다.
+* **apiVersion**: `group/version` 으로 구성되어있다. `group` 이 비어 있다면 `core group` 을 의미한다.
+* **metadata**: Kubernetes object 의 meta data 이다. `name, label` 등등이 해당된다.
 * **spec**: Kubernetes object 의 세부항목이다.
 
 ## Sequence Diagram
@@ -215,7 +204,7 @@ Kubernetes 의 Pod 을 graceful shutdown 하기 위한 방법이 중요하다???
 
 `kubectl` 을 통해 `kube-api-server` 로 API Request 가 도착하면 위의 그림과 같이 `Authentication - Authorization - Mutating Admission - Validating Admission` 과정을 거치고 `etcd` 에 접근한다.
 
-만약 API Request 가 Write Operation 이면  Kubernetes 를 Extending 할 수 있다. `Mutating Admission` 단계에서 Custom Server 로 WebHook 을 보내는 식으로 구현이 가능하다. [Kubernetes Extension / Dynamic Admission Control @ TIL](kubernetes_extension.md#dynamic-admission-contro)
+만약 API Request 가 Write Operation 이면  Kubernetes 를 Extending 할 수 있다. `Mutating Admission` 단계에서 Custom Server 로 WebHook 을 보내는 식으로 구현이 가능하다. [Kubernetes Extension / Dynamic Admission Control @ TIL](kubernetes_extension.md#dynamic-admission-control)
 
 ## How to schedule pod on worker node
 
@@ -233,27 +222,27 @@ Kubernetes 의 Pod 을 graceful shutdown 하기 위한 방법이 중요하다???
 
 ### Master Node
 
-* ETCD
+* **ETCD**
   * key-value 저장소
-* kube-apiserver
+* **kube-apiserver**
   * kubernetes cluster api 를 사용할 수 있게 해주는 gateway 이다. 들어오는 요청의 유효성을 검증하고 다른 곳으로 전달한다.
-* kube-scheduler
+* **kube-scheduler**
   * 현재 cluster 안에서 자원할당이 가능한 Node 를 하나 선택하여 그곳에 pod 를 실행한다. Pod 가 하나 실행할 때 여러가지 조건이 지정되는데 kube-scheduler 가 그 조건에 맞는 Node 를 찾아준다. 예를 들어 필요한 하드웨어 요구사항, affinity, anti-affinity, 특정 데이터가 있는가 등이 해당된다.
-* kube-controller-manager
+* **kube-controller-manager**
   * kubernetes 는 controller 들이 Pod 들을 관리한다. kube-controller-manager 는 controller 들을 실행한다.
-* cloud-controller-manager
+* **cloud-controller-manager**
   * 또 다른 cloud 와 연동할 때 사용한다. 
   * Node Controller, Route Controller, Service Controller, Volume Controller 등이 관련되어 있다.
 
 ### Worker Node
 
-* kubelet
+* **kubelet**
   * 모든 Worker Node 에서 실행되는 agent 이다. Pod 의 Container 가 실행되는 것을 관리한다. PodSpecs 라는 설정을 받아서 그 조건에 맞게 Container 를 실행하고 Container 가 정상적으로 실행되고 있는지 상태 체크를 한다.
-* kube-proxy 
+* **kube-proxy**
   * kubernetes 는 cluster 안의 virtual network 를 설정하고 관리한다. kube-proxy 는 virtual network 가 동작할 수 있도록하는 process 이다. host 의 network 규칙을 관리하거나 connection forwarding 을 한다.
-* container runtime
+* **container runtime**
   * container 를 실행한다. 가장 많이 알려진 container runtime 은 docker 이다. container 에 관한 표준을 제정하는 [OCI(Open Container Initiative)](https://www.opencontainers.org/) 의 runtime-spec 을 구현하는 container runtime 이라면 kubernetes 에서 사용할 수 있다.
-* cAdvisor (container advisor)
+* **cAdvisor** (container advisor)
   * 리소스 사용, 성능 통계를 제공
 
 ### Addons
@@ -423,33 +412,6 @@ AWS EKS cluster 가 만들어지고 나면 다음과 같이 kubectl 을 통해 A
 
 * open browser copied url
 
-## Google GCP
-
-WIP...
-
-## Microsoft AZURE
-
-WIP...
-
-## Install on Win64
-
-* Install docker, enable kubernetes. That's all.
-* If you meet the issue like following, set env `%KUBECONFIG%` as `c:\Users\iamslash\.kube\config`
-
-```bash
-> kubectl config get-contexts
-CURRENT   NAME      CLUSTER   AUTHINFO   NAMESPACE
-> kubectl version
-...
-Unable to connect to the server: dial tcp [::1]:8080: connectex: No connection could be made because the target machine actively refused it.
-```
-
-## Install on macOS
-
-* [도커(Docker), 쿠버네티스(Kubernetes) 통합 도커 데스크톱을 스테이블 채널에 릴리즈 @ 44bits](https://www.44bits.io/ko/post/news--release-docker-desktop-with-kubernetes-to-stable-channel)
-
-* Install docker, enable kubernetes. That's all.
-
 # AWS EKS Basic
 
 * [EKS workshop beginner](https://eksworkshop.com/beginner/)
@@ -460,16 +422,14 @@ Unable to connect to the server: dial tcp [::1]:8080: connectex: No connection c
 
 ## Useful Commands
 
-* [workshop-k8s-basic/guide/guide-03/task-01.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-01.md)
-  * [[토크ON세미나] 쿠버네티스 살펴보기 6강 - Kubernetes(쿠버네티스) 실습 1 | T아카데미](https://www.youtube.com/watch?v=G0-VoHbunks&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=6)
-* [kubectl 치트 시트](https://kubernetes.io/ko/docs/reference/kubectl/cheatsheet/)
-
-----
+> * [workshop-k8s-basic/guide/guide-03/task-01.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-01.md)
+>   * [[토크ON세미나] 쿠버네티스 살펴보기 6강 - Kubernetes(쿠버네티스) 실습 1 | T아카데미](https://www.youtube.com/watch?v=G0-VoHbunks&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=6)
+> * [kubectl 치트 시트](https://kubernetes.io/ko/docs/reference/kubectl/cheatsheet/)
 
 > config
 
 ```bash
-# show current cluster
+# Show current cluster
 $ kubectl config view
 $ kubectl config get-contexts
 $ kubectl config use-context iamslash
@@ -562,15 +522,15 @@ $ kubectl top pod <pod-name> --containers
 > get
 
 ```bash
-# show recent pod, replicaset, deployment, service not all
+# Show recent pod, replicaset, deployment, service not all
 $ kubectl get all
 
-# show nodes
+# Show nodes
 $ kubectl get no
 $ kubectl get node
 $ kubectl get nodes
 
-# change result format
+# Change result format
 $ kubectl get nodes -o wide
 $ kubectl get nodes -o yaml
 $ kubectl get nodes -o json
@@ -579,7 +539,7 @@ $ kubectl get nodes -o json |
 $ kubectl get nodes -o json |
       jq ".items[] | {name:.metadata.name} + .status.capacity"
 
-# show pods with the namespace
+# Show pods with the namespace
 $ k get pods --all-namespace
 $ k get pods --namespace kube-system
 ```
