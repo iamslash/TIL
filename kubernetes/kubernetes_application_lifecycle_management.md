@@ -40,7 +40,7 @@ $ docker run --entrypoint sleep unbuntu-sleeper 10
 $ kubectl create -f pod-definition.yml
 ```
 
-* `pod-definition.yml`
+> `pod-definition.yml`
 
 ```yml
 apiVersion: v1
@@ -62,7 +62,7 @@ $ docker run -e APP_COLOR=blue simple-webapp-color
 $ kubectl create -f pod-definition.yml
 ```
 
-* `pod-definition.yml`
+> `pod-definition.yml`
 
 ```yml
 apiVersion: v1
@@ -80,7 +80,7 @@ spec:
         value: blue
 ```
 
-* `env value types`
+> `env value types`
 
 ```yml
 env:
@@ -113,14 +113,14 @@ $ kubel create configmap
     <config-name> --from-file=app_config.properties
 ```
 
-* `app_config.properties`
+> `app_config.properties`
 
 ```conf
 APP_COLOR: blue
 APP_MODE: prod
 ```
 
-* `pod-definition.yml`
+> `pod-definition.yml`
 
 ```yml
 apiVersion: v1
@@ -146,7 +146,7 @@ $ kubectl get configmaps
 $ kubectl describe configmaps
 ```
 
-* `config-map.yml`
+> `config-map.yml`
 
 ```yml
 apiVersion: v1

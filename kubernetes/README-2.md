@@ -1,11 +1,11 @@
 - [Materials](#materials)
 - [Basic](#basic)
-  - [Launch Ingress](#launch-ingress)
+  - [Ingress](#ingress)
     - [Simple Ingress](#simple-ingress)
     - [Ingress with Annotation](#ingress-with-annotation)
     - [Ingress with SSL/TLS](#ingress-with-ssltls)
     - [Ingress with many Ingress Controllers](#ingress-with-many-ingress-controllers)
-  - [Launch Persistent Volume, Persistent Claim](#launch-persistent-volume-persistent-claim)
+  - [Persistent Volume, Persistent Claim](#persistent-volume-persistent-claim)
     - [Local Volume : hostPath, emptyDir](#local-volume--hostpath-emptydir)
     - [Network Volume](#network-volume)
     - [Volume management with PV, PVC](#volume-management-with-pv-pvc)
@@ -20,7 +20,7 @@
     - [User, Group](#user-group)
     - [User authentication with X509](#user-authentication-with-x509)
   - [Resource Limit of Pods](#resource-limit-of-pods)
-  - [Major Kubernetes Objects](#major-kubernetes-objects)
+    - [Major Kubernetes Objects](#major-kubernetes-objects)
     - [Limit](#limit)
     - [Request](#request)
     - [CPU Limit](#cpu-limit)
@@ -37,7 +37,7 @@
     - [configuring Scheduler](#configuring-scheduler)
   - [Kubernetes Application Status, Deployment](#kubernetes-application-status-deployment)
     - [Rolling update with Deployment](#rolling-update-with-deployment)
-    - [BlueGreen update](#bluegreen-update)
+    - [BlueGreen Deployment](#bluegreen-deployment)
     - [LifeCyle](#lifecyle)
     - [LivenessProbe, ReadinessProbe](#livenessprobe-readinessprobe)
     - [Terminating status](#terminating-status)
@@ -67,7 +67,7 @@
 
 # Basic
 
-## Launch Ingress
+## Ingress
 
 * [workshop-k8s-basic/guide/guide-03/bonus.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-05/bonus.md)
   * [[토크ON세미나] 쿠버네티스 살펴보기 7강 - Kubernetes(쿠버네티스) 실습 2 | T아카데미](https://www.youtube.com/watch?v=v6TUgqfV3Fo&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=7)
@@ -79,7 +79,7 @@ You need Ingress Controller to use Ingress such as Nginx Web Server Ingress Cont
 
 ### Simple Ingress 
 
-* `ingress-example.yaml`
+> `ingress-example.yaml`
   * Service with ClusterIp type???
 
 ```yml
@@ -106,7 +106,7 @@ $ kubectl appy -f ingress-example.yaml
 $ kubectl get ingress
 ```
 
-* Install ingress controller
+> Install ingress controller
 
 ```bash
 $ kubectl appy -f \
@@ -115,8 +115,8 @@ $ kubectl appy -f \
 $ kubectl get pods,deployment -n ingress-nginx  
 ```
 
-* `ingress-service-lb.yaml` 
-  * Service object with LoadBalancer type
+> `ingress-service-lb.yaml` 
+>  * Service object with LoadBalancer type
 
 ```yml
 kind: Service
@@ -177,8 +177,8 @@ spec:
 
 There are useful annotations such as `kubernetes.io/ingress.class`, `nginx.ingress.kubernetes.io/rewrite-target`.
 
-* `ingress-example.yaml`
-  * `metadata.annotations.kubernetes.io/ingress.class` means nginx Ingress Controller.
+> `ingress-example.yaml`
+>  * `metadata.annotations.kubernetes.io/ingress.class` means nginx Ingress Controller.
 
 ```yml
 apiVersion: networking.k8s.io/v1beta1
@@ -199,10 +199,10 @@ spec:
           servicePort: 80
 ```
 
-* `ingress-rewrite-target.yaml`
-  * `/echo-hostname/color/red` -> `/color/red`
-  * `/echo-hostname/color` -> `/color`
-  * `/echo-hostname` -> `/`
+> `ingress-rewrite-target.yaml`
+>  * `/echo-hostname/color/red` -> `/color/red`
+>  * `/echo-hostname/color` -> `/color`
+>  * `/echo-hostname` -> `/`
 
 ```yaml
 apiVersion: networking.k8s.io/v1beta1
@@ -240,7 +240,7 @@ tls.crt tls.key
 $ kubectl create secret tls tls-secret --key tls.key --cert tls.crt  
 ```
 
-* `ingress-tls.yaml`
+> `ingress-tls.yaml`
 
 ```yml
 apiVersion: networking.k8s.io/v1beta1
@@ -283,7 +283,7 @@ $ vim mandatory.yaml
 $ kubectl apply -f mandatory.yaml            
 ```
 
-* `ingress-custom-class.yaml`
+> `ingress-custom-class.yaml`
 
 ```yml
 apiVersion: networking.k8s.io/v1beta1
@@ -309,21 +309,21 @@ $ kubectl delete -f ./
 $ kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/mast/deploy/static/mandatory.yaml
 ```
 
-## Launch Persistent Volume, Persistent Claim
+## Persistent Volume, Persistent Claim
 
-PV (Persistent Volume) 은 POD 의 mount 대상이되는 physical volume 을 의미한다. PVC (Persistent Volume Claim) 은 POD 와 PV 를 연결해주는 역할을 한다. PVC 에 기록된 spec 에 맞는 PV 가 없다면 POD 는 physical volume 을 mount 할 수 없다.
+**PV (Persistent Volume)** 은 **POD** 의 mount 대상이되는 physical volume 을 의미한다. **PVC (Persistent Volume Claim)** 은 **POD** 와 **PV** 를 연결해주는 역할을 한다. **PVC** 에 기록된 spec 에 맞는 **PV** 가 없다면 **POD** 는 physical volume 을 mount 할 수 없다.
 
 Kubernetes supports NFS, AWS EBS, Ceph, GlusterFS as Network Persistent Volumes.
 
-Storage Class 는 physical volume 의 dynamic provision 을 위해 필요하다. POD 와 함께 생성된 PVC 에 맞는 PV 가 없다면 Storage Class 에 미리 설정된 spec 대로 AWS EBS 를 하나 만들고 POD 는 그 physical volume 을 mount 할 수 있다.
+**Storage Class** 는 physical volume 의 dynamic provision 을 위해 필요하다. **POD** 와 함께 생성된 PVC 에 맞는 PV 가 없다면 **Storage Class** 에 미리 설정된 spec 대로 AWS EBS 를 하나 만들고 POD 는 그 physical volume 을 mount 할 수 있다.
 
-POD 가 worker-node 의 path 에 mount 하고 싶다면 `hostPath` 를 사용한다. 이것은 pod 가 delete 되더라도 보전된다. 그러나 pod 가 delete 됬을 때 보존이 필요 없다면 `emptyDir` 을 이용하여 임시디렉토리를 생성한다. 또한 모든 container 들이 공유할 수 있다.
+**POD** 가 worker-node 의 path 에 mount 하고 싶다면 `hostPath` 를 사용한다. 이것은 **POD** 가 delete 되더라도 보전된다. 그러나 pod 가 delete 됬을 때 보존이 필요 없다면 `emptyDir` 을 이용하여 임시디렉토리를 생성한다. 또한 모든 container 들이 공유할 수 있다.
 
 ### Local Volume : hostPath, emptyDir
 
-* `hostpath-pod.yaml`
-  * worker node's `/tmp` mount to pod's `/etc/data`.
-  * This is useful for specific pod to run on specific worker-node like CAdvisor.
+> `hostpath-pod.yaml`
+>  * worker node's `/tmp` mount to pod's `/etc/data`.
+>  * This is useful for specific pod to run on specific worker-node like CAdvisor.
 
 ```yml
 apiVersion: v1
@@ -351,7 +351,7 @@ $ kubectl exec -it hostpath-pod touch /etc/data/mydata/
 $ ls /tmp/mydata
 ```
 
-* `emptydir-pod.yaml`
+> `emptydir-pod.yaml`
 
 ```yaml
 apiVersion: v1
@@ -378,7 +378,7 @@ spec:
       emptyDir: {}                             # 포드 내에서 파일을 공유하는 emptyDir
 ```
 
-* Launch
+> Launch
 
 ```bash
 $ kubectl apply -f emptydir-pod.yaml
@@ -391,7 +391,7 @@ $ kubectl run -it --rm debug --image=alicek106/ubuntu:curl --restart=Never -- cu
 
 ### Network Volume
 
-* `nfs-deployment.yaml`
+> `nfs-deployment.yaml`
 
 ```yml
 apiVersion: apps/v1
@@ -421,7 +421,7 @@ spec:
           privileged: true
 ```
 
-* `nfs-service.yaml`
+> `nfs-service.yaml`
 
 ```yml
 apiVersion: v1
@@ -440,14 +440,14 @@ spec:
     role: nfs-server
 ```
 
-* Launch
+> Launch
 
 ```bash
 $ kubectl apply -f nfs-deployment.yaml
 $ kubectl apply -f nfs-service.yaml
 ```
 
-* `nfs-pod.yaml`
+> `nfs-pod.yaml`
 
 ```yml
 apiVersion: v1
@@ -469,7 +469,7 @@ spec:
       server: {NFS_SERVICE_IP}
 ```
 
-* Launch
+> Launch
 
 ```bash
 $ export NFS_CLUSTER_IP=$(kubectl get svc/nfs-service -o jsonpath='{.spec.clusterIP}')
@@ -481,14 +481,14 @@ $ kubectl exec -it nfs-pod sh
 
 ### Volume management with PV, PVC
 
-* Check legacy pv, pvc
+> Check legacy pv, pvc
 
 ```bash
 $ kubectl get persistentvolume,persistentvolumeclaim
 $ kubectl get pv,pvc
 ```
 
-* Create AWs EBS volume
+> Create AWS EBS volume
 
 ```bash
 $ export BOLUME_ID=$(aws ec2 create-volume --size 5 \
@@ -500,7 +500,7 @@ $ export BOLUME_ID=$(aws ec2 create-volume --size 5 \
   | jq '.VolumeId' -r)
 ```
 
-* `ebs-pv.yaml`
+> `ebs-pv.yaml`
 
 ```yml
 apiVersion: v1
@@ -517,14 +517,14 @@ spec:
     volumeID: <VOLUME_ID>
 ```
 
-* Launch
+> Launch
 
 ```bash
 $ cat ebs-pv.yaml | sed "s/<VOLUME_ID>/$VOLUME_ID/G" | kubectl apply -f -
 $ kubectl get pv
 ```
 
-* `ebs-pod-pvc.yaml`
+> `ebs-pod-pvc.yaml`
 
 ```yml
 apiVersion: v1
@@ -557,7 +557,7 @@ spec:
       claimName: my-ebs-pvc    # 3. my-ebs-pvc라는 이름의 pvc를 사용합니다.
 ```
 
-* Launch
+> Launch
 
 ```bash
 $ kubectl apply -f ebs-pod-pvc.yaml
@@ -566,7 +566,7 @@ $ kubectl get pods
 $ kubectl exec ebs-mount-container -- df -h | grep /mnt
 ```
 
-* ebs-pv-storageclass.yaml
+> ebs-pv-storageclass.yaml
 
 ```yml
 apiVersion: v1
@@ -585,7 +585,7 @@ spec:
     # volumeID: vol-0390f3a601e58ce9b
 ```
 
-* ebs-pod-pvc-custom-sc.yaml
+> ebs-pod-pvc-custom-sc.yaml
 
 ```yml
 apiVersion: v1
@@ -618,7 +618,7 @@ spec:
       claimName: my-ebs-pvc-custom-sc
 ```
 
-* ebs-pv-label.yaml
+> ebs-pv-label.yaml
 
 ```yaml
 apiVersion: v1
@@ -638,7 +638,7 @@ spec:
     volumeID: <여러분의 VOLUME ID를 입력합니다> 
 ```
 
-* ebs-pod-pvc-label-selector.yaml
+> ebs-pod-pvc-label-selector.yaml
 
 ```yaml
 apiVersion: v1
@@ -673,7 +673,7 @@ spec:
       claimName: my-ebs-pvc-selector
 ```
 
-* `ebs-pv-delete.yaml`
+> `ebs-pv-delete.yaml`
 
 ```yml
 apiVersion: v1
@@ -701,7 +701,7 @@ $ kubectl delete -f ebs-pod-pvc.yaml
 $ kubectl get pv,pvc
 ```
 
-* `storageclass-slow.yaml`
+> `storageclass-slow.yaml`
 
 ```yml
 kind: StorageClass
@@ -715,7 +715,7 @@ parameters:
   zones: ap-northeast-2a  # 여러분의 쿠버네티스 클러스터가 위치한 가용 영역을 입력합니다.
 ```
 
-* `storageclass-fast.yaml`
+> `storageclass-fast.yaml`
 
 ```yml
 kind: StorageClass
@@ -735,7 +735,7 @@ $ kubectl apply -f storageclass-fast.yaml
 $ kubectl get sc
 ```
 
-* `pvc-fast-sc.yaml`
+> `pvc-fast-sc.yaml`
 
 ```yml
 apiVersion: v1
@@ -757,7 +757,7 @@ $ kubectl get pv,pvc
 $ kubectl get sc fast -o yaml
 ```
 
-* `storageclass-default.yaml`
+> `storageclass-default.yaml`
 
 ```yml
 kind: StorageClass
@@ -786,7 +786,7 @@ $ kubectl get storageclass
 
 Kubernetes 는 ABAC(Attribute-based access control) 혹은 RBAC(Role-based access control) 를 이용하여 Authorization 을 수행할 수 있다. Master-Node 의 API 호출을 권한관리할 수 있다.
 
-ABAC(Attribute-based access control) 는 사용자(user), 그룹(group),요청 경로(request path), 요청 동사(request verb), namespace, 자원 등으로 권한을 설정한다. 설정은 파일로 관리한다. 설정이 변경될 때 마다 Master-Node 를 rebooting 해야 한다. 매우 불편하여 사용되지 않는다.
+ABAC(Attribute-based access control) 는 사용자(user), 그룹(group), 요청 경로(request path), 요청 동사(request verb), namespace, 자원 등으로 권한을 설정한다. 설정은 파일로 관리한다. 설정이 변경될 때 마다 Master-Node 를 rebooting 해야 한다. 매우 불편하여 사용되지 않는다.
 
 RBAC(Role-based access control) 는 사용자(user), 역할(role) 을 각각 선언하고 두가지를 묶어서(binding) 사용자(user) 에게 권한을 부여해 준다. Master-Node 에 접근할 필요 없이 kubectl 혹은 API 로 권한 설정이 가능하다. 매우 유용하다.
 
@@ -856,8 +856,8 @@ rules:
   verbs: ["get", "list"]
 ```
 
-* `clusterrole-aggregation.yml`
-  * 다른 ClusterRole 들로 부터 label 이 `kubernetes.io/bootstrapping: rbac-defaults` 와 match 되는 것들의 rule 들을 가져온다.
+> `clusterrole-aggregation.yml`
+>  * 다른 ClusterRole 들로 부터 label 이 `kubernetes.io/bootstrapping: rbac-defaults` 와 match 되는 것들의 rule 들을 가져온다.
 
 ```yml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -883,7 +883,7 @@ rules:
 
 Role 과 User 를 묶어주는 역할을 한다. 특정 namespace 만 적용된다.
 
-* 다음과 같이 `serviceaccount-myuser.yaml` 를 선언하여 유저를 생성한다.
+> 다음과 같이 `serviceaccount-myuser.yaml` 를 선언하여 유저를 생성한다.
 
 ```yml
 apiVersion: v1
@@ -893,7 +893,7 @@ metadata:
   namespace: default
 ```
 
-* `read-rolebinding.yml`
+> `read-rolebinding.yml`
 
 ```yml
 apiVersion: rbac.authorization.k8s.io/v1
@@ -915,7 +915,7 @@ roleRef:
 
 Role 과 User 를 묶어주는 역할을 한다. 특정 namespace 가 아닌 전체 cluster 에 적용된다.
 
-* `read-clusterrolebinding.yml`
+> `read-clusterrolebinding.yml`
 
 ```yml
 kind: ClusterRoleBinding
@@ -938,7 +938,7 @@ roleRef:
 `imagePullSecrets` 를 이용하면 Service Account 가 private docker registry 에서
 docker pull 할 때 Secret 을 사용할 수 있게 할 수 있다.
 
-* `sa-reg-auth.yaml`
+> `sa-reg-auth.yaml`
 
 ```yml
 apiVersion: v1
@@ -961,7 +961,7 @@ kubeconfig file 은 일반 적으로 `~/.kube/config` 에 저장된다. `cluster
 가 각각 정의되어 있다. `context` 는 `clusters, users` 를 짝지어 grouping 한
 것이다. `context` 를 바꿔가면서 다향한 `clusters, users` 설정을 이용할 수 있다.
 
-* `~/.kube/config`
+> `~/.kube/config`
 
 ```yml
 apiVersion: v1
@@ -1317,11 +1317,13 @@ $ kubectl get svc
 
 ## Resource Limit of Pods
 
-## Major Kubernetes Objects
+### Major Kubernetes Objects
 
-Reqeust, Limit, 
-Guaranteed, BestEffort, Bursatable, 
-ResourceQuota, LimitRange
+* Reqeust
+* Limit
+* Guaranteed, BestEffort, Bursatable 
+* ResourceQuota
+* LimitRange
 
 ### Limit
 
@@ -1339,7 +1341,7 @@ $ docker run -it --name unlimited_blade ubuntu:16.04
 
 다음은 Limit 의 예이다.
 
-* `resource-limit-pod.yaml`
+> `resource-limit-pod.yaml`
 
 ```yml
 apiVersion: v1
@@ -1393,7 +1395,7 @@ Request 는 적어도 이 만큼의 자원은 컨테이너에게 보장돼야 �
 
 다음은 Request 의 예이다.
 
-* `resource-limit-with-request-pod.yaml`
+> `resource-limit-with-request-pod.yaml`
 
 ```yml
 apiVersion: v1
@@ -1437,20 +1439,20 @@ $ cat /proc/1234/oom_score_adj
 ```
 
 kubernetes 는 pod 의 limit, request 값에 따라 pod 의 qos class 를 정한다. QoS
-class 는 BestEffort, Burstable, Guaranteed 와 같이 총 3 가지가 있다.
+class 는 **BestEffort, Burstable, Guaranteed** 와 같이 총 3 가지가 있다.
 
 Kubernetes 는 memory 가 부족하면 우선순위가 가장 낮은 POD 를 특정 node 에서
 퇴거시킨다. 만약 memory 가 갑작스럽게 높아지면 OOM Killer 가 oom_score_adj 가
 가장 낮은 process 를 강제로 종료한다. 그리고 pod 의 restart policy 에 의해 다시
 시작된다.
 
-pod 의 우선순위는 BestEffort, Burstable, Guaranteed 순으로 높아진다.
+pod 의 우선순위는 **BestEffort, Burstable, Guaranteed** 순으로 높아진다.
 
 **Guaranteed**
 
 Limit 과 Request 가 같은 POD 는 QosClass 가 Guaranteed 이다.
 
-* `resource-lmiit-pod.yaml`
+> `resource-lmiit-pod.yaml`
 
 ```yml
 apiVersion: v1
@@ -1469,7 +1471,7 @@ spec:
         cpu: "1000m"
 ```
 
-* `resource-limit-pod-guaranteed.yaml`
+> `resource-limit-pod-guaranteed.yaml`
 
 ```yml
 apiVersion: v1
@@ -1540,7 +1542,7 @@ spec:
 
 ### ResourceQuota
 
-ResourceQuota 는 namespace 의 resource (cpu, memory, pvc size,
+**ResourceQuota** 는 **Namespace** 의 resource (cpu, memory, pvc size,
 ephemeral-storage) 를 제한한다.
 
 ```bash
@@ -1548,7 +1550,7 @@ $ kubectl get quota
 $ kubectl get resourcequota
 ```
 
-* `resource-quota.yaml`
+> `resource-quota.yaml`
 
 ```yml
 apiVersion: v1
@@ -1582,7 +1584,7 @@ $ kubectl run memory-over-pod --image=nginx --generator=run-pod/v1 --request='cp
 
 다음은 ResourceQuota 를 이용하여 cpu, memory, pods count, services count 를 제한하는 예이다.
 
-* `quota-limit-pod-svc.yaml`
+> `quota-limit-pod-svc.yaml`
 
 ```yml
 apiVersion: v1
@@ -1602,7 +1604,7 @@ spec:
 
 다음은 ResourceQuota 를 이용하여 BestEffort Qos class 의 Pod 개수를 제한하는 예이다.
 
-* `quota-limit-besteffort.yaml`
+> `quota-limit-besteffort.yaml`
 
 ```yml
 apiVersion: v1
@@ -1619,7 +1621,7 @@ spec:
 
 ### LimitRange
 
-LimitRange 는 네임스페이스에 할당되는 resource 의 범위 또는 기본값등을 설정한다.
+**LimitRange** 는 **Namespace** 에 할당되는 resource 의 범위 또는 기본값등을 설정한다.
 
 다음은 LimitRange 의 예이다.
 
@@ -1655,7 +1657,7 @@ $ kubectl apply -f limitrange-example.yaml
 
 다음은 value 대신 ratio 를 사용한 에이다.
 
-* `limitrange-ratio.yaml`
+> `limitrange-ratio.yaml`
 
 ```yml
 apiVersion: v1
@@ -1673,7 +1675,7 @@ spec:
 다음은 pod 의 resource 범위를 제한하는 예이다. pod 의 resource usage
 는 모든 container resource usage 의 합과 같다.
 
-* `limitrange-example-pod.yaml`
+> `limitrange-example-pod.yaml`
 
 ```yml
 apiVersion: v1
@@ -1697,15 +1699,15 @@ spec:
 
 ResourceQuota, LimitRange Admission Controller 는 다음과 같이 동작한다.
 
-* user 가 `kubectl apply -f pod.yaml` 를 수행한다.
+* user 가 `$ kubectl apply -f pod.yaml` 를 수행한다.
 * x509 certificate, Service Account 등을 통해 Authentication 을 거친다.
 * Role, Clusterrole 등을 통해 Authorization 을 거친다.
 * ResourceQuota Admission Controller 는 POD 의 자원 할당 요청이 적절한지 Validating 한다. 만약 POD 로 인해서 해당 ResourceQuota 로 설정된 namespace resource 제한을 넘어선 다면 API 요청은 거절된다.
 * LimitRange Admission Controller 는 cpu, memory 할당의 기본값을 추가한다. 즉, 원래 API 요청을 변형한다.
 
-Custom Admission Controller 를 만들 수도 있다. [kubernetes extension @ TIL](kubernetes_extension.md). 예를 들어 nginx pod 을 생성할 때 실수로 적혀진 port number 를 Custom Admission Controller 에서 수정할 수도 있다.
+Custom Admission Controller 를 만들 수도 있다. [kubernetes extension @ TIL](kubernetes_extension.md) 참고. 예를 들어 nginx pod 을 생성할 때 실수로 적혀진 port number 를 Custom Admission Controller 에서 수정할 수도 있다.
 
-Istio 는 Admission Controller 를 통해서 pod 에 proxy side car container 를 Injection 한다.
+[Istio](/istio/README.md) 는 Admission Controller 를 통해서 pod 에 proxy side car container 를 Injection 한다.
 
 ## Kubernetes Scheduling
 
@@ -2144,7 +2146,7 @@ $ wget https://storage.googleapis.com/kubernetes-release/release/v1.12.0/bin/lin
 `--record` 를 이용하면 이전에 사용했던 replicaSet 이 deployment history 에
 기록된다.
 
-* `deployment-v1.yaml`
+> `deployment-v1.yaml`
 
 ```yml  
 apiVersion: apps/v1
@@ -2169,7 +2171,7 @@ spec:
         - containerPort: 80
 ```
 
-* `deployment-v2.yaml`
+> `deployment-v2.yaml`
 
 ```yml
 apiVersion: apps/v1
@@ -2206,7 +2208,7 @@ $ kubectl rollout history deployment nginx-deployment
 기본적으로 replicaSet 의 revision 은 10 개까지 저장된다. 그러나 revisionHistoryLimit
 을 설정하여 변경할 수 있다.
 
-* `deployment-history-limit.yaml`
+> `deployment-history-limit.yaml`
 
 ```yaml
 apiVersion: apps/v1
@@ -2235,7 +2237,7 @@ spec:
 Recreate Strategy 를 이용하면 기존 pod 를 삭제하고 새로운 pod 를 생성하기 때문에
 서비스 중단이 발생할 수 있다.
 
-* `deployment-recreate-v1.yaml`
+> `deployment-recreate-v1.yaml`
 
 ```yaml
 apiVersion: apps/v1
@@ -2262,7 +2264,7 @@ spec:
         - containerPort: 80
 ```
 
-* `deployment-recreate-v2.yaml`
+> `deployment-recreate-v2.yaml`
 
 ```yaml
 apiVersion: apps/v1
@@ -2298,7 +2300,7 @@ $ kubectl get pods
 
 RollingUpdate strategy 를 사용하면 서비스 중단 없이 pod 를 교체할 수 있다.
 
-* `deployment-rolling-update.yaml`
+> `deployment-rolling-update.yaml`
 
 ```yaml
 apiVersion: apps/v1
@@ -2337,7 +2339,7 @@ spec:
   들어 maxSurge 가 25% 이라면 legacy pod, new pod 의 개수는 replicas 값 대비
   최대 125% 까지 늘어날 수 있다.
 
-### BlueGreen update 
+### BlueGreen Deployment 
 
 다음과 같은 방법으로 BlueGreen 배포를 사용한다.
 
@@ -2367,7 +2369,7 @@ spec:
 
 pod 는 init container, post start 가 제대로 실행이 완료되어야 Running 상태로 전환할 수 있다.
 
-* `init-container-example.yaml`
+> `init-container-example.yaml`
 
 ```yaml
 apiVersion: v1
@@ -2391,7 +2393,7 @@ $ kubectl apply -f init-container-example.yaml
 pod 는 init container 를 이용하여 resource 의 dependency 를 설정할 수 있다.
 다음은 myservice 가 만들어질 때까지 pod 이 기다리는 예이다.
 
-* `init-container-uppercase.yaml`
+> `init-container-uppercase.yaml`
 
 ```yaml
 apiVersion: v1
@@ -2411,7 +2413,7 @@ spec:
 postStart 는 container 가 시작하고 수행하는 hook 이다. 반면에 preStop 은 container 가
 종료되기 전에 수행하는 hook 이다. postStart 는 HTTP, Exec 가 가능하다.
 
-* `poststart-hook.yaml`
+> `poststart-hook.yaml`
 
 ```yaml
 apiVersion: v1
@@ -2443,7 +2445,7 @@ ReadinessProbe 는 container 가 준비되어있는지 검사하는 것이다. �
 
 다음은 livenessProbe 의 예이다.
 
-* `livenessprobe-pod.yaml`
+> `livenessprobe-pod.yaml`
 
 ```yaml
 apiVersion: v1
@@ -2470,7 +2472,7 @@ $ kubectl get events --sort-by=.metadata.creationTimestamp
 
 다음은 readinessProbe 의 예이다.
 
-* `readinessprobe-pod-svc.yaml`
+> `readinessprobe-pod-svc.yaml`
 
 ```yaml
 apiVersion: v1
@@ -2516,7 +2518,7 @@ $ kubectl get endpoints
 readinessProbe 를 이용하기 어려운 경우는 minReadySeconds 를 이용하여 일정시간
 지난 다음 pod 을 delete 하거나 create 한다.
 
-* `minreadyseconds-v1.yaml`
+> `minreadyseconds-v1.yaml`
 
 ```yaml
 # Reference : https://github.com/kubernetes/kubernetes/issues/51671
@@ -2597,6 +2599,8 @@ spec:
 * [Process of Pod Termination](#process-of-pod-termination)
 
 ## Custom Resource Definition
+
+[Custom Resource Definition](kubernetes_extension.md#custom-resource)
 
 ## Kubernetes Objects using Pod Objects
 

@@ -10,6 +10,8 @@
 
 HorizontalPodAutoscaler 에서 Custom Metric Server 와 통신하여 Custom Metric 에 대한 Scaling 을 수행할 수 있다.
 
+[keda](https://keda.sh/) 사용하면 될 것 같다. Prometheus 로 부터 특정 meric 을 얻어 autoscaling 할 수 있다.
+
 # Materials
 
 > * [167. [Kubernetes] 쿠버네티스 모니터링 : Prometheus Adapter와 Opencensus를 이용한 Custom Metrics 수집 및 HPA 적용 @ naverblog](https://blog.naver.com/PostView.nhn?blogId=alice_k106&logNo=221521978267&categoryNo=20&parentCategoryNo=0&viewDate=&currentPage=1&postListTopCurrentPage=1&from=postView)

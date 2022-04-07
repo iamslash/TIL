@@ -16,7 +16,7 @@
 - [AWS EKS Basic](#aws-eks-basic)
 - [Basic](#basic)
   - [Useful Commands](#useful-commands)
-  - [Launch Single Pod](#launch-single-pod)
+  - [Pod](#pod)
   - [Launch Pods with livnessprobe, readinessprobe](#launch-pods-with-livnessprobe-readinessprobe)
     - [key commands](#key-commands)
     - [Launch Simple Pod](#launch-simple-pod)
@@ -25,14 +25,14 @@
     - [Launch Simple Pod with HealthCheck](#launch-simple-pod-with-healthcheck)
     - [Launch Simple Pod with Multi Containers](#launch-simple-pod-with-multi-containers)
     - [Delete All resources](#delete-all-resources)
-  - [Launch Replicaset](#launch-replicaset)
+  - [Replicaset](#replicaset)
     - [Launch Simple Replicaset](#launch-simple-replicaset)
-    - [Launch ReplicaSet Scale out](#launch-replicaset-scale-out)
-  - [Launch Deployment](#launch-deployment)
+    - [Launch ReplicaSet With Scaling Out](#launch-replicaset-with-scaling-out)
+  - [Deployment](#deployment)
     - [Launch Simple Deployment](#launch-simple-deployment)
     - [Launch Deployment with RollingUpdate](#launch-deployment-with-rollingupdate)
   - [How to generate Deployment yaml files](#how-to-generate-deployment-yaml-files)
-  - [Launch Service](#launch-service)
+  - [Service](#service)
     - [Launch Simple Service with ClusterIp type](#launch-simple-service-with-clusterip-type)
     - [Launch Service with NodePort type](#launch-service-with-nodeport-type)
     - [Launch Service with LoadBalaner](#launch-service-with-loadbalaner)
@@ -41,9 +41,9 @@
   - [Kubernetes Managing Commands](#kubernetes-managing-commands)
     - [Imperative Commands](#imperative-commands)
     - [Declarative Commands](#declarative-commands)
-  - [Launch Namespace](#launch-namespace)
-  - [Launch Configmap](#launch-configmap)
-  - [Launch Secret](#launch-secret)
+  - [Namespace](#namespace)
+  - [Configmap](#configmap)
+  - [Secret](#secret)
 - [Continue...](#continue)
 
 ----
@@ -559,7 +559,7 @@ kubectl apply -f <FILENAME>
 kubectl delete -f <FILENAME>
 ```
 
-## Launch Single Pod
+## Pod
 
 ```bash
 # Create my-nginx-* pod and my-nginx deployment
@@ -647,7 +647,7 @@ $ kubectl apply -f whoami-pod.yml
 
 컨테이너가 동작 중인지 여부를 나타낸다. 만약 liveness probe 에 실패하면 kubelet 은 컨테이너를 정지하고, 해당 컨테이너는 재시작 정책의 대상이 된다. 만약 컨테이너가 liveness probe 를 제공하지 않는 경우, 기본 상태는 Success 이다.
 
-* whoami-pod-lp.yml
+> whoami-pod-lp.yml
 
 ```yml
 apiVersion: v1
@@ -678,9 +678,9 @@ $ kubectl apply -f whoami-pod-lp.yml
 
 ### Launch Simple Pod with ReadinessProbe
 
-컨테이너가 요청을 처리할 준비가 되었는지 여부를 나타낸다. 만약 readiness probe 가 실패하면, Endpoint Controller 는 Pod 에 연관된 모든 Services 의 엔드포인트에서 Pods 의 IP 를 제거한다. rediness probe 의 초기값은 Failure 이다. 만약 컨테이너가 Rediness Probe 를 지원하지 않는다면, 기본 상태는 Success 이다.
+컨테이너가 요청을 처리할 준비가 되었는지 여부를 나타낸다. 만약 readiness probe 가 실패하면, Endpoint Controller 는 Pod 에 연관된 모든 Services 의 엔드포인트에서 Pods 의 IP 를 제거한다. Readiness Probe 의 초기값은 Failure 이다. 만약 컨테이너가 Rediness Probe 를 지원하지 않는다면, 기본 상태는 Success 이다.
 
-* whoami-pod-rp.yml
+> whoami-pod-rp.yml
 
 ```yml
 apiVersion: v1
@@ -793,7 +793,7 @@ $ kubectl describe pod/whoami-redis
 $ kubectl delete -f ./
 ```
 
-## Launch Replicaset
+## Replicaset
 
 * [workshop-k8s-basic/guide/guide-03/task-03.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-03.md)
   * [[토크ON세미나] 쿠버네티스 살펴보기 6강 - Kubernetes(쿠버네티스) 실습 1 | T아카데미](https://www.youtube.com/watch?v=G0-VoHbunks&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=6)
@@ -806,9 +806,9 @@ $ kubectl delete -f ./
 
 We use Deployment more than Replicaset. ReplicaSet is used in Deployment.
 
-* whoami-rs.yml
-  * ReplicaSet is still beta.
-  * If there is no pod such as selector, Launch pod with template. 
+> * whoami-rs.yml
+>   * ReplicaSet is still beta.
+>   * If there is no pod such as selector, Launch pod with template. 
 
 ```yml
 apiVersion: apps/v1beta2
@@ -850,7 +850,7 @@ $ kubectl label pod/whoami-rs-<xxxx> service=whoami
 $ kubectl apply -f whoami-rs.yml
 ```
 
-### Launch ReplicaSet Scale out
+### Launch ReplicaSet With Scaling Out
 
 * whoami-rs-scaled.yml
 
@@ -889,21 +889,21 @@ $ kubectl scale --replicas=6 -f whoami-rs-scaled.yml
 $ kubectl scale --replicas=6 replicaset whoami-rs
 ```
 
-## Launch Deployment
+## Deployment
 
 * [workshop-k8s-basic/guide/guide-03/task-04.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-03/task-04.md)
   * [[토크ON세미나] 쿠버네티스 살펴보기 6강 - Kubernetes(쿠버네티스) 실습 1 | T아카데미](https://www.youtube.com/watch?v=G0-VoHbunks&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=6)
 
 ----
 
-Deployment is for deploying stateless applications. and StatefulSet is for deploying stateful applicaions.
+**Deployment** is for deploying stateless applications. and **StatefulSet** is for deploying stateful applicaions.
 `template` of Deployment will include `metadata, spec` of Pod.
 
 ### Launch Simple Deployment
 
-* whoami-deploy.yml
-  * It is almost same with ReplicaSet.
-  * Deployment manages versions of ReplicaSet.
+> * whoami-deploy.yml
+>   * It is almost same with ReplicaSet.
+>   * Deployment manages versions of ReplicaSet.
 
 ```yml
 apiVersion: apps/v1beta2
@@ -1030,7 +1030,7 @@ $ kubectl create deployment --image=nginx nginx --dry-run=true -o yaml > nginx-d
 # Save it to a file, make necessary changes to the file (for example, adding more replicas) and then create the deployment.
 ```
 
-## Launch Service
+## Service
 
 * [workshop-k8s-basic/guide/guide-03/task-05.md](https://github.com/subicura/workshop-k8s-basic/blob/master/guide/guide-05/task-05.md)
   * [[토크ON세미나] 쿠버네티스 살펴보기 7강 - Kubernetes(쿠버네티스) 실습 2 | T아카데미](https://www.youtube.com/watch?v=v6TUgqfV3Fo&list=PLinIyjMcdO2SRxI4VmoU6gwUZr1XGMCyB&index=7)
@@ -1040,19 +1040,19 @@ $ kubectl create deployment --image=nginx nginx --dry-run=true -o yaml > nginx-d
 
 There are 3 kinds of Service typs.
 
-* **ClusterIP** type is used for internal communication. We can access pods just inside of  workder-node.
+* **ClusterIP** type is used for internal communication. We can access pods just inside of workder-node.
 * **NodePort** type is used for external communication. We can access pods from outside of workder-node.
 * **LoadBalancer** type is used for external communication with provision of load balancer in Cloud such as AWS, GCP. LoadBalancer is similar with **NodePort** except provision of load blanacer.
 
 Service will make Endpoint object. You can find out Endpoints with `$ kubectl get endpoints` or `$ kubectl get ep`.
 
-But we use Ingress object more than Service object. Because Service object is lack of SSL, routing config.
+But we use Ingress object more than **Service** object. Because **Service** object is lack of SSL, routing config.
 
 ### Launch Simple Service with ClusterIp type
 
 ![](img/kubernetes_service_clusterip.png)
 
-* deployment-hostname.yaml
+> deployment-hostname.yaml
 
 ```yml
 apiVersion: apps/v1
@@ -1077,7 +1077,7 @@ spec:
         - containerPort: 80
 ```
 
-* hostname-svc-clusterip.yaml
+> hostname-svc-clusterip.yaml
 
 ```yml
 apiVersion: v1
@@ -1118,8 +1118,7 @@ $ kubectl run -it --rm debug --image=alicek106/ubuntu:curl --restart=Never -- ba
 
 ![](img/kubernetes_service_nodeport.png)
 
-
-* deployment-hostname.yaml
+> deployment-hostname.yaml
 
 ```yml
 apiVersion: apps/v1
@@ -1144,7 +1143,7 @@ spec:
         - containerPort: 80
 ```
 
-* hostname-svc-nodeport.yaml
+> hostname-svc-nodeport.yaml
 
 ```yml
 apiVersion: v1
@@ -1178,10 +1177,10 @@ $ curl 10.43.0.32:31587 --slient | grep hello
 
 ----
 
-* `whoami-svc-lb.yml`
-  * If you launch this on AWS, ELB will attached to service.
-  * NodePort is just a external port of Node But LoadBalancer is a external resource to load balancers.
-  * You need to use this just with AWS not on-premise.
+> * `whoami-svc-lb.yml`
+>   * If you launch this on AWS, ELB will attached to service.
+>   * NodePort is just a external port of Node But LoadBalancer is a external resource to load balancers.
+>   * You need to use this just with AWS not on-premise.
 
 ```yml
 apiVersion: apps/v1beta2
@@ -1361,12 +1360,11 @@ $ kubectl create service nodeport nginx --tcp=80:80 --node-port=30080 --dry-run=
 
 ### Declarative Commands
 
-When you use declarative commands, it uses etcd, kube-controller-manager.
+When you use declarative commands, it uses **etcd, kube-controller-manager**.
 Kubernetes will try to keep desired-state. We call this process as **reconcile**.
 
 ```
-kubectl apply -f ...  --->  kube-apiserver  ---> etcd  --->  kube-controller-manager  --->  Reconcile
-                                     
+kubectl apply -f ...  --->  kube-apiserver  ---> etcd  --->  kube-controller-manager  --->  Reconcile                                     
 ```
 
 ```bash
@@ -1376,13 +1374,13 @@ $ kubectl apply -f nginx.yaml
 $ kubectl apply -f nginx.yaml
 ```
 
-## Launch Namespace
+## Namespace
 
 Namespace 는 Kubernetes 의 resource 를 논리적으로 묶을 수 있는 단위이다. 가상 클러스터처럼 사용할 수 있다. 각 Namespace 의 resource 들은 논리적으로 구분이 되어있을 뿐이지 물리적으로 격리된 것은 아니다. 예를 들어 서로 다른 Namespace 에서 생성된 pods 가 같은 node 에 존재할 수 있다.
 
 Linux 의 Namespace 는 container 의 격리된 공간을 생성하기 위해 kernel 에서 지원하는 기능이다. 주로 network, mmount, process namespace 를 의미한다. Kubernetes 의 Namespace 와는 다르다.
 
-* commands
+> commands
 
 ```bash
 # Show namespaces objects
@@ -1408,7 +1406,7 @@ $ kubectl get pods --all-namespaces | grep blue
 $ kubectl -n dev svc
 ```
 
-* `production-namespace.yml`
+> `production-namespace.yml`
 
 ```yml
 apiVersion: v1
@@ -1417,7 +1415,7 @@ metadata:
   name: production
 ```
 
-* launch `production-namespace.yml`
+> launch `production-namespace.yml`
 
 ```bash
 $ kubectl apply -f production-namespace.yaml
@@ -1425,8 +1423,8 @@ $ kubectl create namespace production
 $ kubectl get ns | grep production
 ```
 
-* `hostname-deploy-svc-ns.yaml`
-  * Launch Deployment, Service in production namespace.
+> `hostname-deploy-svc-ns.yaml`
+> * Launch Deployment, Service in production namespace.
 
 ```yaml
 apiVersion: apps/v1
@@ -1466,7 +1464,7 @@ spec:
   type: ClusterIP
 ```
 
-* launch `hostname-deploy-svc-ns.yaml`
+> launch `hostname-deploy-svc-ns.yaml`
 
 ```bash
 $ kubectl apply -f hostname-deploy-svc-ns.yaml
@@ -1483,8 +1481,8 @@ $ kubectl run -i --tty --rm debug --image=alicek106/ubuntu:curl --restart=Never 
 $ kubectl delete namespace production
 ```
 
-* Namespaced resources, un-namespased resources
-  * Node, Namespace are un-namespaced resources.
+> Namespaced resources, un-namespased resources
+>  * Node, Namespace are un-namespaced resources.
 
 ```bash
 # Show namespaced resources
@@ -1493,11 +1491,11 @@ $ kubectl api-resources --namespaced=true
 $ kubectl api-resources --namespaced=false
 ```
 
-## Launch Configmap
+## Configmap
 
 configmap 은 설정값의 모음이다. key, value 가 많다면 volume 을 활용하여 configmap 을 사용하는 것이 좋다.
 
-* commands
+> commands
 
 ```bash
 # kubectl create configmap <config-name> <config-key=value>
@@ -1509,9 +1507,9 @@ $ kubectl get configmap
 $ kubectl get configmap log-level-configmap -o yaml
 ```
 
-* `all-evn-from-configmap.yaml`
-  * configmap 의 모든 key-value 들을 environment variables 으로 읽어온다.
-  * `envFrom`
+> `all-evn-from-configmap.yaml`
+>  * configmap 의 모든 key-value 들을 environment variables 으로 읽어온다.
+>  * `envFrom`
 
 ```yml
 apiVersion: v1
@@ -1535,9 +1533,9 @@ $ kubectl apply -f all-env-from-configmap.yaml
 $ kubectl exec container-env-example env
 ```
 
-* `selective-env-from-configmap.yaml`
-  * configmap 의 일부 key-value 들을 environment variables 으로 읽어온다.
-  * `valueFrom, configMapKeyRef`
+> `selective-env-from-configmap.yaml`
+>  * configmap 의 일부 key-value 들을 environment variables 으로 읽어온다.
+>  * `valueFrom, configMapKeyRef`
 
 ```yml
 apiVersion: v1
@@ -1569,8 +1567,8 @@ $ kubectl apply -f selective-env-from-configmap.yaml
 $ kubectl exec container-selective-env-example env | grep ENV
 ```
 
-* `volume-mount-configmap.yaml` 
-  * `spec.volumes` 는 Volume resource ???
+> `volume-mount-configmap.yaml` 
+>  * `spec.volumes` 는 Volume resource ???
 
 ```yaml
 apiVersion: v1
@@ -1597,7 +1595,7 @@ $ kubectl apply -f volume-mount-configmap.yaml
 $ kubectl exec configmap-volume-pod ls /etc/config
 ```
 
-* `selective-volume-configmap.yaml`
+> `selective-volume-configmap.yaml`
 
 ```yml
 apiVersion: v1
@@ -1627,7 +1625,7 @@ $ kubectl exec selective-cm-volume-pod ls /etc/config
 $ kubectl exec selective-cm-volume-pod cat /etc/config/k8s_fullname
 ```
 
-* Create configmap from file
+> Create configmap from file
 
 ```bash
 # kubectl create configmap <configmap-name> --from-file <file-name> ...
@@ -1645,7 +1643,7 @@ $ kubectl create configmap from-envfile --from-env-file multiple-keyvalue.env
 $ kubectl get cm from-envfile -o yaml
 ```
 
-* Define configmap with yaml file
+> Define configmap with yaml file
 
 ```bash
 $ kubectl create configmap -my-configmap \
@@ -1653,11 +1651,11 @@ $ kubectl create configmap -my-configmap \
 $ kubectl apply -f my-configmap.yaml   
 ```
 
-## Launch Secret
+## Secret
 
 This is very similar with ConfigMap except data are credntials.
 
-* commands
+> commands
 
 ```bash
 $ kubectl create secret generic \
@@ -1676,7 +1674,7 @@ $ kubectl create secret generic \
   --dry-run -o yaml
 ```
 
-* `env-from-secret.yaml`
+> `env-from-secret.yaml`
 
 ```yml
 apiVersion: v1
@@ -1693,7 +1691,7 @@ spec:
           name: my-password
 ```
 
-* `selective-env-from-secret.yaml`
+> `selective-env-from-secret.yaml`
 
 ```yml
 apiVersion: v1
@@ -1713,7 +1711,7 @@ spec:
           key: pw2
 ```
 
-* `volume-mount-secret.yaml`
+> `volume-mount-secret.yaml`
 
 ```yml
 apiVersion: v1
@@ -1734,7 +1732,7 @@ spec:
       secretName: our-password                  # 키-값 쌍을 가져올 컨피그맵 이름
 ```
 
-* `selective-mount-secret.yaml`
+> `selective-mount-secret.yaml`
 
 ```yaml
 apiVersion: v1
@@ -1758,14 +1756,14 @@ spec:
         path: password1           # 최종 파일은 /etc/config/password1이 됨
 ```
 
-* launch
+> launch
 
 ```bash
 $ kubectl apply -f selective-mount-secret.yaml
 $ kubectl exec selective-volume-pod cat /etc/secret/password1
 ```
 
-* Using docker-registry type secrets
+> Using docker-registry type secrets
 
 ```bash
 $ kubectl get secrets
@@ -1788,7 +1786,7 @@ $ kubectl create secret docker-registry registry-auth-registry \
 $ kubectl get secrets
 ```
 
-* `deployment-from-private-repo.yaml`
+> `deployment-from-private-repo.yaml`
 
 ```yml
 apiVersion: apps/v1
@@ -1813,7 +1811,7 @@ spec:
       - name: registry-auth-registry
 ```
 
-* Using TLS type secrets
+> Using TLS type secrets
 
 ```bash
 # Create key pairs
@@ -1828,7 +1826,7 @@ $ kubectl get secrets my-tls-secret
 $ kubectl get secrets my-tls-secret -o yaml
 ```
 
-* Distributing Secret
+> Distributing Secret
 
 If you want to distribute Secrets with YAML file, you need to save Secret data in YAML file. But it is very unconvinent if Secret data are big. Use kustomize.
 
@@ -1836,8 +1834,8 @@ If you want to distribute Secrets with YAML file, you need to save Secret data i
 $ kubectl create secret tls my-tls-secret --cert cert.crt --key cert.key --dry-run -o yaml
 ```
 
-* `kustomization.yaml` with secretGenerator
-  * kubsomize generate Secret yaml file.
+> `kustomization.yaml` with secretGenerator
+>  * kustomize generate Secret yaml file.
 
 ```yml
 secretGenerator:                # 시크릿을 생성하기 위한 지시문
@@ -1856,8 +1854,8 @@ $ kubectl apply -k ./
 $ kubectl delete -k ./
 ```
 
-* `kustomization.yaml` with configMapGenerator
-  * kubsomize generate ConfigMap yaml file.
+> `kustomization.yaml` with configMapGenerator
+>  * kubsomize generate ConfigMap yaml file.
 
 ```yml
 configMapGenerator:                # 시크릿을 생성하기 위한 지시문
@@ -1867,7 +1865,7 @@ configMapGenerator:                # 시크릿을 생성하기 위한 지시문
   - tls.key=cert.key            # tls.key 라는 키에 cert.key 파일의 내용을 저장
 ```
 
-* Updating application cofigs with ConfigMap, Scret
+> Updating application cofigs with ConfigMap, Scret
 
 ```bash
 $ cat my-configmap.yaml
