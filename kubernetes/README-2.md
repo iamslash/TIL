@@ -54,6 +54,7 @@
   - [API server](#api-server)
   - [Monitoring](#monitoring)
   - [Pause Container](#pause-container)
+  - [Pod Packet Sniffing](#pod-packet-sniffing)
 - [Continue...](#continue)
 
 ------
@@ -2711,6 +2712,36 @@ Pod 은 **Pause Container** 를 항상 실행한다. User 가 Manifest File 에 
 
 Pod 에 A, B container 들이 있다고 해보자. A container 가 80 port 를 listen 하고
 있다고 하자. B container 는 80 port 를 이용할 수 없다. A, B container 둘다 **Pause Container** 의 Network Interface eth0 에 연결되어 있기 때문이다. 
+
+## Pod Packet Sniffing
+
+> [ksniff](https://github.com/eldadru/ksniff)
+> [sniff - kubectl 환경 패킷 캡쳐 유틸리디](https://jerryljh.tistory.com/58)
+
+[ksniff](https://github.com/eldadru/ksniff) 를 이용하여 local laptop 에서 Pod 의 packet 을 sniffing 할 수 있다. tcpdump 을 container 로 upload 해서 실행한다.
+
+```bash
+# Install krew
+$ brew install krew
+# Need to set PATH
+$ vim ~/.zshrc
+export PATH="${PATH}:${HOME}/.krew/bin"
+# Install sniff plugin
+$ kubectl krew install sniff
+
+$ kubectl get pods -A -o wide
+NAMESPACE     NAME                               READY   STATUS    RESTARTS   AGE   IP             NODE       NOMINATED NODE   READINESS GATES
+kube-system   coredns-558bd4d5db-hgsw8           1/1     Running   0          26h   172.17.0.2     minikube   <none>           <none>
+kube-system   etcd-minikube                      1/1     Running   0          26h   192.168.49.2   minikube   <none>           <none>
+kube-system   kube-apiserver-minikube            1/1     Running   0          26h   192.168.49.2   minikube   <none>           <none>
+kube-system   kube-controller-manager-minikube   1/1     Running   0          26h   192.168.49.2   minikube   <none>           <none>
+kube-system   kube-proxy-wb6hn                   1/1     Running   0          26h   192.168.49.2   minikube   <none>           <none>
+kube-system   kube-scheduler-minikube            1/1     Running   0          26h   192.168.49.2   minikube   <none>           <none>
+kube-system   storage-provisioner                1/1     Running   0          26h   192.168.49.2   minikube   <none>           <none>
+
+# 이거 맞음?
+$ kubectl sniff -n kube-system coredns-558bd4d5db-hgsw8 -f "port 53" -o - | /Applications/Wireshark.app/Contents/MacOS/tshark -r -
+```
 
 # Continue...
 
