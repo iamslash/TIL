@@ -120,10 +120,7 @@ www.google.com.         266     IN      A       172.217.175.100
 
 # Prerequisite - CoreDNS
 
-* [Kubernetes DNS-Based Service Discovery](https://github.com/kubernetes/dns/blob/master/docs/specification.md)
-* [kubernetes plugin @ coredns](https://coredns.io/plugins/kubernetes/)
-
-----
+> [CoreDNS @ TIL](kubernetes_addon.md#core-dns)
 
 Core DNS is a open source DNS Server. It can use records using `/etc/hosts`. It listens on port **53**, which is the default port for a DNS server.
 
@@ -159,9 +156,5 @@ $ vim /etc/hosts
 # Service Networking
 
 # DNS in kubernetes
-
-# CoreDNS in Kubernetes
-
-* [[K8S] CoreDNS의 동작 흐름 @ tistory](https://ba-reum.tistory.com/39?fbclid=IwAR3r2W_jOocKKDPWwlRFhcmeIwC1hoy1IlEqPFW6IwQA_WQENKIkdyxH9dc)
 
 # Ingress

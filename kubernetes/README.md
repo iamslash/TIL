@@ -237,11 +237,11 @@ Kubernetes 의 Pod 을 graceful shutdown 하기 위한 방법이 중요하다???
 ### Worker Node
 
 * **kubelet**
-  * 모든 Worker Node 에서 실행되는 agent 이다. Pod 의 Container 가 실행되는 것을 관리한다. PodSpecs 라는 설정을 받아서 그 조건에 맞게 Container 를 실행하고 Container 가 정상적으로 실행되고 있는지 상태 체크를 한다.
+  * 모든 Worker Node 에서 실행되는 agent 이다. Pod 의 Container 가 실행되는 것을 관리한다. `PodSpecs` 라는 설정을 받아서 그 조건에 맞게 Container 를 실행하고 Container 가 정상적으로 실행되고 있는지 상태 체크를 한다.
 * **kube-proxy**
   * kubernetes 는 cluster 안의 virtual network 를 설정하고 관리한다. kube-proxy 는 virtual network 가 동작할 수 있도록하는 process 이다. host 의 network 규칙을 관리하거나 connection forwarding 을 한다.
 * **container runtime**
-  * container 를 실행한다. 가장 많이 알려진 container runtime 은 docker 이다. container 에 관한 표준을 제정하는 [OCI(Open Container Initiative)](https://www.opencontainers.org/) 의 runtime-spec 을 구현하는 container runtime 이라면 kubernetes 에서 사용할 수 있다.
+  * container 를 실행한다. 가장 많이 알려진 container runtime 은 [docker](/docker/README.md) 이다. container 에 관한 표준을 제정하는 [OCI(Open Container Initiative)](https://www.opencontainers.org/) 의 runtime-spec 을 구현하는 container runtime 이라면 kubernetes 에서 사용할 수 있다.
 * **cAdvisor** (container advisor)
   * 리소스 사용, 성능 통계를 제공
 
@@ -249,13 +249,7 @@ Kubernetes 의 Pod 을 graceful shutdown 하기 위한 방법이 중요하다???
 
 > * [kubernetes addon @ TIL](kubernetes_addon.md)
 
-cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. 주로 Deployment Controller, Replication Controller 에 의해 관리된다. Addon 이 사용하는 namespace 는 kub-system 이다.
-
-* Networking Addon
-* DNS Addon
-* Dashboard Addon
-* Container resource monitoring
-* cluster logging
+cluster 안에서 필요한 기능들을 위해 실행되는 Pod 들이다. Addon 이 사용하는 namespace 는 kub-system 이다.
 
 # Install
 
