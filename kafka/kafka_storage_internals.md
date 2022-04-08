@@ -10,6 +10,8 @@ Kafka Storage Internals 를 정리한다.
 
 # Materials
 
+* [Kafka Internals](https://developer.confluent.io/learn-kafka/architecture/get-started/)
+  * Videos
 * [How Kafka’s Storage Internals Work](https://thehoard.blog/how-kafkas-storage-internals-work-3a29b02e026)
 * [A Practical Introduction to Kafka Storage Internals @ medium](https://medium.com/@durgaswaroop/a-practical-introduction-to-kafka-storage-internals-d5b544f6925f)
 
