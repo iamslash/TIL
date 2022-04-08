@@ -1940,6 +1940,14 @@ $ sudo vim /etc/security/limits.d/*.conf
 $ ulimit -a
 ```
 
+max process id 를 바꾸어 줘야할 수도 있다. [Maximum PID in Linux @ stackoverflow](https://stackoverflow.com/questions/6294133/maximum-pid-in-linux)
+
+```bash
+# We need to increase **pid_max** to launch many processes or 
+# you will encounter `fork: retry: No child processes` error !!!
+$ sudo echo 4194304 > /proc/sys/kernel/pid_max
+```
+
 # cgroup
 
 * [cgroups](https://hwwwi.tistory.com/12)
