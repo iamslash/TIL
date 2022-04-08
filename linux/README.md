@@ -1910,7 +1910,7 @@ $ echo "net.ipv4.tcp_tw_reuse = 1" >> /etc/sysctl.conf
 ```bash
 # Read parameters 
 $ sudo sysctl -n fs.file-max
-$ sudo sysctl -n fs.nr_open-max
+$ sudo sysctl -n fs.nr_open
 
 # Read
 $ ulimit -a
