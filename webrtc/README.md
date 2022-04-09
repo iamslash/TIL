@@ -71,7 +71,7 @@ WebRTC 는 다음과 같이 여러기술들이 모여서 만들어 졌다.
 | Signaling | [SDP](/sdp/README.md) |
 | Connection | STUN, TURN, ICE |
 | Security | DTLS, SRTP |
-| Network | RTP, SRTP, RTCP |
+| Network | [RTP](/rtp/README.md), SRTP, RTCP |
 
 * DTLS (Datagram Transport Layer Security)
 * SRTP (Secure Real-time Transport Protocol)
