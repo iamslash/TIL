@@ -5,10 +5,16 @@
   - [WebRTc Overview](#webrtc-overview)
   - [WebRTC Example](#webrtc-example)
   - [WebRTC Sequence](#webrtc-sequence)
-  - [WebRTC Architecture](#webrtc-architecture)
+  - [Signaling](#signaling)
+  - [Connecting](#connecting)
+  - [Securing](#securing)
+  - [Media Communication](#media-communication)
+  - [Data Communication](#data-communication)
+  - [WebRTC Topologies](#webrtc-topologies)
     - [Mesh](#mesh)
     - [SFU (Selective Forwarding Unit)](#sfu-selective-forwarding-unit)
     - [MCU (Multi Control Unit)](#mcu-multi-control-unit)
+  - [Debugging](#debugging)
 
 ---
 
@@ -216,9 +222,41 @@ peerConnection.addEventListener('track', async (event) => {
 
 code 를 중심으로 흐름을 이해하자.
 
-## WebRTC Architecture
+## Signaling
+
+WIP...
+
+## Connecting
+
+WIP...
+
+## Securing
+
+Securing 을 위해 DTLS (Datagram Transport Layer Security), SRTP (Secure Real-time Transport Protocol) 를 사용한다.
+
+DTLS 로 대칭 key 를 교환하고 SRTP 로 암호화된 RTP 를 전송한다.
+
+## Media Communication
+
+> [Media Communication](https://webrtcforthecurious.com/docs/06-media-communication/)
+
+Media Communication 을 위해 [RTP (Real-time Transport Protocol)](/rtp/README.md), [RTCP (RTP Control Protocol)](/rtcp/README.md) 를 사용한다.
+
+## Data Communication
+
+> [Data Communication](https://webrtcforthecurious.com/docs/07-data-communication/)
+
+Data Channel 을 위해 SCTP (Stream Control Transmission Protocol), DCEP (Data Channel Establishment Protocol) 을 사용한다.
+
+SCTP 는 패킷의 유실을 막고 순서를 보장해준다. [rfc4960](https://datatracker.ietf.org/doc/html/rfc4960) 에 정의되어 있다.
+
+
+DCEP 는 SCTP 가 지원하지 않는 기능을 위해 사용한다. Data Channel 에 Label 을 부여할 수 있다. [rfc8832](https://datatracker.ietf.org/doc/html/rfc8832) 에 정의되어 있다.
+
+## WebRTC Topologies
 
 * [WebRTC-Mesh, MCU, SFU architecture](https://www.programmersought.com/article/40593543499/)
+* [WebRTC Topologies #](https://webrtcforthecurious.com/docs/08-applied-webrtc/#webrtc-topologies)
 
 -----
 
@@ -241,3 +279,23 @@ downlink pressure
 ![](img/webrtc_mesh.png)
 
 CPU pressure for encoding, decoding, mixing
+
+## Debugging
+
+> [Debugging](https://webrtcforthecurious.com/docs/09-debugging/)
+
+WebRTC 의 Debugging 은 어렵다. 영역별로 구분해서 debugging 해야 한다. 다음과 같이 Category 를 나눈다.
+
+* Signaling Failure
+* Network Failure
+  * STUN server 로 request 해보기
+* Security Failure
+* Media Failure
+* Data Failure
+
+다음과 같은 tool 을 이용한다.
+
+* [nc]([/linux/README.md#commands](https://en.wikipedia.org/wiki/Netcat))
+* [tcpdump](https://en.wikipedia.org/wiki/Tcpdump)
+* [tshark](/tshark/README.md)
+* [webrtc-internals | chrome](chrome://webrtc-internals/)

@@ -1,3 +1,7 @@
+# Abstract
+
+RTP 는 1996 년 1월에 [RFC 1889](https://datatracker.ietf.org/doc/html/rfc1889) 로 정의되었다. [Ron Frederick](https://github.com/ronf) 는 제작자중 한명이다. [nv | github](https://github.com/ronf/nv) 는 [Ron Frederick](https://github.com/ronf) 이 제작한 최초의 video conference tool 이다. 
+
 # Materials
 
 > [28장. RTP의 이해 ](https://brunch.co.kr/@linecard/154)
