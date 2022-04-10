@@ -15,6 +15,8 @@
     - [SFU (Selective Forwarding Unit)](#sfu-selective-forwarding-unit)
     - [MCU (Multi Control Unit)](#mcu-multi-control-unit)
   - [Debugging](#debugging)
+- [Advanced](#advanced)
+  - [WebRTC Implementations](#webrtc-implementations)
 
 ---
 
@@ -224,11 +226,11 @@ code 를 중심으로 흐름을 이해하자.
 
 ## Signaling
 
-WIP...
+WebRTC Connection 을 위해 Peer 들끼리 Meta Data 를 주고 받는다. 예를 들어 [SDP (Session Description Protocol)](/sdp/README.md), ICE Candidate 을 주고 받는다.
 
 ## Connecting
 
-WIP...
+WebRTC Connection 을 위해 [ICE (Interactive Connectivity Establishment)](https://datatracker.ietf.org/doc/html/rfc8445), [STUN (Session Traversal Utilities for NAT)](https://datatracker.ietf.org/doc/html/rfc8489), [TURN (Traversal Using Relays around NAT)](https://datatracker.ietf.org/doc/html/rfc8656) 을 사용한다.
 
 ## Securing
 
@@ -299,3 +301,30 @@ WebRTC 의 Debugging 은 어렵다. 영역별로 구분해서 debugging 해야 �
 * [tcpdump](https://en.wikipedia.org/wiki/Tcpdump)
 * [tshark](/tshark/README.md)
 * [webrtc-internals | chrome](chrome://webrtc-internals/)
+
+# Advanced
+
+## WebRTC Implementations
+
+> * [pion | github](https://github.com/pion)
+
+go 로 만든 WebRTC Implementation 이다.
+
+> * [ion | github](https://github.com/pion/ion)
+>   * [ion doc](https://pionion.github.io/docs/intro)
+
+go 로 만든 WebRTC, Signaling Implementation 이다. pion 을 사용한다. 
+
+> * [ion-sfu | github](https://github.com/pion/ion-sfu)
+>   * [ion-sfu examples | github](https://github.com/pion/ion-sfu/tree/master/examples)
+
+go 로 만든 WebRTC SFU Server 이다. pion, ion 을 사용한다. gRPC, json-rpc 을 지원한다.
+
+> * [ion-sdk-go](https://github.com/pion/ion-sdk-go)
+>   * [ion-sdk-go/example](https://github.com/pion/ion-sdk-go/tree/master/example)
+
+go 로 만든 [ion-sfu](https://github.com/pion/ion-sfu) Client SDK 이다.
+
+> * [LiveKit](https://livekit.io/)
+
+go 로 만든 WebRTC Infrastructure 이다. pion, ion 을 사용한다.
