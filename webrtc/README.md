@@ -326,6 +326,7 @@ go 로 만든 WebRTC SFU Server 이다. pion, ion 을 사용한다. gRPC, json-r
 go 로 만든 [ion-sfu](https://github.com/pion/ion-sfu) Client SDK 이다.
 
 > * [LiveKit](https://livekit.io/)
+>   * [LiveKit doc](https://docs.livekit.io/)
 
 go 로 만든 WebRTC Infrastructure 이다. pion, ion 을 사용한다.
 
