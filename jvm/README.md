@@ -31,7 +31,7 @@ Java SE 7 Edition](https://docs.oracle.com/javase/specs/jvms/se7/html/index.html
 
 # Overview
 
-![](jvm.png)
+![](img/jvm.png)
 
 # Class Loader
 
@@ -236,5 +236,28 @@ Graal VM 은 Java 를 Java 로 구현한 JVM 이다. `([HotSpot JVM] — C2)`, J
 # JIT
 
 * [JIT Compiler Design](http://www.ittc.ku.edu/~kulkarni/teaching/EECS768/19-Spring/Idhaya_Elango_JIT.pdf)
+  * [jvm-mecchanics](https://github.com/dougqh/jvm-mechanics/tree/d3483e5f54ea3a5ebf3e84caa1b55437f34ee635)
+    * Presentation & Code Samples Showing Compilation & Deoptimization Behavior of HotSpot
+  * [Compilation in the HotSpot VM](https://ethz.ch/content/dam/ethz/special-interest/infk/inst-cs/lst-dam/documents/Education/Classes/Fall2015/210_Compiler_Design/Slides/hotspot.pdf)
+  * [Understanding JIT compiler (just-in-time compiler)](https://aboullaite.me/understanding-jit-compiler-just-in-time-compiler/)
 
-자주 사용하는 code 를 미리 compile 한다. 이것을 AOT (Ahead Of Time) Compile 이라고 한다.
+---
+
+HotSpot JVM 에서 도입되었다. 자주 사용하는 code 를 미리 compile 한다. JIT C1, JIT c2 로 나눠진다.
+
+다음은 HotSpot JVM 의 Architecture 이다. JIT 를 주목하자.
+
+![](img/jvm_hotspot_architecture.png)
+
+JIT C1 은 다음과 같은 특징을 갖는다.
+
+* Fast compilation
+* Small footprint
+* Code could be better
+* 주로 Client 에서 사용
+
+JIT C2 는 다음과 같은 특징을 갖는다.
+
+* High resource demands
+* High performance code
+* 주로 server 에서 사용
