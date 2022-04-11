@@ -4,8 +4,8 @@
 - [Class Loader](#class-loader)
 - [Example](#example)
 - [java class architecture](#java-class-architecture)
-- [Graal VM](#graal-vm)
 - [JIT](#jit)
+- [Graal VM](#graal-vm)
 
 ----
 
@@ -221,23 +221,12 @@ SourceFile: "Main.java"
 
 ![](https://github.com/corkami/pics/blob/master/binary/CLASS.png?raw=true)
 
-# Graal VM
-
-* [Reboot JAVA = GraalVM](https://techblog.cjenm.com/reboot-java-graalvm-ec8404ed6ed1)
-
-JVM 을 최적화하려는 노력은 계속되었다. HostSpot JVM 은 JIT 을 이용하여 Optimization 한 기술이다. 
-
-PyPy 는 Python 을 Python 으로 구현한 것이다. JIT 를 이용했다.
-
-JVM 은 cpp 로 구현되었다. 최적화를 위해 assembly 를 사용할 단계까지 왔다. 
-
-Graal VM 은 Java 를 Java 로 구현한 JVM 이다. `([HotSpot JVM] — C2)`, JVMCI, Graal JIT 으로 구성된다. 성능이 개선되었다.
-
 # JIT
 
 * [JIT Compiler Design](http://www.ittc.ku.edu/~kulkarni/teaching/EECS768/19-Spring/Idhaya_Elango_JIT.pdf)
   * [jvm-mecchanics](https://github.com/dougqh/jvm-mechanics/tree/d3483e5f54ea3a5ebf3e84caa1b55437f34ee635)
     * Presentation & Code Samples Showing Compilation & Deoptimization Behavior of HotSpot
+    * 예제 코드와 함께 JIT 원리를 설명한다.
   * [Compilation in the HotSpot VM](https://ethz.ch/content/dam/ethz/special-interest/infk/inst-cs/lst-dam/documents/Education/Classes/Fall2015/210_Compiler_Design/Slides/hotspot.pdf)
   * [Understanding JIT compiler (just-in-time compiler)](https://aboullaite.me/understanding-jit-compiler-just-in-time-compiler/)
 
@@ -261,3 +250,23 @@ JIT C2 는 다음과 같은 특징을 갖는다.
 * High resource demands
 * High performance code
 * 주로 server 에서 사용
+
+[jitwatch](https://github.com/AdoptOpenJDK/jitwatch/) 를 이용하면 JIT log 을 JavaFX 로 볼 수 있다. 다음과 같이 실행한다.
+
+```bash
+$ git clone https://github.com/AdoptOpenJDK/jitwatch.git
+$ cd jitwatch
+$ ./gradlew clean build run
+```
+
+# Graal VM
+
+* [Reboot JAVA = GraalVM](https://techblog.cjenm.com/reboot-java-graalvm-ec8404ed6ed1)
+
+JVM 을 최적화하려는 노력은 계속되었다. HostSpot JVM 은 JIT 을 이용하여 Optimization 한 기술이다. 
+
+PyPy 는 Python 을 Python 으로 구현한 것이다. JIT 를 이용했다.
+
+JVM 은 cpp 로 구현되었다. 최적화를 위해 assembly 를 사용할 단계까지 왔다. 
+
+Graal VM 은 Java 를 Java 로 구현한 JVM 이다. `([HotSpot JVM] — C2)`, JVMCI, Graal JIT 으로 구성된다. 성능이 개선되었다.
