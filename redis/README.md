@@ -39,6 +39,7 @@
   - [Redis Clients](#redis-clients)
   - [Online resharding and shard rebalancing for Redis (cluster mode enabled)](#online-resharding-and-shard-rebalancing-for-redis-cluster-mode-enabled)
   - [Redis Enterprise](#redis-enterprise)
+  - [Optimistic Locking](#optimistic-locking)
 
 ----
 
@@ -488,3 +489,7 @@ Redis Enterprise 는 유료이다. 다음과 같은 특징을 갖는다. 관심�
 * User Interface
   * Full-featured UI for setting-up, configuring, monitoring, alerting.
 * 24/7 Support
+
+## Optimistic Locking 
+
+* [Using Redis transactions in Golang](http://www.inanzzz.com/index.php/post/6lsi/using-redis-transactions-in-golang)
