@@ -1,7 +1,7 @@
 - [Abstract](#abstract)
 - [References](#references)
 - [Materials](#materials)
-- [Basic Usages](#basic-usages)
+- [Basic](#basic)
   - [Compile, Execution](#compile-execution)
   - [Reserved Words](#reserved-words)
   - [Useful Keywords](#useful-keywords)
@@ -60,7 +60,7 @@
     - [Functional Interfaces](#functional-interfaces-1)
     - [Method References](#method-references)
     - [Optional<T>](#optionalt)
-- [Advanced Usage](#advanced-usage)
+- [Advanced](#advanced)
   - [Instant, ZonedDateTime](#instant-zoneddatetime)
   - [arraycopy](#arraycopy)
   - [Integer.valueOf vs Integer.parseInt](#integervalueof-vs-integerparseint)
@@ -127,7 +127,7 @@ This is about JAVA.
   * [src](https://github.com/castello/javajungsuk3)
   * [blog](https://codechobo.tistory.com/1?category=645496)
   
-# Basic Usages
+# Basic
 
 ## Compile, Execution
 
@@ -2026,7 +2026,7 @@ String result = valueOpt.orElseThrow(CustomException::new).toUpperCase();
 
 ```
 
-# Advanced Usage
+# Advanced
 
 ## Instant, ZonedDateTime
 

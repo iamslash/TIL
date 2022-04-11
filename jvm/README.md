@@ -1,3 +1,14 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Overview](#overview)
+- [Class Loader](#class-loader)
+- [Example](#example)
+- [java class architecture](#java-class-architecture)
+- [Graal VM](#graal-vm)
+- [JIT](#jit)
+
+----
+
 # Abstract
 
 jvm 에 대해 적는다.
@@ -209,3 +220,21 @@ SourceFile: "Main.java"
 * [Java Executable Workthrough](https://github.com/corkami/pics/blob/master/binary/class101/class101.pdf)
 
 ![](https://github.com/corkami/pics/blob/master/binary/CLASS.png?raw=true)
+
+# Graal VM
+
+* [Reboot JAVA = GraalVM](https://techblog.cjenm.com/reboot-java-graalvm-ec8404ed6ed1)
+
+JVM 을 최적화하려는 노력은 계속되었다. HostSpot JVM 은 JIT 을 이용하여 Optimization 한 기술이다. 
+
+PyPy 는 Python 을 Python 으로 구현한 것이다. JIT 를 이용했다.
+
+JVM 은 cpp 로 구현되었다. 최적화를 위해 assembly 를 사용할 단계까지 왔다. 
+
+Graal VM 은 Java 를 Java 로 구현한 JVM 이다. `([HotSpot JVM] — C2)`, JVMCI, Graal JIT 으로 구성된다. 성능이 개선되었다.
+
+# JIT
+
+* [JIT Compiler Design](http://www.ittc.ku.edu/~kulkarni/teaching/EECS768/19-Spring/Idhaya_Elango_JIT.pdf)
+
+자주 사용하는 code 를 미리 compile 한다. 이것을 AOT (Ahead Of Time) Compile 이라고 한다.
