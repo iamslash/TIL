@@ -63,6 +63,7 @@
 - [company engineering blog](#company-engineering-blog)
 - [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
 - [Cloud Design Patterns](#cloud-design-patterns)
+- [Enterprise Integration Patterns](#enterprise-integration-patterns)
 - [DDD](#ddd)
 - [Architecture](#architecture)
 - [Cracking The Coding Interview Quiz](#cracking-the-coding-interview-quiz)
@@ -1048,6 +1049,10 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 ----
 
 MSA 의 pattern 들과 거의 유사하다.
+
+# Enterprise Integration Patterns
+
+* [Enterprise Integration Patterns | TIL](/eip/README.md)
 
 # DDD
 

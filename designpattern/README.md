@@ -58,6 +58,7 @@
 - [Java Design Patterns](#java-design-patterns)
 - [Microservice Patterns](#microservice-patterns)
 - [Cloud Design Patterns](#cloud-design-patterns)
+- [Enterprise Integration Patterns](#enterprise-integration-patterns)
 
 ----
 
@@ -261,13 +262,16 @@ public class A {
 
 ----
 
-* [msa @ TIL](/systemdesign/msa.md)
+* [msa | TIL](/systemdesign/msa.md)
 
 # Cloud Design Patterns
 
-* [클라우드 디자인 패턴 @ msdn](https://docs.microsoft.com/ko-kr/azure/architecture/patterns/)
+* [클라우드 디자인 패턴 | msdn](https://docs.microsoft.com/ko-kr/azure/architecture/patterns/)
 
 ----
 
-* [Cloud Deisgn Patterns @ TIL](/systemdesign/clouddesignpattern.md)
+* [Cloud Deisgn Patterns | TIL](/systemdesign/clouddesignpattern.md)
   
+# Enterprise Integration Patterns
+
+* [Enterprise Integration Patterns | TIL](/eip/README.md)
