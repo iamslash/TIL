@@ -310,11 +310,6 @@ WebRTC 의 Debugging 은 어렵다. 영역별로 구분해서 debugging 해야 �
 
 go 로 만든 WebRTC Implementation 이다.
 
-> * [ion | github](https://github.com/pion/ion)
->   * [ion doc](https://pionion.github.io/docs/intro)
-
-go 로 만든 WebRTC, Signaling Implementation 이다. pion 을 사용한다. 
-
 > * [ion-sfu | github](https://github.com/pion/ion-sfu)
 >   * [ion-sfu examples | github](https://github.com/pion/ion-sfu/tree/master/examples)
 
@@ -324,6 +319,12 @@ go 로 만든 WebRTC SFU Server 이다. pion, ion 을 사용한다. gRPC, json-r
 >   * [ion-sdk-go/example](https://github.com/pion/ion-sdk-go/tree/master/example)
 
 go 로 만든 [ion-sfu](https://github.com/pion/ion-sfu) Client SDK 이다.
+
+> * [ion | github](https://github.com/pion/ion)
+>   * [ion doc](https://pionion.github.io/docs/intro)
+
+Real-Distributed RTC System by pure Go and Flutter.
+It uses ion-sfu
 
 > * [LiveKit](https://livekit.io/)
 >   * [LiveKit doc](https://docs.livekit.io/)
