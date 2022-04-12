@@ -493,3 +493,4 @@ Redis Enterprise 는 유료이다. 다음과 같은 특징을 갖는다. 관심�
 ## Optimistic Locking 
 
 * [Using Redis transactions in Golang](http://www.inanzzz.com/index.php/post/6lsi/using-redis-transactions-in-golang)
+* [go-ex-redis | github](https://github.com/iamslash/go-ex/tree/main/go-ex-redis/transaction)
