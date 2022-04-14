@@ -3,6 +3,8 @@
   - [Unity Addressable Asset System](#unity-addressable-asset-system)
   - [Task](#task)
   - [UniTask](#unitask)
+  - [2D Character Setup](#2d-character-setup)
+  - [Pixel Perfect](#pixel-perfect)
 
 ---
 
@@ -27,3 +29,13 @@
 ## UniTask
 
 [UniTask](https://github.com/Cysharp/UniTask.git) Provides an efficient allocation free async/await integration for Unity.
+
+## 2D Character Setup
+
+[2D Character Setup](unity_2d_char_setup.md)
+
+## Pixel Perfect
+
+* [[개발일지] Frostory 픽셀 퍼펙트 세팅](https://gall.dcinside.com/mgallery/board/view/?id=game_dev&no=55170)
+
+Runtime 에 Image 가 정상적으로 보이지않는 현상을 Pixel Perfect 설정으로 해결해야 한다.
