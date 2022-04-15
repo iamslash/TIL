@@ -14,6 +14,7 @@ DDD (Domain Driven Design) 은 Domain 을 중심으로 System 을 Design 하는 
 ## Event Storming
 
 * [마이크로서비스 개발을 위한 Domain Driven Design @ youtube](https://www.youtube.com/watch?v=QUMERCN3rZs&feature=youtu.be)
+* [KCD 2020 [Track 2] 도메인 지식 탐구를 위한 이벤트 스토밍 Event Storming | youtube](https://www.youtube.com/watch?v=hUcpv5fdCIk)
 
 -----
 

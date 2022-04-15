@@ -236,6 +236,7 @@
 * Event 를 중심으로 아키텍팅한다.
 * [What is an Event-Driven Architecture? @ amazon](https://aws.amazon.com/es/event-driven-architecture/)
 * [How to Use Amazon EventBridge to Build Decoupled, Event-Driven Architectures @ amazon](https://pages.awscloud.com/AWS-Learning-Path-How-to-Use-Amazon-EventBridge-to-Build-Decoupled-Event-Driven-Architectures_2020_LP_0001-SRV.html?&trk=ps_a134p000003yBd8AAE&trkCampaign=FY20_2Q_eventbridge_learning_path&sc_channel=ps&sc_campaign=FY20_2Q_EDAPage_eventbridge_learning_path&sc_outcome=PaaS_Digital_Marketing&sc_publisher=Google)
+* [회원시스템 이벤트기반 아키텍처 구축하기 | woowahan](https://techblog.woowahan.com/7835/)
 
 ### Event Sourcing
 
