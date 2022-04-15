@@ -231,9 +231,12 @@
 
 ### Event Driven Architecture
 
-* Send and notify state changes of your objects to other
-  applications using an Event-driven Architecture.
-* Event 를 중심으로 아키텍팅한다.
+* Event 를 중심으로 서비스하는 아키텍처이다. [msa](/systemdesign/msa.md) 의 경우
+  Application 별로 Event 가 정의되야 한다. Producer 는 Event 를
+  [kafka](/kafka/README.md) 에 publish 한다. Consumer 는 관심있는 Event 를
+  처리한다. Producer 와 Consumer 가 Lossely Coupled 된다. Consumer 에 장애가
+  발생해도 Producer 는 Service 에 지장이 없다. Consumer 가 복구되면 밀린 Event
+  를 처리하기 때문에 Resilient 하다.
 * [What is an Event-Driven Architecture? @ amazon](https://aws.amazon.com/es/event-driven-architecture/)
 * [How to Use Amazon EventBridge to Build Decoupled, Event-Driven Architectures @ amazon](https://pages.awscloud.com/AWS-Learning-Path-How-to-Use-Amazon-EventBridge-to-Build-Decoupled-Event-Driven-Architectures_2020_LP_0001-SRV.html?&trk=ps_a134p000003yBd8AAE&trkCampaign=FY20_2Q_eventbridge_learning_path&sc_channel=ps&sc_campaign=FY20_2Q_EDAPage_eventbridge_learning_path&sc_outcome=PaaS_Digital_Marketing&sc_publisher=Google)
 * [회원시스템 이벤트기반 아키텍처 구축하기 | woowahan](https://techblog.woowahan.com/7835/)

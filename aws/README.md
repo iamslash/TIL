@@ -54,7 +54,7 @@
   - [SNS (Simple Notification Service)](#sns-simple-notification-service)
   - [SES (Simple Email Service)](#ses-simple-email-service)
   - [SQS (Simple Queue Service)](#sqs-simple-queue-service)
-  - [ElastiCachi](#elasticachi)
+  - [ElastiCache](#elasticache)
   - [Lambda](#lambda)
   - [API Gateway](#api-gateway)
   - [DynamoDB](#dynamodb)
@@ -599,7 +599,7 @@ not available in Seoul
 
 Message Queue ???
 
-## ElastiCachi
+## ElastiCache
 
 redis, memcached 를 사용할 수 있다.
 
