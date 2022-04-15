@@ -37,5 +37,8 @@
 ## Pixel Perfect
 
 * [[개발일지] Frostory 픽셀 퍼펙트 세팅](https://gall.dcinside.com/mgallery/board/view/?id=game_dev&no=55170)
+* [유나이트 서울 2020 - 픽셀 + 탑다운 + 칼부림 액션게임을 개발하고 싶을 땐 이걸 보고 참아보자. Track1-3 | youtube](https://www.youtube.com/watch?v=J-cfVwYNQSk)
 
 Runtime 에 Image 가 정상적으로 보이지않는 현상을 Pixel Perfect 설정으로 해결해야 한다.
+
+Pixel Perfect 설정은 어렵다. 다양한 방법을 연구해야 한다.
