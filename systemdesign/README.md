@@ -1031,7 +1031,7 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 
 # MSA (Micro Service Architecture)
 
-* [Micro Service Architecture @ TIL](msa.md)
+* [Micro Service Architecture @ TIL](/msa/README.md)
   * [ftgo monolith src @ github](https://github.com/microservices-patterns/ftgo-monolith)
   * [ftgo msa src @ github](https://github.com/microservices-patterns/ftgo-application)
 

@@ -231,7 +231,7 @@
 
 ### Event Driven Architecture
 
-* Event 를 중심으로 서비스하는 아키텍처이다. [msa](/systemdesign/msa.md) 의 경우
+* Event 를 중심으로 서비스하는 아키텍처이다. [msa](/msa/README.md) 의 경우
   Application 별로 Event 가 정의되야 한다. Producer 는 Event 를
   [kafka](/kafka/README.md) 에 publish 한다. Consumer 는 관심있는 Event 를
   처리한다. Producer 와 Consumer 가 Lossely Coupled 된다. Consumer 에 장애가

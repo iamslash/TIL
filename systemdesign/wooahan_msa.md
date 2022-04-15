@@ -9,13 +9,21 @@
 
 # Basic
 
-[msa](/systemdesign/msa.md) 를 위해 다음과 같은 것들을 도입했다.
+[msa](/msa/README.md) 를 위해 다음과 같은 것들을 도입했다.
 
 * Message Broker
   * [Kafka](/kafka/README.md) 와 같은 Message Broker 들을 두고 여러
-    [msa](/systemdesign/msa.md) Application 들이 통신하는 구조이다.
+    [msa](/msa/README.md) Application 들이 통신하는 구조이다.
 * Event Driven Architecture
   * 모두 모여 Event 를 정의해야 한다. [Event Storming](/ddd/README.md#event-storming) 를 참고하자.
+  * Event 는 Command 와 다르다. 
+    * A Service 에서 B Service 에 "이거 해주세요" 라고 message 를 보낸다고
+      해보자. 이 것은 Command 이다. A Service 는 B Service 에 대해 알아야 한다. A, B 는 강하게 결합되어 있다.
+    * A Service 에서 "이거 했어요" 라고 message 를 보낸다고 해보자. 이 것은
+      Event 이다. A Service 는 B Service 에 대해 알 필요가 없다. A Service 의
+      message 를 처리하고 싶은 Service 들은 A Service 에 대해 알아야 한다. A, B
+      는 느슨하게 결합되어 있다??? B Service 는 A Service 에 대해 알아야 하지 않는가?
+    * Event 를 Shared Kernel 로 정의해 놓으면 어떤가??? Service 들은 서로 Loosely Coupled 라고 할 수 있는가??? 
 * [Transactional Outbox Pattern](https://microservices.io/patterns/data/transactional-outbox.html)
   * Message Broker 로 Event 가 전달되었음을 보장한다. 
 * Zero Payload

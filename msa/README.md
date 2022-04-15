@@ -111,9 +111,7 @@ microservices 의 대표적인 implementation 중 Spring Cloud 와 Kubernetes �
 
 ## Transactional messaging
 
-* **Transactional outbox**
-  * RDBMS 의 outbox table 을 사용하여 message 를 message broker 에 전송하는 것을 local transaction 에 포함하는 pattern. outbox table 에 message 가 저장되면 message relay component 가 그것을 polling 하고 있다가 message broker 에게 전송한다. 때로는 message table 을 polling 하지 않고 DB transaction log 를 tailing 하다가 message 를 전송할 수도 있다. 이것을 Transaction log tailing 이라고 한다.
-  * message 전송과 business logic 을 하나의 transaction 으로 관리할 수 있다.
+* **[Transactional outbox](msa_transactional_outbox.md)**
 * **Transaction log tailing**
   * outbox table 을 polling 하지 않고 transaction log 를 plling 하다가 message 가 삽입되면 message broker 에 전달하는 pattern
   * DynamoDB Streams 가 해당된다.

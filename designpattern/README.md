@@ -262,7 +262,7 @@ public class A {
 
 ----
 
-* [msa | TIL](/systemdesign/msa.md)
+* [msa | TIL](/msa/README.md)
 
 # Cloud Design Patterns
 
