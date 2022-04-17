@@ -4,6 +4,8 @@
 - [TCP Transition Diagram](#tcp-transition-diagram)
 - [TCP/IP Packet Structure](#tcpip-packet-structure)
   - [TCP](#tcp)
+    - [Flow Control](#flow-control)
+    - [Congestion Control](#congestion-control)
   - [UDP](#udp)
   - [IPv4](#ipv4)
   - [IPv6](#ipv6)
@@ -118,6 +120,26 @@ Active Close 의 경우 `FIN_WAIT_1, FIN_WAIT_2, TIME_WAIT, CLOSED` 순서대로
 ```
 
 ![](img/TCP-segment.png)
+
+### Flow Control
+
+> [TCP/IP (흐름제어/혼잡제어)](https://gyoogle.dev/blog/computer-science/network/%ED%9D%90%EB%A6%84%EC%A0%9C%EC%96%B4%20&%20%ED%98%BC%EC%9E%A1%EC%A0%9C%EC%96%B4.html)
+
+A Host 에서 B HOST 로 Network Packet 를 보낼 때를 생각해 보자. B 에서 Network
+Packet 을 얼만큼 처리했는지 A 에게 알려준다. A 는 Network Packet 의 흐름을
+조절할 수 있다.
+
+### Congestion Control
+
+> [TCP/IP (흐름제어/혼잡제어)](https://gyoogle.dev/blog/computer-science/network/%ED%9D%90%EB%A6%84%EC%A0%9C%EC%96%B4%20&%20%ED%98%BC%EC%9E%A1%EC%A0%9C%EC%96%B4.html)
+
+A Router 로 Network Ppacket 이 집중된다고 해보자. A Router 가 Network Packet 을
+모두 처리하지 못하면 각 Host 들은 Network Packet 을 다시 보낼 것이다. Network 의
+혼잡함이 증가한다. Host 들은 Network Packet 의 양을 조절하여 Network 의 혼잡함을
+조절할 수 있다.
+
+Flow Control 가 송신측과 수신측 사이의 전송속도를 다루는데 반해, Congestion
+Control 은 호스트와 라우터를 포함한 보다 넓은 관점에서 전송 문제를 다룬다.
 
 ## UDP
 

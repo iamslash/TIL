@@ -14,6 +14,7 @@
 
 * [Sending Reliable Event Notifications with Transactional Outbox Pattern](https://medium.com/event-driven-utopia/sending-reliable-event-notifications-with-transactional-outbox-pattern-7a7c69158d1b)
   * [debezium-examples/outbox/ | github](https://github.com/debezium/debezium-examples/tree/main/outbox)
+* [Pattern: Transactional outbox](https://microservices.io/patterns/data/transactional-outbox.html)
 
 # Basic
 
