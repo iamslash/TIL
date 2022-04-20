@@ -5,6 +5,8 @@ etcdctl 은 command line client 이다.
 
 # Materials
 
+* [Kubernetes 운영을 위한 etcd 기본 동작 원리의 이해](https://tech.kakao.com/2021/12/20/kubernetes-etcd/)
+  * etcd Dive Deep
 * [etcd.io](https://etcd.io/docs/v3.4.0/)
   * [demo @ etcd.io](https://etcd.io/docs/v3.4.0/demo/)
 * [etcd @ joinc](https://www.joinc.co.kr/w/man/12/etcd)
