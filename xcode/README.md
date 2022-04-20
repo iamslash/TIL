@@ -9,10 +9,14 @@
 
 ## Shorcuts
 
-| content | shortcut |
+| ShortCut | Description |
 |:--------|:---------|
-| Quick Help | `ALT + L CLICK`
-| Open Quickly | `CMD + SHIFT + O` |
+| `^ L Click` | Quick Help |
+| `⇧ ⌘ O` | Open Quickly |
+| `^ ⌥ ⌘ Enter` | Assistant View on storyboard |
+| `⇧ ⌘ L` | Library Window |
+| `⌘ B` | Build |
+| `⌘ R` | Run |
 
 ## File Extensions
 

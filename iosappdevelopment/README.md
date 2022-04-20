@@ -1,7 +1,9 @@
 - [Abstract](#abstract)
+- [Materials](#materials)
 - [Basic](#basic)
   - [Overview](#overview)
   - [Apple Developer Program](#apple-developer-program)
+  - [Hello World](#hello-world)
 - [Advanced](#advanced)
   - [Publish iOS Library](#publish-ios-library)
 
@@ -10,6 +12,11 @@
 # Abstract
 
 ios app development 에 대해 정리한다.
+
+# Materials
+
+* [ Do it! 스위프트로 아이폰 앱 만들기 입문 - 개정 5판](http://www.yes24.com/Product/Goods/96825837)
+  * [src](https://github.com/doitswift/example)
 
 # Basic
 
@@ -26,6 +33,19 @@ ios app development 에 대해 정리한다.
 > [Developer | apple](https://developer.apple.com/account/)
 
 무료가입은 가능하지만 Simulator Test 만 가능하다. Device Test 는 못한다.
+
+다음은 iOS Simulator 가 지원하는 기능의 목록이다. 
+
+| iOS Simulator can | iOS Simulator can't |
+|---|---|
+| 좌, 우 회전 | GPS 의 실제값 |
+| 흔들기 | 전화착신 이벤트 |
+| 멀티 터치 | 카메라 |
+| GPS 의 가상값 | 가속도 센서 |
+
+## Hello World
+
+[Hello World 만들기 예제](iosappdevelopment_helloworld.md)
 
 # Advanced
 
