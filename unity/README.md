@@ -5,6 +5,8 @@
   - [UniTask](#unitask)
   - [2D Character Setup](#2d-character-setup)
   - [Pixel Perfect](#pixel-perfect)
+- [Advanced](#advanced)
+  - [Right to left TextMesh Pro](#right-to-left-textmesh-pro)
 
 ---
 
@@ -42,3 +44,11 @@
 Runtime 에 Image 가 정상적으로 보이지않는 현상을 Pixel Perfect 설정으로 해결해야 한다.
 
 Pixel Perfect 설정은 어렵다. 다양한 방법을 연구해야 한다.
+
+# Advanced
+
+## Right to left TextMesh Pro
+
+[RTLTMPro | github](https://github.com/pnarimani/RTLTMPro#installation)
+
+Text Mesh Pro 가 Arabic 을 지원하지 못한다. 그것을 보완한 것.
