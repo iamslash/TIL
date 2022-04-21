@@ -17,12 +17,21 @@
 | `⇧ ⌘ L` | Library Window |
 | `⌘ B` | Build |
 | `⌘ R` | Run |
+| `^ ⌘ <-` | Back |
+| `^ ⌘ ->` | Forward |
+| `^ ⌘ J` | Jump to definition |
 
 ## File Extensions
 
 Project View 의 File Extension 을 보이게 하자.
 
 ![](img/xcode_general_file_extension.png)
+
+## Find References
+
+검색을 원하는 함수에 cursor 를 놓는다. Editor View 왼쪽 위 아이콘을 클릭하고 Caller 를 확인한다.
+
+![](img/editor_callers.png)
 
 ## How to make a iOS app with cocoapods 
 
