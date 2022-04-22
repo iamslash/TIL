@@ -36,7 +36,9 @@ SDK Manager 를 띄운다.
 
 Emulator 로 실행한다. Mac Book 에서 Emulator 는 너무 느리다.
 
-Android 11 부터 Wifi Direct 가 되는 듯???
+Android 11 부터 Wifi Direct 가 된다고 하지만 잘 안된다.
+
+USB Debugging 이 제일 잘 된다.
 
 # Files
 
