@@ -106,11 +106,14 @@
   - [System Design @ blogspot](https://learnsystemdesign.blogspot.com/)
 * [System Design Interview – An insider's guide, Second Edition](https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF)
   * [links](https://github.com/alex-xu-system/bytecode/blob/main/system_design_links.md)
+* [System Design Interview – An Insider's Guide: Volume 2](https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119)
+  * [links](https://github.com/alex-xu-system/bytebytego/blob/main/system_design_links_vol2.md)
 * [incident @ TIL](/incident/README.md)
   * incident case studies
   
 # Materials
 
+* [mobile system design](https://github.com/weeeBox/mobile-system-design)
 * [The Software Architecture Chronicles](https://herbertograca.com/2017/07/03/the-software-architecture-chronicles/)
   * Software Architecture 의 역사
   * [src](git@github.com:hgraca/explicit-architecture-php.git)
