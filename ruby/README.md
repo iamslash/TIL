@@ -9,6 +9,7 @@
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
+  - [Print Type](#print-type)
   - [Print Out](#print-out)
   - [Collections compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
@@ -370,6 +371,14 @@ rand(1.5..3.0) # [1.5..3.0]
 rand(-5..-1)   # [-5..-1]
 
 srand(777)     # seed
+```
+
+## Print Type
+
+```rb
+puts(1.class)  # Integer
+puts([].class) # Array
+puts({}.class) # Hash
 ```
 
 ## Print Out
