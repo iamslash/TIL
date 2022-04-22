@@ -1,36 +1,60 @@
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
-- [Basic Usages](#basic-usages)
-  - [Collections compared c++ container](#collections-compared-c-container)
-  - [Collections](#collections)
+- [Basic](#basic)
+  - [Emacs Config](#emacs-config)
+  - [Play Ground](#play-ground)
+  - [Build and Run](#build-and-run)
+  - [Keywords](#keywords)
   - [let, var](#let-var)
   - [Data Types](#data-types)
-  - [function](#function)
-  - [conditional](#conditional)
-  - [loop](#loop)
-  - [optional](#optional)
-  - [struct](#struct)
-  - [class](#class)
-  - [enum](#enum)
-  - [value reference](#value-reference)
-  - [closure](#closure)
-  - [property](#property)
-  - [inheritance](#inheritance)
-  - [init, deinit](#init-deinit)
-  - [optional chaining](#optional-chaining)
-  - [type casting](#type-casting)
-  - [assert, guard](#assert-guard)
-  - [protocol](#protocol)
-  - [extension](#extension)
-  - [error handling](#error-handling)
-  - [higher order function](#higher-order-function)
-- [Advanced](#advanced)
-  - [Generics](#generics)
-  - [Subscript](#subscript)
-  - [Access Control](#access-control)
-  - [ARC (Automatic Reference Counting)](#arc-automatic-reference-counting)
+  - [min, max values](#min-max-values)
+  - [abs](#abs)
+  - [Bit Manipulation](#bit-manipulation)
+  - [String](#string)
+  - [Random](#random)
+  - [Print Out](#print-out)
+  - [Function](#function)
+  - [Conditional](#conditional)
+  - [Loop](#loop)
+  - [Collections compared to c++ container](#collections-compared-to-c-container)
+  - [Collections](#collections)
+    - [Array](#array)
+    - [Set](#set)
+    - [Dictionary](#dictionary)
+  - [Collection Conversions](#collection-conversions)
+  - [Sort](#sort)
+  - [Search](#search)
+  - [Multi Dimensional Array](#multi-dimensional-array)
+  - [Optional](#optional)
+  - [Struct](#struct)
+  - [Class](#class)
+  - [Enum](#enum)
+  - [Value Reference](#value-reference)
+  - [Closure](#closure)
+  - [Properties](#properties)
+  - [Methods](#methods)
+  - [Subscripts](#subscripts)
+  - [Inheritance](#inheritance)
+  - [Initialization, Deinitialization](#initialization-deinitialization)
+  - [Optional Chaining](#optional-chaining)
+  - [Error Handling](#error-handling)
+  - [Concurrency](#concurrency)
+  - [Type Casting](#type-casting)
+  - [Assert, Guard](#assert-guard)
   - [Nested Types](#nested-types)
-  - [Custom Operators](#custom-operators)
+  - [Protocol](#protocol)
+  - [Extension](#extension)
+  - [Higher Order Function](#higher-order-function)
+  - [Core Libraries](#core-libraries)
+  - [Generics](#generics)
+  - [Opaque Types](#opaque-types)
+  - [Automatic Reference Counting](#automatic-reference-counting)
+  - [Memory Safety](#memory-safety)
+  - [Access Control](#access-control)
+  - [Advanced Operators](#advanced-operators)
+- [Advanced](#advanced)
+  - [Style Guide](#style-guide)
 
 -------------------------------------------------------------------------------
 
@@ -38,136 +62,84 @@
 
 swift에 대해 정리한다.
 
-# Materials
+# References
 
 * [A Swift Tour](https://docs.swift.org/swift-book/GuidedTour/GuidedTour.html)
+* [online Swift playground](http://online.swiftplayground.run/)
+* [The Swift Programming Language (kor)](https://bbiguduk.gitbook.io/swift)
+
+# Materials
+
 * [Swift Language Guide](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html)
 * [야곰의 스위프트 기본 문법 강좌](https://www.inflearn.com/course/%EC%8A%A4%EC%9C%84%ED%94%84%ED%8A%B8-%EA%B8%B0%EB%B3%B8-%EB%AC%B8%EB%B2%95/)
   * 킹왕짱 swift 3 기본 문법
   * [src](https://github.com/yagom/swift_basic)
 * [the swift programming language swift 4.2](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html)
 
-# Basic Usages
+# Basic
 
-## Collections compared c++ container
+## Emacs Config
 
-[Collection Types](https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html) 에 의하면 swift 의 collection 은 `Array, Set, Dictionary` 가 있다.
+* [swift-mode | github](https://github.com/swift-emacs/swift-mode)
 
-| c++                  | swift                  |
-|:---------------------|:----------------------|
-| `if, else, switch`   | `if, else, switch`    |
-| `for, while, do`     | `for, in, while, repeat` |
-| `array`              | `let, Array`          |
-| `vector`             | `var, Array`          |
-| `deque`              | ``                    |
-| `forward_list`       | ``                    |
-| `list`               | ``                    |
-| `stack`              | ``                    |
-| `queue`              | ``                    |
-| `priority_queue`     | ``                    |
-| `set`                | ``                    |
-| `multiset`           | ``                    |
-| `map`                | ``                    |
-| `multimap`           | ``                    |
-| `unordered_set`      | `Set`                 |
-| `unordered_multiset` | ``        |
-| `unordered_map`      | `Dictionary`          |
-| `unordered_multimap` | ``                    |
+## Play Ground
 
-## Collections
+[online Swift playground](http://online.swiftplayground.run/) 가 있다. xcode 에서 Play Ground 를 만들 수 도 있다.
 
-* Array
+## Build and Run
+
+> [10 Tips to Run Swift From Your Terminal](https://betterprogramming.pub/10-tips-to-run-swift-from-your-terminal-b5832cd9cd8c)
+
+> `a.swift`
 
 ```swift
-var i: Array<Int> = Array<Int>()
-// var i : Array<Int> = [Int]()
-// var i : Array<Int> = []
-// var i : [Int] = Arry<int>()
-// var i : [Int] = [Int]()
-// var i : [Int] = []
-// var i = [Int]()
-
-i.append(1)
-i.append(100)
-// i.append(101.1) // error
-print(integers) // [1, 100]
-
-print(i.contains(100)) // true
-print(i.contains(90)) // false
-
-i[0] = 99
-
-i.remove(at: 0)
-i.removeLast()
-i.removeAll()
-
-print(i.count)
-
-// i[0] // error
-
-let ii = [1, 2, 3]
-// ii.append(4) // error
+print("Hello World")
 ```
 
-* Set
+```bash
+# Build
+$ swiftc a.swift
 
-```swift
-var s: Set<Int> = Set<Int>()
-s.insert(1)
-s.insert(100)
-s.insert(99)
-s.insert(99)
+# Run
+$ ./a
+$ swift a.swift
 
-print(s) // [100, 99, 1]
-print(s.contains(1)) // true
-print(s.contains(2)) // false
-
-s.remove(100)
-s.removeFirst()
-print(s.count) // 1
-
-let s0: Set<Int> = [1, 2, 3, 4, 5]
-let s1: Set<Int> = [3, 4, 5, 6, 7]
-
-let union: Set<Int> = s0.union(s1)
-print(union)
-
-let sortedUnion: [Int] = union.sorted()
-print(sortedUnion) // [1, 2, 3, 4, 5, 6, 7]
-
-let intersection: Set<Int> = s0.intersection(s1)
-print(intersection) // [5, 3, 4]
-
-let subtraction: Set<Int> = s0.subtracting(s1)
-print(subtraction) // [2, 1]
+# REPL
+$ swift
 ```
 
-* Dictionary
+## Keywords
+
+> [Swift Keywords](https://www.tutorialkart.com/swift-tutorial/swift-keywords/)
 
 ```swift
-var d: Dictionary<String, Any> = [String: Any]()
-// var d: Dictionary<String, Any> = Dictionary<String, Any>()
-// var d: Dictionary<String, Any> = [:]
-// var d: Dictionary[String: Any] = Dictionary<String, Any>()
-// var d: Dictionary[String: Any] = [String: Any]()
-// var d: Dictionary[String: Any] = [:]
-// var d = [String: Any]()
+// Keywords in declarations
+class	    deinit	    Enum	extension
+func	    import	    Init	internal
+let	        operator	private	protocol
+public	    static	    struct	subscript
+typealias	var
 
-d["someKey"] = "value"
-d["anotherKey"] = 100
-print(d) // ["someKey": "value", "anotherKey": 100]
+// Keywords in statements
+break	case	continue	default
+do	    else	fallthrough	for
+if	    in	    return	    switch
+where	while
 
-d["someKey"] = "dictionary"
-print(d) // ["dictionary": "value", "anotherKey": 100]
+// Keywords in expressions and types
+as	    dynamicType	false	is
+nil	    self	    Self	super
+true	_COLUMN_	_FILE_	_FUNCTION_
+_LINE_
 
-d.removeValue(forKey: "anotherKey")
-d["someKey"] = nil
-print(d)
-
-let d0: [String: String] = [:]
-let d1: [String: String] = ["name": "foo", "gender": "male"]
-// d0["key"] = "value" // error
-// let somevalue: String = d1["name"] // error
+// Keywords in specific contexts
+associativity	convenience	dynamic	    didSet
+final	        get	        infix	    inout
+lazy	        left	    mutating	none
+nonmutating	    optional	override	postfix
+precedence	    prefix	    Protocol	required
+right	        set	        Type	    unowned
+weak	        willSet
 ```
 
 ## let, var
@@ -191,8 +163,13 @@ nickName = "Bar"
 
 ## Data Types
 
-* Bool, Int, UInt, Float, Double, Character, String
-* Any, AnyObject, nil
+```swift
+Bool, 
+Int8, Int16, Int32, Int64(Int),
+UInt8, UInt16, UInt32, UInt64(UInt), 
+Float, Double, Character, String
+Any, AnyObject, nil
+```
 
 ```swift
 var b: Bool = true
@@ -246,7 +223,87 @@ someAny = nil // error
 someAnyObject = nil // error
 ```
 
-## function
+## min, max values
+
+> [Swift – Integer, Floating-Point Numbers](https://www.geeksforgeeks.org/swift-integer-floating-point-numbers/)
+
+```swift
+print("Integer Type        Min                    Max")
+print("UInt8           \(UInt8.min)         \(UInt8.max)")
+print("UInt16          \(UInt16.min)        \(UInt16.max)")
+print("UInt32          \(UInt32.min)        \(UInt32.max)")
+print("UInt64          \(UInt64.min)        \(UInt64.max)")
+print("Int8            \(Int8.min)          \(Int8.max)")
+print("Int16           \(Int16.min)         \(Int16.max)")
+print("Int32           \(Int32.min)         \(Int32.max)")
+print("Int64           \(Int64.min)         \(Int64.max)")
+// Output:
+// Integer Type     Min                    Max
+// UInt8             0                     255
+// UInt16            0                     65535
+// UInt32            0                     4294967295
+// UInt64            0                     18446744073709551615
+// Int8             -128                   127
+// Int16            -32768                 32767
+// Int32            -2147483648            2147483647
+// Int64            -9223372036854775808   9223372036854775807
+```
+
+## abs
+
+```swift
+print(abs(-18))   // 18
+print(abs(-18.7)) // 18.7
+```
+
+## Bit Manipulation
+
+```swift
+let a = 0
+let b = 1
+print(String(a & b, radix: 2))  // 0
+print(String(a | b, radix: 2))  // 1
+print(String(a ^ b, radix: 2))  // 1
+print(String(b << 1, radix: 2)) // 10
+print(String(~a, radix: 2))     // -1
+```
+
+## String
+
+```swift
+// String interpolation
+let a: String = "Hello"
+print("\(a)")
+
+// String of binary representation
+let num = 22
+let str = String(num, radix: 2)
+print(str)
+
+// String formatting
+import Foundation
+print(String(format: "Hello %d", 7))  // Helo 7
+```
+
+## Random
+
+```swift
+for _ in 1...3 {
+    print(Int.random(in: 1..<100))
+}
+```
+
+## Print Out
+
+* [String Format Specifiers | apple](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Strings/Articles/formatSpecifiers.html)
+
+```swift
+import Foundation
+
+print(String(format: "%x %X", 13, 13))  // a D
+```
+
+## Function
 
 ```swift
 func sum(a: Int, b: Int) -> Int {
@@ -303,7 +360,7 @@ runAnother(function: greeting(friend:me:))
 runAnother(function: someFunction)
 ```
 
-## conditional
+## Conditional
 
 ```swift
 let someInteger = 100
@@ -317,7 +374,7 @@ if someInteger < 100 {
 
 switch someInteger {
 case 0:
-    print("zero)    
+    print("zero")    
 case 1..<100:
     print("1~99")
 case 100:
@@ -340,28 +397,214 @@ default:
 }
 ```
 
-## loop
+## Loop
 
 ```swift
 var integers = [1, 2, 3]
 let people = ["foo": 10, "bar": 15, "baz": 12]
+// for in
 for integer in integers {
     print(integer)
 }
 for (name, age) in people {
     print("\(name): \n(age)")
 }
-
+// while
 while integers.count > 1 {
     integers.removeLast()
 }
-
+// repeat while
 repeat {
     integers.removeLast()
-} wihle integers.count > 0
+} while integers.count > 0
 ```
 
-## optional
+## Collections compared to c++ container
+
+[Collection Types](https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html) 에 의하면 swift 의 collection 은 `Array, Set, Dictionary` 가 있다.
+
+[swift-collections | github](https://github.com/apple/swift-collections) 는
+`Deque<>, OrderedSet<>, OrderedDictionary<>` 를 제공한다.
+
+| c++                  | swift                  |
+|:---------------------|:----------------------|
+| `if, else, switch`   | `if, else, switch`    |
+| `for, while, do`     | `for, in, while, repeat` |
+| `array`              | `let, Array`          |
+| `vector`             | `var, Array`          |
+| `deque`              | ``                    |
+| `forward_list`       | ``                    |
+| `list`               | ``                    |
+| `stack`              | ``                    |
+| `queue`              | ``                    |
+| `priority_queue`     | ``                    |
+| `set`                | ``                    |
+| `multiset`           | ``                    |
+| `map`                | ``                    |
+| `multimap`           | ``                    |
+| `unordered_set`      | `Set`                 |
+| `unordered_multiset` | ``        |
+| `unordered_map`      | `Dictionary`          |
+| `unordered_multimap` | ``                    |
+
+## Collections
+
+### Array
+
+```swift
+var i: Array<Int> = Array<Int>()
+// var i : Array<Int> = [Int]()
+// var i : Array<Int> = []
+// var i : [Int] = Arry<int>()
+// var i : [Int] = [Int]()
+// var i : [Int] = []
+// var i = [Int]()
+
+i.append(1)
+i.append(100)
+// i.append(101.1) // error
+print(integers) // [1, 100]
+
+print(i.contains(100)) // true
+print(i.contains(90)) // false
+
+i[0] = 99
+
+i.remove(at: 0)
+i.removeLast()
+i.removeAll()
+
+print(i.count)
+
+// i[0] // error
+
+let ii = [1, 2, 3]
+// ii.append(4) // error
+```
+
+### Set
+
+```swift
+var s: Set<Int> = Set<Int>()
+s.insert(1)
+s.insert(100)
+s.insert(99)
+s.insert(99)
+
+print(s) // [100, 99, 1]
+print(s.contains(1)) // true
+print(s.contains(2)) // false
+
+s.remove(100)
+s.removeFirst()
+print(s.count) // 1
+
+let s0: Set<Int> = [1, 2, 3, 4, 5]
+let s1: Set<Int> = [3, 4, 5, 6, 7]
+
+let union: Set<Int> = s0.union(s1)
+print(union)
+
+let sortedUnion: [Int] = union.sorted()
+print(sortedUnion) // [1, 2, 3, 4, 5, 6, 7]
+
+let intersection: Set<Int> = s0.intersection(s1)
+print(intersection) // [5, 3, 4]
+
+let subtraction: Set<Int> = s0.subtracting(s1)
+print(subtraction) // [2, 1]
+```
+
+### Dictionary
+
+```swift
+var d: Dictionary<String, Any> = [String: Any]()
+// var d: Dictionary<String, Any> = Dictionary<String, Any>()
+// var d: Dictionary<String, Any> = [:]
+// var d: Dictionary[String: Any] = Dictionary<String, Any>()
+// var d: Dictionary[String: Any] = [String: Any]()
+// var d: Dictionary[String: Any] = [:]
+// var d = [String: Any]()
+
+d["someKey"] = "value"
+d["anotherKey"] = 100
+print(d) // ["someKey": "value", "anotherKey": 100]
+
+d["someKey"] = "dictionary"
+print(d) // ["dictionary": "value", "anotherKey": 100]
+
+d.removeValue(forKey: "anotherKey")
+d["someKey"] = nil
+print(d)
+
+let d0: [String: String] = [:]
+let d1: [String: String] = ["name": "foo", "gender": "male"]
+// d0["key"] = "value" // error
+// let somevalue: String = d1["name"] // error
+```
+
+## Collection Conversions
+
+```swift
+// Array to Set
+let s = Set(["a", "b", "c"])
+print(s)  // ["a", "c", "b"]
+
+// Set to Array
+let a = Array(s)
+print(a)  // ["a", "c", "b"]
+```
+
+## Sort
+
+* `sort()` is in-place sorting.
+* `sroted()` returns sroted array copy.
+
+```swift
+var a = [1, 5, 3, 9, 7]
+
+// Sort ASC
+a.sort()
+print(a) // [1, 3, 5, 7, 9]
+// Sort DESC
+a.sort(by: >)
+print(a) // [9, 7, 5, 3, 1]
+print(a.sort()) // []
+
+// Sorted ASC
+print(a.sorted()) // [1, 3, 5, 7, 9]
+// Sort DESC
+print(a.sorted(by: >)) // [9, 7, 5, 3, 1]
+```
+
+## Search
+
+Array 에 binary search 없는 거임?
+
+* [BinarySearch | github](https://github.com/mkeiser/BinarySearch)
+
+## Multi Dimensional Array
+
+> * [Multidimensional Array Example in Swift](https://www.appsdeveloperblog.com/multidimensional-array-example-in-swift/)
+
+```swift
+// one-dim array
+var a = [String]()
+var b = ["a", "b", "c"]
+
+// mult-dim array
+var c = [[String]]()
+var d = [
+  ["a", "b", "c"],
+  ["d", "e", "f"]
+]
+print(a)
+print(b)
+print(c)
+print(d)
+```
+
+## Optional
 
 ```swift
 import Swift
@@ -426,10 +669,9 @@ myName = nil
 //print(myName!) // error
 yourName = nil
 //print(yourName) // error
-
 ```
 
-## struct
+## Struct
 
 ```swift
 struct Sample {
@@ -440,7 +682,7 @@ struct Sample {
         print("instance method")
     }
     static func typeMethod() {
-        print("type method)
+        print("type method")
     }
 }
 
@@ -479,7 +721,7 @@ let jina: Student = Student()
 jina.selfIntroduce() 
 ```
 
-## class
+## Class
 
 ```swift
 class Sample {
@@ -534,7 +776,7 @@ jina.selfIntroduce()
 
 ```
 
-## enum
+## Enum
 
 ```swift
 enum Weekday {
@@ -601,7 +843,7 @@ enum Month {
 Month.mar.printMessage()
 ```
 
-## value reference
+## Value Reference
 
 ```swift
 struct ValueType {
@@ -624,9 +866,11 @@ print("first class reference property : \(firstClassReference.property)")    // 
 print("second class reference property : \(secondClassReference.property)")  // 2
 ```
 
-## closure
+## Closure
 
-클로저는 코드의 블럭이다. 일급 시민 (First-Citizen) 으로 전달인자, 변수, 상수 등으로 저장, 전달이 가능하다. 함수는 클로저의 일종이다. 이름이 있는 클로저라고 생각하자.
+클로저는 코드의 블럭이다. 일급 시민 (First-Citizen) 으로 전달인자, 변수, 상수
+등으로 저장, 전달이 가능하다. 함수는 클로저의 일종이다. 이름이 있는 클로저라고
+생각하자.
 
 ```swift
 import Swift
@@ -731,7 +975,7 @@ result = calculate(a: 10, b: 10) { $0 + $1 }
 print(result) // 20
 ```
 
-## property
+## Properties
 
 ```swift
 struct Student {
@@ -859,7 +1103,55 @@ print(moneyInMyPocket.won)
 // 11500.0
 ```
 
-## inheritance
+## Methods
+
+> * [Methods](https://docs.swift.org/swift-book/LanguageGuide/Methods.html)
+>   * [메서드](https://bbiguduk.gitbook.io/swift/language-guide-1/methods)
+
+```swift
+// Instant methods
+class Counter {
+    var count = 0
+    func increment() {
+        count += 1
+    }
+    func increment(by amount: Int) {
+        count += amount
+    }
+    func reset() {
+        count = 0
+    }
+}
+
+// Type methods
+class SomeClass {
+    class func someTypeMethod() {
+        // type method implementation goes here
+    }
+}
+SomeClass.someTypeMethod()
+```
+
+## Subscripts
+
+> * [Subscripts](https://docs.swift.org/swift-book/LanguageGuide/Subscripts.html)
+>   * [서브스크립트](https://bbiguduk.gitbook.io/swift/language-guide-1/subscripts)
+
+Classes, structures, and enumerations can define subscripts, which are shortcuts for accessing the member elements of a collection, list, or sequence.
+
+```swift
+struct TimesTable {
+    let multiplier: Int
+    subscript(index: Int) -> Int {
+        return multiplier * index
+    }
+}
+let threeTimesTable = TimesTable(multiplier: 3)
+print("six times three is \(threeTimesTable[6])")
+// Prints "six times three is 18"
+```
+
+## Inheritance
 
 ```swift
 class Person {
@@ -939,7 +1231,7 @@ Student.finalCalssMethod()
 // type method - final class
 ```
 
-## init, deinit
+## Initialization, Deinitialization
 
 ```swift
 class PersonA {
@@ -1059,7 +1351,7 @@ donald = nil // donald 인스턴스가 더이상 필요없으므로 메모리에
 // donald가 jenny에게 happy를 인도합니다
 ```
 
-## optional chaining
+## Optional Chaining
 
 ```swift
 class Person {
@@ -1140,423 +1432,7 @@ guardJob = foo?.home?.guard?.job ?? "슈퍼맨"
 print(guardJob) // 슈퍼맨
 ```
 
-## type casting
-
-```swift
-class Person {
-    var name: String = ""
-    func breath() {
-        print("숨을 쉽니다")
-    }
-}
-
-class Student: Person {
-    var school: String = ""
-    func goToSchool() {
-        print("등교를 합니다")
-    }
-}
-
-class UniversityStudent: Student {
-    var major: String = ""
-    func goToMT() {
-        print("멤버쉽 트레이닝을 갑니다 신남!")
-    }
-}
-
-// 인스턴스 생성
-var foo: Person = Person()
-var hana: Student = Student()
-var jason: UniversityStudent = UniversityStudent()
-
-var result: Bool
-
-result = foo is Person // true
-result = foo is Student // false
-result = foo is UniversityStudent // false
-
-result = hana is Person // true
-result = hana is Student // true
-result = hana is UniversityStudent // false
-
-result = jason is Person // true
-result = jason is Student // true
-result = jason is UniversityStudent // true
-
-if foo is UniversityStudent {
-    print("foo은 대학생입니다")
-} else if foo is Student {
-    print("foo은 학생입니다")
-} else if foo is Person {
-    print("foo은 사람입니다")
-} // foo은 사람입니다
-
-switch jason {
-case is Person:
-    print("jason은 사람입니다")
-case is Student:
-    print("jason은 학생입니다")
-case is UniversityStudent:
-    print("jason은 대학생입니다")
-default:
-    print("jason은 사람도, 학생도, 대학생도 아닙니다")
-} // jason은 사람입니다
-
-switch jason {
-case is UniversityStudent:
-    print("jason은 대학생입니다")
-case is Student:
-    print("jason은 학생입니다")
-case is Person:
-    print("jason은 사람입니다")
-default:
-    print("jason은 사람도, 학생도, 대학생도 아닙니다")
-} // jason은 대학생입니다
-
-var mike: Person = UniversityStudent() as Person
-
-var jenny: Student = Student()
-//var jina: UniversityStudent = Person() as UniversityStudent // error
-
-var jina: Any = Person()
-
-var optionalCasted: Student?
-
-optionalCasted = mike as? UniversityStudent
-optionalCasted = jenny as? UniversityStudent // nil
-optionalCasted = jina as? UniversityStudent // nil
-optionalCasted = jina as? Student // nil
-
-var forcedCasted: Student
-
-optionalCasted = mike as! UniversityStudent
-//optionalCasted = jenny as! UniversityStudent // 런타임 오류
-//optionalCasted = jina as! UniversityStudent // 런타임 오류
-//optionalCasted = jina as! Student // 런타임 오류
-
-func doSomethingWithSwitch(someone: Person) {
-    switch someone {
-    case is UniversityStudent:
-        (someone as! UniversityStudent).goToMT()
-    case is Student:
-        (someone as! Student).goToSchool()
-    case is Person:
-        (someone as! Person).breath()
-    }
-}
-
-doSomethingWithSwitch(someone: mike as Person) // 멤버쉽 트레이닝을 갑니다 신남!
-doSomethingWithSwitch(someone: mike) // 멤버쉽 트레이닝을 갑니다 신남!
-doSomethingWithSwitch(someone: jenny) // 등교를 합니다
-doSomethingWithSwitch(someone: foo) // 숨을 쉽니다
-
-func doSomething(someone: Person) {
-    if let universityStudent = someone as? UniversityStudent {
-        universityStudent.goToMT()
-    } else if let student = someone as? Student {
-        student.goToSchool()
-    } else if let person = someone as? Person {
-        person.breath()
-    }
-}
-
-doSomething(someone: mike as Person) // 멤버쉽 트레이닝을 갑니다 신남!
-doSomething(someone: mike) // 멤버쉽 트레이닝을 갑니다 신남!
-doSomething(someone: jenny) // 등교를 합니다
-doSomething(someone: foo) // 숨을 쉽니다
-```
-
-## assert, guard
-
-```swift
-var someInt: Int = 0
-
-assert(someInt == 0, "someInt != 0")
-someInt = 1
-//assert(someInt == 0) // 동작 중지, 검증 실패
-//assert(someInt == 0, "someInt != 0") // 동작 중지, 검증 실패
-// assertion failed: someInt != 0: file guard_assert.swift, line 26
-
-func functionWithAssert(age: Int?) {
-    assert(age != nil, "age == nil")
-    assert((age! >= 0) && (age! <= 130), "나이값 입력이 잘못되었습니다")
-    print("당신의 나이는 \(age!)세입니다")
-}
-
-functionWithAssert(age: 50)
-//functionWithAssert(age: -1) // 동작 중지, 검증 실패
-//functionWithAssert(age: nil) // 동작 중지, 검증 실패
-
-func functionWithGuard(age: Int?) {
-    
-    guard let unwrappedAge = age,
-        unwrappedAge < 130,
-        unwrappedAge >= 0 else {
-        print("나이값 입력이 잘못되었습니다")
-        return
-    }
-    
-    print("당신의 나이는 \(unwrappedAge)세입니다")
-}
-
-var count = 1
-
-while true {
-    guard count < 3 else {
-        break
-    }
-    print(count)
-    count += 1
-}
-// 1
-// 2
-
-
-func someFunction(info: [String: Any]) {
-    guard let name = info["name"] as? String else {
-        return
-    }
-    
-    guard let age = info["age"] as? Int, age >= 0 else {
-        return
-    }
-    
-    print("\(name): \(age)")
-    
-}
-
-someFunction(info: ["name": "jenny", "age": "10"])
-someFunction(info: ["name": "mike"])
-someFunction(info: ["name": "foo", "age": 10]) // foo: 10
-```
-
-## protocol
-
-```swift
-/* 프로토콜 */
-
-//프로토콜은 특정 역할을 수행하기 위한 
-//메서드, 프로퍼티, 이니셜라이저 등의 요구사항을 정의합니다.
-//구조체, 클래스, 열거형은 프로토콜을 채택(Adopted)해서
-//프로토콜의 요구사항을 실제로 구현할 수 있습니다. 
-//어떤 프로토콜의 요구사항을 모두 따르는 타입은 
-//그 ‘프로토콜을 준수한다(Conform)’고 표현합니다. 
-//프로토콜의 요구사항을 충족시키려면 프로토콜이 제시하는 기능을 
-//모두 구현해야 합니다.
-import Swift
-
-//MARK: - 정의 문법
-/*
-protocol <#프로토콜 이름#> {
-    /* 정의부 */
-}
- */
-
-protocol Talkable {
-    
-    // 프로퍼티 요구
-    // 프로퍼티 요구는 항상 var 키워드를 사용합니다
-    // get은 읽기만 가능해도 상관 없다는 뜻이며
-    // get과 set을 모두 명시하면 
-    // 읽기 쓰기 모두 가능한 프로퍼티여야 합니다
-    var topic: String { get set }
-    var language: String { get }
-    
-    // 메서드 요구
-    func talk()
-    
-    // 이니셜라이저 요구
-    init(topic: String, language: String)
-}
-
-//MARK: - 프로토콜 채택 및 준수
-// Person 구조체는 Talkable 프로토콜을 채택했습니다
-struct Person: Talkable {
-    // 프로퍼티 요구 준수
-    var topic: String
-    let language: String
-    
-    // 메서드 요구 준수
-    func talk() {
-        print("\(topic)에 대해 \(language)로 말합니다")
-    }
-    
-    // 이니셜라이저 요구 준수
-    init(topic: String, language: String) {
-        self.topic = topic
-        self.language = language
-    }
-}
-
-
-//MARK: - 프로토콜 상속
-// 프로토콜은 클래스와 다르게 다중상속이 가능합니다
-/*
- protocol <#프로토콜 이름#>: <#부모 프로토콜 이름 목록#> {
- /* 정의부 */
- }
- */
-
-protocol Readable {
-    func read()
-}
-protocol Writeable {
-    func write()
-}
-protocol ReadSpeakable: Readable {
-//    func read()
-    func speak()
-}
-protocol ReadWriteSpeakable: Readable, Writeable {
-//    func read()
-//    func write()
-    func speak()
-}
-
-struct SomeType: ReadWriteSpeakable {
-    func read() {
-        print("Read")
-    }
-    
-    func write() {
-        print("Write")
-    }
-    
-    func speak() {
-        print("Speak")
-    }
-}
-
-//MARK: 클래스 상속과 프로토콜
-// 클래스에서 상속과 프로토콜 채택을 동시에 하려면 
-// 상속받으려는 클래스를 먼저 명시하고
-// 그 뒤에 채택할 프로토콜 목록을 작성합니다
-class SuperClass: Readable {
-    func read() { }
-}
-
-class SubClass: SuperClass, Writeable, ReadSpeakable {
-    func write() { }
-    func speak() { }
-}
-
-//MARK:- 프로토콜 준수 확인
-// 인스턴스가 특정 프로토콜을 준수하는지 확인할 수 있습니다
-// is, as 연산자 사용
-let sup: SuperClass = SuperClass()
-let sub: SubClass = SubClass()
-
-var someAny: Any = sup
-someAny is Readable // true
-someAny is ReadSpeakable // false
-someAny = sub
-
-someAny is Readable // true
-someAny is ReadSpeakable // true
-someAny = sup
-
-if let someReadable: Readable = someAny as? Readable {
-    someReadable.read()
-} // read
-if let someReadSpeakable: ReadSpeakable = someAny as? ReadSpeakable {
-    someReadSpeakable.speak()
-} // 동작하지 않음
-someAny = sub
-
-if let someReadable: Readable = someAny as? Readable {
-    someReadable.read()
-} // read
-```
-
-## extension
-
-```swift
-/* 익스텐션 */
-
-//익스텐션은 구조체, 클래스, 열거형, 프로토콜 타입에 
-//새로운 기능을 추가할 수 있는 기능입니다. 
-//기능을 추가하려는 타입의 구현된 소스 코드를 
-//알지 못하거나 볼 수 없다 해도, 
-//타입만 알고 있다면 그 타입의 기능을 확장할 수도 있습니다.
-//익스텐션으로 추가할 수 있는 기능
-//연산 타입 프로퍼티 / 연산 인스턴스 프로퍼티
-//타입 메서드 / 인스턴스 메서드
-//이니셜라이저
-//서브스크립트
-//중첩 타입
-//특정 프로토콜을 준수할 수 있도록 기능 추가
-//기존에 존재하는 기능을 재정의할 수는 없습니다
-import Swift
-
-//MARK: - 정의 문법
-/*
-extension <#확장할 타입 이름#> {
-    /* 타입에 추가될 새로운 기능 구현 */
-}
- */
-
-//익스텐션은 기존에 존재하는 타입이
-//추가적으로 다른 프로토콜을 채택할 수 있도록 
-//확장할 수도 있습니다.
-/*
-extension <#확장할 타입 이름#>: <#프로토콜1#>, <#프로토콜2#>, <#프로토콜3#>... {
-    /* 프로토콜 요구사항 구현 */
-}
- */
-
-//MARK: - 익스텐션 구현
-//MARK: 연산 프로퍼티 추가
-extension Int {
-    var isEven: Bool {
-        return self % 2 == 0
-    }
-    var isOdd: Bool {
-        return self % 2 == 1
-    }
-}
-
-print(1.isEven) // false
-print(2.isEven) // true
-print(1.isOdd)  // true
-print(2.isOdd)  // false
-var number: Int = 3
-print(number.isEven) // false
-print(number.isOdd) // true
-number = 2
-print(number.isEven) // true
-print(number.isOdd) // false
-
-
-//MARK: 메서드 추가
-extension Int {
-    func multiply(by n: Int) -> Int {
-        return self * n
-    }
-}
-print(3.multiply(by: 2))  // 6
-print(4.multiply(by: 5))  // 20
-number = 3
-print(number.multiply(by: 2))   // 6
-print(number.multiply(by: 3))   // 9
-
-//MARK: 이니셜라이저 추가
-extension String {
-    init(int: Int) {
-        self = "\(int)"
-    }
-    
-    init(double: Double) {
-        self = "\(double)"
-    }
-}
-
-let stringFromInt: String = String(int: 100)
-// "100"
-let stringFromDouble: String = String(double: 100.0)
-// "100.0"
-```
-
-## error handling
+## Error Handling
 
 ```swift
 
@@ -1717,7 +1593,336 @@ result // 1개 제공함
 */
 ```
 
-## higher order function
+## Concurrency
+
+## Type Casting
+
+> * [Type Casting](https://docs.swift.org/swift-book/LanguageGuide/TypeCasting.html)
+>   * [타입 캐스팅](https://bbiguduk.gitbook.io/swift/language-guide-1/type-casting)
+
+* `type(of:)`
+  * 타입확인
+* `is`
+  * 타입비교
+* `as`
+  * 성공하면 Up-casting or Self-casting, 실패하면 Compile Error
+* `as?`
+  * 성공하면 Optional, 실패하면 nil
+* `as!`
+  * 성공하면 Unwrapped, 실패하면 Runtime Error
+
+```swift
+// Print type
+print(type(of: [1, 2, 3])) // Array<Int>
+
+// Compare type
+print([1, 2, 3] is Array<Int>)   // true
+print([1, 2, 3] is Array<Float>) // false
+
+// Type casting
+let a = [1, 2, 3]
+print(a as Int)    // Compile Error
+print(a as? Int)   // nil
+print(a as! Int)   // Runtime Error
+```
+
+## Assert, Guard
+
+```swift
+var someInt: Int = 0
+
+assert(someInt == 0, "someInt != 0")
+someInt = 1
+//assert(someInt == 0) // 동작 중지, 검증 실패
+//assert(someInt == 0, "someInt != 0") // 동작 중지, 검증 실패
+// assertion failed: someInt != 0: file guard_assert.swift, line 26
+
+func functionWithAssert(age: Int?) {
+    assert(age != nil, "age == nil")
+    assert((age! >= 0) && (age! <= 130), "나이값 입력이 잘못되었습니다")
+    print("당신의 나이는 \(age!)세입니다")
+}
+
+functionWithAssert(age: 50)
+//functionWithAssert(age: -1) // 동작 중지, 검증 실패
+//functionWithAssert(age: nil) // 동작 중지, 검증 실패
+
+func functionWithGuard(age: Int?) {
+    
+    guard let unwrappedAge = age,
+        unwrappedAge < 130,
+        unwrappedAge >= 0 else {
+        print("나이값 입력이 잘못되었습니다")
+        return
+    }
+    
+    print("당신의 나이는 \(unwrappedAge)세입니다")
+}
+
+var count = 1
+
+while true {
+    guard count < 3 else {
+        break
+    }
+    print(count)
+    count += 1
+}
+// 1
+// 2
+
+
+func someFunction(info: [String: Any]) {
+    guard let name = info["name"] as? String else {
+        return
+    }
+    
+    guard let age = info["age"] as? Int, age >= 0 else {
+        return
+    }
+    
+    print("\(name): \(age)")
+    
+}
+
+someFunction(info: ["name": "jenny", "age": "10"])
+someFunction(info: ["name": "mike"])
+someFunction(info: ["name": "foo", "age": 10]) // foo: 10
+```
+
+## Nested Types
+
+## Protocol
+
+[Kotlin](/kotlin/README.md) 의 `interface` 와 같다.
+
+```swift
+/* 프로토콜 */
+
+//프로토콜은 특정 역할을 수행하기 위한 
+//메서드, 프로퍼티, 이니셜라이저 등의 요구사항을 정의합니다.
+//구조체, 클래스, 열거형은 프로토콜을 채택(Adopted)해서
+//프로토콜의 요구사항을 실제로 구현할 수 있습니다. 
+//어떤 프로토콜의 요구사항을 모두 따르는 타입은 
+//그 ‘프로토콜을 준수한다(Conform)’고 표현합니다. 
+//프로토콜의 요구사항을 충족시키려면 프로토콜이 제시하는 기능을 
+//모두 구현해야 합니다.
+import Swift
+
+//MARK: - 정의 문법
+/*
+protocol <#프로토콜 이름#> {
+    /* 정의부 */
+}
+ */
+
+protocol Talkable {
+    
+    // 프로퍼티 요구
+    // 프로퍼티 요구는 항상 var 키워드를 사용합니다
+    // get은 읽기만 가능해도 상관 없다는 뜻이며
+    // get과 set을 모두 명시하면 
+    // 읽기 쓰기 모두 가능한 프로퍼티여야 합니다
+    var topic: String { get set }
+    var language: String { get }
+    
+    // 메서드 요구
+    func talk()
+    
+    // 이니셜라이저 요구
+    init(topic: String, language: String)
+}
+
+//MARK: - 프로토콜 채택 및 준수
+// Person 구조체는 Talkable 프로토콜을 채택했습니다
+struct Person: Talkable {
+    // 프로퍼티 요구 준수
+    var topic: String
+    let language: String
+    
+    // 메서드 요구 준수
+    func talk() {
+        print("\(topic)에 대해 \(language)로 말합니다")
+    }
+    
+    // 이니셜라이저 요구 준수
+    init(topic: String, language: String) {
+        self.topic = topic
+        self.language = language
+    }
+}
+
+
+//MARK: - 프로토콜 상속
+// 프로토콜은 클래스와 다르게 다중상속이 가능합니다
+/*
+ protocol <#프로토콜 이름#>: <#부모 프로토콜 이름 목록#> {
+ /* 정의부 */
+ }
+ */
+
+protocol Readable {
+    func read()
+}
+protocol Writeable {
+    func write()
+}
+protocol ReadSpeakable: Readable {
+//    func read()
+    func speak()
+}
+protocol ReadWriteSpeakable: Readable, Writeable {
+//    func read()
+//    func write()
+    func speak()
+}
+
+struct SomeType: ReadWriteSpeakable {
+    func read() {
+        print("Read")
+    }
+    
+    func write() {
+        print("Write")
+    }
+    
+    func speak() {
+        print("Speak")
+    }
+}
+
+//MARK: 클래스 상속과 프로토콜
+// 클래스에서 상속과 프로토콜 채택을 동시에 하려면 
+// 상속받으려는 클래스를 먼저 명시하고
+// 그 뒤에 채택할 프로토콜 목록을 작성합니다
+class SuperClass: Readable {
+    func read() { }
+}
+
+class SubClass: SuperClass, Writeable, ReadSpeakable {
+    func write() { }
+    func speak() { }
+}
+
+//MARK:- 프로토콜 준수 확인
+// 인스턴스가 특정 프로토콜을 준수하는지 확인할 수 있습니다
+// is, as 연산자 사용
+let sup: SuperClass = SuperClass()
+let sub: SubClass = SubClass()
+
+var someAny: Any = sup
+someAny is Readable // true
+someAny is ReadSpeakable // false
+someAny = sub
+
+someAny is Readable // true
+someAny is ReadSpeakable // true
+someAny = sup
+
+if let someReadable: Readable = someAny as? Readable {
+    someReadable.read()
+} // read
+if let someReadSpeakable: ReadSpeakable = someAny as? ReadSpeakable {
+    someReadSpeakable.speak()
+} // 동작하지 않음
+someAny = sub
+
+if let someReadable: Readable = someAny as? Readable {
+    someReadable.read()
+} // read
+```
+
+## Extension
+
+[Kotlin](/kotlin/README.md) 의 `extension` 과 같다.
+
+```swift
+/* 익스텐션 */
+
+//익스텐션은 구조체, 클래스, 열거형, 프로토콜 타입에 
+//새로운 기능을 추가할 수 있는 기능입니다. 
+//기능을 추가하려는 타입의 구현된 소스 코드를 
+//알지 못하거나 볼 수 없다 해도, 
+//타입만 알고 있다면 그 타입의 기능을 확장할 수도 있습니다.
+//익스텐션으로 추가할 수 있는 기능
+//연산 타입 프로퍼티 / 연산 인스턴스 프로퍼티
+//타입 메서드 / 인스턴스 메서드
+//이니셜라이저
+//서브스크립트
+//중첩 타입
+//특정 프로토콜을 준수할 수 있도록 기능 추가
+//기존에 존재하는 기능을 재정의할 수는 없습니다
+import Swift
+
+//MARK: - 정의 문법
+/*
+extension <#확장할 타입 이름#> {
+    /* 타입에 추가될 새로운 기능 구현 */
+}
+ */
+
+//익스텐션은 기존에 존재하는 타입이
+//추가적으로 다른 프로토콜을 채택할 수 있도록 
+//확장할 수도 있습니다.
+/*
+extension <#확장할 타입 이름#>: <#프로토콜1#>, <#프로토콜2#>, <#프로토콜3#>... {
+    /* 프로토콜 요구사항 구현 */
+}
+ */
+
+//MARK: - 익스텐션 구현
+//MARK: 연산 프로퍼티 추가
+extension Int {
+    var isEven: Bool {
+        return self % 2 == 0
+    }
+    var isOdd: Bool {
+        return self % 2 == 1
+    }
+}
+
+print(1.isEven) // false
+print(2.isEven) // true
+print(1.isOdd)  // true
+print(2.isOdd)  // false
+var number: Int = 3
+print(number.isEven) // false
+print(number.isOdd) // true
+number = 2
+print(number.isEven) // true
+print(number.isOdd) // false
+
+
+//MARK: 메서드 추가
+extension Int {
+    func multiply(by n: Int) -> Int {
+        return self * n
+    }
+}
+print(3.multiply(by: 2))  // 6
+print(4.multiply(by: 5))  // 20
+number = 3
+print(number.multiply(by: 2))   // 6
+print(number.multiply(by: 3))   // 9
+
+//MARK: 이니셜라이저 추가
+extension String {
+    init(int: Int) {
+        self = "\(int)"
+    }
+    
+    init(double: Double) {
+        self = "\(double)"
+    }
+}
+
+let stringFromInt: String = String(int: 100)
+// "100"
+let stringFromDouble: String = String(double: 100.0)
+// "100.0"
+```
+
+## Higher Order Function
 
 ```swift
 
@@ -1828,16 +2033,46 @@ print(sumFromThree) // 28
  */
 ```
 
-# Advanced
+## Core Libraries
+
+> * [Swift Core Libraries](https://www.swift.org/core-libraries/)
+
+Swift Standard Library 이외에 다음과 같은 3 가지 core library 를 학습해 두자. 
+
+* [Foundation](https://developer.apple.com/documentation/foundation)
+  * Provide primitive classes and introduces several paradigms that define functionality not provided by the language or runtime.
+  * Provide formatted String.
+* [libdispatch](https://github.com/apple/swift-corelibs-libdispatch)
+  * Provide concurrency on multicore hardware.
+* [XCTest](https://github.com/apple/swift-corelibs-xctest)
+  * Provide unit test.
 
 ## Generics
 
-## Subscript
+WIP...
+
+## Opaque Types
+
+WIP...
+
+## Automatic Reference Counting
+
+WIP...
+
+## Memory Safety
+
+WIP...
 
 ## Access Control
 
-## ARC (Automatic Reference Counting)
+WIP...
 
-## Nested Types
+## Advanced Operators
 
-## Custom Operators
+WIP...
+
+# Advanced
+
+## Style Guide
+
+* [Swift Style Guide](https://google.github.io/swift/)
