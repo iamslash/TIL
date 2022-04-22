@@ -1,37 +1,39 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [Basic Usages](#basic-usages)
-  - [Compile, Execute](#compile-execute)
-  - [REPL](#repl)
+- [Basic](#basic)
   - [Hello World](#hello-world)
-  - [Reserved Words](#reserved-words)
-  - [Useful Keywords](#useful-keywords)
-  - [min, max values](#min-max-values)
-  - [abs, fabs](#abs-fabs)
+  - [Build and Run](#build-and-run)
+  - [Keywords](#keywords)
+  - [Min, Max Values](#min-max-values)
+  - [ABS](#abs)
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
   - [Print Out](#print-out)
   - [Collections compared to c++ containers](#collections-compared-to-c-containers)
-  - [Collections by examples](#collections-by-examples)
+  - [Collections](#collections)
+    - [Array](#array)
+    - [Queue](#queue)
+    - [Set](#set)
+    - [Hash](#hash)
   - [Mult Dimensional Array](#mult-dimensional-array)
   - [Syntax](#syntax)
   - [Classes and Objects](#classes-and-objects)
   - [Variables](#variables)
   - [Operators](#operators)
-  - [Decision makings](#decision-makings)
+  - [Decision Makings](#decision-makings)
   - [Loops](#loops)
   - [Methods](#methods)
   - [Blocks](#blocks)
   - [Modules](#modules)
-  - [Arrays](#arrays)
-  - [Hashes](#hashes)
   - [Date & Time](#date--time)
   - [Ranges](#ranges)
   - [Iterators](#iterators)
   - [File I/O](#file-io)
   - [Exceptions](#exceptions)
+  - [Standard Library](#standard-library)
 - [Advanced](#advanced)
+  - [Style Guide](#style-guide)
   - [Object Oriented](#object-oriented)
   - [Regular Expressions](#regular-expressions)
   - [Database Access](#database-access)
@@ -56,24 +58,13 @@
 
 # Materials
 
+* [Programming Ruby](http://docs.ruby-doc.com/docs/ProgrammingRuby/)
 * [learn ruby in y minutes](https://learnxinyminutes.com/docs/ruby/)
   * 짧은 시간에 ruby 가 어떠한 언어인지 파악해보자
 * [루비 20분 가이드](https://www.ruby-lang.org/ko/documentation/quickstart/)
 * [ruby @ tutorialspoint](https://www.tutorialspoint.com/ruby/)
 
-# Basic Usages
-
-## Compile, Execute
-
-```bash
-$ ruby a.rb
-```
-
-## REPL
-
-```bash
-> irb
-```
+# Basic
 
 ## Hello World
 
@@ -84,7 +75,17 @@ puts "hello world"
 # ruby a.rb
 ```
 
-## Reserved Words
+## Build and Run
+
+```bash
+# Run
+$ ruby a.rb
+
+# REPL
+> irb
+```
+
+## Keywords
 
 * [Keywords @ ruby.io](https://docs.ruby-lang.org/en/2.7.0/doc/keywords_rdoc.html)
 
@@ -215,11 +216,7 @@ yield
 # Starts execution of the block sent to the current method. See methods syntax
 ```
 
-## Useful Keywords
-
-WIP
-
-## min, max values
+## Min, Max Values
 
 ```rb
 class Integer
@@ -234,7 +231,7 @@ p Integer::MAX.class        #=> Fixnum
 p (Integer::MAX + 1).class  #=> Bignum
 ```
 
-## abs, fabs
+## ABS
 
 ```rb
 10.abs()     # 10
@@ -244,7 +241,15 @@ p (Integer::MAX + 1).class  #=> Bignum
 
 ## Bit Manipulation
 
-WIP
+```rb
+a = 0
+b = 1
+puts("%b" % (a & b)) # 0
+puts("%b" % (a | b)) # 1
+puts("%b" % (a ^ b)) # 1
+puts("%b" % (~b))    # ..10
+puts("%b" % (b << 1))# 10
+```
 
 ## String
 
@@ -411,11 +416,11 @@ angel     24
 | `unordered_map`      | `Hash`               |
 | `unordered_multimap` | ``                   |
 
-## Collections by examples
+## Collections
 
-* Array
+### Array
 
-```ruby
+```rb
 a = [1, "two", 3.0]#=> [1, "two", 3.0]
 a = Array.new      #=> []
 Array.new(3)       #=> [nil, nil, nil]
@@ -426,7 +431,7 @@ a = Array.new(3) { Array.new(3) }
 Array({:a => "a", :b => "b"}) #=> [[:a, "a"], [:b, "b"]]
 ```
 
-* Queue
+### Queue
 
 ```ruby
 require 'thread'
@@ -449,7 +454,7 @@ consumer = Thread.new do
 end
 ```
 
-* Set
+### Set
 
 ```ruby
 require 'set'
@@ -462,7 +467,7 @@ s1.subset?(s2)                        #=> false
 s2.subset?(s1)                        #=> true
 ```
 
-* Hash
+### Hash
 
 ```ruby
 grades = { "Jane Doe" => 10, "Jim Doe" => 6 }
@@ -916,7 +921,7 @@ puts Inside_one::CONST
 puts Inside_one::CONST.call + Inside_two::CONST
 ```
 
-## Decision makings
+## Decision Makings
 
 ```ruby
 ## if...else
@@ -1381,72 +1386,6 @@ samp.a2
 samp.b1
 samp.b2
 samp.s1
-```
-
-## Arrays
-
-```ruby
-## creating arrays
-names = Array.new(20)
-puts names.size  # This returns 20
-puts names.length # This also returns 20
-#20
-#20
-
-names = Array.new(4, "mac")
-puts "#{names}"
-# ["mac", "mac", "mac", "mac"]
-
-nums = Array.new(10) { |e| e = e * 2 }
-puts "#{nums}"
-# [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]
-
-nums = Array.[](1, 2, 3, 4, 5)
-nums = Array[1, 2, 3, 4, 5]
-
-digits = Array(0..9)
-puts "#{digits}"
-[0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-
-## array built-in methods
-digits = Array(0..9)
-num = digits.at(6)
-puts "#{num}"
-# 6
-
-## array pack directives
-a = [ "a", "b", "c" ]
-n = [ 65, 66, 67 ]
-puts a.pack("A3A3A3")   #=> "a  b  c  "
-puts a.pack("a3a3a3")   #=> "a\000\000b\000\000c\000\000"
-puts n.pack("ccc")      #=> "ABC"
-# a  b  c
-# abc
-# ABC
-```
-
-## Hashes
-
-```ruby
-## creating hashes
-months = Hash.new( "month" )
-puts "#{months[0]}"
-puts "#{months[72]}"
-# month
-# month
-H = Hash["a" => 100, "b" => 200]
-puts "#{H['a']}"
-puts "#{H['b']}"
-# 100
-# 200
-
-## built-in methods
-$, = ", "
-months = Hash.new( "month" )
-months = {"1" => "January", "2" => "February"}
-keys = months.keys
-puts "#{keys}"
-# ["1", "2"]
 ```
 
 ## Date & Time
@@ -1965,7 +1904,15 @@ end
 end
 ```
 
+## Standard Library
+
+> * [Standard Library Documentation](https://ruby-doc.org/stdlib-3.1.2/)
+
 # Advanced
+
+## Style Guide
+
+[The Ruby Style Guide](https://github.com/rubocop/ruby-style-guide)
 
 ## Object Oriented
 
@@ -2101,4 +2048,3 @@ end
   * embedded Ruby ???
 * ri
   * ruby interactive reference
-
