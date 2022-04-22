@@ -613,6 +613,8 @@ for(String name : names) {
    deque.addLast(4);
    deque.pollFirst();
    deque.pollLast();
+   deque.removeFirstOccurrence(3);
+   deque.removeLastOccurrence(3);
 ```
 
 ### List, LinkedList
