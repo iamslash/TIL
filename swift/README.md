@@ -55,6 +55,7 @@
   - [Advanced Operators](#advanced-operators)
 - [Advanced](#advanced)
   - [Style Guide](#style-guide)
+  - [Libraries](#libraries)
 
 -------------------------------------------------------------------------------
 
@@ -2076,3 +2077,8 @@ WIP...
 ## Style Guide
 
 * [Swift Style Guide](https://google.github.io/swift/)
+
+## Libraries
+
+* [Alamofire](https://github.com/Alamofire/Alamofire)
+  * HTTP Client Library
