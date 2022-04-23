@@ -93,10 +93,25 @@ Android Device 를 USB 로 연결하고 실행하라. 잘된다.
 
 # Local Binary Library
 
-`mylib` module 을 별도의 project 로 만들고 build 한다. `jar` 혹은 `aar` 을 `app` module 의 `libs` 에 copy 한다. 그리고 `app` module 의 `build.gradle` 을 다음과 같이 수정한다.
+`mylib` module 을 별도의 project 로 만들고 build 한다. 
+
+```bash
+$ cd mylib
+$ ../gradlew assembleDebug
+
+# build/outputs/aar/mylib-debug.aar
+$ tree build
+├── outputs
+│   ├── aar
+│   │   └── mylib-debug.aar
+│   └── logs
+│       └── manifest-merger-debug-report.txt
+```
+
+`aar` 을 `app` module 의 `libs` 에 copy 한다. 그리고 `app` module 의 `build.gradle` 을 다음과 같이 수정한다.
 
 ```groovy
-implementation files('libs/mylib.aar')
+implementation files('libs/mylib-debug.aar')
 ```
 
 # Remote Binary Library
