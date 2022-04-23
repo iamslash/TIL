@@ -15,6 +15,24 @@ AAB (Anroid app bundle) 는 현재 사용하는 distribution file 이다. AAB �
 
 # AAB 만들기
 
-# 업로드키로 서명하기
+`Build | Generate Signed Bundle / APK...` 를 선택한다.
 
-# 앱서명키로 서명하기
+![](img/android_generate_signed_bundle_01.png)
+
+`key store password` 는 **업로드키**의 암호를 의미한다. `key alias, key password` 는 **서명키**의 별칭과 암호를 의미한다. `Export encrypted key...` 는 업로드키를 Play Store 에서 관리하길 원할 때 check 한다. 
+
+기존에 생성한 key 를 선택하고 `key store password, key alias, key password` 를 입력한다.
+
+![](img/android_generate_signed_bundle_02.png)
+
+Build Variants 를 선택해서 Build 한다.
+
+![](img/android_generate_signed_bundle_03.png)
+
+# 업로드키, 서명키 만들기
+
+다음과 같이 `keytool` 을 이용하여 command line 으로 만들 수도 있다.
+
+```
+$ keytool -genkey -v -keystore iamslash -storepass aaaaaa -alias iamslash -keypass bbbbbb -keyalg RSA -keysize 2048 -validity 10000
+```
