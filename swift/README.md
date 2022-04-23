@@ -359,6 +359,22 @@ func runAnother(function: (String, String) -> Void) {
 }
 runAnother(function: greeting(friend:me:))
 runAnother(function: someFunction)
+
+// Function Argument Labels and Parameter Names
+// Argument label for input
+// Parameter name for implementation
+func foo(key a: String, val b: String) -> String {
+    return "\(a) \(b)"
+}
+func bar(_ a: String, _ b: String) -> String {
+    return "\(a) \(b)"
+}
+func baz(a: String, b: String) -> String {
+    return "\(a) \(b)"
+}
+print(foo(key: "Hello", val: "World"))
+print(bar("Hello", "World"))
+print(baz(a: "Hello", b: "World"))
 ```
 
 ## Conditional
