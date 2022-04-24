@@ -3,10 +3,9 @@
 - [Materials](#materials)
 - [Javascript Runtime Architecture](#javascript-runtime-architecture)
 - [JavaScript Engine How to work](#javascript-engine-how-to-work)
-- [Basic Usages](#basic-usages)
-  - [Compile, Execute](#compile-execute)
-  - [Reserved Words](#reserved-words)
-  - [Useful Keywords](#useful-keywords)
+- [Basic](#basic)
+  - [Build and Run](#build-and-run)
+  - [Keywords](#keywords)
   - [Min, Max Values](#min-max-values)
   - [abs, fabs](#abs-fabs)
   - [Bit Manipulation](#bit-manipulation)
@@ -14,8 +13,6 @@
   - [Random](#random)
   - [Print Out](#print-out)
   - [Inspecting Functions](#inspecting-functions)
-  - [Documents](#documents)
-  - [Reserved Words](#reserved-words-1)
   - [Data types](#data-types)
   - [Standard built-in objects (global objects)](#standard-built-in-objects-global-objects)
     - [Value properties](#value-properties)
@@ -34,6 +31,13 @@
     - [Other](#other)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collections](#collections)
+    - [Object](#object)
+    - [Array](#array)
+    - [TypedArray](#typedarray)
+    - [Set](#set)
+    - [Map](#map)
+    - [WeakSet](#weakset)
+    - [WeakMap](#weakmap)
   - [Multidimensional Array](#multidimensional-array)
   - [template literals (template strings in ECMA 2015)](#template-literals-template-strings-in-ecma-2015)
   - [Sort](#sort)
@@ -63,7 +67,7 @@
   - [micro task](#micro-task)
   - [Cookies](#cookies)
   - [HTML DOM](#html-dom)
-- [Advanced Usages](#advanced-usages)
+- [Advanced](#advanced)
   - [Computed property names](#computed-property-names)
   - [var, let, const](#var-let-const)
   - [promise](#promise)
@@ -82,6 +86,7 @@ java script에 대해 정리한다.
 
 # Essentials
 
+* [JavaScript @ MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript)
 * [Javascript 핵심 개념 알아보기 - JS Flow](https://www.inflearn.com/course/%ED%95%B5%EC%8B%AC%EA%B0%9C%EB%85%90-javascript-flow/dashboard)
   * inflearn 유료 강좌 흐름
 * [Javascript ES6+ 제대로 알아보기 - 초급](https://www.inflearn.com/course/ecmascript-6-flow/dashboard)
@@ -159,41 +164,36 @@ event-loop 알고리즘은 다음과 같다.
 
 * [JavaScript Visualized: the JavaScript Engine](https://dev.to/lydiahallie/javascript-visualized-the-javascript-engine-4cdf)
 
-# Basic Usages
+# Basic
 
-## Compile, Execute
+## Build and Run
 
 ```js
 $ node a.js
 ```
 
-## Reserved Words
+## Keywords
 
 * [JavaScript Reserved Words](https://www.w3schools.com/js/js_reserved.asp)
 * [Reserved keywords in ES6 with example usage](https://medium.com/@wlodarczyk_j/reserved-keywords-in-es6-with-example-usage-ea0036f63fab)
 
 ```js
-abstract	arguments	await*	boolean
-break	byte	case	catch
-char	class*	const	continue
-debugger	default	delete	do
-double	else	enum*	eval
-export*	extends*	false	final
-finally	float	for	function
-goto	if	implements	import*
-in	instanceof	int	interface
-let*	long	native	new
-null	package	private	protected
-public	return	short	static
-super*	switch	synchronized	this
-throw	throws	transient	true
-try	typeof	var	void
-volatile	while	with	yield
+abstract   else        instanceof   switch
+boolean    enum        int          synchronized
+break      export      interface    this
+byte       extends     long         throw
+case       false       native       throws
+catch      final       new          transient
+char       finally     null         true
+class      float       package      try
+const      for         private      typeof
+continue   function    protected    var
+debugger   goto        public       void 
+default    if          return       volatile
+delete     implements  short        while
+do         import      static       with
+double     in          super
 ```
-
-## Useful Keywords
-
-WIP
 
 ## Min, Max Values
 
@@ -216,7 +216,7 @@ console.log(Math.abs(-2.3));    // 2.3
 
 ## Bit Manipulation
 
-WIP
+WIP...
 
 ## String
 
@@ -328,30 +328,6 @@ console.log("Hello, {0}!".format("World"))
 ```console
 $ node
 $ console. <TAB>
-```
-
-## Documents
-
-* [JavaScript @ MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript)
-
-## Reserved Words
-
-```js
-abstract   else        instanceof   switch
-boolean    enum        int          synchronized
-break      export      interface    this
-byte       extends     long         throw
-case       false       native       throws
-catch      final       new          transient
-char       finally     null         true
-class      float       package      try
-const      for         private      typeof
-continue   function    protected    var
-debugger   goto        public       void 
-default    if          return       volatile
-delete     implements  short        while
-do         import      static       with
-double     in          super
 ```
 
 ## Data types
@@ -567,7 +543,7 @@ console.log(parseInt(100, 2)) // 4, number whose base is 2
   
 ----
 
-* Object
+### Object
 
 ```js
 a = new Object()
@@ -575,9 +551,10 @@ a.foo = 1; a.bar = 2; a.baz = 3
 console.log(a)
 ```
 
-* Array
-  * [Array @ MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
-    * [Array.from() @ MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/from)
+### Array
+
+> * [Array @ MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+> * [Array.from() @ MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/from)
 
 ```js
 // Create an Array
@@ -625,7 +602,7 @@ a[3][3] = 1
 console.log(a)
 ```
 
-* TypedArray
+### TypedArray
 
 ```js
 Int8Array();
@@ -639,7 +616,7 @@ Float32Array();
 Float64Array();
 ```
 
-* Set
+### Set
 
 ```js
 var s = new Set();
@@ -656,7 +633,7 @@ for (let e of s) console.log(e);
 // "some text"
 ```
 
-* Map
+### Map
 
 ```js
 var m = new Map();
@@ -675,7 +652,7 @@ for (var [key, val] of m) {
 // "elephant goes toot"
 ```
 
-* WeakSet
+### WeakSet
 
 ```js
 const ws = new WeakSet(); 
@@ -685,7 +662,7 @@ ws.has(age); // True
 ws.delete(age)
 ```
 
-* WeakMap
+### WeakMap
 
 ```js
 const wm = new WeakMap(); 
@@ -1570,9 +1547,15 @@ console.log('끝');
 
 ## background
 
+WIP...
+
 ## task queue
 
+WIP...
+
 ## micro task
+
+WIP...
 
 ## Cookies
 
@@ -1709,7 +1692,7 @@ document.cookie = "key1 = value1;key2 = value2;expires = date";
 
 ![](https://www.tutorialspoint.com/javascript/images/html-dom.jpg)
 
-# Advanced Usages
+# Advanced
 
 ## Computed property names
 

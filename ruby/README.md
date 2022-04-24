@@ -11,6 +11,7 @@
   - [Random](#random)
   - [Print Type](#print-type)
   - [Print Out](#print-out)
+  - [Inspecting Methods](#inspecting-methods)
   - [Collections compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
     - [Array](#array)
@@ -400,6 +401,22 @@ john      20
 david     30
 peter     40
 angel     24
+```
+
+## Inspecting Methods
+
+Create `~/.irbrc` file like this.
+
+```bash
+$ vim ~/.irbrc
+require 'irb/completion'
+```
+
+Double TAB in `irb`.
+
+```rb
+> a = []
+> a.
 ```
 
 ## Collections compared to c++ containers

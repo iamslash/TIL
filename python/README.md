@@ -4,7 +4,6 @@
 - [Basic](#basic)
   - [Compile, Execute](#compile-execute)
   - [Reserved Words](#reserved-words)
-  - [Useful keywords](#useful-keywords)
   - [min, max values](#min-max-values)
   - [abs, fabs](#abs-fabs)
   - [Bit Manipulation](#bit-manipulation)
@@ -163,10 +162,6 @@ is
 try
 ```
 
-## Useful keywords
-
-WIP
-
 ## min, max values
 
 ```py
@@ -201,7 +196,7 @@ math.fabs(12.0)  # 12.0
 
 ## Bit Manipulation
 
-WIP
+WIP...
 
 ## String
 
