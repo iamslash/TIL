@@ -40,6 +40,7 @@
   - [Optional Chaining](#optional-chaining)
   - [Error Handling](#error-handling)
   - [Concurrency](#concurrency)
+  - [Print type](#print-type)
   - [Type Casting](#type-casting)
   - [Assert, Guard](#assert-guard)
   - [Nested Types](#nested-types)
@@ -1637,6 +1638,23 @@ result // 1개 제공함
 ```
 
 ## Concurrency
+
+WIP...
+
+## Print type
+
+```swift
+print(type(of: [1, 2, 3])) 
+// Array<Int>
+print(type(of: 0...3))
+// ClosedRange<Int>
+print(type(of: (0...3).reversed()))
+// ReversedCollection<ClosedRange<Int>>
+print(type(of: 0..<3))
+// Range<Int>
+print(type(of: (0..<3).reversed()))
+// ReversedCollection<Range<Int>>
+```
 
 ## Type Casting
 
