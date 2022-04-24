@@ -468,6 +468,8 @@ repeat {
 
 ### Array
 
+> [Documentation | Swift | Array](https://developer.apple.com/documentation/swift/array)
+
 ```swift
 var i: Array<Int> = Array<Int>()
 // var i : Array<Int> = [Int]()
@@ -479,24 +481,24 @@ var i: Array<Int> = Array<Int>()
 
 i.append(1)
 i.append(100)
-// i.append(101.1) // error
-print(integers) // [1, 100]
-
+// i.append(101.1) // Error
+print(integers)        // [1, 100]
+print(integers.max())  // 100
+print(integers.last)   // 100
+print(integers.lastIndex(of: 100)) // 1
 print(i.contains(100)) // true
-print(i.contains(90)) // false
+print(i.contains(90))  // false
 
-i[0] = 99
-
-i.remove(at: 0)
-i.removeLast()
-i.removeAll()
-
-print(i.count)
-
-// i[0] // error
+i[0] = 99   // [99, 100]
+i.remove(at: 0)  // [100]
+i.removeLast()   // []
+i.removeLast(1)  // []
+i.removeAll()    // []
+print(i.count)   // 0
+// i[0] // Error
 
 let ii = [1, 2, 3]
-// ii.append(4) // error
+// ii.append(4) // Error
 ```
 
 ### Set

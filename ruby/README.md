@@ -410,10 +410,10 @@ angel     24
 | `for, while`         | `while, until, for`    |
 | `array`              | ``                   |
 | `vector`             | `Array`              |
-| `deque`              | ``                   |
+| `deque`              | `Array`  |
 | `forward_list`       | ``                   |
 | `list`               | ``                   |
-| `stack`              | ``                   |
+| `stack`              | `Array`                   |
 | `queue`              | `Queue`              |
 | `priority_queue`     | ``                   |
 | `set`                | ``                   |
@@ -429,6 +429,8 @@ angel     24
 
 ### Array
 
+> [Array | ruby](https://ruby-doc.org/core-3.1.0/Array.html)
+
 ```rb
 a = [1, "two", 3.0]#=> [1, "two", 3.0]
 a = Array.new      #=> []
@@ -438,6 +440,15 @@ Array.new(4) { Hash.new } #=> [{}, {}, {}, {}]
 a = Array.new(3) { Array.new(3) }
 #=> [[nil, nil, nil], [nil, nil, nil], [nil, nil, nil]]
 Array({:a => "a", :b => "b"}) #=> [[:a, "a"], [:b, "b"]]
+
+a = [1, 3, 2, 5, 4, 1]
+puts(a.index(1))   # 0
+puts(a.rindex(1))  # 5
+puts(a.max())      # 5
+a.delete_at(a.rindex(a.max()))
+a.push(9)
+a.pop()
+puts(a.last)       # 1
 ```
 
 ### Queue

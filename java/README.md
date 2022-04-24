@@ -666,24 +666,26 @@ for(String name : names) {
 참고로 [priority_queue of cpp](/cpp/README.md) 는 `참이 꼭대기이다.`.
 
 ```java
-		// Less top. 작은 값이 꼭대기다.
-		Queue<Integer> pqLess = new PriorityQueue<>();
-		// Great top. 큰 값이 꼭대기다
-		Queue<Integer> pqGreat = new PriorityQueue<>((a,b) -> b - a);
-		pqLess.offer(1);   pqGreat.offer(1);
-		pqLess.offer(10);  pqGreat.offer(10);
-		pqLess.offer(0);   pqGreat.offer(0);
-		pqLess.offer(100); pqGreat.offer(100);
-		// 0 1 10 100
-		System.out.println(pqLess.peek());
-		while (pqLess.size() > 0) {
-      System.out.println(pqLess.poll());
-		}
-		// 100 10 1 0
-		System.out.println(pqGreat.peek());
-		while (pqGreat.size() > 0) {
-      System.out.println(pqGreat.poll());
-		}		
+// Less top. 작은 값이 꼭대기다.
+Queue<Integer> pqLess = new PriorityQueue<>();
+// Great top. 큰 값이 꼭대기다
+Queue<Integer> pqGreat = new PriorityQueue<>((a,b) -> b - a);
+pqLess.offer(1);   pqGreat.offer(1);
+pqLess.offer(10);  pqGreat.offer(10);
+pqLess.offer(0);   pqGreat.offer(0);
+pqLess.offer(100); pqGreat.offer(100);
+// 0 1 10 100
+System.out.println(pqLess.peek());
+while (pqLess.size() > 0) {
+   System.out.println(pqLess.poll());
+}
+// 100 10 1 0
+System.out.println(pqGreat.peek());
+   while (pqGreat.size() > 0) {
+System.out.println(pqGreat.poll());
+}
+// Remove the element
+pqLess.remove(1);
 ```
 
 ```java
