@@ -417,19 +417,43 @@ default:
 ## Loop
 
 ```swift
+// for range
+for i in 0...3 {
+    print("\(i)", terminator: " ")
+}
+// 0 1 2 3
+print("")
+for i in 0..<3 {
+    print("\(i)", terminator: " ")
+}
+// 0 1 2
+print("")
+for i in (0...3).reversed() {
+    print("\(i)", terminator: " ")
+}
+// 3 2 1 0
+print("")
+for i in (0..<3).reversed() {
+    print("\(i)", terminator: " ")
+}
+// 2 1 0
+print("")
+
+// for in
 var integers = [1, 2, 3]
 let people = ["foo": 10, "bar": 15, "baz": 12]
-// for in
 for integer in integers {
     print(integer)
 }
 for (name, age) in people {
     print("\(name): \n(age)")
 }
+
 // while
 while integers.count > 1 {
     integers.removeLast()
 }
+
 // repeat while
 repeat {
     integers.removeLast()
