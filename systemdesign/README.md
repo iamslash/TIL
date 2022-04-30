@@ -104,10 +104,12 @@
 * [Grokking the System Design Interview](https://www.educative.io/collection/5668639101419520/5649050225344512)
   - 유료 시스템 디자인 인터뷰
   - [System Design @ blogspot](https://learnsystemdesign.blogspot.com/)
-* [System Design Interview – An insider's guide, Second Edition](https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF)
-  * [links](https://github.com/alex-xu-system/bytecode/blob/main/system_design_links.md)
-* [System Design Interview – An Insider's Guide: Volume 2](https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119)
-  * [links](https://github.com/alex-xu-system/bytebytego/blob/main/system_design_links_vol2.md)
+* System Design Interview – An insider's guide by Alex
+  * [blog archives](https://blog.bytebytego.com/archive)
+  * [System Design Interview – An insider's guide, Second Edition](https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF)
+    * [links](https://github.com/alex-xu-system/bytecode/blob/main/system_design_links.md)
+  * [System Design Interview – An Insider's Guide: Volume 2](https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119)
+    * [links](https://github.com/alex-xu-system/bytebytego/blob/main/system_design_links_vol2.md)
 * [incident @ TIL](/incident/README.md)
   * incident case studies
   
