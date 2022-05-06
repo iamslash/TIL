@@ -1,14 +1,15 @@
 - [Requirements](#requirements)
   - [Functional Requirements](#functional-requirements)
-  - [Non-functional Requirements](#non-functional-requirements)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
-  - [Traffic Estimates](#traffic-estimates)
-  - [Storage Estimates](#storage-estimates)
-- [System APIs](#system-apis)
-- [DataBase Schema](#database-schema)
-- [High-level Architecture](#high-level-architecture)
-- [Low-level Architecture](#low-level-architecture)
-- [System Extentions](#system-extentions)
+  - [Non-Functional Requirements](#non-functional-requirements)
+- [Estimation](#estimation)
+  - [Traffic](#traffic)
+  - [Storage](#storage)
+- [High Level Design](#high-level-design)
+  - [System APIs](#system-apis)
+  - [Data Model](#data-model)
+  - [High-level Architecture](#high-level-architecture)
+- [Low Level Design](#low-level-design)
+- [System Extention](#system-extention)
 - [Q&A](#qa)
 - [References](#references)
 
@@ -28,21 +29,21 @@
 * The user waits if there is a chance that the seats might be availble.
 * Waiting should be fair. FIFO
 
-## Non-functional Requirements
+## Non-Functional Requirements
 
 * The system should be highly concurrent. Multiple requests for same seats are possible.
 * The system provide finantial transactions.
 
-# Capacity Estimation and Constraints
+# Estimation
 
-## Traffic Estimates
+## Traffic
 
 | Number | Description |
 | -------------------------------------------- | ---------------- |
-| 3 billion   | PV (page view) per month |
-| 10 million | Sold tickets per month |
+| 3 Billion   | PV (page view) per month |
+| 10 Million | Sold tickets per month |
 
-## Storage Estimates
+## Storage
 
 | Number | Description |
 | -------------------------------------------- | ---------------- |
@@ -54,9 +55,11 @@
 | 50 bytes | movies and cinemas | 
 | 2 GB / day (500 cities * 10 cinemas * 2000 seats * 2 shows * (50 + 50)) | data size per day |
 
-# System APIs
+# High Level Design
 
-```
+## System APIs
+
+```c
 search_movies(
   api_key,
   keyword,
@@ -71,10 +74,8 @@ search_movies(
   per_page,
   page_no,
   order_by
-  )
-```
+)
 
-```
 reserve_seats(
   api_key,
   session_id,
@@ -84,17 +85,17 @@ reserve_seats(
 )
 ```
 
-# DataBase Schema
+## Data Model
 
 ![](schema.png)
 
-# High-level Architecture
+## High-level Architecture
 
 ![](DesigningTicketmasterHighLevelArch.png)
 
-# Low-level Architecture
+# Low Level Design
 
-# System Extentions
+# System Extention
 
 # Q&A
 
