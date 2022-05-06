@@ -1,13 +1,13 @@
 - [Requirements](#requirements)
   - [Functional Requirements](#functional-requirements)
   - [Non-Functional Requirements](#non-functional-requirements)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
+- [Estimation](#estimation)
   - [Traffic estimates](#traffic-estimates)
   - [Storage estimates](#storage-estimates)
   - [Memory estimates](#memory-estimates)
   - [High-level estimates](#high-level-estimates)
-- [High Level Architecture](#high-level-architecture)
-- [Low Level Architecture](#low-level-architecture)
+- [High Level Design](#high-level-design)
+- [Low Level Design](#low-level-design)
   - [System APIs](#system-apis)
   - [Photo files](#photo-files)
   - [Meta Data Base](#meta-data-base)
@@ -23,7 +23,7 @@
   - [Data Sharding](#data-sharding)
   - [Ranking and News Feed Generation](#ranking-and-news-feed-generation)
   - [News Feed Creation with Sharded Data](#news-feed-creation-with-sharded-data)
-- [System Extention](#system-extention)
+- [Extention](#extention)
   - [Cache and Load Balancing](#cache-and-load-balancing)
 - [Q&A](#qa)
 - [References](#references)
@@ -45,7 +45,7 @@
 * The maximum latency is 200ms for news feed generation.
 * use cannot see a photo for a while.
 
-# Capacity Estimation and Constraints
+# Estimation
 
 ## Traffic estimates
 
@@ -79,7 +79,7 @@
 | 1425 TB           | Storage for 10 years              |
 | 80 GB           | The number of memory to be cached per day |
 
-# High Level Architecture
+# High Level Design
 
 * Amazon RDS supports 16 TB storage. [Amazon RDS, 최대 16TB 크기의 데이터베이스 스토리지 및 MySQL, MariaDB, Oracle, PostgreSQL 엔진의 빠른 확장 지원](https://aws.amazon.com/ko/about-aws/whats-new/2017/11/amazon-rds-now-supports-database-storage-size-up-to-16tb-and-faster-scaling-for-mysql-mariadb-oracle-and-postgresql-engines/)
 * Application Servers can be divided into Write Application Servers, Read Application Servers
@@ -87,7 +87,7 @@
 
 ![](DesigningInstagram.jpg)
 
-# Low Level Architecture
+# Low Level Design
 
 ## System APIs
 
@@ -188,7 +188,7 @@ Let's think about photoID more. Our system makes 23 photos per second. Finally w
 
 What about using `{timestamp: 52 bits}{photo sequence: 12 bits}` ???
 
-# System Extention
+# Extention
 
 ## Cache and Load Balancing
 

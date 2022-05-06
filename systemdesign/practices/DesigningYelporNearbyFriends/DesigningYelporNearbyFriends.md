@@ -1,14 +1,15 @@
 - [Requirements](#requirements)
   - [Functional Requirements](#functional-requirements)
   - [Non-functional Requirements](#non-functional-requirements)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
+- [Estimation](#estimation)
   - [Traffic Estimates](#traffic-estimates)
   - [Storage Estimates](#storage-estimates)
-- [System APIs](#system-apis)
-- [DataBase Schema](#database-schema)
-- [High-level Architecture](#high-level-architecture)
+- [High Level Design](#high-level-design)
+  - [High-level Architecture](#high-level-architecture)
+  - [System APIs](#system-apis)
+  - [DataBase Schema](#database-schema)
   - [Components](#components)
-- [Low-level Architecture](#low-level-architecture)
+- [Low Level Design](#low-level-design)
   - [Search with Simple RDBMS SQL](#search-with-simple-rdbms-sql)
   - [Search with static size grids](#search-with-static-size-grids)
   - [Search with dynamic size grids (QuardTree)](#search-with-dynamic-size-grids-quardtree)
@@ -16,7 +17,7 @@
     - [Based on region](#based-on-region)
     - [Based on capacity](#based-on-capacity)
   - [Replication and Fault Tolerance](#replication-and-fault-tolerance)
-- [System Extentions](#system-extentions)
+- [Extentions](#extentions)
 - [Q&A](#qa)
 - [References](#references)
 
@@ -35,7 +36,7 @@
 * The system provides real-time search result.
 * The system provides heavy search load.
 
-# Capacity Estimation and Constraints
+# Estimation
 
 ## Traffic Estimates
 
@@ -53,7 +54,14 @@
 | 2 Billion | places for 10 year |
 | 2 TB (2 Billion * 1 K) | storage for 10 year |
 
-# System APIs
+# High Level Design
+
+## High-level Architecture
+
+![](DesigningYelporNearbyFriendsHighLevelArch.png)
+
+
+## System APIs
 
 ```cpp
 search(
@@ -89,7 +97,7 @@ add_review(
 )
 ```
 
-# DataBase Schema
+## DataBase Schema
 
 ```sql
 CREATE TABLE user (
@@ -128,16 +136,12 @@ CREATE TABLE review (
 );
 ```
 
-# High-level Architecture
-
-![](DesigningYelporNearbyFriendsHighLevelArch.png)
-
 ## Components
 
 * QuardTree Server: subtree of QuardTree
 * QuardTree Build Server: Store `{quard_tree_server_id : [{place_id, latitude, longitude},...]}`.
 
-# Low-level Architecture
+# Low Level Design
 
 ## Search with Simple RDBMS SQL
 
@@ -262,7 +266,7 @@ These are numbers for QuardTree cache. We need to divide nodes until one QuardTr
   * Quad Tree Build Server will provision Quad Tree servers.
   * Quad Tree Server will build quad tree after pulling data from Quad Tree Build Server.
 
-# System Extentions
+# Extentions
 
 # Q&A
 

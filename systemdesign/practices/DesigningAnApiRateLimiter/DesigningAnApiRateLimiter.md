@@ -7,8 +7,8 @@
   - [How to do Rate Limiting?](#how-to-do-rate-limiting)
   - [What are different types of throttling?](#what-are-different-types-of-throttling)
   - [What are different types of algorithms used for Rate Limiting?](#what-are-different-types-of-algorithms-used-for-rate-limiting)
-- [High level design for Rate Limiter](#high-level-design-for-rate-limiter)
-- [Low level design for Rate Limiter](#low-level-design-for-rate-limiter)
+- [High Level Design](#high-level-design)
+- [Low Level Design](#low-level-design)
   - [Fixed window algorithm](#fixed-window-algorithm)
     - [Algorithm](#algorithm)
     - [Problems](#problems)
@@ -21,7 +21,7 @@
     - [Estimation](#estimation-2)
   - [Data Sharding and Caching](#data-sharding-and-caching)
   - [Should we rate limit by IP or by user?](#should-we-rate-limit-by-ip-or-by-user)
-- [System Extention](#system-extention)
+- [Extention](#extention)
 - [Q&A](#qa)
 - [References](#references)
 
@@ -83,11 +83,11 @@ Response 429 Too many requests.
             Rolling Window
 ```
 
-# High level design for Rate Limiter
+# High Level Design
 
 ![](DesigningAnApiRateLimiterHighLevelArch.png)
 
-# Low level design for Rate Limiter
+# Low Level Design
 
 ## Fixed window algorithm
 
@@ -222,7 +222,7 @@ This is a example of rate limit setting for 3/min rate limit setting and every 1
 * In case of User based rate limitting, One bad user can cause throttling to other user with login API of wrong token.
 * We need to mix two ways. GitHub Enterprise appliance has rate limit setting for non-authenticated users, authenticated users. [Configuring rate limits @ GitHub](https://docs.github.com/en/enterprise-server@2.21/admin/configuration/configuring-rate-limits)
 
-# System Extention
+# Extention
 
 # Q&A
 

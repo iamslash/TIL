@@ -5,13 +5,14 @@
 - [Requirements](#requirements)
   - [Functional Requirements](#functional-requirements)
   - [Non-functional Requirements](#non-functional-requirements)
-- [System APIs](#system-apis)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
+- [Estimation](#estimation)
   - [Traffic Estimation](#traffic-estimation)
   - [Storage Estimation](#storage-estimation)
   - [High level Estimation](#high-level-estimation)
-- [High-level Architecture](#high-level-architecture)
-- [Low-level Architecture](#low-level-architecture)
+- [High Level Design](#high-level-design)
+  - [System APIs](#system-apis)
+  - [High-level Architecture](#high-level-architecture)
+- [Low Level Design](#low-level-design)
   - [Prefix Server](#prefix-server)
   - [Assemble Server](#assemble-server)
   - [Trie Build Server](#trie-build-server)
@@ -21,7 +22,7 @@
   - [Fault Tolerance](#fault-tolerance)
   - [Typeahead Client](#typeahead-client)
   - [File System](#file-system)
-- [System Extentions](#system-extentions)
+- [Extentions](#extentions)
 - [Q&A](#qa)
 - [Implementations](#implementations)
 - [References](#references)
@@ -38,25 +39,7 @@
 
 * The latency should be less than 200ms.
 
-# System APIs
-
-```c
-search(
-  api_key,
-  query
-)
-
-query: The term for search. The system increment hits of the term and this will be used for rank of the term.
-
-get_top_terms(
-  api_key,
-  prefix
-)
-
-prefix: The system recommend top 10 candidates which starts with the prefix.
-```
-
-# Capacity Estimation and Constraints
+# Estimation
 
 ## Traffic Estimation
 
@@ -85,11 +68,31 @@ prefix: The system recommend top 10 candidates which starts with the prefix.
 | 250 GB (25 GB * 10 year)  | total bytes to index for 10 years |
 | ??? | total bytes with index for 10 years |
 
-# High-level Architecture
+# High Level Design
+
+## System APIs
+
+```c
+search(
+  api_key,
+  query
+)
+
+query: The term for search. The system increment hits of the term and this will be used for rank of the term.
+
+get_top_terms(
+  api_key,
+  prefix
+)
+
+prefix: The system recommend top 10 candidates which starts with the prefix.
+```
+
+## High-level Architecture
 
 ![](DesigningTypeaheadSuggestionHighLevelArch.png)
 
-# Low-level Architecture
+# Low Level Design
 
 ## Prefix Server
 
@@ -125,7 +128,7 @@ When the user type one character, it requets `get_top_terms` with prefix.
 
 HDFS, GlusterFS
 
-# System Extentions
+# Extentions
 
 # Q&A
 

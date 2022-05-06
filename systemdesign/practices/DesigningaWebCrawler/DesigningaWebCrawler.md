@@ -2,16 +2,16 @@
   - [Functional Requirements](#functional-requirements)
   - [Non-functional Requirements](#non-functional-requirements)
   - [Extended Requirements](#extended-requirements)
-- [System APIs](#system-apis)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
+- [Estimation](#estimation)
   - [Traffic](#traffic)
   - [Storage](#storage)
-- [High-level Architecture](#high-level-architecture)
+- [High Level Design](#high-level-design)
   - [How to process](#how-to-process)
-- [Low-level Architecture](#low-level-architecture)
+  - [System APIs](#system-apis)
+- [Low Level Design](#low-level-design)
   - [How to crawl ?](#how-to-crawl-)
   - [Components](#components)
-- [System Extentions](#system-extentions)
+- [Extentions](#extentions)
 - [Q&A](#qa)
 - [Implementation](#implementation)
 - [References](#references)
@@ -36,14 +36,7 @@
 * Limit of pages.
 * Robots exclusion protocol (robot.txt).
 
-# System APIs
-
-```
-collect(api_key,
-        root_url)
-```
-
-# Capacity Estimation and Constraints
+# Estimation
 
 ## Traffic
 
@@ -61,7 +54,7 @@ collect(api_key,
 | 1.5 PB (15B * (100KB + 500)) | total data size  |
 | 2.14 PB (1.5 PB / 0.7) | total data size after 70% rule |
 
-# High-level Architecture
+# High Level Design
 
 ## How to process
 
@@ -72,7 +65,14 @@ collect(api_key,
 * Add new urls to the not-visited urls.
 * Store documents and make an index.
 
-# Low-level Architecture
+## System APIs
+
+```
+collect(api_key,
+        root_url)
+```
+
+# Low Level Design
 
 ![](DesigningaWebCrawlerHighLevelArch.png)
 
@@ -110,7 +110,7 @@ collect(api_key,
 * Checkpointing
   * Save checkpoints and restore them.
 
-# System Extentions
+# Extentions
 
 # Q&A
 

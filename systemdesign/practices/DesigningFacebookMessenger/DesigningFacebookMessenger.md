@@ -1,15 +1,16 @@
 - [Requirements](#requirements)
   - [Functional Requirements](#functional-requirements)
   - [Non-functional Requirements](#non-functional-requirements)
-- [System APIs](#system-apis)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
+- [Estimation](#estimation)
   - [Traffic Estimation](#traffic-estimation)
   - [Storage Estimation](#storage-estimation)
   - [Bandwith Estimation](#bandwith-estimation)
   - [High-level Estimation](#high-level-estimation)
-- [High-level Architecture](#high-level-architecture)
+- [High Level Design](#high-level-design)
+  - [High-level Architecture](#high-level-architecture)
+  - [System APIs](#system-apis)
   - [Workflow](#workflow)
-- [Low-level Architecture](#low-level-architecture)
+- [Low Level Design](#low-level-design)
   - [Messages Handling](#messages-handling)
   - [How will clients main an open connection with the server?](#how-will-clients-main-an-open-connection-with-the-server)
   - [How can the server keep track of all the opened connection to redirect messages to the users](#how-can-the-server-keep-track-of-all-the-opened-connection-to-redirect-messages-to-the-users)
@@ -22,7 +23,7 @@
   - [How should clients eiffiently fetch data form the server ?](#how-should-clients-eiffiently-fetch-data-form-the-server-)
   - [Managing user's status](#managing-users-status)
   - [Partioning Database](#partioning-database)
-- [System Extentions](#system-extentions)
+- [Extentions](#extentions)
   - [Cache](#cache)
   - [Load balancing](#load-balancing)
   - [Fault tolerance and replication](#fault-tolerance-and-replication)
@@ -47,15 +48,7 @@
 * The system supports highly-consistent, users can the same chat history on all their devices.
 * The system supports highly-availabilty, but lower availability in the interest of consistency.
 
-# System APIs
-
-```
-sendMessage(api_key, msg)
-
-recvMessage(msg, from_user)
-```
-
-# Capacity Estimation and Constraints
+# Estimation
 
 ## Traffic Estimation
 
@@ -89,9 +82,19 @@ recvMessage(msg, from_user)
 | 25 MB | ingress data  |
 | 25 MB | egress data |
 
-# High-level Architecture
+# High Level Design
+
+## High-level Architecture
 
 ![](DesigningFacebookMessengerHighLevelArch.png)
+
+## System APIs
+
+```
+sendMessage(api_key, msg)
+
+recvMessage(msg, from_user)
+```
 
 ## Workflow
 
@@ -101,7 +104,7 @@ recvMessage(msg, from_user)
 * User-B receives the message and sends the ack to the chat-B server.
 * The chat-A server notifies to User-A that the message has been delivered successfully to User-B
 
-# Low-level Architecture
+# Low Level Design
 
 ## Messages Handling
 
@@ -167,7 +170,7 @@ Pagination is a good solution.
 * Partitioning based on user_id is a good solution.
 * Partitioning based on message_id is not a good solution because of slow fetching time.
 
-# System Extentions
+# Extentions
 
 ## Cache
 

@@ -3,9 +3,9 @@
 - [Estimation](#estimation)
   - [Traffic](#traffic)
   - [Storage](#storage)
-- [System APIs](#system-apis)
-- [High Level Architecture](#high-level-architecture)
-- [Low Level Architecture](#low-level-architecture)
+- [High Level Design](#high-level-design)
+  - [System APIs](#system-apis)
+- [Low Level Design](#low-level-design)
   - [Fault Tolerance](#fault-tolerance)
   - [Cache](#cache)
   - [Load Balancing](#load-balancing)
@@ -41,7 +41,11 @@
 | 120 GB per day (400 M * 300)  | data size per day    |
 | 1.38 MB / sec (120 GB / 86600 sec) | data size per sec   |
 
-# System APIs
+# High Level Design
+
+![](DesigningTwitterSearchHighLevelArch.png)
+
+## System APIs
 
 ```c
 search(api_dev_key,
@@ -55,11 +59,7 @@ returns: (JSON)
   userID, name, tweet text, tweetID, creation time, number of likes
 ```
 
-# High Level Architecture
-
-![](DesigningTwitterSearchHighLevelArch.png)
-
-# Low Level Architecture
+# Low Level Design
 
 * Storage
   * `120 GB * 365 days * 5 years = 200 TB`

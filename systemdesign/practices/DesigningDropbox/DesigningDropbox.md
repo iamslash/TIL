@@ -1,9 +1,9 @@
 - [Requirements](#requirements)
   - [Functional requirements](#functional-requirements)
   - [Non-functional requirements](#non-functional-requirements)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
-- [High-level Architecture](#high-level-architecture)
-- [Log-level Architecture](#log-level-architecture)
+- [Estimation](#estimation)
+- [High-level Design](#high-level-design)
+- [Log-level Design](#log-level-design)
   - [Clients](#clients)
   - [Meta Database](#meta-database)
   - [Sync Server](#sync-server)
@@ -11,7 +11,7 @@
   - [Cloud/Block Storage](#cloudblock-storage)
   - [File Processing Workflow](#file-processing-workflow)
   - [Data Deduplication](#data-deduplication)
-- [System Extension](#system-extension)
+- [Extension](#extension)
   - [Metadata Sharding](#metadata-sharding)
   - [Caching](#caching)
   - [Security](#security)
@@ -44,7 +44,7 @@ This is system should suuport Availability, Reliability and Durability, Scalabil
 * The client keep a local copy of the metdata(file name, size, etc...)
 * The client upload the diffs instead of the whole chunk.
 
-# Capacity Estimation and Constraints
+# Estimation
 
 | Number                                       | Description      |
 | -------------------------------------------- | ---------------- |
@@ -54,11 +54,11 @@ This is system should suuport Availability, Reliability and Durability, Scalabil
 | 100 billion   | Total files |
 | 10 PB   | Total Storage |
 
-# High-level Architecture
+# High-level Design
 
 ![](DesigningDropboxHighLevelArch.png)
 
-# Log-level Architecture
+# Log-level Design
 
 ## Clients
 
@@ -114,7 +114,7 @@ Every chunks has hash (SHA256) and it will be used removing duplicated chunks. T
 
 In case of post-process deduplication, server handles it. In case of in-line deduplication, client handles it.
 
-# System Extension
+# Extension
 
 ## Metadata Sharding
 

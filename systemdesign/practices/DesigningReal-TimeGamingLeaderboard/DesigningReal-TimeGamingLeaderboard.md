@@ -1,7 +1,7 @@
 - [Requirements](#requirements)
   - [Functional Requirement](#functional-requirement)
   - [Non-Functional Requirement](#non-functional-requirement)
-  - [Estimation](#estimation)
+- [Estimation](#estimation)
 - [High Level Design](#high-level-design)
   - [API Design](#api-design)
   - [High-Level Design](#high-level-design-1)
@@ -10,7 +10,7 @@
   - [Build on the cloud or not](#build-on-the-cloud-or-not)
   - [Scale Redis](#scale-redis)
   - [Alternative Solution: NoSQL](#alternative-solution-nosql)
-- [System Extension](#system-extension)
+- [Extension](#extension)
   - [Faster Retrieval and Breaking Tie](#faster-retrieval-and-breaking-tie)
   - [System Failure Recovery](#system-failure-recovery)
 - [Q&A](#qa)
@@ -25,7 +25,7 @@
 
 ## Non-Functional Requirement
 
-## Estimation
+# Estimation
 
 # High Level Design
 
@@ -43,7 +43,7 @@
 
 ## Alternative Solution: NoSQL
 
-# System Extension
+# Extension
 
 ## Faster Retrieval and Breaking Tie
 

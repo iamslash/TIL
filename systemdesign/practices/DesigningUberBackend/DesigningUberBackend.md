@@ -1,15 +1,16 @@
 - [Requirements](#requirements)
   - [Functional Requirements](#functional-requirements)
   - [Non-functional Requirements](#non-functional-requirements)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
+- [Estimation](#estimation)
   - [Traffic Estimates](#traffic-estimates)
   - [Storage Estimates](#storage-estimates)
   - [Network](#network)
-- [System APIs](#system-apis)
-- [High-level Architecture](#high-level-architecture)
-- [Low-level Architecture](#low-level-architecture)
+- [High Level Design](#high-level-design)
+  - [System APIs](#system-apis)
+  - [High-level Architecture](#high-level-architecture)
+- [Low Level Design](#low-level-design)
   - [Process of a ride.](#process-of-a-ride)
-- [System Extentions](#system-extentions)
+- [Extentions](#extentions)
 - [Q&A](#qa)
 - [Implementation](#implementation)
 - [References](#references)
@@ -31,7 +32,7 @@
 * Latency should be under 100 ms.
 * The system should be high availble.
 
-# Capacity Estimation and Constraints
+# Estimation
 
 ## Traffic Estimates
 
@@ -63,7 +64,9 @@
 | 2.5 M (5 * 500 K) | total subscribers of drivers |
 | 47.5 MB/s (2.5 M * 19 bytes) | egress of drivers' locations per sec |
 
-# System APIs
+# High Level Design
+
+## System APIs
 
 ```
 view_drivers(api_key, customer_location)
@@ -81,11 +84,11 @@ accept_customer(api_key, customer_id)
 notify_driver_location(api_key, driver_location)
 ```
 
-# High-level Architecture
+## High-level Architecture
 
 ![](DesigningUberBackendHighLevelArch.png)
 
-# Low-level Architecture
+# Low Level Design
 
 * The system should update Quad Tree every 10 seconds.
 * The system store DriverLocationHashTable with `{driver_id:{old_latitude,old_longitude,new_latitude,new_longitude}}`.
@@ -107,7 +110,7 @@ notify_driver_location(api_key, driver_location)
 * The driver which accept the ride first will be assgined the ride. What if no driver accept the Application Server notify to other 3 drivers.
 * Once a driver accept a ride, the customer will be notified.
 
-# System Extentions
+# Extentions
 
 # Q&A
 

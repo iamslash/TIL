@@ -1,16 +1,16 @@
 - [Requirements](#requirements)
   - [Functional Requirements](#functional-requirements)
   - [Non-functional Requirements](#non-functional-requirements)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
+- [Estimation](#estimation)
   - [Traffic Estimates](#traffic-estimates)
   - [Storage Estimates](#storage-estimates)
-- [System APIs](#system-apis)
-- [Database Schema](#database-schema)
-- [High-level Architecture](#high-level-architecture)
+- [High Level Design](#high-level-design)
+  - [System APIs](#system-apis)
+  - [Database Schema](#database-schema)
   - [Components](#components)
   - [Feed Generation](#feed-generation)
   - [Feed Publishing](#feed-publishing)
-- [Low-level Architecture](#low-level-architecture)
+- [Low Level Design](#low-level-design)
   - [Feed Generation](#feed-generation-1)
   - [Feed Publishing](#feed-publishing-1)
     - [Pull or Fand-out-on-load](#pull-or-fand-out-on-load)
@@ -18,7 +18,7 @@
     - [Hybrid](#hybrid)
   - [How to rank posts](#how-to-rank-posts)
   - [Shard](#shard)
-- [System Extentions](#system-extentions)
+- [Extentions](#extentions)
 - [Q&A](#qa)
 - [Implementation](#implementation)
 - [References](#references)
@@ -38,7 +38,7 @@
 
 * The system generate uers' newsfeed in realtime and maximum latency could be 2 sec.
 
-# Capacity Estimation and Constraints
+# Estimation
 
 ## Traffic Estimates
 
@@ -60,8 +60,12 @@
 | 500 KB (500 posts * 1 KB) | average post size of a user |
 | 150 TB (500 KB * 300 M) | average posts size of users in a day |
 | 1500 machines (150 TB / 100 GB) | number of machines for storing posts |
+# High Level Design
 
-# System APIs
+![](DesigningFacebooksNewsfeed.png)
+
+
+## System APIs
 
 ```
 get_user_feed(
@@ -78,7 +82,7 @@ since: from date time
 exlucde_replies: include replies or not
 ```
 
-# Database Schema
+## Database Schema
 
 ```sql
 CREATE TABLE user (
@@ -135,10 +139,6 @@ CREATE TABLE media (
 ) WITH CLUSTERING ORDER BY (created_at DESC);
 ```
 
-# High-level Architecture
-
-![](DesigningFacebooksNewsfeed.png)
-
 ## Components
 
 * Web servers
@@ -160,7 +160,7 @@ CREATE TABLE media (
 
 * When users that Alice follows post new one, the system notify those to Alice. 
 
-# Low-level Architecture
+# Low Level Design
 
 ## Feed Generation
 
@@ -211,7 +211,7 @@ most of users would check a few page so 200 posts are enough.
 * Meta DataBase by user_id. Consistent Hashing.
 * Posts DataBase by user_id. Consistent Hashing.
 
-# System Extentions
+# Extentions
 
 # Q&A
 

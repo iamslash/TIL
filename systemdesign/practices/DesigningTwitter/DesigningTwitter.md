@@ -1,17 +1,18 @@
-- [Requirements and Goals of the System](#requirements-and-goals-of-the-system)
-- [Capacity Estimation and Contraints](#capacity-estimation-and-contraints)
+- [Requirements](#requirements)
+- [Estimation](#estimation)
   - [Traffic Estimation](#traffic-estimation)
   - [Storage Estimation](#storage-estimation)
   - [Bandwith Estimation](#bandwith-estimation)
   - [High-level Estimation](#high-level-estimation)
-- [System APIs](#system-apis)
-- [High Level Architecture](#high-level-architecture)
-- [Low Level Architecture](#low-level-architecture)
+- [High Level Design](#high-level-design)
+  - [System APIs](#system-apis)
+  - [High Level Architecture](#high-level-architecture)
+- [Low Level Design](#low-level-design)
   - [Database Schema](#database-schema)
   - [TimelineGeneration](#timelinegeneration)
   - [Monitoring](#monitoring)
   - [Extended Requirements](#extended-requirements)
-- [System Extentions](#system-extentions)
+- [Extentions](#extentions)
   - [Data Sharding](#data-sharding)
   - [Cache](#cache)
   - [Replication and Fault Tolerance](#replication-and-fault-tolerance)
@@ -21,7 +22,7 @@
 
 -----
 
-# Requirements and Goals of the System
+# Requirements
 
 * Functional Requirements
   * 유저는 새로운 트윗을 작성할 수 있다.
@@ -45,7 +46,7 @@
   * Who to follow? Suggestions?
   * Moments.
 
-# Capacity Estimation and Contraints
+# Estimation
 
 ## Traffic Estimation
 
@@ -92,7 +93,9 @@
 | 290 MB / sec (24 / 86400) | ingress per sec |
 | 35 GB / sec | egress per sec |
 
-# System APIs
+# High Level Design
+
+## System APIs
 
 ```c
 tweet(api_dev_key, 
@@ -106,11 +109,11 @@ parameters:
 returns: url to access that tweet  
 ```
 
-# High Level Architecture
+## High Level Architecture
 
 ![](DesigningTwitterHighLevelArch.png)
 
-# Low Level Architecture
+# Low Level Design
 
 ## Database Schema
 
@@ -190,7 +193,7 @@ When the system read A's timeline,
 * Search
   * [Designing Twitter Search](DesigningTwitterSearch.md)
 
-# System Extentions
+# Extentions
 
 ## Data Sharding
 
@@ -220,5 +223,3 @@ read replication because of read-heavy and fault tolerance because of replicatio
 # Q&A
 
 # References
-
-

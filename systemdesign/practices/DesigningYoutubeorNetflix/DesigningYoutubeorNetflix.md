@@ -2,14 +2,15 @@
   - [Functional Requirements](#functional-requirements)
   - [Non-functional Requirements](#non-functional-requirements)
   - [Extended Requirements](#extended-requirements)
-- [System APIs](#system-apis)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
+- [Estimation](#estimation)
   - [Traffic Estimation](#traffic-estimation)
   - [Storage Estimation](#storage-estimation)
   - [Bandwidth Estimation](#bandwidth-estimation)
   - [High level Estimation](#high-level-estimation)
-- [High-level Architecture](#high-level-architecture)
-- [Low-level Architecture](#low-level-architecture)
+- [High Level Design](#high-level-design)
+  - [System APIs](#system-apis)
+  - [High-level Architecture](#high-level-architecture)
+- [Low Level Design](#low-level-design)
   - [Components](#components)
   - [Schema](#schema)
     - [User Database](#user-database)
@@ -20,14 +21,13 @@
   - [Cache](#cache)
   - [DataBase Sharding](#database-sharding)
   - [CDN for Video, Thumbnail](#cdn-for-video-thumbnail)
-- [System Extentions](#system-extentions)
+- [Extentions](#extentions)
 - [Q&A](#qa)
 - [References](#references)
 
 -----
 
 # Requirements
-
 
 ## Functional Requirements
 
@@ -45,35 +45,7 @@
 
 ## Extended Requirements
 
-# System APIs
-
-```
-uploadVideo(api_key, 
-            video_title, 
-            video_description,
-            tags[], 
-            category_id, 
-            default_language, 
-            recording_details, 
-            video)
-
-video(stream) : binary of video
-
-searchVideo(api_key,
-            search_query,
-            user_location, 
-            page_size, 
-            page_no,
-            page_token)
-
-streamVideo(api_key,
-            video_id,
-            video_offset,
-            codec, 
-            resolution)            
-```
-
-# Capacity Estimation and Constraints
+# Estimation
 
 ## Traffic Estimation
 
@@ -108,11 +80,41 @@ streamVideo(api_key,
 | 432 TB (5GB * 86400) | storage for each day  |
 | 788 PB | storage for 5 years  |
 
-# High-level Architecture
+# High Level Design
+
+## System APIs
+
+```
+uploadVideo(api_key, 
+            video_title, 
+            video_description,
+            tags[], 
+            category_id, 
+            default_language, 
+            recording_details, 
+            video)
+
+video(stream) : binary of video
+
+searchVideo(api_key,
+            search_query,
+            user_location, 
+            page_size, 
+            page_no,
+            page_token)
+
+streamVideo(api_key,
+            video_id,
+            video_offset,
+            codec, 
+            resolution)            
+```
+
+## High-level Architecture
 
 ![](DesigningYoutubeorNetflixHighLevelArch.png)
 
-# Low-level Architecture
+# Low Level Design
 
 ## Components
 
@@ -191,7 +193,7 @@ Chunks
 
 ## CDN for Video, Thumbnail
 
-# System Extentions
+# Extentions
 
 # Q&A
 

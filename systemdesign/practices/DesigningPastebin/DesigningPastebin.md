@@ -1,12 +1,12 @@
 - [Requirements](#requirements)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
+- [Estimation](#estimation)
   - [Traffic estimates](#traffic-estimates)
   - [Storage estimates](#storage-estimates)
   - [Bandwidth estimates](#bandwidth-estimates)
   - [Memory estimates](#memory-estimates)
   - [High-level estimates](#high-level-estimates)
-- [High Level Architecture](#high-level-architecture)
-- [Low Level Architecture](#low-level-architecture)
+- [High Level Design](#high-level-design)
+- [Low Level Design](#low-level-design)
   - [System APIs](#system-apis)
   - [DataBase](#database)
   - [DataBase Schema](#database-schema)
@@ -14,7 +14,7 @@
     - [users](#users)
   - [Application Layer](#application-layer)
   - [Datastore layer](#datastore-layer)
-- [System Extention](#system-extention)
+- [Extention](#extention)
   - [Purging or DB Cleanup](#purging-or-db-cleanup)
   - [Data Partitioning and Replication](#data-partitioning-and-replication)
   - [Cache and Load Balancer](#cache-and-load-balancer)
@@ -45,7 +45,7 @@
 * Should we impose size limits on custom URLs?
   * URL database  를 위해 필요하다.
 
-# Capacity Estimation and Constraints
+# Estimation
 
 ## Traffic estimates
 
@@ -96,11 +96,11 @@
 | 36 TB           | Storage for 10 years              |
 | 10 GB           | The number of memory to be cached |
 
-# High Level Architecture
+# High Level Design
 
 ![](architecture.png)
 
-# Low Level Architecture
+# Low Level Design
 
 ## System APIs
 
@@ -150,7 +150,7 @@ Mongo DB sharding
 * Metadata database: MySQL or Dynamo or Cassandra
 * Object storage: amazon s3
 
-# System Extention
+# Extention
 
 ## Purging or DB Cleanup
 
@@ -170,6 +170,4 @@ Mongo DB sharding
 
 # Q&A
 
-
 # References
-

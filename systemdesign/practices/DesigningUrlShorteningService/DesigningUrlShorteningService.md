@@ -1,19 +1,19 @@
 - [Requirements](#requirements)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
+- [Estimation](#estimation)
   - [traffic estimates](#traffic-estimates)
   - [Storage estimates](#storage-estimates)
   - [Bandwidth estimates](#bandwidth-estimates)
   - [Memory estimates](#memory-estimates)
   - [High-level estimates](#high-level-estimates)
-- [High Level Architecture](#high-level-architecture)
-- [Low Level Architecture](#low-level-architecture)
+- [High Level Design](#high-level-design)
+- [Low Level Design](#low-level-design)
   - [System APIs](#system-apis)
   - [Database Design](#database-design)
   - [DataBase Schema](#database-schema)
   - [Encoding actual URL](#encoding-actual-url)
   - [Generating keys from DBMS](#generating-keys-from-dbms)
   - [Data Partitioning and Replication](#data-partitioning-and-replication)
-- [System Extention](#system-extention)
+- [Extention](#extention)
   - [Cache](#cache)
   - [Load Balancer (LB)](#load-balancer-lb)
 - [Q&A](#qa)
@@ -26,7 +26,7 @@
 * Given a long URL, This service will provide short URL.
 * Given a short URL, This service will redirect with long URL.
 
-# Capacity Estimation and Constraints
+# Estimation
 
 ## traffic estimates
 
@@ -72,11 +72,11 @@
 | 15 TB    | Storage for 5 years                |
 | 170 GB   | The number of memory to be cached |
 
-# High Level Architecture
+# High Level Design
 
 ![](architecture.png)
 
-# Low Level Architecture
+# Low Level Design
 
 ## System APIs
 
@@ -127,7 +127,7 @@ If we use Key-DB, we can recycle short URLs.
 * Hash-based partitioning
   * Partitioning for hashed value.
 
-# System Extention
+# Extention
 
 ## Cache
 
