@@ -1,34 +1,52 @@
 - [Requirements](#requirements)
-  - [Functional Requirements](#functional-requirements)
-  - [Non-functional Requirements](#non-functional-requirements)
-  - [Extended Requirements](#extended-requirements)
-- [System APIs](#system-apis)
-- [Capacity Estimation and Constraints](#capacity-estimation-and-constraints)
-- [High-level Architecture](#high-level-architecture)
-- [Low-level Architecture](#low-level-architecture)
-- [System Extentions](#system-extentions)
+  - [Functional Requirement](#functional-requirement)
+  - [Non-Functional Requirement](#non-functional-requirement)
+  - [Estimation](#estimation)
+- [High Level Design](#high-level-design)
+  - [API Design](#api-design)
+  - [High-Level Design](#high-level-design-1)
+  - [Data Model](#data-model)
+- [Low Level Design](#low-level-design)
+  - [Build on the cloud or not](#build-on-the-cloud-or-not)
+  - [Scale Redis](#scale-redis)
+  - [Alternative Solution: NoSQL](#alternative-solution-nosql)
+- [System Extension](#system-extension)
+  - [Faster Retrieval and Breaking Tie](#faster-retrieval-and-breaking-tie)
+  - [System Failure Recovery](#system-failure-recovery)
 - [Q&A](#qa)
 - [References](#references)
 
------
+----
 
 # Requirements
 
-## Functional Requirements
+## Functional Requirement
 
-## Non-functional Requirements
+## Non-Functional Requirement
 
-## Extended Requirements
+## Estimation
 
-# System APIs
+# High Level Design
 
-# Capacity Estimation and Constraints
+## API Design
 
-# High-level Architecture
+## High-Level Design
 
-# Low-level Architecture
+## Data Model
 
-# System Extentions
+# Low Level Design
+
+## Build on the cloud or not
+
+## Scale Redis
+
+## Alternative Solution: NoSQL
+
+# System Extension
+
+## Faster Retrieval and Breaking Tie
+
+## System Failure Recovery
 
 # Q&A
 

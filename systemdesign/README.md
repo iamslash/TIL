@@ -829,52 +829,68 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 ## Fundamentals
 
 | Basic | |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Dynamo @ TIL](/dynamodb/README.md) - Highly Available Key-value                                                                                                  | [Dynamo: Amazon’s Highly Available Key-value Store](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf)                                                                                                                                                 |
-| [Kafka @ TIL](/kafka/README.md) - A Distributed Messaging System for Log Processing                                                                               | [Kafka: a Distributed Messaging System for Log Processing](http://notes.stephenholiday.com/Kafka.pdf)                                                                                                                                                                      |
-| [Consistent Hashing @ TIL](/consistenthasing/README.md)                                                                                                           | [Consistent Hashing and Random Trees:](https://www.akamai.com/es/es/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf) - Original paper |
-| [Paxos](https://www.microsoft.com/en-us/research/uploads/prod/2016/12/paxos-simple-Copy.pdf) - Protocol for distributed consensus                                 |                                                                                                                                                                                                                                                                            |
-| [Concurrency Controls](http://sites.fas.harvard.edu/~cs265/papers/kung-1981.pdf) - Optimistic methods for concurrency controls                                    |                                                                                                                                                                                                                                                                            |
-| [Gossip protocol](http://highscalability.com/blog/2011/11/14/using-gossip-protocols-for-failure-detection-monitoring-mess.html) - For failure detection and more. |                                                                                                                                                                                                                                                                            |
-| [Chubby](http://static.googleusercontent.com/media/research.google.com/en/us/archive/chubby-osdi06.pdf) - Lock service for loosely-coupled distributed systems    |                                                                                                                                                                                                                                                                            |
-| [zookeeper @ TIL](/zookeeper/README.md)                                                                                                                           | [ZooKeeper](https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf) - Wait-free coordination for Internet-scale systems                                                                                                                                    |
-| [MapReduce](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf) - Simplified Data Processing on Large Clusters       |                                                                                                                                                                                                                                                                            |
-| [hadoop @ TIL](/hadoop/README.md)                                                                                                                                 | [Hadoop](http://storageconference.us/2010/Papers/MSST/Shvachko.pdf) - A Distributed File System                                                                                                                                                                            |  |
-| [distributed system @ TIL](/distributedsystem/README.md)                                                                                                          | [Key Characteristics of Distributed Systems](Key_Characteristics_of_Distributed_Systems.md)                                                                                                                                                                                |
-| [Load Balancing](fundamentals/LoadBalancing.md)                                                                                                                       |                                                                                                                                                                                                                                                                            |
-| [Caching](fundamentals/Caching.md)                                                                                                                                    |                                                                                                                                                                                                                                                                            |
-| [Data Partitioning](fundamentals/DataPartitioning.md)                                                                                                                 |                                                                                                                                                                                                                                                                            |
-| [Indexes](fundamentals/Indexes.md)                                                                                                                                    |                                                                                                                                                                                                                                                                            |
-| [Proxies](fundamentals/Proxies.md)                                                                                                                                    |                                                                                                                                                                                                                                                                            |
-| [Redundancy and Replication](fundamentals/RedundancyandReplication.md)                                                                                                |                                                                                                                                                                                                                                                                            |
-| [SQL vs. NoSQL](fundamentals/SQLvsNoSQL.md)                                                                                                                           |                                                                                                                                                                                                                                                                            |
-| [CAP Theorem](fundamentals/CAPTheorem.md)                                                                                                                             |
-| [Long-Polling vs WebSockets vs Server-Sent Events](fundamentals/Long-PollingvsWebSocketsvsServer-SentEvents.md)                                                       |                                                                                                                                                                                                                                                                            |
+|--|--|
+| [Dynamo @ TIL](/dynamodb/README.md) - Highly Available Key-value | [Dynamo: Amazon’s Highly Available Key-value Store](https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf) |
+| [Kafka @ TIL](/kafka/README.md) - A Distributed Messaging System for Log Processing | [Kafka: a Distributed Messaging System for Log Processing](http://notes.stephenholiday.com/Kafka.pdf) |
+| [Consistent Hashing @ TIL](/consistenthasing/README.md) | [Consistent Hashing and Random Trees:](https://www.akamai.com/es/es/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf) - Original paper |
+| [Paxos](https://www.microsoft.com/en-us/research/uploads/prod/2016/12/paxos-simple-Copy.pdf) - Protocol for distributed consensus | |
+| [Concurrency Controls](http://sites.fas.harvard.edu/~cs265/papers/kung-1981.pdf) - Optimistic methods for concurrency controls | |
+| [Gossip protocol](http://highscalability.com/blog/2011/11/14/using-gossip-protocols-for-failure-detection-monitoring-mess.html) - For failure detection and more. | |
+| [Chubby](http://static.googleusercontent.com/media/research.google.com/en/us/archive/chubby-osdi06.pdf) - Lock service for loosely-coupled distributed systems | |
+| [zookeeper @ TIL](/zookeeper/README.md) | [ZooKeeper](https://www.usenix.org/legacy/event/usenix10/tech/full_papers/Hunt.pdf) - Wait-free coordination for Internet-scale systems |
+| [MapReduce](https://static.googleusercontent.com/media/research.google.com/en//archive/mapreduce-osdi04.pdf) - Simplified Data Processing on Large Clusters | |
+| [hadoop @ TIL](/hadoop/README.md) | [Hadoop](http://storageconference.us/2010/Papers/MSST/Shvachko.pdf) - A Distributed File System | |
+| [distributed system @ TIL](/distributedsystem/README.md) | [Key Characteristics of Distributed Systems](Key_Characteristics_of_Distributed_Systems.md) |
+| [Load Balancing](fundamentals/LoadBalancing.md) | |
+| [Caching](fundamentals/Caching.md) | |
+| [Data Partitioning](fundamentals/DataPartitioning.md) | |
+| [Indexes](fundamentals/Indexes.md) | |
+| [Proxies](fundamentals/Proxies.md) | |
+| [Redundancy and Replication](fundamentals/RedundancyandReplication.md) | |
+| [SQL vs. NoSQL](fundamentals/SQLvsNoSQL.md) | |
+| [CAP Theorem](fundamentals/CAPTheorem.md) | |
+| [Long-Polling vs WebSockets vs Server-Sent Events](fundamentals/Long-PollingvsWebSocketsvsServer-SentEvents.md)                                                       | |
 
 ## Design Practices
 
-| Design                                                                                                                      | Implementation |
-| --------------------------------------------------------------------------------------------------------------------------- | -------------- |
-| [Designing a URL Shortening service like TinyURL](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md) |                |
-| [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md)                                                      |                |
-| [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md)                                                   |                |
-| [Designing Dropbox](practices/DesigningDropbox/DesigningDropbox.md)                                                         |                |
-| [Designing Facebook Messenger](practices/DesigningFacebookMessenger/DesigningFacebookMessenger.md)                          |                |
-| [Designing Twitter](practices/DesigningTwitter/DesigningTwitter.md)                                                         |                |
-| [Designing Youtube or Netflix](practices/DesigningYoutubeorNetflix/DesigningYoutubeorNetflix.md)                            |                |
-| [Designing Typeahead Suggestion](practices/DesigningTypeaheadSuggestion/DesigningTypeaheadSuggestion.md)                    |                |
-| [Designing an API Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md)                           |                |
-| [Designing Twitter Search](practices/DesigningTwitterSearch/DesigningTwitterSearch.md)                                      |                |
-| [Designing a Web Crawler](practices/DesigningaWebCrawler/DesigningaWebCrawler.md)                                           |                |
-| [Designing Facebook’s Newsfeed](practices/DesigningFacebooksNewsfeed/DesigningFacebooksNewsfeed.md)                         |                |
-| [Designing Yelp or Nearby Friends](practices/DesigningYelporNearbyFriends/DesigningYelporNearbyFriends.md/)                 |                |
-| [Designing Uber Backend](practices/DesigningUberBackend/DesigningUberBackend.md)                                            |                |
-| [Designing Ticketmaster](practices/DesigningTicketmaster/DesigningTicketmaster.md)                                          |                |
-| [Designing Podcast Backend](practices/DesigningPodcastBackend/DesigningPodcastBackend.md)                                   |                |
-| [Designing Email Service](practices/DesigningEmailService/DesigningEmailService.md)                                         |                |
-| [Designing Facebook Live Video](practices/DesigningFacebookLiveVideo/DesigningFacebookLiveVideo.md)                         |                |
-| [Designing online shopping system](practices/DesigningOnlineShoppingSystem/DesigningOnlineShoppingSystem.md)                |                |
-| [Designing online delivery system](practices/DesigningOnlineDeliverySystem/DesigningOnlineDeliverySystem.md)                |                |
+| Design | Implementation |
+|--|--|
+| [Designing A URL Shortening Service](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md) | |
+| [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md) | |
+| [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md) | |
+| [Designing Dropbox](practices/DesigningDropbox/DesigningDropbox.md) | |
+| [Designing Facebook Messenger](practices/DesigningFacebookMessenger/DesigningFacebookMessenger.md) | |
+| [Designing Twitter](practices/DesigningTwitter/DesigningTwitter.md) | |
+| [Designing Youtube](practices/DesigningYoutubeorNetflix/DesigningYoutubeorNetflix.md) | |
+| [Designing Typeahead Suggestion](practices/DesigningTypeaheadSuggestion/DesigningTypeaheadSuggestion.md) | |
+| [Designing An API Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md) | |
+| [Designing Twitter Search](practices/DesigningTwitterSearch/DesigningTwitterSearch.md) | |
+| [Designing A Web Crawler](practices/DesigningaWebCrawler/DesigningaWebCrawler.md) | |
+| [Designing Facebook’s Newsfeed](practices/DesigningFacebooksNewsfeed/DesigningFacebooksNewsfeed.md) | |
+| [Designing Yelp or Nearby Friends](practices/DesigningYelporNearbyFriends/DesigningYelporNearbyFriends.md/) | |
+| [Designing Uber Backend](practices/DesigningUberBackend/DesigningUberBackend.md) | |
+| [Designing Ticketmaster](practices/DesigningTicketmaster/DesigningTicketmaster.md) | |
+| Designing Hotel Reservation System| |
+| [Designing Podcast Backend](practices/DesigningPodcastBackend/DesigningPodcastBackend.md) | |
+| [Designing Facebook Live Video](practices/DesigningFacebookLiveVideo/DesigningFacebookLiveVideo.md) | |
+| Designing online shopping system | |
+| Designing online delivery system | |
+| [Designing Consistent Hashing](practices/DesigningConsistentHashing/DesigningConsistentHashing.md) | |
+| Designing Key-Value Store | |
+| Designing A Distributed Unique Id Generator | |
+| Designing A Notification System | |
+| Designing Google Drive | |
+| Designing Nearby Friends | |
+| Designing Google Maps | |
+| Designing Distributed Message Queue | |
+| Designing Metrics Monitoring and Alerting System | |
+| Designing Ad Click Event Aggregation | |
+| [Designing Distributed Email Service](practices/DesigningEmailService/DesigningEmailService.md) | |
+| Designing Object Storage Such As S3 | |
+| [Designing Real-Time Gaming Leaderboard](practices/DesigningReal-TimeGamingLeaderboard/DesigningReal-TimeGamingLeaderboard.md) | |
+| Designing Payment System | |
+| Designing Digital Wallet | |
+| Designing Stock Exchange | |
 
 # System Design Primer Practices
 
