@@ -180,6 +180,24 @@ HyperLogLog 는 집합의 원소의 개수를 추정하는 방법으로 2.8.9 �
 | `PFCOUNT` | get counts of key | `> PFCOUNT k1` |
 | `PFMERGE` | merge keys | `> PFMERGE dstkey k1 k2` |
 
+[bloom filter](/bloomfilter/README.md) 와 비슷하다. 어떤 대상을 입력하고 uniq 한
+것들이 몇개 있는지 `O(1)` 의 시간복잡도로 알 수 있다. 메모리는 약 12k btytes 가
+소비된다고 함. 
+
+예를 들어 게시판의 게시물을 조회한 조회수를 계산해 보자. 그 게시물을 조회한 IP 를 `PFADD` 로 추가한다.
+그 게시물을 조회한 unique IP 의 개수를 `PFCOUNT` 로 조회한다.
+
+```bash
+127.0.0.1:6379> PFADD uniqips 1.1.1.1 1.1.1.1
+(integer) 1
+127.0.0.1:6379> PFCOUNT uniqips
+(integer) 1
+127.0.0.1:6379> PFADD uniqips 1.1.1.2 1.1.1.3
+(integer) 1
+127.0.0.1:6379> PFCOUNT uniqips
+(integer) 3
+```
+
 ### Strings
 
 * [STRINGS Intro](http://redisgate.kr/redis/command/strings.php)
