@@ -106,6 +106,7 @@
   - [System Design @ blogspot](https://learnsystemdesign.blogspot.com/)
 * System Design Interview – An insider's guide by Alex
   * [blog archives](https://blog.bytebytego.com/archive)
+  * [system design | discord](https://discord.com/channels/805287783107264553/805880778671128586)
   * [System Design Interview – An insider's guide, Second Edition](https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF)
     * [links](https://github.com/alex-xu-system/bytecode/blob/main/system_design_links.md)
   * [System Design Interview – An Insider's Guide: Volume 2](https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119)
@@ -855,42 +856,42 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 
 | Design | Implementation |
 |--|--|
-| [Designing A URL Shortening Service](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md) | |
-| [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md) | |
-| [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md) | |
-| [Designing Dropbox](practices/DesigningDropbox/DesigningDropbox.md) | |
-| [Designing Facebook Messenger](practices/DesigningFacebookMessenger/DesigningFacebookMessenger.md) | |
-| [Designing Twitter](practices/DesigningTwitter/DesigningTwitter.md) | |
-| [Designing Youtube](practices/DesigningYoutubeorNetflix/DesigningYoutubeorNetflix.md) | |
-| [Designing Typeahead Suggestion](practices/DesigningTypeaheadSuggestion/DesigningTypeaheadSuggestion.md) | |
-| [Designing An API Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md) | |
-| [Designing Twitter Search](practices/DesigningTwitterSearch/DesigningTwitterSearch.md) | |
-| [Designing A Web Crawler](practices/DesigningaWebCrawler/DesigningaWebCrawler.md) | |
-| [Designing Facebook’s Newsfeed](practices/DesigningFacebooksNewsfeed/DesigningFacebooksNewsfeed.md) | |
-| [Designing Yelp or Nearby Friends](practices/DesigningYelporNearbyFriends/DesigningYelporNearbyFriends.md/) | |
-| [Designing Uber Backend](practices/DesigningUberBackend/DesigningUberBackend.md) | |
-| [Designing Ticketmaster](practices/DesigningTicketmaster/DesigningTicketmaster.md) | |
-| Designing Hotel Reservation System| |
-| [Designing Podcast Backend](practices/DesigningPodcastBackend/DesigningPodcastBackend.md) | |
-| [Designing Facebook Live Video](practices/DesigningFacebookLiveVideo/DesigningFacebookLiveVideo.md) | |
-| Designing online shopping system | |
-| Designing online delivery system | |
+| [Designing A Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md) | |
 | [Designing Consistent Hashing](practices/DesigningConsistentHashing/DesigningConsistentHashing.md) | |
-| Designing Key-Value Store | |
-| Designing A Distributed Unique Id Generator | |
+| Designing A Key-Value Store | |
+| Designing A Uniqe ID Generator In Distributed Systems | |
+| [Designing A URL Shortener](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md) | |
+| [Designing A Web Crawler](practices/DesigningaWebCrawler/DesigningaWebCrawler.md) | |
 | Designing A Notification System | |
+| [Designing A News Feed System](practices/DesigningFacebooksNewsfeed/DesigningFacebooksNewsfeed.md) | |
+| [Designing A Chat System](practices/DesigningFacebookMessenger/DesigningFacebookMessenger.md) | |
+| [Designing A Search Autocomplete System](practices/DesigningTypeaheadSuggestion/DesigningTypeaheadSuggestion.md) | |
+| [Designing Youtube](practices/DesigningYoutubeorNetflix/DesigningYoutubeorNetflix.md) | |
 | Designing Google Drive | |
-| Designing Nearby Friends | |
+| Designing Proximity Service | |
+| [Designing Nearby Friends](practices/DesigningYelporNearbyFriends/DesigningYelporNearbyFriends.md/) | |
 | Designing Google Maps | |
 | Designing Distributed Message Queue | |
 | Designing Metrics Monitoring and Alerting System | |
 | Designing Ad Click Event Aggregation | |
+| Designing Hotel Reservation System| |
 | [Designing Distributed Email Service](practices/DesigningEmailService/DesigningEmailService.md) | |
-| Designing Object Storage Such As S3 | |
+| Designing S3-like Object Storage | |
 | [Designing Real-Time Gaming Leaderboard](practices/DesigningReal-TimeGamingLeaderboard/DesigningReal-TimeGamingLeaderboard.md) | |
 | Designing Payment System | |
 | Designing Digital Wallet | |
 | Designing Stock Exchange | |
+| [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md) | |
+| [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md) | |
+| [Designing Dropbox](practices/DesigningDropbox/DesigningDropbox.md) | |
+| [Designing Twitter](practices/DesigningTwitter/DesigningTwitter.md) | |
+| [Designing Twitter Search](practices/DesigningTwitterSearch/DesigningTwitterSearch.md) | |
+| [Designing Uber Backend](practices/DesigningUberBackend/DesigningUberBackend.md) | |
+| [Designing Ticketmaster](practices/DesigningTicketmaster/DesigningTicketmaster.md) | |
+| [Designing Podcast Backend](practices/DesigningPodcastBackend/DesigningPodcastBackend.md) | |
+| [Designing Facebook Live Video](practices/DesigningFacebookLiveVideo/DesigningFacebookLiveVideo.md) | |
+| Designing online shopping system | |
+| Designing online delivery system | |
 
 # System Design Primer Practices
 
