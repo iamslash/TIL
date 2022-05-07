@@ -859,7 +859,7 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 | [Designing A Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md) | |
 | [Designing Consistent Hashing](practices/DesigningConsistentHashing/DesigningConsistentHashing.md) | |
 | Designing A Key-Value Store | |
-| Designing A Uniqe ID Generator In Distributed Systems | |
+| [Designing A Uniqe ID Generator In Distributed Systems](practices/DesigningAUniqeIDGeneratorInDistributedSystems/DesigningAUniqeIDGeneratorInDistributedSystems.md) | |
 | [Designing A URL Shortener](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md) | |
 | [Designing A Web Crawler](practices/DesigningaWebCrawler/DesigningaWebCrawler.md) | |
 | Designing A Notification System | |
