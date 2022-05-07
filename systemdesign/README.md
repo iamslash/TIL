@@ -881,6 +881,7 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 | Designing Payment System | |
 | Designing Digital Wallet | |
 | Designing Stock Exchange | |
+| [Designing Mobile System](practices/DesigningMobileSystem/DesigningMobileSystem.md) | |
 | [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md) | |
 | [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md) | |
 | [Designing Dropbox](practices/DesigningDropbox/DesigningDropbox.md) | |
