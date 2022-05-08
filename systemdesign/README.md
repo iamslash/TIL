@@ -3,12 +3,18 @@
 - [Materials](#materials)
 - [Articles](#articles)
 - [Design Tools](#design-tools)
-- [Prerequisites](#prerequisites)
+- [System Extentions](#system-extentions)
+- [Estimations](#estimations)
+  - [Major Items](#major-items)
+  - [Numbers](#numbers)
+  - [Powers of two](#powers-of-two)
+  - [Latency numbers every programmer should know](#latency-numbers-every-programmer-should-know)
+  - [Availability](#availability)
+  - [Time](#time)
 - [Principles](#principles)
   - [How to approach a system design interview question](#how-to-approach-a-system-design-interview-question)
   - [Distributed System](#distributed-system)
   - [Software Design Principle](#software-design-principle)
-  - [Scalability](#scalability)
   - [Read Heavy vs Write Heavy](#read-heavy-vs-write-heavy)
   - [Performance vs scalability](#performance-vs-scalability)
   - [Latency vs throughput](#latency-vs-throughput)
@@ -154,9 +160,33 @@
 * [webwhiteboard](https://www.webwhiteboard.com/)
   * web white board for system design interview 
 
-# Prerequisites
+# System Extentions
 
-> Numbers
+다음과 같은 항목들을 고려해서 시스템을 확장한다.
+
+* RDBMS, NoSQL
+* Vertical scaling
+* Horizontal scaling
+* Load balancing
+* Relication
+* Cache
+* Static assets in CDN
+* Stateless Web Servers
+* Multiple data centers
+* Asynchronism, message queue
+* logging, metric
+* Sharding, Parititioning
+* Micro Services
+* CI/CD
+
+# Estimations
+
+## Major Items
+
+QPS, peak QPS, Storage, Cache, Number of servers, etc...
+
+## Numbers
+
 > * [Names of large numbers](https://en.wikipedia.org/wiki/Names_of_large_numbers)
 > * [SI 기본 단위](https://ko.wikipedia.org/wiki/SI_%EA%B8%B0%EB%B3%B8_%EB%8B%A8%EC%9C%84)
 > * SI 는 System International 의 줄임말로 국제 단위
@@ -172,42 +202,37 @@
 | 10^21 | Sextillion  | Z         | Zeta-     |
 | 10^24 | Septillion  | Y         | Yota-     |
 
-> powers of two table
+## Powers of two
+
+| Power | Approximate value | Full name | Short name|
+|--|--|--|--|
+| 10 | 1 Thousand | 1 Kilobyte | 1 KB |
+| 20 | 1 Million | 1 Megabyte | 1 MB |
+| 30 | 1 Billion | 1 Gigabyte | 1 GB |
+| 40 | 1 Trillion | 1 Terabyte | 1 TB |
+| 50 | 1 Quadrillion | 1 Petabyte | 1 PB |
+
+## Latency numbers every programmer should know
+
+> [Latency Numbers Every Programmer Should Know](https://gist.github.com/jboner/2841832)
+
+| Name | Time | |
+|--|--|--|
+| L1 cache reference | 0.5 ns | |
+| Branch mispredict | 5 ns | |
+| L2 cache reference | 7 ns |
+| Mutex lock/unlock | 100 ns |
+| Main memory reference | 100 ns |
+| Compress 1K bytes with Zippy | 10,000 ns = 10 us |
+| Send 1 KB bytes over 1 Gbps network | 20,000 ns = 20 us |
+| Read 1 MB sequentially from memory | 250,000 ns = 250 us |
+| Round trip within same datacenter  | 5000,000 ns = 500 us |
+| Disk seek | 10,000,000 ns = 10 ms |
+| Read 1 MB sequentially from 1 Gbps | 10,000,000 ns = 10 ms | |
+| Read 1 MB sequentially from disk | 30,000,000 ns = 30 ms | |
+| Send packet CA->Netherlands->CA | 150,000,000 ns = 150 ms | |
 
 ```
-Power           Exact Value         Approx Value        Bytes
----------------------------------------------------------------
-7                             128
-8                             256
-10                           1024   1 thousand           1 KB
-16                         65,536                       64 KB
-20                      1,048,576   1 million            1 MB
-30                  1,073,741,824   1 billion            1 GB
-32                  4,294,967,296                        4 GB
-40              1,099,511,627,776   1 trillion           1 TB
-```
-
-> latency numbers every programmer should know
-
-```
-Latency Comparison Numbers
---------------------------
-L1 cache reference                           0.5 ns
-Branch mispredict                            5   ns
-L2 cache reference                           7   ns                      14x L1 cache
-Mutex lock/unlock                          100   ns
-Main memory reference                      100   ns                      20x L2 cache, 200x L1 cache
-Compress 1K bytes with Zippy            10,000   ns       10 us
-Send 1 KB bytes over 1 Gbps network     10,000   ns       10 us
-Read 4 KB randomly from SSD*           150,000   ns      150 us          ~1GB/sec SSD
-Read 1 MB sequentially from memory     250,000   ns      250 us
-Round trip within same datacenter      500,000   ns      500 us
-Read 1 MB sequentially from SSD*     1,000,000   ns    1,000 us    1 ms  ~1GB/sec SSD, 4X memory
-Disk seek                           10,000,000   ns   10,000 us   10 ms  20x datacenter roundtrip
-Read 1 MB sequentially from 1 Gbps  10,000,000   ns   10,000 us   10 ms  40x memory, 10X SSD
-Read 1 MB sequentially from disk    30,000,000   ns   30,000 us   30 ms 120x memory, 30X SSD
-Send packet CA->Netherlands->CA    150,000,000   ns  150,000 us  150 ms
-
 Notes
 -----
 1 ns = 10^-9 seconds
@@ -217,16 +242,8 @@ Notes
 
 ![](img/latency_numbers_every_programmer_should_know.png)
 
-> time
+## Availability
 
-| years | days | hours |    mins |       secs |
-| ----: | ---: | ----: | ------: | ---------: |
-|     1 |  365 | 8,760 | 525,600 | 31,536,000 |
-|       |    1 |    24 |   1,440 |     86,400 |
-|       |      |     1 |      60 |      3,600 |
-|       |      |       |       1 |         60 |
-
-> Availability
 > * [Uptime and downtime with 99.9 % SLA](https://uptime.is/)
 
 | Availability % | Downtime per year |
@@ -236,6 +253,15 @@ Notes
 | 99.99% | 52.60 mins |
 | 99.999% | 5.26 mins |
 | 99.9999% | 31.56 secs |
+
+## Time
+
+| years | days | hours |    mins |       secs |
+| ----: | ---: | ----: | ------: | ---------: |
+|     1 |  365 | 8,760 | 525,600 | 31,536,000 |
+|       |    1 |    24 |   1,440 |     86,400 |
+|       |      |     1 |      60 |      3,600 |
+|       |      |       |       1 |         60 |
 
 # Principles
 
@@ -253,16 +279,6 @@ Notes
 ## Software Design Principle
 
 * [design principle](/designprinciple/README.md)
-
-## Scalability
-
-- vertical scaling
-- horizontal scaling
-- caching
-- load balancing
-- database replication
-- database partitioning
-- asynchronism
 
 ## Read Heavy vs Write Heavy
 
