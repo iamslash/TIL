@@ -872,7 +872,7 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 |--|--|
 | [Designing A Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md) | |
 | [Designing Consistent Hashing](practices/DesigningConsistentHashing/DesigningConsistentHashing.md) | |
-| Designing A Key-Value Store | |
+| [Designing A Key-Value Store](practices/DesigningAKey-ValueStore/DesigningAKey-ValueStore.md) | |
 | [Designing A Uniqe ID Generator In Distributed Systems](practices/DesigningAUniqeIDGeneratorInDistributedSystems/DesigningAUniqeIDGeneratorInDistributedSystems.md) | |
 | [Designing A URL Shortener](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md) | |
 | [Designing A Web Crawler](practices/DesigningaWebCrawler/DesigningaWebCrawler.md) | |
@@ -885,7 +885,7 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 | Designing Proximity Service | |
 | [Designing Nearby Friends](practices/DesigningYelporNearbyFriends/DesigningYelporNearbyFriends.md/) | |
 | Designing Google Maps | |
-| Designing Distributed Message Queue | |
+| [Designing Distributed Message Queue](practices/DesigningDistributedMessageQueue/DesigningDistributedMessageQueue.md) | |
 | Designing Metrics Monitoring and Alerting System | |
 | Designing Ad Click Event Aggregation | |
 | Designing Hotel Reservation System| |
