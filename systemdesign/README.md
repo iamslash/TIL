@@ -306,6 +306,20 @@ Brewer's theorem 이라고도 한다. Distributed System 은 **Consistency,Avail
 
 MySQL 은 Distribute System 이 아니다. CAP 를 적용할 수 없다.
 
+따라서 Distributed System 은 다음과 같이 분류할 수 있다.
+
+* CP (Consistency and Partition Tolerance)
+  * node1, node2, node3 이 있다. node3 이 Network Partition 되었다고 하자.
+    Consistency 를 위해 node1, node2 가 동작하지 않는다. Availability 가 떨어진다.
+  * banking 과 같이 Consistency 가 중요한 곳에 사용된다.
+* AP (Availabiltity and Paritition Tolerance)
+  * node1, node2, node3 가 있다. node3 가 Network Partition 되었다고 하자.
+    node1, node2 가 동작한다. node3 에 write 된 data 가 node1, node2 에 전파되지 않았다.
+    Consistency 는 떨어진다. 그러나 서비스의 지장은 없다. 즉, Availability 가 높다. node3 가 
+    Network Partition 에서 복구된다면 그 data 는 다시 동기화 된다.
+* CA (Consistency and Partition Tolerance)
+  * 현실세계에서 Partition Tolerance 는 피할 수 없다. 이 것은 현실세계에서 불가능하다.
+
 ### PACELC (Partitioning Availability Consistency Else Latency Consistency)
 
 * [CAP Theorem, 오해와 진실](http://eincs.com/2013/07/misleading-and-truth-of-cap-theorem/)
