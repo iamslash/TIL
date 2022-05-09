@@ -6,10 +6,9 @@
   - [API Design](#api-design)
   - [High-Level Architecture](#high-level-architecture)
   - [Data Model](#data-model)
+  - [Storage Estimation](#storage-estimation)
 - [Low Level Design](#low-level-design)
-  - [Build on the cloud or not](#build-on-the-cloud-or-not)
   - [Scale Redis](#scale-redis)
-  - [Alternative Solution: NoSQL](#alternative-solution-nosql)
 - [Extension](#extension)
   - [Faster Retrieval and Breaking Tie](#faster-retrieval-and-breaking-tie)
   - [System Failure Recovery](#system-failure-recovery)
@@ -50,7 +49,7 @@
 ## API Design
 
 ```json
-* Update a user's rank.
+* Update a user's score.
   * POST /v1/scores 
   * Request
     * user_id: The user who wins a game.
@@ -99,19 +98,68 @@
 
 ## Data Model
 
-# Low Level Design
+We can think RDBMS, Redis, NoSQL for storages. We will choose single instance of Redis. Redis supports sorted sets.
 
-## Build on the cloud or not
+sorted set is implemented using [skip list](https://github.com/iamslash/learntocode/blob/master/fundamentals/list/skiplist/README.md).
+
+These are operations of sorted sets.
+
+* `ZADD`
+* `ZINCRBY`
+* `ZRANGE/ZREVRANGE`
+* `ZRANK/ZREVRANK`
+
+These are examples of sorted sets.
+
+```
+* Update a user's score
+
+ZINCRBY <key> <increment> <user>
+ZINCRBY leaderboard_feb_2022 1 'iamslash'
+
+* Get top 10 scores.
+
+ZREVRANGE leaderboard_feb_2022 0 9 WITHSCORES
+[(user2,score2),(user1,score1,(user5,score5),...)]
+
+* Get the rank
+
+ZREVRANK leaderboard_feb_2022 'iamslash'
+
+* Get above and below the specific user
+
+iamslash's rank is 361
+ZREVRANGE leaderboard_feb_2022 357 365
+```
+
+## Storage Estimation
+
+| Number | Description | |
+|--|--|--|
+| 25 Millian | The number of users which won at least once | |
+| 24 bytes | The size of user id | |
+| 2 bytes | The size of score | | 
+| 650 MB | 25 Millian * 26 bytes | | 
+
+Single Redis can handle `650 MB` for updating in real time and can handle `2,500 peak QPS`.
+
+# Low Level Design
 
 ## Scale Redis
 
-## Alternative Solution: NoSQL
+Scaling up is ok Scaling out makes the system complicated.
 
 # Extension
 
 ## Faster Retrieval and Breaking Tie
 
+Cache user information in Redis.
+
+When two users' score are same old one's score is higher than new one's score.
+
 ## System Failure Recovery
+
+We can recover Redis with restoring data from RDBMS.
 
 # Q&A
 
