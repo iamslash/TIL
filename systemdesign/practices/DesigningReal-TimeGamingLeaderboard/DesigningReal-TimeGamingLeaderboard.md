@@ -4,7 +4,7 @@
 - [Estimation](#estimation)
 - [High Level Design](#high-level-design)
   - [API Design](#api-design)
-  - [High-Level Design](#high-level-design-1)
+  - [High-Level Architecture](#high-level-architecture)
   - [Data Model](#data-model)
 - [Low Level Design](#low-level-design)
   - [Build on the cloud or not](#build-on-the-cloud-or-not)
@@ -23,15 +23,79 @@
 
 ## Functional Requirement
 
+* The system displays 10 players on the leaderboard.
+* The system shows a user's specific rank.
+* The system displays users above and below the specific user.
+
 ## Non-Functional Requirement
 
+* The system updates scores in real time.
+* The system should be scalable, available, reliable.
+
 # Estimation
+
+| Number | Description| |
+|--|--|--|
+| 5 Millian | DAU | |
+| 50 | Updated users per second | 5,000,000 DAU / 100,000 sec |
+| 250 | Peak updated users per second | 50 * 5 |
+| 10 | A user plays 10 games per day on average | |
+| 500 | QPS for updating score | 50 * 10 |
+| 2,500 | Peak QPS for updating score | 500 QPS * 5 |
+| 1 | The number of fetching top 10 scores in a day | |
+| 50 | QPS for fetching top 10 score | 5,000,000 DAU / 100,000 sec | 
 
 # High Level Design
 
 ## API Design
 
-## High-Level Design
+```json
+* Update a user's rank.
+  * POST /v1/scores 
+  * Request
+    * user_id: The user who wins a game.
+    * points: The user's point
+  * Response
+    * 200 OK: Succeeded to update a user's score.
+    * 400 Bad Request: Failed to update a user's score.
+
+* Get top 10 scores.
+  * GET /v1/scores
+  * Response
+  {
+    "data": [
+    {
+      "user_id": "1",
+      "user_name": "foo",
+      "rank": 1,
+      "score": 976
+    },
+    {
+      "user_id": "2",
+      "user_name": "bar",
+      "rank": 2,
+      "score": 966
+    },
+    ],
+    ...
+    "total": 10
+  }
+
+* Get the rank
+  * GET /v1/scores/{:user_id}
+  * Request
+    * user_id
+  * Response
+  {
+    "user_info": {
+      "user_id": "user5",
+      "score": 940,
+      "rank": 6,
+    }
+  }
+```
+
+## High-Level Architecture
 
 ## Data Model
 
@@ -77,7 +141,7 @@ rank 에 관심있는 user 들은 상위권 user 들이다. 상위권 user 들�
 Redis 의 sorted set 에 저장한다. top 10 users 는 쉽게 가져올 수 있다.
 
 하위권 user 들은 어림잡아 계산한다. 정확하지 않아도 된다. 예를 들어 점수를
-구간별로 나누고 구간에 얼만큼 user 들이 존재하는지 하루에 한번 계산해 Sing
+구간별로 나누고 구간에 얼만큼 user 들이 존재하는지 하루에 한번 계산해 Single
 Instance Redis 에 저장해 둔다. 특정 user 의 점수를 보고 상위 구간에 얼만큼 user
 들이 있는지 알 수 있다.
 
