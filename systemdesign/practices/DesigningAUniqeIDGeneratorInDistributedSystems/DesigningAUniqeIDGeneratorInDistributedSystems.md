@@ -22,7 +22,7 @@
 
 ## Non-functional Requirements
 
-* High Availability
+* High available, reliable
 
 # High Level Design
 
@@ -42,11 +42,11 @@ GET /v1/ids
 ## UUID
 
 [UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) is 128-bit.
-This can not be a good solution
+This can not be a good solution because the size is too big.
 
 ## Snow Flake
 
-twitter invented [snow flake](https://github.com/twitter-archive/snowflake/releases/tag/snowflake-2010) for unique id generator.
+twitter invented [snow flake](https://github.com/twitter-archive/snowflake/releases/tag/snowflake-2010) for unique id generator. This can be a good solution.
 
 ```
  1 bit (for future)
