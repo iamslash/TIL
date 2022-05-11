@@ -2,6 +2,9 @@
 - [Materials](#materials)
 - [Deploy](#deploy)
 - [Architecture](#architecture)
+- [Example: Money Transfer](#example-money-transfer)
+- [Example: Subscription Workflow](#example-subscription-workflow)
+- [Example: SAGA](#example-saga)
 
 ---
 
@@ -45,3 +48,84 @@ Temporal Server is consisted of these 4 services
 * History subsystem: maintains data (mutable state, queues, and timers)
 * Matching subsystem: hosts Task Queues for dispatching
 * Worker service: for internal background workflows
+
+# Example: Money Transfer
+
+* [money-transfer-project-template-go](https://github.com/temporalio/money-transfer-project-template-go)
+
+`Withdraw()` 는 성공하고 `Deposit()` 는 실패했다고 해보자. 다음번에
+`TransferMoney()` 는 다시 실행될테고 `Withdraw()` 는 건너뛰고 `Deposit()` 이
+다시 실행된다.
+
+```go
+func TransferMoney(ctx workflow.Context, transferDetails TransferDetails) error {
+	// RetryPolicy specifies how to automatically handle retries if an Activity fails.
+	retrypolicy := &temporal.RetryPolicy{
+		InitialInterval:    time.Second,
+		BackoffCoefficient: 2.0,
+		MaximumInterval:    time.Minute,
+		MaximumAttempts:    500,
+	}
+	options := workflow.ActivityOptions{
+		// Timeout options specify when to automatically timeout Activity functions.
+		StartToCloseTimeout: time.Minute,
+		// Optionally provide a customized RetryPolicy.
+		// Temporal retries failures by default, this is just an example.
+		RetryPolicy: retrypolicy,
+	}
+	ctx = workflow.WithActivityOptions(ctx, options)
+	err := workflow.ExecuteActivity(ctx, Withdraw, transferDetails).Get(ctx, nil)
+	if err != nil {
+		return err
+	}
+	err = workflow.ExecuteActivity(ctx, Deposit, transferDetails).Get(ctx, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+```
+
+# Example: Subscription Workflow
+
+* [subscription-workflow-project-template-go](https://github.com/temporalio/subscription-workflow-project-template-go)
+
+# Example: SAGA
+
+* [TripBookingWorflow](https://github.dev/temporalio/samples-java/blob/079316d43d23bad3b785a3b1fa38f0c572321a28/src/main/java/io/temporal/samples/bookingsaga/TripBookingWorkflowImpl.java#L1)
+
+`addCompensation()` 으로 주욱 매달아 놓으면 끝이다.
+
+```java
+public class TripBookingWorkflowImpl implements TripBookingWorkflow {
+
+  private final ActivityOptions options =
+      ActivityOptions.newBuilder()
+          .setStartToCloseTimeout(Duration.ofHours(1))
+          // disable retries for example to run faster
+          .setRetryOptions(RetryOptions.newBuilder().setMaximumAttempts(1).build())
+          .build();
+  private final TripBookingActivities activities =
+      Workflow.newActivityStub(TripBookingActivities.class, options);
+
+  @Override
+  public void bookTrip(String name) {
+    // Configure SAGA to run compensation activities in parallel
+    Saga.Options sagaOptions = new Saga.Options.Builder().setParallelCompensation(true).build();
+    Saga saga = new Saga(sagaOptions);
+    try {
+      String carReservationID = activities.reserveCar(name);
+      saga.addCompensation(activities::cancelCar, carReservationID, name);
+
+      String hotelReservationID = activities.bookHotel(name);
+      saga.addCompensation(activities::cancelHotel, hotelReservationID, name);
+
+      String flightReservationID = activities.bookFlight(name);
+      saga.addCompensation(activities::cancelFlight, flightReservationID, name);
+    } catch (ActivityFailure e) {
+      saga.compensate();
+      throw e;
+    }
+  }
+}
+```

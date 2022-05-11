@@ -904,7 +904,7 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 | [Designing Distributed Message Queue](practices/DesigningDistributedMessageQueue/DesigningDistributedMessageQueue.md) | |
 | Designing Metrics Monitoring and Alerting System | |
 | Designing Ad Click Event Aggregation | |
-| Designing Hotel Reservation System| |
+| [Designing Hotel Reservation System](practices/DesigningHotelReservationSystem/DesigningHotelReservationSystem.md) | |
 | [Designing Distributed Email Service](practices/DesigningEmailService/DesigningEmailService.md) | |
 | Designing S3-like Object Storage | |
 | [Designing Real-Time Gaming Leaderboard](practices/DesigningReal-TimeGamingLeaderboard/DesigningReal-TimeGamingLeaderboard.md) | |
