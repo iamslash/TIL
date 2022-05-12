@@ -1193,7 +1193,7 @@ System.out.printf("i: %d, j: %d, k: %d\n", i, j, k);
 List<Integer> b = new ArrayList<>(Arrays.asList(2, 4, 6, 8));
 i = Collections.binarySearch(b, 4);
 j = Collections.binarySearch(b, 5);
-k = ~j; // ~j means (-j) + 1
+k = ~j; // ~j means (-j) - 1
 System.out.printf("i: %d, j: %d, k: %d\n", i, j, k);
 // i: 1, j: -3, k: 2
 
