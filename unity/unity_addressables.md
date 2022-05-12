@@ -65,3 +65,26 @@ export 를 원하는 addressable group 의 `Build Path, Load Path` 를 `Remote B
 ![](img/unity_addressable_build_asset.png)
 
 `catalog*.json, catalog*.hash, remote*.bundle` 이 export 되었다.
+`~/Library/com.unity.addressables/OSX/addressables_content_state.bin` 도
+생성되었다. 아마 `addressables_content_state.bin` 는 마지막 asset 을 build 할 때
+asset 별 정보가 저장되어 있는 것 같다. UpdateBuild 를 수행할 때 참고한다???
+
+## Manage Exported Remote Bundles
+
+export 된 에셋들은 다음과 같은 디렉토리 구조를 갖는다. versioning 을 위해 `git (LFS)` 으로 관리한다. 또한 AWS S3 에도 그대로 upload 한다.
+
+```
+assets/v1.0.0/StandardOSX/catalog.hash
+                          catalog.json
+                          remote_assets_1.bundle
+                          remote_assets_2.bundle
+       v1.1.0/StandardOSX/catalog.hash
+                          catalog.json
+                          remote_assets_1.bundle
+                          remote_assets_2.bundle
+```
+
+운영비용을 고려해서 활성화된 asset 의 버전은 하나로 한다. 예를 들어 `v1.1.0` 이
+활성화 되었다고 해보자.
+
+Client 는 `v1.1.0/StandardOSX/catalog.json` 을 읽는다. 현재 가지고 있는 asset 들중 바뀐 것들을 확인하고 다운로드한다.

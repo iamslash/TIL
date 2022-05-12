@@ -120,14 +120,19 @@ TODO
 # How to save password safely
 
 * [안전한 패스워드 저장](https://d2.naver.com/helloworld/318732)
+* [How to store passwords safely in the database and how to validate a password?](https://blog.bytebytego.com/p/how-does-https-work-episode-6?s=r)
 
 ----
 
-보통 단방향 해쉬함수를 사용한다. 그러나 단방향 해쉬함수는 인식가능성(Recognizability) 와 속도 (Speed) 의 문제점이 있다. 그래서 Salting 과 Key stretching 으로 문제를 해결할 수 있다.
+보통 단방향 해쉬함수를 사용한다. 그러나 단방향 해쉬함수는
+인식가능성(Recognizability) 와 속도 (Speed) 의 문제점이 있다. 그래서 Salting 과
+Key stretching 으로 문제를 해결할 수 있다.
 
-Adaptive key derivation function은 다이제스트를 생성할 때 솔팅과 키 스트레칭을 반복한다.
+Adaptive key derivation function은 다이제스트를 생성할 때 솔팅과 키 스트레칭을
+반복한다.
 
-adaptive key derivation function 중 주요한 key derivation function은 PBKDF2, bcrypt, scrypt 등이 있다.
+adaptive key derivation function 중 주요한 key derivation function은 `PBKDF2,
+bcrypt, scrypt` 등이 있다.
 
 PBKDF2(Password-Based Key Derivation Function) 는 NIST(National Institute of Standards and Technology, 미국표준기술연구소) 에서 승인되었고 가장 많이 사용된다. 다음은 PBKDF2 의 prototype 이다.
 

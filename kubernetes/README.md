@@ -13,6 +13,7 @@
 - [Install](#install)
   - [minikube](#minikube)
   - [AWS EKS](#aws-eks)
+- [Kubernetes Tools](#kubernetes-tools)
 - [AWS EKS Basic](#aws-eks-basic)
 - [Basic](#basic)
   - [Useful Commands](#useful-commands)
@@ -406,6 +407,10 @@ AWS EKS cluster 가 만들어지고 나면 다음과 같이 kubectl 을 통해 A
     ```
 
 * open browser copied url
+
+# Kubernetes Tools
+
+[Kubernetes Tools](kubernetes_tools.md)
 
 # AWS EKS Basic
 
