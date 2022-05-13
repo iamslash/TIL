@@ -5,6 +5,7 @@
 - [Example: Money Transfer](#example-money-transfer)
 - [Example: Subscription Workflow](#example-subscription-workflow)
 - [Example: SAGA](#example-saga)
+- [Load Tester](#load-tester)
 
 ---
 
@@ -129,3 +130,11 @@ public class TripBookingWorkflowImpl implements TripBookingWorkflow {
   }
 }
 ```
+
+# Load Tester
+
+* [Maru: Load Testing Tool for Temporal Workflows](https://mikhail.io/2021/03/maru-load-testing-tool-for-temporal-workflows/)
+
+---
+
+[maru](https://github.com/temporalio/maru/) 로 load testing 할 수 있음.
