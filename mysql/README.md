@@ -15,6 +15,7 @@
   - [Inno-db Deadlock](#inno-db-deadlock)
   - [how to run multiple mysqld instances](#how-to-run-multiple-mysqld-instances)
   - [XA](#xa)
+  - [Optimistic Locking](#optimistic-locking)
 
 ----
 
@@ -540,4 +541,106 @@ if __name__ == '__main__':
     #Foo(OpenConnection())
     #Bar(OpenConnection(), 'xa-1')
     Baz(OpenConnection(), 'xa-7', OpenConnection(), 'xa-8')
+```
+
+## Optimistic Locking
+
+* [Optimistic locking in MySQL](https://stackoverflow.com/questions/17431338/optimistic-locking-in-mysql)
+
+-----
+
+MySQL 로 Optimistic Locking 을 다음과 같이 구현할 수 있다.
+
+다음과 같이 table 을 만들자.
+
+```sql
+CREATE TABLE theTable(
+    iD int NOT NULL,
+    val1 int NOT NULL,
+    val2 int NOT NULL
+);
+INSERT INTO theTable (iD, val1, val2) VALUES (1, 2 ,3);
+```
+
+다음과 같은 query 를 수행하고 싶다.
+
+```sql
+SELECT iD, val1, val2
+  FROM theTable
+ WHERE iD = @theId;
+{code that calculates new values}
+UPDATE theTable
+   SET val1 = @newVal1,
+       val2 = @newVal2
+ WHERE iD = @theId;
+{go on with your other code}
+```
+
+동시성을 옮바르게 처리하기 위해 다음과 같이 Optimistic Locking 을 구현한다.
+
+```sql
+SELECT iD, val1, val2
+  FROM theTable
+ WHERE iD = @theId;
+{code that calculates new values}
+UPDATE theTable
+   SET val1 = @newVal1,
+       val2 = @newVal2
+ WHERE iD = @theId
+   AND val1 = @oldVal1
+   AND val2 = @oldVal2;
+{if AffectedRows == 1 }
+  {go on with your other code}
+{else}
+  {decide what to do since it has gone bad... in your code}
+{endif}
+```
+
+트랜잭션을 사용해서 동시성을 제어할 수도 있다. 이 때 `update` 에서
+blocking 될 것이다. Optimistic Locking 이라고 할 수 있을까???
+[isolation](/isolation/README.md#update-locking-within-transaction) 참고.
+
+```sql
+SELECT iD, val1, val2
+  FROM theTable
+ WHERE iD = @theId;
+{code that calculates new values}
+BEGIN TRANSACTION;
+UPDATE anotherTable
+   SET col1 = @newCol1,
+       col2 = @newCol2
+ WHERE iD = @theId;
+UPDATE theTable
+   SET val1 = @newVal1,
+       val2 = @newVal2
+ WHERE iD = @theId
+   AND val1 = @oldVal1
+   AND val2 = @oldVal2;
+{if AffectedRows == 1 }
+  COMMIT TRANSACTION;
+  {go on with your other code}
+{else}
+  ROLLBACK TRANSACTION;
+  {decide what to do since it has gone bad... in your code}
+{endif}
+```
+
+version 을 이용한 Optimistic Locking 이다.
+
+```sql
+SELECT iD, val1, val2, version
+  FROM theTable
+ WHERE iD = @theId;
+{code that calculates new values}
+UPDATE theTable
+   SET val1 = @newVal1,
+       val2 = @newVal2,
+       version = version + 1
+ WHERE iD = @theId
+   AND version = @oldversion;
+{if AffectedRows == 1 }
+  {go on with your other code}
+{else}
+  {decide what to do since it has gone bad... in your code}
+{endif}
 ```
