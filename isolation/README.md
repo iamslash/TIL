@@ -13,7 +13,10 @@
 
 # Abstract
 
-mysql 을 이용하여 Isolation Level 을 실습해 본다. [Transaction](/spring/README.md#transactional)
+[mysql](/mysql/README.md) 은 [Lock](/mysql/README.md#inno-db-locking) 이용하여
+동시성을 제어한다. 설정을 통해서 사용자가 원하는 수준의 Isolation Level 을
+제공한다. [mysql](/mysql/README.md) 로 실습해 본다.
+[Transaction](/spring/README.md#transactional)
 
 # Materials
 
@@ -31,6 +34,22 @@ $ docker exec -it my-mysql /bin/bash
 $ mysql -u iamslash -p
 mysql> show databases
 mysql> use hello
+```
+
+```bash
+$ vim docker-compose.yml
+version: "3.9"
+services:
+  mysql_0:
+    image: mysql
+    command: --character-set-server=utf8mb4
+    restart: always
+    mem_limit: 512m
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+$ docker-compose up
 ```
 
 # Create Table
@@ -207,8 +226,9 @@ mysql> use hello
 ```sql
 -- session 1
 > set session transaction isolation level serializable;
-> begin;
+> start transaction;
 > select * from user;
+-- table lock???
 +------+--------+
 | id   | name   |
 +------+--------+
@@ -221,18 +241,15 @@ mysql> use hello
 +------+--------+
 
 -- session 2
-> begin;
+> start transaction;
 > update user set name = "barbar" where id = 2;
+-- session 2 locked
 
 -- session 1
-> select * from user;
--- sesssion 1 locked
-
--- session 2
 > commit;
--- session 1 unlocked 
+-- session 2 unlocked
 
--- Can not update data from selected table
+-- Can not update data even from selected table
 ```
 
 # Update locking within transaction
@@ -272,4 +289,4 @@ commit;
 
 # Innodb Lock
 
-> [mysql Inno-db locks @ TIL](#inno-db-locks)
+> [mysql Inno-db locks @ TIL](/mysql/README.md#inno-db-locking)
