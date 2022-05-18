@@ -2671,11 +2671,8 @@ JPA Cache 는 1-level Cache, 2-level Cache 가 있다.
 
 ## Spring Data JPA Locks
 
+* [JPA의 낙관적 잠금(Optimistic Lock), 비관적 잠금(Pessimistic Lock)](https://velog.io/@lsb156/JPA-Optimistic-Lock-Pessimistic-Lock)
 * [비관적 Lock, 낙관적 Lock 이해하기](https://medium.com/@jinhanchoi1/%EB%B9%84%EA%B4%80%EC%A0%81-lock-%EB%82%99%EA%B4%80%EC%A0%81-lock-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-1986a399a54)
-* [Optimistic Locking in JPA | baeldung](https://www.baeldung.com/jpa-optimistic-locking)
-  * [src](https://github.com/eugenp/tutorials/tree/master/persistence-modules/hibernate-jpa)
-* [Pessimistic Locking in JPA | baeldung](https://www.baeldung.com/jpa-pessimistic-locking)
-  * [src](https://github.com/eugenp/tutorials/tree/master/persistence-modules/hibernate-jpa)
 * [Enabling Transaction Locks in Spring Data JPA | baeldung](https://www.baeldung.com/java-jpa-transaction-locks)
 * [Concurrency Problems In Transactions | TIL](/database/README.md#concurrency-problems-in-transactions)
 * [MySQL lock | TIL](/mysql/mysql_lock.md)
@@ -2685,8 +2682,18 @@ JPA Cache 는 1-level Cache, 2-level Cache 가 있다.
 
 ### Pessimistic Locking
 
+* [Pessimistic Locking in JPA | baeldung](https://www.baeldung.com/jpa-pessimistic-locking)
+  * [src](https://github.com/eugenp/tutorials/tree/master/persistence-modules/hibernate-jpa)
+
+---
+
 WIP...
 
 ### Optimistic Locking
+
+* [Optimistic Locking in JPA | baeldung](https://www.baeldung.com/jpa-optimistic-locking)
+  * [src](https://github.com/eugenp/tutorials/tree/master/persistence-modules/hibernate-jpa)
+
+----
 
 WIP...

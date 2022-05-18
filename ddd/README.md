@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Basic](#basic)
   - [Terms](#terms)
@@ -22,17 +23,26 @@
 
 DDD (Domain Driven Design) 은 Domain 을 중심으로 System 을 Design 하는 것이다. 보통 Event storming 을 통해 Bounded Context 들을 구성한다. Boris Diagram, SnapE 의 과정을 거쳐 MSA (Micro Service Architecture) 를 디자인 한다.
 
-# Materials
+# References
 
 * [DDD START! 도메인 주도 설계 구현과 핵심 개념 익히기](http://www.yes24.com/Product/Goods/27750871)
   * [src](https://github.com/madvirus/ddd-start)
   * [DDD START! 수다 #1 @ youtube](https://www.youtube.com/watch?v=N3NSISzolSw)
   * [DDD START! 수다 #2 @ youtube](https://www.youtube.com/watch?v=OjMshMPVx5I)
   * [DDD START! 수다 #3 @ youtube](https://www.youtube.com/watch?v=BE5ysejA2cQ)
+* [The Anatomy Of Domain-Driven Design](https://leanpub.com/theanatomyofdomain-drivendesign)
+  * DDD introduction by infographic
+
+# Materials
+
 * [Domain Driven Design 이란 무엇인가?](https://frontalnh.github.io/2018/05/17/z_domain-driven-design/)
 * [마이크로서비스 개발을 위한 Domain Driven Design @ youtube](https://www.youtube.com/watch?v=QUMERCN3rZs&feature=youtu.be)
 * [MSA 전략 1: 마이크로서비스, 어떻게 디자인 할 것인가? @ slideshare](https://www.slideshare.net/PivotalKorea/msa-1-154454835)
 * ["마이크로 서비스 어디까지 해봤니?" 정리](https://syundev.tistory.com/125)
+* [진화하는 혹은 오래 사는 시스템 만들기](https://brunch.co.kr/@graypool/464)
+  * [Domain Storytelling](http://domainstorytelling.org/) 을 설명한다. DDD 의
+    실무방법중 하나로 이해하자.
+  * [Domain Storytelling Tool](https://www.wps.de/modeler/)
 
 # Basic
 
