@@ -881,7 +881,7 @@ public class WebMvcProperties {
     * Dirty Read, Non-repeatable Read, Phantom Read 가 발생한다.
   * READ_COMMITED (level 1)
     * Transaction 이 Commit 된 데이터만 읽기가 가능하다.
-    * Dirty Read 를 해결한다. 그러나 Nonrepeatable REad, Phatom Read 가 여전히 발생한다.
+    * Dirty Read 를 해결한다. 그러나 Nonrepeatable Read, Phatom Read 가 여전히 발생한다.
   * REPEATABLE_READ (level 2)
     * new rows can be inserted into the dataset.
     * Dirty Read, Non-Repeatable Read 를 해결한다.

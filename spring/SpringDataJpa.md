@@ -40,6 +40,9 @@
   - [Spring Data JPA: Transaction](#spring-data-jpa-transaction)
   - [Spring Data JPA: Auditing](#spring-data-jpa-auditing)
   - [JPA Cache](#jpa-cache)
+  - [Spring Data JPA Locks](#spring-data-jpa-locks)
+    - [Pessimistic Locking](#pessimistic-locking)
+    - [Optimistic Locking](#optimistic-locking)
 
 ----
 
@@ -2665,3 +2668,25 @@ JPA Cache 는 1-level Cache, 2-level Cache 가 있다.
 **1-level Cache** 는 Persistence Context 안에 존재한다. 하나의 HTTP Request 가 시작되고 종료될 때까지 발생하는 하나의 Transaction 동안 유지된다. 
 
 2-level Cache 는 Application 이 시작해서 종료될때까지 유지된다. Redis 와 같이 외부의 Cache 도 2-level Cache 이다???
+
+## Spring Data JPA Locks
+
+* [비관적 Lock, 낙관적 Lock 이해하기](https://medium.com/@jinhanchoi1/%EB%B9%84%EA%B4%80%EC%A0%81-lock-%EB%82%99%EA%B4%80%EC%A0%81-lock-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-1986a399a54)
+* [Optimistic Locking in JPA | baeldung](https://www.baeldung.com/jpa-optimistic-locking)
+  * [src](https://github.com/eugenp/tutorials/tree/master/persistence-modules/hibernate-jpa)
+* [Pessimistic Locking in JPA | baeldung](https://www.baeldung.com/jpa-pessimistic-locking)
+  * [src](https://github.com/eugenp/tutorials/tree/master/persistence-modules/hibernate-jpa)
+* [Enabling Transaction Locks in Spring Data JPA | baeldung](https://www.baeldung.com/java-jpa-transaction-locks)
+* [Concurrency Problems In Transactions | TIL](/database/README.md#concurrency-problems-in-transactions)
+* [MySQL lock | TIL](/mysql/mysql_lock.md)
+* [Isolation Level | TIL](/isolation/README.md)
+
+----
+
+### Pessimistic Locking
+
+WIP...
+
+### Optimistic Locking
+
+WIP...

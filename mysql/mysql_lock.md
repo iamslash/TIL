@@ -181,7 +181,7 @@ record 가 없다. 따라서 gab lock 은 다른 transaction 이 새로운 recor
 예를 들어 transaction t1 에서 `SELECT c1 FROM t WHERE c1 BETWEEN 0 and 10 FOR UPDATE;` 를 수행하면 transaction t2 는 `t.c1 = 15` 에 해댕하는 row 를 insert 할 수 없다. transaction t1 이
 commit 혹은 roll back 을 수행하면 transaction t2 는 새로운 row 를 insert 할 수 있다.
 
-[isolation level](/isolation/README.md) 이 read commited 이면 gap lock 이 비활성화 된다.
+[isolation level](/isolation/README.md) 이 read committed 이면 gap lock 이 비활성화 된다.
 
 # Next-Key Locks
 
@@ -379,42 +379,4 @@ mysql 의 innodb 는 Deadlock 을 detect 할 수 있다. 만약 mysql 이 Deadlo
 detect 하면 어느 한 transaction 의 lock wait 을 중지하여 Deadlock 을 해결한다.
 즉, 바로 error 를 리턴한다.
 
-예를 들어 다음과 같이 deadlock 을 일으켜보자. manual 처럼 deadlock detect
-안되는데... isolation level 이 read committed, repeatable read 일 때 똑같이
-deadlock detect 안된다. 왜지???
-
-```sql
--- sessionA
-mysql> set session transaction isolation level read committed;
-mysql> CREATE TABLE t (i INT) ENGINE = InnoDB;
-Query OK, 0 rows affected (1.07 sec)
-
-mysql> INSERT INTO t (i) VALUES(1);
-Query OK, 1 row affected (0.09 sec)
-
-mysql> START TRANSACTION;
-Query OK, 0 rows affected (0.00 sec)
-
-mysql> SELECT * FROM t WHERE i = 1 LOCK IN SHARE MODE;
-+------+
-| i    |
-+------+
-|    1 |
-+------+
--- sessionA acquired (S) lock for a row (i = 1)
-
--- sessionB
-mysql> set session transaction isolation level read committed;
-mysql> START TRANSACTION;
-Query OK, 0 rows affected (0.00 sec)
-
-mysql> DELETE FROM t WHERE i = 1;
--- sessionB tried to acquire (X) lock for a row (i = 1)
--- sessionB blocked
-
--- sessionA
-mysql> DELETE FROM t WHERE i = 1;
-Query OK, 1 row affected (0.00 sec)
--- sessionA tried to acquire (X) lock for a row (i = 1)
--- why deadlock not found???
-```
+[Deadlock](/isolation/README.md#consistent-read)

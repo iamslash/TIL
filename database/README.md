@@ -38,6 +38,11 @@ database 를 만들어 보자.
 
 # Concurrency Problems In Transactions
 
+* [SQL 트랜잭션 - 믿는 도끼에 발등 찍힌다](https://blog.sapzil.org/2017/04/01/do-not-trust-sql-transaction/)
+  * non-repeatable read 를 설명한다.
+
+----
+
 Concurrency Problems 는 다음과 같다.
 
 * Dirty Read
