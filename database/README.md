@@ -2,6 +2,7 @@
 - [Material](#material)
 - [Relational Algebra](#relational-algebra)
 - [Normalization](#normalization)
+- [Concurrency Problems In Transactions](#concurrency-problems-in-transactions)
 - [ACID](#acid)
 - [SQL](#sql)
 - [SQL Optimization](#sql-optimization)
@@ -35,6 +36,35 @@ database 를 만들어 보자.
 
 * [normalization](/normalization/README.md)
 
+# Concurrency Problems In Transactions
+
+Concurrency Problems 는 다음과 같다.
+
+* Dirty Read
+  * A transaction 이 값을 1 에서 2 로 수정하고 아직 commit 하지 않았다. B transaction 은 값을 2 로 읽어들인다. 만약 A transaction 이 rollback 되면 B transaction 은 잘못된 값 2 을 읽게 된다.
+
+* Non-repeatable Read
+  * A transaction 이 한번 읽어온다. B transaction 이 Update 한다. A transaction 이 다시 한번 읽어온다. 이때 처음 읽었던 값과 다른 값을 읽어온다.
+  
+    ```
+    BEGIN TRAN
+      SELECT SUM(Revenue) AS Total FROM Data;
+      --another tran updates a row
+      SELECT Revenue AS Detail FROM Data;
+    COMMIT  
+    ```
+
+* Phantom Read
+  * A transaction 이 한번 읽어온다. B transaction 이 insert 한다. A transaction 이 다시 한번 읽어온다. 이때 처음 읽었던 record 들에 하나 더 추가된 혹은 하나 삭제된 record 들을 읽어온다.
+
+    ```
+    BEGIN TRAN
+      SELECT SUM(Revenue) AS Total FROM Data;
+      --another tran inserts/deletes a row
+      SELECT Revenue AS Detail FROM Data;
+    COMMIT  
+    ```
+
 # ACID
 
 Transaction 이 안전하게 수행된다는 것을 보장하기 위한 성질이다. James Nicholas
@@ -60,7 +90,6 @@ Transaction 이 안전하게 수행된다는 것을 보장하기 위한 성질�
     | Read commited   | X          | O                   | O            |
     | Repeatable Read | X          | X                   | O            |
     | Serializable    | X          | X                   | X            |
-
 * **Durability** (영구성)
   * 성공적으로 수행된 Transaction 영원히 반영되어야 한다. 장애가
     발생했을 때 data 를 recover 할 수 있다. Transaction 은 logging 된다. 따라서

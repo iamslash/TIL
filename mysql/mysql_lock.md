@@ -16,10 +16,13 @@
 
 # Abstract
 
-MySQL InnoDB 의 Lock 에 대해 정리한다.  
+MySQL InnoDB 의 Lock 에 대해 정리한다. MySQL 은 Lock 으로 [Concurrency
+Problems](/database/README.md#concurrency-problems-in-transactions) 을 해결한다.
+즉, [Isolation Level](/isolation/README.md) 을 Lock 으로 구현한다.
 
 # Materials
 
+> * [Lock으로 이해하는 Transaction의 Isolation Level](https://suhwan.dev/2019/06/09/transaction-isolation-level-and-lock/)
 > * [MySQL InnoDB lock & deadlock 이해하기](https://www.letmecompile.com/mysql-innodb-lock-deadlock/)
 > * [14.7.1 InnoDB Locking @ mysql](https://dev.mysql.com/doc/refman/5.7/en/innodb-locking.html)
 > * [InnoDB locking](https://github.com/octachrome/innodb-locks)
@@ -122,10 +125,27 @@ TABLE LOCK table `test`.`t` trx id 10080 lock mode IX
 
 # Record Locks
 
-Record Lock 은 index record 에 걸리는 lock 을 말한다. 예를 들어 transaction
-t1 에서 `SELECT c1 FROM t WHERE c1 = 10 FOR UPDATE;` 를 실행하면 transaction t2
-에서 `t.c1 = 10` 에 해당하는 row 에 대해 insert, update, delete 을 수행할 수
-없다.
+Record Lock 은 index record 에 걸리는 lock 을 말한다. index record 는 index
+table 에서 data table 의 특정 row 를 가리키는 record 를 말한다. 
+
+```
+    Index table              Data table
+-------------------          ---------
+| id  | row addr  |          |  id   |
+-------------------          ---------
+|  3  | addr to 3 |--------->|   3   |
+|  7  | addr to 7 |--------->|   7   |
+-------------------          ---------
+```
+
+Record Lock 은 다음과 같이 2가지가 있다.
+
+* record lock `(S)`
+* record lock `(X)`
+
+예를 들어 transaction t1 에서 `SELECT c1 FROM t WHERE c1 = 10 FOR UPDATE;` 를
+실행하면 transaction t2 에서 `t.c1 = 10` 에 해당하는 row 에 대해 insert, update,
+delete 을 수행할 수 없다.
 
 ```sql
 > SHOW ENGINE INNODB STATUS;
@@ -139,8 +159,27 @@ Record lock, heap no 2 PHYSICAL RECORD: n_fields 3; compact format; info bits 0
 
 # Gap Locks
 
-Gap Lock 은 index record 들 사이, 특정 index record 이전, 특정 index record 이후에
-걸리는 lock 이다. 예를 들어 transaction t1 에서  `SELECT c1 FROM t WHERE c1 BETWEEN 10 and 20 FOR UPDATE;` 를 수행하면 transaction t2 는 `t.c1 = 15` 에 해댕하는 row 를 insert 할 수 없다. 
+Gap Lock 은 index record 들 사이에 걸리는 lock 이다. 즉, data table 에 없는 index 에 대해 걸리는 lock 이다. 
+
+예를 들어 다음과 같이 index table, data table 이 있다고 해보자.
+
+```
+    Index table              Data table
+-------------------          ---------
+| id  | row addr  |          |  id   |
+-------------------          ---------
+|  3  | addr to 3 |--------->|   3   |
+|  7  | addr to 7 |--------->|   7   |
+-------------------          ---------
+```
+
+`id <= 2, 4 <= id <= 6, 8 <= id` 에 해당하는 index 는 record 가 없다. 이것이
+바로 gab 을 의미한다. gap lock 은 이 gab 에 걸리는 lock 이다. gab 에는 index
+record 가 없다. 따라서 gab lock 은 다른 transaction 이 새로운 record 를 삽입할
+때 동시서을 제어할 수 있다.
+
+예를 들어 transaction t1 에서 `SELECT c1 FROM t WHERE c1 BETWEEN 0 and 10 FOR UPDATE;` 를 수행하면 transaction t2 는 `t.c1 = 15` 에 해댕하는 row 를 insert 할 수 없다. transaction t1 이
+commit 혹은 roll back 을 수행하면 transaction t2 는 새로운 row 를 insert 할 수 있다.
 
 [isolation level](/isolation/README.md) 이 read commited 이면 gap lock 이 비활성화 된다.
 
