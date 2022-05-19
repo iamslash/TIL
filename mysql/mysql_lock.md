@@ -9,7 +9,7 @@
 - [Insert Intention Locks](#insert-intention-locks)
 - [AUTO-INC Locks](#auto-inc-locks)
 - [Predicate Locks for Spatial Indexes](#predicate-locks-for-spatial-indexes)
-- [IX practice](#ix-practice)
+- [Experiment](#experiment)
 - [Inno-db Deadlock](#inno-db-deadlock)
 - [MySQL Optimistic Locking](#mysql-optimistic-locking)
 
@@ -27,6 +27,8 @@ Problems](/database/README.md#concurrency-problems-in-transactions) 을 해결�
 > * [MySQL InnoDB lock & deadlock 이해하기](https://www.letmecompile.com/mysql-innodb-lock-deadlock/)
 > * [14.7.1 InnoDB Locking @ mysql](https://dev.mysql.com/doc/refman/5.7/en/innodb-locking.html)
 > * [InnoDB locking](https://github.com/octachrome/innodb-locks)
+> * [20-MySQL의 잠금 | MySQL DBA 튜토리얼 | MySQL 8 DBA 튜토리얼 | youtube](https://www.youtube.com/watch?v=8NlElO5-Xbk)
+> * [MySQL Gap Lock 다시보기](https://medium.com/daangn/mysql-gap-lock-%EB%8B%A4%EC%8B%9C%EB%B3%B4%EA%B8%B0-7f47ea3f68bc)
 
 # MySQL Lock
 
@@ -48,7 +50,11 @@ $ docker run -p 3306:3306 --rm --name my-mysql -e MYSQL_ROOT_PASSWORD=1 -e MYSQL
 
 $ docker exec -it my-mysql bash
 # mysql -u root -p
+```
 
+다음과 같이 database, table 을 생성한다.
+
+```sql
 -- sessionA
 create database foo;
 use foo;
@@ -56,8 +62,16 @@ create table tab(
   k int primary key,
   v int not null
 );
-insert into tab values(1,1),(2,2),(3,3);
-set session transaction isolation level read committed;
+insert into tab values(1,1),(5,5),(10,10);
+
+-- Check locks
+SELECT * FROM performance_schema.data_locks;
+-- not useful
+SELECT * FROM performance_schema.metadata_locks where OBJECT_SCHEMA not in ('information_schema', 'performance_schema', 'mysql');
+-- Check transactions
+SELECT * FROM information_schema.innodb_trx;
+-- not useful
+show engine innodb status;
 ```
 
 # Shared and Exclusive Locks
@@ -115,15 +129,6 @@ WRITE](https://dev.mysql.com/doc/refman/5.7/en/lock-tables.html)) 을 제외하�
 intention lock 은 곧 특정 row 에 대해 row-level lock 이 예정되어 있다는 것을
 알려주는 것이 목적이다. 
 
-intention lock 은 다음과 같이 `show engine innodb status` 로 확인할 수 있다.
-
-```sql
-> show engine innodb status;
-...
-TABLE LOCK table `test`.`t` trx id 10080 lock mode IX
-...
-```
-
 # Record Locks
 
 Record Lock 은 index record 에 걸리는 lock 을 말한다. index record 는 index
@@ -132,10 +137,10 @@ table 에서 data table 의 특정 row 를 가리키는 record 를 말한다.
 ```
     Index table              Data table
 -------------------          ---------
-| id  | row addr  |          |  id   |
+| id  | row addr  |          |   k   |
 -------------------          ---------
-|  3  | addr to 3 |--------->|   3   |
-|  7  | addr to 7 |--------->|   7   |
+|  1  | addr to 1 |--------->|   1   |
+|  5  | addr to 5 |--------->|   5   |
 -------------------          ---------
 ```
 
@@ -158,6 +163,62 @@ Record lock, heap no 2 PHYSICAL RECORD: n_fields 3; compact format; info bits 0
  2: len 7; hex b60000019d0110; asc        ;;
 ```
 
+다음은 `intention lock(IS), record lock(S)` 의 예이다.
+
+```sql
+-- session 1
+begin;
+select * from tab;
++----+----+
+| k  | v  |
++----+----+
+|  1 |  1 |
+|  5 |  5 |
+| 10 | 10 |
++----+----+
+select * from tab where k=1 for share;
+
+-- session 2
+  SELECT EVENT_ID, OBJECT_SCHEMA, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, 
+         LOCK_MODE, LOCK_STATUS, LOCK_DATA 
+    FROM performance_schema.data_locks 
+ORDER BY EVENT_ID;
++----------+---------------+-------------+------------+-----------+---------------+-------------+-----------+
+| EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++----------+---------------+-------------+------------+-----------+---------------+-------------+-----------+
+|      221 | foo           | tab         | NULL       | TABLE     | IS            | GRANTED     | NULL      |
+|      221 | foo           | tab         | PRIMARY    | RECORD    | S,REC_NOT_GAP | GRANTED     | 1         |
++----------+---------------+-------------+------------+-----------+---------------+-------------+-----------+
+```
+
+다음은 `intention lock(IX), record lock(X)` 의 예이다.
+
+```sql
+-- session 1
+begin;
+select * from tab;
++----+----+
+| k  | v  |
++----+----+
+|  1 |  1 |
+|  5 |  5 |
+| 10 | 10 |
++----+----+
+select * from tab where k=1 for update;
+
+-- session 2
+  SELECT EVENT_ID, OBJECT_SCHEMA, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, 
+         LOCK_MODE, LOCK_STATUS, LOCK_DATA 
+    FROM performance_schema.data_locks 
+ORDER BY EVENT_ID;
++----------+---------------+-------------+------------+-----------+---------------+-------------+-----------+
+| EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA |
++----------+---------------+-------------+------------+-----------+---------------+-------------+-----------+
+|      225 | foo           | tab         | NULL       | TABLE     | IX            | GRANTED     | NULL      |
+|      225 | foo           | tab         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 1         |
++----------+---------------+-------------+------------+-----------+---------------+-------------+-----------+
+```
+
 # Gap Locks
 
 Gap Lock 은 index record 들 사이에 걸리는 lock 이다. 즉, data table 에 없는 index 에 대해 걸리는 lock 이다. 
@@ -177,12 +238,44 @@ Gap Lock 은 index record 들 사이에 걸리는 lock 이다. 즉, data table �
 `id <= 2, 4 <= id <= 6, 8 <= id` 에 해당하는 index 는 record 가 없다. 이것이
 바로 gab 을 의미한다. gap lock 은 이 gab 에 걸리는 lock 이다. gab 에는 index
 record 가 없다. 따라서 gab lock 은 다른 transaction 이 새로운 record 를 삽입할
-때 동시서을 제어할 수 있다.
+때 동시성을 제어할 수 있다.
 
-예를 들어 transaction t1 에서 `SELECT c1 FROM t WHERE c1 BETWEEN 0 and 10 FOR UPDATE;` 를 수행하면 transaction t2 는 `t.c1 = 15` 에 해댕하는 row 를 insert 할 수 없다. transaction t1 이
-commit 혹은 roll back 을 수행하면 transaction t2 는 새로운 row 를 insert 할 수 있다.
+예를 들어 transaction t1 에서 `SELECT c1 FROM t WHERE c1 BETWEEN 0 and 10 FOR
+UPDATE;` 를 수행하면 transaction t2 는 `t.c1 = 15` 에 해댕하는 row 를 insert 할
+수 없다. transaction t1 이 commit 혹은 roll back 을 수행하면 transaction t2 는
+새로운 row 를 insert 할 수 있다.
 
 [isolation level](/isolation/README.md) 이 read committed 이면 gap lock 이 비활성화 된다.
+
+다음은 `gap lock(X)` 의 예이다.
+
+```sql
+-- session 1
+begin;
+select * from tab where k between 6 AND 9 for update;
+
+-- session 2
+begin;
+  SELECT EVENT_ID, OBJECT_SCHEMA, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, 
+         LOCK_MODE, LOCK_STATUS, LOCK_DATA 
+    FROM performance_schema.data_locks 
+ORDER BY EVENT_ID;
++----------+---------------+-------------+------------+-----------+-----------+-------------+-----------+
+| EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA |
++----------+---------------+-------------+------------+-----------+-----------+-------------+-----------+
+|      252 | foo           | tab         | NULL       | TABLE     | IX        | GRANTED     | NULL      |
+|      252 | foo           | tab         | PRIMARY    | RECORD    | X,GAP     | GRANTED     | 10        |
++----------+---------------+-------------+------------+-----------+-----------+-------------+-----------+
+insert into tab values(6,6);
+-- session 2 blocked
+
+-- session 1
+rollback;
+-- session 2 unblocked
+
+-- session 2
+rollback;
+```
 
 # Next-Key Locks
 
@@ -195,34 +288,48 @@ Insert intention lock 은 gap lock 의 종류이다. `INSERT ...` 를 실행할 
 서로 다른 두 transaction 은 gap 에서 같은 위치의 record 를 삽입하지 않는다면 conflict 는
 없다.
 
-예를 들어 다음과 같이 `sessionA, sessionB` 를 살펴보자.
+다음은 `insert intention lock(X)` 의 예이다.
+
 
 ```sql
--- sessionA
-mysql> CREATE TABLE child (id int(11) NOT NULL, PRIMARY KEY(id)) ENGINE=InnoDB;
-mysql> INSERT INTO child (id) values (90),(102);
+-- session 1
+begin;
+select * from tab where k between 6 AND 9 for update;
 
-mysql> START TRANSACTION;
-mysql> SELECT * FROM child WHERE id > 100 FOR UPDATE;
-+-----+
-| id  |
-+-----+
-| 102 |
-+-----+
--- sessionA acquired insert intention lock
+-- session 2
+begin;
+  SELECT EVENT_ID, OBJECT_SCHEMA, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, 
+         LOCK_MODE, LOCK_STATUS, LOCK_DATA 
+    FROM performance_schema.data_locks 
+ORDER BY EVENT_ID;
++----------+---------------+-------------+------------+-----------+-----------+-------------+-----------+
+| EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA |
++----------+---------------+-------------+------------+-----------+-----------+-------------+-----------+
+|      252 | foo           | tab         | NULL       | TABLE     | IX        | GRANTED     | NULL      |
+|      252 | foo           | tab         | PRIMARY    | RECORD    | X,GAP     | GRANTED     | 10        |
++----------+---------------+-------------+------------+-----------+-----------+-------------+-----------+
+insert into tab values(6,6);
+-- session 2 blocked
 
--- sessionB
-mysql> START TRANSACTION;
-mysql> INSERT INTO child (id) VALUES (101);
--- sessionB acquired insert intention lock
+-- session 1
+  SELECT EVENT_ID, OBJECT_SCHEMA, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, 
+         LOCK_MODE, LOCK_STATUS, LOCK_DATA 
+    FROM performance_schema.data_locks 
+ORDER BY EVENT_ID;
++----------+---------------+-------------+------------+-----------+------------------------+-------------+-----------+
+| EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE              | LOCK_STATUS | LOCK_DATA |
++----------+---------------+-------------+------------+-----------+------------------------+-------------+-----------+
+|       53 | foo           | tab         | NULL       | TABLE     | IX                     | GRANTED     | NULL      |
+|       53 | foo           | tab         | PRIMARY    | RECORD    | X,GAP,INSERT_INTENTION | WAITING     | 10        |
+|      260 | foo           | tab         | NULL       | TABLE     | IX                     | GRANTED     | NULL      |
+|      260 | foo           | tab         | PRIMARY    | RECORD    | X,GAP                  | GRANTED     | 10        |
++----------+---------------+-------------+------------+-----------+------------------------+-------------+-----------+
+-- session 2 waiting
+rollback;
+-- session 2 unblocked
 
-mysql> show engine innodb status;
-RECORD LOCKS space id 31 page no 3 n bits 72 index `PRIMARY` of table `test`.`child`
-trx id 8731 lock_mode X locks gap before rec insert intention waiting
-Record lock, heap no 3 PHYSICAL RECORD: n_fields 3; compact format; info bits 0
- 0: len 4; hex 80000066; asc    f;;
- 1: len 6; hex 000000002215; asc     " ;;
- 2: len 7; hex 9000000172011c; asc     r  ;;...
+-- session 2
+rollback;
 ```
 
 # AUTO-INC Locks
@@ -234,141 +341,99 @@ into tables with AUTO_INCREMENT columns.
 
 InnoDB supports SPATIAL indexing of columns containing spatial columns???
 
-# IX practice
+# Experiment
 
-다음은 `select ... for update` 와 `update` 를 두개의 transaction
-을 실습한 것이다. innodb 의 transaction 상태가 어떻게 변하는지 살펴보자.
+다음은 몇가지 실험을 한 것이다. 아직 이해가 가지 않는다.
 
 ```sql
--- sessionA
-> begin;
-> SELECT * from tab where k=1 for update;
-> show engine innodb status;
-------------
-TRANSACTIONS
-------------
-Trx id counter 1841
-Purge done for trx's n:o < 1835 undo n:o < 0 state: running but idle
-History list length 0
-LIST OF TRANSACTIONS FOR EACH SESSION:
----TRANSACTION 421609938063360, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 421609938061744, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 421609938060936, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 1840, ACTIVE 4 sec
-2 lock struct(s), heap size 1128, 1 row lock(s)
-MySQL thread id 10, OS thread handle 140134792005376, query id 124 localhost root starting
-show engine innodb status
+-- session 1
+begin;
+select * from tab where v=5;
+-- v is not a primary key
+
+-- session 2
+  SELECT EVENT_ID, OBJECT_SCHEMA, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, 
+         LOCK_MODE, LOCK_STATUS, LOCK_DATA 
+    FROM performance_schema.data_locks 
+ORDER BY EVENT_ID;
++----------+---------------+-------------+------------+-----------+-----------+-------------+------------------------+
+| EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA              |
++----------+---------------+-------------+------------+-----------+-----------+-------------+------------------------+
+|      271 | foo           | tab         | NULL       | TABLE     | IX        | GRANTED     | NULL                   |
+|      271 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | supremum pseudo-record |
+|      271 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | 1                      |
+|      271 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | 5                      |
+|      271 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | 10                     |
++----------+---------------+-------------+------------+-----------+-----------+-------------+------------------------+
+-- Why all data records were locked???
+-- supremum psedu-record means infinite range data records???
 ```
 
 ```sql
--- sessionB
-> begin;
-> UPDATE set v=11 where k=1;
--- sessionB blocked for a while
+-- session 1
+begin;
+select * from tab where k between 1 and 10 for update;
+
+-- session 2
+begin;
+  SELECT EVENT_ID, OBJECT_SCHEMA, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, 
+         LOCK_MODE, LOCK_STATUS, LOCK_DATA 
+    FROM performance_schema.data_locks 
+ORDER BY EVENT_ID;
++----------+---------------+-------------+------------+-----------+---------------+-------------+------------------------+
+| EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE     | LOCK_STATUS | LOCK_DATA              |
++----------+---------------+-------------+------------+-----------+---------------+-------------+------------------------+
+|      277 | foo           | tab         | NULL       | TABLE     | IX            | GRANTED     | NULL                   |
+|      277 | foo           | tab         | PRIMARY    | RECORD    | X,REC_NOT_GAP | GRANTED     | 1                      |
+|      277 | foo           | tab         | PRIMARY    | RECORD    | X             | GRANTED     | supremum pseudo-record |
+|      277 | foo           | tab         | PRIMARY    | RECORD    | X             | GRANTED     | 5                      |
+|      277 | foo           | tab         | PRIMARY    | RECORD    | X             | GRANTED     | 10                     |
++----------+---------------+-------------+------------+-----------+---------------+-------------+------------------------+
+-- supremum psudo-record means [2..4], [6..9] ???
+insert into tab values(6,6);
+-- session 2 blocked
+-- supremum psudo-record means gap block ???
+
+-- session 1
+  SELECT EVENT_ID, OBJECT_SCHEMA, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, 
+         LOCK_MODE, LOCK_STATUS, LOCK_DATA 
+    FROM performance_schema.data_locks 
+ORDER BY EVENT_ID;
++----------+---------------+-------------+------------+-----------+------------------------+-------------+------------------------+
+| EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE              | LOCK_STATUS | LOCK_DATA              |
++----------+---------------+-------------+------------+-----------+------------------------+-------------+------------------------+
+|       61 | foo           | tab         | NULL       | TABLE     | IX                     | GRANTED     | NULL                   |
+|       61 | foo           | tab         | PRIMARY    | RECORD    | X,GAP,INSERT_INTENTION | WAITING     | 10                     |
+|      277 | foo           | tab         | NULL       | TABLE     | IX                     | GRANTED     | NULL                   |
+|      277 | foo           | tab         | PRIMARY    | RECORD    | X,REC_NOT_GAP          | GRANTED     | 1                      |
+|      277 | foo           | tab         | PRIMARY    | RECORD    | X                      | GRANTED     | supremum pseudo-record |
+|      277 | foo           | tab         | PRIMARY    | RECORD    | X                      | GRANTED     | 5                      |
+|      277 | foo           | tab         | PRIMARY    | RECORD    | X                      | GRANTED     | 10                     |
++----------+---------------+-------------+------------+-----------+------------------------+-------------+------------------------+
+rollback;
+-- session 2 unblocked;
+
+-- session 2
+rollback;
 ```
 
 ```sql
--- sessionA
-> show engine innodb status;
-------------
-TRANSACTIONS
-------------
-Trx id counter 1842
-Purge done for trx's n:o < 1835 undo n:o < 0 state: running but idle
-History list length 0
-LIST OF TRANSACTIONS FOR EACH SESSION:
----TRANSACTION 421609938061744, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 421609938060936, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 1841, ACTIVE 4 sec starting index read
-mysql tables in use 1, locked 1
-LOCK WAIT 2 lock struct(s), heap size 1128, 1 row lock(s)
-MySQL thread id 11, OS thread handle 140134790948608, query id 127 localhost root updating
-UPDATE tab set v=11 where k=1
-------- TRX HAS BEEN WAITING 4 SEC FOR THIS LOCK TO BE GRANTED:
-RECORD LOCKS space id 3 page no 4 n bits 72 index PRIMARY of table `foo`.`tab` trx id 1841 lock_mode X locks rec but not gap waiting
-Record lock, heap no 2 PHYSICAL RECORD: n_fields 4; compact format; info bits 0
- 0: len 4; hex 80000001; asc     ;;
- 1: len 6; hex 000000000726; asc      &;;
- 2: len 7; hex 81000001180110; asc        ;;
- 3: len 4; hex 80000001; asc     ;;
+-- session 1
+begin;
+select * from tab where k>=20 for update;
 
-------------------
----TRANSACTION 1840, ACTIVE 56 sec
-2 lock struct(s), heap size 1128, 1 row lock(s)
-MySQL thread id 10, OS thread handle 140134792005376, query id 128 localhost root starting
-show engine innodb status
-```
-
-```sql
--- sessionB unblocked after for a while
-ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction
-> show engine innodb status;
-------------
-TRANSACTIONS
-------------
-Trx id counter 1842
-Purge done for trx's n:o < 1835 undo n:o < 0 state: running but idle
-History list length 0
-LIST OF TRANSACTIONS FOR EACH SESSION:
----TRANSACTION 421609938061744, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 421609938060936, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 1841, ACTIVE 97 sec
-1 lock struct(s), heap size 1128, 1 row lock(s)
-MySQL thread id 11, OS thread handle 140134790948608, query id 129 localhost root starting
-show engine innodb status
----TRANSACTION 1840, ACTIVE 149 sec
-2 lock struct(s), heap size 1128, 1 row lock(s)
-MySQL thread id 10, OS thread handle 140134792005376, query id 128 localhost root
-```
-
-```sql
--- sessionA
-> rollback;
-> show engine innodb status;
-------------
-TRANSACTIONS
-------------
-Trx id counter 1842
-Purge done for trx's n:o < 1835 undo n:o < 0 state: running but idle
-History list length 0
-LIST OF TRANSACTIONS FOR EACH SESSION:
----TRANSACTION 421609938062552, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 421609938061744, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 421609938060936, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 1841, ACTIVE 224 sec
-1 lock struct(s), heap size 1128, 1 row lock(s)
-MySQL thread id 11, OS thread handle 140134790948608, query id 129 localhost root
-```
-
-```sql
--- sessionB
-> rollback;
-> show engine innodb status;
-------------
-TRANSACTIONS
-------------
-Trx id counter 1842
-Purge done for trx's n:o < 1835 undo n:o < 0 state: running but idle
-History list length 0
-LIST OF TRANSACTIONS FOR EACH SESSION:
----TRANSACTION 421609938063360, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 421609938062552, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 421609938061744, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
----TRANSACTION 421609938060936, not started
-0 lock struct(s), heap size 1128, 0 row lock(s)
+-- session 2
+  SELECT EVENT_ID, OBJECT_SCHEMA, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, 
+         LOCK_MODE, LOCK_STATUS, LOCK_DATA 
+    FROM performance_schema.data_locks 
+ORDER BY EVENT_ID;
++----------+---------------+-------------+------------+-----------+-----------+-------------+------------------------+
+| EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA              |
++----------+---------------+-------------+------------+-----------+-----------+-------------+------------------------+
+|      283 | foo           | tab         | NULL       | TABLE     | IX        | GRANTED     | NULL                   |
+|      283 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | supremum pseudo-record |
++----------+---------------+-------------+------------+-----------+-----------+-------------+------------------------+
+-- supremum pseudo-record means what???
 ```
 
 # Inno-db Deadlock
@@ -381,7 +446,6 @@ detect 하면 어느 한 transaction 의 lock wait 을 중지하여 Deadlock 을
 즉, 바로 error 를 리턴한다.
 
 [Deadlock](/isolation/README.md#consistent-read)
-
 
 # MySQL Optimistic Locking
 
