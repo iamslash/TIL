@@ -277,10 +277,62 @@ rollback;
 rollback;
 ```
 
+```sql
+-- session 1
+begin;
+update tab set v=v+10 where k=2;
+
+-- session 2
+begin;
+  SELECT EVENT_ID, OBJECT_SCHEMA, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, 
+         LOCK_MODE, LOCK_STATUS, LOCK_DATA 
+    FROM performance_schema.data_locks 
+ORDER BY EVENT_ID;
++----------+---------------+-------------+------------+-----------+-----------+-------------+-----------+
+| EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA |
++----------+---------------+-------------+------------+-----------+-----------+-------------+-----------+
+|      317 | foo           | tab         | NULL       | TABLE     | IX        | GRANTED     | NULL      |
+|      317 | foo           | tab         | PRIMARY    | RECORD    | X,GAP     | GRANTED     | 5         |
++----------+---------------+-------------+------------+-----------+-----------+-------------+-----------+
+insert into tab values(6,6);
+-- session 2 blocked
+
+-- session 1
+rollback;
+-- session 2 unblocked
+
+-- session 2
+rollback;
+```
+
 # Next-Key Locks
 
 Next-Key Lock 은 index record 에 대한 record lock 과 그 index record 의 이전
 index record 들에 대한 gab lock 을 합한 것이다.
+
+```sql
+-- session 1
+begin;
+select * from tab where v=5;
+-- v is not a primary key
+
+-- session 2
+  SELECT EVENT_ID, OBJECT_SCHEMA, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, 
+         LOCK_MODE, LOCK_STATUS, LOCK_DATA 
+    FROM performance_schema.data_locks 
+ORDER BY EVENT_ID;
++----------+---------------+-------------+------------+-----------+-----------+-------------+------------------------+
+| EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA              |
++----------+---------------+-------------+------------+-----------+-----------+-------------+------------------------+
+|      271 | foo           | tab         | NULL       | TABLE     | IX        | GRANTED     | NULL                   |
+|      271 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | supremum pseudo-record |
+|      271 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | 1                      |
+|      271 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | 5                      |
+|      271 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | 10                     |
++----------+---------------+-------------+------------+-----------+-----------+-------------+------------------------+
+-- Why all data records were locked???
+-- LOCK_DATA in (supremum psedu-record, 1, 5, 10) means next key lock???
+```
 
 # Insert Intention Locks
 
@@ -344,30 +396,6 @@ InnoDB supports SPATIAL indexing of columns containing spatial columns???
 # Experiment
 
 다음은 몇가지 실험을 한 것이다. 아직 이해가 가지 않는다.
-
-```sql
--- session 1
-begin;
-select * from tab where v=5;
--- v is not a primary key
-
--- session 2
-  SELECT EVENT_ID, OBJECT_SCHEMA, OBJECT_NAME, INDEX_NAME, LOCK_TYPE, 
-         LOCK_MODE, LOCK_STATUS, LOCK_DATA 
-    FROM performance_schema.data_locks 
-ORDER BY EVENT_ID;
-+----------+---------------+-------------+------------+-----------+-----------+-------------+------------------------+
-| EVENT_ID | OBJECT_SCHEMA | OBJECT_NAME | INDEX_NAME | LOCK_TYPE | LOCK_MODE | LOCK_STATUS | LOCK_DATA              |
-+----------+---------------+-------------+------------+-----------+-----------+-------------+------------------------+
-|      271 | foo           | tab         | NULL       | TABLE     | IX        | GRANTED     | NULL                   |
-|      271 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | supremum pseudo-record |
-|      271 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | 1                      |
-|      271 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | 5                      |
-|      271 | foo           | tab         | PRIMARY    | RECORD    | X         | GRANTED     | 10                     |
-+----------+---------------+-------------+------------+-----------+-----------+-------------+------------------------+
--- Why all data records were locked???
--- supremum psedu-record means infinite range data records???
-```
 
 ```sql
 -- session 1
