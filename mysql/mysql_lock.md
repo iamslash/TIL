@@ -23,12 +23,12 @@ Problems](/database/README.md#concurrency-problems-in-transactions) 을 해결�
 
 # Materials
 
-> * [Lock으로 이해하는 Transaction의 Isolation Level](https://suhwan.dev/2019/06/09/transaction-isolation-level-and-lock/)
-> * [MySQL InnoDB lock & deadlock 이해하기](https://www.letmecompile.com/mysql-innodb-lock-deadlock/)
-> * [14.7.1 InnoDB Locking @ mysql](https://dev.mysql.com/doc/refman/5.7/en/innodb-locking.html)
-> * [InnoDB locking](https://github.com/octachrome/innodb-locks)
-> * [20-MySQL의 잠금 | MySQL DBA 튜토리얼 | MySQL 8 DBA 튜토리얼 | youtube](https://www.youtube.com/watch?v=8NlElO5-Xbk)
-> * [MySQL Gap Lock 다시보기](https://medium.com/daangn/mysql-gap-lock-%EB%8B%A4%EC%8B%9C%EB%B3%B4%EA%B8%B0-7f47ea3f68bc)
+* [Lock으로 이해하는 Transaction의 Isolation Level](https://suhwan.dev/2019/06/09/transaction-isolation-level-and-lock/)
+* [MySQL InnoDB lock & deadlock 이해하기](https://www.letmecompile.com/mysql-innodb-lock-deadlock/)
+* [14.7.1 InnoDB Locking @ mysql](https://dev.mysql.com/doc/refman/5.7/en/innodb-locking.html)
+* [InnoDB locking](https://github.com/octachrome/innodb-locks)
+* [20-MySQL의 잠금 | MySQL DBA 튜토리얼 | MySQL 8 DBA 튜토리얼 | youtube](https://www.youtube.com/watch?v=8NlElO5-Xbk)
+* [MySQL Gap Lock 다시보기](https://medium.com/daangn/mysql-gap-lock-%EB%8B%A4%EC%8B%9C%EB%B3%B4%EA%B8%B0-7f47ea3f68bc)
 
 # MySQL Lock
 
@@ -152,16 +152,6 @@ Record Lock 은 다음과 같이 2가지가 있다.
 예를 들어 transaction t1 에서 `SELECT c1 FROM t WHERE c1 = 10 FOR UPDATE;` 를
 실행하면 transaction t2 에서 `t.c1 = 10` 에 해당하는 row 에 대해 insert, update,
 delete 을 수행할 수 없다.
-
-```sql
-> SHOW ENGINE INNODB STATUS;
-RECORD LOCKS space id 58 page no 3 n bits 72 index `PRIMARY` of table `test`.`t`
-trx id 10078 lock_mode X locks rec but not gap
-Record lock, heap no 2 PHYSICAL RECORD: n_fields 3; compact format; info bits 0
- 0: len 4; hex 8000000a; asc     ;;
- 1: len 6; hex 00000000274f; asc     'O;;
- 2: len 7; hex b60000019d0110; asc        ;;
-```
 
 다음은 `intention lock(IS), record lock(S)` 의 예이다.
 

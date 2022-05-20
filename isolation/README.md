@@ -226,9 +226,9 @@ Query OK, 1 row affected (21.69 sec)
 
 ```sql
 -- session 1
-> set session transaction isolation level read uncommitted;
-> start transaction;
-> select * from user;
+set session transaction isolation level read uncommitted;
+start transaction;
+select * from user;
 -- no lock
 +------+------+
 | id   | name |
@@ -239,15 +239,15 @@ Query OK, 1 row affected (21.69 sec)
 +------+------+
 
 -- session 2
-> set session transaction isolation level read uncommitted;
-> start transaction;
-> update user SET name="foofoo" where id=1;
+set session transaction isolation level read uncommitted;
+start transaction;
+update user SET name="foofoo" where id=1;
 -- session 2 acquired (IX) of the row(is=1)
-> insert into user (id, name) values (4, "tree");
+insert into user (id, name) values (4, "tree");
 -- session 2 acquired (IX) of the row(is=4)
 
 -- session 1
-> select * from user;
+select * from user;
 +------+--------+
 | id   | name   |
 +------+--------+
@@ -257,10 +257,10 @@ Query OK, 1 row affected (21.69 sec)
 |    4 | tree   |
 +------+--------+
 -- session 1 reads new snapshot which includes uncommited update from session 2
-> commit;
+commit;
 
 -- session 2
-> commit;
+commit;
 ```
 
 # Practice of Read Committed
