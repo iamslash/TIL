@@ -4,6 +4,7 @@
   - [Hexagonal Archiecture Over View](#hexagonal-archiecture-over-view)
   - [Primary Port, Adapter Example](#primary-port-adapter-example)
   - [Secondary Port, Adapter Example](#secondary-port-adapter-example)
+  - [Directory Structures](#directory-structures)
 
 ----
 
@@ -17,6 +18,10 @@ Hexagonal 이라는 용어 때문에 6 가지 Port 를 써야할 거 같지만 �
 
 # Materials
 
+* [Get Your Hands Dirty on Clean Architecture](https://leanpub.com/get-your-hands-dirty-on-clean-architecture)
+  * Getting started with Hexaganal Architecture 
+  * [src](https://github.com/thombergs/buckpal)
+  * [Hexagonal Architecture with Java and Spring](https://reflectoring.io/spring-hexagonal/)
 * [지속 가능한 소프트웨어 설계 패턴: 포트와 어댑터 아키텍처 적용하기 @ line](https://engineering.linecorp.com/ko/blog/port-and-adapter-architecture/?fbclid=IwAR2GLZMhXkX4Weri0qHQaLkwhlaBEJgFZ0yEQ5ilQO_cDJgvb2AP4TCqRu0)
 * [DDD, Hexagonal, Onion, Clean, CQRS, … How I put it all together](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
 
@@ -113,4 +118,30 @@ public class NotificationExecutor implements NotificationService {
         log.info("sendSms");
     }
 }
+```
+
+## Directory Structures
+
+[Example Implementation of a Hexagonal Architecture | github](https://github.com/thombergs/buckpal) 의 구조가 맘에든다.
+
+```bash
+└── src
+    ├── main
+    │   ├── java
+    │   │   └── io
+    │   │       └── reflectoring
+    │   │           └── buckpal
+    │   │               ├── account
+    │   │               │   ├── adapter
+    │   │               │   │   ├── in
+    │   │               │   │   │   └── web
+    │   │               │   │   └── out
+    │   │               │   │       └── persistence
+    │   │               │   ├── application
+    │   │               │   │   ├── port
+    │   │               │   │   │   ├── in
+    │   │               │   │   │   └── out
+    │   │               │   │   └── service
+    │   │               │   └── domain
+    │   │               └── common
 ```
