@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
-- [2 Phase Commit, TCC (Try-Confirm/Cancel)](#2-phase-commit-tcc-try-confirmcancel)
+- [2 Phase Commit](#2-phase-commit)
+- [TCC (Try-Confirm/Cancel)](#tcc-try-confirmcancel)
   - [Sequences](#sequences)
   - [Exceptions](#exceptions)
   - [Summary](#summary)
@@ -13,9 +14,22 @@
 
 # Abstract
 
-It's about Distributed Transactions. There are 2 methods for Distributed Transactions including **2 Phase Commit**, **SAGAS**. 
+It's about Distributed Transactions. There are 2 kinds of distributed transactions.
 
-And there are 2 types of **SAGAS** including **Choreography based SAGA**, **Orchestration based SAGA**. **Choreography** is distributed decision making and **Orchestration** is centralized decision making. So **Orchestration** has a SPOF problem.
+* low level
+  * **2 Phase Commit**
+* high level
+  * **TC/C (Try Confirm / Cancel)**
+  * SAGAS
+    * **Choreography SAGAS**
+    * **Orchestration SAGAS**
+
+low level means the storage or the driver should support 2 Phase Commit. for
+example [MySQL](/mysql/README.md) supports [XA](/mysql/README.md#xa).
+
+high level means the application should support those.
+
+**Choreography** is distributed decision making and **Orchestration** is centralized decision making. So **Orchestration** has a SPOF problem.
 
 # Materials
 
@@ -35,7 +49,11 @@ And there are 2 types of **SAGAS** including **Choreography based SAGA**, **Orch
 * [내 멋대로 구현한 이벤트 드리븐](https://www.popit.kr/%EB%82%B4-%EB%A9%8B%EB%8C%80%EB%A1%9C-%EA%B5%AC%ED%98%84%ED%95%9C-%EC%9D%B4%EB%B2%A4%ED%8A%B8-%EB%93%9C%EB%A6%AC%EB%B8%90/)
 * [마이크로 서비스에서 분산 트랜잭션](https://medium.com/@giljae/%EB%A7%88%EC%9D%B4%ED%81%AC%EB%A1%9C-%EC%84%9C%EB%B9%84%EC%8A%A4%EC%97%90%EC%84%9C-%EB%B6%84%EC%82%B0-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-347af5136c87)
 
-# 2 Phase Commit, TCC (Try-Confirm/Cancel)
+# 2 Phase Commit
+
+* [XA](/mysql/README.md#xa)
+
+# TCC (Try-Confirm/Cancel)
 
 * [REST 기반의 간단한 분산 트랜잭션 구현 – 1편 TCC 개관](https://www.popit.kr/rest-%EA%B8%B0%EB%B0%98%EC%9D%98-%EA%B0%84%EB%8B%A8%ED%95%9C-%EB%B6%84%EC%82%B0-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B5%AC%ED%98%84-1%ED%8E%B8/)
   * [src](https://github.com/YooYoungmo/article-tcc)
@@ -67,7 +85,8 @@ And there are 2 types of **SAGAS** including **Choreography based SAGA**, **Orch
       url: "http://localhost:8081/api/v1/payments/1",
       expires: "2020-08-22T09:00:00.000"
     }
-    ```  * Create a record with `status = reserved` in `reserved_payment` table. 
+    ``` 
+ * Create a record with `status = reserved` in `reserved_payment` table. 
 
 4. create order 
    * Create a record in `order` table.
