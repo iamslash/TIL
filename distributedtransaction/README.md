@@ -51,7 +51,32 @@ high level means the application should support those.
 
 # 2 Phase Commit
 
-* [XA](/mysql/README.md#xa)
+* [Understanding Two-Phase Commit | baeldung](https://www.baeldung.com/cs/saga-pattern-microservices)
+
+----
+
+다음의 그림과 같이 coordinator 가 여러 microservice 들에게 모두 commit 해도
+되는지 물어보고 결정하는 방법이다.
+
+![](img/2phasecommit_prepare.png)
+
+![](img/2phasecommit_commit.png)
+
+다음과 같이 local transaction 을 2 개의 단계로 구분하여 처리한다.
+
+* Prepare Phase
+  * commit 해도 되요?
+* Commit Phase
+  * commit 해 주세요.
+
+Coordinator 가 global transaction, local transaction 의 상태를 저장해야 한다. 각 단계에서 문제가 없다면 모두 commit 한다. 각 단계에서 문제가 발생한다면 전체 transaction 을 rollback 한다.
+
+2 Phase Commit 의 단점은 다음과 같다.
+
+* Coordinator 가 SPOF (Single Point Of Failure) 이다.
+* 가장 느린 microservice 에게 bottle neck 이 있다.
+* coordinator 를 중심으로 통신이 많다. scalability, performance issue 가 있다.
+* NoSQL 은 ACID compliant transaction 을 지원하지 않는다. NoSQL 은 사용이 어렵다. [MySQL](/mysql/README.md) 은 2 phase commit 을 위해 [XA](/mysql/README.md#xa) 를 지원한다.
 
 # TCC (Try-Confirm/Cancel)
 
