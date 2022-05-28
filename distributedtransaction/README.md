@@ -5,10 +5,12 @@
   - [Sequences](#sequences)
   - [Exceptions](#exceptions)
   - [Summary](#summary)
+- [2PC vs TC/C](#2pc-vs-tcc)
 - [SAGA](#saga)
   - [SAGA Overview](#saga-overview)
   - [Choreography SAGA](#choreography-saga)
   - [Orchestration SAGA](#orchestration-saga)
+- [TC/C vs Sagas](#tcc-vs-sagas)
 - [Conclusion](#conclusion)
 
 -----
@@ -86,6 +88,9 @@ Coordinator 가 global transaction, local transaction 의 상태를 저장해야
 
 * [REST 기반의 간단한 분산 트랜잭션 구현 – 1편 TCC 개관](https://www.popit.kr/rest-%EA%B8%B0%EB%B0%98%EC%9D%98-%EA%B0%84%EB%8B%A8%ED%95%9C-%EB%B6%84%EC%82%B0-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B5%AC%ED%98%84-1%ED%8E%B8/)
   * [src](https://github.com/YooYoungmo/article-tcc)
+  * [REST 기반의 간단한 분산 트랜잭션 구현 - 2편 TCC Cancel, Timeout](https://www.popit.kr/rest-%EA%B8%B0%EB%B0%98%EC%9D%98-%EA%B0%84%EB%8B%A8%ED%95%9C-%EB%B6%84%EC%82%B0-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B5%AC%ED%98%84-2%ED%8E%B8-tcc-cancel-timeout/)
+  * [REST 기반의 간단한 분산 트랜잭션 구현 - 3편 TCC Confirm(Eventual Consistency)](https://www.popit.kr/rest-%EA%B8%B0%EB%B0%98%EC%9D%98-%EA%B0%84%EB%8B%A8%ED%95%9C-%EB%B6%84%EC%82%B0-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B5%AC%ED%98%84-3%ED%8E%B8-tcc-confirmeventual-consistency/)
+  * [REST 기반의 간단한 분산 트랜잭션 구현 - 4편 REST Retry](https://www.popit.kr/rest-%EA%B8%B0%EB%B0%98%EC%9D%98-%EA%B0%84%EB%8B%A8%ED%95%9C-%EB%B6%84%EC%82%B0-%ED%8A%B8%EB%9E%9C%EC%9E%AD%EC%85%98-%EA%B5%AC%ED%98%84-4%ED%8E%B8-rest-retry/)
 
 ## Sequences
 
@@ -94,6 +99,7 @@ Coordinator 가 global transaction, local transaction 의 상태를 저장해야
 1. **order** : User request order. `Order Service` is Transaction Coordinator.
 
 2. **try reduce stock** : `POST /api/v1/stocks HTTP/1.1`
+   
   * reponse body 
     ```json
     {
@@ -158,7 +164,15 @@ Coordinator 가 global transaction, local transaction 의 상태를 저장해야
 
 ## Summary
 
-Order Service is a `Transaction Coordinator`. Kafka can handle Eventual Consistency.
+**Order Service** is a `Transaction Coordinator`. [Kafka](/kafka/README.md) can handle Eventual Consistency.
+
+# 2PC vs TC/C
+
+| Phase | 2PC | TC/C |
+|--|--|--|
+| First Phase | Local transactions are not done yet | All local transactions completed, committed or canceled |
+| Second Phase: **success** | Commit all local transactions | Execute new local transactions if needed |
+| Third Phase: **fail** | Cancel all local transactions | Reverse the side effect of the already committed transaction, or called "undo" |
 
 # SAGA
 
@@ -221,6 +235,17 @@ Chris Richardson 의 Orchestration SAGA Architecture.
 ![](orchestration_saga.jpg)
 
 ![](https://chrisrichardson.net/i/sagas/Create_Order_Saga_Orchestration.png)
+
+# TC/C vs Sagas
+
+| Item | TC/C | SAGAS |
+|---|---|---|
+| Compensating action | In Cancel Phase | In rollback phase |
+| Central coordination | Yes | Yes (Orchestration SAGA) |
+| Operation execution order | any | linear |
+| Parallel execution possibility | Yes | No (linear) |
+| Could see the partial inconsistent status | Yes | Yes |
+| Application or database logic | Application | Application |
 
 # Conclusion
 
