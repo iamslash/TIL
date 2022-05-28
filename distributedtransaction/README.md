@@ -5,16 +5,19 @@
   - [Sequences](#sequences)
   - [Exceptions](#exceptions)
   - [Summary](#summary)
-- [SAGA pattern, Event driven](#saga-pattern-event-driven)
-  - [Choreography based SAGA](#choreography-based-saga)
-  - [Orchestration based SAGA](#orchestration-based-saga)
+- [SAGA](#saga)
+  - [SAGA Overview](#saga-overview)
+  - [Choreography SAGA](#choreography-saga)
+  - [Orchestration SAGA](#orchestration-saga)
 - [Conclusion](#conclusion)
 
 -----
 
 # Abstract
 
-It's about Distributed Transactions. There are 2 kinds of distributed transactions.
+Global transaction 은 local transaction 으로 나누어 진다. 이렇게 local transaction 으로 나누어진 transaction 들의 모음을 distributed transaction 이라고 한다. 
+
+Distributed Transaction 은 다음과 같은 종류가 있다.
 
 * low level
   * **2 Phase Commit**
@@ -52,6 +55,7 @@ high level means the application should support those.
 # 2 Phase Commit
 
 * [Understanding Two-Phase Commit | baeldung](https://www.baeldung.com/cs/saga-pattern-microservices)
+  * [A Guide to Transactions Across Microservices | baeldung](https://www.baeldung.com/transactions-across-microservices)
 
 ----
 
@@ -156,29 +160,63 @@ Coordinator 가 global transaction, local transaction 의 상태를 저장해야
 
 Order Service is a `Transaction Coordinator`. Kafka can handle Eventual Consistency.
 
-# SAGA pattern, Event driven
+# SAGA
 
 * [Orchestration vs. Choreography](https://stackoverflow.com/questions/4127241/orchestration-vs-choreography)
+* [7. Introduction to Saga | baeldung](https://www.baeldung.com/cs/saga-pattern-microservices#introduction-to-saga)
+  * [A Guide to Transactions Across Microservices | baeldung](https://www.baeldung.com/transactions-across-microservices)
 
 ----
 
-Choreography based SAGA, Orchestration based SAGA 와 같이 2 종류의 SAGA pattern 이 있다. Choreography based SAGA 는 transaction 성공여부 판단을 각 service 에서 나누어 한다. Orchestration based SAGA 는 transaction 성공여부 판단을 한 곳에서 한다.
+## SAGA Overview
 
-## Choreography based SAGA
+SAGA 는 global transaction 을 local transaction 으로 나누고 순서대로 처리하는 방법이다. `TC/C` 는 local transaction 이 순서대로 처리되지 않는다. 예외 사항이 더 많아서 구현이 어렵다. 
+
+![](img/saga_flow.png)
+
+global transaction 은 `Create Order, Process Payment, Update Inventory, Deliver Order` 와 같은 local transaction 들로 나누어져 있다. 
+
+만약 `Process Payment` transaction 이 실패한다면 `Reverse Payment, Cancel Order` 순서로 Compensating Transaction 을 실행한다.
+
+Compensating Transaction 이 실패한다면 어딘가에 저장해 놓고 Eventual Consistent 하게 처리한다. 예를 들어 Kafka Topic 에 실패한 Compensating Transaction 을 저장해 놓고 성공할 때까지 재시도 한다. 따라서 재시도 해야할 task 는 idempotent, retryable 해야 한다.
+
+SAGA 는 **Choreography SAGA, Orchestration SAGA** 와 같이 2 종류가 있다. **Choreography SAGA** 는 transaction 성공여부 판단을 각 service 에서 나누어 한다. **Orchestration SAGA** 는 transaction 성공여부 판단을 한 곳에서 한다.
+
+## Choreography SAGA
 
 * [Choreography-based sagas example @ github](https://github.com/eventuate-tram/eventuate-tram-examples-customers-and-orders)
   
 ----  
 
+다음은 Baeldung 의 Choreography SAGA Architecture 이다.
+
+![](https://www.baeldung.com/wp-content/uploads/sites/4/2021/04/saga-coreography.png)
+
+Saga Execution Coordinator 는 Framewok 와 같다. 각 microservice 에 embed 되었다고 생각하자. micro service 들은 SEC (SAGA Execution Component) 와 message 들을 주고 받는다. 그리고 transaction 혹은 compensation transaction 을 수행한다.
+
+다음은 Tx2 가 실패했을 때의 처리과정이다.
+
+![](https://www.baeldung.com/wp-content/uploads/sites/4/2021/04/saga-coreography-2.png)
+
+다음은 Chris Richardson 의 Choregography SAGA Architecture 이다.
+
 ![](choreography_saga.jpg)
 
 ![](https://chrisrichardson.net/i/sagas/Create_Order_Saga.png)
 
-## Orchestration based SAGA
+## Orchestration SAGA
 
 * [orchestration-based-sagas example @ github](https://github.com/eventuate-tram/eventuate-tram-sagas-examples-customers-and-orders)
   
 ----
+
+다음은 Baeldung 의 Orchestration SAGA Architecture 이다.
+
+![](https://www.baeldung.com/wp-content/uploads/sites/4/2021/04/saga-orchestration.png)
+
+SEC (SAGA Execution Component) 가 직접 Compensation Transaction 을 수행한다???
+
+Chris Richardson 의 Orchestration SAGA Architecture.
 
 ![](orchestration_saga.jpg)
 
@@ -186,4 +224,8 @@ Choreography based SAGA, Orchestration based SAGA 와 같이 2 종류의 SAGA pa
 
 # Conclusion
 
-Event Driven pattern is better than TCC pattern. It's not easy to extend the system for TCC pattern. In case of TCC, Transaction Coordinator is a bottleneck.
+SAGA 가 제일 그럴듯하다. 
+
+Choreography SAGA 는 greenfield project 에 적당하다. 처음부터 project 를 시작한다면 할 만하다는 의미이다. 많은 micro service 제작자들과 local transaction 의 상태등을 포함해서 협의를 해야하기 때문이다.
+
+Orchestration SAGA 는 brownfield project 에 적당하다. 이미 진행된 project 에 적용할 만하다. 많은 micro service 제작자들과 협의해야할 내용이 Choreography SAGA 에 비해 적다. local transaction 의 상태는 orchestrator 만 알아도 된다. 
