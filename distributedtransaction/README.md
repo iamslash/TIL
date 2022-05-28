@@ -184,6 +184,10 @@ Coordinator 가 global transaction, local transaction 의 상태를 저장해야
 
 ## SAGA Overview
 
+* [Saga Pattern in Microservices | baeldung](https://www.baeldung.com/cs/saga-pattern-microservices)
+* [Distributed Transactions in Microservices with Kafka Streams and Spring Boot](https://piotrminkowski.com/2022/01/24/distributed-transactions-in-microservices-with-kafka-streams-and-spring-boot/)
+  * [src](https://github.com/piomin/sample-spring-kafka-microservices)
+
 SAGA 는 global transaction 을 local transaction 으로 나누고 순서대로 처리하는 방법이다. `TC/C` 는 local transaction 이 순서대로 처리되지 않는다. 예외 사항이 더 많아서 구현이 어렵다. 
 
 ![](img/saga_flow.png)
@@ -221,6 +225,10 @@ Saga Execution Coordinator 는 Framewok 와 같다. 각 microservice 에 embed �
 ## Orchestration SAGA
 
 * [orchestration-based-sagas example @ github](https://github.com/eventuate-tram/eventuate-tram-sagas-examples-customers-and-orders)
+* [Distributed Transactions in Microservices with Kafka Streams and Spring Boot](https://piotrminkowski.com/2022/01/24/distributed-transactions-in-microservices-with-kafka-streams-and-spring-boot/)
+  * Orchestration SAGA Implementation with Kafka Streams and Spring Boot
+  * [src](https://github.com/piomin/sample-spring-kafka-microservices)
+
   
 ----
 
