@@ -88,6 +88,14 @@
 
 # References
 
+* System Design Interview – An insider's guide by Alex
+  * [blog archives](https://blog.bytebytego.com/archive)
+  * [oneline ebook](https://bytebytego.com/courses/system-design-interview/)
+  * [system design | discord](https://discord.com/channels/805287783107264553/805880778671128586)
+  * [System Design Interview – An insider's guide, Second Edition](https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF)
+    * [links](https://github.com/alex-xu-system/bytecode/blob/main/system_design_links.md)
+  * [System Design Interview – An Insider's Guide: Volume 2](https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119)
+    * [links](https://github.com/alex-xu-system/bytebytego/blob/main/system_design_links_vol2.md)
 * [Design Microservices Architecture with Patterns & Principles @ udemy](https://www.udemy.com/course/design-microservices-architecture-with-patterns-principles/)
   * 유료이다. 실용적인 패턴만 정리. distributed transaction 설명
   * [slide @ github](https://github.com/mehmetozkaya/Design-Microservices-Architecture-with-Patterns-Principles)
@@ -111,13 +119,6 @@
   - 유료 시스템 디자인 인터뷰
   - [System Design @ blogspot](https://learnsystemdesign.blogspot.com/)
   - [src](https://github.com/Jeevan-kumar-Raj/Grokking-System-Design)
-* System Design Interview – An insider's guide by Alex
-  * [blog archives](https://blog.bytebytego.com/archive)
-  * [system design | discord](https://discord.com/channels/805287783107264553/805880778671128586)
-  * [System Design Interview – An insider's guide, Second Edition](https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF)
-    * [links](https://github.com/alex-xu-system/bytecode/blob/main/system_design_links.md)
-  * [System Design Interview – An Insider's Guide: Volume 2](https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119)
-    * [links](https://github.com/alex-xu-system/bytebytego/blob/main/system_design_links_vol2.md)
 * [System Design The Big Archives](https://blog.bytebytego.com/p/free-system-design-pdf-158-pages?s=r)
   * [pdf](https://bytebyte-go.s3.amazonaws.com/ByteByteGo_LinkedIn_PDF.pdf)
 * [incident @ TIL](/incident/README.md)
