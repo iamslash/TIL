@@ -117,6 +117,8 @@
     * [links](https://github.com/alex-xu-system/bytecode/blob/main/system_design_links.md)
   * [System Design Interview – An Insider's Guide: Volume 2](https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119)
     * [links](https://github.com/alex-xu-system/bytebytego/blob/main/system_design_links_vol2.md)
+* [System Design The Big Archives](https://blog.bytebytego.com/p/free-system-design-pdf-158-pages?s=r)
+  * [pdf](https://bytebyte-go.s3.amazonaws.com/ByteByteGo_LinkedIn_PDF.pdf)
 * [incident @ TIL](/incident/README.md)
   * incident case studies
   
