@@ -193,6 +193,10 @@ kafka 는 disk 에서 데이터를 caching 한다. 따라서 저렴한 비용으
 
 ## Zero Copy
 
+* [Why is Kafka fast?](https://blog.bytebytego.com/p/why-is-kafka-fast?s=r)
+
+----
+
 ![](img/zerocopy_1.gif)
 
 데이터를 읽어서 네트워크로 전송할 때 kernel mode -> user mode -> kernel mode 순서로 OS 의 mode 변환이 필요하다.

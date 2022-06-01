@@ -51,6 +51,7 @@ redis 에 대해 정리한다.
 
 * [Redis in Action @ manning](https://www.manning.com/books/redis-in-action)
   * [src](git@github.com:josiahcarlson/redis-in-action.git)
+* [Why is redis so fast? | bytebytego](https://blog.bytebytego.com/p/why-is-redis-so-fast?s=r)
 
 # Materials
 

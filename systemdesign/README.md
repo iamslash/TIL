@@ -95,7 +95,7 @@
   * [System Design Interview – An insider's guide, Second Edition](https://www.amazon.com/System-Design-Interview-insiders-Second/dp/B08CMF2CQF)
     * [links](https://github.com/alex-xu-system/bytecode/blob/main/system_design_links.md)
   * [System Design Interview – An Insider's Guide: Volume 2](https://www.amazon.com/System-Design-Interview-Insiders-Guide/dp/1736049119)
-    * [links](https://github.com/alex-xu-system/bytebytego/blob/main/system_design_links_vol2.md)
+    * [links](https://github.com/alex-xu-system/bytebytego/blob/main/system_design_links_vol2.md)https://blog.bytebytego.com/p/how-does-https-work-episode-6?s=r
 * [Design Microservices Architecture with Patterns & Principles @ udemy](https://www.udemy.com/course/design-microservices-architecture-with-patterns-principles/)
   * 유료이다. 실용적인 패턴만 정리. distributed transaction 설명
   * [slide @ github](https://github.com/mehmetozkaya/Design-Microservices-Architecture-with-Patterns-Principles)
@@ -401,6 +401,21 @@ MySQL 은 Distribute System 이 아니다. CAP 를 적용할 수 없다.
 | Downtime per day   | 8.6s                |
 
 ## Domain name system
+
+* [How does the Domain Name System (DNS) lookup work? | bytebytego](https://blog.bytebytego.com/p/how-does-the-domain-name-system-dns?s=r)
+
+----
+
+DNS server 의 종류는 다음과 같이 3 가지가 있다.
+
+* **Root Name Server**
+  * redirect request to TLD Server. ex) redirect request to TLD server for ".com"
+* **TLD (Top Level Domain) Name Server**
+  * redirect request to Authoritative Server. ex) redirect request to Authoritative Name Server for "google.com"
+* **Authoritative Name Server**
+  * redirect request to Real Server. ex) redirect request to Real Name Server for "www.google.com"
+
+DNS lookups on average take almost 20-120 milliseconds.
 
 <p align="center">
   <img src="http://i.imgur.com/IOyLj4i.jpg"/>

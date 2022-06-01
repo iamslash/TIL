@@ -1,10 +1,11 @@
 # Abstract
 
 Bloom Filter 는 확률형 자료구조이다. data 가 있는지 빠르게 검사하고 싶을 때
-사용한다. data 가 있다면 반드시 있다는 얘기다. 그러나 없는데 있다고 할 수 있다.
+사용한다. data 가 있다면 반드시 있다는 얘기다. 그러나 없는데 있다고 할 수 있다. (False Positive)
 
 # Materials
 
+* [How to avoid crawling duplicate URLs at Google scale | bytebytego](https://blog.bytebytego.com/p/how-to-avoid-crawling-duplicate-urls?s=r)
 * [알아두면 좋은 자료 구조, Bloom Filter](https://steemit.com/kr-dev/@heejin/bloom-filter)
 * [Bloom Filters by Example](https://llimllib.github.io/bloomfilter-tutorial/)
 
