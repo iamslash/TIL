@@ -54,7 +54,7 @@ spring framework 에 대해 정리한다.
 
 * [우아한형제들 기술이사 김영한의 스프링 완전 정복 | inflearn](https://www.inflearn.com/roadmaps/373) 
 * [김영한의 스프링 부트와 JPA 실무 완전 정복 로드맵 | inflearn](https://www.inflearn.com/roadmaps/149)
-- [Spring Framework Documentation](https://docs.spring.io/spring/docs/current/spring-framework-reference/)
+* [Spring Framework Documentation](https://docs.spring.io/spring/docs/current/spring-framework-reference/)
   
 # Materials
 
