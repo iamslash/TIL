@@ -1,4 +1,5 @@
 - [Abstract](#abstract)
+- [References](#references)
 - [Materials](#materials)
 - [Feature](#feature)
   - [IOC (Inversion Of Control)](#ioc-inversion-of-control)
@@ -47,8 +48,14 @@
 
 # Abstract
 
-- spring framework 에 대해 정리한다.
+spring framework 에 대해 정리한다.
 
+# References
+
+* [우아한형제들 기술이사 김영한의 스프링 완전 정복 | inflearn](https://www.inflearn.com/roadmaps/373) 
+* [김영한의 스프링 부트와 JPA 실무 완전 정복 로드맵 | inflearn](https://www.inflearn.com/roadmaps/149)
+- [Spring Framework Documentation](https://docs.spring.io/spring/docs/current/spring-framework-reference/)
+  
 # Materials
 
 - [[LIVE 다시보기] 어디 가서 코프링 매우 알은 체하기! : 9월 우아한테크세미나 @ youtube](https://www.youtube.com/watch?v=ewBri47JWII)
@@ -65,23 +72,6 @@
 - [백기선의 Spring 완전 정복 로드맵 - 에이스 개발자가 되자! @ inflearn](https://www.inflearn.com/roadmaps/8)
   - 유료이긴 하지만 유용하다
 - [스프링 레퍼런스 번역](https://blog.outsider.ne.kr/category/JAVA?page=1)
-- [Spring Framework Documentation](https://docs.spring.io/spring/docs/current/spring-framework-reference/)
-  - Overview	
-    - history, design philosophy, feedback, getting started.
-  - Core	
-    - IoC Container, Events, Resources, i18n, Validation, Data Binding, Type Conversion, SpEL, AOP.
-  - Testing	
-    - Mock Objects, TestContext Framework, Spring MVC Test, WebTestClient.
-  - Data Access	
-    - Transactions, DAO Support, JDBC, O/R Mapping, XML Marshalling.
-  - Web Servlet	
-    - Spring MVC, WebSocket, SockJS, STOMP Messaging.
-  - Web Reactive	
-    - Spring WebFlux, WebClient, WebSocket.
-  - Integration	
-    - Remoting, JMS, JCA, JMX, Email, Tasks, Scheduling, Caching.
-  - Languages	
-    - Kotlin, Groovy, Dynamic Languages.
 
 # Feature
 
