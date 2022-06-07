@@ -1452,36 +1452,49 @@ SELECT account_id,
 `LEAD` 는 특정 record 보다 아래에 위치하는 record 를 가져올 때 사용한다. `LAG`
 는 특정 record 보다 위에 위치하는 record 를 가져올 때 사용한다.
 
-`LEAD(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 아래 `N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
-
-> [BiggestWindowBetweenVisits @ learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode2/BiggestWindowBetweenVisits/README.md)
-
-```sql
-SELECT user_id, MAX(diff) AS biggest_window
-  FROM (
-    SELECT user_id,
-           DATEDIFF(LEAD(visit_date, 1, '2021-01-01')
-                      OVER(PARTITION BY user_id 
-                           ORDER BY visit_date), 
-                    visit_date) AS diff
-      FROM userVisits
-  ) t
- GROUP BY user_id
- ORDER BY user_id
-```
-
-> [UsersWithTwoPurchasesWithinSevenDays @ learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode3/UsersWithTwoPurchasesWithinSevenDays/README.md)
+`LEAD(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 아래
+`N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
 
 ```sql
-SELECT DISTINCT user_id 
-  FROM (
-    SELECT user_id, 
-           purchase_date AS cur_date,
-           LAG(purchase_date) OVER(PARTITION BY user_id ORDER BY purchase_date) AS prv_date
-      FROM Purchases
-  ) t
- WHERE DATEDIFF(cur_date, prv_date) <= 7 
+Input:
+UserVisits table:
++---------+------------+
+| user_id | visit_date |
++---------+------------+
+| 1       | 2020-11-28 |
+| 1       | 2020-10-20 |
+| 1       | 2020-12-3  |
+| 2       | 2020-10-5  |
+| 2       | 2020-12-9  |
+| 3       | 2020-11-11 |
++---------+------------+
+
+Output:
++---------+------------+------------+
+| user_id | visit_date | next_date  | 
++---------+------------+------------+
+| 1       | 2020-11-28 | 2020-10-20 |
+| 1       | 2020-10-20 | 2020-12-3  |
+| 1       | 2020-12-3  | 2021-01-01 |
+| 2       | 2020-10-5  | 2020-12-9  |
+| 2       | 2020-12-9  | 2021-01-01 |
+| 3       | 2020-11-11 | 2021-01-01 |
++---------+------------+------------+
+
+SELECT user_id,
+       LEAD(visit_date, 1, '2021-01-01')
+       OVER(PARTITION BY user_id ORDER BY visit_date) AS next_date
+  FROM userVisits
 ```
+
+* [BiggestWindowBetweenVisits | learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode2/BiggestWindowBetweenVisits/README.md)
+  * `LEAD() OVER()`
+
+* [Products With Three or More Orders in Two Consecutive Years | learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode3/ProductsWithThreeorMoreOrdersinTwoConsecutiveYears/README.md)
+  * `LEAD() OVER()`
+
+* [UsersWithTwoPurchasesWithinSevenDays | learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode3/UsersWithTwoPurchasesWithinSevenDays/README.md)
+  * `LAG() OVER()`
 
 ## Where
 

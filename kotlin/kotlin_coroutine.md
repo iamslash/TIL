@@ -22,6 +22,7 @@ Coroutine 이 하나 만들어지면 CoroutineScope 과 Job 이 만들어 진다
 
 # Materials
 
+* [[Kotlin] Coroutine - 코루틴의 내부 구현](https://developpaper.com/spring-source-code-analysis-12-spring-boot-loading-mechanism/)
 * [[새차원, 코틀린 코루틴(Coroutines)] 1. why coroutines @ youtube](https://www.youtube.com/watch?v=Vs34wiuJMYk&list=PLbJr8hAHHCP5N6Lsot8SAnC28SoxwAU5A)
 * [kotlinx coroutines core jvm test guide @ github](https://github.com/Kotlin/kotlinx.coroutines/tree/master/kotlinx-coroutines-core/jvm/test/guide)
 * [Coroutines @ kotlin.io](https://kotlinlang.org/docs/coroutines-overview.html)
