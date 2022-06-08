@@ -14,6 +14,7 @@
   - [Disk Information](#disk-information)
   - [Network Information](#network-information)
 - [Process](#process)
+  - [task_struct, thread_info](#task_struct-thread_info)
   - [Process Information](#process-information)
   - [Process Management](#process-management)
   - [task_struct](#task_struct)
@@ -450,6 +451,28 @@ $ ethtool eth0
 ```
 
 # Process
+
+## task_struct, thread_info
+
+[Linux Kernel: Threading vs Process - task_struct vs thread_info](https://stackoverflow.com/questions/21360524/linux-kernel-threading-vs-process-task-struct-vs-thread-info)
+
+Linux 에서 thread 는 process 와 같이 취급된다. thread 하나에 `task_struct` 그리고 그걸 가리키는 `thread_info` 가 할당된다. `thread_info` 는 thread 의 stack 의 시작주소에 위치한다.
+
+`thread_info` 는 architecture 에 의존적인 것이다. 즉, ARM, X86 에 따라 모양이 다르다. 반면에 `task_struct` 는 architecture 에 독립적이다. 즉, ARM, X86 에서 같은 모양이다.
+
+다음은 Linux Kernel 에서 Single-Thread Process 와 Multi-Thread Process 의 virutal memory layout 을 나타내는 그림이다.
+
+![](img/single_thread_multi_thread.png)
+
+Thread 들은 Program Code, Heap, Open Files 을 공유한다. 그러나 Thread 별로 stack 이 다르다. 이 것은 windows, linux 모두 마찬가지이다. 그러나 PCB, TCB 를 표현하는 방법은 windows, linux 모두 다르다.
+
+다음은 windows process, thread 의 자료구조를 표현한 것이다. process 는  `KPROCESS` 로 thread 는 `ETHREAD` 로 표현한다. PCB 와 TCB 가 구분되어 있다.
+
+![](img/process_on_windows.png)
+
+다음은 linux process, thread 의 자료구조를 표현한 것이다. process, thread 를 모두 `task_struct` 로 표현한다. PCB, TCB 가 동일하다.
+
+![](img/process_on_linux.png)
 
 ## Process Information
 
@@ -899,7 +922,7 @@ int main() {
 
 **exit()** 은 모든 resource 들을 free 하고 parent 에게 종료를 통보한다. exit() 는 내가 program 에 삽입하지 않아도 실행된다.
 
-**schedule()** 은 은 다음에 실행될 Process 를 찾아 선택한다. 그리고 context_switch() 라는 kernel internal function 을 실행한다. schedule() 은 kernel internal function 이다. system call 은 user program 에서 호출할 수 있지만 kernel internal function 은 user program 에 노출되어 있지 않다. read(), write(), wait(), exit() 와 같은 system call 들은 schedule 을 호출한다. 
+**schedule()** 은 다음에 실행될 Process 를 찾아 선택한다. 그리고 `context_switch()` 라는 kernel internal function 을 실행한다. `schedule()` 은 kernel internal function 이다. system call 은 user program 에서 호출할 수 있지만 kernel internal function 은 user program 에 노출되어 있지 않다. `read(), write(), wait(), exit()` 와 같은 system call 들은 schedule 을 호출한다. 
 
 **context_switch()** 은 현재 CPU state vector 를 은퇴하는 Process 를 선택하고 그것의 PCB 에 적당한 정보를 기록한다. 그리고 새로 등장한 Process 의 PCB 를 읽어오고 그 PCB 의 PC 로 부터 프로그램을 실행한다.
 
