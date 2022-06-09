@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Architectures](#architectures)
+  - [Layered Architecture Advantages, Disadvantages](#layered-architecture-advantages-disadvantages)
   - [Clean Architecture](#clean-architecture)
   - [Unified Architecture for Data Infrastructure](#unified-architecture-for-data-infrastructure)
 
@@ -15,6 +16,21 @@ Architecture 들에 대해 정리한다.
 * [Explicit Architecture](https://herbertograca.com/2017/11/16/explicit-architecture-01-ddd-hexagonal-onion-clean-cqrs-how-i-put-it-all-together/)
 
 # Architectures
+
+## Layered Architecture Advantages, Disadvantages
+
+* [Layered Architecture](https://www.baeldung.com/cs/layered-architecture)
+
+**Advantages**
+
+* 새로운 사람이 파악하기 쉽다. Hand over 가 쉽고 빠르다. 
+* 유지보수가 쉽다. 새로운 feature 를 구현할 때 패턴이 명확해서 구현이 쉽고 빠르다.  
+* 의존성이 적다. 단 하나의 레이어에만 의존성이 있다.
+* 의존성이 적어서 테스트가 쉽다.
+
+**Disadvantages**
+
+* 큰 변경은 어렵다. 하나의 레이어가 크게 바뀐다면 다른 레이어를 바꿔야할 수도 있다.
 
 ## Clean Architecture
 
