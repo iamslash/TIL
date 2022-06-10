@@ -80,6 +80,9 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
   * Linux Kernel 의 버전을 파악할 수 있다. longterm 은 LTS (Long Term Support) 를 의미한다.
 * [Linux Kernel Networking: Implementation and Theory (Expert's Voice in Open Source) 1st ed.](https://www.amazon.com/Linux-Kernel-Networking-Implementation-Experts/dp/143026196X)
   * Linux Kernel 의 Network 부분을 자세히 설명한다.
+* [(unofficial) Linux Kernel Mailing List archive](https://lkml.org/)
+  * 개발자들이 살벌하게 싸운다.
+  * [refactoring of _do_fork()](https://lkml.org/lkml/2020/8/18/987)
 
 # Materials
 
