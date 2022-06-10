@@ -9,6 +9,7 @@
     - [Unique Kye](#unique-kye)
     - [Foreign Key](#foreign-key)
   - [BIGINT(20) vs INT(20)](#bigint20-vs-int20)
+  - [SKIP LOCKED, NOWAIT](#skip-locked-nowait)
 - [Advanced](#advanced)
   - [how to reset password](#how-to-reset-password)
   - [Inno-db Locking](#inno-db-locking)
@@ -108,6 +109,140 @@ SELECT bar from foo;
 +----------------------+
 | 00000000000000001234 |
 +----------------------+
+```
+
+## SKIP LOCKED, NOWAIT
+
+* [MySQL 8.0.1: Using SKIP LOCKED and NOWAIT to handle hot rows](https://dev.mysql.com/blog-archive/mysql-8-0-1-using-skip-locked-and-nowait-to-handle-hot-rows/)
+* [MySQL8.0 SKIP LOCKED / NOWAIT 활용하기](https://kimdubi.github.io/mysql/skip_locked/)
+
+MySQL 8.0.1 부터 지원한다.
+
+* NOWAIT: row 에 lock 이 걸려있으면 실패처리한다. innodb_lock_wait_timeout 만큼 기다리지 않는다.
+* SKIP LOCKED: lock 이 걸려있지 않은 row 만 모아서 리턴한다.
+
+예를 들어 다음과 같이 progress 테이블에 data 를 삽입하자.
+
+```sql
+> CREATE TABLE progress (
+  seq INT PRIMARY KEY,
+  progress ENUM('PREPARE', 'DONE') DEFAULT 'PREPARE'
+);
+INSERT INTO progress (seq)
+WITH RECURSIVE my_cte AS
+(
+SELECT 1 AS n
+UNION ALL
+SELECT 1+n FROM my_cte WHERE n<10
+)
+SELECT * FROM my_cte;
+```
+
+다음과 같은 경우 session 2 는 lock 을 얻기위해 기다리다가 실패한다.
+
+```sql
+-- session 1
+> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+> select * from progress where progress='PREPARE' order by seq limit 3 for update;
++-----+----------+
+| seq | progress |
++-----+----------+
+|   1 | PREPARE  |
+|   2 | PREPARE  |
+|   3 | PREPARE  |
++-----+----------+
+3 rows in set (0.01 sec)
+
+-- session 2
+> begin;
+Query OK, 0 rows affected (0.00 sec)
+> select * from progress where progress='PREPARE' order by seq limit 3 for update;
+
+ERROR 1205 (HY000): Lock wait timeout exceeded; try restarting transaction 
+```
+
+다음과 같이 skip locked 를 사용하여 unlocked rows 를 리턴해 보자.
+
+```sql
+--- session 1
+> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+> select * from progress where progress='PREPARE' order by seq limit 3 for update ;
++-----+----------+
+| seq | progress |
++-----+----------+
+|   1 | PREPARE  |
+|   2 | PREPARE  |
+|   3 | PREPARE  |
++-----+----------+
+3 rows in set (0.00 sec)
+
+
+--- session 2 
+> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+> select * from progress where progress='PREPARE' order by seq limit 3 for update skip locked;
++-----+----------+
+| seq | progress |
++-----+----------+
+|   4 | PREPARE  |
+|   5 | PREPARE  |
+|   6 | PREPARE  |
++-----+----------+
+3 rows in set (0.00 sec) 
+```
+
+이번에는 영화관의 좌석을 예매하는 예를 살펴보자. 다음과 같이 seats 테이블에 data 를 삽입한다.
+
+```sql
+CREATE TABLE seats (
+  seat_no INT PRIMARY KEY,
+  booked ENUM('YES', 'NO') DEFAULT 'NO'
+);
+-- generate 100 sample rows
+INSERT INTO seats (seat_no)
+WITH RECURSIVE my_cte AS
+(
+SELECT 1 AS n
+UNION ALL
+SELECT 1+n FROM my_cte WHERE n<100
+)
+SELECT * FROM my_cte;
+```
+
+다음과 같이 skip locked 를 사용하여 unlocked rows 를 반환한다.
+
+```sql
+--- session 1  1~90번 좌석을 예매 중
+
+> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+> SELECT * FROM seats WHERE seat_no BETWEEN 1 AND 90 AND booked = 'NO' FOR UPDATE ;
+
+--- session 2 
+> begin;
+Query OK, 0 rows affected (0.00 sec)
+
+> SELECT * FROM seats where booked = 'NO' for update skip locked;
++---------+--------+
+| seat_no | booked |
++---------+--------+
+|      92 | NO     |
+|      93 | NO     |
+|      94 | NO     |
+|      95 | NO     |
+|      96 | NO     |
+|      97 | NO     |
+|      98 | NO     |
+|      99 | NO     |
+|     100 | NO     |
++---------+--------+
+9 rows in set (0.00 sec)
 ```
 
 # Advanced

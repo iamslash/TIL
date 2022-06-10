@@ -126,6 +126,7 @@
   
 # Materials
 
+* [System Design Resources | github](https://github.com/InterviewReady/system-design-resources)
 * [mobile system design](https://github.com/weeeBox/mobile-system-design)
 * [The Software Architecture Chronicles](https://herbertograca.com/2017/07/03/the-software-architecture-chronicles/)
   * Software Architecture 의 역사
