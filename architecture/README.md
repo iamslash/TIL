@@ -20,12 +20,13 @@ Architecture 들에 대해 정리한다.
 ## Layered Architecture Advantages, Disadvantages
 
 * [Layered Architecture](https://www.baeldung.com/cs/layered-architecture)
+* [토스ㅣSLASH 22 - 지속 성장 가능한 코드를 만들어가는 방법 | youtube](https://www.youtube.com/watch?v=RVO02Z1dLF8)
 
 **Advantages**
 
 * 새로운 사람이 파악하기 쉽다. Hand over 가 쉽고 빠르다. 
 * 유지보수가 쉽다. 새로운 feature 를 구현할 때 패턴이 명확해서 구현이 쉽고 빠르다.  
-* 의존성이 적다. 단 하나의 레이어에만 의존성이 있다.
+* 의존성이 적다. 단 하나의 레이어에만 의존성이 있다. 복잡도가 낮다. 확장이 쉽다.
 * 의존성이 적어서 테스트가 쉽다.
 
 **Disadvantages**
