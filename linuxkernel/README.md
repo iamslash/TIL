@@ -82,10 +82,14 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
   * Linux Kernel 의 Network 부분을 자세히 설명한다.
 * [(unofficial) Linux Kernel Mailing List archive](https://lkml.org/)
   * 개발자들이 살벌하게 싸운다.
-  * [refactoring of _do_fork()](https://lkml.org/lkml/2020/8/18/987)
+  * [refactoring of _do_fork()https://www.youtube.com/watch?v=2VcA5Wj7IvU](https://lkml.org/lkml/2020/8/18/987)
 
 # Materials
 
+* [Debugging the Linux Kernel with Qemu and GDB | youtube](https://www.youtube.com/watch?v=2VcA5Wj7IvU)
+  * Qemu 에서 linux 를 실행하고 원격으로 gdb debugging 하는 방법
+  * [Debugging the Linux Kernel with Qemu and GDB](https://pnx9.github.io/thehive/Debugging-Linux-Kernel.html)
+  * [KernelBuild](https://kernelnewbies.org/KernelBuild)
 * [리눅스 커널 책 리뷰 및 가이드 @ tistory](https://pr0gr4m.tistory.com/entry/%EB%A6%AC%EB%88%85%EC%8A%A4-%EC%BB%A4%EB%84%90-%EC%B1%85-%EB%A6%AC%EB%B7%B0-%EB%B0%8F-%EA%B0%80%EC%9D%B4%EB%93%9C)
   * 킹왕짱 Linux Kernel 책 리뷰
 * videos
