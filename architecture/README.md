@@ -43,6 +43,136 @@ layer 들로 구성된 architecture 이다. [Clean Architecure](/cleanarchitectu
 * [패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src](https://github.com/gregshiny/example-order)
 * [패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src](https://github.com/gregshiny/example-gift)
 
+다음은 [패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src](https://github.com/gregshiny/example-order) 의 directory structure 이다.
+
+```
+src
+├── main
+│   ├── java
+│   │   └── dev
+│   │       └── practice
+│   │           └── order
+│   │               ├── OrderApplication.java
+│   │               ├── application
+│   │               │   ├── item
+│   │               │   │   └── ItemFacade.java
+│   │               │   ├── order
+│   │               │   │   └── OrderFacade.java
+│   │               │   └── partner
+│   │               │       └── PartnerFacade.java
+│   │               ├── common
+│   │               │   ├── exception
+│   │               │   │   ├── BaseException.java
+│   │               │   │   ├── EntityNotFoundException.java
+│   │               │   │   ├── IllegalStatusException.java
+│   │               │   │   └── InvalidParamException.java
+│   │               │   ├── interceptor
+│   │               │   │   └── CommonHttpRequestInterceptor.java
+│   │               │   ├── response
+│   │               │   │   ├── CommonControllerAdvice.java
+│   │               │   │   ├── CommonResponse.java
+│   │               │   │   └── ErrorCode.java
+│   │               │   └── util
+│   │               │       └── TokenGenerator.java
+│   │               ├── config
+│   │               │   └── JpaAuditingConfiguration.java
+│   │               ├── domain
+│   │               │   ├── AbstractEntity.java
+│   │               │   ├── item
+│   │               │   │   ├── Item.java
+│   │               │   │   ├── ItemCommand.java
+│   │               │   │   ├── ItemInfo.java
+│   │               │   │   ├── ItemOptionSeriesFactory.java
+│   │               │   │   ├── ItemReader.java
+│   │               │   │   ├── ItemService.java
+│   │               │   │   ├── ItemServiceImpl.java
+│   │               │   │   ├── ItemStore.java
+│   │               │   │   ├── option
+│   │               │   │   │   ├── ItemOption.java
+│   │               │   │   │   └── ItemOptionStore.java
+│   │               │   │   └── optiongroup
+│   │               │   │       ├── ItemOptionGroup.java
+│   │               │   │       └── ItemOptionGroupStore.java
+│   │               │   ├── notification
+│   │               │   │   └── NotificationService.java
+│   │               │   ├── order
+│   │               │   │   ├── Order.java
+│   │               │   │   ├── OrderCommand.java
+│   │               │   │   ├── OrderInfo.java
+│   │               │   │   ├── OrderInfoMapper.java
+│   │               │   │   ├── OrderItemSeriesFactory.java
+│   │               │   │   ├── OrderReader.java
+│   │               │   │   ├── OrderService.java
+│   │               │   │   ├── OrderServiceImpl.java
+│   │               │   │   ├── OrderStore.java
+│   │               │   │   ├── fragment
+│   │               │   │   │   └── DeliveryFragment.java
+│   │               │   │   ├── item
+│   │               │   │   │   ├── OrderItem.java
+│   │               │   │   │   ├── OrderItemOption.java
+│   │               │   │   │   └── OrderItemOptionGroup.java
+│   │               │   │   └── payment
+│   │               │   │       ├── PayMethod.java
+│   │               │   │       ├── PaymentProcessor.java
+│   │               │   │       └── validator
+│   │               │   │           ├── PayAmountValidator.java
+│   │               │   │           ├── PayMethodValidator.java
+│   │               │   │           ├── PayStatusValidator.java
+│   │               │   │           └── PaymentValidator.java
+│   │               │   └── partner
+│   │               │       ├── Partner.java
+│   │               │       ├── PartnerCommand.java
+│   │               │       ├── PartnerInfo.java
+│   │               │       ├── PartnerReader.java
+│   │               │       ├── PartnerService.java
+│   │               │       ├── PartnerServiceImpl.java
+│   │               │       └── PartnerStore.java
+│   │               ├── infrastructure
+│   │               │   ├── NotificationExecutor.java
+│   │               │   ├── item
+│   │               │   │   ├── ItemOptionSeriesFactoryImpl.java
+│   │               │   │   ├── ItemReaderImpl.java
+│   │               │   │   ├── ItemRepository.java
+│   │               │   │   ├── ItemStoreImpl.java
+│   │               │   │   ├── option
+│   │               │   │   │   ├── ItemOptionRepository.java
+│   │               │   │   │   └── ItemOptionStoreImpl.java
+│   │               │   │   └── optiongroup
+│   │               │   │       ├── ItemOptionGroupRepository.java
+│   │               │   │       └── ItemOptionGroupStoreImpl.java
+│   │               │   ├── order
+│   │               │   │   ├── OrderItemOptionGroupRepository.java
+│   │               │   │   ├── OrderItemOptionRepository.java
+│   │               │   │   ├── OrderItemRepository.java
+│   │               │   │   ├── OrderItemSeriesFactoryImpl.java
+│   │               │   │   ├── OrderReaderImpl.java
+│   │               │   │   ├── OrderRepository.java
+│   │               │   │   ├── OrderStoreImpl.java
+│   │               │   │   └── payment
+│   │               │   │       ├── KakaoPayApiCaller.java
+│   │               │   │       ├── NaverPayApiCaller.java
+│   │               │   │       ├── PaymentApiCaller.java
+│   │               │   │       ├── PaymentProcessorImpl.java
+│   │               │   │       ├── PgCardApiCaller.java
+│   │               │   │       └── TossPayApiCaller.java
+│   │               │   └── partner
+│   │               │       ├── PartnerReadImpl.java
+│   │               │       ├── PartnerRepository.java
+│   │               │       └── PartnerStoreImpl.java
+│   │               └── interfaces
+│   │                   ├── item
+│   │                   │   ├── ItemApiController.java
+│   │                   │   ├── ItemDto.java
+│   │                   │   └── ItemDtoMapper.java
+│   │                   ├── order
+│   │                   │   ├── OrderApiController.java
+│   │                   │   ├── OrderDto.java
+│   │                   │   └── OrderDtoMapper.java
+│   │                   └── partner
+│   │                       ├── PartnerApiController.java
+│   │                       └── PartnerDto.java
+```
+
 ## Clean Architecture
 
 * [Clean Architecure](/cleanarchitecture/README.md)

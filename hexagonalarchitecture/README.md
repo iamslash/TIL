@@ -4,7 +4,7 @@
   - [Hexagonal Archiecture Over View](#hexagonal-archiecture-over-view)
   - [Primary Port, Adapter Example](#primary-port-adapter-example)
   - [Secondary Port, Adapter Example](#secondary-port-adapter-example)
-  - [Directory Structures](#directory-structures)
+  - [Best Practices](#best-practices)
 
 ----
 
@@ -120,9 +120,9 @@ public class NotificationExecutor implements NotificationService {
 }
 ```
 
-## Directory Structures
+## Best Practices
 
-[Example Implementation of a Hexagonal Architecture | github](https://github.com/thombergs/buckpal) 의 구조가 맘에든다.
+다음은 [Example Implementation of a Hexagonal Architecture | github](https://github.com/thombergs/buckpal) 의 directory structure 이다.
 
 ```bash
 └── src
