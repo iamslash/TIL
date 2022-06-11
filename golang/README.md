@@ -90,6 +90,7 @@
   - [Vfsgen](#vfsgen)
   - [IntelliJ IDEA](#intellij-idea)
   - [Managing Multiple go versions](#managing-multiple-go-versions)
+  - [Race](#race)
 - [Effective Go](#effective-go)
 - [Design Patterns](#design-patterns)
 -------------------------------------------------------------------------------
@@ -2553,6 +2554,12 @@ export GOROOT=/Users/davidsun/sdk/go1.14.13
 export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
 echo "done..."
 ```
+
+## Race
+
+* [Data Race Patterns in Go](https://eng.uber.com/data-race-patterns-in-go/)
+  * uber 가 모은 실수 패턴
+  * [Data Race Patterns in Go (uber.com) | ycombinator](https://news.ycombinator.com/item?id=31698503)
 
 # Effective Go
 

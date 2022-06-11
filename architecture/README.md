@@ -1,7 +1,7 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Architectures](#architectures)
-  - [Layered Architecture Advantages, Disadvantages](#layered-architecture-advantages-disadvantages)
+  - [Layered Architecture](#layered-architecture)
   - [Clean Architecture](#clean-architecture)
   - [Unified Architecture for Data Infrastructure](#unified-architecture-for-data-infrastructure)
 
@@ -17,10 +17,15 @@ Architecture 들에 대해 정리한다.
 
 # Architectures
 
-## Layered Architecture Advantages, Disadvantages
+## Layered Architecture 
 
 * [Layered Architecture](https://www.baeldung.com/cs/layered-architecture)
 * [토스ㅣSLASH 22 - 지속 성장 가능한 코드를 만들어가는 방법 | youtube](https://www.youtube.com/watch?v=RVO02Z1dLF8)
+  * package, layer, module 의 best practice 를 설명함.
+
+----
+
+layer 들로 구성된 architecture 이다. [Clean Architecure](/cleanarchitecture/README.md), [Hexagonal Architecture](/hexagonalarchitecture/README.md) 등등이 있다.
 
 **Advantages**
 
@@ -32,6 +37,11 @@ Architecture 들에 대해 정리한다.
 **Disadvantages**
 
 * 큰 변경은 어렵다. 하나의 레이어가 크게 바뀐다면 다른 레이어를 바꿔야할 수도 있다.
+
+다음은 Layered Architecture Best Practice 에 해당하는 Project 들이다.
+
+* [패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src](https://github.com/gregshiny/example-order)
+* [패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src](https://github.com/gregshiny/example-gift)
 
 ## Clean Architecture
 

@@ -131,17 +131,46 @@ public class NotificationExecutor implements NotificationService {
     │   │   └── io
     │   │       └── reflectoring
     │   │           └── buckpal
+    │   │               ├── BuckPalApplication.java
+    │   │               ├── BuckPalConfiguration.java
+    │   │               ├── BuckPalConfigurationProperties.java
     │   │               ├── account
     │   │               │   ├── adapter
     │   │               │   │   ├── in
     │   │               │   │   │   └── web
+    │   │               │   │   │       └── SendMoneyController.java
     │   │               │   │   └── out
     │   │               │   │       └── persistence
+    │   │               │   │           ├── AccountJpaEntity.java
+    │   │               │   │           ├── AccountMapper.java
+    │   │               │   │           ├── AccountPersistenceAdapter.java
+    │   │               │   │           ├── ActivityJpaEntity.java
+    │   │               │   │           ├── ActivityRepository.java
+    │   │               │   │           └── SpringDataAccountRepository.java
     │   │               │   ├── application
     │   │               │   │   ├── port
     │   │               │   │   │   ├── in
+    │   │               │   │   │   │   ├── GetAccountBalanceQuery.java
+    │   │               │   │   │   │   ├── SendMoneyCommand.java
+    │   │               │   │   │   │   └── SendMoneyUseCase.java
     │   │               │   │   │   └── out
+    │   │               │   │   │       ├── AccountLock.java
+    │   │               │   │   │       ├── LoadAccountPort.java
+    │   │               │   │   │       └── UpdateAccountStatePort.java
     │   │               │   │   └── service
+    │   │               │   │       ├── GetAccountBalanceService.java
+    │   │               │   │       ├── MoneyTransferProperties.java
+    │   │               │   │       ├── NoOpAccountLock.java
+    │   │               │   │       ├── SendMoneyService.java
+    │   │               │   │       └── ThresholdExceededException.java
     │   │               │   └── domain
+    │   │               │       ├── Account.java
+    │   │               │       ├── Activity.java
+    │   │               │       ├── ActivityWindow.java
+    │   │               │       └── Money.java
     │   │               └── common
+    │   │                   ├── PersistenceAdapter.java
+    │   │                   ├── SelfValidating.java
+    │   │                   ├── UseCase.java
+    │   │                   └── WebAdapter.java
 ```
