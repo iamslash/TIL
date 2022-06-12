@@ -83,6 +83,8 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
 * [(unofficial) Linux Kernel Mailing List archive](https://lkml.org/)
   * 개발자들이 살벌하게 싸운다.
   * [refactoring of _do_fork()https://www.youtube.com/watch?v=2VcA5Wj7IvU](https://lkml.org/lkml/2020/8/18/987)
+* [Linux Under The Hood | oreilly](https://learning.oreilly.com/videos/linux-under-the/9780134663500/)
+  * Linux 의 깊숙한 부분을 동영상으로 설명한다. 유료임.
 
 # Materials
 
