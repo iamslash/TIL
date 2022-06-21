@@ -747,7 +747,24 @@ WIP...
 
 # Memory Management
 
-WIP...
+Linux 는 다음과 같이 RAM 을 중심으로 데이터가 이동된다.
+
+![](img/linux_kernel_memory_mgmt.png)
+
+* Process 는 Virtual Memory 에 데이터를 쓴다. 이것은 매핑된 Physical Memory 에 데이터를 쓰는 것과 같다.
+* User 는 HDD 로 부터 데이터를 원한다. RAM 은 HDD 로 부터 page 크기의 데이터를 읽어드리고 캐싱한다. 그리고 User 에게 data 를 보낸다.
+* User 가 HDD 로 데이터를 쓰기를 원한다. RAM 에 data 를 쓴다. page 들 중 변경된 것은 주기적으로 HDD 에 쓰여진다.
+* CPU 는 RAM 으로 부터 data 를 읽는다. 그리고 L1, L2, L3 와 같은 캐시에 데이터를 캐싱한다.
+
+다음은 Linux Kernel Memory 를 구성하는 주요요소들이다.
+
+* **Page**: The blocks that are used in memory, about 4K. 
+* **Virtual Memory**: The process address space
+* **Paging**: Getting memory from secondary storage in primary storage
+* **Swap**: emulated memory on disk
+* **Transaltion Lookaside Buffer**: A cache that helps speeding up the translation between virtual memory and physical memory
+* **Cache**: Fast memory that is close to CPU 
+* **Page cache**: Area where recently used memory page are stored
 
 # System Load
 
