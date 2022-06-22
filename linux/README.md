@@ -829,7 +829,7 @@ EOF
   * `vmstat -S M 1` 1 초 마다 MB 단위로 보여다오
   * `total physical memory = free + buff + cache + used`
     * buff 는 i-node 값 즉 파일들의 real address 를 cache 한다. disk seek time 을 향상시킬 수 있다.
-    * cache 는 파일의 real data 를 cache 한다. disk read performance 를 향상시킬 수 있다.
+    * cache 는 파일의 real data 를 page size 단위로 cache 한다. disk read performance 를 향상시킬 수 있다.
     * free 가 부족하면 cache 에서 free 로 메모리가 옮겨갈 수도 있다. free 가 부족하다고 꼭 메모리가 부족한 상황은 아니다.
     * `/proc/sys/vm/vfs_cache_pressure` 가 buff 와 cache 의 비율을 설정하는 값이다. default 는 100 이다. 파일의 개수가 많아서 buff 가 중요한 시스템이라면 이 것을 높게 설정한다.
     * `/proc/sys/vm/min_free_kbytes` 는 free 의 최소 용량이다. 이것이 낮아지면 cache 가 높아진다. hit ratio 가 낮은 시스템인 경우 cache 가 필요 없으므로 min_free_kbytes 를 늘려주자.
@@ -1742,7 +1742,7 @@ swap-in, swap-ou 의 횟수가 많다면 물리 메모리가 부족하다는 의
 대부분의 메모리 조회 application 들은 `/proc/meminfo` 의 내용을 참고한다.
 
 ```bash
-$ docker run --rm -it ubuntu:18.04
+$ docker run --rm -it --name my-ubuntu ubuntu:18.04
 
 $ cat /proc/meminfo
 MemTotal:        8152552 kB

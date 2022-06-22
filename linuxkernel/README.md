@@ -19,10 +19,11 @@
   - [Process Management](#process-management)
   - [task_struct](#task_struct)
   - [thread_info](#thread_info)
+  - [Understanding Process and Threads](#understanding-process-and-threads)
+  - [Killing a Zombie](#killing-a-zombie)
 - [Interrupt](#interrupt)
 - [Kernel Timer](#kernel-timer)
 - [Kernel Synchronization](#kernel-synchronization)
-- [Process Scheduling](#process-scheduling)
 - [System Call](#system-call)
 - [Signal](#signal)
 - [Virtual File System](#virtual-file-system)
@@ -695,6 +696,161 @@ struct thread_info {
 };
 ```
 
+## Understanding Process and Threads
+
+`$ dd` 를 이용하면 CPU 100% 를 재연할 수 있다. [dd | man](https://man7.org/linux/man-pages/man1/dd.1.html)
+
+```console
+# dd if=/dev/zero of=/dev/null &
+# top
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+   35 root      20   0    4388    680    612 R 100.0  0.0   0:37.48 dd
+    1 root      20   0   18268   3388   2856 S   0.0  0.0   0:00.12 bash
+   36 root      20   0   19892   2444   2084 R   0.0  0.0   0:00.01 top
+```
+
+`$ taskset` 을 이용하면 process 의 CPU affinity 를 설정하거나 읽어올 수 있다.
+예를 들어 특정 pid 의 process 를 cpu3 에서 실행하도록 할 수 있다. [taskset | man](https://man7.org/linux/man-pages/man1/taskset.1.html)
+
+```bash
+# dd 를 cpu3 에서 실행한다.
+$ taskset -pc 3 $(pidof dd)
+```
+
+`/sys/bus/cpu/devices/` 를 살펴보면 cpu 별 디렉토리들을 확인할 수 있다.
+
+```bash
+$ cd /sys/bus/cpu/devices/
+$ ls -alh
+total 0
+drwxr-xr-x 2 root root 0 Jun 22 13:32 .
+drwxr-xr-x 4 root root 0 Jun 22 13:32 ..
+lrwxrwxrwx 1 root root 0 Jun 22 13:32 cpu0 -> ../../../devices/system/cpu/cpu0
+lrwxrwxrwx 1 root root 0 Jun 22 13:32 cpu1 -> ../../../devices/system/cpu/cpu1
+lrwxrwxrwx 1 root root 0 Jun 22 13:32 cpu2 -> ../../../devices/system/cpu/cpu2
+lrwxrwxrwx 1 root root 0 Jun 22 13:32 cpu3 -> ../../../devices/system/cpu/cpu3
+lrwxrwxrwx 1 root root 0 Jun 22 13:32 cpu4 -> ../../../devices/system/cpu/cpu4
+lrwxrwxrwx 1 root root 0 Jun 22 13:32 cpu5 -> ../../../devices/system/cpu/cpu5
+lrwxrwxrwx 1 root root 0 Jun 22 13:32 cpu6 -> ../../../devices/system/cpu/cpu6
+lrwxrwxrwx 1 root root 0 Jun 22 13:32 cpu7 -> ../../../devices/system/cpu/cpu7
+
+$ cd cpu3
+$ ls -alh
+total 0
+drwxr-xr-x  6 root root    0 Jun 22 13:32 .
+drwxr-xr-x 16 root root    0 Jun 22 12:45 ..
+drwxr-xr-x  6 root root    0 Jun 22 13:34 cache
+-r--------  1 root root 4.0K Jun 22 13:34 crash_notes
+-r--------  1 root root 4.0K Jun 22 13:34 crash_notes_size
+drwxr-xr-x  2 root root    0 Jun 22 13:34 hotplug
+-rw-r--r--  1 root root 4.0K Jun 22 13:34 online
+drwxr-xr-x  2 root root    0 Jun 22 13:34 power
+lrwxrwxrwx  1 root root    0 Jun 22 13:34 subsystem -> ../../../../bus/cpu
+drwxr-xr-x  2 root root    0 Jun 22 13:34 topology
+-rw-r--r--  1 root root 4.0K Jun 22 13:34 uevent
+
+$ cat online
+1
+$ echo 0 > online
+# This will make cpu3 offline
+
+$ lscpu
+# If you make cpu3 offline
+# On-line CPU will be changed
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                8
+On-line CPU(s) list:   0-7
+Thread(s) per core:    1
+Core(s) per socket:    1
+Socket(s):             8
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 158
+Stepping:              13
+CPU MHz:               2400.000
+BogoMIPS:              4852.88
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              256K
+L3 cache:              16384K
+```
+
+## Killing a Zombie
+
+> [7.3 Killing a zombie | Linux Under the Hood](https://learning.oreilly.com/videos/linux-under-the/9780134663500/9780134663500-LUTH_07_03/)
+
+Zombie Process 는 제대로 정리되지 않은 Process 를 말한다. Child Process 가
+`exit()` 를 호출하였지만 부모가 `wait()` 하지 않으면 Child Process 는 Zombie
+Process 가 된다. Zombie Proces 는 여전히 Process Table 에 남아있다. Zombie
+Process 는 System Resource 를 사용하지 않는다. PID 는 사용한다. Max PID 는
+정해져 있다. 새로운 PID 가 Max PID 를 넘어서게 되면 Process 생성을 실패한다.
+Zombie Process 가 많아지면 문제가 된다.
+
+`$ kill -s SIGCHILD <ppid>` 를 이용하면 parent process 가 child processes 를
+`wait()` 한다. Zombie Process 는 reaped 될 것이다. 잘 되는건가?
+
+Orphan Process 는 Parent Process 가 죽고 남아 있는 Child Process 를 말한다.
+Zombie Process 와는 다르다. init Process 가 Orphan Process 의 부모가 된다.
+
+다음과 같이 `zombie.c` 를 작성하자.
+
+```c
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+int main() {
+	pid_t child_pid;
+	child_pid = fork();
+	if (child_pid > 0) {
+		// Parent process
+		sleep(60);
+	} else {
+		// Child process
+		exit(0);
+	}
+	return 0;
+}
+```
+
+build 및 실행하자.
+
+```bash
+$ docker run -it --rm --name my-ubuntu ubuntu:18.08
+
+$ apt-get update
+$ apt-get install gcc vim -Y
+
+$ gcc zombie.c -o zombie
+$ ./zombie &
+$ top
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+    1 root      20   0   18268   3388   2856 S   0.0  0.0   0:00.20 bash
+  525 root      20   0    4208    624    556 S   0.0  0.0   0:00.00 zombie
+  526 root      20   0       0      0      0 Z   0.0  0.0   0:00.00 zombie
+  527 root      20   0   19888   2456   2116 R   0.0  0.0   0:00.00 top
+
+$ ps aux | grep defunct
+root       526  0.0  0.0      0     0 pts/0    Z    14:05   0:00 [zombie] <defunct>
+root       536  0.0  0.0   8884   780 pts/0    S+   14:05   0:00 grep --color=auto defunct
+
+$ kill -9 526
+# Can not kill Zombie Process
+
+$ ps fax
+  PID TTY      STAT   TIME COMMAND
+    1 pts/0    Ss     0:00 /bin/bash
+  525 pts/0    S      0:00 ./zombie
+  526 pts/0    Z      0:00  \_ [zombie] <defunct>
+  537 pts/0    R+     0:00 ps fax
+
+$ kill -s SIGCHLD 525
+# It does not work. why???
+$ kill -9 525
+# It works
+```
+
 # Interrupt
 
 WIP...
@@ -718,10 +874,6 @@ switching 의 비용은 크다. 몇 cycle 일까???
 
 임계영역이 짧을 때는 spin lock 을 사용한다. 임계영역이 길다면 mutex 를
 사용한다.
-
-# Process Scheduling
-
-WiP...
 
 # System Call
 
@@ -765,6 +917,46 @@ Linux 는 다음과 같이 RAM 을 중심으로 데이터가 이동된다.
 * **Transaltion Lookaside Buffer**: A cache that helps speeding up the translation between virtual memory and physical memory
 * **Cache**: Fast memory that is close to CPU 
 * **Page cache**: Area where recently used memory page are stored
+
+`$ free -m` 를 이용하면 Physical Memory 의 상황을 알 수 있다. [linux | TIL](/linux/README.md#memory) 참고.
+
+```console
+$ docker run -it --rm --name my-ubuntu ubuntu:14.04
+# free -m
+             total       used       free     shared    buffers     cached
+Mem:         16013       6660       9352        402        341       5401
+-/+ buffers/cache:        918      15095
+Swap:         1023          0       1023
+```
+
+free 가 적다고 Physical Memory 가 부족한 것은 아니다. `buffers/cache` 의 일부를
+사용할 수 있다. `-/+ buffers/cache` 의 `-/+` 의 의미는 언제든지 줄거나 늘어날 수
+있다는 의미인가??? `918 (-/+ buffers/cache used) + 15,095 (-/+ buffers/cach free) = 16,013 (total)` 의 이유는???
+Linux Kernel version 에 따라 계산법이 다른건가???
+
+Inactive memory 는 swap space 으로 page out 될 수 있다. Inactive memory 만큼
+Physical Memory 가 확보된다. 
+
+`$ cat /proc/meminfo` 를 이용하면 `Active/Inactive` physical memory 를 확인할 수
+있다. `Active = Active(anon) + Active(file), Inactive = Inactive(anon) +
+Inactive(file)` 이다. [linux | TIL](/linux/README.md#memory) 참고
+
+```console
+# cat /proc/meminfo
+MemTotal:       16397792 kB
+MemFree:         9577040 kB
+MemAvailable:   15212580 kB
+Buffers:          349288 kB
+Cached:          5530972 kB
+SwapCached:            0 kB
+Active:          1238900 kB
+Inactive:        5068616 kB
+Active(anon):      74636 kB
+Inactive(anon):   664236 kB
+Active(file):    1164264 kB
+Inactive(file):  4404380 kB
+...
+```
 
 # System Load
 
