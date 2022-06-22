@@ -870,6 +870,8 @@ SAGAS is a long lived transaction that can be broken up into transactions.
 ## Observability
 
 * [Monitoring @ TIL](essentials/Monitoring.md)
+* [Observability: 로그라고해서 다 같은 로그가 아니다(1/2)](https://netmarble.engineering/observability-logging-a/)
+  * [Observability: 로그라고해서 다 같은 로그가 아니다(2/2)](https://netmarble.engineering/observability-logging-b/)
 
 -------
 
