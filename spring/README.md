@@ -40,6 +40,7 @@
   - [Spring with flyway](#spring-with-flyway)
   - [Custom Data Binder in Spring MVC](#custom-data-binder-in-spring-mvc)
   - [Caching in spring boot](#caching-in-spring-boot)
+  - [Transaction Propagation and suspend function](#transaction-propagation-and-suspend-function)
 - [Spring Libraries](#spring-libraries)
   - [Problem](#problem)
   - [Spring Retry](#spring-retry)
@@ -1065,6 +1066,70 @@ public ResponseEntity getVersion(
 * `@CacheEvict`
 * `@Cacheable`
 * `@CacheConfig`
+
+## Transaction Propagation and suspend function
+
+* [Spring @Transactional on suspend function](https://www.androidbugfix.com/2021/12/spring-transactional-on-suspend-function.html)
+* [Spring @Transactional on suspend function | stackoverflow](https://stackoverflow.com/questions/68590209/spring-transactional-on-suspend-function)
+
+----
+
+suspend function 에 `@Transactional` 을 부착했다고 Transaction Propagation 이 제대로 동작하는 것은 아니다. Transaction 은 Thread Local Stack 을 이용한다. 다음과 같이 R2DBC 와 같은 Reactive Implementation 를 사용하지 않은 경우를 살펴보자. suspend function 이 같은 Transaction 으로 묶이지 않는다.
+
+```java
+@Service
+class UserService(private val userRepository: UserRepository) {
+    @Transactional
+    suspend fun setUsername(id: UUID, username: String): Person {
+        logger.info { "Updating username..." }
+        val user = userRepository.findByIdentityId(identityId = id)
+            ?: throw IllegalArgumentException("User does not exist!")
+
+        // we update the username here but the change will be overridden after the verification to the actual username!
+        user.userName = "foo"
+
+        verifyUsername(username)
+
+        user.userName = username
+        return userRepository.save(user)
+    }
+    
+    private suspend fun verifyUsername(username: String) {
+        // assume we are doing some kind of network call here which will suspend while waiting got a response
+        logger.info { "Verifying..." }
+        delay(1000)
+        logger.info { "Finished verifying!" }
+    }
+}
+```
+
+다음은 Spring Data Jpa 의 log 이다.
+
+```
+DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [x.x.x.UserService.setUsername]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+DEBUG o.s.orm.jpa.JpaTransactionManager - Opened new EntityManager [SessionImpl(1406394125<open>)] for JPA transaction
+DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@9ec4d42]
+INFO  x.x.x.UserService - Updating username...
+DEBUG org.hibernate.SQL - select person0_.id as id1_6_, person0_.email as email2_6_, person0_.family_name as family_n3_6_, person0_.given_name as given_na4_6_, person0_.identity_id as identity5_6_, person0_.user_name as user_nam6_6_ from person person0_ where person0_.identity_id=?
+INFO  x.x.x.UserService - Verifying...
+DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(1406394125<open>)]
+DEBUG org.hibernate.SQL - update person set email=?, family_name=?, given_name=?, identity_id=?, user_name=? where id=?
+DEBUG o.s.orm.jpa.JpaTransactionManager - Closing JPA EntityManager [SessionImpl(1406394125<open>)] after transaction
+INFO  x.x.x.UserService - Finished verifying
+DEBUG o.s.orm.jpa.JpaTransactionManager - Creating new transaction with name [org.springframework.data.jpa.repository.support.SimpleJpaRepository.save]: PROPAGATION_REQUIRED,ISOLATION_DEFAULT
+DEBUG o.s.orm.jpa.JpaTransactionManager - Opened new EntityManager [SessionImpl(319912425<open>)] for JPA transaction
+DEBUG o.s.orm.jpa.JpaTransactionManager - Exposing JPA transaction as JDBC [org.springframework.orm.jpa.vendor.HibernateJpaDialect$HibernateConnectionHandle@1dd261da]
+DEBUG org.hibernate.SQL - select person0_.id as id1_6_0_, person0_.email as email2_6_0_, person0_.family_name as family_n3_6_0_, person0_.given_name as given_na4_6_0_, person0_.identity_id as identity5_6_0_, person0_.user_name as user_nam6_6_0_ from person person0_ where person0_.id=?
+DEBUG o.s.orm.jpa.JpaTransactionManager - Initiating transaction commit
+DEBUG o.s.orm.jpa.JpaTransactionManager - Committing JPA transaction on EntityManager [SessionImpl(319912425<open>)]
+DEBUG org.hibernate.SQL - update person set email=?, family_name=?, given_name=?, identity_id=?, user_name=? where id=?
+DEBUG o.s.orm.jpa.JpaTransactionManager - Closing JPA EntityManager [SessionImpl(319912425<open>)] after transaction
+```
+
+Spring MVC 라면 suspend function 을 쓰지 말자. Kotlin Coroutine 을 사용하지 않는 것이 좋다???
+
+Spring WebFlux 라면 문제 없는가??? suspend function 은 Single Thread 에서 동작해야 하는가??? R2DBC 와 같은 Reactive Implementation 은 `Courtines Context/Reactor's Subscription Context` 에 Transaction State 를 관리한다고 함. [Reactive Transactions with Spring](https://spring.io/blog/2019/05/16/reactive-transactions-with-spring)
 
 # Spring Libraries
 
