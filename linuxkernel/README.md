@@ -19,8 +19,12 @@
   - [Process Management](#process-management)
   - [task_struct](#task_struct)
   - [thread_info](#thread_info)
-  - [Understanding Process and Threads](#understanding-process-and-threads)
+  - [Process and Threads](#process-and-threads)
   - [Killing a Zombie](#killing-a-zombie)
+  - [priorities, schedulers and nice values](#priorities-schedulers-and-nice-values)
+  - [IPC, Sockers and Pipes](#ipc-sockers-and-pipes)
+  - [D-Bus Message](#d-bus-message)
+  - [Monitoring processes through /proc](#monitoring-processes-through-proc)
 - [Interrupt](#interrupt)
 - [Kernel Timer](#kernel-timer)
 - [Kernel Synchronization](#kernel-synchronization)
@@ -696,7 +700,7 @@ struct thread_info {
 };
 ```
 
-## Understanding Process and Threads
+## Process and Threads
 
 `$ dd` 를 이용하면 CPU 100% 를 재연할 수 있다. [dd | man](https://man7.org/linux/man-pages/man1/dd.1.html)
 
@@ -849,6 +853,121 @@ $ kill -s SIGCHLD 525
 # It does not work. why???
 $ kill -9 525
 # It works
+```
+
+## priorities, schedulers and nice values
+
+* [Understanding priorities, schedulers and nice values | Linux Under the Hood](https://learning.oreilly.com/videos/linux-under-the/9780134663500/9780134663500-LUTH_07_04/)
+
+`top` 을 이용하면 Process 의 `PR, NI` 를 알 수 있다. Process 는 Realtime Process,
+Normal Process 로 구분된다. Realtime Process 는 스케줄링 우선순위가 높다. 주로 System 과 관련이 있는 Process 들이다. `PR` 의 값의 범위는 `0 ~ 139` 이다. Realtime Process 들끼리의 우선순위를 말한다. `NI` 의 값의 범위는 `-20 ~ 19` 이다. Normal Process 들끼리의 우선순위를 말한다. 숫자가 낮으면 스케줄링의 우선순위가 높다.
+
+```
+$ top
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+    1 root      20   0   18268   3388   2856 S   0.0  0.0   0:00.24 bash
+  550 root      20   0   19892   2500   2140 R   0.0  0.0   0:00.00 top
+```
+
+`chrt` 를 이용하면 Realtime Process 우선순위를 조정할 수 있다. Realtime Process 의 Scheduling Policies 종류는 다음과 같다.
+
+* SCHED_BATCH
+* SCHED_FIFO (First In First Out)
+* SCHED_IDLE CPU 가 IDLE 일 때, 우선순위가 매우 낮다.
+* SCHED_OTHER
+* SCHED_RR (Round Robin)
+
+```bash
+$ chrt --help
+chrt - manipulate real-time attributes of a process
+...
+Scheduling policies:
+  -b | --batch         set policy to SCHED_BATCH
+  -f | --fifo          set policy to SCHED_FIFO
+  -i | --idle          set policy to SCHED_IDLE
+  -o | --other         set policy to SCHED_OTHER
+  -r | --rr            set policy to SCHED_RR (default)
+
+...
+```
+
+다음과 같이 Process 의 우선순위를 실습해 보자.
+
+```bash
+$ dd if=/dev/zero of=/dev/null &
+$ dd if=/dev/zero of=/dev/null &
+$ dd if=/dev/zero of=/dev/null &
+$ dd if=/dev/zero of=/dev/null &
+$ top
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+  553 root      20   0    4388    664    592 R 100.0  0.0   0:06.32 dd
+  552 root      20   0    4388    720    652 R  99.9  0.0   0:07.09 dd
+  554 root      20   0    4388    676    604 R  99.9  0.0   0:04.93 dd
+  555 root      20   0    4388    776    704 R  99.9  0.0   0:04.23 dd
+    1 root      20   0   18268   3388   2856 S   0.0  0.0   0:00.24 bash
+  556 root      20   0   19892   2400   2040 R   0.0  0.0   0:00.00 top
+
+# r 을 누르고 -5 를 입력한다. 즉, renice 를 한다.
+# docker container ubuntu 라서 안되는 건가? 잘 안됨.
+PID to renice [default pid = 552] -5
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND
+  552 root      20   0    4388    720    652 R 100.0  0.0   0:34.68 dd
+  553 root      20   0    4388    664    592 R 100.0  0.0   0:33.90 dd
+  554 root      20   0    4388    676    604 R 100.0  0.0   0:32.51 dd
+  555 root      20   0    4388    776    704 R 100.0  0.0   0:31.82 dd
+    1 root      20   0   18268   3388   2856 S   0.0  0.0   0:00.24 bash
+  556 root      20   0   19892   2400   2040 R   0.0  0.0   0:00.00 top
+
+$ chrt 19 dd if=/dev/zero of=/dev/null &
+# docker container ubuntu 라서 안되는 건가?
+chrt: failed to set pid 0's policy: Operation not permitted
+
+$ kill -9 $(pidof dd)
+```
+
+## IPC, Sockers and Pipes
+
+> [Understanding inter-process communication, sockets, and pipes | Linux Under the Hood](https://learning.oreilly.com/videos/linux-under-the/9780134663500/9780134663500-LUTH_07_05/)
+
+`/proc` 를 살펴보면 Process 가 사용하는 socket 이 얼만큼 있는지 알 수 있다.
+socket 을 사용하는 Process 를 살펴보면 file descript no 와 함께 socket 이
+표시된다.
+
+```bash
+$ ls -alh /proc/1/fd
+total 0
+dr-x------ 2 root root  0 Jun 22 12:45 .
+dr-xr-xr-x 9 root root  0 Jun 22 12:45 ..
+lrwx------ 1 root root 64 Jun 22 12:45 0 -> /dev/pts/0
+lrwx------ 1 root root 64 Jun 22 12:45 1 -> /dev/pts/0
+lrwx------ 1 root root 64 Jun 22 12:45 2 -> /dev/pts/0
+lrwx------ 1 root root 64 Jun 23 06:31 255 -> /dev/pts/0
+```
+
+## D-Bus Message
+
+> * [1. D-Bus 기초](https://www.kernelpanic.kr/22)
+> * [D-Bus](https://ko.wikipedia.org/wiki/D-Bus)
+
+D-Bus 는 IPC 중 하나이다. 하나의 Machine 의 많든 Process 들이
+통신하는 방식이다. socket 을 사용한다면 모든 Process 들이 각각
+연결되야 한다. 그러나 D-Bus 를 사용하면 각 Process 가 D-Bus
+에만 연결하면 된다.
+
+## Monitoring processes through /proc
+
+`/proc` 를 살펴보면 특정 Process 의 정보를 얻어올 수 있다.
+
+```bash
+$ cd /proc/1
+
+# Show command line
+$ cat cmdline
+# Show out of memory score
+$ cat oom_score
+# Show proess status including memory
+$ less status 
+
 ```
 
 # Interrupt

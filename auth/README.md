@@ -8,3 +8,4 @@ Authenticate, Authorization 구현 방법에 대해 적는다.
 * [Spring Boot로 만드는 OAuth2 시스템 1](https://brunch.co.kr/@sbcoba/1)
 * [Go OAuth2.0 서버](https://litaro.tistory.com/entry/Go-OAuth20-server-client)
 * [Simple Single Sign-On with Spring Security OAuth2](https://www.baeldung.com/sso-spring-security-oauth2)
+* [Spring Security Zero to Master along with JWT,OAUTH2 | udemy](https://udemy.com/course/spring-security-zero-to-master/)
