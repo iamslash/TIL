@@ -1,4 +1,5 @@
 - [Materials](#materials)
+- [Usual Commands](#usual-commands)
 - [Simple Service](#simple-service)
 - [Advanced](#advanced)
   - [Restart Periodically](#restart-periodically)
@@ -11,6 +12,12 @@
 * `man system.service`
 * [systemd @ wikipedia](https://en.wikipedia.org/wiki/Systemd)
 * [systemd unit 등록 관련 옵션 정리](https://fmd1225.tistory.com/93)
+
+# Usual Commands
+
+```
+$ systemctl show httpd
+```
 
 # Simple Service
 

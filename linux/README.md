@@ -904,6 +904,8 @@ EOF
     03:59:53        0        10    0.0%    0.0%    0.0%    0.0%    0.0%     1  bash    
     ```
   * `pidstat 1` 1 초 마다 보여도
+* `iotop`
+  * WIP...
 * `iostat`
   * block device 별로 io 를 모니터링한다.
   * `man iostat`
@@ -1359,6 +1361,8 @@ EOF
 * `strace`
   * system call 과 signal 을 모니터링 해주라. 소스는 없는데 디버깅 하고 싶을때 유용하다
   * `strace ls`
+  * `strace -c ls` Show ltrace with counts
+  * `strace -c ls /home`
   * `strace -e open ls` system call중 open만 보여주라
   * `strace -e trace-open,read ls /home` system call중 open, read보여주라
   * `strace -o a.txt ls` `cat a.txt`
@@ -1366,10 +1370,10 @@ EOF
   * `strace -p 1725 -o output.txt`
   * `strace -t -e open ls /home` 절대 시간으로 보여다오
   * `strace -r ls` 상대 시간으로 보여다오
-  * `strace -c ls /home` 테이블 형태로 보여다오
 * `ltrace`
   * library call 좀 보여다오
   * `ltrace ls`
+  * `ltrace -c ls` Show ltrace with counts
   * `ltrace -p 1275`
 * `pstack`
   * process 의 callstack 을 thread 별로 보여다오

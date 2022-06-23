@@ -967,7 +967,6 @@ $ cat cmdline
 $ cat oom_score
 # Show proess status including memory
 $ less status 
-
 ```
 
 # Interrupt
