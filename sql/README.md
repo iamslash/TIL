@@ -1385,9 +1385,7 @@ mysql> SELECT
 SELECT val,
        RANK() OVER(ORDER BY val) my_rank
   FROM t;
-```
 
-```
 val     my_rank
   1     1
   2     2
@@ -1412,9 +1410,7 @@ val     my_rank
 SELECT val,
        DENSE_RANK() OVER(ORDER BY val) my_rank
   FROM t;
-```
 
-```
 val     my_rank
   1     1
   2     2
@@ -1449,8 +1445,10 @@ SELECT account_id,
 
 ----
 
-`LEAD` 는 특정 record 보다 아래에 위치하는 record 를 가져올 때 사용한다. `LAG`
-는 특정 record 보다 위에 위치하는 record 를 가져올 때 사용한다.
+`LEAD` 는 특정 record 보다 아래에 위치하는 record 를 가져올 때 사용한다. 현재
+값이 대상 값보다 leading 하고 있을 때 대상 값을 가져온다. `LAG` 는 특정 record
+보다 위에 위치하는 record 를 가져올 때 사용한다. 현재 값이 대상 값보다 lagging
+하고 있을 때 대상 값을 가져온다.
 
 `LEAD(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 아래
 `N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
@@ -1473,8 +1471,8 @@ Output:
 +---------+------------+------------+
 | user_id | visit_date | next_date  | 
 +---------+------------+------------+
-| 1       | 2020-11-28 | 2020-10-20 |
-| 1       | 2020-10-20 | 2020-12-3  |
+| 1       | 2020-11-28 | 2020-12-3  |
+| 1       | 2020-10-20 | 2020-11-28 |
 | 1       | 2020-12-3  | 2021-01-01 |
 | 2       | 2020-10-5  | 2020-12-9  |
 | 2       | 2020-12-9  | 2021-01-01 |
@@ -1484,6 +1482,41 @@ Output:
 SELECT user_id,
        LEAD(visit_date, 1, '2021-01-01')
        OVER(PARTITION BY user_id ORDER BY visit_date) AS next_date
+  FROM userVisits
+```
+
+`LAG(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 위로
+`N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
+
+```sql
+Input:
+UserVisits table:
++---------+------------+
+| user_id | visit_date |
++---------+------------+
+| 1       | 2020-11-28 |
+| 1       | 2020-10-20 |
+| 1       | 2020-12-3  |
+| 2       | 2020-10-5  |
+| 2       | 2020-12-9  |
+| 3       | 2020-11-11 |
++---------+------------+
+
+Output:
++---------+------------+------------+
+| user_id | visit_date | prev_date  | 
++---------+------------+------------+
+| 1       | 2020-11-28 | 2020-10-20 |
+| 1       | 2020-10-20 | 2020-01-01 |
+| 1       | 2020-12-3  | 2021-11-28 |
+| 2       | 2020-10-5  | 2020-01-01 |
+| 2       | 2020-12-9  | 2021-10-5  |
+| 3       | 2020-11-11 | 2020-01-01 |
++---------+------------+------------+
+
+SELECT user_id,
+       LAG(visit_date, 1, '2020-01-01')
+       OVER(PARTITION BY user_id ORDER BY visit_date) AS prev_date
   FROM userVisits
 ```
 

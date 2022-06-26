@@ -76,6 +76,10 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
 
 # References
 
+* [문c 블로그](http://jake.dothome.co.kr/)
+  * Linux Kernel 킹왕짱 고품질 블로그
+* [코드로 알아보는 ARM 리눅스 커널](http://www.yes24.com/Product/Goods/85734266)
+  * 좋은 책이라고?
 * [디버깅을 통해 배우는 리눅스 커널의 구조와 원리 1 라즈베리 파이로 따라하면서 쉽게 이해할 수 있는 리눅스 커널 @ yes24](http://www.yes24.com/Product/Goods/90085976)
   * [디버깅을 통해 배우는 리눅스 커널의 구조와 원리 2 라즈베리 파이로 따라하면서 쉽게 이해할 수 있는 리눅스 커널 @ yes24](http://www.yes24.com/Product/Goods/90087307)
   * [blog](http://rousalome.egloos.com/v/10015971)
