@@ -70,6 +70,8 @@ Istio provides these features. [Feature Status](https://istio.io/latest/docs/rel
 
 # Materials
 
+* [Istio & envoy 파헤치기](https://phantasmicmeans.tistory.com/entry/Istio-%ED%8C%8C%ED%97%A4%EC%B9%98%EA%B8%B0)
+  * Istio Under The Hood
 * [간단한 예제로 보는 Istio VirtualService와 Destination 을 활용한 Istio Traffic Routing의 이해](https://itnp.kr/post/istio-routing-api)
   * 킹왕짱 설명
 * [Istio 트래픽 흐름 @ youtube](https://www.youtube.com/playlist?list=PLDoAIZhHTMvPIY7PHDtMaqbUUWEbE6-6H)
