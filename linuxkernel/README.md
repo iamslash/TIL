@@ -99,6 +99,8 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
 
 # Materials
 
+* [IT/Linux Kernal | Art of Pr0gr4m](https://pr0gr4m.tistory.com/category/IT/Linux%20Kernel?page=6)
+  * Linux 5.x Deep Dive
 * [Debugging the Linux Kernel with Qemu and GDB | youtube](https://www.youtube.com/watch?v=2VcA5Wj7IvU)
   * Qemu 에서 linux 를 실행하고 원격으로 gdb debugging 하는 방법
   * [Debugging the Linux Kernel with Qemu and GDB](https://pnx9.github.io/thehive/Debugging-Linux-Kernel.html)
