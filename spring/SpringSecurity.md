@@ -1,4 +1,23 @@
 - [Materials](#materials)
+- [Prerequisites](#prerequisites)
+	- [Spring Security Architecture](#spring-security-architecture)
+		- [A Review of Filters](#a-review-of-filters)
+		- [DelegatingFilterProxy](#delegatingfilterproxy)
+		- [FilterChainProxy](#filterchainproxy)
+		- [SecurityFilterChain](#securityfilterchain)
+		- [Security Filters](#security-filters)
+		- [Handling Security Exceptions](#handling-security-exceptions)
+	- [Servlet Authentication Architecture](#servlet-authentication-architecture)
+		- [SecurityContextHolder](#securitycontextholder)
+		- [AuthenticationManager](#authenticationmanager)
+		- [ProviderManager](#providermanager)
+		- [**Request Credentials with `AuthenticationEntryPoint`**](#request-credentials-withauthenticationentrypoint)
+		- [AbstractAuthenticationProcessingFilter](#abstractauthenticationprocessingfilter)
+	- [Servlet Authorization Architecture](#servlet-authorization-architecture)
+		- [Authorities](#authorities)
+		- [Delegate-based AuthorizationManager implements](#delegate-based-authorizationmanager-implements)
+		- [Adapting AccessDecisionManager and AccessDecisionVoters](#adapting-accessdecisionmanager-and-accessdecisionvoters)
+		- [Hierarchical Roles](#hierarchical-roles)
 - [스프링 시큐리티: 폼 인증](#스프링-시큐리티-폼-인증)
 	- [폼 인증 예제 살펴보기](#폼-인증-예제-살펴보기)
 	- [스프링 웹 프로젝트 만들기](#스프링-웹-프로젝트-만들기)
@@ -62,6 +81,232 @@
   * [src](https://github.com/keesun/spring-security-basic)
 * [Spring boot - Spring Security(스프링 시큐리티) 란? 완전 해결!](https://coding-start.tistory.com/153)
 * [Spring Security 를 유닛테스트 하기](https://velog.io/@jj362/Spring-Security-%EB%A5%BC-%EC%9C%A0%EB%8B%9B%ED%85%8C%EC%8A%A4%ED%8A%B8-%ED%95%98%EA%B8%B0)
+
+# Prerequisites
+
+다음의 문서를 잘 읽고 Spring Security Architecture, Authentication Architecture, Authorization Architecture 항목을 그림위주로 이해한다.
+
+- [Spring Security | spring.io](https://docs.spring.io/spring-security/reference/index.html)
+    - [samples](https://docs.spring.io/spring-security/reference/samples.html)
+
+## Spring Security Architecture
+
+### A Review of Filters
+
+Spring 은 다음과 같이 HTTP Request 를 Filter 들을 지나 Servlet 으로 전달된다.
+
+![](https://docs.spring.io/spring-security/reference/_images/servlet/architecture/filterchain.png)
+
+Filter 의 doFilter 는 다음과 같이 구현한다. `chain.doFilter()` 를 호출하여 다음 Filter 로 HTTP Request 를 전달한다. 
+
+```java
+fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+    // do something before the rest of the application
+    chain.doFilter(request, response) // invoke the rest of the application
+    // do something after the rest of the application
+}
+```
+
+### DelegatingFilterProxy
+
+DelegatingFilterProxy 를 통해 Filter 로 전달된 HTTP Request 를 다른 곳으로 전달할 수 있다.
+
+![](https://docs.spring.io/spring-security/reference/_images/servlet/architecture/delegatingfilterproxy.png)
+
+다음은 `DelegatingFilterProxy` 의 pseudo code 이다.
+
+```java
+fun doFilter(request: ServletRequest, response: ServletResponse, chain: FilterChain) {
+	// Lazily get Filter that was registered as a Spring Bean
+	// For the example in DelegatingFilterProxy 
+	// delegate is an instance of Bean Filter0
+	val delegate: Filter = getFilterBean(someBeanName)
+	// delegate work to the Spring Bean
+	delegate.doFilter(request, response)
+}
+```
+
+### FilterChainProxy
+
+FilterChainProxy 는 Spring Security 가 제공하는 특별한 Filter 이다. FilterChainProxy 는 HTTP Request 를 SecurityFilterChain 의 Filter 들로 전달한다.
+
+![](https://docs.spring.io/spring-security/reference/_images/servlet/architecture/filterchainproxy.png)
+
+
+### SecurityFilterChain
+
+SecurityFilterChain 은 Security Filter 들로 구성된다.
+
+![](https://docs.spring.io/spring-security/reference/_images/servlet/architecture/securityfilterchain.png)
+
+다음과 같이 Multiple SecurityFilterChain 도 가능하다.
+
+![](https://docs.spring.io/spring-security/reference/_images/servlet/architecture/multi-securityfilterchain.png)
+
+### Security Filters
+
+다음은 Security Filter 들이다.
+
+* ForceEagerSessionCreationFilter
+* ChannelProcessingFilter
+* WebAsyncManagerIntegrationFilter
+* SecurityContextPersistenceFilter
+* HeaderWriterFilter
+* CorsFilter
+* CsrfFilter
+* LogoutFilter
+* OAuth2AuthorizationRequestRedirectFilter
+* Saml2WebSsoAuthenticationRequestFilter
+* X509AuthenticationFilter
+* AbstractPreAuthenticatedProcessingFilter
+* CasAuthenticationFilter
+* OAuth2LoginAuthenticationFilter
+* Saml2WebSsoAuthenticationFilter
+* UsernamePasswordAuthenticationFilter
+* OpenIDAuthenticationFilter
+* DefaultLoginPageGeneratingFilter
+* DefaultLogoutPageGeneratingFilter
+* ConcurrentSessionFilter
+* DigestAuthenticationFilter
+* BearerTokenAuthenticationFilter
+* BasicAuthenticationFilter
+* RequestCacheAwareFilter
+* SecurityContextHolderAwareRequestFilter
+* JaasApiIntegrationFilter
+* RememberMeAuthenticationFilter
+* AnonymousAuthenticationFilter
+* OAuth2AuthorizationCodeGrantFilter
+* SessionManagementFilter
+* ExceptionTranslationFilter
+* FilterSecurityInterceptor
+* SwitchUserFilter
+
+### Handling Security Exceptions
+
+ExceptionTranslationFilter 는 Exception 을 처리한다.
+
+![](https://docs.spring.io/spring-security/reference/_images/servlet/architecture/exceptiontranslationfilter.png)
+
+다음은 ExceptionTranslationFilter 의 pseudo code 이다.
+
+```java
+try {
+	filterChain.doFilter(request, response);
+} catch (AccessDeniedException | AuthenticationException ex) {
+	if (!authenticated || ex instanceof AuthenticationException) {
+		startAuthentication();
+	} else {
+		accessDenied();
+	}
+}
+```
+
+## Servlet Authentication Architecture
+
+### SecurityContextHolder
+
+SecurityContextHolder 는 SecurityContext, Authentication, Principal, Credentials, Authorities 를 소유한다.
+
+![](https://docs.spring.io/spring-security/reference/_images/servlet/authentication/architecture/securitycontextholder.png)
+
+### AuthenticationManager
+
+**AuthenticationManager** 는 인증을 담당하는 interface 이다. 주로 **ProviderManager** 가 구현한다.
+
+### ProviderManager
+
+하나의 ProviderManager 에 여러개의 AuthenticationProvider 를 inject 할 수 있다.
+
+![](https://docs.spring.io/spring-security/reference/_images/servlet/authentication/architecture/providermanager.png)
+
+![](https://docs.spring.io/spring-security/reference/_images/servlet/authentication/architecture/providermanager-parent.png)
+
+![](https://docs.spring.io/spring-security/reference/_images/servlet/authentication/architecture/providermanagers-parent.png)
+
+### **Request Credentials with `AuthenticationEntryPoint`**
+
+Client 가 Credentials 를 전송할 수 있도록 Redirect 한다.
+
+### AbstractAuthenticationProcessingFilter
+
+![](https://docs.spring.io/spring-security/reference/_images/servlet/authentication/architecture/abstractauthenticationprocessingfilter.png)
+
+## Servlet Authorization Architecture
+
+### Authorities
+
+Authorities 는 `getAuthority()` 로 구별하자. **GrantedAuthority** 는 다음과 같은 함수를 갖는다.
+
+```java
+String getAuthority();
+```
+
+### Delegate-based AuthorizationManager implements
+
+![](https://docs.spring.io/spring-security/reference/_images/servlet/authorization/authorizationhierarchy.png)
+
+### Adapting AccessDecisionManager and AccessDecisionVoters
+
+AuthorizationManager 이 추천인 듯. AccessDecisionManager, AccessDecisionVoters 를 위한 Adapter 예제가 있음.
+
+```java
+@Component
+public class AccessDecisionManagerAuthorizationManagerAdapter implements AuthorizationManager {
+    private final AccessDecisionManager accessDecisionManager;
+    private final SecurityMetadataSource securityMetadataSource;
+
+    @Override
+    public AuthorizationDecision check(Supplier<Authentication> authentication, Object object) {
+        try {
+            Collection<ConfigAttributes> attributes = this.securityMetadataSource.getAttributes(object);
+            this.accessDecisionManager.decide(authentication.get(), object, attributes);
+            return new AuthorizationDecision(true);
+        } catch (AccessDeniedException ex) {
+            return new AuthorizationDecision(false);
+        }
+    }
+
+    @Override
+    public void verify(Supplier<Authentication> authentication, Object object) {
+        Collection<ConfigAttributes> attributes = this.securityMetadataSource.getAttributes(object);
+        this.accessDecisionManager.decide(authentication.get(), object, attributes);
+    }
+}
+
+@Component
+public class AccessDecisionVoterAuthorizationManagerAdapter implements AuthorizationManager {
+    private final AccessDecisionVoter accessDecisionVoter;
+    private final SecurityMetadataSource securityMetadataSource;
+
+    @Override
+    public AuthorizationDecision check(Supplier<Authentication> authentication, Object object) {
+        Collection<ConfigAttributes> attributes = this.securityMetadataSource.getAttributes(object);
+        int decision = this.accessDecisionVoter.vote(authentication.get(), object, attributes);
+        switch (decision) {
+        case ACCESS_GRANTED:
+            return new AuthorizationDecision(true);
+        case ACCESS_DENIED:
+            return new AuthorizationDecision(false);
+        }
+        return null;
+    }
+}
+```
+
+### Hierarchical Roles
+
+Authorities 를 계층구조로 해석할 수 있다. 예를 들어 ROLE_ADMIN 은 ROLE_STAFF 의 권한을 포함할 수 있다.
+
+```java
+@Bean
+AccessDecisionVoter hierarchyVoter() {
+    RoleHierarchy hierarchy = new RoleHierarchyImpl();
+    hierarchy.setHierarchy("ROLE_ADMIN > ROLE_STAFF\n" +
+            "ROLE_STAFF > ROLE_USER\n" +
+            "ROLE_USER > ROLE_GUEST");
+    return new RoleHierarchyVoter(hierarchy);
+}
+```
 
 # 스프링 시큐리티: 폼 인증
 
