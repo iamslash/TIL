@@ -1,4 +1,5 @@
 - [Summary](#summary)
+- [How process multiple socket connects](#how-process-multiple-socket-connects)
 - [How HTTP Request Flow](#how-http-request-flow)
 - [How handlerMappings work](#how-handlermappings-work)
 - [How ViewResolver work](#how-viewresolver-work)
@@ -26,6 +27,157 @@
 * **Handler interceptor**: `Handler interceptor` 는 모든 `@Controller Class` 의 `@RequestMapping Method` 가 호출되기 전 공통으로 처리되는 것이다.
 * **Handler exception resolver**: `Handler exception resolver` 는 Exception 을 처리하는 것이 이다. `DispatchServlet` 은 `private List<HandlerExceptionResolver> handlerExceptionResolvers` 를 가지고 있다.
 * **View Resolver**: `View Resolver` 는 HTML Rendering 을 처리하는 것이다. `DispatchServlet` 은 `private List<ViewResolver> viewResolvers` 를 가지고 있다.
+
+# How process multiple socket connects
+
+* [스프링부트는 어떻게 다중 유저 요청을 처리할까? (Tomcat9.0 Thread Pool)](https://velog.io/@sihyung92/how-does-springboot-handle-multiple-requests)
+
+Spring Boot 의 embedded tomcat 은 task queue 를 갖고 있다. task queue 에 쌓여진 HTTP Request 를 worker thread 들이 가져가서 처리한다. 다음과 같이 embedded tomcat 의 max thread 등을 설정할 수 있다.
+
+```yaml
+server:
+  tomcat:
+    threads:
+      max: 200 
+      min-spare: 10 
+    max-connections: 8192 
+    accept-count: 100 # task queue size
+    connection-timeout: 20000 # time out secs
+  port: 8080
+```
+
+BIO 대신 NIO 를 사용한다. socket connect 하나당 thread 하나는 아니다.
+
+embedded tomcat 은 다음과 같이 생성된다.
+
+```java
+// org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory
+	@Override
+	public WebServer getWebServer(ServletContextInitializer... initializers) {
+		if (this.disableMBeanRegistry) {
+			Registry.disableRegistry();
+		}
+		Tomcat tomcat = new Tomcat();
+		File baseDir = (this.baseDirectory != null) ? this.baseDirectory : createTempDir("tomcat");
+		tomcat.setBaseDir(baseDir.getAbsolutePath());
+		Connector connector = new Connector(this.protocol);
+		connector.setThrowOnFailure(true);
+		tomcat.getService().addConnector(connector);
+		customizeConnector(connector);
+		tomcat.setConnector(connector);
+		tomcat.getHost().setAutoDeploy(false);
+		configureEngine(tomcat.getEngine());
+		for (Connector additionalConnector : this.additionalTomcatConnectors) {
+			tomcat.getService().addConnector(additionalConnector);
+		}
+		prepareContext(tomcat.getHost(), initializers);
+		return getTomcatWebServer(tomcat);
+	}
+```
+
+embedded tomcat 은 다음과 같이 시작한다.
+
+```java
+// org.springframework.boot.web.embedded.tomcat.TomcatWebServer
+	private void initialize() throws WebServerException {
+		logger.info("Tomcat initialized with port(s): " + getPortsDescription(false));
+		synchronized (this.monitor) {
+			try {
+				addInstanceIdToEngineName();
+
+				Context context = findContext();
+				context.addLifecycleListener((event) -> {
+					if (context.equals(event.getSource()) && Lifecycle.START_EVENT.equals(event.getType())) {
+						// Remove service connectors so that protocol binding doesn't
+						// happen when the service is started.
+						removeServiceConnectors();
+					}
+				});
+
+				// Start the server to trigger initialization listeners
+				this.tomcat.start();
+
+				// We can re-throw failure exception directly in the main thread
+				rethrowDeferredStartupExceptions();
+
+				try {
+					ContextBindings.bindClassLoader(context, context.getNamingToken(), getClass().getClassLoader());
+				}
+				catch (NamingException ex) {
+					// Naming is not enabled. Continue
+				}
+
+				// Unlike Jetty, all Tomcat threads are daemon threads. We create a
+				// blocking non-daemon to stop immediate shutdown
+				startDaemonAwaitThread();
+			}
+			catch (Exception ex) {
+				stopSilently();
+				destroySilently();
+				throw new WebServerException("Unable to start embedded Tomcat", ex);
+			}
+		}
+	}
+```
+
+main thread 는 `startDaemonAwaitThread()` 에서 embedded tomcat 을 wait 한다.
+
+```java
+// // org.springframework.boot.web.embedded.tomcat.TomcatWebServer
+	private void startDaemonAwaitThread() {
+		Thread awaitThread = new Thread("container-" + (containerCounter.get())) {
+
+			@Override
+			public void run() {
+				TomcatWebServer.this.tomcat.getServer().await();
+			}
+
+		};
+		awaitThread.setContextClassLoader(getClass().getClassLoader());
+		awaitThread.setDaemon(false);
+		awaitThread.start();
+	}
+```
+
+다음은 `TaskQueue` 와 `TaskThreadFactory` 를 생성하는 부분이다. `TaskThreadFactory` 에
+의해 생성되는 thread 의 이름은 `http-nio-8080-*` 과 같다.
+
+```java
+// org.apache.tomcat.util.net.AbstractEndpoint
+    public void createExecutor() {
+        internalExecutor = true;
+        TaskQueue taskqueue = new TaskQueue();
+        TaskThreadFactory tf = new TaskThreadFactory(getName() + "-exec-", daemon, getThreadPriority());
+        executor = new ThreadPoolExecutor(getMinSpareThreads(), getMaxThreads(), 60, TimeUnit.SECONDS,taskqueue, tf);
+        taskqueue.setParent( (ThreadPoolExecutor) executor);
+    }
+```
+
+다음은 Client 가 접속하면 Server 의 Socket Connection 을 만들어 TaskQueue 에
+삽입하는 부분이다. (`workQueue.offer(command)`)
+
+```java
+// java.util.concurrent.ThreadPoolExecutor
+    public void execute(Runnable command) {
+        if (command == null)
+            throw new NullPointerException();
+        int c = ctl.get();
+        if (workerCountOf(c) < corePoolSize) {
+            if (addWorker(command, true))
+                return;
+            c = ctl.get();
+        }
+        if (isRunning(c) && workQueue.offer(command)) {
+            int recheck = ctl.get();
+            if (! isRunning(recheck) && remove(command))
+                reject(command);
+            else if (workerCountOf(recheck) == 0)
+                addWorker(null, false);
+        }
+        else if (!addWorker(command, false))
+            reject(command);
+    }
+```
 
 # How HTTP Request Flow
 
