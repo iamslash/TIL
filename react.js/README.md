@@ -61,6 +61,8 @@ react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다. [https:/
 * [리액트를 다루는 기술(개정판) -16.8버전](https://www.gilbut.co.kr/book/view?bookcode=BN002496)
   * [src](https://github.com/velopert/learning-react)
   * [벨로퍼트와 함께하는 모던 리액트](https://react.vlpt.us/)
+* [한 번에 끝내는 React의 모든 것 초격차 패키지 | FastCampus](https://fastcampus.co.kr/dev_online_react/)
+  * 유료이지만 그럴듯 함.
 * [React 적용 가이드 - React와 Redux @ NaverD2](https://d2.naver.com/helloworld/1848131)
   * [src](https://github.com/naver/react-sample-code)
   * [React 적용 가이드 - React 작동 방법 @ NaverD2](https://d2.naver.com/helloworld/9297403)
