@@ -5,6 +5,7 @@ recoil 은 state management library 이다.
 # Materials
 
 * [[Recoil][기초] | Recoil 사용법](https://velog.io/@myway_7/Recoil%EA%B8%B0%EC%B4%88-Recoil-%EC%82%AC%EC%9A%A9%EB%B2%95)
+* [Recoil 시작하기 | recoil.js](https://recoiljs.org/ko/docs/introduction/getting-started)
 
 # Basic
 
@@ -17,8 +18,8 @@ ReactDOM.render(
   <>
     <GlobalStyle />
     <ThemeProvider theme={{ ...theme, ...mixin }}>
-      <RecoilRoot> //여기에 위치
-        <Router /> //이제 Router 컴포넌트 소속 모든 컴포넌트들이 전역상태를 사용한다
+      <RecoilRoot> 
+        <Router /> 
       </RecoilRoot>
     </ThemeProvider>
   </>,
@@ -26,7 +27,7 @@ ReactDOM.render(
 );
 ```
 
-Global State 를 만든다.
+`atom()` 호출하여 Global State 를 만든다.
 
 ```js
 export const filterSelect = atom({
@@ -54,7 +55,7 @@ import {useRecoilState} from 'recoil' // 훅 import
 const [state, setState] = useRecoilState(filterSelect); // 전역상태를 state로 만듦
 ```
 
-`state` 를 변경해 보자.
+`setState()` 를 호출하여 `state` 를 변경해 보자.
 
 ```js
 setState(prev => {
