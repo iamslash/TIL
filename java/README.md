@@ -607,14 +607,29 @@ for(String name : names) {
 ```java
    Deque<Integer> deque = new ArrayDeque<>();
    int n     = deque.size();
-   int first = deque.getFirst();
-   int last  = deque.getLast();
+   // add, remove, get
+   deque.add(2);
    deque.addFirst(3);
    deque.addLast(4);
-   deque.pollFirst();
-   deque.pollLast();
+   deque.remove();
+   deque.removeFirst(3);
    deque.removeFirstOccurrence(3);
+   deque.removeLast();
    deque.removeLastOccurrence(3);
+   int first = deque.getFirst();
+   int last  = deque.getLast();
+   // offer, poll, peek
+   deque.offer(2);
+   deque.offerFirst(3);
+   deque.offerLast(4);
+   deque.poll();
+   deque.pollFirst(3);
+   deque.pollFirstOccurrence(3);
+   deque.pollLast();
+   deque.pollLastOccurrence(3);
+   int last  = deque.peek();
+   int first = deque.peekFirst();
+   int last  = deque.peekLast();
 ```
 
 ### List, LinkedList
