@@ -1,5 +1,5 @@
 - [Summary](#summary)
-- [How process multiple socket connects](#how-process-multiple-socket-connects)
+- [How to process multiple socket connects](#how-to-process-multiple-socket-connects)
 - [How HTTP Request Flow](#how-http-request-flow)
 - [How handlerMappings work](#how-handlermappings-work)
 - [How ViewResolver work](#how-viewresolver-work)
@@ -28,7 +28,7 @@
 * **Handler exception resolver**: `Handler exception resolver` 는 Exception 을 처리하는 것이 이다. `DispatchServlet` 은 `private List<HandlerExceptionResolver> handlerExceptionResolvers` 를 가지고 있다.
 * **View Resolver**: `View Resolver` 는 HTML Rendering 을 처리하는 것이다. `DispatchServlet` 은 `private List<ViewResolver> viewResolvers` 를 가지고 있다.
 
-# How process multiple socket connects
+# How to process multiple socket connects
 
 * [스프링부트는 어떻게 다중 유저 요청을 처리할까? (Tomcat9.0 Thread Pool)](https://velog.io/@sihyung92/how-does-springboot-handle-multiple-requests)
 
@@ -46,12 +46,15 @@ server:
   port: 8080
 ```
 
-BIO 대신 NIO 를 사용한다. socket connect 하나당 thread 하나는 아니다.
+BIO (Blocking I/O) 대신 NIO (NonBlocking I/O) 를 사용한다.
 
 embedded tomcat 은 다음과 같이 생성된다.
 
 ```java
 // org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory
+public class TomcatServletWebServerFactory extends AbstractServletWebServerFactory
+		implements ConfigurableTomcatWebServerFactory, ResourceLoaderAware {
+...
 	@Override
 	public WebServer getWebServer(ServletContextInitializer... initializers) {
 		if (this.disableMBeanRegistry) {
@@ -79,6 +82,34 @@ embedded tomcat 은 다음과 같이 시작한다.
 
 ```java
 // org.springframework.boot.web.embedded.tomcat.TomcatWebServer
+public class TomcatWebServer implements WebServer {
+...
+	private void initialize() throws WebServerException {
+		logger.info("Tomcat initialized with port(s): " + getPortsDescription(false));
+		synchronized (this.monitor) {
+			try {
+				addInstanceIdToEngineName();
+
+				Context context = findContext();
+				context.addLifecycleListener((event) -> {
+					if (context.equals(event.getSource()) && Lifecycle.START_EVENT.equals(event.getType())) {
+						// Remove service connectors so that protocol binding doesn't
+						// happen when the service is started.
+						removeServiceConnectors();
+					}
+				});
+
+				// Start the server to trigger initialization listeners
+				this.tomcat.start();
+...
+```
+
+main thread 는 `startDaemonAwaitThread()` 에서 embedded tomcat 을 wait 한다.
+
+```java
+// org.springframework.boot.web.embedded.tomcat.TomcatWebServer
+public class TomcatWebServer implements WebServer {
+...
 	private void initialize() throws WebServerException {
 		logger.info("Tomcat initialized with port(s): " + getPortsDescription(false));
 		synchronized (this.monitor) {
@@ -110,20 +141,10 @@ embedded tomcat 은 다음과 같이 시작한다.
 				// Unlike Jetty, all Tomcat threads are daemon threads. We create a
 				// blocking non-daemon to stop immediate shutdown
 				startDaemonAwaitThread();
-			}
-			catch (Exception ex) {
-				stopSilently();
-				destroySilently();
-				throw new WebServerException("Unable to start embedded Tomcat", ex);
-			}
-		}
-	}
-```
+...       
 
-main thread 는 `startDaemonAwaitThread()` 에서 embedded tomcat 을 wait 한다.
-
-```java
-// // org.springframework.boot.web.embedded.tomcat.TomcatWebServer
+public class TomcatWebServer implements WebServer {
+...
 	private void startDaemonAwaitThread() {
 		Thread awaitThread = new Thread("container-" + (containerCounter.get())) {
 
@@ -144,6 +165,8 @@ main thread 는 `startDaemonAwaitThread()` 에서 embedded tomcat 을 wait 한�
 
 ```java
 // org.apache.tomcat.util.net.AbstractEndpoint
+public abstract class AbstractEndpoint<S,U> {
+...
     public void createExecutor() {
         internalExecutor = true;
         TaskQueue taskqueue = new TaskQueue();
@@ -153,11 +176,13 @@ main thread 는 `startDaemonAwaitThread()` 에서 embedded tomcat 을 wait 한�
     }
 ```
 
-다음은 Client 가 접속하면 Server 의 Socket Connection 을 만들어 TaskQueue 에
+다음은 Client 가 접속하면 Server 에서 `Runnable` instance 을 만들어 `TaskQueue` 에
 삽입하는 부분이다. (`workQueue.offer(command)`)
 
 ```java
 // java.util.concurrent.ThreadPoolExecutor
+public class ThreadPoolExecutor extends java.util.concurrent.ThreadPoolExecutor {
+...    
     public void execute(Runnable command) {
         if (command == null)
             throw new NullPointerException();
@@ -177,6 +202,158 @@ main thread 는 `startDaemonAwaitThread()` 에서 embedded tomcat 을 wait 한�
         else if (!addWorker(command, false))
             reject(command);
     }
+```
+
+다음은 `Worker` instance 가 `TaskQueue` 에서 Socket Connection 을 가져오는 부분이다. (`workQueue.poll()`)
+
+```java
+// java.util.concurrent.ThreadPoolExecutor
+    private final class Worker
+        extends AbstractQueuedSynchronizer
+        implements Runnable
+    {
+...
+        public void run() {
+            runWorker(this);
+        }
+...
+    }     
+
+public class ThreadPoolExecutor extends AbstractExecutorService {
+...    
+    final void runWorker(Worker w) {
+        Thread wt = Thread.currentThread();
+        Runnable task = w.firstTask;
+        w.firstTask = null;
+        w.unlock(); // allow interrupts
+        boolean completedAbruptly = true;
+        try {
+            while (task != null || (task = getTask()) != null) {   
+
+public class ThreadPoolExecutor extends AbstractExecutorService {
+...    
+    private Runnable getTask() {
+        boolean timedOut = false; // Did the last poll() time out?
+
+        for (;;) {
+            int c = ctl.get();
+
+            // Check if queue empty only if necessary.
+            if (runStateAtLeast(c, SHUTDOWN)
+                && (runStateAtLeast(c, STOP) || workQueue.isEmpty())) {
+                decrementWorkerCount();
+                return null;
+            }
+
+            int wc = workerCountOf(c);
+
+            // Are workers subject to culling?
+            boolean timed = allowCoreThreadTimeOut || wc > corePoolSize;
+
+            if ((wc > maximumPoolSize || (timed && timedOut))
+                && (wc > 1 || workQueue.isEmpty())) {
+                if (compareAndDecrementWorkerCount(c))
+                    return null;
+                continue;
+            }
+
+            try {
+                Runnable r = timed ?
+                    workQueue.poll(keepAliveTime, TimeUnit.NANOSECONDS) :
+                    workQueue.take();
+```
+
+`Worker` instance 는 다음과 같이 `ThreadPoolExecutor::addWorker()` 를 호출하여 생성한다.
+
+```java
+// java.util.concurrent.ThreadPoolExecutor
+public class ThreadPoolExecutor extends AbstractExecutorService {
+...    
+    public void execute(Runnable command) {
+        if (command == null)
+            throw new NullPointerException();
+        int c = ctl.get();
+        if (workerCountOf(c) < corePoolSize) {
+            if (addWorker(command, true))
+                return;
+            c = ctl.get();
+        }
+        if (isRunning(c) && workQueue.offer(command)) {
+            int recheck = ctl.get();
+            if (! isRunning(recheck) && remove(command))
+                reject(command);
+            else if (workerCountOf(recheck) == 0)
+                addWorker(null, false);
+        }
+        else if (!addWorker(command, false))
+            reject(command);
+    }
+
+public class ThreadPoolExecutor extends AbstractExecutorService {
+...  
+    private boolean addWorker(Runnable firstTask, boolean core) {
+        retry:
+        for (int c = ctl.get();;) {
+            // Check if queue empty only if necessary.
+            if (runStateAtLeast(c, SHUTDOWN)
+                && (runStateAtLeast(c, STOP)
+                    || firstTask != null
+                    || workQueue.isEmpty()))
+                return false;
+
+            for (;;) {
+                if (workerCountOf(c)
+                    >= ((core ? corePoolSize : maximumPoolSize) & COUNT_MASK))
+                    return false;
+                if (compareAndIncrementWorkerCount(c))
+                    break retry;
+                c = ctl.get();  // Re-read ctl
+                if (runStateAtLeast(c, SHUTDOWN))
+                    continue retry;
+                // else CAS failed due to workerCount change; retry inner loop
+            }
+        }
+
+        boolean workerStarted = false;
+        boolean workerAdded = false;
+        Worker w = null;
+        try {
+            w = new Worker(firstTask);
+            final Thread t = w.thread;
+            if (t != null) {
+                final ReentrantLock mainLock = this.mainLock;
+                mainLock.lock();
+                try {
+                    // Recheck while holding lock.
+                    // Back out on ThreadFactory failure or if
+                    // shut down before lock acquired.
+                    int c = ctl.get();
+
+                    if (isRunning(c) ||
+                        (runStateLessThan(c, STOP) && firstTask == null)) {
+                        if (t.getState() != Thread.State.NEW)
+                            throw new IllegalThreadStateException();
+                        workers.add(w);
+                        workerAdded = true;
+                        int s = workers.size();
+                        if (s > largestPoolSize)
+                            largestPoolSize = s;
+                    }
+                } finally {
+                    mainLock.unlock();
+                }
+                if (workerAdded) {
+                    t.start();
+                    workerStarted = true;
+                }
+            }
+        } finally {
+            if (! workerStarted)
+                addWorkerFailed(w);
+        }
+        return workerStarted;
+    }
+...        
 ```
 
 # How HTTP Request Flow
