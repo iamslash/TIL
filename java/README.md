@@ -619,6 +619,7 @@ for(String name : names) {
    int first = deque.getFirst();
    int last  = deque.getLast();
    // offer, poll, peek
+   // There is no exception for poll, peek
    deque.offer(2);
    deque.offerFirst(3);
    deque.offerLast(4);
