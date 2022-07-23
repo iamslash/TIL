@@ -63,6 +63,7 @@
   - [ROW_NUMBER() OVER()](#row_number-over)
   - [RANK() OVER()](#rank-over)
   - [DENSE_RANK() OVER()](#dense_rank-over)
+  - [PERCENT_RANK() OVER()](#percent_rank-over)
   - [SUM() OVER()](#sum-over)
   - [LEAD() OVER(), LAG() OVER()](#lead-over-lag-over)
   - [Where](#where)
@@ -964,9 +965,13 @@ INSERT INTO Customers (CustomerName, City, Country)
 
 ## Null Functions
 
+* [[DB] MySQL NULL 처리(IFNULL, CASE, COALESCE)](https://velog.io/@gillog/DB-MySQL-NULL-%EC%B2%98%EB%A6%ACIFNULL-CASE-COALESCE)
+
 ```sql
+-- Return second, first is null
 SELECT ProductName, UnitPrice * (UnitsInStock + IFNULL(UnitsOnOrder, 0))
   FROM Products
+-- Return first not null
 SELECT ProductName, UnitPrice * (UnitsInStock + COALESCE(UnitsOnOrder, 0))
   FROM Products
 ```
@@ -1437,6 +1442,47 @@ val     my_rank
   4     4
   4     4
   5     5
+```
+
+## PERCENT_RANK() OVER()
+
+* [PERCENT_RANK() over_clause](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_percent-rank)
+
+Returns the percentage of partition values less than the value in the current row, excluding the highest value. 
+
+```
+(rank - 1) / (rows - 1)
+```
+
+```sql
+Input: 
+Students table:
++------------+---------------+------+
+| student_id | department_id | mark |
++------------+---------------+------+
+| 2          | 2             | 650  |
+| 8          | 2             | 650  |
+| 7          | 1             | 920  |
+| 1          | 1             | 610  |
+| 3          | 1             | 530  |
++------------+---------------+------+
+Output: 
++------------+---------------+------------+
+| student_id | department_id | percentage |
++------------+---------------+------------+
+| 7          | 1             | 0.0        |
+| 1          | 1             | 50.0       |
+| 3          | 1             | 100.0      |
+| 2          | 2             | 0.0        |
+| 8          | 2             | 0.0        |
++------------+---------------+------------+
+
+SELECT student_id,
+       department_id,
+       ROUND(
+         100 * PERCENT_RANK() OVER (PARTITION BY department_id ORDER BY mark DESC)
+         , 2) AS percentage
+  FROM Students
 ```
 
 ## SUM() OVER()
