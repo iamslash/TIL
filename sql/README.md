@@ -12,6 +12,7 @@
   - [Select `Year-Month`](#select-year-month)
   - [Order By](#order-by)
   - [Insert Into](#insert-into)
+  - [Insert On Duplicate Key Update](#insert-on-duplicate-key-update)
   - [Null Values](#null-values)
   - [Update](#update)
   - [Update with Join](#update-with-join)
@@ -338,6 +339,23 @@ INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Cou
   VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
 INSERT INTO Customers (CustomerName, City, Country)
   VALUES ('Cardinal', 'Stavanger', 'Norway');
+```
+
+## Insert On Duplicate Key Update
+
+* [13.2.6.2 INSERT ... ON DUPLICATE KEY UPDATE Statement](https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html)
+
+없으면 삽입하고 있으면 기존의 값에 delta 를 더하라. 
+
+Upsert 와는 다르다. Upsert 는 없으면 삽입하고 있으면 기존의 값을 수정하라는
+의미이다. 예를 들어 `c = c + 1` 이 아니고 `c = 3` 하라는 말이다. [Upsert in SQL: What is an Upsert, and When Should You Use One?](https://www.cockroachlabs.com/blog/sql-upsert/)
+
+```sql
+INSERT INTO t1 (a,b,c) VALUES (1,2,3)
+  ON DUPLICATE KEY UPDATE c=c+1;
+
+-- Same with above one when the recoard exists
+UPDATE t1 SET c=c+1 WHERE a=1;
 ```
 
 ## Null Values
