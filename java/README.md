@@ -84,6 +84,7 @@
   - [Caffeine](#caffeine)
   - [Cache2k](#cache2k)
   - [JCache](#jcache)
+  - [JVM Remote Debugging](#jvm-remote-debugging)
 - [Quiz](#quiz)
 - [Effective Java](#effective-java)
 - [Design Patterns](#design-patterns)
@@ -2754,6 +2755,20 @@ Super Type Toke???
 ## JCache
 
 * [JCache](java_jcache.md)
+
+## JVM Remote Debugging
+
+* [how to debug spring application with gradle](https://stackoverflow.com/questions/39490624/how-to-debug-spring-application-with-gradle)
+
+다음과 같이 Java Application 을 실행한다. Remote Debugger 가 Attach 될 때까지 Java Application 은 suspended 된다.
+
+```console
+$ ./gradlew bootrun --jvm-debug
+```
+
+그리고 IntelliJ 의 Run/Debug Configuration 에서 Remote JVM Debug 를 추가한다. 그리고 추가한 item 을 활성화하고 debug 를 실행한다.
+
+![](img/jvm_remote_debugging.png)
 
 # Quiz
 
