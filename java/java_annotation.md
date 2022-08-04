@@ -40,18 +40,18 @@ public int aaa;
 
 다음은 builtin annotation 들이다.
 
-| name                   | desc                                | type                                                                                                              |
-| :--------------------- | :---------------------------------- | :---------------------------------------------------------------------------------------------------------------- |
-| `@Deprecated`          | something deprecated                |                                                                                                                   |
-| `@Override`            | overrided method                    |                                                                                                                   |
-| `@SuppressWarnings`    | suppress compile warnings           |                                                                                                                   |
-| `@SafeVarargs`         | suppress variable arguments warning |                                                                                                                   |
-| `@Retention`           | retention of annotation             | `SOURCE, CLASS, RUNTIME`                                                                                          |
-| `@Target`              | target of annotation                | `ANNOTATION_TYPE, CONSTRUCTOR, FIELD, LOCAL_VARIABLE, METHOD, PACKAGE, PARAMETER, TYPE, TYPE_PARAMETER, TYPE_USE` |
-| `@Documented`          | documented in javadoc               |                                                                                                                   |
-| `@Inherited`           | this annotation will be inherited   |                                                                                                                   |
-| `@FunctionalInterface` | for functional interface            |                                                                                                                   |
-| `@Repeatable`          | repeatable annotation               |                                                                                                                   |
+| name                   | desc                                | type  |
+| :--------------------- | :---------------------------------- | -- |
+| `@Deprecated`          | something deprecated | |
+| `@Override`            | overrided method  |  |
+| `@SuppressWarnings`    | suppress compile warnings           |  |
+| `@SafeVarargs`         | suppress variable arguments warning |  |
+| `@Retention`           | retention of annotation             | `SOURCE, CLASS, RUNTIME`  |
+| `@Target`              | target of annotation                | `ANNOTATION_TYPE, CONSTRUCTOR, FIELD, LOCAL_VARIABLE, METHOD, PACKAGE, PARAMETER, TYPE, TYPE_PARAMETER, TYPE_USE` | 
+| `@Documented`          | documented in javadoc               | |
+| `@Inherited`           | this annotation will be inherited   |  |
+| `@FunctionalInterface` | for functional interface            |  |
+| `@Repeatable`          | repeatable annotation               | |
 
 `@Target` 를 사용하면 다음과 같이 annotation 의 대상이 되는 자료형을 정할 수 있다.
 
