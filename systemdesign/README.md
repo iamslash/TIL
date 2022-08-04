@@ -58,6 +58,7 @@
   - [Control Plane, Data Plane, Management Plane](#control-plane-data-plane-management-plane)
   - [Distributed Transaction](#distributed-transaction)
   - [Observability](#observability)
+  - [Load Test](#load-test)
 - [System Design Interview](#system-design-interview)
   - [Fundamentals](#fundamentals)
   - [Design Practices](#design-practices)
@@ -566,6 +567,7 @@ API Gate Way 와 Service Mesh 의 차이는 무엇일까?
 * Schema Design
   * Document DB (embedded data model, normalized data model)
     * Schema Design in MongoDB vs Schema Design in MySQL](https://www.percona.com/blog/2013/08/01/schema-design-in-mongodb-vs-schema-design-in-mysql/)
+  * [RDBMS Schema Design](/rdbmsschemadesign/README.md)
 
 ## Cache
 
@@ -872,6 +874,10 @@ SAGAS is a long lived transaction that can be broken up into transactions.
 * [Monitoring @ TIL](essentials/Monitoring.md)
 * [Observability: 로그라고해서 다 같은 로그가 아니다(1/2)](https://netmarble.engineering/observability-logging-a/)
   * [Observability: 로그라고해서 다 같은 로그가 아니다(2/2)](https://netmarble.engineering/observability-logging-b/)
+
+## Load Test
+
+* [Load Test | TIL](/loadtest/README.md)
 
 -------
 

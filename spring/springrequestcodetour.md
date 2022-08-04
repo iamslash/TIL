@@ -1,10 +1,10 @@
 - [Summary](#summary)
-- [How to process multiple socket connects](#how-to-process-multiple-socket-connects)
-- [How HTTP Request Flow](#how-http-request-flow)
-- [How handlerMappings work](#how-handlermappings-work)
-- [How ViewResolver work](#how-viewresolver-work)
-- [How HandlerExceptionResolver work](#how-handlerexceptionresolver-work)
-  - [How "world" returned from @RestController Class](#how-world-returned-from-restcontroller-class)
+- [Spring Application Socket Connection Flow](#spring-application-socket-connection-flow)
+- [Spring Application HTTP Request Flow](#spring-application-http-request-flow)
+- [Spring Application Handler Mapping Flow](#spring-application-handler-mapping-flow)
+- [Spring Application View Rendering Flow](#spring-application-view-rendering-flow)
+- [Spring Application Exception Rendering Flow](#spring-application-exception-rendering-flow)
+- [Spring Application RestController Class HTTP Response Flow](#spring-application-restcontroller-class-http-response-flow)
 
 ----
 
@@ -28,7 +28,7 @@
 * **Handler exception resolver**: `Handler exception resolver` 는 Exception 을 처리하는 것이 이다. `DispatchServlet` 은 `private List<HandlerExceptionResolver> handlerExceptionResolvers` 를 가지고 있다.
 * **View Resolver**: `View Resolver` 는 HTML Rendering 을 처리하는 것이다. `DispatchServlet` 은 `private List<ViewResolver> viewResolvers` 를 가지고 있다.
 
-# How to process multiple socket connects
+# Spring Application Socket Connection Flow
 
 * [스프링부트는 어떻게 다중 유저 요청을 처리할까? (Tomcat9.0 Thread Pool)](https://velog.io/@sihyung92/how-does-springboot-handle-multiple-requests)
 
@@ -356,7 +356,7 @@ public class ThreadPoolExecutor extends AbstractExecutorService {
 ...        
 ```
 
-# How HTTP Request Flow
+# Spring Application HTTP Request Flow
 
 `org.apache.tomcat.embed:tomcat-embed-core` 의 `SocketProcessorBase<S>` 는 HTTP Request 를 처리하는 `Concrete Runnable Class` 이다. 
 
@@ -1615,7 +1615,7 @@ public class HelloController {
 }
 ```
 
-# How handlerMappings work
+# Spring Application Handler Mapping Flow
 
 HTTP Request 가 도착하면 `DispatcherServlet::handlerMappings` 의 `RequestMappingHandlerMapping` 은 `@Control Class` 의 `@RequestMapping Method` 들 중 적당한 것을 골라 `HandlerExecutionChain` instance 를 생성하여 리턴한다.
 
@@ -1639,7 +1639,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 URL 과 짝이 되는 `@Control Class` 의 `@RequestMapping Method` 의 모음은 이미 `AbstractHandlerMethodMapping` 의 `private final MappingRegistry mappingRegistry = new MappingRegistry()` 에 저장되어 있다. `AbstractHandlerMethodMapping` 은 `RequestMappingHandlerMapping` 의 부모이다.
 
-# How ViewResolver work
+# Spring Application View Rendering Flow
 
 `DispatchServlet` 은 `@Control Class` 의 `@RequestMapping Method` 를 호출하고 나면 결과를 `processDispatchResult` 에서 rendering 한다.
 
@@ -1706,7 +1706,7 @@ public class HelloController {
 }
 ```
 
-# How HandlerExceptionResolver work
+# Spring Application Exception Rendering Flow
 
 `DispatchServlet` 은 `@Control Class` 의 `@RequestMapping Method` 를 호출하고 나면 결과를 `processDispatchResult` 에서 Exception 을 rendering 한다.
 
@@ -1759,7 +1759,7 @@ public class DispatcherServlet extends FrameworkServlet {
 }   
 ```
 
-## How "world" returned from @RestController Class
+# Spring Application RestController Class HTTP Response Flow
 
 다음과 같은 `@RequestController Class` 를 사용하면 다른 방식으로 "world" 문자열이 HTTP Response Body 에 담겨진다.
 
