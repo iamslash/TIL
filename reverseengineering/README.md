@@ -10,3 +10,5 @@ Reverse Engineering 에 대해 적는다.
 # godbolt
 
 [godbolt](https://godbolt.org/) 를 이용하여 Web 에서 쉽게 compiled code 를 분석할 수 있다.
+
+[rmsbolt](https://gitlab.com/jgkamat/rmsbolt) 는 emacs addon 임.
