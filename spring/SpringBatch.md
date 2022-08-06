@@ -14,9 +14,10 @@
 
 # Materials
 
+* [Spring Batch - Reference Documentation | spring.io](https://docs.spring.io/spring-batch/docs/current/reference/html/index-single.html)
+  * You should read this.
 * [Spring Batch – Tasklets vs Chunks](https://www.baeldung.com/spring-batch-tasklet-chunk)
   * [src](https://github.com/eugenp/tutorials/tree/master/spring-batch)
-* [Spring Batch - Reference Documentation](https://docs.spring.io/spring-batch/docs/current/reference/html/index.html)
 * Jojoldu Spring Batch Guide
   * [src](https://github.com/jojoldu/spring-batch-in-action)
   * [1. Spring Batch 가이드 - 배치 어플리케이션이란?](https://jojoldu.tistory.com/324?category=902551)
