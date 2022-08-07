@@ -107,17 +107,7 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 
 예를 들어 `@Controller, @RequestMapping` 을 사용한 코드는 tomcat, jetty, netty, undertow 와 같은 servlet container 중 어느 것을 사용해도 많은 수정을 할 필요 없다. 즉, 여러 Spring Web MVC 들을 추상화했다고 할 수 있다.
 
-다음은 Spring Web MVC 를 추상화한 구현이다.
-
-```java
-```
-
-또한 `@Transactional` 을 사용한 코드는 JpaTransactionManager, DatasourceTransactionManager, HibernateTransactionManager 중 어느 것을 사용해도 많은 수정을 할 필요 없다. 즉, 여러 Transaction Manager 들을 추상화했다고 할 수 있다.
-
-다음은 TransactionManager 를 추상화한 구현이다.
-
-```java
-```
+또한 `@Transactional` 을 사용한 코드는 `JpaTransactionManager, DatasourceTransactionManager, HibernateTransactionManager` 중 어느 것을 사용해도 많은 수정을 할 필요 없다. 즉, 여러 Transaction Manager 들을 추상화했다고 할 수 있다.
 
 # Spring Framework Core
 

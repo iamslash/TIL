@@ -1,7 +1,6 @@
 - [Abstract](#abstract)
 - [How to run SpringApplication](#how-to-run-springapplication)
 	- [Summary](#summary)
-	- [* 너무 오래됬지만 Spring Framework 의 BeanFactory 등을 설명한다.](#-너무-오래됬지만-spring-framework-의-beanfactory-등을-설명한다)
 	- [Sequences](#sequences)
 - [How to gather WebApplicationInitializer and run them](#how-to-gather-webapplicationinitializer-and-run-them)
 - [How to read application.yml](#how-to-read-applicationyml)
@@ -19,9 +18,6 @@
 	- [Summary](#summary-4)
 	- [Sequences](#sequences-2)
 - [How to read bootstrap.yml](#how-to-read-bootstrapyml)
-- [How to process HTTP request](#how-to-process-http-request)
-- [How to process Exceptions](#how-to-process-exceptions)
-	- [Summary](#summary-5)
 
 ----
 
@@ -38,6 +34,7 @@ This is about code tour of spring-boot-2.2.6.
   * [It's a Kind of Magic: Under the Covers of Spring Boot - Brian Clozel, Stéphane Nicoll @ youtube](https://www.youtube.com/watch?v=jDchAEHIht0)
 * [Spring Framework](https://www.youtube.com/playlist?list=PLC97BDEFDCDD169D7)
   * 너무 오래됬지만 Spring Framework 의 BeanFactory 등을 설명한다.
+  
 -----
 
 `SpringApplication::run` 은 Spring Application 을 실행한다. 그리고 다음과 같은 것들을 순서대로 처리한다.
@@ -397,6 +394,7 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 		}
 	}
 ```
+
 # Beans Processing
 
 * [Spring IoC Container를 까보자 #Bean 등록은 어떻게 될까?](https://blog.woniper.net/336?category=699184)
@@ -471,9 +469,8 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 
 ## Sequences
 
-* `org.springframework.boot.SpringApplication::refresh`
-
 ```java
+// org.springframework.boot.SpringApplication::refresh
 	public ConfigurableApplicationContext run(String... args) {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
@@ -494,9 +491,8 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 			refreshContext(context);
 ```
 
-* `org.springframework.boot.SpringApplication::refreshContext`
-
 ```java
+// org.springframework.boot.SpringApplication::refreshContext
 	private void refreshContext(ConfigurableApplicationContext context) {
 		refresh(context);
 		if (this.registerShutdownHook) {
@@ -510,79 +506,8 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 	}
 ```
 
-* `org.springframework.boot.SpringApplication::refresh`
-
 ```java
-	@Override
-	public void refresh() throws BeansException, IllegalStateException {
-		synchronized (this.startupShutdownMonitor) {
-			// Prepare this context for refreshing.
-			prepareRefresh();
-
-			// Tell the subclass to refresh the internal bean factory.
-			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
-
-			// Prepare the bean factory for use in this context.
-			prepareBeanFactory(beanFactory);
-
-			try {
-				// Allows post-processing of the bean factory in context subclasses.
-				postProcessBeanFactory(beanFactory);
-
-				// Invoke factory processors registered as beans in the context.
-				invokeBeanFactoryPostProcessors(beanFactory);
-
-				// Register bean processors that intercept bean creation.
-				registerBeanPostProcessors(beanFactory);
-
-				// Initialize message source for this context.
-				initMessageSource();
-
-				// Initialize event multicaster for this context.
-				initApplicationEventMulticaster();
-
-				// Initialize other special beans in specific context subclasses.
-				onRefresh();
-
-				// Check for listener beans and register them.
-				registerListeners();
-
-				// Instantiate all remaining (non-lazy-init) singletons.
-				finishBeanFactoryInitialization(beanFactory);
-
-				// Last step: publish corresponding event.
-				finishRefresh();
-			}
-
-			catch (BeansException ex) {
-				if (logger.isWarnEnabled()) {
-					logger.warn("Exception encountered during context initialization - " +
-							"cancelling refresh attempt: " + ex);
-				}
-
-				// Destroy already created singletons to avoid dangling resources.
-				destroyBeans();
-
-				// Reset 'active' flag.
-				cancelRefresh(ex);
-
-				// Propagate exception to caller.
-				throw ex;
-			}
-
-			finally {
-				// Reset common introspection caches in Spring's core, since we
-				// might not ever need metadata for singleton beans anymore...
-				resetCommonCaches();
-			}
-		}
-	}
-```
-
-* `org.springframework.context.support.AbstractApplicationContext::refresh`
-
-```java
-
+// org.springframework.boot.SpringApplication::refresh
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
@@ -883,106 +808,4 @@ public class BootstrapApplicationListener
 		mergeDefaultProperties(environment.getPropertySources(), bootstrapProperties);
 		return context;
 	}
-```
-
-# How to process HTTP request
-
-[Spring Request Code Tour](springrequestcodetour.md)
-
-# How to process Exceptions
-
-## Summary
-
-`DispatcherServlet::doDispatch()` 는 HTTP Request 를 처리한다. `Controller` 의 `HTTP handle method` 가 실행 중 Exception 이 발생되면 `DispatcherServlet::processDispatchResult()` 에서 Exception 이 처리된다.
-
-```java
-public class DispatcherServlet extends FrameworkServlet {
-...
-	protected void doDispatch(HttpServletRequest request, HttpServletResponse response) throws Exception {
-		HttpServletRequest processedRequest = request;
-		HandlerExecutionChain mappedHandler = null;
-		boolean multipartRequestParsed = false;
-
-		WebAsyncManager asyncManager = WebAsyncUtils.getAsyncManager(request);
-
-		try {
-			ModelAndView mv = null;
-			Exception dispatchException = null;
-
-			try {
-				processedRequest = checkMultipart(request);
-				multipartRequestParsed = (processedRequest != request);
-
-				// Determine handler for the current request.
-				mappedHandler = getHandler(processedRequest);
-				if (mappedHandler == null) {
-					noHandlerFound(processedRequest, response);
-					return;
-				}
-
-				// Determine handler adapter for the current request.
-				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
-
-				// Process last-modified header, if supported by the handler.
-				String method = request.getMethod();
-				boolean isGet = "GET".equals(method);
-				if (isGet || "HEAD".equals(method)) {
-					long lastModified = ha.getLastModified(request, mappedHandler.getHandler());
-					if (new ServletWebRequest(request, response).checkNotModified(lastModified) && isGet) {
-						return;
-					}
-				}
-
-				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
-					return;
-				}
-
-				// Actually invoke the handler.
-				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
-
-				if (asyncManager.isConcurrentHandlingStarted()) {
-					return;
-				}
-
-				applyDefaultViewName(processedRequest, mv);
-				mappedHandler.applyPostHandle(processedRequest, response, mv);
-			}
-			catch (Exception ex) {
-				dispatchException = ex;
-			}
-			catch (Throwable err) {
-				// As of 4.3, we're processing Errors thrown from handler methods as well,
-				// making them available for @ExceptionHandler methods and other scenarios.
-				dispatchException = new NestedServletException("Handler dispatch failed", err);
-			}
-			processDispatchResult(processedRequest, response, mappedHandler, mv, dispatchException);
-	}
-...
-}
-```
-
-`DispatcherServlet::handlerExceptionResolvers` 를 `resolver` 로 순회하면서 `resolver.resolveException()` 을 호출한다. 
-
-```java
-public class DispatcherServlet extends FrameworkServlet {
-...
-	@Nullable
-	protected ModelAndView processHandlerException(HttpServletRequest request, HttpServletResponse response,
-			@Nullable Object handler, Exception ex) throws Exception {
-
-		// Success and error responses may use different content types
-		request.removeAttribute(HandlerMapping.PRODUCIBLE_MEDIA_TYPES_ATTRIBUTE);
-
-		// Check registered HandlerExceptionResolvers...
-		ModelAndView exMv = null;
-		if (this.handlerExceptionResolvers != null) {
-			for (HandlerExceptionResolver resolver : this.handlerExceptionResolvers) {
-				exMv = resolver.resolveException(request, response, handler, ex);
-				if (exMv != null) {
-					break;
-				}
-			}
-		}
-...
-}		
 ```

@@ -47,6 +47,8 @@
 
 # Materials
 
+* [Spring REST Docs | spring.io](https://docs.spring.io/spring-restdocs/docs/current/reference/html5/)
+  * You shoud read this.
 * [스프링 프레임워크 핵심 기술 @ inflearn](https://www.inflearn.com/course/spring-framework_core/)
   * [src](https://github.com/keesun/study/tree/master/rest-api-with-spring)
 
