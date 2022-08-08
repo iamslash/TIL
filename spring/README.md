@@ -93,7 +93,49 @@ object 를 내가 생성하지 않고 Spring Container 가 생성해서 주입�
 
 ## AOP (Aspect Oriented Programming)
 
+* [How To Implement AOP In Spring Boot Application?](https://javatechonline.com/how-to-implement-aop-in-spring-boot-application/?fbclid=IwAR2o-sGmvx-Pq9140rP8cc_GiOG_zaxi26h1qIxhJ4EamXY2z4X90_JuDN8)
+
 반복되는 코드를 분리해서 모듈화하는 프로그래밍 기법이다. 반복되는 코드를 `cross-cutting`, 분리된 모듈을 `aspect` 라고 한다. 따라서 AOP 를 적용하면 반복되는 코드를 줄일 수 있다. 이때 반복되는 코드와 같이 해야할 일들을 `advice`, 어디에 적용해야 하는지를 `pointcut`, 적용해야할 class 를 `target`, method 를 호출할 때 aspect 를 삽입하는 지점을 `joinpoint` 라고 한다. 
+
+```java
+package com.iamslash.aop;
+
+// 0. Target Class
+public class Payment {
+  // 0. Target Method
+  public void doPayment() {
+    // payment logic
+  }
+}
+
+@Aspect
+// 1. Aspect Class
+public class TransactionService {
+
+  // 2. Pointcut
+  @pointcut("execution(public void com.iamslash.aop.Payment.doPayment())")
+  public void p1() {
+  }
+
+  // 3. Advices
+  @Before("p1()")
+  public void beginTransaction() {
+        System.out.println("Transaction begins !");
+  }
+  @After("p1()")
+  public void completeTransaction() {
+        System.out.println("Transaction completes !");
+  }
+  @AfterReturning("p1()")
+  public void commitTransaction() {
+        System.out.println("Transaction committed !");
+  }
+  @AfterThrowing("p1()")
+  public void rollbackTransaction() {
+        System.out.println("Transaction rolled back !");
+  }  
+}
+```
 
 AOP 는 언어별로 다양한 구현체가 있다. java 는 주로 AspectJ 를 사용한다. 또한 AOP 는 compile, load, run time 에 적용 가능하다. 만약 Foo 라는 class 에 A 라는 aspect 를 적용한다고 해보자. 
 
