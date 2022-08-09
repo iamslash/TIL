@@ -33,6 +33,7 @@ layer 들로 구성된 architecture 이다. [Clean Architecure](/cleanarchitectu
 * 유지보수가 쉽다. 새로운 feature 를 구현할 때 패턴이 명확해서 구현이 쉽고 빠르다.  
 * 의존성이 적다. 단 하나의 레이어에만 의존성이 있다. 복잡도가 낮다. 확장이 쉽다.
 * 의존성이 적어서 테스트가 쉽다.
+* 레이어별로 동시 작업이 가능하다. 생산성이 높다.
 
 **Disadvantages**
 
@@ -172,6 +173,18 @@ src
 │   │                       ├── PartnerApiController.java
 │   │                       └── PartnerDto.java
 ```
+
+다음은 주요 특징들이다.
+
+* Controller Class 가 HTTP Request Parameters 를 mapping 한 Object 의 Class 를 DTO Class 라고 하자. DTO Class 는 Presentation Layer 에 둔다.
+* DTO Class Object 로 변환하는 Converter 를 DTO Mapper Class 라 하자. DTO Mapper Class 는 Presentation Layer 에 둔다. [mapstruct](/mapstruct/README.md) library 를 사용하면 간단한 code 로 mapper 를 구현할 수 있다.
+* Domain Layer 로 전달할 Argument Object 의 Class 를 Command Class 라고 하자. 반대로 Domain Layer 에서 Application 로 return 하는 Return Object 의 Class 를 Info Class 라고 하자. Command Class, Info Class 는 Domain Layer 에 둔다.
+* Presentation Layer 는 Domain Layer 의 의존성을 갖는다. Mapper Class 에서 Command Class, Info Class 를 참조하기 때문이다.
+* Domain Class 는 Pure 하지 않다. `@Entity` 를 부착한다. Domain Class 가 POJO 가 되려면 많은 code 를 만들어야 한다. 피하고 싶다.
+* JPA Repository Interface 는 Infrastructure Layer 에 둔다.
+* Layer 별로 독립적으로 개발하기 위해 Class 를 Interface, Implementation Class 로 분리한다. (예. OrderService, OrderServieImpl)
+* HTTP Response Error 는 CommonResponse 로 추상화 했다. ErrorCode 라는 Enum Class 를 두어 여러가지 error 별로 Class 를 두지 않았다.
+* Business Exception Class 들은 ErrorCode 를 소유한다. ErrorCode 의 모음이 하나의 Exception Class 에 대응된다. error code 가 많다고 하더라도 mapping 되는 Exception class 는 적은 것이 더 좋다. 그렇다면 BaseException 만 있어도 되는거 아닌가?
 
 ## Clean Architecture
 
