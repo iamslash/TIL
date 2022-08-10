@@ -40,6 +40,7 @@
     - [WeakMap](#weakmap)
   - [Multidimensional Array](#multidimensional-array)
   - [template literals (template strings in ECMA 2015)](#template-literals-template-strings-in-ecma-2015)
+  - [Tagged Template Literals (ES6)](#tagged-template-literals-es6)
   - [Sort](#sort)
   - [Variables](#variables)
   - [Operators](#operators)
@@ -725,6 +726,38 @@ console.log(`My name is ${first} ${last}.`);
 
 // ${} will be converted to string
 console.log(`1 + 1 = ${1 + 1}`); // "1 + 1 = 2"
+```
+
+## Tagged Template Literals (ES6)
+
+* [Tagged Template | MSDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals#tagged_templates)
+
+Template Literals 앞에 Tag 를 부착할 수 있다. Tag 는 곧 function 이다. Template Literals 는
+Tag 의 argument 로 전달된다.
+
+```js
+const person = 'Mike';
+const age = 28;
+const score = 10;
+
+function myTag(strings, personExp, ageExp, aaaExp) {
+  const str0 = strings[0]; // "That "
+  const str1 = strings[1]; // " is a "
+  const str2 = strings[2]; // "."
+
+  const ageStr = ageExp > 99 ? 'centenarian' : 'youngster';
+
+  // We can even return a string built using a template literal
+  return `${str0}${personExp}${str1}${ageStr}${str2}${aaaExp}`;
+}
+
+const thatOutput = myTag`That ${person} is a ${age}. ${score}`;
+const thisOutput = myTag`This ${person} is a ${age}. ${score}`;
+
+console.log(thatOutput);
+// That Mike is a youngster. 10
+console.log(thisOutput);
+// This Mike is a youngster. 10
 ```
 
 ## Sort
