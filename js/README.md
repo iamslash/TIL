@@ -2028,11 +2028,12 @@ await fooAsync().then(() => console.log("done"));
 
 ## import from
 
-* [When should I use curly braces for ES6 import?](https://stackoverflow.com/questions/36795819/when-should-i-use-curly-braces-for-es6-import)
+* [When should I use curly braces for ES6 import? | stackoverflow](https://stackoverflow.com/questions/36795819/when-should-i-use-curly-braces-for-es6-import)
+* [ES6 export default with multiple functions referring to each other | stackoverflow ](https://stackoverflow.com/questions/33178843/es6-export-default-with-multiple-functions-referring-to-each-other)
 
 ----
 
-default export
+**default export**
 
 ```js
 // B.js, This is default import.
@@ -2041,13 +2042,12 @@ import A from './A'
 export default 42
 
 // B.js, This doen't matter what name you assign to.
-// Because it will always resolve to whatever is the default export of A.
 import A from './A'
 import MyA from './A'
 import Something from './A'
 ```
 
-named export
+**single named export**
 
 ```js
 // B.js, This is named import called A.
@@ -2059,20 +2059,18 @@ export const A = 42
 import { A } from './A'
 import { myA } from './A' // Doesn't work!
 import { Something } from './A' // Doesn't work!
-
 // A.js, If you use those names, you have to export corresponding names.
 export const A = 42
 export const myA = 43
 export const Something = 44
 ```
 
-multiple named import
+**multiple named import**
 
 ```js
 // B.js, A module can only have one default export and
 // as many named exports as you'd like. You can import them all together:
 import A, { myA, Something } from './A'
-
 // A.js
 export default 42
 export const myA = 43
@@ -2080,6 +2078,25 @@ export const Something = 44
 
 // B.js, We can assign them all different names.
 import X, { myA as myX, Something as XSomething } from './A'
+```
+
+**multiple named function import**
+
+```js
+// util.js
+export function foo() { console.log('foo') }
+export function bar() { console.log('bar') }
+export function baz() { foo(); bar() }
+
+export default {foo, bar, baz}
+
+// A.js, using default export
+import util from './util'
+util.foo()
+
+// B.js, using named exports
+import {bar} from './util'
+bar()
 ```
 
 ## Generator function, function*
