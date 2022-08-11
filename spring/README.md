@@ -93,7 +93,11 @@ object 를 내가 생성하지 않고 Spring Container 가 생성해서 주입�
 
 ## AOP (Aspect Oriented Programming)
 
-* [How To Implement AOP In Spring Boot Application?](https://javatechonline.com/how-to-implement-aop-in-spring-boot-application/?fbclid=IwAR2o-sGmvx-Pq9140rP8cc_GiOG_zaxi26h1qIxhJ4EamXY2z4X90_JuDN8)
+> [How To Implement AOP In Spring Boot Application?](https://javatechonline.com/how-to-implement-aop-in-spring-boot-application/?fbclid=IwAR2o-sGmvx-Pq9140rP8cc_GiOG_zaxi26h1qIxhJ4EamXY2z4X90_JuDN8)
+
+![](https://javatechonline.com/ezoimgfmt/i0.wp.com/javatechonline.com/wp-content/uploads/2021/01/AOP1-2.jpg?ezimgfmt=ng%3Awebp%2Fngcb2%2Frs%3Adevice%2Frscb2-1&ssl=1&w=547)
+
+---
 
 반복되는 코드를 분리해서 모듈화하는 프로그래밍 기법이다. 반복되는 코드를 `cross-cutting`, 분리된 모듈을 `aspect` 라고 한다. 따라서 AOP 를 적용하면 반복되는 코드를 줄일 수 있다. 이때 반복되는 코드와 같이 해야할 일들을 `advice`, 어디에 적용해야 하는지를 `pointcut`, 적용해야할 class 를 `target`, method 를 호출할 때 aspect 를 삽입하는 지점을 `joinpoint` 라고 한다. 
 
