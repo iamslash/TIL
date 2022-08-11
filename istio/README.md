@@ -94,6 +94,14 @@ Istio provides these features. [Feature Status](https://istio.io/latest/docs/rel
 
 ![](img/istio_arch.png)
 
+**Pilot** 은 다음을 담당한다.
+
+
+
+**Citadel** 은 다음을 담당한다.
+
+**Gallery** 는 다음을 담당한다.
+
 ## Traffic Management
 
 Traffic Management 는 Istio 가 제공하는 많은 기능들 중 기본적인 것이다. 잘

@@ -21,6 +21,10 @@ Spring WebFlux 에 대해 정리한다.
 
 # Materials
 
+* [Kotlin & Spring : 리팩토링부터 서비스 구현까지 | fastcampus](https://fastcampus.co.kr/dev_online_kopring?utm_source=facebook&utm_medium=social&utm_campaign=prd%5E220516%5E211160&utm_content=1_3_1%5E211160&fbclid=IwAR2prWYYFMAOSmBZngZ-dPAEUCcKocYnKts8YAxBe9rSi4JP4d-UGklwNL0)
+  * [srcs](https://github.com/digimon1740?tab=repositories&q=fastcampus&type=&language=&sort=)
+* [Spring WebFlux와 Kotlin으로 만드는 Todo 서비스 - 1편 | tistory](https://devsh.tistory.com/entry/Spring-WebFlux-with-Kotlin)
+  * [Kotlin과 Spring WebFlux 기반의 컨텐츠 인증 서비스 개발 후기 | lezhin](https://tech.lezhin.com/2020/07/15/kotlin-webflux?fbclid=IwAR01SrcLJtuZs64V9IvhjXAQGGramduIzOf_g5ylrYhwjPrfpi1AR1DA3OA)
 * [Webflux로 막힘없는 프로젝트 만들기 @ ifkakao2021](https://if.kakao.com/session/107)
   * event-loop 를 당당하는 single thread 가 blocking 되면 Reactor meltdown 을 일으킨다. 그것을 해결하는 방법을 제시한다. 
   * [pdf](https://t1.kakaocdn.net/service_if_kakao_prod/file/file-1636524397590)
@@ -273,13 +277,83 @@ public class StatefulRedisConnectionImpl<K, V> extends RedisChannelHandler<K, V>
 
 ## Reactive Cache
 
-* [Spring Webflux Cache @ tistory](https://dreamchaser3.tistory.com/17)
-* [[webflux] 이미지 조회 Cache 처리 @ tistory](https://devmingsa.tistory.com/81)
-* [Using Multiple Cache Managers in Spring @ baeldung](https://www.baeldung.com/spring-multiple-cache-managers)
+* [Spring Webflux Cache | tistory](https://dreamchaser3.tistory.com/17)
+* [[webflux] 이미지 조회 Cache 처리 | tistory](https://devmingsa.tistory.com/81)
+* [Using Multiple Cache Managers in Spring | baeldung](https://www.baeldung.com/spring-multiple-cache-managers)
 
 ----
 
-WIP...
+* [Spring Webflux and @Cacheable Annotation | baeldung](https://www.baeldung.com/spring-webflux-cacheable)
+
+cache log 를 아래와 같이 켠다.
+
+```
+logging.level.org.springframework.data.mongodb.core.ReactiveMongoTemplate=DEBUG
+logging.level.org.springframework.cache=TRACE
+```
+
+WebFlux 에서 `@Cacheable` 을 사용하면 `Mono, Flux` 과 같은 Wrapper Object 를 캐싱한다. 문제가 있다.
+
+```java
+@Service
+public class ItemService {
+
+    private final ItemRepository repository;
+    ...
+
+    @Cacheable("items")
+    public Mono<Item> getItem(String id){
+        return repository.findById(id);
+    }
+
+    ...
+}
+```
+
+다음과 같이 해결한다. 그러나 이때 **Flux cache TTL** 이 `@Cacheable` 보다 커야 한다. 그렇지 않으면
+**Cache Item** 보다 **Flux** 가 먼저 사라질 수 있다.
+
+```java
+@Service
+public class ItemService {
+
+    private final ItemRepository repository;
+    ...
+
+    @Cacheable("items")
+    public Mono<Item> getItem_withCache(String id) {
+        return repository.findById(id).cache();
+    }
+
+    ...
+}
+```
+
+또한 Reactor3 addon 을 사용하면 `CacheMono, CacheFlux` 를 이용하여 다음과 같이
+해결할 수 있다.
+
+```java
+// ItemService.java
+
+@Service
+public class ItemService {
+
+    private final ItemRepository repository;
+
+    public ItemService(ItemRepository repository) {
+        this.repository = repository;
+        this.cache = Caffeine.newBuilder().build(this::getItem_withAddons);
+    }
+
+    @Cacheable("items")
+    public Mono<Item> getItem_withAddons(String id) {
+        return CacheMono.lookup(cache.asMap(), id)
+          .onCacheMissResume(() -> repository.findById(id).cast(Object.class))
+          .cast(Item.class);
+    }
+
+}
+```
 
 ## From Imperative to Reactor
 
