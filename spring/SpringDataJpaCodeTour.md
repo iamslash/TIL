@@ -29,7 +29,7 @@ JPA 는 Persistence, ORM 을 위한 API Specification 이다. JPA repo 는 [Jaka
 * execute the query.
 * transform result.
 
-`EntityManager::persist()` 가 호출되는 분을 중심으로 흐름을 이해하자. 
+`EntityManager::persist()` 가 호출되는 분을 중심으로 흐름을 이해하자. [How are Spring Data repositories actually implemented? | stackoverflow](https://stackoverflow.com/questions/38509882/how-are-spring-data-repositories-actually-implemented) 를 참고.
 
 ```java
 // com.iamslash.exjpa.post.PostService
@@ -45,6 +45,15 @@ public class PostService {
     @Transactional
     public void save(Post post) {
         postsRepository.save(post);
+
+// org.springframework.data.repository.core.support.RepositoryFactorySupport
+@Slf4j
+public abstract class RepositoryFactorySupport implements BeanClassLoaderAware, BeanFactoryAware {
+...
+		@Nullable
+		private Object doInvoke(MethodInvocation invocation) throws Throwable {
+
+			Method method = invocation.getMethod();
 
 // org.springframework.data.jpa.repository.support.SimpleJpaRepository
 @Repository
@@ -217,6 +226,63 @@ public abstract class AbstractEntityPersister
 		}
 
 		return insert.toStatementString();
+	}
+```
+
+`@Repository` Class 의 Proxy Class 는 다음과 같이 만들어 진다.
+
+```java
+// org.springframework.data.repository.core.support.RepositoryFactorySupport
+@Slf4j
+public abstract class RepositoryFactorySupport implements BeanClassLoaderAware, BeanFactoryAware {
+...
+	public <T> T getRepository(Class<T> repositoryInterface, RepositoryFragments fragments) {
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Initializing repository instance for {}…", repositoryInterface.getName());
+		}
+
+		Assert.notNull(repositoryInterface, "Repository interface must not be null!");
+		Assert.notNull(fragments, "RepositoryFragments must not be null!");
+
+		RepositoryMetadata metadata = getRepositoryMetadata(repositoryInterface);
+		RepositoryComposition composition = getRepositoryComposition(metadata, fragments);
+		RepositoryInformation information = getRepositoryInformation(metadata, composition);
+
+		validate(information, composition);
+
+		Object target = getTargetRepository(information);
+
+		// Create proxy
+		ProxyFactory result = new ProxyFactory();
+		result.setTarget(target);
+		result.setInterfaces(repositoryInterface, Repository.class, TransactionalProxy.class);
+
+		if (MethodInvocationValidator.supports(repositoryInterface)) {
+			result.addAdvice(new MethodInvocationValidator());
+		}
+
+		result.addAdvisor(ExposeInvocationInterceptor.ADVISOR);
+
+		postProcessors.forEach(processor -> processor.postProcess(result, information));
+
+		if (DefaultMethodInvokingMethodInterceptor.hasDefaultMethods(repositoryInterface)) {
+			result.addAdvice(new DefaultMethodInvokingMethodInterceptor());
+		}
+
+		ProjectionFactory projectionFactory = getProjectionFactory(classLoader, beanFactory);
+		result.addAdvice(new QueryExecutorMethodInterceptor(information, projectionFactory));
+
+		composition = composition.append(RepositoryFragment.implemented(target));
+		result.addAdvice(new ImplementationMethodExecutionInterceptor(composition));
+
+		T repository = (T) result.getProxy(classLoader);
+
+		if (LOG.isDebugEnabled()) {
+			LOG.debug("Finished creation of repository instance for {}.", repositoryInterface.getName());
+		}
+
+		return repository;
 	}
 ```
 
