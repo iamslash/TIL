@@ -7,6 +7,16 @@ Spring Data Jpa 의 code 를 분석해 본다.
 * [Spring Data JPA | github](https://github.com/spring-projects/spring-data-jpa)
 * [Understanding Spring JPA native query under the hood | stackoverflow](https://stackoverflow.com/questions/58784625/understanding-spring-jpa-native-query-under-the-hood)
 
+# JPA (Java Persistence API)
+
+* [JPA는 도대체 뭘까? (orm, 영속성, hibernate, spring-data-jpa) | velog](https://velog.io/@adam2/JPA%EB%8A%94-%EB%8F%84%EB%8D%B0%EC%B2%B4-%EB%AD%98%EA%B9%8C-orm-%EC%98%81%EC%86%8D%EC%84%B1-hibernate-spring-data-jpa)
+
+JPA 는 Persistence, ORM 을 위한 API Specification 이다. JPA repo 는 [Jakarta Persistence project | github](https://github.com/eclipse-ee4j/jpa-api) 이다.
+
+[hibernate-orm | github](https://github.com/hibernate/hibernate-orm) 는 JPA 의 implementation 이다. [Spring Data JPA](SpringDataJpa.md) 는 JPA 를 더욱 쉽게 사용하라고 Spring 에서 만든 Framework 이다. 
+
+일반적으로 우리는 Spring Application 으로 ORM 을 이용할 때 JPA 혹은 [hibernate-orm | github](https://github.com/hibernate/hibernate-orm) 를 호출하는 것보다 [Spring Data JPA](SpringDataJpa.md) 를 사용한다.
+
 # JpaRepository Class
 
 * find and extract the query from the annotation.
@@ -19,7 +29,7 @@ Spring Data Jpa 의 code 를 분석해 본다.
 * execute the query.
 * transform result.
 
-`EntityManager::persist()` 가 호출되는 부분가지 흐름을 이해하자. 
+`EntityManager::persist()` 가 호출되는 분을 중심으로 흐름을 이해하자. 
 
 ```java
 // com.iamslash.exjpa.post.PostService

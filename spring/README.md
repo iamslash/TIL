@@ -1,29 +1,21 @@
 - [Abstract](#abstract)
 - [References](#references)
 - [Materials](#materials)
-- [Feature](#feature)
-  - [IOC (Inversion Of Control)](#ioc-inversion-of-control)
-  - [DI (Dependency Injection)](#di-dependency-injection)
-  - [AOP (Aspect Oriented Programming)](#aop-aspect-oriented-programming)
-  - [PSA (Portable Service Abstraction)](#psa-portable-service-abstraction)
-- [Spring Framework Core](#spring-framework-core)
-- [Spring Boot](#spring-boot)
-- [Spring Web MVC](#spring-web-mvc)
-- [Spring Data JPA](#spring-data-jpa)
-- [Spring REST API](#spring-rest-api)
-- [Spring Security](#spring-security)
-- [Spring Example Application](#spring-example-application)
-- [Spring Batch](#spring-batch)
-- [Examples](#examples)
-  - [Spring Elasticsearch](#spring-elasticsearch)
-  - [Spring Kafka](#spring-kafka)
-  - [Spring memcached](#spring-memcached)
-  - [Spring MongoDB](#spring-mongodb)
-  - [Spring MySQL](#spring-mysql)
-  - [Spring Postgres](#spring-postgres)
-  - [Spring redis](#spring-redis)
-  - [Spring ldap](#spring-ldap)
-- [Tips](#tips)
+- [Basic](#basic)
+  - [Feature](#feature)
+    - [IOC (Inversion Of Control)](#ioc-inversion-of-control)
+    - [DI (Dependency Injection)](#di-dependency-injection)
+    - [AOP (Aspect Oriented Programming)](#aop-aspect-oriented-programming)
+    - [PSA (Portable Service Abstraction)](#psa-portable-service-abstraction)
+  - [Spring Framework Core](#spring-framework-core)
+  - [Spring Boot](#spring-boot)
+  - [Spring Web MVC](#spring-web-mvc)
+  - [Spring Data JPA](#spring-data-jpa)
+  - [Spring REST API](#spring-rest-api)
+  - [Spring Security](#spring-security)
+  - [Spring Batch](#spring-batch)
+  - [Spring Example Application](#spring-example-application)
+- [Advanced](#advanced)
   - [Active profile](#active-profile)
   - [Test Active profile](#test-active-profile)
   - [@ConfigurationProperties](#configurationproperties)
@@ -74,24 +66,26 @@ spring framework 에 대해 정리한다.
   - 유료이긴 하지만 유용하다
 - [스프링 레퍼런스 번역](https://blog.outsider.ne.kr/category/JAVA?page=1)
 
-# Feature
+# Basic
 
-## IOC (Inversion Of Control)
+## Feature
+
+### IOC (Inversion Of Control)
 
 * [IOC 와 DI 에 대해서 @ tistory](https://mo-world.tistory.com/entry/IOC%EC%99%80-DI-%EC%97%90-%EB%8C%80%ED%95%98%EC%97%AC-%EC%8A%A4%ED%94%84%EB%A7%81-%EA%B0%9C%EB%85%90-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-%EC%89%BD%EA%B2%8C-%EC%84%A4%EB%AA%85)
 
 ----
 
-Spring Container 가 코드의 흐름을 제어할 수 있다. 즉, 내가 코드의 흐름을 제어하는 것을
-Spring Container 가 가져갔다고 해서 inversion of control 이라고 한다.
-Spring Container 가 object 의 life cycle 을 나 대신 관리한다. 
-IOC 때문에 DI, AOP 가 가능하다.
+Spring Container 가 코드의 흐름을 제어할 수 있다. 즉, 내가 코드의 흐름을
+제어하는 것을 Spring Container 가 가져갔다고 해서 IOC (Inversion Of Control)
+라고 한다. Spring Container 가 object 의 life cycle 을 나 대신 관리한다. IOC
+때문에 DI, AOP 가 가능하다.
 
-## DI (Dependency Injection)
+### DI (Dependency Injection)
 
 object 를 내가 생성하지 않고 Spring Container 가 생성해서 주입해준다.
 
-## AOP (Aspect Oriented Programming)
+### AOP (Aspect Oriented Programming)
 
 > [How To Implement AOP In Spring Boot Application?](https://javatechonline.com/how-to-implement-aop-in-spring-boot-application/?fbclid=IwAR2o-sGmvx-Pq9140rP8cc_GiOG_zaxi26h1qIxhJ4EamXY2z4X90_JuDN8)
 
@@ -147,7 +141,7 @@ AOP 는 언어별로 다양한 구현체가 있다. java 는 주로 AspectJ 를 
 * load time 에 AOP 를 적용한다면 VM 이 Foo 를 load 할 때 aspect 가 적용된 Foo 를 메모리에 로드한다. 이것을 AOP weaving 이라고 한다. AOP weaving 을 위해서는 agent 를 포함하여 복잡한 설정을 해야 한다.
 * rum time 에 AOP 를 적용한다면 VM 이 Foo 를 실행할 때 aspect 를 적용한다. 수행성능은 load time 과 비슷할 것이다. 대신 복잡한 설정이 필요없다.
 
-## PSA (Portable Service Abstraction)
+### PSA (Portable Service Abstraction)
 
 annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수 있다.
 
@@ -155,88 +149,39 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 
 또한 `@Transactional` 을 사용한 코드는 `JpaTransactionManager, DatasourceTransactionManager, HibernateTransactionManager` 중 어느 것을 사용해도 많은 수정을 할 필요 없다. 즉, 여러 Transaction Manager 들을 추상화했다고 할 수 있다.
 
-# Spring Framework Core
+## Spring Framework Core
 
 [Spring Framework Core](SpringFrameworkCore.md)
 
-# Spring Boot
+## Spring Boot
 
 [Spring Boot](SpringBoot.md)
 
-# Spring Web MVC
+## Spring Web MVC
 
 [Spring Web MVC](SpringWebMvc.md)
 
-# Spring Data JPA
+## Spring Data JPA
 
 [Spring Data JPA](SpringDataJpa.md)
 
-# Spring REST API
+## Spring REST API
 
 [Spring REST API](SpringRestApi.md)
 
-# Spring Security
+## Spring Security
 
 [Spring Security](SpringSecurity.md)
 
-# Spring Example Application
+## Spring Batch
+
+[Spring Batch](SpringBatch.md)
+
+## Spring Example Application
 
 [Spring JPA Example](SpringExampleApplication.md)
 
-# Spring Batch
-
-* [Creating a Batch Service](https://spring.io/guides/gs/batch-processing/)
-  * [src](https://github.com/spring-guides/gs-batch-processing)
-* [1. Spring Batch 가이드 - 배치 어플리케이션이란?](https://jojoldu.tistory.com/324?category=902551)
-  * [2. Spring Batch 가이드 - Batch Job 실행해보기](https://jojoldu.tistory.com/325)
-  * [src](https://github.com/jojoldu/spring-batch-in-action)
-* [Spring Batch](https://spring.io/projects/spring-batch)
-
-----
-
-[Spring Batch @ TIL](SpringBatch.md)
-
-# Examples
-
-## Spring Elasticsearch
-
-* [exelasticsearch](https://github.com/iamslash/spring-examples/tree/master/exelasticsearch/)
-
-## Spring Kafka
-
-* [exkafka](https://github.com/iamslash/spring-examples/tree/master/exkafka/)
-* [Spring Kafka Non-Blocking Retries and Dead Letter Topics](https://evgeniy-khist.github.io/spring-kafka-non-blocking-retries-and-dlt/)
-  * [src](https://github.com/evgeniy-khist/spring-kafka-non-blocking-retries-and-dlt)
-
-----
-
-* [Spring Kafka](springkafka.md)
-
-## Spring memcached
-
-* [exmemcached](https://github.com/iamslash/spring-examples/tree/master/exmemcached/)
-
-## Spring MongoDB
-
-* [exmongodb]()
-
-## Spring MySQL
-
-* [exmysql]()
-
-## Spring Postgres
-
-* [expostgresql]()
-
-## Spring redis
-
-* [exredis]()
-
-## Spring ldap
-
-* [exldap]()
-
-# Tips
+# Advanced
 
 ## Active profile
 
@@ -1173,8 +1118,6 @@ Spring WebFlux 라면 문제 없는가??? suspend function 은 Single Thread 에
 
 Exception 을 Json 으로 변환해서 HTTP Reponse 로 보내주는 Library 이다. 
 
-* [ex-problem](https://github.com/iamslash/spring-ex/tree/master/ex-problem)
-
 ## Spring Retry
 
-* [Spring Retry @ TIL](springretry.md)
+* [Spring Retry @ TIL](SpringRetry.md)

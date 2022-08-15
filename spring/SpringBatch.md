@@ -14,6 +14,9 @@
 
 # Materials
 
+* [Creating a Batch Service](https://spring.io/guides/gs/batch-processing/)
+  * [src](https://github.com/spring-guides/gs-batch-processing)
+* [Spring Batch | spring.io](https://spring.io/projects/spring-batch)
 * [Spring Batch - Reference Documentation | spring.io](https://docs.spring.io/spring-batch/docs/current/reference/html/index-single.html)
   * You should read this.
 * [Spring Batch – Tasklets vs Chunks](https://www.baeldung.com/spring-batch-tasklet-chunk)
