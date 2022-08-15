@@ -19,7 +19,7 @@ Spring Data Jpa 의 code 를 분석해 본다.
 * execute the query.
 * transform result.
 
-`EntityManager::persist()` 가 호출되는 부분가지 흐름을 이해하자.
+`EntityManager::persist()` 가 호출되는 부분가지 흐름을 이해하자. 
 
 ```java
 // com.iamslash.exjpa.post.PostService
@@ -71,6 +71,143 @@ public abstract class AbstractEntityPersister
 		else {
 			// For the case of dynamic-insert="false", use the static SQL
 			id = insert( fields, getPropertyInsertability(), getSQLIdentityInsertString(), object, session );
+```
+
+`AbstractEntityPersister::sqlIdentityInsertString` 는 insert SQL 를 갖고 있다. Spring Application 이 시작할 때 `AbstractEntityPersister::sqlIdentityInsertString` 를 채운다.
+
+```java
+// org.hibernate.persister.entity.AbstractEntityPersister
+public abstract class AbstractEntityPersister
+		implements OuterJoinLoadable, Queryable, ClassMetadata, UniqueKeyLoadable,
+		SQLLoadable, LazyPropertyInitializer, PostInsertIdentityPersister, Lockable {
+...
+	public final void postInstantiate() throws MappingException {
+		doLateInit();
+
+// org.hibernate.persister.entity.AbstractEntityPersister
+public abstract class AbstractEntityPersister
+		implements OuterJoinLoadable, Queryable, ClassMetadata, UniqueKeyLoadable,
+		SQLLoadable, LazyPropertyInitializer, PostInsertIdentityPersister, Lockable {
+...
+	private void doLateInit() {
+		//insert/update/delete SQL
+		final int joinSpan = getTableSpan();
+		sqlDeleteStrings = new String[joinSpan];
+		sqlInsertStrings = new String[joinSpan];
+		sqlUpdateStrings = new String[joinSpan];
+		sqlLazyUpdateStrings = new String[joinSpan];
+
+		sqlUpdateByRowIdString = rowIdName == null ?
+				null :
+				generateUpdateString( getPropertyUpdateability(), 0, true );
+		sqlLazyUpdateByRowIdString = rowIdName == null ?
+				null :
+				generateUpdateString( getNonLazyPropertyUpdateability(), 0, true );
+
+		for ( int j = 0; j < joinSpan; j++ ) {
+			sqlInsertStrings[j] = customSQLInsert[j] == null ?
+					generateInsertString( getPropertyInsertability(), j ) :
+						substituteBrackets( customSQLInsert[j]);
+			sqlUpdateStrings[j] = customSQLUpdate[j] == null ?
+					generateUpdateString( getPropertyUpdateability(), j, false ) :
+						substituteBrackets( customSQLUpdate[j]);
+			sqlLazyUpdateStrings[j] = customSQLUpdate[j] == null ?
+					generateUpdateString( getNonLazyPropertyUpdateability(), j, false ) :
+						substituteBrackets( customSQLUpdate[j]);
+			sqlDeleteStrings[j] = customSQLDelete[j] == null ?
+					generateDeleteString( j ) :
+						substituteBrackets( customSQLDelete[j]);
+		}
+
+		tableHasColumns = new boolean[joinSpan];
+		for ( int j = 0; j < joinSpan; j++ ) {
+			tableHasColumns[j] = sqlUpdateStrings[j] != null;
+		}
+
+		//select SQL
+		sqlSnapshotSelectString = generateSnapshotSelectString();
+		sqlLazySelectStringsByFetchGroup = generateLazySelectStringsByFetchGroup();
+		sqlVersionSelectString = generateSelectVersionString();
+		if ( hasInsertGeneratedProperties() ) {
+			sqlInsertGeneratedValuesSelectString = generateInsertGeneratedValuesSelectString();
+		}
+		if ( hasUpdateGeneratedProperties() ) {
+			sqlUpdateGeneratedValuesSelectString = generateUpdateGeneratedValuesSelectString();
+		}
+		if ( isIdentifierAssignedByInsert() ) {
+			identityDelegate = ( (PostInsertIdentifierGenerator) getIdentifierGenerator() )
+					.getInsertGeneratedIdentifierDelegate( this, getFactory().getDialect(), useGetGeneratedKeys() );
+			sqlIdentityInsertString = customSQLInsert[0] == null
+					? generateIdentityInsertString( getPropertyInsertability() )
+
+// org.hibernate.persister.entity.AbstractEntityPersister
+public abstract class AbstractEntityPersister
+		implements OuterJoinLoadable, Queryable, ClassMetadata, UniqueKeyLoadable,
+		SQLLoadable, LazyPropertyInitializer, PostInsertIdentityPersister, Lockable {
+...
+	public String generateIdentityInsertString(boolean[] includeProperty) {
+		Insert insert = identityDelegate.prepareIdentifierGeneratingInsert();
+		insert.setTableName( getTableName( 0 ) );
+
+		// add normal properties except lobs
+		for ( int i = 0; i < entityMetamodel.getPropertySpan(); i++ ) {
+			if ( isPropertyOfTable( i, 0 ) && !lobProperties.contains( i ) ) {
+				final InDatabaseValueGenerationStrategy generationStrategy = entityMetamodel.getInDatabaseValueGenerationStrategies()[i];
+
+				if ( includeProperty[i] ) {
+					insert.addColumns(
+							getPropertyColumnNames( i ),
+							propertyColumnInsertable[i],
+							propertyColumnWriters[i]
+					);
+				}
+				else if ( generationStrategy != null &&
+						generationStrategy.getGenerationTiming().includesInsert() &&
+						generationStrategy.referenceColumnsInSql() ) {
+
+					final String[] values;
+
+					if ( generationStrategy.getReferencedColumnValues() == null ) {
+						values = propertyColumnWriters[i];
+					}
+					else {
+						values = new String[propertyColumnWriters[i].length];
+
+						for ( int j = 0; j < values.length; j++ ) {
+							values[j] = ( generationStrategy.getReferencedColumnValues()[j] != null ) ?
+									generationStrategy.getReferencedColumnValues()[j] :
+									propertyColumnWriters[i][j];
+						}
+					}
+					insert.addColumns(
+							getPropertyColumnNames( i ),
+							propertyColumnInsertable[i],
+							values
+					);
+				}
+			}
+		}
+
+		// HHH-4635 & HHH-8103
+		// Oracle expects all Lob properties to be last in inserts
+		// and updates.  Insert them at the end.
+		for ( int i : lobProperties ) {
+			if ( includeProperty[i] && isPropertyOfTable( i, 0 ) ) {
+				insert.addColumns( getPropertyColumnNames( i ), propertyColumnInsertable[i], propertyColumnWriters[i] );
+			}
+		}
+
+		// add the discriminator
+		addDiscriminatorToInsert( insert );
+
+		// delegate already handles PK columns
+
+		if ( getFactory().getSessionFactoryOptions().isCommentsEnabled() ) {
+			insert.setComment( "insert " + getEntityName() );
+		}
+
+		return insert.toStatementString();
+	}
 ```
 
 # @Transactional Class
