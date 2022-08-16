@@ -165,11 +165,14 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 
 ## Spring Framework Core
 
-[Spring Framework Core](SpringFrameworkCore.md)
+* [Spring Framework Core](SpringFrameworkCore.md)
+* [Spring Framework Core Code Tour](SpringFrameworkCoreCodeTour.md)
+* [Spring HTTP Request Code Tour](SpringReqCodeTour.md)
 
 ## Spring Boot
 
-[Spring Boot](SpringBoot.md)
+* [Spring Boot](SpringBoot.md)
+* [Spring Boot Code Tour](SpringBootCodeTour.md)
 
 ## Spring Web MVC
 
@@ -177,7 +180,8 @@ annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수
 
 ## Spring Data JPA
 
-[Spring Data JPA](SpringDataJpa.md)
+* [Spring Data JPA](SpringDataJpa.md)
+* [Spring Data JPA Code Tour](SpringDataJpaCodeTour.md)
 
 ## Spring REST API
 
