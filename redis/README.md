@@ -55,6 +55,7 @@ redis 에 대해 정리한다.
 
 # Materials
 
+* [Redis Explained](https://architecturenotes.co/redis/?fbclid=IwAR1AcotTilYd-Uq7_OkHW-vazZQuk9EWCteukDycO5kIPn45NQhJfqceI5c)
 * [[우아한테크세미나] 191121 우아한레디스 by 강대명님](https://www.youtube.com/watch?v=mPB2CZiAkKM) 
 * [강대명 <대용량 서버 구축을 위한 Memcached와 Redis>](https://americanopeople.tistory.com/177)
 * [대용량 서버 구축을 위한 Memcached와 Redis](http://www.hanbit.co.kr/store/books/look.php?p_code=E1904063627)
