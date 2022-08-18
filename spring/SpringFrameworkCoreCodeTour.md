@@ -1,10 +1,10 @@
 - [Reading `application.yml` Flow](#reading-applicationyml-flow)
 - [How Event Handler Works](#how-event-handler-works)
 - [How ApplicationRunner Works](#how-applicationrunner-works)
-- [How To Process Beans](#how-to-process-beans)
-- [How To Register Beans](#how-to-register-beans)
-- [How To Instantiate Bean](#how-to-instantiate-bean)
-- [How To Get Bean](#how-to-get-bean)
+- [Big Picture For Bean](#big-picture-for-bean)
+- [Reading Bean](#reading-bean)
+- [Registering Beans](#registering-beans)
+- [Instantiating Bean](#instantiating-bean)
 
 ----
 
@@ -237,7 +237,7 @@ public class SpringApplication {
 	}
 ```
 
-# How To Process Beans
+# Big Picture For Bean
 
 * [Spring IoC Container를 까보자 #Bean 등록은 어떻게 될까?](https://blog.woniper.net/336?category=699184)
 
@@ -300,7 +300,71 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 @enduml
 ```
 
-# How To Register Beans
+# Reading Bean
+
+`ListableBeanFactory::getBeansWithAnnotation()` 으로 특정 Bean 을 읽어올 수 있다.
+
+```java
+// org.springframework.boot.context.properties.ConfigurationPropertiesBean
+public final class ConfigurationPropertiesBean {
+...
+	public static Map<String, ConfigurationPropertiesBean> getAll(ApplicationContext applicationContext) {
+		Assert.notNull(applicationContext, "ApplicationContext must not be null");
+		if (applicationContext instanceof ConfigurableApplicationContext) {
+			return getAll((ConfigurableApplicationContext) applicationContext);
+		}
+		Map<String, ConfigurationPropertiesBean> propertiesBeans = new LinkedHashMap<>();
+		applicationContext.getBeansWithAnnotation(ConfigurationProperties.class)
+				.forEach((beanName, bean) -> propertiesBeans.put(beanName, get(applicationContext, bean, beanName)));
+
+// org.springframework.context.ApplicationContext
+public interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
+		MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
+
+// org.springframework.beans.factory.ListableBeanFactory
+public interface ListableBeanFactory extends BeanFactory {
+...
+	Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws BeansException;
+
+// org.springframework.beans.factory.support.DefaultListableBeanFactory
+public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
+		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
+...
+	@Override
+	public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) {
+		String[] beanNames = getBeanNamesForAnnotation(annotationType);
+
+// org.springframework.beans.factory.support.DefaultListableBeanFactory
+public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
+		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
+...
+	@Override
+	public String[] getBeanNamesForAnnotation(Class<? extends Annotation> annotationType) {
+		List<String> result = new ArrayList<>();
+		for (String beanName : this.beanDefinitionNames) {
+			BeanDefinition beanDefinition = getBeanDefinition(beanName);
+			if (!beanDefinition.isAbstract() && findAnnotationOnBean(beanName, annotationType) != null) {
+
+// org.springframework.beans.factory.support.DefaultListableBeanFactory
+public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
+		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
+...
+	@Override
+	@Nullable
+	public <A extends Annotation> A findAnnotationOnBean(String beanName, Class<A> annotationType)
+			throws NoSuchBeanDefinitionException {
+
+		return findMergedAnnotationOnBean(beanName, annotationType)
+				.synthesize(MergedAnnotation::isPresent).orElse(null);
+
+// org.springframework.beans.factory.support.DefaultListableBeanFactory
+public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
+		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
+...
+
+```
+
+# Registering Beans
 
 * `DefaultListableBeanFactory.registerBeanDefinition` register bean-name, bean-definition to `Map<String, BeanDefinition>`.
 
@@ -405,71 +469,7 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 	}
 ```
 
-# How To Instantiate Bean
+# Instantiating Bean
 
 * `AnnotationConfigApplicationContext::getBean()` starts to instantiate Bean.
 * `AbstractBeanFactory.doGetBean` instantiate Bean.
-
-# How To Get Bean
-
-`ListableBeanFactory::getBeansWithAnnotation()` 으로 특정 Bean 을 읽어올 수 있다.
-
-```java
-// org.springframework.boot.context.properties.ConfigurationPropertiesBean
-public final class ConfigurationPropertiesBean {
-...
-	public static Map<String, ConfigurationPropertiesBean> getAll(ApplicationContext applicationContext) {
-		Assert.notNull(applicationContext, "ApplicationContext must not be null");
-		if (applicationContext instanceof ConfigurableApplicationContext) {
-			return getAll((ConfigurableApplicationContext) applicationContext);
-		}
-		Map<String, ConfigurationPropertiesBean> propertiesBeans = new LinkedHashMap<>();
-		applicationContext.getBeansWithAnnotation(ConfigurationProperties.class)
-				.forEach((beanName, bean) -> propertiesBeans.put(beanName, get(applicationContext, bean, beanName)));
-
-// org.springframework.context.ApplicationContext
-public interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
-		MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
-
-// org.springframework.beans.factory.ListableBeanFactory
-public interface ListableBeanFactory extends BeanFactory {
-...
-	Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws BeansException;
-
-// org.springframework.beans.factory.support.DefaultListableBeanFactory
-public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
-		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
-...
-	@Override
-	public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) {
-		String[] beanNames = getBeanNamesForAnnotation(annotationType);
-
-// org.springframework.beans.factory.support.DefaultListableBeanFactory
-public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
-		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
-...
-	@Override
-	public String[] getBeanNamesForAnnotation(Class<? extends Annotation> annotationType) {
-		List<String> result = new ArrayList<>();
-		for (String beanName : this.beanDefinitionNames) {
-			BeanDefinition beanDefinition = getBeanDefinition(beanName);
-			if (!beanDefinition.isAbstract() && findAnnotationOnBean(beanName, annotationType) != null) {
-
-// org.springframework.beans.factory.support.DefaultListableBeanFactory
-public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
-		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
-...
-	@Override
-	@Nullable
-	public <A extends Annotation> A findAnnotationOnBean(String beanName, Class<A> annotationType)
-			throws NoSuchBeanDefinitionException {
-
-		return findMergedAnnotationOnBean(beanName, annotationType)
-				.synthesize(MergedAnnotation::isPresent).orElse(null);
-
-// org.springframework.beans.factory.support.DefaultListableBeanFactory
-public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
-		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
-...
-
-```

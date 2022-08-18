@@ -1055,7 +1055,6 @@ public final class ApplicationFilterChain implements FilterChain {
 ...
 }
 
-
 // org.springframework.web.filter.OncePerRequestFilter
 public abstract class OncePerRequestFilter extends GenericFilterBean {
 ...
@@ -1111,7 +1110,6 @@ public class RequestContextFilter extends OncePerRequestFilter {
 			filterChain.doFilter(request, response);
 ...
 }
-
 
 // org.apache.catalina.core.ApplicationFilterChain
 public final class ApplicationFilterChain implements FilterChain {
@@ -1175,7 +1173,6 @@ public final class ApplicationFilterChain implements FilterChain {
                     filter.doFilter(request, response, this);
 ...
 }
-
 
 // org.springframework.web.filter.OncePerRequestFilter
 public abstract class OncePerRequestFilter extends GenericFilterBean {

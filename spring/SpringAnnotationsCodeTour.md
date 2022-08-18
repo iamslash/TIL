@@ -25,7 +25,14 @@ Spring Application 은 어떻게 Annotation 을 다루고 있는지 살펴보자
 다루는 방법은 다음과 같은 것들이 있다.
 
 * `Processor` Class 를 상속한 Class 를 정의해서 특정 Annotation 을 구현한다.
-  * 아래의 예는 `@Foo` Class 를 처리하고 있다. [java_annotation](/java/java_annotation.md#annotation-processing) 참고.
+* Class 에 부착된 Annotation 을 읽어와서 특정 Annotation 과 약속한 일을
+  수행한다. 
+  * `@ComponentScan` 를 사용하면 그 Annotation 을 읽어와서 attributes 를 얻어온다. 그리고 component scanning 대상을 확인한다. [@ComponentScan](#componentscan) 참고.
+* 특정 Class 의 Instance 를 Bean 으로 등록할 때 Proxy Class 의 Instance 를 만들어서
+  그것을 Bean 으로 등록한다. (AOP)  
+  * `@Repository` 을 사용하면 그것이 부착된 Class 를 Proxy Class 로 감싸서 AOP 를 구현한다. [@Repository](#repository) 참고.
+ 
+아래의 예는 `@Foo` Class 를 Compile Time 에 조작하는 것이다. [JAVA Annotation Processing](/java/java_annotation.md#annotation-processing) 참고.
 
 ```java
 public class FooProcessor implements Processor {
@@ -53,27 +60,11 @@ public class FooProcessor implements Processor {
 }
 ```
 
-* Class 에 부착된 Annotation 을 읽어와서 특정 Annotation 에 약속된 일을
-  수행한다. 
-  * 아래의 예는 `@ComponentScan` Annotation 을 `ComponentScan.class` 로 특정하고 있다.
-
-```java
-// org.springframework.context.annotation.ConfigurationClassParser
-class ConfigurationClassParser {
-...
-	@Nullable
-	protected final SourceClass doProcessConfigurationClass(
-			ConfigurationClass configClass, SourceClass sourceClass, Predicate<String> filter)
-		// Process any @ComponentScan annotations
-		Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
-				sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
-```
-
 # Reading Merged Annotions Flow
 
 기본적으로 Class 의 Annotation 을 `getAnnotations()` 로 읽어오면 그 Class 에
 부착된 Annotation 만 읽어온다. 부착된 Annotation 에 부착된 Annotation 을
-읽어오려면 Annotation Graph 를 만들어서 읽어야 한다. [JavaAnnotations](/java/java_annotation.md#merged-annotations) 참고
+읽어오려면 Annotation Graph 를 만들어서 읽어야 한다. [Java Annotations Merged Annotations](/java/java_annotation.md#merged-annotations) 참고.
 
 `@SpringBootApplication` 은 다음과 같이 정의되어 있다. `@interface SpringBootApplication` 에 부착된 Annotation 들을 어떻게 읽어오는 걸까?
 

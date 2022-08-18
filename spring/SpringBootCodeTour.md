@@ -1,7 +1,5 @@
 - [Abstract](#abstract)
 - [SpringApplication Lifecycle](#springapplication-lifecycle)
-	- [Summary](#summary)
-	- [Sequences](#sequences)
 - [How To Gather WebApplicationInitializer And Run Them](#how-to-gather-webapplicationinitializer-and-run-them)
 - [Auto Configuration](#auto-configuration)
 - [Reading `bootstrap.yml` Flow](#reading-bootstrapyml-flow)
@@ -13,8 +11,6 @@
 This is about code tour of spring-boot-2.2.6.
 
 # SpringApplication Lifecycle
-
-## Summary
 
 * [Analysis of SpringBoot startup process](https://programmer.group/analysis-of-springboot-startup-process.html)
   * Sequence Diagram 이 있음.
@@ -39,11 +35,9 @@ This is about code tour of spring-boot-2.2.6.
 * Loop
 * Return ApplicationContext reference (IOC container)
 
-## Sequences
-
-* `/org/springframework/boot/SpringApplication::run`
-
 ```java
+// /org/springframework/boot/SpringApplication::run
+
 	/**
 	 * Run the Spring application, creating and refreshing a new
 	 * {@link ApplicationContext}.
@@ -159,15 +153,14 @@ org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration,\
 org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration,\
 ```
 
-[Spring Annotations Code Tour @EnableAutoConfiguration](SpringAnnotationsCodeTour.md#enableautoconfiguration)
+[Spring Annotations Code Tour @EnableAutoConfiguration](SpringAnnotationsCodeTour.md#enableautoconfiguration) 참고.
 
 # Reading `bootstrap.yml` Flow
 
 * Should have spring-cloud-commons-2.2.2.RELEASE.jar
 
-* `org.springframework.cloud.bootstrap.BootstrapApplicationListener`
-
 ```java
+// org.springframework.cloud.bootstrap.BootstrapApplicationListener
 public class BootstrapApplicationListener
 		implements ApplicationListener<ApplicationEnvironmentPreparedEvent>, Ordered {
 
@@ -187,11 +180,8 @@ public class BootstrapApplicationListener
 	public static final String DEFAULT_PROPERTIES = "springCloudDefaultProperties";
 
 	private int order = DEFAULT_ORDER;
-```
 
-* `org.springframework.boot.SpringApplication::run`
-
-```java
+// org.springframework.boot.SpringApplication::run
 	public ConfigurableApplicationContext run(String... args) {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
@@ -203,11 +193,8 @@ public class BootstrapApplicationListener
 		try {
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
-```
 
-* `org.springframework.cloud.bootstrap.BootstrapApplicationListener::onApplicationEvent`
-
-```java
+// org.springframework.cloud.bootstrap.BootstrapApplicationListener::onApplicationEvent
 	@Override
 	public void onApplicationEvent(ApplicationEnvironmentPreparedEvent event) {
 		ConfigurableEnvironment environment = event.getEnvironment();
@@ -239,11 +226,8 @@ public class BootstrapApplicationListener
 
 		apply(context, event.getSpringApplication(), environment);
 	}
-```
 
-* `org.springframework.cloud.bootstrap.BootstrapApplicationListener::bootstrapServiceContext`
-
-```java
+// org.springframework.cloud.bootstrap.BootstrapApplicationListener::bootstrapServiceContext
 	private ConfigurableApplicationContext bootstrapServiceContext(
 			ConfigurableEnvironment environment, final SpringApplication application,
 			String configName) {
