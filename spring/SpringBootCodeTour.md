@@ -1,12 +1,10 @@
 - [Abstract](#abstract)
-- [How To Run SpringApplication](#how-to-run-springapplication)
+- [SpringApplication Lifecycle](#springapplication-lifecycle)
 	- [Summary](#summary)
 	- [Sequences](#sequences)
 - [How To Gather WebApplicationInitializer And Run Them](#how-to-gather-webapplicationinitializer-and-run-them)
-- [How autoconfigure Works](#how-autoconfigure-works)
-	- [Summary](#summary-1)
-	- [Sequences](#sequences-1)
-- [How To Read Bootstrap.yml](#how-to-read-bootstrapyml)
+- [Auto Configuration](#auto-configuration)
+- [Reading `bootstrap.yml` Flow](#reading-bootstrapyml-flow)
 
 ----
 
@@ -14,10 +12,12 @@
 
 This is about code tour of spring-boot-2.2.6.
 
-# How To Run SpringApplication
+# SpringApplication Lifecycle
 
 ## Summary
 
+* [Analysis of SpringBoot startup process](https://programmer.group/analysis-of-springboot-startup-process.html)
+  * Sequence Diagram 이 있음.
 * [How Spring Boot works internally @ youtube](https://www.youtube.com/watch?v=2K9ZtPL5r6A)
 * [It's a kind of magic: under the covers of Spring Boot by Stéphane Nicoll & Andy Wilkinson @ youtube](https://www.youtube.com/watch?v=uof5h-j0IeE)
   * [It's a Kind of Magic: Under the Covers of Spring Boot - Brian Clozel, Stéphane Nicoll @ youtube](https://www.youtube.com/watch?v=jDchAEHIht0)
@@ -34,7 +34,7 @@ This is about code tour of spring-boot-2.2.6.
 * Start the IOC container
 * Refresh context
 * StopWatch ends
-* Tigger Listeners
+* Trigger Listeners
 * Trigger Runners
 * Loop
 * Return ApplicationContext reference (IOC container)
@@ -138,9 +138,7 @@ This is about code tour of spring-boot-2.2.6.
 	}
 ```
 
-# How autoconfigure Works
-
-## Summary
+# Auto Configuration
 
 * [How Spring Boot works internally @ youtube](https://www.youtube.com/watch?v=2K9ZtPL5r6A)
   * `spring-kafka` 가 어떻게 `autoconfigure` 되는지 설명함.
@@ -161,51 +159,9 @@ org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration,\
 org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration,\
 ```
 
-## Sequences
+[Spring Annotations Code Tour @EnableAutoConfiguration](SpringAnnotationsCodeTour.md#enableautoconfiguration)
 
-`FACTORIES_RESOURCE_LOCATION` 에 `spring.factories` 파일 경로가 hard coding 되어 있다.
-
-```java
-// org.springframework.core.io.support.SpringFactoriesLoader
-public final class SpringFactoriesLoader {
-
-	/**
-	 * The location to look for factories.
-	 * <p>Can be present in multiple JAR files.
-	 */
-	public static final String FACTORIES_RESOURCE_LOCATION = "META-INF/spring.factories";
-
-...
-}
-```
-
-`loadFactoryNames` 에서 classpath 에 포함된 `spring.factories` 파일들을 로딩한다.
- 
-```java
-// org.springframework.core.io.support.SpringFactoriesLoader
-public final class SpringFactoriesLoader {
-...	
-	public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader) {
-		ClassLoader classLoaderToUse = classLoader;
-		if (classLoaderToUse == null) {
-			classLoaderToUse = SpringFactoriesLoader.class.getClassLoader();
-		}
-		String factoryTypeName = factoryType.getName();
-		return loadSpringFactories(classLoaderToUse).getOrDefault(factoryTypeName, Collections.emptyList());
-	}
-
-	private static Map<String, List<String>> loadSpringFactories(ClassLoader classLoader) {
-		Map<String, List<String>> result = cache.get(classLoader);
-		if (result != null) {
-			return result;
-		}
-
-		result = new HashMap<>();
-		try {
-			Enumeration<URL> urls = classLoader.getResources(FACTORIES_RESOURCE_LOCATION);
-```
-
-# How To Read Bootstrap.yml
+# Reading `bootstrap.yml` Flow
 
 * Should have spring-cloud-commons-2.2.2.RELEASE.jar
 

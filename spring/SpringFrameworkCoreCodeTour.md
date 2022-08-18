@@ -1,18 +1,16 @@
-- [How To Read `application.yml`](#how-to-read-applicationyml)
+- [Reading `application.yml` Flow](#reading-applicationyml-flow)
 - [How Event Handler Works](#how-event-handler-works)
 - [How ApplicationRunner Works](#how-applicationrunner-works)
 - [How To Process Beans](#how-to-process-beans)
-  - [Summary](#summary)
-  - [Class Diagram](#class-diagram)
+	- [Summary](#summary)
+	- [Class Diagram](#class-diagram)
 - [How To Register Beans](#how-to-register-beans)
-  - [Summary](#summary-1)
-  - [Sequences](#sequences)
 - [How To Instantiate Bean](#how-to-instantiate-bean)
-  - [Summary](#summary-2)
+- [How To Get Bean](#how-to-get-bean)
 
 ----
 
-# How To Read `application.yml`
+# Reading `application.yml` Flow
 
 * `org/springframework/boot/SpringApplication::run`
 
@@ -326,11 +324,7 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 
 # How To Register Beans
 
-## Summary
-
 * `DefaultListableBeanFactory.registerBeanDefinition` register bean-name, bean-definition to `Map<String, BeanDefinition>`.
-
-## Sequences
 
 ```java
 // org.springframework.boot.SpringApplication::refresh
@@ -352,9 +346,7 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 					new Class[] { ConfigurableApplicationContext.class }, context);
 			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
 			refreshContext(context);
-```
 
-```java
 // org.springframework.boot.SpringApplication::refreshContext
 	private void refreshContext(ConfigurableApplicationContext context) {
 		refresh(context);
@@ -367,9 +359,7 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 			}
 		}
 	}
-```
 
-```java
 // org.springframework.boot.SpringApplication::refresh
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
@@ -439,7 +429,69 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 
 # How To Instantiate Bean
 
-## Summary
-
-* `AnnotationConfigApplicationContext::getBean` starts to instantiate Bean.
+* `AnnotationConfigApplicationContext::getBean()` starts to instantiate Bean.
 * `AbstractBeanFactory.doGetBean` instantiate Bean.
+
+# How To Get Bean
+
+`ListableBeanFactory::getBeansWithAnnotation()` 으로 특정 Bean 을 읽어올 수 있다.
+
+```java
+// org.springframework.boot.context.properties.ConfigurationPropertiesBean
+public final class ConfigurationPropertiesBean {
+...
+	public static Map<String, ConfigurationPropertiesBean> getAll(ApplicationContext applicationContext) {
+		Assert.notNull(applicationContext, "ApplicationContext must not be null");
+		if (applicationContext instanceof ConfigurableApplicationContext) {
+			return getAll((ConfigurableApplicationContext) applicationContext);
+		}
+		Map<String, ConfigurationPropertiesBean> propertiesBeans = new LinkedHashMap<>();
+		applicationContext.getBeansWithAnnotation(ConfigurationProperties.class)
+				.forEach((beanName, bean) -> propertiesBeans.put(beanName, get(applicationContext, bean, beanName)));
+
+// org.springframework.context.ApplicationContext
+public interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
+		MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
+
+// org.springframework.beans.factory.ListableBeanFactory
+public interface ListableBeanFactory extends BeanFactory {
+...
+	Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws BeansException;
+
+// org.springframework.beans.factory.support.DefaultListableBeanFactory
+public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
+		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
+...
+	@Override
+	public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) {
+		String[] beanNames = getBeanNamesForAnnotation(annotationType);
+
+// org.springframework.beans.factory.support.DefaultListableBeanFactory
+public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
+		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
+...
+	@Override
+	public String[] getBeanNamesForAnnotation(Class<? extends Annotation> annotationType) {
+		List<String> result = new ArrayList<>();
+		for (String beanName : this.beanDefinitionNames) {
+			BeanDefinition beanDefinition = getBeanDefinition(beanName);
+			if (!beanDefinition.isAbstract() && findAnnotationOnBean(beanName, annotationType) != null) {
+
+// org.springframework.beans.factory.support.DefaultListableBeanFactory
+public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
+		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
+...
+	@Override
+	@Nullable
+	public <A extends Annotation> A findAnnotationOnBean(String beanName, Class<A> annotationType)
+			throws NoSuchBeanDefinitionException {
+
+		return findMergedAnnotationOnBean(beanName, annotationType)
+				.synthesize(MergedAnnotation::isPresent).orElse(null);
+
+// org.springframework.beans.factory.support.DefaultListableBeanFactory
+public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
+		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
+...
+
+```

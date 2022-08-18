@@ -120,27 +120,27 @@ public @interface Foo {
 
 ```java
 public class FooProcessor implements Processor {
-  @Override
-  public Set<String> getSupportedAnnotationTypes() {
-    return Set.of(Foo.class.getName());
+@Override
+public Set<String> getSupportedAnnotationTypes() {
+return Set.of(Foo.class.getName());
+}
+@Override
+public SourceVersion getSupportedSourceVersion() {
+return SourceVersion.latestSupported();
+}
+@Override
+public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+Set<? extends Element> elements = roundEnv.getElementsAnnotationWith(Foo.class);
+for (Element el : elements) {
+  Name elName = el.getSimpleName();
+  if (el.getKind() != ElementKind.INTERFACE) {
+    processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Foo annotation can not be used on " + elName);
+  } else {
+    processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Processing " + elName);
   }
-  @Override
-  public SourceVersion getSupportedSourceVersion() {
-    return SourceVersion.latestSupported();
-  }
-  @Override
-  public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-    Set<? extends Element> elements = roundEnv.getElementsAnnotationWith(Foo.class);
-    for (Element el : elements) {
-      Name elName = el.getSimpleName();
-      if (el.getKind() != ElementKind.INTERFACE) {
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.ERROR, "Foo annotation can not be used on " + elName);
-      } else {
-        processingEnv.getMessager().printMessage(Diagnostic.Kind.NOTE, "Processing " + elName);
-      }
-    }
-    return true;
-  }
+}
+return true;
+}
 }
 ```
 

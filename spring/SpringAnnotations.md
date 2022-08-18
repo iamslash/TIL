@@ -1,15 +1,15 @@
 - [Abstract](#abstract)
-- [@Configuration](#configuration)
-- [@ConfigurationProperties](#configurationproperties)
-- [@EnableConfigurationProperties](#enableconfigurationproperties)
-- [@TestPropertySource](#testpropertysource)
-- [@Autowired](#autowired)
-- [@ExceptionHandler](#exceptionhandler)
-- [@ControllerAdvice, @RestControllerAdvice](#controlleradvice-restcontrolleradvice)
-- [@Import](#import)
-- [@EnableAutoConfiguration](#enableautoconfiguration)
-- [@DynamicInsert, @DynamicUpdate](#dynamicinsert-dynamicupdate)
-- [@Validation](#validation)
+- [`@Configuration`](#configuration)
+- [`@ConfigurationProperties`](#configurationproperties)
+- [`@EnableConfigurationProperties`](#enableconfigurationproperties)
+- [`@TestPropertySource`](#testpropertysource)
+- [`@Autowired`](#autowired)
+- [`@ExceptionHandler`](#exceptionhandler)
+- [`@ControllerAdvice, @RestControllerAdvice`](#controlleradvice-restcontrolleradvice)
+- [`@Import`](#import)
+- [`@EnableAutoConfiguration`](#enableautoconfiguration)
+- [`@DynamicInsert, @DynamicUpdate`](#dynamicinsert-dynamicupdate)
+- [`@Validation`](#validation)
 
 -----
 
@@ -17,7 +17,7 @@
 
 This is about annotations of Spring Framework.
 
-# @Configuration
+# `@Configuration`
 
 특정 Bean 들을 생성할 때 필요한 설정들을 구현한 class 를 `Configuration Bean Class` 혹은 간단히 `Configuration Class` 라고 하자. `Configuration Class` 는 역시 또 다른 Bean 으로 등록하기 위해 `@Configuration` 을 부착한다. Spring Framework 는 Component Scan 할 때 `@Configuration` 이 부착된 `Configuration Class` 를 읽는다. 그리고 그 Class 의 함수들중 `@Bean` 이 부착된 method 를 실행하여 Bean 을 생성한다.
 
@@ -59,7 +59,7 @@ public class AppMain {
 
 ```
 
-# @ConfigurationProperties
+# `@ConfigurationProperties`
 
 특정 Bean 은 Configuration Class 를 이용하여 생성한다. 이때 그 Bean 의 설정을 넘겨줘야 한다. 이 설정을 `ConfigurationProperties Class` 라고 한다. `@ConfigurationProperties` 는 `ConfigurationProperties Class` 에 생성할 Bean 의 이름과 함께 attach 한다.
 
@@ -72,7 +72,7 @@ public class UserProperties {
 }
 ```
 
-# @EnableConfigurationProperties
+# `@EnableConfigurationProperties`
 
 `Configuration Class` 에 생성할 Bean 의 `ConfigurationProperties Class` 를 넘겨줘야 한다. `@EnableConfigurationProperties` 를 `ConfigurationProperties Class` 와 함께 `Configuration Class` 에 attach 한다.
 
@@ -91,7 +91,7 @@ public class UserConfiguration {
 }
 ```
 
-# @TestPropertySource
+# `@TestPropertySource`
 
 `@TestPropertySource` 를 이용하여 Properties 를 overriding 할 수도 있다.
 
@@ -112,7 +112,7 @@ public class ExbasicApplicationTests {
 }
 ```
 
-# @Autowired
+# `@Autowired`
 
 * [Autowired 분석](https://galid1.tistory.com/512)
 
@@ -225,7 +225,7 @@ public class BookService {
 }
 ```
 
-# @ExceptionHandler
+# `@ExceptionHandler`
 
 * [@ControllerAdvice, @ExceptionHandler를 이용한 예외처리 분리, 통합하기(Spring에서 예외 관리하는 방법, 실무에서는 어떻게?)](https://jeong-pro.tistory.com/195)
 
@@ -245,7 +245,7 @@ public class HelloController {
 }
 ```
 
-# @ControllerAdvice, @RestControllerAdvice
+# `@ControllerAdvice, @RestControllerAdvice`
 
 You can handle global exceptions with `@ControllerAdvice`.
 
@@ -259,16 +259,19 @@ public class HelloAdvice {
 }
 ```
 
-# @Import
+# `@Import`
 
 * [[Spring] @Import 어노테이션 사용](https://hilucky.tistory.com/244)
 * [4.3.  Aggregating @Configuration classes with @Import](https://docs.spring.io/spring-javaconfig/docs/1.0.0.M4/reference/html/ch04s03.html)
 
 ----
 
-`Component Scan` 이 없다면 모든 `@Configuration class` 들은 Bean 으로 등록될 수 없다. 이때 하나의 `@Configuration class` 를 bean 으로 등록한다면 `@Import` 와 함께 사용된 다른 `@Configuration class` 들이 bean 으로 등록된다.
+`Component Scan` 이 없다면 모든 `@Configuration class` 들은 Bean 으로 등록될 수
+없다. `@Import` 를 이용하여  `@Configuration` Class 를 Bean 으로 등록할 수 있다.
 
-`@Configuration class` 에서 또 다른 `@Configuration class` 를 bean 으로 등록할 수 있다. 예를 들어 다음과 같이 `AppConfig` 를 bean 으로 등록하면 `DataSource` 도 bean 으로 등록된다. 
+`@Configuration` Class 에서 또 다른 `@Configuration` Class 를 bean 으로 등록할
+수 있다. 예를 들어 다음과 같이 `AppConfig` Class 를 bean 으로 등록하면 `DataSource` 도
+bean 으로 등록된다. 
 
 ```java
 @Configuration
@@ -300,7 +303,7 @@ public class Main {
 }
 ```
 
-다음과 같이 다수의 `@Configuration class` 들을 `@Import` 할 수도 있다.
+`@Import` 는 여러 `@Configuration` Class 들을 Bean 으로 등록할 수도 있다.
 
 ```java
 @Configuration
@@ -310,12 +313,12 @@ public class AppConfig extends ConfigurationSupport {
 }
 ```
 
-# @EnableAutoConfiguration
+# `@EnableAutoConfiguration`
 
 * [자동 설정 이해 @ TIL](SpringBoot.md#자동-설정-이해)
 * [How autoconfigure works @ TIL](SpringBootCodeTour.md#how-autoconfigure-works)
 
-# @DynamicInsert, @DynamicUpdate
+# `@DynamicInsert, @DynamicUpdate`
 
 > * [jpa insert 시 default 값 적용](https://dotoridev.tistory.com/6)
 
@@ -491,7 +494,7 @@ public void insert_test() {
 }
 ```
 
-# @Validation
+# `@Validation`
 
 * [Java Bean Validation 제대로 알고 쓰자](https://kapentaz.github.io/java/Java-Bean-Validation-%EC%A0%9C%EB%8C%80%EB%A1%9C-%EC%95%8C%EA%B3%A0-%EC%93%B0%EC%9E%90/#)
 * [Package javax.validation.constraints @ java](https://docs.oracle.com/javaee/7/api/javax/validation/constraints/package-summary.html)
