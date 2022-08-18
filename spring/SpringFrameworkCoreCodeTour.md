@@ -2,8 +2,6 @@
 - [How Event Handler Works](#how-event-handler-works)
 - [How ApplicationRunner Works](#how-applicationrunner-works)
 - [How To Process Beans](#how-to-process-beans)
-	- [Summary](#summary)
-	- [Class Diagram](#class-diagram)
 - [How To Register Beans](#how-to-register-beans)
 - [How To Instantiate Bean](#how-to-instantiate-bean)
 - [How To Get Bean](#how-to-get-bean)
@@ -12,9 +10,10 @@
 
 # Reading `application.yml` Flow
 
-* `org/springframework/boot/SpringApplication::run`
-
 ```java
+// org.springframework.context.ConfigurableApplicationContext
+public interface ConfigurableApplicationContext extends ApplicationContext, Lifecycle, Closeable {
+...
 	public ConfigurableApplicationContext run(String... args) {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
@@ -27,11 +26,9 @@
 			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
 			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
 
-```
-
-* `org/springframework/boot/context/config/ConfigFileApplicationListener::onApplicationEvent`
-
-```java
+// org.springframework.boot.context.config.ConfigFileApplicationListener
+public class ConfigFileApplicationListener implements EnvironmentPostProcessor, SmartApplicationListener, Ordered {
+...
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
 		if (event instanceof ApplicationEnvironmentPreparedEvent) {
@@ -41,11 +38,10 @@
 			onApplicationPreparedEvent(event);
 		}
 	}
-```
 
-* `org/springframework/boot/context/config/ConfigFileApplicationListener::load`
-
-```java
+// org.springframework.boot.context.config.ConfigFileApplicationListener
+public class ConfigFileApplicationListener implements EnvironmentPostProcessor, SmartApplicationListener, Ordered {
+...
 		void load() {
 			FilteredPropertySource.apply(this.environment, DEFAULT_PROPERTIES, LOAD_FILTERED_PROPERTY,
 					(defaultProperties) -> {
@@ -68,11 +64,9 @@
 						applyActiveProfiles(defaultProperties);
 					});
 		}
-```
-
-* `org/springframework/boot/context/config/ConfigFileApplicationListener::load`
-
-```java
+// org.springframework.boot.context.config.ConfigFileApplicationListener
+public class ConfigFileApplicationListener implements EnvironmentPostProcessor, SmartApplicationListener, Ordered {
+...
 		private void load(String location, String name, Profile profile, DocumentFilterFactory filterFactory,
 				DocumentConsumer consumer) {
 			if (!StringUtils.hasText(name)) {
@@ -96,12 +90,8 @@
 				}
 			}
 		}
-```
 
-* `org/springframework/boot/context/config/ConfigFileApplicationListener::loadForFileExtension`
-
-```java
-
+// org.springframework.boot.context.config.ConfigFileApplicationListener
 public class ConfigFileApplicationListener implements EnvironmentPostProcessor, SmartApplicationListener, Ordered {
 
 	private static final String DEFAULT_PROPERTIES = "defaultProperties";
@@ -131,11 +121,10 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 		// Also try the profile-specific section (if any) of the normal file
 		load(loader, prefix + fileExtension, profile, profileFilter, consumer);
 	}
-```
 
-* `org/springframework/boot/context/config/ConfigFileApplicationListener::load`
-
-```java
+// org.springframework.boot.context.config.ConfigFileApplicationListener
+public class ConfigFileApplicationListener implements EnvironmentPostProcessor, SmartApplicationListener, Ordered {
+...
 		private void load(PropertySourceLoader loader, String location, Profile profile, DocumentFilter filter,
 				DocumentConsumer consumer) {
 			try {
@@ -192,34 +181,26 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 # How Event Handler Works
 
-* `org/springframework/boot/SpringApplication::run`
-
 ```java
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
 	public ConfigurableApplicationContext run(String... args) {
 ...
 		try {
 			listeners.running(context);
-		}
-		catch (Throwable ex) {
-			handleRunFailure(context, ex, exceptionReporters, null);
-			throw new IllegalStateException(ex);
-		}
-		return context;
-	}
-```
 
-* `/org/springframework/boot/context/event/EventPublishingRunListener::running`
-
-```java
+// org.springframework.boot.context.event.EventPublishingRunListener
+public class EventPublishingRunListener implements SpringApplicationRunListener, Ordered {
+...
 	@Override
 	public void running(ConfigurableApplicationContext context) {
 		context.publishEvent(new ApplicationReadyEvent(this.application, this.args, context));
 	}
-```
 
-* `org.springframework.context.event.ApplicationListenerMethodAdapter::onApplicationEvent`
-
-```java
+// org.springframework.context.event.ApplicationListenerMethodAdapter
+public class ApplicationListenerMethodAdapter implements GenericApplicationListener {
+...
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
 		processEvent(event);
@@ -228,18 +209,18 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 # How ApplicationRunner Works
 
-* `org/springframework/boot/SpringApplication::run`
-
 ```java
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
 	public ConfigurableApplicationContext run(String... args) {
     ...
 			listeners.started(context);
 			callRunners(context, applicationArguments);
-```
 
-* `org/springframework/boot/SpringApplication::callRunners`
-
-```java
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
 	private void callRunners(ApplicationContext context, ApplicationArguments args) {
 		List<Object> runners = new ArrayList<>();
 		runners.addAll(context.getBeansOfType(ApplicationRunner.class).values());
@@ -262,12 +243,9 @@ public class ConfigFileApplicationListener implements EnvironmentPostProcessor, 
 
 -----
 
-## Summary
-
 * Register Bean Definition to `Map<String, BeanDefinition>`.
 * `getBean` instantiate Bean with `BeanDefinition` and save to `Map<String, Object>` for cache.
-
-## Class Diagram
+* Context Object has Beans.
 
 Bean Processing 을 이해하기 위해 먼저 class diagram 을 파악한다.
 

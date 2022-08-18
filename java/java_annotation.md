@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basic](#basic)
+- [Merged Annotations](#merged-annotations)
 - [Annotation Processing](#annotation-processing)
 
 ----
@@ -99,6 +100,77 @@ public @interface RepeatableAnnotation {
 public void performAction() {
    // Some code here
 }
+```
+
+# Merged Annotations
+
+다음과 같이 `@Foo, @Bar, @Baz, @David` 를 작성했다. 
+
+* `MainApp.class` 의 annotation 들을 출력하면 `MainApp` 에 부착된 `@Foo` 만 출력된다.
+* `Foo.class` 의 annotation 들을 출력하면 `@Foo` 에 부착된 `@Bar, @Baz` 만 출력된다.
+* `@David` 까지 읽어오고 싶다면 Annotation Graph 를 만들어야 할 것 같다.
+
+```java
+// com.iamslash.exannotation.merged.David
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface David {
+}
+
+// com.iamslash.exannotation.merged.Baz
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@David
+public @interface Baz {
+}
+
+// com.iamslash.exannotation.merged.Bar
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@David
+public @interface Bar {
+}
+
+// com.iamslash.exannotation.merged.Foo
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Bar
+@Baz
+public @interface Foo {
+}
+
+// com.iamslash.exannotation.merged.MainApp
+@Foo
+public class MainApp {
+
+    public static void readAnnotation(Class clazz) {
+        try {
+            Annotation[] annotations = clazz.getAnnotations();
+            System.out.printf("Annotation of %s : \n", clazz.toString());
+            for (Annotation annotation : annotations) {
+                System.out.printf("\t%s\n", annotation.toString());
+            }
+        }
+        catch (Exception e) {
+            System.out.println(e);
+        }
+    }
+
+    public static void main(String[] args) {
+        readAnnotation(MainApp.class);
+        readAnnotation(Foo.class);
+    }
+
+}
+
+// Output:
+// Annotation of class com.iamslash.exannotation.merged.MainApp : 
+// 	@com.iamslash.exannotation.merged.Foo()
+// Annotation of interface com.iamslash.exannotation.merged.Foo : 
+// 	@java.lang.annotation.Target(value={TYPE})
+// 	@java.lang.annotation.Retention(value=RUNTIME)
+// 	@com.iamslash.exannotation.merged.Bar()
+// 	@com.iamslash.exannotation.merged.Baz()
 ```
 
 # Annotation Processing

@@ -1,4 +1,5 @@
 - [Annotation Under The Hood](#annotation-under-the-hood)
+- [Reading Merged Annotions Flow](#reading-merged-annotions-flow)
 - [`@SpringBootApplication`](#springbootapplication)
 - [`@SpringBootConfiguration`](#springbootconfiguration)
 - [`@Configuration`](#configuration)
@@ -20,8 +21,8 @@
 
 # Annotation Under The Hood
 
-Spring Application 은 어떻게 Annotation 을 다루고 있는지 살펴보자.
-Annotation 을 다루는 방법은 다음과 같은 것들이 있다.
+Spring Application 은 어떻게 Annotation 을 다루고 있는지 살펴보자. Annotation 을
+다루는 방법은 다음과 같은 것들이 있다.
 
 * `Processor` Class 를 상속한 Class 를 정의해서 특정 Annotation 을 구현한다.
   * 아래의 예는 `@Foo` Class 를 처리하고 있다. [java_annotation](/java/java_annotation.md#annotation-processing) 참고.
@@ -69,7 +70,11 @@ class ConfigurationClassParser {
 ```
 
 
-* Reading Merged Annotions Flow
+# Reading Merged Annotions Flow
+
+기본적으로 Class 의 Annotation 을 `getAnnotations()` 로 읽어오면 그 Class 에
+부착된 Annotation 만 읽어온다. 부착된 Annotation 에 부착된 Annotation 을
+읽어오려면 Annotation Graph 를 만들어서 읽어야 한다. [JavaAnnotations](/java/java_annotation.md#merged-annotations) 참고
 
 `@SpringBootApplication` 은 다음과 같이 정의되어 있다. `@interface SpringBootApplication` 에 부착된 Annotation 들을 어떻게 읽어오는 걸까?
 
@@ -86,7 +91,16 @@ class ConfigurationClassParser {
 public @interface SpringBootApplication {
 ```
 
+다음과 같이 MergedAnnotation 을 이용하는 걸까?
+
 ```java
+// org.springframework.boot.test.context.SpringBootContextLoader
+public class SpringBootContextLoader extends AbstractContextLoader {
+...
+	protected String[] getArgs(MergedContextConfiguration config) {
+		return MergedAnnotations.from(config.getTestClass(), SearchStrategy.TYPE_HIERARCHY).get(SpringBootTest.class)
+				.getValue("args", String[].class).orElse(NO_ARGS);
+	}
 ```
 
 # `@SpringBootApplication`
@@ -224,8 +238,8 @@ class ConfigurationClassParser {
 
 # `@Import`
 
-`@Import` 의 Argument 로 `@Configuration` Class 를 넘기면 그 `@Configuration`
-Class 를 Bean 으로 등록한다. 즉, `@Configuration` Class 의 `@Bean` Method 가
+`@Import` 의 Arguement 로 `@Configuration` Class 를 넘기면 그 `@Configuration`
+Class 의 Instance 를 Bean 으로 등록한다. 즉, `@Configuration` Class 의 `@Bean` Method 가
 return 하는 Object 를 Bean 으로 등록한다.
 
 ```java
