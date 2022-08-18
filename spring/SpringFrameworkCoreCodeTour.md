@@ -1,7 +1,7 @@
 - [Reading `application.yml` Flow](#reading-applicationyml-flow)
 - [How Event Handler Works](#how-event-handler-works)
 - [How ApplicationRunner Works](#how-applicationrunner-works)
-- [Big Picture For Bean](#big-picture-for-bean)
+- [Processing Bean](#processing-bean)
 - [Reading Bean](#reading-bean)
 - [Registering Beans](#registering-beans)
 - [Instantiating Bean](#instantiating-bean)
@@ -237,7 +237,7 @@ public class SpringApplication {
 	}
 ```
 
-# Big Picture For Bean
+# Processing Bean
 
 * [Spring IoC Container를 까보자 #Bean 등록은 어떻게 될까?](https://blog.woniper.net/336?category=699184)
 
@@ -468,6 +468,12 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 		}
 	}
 ```
+
+다음은 Registering Bean 의 sequence diagram 이다.
+
+* [A process of Spring Bean from scratch](https://programming.vip/docs/a-process-of-spring-bean-from-scratch.html)
+
+![](img/registeringbean.png)
 
 # Instantiating Bean
 
