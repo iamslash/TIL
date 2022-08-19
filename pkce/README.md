@@ -2,7 +2,7 @@
 
 PKCE (Proof Key for Code Extensions) 에 대해 정리한다. "픽시" 로 발음한다.
 
-OAUTH2.0 에 사용된다. Client, OAuth Server 가 서로 상대방이 제대로 인지 검증하기 위한 수단이다.
+OAUTH2.0 에 사용된다. Client, OAuth Server 가 서로 상대방이 제대로 인지 검증하기 위한 수단이다. Okta 에서 Application 생성후 Application General 메뉴에서 PKCE 항목을 확인할 수 있다. Application 생성화면에서는 보지 못함. 기본인가?
 
 [OIDC](/oidc/README.md) 와 같이 이해해야 함.
 
