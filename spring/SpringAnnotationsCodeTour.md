@@ -1,5 +1,6 @@
 - [Annotation Under The Hood](#annotation-under-the-hood)
 - [Reading Merged Annotions Flow](#reading-merged-annotions-flow)
+- [Registering Bean Flow](#registering-bean-flow)
 - [`@SpringBootApplication`](#springbootapplication)
 - [`@SpringBootConfiguration`](#springbootconfiguration)
 - [`@Configuration`](#configuration)
@@ -63,8 +64,9 @@ public class FooProcessor implements Processor {
 # Reading Merged Annotions Flow
 
 기본적으로 Class 의 Annotation 을 `getAnnotations()` 로 읽어오면 그 Class 에
-부착된 Annotation 만 읽어온다. 부착된 Annotation 에 부착된 Annotation 을
-읽어오려면 Annotation Graph 를 만들어서 읽어야 한다. [Java Annotations Merged Annotations](/java/java_annotation.md#merged-annotations) 참고.
+부착된 Annotation 만 읽어온다. 부착된 Annotation 에 다시 부착된 Annotation 을
+읽어오려면 Annotation Graph 를 만들어서 읽어야 한다. [Java Annotations Merged
+Annotations](/java/java_annotation.md#merged-annotations) 참고.
 
 `@SpringBootApplication` 은 다음과 같이 정의되어 있다. `@interface SpringBootApplication` 에 부착된 Annotation 들을 어떻게 읽어오는 걸까?
 
@@ -81,16 +83,220 @@ public class FooProcessor implements Processor {
 public @interface SpringBootApplication {
 ```
 
-다음과 같이 `MergedAnnotation` 을 이용하는 걸까?
+`MergedAnnotation::from()` 을 이용하면 특정 Class 에 특정 Annotation 이 있는지 검색할 수 있다. 아래의 예는 
+`BeanDefinitionLoader::isComponent()` 의 구현이다. 특정 Class 에 `@Component` 가 부착됬는지 확인한다.
 
 ```java
-// org.springframework.boot.test.context.SpringBootContextLoader
-public class SpringBootContextLoader extends AbstractContextLoader {
+// org.springframework.boot.BeanDefinitionLoader
+class BeanDefinitionLoader {
 ...
-	protected String[] getArgs(MergedContextConfiguration config) {
-		return MergedAnnotations.from(config.getTestClass(), SearchStrategy.TYPE_HIERARCHY).get(SpringBootTest.class)
-				.getValue("args", String[].class).orElse(NO_ARGS);
+	private boolean isComponent(Class<?> type) {
+		// This has to be a bit of a guess. The only way to be sure that this type is
+		// eligible is to make a bean definition out of it and try to instantiate it.
+		if (MergedAnnotations.from(type, SearchStrategy.TYPE_HIERARCHY).isPresent(Component.class)) {
+
+// org.springframework.core.annotation.MergedAnnotations
+public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>> {
+...
+	static MergedAnnotations from(AnnotatedElement element, SearchStrategy searchStrategy) {
+		return from(element, searchStrategy, RepeatableContainers.standardRepeatables());
+
+// org.springframework.core.annotation.MergedAnnotations
+public interface MergedAnnotations extends Iterable<MergedAnnotation<Annotation>> {
+...
+	static MergedAnnotations from(AnnotatedElement element, SearchStrategy searchStrategy,
+			RepeatableContainers repeatableContainers) {
+
+		return TypeMappedAnnotations.from(element, searchStrategy, repeatableContainers, AnnotationFilter.PLAIN);
+
+// org.springframework.core.annotation.TypeMappedAnnotations
+final class TypeMappedAnnotations implements MergedAnnotations {
+...	
+	static MergedAnnotations from(AnnotatedElement element, SearchStrategy searchStrategy,
+			RepeatableContainers repeatableContainers, AnnotationFilter annotationFilter) {
+
+		if (AnnotationsScanner.isKnownEmpty(element, searchStrategy)) {
+			return NONE;
+		}
+		return new TypeMappedAnnotations(element, searchStrategy, repeatableContainers, annotationFilter);
+
+// org.springframework.core.annotation.TypeMappedAnnotations
+final class TypeMappedAnnotations implements MergedAnnotations {
+...	
+	private TypeMappedAnnotations(AnnotatedElement element, SearchStrategy searchStrategy,
+			RepeatableContainers repeatableContainers, AnnotationFilter annotationFilter) {
+
+		this.source = element;
+		this.element = element;
+		this.searchStrategy = searchStrategy;
+		this.annotations = null;
+		this.repeatableContainers = repeatableContainers;
+		this.annotationFilter = annotationFilter;
 	}
+
+// org.springframework.core.annotation.TypeMappedAnnotations
+final class TypeMappedAnnotations implements MergedAnnotations {
+...
+	@Override
+	public <A extends Annotation> boolean isPresent(Class<A> annotationType) {
+		if (this.annotationFilter.matches(annotationType)) {
+			return false;
+		}
+		return Boolean.TRUE.equals(scan(annotationType,
+				IsPresent.get(this.repeatableContainers, this.annotationFilter, false)));
+	}
+```
+
+# Registering Bean Flow
+
+`BeanDefinitionLoader` Class 는 `AnnotatedBeanDefinitionReader annotatedReader`
+와 `XmlBeanDefinitionReader xmlReader` 를 갖는다. Annotation 혹은 XML 로 부터
+Bean 을 읽어들일 수 있다.
+
+```java
+// org.springframework.boot.BeanDefinitionLoader
+class BeanDefinitionLoader {
+
+	private final Object[] sources;
+
+	private final AnnotatedBeanDefinitionReader annotatedReader;
+
+	private final XmlBeanDefinitionReader xmlReader;
+```
+
+`DefaultListableBeanFactory::registerBeanDefinition(String beanName, BeanDefinition beanDefinition)` 를 호출하여 `DefaultListableBeanFactory::beanDefinitionMap` 에 Bean 의 이름과 BeanDefinition 을 저장한다. 그리고 `DefaultListableBeanFactory::beanDefinitionNames` 에 Bean 의 이름을 추가한다.
+
+```java
+// org.springframework.beans.factory.support.DefaultListableBeanFactory
+public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
+		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
+...
+	private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
+...
+	private volatile List<String> beanDefinitionNames = new ArrayList<>(256);
+...
+	@Override
+	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
+			throws BeanDefinitionStoreException {
+...
+				// Still in startup registration phase
+				this.beanDefinitionMap.put(beanName, beanDefinition);
+				this.beanDefinitionNames.add(beanName);				
+```
+
+`BeanDefinitionRegistry::registerBeanDefinition(String beanName, BeanDefinition beanDefinition)` 가 Bean 의 이름과 BeanDefinition 을 저장한다. `DefaultListableBeanFactory` 는 `BeanDefinitionRegistry` 를 implement 한다. 
+
+```java
+// org.springframework.boot.BeanDefinitionLoader
+class BeanDefinitionLoader {
+...	
+	private int load(Object source) {
+		Assert.notNull(source, "Source must not be null");
+		if (source instanceof Class<?>) {
+			return load((Class<?>) source);
+
+// org.springframework.boot.BeanDefinitionLoader
+class BeanDefinitionLoader {
+...	
+	private int load(Class<?> source) {
+		if (isGroovyPresent() && GroovyBeanDefinitionSource.class.isAssignableFrom(source)) {
+			// Any GroovyLoaders added in beans{} DSL can contribute beans here
+			GroovyBeanDefinitionSource loader = BeanUtils.instantiateClass(source, GroovyBeanDefinitionSource.class);
+			load(loader);
+		}
+		if (isComponent(source)) {
+			this.annotatedReader.register(source);		
+
+// org.springframework.context.annotation.AnnotatedBeanDefinitionReader
+public class AnnotatedBeanDefinitionReader {
+...
+	public void register(Class<?>... componentClasses) {
+		for (Class<?> componentClass : componentClasses) {
+			registerBean(componentClass);
+
+// org.springframework.context.annotation.AnnotatedBeanDefinitionReader
+public class AnnotatedBeanDefinitionReader {
+...
+	public void registerBean(Class<?> beanClass) {
+		doRegisterBean(beanClass, null, null, null, null);
+
+// org.springframework.context.annotation.AnnotatedBeanDefinitionReader
+public class AnnotatedBeanDefinitionReader {
+...
+	private <T> void doRegisterBean(Class<T> beanClass, @Nullable String name,
+			@Nullable Class<? extends Annotation>[] qualifiers, @Nullable Supplier<T> supplier,
+			@Nullable BeanDefinitionCustomizer[] customizers) {
+
+		AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass);
+		if (this.conditionEvaluator.shouldSkip(abd.getMetadata())) {
+			return;
+		}
+
+		abd.setInstanceSupplier(supplier);
+		ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(abd);
+		abd.setScope(scopeMetadata.getScopeName());
+		String beanName = (name != null ? name : this.beanNameGenerator.generateBeanName(abd, this.registry));
+
+		AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
+		if (qualifiers != null) {
+			for (Class<? extends Annotation> qualifier : qualifiers) {
+				if (Primary.class == qualifier) {
+					abd.setPrimary(true);
+				}
+				else if (Lazy.class == qualifier) {
+					abd.setLazyInit(true);
+				}
+				else {
+					abd.addQualifier(new AutowireCandidateQualifier(qualifier));
+				}
+			}
+		}
+		if (customizers != null) {
+			for (BeanDefinitionCustomizer customizer : customizers) {
+				customizer.customize(abd);
+			}
+		}
+
+		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
+		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
+		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);
+...	
+
+// org.springframework.beans.factory.support.BeanDefinitionReaderUtils
+public abstract class BeanDefinitionReaderUtils {
+...
+	public static void registerBeanDefinition(
+			BeanDefinitionHolder definitionHolder, BeanDefinitionRegistry registry)
+			throws BeanDefinitionStoreException {
+
+		// Register bean definition under primary name.
+		String beanName = definitionHolder.getBeanName();
+		registry.registerBeanDefinition(beanName, definitionHolder.getBeanDefinition());
+
+// org.springframework.context.support.GenericApplicationContext
+public class GenericApplicationContext extends AbstractApplicationContext implements BeanDefinitionRegistry {
+...
+	@Override
+	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
+			throws BeanDefinitionStoreException {
+
+		this.beanFactory.registerBeanDefinition(beanName, beanDefinition);
+
+// org.springframework.beans.factory.support.DefaultListableBeanFactory
+public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
+		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
+...
+	private final Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>(256);
+...
+	private volatile List<String> beanDefinitionNames = new ArrayList<>(256);
+...
+	@Override
+	public void registerBeanDefinition(String beanName, BeanDefinition beanDefinition)
+			throws BeanDefinitionStoreException {
+...
+				// Still in startup registration phase
+				this.beanDefinitionMap.put(beanName, beanDefinition);
+				this.beanDefinitionNames.add(beanName);
 ```
 
 # `@SpringBootApplication`
@@ -116,9 +322,8 @@ public @interface SpringBootApplication {
 
 # `@SpringBootConfiguration`
 
-`@SpringBootConfiguration` 를 부착하면 부착된 Class 는 다음과 같은 기능을 갖는다.
-
-* `@Configuration` 때문에 `@Configuration` Class 가 된다. 즉, `@Bean` Method 는 Bean 을 생성할 수 있다. 
+`@SpringBootConfiguration` 를 부착하면 `@Configuration` 때문에 `@Configuration`
+Class 가 된다. 즉, `@Bean` Method 는 Bean 을 생성할 수 있다. 
 
 ```java
 // org.springframework.boot.SpringBootConfiguration
@@ -229,7 +434,7 @@ class ConfigurationClassParser {
 # `@Import`
 
 `@Import` 의 Arguement 로 `@Configuration` Class 를 넘기면 그 `@Configuration`
-Class 의 Instance 를 Bean 으로 등록한다. 즉, `@Configuration` Class 의 `@Bean` Method 가
+Class 의 Instance 를 Bean 으로 등록한다. 그리고 `@Configuration` Class 의 `@Bean` Method 가
 return 하는 Object 를 Bean 으로 등록한다.
 
 ```java
@@ -243,7 +448,6 @@ class ConfigurationClassParser {
 	...
 		// Process any @Import annotations
 		processImports(configClass, sourceClass, getImports(sourceClass), filter, true);
-
 ```
 
 # `@ImportResource`
@@ -292,7 +496,37 @@ class ConfigurationClassParser {
 
 # `@EnableAutoConfiguration`
 
-`FACTORIES_RESOURCE_LOCATION` 에 `spring.factories` 파일 경로가 hard coding 되어 있다.
+`AutoConfigurationImportSelector.class` 를 Import 하고 있다. 즉, `AutoConfigurationImportSelector.class` 를 component scanning 한다. `AutoConfigurationImportSelector` 는 `@Configuration` Class 가 아닌데?
+
+```java
+@Target(ElementType.TYPE)
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Inherited
+@AutoConfigurationPackage
+@Import(AutoConfigurationImportSelector.class)
+public @interface EnableAutoConfiguration {
+
+	String ENABLED_OVERRIDE_PROPERTY = "spring.boot.enableautoconfiguration";
+
+	/**
+	 * Exclude specific auto-configuration classes such that they will never be applied.
+	 * @return the classes to exclude
+	 */
+	Class<?>[] exclude() default {};
+
+	/**
+	 * Exclude specific auto-configuration class names such that they will never be
+	 * applied.
+	 * @return the class names to exclude
+	 * @since 1.3.0
+	 */
+	String[] excludeName() default {};
+
+}
+```
+
+`SpringFactoriesLoader::FACTORIES_RESOURCE_LOCATION` 에 파일 경로(`spring.factories`)가 hard coding 되어 있다.
 
 ```java
 // org.springframework.core.io.support.SpringFactoriesLoader
@@ -308,7 +542,7 @@ public final class SpringFactoriesLoader {
 }
 ```
 
-`loadFactoryNames` 에서 classpath 에 포함된 `spring.factories` 파일들을 로딩한다.
+`SpringFactoriesLoader::loadFactoryNames()` 에서 classpath 에 포함된 `spring.factories` 파일들을 로딩한다.
  
 ```java
 // org.springframework.core.io.support.SpringFactoriesLoader
