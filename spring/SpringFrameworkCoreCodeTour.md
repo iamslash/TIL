@@ -2,9 +2,10 @@
 - [How Event Handler Works](#how-event-handler-works)
 - [How ApplicationRunner Works](#how-applicationrunner-works)
 - [Processing Bean](#processing-bean)
-- [Reading Bean](#reading-bean)
-- [Registering Beans](#registering-beans)
-- [Instantiating Bean](#instantiating-bean)
+- [Getting Bean Instance](#getting-bean-instance)
+- [Registering Bean Definition](#registering-bean-definition)
+- [Creating Bean Instance](#creating-bean-instance)
+- [Instanciating SingleTon Bean Instances](#instanciating-singleton-bean-instances)
 
 ----
 
@@ -247,7 +248,8 @@ public class SpringApplication {
 * `getBean` instantiate Bean with `BeanDefinition` and save to `Map<String, Object>` for cache.
 * Context Object has Beans.
 
-Bean Processing 을 이해하기 위해 먼저 class diagram 을 파악한다.
+Bean Processing 을 이해하기 위해서는 다음의 Class Diagram 을 이해해야 한다. 자꾸
+보면 외워진다.
 
 ![](img/classdiagrambeans.png)
 
@@ -300,71 +302,13 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 @enduml
 ```
 
-# Reading Bean
+# Getting Bean Instance
 
 `ListableBeanFactory::getBeansWithAnnotation()` 으로 특정 Bean 을 읽어올 수 있다.
 
-```java
-// org.springframework.boot.context.properties.ConfigurationPropertiesBean
-public final class ConfigurationPropertiesBean {
-...
-	public static Map<String, ConfigurationPropertiesBean> getAll(ApplicationContext applicationContext) {
-		Assert.notNull(applicationContext, "ApplicationContext must not be null");
-		if (applicationContext instanceof ConfigurableApplicationContext) {
-			return getAll((ConfigurableApplicationContext) applicationContext);
-		}
-		Map<String, ConfigurationPropertiesBean> propertiesBeans = new LinkedHashMap<>();
-		applicationContext.getBeansWithAnnotation(ConfigurationProperties.class)
-				.forEach((beanName, bean) -> propertiesBeans.put(beanName, get(applicationContext, bean, beanName)));
+[Getting Bean Instance](SpringAnnotationsCodeTour.md#getting-bean-instance) 참고.
 
-// org.springframework.context.ApplicationContext
-public interface ApplicationContext extends EnvironmentCapable, ListableBeanFactory, HierarchicalBeanFactory,
-		MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
-
-// org.springframework.beans.factory.ListableBeanFactory
-public interface ListableBeanFactory extends BeanFactory {
-...
-	Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) throws BeansException;
-
-// org.springframework.beans.factory.support.DefaultListableBeanFactory
-public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
-		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
-...
-	@Override
-	public Map<String, Object> getBeansWithAnnotation(Class<? extends Annotation> annotationType) {
-		String[] beanNames = getBeanNamesForAnnotation(annotationType);
-
-// org.springframework.beans.factory.support.DefaultListableBeanFactory
-public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
-		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
-...
-	@Override
-	public String[] getBeanNamesForAnnotation(Class<? extends Annotation> annotationType) {
-		List<String> result = new ArrayList<>();
-		for (String beanName : this.beanDefinitionNames) {
-			BeanDefinition beanDefinition = getBeanDefinition(beanName);
-			if (!beanDefinition.isAbstract() && findAnnotationOnBean(beanName, annotationType) != null) {
-
-// org.springframework.beans.factory.support.DefaultListableBeanFactory
-public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
-		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
-...
-	@Override
-	@Nullable
-	public <A extends Annotation> A findAnnotationOnBean(String beanName, Class<A> annotationType)
-			throws NoSuchBeanDefinitionException {
-
-		return findMergedAnnotationOnBean(beanName, annotationType)
-				.synthesize(MergedAnnotation::isPresent).orElse(null);
-
-// org.springframework.beans.factory.support.DefaultListableBeanFactory
-public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory
-		implements ConfigurableListableBeanFactory, BeanDefinitionRegistry, Serializable {
-...
-
-```
-
-# Registering Beans
+# Registering Bean Definition
 
 * `DefaultListableBeanFactory.registerBeanDefinition` register bean-name, bean-definition to `Map<String, BeanDefinition>`.
 
@@ -374,7 +318,211 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
 ![](img/registeringbean.png)
 
-# Instantiating Bean
+# Creating Bean Instance
 
 * `AnnotationConfigApplicationContext::getBean()` starts to instantiate Bean.
 * `AbstractBeanFactory.doGetBean` instantiate Bean.
+  
+[Creating Bean Intstance](SpringAnnotationsCodeTour.md#creating-bean-instance) 참고.
+
+# Instanciating SingleTon Bean Instances
+
+`ConfigurableListableBeanFactory::preInstantiateSingletons()` 에서 SingleTon Bean Instances 를 생성한다.
+
+```java
+// org.springframework.beans.factory.config.ConfigurableListableBeanFactory
+public interface ConfigurableListableBeanFactory
+		extends ListableBeanFactory, AutowireCapableBeanFactory, ConfigurableBeanFactory {
+...
+	@Override
+	public void preInstantiateSingletons() throws BeansException {
+```
+
+다음은 SpringApplication 이
+`ConfigurableListableBeanFactory::preInstantiateSingletons()` 를 호출하기 까지
+흐름을 추적한 것이다. `AbstractBeanFactory::getBean()` 를 호출하면 `DefaultSingletonBeanRegistry::singletonObjects`
+에 없으면 Bean Instance 를 생성한다. [Creating Bean Instance](SpringAnnotationsCodeTour.md#creating-bean-instance) 참고.
+
+```java
+// com.iamslash.exannotation.ExAnnotationApp
+@SpringBootApplication
+public class ExAnnotationApp {
+
+    public static void main(String[] args) {
+        new SpringApplicationBuilder()
+            .sources(ExAnnotationApp.class)
+            .run(args);
+
+// org.springframework.boot.builder.SpringApplicationBuilder
+public class SpringApplicationBuilder {
+...
+	public ConfigurableApplicationContext run(String... args) {
+		if (this.running.get()) {
+			// If already created we just return the existing context
+			return this.context;
+		}
+		configureAsChildIfNecessary(args);
+		if (this.running.compareAndSet(false, true)) {
+			synchronized (this.running) {
+				// If not already running copy the sources over and then run.
+				this.context = build().run(args);
+
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
+	public ConfigurableApplicationContext run(String... args) {
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		ConfigurableApplicationContext context = null;
+		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
+		configureHeadlessProperty();
+		SpringApplicationRunListeners listeners = getRunListeners(args);
+		listeners.starting();
+		try {
+			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
+			configureIgnoreBeanInfo(environment);
+			Banner printedBanner = printBanner(environment);
+			context = createApplicationContext();
+			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
+					new Class[] { ConfigurableApplicationContext.class }, context);
+			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
+			refreshContext(context);
+
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
+	private void refreshContext(ConfigurableApplicationContext context) {
+		refresh(context);
+
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
+	protected void refresh(ApplicationContext applicationContext) {
+		Assert.isInstanceOf(AbstractApplicationContext.class, applicationContext);
+		((AbstractApplicationContext) applicationContext).refresh();
+
+// org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext
+public class ServletWebServerApplicationContext extends GenericWebApplicationContext
+		implements ConfigurableWebServerApplicationContext {
+...
+	@Override
+	public final void refresh() throws BeansException, IllegalStateException {
+		try {
+			super.refresh();
+
+// org.springframework.context.support.AbstractApplicationContext
+public abstract class AbstractApplicationContext extends DefaultResourceLoader
+		implements ConfigurableApplicationContext {
+...
+	@Override
+	public void refresh() throws BeansException, IllegalStateException {
+		synchronized (this.startupShutdownMonitor) {
+			// Prepare this context for refreshing.
+			prepareRefresh();
+
+			// Tell the subclass to refresh the internal bean factory.
+			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+
+			// Prepare the bean factory for use in this context.
+			prepareBeanFactory(beanFactory);
+
+			try {
+				// Allows post-processing of the bean factory in context subclasses.
+				postProcessBeanFactory(beanFactory);
+
+				// Invoke factory processors registered as beans in the context.
+				invokeBeanFactoryPostProcessors(beanFactory);
+
+				// Register bean processors that intercept bean creation.
+				registerBeanPostProcessors(beanFactory);
+
+				// Initialize message source for this context.
+				initMessageSource();
+
+				// Initialize event multicaster for this context.
+				initApplicationEventMulticaster();
+
+				// Initialize other special beans in specific context subclasses.
+				onRefresh();
+
+				// Check for listener beans and register them.
+				registerListeners();
+
+				// Instantiate all remaining (non-lazy-init) singletons.
+				finishBeanFactoryInitialization(beanFactory);
+
+// org.springframework.context.support.AbstractApplicationContext
+public abstract class AbstractApplicationContext extends DefaultResourceLoader
+		implements ConfigurableApplicationContext {
+...
+	protected void finishBeanFactoryInitialization(ConfigurableListableBeanFactory beanFactory) {
+		// Initialize conversion service for this context.
+		if (beanFactory.containsBean(CONVERSION_SERVICE_BEAN_NAME) &&
+				beanFactory.isTypeMatch(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class)) {
+			beanFactory.setConversionService(
+					beanFactory.getBean(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class));
+		}
+
+		// Register a default embedded value resolver if no bean post-processor
+		// (such as a PropertyPlaceholderConfigurer bean) registered any before:
+		// at this point, primarily for resolution in annotation attribute values.
+		if (!beanFactory.hasEmbeddedValueResolver()) {
+			beanFactory.addEmbeddedValueResolver(strVal -> getEnvironment().resolvePlaceholders(strVal));
+		}
+
+		// Initialize LoadTimeWeaverAware beans early to allow for registering their transformers early.
+		String[] weaverAwareNames = beanFactory.getBeanNamesForType(LoadTimeWeaverAware.class, false, false);
+		for (String weaverAwareName : weaverAwareNames) {
+			getBean(weaverAwareName);
+		}
+
+		// Stop using the temporary ClassLoader for type matching.
+		beanFactory.setTempClassLoader(null);
+
+		// Allow for caching all bean definition metadata, not expecting further changes.
+		beanFactory.freezeConfiguration();
+
+		// Instantiate all remaining (non-lazy-init) singletons.
+		beanFactory.preInstantiateSingletons();
+
+// org.springframework.beans.factory.config.ConfigurableListableBeanFactory
+public interface ConfigurableListableBeanFactory
+		extends ListableBeanFactory, AutowireCapableBeanFactory, ConfigurableBeanFactory {
+...
+	@Override
+	public void preInstantiateSingletons() throws BeansException {
+		if (logger.isTraceEnabled()) {
+			logger.trace("Pre-instantiating singletons in " + this);
+		}
+
+		// Iterate over a copy to allow for init methods which in turn register new bean definitions.
+		// While this may not be part of the regular factory bootstrap, it does otherwise work fine.
+		List<String> beanNames = new ArrayList<>(this.beanDefinitionNames);
+
+		// Trigger initialization of all non-lazy singleton beans...
+		for (String beanName : beanNames) {
+			RootBeanDefinition bd = getMergedLocalBeanDefinition(beanName);
+			if (!bd.isAbstract() && bd.isSingleton() && !bd.isLazyInit()) {
+				if (isFactoryBean(beanName)) {
+					Object bean = getBean(FACTORY_BEAN_PREFIX + beanName);
+					if (bean instanceof FactoryBean) {
+						final FactoryBean<?> factory = (FactoryBean<?>) bean;
+						boolean isEagerInit;
+						if (System.getSecurityManager() != null && factory instanceof SmartFactoryBean) {
+							isEagerInit = AccessController.doPrivileged((PrivilegedAction<Boolean>)
+											((SmartFactoryBean<?>) factory)::isEagerInit,
+									getAccessControlContext());
+						}
+						else {
+							isEagerInit = (factory instanceof SmartFactoryBean &&
+									((SmartFactoryBean<?>) factory).isEagerInit());
+						}
+						if (isEagerInit) {
+							getBean(beanName);
+						}
+					}
+				}
+				else {
+					getBean(beanName);		
+```

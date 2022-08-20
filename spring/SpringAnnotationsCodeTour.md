@@ -1,6 +1,8 @@
 - [Annotation Under The Hood](#annotation-under-the-hood)
 - [Reading Merged Annotions Flow](#reading-merged-annotions-flow)
-- [Registering Bean Flow](#registering-bean-flow)
+- [Registering Bean Definition Flow](#registering-bean-definition-flow)
+- [Creating Bean Instance](#creating-bean-instance)
+- [Getting Bean Instance](#getting-bean-instance)
 - [`@SpringBootApplication`](#springbootapplication)
 - [`@SpringBootConfiguration`](#springbootconfiguration)
 - [`@Configuration`](#configuration)
@@ -147,11 +149,11 @@ final class TypeMappedAnnotations implements MergedAnnotations {
 	}
 ```
 
-# Registering Bean Flow
+# Registering Bean Definition Flow
 
 `BeanDefinitionLoader` Class 는 `AnnotatedBeanDefinitionReader annotatedReader`
 와 `XmlBeanDefinitionReader xmlReader` 를 갖는다. Annotation 혹은 XML 로 부터
-Bean 을 읽어들일 수 있다.
+Bean Definition 을 읽어들일 수 있다.
 
 ```java
 // org.springframework.boot.BeanDefinitionLoader
@@ -297,6 +299,322 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 				// Still in startup registration phase
 				this.beanDefinitionMap.put(beanName, beanDefinition);
 				this.beanDefinitionNames.add(beanName);
+```
+
+# Creating Bean Instance
+
+`Object AbstractBeanFactory::createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)` 이 호출되고 `<T> T BeanUtils::instantiateClass(Constructor<T> ctor, Object... args)` 에서 `ctor.newInstance()` 를 호출하여 Bean Instance 를 생성한다.
+
+```java
+// org.springframework.beans.factory.support.AbstractBeanFactory
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
+...
+	protected abstract Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+			throws BeanCreationException;
+
+// org.springframework.beans.factory.support.SimpleInstantiationStrategy
+public class SimpleInstantiationStrategy implements InstantiationStrategy {
+...
+	@Override
+	public Object instantiate(RootBeanDefinition bd, @Nullable String beanName, BeanFactory owner) {
+```
+
+다음은 `AbstractBeanFactory::createBean()` 을 추적한 것이다.
+
+```java
+// org.springframework.beans.factory.support.AbstractBeanFactory
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
+...
+	protected abstract Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+			throws BeanCreationException;
+
+// org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory
+public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory
+		implements AutowireCapableBeanFactory {
+...
+	@Override
+	protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+			throws BeanCreationException {
+
+		if (logger.isTraceEnabled()) {
+			logger.trace("Creating instance of bean '" + beanName + "'");
+		}
+		RootBeanDefinition mbdToUse = mbd;
+
+		// Make sure bean class is actually resolved at this point, and
+		// clone the bean definition in case of a dynamically resolved Class
+		// which cannot be stored in the shared merged bean definition.
+		Class<?> resolvedClass = resolveBeanClass(mbd, beanName);
+		if (resolvedClass != null && !mbd.hasBeanClass() && mbd.getBeanClassName() != null) {
+			mbdToUse = new RootBeanDefinition(mbd);
+			mbdToUse.setBeanClass(resolvedClass);
+		}
+
+		// Prepare method overrides.
+		try {
+			mbdToUse.prepareMethodOverrides();
+		}
+		catch (BeanDefinitionValidationException ex) {
+			throw new BeanDefinitionStoreException(mbdToUse.getResourceDescription(),
+					beanName, "Validation of method overrides failed", ex);
+		}
+
+		try {
+			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
+			Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
+			if (bean != null) {
+				return bean;
+			}
+		}
+		catch (Throwable ex) {
+			throw new BeanCreationException(mbdToUse.getResourceDescription(), beanName,
+					"BeanPostProcessor before instantiation of bean failed", ex);
+		}
+
+		try {
+			Object beanInstance = doCreateBean(beanName, mbdToUse, args);
+
+// org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory
+public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory
+		implements AutowireCapableBeanFactory {
+...
+	protected Object doCreateBean(final String beanName, final RootBeanDefinition mbd, final @Nullable Object[] args)
+			throws BeanCreationException {
+
+		// Instantiate the bean.
+		BeanWrapper instanceWrapper = null;
+		if (mbd.isSingleton()) {
+			instanceWrapper = this.factoryBeanInstanceCache.remove(beanName);
+		}
+		if (instanceWrapper == null) {
+			instanceWrapper = createBeanInstance(beanName, mbd, args);
+
+// org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory
+public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory
+		implements AutowireCapableBeanFactory {
+...
+	protected BeanWrapper createBeanInstance(String beanName, RootBeanDefinition mbd, @Nullable Object[] args) {
+		// Make sure bean class is actually resolved at this point.
+		Class<?> beanClass = resolveBeanClass(mbd, beanName);
+
+		if (beanClass != null && !Modifier.isPublic(beanClass.getModifiers()) && !mbd.isNonPublicAccessAllowed()) {
+			throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+					"Bean class isn't public, and non-public access not allowed: " + beanClass.getName());
+		}
+
+		Supplier<?> instanceSupplier = mbd.getInstanceSupplier();
+		if (instanceSupplier != null) {
+			return obtainFromSupplier(instanceSupplier, beanName);
+		}
+
+		if (mbd.getFactoryMethodName() != null) {
+			return instantiateUsingFactoryMethod(beanName, mbd, args);
+		}
+
+		// Shortcut when re-creating the same bean...
+		boolean resolved = false;
+		boolean autowireNecessary = false;
+		if (args == null) {
+			synchronized (mbd.constructorArgumentLock) {
+				if (mbd.resolvedConstructorOrFactoryMethod != null) {
+					resolved = true;
+					autowireNecessary = mbd.constructorArgumentsResolved;
+				}
+			}
+		}
+		if (resolved) {
+			if (autowireNecessary) {
+				return autowireConstructor(beanName, mbd, null, null);
+			}
+			else {
+				return instantiateBean(beanName, mbd);
+			}
+		}
+
+		// Candidate constructors for autowiring?
+		Constructor<?>[] ctors = determineConstructorsFromBeanPostProcessors(beanClass, beanName);
+		if (ctors != null || mbd.getResolvedAutowireMode() == AUTOWIRE_CONSTRUCTOR ||
+				mbd.hasConstructorArgumentValues() || !ObjectUtils.isEmpty(args)) {
+			return autowireConstructor(beanName, mbd, ctors, args);
+		}
+
+		// Preferred constructors for default construction?
+		ctors = mbd.getPreferredConstructors();
+		if (ctors != null) {
+			return autowireConstructor(beanName, mbd, ctors, null);
+		}
+
+		// No special handling: simply use no-arg constructor.
+		return instantiateBean(beanName, mbd);
+
+// org.springframework.beans.factory.support.AbstractAutowireCapableBeanFactory
+public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFactory
+		implements AutowireCapableBeanFactory {
+...
+	protected BeanWrapper instantiateBean(final String beanName, final RootBeanDefinition mbd) {
+		try {
+			Object beanInstance;
+			final BeanFactory parent = this;
+			if (System.getSecurityManager() != null) {
+				beanInstance = AccessController.doPrivileged((PrivilegedAction<Object>) () ->
+						getInstantiationStrategy().instantiate(mbd, beanName, parent),
+						getAccessControlContext());
+			}
+			else {
+				beanInstance = getInstantiationStrategy().instantiate(mbd, beanName, parent);	
+
+// org.springframework.beans.factory.support.SimpleInstantiationStrategy
+public class SimpleInstantiationStrategy implements InstantiationStrategy {
+...
+	@Override
+	public Object instantiate(RootBeanDefinition bd, @Nullable String beanName, BeanFactory owner) {
+		// Don't override the class with CGLIB if no overrides.
+		if (!bd.hasMethodOverrides()) {
+			Constructor<?> constructorToUse;
+			synchronized (bd.constructorArgumentLock) {
+				constructorToUse = (Constructor<?>) bd.resolvedConstructorOrFactoryMethod;
+				if (constructorToUse == null) {
+					final Class<?> clazz = bd.getBeanClass();
+					if (clazz.isInterface()) {
+						throw new BeanInstantiationException(clazz, "Specified class is an interface");
+					}
+					try {
+						if (System.getSecurityManager() != null) {
+							constructorToUse = AccessController.doPrivileged(
+									(PrivilegedExceptionAction<Constructor<?>>) clazz::getDeclaredConstructor);
+						}
+						else {
+							constructorToUse = clazz.getDeclaredConstructor();
+						}
+						bd.resolvedConstructorOrFactoryMethod = constructorToUse;
+					}
+					catch (Throwable ex) {
+						throw new BeanInstantiationException(clazz, "No default constructor found", ex);
+					}
+				}
+			}
+			return BeanUtils.instantiateClass(constructorToUse);
+```
+
+# Getting Bean Instance
+
+`Object BeanFactory::getBean(String name)` 이 특정한 이름의 Bean Instance 를
+얻어온다. `DefaultSingletonBeanRegistry::singletonObjects` 에 있으면 가져오고
+없으면 생성한다. Bean 을 생성하는 것은 [Creating Bean
+Instance](#creating-bean-instance) 를 참고하자.
+
+```java
+// org.springframework.beans.factory.BeanFactory
+public interface BeanFactory {
+...
+	Object getBean(String name) throws BeansException;
+
+// org.springframework.beans.factory.support.DefaultSingletonBeanRegistry
+public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
+
+	/** Cache of singleton objects: bean name to bean instance. */
+	private final Map<String, Object> singletonObjects = new ConcurrentHashMap<>(256);
+```
+
+다음은 `BeanFactory::getBean()` 의 흐름을 추적한 것이다.
+
+```java
+// org.springframework.beans.factory.BeanFactory
+public interface BeanFactory {
+...
+	Object getBean(String name) throws BeansException;
+
+// org.springframework.beans.factory.support.AbstractBeanFactory
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory {
+...
+	protected <T> T doGetBean(final String name, @Nullable final Class<T> requiredType,
+			@Nullable final Object[] args, boolean typeCheckOnly) throws BeansException {
+
+		final String beanName = transformedBeanName(name);
+		Object bean;
+
+		// Eagerly check singleton cache for manually registered singletons.
+		Object sharedInstance = getSingleton(beanName);
+		if (sharedInstance != null && args == null) {
+			if (logger.isTraceEnabled()) {
+				if (isSingletonCurrentlyInCreation(beanName)) {
+					logger.trace("Returning eagerly cached instance of singleton bean '" + beanName +
+							"' that is not fully initialized yet - a consequence of a circular reference");
+				}
+				else {
+					logger.trace("Returning cached instance of singleton bean '" + beanName + "'");
+				}
+			}
+			bean = getObjectForBeanInstance(sharedInstance, name, beanName, null);
+		}
+
+		else {
+			// Fail if we're already creating this bean instance:
+			// We're assumably within a circular reference.
+			if (isPrototypeCurrentlyInCreation(beanName)) {
+				throw new BeanCurrentlyInCreationException(beanName);
+			}
+
+			// Check if bean definition exists in this factory.
+			BeanFactory parentBeanFactory = getParentBeanFactory();
+			if (parentBeanFactory != null && !containsBeanDefinition(beanName)) {
+				// Not found -> check parent.
+				String nameToLookup = originalBeanName(name);
+				if (parentBeanFactory instanceof AbstractBeanFactory) {
+					return ((AbstractBeanFactory) parentBeanFactory).doGetBean(
+							nameToLookup, requiredType, args, typeCheckOnly);
+				}
+				else if (args != null) {
+					// Delegation to parent with explicit args.
+					return (T) parentBeanFactory.getBean(nameToLookup, args);
+				}
+				else if (requiredType != null) {
+					// No args -> delegate to standard getBean method.
+					return parentBeanFactory.getBean(nameToLookup, requiredType);
+				}
+				else {
+					return (T) parentBeanFactory.getBean(nameToLookup);
+				}
+			}
+
+			if (!typeCheckOnly) {
+				markBeanAsCreated(beanName);
+			}
+
+			try {
+				final RootBeanDefinition mbd = getMergedLocalBeanDefinition(beanName);
+				checkMergedBeanDefinition(mbd, beanName, args);
+
+				// Guarantee initialization of beans that the current bean depends on.
+				String[] dependsOn = mbd.getDependsOn();
+				if (dependsOn != null) {
+					for (String dep : dependsOn) {
+						if (isDependent(beanName, dep)) {
+							throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+									"Circular depends-on relationship between '" + beanName + "' and '" + dep + "'");
+						}
+						registerDependentBean(dep, beanName);
+						try {
+							getBean(dep);
+						}
+						catch (NoSuchBeanDefinitionException ex) {
+							throw new BeanCreationException(mbd.getResourceDescription(), beanName,
+									"'" + beanName + "' depends on missing bean '" + dep + "'", ex);
+						}
+					}
+				}
+
+				// Create bean instance.
+				if (mbd.isSingleton()) {
+					sharedInstance = getSingleton(beanName, () -> {
+
+// org.springframework.beans.factory.support.DefaultSingletonBeanRegistry
+public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
+...
+	public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
+		Assert.notNull(beanName, "Bean name must not be null");
+		synchronized (this.singletonObjects) {
+			Object singletonObject = this.singletonObjects.get(beanName);
 ```
 
 # `@SpringBootApplication`
