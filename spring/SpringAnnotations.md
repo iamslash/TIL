@@ -19,11 +19,23 @@ This is about annotations of Spring Framework.
 
 # `@Configuration`
 
-특정 Bean 들을 생성할 때 필요한 설정들을 구현한 class 를 `Configuration Bean Class` 혹은 간단히 `Configuration Class` 라고 하자. `Configuration Class` 는 역시 또 다른 Bean 으로 등록하기 위해 `@Configuration` 을 부착한다. Spring Framework 는 Component Scan 할 때 `@Configuration` 이 부착된 `Configuration Class` 를 읽는다. 그리고 그 Class 의 함수들중 `@Bean` 이 부착된 method 를 실행하여 Bean 을 생성한다.
+* [[Spring] 빈 등록을 위한 어노테이션 @Bean, @Configuration, @Component 차이 및 비교 - (1/2)](https://mangkyu.tistory.com/75)
+  * [[Spring] @Configuration 안에 @Bean을 사용해야 하는 이유, proxyBeanMethods - (2/2)](https://mangkyu.tistory.com/234)
 
-예를 들어 다음과 같이 `MyBean, MyBeanImpl, MyConfig` 를 참고하자. `MyConfig` 라는 `Configuration Class` 를 통해 `MyBean` 이라는 Bean 을 생성한다.
+----
+
+`@Configuration` 이 부착된 Class 는 `@Bean` Method 가 return 하는 Instance 를
+Bean Instance 로 등록한다. 이때 Bean 의 이름은 `@Bean` Method 와 같다.
+
+`@Bean` 은 `@Configuration` 이 부착되지 않은 Class 에도 사용할 수 있다. 그러나
+Single-ton 이 보장되지 않는다. `@Configuration` Class 안에 정의된 `@Bean`
+Method 는 CGLIB 이 생성한 Proxy Code 에 의해 Single-ton 을 보장해 준다. 
+
+예를 들어 다음과 같이 `MyBean, MyBeanImpl, MyConfig` 를 참고하자. `MyConfig`
+라는 `Configuration Class` 를 통해 `MyBean` 이라는 Bean Instance 를 생성한다.
 
 ```java
+// 
 @Configuration
 public class MyConfig {
 	@Bean
@@ -32,22 +44,19 @@ public class MyConfig {
 	}	
 }
 
-...
-
+//
 public interface MyBean {
 	public String getBeanName();
 }
 
-...
-
+//
 public class MyBeanImpl implements MyBean {
 	public String getBeanName() {
 		return "My Bean";
 	}
 }
 
-...
-
+//
 public class AppMain {
 	public static void main(String[] args) {
 		AnnotationConfigApplicationContexet context = new AnnotationConfigApplicationContexet(MyConfig.class);
@@ -56,8 +65,14 @@ public class AppMain {
 		context.close(0);
 	}
 }
-
 ```
+
+`@Component` 만 부착해도 해당 Class 의 Bean Definition 을 등록하고 Bean Instance
+를 생성할 수 있다. 왜 `@Configuration` 을 사용하는 걸까? 그 이유는 다음과 같다.
+
+* Bean 으로 등록할 Class 의 code 를 접근할 수 없을 때
+* Bean 으로 등록할 Class 들을 한 곳에서 관리하고 싶을 때
+* Bean 으로 등록할 Class 들을 다양한 방법으로 생성하여 가각을 Bean 으로 등록하고 싶을 때
 
 # `@ConfigurationProperties`
 

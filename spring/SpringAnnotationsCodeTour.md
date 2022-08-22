@@ -640,8 +640,9 @@ public @interface SpringBootApplication {
 
 # `@SpringBootConfiguration`
 
-`@SpringBootConfiguration` 를 부착하면 `@Configuration` 때문에 `@Configuration`
-Class 가 된다. 즉, `@Bean` Method 는 Bean 을 생성할 수 있다. 
+`@SpringBootConfiguration` 를 부착하면 `@Configuration` Class 가 된다.
+`@SpringBootConfiguration` 에 `@Configuration` 이 부착되어 있기 때문이다. 즉,
+`@Bean` Method 는 Bean Instance 을 생성할 수 있다. 
 
 ```java
 // org.springframework.boot.SpringBootConfiguration
@@ -654,9 +655,44 @@ public @interface SpringBootConfiguration {
 
 # `@Configuration`
 
-`@Bean` Method 가 return 하는 Object 를 Bean 으로 등록한다.
+`ConfigurationClassParser::processConfigurationClass(ConfigurationClass configClass, Predicate<String> filter)` 를 호출하여 처리한다. `configClass` 는 `@Configuration` Class 와 같다. 주로 `@Bean` Method 가 return 하는 Object 를 Bean Instance 로 등록한다. 
 
-```java
+```java		
+// org.springframework.context.annotation.ConfigurationClassParser
+class ConfigurationClassParser {
+...
+	protected void processConfigurationClass(ConfigurationClass configClass, Predicate<String> filter) throws IOException {
+		if (this.conditionEvaluator.shouldSkip(configClass.getMetadata(), ConfigurationPhase.PARSE_CONFIGURATION)) {
+			return;
+		}
+
+		ConfigurationClass existingClass = this.configurationClasses.get(configClass);
+		if (existingClass != null) {
+			if (configClass.isImported()) {
+				if (existingClass.isImported()) {
+					existingClass.mergeImportedBy(configClass);
+				}
+				// Otherwise ignore new imported config class; existing non-imported class overrides it.
+				return;
+			}
+			else {
+				// Explicit bean definition found, probably replacing an import.
+				// Let's remove the old one and go with the new one.
+				this.configurationClasses.remove(configClass);
+				this.knownSuperclasses.values().removeIf(configClass::equals);
+			}
+		}
+
+		// Recursively process the configuration class and its superclass hierarchy.
+		SourceClass sourceClass = asSourceClass(configClass, filter);
+		do {
+			sourceClass = doProcessConfigurationClass(configClass, sourceClass, filter);
+		}
+		while (sourceClass != null);
+
+		this.configurationClasses.put(configClass, configClass);
+	}
+
 // org.springframework.context.annotation.ConfigurationClassParser
 class ConfigurationClassParser {
 ...
@@ -664,29 +700,12 @@ class ConfigurationClassParser {
 	protected final SourceClass doProcessConfigurationClass(
 			ConfigurationClass configClass, SourceClass sourceClass, Predicate<String> filter)
 			throws IOException {
-	...
-		// Process any @ComponentScan annotations
-		Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
-				sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
-		if (!componentScans.isEmpty() &&
-				!this.conditionEvaluator.shouldSkip(sourceClass.getMetadata(), ConfigurationPhase.REGISTER_BEAN)) {
-			for (AnnotationAttributes componentScan : componentScans) {
-				// The config class is annotated with @ComponentScan -> perform the scan immediately
-				Set<BeanDefinitionHolder> scannedBeanDefinitions =
-						this.componentScanParser.parse(componentScan, sourceClass.getMetadata().getClassName());
-				// Check the set of scanned definitions for any further config classes and parse recursively if needed
-				for (BeanDefinitionHolder holder : scannedBeanDefinitions) {
-					BeanDefinition bdCand = holder.getBeanDefinition().getOriginatingBeanDefinition();
-					if (bdCand == null) {
-						bdCand = holder.getBeanDefinition();
-					}
-					if (ConfigurationClassUtils.checkConfigurationClassCandidate(bdCand, this.metadataReaderFactory)) {
-						parse(bdCand.getBeanClassName(), holder.getBeanName());
-					}
-				}
-			}
-		}				
-
+...
+		// Process individual @Bean methods
+		Set<MethodMetadata> beanMethods = retrieveBeanMethodMetadata(sourceClass);
+		for (MethodMetadata methodMetadata : beanMethods) {
+			configClass.addBeanMethod(new BeanMethod(methodMetadata, configClass));
+		}	
 ```
 
 # `@PropertySource`
@@ -726,6 +745,7 @@ class ConfigurationClassParser {
 	@Nullable
 	protected final SourceClass doProcessConfigurationClass(
 			ConfigurationClass configClass, SourceClass sourceClass, Predicate<String> filter)
+...			
 		// Process any @ComponentScan annotations
 		Set<AnnotationAttributes> componentScans = AnnotationConfigUtils.attributesForRepeatable(
 				sourceClass.getMetadata(), ComponentScans.class, ComponentScan.class);
@@ -751,21 +771,84 @@ class ConfigurationClassParser {
 
 # `@Import`
 
-`@Import` 의 Arguement 로 `@Configuration` Class 를 넘기면 그 `@Configuration`
-Class 의 Instance 를 Bean 으로 등록한다. 그리고 `@Configuration` Class 의 `@Bean` Method 가
-return 하는 Object 를 Bean 으로 등록한다.
+`@Import` 의 Arguement 로 특별한 Class 를 넘기면 그 Class 의 Instance 를 Bean
+Instance 으로 등록한다. 특별한 Class 를 Importee Class 라고 하자. 종류는 다음과 같다.
+
+* `candidate.isAssignable(ImportSelector.class) == true` 인 Class
+* `candidate.isAssignable(ImportBeanDefinitionRegistrar.class) == true` 인 Class
+* `@Configuration` Class
 
 ```java
 // org.springframework.context.annotation.ConfigurationClassParser
+//        configClass: @Import 가 부착된 Class
+// currentSourceClass: configClass 의 SourceClass
+//   importCandidates: @Import 의 대상인 Importee Classes
 class ConfigurationClassParser {
 ...
-	@Nullable
-	protected final SourceClass doProcessConfigurationClass(
-			ConfigurationClass configClass, SourceClass sourceClass, Predicate<String> filter)
-			throws IOException {
-	...
-		// Process any @Import annotations
-		processImports(configClass, sourceClass, getImports(sourceClass), filter, true);
+	private void processImports(ConfigurationClass configClass, SourceClass currentSourceClass,
+			Collection<SourceClass> importCandidates, Predicate<String> exclusionFilter,
+			boolean checkForCircularImports) {
+
+		if (importCandidates.isEmpty()) {
+			return;
+		}
+
+		if (checkForCircularImports && isChainedImportOnStack(configClass)) {
+			this.problemReporter.error(new CircularImportProblem(configClass, this.importStack));
+		}
+		else {
+			this.importStack.push(configClass);
+			try {
+				for (SourceClass candidate : importCandidates) {
+					if (candidate.isAssignable(ImportSelector.class)) {
+						// Candidate class is an ImportSelector -> delegate to it to determine imports
+						Class<?> candidateClass = candidate.loadClass();
+						ImportSelector selector = ParserStrategyUtils.instantiateClass(candidateClass, ImportSelector.class,
+								this.environment, this.resourceLoader, this.registry);
+						Predicate<String> selectorFilter = selector.getExclusionFilter();
+						if (selectorFilter != null) {
+							exclusionFilter = exclusionFilter.or(selectorFilter);
+						}
+						if (selector instanceof DeferredImportSelector) {
+							this.deferredImportSelectorHandler.handle(configClass, (DeferredImportSelector) selector);
+						}
+						else {
+							String[] importClassNames = selector.selectImports(currentSourceClass.getMetadata());
+							Collection<SourceClass> importSourceClasses = asSourceClasses(importClassNames, exclusionFilter);
+							processImports(configClass, currentSourceClass, importSourceClasses, exclusionFilter, false);
+						}
+					}
+					else if (candidate.isAssignable(ImportBeanDefinitionRegistrar.class)) {
+						// Candidate class is an ImportBeanDefinitionRegistrar ->
+						// delegate to it to register additional bean definitions
+						Class<?> candidateClass = candidate.loadClass();
+						ImportBeanDefinitionRegistrar registrar =
+								ParserStrategyUtils.instantiateClass(candidateClass, ImportBeanDefinitionRegistrar.class,
+										this.environment, this.resourceLoader, this.registry);
+						configClass.addImportBeanDefinitionRegistrar(registrar, currentSourceClass.getMetadata());
+					}
+					else {
+						// Candidate class not an ImportSelector or ImportBeanDefinitionRegistrar ->
+						// process it as an @Configuration class
+						this.importStack.registerImport(
+								currentSourceClass.getMetadata(), candidate.getMetadata().getClassName());
+						processConfigurationClass(candidate.asConfigClass(configClass), exclusionFilter);
+					}
+				}
+			}
+			catch (BeanDefinitionStoreException ex) {
+				throw ex;
+			}
+			catch (Throwable ex) {
+				throw new BeanDefinitionStoreException(
+						"Failed to process import candidates for configuration class [" +
+						configClass.getMetadata().getClassName() + "]", ex);
+			}
+			finally {
+				this.importStack.pop();
+			}
+		}
+	}
 ```
 
 # `@ImportResource`
@@ -794,7 +877,9 @@ class ConfigurationClassParser {
 
 # `@Bean`
 
-`@Bean` Method 가 return 하는 Object 는 Bean 으로 등록된다.
+`@Bean` Method 가 return 하는 Object 는 Bean 으로 등록된다. `@Configuration`
+Class 안에서 선언되야 생성되는 Bean Instance 의 Single-ton 이 보장된다. 주로
+`@Configuration` Class 안에서만 사용된다. [@Configuration](#configuration) 참고.
 
 ```java
 // org.springframework.context.annotation.ConfigurationClassParser
@@ -814,9 +899,10 @@ class ConfigurationClassParser {
 
 # `@EnableAutoConfiguration`
 
-`AutoConfigurationImportSelector.class` 를 Import 하고 있다. 즉, `AutoConfigurationImportSelector.class` 를 component scanning 한다. `AutoConfigurationImportSelector` 는 `@Configuration` Class 가 아닌데?
+`AutoConfigurationImportSelector.class` 를 Import 하고 있다. 또한 `AutoConfigurationImportSelector.class` 는 `candidate.isAssignable(ImportSelector.class) == true` 인 Class 이다. [`@Import`](#import) 참고.
 
 ```java
+// org.springframework.boot.autoconfigure.EnableAutoConfiguration
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
@@ -825,44 +911,62 @@ class ConfigurationClassParser {
 @Import(AutoConfigurationImportSelector.class)
 public @interface EnableAutoConfiguration {
 
-	String ENABLED_OVERRIDE_PROPERTY = "spring.boot.enableautoconfiguration";
+// org.springframework.boot.autoconfigure.AutoConfigurationImportSelector
+public class AutoConfigurationImportSelector implements DeferredImportSelector, BeanClassLoaderAware,
+		ResourceLoaderAware, BeanFactoryAware, EnvironmentAware, Ordered {
 
-	/**
-	 * Exclude specific auto-configuration classes such that they will never be applied.
-	 * @return the classes to exclude
-	 */
-	Class<?>[] exclude() default {};
-
-	/**
-	 * Exclude specific auto-configuration class names such that they will never be
-	 * applied.
-	 * @return the class names to exclude
-	 * @since 1.3.0
-	 */
-	String[] excludeName() default {};
-
-}
+// org.springframework.context.annotation.DeferredImportSelector
+public interface DeferredImportSelector extends ImportSelector {
 ```
 
-`SpringFactoriesLoader::FACTORIES_RESOURCE_LOCATION` 에 파일 경로(`spring.factories`)가 hard coding 되어 있다.
+`AutoConfigurationImportSelector` 는 `spring.factories` 에 저장된 key 와 value 들을 읽어서
+`@Configuration` Class 처럼 처리한다. 즉, value 를 `ConfigurationClassParser::processConfigurationClass(ConfigurationClass configClass, Predicate<String> filter)` 의 configClass 로 넘겨서 호출한다.
+
+```java
+```
+
+`SpringFactoriesLoader::FACTORIES_RESOURCE_LOCATION` 에 spring factory file (`spring.factories`)의 경로가 hard coding 되어 있다.
 
 ```java
 // org.springframework.core.io.support.SpringFactoriesLoader
 public final class SpringFactoriesLoader {
-
-	/**
-	 * The location to look for factories.
-	 * <p>Can be present in multiple JAR files.
-	 */
+...
 	public static final String FACTORIES_RESOURCE_LOCATION = "META-INF/spring.factories";
 
+// META-INF/spring.factories
 ...
-}
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
+org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
+org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,\
+org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration,\
+org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration,\
+...
 ```
 
-`SpringFactoriesLoader::loadFactoryNames()` 에서 classpath 에 포함된 `spring.factories` 파일들을 로딩한다.
+`List<String> SpringFactoriesLoader::loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader)` 에서 `spring.factories` 의 key 들중
+`factoryType` 의 Class Path 를 고르고 그 값들을 return 한다. 다음은
+`spring.factories` 파일의 `EnableAutoConfiguration` key 의 값들을 return 하는
+흐름이다. 
  
 ```java
+// org.springframework.boot.autoconfigure.AutoConfigurationImportSelector
+public class AutoConfigurationImportSelector implements DeferredImportSelector, BeanClassLoaderAware,
+		ResourceLoaderAware, BeanFactoryAware, EnvironmentAware, Ordered {
+...
+	protected List<String> getCandidateConfigurations(AnnotationMetadata metadata, AnnotationAttributes attributes) {
+		List<String> configurations = SpringFactoriesLoader.loadFactoryNames(getSpringFactoriesLoaderFactoryClass(),
+				getBeanClassLoader());
+
+// org.springframework.boot.autoconfigure.AutoConfigurationImportSelector
+public class AutoConfigurationImportSelector implements DeferredImportSelector, BeanClassLoaderAware,
+		ResourceLoaderAware, BeanFactoryAware, EnvironmentAware, Ordered {
+...
+	protected Class<?> getSpringFactoriesLoaderFactoryClass() {
+		return EnableAutoConfiguration.class;
+	}
+
 // org.springframework.core.io.support.SpringFactoriesLoader
 public final class SpringFactoriesLoader {
 ...	
@@ -874,16 +978,6 @@ public final class SpringFactoriesLoader {
 		String factoryTypeName = factoryType.getName();
 		return loadSpringFactories(classLoaderToUse).getOrDefault(factoryTypeName, Collections.emptyList());
 	}
-
-	private static Map<String, List<String>> loadSpringFactories(ClassLoader classLoader) {
-		Map<String, List<String>> result = cache.get(classLoader);
-		if (result != null) {
-			return result;
-		}
-
-		result = new HashMap<>();
-		try {
-			Enumeration<URL> urls = classLoader.getResources(FACTORIES_RESOURCE_LOCATION);
 ```
 
 # `@Repository`
