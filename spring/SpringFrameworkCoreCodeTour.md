@@ -6,6 +6,7 @@
 - [Registering Bean Definition](#registering-bean-definition)
 - [Creating Bean Instance](#creating-bean-instance)
 - [Instanciating SingleTon Bean Instances](#instanciating-singleton-bean-instances)
+- [Reading `spring.factories`](#reading-springfactories)
 
 ----
 
@@ -525,4 +526,187 @@ public interface ConfigurableListableBeanFactory
 				}
 				else {
 					getBean(beanName);		
+```
+
+# Reading `spring.factories`
+
+`spring.factories` 에 Interface 혹은 Abstract Class 를 key 로 Implementation Class 를 comma-separated value 로 넣어두면 Spring Application 이 시작할 때 필요한 Implementation Class 의 Instances 를 생성할 수 있다. 이것은 `SpringFactoriesLoader` Class 에 의해 이루어 진다. `factories` 라는 단어를 사용한 것을 보니 Bean 생성 로직과는 무관하게 Class Instance 를 생성하는 mechanism 같다.
+
+`SpringFactoriesLoader` 는 `META-INF/spring.factories` 를 읽고 Instance 를 생성하는 Class 이다. 내가 발견한 `spring.factories` 는 다음과 같다.
+
+```
+spring-beans-5.2.5.RELEASE.jar!/META-INF/spring.factories
+spring-boot-2.2.6.RELEASE.jar!/META-INF/spring.factories
+spring-boot-autoconfigure-2.2.6.RELEASE.jar!/META-INF/spring.factories
+```
+
+`spring.factores` 의 형식은 Properties format 을 따른다. 즉, key 와 comma-separated values 로 구성된다. key 는
+Interface 혹은 Abstract Class 이름이다. value 는 key 를 구현한 Implementation Class 의 이름이다.
+
+```conf
+# Auto Configure
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
+org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
+org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,\
+org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration,\
+org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration,\
+...
+```
+
+`Map<String, List<String>> SpringFactoriesLoader::loadSpringFactories(@Nullable ClassLoader classLoader)` 는 모든 `spring.factories` 파일들을 읽고 그것을 Map 에 저장하여 리턴한다. 이 Map 은 caching 된다. 즉, 두번째 호출부터 이미 생성한 Map 을 바로 리턴한다. 또한 `SpringFactoriesLoader::FACTORIES_RESOURCE_LOCATION` 에 spring factory file (`spring.factories`)의 경로가 hard coding 되어 있다.
+
+```java
+// org.springframework.core.io.support.SpringFactoriesLoader
+public final class SpringFactoriesLoader {
+...
+	public static final String FACTORIES_RESOURCE_LOCATION = "META-INF/spring.factories";
+
+// org.springframework.core.io.support.SpringFactoriesLoader
+	private static Map<String, List<String>> loadSpringFactories(@Nullable ClassLoader classLoader) {
+		MultiValueMap<String, String> result = cache.get(classLoader);
+		if (result != null) {
+			return result;
+		}
+
+		try {
+			Enumeration<URL> urls = (classLoader != null ?
+					classLoader.getResources(FACTORIES_RESOURCE_LOCATION) :
+					ClassLoader.getSystemResources(FACTORIES_RESOURCE_LOCATION));
+			result = new LinkedMultiValueMap<>();
+			while (urls.hasMoreElements()) {
+				URL url = urls.nextElement();
+				UrlResource resource = new UrlResource(url);
+				Properties properties = PropertiesLoaderUtils.loadProperties(resource);
+				for (Map.Entry<?, ?> entry : properties.entrySet()) {
+					String factoryTypeName = ((String) entry.getKey()).trim();
+					for (String factoryImplementationName : StringUtils.commaDelimitedListToStringArray((String) entry.getValue())) {
+						result.add(factoryTypeName, factoryImplementationName.trim());
+					}
+				}
+			}
+			cache.put(classLoader, result);
+			return result;
+		}
+		catch (IOException ex) {
+			throw new IllegalArgumentException("Unable to load factories from location [" +
+					FACTORIES_RESOURCE_LOCATION + "]", ex);
+		}
+	}
+```
+
+`<T> T SpringFactoriesLoader::instantiateFactory(String factoryImplementationName, Class<T> factoryType, ClassLoader classLoader)` 는 Interface 혹은 Abstract Class 가 factoryType 이고 Implementation Class 가 factoryImplementationName 인 것을 생성하여 리턴한다. 즉, factoryImplementationName 이름을 갖는 Class 의 Instance 를 생성하여 리턴한다. 
+
+```java
+// org.springframework.core.io.support.SpringFactoriesLoader
+public final class SpringFactoriesLoader {
+...
+	private static <T> T instantiateFactory(String factoryImplementationName, Class<T> factoryType, ClassLoader classLoader) {
+		try {
+			Class<?> factoryImplementationClass = ClassUtils.forName(factoryImplementationName, classLoader);
+			if (!factoryType.isAssignableFrom(factoryImplementationClass)) {
+				throw new IllegalArgumentException(
+						"Class [" + factoryImplementationName + "] is not assignable to factory type [" + factoryType.getName() + "]");
+			}
+			return (T) ReflectionUtils.accessibleConstructor(factoryImplementationClass).newInstance();
+		}
+		catch (Throwable ex) {
+			throw new IllegalArgumentException(
+				"Unable to instantiate factory class [" + factoryImplementationName + "] for factory type [" + factoryType.getName() + "]",
+				ex);
+		}
+	}
+```
+
+`List<String> SpringFactoriesLoader::loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader)` 는 Interface 혹은 Abstract Class 가
+factoryType 인 것의 Implementation Class Names 을 리턴한다. 즉, `spring.factories` 를 읽고
+`factoryType` 을 key 로 하는 value 들을 리턴한다.
+
+```java
+// org.springframework.core.io.support.SpringFactoriesLoader
+public final class SpringFactoriesLoader {
+...
+	public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader) {
+		String factoryTypeName = factoryType.getName();
+		return loadSpringFactories(classLoader).getOrDefault(factoryTypeName, Collections.emptyList());
+	}
+```
+
+`List<T> SpringFactoriesLoader::loadFactories(Class<T> factoryType, @Nullable ClassLoader classLoader)` 는 Interface 혹은 Abstract Class 가 factoryType 인 Implementation Class 의 Instances 를 생성하여 리턴한다.
+
+```java
+// org.springframework.core.io.support.SpringFactoriesLoader
+public final class SpringFactoriesLoader {
+...
+	public static <T> List<T> loadFactories(Class<T> factoryType, @Nullable ClassLoader classLoader) {
+		Assert.notNull(factoryType, "'factoryType' must not be null");
+		ClassLoader classLoaderToUse = classLoader;
+		if (classLoaderToUse == null) {
+			classLoaderToUse = SpringFactoriesLoader.class.getClassLoader();
+		}
+		List<String> factoryImplementationNames = loadFactoryNames(factoryType, classLoaderToUse);
+		if (logger.isTraceEnabled()) {
+			logger.trace("Loaded [" + factoryType.getName() + "] names: " + factoryImplementationNames);
+		}
+		List<T> result = new ArrayList<>(factoryImplementationNames.size());
+		for (String factoryImplementationName : factoryImplementationNames) {
+			result.add(instantiateFactory(factoryImplementationName, factoryType, classLoaderToUse));
+		}
+		AnnotationAwareOrderComparator.sort(result);
+		return result;
+	}
+```
+
+Spring Application 은 다음과 같은 부분에서 `spring.factories` 의 Implementation Class 의 Instance 를 생성하고 있다. 이때 Implementation Class 의 Instance 를 생성하는 logic 은 `SpringFactoriesLoader` 를 이용하지 않는다는 것을 유의하자.
+
+```java
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
+		setInitializers((Collection) getSpringFactoriesInstances(ApplicationContextInitializer.class));
+		setListeners((Collection) getSpringFactoriesInstances(ApplicationListener.class));
+
+...
+			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
+					new Class[] { ConfigurableApplicationContext.class }, context);
+...
+		return new SpringApplicationRunListeners(logger,
+				getSpringFactoriesInstances(SpringApplicationRunListener.class, types, this, args));
+
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
+	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type) {
+		return getSpringFactoriesInstances(type, new Class<?>[] {});
+	}
+
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
+	private <T> Collection<T> getSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes, Object... args) {
+		ClassLoader classLoader = getClassLoader();
+		// Use names and ensure unique to protect against duplicates
+		Set<String> names = new LinkedHashSet<>(SpringFactoriesLoader.loadFactoryNames(type, classLoader));
+		List<T> instances = createSpringFactoriesInstances(type, parameterTypes, classLoader, args, names);
+
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
+	private <T> List<T> createSpringFactoriesInstances(Class<T> type, Class<?>[] parameterTypes,
+			ClassLoader classLoader, Object[] args, Set<String> names) {
+		List<T> instances = new ArrayList<>(names.size());
+		for (String name : names) {
+			try {
+				Class<?> instanceClass = ClassUtils.forName(name, classLoader);
+				Assert.isAssignable(type, instanceClass);
+				Constructor<?> constructor = instanceClass.getDeclaredConstructor(parameterTypes);
+				T instance = (T) BeanUtils.instantiateClass(constructor, args);
+				instances.add(instance);
+			}
+			catch (Throwable ex) {
+				throw new IllegalArgumentException("Cannot instantiate " + type + " : " + name, ex);
+			}
+		}
+		return instances;
+	}
 ```

@@ -899,7 +899,7 @@ class ConfigurationClassParser {
 
 # `@EnableAutoConfiguration`
 
-`AutoConfigurationImportSelector.class` 를 Import 하고 있다. 또한 `AutoConfigurationImportSelector.class` 는 `candidate.isAssignable(ImportSelector.class) == true` 인 Class 이다. [`@Import`](#import) 참고.
+`@EnableAutoConfiguration` 는 `AutoConfigurationImportSelector.class` 를 Import 하고 있다. 또한 `AutoConfigurationImportSelector.class` 는 `candidate.isAssignable(ImportSelector.class) == true` 인 Class 이다. Importee Class 를 특별하게 처리한다. [`@Import`](#import) 참고.
 
 ```java
 // org.springframework.boot.autoconfigure.EnableAutoConfiguration
@@ -919,22 +919,54 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 public interface DeferredImportSelector extends ImportSelector {
 ```
 
-`AutoConfigurationImportSelector` 는 `spring.factories` 에 저장된 key 와 value 들을 읽어서
-`@Configuration` Class 처럼 처리한다. 즉, value 를 `ConfigurationClassParser::processConfigurationClass(ConfigurationClass configClass, Predicate<String> filter)` 의 configClass 로 넘겨서 호출한다.
+`@Import(AutoConfigurationImportSelector.class)` 때문에 `ConfigurationClassParser::processImports(...)` 를 실행한다. configClass 는 `ExAnnotation` 과 같이 EntryPoint Class 이다. importCandidates 에 `AutoConfigurationImportSelector` 가 들어있다.
 
 ```java
+// org.springframework.context.annotation.ConfigurationClassParser
+//        configClass: @Import 가 부착된 Class
+// currentSourceClass: configClass 의 SourceClass
+//   importCandidates: @Import 의 대상인 Importee Classes
+class ConfigurationClassParser {
+...
+	private void processImports(ConfigurationClass configClass, SourceClass currentSourceClass,
+			Collection<SourceClass> importCandidates, Predicate<String> exclusionFilter,
+			boolean checkForCircularImports) {
+
+		if (importCandidates.isEmpty()) {
+			return;
+		}
+
+		if (checkForCircularImports && isChainedImportOnStack(configClass)) {
+			this.problemReporter.error(new CircularImportProblem(configClass, this.importStack));
+		}
+		else {
+			this.importStack.push(configClass);
+			try {
+				for (SourceClass candidate : importCandidates) {
+					if (candidate.isAssignable(ImportSelector.class)) {
+						// Candidate class is an ImportSelector -> delegate to it to determine imports
+						Class<?> candidateClass = candidate.loadClass();
+						ImportSelector selector = ParserStrategyUtils.instantiateClass(candidateClass, ImportSelector.class,
+								this.environment, this.resourceLoader, this.registry);
+						Predicate<String> selectorFilter = selector.getExclusionFilter();
+						if (selectorFilter != null) {
+							exclusionFilter = exclusionFilter.or(selectorFilter);
+						}
+						if (selector instanceof DeferredImportSelector) {
+							this.deferredImportSelectorHandler.handle(configClass, (DeferredImportSelector) selector);
+						}
+						else {
+							String[] importClassNames = selector.selectImports(currentSourceClass.getMetadata());
+							Collection<SourceClass> importSourceClasses = asSourceClasses(importClassNames, exclusionFilter);
+							processImports(configClass, currentSourceClass, importSourceClasses, exclusionFilter, false);
+						}
 ```
 
-`SpringFactoriesLoader::FACTORIES_RESOURCE_LOCATION` 에 spring factory file (`spring.factories`)의 경로가 hard coding 되어 있다.
+`@Import(AutoConfigurationImportSelector.class)` 를 처리하면 `spring.factories` 의 `EnableAutoConfiguration` key 의 value 에 해당하는 Concrete Class 들을 Importee Class 처럼 처리한다.
 
-```java
-// org.springframework.core.io.support.SpringFactoriesLoader
-public final class SpringFactoriesLoader {
-...
-	public static final String FACTORIES_RESOURCE_LOCATION = "META-INF/spring.factories";
+다음과 같은 `spring.factories` 를 살펴보자. 
 
-// META-INF/spring.factories
-...
+```conf
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
@@ -942,14 +974,12 @@ org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
 org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration,\
 org.springframework.boot.autoconfigure.batch.BatchAutoConfiguration,\
 org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration,\
-...
 ```
 
-`List<String> SpringFactoriesLoader::loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader)` 에서 `spring.factories` 의 key 들중
-`factoryType` 의 Class Path 를 고르고 그 값들을 return 한다. 다음은
-`spring.factories` 파일의 `EnableAutoConfiguration` key 의 값들을 return 하는
-흐름이다. 
- 
+`spring.factories` 에서 `EnableAutoConfiguration` key 에 해당하는 value 들은
+어떻게 읽어오는 걸까? 아래 code 에서 `configurations` 에 124 개의 value 들이
+저장된다.
+
 ```java
 // org.springframework.boot.autoconfigure.AutoConfigurationImportSelector
 public class AutoConfigurationImportSelector implements DeferredImportSelector, BeanClassLoaderAware,
@@ -966,18 +996,327 @@ public class AutoConfigurationImportSelector implements DeferredImportSelector, 
 	protected Class<?> getSpringFactoriesLoaderFactoryClass() {
 		return EnableAutoConfiguration.class;
 	}
+```
 
-// org.springframework.core.io.support.SpringFactoriesLoader
-public final class SpringFactoriesLoader {
-...	
-	public static List<String> loadFactoryNames(Class<?> factoryType, @Nullable ClassLoader classLoader) {
-		ClassLoader classLoaderToUse = classLoader;
-		if (classLoaderToUse == null) {
-			classLoaderToUse = SpringFactoriesLoader.class.getClassLoader();
+그렇다면 124 개의 value 들 중 생성할만한 것들을 어떻게 읽어오는 걸까? 아래와
+같은 code 를 살펴보자. `grouping.getImports()` 는 124 개중 조건을 만족하는 23
+개를 가져온다. 그리고 `ConfigurationClassParser::processImports(...)` 를
+호출하여 23 개의 Concrete Class 들을 다시 Importee Class 처럼 처리한다.
+[`@Import`](#import) 참고.
+
+```java
+// org.springframework.context.annotation.ConfigurationClassParser
+	private class DeferredImportSelectorGroupingHandler {
+...
+		public void processGroupImports() {
+			for (DeferredImportSelectorGrouping grouping : this.groupings.values()) {
+				Predicate<String> exclusionFilter = grouping.getCandidateFilter();
+				grouping.getImports().forEach(entry -> {
+					ConfigurationClass configurationClass = this.configurationClasses.get(entry.getMetadata());
+					try {
+						processImports(configurationClass, asSourceClass(configurationClass, exclusionFilter),
+								Collections.singleton(asSourceClass(entry.getImportClassName(), exclusionFilter)),
+								exclusionFilter, false);
+					}
+					catch (BeanDefinitionStoreException ex) {
+						throw ex;
+					}
+					catch (Throwable ex) {
+						throw new BeanDefinitionStoreException(
+								"Failed to process import candidates for configuration class [" +
+										configurationClass.getMetadata().getClassName() + "]", ex);
+					}
+				});
+			}
 		}
-		String factoryTypeName = factoryType.getName();
-		return loadSpringFactories(classLoaderToUse).getOrDefault(factoryTypeName, Collections.emptyList());
-	}
+```
+
+지금까지의 흐름을 추적해 보면 다음과 같다.
+
+```java
+// com.iamslash.exannotation.ExAnnotationApp
+@SpringBootApplication
+public class ExAnnotationApp {
+
+    public static void main(String[] args) {
+        new SpringApplicationBuilder()
+            .sources(ExAnnotationApp.class)
+            .run(args);
+
+// org.springframework.boot.builder.SpringApplicationBuilder
+public class SpringApplicationBuilder {
+...
+	public ConfigurableApplicationContext run(String... args) {
+		if (this.running.get()) {
+			// If already created we just return the existing context
+			return this.context;
+		}
+		configureAsChildIfNecessary(args);
+		if (this.running.compareAndSet(false, true)) {
+			synchronized (this.running) {
+				// If not already running copy the sources over and then run.
+				this.context = build().run(args);
+
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
+	public ConfigurableApplicationContext run(String... args) {
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		ConfigurableApplicationContext context = null;
+		Collection<SpringBootExceptionReporter> exceptionReporters = new ArrayList<>();
+		configureHeadlessProperty();
+		SpringApplicationRunListeners listeners = getRunListeners(args);
+		listeners.starting();
+		try {
+			ApplicationArguments applicationArguments = new DefaultApplicationArguments(args);
+			ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);
+			configureIgnoreBeanInfo(environment);
+			Banner printedBanner = printBanner(environment);
+			context = createApplicationContext();
+			exceptionReporters = getSpringFactoriesInstances(SpringBootExceptionReporter.class,
+					new Class[] { ConfigurableApplicationContext.class }, context);
+			prepareContext(context, environment, listeners, applicationArguments, printedBanner);
+			refreshContext(context);
+
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
+	private void refreshContext(ConfigurableApplicationContext context) {
+		refresh(context);
+
+// org.springframework.boot.SpringApplication
+public class SpringApplication {
+...
+	protected void refresh(ApplicationContext applicationContext) {
+		Assert.isInstanceOf(AbstractApplicationContext.class, applicationContext);
+		((AbstractApplicationContext) applicationContext).refresh();
+
+// org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext
+public class ServletWebServerApplicationContext extends GenericWebApplicationContext
+		implements ConfigurableWebServerApplicationContext {
+...
+	@Override
+	public final void refresh() throws BeansException, IllegalStateException {
+		try {
+			super.refresh();
+
+// org.springframework.context.support.AbstractApplicationContext
+public abstract class AbstractApplicationContext extends DefaultResourceLoader
+		implements ConfigurableApplicationContext {
+...
+	@Override
+	public void refresh() throws BeansException, IllegalStateException {
+		synchronized (this.startupShutdownMonitor) {
+			// Prepare this context for refreshing.
+			prepareRefresh();
+
+			// Tell the subclass to refresh the internal bean factory.
+			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
+
+			// Prepare the bean factory for use in this context.
+			prepareBeanFactory(beanFactory);
+
+			try {
+				// Allows post-processing of the bean factory in context subclasses.
+				postProcessBeanFactory(beanFactory);
+
+				// Invoke factory processors registered as beans in the context.
+				invokeBeanFactoryPostProcessors(beanFactory);
+
+// org.springframework.context.support.AbstractApplicationContext
+public abstract class AbstractApplicationContext extends DefaultResourceLoader
+		implements ConfigurableApplicationContext {
+...
+	protected void invokeBeanFactoryPostProcessors(ConfigurableListableBeanFactory beanFactory) {
+		PostProcessorRegistrationDelegate.invokeBeanFactoryPostProcessors(beanFactory, getBeanFactoryPostProcessors());
+
+// org.springframework.context.support.PostProcessorRegistrationDelegate
+final class PostProcessorRegistrationDelegate {
+...
+	public static void invokeBeanFactoryPostProcessors(
+			ConfigurableListableBeanFactory beanFactory, List<BeanFactoryPostProcessor> beanFactoryPostProcessors) {
+
+		// Invoke BeanDefinitionRegistryPostProcessors first, if any.
+		Set<String> processedBeans = new HashSet<>();
+
+		if (beanFactory instanceof BeanDefinitionRegistry) {
+			BeanDefinitionRegistry registry = (BeanDefinitionRegistry) beanFactory;
+			List<BeanFactoryPostProcessor> regularPostProcessors = new ArrayList<>();
+			List<BeanDefinitionRegistryPostProcessor> registryProcessors = new ArrayList<>();
+
+			for (BeanFactoryPostProcessor postProcessor : beanFactoryPostProcessors) {
+				if (postProcessor instanceof BeanDefinitionRegistryPostProcessor) {
+					BeanDefinitionRegistryPostProcessor registryProcessor =
+							(BeanDefinitionRegistryPostProcessor) postProcessor;
+					registryProcessor.postProcessBeanDefinitionRegistry(registry);
+					registryProcessors.add(registryProcessor);
+				}
+				else {
+					regularPostProcessors.add(postProcessor);
+				}
+			}
+
+			// Do not initialize FactoryBeans here: We need to leave all regular beans
+			// uninitialized to let the bean factory post-processors apply to them!
+			// Separate between BeanDefinitionRegistryPostProcessors that implement
+			// PriorityOrdered, Ordered, and the rest.
+			List<BeanDefinitionRegistryPostProcessor> currentRegistryProcessors = new ArrayList<>();
+
+			// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
+			String[] postProcessorNames =
+					beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
+			for (String ppName : postProcessorNames) {
+				if (beanFactory.isTypeMatch(ppName, PriorityOrdered.class)) {
+					currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
+					processedBeans.add(ppName);
+				}
+			}
+			sortPostProcessors(currentRegistryProcessors, beanFactory);
+			registryProcessors.addAll(currentRegistryProcessors);
+			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
+
+// org.springframework.context.support.PostProcessorRegistrationDelegate
+final class PostProcessorRegistrationDelegate {
+...
+	private static void invokeBeanDefinitionRegistryPostProcessors(
+			Collection<? extends BeanDefinitionRegistryPostProcessor> postProcessors, BeanDefinitionRegistry registry) {
+
+		for (BeanDefinitionRegistryPostProcessor postProcessor : postProcessors) {
+			postProcessor.postProcessBeanDefinitionRegistry(registry);
+
+// org.springframework.context.annotation.ConfigurationClassPostProcessor
+public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPostProcessor,
+		PriorityOrdered, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
+...
+	@Override
+	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
+		int registryId = System.identityHashCode(registry);
+		if (this.registriesPostProcessed.contains(registryId)) {
+			throw new IllegalStateException(
+					"postProcessBeanDefinitionRegistry already called on this post-processor against " + registry);
+		}
+		if (this.factoriesPostProcessed.contains(registryId)) {
+			throw new IllegalStateException(
+					"postProcessBeanFactory already called on this post-processor against " + registry);
+		}
+		this.registriesPostProcessed.add(registryId);
+
+		processConfigBeanDefinitions(registry);
+
+// org.springframework.context.annotation.ConfigurationClassPostProcessor
+public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPostProcessor,
+		PriorityOrdered, ResourceLoaderAware, BeanClassLoaderAware, EnvironmentAware {
+...
+	public void processConfigBeanDefinitions(BeanDefinitionRegistry registry) {
+		List<BeanDefinitionHolder> configCandidates = new ArrayList<>();
+		String[] candidateNames = registry.getBeanDefinitionNames();
+
+		for (String beanName : candidateNames) {
+			BeanDefinition beanDef = registry.getBeanDefinition(beanName);
+			if (beanDef.getAttribute(ConfigurationClassUtils.CONFIGURATION_CLASS_ATTRIBUTE) != null) {
+				if (logger.isDebugEnabled()) {
+					logger.debug("Bean definition has already been processed as a configuration class: " + beanDef);
+				}
+			}
+			else if (ConfigurationClassUtils.checkConfigurationClassCandidate(beanDef, this.metadataReaderFactory)) {
+				configCandidates.add(new BeanDefinitionHolder(beanDef, beanName));
+			}
+		}
+
+		// Return immediately if no @Configuration classes were found
+		if (configCandidates.isEmpty()) {
+			return;
+		}
+
+		// Sort by previously determined @Order value, if applicable
+		configCandidates.sort((bd1, bd2) -> {
+			int i1 = ConfigurationClassUtils.getOrder(bd1.getBeanDefinition());
+			int i2 = ConfigurationClassUtils.getOrder(bd2.getBeanDefinition());
+			return Integer.compare(i1, i2);
+		});
+
+		// Detect any custom bean name generation strategy supplied through the enclosing application context
+		SingletonBeanRegistry sbr = null;
+		if (registry instanceof SingletonBeanRegistry) {
+			sbr = (SingletonBeanRegistry) registry;
+			if (!this.localBeanNameGeneratorSet) {
+				BeanNameGenerator generator = (BeanNameGenerator) sbr.getSingleton(
+						AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR);
+				if (generator != null) {
+					this.componentScanBeanNameGenerator = generator;
+					this.importBeanNameGenerator = generator;
+				}
+			}
+		}
+
+		if (this.environment == null) {
+			this.environment = new StandardEnvironment();
+		}
+
+		// Parse each @Configuration class
+		ConfigurationClassParser parser = new ConfigurationClassParser(
+				this.metadataReaderFactory, this.problemReporter, this.environment,
+				this.resourceLoader, this.componentScanBeanNameGenerator, registry);
+
+		Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
+		Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
+		do {
+			parser.parse(candidates);
+
+// org.springframework.context.annotation.ConfigurationClassParser
+class ConfigurationClassParser {
+...
+	public void parse(Set<BeanDefinitionHolder> configCandidates) {
+		for (BeanDefinitionHolder holder : configCandidates) {
+			BeanDefinition bd = holder.getBeanDefinition();
+			try {
+				if (bd instanceof AnnotatedBeanDefinition) {
+					parse(((AnnotatedBeanDefinition) bd).getMetadata(), holder.getBeanName());
+				}
+				else if (bd instanceof AbstractBeanDefinition && ((AbstractBeanDefinition) bd).hasBeanClass()) {
+					parse(((AbstractBeanDefinition) bd).getBeanClass(), holder.getBeanName());
+				}
+				else {
+					parse(bd.getBeanClassName(), holder.getBeanName());
+				}
+			}
+			catch (BeanDefinitionStoreException ex) {
+				throw ex;
+			}
+			catch (Throwable ex) {
+				throw new BeanDefinitionStoreException(
+						"Failed to parse configuration class [" + bd.getBeanClassName() + "]", ex);
+			}
+		}
+
+		this.deferredImportSelectorHandler.process();	
+
+// org.springframework.context.annotation.ConfigurationClassParser
+class ConfigurationClassParser {
+...
+		public void process() {
+			List<DeferredImportSelectorHolder> deferredImports = this.deferredImportSelectors;
+			this.deferredImportSelectors = null;
+			try {
+				if (deferredImports != null) {
+					DeferredImportSelectorGroupingHandler handler = new DeferredImportSelectorGroupingHandler();
+					deferredImports.sort(DEFERRED_IMPORT_COMPARATOR);
+					deferredImports.forEach(handler::register);
+					handler.processGroupImports();
+
+// org.springframework.context.annotation.ConfigurationClassParser
+	private class DeferredImportSelectorGroupingHandler {
+    ...
+		public void processGroupImports() {
+			for (DeferredImportSelectorGrouping grouping : this.groupings.values()) {
+				Predicate<String> exclusionFilter = grouping.getCandidateFilter();
+				grouping.getImports().forEach(entry -> {
+					ConfigurationClass configurationClass = this.configurationClasses.get(entry.getMetadata());
+					try {
+						processImports(configurationClass, asSourceClass(configurationClass, exclusionFilter),
+								Collections.singleton(asSourceClass(entry.getImportClassName(), exclusionFilter)),
+								exclusionFilter, false);
 ```
 
 # `@Repository`
