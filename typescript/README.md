@@ -18,6 +18,9 @@
     - [Template Literal Types](#template-literal-types)
   - [Classes (Handbook)](#classes-handbook)
   - [Modules (Handbook)](#modules-handbook)
+- [Advanced](#advanced)
+  - [`declare`](#declare)
+  - [Function Definition With Interfaces](#function-definition-with-interfaces)
 
 ----
 
@@ -26,6 +29,7 @@
 * [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
   * Should read this.
   * [TypeScript Handbook kor](https://typescript-kr.github.io/)
+* [8장. 리액트 프로젝트에서 타입스크립트 사용하기](https://react.vlpt.us/using-typescript/)
 * [TypeScript 환경에서 Redux를 프로처럼 사용하기 @ velog](https://velog.io/@velopert/use-typescript-and-redux-like-a-pro) 
 * [playcode](https://playcode.io/)
   * typescript play ground
@@ -253,3 +257,41 @@ declare function create(o: object | null): void;
 ## Classes (Handbook)
 
 ## Modules (Handbook)
+
+# Advanced
+
+## `declare`
+
+* [Purpose of declare keyword in TypeScript | stackoverflow](https://stackoverflow.com/questions/43335962/purpose-of-declare-keyword-in-typescript)
+  * [kor](https://jjnooys.medium.com/typescript-declare-cd163acb9f)
+
+declare 로 선언한 type 은 compile 의 대상이 아니다. compile time 에 이렇게 생겼으니 믿고 넘어가주세요 라는 의미이다.
+
+```ts
+        type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
+declare type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
+```
+
+## Function Definition With Interfaces 
+
+* [](https://www.softwaretestinghelp.com/typescript-interface/)
+
+TypeScript Interface can be used to define a function type by ensuring a
+function signature. We use the optional property using a question mark before
+the property name colon.
+
+```ts
+{
+    interface FunctionComponent {
+        (): string;
+        displayName?: string;
+    }
+    const foo: FunctionComponent = () => "Hello Foo";
+    foo.displayName = "Hello Foo";
+    console.log(foo);
+
+    const bar = () => "Hello Bar";
+    bar.displayName = "Hello Bar";
+    console.log(bar);
+}
+```
