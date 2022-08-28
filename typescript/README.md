@@ -21,6 +21,7 @@
 - [Advanced](#advanced)
   - [`declare`](#declare)
   - [Function Definition With Interfaces](#function-definition-with-interfaces)
+  - [Interface vs Type](#interface-vs-type)
 
 ----
 
@@ -293,5 +294,120 @@ the property name colon.
     const bar = () => "Hello Bar";
     bar.displayName = "Hello Bar";
     console.log(bar);
+}
+```
+
+## Interface vs Type
+
+* [typescript type과 interface의 차이 | tistory](https://bny9164.tistory.com/48)
+
+---
+
+`type` 보다는 `interface` 를 추천한다. type 은 runtime 에 recursive 하게 transpile 한다. compile time 오래 걸리기 때문에 performance 가 좋지 않다.
+
+`type` 은 `interface` 에 비해 아래와 같은 단점들이 있다.
+
+```ts
+//////////////////////////////////////////////////////////////////////
+// Interfaces vs. Intersections
+// extends
+{
+    interface Point {
+        x: number;
+        y: number;
+    }
+    interface PointColor extends Point {
+        c: number;
+    }
+    const pointColor = {
+        x: 3,
+        y: 3,
+        c: 3,
+    }
+    console.log(pointColor);
+}
+{
+    type Point = {
+        x: number;
+        y: number;
+    }
+    interface PointColor extends Point {
+        c: number;
+    }
+    const pointColor: PointColor = { x: 3, y: 3, c: 3 };
+    console.log(pointColor);
+}
+{
+    // extends does not work for type
+    type Point = {
+        x: number;
+        y: number;
+    }
+    // // ERROR: Could not use type with extends
+    // type PointColor extends Point {
+    //     c: number;
+    // }
+}
+// merged declaration
+{
+    // merged declaration works for interface
+    interface PointColor {
+        x: number;
+        y: number;
+    }
+    interface PointColor {
+        c: number;
+    }
+    const pointColor: PointColor = { x: 3, y: 3, c: 3 };
+    console.log(pointColor);
+}
+{
+    // // ERROR: mergedd declaration does not work for type
+    // type PointColor = {
+    //     x: number;
+    //     y: number;
+    // }
+    // type PointColor = {
+    //     c: number;
+    // }
+}
+// computed value
+{
+    // computed value does not work for interface
+    type coords = 'x' | 'y';
+    interface CoordTypes {
+        [key in coords]: string
+    }
+}
+{
+    // computed value works for type
+    type coords = 'x' | 'y';
+    type CoordTypes = {
+        [CoordTypes in coords]: string;
+    }
+    const point: CoordTypes = { x: '3', y: '3' };
+    console.log(point);
+}
+// type could be resolved to never type
+// You should be careful
+{
+    type goodType = { a: 1 } & { b: 2 } // good
+    type neverType = { a: 1; b: 2 } & { b: 3 } // resolved to `never`
+
+    const foo: goodType = { a: 1, b: 2 } // good
+    // ERROR: Type 'number' is not assignable to type 'never'.(2322)
+    const bar: neverType = { a: 1, b: 3 } 
+    // ERROR: Type 'number' is not assignable to type 'never'.(2322)
+    const baz: neverType = { a: 1, b: 2 } 
+}
+{
+    type t1 = {
+        a: number
+    }
+    type t2 = t1 & {
+        b: string
+    }
+    
+    const foo: t2 = { a: 1, b: 2 } // ERROR
 }
 ```
