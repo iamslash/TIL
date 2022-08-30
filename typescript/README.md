@@ -2,6 +2,23 @@
 - [Basic](#basic)
   - [Build & Run](#build--run)
   - [Hello World](#hello-world)
+  - [Reserved Words](#reserved-words)
+  - [min, max values](#min-max-values)
+  - [abs vs fabs](#abs-vs-fabs)
+  - [Bit Manipulation](#bit-manipulation)
+  - [String](#string)
+  - [Random](#random)
+  - [Print Out](#print-out)
+  - [Data Types](#data-types)
+  - [Control Flow](#control-flow)
+  - [Loops](#loops)
+  - [Collections](#collections)
+  - [Collection Conversions](#collection-conversions)
+  - [Sort](#sort)
+  - [Search](#search)
+  - [Multi Dimensional Arrays](#multi-dimensional-arrays)
+  - [Enum](#enum)
+  - [Generics](#generics)
 - [Advanced](#advanced)
   - [`declare`](#declare)
   - [Function Definition With Interfaces](#function-definition-with-interfaces)
@@ -47,6 +64,125 @@ function greet(person: string, date: Date) {
 greet("Maddison", new Date());
 ```
 
+## Reserved Words
+
+## min, max values
+
+## abs vs fabs
+
+## Bit Manipulation
+
+## String
+
+## Random
+
+## Print Out
+
+## Data Types
+
+```ts
+boolean
+number
+string
+array
+tuple
+enum
+unkown
+any
+void
+null
+undefined
+never
+object
+
+// boolean
+let isDone: boolean = false;
+
+// number
+let decimal: number = 6;
+let hex: number = 0xf00d;
+let binary: number = 0b1010;
+let octal: number = 0o744;
+let big: bigint = 100n;
+
+// string
+let color: string = "blue";
+color = 'red';
+
+// Array
+// Arrays of values
+let list1: number[] = [1, 2, 3];
+// Generic Array
+let list2: Array<number> = [1, 2, 3];
+
+// Tuple
+let x: [string, number];
+x = ["hello", 10];
+
+// Enum
+enum Color {
+    Red, Green, Blue,
+}
+let c: Color = Color.Green;
+
+// Unkonwn
+let notSure: unknown = 4;
+notSure = "Maybe a string instead";
+notSure = false;
+
+// Any
+declare function getValue(key: string): any;
+const std: string = getValue("David");
+
+// Void
+function warnUser(): void {
+    console.log("Hello World");
+}
+
+// Null and Undefined
+let u: undefined = undefined;
+let n: null = null;
+
+// Never
+function error(msg: string): never {
+    throw new Error(msg);
+}
+function fail() {
+    return error("something failed");
+}
+function infiniteLoop(): never {
+    while (true) {}
+}
+
+// Object
+declare function create(o: object | null): void;
+create({ prop: 0 });
+create(null);
+create(undefined);
+
+// Type assertions
+let someValue: unknown = "This is a string";
+let strLength: number = (someValue as string).length;
+let strLength2: number = (<string>someValue).length;
+```
+
+## Control Flow
+
+## Loops
+
+## Collections
+
+## Collection Conversions
+
+## Sort
+
+## Search
+
+## Multi Dimensional Arrays
+
+## Enum
+
+## Generics
 
 # Advanced
 
