@@ -10,8 +10,9 @@
   - [Random](#random)
   - [Print Out](#print-out)
   - [Data Types](#data-types)
-  - [Control Flow](#control-flow)
-  - [Loops](#loops)
+  - [Decision Making Statements](#decision-making-statements)
+  - [Looping Statements](#looping-statements)
+  - [Branching Statements](#branching-statements)
   - [Collections](#collections)
   - [Collection Conversions](#collection-conversions)
   - [Sort](#sort)
@@ -166,9 +167,17 @@ let strLength: number = (someValue as string).length;
 let strLength2: number = (<string>someValue).length;
 ```
 
-## Control Flow
+## Decision Making Statements
 
-## Loops
+if, if-else, switch
+
+## Looping Statements
+
+for, while, do-while
+
+## Branching Statements
+
+break, continue, return
 
 ## Collections
 
