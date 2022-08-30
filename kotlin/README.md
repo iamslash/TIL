@@ -1296,7 +1296,9 @@ Kotlin 함수 타입의 파라미터 타입은 `contravariant (down-casting)` �
 
 ## Inheritance
 
-open class 는 subclassing 할 수 있다. open fun 은 override 할 수 있다.
+Kotlin 의 class, method 는 기본적으로 final 이다. subclassing, overriding 할 수
+없다. **open class** 는 subclassing 할 수 있다. **open fun** 은 overriding 할 수 있다.
+**internal class** 는 같은 module 에서만 접근할 수 있다.
 
 ```kotlin
 open class Dog {                
