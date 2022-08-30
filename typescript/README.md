@@ -8,7 +8,7 @@
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
-  - [Print Out](#print-out)
+  - [Formatted Strings](#formatted-strings)
   - [Data Types](#data-types)
   - [Decision Making Statements](#decision-making-statements)
   - [Looping Statements](#looping-statements)
@@ -77,7 +77,7 @@ greet("Maddison", new Date());
 
 ## Random
 
-## Print Out
+## Formatted Strings
 
 ## Data Types
 
