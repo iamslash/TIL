@@ -9,6 +9,7 @@
   - [String](#string)
   - [Random](#random)
   - [Formatted Strings](#formatted-strings)
+  - [Inspecting](#inspecting)
   - [Data Types](#data-types)
   - [Decision Making Statements](#decision-making-statements)
   - [Looping Statements](#looping-statements)
@@ -67,17 +68,135 @@ greet("Maddison", new Date());
 
 ## Reserved Words
 
+* [types.ts | github](https://github.com/Microsoft/TypeScript/blob/fad889283e710ee947e8412e173d2c050107a3c1/src/compiler/types.ts#L87)
+
+```ts
+// Reserved words
+break case catch class const
+continue debugger default delete
+do else enum export extends false
+finally for function if import in
+instanceof new null return super
+switch this throw true try typeof
+var void while with
+
+// Strict mode reserved words
+as implements interface let package
+private protected public static yield
+
+// Contextual keywords
+any boolean constructor declare get
+module require number set string symbol
+type from of
+```
+
 ## min, max values
+
+```ts
+console.log(Number.MAX_SAFE_INTEGER);   // 9007199254740991
+console.log(Number.MIN_SAFE_INTEGER);   // -9007199254740991
+console.log(Number.MAX_VALUE);  // 1.7976931348623157e+308
+console.log(Number.MIN_VALUE);  // 5e-324
+
+console.log(Number.MAX_SAFE_INTEGER + 1);   // 9007199254740992
+console.log(Number.MAX_SAFE_INTEGER + 2);   // 9007199254740992
+console.log(Number.MAX_SAFE_INTEGER + 3);   // 9007199254740994
+```
 
 ## abs vs fabs
 
+```ts
+function difference(a, b) {
+  return Math.abs(a - b);
+}
+console.log(difference(3, 5));
+// expected output: 2
+console.log(difference(5, 3));
+// expected output: 2
+console.log(difference(1.23456, 7.89012));
+// expected output: 6.6555599999999995
+```
+
 ## Bit Manipulation
+
+```ts
+var a: number = 2;  // 10
+var b: number = 3;  // 11
+var result;
+
+// (a & b) =>  2 
+console.log("(a & b) => ", a & b);
+          
+// (a | b) =>  3 
+console.log("(a | b) => ", a | b);  
+
+// (a ^ b) =>  1 
+console.log("(a ^ b) => ", a ^ b);
+ 
+// (~b) =>  -4 
+console.log("(~b) => ", ~b);
+
+// (a << b) =>  16 
+console.log("(a << b) => ", a << b); 
+
+// (a >> b) =>  0
+console.log("(a >> b) => ", a >> b);
+```
 
 ## String
 
+```ts
+type World = "world";
+type Greeting = `hello ${World}`;
+console.log(Greeting)  // hello world
+```
+
 ## Random
 
+* [Math.random() | mdn](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Math/random)
+
+`[0..1]` 의 값을 생성한다.
+
+```ts
+console.log(Math.random());
+console.log(Math.random());
+```
+
 ## Formatted Strings
+
+* [util.format | node.js](https://nodejs.org/api/util.html#utilformatformat-args)
+
+typescript 의 primary type 은 `boolean, number, string` 임을 기억하자.
+
+```ts
+import * as util from "util";
+
+console.log(util.format('%s %d %s', true, 4, 'Hello World'));
+```
+
+## Inspecting 
+
+* [util.inspect | node.js](https://nodejs.org/api/util.html#utilinspectobject-options)
+
+```ts
+import * as util from "util";
+
+class Foo {
+  get [Symbol.toStringTag]() {
+    return 'bar';
+  }
+}
+class Bar {}
+const baz = Object.create(null, { [Symbol.toStringTag]: { value: 'foo' } });
+console.log(util.inspect(new Foo())); // 'Foo [bar] {}'
+console.log(util.inspect(new Bar())); // 'Bar {}'
+console.log(util.inspect(baz));       // '[foo] {}'
+```
+
+```console
+$ ts-node
+> console. <TAB>
+```
 
 ## Data Types
 
