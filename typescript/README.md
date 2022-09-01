@@ -534,6 +534,8 @@ console.log(arr);  // [10, 5, 3, 2, 1]
 
 ## Search
 
+built-in binary search function 없는 건가?
+
 ```ts
 let arr = [1, 2, 3, 4, 5];
 console.log(arr.find(a => a > 3));  // 4
@@ -584,6 +586,9 @@ enum BooleanLikeHeterogeneousEnum {
   No = 0,
   Yes = "YES",
 }
+
+let dir: Direction = Direction.Up;
+let foo: BooleanLikeHeterogeneousEnum.No;
 ```
 
 ## Generics
