@@ -91,8 +91,9 @@
   - [IntelliJ IDEA](#intellij-idea)
   - [Managing Multiple go versions](#managing-multiple-go-versions)
   - [Race](#race)
-- [Effective Go](#effective-go)
-- [Design Patterns](#design-patterns)
+  - [Effective Go](#effective-go)
+  - [Design Patterns](#design-patterns)
+  - [Architectures](#architectures)
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -118,8 +119,6 @@
   * Go 언어의 spec 을 확인한다.
 * [uber-go style guide](https://github.com/uber-go/guide)
   * uber 의 go style guide 이다. 참고할만한 것이 많다.
-* [upspin @ github](https://github.com/upspin/upspin)
-  * Rob Pike 의 repo 이다. 배울 것이 많다.
 * [go by example](https://gobyexample.com/)
   * 최고의 예제들
 * [golang doc](https://golang.org/doc/)
@@ -2561,11 +2560,18 @@ echo "done..."
   * uber 가 모은 실수 패턴
   * [Data Race Patterns in Go (uber.com) | ycombinator](https://news.ycombinator.com/item?id=31698503)
 
-# Effective Go
+## Effective Go
 
 * [effective go](https://golang.org/doc/effective_go.html)
   * [한글](https://gosudaweb.gitbooks.io/effective-go-in-korean/content/)
 
-# Design Patterns
+## Design Patterns
 
 * [Design Patterns in Go](go_design_pattern.md)
+
+## Architectures
+
+* [upspin @ github](https://github.com/upspin/upspin)
+  * Rob Pike 의 repo 이다. 배울 것이 많다.
+* [wtf | github](https://github.com/benbjohnson/wtf.git)
+  * Layered architecture example application by go

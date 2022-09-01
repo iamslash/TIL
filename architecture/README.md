@@ -43,6 +43,8 @@ layer 들로 구성된 architecture 이다. [Clean Architecure](/cleanarchitectu
 
 * [패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src](https://github.com/gregshiny/example-order)
 * [패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src](https://github.com/gregshiny/example-gift)
+* [wtf | github](https://github.com/benbjohnson/wtf.git)
+  * Similar with simplified Hexgonal 
 
 다음은 [패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src](https://github.com/gregshiny/example-order) 의 directory structure 이다.
 

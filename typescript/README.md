@@ -11,10 +11,14 @@
   - [Formatted Strings](#formatted-strings)
   - [Inspecting](#inspecting)
   - [Data Types](#data-types)
-  - [Decision Making Statements](#decision-making-statements)
-  - [Looping Statements](#looping-statements)
-  - [Branching Statements](#branching-statements)
+  - [Control Flow Statements](#control-flow-statements)
+    - [Loop Statements](#loop-statements)
+    - [Looping Statements](#looping-statements)
   - [Collections](#collections)
+    - [tutple](#tutple)
+    - [array](#array)
+    - [set](#set)
+    - [map](#map)
   - [Collection Conversions](#collection-conversions)
   - [Sort](#sort)
   - [Search](#search)
@@ -22,6 +26,7 @@
   - [Enum](#enum)
   - [Generics](#generics)
 - [Advanced](#advanced)
+  - [export and import](#export-and-import)
   - [`declare`](#declare)
   - [Function Definition With Interfaces](#function-definition-with-interfaces)
   - [Interface vs Type](#interface-vs-type)
@@ -30,6 +35,7 @@
 
 # Materials
 
+* [한눈에 보는 타입스크립트(updated)](https://heropy.blog/2020/01/27/typescript/)
 * [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
   * Should read this.
   * [TypeScript Handbook kor](https://typescript-kr.github.io/)
@@ -169,7 +175,7 @@ console.log(Math.random());
 typescript 의 primary type 은 `boolean, number, string` 임을 기억하자.
 
 ```ts
-import * as util from "util";
+import util from "util";
 
 console.log(util.format('%s %d %s', true, 4, 'Hello World'));
 ```
@@ -179,7 +185,7 @@ console.log(util.format('%s %d %s', true, 4, 'Hello World'));
 * [util.inspect | node.js](https://nodejs.org/api/util.html#utilinspectobject-options)
 
 ```ts
-import * as util from "util";
+import util from "util";
 
 class Foo {
   get [Symbol.toStringTag]() {
@@ -286,33 +292,360 @@ let strLength: number = (someValue as string).length;
 let strLength2: number = (<string>someValue).length;
 ```
 
-## Decision Making Statements
+## Control Flow Statements
 
-if, if-else, switch
+### Loop Statements
 
-## Looping Statements
+```ts
+// if ... else if ... else
+var num: number = 1
+if (num > 0) {
+    console.log("positive");
+} else if (num < 0) {
+    console.log("negative");
+} else {
+    console.log("zero");
+}
 
-for, while, do-while
+var grade: string = "A";
+switch (grade) {
+    case "A": {
+        console.log("Excellent");
+        break;
+    }
+    case "B": {
+        console.log("Good");
+        break;
+    }
+    default: {
+        console.log("Invalid choice");
+        break;
+    }
+}
+```
 
-## Branching Statements
+### Looping Statements
 
-break, continue, return
+```ts
+// for
+for (let i = 0; i < 3; i++) {
+    console.log(i);
+}
+// Output:
+// 0
+// 1
+// 2
+
+// for ... of return value
+let arr = [1, 2, 3];
+for (var val of arr) {
+    console.log(val);
+}
+// Output:
+// 1
+// 2
+// 3
+let srr = "Hello";
+for (var chr of str) {
+    console.log(chr);
+}
+// Output:
+// H
+// e
+// l
+// l
+// o
+
+// for ... of return index
+let arr = [1, 2, 3];
+for (var idx in arr) {
+    console.log(idx);
+}
+// Output:
+// 0
+// 1
+// 2
+
+// var vs let in for loop
+// var can be accessed outside loop
+let arr = [1, 2, 3];
+for (var idx1 in arr) {
+    console.log(idx1);
+}
+console.log(idx1);
+for (let idx2 in arr) {
+    console.log(idx2);
+}
+console.log(idx2);  // ERROR
+```
 
 ## Collections
 
+### tutple
+
+```ts
+var employee: [number, string] = [1, 'David'];
+var person: [number, string, boolean] = [1, 'David', true];
+var user: [number, string, boolean, number, string];
+user = [1, 'David', true, 10, 'admin'];
+var employees: [number, string][];
+employees = [[1, 'David'], [2, 'Tom']];
+
+console.log(employee[0], employee[1]);  // 1 'David'
+
+employee.push(2, 'John');
+console.log(employee);  // [1, 'David', 2, 'John']
+employee.pop();
+console.log(employee);  // [1, 'David', 2]
+employee[1] = employee[1].concat(' Sun');
+console.log(employee);  // [1, 'David Sun', 2]
+```
+
+### array
+
+```ts
+let fruits: Array<string>;
+fruits = ['Apple', 'Orange', 'Banana'];
+let vals: (string | number)[] = ['Apple', 2, 'Orange', 3, 4, 'Banana']; 
+let vals: Array<string | number> = ['Apple', 2, 'Orange', 3, 4, 'Banana']; 
+console.log(vals[0]);  // 'Apple'
+
+for (var idx in fruits) {
+    console.log(fruits[idx]);
+}
+// Output:
+// 0
+// 1
+// 2
+for (var i = 0; i < fruits.length; i++) {
+    console.log(fruits[i]);
+}
+// Output:
+// 'Apple'
+// 'Orange'
+// 'Banana'
+
+fruits.sort();
+console.log(fruits);  // ['Apple', 'Banana', 'Orange']
+console.log(fruits.pop()); // 'Orange'
+fruits.push('Papaya');  
+console.log(fruits);  // ['Apple', 'Banana', 'Papaya']
+fruits = fruits.concat(['Fig', 'Mango']); 
+console.log(fruits); //output: ['Apple', 'Banana', 'Papaya', 'Fig', 'Mango'] 
+console.log(fruits.indexOf('Papaya'));  // 2
+```
+
+### set
+
+```ts
+let dirs = new Set<string>();
+let dirs = new Set<string>(['east', 'west']);
+dirs.add('east');
+dirs.add('north');
+dirs.add('south');
+console.log(dirs);      // Set(4) { 'east', 'west', 'north', 'south' }
+console.log(dirs.has('east'));  // true
+console.log(dirs.size);         // 4
+
+console.log(dirs.delete('east')); // true
+console.log(dirs);                // Set(3) { 'west', 'north', 'south' }
+for (let dir of dirs) {
+    console.log(dir);
+}
+// Output:
+// west
+// north
+// south
+
+console.log(dirs.clear()); // undefined
+console.log(dirs);         // Set(0) {}
+```
+
+### map
+
+```ts
+let fooMap = new Map<string, number>();
+let barMap = new Map<string, string>([
+    ['key1', 'val1'],
+    ['key2', 'val2']
+]);
+
+fooMap.set('David', 10);
+fooMap.set('John', 20);
+fooMap.set('Raj', 30);
+console.log(fooMap.get('David'));  // 10
+console.log(fooMap.has('David'));  // true
+console.log(fooMap.has('Tom'));    // false
+console.log(fooMap.size);          // 3
+console.log(fooMap.delete('Raj')); // true
+
+for (let key of fooMap.keys()) {
+    console.log(key);
+}
+// Output:
+// David
+// John
+for (let val of fooMap.values()) {
+    console.log(val);
+}
+// Output:
+// 10
+// 20
+for (let entry of fooMap.entries()) {
+    console.log(entry[0], entry[1]);
+}
+// Output:
+// "David" 10
+// "John" 20
+for (let [key, val] of fooMap) {
+    console.log(key, val);
+}
+
+fooMap.celar();
+```
+
 ## Collection Conversions
+
+```ts
+// tuple to set
+let arr = [11, 22, 33];
+let set = new Set(arr);
+console.log(set);  // Set(3) { 11, 22, 33 }
+```
 
 ## Sort
 
+```ts
+let arr: number[] = [1, 10, 2, 5, 3];
+console.log(arr);  // [1, 10, 2, 5, 3]
+
+// sort lexicographically
+arr.sort();
+console.log(arr);  // [1, 10, 2, 3, 5]
+
+// sort asencding
+arr.sort((a: number, b: number) => a - b);
+console.log(arr);  // [1, 2, 3, 5, 10]
+
+// sort descending
+arr.sort((a: number, b: number) => b - a);
+console.log(arr);  // [10, 5, 3, 2, 1]
+```
+
 ## Search
+
+```ts
+let arr = [1, 2, 3, 4, 5];
+console.log(arr.find(a => a > 3));  // 4
+console.log(arr.indexOf(2));        // 1 
+```
 
 ## Multi Dimensional Arrays
 
+```ts
+let aa: number[][] = [[1, 2, 3],[23, 24, 25]]  
+for (let i = 0; i < aa.length; i++) {
+    for (let j = 0; j < aa[0].length; j++) {
+        console.log(aa[i][j]);
+    }
+}
+// Output:
+// 1
+// 2
+// 3
+// 23
+// 24
+// 25
+```
+
 ## Enum
+
+* [Enum | typescript](https://www.typescriptlang.org/docs/handbook/enums.html#handbook-content)
+
+```ts
+// numeric enums
+enum Direction {
+  Up = 1,
+  Down,
+  Left,
+  Right,
+}
+
+// string enums
+enum Direction {
+  Up = "UP",
+  Down = "DOWN",
+  Left = "LEFT",
+  Right = "RIGHT",
+}
+
+// heterogeneous enums
+enum BooleanLikeHeterogeneousEnum {
+  No = 0,
+  Yes = "YES",
+}
+```
 
 ## Generics
 
+* [Generics](typescript_handbook.md#generics)
+
+```ts
+// generic functions
+function identity<type>(arg: Type): Type {
+    return arg;
+}
+
+// generic classes
+class GenericNumber<NumType> {
+    zeroValue: NumType;
+    add: (x: NumType, y: NumType) => NumType;
+}
+let a = new GenericNumber<number>();
+a.zeroValue = 0;
+a.add = function(x, y) {
+    return x + y;
+}
+```
+
 # Advanced
+
+## export and import
+
+* [한눈에 보는 타입스크립트(updated) - 내보내기(export)와 가져오기(import)](https://heropy.blog/2020/01/27/typescript/)
+
+```ts
+// foo.ts
+// export interface
+export interface UserType {
+    name: string,
+    mobile: number
+}
+// export type
+export type UserIDType = string | number;
+
+// bar.ts
+// import interface, type
+import { UserType, UserIDType } from './foo';
+const user: UserType = {
+    name: 'David',
+    mobile: 333
+}
+const userid: UserIDType = "111";
+```
+
+typescript supports `export = bar;`, `export bar = require('bar');` for
+`CommonJS/AMD/UMD` modules. This is same with `export default` which exports one
+object in one module from ES6.
+
+```ts
+// import from bar CommonJS/AMD/UMD module
+import bar = require('bar');
+// or
+import * as bar from 'bar';
+// or "esModuleInterop": true
+import bar from 'bar';
+```
 
 ## `declare`
 
