@@ -23,7 +23,7 @@ unit test, integration test, e2e test, regression test, performance test
 
 ## E2E Test
 
-User 의 행동을 기반으로 수행하는 test 이다. 예를 들어 User 가 Web Page 의 Button 을 Click 하면 Frontend, Backend 를 거쳐 다시 User 에게 보여지는 내용을 검증하는 test 이다.
+[e2e test](/e2etest/README.md)
 
 ## Regression Test
 

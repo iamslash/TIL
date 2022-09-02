@@ -48,7 +48,7 @@ QA 가 매번 진행하는 Regression Test 를 E2E Test 로 자동화할 수 있
 # Cypress
 
 하나의 Browser (Chrome) 를 대상으로 테스트할 수 있다. 빠르게 테스트할 수 있다. 보통
-개발 도중 테스트에 적당하다.
+개발 도중 테스트에 적당하다. 유료이다.
 
 # Playwright
 

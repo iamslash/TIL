@@ -48,6 +48,7 @@
   - [ArchUnit JUnit 5 연동](#archunit-junit-5-연동)
   - [ArchUnit 클래스 의존성 확인하기](#archunit-클래스-의존성-확인하기)
 - [Stub, Mock, Spy](#stub-mock-spy)
+- [Separated Integration Test Directory](#separated-integration-test-directory)
 
 ----
 
@@ -1349,4 +1350,38 @@ public class HelloTests {
     Mockito.verify(notificationClient, Mockito.times(1)).notifyToMobile();
   }
 }
+```
+
+# Separated Integration Test Directory
+
+* [Separate Gradle Tasks for Unit and Integration Tests](https://inspeerity.com/blog/separate-gradle-tasks-for-unit-and-integration-tests)
+
+`src/test` 에 unit test code 를 작성한다. `src/intg` 에 integration test code 를 작성한다. resource file 을 구분해서 사용할 수 있다. dependency 역시 구분해서 설정할 수 있다.
+
+`src/intg` 디렉토리를 만들고 다음과 같이 gradle 설정을 한다.
+
+```
+// Include a integration test source
+sourceSets {
+    integration {
+        groovy.srcDir "$projectDir/src/intg/kotlin"
+        resources.srcDir "$projectDir/src/intg/resources"
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
+}
+
+// Define integration dependency functions
+configurations {
+    integrationImplementation.extendsFrom testImplementation
+    integrationRuntime.extendsFrom testRuntime
+}
+
+// Create a integration test task
+task integrationTest(type: Test) {
+    testClassesDirs = sourceSets.integration.output.classesDirs
+    classpath = sourceSets.integration.runtimeClasspath
+}
+
+check.dependsOn integrationTest
 ```
