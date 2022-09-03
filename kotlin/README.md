@@ -22,7 +22,6 @@
     - [Deque, ArrayDeque](#deque-arraydeque)
     - [Queue, PriorityQueue](#queue-priorityqueue)
     - [filter](#filter)
-    - [map](#map-1)
     - [any, all, none](#any-all-none)
     - [find, findLast](#find-findlast)
     - [first, last](#first-last)
@@ -87,9 +86,9 @@
   - [Null safety](#null-safety-1)
   - [@JvmOverloads](#jvmoverloads)
   - [`@JvmStatic` vs Companion](#jvmstatic-vs-companion)
-- [Effective Kotlin](#effective-kotlin)
-- [Design Pattern](#design-pattern)
-- [Coding Convention](#coding-convention)
+  - [Effective Kotlin](#effective-kotlin)
+  - [Design Pattern](#design-pattern)
+  - [Coding Convention](#coding-convention)
 
 ----
 
@@ -299,6 +298,7 @@ val one = 1 // Int
 val threeBillion = 3000000000 // Long
 val oneLong = 1L // Long
 val oneByte: Byte = 1
+val twoLong = one.toLong()
 
 // Float, Double
 val pi = 3.14 // Double
@@ -625,6 +625,15 @@ val vals = valsMap.getOrPut(0, { mutableListOf<Int>() })
 valsMap.putIfAbsent(1, mutableListOf<Int>())
 ```
 
+```kotlin
+val numbers = listOf(1, -2, 3, -4, 5, -6)     
+val doubled = numbers.map { x -> x * 2 }      
+val tripled = numbers.map { it * 3 }
+
+val found = doubled.containsKey(3)
+val value = doubled.getOrDefault(3, 0)       
+```
+
 ### Deque, ArrayDeque
 
 ```kotlin
@@ -690,14 +699,6 @@ fun main() {
 val numbers = listOf(1, -2, 3, -4, 5, -6)      
 val positives = numbers.filter { x -> x > 0 }  
 val negatives = numbers.filter { it < 0 }      
-```
-
-### map
-
-```kotlin
-val numbers = listOf(1, -2, 3, -4, 5, -6)     
-val doubled = numbers.map { x -> x * 2 }      
-val tripled = numbers.map { it * 3 }          
 ```
 
 ### any, all, none
@@ -2346,14 +2347,14 @@ Java 에서 Kotlin class 의 static method 를 호출한다고 하자. Kotlin cl
 method 에 `@JvmStatic` 을 사용하자. Companion class 가 만들어지지 않아서
 효율적이다.
 
-# Effective Kotlin
+## Effective Kotlin
 
 * [Effective Kotlin](/kotlin/kotlin_effective.md)
 
-# Design Pattern
+## Design Pattern
 
 * [Kotlin Design Pattern](/kotlin/kotlin_design_pattern.md)
 
-# Coding Convention
+## Coding Convention
 
 * [Coding conventions @ Kotlin](https://kotlinlang.org/docs/coding-conventions.html)
