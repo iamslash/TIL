@@ -178,6 +178,10 @@ typescript 의 primary type 은 `boolean, number, string` 임을 기억하자.
 import util from "util";
 
 console.log(util.format('%s %d %s', true, 4, 'Hello World'));
+
+// Print without newline
+process.stdout.write(`i: ${i}, diff: ${diff} has: ${numMap.has(diff)} `);
+console.log(numMap);
 ```
 
 ## Inspecting 
@@ -473,7 +477,9 @@ let barMap = new Map<string, string>([
 fooMap.set('David', 10);
 fooMap.set('John', 20);
 fooMap.set('Raj', 30);
-console.log(fooMap.get('David'));  // 10
+console.log(fooMap.get('David'));   // 10
+// default value
+console.log(fooMap.get('Tom') || 0) // 0
 console.log(fooMap.has('David'));  // true
 console.log(fooMap.has('Tom'));    // false
 console.log(fooMap.size);          // 3
