@@ -1,12 +1,14 @@
 - [Abstract](#abstract)
 - [References](#references)
 - [Materials](#materials)
-- [Install on windows 10](#install-on-windows-10)
+- [Install](#install)
+  - [Install on windows 10](#install-on-windows-10)
 - [Basic](#basic)
+  - [Build And Run](#build-and-run)
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
-  - [Keywords](#keywords)
-  - [Basic types](#basic-types)
+  - [Reserved Words](#reserved-words)
+  - [Data Types](#data-types)
   - [String](#string)
   - [Print type](#print-type)
   - [Int vs Int?](#int-vs-int)
@@ -126,11 +128,21 @@ kotlin 에 대해 정리한다. kotlin 은 종합백화점같다. 없는게 없�
   * [Patterns @ baeldung](https://www.baeldung.com/kotlin/category/patterns)
 * [Effective Kotlin 글 정리 내역 @ medium](https://taehwandev.medium.com/effective-kotlin-%EA%B8%80-%EC%A0%95%EB%A6%AC-%EB%82%B4%EC%97%AD-620d13946c81)
 
-# Install on windows 10
+# Install
+
+## Install on windows 10
 
 * Install JDK 1.8.
 * Install IntelliJ Community Edition.
 * Register `C:\Program Files\JetBrains\IntelliJ IDEA Community Edition 2019.2.2\plugins\Kotlin\kotlinc\bin` to `Path`.
+
+# Basic
+
+## Build And Run
+
+* [Kotlin command-line compiler | kotlin](https://kotlinlang.org/docs/command-line.html#run-the-repl)
+
+----
 
 ```bash
 # kotlinc is alias of kotlinc-jvm
@@ -141,9 +153,14 @@ $ java -jar a.jar
 # build with kotlinc run with kotlin
 $ kotlinc a.kt
 $ kotlin AKt
-```
 
-# Basic
+# REPL
+$ kotlinc
+> val a = "333"
+> val b = a.toLong()
+> b
+res2: kotlin.Long = 333
+```
 
 ## Basic Syntax
 
@@ -153,7 +170,7 @@ $ kotlin AKt
 
 * [Idioms @ kotlin](https://kotlinlang.org/docs/idioms.html)
 
-## Keywords
+## Reserved Words
 
 * [Keywords and operators](https://kotlinlang.org/docs/keyword-reference.html#operators-and-special-symbols)
 
@@ -282,7 +299,7 @@ $
 _
 ```
 
-## Basic types
+## Data Types
 
 * [Basic types](https://kotlinlang.org/docs/basic-types.html)
 
@@ -298,7 +315,6 @@ val one = 1 // Int
 val threeBillion = 3000000000 // Long
 val oneLong = 1L // Long
 val oneByte: Byte = 1
-val twoLong = one.toLong()
 
 // Float, Double
 val pi = 3.14 // Double
@@ -307,6 +323,9 @@ val oneDouble = 1.0 // Double
 
 val e = 2.7182818284 // Double
 val eFloat = 2.7182818284f // Float, actual value is 2.7182817
+
+// Type assertions
+val twoLong = one.toLong()
 ```
 
 ## String

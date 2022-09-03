@@ -50,16 +50,23 @@
 ## Build & Run
 
 ```bash
-# tsc
+# Install tsc
 $ npm install -g typescript
+# Build with tsc
 $ tsc a.ts
+# Run with node
 $ node a.js
-```
 
-```bash
-# ts-node
+# Install ts-node 
 $ npm install -g ts-node
+# Run with ts-node
 $ ts-node a.ts
+
+# REPL
+$ ts-node
+> let a = 2
+> a
+2
 ```
 
 ## Hello World

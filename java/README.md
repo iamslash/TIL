@@ -2,7 +2,7 @@
 - [References](#references)
 - [Materials](#materials)
 - [Basic](#basic)
-  - [Compile, Execution](#compile-execution)
+  - [Build And Run](#build-and-run)
   - [Reserved Words](#reserved-words)
   - [Useful Keywords](#useful-keywords)
   - [min, max values](#min-max-values)
@@ -130,11 +130,19 @@ This is about JAVA.
   
 # Basic
 
-## Compile, Execution
+## Build And Run
 
 ```bash
+# Build And Run
 > javac A.java
 > java A
+
+# REPL
+> jshell
+jshell> int a = 1
+a ==> 1
+jshell> a
+a ==> 1
 ```
 
 ## Reserved Words
