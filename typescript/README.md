@@ -822,6 +822,7 @@ the property name colon.
 # Effective Typescript
 
 * [Effective TypeScript](https://effectivetypescript.com/)
+  * [src](https://github.com/danvk/effective-typescript)
 
 # Typescript Design Pattern
 

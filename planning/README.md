@@ -12,4 +12,5 @@ How to plan the project.
 ![](https://miro.medium.com/max/1400/0*afnaVcjS1LfPmZAz.jpg)
 
 * Make a Figma
+  * Make error expected actions such as [Patterns–Errors | material.io](https://material.io/archive/guidelines/patterns/errors.html#errors-user-input-errors)
 * Make a Documents (Notion, Word, etc...)

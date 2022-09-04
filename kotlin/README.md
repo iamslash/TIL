@@ -9,6 +9,8 @@
   - [Idioms](#idioms)
   - [Reserved Words](#reserved-words)
   - [Data Types](#data-types)
+  - [Define Multiple Variables at Once in Kotlin](#define-multiple-variables-at-once-in-kotlin)
+  - [Type Assertions](#type-assertions)
   - [String](#string)
   - [Print type](#print-type)
   - [Int vs Int?](#int-vs-int)
@@ -324,9 +326,22 @@ val oneDouble = 1.0 // Double
 
 val e = 2.7182818284 // Double
 val eFloat = 2.7182818284f // Float, actual value is 2.7182817
+```
 
+## Define Multiple Variables at Once in Kotlin
+
+* [Define Multiple Variables at Once in Kotlin | baeldung](https://www.baeldung.com/kotlin/define-multiple-variables)
+
+```kotlin
+val foo = "foo"; val bar = "bar"; val baz = "baz"
+```
+
+## Type Assertions
+
+```kotlin
 // Type assertions
-val twoLong = one.toLong()
+val one = 1
+val oneLong = one.toLong()
 ```
 
 ## String
