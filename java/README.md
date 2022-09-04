@@ -85,9 +85,10 @@
   - [Cache2k](#cache2k)
   - [JCache](#jcache)
   - [JVM Remote Debugging](#jvm-remote-debugging)
-- [Quiz](#quiz)
+  - [Quiz](#quiz)
 - [Effective Java](#effective-java)
-- [Design Patterns](#design-patterns)
+- [Java Design Patterns](#java-design-patterns)
+- [Java Architecture](#java-architecture)
 
 -------------------------------------------------------------------------------
 
@@ -2770,7 +2771,8 @@ $ ./gradlew bootrun --jvm-debug
 
 ![](img/jvm_remote_debugging.png)
 
-# Quiz
+
+## Quiz
 
 * Private Constructor
 * Return from Finally
@@ -2785,6 +2787,12 @@ $ ./gradlew bootrun --jvm-debug
 
 * [Effective Java](effectivejava/README.md)
 
-# Design Patterns
+# Java Design Patterns
 
 * [Design Patterns in java](java_design_pattern.md)
+
+# Java Architecture
+
+* [패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src](https://github.com/gregshiny/example-order)
+* [패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src](https://github.com/gregshiny/example-gift)
+  

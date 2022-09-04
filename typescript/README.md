@@ -30,6 +30,9 @@
   - [`declare`](#declare)
   - [Function Definition With Interfaces](#function-definition-with-interfaces)
   - [Interface vs Type](#interface-vs-type)
+- [Effective Typescript](#effective-typescript)
+- [Typescript Design Pattern](#typescript-design-pattern)
+- [Typescript Architecture](#typescript-architecture)
 
 ----
 
@@ -815,3 +818,17 @@ the property name colon.
     const foo: t2 = { a: 1, b: 2 } // ERROR
 }
 ```
+
+# Effective Typescript
+
+* [Effective TypeScript](https://effectivetypescript.com/)
+
+# Typescript Design Pattern
+
+* [Typescript Design Pattern | refacotring.guru](https://refactoring.guru/design-patterns/typescript)
+
+# Typescript Architecture
+
+* [Typescript Clean Architecture | github](https://github.com/pvarentsov/typescript-clean-architecture)
+  * java 의 Clean Architecture 와는 조금 다른 듯?
+* [A TypeScript Stab at Clean Architecture](https://www.freecodecamp.org/news/a-typescript-stab-at-clean-architecture-b51fbb16a304/)

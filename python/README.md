@@ -85,6 +85,9 @@
   - [objgraph](#objgraph)
 - [Tip](#tip)
   - [MySQL-python 1.2.5 on python2.7 build error, library not found for -lssl](#mysql-python-125-on-python27-build-error-library-not-found-for--lssl)
+- [Effective Python](#effective-python)
+- [Python Design Pattern](#python-design-pattern)
+- [Python Architecture](#python-architecture)
   
 ----
 
@@ -3004,3 +3007,15 @@ $ pip install MySQL-python==1.2.5
 
 $ pip install --global-option=build_ext --global-option="-I/usr/local/opt/openssl@1.1/include" --global-option="-L/usr/local/opt/openssl@1.1/lib" MySQL-python==1.2.5
 ```
+
+# Effective Python
+
+* [Effective Python](https://effectivepython.com/)
+
+# Python Design Pattern
+
+* [Python Design Pattern | refactoring.guru](https://refactoring.guru/design-patterns/python)
+
+# Python Architecture
+
+* [Architecture Patterns with Python | amazon](https://www.amazon.com/Architecture-Patterns-Python-Domain-Driven-Microservices/dp/1492052205)
