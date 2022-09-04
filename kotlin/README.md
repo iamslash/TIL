@@ -498,6 +498,7 @@ val intList: List<Int> = nullableList.filterNotNull()
     for (i in h.indices) {
         h[i] = i * i
     }
+    println(f.contentToString())
 
     // 2d array
     val aa = Array(3, {Array(3, {i -> 0})})
@@ -518,6 +519,7 @@ val intList: List<Int> = nullableList.filterNotNull()
             hh[i][j] = i * j
         }
     }
+    hh.forEach { println(it.contentToString()) }
 
     // 3d array
     // thanks to type infer
