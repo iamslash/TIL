@@ -347,9 +347,15 @@ val oneLong = one.toLong()
 ## String
 
 ```kotlin
+// StringBuilder
 val sb: StringBuilder() = StringBuilder()
 sb.append('a' + 1) // OK
 sb.append(1 + 'a') // ERROR
+
+// Interpolated string
+val foo = 3
+val bar = "Hello"
+println("foo: ${foo}, bar: ${bar}")
 ```
 
 ## Print type
@@ -1978,25 +1984,23 @@ println(q)
 -----
 
 ```java
-// Sort intArray
-val a = intArrayOf(5, 4, 3, 2, 1)
-val sortList = a.sort()  // a is also sorted 
-val sortDescending = a.sortDescending()
+// sort intArray
 // There are no sortBy, sortByDescending, sortWith for intArray
+// sort returns Unit
+val a = intArrayOf(5, 4, 3, 2, 1)
+a.sort()  // a is also sorted 
+a.sortDescending()
 
+// sorted intArray
+// sorted returns intArray
 val sorted = a.sorted()
 val sortedBy = a.sortedBy { kotlin.math.abs(it) }
 val sortedDescending = a.sortedDescending()
 val sortedByDescending = a.sortedByDescending { kotlin.math.abs(it) }
-val sortedWith = a.sortedWith { a, b ->
-    when {
-        a < b -> -1
-        a > b -> 1
-        else -> 0
-    }
-}
+val sortedWith = a.sortedWith { a, b -> a - b }
 
 // sort vs sorted, sort is faster than sorted
+// sort returns Unit, sorted returns IntArray
 // sort of a.sort()
 public actual fun IntArray.sort(): Unit {
     if (size > 1) java.util.Arrays.sort(this)
@@ -2010,32 +2014,41 @@ public expect fun IntArray.toTypedArray(): Array<Int>
 ```
 
 ```java
-// Sort Array<Int>
-val l = mutableListOf<Int>(5, 4, 3, 2, 1)
-val sortList = l.sort()  // l is also sorted 
-val sortDescending = l.sortDescending()
-val sortByList = l.sortBy { kotlin.math.abs(it) }
-val sortByDescending = l.sortByDescending { kotlin.math.abs(it) }
-val sortWith = l.sortWith { a, b ->
-    when {
-        a < b -> -1
-        a > b -> 1
-        else -> 0
-    }
-}
+// sort Array<Int>
+val l = arrayListOf<Int>(5, 4, 3, 2, 1)
+l.sort()
+l.sortDescending()
+l.sortBy { kotlin.math.abs(it) }
+l.sortByDescending { kotlin.math.abs(it) }
+l.sortWith { a, b -> a - b}
+l.sortWith(Comparator<Int>{ a, b -> a - b })
+
+// sorted Array<Int>
 val sorted = l.sorted()
 val sortedBy = l.sortedBy { kotlin.math.abs(it) }
 val sortedDescending = l.sortedDescending()
 val sortedByDescending = l.sortedByDescending { kotlin.math.abs(it) }
-val sortedWith = l.sortedWith { a, b ->
-    when {
-        a < b -> -1
-        a > b -> 1
-        else -> 0
-    }
-}
+val sortedWith = l.sortedWith { a, b -> a - b }
+val sortedWithComparator = l.sortedWith(Comparator<Int>{ a, b -> a - b })
 
-// Sort Array<String>
+// sort MutableList<Int>
+val l = mutableListOf<Int>(5, 4, 3, 2, 1)
+l.sort()  // l is also sorted 
+l.sortDescending()
+l.sortBy { kotlin.math.abs(it) }
+l.sortByDescending { kotlin.math.abs(it) }
+l.sortWith { a, b -> a - b}
+l.sortWith(Comparator<Int>{ a, b -> a - b })
+
+// sorted MutableList<Int>
+val sorted = l.sorted()
+val sortedBy = l.sortedBy { kotlin.math.abs(it) }
+val sortedDescending = l.sortedDescending()
+val sortedByDescending = l.sortedByDescending { kotlin.math.abs(it) }
+val sortedWith = l.sortedWith { a, b -> a - b }
+val sortedWithComparator = l.sortedWith(Comparator<Int>{ a, b -> a - b })
+
+// Sort sortedWith Array<String> by string
 val names = listOf("kim", "julia", "jim", "hala")
 names.sortedWith(Comparator<String>{ a, b ->
     when {
@@ -2045,7 +2058,8 @@ names.sortedWith(Comparator<String>{ a, b ->
     }
 })
 // names: [hala, jim, julia, kim]
-// Sort string by length
+
+// Sort sortedWith Array<String> by length
 names.sortedWith(Comparator<String>{ a, b ->
     when {
         a.length > b.length -> 1
