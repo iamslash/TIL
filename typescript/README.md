@@ -853,3 +853,9 @@ the property name colon.
 * [Typescript Clean Architecture | github](https://github.com/pvarentsov/typescript-clean-architecture)
   * java 의 Clean Architecture 와는 조금 다른 듯?
 * [A TypeScript Stab at Clean Architecture](https://www.freecodecamp.org/news/a-typescript-stab-at-clean-architecture-b51fbb16a304/)
+* [Evolution of a React folder structure and why to group by features right away](https://profy.dev/article/react-folder-structure)
+* [React Folder Structure in 5 Steps [2022]](https://www.robinwieruch.de/react-folder-structure/)
+  * 단순한 구조부터 복잡한 구조까지 단계별로 설명
+* [bulletproof-react/docs/project-structure.md](https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md)
+* [4 folder structures to organize your React & React Native project](https://reboot.studio/blog/folder-structures-to-organize-react-project/)
+* [Project structure | Frontend Handbook](https://infinum.com/handbook/frontend/react/project-structure)

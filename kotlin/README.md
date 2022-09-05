@@ -539,6 +539,7 @@ val intList: List<Int> = nullableList.filterNotNull()
 ### List
 
 * [Concepts.Standard Library.Collections.Overview](https://kotlinlang.org/docs/collections-overview.html)
+* [Kotlin List Tutorial with Examples | javaguides](https://www.javaguides.net/2019/09/kotlin-list-tutorial-with-examples.html)
 
 -----
 
@@ -566,26 +567,108 @@ fun main() {
 ### Set
 
 * [Concepts.Standard Library.Collections.Overview](https://kotlinlang.org/docs/collections-overview.html)
+* [Kotlin Set Tutorial with Examples](https://www.javaguides.net/2019/09/kotlin-set-tutorial-with-examples.html)
 
 ----
 
 A **set** is an unordered collection that does not support duplicates. **Set** is immutable, **MutableSet** is mutable.
 
 ```kotlin
-val openIssues: MutableSet<String> = mutableSetOf("uniqueDescr1", "uniqueDescr2", "uniqueDescr3")
-fun addIssue(uniqueDesc: String): Boolean {
-    return openIssues.add(uniqueDesc)
-}
-fun getStatusLog(isAdded: Boolean): String {
-    return if (isAdded) "registered correctly." else "marked as duplicate and rejected."
-}
-fun main() {
-    val aNewIssue: String = "uniqueDescr4"
-    val anIssueAlreadyIn: String = "uniqueDescr2" 
+// setOf()
+val fooSet = setOf("one", "two", "three")
+println(fooSet)
+println("${fooSet.size}")
 
-    println("Issue $aNewIssue ${getStatusLog(addIssue(aNewIssue))}")                              
-    println("Issue $anIssueAlreadyIn ${getStatusLog(addIssue(anIssueAlreadyIn))}")                 
+// mutableSetOf()
+val fooSet = mutableSetOf(1, 2, 3)
+fooSet.add(4)
+fooSet.addAll(setOf(5, 6, 7, 10))
+println(fooSet)  // [1, 2, 3, 4, 5, 6, 7, 10]
+fooSet.remove(10)
+println(fooSet)  // [1, 2, 3, 4, 5, 6, 7]
+fooSet.retainAll(setOf(1, 12, 14, 16, 18))  // true
+println(fooSet)  // [1]
+fooSet.clear()
+
+// indexing
+val fooSet = setOf("one", "two", "three", "one")
+val a = fooSet.elementAt(0)        // one
+val b = fooSet.indexOf("one")      // 0
+val c = fooSet.lastIndexOf("one")  // 0
+
+// count()
+val fooSet = setOf(12, 1, 2, 3)
+val a = fooSet.count()  // 5
+val b = fooSet.size    // 5
+val c = fooSet.count { e -> e < 0 } // 0
+val d = fooSet.count { e -> e % 2 == 0 } // 2
+
+// first, last elements
+val fooSet = setOf("one", "two", "three")
+val a = fooSet.first()
+val b = fooSet.last()
+val c = fooSet.findLast { e -> e.startsWith('o') } // one
+val d = fooSet.first { e -> e.startsWith('t') }    // three
+
+// loop
+// forEach loop
+val fooSet = setOf("one", "two", "three")
+fooSet.forEach {
+    e -> print("${e} ")
 }
+println()
+// for ... in loop
+for (num in fooSet) {
+    print("${num} ")
+}
+println()
+// for ... in ... until loop
+for (i in 0 until fooSet.size) {
+    print("${fooSet.elementAt(i)} ")
+}
+println()
+// forEachIndexed() loop
+fooSet.forEachIndexed({
+    i,
+    e -> println("fooSet[${i}] = ${e}")
+})
+// hasNext() loop
+val it: Iterator<String> = fooSet.asIterable().iterator();
+while (it.hasNext()) {
+    val e = it.next()
+    print("${e} ")
+}
+println()
+
+// sort
+val numSet = setOf(5, 4, 3, 2, 1)
+val a = numSet.sorted()  // [1, 2, 3, 4, 5]
+val b = numSet.sortedDescending()  // [5, 4, 3, 2, 1]
+val c = numSet.revered() // [1, 2, 3, 4, 5]
+
+// contains()
+val numSet = setOf(1, 4)
+val a = numSet.contains(4)  // true
+val b = numSet.contains(10) // false
+
+// union()
+val fooSet = setOf(1, 2, 3)
+val barSet = setOf(4, 5, 6)
+val bazSet = fooSet.union(barSet)  // [1, 2, 3, 4, 5, 6]
+
+// filter()
+val fooSet = setOf("one", "two", "three")
+val a = fooSet.filter { e -> e.length == 5 }
+println(a)  // [three]
+val b = fooSet.filterNot { e -> e.length == 5 }
+println(b)  // [one, two]
+
+// any(), all()
+val fooSet = setOf(1, 2, 3, 4, 5)
+val a = fooSet.any { e -> e > 3 }
+val b = fooSet.all { e -> e > 3 }
+println(a)  // true
+println(b)  // false
 ```
 
 ### Map
