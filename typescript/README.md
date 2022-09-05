@@ -12,7 +12,7 @@
   - [Inspecting](#inspecting)
   - [Data Types](#data-types)
   - [Control Flow Statements](#control-flow-statements)
-    - [Loop Statements](#loop-statements)
+    - [Decision Making Statements](#decision-making-statements)
     - [Looping Statements](#looping-statements)
   - [Collections](#collections)
     - [tutple](#tutple)
@@ -325,7 +325,7 @@ let strLength2: number = (<string>someValue).length;
 
 ## Control Flow Statements
 
-### Loop Statements
+### Decision Making Statements
 
 ```ts
 // if ... else if ... else
