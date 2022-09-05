@@ -162,9 +162,26 @@ console.log("(a >> b) => ", a >> b);
 ## String
 
 ```ts
+// Interpolated string
 type World = "world";
 type Greeting = `hello ${World}`;
-console.log(Greeting)  // hello world
+console.log(Greeting);  // hello world
+
+// Loop string
+let s = "hello world'
+let n = s.length
+for (let i = 0; i < n; ++i) {
+    let c = s.charAt(i);
+    console.log(c);
+}
+
+// Convert letters, number in string
+// https://stackoverflow.com/questions/22624379/how-to-convert-letters-to-numbers-with-javascript
+let s = "abcdefg";
+let c = s.charAt(0);   // c is string, "a"
+// 97 means "a"
+let i = c.charCodeAt(0) - 97;  // 0
+let d = string.fromCharCode(97 + i) // "a"
 ```
 
 ## Random
@@ -447,6 +464,9 @@ console.log(fruits);  // ['Apple', 'Banana', 'Papaya']
 fruits = fruits.concat(['Fig', 'Mango']); 
 console.log(fruits); //output: ['Apple', 'Banana', 'Papaya', 'Fig', 'Mango'] 
 console.log(fruits.indexOf('Papaya'));  // 2
+
+// Init array with one value
+let prevIdxs = new Array<Number>().fill(-1);
 ```
 
 ### set

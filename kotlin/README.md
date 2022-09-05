@@ -356,6 +356,11 @@ sb.append(1 + 'a') // ERROR
 val foo = 3
 val bar = "Hello"
 println("foo: ${foo}, bar: ${bar}")
+
+// get char from string
+val s = "abcdefg"
+val c = s.get(0)  // a
+val i = c - 'a'   // 0
 ```
 
 ## Print type
