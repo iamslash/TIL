@@ -81,7 +81,7 @@
 
 This is about how to use kotlin effectively.
 
-[exercise of effective kotlin @ github](https://github.com/iamslash/kotlin-ex/tree/main/ex-effective)
+[kotlin-ex-effective | github](https://github.com/iamslash/kotlin-ex/tree/main/kotlin-ex-effective)
 
 # Matrials
 
@@ -90,10 +90,15 @@ This is about how to use kotlin effectively.
   * [Moskala Marcin](https://marcinmoskala.com/#page-top)
 
 # Part 1: Good code
+
 ## Chapter 1: Safety
+
 ### Item 1: Limit mutability
+
 ### Item 2: Minimize the scope of variables
+
 ### Item 3: Eliminate platform types as soon as possible
+
 ### Item 4: Do not expose inferred types
 
 ```kotlin
