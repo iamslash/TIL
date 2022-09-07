@@ -26,6 +26,7 @@
   - [Dead Letter Queue](#dead-letter-queue)
   - [Batch](#batch)
   - [Kafka GUI](#kafka-gui)
+  - [Duplicated message](#duplicated-message)
 - [Basic](#basic)
   - [Usual configs of server.properties](#usual-configs-of-serverproperties)
   - [Useful Client Commands](#useful-client-commands)
@@ -407,6 +408,28 @@ Producer 는 record 를 batch 로 묶어서 보낸다. `batch.size` 를 설정�
 
 * [CMAK (Cluster Manager for Apache Kafka, previously known as Kafka Manager)](https://github.com/yahoo/CMAK#deployment)
   * yahoo 에서 개발한 Web GUI
+
+## Duplicated message
+
+* [deduplicate messages whil reading from kafka | stackoverflow](https://stackoverflow.com/questions/59784986/deduplicate-messages-whil-reading-from-kafka)
+
+----
+
+Kafka 는 왜 중복된 message 를 저장하는가? Producer 가 Kafka Broker 에게 message
+를 보내고 network 문제 때문에 ACK 를 받지 못했다면 앞서 보냈던 message 를 다시
+보낼 것이다. 따라서 중복된 message 를 저장하게 된다.
+
+이 것을 해결하기 위해 message 에 `msgId` 를 포함시킨다. 그리고 Consumer 는
+`msgId` 가 이미 처리되었는지 확인한다. `msgId` 가 이미 처리되었는지 확인하는
+방법은 다음과 같은 것들이 있다.
+
+* [Redis](/redis/README.md) 에 `msgId` 를 저장하고 `SETNX` command 를 이용한다.
+  * pros: Deduplication
+  * cons: Complicated Architecture (depencency on Redis)
+* message 에 Kafka Topic Partition ID 를 설정하고 application 의 local cache 에
+  처리된 `msgId` 를 저장한다.
+  * pros: Deduplication, Simple Architecture
+  * cons: Reset local cache on bootstrapping
 
 # Basic
 
