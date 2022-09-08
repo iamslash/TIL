@@ -10,6 +10,7 @@
     - [Foreign Key](#foreign-key)
   - [BIGINT(20) vs INT(20)](#bigint20-vs-int20)
   - [SKIP LOCKED, NOWAIT](#skip-locked-nowait)
+  - [SAVEPOINT](#savepoint)
 - [Advanced](#advanced)
   - [how to reset password](#how-to-reset-password)
   - [Inno-db Locking](#inno-db-locking)
@@ -243,6 +244,36 @@ Query OK, 0 rows affected (0.00 sec)
 |     100 | NO     |
 +---------+--------+
 9 rows in set (0.00 sec)
+```
+
+## SAVEPOINT
+
+* [13.3.4 SAVEPOINT, ROLLBACK TO SAVEPOINT, and RELEASE SAVEPOINT Statements | mysql](https://dev.mysql.com/doc/refman/8.0/en/savepoint.html)
+* [[MYSQL] SAVEPOINT | tistory](https://88240.tistory.com/458)
+
+----
+
+SAVEPOINT 는 다음과 같이 특정 시점으로 ROLLBACK 할 수 있도록 한다.
+
+```sql
+-- AUTO COMMIT OFF
+SET AUTOCOMMIT = FALSE;
+
+-- Begin transaction
+START TRANSACTION;
+
+-- Update
+SAVEPOINT A;
+UPDATE a SET name = 'foo' WHERE USER_NAME = 'iamslash'
+
+SAVEPOINT B;
+UPDATE a SET name = 'bar' WHERE USER_NAME = 'foo'
+
+SAVEPOINT C;
+UPDATE a SET name = 'baz' WHERE USER_NAME = 'bar'
+
+-- Rollback to SAVEPOINT C
+ROLLBACK TO SAVEPOINT C
 ```
 
 # Advanced
