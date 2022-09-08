@@ -889,8 +889,8 @@ public class WebMvcProperties {
 | Serializable    | X          | X                   | X            |
 
 * Propagation
-  * REQUIRED
-    * Parent Transaction 에서 실행한다. Parent Transaction 이 없을 경우 새로운 Transaction 을 생성한다. Default
+  * REQUIRED (Default)
+    * Parent Transaction 에서 실행한다. Parent Transaction 이 없을 경우 새로운 Transaction 을 생성한다.
   * SUPPORTS
     * 이미 시작된 Transaction 이 있으면 참여하고 그렇지 않으면 Transaction 없이 실행한다.
   * REQUIRES_NEW
@@ -905,7 +905,7 @@ public class WebMvcProperties {
     * 이미 진행중인 Transaction 이 있다면 중첩된 Transaction 을 시작한다.
     * REQUIRES_NEW 처럼 독립적인 Transaction 을 생성하는 것과는 다르다.
     * Nested Transaction 은 Parent Transaction 의 Commit, Rollback 에 영향을 받는다. 그러나 자신의 Transaction 은 Parent Transaction 에게 양향을 주지는 않는다.
-    * NESTED Transaction 은 JDBC 3.0 의 savepoint 와 DataSourceTransactionManager 를 이용할 경우에 가능하다.
+    * NESTED Transaction 은 **JDBC 3.0** 의 [savepoint](/mysql/README.md#savepoint) 와 **DataSourceTransactionManager** 를 이용할 경우에만 가능하다.
 
 * readOnley property
   * Transaction 을 읽기 전용으로 설정한다.
