@@ -33,6 +33,7 @@
   - [Right Join](#right-join)
   - [FUll Join](#full-join)
   - [Self Join](#self-join)
+  - [Triple Join](#triple-join)
   - [Union](#union)
   - [Group By](#group-by)
   - [Having](#having)
@@ -760,6 +761,48 @@ SELECT A.CustomerName AS CustomerName1, B.CustomerName AS CustomerName2, A.City
   WHERE A.CustomerID <> B.CustomerID
   AND A.City = B.City 
   ORDER BY A.City;
+```
+
+## Triple Join
+
+* [Calculate the Influence of Each Salesperson | leetcode](https://leetcode.com/problems/calculate-the-influence-of-each-salesperson/)
+
+
+```sql
+Table: Salesperson
++----------------+---------+
+| Column Name    | Type    |
++----------------+---------+
+| salesperson_id | int     |
+| name           | varchar |
++----------------+---------+
+
+Table: Customer
++----------------+------+
+| Column Name    | Type |
++----------------+------+
+| customer_id    | int  |
+| salesperson_id | int  |
++----------------+------+
+
+Table: Sales
++-------------+------+
+| Column Name | Type |
++-------------+------+
+| sale_id     | int  |
+| customer_id | int  |
+| price       | int  |
++-------------+------+
+
+   SELECT p.salesperson_id,
+          p.name,
+          IFNULL(SUM(price), 0) AS total
+     FROM Salesperson p
+LEFT JOIN Customer c
+       ON p.salesperson_id = c.salesperson_id
+LEFT JOIN Sales s
+       ON c.customer_id = s.customer_id
+ GROUP BY 1;       
 ```
 
 ## Union
