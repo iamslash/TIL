@@ -37,7 +37,12 @@ A class should have only **one reason** to change. by Robert C. Martin.
 
 # OCP
 
-Objects or entitles should be open for **extension**, but closed for modification. Bertrand Meyer.
+Objects or entitles should be open for **extension**, but closed for **modification**. Bertrand Meyer.
+
+Fruit 라는 interface 를 만들고 Banana, Orange, Applce 과 같이 class 들을 만들어
+implement 하자. Client 는 Fruit 를 바라보고 구현되어 있다. 이후 Kiwi class 를
+만들어 Fruit 를 implement 하자. **기능**이 확장되었다. 그러나 Client 의 code 는
+**수정**할 필요가 없다.  
 
 # LSP
 
