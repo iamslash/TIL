@@ -46,7 +46,22 @@ spring framework 에 대해 정리한다.
 # References
 
 * [우아한형제들 기술이사 김영한의 스프링 완전 정복 | inflearn](https://www.inflearn.com/roadmaps/373) 
+  * [스프링 입문 - 코드로 배우는 스프링 부트, 웹 MVC, DB 접근 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%EC%9E%85%EB%AC%B8-%EC%8A%A4%ED%94%84%EB%A7%81%EB%B6%80%ED%8A%B8)
+  * [스프링 핵심 원리 - 기본편](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%ED%95%B5%EC%8B%AC-%EC%9B%90%EB%A6%AC-%EA%B8%B0%EB%B3%B8%ED%8E%B8)
+  * [모든 개발자를 위한 HTTP 웹 기본 지식](https://www.inflearn.com/course/http-%EC%9B%B9-%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC)
+  * [스프링 MVC 1편 - 백엔드 웹 개발 핵심 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-1)
+  * [스프링 MVC 2편 - 백엔드 웹 개발 활용 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-mvc-2)
+  * [스프링 DB 1편 - 데이터 접근 핵심 원리](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-db-1)
+  * [스프링 DB 2편 - 데이터 접근 활용 기술](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-db-2)
+  * [스프링 핵심 원리 - 고급편](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%ED%95%B5%EC%8B%AC-%EC%9B%90%EB%A6%AC-%EA%B3%A0%EA%B8%89%ED%8E%B8)
+  * 실전! 스프링 부트 (출시 예정)
 * [김영한의 스프링 부트와 JPA 실무 완전 정복 로드맵 | inflearn](https://www.inflearn.com/roadmaps/149)
+  * **활용편 1** - 먼저 활용편 1을 쭉 따라 치며 전체 기술과 백엔드 서비스 개발의 감을 익힙니다. (이해가 좀 부족해도 우선 진행하시길 권장합니다.)
+  * **JPA 기본편** - JPA 기본 내공을 다집니다.
+  * **활용편 1 복습** - 이미 기본편을 학습한 상태이기 때문에 처음부터 다시 쭉 따라하다 보면 JPA의 깊이있는 내용을 이해할 수 있습니다.
+  * **활용편 2** - 실전에서 JPA를 개발하고, JPA 성능 최적화를 어떻게 하는지 이해합니다.
+  * **스프링 데이터 JPA** - 실무에서 필요한 기능 위주로 스프링 데이터 JPA를 학습합니다.
+  * **Querydsl** - 복잡한 쿼리와 동적쿼리 문제를 해결합니다.
 * [Spring Framework Documentation](https://docs.spring.io/spring/docs/current/spring-framework-reference/)
   
 # Materials
@@ -63,7 +78,7 @@ spring framework 에 대해 정리한다.
 - [예제로 배우는 스프링 입문 (개정판) @ inflearn](https://www.inflearn.com/course/spring_revised_edition#)
   - [spring-petclinic @ github](https://github.com/spring-projects/spring-petclinic)
 - [백기선의 Spring 완전 정복 로드맵 - 에이스 개발자가 되자! @ inflearn](https://www.inflearn.com/roadmaps/8)
-  - 유료이긴 하지만 유용하다
+  - 유료이고 오래 되었다. manual 읽어주기 정도. 
 - [스프링 레퍼런스 번역](https://blog.outsider.ne.kr/category/JAVA?page=1)
 
 # Basic
