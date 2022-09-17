@@ -760,7 +760,22 @@ public class MainApp {
    for (String val : set) // ... Alphabetical order.
    {
       System.out.println(val);
-   }    
+   }
+
+   SortedSet<Integer> sst = new TreeSet<Integer>();
+   sst.add(1);
+   sst.add(3);
+   sst.add(5);
+   System.out.println(set.first())  // 1
+   System.out.println(set.last())   // 5
+
+   TreeSet<Integer> sst = new TreeSet<Integer>();
+   // left most equal
+   Sustem.out.println(set.floor(3)) // 3
+   Sustem.out.println(set.floor(4)) // 3
+   // right most equal
+   Sustem.out.println(set.ceiling(6)) // 5
+   Sustem.out.println(set.ceiling(4)) // 5   
 ```
 
 ### SortedMap, TreeMap
