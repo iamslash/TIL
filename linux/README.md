@@ -86,11 +86,13 @@ $ docker exec -it systemd-ubuntu bash
 # Linux Application Code
 
 * [coreutils | github](https://github.com/coreutils/coreutils)
-  * ls, chown
+  * ls, mkdir, nohup, pwd, rm, sleep, tail, tee, wc, whoami, cat, cp, cut, df,
+    du, echo, head, copy, chown, basename, etc...
 * [procps | gitlab](https://gitlab.com/procps-ng/procps)
   * procps is a set of command line and full-screen utilities that provide
     information out of the pseudo-filesystem most commonly located at /proc.
-  * free, kill, pgrep, pkill, pmap, ps
+  * free, kill, pgrep, pkill, pmap, ps, pwdx, skill, slabtop, snice, sysctl,
+    tload, top, uptime, vmstat, w, watch
 
 # Permissions
 
