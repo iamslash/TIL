@@ -942,17 +942,21 @@ EOF
 * `free`
   * [리눅스 free 명령어로 메모리 상태 확인하기](https://www.whatap.io/ko/blog/37/)
   * [[Linux] Memory 확인 방법 및 종류별 설명 (Free, Buffer, Cache, Swap Memory)](https://m.blog.naver.com/PostView.nhn?blogId=yhsterran&logNo=221607492403&proxyReferer=https:%2F%2Fwww.google.com%2F)
+  * `-/+ buffer/cache` 항목이 등장한다면 옛날 version 이다. `available` 이 등장해야 새 version 이다.
   * physical memory 와 swap memory 의 상태를 알려다오.
-    ```bash
-    $ free -h
-                  total        used        free      shared  buff/cache   available
-    Mem:           7.8G        1.6G        2.4G        402M        3.7G        5.5G
-    Swap:          1.0G        1.0M        1.0G
     ```
-    * `total` : `used + free + shared + buff/cache`
-      * 맞을까???
-    * `used` : `total - free - shared - buff/cache`
-      * 맞을까???
+    $ docker run -it --rm --name my-ubuntu ubuntu:18.04 
+    # free -h
+                  total        used        free      shared  buff/cache   available
+    Mem:            15G        1.1G         11G        411M        3.2G         13G
+    Swap:          1.0G          0B        1.0G
+    # free
+                  total        used        free      shared  buff/cache   available
+    Mem:       16397792     1135008    11862196      421624     3400588    14644580
+    Swap:       1048572           0     1048572
+    ```
+    * `total(16,397,792)` = `used + free + buff/cache` = `16,397,792`
+    * `shared` 는 `used` 에 포함된다.
     * `free` : 누구도 점유하지 않은 Physical Memory
     * `shared` : tmpfs(메모리 파일 시스템), rmpfs 으로 사용되는 메모리.
       * 여러 프로세스에서 공유한다.
@@ -961,6 +965,7 @@ EOF
     * `available` : 새로운 application 이 실행될 때 swapping 없이 사용할 수 있는 Physical memory 를 말한다. 
       * `available` : `MemFree + SReclaimable + the file LRU lists + the low watermarks in each zone` 
       * 시스템이 예측해서 계산한 것이다. 정확하다고 볼 수 없다.
+      * `available` 이 부족하면 System 은 OOM (Out Of Memory) 상황이다.
     * `slab` : Kernel Object 를 저장하는 단위이다. 
       * Kernel 은 Page 보다 작은 Slab 단위로 메모리를 사용한다. 하나의 Page 에 여러 Slab 들이 거주할 수 있다.
       * `i-node, dentry` 정보들을 캐싱한다.

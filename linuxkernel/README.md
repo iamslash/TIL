@@ -1070,28 +1070,23 @@ Linux 는 다음과 같이 RAM 을 중심으로 데이터가 이동된다.
 `$ free -m` 를 이용하면 Physical Memory 의 상황을 알 수 있다. [linux | TIL](/linux/README.md#memory) 참고. `free` 는 `/proc/meminfo` 를 읽어서 Memory 상황을 표시해 준다. [procps-ng free.c | gitlab](https://gitlab.com/procps-ng/procps/-/blob/newlib/src/free.c)
 
 ```console
-$ docker run -it --rm --name my-ubuntu ubuntu:14.04
+$ docker run -it --rm --name my-ubuntu ubuntu:18.04
 
+# free -h
+              total        used        free      shared  buff/cache   available
+Mem:            15G        1.1G         11G        411M        3.2G         13G
+Swap:          1.0G          0B        1.0G
 # free
-             total       used       free     shared    buffers     cached
-Mem:      16397792    4521788   11876004     421624     332716    2855756
--/+ buffers/cache:    1333316   15064476
-Swap:      1048572          0    1048572
-# free -m
-             total       used       free     shared    buffers     cached
-Mem:         16013       4414      11598        411        324       2789
--/+ buffers/cache:       1300      14712
-Swap:         1023          0       1023
+              total        used        free      shared  buff/cache   available
+Mem:       16397792     1136372    11860716      421624     3400704    14643216
+Swap:       1048572           0     1048572
 ```
 
 다음과 같이 요약할 수 있다.
 
-* `total (16,397,792) = used (4,521,788) + free (11,876,004)` 이다. 
-* `used (4,521,788)` 는 `shared (421,624) + buffers (332,716) + cached (2,855,756) = 3,610,096` 를 포함한다.
-* `free` 가 적다고 Physical Memory 가 부족한 것은 아니다. `buffers/cached` 의 일부를
-사용할 수 있다. `-/+ buffers/cache` 의 `-/+` 의 의미는 언제든지 줄거나 늘어날 수
-있다는 의미인가??? 
-* `-/+ buffers/cache used (1,333,316) + -/+ buffers/cache free (15,064,476) = total (16,397,792)` 인 이유는 무엇인가??? `-/+ buffers/cache free` 만큼 사용가능하다는 의미인가???
+* `total(16,397,792)` = `used + free + buff/cache` = `16,397,792`. 
+* `free` 가 적다고 Physical Memory 가 부족한 것은 아니다. `buffers/cache` 의 일부를
+사용할 수 있다. 
 
 한발 더 깊게 들어가 보자.
 
