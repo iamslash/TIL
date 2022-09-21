@@ -139,13 +139,21 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
 # Boot Process
 
 * [An introduction to the Linux boot and startup processes](https://opensource.com/article/17/2/linux-boot-and-startup)
+* [리눅스 부트 과정 | tistory](https://wogh8732.tistory.com/72)
 
 ----
 
-* BIOS POST
-* Boot loader (GRUB2)
-* Kernel initialization
-* Start systemd, the parent of all processes.
+Linux 의 Boot Process 는 다음과 같다. [https://wogh8732.tistory.com/72](https://wogh8732.tistory.com/72)
+
+- **UEFI/BIOS**
+    - ROM 에 설치된 BIOS 가 Booting 에 필요한 장치들(CPU, RAM, DISK, 키보드, 마우스, etc…)의 건강을 체크한다.
+- **UEFI/BIOS** 가 MBR (Master Boot Record) 에 설치된 Boot Loader 를 Memory 에 로딩후 실행한다.
+    - Linux 는 주로 **GRUB2** 를 Boot Loader 로 사용한다.
+- **Boot Loader** 는 Linux Kernel Image 와 RAM Disk 를 RAM 에 로딩하고 Linux Kernel 을 실행한다.
+    - RAM Disk 는 initramfs 이다. Linux Kernel 을 실행할 때 필요한 Driver, Program, Binary Files 등을 가지고 있다.
+- **Linux Kernel** 은 `/sbin/init` 을 실행한다.
+    - `/sbin/init` 은 `systemd` 를 실행하는 건가?
+- **systemd** 는 미리 작성된 service 들을 실행한다.
 
 # Build and run old linux
 

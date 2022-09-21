@@ -1419,7 +1419,8 @@ spec:
 
 ### CPU Limit
 
-> [185. [Kubernetes] CPU Affinity를 위한 CPU Manager 사용 방법, 구현 원리 Deep Dive @ naverblog](https://blog.naver.com/alice_k106/221633530545)
+> * [185. [Kubernetes] CPU Affinity를 위한 CPU Manager 사용 방법, 구현 원리 Deep Dive @ naverblog](https://blog.naver.com/alice_k106/221633530545)
+> * [Kubernetes Resource and QoS Concept](https://www.getoutsidedoor.com/2020/11/15/kubernetes-resource-and-qos/#how-pods-with-resource-limits-are-run)
 
 특정 POD 가 특정 NODE 의 CPU 만을 이용하도록 제한하기 위해서는 CPU Manager 를
 이용해야 한다. CPU Manager 는 kubelet 의 실행옵션을 변경해야 한다.
@@ -1438,7 +1439,7 @@ $ cat /proc/1234/oom_score_adj
 -999
 ```
 
-kubernetes 는 pod 의 limit, request 값에 따라 pod 의 qos class 를 정한다. QoS
+kubernetes 는 pod 의 limit, request 값에 따라 pod 의 qos class 가 정해진다. QoS
 class 는 **BestEffort, Burstable, Guaranteed** 와 같이 총 3 가지가 있다.
 
 Kubernetes 는 memory 가 부족하면 우선순위가 가장 낮은 POD 를 특정 node 에서
@@ -1497,7 +1498,9 @@ QoS class 가 Guaranteed 이면 oom_score_adj 가 -998 이다.
 
 **BestEffort**
 
-Request, Limit 을 설정하지 않는 POD 는 QoS class 가 BestEffort 이다.
+Request, Limit 을 설정하지 않는 POD 는 QoS class 가 BestEffort 이다. BestEffort
+Pod 가 자원을 많이 차지하면 같은 Workder Node 의 다른 Pod 들에게 피해를 줄 수
+있다.
 
 * `nginx-besteffort-pod.yaml`
 
@@ -1516,7 +1519,10 @@ node 에 존재하는 모든 자원을 사용할 수도 있지만 자원을 전�
 
 **Burstable**
 
-Request 가 Limit 보다 작은 POD 는 QoS class 가 Burstable 이다.
+Request 가 Limit 보다 작은 POD 는 QoS class 가 Burstable 이다. Burstable POD 이
+짧은 시간에 자원을 많이 차지 하고 돌아오는 것은 문제가 되지 않는다. 그러나
+Burstable Pod 가 자원을 많이 차지할 때 같은 Workder Node 의 다른 Pod 들에게
+피해를 줄 수 있다.
 
 * `resource-limit-with-request-pod.yaml`
 

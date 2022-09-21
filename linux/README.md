@@ -1955,16 +1955,20 @@ $ sudo echo 4194304 > /proc/sys/kernel/pid_max
 # cgroup
 
 * [cgroups](https://hwwwi.tistory.com/12)
+* [CGROUPS | kernel](https://www.kernel.org/doc/Documentation/cgroup-v1/cgroups.txt)
 
-프로세스들을 하나의 그룹으로 묶는다. 그리고 cpu, memory, network, device, I/O 등등의 자원을 그룹별로 제한할 수 있다. [Docker](/docker/README.md) 와 같은 container 기술의 기반이 된다. 
+프로세스들을 하나의 그룹으로 묶는다. 그리고 cpu, memory, network, device, I/O
+등등의 자원을 그룹별로 제한할 수 있다. [Docker](/docker/README.md) 와 같은
+container 기술의 기반이 된다. Docker Container 가 하나 실행되면 control group 이
+생성될 것 같다.
 
 cgroup 은 다음과 같은 방법으로 설정할 수 있다.
 
-* /sys/fs/cgroup 을 직접 편집
-* cgmanager
-* cgroup-tools
+* `/sys/fs/cgroup` 을 직접 편집
+* `cgmanager`
+* `cgroup-tools`
 
-다음은 cgroup-tools 를 이용하여 control group 을 만들고 cpu 를 제한하는 예이다.
+다음은 `cgroup-tools` 를 이용하여 control group 을 만들고 cpu 를 제한하는 예이다.
 
 ```bash
 $ sudo cgcreate -a hwi -g cpu:mycgroup
@@ -1972,7 +1976,9 @@ $ ls -al /sys/fs/cgroup/cpu/ | grep mycgroup
 drwxr-xr-x  2 hwi root   0 10월 20 18:00 mycgroup
 ```
 
-cpu 를 제한하기 위해 mtcgroup 이라는 control group 을 생성했다. 소유자는 hwi 이다. control cgroup 을 생성하면 제한하고자 하는 subsystem 의 디렉토리에 cgroup directory 가 만들어 진다. 
+cpu 를 제한하기 위해 mycgroup 이라는 control group 을 생성했다. 소유자는 hwi
+이다. control cgroup 을 생성하면 제한하고자 하는 subsystem 의 디렉토리에 cgroup
+directory 가 만들어 진다. 
 
 이제 테스트 해보자.
 
