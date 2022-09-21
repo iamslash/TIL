@@ -1130,6 +1130,74 @@ Inactive(file):  2126308 kB
 * `used(4,521,788)` of free != `Active(858248)` + `Inactive(3334564)` = `4,192,812` ???
 * `MemAvailable` 의 계산 방법은 복잡하다. [Linux Memory | TIL](/linux/README.md#memory) 를 참고하자.
 
+다음은 `free` 의 구현중 일부이다. `/proc/meminfo` 를 읽고 어떻게 Memory Status 를 계산하는지 알 수 있다.
+
+```c
+// https://gitlab.com/procps-ng/procps/
+
+// src/free.c
+int main(int argc, char **argv)
+{
+...
+	if ( (rc = procps_meminfo_new(&mem_info)) < 0)
+    {
+        if (rc == -ENOENT)
+            xerrx(EXIT_FAILURE,
+                  _("Memory information file /proc/meminfo does not exist"));
+        else
+            xerrx(EXIT_FAILURE,
+                  _("Unable to create meminfo structure"));
+    }
+...
+}
+
+// library/meminfo.c
+PROCPS_EXPORT int procps_meminfo_new (
+        struct meminfo_info **info)
+{
+    struct meminfo_info *p;
+...
+    if (meminfo_read_failed(p)) {
+...
+}
+
+// library/meminfo.c
+static int meminfo_read_failed (
+        struct meminfo_info *info)
+{
+...
+    if (0 == mHr(MemAvailable))
+        mHr(MemAvailable) = mHr(MemFree);
+    mHr(derived_mem_cached) = mHr(Cached) + mHr(SReclaimable);
+
+    /* if 'available' is greater than 'total' or our calculation of mem_used
+       overflows, that's symptomatic of running within a lxc container where
+       such values will be dramatically distorted over those of the host. */
+    if (mHr(MemAvailable) > mHr(MemTotal))
+        mHr(MemAvailable) = mHr(MemFree);
+    mem_used = mHr(MemTotal) - mHr(MemAvailable);
+    if (mem_used < 0)
+        mem_used = mHr(MemTotal) - mHr(MemFree);
+    mHr(derived_mem_used) = (unsigned long)mem_used;
+
+    if (mHr(HighFree) < mHr(HighTotal))
+         mHr(derived_mem_hi_used) = mHr(HighTotal) - mHr(HighFree);
+
+    if (0 == mHr(LowTotal)) {
+        mHr(LowTotal) = mHr(MemTotal);
+        mHr(LowFree)  = mHr(MemFree);
+    }
+    if (mHr(LowFree) < mHr(LowTotal))
+        mHr(derived_mem_lo_used) = mHr(LowTotal) - mHr(LowFree);
+
+    if (mHr(SwapFree) < mHr(SwapTotal))
+        mHr(derived_swap_used) = mHr(SwapTotal) - mHr(SwapFree);
+
+    return 0;
+ #undef mHr
+} // end: meminfo_read_failed
+```
+
 # System Load
 
 * [서버에 걸리는 부하, 추측하지 말고 계측하자](https://injae-kim.github.io/dev/2020/07/09/how-to-check-single-server-load-average.html)
