@@ -32,9 +32,9 @@
 - [Signal](#signal)
 - [Virtual File System](#virtual-file-system)
 - [Memory Management](#memory-management)
+- [Memory Management](#memory-management-1)
 - [System Load](#system-load)
 - [fork, exec](#fork-exec)
-- [Memory Management](#memory-management-1)
 - [Swap](#swap)
 - [Numa](#numa)
 - [TIME_WAIT](#time_wait)
@@ -1031,14 +1031,31 @@ WIP...
 
 # Memory Management
 
+# Memory Management
+
+* [Linux Memory | TIL](/linux/README.md#memory)
+* [Understanding the Linux Virtual Memory Manager](https://www.kernel.org/doc/gorman/html/understand/)   
+  * Memory Management 를 다룬 책이다. source code 도 설명한다.
+* [/fs/proc/meminfo.c @ kernel](https://elixir.bootlin.com/linux/v4.15/source/fs/proc/meminfo.c#L46)
+  * `/proc/meminfo` 의 주요지표가 어떻게 계산 되는지 이해할 수 있다.
+* [/mm/page_alloc.c @ kernel](https://elixir.bootlin.com/linux/v4.15/source/mm/page_alloc.c#L4564)
+  * MemAvailable 이 어떻게 계산되는지  을 보고 이해하자.
+* [Slab Allocator(슬랩 할당자)](https://wiki.kldp.org/wiki.php/slab_allocator)
+
+----
+
 Linux 는 다음과 같이 RAM 을 중심으로 데이터가 이동된다.
 
 ![](img/linux_kernel_memory_mgmt.png)
 
-* Process 는 Virtual Memory 에 데이터를 쓴다. 이것은 매핑된 Physical Memory 에 데이터를 쓰는 것과 같다.
-* User 는 HDD 로 부터 데이터를 원한다. RAM 은 HDD 로 부터 page 크기의 데이터를 읽어드리고 캐싱한다. 그리고 User 에게 data 를 보낸다.
-* User 가 HDD 로 데이터를 쓰기를 원한다. RAM 에 data 를 쓴다. page 들 중 변경된 것은 주기적으로 HDD 에 쓰여진다.
-* CPU 는 RAM 으로 부터 data 를 읽는다. 그리고 L1, L2, L3 와 같은 캐시에 데이터를 캐싱한다.
+* Process 는 Virtual Memory 에 데이터를 쓴다. 이것은 매핑된 Physical Memory 에
+  데이터를 쓰는 것과 같다.
+* User 는 HDD 로 부터 데이터를 원한다. RAM 은 HDD 로 부터 page 크기의 데이터를
+  읽어드리고 캐싱한다. 그리고 User 에게 data 를 보낸다.
+* User 가 HDD 로 데이터를 쓰기를 원한다. RAM 에 data 를 쓴다. page 들 중 변경된
+  것은 주기적으로 HDD 에 쓰여진다.
+* CPU 는 RAM 으로 부터 data 를 읽는다. 그리고 L1, L2, L3 와 같은 캐시에 데이터를
+  캐싱한다.
 
 다음은 Linux Kernel Memory 를 구성하는 주요요소들이다.
 
@@ -1050,45 +1067,68 @@ Linux 는 다음과 같이 RAM 을 중심으로 데이터가 이동된다.
 * **Cache**: Fast memory that is close to CPU 
 * **Page cache**: Area where recently used memory page are stored
 
-`$ free -m` 를 이용하면 Physical Memory 의 상황을 알 수 있다. [linux | TIL](/linux/README.md#memory) 참고.
+`$ free -m` 를 이용하면 Physical Memory 의 상황을 알 수 있다. [linux | TIL](/linux/README.md#memory) 참고. `free` 는 `/proc/meminfo` 를 읽어서 Memory 상황을 표시해 준다. [procps-ng free.c | gitlab](https://gitlab.com/procps-ng/procps/-/blob/newlib/src/free.c)
 
 ```console
 $ docker run -it --rm --name my-ubuntu ubuntu:14.04
+
+# free
+             total       used       free     shared    buffers     cached
+Mem:      16397792    4521788   11876004     421624     332716    2855756
+-/+ buffers/cache:    1333316   15064476
+Swap:      1048572          0    1048572
 # free -m
              total       used       free     shared    buffers     cached
-Mem:         16013       6660       9352        402        341       5401
--/+ buffers/cache:        918      15095
+Mem:         16013       4414      11598        411        324       2789
+-/+ buffers/cache:       1300      14712
 Swap:         1023          0       1023
 ```
 
-free 가 적다고 Physical Memory 가 부족한 것은 아니다. `buffers/cache` 의 일부를
+다음과 같이 요약할 수 있다.
+
+* `total (16,397,792) = used (4,521,788) + free (11,876,004)` 이다. 
+* `used (4,521,788)` 는 `shared (421,624) + buffers (332,716) + cached (2,855,756) = 3,610,096` 를 포함한다.
+* `free` 가 적다고 Physical Memory 가 부족한 것은 아니다. `buffers/cached` 의 일부를
 사용할 수 있다. `-/+ buffers/cache` 의 `-/+` 의 의미는 언제든지 줄거나 늘어날 수
-있다는 의미인가??? `918 (-/+ buffers/cache used) + 15,095 (-/+ buffers/cach free) = 16,013 (total)` 의 이유는???
-Linux Kernel version 에 따라 계산법이 다른건가???
+있다는 의미인가??? 
+* `-/+ buffers/cache used (1,333,316) + -/+ buffers/cache free (15,064,476) = total (16,397,792)` 인 이유는 무엇인가??? `-/+ buffers/cache free` 만큼 사용가능하다는 의미인가???
 
-Inactive memory 는 swap space 으로 page out 될 수 있다. Inactive memory 만큼
-Physical Memory 가 확보된다. 
+한발 더 깊게 들어가 보자.
 
-`$ cat /proc/meminfo` 를 이용하면 `Active/Inactive` physical memory 를 확인할 수
+`$ cat /proc/meminfo` 를 이용하면 `Active/Inactive` Physical Memory 를 확인할 수
 있다. `Active = Active(anon) + Active(file), Inactive = Inactive(anon) +
-Inactive(file)` 이다. [linux | TIL](/linux/README.md#memory) 참고
+Inactive(file)` 이다. [Linux Memory | TIL](/linux/README.md#memory) 참고
+
+Anonymous Memory 는 RAM 에 상주한다. Application 에 의해 사용되는 Stack, Heap
+등을 말한다. `free` 에서 보여주는 **used, shared** 에 포함된다. Inactive
+Anonymous Memory 는 Swap Out 의 대상이다. 
+
+File memory 는 RAM 에 상주한다. Memory Map (`mmap()`) 에 의해 Disk 의 영역이 Memory 에
+매핑된 영역을 말한다.  `free` 에서 보여주는 **buffer/cached** 에 포함된다.
+Inactive File Memory 는 언제든지 날아갈 수 있다. Swap Out 의 대상은 아니다.
 
 ```console
 # cat /proc/meminfo
 MemTotal:       16397792 kB
-MemFree:         9577040 kB
-MemAvailable:   15212580 kB
-Buffers:          349288 kB
-Cached:          5530972 kB
+MemFree:        11877356 kB
+MemAvailable:   14644868 kB
+Buffers:          332804 kB
+Cached:          2856756 kB
 SwapCached:            0 kB
-Active:          1238900 kB
-Inactive:        5068616 kB
-Active(anon):      74636 kB
-Inactive(anon):   664236 kB
-Active(file):    1164264 kB
-Inactive(file):  4404380 kB
+Active:           858248 kB
+Inactive:        3334564 kB
+Active(anon):      75092 kB
+Inactive(anon):  1208256 kB
+Active(file):     783156 kB
+Inactive(file):  2126308 kB
 ...
 ```
+
+다음과 같이 계산해 보자. `free` 의 결과와 `/proc/meminfo` 의 내용을 비교해보고 싶다.
+
+* `used(4,521,788)` of free ~= `MemTotal(16,397,792)` - `MemFree(11,877,356)` = `4,520,436`
+* `used(4,521,788)` of free != `Active(858248)` + `Inactive(3334564)` = `4,192,812` ???
+* `MemAvailable` 의 계산 방법은 복잡하다. [Linux Memory | TIL](/linux/README.md#memory) 를 참고하자.
 
 # System Load
 
@@ -1277,16 +1317,6 @@ int main() {
 **schedule()** 은 다음에 실행될 Process 를 찾아 선택한다. 그리고 `context_switch()` 라는 kernel internal function 을 실행한다. `schedule()` 은 kernel internal function 이다. system call 은 user program 에서 호출할 수 있지만 kernel internal function 은 user program 에 노출되어 있지 않다. `read(), write(), wait(), exit()` 와 같은 system call 들은 schedule 을 호출한다. 
 
 **context_switch()** 은 현재 CPU state vector 를 은퇴하는 Process 를 선택하고 그것의 PCB 에 적당한 정보를 기록한다. 그리고 새로 등장한 Process 의 PCB 를 읽어오고 그 PCB 의 PC 로 부터 프로그램을 실행한다.
-
-# Memory Management
-
-* [Understanding the Linux Virtual Memory Manager](https://www.kernel.org/doc/gorman/html/understand/) 은 Memory Management 를 다룬 책이다. source code 도 설명한다.
-
-`/proc/meminfo` 의 주요지표가 어덯게 계산 되는지 [/fs/proc/meminfo.c @ kernel](https://elixir.bootlin.com/linux/v4.15/source/fs/proc/meminfo.c#L46) 를 보고 이해하자.
-
-MemAvailable 이 어떻게 계산되는지 [/mm/page_alloc.c @ kernel](https://elixir.bootlin.com/linux/v4.15/source/mm/page_alloc.c#L4564) 을 보고 이해하자.
-
-* [Slab Allocator(슬랩 할당자)](https://wiki.kldp.org/wiki.php/slab_allocator)
 
 # Swap
 

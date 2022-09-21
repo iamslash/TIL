@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [References](#references)
 - [Materials](#materials)
+- [Linux Application Code](#linux-application-code)
 - [Permissions](#permissions)
   - [mode](#mode)
     - [setuid](#setuid)
@@ -81,6 +82,15 @@ $ docker exec -it systemd-ubuntu bash
   * 유용한 시스템 침입 테스트 커맨드들
 * [command line reference](https://ss64.com/)
   * bash, macOS, cmd, powershell 등등의 command line reference
+
+# Linux Application Code
+
+* [coreutils | github](https://github.com/coreutils/coreutils)
+  * ls, chown
+* [procps | gitlab](https://gitlab.com/procps-ng/procps)
+  * procps is a set of command line and full-screen utilities that provide
+    information out of the pseudo-filesystem most commonly located at /proc.
+  * free, kill, pgrep, pkill, pmap, ps
 
 # Permissions
 
@@ -932,7 +942,7 @@ EOF
 * `free`
   * [리눅스 free 명령어로 메모리 상태 확인하기](https://www.whatap.io/ko/blog/37/)
   * [[Linux] Memory 확인 방법 및 종류별 설명 (Free, Buffer, Cache, Swap Memory)](https://m.blog.naver.com/PostView.nhn?blogId=yhsterran&logNo=221607492403&proxyReferer=https:%2F%2Fwww.google.com%2F)
-  * physical memory 와 swap memory 의 상태를 알려다오
+  * physical memory 와 swap memory 의 상태를 알려다오.
     ```bash
     $ free -h
                   total        used        free      shared  buff/cache   available
@@ -940,7 +950,9 @@ EOF
     Swap:          1.0G        1.0M        1.0G
     ```
     * `total` : `used + free + shared + buff/cache`
+      * 맞을까???
     * `used` : `total - free - shared - buff/cache`
+      * 맞을까???
     * `free` : 누구도 점유하지 않은 Physical Memory
     * `shared` : tmpfs(메모리 파일 시스템), rmpfs 으로 사용되는 메모리.
       * 여러 프로세스에서 공유한다.
@@ -952,9 +964,9 @@ EOF
     * `slab` : Kernel Object 를 저장하는 단위이다. 
       * Kernel 은 Page 보다 작은 Slab 단위로 메모리를 사용한다. 하나의 Page 에 여러 Slab 들이 거주할 수 있다.
       * `i-node, dentry` 정보들을 캐싱한다.
-  * `free -h` human readable 하게 보여줘
-  * `free -ht` total 추가해조
-  * `free -hts 5` 5초마다 갱신해서 보여줘
+  * `free -h` human readable 하게 보여줘.
+  * `free -ht` total 추가해조.
+  * `free -hts 5` 5초마다 갱신해서 보여줘.
 * `slabtop`
   * slab 의 사용내역을 알려다오. `c` 를 누르면 CACHE SIZE 내림차순으로 보여준다.
   * [Linux Memory Slab 관리](https://lascrea.tistory.com/66)
@@ -1862,12 +1874,12 @@ SReclaimable: Part of Slab, that might be reclaimed, such as caches
   SUnreclaim: Part of Slab, that cannot be reclaimed on memory pressure              
 ```
 
-* **MemAvailable** : 새로운 application 이 실행될 때 swapping 없이 사용할 수 있는 Physical memory 를 말한다. **MemFree**, **SReclaimable**, **the file LRU lists**, **the low watermarks in each zone** 으로 구성된다.
-  * [/mm/page_alloc.c](https://elixir.bootlin.com/linux/v4.15/source/mm/page_alloc.c#L4564) 를 참고하면 MemAvailable 이 어떻게 계산되는지 알 수 있다.
-* Inactive(anon), Inactive(file), SReclaimable 은 사용된지 오래된 메모리들의 모임이다. swap out 될 수 있다. 
-  * Inactive(anon) : Anonymous Memory 중 사용된지 오래된 메모리이다. (malloc 으로 할당한 것???)
-  * Inactive(file) : Page cache 중 사용된지 오래된 메모리이다.
-  * SReclaimable : Slab 중 다시 할당하는 것이 가능한 것들이다. 
+* **MemAvailable** : 새로운 Application 이 실행될 때 Swapping 없이 사용할 수 있는 Physical Memory 를 말한다. **MemFree**, **SReclaimable**, **the file LRU lists**, **the low watermarks in each zone** 으로 구성된다.
+  * [/mm/page_alloc.c](https://elixir.bootlin.com/linux/v4.15/source/mm/page_alloc.c#L4564) 를 참고하면 **MemAvailable** 이 어떻게 계산되는지 알 수 있다.
+* Inactive(anon), Inactive(file), SReclaimable 은 사용된지 오래된 메모리들의 모임이다. System 이 Memory Pressure 상황이라면 Physical Memory 에서 날아갈 수 있다.
+  * Inactive(anon) : Anonymous Memory 중 사용된지 오래된 메모리이다. Stack, Heap 등을 말한다. Swap Out 의 대상이다.
+  * Inactive(file) : Page cache 중 사용된지 오래된 메모리이다. Swap Out 의 대상은 아니다.
+  * SReclaimable : Slab 중 다시 할당하는 것이 가능한 것들이다. Swap Out 의 대상일까???
 
 [htop](https://htop.dev/) 은 개선된 top 이다. top 보다 직관적이다. [htop](https://htop.dev/) 의 주요 지표들을 해석해 보자.
 
