@@ -5,20 +5,26 @@
   - [Install on windows 10](#install-on-windows-10)
 - [Basic](#basic)
   - [Build And Run](#build-and-run)
+  - [Hello World](#hello-world)
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
   - [Reserved Words](#reserved-words)
-  - [Data Types](#data-types)
-  - [Define Multiple Variables at Once in Kotlin](#define-multiple-variables-at-once-in-kotlin)
-  - [Type Assertions](#type-assertions)
-  - [String](#string)
-  - [Print type](#print-type)
-  - [Int vs Int?](#int-vs-int)
-  - [Any, Unit, Nothing](#any-unit-nothing)
   - [min max values](#min-max-values)
-  - [Null safety](#null-safety)
+  - [min max](#min-max)
+  - [abs, fabs](#abs-fabs)
+  - [Bit Manipulation](#bit-manipulation)
+  - [String](#string)
+  - [Random](#random)
+  - [Formatted String](#formatted-string)
+  - [Data Types](#data-types)
+  - [Control Flow Statements](#control-flow-statements)
+    - [Decision Making Statements](#decision-making-statements)
+      - [When](#when)
+      - [Equality Checks](#equality-checks)
+    - [Looping Statements](#looping-statements)
+      - [for, while, do](#for-while-do)
+      - [Ranges](#ranges)
   - [Collections compared to c++](#collections-compared-to-c)
-  - [Multi Dimensional Array](#multi-dimensional-array)
   - [Collections](#collections)
     - [List](#list)
     - [Set](#set)
@@ -38,15 +44,24 @@
     - [Map Element Access](#map-element-access)
     - [zip](#zip)
     - [getOrElse](#getorelse)
+  - [Collection APIs](#collection-apis)
+  - [Collection Conversions](#collection-conversions)
+  - [Sort](#sort)
+  - [Search](#search)
+  - [Multi Dimensional Array](#multi-dimensional-array)
+  - [Init Array](#init-array)
+  - [Define Multiple Variables at Once in Kotlin](#define-multiple-variables-at-once-in-kotlin)
+  - [Type Assertions](#type-assertions)
+  - [Print type](#print-type)
+  - [Int vs Int?](#int-vs-int)
+  - [Any, Unit, Nothing](#any-unit-nothing)
+  - [Null safety](#null-safety)
   - [Scope Functions](#scope-functions)
     - [let](#let)
     - [run](#run)
     - [with](#with)
     - [apply](#apply)
     - [also](#also)
-  - [Collection APIs](#collection-apis)
-  - [Collection Conversions](#collection-conversions)
-  - [Init Array](#init-array)
   - [Infix Functions](#infix-functions)
   - [Operator Functions](#operator-functions)
   - [Functions with vararg Parameters](#functions-with-vararg-parameters)
@@ -55,11 +70,6 @@
   - [Generics in,out,*](#generics-inout)
   - [Notation for platform types](#notation-for-platform-types)
   - [Inheritance](#inheritance)
-  - [Control Flow](#control-flow)
-    - [When](#when)
-    - [Loops](#loops)
-    - [Ranges](#ranges)
-    - [Equality Checks](#equality-checks)
   - [Special Classes](#special-classes)
     - [Data Classes](#data-classes)
     - [Enum classes](#enum-classes)
@@ -75,9 +85,6 @@
     - [Delegation Pattern](#delegation-pattern)
     - [Delegated Properties](#delegated-properties)
   - [Lazy Initialization (lateinit vs by lazy)](#lazy-initialization-lateinit-vs-by-lazy)
-  - [Sort](#sort)
-  - [min max](#min-max)
-  - [Formatted String](#formatted-string)
 - [Advanced](#advanced)
   - [Show kotlin decompile](#show-kotlin-decompile)
   - [Smart casts](#smart-casts)
@@ -163,6 +170,14 @@ $ kotlinc
 > val b = a.toLong()
 > b
 res2: kotlin.Long = 333
+```
+
+## Hello World
+
+```kotlin
+fun main() {
+    println("Hello World")
+}
 ```
 
 ## Basic Syntax
@@ -302,6 +317,118 @@ $
 _
 ```
 
+## min max values
+
+```kotlin
+// int
+println(Int.MIN_VALUE);
+println(Int.MAX_VALUE);
+println(Int.MIN_VALUE - 1);
+println(Int.MAX_VALUE + 1);
+
+// float
+println(Float.MIN_VALUE);
+println(Float.MAX_VALUE);
+```
+
+## min max
+
+* [Kotlin pi, 절댓값, 대소 비교 - PI, abs, max, min](https://notepad96.tistory.com/entry/Kotlin-pi-%EC%A0%88%EB%8C%93%EA%B0%92-%EB%8C%80%EC%86%8C-%EB%B9%84%EA%B5%90-PI-abs-max-min)
+
+----
+
+```kt
+import kotlin.math.*
+
+fun main(args : Array<String>) {
+    var a = 10
+    var b = 30
+    var c = 40
+    println("max val is ${max(a, b)}")    // kotlin.math.max
+    println("min val is ${min(c, b)}")   // kotlin.math.min
+}
+```
+
+## abs, fabs
+
+```java
+println(kotlin.math.abs(-3))    // 3
+println(kotlin.math.abs(-3.0))  // 3.0
+```
+
+## Bit Manipulation
+
+```
+// https://www.programiz.com/kotlin-programming/bitwise
+
+val a = 12   // 0000 1100
+val b = 25   // 0001 1001
+var c: Int
+
+// c = a.or(b)
+c = a or b   // 0001 1101
+// c = a.and(b)
+c = a and b  // 00001000
+// c = a.xor(b)
+c = a xor b  // 00010101
+
+c = a.inv()  // 1111 0011
+c = a shl 2  // 0011 0000
+c = a shr 2  // 0000 0011
+
+val a = 5    // 0000 0101
+val b = -5   // 1111 1011
+// Signed right shift
+c = a shr 1  // 0000 0010
+// UnSigned right shift
+c = a ushr 1 // 0000 0010
+c = b shr 1  // 1111 1101    -3
+c = b ushr 1 // 0111 1101    2147483645
+```
+
+## String
+
+```kotlin
+// StringBuilder
+val sb: StringBuilder() = StringBuilder()
+sb.append('a' + 1) // OK
+sb.append(1 + 'a') // ERROR
+
+// Interpolated string
+val foo = 3
+val bar = "Hello"
+println("foo: ${foo}, bar: ${bar}")
+
+// get char from string
+val s = "abcdefg"
+val c = s.get(0)  // a
+val i = c - 'a'   // 0
+```
+
+## Random
+
+```kotlin
+import java.util.Random
+
+val random = Random()
+val num = random.nextInt(5)
+```
+
+## Formatted String
+
+```kotlin
+// Double
+val pi = 3.14159265358979323
+val fi = "pi = %.2f".format(pi)
+println("pi is ${pi}")
+println("fi is ${fi}")
+
+// String
+val name = "iamslash"
+val msg = "Hello World"
+println("${String.format("%10s", name)}: Sending Message= $msg")
+```
+
 ## Data Types
 
 * [Basic types](https://kotlinlang.org/docs/basic-types.html)
@@ -328,137 +455,146 @@ val e = 2.7182818284 // Double
 val eFloat = 2.7182818284f // Float, actual value is 2.7182817
 ```
 
-## Define Multiple Variables at Once in Kotlin
+## Control Flow Statements
 
-* [Define Multiple Variables at Once in Kotlin | baeldung](https://www.baeldung.com/kotlin/define-multiple-variables)
+### Decision Making Statements
 
-```kotlin
-val foo = "foo"; val bar = "bar"; val baz = "baz"
-```
-
-## Type Assertions
+#### When
 
 ```kotlin
-// Type assertions
-val one = 1
-val oneLong = one.toLong()
+fun main() {
+    cases("Hello")
+    cases(1)
+    cases(0L)
+    cases(MyClass())
+    cases("hello")
+}
+fun cases(obj: Any) {                                
+    when (obj) {                                      
+        1 -> println("One")                          
+        "Hello" -> println("Greeting")               
+        is Long -> println("Long")                   
+        !is String -> println("Not a string")        
+        else -> println("Unknown")                   
+    }   
+}
+class MyClass
+
+fun main() {
+    println(whenAssign("Hello"))
+    println(whenAssign(3.4))
+    println(whenAssign(1))
+    println(whenAssign(MyClass()))
+}
+
+fun whenAssign(obj: Any): Any {
+    val result = when (obj) {                  
+        1 -> "one"                              
+        "Hello" -> 1                            
+        is Long -> false                        
+        else -> 42                              
+    }
+    return result
+}
+
+class MyClass
 ```
 
-## String
+#### Equality Checks
+
+* `==` for structural comparison
+  * `if (a == null) b == null else a.equals(b)`
+* `===` for referential comparison
 
 ```kotlin
-// StringBuilder
-val sb: StringBuilder() = StringBuilder()
-sb.append('a' + 1) // OK
-sb.append(1 + 'a') // ERROR
-
-// Interpolated string
-val foo = 3
-val bar = "Hello"
-println("foo: ${foo}, bar: ${bar}")
-
-// get char from string
-val s = "abcdefg"
-val c = s.get(0)  // a
-val i = c - 'a'   // 0
+val authors = setOf("Shakespeare", "Hemingway", "Twain")
+val writers = setOf("Twain", "Shakespeare", "Hemingway")
+println(authors == writers)   // true
+println(authors === writers)  // false
 ```
 
-## Print type
+### Looping Statements
 
-```java
-val obj: Double = 5.0
-
-println(obj.javaClass.name)                 // double
-println(obj.javaClass.kotlin)               // class kotlin.Double
-println(obj.javaClass.kotlin.qualifiedName) // kotlin.Double
-```
-
-## Int vs Int?
-
-다음은 Kotlin 과 Java 의 주요 type 비교이다.
-
-| Kotlin | Java |
-|--|--|
-| `Int` | `int` |
-| `Int?` | `Integer` |
-| `List<Int>` | `List<Integer>` |
-| `IntArray` | `int[]` |
-| `Array<Int>` | `Integer[]` |
-  
-Kotlin 은 문자열 혹은 `[-127,127]` 의 Int 를 caching 한다.
+#### for, while, do
 
 ```kotlin
-val a = "Hello World"
-val b = "Hello World"
-print(a == b)  // true
-print(a === b) // true
+// for
+val cakes = listOf("carrot", "cheese", "chocolate")
+for (cake in cakes) {                               
+    println("Yummy, it's a $cake cake!")
+}
 
-val a: Int? = 1
-val b: Int? = 1
-print(a == b)  // true
-print(a === b) // true
+// while, do-while
+fun eatACake() = println("Eat a Cake")
+fun bakeACake() = println("Bake a Cake")
+fun main(args: Array<String>) {
+    var cakesEaten = 0
+    var cakesBaked = 0
+    while (cakesEaten < 5) {                    
+        eatACake()
+        cakesEaten ++
+    }
+    do {                                        
+        bakeACake()
+        cakesBaked++
+    } while (cakesBaked < cakesEaten)
+}
 
-val a: Int? = 1234
-val b: Int? = 1234
-print(a == b)  // true
-print(a === b) // false
+// iterators
+class Animal(val name: String)
+class Zoo(val animals: List<Animal>) {
+    operator fun iterator(): Iterator<Animal> {             
+        return animals.iterator()                           
+    }
+}
+fun main() {
+    val zoo = Zoo(listOf(Animal("zebra"), Animal("lion")))
+    for (animal in zoo) {                                   
+        println("Watch out, it's a ${animal.name}")
+    }
+}
 ```
 
-## Any, Unit, Nothing
-
-> [[Kotlin] 헷갈리는 "Nothing" 확실하게 이해하기(feat. Any, Unit)](https://readystory.tistory.com/143)
-
-* `Any` 는 모든 Type 의 조상이다. Java 의 `Object` 와 같다.
-  ```kotlin
-  val greeting: Any = "Hello World"
-  // After compliing
-  public final Object greeting = "Hello World";
-  ```
-* `Nothing` 은 모든 Type 의 자식이다.
-* `Unit` 은 Java 의 `void` 와 같다. `Unit` 은 single tone instance 이다.
-  ```kotlin
-  val unit: Unit = Unit
-  val unit: Any = Unit
-  ```
-
-## min max values
+#### Ranges
 
 ```kotlin
-// int
-println(Int.MIN_VALUE);
-println(Int.MAX_VALUE);
-println(Int.MIN_VALUE - 1);
-println(Int.MAX_VALUE + 1);
+// int ranges
+for (i in 0..3) {  // Output: 0 1 2 3             
+    print("$i ")
+}
+println()
+for (i in 0 until 3) {  // Output: 0 1 2
+    print("$i ")
+}
+println()
+for(i in 2..8 step 2) { // Output: 2 4 6 8 
+    print("$i ")
+}
+println()
+for (i in 3 downTo 0) { // Output: 3 2 1 0
+    print("$i ")
+}
+println()
 
-// float
-println(Float.MIN_VALUE);
-println(Float.MAX_VALUE);
-```
+// char ranges
+for (c in 'a'..'d') {
+    print(c)
+}
+print(" ")
+for (c in 'z' downTo 's' step 2) { 
+    print(c)
+}
+print(" ")
 
-## Null safety
-
-* [Null safety @ kotlin](https://kotlinlang.org/docs/null-safety.html#the-operator)
-
-----
-
-```kotlin
-// safe call operator ?.
-val b: String? = null
-println(b?.length)
-
-// Elivis operator ?: which looks like elvis' hair
-val l: b?.length ?: -1
-
-// not-null assertion operator !! 
-// if b is null NPE will be thrown.
-val l = b!!.length
-
-// safe casts
-val aInt: Int? = a as? Int
-
-// filter not nullable elements
-val nullablelist: List<Int?> = listOf(1, 2, null, 5)
-val intList: List<Int> = nullableList.filterNotNull()
+// ranges with if statements
+val x = 2
+if (x in 1..5) {            
+    print("x is in range from 1 to 5")
+}
+println()
+if (x !in 6..10) {          
+    print("x is not in range from 6 to 10")
+}
 ```
 
 ## Collections compared to c++
@@ -483,54 +619,6 @@ val intList: List<Int> = nullableList.filterNotNull()
 | `unordered_multiset` | ``                                     |
 | `unordered_map`      | `Map, MutableMap, java.util.HashMap` |
 | `unordered_multimap` | ``                                     |
-
-## Multi Dimensional Array
-
-* `Array<Int>` is same with `Integer[]` of java.
-* `IntArray` is same with `int[]` of java.
-
-```kotlin
-    
-    // 1d array
-    val a = Array(3, {i -> 0})
-    val b = Array(3, {0})
-    val c = IntArray(3, {i -> 0})
-    val d = IntArray(3, {0})
-    val e = arrayOf(1, 2, 3)
-    val f = intArrayOf(1, 2, 3)
-    // late initialization
-    val h = arrayOfNulls<Number>(3)
-    for (i in h.indices) {
-        h[i] = i * i
-    }
-    println(f.contentToString())
-
-    // 2d array
-    val aa = Array(3, {Array(3, {i -> 0})})
-    val bb = Array(3, {Array(3, {0})})
-    val cc = Array(3, {IntArray(3, {i -> 0})})
-    val dd = Array(3, {IntArray(3, {0})})
-    val ee = Array(3, {arrayOf(1, 2, 3)})
-    val ff = Array(3, {intArrayOf(1, 2, 3)})
-    // late initialization
-    val hh = Array(3, {arrayOfNulls<Number>(3)})
-    for (i in hh.indices) {
-        for (j in hh[0].indices) {
-            hh[i][j] = i * j
-        }
-    }
-    for (i in 0 until 3) {
-        for (j in 0 until 3) {
-            hh[i][j] = i * j
-        }
-    }
-    hh.forEach { println(it.contentToString()) }
-
-    // 3d array
-    // thanks to type infer
-    val aaa = Array(3, {Array(3, {Array(3, {i -> 0})})})
-    val bbb = Array(3, {Array(3, {IntArray(3, {i -> 0})})})
-```
 
 ## Collections
 
@@ -991,115 +1079,6 @@ map["x"] = null
 println(map.getOrElse("x") { 1 })       
 ```
 
-## Scope Functions
-
-Scope functions 는 code block 을 실행하는 함수이다.
-
-### let
-
-* [Concepts.Standard library.Scope functions.let](https://kotlinlang.org/docs/scope-functions.html#let)
-
------
-
-**let** executes the given block of code and returns the result of its last expression. The object is accessible inside the block by the reference **it** (by default) or a custom name.
-
-```kotlin
-val empty = "test".let {               
-    customPrint(it)                    
-    it.isEmpty()                       
-}
-println(" is empty: $empty")
-fun printNonNull(str: String?) {
-    println("Printing \"$str\":")
-
-    str?.let {                         
-        print("\t")
-        customPrint(it)
-        println()
-    }
-}
-fun printIfBothNonNull(strOne: String?, strTwo: String?) {
-    strOne?.let { firstString ->        
-        strTwo?.let { secondString ->
-            customPrint("$firstString : $secondString")
-            println()
-        }
-    }
-}
-printNonNull(null)
-printNonNull("my string") 
-printIfBothNonNull("First","Second") 
-```
-
-### run
-
-* [Concepts.Standard library.Scope functions.run](https://kotlinlang.org/docs/scope-functions.html#run)
-
------
-**let** is same with **run** but the difference is that inside run the object is accessed by **this**. 
-
-```kotlin
-fun getNullableLength(ns: String?) {
-    println("for \"$ns\":")
-    ns?.run {                                                  // 1
-        println("\tis empty? " + isEmpty())                    // 2
-        println("\tlength = $length")                           
-        length                                                 // 3
-    }
-}
-getNullableLength(null)
-getNullableLength("")
-getNullableLength("some string with Kotlin")
-```
-
-### with
-
-* [Concepts.Standard library.Scope functions.with](https://kotlinlang.org/docs/scope-functions.html#with)
-
------
-
-**with** 의 argument 로 사용된 instance 의 member 를 간단히 접근할 때 사용한다.
-
-```kotlin
-with(configuration) {
-    println("$host:$port")
-}
-// instead of:
-println("${configuration.host}:${configuration.port}")  
-```
-
-### apply
-
-* [Concepts.Standard library.Scope functions.apply](https://kotlinlang.org/docs/scope-functions.html#apply)
-
------
-
-**apply** executes a block of code on an object and returns the object itself. Inside the block, the object is referenced by **this**.
-
-```kotlin
-val jake = Person()
-val stringDescription = jake.apply {
-    name = "Jake"                   
-    age = 30
-    about = "Android developer"
-}.toString()                        
-```
-
-### also
-
-* [Concepts.Standard library.Scope functions.also](https://kotlinlang.org/docs/scope-functions.html#also)
-
------
-
-**also** works like apply: it executes a given block and returns the object called. Inside the block, the object is referenced by **it**
-
-```kotlin
-val jake = Person("Jake", 30, "Android developer")   
-    .also {                                           
-        writeCreationLog(it)                         
-    }
-```
-
 ## Collection APIs
 
 * [Collections @ kotlin Koans](https://play.kotlinlang.org/koans/Collections/Introduction/Task.kt)
@@ -1216,6 +1195,164 @@ fun main(args: Array<String>) {
 }
 ```
 
+## Sort
+
+* [Guide to Sorting in Kotlin @ baeldung](https://www.baeldung.com/kotlin/sort)
+* [Kotlin sortedWith syntax and lambda examples](https://alvinalexander.com/source-code-kotlin-sortedWith-syntax-lambda-examples/)
+
+-----
+
+```java
+// sort intArray
+// There are no sortBy, sortByDescending, sortWith for intArray
+// sort returns Unit
+val a = intArrayOf(5, 4, 3, 2, 1)
+a.sort()  // a is also sorted 
+a.sortDescending()
+
+// sorted intArray
+// sorted returns intArray
+val sorted = a.sorted()
+val sortedBy = a.sortedBy { kotlin.math.abs(it) }
+val sortedDescending = a.sortedDescending()
+val sortedByDescending = a.sortedByDescending { kotlin.math.abs(it) }
+val sortedWith = a.sortedWith { a, b -> a - b }
+
+// sort vs sorted, sort is faster than sorted
+// sort returns Unit, sorted returns IntArray
+// sort of a.sort()
+public actual fun IntArray.sort(): Unit {
+    if (size > 1) java.util.Arrays.sort(this)
+}
+// sorted of a.sorted()
+// sorted needs converting from intArray to Array<Int> 
+public fun IntArray.sorted(): List<Int> {
+    return toTypedArray().apply { sort() }.asList()
+}
+public expect fun IntArray.toTypedArray(): Array<Int>
+```
+
+```java
+// sort Array<Int>
+val l = arrayListOf<Int>(5, 4, 3, 2, 1)
+l.sort()
+l.sortDescending()
+l.sortBy { kotlin.math.abs(it) }
+l.sortByDescending { kotlin.math.abs(it) }
+l.sortWith { a, b -> a - b}
+l.sortWith(Comparator<Int>{ a, b -> a - b })
+
+// sorted Array<Int>
+val sorted = l.sorted()
+val sortedBy = l.sortedBy { kotlin.math.abs(it) }
+val sortedDescending = l.sortedDescending()
+val sortedByDescending = l.sortedByDescending { kotlin.math.abs(it) }
+val sortedWith = l.sortedWith { a, b -> a - b }
+val sortedWithComparator = l.sortedWith(Comparator<Int>{ a, b -> a - b })
+
+// sort MutableList<Int>
+val l = mutableListOf<Int>(5, 4, 3, 2, 1)
+l.sort()  // l is also sorted 
+l.sortDescending()
+l.sortBy { kotlin.math.abs(it) }
+l.sortByDescending { kotlin.math.abs(it) }
+l.sortWith { a, b -> a - b}
+l.sortWith(Comparator<Int>{ a, b -> a - b })
+
+// sorted MutableList<Int>
+val sorted = l.sorted()
+val sortedBy = l.sortedBy { kotlin.math.abs(it) }
+val sortedDescending = l.sortedDescending()
+val sortedByDescending = l.sortedByDescending { kotlin.math.abs(it) }
+val sortedWith = l.sortedWith { a, b -> a - b }
+val sortedWithComparator = l.sortedWith(Comparator<Int>{ a, b -> a - b })
+
+// Sort sortedWith Array<String> by string
+val names = listOf("kim", "julia", "jim", "hala")
+names.sortedWith(Comparator<String>{ a, b ->
+    when {
+        a > b -> 1
+        a < b -> -1
+        else -> 0
+    }
+})
+// names: [hala, jim, julia, kim]
+
+// Sort sortedWith Array<String> by length
+names.sortedWith(Comparator<String>{ a, b ->
+    when {
+        a.length > b.length -> 1
+        a.length < b.length -> -1
+        else -> 0
+    }
+})
+// names: [kim, jim, hala, julia]
+```
+
+## Search
+
+```kotlin
+val list = mutableListOf('a', 'b', 'c', 'd', 'e')
+println(list.binarySearch('d')) // 3
+
+list.remove('d')
+
+val invertedInsertionPoint = list.binarySearch('d')
+val actualInsertionPoint = -(invertedInsertionPoint + 1)
+println(actualInsertionPoint) // 3
+
+list.add(actualInsertionPoint, 'd')
+println(list) // [a, b, c, d, e]
+```
+
+## Multi Dimensional Array
+
+* `Array<Int>` is same with `Integer[]` of java.
+* `IntArray` is same with `int[]` of java.
+
+```kotlin
+    
+    // 1d array
+    val a = Array(3, {i -> 0})
+    val b = Array(3, {0})
+    val c = IntArray(3, {i -> 0})
+    val d = IntArray(3, {0})
+    val e = arrayOf(1, 2, 3)
+    val f = intArrayOf(1, 2, 3)
+    // late initialization
+    val h = arrayOfNulls<Number>(3)
+    for (i in h.indices) {
+        h[i] = i * i
+    }
+    println(f.contentToString())
+
+    // 2d array
+    val aa = Array(3, {Array(3, {i -> 0})})
+    val bb = Array(3, {Array(3, {0})})
+    val cc = Array(3, {IntArray(3, {i -> 0})})
+    val dd = Array(3, {IntArray(3, {0})})
+    val ee = Array(3, {arrayOf(1, 2, 3)})
+    val ff = Array(3, {intArrayOf(1, 2, 3)})
+    // late initialization
+    val hh = Array(3, {arrayOfNulls<Number>(3)})
+    for (i in hh.indices) {
+        for (j in hh[0].indices) {
+            hh[i][j] = i * j
+        }
+    }
+    for (i in 0 until 3) {
+        for (j in 0 until 3) {
+            hh[i][j] = i * j
+        }
+    }
+    hh.forEach { println(it.contentToString()) }
+
+    // 3d array
+    // thanks to type infer
+    val aaa = Array(3, {Array(3, {Array(3, {i -> 0})})})
+    val bbb = Array(3, {Array(3, {IntArray(3, {i -> 0})})})
+```
+
 ## Init Array
 
 * [Initializing Arrays in Kotlin](https://www.baeldung.com/kotlin/initialize-array)
@@ -1235,6 +1372,215 @@ for (i in array.indices) {
 // Generate values with indices
 val generatedArray = IntArray(10) { i -> i * i }
 val generatedStringArray = Array(10) { i -> "Number of index: $i"  }
+```
+
+## Define Multiple Variables at Once in Kotlin
+
+* [Define Multiple Variables at Once in Kotlin | baeldung](https://www.baeldung.com/kotlin/define-multiple-variables)
+
+```kotlin
+val foo = "foo"; val bar = "bar"; val baz = "baz"
+```
+
+## Type Assertions
+
+```kotlin
+// Type assertions
+val one = 1
+val oneLong = one.toLong()
+```
+
+## Print type
+
+```java
+val obj: Double = 5.0
+
+println(obj.javaClass.name)                 // double
+println(obj.javaClass.kotlin)               // class kotlin.Double
+println(obj.javaClass.kotlin.qualifiedName) // kotlin.Double
+```
+
+## Int vs Int?
+
+다음은 Kotlin 과 Java 의 주요 type 비교이다.
+
+| Kotlin | Java |
+|--|--|
+| `Int` | `int` |
+| `Int?` | `Integer` |
+| `List<Int>` | `List<Integer>` |
+| `IntArray` | `int[]` |
+| `Array<Int>` | `Integer[]` |
+  
+Kotlin 은 문자열 혹은 `[-127,127]` 의 Int 를 caching 한다.
+
+```kotlin
+val a = "Hello World"
+val b = "Hello World"
+print(a == b)  // true
+print(a === b) // true
+
+val a: Int? = 1
+val b: Int? = 1
+print(a == b)  // true
+print(a === b) // true
+
+val a: Int? = 1234
+val b: Int? = 1234
+print(a == b)  // true
+print(a === b) // false
+```
+
+## Any, Unit, Nothing
+
+> [[Kotlin] 헷갈리는 "Nothing" 확실하게 이해하기(feat. Any, Unit)](https://readystory.tistory.com/143)
+
+* `Any` 는 모든 Type 의 조상이다. Java 의 `Object` 와 같다.
+  ```kotlin
+  val greeting: Any = "Hello World"
+  // After compliing
+  public final Object greeting = "Hello World";
+  ```
+* `Nothing` 은 모든 Type 의 자식이다.
+* `Unit` 은 Java 의 `void` 와 같다. `Unit` 은 single tone instance 이다.
+  ```kotlin
+  val unit: Unit = Unit
+  val unit: Any = Unit
+  ```
+
+## Null safety
+
+* [Null safety @ kotlin](https://kotlinlang.org/docs/null-safety.html#the-operator)
+
+----
+
+```kotlin
+// safe call operator ?.
+val b: String? = null
+println(b?.length)
+
+// Elivis operator ?: which looks like elvis' hair
+val l: b?.length ?: -1
+
+// not-null assertion operator !! 
+// if b is null NPE will be thrown.
+val l = b!!.length
+
+// safe casts
+val aInt: Int? = a as? Int
+
+// filter not nullable elements
+val nullablelist: List<Int?> = listOf(1, 2, null, 5)
+val intList: List<Int> = nullableList.filterNotNull()
+```
+
+## Scope Functions
+
+Scope functions 는 code block 을 실행하는 함수이다.
+
+### let
+
+* [Concepts.Standard library.Scope functions.let](https://kotlinlang.org/docs/scope-functions.html#let)
+
+-----
+
+**let** executes the given block of code and returns the result of its last expression. The object is accessible inside the block by the reference **it** (by default) or a custom name.
+
+```kotlin
+val empty = "test".let {               
+    customPrint(it)                    
+    it.isEmpty()                       
+}
+println(" is empty: $empty")
+fun printNonNull(str: String?) {
+    println("Printing \"$str\":")
+
+    str?.let {                         
+        print("\t")
+        customPrint(it)
+        println()
+    }
+}
+fun printIfBothNonNull(strOne: String?, strTwo: String?) {
+    strOne?.let { firstString ->        
+        strTwo?.let { secondString ->
+            customPrint("$firstString : $secondString")
+            println()
+        }
+    }
+}
+printNonNull(null)
+printNonNull("my string") 
+printIfBothNonNull("First","Second") 
+```
+
+### run
+
+* [Concepts.Standard library.Scope functions.run](https://kotlinlang.org/docs/scope-functions.html#run)
+
+-----
+**let** is same with **run** but the difference is that inside run the object is accessed by **this**. 
+
+```kotlin
+fun getNullableLength(ns: String?) {
+    println("for \"$ns\":")
+    ns?.run {                                                  // 1
+        println("\tis empty? " + isEmpty())                    // 2
+        println("\tlength = $length")                           
+        length                                                 // 3
+    }
+}
+getNullableLength(null)
+getNullableLength("")
+getNullableLength("some string with Kotlin")
+```
+
+### with
+
+* [Concepts.Standard library.Scope functions.with](https://kotlinlang.org/docs/scope-functions.html#with)
+
+-----
+
+**with** 의 argument 로 사용된 instance 의 member 를 간단히 접근할 때 사용한다.
+
+```kotlin
+with(configuration) {
+    println("$host:$port")
+}
+// instead of:
+println("${configuration.host}:${configuration.port}")  
+```
+
+### apply
+
+* [Concepts.Standard library.Scope functions.apply](https://kotlinlang.org/docs/scope-functions.html#apply)
+
+-----
+
+**apply** executes a block of code on an object and returns the object itself. Inside the block, the object is referenced by **this**.
+
+```kotlin
+val jake = Person()
+val stringDescription = jake.apply {
+    name = "Jake"                   
+    age = 30
+    about = "Android developer"
+}.toString()                        
+```
+
+### also
+
+* [Concepts.Standard library.Scope functions.also](https://kotlinlang.org/docs/scope-functions.html#also)
+
+-----
+
+**also** works like apply: it executes a given block and returns the object called. Inside the block, the object is referenced by **it**
+
+```kotlin
+val jake = Person("Jake", 30, "Android developer")   
+    .also {                                           
+        writeCreationLog(it)                         
+    }
 ```
 
 ## Infix Functions
@@ -1471,144 +1817,6 @@ fun main() {
     val lion: Lion = Asiatic("Rufo")                              
     lion.sayHello()
 }
-```
-
-## Control Flow
-
-### When
-
-```kotlin
-fun main() {
-    cases("Hello")
-    cases(1)
-    cases(0L)
-    cases(MyClass())
-    cases("hello")
-}
-fun cases(obj: Any) {                                
-    when (obj) {                                      
-        1 -> println("One")                          
-        "Hello" -> println("Greeting")               
-        is Long -> println("Long")                   
-        !is String -> println("Not a string")        
-        else -> println("Unknown")                   
-    }   
-}
-class MyClass
-
-fun main() {
-    println(whenAssign("Hello"))
-    println(whenAssign(3.4))
-    println(whenAssign(1))
-    println(whenAssign(MyClass()))
-}
-
-fun whenAssign(obj: Any): Any {
-    val result = when (obj) {                  
-        1 -> "one"                              
-        "Hello" -> 1                            
-        is Long -> false                        
-        else -> 42                              
-    }
-    return result
-}
-
-class MyClass
-```
-
-### Loops
-
-```kotlin
-// for
-val cakes = listOf("carrot", "cheese", "chocolate")
-for (cake in cakes) {                               
-    println("Yummy, it's a $cake cake!")
-}
-
-// while, do-while
-fun eatACake() = println("Eat a Cake")
-fun bakeACake() = println("Bake a Cake")
-fun main(args: Array<String>) {
-    var cakesEaten = 0
-    var cakesBaked = 0
-    while (cakesEaten < 5) {                    
-        eatACake()
-        cakesEaten ++
-    }
-    do {                                        
-        bakeACake()
-        cakesBaked++
-    } while (cakesBaked < cakesEaten)
-}
-
-// iterators
-class Animal(val name: String)
-class Zoo(val animals: List<Animal>) {
-    operator fun iterator(): Iterator<Animal> {             
-        return animals.iterator()                           
-    }
-}
-fun main() {
-    val zoo = Zoo(listOf(Animal("zebra"), Animal("lion")))
-    for (animal in zoo) {                                   
-        println("Watch out, it's a ${animal.name}")
-    }
-}
-```
-
-### Ranges
-
-```kotlin
-// int ranges
-for (i in 0..3) {  // Output: 0 1 2 3             
-    print("$i ")
-}
-println()
-for (i in 0 until 3) {  // Output: 0 1 2
-    print("$i ")
-}
-println()
-for(i in 2..8 step 2) { // Output: 2 4 6 8 
-    print("$i ")
-}
-println()
-for (i in 3 downTo 0) { // Output: 3 2 1 0
-    print("$i ")
-}
-println()
-
-// char ranges
-for (c in 'a'..'d') {
-    print(c)
-}
-print(" ")
-for (c in 'z' downTo 's' step 2) { 
-    print(c)
-}
-print(" ")
-
-// ranges with if statements
-val x = 2
-if (x in 1..5) {            
-    print("x is in range from 1 to 5")
-}
-println()
-if (x !in 6..10) {          
-    print("x is not in range from 6 to 10")
-}
-```
-
-### Equality Checks
-
-* `==` for structural comparison
-  * `if (a == null) b == null else a.equals(b)`
-* `===` for referential comparison
-
-```kotlin
-val authors = setOf("Shakespeare", "Hemingway", "Twain")
-val writers = setOf("Twain", "Shakespeare", "Hemingway")
-println(authors == writers)   // true
-println(authors === writers)  // false
 ```
 
 ## Special Classes
@@ -2066,138 +2274,11 @@ println(q)
 * `lateinit` 은 초기화 이후 값이 변할 수 있는 변수 에 사용한다. 
 * `by lazy` 는 초기화 이후 읽기만 할 변수에 사용한다.
 
-## Sort
-
-* [Guide to Sorting in Kotlin @ baeldung](https://www.baeldung.com/kotlin/sort)
-* [Kotlin sortedWith syntax and lambda examples](https://alvinalexander.com/source-code-kotlin-sortedWith-syntax-lambda-examples/)
-
------
-
-```java
-// sort intArray
-// There are no sortBy, sortByDescending, sortWith for intArray
-// sort returns Unit
-val a = intArrayOf(5, 4, 3, 2, 1)
-a.sort()  // a is also sorted 
-a.sortDescending()
-
-// sorted intArray
-// sorted returns intArray
-val sorted = a.sorted()
-val sortedBy = a.sortedBy { kotlin.math.abs(it) }
-val sortedDescending = a.sortedDescending()
-val sortedByDescending = a.sortedByDescending { kotlin.math.abs(it) }
-val sortedWith = a.sortedWith { a, b -> a - b }
-
-// sort vs sorted, sort is faster than sorted
-// sort returns Unit, sorted returns IntArray
-// sort of a.sort()
-public actual fun IntArray.sort(): Unit {
-    if (size > 1) java.util.Arrays.sort(this)
-}
-// sorted of a.sorted()
-// sorted needs converting from intArray to Array<Int> 
-public fun IntArray.sorted(): List<Int> {
-    return toTypedArray().apply { sort() }.asList()
-}
-public expect fun IntArray.toTypedArray(): Array<Int>
-```
-
-```java
-// sort Array<Int>
-val l = arrayListOf<Int>(5, 4, 3, 2, 1)
-l.sort()
-l.sortDescending()
-l.sortBy { kotlin.math.abs(it) }
-l.sortByDescending { kotlin.math.abs(it) }
-l.sortWith { a, b -> a - b}
-l.sortWith(Comparator<Int>{ a, b -> a - b })
-
-// sorted Array<Int>
-val sorted = l.sorted()
-val sortedBy = l.sortedBy { kotlin.math.abs(it) }
-val sortedDescending = l.sortedDescending()
-val sortedByDescending = l.sortedByDescending { kotlin.math.abs(it) }
-val sortedWith = l.sortedWith { a, b -> a - b }
-val sortedWithComparator = l.sortedWith(Comparator<Int>{ a, b -> a - b })
-
-// sort MutableList<Int>
-val l = mutableListOf<Int>(5, 4, 3, 2, 1)
-l.sort()  // l is also sorted 
-l.sortDescending()
-l.sortBy { kotlin.math.abs(it) }
-l.sortByDescending { kotlin.math.abs(it) }
-l.sortWith { a, b -> a - b}
-l.sortWith(Comparator<Int>{ a, b -> a - b })
-
-// sorted MutableList<Int>
-val sorted = l.sorted()
-val sortedBy = l.sortedBy { kotlin.math.abs(it) }
-val sortedDescending = l.sortedDescending()
-val sortedByDescending = l.sortedByDescending { kotlin.math.abs(it) }
-val sortedWith = l.sortedWith { a, b -> a - b }
-val sortedWithComparator = l.sortedWith(Comparator<Int>{ a, b -> a - b })
-
-// Sort sortedWith Array<String> by string
-val names = listOf("kim", "julia", "jim", "hala")
-names.sortedWith(Comparator<String>{ a, b ->
-    when {
-        a > b -> 1
-        a < b -> -1
-        else -> 0
-    }
-})
-// names: [hala, jim, julia, kim]
-
-// Sort sortedWith Array<String> by length
-names.sortedWith(Comparator<String>{ a, b ->
-    when {
-        a.length > b.length -> 1
-        a.length < b.length -> -1
-        else -> 0
-    }
-})
-// names: [kim, jim, hala, julia]
-```
-
-## min max
-
-* [Kotlin pi, 절댓값, 대소 비교 - PI, abs, max, min](https://notepad96.tistory.com/entry/Kotlin-pi-%EC%A0%88%EB%8C%93%EA%B0%92-%EB%8C%80%EC%86%8C-%EB%B9%84%EA%B5%90-PI-abs-max-min)
-
-----
-
-```kt
-import kotlin.math.*
-
-fun main(args : Array<String>) {
-    var a = 10
-    var b = 30
-    var c = 40
-    println("max val is ${max(a, b)}")    // kotlin.math.max
-    println("min val is ${min(c, b)}")   // kotlin.math.min
-}
-```
-
-## Formatted String
-
-```kotlin
-// Double
-val pi = 3.14159265358979323
-val fi = "pi = %.2f".format(pi)
-println("pi is ${pi}")
-println("fi is ${fi}")
-
-// String
-val name = "iamslash"
-val msg = "Hello World"
-println("${String.format("%10s", name)}: Sending Message= $msg")
-```
-
 # Advanced
 
 ## Show kotlin decompile
 
-kotlin 의 code 를 java 의 code 로 transpile 해보는 습관을 갖자. kotlin syntax 를 보다 명확히 이해할 수 있다. 
+kotlin 의 code 를 java 의 code 로 transpile 해보는 습관을 갖자. kotlin syntax 를 보다 명확히 이해할 수 있다. "show kotlin Bytecode | Decompile"
 
 ![](img/show_kotlin_decompile.png)
 

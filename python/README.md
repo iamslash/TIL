@@ -2,18 +2,20 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Basic](#basic)
-  - [Compile, Execute](#compile-execute)
+  - [Build And Run](#build-and-run)
+  - [Hello World](#hello-world)
   - [Reserved Words](#reserved-words)
   - [min, max values](#min-max-values)
   - [abs, fabs](#abs-fabs)
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
-  - [Print Out](#print-out)
+  - [Formatted Strings](#formatted-strings)
   - [Data Types](#data-types)
-  - [Decision Making](#decision-making)
-  - [Loops](#loops)
-  - [for and if oneline](#for-and-if-oneline)
+  - [Control Flow Statements](#control-flow-statements)
+    - [Decision Making Statements](#decision-making-statements)
+    - [Looping Statements](#looping-statements)
+    - [for and if oneline](#for-and-if-oneline)
   - [Collections Compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
     - [tuple](#tuple)
@@ -33,8 +35,8 @@
   - [Search](#search)
   - [Multidimensional Array](#multidimensional-array)
   - [Built-in Functions](#built-in-functions)
-  - [round](#round)
-  - [classes](#classes)
+  - [Round](#round)
+  - [Classes](#classes)
   - [lambdas](#lambdas)
   - [slice](#slice)
   - [underscore](#underscore)
@@ -121,10 +123,16 @@ python3 에 대해 정리한다.
 
 # Basic
 
-## Compile, Execute
+## Build And Run
 
 ```bash
 $ python3 a.py
+```
+
+## Hello World
+
+```py
+print('Hello World')
 ```
 
 ## Reserved Words
@@ -199,7 +207,19 @@ math.fabs(12.0)  # 12.0
 
 ## Bit Manipulation
 
-WIP...
+```py
+# https://www.tutorialspoint.com/python/bitwise_operators_example.htm
+a = 60            # 60 = 0011 1100 
+b = 13            # 13 = 0000 1101 
+c = 0
+
+c = a & b;        # 12 = 0000 1100
+c = a | b;        # 61 = 0011 1101 
+c = a ^ b;        # 49 = 0011 0001
+c = ~a;           # -61 = 1100 0011
+c = a << 2;       # 240 = 1111 0000
+c = a >> 2;       # 15 = 0000 1111
+```
 
 ## String
 
@@ -257,13 +277,31 @@ str(57.0)
 'd'
 ```
 
-## Print Out
+## Formatted Strings
 
 ```py
 print('Hello World')
 a, b = 1, 2
 # f string, literal string interpolation
 print(f'a: {a}, b{b}')
+
+# Recommend f-string which is the fastest.
+# https://brownbears.tistory.com/421
+
+# % operator
+import timeit 
+timeit.timeit("""name = "Eric" ... age = 74 ... '%s is %s.' % (name, age)""", number = 10000)
+# 0.003324444866599663
+
+# str.format()
+import timeit 
+timeit.timeit("""name = "Eric" ... age = 74 ... '{} is {}.'.format(name, age)""", number = 10000) 
+# 0.004242089427570761
+
+# f-string
+import timeit 
+timeit.timeit("""name = "Eric" ... age = 74 ... f'{name} is {age}.'""", number = 10000) 
+# 0.0024820892040722242
 ```
 
 ## Data Types
@@ -293,7 +331,9 @@ Data Type 의 크기는 다음과 같다. [Python의 데이터 타입 크기 및
 | Real | `float` | 8 byte | `4.9×10^-324~1.8×10^308` |
 |      | `complex` | 16 byte | `4.9×10^-324~1.8×10^308` |
 
-## Decision Making
+## Control Flow Statements
+
+### Decision Making Statements
 
 * [4. More Control Flow Tools @ python3](https://docs.python.org/3/tutorial/controlflow.html)
 
@@ -309,7 +349,7 @@ else:
     print('More')
 ```
 
-## Loops
+### Looping Statements
 
 > [Python For Loops @ w3schools](https://www.w3schools.com/python/python_for_loops.asp)
 
@@ -370,7 +410,7 @@ for x in [0, 1, 2]:
   pass
 ```
 
-## for and if oneline
+### for and if oneline
 
 > * [[python] for문, if문 한 줄로 코딩하기 (for and if in one line)](https://leedakyeong.tistory.com/entry/python-for%EB%AC%B8-if%EB%AC%B8-%ED%95%9C-%EC%A4%84%EB%A1%9C-%EC%BD%94%EB%94%A9%ED%95%98%EA%B8%B0)
 
@@ -1096,7 +1136,7 @@ print(C)
 
 * [Built-in Functions](builtinfunctions.md)
 
-## round
+## Round
 
 * [Rounding numbers in Python 2 and Python 3](https://kingant.net/2019/01/rounding-numbers-in-python-2-and-python-3/)
 
@@ -1127,7 +1167,7 @@ from decimal import Decimal, ROUND_HALF_UP, ROUND_HALF_EVEN
 3
 ```
 
-## classes
+## Classes
 
 * class, instance variables
 
