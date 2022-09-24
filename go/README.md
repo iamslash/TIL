@@ -23,24 +23,26 @@
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
-  - [Print Out](#print-out)
+  - [Formatted Strings](#formatted-strings)
   - [Declarations](#declarations)
   - [Data Types](#data-types)
-  - [Control Flows](#control-flows)
-    - [If](#if)
-    - [Switch](#switch)
-    - [select](#select)
-  - [Loops](#loops)
+  - [Control Flow Statements](#control-flow-statements)
+    - [Decision Making Statements](#decision-making-statements)
+      - [if](#if)
+      - [switch](#switch)
+      - [select](#select)
+    - [Looping Statements](#looping-statements)
   - [Operators](#operators)
     - [Arithmetic](#arithmetic)
     - [Comparison](#comparison)
     - [Logical](#logical)
     - [Other](#other)
   - [Collections compared to c++ containers](#collections-compared-to-c-containers)
-  - [Collections by examples](#collections-by-examples)
+  - [Collections](#collections)
     - [array](#array)
     - [slice](#slice)
     - [map](#map)
+    - [set](#set)
     - [Nested Maps](#nested-maps)
     - [heap](#heap)
     - [list](#list)
@@ -48,6 +50,7 @@
     - [sort](#sort)
     - [search](#search)
   - [Multidimensional Array](#multidimensional-array)
+  - [Enums](#enums)
   - [Constants](#constants)
   - [Functions](#functions)
     - [Functions As Values And Closures](#functions-as-values-and-closures)
@@ -335,7 +338,16 @@ fmt.Println(math.Abs(-2.0)) // -2.0
 
 ## Bit Manipulation
 
-WIP
+```go
+var a uint = 60 // 0011 1100
+var b uint = 13 // 0000 1101
+var c uint = 0
+c = a & b       // 0000 1100
+c = a | b       // 0011 1101
+c = a ^ b       // 0011 0001
+c = a << 2      // 1111 0000
+c = a >> 2      // 0000 1111
+```
 
 ## String
 
@@ -435,7 +447,7 @@ func Key() string {
 }
 ```
 
-## Print Out
+## Formatted Strings
 
 ```go
 import fmt
@@ -490,9 +502,12 @@ float32 float64
 complex64 complex128
 ```
 
-## Control Flows
+## Control Flow Statements
 
-### If
+### Decision Making Statements
+
+#### if
+
 ```go
 func main() {
 	// Basic one
@@ -518,7 +533,7 @@ func main() {
 }
 ```
 
-### Switch
+#### switch
 
 ```go
     // switch statement
@@ -550,7 +565,7 @@ func main() {
     }
 ```
 
-### select
+#### select
 
 * [[이더리움에서 배우는 Go언어] select 의 거의 모든 패턴들](https://hamait.tistory.com/1017)
 
@@ -590,62 +605,62 @@ func main() {
 }  
 ```
 
-## Loops
+### Looping Statements
 
 ```go
-    // There's only `for`, no `while`, no `until`
-    for i := 1; i < 10; i++ {
-    }
-    for ; i < 10; { // while - loop
-    }
-    for i < 10 { // you can omit semicolons if there is only a condition
-    }
-    for { // you can omit the condition ~ while (true)
-    }
+// There's only `for`, no `while`, no `until`
+for i := 1; i < 10; i++ {
+}
+for ; i < 10; { // while - loop
+}
+for i < 10 { // you can omit semicolons if there is only a condition
+}
+for { // you can omit the condition ~ while (true)
+}
 
 // break
-   /* local variable definition */
-   var a int = 10
+/* local variable definition */
+var a int = 10
 
-   /* for loop execution */
-   for a < 20 {
-      fmt.Printf("value of a: %d\n", a);
-      a++;
-      if a > 15 {
-         /* terminate the loop using break statement */
-         break;
-      }
-   }
+/* for loop execution */
+for a < 20 {
+  fmt.Printf("value of a: %d\n", a);
+  a++;
+  if a > 15 {
+      /* terminate the loop using break statement */
+      break;
+  }
+}
 
 // continue
-   /* local variable definition */
-   var a int = 10
+/* local variable definition */
+var a int = 10
 
-   /* do loop execution */
-   for a < 20 {
-      if a == 15 {
-         /* skip the iteration */
-         a = a + 1;
-         continue;
-      }
-      fmt.Printf("value of a: %d\n", a);
-      a++;     
-   }  
+/* do loop execution */
+for a < 20 {
+  if a == 15 {
+      /* skip the iteration */
+      a = a + 1;
+      continue;
+  }
+  fmt.Printf("value of a: %d\n", a);
+  a++;     
+}  
 
 // goto
-   /* local variable definition */
-   var a int = 10
+/* local variable definition */
+var a int = 10
 
-   /* do loop execution */
-   LOOP: for a < 20 {
-      if a == 15 {
-         /* skip the iteration */
-         a = a + 1
-         goto LOOP
-      }
-      fmt.Printf("value of a: %d\n", a)
-      a++     
-   }  
+/* do loop execution */
+LOOP: for a < 20 {
+  if a == 15 {
+      /* skip the iteration */
+      a = a + 1
+      goto LOOP
+  }
+  fmt.Printf("value of a: %d\n", a)
+  a++     
+}  
 
 // string iteration
 for i, c := range "Hello, 世界" {
@@ -706,22 +721,22 @@ for i, c := range "Hello, 世界" {
 | `for, while`         | `for`                |
 | `array`              | `array`              |
 | `vector`             | `slice`              |
-| `deque`              | ``                   |
-| `forward_list`       | ``                   |
+| `deque`              |                    |
+| `forward_list`       |                    |
 | `list`               | `container/list`     |
 | `stack`              | ``                   |
 | `queue`              | ``                   |
 | `priority_queue`     | `container/heap`     |
-| `set`                | `map[keytype]struct{}`|
+| `set`                | `map[keytype]struct{}` |
 | `multiset`           | ``                   |
-| `map`                | ``                   |
+| `map`                |   |
 | `multimap`           | ``                   |
 | `unordered_set`      | ``                   |
 | `unordered_multiset` | ``                   |
 | `unordered_map`      | `map`                |
 | `unordered_multimap` | ``                   |
 
-## Collections by examples
+## Collections
 
 ### array
 
@@ -939,7 +954,6 @@ func main() {
 	fmt.Println(len(M))
 }
 
-
 // $ go run maps.go 
 // map: map[k1:7 k2:13]
 // v1:  7
@@ -947,6 +961,16 @@ func main() {
 // map: map[k1:7]
 // prs: false
 // map: map[foo:1 bar:2]
+```
+
+### set
+
+```go
+var a = make(map[int]struct{})
+a[1] = struct{}{}
+a[3] = struct{}{}
+a[5] = struct{}{}
+fmt.Println(len(a))
 ```
 
 ### Nested Maps
@@ -1301,8 +1325,8 @@ func ExampleRing_Unlink() {
 
 ### sort
 
-  * [The 3 ways to sort in Go](https://yourbasic.org/golang/how-to-sort-in-go/)
-  * [golang.org/src/sort/example_test.go](https://golang.org/src/sort/example_test.go)
+* [The 3 ways to sort in Go](https://yourbasic.org/golang/how-to-sort-in-go/)
+* [golang.org/src/sort/example_test.go](https://golang.org/src/sort/example_test.go)
 
 ----
 
@@ -1433,6 +1457,45 @@ for i := range C[0] {
 }
 fmt.Println(C)
 // [[1 1 1 1] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
+```
+
+## Enums
+
+go 는 enum 이 없다. const 를 이용하여 enum 을 구현하자.
+
+```go
+// https://blog.advenoh.pe.kr/go/Go%EC%97%90%EC%84%9C%EC%9D%98-%EC%97%B4%EA%B1%B0%ED%98%95-%EC%83%81%EC%88%98-Enums-in-Go/
+type WeekDay int
+func printWeekDays() {
+  const (
+    Sunday WeekDay = iota
+		Monday
+		Tuesday
+		Wednesday
+		Thursday
+		Friday
+		Saturday
+		numberOfDays
+  )
+  for day := WeekDay(0); day < numberOfDays; day++ {
+    fmt.Print(" ", day)
+  }
+  fmt.Println("")
+  // Output:
+  // Sunday Monday Tuesday Wednesday Thursday Friday Saturday
+}
+func (d WeekDay) string() string {
+  var weekDays = [...]string{
+    "Sunday",
+		"Monday",
+		"Tuesday",
+		"Wednesday",
+		"Thursday",
+		"Friday",
+		"Saturday",
+  }
+  return weekDays[int(d) % len(weekDays)]
+}
 ```
 
 ## Constants
@@ -1771,7 +1834,6 @@ type User struct {
 ```
 
 ## Pointers
-
 
 ----
 
