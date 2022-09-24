@@ -50,7 +50,7 @@
   - [Search](#search)
   - [Multi Dimensional Array](#multi-dimensional-array)
   - [Init Array](#init-array)
-  - [Define Multiple Variables at Once in Kotlin](#define-multiple-variables-at-once-in-kotlin)
+  - [Define Multiple Variables On The Same Line](#define-multiple-variables-on-the-same-line)
   - [Type Assertions](#type-assertions)
   - [Print type](#print-type)
   - [Int vs Int?](#int-vs-int)
@@ -1374,7 +1374,7 @@ val generatedArray = IntArray(10) { i -> i * i }
 val generatedStringArray = Array(10) { i -> "Number of index: $i"  }
 ```
 
-## Define Multiple Variables at Once in Kotlin
+## Define Multiple Variables On The Same Line
 
 * [Define Multiple Variables at Once in Kotlin | baeldung](https://www.baeldung.com/kotlin/define-multiple-variables)
 

@@ -71,6 +71,7 @@
   - [Channels](#channels)
     - [Channel Axioms](#channel-axioms)
   - [Type Assertion](#type-assertion)
+  - [Define Multiple Variables On The Same Line](#define-multiple-variables-on-the-same-line)
   - [Context](#context)
   - [module](#module)
 - [Advanced](#advanced)
@@ -2119,6 +2120,12 @@ a, ok := i.(int)
 
 b, ok := i.(string)
 // b == "" (default value) and ok == false
+```
+
+## Define Multiple Variables On The Same Line
+
+```ts
+var i, j, n = 0, 0, 10
 ```
 
 ## Context

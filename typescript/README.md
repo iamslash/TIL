@@ -25,6 +25,7 @@
   - [Multi Dimensional Arrays](#multi-dimensional-arrays)
   - [Enum](#enum)
   - [Generics](#generics)
+  - [Define Multiple Variables On The Same Line](#define-multiple-variables-on-the-same-line)
 - [Advanced](#advanced)
   - [export and import](#export-and-import)
   - [`declare`](#declare)
@@ -647,6 +648,12 @@ a.zeroValue = 0;
 a.add = function(x, y) {
     return x + y;
 }
+```
+
+## Define Multiple Variables On The Same Line
+
+```ts
+let i = 0, j = 0, n = s.length
 ```
 
 # Advanced
