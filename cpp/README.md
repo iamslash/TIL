@@ -599,7 +599,27 @@ Color a { COLOR_RED };
 
 ## Template
 
-```
+```cpp
+// 함수 템플릿 http://soen.kr/lecture/ccpp/cpp3/31-1-1.htm
+template <typename T>
+void swap(T& a, T& b) {
+  T t;
+  t = a;
+  a = b;
+  b = t;
+}
+
+// 클래스 템플릿 http://soen.kr/lecture/ccpp/cpp3/31-2-1.htm
+class Foo{
+private:
+  int age;
+public:
+  Foo(int age) : age(age) { }
+  template <typename T>
+  void doit(T a) {
+    cout << a;
+  }
+}
 ```
 
 ## Virtual Function
