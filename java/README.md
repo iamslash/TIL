@@ -2826,6 +2826,8 @@ $ ./gradlew bootrun --jvm-debug
 
 # Java Architecture
 
-* [패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src](https://github.com/gregshiny/example-order)
-* [패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src](https://github.com/gregshiny/example-gift)
+* [example-order | github](https://github.com/gregshiny/example-order)
+  * 패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src
+* [example-gift | github](https://github.com/gregshiny/example-gift)
+  * 패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src
   
