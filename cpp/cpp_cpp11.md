@@ -1,5 +1,4 @@
-
-- [](#)
+- [Fixed width integer types](#fixed-width-integer-types)
 - [nullptr](#nullptr)
 - [enum class](#enum-class)
 - [static_assert](#static_assert)

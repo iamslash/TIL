@@ -1,18 +1,19 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basic](#basic)
-  - [Compile, Execution](#compile-execution)
+  - [Build And Run](#build-and-run)
+  - [Hello World](#hello-world)
   - [Reserved Words](#reserved-words)
-  - [Useful Keywords](#useful-keywords)
   - [min, max values](#min-max-values)
-  - [abs vs fabs](#abs-vs-fabs)
+  - [abs, fabs](#abs-fabs)
   - [Bit Maniulation](#bit-maniulation)
   - [String](#string)
   - [Random](#random)
-  - [Sort](#sort)
-  - [Formatted String](#formatted-string)
-  - [Search](#search)
-  - [virtual function](#virtual-function)
+  - [Formatted Strings](#formatted-strings)
+  - [Data Types](#data-types)
+  - [Control Flow Statements](#control-flow-statements)
+    - [Decision Making Statements](#decision-making-statements)
+    - [Looping Statements](#looping-statements)
   - [Containers](#containers)
     - [vector vs deque vs list](#vector-vs-deque-vs-list)
     - [vector](#vector)
@@ -20,6 +21,12 @@
     - [list](#list)
     - [priority_queue](#priority_queue)
   - [How to choose a container](#how-to-choose-a-container)
+  - [Sort](#sort)
+  - [Search](#search)
+  - [Multi Dimensional Arrays](#multi-dimensional-arrays)
+  - [Enum](#enum)
+  - [Template](#template)
+  - [Virtual Function](#virtual-function)
 - [Advanced](#advanced)
   - [RAII (Resource Acquisition Is Initialzation)](#raii-resource-acquisition-is-initialzation)
   - [Compiler Generated Code](#compiler-generated-code)
@@ -66,11 +73,19 @@ c++에 대해 정리한다.
 
 # Basic
 
-## Compile, Execution
+## Build And Run
 
 ```bash
 $ g++ -std=c++11 -o a.out a.cpp
 $ ./a.out
+```
+
+## Hello World
+
+```cpp
+void main() {
+  printf("Hello World");
+}
 ```
 
 ## Reserved Words
@@ -179,10 +194,6 @@ xor
 xor_eq
 ```
 
-## Useful Keywords
-
-WIP
-
 ## min, max values
 
 ```cpp
@@ -197,13 +208,20 @@ print("%f\n", std::numeric_limits<float>::max());
 print("%f\n", std::numeric_limits<float>::min());
 ```
 
-## abs vs fabs
+## abs, fabs
 
 `abs(int n)` 는 `cstdlib` 에 정의되어 있고 `fabs(double n)` 는 `cmath` 에 정의되어 있다.
 
 ## Bit Maniulation
 
 ```cpp
+int a = 5;  // 0000 0101
+int b = 7;  // 0000 0111
+int c = 0;
+c = a & b;  // 0000 0101
+c = a | b;  // 0000 0111
+c = a ^ b;  // 0000 0010
+c = ~a;     // 1111 1010
 ```
 
 ## String
@@ -223,17 +241,7 @@ string s = to_string(n);
 int num = random();
 ```
 
-## Sort
-
-```cpp
-vector<int> a = {5, 4, 3, 2, 1};
-sort(a.begin(), a.end());  // 1 2 3 4 5
-sort(a.begin(), a.end(), [](int a, int b) {
-  return a < b;
-});  // 5 4 3 2 1
-```
-
-## Formatted String
+## Formatted Strings
 
 > [printf](https://www.cplusplus.com/reference/cstdio/printf/)
 
@@ -263,86 +271,116 @@ int main()
 // A string
 ```
 
-## Search
+## Data Types
 
 ```cpp
-// Search Position
-itr = lower_bound(vec.begin(), vec.end(), 9);  // vec[1]  
-// Find the first position where 9 could be inserted and still keep the sorting.
-
-itr = upper_bound(vec.begin(), vec.end(), 9);  // vec[4] 
-// Find the last position where 9 could be inserted and still keep the sorting.
+Type    Description             Size (in Bytes)
+int	    Integer	                2 or 4
+float	  Floating-point	        4
+double	Double Floating-point	  8
+char	  Character	              1
+wchar_t	Wide Character	        2
+bool	  Boolean	                1
+void	  Empty	                  0
 ```
 
-## virtual function
+## Control Flow Statements
 
-![](img/virtualfunction.png)
-
-virtual function 은 vptr, vtable 에 의해 구현된다. `vtable` 은 virtual function 주소들의 배열이다. `vptr` 은 `vtable` 을 가리키는 포인터이다. 임의의 class 가 virtual function 이 하나라도 있다면 runtime 에서 vptr 이 만들어진다. 아래와 같은 예에서 `vptr` 이 4 byte 이면 `sizeof(Instrument) == 4` 이다.
-
-그리고 vptr 은 vtable 을 가리킨다. 따라서 아래의 예에서 `wp->play()` 를 호출하면 `wp->vptr->Brass::vtable->Brass::play()` 를 호출하게 된다.
-
-다음은 위 그림의 구현이다.
+### Decision Making Statements
 
 ```cpp
-class Instrument {
-public:
-  virtual void play() {
-  }
-  virtual void what() {
-  }
-  virtual void adjust() {
-  }
-};
-
-class Wind : public Instrument {
-public:
-  virtual void play() {
-  }
-  virtual void what() {
-  }
-  virtual void adjust() {
-  }
+// if
+if (x == 100) {
+  printf("Yes");
+}
+if (x > 0) {
+  printf("positive");
+} else if (x < 0) {
+  printf("negative");
+} else {
+  printf("zero")
 }
 
-class Percussion : public Instrument {
-public:
-  virtual void play() {
-  }
-  virtual void what() {
-  }
-  virtual void adjust() {
-  }
+// switch
+char grade = 'D';
+switch(grade) {
+  case 'A' :
+      cout << "Excellent!" << endl; 
+      break;
+  case 'B' :
+  case 'C' :
+      cout << "Well done" << endl;
+      break;
+  case 'D' :
+      cout << "You passed" << endl;
+      break;
+  case 'F' :
+      cout << "Better try again" << endl;
+      break;
+  default :
+      cout << "Invalid grade" << endl;
 }
-class Stringed : public Instrument {
-public:
-  virtual void play() {
-  }
-  virtual void what() {
-  }
-  virtual void adjust() {
-  }
-}
+cout << "Your grade is " << grade << endl;
+```
 
-class Brass : public Instrument {
-public:
-  virtual void play() {
-  }
-  virtual void what() {
-  }
-  virtual void adjust() {
+### Looping Statements
+
+```cpp
+int a = 10;
+
+// while
+while( a < 20 ) {
+  cout << "value of a: " << a << endl;
+  a++;
+}
+// for
+for( int a = 10; a < 20; a = a + 1 ) {
+  cout << "value of a: " << a << endl;
+}
+// do while
+do {
+  cout << "value of a: " << a << endl;
+  a = a + 1;
+} while( a < 20 );
+// nested
+int i, j;
+for(i = 2; i<100; i++) {
+  for(j = 2; j <= (i/j); j++) {
+      if(!(i%j)) break; // if factor found, not prime
+      if(j > (i/j)) cout << i << " is prime\n";
   }
 }
-
-int main() {
-  WindPercussion* wp;
-  Brass br;
-  Instrument inst;
-
-  wp = &br;
-  //wp = &inst;
-  // sizeof(br) is 4 because of vtpr
-}
+// break
+do {
+  cout << "value of a: " << a << endl;
+  a = a + 1;
+  if( a > 15) {
+      // terminate the loop
+      break;
+  }
+} while( a < 20 );
+// continue
+do {
+  if( a == 15) {
+      // skip the iteration.
+      a = a + 1;
+      continue;
+  }
+  cout << "value of a: " << a << endl;
+  a = a + 1;
+} 
+while( a < 20 );
+// goto
+LOOP:do {
+  if( a == 15) {
+      // skip the iteration.
+      a = a + 1;
+      goto LOOP;
+  }
+  cout << "value of a: " << a << endl;
+  a = a + 1;
+} 
+while( a < 20 );
 ```
 
 ## Containers
@@ -511,6 +549,129 @@ int main() {
 [C++ Containers Cheat Sheet](http://homepages.e3.net.nz/~djm/cppcontainers.html)
 
 ![](img/containerchoice.png)
+
+## Sort
+
+```cpp
+vector<int> a = {5, 4, 3, 2, 1};
+sort(a.begin(), a.end());  // 1 2 3 4 5
+sort(a.begin(), a.end(), [](int a, int b) {
+  return a < b;
+});  // 5 4 3 2 1
+```
+
+## Search
+
+```cpp
+// Search Position
+itr = lower_bound(vec.begin(), vec.end(), 9);  // vec[1]  
+// Find the first position where 9 could be inserted and still keep the sorting.
+
+itr = upper_bound(vec.begin(), vec.end(), 9);  // vec[4] 
+// Find the last position where 9 could be inserted and still keep the sorting.
+```
+
+## Multi Dimensional Arrays
+
+```cpp
+// https://www.programiz.com/cpp-programming/multidimensional-arrays
+int board[2][3] = { {2, 4, 5}, {9, 0, 19}};
+int board[2][3][4] = {
+  { {3, 4, 2, 3}, {0, -3, 9, 11}, {23, 12, 23, 2} },
+  { {13, 4, 56, 3}, {5, 9, 3, 5}, {5, 1, 4, 9} }
+  };
+```
+
+## Enum
+
+```cpp
+enum Color
+{
+  COLOR_BLACK,
+  COLOR_RED,
+  COLOR_BLUE,
+}; 
+
+Color c = COLOR_BLACK;
+Color h(COLOR_BLUE);
+Color a { COLOR_RED };
+```
+
+## Template
+
+```
+```
+
+## Virtual Function
+
+![](img/virtualfunction.png)
+
+virtual function 은 vptr, vtable 에 의해 구현된다. `vtable` 은 virtual function 주소들의 배열이다. `vptr` 은 `vtable` 을 가리키는 포인터이다. 임의의 class 가 virtual function 이 하나라도 있다면 runtime 에서 vptr 이 만들어진다. 아래와 같은 예에서 `vptr` 이 4 byte 이면 `sizeof(Instrument) == 4` 이다.
+
+그리고 vptr 은 vtable 을 가리킨다. 따라서 아래의 예에서 `wp->play()` 를 호출하면 `wp->vptr->Brass::vtable->Brass::play()` 를 호출하게 된다.
+
+다음은 위 그림의 구현이다.
+
+```cpp
+class Instrument {
+public:
+  virtual void play() {
+  }
+  virtual void what() {
+  }
+  virtual void adjust() {
+  }
+};
+
+class Wind : public Instrument {
+public:
+  virtual void play() {
+  }
+  virtual void what() {
+  }
+  virtual void adjust() {
+  }
+}
+
+class Percussion : public Instrument {
+public:
+  virtual void play() {
+  }
+  virtual void what() {
+  }
+  virtual void adjust() {
+  }
+}
+class Stringed : public Instrument {
+public:
+  virtual void play() {
+  }
+  virtual void what() {
+  }
+  virtual void adjust() {
+  }
+}
+
+class Brass : public Instrument {
+public:
+  virtual void play() {
+  }
+  virtual void what() {
+  }
+  virtual void adjust() {
+  }
+}
+
+int main() {
+  WindPercussion* wp;
+  Brass br;
+  Instrument inst;
+
+  wp = &br;
+  //wp = &inst;
+  // sizeof(br) is 4 because of vtpr
+}
+```
 
 # Advanced
 
