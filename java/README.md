@@ -3,19 +3,20 @@
 - [Materials](#materials)
 - [Basic](#basic)
   - [Build And Run](#build-and-run)
+  - [Hello World](#hello-world)
   - [Reserved Words](#reserved-words)
-  - [Useful Keywords](#useful-keywords)
   - [min, max values](#min-max-values)
-  - [abs vs fabs](#abs-vs-fabs)
+  - [abs, fabs](#abs-fabs)
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
-  - [Print Out](#print-out)
+  - [Formatted Strings](#formatted-strings)
   - [Data Types](#data-types)
-  - [Decision Making](#decision-making)
-  - [Loops](#loops)
+  - [Control Flow Statements](#control-flow-statements)
+    - [Decision Making Statements](#decision-making-statements)
+    - [Looping Statements](#looping-statements)
   - [Collections compared c++ container](#collections-compared-c-container)
-  - [Collection Examples](#collection-examples)
+  - [Collections](#collections)
     - [unmodifiableList](#unmodifiablelist)
     - [Vector](#vector)
     - [List, ArrayList](#list-arraylist)
@@ -31,11 +32,13 @@
     - [Set, LinkedHashSet](#set-linkedhashset)
     - [Map, LinkedHashMap](#map-linkedhashmap)
     - [Arrays](#arrays)
-    - [Collections](#collections)
+    - [Collections](#collections-1)
   - [Collection Conversions](#collection-conversions)
   - [Sort](#sort)
   - [Search](#search)
   - [Multi Dimensional Array](#multi-dimensional-array)
+  - [Enum](#enum)
+  - [Generics](#generics)
   - [Collection Framework](#collection-framework)
   - [Collection Implementations](#collection-implementations)
   - [Inner Classes](#inner-classes)
@@ -43,9 +46,7 @@
   - [Marker Interfaces](#marker-interfaces)
   - [Functional Interfaces](#functional-interfaces)
   - [Anonymous Classes](#anonymous-classes)
-  - [Enum](#enum)
   - [Annotation](#annotation)
-  - [Generics](#generics)
   - [Concurrency](#concurrency)
     - [ReentrantLock](#reentrantlock)
     - [Semaphore](#semaphore)
@@ -146,6 +147,16 @@ jshell> a
 a ==> 1
 ```
 
+## Hello World
+
+```java
+class Solution {
+   public static void main(String[] args) {
+      System.out.println("Hello World")
+   }
+}
+```
+
 ## Reserved Words
 
 ```java
@@ -164,11 +175,9 @@ throws      transient   try         void
 volatile    while
 ```
 
-## Useful Keywords
-
-- volatile
-  - 데이터를 읽을 때 cahe 에서 읽지 않고 memory 에서 읽는다. 그리고 데이터를 쓸 때 cache 에 쓰지 않고 memory 에 쓴다.
-  - thread 들이 여러개의 cache 때문에 데이터의 원자성이 보장되지 않을 때 사용한다.
+* volatile
+  * 데이터를 읽을 때 cahe 에서 읽지 않고 memory 에서 읽는다. 그리고 데이터를 쓸 때 cache 에 쓰지 않고 memory 에 쓴다.
+  * thread 들이 여러개의 cache 때문에 데이터의 원자성이 보장되지 않을 때 사용한다.
 
 ```java
 public class SharedFoo {
@@ -176,8 +185,8 @@ public class SharedFoo {
 }
 ```
 
-- strictfp
-  - JVM 은 host platform 에 따라 부동 소수점 표현방식이 다양할 수 있다. IEEE 754 로 표준화 하기 위해 필요하다.
+* strictfp
+  * JVM 은 host platform 에 따라 부동 소수점 표현방식이 다양할 수 있다. IEEE 754 로 표준화 하기 위해 필요하다.
 
 ```java
 strictfp class Example {
@@ -191,9 +200,9 @@ strictfp interface B {...}
 strictfp void method() {...} 
 ```
 
-- native
-  - [참고](https://www.baeldung.com/java-native)
-  - java 에서 c/cpp library 와 같은 platform dependent api 를 이용할 때 선언한다.
+* native
+  * [참고](https://www.baeldung.com/java-native)
+  * java 에서 c/cpp library 와 같은 platform dependent api 를 이용할 때 선언한다.
 
 ```java
 public class DateTimeUtils {
@@ -221,8 +230,8 @@ public class DateTimeUtilsManualTest {
 }
 ```
 
-- transient
-  - serialize 의 대상이 되지 않도록 한다.
+* transient
+  * serialize 의 대상이 되지 않도록 한다.
 
 ```java
 class Person implements Serializable {
@@ -264,7 +273,7 @@ System.out.println(Float.MIN_VALUE);
 System.out.println(Float.MAX_VALUE);
 ```
 
-## abs vs fabs
+## abs, fabs
 
 ```java
 // abs
@@ -291,12 +300,18 @@ System.out.println(Math.abs(f));
 
 ```java
 int a = -2; // 1111 1110
-
 // Arithmatic bit shift
 int b = a >> 1; // 1111 1111
-
 // Logical bit shift
 int c = a >>> 1; // 0111 1111
+
+int a = 5;  // 0000 0101
+int b = 7;  // 0000 0111
+int c = 0;
+c = a & b;  // 0000 0101
+c = a | b;  // 0000 0111
+c = a ^ b;  // 0000 0010
+c = ~a;     // 1111 1010
 ```
 
 ## String
@@ -369,7 +384,7 @@ System.out.println(rnd.nextInt(10)); // 0~9
 System.out.println(rnd.nextFloat()); // 0.0~1.0
 ```
 
-## Print Out
+## Formatted Strings
 
 > [Formatting Numeric Print Output @ oracle](https://docs.oracle.com/javase/tutorial/java/data/numberformat.html)
 
@@ -395,7 +410,9 @@ char a = '\u001';
 String a = "\u001";
 ```
 
-## Decision Making
+## Control Flow Statements
+
+### Decision Making Statements
 
 ```java
 //// if
@@ -431,7 +448,7 @@ switch (grade) {
 System.out.println("Your grade is " + grade);
 ```
 
-## Loops
+### Looping Statements
 
 ```java
 //// while
@@ -534,7 +551,7 @@ for(String name : names) {
   * Stack 은 legacy class 이다. Degue 는 새로 개발된 Collection 이다.
   * Deque 은 LIFO queue 를 지원한다. Deque 의 사용을 추천한다. 
 
-## Collection Examples
+## Collections
 
 ### unmodifiableList
 
@@ -1334,148 +1351,6 @@ for (int[] item : C) {
 }
 ```
 
-## Collection Framework
-
-- [Java Collection Framework Technote](https://docs.oracle.com/javase/8/docs/technotes/guides/collections/)
-- [Outline of the Collections Framework](http://docs.oracle.com/javase/8/docs/technotes/guides/collections/reference.html)
-- [Collection Framework](https://upload.wikimedia.org/wikibooks/en/thumb/c/ca/Java_collection_implementation.jpg/700px-Java_collection_implementation.jpg)
-- [Collections in Java](https://www.javatpoint.com/collections-in-java)
-
-![](img/java-collection-hierarchy.png)
-
-## Collection Implementations
-
-| Interface | Hash Table | Resizable Array | Balanced Tree | Linked List | Hash Table + Linked List |
-| :-------- | :--------- | :-------------: | :------------ | :---------- | :----------------------: |
-| Set       | HashSet    |                 | TreeSet       |             |      LinkedHashSet       |
-| List      |            |    ArrayList    |               | LinkedList  |                          |
-| Deque     |            |   ArrayDeque    |               | LinkedList  |                          |
-| Map       | HashMap    |                 | TreeMap       |             |      LinkedHashMap       |
-
-## Inner Classes
-
-```java
-//// Anonymous Inner Class
-// AnonymousInner an_inner = new AnonymousInner() {
-//    public void my_method() {
-//       ........
-//       ........
-//    }   
-// };
-abstract class AnonymousInner {
-   public abstract void mymethod();
-}
-
-public class Outer_class {
-   public static void main(String args[]) {
-      AnonymousInner inner = new AnonymousInner() {
-         public void mymethod() {
-            System.out.println("This is an example of anonymous inner class");
-         }
-      };
-      inner.mymethod();	
-   }
-}
-
-//// Anonymous Inner Class as Argument
-// obj.my_Method(new My_Class() {
-//    public void Do() {
-//       .....
-//       .....
-//    }
-// });
-interface Message {
-   String greet();
-}
-
-public class My_class {
-   // method which accepts the object of interface Message
-   public void displayMessage(Message m) {
-      System.out.println(m.greet() +
-         ", This is an example of anonymous inner class as an argument");  
-   }
-
-   public static void main(String args[]) {
-      // Instantiating the class
-      My_class obj = new My_class();
-
-      // Passing an anonymous inner class as an argument
-      obj.displayMessage(new Message() {
-         public String greet() {
-            return "Hello";
-         }
-      });
-   }
-}
-```
-
-## java 8 Interface Changes
-
-java 8 의 interface 는 `default methods, static methods` 가 가능하다.
-
-```java
-public interface IA {
-
-	void foo(String str);
-
-	default void bar(String str){
-	}
-   
-   static void baz(String str) {      
-   }
-}
-```
-
-## Marker Interfaces
-
-다음과 같이 몸체가 없는 interface 를 marker interface 라고 한다. 이것을 상속받으면 단지 상속받았다는 표시만 하기 때문에 marker interface 라고 한다.
-
-```java
-public interface Cloneable {
-}
-public interface Serializable {   
-}
-```
-
-## Functional Interfaces
-
-single abstract method 를 갖는 interface 를 특별히 functional interface 라고 한다. 다음과 같이 `@FunctionalInterface` 를 사용하면 compiler 에게 functional interface 라는 힌트를 줄 수 있다.
-
-```java
-@FunctionalInterface
-public interface Runnable {
-  void run();
-}
-```
-
-java 8 부터 다음과 같이 functional interface 를 구현한 anonymous class instance 를 lambda expression 으로 생성할 수 있다.
-
-```java
-public void runMe(final Runnable r) {
-  r.run();
-}
-...
-runMe(() -> System.out.println( "Run!" ));
-```
-
-## Anonymous Classes
-
-anonymous function 처럼 interface 를 구현한 class 의 instance 를 이름없이 생성할 수 있다. 다음은 `Runnable` interface 를 상속받는 class 의 instance 를 이름없이 생성하는 예이다.
-
-```java
-public class AnonymousClass {
-  public static void main( String[] args ) {
-    new Thread(
-      new Runnable() {
-        @Override
-        public void run() {
-          // Implementation here
-        }
-      }
-    ).start();
-  }
-}
-```
 
 ## Enum
 
@@ -1524,10 +1399,6 @@ public enum PowerSwitch {
    }
 }
 ```
-
-## Annotation
-
-* [Java Annotation @ TIL](java_annotation.md)
 
 ## Generics
 
@@ -1711,6 +1582,153 @@ public class Zoo<T> {
 * `Zoo<? extends Herbivore>` 는 Herbivore, Rabbit 만 가능하다.
 * `Zoo<? super Predator` 는 Predator, Animal 만 가능하다.
 
+## Collection Framework
+
+- [Java Collection Framework Technote](https://docs.oracle.com/javase/8/docs/technotes/guides/collections/)
+- [Outline of the Collections Framework](http://docs.oracle.com/javase/8/docs/technotes/guides/collections/reference.html)
+- [Collection Framework](https://upload.wikimedia.org/wikibooks/en/thumb/c/ca/Java_collection_implementation.jpg/700px-Java_collection_implementation.jpg)
+- [Collections in Java](https://www.javatpoint.com/collections-in-java)
+
+![](img/java-collection-hierarchy.png)
+
+## Collection Implementations
+
+| Interface | Hash Table | Resizable Array | Balanced Tree | Linked List | Hash Table + Linked List |
+| :-------- | :--------- | :-------------: | :------------ | :---------- | :----------------------: |
+| Set       | HashSet    |                 | TreeSet       |             |      LinkedHashSet       |
+| List      |            |    ArrayList    |               | LinkedList  |                          |
+| Deque     |            |   ArrayDeque    |               | LinkedList  |                          |
+| Map       | HashMap    |                 | TreeMap       |             |      LinkedHashMap       |
+
+## Inner Classes
+
+```java
+//// Anonymous Inner Class
+// AnonymousInner an_inner = new AnonymousInner() {
+//    public void my_method() {
+//       ........
+//       ........
+//    }   
+// };
+abstract class AnonymousInner {
+   public abstract void mymethod();
+}
+
+public class Outer_class {
+   public static void main(String args[]) {
+      AnonymousInner inner = new AnonymousInner() {
+         public void mymethod() {
+            System.out.println("This is an example of anonymous inner class");
+         }
+      };
+      inner.mymethod();	
+   }
+}
+
+//// Anonymous Inner Class as Argument
+// obj.my_Method(new My_Class() {
+//    public void Do() {
+//       .....
+//       .....
+//    }
+// });
+interface Message {
+   String greet();
+}
+
+public class My_class {
+   // method which accepts the object of interface Message
+   public void displayMessage(Message m) {
+      System.out.println(m.greet() +
+         ", This is an example of anonymous inner class as an argument");  
+   }
+
+   public static void main(String args[]) {
+      // Instantiating the class
+      My_class obj = new My_class();
+
+      // Passing an anonymous inner class as an argument
+      obj.displayMessage(new Message() {
+         public String greet() {
+            return "Hello";
+         }
+      });
+   }
+}
+```
+
+## java 8 Interface Changes
+
+java 8 의 interface 는 `default methods, static methods` 가 가능하다.
+
+```java
+public interface IA {
+
+	void foo(String str);
+
+	default void bar(String str){
+	}
+   
+   static void baz(String str) {      
+   }
+}
+```
+
+## Marker Interfaces
+
+다음과 같이 몸체가 없는 interface 를 marker interface 라고 한다. 이것을 상속받으면 단지 상속받았다는 표시만 하기 때문에 marker interface 라고 한다.
+
+```java
+public interface Cloneable {
+}
+public interface Serializable {   
+}
+```
+
+## Functional Interfaces
+
+single abstract method 를 갖는 interface 를 특별히 functional interface 라고 한다. 다음과 같이 `@FunctionalInterface` 를 사용하면 compiler 에게 functional interface 라는 힌트를 줄 수 있다.
+
+```java
+@FunctionalInterface
+public interface Runnable {
+  void run();
+}
+```
+
+java 8 부터 다음과 같이 functional interface 를 구현한 anonymous class instance 를 lambda expression 으로 생성할 수 있다.
+
+```java
+public void runMe(final Runnable r) {
+  r.run();
+}
+...
+runMe(() -> System.out.println( "Run!" ));
+```
+
+## Anonymous Classes
+
+anonymous function 처럼 interface 를 구현한 class 의 instance 를 이름없이 생성할 수 있다. 다음은 `Runnable` interface 를 상속받는 class 의 instance 를 이름없이 생성하는 예이다.
+
+```java
+public class AnonymousClass {
+  public static void main( String[] args ) {
+    new Thread(
+      new Runnable() {
+        @Override
+        public void run() {
+          // Implementation here
+        }
+      }
+    ).start();
+  }
+}
+```
+
+## Annotation
+
+* [Java Annotation @ TIL](java_annotation.md)
+
 ## Concurrency
 
 * [동시성](https://github.com/Yooii-Studios/Clean-Code/blob/master/Chapter%2013%20-%20%EB%8F%99%EC%8B%9C%EC%84%B1.md)
@@ -1722,11 +1740,11 @@ public class Zoo<T> {
 
 ### ReentrantLock
 
-WIP
+WIP...
 
 ### Semaphore
 
-WIP
+WIP...
 
 ### CountDownLatch
 
