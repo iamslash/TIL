@@ -3059,3 +3059,4 @@ $ pip install --global-option=build_ext --global-option="-I/usr/local/opt/openss
 # Python Architecture
 
 * [Architecture Patterns with Python | amazon](https://www.amazon.com/Architecture-Patterns-Python-Domain-Driven-Microservices/dp/1492052205)
+* [tructuring Your Project | Hitchhiker's Guide](https://docs.python-guide.org/writing/structure/)

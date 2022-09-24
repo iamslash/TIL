@@ -40,7 +40,7 @@
   - [lvalue and rvalue](#lvalue-and-rvalue)
   - [ADL(Argument Dependent Lookup)](#adlargument-dependent-lookup)
   - [typename vs class in template](#typename-vs-class-in-template)
-  - [size() infinite loop](#size-infinite-loop)
+  - [`size()` infinite loop](#size-infinite-loop)
   - [Concurrent Programming](#concurrent-programming)
   - [C++ Unit Test](#c-unit-test)
   - [Boost Library](#boost-library)
@@ -49,6 +49,7 @@
 - [C++11](#c11)
 - [Effective CPP](#effective-cpp)
 - [Design Patterns](#design-patterns)
+- [C++ Architecture](#c-architecture)
 
 -----
 
@@ -1701,7 +1702,7 @@ class Demonstration {
 
 ```
 
-## size() infinite loop
+## `size()` infinite loop
 
 다음과 같은 경우 size() 의 type 이 unsigned 이므로 `` 무한 루프에 빠진다. 
 
@@ -1753,3 +1754,7 @@ class Demonstration {
 # Design Patterns
 
 * [Design Patterns in Cpp](cpp_design_pattern.md)
+
+# C++ Architecture
+
+* [What is a general C++ project structure like?](https://www.linkedin.com/pulse/what-general-c-project-structure-like-herbert-elwood-gilliland-iii/)
