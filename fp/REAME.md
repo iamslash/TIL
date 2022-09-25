@@ -10,6 +10,9 @@ functional programming 은 함수의 동작에 의한 변수의 부수적인 값
 
 # Material
 
+* [Level up with functional programming](https://grokkingsimplicity.com/)
+  * [src](https://www.manning.com/books/grokking-functional-programming)
+  * Functional Programming 을 계산, 액션, 데이터 로 구분해서 Programming 하는 것이라고 요약 
 * [함수형 프로그래밍이 뭔가요? @ youtube](https://www.youtube.com/watch?v=jVG5jvOzu9Y)
   * 킹왕짱 설명
 * [[10분 테코톡] 🍩도넛의 함수형 프로그래밍 @ youtube](https://www.youtube.com/watch?v=ii5hnSCE6No)
