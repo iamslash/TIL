@@ -23,7 +23,7 @@ computer system architecture 에 대해 정리한다.
 
 # Materials
 
-* [혼자 공부하는 컴퓨터구조 + 운영체제](https://github.com/kangtegong/self-learning-cs)
+* [혼자 공부하는 컴퓨터구조 + 운영체제 | yes24](http://www.yes24.com/product/goods/111378840)
   * [src](https://github.com/kangtegong/self-learning-cs)
   * [video](https://www.youtube.com/playlist?list=PLVsNizTWUw7FCS83JhC1vflK8OcLRG0Hl)
 * [Encoding x86 instructions](https://www-user.tu-chemnitz.de/~heha/viewchm.php/hs/x86.chm/x86.htm) 
