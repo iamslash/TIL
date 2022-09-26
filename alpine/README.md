@@ -8,11 +8,13 @@
 
 # Basic
 
+## Overview
+
 c runtime 으로 glibc 대신 [musl libc](https://en.wikipedia.org/wiki/Musl) 를 사용한다. shell commands 는 GNU util 대신 [busybox](https://en.wikipedia.org/wiki/BusyBox) 를 사용한다.
 
 package manager 는 [apk](https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management) 를 사용한다.
 
-# APK
+## APK Commands
 
 ```bash
 # Refresh contents of packages
@@ -37,4 +39,13 @@ $ apk info -L vim
 # Apk uprade
 $ apk update
 $ apk upgrade
+```
+
+## Run Alpine Docker Container 
+
+* [Starting a Shell in the Alpine Docker Container](https://www.baeldung.com/linux/shell-alpine-docker)
+
+```bash
+
+$ docker run -it --rm alpine /bin/sh
 ```
