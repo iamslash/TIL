@@ -23,6 +23,9 @@ computer system architecture 에 대해 정리한다.
 
 # Materials
 
+* [혼자 공부하는 컴퓨터구조 + 운영체제](https://github.com/kangtegong/self-learning-cs)
+  * [src](https://github.com/kangtegong/self-learning-cs)
+  * [video](https://www.youtube.com/playlist?list=PLVsNizTWUw7FCS83JhC1vflK8OcLRG0Hl)
 * [Encoding x86 instructions](https://www-user.tu-chemnitz.de/~heha/viewchm.php/hs/x86.chm/x86.htm) 
   * x86 instructions 인코딩 방법
 * [Computer System Architecture, 3e](https://www.amazon.in/Computer-System-Architecture-3e-Mano/dp/8131700704)

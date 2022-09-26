@@ -46,9 +46,13 @@
 
 # Materials
 
-* [Kernel of LInux 강의노트](https://books-and-cows.gitbook.io/-linux-kernel-lecture-note/)
-  * [video](https://olc.kr/course/course_online_view.jsp?id=35&s_keyword=kernel&x=0&y=0)
+* [Kernel of Linux | OLC](https://olc.kr/course/course_online_view.jsp?id=35&s_keyword=Kernel&x=0&y=0)
+  * 고건 교수 동영상 강좌 
+  * 가장 깊이 있는 한글 동영상 강좌
   * [pdf](https://olc.kr/classroom/library.jsp?cuid=283080)
+* [혼자 공부하는 컴퓨터구조 + 운영체제](https://github.com/kangtegong/self-learning-cs)
+  * [src](https://github.com/kangtegong/self-learning-cs)
+  * [video](https://www.youtube.com/playlist?list=PLVsNizTWUw7FCS83JhC1vflK8OcLRG0Hl)
 * [뇌를 자극하는 윈도우즈 시스템 프로그래밍 @ youtube](https://www.youtube.com/playlist?list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc)
   * 쉽게 설명하는 동영상 강좌 
 * [linux 0.01](https://github.com/zavg/linux-0.01)

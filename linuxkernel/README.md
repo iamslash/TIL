@@ -76,6 +76,12 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
 
 # References
 
+* [Linux Kernel | 까망눈 연구소](https://jeongzero.oopy.io/0bd09eaa-b8d6-45c0-9d01-167fb1b5b984)
+  * [Kernel of Linux | OLC](https://olc.kr/course/course_online_view.jsp?id=35&s_keyword=Kernel&x=0&y=0) 를 잘 요약했다.
+* [Kernel of Linux | OLC](https://olc.kr/course/course_online_view.jsp?id=35&s_keyword=Kernel&x=0&y=0)
+  * 고건 교수 동영상 강좌 
+  * 가장 깊이 있는 한글 동영상 강좌
+  * [pdf](https://olc.kr/classroom/library.jsp?cuid=283080)
 * [문c 블로그](http://jake.dothome.co.kr/)
   * Linux Kernel 킹왕짱 고품질 블로그
 * [코드로 알아보는 ARM 리눅스 커널](http://www.yes24.com/Product/Goods/85734266)
