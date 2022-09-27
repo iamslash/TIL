@@ -32,7 +32,6 @@
 - [Signal](#signal)
 - [Virtual File System](#virtual-file-system)
 - [Memory Management](#memory-management)
-- [Memory Management](#memory-management-1)
 - [System Load](#system-load)
 - [fork, exec](#fork-exec)
 - [Swap](#swap)
@@ -502,7 +501,7 @@ Linux 에서 thread 는 process 와 같이 취급된다. thread 하나에 `task_
 
 Thread 들은 Program Code, Heap, Open Files 을 공유한다. 그러나 Thread 별로 stack 이 다르다. 이 것은 windows, linux 모두 마찬가지이다. 그러나 PCB, TCB 를 표현하는 방법은 windows, linux 모두 다르다.
 
-다음은 windows process, thread 의 자료구조를 표현한 것이다. process 는  `KPROCESS` 로 thread 는 `ETHREAD` 로 표현한다. PCB 와 TCB 가 구분되어 있다.
+다음은 windows process, thread 의 자료구조를 표현한 것이다. process 는  `KPROCESS` 로 thread 는 `KTHREAD` 로 표현한다. PCB 와 TCB 가 구분되어 있다.
 
 ![](img/process_on_windows.png)
 
@@ -1034,8 +1033,6 @@ WIP...
 # Virtual File System
 
 WIP...
-
-# Memory Management
 
 # Memory Management
 
