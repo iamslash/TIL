@@ -1722,24 +1722,26 @@ fun main() {
 ----
 
 variance 는 invariant, covariant, contravariant 가 있다. 다음의
-그림을 참고하여 이해하자.
+그림을 참고하여 이해하자. up-casting 은 자연스러워 보이고 down-casting 은 위험해 보인다.
 
 ![](img/kotlin_variance.png)
 
-* `Int` 는 `Number` 의 자식이다. `Int` instance 는 `Number` 로 casting 이 가능하다.
+* `Int` 는 `Number` 의 자식이다. `Int` instance 는 `Number` 로 up-casting 이 가능하다.
 * `class Box<T>` 로 선언했다. `Box<Number>` instance 는 `Box<Int>` 로 casting 될
-  수 없다. 반대도 불가하다. 둘은 전혀 관계가 없다. 이 것을 invariant(불공변성) 라고 한다.
+  수 없다. 반대도 불가하다. 둘은 전혀 관계가 없다. 이 것을 **invariant(불공변성)** 라고 한다.
 * `class Box<out T>` 로 선언했다. `Box<Int>` instance 는 `Box<Number>` 로 casting 될
-  수 있다. 즉, up-casting 이 가능하다. 이 것을 covariant(공변성) 라고 한다.
+  수 있다. 즉, up-casting 이 가능하다. 이 것을 **covariant(공변성)** 라고 한다.
 * `class Box<in T>` 로 선언했다. `Box<Number>` instance 는 `Box<Int>` 로 casting 될
-  수 있다. 즉, down-casting 이 가능하다. 이 것을 contravariant(반공변성) 라고 한다.
+  수 있다. 즉, down-casting 이 가능하다. 이 것을 **contravariant(반공변성)** 라고 한다.
 
 이 것을 다음과 같이 정리할 수도 있다.
 
-* `Nothing` : no-casting, invariant
-* `in`: down-casting, contravariant
-* `out`: up-casting, covariant
-* `*`: any-casting
+```
+Nothing : no-casting    invariant
+    out : up-casting    covariant
+     in : down-casting  contravariant
+      * : any-casting
+```
 
 ```kotlin
 class Bar<in T>
@@ -1760,7 +1762,9 @@ fun main(args: Array<String>) {
 }
 ```
 
-Kotlin 함수 타입의 파라미터 타입은 `contravariant (down-casting)` 이다. 모든 리턴타칩은 `covariant (up-casting)` 이다. 
+JAVA 의 베스트 캐스팅 전략은 **PECS (Producer Extends Consumer Super)** 이다.
+
+Kotlin 의 베스트 캐스팅 전략은 ???
 
 ## Notation for platform types
 

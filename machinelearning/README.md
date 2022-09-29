@@ -193,6 +193,14 @@ False 라는 의미이다.
 * False Negative
   * 거짓으로 부정적이다. 답은 True 인데 결과는 False 이다.
 
+Precision, Recall, Accuracy 는 다음과 같다.
+
+```
+Precision : TP / (TP + FP)
+Recall    : TP / (TP + FN)
+Accuracy  : (TP + TN) / (TP + FN + FP + TN)
+```
+
 # Expectation Function
 
 기대값 `E(X)` 을 어떻게 구하는지 설명한다. 완벽한 세계에서 주사위를 던지는 상황을 생각해 보자. 확률변수 X 와 P(X) 는 다음과 같다.
