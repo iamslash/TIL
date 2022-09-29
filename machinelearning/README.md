@@ -1,10 +1,11 @@
 - [Abstract](#abstract)
 - [Essentials](#essentials)
 - [Materials](#materials)
+- [Precision, Recall](#precision-recall)
 - [Expectation Function](#expectation-function)
 - [Entropy](#entropy)
 - [Cross Entropy](#cross-entropy)
-- [KLD (Kullback–Leibler divergence)](#kld-kullback%E2%80%93leibler-divergence)
+- [KLD (Kullback–Leibler divergence)](#kld-kullbackleibler-divergence)
 - [JSD (Jensson Shannon Divergence)](#jsd-jensson-shannon-divergence)
 - [Posterior](#posterior)
 - [Prior](#prior)
@@ -168,6 +169,29 @@
 - [TensorFlow Tutorials (Simple Examples)](https://github.com/nlintz/TensorFlow-Tutorials)
 - [Another TensorFlow Tutorials](https://github.com/pkmital/tensorflow_tutorials)
 - [TensorFlow Examples](https://github.com/aymericdamien/TensorFlow-Examples)
+
+# Precision, Recall
+
+* [분류성능평가지표 - Precision(정밀도), Recall(재현율) and Accuracy(정확도) | tistory](https://sumniya.tistory.com/26)
+
+----
+
+| Result\Answer | True | False |
+|---|---|---|
+| True  | **True Positive** | False Positive |
+| False | False Negative | **True Negative** |
+
+Positive 가 포함되면 결과는 True 라는 의미이다. Negative 가 포함되면 결과는
+False 라는 의미이다.
+
+* True Positivie
+  * 참으로 긍정적이다. 답도 True 이고 결과도 True 이다.
+* True Negative 
+  * 참으로 부정적이다. 답도 False 이고 결과도 False 이다.
+* False Positivie
+  * 거짓으로 긍정적이다. 답은 False 인데 결과는 True 이다.
+* False Negative
+  * 거짓으로 부정적이다. 답은 True 인데 결과는 False 이다.
 
 # Expectation Function
 
