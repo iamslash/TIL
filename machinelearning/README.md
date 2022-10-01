@@ -594,18 +594,25 @@ L(w) + \frac{w^{2}}{2 \sigma_{w}^{2}} &= \sum_{i=1}^{N} (t_{i} - y(x_{i} | w))^{
 
 # Supervised Learning
 
-- supervised learning은 이미 x는 y라는 결론이 도출된 데이터를 이용하여 학습시키는 것이다.
-  이미 결론이 도출된 데이터이기 때문에 데이터의 정확성은 높지만 이러한 데이터를 사람이 산출해야
-  한다.
-- supervised learning의 종류는 classification, regression이 있다. 
-- classification은 입력 데이터 x와 출력 데이터 y가 있을때 y가 이산적인 경우
-  즉 [0,1,2,..]와 같이 유한한 경우를 말한다.
-- classification problem을 해결하기 위한 기법들로 logistic regression,
-  KNN (k nearest neighbors), SVM (support vector machines), decision tree
-  등이 있다.
-- regression은 입력 데이터 x와 출력 데이터 y가 있을때 y가 실수인 경우를 말한다.
-  regression problem을 해결하기 위한 기법들로 통계학의 회귀분석 방법중 linear regression
-  등이 있다.
+- supervised learning 은 이미 x 는 y 라는 결론이 도출된 데이터를 이용하여
+  학습시키는 것이다. 이미 결론이 도출된 데이터이기 때문에 데이터의 정확성은
+  높지만 이러한 데이터를 사람이 산출해야 한다.
+- supervised learning 의 종류는 classification(분류), regression(회귀)이 있다. 
+- data 는 discrete(이산적인) 혹은 continuous(연속적인) 이라고 할 수 있다.
+  descrete 한 경우는 값이 연속적으로 분포하지 않는다는 말이다. 그 외의 경우는
+  continuous 하다고 할 수 있다. 예를 들어 개는 그냥 개다. 따라서 동물의 이름은
+  discrete 하다고 할 수 있다. 사람의 키는 170, 170.1 등등 무수히 많다.
+  continuous 하다고 할 수 있다.
+- classification(분류) Model 은 입력 데이터 x 와 출력 데이터 y 가 있을때 y 가
+  discrete 한 Model 을 말한다. 예를 들어 동물의 사진을 주고 어떤 동물인지
+  예측하는 모델이 해당된다.
+- regression(회귀) Model 은 입력 데이터 x 와 출력 데이터 y 가 있을때 y 가
+  continuous 한 Model 을 말한다. 예를 들어 예를 들어 사람의 키, 몸무게를 주고
+  허리둘레를 예측하는 모델이 해당된다.
+- classification Model 을 만들기 위한 기법들로 logistic regression, KNN (k
+  nearest neighbors), SVM (support vector machines), decision tree 등이 있다.
+- regression Model 을 해결하기 위한 기법들로 통계학의 회귀분석 방법중 linear
+  regression 등이 있다.
 
 # Unsupervised Learning
 
