@@ -15,6 +15,7 @@ rookie 가 학습해야할 roadmap 에 대해 정리한다.
 # Materials
 
 * [developer roadmap | github](https://github.com/kamranahmedse/developer-roadmap)
+  * [video](https://www.youtube.com/c/theroadmap/featured)
 
 # Backend Roadmap
 
