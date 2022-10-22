@@ -183,8 +183,15 @@ CPU 는 disk 에서 데이터를 읽어들여 memeory 로 로드해야 한다. �
 # Clustered Index vs Non-clustered Index
 
 * [Difference between Clustered and Non-clustered index](https://www.geeksforgeeks.org/difference-between-clustered-and-non-clustered-index/)
+* [[MySQL] 인덱스구조 : 클러스터링인덱스/넌 클러스터링인덱스](https://pearlluck.tistory.com/m/54)
 
 ----
+
+![](img/2022-10-23-07-57-59.png)
+
+**Clustered Index** 는 Leaf Node 가 모든 Attribute Values 가 있다. SELECT 할 때
+한번에 읽어 온다. 반면에 **Non-Clustered Index** 는 Leaf Node 가 **Clustered
+Index** 의 주소를 갖는다. 다시한번 **Clustered Index** 를 찾아갈 필요가 있다.
 
 Index of `Roll_no is` is a **Clustered Index**.
 
