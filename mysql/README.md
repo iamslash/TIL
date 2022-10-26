@@ -281,6 +281,38 @@ ROLLBACK TO SAVEPOINT C
 
 * [Mysql Explain](https://cheese10yun.github.io/mysql-explian/)
 
+다음과 같은 table 을 제작하자.
+
+```sql
+create table if not exists members
+(
+    id              bigint auto_increment primary key,
+    email           varchar(255)  not null,
+    name            varchar(255)  not null,
+);
+
+create table if not exists trxs
+(
+    id              bigint auto_increment primary key,
+    code            varchar(255)  not null,
+    partner_trx_id  varchar(255)  not null,
+    payment_type    varchar(255)  not null,
+);
+
+
+create table if not exists orders
+(
+    id              bigint auto_increment primary key,
+    order_num       varchar(255) not null,
+    member_id       bigint        null,
+    trx_id          bigint        null,
+    constraint member_id_fk
+        foreign key (member_id) references members (id),
+    constraint trx_id_fk
+        foreign key (trx_id) references trxs (id),
+);
+```
+
 `explain` 을 이용하면 실행 계획을 알 수 있다.
 
 ```sql

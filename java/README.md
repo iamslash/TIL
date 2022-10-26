@@ -892,12 +892,18 @@ public class MainApp {
    map.put(".com", "International");
    map.remove(".com");
    map.putIfAbsent("aaa", "bbb");
-   map.computeIfAbset("aaa", key -> "bbb");
+   map.computeIfAbsent("aaa", key -> "bbb");
    map.put(".au", map.getOrDefault(".au", "Australia"));
    map.entrySet().removeIf(e -> e.getKey() == ".com");
    System.out.println(map);
    System.out.println(map.get(".au"));
    System.out.println(map.containsKey(".au"));
+
+   // computIfAbsent
+   Map<Integer, List<Integer>> map = new HashMap<>();
+   map.computeIfAbsent(0, a -> new ArrayList<>()).add(1);
+   // ERROR: because putIfAbsent return null
+   map.putIfAbsent(0, new ArrayList<>()).add(1); 
 
    // loop with forEach
    map.forEach(key -> System.out.println(key));
