@@ -729,6 +729,9 @@ System.out.println(pqGreat.poll());
 }
 // Remove the element
 pqLess.remove(1);
+// priority queue of the array
+// ERROR: (a, b) -> b[0] - a[0]
+Queue<long[]> pq = new PriorityQueue<long[]>((a, b) -> Long.compare(b[0], a[0]));
 ```
 
 ```java
