@@ -18,7 +18,7 @@ Compiler 에 대해 정리한다.
 * [컴파일러 만들기 컴퓨터 프로그램의 구조와 원리 | yes24](http://www.yes24.com/Product/Goods/103153057)
   * [src](https://github.com/AcornPublishing/crafting-compiler) 
 * [Crafting Interpreters](https://craftinginterpreters.com/)
-  * 짱짱맨
+  * [hml](https://craftinginterpreters.com/contents.html)
 * [컴파일러 구조와 원리 | yes24](http://www.yes24.com/Product/Goods/4189980)
   * linker 의 분량이 적다는게 흠이다.
 
