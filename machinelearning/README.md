@@ -197,8 +197,8 @@ False 라는 의미이다.
 Precision, Recall, Accuracy 는 다음과 같다.
 
 ```
-Precision : TP / (TP + FP)
-Recall    : TP / (TP + FN)
+Precision : TP / (TP + FP) 내가참 중 진짜 참
+Recall    : TP / (TP + FN) 전체참 중 내가 참
 Accuracy  : (TP + TN) / (TP + FN + FP + TN)
 ```
 

@@ -1,3 +1,8 @@
+- [Mark and Sweep](#mark-and-sweep)
+- [G1GC (Garbage First Garbage Collector)](#g1gc-garbage-first-garbage-collector)
+
+----
+
 # Mark and Sweep
 
 * [Java Garbage Collection Basics](https://www.oracle.com/webfolder/technetwork/tutorials/obe/java/gc01/index.html)
@@ -17,4 +22,30 @@ jvm 의 gc 는 크게 `Young Generation, Old Generation, Permanent Generation` �
 
 -----
 
+G1GC 는 Full GC 가 발생하면 Memory 를 OS 에 돌려주는 것 같다.
+
+```cpp
+// hotspot/src/share/vm/gc_implementation/g1/g1CollectedHeap.cpp
+bool G1CollectedHeap::do_collection(bool explicit_gc,
+                                    bool clear_all_soft_refs,
+                                    size_t word_size) {
+...
+      // Resize the heap if necessary.
+      resize_if_necessary_after_full_collection(explicit_gc ? 0 : word_size);
+...
+}                                      
+
+// hotspot/src/share/vm/gc_implementation/g1/g1CollectedHeap.hpp
+class G1CollectedHeap : public SharedHeap {
+...
+  // Resize the heap if necessary after a full collection.  If this is
+  // after a collect-for allocation, "word_size" is the allocation size,
+  // and will be considered part of the used portion of the heap.
+  void resize_if_necessary_after_full_collection(size_t word_size);
+...  
+}
+
+// hotspot/src/share/vm/gc_implementation/g1/g1CollectedHeap.cpp
+
+```
 
