@@ -1,10 +1,17 @@
 # Materials
 
+* [Maven 정복](https://wikidocs.net/17298)
 * [maven archetype plugin - 템플릿에서 메이븐 프로젝트 생성하기](https://www.lesstif.com/pages/viewpage.action?pageId=21430332)
 * [메이븐(Maven) 강의 @ youtube](https://www.youtube.com/watch?v=VAp0n9DmeEA&list=PLq8wAnVUcTFWRRi_JWLArMND_PnZM6Yja)
 * [Maven in 5 Minutes @ apache](https://maven.apache.org/guides/getting-started/maven-in-five-minutes.html)
 
 # Basic
+
+## Install
+
+```bash
+$ sdk install maven
+```
 
 ## How to build and run
 

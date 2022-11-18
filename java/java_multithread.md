@@ -683,8 +683,10 @@ public static void main(String[] args) {
 
 Differences Between Lock and Synchronized Block
 
-* A synchronized block is fully contained within a method – we can have Lock API's lock() and unlock() operation in separate methods
-* Synchronized doesn't support fairness property. We can achieve fairness within the Lock APIs by specifying the fairness property. 
+* [synchronized vs Lock | tistory](https://zion830.tistory.com/57)
+
+* A **synchronized block** is fully contained within a method – we can have Lock API's lock() and unlock() operation in separate methods
+* **Synchronized** doesn't support fairness property. We can achieve fairness within the Lock APIs by specifying the fairness property. 
 * A thread gets blocked if it can't get an access to the synchronized block. The Lock API provides tryLock() method. The thread acquires lock only if it's available and not held by any other thread.
 * A thread which is in “waiting” state to acquire the access to synchronized block, can't be interrupted. The Lock API provides a method lockInterruptibly() which can be used to interrupt the thread when it's waiting for the lock
 
