@@ -17,6 +17,7 @@
   - [Scope](#scope)
   - [Super POM](#super-pom)
   - [Plugin](#plugin)
+  - [Generate Project](#generate-project)
 - [Advanced](#advanced)
   - [BOM](#bom)
 
@@ -116,6 +117,8 @@ $ java -cp target/HelloWorld-1.0-SNAPSHOT.jar HelloWorld
 ```
 
 ## Directory Structures
+
+target 이 distribution directory 이다.
 
 ```bash
 $ tree my-maven
@@ -241,6 +244,31 @@ Project 의 pom.xml 은 super pom.xml 을 상속한다. super pom.xml 은
 * maven-source-plugin
 * maven-javadoc-plugin
 * maven-war-plugin
+
+## Generate Project
+
+```bash
+$ mvn archetype:generate -DgroupId=com.iamslash.app \
+  -DartifactId=my-app \
+  -DarchetypeArtifactId=maven-archetype-quickstart \
+  -DinteractiveMode=false
+$ tree my-app
+my-app
+├── pom.xml
+└── src
+    ├── main
+    │   └── java
+    │       └── com
+    │           └── iamslash
+    │               └── app
+    │                   └── App.java
+    └── test
+        └── java
+            └── com
+                └── iamslash
+                    └── app
+                        └── AppTest.java
+```
 
 # Advanced
 
