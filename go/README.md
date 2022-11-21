@@ -106,6 +106,8 @@
 
 # References
 
+* [google-go styleguide](https://google.github.io/styleguide/go/index)
+  * google go style guide
 * [A Tour of Go](https://go.dev/tour/welcome/1)
   * 따라하기를 통해 Go 의 대부분을 익힐 수 있다.
 * [effective go](https://golang.org/doc/effective_go.html)
