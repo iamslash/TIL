@@ -3,6 +3,7 @@
 - [Basic](#basic)
   - [Install](#install)
   - [Hello World](#hello-world)
+  - [Water Mark](#water-mark)
 
 ----
 
@@ -55,3 +56,9 @@ $ tail -f log/flink-*-taskexecutor-*.out
 # Stop the cluster
 $ bin/stop-cluster.sh
 ```
+
+## Water Mark
+
+* [이벤트 시간 처리(Event Time Processing)와 워터마크(Watermark) | tistory](https://seamless.tistory.com/99)
+
+Watermark 는 Event Time Processing 에서 지연된 message 처리를 위한 것이다.
