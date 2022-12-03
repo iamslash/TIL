@@ -299,6 +299,11 @@ LDFLAGS += --entry KernelMain -z norelro --image-base 0x100000 --static -z separ
 $ vim kernel/Makefile # Update sed for macos sed
     sed -I '' -e 's|$(notdir $(OBJ))|$(OBJ)|' $@
 
+$ vim kernel/main.cpp # Add this for macos
+extern "C" void __cxa_pure_virtual() {
+  while (1) __asm__("hlt");
+}
+
 $ vim MikanLoaderPkg/Main.c
 //  typedef void EntryPointType(const struct FrameBufferConfig*,
 //                              const struct MemoryMap*,
@@ -334,4 +339,4 @@ Copy files to USB like these. `BOOTX64.EFI` is same with `Build/MikanLoaderX64/D
 /EFI/BOOT/BOOTX64.EFI
 ```
 
-Turn on computer inserting USB.
+Turn on computer inserting USB. It works. (2022.12.03)
