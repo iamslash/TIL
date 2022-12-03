@@ -15,7 +15,7 @@
   - [Print Characters On Console](#print-characters-on-console)
   - [Mouse Input](#mouse-input)
   - [Final](#final)
-  - [How To Test On Real Computer](#how-to-test-on-real-computer)
+  - [How To Boot Real Computer With USB](#how-to-boot-real-computer-with-usb)
 
 ----
 
@@ -325,7 +325,7 @@ $ ~/my/etc/mikanos-build/devenv/run_qemu.sh \
     ~/my/cpp/mikanos/kernel/kernel.elf
 ```
 
-## How To Test On Real Computer
+## How To Boot Real Computer With USB
 
 Copy files to USB like these. `BOOTX64.EFI` is same with `Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi`
 
