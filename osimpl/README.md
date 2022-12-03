@@ -2,18 +2,23 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Prerequisites](#prerequisites)
-- [MikanOS on macosx](#mikanos-on-macosx)
+- [MikanOS on macos](#mikanos-on-macos)
   - [edk2](#edk2)
   - [qemu](#qemu)
   - [llvm](#llvm)
   - [etc](#etc)
   - [Hello World](#hello-world)
+  - [Build Kernel](#build-kernel)
+  - [Run Loader With Kernel](#run-loader-with-kernel)
+  - [Draw Pixel On Kernel](#draw-pixel-on-kernel)
 
 ----
 
 # Abstract
 
-os 를 구현해보자. [fourbucks @ github](https://github.com/iamslash/fourbucks) 에서 실제로 구현해 본다.
+os 를 구현해보자. 바탁부터 구현하는 것은 어려워서 UEFI 를 이용해서 제작해 보자. [0부터 시작하는 OS 자작 입문 [내가 만드는 OS 세계의 모든 것]](http://www.acornpub.co.kr/book/operating-system) 를 읽고 따라해본다.
+
+[fourbucks @ github](https://github.com/iamslash/fourbucks) 에서 실제로 구현해 본다.
 
 # Essentials
 
@@ -45,7 +50,7 @@ os 를 구현해보자. [fourbucks @ github](https://github.com/iamslash/fourbuc
 * qemu
 * Intel_Architecture_Software_Developers_Manual_Volume_3_Sys.pdf
 
-# MikanOS on macosx
+# MikanOS on macos
 
 ## edk2
 
@@ -109,3 +114,54 @@ $ build
 $ ~/my/etc/mikanos-build/devenv/run_qemu.sh Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi
 ```
 
+## Build Kernel
+
+```bash
+$ cd ~/my/c/mikanos
+$ git checkout osbook_day03a
+$ cd kernel
+
+$ clang++ -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone \
+  -fno-exceptions -fno-rtti -std=c++17 -c main.cpp
+$ ld.lld --entry KernelMain -z norelro --image-base 0x100000 --static \
+  -o kernel.elf main.o
+```
+
+## Run Loader With Kernel
+
+```bash
+$ cd ~/my/etc/mikanos-buld/edk2
+$ build
+$ ~/my/etc/mikanos-build/devenv/run_qemu.sh \
+    Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi \
+    ~/my/cpp/mikanos/kernel/kernel.elf
+```
+
+## Draw Pixel On Kernel
+
+```bash
+$ vim ~/my/etc/mikanos-build/devenv/buildenv.sh
+BASEDIR="$HOME/my/etc/mikanos-build/devenv/x86_64-elf"
+EDK2DIR="$HOME/my/c/edk2"
+
+$ source ~/my/etc/mikanos-build/devenv/buildenv.sh
+$ echo $CPPFLAGS
+$ echo $LDFLAGS
+
+$ cd ~/my/cpp/mikanos
+$ git checkout osbook_day03c
+$ cd kernel
+
+$ clang++ $CPPFLAGS -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone \
+  -fno-exceptions -fno-rtti -std=c++17 -c main.cpp
+$ ld.lld $LDFLAGS --entry KernelMain -z norelro --image-base 0x100000 --static \
+  -o kernel.elf main.o
+
+# Build and run
+$ cd ~/my/etc/mikanos-buld/edk2
+$ source edksetup.sh 
+$ build
+$ ~/my/etc/mikanos-build/devenv/run_qemu.sh \
+    Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi \
+    ~/my/cpp/mikanos/kernel/kernel.elf
+```
