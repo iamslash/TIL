@@ -11,6 +11,11 @@
   - [Build Kernel](#build-kernel)
   - [Run Loader With Kernel](#run-loader-with-kernel)
   - [Draw Pixel On Kernel](#draw-pixel-on-kernel)
+  - [Make Basic](#make-basic)
+  - [Print Characters On Console](#print-characters-on-console)
+  - [Mouse Input](#mouse-input)
+  - [Final](#final)
+  - [How To Test On Real Computer](#how-to-test-on-real-computer)
 
 ----
 
@@ -139,7 +144,30 @@ $ ~/my/etc/mikanos-build/devenv/run_qemu.sh \
 
 ## Draw Pixel On Kernel
 
+* [mikanos macosx build](https://qiita.com/yamoridon/items/4905765cc6e4f320c9b5)
+  * Build & Run on macosx 
+
+We need to update some code for macos
+
+```c
+// ~/my/cpp/mikanos/MikanLoaderPkg/Main.c
+// AsIs
+typedef void EntryPointType(UINT64, UINT64);
+// ToBe
+typedef void __attribute__((sysv_abi)) EntryPointType(UINT64, UINT64);
+```
+
+We need to change link commandline
+
 ```bash
+# AsIs
+$ ld.lld $LDFLAGS --entry KernelMain -z norelro --image-base 0x100000 --static -o kernel.elf main.o
+# ToBe
+$ ld.lld $LDFLAGS --entry=KernelMain -z norelro --image-base 0x100000 --static -o kernel.elf -z separate-code main.o
+```
+
+```bash
+$ ln -s ~/my/etc/mikanos-build/ ~/osbook
 $ vim ~/my/etc/mikanos-build/devenv/buildenv.sh
 BASEDIR="$HOME/my/etc/mikanos-build/devenv/x86_64-elf"
 EDK2DIR="$HOME/my/c/edk2"
@@ -148,20 +176,162 @@ $ source ~/my/etc/mikanos-build/devenv/buildenv.sh
 $ echo $CPPFLAGS
 $ echo $LDFLAGS
 
-$ cd ~/my/cpp/mikanos
+$ cd ~/my/cpp/mikanos/kernel
 $ git checkout osbook_day03c
-$ cd kernel
+$ ~/my/cpp/mikanos/MikanLoaderPkg/Main.c
 
 $ clang++ $CPPFLAGS -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone \
   -fno-exceptions -fno-rtti -std=c++17 -c main.cpp
-$ ld.lld $LDFLAGS --entry KernelMain -z norelro --image-base 0x100000 --static \
-  -o kernel.elf main.o
+#$ clang++ -I/Users/david.s/my/etc/mikanos-build/devenv/x86_64-elf/include/c++/v1 -I/Users/david.s/my/etc/mikanos-build/devenv/x86_64-elf/include -I/Users/david.s/my/etc/mikanos-build/devenv/x86_64-elf/include/freetype2     -I/Users/david.s/my/c/edk2/MdePkg/Include -I/Users/david.s/my/c/edk2/MdePkg/Include/X64     -nostdlibinc -D__ELF__ -D_LDBL_EQ_DBL -D_GNU_SOURCE -D_POSIX_TIMERS     -DEFIAPI='__attribute__((ms_abi))' -O2 -Wall -g --target=x86_64-elf -ffreestanding -mno-red-zone -fno-exceptions -fno-rtti -std=c++17 -c main.cpp
+$ ld.lld $LDFLAGS --entry=KernelMain -z norelro --image-base 0x100000 --static -o kernel.elf -z separate-code main.o
 
-# Build and run
-$ cd ~/my/etc/mikanos-buld/edk2
+# Build and run edk2
+$ cd ~/my/c/edk2
 $ source edksetup.sh 
 $ build
 $ ~/my/etc/mikanos-build/devenv/run_qemu.sh \
     Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi \
     ~/my/cpp/mikanos/kernel/kernel.elf
 ```
+
+## Make Basic
+
+We need to update Makefile for macos
+
+```bash
+# Build kernel
+$ cd ~/my/cpp/mikanos
+$ git checkout osbook_day04a
+
+$ vim kernel/Makefile # Add -z separate-code
+LDFLAGS += --entry KernelMain -z norelro --image-base 0x100000 --static -z separate-code
+
+$ vim MikanLoaderPkg/Main.c
+//typedef void EntryPointType(UINT64, UINT64);
+typedef void __attribute__((sysv_abi)) EntryPointType(UINT64, UINT64);
+
+$ source ~/my/etc/mikanos-build/devenv/buildenv.sh
+$ make
+
+# Build edk2
+$ cd ~/my/c/edk2
+$ source edksetup.sh 
+$ build
+
+# Run BootLoader and Kernel
+$ ~/my/etc/mikanos-build/devenv/run_qemu.sh \
+    Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi \
+    ~/my/cpp/mikanos/kernel/kernel.elf
+```
+
+## Print Characters On Console
+
+```bash
+# Build kernel
+$ cd ~/my/cpp/mikanos
+$ git checkout osbook_day05f
+
+$ vim kernel/Makefile # Add -z separate-code
+LDFLAGS += --entry KernelMain -z norelro --image-base 0x100000 --static -z separate-code
+
+$ vim kernel/Makefile # Update sed for macos sed
+    sed -I '' -e 's|$(notdir $(OBJ))|$(OBJ)|' $@
+
+$ vim MikanLoaderPkg/Main.c
+//typedef void EntryPointType(const struct FrameBufferConfig*);
+typedef void __attribute__((sysv_abi)) EntryPointType(const struct FrameBufferConfig*);
+
+$ source ~/my/etc/mikanos-build/devenv/buildenv.sh
+$ make
+
+# Build edk2
+$ cd ~/my/c/edk2
+$ source edksetup.sh 
+$ build
+
+# Run BootLoader and Kernel
+$ ~/my/etc/mikanos-build/devenv/run_qemu.sh \
+    Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi \
+    ~/my/cpp/mikanos/kernel/kernel.elf
+```
+
+## Mouse Input
+
+```bash
+# Build kernel
+$ cd ~/my/cpp/mikanos
+$ git checkout osbook_day06c
+
+$ vim kernel/Makefile # Add -z separate-code
+LDFLAGS += --entry KernelMain -z norelro --image-base 0x100000 --static -z separate-code
+
+$ vim kernel/Makefile # Update sed for macos sed
+    sed -I '' -e 's|$(notdir $(OBJ))|$(OBJ)|' $@
+
+$ vim MikanLoaderPkg/Main.c
+//typedef void EntryPointType(const struct FrameBufferConfig*);
+typedef void __attribute__((sysv_abi)) EntryPointType(const struct FrameBufferConfig*);
+
+$ source ~/my/etc/mikanos-build/devenv/buildenv.sh
+$ make clean && make
+
+# Build edk2
+$ cd ~/my/c/edk2
+$ source edksetup.sh 
+$ build clean && build
+
+# Run BootLoader and Kernel
+$ ~/my/etc/mikanos-build/devenv/run_qemu.sh \
+    Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi \
+    ~/my/cpp/mikanos/kernel/kernel.elf
+```
+
+## Final
+
+```bash
+# Build kernel
+$ cd ~/my/cpp/mikanos
+$ git checkout master
+
+$ vim kernel/Makefile # Add -z separate-code
+LDFLAGS += --entry KernelMain -z norelro --image-base 0x100000 --static -z separate-code
+
+$ vim kernel/Makefile # Update sed for macos sed
+    sed -I '' -e 's|$(notdir $(OBJ))|$(OBJ)|' $@
+
+$ vim MikanLoaderPkg/Main.c
+//  typedef void EntryPointType(const struct FrameBufferConfig*,
+//                              const struct MemoryMap*,
+//                              const VOID*,
+//                              VOID*,
+//                              EFI_RUNTIME_SERVICES*);
+  typedef void __attribute__((sysv_abi)) EntryPointType(const struct FrameBufferConfig*,
+                                                        const struct MemoryMap*,
+                                                        const VOID*,
+                                                        VOID&,
+                                                        EFI_RUNTIME_SERVICES*);
+
+$ source ~/my/etc/mikanos-build/devenv/buildenv.sh
+$ make clean && make
+
+# Build edk2
+$ cd ~/my/c/edk2
+$ source edksetup.sh 
+$ build clean && build
+
+# Run BootLoader and Kernel
+$ ~/my/etc/mikanos-build/devenv/run_qemu.sh \
+    Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi \
+    ~/my/cpp/mikanos/kernel/kernel.elf
+```
+
+## How To Test On Real Computer
+
+Copy files to USB like these. `BOOTX64.EFI` is same with `Build/MikanLoaderX64/DEBUG_CLANGPDB/X64/Loader.efi`
+
+```
+/kernel.elf
+/EFI/BOOT/BOOTX64.EFI
+```
+
+Turn on computer inserting USB.
