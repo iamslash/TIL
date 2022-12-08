@@ -60,7 +60,7 @@
   - [Pair Class](#pair-class)
     - [Functional Interfaces](#functional-interfaces-1)
     - [Method References](#method-references)
-    - [Optional<T>](#optionalt)
+    - [Optional](#optional)
 - [Advanced](#advanced)
   - [Instant, ZonedDateTime](#instant-zoneddatetime)
   - [arraycopy](#arraycopy)
@@ -581,23 +581,30 @@ for(String name : names) {
 ### List, ArrayList
 
 ```java
-   // Integer List
-   List<Integer> D = new ArrayList<Integer>(Collections.nCopies(N,  1));
-   Integer a = D.get(0);
-   D.set(0, 1);
-   D.add(1);
-   // remove last
-   D.remove(D.size()-1);
+// Integer List
+List<Integer> D = new ArrayList<Integer>(Collections.nCopies(N,  1));
+Integer a = D.get(0);
+D.set(0, 1);
+D.add(1);
+// remove last
+D.remove(D.size()-1);
 
-   // String List
-   List<String> wordList = new ArrayList<>();
-   wordList.add("Hello")
-   wordList.add("World")
-   // Removes the element at the specified position 
-   String word = wordList.remove(wordList.size() - 1)
-   // remove first occurred element
-   boolean deleted = wordList.remove("Hello")
-   boolean found = worldList.contains("Hello")
+// String List
+List<String> wordList = new ArrayList<>();
+wordList.add("Hello")
+wordList.add("World")
+// Removes the element at the specified position 
+String word = wordList.remove(wordList.size() - 1)
+// remove first occurred element
+boolean deleted = wordList.remove("Hello")
+boolean found = worldList.contains("Hello")
+
+// List array
+List<int[]>[] graph = new ArrayList[n + 1];        
+boolean[] visit = new boolean[n + 1];
+for (int i = 0; i <= n; ++i) {
+   graph[i] = new ArrayList<>();
+}
 ```
 
 ### Deque, ArrayDeque
