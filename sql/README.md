@@ -1,7 +1,9 @@
-- [Intro](#intro)
 - [Essentials](#essentials)
 - [Materials](#materials)
-- [Usage](#usage)
+- [Prepare Database](#prepare-database)
+  - [MySQL](#mysql)
+  - [PostreSQL](#postresql)
+- [Basic](#basic)
   - [Show something](#show-something)
   - [Select statement order](#select-statement-order)
   - [Select](#select)
@@ -61,10 +63,10 @@
   - [Views](#views)
   - [CASE](#case)
   - [Session Variables](#session-variables)
-  - [ROW_NUMBER() OVER()](#row_number-over)
+  - [ROW\_NUMBER() OVER()](#row_number-over)
   - [RANK() OVER()](#rank-over)
-  - [DENSE_RANK() OVER()](#dense_rank-over)
-  - [PERCENT_RANK() OVER()](#percent_rank-over)
+  - [DENSE\_RANK() OVER()](#dense_rank-over)
+  - [PERCENT\_RANK() OVER()](#percent_rank-over)
   - [SUM() OVER()](#sum-over)
   - [LEAD() OVER(), LAG() OVER()](#lead-over-lag-over)
   - [Where](#where)
@@ -81,12 +83,9 @@
 
 -----
 
-# Intro
-
-- sql 은 자주 다루는 언어가 아니기 때문에 사용법을 잊어 버리기 쉽다. [sqlzoo](http://sqlzoo.net/) 와 [database problems @ leecode](https://leetcode.com/problemset/database/) 를 복습한다.
-
 # Essentials
 
+- [The Database Cookbook For Developers](https://sqlfordevs.com/ebook)
 - [sqlzoo](http://sqlzoo.net/)
   - tutorial 의 문제들은 필수다.
 - [database problems @ leecode](https://leetcode.com/problemset/database/) 
@@ -104,13 +103,49 @@
 * [use the idex luke](http://use-the-index-luke.com/)
 * [sql @ w3schools](https://www.w3schools.com/sql/default.asp)
 
-# Usage
+# Prepare Database
+
+## MySQL
+
+```bash
+$ docker run -p 3306:3306 --rm --name my-mysql -e MYSQL_ROOT_PASSWORD=1 -e MYSQL_DATABASE=hello -e MYSQL_USER=iamslash -e MYSQL_PASSWORD=1 -d mysql
+
+$ docker ps
+$ docker exec -it my-mysql /bin/bash
+
+$ mysql -u iamslash -p
+mysql> show databases
+mysql> use hello
+```
+
+```sql
+CREATE TABLE games
+(
+  yr   INT NOT NULL PRIMARY KEY,
+  city VARCHAR(20)
+);
+CREATE INDEX idx_yr ON Persons (yr);
+INSERT INTO games(yr, city) VALUES (2004,'Athens');
+INSERT INTO games(yr, city) VALUES (2008,'Beijing');
+INSERT INTO games(yr, city) VALUES (2012,'London');
+SELECT * FROM games;
+```
+
+## PostreSQL
+
+```bash
+```
+
+```sql
+```
+
+# Basic
 
 ## Show something
 
 ```sql
-show full columns from users;
-show index from users;
+show full columns from games;
+show index from games;
 ```
 
 ## Select statement order
@@ -138,18 +173,18 @@ show index from users;
 ## Select
 
 ```sql
-SELECT CustomerName, City FROM Customers;
-SELECT * FROM Customers;
+SELECT yr, city FROM games;
+SELECT * FROM games;
 ```
 
 ## Select Distinct
 
 ```sql
-SELECT DISTINCT Country FROM Customers;
-SELECT COUNT(DISTINCT Country) FROM Customers;
+SELECT DISTINCT city FROM games;
+SELECT COUNT(DISTINCT city) FROM games;
 SELECT COUNT(*) AS DistinctCountries
-  FROM (SELECT DISTINCT Country FROM Customers);
-SELECT COUNT(DISTINCT Country city) FROM Customers;
+  FROM (SELECT DISTINCT city FROM games);
+SELECT COUNT(DISTINCT city city) FROM games;
 ```
 
 ## Select subquery
@@ -158,9 +193,9 @@ SELECT COUNT(DISTINCT Country city) FROM Customers;
 
 ----
 
-subquery 는 SELECT, FROM, WHERE, HAVING, ORDER BY, VALUES of INSERT, SET of UPDATE 에 사용가능하다.
+subquery 는 `SELECT, FROM, WHERE, HAVING, ORDER BY, VALUES of INSERT, SET of UPDATE` 에 사용가능하다.
 
-* SELECT
+* `SELECT`
 
 ```sql
 SELECT 
@@ -176,7 +211,7 @@ FROM
   Player P2
 ```
 
-* FROM
+* `FROM`
 
 ```sql
 SELECT 
@@ -195,7 +230,7 @@ FROM
 ;
 ```
 
-* WHERE
+* `WHERE`
 
 ```sql
 SELECT 
@@ -221,7 +256,7 @@ ORDER BY
 ;
 ```
 
-* HAVING
+* `HAVING`
 
 ```sql
 SELECT 
@@ -246,7 +281,7 @@ HAVING
 ## WITH AS
 
 subquery 를 특정 table 에 할당한다. 이후 여러군데서 그 table 을 이용할 수 있다.
-CTE (common table expressions) 라고도 한다.
+**CTE (common table expressions)** 라고도 한다.
 
 * [Difference between WITH clause and subquery?](https://stackoverflow.com/questions/30078464/difference-between-with-clause-and-subquery)
 
