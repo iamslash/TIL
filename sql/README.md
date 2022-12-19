@@ -3,12 +3,29 @@
 - [Prepare Database](#prepare-database)
   - [MySQL](#mysql)
   - [PostreSQL](#postresql)
-- [Basic](#basic)
+- [SQL Types](#sql-types)
+- [DDL](#ddl)
+  - [Create DB](#create-db)
+  - [Drop DB](#drop-db)
+  - [Create Table](#create-table)
+  - [Drop Table](#drop-table)
+  - [Alter Table](#alter-table)
+  - [Constraints](#constraints)
+  - [Not Null](#not-null)
+  - [Unique](#unique)
+  - [Primary Key](#primary-key)
+  - [Foreign Key](#foreign-key)
+  - [Check](#check)
+  - [Default](#default)
+  - [Index](#index)
+  - [Auto Increment](#auto-increment)
+  - [Views](#views)
   - [Show something](#show-something)
+- [DML](#dml)
   - [Select statement order](#select-statement-order)
   - [Select](#select)
   - [Select Distinct](#select-distinct)
-  - [Select subquery](#select-subquery)
+  - [Select Subquery](#select-subquery)
   - [WITH AS](#with-as)
   - [WITH RECURSIVE](#with-recursive)
   - [Select `Year-Month`](#select-year-month)
@@ -33,7 +50,7 @@
   - [Inner Join](#inner-join)
   - [Left Join](#left-join)
   - [Right Join](#right-join)
-  - [FUll Join](#full-join)
+  - [Full Join](#full-join)
   - [Self Join](#self-join)
   - [Triple Join](#triple-join)
   - [Union](#union)
@@ -45,22 +62,7 @@
   - [Insert Into Select](#insert-into-select)
   - [Null Functions](#null-functions)
   - [Comments](#comments)
-  - [Create DB](#create-db)
-  - [Drop DB](#drop-db)
-  - [Create Table](#create-table)
-  - [Drop Table](#drop-table)
-  - [Alter Table](#alter-table)
-  - [Constraints](#constraints)
-  - [Not Null](#not-null)
-  - [Unique](#unique)
-  - [Primary Key](#primary-key)
-  - [Foreign Key](#foreign-key)
-  - [Check](#check)
-  - [Default](#default)
-  - [Index](#index)
-  - [Auto Increment](#auto-increment)
   - [Dates](#dates)
-  - [Views](#views)
   - [CASE](#case)
   - [Session Variables](#session-variables)
   - [ROW\_NUMBER() OVER()](#row_number-over)
@@ -110,7 +112,6 @@
 ```bash
 $ docker run -p 3306:3306 --rm --name my-mysql -e MYSQL_ROOT_PASSWORD=1 -e MYSQL_DATABASE=hello -e MYSQL_USER=iamslash -e MYSQL_PASSWORD=1 -d mysql
 
-$ docker ps
 $ docker exec -it my-mysql /bin/bash
 
 $ mysql -u iamslash -p
@@ -124,7 +125,7 @@ CREATE TABLE games
   yr   INT NOT NULL PRIMARY KEY,
   city VARCHAR(20)
 );
-CREATE INDEX idx_yr ON Persons (yr);
+CREATE INDEX idx_yr ON games (yr);
 INSERT INTO games(yr, city) VALUES (2004,'Athens');
 INSERT INTO games(yr, city) VALUES (2008,'Beijing');
 INSERT INTO games(yr, city) VALUES (2012,'London');
@@ -134,12 +135,314 @@ SELECT * FROM games;
 ## PostreSQL
 
 ```bash
+$ docker run --rm -p 5432:5432 -e POSTGRES_PASSWORD=1 -e POSTGRES_USER=iamslash -e POSTGRES_DB=basicdb --name my-postgres -d postgres
+
+$ docker exec -it my-postgres bash
+
+$ psql -U iamslash basicdb
 ```
 
 ```sql
+CREATE TABLE games
+(
+	yr SERIAL PRIMARY KEY,
+	city VARCHAR(20) NOT NULL
+);
+CREATE INDEX idx_yr ON games USING btree(yr);
+INSERT INTO games(yr, city) VALUES (2004,'Athens');
+INSERT INTO games(yr, city) VALUES (2008,'Beijing');
+INSERT INTO games(yr, city) VALUES (2012,'London');
+SELECT * FROM games;
 ```
 
-# Basic
+# SQL Types
+
+* DML : Data Manipulation Language
+  * SELECT, INSERT, UPDATE, DELETE 
+* DDL : Data Definition Language
+  * CREATE, ALTER, DROP, RENAME, TRUNCATE 
+* DCL : Data Control Language
+  * GRANT, REVOKE 
+* TCL : Transaction Control Language
+  * COMMIT, ROLLBACK, SAVEPOINT 
+
+# DDL
+
+## Create DB
+
+```sql
+CREATE DATABASE testDB;
+```
+
+## Drop DB
+
+```sql
+DROP DATABASE testDB;
+```
+
+## Create Table
+
+```sql
+CREATE TABLE Persons (
+    PersonID int,
+    LastName varchar(255),
+    FirstName varchar(255),
+    Address varchar(255),
+    City varchar(255) 
+);
+```
+
+## Drop Table
+
+```sql
+DROP TABLE Shippers;
+
+TRUNCATE TABLE table_name;
+```
+
+## Alter Table
+
+```sql
+ALTER TABLE Persons
+  ADD DateOfBirth date;
+
+ALTER TABLE Persons
+  ALTER COLUMN DateOfBirth year;
+
+ALTER TABLE Persons
+  DROP COLUMN DateOfBirth;
+```
+
+## Constraints
+
+* NOT NULL - Ensures that a column cannot have a NULL value
+* UNIQUE - Ensures that all values in a column are different
+* PRIMARY KEY - A combination of a NOT NULL and UNIQUE. Uniquely identifies each row in a table
+* FOREIGN KEY - Uniquely identifies a row/record in another table
+* CHECK - Ensures that all values in a column satisfies a specific condition
+* DEFAULT - Sets a default value for a column when no value is specified
+* INDEX - Used to create and retrieve data from the database very quickly
+
+```sql
+CREATE TABLE table_name (
+    column1 datatype constraint,
+    column2 datatype constraint,
+    column3 datatype constraint,
+    ....
+);
+```
+
+## Not Null
+
+```sql
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255) NOT NULL,
+    Age int
+);
+```
+
+## Unique
+
+```sql
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    UNIQUE (ID)
+);
+
+ALTER TABLE Persons
+  ADD UNIQUE (ID);
+ALTER table Persons DROP INDEX ID;
+
+ALTER TABLE Persons
+  ADD CONSTRAINT UC_Person UNIQUE (ID,LastName);
+
+ALTER TABLE Persons
+  DROP INDEX UC_Person;
+```
+
+## Primary Key
+
+```sql
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    PRIMARY KEY (ID)
+);
+
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CONSTRAINT PK_Person PRIMARY KEY (ID,LastName)
+);
+
+ALTER TABLE Persons
+  ADD PRIMARY KEY (ID);
+
+ALTER TABLE Persons
+  ADD CONSTRAINT PK_Person PRIMARY KEY (ID,LastName);
+
+ALTER TABLE Persons
+  DROP PRIMARY KEY;
+```
+
+## Foreign Key
+
+```sql
+CREATE TABLE Orders (
+    OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    FOREIGN KEY (PersonID) REFERENCES Persons(PersonID)
+);
+
+CREATE TABLE Orders (
+    OrderID int NOT NULL,
+    OrderNumber int NOT NULL,
+    PersonID int,
+    PRIMARY KEY (OrderID),
+    CONSTRAINT FK_PersonOrder FOREIGN KEY (PersonID)
+    REFERENCES Persons(PersonID)
+);
+
+ALTER TABLE Orders
+  ADD FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
+
+ALTER TABLE Orders
+  ADD CONSTRAINT FK_PersonOrder
+  FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
+
+ALTER TABLE Orders
+  DROP FOREIGN KEY FK_PersonOrder;
+```
+
+## Check
+
+```sql
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    CHECK (Age>=18)
+);
+
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    City varchar(255),
+    CONSTRAINT CHK_Person CHECK (Age>=18 AND City='Sandnes')
+);
+
+ALTER TABLE Persons
+  ADD CHECK (Age>=18);
+
+ALTER TABLE Persons
+  ADD CONSTRAINT CHK_PersonAge CHECK (Age>=18 AND City='Sandnes');
+
+ALTER TABLE Persons
+  DROP CHECK CHK_PersonAge;
+```
+
+## Default
+
+```sql
+CREATE TABLE Persons (
+    ID int NOT NULL,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    City varchar(255) DEFAULT 'Sandnes'
+);
+
+CREATE TABLE Orders (
+    ID int NOT NULL,
+    OrderNumber int NOT NULL,
+    OrderDate date DEFAULT GETDATE()
+);
+
+ALTER TABLE Persons
+  ALTER City SET DEFAULT 'Sandnes';
+
+ALTER TABLE Persons
+  ALTER City DROP DEFAULT;
+```
+
+## Index
+
+```sql
+CREATE INDEX idx_lastname
+  ON Persons (LastName);
+
+CREATE INDEX idx_pname
+  ON Persons (LastName, FirstName);
+
+ALTER TABLE table_name
+  DROP INDEX index_name;
+```
+
+## Auto Increment
+
+```sql
+CREATE TABLE Persons (
+    ID int NOT NULL AUTO_INCREMENT,
+    LastName varchar(255) NOT NULL,
+    FirstName varchar(255),
+    Age int,
+    PRIMARY KEY (ID)
+);
+
+ALTER TABLE Persons AUTO_INCREMENT=100;
+
+INSERT INTO Persons (FirstName,LastName)
+VALUES ('Lars','Monsen');
+```
+
+## Views
+
+```sql
+CREATE VIEW [Current Product List] AS
+SELECT ProductID, ProductName
+FROM Products
+WHERE Discontinued = No;
+
+SELECT * FROM [Current Product List];
+
+CREATE VIEW [Products Above Average Price] AS
+SELECT ProductName, UnitPrice
+FROM Products
+WHERE UnitPrice > (SELECT AVG(UnitPrice) FROM Products);
+
+SELECT * FROM [Products Above Average Price];
+
+CREATE VIEW [Category Sales For 1997] AS
+SELECT DISTINCT CategoryName, Sum(ProductSales) AS CategorySales
+FROM [Product Sales for 1997]
+GROUP BY CategoryName;
+
+SELECT * FROM [Category Sales For 1997];
+
+SELECT * FROM [Category Sales For 1997]
+  WHERE CategoryName = 'Beverages';
+
+CREATE OR REPLACE VIEW [Current Product List] AS
+SELECT ProductID, ProductName, Category
+FROM Products
+WHERE Discontinued = No;
+
+DROP VIEW view_name;
+```
 
 ## Show something
 
@@ -147,6 +450,8 @@ SELECT * FROM games;
 show full columns from games;
 show index from games;
 ```
+
+# DML
 
 ## Select statement order
 
@@ -187,7 +492,7 @@ SELECT COUNT(*) AS DistinctCountries
 SELECT COUNT(DISTINCT city city) FROM games;
 ```
 
-## Select subquery
+## Select Subquery
 
 * [SQL / MySQL 서브쿼리](https://snowple.tistory.com/360)
 
@@ -742,7 +1047,7 @@ ON Customers.Id = Orders.CustomerId;
 
 ## Join ON vs WHERE
 
-- ON은 JOIN이 실행되기 전에 적용되고 WHERE는 JOIN이 실행되고 난 다음에 적용된다.
+- `ON` 은 `JOIN` 이 실행되기 전에 적용되고 `WHERE` 는 `JOIN` 이 실행되고 난 다음에 적용된다.
 
 ```sql
 SELECT * FROM Customers a LEFT JOIN Orders b ON (a.Id = b.Id) WHERE b.CustomerId = 1
@@ -779,7 +1084,7 @@ SELECT Orders.OrderID, Employees.LastName, Employees.FirstName
   ORDER BY Orders.OrderID;
 ```
 
-## FUll Join
+## Full Join
 
 ```sql
 SELECT Customers.CustomerName, Orders.OrderID
@@ -1085,247 +1390,6 @@ AND Country='USA'
 ORDER BY CustomerName;
 ```
 
-## Create DB
-
-```sql
-CREATE DATABASE testDB;
-```
-
-## Drop DB
-
-```sql
-DROP DATABASE testDB;
-```
-
-## Create Table
-
-```sql
-CREATE TABLE Persons (
-    PersonID int,
-    LastName varchar(255),
-    FirstName varchar(255),
-    Address varchar(255),
-    City varchar(255) 
-);
-```
-
-## Drop Table
-
-```sql
-DROP TABLE Shippers;
-
-TRUNCATE TABLE table_name;
-```
-
-## Alter Table
-
-```sql
-ALTER TABLE Persons
-  ADD DateOfBirth date;
-
-ALTER TABLE Persons
-  ALTER COLUMN DateOfBirth year;
-
-ALTER TABLE Persons
-  DROP COLUMN DateOfBirth;
-```
-
-## Constraints
-
-* NOT NULL - Ensures that a column cannot have a NULL value
-* UNIQUE - Ensures that all values in a column are different
-* PRIMARY KEY - A combination of a NOT NULL and UNIQUE. Uniquely identifies each row in a table
-* FOREIGN KEY - Uniquely identifies a row/record in another table
-* CHECK - Ensures that all values in a column satisfies a specific condition
-* DEFAULT - Sets a default value for a column when no value is specified
-* INDEX - Used to create and retrieve data from the database very quickly
-
-```sql
-CREATE TABLE table_name (
-    column1 datatype constraint,
-    column2 datatype constraint,
-    column3 datatype constraint,
-    ....
-);
-```
-
-## Not Null
-
-```sql
-CREATE TABLE Persons (
-    ID int NOT NULL,
-    LastName varchar(255) NOT NULL,
-    FirstName varchar(255) NOT NULL,
-    Age int
-);
-```
-
-## Unique
-
-```sql
-CREATE TABLE Persons (
-    ID int NOT NULL,
-    LastName varchar(255) NOT NULL,
-    FirstName varchar(255),
-    Age int,
-    UNIQUE (ID)
-);
-
-ALTER TABLE Persons
-  ADD UNIQUE (ID);
-ALTER table Persons DROP INDEX ID;
-
-ALTER TABLE Persons
-  ADD CONSTRAINT UC_Person UNIQUE (ID,LastName);
-
-ALTER TABLE Persons
-  DROP INDEX UC_Person;
-```
-
-## Primary Key
-
-```sql
-CREATE TABLE Persons (
-    ID int NOT NULL,
-    LastName varchar(255) NOT NULL,
-    FirstName varchar(255),
-    Age int,
-    PRIMARY KEY (ID)
-);
-
-CREATE TABLE Persons (
-    ID int NOT NULL,
-    LastName varchar(255) NOT NULL,
-    FirstName varchar(255),
-    Age int,
-    CONSTRAINT PK_Person PRIMARY KEY (ID,LastName)
-);
-
-ALTER TABLE Persons
-  ADD PRIMARY KEY (ID);
-
-ALTER TABLE Persons
-  ADD CONSTRAINT PK_Person PRIMARY KEY (ID,LastName);
-
-ALTER TABLE Persons
-  DROP PRIMARY KEY;
-```
-
-## Foreign Key
-
-```sql
-CREATE TABLE Orders (
-    OrderID int NOT NULL,
-    OrderNumber int NOT NULL,
-    PersonID int,
-    PRIMARY KEY (OrderID),
-    FOREIGN KEY (PersonID) REFERENCES Persons(PersonID)
-);
-
-CREATE TABLE Orders (
-    OrderID int NOT NULL,
-    OrderNumber int NOT NULL,
-    PersonID int,
-    PRIMARY KEY (OrderID),
-    CONSTRAINT FK_PersonOrder FOREIGN KEY (PersonID)
-    REFERENCES Persons(PersonID)
-);
-
-ALTER TABLE Orders
-  ADD FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
-
-ALTER TABLE Orders
-  ADD CONSTRAINT FK_PersonOrder
-  FOREIGN KEY (PersonID) REFERENCES Persons(PersonID);
-
-ALTER TABLE Orders
-  DROP FOREIGN KEY FK_PersonOrder;
-```
-
-## Check
-
-```sql
-CREATE TABLE Persons (
-    ID int NOT NULL,
-    LastName varchar(255) NOT NULL,
-    FirstName varchar(255),
-    Age int,
-    CHECK (Age>=18)
-);
-
-CREATE TABLE Persons (
-    ID int NOT NULL,
-    LastName varchar(255) NOT NULL,
-    FirstName varchar(255),
-    Age int,
-    City varchar(255),
-    CONSTRAINT CHK_Person CHECK (Age>=18 AND City='Sandnes')
-);
-
-ALTER TABLE Persons
-  ADD CHECK (Age>=18);
-
-ALTER TABLE Persons
-  ADD CONSTRAINT CHK_PersonAge CHECK (Age>=18 AND City='Sandnes');
-
-ALTER TABLE Persons
-  DROP CHECK CHK_PersonAge;
-```
-
-## Default
-
-```sql
-CREATE TABLE Persons (
-    ID int NOT NULL,
-    LastName varchar(255) NOT NULL,
-    FirstName varchar(255),
-    Age int,
-    City varchar(255) DEFAULT 'Sandnes'
-);
-
-CREATE TABLE Orders (
-    ID int NOT NULL,
-    OrderNumber int NOT NULL,
-    OrderDate date DEFAULT GETDATE()
-);
-
-ALTER TABLE Persons
-  ALTER City SET DEFAULT 'Sandnes';
-
-ALTER TABLE Persons
-  ALTER City DROP DEFAULT;
-```
-
-## Index
-
-```sql
-CREATE INDEX idx_lastname
-  ON Persons (LastName);
-
-CREATE INDEX idx_pname
-  ON Persons (LastName, FirstName);
-
-ALTER TABLE table_name
-  DROP INDEX index_name;
-```
-
-## Auto Increment
-
-```sql
-CREATE TABLE Persons (
-    ID int NOT NULL AUTO_INCREMENT,
-    LastName varchar(255) NOT NULL,
-    FirstName varchar(255),
-    Age int,
-    PRIMARY KEY (ID)
-);
-
-ALTER TABLE Persons AUTO_INCREMENT=100;
-
-INSERT INTO Persons (FirstName,LastName)
-VALUES ('Lars','Monsen');
-```
-
 ## Dates
 
 * DATE - format YYYY-MM-DD
@@ -1335,41 +1399,6 @@ VALUES ('Lars','Monsen');
 
 ```sql
 SELECT * FROM Orders WHERE OrderDate='2008-11-11'
-```
-
-## Views
-
-```sql
-CREATE VIEW [Current Product List] AS
-SELECT ProductID, ProductName
-FROM Products
-WHERE Discontinued = No;
-
-SELECT * FROM [Current Product List];
-
-CREATE VIEW [Products Above Average Price] AS
-SELECT ProductName, UnitPrice
-FROM Products
-WHERE UnitPrice > (SELECT AVG(UnitPrice) FROM Products);
-
-SELECT * FROM [Products Above Average Price];
-
-CREATE VIEW [Category Sales For 1997] AS
-SELECT DISTINCT CategoryName, Sum(ProductSales) AS CategorySales
-FROM [Product Sales for 1997]
-GROUP BY CategoryName;
-
-SELECT * FROM [Category Sales For 1997];
-
-SELECT * FROM [Category Sales For 1997]
-  WHERE CategoryName = 'Beverages';
-
-CREATE OR REPLACE VIEW [Current Product List] AS
-SELECT ProductID, ProductName, Category
-FROM Products
-WHERE Discontinued = No;
-
-DROP VIEW view_name;
 ```
 
 ## CASE

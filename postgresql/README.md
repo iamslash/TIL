@@ -15,15 +15,18 @@
 
 # Install
 
+* [[Docker] Docker PostgreSQL 설치 및 실행 | tistory](https://kanoos-stu.tistory.com/23)
+
+----
+
 ```console
-$ docker run -p 5432:5432 -e POSTGRES_PASSWORD=1 -e POSTGRES_USER=iamslash -e POSTGRES_DB=basicdb --name my-postgres -d postgres
+$ docker run --rm -p 5432:5432 -e POSTGRES_PASSWORD=1 -e POSTGRES_USER=iamslash -e POSTGRES_DB=basicdb --name my-postgres -d postgres
 
-$ docker exec -i -t my-postgres
+$ docker exec -it my-postgres bash
 
-$ su - postgres
-
-$ psql basicdb
-\list
+$ psql -U iamslash basicdb
+# Show databases
+\list 
 \dt
 SELECT * FROM account;
 ```
