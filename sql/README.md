@@ -20,32 +20,40 @@
   - [Index](#index)
   - [Auto Increment](#auto-increment)
   - [Views](#views)
-  - [Show something](#show-something)
+  - [Show Something](#show-something)
 - [DML](#dml)
-  - [Select statement order](#select-statement-order)
+  - [Select Statement Order](#select-statement-order)
   - [Select](#select)
   - [Select Distinct](#select-distinct)
-  - [Select Subquery](#select-subquery)
-  - [WITH AS](#with-as)
-  - [WITH RECURSIVE](#with-recursive)
-  - [Select `Year-Month`](#select-year-month)
-  - [Order By](#order-by)
-  - [Insert Into](#insert-into)
-  - [Insert On Duplicate Key Update](#insert-on-duplicate-key-update)
-  - [Null Values](#null-values)
-  - [Update](#update)
-  - [Update with Join](#update-with-join)
-  - [Delete](#delete)
-  - [Select Top](#select-top)
-  - [Min, Max](#min-max)
-  - [Count, Avg, Sum](#count-avg-sum)
-  - [Conditional Aggregate Functions](#conditional-aggregate-functions)
+  - [Where](#where)
+  - [And, Or, Not](#and-or-not)
   - [Like](#like)
   - [Wildcards](#wildcards)
   - [In](#in)
   - [Between](#between)
   - [Aliases](#aliases)
-  - [JOIN Basic](#join-basic)
+  - [Group By](#group-by)
+  - [Having](#having)
+  - [Select Subquery](#select-subquery)
+  - [Exists](#exists)
+  - [Any, All](#any-all)
+  - [Select Top](#select-top)
+  - [Select Into](#select-into)
+  - [WITH AS](#with-as)
+  - [WITH RECURSIVE](#with-recursive)
+  - [Select `Year-Month`](#select-year-month)
+  - [Order By](#order-by)
+  - [Insert](#insert)
+  - [Insert Into Select](#insert-into-select)
+  - [Insert On Duplicate Key Update](#insert-on-duplicate-key-update)
+  - [Null Values](#null-values)
+  - [Update](#update)
+  - [Update Join](#update-join)
+  - [Delete](#delete)
+  - [Min, Max](#min-max)
+  - [Count, Avg, Sum](#count-avg-sum)
+  - [Conditional Aggregate Functions](#conditional-aggregate-functions)
+  - [Join Basic](#join-basic)
   - [Join ON vs WHERE](#join-on-vs-where)
   - [Inner Join](#inner-join)
   - [Left Join](#left-join)
@@ -54,12 +62,6 @@
   - [Self Join](#self-join)
   - [Triple Join](#triple-join)
   - [Union](#union)
-  - [Group By](#group-by)
-  - [Having](#having)
-  - [Exists](#exists)
-  - [Any, All](#any-all)
-  - [Select Into](#select-into)
-  - [Insert Into Select](#insert-into-select)
   - [Null Functions](#null-functions)
   - [Comments](#comments)
   - [Dates](#dates)
@@ -71,8 +73,6 @@
   - [PERCENT\_RANK() OVER()](#percent_rank-over)
   - [SUM() OVER()](#sum-over)
   - [LEAD() OVER(), LAG() OVER()](#lead-over-lag-over)
-  - [Where](#where)
-  - [And, Or, Not](#and-or-not)
   - [Pivot](#pivot)
   - [Functions (MySQL)](#functions-mysql)
   - [Operators](#operators)
@@ -444,7 +444,7 @@ WHERE Discontinued = No;
 DROP VIEW view_name;
 ```
 
-## Show something
+## Show Something
 
 ```sql
 show full columns from games;
@@ -453,7 +453,7 @@ show index from games;
 
 # DML
 
-## Select statement order
+## Select Statement Order
 
 * [SELECT 실행 순서](https://j2yes.tistory.com/entry/select%EB%AC%B8-%EC%88%9C%EC%84%9C%EC%99%80-having%EC%A0%88)
 
@@ -490,6 +490,251 @@ SELECT COUNT(DISTINCT city) FROM games;
 SELECT COUNT(*) AS DistinctCountries
   FROM (SELECT DISTINCT city FROM games);
 SELECT COUNT(DISTINCT city city) FROM games;
+```
+
+## Where
+
+```sql
+SELECT * 
+  FROM Customers
+ WHERE Country='Mexico';
+
+SELECT * 
+  FROM Customers
+ WHERE CustomerID=1;
+```
+
+| Operator |                   Description                    |
+| :------: | :----------------------------------------------: |
+|    =     |                      Equal                       |
+|    <>    |                    Not Equal                     |
+|    >     |                   Greater than                   |
+|    <     |                    Less than                     |
+|    >=    |              Greater than or equal               |
+|    <=    |                Less than or equal                |
+| BETWEEN  |            Between an inclusive range            |
+|   LIKE   |               Search for a pattern               |
+|    IN    | To specify multiple possible values for a column |
+
+## And, Or, Not
+
+```sql
+SELECT * 
+  FROM Customers
+ WHERE Country='Germany' AND 
+       City='Berlin';
+
+SELECT * 
+  FROM Customers
+ WHERE City='Berlin' OR 
+       City='München';
+
+SELECT * 
+  FROM Customers
+ WHERE NOT Country='Germany';
+
+SELECT * 
+  FROM Customers
+ WHERE Country='Germany' AND 
+       (City='Berlin' OR City='München');
+
+SELECT * 
+  FROM Customers
+ WHERE NOT Country='Germany' AND 
+       NOT Country='USA';
+```
+
+
+## Like
+
+* Mysql
+  * `%` - The percent sign represents zero, one, or multiple characters
+  * `_` - The underscore represents a single character
+
+
+```sql
+SELECT * 
+  FROM Customers
+ WHERE CustomerName LIKE 'a%';
+
+SELECT * 
+  FROM Customers
+ WHERE CustomerName LIKE '%a';
+
+SELECT * 
+  FROM Customers
+ WHERE CustomerName LIKE '%or%';
+
+SELECT * 
+  FROM Customers
+ WHERE CustomerName LIKE '_r%';
+
+SELECT * 
+  FROM Customers
+ WHERE CustomerName LIKE 'a_%_%';
+
+SELECT * 
+  FROM Customers
+ WHERE ContactName LIKE 'a%o';
+
+SELECT * 
+  FROM Customers
+ WHERE CustomerName NOT LIKE 'a%';
+```
+
+## Wildcards
+
+* Ms Access, Sql Server
+  * [charlist] - Defines sets and ranges of characters to match
+  * [^charlist] or [!charlist] - Defines sets and ranges of characters NOT to match
+
+```sql
+SELECT * 
+  FROM Customers
+ WHERE City LIKE '[bsp]%';
+
+SELECT * 
+  FROM Customers
+  WHERE City LIKE '[a-c]%';
+
+SELECT * 
+  FROM Customers
+ WHERE City LIKE '[!bsp]%';
+
+SELECT * 
+  FROM Customers
+ WHERE City NOT LIKE '[bsp]%';
+```
+
+## In
+
+```sql
+SELECT * 
+  FROM Customers
+ WHERE Country IN ('Germany', 'France', 'UK');
+
+SELECT * 
+  FROM Customers
+ WHERE Country NOT IN ('Germany', 'France', 'UK');
+
+SELECT * 
+  FROM Customers
+ WHERE Country IN (SELECT Country FROM Suppliers);
+```
+
+## Between
+
+```sql
+SELECT * 
+  FROM Products
+ WHERE Price BETWEEN 10 AND 20;
+
+SELECT * 
+  FROM Products
+ WHERE Price NOT BETWEEN 10 AND 20;
+
+SELECT * 
+  FROM Products
+ WHERE (Price BETWEEN 10 AND 20) AND 
+       NOT CategoryID IN (1,2,3);
+  SELECT * 
+    FROM Products
+   WHERE ProductName BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'  
+ORDER BY ProductName;
+
+  SELECT * 
+    FROM Products
+   WHERE ProductName NOT BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'
+ORDER BY ProductName;  
+
+  SELECT * 
+    FROM Orders
+   WHERE OrderDate BETWEEN #07/04/1996# AND #07/09/1996#;
+```
+
+## Aliases
+
+```sql
+SELECT CustomerID As ID, 
+       CustomerName AS Customer
+  FROM Customers;
+
+SELECT CustomerName AS Customer, 
+       ContactName AS [Contact Person]
+  FROM Customers;
+
+SELECT CustomerName, 
+       Address + ', ' + PostalCode + ' ' + City + ', ' + Country AS Address
+  FROM Customers;
+
+SELECT CustomerName, 
+       CONCAT(Address,', ',PostalCode,', ',City,', ',Country) AS Address
+  FROM Customers;
+
+SELECT o.OrderID, 
+       o.OrderDate, 
+       c.CustomerName
+  FROM Customers AS c, 
+       Orders AS o
+ WHERE c.CustomerName="Around the Horn" AND 
+       c.CustomerID=o.CustomerID;
+
+SELECT Orders.OrderID, 
+       Orders.OrderDate, 
+       Customers.CustomerName
+  FROM Customers, Orders
+ WHERE Customers.CustomerName="Around the Horn" AND Customers.CustomerID=Orders.CustomerID;
+```
+
+## Group By
+
+```sql
+  SELECT COUNT(CustomerID), Country
+    FROM Customers
+GROUP BY Country;
+
+  SELECT COUNT(CustomerID), Country
+    FROM Customers
+GROUP BY Country
+ORDER BY COUNT(CustomerID) DESC;
+
+   SELECT Shippers.ShipperName, COUNT(Orders.OrderID) AS NumberOfOrders FROM Orders
+LEFT JOIN Shippers 
+       ON Orders.ShipperID = Shippers.ShipperID
+ GROUP BY ShipperName;
+```
+
+## Having
+
+* Having 다음은 aggregate function 만 사용한다. aggregate function 에 condition 을 삽입할 수도 있다. [Conditional Aggregate Functions](#conditional-aggregate-functions) 참고.
+* The HAVING clause was added to SQL because the WHERE keyword could
+  not be used with aggregate functions.
+
+```sql
+SELECT COUNT(CustomerID), Country
+  FROM Customers
+  GROUP BY Country
+  HAVING COUNT(CustomerID) > 5;
+SELECT COUNT(CustomerID), Country
+  FROM Customers
+  GROUP BY Country
+  HAVING COUNT(CustomerID) > 5;  
+SELECT COUNT(CustomerID), Country
+  FROM Customers
+  GROUP BY Country
+  HAVING COUNT(CustomerID) > 5
+  ORDER BY COUNT(CustomerID) DESC;
+SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+  FROM (Orders
+  INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID)
+  GROUP BY LastName
+  HAVING COUNT(Orders.OrderID) > 10;
+SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
+  FROM Orders
+  INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
+  WHERE LastName = 'Davolio' OR LastName = 'Fuller'
+  GROUP BY LastName
+  HAVING COUNT(Orders.OrderID) > 25;
 ```
 
 ## Select Subquery
@@ -583,6 +828,97 @@ HAVING
   )
 ```
 
+## Exists
+
+```sql
+SELECT SupplierName
+  FROM Suppliers
+ WHERE EXISTS (SELECT ProductName FROM Products WHERE SupplierId = Suppliers.supplierId AND Price < 20);
+
+SELECT SupplierName
+  FROM Suppliers
+ WHERE EXISTS (SELECT ProductName FROM Products WHERE SupplierId = Suppliers.supplierId AND Price = 22);
+```
+
+## Any, All
+
+```sql
+SELECT ProductName
+  FROM Products
+ WHERE ProductID = ANY (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
+
+SELECT ProductName
+  FROM Products
+ WHERE ProductID = ANY (SELECT ProductID FROM OrderDetails WHERE Quantity > 99);
+
+SELECT ProductName
+  FROM Products
+ WHERE ProductID = ALL (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
+```
+
+## Select Top
+
+```sql
+SELECT TOP 3 * 
+  FROM Customers;
+
+SELECT * 
+  FROM Customers
+ LIMIT 3;
+
+SELECT * 
+  FROM Customers
+ WHERE ROWNUM <= 3;
+
+SELECT TOP 50 PERCENT * 
+  FROM Customers;
+
+SELECT TOP 3 * 
+  FROM Customers
+ WHERE Country='Germany';
+
+SELECT * 
+  FROM Customers
+ WHERE Country='Germany'
+ LIMIT 3;
+
+SELECT * 
+  FROM Customers
+ WHERE Country='Germany' AND 
+       ROWNUM <= 3;
+```
+
+## Select Into
+
+```sql
+SELECT * 
+  INTO CustomersBackup2017
+  FROM Customers;
+
+SELECT * 
+  INTO CustomersBackup2017 IN 'Backup.mdb'
+  FROM Customers;
+
+SELECT CustomerName, ContactName 
+  INTO CustomersBackup2017
+  FROM Customers;
+
+SELECT * 
+  INTO CustomersGermany
+  FROM Customers
+  WHERE Country = 'Germany';
+
+SELECT Customers.CustomerName, Orders.OrderID
+  INTO CustomersOrderBackup2017
+  FROM Customers
+  LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID;
+
+SELECT * 
+  INTO newtable
+  FROM oldtable
+  WHERE 1 = 0;
+```
+
 ## WITH AS
 
 subquery 를 특정 table 에 할당한다. 이후 여러군데서 그 table 을 이용할 수 있다.
@@ -674,13 +1010,31 @@ SELECT * FROM Customers
   ORDER BY Country ASC, CustomerName DESC;
 ```
 
-## Insert Into
+## Insert
 
 ```sql
 INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
   VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
 INSERT INTO Customers (CustomerName, City, Country)
   VALUES ('Cardinal', 'Stavanger', 'Norway');
+```
+
+## Insert Into Select
+
+```sql
+INSERT INTO Customers (CustomerName, City, Country)
+SELECT SupplierName, 
+       City, 
+       Country 
+  FROM Suppliers;
+
+INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
+SELECT SupplierName, ContactName, Address, City, PostalCode, Country FROM Suppliers;
+
+INSERT INTO Customers (CustomerName, City, Country)
+SELECT SupplierName, City, Country 
+  FROM Suppliers
+ WHERE Country='Germany';
 ```
 
 ## Insert On Duplicate Key Update
@@ -722,7 +1076,7 @@ UPDATE Customers
   SET ContactName='Juan';
 ```
 
-## Update with Join
+## Update Join
 
 * [Update with Join](http://www.gurubee.net/article/79308)
 
@@ -777,24 +1131,6 @@ DELETE FROM Customers
   WHERE CustomerName='Alfreds Futterkiste';
 DELETE FROM Customers;
 DELETE * FROM Customers;
-```
-
-## Select Top
-
-```sql
-SELECT TOP 3 * FROM Customers;
-SELECT * FROM Customers
-  LIMIT 3;
-SELECT * FROM Customers
-  WHERE ROWNUM <= 3;
-SELECT TOP 50 PERCENT * FROM Customers;
-SELECT TOP 3 * FROM Customers
-  WHERE Country='Germany';
-SELECT * FROM Customers
-  WHERE Country='Germany'
-  LIMIT 3;
-SELECT * FROM Customers
-  WHERE Country='Germany' AND ROWNUM <= 3;
 ```
 
 ## Min, Max
@@ -896,98 +1232,7 @@ ORDER BY points DESC,
          team_name ASC
 ```
 
-## Like
-
-* Mysql
-  * % - The percent sign represents zero, one, or multiple characters
-  * _ - The underscore represents a single character
-
-
-```sql
-SELECT * FROM Customers
-  WHERE CustomerName LIKE 'a%';
-SELECT * FROM Customers
-  WHERE CustomerName LIKE '%a';
-SELECT * FROM Customers
-  WHERE CustomerName LIKE '%or%';
-SELECT * FROM Customers
-  WHERE CustomerName LIKE '_r%';
-SELECT * FROM Customers
-  WHERE CustomerName LIKE 'a_%_%';
-SELECT * FROM Customers
-  WHERE ContactName LIKE 'a%o';
-SELECT * FROM Customers
-  WHERE CustomerName NOT LIKE 'a%';
-```
-
-## Wildcards
-
-* Ms Access, Sql Server
-  * [charlist] - Defines sets and ranges of characters to match
-  * [^charlist] or [!charlist] - Defines sets and ranges of characters NOT to match
-
-```sql
-SELECT * FROM Customers
-  WHERE City LIKE '[bsp]%';
-SELECT * FROM Customers
-  WHERE City LIKE '[a-c]%';
-SELECT * FROM Customers
-  WHERE City LIKE '[!bsp]%';
-SELECT * FROM Customers
-  WHERE City NOT LIKE '[bsp]%';
-```
-
-## In
-
-```sql
-SELECT * FROM Customers
-  WHERE Country IN ('Germany', 'France', 'UK');
-SELECT * FROM Customers
-  WHERE Country NOT IN ('Germany', 'France', 'UK');
-SELECT * FROM Customers
-  WHERE Country IN (SELECT Country FROM Suppliers);
-```
-
-## Between
-
-```sql
-SELECT * FROM Products
-  WHERE Price BETWEEN 10 AND 20;
-SELECT * FROM Products
-  WHERE Price NOT BETWEEN 10 AND 20;
-SELECT * FROM Products
-  WHERE (Price BETWEEN 10 AND 20)
-  AND NOT CategoryID IN (1,2,3);
-SELECT * FROM Products
-  WHERE ProductName BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'  
-  ORDER BY ProductName;
-SELECT * FROM Products
-  WHERE ProductName NOT BETWEEN 'Carnarvon Tigers' AND 'Mozzarella di Giovanni'
-  ORDER BY ProductName;  
-SELECT * FROM Orders
-  WHERE OrderDate BETWEEN #07/04/1996# AND #07/09/1996#;
-```
-
-## Aliases
-
-```sql
-SELECT CustomerID As ID, CustomerName AS Customer
-  FROM Customers;
-SELECT CustomerName AS Customer, ContactName AS [Contact Person]
-  FROM Customers;
-SELECT CustomerName, Address + ', ' + PostalCode + ' ' + City + ', ' + Country AS Address
-  FROM Customers;
-SELECT CustomerName, CONCAT(Address,', ',PostalCode,', ',City,', ',Country) AS Address
-  FROM Customers;
-SELECT o.OrderID, o.OrderDate, c.CustomerName
-  FROM Customers AS c, Orders AS o
-  WHERE c.CustomerName="Around the Horn" AND c.CustomerID=o.CustomerID;
-SELECT Orders.OrderID, Orders.OrderDate, Customers.CustomerName
-  FROM Customers, Orders
-  WHERE Customers.CustomerName="Around the Horn" AND Customers.CustomerID=Orders.CustomerID;
-```
-
-## JOIN Basic
+## Join Basic
 
 ```sql
 SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate
@@ -1240,122 +1485,19 @@ GROUP BY employee_id
   HAVING COUNT(employee_id) = 1
 ```
 
-## Group By
-
-```sql
-SELECT COUNT(CustomerID), Country
-  FROM Customers
-  GROUP BY Country;
-SELECT COUNT(CustomerID), Country
-  FROM Customers
-  GROUP BY Country
-  ORDER BY COUNT(CustomerID) DESC;
-SELECT Shippers.ShipperName, COUNT(Orders.OrderID) AS NumberOfOrders FROM Orders
-  LEFT JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID
-  GROUP BY ShipperName;
-```
-
-## Having
-
-* Having 다음은 aggregate function 만 사용한다. aggregate function 에 condition 을 삽입할 수도 있다. [Conditional Aggregate Functions](#conditional-aggregate-functions) 참고.
-* The HAVING clause was added to SQL because the WHERE keyword could
-  not be used with aggregate functions.
-
-```sql
-SELECT COUNT(CustomerID), Country
-  FROM Customers
-  GROUP BY Country
-  HAVING COUNT(CustomerID) > 5;
-SELECT COUNT(CustomerID), Country
-  FROM Customers
-  GROUP BY Country
-  HAVING COUNT(CustomerID) > 5;  
-SELECT COUNT(CustomerID), Country
-  FROM Customers
-  GROUP BY Country
-  HAVING COUNT(CustomerID) > 5
-  ORDER BY COUNT(CustomerID) DESC;
-SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
-  FROM (Orders
-  INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID)
-  GROUP BY LastName
-  HAVING COUNT(Orders.OrderID) > 10;
-SELECT Employees.LastName, COUNT(Orders.OrderID) AS NumberOfOrders
-  FROM Orders
-  INNER JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
-  WHERE LastName = 'Davolio' OR LastName = 'Fuller'
-  GROUP BY LastName
-  HAVING COUNT(Orders.OrderID) > 25;
-```
-
-## Exists
-
-```sql
-SELECT SupplierName
-  FROM Suppliers
-  WHERE EXISTS (SELECT ProductName FROM Products WHERE SupplierId = Suppliers.supplierId AND Price < 20);
-SELECT SupplierName
-  FROM Suppliers
-  WHERE EXISTS (SELECT ProductName FROM Products WHERE SupplierId = Suppliers.supplierId AND Price = 22);
-```
-
-## Any, All
-
-```sql
-SELECT ProductName
-  FROM Products
-  WHERE ProductID = ANY (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
-SELECT ProductName
-  FROM Products
-  WHERE ProductID = ANY (SELECT ProductID FROM OrderDetails WHERE Quantity > 99);
-SELECT ProductName
-  FROM Products
-  WHERE ProductID = ALL (SELECT ProductID FROM OrderDetails WHERE Quantity = 10);
-```
-
-## Select Into
-
-```sql
-SELECT * INTO CustomersBackup2017
-  FROM Customers;
-SELECT * INTO CustomersBackup2017 IN 'Backup.mdb'
-  FROM Customers;
-SELECT CustomerName, ContactName INTO CustomersBackup2017
-  FROM Customers;
-SELECT * INTO CustomersGermany
-  FROM Customers
-  WHERE Country = 'Germany';
-SELECT Customers.CustomerName, Orders.OrderID
-  INTO CustomersOrderBackup2017
-  FROM Customers
-  LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID;
-SELECT * INTO newtable
-  FROM oldtable
-  WHERE 1 = 0;
-```
-
-## Insert Into Select
-
-```sql
-INSERT INTO Customers (CustomerName, City, Country)
-  SELECT SupplierName, City, Country FROM Suppliers;
-INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
-  SELECT SupplierName, ContactName, Address, City, PostalCode, Country FROM Suppliers;
-INSERT INTO Customers (CustomerName, City, Country)
-  SELECT SupplierName, City, Country FROM Suppliers
-  WHERE Country='Germany';
-```
-
 ## Null Functions
 
 * [[DB] MySQL NULL 처리(IFNULL, CASE, COALESCE)](https://velog.io/@gillog/DB-MySQL-NULL-%EC%B2%98%EB%A6%ACIFNULL-CASE-COALESCE)
 
 ```sql
 -- Return second, first is null
-SELECT ProductName, UnitPrice * (UnitsInStock + IFNULL(UnitsOnOrder, 0))
+SELECT ProductName, 
+       UnitPrice * (UnitsInStock + IFNULL(UnitsOnOrder, 0))
   FROM Products
--- Return first not null
-SELECT ProductName, UnitPrice * (UnitsInStock + COALESCE(UnitsOnOrder, 0))
+
+-- Return first, not null
+SELECT ProductName, 
+       UnitPrice * (UnitsInStock + COALESCE(UnitsOnOrder, 0))
   FROM Products
 ```
 
@@ -1699,42 +1841,6 @@ SELECT user_id,
 
 * [UsersWithTwoPurchasesWithinSevenDays | learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode3/UsersWithTwoPurchasesWithinSevenDays/README.md)
   * `LAG() OVER()`
-
-## Where
-
-```sql
-SELECT * FROM Customers
-  WHERE Country='Mexico';
-SELECT * FROM Customers
-  WHERE CustomerID=1;
-```
-
-| Operator |                   Description                    |
-| :------: | :----------------------------------------------: |
-|    =     |                      Equal                       |
-|    <>    |                    Not Equal                     |
-|    >     |                   Greater than                   |
-|    <     |                    Less than                     |
-|    >=    |              Greater than or equal               |
-|    <=    |                Less than or equal                |
-| BETWEEN  |            Between an inclusive range            |
-|   LIKE   |               Search for a pattern               |
-|    IN    | To specify multiple possible values for a column |
-
-## And, Or, Not
-
-```sql
-SELECT * FROM Customers
-  WHERE Country='Germany' AND City='Berlin';
-SELECT * FROM Customers
-  WHERE City='Berlin' OR City='München';
-SELECT * FROM Customers
-  WHERE NOT Country='Germany';
-SELECT * FROM Customers
-  WHERE Country='Germany' AND (City='Berlin' OR City='München');
-SELECT * FROM Customers
-  WHERE NOT Country='Germany' AND NOT Country='USA';
-```
 
 ## Pivot
 
