@@ -75,11 +75,20 @@
   - [LEAD() OVER(), LAG() OVER()](#lead-over-lag-over)
   - [Pivot](#pivot)
   - [Functions (MySQL)](#functions-mysql)
+    - [String](#string)
+    - [Numeric](#numeric)
+    - [Date](#date)
+    - [Advanced](#advanced)
   - [Operators](#operators)
+    - [Arithmetic](#arithmetic)
+    - [Bitwise](#bitwise)
+    - [Comparison](#comparison)
+    - [Compound](#compound)
+    - [Logical](#logical)
   - [Data Types (MySQL)](#data-types-mysql)
     - [Text](#text)
     - [Number](#number)
-    - [Date](#date)
+    - [Date](#date-1)
 - [Problems](#problems)
 - [Quiz](#quiz)
 
@@ -1490,15 +1499,34 @@ GROUP BY employee_id
 * [[DB] MySQL NULL 처리(IFNULL, CASE, COALESCE)](https://velog.io/@gillog/DB-MySQL-NULL-%EC%B2%98%EB%A6%ACIFNULL-CASE-COALESCE)
 
 ```sql
--- Return second, first is null
+-- Return second, when first is null.
 SELECT ProductName, 
        UnitPrice * (UnitsInStock + IFNULL(UnitsOnOrder, 0))
   FROM Products
 
--- Return first, not null
+-- Return first not null in a list.
 SELECT ProductName, 
        UnitPrice * (UnitsInStock + COALESCE(UnitsOnOrder, 0))
   FROM Products
+
+> SELECT IFNULL(1, 0), IFNULL(NULL, 0);
++--------------+-----------------+
+| IFNULL(1, 0) | IFNULL(NULL, 0) |
++--------------+-----------------+
+|            1 |               0 |
++--------------+-----------------+
+> SELECT COALESCE(1, 0), COALESCE(NULL, 0);
++----------------+-------------------+
+| COALESCE(1, 0) | COALESCE(NULL, 0) |
++----------------+-------------------+
+|              1 |                 0 |
++----------------+-------------------+
+> SELECT COALESCE(NULL, NULL, 1, NULL);
++-------------------------------+
+| COALESCE(NULL, NULL, 1, NULL) |
++-------------------------------+
+|                             1 |
++-------------------------------+
 ```
 
 ## Comments
@@ -1610,7 +1638,7 @@ SELECT @var2 := 2
 
 ----
 
-특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 줄번호를 부여한다. OVER() 에 PARTITION BY, ORDER BY 를 사용할 수 있다.
+특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 줄번호를 부여한다. `OVER()` 에 `PARTITION BY, ORDER BY` 를 사용할 수 있다.
 
 ```sql
 
@@ -1651,7 +1679,7 @@ mysql> SELECT
 
 -----
 
-특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 순위를 읽어온다. 순위에 공백이 있음을 주의하자. OVER() 에 PARTITION BY, ORDER BY 를 사용할 수 있다.
+특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 순위를 읽어온다. 순위에 공백이 있음을 주의하자. `OVER()` 에 `PARTITION BY, ORDER BY` 를 사용할 수 있다.
 
 ```sql
 SELECT val,
@@ -1676,7 +1704,7 @@ val     my_rank
 ----
 
 특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 순위를 읽어온다.
-`RANK()` 와 달리 순위의 공백이 없다. OVER() 에 PARTITION BY, ORDER BY 를 사용할 수 있다.
+`RANK()` 와 달리 순위의 공백이 없다. `OVER()` 에 `PARTITION BY, ORDER BY` 를 사용할 수 있다.
 
 ```sql
 SELECT val,
@@ -1848,7 +1876,7 @@ SELECT user_id,
 > * [Case - PIVOT](https://velog.io/@ifyouseeksoomi/Mysql-Case-PIVOT)
 > * [MySQL Pivot: rotating rows to columns](https://linuxhint.com/mysql_pivot/)
 
-데이터의 row 를 colum 으로 전환하는 것을 pivot 이라고 한다.
+특정 column 값들을 새로운 column 으로 전환하는 것을 pivot 이라고 한다.
 
 예를 들어 다음과 같이 Products table 의 데이터를 살펴보자. store column 의 값들에 해당하는 row 를 새로운 table 의 column 으로 회전해 보자.
 
@@ -1892,7 +1920,7 @@ After pivot:
 
 ## Functions (MySQL)
 
-* String
+### String
 
 ```
 ASCII	Returns the number code that represents the specific character
@@ -2077,7 +2105,7 @@ SELECT UPPER('Hej');
 -- 'HEJ'
 ```
 
-* Numeric
+### Numeric
 
 ```
 ABS	Returns the absolute value of a number
@@ -2339,7 +2367,7 @@ mysql> SELECT TRUNCATE(10.28*100,0);
        -> 1028
 ```
 
-* Date 
+### Date 
 
 ```
 ADDDATE	Returns a date after a certain time/date interval has been added
@@ -2767,7 +2795,7 @@ mysql> SELECT YEARWEEK('1987-01-01');
         -> 198652
 ```
 
-* Advanced
+### Advanced
 
 ```
 BIN	Converts a decimal number to a binary number
@@ -2922,7 +2950,7 @@ mysql> SELECT VERSION();
 
 ## Operators
 
-* Arithmetic
+### Arithmetic
 
 | Operator | Description |
 | :------: | :---------: |
@@ -2932,15 +2960,15 @@ mysql> SELECT VERSION();
 |    /     |     Div     |
 |    %     |   Modulo    |
 
-* Bitwise
+### Bitwise
 
 | Operator | Description |
 | :------: | :---------: |
 |    &     |     AND     |
-|          |     OR      |
+|    \|    |      OR     |
 |    ^     |     XOR     |
 
-* Comparison
+### Comparison
 
 | Operator |      Description      |
 | :------: | :-------------------: |
@@ -2951,7 +2979,7 @@ mysql> SELECT VERSION();
 |    >=    | Greater than or equal |
 |    <=    |  Less than or equal   |
 
-* Compound
+### Compound
 
 | Operator |  Description   |
 | :------: | :------------: |
@@ -2961,10 +2989,10 @@ mysql> SELECT VERSION();
 |    /=    |   div equal    |
 |    %=    |  modulo equal  |
 |    &=    |   AND equal    |
-|   ^-=    |   XOR equal    |
-|          |    OR equal    |
+|    ^=    |   XOR equal    |
+|   \|=    |    OR equal    |
 
-* Logical
+### Logical
 
 | Operator |                         Description                          |
 | :------: | :----------------------------------------------------------: |
@@ -3046,4 +3074,4 @@ mysql> SELECT VERSION();
 * Joins
 * Denormalization
 * Entity-Relationship Diagram
-* Design Grade Database| | | |
+* Design Grade Database
