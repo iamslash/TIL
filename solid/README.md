@@ -8,6 +8,7 @@
 - [DIP](#dip)
 - [IoC](#ioc)
 - [IoC vs DIP vs DI](#ioc-vs-dip-vs-di)
+- [Spring Framework](#spring-framework)
 
 ----
 
@@ -39,10 +40,27 @@ A class should have only **one reason** to change. by Robert C. Martin.
 
 Objects or entitles should be open for **extension**, but closed for **modification**. Bertrand Meyer.
 
-Fruit 라는 interface 를 만들고 Banana, Orange, Applce 과 같이 class 들을 만들어
+Fruit 라는 interface 를 만들고 Banana, Orange, Apple 과 같이 class 들을 만들어
 implement 하자. Client 는 Fruit 를 바라보고 구현되어 있다. 이후 Kiwi class 를
 만들어 Fruit 를 implement 하자. **기능**이 확장되었다. 그러나 Client 의 code 는
-**수정**할 필요가 없다.  
+**수정**할 필요가 없다. 한편으로는 `Kiwi` class 를 사용하는 code 를 Client 에서
+변경해야 되지 않는가? OCP 는 지켜지기 힘들다.
+
+다음의 경우를 살펴보자. `MemoryFruitRepository` 대신 `JdbcFruitRepository` 을
+사용하려면 Client code 를 변경해야 한다. OCP 가 지켜지지 않고 있다.
+
+```java
+public class Fruit {
+    private FruitRepository fruitRepository = new MemoryFruitRepository();    
+}
+public class FruitService {
+    // private FruitRepository fruitRepository = new MemoryFruitRepository();
+    private FruitRepository fruitRepository = new JdbcFruitRepository();
+}
+```
+
+[Spring](/spring/README.md) 는 DI, DI Container 로 OCP
+를 지킬 수 있다. `JdbcFruitRepository` 를 Bean 으로 만들고 Client code 에서는 `FruitRepository` 로 주입받는다.
 
 # LSP
 
@@ -62,13 +80,35 @@ Interface 를 사용하면 Dependency 를 Inversion 할 수 있다. 예를 들�
 
 ![](img/solid_dip.png)
 
-Application 은 ServiceFactory 라는 Interface 의 makeSvc 를 호출하여 ConcreteImpl 을 생성하고 Service Interface type 으로 소유한다. concreteImple 이라는 conrete class 에 변경이 생겨도 Application 은 수정할 필요가 없다.
+Application 은 ServiceFactory 라는 Interface 의 makeSvc 를 호출하여 ConcreteImpl
+을 생성하고 Service Interface type 으로 소유한다. concreteImple 이라는 conrete
+class 에 변경이 생겨도 Application 은 수정할 필요가 없다.
 
-만약 ServiceFactory 가 없었다고 해보자. Application 은 ConcretImpl 을 직접 생성해야 한다. 즉, ServiceFactory 라는 abstraction 에 의존하지 않고 ConcretImple 이라는 concret 에 의존하는 것이다.
+만약 ServiceFactory 가 없었다고 해보자. Application 은 ConcretImpl 을 직접
+생성해야 한다. 즉, ServiceFactory 라는 abstraction 에 의존하지 않고 ConcretImple
+이라는 concret 에 의존하는 것이다.
 
 ConcreteImpl 의 기능이 수정되었다면 Application 역시 수정되야할 수도 있다. 
 
-따라서 ConcretImpl 과 같은 Concrete 에 의존하지 말고 ServiceFactory 와 같은 Abstraction 에 의존하라는 얘기이다.
+따라서 ConcretImpl 과 같은 Concrete 에 의존하지 말고 ServiceFactory 와 같은
+Abstraction 에 의존하라는 얘기이다. 그러나 Client code 에서 `ServiceFactoryImpl` 를 생성하는 code 를 사용할 수 밖에 없다. DIP 는 지켜지기 힘들다.
+
+다음의 경우를 살펴보자. `MemoryFruitRepository` 대신 `JdbcFruitRepository` 을
+사용하려면 Client code 를 변경해야 한다. `JdbcFruitRepository` concrete class
+에 의존하고 있다. DIP 가 지켜지지 않고 있다.
+
+```java
+public class Fruit {
+    private FruitRepository fruitRepository = new MemoryFruitRepository();    
+}
+public class FruitService {
+    // private FruitRepository fruitRepository = new MemoryFruitRepository();
+    private FruitRepository fruitRepository = new JdbcFruitRepository();
+}
+```
+
+[Spring](/spring/README.md) 는 DI, DI Container 로 DIP
+를 지킬 수 있다. `JdbcFruitRepository` 를 Bean 으로 만들고 Client code 에서는 `FruitRepository` 로 주입받는다.
 
 # IoC
 
@@ -79,11 +119,9 @@ ConcreteImpl 의 기능이 수정되었다면 Application 역시 수정되야할
 IoC 란 코드의 흐름을 제어하는 주체가 바뀌는 것을 의미한다. 
 
 예를 들어 Library 를 사용하면 Library 를 호출하는 Host 가 코드 흐름을 제어하는
-주체이다. 그러나 
-
-Framework 를 사용하면 Host 는 Framework 에서 제공하는 Handler 들을 정의한다.
-이것은 코드 흐름을 제어하는 주체가 Host 가 아닌 Framework 임을 의미한다. 이것이
-IoC 의 예이다.
+주체이다. 그러나 Framework 를 사용하면 Host 는 Framework 에서 제공하는 Handler
+들을 정의한다. 이것은 코드 흐름을 제어하는 주체가 Host 가 아닌 Framework 임을
+의미한다. 이것이 IoC 의 예이다.
 
 # IoC vs DIP vs DI
 
@@ -92,3 +130,25 @@ IoC, DIP, DI 에 대한 의견이 많다. 다음과 같은 글을 참고해서 �
 * [IoC, DI, DIP 개념 잡기](https://vagabond95.me/posts/about-ioc-dip-di/)
 * [DIP in the Wild](https://martinfowler.com/articles/dipInTheWild.html#YouMeanDependencyInversionRight)
 * [A curry of Dependency Inversion Principle (DIP), Inversion of Control (IoC), Dependency Injection (DI) and IoC Container](https://www.codeproject.com/Articles/538536/A-curry-of-Dependency-Inversion-Principle-DIP-Inve#Dependency%20Inversion%20Principle%20(DIP))
+
+# Spring Framework
+
+Polymorphism 만으로 OCP, DIP 를 지킬 수 없다. 
+
+[Spring Framework](/spring/README.md) 는 다음의 기술로 OCP, DIP 를 가능하게 한다.
+
+* DI (Dependency Injection)
+* DI Container 
+
+```java
+public class Fruit {
+    private FruitRepository fruitRepository = new MemoryFruitRepository();    
+}
+public class FruitService {
+    // private FruitRepository fruitRepository = new MemoryFruitRepository();
+    private FruitRepository fruitRepository = new JdbcFruitRepository();
+}
+```
+
+`JdbcFruitRepository` 를 Bean 으로 만들고 Client code 에서는 `FruitRepository`
+로 주입받는다. OCP, DIP 를 지킬 수 있다???
