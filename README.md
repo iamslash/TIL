@@ -4,6 +4,7 @@
 
 # Usage
 
+- I use [Paste Image](https://marketplace.visualstudio.com/items?itemName=mushan.vscode-paste-image) vscode plugin with shortcut `Cmd Opt v` when I need to paste the image.
 - I use emacs with markdown mode. I can preview a markdown file using 'C-c C-c p'. And I can search with github search in this repository.
 - [detexify](http://detexify.kirelabs.org/classify.html)
   - 원하는 심볼을 그리면 코드를 알려준다.
@@ -14,13 +15,3 @@
 - [LaTeX math symbols](http://web.ift.uib.no/Teori/KURS/WRK/TeX/symALL.html)
 - [markdown syntax](https://dooray.com/htmls/guides/markdown_ko_KR.html)
 - [demos graph](https://www.desmos.com/)
-
-# Updating...
-
-- [systemdesign](systemdeisgn)
-- [statistics](statistics)
-- [machinelearning](machinelearning/README.md)
-- [reinforcementlearning](reinforcementlearning/README.md)
-- [datascience](datascience/README.md)
-- [cs](datascience/cs.md)
-- [os](datascience/os.md)

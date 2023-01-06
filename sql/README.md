@@ -39,7 +39,7 @@
   - [Any, All](#any-all)
   - [Select Top](#select-top)
   - [Select Into](#select-into)
-  - [WITH AS](#with-as)
+  - [WITH AS (CTE)](#with-as-cte)
   - [WITH RECURSIVE](#with-recursive)
   - [Select `Year-Month`](#select-year-month)
   - [Order By](#order-by)
@@ -166,13 +166,13 @@ SELECT * FROM games;
 
 # SQL Types
 
-* DML : Data Manipulation Language
+* **DML** : Data Manipulation Language
   * SELECT, INSERT, UPDATE, DELETE 
-* DDL : Data Definition Language
+* **DDL** : Data Definition Language
   * CREATE, ALTER, DROP, RENAME, TRUNCATE 
-* DCL : Data Control Language
+* **DCL** : Data Control Language
   * GRANT, REVOKE 
-* TCL : Transaction Control Language
+* **TCL** : Transaction Control Language
   * COMMIT, ROLLBACK, SAVEPOINT 
 
 # DDL
@@ -899,36 +899,21 @@ SELECT *
 
 ## Select Into
 
+`SELECT` 결과를 Table 에 저장할 수 있다.
+
 ```sql
-SELECT * 
-  INTO CustomersBackup2017
-  FROM Customers;
+-- mysql
+-- mysql 은 create table ... as ... 를 사용해야 한다.
+create table games2 as (select * from games);
 
-SELECT * 
-  INTO CustomersBackup2017 IN 'Backup.mdb'
-  FROM Customers;
-
-SELECT CustomerName, ContactName 
-  INTO CustomersBackup2017
-  FROM Customers;
-
-SELECT * 
-  INTO CustomersGermany
-  FROM Customers
-  WHERE Country = 'Germany';
-
-SELECT Customers.CustomerName, Orders.OrderID
-  INTO CustomersOrderBackup2017
-  FROM Customers
-  LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID;
-
+-- ms-sql ???
 SELECT * 
   INTO newtable
   FROM oldtable
   WHERE 1 = 0;
 ```
 
-## WITH AS
+## WITH AS (CTE)
 
 subquery 를 특정 table 에 할당한다. 이후 여러군데서 그 table 을 이용할 수 있다.
 **CTE (common table expressions)** 라고도 한다.
@@ -985,7 +970,7 @@ ORDER BY member_id ASC;
 WITH block 안의 query 를 재귀적으로 적용할 수 있다. 예를 들어 seed 1 을 이용하여 `[1..maxNum)` 영역의 번호가 저장된 table 을 생성할 수 있다. [Find the Missing IDs @ leetcode](https://leetcode.com/problems/find-the-missing-ids/)
 
 ```sql
-WITH recursive t as (
+WITH RECURSIVE t as (
     SELECT 1 AS i
      UNION ALL
     SELECT i + 1
@@ -1003,32 +988,46 @@ LEFT JOIN customers c
 
 ```sql
 SELECT LEFT(order_date, 7) AS month 
-FROM Orders;
+  FROM Orders;
 ```
 
 ## Order By
 
 ```sql
-SELECT * FROM Customers
-  ORDER BY Country;
-SELECT * FROM Customers
-  ORDER BY Country DESC;
-SELECT * FROM Customers
-  ORDER BY Country, CustomerName;
-SELECT * FROM Customers
-  ORDER BY Country ASC, CustomerName DESC;
+  SELECT * 
+    FROM Customers
+ORDER BY Country;
+
+  SELECT * 
+    FROM Customers
+ORDER BY Country DESC;
+
+  SELECT * 
+    FROM Customers
+ORDER BY Country, 
+         CustomerName;
+
+  SELECT * 
+    FROM Customers
+ORDER BY Country ASC, 
+         CustomerName DESC;
 ```
 
 ## Insert
 
+임의의 값들을 Insert 할 수 있다.
+
 ```sql
 INSERT INTO Customers (CustomerName, ContactName, Address, City, PostalCode, Country)
-  VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
+     VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
+
 INSERT INTO Customers (CustomerName, City, Country)
-  VALUES ('Cardinal', 'Stavanger', 'Norway');
+     VALUES ('Cardinal', 'Stavanger', 'Norway');
 ```
 
 ## Insert Into Select
+
+Select 결과를 Insert 할 수 있다.
 
 ```sql
 INSERT INTO Customers (CustomerName, City, Country)
@@ -1066,23 +1065,28 @@ UPDATE t1 SET c=c+1 WHERE a=1;
 ## Null Values
 
 ```sql
-SELECT LastName, FirstName, Address FROM Persons
-  WHERE Address IS NULL;
-SELECT LastName, FirstName, Address FROM Persons
-  WHERE Address IS NOT NULL;
+SELECT LastName, FirstName, Address 
+  FROM Persons
+ WHERE Address IS NULL;
+
+SELECT LastName, FirstName, Address 
+  FROM Persons
+ WHERE Address IS NOT NULL;
 ```
 
 ## Update
 
 ```sql
-UPDATE Customers
-  SET ContactName = 'Alfred Schmidt', City= 'Frankfurt'
+ UPDATE Customers
+    SET ContactName = 'Alfred Schmidt', City= 'Frankfurt'
   WHERE CustomerID = 1;
-UPDATE Customers
-  SET ContactName='Juan'
+
+ UPDATE Customers
+    SET ContactName='Juan'
   WHERE Country='Mexico';
-UPDATE Customers
-  SET ContactName='Juan';
+
+ UPDATE Customers
+    SET ContactName='Juan';
 ```
 
 ## Update Join
@@ -1137,8 +1141,10 @@ UPDATE emp e
 
 ```sql
 DELETE FROM Customers
-  WHERE CustomerName='Alfreds Futterkiste';
+      WHERE CustomerName='Alfreds Futterkiste';
+
 DELETE FROM Customers;
+
 DELETE * FROM Customers;
 ```
 
@@ -1147,6 +1153,7 @@ DELETE * FROM Customers;
 ```sql
 SELECT MIN(Price) AS SmallestPrice
   FROM Products;
+
 SELECT MAX(Price) AS LargestPrice
   FROM Products;
 ```
@@ -1156,8 +1163,10 @@ SELECT MAX(Price) AS LargestPrice
 ```sql
 SELECT COUNT(ProductID)
   FROM Products;
+
 SELECT AVG(Price)
   FROM Products;
+
 SELECT SUM(Quantity)
   FROM OrderDetails;
 ```
@@ -1244,9 +1253,12 @@ ORDER BY points DESC,
 ## Join Basic
 
 ```sql
-SELECT Orders.OrderID, Customers.CustomerName, Orders.OrderDate
-  FROM Orders
-  INNER JOIN Customers ON Orders.CustomerID=Customers.CustomerID;
+    SELECT Orders.OrderID, 
+           Customers.CustomerName, 
+           Orders.OrderDate
+      FROM Orders
+INNER JOIN Customers 
+        ON Orders.CustomerID=Customers.CustomerID;
 ```
 
 ![](img/Visual_SQL_JOINS_V2.png)
@@ -1286,17 +1298,19 @@ SELECT * FROM Customers INNER JOIN Orders;
 - 다음은 LEFT OUTER JOIN이다. 왼쪽을 기준으로 오른쪽 데이터는 NULL이 가능하다.
 
 ```sql
-SELECT * FROM Customers 
+         SELECT * 
+           FROM Customers 
 LEFT OUTER JOIN Orders
-ON Customers.Id = Orders.CustomerId;
+             ON Customers.Id = Orders.CustomerId;
 ```
 
 - 다음은 RIGHT OUTER JOIN이다. 오른쪽을 기준으로 왼쪽 데이터는 NULL이 가능하다.
 
 ```sql
-SELECT * FROM Customers
+          SELECT * 
+            FROM Customers
 RIGHT OUTER JOIN Orders
-ON Customers.Id = Orders.CustomerId;
+              ON Customers.Id = Orders.CustomerId;
 ```
 
 ## Join ON vs WHERE
@@ -1304,57 +1318,78 @@ ON Customers.Id = Orders.CustomerId;
 - `ON` 은 `JOIN` 이 실행되기 전에 적용되고 `WHERE` 는 `JOIN` 이 실행되고 난 다음에 적용된다.
 
 ```sql
-SELECT * FROM Customers a LEFT JOIN Orders b ON (a.Id = b.Id) WHERE b.CustomerId = 1
-SELECT * FROM Customers a LEFT JOIN Orders b ON (a.Id = b.Id AND b.CustomerId = 1
+   SELECT * 
+     FROM Customers a 
+LEFT JOIN Orders b 
+       ON (a.Id = b.Id) 
+    WHERE b.CustomerId = 1
+
+   SELECT * 
+     FROM Customers a 
+LEFT JOIN Orders b 
+       ON a.Id = b.Id AND 
+          b.CustomerId = 1
 ```
 
 ## Inner Join
 
 ```sql
-SELECT Orders.OrderID, Customers.CustomerName
-  FROM Orders
-  INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID;
-SELECT Orders.OrderID, Customers.CustomerName, Shippers.ShipperName
-  FROM ((Orders
-           INNER JOIN Customers ON Orders.CustomerID = Customers.CustomerID)
-         INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID);
+      SELECT Orders.OrderID, Customers.CustomerName
+        FROM Orders
+  INNER JOIN Customers 
+          ON Orders.CustomerID = Customers.CustomerID;
+
+      SELECT Orders.OrderID, 
+             Customers.CustomerName, 
+             Shippers.ShipperName
+        FROM ((Orders
+           INNER JOIN Customers 
+                   ON Orders.CustomerID = Customers.CustomerID)
+           INNER JOIN Shippers ON Orders.ShipperID = Shippers.ShipperID);
 ```
 
 ## Left Join
 
 ```sql
-SELECT Customers.CustomerName, Orders.OrderID
-  FROM Customers
-  LEFT JOIN Orders ON Customers.CustomerID = Orders.CustomerID
-  ORDER BY Customers.CustomerName;
+   SELECT Customers.CustomerName, 
+          Orders.OrderID
+     FROM Customers
+LEFT JOIN Orders 
+       ON Customers.CustomerID = Orders.CustomerID
+ ORDER BY Customers.CustomerName;
 ```
 
 ## Right Join
 
 ```sql
-SELECT Orders.OrderID, Employees.LastName, Employees.FirstName
-  FROM Orders
-  RIGHT JOIN Employees ON Orders.EmployeeID = Employees.EmployeeID
-  ORDER BY Orders.OrderID;
+      SELECT Orders.OrderID, 
+             Employees.LastName, 
+             Employees.FirstName
+        FROM Orders
+  RIGHT JOIN Employees 
+          ON Orders.EmployeeID = Employees.EmployeeID
+    ORDER BY Orders.OrderID;
 ```
 
 ## Full Join
 
 ```sql
-SELECT Customers.CustomerName, Orders.OrderID
-  FROM Customers
-  FULL OUTER JOIN Orders ON Customers.CustomerID=Orders.CustomerID
-  ORDER BY Customers.CustomerName;
+         SELECT Customers.CustomerName, Orders.OrderID
+           FROM Customers
+FULL OUTER JOIN Orders 
+             ON Customers.CustomerID=Orders.CustomerID
+       ORDER BY Customers.CustomerName;
 ```
 
 ## Self Join
 
 ```sql
-SELECT A.CustomerName AS CustomerName1, B.CustomerName AS CustomerName2, A.City
-  FROM Customers A, Customers B
-  WHERE A.CustomerID <> B.CustomerID
-  AND A.City = B.City 
-  ORDER BY A.City;
+  SELECT A.CustomerName AS CustomerName1, 
+         B.CustomerName AS CustomerName2, A.City
+    FROM Customers A, Customers B
+   WHERE A.CustomerID <> B.CustomerID AND 
+         A.City = B.City 
+ORDER BY A.City;
 ```
 
 ## Triple Join
@@ -1499,7 +1534,7 @@ GROUP BY employee_id
 * [[DB] MySQL NULL 처리(IFNULL, CASE, COALESCE)](https://velog.io/@gillog/DB-MySQL-NULL-%EC%B2%98%EB%A6%ACIFNULL-CASE-COALESCE)
 
 ```sql
--- Return second, when first is null.
+-- Return second when first is null from two values.
 SELECT ProductName, 
        UnitPrice * (UnitsInStock + IFNULL(UnitsOnOrder, 0))
   FROM Products
@@ -1509,24 +1544,27 @@ SELECT ProductName,
        UnitPrice * (UnitsInStock + COALESCE(UnitsOnOrder, 0))
   FROM Products
 
+-- Return null when first is same with second from two values.
+SELECT NULLIF(1, 1), NULLIF(1, 0)
+
 > SELECT IFNULL(1, 0), IFNULL(NULL, 0);
 +--------------+-----------------+
 | IFNULL(1, 0) | IFNULL(NULL, 0) |
 +--------------+-----------------+
 |            1 |               0 |
 +--------------+-----------------+
-> SELECT COALESCE(1, 0), COALESCE(NULL, 0);
-+----------------+-------------------+
-| COALESCE(1, 0) | COALESCE(NULL, 0) |
-+----------------+-------------------+
-|              1 |                 0 |
-+----------------+-------------------+
 > SELECT COALESCE(NULL, NULL, 1, NULL);
 +-------------------------------+
 | COALESCE(NULL, NULL, 1, NULL) |
 +-------------------------------+
 |                             1 |
 +-------------------------------+
+> SELECT NULLIF(1, 1), NULLIF(1, 0);
++--------------+--------------+
+| NULLIF(1, 1) | NULLIF(1, 0) |
++--------------+--------------+
+|         NULL |            1 |
++--------------+--------------+
 ```
 
 ## Comments

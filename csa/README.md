@@ -23,6 +23,10 @@ computer system architecture 에 대해 정리한다.
 
 # Materials
 
+* [CPU는 어떻게 작동할까? | youtube](https://www.youtube.com/watch?v=Fg00LN30Ezg)
+  * 3D Max 로 CPU 의 구조를 만들고 해설함. 킹왕짱.
+* [GPU는 어떻게 작동할까 | youtube](https://www.youtube.com/watch?v=ZdITviTD3VM)
+  * 3D Max 로 GPU 의 구조를 만들고 해설함. 킹왕짱.
 * [혼자 공부하는 컴퓨터구조 + 운영체제 | yes24](http://www.yes24.com/product/goods/111378840)
   * [src](https://github.com/kangtegong/self-learning-cs)
   * [video](https://www.youtube.com/playlist?list=PLVsNizTWUw7FCS83JhC1vflK8OcLRG0Hl)
