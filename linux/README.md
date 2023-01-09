@@ -64,6 +64,8 @@ $ docker run -d --name systemd-ubuntu --privileged jrei/systemd-ubuntu
 $ docker exec -it systemd-ubuntu bash
 ```
 
+[Linux Command MindMap](https://xmind.app/m/WwtB/?utm_source=substack&utm_medium=email) 는 Linux Command 대부분을 MindMap 으로 표현했다. 
+
 # References
 
 * [DevOps와 SE를 위한 리눅스 커널 이야기 @ gitbooks](https://jihooyim1.gitbooks.io/linuxbasic/content/)
