@@ -14,7 +14,8 @@
 
 # Abstract
 
-database 를 만들어 보자.
+database 를 만들어 보자. [chidb](http://chi.cs.uchicago.edu/chidb/index.html),
+[sqlite @ github](https://github.com/smparkes/sqlite) 분석부터 시작해 본다.
 
 # Material
 
