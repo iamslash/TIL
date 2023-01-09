@@ -27,6 +27,7 @@ database 를 만들어 보자.
 * [cubrid @ github](https://github.com/CUBRID/cubrid)
   * 국산 opensource rdbms
 * [sqlite @ github](https://github.com/smparkes/sqlite)
+* [SQLite Internals: How The World's Most Used Database Works](https://www.compileralchemy.com/books/sqlite-internals/)
 
 # Relational Algebra
 
