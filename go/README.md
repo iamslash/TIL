@@ -2612,17 +2612,16 @@ $ go build cmd/main/main.go
 
 ## Managing Multiple go versions
 
-export GOROOT, GOPATH, PATH with specific go version. execute this script with `$ source switch_go_1.14.13.sh`.
-
-* `switch_go_1.14.13.sh`
+* [Managing Go installations](https://go.dev/doc/manage-install)
 
 ```bash
-#!/usr/bin/env bash
-
-export GOPATH=$HOME/my/gopath-1.14.13
-export GOROOT=/Users/davidsun/sdk/go1.14.13
-export PATH=$GOROOT/bin:$GOPATH/bin:$PATH
-echo "done..."
+# Install new version
+$ go install golang.org/dl/go1.19@latest
+$ go1.19 download
+$ go1.19 version
+go version go1.19 darwin/amd64
+$ go1.19 env GOROOT
+/Users/iamslash/sdk/go1.19
 ```
 
 ## Race
