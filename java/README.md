@@ -778,31 +778,40 @@ public class MainApp {
 ### SortedSet, TreeSet
 
 ```java
-   SortedSet<String> set = new TreeSet<String>();
-   set.add("perls");
-   set.add("net");
-   set.add("dot");
-   set.add("sam");
-   set.remove("sam");
-   for (String val : set) // ... Alphabetical order.
-   {
-      System.out.println(val);
-   }
+SortedSet<String> set = new TreeSet<String>();
+set.add("perls");
+set.add("net");
+set.add("dot");
+set.add("sam");
+set.remove("sam");
+for (String val : set) // ... Alphabetical order.
+{
+   System.out.println(val);
+}
 
-   SortedSet<Integer> sst = new TreeSet<Integer>();
-   sst.add(1);
-   sst.add(3);
-   sst.add(5);
-   System.out.println(set.first())  // 1
-   System.out.println(set.last())   // 5
+SortedSet<Integer> sst = new TreeSet<Integer>();
+sst.add(1);
+sst.add(3);
+sst.add(5);
+System.out.println(set.first())  // 1
+System.out.println(set.last())   // 5
 
-   TreeSet<Integer> sst = new TreeSet<Integer>();
-   // left most equal
-   Sustem.out.println(set.floor(3)) // 3
-   Sustem.out.println(set.floor(4)) // 3
-   // right most equal
-   Sustem.out.println(set.ceiling(6)) // 5
-   Sustem.out.println(set.ceiling(4)) // 5   
+TreeSet<Integer> sst = new TreeSet<Integer>();
+// the greatest element in this set 
+// less than or equal to the given element,
+Sustem.out.println(set.floor(3)) // 3
+Sustem.out.println(set.floor(4)) // 3
+// the least element in this set 
+// greater than or equal to the given element
+Sustem.out.println(set.ceiling(6)) // 5
+Sustem.out.println(set.ceiling(4)) // 5   
+
+// the greatest element in this set strictly 
+// less than the given element
+System.out.println(set.lower(3))  // 1
+// the least element in this set strictly 
+// greater than the given element
+System.out.println(set.higher(3)) // 5
 ```
 
 ### SortedMap, TreeMap
