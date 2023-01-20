@@ -5,10 +5,8 @@
 - [Install](#install)
   - [Install on osx](#install-on-osx)
   - [Deploy with docker on OSX](#deploy-with-docker-on-osx)
-  - [Deploy with docker on Win32](#deploy-with-docker-on-win32)
-  - [Deploy Prometheus & Grafana docker-compose stack with docker-swarm](#deploy-prometheus--grafana-docker-compose-stack-with-docker-swarm)
+  - [Deploy Prometheus, Grafana, NodeExporter with docker-compose](#deploy-prometheus-grafana-nodeexporter-with-docker-compose)
   - [Deploy GitHub Monitoring Stack with docker-compose](#deploy-github-monitoring-stack-with-docker-compose)
-- [Basic](#basic)
 - [PromQL](#promql)
   - [Data Model](#data-model)
   - [Time Series](#time-series)
@@ -25,7 +23,7 @@
       - [Arithmetic binary operators](#arithmetic-binary-operators)
       - [Comparison binary operators](#comparison-binary-operators)
       - [Logical/set binary operators](#logicalset-binary-operators)
-    - [Vector matching (join)](#vector-matching-join)
+    - [Vector Matching (join)](#vector-matching-join)
     - [Aggregation operators](#aggregation-operators)
     - [Binary operator precedence](#binary-operator-precedence)
   - [Functions](#functions)
@@ -42,7 +40,6 @@
 - [Metric Types](#metric-types)
 - [How to Develop Prometheus Client](#how-to-develop-prometheus-client)
   - [Simple Instrumentation](#simple-instrumentation)
-  - [Metric types](#metric-types-1)
 - [Advanced](#advanced)
   - [How to reload configuration](#how-to-reload-configuration)
   - [Prometheus High Availability](#prometheus-high-availability)
@@ -92,57 +89,18 @@ $ docker run \
     prom/prometheus
 ```
 
-## Deploy with docker on Win32
+## Deploy Prometheus, Grafana, NodeExporter with docker-compose
 
-```console
-$ code D:\tmp\prometheus\prometheus.yml
-
-$ docker run --rm --name my-prometheus -p 9090:9090 -v D:\tmp\prometheus\prometheus.yml:/etc/prometheus/prometheus.yml prom/prometheus
-
-# Open Browser http://localhost:9090
-```
-
-* `D:\tmp\prometheus\prometheus.yml`
-
-```yml
-global:
-  scrape_interval:     15s # By default, scrape targets every 15 seconds.
-
-  # Attach these labels to any time series or alerts when communicating with
-  # external systems (federation, remote storage, Alertmanager).
-  external_labels:
-    monitor: 'codelab-monitor'
-
-# A scrape configuration containing exactly one endpoint to scrape:
-# Here it's Prometheus itself.
-scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: 'prometheus'
-
-    # Override the global default and scrape targets from this job every 5 seconds.
-    scrape_interval: 5s
-
-    static_configs:
-      - targets: ['localhost:9090']
-      
-```
-
-## Deploy Prometheus & Grafana docker-compose stack with docker-swarm
-
-* [A Prometheus & Grafana docker-compose stack](https://github.com/vegasbrianc/prometheus)
-  * Prometheus, Grafana
-  
-----
+* [Prometheus-Grafana | github](https://github.com/Einsteinish/Docker-Compose-Prometheus-and-Grafana)
 
 ```bash
 $ cd my/docker/
-$ git clone git@github.com:vegasbrianc/prometheus.git
-$ HOSTNAME=$(hostname) docker stack deploy -c docker-stack.yml prom
-# open Grafana dashboard http://192.168.10.1:3000
-# admin / foobar (/grafana/config.monitoring)
-$ docker stack ps prom
-$ docker service ls
-$ docker service logs prom_<service_name>
+$ git clone https://github.com/Einsteinish/Docker-Compose-Prometheus-and-Grafana.git
+$ cd Docker-Compose-Prometheus-and-Grafana
+$ docker-compose up -d
+# Open browser http://localhost:3000 with admin / admin
+
+$ docker-compose down
 ```
 
 ## Deploy GitHub Monitoring Stack with docker-compose
@@ -163,116 +121,6 @@ $ docker-compose up -d
 # Open browser http://localhost:3000 with admin / foobar
 $ docker-compose down 
 ```
-
-# Basic
-
-- run prometheus
-
-  - ```$ prometheus --config.file=prometheus.yml```
-  - prometheus.yml
-
-    ```yml
-    global:
-      scrape_interval:     15s # By default, scrape targets every 15 seconds.
-
-      # Attach these labels to any time series or alerts when communicating with
-      # external systems (federation, remote storage, Alertmanager).
-      external_labels:
-        monitor: 'codelab-monitor'
-
-    # A scrape configuration containing exactly one endpoint to scrape:
-    # Here it's Prometheus itself.
-    scrape_configs:
-      # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-      - job_name: 'prometheus'
-
-        # Override the global default and scrape targets from this job every 5 seconds.
-        scrape_interval: 5s
-
-        static_configs:
-          - targets: ['localhost:9090']
-      - job_name: "node"
-        static_configs:
-          - targets:
-              - "localhost:9100"
-            labels:
-              resin_app: RESIN_APP_ID
-              resin_device_uuid: RESIN_DEVICE_UUID
-    ```
-
-- exporter
-  - 특정 machine 에서 자료를 수집한다. URL 을 통해 prometheus 가 pulling 한다.
-  - [node_exporter](https://github.com/prometheus/node_exporter) 는
-    linux 의 cpu 등등의 정보를 수집한다. 실행후
-    `http://<your-device-ip>:9100/metrics` 를 브라우저로 접속한다.
-
-- scraping
-  - config file 의 scrape_configs 를 설정하여 prometheus 가 targeting 할 수 있도록 하자.
-  - prometheus.yml
-  
-    ```yaml
-    ...
-    scrape_configs:  
-      - job_name: "node"
-        static_configs:
-        - targets:
-            - "localhost:9100"
-          labels:
-            resin_app: RESIN_APP_ID
-            resin_device_uuid: RESIN_DEVICE_UUID
-    ...
-    ```
-  
-- alert
-  - alertmanager 를 이용하여 관리자에게 email 등등의 알람을 전송 할 수 있다.
-  
-  - prometheus rulefile, a.rules
-
-    ```
-    ALERT cpu_threshold_exceeded  
-      IF (100 * (1 - avg by(job)(irate(node_cpu{mode='idle'}[5m])))) > THRESHOLD_CPU
-      ANNOTATIONS {
-        summary = "Instance {{ $labels.instance }} CPU usage is dangerously high",
-        description = "This device's CPU usage has exceeded the threshold with a value of {{ $value }}.",
-      }
-    ```
-  
-  - alertmanager configfile, a.yml
-    
-    ```yml
-    route:  
-      group_by: [Alertname]
-      # Send all notifications to me.
-      receiver: email-me
-      # When a new group of alerts is created by an incoming alert, wait at
-      # least 'group_wait' to send the initial notification.
-      # This way ensures that you get multiple alerts for the same group that start
-      # firing shortly after another are batched together on the first
-      # notification.
-      group_wait: 30s
-
-      # When the first notification was sent, wait 'group_interval' to send a batch
-      # of new alerts that started firing for that group.
-      group_interval: 5m
-
-      # If an alert has successfully been sent, wait 'repeat_interval' to
-      # resend them.
-      repeat_interval: 3h
-
-    templates:  
-    - '/etc/ALERTMANAGER_PATH/default.tmpl'
-
-    receivers:  
-    - name: email-me
-      email_configs:
-      - to: GMAIL_ACCOUNT
-        from: GMAIL_ACCOUNT
-        smarthost: smtp.gmail.com:587
-        html: '{{ template "email.default.html" . }}'
-        auth_username: "GMAIL_ACCOUNT"
-        auth_identity: "GMAIL_ACCOUNT"
-        auth_password: "GMAIL_AUTH_TOKEN"
-    ```
 
 # PromQL
 
@@ -315,15 +163,16 @@ http_requests_total{method="POST", handler="/hello"} 1037
     ```
 * **Range vector**
   * a set of time series containing a range of data points over time for each time series
-  ```c
-  http_requests_total{method="POST", handler="/messages"}[5m]
-  [1037 @1551242271.728, 1038 @1551242331.728, 1040 @1551242391.728]
+    ```c
+    http_requests_total{method="POST", handler="/messages"}[5m]
+    [1037 @1551242271.728, 1038 @1551242331.728, 1040 @1551242391.728]
 
-  http_requests_total{method="GET", handler="/messages"}[5m]
-  [500 @1551242484.013, 501 @1551242544.013, 502 @1551242604.013]
-  ```
+    http_requests_total{method="GET", handler="/messages"}[5m]
+    [500 @1551242484.013, 501 @1551242544.013, 502 @1551242604.013]
+    ```
 * **Scalar**
   * a simple numeric floating point value
+  
 * **String (Deprecated)**
   * a simple string value; currently unused
 
@@ -382,18 +231,18 @@ http_requests_total{method="POST", handler="/hello"} 1037
   * get the unused memory in MiB for every instance
 
 * `sum by (app, proc) (instance_memory_limit_bytes - instance_memory_usage_bytes) / 1024 / 1024`
-  * get the sum of the unused memory grouped by app, proc
+  * get the sum of the unused memory in MiB grouped by app, proc
 
 * `topk(3, sum by (app, proc) (rate(instance_cpu_time_ns[5m])))`
   * top 3 CPU users grouped by app, proc
   * These are datas
-  ```
-  instance_cpu_time_ns{app="lion", proc="web", rev="34d0f99", env="prod", job="cluster-manager"}
-  instance_cpu_time_ns{app="elephant", proc="worker", rev="34d0f99", env="prod", job="cluster-manager"}
-  instance_cpu_time_ns{app="turtle", proc="api", rev="4d3a513", env="prod", job="cluster-manager"}
-  instance_cpu_time_ns{app="fox", proc="widget", rev="4d3a513", env="prod", job="cluster-manager"}
-  ...
-  ```
+    ```
+    instance_cpu_time_ns{app="lion", proc="web", rev="34d0f99", env="prod", job="cluster-manager"}
+    instance_cpu_time_ns{app="elephant", proc="worker", rev="34d0f99", env="prod", job="cluster-manager"}
+    instance_cpu_time_ns{app="turtle", proc="api", rev="4d3a513", env="prod", job="cluster-manager"}
+    instance_cpu_time_ns{app="fox", proc="widget", rev="4d3a513", env="prod", job="cluster-manager"}
+    ...
+    ```
 
 * `http_requests_total offset 5m`
   * returns the value of http_requests_total 5 minutes in the past relative to the current query evaluation time
@@ -411,6 +260,7 @@ http_requests_total{method="POST", handler="/hello"} 1037
 ## Basics
 
 ### Time series Sslectors
+
 #### Instant vector selectors
 
 return instant vector
@@ -497,7 +347,7 @@ or (union)
 unless (complement)
 ```
 
-### Vector matching (join)
+### Vector Matching (join)
 
 > * [Vector matching @ prometheus.io](https://prometheus.io/docs/prometheus/latest/querying/operators/#vector-matching)
 > * [Left joins in PromQL](https://www.robustperception.io/left-joins-in-promql)
@@ -697,6 +547,9 @@ $ curl 'http://localhost:9090/api/v1/query_range?query=up&start=2015-07-01T20:10
 
 ----
 
+`*_bucket` 는 값의 영역 개수를 의미한다. `*_sum` 은 값을 모두 더한 것을 의미한다. `*_count` 는
+값의 개수를 의미한다.
+
 Usually measure the latency. Can adjust time period when make the range vector. But Summary can't.
 
 ### prometheus http request duration seconds
@@ -721,7 +574,7 @@ Usually measure the latency. Can adjust time period when make the range vector. 
   ```
 
 * the number of observations per second over the last five minutes on average
-  * `rate(prometheus_http_request_duration_seconds_sum[5m]`
+  * `rate(prometheus_http_request_duration_seconds_sum[5m])`
 * how long they took per second on average
   * `rate(prometheus_http_request_duration_seconds_count[5m])`
 * the average duration of one observation
@@ -778,6 +631,9 @@ Usually measure the latency. Can adjust time period when make the range vector. 
 
 ----
 
+`*{quantile="*"}` 는 분위수별 값을 의미한다. `*_sum` 은 값을 모두 더한 것을 의미한다. `*_count` 는
+값의 개수를 의미한다.
+
 * data
 
   ```json
@@ -819,56 +675,56 @@ Usually measure the latency. Can adjust time period when make the range vector. 
   * 늘어나거나 줄어드는 수치
   * `avg_over_time(queue_size[5m])` 와 같이 `avg_over_time()` 을 사용할 수 있다.
 * Histogram
-  * 미리 정한 bucket 에 수치를 담는다.
+  * 값을 영역별로 나누고 개수를 저장한다.
   * 다음은 `4.467s, 9.213s, and 9.298s` 의 예이다.
-  ```
-  # HELP request_duration Time for HTTP request.
-  # TYPE request_duration histogram
-  request_duration_bucket{le="0.005",} 0.0
-  request_duration_bucket{le="0.01",} 0.0
-  request_duration_bucket{le="0.025",} 0.0
-  request_duration_bucket{le="0.05",} 0.0
-  request_duration_bucket{le="0.075",} 0.0
-  request_duration_bucket{le="0.1",} 0.0
-  request_duration_bucket{le="0.25",} 0.0
-  request_duration_bucket{le="0.5",} 0.0
-  request_duration_bucket{le="0.75",} 0.0
-  request_duration_bucket{le="1.0",} 0.0
-  request_duration_bucket{le="2.5",} 0.0
-  request_duration_bucket{le="5.0",} 1.0
-  request_duration_bucket{le="7.5",} 1.0
-  request_duration_bucket{le="10.0",} 3.0
-  request_duration_bucket{le="+Inf",} 3.0
-  request_duration_count 3.0
-  request_duration_sum 22.978489699999997
-  ```
-  * 다음과 같이 query 한다.
+    ```
+    # HELP request_duration Time for HTTP request.
+    # TYPE request_duration histogram
+    request_duration_bucket{le="0.005",} 0.0
+    request_duration_bucket{le="0.01",} 0.0
+    request_duration_bucket{le="0.025",} 0.0
+    request_duration_bucket{le="0.05",} 0.0
+    request_duration_bucket{le="0.075",} 0.0
+    request_duration_bucket{le="0.1",} 0.0
+    request_duration_bucket{le="0.25",} 0.0
+    request_duration_bucket{le="0.5",} 0.0
+    request_duration_bucket{le="0.75",} 0.0
+    request_duration_bucket{le="1.0",} 0.0
+    request_duration_bucket{le="2.5",} 0.0
+    request_duration_bucket{le="5.0",} 1.0
+    request_duration_bucket{le="7.5",} 1.0
+    request_duration_bucket{le="10.0",} 3.0
+    request_duration_bucket{le="+Inf",} 3.0
+    request_duration_count 3.0
+    request_duration_sum 22.978489699999997
+    ```
 
-  ```
-  rate(request_duration_sum[5m])
-  /
-  rate(request_duration_count[5m])  
-  ```
+  * 다음과 같이 query 한다.
+    ```
+    rate(request_duration_sum[5m])
+    /
+    rate(request_duration_count[5m])  
+    ```
+
   * `histogram_quantile(0.95, sum(rate(request_duration_bucket[5m])) by (le))` 와 같이 `historgram_quantile()` 을 사용가능하다.
 
 * Summary
-  * historgram 과 비슷하다. `histogram_quantile()` 을 사용할 수 없다.
-
-  ```
-  # HELP request_duration_summary Time for HTTP request.
-  # TYPE request_duration_summary summary
-  request_duration_summary{quantile="0.95",} 7.4632192
-  request_duration_summary_count 5.0
-  request_duration_summary_sum 27.338737899999998
-  ```
+  * 값을 분위수별로 나누고 해당 값을 저장한다. `histogram_quantile()` 을 사용할 수 없다.
+    ```
+    # HELP request_duration_summary Time for HTTP request.
+    # TYPE request_duration_summary summary
+    request_duration_summary{quantile="0.95",} 7.4632192
+    request_duration_summary_count 5.0
+    request_duration_summary_sum 27.338737899999998
+    ```
   * 다음과 같이 query 한다.
   
-  ```
-  rate(request_duration_summary_sum[5m])
-  /
-  rate(request_duration_summary_count[5m])
-  ```
-  
+    ```
+    rate(request_duration_summary_sum[5m])
+    /
+    rate(request_duration_summary_count[5m])
+    ```
+    
 **Metric Type Comparison Table**
 
 |	 |Counter |	Gauge |	Histogram |	Summary |
@@ -890,7 +746,7 @@ Usually measure the latency. Can adjust time period when make the range vector. 
 
 ----
 
-* run client
+* Application Server
   * main.go
 
     ```go
@@ -961,7 +817,7 @@ Usually measure the latency. Can adjust time period when make the range vector. 
       http.ListenAndServe(":2112", nil)
     }
     ```
-  * run client
+  * Run application server
 
     ```bash
     $ go mod init main
@@ -970,7 +826,7 @@ Usually measure the latency. Can adjust time period when make the range vector. 
     $ curl http://localhost:2112/metrics
     ```
 
-* run server
+* Prometheus
   * prometheus.yml
 
     ```yml
@@ -1007,7 +863,7 @@ Usually measure the latency. Can adjust time period when make the range vector. 
         - targets:
           - host.docker.internal:2112
     ```
-  * run server
+  * Run Prometheus
 
     ```bash
     $ docker pull prom/prometheus
@@ -1019,170 +875,9 @@ Usually measure the latency. Can adjust time period when make the range vector. 
         --name my-prometheus \
         prom/prometheus
     ```
-  * open browser
+  * Open browser
     * status page: `localhost:9090`
     * metrics endpoint: `localhost:9090/metrics`
-
-## Metric types
-
-* [METRIC TYPES](https://prometheus.io/docs/concepts/metric_types/)
-
-----
-
-There are 4 kinds of metric types such as Counter, Gauge, Histogram, Summary.
-
-**Counter**
-
-This is a cumulative metric. For example, the number of requests served, tasks completed, http total send bytes, http total request, running time or errors. There is just increment no decrement. 
-
-[Counter doc](https://godoc.org/github.com/prometheus/client_golang/prometheus#Counter)
-
-```go
-httpReqs := prometheus.NewCounterVec(
-    prometheus.CounterOpts{
-        Name: "http_requests_total",
-        Help: "How many HTTP requests processed, partitioned by status code and HTTP method.",
-    },
-    []string{"code", "method"},
-)
-prometheus.MustRegister(httpReqs)
-
-httpReqs.WithLabelValues("404", "POST").Add(42)
-
-// If you have to access the same set of labels very frequently, it
-// might be good to retrieve the metric only once and keep a handle to
-// it. But beware of deletion of that metric, see below!
-m := httpReqs.WithLabelValues("200", "GET")
-for i := 0; i < 1000000; i++ {
-    m.Inc()
-}
-// Delete a metric from the vector. If you have previously kept a handle
-// to that metric (as above), future updates via that handle will go
-// unseen (even if you re-create a metric with the same label set
-// later).
-httpReqs.DeleteLabelValues("200", "GET")
-// Same thing with the more verbose Labels syntax.
-httpReqs.Delete(prometheus.Labels{"method": "GET", "code": "200"})
-```
-
-**Gauge**
-
-This is a metric that represents a single numerical value that can arbitrarily go up and down. For example, memory, disk usage, temperature, current cpu usage, current thread count.
-
-[Gauge doc](https://godoc.org/github.com/prometheus/client_golang/prometheus#Gauge)
-
-```go
-opsQueued := prometheus.NewGauge(prometheus.GaugeOpts{
-    Namespace: "our_company",
-    Subsystem: "blob_storage",
-    Name:      "ops_queued",
-    Help:      "Number of blob storage operations waiting to be processed.",
-})
-prometheus.MustRegister(opsQueued)
-
-// 10 operations queued by the goroutine managing incoming requests.
-opsQueued.Add(10)
-// A worker goroutine has picked up a waiting operation.
-opsQueued.Dec()
-// And once more...
-opsQueued.Dec()
-```
-
-**Histogram**
-
-A histogram samples observations (usually things like request durations or response sizes) and counts them in configurable buckets. It also provides a sum of all observed values. For example, TPS.
-
-[Histogram doc](https://godoc.org/github.com/prometheus/client_golang/prometheus#Histogram)
-
-```go
-temps := prometheus.NewHistogram(prometheus.HistogramOpts{
-    Name:    "pond_temperature_celsius",
-    Help:    "The temperature of the frog pond.", // Sorry, we can't measure how badly it smells.
-    Buckets: prometheus.LinearBuckets(20, 5, 5),  // 5 buckets, each 5 centigrade wide.
-})
-
-// Simulate some observations.
-for i := 0; i < 1000; i++ {
-    temps.Observe(30 + math.Floor(120*math.Sin(float64(i)*0.1))/10)
-}
-
-// Just for demonstration, let's check the state of the histogram by
-// (ab)using its Write method (which is usually only used by Prometheus
-// internally).
-metric := &dto.Metric{}
-temps.Write(metric)
-fmt.Println(proto.MarshalTextString(metric))
-```
-
-```
-histogram: <
-  sample_count: 1000
-  sample_sum: 29969.50000000001
-  bucket: <
-    cumulative_count: 192
-    upper_bound: 20
-  >
-  bucket: <
-    cumulative_count: 366
-    upper_bound: 25
-  >
-  bucket: <
-    cumulative_count: 501
-    upper_bound: 30
-  >
-  bucket: <
-    cumulative_count: 638
-    upper_bound: 35
-  >
-  bucket: <
-    cumulative_count: 816
-    upper_bound: 40
-  >
->
-```
-
-**Summary**
-
-[Summary doc](https://godoc.org/github.com/prometheus/client_golang/prometheus#Summary)
-
-```go
-temps := prometheus.NewSummary(prometheus.SummaryOpts{
-    Name:       "pond_temperature_celsius",
-    Help:       "The temperature of the frog pond.",
-    Objectives: map[float64]float64{0.5: 0.05, 0.9: 0.01, 0.99: 0.001},
-})
-
-// Simulate some observations.
-for i := 0; i < 1000; i++ {
-    temps.Observe(30 + math.Floor(120*math.Sin(float64(i)*0.1))/10)
-}
-
-// Just for demonstration, let's check the state of the summary by
-// (ab)using its Write method (which is usually only used by Prometheus
-// internally).
-metric := &dto.Metric{}
-temps.Write(metric)
-fmt.Println(proto.MarshalTextString(metric))
-```
-
-```
-summary: <
-  sample_count: 1000
-  sample_sum: 29969.50000000001
-  quantile: <
-    quantile: 0.5
-    value: 31.1
-  >
-  quantile: <
-    quantile: 0.9
-    value: 41.3
-  >
-  quantile: <
-    quantile: 0.99
-    value: 41.9
-  >
->
-```
 
 # Advanced
 
