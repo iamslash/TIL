@@ -709,7 +709,7 @@ Usually measure the latency. Can adjust time period when make the range vector. 
   * `histogram_quantile(0.95, sum(rate(request_duration_bucket[5m])) by (le))` 와 같이 `historgram_quantile()` 을 사용가능하다.
 
 * Summary
-  * 값을 분위수별로 나누고 해당 값을 저장한다. `histogram_quantile()` 을 사용할 수 없다.
+  * 값을 분위수별로 나누고 분위수에 해당하는 값을 저장한다. `histogram_quantile()` 을 사용할 수 없다.
     ```
     # HELP request_duration_summary Time for HTTP request.
     # TYPE request_duration_summary summary
