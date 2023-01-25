@@ -12,7 +12,7 @@
 - [Extension](#extension)
   - [Faster Retrieval and Breaking Tie](#faster-retrieval-and-breaking-tie)
   - [System Failure Recovery](#system-failure-recovery)
-- [Q&A](#qa)
+- [Q\&A](#qa)
   - [How To Deal with 5B users](#how-to-deal-with-5b-users)
 - [References](#references)
 
