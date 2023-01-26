@@ -303,6 +303,10 @@ Geospatial index table is small and we can save it in one server with read repli
 
 ## Caching
 
+The workload is read-heavy and the dataset is small. The data could fit in the AWS AuroraDB MySQL. The queries are not I/O bound and in-memory cache should be fine. If read performance is bottle-neck, we can add read replicas.
+ 
+
+
 ## Region and Availability Zones
 
 ## Filter Results by Time or Business Type

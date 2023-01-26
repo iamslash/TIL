@@ -35,7 +35,8 @@
     - [Monitoring](#monitoring)
     - [Redis for Cache or Persistent Store](#redis-for-cache-or-persistent-store)
 - [Advanced](#advanced)
-  - [How to debug](#how-to-debug)
+  - [Redis Cluster With ZooKeeper](#redis-cluster-with-zookeeper)
+  - [How To Debug](#how-to-debug)
   - [Redis Clients](#redis-clients)
   - [Online resharding and shard rebalancing for Redis (cluster mode enabled)](#online-resharding-and-shard-rebalancing-for-redis-cluster-mode-enabled)
   - [Redis Enterprise](#redis-enterprise)
@@ -470,7 +471,22 @@ Redis 를 Persistent Store 로 사용한다면 얘기가 달라진다. Replica �
 
 # Advanced
 
-## How to debug
+## Redis Cluster With ZooKeeper
+
+* [ZooKeeper를 활용한 Redis Cluster 관리 | naverd2](https://d2.naver.com/helloworld/294797)
+
+[zookeeper](/zookeeper/README.md) 에 [redis](/redis/README.md) 를 등록한다. 이때
+Redis Cluster Manager 와 같은 별도의 Application 을 구현해야 한다.
+
+Redis Cluster Manager 는 주기적으로 [redis](/redis/README.md) 에게 PING command
+를 보내서 health check 한다. 그리고 [zookeeper](/zookeeper/README.md) 를 update
+한다.
+
+Application Server 들은 어떤 [Redis](/redis/README.md) 에 저장 혹은 읽기를
+수행할지 [consistent hashing](/consistenthasing/README.md) 을 이용하여 결정할 수
+있다.
+
+## How To Debug
 
 * [Set up vscode debug](#set-up-vscode-debug)
 

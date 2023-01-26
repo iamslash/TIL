@@ -1,15 +1,37 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Install with Docker](#install-with-docker)
+- [Basic](#basic)
+  - [Create znodes (persistent, ephemeral, sequential)](#create-znodes-persistent-ephemeral-sequential)
+  - [Get data](#get-data)
+  - [Remove / Delete a znode](#remove--delete-a-znode)
+  - [Set data](#set-data)
+  - [Watch znode for changes](#watch-znode-for-changes)
+  - [Check Status](#check-status)
+  - [Ephemeral nodes](#ephemeral-nodes)
+- [Case Studies](#case-studies)
+- [Caution](#caution)
+
+----
+
 # Abstract
 
-consensus algorithm 중 하나인 zab 을 구현한 coordinator 이다. 주로 다음과 같은 특징을 갖는다.
+consensus algorithm 중 하나인 zab 을 구현한 coordinator 이다. 주로 다음과 같은
+특징을 갖는다.
 
 * Strong Consistency 를 지원하므로 Global Locking 에 사용한다.
-* Configuration Management System 으로 이용한다. 예를 들어 A/B test 를 수행할 때 IOS client 를 한번 build 하고 configuration 의 내용에 따라 runtime 에 기능이 달라지도록 한다.
+* Configuration Management System 으로 이용한다. 예를 들어 A/B test 를 수행할 때
+  IOS client 를 한번 build 하고 configuration 의 내용에 따라 runtime 에 기능이
+  달라지도록 한다.
 * Strong Consistency 를 보장하기 때문에 Write 연산이 비싸다.
 
-Consensus 란 분산 시스템에서 노드 간의 상태를 공유하는 알고리즘을 말한다. 가장 유명한 알고리즘으로 `Paxos` 가 있다. `Raft` 는 이해하기 어려운 기존의 알고리즘과 달리 쉽게 이해하고 구현하기 위해 설계되었다.
+Consensus 란 분산 시스템에서 노드 간의 상태를 공유하는 알고리즘을 말한다. 가장
+유명한 알고리즘으로 `Paxos` 가 있다. `Raft` 는 이해하기 어려운 기존의 알고리즘과
+달리 쉽게 이해하고 구현하기 위해 설계되었다.
 
 # Materials
 
+* [ZooKeeper를 활용한 Redis Cluster 관리](https://d2.naver.com/helloworld/294797)
 * [아이펀팩토리 게임서버개발 세미나 2부 zookeeper 를 이용한 분산 서버 만들기 @ youtube](https://www.youtube.com/watch?v=8yGHlHm0h6g)
   * [ppt](https://www.slideshare.net/iFunFactory/apache-zookeeper-55966566)
 * [Zookeeper Tutorial @ joinc](https://www.joinc.co.kr/w/man/12/zookeeper/tutorial)
