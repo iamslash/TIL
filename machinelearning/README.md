@@ -1,7 +1,7 @@
 - [Abstract](#abstract)
 - [Essentials](#essentials)
 - [Materials](#materials)
-- [Precision, Recall](#precision-recall)
+- [Precision, Recall, Accuracy, F1](#precision-recall-accuracy-f1)
 - [Expectation Function](#expectation-function)
 - [Entropy](#entropy)
 - [Cross Entropy](#cross-entropy)
@@ -171,36 +171,24 @@
 - [Another TensorFlow Tutorials](https://github.com/pkmital/tensorflow_tutorials)
 - [TensorFlow Examples](https://github.com/aymericdamien/TensorFlow-Examples)
 
-# Precision, Recall
+# Precision, Recall, Accuracy, F1
 
-* [분류성능평가지표 - Precision(정밀도), Recall(재현율) and Accuracy(정확도) | tistory](https://sumniya.tistory.com/26)
-
+> * [[BigS] 맨날 헷갈리는 모델 평가 지표! 민감도, 재현율, 특이도, 정확도, F1 Score 이해하기 + 외우기 | youtube](https://www.youtube.com/watch?v=Eyxynd-vDsQ)
+> * [[머신러닝] 다중 분류 모델 성능 측정 (accuracy, f1 score, precision, recall on multiclass classification)](https://www.youtube.com/watch?v=8DbC39cvvis)
 ----
 
-| Result\Answer | True | False |
-|---|---|---|
-| True  | **True Positive** | False Positive |
-| False | False Negative | **True Negative** |
+![](img/2023-01-30-17-14-23.png)
 
-Positive 가 포함되면 결과는 True 라는 의미이다. Negative 가 포함되면 결과는
-False 라는 의미이다.
+| name | formula | description | etc |
+|--|--|--|--|
+| Accuracy (정분류율) | `(TP + TN) / (TP + FN + FP + TN)` | | |
+| Error Errate(오분류율) | `(FN + FP) / (TP + TN + FN + FP)` | | |
+| Precision (정확도) | `TP / (TP + FP)` | 모델이 참이라고 예측한 것중 실제 참 | 정확한 비율 |
+| Recall (민감도, 재현율) | `TP / (TP + FN)` | 실제 참인 것중 모델이 참 | 놓치지 않을 비율 |
+| Specificity (특이도) | `TN / (TN + FP)` |  |  |
+| F1 () | `2 * (Precision * Result) / (Precision + Result)` | | |
 
-* True Positivie
-  * 참으로 긍정적이다. 답도 True 이고 결과도 True 이다.
-* True Negative 
-  * 참으로 부정적이다. 답도 False 이고 결과도 False 이다.
-* False Positivie
-  * 거짓으로 긍정적이다. 답은 False 인데 결과는 True 이다.
-* False Negative
-  * 거짓으로 부정적이다. 답은 True 인데 결과는 False 이다.
-
-Precision, Recall, Accuracy 는 다음과 같다.
-
-```
-Precision : TP / (TP + FP) 내가참 중 진짜 참
-Recall    : TP / (TP + FN) 전체참 중 내가 참
-Accuracy  : (TP + TN) / (TP + FN + FP + TN)
-```
+![](img/2023-01-30-15-39-01.png)
 
 # Expectation Function
 
