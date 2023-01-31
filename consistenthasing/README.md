@@ -1,3 +1,10 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Basic](#basic)
+- [Implementation](#implementation)
+
+----
+
 # Abstract
 
 key 가 주어졌을 때 hash ring 에 적절히 hash 가 되도록 하는 방법이다. hash ring 에 5 개의 서버 A, B, C, D, E 가 있을 때 임의의 서버가 장애가 발생하고 복구되더라도 데이터의 이동을 최소화 할 수 있다. sharding 과 같은 partitioning 전략을 도입할 때 필수이다.

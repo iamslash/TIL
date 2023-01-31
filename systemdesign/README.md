@@ -927,7 +927,7 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 | [Designing Youtube](practices/DesigningYoutubeorNetflix/DesigningYoutubeorNetflix.md) | |
 | Designing Google Drive | |
 | [Designing Proximity Service](practices/DesigningProximityService/DesigningProximityService.md) | |
-| [Designing Nearby Friends](practices/DesigningYelporNearbyFriends/DesigningYelporNearbyFriends.md/) | |
+| [Designing Nearby Friends](practices/DesigningYelporNearbyFriends/DesigningYelporNearbyFriends.md) | |
 | Designing Google Maps | |
 | [Designing Distributed Message Queue](practices/DesigningDistributedMessageQueue/DesigningDistributedMessageQueue.md) | |
 | Designing Metrics Monitoring and Alerting System | |
