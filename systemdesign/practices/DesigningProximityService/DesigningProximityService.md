@@ -14,6 +14,7 @@
     - [Database Cluster](#database-cluster)
     - [Scalability of Business Service and LBS](#scalability-of-business-service-and-lbs)
   - [Algorithms To Find Nearby Businesses](#algorithms-to-find-nearby-businesses)
+    - [Diffent Types Of Geospatial Indexes](#diffent-types-of-geospatial-indexes)
     - [Two-Dimensional Search](#two-dimensional-search)
     - [Evenly Divided Grid](#evenly-divided-grid)
     - [Geohash](#geohash)
@@ -24,8 +25,6 @@
   - [Scale The Database](#scale-the-database)
   - [Caching](#caching)
   - [Region and Availability Zones](#region-and-availability-zones)
-  - [Filter Results by Time or Business Type](#filter-results-by-time-or-business-type)
-  - [Final Architecture Diagram](#final-architecture-diagram)
 
 ----
 
@@ -48,8 +47,9 @@
 | Number | Description | Calculation |
 |--|--|--|
 | 100 Millian | DAU | |
-| 86,400 sec (=~ 100,000 sec) | seconds ina day | |
-| 5,000 | Search QPS | 100,000,000 DAU / 100,000 sec | 
+| 86,400 sec (=~ 100,000 sec) | seconds in a day | |
+| 5 | One user makes 5 search query per day| |
+| 5,000 | Search QPS | 5 * 100,000,000 DAU / 100,000 sec | 
 
 # High Level Design
 
@@ -60,7 +60,7 @@
 
 ----
 
-```
+```c
 * Search the shops nearby the user
   * GET /v1/search/nearby
   * Request
@@ -112,13 +112,18 @@ This is a read-heavy system and a relational database such as [MySQL](/mysql/REA
 | geohash | |
 | business_id | |
 
+> Geo Index Table Examples
+
 | geohash | business_id |
+|--|--|
 | 32feac | 343 |
 | 32feac | 343 |
 | f31cad | 111 |
 | f31cad | 112 |
 
 ## System Architecture Diagram
+
+![](img/2023-01-31-20-37-55.png)
 
 ### Load Balancer
 
@@ -147,6 +152,10 @@ Group, we are able to scale out, scale in very easily.
 
 ## Algorithms To Find Nearby Businesses
 
+### Diffent Types Of Geospatial Indexes
+
+![](img/2023-01-31-20-52-20.png)
+
 ### Two-Dimensional Search
 
 This is very naive. This SQL is for search operation but it is not efficient
@@ -163,11 +172,7 @@ SELECT business_id
        (longitude BETWEEN {:my_longitude} - radius AND {:my_longitude} + radius)
 ```
 
-![](img/intersect_two_datasets.png)
-
 If we use one dimension index we can improve the search speed.
-
-![](img/different_types_of_geospatial_indexes.png)
 
 ### Evenly Divided Grid
 
@@ -182,10 +187,9 @@ We divide one square to 4 sub-squares recursively with following rules.
 * Longitude range `[-180, 0]` is represented by `0`
 * Longitude range `[0, 180]` is represented by `1`
 
-```
-    0 1    1 1
-    0 0    1 0
-```
+![](img/2023-01-31-21-00-50.png)
+
+![](img/2023-01-31-21-01-07.png)
 
 Geohash usually uses base-32 representation.
 
@@ -297,7 +301,7 @@ Quadtree
 
 ## Scale The Database
 
-Business table is big and we can shard it by business_id.
+Business table is big and we can shard it by `business_id`.
 
 Geospatial index table is small and we can save it in one server with read replicas.
 
@@ -307,6 +311,6 @@ The workload is read-heavy and the dataset is small. The data could fit in the A
 
 ## Region and Availability Zones
 
-## Filter Results by Time or Business Type
+We can deploy LBS (Location Based Service) to multiple regions for latency.
 
-## Final Architecture Diagram
+We can deploy LBS (Location Based Service) to multiple zones for high availability.
