@@ -186,7 +186,7 @@
 | Precision (정확도) | `TP / (TP + FP)` | 모델이 참이라고 예측한 것중 실제 참 | 정확한 비율 |
 | Recall (민감도, 재현율) | `TP / (TP + FN)` | 실제 참인 것중 모델이 참 | 놓치지 않을 비율 |
 | Specificity (특이도) | `TN / (TN + FP)` |  |  |
-| F1 () | `2 * (Precision * Result) / (Precision + Result)` | | |
+| F1 score | `2 * (Precision * Result) / (Precision + Result)` | | |
 
 ![](img/2023-01-30-15-39-01.png)
 

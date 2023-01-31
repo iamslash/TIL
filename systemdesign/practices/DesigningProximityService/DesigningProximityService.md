@@ -1,7 +1,7 @@
 - [Requirements](#requirements)
   - [Functional Requirement](#functional-requirement)
   - [Non-Functional Requirement](#non-functional-requirement)
-- [Estimation](#estimation)
+  - [Estimation](#estimation)
 - [High Level Design](#high-level-design)
   - [API Design](#api-design)
   - [Data Model](#data-model)
@@ -20,7 +20,7 @@
     - [Quadtree](#quadtree)
     - [Google S2](#google-s2)
   - [Geohash vs Quadtree](#geohash-vs-quadtree)
-- [High Level Deisgn Deep Dive](#high-level-deisgn-deep-dive)
+- [High Level Design Deep Dive](#high-level-design-deep-dive)
   - [Scale The Database](#scale-the-database)
   - [Caching](#caching)
   - [Region and Availability Zones](#region-and-availability-zones)
@@ -43,7 +43,7 @@
 * Data privacy including GDPR (General Data Protection Regulation) and CCPA (California Consumer Privacy Act), etc.
 * High availability and scalability.
 
-# Estimation
+## Estimation
 
 | Number | Description | Calculation |
 |--|--|--|
@@ -293,7 +293,7 @@ Quadtree
 * It can dynamically adjust the grid size based on density.
 * It is complicated to udpate the index than geohash.
 
-# High Level Deisgn Deep Dive
+# High Level Design Deep Dive
 
 ## Scale The Database
 
