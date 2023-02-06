@@ -89,6 +89,8 @@
 
 # References
 
+* [SwirlAI Newsletter](https://swirlai.substack.com/)
+  * Usually about ML Ops
 * System Design Interview – An insider's guide by Alex
   * [blog archives](https://blog.bytebytego.com/archive)
   * [oneline ebook](https://bytebytego.com/courses/system-design-interview/)

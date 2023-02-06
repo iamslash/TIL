@@ -31,6 +31,7 @@
 - [RL (Reinforcement Learning)](#rl-reinforcement-learning)
 - [GAN (Generative Adversarial Network)](#gan-generative-adversarial-network)
 - [NLP (Natural Language Processing)](#nlp-natural-language-processing)
+- [Transformers](#transformers)
 - [References](#references)
 
 -----
@@ -64,6 +65,8 @@
 
 # Essentials
 
+- [Practical Deep Learning for Coders](https://course.fast.ai/)
+  - 매우 추천
 - [모두를 위한 머신러닝/딥러닝 시즌 2](https://deeplearningzerotoall.github.io/season2/)
   - [tensorflow](https://deeplearningzerotoall.github.io/season2/lec_tensorflow.html)
   - [pytorch](https://deeplearningzerotoall.github.io/season2/lec_pytorch.html)
@@ -4263,6 +4266,12 @@ if __name__ == "__main__":
 # NLP (Natural Language Processing)
 
 - [Natural Language Processing](/nlp/README.md)
+
+# Transformers
+
+* [Visual Guide to Transformer Neural Networks - (Episode 1) Position Embeddings | youtube](https://www.youtube.com/watch?v=dichIcUZfOw)
+  * [Visual Guide to Transformer Neural Networks - (Episode 2) Multi-Head & Self-Attention | youtube](https://www.youtube.com/watch?v=mMa2PmYJlCo)
+* [[딥러닝 기계 번역] Transformer: Attention Is All You Need (꼼꼼한 딥러닝 논문 리뷰와 코드 실습) | youtube](https://www.youtube.com/watch?v=AA621UofTUA)
 
 # References
 
