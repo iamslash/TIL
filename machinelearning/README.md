@@ -66,7 +66,8 @@
 # Essentials
 
 - [Practical Deep Learning for Coders](https://course.fast.ai/)
-  - 매우 추천
+  - [Colab links](https://course.fast.ai/Resources/book.html)
+  - [Forumn links](https://forums.fast.ai/t/lesson-1-official-topic/95287)
 - [모두를 위한 머신러닝/딥러닝 시즌 2](https://deeplearningzerotoall.github.io/season2/)
   - [tensorflow](https://deeplearningzerotoall.github.io/season2/lec_tensorflow.html)
   - [pytorch](https://deeplearningzerotoall.github.io/season2/lec_pytorch.html)

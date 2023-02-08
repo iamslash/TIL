@@ -930,7 +930,7 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 | Designing Google Drive | |
 | [Designing Proximity Service](practices/DesigningProximityService/DesigningProximityService.md) | |
 | [Designing Nearby Friends](practices/DesigningNearbyFriends/DesigningNearbyFriends.md) | |
-| Designing Google Maps | |
+| [Designing Google Maps](practices/DesigningGoogleMaps/DesigningGoogleMaps.md) | |
 | [Designing Distributed Message Queue](practices/DesigningDistributedMessageQueue/DesigningDistributedMessageQueue.md) | |
 | Designing Metrics Monitoring and Alerting System | |
 | Designing Ad Click Event Aggregation | |
