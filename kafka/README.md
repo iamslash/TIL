@@ -754,9 +754,34 @@ Kafka Streams Application 은 Kafka Sreams API 를 사용한 Application 이다.
 
 * [ksqlDB Quickstart](https://ksqldb.io/quickstart.html)
 * [[Kafka 101] KSQL (KSqlDB)](https://always-kimkim.tistory.com/entry/kafka101-ksql)
+* [ksqlDB Deep Dive](https://techblog-assets.dev.hpcnt.com/95c8667e0eb53e7f815d6a8cd8a7fe5fcc01d1b8/2022/12/27/ksqldb-deepdive.html)
 
 ----
 
-ksqkDB 는 Kafka stream 으로 읽어들인 data 를 KSQL 로 분석할 수 있게 해주는 application 이다. 
+ksqlDB 는 Kafka stream 으로 읽어들인 data 를 stream, table 로 저장하고 또 다른 application 이 consumming 할 수 있다.
 
-data 분석용으로 사용할 만 하다.
+임의의 Kafka topic 이 있을 때 다음과 같이 ksqlDB 의 stream 을 생성할 수 있다.
+
+```sql
+CREATE STREAM MCDONALD_ORDERS 
+             (menu VARCHAR, 
+              price INTEGER, 
+              quantity INTEGER)    
+        WITH (kafka_topic='mcdonald-orders',
+              value_format='avro');
+```
+
+table 은 stream 으로 부터 다음과 같이 생성한다.
+
+```sql
+CREATE TABLE MENU_COUNTS 
+   AS SELECT MENU, SUM(QUANTITY) AS ORDER_COUNT 
+        FROM MCDONALD_ORDERS 
+      WINDOW TUMBLING (SIZE 5 MINUTES) 
+    GROUP BY MENU 
+        EMIT CHANGES;
+```
+
+application 이 ksqlDB 에 push query 를 보내면 stream data 를 꾸준히 얻을 수 있다. 즉, 추가된 데이터를 계속해서 받아낼 수 있다. push query 는 `SELECT ... EMIT CHANGES` 형태의 query 를 말한다.
+
+application 이 ksqlDB 에 pull query 를 보내면 최신 상태의 data 를 얻을 수 있다. pull query 는 `EMIT CHANGES` 가 없다.
