@@ -89,6 +89,8 @@
 
 # References
 
+* [Machine Learning System Design | amazon](https://www.amazon.com/Machine-Learning-System-Design-Interview/dp/1736049127/ref=sr_1_1?crid=1G3JKBVICKM0Q&keywords=machine+learning+system+design&qid=1676028725&sprefix=machine+learning+system+desi%2Caps%2C475&sr=8-1)
+  * [links | github](https://github.com/ByteByteGoHq/ml-bytebytego)
 * [SwirlAI Newsletter](https://swirlai.substack.com/)
   * Usually about ML Ops
 * System Design Interview – An insider's guide by Alex
@@ -129,6 +131,8 @@
   
 # Materials
 
+* [대규모 소프트웨어 패턴 강좌 업데이트](https://architecture101.blog/2023/02/11/welcome_2_pattern_worlds/?fbclid=IwAR2lVvRIidYW_CnAs4tTExStad1T4pq54V2ySCtMMlBS0DTfxD0_NQdGW9Y&mibextid=Zxz2cZ)
+  * 아키텍처 전문 강사의 커리큘럼, POSA1, POSA2, POSA3, AOSA, Cloud+MSA
 * [System Design Resources | github](https://github.com/InterviewReady/system-design-resources)
 * [mobile system design](https://github.com/weeeBox/mobile-system-design)
 * [The Software Architecture Chronicles](https://herbertograca.com/2017/07/03/the-software-architecture-chronicles/)

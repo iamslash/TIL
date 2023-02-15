@@ -32,6 +32,7 @@
 - [GAN (Generative Adversarial Network)](#gan-generative-adversarial-network)
 - [NLP (Natural Language Processing)](#nlp-natural-language-processing)
 - [Transformers](#transformers)
+- [Glossory](#glossory)
 - [References](#references)
 
 -----
@@ -65,6 +66,10 @@
 
 # Essentials
 
+- [Machine Learning Glossary](https://developers.google.com/machine-learning/glossary)
+- [Designing Machine Learning Systems (Chip Huyen 2022)](https://www.amazon.com/Designing-Machine-Learning-Systems-Production-Ready/dp/1098107969)
+  - [src](https://github.com/chiphuyen/dmls-book)
+  - Can learn Machine Learning Jargons.
 - [Practical Deep Learning for Coders](https://course.fast.ai/)
   - [Colab links](https://course.fast.ai/Resources/book.html)
   - [Forumn links](https://forums.fast.ai/t/lesson-1-official-topic/95287)
@@ -99,6 +104,9 @@
 
 # Materials
 
+- [Large-scale LM에 대한 얕고 넓은 지식들 (part 1) | youtube](https://www.youtube.com/watch?v=w4a-ARCEiqU)
+  - [Large-scale LM에 대한 얕고 넓은 지식들(part 2) | youtube](https://www.youtube.com/watch?v=zbuD21YwLZI)
+  - [ppt | github](https://github.com/jiphyeonjeon/season2/tree/main/advanced)
 - [모두를 위한 컨벡스 최적화 (Convex Optimization For All)](https://wikidocs.net/book/1896)
   - 최적화 문제를 정리한 책 
 - [math for machine learning](https://mml-book.github.io/)
@@ -187,8 +195,8 @@
 |--|--|--|--|
 | Accuracy (정분류율) | `(TP + TN) / (TP + FN + FP + TN)` | | |
 | Error Errate(오분류율) | `(FN + FP) / (TP + TN + FN + FP)` | | |
-| Precision (정확도) | `TP / (TP + FP)` | 모델이 참이라고 예측한 것중 실제 참 | 정확한 비율 |
-| Recall (민감도, 재현율) | `TP / (TP + FN)` | 실제 참인 것중 모델이 참 | 놓치지 않을 비율 |
+| Precision (정확도) | `TP / (TP + FP)` | 전체참 중 진짜참 | 정확한 비율 |
+| Recall (민감도, 재현율) | `TP / (TP + FN)` | 내가참 중 진짜참 | 잡아챈 비율 |
 | Specificity (특이도) | `TN / (TN + FP)` |  |  |
 | F1 score | `2 * (Precision * Result) / (Precision + Result)` | | |
 
@@ -4273,6 +4281,10 @@ if __name__ == "__main__":
 * [Visual Guide to Transformer Neural Networks - (Episode 1) Position Embeddings | youtube](https://www.youtube.com/watch?v=dichIcUZfOw)
   * [Visual Guide to Transformer Neural Networks - (Episode 2) Multi-Head & Self-Attention | youtube](https://www.youtube.com/watch?v=mMa2PmYJlCo)
 * [[딥러닝 기계 번역] Transformer: Attention Is All You Need (꼼꼼한 딥러닝 논문 리뷰와 코드 실습) | youtube](https://www.youtube.com/watch?v=AA621UofTUA)
+
+# Glossory
+
+[Machine Learning Glossary](mlglossary.md)
 
 # References
 

@@ -782,6 +782,6 @@ CREATE TABLE MENU_COUNTS
         EMIT CHANGES;
 ```
 
-application 이 ksqlDB 에 push query 를 보내면 stream data 를 꾸준히 얻을 수 있다. 즉, 추가된 데이터를 계속해서 받아낼 수 있다. push query 는 `SELECT ... EMIT CHANGES` 형태의 query 를 말한다.
+application 이 ksqlDB 에 push query 를 보내면 stream data 를 꾸준히 얻을 수 있다. 즉, 추가된 데이터를 계속해서 받아낼 수 있다. push query 는 `SELECT ... EMIT CHANGES` 형태의 query 를 말한다. push query 는 stream, table 에 사용할 수 있다. 
 
-application 이 ksqlDB 에 pull query 를 보내면 최신 상태의 data 를 얻을 수 있다. pull query 는 `EMIT CHANGES` 가 없다.
+application 이 ksqlDB 에 pull query 를 보내면 최신 상태의 data 를 얻을 수 있다. pull query 는 `EMIT CHANGES` 가 없다. pull query 는 materialized view 에 사용할 수 있다.

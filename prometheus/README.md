@@ -37,6 +37,7 @@
   - [Summary](#summary)
   - [Summary vs Histogram](#summary-vs-histogram)
   - [irate vs rate](#irate-vs-rate)
+  - [incrase vs rate](#incrase-vs-rate)
 - [Metric Types](#metric-types)
 - [How to Develop Prometheus Client](#how-to-develop-prometheus-client)
   - [Simple Instrumentation](#simple-instrumentation)
@@ -655,12 +656,20 @@ Usually measure the latency. Can adjust time period when make the range vector. 
   
 ## Summary vs Histogram
 
-* Histogram can adjust time period when make the range vector. But Summary can't.
-* Histogram costs more than Summary in server-side.
+* Histogram 은 Server 에서 Quantile 별 집계를 수행함.
+* Summary 는 Client 에서 Quantile 별 집계를 수행함. 미리 정해진 Quantile 만 사용할 수 있음.
 
 ## irate vs rate
 
 * [Why irate from Prometheus doesn't capture spikes](https://valyala.medium.com/why-irate-from-prometheus-doesnt-capture-spikes-45f9896d7832)
+
+## incrase vs rate
+
+* [프로메테우스 지표 rate와 increase의 차이점](https://blog.voidmainvoid.net/449)
+
+`increase()` 는 일정시간동안 늘어난 count.
+
+`rate()` 는 초당 늘어난 count.
 
 # Metric Types
 
@@ -675,7 +684,7 @@ Usually measure the latency. Can adjust time period when make the range vector. 
   * 늘어나거나 줄어드는 수치
   * `avg_over_time(queue_size[5m])` 와 같이 `avg_over_time()` 을 사용할 수 있다.
 * Histogram
-  * 값을 영역별로 나누고 개수를 저장한다.
+  * Server 에서 Quantile 별 집계를 수행함.
   * 다음은 `4.467s, 9.213s, and 9.298s` 의 예이다.
     ```
     # HELP request_duration Time for HTTP request.
@@ -709,7 +718,7 @@ Usually measure the latency. Can adjust time period when make the range vector. 
   * `histogram_quantile(0.95, sum(rate(request_duration_bucket[5m])) by (le))` 와 같이 `historgram_quantile()` 을 사용가능하다.
 
 * Summary
-  * 값을 분위수별로 나누고 분위수에 해당하는 값을 저장한다. `histogram_quantile()` 을 사용할 수 없다.
+  * Client 에서 Quantile 별 집계를 수행함. 미리 정해진 Quantile 만 사용할 수 있음. `histogram_quantile()` 을 사용할 수 없다.
     ```
     # HELP request_duration_summary Time for HTTP request.
     # TYPE request_duration_summary summary
