@@ -3,7 +3,12 @@
 - [Materials](#materials)
 - [References](#references)
 - [Basic](#basic)
-  - [NPM](#npm)
+  - [yarn](#yarn)
+  - [eslint](#eslint)
+  - [prettier](#prettier)
+  - [zustand](#zustand)
+  - [MUI](#mui)
+  - [npm](#npm)
   - [Webpack](#webpack)
   - [Webpack Deep Dive](#webpack-deep-dive)
   - [Babel](#babel)
@@ -15,10 +20,19 @@
 
 # Abstract
 
-HTML, CSS, JavaScript 등 front-end 개발에 필요한 tech stack 에 대해 정리한다. front-end view library 로 [react.js](/react.js/README.md) 를 주로 사용한다.
+HTML, CSS, JavaScript 등 Frontend 개발에 필요한 tech stack 에 대해 정리한다.
+Frontend tech stack 은 update 가 빠르다. 
+
+[Realworld conduit srcs](https://codebase.show/projects/realworld)
+에서 frontend, backend examples 를 참고하자.
 
 # Essentials
 
+* [Realworld conduit](https://github.com/gothinkster/realworld)
+  * medium clone 의 repo 이다. backend, frontend 를 다양한 tech stack 으로 구현한 예제들을 검색할 수 있다. 
+  * [Realworld conduit demo](https://react-ts-redux-realworld-example-app.netlify.app/#/)
+  * [Realworld conduit api docs swagger](https://api.realworld.io/api-docs/)
+  * [Realworld conduit srcs](https://codebase.show/projects/realworld)
 * [CSS Tutorial](https://www.w3schools.com/css/default.asp)
   * 최고의 CSS 튜토리얼
 * [W3Schools How To](https://www.w3schools.com/howto/default.asp)
@@ -57,110 +71,29 @@ HTML, CSS, JavaScript 등 front-end 개발에 필요한 tech stack 에 대해 �
 
 # Basic
 
-## NPM
+## yarn
 
-```bash
-$ mkdir basic
+WIP...
 
-$ cd basic
+## eslint
 
-$ npm init
+WIP...
 
-package name:
-version:
-description:
-entry point:
-test command:
-git repository:
-keywords:
-author:
-license:
+## prettier
 
-# You can skip with -y option
-# This will generate package.json
-$ npm init -y
+WIP...
 
-$ npm test
-```
+## zustand
 
-Let's update pakcage.json like this
+WIP...
 
-```js
-{
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  }
-}
-```
+## MUI
 
-```bash
-$ npm test
-```
+WIP...
 
-These are usual npm commands.
+## npm
 
-* `start`: 어플리케이션 실행
-* `test`: 테스트
-* `install`: 패키지 설치
-* `uninstall`: 패키지 삭제
-
-Let's update package.json again like this.
-
-```js
-{
-  "scripts": {
-    "build": "여기에 빌드 스크립트를 등록한다"
-  }
-}
-```
-
-And run it.
-
-```console
-$ npm run build
-```
-
-If you want to use js library in html, please embed this.
-
-```html
-<script src="https://unpkg.com/react@16/umd/react.development.js"></script>
-```
-
-If you wnat to download js library in loca, please run this command.
-
-```console
-$ npm install react
-```
-
-You can find out package.json has been changed.
-
-```js
-{
-  "dependencies": {
-    "react": "^16.12.0"
-  }
-}
-```
-
-The type of version are like these.
-
-```js
-// exact version
-1.2.3
-
-// greater than, greater than equal
-// lesser than, lesser than equal
->1.2.3
->=1.2.3
-<1.2.3
-<=1.2.3
-
-// If there is a minor version, upgrading patch version is ok.
-~1.2.3
-
-// If there is a major version, upgrading minor, patch is ok.
-^1.2.3
-```
+[npm](/npm/README.md)
 
 ## Webpack
 

@@ -35,7 +35,6 @@
     - [`function combineActions(...types)`](#function-combineactionstypes)
     - [`function handleActions(handlers, defaultState)`](#function-handleactionshandlers-defaultstate)
   - [react-router](#react-router)
-  - [* React Router Introduction @ youtube](#-react-router-introduction--youtube)
   - [Ant Design](#ant-design)
   - [redux-saga](#redux-saga)
   - [Redux Debugger in Chrome](#redux-debugger-in-chrome)
@@ -44,11 +43,16 @@
 
 # Abstract
 
-react.js 는 view library 이다. redux 와 다르다는 것을 주의하자. redux 는 A Predictable State Container for JS Apps 이다. 그리고 매우 작다(2KB). react.js 와 함께 사용할 front-end library 들은 [react libraries](#react-libraries) 를 참고해서 이해하자.
+react.js 는 view library 이다. redux 는 state management library 이다. react.js
+와 함께 사용할 front-end library 들은 [react libraries](#react-libraries) 를
+참고해서 이해하자.
 
-props 는 function parameter 와 유사하다. immutable 이다. state 는 local variable of function 과 같다. mutable 이다. [[React] Props와  State의 차이](https://singa-korean.tistory.com/37) 참고.
+props 는 function parameter 와 유사하다. immutable 이다. state 는 local variable
+of function 과 같다. mutable 이다. [[React] Props와  State의
+차이](https://singa-korean.tistory.com/37) 참고.
 
-react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다. [https://reactjs.org/docs/getting-started.html](https://reactjs.org/docs/getting-started.html) 
+react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다.
+[https://reactjs.org/docs/getting-started.html](https://reactjs.org/docs/getting-started.html) 
 
 # Templates
 
