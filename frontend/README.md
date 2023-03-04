@@ -3,11 +3,6 @@
 - [Materials](#materials)
 - [References](#references)
 - [Basic](#basic)
-  - [yarn](#yarn)
-  - [eslint](#eslint)
-  - [prettier](#prettier)
-  - [zustand](#zustand)
-  - [MUI](#mui)
   - [npm](#npm)
   - [Webpack](#webpack)
   - [Webpack Deep Dive](#webpack-deep-dive)
@@ -25,6 +20,8 @@ Frontend tech stack 은 update 가 빠르다.
 
 [Realworld conduit srcs](https://codebase.show/projects/realworld)
 에서 frontend, backend examples 를 참고하자.
+
+2023.03 시점에 typescript, vite, eslint, prettier, zustand, mui, axios, react-query 를 주로 사용한다.
 
 # Essentials
 
@@ -70,26 +67,6 @@ Frontend tech stack 은 update 가 빠르다.
   * 글자를 입력하고 폰트미리보기를 할 수 있다.
 
 # Basic
-
-## yarn
-
-WIP...
-
-## eslint
-
-WIP...
-
-## prettier
-
-WIP...
-
-## zustand
-
-WIP...
-
-## MUI
-
-WIP...
 
 ## npm
 
