@@ -21,7 +21,7 @@ Frontend tech stack 은 update 가 빠르다.
 [Realworld conduit srcs](https://codebase.show/projects/realworld)
 에서 frontend, backend examples 를 참고하자.
 
-2023.03 시점에 typescript, vite, eslint, prettier, zustand, mui, axios, react-query 를 주로 사용한다.
+2023.03 시점에 typescript, vite, eslint, prettier, zustand, mui, axios, react-query, msw, cypress 를 주로 사용한다.
 
 # Essentials
 
