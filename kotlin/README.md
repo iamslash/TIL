@@ -67,7 +67,7 @@
   - [Functions with vararg Parameters](#functions-with-vararg-parameters)
   - [Classes](#classes)
   - [Generics](#generics)
-  - [Generics in,out,*](#generics-inout)
+  - [Generics in,out,\*](#generics-inout)
   - [Notation for platform types](#notation-for-platform-types)
   - [Inheritance](#inheritance)
   - [Special Classes](#special-classes)
@@ -101,6 +101,7 @@
 - [Kotlin Design Pattern](#kotlin-design-pattern)
 - [Coding Convention](#coding-convention)
 - [Kotlin Architecture](#kotlin-architecture)
+- [Kotlin Projects](#kotlin-projects)
 
 ----
 
@@ -2585,4 +2586,7 @@ method 에 `@JvmStatic` 을 사용하자. Companion class 가 만들어지지 �
 
 # Kotlin Architecture
 
-WIP...
+# Kotlin Projects
+
+* [Realworld conduit realworld-springboot-kotlin](https://github.com/raeperd/realworld-springboot-kotlin)
+* [Realworld conduit kotlin-spring-realworld-example-app](https://github.com/gothinkster/kotlin-spring-realworld-example-app)
