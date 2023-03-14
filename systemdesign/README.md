@@ -33,6 +33,7 @@
   - [Database](#database)
   - [Cache](#cache)
   - [Asynchronism](#asynchronism)
+  - [Message Queues VS Event Streaming Platform](#message-queues-vs-event-streaming-platform)
   - [Communication](#communication)
     - [TCP](#tcp)
     - [UDP](#udp)
@@ -633,6 +634,34 @@ API Gate Way 와 Service Mesh 의 차이는 무엇일까?
   * Celery
 * Back pressure
   * MQ 가 바쁘면 client 에게 503 Service Unavailable 을 줘서 시스템의 성능저하를 예방한다. 일종의 circuit breaker 같다.
+
+## Message Queues VS Event Streaming Platform
+
+Event streaming platform 은 다음과 같은 특징을 갖는다.
+
+* Long data retention
+* Repeated consumption of messages
+
+Event streaming platform 의 종류는 다음과 같다.
+
+* [Kafka](/kafka/README.md)
+* Pulsa 
+
+Message queue 는 다음과 같은 특징을 갖는다.
+
+* Short data retention (Just on memory)
+* Onetime consumption of messages
+
+Message queue 의 종류는 다음과 같다.
+
+* [nats](/nats/README.md)
+* RocketMQ
+* ActiveMQ
+* RabbitMQ
+* ZeroMQ
+
+그러나 Message queue, Event streaming platform 경계는 흐릿해지고 있다. Rabbit MQ
+는 Long data retention, repeated consumption 이 가능하다.
 
 ## Communication
 
