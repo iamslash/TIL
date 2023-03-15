@@ -1,7 +1,7 @@
 - [Abstract](#abstract)
 - [Debug On IntelliJ](#debug-on-intellij)
 - [Entry Point](#entry-point)
-- [Process Incomming Message](#process-incomming-message)
+- [Handle Create Topics](#handle-create-topics)
 
 ----
 
@@ -68,7 +68,15 @@ IntelliJ 의 configuration 을 다음과 같이 수정한다. debugging 시작.
       try server.startup()
 ```
 
-# Process Incomming Message
+# Handle Create Topics
+
+```bash
+$ bin/kafka-topics.sh --list --bootstrap-server localhost:9092
+$ bin/kafka-topics.sh --create --topic quickstart-events --bootstrap-server localhost:9092
+$ bin/kafka-topics.sh --describe --topic quickstart-events --bootstrap-server localhost:9092
+$ bin/kafka-console-producer.sh --topic quickstart-events --bootstrap-server localhost:9092
+$ bin/kafka-console-consumer.sh --topic quickstart-events --from-beginning --bootstrap-server localhost:9092
+```
 
 ```java
 // kafka/server/KafkaApis.scala
@@ -116,4 +124,9 @@ IntelliJ 의 configuration 을 다음과 같이 수정한다. debugging 시작.
         case ApiKeys.DELETE_TOPICS => maybeForwardToController(request, handleDeleteTopicsRequest)
         case ApiKeys.DELETE_RECORDS => handleDeleteRecordsRequest(request)
 ...
+
+  def handleCreateTopicsRequest(request: RequestChannel.Request): Unit = {
+    val zkSupport = metadataSupport.requireZkOrThrow(KafkaApis.shouldAlwaysForward(request))
+    val controllerMutationQuota = quotas.controllerMutation.newQuotaFor(request, strictSinceVersion = 6)
+
 ```
