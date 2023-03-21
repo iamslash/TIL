@@ -965,7 +965,7 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 | [Designing Nearby Friends](practices/DesigningNearbyFriends/DesigningNearbyFriends.md) | |
 | [Designing Google Maps](practices/DesigningGoogleMaps/DesigningGoogleMaps.md) | |
 | [Designing Distributed Message Queue](practices/DesigningDistributedMessageQueue/DesigningDistributedMessageQueue.md) | |
-| Designing Metrics Monitoring and Alerting System | |
+| [Designing Metrics Monitoring and Alerting System](practices/DesigningMetricsMonitoringandAlertingSystem/DesigningMetricsMonitoringandAlertingSystem.md) | |
 | Designing Ad Click Event Aggregation | |
 | [Designing Hotel Reservation System](practices/DesigningHotelReservationSystem/DesigningHotelReservationSystem.md) | |
 | [Designing Distributed Email Service](practices/DesigningEmailService/DesigningEmailService.md) | |
