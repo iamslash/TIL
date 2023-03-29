@@ -20,6 +20,8 @@
 | `^ ⌘ <-` | Back |
 | `^ ⌘ ->` | Forward |
 | `^ ⌘ J` | Jump to definition |
+| `^ ⇧ ⌘ F` | Find selected symbol in workspace |
+| `^ ⇧ ⌘ H` | Find call hierarchy |
 
 ## File Extensions
 
