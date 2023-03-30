@@ -464,11 +464,17 @@ method definitions
 
 ## Methods
 
-objc 는 함수를 호출하는 형식이 특이하다. 메소드 앞의 `+` 는 `class method` 를 의미한다. 메소드 앞의 `-` 는 `instance method` 를 의미한다. 메소드의 argument 는 c-style 의 형변환 문법을 이용해서 표기한다. 메소드를 호출하는 것은 메시지를 전달한다는 의미이기
-때문에 c#과 달리 `[nil print]`를 허용한다. 인자는 `:` 다음에 따라온다. 인자가 여러개인 경우
-두번째 인자부터 label을 사용한다. label은 생략할 수 있지만 추천하지 않는다. label 역시 메소드의 구성요소 이기 때문에 컴파일러는 label 을 포함하여 메소드를 구별한다. 메소드의 리턴, 인자 타입은 기본이 `int` 가 아니고 `id` 이다.
+objc 는 함수를 호출하는 형식이 특이하다. 메소드 앞의 `+` 는 `class method` 를
+의미한다. 메소드 앞의 `-` 는 `instance method` 를 의미한다. 메소드의 argument 는
+c-style 의 형변환 문법을 이용해서 표기한다. 메소드를 호출하는 것은 메시지를
+전달한다는 의미이기 때문에 c#과 달리 `[nil print]`를 허용한다. 인자는 `:` 다음에
+따라온다. 인자가 여러개인 경우 두번째 인자부터 label을 사용한다. label은 생략할
+수 있지만 추천하지 않는다. label 역시 메소드의 구성요소 이기 때문에 컴파일러는
+label 을 포함하여 메소드를 구별한다. 메소드의 리턴, 인자 타입은 기본이 `int` 가
+아니고 `id` 이다.
 
-모든 메소드는 `self, _cmd` 를 숨겨진 인자로 제공한다. `self` 는 receiving object 이고 `_cmd` 는 호출되는 메소드의 실렉터이다.
+모든 메소드는 `self, _cmd` 를 숨겨진 인자로 제공한다. `self` 는 receiving object
+이고 `_cmd` 는 호출되는 메소드의 실렉터이다.
 
 다음은 메소드를 c# 과 objc 로 구현한 예이다.
 
@@ -488,7 +494,7 @@ Document document = new Document();
 bool success = document.SaveAs("MyFile.txt", "C:\Temp");
 ```
 
-```objc
+```c
 Document *document = [[Document alloc] init];
 [document print];
 [document release];
@@ -527,23 +533,25 @@ BOOL success = [document saveAs:@"MyFile.txt" toLocation:@"~/Temp"];
 #include <AvailabilityMacros.h>
 @interface SomeClass
 -method DEPRECATED_ATTRIBUTE; // or some other deployment-target-specific macro @end
-
 ```
 
 ## Naming Conventions
 
-클래스, 카테고리, 프로토콜의 선언은 주로 `.h` 에 저장하고 구현은 주로 `.m` 에 저장한다.
+클래스, 카테고리, 프로토콜의 선언은 주로 `.h` 에 저장하고 구현은 주로 `.m` 에
+저장한다.
 
-클래스, 카테고리, 프로토콜의 이름은 주로 대문자로 시작한다. 그러나 메소드, 인스턴스 변수의 이름은 소문자로 시작한다. 인스턴스를 저장한 변수 역시 소문자로 시작한다. 
+클래스, 카테고리, 프로토콜의 이름은 주로 대문자로 시작한다. 그러나 메소드,
+인스턴스 변수의 이름은 소문자로 시작한다. 인스턴스를 저장한 변수 역시 소문자로
+시작한다. 
 
 # Advanced Usages
 
 ## Objects, Classes and Methods
 
-objc는 `a.h` 에서 `@interface` 를 이용하여 class를 선언하고 `a.m` 에서
-`@implementation` 를 이용하여 class를 구현한다.  `id` type은 `void*` 와
-유사하다. 함수이름 앞의 `-` 는 instance method를 의미하고 `+` 는 class
-method를 의미한다.
+objc는 `a.h` 에서 `@interface` 를 이용하여 class 를 선언하고 `a.m` 에서
+`@implementation` 를 이용하여 class 를 구현한다.  `id` type은 `void*` 와
+유사하다. 함수이름 앞의 `-` 는 instance method를 의미하고 `+` 는 class method를
+의미한다.
 
 ```c#
 // Document.cs
@@ -556,7 +564,7 @@ public class Document
 }
 ```
 
-```
+```c
 // Document.h
 @interface Document : NSObject
  
@@ -577,18 +585,19 @@ public class Document
 
 ## Allocating and Initializing Objects
 
-objc에서 메모리는 `alloc` 함수를 호출하여 할당한다. `dealloc` 함수를
-호출하여 해제할 수 있다. `alloc`, `retain` 함수를 호출하면 `reference count` 가 증가하고 `release` 를 호출하면 `reference count 가
-감소한다. `reference count` 가 `0` 이되면 `dealloc` 이 호출된다.
+objc에서 메모리는 `alloc` 함수를 호출하여 할당한다. `dealloc` 함수를 호출하여
+해제할 수 있다. `alloc`, `retain` 함수를 호출하면 `reference count` 가 증가하고
+`release` 를 호출하면 `reference count 가 감소한다. `reference count` 가 `0`
+이되면 `dealloc` 이 호출된다.
 
-`autorelease` 를 이용하면 자동으로 해제할 수 있지만 의도치 않는 일이
-발생할 수 있기 때문에 추천하지 않는다.
+`autorelease` 를 이용하면 자동으로 해제할 수 있지만 의도치 않는 일이 발생할 수
+있기 때문에 추천하지 않는다.
 
 ```csharp
 Document document = new Document("My New Document");
 ```
 
-```objc
+```c
 Document *document = [[Document alloc] initWithTitle:@"My New Document"];
 
 Document *document = [[Document alloc] initWithTitle:@"My New Document"];
@@ -602,9 +611,9 @@ Document *document = [[[Document alloc] initWithTitle:@"My New Document"] autore
 
 ## Declared Properties
 
-c#의 property와 유사하다. `@property` 로 선언하고 `@synthesize` 로
-구현한다. `nonatomic` 은 thread safe 하지 않다는 의미하고 `copy` 는
-문자열을 복사한다는 의미이다.
+c# 의 property 와 유사하다. `@property` 로 선언하고 `@synthesize` 로 구현한다.
+`nonatomic` 은 thread safe 하지 않다는 의미하고 `copy` 는 문자열을 복사한다는
+의미이다.
 
 ```csharp
 public class Document : IPrintable
@@ -618,7 +627,7 @@ public class Document : IPrintable
 }
 ```
 
-```objc
+```c
 // Document.h
 @interface Document : NSObject<Printing>
  
@@ -648,8 +657,7 @@ public class Document : IPrintable
 
 ## Categories and Exensions
 
-c# 의 extension method 와 비슷하다. class 의 상속없이 기능을 확장할 수
-있다.
+c# 의 extension method 와 비슷하다. class 의 상속없이 기능을 확장할 수 있다.
 
 ```csharp
 public static class StringExtensions
@@ -666,7 +674,7 @@ Document document = new Document("My New Document");
 Console.WriteLine(document.title.Reverse());
 ```
 
-```objc
+```c
 // NSString+Reverse.h
 @interface NSString (Reverse)
  
@@ -704,9 +712,10 @@ NSLog(@"Reversed title: %@", [document.title reverse]);
 
 [blocks @ apple](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Blocks/Articles/00_Introduction.html)
 
-apple 이 `lambda expression` 을 지원하기 위해 clang implementation 에 추가한 비표준 기능이다. 다음은 예이다.
+apple 이 `lambda expression` 을 지원하기 위해 clang implementation 에 추가한
+비표준 기능이다. 다음은 예이다.
 
-```objc
+```c
 int multiplier = 7;
 int (^myBlock)(int) = ^(int num) {
     return num * multiplier;
@@ -715,7 +724,7 @@ int (^myBlock)(int) = ^(int num) {
 
 block 의 외부와 block 의 내부에서 변수를 공유하기 위해 `__block` 을 사용한다.
 
-```objc
+```c
 NSArray *stringsArray = @[ @"string 1",
                           @"String 21", // <-
                           @"string 12",
@@ -761,7 +770,7 @@ orderedSameCount: 2
 
 objc 의 protocol 은 c# 의 interface 와 비슷하다.
 
-```csharp
+```cs
 // IPrintable.cs
 public interface IPrintable
 {
@@ -778,7 +787,7 @@ public class Document : IPrintable
 }
 ```
 
-```objc
+```c
 // Printable.h
 @protocol Printing <NSObject>
  
@@ -806,18 +815,18 @@ public class Document : IPrintable
 
 collection 을 편리하게 순회하는 방법이다. 다음과 같은 방법으로 사용한다.
 
-```objc
+```c
 for ( Type newvar in expression ) { statements }
 ```
 
-```objc
+```c
 Type existingvar;
 for ( Type existingvar in expression ) { statements }
 ```
 
 다음은 fast enumeration 을 사용한 예이다.
 
-```objc
+```c
 NSArray *array = [NSArray arrayWithObjects:@"One", @"Two", @"Three", @"Four", nil];
 for (NSString *element in array) {
   NSLog(@"element: %@", element);
@@ -832,7 +841,10 @@ for (key in dictionary) {
 
 ## Enabling Staic Behavior
 
-objc 는 기본적으로 dynamic behavior 이다. 즉 compile time 보다는 run time 에 결정되는 것들이 많다. 그러나 다음과 같이 class 의 인스턴스를 `id` 형으로 저장하지 않는 다면 `static typing, type checking` 을 할 수 있다. 곧, static behavior 가 가능해진다.
+objc 는 기본적으로 dynamic behavior 이다. 즉 compile time 보다는 run time 에
+결정되는 것들이 많다. 그러나 다음과 같이 class 의 인스턴스를 `id` 형으로
+저장하지 않는 다면 `static typing, type checking` 을 할 수 있다. 곧, static
+behavior 가 가능해진다.
 
 ```objc
 // static typing
@@ -847,7 +859,8 @@ aShape = aRect;
 
 ## Selectors
 
-컴파일러는 메소드의 이름과 유니크한 아이디를 테이블 형태로 관리한다. 유니크한 아이디가 곧 실렉터이고 다음과 같이 선언할 수 있다.
+컴파일러는 메소드의 이름과 유니크한 아이디를 테이블 형태로 관리한다. 유니크한
+아이디가 곧 실렉터이고 다음과 같이 선언할 수 있다.
 
 ```objc
 SEL setWidthHeight;
@@ -859,7 +872,9 @@ NSString *method;
 method = NSStringFromSelector(setWidthHeight);
 ```
 
-실렉터는 `performSelector:, performSelector:withObject:, performSelector:withObject:withObject:` 과 같이 NSObject의 메소드로 호출 할 수 있다. 다음은 호출의 예이다.
+실렉터는 `performSelector:, performSelector:withObject:,
+performSelector:withObject:withObject:` 과 같이 NSObject의 메소드로 호출 할 수
+있다. 다음은 호출의 예이다.
 
 ```objc
 [friend performSelector:@selector(gossipAbout:)
@@ -875,7 +890,7 @@ SEL request = getTheSelector();
 
 `@try, @catch, @throw, @finally` 등으로 exception handling 한다.
 
-```objc
+```c
 // Basic Exception
 Cup *cup = [[Cup alloc] init];
 @try {
@@ -930,11 +945,11 @@ updating...
 
 ## Using C++ With Objective-C
 
-objc 에서 c++ 를 사용하고 싶다면 `*.mm` 를 작성해야 한다.
-objc 는 c++ 의 virtual function 을 지원하지 않는다.
-그리고 c++ 의 constructor, destructor 를 호출하지 않는다.
+objc 에서 c++ 를 사용하고 싶다면 `*.mm` 를 작성해야 한다. objc 는 c++ 의 virtual
+function 을 지원하지 않는다. 그리고 c++ 의 constructor, destructor 를 호출하지
+않는다.
 
-```objc
+```c
 /* Hello.mm
 * Compile with: g++ -x objective-c++ -framework Foundation Hello.mm  -o hello
 */

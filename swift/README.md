@@ -55,6 +55,7 @@
   - [Access Control](#access-control)
   - [Advanced Operators](#advanced-operators)
 - [Advanced](#advanced)
+  - [Renaming Objective-C APIs for Swift](#renaming-objective-c-apis-for-swift)
   - [Style Guide](#style-guide)
   - [Libraries](#libraries)
 
@@ -316,10 +317,6 @@ func printMyName(name: String) -> Void {
     print(name)
 }
 
-func printYourName(name: String) {
-    print(name)
-}
-
 func maximumIntegerValue() -> Int {
     return Int.max
 }
@@ -331,6 +328,7 @@ func bye() {print("bye") }
 sum(a: 3, b: 5) // 8
 printMyName(name: "Foo") // Foo
 printYourName(name: "hana") // hana
+printYourName("hana") // hana
 maximumIntegerValue() 
 hello()
 bye()
@@ -364,6 +362,9 @@ runAnother(function: someFunction)
 // Function Argument Labels and Parameter Names
 // Argument label for input
 // Parameter name for implementation
+// 함수를 호출할 때 argument 전달시 label 을 표기해야 한다. label 을
+// 표기하기 싫다면 함수를 정의할 때 label 자리에 _ 를 사용한다. 함수 정의에
+// label 이 없다면 parameter 이름을 label 이름으로 대신한다.
 func foo(key a: String, val b: String) -> String {
     return "\(a) \(b)"
 }
@@ -2133,6 +2134,74 @@ WIP...
 WIP...
 
 # Advanced
+
+## Renaming Objective-C APIs for Swift
+
+> * [Renaming Objective-C APIs for Swift](https://developer.apple.com/documentation/swift/renaming-objective-c-apis-for-swift)
+> * [[Objective-C] Swift 에서 사용할 함수의 첫번째 인자 이름 지정하기](https://sujinnaljin.medium.com/objective-c-%ED%95%A8%EC%88%98%EC%9D%98-%EC%B2%AB%EB%B2%88%EC%A7%B8-%EC%9D%B8%EC%9E%90-%EC%9D%B4%EB%A6%84-%EC%A7%80%EC%A0%95%ED%95%98%EA%B8%B0-863aae7a3533)
+
+----
+
+Swift function 을 를 objc method 로 바꾸고 그 method 를 Swift 에서 호출해 보자.
+
+```swift
+// swift
+func add(first a: Int, second b: Int) -> Int { 
+   return a + b
+}
+add(first: 1, second: 2)
+
+// objc
+- (NSUInteger) add: (NSUInteger)a second: (NSInteger) b {
+   return a + b;
+}
+
+// Call from swift
+add(1, second: 2)
+```
+
+objc method 를 살펴보자. swift 에서 사용한 first label `first` 가 없다. objc
+method 는 first label 을 생략하기 때문에 method name 을 다음과 같이 수정해야
+한다.
+
+```swift
+// objc
+- (NSUInteger) addToFirst: (NSUInteger)a second: (NSInteger) b {
+   return a + b;
+}
+
+// Call from swift
+add(toFirst: 1, second: 2)
+```
+
+그러나 objc method name 에 따라 일부가 사라지는 경우가 있다. `Color` 가 사라졌다. (테스트 못함)
+
+```swift
+// objc
+- (void) makeBorderWithColor: (UIColor*) color width: (CGFloat) width;
+
+// Call from swift
+self.makeBorder(with: .red, width: 10)
+```
+
+`NS_SWIFT_NAME` macro 를 사용하면 해결된다.
+
+```swift
+// As-is
+// objc 
+- (void) makeRounded: (CGFloat) cornerRadius;
+
+// Call from swift
+myView.makeRounded(16)
+
+// To-be
+// objc
+- (void) makeRounded: (CGFloat) cornerRadius 
+NS_SWIFT_NAME(makeRounded(cornerRadius:));
+
+// Call from swift
+myView.makeRounded(cornerRadius: 16)
+```
 
 ## Style Guide
 
