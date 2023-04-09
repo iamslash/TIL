@@ -66,6 +66,11 @@
 
 # Essentials
 
+- [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
+  - 한글로 제일 쉽게 설명하는 자료이다. 누가 뭐래도 최고. 
+  - [src](https://github.com/hunkim/DeepLearningZeroToAll)
+- [ML-For-Beginners](https://github.com/microsoft/ML-For-Beginners)
+  - microsoft ml for beginners
 - [Machine Learning Glossary](https://developers.google.com/machine-learning/glossary)
 - [Designing Machine Learning Systems (Chip Huyen 2022)](https://www.amazon.com/Designing-Machine-Learning-Systems-Production-Ready/dp/1098107969)
   - [src](https://github.com/chiphuyen/dmls-book)
@@ -77,8 +82,6 @@
   - [tensorflow](https://deeplearningzerotoall.github.io/season2/lec_tensorflow.html)
   - [pytorch](https://deeplearningzerotoall.github.io/season2/lec_pytorch.html)
   - [src](https://github.com/deeplearningzerotoall/PyTorch)
-- [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
-  - 한글로 제일 쉽게 설명하는 자료이다. 
 - [(2018) 인공지능 및 기계학습 개론Ⅰ @ edwith](https://kaist.edwith.org/machinelearning1_17)
   - 카이스트 산업공학과 문일철 교수 강의
 - [(2018) 인공지능 및 기계학습 개론ⅠI @ edwith](https://kaist.edwith.org/machinelearning2__17)
@@ -636,9 +639,9 @@ L(w) + \frac{w^{2}}{2 \sigma_{w}^{2}} &= \sum_{i=1}^{N} (t_{i} - y(x_{i} | w))^{
 
 # Linear regression with one variable
 
-- 한개의 독립변수(x)와 한개의 종속변수(y)를 이용하여 데이터를 분석하고
-  예측하는 것. 이때 통계적 가설에 해당하는 데이터의 일정한 패턴은
-  일차함수로 표현할 수 있다. 일차함수이기 때문에 선형회귀라고 한다.
+- 한개의 독립변수 `x` 와 한개의 종속변수 `y` 를 이용하여 데이터를 분석하고
+  예측하는 것. 이때 통계적 가설에 해당하는 데이터의 일정한 패턴은 일차함수로
+  표현할 수 있다. 일차함수이기 때문에 선형회귀라고 한다.
 - linear regression의 hypothesis function은 일차 함수이기 때문에
   다음과 같이 표현 가능 하다.
 
@@ -648,13 +651,12 @@ L(w) + \frac{w^{2}}{2 \sigma_{w}^{2}} &= \sum_{i=1}^{N} (t_{i} - y(x_{i} | w))^{
 H(x) = Wx + b
 ```
 
-- 여러가지 H(x)가 존재할 수 있다. 여러가지 가설이 존재할 수 있다는
-  말이다.  데이터값 y와 예측값 H(x)를 비교해서 흩어짐의 정도가 가장
-  작은 H(x)가 훌륭한 H(x)라고 할만 하다. 이때 흩어짐의 정도를 측정하는
-  함수를 cost function이라고 한다.  cost function은 W(weight)와
-  b(bias)를 인자로 갖는 함수라고 할 수 있다. 곧 linear regression은
-  W와 b를 어떻게 정해서 cost(W, b)의 값을 최소로하는 H(x)를 구하는
-  행위이다.
+- 여러가지 `H(x)` 가 존재할 수 있다. 여러가지 가설이 존재할 수 있다는 말이다.
+  데이터값 `y` 와 예측값 `H(x)` 를 비교해서 흩어짐의 정도가 가장 작은 `H(x)` 가
+  훌륭한 `H(x)` 라고 할만 하다. 이때 흩어짐의 정도를 측정하는 함수를 cost
+  function 이라고 한다.  cost function 은 `W (weight)` 와 `b (bias)` 를 인자로
+  갖는 함수라고 할 수 있다. 곧 linear regression 은 `W` 와 `b` 를 어떻게 정해서
+  `cost(W, b)` 의 값을 최소로하는 `H(x)` 를 구하는 행위이다.
 
 ![](img/cost.png)
 
@@ -662,20 +664,19 @@ H(x) = Wx + b
 cost(W, b) = \frac{1}{m} \sum_{m}^{i=1} (H(x_{i})-y_{i})^{2}
 ```
 
-- cost(W, b)를 최소로 하는 W, b를 찾기 위해 gradient descent
-  algorithm을 사용한다. gradient descent algorithm은 여러가지 W, b를
-  설정해 보고 training data를 이용하여 가장 최소의 cost(W, b)를 갖는
-  W, b를 찾는다.
+- `cost(W, b)` 를 최소로 하는 `W, b` 를 찾기 위해 gradient descent algorithm 을
+  사용한다. gradient descent algorithm 은 여러가지 `W, b` 를 설정해 보고
+  training data 를 이용하여 가장 최소의 `cost(W, b)` 를 갖는 `W, b` 를 찾는다.
 
-- 계산의 편의를 위해 b를 생략한 cost(W)를 고민해보자. 이것은 W를
-  x축으로 하고 포물선을 그리는 이차함수이다.  가장 볼록한 부분의 W값이
-  cost(W)를 최소화 할 것이다. cost(W)를 W에 관하여 미분하고 기울기가
-  가장 적은 cost(W)를 찾으면 된다. 
+- 계산의 편의를 위해 `b` 를 생략한 `cost(W)` 를 고민해보자. 이것은 `W` 를
+  `x` 축으로 하고 포물선을 그리는 이차함수이다.  가장 볼록한 부분의 `W` 값이
+  `cost(W)` 를 최소화 할 것이다. `cost(W)` 를 `W` 에 관하여 미분하고 기울기가
+  가장 적은 `cost(W)` 를 찾으면 된다. 
   
-- 기본적인 linear regression을 tensorflow를 이용하여 구현해보자.  W,
-  b, hypothesis, train은 모두 node이다. sess.run의 run은 eval과 같다.
-  인자로 넘겨진 node를 eval해달라는 의미이다. sess.run(cost)는 cost node를
-  eval한 결과를 리턴한다.
+- 기본적인 linear regression 을 tensorflow 를 이용하여 구현해보자.  `W, b,
+  hypothesis, train` 은 모두 node 이다. `sess.run` 의 `run` 은 eval 과 같다.
+  인자로 넘겨진 node 를 eval 해달라는 의미이다. `sess.run(cost)` 는 cost node 를
+  eval 한 결과를 리턴한다.
 
 ```python
 import tensorflow as tf
@@ -706,9 +707,9 @@ if __name__ == "__main__":
     main()
 ```
 
-- place holder와 train data를 이용해서 구현해보자. place holder는
+- place holder 와 train data 를 이용해서 구현해보자. place holder 는
   자리만 예약하고 나중에 값을 대입하겠다는 약속을 한 node이다. 나중에 제공할
-  값은 sess.run의 feed_dict인자로 넘겨준다.
+  값은 `sess.run` 의 `feed_dict` 인자로 넘겨준다.
 
 ```python
 import tensorflow as tf
@@ -739,20 +740,20 @@ if __name__ == "__main__":
     main()
 ```
 
-- gradient descent algorithm은 어떻게 해서 최소의 W, b를 찾아내는지
-  살펴보자. 먼저 H(x)와 cost(W) 다음과 같이 정의하자.
+- gradient descent algorithm 은 어떻게 해서 최소의 `W, b` 를 찾아내는지
+  살펴보자. 먼저 `H(x)` 와 `cost(W)` 다음과 같이 정의하자.
   
 ![](img/hypothesis.png)
 
 ![](img/cost.png)
 
-- cost(W)를 최소화될때까지 W를 갱신해야한다. 다음과 같이 새로운 W는
-  현재의 W에서 α(learning rate)와 cost(W)를 W에 관하여 미분한 것을
-  곱한 값을 빼서 얻는다. cost(W)는 미분을 쉽게 하기 위해 다음과 같이
-  1/2를 곱한다. 원래의 것을 미분하는 것이나 1/2를 곱하고 미분하는
-  것이나 동일하다. α(learning rate)와 cost(W)를 W에 관하여 미분한
+- `cost(W)` 를 최소화될때까지 `W` 를 갱신해야한다. 다음과 같이 새로운 `W` 는
+  현재의 `W` 에서 `α(learning rate)` 와 `cost(W)` 를 `W` 에 관하여 미분한 것을
+  곱한 값을 빼서 얻는다. `cost(W)` 는 미분을 쉽게 하기 위해 다음과 같이
+  `1/2` 를 곱한다. 원래의 것을 미분하는 것이나 `1/2` 를 곱하고 미분하는
+  것이나 동일하다. `α(learning rate)` 와 `cost(W)` 를 `W` 에 관하여 미분한
   것은 한번은 양이되고 한번은 음이 되는 식으로 반복할 것이다. learning
-  rate을 잘 설정해야 새로운 W를 쉽게 찾아 갈 수 있다.
+  rate 을 잘 설정해야 새로운 `W` 를 쉽게 찾아 갈 수 있다.
 
 ```latex
 \begin{align*}
@@ -766,7 +767,7 @@ if __name__ == "__main__":
 
 ![](img/gradient_descent.png)
 
-- 앞서 언급한 것 처럼 x축을 W, y축을 cost(W)로 하는 그래프를 그려 보자.
+- 앞서 언급한 것 처럼 x 축을 `W`, y 축을 `cost(W)` 로 하는 그래프를 그려 보자.
 
 ```python
 import tensorflow as tf
@@ -795,8 +796,8 @@ if __name__ == "__main__":
     main()
 ```
 
-- gradient descent algorithm을 직접 구현해서 cost(W)를 최소화 하는
-  W를 찾아 보자.
+- gradient descent algorithm 을 직접 구현해서 `cost(W)` 를 최소화 하는
+  `W` 를 찾아 보자.
 
 ```python
 import tensorflow as tf
@@ -827,7 +828,7 @@ if __name__ == '__main__':
     main()
 ```
 
-- gradient descent algorithm을 GradientDescentOptimizer를 활용하여
+- gradient descent algorithm 을 `GradientDescentOptimizer` 를 활용하여
   쉽게 구현할 수 있다.
   
 ```python
@@ -859,8 +860,8 @@ if __name__ == "__main__":
     main()
 ```
 
-- gradient descent algorithm을 직접 구현한 것과 GradientDescentOptimizer를 활용한 것의
-  결과는 동일하다. gvs를 보정하면 custom gradient descent값을 이용 할 수 있다.
+- gradient descent algorithm 을 직접 구현한 것과 `GradientDescentOptimizer` 를 활용한 것의
+  결과는 동일하다. `gvs` 를 보정하면 custom gradient descent 값을 이용 할 수 있다.
   
 ```python
 import tensorflow as tf
@@ -892,8 +893,8 @@ if __name__ == "__main__":
 
 # Linear regression with multiple variables
 
-- 만약 feature가 x1, x2, x3와 같이 세가지 일때 hypothesis와
-  cost(W, b)는 다음과 같다.
+- 만약 feature 가 `x1, x2, x3` 와 같이 세가지 일때 hypothesis 와
+  `cost(W, b)` 는 다음과 같다.
 
 ![](img/multiple_linear_regression_hypothesis_cost.png)
   
@@ -905,19 +906,19 @@ H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ...
 \end{align*}
 ```
 
-- feature가 여러개인 경우 matrix를 이용하여 계산 할 수 있다. matrix를
-  이용한다는 것은 여러개의 데이터를 pararrel하게 처리할 수 있다는
-  의미이다. 위와 같이 feature가 x1, x2, x3인 경우 다음과 같은 형태의
-  행렬 연산을 이용하여 hypothesis를 구할 수 있다. 이때 X행렬의 형태는
-  data instance x feature count, W행렬의 형태는 feature count x output
-  count이고 H(X)의 행렬은 data instance x output count이다. 예를
-  들어서 feature가 x1, x2, x3이고 output이 y인 경우 X행렬의 형태는 1 x
-  3, W행렬의 형태는 3 x 1이고 H(X)행렬의 형태는 1 x 1이다.  만약
-  데이터의 개수가 5개라면 X행렬의 형태는 5 x 3, W행렬의 형태는 3 x
-  1이고 H(X)행렬의 형태는 5 x 1이다. 데이터의 개수가 5개, feature가
-  x1, x2, x3와 같이 세개이고 output이 y1, y2와 같이 두개라고
-  해보자. 이때 X의 행렬의 형태는 5 x 3, W행렬의 형태는 3 x 2,
-  H(X)행렬의 형태는 5 x 2가 된다.
+- feature가 여러개인 경우 matrix 를 이용하여 계산 할 수 있다. matrix 를
+  이용한다는 것은 여러개의 데이터를 pararrel 하게 처리할 수 있다는 의미이다.
+  위와 같이 feature 가 `x1, x2, x3` 인 경우 다음과 같은 형태의 행렬 연산을
+  이용하여 hypothesis 를 구할 수 있다. 이때 `X` 행렬의 형태는 `data instance x
+  feature count`, `W` 행렬의 형태는 `feature count x output count` 이고 `H(X)`
+  의 행렬은 `data instance x output count` 이다. 예를 들어서 `feature` 가 `x1,
+  x2, x3` 이고 output 이 `y` 인 경우 `X` 행렬의 형태는 `1 x 3`, `W` 행렬의
+  형태는 `3 x 1` 이고 `H(X)` 행렬의 형태는 `1 x 1` 이다.  만약 데이터의 개수가
+  `5` 개라면 `X` 행렬의 형태는 `5 x 3`, `W` 행렬의 형태는 `3 x 1` 이고 `H(X)`
+  행렬의 형태는 `5 x 1` 이다. 데이터의 개수가 `5` 개, feature 가 `x1, x2, x3` 와
+  같이 세개이고 output 이 `y1, y2` 와 같이 두개라고 해보자. 이때 `X` 의 행렬의
+  형태는 `5 x 3`, `W` 행렬의 형태는 `3 x 2`, `H(X)` 행렬의 형태는 `5 x 2` 가
+  된다.
 
 ![](img/multiple_linear_regression_multi.png)
 
@@ -941,7 +942,7 @@ H(X) &= X W
 \end{align*}
 ```
 
-- feature가 여러개일때 linear regression을 구현해보자.
+- feature 가 여러개일때 linear regression 을 구현해보자.
 
 ```python
 import tensorflow as tf
@@ -982,7 +983,7 @@ if __name__ == '__main__':
     main()
 ```
 
-- feature가 여러개일때 행렬 연산을 이용하여 linear regression을 구현해보자.
+- feature 가 여러개일때 행렬 연산을 이용하여 linear regression 을 구현해보자.
   행렬을 이용하면 코드가 조금 더 깔끔해 진다.
 
 ```python
@@ -1026,7 +1027,7 @@ if __name__ == "__main__":
     main()
 ```
 
-- feature가 여러개일때 행렬 연산과 파일입출력을 이용하여 linear regression을 구현해보자.
+- feature 가 여러 개일때 행렬 연산과 파일입출력을 이용하여 linear regression 을 구현해보자.
   현실세계에서 데이터는 주로 파일을 통해 제공된다.
 
 ```python
@@ -1075,13 +1076,13 @@ if __name__ == "__main__":
 ```
 
 - 데이터의 개수가 많다면 메모리의 제한때문에 파일의 모든 내용을 한번에
-  가져올 수 없다. tensorflow는 다음의 그림과 같이 x, y의 데이터들을
+  가져올 수 없다. tensorflow 는 다음의 그림과 같이 `x, y` 의 데이터들을
   일정한 크기(배치)씩 가져올 수 있는 기능을 제공한다.
 
 ![](img/AnimatedFileQueues.gif)
 
-- feature가 여러개일때 행렬 연산과 tf.TextLineReader를 이용하여 linear
-  regression을 구현해보자.
+- feature 가 여러개일때 행렬 연산과 `tf.TextLineReader` 를 이용하여 linear
+  regression 을 구현해보자.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1143,21 +1144,21 @@ if __name__ == "__main__":
 - `y` 가 `0` 혹은 `1` 과 같이 두개만 존재하는 경우의 회귀분석이다. 예를 들어서
   학생이 시험을 통과하기 위해 공부한 시간을 `x1`, 공부한 책의 숫자를 `x2`,
   시험통과여부를 `y` 라고 하자. 이때 `y` 값의 후보는 `0, 1` 이고 logistic
-  regression 이라고 할 수 있다. 이 밖에도 스팸인지 햄인지 구별하는
-  경우, 페이스북 친구의 타임라인을 보여줄 것인지 말 것인지, 신용카드
-  이용 패턴을 분석해서 내가 사용한 것인지 다른 사람이 도용해서
-  사용한것인지, 주식투자에서 특정 종목에 대해서 투자를 할 것인지 말
-  것인지 등등이 해당된다.
+  regression 이라고 할 수 있다. 이 밖에도 스팸인지 햄인지 구별하는 경우,
+  페이스북 친구의 타임라인을 보여줄 것인지 말 것인지, 신용카드 이용 패턴을
+  분석해서 내가 사용한 것인지 다른 사람이 도용해서 사용한것인지, 주식투자에서
+  특정 종목에 대해서 투자를 할 것인지 말 것인지 등등이 해당된다.
 
-- hypothesis function 를 linear regression 처럼 일차 함수로 적용하면
-  문제가 발생한다. 예를 들어서 앞서 언급한 학생의 시험 통과 결정의
-  예를 생각해보자.  training data 가 `x1` 이 `1` 일때 `y` 는 `0`, `x1` 이 `2` 일때 `y` 는
-  `1` , `x1` 이 `3` 일때 `y` 는 `2` 이라고 하자. 이때 `y` 가 `0.5` 보다 크거나 같은 경우는
-  통과 `0.5` 보다 작은 경우는 실패하고 할 수 있다. 이 경우 `H(x) = x - 1`이다. 하지만 training data 에 `x1` 이 `4` 일때 `y` 가 `1` 이라는 데이터가
-  추가되었다고 해보자. 그렇다면 `H(x) = x/2 - 1` 이 될테고 test data 의
-  `x1` 이 `2` 일 경우 `y` 는 `0` 이므로 training data 와 달리 보정된 `y` 는 실패가
-  되어 버린다. 이 것은 accuracy 가 떨어진다고 할 수 있다. 따라서
-  일차함수로 표현하면 문제가 될 수 있다.
+- hypothesis function 를 linear regression 처럼 일차 함수로 적용하면 문제가
+  발생한다. 예를 들어서 앞서 언급한 학생의 시험 통과 결정의 예를 생각해보자.
+  training data 가 `x1` 이 `1` 일때 `y` 는 `0`, `x1` 이 `2` 일때 `y` 는 `1` ,
+  `x1` 이 `3` 일때 `y` 는 `2` 이라고 하자. 이때 `y` 가 `0.5` 보다 크거나 같은
+  경우는 통과 `0.5` 보다 작은 경우는 실패하고 할 수 있다. 이 경우 `H(x) = x -
+  1` 이다. 하지만 training data 에 `x1` 이 `4` 일때 `y` 가 `1` 이라는 데이터가
+  추가되었다고 해보자. 그렇다면 `H(x) = x/2 - 1` 이 될테고 test data 의 `x1` 이
+  `2` 일 경우 `y` 는 `0` 이므로 training data 와 달리 보정된 `y` 는 실패가 되어
+  버린다. 이 것은 accuracy 가 떨어진다고 할 수 있다. 따라서 일차함수로 표현하면
+  문제가 될 수 있다.
 
 ![](img/logistic_regression_linear_hypothesis_1.png)
 
@@ -1253,7 +1254,7 @@ if __name__ == "__main__":
     main()
 ```
 
-- 당뇨병 환자인지 아닌지를 예측하는 logistic regression을 구현해 보자.
+- 당뇨병 환자인지 아닌지를 예측하는 logistic regression 을 구현해 보자.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1364,11 +1365,12 @@ H_{C}(X) \\
 S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
 ```
 
-- 출력값들이 각각 `0.7, 0.2, 0.1` 이라고 하자. 한번 더 처리하여 `1.0, 0.,
-  0.` 과 같이 명쾌하게 A등급에 속한다고 결론내고 싶다. 그래서 one hot
-  encoding 이 발견되었다. 최종 출력값은 `1, 0, 0` 이다. one hot encoding 은 `tf.arg_max` 를 사용했다.
+- 출력값들이 각각 `0.7, 0.2, 0.1` 이라고 하자. 한번 더 처리하여 `1.0, 0., 0.` 과
+  같이 명쾌하게 A등급에 속한다고 결론내고 싶다. 그래서 one hot encoding 이
+  발견되었다. 최종 출력값은 `1, 0, 0` 이다. one hot encoding 은 `tf.arg_max` 를
+  사용했다.
 
-- `0.7, 0.2, 0.1` 의 출력값은 `S(\bar{Y})`라고 표기하자. `\bar{Y}` 는
+- `0.7, 0.2, 0.1` 의 출력값은 `S(\bar{Y})` 라고 표기하자. `\bar{Y}` 는
   예측값을 의미한다. `1, 0, 0` 과 같은 출력값은 `L` 이라고 표기하자. 이것은
   학습데이터의 값이다. cost function 을 제작하기 위해 예측값과
   데이터값을 인자로 하고 예측값과 데이터값이 같으면 `0` 에 가까운 값을 다르면
@@ -1396,12 +1398,12 @@ D(S, L) &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
 \end{align*}
 ```
 
-- `L_{j}` 가 `[0, 1]`, `\bar{y}_{j}` 가 `[0, 1]` 이라고 해보자.  `cost` 는 `0 x ∞ + 1 x 0`가 되어 `0` 이 된다. `\bar{y}_{j}` 가 `[1, 0]` 이라고 해보자.
-  cost는 `0 x 0 + 1 x ∞`가 되어 무한대가 된다.  앞서 언급한 cross
-  entropy function 의 전개식과 `-log(x)` 를 이용하면 데이터값과
-  예측값이 동일할때 cost function 의 리턴값이 `0` 에 가깝고 그렇지 않으면
-  무한대에 가까워진다. 이것으로 cross entropy function 이 제대로
-  동작한다고 말 할 수 있다.
+- `L_{j}` 가 `[0, 1]`, `\bar{y}_{j}` 가 `[0, 1]` 이라고 해보자.  `cost` 는 `0 x
+  ∞ + 1 x 0`가 되어 `0` 이 된다. `\bar{y}_{j}` 가 `[1, 0]` 이라고 해보자. cost는
+  `0 x 0 + 1 x ∞` 가 되어 무한대가 된다.  앞서 언급한 cross entropy function 의
+  전개식과 `-log(x)` 를 이용하면 데이터값과 예측값이 동일할때 cost function 의
+  리턴값이 `0` 에 가깝고 그렇지 않으면 무한대에 가까워진다. 이것으로 cross
+  entropy function 이 제대로 동작한다고 말 할 수 있다.
 
 ![](img/minus_log_graph.png)
 
@@ -1511,7 +1513,7 @@ if __name__ == "__main__":
     main()
 ```
 
-- 동물들의 데이터를 이용해서 어떤 동물인지 분류하는 문제를 softmax regression으로
+- 동물들의 데이터를 이용해서 어떤 동물인지 분류하는 문제를 softmax regression 으로
   해결해보자.
 
 ```python
@@ -1614,7 +1616,6 @@ W := W - \alpha \frac{\partial}{\partial W} cost(W, b)
 ```latex
 {x}'_{j} = \frac{x_{j} - \mu _{j}}{\sigma _j{}}
 ```
-
 
 - training data set 에 대해서 너무 훈련이 되있다면 test data set 에 대한
   정확도가 낮을 수 있다. 이러한 현상을 overfitting 이라고 한다. 다음과
@@ -2821,8 +2822,6 @@ cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S_{i}, L_{i}) \\
 \end{align*}
 ```
   
-
-
 - dropout 이란 neural networks 의 노드중 임의의 것들을 제거하여 overfitting
   현상을 해결하는 것이다. tensorflow 로 간단히 구현할 수 있다.
 
