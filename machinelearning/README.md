@@ -1305,11 +1305,11 @@ if __name__ == "__main__":
   출석 횟수를 입력으로 성적을 출력으로 갖는 경우를 생각해보자. 이때
   성적은 `A, B, C` 중 하나이다. 이것은 multinomial
   classification 문제이다. 입력 `x1, x2` 에 대해 출력 `Y` 가 `A` 이냐 아니냐에
-  대한 logistic regression 을 할 수 있다. 마찬 가지로 `Y` 가 `B, C` 인 경우
-  각각 logistic regression 을 할 수 있다. 그렇다면 logistic
+  대한 **logistic regression** 을 할 수 있다. 마찬 가지로 `Y` 가 `B, C` 인 경우
+  각각 **logistic regression** 을 할 수 있다. 그렇다면 logistic
   regression 을 수행할 `hypothesis function` 은 3 가지이다. 이것은
   행렬연산을 활용하여 다음과 같이 한 번에 수행할 수 있다. 이와 같이
-  multinomial classification 은 binary classification 을 여러개
+  **multinomial classification** 은 **binary classification** 을 여러개
   이용해서 해결한다.
 
 ![](img/softmax_regression_hypothesis_matrix.png)
@@ -1355,7 +1355,7 @@ H_{C}(X) \\
 
 - 출력값들이 각각 `2.0, 1.0, 0.1` 이라고 하자. 그렇다면 이것은 `A` 등급에 속한다.
   하지만 출력값들의 형태를 각각의 등급에 대해 `[0, 1]` 의 확률값으로 표현하고 싶다.
-  그래서 softmax function 이 발견되었다. softmax function 을 이용하면
+  그래서 **softmax function** 이 발견되었다. **softmax function** 을 이용하면
   `0.7, 0.2, 0.1` 의 형태로 출력값이 변경된다. 결과적으로 `0.7` 의 확률로
   `A` 등급에 속한다는 의미이다. 확률이기 때문에 모두 더하면 `1` 이다. 
 
@@ -1366,7 +1366,7 @@ S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
 ```
 
 - 출력값들이 각각 `0.7, 0.2, 0.1` 이라고 하자. 한번 더 처리하여 `1.0, 0., 0.` 과
-  같이 명쾌하게 A등급에 속한다고 결론내고 싶다. 그래서 one hot encoding 이
+  같이 명쾌하게 A등급에 속한다고 결론내고 싶다. 그래서 **one hot encoding** 이
   발견되었다. 최종 출력값은 `1, 0, 0` 이다. one hot encoding 은 `tf.arg_max` 를
   사용했다.
 
@@ -1374,8 +1374,8 @@ S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
   예측값을 의미한다. `1, 0, 0` 과 같은 출력값은 `L` 이라고 표기하자. 이것은
   학습데이터의 값이다. cost function 을 제작하기 위해 예측값과
   데이터값을 인자로 하고 예측값과 데이터값이 같으면 `0` 에 가까운 값을 다르면
-  무한대의 값을 리턴하는 함수가 필요하다. 그래서 cross-entropy
-  function 이 발견되었고 다음과 같이 정의가 가능하다.
+  무한대의 값을 리턴하는 함수가 필요하다. 그래서 **cross-entropy
+  function** 이 발견되었고 다음과 같이 정의가 가능하다.
 
 ![](img/softmax_regression_cross.png)
 
@@ -1383,8 +1383,8 @@ S(\bar{y}_{j}) = \frac{e^{\bar{y}_{j}}}{\sum_{j=1}^{k}e^{\bar{y}_{j}}}
 D(S, L) = -\sum_{j=1}^{k}L_{j}\log(S_{j})
 ```
 
-- cross entropy function 이 제대로 동작하는지 예를 들어서
-  살펴보자. 앞서 언급한 cross entropy function 은 다음과 같이 전개 할
+- **cross entropy function** 이 제대로 동작하는지 예를 들어서
+  살펴보자. 앞서 언급한 **cross entropy function** 은 다음과 같이 전개 할
   수 있고 `-log(x)` 함수의 모양을 눈여겨 볼 필요가 있다. `L_{j}` 는
   학습데이터값이고 `\bar{y}_{j}` 는 예측값이다.
 
@@ -1400,15 +1400,15 @@ D(S, L) &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
 
 - `L_{j}` 가 `[0, 1]`, `\bar{y}_{j}` 가 `[0, 1]` 이라고 해보자.  `cost` 는 `0 x
   ∞ + 1 x 0`가 되어 `0` 이 된다. `\bar{y}_{j}` 가 `[1, 0]` 이라고 해보자. cost는
-  `0 x 0 + 1 x ∞` 가 되어 무한대가 된다.  앞서 언급한 cross entropy function 의
+  `0 x 0 + 1 x ∞` 가 되어 무한대가 된다.  앞서 언급한 **cross entropy function** 의
   전개식과 `-log(x)` 를 이용하면 데이터값과 예측값이 동일할때 cost function 의
   리턴값이 `0` 에 가깝고 그렇지 않으면 무한대에 가까워진다. 이것으로 cross
   entropy function 이 제대로 동작한다고 말 할 수 있다.
 
 ![](img/minus_log_graph.png)
 
-- logistic regression 의 logistic cost function 과 softmax regression 의
-  cross entropy function 은 사실상 같다. `H(x), S` 는 예측 값을 의미하고
+- **logistic regression** 의 **logistic cost function** 과 **softmax regression** 의
+  **cross entropy function** 은 사실상 같다. `H(x), S` 는 예측 값을 의미하고
   `y, L` 은 데이터 값을 의미한다.
 
 ![](img/softmax_regression_vs_logistic_regression_cost.png)
@@ -1420,7 +1420,7 @@ D(S, L)    &= -\sum_{j=1}^{k}L_{j}\log(S_{j}) \\
 \end{align*}
 ```
 
-- softmax regression 의 cost function 은 다음과 같다.  실제 그래프로
+- **softmax regression** 의 cost function 은 다음과 같다.  실제 그래프로
   그려보면 logistic regression 의 cost function 처럼 아래가 볼록한
   모양이다. 기울기가 `0` 인 지점은 한 곳이다. gradient descent
   algorithm 을 이용해서 cost function 이 최소인 `W, b` 를 찾아 낼 수
@@ -1438,8 +1438,8 @@ cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S, L) \\
 \end{align*}
 ```
 
-- x 가 4 개이고 y 가 3 개인 데이터를 이용하여 softmax regression 을 구현해 보자.
-  one hot encoding 을 위해 `tf.arg_max` 를 사용했다.
+- x 가 4 개이고 y 가 3 개인 데이터를 이용하여 **softmax regression** 을 구현해 보자.
+  **one hot encoding** 을 위해 `tf.arg_max` 를 사용했다.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -1513,7 +1513,7 @@ if __name__ == "__main__":
     main()
 ```
 
-- 동물들의 데이터를 이용해서 어떤 동물인지 분류하는 문제를 softmax regression 으로
+- 동물들의 데이터를 이용해서 어떤 동물인지 분류하는 문제를 **softmax regression** 으로
   해결해보자.
 
 ```python
