@@ -198,8 +198,8 @@
 |--|--|--|--|
 | Accuracy (정분류율) | `(TP + TN) / (TP + FN + FP + TN)` | | |
 | Error Errate(오분류율) | `(FN + FP) / (TP + TN + FN + FP)` | | |
-| Precision (정확도) | `TP / (TP + FP)` | 전체참 중 진짜참 | 정확한 비율 |
-| Recall (민감도, 재현율) | `TP / (TP + FN)` | 내가참 중 진짜참 | 잡아챈 비율 |
+| Precision (정확도) | `TP / (TP + FP)` | 내가참 중 진짜참 | 정확한 비율 |
+| Recall (민감도, 재현율) | `TP / (TP + FN)` | 진짜참 중 내가참 | 잡아챈 비율 |
 | Specificity (특이도) | `TN / (TN + FP)` |  |  |
 | F1 score | `2 * (Precision * Result) / (Precision + Result)` | | |
 
@@ -1942,7 +1942,9 @@ if __name__ == "__main__":
 - 다음은 tensor flow 의 유용한 함수들을 사용한 예제이다. 잘 학습해 놓자.
 
 ```python
+# https://github.com/hunkim/DeepLearningZeroToAll/blob/master/lab-08-tensor_manipulation.ipynb
 # https://www.tensorflow.org/api_guides/python/array_ops
+
 import tensorflow as tf
 import numpy as np
 import pprint
@@ -2169,9 +2171,9 @@ if __name__ == "__main__":
     main()
 ```
 
-- XOR 문제를 해결하기 위해 3개의 logistic regression unit 으로
-  표현해보자.  x1, x2 에 [0, 0], [0, 1], [1, 0], [1, 1]을 입력해서
-  연산해서 `bar{y}` 값을 확인 해 보면 정상 동작함을 알 수 있다.
+- XOR 문제를 해결하기 위해 3개의 logistic regression unit 으로 표현해보자.  `x1,
+  x2` 에 `[0, 0], [0, 1], [1, 0], [1, 1]` 을 입력해서 연산해서 `bar{y}` 값을
+  확인 해 보면 정상 동작함을 알 수 있다.
 
 ![](img/xor3units_1.png)
 
