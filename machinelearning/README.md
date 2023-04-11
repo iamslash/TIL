@@ -4281,6 +4281,7 @@ if __name__ == "__main__":
 
 * [Visual Guide to Transformer Neural Networks - (Episode 1) Position Embeddings | youtube](https://www.youtube.com/watch?v=dichIcUZfOw)
   * [Visual Guide to Transformer Neural Networks - (Episode 2) Multi-Head & Self-Attention | youtube](https://www.youtube.com/watch?v=mMa2PmYJlCo)
+  * [Visual Guide to Transformer Neural Networks - (Episode 3) Decoder’s Masked Attention | youtube](https://www.youtube.com/watch?v=gJ9kaJsE78k)
 * [[딥러닝 기계 번역] Transformer: Attention Is All You Need (꼼꼼한 딥러닝 논문 리뷰와 코드 실습) | youtube](https://www.youtube.com/watch?v=AA621UofTUA)
 
 # Glossory
