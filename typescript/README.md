@@ -27,6 +27,7 @@
   - [Generics](#generics)
   - [Define Multiple Variables On The Same Line](#define-multiple-variables-on-the-same-line)
 - [Advanced](#advanced)
+  - [Triple Dots](#triple-dots)
   - [Nullish Coalescing Operator (||), Double Question Marks (??)](#nullish-coalescing-operator--double-question-marks-)
   - [export and import](#export-and-import)
   - [`declare`](#declare)
@@ -658,6 +659,70 @@ let i = 0, j = 0, n = s.length
 ```
 
 # Advanced
+
+## Triple Dots
+
+> * [JavaScript | JS에서 점점점(…)은 무엇일까?](https://dinn.github.io/javascript/js-dotdotdot/)
+>
+
+Triple dot are one of these.
+
+* rest parameter 
+* spread operator
+* rest property
+* spread property 
+
+```ts
+// Rest parameter
+function hello(a, b, ...args) {
+    console.log(a);
+    console.log(b);
+    console.log(args);
+}
+hello(1, 2, 3, 4, 5)
+// 1
+// 2
+// [3, 4, 5]
+let arr = [1, 2, 3];
+let [one, two, three] = arr;
+console.log(one, two, three)  // 1 2 3
+function foo(...[a, b, c]) {
+    console.log(a, b, c);
+}
+foo(1, 2, 3);  // 1 2 3
+
+// Spread operator
+let arr = [3, 4, 5]
+let foo = [...arr];
+console.log(arr)  // [3, 4, 5]
+console.log(foo)  // [3, 4, 5]
+
+// Rest property
+let foo = {
+    a: 1,
+    b: 2,
+    x: 3,
+    y: 4
+}
+let {a, b, ...c} = foo;
+console.log(a);  // 1
+console.log(b);  // 2
+console.log(c);  // {x: 3, y: 4}
+let {a, ...c, y} = foo;  // ERROR: Uncaught SyntaxError: Rest element must be last element
+
+// Spread property
+let a = 1;
+let b = 2;
+let c = {x: 3, y: 4};
+let foo = {a, b, ...c};
+console.log(foo);  // {a: 1, b: 2, x: 3, y: 4}
+
+let foo = {a: 1, b: 2};
+let bar = {c: 3, d: 4};
+let assignedObj = Object.assign({}, foo, bar);  // {a: 1, b: 2, c: 3, d: 4}
+let spreadObj = {...foo, ...bar};               // {a: 1, b: 2, c: 3, d: 4}
+console.log(JSON.stringify(assignedObj) === JSON.stringify(spreadObj);) // true
+```
 
 ## Nullish Coalescing Operator (||), Double Question Marks (??)
 

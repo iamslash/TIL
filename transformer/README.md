@@ -4,6 +4,7 @@
 
 # Materials
 
+* [The Annotated Transformer](https://nlp.seas.harvard.edu/2018/04/03/attention.html)
 * [Pytorch Transformers from Scratch (Attention is all you need) | youtube](https://www.youtube.com/watch?v=U0s0f995w14)
   * [pytorch src](https://github.com/aladdinpersson/Machine-Learning-Collection/blob/master/ML/Pytorch/more_advanced/transformer_from_scratch/transformer_from_scratch.py)
 * [Visual Guide to Transformer Neural Networks - (Episode 1) Position Embeddings | youtube](https://www.youtube.com/watch?v=dichIcUZfOw)
