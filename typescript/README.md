@@ -27,6 +27,7 @@
   - [Generics](#generics)
   - [Define Multiple Variables On The Same Line](#define-multiple-variables-on-the-same-line)
 - [Advanced](#advanced)
+  - [Utility Types](#utility-types)
   - [Triple Dots](#triple-dots)
   - [Nullish Coalescing Operator (||), Double Question Marks (??)](#nullish-coalescing-operator--double-question-marks-)
   - [export and import](#export-and-import)
@@ -659,6 +660,47 @@ let i = 0, j = 0, n = s.length
 ```
 
 # Advanced
+
+## Utility Types
+
+> * [Utility Types | typescript](https://www.typescriptlang.org/ko/docs/handbook/utility-types.html)
+> * [[Typescript] 유틸리티 타입 - Parameters, ReturnType, Required](https://www.morolog.dev/entry/Typscript-%EC%9C%A0%ED%8B%B8%EB%A6%AC%ED%8B%B0-%ED%83%80%EC%9E%85-Parameters-ReturnType-Required)
+
+```ts
+// ReturnType<T>
+// It creates a type return of the function.
+declare function foo(): Foo
+type fooResult = ReturnType<typeof foo>;
+
+type F = (...p: any[]) => any
+function debounce(fn: F, t: number): F {
+    return function(...args) {
+        let timeout: ReturnType<typeof setTimeout>
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fn(...args), t);
+        }
+    }
+};
+
+// Paremeters<T>
+// It creates a type parameter of the function.
+declare function foo(foo: {name: string, mobile: number}): void
+type fooParams = Parameters<typeof foo>;
+
+// Required<T>
+// It creates a type every fields are required. 
+interface Props {
+  a?: number;
+  b?: string;
+}
+
+// OK
+const obj: Props = { a: 5 };
+// ERROR: Property 'b' is missing in type '{ a: number; }' 
+// but required in type 'Required<Props>'.
+const obj2: Required<Props> = { a: 5 };  
+```
 
 ## Triple Dots
 
