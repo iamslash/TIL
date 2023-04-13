@@ -1,6 +1,6 @@
 - [Materials](#materials)
 - [Basic](#basic)
-  - [Build & Run](#build--run)
+  - [Build \& Run](#build--run)
   - [Hello World](#hello-world)
   - [Reserved Words](#reserved-words)
   - [min, max values](#min-max-values)
@@ -27,6 +27,7 @@
   - [Generics](#generics)
   - [Define Multiple Variables On The Same Line](#define-multiple-variables-on-the-same-line)
 - [Advanced](#advanced)
+  - [Nullish Coalescing Operator (||), Double Question Marks (??)](#nullish-coalescing-operator--double-question-marks-)
   - [export and import](#export-and-import)
   - [`declare`](#declare)
   - [Function Definition With Interfaces](#function-definition-with-interfaces)
@@ -571,7 +572,7 @@ console.log(arr);  // [10, 5, 3, 2, 1]
 
 ## Search
 
-built-in binary search function 없는 건가?
+built-in binary search function 없는 건
 
 ```ts
 let arr = [1, 2, 3, 4, 5];
@@ -657,6 +658,34 @@ let i = 0, j = 0, n = s.length
 ```
 
 # Advanced
+
+## Nullish Coalescing Operator (||), Double Question Marks (??)
+
+> * [null 값을 처리하는 명령의 비교(How To Use Double Question Marks: ??)](https://ksrae.github.io/angular/double-question-marks/)
+
+```ts
+// if for checking undefined or null
+if (val !== undefined || val != null) {
+    console.log("ok");
+}
+// tri operator for checking undefined or null
+val = val !== undefined || val !== null ? val : '';
+// Nullish Coalescing Operator for checking undefined or null
+val = val || '';
+// Nullish Coalescing Operator can check falsy
+console.log(undefined || "falsy");  // falsy
+console.log(null || "falsy");       // falsy
+console.log(false || "falsy");      // falsy
+console.log(0 || "falsy");          // falsy
+console.log('' || "falsy");         // falsy
+
+// Double Question Marks since typescript 3.7
+console.log(undefined ?? "falsy");  // falsy
+console.log(null ?? "falsy");       // falsy
+console.log(false ?? "falsy");      // false
+console.log(0 ?? "falsy");          // 0
+console.log('' ?? "falsy");         // 
+```
 
 ## export and import
 
