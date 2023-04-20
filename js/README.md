@@ -69,12 +69,13 @@
   - [Cookies](#cookies)
   - [HTML DOM](#html-dom)
 - [Advanced](#advanced)
+  - [Map vs Object](#map-vs-object)
   - [Computed property names](#computed-property-names)
   - [var, let, const](#var-let-const)
   - [promise](#promise)
   - [async, await](#async-await)
   - [import from](#import-from)
-  - [Generator function, function*](#generator-function-function)
+  - [Generator function, function\*](#generator-function-function)
   - [Shorthand property names](#shorthand-property-names)
   - [Duplicate property names](#duplicate-property-names)
   - [Decorator](#decorator)
@@ -1726,6 +1727,15 @@ document.cookie = "key1 = value1;key2 = value2;expires = date";
 ![](https://www.tutorialspoint.com/javascript/images/html-dom.jpg)
 
 # Advanced
+
+## Map vs Object
+
+> * [Objects vs maps | msdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map#objects_vs._maps)
+
+Object 와 map 는 둘다 key, value 를 저장할 수 있다. 주요 차이는 다음과 같다.
+
+* Object 는 prototype 이 있다. Map 은 없다.
+* Map 은 size 를 쉽게 얻을 수 있다. Object 는 size 를 수동으로 저장해야 한다.
 
 ## Computed property names
 

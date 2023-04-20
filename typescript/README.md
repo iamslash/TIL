@@ -27,6 +27,7 @@
   - [Generics](#generics)
   - [Define Multiple Variables On The Same Line](#define-multiple-variables-on-the-same-line)
 - [Advanced](#advanced)
+  - [Map vs Record](#map-vs-record)
   - [Utility Types](#utility-types)
   - [Triple Dots](#triple-dots)
   - [Nullish Coalescing Operator (||), Double Question Marks (??)](#nullish-coalescing-operator--double-question-marks-)
@@ -661,6 +662,12 @@ let i = 0, j = 0, n = s.length
 
 # Advanced
 
+## Map vs Record
+
+* [map vs object | TIL](/js/README.md#map-vs-object)
+
+Map vs Object 와 같다.
+
 ## Utility Types
 
 > * [Utility Types | typescript](https://www.typescriptlang.org/ko/docs/handbook/utility-types.html)
@@ -700,6 +707,65 @@ const obj: Props = { a: 5 };
 // ERROR: Property 'b' is missing in type '{ a: number; }' 
 // but required in type 'Required<Props>'.
 const obj2: Required<Props> = { a: 5 };  
+
+// Record<Keys, Type>
+// Constructs an object type whose property keys are Keys and 
+// whose property values are Type.  
+// https://developer-talk.tistory.com/296
+
+// personType 이라는 object type 을 정의하자.
+// index signature 를 사용함.
+type personType = {
+    [name: string]: number
+}
+let person: personType = {
+    'foo': 10,
+    'bar': 20,
+    'baz': 30
+}
+// 이 것을 Record type 으로 바꾸어 보자.
+// 장점이 뭐냐?
+type personType = Record<string, number>;
+let person: personType = {
+    'foo': 10,
+    'bar': 20,
+    'baz': 30
+}
+// index signature 로 해결안되는 경우가 있다.
+// ERROR:
+// An index signature parameter type cannot be a
+// literal type or generic type. Consider using a mapped
+// object type intead.
+type personType = {
+    [name: 'foo' | 'bar' | 'baz']: number
+}
+// 이렇게 해결하자.
+type = names = 'foo' | 'bar' | 'bar';
+type personType = Record<names, number>;
+let person: personType = {
+    'foo': 10,
+    'bar': 20,
+    'baz': 30
+}
+
+// keyof
+// The keyof operator takes an object type and 
+// produces a string or numeric literal union of its keys.
+type Point = { x: number; y: number };
+type P = keyof Point;
+
+// keyof, Record type
+type personType = {
+    name: string;
+    age: number;
+    addr: string;
+}
+type personRecordType = Record<keyof personType, string>
+let person: personRecordType = {
+    name: "iamslash",
+    age: "18",
+    addr: "USA"
+}
 ```
 
 ## Triple Dots
