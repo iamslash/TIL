@@ -12,14 +12,11 @@
   - [Scale Metrics Transmission Pipeline](#scale-metrics-transmission-pipeline)
   - [Where Aggregations can happen](#where-aggregations-can-happen)
   - [Query Service](#query-service)
-    - [Cache Layer](#cache-layer)
-    - [Time-series Database Query](#time-series-database-query)
   - [Storage Layer](#storage-layer)
     - [Time-Series DataBase](#time-series-database)
     - [Space Optimization](#space-optimization)
   - [Alerting System](#alerting-system)
   - [Visualization](#visualization)
-- [Extentions](#extentions)
 
 -----
 
@@ -110,34 +107,128 @@ a benchmarking for InfluxDB.
 
 Pull vs Push
 
+* Easy Debugging
+  * Pull: You can debug using `/metrics` endpoint even on your laptop.
+* Health Check
+  * Pull: If an application server does not respond for pulling, you can check the health.
+* Short-lived jobs
+  * Push: The batch jobs will be short-lived.
+* Firewall or complicated network setups
+  * Pull: All `/metrics` endpoint should be reachable.
+  * Push: If metric collector is behind loadbalancers, Push is easier.
+* Performance
+  * Pull: Use TCP.
+  * Push: Use UDP. It's more efficient.
+* Data authenticity
+  * Pull: API Key???
+  * Push: Whitelist.
+
 ## Scale Metrics Transmission Pipeline
 
-Scal through kafka
+**Scale through kafka**
 
-alternative to kafka
+* Kafka decouples between the data collection and data processing.
+
+**alternative to kafka**
+
+* [m3](/m3/README.md)
 
 ## Where Aggregations can happen
 
+**Collction agent**
+
+It will run on the client-side.
+
+**Ingestion pipeline**
+
+It will run before writing to storage. [Flink](/flink/README.md) is a good example.
+
+**Query side**
+
+It will run after writing to storage.
+
 ## Query Service
 
-### Cache Layer
+**Cache Layer**
 
-### Time-series Database Query
+It will cache query results.
+
+**Time-series Database Query**
+
+It is hard to build SQL to query time-searies data.
+
+```sql
+  SELECT id,
+         temp,
+         avg(temp) over (partition by group_nr order by time_read) AS rolling_avg         
+    FROM (
+           SELECT id, temp, time_read, interval_group
+                  id - row_number() over (partition by interval_group ORDER BY time_read) AS group_nr
+             FROM (...) t1            
+         ) t2
+ORDER BY time_read;  
+```
+
+Flux (InfluxDB) is simpler than SQL.
+
+```
+from(db:"telegraf")
+  |> range(start:-1h)
+  |> filter(fn: (r) => r._measurement == "foo")
+  |> expoentialMovingAverage(size:-10s)
+```
 
 ## Storage Layer
 
 ### Time-Series DataBase
 
+[According to the Facebook](https://www.vldb.org/pvldb/vol8/p1816-teller.pdf), At least 85% of all queries are for past 26 hours. InFlux
+ia a good solution.
+
 ### Space Optimization
 
-Data encoding and compression
+**Data encoding and compression**
 
-Downsampling
+```
+32 bits for ts
+1610087371  1610087381  1610087391  1610087400  1610087411 
 
-Cold storage
+under 32 bits for ts with delta
+1610087371          10          10           9          11
+```
+
+**Downsampling**
+
+* Retention: 7 days no sampling
+* Retention: 30 days downsample to 1 min resolution
+* Retention: 1 year, downsample to 1 hr resolution
+
+10-sec resolution data
+
+| metric | ts | hostname | metric_value |
+|--|--|--|--|
+| cpu | 2021-10-24T19:00:00Z | iamslash | 10 |
+| cpu | 2021-10-24T19:00:10Z | iamslash | 16 |
+| cpu | 2021-10-24T19:00:20Z | iamslash | 20 |
+| cpu | 2021-10-24T19:00:30Z | iamslash | 30 |
+| cpu | 2021-10-24T19:00:40Z | iamslash | 20 |
+| cpu | 2021-10-24T19:00:50Z | iamslash | 30 |
+
+30-sec resolution data
+
+| metric | ts | hostname | metric_value(avg) |
+|--|--|--|--|
+| cpu | 2021-10-24T19:00:00Z | iamslash | 19 |
+| cpu | 2021-10-24T19:00:30Z | iamslash | 25 |
+
+**Cold storage**
+
+The storage for inactive data.
 
 ## Alerting System
 
+Pagerduty is a good solution.
+
 ## Visualization
 
-# Extentions
+[Grafana](/grafana/README.md) is a good solution.
