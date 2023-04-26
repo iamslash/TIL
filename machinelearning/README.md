@@ -4280,6 +4280,7 @@ if __name__ == "__main__":
 # Transformers
 
 - [Transformer](/transformer/README.md)
+- [whisper](/whisper/README.md)
 
 # Glossory
 

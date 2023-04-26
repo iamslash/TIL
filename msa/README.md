@@ -22,6 +22,8 @@
 
 # Materials
 
+* [도서 마이크로서비스 아키텍처 구축 가이드(한빛미디어)](https://m.hanbit.co.kr/store/books/book_view.html?p_code=B9403623796)
+  * [src](https://github.com/wharup/book-examples)
 * [A pattern language for microservices](https://microservices.io/patterns/index.html)
   - microservices 의 기본개념
   - [ftgo-monolith src](https://github.com/microservices-patterns/ftgo-monolith)
