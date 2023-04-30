@@ -8,13 +8,13 @@
   - [Data Model](#data-model)
 - [Low Level Design](#low-level-design)
 - [System Extension](#system-extension)
-- [Q&A](#qa)
+- [Q\&A](#qa)
 - [References](#references)
 
 ----
 
 # Requirements
-r
+
 ## Functional Requirement
 
 * Show the hotel related page

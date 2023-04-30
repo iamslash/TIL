@@ -27,7 +27,7 @@
   - [Cache](#cache)
   - [Load balancing](#load-balancing)
   - [Fault tolerance and replication](#fault-tolerance-and-replication)
-- [Q&A](#qa)
+- [Q\&A](#qa)
 - [References](#references)
 
 -----
@@ -191,6 +191,7 @@ Cache recent messages (15 mins).
 
 # References
 
+* [소개 - 슬랙이 수백만 메시지를 실시간으로 보내는 방법 (슬랙 메시징 구조) | youtube](https://www.youtube.com/watch?v=36F35JZXFKo)
 * [01. 2200만 사용자를 위한 채팅 시스템 아키텍처](https://summits-korea.virtual.awsevents.com/media/01.%202200%EB%A7%8C%20%EC%82%AC%EC%9A%A9%EC%9E%90%EB%A5%BC%20%EC%9C%84%ED%95%9C%20%EC%B1%84%ED%8C%85%20%EC%8B%9C%EC%8A%A4%ED%85%9C%20%EC%95%84%ED%82%A4%ED%85%8D%EC%B2%98/1_ybuscua9)
   * 당근마켓의 채팅시스템
   * Redis 로 user 가 어느 server 에 접속해 있는지 저장
