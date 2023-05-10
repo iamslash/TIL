@@ -25,7 +25,6 @@
   - [Fault Tolerance](#fault-tolerance)
   - [Data Monitoring And Correctness](#data-monitoring-and-correctness)
   - [Alternative Solution](#alternative-solution)
-- [Extentions](#extentions)
 
 -----
 
@@ -170,36 +169,131 @@ This is write heavy system because peak QPS is 50,000.
 
 ## Architecture
 
+![](img/2023-05-02-14-50-00.png)
+
 ### Asynchronous Processing
 
+We use 2 message queues for decoupling services.
 
+This is a dto for first message queue.
+
+```
+ad_id | click_timestamp | user_id | ip | country
+```
+
+These are dtos for second message queue.
+
+```
+ad_id | click_minute | count
+
+update_time_minute | most_clicked_ads
+```
 
 ### Map Reduce
+
+We use map reduce for counting clicks.
 
 ### Use Cases
 
 #### Aggregate the number of clicks
 
+Event data will be partitioned by ad_id in **map nodes**.
+
+We can get the number of clicks by ad_id.
+
+![](img/2023-05-10-15-23-18.png)
+
 #### Return top N most clicked ads
 
+We can get the top N most clckied ads from the **reduce node**.
+
+![](img/2023-05-10-15-30-28.png)
+
 #### Data Filtering 
+
+We can get filtering data with a **precalulcated table**.
+
+| ad_id | click_min | country | count |
+|--|--|--|--|
+| ad001 | 202301010001 | USA | 100 |
+| ad001 | 202301010001 | KOR | 100 |
+| ad001 | 202301010001 | TR | 100 |
+| ad002 | 202301010001 | USA | 100 |
+| ad002 | 202301010001 | KOR | 100 |
+| ad002 | 202301010001 | TR | 100 |
 
 # High Level Design Deep Dive
 
 ## Streaming vs Batching
 
+Lambda And Kappa Architectures
+
+![](img/2023-05-10-15-39-17.png)
+
 ## Time
+
+We consider 2 type of times.
+
+* event time: clicked time
+* processing time: processed time
+
+We use both for accuracy.
+
+We miss events when we process event time, processing time in same window.
+
+![](img/2023-05-10-16-01-34.png)
+
+We can fix it using **water marks**. water marks are additional parts of time window which is adjustable.
+
+![](img/2023-05-10-16-04-38.png)
 
 ## Aggregation Window
 
+According to "Designing Data-Intensive Applications" book, There 4 types of window.
+
+* Tumbling Window (Fixed Window)
+* Hopping Window
+* Sliding Window
+* Session Window
+
+![](img/2023-05-10-16-11-11.png)
+
 ## Delivery Guarantees
+
+We use [Kafka](/kafka/README.md) which provides 3 delivery semantics.
+
+* at-most once.
+* at-least once.
+* exactly once.
+
+It's important to process duplicates and ensure all events are processed.
+
+Usually at-least is enough but if the accuracy is crucial, exactly once is a good solution.
+
+Processing deduplication in large system is difficult. [An Overview of End-to-End Exactly-Once Processing in Apache Flink (with Apache Kafka, too!)](https://flink.apache.org/2018/02/28/an-overview-of-end-to-end-exactly-once-processing-in-apache-flink-with-apache-kafka-too/)
 
 ## Scale The System
 
+**Producers** are easy to be scaled up. **Consumers** are depends on the number of partitions of topics.
+
+Refer [Kafka](/kafka/README.md) for Scaling **brokers**.
+
+Refer [Cassandra](/cassandra/README.md) for scaling **data base**. 
+
+We can resolve hot spot issues allocating more nodes to specific ads.
+
 ## Fault Tolerance
+
+When one of aggregation nodes is failed, new aggreation node will load data (ex, top 3 ads in 3 mins).
+
+Primary aggregation node should make a snapshot regularly.
 
 ## Data Monitoring And Correctness
 
+**Latency, message queue size, lag time** is important. 
+
+We use reconciliation service for correctness. It will adjust correct the data regularly.
+
 ## Alternative Solution
 
-# Extentions
+We can use off-the-shelf solutions such as HIVE, [ElasticSearch](/elasticsearch/README.md), ClickHouse.
