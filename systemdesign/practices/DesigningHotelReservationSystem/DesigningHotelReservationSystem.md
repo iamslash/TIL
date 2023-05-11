@@ -1,14 +1,12 @@
 - [Requirements](#requirements)
   - [Functional Requirement](#functional-requirement)
   - [Non-Functional Requirement](#non-functional-requirement)
-- [Estimation](#estimation)
+  - [Estimation](#estimation)
 - [High Level Design](#high-level-design)
   - [API Design](#api-design)
-  - [High-Level Architecture](#high-level-architecture)
   - [Data Model](#data-model)
-- [Low Level Design](#low-level-design)
-- [System Extension](#system-extension)
-- [Q\&A](#qa)
+  - [High-Level Architecture](#high-level-architecture)
+- [High Level Design Deep Dive](#high-level-design-deep-dive)
 - [References](#references)
 
 ----
@@ -19,7 +17,7 @@
 
 * Show the hotel related page
 * Show the hotel room-related detail page
-* Reserver a room
+* Reserve a room
 * Admin console to add/remove/update hotel or room info
 * Support the overbooking
 * The price of a hotel room can be changed
@@ -27,11 +25,11 @@
 ## Non-Functional Requirement
 
 * High concurrency
-  * Many people can try to reserver a same room.
+  * Many people can try to reserve a same room.
 * Moderate latency
   * The latency should be small.
 
-# Estimation
+## Estimation
 
 | Number | Description | Calculation |
 |--|---|--|
@@ -77,14 +75,16 @@
   * DELETE /v1/reservations/<reserve-id>
 ```
 
-## High-Level Architecture
-
 ## Data Model
 
-# Low Level Design
 
-# System Extension
 
-# Q&A
+## High-Level Architecture
+
+# High Level Design Deep Dive
 
 # References
+
+* [RestAppHotelbooking | java](https://github.com/BogushAleksandr/RestAppHotelbooking)
+* [Booking Application | go](https://github.com/revel/examples/blob/master/README.md)
+* [Hotel Reservation Management System | python](https://github.com/rub9542/Hotel-Reservation-Management-System)

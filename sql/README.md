@@ -1,5 +1,6 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
+- [SQL Query Order Of Execution](#sql-query-order-of-execution)
 - [Prepare Database](#prepare-database)
   - [MySQL](#mysql)
   - [PostreSQL](#postresql)
@@ -113,6 +114,12 @@
   - 비디오 대여점을 모델링한 example db이다. sql을 참고해서 공부하자.
 * [use the idex luke](http://use-the-index-luke.com/)
 * [sql @ w3schools](https://www.w3schools.com/sql/default.asp)
+
+# SQL Query Order Of Execution
+
+[SQL Query Order Of Execution](https://www.newsletter.swirlai.com/i/119650808/sql-query-order-of-execution)
+
+![](img/2023-05-11-08-52-17.png)
 
 # Prepare Database
 
