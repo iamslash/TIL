@@ -8,9 +8,7 @@
   - [System APIs](#system-apis)
   - [Data Model](#data-model)
   - [High-level Architecture](#high-level-architecture)
-- [Low Level Design](#low-level-design)
-- [System Extention](#system-extention)
-- [Q&A](#qa)
+- [High Level Design Deep Dive](#high-level-design-deep-dive)
 - [References](#references)
 
 -----
@@ -93,10 +91,8 @@ reserve_seats(
 
 ![](DesigningTicketmasterHighLevelArch.png)
 
-# Low Level Design
-
-# System Extention
-
-# Q&A
+# High Level Design Deep Dive
 
 # References
+
+* [DesigningHotelReservationSystem](/systemdesign/practices/DesigningHotelReservationSystem/DesigningHotelReservationSystem.md)

@@ -7,6 +7,10 @@
   - [Data Model](#data-model)
   - [High-Level Architecture](#high-level-architecture)
 - [High Level Design Deep Dive](#high-level-design-deep-dive)
+  - [Reservation By Room Type](#reservation-by-room-type)
+  - [Concurrenty Issues](#concurrenty-issues)
+  - [Scalability](#scalability)
+  - [Data Consistency Among Services](#data-consistency-among-services)
 - [References](#references)
 
 ----
@@ -77,11 +81,254 @@
 
 ## Data Model
 
+* Hotel Service
 
+  * hotel
+    * hotel_id (PK)
+    * name
+    * address
+    * location
+  * room
+    * room_id (PK)
+    * room_type_id
+    * floor
+    * number
+    * hotel_id
+    * name
+    * is_available
+
+* Rate Service
+  * room_type_rate
+    * hotel_id (PK)
+    * date (PK)
+    * rate
+
+* Reservation Service
+  * reservation
+    * reservation_id (PK)
+    * hotel_id
+    * room_id
+    * srtart_date
+    * end_date
+    * status
+    * guest_id
+
+* Guest Service
+  * guest
+    * guest_id (PK)
+    * first_name
+    * last_name
+    * email
+
+There are **status** of **reservation** table 
+
+* pending
+* canceled
+* paid
+* rejected
+* refunded
 
 ## High-Level Architecture
 
+![](img/2023-05-12-21-48-40.png)
+
 # High Level Design Deep Dive
+
+## Reservation By Room Type
+
+Users can make a reservation not by room_id but by room_type. We can improve the design for reservating by room type. 
+
+This is a improved API.
+
+```
+* Rservation APIs
+  * POST /v1/reservations
+    * Request
+    {
+        "startDate": "2022-03-01",
+        "endDate": "2022-03-04",
+        "hotelID": "333",
+        "roomTypeID": "23483727",
+        "reservationID": "12231"
+    }
+```
+
+These are improved database schemas.
+
+* Hotel Service
+
+  * hotel
+    * hotel_id (PK)
+    * name
+    * address
+    * location
+  * room
+    * room_id (PK)
+    * room_type_id
+    * floor
+    * number
+    * hotel_id
+    * name
+    * is_available
+
+* Rate Service
+  * room_type_rate
+    * hotel_id (PK)
+    * date (PK)
+    * rate
+
+* Reservation Service
+  * room_type_inventory
+    * hotel_id
+    * room_type_id
+    * date
+    * total_inventory
+    * total_reserved
+  * reservation
+    * reservation_id (PK)
+    * hotel_id
+    * room_id
+    * srtart_date
+    * end_date
+    * status
+    * guest_id
+
+* Guest Service
+  * guest
+    * guest_id (PK)
+    * first_name
+    * last_name
+    * email
+
+These are access patterns.
+
+Select rows within a date range.
+
+```sql
+SELECT date,
+       total_inventory,
+       total_reserved
+  FROM room_type_inventory
+ WHERE room_type_id = ${roomTypeId} AND
+       hotel_id = ${hotelId} AND
+       date BETWEEN ${startDate} and ${endDate}
+```
+
+Thie SQL returns data like this.
+
+| date | total_inventory | total_reserved |
+|--|--|--|
+| 2021-07-01 | 100 | 97 |
+| 2021-07-02 | 100 | 96 |
+| 2021-07-03 | 100 | 95 |
+
+For each entry, check the condition.
+
+```c
+if ((total_reserved + ${numberOfRoomsToReserve}) <= 110 % * total_inventory)
+```
+
+What if data is very big we can think two strategies.
+
+* Use **hot sorage** for recent data, **cold storage** for old data.
+* Database sharding. Shard key is hotel_id. The date will be sharded by `hash(hoteL_id) % number_of_db`.
+
+## Concurrenty Issues
+
+Solutions for double booking problems of one users.
+
+1. Prohibit double click on client-side.
+2. Make APIs idempotent on same reservation.
+
+Solutions for race condition of two users.
+
+1. Pessimistic locking
+2. Optimistic locking
+3. Database constraints
+
+These are SQLs for business logic.
+
+```sql
+-- step 1: Check room inventory
+SELECT date,
+       total_inventory,
+       total_reserved
+  FROM room_type_inventory
+ WHERE room_type_id = ${roomTypeId} AND
+       hotel_id = ${hotelId} AND
+       date BETWEEN ${startDate} AND ${endDate}
+
+if ((total_reserved + ${numberOfRoomsToReserved}) > 110% * total_inventory) {
+  Rollback
+}        
+
+-- step 2: reserve rooms
+UPDATE room_type_inventory
+   SET total_reserved = total_reserved + ${numberOfRoomsToReserve}
+ WHERE room_type_id = ${roomTypeId} AND
+       date BETWEEN ${startDate} AND ${endDate} 
+
+-- step 3: commit
+Commit  
+```
+
+**Pessimistic locking**
+
+Use `SELECT ... FOR UPDATE`. It will provide serializable isolation temporally. [isolation](/isolation/README.md#solution-of-non-repeatable-read-in-repeatable-read-isolation-level)
+
+> Pros:
+
+* It is easy to implement.
+* It is suitable heavy contention data.
+
+> Cons:
+
+* Reduce system throughputs.
+* Deadlocks may occur.
+
+**Optimistic locking**
+
+[Optimistic Locking](/systemdesign/README.md#optimistic-lock-vs-pessimistic-lock) is
+faster than pessimistic locking.
+
+> Pros:
+
+* No need to lock the database.
+* It is a good solution when data conflicts are rare.
+
+> Cons:
+
+* When data conflicts are soften it will reduce system throughputs.
+
+**Database constraints**
+
+```sql
+CONSTRAINT `check_room_count` CHECK((`total_inventory - total_reserved` >= 0))
+```
+
+> Pros:
+
+* Easy to implement.
+* It is a good solution when data conflicts are rare.
+
+> Cons:
+
+* It is similar with optimistic locking.
+* Contraint is not under control of SCM such as [git](/git/README.md).
+* Not all database support constraints.
+
+## Scalability
+
+Database Sharding
+
+[Redis](/redis/README.md)
+
+## Data Consistency Among Services
+
+There two solutions.
+
+* [2 Phase Commit](/distributedtransaction/README.md#2-phase-commit)
+* [SAGAS](/distributedtransaction/README.md#saga)
 
 # References
 
