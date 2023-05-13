@@ -469,6 +469,7 @@ console.log(fruits);  // ['Apple', 'Banana', 'Papaya']
 fruits = fruits.concat(['Fig', 'Mango']); 
 console.log(fruits); //output: ['Apple', 'Banana', 'Papaya', 'Fig', 'Mango'] 
 console.log(fruits.indexOf('Papaya'));  // 2
+console.log(fruits.slice(1, 2));  // ['Banana']
 
 // Init array with one value
 let prevIdxs = new Array<Number>().fill(-1);
