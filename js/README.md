@@ -1183,7 +1183,10 @@ wrapper(); // zero
 
 -----
 
-function scope, block scope 에서 변수를 선언하고 초기화하면 "1) 선언부분이 맨 위로 끌어올려지고" "2) undefined" 가 할당된다. 함수가 실행되면 scope, execution context 가 생성되고 hoisting 및 this binding 을 한다. 그리고 함수의 코드를 하나씩 실행한다. ES6 의 hoisting 은 "1)" 만 하고 "2)" 는 없다.
+function scope, block scope 에서 변수를 선언하고 초기화하면 "1) 선언부분이 맨
+위로 끌어올려지고" "2) undefined" 가 할당된다. 함수가 실행되면 scope, execution
+context 가 생성되고 hoisting 및 this binding 을 한다. 그리고 함수의 코드를
+하나씩 실행한다. ES6 의 hoisting 은 "1)" 만 하고 "2)" 는 없다.
 
 ```js
 console.log(zero); // 에러가 아니라 undefined
@@ -1263,9 +1266,10 @@ console.log(foo);
 
 -----
 
-`global context` 생성후 함수 호출 할때 마다 `execution context` 가
-생성된다. `execution context` 는 `arguments, variable, scope chain, this` 가 저장된다. 함수가 실행될때 그 함수의 `execution context` 에 변수가 없다면 `scope
-chain` 을 따라 올라가며 검색한다. 함수 실행이 종료되면 `execution context` 는 사라진다.
+`global context` 생성후 함수 호출 할때 마다 `execution context` 가 생성된다.
+`execution context` 는 `arguments, variable, scope chain, this` 가 저장된다.
+함수가 실행될때 그 함수의 `execution context` 에 변수가 없다면 `scope chain` 을
+따라 올라가며 검색한다. 함수 실행이 종료되면 `execution context` 는 사라진다.
 
 ## Prototype
 
@@ -1273,9 +1277,18 @@ chain` 을 따라 올라가며 검색한다. 함수 실행이 종료되면 `exec
 
 -----
 
-Contructor function 이 있을 때 new 연산자를 사용하여 instance 를 생성했다고 해보자. 이때 Constructor function 의 prototype 과 instance 의 `__prototype__` 은 같은 객체를 가리킨다. 
+Prototypes are the mechanism by which JavaScript objects inherit features from
+one another. 
 
-`Array` constructor 로 new 연산자를 사용하여 `[1, 2, 3]` 을 생성했다고 해보자. 이때, `Array` 는 `from(), isArray(), of(), arguments, length, name, prototype` 의 property 를 갖고 있다. 이때 `Array.prototype` 은 `[1, 2, 3].__prototype__` 과 같다. `Array.prototype` 은 다시 `concat(), filter(), forEach(), map(), push(), pop()` 등의 property 를 갖는다.
+Contructor function 이 있을 때 new 연산자를 사용하여 instance 를 생성했다고
+해보자. 이때 Constructor function 의 prototype 과 instance 의 `__prototype__` 은
+같은 객체를 가리킨다. 
+
+`Array` constructor 로 new 연산자를 사용하여 `[1, 2, 3]` 을 생성했다고 해보자.
+이때, `Array` 는 `from(), isArray(), of(), arguments, length, name, prototype`
+의 property 를 갖고 있다. 이때 `Array.prototype` 은 `[1, 2, 3].__prototype__` 과
+같다. `Array.prototype` 은 다시 `concat(), filter(), forEach(), map(), push(),
+pop()` 등의 property 를 갖는다.
 
 또한 `__prototype__` 은 생략 가능하다. 따라서 다음의 표현은 모두 같다.
 
@@ -1336,7 +1349,8 @@ var foo = new Person('Foo', 30);
 var bar = new Person('Bar', 25);
 ```
 
-`foo.__proto__.setOlder(), foo.__proto__.getAge()` 는 NaN 이다. this 가 `__proto__` 이기 때문이다. `foo.setOlder(); foo.getOlder();` 는 정상이다.
+`foo.__proto__.setOlder(), foo.__proto__.getAge()` 는 NaN 이다. this 가
+`__proto__` 이기 때문이다. `foo.setOlder(); foo.getOlder();` 는 정상이다.
 
 이번에는 prototype chaining 을 활용하는 예를 살펴보자.
 
@@ -1884,13 +1898,19 @@ b = 'world'; // ERROR
 
 ----
 
-비동기를 구현하기 위한 object 이다. `promise` 는 `pending, resolved, rejected` 와 같이 3 가지 상태를 갖는다 ???
+비동기를 구현하기 위한 object 이다. `promise` 는 `pending, resolved, rejected`
+와 같이 3 가지 상태를 갖는다 ???
 
-`Promise` object 의 `then()` 혹은 `catch()`을 호출하면 `Promise` object 는 resolved 상태로 된다.
+`Promise` object 의 `then()` 혹은 `catch()`을 호출하면 `Promise` object 는
+resolved 상태로 된다.
 
-`Promise` 의 function argument 는 `resolve, reject` 를 argument 로 하는 함수이다. `resolve` 를 호출하면 `then()` 의 function arg 가 호출되고 `reject` 를 호출하면 `catch()` 의 function arg 가 호출된다. 곧 `then()` 의 function arg 가 `resolve` 이고 `catch()` 의 function arg 가 `reject` 이다.
+`Promise` 의 function argument 는 `resolve, reject` 를 argument 로 하는
+함수이다. `resolve` 를 호출하면 `then()` 의 function arg 가 호출되고 `reject` 를
+호출하면 `catch()` 의 function arg 가 호출된다. 곧 `then()` 의 function arg 가
+`resolve` 이고 `catch()` 의 function arg 가 `reject` 이다.
 
-`promise` 를 `then()` 의 function arg 에서 정상처리를 하고 `catch()` 의 function arg 에서 오류처리를 한다고 생각하자.
+`promise` 를 `then()` 의 function arg 에서 정상처리를 하고 `catch()` 의 function
+arg 에서 오류처리를 한다고 생각하자.
 
 ```js
 // simple promise
@@ -1957,8 +1977,9 @@ promiseB
   .catch(e => console.error(e));
 ```
 
-다음은 `promise chaining` 의 예이다. `then` 에서
-다시 `promise` 를 리턴한다. 그 `promise` 가 `resolved` 상태로 전환되면 다음 `then` 이 호출되고 `rejected` 상태로 전환되면 `catch` 가 호출된다.
+다음은 `promise chaining` 의 예이다. `then` 에서 다시 `promise` 를 리턴한다. 그
+`promise` 가 `resolved` 상태로 전환되면 다음 `then` 이 호출되고 `rejected`
+상태로 전환되면 `catch` 가 호출된다.
 
 ```js
 function promiseBar(name, stuff) {
