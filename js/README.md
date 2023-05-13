@@ -62,6 +62,7 @@
   - [execution context](#execution-context)
   - [Prototype](#prototype)
   - [Class](#class)
+  - [Expressions \& Operators](#expressions--operators)
   - [event loop](#event-loop)
   - [background](#background)
   - [task queue](#task-queue)
@@ -73,9 +74,12 @@
   - [Computed property names](#computed-property-names)
   - [var, let, const](#var-let-const)
   - [promise](#promise)
-  - [async, await](#async-await)
+  - [Async, Await](#async-await)
+  - [Generator function](#generator-function)
+  - [Async Generator Function](#async-generator-function)
+  - [Async vs Generator Function](#async-vs-generator-function)
+  - [Iteration Protocols](#iteration-protocols)
   - [import from](#import-from)
-  - [Generator function, function\*](#generator-function-function)
   - [Shorthand property names](#shorthand-property-names)
   - [Duplicate property names](#duplicate-property-names)
   - [Decorator](#decorator)
@@ -1566,6 +1570,37 @@ class Employee extends Person {
 }
 ```
 
+## Expressions & Operators
+
+```js
+// Optional chaining (?.)
+// Returns undefined when target object is undefined or null.
+const adventurer = {
+  name: 'Alice',
+  cat: {
+    name: 'Dinah'
+  }
+};
+const dogName = adventurer.dog?.name;
+console.log(dogName);                               // undefined
+console.log(adventurer.someNonExistentMethod?.());  // undefined
+
+// Strict equality (===)
+console.log(1 === 1);             // true
+console.log('hello' === 'hello'); // true
+console.log('1' ===  1);          // false
+console.log(0 === false);         // false
+
+// Spread syntax (...)
+function sum(x, y, z) {
+  return x + y + z;
+}
+
+const numbers = [1, 2, 3];
+console.log(sum(...numbers));           // 6
+console.log(sum.apply(null, numbers));  // 6
+```
+
 ## event loop
 
 ```js
@@ -1957,17 +1992,22 @@ promiseBar('jane', bar)
   .catch(e => console.error(e));
 ```
 
-## async, await
+## Async, Await
 
+* [async function | mdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function)
 * [JavaScript Visualized: Promises & Async/Await](https://dev.to/lydiahallie/javascript-visualized-promises-async-await-5gke)
 * [JavaScript async and await](https://zellwk.com/blog/async-await/)
 * [JavaScript async and await in loops](https://zellwk.com/blog/async-await-in-loops/)
 
 ----
 
-비동기를 구현하는 새로운 방법이다. 콜백지옥을 탈출 할 수 있다. `async` 로 함수선언을 하고 함수안에서 `promise` 앞에 `await` 로 기다린다. 이것은 `c#` 의 `IEnumerator, yield` 와 유사하다.
+asynchronous programming 을 구현하는 새로운 방법이다. 콜백지옥을 탈출 할 수
+있다. `async` 로 함수를 정의하고 함수안에서 `await` 으로 `Promise` object 가
+실행을 마칠 때 까지 기다린다. async function 은 `Promise` object 를 return 한다.
+즉, async function 에서 `await` 로 다른 async function 을 기다릴 수 있다. 
 
-`await` 다음에 오는 `Promise` 의 `then()` 혹은 `catch()` 를 호출하지 않아도 `Promise` 가 `resolved` 상태로 전환된다 ???
+`await` 다음에 오는 `Promise` object 의 `then()` 혹은 `catch()` 를 호출하지
+않아도 `Promise` 가 `resolved` 상태로 전환된다 ???
 
 ```js
 // sleep
@@ -1982,6 +2022,7 @@ const sleep = ms => {
     console.log(i)
   }
 })().then(() => { console.log("done") })
+
 // It works welll, sleep, async, await in a loop
 (async _ => {
   for (i = 0; i < 5; ++i) {
@@ -1999,9 +2040,9 @@ const sleep = ms => {
 })().then(() => { console.log("done") })
 ```
 
-다음은 nested async function 의 예이다. `await bazAsync()`
-는 `basZsync()` 를 모두 마치고 종료한다. 이때 index `i, j, k` 를
-구분해서 사용해야 한다. 같은 index 를 사용하면 동작하지 않는다. async, await 를 사용해서 callback hell 을 피했다.
+다음은 nested async function 의 예이다. `await bazAsync()` 는 `basZsync()` 를
+모두 마치고 종료한다. 이때 index `i, j, k` 를 구분해서 사용해야 한다. 같은 index
+를 사용하면 동작하지 않는다. async, await 를 사용해서 callback hell 을 피했다.
 
 ```js
 const sleep = ms => {
@@ -2034,6 +2075,137 @@ async function fooAsync() {
   }
 }
 await fooAsync().then(() => console.log("done"));
+```
+
+## Generator function
+
+* [JavaScript Visualized: Generators and Iterators](https://dev.to/lydiahallie/javascript-visualized-generators-and-iterators-e36)
+* [function*](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Statements/function*)
+
+----
+
+generator function 은 `Generator` object 를 return 하는 함수이다. `function*` 을
+이용하여 정의할 수 있다. generator function 으로 asyncronous programming 을 할 수 있다.
+
+`Generator` object 의 `next()` 를 호출하면 generator function 의 처음 혹은
+이전에 멈춘 `yield` 부터 다음 `yield` 혹은 함수의 끝까지 실행된다. `next()` 는
+`iterator protocol` 의 함수이다???
+
+`next()` 는 `value, done` key 가 포함된 object 를 return 한다. ex) `{value: undefined, done: true}`
+
+```js
+// Define using function*
+function* foo(i) {
+  yield i;
+  yield i + 10;
+}
+const gen = foo(10);     // Return Generator object
+console.log(gen.next().value); // 10
+console.log(gen.next().value); // 20
+```
+
+`yield*` 를 사용하여 다른 generator function 을 호출할 수 있다.
+
+```js
+function* anotherGenerator(i) {
+  yield i + 1;
+  yield i + 2;
+  yield i + 3;
+}
+
+function* generator(i){
+  yield i;
+  yield* anotherGenerator(i);
+  yield i + 10;
+}
+
+var gen = generator(10);
+
+console.log(gen.next().value); // 10
+console.log(gen.next().value); // 11
+console.log(gen.next().value); // 12
+console.log(gen.next().value); // 13
+console.log(gen.next().value); // 20
+```
+
+`next()` 에 argument 를 넘길 수도 있다.
+
+```js
+function* logGenerator() {
+  console.log(yield);  // yield return 'pretzel'
+  console.log(yield);  // yield return 'california'
+  console.log(yield);  // yield return 'mayonnaise'
+}
+
+var gen = logGenerator();
+
+// the first call of next executes from the start of the function
+// until the first yield statement
+gen.next();
+gen.next('pretzel'); // pretzel
+gen.next('california'); // california
+gen.next('mayonnaise'); // mayonnaise
+```
+
+## Async Generator Function
+
+`async function*` 를 이용하여 정의한다. `AsyncGenerator` object 를 리턴한다.
+`yield await` 로 `Promise` object 가 실행을 끝낼 때까지 기다리고 `resolve()` 로
+전달한 argument 를 yield 한다.
+
+`foo()` 가 리턴한 `AsyncGenerator` object 는 `await` 로 기다려야 한다.
+
+```js
+async function* foo() {
+  yield await Promise.resolve('a');
+  yield await Promise.resolve('b');
+  yield await Promise.resolve('c');
+}
+
+let str = '';
+
+async function generate() {
+  for await (const val of foo()) {
+    str = str + val;
+  }
+  console.log(str);
+}
+
+generate();  // "abc"
+```
+
+## Async vs Generator Function
+
+`async function` 와 `generator function` 을 이용하여 asynchronous programming 을
+구현할 수 있다. 
+
+`generator function` 는 실행 도중 잠깐 멈추고 다음에 멈춘 부분부터 다시 실행할
+수 있다. 그러나 `async function` 은 실행도중 멈출 수 없다.
+
+## Iteration Protocols
+
+> [Iteration protocols | mdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols)
+
+protocol 은 interface 를 말하는 건가? Iteration protocol 은 다음과 같이
+두가지가 있다.
+
+* iterable protocol
+  * iterable protocol object 를 `for...of` 에 사용하여 반복할 수 있다.
+* iterator protocol
+  * iterator protocol object 의 `next()` 함수를 호출하여 반복할 수 있다.
+  * `value, done` key 를 포함한 object 를 리턴한다. ex) `{value: 3, done: true}`
+
+```js
+// Custom iterable, difficult to understand
+const myIterable = {
+  *[Symbol.iterator]() {
+    yield 1;
+    yield 2;
+    yield 3;
+  },
+};
+
+console.log([...myIterable]); // [1, 2, 3]
 ```
 
 ## import from
@@ -2107,25 +2279,6 @@ util.foo()
 // B.js, using named exports
 import {bar} from './util'
 bar()
-```
-
-## Generator function, function*
-
-* [JavaScript Visualized: Generators and Iterators](https://dev.to/lydiahallie/javascript-visualized-generators-and-iterators-e36)
-* [function*](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Statements/function*)
-
-----
-
-```js
-function* generator(i) {
-  yield i;
-  yield i + 10;
-}
-const gen = generator(10);
-console.log(gen.next().value);
-// expected output: 10
-console.log(gen.next().value);
-// expected output: 20
 ```
 
 ## Shorthand property names
