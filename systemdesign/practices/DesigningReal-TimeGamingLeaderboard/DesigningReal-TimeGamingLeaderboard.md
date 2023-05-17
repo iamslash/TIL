@@ -1,13 +1,13 @@
 - [Requirements](#requirements)
   - [Functional Requirement](#functional-requirement)
   - [Non-Functional Requirement](#non-functional-requirement)
-- [Estimation](#estimation)
+  - [Estimation](#estimation)
 - [High Level Design](#high-level-design)
   - [API Design](#api-design)
   - [High-Level Architecture](#high-level-architecture)
   - [Data Model](#data-model)
   - [Storage Estimation](#storage-estimation)
-- [Low Level Design](#low-level-design)
+- [High Level Design Deep Dive](#high-level-design-deep-dive)
   - [Scale Redis](#scale-redis)
 - [Extension](#extension)
   - [Faster Retrieval and Breaking Tie](#faster-retrieval-and-breaking-tie)
@@ -31,7 +31,7 @@
 * The system updates scores in real time.
 * The system should be scalable, available, reliable.
 
-# Estimation
+## Estimation
 
 | Number | Description| |
 |--|--|--|
@@ -143,7 +143,7 @@ ZREVRANGE leaderboard_feb_2022 357 365
 
 Single Redis can handle `650 MB` for updating in real time and can handle `2,500 peak QPS`.
 
-# Low Level Design
+# High Level Design Deep Dive
 
 ## Scale Redis
 

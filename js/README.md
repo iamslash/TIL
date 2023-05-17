@@ -14,6 +14,7 @@
   - [Print Out](#print-out)
   - [Inspecting Functions](#inspecting-functions)
   - [Data types](#data-types)
+  - [Truthy Falthy](#truthy-falthy)
   - [Standard built-in objects (global objects)](#standard-built-in-objects-global-objects)
     - [Value properties](#value-properties)
     - [Function properties](#function-properties)
@@ -388,6 +389,32 @@ console.log(3/4);  // 0.75
 console.log(parseInt(3/4)) // 0
 console.log(parseInt(100, 2)) // 4, number whose base is 2
 ```
+
+## Truthy Falthy
+
+> [Falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
+
+A falsy (sometimes written falsey) value is a value that is considered false when encountered in a Boolean context.
+
+```js
+// The logical AND operator, &&
+// Returns the first object when it is falsy.
+console.log(false && "dog");  // false
+console.log(0 && "dog");  // 0
+
+// Not reachable
+if (false) {}         // Boolean
+if (null) {}          // Null
+if (undefined) {}     // Undefined
+if (0) {}             // Number
+if (-0) {}            // Number
+if (NaN) {}           // Number
+if (0n) {}            // BigInt
+if ("") {}            // String
+if (document.all) {}  // Object
+```
+
+A trusy value is a value which is not falsy.
 
 ## Standard built-in objects (global objects)
 
@@ -1609,10 +1636,25 @@ console.log(0 === false);         // false
 function sum(x, y, z) {
   return x + y + z;
 }
-
 const numbers = [1, 2, 3];
 console.log(sum(...numbers));           // 6
 console.log(sum.apply(null, numbers));  // 6
+
+// Logical AND assignment (&&=)
+// save when x is truthy.
+let a = 1, b = 0;
+a &&= 2;  // a = a && 2
+console.log(a);  // 2
+b &&= 2;  // b = b && 2
+console.log(b);  // 0
+
+// Logical OR assignment (||=)
+// save when x is falthy.
+const a = { duration: 50, title: '' };
+a.duration ||= 10;
+console.log(a.duration);  // 50
+a.title ||= 'title is empty.';
+console.log(a.title);  // "title is empty"
 ```
 
 ## event loop
