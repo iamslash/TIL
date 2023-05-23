@@ -777,7 +777,7 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 
 ### CORS (Cross Origin Resource Sharing)
 
-XMLHttpRequest 가 cross-domain 을 요청할 수 있도록하는 방법이다. request 를 수신하는 Web Server 에서 설정해야 한다.
+[cors](/cors/README.md)
 
 ### PKI (Public Key Infrastructure)
 
