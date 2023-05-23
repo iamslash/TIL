@@ -42,6 +42,8 @@ Rust 에 대해 정리한다.
 
 # References
 
+* [Comprehensive Rust](https://google.github.io/comprehensive-rust/welcome.html)
+  * [kor](https://google.github.io/comprehensive-rust/ko/welcome.html)
 * [Awesome Rust @ github](https://github.com/rust-unofficial/awesome-rust)
 * [Rust](https://www.rust-lang.org/learn)
   * [Crate std reference](https://doc.rust-lang.org/stable/std/index.html)

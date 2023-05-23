@@ -39,6 +39,7 @@
     - [UDP](#udp)
     - [RPC](#rpc)
     - [REST (REpresentational State Transfer) API](#rest-representational-state-transfer-api)
+    - [REST API DESIGN](#rest-api-design)
     - [RPC VS REST](#rpc-vs-rest)
     - [HTTP 1.x vs HTTP 2.0](#http-1x-vs-http-20)
     - [HTTP Flow](#http-flow)
@@ -710,6 +711,15 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 상세보기에서는 글 수정이나 글 삭제로 갈 수 있는 링크가 있습니다. 이렇게 웹 페이지를 보면, 웹 페이지 자체에 관련된 링크가 있는것을 알 수 있는데 이를 HATEOAS (Hypermedia As The Engine Of Application State) 라고 한다. HATEOAS 를 API 에서 제공하는 것은 어렵다.
 
 결국 HTTP 는 REST API 의 uniform interface 스타일 중 self-descriptive message, HATEOAS 를 제외하고 대부분의 특징들이 구현되어 있다고 할 수 있다. 그래서 REST API 대신 HTTP API 또는 WEB API 라고 한다.
+
+### REST API DESIGN
+
+* [15 fundamental tips on REST API design | medium](https://medium.com/@liams_o/15-fundamental-tips-on-rest-api-design-9a05bcd42920)
+* [EP53: Design effective and safe APIs](https://blog.bytebytego.com/p/ep53-design-effective-and-safe-apis)
+
+----
+
+[restapi](/restapi/README.md)
 
 ### RPC VS REST
 

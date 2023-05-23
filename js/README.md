@@ -15,7 +15,7 @@
   - [Inspecting Functions](#inspecting-functions)
   - [Data types](#data-types)
   - [Truthy Falthy](#truthy-falthy)
-  - [Standard built-in objects (global objects)](#standard-built-in-objects-global-objects)
+  - [Standard built-in objects (global objects) by category](#standard-built-in-objects-global-objects-by-category)
     - [Value properties](#value-properties)
     - [Function properties](#function-properties)
     - [Fundamental objects](#fundamental-objects)
@@ -418,11 +418,11 @@ if (document.all) {}  // Object
 
 A trusy value is a value which is not falsy.
 
-## Standard built-in objects (global objects)
+## Standard built-in objects (global objects) by category
 
 * [Standard built-in objects @ MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects)
 
-* global objects means objects in the global scope. It is different the global object.
+The term "global objects" (or standard built-in objects) here is not to be confused with the global object. Here, "global objects" refer to objects in the global scope.
 
 ----
 
@@ -1719,6 +1719,12 @@ a.duration ||= 10;
 console.log(a.duration);  // 50
 a.title ||= 'title is empty.';
 console.log(a.title);  // "title is empty"
+
+// Nullish coalescing operator (??)
+const foo = null ?? 'default string';
+console.log(foo);  // "default string"
+const baz = 0 ?? 42;
+console.log(baz);  // 0
 ```
 
 ## event loop
