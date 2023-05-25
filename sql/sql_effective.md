@@ -267,8 +267,8 @@ SELECT * FROM customers ORDER BY country ASC NULLS LAST;
 
 ## Deterministic Ordering for Pagination	
 
-pagination 결과가 동일하기 위해서는 `ORDER BY` 에 최대한 많은 column 을 적어야
-한다. 그렇지 않으면 pagination 결과가 SQL 을 요청할 때 마다 달라질 수 있다.
+[pagination](/pagination/README.md) 결과가 동일하기 위해서는 `ORDER BY` 에 최대한 많은 column 을 적어야
+한다. 그렇지 않으면 [pagination](/pagination/README.md) 결과가 SQL 을 요청할 때 마다 달라질 수 있다.
 
 ```sql
   SELECT *

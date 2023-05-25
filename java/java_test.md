@@ -27,6 +27,7 @@
   - [BDD 스타일 Mockito API](#bdd-스타일-mockito-api)
   - [Mockito 연습문제](#mockito-연습문제)
 - [Docker and Test](#docker-and-test)
+  - [Gradle-docker-compose-plugin](#gradle-docker-compose-plugin)
   - [Testcontainers 소개](#testcontainers-소개)
   - [Testcontainers 설치](#testcontainers-설치)
   - [컨테이너 정보를 스프링 테스트에서 참조하기](#컨테이너-정보를-스프링-테스트에서-참조하기)
@@ -923,6 +924,10 @@ public Study openStudy(Study study) {
 
 # Docker and Test
 
+## Gradle-docker-compose-plugin
+
+[test container](https://www.testcontainers.org/) 는 느리다. [gradle-docker-compose-plugin](https://github.com/avast/gradle-docker-compose-plugin) 이 더 좋다.
+
 ## Testcontainers 소개
 
 * [24. TestContainers intro](https://github.com/keesun/inflearn-the-java-test/commit/253fba50f3f494a5a108bfd59014cfc675176615)
@@ -965,7 +970,6 @@ public Study openStudy(Study study) {
 
 
 ## JMeter 사용하기
-
 
 
 # Operation Issue Test

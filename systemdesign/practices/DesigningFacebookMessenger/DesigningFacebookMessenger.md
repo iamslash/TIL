@@ -156,7 +156,7 @@ MySQL, MongoDB is not a good solution. HBase is a good solution.
 
 ## How should clients eiffiently fetch data form the server ?
 
-Pagination is a good solution.
+[Pagination](/pagination/README.md) is a good solution.
 
 ## Managing user's status
 
