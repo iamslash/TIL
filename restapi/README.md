@@ -22,7 +22,8 @@
 
 * [15 fundamental tips on REST API design | medium](https://medium.com/@liams_o/15-fundamental-tips-on-rest-api-design-9a05bcd42920)
 * [EP53: Design effective and safe APIs](https://blog.bytebytego.com/p/ep53-design-effective-and-safe-apis)
-
+* [Mastering the Art of API Design](https://blog.bytebytego.com/p/api-design?utm_source=substack&utm_medium=email)
+* [Design Effective and Secure REST APIs](https://blog.bytebytego.com/p/design-effective-and-secure-rest)
 
 # Basic
 
