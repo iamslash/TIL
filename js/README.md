@@ -234,9 +234,28 @@ WIP...
 -----
 
 ```js
-// Sub String
-var s = "Hello World"
-console.log(s.substring(0, 5))  // Hello
+// charAt
+const s = 'Hello World  ';
+console.log(s.charAt(1));         // e
+console.log(s.at(1));             // e
+console.log(s.charAt(1) === s.at(1)) // true
+console.log(s.charCodeAt(1));     // 101
+console.log(s.startsWith('H'));   // true
+console.log(s.endsWith("  "));    // true
+console.log(s.indexOf('e'));      // 1
+console.log(s.lastIndexOf('l'));  // 9
+console.log(s.trim());            // Hello World
+console.log(s.substring(0, 5))    // Hello
+console.log(s.split('')[1]);      // e
+console.log(s.split(' ')[1]);     // World
+console.log(s.search('e'));       // 1
+console.log(s.search('[o-z]'));   // 4
+console.log(s.replace("Hello", "Bye"));  // Bye World
+console.log(s.replaceAll("l", "k"));  // Hekko Workd
+console.log(String.fromCharCode(189, 43, 190, 61)); // ½+¾=
+console.log(s.concat(' ', "Really"));  // Hello World   Really
+console.log(typeof(s.at(1)));
+
 // Convert Number to String
 var tt = 2
 tt += "";
