@@ -32,4 +32,9 @@
 
 ## Chords On 1, 2, 3, 4 Strings
 
+## Chords Based On 5, 6 String
+
+* A type
+* B type
+
 ## IIm7 - V7 - IM7
