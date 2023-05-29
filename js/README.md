@@ -12,6 +12,7 @@
   - [String](#string)
   - [Random](#random)
   - [Print Out](#print-out)
+  - [Inspecting Types](#inspecting-types)
   - [Inspecting Functions](#inspecting-functions)
   - [Data types](#data-types)
   - [Truthy Falthy](#truthy-falthy)
@@ -225,7 +226,18 @@ console.log(Math.abs(-2.3));    // 2.3
 
 ## Bit Manipulation
 
-WIP...
+```js
+function dec2bin(dec) {
+  return (dec >>> 0).toString(2);
+}
+
+a = 5;  // 0000 0101
+b = 7;  // 0000 0111
+a & b;  // 0000 0101
+a | b;  // 0000 0111
+a ^ b;  // 0000 0010
+~a;     // 1111 1010
+```
 
 ## String
 
@@ -349,13 +361,20 @@ String.prototype.format = function() {
 console.log("Hello, {0}!".format("World"))
 ```
 
+## Inspecting Types
+
+```js
+typeof({})  // object
+typeof([])  // object
+```
+
 ## Inspecting Functions
 
 `node` 를 실행하고 `TAB` 을 누르면 리스트를 확인할 수 있다.
 
 ```console
-$ node
-$ console. <TAB>
+> node
+> console. <TAB>
 ```
 
 ## Data types
@@ -433,6 +452,12 @@ if (NaN) {}           // Number
 if (0n) {}            // BigInt
 if ("") {}            // String
 if (document.all) {}  // Object
+
+// Comparisons of falthy value
+false == 0        // true
+null == undefined // true
+0n == 0           // true
+"" == 0           // true
 ```
 
 A trusy value is a value which is not falsy.
@@ -1697,6 +1722,12 @@ class Employee extends Person {
 ## Expressions & Operators
 
 ```js
+// unsigned right shift (>>>)
+console.log(`${(5).toString(2)}`); // 0000 0101
+console.log(`${(5 >>> 2).toString(2)}`); // 0000 0001
+console.log(`${(-5).toString(2)}`); // -101
+console.log(`${(-5 >>> 0).toString(2)}`); // 1111 1101
+
 // Optional chaining (?.)
 // Returns undefined when target object is undefined or null.
 const adventurer = {
