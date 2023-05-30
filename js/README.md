@@ -59,8 +59,9 @@
     - [IIFE(Immediately-invoked function expression)](#iifeimmediately-invoked-function-expression)
     - [arrow function (ES6)](#arrow-function-es6)
   - [Method](#method)
+  - [Exception](#exception)
   - [scope](#scope)
-  - [hoisting](#hoisting)
+  - [Hoisting](#hoisting)
   - [TDZ (Temporal Dead Zone)](#tdz-temporal-dead-zone)
   - [this](#this)
   - [execution context](#execution-context)
@@ -92,7 +93,7 @@
 
 # Abstract
 
-java script에 대해 정리한다.
+java script 에 대해 정리한다.
 
 # Essentials
 
@@ -147,9 +148,13 @@ java script에 대해 정리한다.
   
 ----
 
-js runtime engine 는 single threaded 이다. 기본적으로 web-browser 의 main thread 에서 js 가 실행된다. 따라서 js code 가 blocking 되면 ui 는 rendering 될 수 없다. 그렇다면 어떻게 aync 를 지원하는지 알아보자.
+js runtime engine 는 single threaded 이다. 기본적으로 web-browser 의 main thread
+에서 js 가 실행된다. 따라서 js code 가 blocking 되면 ui 는 rendering 될 수 없다.
+그렇다면 어떻게 aync 를 지원하는지 알아보자.
 
-web-browser 는 js engine 이 제공하지 못하는 WebApi 를 제공한다. WebApi 를 이용하면 aync 구현이 가능하다. [JavaScript Visualized: Event Loop](https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif)
+web-browser 는 js engine 이 제공하지 못하는 WebApi 를 제공한다. WebApi 를
+이용하면 aync 구현이 가능하다. [JavaScript Visualized: Event
+Loop](https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif)
 
 ![](img/js-event-loop.gif)
 
@@ -168,7 +173,7 @@ event-loop 알고리즘은 다음과 같다.
 1. macro-task-queue 에서 가장 오래된 태스크를 꺼내 실행한다.
 2. micro-taskqueue 를 비울때까지 실행한다.
 3. 렌더링한다.
-4. 매크로태스크 큐가 비어있으면 기다린다.
+4. macro-task-queue 가 비어있으면 기다린다.
 
 # JavaScript Engine How to work
 
@@ -363,10 +368,34 @@ console.log("Hello, {0}!".format("World"))
 
 ## Inspecting Types
 
+> [typeof | mdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof)
+
+`typeof` returns these.
+
+| Type | Result |
+|--|--|
+| `Undefined` | `undefined` |
+| `Null` | `object` |
+| `Boolean` | `boolean` |
+| `Number` | `number` |
+| `BigInt` | `bigint` |
+| `String` | `string` |
+| `Symbol` | `symbol` |
+| `Function` | `function` |
+| Any other object | `object` |
+
 ```js
-typeof({})  // object
-typeof([])  // object
+typeof({})    // object
+typeof([])    // object
+typeof(null)  // object
+typeof(undefined) // undefined
 ```
+
+`typeof(null)` is not `null` but `object`.
+[reason](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#typeof_null) 
+
+According to [The history of “typeof
+null”](https://2ality.com/2013/10/typeof-null.html), It is a historical bug.
 
 ## Inspecting Functions
 
@@ -432,7 +461,7 @@ console.log(parseInt(100, 2)) // 4, number whose base is 2
 
 ## Truthy Falthy
 
-> [Falsy](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
+> [Falsy | mdn](https://developer.mozilla.org/en-US/docs/Glossary/Falsy)
 
 A falsy (sometimes written falsey) value is a value that is considered false when encountered in a Boolean context.
 
@@ -442,22 +471,36 @@ A falsy (sometimes written falsey) value is a value that is considered false whe
 console.log(false && "dog");  // false
 console.log(0 && "dog");  // 0
 
-// Not reachable
-if (false) {}         // Boolean
-if (null) {}          // Null
-if (undefined) {}     // Undefined
-if (0) {}             // Number
-if (-0) {}            // Number
-if (NaN) {}           // Number
-if (0n) {}            // BigInt
-if ("") {}            // String
-if (document.all) {}  // Object
+// Not reachable 
+Boolean(false)        // Boolean
+Boolean(null)         // Null
+Boolean(undefined)    // Undefined
+Boolean(0)            // Number
+Boolean(-0)           // Number
+Boolean(NaN)          // Number
+Boolean(0n)           // BigInt
+Boolean('')           // String
+Boolean(document.all) // Object
 
-// Comparisons of falthy value
-false == 0        // true
+// Comparisons of falsy values
+false == 0            // true
+false == -0           // true
+false == 0n           // true
+false == ''           // true
+false == null         // false
+false == undefined    // false
+false == NaN          // false
+false === 0           // false
+false === ''          // false
+false === -0          // false
+false === 0n          // false
+
 null == undefined // true
-0n == 0           // true
-"" == 0           // true
+null == 0         // false
+null == -0        // false
+null == 0n        // false
+null == ''        // false
+null == NaN       // false
 ```
 
 A trusy value is a value which is not falsy.
@@ -1281,6 +1324,25 @@ obj.b(); // b is a method
 obj.c(); // c is a method
 ```
 
+## Exception
+
+> [throw | mdn](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Statements/throw)
+
+```js
+function getRectArea(width, height) {
+  if (isNaN(width) || isNaN(height)) {
+    throw new Error('Parameter is not a number!');
+  }
+}
+
+try {
+  getRectArea(3, 'A');
+} catch (e) {
+  console.error(e);
+  // Expected output: Error: Parameter is not a number!
+}
+```
+
 ## scope
 
 변수의 유효범위를 말한다. 함수가 정의 되면 scope 가 만들어진다. ES6 부터는 block 역시 scope 를 생성한다.
@@ -1312,62 +1374,95 @@ wrapper(); // zero
 ```
 
 
-## hoisting
+## Hoisting
 
 * [JavaScript Visualized: Hoisting](https://dev.to/lydiahallie/javascript-visualized-hoisting-478h)
+* [Hoisting | mdn](https://developer.mozilla.org/en-US/docs/Glossary/Hoisting)
 
 -----
 
-function scope, block scope 에서 변수를 선언하고 초기화하면 "1) 선언부분이 맨
-위로 끌어올려지고" "2) undefined" 가 할당된다. 함수가 실행되면 scope, execution
-context 가 생성되고 hoisting 및 this binding 을 한다. 그리고 함수의 코드를
-하나씩 실행한다. ES6 의 hoisting 은 "1)" 만 하고 "2)" 는 없다.
+declaration of **functions, variables or classes** 를 interpreter 가 실행하기
+전에 해당 scope 의 꼭대기로 끌어올리는 것을 말한다. 즉, 선언하기 전에
+ReferenceError 발생 없이 사용할 수 있다는 의미이다.
+[HoistableDeclaration](https://tc39.es/ecma262/#prod-HoistableDeclaration) 이
+ECMA 에 정의되어 있긴 하지만 Hoisting 이 official term 은 아닌 것 같다.
+
+Hoisting 은 다음과 같이 3 가지 종류가 있다.
+
+* Hoisted variable 를 declaration 실행 이전에 사용할 수 있다. (**Value Hoisting**)
+  * `function, function*, async function, async function*`
+* Hoisted variable 를 declaration 실행 이전에 사용할 수 있지만 그 값은
+  `undefined` 이다. (**Declaration Hoisting**)
+  * `var`
+* declaration 실행 이전에 사용하면 ReferenceError 를 발생한다. (**Non-Hoisted**)
+  * `let, const, class`
+  * [TDZ](#tdz-temporal-dead-zone) 참고.
 
 ```js
-console.log(zero); // 에러가 아니라 undefined
-sayWow(); // 정상적으로 wow
-function sayWow() {
-  console.log('wow');
-}
-var zero = 'zero';
-```
-
-위의 코드는 아래와 같다.
-
-```js
-function sayWow() {
-  console.log('wow');
-}
-var zero;
-console.log(zero);
-sayWow();
-zero = 'zero';
-```
-
-함수를 표현식으로 선언한 경우는 에러가 발생한다.
-
-```js
-sayWow(); // (3)
-sayYeah(); // (5) 여기서 대입되기 전에 호출해서 에러
-var sayYeah = function() { // (1) 선언 (6) 대입
-  console.log('yeah');
-}
-function sayWow() { // (2) 선언과 동시에 초기화(호이스팅)
-  console.log('wow'); // (4)
+const x = 1;
+{
+  console.log(x); // ReferenceError
+  const x = 2;
 }
 ```
 
 ## TDZ (Temporal Dead Zone)
 
-...
+`let, const` 로 변수를 선언하면 실제 선언되기 전에 사용할 수 없다. 즉, TDZ 에서
+변수를 사용하면 Reference 가 발생한다. `let, const` 가 선언된 block 의 시작부터
+선언된 행까지를 TDZ (Temporal Dead Zone) 이라고 한다.
+
+```js
+{
+  // TDZ starts at beginning of scope
+  console.log(bar); // undefined
+  console.log(foo); // ReferenceError
+  var bar = 1;
+  let foo = 2; // End of TDZ (for foo)
+}
+```
+
+The TDZ and typeof
+
+```js
+// results in a 'ReferenceError'
+console.log(typeof i);
+let i = 10;
+```
+
+TDZ combined with lexical scoping
+
+
+```js
+function test() {
+  var foo = 33;
+  if (foo) {
+    let foo = foo + 55; // ReferenceError
+  }
+}
+test();
+```
+
+```js
+// "n.a" is "a" of "let n"
+function go(n) {
+  // n here is defined!
+  console.log(n); // { a: [1, 2, 3] }
+
+  for (let n of n.a) {
+    //          ^ ReferenceError
+    console.log(n);
+  }
+}
+go({ a: [1, 2, 3] });
+```
 
 ## this
 
 * 전역공간에서 `this` 는 `window/global` 이다. 
-* 함수내부에서 `this` 는 `window/global 이다.`
+* 함수내부에서 `this` 는 `window/global` 이다.
 * 메소드 호출시 `this` 는 `.` 앞의 객체이다.
 * callback 에서 `this` 는 함수내부에서와 같다.
-
 
 ```js
 function a(x, y, z) {
@@ -1970,12 +2065,17 @@ console.log(a.foo3) // 3
 
 ## var, let, const
 
+* [let | mdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let)
 * [var, let, const 차이점은?](https://gist.github.com/LeoHeo/7c2a2a6dbcf80becaaa1e61e90091e5d)
 
 ----
 
-* var 는 function-scoped 이고 let, const 는 block-scoped 이다.
-* var 는 함수를 기준으로 hoisting 이 발생한다.
+* **var** 는 global-scoped 혹은 function-scoped 이다.
+  * 함수 밖에서 선언했을 때 global-scoped 이다.
+  * 함수 안에서 선언했을 때 function-scoped 이다.
+* **let, const** 는 block-scoped 이다.
+* **var** 는 hoisted 이다.
+* **let, cnost** 는 non-hoisted 이다.
 
 ```js
 // i is hoisted.
@@ -1986,7 +2086,7 @@ console.log('after loop i is ', i) // after loop i is 10
 
 // i is hoisted in a function. So error happens.
 function counter () {
-  for(var i=0; i<10; i++) {
+  for(var i = 0; i < 10; i++) {
     console.log('i', i)
   }
 }
@@ -2034,14 +2134,14 @@ To prevent hoisting in IIFE, just use strict
 // Error will happen.
 (function() {
   'use strict'
-  for(i=0; i<10; i++) {
+  for(i = 0; i < 10; i++) {
     console.log('i', i)
   }
 })()
 console.log('after loop i is', i) // ReferenceError: i is not defined
 ```
 
-* let, const 는 변수재선언이 불가능하다. const 는 immutable 하다.
+* let, const 는 변수 재선언이 불가능하다. const 는 immutable 하다.
 
 ```js
 let a = 'hello'

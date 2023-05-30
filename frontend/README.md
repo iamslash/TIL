@@ -3,6 +3,9 @@
 - [Materials](#materials)
 - [References](#references)
 - [Basic](#basic)
+  - [Compatibilities](#compatibilities)
+  - [Push API](#push-api)
+  - [Service Worker API](#service-worker-api)
   - [npm](#npm)
   - [Webpack](#webpack)
   - [Webpack Deep Dive](#webpack-deep-dive)
@@ -21,7 +24,8 @@ Frontend tech stack 은 update 가 빠르다.
 [Realworld conduit srcs](https://codebase.show/projects/realworld)
 에서 frontend, backend examples 를 참고하자.
 
-2023.03 시점에 typescript, vite, eslint, prettier, zustand, mui, axios, react-query, msw, cypress 를 주로 사용한다.
+2023.03 시점에 typescript, vite, eslint, prettier, zustand, mui, axios,
+react-query, msw, cypress 를 주로 사용한다.
 
 # Essentials
 
@@ -67,6 +71,33 @@ Frontend tech stack 은 update 가 빠르다.
   * 글자를 입력하고 폰트미리보기를 할 수 있다.
 
 # Basic
+
+## Compatibilities
+
+[caniuse.com](https://caniuse.com/) 에서 검색한다. browser 별로 호환성을 확인할
+수 있다.
+
+## Push API
+
+> * [웹 푸시 알림(Web Push Notification)](https://geundung.dev/114)
+> * [Push API | mdn](https://developer.mozilla.org/en-US/docs/Web/API/Push_API)
+> * [Push API | w3.org](https://www.w3.org/TR/push-api/)
+
+Client Browser 가 Server 로 부터 Push Notification 을 받을 수 있도록 하는 API 이다. 
+
+예를 들어 Browser 가 FCM (Firebase Cloud Message) Service 를 subscript 하면
+Application Service 가 Browser 에게 FCM 을 통해 Push Notification 을 보낼 수
+있다.
+
+## Service Worker API
+
+> * [Service Worker API | mdn](https://developer.mozilla.org/ko/docs/Web/API/Service_Worker_API)
+
+Client Browser 에서 실행되는 Event Driven Worker 인 Service Worker 의 API 이다.
+Client Browser Main Thread 와 달리 별도의 Thread 에서 실행되기 때문에 DOM 에
+접근할 수 없고 XHR, WebStorage 를 사용할 수 없다. 
+
+Service Worker 를 이용하여 Server 로 부터 Push Notification 을 받아낼 수 있다.
 
 ## npm
 
