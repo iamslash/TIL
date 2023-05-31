@@ -28,8 +28,6 @@
     - [Structured Data](#structured-data)
     - [Control abstraction objects](#control-abstraction-objects)
     - [Reflection](#reflection)
-      - [Reflect](#reflect)
-      - [Proxy](#proxy)
     - [Internationalization](#internationalization)
     - [WebAssembly](#webassembly)
     - [Other](#other)
@@ -86,7 +84,7 @@
   - [Iteration Protocols](#iteration-protocols)
   - [import from](#import-from)
   - [Shorthand property names](#shorthand-property-names)
-  - [Duplicate property names](#duplicate-property-names)
+  - [Duplicate Property Names](#duplicate-property-names)
   - [Decorator](#decorator)
 
 -------------------------------------------------------------------------------
@@ -189,8 +187,8 @@ $ node a.js
 
 ## Keywords
 
-* [JavaScript Reserved Words](https://www.w3schools.com/js/js_reserved.asp)
-* [Reserved keywords in ES6 with example usage](https://medium.com/@wlodarczyk_j/reserved-keywords-in-es6-with-example-usage-ea0036f63fab)
+> * [JavaScript Reserved Words](https://www.w3schools.com/js/js_reserved.asp)
+> * [Reserved keywords in ES6 with example usage](https://medium.com/@wlodarczyk_j/reserved-keywords-in-es6-with-example-usage-ea0036f63fab)
 
 ```js
 abstract   else        instanceof   switch
@@ -347,6 +345,8 @@ console.log(getRandomInt(1, 10))
 
 ## Print Out
 
+> * [Text Formatting | mdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Text_formatting)
+
 ```js
 console.log('Hello World')
 // from ES6. focus on ` not '
@@ -364,6 +364,17 @@ String.prototype.format = function() {
   return a
 }
 console.log("Hello, {0}!".format("World"))
+
+// Rounding floating-point numbers
+(12.345).toFixed(2); // returns "12.35" (rounding!)
+(12.3).toFixed(2); // returns "12.30" (zero padding)
+
+// Exponential form
+(33333).toExponential(2); // "3.33e+4"
+
+// Hexadecimal and other bases
+(3735928559).toString(16); // to base 16: "deadbeef"
+parseInt("deadbeef", 16); // from base 16: 3735928559
 ```
 
 ## Inspecting Types
@@ -424,7 +435,7 @@ javascript 는 다음과 같은 타입들을 가지고 있다.
 
 ```js
 // Boolean
-var a = true; // false
+var a = true; 
 
 // Null
 var b = null;
@@ -471,7 +482,7 @@ A falsy (sometimes written falsey) value is a value that is considered false whe
 console.log(false && "dog");  // false
 console.log(0 && "dog");  // 0
 
-// Not reachable 
+// false in condition 
 Boolean(false)        // Boolean
 Boolean(null)         // Null
 Boolean(undefined)    // Undefined
@@ -605,70 +616,8 @@ The term "global objects" (or standard built-in objects) here is not to be confu
 
 ### Reflection
 
-#### Reflect
-
-Provide static methods to be interceptable for the object. `Reflect` is not a
-constructor. We can not use it with the new operator or invoke the `Reflect`
-object as a function. `Reflect` has same method names with `Proxy`.
-
-```js
-const object1 = {
-  x: 1,
-  y: 2
-};
-console.log(Reflect.get(object1, 'x'));   // 1
-
-const array1 = ['zero', 'one'];
-console.log(Reflect.get(array1, 1));      // "one"
-```
-
-#### Proxy
-
-Intercept and redefine operations for the object.
-
-```js
-// Do nothing
-const target = {
-  msg1: "hello",
-  msg2: "everyone",
-}
-const handler1 = {}
-const proxy1 = new Proxy(target, handler1)
-console.log(proxy1.message1); // hello
-console.log(proxy1.message2); // everyone
-
-// Do something
-const target = {
-  message1: "hello",
-  message2: "everyone",
-};
-const handler2 = {
-  get(target, prop, receiver) {
-    return "world";
-  },
-};
-const proxy2 = new Proxy(target, handler2);
-console.log(proxy2.message1); // world
-console.log(proxy2.message2); // world
-
-// Do something in specific condition
-// with Reflect
-const target = {
-  message1: "hello",
-  message2: "everyone"
-};
-const handler3 = {
-  get(target, prop, receiver) {
-    if (prop === "message2") {
-      return "world";
-    }
-    return Reflect.get(...arguments);
-  },
-};
-const proxy3 = new Proxy(target, handler3);
-console.log(proxy3.message1); // hello
-console.log(proxy3.message2); // world
-```
+* [Reflect](standard_built_in_objs/refelct.md)
+* [Proxy](standard_built_in_objs/proxy.md)
 
 ### Internationalization
 
@@ -876,8 +825,8 @@ console.log(a)
 
 ## template literals (template strings in ECMA 2015)
 
-* [Template literals](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Template_literals)
-* [템플릿 리터럴](https://poiemaweb.com/es6-template-literals)
+> * [Template literals](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Template_literals)
+> * [템플릿 리터럴](https://poiemaweb.com/es6-template-literals)
 
 ----
 
@@ -1471,12 +1420,12 @@ function a(x, y, z) {
 var b = {
   c: 'eee'
 }
-a.call(b, 1, 2, 3)
-a.apply(b, [1, 2, 3])
-var c = a.bind(b);
-c(1, 2, 3);
+a.call(b, 1, 2, 3)        // { c: 'eee' } 1 2 3
+a.apply(b, [1, 2, 3])     // { c: 'eee' } 1 2 3
+var c = a.bind(b);        
+c(1, 2, 3);               // { c: 'eee' } 1 2 3
 var d = a.bind(b, 1, 2);
-d(3);
+d(3);                     // { c: 'eee' } 1 2 3
 ```
 
 * 생성자함수에서 `this` 는 인스턴스이다.
@@ -1487,7 +1436,7 @@ function Person(n, a) {
   this.age = a;
 }
 var foo = new Person('Foo', 30);
-console.log(foo);
+console.log(foo);  // Person { name: 'Foo', age: 30 }
 ```
 
 ## execution context
@@ -1633,7 +1582,9 @@ console.log(arr.__proto__.__proto__.toString.call(arr));
 
 ## Class
 
-Array 는 class 이다. Array 를 new 연산자를 이용하여 생성한 `[1, 2, 3]` 은 instance 이다. Array 는 다음과 같이 static methods, static properties, methods 로 구성된다.
+Array 는 class 이다. Array 를 new 연산자를 이용하여 생성한 `[1, 2, 3]` 은
+instance 이다. Array 는 다음과 같이 static methods, static properties, methods
+로 구성된다.
 
 ```
 Array.from()                -- static methods
@@ -2075,7 +2026,7 @@ console.log(a.foo3) // 3
   * 함수 안에서 선언했을 때 function-scoped 이다.
 * **let, const** 는 block-scoped 이다.
 * **var** 는 hoisted 이다.
-* **let, cnost** 는 non-hoisted 이다.
+* **let, const** 는 non-hoisted 이다.
 
 ```js
 // i is hoisted.
@@ -2161,7 +2112,7 @@ b = 'world'; // ERROR
 ----
 
 비동기를 구현하기 위한 object 이다. `promise` 는 `pending, resolved, rejected`
-와 같이 3 가지 상태를 갖는다 ???
+와 같이 3 가지 상태를 갖는다.
 
 `Promise` object 의 `then()` 혹은 `catch()`을 호출하면 `Promise` object 는
 resolved 상태로 된다.
@@ -2372,7 +2323,7 @@ generator function 은 `Generator` object 를 return 하는 함수이다. `funct
 
 `Generator` object 의 `next()` 를 호출하면 generator function 의 처음 혹은
 이전에 멈춘 `yield` 부터 다음 `yield` 혹은 함수의 끝까지 실행된다. `next()` 는
-`iterator protocol` 의 함수이다???
+`iterator protocol` 의 함수이다.
 
 `next()` 는 `value, done` key 가 포함된 object 를 return 한다. ex) `{value: undefined, done: true}`
 
@@ -2594,7 +2545,7 @@ let o = {a, b, c}
 console.log((o.a === {a}.a)) // true
 ```
 
-## Duplicate property names
+## Duplicate Property Names
 
 * [Object initializer @ MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Object_initializer)
 
