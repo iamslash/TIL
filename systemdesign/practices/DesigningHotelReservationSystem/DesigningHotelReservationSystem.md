@@ -327,8 +327,8 @@ Database Sharding
 
 There two solutions.
 
-* [2 Phase Commit](/distributedtransaction/README.md#2-phase-commit)
-* [SAGAS](/distributedtransaction/README.md#saga)
+* [2 Phase Commit | TIL](/distributedtransaction/README.md#2-phase-commit)
+* [SAGAS | TIL](/distributedtransaction/README.md#saga)
 
 # References
 

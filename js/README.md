@@ -616,7 +616,7 @@ The term "global objects" (or standard built-in objects) here is not to be confu
 
 ### Reflection
 
-* [Reflect](standard_built_in_objs/refelct.md)
+* [Reflect](standard_built_in_objs/reflect.md)
 * [Proxy](standard_built_in_objs/proxy.md)
 
 ### Internationalization

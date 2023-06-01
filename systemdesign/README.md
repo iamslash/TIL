@@ -29,7 +29,7 @@
   - [Reverse proxy](#reverse-proxy)
   - [Application layer](#application-layer)
     - [Service Mesh](#service-mesh)
-    - [Service discovery](#service-discovery)
+    - [Service Discovery](#service-discovery)
   - [Database](#database)
   - [Cache](#cache)
   - [Asynchronism](#asynchronism)
@@ -51,7 +51,7 @@
     - [CORS (Cross Origin Resource Sharing)](#cors-cross-origin-resource-sharing)
     - [PKI (Public Key Infrastructure)](#pki-public-key-infrastructure)
     - [SSL/TLS](#ssltls)
-  - [Database Primary Key](#database-primary-key)
+  - [Distributed Primary Key](#distributed-primary-key)
   - [Idempotency](#idempotency)
   - [80/20 rule](#8020-rule)
   - [70% Capacity model](#70-capacity-model)
@@ -61,6 +61,7 @@
   - [Distributed Transaction](#distributed-transaction)
   - [Observability](#observability)
   - [Load Test](#load-test)
+  - [Rate Limiting](#rate-limiting)
 - [System Design Interview](#system-design-interview)
   - [Fundamentals](#fundamentals)
   - [Design Practices](#design-practices)
@@ -128,7 +129,7 @@
   - [src](https://github.com/Jeevan-kumar-Raj/Grokking-System-Design)
 * [System Design The Big Archives](https://blog.bytebytego.com/p/free-system-design-pdf-158-pages?s=r)
   * [pdf](https://bytebyte-go.s3.amazonaws.com/ByteByteGo_LinkedIn_PDF.pdf)
-* [incident @ TIL](/incident/README.md)
+* [Incident | TIL](/incident/README.md)
   * incident case studies
   
 # Materials
@@ -288,11 +289,11 @@ Notes
 
 ## Distributed System
 
-* [Distributed System](/distributedsystem/README.md)
+* [Distributed System | TIL](/distributedsystem/README.md)
 
 ## Software Design Principle
 
-* [design principle](/designprinciple/README.md)
+* [Design Principle | TIL](/designprinciple/README.md)
 
 ## Read Heavy vs Write Heavy
 
@@ -304,11 +305,14 @@ Notes
 
 ## Performance vs scalability
 
-performance 의 문제가 있다면 single user 가 느린 시스템을 경험할 것이다. scalability 의 문제가 있다면 single user 가 빠른 시스템을 경험할 지라도 multi user 는 느린 시스템을 경험할 수 있다???
+performance 의 문제가 있다면 single user 가 느린 시스템을 경험할 것이다.
+scalability 의 문제가 있다면 single user 가 빠른 시스템을 경험할 지라도 multi
+user 는 느린 시스템을 경험할 수 있다???
 
 ## Latency vs throughput
 
-Latency 는 어떤 action 을 수행하고 결과를 도출하는데 걸리는 시간이다. Throughput 은 단위 시간당 수행하는 액션 혹은 결과의 수이다.
+Latency 는 어떤 action 을 수행하고 결과를 도출하는데 걸리는 시간이다. Throughput
+은 단위 시간당 수행하는 액션 혹은 결과의 수이다.
 
 ## Availability vs consistency
 
@@ -324,30 +328,32 @@ Latency 는 어떤 action 을 수행하고 결과를 도출하는데 걸리는 �
 Brewer's theorem 이라고도 한다. Distributed System 은 **Consistency,Availability, Partition tolerance** 중 2 가지만 만족할 수 있다. 2 가지를
 만족시키기 위해 1 가지를 희생해야 한다는 의미와 같다.
 
-* Consistency
+* **Consistency**
   * all nodes see the same data at the same time
   * 모든 node 가 같은 시간에 같은 data 를 갖는다.
-* Availability
-  * a guarantee that every request receives a response about whether it was successful or failed
+* **Availability**
+  * a guarantee that every request receives a response about whether it was
+    successful or failed
   * 일부 node 에 장애가 발생해도 서비스에 지장이 없다.
-* Partition tolerance
-  * the system continues to operate despite arbitrary message loss or failure of part of the system.
+* **Partition tolerance**
+  * the system continues to operate despite arbitrary message loss or failure of
+    part of the system.
   * node 간에 네트워크가 단절되었을 때 서비스에 지장이 없다.
 
 MySQL 은 Distribute System 이 아니다. CAP 를 적용할 수 없다.
 
 따라서 Distributed System 은 다음과 같이 분류할 수 있다.
 
-* CP (Consistency and Partition Tolerance)
+* **CP (Consistency and Partition Tolerance)**
   * node1, node2, node3 이 있다. node3 이 Network Partition 되었다고 하자.
     Consistency 를 위해 node1, node2 가 동작하지 않는다. Availability 가 떨어진다.
   * banking 과 같이 Consistency 가 중요한 곳에 사용된다.
-* AP (Availabiltity and Paritition Tolerance)
+* **AP (Availabiltity and Paritition Tolerance)**
   * node1, node2, node3 가 있다. node3 가 Network Partition 되었다고 하자.
     node1, node2 가 동작한다. node3 에 write 된 data 가 node1, node2 에 전파되지 않았다.
     Consistency 는 떨어진다. 그러나 서비스의 지장은 없다. 즉, Availability 가 높다. node3 가 
     Network Partition 에서 복구된다면 그 data 는 다시 동기화 된다.
-* CA (Consistency and Partition Tolerance)
+* **CA (Consistency and Partition Tolerance)**
   * 현실세계에서 Partition Tolerance 는 피할 수 없다. 이 것은 현실세계에서 불가능하다.
 
 ### PACELC (Partitioning Availability Consistency Else Latency Consistency)
@@ -358,12 +364,21 @@ MySQL 은 Distribute System 이 아니다. CAP 를 적용할 수 없다.
 
 ![](/aws/img/truth-of-cap-theorem-pacelc.jpg)
 
-시스템이 Partitioning 상황 즉 네트워크 장애 상황일 때는 Availability 혹은 Consistency 중 하나를 추구하고 일반적인 상황일 때는 Latency 혹은 Consistency 중 하나를 추구하라는 이론이다. 
+시스템이 Partitioning 상황 즉 네트워크 장애 상황일 때는 Availability 혹은
+Consistency 중 하나를 추구하고 일반적인 상황일 때는 Latency 혹은 Consistency 중
+하나를 추구하라는 이론이다. 
 
-이것을 다시 한번 풀어보면 이렇다. 네트워크 장애 상황일 때 클라이언트는 일관성은 떨어져도 좋으니 일단 데이터를 받겠다 혹은 일관성있는 데이터 아니면 에러를 받겠다는 말이다. 네트워크 장애가 아닌 보통의 상황일 때 클라이언트는 일관성은 떨어져도 빨리 받겠다 혹은 일관성있는 데이터 아니면 늦게 받겠다는 말이다.
+이것을 다시 한번 풀어보면 이렇다. 네트워크 장애 상황일 때 클라이언트는 일관성은
+떨어져도 좋으니 일단 데이터를 받겠다 혹은 일관성있는 데이터 아니면 에러를
+받겠다는 말이다. 네트워크 장애가 아닌 보통의 상황일 때 클라이언트는 일관성은
+떨어져도 빨리 받겠다 혹은 일관성있는 데이터 아니면 늦게 받겠다는 말이다.
 
-* HBase 는 PC/EC 이다. 네트워크 장애상황일 때 무조건 일관성있는 데이터를 보내고 보통의 상황일 때도 무조건 일관성있는 데이터를 보낸다. 한마디로 일관성 성애자이다.
-* Cassandra 는 PA/EL 이다. 일관성은 별로 중요하지 않다. 네트워크 장애상황일 때 일관성은 떨어져도 데이터를 일단 보낸다. 보통의 상황일 때 역시 일관성은 떨어져도 좋으니 일단 빨리 데이터를 보낸다.
+* HBase 는 PC/EC 이다. 네트워크 장애상황일 때 무조건 일관성있는 데이터를 보내고
+  보통의 상황일 때도 무조건 일관성있는 데이터를 보낸다. 한마디로 일관성
+  성애자이다.
+* [Cassandra](/cassandra/README.md) 는 PA/EL 이다. 일관성은 별로 중요하지 않다. 네트워크 장애상황일 때
+  일관성은 떨어져도 데이터를 일단 보낸다. 보통의 상황일 때 역시 일관성은
+  떨어져도 좋으니 일단 빨리 데이터를 보낸다.
 
 ## Consistency patterns
 
@@ -509,7 +524,9 @@ nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은
   
 ----
 
-A service mesh is a dedicated infrastructure layer for handling service-to-service communication. [Istio](/istio/README.md) 는 대표적인 Service Mesh Solution 이다.
+A service mesh is a dedicated infrastructure layer for handling
+service-to-service communication. [Istio](/istio/README.md) 는 대표적인 Service
+Mesh Solution 이다.
 
 service mesh 의 주요기능은 다음과 같다. 
 
@@ -522,12 +539,12 @@ service mesh 의 주요기능은 다음과 같다.
 * Distributed Tracing
 * Metrics Collecting
 
-API Gate Way 와 Service Mesh 의 차이는 무엇일까? 
+API Gate Way 는 Service Mesh 의 종류 중 하나이다.
 
-### Service discovery
+### Service Discovery
 
 * service 의 ip, port 등을 등록하고 살아있는지 확인할 수 있다.
-* consul, etcd, zookeepr 가 해당된다.
+* [consul](/consul/README.md), [Etcd](/etcd/), [Zookeepr](/zookeeper/README.md) 가 해당된다.
 
 ## Database
 
@@ -666,17 +683,17 @@ Message queue 의 종류는 다음과 같다.
 
 ## Communication
 
-* [network @ TIL](/network/README.md)
+* [Network | TIL](/network/README.md)
 
 ----
 
 ### TCP
 
-[tcp](/network/README.md#tcp)
+[TCP | TIL](/network/README.md#tcp)
 
 ### UDP
 
-[udp](/network/README.md#udp)
+[UDP | TIL](/network/README.md#udp)
 
 ### RPC
 
@@ -689,9 +706,11 @@ TODO
 
 ----
 
-2000 년도에 로이 필딩 (Roy Fielding) 의 박사학위 논문에서 최초로 소개되었다. REST 형식의 API 를 말한다.
+2000 년도에 로이 필딩 (Roy Fielding) 의 박사학위 논문에서 최초로 소개되었다.
+REST 형식의 API 를 말한다.
 
-로이 필딩은 현재 공개된 REST API 라고 불리우는 것은 대부분 REST API 가 아니다라고 말한다. REST API 는 다음과 같은 것들을 포함해야 한다고 한다.
+로이 필딩은 현재 공개된 REST API 라고 불리우는 것은 대부분 REST API 가
+아니다라고 말한다. REST API 는 다음과 같은 것들을 포함해야 한다고 한다.
 
 * client-server
 * stateless
@@ -700,17 +719,25 @@ TODO
 * layered system
 * code-on-demand (optional)
 
-HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다. uniform interface 는 다음을 포함한다.
+HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다. uniform
+interface 는 다음을 포함한다.
 
 * 리소스가 URI로 식별되야 합니다.
 * 리소스를 생성,수정,추가하고자 할 때 HTTP메시지에 표현을 해서 전송해야 합니다.
 * 메시지는 스스로 설명할 수 있어야 합니다. (Self-descriptive message)
 * 애플리케이션의 상태는 Hyperlink를 이용해 전이되야 합니다.(HATEOAS)
 
-위의 두가지는 이미 만족하지만 나머지 두가지는 HTTP 로 구현하기 어렵다. 예를 들어 HTTP BODY 에 JSON 을 포함했을 때 HTTP message 스스로 body 의 내용을 설명하기란 어렵다. 그리고 웹 게시판을 사용할 때, 리스트 보기를 보면, 상세보기나 글쓰기로 이동할 수 있는 링크가 있습니다.
-상세보기에서는 글 수정이나 글 삭제로 갈 수 있는 링크가 있습니다. 이렇게 웹 페이지를 보면, 웹 페이지 자체에 관련된 링크가 있는것을 알 수 있는데 이를 HATEOAS (Hypermedia As The Engine Of Application State) 라고 한다. HATEOAS 를 API 에서 제공하는 것은 어렵다.
+위의 두가지는 이미 만족하지만 나머지 두가지는 HTTP 로 구현하기 어렵다. 예를 들어
+HTTP BODY 에 JSON 을 포함했을 때 HTTP message 스스로 body 의 내용을 설명하기란
+어렵다. 그리고 웹 게시판을 사용할 때, 리스트 보기를 보면, 상세보기나 글쓰기로
+이동할 수 있는 링크가 있습니다. 상세보기에서는 글 수정이나 글 삭제로 갈 수 있는
+링크가 있습니다. 이렇게 웹 페이지를 보면, 웹 페이지 자체에 관련된 링크가
+있는것을 알 수 있는데 이를 HATEOAS (Hypermedia As The Engine Of Application
+State) 라고 한다. HATEOAS 를 API 에서 제공하는 것은 어렵다.
 
-결국 HTTP 는 REST API 의 uniform interface 스타일 중 self-descriptive message, HATEOAS 를 제외하고 대부분의 특징들이 구현되어 있다고 할 수 있다. 그래서 REST API 대신 HTTP API 또는 WEB API 라고 한다.
+결국 HTTP 는 REST API 의 uniform interface 스타일 중 self-descriptive message,
+HATEOAS 를 제외하고 대부분의 특징들이 구현되어 있다고 할 수 있다. 그래서 REST
+API 대신 HTTP API 또는 WEB API 라고 한다.
 
 ### REST API DESIGN
 
@@ -719,27 +746,27 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 
 ----
 
-[restapi](/restapi/README.md)
+[restapi | TIL](/restapi/README.md)
 
 ### RPC VS REST
 
-| Operation                       | RPC                                                                                       | REST                                                         |
-| ------------------------------- | ----------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| Signup                          | **POST** /signup                                                                          | **POST** /persons                                            |
-| Resign                          | **POST** /resign<br/>{<br/>"personid": "1234"<br/>}                                       | **DELETE** /persons/1234                                     |
-| Read a person                   | **GET** /readPerson?personid=1234                                                         | **GET** /persons/1234                                        |
-| Read a person’s items list      | **GET** /readUsersItemsList?personid=1234                                                 | **GET** /persons/1234/items                                  |
+| Operation                       | RPC       | REST     |
+| ------------------------------- | ---------------------------------------------------- | ----------------------------------------- |
+| Signup | **POST** /signup    | **POST** /persons                                            |
+| Resign  | **POST** /resign<br/>{<br/>"personid": "1234"<br/>}  | **DELETE** /persons/1234  |
+| Read a person  | **GET** /readPerson?personid=1234  | **GET** /persons/1234 |
+| Read a person’s items list      | **GET** /readUsersItemsList?personid=1234 | **GET** /persons/1234/items  |
 | Add an item to a person’s items | **POST** /addItemToUsersItemsList<br/>{<br/>"personid": "1234";<br/>"itemid": "456"<br/>} | **POST** /persons/1234/items<br/>{<br/>"itemid": "456"<br/>} |
-| Update an item                  | **POST** /modifyItem<br/>{<br/>"itemid": "456";<br/>"key": "value"<br/>}                  | **PUT** /items/456<br/>{<br/>"key": "value"<br/>}            |
-| Delete an item                  | **POST** /removeItem<br/>{<br/>"itemid": "456"<br/>}                                      | **DELETE** /items/456                                        |
+| Update an item | **POST** /modifyItem<br/>{<br/>"itemid": "456";<br/>"key": "value"<br/>} | **PUT** /items/456<br/>{<br/>"key": "value"<br/>} |
+| Delete an item | **POST** /removeItem<br/>{<br/>"itemid": "456"<br/>} | **DELETE** /items/456 |
 
 ### HTTP 1.x vs HTTP 2.0
 
-* [HTTP @ TIL](/HTTP/README.md)
+* [HTTP | TIL](/HTTP/README.md)
 
 ### HTTP Flow
 
-* [HTTP Flow @ TIL](/HTTP/README.md#http-flow)
+* [HTTP Flow | TIL](/HTTP/README.md#http-flow)
 
 ## Security
 
@@ -751,7 +778,9 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 ----
   
 * 일반적인 방화벽과 달리 웹 애플리케이션의 보안에 특화된 솔루션이다. 
-* 애플리케이션의 가용성에 영향을 주거나, SQL Injection, XSS (Cross Site Scripting) 과 같이 보안을 위협하거나, 리소스를 과도하게 사용하는 웹 공격으로부터 웹 애플리케이션을 보호하는 데 도움이 된다.
+* 애플리케이션의 가용성에 영향을 주거나, SQL Injection, XSS (Cross Site
+  Scripting) 과 같이 보안을 위협하거나, 리소스를 과도하게 사용하는 웹
+  공격으로부터 웹 애플리케이션을 보호하는 데 도움이 된다.
 
 ### XSS (Cross Site Scripting)
 
@@ -767,33 +796,36 @@ HTTP 를 사용하면 uniform interface 를 제외하고는 모두 만족 한다
 
 ----
 
-* 특정 사용자의 세션을 탈취하는 데에는 실패하였지만 스크립팅 공격이 통할 때 사용할 수 있는 해킹 기법. 피해자가 스크립트를 보는 것과 동시에 자기도 모르게 특정한 사이트에 어떠한 요청(Request) 데이터를 보낸다.
+* 특정 사용자의 세션을 탈취하는 데에는 실패하였지만 스크립팅 공격이 통할 때
+  사용할 수 있는 해킹 기법. 피해자가 스크립트를 보는 것과 동시에 자기도 모르게
+  특정한 사이트에 어떠한 요청(Request) 데이터를 보낸다.
 
 ### XSS vs CSRF
 
 * XSS 는 공격대상이 Client 이고 CSRF 는 공격대상이 Server 이다.
 * XSS 는 사이트변조나 백도어를 통해 Client 를 공격한다.
-* CSRF 는 요청을 위조하여 사용자의 권한을 이용해 서버를 공격한다.
+* CSRF 는 요청을 위조하여 사용자의 권한을 이용해 Server 를 공격한다.
 
 ### CORS (Cross Origin Resource Sharing)
 
-[cors](/cors/README.md)
+[cors | TIL](/cors/README.md)
 
 ### PKI (Public Key Infrastructure)
 
-> [pki @ TIL](/pki/README.md)
+> [pki | TIL](/pki/README.md)
 
 ### SSL/TLS
 
-> [ssl/tls @ TIL](/ssltls/README.md)
+> [ssl/tls | TIL](/ssltls/README.md)
 
-## Database Primary Key
+## Distributed Primary Key
 
 * [강대명 <대용량 서버 구축을 위한 Memcached와 Redis>](https://americanopeople.tistory.com/177)
 
 ----
 
-Sharding 을 고려하여 Primary Key 를 효율적으로 설계해 보자. 예를 들어 이메일 시스템을 디자인한다고 해보자. User 와 Email 테이블의 스키마는 다음과 같다. 
+Sharding 을 고려하여 Primary Key 를 효율적으로 설계해 보자. 예를 들어 이메일
+시스템을 디자인한다고 해보자. User 와 Email 테이블의 스키마는 다음과 같다. 
 
 * `User`
 
@@ -829,10 +861,10 @@ email file 은 AWS S3 에 저장하자. email file 의 key 를 마련해야 한�
   * id 에 시간 정보가 반영되어 있다. id 를 오름차순으로 정렬하면 시간순 으로 데이터를 정렬할 수 있다.
   * 16 bytes (128 bit), 36 characters 이다. 너무 크다.
   * 적은 바이트로 시간 정보를 저장할 수 있었으면 좋겠다.
-* `{timestamp: 52 bits}_{sequence: 12bits}` 8 bytes
+* `{timestamp: 52 bits}_{sequence: 12 bits}` 8 bytes
   * 샤드 아이디도 저장되었으면 좋겠다.
   * timestamp 는 4 bytes 를 모두 사용하면 `1970/01/01` 부터 `2106/02/07 06:28` 까지만 표현 가능하다.  
-* `{timestamp: 52 bits}_{shard_id: 12 bits}_{sequence:12 bits}` 8 bytes 
+* `{timestamp: 52 bits}_{shard_id: 12 bits}_{sequence: 12 bits}` 8 bytes 
   * IDC 정보도 반영되었으면 좋겠다.
 * `{timestamp: 42 bits}_{datacenter_id: 5 bits}_{worker_id: 5 bits}_{sequence: 12bits}` 8 bytes
   * 이것은 twitter 의 id 이다.
@@ -841,8 +873,13 @@ email file 은 AWS S3 에 저장하자. email file 의 key 를 마련해야 한�
 * `{timetamp: 4 bytes}_{machine_id:3 bytes}_{process_id:2 bytes}_{counter:3 bytes}` 12 bytes
   * 이것은 mongoDB 의 ID 이다. 
 * `{timestamp}_{shard_id}_{type}_{sequence}` 8 bytes
-* 만약 select 의 형태가 특정 user 의 최근 10 분간 수신된 email data 만 얻어오는 형태라면 Primary Key 에 timebound 를 도입해 보는 것도 좋은 방법이다. 
-  * timebound 가 없다면 email data 는 모든 shard 로 골고루 분산될 것이다. Primary Key 를 `{timebound}_{shard_id}_{type}_{sequence}` 를 설정해보자. 그렇다면 특정 유저의 최근 1 시간동안 수신된 email 은 하나의 shard 에 저장된다. 따라서 특정유저의 email data 를 얻어올 때 모든 shard 에 query 할 필요가 없다.
+* 만약 select 의 형태가 특정 user 의 최근 10 분간 수신된 email data 만 얻어오는
+  형태라면 Primary Key 에 timebound 를 도입해 보는 것도 좋은 방법이다. 
+  * timebound 가 없다면 email data 는 모든 shard 로 골고루 분산될 것이다.
+    Primary Key 를 `{timebound}_{shard_id}_{type}_{sequence}` 를 설정해보자.
+    그렇다면 특정 유저의 최근 1 시간동안 수신된 email 은 하나의 shard 에
+    저장된다. 따라서 특정유저의 email data 를 얻어올 때 모든 shard 에 query 할
+    필요가 없다.
 
 ## Idempotency
 
@@ -850,15 +887,19 @@ email file 은 AWS S3 에 저장하자. email file 의 key 를 마련해야 한�
 
 ----
 
-한글로 멱등성이라고 한다. RESTful API 에서 같은 호출을 여러번 해도 동일한 결과를 리턴하는 것을 말한다.
+한글로 멱등성이라고 한다. RESTful API 에서 같은 호출을 여러번 해도 동일한 결과를
+리턴하는 것을 말한다.
 
 ## 80/20 rule
 
-어떠한 데이터의 20% 만 자주사용한다는 규칙이다. 주로 Cache data size 를 estimate 할 때 사용한다. 예를 들어 total data size 가 100GB 이면 cache data size 는 20GB 로 예측한다. 
+어떠한 데이터의 20% 만 자주사용한다는 규칙이다. 주로 Cache data size 를 estimate
+할 때 사용한다. 예를 들어 total data size 가 100GB 이면 cache data size 는 20GB
+로 예측한다. 
 
 ## 70% Capacity model
 
-estimated data size 는 total data size 의 70% 라는 규칙이다. 예를 들어 estimated data size 가 70GB 이면 total data size 는 100GB 이면 충분하다고 예측한다.
+estimated data size 는 total data size 의 70% 라는 규칙이다. 예를 들어 estimated
+data size 가 70GB 이면 total data size 는 100GB 이면 충분하다고 예측한다.
 
 ```
 total data size : estimated data size = 100 : 70
@@ -871,9 +912,9 @@ total data size : estimated data size = 100 : 70
 
 -----
 
-* SLA (Service Level Agreement) is a contract that the service provider promises customers on service availability, performance, etc.
-* SLO (Service Level Objective) is a goal that service provider wants to reach.
-* SLI (Service Level Indicator) is a measurement the service provider uses for the goal.
+* **SLA (Service Level Agreement)** is a contract that the service provider promises customers on service availability, performance, etc.
+* **SLO (Service Level Objective)** is a goal that service provider wants to reach.
+* **SLI (Service Level Indicator)** is a measurement the service provider uses for the goal.
 
 ## Optimistic Lock vs Pessimistic Lock
 
@@ -889,7 +930,7 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 
 원리는 다음과 같다.
 
-* table 에 `version` field 가 있어야 한다.
+* Table Schema 에 `version` field 가 있어야 한다.
 * A Client 가 원하는 record 를 `version` 을 포함하여 읽어온다. `version` 은 `v0` 이라고 하자. 
 * 그 record 의 내용을 변경하여 `version` 은 `v0` 으로 다시 저장하자. 실패할 수
   있다. 만약 B client 가 그 record 의 내용을 변경했다면 `version` 은 `v1`
@@ -901,9 +942,9 @@ Database 의 isolation level 보다 융통성있는 locking 방법
 
 ----
 
-* The data plane is the part of the software that processes the data requests.
-* The control plane is the part of the software that configures and shuts down the data plane.
-* The management plane is ???
+* The **data plane** is the part of the software that processes the data requests.
+* The **control plane** is the part of the software that configures and shuts down the data plane.
+* The **management plane** is ???
 
 ## Distributed Transaction
 
@@ -927,6 +968,33 @@ SAGAS is a long lived transaction that can be broken up into transactions.
 -------
 
 monitoring, logging, tracing, alerting, auditing 등을 말한다.
+
+## Rate Limiting
+
+* [Rate Limiting Fundamentals | bytebytego](https://blog.bytebytego.com/p/rate-limiting-fundamentals)
+
+-----
+
+User requests are throttled or blocked when they exceed the threshold.
+
+* Prevent Resource Starvation.
+* Reduce cost.
+* Prevent servers from being overloaded.
+
+These are use cases.
+
+* A client can send a HTTP request no more than 100 per second from the same IP address.
+* A user can send a message no more than 2 per second from the same device.
+* A user can create a maximum of 10 accounts per day from the same IP address.
+* A user can get rewards only 5 times per week from the same device.
+
+There many rate limiting algorithms
+
+* Fixed Window Counter
+* Sliding Window Log
+* Sliding Window Counter
+* Token Bucket
+* Leaky Bucket
 
 # System Design Interview
 
@@ -953,7 +1021,7 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 | [Redundancy and Replication](fundamentals/RedundancyandReplication.md) | |
 | [SQL vs. NoSQL](fundamentals/SQLvsNoSQL.md) | |
 | [CAP Theorem](fundamentals/CAPTheorem.md) | |
-| [Long-Polling vs WebSockets vs Server-Sent Events](fundamentals/Long-PollingvsWebSocketsvsServer-SentEvents.md)                                                       | |
+| [Long-Polling vs WebSockets vs Server-Sent Events](fundamentals/Long-PollingvsWebSocketsvsServer-SentEvents.md) | |
 
 ## Design Practices
 
@@ -999,9 +1067,9 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 
 # System Design Primer Practices
 
-| Question                                                                                      |                                                                                                                            |
-| --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| Design Pastebin.com (or Bit.ly)                                                               | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md)     |
+| Question  |  |
+| -- | -- |
+| Design Pastebin.com (or Bit.ly) | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md) |
 | Design the Twitter timeline (or Facebook feed)<br/>Design Twitter search (or Facebook search) | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/twitter/README.md)      |
 | Design a web crawler                                                                          | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/web_crawler/README.md)  |
 | Design Mint.com                                                                               | [Solution](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/mint/README.md)         |
@@ -1024,18 +1092,18 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 
 # Additional System Design Interview Questions
 
-| Question                                                    | Reference(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| ----------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Design a file sync service like Dropbox                     | [youtube.com](https://www.youtube.com/watch?v=PE4gwstWhmc)                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Design a search engine like Google                          | [queue.acm.org](http://queue.acm.org/detail.cfm?id=988407)<br/>[stackexchange.com](http://programmers.stackexchange.com/questions/38324/interview-question-how-would-you-implement-google-search)<br/>[ardendertat.com](http://www.ardendertat.com/2012/01/11/implementing-search-engines/)<br>[stanford.edu](http://infolab.stanford.edu/~backrub/google.html)                                                                                             |
-| Design a scalable web crawler like Google                   | [quora.com](https://www.quora.com/How-can-I-build-a-web-crawler-from-scratch)                                                                                                                                                                                                                                                                                                                                                                               |
-| Design Google docs                                          | [code.google.com](https://code.google.com/p/google-mobwrite/)<br/>[neil.fraser.name](https://neil.fraser.name/writing/sync/)                                                                                                                                                                                                                                                                                                                                |
-| Design a key-value store like Redis                         | [slideshare.net](http://www.slideshare.net/dvirsky/introduction-to-redis)                                                                                                                                                                                                                                                                                                                                                                                   |
-| Design a cache system like Memcached                        | [slideshare.net](http://www.slideshare.net/oemebamo/introduction-to-memcached)                                                                                                                                                                                                                                                                                                                                                                              |
-| Design a recommendation system like Amazon's                | [hulu.com](http://tech.hulu.com/blog/2011/09/19/recommendation-system.html)<br/>[ijcai13.org](http://ijcai13.org/files/tutorial_slides/td3.pdf)                                                                                                                                                                                                                                                                                                             |
-| Design a tinyurl system like Bitly                          | [n00tc0d3r.blogspot.com](http://n00tc0d3r.blogspot.com/)                                                                                                                                                                                                                                                                                                                                                                                                    |
-| Design a chat app like WhatsApp                             | [highscalability.com](http://highscalability.com/blog/2014/2/26/the-whatsapp-architecture-facebook-bought-for-19-billion.html)                                                                                                                                                                                                                                                                                                                              |
-| Design a picture sharing system like Instagram              | [highscalability.com](http://highscalability.com/flickr-architecture)<br/>[highscalability.com](http://highscalability.com/blog/2011/12/6/instagram-architecture-14-million-users-terabytes-of-photos.html)                                                                                                                                                                                                                                                 |
+| Question | Reference(s) |
+| -- | -- |
+| Design a file sync service like Dropbox | [youtube.com](https://www.youtube.com/watch?v=PE4gwstWhmc)  |
+| Design a search engine like Google | [queue.acm.org](http://queue.acm.org/detail.cfm?id=988407)<br/>[stackexchange.com](http://programmers.stackexchange.com/questions/38324/interview-question-how-would-you-implement-google-search)<br/>[ardendertat.com](http://www.ardendertat.com/2012/01/11/implementing-search-engines/)<br>[stanford.edu](http://infolab.stanford.edu/~backrub/google.html) |
+| Design a scalable web crawler like Google  | [quora.com](https://www.quora.com/How-can-I-build-a-web-crawler-from-scratch) |
+| Design Google docs | [code.google.com](https://code.google.com/p/google-mobwrite/)<br/>[neil.fraser.name](https://neil.fraser.name/writing/sync/) |
+| Design a key-value store like Redis | [slideshare.net](http://www.slideshare.net/dvirsky/introduction-to-redis) |
+| Design a cache system like Memcached | [slideshare.net](http://www.slideshare.net/oemebamo/introduction-to-memcached) |
+| Design a recommendation system like Amazon's | [hulu.com](http://tech.hulu.com/blog/2011/09/19/recommendation-system.html)<br/>[ijcai13.org](http://ijcai13.org/files/tutorial_slides/td3.pdf) |
+| Design a tinyurl system like Bitly | [n00tc0d3r.blogspot.com](http://n00tc0d3r.blogspot.com/) |
+| Design a chat app like WhatsApp | [highscalability.com](http://highscalability.com/blog/2014/2/26/the-whatsapp-architecture-facebook-bought-for-19-billion.html) |
+| Design a picture sharing system like Instagram | [highscalability.com](http://highscalability.com/flickr-architecture)<br/>[highscalability.com](http://highscalability.com/blog/2011/12/6/instagram-architecture-14-million-users-terabytes-of-photos.html)                                                                                                                                                                                                                                                 |
 | Design the Facebook news feed function                      | [quora.com](http://www.quora.com/What-are-best-practices-for-building-something-like-a-News-Feed)<br/>[quora.com](http://www.quora.com/Activity-Streams/What-are-the-scaling-issues-to-keep-in-mind-while-developing-a-social-network-feed)<br/>[slideshare.net](http://www.slideshare.net/danmckinley/etsy-activity-feeds-architecture)                                                                                                                    |
 | Design the Facebook timeline function                       | [facebook.com](https://www.facebook.com/note.php?note_id=10150468255628920)<br/>[highscalability.com](http://highscalability.com/blog/2012/1/23/facebook-timeline-brought-to-you-by-the-power-of-denormaliza.html)                                                                                                                                                                                                                                          |
 | Design the Facebook chat function                           | [erlang-factory.com](http://www.erlang-factory.com/upload/presentations/31/EugeneLetuchy-ErlangatFacebook.pdf)<br/>[facebook.com](https://www.facebook.com/note.php?note_id=14218138919&id=9445547199&index=0)                                                                                                                                                                                                                                              |
@@ -1052,41 +1120,41 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 
 # Real World Architecture
 
-| Type            | System                                                                                                               | Reference(s)                                                                                                                                   |
-| --------------- | -------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
-| Data processing | **MapReduce** - Distributed data processing from Google                                                              | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/mapreduce-osdi04.pdf)                     |
-| Data processing | **Spark** - Distributed data processing from Databricks                                                              | [slideshare.net](http://www.slideshare.net/AGrishchenko/apache-spark-architecture)                                                             |
-| Data processing | **Storm** - Distributed data processing from Twitter                                                                 | [slideshare.net](http://www.slideshare.net/previa/storm-16094009)                                                                              |
-| Data store      | **Bigtable** - Distributed column-oriented database from Google                                                      | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/chang06bigtable.pdf)                                                    |
-| Data store      | **HBase** - Open source implementation of Bigtable                                                                   | [slideshare.net](http://www.slideshare.net/alexbaranau/intro-to-hbase)                                                                         |
-| Data store      | **[Cassandra](/cassandra/README.md)** - Distributed column-oriented database from Facebook                                                   | [slideshare.net](http://www.slideshare.net/planetcassandra/cassandra-introduction-features-30103666)                                           |
-| Data store      | **[DynamoDB](/dynamodb/README.md)** - Document-oriented database from Amazon                                                                | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/decandia07dynamo.pdf)                                                   |
-| Data store      | **[MongoDB](/mongodb/README.md)** - Document-oriented database                                                                             | [slideshare.net](http://www.slideshare.net/mdirolf/introduction-to-mongodb)                                                                    |
-| Data store      | **Spanner** - Globally-distributed database from Google                                                              | [research.google.com](http://research.google.com/archive/spanner-osdi2012.pdf)                                                                 |
-| Data store      | **[Memcached](/memcached/README.md)** - Distributed memory caching system                                                                    | [slideshare.net](http://www.slideshare.net/oemebamo/introduction-to-memcached)                                                                 |
-| Data store      | **[Redis](/redis/README.md)** - Distributed memory caching system with persistence and value types                                       | [slideshare.net](http://www.slideshare.net/dvirsky/introduction-to-redis)                                                                      |
-| Data store      | **Couchbase** - an open-source, distributed multi-model NoSQL document-oriented database                             | [couchbase.com](https://www.couchbase.com/)                                                                                                    |
-| Data store      | **[Elasticsearch](/elasticsearch/README.md)**                                                                                                    | [Elasticsearch @ TIL](/elasticsearch/README.md)                                                                                                |
-| File system     | **Google File System (GFS)** - Distributed file system                                                               | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/gfs-sosp2003.pdf)                         |
-| File system     | **[Hadoop File System (HDFS)](/hadoop/README.md)** - Open source implementation of GFS                                                    | [apache.org](https://hadoop.apache.org/docs/r1.2.1/hdfs_design.html)                                                                           |
-| File system     | **GlusterFS** - Distributed File System                                                                              | [GlusterFS](/GlusterFS/README.md)                                                                                                              |
-| Monitoring      | **[Graylog](/graylog/README.md)**                                                                                                          | [Graylog @ TIL](/graylog/README.md)                                                                                                             |
-| Monitoring      | **Prometheus**                                                                                                       | [Prometheus @ TIL](/prometheus/README.md)                                                                                                      |
-| Monitoring      | **[Grafana](/grafana/README.md)**                                                                                                          | [Grafana @ TIL](/grafana/README.md)                                                                                                            |
-| CI/CD           | **[Jenkins](/jenkins/README.md)**                                                                                                          | [Jenkins @ TIL](/jenkins/README.md)                                                                                                            |
-| Misc            | **Chubby** - Lock service for loosely-coupled distributed systems from Google                                        | [research.google.com](http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/archive/chubby-osdi06.pdf) |
-| Misc            | **Dapper** - Distributed systems tracing infrastructure                                                              | [research.google.com](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36356.pdf)                                |
-| Misc            | **[Kafka](/kafka/README.md)** - Pub/sub message queue from LinkedIn                                                                      | [slideshare.net](http://www.slideshare.net/mumrah/kafka-talk-tri-hug)                                                                          |
-| Misc            | **[Zookeeper](/zookeeper/README.md)** - Centralized infrastructure and services enabling synchronization                                     | [slideshare.net](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper)                                                       |
-| Misc            | **ØMQ** - a high-performance asynchronous messaging library, aimed at use in distributed or concurrent applications. | [zeromq.org](http://zeromq.org/)                                                                                                               |
-| Misc            | **[etcd](/etcd/README.md)** - A distributed, reliable key-value store for the most critical data of a distributed system.               | [etcd docs](https://coreos.com/etcd/docs/latest/)                                                                                              |
-| Misc            | **Mosquitto** - An open source MQTT broker. [MQTT](/mqtt/README.md) is a Standard for IoT Messaging                  |                                                                                                                                                |
-| Misc            | **Netty** - Netty is a NIO client server framework.                                                                  |                                                                                                                                                |
+| Type | System | Reference(s) |
+| -- | -- | -- |
+| Data processing | **MapReduce** - Distributed data processing from Google | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/mapreduce-osdi04.pdf) |
+| Data processing | **Spark** - Distributed data processing from Databricks | [slideshare.net](http://www.slideshare.net/AGrishchenko/apache-spark-architecture) |
+| Data processing | **Storm** - Distributed data processing from Twitter | [slideshare.net](http://www.slideshare.net/previa/storm-16094009) |
+| Data store      | **Bigtable** - Distributed column-oriented database from Google | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/chang06bigtable.pdf) |
+| Data store      | **HBase** - Open source implementation of Bigtable | [slideshare.net](http://www.slideshare.net/alexbaranau/intro-to-hbase) |
+| Data store      | **[Cassandra](/cassandra/README.md)** - Distributed column-oriented database from Facebook | [slideshare.net](http://www.slideshare.net/planetcassandra/cassandra-introduction-features-30103666) |
+| Data store      | **[DynamoDB](/dynamodb/README.md)** - Document-oriented database from Amazon | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/decandia07dynamo.pdf) |
+| Data store      | **[MongoDB](/mongodb/README.md)** - Document-oriented database | [slideshare.net](http://www.slideshare.net/mdirolf/introduction-to-mongodb) |
+| Data store      | **Spanner** - Globally-distributed database from Google | [research.google.com](http://research.google.com/archive/spanner-osdi2012.pdf) |
+| Data store      | **[Memcached](/memcached/README.md)** - Distributed memory caching system | [slideshare.net](http://www.slideshare.net/oemebamo/introduction-to-memcached) |
+| Data store      | **[Redis](/redis/README.md)** - Distributed memory caching system with persistence and value types | [slideshare.net](http://www.slideshare.net/dvirsky/introduction-to-redis) |
+| Data store      | **Couchbase** - an open-source, distributed multi-model NoSQL document-oriented database | [couchbase.com](https://www.couchbase.com/) |
+| Data store      | **[Elasticsearch](/elasticsearch/README.md)** | [Elasticsearch @ TIL](/elasticsearch/README.md) |
+| File system     | **Google File System (GFS)** - Distributed file system | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/gfs-sosp2003.pdf) |
+| File system     | **[Hadoop File System (HDFS)](/hadoop/README.md)** - Open source implementation of GFS | [apache.org](https://hadoop.apache.org/docs/r1.2.1/hdfs_design.html) |
+| File system     | **GlusterFS** - Distributed File System | [GlusterFS](/GlusterFS/README.md) |
+| Monitoring      | **[Graylog](/graylog/README.md)** | [Graylog @ TIL](/graylog/README.md) |
+| Monitoring      | **Prometheus** | [Prometheus @ TIL](/prometheus/README.md) |
+| Monitoring      | **[Grafana](/grafana/README.md)** | [Grafana @ TIL](/grafana/README.md) |
+| CI/CD           | **[Jenkins](/jenkins/README.md)** | [Jenkins @ TIL](/jenkins/README.md) |
+| Misc            | **Chubby** - Lock service for loosely-coupled distributed systems from Google | [research.google.com](http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/archive/chubby-osdi06.pdf) |
+| Misc            | **Dapper** - Distributed systems tracing infrastructure | [research.google.com](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36356.pdf) |
+| Misc            | **[Kafka](/kafka/README.md)** - Pub/sub message queue from LinkedIn | [slideshare.net](http://www.slideshare.net/mumrah/kafka-talk-tri-hug) |
+| Misc            | **[Zookeeper](/zookeeper/README.md)** - Centralized infrastructure and services enabling synchronization | [slideshare.net](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper) |
+| Misc            | **ØMQ** - a high-performance asynchronous messaging library, aimed at use in distributed or concurrent applications. | [zeromq.org](http://zeromq.org/) |
+| Misc            | **[etcd](/etcd/README.md)** - A distributed, reliable key-value store for the most critical data of a distributed system. | [etcd docs](https://coreos.com/etcd/docs/latest/) |
+| Misc            | **Mosquitto** - An open source MQTT broker. [MQTT](/mqtt/README.md) is a Standard for IoT Messaging |  |
+| Misc            | **Netty** - Netty is a NIO client server framework. | |
 
 # Company Architectures
 
-| Company        | Reference(s)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| -------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Company        | Reference(s) |
+| -------------- | -- |
 | 배달의 민족 | [배달의민족 msa](wooahan_msa.md) |
 | Amazon         | [Amazon architecture](http://highscalability.com/amazon-architecture) |
 | Cinchcast      | [Producing 1,500 hours of audio every day](http://highscalability.com/blog/2012/7/16/cinchcast-architecture-producing-1500-hours-of-audio-every-d.html) |
@@ -1163,9 +1231,11 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 
 -----
 
-하나의 서비스를 느슨하게 연결된 작은 서비스들로 구성하여 구축하는 software development technique 중 하나이다.
+하나의 서비스를 느슨하게 연결된 작은 서비스들로 구성하여 구축하는 software
+development technique 중 하나이다.
 
-모듈화도 되고 여러 팀이 독립적으로 개발할 수도 있다. 그러나 너무 많은 서비스들의 수때문에 많은 프로토콜을 구현해야 하고 유지보수가 용이하지 않다.
+모듈화도 되고 여러 팀이 독립적으로 개발할 수도 있다. 그러나 너무 많은 서비스들의
+수때문에 많은 프로토콜을 구현해야 하고 유지보수가 용이하지 않다.
 
 [A pattern language for microservices](https://microservices.io/patterns/index.html) 를 참고하여 pattern 들을 파악하자.
 
@@ -1175,7 +1245,7 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 
 ----
 
-MSA 의 pattern 들과 거의 유사하다.
+[MSA | TIL](/msa/README.md) 의 pattern 들과 거의 유사하다.
 
 # Enterprise Integration Patterns
 
@@ -1183,11 +1253,11 @@ MSA 의 pattern 들과 거의 유사하다.
 
 # DDD
 
-* [DDD @ TIL](/domaindrivendesign/README.md)
+* [DDD | TIL](/domaindrivendesign/README.md)
 
 # Architecture
 
-* [Architecture @ TIL](/architecture/README.md)
+* [Architecture | TIL](/architecture/README.md)
 
 # Cracking The Coding Interview Quiz
 
