@@ -90,6 +90,7 @@
     - [Text](#text)
     - [Number](#number)
     - [Date](#date-1)
+- [Effecive SQL](#effecive-sql)
 - [Problems](#problems)
 - [Quiz](#quiz)
 
@@ -1054,19 +1055,58 @@ SELECT SupplierName, City, Country
 
 ## Insert On Duplicate Key Update
 
-* [13.2.6.2 INSERT ... ON DUPLICATE KEY UPDATE Statement](https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html)
+* [13.2.6.2 INSERT ... ON DUPLICATE KEY UPDATE Statement | MySQL](https://dev.mysql.com/doc/refman/8.0/en/insert-on-duplicate.html)
 
-없으면 삽입하고 있으면 기존의 값에 delta 를 더하라. 
-
-Upsert 와는 다르다. Upsert 는 없으면 삽입하고 있으면 기존의 값을 수정하라는
-의미이다. 예를 들어 `c = c + 1` 이 아니고 `c = 3` 하라는 말이다. [Upsert in SQL: What is an Upsert, and When Should You Use One?](https://www.cockroachlabs.com/blog/sql-upsert/)
+Primary key columns 가 없으면 삽입하고 있으면 가공해서 수정하라.
 
 ```sql
 INSERT INTO t1 (a,b,c) VALUES (1,2,3)
-  ON DUPLICATE KEY UPDATE c=c+1;
+  ON DUPLICATE KEY UPDATE c = c + 1;
 
 -- Same with above one when the recoard exists
-UPDATE t1 SET c=c+1 WHERE a=1;
+UPDATE t1 SET c = c + 1 WHERE a = 1;
+```
+
+Upsert 와는 다르다. Upsert 는 없으면 삽입하고 있으면 제공된 값으로 수정하라는
+의미이다. 보통 제공된 값의 연산이 없다. 예를 들어 `c = c + 1` 는 지원하지 않고
+`c = 3` 만 지원한다. [Upsert in SQL: What is an Upsert, and When Should You Use
+One?](https://www.cockroachlabs.com/blog/sql-upsert/)
+
+다음은 DockroachDB Upsert 의 예이다.
+
+```sql
+UPSERT INTO employees 
+            (id, name, email) 
+     VALUES (2, ‘Dennis’, ‘dennisp@weyland.corp’);
+```
+
+`ON DUPLICATE KEY UDATE...` 의 `VALUES()` 는 `INSERT INTO` 로 제공된 column 을
+의미한다. 그러나 MySQL 8.0.20 이후로 deprecate 되었다. 대신 alias 를 사용하라고
+한다.
+
+```sql
+-- With VALUES()
+ INSERT INTO t1 (a,b,c) 
+      VALUES (1,2,3),(4,5,6)
+ON DUPLICATE KEY UPDATE c = VALUES(a) + VALUES(b);
+
+-- W/O VALUES()
+ INSERT INTO t1 (a,b,c) 
+      VALUES (1,2,3)
+ON DUPLICATE KEY UPDATE c = 3;
+ INSERT INTO t1 (a,b,c) 
+      VALUES (4,5,6)
+ON DUPLICATE KEY UPDATE c = 9;
+```
+
+```sql
+-- alias instead of VALUES()
+INSERT INTO t1 (a,b,c) VALUES (1,2,3),(4,5,6) AS new
+  ON DUPLICATE KEY UPDATE c = new.a + new.b;
+
+-- omit alias
+INSERT INTO t1 (a,b,c) VALUES (1,2,3),(4,5,6) AS new(m,n,p)
+  ON DUPLICATE KEY UPDATE c = m + n;
 ```
 
 ## Null Values
@@ -3105,6 +3145,10 @@ mysql> SELECT VERSION();
   automatically set itself to the current date and time. TIMESTAMP
   also accepts various formats, like YYYYMMDDHHMISS, YYMMDDHHMISS,
   YYYYMMDD, or YYMMDD.
+
+# Effecive SQL
+
+* [Effective SQL](sql_effective.md)
 
 # Problems
 

@@ -56,16 +56,27 @@
 ## Prevent Lock Contention For Updates On Hot Rows	
 
 하나의 record 에 모두 저장하는 것보다는 여러 record 에 나누어서 저장하자.
-동시성을 해결할 수 있다.
+동시성을 해결할 수 있다. 다음은 특정한 `tweet_id` 의 좋아요 개수를 수정하는
+예제이다.  
 
 ```sql
 -- MySQL
+CREATE TABLE tweet_statistics (
+  tweet_id BIGINT,
+  fanout INT,
+  likes_count INT,
+  PRIMARY KEY (tweet_id, fanout)
+);
+
 INSERT INTO tweet_statistics (
-    tweet_id, fanout, likes_count
-) VALUES (
-    1475870220422107137, FLOOR(RAND() * 10), 1
-) ON DUPLICATE KEY UPDATE likes_count = 
-likes_count + VALUES(likes_count);
+    tweet_id, fanout, likes_count) 
+     VALUES (
+    1475870220422107137, FLOOR(RAND() * 10), 1) 
+ON DUPLICATE KEY UPDATE likes_count = likes_count + VALUES(likes_count);
+
+  SELECT tweet_id, SUM(likes_count)
+    FROM tweet_statistics
+GROUP BY tweet_id;
 
 -- PostgreSQL
 INSERT INTO tweet_statistics (
@@ -75,6 +86,15 @@ INSERT INTO tweet_statistics (
 ) ON CONFLICT (tweet_id, fanout) DO UPDATE SET likes_count =
 tweet_statistics.likes_count + excluded.likes_count;
 ```
+
+MySQL 의 `VALUES(likes_count)` 는 `INSERT INTO` 로 제공된 `likes_count` 를 말한다. 그러나 MySQL
+8.0.20 이후로 deprecate 되었다. [Insert On Duplicate Key Update | TIL](/sql/README.md#insert-on-duplicate-key-update) 참고.
+
+그런데 이렇게 SQL 에 `RAND()` 을 사용하게 되면 Global Lock 이 적용된다.
+비효율적이다. Application 에서 random number 를 만들어 주입하자.
+
+like 를 한 사람이 한번만 하도록 제한해 보자. 어떻게 구현하면 좋을까?
+[HyperLogLogs](/redis/README.md#hyperl­oglogs) 가 유용하다.
 
 ## Updates Based On A Select Query	
 

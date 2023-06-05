@@ -14,11 +14,11 @@
   - [Disk Information](#disk-information)
   - [Network Information](#network-information)
 - [Process](#process)
-  - [task_struct, thread_info](#task_struct-thread_info)
+  - [task\_struct, thread\_info](#task_struct-thread_info)
   - [Process Information](#process-information)
   - [Process Management](#process-management)
-  - [task_struct](#task_struct)
-  - [thread_info](#thread_info)
+  - [task\_struct](#task_struct)
+  - [thread\_info](#thread_info)
   - [Process and Threads](#process-and-threads)
   - [Killing a Zombie](#killing-a-zombie)
   - [priorities, schedulers and nice values](#priorities-schedulers-and-nice-values)
@@ -30,13 +30,14 @@
 - [Kernel Synchronization](#kernel-synchronization)
 - [System Call](#system-call)
 - [Signal](#signal)
-- [Virtual File System](#virtual-file-system)
+- [Storage](#storage)
+- [Network](#network)
 - [Memory Management](#memory-management)
 - [System Load](#system-load)
 - [fork, exec](#fork-exec)
 - [Swap](#swap)
 - [Numa](#numa)
-- [TIME_WAIT](#time_wait)
+- [TIME\_WAIT](#time_wait)
 - [TCP Keepalive](#tcp-keepalive)
 - [TCP Retransmission and TimeOut](#tcp-retransmission-and-timeout)
 - [Dirty Page](#dirty-page)
@@ -62,7 +63,8 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
 초기버전은 나중에 보자. 아래는 초기버전 공부에 대한 계획이다.
 
 * [Linux Kernel documentation](https://www.kernel.org/doc/)
-  * 옛날 버전인가???
+  * 킹왕짱!!!
+  * [한국어](https://www.kernel.org/doc/html/latest/translations/ko_KR/index.html)
   * [Understanding the Linux Virtual Memory Manager](https://www.kernel.org/doc/gorman/html/understand/) 은 Memory Management 를 다룬 책이다. Memory Management source code 를 commentary 함.
 * [The Linux Kernel documentation](https://www.kernel.org/doc/html/latest/) 에 최고의 문서들이 있다. 
   * [Index of /doc/Documentation/ @ kernel](https://www.kernel.org/doc/Documentation/) 이 것은 source 로 보인다.
@@ -1030,9 +1032,15 @@ switching 의 비용은 크다. 몇 cycle 일까???
 
 WIP...
 
-# Virtual File System
+# Storage
 
-WIP...
+* [Linux Storage Stack Diagram](https://www.thomas-krenn.com/en/wiki/Linux_Storage_Stack_Diagram)
+  * `read(file descriptor)` 가 kernel 에서 어떻게 구현되어 있는지 흐름을 파악할 수 있다.
+
+# Network
+
+* [Networking in the Linux Kernel](https://openwrt.org/docs/guide-developer/networking/praxis)
+  * `read(socket descriptor)` 가 kernel 에서 어떻게 구현되어 있는지 흐름을 파악할 수 있다.
 
 # Memory Management
 

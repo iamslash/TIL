@@ -1,5 +1,9 @@
 # Basic
 
+## Materials
+
+* [MLOps Community](https://mlops.community/)
+
 ## Releases
 
 배포 방식은 blue-green release, A/B testing, canary relase 등이 있다.
@@ -9,3 +13,4 @@
   * [CanaryRelease @ martinfowloer](http://martinfowler.com/bliki/CanaryRelease.html)
 * [Blue Green Deployment](https://blog.naver.com/muchine98/220267437777)
   * [BlueGreenDeployment @ martinfowler](https://martinfowler.com/bliki/BlueGreenDeployment.html)
+  
