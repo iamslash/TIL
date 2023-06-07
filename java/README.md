@@ -176,8 +176,10 @@ volatile    while
 ```
 
 * volatile
-  * 데이터를 읽을 때 cahe 에서 읽지 않고 memory 에서 읽는다. 그리고 데이터를 쓸 때 cache 에 쓰지 않고 memory 에 쓴다.
-  * thread 들이 여러개의 cache 때문에 데이터의 원자성이 보장되지 않을 때 사용한다.
+  * 데이터를 읽을 때 cahe 에서 읽지 않고 memory 에서 읽는다. 그리고 데이터를 쓸
+    때 cache 에 쓰지 않고 memory 에 쓴다.
+  * thread 들이 여러개의 cache 때문에 데이터의 원자성이 보장되지 않을 때
+    사용한다.
 
 ```java
 public class SharedFoo {
@@ -186,7 +188,8 @@ public class SharedFoo {
 ```
 
 * strictfp
-  * JVM 은 host platform 에 따라 부동 소수점 표현방식이 다양할 수 있다. IEEE 754 로 표준화 하기 위해 필요하다.
+  * JVM 은 host platform 에 따라 부동 소수점 표현방식이 다양할 수 있다. IEEE 754
+    로 표준화 하기 위해 필요하다.
 
 ```java
 strictfp class Example {
@@ -201,8 +204,9 @@ strictfp void method() {...}
 ```
 
 * native
-  * [참고](https://www.baeldung.com/java-native)
-  * java 에서 c/cpp library 와 같은 platform dependent api 를 이용할 때 선언한다.
+  * [The Java Native Keyword and Methods | baeldung](https://www.baeldung.com/java-native)
+  * java 에서 c/cpp library 와 같은 platform dependent api 를 이용할 때
+    선언한다.
 
 ```java
 public class DateTimeUtils {
@@ -235,7 +239,7 @@ public class DateTimeUtilsManualTest {
 
 ```java
 class Person implements Serializable {
-    private transient String name; // thi shoul be null
+    private transient String name; // this should be null
     private String email;
     private int age;
 

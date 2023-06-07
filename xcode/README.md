@@ -7,6 +7,16 @@
 
 # Basic
 
+## Install
+
+Appstore 는 느리다. [xcodes](https://github.com/XcodesOrg/xcodes) command line 을
+이용하면 빠르다.
+
+```bash
+$ brew install xcodesorg/made/xcodes
+$ xcodes install --latest
+```
+
 ## Shorcuts
 
 | ShortCut | Description |

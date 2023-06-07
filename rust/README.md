@@ -3,9 +3,10 @@
 - [Materials](#materials)
 - [Basic](#basic)
   - [Features](#features)
-  - [Pros and Cons](#pros-and-cons)
   - [Install](#install)
+  - [Tools](#tools)
   - [Build and Run](#build-and-run)
+  - [Hello World](#hello-world)
   - [Useful Keywords](#useful-keywords)
   - [Ownership](#ownership)
   - [Copy vs Clone](#copy-vs-clone)
@@ -68,19 +69,35 @@ Rust 에 대해 정리한다.
 * No Garbage Collector
 * No Dangling Reference
 
-## Pros and Cons
-
-WIP...
-
 ## Install
 
 ```bash
+# Install rust on macosx
 $ brew install rust
+
+# Install rustup, rustc, cargo on macosx
+$ curl https://sh.rustup.rs -sSf | sh
 ```
+
+## Tools
+
+* **rustc** : rust compiler
+* **cargo** : rust package manager, build tool
+* **rustup** : rust toolchain (rustc, cargo) manager
 
 ## Build and Run
 
 ```bash
+# Build and run with rustc
+$ rustc a.rs -o a.out
+$ ./a.out
+
+# Build and run with cargo
+$ cargo new a
+$ cd a
+$ cargo run
+
+# cargo commands
 # Build current directory
 $ cargo build
 # Run current directory
@@ -93,9 +110,18 @@ $ cargo install cargo-expand
 $ cargo expand
 ```
 
+## Hello World
+
+```rs
+// a.rs
+fn main() {
+     println!("Hello World")
+}
+```
+
 ## Useful Keywords
 
-```
+```rs
 as - perform primitive casting, disambiguate the specific trait containing an item, or rename items in use and extern crate statements
 async - return a Future instead of blocking the current thread
 await - suspend execution until the result of a Future is ready
@@ -147,7 +173,7 @@ while - loop conditionally based on the result of an expression
 
 ## Copy vs Clone
 
-Copy trait means shallow copy, Clone trait means deep copy.
+**Copy trait** means shallow copy, **Clone trait** means deep copy.
 
 Here are some of the types that implement Copy:
 
@@ -155,15 +181,20 @@ Here are some of the types that implement Copy:
 * The Boolean type, bool, with values true and **false**.
 * All the floating point types, such as **f64**.
 * The character type, **char**.
-* **Tuples**, if they only contain types that also implement Copy. For example, (i32, i32) implements Copy, but (i32, String) does not.
+* **Tuples**, if they only contain types that also implement Copy. For example,
+  `(i32, i32)` implements Copy, but `(i32, String)` does not.
 
 ## Crate
 
-create 은 build 된 binary 의 단위이다. 실행파일 혹은 라이브러리로 구분할 수 있다. 
+create 은 build 된 binary 의 단위이다. 실행파일 혹은 라이브러리로 구분할 수
+있다. 
 
 ## Module
 
-module 은 code 의 logical unit 이다. 관련된 code 들이 한덩이 모여있는 것이다. 다음과 같이 `mod` 를 사용하여 module 을 정의한다. 또한 `use` 를 사용하여 다른 module 의 function 등을 import 한다. module function 은 기본적으로 prviate 이다. `pub` 을 사용하여 public 으로 바꿀 수 있다.
+module 은 code 의 logical unit 이다. 관련된 code 들이 한덩이 모여있는 것이다.
+다음과 같이 `mod` 를 사용하여 module 을 정의한다. 또한 `use` 를 사용하여 다른
+module 의 function 등을 import 한다. module function 은 기본적으로 prviate 이다.
+`pub` 을 사용하여 public 으로 바꿀 수 있다.
 
 ```rs
 mod print_things {
@@ -177,9 +208,15 @@ mod print_things {
 fn main() {}
 ```
 
-또한 module 을 별도의 파일로 분리할 수 있다. 예를 들어 다음과 같이 **http** module 을 만들어 보자. 반드시 분리된 module directory 에 `mod.rs` 가 있어야 한다. `mod.rs` 에 module tree 에 포함할 파일들의 이름을 `mod` 를 이용하여 선언해야 한다. 그래야 해당파일들이 module tree 에 포함되고 `mod.rs` 가 compile 될 때 함께 compile 된다.
+또한 module 을 별도의 파일로 분리할 수 있다. 예를 들어 다음과 같이 **http**
+module 을 만들어 보자. 반드시 분리된 module directory 에 `mod.rs` 가 있어야
+한다. `mod.rs` 에 module tree 에 포함할 파일들의 이름을 `mod` 를 이용하여
+선언해야 한다. 그래야 해당파일들이 module tree 에 포함되고 `mod.rs` 가 compile
+될 때 함께 compile 된다.
 
-또한 http module 은 `main.rs` 에 `mod http;` 로 선언되야 한다. 그래야 http module 의 file 들이 root module tree 에 포함된다. 그리고 rustc 가 main.rs 를 compile 할 때 **http** module 을 compile 할 것이다. 
+또한 http module 은 `main.rs` 에 `mod http;` 로 선언되야 한다. 그래야 http
+module 의 file 들이 root module tree 에 포함된다. 그리고 rustc 가 main.rs 를
+compile 할 때 **http** module 을 compile 할 것이다. 
 
 ```bash
 .
@@ -271,7 +308,9 @@ if, let-if, loop, while, for
 
 ## Struct
 
-golang 의 struct 와 같다. `struct` 로 정의하고 `impl` 로 구현한다. **instant function** 은 첫번째 arguement 가 self 이다. **associate function** (static function) 은 첫번째 arguement 가 self 가 아니다. 
+golang 의 struct 와 같다. `struct` 로 정의하고 `impl` 로 구현한다. **instant
+function** 은 첫번째 arguement 가 self 이다. **associate function** (static
+function) 은 첫번째 arguement 가 self 가 아니다. 
 
 ```rs
 // server.rs
@@ -296,7 +335,8 @@ impl Server {
 
 ----
 
-enumrations 을 `enum` 으로 정의한다. **enum** 의 member 를 **variant** 라고 한다. 다음은 간단한 **enum** 의 예이다.
+enumrations 을 `enum` 으로 정의한다. **enum** 의 member 를 **variant** 라고
+한다. 다음은 간단한 **enum** 의 예이다.
 
 ```rs
 // main.rs
@@ -374,8 +414,8 @@ fn main() {
 
 ----
 
-Box 는 특정 데이터를 heap 에 보관하고 싶을 때 쓴다. 크기가 큰 데이터가 stack 에 보관되는 경우
-ownership 이 옮겨질 때 데이터의 이동시간이 길 수 있다.
+Box 는 특정 데이터를 heap 에 보관하고 싶을 때 쓴다. 크기가 큰 데이터가 stack 에
+보관되는 경우 ownership 이 옮겨질 때 데이터의 이동시간이 길 수 있다.
 
 ```rs
 fn main() {
@@ -598,4 +638,3 @@ let default_path = format!("{}/public", env!("CARGO_MANIFEST_DIR"));
 -----
 
 Tokio 는 Rust 의 Asynchronous Framework 이다.
-
