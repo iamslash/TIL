@@ -11,6 +11,7 @@
   - [String](#string)
   - [Random](#random)
   - [Formatted Strings](#formatted-strings)
+  - [Object Introspection](#object-introspection)
   - [Data Types](#data-types)
   - [Control Flow Statements](#control-flow-statements)
     - [Decision Making Statements](#decision-making-statements)
@@ -39,45 +40,42 @@
   - [Classes](#classes)
   - [lambdas](#lambdas)
   - [slice](#slice)
-  - [underscore](#underscore)
-  - [args, kwargs](#args-kwargs)
-  - [comprehension](#comprehension)
-  - [generator](#generator)
-  - [Map, filter, reduce](#map-filter-reduce)
-  - [set](#set-1)
-  - [ternary operators](#ternary-operators)
-  - [multiple return](#multiple-return)
-  - [exception](#exception)
+  - [Underscore](#underscore)
+  - [Args, Kwargs](#args-kwargs)
+  - [Comprehension](#comprehension)
+  - [Generator](#generator)
+  - [Map, Filter, Reduce](#map-filter-reduce)
+  - [Set](#set-1)
+  - [Ternary Operators](#ternary-operators)
+  - [Multiple Return](#multiple-return)
+  - [Exception](#exception)
   - [Dunder methods (Magic methods)](#dunder-methods-magic-methods)
   - [pdb](#pdb)
-  - [async, await](#async-await)
-  - [performance check](#performance-check)
+  - [Async, Await](#async-await)
+  - [Performance Check](#performance-check)
   - [`__slots__`](#__slots__)
-  - [enumerate](#enumerate)
-  - [object introspection](#object-introspection)
-  - [metaclass](#metaclass)
-  - [weakref](#weakref)
-  - [memory leak](#memory-leak)
+  - [Enumerate](#enumerate)
+  - [Metaclass](#metaclass)
+  - [Weakref](#weakref)
+  - [Memory Leak](#memory-leak)
   - [gc](#gc)
   - [dependencies](#dependencies)
 - [Advanced](#advanced)
   - [Pythonic Way](#pythonic-way)
-  - [open function](#open-function)
+  - [Open Function](#open-function)
   - [Decorator](#decorator)
-  - [virtual environment](#virtual-environment)
+  - [Virtual Environment](#virtual-environment)
   - [one-liners](#one-liners)
-  - [c extension](#c-extension)
+  - [C Extension](#c-extension)
   - [python 2+3](#python-23)
-  - [coroutine](#coroutine)
-  - [function caches](#function-caches)
-  - [context managers](#context-managers)
+  - [Coroutine](#coroutine)
+  - [Function Caches](#function-caches)
+  - [Context Managers](#context-managers)
   - [typing — Support for type hints @ python3](#typing--support-for-type-hints--python3)
   - [itertools — Functions creating iterators for efficient looping](#itertools--functions-creating-iterators-for-efficient-looping)
   - [functools — Higher-order functions and operations on callable objects](#functools--higher-order-functions-and-operations-on-callable-objects)
 - [Library](#library)
   - [regex](#regex)
-  - [numpy](#numpy)
-  - [pandas](#pandas)
   - [click](#click)
   - [unittest](#unittest)
   - [pytest](#pytest)
@@ -85,7 +83,6 @@
   - [fabric](#fabric)
   - [flake8](#flake8)
   - [objgraph](#objgraph)
-- [Tip](#tip)
   - [MySQL-python 1.2.5 on python2.7 build error, library not found for -lssl](#mysql-python-125-on-python27-build-error-library-not-found-for--lssl)
 - [Effective Python](#effective-python)
 - [Python Design Pattern](#python-design-pattern)
@@ -302,6 +299,55 @@ timeit.timeit("""name = "Eric" ... age = 74 ... '{} is {}.'.format(name, age)"""
 import timeit 
 timeit.timeit("""name = "Eric" ... age = 74 ... f'{name} is {age}.'""", number = 10000) 
 # 0.0024820892040722242
+```
+
+
+## Object Introspection
+
+* `dir`
+
+```py
+my_list = [1, 2, 3]
+dir(my_list)
+# Output: ['__add__', '__class__', '__contains__', '__delattr__', '__delitem__',
+# '__delslice__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__',
+# '__getitem__', '__getslice__', '__gt__', '__hash__', '__iadd__', '__imul__',
+# '__init__', '__iter__', '__le__', '__len__', '__lt__', '__mul__', '__ne__',
+# '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__reversed__', '__rmul__',
+# '__setattr__', '__setitem__', '__setslice__', '__sizeof__', '__str__',
+# '__subclasshook__', 'append', 'count', 'extend', 'index', 'insert', 'pop',
+# 'remove', 'reverse', 'sort']
+```
+
+* `type, id`
+
+```py
+print(type(''))
+# Output: <type 'str'>
+
+print(type([]))
+# Output: <type 'list'>
+
+print(type({}))
+# Output: <type 'dict'>
+
+print(type(dict))
+# Output: <type 'type'>
+
+print(type(3))
+# Output: <type 'int'>
+
+name = "Yasoob"
+print(id(name))
+# Output: 139972439030304
+```
+
+* inspect module
+
+```py
+import inspect
+print(inspect.getmembers(str))
+# Output: [('__add__', <slot wrapper '__add__' of ... ...
 ```
 
 ## Data Types
@@ -1204,7 +1250,9 @@ b.pi
 
 * old style vs new style classes
 
-new style classes 는 object 를 상속받는다. 따라서 `__slots__` 등과 같은 magic mathod 를 사용할 수 있다. python 3 는 명시적으로 object 를 상속받지 않아도 new style classes 로 선언된다.
+new style classes 는 object 를 상속받는다. 따라서 `__slots__` 등과 같은 magic
+mathod 를 사용할 수 있다. python 3 는 명시적으로 object 를 상속받지 않아도 new
+style classes 로 선언된다.
 
 ```py
 class OldClass():
@@ -1330,19 +1378,19 @@ list1, list2 = map(lambda t: list(t), zip(*data))
 ['e', 'd', 'c', 'b', 'a']
 ```
 
-## underscore
+## Underscore
 
-[참고](https://dbader.org/blog/meaning-of-underscores-in-python)
+> [참고](https://dbader.org/blog/meaning-of-underscores-in-python)
 
 파이썬은 다음과 같이 5 가지 underscore 문법을 가지고 있다.
 
-| pattern                                | example   | desc                                                                             |
-| :------------------------------------- | :-------- | :------------------------------------------------------------------------------- |
-| Single Leading Underscore              | `_foo`    | 개발자끼리 약속한 internal use                                                   |
-| Single Trailing Underscore             | `foo_`    | 파이썬 키워드와 이름충돌을 피하기 위함                                           |
-| Double Leading Underscore              | `__foo`   | 파이썬 인터프리터가 강제로 이름을 바꿔 버린다. `dir(a)` 이용하여 확인할 수 있다. |
-| Double Leading and Trailing Underscore | `__foo__` | 파이썬 인터프리터가 내부적으로 사용하는 이름들. dunder members                   |
-| Single Underscore                      | `_`       | 신경쓰지 않아도되는 오브젝트들                                                   |
+| pattern | example | desc |
+| :-- | :-- | :--- |
+| Single Leading Underscore | `_foo` | 개발자끼리 약속한 internal use |
+| Single Trailing Underscore | `foo_` | 파이썬 키워드와 이름충돌을 피하기 위함 |
+| Double Leading Underscore | `__foo` | 파이썬 인터프리터가 강제로 이름을 바꿔 버린다. `dir(a)` 이용하여 확인할 수 있다. |
+| Double Leading and Trailing Underscore | `__foo__` | 파이썬 인터프리터가 내부적으로 사용하는 이름들. dunder members |
+| Single Underscore | `_` | 신경쓰지 않아도되는 오브젝트들 |
 
 ```bash
 >>> class A:
@@ -1357,10 +1405,10 @@ list1, list2 = map(lambda t: list(t), zip(*data))
 # 파이썬 인터프리터에 의해 '__foo' 가 `_A__foo` 로 mangling 되었다.
 ```
 
-## args, kwargs
+## Args, Kwargs
 
-arguments, keyword arguments 를 의미한다. 다음과 같이 함수의 인자를
-튜플, 딕셔너리로 받아낼 수 있다.
+arguments, keyword arguments 를 의미한다. 다음과 같이 함수의 인자를 튜플,
+딕셔너리로 받아낼 수 있다.
 
 ```py
 def foo(*args, **kwargs):
@@ -1372,7 +1420,7 @@ def foo(*args, **kwargs):
 foo(1, 2, 3, 4, i=0, j=1, k=2)
 ```
 
-## comprehension
+## Comprehension
 
 list, set, dict, generator 를 간략히 표현할 수 있다.
 
@@ -1441,7 +1489,7 @@ for x in multiples_gen:
   # Outputs numbers
 ```
 
-## generator
+## Generator
 
 python 의 반복과 관련된 3 가지 키워드 `iterable, iterator, iteration` 이 중요하다.
 
@@ -1552,7 +1600,7 @@ print(next(my_iter))
 <generator object <genexpr> at 0x000001B42CD5B888>
 ```
 
-## Map, filter, reduce
+## Map, Filter, Reduce
 
 `map` 은 `map(function_to_apply, list_of_inputs)` 와 같이 사용한다. `map` 은 `map object` 를 리턴하기 때문에 `list` 가 필요할 때가 있다.
 
@@ -1597,7 +1645,7 @@ product = reduce((lambda x, y: x * y), [1, 2, 3, 4])
 # Output: 24
 ```
 
-## set
+## Set
 
 다음은 일반적인 예이다.
 
@@ -1630,7 +1678,7 @@ print(input_set.difference(valid))
 # Output: set(['brown'])
 ```
 
-## ternary operators
+## Ternary Operators
 
 삼항 연산자는 `condition_if_true if condition else condition_if_false` 와 같이 사용한다.
 
@@ -1669,7 +1717,7 @@ True
 No data returned
 ```
 
-## multiple return
+## Multiple Return
 
 `global` 을 사용하면 multiple return 이 가능하다.
 
@@ -1751,7 +1799,7 @@ print(age)
 #31
 ```
 
-## exception
+## Exception
 
 ```py
 # single exception
@@ -1862,7 +1910,7 @@ import pdb; pdb.set_trace()
 * [visual studio python](https://www.visualstudio.com/ko/vs/python/) 도 멋지다.
 * [python in visual studio code](https://code.visualstudio.com/docs/languages/python) 도 멋지다.
 
-## async, await
+## Async, Await
 
 `sync, await` 은 unity c# 의 `IEnumerator, yield` 와 비슷하다.
 
@@ -1888,7 +1936,7 @@ if __name__ == "__main__":
     loop.run_until_complete(main())
 ```
 
-## performance check
+## Performance Check
 
 * timeit
   * 두가지의 코드를 각각 c1, c2라고 하자. c1은 한번 실행되는
@@ -1927,11 +1975,12 @@ if __name__ == "__main__":
   
 ## `__slots__`
 
-임의의 class 는 attributes 를 dict 를 이용하여 저장한다. dict 는 메모리를
-많이 소모한다.  `__slots__` 를 이용하면 `dict` 를 사용하지 않고 attributes 를
-저장할 수 있기에 메모리를 적게 사용한다. 그러나 동적으로 attributes 를
-정의 할 수 없다. 특정 class 의 attributes 는 생성과 동시에 정해지고
-runtime 에 추가될 일이 없다면 `__slots__` 를 이용하자. 40% 혹은 50% 까지 성능향상 할 수 있다고 함. [참고](http://book.pythontips.com/en/latest/__slots__magic.html)
+임의의 class 는 attributes 를 dict 를 이용하여 저장한다. dict 는 메모리를 많이
+소모한다.  `__slots__` 를 이용하면 `dict` 를 사용하지 않고 attributes 를 저장할
+수 있기에 메모리를 적게 사용한다. 그러나 동적으로 attributes 를 정의 할 수 없다.
+특정 class 의 attributes 는 생성과 동시에 정해지고 runtime 에 추가될 일이 없다면
+`__slots__` 를 이용하자. 40% 혹은 50% 까지 성능향상 할 수 있다고 함.
+[참고](http://book.pythontips.com/en/latest/__slots__magic.html)
 
 ```py
 # members with dict
@@ -1952,7 +2001,7 @@ class MyClass(object):
     # ...
 ```
 
-## enumerate
+## Enumerate
 
 무언가에 대해 반복할 때 auto increment number 와 함께 순회할 수 있다.
 
@@ -1980,60 +2029,13 @@ print(counter_list)
 # Output: [(1, 'apple'), (2, 'banana'), (3, 'grapes'), (4, 'pear')]
 ```
 
-## object introspection
+## Metaclass
 
-* `dir`
-
-```py
-my_list = [1, 2, 3]
-dir(my_list)
-# Output: ['__add__', '__class__', '__contains__', '__delattr__', '__delitem__',
-# '__delslice__', '__doc__', '__eq__', '__format__', '__ge__', '__getattribute__',
-# '__getitem__', '__getslice__', '__gt__', '__hash__', '__iadd__', '__imul__',
-# '__init__', '__iter__', '__le__', '__len__', '__lt__', '__mul__', '__ne__',
-# '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__reversed__', '__rmul__',
-# '__setattr__', '__setitem__', '__setslice__', '__sizeof__', '__str__',
-# '__subclasshook__', 'append', 'count', 'extend', 'index', 'insert', 'pop',
-# 'remove', 'reverse', 'sort']
-```
-
-* `type, id`
-
-```py
-print(type(''))
-# Output: <type 'str'>
-
-print(type([]))
-# Output: <type 'list'>
-
-print(type({}))
-# Output: <type 'dict'>
-
-print(type(dict))
-# Output: <type 'type'>
-
-print(type(3))
-# Output: <type 'int'>
-
-name = "Yasoob"
-print(id(name))
-# Output: 139972439030304
-```
-
-* inspect module
-
-```py
-import inspect
-print(inspect.getmembers(str))
-# Output: [('__add__', <slot wrapper '__add__' of ... ...
-```
-
-## metaclass
-
-* metaclass 는 runtime 에 class 를 생성할 수 있다. 한편 class 는 runtime 에 instance 를 생성할 수 있다. 또한 클래스가 정의될 때를 decorating 할 수 있다. 
-* `__metaclass__` 는 python 3 에서 더이상 사용하지 않는다. 클래스를 정의할때 인자로 `metaclass` 를 사용하자.
-* class 는 class instance 의 type 이고 metaclass 는 class 의
-  type 이다. 
+* metaclass 는 runtime 에 class 를 생성할 수 있다. 한편 class 는 runtime 에
+  instance 를 생성할 수 있다. 또한 클래스가 정의될 때를 decorating 할 수 있다. 
+* `__metaclass__` 는 python 3 에서 더이상 사용하지 않는다. 클래스를 정의할때
+  인자로 `metaclass` 를 사용하자.
+* class 는 class instance 의 type 이고 metaclass 는 class 의 type 이다. 
   
 ```python
 >>> class Foo(object): pass
@@ -2095,7 +2097,7 @@ MyMetaClass is called.
 >>> f = Foo()
 ```
 
-## weakref
+## Weakref
 
 다음과 같이 class `Foo`를 정의하여 reference count가 0이 될 때
 `__del__`이 호출 되는 것을 확인하자.
@@ -2156,11 +2158,10 @@ TypeError: 'NoneType' object is not callable
 7f1850f0c358 is destroyed
 ```
 
-## memory leak
+## Memory Leak
 
-gc가 순환 참조들을 수거하긴 하지만 많은 비용이 필요한 작업이다.
-reference count를 잘 관리해서 gc의 도움 없이 메모리 누수를 방지하도록
-하자.
+gc가 순환 참조들을 수거하긴 하지만 많은 비용이 필요한 작업이다. reference
+count를 잘 관리해서 gc의 도움 없이 메모리 누수를 방지하도록 하자.
 
 * with, finally 를 이용하여 리소스를 꼭 정리해주자.
 
@@ -2239,15 +2240,13 @@ tossi==0.0.1
 > pip install -r requirements.txt
 ```
 
-
-
 # Advanced 
 
 ## Pythonic Way
 
 * [Code Style¶](https://docs.python-guide.org/writing/style/)
 
-## open function
+## Open Function
 
 다음의 코드는 3 가지 문제점이 있다.
 
@@ -2257,7 +2256,8 @@ jpgdata = f.read()
 f.close()
 ```
 
-첫째, `open` 이후 exception 이 발생해도 `close` 가 호출되지 않는다. 다음과 같이 `with` 를 사용하자.
+첫째, `open` 이후 exception 이 발생해도 `close` 가 호출되지 않는다. 다음과 같이
+`with` 를 사용하자.
 
 ```py
 with open('photo.jpg', 'r+') as f:
@@ -2265,6 +2265,7 @@ with open('photo.jpg', 'r+') as f:
 ```
 
 둘째, 파일이 바이너리인지 텍스트인지를 읽기모드 옵션으로 제공해야 한다.
+
 셋째, 파일의 인코딩형식을 제공해야 한다.
 
 ```py
@@ -2280,14 +2281,14 @@ else:
 
 with io.open('summary.txt', 'w', encoding='utf-8') as outf:
     outf.write(text % len(jpgdata))
-
 ```
 
 ## Decorator
 
 어떤 함수의 앞, 뒤에 수행될 내용을 장식해 주는 기능을 한다. 
 
-다음은 `a_function_requiring_decoration()` 의 앞, 뒤에 수행될 내용을 장식하는 단순한 방법이다.
+다음은 `a_function_requiring_decoration()` 의 앞, 뒤에 수행될 내용을 장식하는
+단순한 방법이다.
 
 ```py
 def a_new_decorator(a_func):
@@ -2440,9 +2441,10 @@ def baz():
   print('baz')    
 ```
 
-## virtual environment
+## Virtual Environment
 
-다음은 python 2.x, 3.x 에서 virtualenv 사용법이다. [Python virtualenv 정리 (Linux/Windows)](https://dgkim5360.tistory.com/entry/python-virtualenv-on-linux-ubuntu-and-windows)
+다음은 python 2.x, 3.x 에서 virtualenv 사용법이다. [Python virtualenv 정리
+(Linux/Windows)](https://dgkim5360.tistory.com/entry/python-virtualenv-on-linux-ubuntu-and-windows)
 
 ```bash
 # python 2 
@@ -2510,7 +2512,7 @@ class A(object):
         self.__dict__.update({k: v for k, v in locals().items() if k != 'self'})
 ```
 
-## c extension
+## C Extension
 
 * Ctypes
 
@@ -2723,7 +2725,6 @@ print "Sum of List - " + str(l) + " = " +  str(addList.add(l))
 
 python 2 와 python 3 에서 실행될 수 있는 코드를 작성하자. 
 
-
 ```py
 # python 2 에서 `with` 를 사용할 수 있다.
 from __future__ import with_statement
@@ -2749,9 +2750,11 @@ except ImportError:
 from future.builtins.disabled import *
 ```
 
-## coroutine
+## Coroutine
 
-generator 는 data producer 이고 coroutine 은 data consumer 인 것을 제외하면 generator 와 coroutine 은 유사하다. coroutine 은 `send()` 를 이용하여 데이터를 외부에서 제공해야 한다. 
+generator 는 data producer 이고 coroutine 은 data consumer 인 것을 제외하면
+generator 와 coroutine 은 유사하다. coroutine 은 `send()` 를 이용하여 데이터를
+외부에서 제공해야 한다. 
 
 ```py
 # generator
@@ -2782,7 +2785,7 @@ search = grep('coroutine')
 search.close()
 ```
 
-## function caches
+## Function Caches
 
 함수의 `인자:리턴` 을 캐시에 저장한다.
 
@@ -2800,9 +2803,10 @@ def fib(n):
 >>> fib.cache_clear()
 ```
 
-## context managers
+## Context Managers
 
-context managers 는 resource 할당과 해제를 자동으로 해준다. 주로 `with` 와 함께 사용한다. 아래의 두블록은 같다.
+context managers 는 resource 할당과 해제를 자동으로 해준다. 주로 `with` 와 함께
+사용한다. 아래의 두블록은 같다.
 
 ```py
 # 
@@ -2816,7 +2820,9 @@ finally:
     file.close()
 ```
 
-class 에 `__enter__, __exit__` 를 정의하여 context amangers 로 만들어 보자. 그리고 `with` 에서 사용해 보자. exception 은 `__exit__` 에서 `traceback` 을 참고하여 handle 한다. 이상없으면 `True` 를 리턴한다.
+class 에 `__enter__, __exit__` 를 정의하여 context amangers 로 만들어 보자.
+그리고 `with` 에서 사용해 보자. exception 은 `__exit__` 에서 `traceback` 을
+참고하여 handle 한다. 이상없으면 `True` 를 리턴한다.
 
 ```py
 class File(object):
@@ -2903,10 +2909,6 @@ print(m.group(0))
 print(m.group(1))
 ```
 
-## numpy
-
-## pandas
-
 ## click
 
 [click](http://click.pocoo.org/5/)은 콘솔 라이브러리이다.
@@ -2980,7 +2982,6 @@ def test_answer():
 
 [urwid](http://urwid.org/)는 text gui 라이브러이다.
 
-
 ## fabric
 
 [fabric](https://github.com/mathiasertl/fabric/)은 응용프로그램 배포툴이다.
@@ -3031,8 +3032,6 @@ type                       163
 >>> len(xs)
 99
 ```
-
-# Tip
 
 ## MySQL-python 1.2.5 on python2.7 build error, library not found for -lssl
 

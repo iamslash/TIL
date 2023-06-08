@@ -23,7 +23,7 @@
   - [To Do List with redux](#to-do-list-with-redux)
   - [react-redux](#react-redux)
   - [rendering Sequences](#rendering-sequences)
-- [react libraries](#react-libraries)
+- [Advanced](#advanced)
   - [redux-toolkit](#redux-toolkit)
   - [redux](#redux-1)
     - [`function combineReducers<S>(reducers: ReducersMapObject): Reducer<S>`](#function-combinereducerssreducers-reducersmapobject-reducers)
@@ -38,6 +38,7 @@
   - [Ant Design](#ant-design)
   - [redux-saga](#redux-saga)
   - [Redux Debugger in Chrome](#redux-debugger-in-chrome)
+- [Architectures](#architectures)
 
 ----
 
@@ -1219,7 +1220,7 @@ Component 가 rendering 되는 경우들을 생각해 보자.
 
 또한  Component 의 user event 혹은 timer event 에 의해 dispatch function 이 호출된다. reducer 는 변경된 state 를 리턴한다. 그리고 그 component 의 render function 이 호출된다. redner function 에서 props 를 통해 state 를 접근할 수 있다.
 
-# react libraries
+# Advanced
 
 ## redux-toolkit
 
@@ -1399,3 +1400,7 @@ const store = createStore(
   composeWithDevTools(applyMiddleware(logger, ReduxThunk, sagaMiddleware))
 );
 ```
+
+# Architectures
+
+* [Optimize React apps using a multi-layered structure](https://blog.logrocket.com/optimize-react-apps-using-a-multi-layered-structure/)

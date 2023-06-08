@@ -76,7 +76,6 @@
   - [Map vs Object](#map-vs-object)
   - [Computed property names](#computed-property-names)
   - [var, let, const](#var-let-const)
-  - [promise](#promise)
   - [Async, Await](#async-await)
   - [Generator function](#generator-function)
   - [Async Generator Function](#async-generator-function)
@@ -607,7 +606,7 @@ The term "global objects" (or standard built-in objects) here is not to be confu
 
 ### Control abstraction objects
 
-* Promise
+* [Promise](standard_built_in_objs/promise.md)
 * Generator
 * GeneratorFunction
 * AsyncFunction
@@ -2102,128 +2101,6 @@ a = 'world'; // 잘된다.
 const b = 'hello';
 const b; // ERROR
 b = 'world'; // ERROR
-```
-
-## promise
-
-* [JavaScript Visualized: Promises & Async/Await](https://dev.to/lydiahallie/javascript-visualized-promises-async-await-5gke)
-* [Promises in JavaScript](https://zellwk.com/blog/js-promises/)
-
-----
-
-비동기를 구현하기 위한 object 이다. `promise` 는 `pending, resolved, rejected`
-와 같이 3 가지 상태를 갖는다.
-
-`Promise` object 의 `then()` 혹은 `catch()`을 호출하면 `Promise` object 는
-resolved 상태로 된다.
-
-`Promise` 의 function argument 는 `resolve, reject` 를 argument 로 하는
-함수이다. `resolve` 를 호출하면 `then()` 의 function arg 가 호출되고 `reject` 를
-호출하면 `catch()` 의 function arg 가 호출된다. 곧 `then()` 의 function arg 가
-`resolve` 이고 `catch()` 의 function arg 가 `reject` 이다.
-
-`promise` 를 `then()` 의 function arg 에서 정상처리를 하고 `catch()` 의 function
-arg 에서 오류처리를 한다고 생각하자.
-
-```js
-// simple promise
-p = new Promise(() => {}) // p is pending
-p = new Promise((resolve, reject) => {}) // p is pending
-
-// promise with calling resolve 
-p = new Promise((resolve, reject) => {
-  return resolve(7) // 
-})
-p.then(num => console.log(num)) // 7, p is resolved
-
-// promise with calling reject
-p = new Promise((resolve, reject) => {
-   //return reject(7)
-   return reject(new Error('7'))
-})
-p.then(num => console.log(num))
-.catch(num => console.error(num)) // Error 7, p is resolved
-
-// sleep with setTimeout
-setTimeout(() => console.log("done"), 1000)
-
-// promise with setTimeout
-p = new Promise((resolve, reject) => {
-  return setTimeout(resolve, 1000);
-})
-p.then(() => console.log("done"))
-
-// sleep function with promise
-const sleep = ms => {
-  //return new Promise(resolve => setTimeout(resolve, ms))
-  return new Promise((resolve, reject) => setTimeout(resolve, ms))
-}
-sleep(1000).then(() => console.log("done"))
-
-// await sleep function with promise
-r = await sleep(1000).then(() => "done")
-```
-
-```js
-function promiseFoo(b) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      console.log('Foo');
-      if (b) {
-         resolve({result: 'RESOLVE'});
-      } else {
-         reject(new Error('REJECT'));
-      }
-    }, 5000);
-  });
-}
-
-const promiseA = promiseFoo(true);
-console.log('promiseA created', promiseA);
-
-const promiseB = promiseFoo(false);
-console.log('promiseB created', promiseB);
-
-promiseA.then(a => console.log(a));
-promiseB
-  .then(a => console.log(a))
-  .catch(e => console.error(e));
-```
-
-다음은 `promise chaining` 의 예이다. `then` 에서 다시 `promise` 를 리턴한다. 그
-`promise` 가 `resolved` 상태로 전환되면 다음 `then` 이 호출되고 `rejected`
-상태로 전환되면 `catch` 가 호출된다.
-
-```js
-function promiseBar(name, stuff) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      if (stuff.energy > 50) {
-         resolve({result: '${name} alive', loss: 10});
-      } else {
-         reject(new Error('${name} died'));
-      }
-    }, 3000);
-  });
-}
-const bar = { energy: 70 };
-promiseBar('jane', bar)
-  .then(a => {
-    console.log(a.result);
-    bar.energy -= a.loss;
-    return promiseBar('john', bar);
-  })
-  .then(a => {
-     console.log(a.result);
-     bar.energy -= a.loss;
-     return promiseBar('paul', bar);
-  })
-  .then(a => {
-     console.log(a.result);
-     bar.energy -= a.loss;
-     return promiseBar('sam', bar);
-  })
-  .catch(e => console.error(e));
 ```
 
 ## Async, Await
