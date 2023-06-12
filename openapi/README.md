@@ -1,13 +1,13 @@
 # Abstract
 
-openapi 는 REST API 제작을 위한 specification 이다. yaml, json 으로
-specification 을 정의한 후 openapi-generator CLI 로 server stubs,
-client libraries 를 생성할 수 있다.
+openapi 는 REST API 제작을 위한 specification 이다. 예전에는 Swagger
+Specification 라고 불렀다. yaml, json 으로 specification 을 정의한 후
+openapi-generator CLI 로 server stubs, client libraries 를 생성할 수 있다.
 
 # Materials
 
-* [What Is OpenAPI? What Is Swagger? @ swagger](https://swagger.io/docs/specification/about/)
-  * [Basic Structure @ swagger](https://swagger.io/docs/specification/basic-structure/)
+* [What Is OpenAPI? What Is Swagger? | swagger](https://swagger.io/docs/specification/about/)
+  * [Basic Structure | swagger](https://swagger.io/docs/specification/basic-structure/)
   * easier to understand than [OpenAPI 3.0 Specification](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md)
 
 # Basic
