@@ -3,6 +3,7 @@
 - [Materials](#materials)
 - [References](#references)
 - [Basic](#basic)
+  - [Zustand](#zustand)
   - [Compatibilities](#compatibilities)
   - [Push API](#push-api)
   - [Service Worker API](#service-worker-api)
@@ -71,6 +72,35 @@ react-query, msw, cypress 를 주로 사용한다.
   * 글자를 입력하고 폰트미리보기를 할 수 있다.
 
 # Basic
+
+## Zustand
+
+[zustand](https://github.com/pmndrs/zustand) 는 state management library 이다.
+
+State management library 를 사용하면 다음과 같은 장점이 있다.
+
+* **Separation of concerns**: By moving state management logic to a separate
+  store, we're separating the concerns of state management from the presentation
+  layer, making our code more organized and easier to maintain.
+* **Reuse and sharing**: Zustand allows us to create a global state, which can
+  be easily shared and accessed by any component within the application. This
+  eliminates the need for passing down data through multiple levels of
+  components and decreases the complexity of state management, especially in a
+  large application.
+* **Simplification**: The new PartnerPage.js now focuses primarily on rendering
+  UI components and handling user interactions, making it easier to understand
+  and maintain. The state management logic is now abstracted away in the store,
+  which makes both components and the store itself simpler.
+* **Scalability**: Using Zustand in the PartnerPage.js allows for better
+  scalability in the long run. As the application grows, state management
+  becomes more complex, and managing state directly within components can lead
+  to performance issues and harder-to-maintain code. Zustand is designed to
+  efficiently handle complex state management while keeping a simple and
+  easy-to-use API.
+* **Easier testing**: Separating state management and component rendering makes
+  it easier to test the state management logic in isolation. Testing UI
+  components also becomes simpler, as they are decoupled from the state
+  management logic.
 
 ## Compatibilities
 

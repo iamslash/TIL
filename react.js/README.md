@@ -11,7 +11,7 @@
   - [Thinking in React Component State](#thinking-in-react-component-state)
   - [Practicing this setState](#practicing-this-setstate)
   - [SetState Caveats](#setstate-caveats)
-  - [Loading states](#loading-states)
+  - [Loading States](#loading-states)
   - [Smart vs Dumb](#smart-vs-dumb)
   - [AJAX on React](#ajax-on-react)
   - [Promises](#promises)
@@ -44,9 +44,7 @@
 
 # Abstract
 
-react.js 는 view library 이다. redux 는 state management library 이다. react.js
-와 함께 사용할 front-end library 들은 [react libraries](#react-libraries) 를
-참고해서 이해하자.
+react.js 는 view library 이다. redux 는 state management library 이다. 
 
 props 는 function parameter 와 유사하다. immutable 이다. state 는 local variable
 of function 과 같다. mutable 이다. [[React] Props와  State의
@@ -103,9 +101,11 @@ react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다.
 
 ## Create React App
 
-[Webpack](https://webpack.js.org/) 은 ES6 를 browser 가 이해할 수 있는 code 로 transpile 한다.
+[Webpack](https://webpack.js.org/) 은 ES6 를 browser 가 이해할 수 있는 code 로
+transpile 한다.
 
-create-react-app 으로 startup-repo 를 생성할 수 있다. create-react-app 은 Webpack, babel 을 포함한다.
+create-react-app 으로 startup-repo 를 생성할 수 있다. create-react-app 은
+Webpack, babel 을 포함한다.
 
 ```bash
 $ brew install node.js
@@ -128,8 +128,8 @@ $ npm start
 <div id="root"></div>
 ```
 
-`src/index.js` 는 `App` component 를 `id="root"` 인 `div` 에 rendering 하고 있다. `<App />` 는 JSX 이다. 
-JSX 는 pure javascript 로 transpile 된다.
+`src/index.js` 는 `App` component 를 `id="root"` 인 `div` 에 rendering 하고
+있다. `<App />` 는 JSX 이다. JSX 는 pure javascript 로 transpile 된다.
 
 ```js
 ReactDOM.render(<App />, document.getElementById('root'));
@@ -156,7 +156,8 @@ class App extends Component {
 export default App;
 ```
 
-`src/App.js` 는 `Movie` component 를 rendering 하고 있다. `Movie` component 는 다시 `MoviePoster` component 를 rendering 하고 있다.
+`src/App.js` 는 `Movie` component 를 rendering 하고 있다. `Movie` component 는
+다시 `MoviePoster` component 를 rendering 하고 있다.
 
 `src/Movie.js` 는 `Movie, MoviePoster` component 가 정의되어 있다.
 
@@ -345,7 +346,8 @@ export default Movie;
 
 ----
 
-하나의 component 는 다음과 같은 순서로 `Render, Update` 가 수행된다. Override function 의 순서를 주의하자.
+하나의 component 는 다음과 같은 순서로 `Render, Update` 가 수행된다. Override
+function 의 순서를 주의하자.
 
 ```js
 class App extends Component {
@@ -374,14 +376,15 @@ class App extends Component {
 
 ## Thinking in React Component State
 
-[Thinking in React Component State @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/8915cfe21228044db9c9c1a43b0ffd0465694c58)
+* [Thinking in React Component State @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/8915cfe21228044db9c9c1a43b0ffd0465694c58)
 
 ----
 
 `App` component 에 `state` 를 선언하고 `componentDidMount()` 에서 바꿔보자.
 `this.setState()` 함수를 호출하면 `render()` 가 호출된다. `state` 를 바꾸고
 `this.setState()` 를 호출하여 화면을 업데이트한다. 여기서 언급한 `state` 는
-redux 의 `state` 과는 다르다는 것을 주의하자. [React State vs. Redux State: When and Why?](https://spin.atomicobject.com/2017/06/07/react-state-vs-redux-state/)
+redux 의 `state` 과는 다르다는 것을 주의하자. [React State vs. Redux State: When
+and Why?](https://spin.atomicobject.com/2017/06/07/react-state-vs-redux-state/)
 
 ```js
 class App extends Component {
@@ -416,7 +419,9 @@ class App extends Component {
 
 ----
 
-`App` component 의 `state` 으로 title, poster 를 옮기자. 그리고 일정 시간 이후에 `state` 을 변경해 보자. `...this.state.movies` 를 이용하면 기존의 array 에 `this.state.movies` 를 unwind 해서 추가할 수 있다.
+`App` component 의 `state` 으로 title, poster 를 옮기자. 그리고 일정 시간 이후에
+`state` 을 변경해 보자. `...this.state.movies` 를 이용하면 기존의 array 에
+`this.state.movies` 를 unwind 해서 추가할 수 있다.
 
 ```js
 class App extends Component {
@@ -479,18 +484,22 @@ class App extends Component {
   // Update: componentWillReceiveProps() -> shouldComponentUpdate() -> 
   //         componentWillUpate() -> render() -> componentDidUpdate()
 
-setState 를 component lifecycle event handler (`render, componentWillMount, componentWillReceiveProps, shouldComponentUpdate, componentWillUpate, componentDidUpdate`) 에서 호출할 때 주의해야 한다.
+setState 를 component lifecycle event handler (`render, componentWillMount,
+componentWillReceiveProps, shouldComponentUpdate, componentWillUpate,
+componentDidUpdate`) 에서 호출할 때 주의해야 한다.
 
 * [React setState usage and gotchas](https://itnext.io/react-setstate-usage-and-gotchas-ac10b4e03d60)
   * [Boost your React with State Machines](https://www.freecodecamp.org/news/boost-your-react-with-state-machines-1e9641b0aa43/)
 
-## Loading states
+## Loading States
 
 [Loading states @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/c822239549b2ea678195536b213d4fa54e1f149b)
 
 ----
 
-loading screen 을 구현해 보자. `App` component 에 rendering 을 시작하자 마자 `Loading...` 을 출력하고 일정 시간이 지나면 state 을 업데이트하여 movies 가 rendering 되도록 해보자.
+loading screen 을 구현해 보자. `App` component 에 rendering 을 시작하자 마자
+`Loading...` 을 출력하고 일정 시간이 지나면 state 을 업데이트하여 movies 가
+rendering 되도록 해보자.
 
 ```js
 class App extends Component {
@@ -592,8 +601,9 @@ MoviePoster.propTypes = {
 
 ----
 
-AJAX 는 Asynchrous JavaScript and XML 이다. 그러나 XML 은 사용하지 않고 JSON 을 사용한다. AJAJ 로 바뀌어야 한다???
-다음은 fetch 함수를 이용하여 XHR (XML HTTP Request) 를 실행한 것이다.
+AJAX 는 Asynchrous JavaScript and XML 이다. 그러나 XML 은 사용하지 않고 JSON 을
+사용한다. AJAJ 로 바뀌어야 한다??? 다음은 fetch 함수를 이용하여 XHR (XML HTTP
+Request) 를 실행한 것이다.
 
 ```js
 class App extends Component {
@@ -881,23 +891,36 @@ $ yarn run deploy
 * [초보자를 위한 리덕스 101](https://academy.nomadcoders.co/courses/235420/lectures/13817530)
   * [src](https://github.com/nomadcoders/vanilla-redux)
 
-Redux 는 state 를 관리하기 위한 거대한 event loop 이다. 여기서 말하는 state 는 redux state 혹은 global state 이다. React Component 의 component state 혹은 local state 와는 다르다.
+Redux 는 state 를 관리하기 위한 거대한 event loop 이다. 여기서 말하는 state 는
+redux state 혹은 global state 이다. React Component 의 component state 혹은
+local state 와는 다르다.
 
-Action 은 event 를 말하고 Reducer 는 event handler 이다. 즉, Reducer 는 함수이고 변경된 redux state 를 return 한다. 변경된 redux state 가 return 되면 react component 에게 props 형태로 전달되고 react component 의 render() 가 호출된다. 즉, rendering 된다. Reducer 의 첫번째 argument 는 state 이고 두번째 argument 는 action 이다.
+Action 은 event 를 말하고 Reducer 는 event handler 이다. 즉, Reducer 는 함수이고
+변경된 redux state 를 return 한다. 변경된 redux state 가 return 되면 react
+component 에게 props 형태로 전달되고 react component 의 render() 가 호출된다.
+즉, rendering 된다. Reducer 의 첫번째 argument 는 state 이고 두번째 argument 는
+action 이다.
 
-Store 는 Application 의 state 이다. Store 를 생성하기 위해서는 Reducer 가 필요하다. Store instance 의 `getState()` 를 호출하면 현재 state 를 얻어올 수 있다. Store instance 의 `dispatch()` 를 특정 `action` 과 함께 호출하면 Store instance 에 등록된 Reducer 가 그 action 을 두번째 argument 로 호출된다. 
+Store 는 Application 의 state 이다. Store 를 생성하기 위해서는 Reducer 가
+필요하다. Store instance 의 `getState()` 를 호출하면 현재 state 를 얻어올 수
+있다. Store instance 의 `dispatch()` 를 특정 `action` 과 함께 호출하면 Store
+instance 에 등록된 Reducer 가 그 action 을 두번째 argument 로 호출된다. 
 
-또한 Store instance 의 `subscribe()` 를 함수와 함께 호출하면 Store 가 변경될 때 마다 그 함수가 호출된다. 그 함수에서 Store instance 의 `getState()` 를 호출하면 변경된 state 를 얻어올 수 있다.
+또한 Store instance 의 `subscribe()` 를 함수와 함께 호출하면 Store 가 변경될 때
+마다 그 함수가 호출된다. 그 함수에서 Store instance 의 `getState()` 를 호출하면
+변경된 state 를 얻어올 수 있다.
 
 [리덕스(Redux)란 무엇인가?](https://voidsatisfaction.github.io/2017/02/24/what-is-redux/)
 
 Redux 는 다음과 같은 흐름으로 처리된다.
 
 * Store 에 Component 를 subscribe 한다.
-* User 가 button 을 click 하면 Store 의 dispatch 함수가 특정 action 을 argument 로 호출된다.
+* User 가 button 을 click 하면 Store 의 dispatch 함수가 특정 action 을 argument
+  로 호출된다.
 * Store 에 등록된 Reducer 가 호출된다. 
 * Reducer 는 redux state 를 변경하여 return 한다.
-* Store 에 미리 subscribe 된 Component 에게 변경된 redux state 가 props 형태로 전달된다.
+* Store 에 미리 subscribe 된 Component 에게 변경된 redux state 가 props 형태로
+  전달된다.
 * Component 는 props 에서 변경된 redux state 를 이용하여 rendering 한다.
 
 ```js
@@ -1068,8 +1091,12 @@ ReactDOM.render(
 );
 ```
 
-`connect` 를 호출하여 `mapStateToProps` 와 함께 특정 Component 를 연결할 수 있다. `mapStateToProps` 는 state 가 주어지면 state 를 포함한 props 를 리턴하는 함수이다. 
-즉, state 가 변경되면 `mapStateToProps` 가 호출된다. 그리고 `mapStateToProps` 는 state 가 포함된 props 를 리턴한다. 리턴된 props 는 component 의 render 함수로 전달된다. 렌더 함수안에서 props 를 통해서 변경된 state 를 읽어올 수 있다. 
+`connect` 를 호출하여 `mapStateToProps` 와 함께 특정 Component 를 연결할 수
+있다. `mapStateToProps` 는 state 가 주어지면 state 를 포함한 props 를 리턴하는
+함수이다. 즉, state 가 변경되면 `mapStateToProps` 가 호출된다. 그리고
+`mapStateToProps` 는 state 가 포함된 props 를 리턴한다. 리턴된 props 는
+component 의 render 함수로 전달된다. 렌더 함수안에서 props 를 통해서 변경된
+state 를 읽어올 수 있다. 
 
 ```js
 import React, { useState } from "react";
@@ -1103,7 +1130,12 @@ function mapStateToProps(state) {
 export default connect(mapStateToProps)(Home);
 ```
 
-`connect` 를 호출하여 `mapDispatchToProps` 와 함께 특정 Component 를 연결할 수 있다. `mapDispatchToProps` 는 dispatch function 이 주어지면 dispatch function 을 포함한 props 를 리턴하는 함수이다. 리턴된 props 는 `connect` 에 연결된 component 의 render 함수로 전달된다. render 함수안에서 props 를 통해 dispatch function 을 읽어올 수 있다. 특정 dispatch function 을 호출하면 특정 reducer 를 호출할 수 있다.
+`connect` 를 호출하여 `mapDispatchToProps` 와 함께 특정 Component 를 연결할 수
+있다. `mapDispatchToProps` 는 dispatch function 이 주어지면 dispatch function 을
+포함한 props 를 리턴하는 함수이다. 리턴된 props 는 `connect` 에 연결된 component
+의 render 함수로 전달된다. render 함수안에서 props 를 통해 dispatch function 을
+읽어올 수 있다. 특정 dispatch function 을 호출하면 특정 reducer 를 호출할 수
+있다.
 
 ```js
 import React, { useState } from "react";
@@ -1145,7 +1177,12 @@ function mapDispatchToProps(dispatch) {
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
 ```
 
-다음은 `connect` 에 두번째 argument 로 `mapDispatchToProps` 를 전달하고 `ToDo` component 와 연결한다. `ToDo` component 의 button 이 click 되면 `ToDo` component 에 전달된 props 의 두번째 요소인 dispatch function 이 호출된다. dispatch function 에 해당하는 `onBtnClick` 이 호출되면 `DELETE` action 이 발생하고 Reducer 가 호출된다. reducer 는 변경된 state 를 리턴하고 `ToDo` component 의 render function 이 변경된 state argument 와 함께 호출된다.
+다음은 `connect` 에 두번째 argument 로 `mapDispatchToProps` 를 전달하고 `ToDo`
+component 와 연결한다. `ToDo` component 의 button 이 click 되면 `ToDo` component
+에 전달된 props 의 두번째 요소인 dispatch function 이 호출된다. dispatch
+function 에 해당하는 `onBtnClick` 이 호출되면 `DELETE` action 이 발생하고
+Reducer 가 호출된다. reducer 는 변경된 state 를 리턴하고 `ToDo` component 의
+render function 이 변경된 state argument 와 함께 호출된다.
 
 ```js
 import React from "react";
@@ -1216,9 +1253,13 @@ export default store;
 
 Component 가 rendering 되는 경우들을 생각해 보자. 
 
-먼저 부모 Component 가 rendering 될때 자식 Component 의 render function 이 props 와 함께 호출되는 경우가 있다.
+먼저 부모 Component 가 rendering 될때 자식 Component 의 render function 이 props
+와 함께 호출되는 경우가 있다.
 
-또한  Component 의 user event 혹은 timer event 에 의해 dispatch function 이 호출된다. reducer 는 변경된 state 를 리턴한다. 그리고 그 component 의 render function 이 호출된다. redner function 에서 props 를 통해 state 를 접근할 수 있다.
+또한  Component 의 user event 혹은 timer event 에 의해 dispatch function 이
+호출된다. reducer 는 변경된 state 를 리턴한다. 그리고 그 component 의 render
+function 이 호출된다. redner function 에서 props 를 통해 state 를 접근할 수
+있다.
 
 # Advanced
 
@@ -1237,7 +1278,8 @@ Component 가 rendering 되는 경우들을 생각해 보자.
 
 ----
 
-The combineReducers helper function turns an object whose values are different reducing functions into a single reducing function you can pass to createStore.
+The combineReducers helper function turns an object whose values are different
+reducing functions into a single reducing function you can pass to createStore.
 
 ### `function applyMiddleware(...middlewares: Middleware[]): GenericStoreEnhancer`
 
@@ -1245,7 +1287,8 @@ The combineReducers helper function turns an object whose values are different r
 
 ----
 
-Middleware is the suggested way to extend Redux with custom functionality. Middleware lets you wrap the store's dispatch method for fun and profit. 
+Middleware is the suggested way to extend Redux with custom functionality.
+Middleware lets you wrap the store's dispatch method for fun and profit. 
 
 This is an example of custom log middleware.
 
@@ -1285,7 +1328,8 @@ store.dispatch({
 
 ----
 
-Creates a Redux store that holds the complete state tree of your app. There should only be a single store in your app.
+Creates a Redux store that holds the complete state tree of your app. There
+should only be a single store in your app.
 
 ## react-redux
 

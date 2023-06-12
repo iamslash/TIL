@@ -94,6 +94,8 @@ java script 에 대해 정리한다.
 
 # Essentials
 
+* [The modern javascript tutorial](https://javascript.info/)
+  * mdn 보기 전에 꼭
 * [JavaScript @ MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript)
 * [Javascript 핵심 개념 알아보기 - JS Flow](https://www.inflearn.com/course/%ED%95%B5%EC%8B%AC%EA%B0%9C%EB%85%90-javascript-flow/dashboard)
   * inflearn 유료 강좌 흐름
@@ -122,8 +124,6 @@ java script 에 대해 정리한다.
 * [How JavaScript works](https://blog.sessionstack.com/how-does-javascript-actually-work-part-1-b0bacc073cf)
   * JavaScript 가 어떻게 동작하는지 기술한 시리즈 게시글중 첫번째
   * [번역](https://engineering.huiseoul.com/%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EB%8A%94-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%9E%91%EB%8F%99%ED%95%98%EB%8A%94%EA%B0%80-%EC%97%94%EC%A7%84-%EB%9F%B0%ED%83%80%EC%9E%84-%EC%BD%9C%EC%8A%A4%ED%83%9D-%EA%B0%9C%EA%B4%80-ea47917c8442)
-* [The modern javascript tutorial](https://javascript.info/)
-  * 가장 자세한 tutorial
 * [Secrets of the JavaScript Ninja - John Resig and Bear Bibeault](https://www.manning.com/books/secrets-of-the-javascript-ninja)
 * [함수형 자바스크립트 프로그래밍 - 유인동](http://www.yes24.com/24/Goods/56885507?Acode=101)
   * 비함수형 언어인 자바스크립트를 이용하여 함수형 프로그래밍을 시도한다.
@@ -135,6 +135,7 @@ java script 에 대해 정리한다.
 
 # Javascript Runtime Architecture
 
+* [이벤트 루프와 매크로태스크, 마이크로태스크 | javascript.info](https://ko.javascript.info/event-loop)
 * [어쨌든 이벤트 루프는 무엇입니까? | Philip Roberts | JSConf EU @ youtube](https://www.youtube.com/watch?v=8aGhZQkoFbQ)
   * [loupe](latentflip.com/loupe)
     * js even-loop
@@ -145,7 +146,7 @@ java script 에 대해 정리한다.
   
 ----
 
-js runtime engine 는 single threaded 이다. 기본적으로 web-browser 의 main thread
+Js runtime engine 는 single threaded 이다. 기본적으로 web-browser 의 main thread
 에서 js 가 실행된다. 따라서 js code 가 blocking 되면 ui 는 rendering 될 수 없다.
 그렇다면 어떻게 aync 를 지원하는지 알아보자.
 
@@ -155,22 +156,41 @@ Loop](https://dev.to/lydiahallie/javascript-visualized-event-loop-3dif)
 
 ![](img/js-event-loop.gif)
 
-위의 그림은 `v8` 과 같은 interpreter engine 의 구조이다. micro-task-queue 는 macro-task-queue 보다 우선순위가 높다.
+위의 그림은 `v8` 과 같은 interpreter engine 의 구조이다. `micro-task-queue` 는
+`macro-task-queue` 보다 우선순위가 높다.
 
-`process.nextTickm, Promise, Object.observe, MutationObserver` 는 argument 로 전달된 call back 을 micro-task-queue 에 삽입한다. 
+`process.nextTickm, Promise, Object.observe, MutationObserver` 는 argument 로
+전달된 call back 을 `micro-task-queue` 에 삽입한다. 
 
-`setTimeout, setInterval, setImmediate, requestAnimationFrame, I/O, UI 렌더링` 는 argument 로 전달된 call back 을 macro-task-queue 에 삽입한다.
+`setTimeout, setInterval, setImmediate, requestAnimationFrame, I/O, UI 렌더링`
+는 argument 로 전달된 call back 을 `macro-task-queue` 에 삽입한다.
 
-아래 그림의 회색 박스는 `v8` 와 같은 interpreter engine 이고 나머지는 `chrome` 과 같은 browser 라고 생각하자. callback queue 가 하나로 표현되어 있음을 주의 하자.
+아래 그림의 회색 박스는 `v8` 와 같은 interpreter engine 이고 나머지는 `chrome`
+과 같은 browser 라고 생각하자. callback queue 가 하나로 표현되어 있음을 주의
+하자.
 
 ![](https://cdn-images-1.medium.com/max/800/1*4lHHyfEhVB0LnQ3HlhSs8g.png)
 
 event-loop 알고리즘은 다음과 같다. 
 
-1. macro-task-queue 에서 가장 오래된 태스크를 꺼내 실행한다.
-2. micro-taskqueue 를 비울때까지 실행한다.
+1. `macro-task-queue` 에서 가장 오래된 태스크를 꺼내 실행한다.
+2. `micro-taskqueue` 를 비울때까지 실행한다.
 3. 렌더링한다.
-4. macro-task-queue 가 비어있으면 기다린다.
+4. `macro-task-queue` 가 비어있으면 기다린다.
+
+예를 다음과 같은 code 를 살펴보자.
+
+```js
+setTimeout(() => alert("timeout"));
+
+Promise.resolve()
+  .then(() => alert("promise"));
+
+alert("code");
+// code
+// promise
+// timeout
+```
 
 # JavaScript Engine How to work
 
@@ -519,7 +539,9 @@ A trusy value is a value which is not falsy.
 
 * [Standard built-in objects @ MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects)
 
-The term "global objects" (or standard built-in objects) here is not to be confused with the global object. Here, "global objects" refer to objects in the global scope.
+The term "global objects" (or standard built-in objects) here is not to be
+confused with the global object. Here, "global objects" refer to objects in the
+global scope.
 
 ----
 
@@ -2112,15 +2134,27 @@ b = 'world'; // ERROR
 
 ----
 
-asynchronous programming 을 구현하는 새로운 방법이다. 콜백지옥을 탈출 할 수
-있다. `async` 로 함수를 정의하고 함수안에서 `await` 으로 `Promise` object 가
-실행을 마칠 때 까지 기다린다. async function 은 `Promise` object 를 return 한다.
-즉, async function 에서 `await` 로 다른 async function 을 기다릴 수 있다. 
+Asynchronous programming 을 구현하는 새로운 방법이다. 콜백지옥을 탈출 할 수
+있다. 다음은 `async` function 의 특징이다.
 
-`await` 다음에 오는 `Promise` object 의 `then()` 혹은 `catch()` 를 호출하지
-않아도 `Promise` 가 `resolved` 상태로 전환된다 ???
+* `async` 로 함수를 정의하면 그 함수는 `Promise` object 를 return 한다.
+* `async` 함수안에서 `await` 으로 `Promise` object 가 실행을 마칠 때 까지
+  기다린다. 
+
+not `Promise` object 를 return 하면 resolved `Promise` object 를 return 한다.
 
 ```js
+// This will return resolved Promise object.
+async function f() {
+  return 1;
+}
+f().then(alert); // 1
+// This is same with return 1;
+async function f() {
+  return Promise.resolve(1);
+}
+f().then(alert); // 1
+
 // sleep
 const sleep = ms => {
   return new Promise(resolve => setTimeout(resolve, ms))
@@ -2186,6 +2220,29 @@ async function fooAsync() {
   }
 }
 await fooAsync().then(() => console.log("done"));
+```
+
+`await` 는 `thenable` object 앞에 사용할 수 있다. `thenable` object 는
+`then()` 를 갖는 object 를 말한다.
+
+```js
+class Thenable {
+  constructor(num) {
+    this.num = num;
+  }
+  then(resolve, reject) {
+    alert(resolve);
+    setTimeout(() => resolve(this.num * 2), 1000);
+  }
+};
+
+async function f() {
+  let result = await new Thenable(1);
+  // -- 1s later
+  alert(result);
+  // 2
+}
+f();
 ```
 
 ## Generator function
