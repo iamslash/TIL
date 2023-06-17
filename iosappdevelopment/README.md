@@ -5,7 +5,6 @@
   - [Apple Developer Program](#apple-developer-program)
   - [Xcode Application Tutorial](#xcode-application-tutorial)
   - [Pod Application Tutorial](#pod-application-tutorial)
-- [Advanced](#advanced)
   - [Publish iOS Library](#publish-ios-library)
 
 ----
@@ -18,6 +17,7 @@ ios app development 에 대해 정리한다.
 
 * [ Do it! 스위프트로 아이폰 앱 만들기 입문 - 개정 5판](http://www.yes24.com/Product/Goods/96825837)
   * [src](https://github.com/doitswift/example)
+* [Awesome iOS](https://github.com/vsouza/awesome-ios)
 
 # Basic
 
@@ -46,18 +46,12 @@ ios app development 에 대해 정리한다.
 
 ## Xcode Application Tutorial
 
-Xcode 로 Application Project 를 만들어 보자.
-
-[Hello World 만들기 예제](iosappdevelopment_helloworld.md)
+[ios Hello World](iosappdevelopment_helloworld.md)
 
 ## Pod Application Tutorial
 
-[cocoapods](/cocoapods/README.md) 으로 Xcode Application Project 를 만들어 보자.
-
-[cocoapods](/cocoapods/README.md#create-pod)
-
-# Advanced
+[cocoapods](/cocoapods/README.md#using-pod-application-create)
 
 ## Publish iOS Library
 
-[cocoapods](/cocoapods/README.md)
+[cocoapods](/cocoapods/README.md#using-pod-lib-create)
