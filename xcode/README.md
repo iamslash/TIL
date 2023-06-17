@@ -24,7 +24,9 @@ $ xcodes install --latest
 | `^ L Click` | Quick Help |
 | `⇧ ⌘ O` | Open Quickly |
 | `^ ⌥ ⌘ Enter` | Assistant View on storyboard |
-| `⇧ ⌘ L` | Library Window |
+| `⇧ ⌥ ⌘ Enter` | Enable Code Review on storyboard |
+| `⇧ ⌘ L` | Show library window |
+| `^ ⇧ ⌘ M` | Show/Hide Minimap |
 | `⌘ B` | Build |
 | `⌘ R` | Run |
 | `^ ⌘ <-` | Back |
@@ -32,6 +34,41 @@ $ xcodes install --latest
 | `^ ⌘ J` | Jump to definition |
 | `^ ⇧ ⌘ F` | Find selected symbol in workspace |
 | `^ ⇧ ⌘ H` | Find call hierarchy |
+| `⌘ 0` | Show/Hide Navigator |
+| `⌥ ⌘ 0` | Show/Hide Inspector |
+
+## Terms
+
+* Workspace vs Project
+  * an Xcode project is focused on building a specific product using
+    a defined set of resources and settings, while a workspace allows you to
+    work with multiple projects and their dependencies in a unified environment.
+    Deciding which to use depends on the complexity of your application and the
+    degree of modularity and collaboration required in your development process.
+
+* Scheme
+  * a collection of settings and configurations used to define how to build,
+    run, test, profile, analyze, and archive your app.
+  * The scheme content is stored in a `.xcscheme file`, which is located within
+    your project's `.xcworkspace` or `.xcodeproj` directories. The `.xcscheme` file is
+    an XML-based file that stores the information about your scheme, such as
+    build targets, build configurations, and environment settings.
+  * If your project uses an Xcode workspace (`.xcworkspace`): In this case, your
+    scheme files are located inside the
+    `<ProjectName>.xcworkspace/xcshareddata/xcschemes/` directory.
+  * If your project uses an Xcode project file (`.xcodeproj`): Custom scheme
+    files are located inside the
+    `<ProjectName>.xcodeproj/xcuserdata/[username].xcuserdatad/xcschemes/`
+    directory, while shared scheme files are in
+    `<ProjectName>.xcodeproj/xcshareddata/xcschemes/`.
+
+* Target
+  * set of build configurations and settings used to create a specific product
+    or output from your project, such as an app, a library, a framework, or a
+    test bundle. Each target contains the necessary instructions on how to
+    process your project's source code, resources, and dependencies to produce
+    the desired outcome.
+  * Saved in `project.pbxproj` and `.xcodeproj`
 
 ## File Extensions
 
@@ -47,10 +84,8 @@ Project View 의 File Extension 을 보이게 하자.
 
 ## How to make a iOS app with cocoapods 
 
+[cocoapods create application](/cocoapods/README.md#using-pod-application-create)
+
 ## How to make a iOS library with cocoapods
 
-> [[iOS] 나만의 라이브러리 만들기(feat. CocoaPods)](https://fomaios.tistory.com/entry/iOS-%EB%82%98%EB%A7%8C%EC%9D%98-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC-%EB%A7%8C%EB%93%A4%EA%B8%B0feat-CocoaPods)
-
-```
-$ pod lib create MyLib
-```
+[cocoapods create library](/cocoapods/README.md#using-pod-lib-create)

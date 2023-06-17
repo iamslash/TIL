@@ -23,7 +23,12 @@ CocoaPods is a dependency manager for Swift and Objective-C Cocoa projects.
 ## Install
 
 ```bash
-$ sudo gem install cocoapods
+$ vim ~/.zshrc
+# ruby
+export GEM_HOME=$HOME/.gem
+export PATH=$GEM_HOME/bin:$PATH
+
+$ gem install cocoapods
 $ pod setup
 $ pod search AFNetwork
 ```

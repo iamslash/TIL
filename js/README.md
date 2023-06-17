@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [Essentials](#essentials)
 - [Materials](#materials)
+- [Javascript Style Guide](#javascript-style-guide)
 - [Javascript Runtime Architecture](#javascript-runtime-architecture)
 - [JavaScript Engine How to work](#javascript-engine-how-to-work)
 - [Basic](#basic)
@@ -132,6 +133,14 @@ java script 에 대해 정리한다.
 * [실행 컨텍스트](https://www.zerocho.com/category/Javascript/post/5741d96d094da4986bc950a0)
 * [Underscore.js](http://underscorejs.org/)
   * functional programming helper
+
+# Javascript Style Guide
+
+* [JavaScript Standard Style](https://standardjs.com/rules-en.html)
+
+----
+
+EditorConfig for vscode [참고](https://suyeon96.tistory.com/33)
 
 # Javascript Runtime Architecture
 
@@ -702,7 +711,15 @@ global scope.
 ```js
 a = new Object()
 a.foo = 1; a.bar = 2; a.baz = 3
-console.log(a)
+
+console.log(a)  
+// { foo: 1, bar: 2, baz: 3 }
+
+console.log(Object.entries(a));
+// [ [ 'foo', 1 ], [ 'bar', 2 ], [ 'baz', 3 ] ]
+
+console.log(Object.values(a));
+// [ 1, 2, 3 ]
 ```
 
 ### Array

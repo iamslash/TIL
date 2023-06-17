@@ -1,6 +1,21 @@
+- [Abstract](#abstract)
+- [Create Project](#create-project)
+- [StoryBoard](#storyboard)
+- [Add IBOutlet, IBAction](#add-iboutlet-ibaction)
+- [Implement IBAction](#implement-ibaction)
+- [Build and Run iOS Simulator](#build-and-run-ios-simulator)
+
+----
+
 # Abstract
 
-Swift, Xcode 로 간단한 iOS Application 을 만들어 본다.
+Swift, Xcode 로 간단한 iOS Application 을 만들어 본다. 
+
+[Technologies Documentation](https://developer.apple.com/documentation/technologies) 에서 Framework 의 reference 를 찾을 수 있다.
+
+[iOS & iPadOS Release Notes](https://developer.apple.com/documentation/ios-ipados-release-notes) 에서 iOS & iPadOS 의 version 별 특이사항을 알 수 있다.
+
+[SwiftUI](https://developer.apple.com/tutorials/swiftui/creating-and-combining-views) 가 새로나왔다. Storyboard 보다 좋다고 함.
 
 # Create Project
 
@@ -62,12 +77,7 @@ Project options 를 채운다.
 
 주요 단축키는 다음과 같다. 
 
-| Short Cut | Description |
-|--|--|
-| `^ ⌥ ⌘ Enter` | Assistant View on storyboard |
-| `⇧ ⌘ L` | Library Window |
-| `⌘ B` | Build |
-| `⌘ R` | Run |
+[xcode shortcuts](/xcode/README.md#shorcuts)
 
 # StoryBoard
 
