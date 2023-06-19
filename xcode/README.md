@@ -36,6 +36,8 @@ $ xcodes install --latest
 | `^ ⇧ ⌘ H` | Find call hierarchy |
 | `⌘ 0` | Show/Hide Navigator |
 | `⌥ ⌘ 0` | Show/Hide Inspector |
+| `⇧ ⌘ Y` | Activate Debug Console |
+| `⇧ ⌘ C` | Show/Hide Debug Area |
 
 ## Terms
 
@@ -70,7 +72,7 @@ $ xcodes install --latest
     the desired outcome.
   * Saved in `project.pbxproj` and `.xcodeproj`
 
-## File Extensions
+## Show File Extensions
 
 Project View 의 File Extension 을 보이게 하자.
 

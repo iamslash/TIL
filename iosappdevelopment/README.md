@@ -6,6 +6,8 @@
   - [Xcode Application Tutorial](#xcode-application-tutorial)
   - [Pod Application Tutorial](#pod-application-tutorial)
   - [Publish iOS Library](#publish-ios-library)
+- [Advanced](#advanced)
+  - [Background Tasks](#background-tasks)
 
 ----
 
@@ -55,3 +57,20 @@ ios app development 에 대해 정리한다.
 ## Publish iOS Library
 
 [cocoapods](/cocoapods/README.md#using-pod-lib-create)
+
+# Advanced
+
+## Background Tasks
+
+* [[iOS] BackgroundTasks Framework 간단 정리](https://lemon-dev.tistory.com/entry/iOS-BackgroundTask-Framework-%EA%B0%84%EB%8B%A8-%EC%A0%95%EB%A6%AC)
+* [How to manage background tasks with the Task Scheduler in iOS 13?](https://snow.dog/blog/how-to-manage-background-tasks-with-the-task-scheduler-in-ios-13)
+
+----
+
+iOS 13 부터 `BGAppRefreshTask`, `BGProcessingTask` 를 이용하면 Background Task 구현이 가능하다. `BGAppRefreshTask` 는 가벼운 것 `BGProcessingTask` 는 무거운 것에 실행하자???
+
+`BGAppRefreshTask` - An object representing a short task typically used to refresh content that’s run while the app is in the background.
+
+`BGProcessingTask` - A time-consuming processing task that runs while the app is in the background.
+
+iOS 가 언제 background task 를 취소할지 예측할 수 없다. 우선순위가 낮아 언제 실행될지 예측할 수 없다. UX 를 신경써야 한다.
