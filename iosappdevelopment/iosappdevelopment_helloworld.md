@@ -15,7 +15,7 @@ Swift, Xcode 로 간단한 iOS Application 을 만들어 본다.
 
 [iOS & iPadOS Release Notes](https://developer.apple.com/documentation/ios-ipados-release-notes) 에서 iOS & iPadOS 의 version 별 특이사항을 알 수 있다.
 
-[SwiftUI](https://developer.apple.com/tutorials/swiftui/creating-and-combining-views) 가 새로나왔다. Storyboard 보다 좋다고 함.
+[SwiftUI](/swiftui/README.md) 가 새로나왔다. Storyboard 보다 좋다고 함.
 
 # Create Project
 
