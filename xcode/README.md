@@ -24,6 +24,7 @@ $ xcodes install --latest
 | `^ L Click` | Quick Help |
 | `⇧ ⌘ O` | Open Quickly |
 | `^ ⌥ ⌘ Enter` | Assistant View on storyboard |
+| `⌥ ⌘ Enter` | Canvas View on SwiftUI |
 | `⇧ ⌥ ⌘ Enter` | Enable Code Review on storyboard |
 | `⇧ ⌘ L` | Show library window |
 | `^ ⇧ ⌘ M` | Show/Hide Minimap |

@@ -3,6 +3,7 @@
 - [Materials](#materials)
 - [References](#references)
 - [Basic](#basic)
+  - [IntelliJ Show NPM Scripts](#intellij-show-npm-scripts)
   - [Zustand](#zustand)
   - [Compatibilities](#compatibilities)
   - [Push API](#push-api)
@@ -72,6 +73,13 @@ react-query, msw, cypress 를 주로 사용한다.
   * 글자를 입력하고 폰트미리보기를 할 수 있다.
 
 # Basic
+
+## IntelliJ Show NPM Scripts
+
+[Gradle](/gradle/README.md) 처럼 task view 를 이용할 수 있다. `package.json` 을
+우클릭하고 `Show npm Scripts` 를 선택한다. 
+
+![](img/2023-06-21-15-53-51.png)
 
 ## Zustand
 

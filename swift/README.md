@@ -56,8 +56,9 @@
   - [Advanced Operators](#advanced-operators)
 - [Advanced](#advanced)
   - [Renaming Objective-C APIs for Swift](#renaming-objective-c-apis-for-swift)
-  - [Style Guide](#style-guide)
-  - [Libraries](#libraries)
+  - [Property Wrapper](#property-wrapper)
+- [Style Guide](#style-guide)
+- [Libraries](#libraries)
 
 -------------------------------------------------------------------------------
 
@@ -2203,11 +2204,87 @@ NS_SWIFT_NAME(makeRounded(cornerRadius:));
 myView.makeRounded(cornerRadius: 16)
 ```
 
-## Style Guide
+## Property Wrapper
+
+* [Property Wrapper](https://zeddios.tistory.com/1221)
+
+----
+
+Property 의 Wrapper 를 만들 수 있다. 즉, Property 의 boiler plate code 를
+재활용할 수 있다. 
+
+```swift
+// Define Uppercase property wrapper
+@propertyWrapper
+struct Uppercase {
+    
+    private var value: String = ""
+    
+    var wrappedValue: String {
+        get { self.value }
+        set { self.value = newValue.uppercased() }
+    }
+    
+    init(wrappedValue initialValue: String) {
+        self.wrappedValue = initialValue
+    }
+}
+
+// Use it
+struct Address {
+    @Uppercase var town: String
+}
+let address = Address(town: "earth")
+print(address.town)  // EARTH
+```
+
+```swift
+// Define UserDefault<T> property wrapper
+@propertyWrapper
+struct UserDefault<T> {
+    
+    let key: String
+    let defaultValue: T
+    let storage: UserDefaults
+
+    var wrappedValue: T {
+        get { self.storage.object(forKey: self.key) as? T ?? self.defaultValue }
+        set { self.storage.set(newValue, forKey: self.key) }
+    }
+    
+    init(key: String, defaultValue: T, storage: UserDefaults = .standard) {
+        self.key = key
+        self.defaultValue = defaultValue
+        self.storage = storage
+    }
+}
+
+// Use it
+class UserManager {
+    
+    @UserDefault(key: "usesTouchID", defaultValue: false)
+    static var usesTouchID: Bool
+    
+    @UserDefault(key: "myEmail", defaultValue: nil)
+    static var myEmail: String?
+    
+    @UserDefault(key: "isLoggedIn", defaultValue: false)
+    static var isLoggedIn: Bool
+}
+```
+
+`@State` 는 대표적인 Property Wrapper 중 하나이다.
+
+```swift
+@available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
+@frozen @propertyWrapper public struct State<Value> : DynamicProperty {
+```
+
+# Style Guide
 
 * [Swift Style Guide](https://google.github.io/swift/)
 
-## Libraries
+# Libraries
 
 * [Alamofire](https://github.com/Alamofire/Alamofire)
   * HTTP Client Library
