@@ -39,6 +39,7 @@ $ xcodes install --latest
 | `⌥ ⌘ 0` | Show/Hide Inspector |
 | `⇧ ⌘ Y` | Activate Debug Console |
 | `⇧ ⌘ C` | Show/Hide Debug Area |
+| `^ I` | Reindent |
 
 ## Terms
 
