@@ -74,6 +74,7 @@
   - [Cookies](#cookies)
   - [HTML DOM](#html-dom)
 - [Advanced](#advanced)
+  - [apply vs call](#apply-vs-call)
   - [Map vs Object](#map-vs-object)
   - [Computed property names](#computed-property-names)
   - [var, let, const](#var-let-const)
@@ -577,7 +578,7 @@ global scope.
 ### Fundamental objects
 
 * Object
-* Function
+* [Function](standard_built_in_objs/function.md)
 * Boolean
 * Symbol
 
@@ -598,7 +599,7 @@ global scope.
 * Number
 * BigInt
 * Math
-* Date
+* [Date](standard_built_in_objs/date.md)
 
 ### Text processing
 
@@ -1498,7 +1499,7 @@ Prototypes are the mechanism by which JavaScript objects inherit features from
 one another. 
 
 Contructor function 이 있을 때 new 연산자를 사용하여 instance 를 생성했다고
-해보자. 이때 Constructor function 의 prototype 과 instance 의 `__prototype__` 은
+해보자. 이때 Constructor function 의 `prototype` 과 instance 의 `__prototype__` 은
 같은 객체를 가리킨다. 
 
 `Array` constructor 로 new 연산자를 사용하여 `[1, 2, 3]` 을 생성했다고 해보자.
@@ -2022,6 +2023,21 @@ document.cookie = "key1 = value1;key2 = value2;expires = date";
 ![](https://www.tutorialspoint.com/javascript/images/html-dom.jpg)
 
 # Advanced
+
+## apply vs call
+
+둘다 [Function](standard_built_in_objs/function.md) 의 methods 이다. apply 는 args 가 array 이고 call 은 unwinded array 이다.
+
+```js
+function a(x, y, z) {
+  console.log(this, x, y, z);
+}
+var b = {
+  c: 'eee'
+}
+a.call(b, 1, 2, 3)        // { c: 'eee' } 1 2 3
+a.apply(b, [1, 2, 3])     // { c: 'eee' } 1 2 3
+```
 
 ## Map vs Object
 

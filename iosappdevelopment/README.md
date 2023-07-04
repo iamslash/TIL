@@ -6,6 +6,7 @@
   - [Xcode Application Tutorial](#xcode-application-tutorial)
   - [Pod Application Tutorial](#pod-application-tutorial)
   - [Publish iOS Library](#publish-ios-library)
+  - [Distribution](#distribution)
 - [Advanced](#advanced)
   - [Background Tasks](#background-tasks)
 
@@ -58,6 +59,32 @@ ios app development 에 대해 정리한다.
 ## Publish iOS Library
 
 [cocoapods](/cocoapods/README.md#using-pod-lib-create)
+
+## Distribution
+
+ios application 배포 방법을 이해하기 위해서는 다음과 같은 개념들을 알아야 한다.
+
+* DeviceID
+  * iPhone 마다 부여된 고유한 ID 를 말한다.
+* AppID
+* Certificate
+  * ios application 을 Certificate 의 비밀키로 signing 해야 App Store 에 제출할
+    수 있다. 
+* Provisioning Profile
+  * AppID, DeviceID, Certificate 의 매핑정보가 들어있다.
+  * Enterprise Profile 을 만들면 AppID, Certificate 만 필요하다. 즉, DeviceID
+    없이 ios app 을 배포할 수 있다.
+
+ios application (ipa) 배포하는 방법은 다음과 같다.
+
+* Submitting to App Store 
+* Copy ipa to specific devices
+* Firebase enterprise distribution
+* Testflight
+  * App Store 심사가 필요하다. 불편하다.
+
+Firebase 를 이용하면 Enterprise Provisioning Profile 을 생성하여 DeviceID 없이
+배포할 수 있다. 주로 test app 배포 용도로 사용한다.
 
 # Advanced
 

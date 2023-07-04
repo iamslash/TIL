@@ -1,6 +1,7 @@
 - [Abstract](#abstract)
 - [References](#references)
 - [Materials](#materials)
+- [GUI Console](#gui-console)
 - [Architecture](#architecture)
   - [Overview](#overview)
   - [Sequence Diagram](#sequence-diagram)
@@ -102,6 +103,15 @@ Kubernetes 는 여러개의 Container 들을 협업시킬 수 있는 도구이�
   * Self Managed Worker Nodes, Managed Node groups, Serverless Worker Nodes
 * [A Practical Step-by-Step Guide to Understanding Kubernetes](https://medium.com/better-programming/a-practical-step-by-step-guide-to-understanding-kubernetes-d8be7f82e533)
   * Launch Django, PostgreSQL, Redis on Kubernetes.
+
+# GUI Console
+
+* [k9s](https://github.com/derailed/k9s)
+  * TUI console
+* [OpenLens](https://github.com/MuhammedKalkan/OpenLens?ref=blog.joe-brothers.com)
+  * GUI console
+  * [GitHub](https://github.com/MuhammedKalkan/OpenLens) 에 build version 을 다운로드할 수 있다. 혹은 `brew install --cask openlens` 로 설치할 수 있다.
+  * node shell, pod shell, pod log 는 extention 을 설치해야 한다. [Lens 오픈소스 대체, OpenLens](https://blog.joe-brothers.com/kubernetes-lens-alternative-openlens/)
 
 # Architecture
 
