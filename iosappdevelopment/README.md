@@ -90,6 +90,10 @@ Firebase 를 이용하면 Enterprise Provisioning Profile 을 생성하여 Devic
 
 ## Background Tasks
 
+
+* [Advances in App Background Execution | wwdc2019](https://developer.apple.com/videos/play/wwdc2019/707/)
+  * [src](https://developer.apple.com/documentation/backgroundtasks/refreshing_and_maintaining_your_app_using_background_tasks)
+* [Background execution demystified | wwdc2020](https://developer.apple.com/videos/play/wwdc2020/10063)
 * [[iOS] BackgroundTasks Framework 간단 정리](https://lemon-dev.tistory.com/entry/iOS-BackgroundTask-Framework-%EA%B0%84%EB%8B%A8-%EC%A0%95%EB%A6%AC)
 * [How to manage background tasks with the Task Scheduler in iOS 13?](https://snow.dog/blog/how-to-manage-background-tasks-with-the-task-scheduler-in-ios-13)
 
