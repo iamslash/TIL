@@ -90,7 +90,7 @@ Firebase 를 이용하면 Enterprise Provisioning Profile 을 생성하여 Devic
 
 ## Background Tasks
 
-
+* [Background Tasks | apple](https://developer.apple.com/documentation/backgroundtasks)
 * [Advances in App Background Execution | wwdc2019](https://developer.apple.com/videos/play/wwdc2019/707/)
   * [src](https://developer.apple.com/documentation/backgroundtasks/refreshing_and_maintaining_your_app_using_background_tasks)
 * [Background execution demystified | wwdc2020](https://developer.apple.com/videos/play/wwdc2020/10063)
@@ -99,10 +99,32 @@ Firebase 를 이용하면 Enterprise Provisioning Profile 을 생성하여 Devic
 
 ----
 
-iOS 13 부터 `BGAppRefreshTask`, `BGProcessingTask` 를 이용하면 Background Task 구현이 가능하다. `BGAppRefreshTask` 는 가벼운 것 `BGProcessingTask` 는 무거운 것에 실행하자???
+iOS 는 `Background Task Completion` 을 제공한다. iOS 13 이전에도 있었던 것 같다.
+foreground 의 app 이 background 로 바뀌면 하던 일을 마무리할 수 있다. foreground
+에서 background 로 바뀔 때 background 에서 한번 실행된다.
 
-`BGAppRefreshTask` - An object representing a short task typically used to refresh content that’s run while the app is in the background.
+iOS 13 부터 `BGAppRefreshTask`, `BGProcessingTask` 를 제공한다. 
 
-`BGProcessingTask` - A time-consuming processing task that runs while the app is in the background.
+`BGAppRefreshTask` - 비교적 가벼운 logic 이 적당하다. app 이 다음 번에
+foreground 가 되었을 때 UI 를 미리 업데이트하는 logic 에 적당하다. 예를 들어
+user 가 획득한 점수를 원격으로부터 받아오는 것이 해당된다.
 
-iOS 가 언제 background task 를 취소할지 예측할 수 없다. 우선순위가 낮아 언제 실행될지 예측할 수 없다. UX 를 신경써야 한다.
+`BGProcessingTask` - 비교적 무거운 logic 이 적당하다. 예를 들어 아주 긴 파일을
+다운로드하는 것이 해당된다. 
+
+두 가지 방식에 대해 cancel 조건이 다를 것이다. iOS 가 언제 background task 를
+취소할지 예측할 수 없다. 언제 실행될지도 예측할 수 없다. UX 를 신경써야 한다.
+
+테스트 방법은 [Starting and Terminating Tasks During Development |
+apple](https://developer.apple.com/documentation/backgroundtasks/starting_and_terminating_tasks_during_development)
+을 참고한다. 
+
+`BGTaskScheduler.shared.submit()` 에 break point 를 설정한다. app 의 실행이 멈출
+때 LLDB prompt 에 다음과 같은 command line 을 입력하여 background task 를 시작
+혹은 종료할 수 있다. test 를 위해 AppStore 제출과 관계없는 code 를 작성할 필요가 있다.
+
+```
+LLDB> e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"TASK_IDENTIFIER"]
+
+LLDB> e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateExpirationForTaskWithIdentifier:@"TASK_IDENTIFIER"]
+```
