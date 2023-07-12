@@ -57,6 +57,8 @@
 - [Advanced](#advanced)
   - [Renaming Objective-C APIs for Swift](#renaming-objective-c-apis-for-swift)
   - [Property Wrapper](#property-wrapper)
+  - [`@escaping`](#escaping)
+  - [Closure vs Async/Await](#closure-vs-asyncawait)
 - [Style Guide](#style-guide)
 - [Libraries](#libraries)
 
@@ -2278,6 +2280,76 @@ class UserManager {
 ```swift
 @available(iOS 13.0, macOS 10.15, tvOS 13.0, watchOS 6.0, *)
 @frozen @propertyWrapper public struct State<Value> : DynamicProperty {
+```
+
+## `@escaping`
+
+`@escaping` is an attribute used in Swift for function parameters that take
+closures as arguments. By default, closures passed to a function are
+"non-escaping", which means that the closure is executed and completes within
+the scope of the function. When a closure is marked with `@escaping`, it
+indicates that the closure may "escape" the function and could be stored, used,
+or executed later, outside the scope of the function, allowing the closure to
+outlive the function call.
+
+`@escaping` is often used when dealing with asynchronous operations, completion
+handlers, or APIs that store closures as properties for later execution. Since
+escaping closures may outlive the function, they need to capture and maintain
+any values they reference, which may affect memory management and retain cycles.
+
+```swift
+func fetchData(completion: @escaping (Data?, Error?) -> Void) {
+    let url = URL(string: "https://iamslash.com/data")!
+    
+    URLSession.shared.dataTask(with: url) { (data, response, error) in
+        completion(data, error)
+    }.resume()
+}
+```
+
+## Closure vs Async/Await
+
+Closure
+
+```swift
+import Foundation
+
+func fetchData(completion: @escaping (Data?, Error?) -> Void) {
+    let url = URL(string: "https://example.com/data")!
+    
+    URLSession.shared.dataTask(with: url) { (data, response, error) in
+        completion(data, error)
+    }.resume()
+}
+
+fetchData { data, error in
+    if let error = error {
+        print("Error: \(error)")
+    } else {
+        print("Data: \(data)")
+    }
+}
+```
+
+async/await (since swift 5.5)
+
+```swift
+import Foundation
+
+func fetchData() async throws -> Data {
+    let url = URL(string: "https://iamslash.com/data")!
+    let (data, _) = try await URLSession.shared.data(from: url)
+    return data
+}
+
+Task {
+    do {
+        let data = try await fetchData()
+        print("Data: \(data)")
+    } catch {
+        print("Error: \(error)")
+    }
+}
 ```
 
 # Style Guide
