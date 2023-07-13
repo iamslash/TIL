@@ -1,3 +1,17 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Basic](#basic)
+  - [Swift Event](#swift-event)
+  - [`@State`](#state)
+  - [`@Published`](#published)
+  - [`@State` vs `@Published`](#state-vs-published)
+  - [`@Environment`](#environment)
+- [Typical `@Environment`](#typical-environment)
+- [`@StateObject` vs `@ObservedObject`](#stateobject-vs-observedobject)
+  - [`@Binding`](#binding)
+
+---
+
 # Abstract
 
 Interface Builder 다음의 UI Tool 이다.
@@ -36,7 +50,7 @@ struct ContentView: View {
 
 The `$` sign is used to create a two-way binding between the property and the Toggle view, ensuring that changes in the state of the switch are automatically reflected in the view.
 
-# `@Published`
+## `@Published`
 
 `@Published` is a property wrapper in SwiftUI and part of the Combine framework, used in conjunction with ObservableObject to handle data changes and updates in an app's state. When you place the `@Published` property wrapper before a property in a class that conforms to the `ObservableObject` protocol, it automatically announces any changes made to that property by sending notifications to any subscribers.
 
@@ -66,7 +80,7 @@ struct ContentView: View {
 
 In this example, the `Counter` class conforms to the `ObservableObject` protocol, and `count` property is marked as `@Published`. This means that whenever count property changes, it will notify its subscribers. In the ContentView, we are using `@ObservedObject` to create a binding between the view and the counter object. When the count is increased by tapping the "Increment" button, the view automatically updates to reflect the new value of the count property.
 
-# `@State` vs `@Published`
+## `@State` vs `@Published`
 
 Both `@State` and `@Published` are used to manage and observe data changes in
 SwiftUI, but they serve different purposes and have different use cases.
@@ -93,7 +107,7 @@ internal state of a **single view**, and use `@Published` when you need to manag
 and share data across **multiple views** using a separate data model conforming to
 `ObservableObject`.
 
-# `@Environment`
+## `@Environment`
 
 `@Environment` is a property wrapper in SwiftUI that allows you to access and use
 environment values (shared data and settings) that are managed by the SwiftUI
@@ -191,3 +205,47 @@ In summary, use `@StateObject` when you need to initialize and manage the
 lifecycle of an observable object in a view, while use `@ObservedObject` when
 you need to observe and update an object that is created and owned externally,
 such as by a parent or ancestor view.
+
+## `@Binding`
+
+`@Binding` is a property wrapper in SwiftUI used to create a mutable two-way
+binding between a property and a view. It enables a child view to access, share,
+and modify a value owned by a parent or ancestor view without directly owning
+the underlying state of the property.
+
+When you use `@Binding` with a property in a child view, it reflects the changes
+made in that view into the original data source in the parent or ancestor view,
+allowing you to create more decoupled and reusable components in SwiftUI.
+
+Here's an example to demonstrate the usage of `@Binding`:
+
+```swift
+import SwiftUI
+
+struct ContentView: View {
+    @State private var isSwitchOn: Bool = false
+
+    var body: some View {
+        VStack {
+            Toggle("Switch", isOn: $isSwitchOn)
+            ChildView(isSwitchOn: $isSwitchOn)
+        }
+    }
+}
+
+struct ChildView: View {
+    @Binding var isSwitchOn: Bool
+
+    var body: some View {
+        Button("Toggle Switch") {
+            isSwitchOn.toggle()
+        }
+    }
+}
+```
+
+the ContentView has a `@State` property `isSwitchOn`. The ChildView uses an `@Binding`
+property with the same name to create a two-way binding with the parent view's
+property. When the button in the `ChildView` is tapped, it toggles the value of
+`isSwitchOn`, which is also reflected in the parent view's property due to the
+binding.
