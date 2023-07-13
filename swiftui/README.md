@@ -6,8 +6,8 @@
   - [`@Published`](#published)
   - [`@State` vs `@Published`](#state-vs-published)
   - [`@Environment`](#environment)
-- [Typical `@Environment`](#typical-environment)
-- [`@StateObject` vs `@ObservedObject`](#stateobject-vs-observedobject)
+  - [Typical `@Environment`](#typical-environment)
+  - [`@StateObject` vs `@ObservedObject`](#stateobject-vs-observedobject)
   - [`@Binding`](#binding)
 
 ---
@@ -145,7 +145,7 @@ color scheme, the corresponding text is displayed. When the color scheme
 changes, SwiftUI automatically updates the view to reflect the new state.
 
 
-# Typical `@Environment`
+## Typical `@Environment`
 
 There are several predefined `@Environment` values in SwiftUI that allow access
 to system settings, user preferences, or context-specific information. Here's a
@@ -174,7 +174,7 @@ provides. To use a specific environment value, you can access it using the
 For example, to access the color scheme, you would use
 `@Environment(\.colorScheme) var colorScheme`
 
-# `@StateObject` vs `@ObservedObject`
+## `@StateObject` vs `@ObservedObject`
 
 `@StateObject` and `@ObservedObject` are both property wrappers in SwiftUI that
 help you manage and observe state changes in your app. However, they serve
