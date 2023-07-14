@@ -19,7 +19,7 @@
     - [vector](#vector)
     - [deque (double ended queue)](#deque-double-ended-queue)
     - [list](#list)
-    - [priority_queue](#priority_queue)
+    - [priority\_queue](#priority_queue)
   - [How to choose a container](#how-to-choose-a-container)
   - [Sort](#sort)
   - [Search](#search)
@@ -47,9 +47,10 @@
 - [Quiz](#quiz)
 - [STL](#stl)
 - [C++11](#c11)
+- [Style Guide](#style-guide)
 - [Effective CPP](#effective-cpp)
-- [Design Patterns](#design-patterns)
-- [C++ Architecture](#c-architecture)
+- [Design Pattern](#design-pattern)
+- [Architecture](#architecture)
 
 -----
 
@@ -1747,14 +1748,18 @@ class Demonstration {
 
 * [c++11](cpp_cpp11.md)
 
+# Style Guide
+
+* [C++ Style Guide | google](https://google.github.io/styleguide/cppguide.html)
+
 # Effective CPP
 
 * [Effective Cpp](cpp_effective.md)
 
-# Design Patterns
+# Design Pattern
 
-* [Design Patterns in Cpp](cpp_design_pattern.md)
+* [c++ design pattern | reactoring.guru](https://refactoring.guru/design-patterns/cpp)
 
-# C++ Architecture
+# Architecture
 
 * [What is a general C++ project structure like?](https://www.linkedin.com/pulse/what-general-c-project-structure-like-herbert-elwood-gilliland-iii/)

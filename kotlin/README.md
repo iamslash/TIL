@@ -97,10 +97,10 @@
   - [Null safety](#null-safety-1)
   - [@JvmOverloads](#jvmoverloads)
   - [`@JvmStatic` vs Companion](#jvmstatic-vs-companion)
+- [Stule Guide](#stule-guide)
 - [Effective Kotlin](#effective-kotlin)
-- [Kotlin Design Pattern](#kotlin-design-pattern)
-- [Coding Convention](#coding-convention)
-- [Kotlin Architecture](#kotlin-architecture)
+- [Design Pattern](#design-pattern)
+- [Architecture](#architecture)
 - [Kotlin Projects](#kotlin-projects)
 
 ----
@@ -2572,19 +2572,26 @@ Java 에서 Kotlin class 의 static method 를 호출한다고 하자. Kotlin cl
 method 에 `@JvmStatic` 을 사용하자. Companion class 가 만들어지지 않아서
 효율적이다.
 
+# Stule Guide
+
+* [Coding conventions | Kotlin](https://kotlinlang.org/docs/coding-conventions.html)
+
 # Effective Kotlin
 
 * [Effective Kotlin](/kotlin/kotlin_effective.md)
 
-# Kotlin Design Pattern
+# Design Pattern
 
 * [Kotlin Design Pattern](/kotlin/kotlin_design_pattern.md)
 
-# Coding Convention
+# Architecture
 
-* [Coding conventions @ Kotlin](https://kotlinlang.org/docs/coding-conventions.html)
+Java Examples 로 대신함.
 
-# Kotlin Architecture
+* [example-order | github](https://github.com/gregshiny/example-order)
+  * 패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src
+* [example-gift | github](https://github.com/gregshiny/example-gift)
+  * 패스트캠퍼스 RED - 비즈니스 성공을 위한 Java/Spring 기반 서비스 개발과 MSA 구축 src
 
 # Kotlin Projects
 

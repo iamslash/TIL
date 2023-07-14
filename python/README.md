@@ -74,7 +74,7 @@
   - [typing — Support for type hints @ python3](#typing--support-for-type-hints--python3)
   - [itertools — Functions creating iterators for efficient looping](#itertools--functions-creating-iterators-for-efficient-looping)
   - [functools — Higher-order functions and operations on callable objects](#functools--higher-order-functions-and-operations-on-callable-objects)
-- [Library](#library)
+- [Libraries](#libraries)
   - [regex](#regex)
   - [click](#click)
   - [unittest](#unittest)
@@ -84,9 +84,10 @@
   - [flake8](#flake8)
   - [objgraph](#objgraph)
   - [MySQL-python 1.2.5 on python2.7 build error, library not found for -lssl](#mysql-python-125-on-python27-build-error-library-not-found-for--lssl)
+- [Style Guide](#style-guide)
 - [Effective Python](#effective-python)
-- [Python Design Pattern](#python-design-pattern)
-- [Python Architecture](#python-architecture)
+- [Design Pattern](#design-pattern)
+- [Architecture](#architecture)
   
 ----
 
@@ -2892,7 +2893,7 @@ if __name__ == "__main__":
 
 * [functools](functools.md)
 
-# Library
+# Libraries
 
 ## regex
 
@@ -3047,15 +3048,19 @@ $ pip install MySQL-python==1.2.5
 $ pip install --global-option=build_ext --global-option="-I/usr/local/opt/openssl@1.1/include" --global-option="-L/usr/local/opt/openssl@1.1/lib" MySQL-python==1.2.5
 ```
 
+# Style Guide
+
+* [Python Style Guide | google](https://google.github.io/styleguide/pyguide.html)
+
 # Effective Python
 
 * [Effective Python](https://effectivepython.com/)
 
-# Python Design Pattern
+# Design Pattern
 
 * [Python Design Pattern | refactoring.guru](https://refactoring.guru/design-patterns/python)
 
-# Python Architecture
+# Architecture
 
 * [Architecture Patterns with Python | amazon](https://www.amazon.com/Architecture-Patterns-Python-Domain-Driven-Microservices/dp/1492052205)
 * [tructuring Your Project | Hitchhiker's Guide](https://docs.python-guide.org/writing/structure/)

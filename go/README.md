@@ -95,9 +95,10 @@
   - [IntelliJ IDEA](#intellij-idea)
   - [Managing Multiple go versions](#managing-multiple-go-versions)
   - [Race](#race)
+- [Style Guide](#style-guide)
 - [Effective Go](#effective-go)
-- [Go Design Patterns](#go-design-patterns)
-- [Go Architectures](#go-architectures)
+- [Design Pattern](#design-pattern)
+- [Architecture](#architecture)
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -2630,16 +2631,20 @@ $ go1.19 env GOROOT
   * uber 가 모은 실수 패턴
   * [Data Race Patterns in Go (uber.com) | ycombinator](https://news.ycombinator.com/item?id=31698503)
 
+# Style Guide
+
+* [Go Style Guide | google](https://google.github.io/styleguide/go/)
+
 # Effective Go
 
 * [effective go](https://golang.org/doc/effective_go.html)
   * [한글](https://gosudaweb.gitbooks.io/effective-go-in-korean/content/)
 
-# Go Design Patterns
+# Design Pattern
 
-* [Design Patterns in Go](go_design_pattern.md)
+* [Go Design Patterns](go_design_pattern.md)
 
-# Go Architectures
+# Architecture
 
 * [upspin @ github](https://github.com/upspin/upspin)
   * Rob Pike 의 repo 이다. 배울 것이 많다.

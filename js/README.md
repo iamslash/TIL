@@ -87,6 +87,10 @@
   - [Shorthand property names](#shorthand-property-names)
   - [Duplicate Property Names](#duplicate-property-names)
   - [Decorator](#decorator)
+- [Style Guide](#style-guide)
+- [Effective JavaScript](#effective-javascript)
+- [Design Pattern](#design-pattern)
+- [Architecutre](#architecutre)
 
 -------------------------------------------------------------------------------
 
@@ -2573,3 +2577,21 @@ export default class MyApp extends React.Component {
   // ...define your main app here
 }
 ```
+
+# Style Guide
+
+* [Google JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html)
+
+# Effective JavaScript
+
+* [Effective JavaScript](http://effectivejs.com/)
+  * [src](https://github.com/effectivejs/code)
+
+# Design Pattern
+
+* [TypeScript Design Pattern | refactoring.guru](https://refactoring.guru/design-patterns/typescript)
+
+# Architecutre
+
+JavaScript 는 주로 [React.js](/react.js/README.md) 와 함께 사용한다. [React.js
+Architecture](/React.js/README.md#architectures) 를 참고하자.

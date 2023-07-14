@@ -35,8 +35,9 @@
   - [`declare`](#declare)
   - [Function Definition With Interfaces](#function-definition-with-interfaces)
   - [Interface vs Type](#interface-vs-type)
+- [Style Guide](#style-guide)
 - [Effective Typescript](#effective-typescript)
-- [Typescript Design Pattern](#typescript-design-pattern)
+- [Design Pattern](#design-pattern)
 - [Typescript Architecture](#typescript-architecture)
 
 ----
@@ -1049,12 +1050,16 @@ the property name colon.
 }
 ```
 
+# Style Guide
+
+* [TypeScript Style Guide | google](https://google.github.io/styleguide/tsguide.html)
+
 # Effective Typescript
 
 * [Effective TypeScript](https://effectivetypescript.com/)
   * [src](https://github.com/danvk/effective-typescript)
 
-# Typescript Design Pattern
+# Design Pattern
 
 * [Typescript Design Pattern | refacotring.guru](https://refactoring.guru/design-patterns/typescript)
 

@@ -2373,7 +2373,7 @@ Task {
 
 # Design Pattern
 
-* [Swift Design Pattern | refactoringguru](https://refactoring.guru/design-patterns/swift)
+* [Swift Design Pattern | refactoring.guru](https://refactoring.guru/design-patterns/swift)
 
 # Architectures
 
