@@ -2847,7 +2847,7 @@ $ ./gradlew bootrun --jvm-debug
 
 # Effective Java
 
-* [Effective Java](effectivejava/README.md)
+* [Effective Java](java_effective.md)
 
 # Java Design Patterns
 

@@ -18,6 +18,7 @@
     - [Model-View-Controller](#model-view-controller)
     - [Model-View-Presenter](#model-view-presenter)
     - [Model-View-ViewModel](#model-view-viewmodel)
+    - [MVC vs MVP vs MVVM](#mvc-vs-mvp-vs-mvvm)
     - [Naked Objects](#naked-objects)
     - [Repository](#repository)
     - [Serverless](#serverless)
@@ -280,25 +281,78 @@
 
 ### Model-View-Controller
 
-* Separate the user interface into three interconnected components:
-  the model, the view and the controller. Let the model manage the
-  data, the view display the data and the controller mediate
-  updating the data and redrawing the display.
-* 시스템을 model, view, controller 로 구분해서 구현한다.
+MVC (Model-View-Controller):
+
+* Model: Represents the application's data, logic, and business rules. It is
+  responsible for retrieving and storing data, as well as performing any
+  necessary data processing.
+
+* View: Represents the user interface and presentation of the data fetched by
+  the Model. It displays the data to the user and receives user inputs to send
+  back to the Controller.
+* Controller: Acts as an intermediary between the Model and View. It handles
+  user input from the View, processes it, and updates the Model and View
+  accordingly. 
+  
+Key points:
+
+* The Controller is responsible for defining the application's behavior and
+  managing communication between the Model and View.
+* The View is dependent on the Model, but the Model is not dependent on the
+  View.
 
 ### Model-View-Presenter
 
-* Apply a "Separation of Concerns" principle in a way that allows
-  developers to build and test user interfaces.
-* 시스템을 model, view, presenter 로 구분해서 구현한다.
-* [안드로이드의 MVC, MVP, MVVM 종합 안내서](https://academy.realm.io/kr/posts/eric-maxwell-mvc-mvp-and-mvvm-on-android/)
+MVP (Model-View-Presenter):
+
+* Model: Similar to MVC, the Model represents the application's data, logic, and
+  business rules.
+* View: Responsible for displaying the data from the Model. It also receives
+  user inputs and sends them to the Presenter.
+* Presenter: Acts as an intermediary between the Model and View, similar to the
+  Controller in MVC. However, the Presenter is responsible for updating the View
+  directly and has a reference to the View.
+
+Key points:
+
+* The Presenter contains the application's behavior and manages communication
+  between the Model and View, but it also updates the View directly.
+
+* The View is not dependent on the Model, making them more decoupled.
 
 ### Model-View-ViewModel
 
-* To apply "Separation of Concerns" to separate the logic from the UI components and allow developers to work on UI without affecting the logic and vice versa.
-* 시스템을 model, view, viewmodel 로 구분해서 구현한다.
-* [[디자인패턴] MVC, MVP, MVVM 비교](https://beomy.tistory.com/43)
-  
+MVVM (Model-View-ViewModel):
+
+* Model: Same as in MVC and MVP, the Model represents the application's data,
+  logic, and business rules.
+* View: Displays the data and receives user inputs, but the View is not aware of
+  the ViewModel or the Model.
+* ViewModel: Acts as an intermediary between the Model and View, similar to the
+  Presenter in MVP. However, the ViewModel exposes data-bindings instead of
+  directly updating the View. The View updates itself based on the data-bindings
+  and notifies the ViewModel of user input.
+
+Key points:
+
+* The ViewModel uses data-bindings to update the View, rather than directly
+  changing it.
+* The View is not aware of the ViewModel or the Model, providing a high level of
+  separation between them.
+* [SwiftUI](/swiftui/) is a good example.
+
+### MVC vs MVP vs MVVM
+
+MVC (Model-View-Controller), MVP (Model-View-Presenter), and MVVM
+(Model-View-ViewModel) are three popular architectural patterns for designing
+software applications, especially in the web, mobile, and desktop domains. They
+all emphasize separation of concerns, helping to organize code and make it more
+maintainable. 
+
+all three patterns (MVC, MVP, and MVVM) aim to separate the concerns of data,
+presentation, and behavior in an application. The primary differences lie in the
+way the Controller/Presenter/ViewModel manage communication and update the View.
+
 ### Naked Objects
 
 * The Naked Objects architectural pattern is well suited for rapid
@@ -452,7 +506,15 @@
 
 ### Parameter Object 
 
-* The syntax of Java language doesn’t allow you to declare a method with a predefined value for a parameter. Probably the best option to achieve default method parameters in Java is by using the method overloading. Method overloading allows you to declare several methods with the same name but with a different number of parameters. But the main problem with method overloading as a solution for default parameter values reveals itself when a method accepts multiple parameters. Creating an overloaded method for each possible combination of parameters might be cumbersome. To deal with this issue, the Parameter Object pattern is used.
+* The syntax of Java language doesn’t allow you to declare a method with a
+  predefined value for a parameter. Probably the best option to achieve default
+  method parameters in Java is by using the method overloading. Method
+  overloading allows you to declare several methods with the same name but with
+  a different number of parameters. But the main problem with method overloading
+  as a solution for default parameter values reveals itself when a method
+  accepts multiple parameters. Creating an overloaded method for each possible
+  combination of parameters might be cumbersome. To deal with this issue, the
+  Parameter Object pattern is used.
 * argument 를 객체로 감싸서 전달한다.
 
 ### Partial Response
@@ -494,43 +556,64 @@
 
 ### Sharding
 
-* Sharding pattern means divide the data store into horizontal partitions or shards. Each shard has the same schema, but holds its own distinct subset of the data. A shard is a data store in its own right (it can contain the data for many entities of different types), running on a server acting as a storage node.
+* Sharding pattern means divide the data store into horizontal partitions or
+  shards. Each shard has the same schema, but holds its own distinct subset of
+  the data. A shard is a data store in its own right (it can contain the data
+  for many entities of different types), running on a server acting as a storage
+  node.
 * 데이터를 수평적으로 나누어 구현한다.
 
 ### Spatial Partition
 
-* As explained in the book Game Programming Patterns by Bob Nystrom, spatial partition pattern helps to efficiently locate objects by storing them in a data structure organized by their positions.
+* As explained in the book Game Programming Patterns by Bob Nystrom, spatial
+  partition pattern helps to efficiently locate objects by storing them in a
+  data structure organized by their positions.
 * 지역을 나누어서 관리한다. 쿼드트리가 이것에 해당한다.
 
 ### Special Case
 
-* Define some special cases, and encapsulates them into subclasses that provide different special behaviors.
+* Define some special cases, and encapsulates them into subclasses that provide
+  different special behaviors.
 * 자식 클래스를 정의하여 특별한 행동을 부여한다.
 
 ### Specification
 
-* Specification pattern separates the statement of how to match a candidate, from the candidate object that it is matched against. As well as its usefulness in selection, it is also valuable for validation and for building to order.
+* Specification pattern separates the statement of how to match a candidate,
+  from the candidate object that it is matched against. As well as its
+  usefulness in selection, it is also valuable for validation and for building
+  to order.
 * ???
 
 ### [State](/designpattern/state/state.md)
 
-* Allow an object to alter its behavior when its internal state changes. The object will appear to change its class.
+* Allow an object to alter its behavior when its internal state changes. The
+  object will appear to change its class.
 * 상태를 추상화한다.
 
 ### [Strategy](/designpattern/strategy/strategy.md)
 
-* Define a family of algorithms, encapsulate each one, and make them interchangeable. Strategy lets the algorithm vary independently from the clients that use it.
+* Define a family of algorithms, encapsulate each one, and make them
+  interchangeable. Strategy lets the algorithm vary independently from the
+  clients that use it.
 * 전략을 추상화한다.
 
 ### Subclass Sandbox
 
-* The subclass sandbox pattern describes a basic idea, while not having a lot of detailed mechanics. You will need the pattern when you have several similar subclasses. If you have to make a tiny change, then change the base class, while all subclasses shouldn't have to be touched. So the base class has to be able to provide all of the operations a derived class needs to perform.
+* The subclass sandbox pattern describes a basic idea, while not having a lot of
+  detailed mechanics. You will need the pattern when you have several similar
+  subclasses. If you have to make a tiny change, then change the base class,
+  while all subclasses shouldn't have to be touched. So the base class has to be
+  able to provide all of the operations a derived class needs to perform.
 * 기능을 추가할 때 subclass 는 수정하지 않고 baseclass 만 수정한다.
 
 ### [Template method](/designpattern/template/template.md)
 
-* Define the skeleton of an algorithm in an operation, deferring some steps to subclasses. Template Method lets subclasses redefine certain steps of an algorithm without changing the algorithm's structure.
-* 추상 클래스의 함수에서 구현 클래스의 함수들을 절차에 맞게 호출한다. 구현 클래스에서 단위 절차에 해당하는 함수들을 구현한다. 절차가 수정되면 추상 클래스만 수정하면 된다.
+* Define the skeleton of an algorithm in an operation, deferring some steps to
+  subclasses. Template Method lets subclasses redefine certain steps of an
+  algorithm without changing the algorithm's structure.
+* 추상 클래스의 함수에서 구현 클래스의 함수들을 절차에 맞게 호출한다. 구현
+  클래스에서 단위 절차에 해당하는 함수들을 구현한다. 절차가 수정되면 추상
+  클래스만 수정하면 된다.
 
 ### Throttling  
 
@@ -579,7 +662,10 @@
 
 ### Active Object
 
-* The active object design pattern decouples method execution from method invocation for objects that each reside in their thread of control. The goal is to introduce concurrency, by using asynchronous method invocation, and a scheduler for handling requests.
+* The active object design pattern decouples method execution from method
+  invocation for objects that each reside in their thread of control. The goal
+  is to introduce concurrency, by using asynchronous method invocation, and a
+  scheduler for handling requests.
 * 쓰레드와 큐를 갖는 객체이다. 객체에게 요청을 보내면 큐에 저장되고 객체의 쓰레드가 하나씩 처리한다.
 * [go](/golang/README.md) 로 구현한다면 struct 에 channel 과 그 channel 에서 요청을 하나씩 처리하는 go routine 을 추가한다. struct instance 가 곧 Actibe Object 이다.
 
@@ -605,12 +691,19 @@
 
 ### Event Queue
 
-* Event Queue is a good pattern if You have a limited accessibility resource (for example: Audio or Database), but You need to handle all the requests that want to use that. It puts all the requests in a queue and process them asynchronously. Gives the resource for the event when it is the next in the queue and in same time removes it from the queue.
-* 큐를 하나 두고 이벤트를 보낸다. 큐에서 이벤트를 꺼내거 처리한다. 큐를 통해 쓰로틀링된다. 제한된 접근을 제공하는 리소스들을 처리할 수 있다.
+* Event Queue is a good pattern if You have a limited accessibility resource
+  (for example: Audio or Database), but You need to handle all the requests that
+  want to use that. It puts all the requests in a queue and process them
+  asynchronously. Gives the resource for the event when it is the next in the
+  queue and in same time removes it from the queue.
+* 큐를 하나 두고 이벤트를 보낸다. 큐에서 이벤트를 꺼내거 처리한다. 큐를 통해
+  쓰로틀링된다. 제한된 접근을 제공하는 리소스들을 처리할 수 있다.
 
 ### Event-based Asynchronous
 
-* The Event-based Asynchronous Pattern makes available the advantages of multithreaded applications while hiding many of the complex issues inherent in multithreaded design.
+* The Event-based Asynchronous Pattern makes available the advantages of
+  multithreaded applications while hiding many of the complex issues inherent in
+  multithreaded design.
 * 멀티 쓰레드 애플리케이션에서 서로 다른 쓰레드가 이벤트를 주고 받으면서 처리한다.
 
 ### Guarded Suspension
@@ -633,7 +726,10 @@
 
 ### Lockable Object
 
-* The lockable object design pattern ensures that there is only one user using the target object. Compared to the built-in synchronization mechanisms such as using the synchronized keyword, this pattern can lock objects for an undetermined time and is not tied to the duration of the request.
+* The lockable object design pattern ensures that there is only one user using
+  the target object. Compared to the built-in synchronization mechanisms such as
+  using the synchronized keyword, this pattern can lock objects for an
+  undetermined time and is not tied to the duration of the request.
 * 쓰레드 안정적인 객체.
 
 ### Master-Worker
@@ -643,7 +739,8 @@
 
 ### Monitors
 
-* Monitor pattern is used to create thread-safe objects and prevent conflicts between threads in concurrent applications.
+* Monitor pattern is used to create thread-safe objects and prevent conflicts
+  between threads in concurrent applications.
 * 쓰레드 안정적인 객체. Lockable object 와 무슨차이???
 
 ### Producer Consumer
@@ -664,7 +761,11 @@
 
 ### Queue based load leveling
 
-* Use a queue that acts as a buffer between a task and a service that it invokes in order to smooth intermittent heavy loads that may otherwise cause the service to fail or the task to time out. This pattern can help to minimize the impact of peaks in demand on availability and responsiveness for both the task and the service.
+* Use a queue that acts as a buffer between a task and a service that it invokes
+  in order to smooth intermittent heavy loads that may otherwise cause the
+  service to fail or the task to time out. This pattern can help to minimize the
+  impact of peaks in demand on availability and responsiveness for both the task
+  and the service.
 * ???
 
 ### Reactor
@@ -694,8 +795,10 @@
 
 ### Saga
 
-* This pattern is used in distributed services to perform a group of operations atomically. This is an analog of transaction in a database but in terms of microservices architecture this is executed in a distributed environment
-* [distributed transaction](/distributedsystem/README.md) 을 처리한다.
+* This pattern is used in distributed services to perform a group of operations
+  atomically. This is an analog of transaction in a database but in terms of
+  microservices architecture this is executed in a distributed environment
+* [Distributed Transaction](/distributedsystem/README.md) 을 처리한다.
 
 ### Thread Pool
 
@@ -709,7 +812,8 @@
 
 ### Version Number
 
-* Resolve concurrency conflicts when multiple clients are trying to update same entity simultaneously.
+* Resolve concurrency conflicts when multiple clients are trying to update same
+  entity simultaneously.
 * 데이터마다 버전을 부여하고 여러 쓰레드가 안정적으로 접근할 수 있다.
 * 낙관적 잠금이라고도 한다.
 * [systemdesign - Optimistic Lock vs Pessimistic Lock](/systemdesign/README.md#optimistic-lock-vs-pessimistic-lock)
@@ -718,37 +822,53 @@
 
 ### [Abstract Factory](/designpattern/abstractfactory/abstractfactory.md)
 
-* Provide an interface for creating families of related or dependent objects without specifying their concrete classes.
+* Provide an interface for creating families of related or dependent objects
+  without specifying their concrete classes.
 * 팩토리 메쏘드를 갖는 팩토리를 생성한다.
 
 ### [Builder](/designpattern/builder/builder.md) 
 
-* Separate the construction of a complex object from its representation so that the same construction process can create different representations.
+* Separate the construction of a complex object from its representation so that
+  the same construction process can create different representations.
 * 객체 생성 과정을 추상화 한다.
 
 ### Converter 
 
-* The purpose of the Converter pattern is to provide a generic, common way of bidirectional conversion between corresponding types, allowing a clean implementation in which the types do not need to be aware of each other. Moreover, the Converter pattern introduces bidirectional collection mapping, reducing a boilerplate code to minimum.
+* The purpose of the Converter pattern is to provide a generic, common way of
+  bidirectional conversion between corresponding types, allowing a clean
+  implementation in which the types do not need to be aware of each other.
+  Moreover, the Converter pattern introduces bidirectional collection mapping,
+  reducing a boilerplate code to minimum.
 * 두 객체 사이를 변환한다. DTO 를 Entity 로 변환하고 Entity 를 DTO 로 변환한다.
 
 ### Dependency Injection 
 
-* Dependency Injection is a software design pattern in which one or more dependencies (or services) are injected, or passed by reference, into a dependent object (or client) and are made part of the client's state. The pattern separates the creation of a client's dependencies from its own behavior, which allows program designs to be loosely coupled and to follow the inversion of control and single responsibility principles.
+* Dependency Injection is a software design pattern in which one or more
+  dependencies (or services) are injected, or passed by reference, into a
+  dependent object (or client) and are made part of the client's state. The
+  pattern separates the creation of a client's dependencies from its own
+  behavior, which allows program designs to be loosely coupled and to follow the
+  inversion of control and single responsibility principles.
 * 객체를 생성해서 주입한다.
 
 ### Factory 
 
-* Providing a static method encapsulated in a class called the factory, to hide the implementation logic and make client code focus on usage rather than initializing new objects.
+* Providing a static method encapsulated in a class called the factory, to hide
+  the implementation logic and make client code focus on usage rather than
+  initializing new objects.
 * 객체를 생성하는 클래스.
 
 ### Factory Kit
 
-* Define a factory of immutable content with separated builder and factory interfaces.
+* Define a factory of immutable content with separated builder and factory
+  interfaces.
 * ???
 
 ### [Factory Method](/designpattern/factorymethod/factorymethod.md)
 
-* Define an interface for creating an object, but let subclasses decide which class to instantiate. Factory Method lets a class defer instantiation to subclasses.
+* Define an interface for creating an object, but let subclasses decide which
+  class to instantiate. Factory Method lets a class defer instantiation to
+  subclasses.
 * 객체 생성을 추상화한 메쏘드.
 
 ### MonoState 
@@ -768,22 +888,29 @@
 
 ### Object Pool
 
-* When objects are expensive to create and they are needed only for short periods of time it is advantageous to utilize the Object Pool pattern. The Object Pool provides a cache for instantiated objects tracking which ones are in use and which are available.
+* When objects are expensive to create and they are needed only for short
+  periods of time it is advantageous to utilize the Object Pool pattern. The
+  Object Pool provides a cache for instantiated objects tracking which ones are
+  in use and which are available.
 * 객체를 풀에 담아두고 재활용한다.
 
 ### Property 
 
-* Create hierarchy of objects and new objects using already existing objects as parents.
+* Create hierarchy of objects and new objects using already existing objects as
+  parents.
 * ???
 
 ### [Prototype](/designpattern/prototype/prototype.md) 
 
-* Specify the kinds of objects to create using a prototypical instance, and create new objects by copying this prototype.
+* Specify the kinds of objects to create using a prototypical instance, and
+  create new objects by copying this prototype.
 * 복사에 의해 객체를 생성한다.
 
 ### Registry 
 
-* Stores the objects of a single class and provide a global point of access to them. Similar to Multiton pattern, only difference is that in a registry there is no restriction on the number of objects.
+* Stores the objects of a single class and provide a global point of access to
+  them. Similar to Multiton pattern, only difference is that in a registry there
+  is no restriction on the number of objects.
 * 객체를 하나 등록해 놓고 사용한다. 복사하여 사용한다???
 
 ### [Singleton](singleton/singleton.md) 
@@ -793,41 +920,57 @@
 
 ### Step Builder 
 
-* An extension of the Builder pattern that fully guides the user through the creation of the object with no chances of confusion. The user experience will be much more improved by the fact that he will only see the next step methods available, NO build method until is the right time to build the object.
+* An extension of the Builder pattern that fully guides the user through the
+  creation of the object with no chances of confusion. The user experience will
+  be much more improved by the fact that he will only see the next step methods
+  available, NO build method until is the right time to build the object.
 * ???
 
 ### Value Object 
 
-* Provide objects which follow value semantics rather than reference semantics. This means value objects' equality is not based on identity. Two value objects are equal when they have the same value, not necessarily being the same object.
+* Provide objects which follow value semantics rather than reference semantics.
+  This means value objects' equality is not based on identity. Two value objects
+  are equal when they have the same value, not necessarily being the same
+  object.
 * 값만 가지고 있는 객체를 말한다. 레퍼런스는 가지고 있지 않다. 소유한 값들이 같으면 두 객체는 같다.  
 
 ## Functional
 
 ### Collection Pipeline
 
-* Collection Pipeline introduces Function Composition and Collection Pipeline, two functional-style patterns that you can combine to iterate collections in your code. In functional programming, it's common to sequence complex operations through a series of smaller modular functions or operations. The series is called a composition of functions, or a function composition. When a collection of data flows through a function composition, it becomes a collection pipeline. Function Composition and Collection Pipeline are two design patterns frequently used in functional-style programming.
+* Collection Pipeline introduces Function Composition and Collection Pipeline,
+  two functional-style patterns that you can combine to iterate collections in
+  your code. In functional programming, it's common to sequence complex
+  operations through a series of smaller modular functions or operations. The
+  series is called a composition of functions, or a function composition. When a
+  collection of data flows through a function composition, it becomes a
+  collection pipeline. Function Composition and Collection Pipeline are two
+  design patterns frequently used in functional-style programming.
 * ???
 
 ### Filterer
 
-* The intent of this design pattern is to introduce a functional interface that will add a functionality for container-like objects to easily return filtered versions of themselves.
+* The intent of this design pattern is to introduce a functional interface that
+  will add a functionality for container-like objects to easily return filtered
+  versions of themselves.
 * ???
 
 ### Fluent Interface
 
-* A fluent interface provides an easy-readable, flowing interface, that often mimics a domain specific language. Using this pattern results in code that can be read nearly as human language.
+* A fluent interface provides an easy-readable, flowing interface, that often
+  mimics a domain specific language. Using this pattern results in code that can
+  be read nearly as human language.
 * ???
 
 ### Monad
 
-* Monad pattern based on monad from linear algebra represents the
-  way of chaining operations together step by step. Binding
-  functions can be described as passing one's output to another's
-  input basing on the 'same type' contract. Formally, monad consists
-  of a type constructor M and two operations: bind - that takes
-  monadic object and a function from plain object to monadic value
-  and returns monadic value return - that takes plain type object
-  and returns this object wrapped in a monadic value.
+* Monad pattern based on monad from linear algebra represents the way of
+  chaining operations together step by step. Binding functions can be described
+  as passing one's output to another's input basing on the 'same type' contract.
+  Formally, monad consists of a type constructor M and two operations: bind -
+  that takes monadic object and a function from plain object to monadic value
+  and returns monadic value return - that takes plain type object and returns
+  this object wrapped in a monadic value.
 * ???
 
 ## Idiom
@@ -843,13 +986,18 @@
 
 ### Callback
 
-* Callback is a piece of executable code that is passed as an argument to other code, which is expected to call back (execute) the argument at some convenient time.
+* Callback is a piece of executable code that is passed as an argument to other
+  code, which is expected to call back (execute) the argument at some convenient
+  time.
 * 함수를 인자로 다른 함수에게 넘겨준다.
 
 ### Combinator
 
-* The functional pattern representing a style of organizing libraries centered around the idea of combining functions.
-Putting it simply, there is some type T, some functions for constructing "primitive" values of type T, and some "combinators" which can combine values of type T in various ways to build up more complex values of type T.
+* The functional pattern representing a style of organizing libraries centered
+  around the idea of combining functions. Putting it simply, there is some type
+  T, some functions for constructing "primitive" values of type T, and some
+  "combinators" which can combine values of type T in various ways to build up
+  more complex values of type T.
 * 함수를 합성한다.
 
 ### Double Checked Locking
@@ -862,18 +1010,24 @@ Putting it simply, there is some type T, some functions for constructing "primit
 
 ### Double Dispatch
 
-* Double Dispatch pattern is a way to create maintainable dynamic behavior based on receiver and parameter types.
+* Double Dispatch pattern is a way to create maintainable dynamic behavior based
+  on receiver and parameter types.
 * receiver, parameter type 을 보고 수행할 비지니스 로직을 선택한다.
 * [visitor](/designpattern/visitor/visitor.md)
 
 ### Execute Around
 
-* Execute Around idiom frees the user from certain actions that should always be executed before and after the business method. A good example of this is resource allocation and deallocation leaving the user to specify only what to do with the resource.
+* Execute Around idiom frees the user from certain actions that should always be
+  executed before and after the business method. A good example of this is
+  resource allocation and deallocation leaving the user to specify only what to
+  do with the resource.
 * 특정 영역을 수행하기 전에 수행하고 수행하고 나서 수행한다.
 
 ### Lazy Loading
 
-* Lazy loading is a design pattern commonly used to defer initialization of an object until the point at which it is needed. It can contribute to efficiency in the program's operation if properly and appropriately used.
+* Lazy loading is a design pattern commonly used to defer initialization of an
+  object until the point at which it is needed. It can contribute to efficiency
+  in the program's operation if properly and appropriately used.
 * 꼭 필요할 때 로딩한다.
 
 ### Mute Idiom

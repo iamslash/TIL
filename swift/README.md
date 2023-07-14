@@ -59,8 +59,13 @@
   - [Property Wrapper](#property-wrapper)
   - [`@escaping`](#escaping)
   - [Closure vs Async/Await](#closure-vs-asyncawait)
-- [Style Guide](#style-guide)
 - [Libraries](#libraries)
+- [Style Guide](#style-guide)
+- [Effective Swift](#effective-swift)
+- [Design Pattern](#design-pattern)
+- [Architectures](#architectures)
+  - [MV (Model View)](#mv-model-view)
+  - [MVVM (Model-View-View-Model)](#mvvm-model-view-view-model)
 
 -------------------------------------------------------------------------------
 
@@ -1818,7 +1823,7 @@ struct Person: Talkable {
 }
 
 
-//MARK: - 프로토콜 상속
+// MARK: - 프로토콜 상속
 // 프로토콜은 클래스와 다르게 다중상속이 가능합니다
 /*
  protocol <#프로토콜 이름#>: <#부모 프로토콜 이름 목록#> {
@@ -2352,11 +2357,106 @@ Task {
 }
 ```
 
-# Style Guide
-
-* [Swift Style Guide](https://google.github.io/swift/)
-
 # Libraries
 
 * [Alamofire](https://github.com/Alamofire/Alamofire)
   * HTTP Client Library
+
+# Style Guide
+
+* [Swift Style Guide](https://google.github.io/swift/)
+
+# Effective Swift
+
+* [Effective Swift](https://theswiftists.github.io/effective-swift/)
+  * Effective Java 를 Swift 로 옮긴 것
+
+# Design Pattern
+
+* [Swift Design Pattern | refactoringguru](https://refactoring.guru/design-patterns/swift)
+
+# Architectures
+
+## MV (Model View)
+
+* [MVC](/java/java_design_pattern.md#model-view-controller)
+
+```swift
+// User.swift - Model
+struct User: Identifiable {
+    let id: Int
+    let name: String
+    let age: Int
+    let email: String
+}
+
+// UserListView.swift - View
+import SwiftUI
+
+struct UserListView: View {
+    let users = [
+        User(id: 1, name: "John Doe", age: 24, email: "john@example.com"),
+        User(id: 2, name: "Jane Smith", age: 30, email: "jane@example.com")
+    ]
+
+    var body: some View {
+        NavigationView {
+            List(users) { user in
+                VStack(alignment: .leading) {
+                    Text(user.name)
+                        .font(.headline)
+                    Text("Age: \(user.age)")
+                    Text(user.email)
+                        .font(.subheadline)
+                }
+            }.navigationTitle("Users")
+        }
+    }
+}
+```
+
+## MVVM (Model-View-View-Model)
+
+* [MVVM](/java/java_design_pattern.md#model-view-viewmodel)
+
+```swift
+// User.swift - Model
+struct User: Identifiable {
+    let id: Int
+    let name: String
+    let age: Int
+    let email: String
+}
+
+// UserListView - View
+import SwiftUI
+
+struct UserListView: View {
+    // Instantiate the ViewModel
+    @StateObject private var viewModel = UserListViewModel()
+
+    var body: some View {
+        NavigationView {
+            List(viewModel.users) { user in
+                VStack(alignment: .leading) {
+                    Text(user.name)
+                        .font(.headline)
+                    Text("Age: \(user.age)")
+                    Text(user.email)
+                        .font(.subheadline)
+                }
+            }.navigationTitle("Users")
+        }
+    }
+}
+
+// UserListViewModel.swift - View Model
+import SwiftUI
+
+class UserListViewModel: ObservableObject {
+    @Published var users: [User] = [
+        User(id: 1, name: "John Doe", age: 24, email: "john@example.com"),
+        User(id: 2, name: "Jane Smith", age: 30, email: "jane@example.com")
+    ]
+}
+```
