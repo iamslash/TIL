@@ -79,6 +79,7 @@ swift에 대해 정리한다.
 * [A Swift Tour](https://docs.swift.org/swift-book/GuidedTour/GuidedTour.html)
 * [online Swift playground](http://online.swiftplayground.run/)
 * [The Swift Programming Language (kor)](https://bbiguduk.gitbook.io/swift)
+* [Awesome Swift](https://github.com/matteocrippa/awesome-swift)
 
 # Materials
 

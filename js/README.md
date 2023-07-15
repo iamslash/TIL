@@ -12,6 +12,7 @@
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
+  - [Integer Division](#integer-division)
   - [Print Out](#print-out)
   - [Inspecting Types](#inspecting-types)
   - [Inspecting Functions](#inspecting-functions)
@@ -374,6 +375,13 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min)) + min; 
 }
 console.log(getRandomInt(1, 10))
+```
+
+## Integer Division
+
+```js
+console.log(3 / 2);             // 1.5
+consoel.log(Math.floor(3 / 2))  // 1
 ```
 
 ## Print Out
