@@ -29,5 +29,5 @@ constructor 만으로 object 를 생성하는 것은 다음과 같은 이유 때
 # Real World Examples
 
 * [Builder in kotlin](/kotlin/kotlin_design_pattern/builder.md)
-* [Builder in java](/java/java_design_pattern/builder.md)
+* [Builder in java](/java/java_designpattern/builder.md)
 * [Builder in go](/golang/go_design_pattern/builder.md)

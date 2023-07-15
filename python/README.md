@@ -85,8 +85,9 @@
   - [objgraph](#objgraph)
   - [MySQL-python 1.2.5 on python2.7 build error, library not found for -lssl](#mysql-python-125-on-python27-build-error-library-not-found-for--lssl)
 - [Style Guide](#style-guide)
+- [Refactoring](#refactoring)
 - [Effective Python](#effective-python)
-- [Design Pattern](#design-pattern)
+- [GOF Design Pattern](#gof-design-pattern)
 - [Architecture](#architecture)
   
 ----
@@ -3050,15 +3051,20 @@ $ pip install --global-option=build_ext --global-option="-I/usr/local/opt/openss
 
 # Style Guide
 
+* [PEP 8 Style Guide](https://peps.python.org/pep-0008/)
 * [Python Style Guide | google](https://google.github.io/styleguide/pyguide.html)
+
+# Refactoring
+
+[Refactoring Python](refactoring_python.md)
 
 # Effective Python
 
-* [Effective Python](https://effectivepython.com/)
+[Effective Python](effective_python.md)
 
-# Design Pattern
+# GOF Design Pattern
 
-* [Python Design Pattern | refactoring.guru](https://refactoring.guru/design-patterns/python)
+[Python GOF Design Pattern](python_gof_designpattern.md)
 
 # Architecture
 

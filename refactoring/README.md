@@ -13,12 +13,17 @@
     - [Simplifying Conditional Expressions](#simplifying-conditional-expressions)
     - [Simplifying Method Calls](#simplifying-method-calls)
     - [Dealing with Generalization](#dealing-with-generalization)
+- [Examples](#examples)
 
 ---
 
 # Materials
 
 * [Catalog of Refactoring](https://refactoring.guru/refactoring/catalog)
+* [Five Lines of Code | manning](https://www.manning.com/books/five-lines-of-code)
+  * Refacotring of [TypeScript](/typescript/README.md)
+  * [src](https://github.com/wikibook/five-lines)
+  * [homework](https://github.com/wikibook/bomb-guy)
 
 # Basic
 
@@ -151,3 +156,8 @@
 * Form Template Method
 * Replace Inheritance with Delegation
 * Replace Delegation with Inheritance
+
+# Examples
+
+* [Refactoring TypeScript](/typescript/refactoring_typescript.md)
+* [Refactoring Python](/python/refactoring_python.md)

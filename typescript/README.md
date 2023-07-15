@@ -36,9 +36,10 @@
   - [Function Definition With Interfaces](#function-definition-with-interfaces)
   - [Interface vs Type](#interface-vs-type)
 - [Style Guide](#style-guide)
-- [Effective Typescript](#effective-typescript)
+- [Refactoring](#refactoring)
+- [Effective](#effective)
 - [Design Pattern](#design-pattern)
-- [Typescript Architecture](#typescript-architecture)
+- [Architecture](#architecture)
 
 ----
 
@@ -1054,16 +1055,19 @@ the property name colon.
 
 * [TypeScript Style Guide | google](https://google.github.io/styleguide/tsguide.html)
 
-# Effective Typescript
+# Refactoring
 
-* [Effective TypeScript](https://effectivetypescript.com/)
-  * [src](https://github.com/danvk/effective-typescript)
+[Refactoring TypeScript](refactoring_typescript.md)
+
+# Effective
+
+[Effective TypeScript](effective_typescript.md)
 
 # Design Pattern
 
-* [Typescript Design Pattern | refacotring.guru](https://refactoring.guru/design-patterns/typescript)
+[TypeScript Design Pattern](typescript_designpattern.md)
 
-# Typescript Architecture
+# Architecture
 
 * [Typescript Clean Architecture | github](https://github.com/pvarentsov/typescript-clean-architecture)
   * java 의 Clean Architecture 와는 조금 다른 듯?

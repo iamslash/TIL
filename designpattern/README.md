@@ -36,7 +36,8 @@
     - [Strategy](#strategy)
     - [Template](#template)
     - [Visitor](#visitor)
-  - [Q&A](#qa)
+  - [Examples](#examples)
+  - [Q\&A](#qa)
 - [Game Programming Pattern](#game-programming-pattern)
   - [Sequencing Pattern](#sequencing-pattern)
     - [Double Buffer](#double-buffer)
@@ -109,11 +110,15 @@
 
 ![](img/Uml_class_relation_arrows_en.svg.png)
 
-끝이 빈 화살표이면 Association 혹은 Dependency 이다. 실선은 점선보다 강하다. 실선은 **Association**, 점선은 **Dependency** 이다.
+끝이 빈 화살표이면 Association 혹은 Dependency 이다. 실선은 점선보다 강하다.
+실선은 **Association**, 점선은 **Dependency** 이다.
 
-끝이 삼각 화살표이면 Inheritance 혹은 Implementation 이다. 실선은 점선보다 강하다. 실선은 **Inheritance**, 점선으 **Implementation** 이다. 
+끝이 삼각 화살표이면 Inheritance 혹은 Implementation 이다. 실선은 점선보다
+강하다. 실선은 **Inheritance**, 점선으 **Implementation** 이다. 
 
-끝이 다이아 화살표이면 Composition 혹은 Aggregation 이다. 다이가 채워진 것이 빈 것보다 강하다. 다이아가 채워진 것은 **Composition**, 다이아가 비워진 것은 **Aggregation** 이다.
+끝이 다이아 화살표이면 Composition 혹은 Aggregation 이다. 다이가 채워진 것이 빈
+것보다 강하다. 다이아가 채워진 것은 **Composition**, 다이아가 비워진 것은
+**Aggregation** 이다.
 
 ## Association
 
@@ -158,7 +163,8 @@ public class A {
 
 ## Aggregation
 
-A 클래스가 B 클래스를 소유하고 B 클래스는 A 클래스를 구성하는 부분일 때 둘의 관계는 Aggregation 이다. (**has-a, whole-part**)
+A 클래스가 B 클래스를 소유하고 B 클래스는 A 클래스를 구성하는 부분일 때 둘의
+관계는 Aggregation 이다. (**has-a, whole-part**)
 
 ```cs
 public class A {
@@ -168,9 +174,13 @@ public class A {
 
 ## Aggregation vs Composition
 
-호수 클래스와 오리 클래스가 있다고 하자. 호수위에 오리가 떠있다. 그리고 오리들은 농부의 소유물이다. 호수가 사라진다고 해서 오리가 사라지지는 않는다. 호수 클래스와 오리 클래스는 Aggregation 관계이다.
+호수 클래스와 오리 클래스가 있다고 하자. 호수위에 오리가 떠있다. 그리고 오리들은
+농부의 소유물이다. 호수가 사라진다고 해서 오리가 사라지지는 않는다. 호수
+클래스와 오리 클래스는 Aggregation 관계이다.
 
-자동차와 클래스와 카뷰레터 클래스가 있다고 하자. 카뷰레터는 자동차의 부품이다. 자동차가 파괴되면 카뷰레터 역시 파괴된다. 자동차 클래스와 카뷰레터 클래스는 Composition 관계이다.
+자동차와 클래스와 카뷰레터 클래스가 있다고 하자. 카뷰레터는 자동차의 부품이다.
+자동차가 파괴되면 카뷰레터 역시 파괴된다. 자동차 클래스와 카뷰레터 클래스는
+Composition 관계이다.
 
 # [GOF Pattern](http://www.dofactory.com/net/design-patterns)
 
@@ -206,30 +216,53 @@ public class A {
 ### [Template](template/template.md)
 ### [Visitor](visitor/visitor.md)
 
+## Examples
+
+- [Kotlin GOF Design Pattern](/kotlin/kotlin_design_pattern.md)
+- [Swift GOF Design Pattern](/swift/swift_designpattern.md)
+- [Python GOF Design Pattern](/python/python_designpattern.md)
+
 ## Q&A
 
 - **Factory Method vs Abstract Factory difference???**
-  - Factory Method 는 동일한 분류의 객체를 생성할 때 사용한다. Abstract Factory 는 다양한 분류의 객체를 생성할 때 사용한다. Abstract Factory 는 두개 이상의 Factory Method 를 소유한다.
+  - Factory Method 는 동일한 분류의 객체를 생성할 때 사용한다. Abstract Factory
+    는 다양한 분류의 객체를 생성할 때 사용한다. Abstract Factory 는 두개 이상의
+    Factory Method 를 소유한다.
 - **Proxy vs Adapter difference???**
-  - Proxy class 는 wrapping 하고 싶은 class 와 형제관계이다. Adapter class 는 wrapping 하고 싶은 class 와 형제관계가 아니다.
+  - Proxy class 는 wrapping 하고 싶은 class 와 형제관계이다. Adapter class 는
+    wrapping 하고 싶은 class 와 형제관계가 아니다.
 - **Decorator is better than Subclassing???**
   - [decorator @ TIL](decorator.md)
-  - IFruit 를 상속받은 Apple, Orange 가 있다고 해보자. 과일판매기능을 추가하고 싶다. Subclassing 을 이용한다면 AppleSellable, OrangeSellable 를 각각 구현해 주어야 한다. 그러나 Decorator 를 이용하면 하나의 ConcreteDecorator Sellable 를 추가하여 더욱 간단히 구현할 수 있다.
+  - IFruit 를 상속받은 Apple, Orange 가 있다고 해보자. 과일판매기능을 추가하고
+    싶다. Subclassing 을 이용한다면 AppleSellable, OrangeSellable 를 각각 구현해
+    주어야 한다. 그러나 Decorator 를 이용하면 하나의 ConcreteDecorator Sellable
+    를 추가하여 더욱 간단히 구현할 수 있다.
 - **Bridge vs Strategy difference???**
-  - Strategy 는 behavioral pattern 이다. 인스턴스 교체를 통해서 runtime 에 동작이 달라진다. Bridge pattern 은 structural pattern 이다. 추상과 구현이 분리된 구조이다. Strategy 는 추상과 구현이 분리되어 있지 않다. 따라서 Strategy 의 추상과 구현의 결합도가 Bridge 보다 높다.
+  - Strategy 는 behavioral pattern 이다. 인스턴스 교체를 통해서 runtime 에
+    동작이 달라진다. Bridge pattern 은 structural pattern 이다. 추상과 구현이
+    분리된 구조이다. Strategy 는 추상과 구현이 분리되어 있지 않다. 따라서
+    Strategy 의 추상과 구현의 결합도가 Bridge 보다 높다.
 - **Strategy vs Visitor difference???**
-  - Strategy 는 `1:many` 관계를 추상화한다. Visitor 는 `many:many` 관계를 추상화한다. 
-  - Strategy 는 Single Dispatch 를 이용한 것이고 Visitor 는 Double Dispatch 를 이용한 것이다.
-  - 예를 들어 Strategy class `Video` 를 상속받은 Concrete Strategy class `MpegCompression, AviCompression, QuickTimeCompression` 가 있다고 해보자. 
-  - 시간이 지나 Audio 압축을 지원하고자 한다. `MpegVideoCompression, MpegAudioCompression` 과 같이 중복해서 Concrete Strategy class 를 추가하는 것보다는 Visitor interface `IVisitor`  를 상속받은 Concrete Visitor `MpegCompression` 을 이용하는 것이 더욱 간단하다. 다음은 `MpegCompression` 의 vistor method 이다.
+  - Strategy 는 `1:many` 관계를 추상화한다. Visitor 는 `many:many` 관계를
+    추상화한다. 
+  - Strategy 는 Single Dispatch 를 이용한 것이고 Visitor 는 Double Dispatch 를
+    이용한 것이다.
+  - 예를 들어 Strategy class `Video` 를 상속받은 Concrete Strategy class
+    `MpegCompression, AviCompression, QuickTimeCompression` 가 있다고 해보자. 
+  - 시간이 지나 Audio 압축을 지원하고자 한다. `MpegVideoCompression,
+    MpegAudioCompression` 과 같이 중복해서 Concrete Strategy class 를 추가하는
+    것보다는 Visitor interface `IVisitor`  를 상속받은 Concrete Visitor
+    `MpegCompression` 을 이용하는 것이 더욱 간단하다. 다음은 `MpegCompression`
+    의 vistor method 이다.
 
     ```java
     MpegCompression::compressVideo(Video object)
     MpegCompression::compressAudio(Audio object)
     ```     
 - **Strategy vs State difference???**
-  - Strategy 와 State 는 매우 비슷하다. State 는 Concrete State 들 끼리 서로 변신하는 상태전환의 개념을 포함한다. Strategy 는 Concrete Strategy 들 끼리 서로 관계가 없다.
-
+  - Strategy 와 State 는 매우 비슷하다. State 는 Concrete State 들 끼리 서로
+    변신하는 상태전환의 개념을 포함한다. Strategy 는 Concrete Strategy 들 끼리
+    서로 관계가 없다.
 
 # [Game Programming Pattern](http://gameprogrammingpatterns.com/contents.html)
 
@@ -253,7 +286,7 @@ public class A {
 
 # Java Design Patterns
 
-* [Java Design Pattern](/java/java_design_pattern.md)
+* [Java Design Pattern](/java/java_designpattern.md)
   * 디자인 패턴의 끝판왕임
 
 # Microservice Patterns

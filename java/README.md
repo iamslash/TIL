@@ -87,8 +87,10 @@
   - [JCache](#jcache)
   - [JVM Remote Debugging](#jvm-remote-debugging)
   - [Quiz](#quiz)
+- [Style Guide](#style-guide)
+- [Refactoring](#refactoring)
 - [Effective Java](#effective-java)
-- [Java Design Patterns](#java-design-patterns)
+- [Java Design Pattern](#java-design-pattern)
 - [Java Architecture](#java-architecture)
 
 -------------------------------------------------------------------------------
@@ -2845,13 +2847,22 @@ $ ./gradlew bootrun --jvm-debug
 * Lambda Expressions
 * Lambda Random
 
+# Style Guide
+
+[Google Java Style Guide](https://google.github.io/styleguide/javaguide.html)
+
+# Refactoring
+
+[Refactoring Java](refactoring_java.md)
+
 # Effective Java
 
-* [Effective Java](java_effective.md)
+[Effective Java](java_effective.md)
 
-# Java Design Patterns
+# Java Design Pattern
 
-* [Design Patterns in java](java_design_pattern.md)
+- [Java Design Pattern](java_designpattern.md)
+- [Java GOF Design Pattern](java_gof_designpattern.md)
 
 # Java Architecture
 

@@ -323,6 +323,6 @@ Visitor Pattern 을 이용했기 때문에 다음과 같은 특징들을 갖는�
 # Examples
 
 * [Visitor by go](/golang/go_design_pattern/visitor.md)
-* [Visitor by java](/java/java_design_pattern/visitor.md)
+* [Visitor by java](/java/java_designpattern/visitor.md)
 * [Visitor by kotlin](/kotlin/kotlin_design_pattern/visitor.md)
 * [Visitor by cpp](/cpp/cpp_design_pattern/visitor.md)

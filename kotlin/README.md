@@ -98,6 +98,7 @@
   - [@JvmOverloads](#jvmoverloads)
   - [`@JvmStatic` vs Companion](#jvmstatic-vs-companion)
 - [Stule Guide](#stule-guide)
+- [Refactoring](#refactoring)
 - [Effective Kotlin](#effective-kotlin)
 - [Design Pattern](#design-pattern)
 - [Architecture](#architecture)
@@ -2576,9 +2577,13 @@ method 에 `@JvmStatic` 을 사용하자. Companion class 가 만들어지지 �
 
 * [Coding conventions | Kotlin](https://kotlinlang.org/docs/coding-conventions.html)
 
+# Refactoring
+
+[Refactoring Kotlin](effective_kotlin.md)
+
 # Effective Kotlin
 
-* [Effective Kotlin](/kotlin/kotlin_effective.md)
+* [Effective Kotlin](effective_kotlin.md)
 
 # Design Pattern
 

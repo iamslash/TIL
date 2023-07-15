@@ -28,7 +28,7 @@
   - [Methods](#methods)
   - [Blocks](#blocks)
   - [Modules](#modules)
-  - [Date & Time](#date--time)
+  - [Date \& Time](#date--time)
   - [Ranges](#ranges)
   - [Iterators](#iterators)
   - [File I/O](#file-io)
@@ -51,6 +51,11 @@
   - [Predefined Variables](#predefined-variables)
   - [Predefined Constants](#predefined-constants)
   - [Associated Tools](#associated-tools)
+- [Style Guide](#style-guide-1)
+- [Refactoring](#refactoring)
+- [Effective](#effective)
+- [Design Pattern](#design-pattern)
+- [Architecture](#architecture)
 
 ------
 
@@ -2085,3 +2090,21 @@ end
   * embedded Ruby ???
 * ri
   * ruby interactive reference
+
+# Style Guide
+
+[Ruby Style Guide](https://rubystyle.guide/)
+
+# Refactoring
+
+[Refactoring Ruby](refactoring_ruby.md)
+
+# Effective
+
+[Effective Ruby](effective_ruby.md)
+
+# Design Pattern
+
+[Ruby Design Pattern](ruby_gof_designpattern.md)
+
+# Architecture

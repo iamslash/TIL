@@ -474,7 +474,7 @@ way the Controller/Presenter/ViewModel manage communication and update the View.
 * Given a language, define a representation for its grammar along with an interpreter that uses the representation to interpret sentences in the language.
 * 해석을 추상화한다.
 
-### [Iterator](iterator/iterator.md) 
+### [Iterator](/designpattern/iterator/iterator.md) 
 
 * Provide a way to access the elements of an aggregate object sequentially without exposing its underlying representation.
 * 순회를 추상화한다.

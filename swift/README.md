@@ -61,9 +61,10 @@
   - [Closure vs Async/Await](#closure-vs-asyncawait)
 - [Libraries](#libraries)
 - [Style Guide](#style-guide)
-- [Effective Swift](#effective-swift)
-- [Design Pattern](#design-pattern)
-- [Architectures](#architectures)
+- [Refactoring](#refactoring)
+- [Effective](#effective)
+- [GOF Design Pattern](#gof-design-pattern)
+- [Architecture](#architecture)
   - [MV (Model View)](#mv-model-view)
   - [MVVM (Model-View-View-Model)](#mvvm-model-view-view-model)
 
@@ -2366,20 +2367,23 @@ Task {
 
 * [Swift Style Guide](https://google.github.io/swift/)
 
-# Effective Swift
+# Refactoring
 
-* [Effective Swift](https://theswiftists.github.io/effective-swift/)
-  * Effective Java 를 Swift 로 옮긴 것
+[Refactoring Swift](refactoring_swift.md)
 
-# Design Pattern
+# Effective
 
-* [Swift Design Pattern | refactoring.guru](https://refactoring.guru/design-patterns/swift)
+[Effective Swift](effective_swift.md)
 
-# Architectures
+# GOF Design Pattern
+
+[Swift GOF Design Pattern](swift_gof_designpattern.md)
+
+# Architecture
 
 ## MV (Model View)
 
-* [MVC](/java/java_design_pattern.md#model-view-controller)
+* [MVC](/java/java_designpattern.md#model-view-controller)
 
 ```swift
 // User.swift - Model
@@ -2417,7 +2421,7 @@ struct UserListView: View {
 
 ## MVVM (Model-View-View-Model)
 
-* [MVVM](/java/java_design_pattern.md#model-view-viewmodel)
+* [MVVM](/java/java_designpattern.md#model-view-viewmodel)
 
 ```swift
 // User.swift - Model

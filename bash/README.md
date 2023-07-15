@@ -104,6 +104,7 @@
 - [heredoc](#heredoc)
 - [Shortcuts](#shortcuts)
 - [Problems](#problems)
+- [Style Guide](#style-guide)
 
 -------------------------------------------------------------------------------
 
@@ -4081,3 +4082,7 @@ END {
     }
 }' file.txt
 ```
+
+# Style Guide
+
+* [Shell Style Guide | google](https://google.github.io/styleguide/shellguide.html)
