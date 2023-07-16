@@ -101,7 +101,7 @@ This is about JAVA.
 
 # References
 
-* [effective java @ TIL](java_effective.md)
+* [effective java @ TIL](effective_java.md)
 * [java annotation @ TIL](java_annotation.md)
 * [java gc @ TIL](java_gc.md)
 * [java multithread @ TIL](/java/java_multithread.md)
@@ -1901,7 +1901,7 @@ class Main {
 
 ## Effective Java Programming
 
-* [effective java @ TIL](java_effective.md)
+* [Effective Java | TIL](effective_java.md)
 
 ## What's new Java8
 
@@ -2857,7 +2857,7 @@ $ ./gradlew bootrun --jvm-debug
 
 # Effective Java
 
-[Effective Java](java_effective.md)
+[Effective Java](effective_java.md)
 
 # Java Design Pattern
 

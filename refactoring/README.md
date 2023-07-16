@@ -1,163 +1,187 @@
 - [Materials](#materials)
-- [Basic](#basic)
-  - [Code Smells](#code-smells)
-    - [Bloaters](#bloaters)
-    - [Object-Orientation Abusers](#object-orientation-abusers)
-    - [Change Preventers](#change-preventers)
-    - [Dispensables](#dispensables)
-    - [Couplers](#couplers)
-  - [Refactoring Techniques](#refactoring-techniques)
-    - [Composing Methods](#composing-methods)
-    - [Moving Features between Objects](#moving-features-between-objects)
-    - [Organizing Data](#organizing-data)
-    - [Simplifying Conditional Expressions](#simplifying-conditional-expressions)
-    - [Simplifying Method Calls](#simplifying-method-calls)
-    - [Dealing with Generalization](#dealing-with-generalization)
+- [Catalog](#catalog)
+  - [Change Function Declaration](#change-function-declaration)
+  - [Change Reference to Value](#change-reference-to-value)
+  - [Collapse Hierarchy](#collapse-hierarchy)
+  - [Combine functions into Class](#combine-functions-into-class)
+  - [Combine Functions into Transform](#combine-functions-into-transform)
+  - [Consolidate Conditional Expression](#consolidate-conditional-expression)
+  - [Decompose Conditional](#decompose-conditional)
+  - [Encapsulate Collection](#encapsulate-collection)
+  - [Encapsulate Record (Replace Record with Data Class)](#encapsulate-record-replace-record-with-data-class)
+  - [Encapsulate Variable (Encapsulate Field • Self-Encapsulate Field)](#encapsulate-variable-encapsulate-field--self-encapsulate-field)
+  - [Extract Class](#extract-class)
+  - [Extract Function](#extract-function)
+  - [Extract Method](#extract-method)
+  - [Extract Superclass](#extract-superclass)
+  - [Extract Variable (Introduce Explaining Variable)](#extract-variable-introduce-explaining-variable)
+  - [Hide Delegate](#hide-delegate)
+  - [Inline Class](#inline-class)
+  - [Inline Function (Inline Method)](#inline-function-inline-method)
+  - [Inline Variable](#inline-variable)
+  - [Inline Temp](#inline-temp)
+  - [Introduce Assertion](#introduce-assertion)
+  - [Introduce Parameter Object](#introduce-parameter-object)
+  - [Introduce Special Case (Introduce Null Object)](#introduce-special-case-introduce-null-object)
+  - [Move Field](#move-field)
+  - [Move Function (Move Method)](#move-function-move-method)
+  - [Move Statements into Function](#move-statements-into-function)
+  - [Move Statements to Callers](#move-statements-to-callers)
+  - [Parameterize Function (Parameterize Method)](#parameterize-function-parameterize-method)
+  - [Preserve Whole Object](#preserve-whole-object)
+  - [Pull Up Constructor Body](#pull-up-constructor-body)
+  - [Pull Up Field](#pull-up-field)
+  - [Pull Up Method](#pull-up-method)
+  - [Push Down Field](#push-down-field)
+  - [Push Down Method](#push-down-method)
+  - [Remove Dead Code](#remove-dead-code)
+  - [Remove Flag Argument (Replace Parameter with Explicit Methods)](#remove-flag-argument-replace-parameter-with-explicit-methods)
+  - [Remove Middle Man](#remove-middle-man)
+  - [Remove Setting Method](#remove-setting-method)
+  - [Remove Subclass (Replace Subclass with Fields)](#remove-subclass-replace-subclass-with-fields)
+  - [Rename Field](#rename-field)
+  - [Rename Variable](#rename-variable)
+  - [Replace Command with Function](#replace-command-with-function)
+  - [Replace Conditional with Polymorphism](#replace-conditional-with-polymorphism)
+  - [Replace Constructor with Factory Function (Replace Constructor with Factory Method)](#replace-constructor-with-factory-function-replace-constructor-with-factory-method)
+  - [Replace Control Flag with Break (Remove Control Flag)](#replace-control-flag-with-break-remove-control-flag)
+  - [Replace Derived Variable with Query](#replace-derived-variable-with-query)
+  - [Replace Error Code with Exception](#replace-error-code-with-exception)
+  - [Replace Exception with Precheck (Replace Exception with Test)](#replace-exception-with-precheck-replace-exception-with-test)
+  - [Replace Function with Command (Replace Method with Method Object)](#replace-function-with-command-replace-method-with-method-object)
+  - [Replace Inline Code with Function Call](#replace-inline-code-with-function-call)
+  - [Replace Loop with Pipeline](#replace-loop-with-pipeline)
+  - [Replace Magic Literal (Replace Magic Number with Symbolic Constant)](#replace-magic-literal-replace-magic-number-with-symbolic-constant)
+  - [Replace Nested Conditional with Guard Clauses](#replace-nested-conditional-with-guard-clauses)
+  - [Replace Parameter with Query (Replace Parameter with Method)](#replace-parameter-with-query-replace-parameter-with-method)
+  - [Replace Primitive with Object (Replace Data Value with Object • Replace Type Code with Class)](#replace-primitive-with-object-replace-data-value-with-object--replace-type-code-with-class)
+  - [Replace Query with Parameter](#replace-query-with-parameter)
+  - [Replace Subclass with Delegate](#replace-subclass-with-delegate)
+  - [Replace Superclass with Delegate (Replace Inheritance with Delegation)](#replace-superclass-with-delegate-replace-inheritance-with-delegation)
+  - [Replace Temp with Query](#replace-temp-with-query)
+  - [Replace Type Code with Subclasses (Extract Subclass • Replace Type Code with State/Strategy)](#replace-type-code-with-subclasses-extract-subclass--replace-type-code-with-statestrategy)
+  - [Return Modified Value](#return-modified-value)
+  - [Separate Query from Modifier](#separate-query-from-modifier)
+  - [Slide Statements (Consolidate Duplicate Conditional Fragments)](#slide-statements-consolidate-duplicate-conditional-fragments)
+  - [Split Loop](#split-loop)
+  - [Split Phase](#split-phase)
+  - [Split Variable (Remove Assignments to Parameters • Split Temp)](#split-variable-remove-assignments-to-parameters--split-temp)
+  - [Substitute Algorithm](#substitute-algorithm)
 - [Examples](#examples)
+
 
 ---
 
+
 # Materials
 
-* [Catalog of Refactoring](https://refactoring.guru/refactoring/catalog)
-* [Five Lines of Code | manning](https://www.manning.com/books/five-lines-of-code)
-  * Refacotring of [TypeScript](/typescript/README.md)
-  * [src](https://github.com/wikibook/five-lines)
-  * [homework](https://github.com/wikibook/bomb-guy)
+* [Refactoring | martinfowler](https://refactoring.com/catalog/)
 
-# Basic
+# Catalog
 
-## Code Smells
+## Change Function Declaration
 
-### Bloaters
+## Change Reference to Value
 
-* Long Method
-* Large Class
-* Primitive Obsession
-* Long Parameter List
-* Data Clumps
+## Collapse Hierarchy
 
-### Object-Orientation Abusers
+## Combine functions into Class
 
-* Alternative Classes with Different Interfaces
-* Refused Bequest
-* Switch Statements
-* Temporary Field
+## Combine Functions into Transform
 
-### Change Preventers
+## Consolidate Conditional Expression
 
-* Divergent Change
-* Parallel Inheritance Hierarchies
-* Shotgun Surgery
+## Decompose Conditional
 
-### Dispensables
+## Encapsulate Collection
 
-* Comments
-* Duplicate Code
-* Data Class
-* Dead Code
-* Lazy Class
-* Speculative Generality
+## Encapsulate Record (Replace Record with Data Class)
 
-### Couplers
+## Encapsulate Variable (Encapsulate Field • Self-Encapsulate Field)
 
-* Feature Envy
-* Inappropriate Intimacy
-* Incomplete Library Class
-* Message Chains
-* Middle Man
+## Extract Class
+## Extract Function
+## Extract Method
 
-## Refactoring Techniques
+## Extract Superclass
+## Extract Variable (Introduce Explaining Variable)
 
-### Composing Methods
+## Hide Delegate
 
-* Extract Method
-* Inline Method
-* Extract Variable
-* Inline Temp
-* Replace Temp with Query
-* Split Temporary Variable
-* Remove Assignments to Parameters
-* Replace Method with Method Object
-* Substitute Algorithm
+## Inline Class
+## Inline Function (Inline Method)
 
-### Moving Features between Objects
+## Inline Variable
+## Inline Temp
 
-* Move Method
-* Move Field
-* Extract Class
-* Inline Class
-* Hide Delegate
-* Remove Middle Man
-* Introduce Foreign Method
-* Introduce Local Extension
+## Introduce Assertion
+## Introduce Parameter Object
+## Introduce Special Case (Introduce Null Object)
 
-### Organizing Data
+## Move Field
+## Move Function (Move Method)
 
-* Change Value to Reference
-* Change Reference to Value
-* Duplicate Observed Data
-* Self Encapsulate Field
-* Replace Data Value with Object
-* Replace Array with Object
-* Change Unidirectional Association to Bidirectional
-* Change Bidirectional Association to Unidirectional
-* Encapsulate Field
-* Encapsulate Collection
-* Replace Magic Number with Symbolic Constant
-* Replace Type Code with Class
-* Replace Type Code with Subclasses
-* Replace Type Code with State/Strategy
-* Replace Subclass with Fields
+## Move Statements into Function
+## Move Statements to Callers
+## Parameterize Function (Parameterize Method)
 
-### Simplifying Conditional Expressions
+## Preserve Whole Object
+## Pull Up Constructor Body
+## Pull Up Field
+## Pull Up Method
+## Push Down Field
+## Push Down Method
+## Remove Dead Code
+## Remove Flag Argument (Replace Parameter with Explicit Methods)
 
-* Consolidate Conditional Expression
-* Consolidate Duplicate Conditional Fragments
-* Decompose Conditional
-* Replace Conditional with Polymorphism
-* Remove Control Flag
-* Replace Nested Conditional with Guard Clauses
-* Introduce Null Object
-* Introduce Assertion
+## Remove Middle Man
+## Remove Setting Method
+## Remove Subclass (Replace Subclass with Fields)
 
-### Simplifying Method Calls
+## Rename Field
+## Rename Variable
+## Replace Command with Function
+## Replace Conditional with Polymorphism
+## Replace Constructor with Factory Function (Replace Constructor with Factory Method)
 
-* Add Parameter
-* Remove Parameter
-* Rename Method
-* Separate Query from Modifier
-* Parameterize Method
-* Introduce Parameter Object
-* Preserve Whole Object
-* Remove Setting Method
-* Replace Parameter with Explicit Methods
-* Replace Parameter with Method Call
-* Hide Method
-  * class 의 method 가 외부에서 사용되지 않는다면 protected/private 으로 제한하라.
-* Replace Constructor with Factory Method
-* Replace Error Code with Exception
-* Replace Exception with Test
+## Replace Control Flag with Break (Remove Control Flag)
 
-### Dealing with Generalization
+## Replace Derived Variable with Query
+## Replace Error Code with Exception
+## Replace Exception with Precheck (Replace Exception with Test)
 
-* Pull Up Field
-  * 두 sub class 가 같은 field 를 가지고 있을 때 super class 로 그 field 를 이동하라.
-* Pull Up Method
-  * 두 sub class 가 같은 method 를 가지고 있을 때 super class 로 그 method 를 이동하라.
-* [Pull Up Constructor Body](PullUpConstructorBody.md)
-  * sub class constructor 의 일부를 super class constructor 호출로 교체하라.
-* Push Down Field
-* Push Down Method
-* Extract Subclass
-* Extract Superclass
-* Extract Interface
-* Collapse Hierarchy
-* Form Template Method
-* Replace Inheritance with Delegation
-* Replace Delegation with Inheritance
+## Replace Function with Command (Replace Method with Method Object)
+
+## Replace Inline Code with Function Call
+## Replace Loop with Pipeline
+## Replace Magic Literal (Replace Magic Number with Symbolic Constant)
+
+## Replace Nested Conditional with Guard Clauses
+## Replace Parameter with Query (Replace Parameter with Method)
+
+## Replace Primitive with Object (Replace Data Value with Object • Replace Type Code with Class)
+
+## Replace Query with Parameter
+## Replace Subclass with Delegate
+## Replace Superclass with Delegate (Replace Inheritance with Delegation)
+
+## Replace Temp with Query
+## Replace Type Code with Subclasses (Extract Subclass • Replace Type Code with State/Strategy)
+
+## Return Modified Value
+## Separate Query from Modifier
+## Slide Statements (Consolidate Duplicate Conditional Fragments)
+
+## Split Loop
+## Split Phase
+## Split Variable (Remove Assignments to Parameters • Split Temp)
+
+## Substitute Algorithm
 
 # Examples
 
+* [Refactoring Java](/java/refactoring_java.md)
+* [Refactoring Swift](/swift/refactoring_swift.md)
 * [Refactoring TypeScript](/typescript/refactoring_typescript.md)
 * [Refactoring Python](/python/refactoring_python.md)
+* [Refactoring Ruby](/ruby/README.md)

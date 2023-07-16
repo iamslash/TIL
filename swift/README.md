@@ -3002,7 +3002,7 @@ Task {
 
 # Style Guide
 
-[Swift Style Guide | google](https://google.github.io/swift/)
+[Swift Style Guide](swift_style_guide.md)
 
 # Refactoring
 
