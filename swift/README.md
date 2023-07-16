@@ -14,10 +14,12 @@
   - [String](#string)
   - [Random](#random)
   - [Print Out](#print-out)
+  - [Formatted String](#formatted-string)
   - [Function](#function)
-  - [Conditional](#conditional)
-  - [Loop](#loop)
-  - [Collections compared to c++ container](#collections-compared-to-c-container)
+  - [Control Flow](#control-flow)
+    - [Conditional](#conditional)
+    - [Loop](#loop)
+  - [Collections Compared With C++ Container](#collections-compared-with-c-container)
   - [Collections](#collections)
     - [Array](#array)
     - [Set](#set)
@@ -29,9 +31,9 @@
   - [Optional](#optional)
   - [Struct](#struct)
   - [Class](#class)
-  - [Enum](#enum)
+  - [Enumerations](#enumerations)
   - [Value Reference](#value-reference)
-  - [Closure](#closure)
+  - [Closures](#closures)
   - [Properties](#properties)
   - [Methods](#methods)
   - [Subscripts](#subscripts)
@@ -40,7 +42,8 @@
   - [Optional Chaining](#optional-chaining)
   - [Error Handling](#error-handling)
   - [Concurrency](#concurrency)
-  - [Print type](#print-type)
+  - [Macros](#macros)
+  - [Print Type](#print-type)
   - [Type Casting](#type-casting)
   - [Assert, Guard](#assert-guard)
   - [Nested Types](#nested-types)
@@ -49,7 +52,7 @@
   - [Higher Order Function](#higher-order-function)
   - [Core Libraries](#core-libraries)
   - [Generics](#generics)
-  - [Opaque Types](#opaque-types)
+  - [Opaque and Boxed Types](#opaque-and-boxed-types)
   - [Automatic Reference Counting](#automatic-reference-counting)
   - [Memory Safety](#memory-safety)
   - [Access Control](#access-control)
@@ -76,18 +79,18 @@ swift에 대해 정리한다.
 
 # References
 
-* [A Swift Tour](https://docs.swift.org/swift-book/GuidedTour/GuidedTour.html)
-* [online Swift playground](http://online.swiftplayground.run/)
-* [The Swift Programming Language (kor)](https://bbiguduk.gitbook.io/swift)
+* [The Swift Programming Language | swift.org](https://docs.swift.org/swift-book/documentation/the-swift-programming-language/)
+  * [kor](https://bbiguduk.gitbook.io/swift)
 * [Awesome Swift](https://github.com/matteocrippa/awesome-swift)
 
 # Materials
 
-* [Swift Language Guide](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html)
 * [야곰의 스위프트 기본 문법 강좌](https://www.inflearn.com/course/%EC%8A%A4%EC%9C%84%ED%94%84%ED%8A%B8-%EA%B8%B0%EB%B3%B8-%EB%AC%B8%EB%B2%95/)
-  * 킹왕짱 swift 3 기본 문법
+  * swift 3 를 잘 설명함.
   * [src](https://github.com/yagom/swift_basic)
-* [the swift programming language swift 4.2](https://docs.swift.org/swift-book/LanguageGuide/TheBasics.html)
+* [스위프트 프로그래밍 by 야곰 | yes24](https://www.yes24.com/Product/Goods/78907450)
+  * Swift 5 를 잘 설명함.
+  * [src](https://bitbucket.org/yagom/swift_programming/src/master/)
 
 # Basic
 
@@ -308,6 +311,13 @@ for _ in 1...3 {
 
 ## Print Out
 
+```swift
+let num: Int = 100
+print("Hello World \(num)")
+```
+
+## Formatted String
+
 * [String Format Specifiers | apple](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/Strings/Articles/formatSpecifiers.html)
 
 ```swift
@@ -333,7 +343,7 @@ func maximumIntegerValue() -> Int {
 
 func hello() -> Void { print("hello") }
 
-func bye() {print("bye") }
+func bye() { print("bye") }
 
 sum(a: 3, b: 5) // 8
 printMyName(name: "Foo") // Foo
@@ -370,8 +380,8 @@ runAnother(function: greeting(friend:me:))
 runAnother(function: someFunction)
 
 // Function Argument Labels and Parameter Names
-// Argument label for input
-// Parameter name for implementation
+//   Argument label for input
+//   Parameter name for implementation
 // 함수를 호출할 때 argument 전달시 label 을 표기해야 한다. label 을
 // 표기하기 싫다면 함수를 정의할 때 label 자리에 _ 를 사용한다. 함수 정의에
 // label 이 없다면 parameter 이름을 label 이름으로 대신한다.
@@ -389,7 +399,9 @@ print(bar("Hello", "World"))
 print(baz(a: "Hello", b: "World"))
 ```
 
-## Conditional
+## Control Flow
+
+### Conditional
 
 ```swift
 let someInteger = 100
@@ -426,7 +438,7 @@ default:
 }
 ```
 
-## Loop
+### Loop
 
 ```swift
 // for range
@@ -472,7 +484,7 @@ repeat {
 } while integers.count > 0
 ```
 
-## Collections compared to c++ container
+## Collections Compared With C++ Container
 
 [Collection Types](https://docs.swift.org/swift-book/LanguageGuide/CollectionTypes.html) 에 의하면 swift 의 collection 은 `Array, Set, Dictionary` 가 있다.
 
@@ -831,7 +843,7 @@ jina.selfIntroduce()
 
 ```
 
-## Enum
+## Enumerations
 
 ```swift
 enum Weekday {
@@ -921,7 +933,7 @@ print("first class reference property : \(firstClassReference.property)")    // 
 print("second class reference property : \(secondClassReference.property)")  // 2
 ```
 
-## Closure
+## Closures
 
 클로저는 코드의 블럭이다. 일급 시민 (First-Citizen) 으로 전달인자, 변수, 상수
 등으로 저장, 전달이 가능하다. 함수는 클로저의 일종이다. 이름이 있는 클로저라고
@@ -1192,7 +1204,7 @@ SomeClass.someTypeMethod()
 > * [Subscripts](https://docs.swift.org/swift-book/LanguageGuide/Subscripts.html)
 >   * [서브스크립트](https://bbiguduk.gitbook.io/swift/language-guide-1/subscripts)
 
-Classes, structures, and enumerations can define subscripts, which are shortcuts for accessing the member elements of a collection, list, or sequence.
+**Classes**, **structures**, and **enumerations** can define subscripts, which are shortcuts for accessing the member elements of a collection, list, or sequence.
 
 ```swift
 struct TimesTable {
@@ -1650,9 +1662,124 @@ result // 1개 제공함
 
 ## Concurrency
 
+```swift
+////////////////////////////////////////////////////////////
+// Defining and Calling Asynchronous Functions
+func listPhotos(inGallery name: String) async throws -> [String] {
+    try await Task.sleep(until: .now + .seconds(2), clock: .continuous)
+    return ["IMG001", "IMG99", "IMG0404"]
+}
+let photoNames = await listPhotos(inGallery: "Summer Vacation")
+let sortedNames = photoNames.sorted()
+let name = sortedNames[0]
+let photo = await downloadPhoto(named: name)
+show(photo)
+
+////////////////////////////////////////////////////////////
+// Asynchronous Sequences
+import Foundation
+// fetch one by one
+let handle = FileHandle.standardInput
+for try await line in handle.bytes.lines {
+    print(line)
+}
+
+////////////////////////////////////////////////////////////
+// Calling Asynchronous Functions in Parallel
+async let firstPhoto = downloadPhoto(named: photoNames[0])
+async let secondPhoto = downloadPhoto(named: photoNames[1])
+async let thirdPhoto = downloadPhoto(named: photoNames[2])
+let photos = await [firstPhoto, secondPhoto, thirdPhoto]
+show(photos)
+
+////////////////////////////////////////////////////////////
+// Tasks and Task Groups
+// taskGroup include queue and thread pool
+await withTaskGroup(of: Data.self) { taskGroup in
+    let photoNames = await listPhotos(inGallery: "Summer Vacation")
+    for name in photoNames {
+        taskGroup.addTask { await downloadPhoto(named: name) }
+    }
+}
+
+////////////////////////////////////////////////////////////
+// Unstructured Concurrency
+let newPhoto = // ... some photo data ...
+let handle = Task {
+    return await add(newPhoto, toGalleryNamed: "Spring Adventures")
+}
+let result = await handle.value
+
+////////////////////////////////////////////////////////////
+// Task Cancellation
+```swift
+Task.checkCancellation()
+Task.isCancelled
+Task.cancel()
+
+////////////////////////////////////////////////////////////
+// Actors
+// Like classes, actors are reference types, so the comparison of value types and reference types
+// Actors let you safely share information between concurrent code.
+actor TemperatureLogger {
+    let label: String
+    var measurements: [Int]
+    private(set) var max: Int
+
+    init(label: String, measurement: Int) {
+        self.label = label
+        self.measurements = [measurement]
+        self.max = measurement
+    }
+}
+let logger = TemperatureLogger(label: "Outdoors", measurement: 25)
+print(await logger.max)
+// Prints "25"
+
+extension TemperatureLogger {
+    func update(with measurement: Int) {
+        measurements.append(measurement)
+        if measurement > max {
+            max = measurement
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////
+// Sendable Types
+// A type that can be shared from one concurrency domain 
+// to another is known as a sendable type
+struct TemperatureReading: Sendable {
+    var measurement: Int
+}
+extension TemperatureLogger {
+    func addReading(from reading: TemperatureReading) {
+        measurements.append(reading.measurement)
+    }
+}
+let logger = TemperatureLogger(label: "Tea kettle", measurement: 85)
+let reading = TemperatureReading(measurement: 45)
+await logger.addReading(from: reading)
+
+// Implicit Sendable
+struct TemperatureReading {
+    var measurement: Int
+}
+
+// Explicit Not Sendable
+struct FileDescriptor {
+    let rawValue: CInt
+}
+
+@available(*, unavailable)
+extension FileDescriptor: Sendable { }
+```
+
+## Macros
+
 WIP...
 
-## Print type
+## Print Type
 
 ```swift
 print(type(of: [1, 2, 3])) 
@@ -1763,6 +1890,53 @@ someFunction(info: ["name": "foo", "age": 10]) // foo: 10
 ```
 
 ## Nested Types
+
+```swift
+////////////////////////////////////////////////////////////
+// Nested Types in Action
+struct BlackjackCard {
+    // nested Suit enumeration
+    enum Suit: Character {
+        case spades = "♠", hearts = "♡", diamonds = "♢", clubs = "♣"
+    }
+    // nested Rank enumeration
+    enum Rank: Int {
+        case two = 2, three, four, five, six, seven, eight, nine, ten
+        case jack, queen, king, ace
+        struct Values {
+            let first: Int, second: Int?
+        }
+        var values: Values {
+            switch self {
+            case .ace:
+                return Values(first: 1, second: 11)
+            case .jack, .queen, .king:
+                return Values(first: 10, second: nil)
+            default:
+                return Values(first: self.rawValue, second: nil)
+            }
+        }
+    }
+    // BlackjackCard properties and methods
+    let rank: Rank, suit: Suit
+    var description: String {
+        var output = "suit is \(suit.rawValue),"
+        output += " value is \(rank.values.first)"
+        if let second = rank.values.second {
+            output += " or \(second)"
+        }
+        return output
+    }
+}
+let theAceOfSpades = BlackjackCard(rank: .ace, suit: .spades)
+print("theAceOfSpades: \(theAceOfSpades.description)")
+// Prints "theAceOfSpades: suit is ♠, value is 1 or 11"
+
+////////////////////////////////////////////////////////////
+// Referring to Nested Types
+let heartsSymbol = BlackjackCard.Suit.hearts.rawValue
+// heartsSymbol is "♡"
+```
 
 ## Protocol
 
@@ -2123,7 +2297,7 @@ Swift Standard Library 이외에 다음과 같은 3 가지 core library 를 학�
 
 WIP...
 
-## Opaque Types
+## Opaque and Boxed Types
 
 WIP...
 
