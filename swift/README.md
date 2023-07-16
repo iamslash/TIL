@@ -8,8 +8,8 @@
   - [Keywords](#keywords)
   - [let, var](#let-var)
   - [Data Types](#data-types)
-  - [min, max values](#min-max-values)
-  - [abs](#abs)
+  - [Min, Max Values](#min-max-values)
+  - [Absolute Value](#absolute-value)
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
@@ -33,7 +33,7 @@
   - [Struct](#struct)
   - [Class](#class)
   - [Enumerations](#enumerations)
-  - [Value Reference](#value-reference)
+  - [Value Type vs Reference Type](#value-type-vs-reference-type)
   - [Closures](#closures)
   - [Properties](#properties)
   - [Methods](#methods)
@@ -183,8 +183,8 @@ nickName = "Bar"
 
 ```swift
 Bool, 
-Int8, Int16, Int32, Int64(Int),
-UInt8, UInt16, UInt32, UInt64(UInt), 
+Int8, Int16, Int32, Int64(Int)
+UInt8, UInt16, UInt32, UInt64(UInt)
 Float, Double, Character, String
 Any, AnyObject, nil
 ```
@@ -241,7 +241,7 @@ someAny = nil // error
 someAnyObject = nil // error
 ```
 
-## min, max values
+## Min, Max Values
 
 > [Swift – Integer, Floating-Point Numbers](https://www.geeksforgeeks.org/swift-integer-floating-point-numbers/)
 
@@ -267,7 +267,7 @@ print("Int64           \(Int64.min)         \(Int64.max)")
 // Int64            -9223372036854775808   9223372036854775807
 ```
 
-## abs
+## Absolute Value
 
 ```swift
 print(abs(-18))   // 18
@@ -482,22 +482,24 @@ for i in 0...3 {
     print("\(i)", terminator: " ")
 }
 // 0 1 2 3
+
 print("")
 for i in 0..<3 {
     print("\(i)", terminator: " ")
 }
 // 0 1 2
+
 print("")
 for i in (0...3).reversed() {
     print("\(i)", terminator: " ")
 }
 // 3 2 1 0
+
 print("")
 for i in (0..<3).reversed() {
     print("\(i)", terminator: " ")
 }
 // 2 1 0
-print("")
 
 // for in
 var integers = [1, 2, 3]
@@ -710,243 +712,183 @@ print(d)
 ## Optional
 
 ```swift
-import Swift
+//> Declaring and using optionals:
+// Declare an optional String
+var optionalStr: String? = "Hello"
+// Set it to nil (absence of a value)
+optionalStr = nil
 
-var implicitlyUnwrappedOptionalValue: Int! = 100
-switch implicitlyUnwrappedOptionalValue {
-case .nome:
-    print("This Optional variable is nil")
-case .some(let value)    
-    print("Value is \(value)")
-}
+//> Forced Unwrapping: 
+// To access the value inside an optional, you can use forced
+// unwrapping by appending an exclamation mark (!). 
+// However, it can cause a runtime crash if the optional contains nil.
+var optionalValue: Int? = 42
+// Forced unwrapping (dangerous, may crash if optionalValue is nil)
+let value = optionalValue!
 
-implicitlyUnwrappedOptionalValue = implicitlyUnwrappedOptionalValue + 1
-implicitlyUnwrappedOptionalValue = nil
-// implicitlyUnwrappedOptionalValue = implicitlyUnwrappedOptionalValue + 1 // error
-
-var optionalValue: Int? = 100
-switch optionalValue {
-case .none:
-    print("This Optional variable is nil")
-case .some(let value):
-    print("Value is \(value)")
-}
-optionalValue = nil
-// optionalValue = optionalvalue + 1 // error
-```
-
-```swift
-import Swift
-
-func printName(_ name: String) {
-    print(name)
-}
-var myName: String? = nil
-if let name: String = myName {
-    printName(name)
+//> Optional Binding: 
+// A safer way to unwrap optionals using the if let or 
+// guard let constructs.
+var optionalValue: Int? = 42
+// Using if let (safe, only runs the block if optionalValue is not nil)
+if let value = optionalValue {
+    print("Unwrapped value is \(value)")
 } else {
-    print("myName == nil")
+    print("optionalValue is nil")
+}
+// Using guard let (ensures value is available within the block,
+// or exits block early if not)
+func printValue() {
+    guard let value = optionalValue else {
+        print("optionalValue is nil")
+        return
+    }
+    print("Unwrapped value is \(value)")
 }
 
-var yourName: String! = nil
-if let name: String yourName {
-    printName(name)
-} else {
-    print("yourName == nil")
-}
+//> Optional Chaining: 
+// Allows you to call properties, methods, or subscripts on optionals
+// that might be nil. It returns an optional and short-circuits 
+// when an optional is nil.
+class Person {
+    var name: String?
 
-myName = "Foo"
-yourName = nil
+    init(name: String?) {
+        self.name = name
+    }
 
-if let name = myName, let friend = yourName {
-    print("\n(name) and \(friend)")
+    func greet() {
+        print("Hello, \(name ?? "unknown")!")
+    }
 }
-yourName = "hana"
-if let name = myName, let firned = yourName {
-    print("\n(name) and \(friend)")
-}
-// Foo and hana
+let person: Person? = Person(name: "Alice")
+// Optional chaining (greet() is called only if person is not nil)
+person?.greet()
 
-printName(myName!) // Foo
-myName = nil
-//print(myName!) // error
-yourName = nil
-//print(yourName) // error
+//> Nil Coalescing Operator (??): 
+// Provides a default value to use when the optional 
+// on the left is nil.
+let optionalValue: Int? = nil
+let defaultValue = 42
+// Nil coalescing (returns defaultValue if optionalValue is nil)
+let value = optionalValue ?? defaultValue // value is now 42
 ```
 
 ## Struct
 
+**Structures** (or structs) in Swift are value types that define a custom data
+structure. They can have properties, methods, and initializers.
+
 ```swift
-struct Sample {
-    var mutableProperty: Int = 100
-    let immutableProperty: Int = 100
-    static var typeProperty: Int = 100
-    func instanceMethod() {
-        print("instance method")
-    }
-    static func typeMethod() {
-        print("type method")
+// Declare a struct
+struct Point {
+    var x: Double
+    var y: Double
+    
+    func description() -> String {
+        return "(\(x), \(y))"
     }
 }
 
-var mutable: Sample = Sample()
-mutable.mutableProperty = 200
-// mutable.immutableProperty = 200 // error
-let immutable: Sample = Sample()
-//immutable.mutableProperty = 200 // error
-//immutable.immutableProperty = 200 // error
+// Create an instance of the Point struct
+var pointA = Point(x: 3.0, y: 4.0)
 
-sample.typeProperty = 300
-sample.typeMethod()
+// Access its properties
+print("pointA x: \(pointA.x), y: \(pointA.y)") // Output: pointA x: 3.0, y: 4.0
 
-//mutable.typeProperty = 400 // error
-//mutable.typeMethod() // error
+// Call method on the instance
+print("pointA description: \(pointA.description())") // Output: pointA description: (3.0, 4.0)
 
-struct Student {
-    var name: String = "unknow"
-    var `class`: String = "Swfit"
-    static func selfIntroduce() {
-        print("학생타입입니다.")
-    }
-    func selfIntroduce() {
-        print("저는 \(self.class)반 \(name)입니다.")
-    }
-}
-Student.selfIntroduct()
+// Assign pointA to another variable (creates a copy)
+var pointB = pointA
+pointB.x = 5.0
+pointB.y = 6.0
 
-var foo: Student = Student()
-foo.name = "Foo"
-foo.class = "스위프트"
-foo.selfIntroduce()
-
-let jina: Student = Student()
-//jina.name = "jina" // error
-jina.selfIntroduce() 
+// Both pointA and pointB refer to different copies
+print("pointA: \(pointA.description()), pointB: \(pointB.description())") // Output: pointA: (3.0, 4.0), pointB: (5.0, 6.0)
 ```
 
 ## Class
 
+Classes in Swift are reference types that define a custom data structure. They
+can have properties, methods, initializers, and support inheritance,
+sub-classing, and casting.
+
 ```swift
-class Sample {
-    var mutableProperty: Int = 100
-    let immutableProperty: Int = 100
-    static var typeProperty: Int = 100
-    func instanceMethod() {
-        print("instance method")
+// Declare a class
+class Circle {
+    var radius: Double
+    
+    init(radius: Double) {
+        self.radius = radius
     }
-    static func typeMethod() {
-        print("type method - static")
+    
+    func area() -> Double {
+        return Double.pi * radius * radius
     }
-    class func classMethod() {
-        print("type method - class")
-    }
-}
-
-var mutableReference: Sample = Sample()
-mutableReference.mutableProperty = 200
-//mutableReference.immutableProperty = 200 // error
-
-let immutableReference: Sample = Sample()
-immutableReference.mutableProperty = 200
-//immutalbeReference = mutableReference // error
-//immutableReference.immutableProperty = 200
-
-Sample.typeProperty = 300
-Sample.typeMethod()
-
-//mutableReference.typeProperty = 400 // error
-//mutableReference.typeMethod() // error
-
-class Student {
-    var name: String = "unknown"
-    var `class`: String = "Swift"
-    class func selfIntroduce() {
-        print("학생타입니다.")
-    }
-    func slefIntroduce() {
-        print("저는 \(self.class)반 \(name)입니다.")
+    
+    func description() -> String {
+        return "Circle with radius: \(radius)"
     }
 }
-Student.selfIntroduce()
-var foo: Student = Student()
-foo.name = "foo"
-foo.class = "스위프트"
-foo.selfIntroduce()
 
-let jina: Student = Student()
-jina.name = "jina"
-jina.selfIntroduce()
+// Create an instance of the Circle class
+let circleA = Circle(radius: 4.0)
 
+// Access its properties
+print("circleA radius: \(circleA.radius)") // Output: circleA radius: 4.0
+
+// Call methods on the instance
+print("circleA area: \(circleA.area())") // Output: circleA area: 50.26548245743669
+print("circleA description: \(circleA.description())") // Output: circleA description: Circle with radius: 4.0
+
+// Assign circleA to another variable (creates a reference to the same instance)
+let circleB = circleA
+circleB.radius = 5.0
+
+// Both circleA and circleB refer to the same instance
+print("circleA: \(circleA.description()), circleB: \(circleB.description())") // Output: circleA: Circle with radius: 5.0, circleB: Circle with radius: 5.0
 ```
 
 ## Enumerations
 
+Enumerations (or enums) in Swift are used to define a common type for a group of
+related values, allowing you to work with those values in a type-safe and
+expressive way.
+
 ```swift
-enum Weekday {
-    case mon
-    case true
-    case wed
-    case thu, fri, sat, sun
-}
-var day: Weekday = Weekday.mon
-day = .true
-print(day)
-
-switch day {
-case .mon, .tue, .wed, .thu:
-    print("평일입니다.")
-case Weekday.fri:
-    print("불금파티!!")
-case .sat, .sun:
-    print("신나는 주말!!")
+// Declare an enumeration for compass directions
+enum CompassDirection {
+    case north
+    case south
+    case east
+    case west
 }
 
-enum Fruit: Int {
-    case apple = 0
-    case grape = 1
-    case peach
-}
-print("Fruit.peach.rawValue == \(Fruit.peach.rawValue)")
-enum School: String {
-    case elementary = "초등"
-    case middle = "중등"
-    case high = "고등"
-    case university
-}
-print("School.middle.rawValue == \(School.middle.rawValue)")
-// School.middle.rawValue == 중등
-print("School.middle.rawValue == \(School.univerty.rawValue)")
-// School.middle.rawValue == university
+// Create a variable using the enum type
+var currentDirection: CompassDirection = .north
 
-let apple: Fruit? = Fruit(rawValue: 0)
-if let orange: Fruit = Fruit(rawValue: 5) {
-    print("rawValue 5 에 해당하는 케이스는 \(orange)입니다.")
-} else {
-    print("rawValue 5 에 해당하는 케이스가 없습니다.")
-}
-
-enum Month {
-    case dec, jan, feb
-    case mar, apr, may
-    case jun, jul, aug
-    case sep, oct, nov
-    func printMessage() {
-        switch self {
-        case .mar, .apr, .may:
-            print("따스한 봄")
-        case .jun, .jul, .aug:
-            print("더운 여름")
-        case .sep, .oct, .nov:
-            print("완연한 가을")
-        case .dec, .jan, .feb:
-            print("추운 겨울")
-        }    
+// Switch between enum cases using a switch statement
+func printDirection(direction: CompassDirection) {
+    switch direction {
+    case .north:
+        print("Heading north")
+    case .south:
+        print("Heading south")
+    case .east:
+        print("Heading east")
+    case .west:
+        print("Heading west")
     }
 }
-Month.mar.printMessage()
+
+printDirection(direction: currentDirection) // Output: Heading north
+
+currentDirection = .south
+printDirection(direction: currentDirection) // Output: Heading south
 ```
 
-## Value Reference
+## Value Type vs Reference Type
 
 ```swift
 struct ValueType {
@@ -1698,117 +1640,163 @@ result // 1개 제공함
 
 ## Concurrency
 
-```swift
-////////////////////////////////////////////////////////////
-// Defining and Calling Asynchronous Functions
-func listPhotos(inGallery name: String) async throws -> [String] {
-    try await Task.sleep(until: .now + .seconds(2), clock: .continuous)
-    return ["IMG001", "IMG99", "IMG0404"]
-}
-let photoNames = await listPhotos(inGallery: "Summer Vacation")
-let sortedNames = photoNames.sorted()
-let name = sortedNames[0]
-let photo = await downloadPhoto(named: name)
-show(photo)
+There are several approaches to manage concurrency in Swift, including
+**Dispatch Queues (Grand Central Dispatch)** and Swift 5.1 Concurrency model
+that uses **async**, **await**, and **actors**. Swift 5.5 Concurrency model 
+introduced **Task** and **TaskGroup**.
 
-////////////////////////////////////////////////////////////
-// Asynchronous Sequences
+**Dispatch Queues (Grand Central Dispatch or GCD)**:
+
+**GCD** is a low-level API for managing concurrent tasks. It uses dispatch queues to schedule tasks for execution.
+
+* **Serial Dispatch Queue**: Executes tasks one at a time, in the order they were added.
+* **Concurrent Dispatch Queue**: Executes tasks concurrently, without any specific order.
+
+```swift
+import Dispatch
+
+// Create a serial dispatch queue
+let serialQueue = DispatchQueue(label: "serial_queue")
+
+// Add tasks to the serial dispatch queue
+serialQueue.async {
+    print("Task 1")
+}
+
+serialQueue.async {
+    print("Task 2")
+}
+
+// Create a concurrent dispatch queue
+let concurrentQueue = DispatchQueue(label: "concurrent_queue", attributes: .concurrent)
+
+// Add tasks to the concurrent dispatch queue
+concurrentQueue.async {
+    print("Task A")
+}
+
+concurrentQueue.async {
+    print("Task B")
+}
+```
+
+Swift Concurrency (**async**, **await**, and **actors**):
+
+Introduced in Swift 5.5
+
+* **async function**: Functions marked async can run concurrently with other
+  tasks.
+* **await**: Used to call async functions, it suspends the current task until
+  the async function completes.
+* **actors**: A new type, similar to classes, that manage concurrent access to
+  their state using async functions.
+
+```swift
 import Foundation
-// fetch one by one
-let handle = FileHandle.standardInput
-for try await line in handle.bytes.lines {
-    print(line)
+
+// Define an async function
+func fetchData() async -> String {
+    // Simulate a network request
+    Thread.sleep(forTimeInterval: 2.0)
+    return "Fetched Data"
 }
 
-////////////////////////////////////////////////////////////
-// Calling Asynchronous Functions in Parallel
-async let firstPhoto = downloadPhoto(named: photoNames[0])
-async let secondPhoto = downloadPhoto(named: photoNames[1])
-async let thirdPhoto = downloadPhoto(named: photoNames[2])
-let photos = await [firstPhoto, secondPhoto, thirdPhoto]
-show(photos)
+// Call the async function using 'await'
+async {
+    let data = await fetchData()
+    print("Data: \(data)")
+}
 
-////////////////////////////////////////////////////////////
-// Tasks and Task Groups
-// taskGroup include queue and thread pool
-await withTaskGroup(of: Data.self) { taskGroup in
-    let photoNames = await listPhotos(inGallery: "Summer Vacation")
-    for name in photoNames {
-        taskGroup.addTask { await downloadPhoto(named: name) }
+// Define an actor
+actor Counter {
+    private(set) var count = 0
+    
+    func increment() {
+        count += 1
+    }
+    
+    func reset() {
+        count = 0
     }
 }
 
-////////////////////////////////////////////////////////////
-// Unstructured Concurrency
-let newPhoto = // ... some photo data ...
-let handle = Task {
-    return await add(newPhoto, toGalleryNamed: "Spring Adventures")
+// Spawn multiple tasks using the 'Counter' actor
+async {
+    let counter = Counter()
+    
+    // Increment the 'Counter' actor concurrently
+    async let task1 = Task { await counter.increment() }
+    async let task2 = Task { await counter.increment() }
+    
+    // Wait for tasks to complete and print the result
+    await task1.value
+    await task2.value
+    print("Counter: \(await counter.count)")
 }
-let result = await handle.value
+```
 
-////////////////////////////////////////////////////////////
-// Task Cancellation
+**Task**: A Task represents an asynchronous unit of work, and it provides a
+mechanism to produce a result or complete with an error. You can also use tasks
+for cancellation, prioritization, and suspension of tasks.
+
 ```swift
-Task.checkCancellation()
-Task.isCancelled
-Task.cancel()
+import Foundation
 
-////////////////////////////////////////////////////////////
-// Actors
-// Like classes, actors are reference types, so the comparison of value types and reference types
-// Actors let you safely share information between concurrent code.
-actor TemperatureLogger {
-    let label: String
-    var measurements: [Int]
-    private(set) var max: Int
-
-    init(label: String, measurement: Int) {
-        self.label = label
-        self.measurements = [measurement]
-        self.max = measurement
-    }
+func fetchData() async -> String {
+  // Simulate a network request
+  Thread.sleep(forTimeInterval: 2.0)
+  return "Fetched data"
 }
-let logger = TemperatureLogger(label: "Outdoors", measurement: 25)
-print(await logger.max)
-// Prints "25"
 
-extension TemperatureLogger {
-    func update(with measurement: Int) {
-        measurements.append(measurement)
-        if measurement > max {
-            max = measurement
+async {
+  let task = Task { () -> String in
+    return await fetchData()
+  }
+
+  // Get the result of the task
+  let result = await task.value
+  print("Task result: \(result)")
+}
+```
+
+**TaskGroup**: A TaskGroup is a group of tasks that can be handled together. You
+can use the TaskGroup concept to perform a series of tasks with a common goal.
+The TaskGroup lets you spawn tasks, await their completion, and collect their
+results.
+
+```swift
+import Foundation
+
+// Function to perform async tasks
+func fetchData(index: Int) async -> Int {
+  // Simulate a network request
+  Thread.sleep(forTimeInterval: 0.5)
+  return index
+}
+
+// Main async scope
+async {
+  do {
+    let results: [Int] = try await withThrowingTaskGroup(of: Int.self) { group in
+      for index in 1...5 {
+        group.addTask {
+          return await fetchData(index: index)
         }
+      }
+      
+      // Collect the results
+      var resultArray: [Int] = []
+      for try await result in group {
+        resultArray.append(result)
+      }
+      
+      return resultArray
     }
+    print("TaskGroup results: \(results)") // Output: TaskGroup results: [1, 2, 3, 4, 5]
+  } catch {
+    print("TaskGroup error: \(error)")
+  }
 }
-
-////////////////////////////////////////////////////////////
-// Sendable Types
-// A type that can be shared from one concurrency domain 
-// to another is known as a sendable type
-struct TemperatureReading: Sendable {
-    var measurement: Int
-}
-extension TemperatureLogger {
-    func addReading(from reading: TemperatureReading) {
-        measurements.append(reading.measurement)
-    }
-}
-let logger = TemperatureLogger(label: "Tea kettle", measurement: 85)
-let reading = TemperatureReading(measurement: 45)
-await logger.addReading(from: reading)
-
-// Implicit Sendable
-struct TemperatureReading {
-    var measurement: Int
-}
-
-// Explicit Not Sendable
-struct FileDescriptor {
-    let rawValue: CInt
-}
-
-@available(*, unavailable)
-extension FileDescriptor: Sendable { }
 ```
 
 ## Macros
@@ -1995,116 +1983,122 @@ print(a as! Int)   // Runtime Error
 
 ## Assert, Guard
 
+**assert** and **guard** are used to handle edge cases during program execution.
+
+**assert**: The `assert` function is used for validating assumptions about your
+program and checking for potential runtime errors during the development phase.
+If the given condition is true, the program continues execution normally.
+Otherwise, a custom error message is displayed, and the program is halted.
+Assertions are only active in debug builds and removed from production/release
+builds.
+
 ```swift
-var someInt: Int = 0
-
-assert(someInt == 0, "someInt != 0")
-someInt = 1
-//assert(someInt == 0) // 동작 중지, 검증 실패
-//assert(someInt == 0, "someInt != 0") // 동작 중지, 검증 실패
-// assertion failed: someInt != 0: file guard_assert.swift, line 26
-
-func functionWithAssert(age: Int?) {
-    assert(age != nil, "age == nil")
-    assert((age! >= 0) && (age! <= 130), "나이값 입력이 잘못되었습니다")
-    print("당신의 나이는 \(age!)세입니다")
+func calculateArea(length: Int, width: Int) -> Int {
+    // Asserting that length and width are positive numbers
+    assert(length > 0, "Length must be a positive number.")
+    assert(width > 0, "Width must be a positive number.")
+    
+    return length * width
 }
 
-functionWithAssert(age: 50)
-//functionWithAssert(age: -1) // 동작 중지, 검증 실패
-//functionWithAssert(age: nil) // 동작 중지, 검증 실패
+let area = calculateArea(length: 5, width: 3)
+print("Area: \(area)") // Output: Area: 15
 
-func functionWithGuard(age: Int?) {
+// let invalidArea = calculateArea(length: -1, width: 4)
+// Assertion failed: Length must be a positive number.
+```
+
+**guard**: The `guard` statement is used to handle early exits from a scope
+(function, loop, or control block) based on a specified condition. It allows you
+to check for specific conditions and exit early if they are not met, keeping
+your code cleaner and more readable.
+
+```swift
+func greet(person: [String: String]) {
+    // Verify if the "name" key is present in the dictionary
+    guard let name = person["name"] else {
+        print("Name is missing.")
+        return
+    }
+
+    print("Hello, \(name)!")
     
-    guard let unwrappedAge = age,
-        unwrappedAge < 130,
-        unwrappedAge >= 0 else {
-        print("나이값 입력이 잘못되었습니다")
+    // Check for other optional keys
+    guard let age = person["age"] else {
+        print("Age is not provided.")
         return
     }
     
-    print("당신의 나이는 \(unwrappedAge)세입니다")
+    print("You are \(age) years old.")
 }
 
-var count = 1
+let personA = ["name": "Alice", "age": "32"]
+greet(person: personA) // Output: Hello, Alice! You are 32 years old.
 
-while true {
-    guard count < 3 else {
-        break
-    }
-    print(count)
-    count += 1
-}
-// 1
-// 2
-
-
-func someFunction(info: [String: Any]) {
-    guard let name = info["name"] as? String else {
-        return
-    }
-    
-    guard let age = info["age"] as? Int, age >= 0 else {
-        return
-    }
-    
-    print("\(name): \(age)")
-    
-}
-
-someFunction(info: ["name": "jenny", "age": "10"])
-someFunction(info: ["name": "mike"])
-someFunction(info: ["name": "foo", "age": 10]) // foo: 10
 ```
 
 ## Nested Types
 
+Swift allows you to define nested types, which means you can nest supporting
+enumerations, classes, and structures within the definition of the type they
+support. This can be useful to encapsulate the functionality and data specific
+to a certain type and maintain a clean structure in your code, improving
+readability and organization.
+
 ```swift
-////////////////////////////////////////////////////////////
-// Nested Types in Action
-struct BlackjackCard {
-    // nested Suit enumeration
-    enum Suit: Character {
-        case spades = "♠", hearts = "♡", diamonds = "♢", clubs = "♣"
-    }
-    // nested Rank enumeration
-    enum Rank: Int {
-        case two = 2, three, four, five, six, seven, eight, nine, ten
-        case jack, queen, king, ace
-        struct Values {
-            let first: Int, second: Int?
+// Outer structure which represents a Bank
+struct Bank {
+    
+    // Nested structure which represents Bank Account
+    struct Account {
+        var balance: Double
+        
+        // Nested enumeration which represents Account Type
+        enum AccountType {
+            case checking, savings
         }
-        var values: Values {
-            switch self {
-            case .ace:
-                return Values(first: 1, second: 11)
-            case .jack, .queen, .king:
-                return Values(first: 10, second: nil)
-            default:
-                return Values(first: self.rawValue, second: nil)
+        
+        let type: AccountType
+        
+        // Function to deposit money into the account.
+        mutating func deposit(amount: Double) {
+            balance += amount
+        }
+        
+        // Function to withdraw money from the account.
+        mutating func withdraw(amount: Double) {
+            if amount <= balance {
+                balance -= amount
+            } else {
+                print("Insufficient balance.")
             }
         }
     }
-    // BlackjackCard properties and methods
-    let rank: Rank, suit: Suit
-    var description: String {
-        var output = "suit is \(suit.rawValue),"
-        output += " value is \(rank.values.first)"
-        if let second = rank.values.second {
-            output += " or \(second)"
+    
+    private var accounts: [Account] = [] // Array to store accounts
+    
+    // Function to create a new account.
+    mutating func createAccount(accountType: Account.AccountType) {
+        let newAccount = Account(balance: 0, type: accountType)
+        accounts.append(newAccount)
+    }
+    
+    // Function to get the balance of a specific account.
+    func getBalance(accountIndex: Int) -> Double? {
+        if accountIndex < 0 || accountIndex >= accounts.count {
+            print("Invalid account index.")
+            return nil
         }
-        return output
+        
+        return accounts[accountIndex].balance
     }
 }
-let theAceOfSpades = BlackjackCard(rank: .ace, suit: .spades)
-print("theAceOfSpades: \(theAceOfSpades.description)")
-// Prints "theAceOfSpades: suit is ♠, value is 1 or 11"
-
-////////////////////////////////////////////////////////////
-// Referring to Nested Types
-let heartsSymbol = BlackjackCard.Suit.hearts.rawValue
-// heartsSymbol is "♡"
 ```
+
+we have an outer structure `Bank`, with a nested structure `Account` inside it.
+The `Account` structure also has a nested enum `AccountType` that contains the
+types of accounts (checking and savings). We also have some functions to create
+accounts, deposit, withdraw, and get the balance of a specific account.
 
 ## Protocol
 
@@ -2466,48 +2460,70 @@ Swift Standard Library 이외에 다음과 같은 3 가지 core library 를 학�
 Generic code enables you to write flexible, reusable functions and types that
 can work with any type
 
+Generic functions:
+
 ```swift
-//> The Problem That Generics Solve
-func swapTwoInts(_ a: inout Int, _ b: inout Int) {
-    let temporaryA = a
+func swapValues<T>(_ a: inout T, _ b: inout T) {
+    let temp = a
     a = b
-    b = temporaryA
-}
-var someInt = 3
-var anotherInt = 107
-swapTwoInts(&someInt, &anotherInt)
-print("someInt is now \(someInt), and anotherInt is now \(anotherInt)")
-// Prints "someInt is now 107, and anotherInt is now 3"
-func swapTwoStrings(_ a: inout String, _ b: inout String) {
-    let temporaryA = a
-    a = b
-    b = temporaryA
-}
-func swapTwoDoubles(_ a: inout Double, _ b: inout Double) {
-    let temporaryA = a
-    a = b
-    b = temporaryA
+    b = temp
 }
 
-//> Generic Functions
-func swapTwoValues<T>(_ a: inout T, _ b: inout T) {
-    let temporaryA = a
-    a = b
-    b = temporaryA
-}
-func swapTwoInts(_ a: inout Int, _ b: inout Int)
-func swapTwoValues<T>(_ a: inout T, _ b: inout T)
-// T is inferred to be Int
-var someInt = 3
-var anotherInt = 107
-swapTwoValues(&someInt, &anotherInt)
-// someInt is now 107, and anotherInt is now 3
-// T is inferred to be String
-var someString = "hello"
-var anotherString = "world"
-swapTwoValues(&someString, &anotherString)
-// someString is now "world", and anotherString is now "hello"
+var intA = 5
+var intB = 10
+swapValues(&intA, &intB)
+print("intA: \(intA), intB: \(intB)") // Output: intA: 10, intB: 5
+
+var strA = "Hello"
+var strB = "World"
+swapValues(&strA, &strB)
+print("strA: \(strA), strB: \(strB)") // Output: strA: World, strB: Hello
 ```
+
+`swapValues` function is a generic function that swaps the values of two
+variables. The `<T>` syntax indicates it's a generic function with a type
+placeholder `T`. The function operates on any type `T`, and it swaps the values
+of variables a and b without casting or type-checking their types.
+
+Generic types:
+
+```swift
+// Generic Stack using an Array
+struct Stack<Element> {
+    private var items: [Element] = []
+    
+    mutating func push(_ item: Element) {
+        items.append(item)
+    }
+    
+    mutating func pop() -> Element? {
+        return items.isEmpty ? nil : items.removeLast()
+    }
+    
+    func peek() -> Element? {
+        return items.last
+    }
+    
+    func isEmpty() -> Bool {
+        return items.isEmpty
+    }
+}
+
+var intStack = Stack<Int>()
+intStack.push(1)
+intStack.push(2)
+print(intStack.pop()) // Output: Optional(2)
+
+var strStack = Stack<String>()
+strStack.push("Hello")
+strStack.push("World")
+print(strStack.peek()) // Output: Optional("World")
+```
+
+`Stack` is a generic type that represents a stack data structure. It has a type
+placeholder `Element` that represents the data type of elements in the stack. When
+we create an instance of the St`ack, we provide the actual data type (e.g., Int,
+String) to be used in place of `Element`.
 
 ## Opaque and Boxed Types
 
@@ -2986,7 +3002,7 @@ Task {
 
 # Style Guide
 
-* [Swift Style Guide](https://google.github.io/swift/)
+[Swift Style Guide | google](https://google.github.io/swift/)
 
 # Refactoring
 
