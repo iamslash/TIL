@@ -16,6 +16,7 @@
   - [Print Out](#print-out)
   - [Formatted String](#formatted-string)
   - [Function](#function)
+  - [Basic Operators](#basic-operators)
   - [Control Flow](#control-flow)
     - [Conditional](#conditional)
     - [Loop](#loop)
@@ -62,6 +63,7 @@
   - [Property Wrapper](#property-wrapper)
   - [`@escaping`](#escaping)
   - [Closure vs Async/Await](#closure-vs-asyncawait)
+  - [Diagnosing memory, thread, and crash issues early](#diagnosing-memory-thread-and-crash-issues-early)
 - [Libraries](#libraries)
 - [Style Guide](#style-guide)
 - [Refactoring](#refactoring)
@@ -397,6 +399,40 @@ func baz(a: String, b: String) -> String {
 print(foo(key: "Hello", val: "World"))
 print(bar("Hello", "World"))
 print(baz(a: "Hello", b: "World"))
+```
+
+## Basic Operators
+
+Arithmetic, comparison, assignment, and logical operators.
+
+```swift
+// Arithmetic operators
+let sum = 3 + 2 // 5
+let difference = 3 - 2 // 1
+let product = 3 * 2 // 6
+let quotient = 6 / 2 // 3
+let remainder = 7 % 3 // 1
+
+// Comparison operators
+let isEqual = 5 == 5 // true
+let isNotEqual = 5 != 6 // true
+let isGreater = 7 > 6 // true
+let isLess = 4 < 5 // true
+let isGreaterOrEqual = 4 >= 3 // true
+let isLessOrEqual = 3 <= 4 // true
+
+// Assignment operators
+var a = 10
+var b = 5
+a = b // a is now 5
+
+// Logical operators
+let conditionA = true
+let conditionB = false
+
+let andResult = conditionA && conditionB // false
+let orResult = conditionA || conditionB // true
+let notResult = !conditionA // false
 ```
 
 ## Control Flow
@@ -1777,7 +1813,139 @@ extension FileDescriptor: Sendable { }
 
 ## Macros
 
-WIP...
+Macros transform your source code when you compile it, 
+letting you avoid writing **repetitive code** by hand.
+
+
+```swift
+//> Freestanding Macros:
+func myFunction() {
+    print("Currently running \(#function)")
+    // Currently running myFunction()
+
+    #warning("Something's wrong")
+
+}
+
+//> Attached Macros:
+// as-is
+struct SundaeToppings: OptionSet {
+    let rawValue: Int
+    static let nuts = SundaeToppings(rawValue: 1 << 0)
+    static let cherry = SundaeToppings(rawValue: 1 << 1)
+    static let fudge = SundaeToppings(rawValue: 1 << 2)
+}
+// to-be
+// @OptionSet is a macro from the Swift standard library.
+@OptionSet<Int>
+struct SundaeToppings {
+    private enum Options: Int {
+        case nuts
+        case cherry
+        case fudge
+    }
+}
+// Expanded code
+struct SundaeToppings {
+    private enum Options: Int {
+        case nuts
+        case cherry
+        case fudge
+    }
+    typealias RawValue = Int
+    var rawValue: RawValue
+    init() { self.rawValue = 0 }
+    init(rawValue: RawValue) { self.rawValue = rawValue }
+    static let nuts: Self = Self(rawValue: 1 << Options.nuts.rawValue)
+    static let cherry: Self = Self(rawValue: 1 << Options.cherry.rawValue)
+    static let fudge: Self = Self(rawValue: 1 << Options.fudge.rawValue)
+}
+extension SundaeToppings: OptionSet { }
+
+//> Macro Declarations
+public macro OptionSet<RawType>() =
+        #externalMacro(module: "SwiftMacros", type: "OptionSetMacro")
+
+//> Macro Expansion
+let magicNumber = #fourCharacterCode("ABCD")
+// Expanded code
+let magicNumber = 1145258561
+
+//> Implementing a Macro
+// Pakcage.swift of Macro library
+targets: [
+    // Macro implementation that performs the source transformations.
+    .macro(
+        name: "MyProjectMacros",
+        dependencies: [
+            .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+            .product(name: "SwiftCompilerPlugin", package: "swift-syntax")
+        ]
+    ),
+    // Library that exposes a macro as part of its API.
+    .target(name: "MyProject", dependencies: ["MyProjectMacros"]),
+]
+// Package.swift of Host application
+dependencies: [
+    .package(url: "https://github.com/apple/swift-syntax.git", from: "some-tag"),
+],
+// FourCharacterCode macro implementation
+public struct FourCharacterCode: ExpressionMacro {
+    public static func expansion(
+        of node: some FreestandingMacroExpansionSyntax,
+        in context: some MacroExpansionContext
+    ) throws -> ExprSyntax {
+        guard let argument = node.argumentList.first?.expression,
+              let segments = argument.as(StringLiteralExprSyntax.self)?.segments,
+              segments.count == 1,
+              case .stringSegment(let literalSegment)? = segments.first
+        else {
+            throw CustomError.message("Need a static string")
+        }
+
+        let string = literalSegment.content.text
+        guard let result = fourCharacterCode(for: string) else {
+            throw CustomError.message("Invalid four-character code")
+        }
+
+
+        return "\(raw: result)"
+    }
+}
+private func fourCharacterCode(for characters: String) -> UInt32? {
+    guard characters.count == 4 else { return nil }
+
+    var result: UInt32 = 0
+    for character in characters {
+        result = result << 8
+        guard let asciiValue = character.asciiValue else { return nil }
+        result += UInt32(asciiValue)
+    }
+    return result.bigEndian
+}
+enum CustomError: Error { case message(String) }
+
+//> Developing and Debugging Macros
+// Test of the #fourCharacterCode macro
+let source: SourceFileSyntax =
+    """
+    let abcd = #fourCharacterCode("ABCD")
+    """
+let file = BasicMacroExpansionContext.KnownSourceFile(
+    moduleName: "MyModule",
+    fullFilePath: "test.swift"
+)
+let context = BasicMacroExpansionContext(sourceFiles: [source: file])
+let transformedSF = source.expand(
+    macros:["fourCharacterCode": FourCC.self],
+    in: context
+)
+let expectedDescription =
+    """
+    let abcd = 1145258561
+    """
+precondition(transformedSF.description == expectedDescription)
+```
 
 ## Print Type
 
@@ -2295,27 +2463,292 @@ Swift Standard Library 이외에 다음과 같은 3 가지 core library 를 학�
 
 ## Generics
 
-WIP...
+Generic code enables you to write flexible, reusable functions and types that
+can work with any type
+
+```swift
+//> The Problem That Generics Solve
+func swapTwoInts(_ a: inout Int, _ b: inout Int) {
+    let temporaryA = a
+    a = b
+    b = temporaryA
+}
+var someInt = 3
+var anotherInt = 107
+swapTwoInts(&someInt, &anotherInt)
+print("someInt is now \(someInt), and anotherInt is now \(anotherInt)")
+// Prints "someInt is now 107, and anotherInt is now 3"
+func swapTwoStrings(_ a: inout String, _ b: inout String) {
+    let temporaryA = a
+    a = b
+    b = temporaryA
+}
+func swapTwoDoubles(_ a: inout Double, _ b: inout Double) {
+    let temporaryA = a
+    a = b
+    b = temporaryA
+}
+
+//> Generic Functions
+func swapTwoValues<T>(_ a: inout T, _ b: inout T) {
+    let temporaryA = a
+    a = b
+    b = temporaryA
+}
+func swapTwoInts(_ a: inout Int, _ b: inout Int)
+func swapTwoValues<T>(_ a: inout T, _ b: inout T)
+// T is inferred to be Int
+var someInt = 3
+var anotherInt = 107
+swapTwoValues(&someInt, &anotherInt)
+// someInt is now 107, and anotherInt is now 3
+// T is inferred to be String
+var someString = "hello"
+var anotherString = "world"
+swapTwoValues(&someString, &anotherString)
+// someString is now "world", and anotherString is now "hello"
+```
 
 ## Opaque and Boxed Types
 
-WIP...
+Swift provides two ways to hide details about a value’s type: **opaque types**
+and **boxed protocol types**. Both are related to dealing with protocols and
+their associated types.
+
+**Opaque types** are introduced in Swift 5.1 with the keyword some. They are used to
+hide the underlying concrete type that conforms to a protocol. When you return
+an opaque type, you are returning a type that conforms to a specific protocol,
+but the actual type is not exposed to the caller. This is useful when you want
+to hide implementation details and maintain type identity without revealing the
+concrete type.
+
+```swift
+func createShape() -> some Shape {
+    return Circle()
+}
+```
+
+The caller of `createShape()` will know that it returns a type conforming to the
+`Shape` protocol, but it won't know that the underlying concrete type is `Circle`.
+
+**Boxed protocol types**, also known as existential types, are used when you
+need to store or pass around heterogeneous instances of different types that
+conform to the same protocol. When you use a protocol as a type, the Swift
+compiler boxes the value into an existential container, allowing it to hold any
+value that conforms to the protocol.
+
+```swift
+var shapes: [Shape] = [Circle(), Rectangle()]
+```
+
+The shapes array can store any object that conforms to the `Shape` protocol.
+However, when using boxed protocol types, you lose the information about the
+specific type of the object conforming to the protocol.
+
+Key Differences:
+
+**Opaque types** maintain type identity, while **boxed protocol types** lose type
+identity. In other words, when using **opaque types**, the compiler has knowledge of
+the specific concrete type at compile-time, whereas with **boxed protocol types**,
+the specific type information is lost.
+
+**Opaque types** provide better type safety and optimization because the Swift
+compiler knows the concrete type during compilation, while **boxed protocol types**
+may require dynamic dispatch and runtime checks for type compatibility, which
+can result in decreased performance.
+
+**Opaque types** can only be used as return types in functions, while **boxed protocol
+types** can be used as return types, parameter types, and stored as properties.
+
+**Opaque types** cannot be used with associated types that have **Self** or **associated
+type** requirements, while **boxed protocol types** can handle these scenarios by
+using a type-erased container, like an `Any-` wrapper, to deal with associated
+types.
 
 ## Automatic Reference Counting
 
-WIP...
+**ARC** manages memory by tracking class instance references increasing,
+decreasing reference counts. 
+
+**Weak** and **unowned references** prevent memory leaks.
+
+```swift
+//> ARC
+// You should use `weak var` not just `var`.`
+class Person {
+    let name: String
+    weak var bestFriend: Person?
+    init(name: String) {
+        self.name = name
+    }    
+    deinit {
+        print("\(name) is being deallocated.")
+    }
+}
+// Creating two Person instances
+var personA: Person? = Person(name: "Alice")
+var personB: Person? = Person(name: "Bob")
+// Set their bestFriend property to each other (Weak reference avoids strong reference cycle)
+personA?.bestFriend = personB
+personB?.bestFriend = personA
+// ARC will deallocate the instances when there are no strong references left
+personA = nil // Output: "Alice is being deallocated."
+personB = nil // Output: "Bob is being deallocated."
+
+//> Weak references
+// Declare weak reference
+class ObjectA {
+    weak var objectB: ObjectB?
+}
+// Usage
+let objA = ObjectA()
+var objB: ObjectB? = ObjectB()
+objA.objectB = objB
+objB = nil // Instance of ObjectB deallocated, objA.objectB becomes nil
+
+//> Unowned references 
+// Declare unowned reference
+class ObjectA {
+    unowned let objectB: ObjectB
+    init(objB: ObjectB) { objectB = objB }
+}
+// Usage
+let objB = ObjectB()
+// Instance of ObjectB will outlive objA.objectB reference
+let objA = ObjectA(objB: objB) 
+```
 
 ## Memory Safety
 
-WIP...
+There are three primary aspects of memory safety in Swift:
+
+* Initialization before use
+* Bounds checks on array access
+* Exclusive access to memory
+
+**Initialization before use**: Swift ensures that all properties of a value are
+initialized before the value is used. It means that you cannot use an
+uninitialized variable, preventing accidental access to garbage data.
+
+```swift
+var count: Int
+// Using 'count' below without initializing will lead to a compile-time error.
+// print(count) - Error: variable 'count' used before being initialized
+count = 5
+print(count)  // 5
+```
+
+**Bounds checks on array access**: Swift performs bounds checks on array access
+to ensure you won't access memory outside the array's storage. If you attempt to
+read or write to an array index that's out-of-bounds, Swift will trigger a
+runtime error.
+
+```swift
+var numbers = [1, 2, 3]
+// Accessing invalid index will result in a runtime error
+// print(numbers[3]) - Fatal error: Index out of range
+print(number[3]) // Fatal error: Index out of range
+```
+
+**Exclusive access to memory**: Swift prevents simultaneous access (read and
+write) to the same memory location, avoiding racing conditions and unpredictable
+behavior. This is enforced through compile-time checks and runtime checks.
+
+```swift
+// Example of conflict due to improper simultaneous access
+func modify(value: inout Int) {
+    value += 1
+    value *= 2
+}
+var sharedValue = 3
+modify(value: &sharedValue)
+print(sharedValue) // Expected output: (3 + 1) * 2 = 8
+```
 
 ## Access Control
 
-WIP...
+Swift provides five access levels:
+
+* **private**: Accessible only within the same source file where the entity is
+  defined.
+* **fileprivate**: Accessible only within the same source file.
+* **internal**: Accessible within the entire module (by default, if no access
+  modifier is specified).
+* **public**: Accessible anywhere, but only sub-classable within the module. For
+  properties and functions, it means they can be read but not overridden outside
+  the module.
+* **open**: Accessible and sub-classable from any module. For properties and
+  functions, it means they can be read and overridden from any module.
+
+```swift
+// MyClass.swift
+class MyClass {
+    private var privateVar = "Only accessible within MyClass.swift"
+    fileprivate var fileprivateVar = "Accessible within the same source file"    
+    internal var internalVar = "Accessible within the entire module (default)"
+    public var publicVar = "Readable anywhere, but not modifiable outside the module"    
+    open var openVar = "Readable and modifiable from any module"
+}
+
+// AnotherSourceFile.swift
+import SomeModule
+
+let myClass = MyClass()
+// myClass.privateVar - Error: 'privateVar' is inaccessible due to 'private' protection level
+// Can access 'fileprivate' if in the same source file as MyClass
+print(myClass.fileprivateVar)
+// Accessible as they are within the same module
+print(myClass.internalVar)
+print(myClass.publicVar)
+print(myClass.openVar)
+```
 
 ## Advanced Operators
 
-WIP...
+Bitwise, overflow, compound assignment, and other custom operators.
+
+```swift
+// Bitwise operators
+let a: UInt8 = 0b1100
+let b: UInt8 = 0b0110
+
+let bitwiseNOT = ~a // 0b0011
+let bitwiseAND = a & b // 0b0100
+let bitwiseOR = a | b // 0b1110
+let bitwiseXOR = a ^ b // 0b1010
+let leftShift = a << 1 // 0b11000 (0b1000 after removing the overflowed bit)
+let rightShift = a >> 1 // 0b0110
+
+// Overflow operators
+//   Overflow addition (&+): Adds two numbers and wraps the result on overflow.
+//   Overflow subtraction (&-): Subtracts two numbers and wraps the result on overflow.
+//   Overflow multiplication (&*): Multiplies two numbers and wraps the result on overflow.
+let maxInt = UInt8.max
+let overflowAdd = maxInt &+ 1 // 0 (wrapped overflow)
+let overflowSubtract = UInt8.min &- 1 // 255 (wrapped overflow)
+
+// Compound Assignment Operators
+var a = 7
+a += 2 // a = a + 2, now a is 9
+a -= 3 // a = a - 3, now a is 6
+a *= 4 // a = a * 4, now a is 24
+a /= 2 // a = a / 2, now a is 12
+
+// Custom Operators:
+// Swift allows you to create custom operators, 
+// which can either be prefix, infix, or postfix.
+// Custom operators need to be declared first with 
+// the operator keyword and associated with a special symbol.
+
+// Declare a custom power operator
+infix operator **
+// Implementing the custom operator function
+func **(base: Double, power: Double) -> Double {
+    return pow(base, power)
+}
+// Using the custom power operator
+let result = 2.0 ** 3.0 // 8.0
+```
 
 # Advanced
 
@@ -2532,6 +2965,19 @@ Task {
     }
 }
 ```
+
+## Diagnosing memory, thread, and crash issues early
+
+[Diagnosing memory, thread, and crash issues early](https://developer.apple.com/documentation/xcode/diagnosing-memory-thread-and-crash-issues-early)
+
+* **Address Sanitizer** — The ASan tool identifies potential memory-related
+  corruption issues.
+* **Thread Sanitizer** — The TSan tool detects race conditions between threads.
+* **Main Thread Checker** — This tool verifies that system APIs that must run on
+  the main thread actually do run on that thread.
+* **Undefined Behavior Sanitizer** — The UBSan tool detects divide-by-zero
+  errors, attempts to access memory using a misaligned pointer, and other
+  undefined behaviors.
 
 # Libraries
 
