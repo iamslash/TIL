@@ -118,12 +118,14 @@
 ## item7: Eliminate obsolete object references
 ## item8: Avoid finalizers and cleaners
 ## item9: Prefer try-with-resources to try-finally
+
 # Methods Common to All Objects
 ## item10: Obey the general contract when overriding equals
 ## item11: Always override hashCode when you override equals
 ## item12: Always override toString
 ## item13: Override clone judiciously
 ## item14: Consider implementing Comparable
+
 # Classes and Interfaces
 ## item15: Minimize the accessibility of classes and members
 ## item16: In public classes, use accessor methods, not public fields
@@ -136,6 +138,7 @@
 ## item23: Prefer class hierarchies to tagged classes
 ## item24: Favor static member classes over nonstatic
 ## item25: Limit source files to a single top-level class
+
 # Generics
 ## item26: Don’t use raw types
 ## item27: Eliminate unchecked warnings
@@ -145,6 +148,7 @@
 ## item31: Use bounded wildcards to increase API flexibility
 ## item32: Combine generics and varargs judiciously
 ## item33: Consider typesafe heterogeneous containers
+
 # Enums and Annotations
 ## item34: Use enums instead of int constants
 ## item35: Use instance fields instead of ordinals
@@ -154,6 +158,7 @@
 ## item39: Prefer annotations to naming patterns
 ## item40: Consistently use the Override annotation
 ## item41: Use marker interfaces to define types
+
 # Lambdas and Streams
 ## item42: Prefer lambdas to anonymous classes
 ## item43: Prefer method references to lambdas
@@ -162,6 +167,7 @@
 ## item46: Prefer side-effect-free functions in streams
 ## item47: Prefer Collection to Stream as a return type
 ## item48: Use caution when making streams parallel
+
 # Methods
 ## item49: Check parameters for validity
 ## item50: Make defensive copies when needed
@@ -171,6 +177,7 @@
 ## item54: Return empty collections or arrays, not nulls
 ## item55: Return optionals judiciously
 ## item56: Write doc comments for all exposed API elements
+
 # General Programming
 ## item57: Minimize the scope of local variables
 ## item58: Prefer for-each loops to traditional for loops
@@ -184,6 +191,7 @@
 ## item66: Use native methods judiciously
 ## item67: Optimize judiciously
 ## item68: Adhere to generally accepted naming conventions
+
 # Exceptions
 ## item69: Use exceptions only for exceptional conditions
 ## item70: Use checked exceptions for recoverable conditions and runtime exceptions for programming errors
@@ -194,6 +202,7 @@
 ## item75: Include failure-capture information in detail messages
 ## item76: Strive for failure atomicity
 ## item77: Don’t ignore exceptions
+
 # Concurrency
 ## item78: Synchronize access to shared mutable data
 ## item79: Avoid excessive synchronization
@@ -202,6 +211,7 @@
 ## item82: Document thread safety
 ## item83: Use lazy initialization judiciously
 ## item84: Don’t depend on the thread scheduler
+
 # Serialization
 ## item85: Prefer alternatives to Java serialization
 ## item86: Implement Serializable with great caution
