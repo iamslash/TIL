@@ -109,8 +109,85 @@
   * Effective Java 를 Swift 로 옮긴 것
 
 # Creating and Destroying Objects
+
 ## item1: Consider static factory methods instead of constructors
+
+In Swift, you can use static factory methods instead of initializers to provide
+more explicit and readable ways of creating objects.
+
+```swift
+class Car {
+    var model: String
+    
+    private init(model: String) {
+        self.model = model
+    }
+    
+    static func createTesla() -> Car {
+        return Car(model: "Tesla")
+    }
+    
+    static func createBMW() -> Car {
+        return Car(model: "BMW")
+    }
+}
+
+let car1 = Car.createTesla()
+let car2 = Car.createBMW()
+```
+
 ## item2: Consider a builder when faced with many constructor parameters
+
+The Builder pattern can be useful when dealing with many constructor parameters,
+especially when some parameters are optional.
+
+```swift
+struct User {
+    let firstName: String
+    let lastName: String
+    let age: Int?
+    let address: String?
+}
+
+class UserBuilder {
+    private var firstName = ""
+    private var lastName = ""
+    private var age: Int?
+    private var address: String?
+    
+    func setFirstName(_ firstName: String) -> UserBuilder {
+        self.firstName = firstName
+        return self
+    }
+    
+    func setLastName(_ lastName: String) -> UserBuilder {
+        self.lastName = lastName
+        return self
+    }
+    
+    func setAge(_ age: Int) -> UserBuilder {
+        self.age = age
+        return self
+    }
+    
+    func setAddress(_ address: String) -> UserBuilder {
+        self.address = address
+        return self
+    }
+    
+    func build() -> User {
+        return User(firstName: firstName, lastName: lastName, age: age, address: address)
+    }
+}
+
+let user = UserBuilder()
+    .setFirstName("John")
+    .setLastName("Doe")
+    .setAge(30)
+    .setAddress("123 Main St")
+    .build()
+```
+
 ## item3: Enforce the singleton property with a private constructor or an enum type
 ## item4: Enforce noninstantiability with a private constructor
 ## item5: Prefer dependency injection to hardwiring resources
