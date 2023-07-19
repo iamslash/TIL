@@ -1,5 +1,3 @@
-# Materials
-
 * [프라미스 | javascript.info](https://ko.javascript.info/promise-basics)
   * 제일 쉬운 설명
 
@@ -249,4 +247,26 @@ new Promise((resolve, reject) => {
   reject(new Error("failed"));
 }).catch(alert); 
 // Error: failed
+```
+
+다음은 [2776. Convert Callback Based Function to Promise Based Function | leetcode](https://leetcode.com/problems/convert-callback-based-function-to-promise-based-function/) 의 해답이다. async function 과 promise 의 동작원리를 이해할 수 있다.
+
+```js
+var promisify = function(fn) {
+    return async function(...args) {
+        return new Promise((resolve, reject) => {
+            function handler(value, error) {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(value);
+                }
+            }
+            fn(handler, ...args);
+        });
+    }
+};
+
+const asyncFunc = promisify(callback => callback(42));
+asyncFunc().then(console.log); // 42
 ```
