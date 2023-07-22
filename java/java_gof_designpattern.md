@@ -977,24 +977,570 @@ public class Main {
 
 [Interpreter Design Pattern](/gofdesignpattern/interpreter/interpreter.md)
 
-
+Interpreter pattern is a design pattern that provides a way to evaluate language
+grammar or expressions. It involves building an interpreter to interpret the
+expressions of a language. This pattern is used in situations where there is a
+language to be interpreted or domain-specific language expression, which must be
+evaluated.
 
 ```java
+import java.util.HashMap;
+import java.util.Map;
 
+interface Expression {
+    boolean interpret(Map<String, Boolean> context);
+}
+
+class Constant implements Expression {
+    private boolean value;
+
+    public Constant(boolean value) {
+        this.value = value;
+    }
+
+    public boolean interpret(Map<String, Boolean> context) {
+        return value;
+    }
+}
+
+class Variable implements Expression {
+    private String name;
+
+    public Variable(String name) {
+        this.name = name;
+    }
+
+    public boolean interpret(Map<String, Boolean> context) {
+        return context.get(name);
+    }
+}
+
+class And implements Expression {
+    private Expression left, right;
+
+    public And(Expression left, Expression right) {
+        this.left = left;
+        this.right = right;
+    }
+
+    public boolean interpret(Map<String, Boolean> context) {
+        return left.interpret(context) && right.interpret(context);
+    }
+}
+
+class Or implements Expression {
+    private Expression left, right;
+
+    public Or(Expression left, Expression right) {
+        this.left = left;
+        this.right = right;
+    }
+
+    public boolean interpret(Map<String, Boolean> context) {
+        return left.interpret(context) || right.interpret(context);
+    }
+}
+
+public class InterpreterExample {
+    public static void main(String[] args) {
+        Expression a = new Variable("A");
+        Expression b = new Variable("B");
+        Expression expression = new Or(new And(a, b), new Or(a, new And(a, b)));
+
+        Map<String, Boolean> context = new HashMap<>();
+        context.put("A", true);
+        context.put("B", false);
+
+        System.out.println("Expression result: " + expression.interpret(context));
+    }
+}
 ```
 
 ## Iterator
 
+[Iterator Design Pattern](/gofdesignpattern/iterator/iterator.md)
+
+Iterator design pattern is a design pattern that provides a way to access the
+elements of a collection object sequentially without exposing its underlying
+representation. This pattern is useful to provide a standard way to traverse
+through a group of objects and helps decouple the algorithms from the data
+structures they operate upon.
+
+```java
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+class MyCollection<T> implements Iterable<T> {
+    private List<T> items = new ArrayList<>();
+
+    public void add(T item) {
+        items.add(item);
+    }
+
+    public Iterator<T> iterator() {
+        return new MyIterator<>(this.items);
+    }
+}
+
+class MyIterator<T> implements Iterator<T> {
+    private List<T> items;
+    private int currentIndex = 0;
+
+    public MyIterator(List<T> items) {
+        this.items = items;
+    }
+
+    public boolean hasNext() {
+        return currentIndex < items.size();
+    }
+
+    public T next() {
+        return items.get(currentIndex++);
+    }
+}
+
+public class IteratorExample {
+    public static void main(String[] args) {
+        MyCollection<Integer> numbers = new MyCollection<>();
+        numbers.add(1);
+        numbers.add(2);
+        numbers.add(3);
+
+        for (Integer num : numbers) {
+            System.out.println(num);
+        }
+    }
+}
+```
+
 ## Mediator
+
+[Mediator Design Pattern](/gofdesignpattern/mediator/mediator.md)
+
+The Mediator pattern is a behavioral design pattern that defines an object that
+encapsulates how objects (colleagues) interact with each other. This pattern
+promotes loose coupling by avoiding direct connections between colleagues, and
+the mediator object is responsible for handling their interactions.
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+// Mediator component
+interface ChatMediator {
+    void sendMessage(String msg, User user);
+    void addUser(User user);
+}
+
+class ChatMediatorImpl implements ChatMediator {
+    private List<User> users;
+
+    public ChatMediatorImpl() {
+        this.users = new ArrayList<>();
+    }
+
+    @Override
+    public void addUser(User user) {
+        this.users.add(user);
+    }
+
+    @Override
+    public void sendMessage(String msg, User user) {
+        for (User u : this.users) {
+            if (u != user) {
+                u.receive(msg);
+            }
+        }
+    }
+}
+
+// Colleague component
+abstract class User {
+    protected ChatMediator mediator;
+    protected String name;
+
+    public User(ChatMediator mediator, String name) {
+        this.mediator = mediator;
+        this.name = name;
+    }
+
+    public abstract void send(String msg);
+    public abstract void receive(String msg);
+}
+
+class UserImpl extends User {
+    public UserImpl(ChatMediator mediator, String name) {
+        super(mediator, name);
+    }
+
+    @Override
+    public void send(String msg) {
+        mediator.sendMessage(msg, this);
+    }
+
+    @Override
+    public void receive(String msg) {
+        System.out.println(this.name + " received: " + msg);
+    }
+}
+
+// Application code
+public class MediatorPattern {
+    public static void main(String[] args) {
+        ChatMediator mediator = new ChatMediatorImpl();
+
+        User user1 = new UserImpl(mediator, "Alice");
+        User user2 = new UserImpl(mediator, "Bob");
+        User user3 = new UserImpl(mediator, "Eve");
+
+        mediator.addUser(user1);
+        mediator.addUser(user2);
+        mediator.addUser(user3);
+
+        user1.send("Hello, everyone!");
+    }
+}
+```
 
 ## Memento
 
+[Memento Design Pattern](/gofdesignpattern/memento/memento.md)
+
+Memento pattern is a behavioral design pattern that allows an object
+(originator) to save and restore its previous state without revealing the
+structure or details of its internal state, thus enabling an undo mechanism. A
+memento object is used to store the state of the originator, and a caretaker is
+responsible for the memento's safe keeping.
+
+```java
+// The Memento class
+class Memento {
+    private final String state;
+
+    public Memento(String state) {
+        this.state = state;
+    }
+
+    public String getState() {
+        return state;
+    }
+}
+
+// The Originator class
+class Originator {
+    private String state;
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public Memento save() {
+        return new Memento(state);
+    }
+
+    public void restore(Memento memento) {
+        state = memento.getState();
+    }
+}
+
+// The Caretaker class
+class Caretaker {
+    private final Stack<Memento> mementos = new Stack<>();
+
+    public void save(Originator originator) {
+        mementos.push(originator.save());
+    }
+
+    public void undo(Originator originator) {
+        if (!mementos.isEmpty()) {
+            originator.restore(mementos.pop());
+        }
+    }
+}
+```
+
 ## Observer
+
+[Observer Design Pattern](/gofdesignpattern/observer/observer.md)
+
+Observer Pattern is a behavioral design pattern that allows an object (subject)
+to maintain a list of its dependents (observers) and notify them automatically
+of any changes in state. When a state change occurs, the subject updates the
+observers.
+
+```java
+import java.util.ArrayList;
+import java.util.List;
+
+interface Observer {
+    void update(String message);
+}
+
+class Subject {
+    private List<Observer> observers = new ArrayList<>();
+
+    void attach(Observer observer) {
+        observers.add(observer);
+    }
+
+    void notifyObservers(String message) {
+        for (Observer observer : observers) {
+            observer.update(message);
+        }
+    }
+}
+
+class ConcreteObserver implements Observer {
+    private String name;
+
+    ConcreteObserver(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public void update(String message) {
+        System.out.println(name + " received the message: " + message);
+    }
+}
+
+public class ObserverPatternDemo {
+    public static void main(String[] args) {
+        Subject subject = new Subject();
+        ConcreteObserver observer1 = new ConcreteObserver("Observer1");
+        ConcreteObserver observer2 = new ConcreteObserver("Observer2");
+
+        subject.attach(observer1);
+        subject.attach(observer2);
+
+        subject.notifyObservers("Hello, Observers!");
+    }
+}
+```
 
 ## State
 
+[State Design Pattern](/gofdesignpattern/state/state.md)
+
+The State pattern is a behavioral design pattern that allows an object to change
+its behavior when its internal state changes.
+
+```java
+interface State {
+  void handle(Context context);
+}
+
+class ConcreteStateA implements State {
+  public void handle(Context context) {
+    context.changeState(new ConcreteStateB());
+  }
+}
+
+class ConcreteStateB implements State {
+  public void handle(Context context) {
+    context.changeState(new ConcreteStateA());
+  }
+}
+
+class Context {
+  private State state;
+
+  public Context(State state) {
+    this.state = state;
+  }
+
+  public void changeState(State newState) {
+    state = newState;
+  }
+
+  public void request() {
+    state.handle(this);
+  }
+}
+
+public class StatePattern {
+  public static void main(String[] args) {
+    Context context = new Context(new ConcreteStateA());
+    context.request();
+    context.request();
+  }
+}
+```
+
 ## Strategy
+
+[Strategy Design Pattern](/gofdesignpattern/strategy/strategy.md)
+
+The strategy pattern is a behavioral design pattern that defines a family of
+algorithms, encapsulates each of them, and makes them interchangeable. It allows
+the algorithm to vary independently from the clients that use it.
+
+```java
+// Strategy interface
+interface Strategy {
+    int doOperation(int a, int b);
+}
+
+// Concrete Strategies
+class Addition implements Strategy {
+    public int doOperation(int a, int b) {
+        return a + b;
+    }
+}
+
+class Subtraction implements Strategy {
+    public int doOperation(int a, int b) {
+        return a - b;
+    }
+}
+
+class Multiplication implements Strategy {
+    public int doOperation(int a, int b) {
+        return a * b;
+    }
+}
+
+// Context class
+class Context {
+    private Strategy strategy;
+
+    public Context(Strategy strategy) {
+        this.strategy = strategy;
+    }
+
+    public int executeStrategy(int a, int b) {
+        return strategy.doOperation(a, b);
+    }
+}
+
+// Client
+public class Main {
+    public static void main(String[] args) {
+        Context context = new Context(new Addition());
+        System.out.println("10 + 5 = " + context.executeStrategy(10, 5));
+
+        context = new Context(new Subtraction());
+        System.out.println("10 - 5 = " + context.executeStrategy(10, 5));
+
+        context = new Context(new Multiplication());
+        System.out.println("10 * 5 = " + context.executeStrategy(10, 5));
+    }
+}
+```
 
 ## Template
 
+[Template Design Pattern](/gofdesignpattern/template/template.md)
+
+The template pattern is a behavioral design pattern that defines the program
+skeleton of an algorithm in a method, called template method, which defers some
+steps to subclasses. It lets subclasses redefine certain steps of an algorithm
+without changing the algorithm's structure.
+
+```java
+abstract class Game {
+  abstract void initialize();
+  abstract void startGame();
+  abstract void endGame();
+
+  public final void play() {
+    initialize();
+    startGame();
+    endGame();
+  }
+}
+
+class Cricket extends Game {
+  void initialize() { System.out.println("Cricket Game Initialized!"); }
+  void startGame() { System.out.println("Cricket Game Started!"); }
+  void endGame() { System.out.println("Cricket Game Finished!"); }
+}
+
+class Football extends Game {
+  void initialize() { System.out.println("Football Game Initialized!"); }
+  void startGame() { System.out.println("Football Game Started!"); }
+  void endGame() { System.out.println("Football Game Finished!"); }
+}
+
+public class TemplatePattern {
+  public static void main(String[] args) {
+    Game game = new Cricket();
+    game.play();
+
+    game = new Football();
+    game.play();
+  }
+}
+```
+
 ## Visitor
+
+[Visitor Design Pattern](/gofdesignpattern/visitor/visitor.md)
+
+Visitor pattern is a design pattern used in object-oriented programming that
+promotes separation of concerns, allowing operations to be defined independently
+on objects while traversing data structures, typically through a tree traversal
+algorithm. Visitor pattern is an example of the **double dispatch technique**,
+where the operation's implementation depends on both the **type of the
+operation** and the **type of the data**.
+
+```java
+interface ShapeVisitor {
+    void visit(Circle circle);
+    void visit(Rectangle rectangle);
+}
+
+interface Shape {
+    void accept(ShapeVisitor visitor);
+}
+
+class Circle implements Shape {
+    double radius;
+
+    Circle(double radius) {
+        this.radius = radius;
+    }
+
+    void accept(ShapeVisitor visitor) {
+        visitor.visit(this);
+    }
+}
+
+class Rectangle implements Shape {
+    double length, width;
+
+    Rectangle(double length, double width) {
+        this.length = length;
+        this.width = width;
+    }
+
+    void accept(ShapeVisitor visitor) {
+        visitor.visit(this);
+    }
+}
+
+class ShapeAreaVisitor implements ShapeVisitor {
+    double totalArea = 0;
+
+    void visit(Circle circle) {
+        totalArea += Math.PI * Math.pow(circle.radius, 2);
+    }
+
+    void visit(Rectangle rectangle) {
+        totalArea += rectangle.length * rectangle.width;
+    }
+}
+
+public class VisitorPatternExample {
+    public static void main(String[] args) {
+        Shape[] shapes = {new Circle(5), new Rectangle(3, 4), new Circle(2)};
+        ShapeAreaVisitor areaVisitor = new ShapeAreaVisitor();
+
+        for (Shape shape : shapes) {
+            shape.accept(areaVisitor);
+        }
+
+        System.out.println("Total area: " + areaVisitor.totalArea);
+    }
+}
+```

@@ -14,5 +14,9 @@
 
 # Examples
 
-* [Observer in kotlin](/kotlin/kotlin_design_pattern/observer.md)
-* [Observer in go](/golang/go_design_pattern/observer.md)
+* [Observer in C++](/cpp/cpp_gof_designpattern.md#observer)
+* [Observer in Java](/java/java_gof_designpattern.md#observer)
+* [Observer in Kotlin](/kotlin/kotlin_gof_design_pattern.md#observer)
+* [Observer in Python](/python/python_gof_designpattern.md#observer)
+* [Observer in Go](/go/go_gof_design_pattern.md#observer)
+* [Observer in Swift](/swift/swift_gof_designpattern.md#observer)

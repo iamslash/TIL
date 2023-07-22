@@ -15,5 +15,9 @@
 
 # Examples
 
-* [Strategy in kotlin](/kotlin/kotlin_design_pattern/strategy.md)
-* [Strategy in go](/golang/go_design_pattern/strategy.md)
+* [Strategy in C++](/cpp/cpp_gof_designpattern.md#strategy)
+* [Strategy in Java](/java/java_gof_designpattern.md#strategy)
+* [Strategy in Kotlin](/kotlin/kotlin_gof_design_pattern.md#strategy)
+* [Strategy in Python](/python/python_gof_designpattern.md#strategy)
+* [Strategy in Go](/go/go_gof_design_pattern.md#strategy)
+* [Strategy in Swift](/swift/swift_gof_designpattern.md#strategy)

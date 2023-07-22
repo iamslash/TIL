@@ -13,5 +13,9 @@
 
 # Examples
 
-* [Template in kotlin](/kotlin/kotlin_design_pattern/template.md)
-* [Template in go](/golang/go_design_pattern/template.md)
+* [Template in C++](/cpp/cpp_gof_designpattern.md#template)
+* [Template in Java](/java/java_gof_designpattern.md#template)
+* [Template in Kotlin](/kotlin/kotlin_gof_design_pattern.md#template)
+* [Template in Python](/python/python_gof_designpattern.md#template)
+* [Template in Go](/go/go_gof_design_pattern.md#template)
+* [Template in Swift](/swift/swift_gof_designpattern.md#template)

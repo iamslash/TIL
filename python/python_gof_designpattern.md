@@ -781,19 +781,440 @@ if __name__ == "__main__":
 
 ## Interpreter
 
+[Interpreter Design Pattern](/gofdesignpattern/interpreter/interpreter.md)
+
+Interpreter pattern is a design pattern that provides a way to evaluate language
+grammar or expressions. It involves building an interpreter to interpret the
+expressions of a language. This pattern is used in situations where there is a
+language to be interpreted or domain-specific language expression, which must be
+evaluated.
+
+```py
+from typing import Dict
+
+class Expression:
+    def interpret(self, context: Dict[str, bool]) -> bool:
+        pass
+
+class Constant(Expression):
+    def __init__(self, value: bool):
+        self.value = value
+
+    def interpret(self, context: Dict[str, bool]) -> bool:
+        return self.value
+
+class Variable(Expression):
+    def __init__(self, name: str):
+        self.name = name
+
+    def interpret(self, context: Dict[str, bool]) -> bool:
+        return context[self.name]
+
+class And(Expression):
+    def __init__(self, left: Expression, right: Expression):
+        self.left = left
+        self.right = right
+
+    def interpret(self, context: Dict[str, bool]) -> bool:
+        return self.left.interpret(context) and self.right.interpret(context)
+
+class Or(Expression):
+    def __init__(self, left: Expression, right: Expression):
+        self.left = left
+        self.right = right
+
+    def interpret(self, context: Dict[str, bool]) -> bool:
+        return self.left.interpret(context) or self.right.interpret(context)
+
+a = Variable("A")
+b = Variable("B")
+expression = Or(And(a, b), Or(a, And(a, b)))
+context = {"A": True, "B": False}
+
+print("Expression result:", expression.interpret(context))
+```
+
 ## Iterator
+
+[Iterator Design Pattern](/gofdesignpattern/iterator/iterator.md)
+
+Iterator design pattern is a design pattern that provides a way to access the
+elements of a collection object sequentially without exposing its underlying
+representation. This pattern is useful to provide a standard way to traverse
+through a group of objects and helps decouple the algorithms from the data
+structures they operate upon.
+
+```py
+class MyCollection:
+    def __init__(self):
+        self.items = []
+
+    def add(self, item):
+        self.items.append(item)
+
+    def __iter__(self):
+        return iter(self.items)
+
+
+numbers = MyCollection()
+numbers.add(1)
+numbers.add(2)
+numbers.add(3)
+
+for num in numbers:
+    print(num)
+```
 
 ## Mediator
 
+[Mediator Design Pattern](/gofdesignpattern/mediator/mediator.md)
+
+The Mediator pattern is a behavioral design pattern that defines an object that
+encapsulates how objects (colleagues) interact with each other. This pattern
+promotes loose coupling by avoiding direct connections between colleagues, and
+the mediator object is responsible for handling their interactions.
+
+```py
+from abc import ABC, abstractmethod
+
+class ChatMediator(ABC):
+    @abstractmethod
+    def send_message(self, msg, user):
+        pass
+
+    @abstractmethod
+    def add_user(self, user):
+        pass
+
+class ChatMediatorImpl(ChatMediator):
+    def __init__(self):
+        self.users = []
+
+    def add_user(self, user):
+        self.users.append(user)
+
+    def send_message(self, msg, user):
+        for u in self.users:
+            if u != user:
+                u.receive(msg)
+
+class User(ABC):
+    def __init__(self, mediator, name):
+        self.mediator = mediator
+        self.name = name
+
+    @abstractmethod
+    def send(self, msg):
+        pass
+
+    @abstractmethod
+    def receive(self, msg):
+        pass
+
+class UserImpl(User):
+    def send(self, msg):
+        self.mediator.send_message(msg, self)
+
+    def receive(self, msg):
+        print(f"{self.name} received: {msg}")
+
+if __name__ == "__main__":
+    mediator = ChatMediatorImpl()
+
+    user1 = UserImpl(mediator, "Alice")
+    user2 = UserImpl(mediator, "Bob")
+    user3 = UserImpl(mediator, "Eve")
+
+    mediator.add_user(user1)
+    mediator.add_user(user2)
+    mediator.add_user(user3)
+
+    user1.send("Hello, everyone!")
+```
+
 ## Memento
+
+[Memento Design Pattern](/gofdesignpattern/memento/memento.md)
+
+Memento pattern is a behavioral design pattern that allows an object
+(originator) to save and restore its previous state without revealing the
+structure or details of its internal state, thus enabling an undo mechanism. A
+memento object is used to store the state of the originator, and a caretaker is
+responsible for the memento's safe keeping.
+
+```py
+from collections import deque
+
+# The Memento class
+class Memento:
+    def __init__(self, state):
+        self._state = state
+
+    def get_state(self):
+        return self._state
+
+# The Originator class
+class Originator:
+    def __init__(self):
+        self._state = ""
+
+    def set_state(self, state):
+        self._state = state
+
+    def save(self):
+        return Memento(self._state)
+
+    def restore(self, memento):
+        self._state = memento.get_state()
+
+# The Caretaker class
+class Caretaker:
+    def __init__(self):
+        self._mementos = deque()
+
+    def save(self, originator):
+        self._mementos.append(originator.save())
+
+    def undo(self, originator):
+        if self._mementos:
+            originator.restore(self._mementos.pop())
+```
 
 ## Observer
 
+[Observer Design Pattern](/gofdesignpattern/observer/observer.md)
+
+Observer Pattern is a behavioral design pattern that allows an object (subject)
+to maintain a list of its dependents (observers) and notify them automatically
+of any changes in state. When a state change occurs, the subject updates the
+observers.
+
+```py
+class Observer:
+    def update(self, message):
+        pass
+
+class Subject:
+    def __init__(self):
+        self.observers = []
+
+    def attach(self, observer):
+        self.observers.append(observer)
+
+    def notify_observers(self, message):
+        for observer in self.observers:
+            observer.update(message)
+
+class ConcreteObserver(Observer):
+    def __init__(self, name):
+        self.name = name
+
+    def update(self, message):
+        print(f"{self.name} received the message: {message}")
+
+if __name__ == "__main__":
+    subject = Subject()
+    observer1 = ConcreteObserver("Observer1")
+    observer2 = ConcreteObserver("Observer2")
+
+    subject.attach(observer1)
+    subject.attach(observer2)
+
+    subject.notify_observers("Hello, Observers!")
+```
+
 ## State
+
+[State Design Pattern](/gofdesignpattern/state/state.md)
+
+The State pattern is a behavioral design pattern that allows an object to change
+its behavior when its internal state changes.
+
+```py
+from abc import ABC, abstractmethod
+
+class State(ABC):
+
+  @abstractmethod
+  def handle(self, context):
+    pass
+
+class ConcreteStateA(State):
+  def handle(self, context):
+    context.change_state(ConcreteStateB())
+
+class ConcreteStateB(State):
+  def handle(self, context):
+    context.change_state(ConcreteStateA())
+
+class Context:
+  def __init__(self, state):
+    self.state = state
+
+  def change_state(self, new_state):
+    self.state = new_state
+
+  def request(self):
+    self.state.handle(self)
+
+if __name__ == '__main__':
+  context = Context(ConcreteStateA())
+  context.request()
+  context.request()
+```
 
 ## Strategy
 
+[Strategy Design Pattern](/gofdesignpattern/strategy/strategy.md)
+
+The strategy pattern is a behavioral design pattern that defines a family of
+algorithms, encapsulates each of them, and makes them interchangeable. It allows
+the algorithm to vary independently from the clients that use it.
+
+```py
+from abc import ABC, abstractmethod
+
+class Strategy(ABC):
+    @abstractmethod
+    def do_operation(self, a, b): pass
+
+class Addition(Strategy):
+    def do_operation(self, a, b):
+        return a + b
+
+class Subtraction(Strategy):
+    def do_operation(self, a, b):
+        return a - b
+
+class Multiplication(Strategy):
+    def do_operation(self, a, b):
+        return a * b
+
+class Context:
+    def __init__(self, strategy):
+        self.strategy = strategy
+
+    def execute_strategy(self, a, b):
+        return self.strategy.do_operation(a, b)
+
+if __name__ == '__main__':
+    context = Context(Addition())
+    print(f"10 + 5 = {context.execute_strategy(10, 5)}")
+
+    context = Context(Subtraction())
+    print(f"10 - 5 = {context.execute_strategy(10, 5)}")
+
+    context = Context(Multiplication())
+    print(f"10 * 5 = {context.execute_strategy(10, 5)}")
+}
+```
+
 ## Template
+
+[Template Design Pattern](/gofdesignpattern/template/template.md)
+
+The template pattern is a behavioral design pattern that defines the program
+skeleton of an algorithm in a method, called template method, which defers some
+steps to subclasses. It lets subclasses redefine certain steps of an algorithm
+without changing the algorithm's structure.
+
+```py
+from abc import ABC, abstractmethod
+
+class Game(ABC):
+
+    @abstractmethod
+    def initialize(self): pass
+
+    @abstractmethod
+    def start_game(self): pass
+
+    @abstractmethod
+    def end_game(self): pass
+
+    def play(self):
+        self.initialize()
+        self.start_game()
+        self.end_game()
+
+class Cricket(Game):
+
+    def initialize(self): print("Cricket Game Initialized!")
+    def start_game(self): print("Cricket Game Started!")
+    def end_game(self): print("Cricket Game Finished!")
+
+class Football(Game):
+
+    def initialize(self): print("Football Game Initialized!")
+    def start_game(self): print("Football Game Started!")
+    def end_game(self): print("Football Game Finished!")
+
+game = Cricket()
+game.play()
+
+game = Football()
+game.play()
+```
 
 ## Visitor
 
+[Visitor Design Pattern](/gofdesignpattern/visitor/visitor.md)
+
+Visitor pattern is a design pattern used in object-oriented programming that
+promotes separation of concerns, allowing operations to be defined independently
+on objects while traversing data structures, typically through a tree traversal
+algorithm. Visitor pattern is an example of the **double dispatch technique**,
+where the operation's implementation depends on both the **type of the
+operation** and the **type of the data**.
+
+```py
+from math import pi
+from abc import ABC, abstractmethod
+
+class ShapeVisitor(ABC):
+    @abstractmethod
+    def visit_circle(self, circle):
+        pass
+    
+    @abstractmethod
+    def visit_rectangle(self, rectangle):
+        pass
+
+class Shape(ABC):
+    @abstractmethod
+    def accept(self, visitor):
+        pass
+
+class Circle(Shape):
+    def __init__(self, radius):
+        self.radius = radius
+
+    def accept(self, visitor):
+        visitor.visit_circle(self)
+
+class Rectangle(Shape):
+    def __init__(self, length, width):
+        self.length = length
+        self.width = width
+
+    def accept(self, visitor):
+        visitor.visit_rectangle(self)
+
+class ShapeAreaVisitor(ShapeVisitor):
+    def __init__(self):
+        self.total_area = 0
+
+    def visit_circle(self, circle):
+        self.total_area += pi * circle.radius**2
+
+    def visit_rectangle(self, rectangle):
+        self.total_area += rectangle.length * rectangle.width
+
+shapes = [Circle(5), Rectangle(3, 4), Circle(2)]
+area_visitor = ShapeAreaVisitor()
+
+for shape in shapes:
+    shape.accept(area_visitor)
+
+print(f"Total area: {area_visitor.total_area}")
+```

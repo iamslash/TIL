@@ -13,5 +13,9 @@
 
 # Examples
 
-* [Mediator in kotlin](/kotlin/kotlin_design_pattern/mediator.md)
-* [Mediator in go](/golang/go_design_pattern/mediator.md)
+* [Mediator in C++](/cpp/cpp_gof_designpattern.md#mediator)
+* [Mediator in Java](/java/java_gof_designpattern.md#mediator)
+* [Mediator in Kotlin](/kotlin/kotlin_gof_design_pattern.md#mediator)
+* [Mediator in Python](/python/python_gof_designpattern.md#mediator)
+* [Mediator in Go](/go/go_gof_design_pattern.md#mediator)
+* [Mediator in Swift](/swift/swift_gof_designpattern.md#mediator)

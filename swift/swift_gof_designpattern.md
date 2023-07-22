@@ -932,19 +932,489 @@ invoker.executeCommand()
 
 ## Interpreter
 
+[Interpreter Design Pattern](/gofdesignpattern/interpreter/interpreter.md)
+
+Interpreter pattern is a design pattern that provides a way to evaluate language
+grammar or expressions. It involves building an interpreter to interpret the
+expressions of a language. This pattern is used in situations where there is a
+language to be interpreted or domain-specific language expression, which must be
+evaluated.
+
+```swift
+import Foundation
+
+protocol Expression {
+    func interpret(context: [String: Bool]) -> Bool
+}
+
+class Constant: Expression {
+    private var value: Bool
+
+    init(value: Bool) {
+        self.value = value
+    }
+
+    func interpret(context: [String: Bool]) -> Bool {
+        return value
+    }
+}
+
+class Variable: Expression {
+    private var name: String
+
+    init(name: String) {
+        self.name = name
+    }
+
+    func interpret(context: [String: Bool]) -> Bool {
+        return context[name] ?? false
+    }
+}
+
+class And: Expression {
+    private var left, right: Expression
+
+    init(left: Expression, right: Expression) {
+        self.left = left
+        self.right = right
+    }
+
+    func interpret(context: [String: Bool]) -> Bool {
+        return left.interpret(context: context) && right.interpret(context: context)
+    }
+}
+
+class Or: Expression {
+    private var left, right: Expression
+
+    init(left: Expression, right: Expression) {
+        self.left = left
+        self.right = right
+    }
+
+    func interpret(context: [String: Bool]) -> Bool {
+        return left.interpret(context: context) || right.interpret(context: context)
+    }
+}
+
+let a = Variable(name: "A")
+let b = Variable(name: "B")
+let expression = Or(left: And(left: a, right: b), right: Or(left: a, right: And(left: a, right: b)))
+let context = ["A": true, "B": false]
+
+print("Expression result:", expression.interpret(context: context))
+```
+
 ## Iterator
+
+[Iterator Design Pattern](/gofdesignpattern/iterator/iterator.md)
+
+Iterator design pattern is a design pattern that provides a way to access the
+elements of a collection object sequentially without exposing its underlying
+representation. This pattern is useful to provide a standard way to traverse
+through a group of objects and helps decouple the algorithms from the data
+structures they operate upon.
+
+```swift
+struct MyCollection<T>: Sequence {
+    private var items: [T] = []
+
+    mutating func add(_ item: T) {
+        items.append(item)
+    }
+
+    func makeIterator() -> AnyIterator<T> {
+        return AnyIterator(items.makeIterator())
+    }
+}
+
+var numbers = MyCollection<Int>()
+numbers.add(1)
+numbers.add(2)
+numbers.add(3)
+
+for num in numbers {
+    print(num)
+}
+```
 
 ## Mediator
 
+[Mediator Design Pattern](/gofdesignpattern/mediator/mediator.md)
+
+The Mediator pattern is a behavioral design pattern that defines an object that
+encapsulates how objects (colleagues) interact with each other. This pattern
+promotes loose coupling by avoiding direct connections between colleagues, and
+the mediator object is responsible for handling their interactions.
+
+```swift
+protocol ChatMediator {
+    func sendMessage(_ msg: String, from user: User?)
+    func addUser(_ user: User)
+}
+
+class ChatMediatorImpl: ChatMediator {
+    private var users: [User] = []
+
+    func addUser(_ user: User) {
+        users.append(user)
+    }
+
+    func sendMessage(_ msg: String, from user: User?) {
+        for u in users where u !== user {
+            u.receive(msg)
+        }
+    }
+}
+
+class User {
+    let mediator: ChatMediator
+    let name: String
+
+    init(mediator: ChatMediator, name: String) {
+        self.mediator = mediator
+        self.name = name
+    }
+
+    func send(_ msg: String) {
+        mediator.sendMessage(msg, from: self)
+    }
+
+    func receive(_ msg: String) {
+        print("\(name) received: \(msg)")
+    }
+}
+
+let mediator: ChatMediator = ChatMediatorImpl()
+
+let user1 = User(mediator: mediator, name: "Alice")
+let user2 = User(mediator: mediator, name: "Bob")
+let user3 = User(mediator: mediator, name: "Eve")
+
+mediator.addUser(user1)
+mediator.addUser(user2)
+mediator.addUser(user3)
+
+user1.send("Hello, everyone!")
+```
+
 ## Memento
+
+[Memento Design Pattern](/gofdesignpattern/memento/memento.md)
+
+Memento pattern is a behavioral design pattern that allows an object
+(originator) to save and restore its previous state without revealing the
+structure or details of its internal state, thus enabling an undo mechanism. A
+memento object is used to store the state of the originator, and a caretaker is
+responsible for the memento's safe keeping.
+
+```swift
+// The Memento class
+class Memento {
+    private let state: String
+
+    init(state: String) {
+        self.state = state
+    }
+
+    func getState() -> String {
+        return state
+    }
+}
+
+// The Originator class
+class Originator {
+    private var state: String = ""
+
+    func setState(state: String) {
+        self.state = state
+    }
+
+    func save() -> Memento {
+        return Memento(state: state)
+    }
+
+    func restore(memento: Memento) {
+        self.state = memento.getState()
+    }
+}
+
+// The Caretaker class
+class Caretaker {
+    private var mementos: [Memento] = []
+
+    func save(originator: Originator) {
+        mementos.append(originator.save())
+    }
+
+    func undo(originator: Originator) {
+        if !mementos.isEmpty {
+            originator.restore(memento: mementos.removeLast())
+        }
+    }
+}
+```
 
 ## Observer
 
+[Observer Design Pattern](/gofdesignpattern/observer/observer.md)
+
+Observer Pattern is a behavioral design pattern that allows an object (subject)
+to maintain a list of its dependents (observers) and notify them automatically
+of any changes in state. When a state change occurs, the subject updates the
+observers.
+
+```swift
+import Foundation
+
+protocol Observer: AnyObject {
+    func update(message: String)
+}
+
+class Subject {
+    private var observers = [Observer]()
+
+    func attach(observer: Observer) {
+        observers.append(observer)
+    }
+
+    func notifyObservers(message: String) {
+        observers.forEach { $0.update(message: message) }
+    }
+}
+
+class ConcreteObserver: Observer {
+    private let name: String
+
+    init(name: String) {
+        self.name = name
+    }
+
+    func update(message: String) {
+        print("\(name) received the message: \(message)")
+    }
+}
+
+let subject = Subject()
+let observer1 = ConcreteObserver(name: "Observer1")
+let observer2 = ConcreteObserver(name: "Observer2")
+
+subject.attach(observer: observer1)
+subject.attach(observer: observer2)
+
+subject.notifyObservers(message: "Hello, Observers!")
+```
+
 ## State
+
+[State Design Pattern](/gofdesignpattern/state/state.md)
+
+The State pattern is a behavioral design pattern that allows an object to change
+its behavior when its internal state changes.
+
+```swift
+protocol State {
+    func handle(context: Context)
+}
+
+class ConcreteStateA: State {
+    func handle(context: Context) {
+        context.changeState(newState: ConcreteStateB())
+    }
+}
+
+class ConcreteStateB: State {
+    func handle(context: Context) {
+        context.changeState(newState: ConcreteStateA())
+    }
+}
+
+class Context {
+    private var state: State
+
+    init(state: State) {
+        self.state = state
+    }
+
+    func changeState(newState: State) {
+        state = newState
+    }
+
+    func request() {
+        state.handle(context: self)
+    }
+}
+
+let context = Context(state: ConcreteStateA())
+context.request()
+context.request()
+```
 
 ## Strategy
 
+[Strategy Design Pattern](/gofdesignpattern/strategy/strategy.md)
+
+The strategy pattern is a behavioral design pattern that defines a family of
+algorithms, encapsulates each of them, and makes them interchangeable. It allows
+the algorithm to vary independently from the clients that use it.
+
+```swift
+protocol Strategy {
+    func doOperation(_ a: Int, _ b: Int) -> Int
+}
+
+struct Addition: Strategy {
+    func doOperation(_ a: Int, _ b: Int) -> Int {
+        return a + b
+    }
+}
+
+struct Subtraction: Strategy {
+    func doOperation(_ a: Int, _ b: Int) -> Int {
+        return a - b
+    }
+}
+
+struct Multiplication: Strategy {
+    func doOperation(_ a: Int, _ b: Int) -> Int {
+        return a * b
+    }
+}
+
+struct Context {
+    private let strategy: Strategy
+
+    init(_ strategy: Strategy) {
+        self.strategy = strategy
+    }
+
+    func executeStrategy(_ a: Int, _ b: Int) -> Int {
+        return strategy.doOperation(a, b)
+    }
+}
+
+let context = Context(Addition())
+print("10 + 5 = \(context.executeStrategy(10, 5))")
+
+let context2 = Context(Subtraction())
+print("10 - 5 = \(context2.executeStrategy(10, 5))")
+
+let context3 = Context(Multiplication())
+print("10 * 5 = \(context3.executeStrategy(10, 5))")
+```
+
 ## Template
+
+[Template Design Pattern](/gofdesignpattern/template/template.md)
+
+The template pattern is a behavioral design pattern that defines the program
+skeleton of an algorithm in a method, called template method, which defers some
+steps to subclasses. It lets subclasses redefine certain steps of an algorithm
+without changing the algorithm's structure.
+
+```swift
+import Foundation
+
+protocol Game {
+  func initialize()
+  func startGame()
+  func endGame()
+  func play()
+}
+
+extension Game {
+  func play() {
+    initialize()
+    startGame()
+    endGame()
+  }
+}
+
+class Cricket: Game {
+  func initialize() { print("Cricket Game Initialized!") }
+  func startGame() { print("Cricket Game Started!") }
+  func endGame() { print("Cricket Game Finished!") }
+}
+
+class Football: Game {
+  func initialize() { print("Football Game Initialized!") }
+  func startGame() { print("Football Game Started!") }
+  func endGame() { print("Football Game Finished!") }
+}
+
+let game: Game = Cricket()
+game.play()
+
+let game2: Game = Football()
+game2.play()
+```
 
 ## Visitor
 
+[Visitor Design Pattern](/gofdesignpattern/visitor/visitor.md)
+
+Visitor pattern is a design pattern used in object-oriented programming that
+promotes separation of concerns, allowing operations to be defined independently
+on objects while traversing data structures, typically through a tree traversal
+algorithm. Visitor pattern is an example of the **double dispatch technique**,
+where the operation's implementation depends on both the **type of the
+operation** and the **type of the data**.
+
+```swift
+import Foundation
+
+protocol ShapeVisitor {
+    func visit(circle: Circle)
+    func visit(rectangle: Rectangle)
+}
+
+protocol Shape {
+    func accept(visitor: ShapeVisitor)
+}
+
+class Circle: Shape {
+    let radius: Double
+
+    init(radius: Double) {
+        self.radius = radius
+    }
+
+    func accept(visitor: ShapeVisitor) {
+        visitor.visit(circle: self)
+    }
+}
+
+class Rectangle: Shape {
+    let length, width: Double
+
+    init(length: Double, width: Double) {
+        self.length = length
+        self.width = width
+    }
+
+    func accept(visitor: ShapeVisitor) {
+        visitor.visit(rectangle: self)
+    }
+}
+
+class ShapeAreaVisitor: ShapeVisitor {
+    var totalArea = 0.0
+
+    func visit(circle: Circle) {
+        totalArea += Double.pi * pow(circle.radius, 2)
+    }
+
+    func visit(rectangle: Rectangle) {
+        totalArea += rectangle.length * rectangle.width
+    }
+}
+
+let shapes: [Shape] = [Circle(radius: 5), Rectangle(length: 3, width: 4), Circle(radius: 2)]
+let areaVisitor = ShapeAreaVisitor()
+
+for shape in shapes {
+    shape.accept(visitor: areaVisitor)
+}
+
+print("Total area: \(areaVisitor.totalArea)")
+```

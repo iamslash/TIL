@@ -13,5 +13,9 @@
 
 # Examples
 
-* [Memento in kotlin](/kotlin/kotlin_design_pattern/memento.md)
-* [Memento in go](/golang/go_design_pattern/memento.md)
+* [Memento in C++](/cpp/cpp_gof_designpattern.md#memento)
+* [Memento in Java](/java/java_gof_designpattern.md#memento)
+* [Memento in Kotlin](/kotlin/kotlin_gof_design_pattern.md#memento)
+* [Memento in Python](/python/python_gof_designpattern.md#memento)
+* [Memento in Go](/go/go_gof_design_pattern.md#memento)
+* [Memento in Swift](/swift/swift_gof_designpattern.md#memento)

@@ -13,5 +13,9 @@
 
 # Examples
 
-* [State in kotlin](/kotlin/kotlin_design_pattern/state.md)
-* [State in go](/golang/go_design_pattern/state.md)
+* [State in C++](/cpp/cpp_gof_designpattern.md#state)
+* [State in Java](/java/java_gof_designpattern.md#state)
+* [State in Kotlin](/kotlin/kotlin_gof_design_pattern.md#state)
+* [State in Python](/python/python_gof_designpattern.md#state)
+* [State in Go](/go/go_gof_design_pattern.md#state)
+* [State in Swift](/swift/swift_gof_designpattern.md#state)

@@ -1112,19 +1112,560 @@ int main() {
 
 ## Interpreter
 
+[Interpreter Design Pattern](/gofdesignpattern/interpreter/interpreter.md)
+
+Interpreter pattern is a design pattern that provides a way to evaluate language
+grammar or expressions. It involves building an interpreter to interpret the
+expressions of a language. This pattern is used in situations where there is a
+language to be interpreted or domain-specific language expression, which must be
+evaluated.
+
+```c++
+#include <iostream>
+#include <map>
+#include <string>
+
+class Expression {
+public:
+    virtual bool interpret(std::map<std::string, bool>& context) = 0;
+};
+
+class Constant : public Expression {
+private:
+    bool value;
+
+public:
+    Constant(bool value) : value(value) {}
+
+    bool interpret(std::map<std::string, bool>& context) override {
+        return value;
+    }
+};
+
+class Variable : public Expression {
+private:
+    std::string name;
+
+public:
+    Variable(std::string name) : name(name) {}
+
+    bool interpret(std::map<std::string, bool>& context) override {
+        return context[name];
+    }
+};
+
+class And : public Expression {
+private:
+    Expression* left;
+    Expression* right;
+
+public:
+    And(Expression* left, Expression* right) : left(left), right(right) {}
+
+    bool interpret(std::map<std::string, bool>& context) override {
+        return left->interpret(context) && right->interpret(context);
+    }
+};
+
+class Or : public Expression {
+private:
+    Expression* left;
+    Expression* right;
+
+public:
+    Or(Expression* left, Expression* right) : left(left), right(right) {}
+
+    bool interpret(std::map<std::string, bool>& context) override {
+        return left->interpret(context) || right->interpret(context);
+    }
+};
+
+int main() {
+    Variable a("a");
+    Variable b("b");
+    And a_and_b(&a, &b);
+    Or a_or_b(&a, &b);
+    Or expression(&a_and_b, &a_or_b);
+
+    std::map<std::string, bool> context;
+    context["a"] = true;
+    context["b"] = false;
+
+    std::cout << "Expression result: " << expression.interpret(context) << std::endl;
+}
+```
+
 ## Iterator
+
+[Iterator Design Pattern](/gofdesignpattern/iterator/iterator.md)
+
+Iterator design pattern is a design pattern that provides a way to access the
+elements of a collection object sequentially without exposing its underlying
+representation. This pattern is useful to provide a standard way to traverse
+through a group of objects and helps decouple the algorithms from the data
+structures they operate upon.
+
+```c++
+#include <iostream>
+#include <vector>
+
+template <typename T>
+class MyCollection {
+public:
+    void add(const T& item) {
+        items.push_back(item);
+    }
+
+    typename std::vector<T>::iterator begin() {
+        return items.begin();
+    }
+
+    typename std::vector<T>::iterator end() {
+        return items.end();
+    }
+
+private:
+    std::vector<T> items;
+};
+
+int main() {
+    MyCollection<int> numbers;
+    numbers.add(1);
+    numbers.add(2);
+    numbers.add(3);
+
+    for (auto num : numbers) {
+        std::cout << num << std::endl;
+    }
+
+    return 0;
+}
+```
 
 ## Mediator
 
+[Mediator Design Pattern](/gofdesignpattern/mediator/mediator.md)
+
+The Mediator pattern is a behavioral design pattern that defines an object that
+encapsulates how objects (colleagues) interact with each other. This pattern
+promotes loose coupling by avoiding direct connections between colleagues, and
+the mediator object is responsible for handling their interactions.
+
+```c++
+#include <iostream>
+#include <vector>
+#include <string>
+#include <memory>
+
+class User;
+
+class ChatMediator {
+public:
+  virtual void SendMessage(const std::string& msg, User* user) = 0;
+  virtual void AddUser(std::unique_ptr<User> user) = 0;
+};
+
+class User {
+protected:
+  ChatMediator& mediator_;
+  std::string name_;
+public:
+  User(ChatMediator& mediator, const std::string& name)
+      : mediator_(mediator), name_(name) {}
+  virtual ~User() {}
+  virtual void Send(const std::string& msg) = 0;
+  virtual void Receive(const std::string& msg) = 0;
+};
+
+class ChatMediatorImpl : public ChatMediator {
+private:
+  std::vector<std::unique_ptr<User>> users_;
+public:
+  void SendMessage(const std::string& msg, User* user) override {
+    for (const auto& u : users_) {
+      if (u.get() != user) {
+        u->Receive(msg);
+      }
+    }
+  }
+  void AddUser(std::unique_ptr<User> user) override {
+    users_.emplace_back(std::move(user));
+  }
+};
+
+class UserImpl : public User {
+public:
+  UserImpl(ChatMediator& mediator, const std::string& name)
+      : User(mediator, name) {}
+
+  void Send(const std::string& msg) override {
+    mediator_.SendMessage(msg, this);
+  }
+
+  void Receive(const std::string& msg) override {
+    std::cout << name_ << " received: " << msg << std::endl;
+  }
+};
+
+int main() {
+  ChatMediatorImpl mediator;
+
+  auto user1 = std::make_unique<UserImpl>(mediator, "Alice");
+  auto user2 = std::make_unique<UserImpl>(mediator, "Bob");
+  auto user3 = std::make_unique<UserImpl>(mediator, "Eve");
+
+  mediator.AddUser(std::move(user1));
+  mediator.AddUser(std::move(user2));
+  mediator.AddUser(std::move(user3));
+
+  mediator.SendMessage("Hello, everyone!", nullptr);
+
+  return 0;
+}
+```
+
 ## Memento
+
+[Memento Design Pattern](/gofdesignpattern/memento/memento.md)
+
+Memento pattern is a behavioral design pattern that allows an object
+(originator) to save and restore its previous state without revealing the
+structure or details of its internal state, thus enabling an undo mechanism. A
+memento object is used to store the state of the originator, and a caretaker is
+responsible for the memento's safe keeping.
+
+```c++
+#include <iostream>
+#include <stack>
+
+// The Memento class
+class Memento {
+private:
+    std::string state;
+
+public:
+    Memento(std::string state) : state(state) {}
+    std::string getState() { return state; }
+};
+
+// The Originator class
+class Originator {
+private:
+    std::string state;
+
+public:
+    void setState(std::string newState) { state = newState; }
+    Memento save() { return Memento(state); }
+    void restore(Memento memento) { state = memento.getState(); }
+};
+
+// The Caretaker class
+class Caretaker {
+private:
+    std::stack<Memento> mementos;
+
+public:
+    void save(Originator &originator) { mementos.push(originator.save()); }
+    void undo(Originator &originator) {
+        if (!mementos.empty()) {
+            originator.restore(mementos.top());
+            mementos.pop();
+        }
+    }
+};
+```
 
 ## Observer
 
+[Observer Design Pattern](/gofdesignpattern/observer/observer.md)
+
+Observer Pattern is a behavioral design pattern that allows an object (subject)
+to maintain a list of its dependents (observers) and notify them automatically
+of any changes in state. When a state change occurs, the subject updates the
+observers.
+
+```c++
+#include <iostream>
+#include <string>
+#include <vector>
+
+class Observer {
+public:
+    virtual void update(const std::string& message) = 0;
+};
+
+class Subject {
+private:
+    std::vector<Observer*> observers;
+
+public:
+    void attach(Observer* observer) {
+        observers.push_back(observer);
+    }
+
+    void notifyObservers(const std::string& message) {
+        for (Observer* observer : observers) {
+            observer->update(message);
+        }
+    }
+};
+
+class ConcreteObserver : public Observer {
+private:
+    std::string name;
+
+public:
+    ConcreteObserver(const std::string& name) : name(name) {}
+
+    void update(const std::string& message) override {
+        std::cout << name << " received the message: " << message << std::endl;
+    }
+};
+
+int main() {
+    Subject subject;
+    ConcreteObserver observer1("Observer1");
+    ConcreteObserver observer2("Observer2");
+
+    subject.attach(&observer1);
+    subject.attach(&observer2);
+
+    subject.notifyObservers("Hello, Observers!");
+}
+```
+
 ## State
+
+[State Design Pattern](/gofdesignpattern/state/state.md)
+
+The State pattern is a behavioral design pattern that allows an object to change
+its behavior when its internal state changes.
+
+```c++
+#include <iostream>
+
+class Context;
+
+class State {
+public:
+  virtual void handle(Context &context) = 0;
+};
+
+class ConcreteStateA : public State {
+public:
+  void handle(Context &context) override;
+};
+
+class ConcreteStateB : public State {
+public:
+  void handle(Context &context) override;
+};
+
+class Context {
+private:
+  State *state;
+
+public:
+  Context(State *state) : state(state) {}
+  void changeState(State *newState) { state = newState; }
+  void request() { state->handle(*this); }
+};
+
+void ConcreteStateA::handle(Context &context) { context.changeState(new ConcreteStateB); }
+void ConcreteStateB::handle(Context &context) { context.changeState(new ConcreteStateA); }
+
+int main() {
+  Context context(new ConcreteStateA());
+  context.request();
+  context.request();
+}
+```
 
 ## Strategy
 
+[Strategy Design Pattern](/gofdesignpattern/strategy/strategy.md)
+
+The strategy pattern is a behavioral design pattern that defines a family of
+algorithms, encapsulates each of them, and makes them interchangeable. It allows
+the algorithm to vary independently from the clients that use it.
+
+```c++
+#include <iostream>
+
+class Strategy {
+public:
+    virtual int doOperation(int a, int b) = 0;
+};
+
+class Addition : public Strategy {
+public:
+    int doOperation(int a, int b) {
+        return a + b;
+    }
+};
+
+class Subtraction : public Strategy {
+public:
+    int doOperation(int a, int b) {
+        return a - b;
+    }
+};
+
+class Multiplication : public Strategy {
+public:
+    int doOperation(int a, int b) {
+        return a * b;
+    }
+};
+
+class Context {
+private:
+    Strategy* strategy;
+public:
+    Context(Strategy* strategy) : strategy(strategy) {}
+
+    int executeStrategy(int a, int b) {
+        return strategy->doOperation(a, b);
+    }
+};
+
+int main() {
+    Context context(new Addition());
+    std::cout << "10 + 5 = " << context.executeStrategy(10, 5) << std::endl;
+
+    context = Context(new Subtraction());
+    std::cout << "10 - 5 = " << context.executeStrategy(10, 5) << std::endl;
+
+    context = Context(new Multiplication());
+    std::cout << "10 * 5 = " << context.executeStrategy(10, 5) << std::endl;
+
+    return 0;
+}
+```
+
 ## Template
+
+[Template Design Pattern](/gofdesignpattern/template/template.md)
+
+The template pattern is a behavioral design pattern that defines the program
+skeleton of an algorithm in a method, called template method, which defers some
+steps to subclasses. It lets subclasses redefine certain steps of an algorithm
+without changing the algorithm's structure.
+
+```c++
+#include <iostream>
+
+class Game {
+public:
+  virtual void initialize() = 0;
+  virtual void startGame() = 0;
+  virtual void endGame() = 0;
+
+  void play() {
+    initialize();
+    startGame();
+    endGame();
+  }
+};
+
+class Cricket : public Game {
+  void initialize() { std::cout << "Cricket Game Initialized!\n"; }
+  void startGame() { std::cout << "Cricket Game Started!\n"; }
+  void endGame() { std::cout << "Cricket Game Finished!\n"; }
+};
+
+class Football : public Game {
+  void initialize() { std::cout << "Football Game Initialized!\n"; }
+  void startGame() { std::cout << "Football Game Started!\n"; }
+  void endGame() { std::cout << "Football Game Finished!\n"; }
+};
+
+int main() {
+  Game* game = new Cricket();
+  game->play();
+
+  game = new Football();
+  game->play();
+
+  delete game;
+}
+```
 
 ## Visitor
 
+[Visitor Design Pattern](/gofdesignpattern/visitor/visitor.md)
+
+Visitor pattern is a design pattern used in object-oriented programming that
+promotes separation of concerns, allowing operations to be defined independently
+on objects while traversing data structures, typically through a tree traversal
+algorithm. Visitor pattern is an example of the **double dispatch technique**,
+where the operation's implementation depends on both the **type of the
+operation** and the **type of the data**.
+
+```c++
+#include <iostream>
+#include <cmath>
+#include <vector>
+
+class Circle;
+class Rectangle;
+
+class ShapeVisitor {
+public:
+    virtual void visit(Circle& circle) = 0;
+    virtual void visit(Rectangle& rectangle) = 0;
+};
+
+class Shape {
+public:
+    virtual void accept(ShapeVisitor& visitor) = 0;
+};
+
+class Circle : public Shape {
+public:
+    double radius;
+
+    Circle(double radius) : radius(radius) {}
+
+    void accept(ShapeVisitor& visitor) override {
+        visitor.visit(*this);
+    }
+};
+
+class Rectangle : public Shape {
+public:
+    double length, width;
+
+    Rectangle(double length, double width) : length(length), width(width) {}
+
+    void accept(ShapeVisitor& visitor) override {
+        visitor.visit(*this);
+    }
+};
+
+class ShapeAreaVisitor : public ShapeVisitor {
+public:
+    double totalArea = 0;
+
+    void visit(Circle& circle) override {
+        totalArea += 3.14159 * std::pow(circle.radius, 2);
+    }
+
+    void visit(Rectangle& rectangle) override {
+        totalArea += rectangle.length * rectangle.width;
+    }
+};
+
+int main() {
+    std::vector<Shape*> shapes = {new Circle(5), new Rectangle(3, 4), new Circle(2)};
+    ShapeAreaVisitor areaVisitor;
+
+    for (Shape* shape : shapes) {
+        shape->accept(areaVisitor);
+    }
+
+    std::cout << "Total area: " << areaVisitor.totalArea << std::endl;
+
+    return 0;
+}
+```

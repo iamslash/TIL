@@ -993,18 +993,483 @@ func main() {
 
 ## Interpreter
 
+[Interpreter Design Pattern](/gofdesignpattern/interpreter/interpreter.md)
+
+Interpreter pattern is a design pattern that provides a way to evaluate language
+grammar or expressions. It involves building an interpreter to interpret the
+expressions of a language. This pattern is used in situations where there is a
+language to be interpreted or domain-specific language expression, which must be
+evaluated.
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+type Expression interface {
+	Interpret(context map[string]bool) bool
+}
+
+type Constant struct {
+	value bool
+}
+
+func (c Constant) Interpret(context map[string]bool) bool {
+	return c.value
+}
+
+type Variable struct {
+	name string
+}
+
+func (v Variable) Interpret(context map[string]bool) bool {
+	return context[v.name]
+}
+
+type And struct {
+	left, right Expression
+}
+
+func (a And) Interpret(context map[string]bool) bool {
+	return a.left.Interpret(context) && a.right.Interpret(context)
+}
+
+type Or struct {
+	left, right Expression
+}
+
+func (o Or) Interpret(context map[string]bool) bool {
+	return o.left.Interpret(context) || o.right.Interpret(context)
+}
+
+func main() {
+	a := &Variable{"A"}
+	b := &Variable{"B"}
+	expression := &Or{&And{a, b}, &Or{a, &And{a, b}}}
+	context := map[string]bool{"A": true, "B": false}
+
+	fmt.Println("Expression result:", expression.Interpret(context))
+}
+```
+
 ## Iterator
+
+[Iterator Design Pattern](/gofdesignpattern/iterator/iterator.md)
+
+Iterator design pattern is a design pattern that provides a way to access the
+elements of a collection object sequentially without exposing its underlying
+representation. This pattern is useful to provide a standard way to traverse
+through a group of objects and helps decouple the algorithms from the data
+structures they operate upon.
+
+```go
+package main
+
+import (
+	"fmt"
+)
+
+type MyCollection struct {
+	items []int
+}
+
+func (c *MyCollection) Add(item int) {
+	c.items = append(c.items, item)
+}
+
+func (c *MyCollection) Values() []int {
+	return c.items
+}
+
+func main() {
+	numbers := MyCollection{}
+	numbers.Add(1)
+	numbers.Add(2)
+	numbers.Add(3)
+
+	for _, num := range numbers.Values() {
+		fmt.Println(num)
+	}
+}
+```
 
 ## Mediator
 
+[Mediator Design Pattern](/gofdesignpattern/mediator/mediator.md)
+
+The Mediator pattern is a behavioral design pattern that defines an object that
+encapsulates how objects (colleagues) interact with each other. This pattern
+promotes loose coupling by avoiding direct connections between colleagues, and
+the mediator object is responsible for handling their interactions.
+
+```go
+package main
+
+import "fmt"
+
+type ChatMediator interface {
+	SendMessage(msg string, user *User)
+	AddUser(user *User)
+}
+
+type chatMediatorImpl struct {
+	users []*User
+}
+
+func (m *chatMediatorImpl) SendMessage(msg string, user *User) {
+	for _, u := range m.users {
+		if u != user {
+			u.Receive(msg)
+		}
+	}
+}
+
+func (m *chatMediatorImpl) AddUser(user *User) {
+	m.users = append(m.users, user)
+}
+
+type User struct {
+	mediator ChatMediator
+	name     string
+}
+
+func (u *User) Send(msg string) {
+	u.mediator.SendMessage(msg, u)
+}
+
+func (u *User) Receive(msg string) {
+	fmt.Printf("%s received: %s\n", u.name, msg)
+}
+
+func newUser(mediator ChatMediator, name string) *User {
+	return &User{mediator, name}
+}
+
+func main() {
+	mediator := &chatMediatorImpl{}
+
+	user1 := newUser(mediator, "Alice")
+	user2 := newUser(mediator, "Bob")
+	user3 := newUser(mediator, "Eve")
+
+	mediator.AddUser(user1)
+	mediator.AddUser(user2)
+	mediator.AddUser(user3)
+
+	user1.Send("Hello, everyone!")
+}
+```
+
 ## Memento
+
+[Memento Design Pattern](/gofdesignpattern/memento/memento.md)
+
+Memento pattern is a behavioral design pattern that allows an object
+(originator) to save and restore its previous state without revealing the
+structure or details of its internal state, thus enabling an undo mechanism. A
+memento object is used to store the state of the originator, and a caretaker is
+responsible for the memento's safe keeping.
+
+```go
+type Memento struct {
+    state string
+}
+
+func (m *Memento) getState() string {
+    return m.state
+}
+
+type Originator struct {
+    state string
+}
+
+func (o *Originator) setState(state string) {
+    o.state = state
+}
+
+func (o *Originator) save() *Memento {
+    return &Memento{state: o.state}
+}
+
+func (o *Originator) restore(memento *Memento) {
+    o.state = memento.getState()
+}
+
+type Caretaker struct {
+    mementos []*Memento
+}
+
+func (c *Caretaker) save(originator *Originator) {
+    c.mementos = append(c.mementos, originator.save())
+}
+
+func (c *Caretaker) undo(originator *Originator) {
+    if len(c.mementos) > 0 {
+        originator.restore(c.mementos[len(c.mementos)-1])
+        c.mementos = c.mementos[:len(c.mementos)-1]
+    }
+}
+```
 
 ## Observer
 
+[Observer Design Pattern](/gofdesignpattern/observer/observer.md)
+
+Observer Pattern is a behavioral design pattern that allows an object (subject)
+to maintain a list of its dependents (observers) and notify them automatically
+of any changes in state. When a state change occurs, the subject updates the
+observers.
+
+```go
+package main
+
+import (
+    "fmt"
+)
+
+type Observer interface {
+    Update(string)
+}
+
+type Subject struct {
+    Observers []Observer
+}
+
+func (s *Subject) Attach(o Observer) {
+    s.Observers = append(s.Observers, o)
+}
+
+func (s *Subject) NotifyObservers(message string) {
+    for _, observer := range s.Observers {
+        observer.Update(message)
+    }
+}
+
+type ConcreteObserver struct {
+    Name string
+}
+
+func (o *ConcreteObserver) Update(message string) {
+    fmt.Printf("%s received the message: %s\n", o.Name, message)
+}
+
+func main() {
+    subject := &Subject{}
+    observer1 := &ConcreteObserver{Name: "Observer1"}
+    observer2 := &ConcreteObserver{Name: "Observer2"}
+
+    subject.Attach(observer1)
+    subject.Attach(observer2)
+
+    subject.NotifyObservers("Hello, Observers!")
+}
+```
+
 ## State
+
+[State Design Pattern](/gofdesignpattern/state/state.md)
+
+The State pattern is a behavioral design pattern that allows an object to change
+its behavior when its internal state changes.
+
+```go
+package main
+
+import "fmt"
+
+type State interface {
+	Handle(context *Context)
+}
+
+type ConcreteStateA struct{}
+
+func (c *ConcreteStateA) Handle(context *Context) {
+	context.ChangeState(&ConcreteStateB{})
+}
+
+type ConcreteStateB struct{}
+
+func (c *ConcreteStateB) Handle(context *Context) {
+	context.ChangeState(&ConcreteStateA{})
+}
+
+type Context struct {
+	state State
+}
+
+func (c *Context) ChangeState(newState State) {
+	c.state = newState
+}
+
+func (c *Context) Request() {
+	c.state.Handle(c)
+}
+
+func main() {
+	context := &Context{&ConcreteStateA{}}
+	context.Request()
+	context.Request()
+}
+```
 
 ## Strategy
 
+[Strategy Design Pattern](/gofdesignpattern/strategy/strategy.md)
+
+The strategy pattern is a behavioral design pattern that defines a family of
+algorithms, encapsulates each of them, and makes them interchangeable. It allows
+the algorithm to vary independently from the clients that use it.
+
+```go
+package main
+
+import "fmt"
+
+type Strategy interface {
+    DoOperation(a, b int) int
+}
+
+type Addition struct{}
+func (Addition) DoOperation(a, b int) int { return a + b }
+
+type Subtraction struct{}
+func (Subtraction) DoOperation(a, b int) int { return a - b }
+
+type Multiplication struct{}
+func (Multiplication) DoOperation(a, b int) int { return a * b }
+
+type Context struct {
+    strategy Strategy
+}
+func (c Context) ExecuteStrategy(a, b int) int {
+    return c.strategy.DoOperation(a, b)
+}
+
+func main() {
+    context := Context{Addition{}}
+    fmt.Printf("10 + 5 = %d\n", context.ExecuteStrategy(10, 5))
+
+    context = Context{Subtraction{}}
+    fmt.Printf("10 - 5 = %d\n", context.ExecuteStrategy(10, 5))
+
+    context = Context{Multiplication{}}
+    fmt.Printf("10 * 5 = %d\n", context.ExecuteStrategy(10, 5))
+}
+```
+
 ## Template
 
+[Template Design Pattern](/gofdesignpattern/template/template.md)
+
+The template pattern is a behavioral design pattern that defines the program
+skeleton of an algorithm in a method, called template method, which defers some
+steps to subclasses. It lets subclasses redefine certain steps of an algorithm
+without changing the algorithm's structure.
+
+```go
+package main
+
+import "fmt"
+
+type Game interface {
+	Initialize()
+	StartGame()
+	EndGame()
+}
+
+func Play(game Game) {
+	game.Initialize()
+	game.StartGame()
+	game.EndGame()
+}
+
+type Cricket struct{}
+
+func (c Cricket) Initialize() { fmt.Println("Cricket Game Initialized!") }
+func (c Cricket) StartGame() { fmt.Println("Cricket Game Started!") }
+func (c Cricket) EndGame() { fmt.Println("Cricket Game Finished!") }
+
+type Football struct{}
+
+func (f Football) Initialize() { fmt.Println("Football Game Initialized!") }
+func (f Football) StartGame() { fmt.Println("Football Game Started!") }
+func (f Football) EndGame() { fmt.Println("Football Game Finished!") }
+
+func main() {
+	game := Cricket{}
+	Play(game)
+
+	game2 := Football{}
+	Play(game2)
+}
+```
+
 ## Visitor
+
+[Visitor Design Pattern](/gofdesignpattern/visitor/visitor.md)
+
+Visitor pattern is a design pattern used in object-oriented programming that
+promotes separation of concerns, allowing operations to be defined independently
+on objects while traversing data structures, typically through a tree traversal
+algorithm. Visitor pattern is an example of the **double dispatch technique**,
+where the operation's implementation depends on both the **type of the
+operation** and the **type of the data**.
+
+```go
+package main
+
+import (
+    "fmt"
+    "math"
+)
+
+type Circle struct {
+    radius float64
+}
+
+type Rectangle struct {
+    length, width float64
+}
+
+func (c *Circle) accept(visitor ShapeVisitor) {
+    visitor.visitCircle(c)
+}
+
+func (r *Rectangle) accept(visitor ShapeVisitor) {
+    visitor.visitRectangle(r)
+}
+
+type Shape interface {
+    accept(visitor ShapeVisitor)
+}
+
+type ShapeVisitor interface {
+    visitCircle(*Circle)
+    visitRectangle(*Rectangle)
+}
+
+type shapeAreaVisitor struct {
+    totalArea float64
+}
+
+func (v *shapeAreaVisitor) visitCircle(c *Circle) {
+    v.totalArea += math.Pi * math.Pow(c.radius, 2)
+}
+
+func (v *shapeAreaVisitor) visitRectangle(r *Rectangle) {
+    v.totalArea += r.length * r.width
+}
+
+func main() {
+    shapes := []Shape{&Circle{radius: 5}, &Rectangle{length: 3, width: 4}, &Circle{radius: 2}}
+    areaVisitor := &shapeAreaVisitor{}
+
+    for _, shape := range shapes {
+        shape.accept(areaVisitor)
+    }
+
+    fmt.Printf("Total area: %f\n", areaVisitor.totalArea)
+}
+```

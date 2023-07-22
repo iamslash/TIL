@@ -106,3 +106,6 @@
   - Strategy 와 State 는 매우 비슷하다. State 는 Concrete State 들 끼리 서로
     변신하는 상태전환의 개념을 포함한다. Strategy 는 Concrete Strategy 들 끼리
     서로 관계가 없다.
+  - The strategy pattern focuses on selecting an algorithm or a strategy to
+    perform a task, while the state pattern focuses on changing the behavior of
+    an object based on its internal state.

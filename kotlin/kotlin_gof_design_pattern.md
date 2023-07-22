@@ -875,18 +875,400 @@ fun main() {
 
 ## Interpreter
 
+[Interpreter Design Pattern](/gofdesignpattern/interpreter/interpreter.md)
+
+Interpreter pattern is a design pattern that provides a way to evaluate language
+grammar or expressions. It involves building an interpreter to interpret the
+expressions of a language. This pattern is used in situations where there is a
+language to be interpreted or domain-specific language expression, which must be
+evaluated.
+
+```kotlin
+interface Expression {
+    fun interpret(context: Map<String, Boolean>): Boolean
+}
+
+class Constant(private val value: Boolean) : Expression {
+    override fun interpret(context: Map<String, Boolean>) = value
+}
+
+class Variable(private val name: String) : Expression {
+    override fun interpret(context: Map<String, Boolean>) = context[name] ?: false
+}
+
+class And(private val left: Expression, private val right: Expression) : Expression {
+    override fun interpret(context: Map<String, Boolean>) = left.interpret(context) && right.interpret(context)
+}
+
+class Or(private val left: Expression, private val right: Expression) : Expression {
+    override fun interpret(context: Map<String, Boolean>) = left.interpret(context) || right.interpret(context)
+}
+
+fun main() {
+    val a = Variable("A")
+    val b = Variable("B")
+    val expression = Or(And(a, b), Or(a, And(a, b)))
+    val context = mapOf("A" to true, "B" to false)
+
+    println("Expression result: ${expression.interpret(context)}")
+}
+```
+
 ## Iterator
+
+[Iterator Design Pattern](/gofdesignpattern/iterator/iterator.md)
+
+Iterator design pattern is a design pattern that provides a way to access the
+elements of a collection object sequentially without exposing its underlying
+representation. This pattern is useful to provide a standard way to traverse
+through a group of objects and helps decouple the algorithms from the data
+structures they operate upon.
+
+```kotlin
+class MyCollection<T> : Iterable<T> {
+    private val items = mutableListOf<T>()
+
+    fun add(item: T) {
+        items.add(item)
+    }
+
+    override fun iterator(): Iterator<T> = items.iterator()
+}
+
+fun main() {
+    val numbers = MyCollection<Int>()
+    numbers.add(1)
+    numbers.add(2)
+    numbers.add(3)
+
+    for (num in numbers) {
+        println(num)
+    }
+}
+```
 
 ## Mediator
 
+[Mediator Design Pattern](/gofdesignpattern/mediator/mediator.md)
+
+The Mediator pattern is a behavioral design pattern that defines an object that
+encapsulates how objects (colleagues) interact with each other. This pattern
+promotes loose coupling by avoiding direct connections between colleagues, and
+the mediator object is responsible for handling their interactions.
+
+```kotlin
+interface ChatMediator {
+    fun sendMessage(msg: String, user: User?)
+    fun addUser(user: User)
+}
+
+class ChatMediatorImpl : ChatMediator {
+    private val users: MutableList<User> = ArrayList()
+
+    override fun addUser(user: User) {
+        users.add(user)
+    }
+
+    override fun sendMessage(msg: String, user: User?) {
+        users.filter { it != user }.forEach { it.receive(msg) }
+    }
+}
+
+abstract class User(
+    protected val mediator: ChatMediator, 
+    protected val name: String
+) {
+    abstract fun send(msg: String)
+    abstract fun receive(msg: String)
+}
+
+class UserImpl(mediator: ChatMediator, name: String) : User(mediator, name) {
+    override fun send(msg: String) {
+        mediator.sendMessage(msg, this)
+    }
+
+    override fun receive(msg: String) {
+        println("$name received: $msg")
+    }
+}
+
+fun main() {
+    val mediator: ChatMediator = ChatMediatorImpl()
+
+    val user1 = UserImpl(mediator, "Alice")
+    val user2 = UserImpl(mediator, "Bob")
+    val user3 = UserImpl(mediator, "Eve")
+
+    mediator.addUser(user1)
+    mediator.addUser(user2)
+    mediator.addUser(user3)
+
+    user1.send("Hello, everyone!")
+}
+```
+
 ## Memento
+
+[Memento Design Pattern](/gofdesignpattern/memento/memento.md)
+
+Memento pattern is a behavioral design pattern that allows an object
+(originator) to save and restore its previous state without revealing the
+structure or details of its internal state, thus enabling an undo mechanism. A
+memento object is used to store the state of the originator, and a caretaker is
+responsible for the memento's safe keeping.
+
+```kotlin
+// The Memento class
+data class Memento(val state: String)
+
+// The Originator class
+class Originator {
+    var state: String = ""
+
+    fun save(): Memento = Memento(state)
+    fun restore(memento: Memento) {
+        state = memento.state
+    }
+}
+
+// The Caretaker class
+class Caretaker {
+    private val mementos = Stack<Memento>()
+
+    fun save(originator: Originator) {
+        mementos.push(originator.save())
+    }
+
+    fun undo(originator: Originator) {
+        if (mementos.isNotEmpty()) {
+            originator.restore(mementos.pop())
+        }
+    }
+}
+```
 
 ## Observer
 
+[Observer Design Pattern](/gofdesignpattern/observer/observer.md)
+
+Observer Pattern is a behavioral design pattern that allows an object (subject)
+to maintain a list of its dependents (observers) and notify them automatically
+of any changes in state. When a state change occurs, the subject updates the
+observers.
+
+```kotlin
+interface Observer {
+    fun update(message: String)
+}
+
+class Subject {
+    private val observers = mutableListOf<Observer>()
+
+    fun attach(observer: Observer) {
+        observers.add(observer)
+    }
+
+    fun notifyObservers(message: String) {
+        observers.forEach { it.update(message) }
+    }
+}
+
+class ConcreteObserver(private val name: String) : Observer {
+    override fun update(message: String) {
+        println("$name received the message: $message")
+    }
+}
+
+fun main() {
+    val subject = Subject()
+    val observer1 = ConcreteObserver("Observer1")
+    val observer2 = ConcreteObserver("Observer2")
+
+    subject.attach(observer1)
+    subject.attach(observer2)
+
+    subject.notifyObservers("Hello, Observers!")
+}
+```
+
 ## State
+
+[State Design Pattern](/gofdesignpattern/state/state.md)
+
+The State pattern is a behavioral design pattern that allows an object to change
+its behavior when its internal state changes.
+
+```kotlin
+interface State {
+  fun handle(context: Context)
+}
+
+class ConcreteStateA : State {
+  override fun handle(context: Context) {
+    context.changeState(ConcreteStateB())
+  }
+}
+
+class ConcreteStateB : State {
+  override fun handle(context: Context) {
+    context.changeState(ConcreteStateA())
+  }
+}
+
+class Context(var state: State) {
+  fun changeState(newState: State) {
+    state = newState
+  }
+
+  fun request() {
+    state.handle(this)
+  }
+}
+
+fun main() {
+  val context = Context(ConcreteStateA())
+  context.request()
+  context.request()
+}
+```
 
 ## Strategy
 
+[Strategy Design Pattern](/gofdesignpattern/strategy/strategy.md)
+
+The strategy pattern is a behavioral design pattern that defines a family of
+algorithms, encapsulates each of them, and makes them interchangeable. It allows
+the algorithm to vary independently from the clients that use it.
+
+```kotlin
+interface Strategy {
+    fun doOperation(a: Int, b: Int): Int
+}
+
+class Addition : Strategy {
+    override fun doOperation(a: Int, b: Int) = a + b
+}
+
+class Subtraction : Strategy {
+    override fun doOperation(a: Int, b: Int) = a - b
+}
+
+class Multiplication : Strategy {
+    override fun doOperation(a: Int, b: Int) = a * b
+}
+
+class Context(private val strategy: Strategy) {
+    fun executeStrategy(a: Int, b: Int) = strategy.doOperation(a, b)
+}
+
+fun main() {
+    var context = Context(Addition())
+    println("10 + 5 = ${context.executeStrategy(10, 5)}")
+
+    context = Context(Subtraction())
+    println("10 - 5 = ${context.executeStrategy(10, 5)}")
+
+    context = Context(Multiplication())
+    println("10 * 5 = ${context.executeStrategy(10, 5)}")
+}
+```
+
 ## Template
 
+[Template Design Pattern](/gofdesignpattern/template/template.md)
+
+The template pattern is a behavioral design pattern that defines the program
+skeleton of an algorithm in a method, called template method, which defers some
+steps to subclasses. It lets subclasses redefine certain steps of an algorithm
+without changing the algorithm's structure.
+
+```kotlin
+abstract class Game {
+  abstract fun initialize()
+  abstract fun startGame()
+  abstract fun endGame()
+
+  fun play() {
+    initialize()
+    startGame()
+    endGame()
+  }
+}
+
+class Cricket : Game() {
+  override fun initialize() { println("Cricket Game Initialized!") }
+  override fun startGame() { println("Cricket Game Started!") }
+  override fun endGame() { println("Cricket Game Finished!") }
+}
+
+class Football : Game() {
+  override fun initialize() { println("Football Game Initialized!") }
+  override fun startGame() { println("Football Game Started!") }
+  override fun endGame() { println("Football Game Finished!") }
+}
+
+fun main() {
+  var game: Game = Cricket()
+  game.play()
+
+  game = Football()
+  game.play()
+}
+```
+
 ## Visitor
+
+[Visitor Design Pattern](/gofdesignpattern/visitor/visitor.md)
+
+Visitor pattern is a design pattern used in object-oriented programming that
+promotes separation of concerns, allowing operations to be defined independently
+on objects while traversing data structures, typically through a tree traversal
+algorithm. Visitor pattern is an example of the **double dispatch technique**,
+where the operation's implementation depends on both the **type of the
+operation** and the **type of the data**.
+
+```kotlin
+interface ShapeVisitor {
+    fun visit(circle: Circle)
+    fun visit(rectangle: Rectangle)
+}
+
+interface Shape {
+    fun accept(visitor: ShapeVisitor)
+}
+
+data class Circle(val radius: Double) : Shape {
+    override fun accept(visitor: ShapeVisitor) {
+        visitor.visit(this)
+    }
+}
+
+data class Rectangle(val length: Double, val width: Double) : Shape {
+    override fun accept(visitor: ShapeVisitor) {
+        visitor.visit(this)
+    }
+}
+
+class ShapeAreaVisitor : ShapeVisitor {
+    var totalArea = 0.0
+    
+    override fun visit(circle: Circle) {
+        totalArea += Math.PI * Math.pow(circle.radius, 2.0)
+    }
+
+    override fun visit(rectangle: Rectangle) {
+        totalArea += rectangle.length * rectangle.width
+    }
+}
+
+fun main() {
+    val shapes = listOf(Shape(Circle(5.0)), Shape(Rectangle(3.0, 4.0)), Shape(Circle(2.0)));
+    val areaVisitor = ShapeAreaVisitor()
+
+    for (shape in shapes) {
+        shape.accept(areaVisitor)
+    }
+
+    println("Total area: ${areaVisitor.totalArea}")
+}
+```

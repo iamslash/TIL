@@ -13,4 +13,9 @@
 
 # Examples
 
-* [Iterator in go](/golang/go_design_pattern/iterator.md)
+* [Iterator in C++](/cpp/cpp_gof_designpattern.md#Iterator)
+* [Iterator in Java](/java/java_gof_designpattern.md#Iterator)
+* [Iterator in Kotlin](/kotlin/kotlin_gof_design_pattern.md#Iterator)
+* [Iterator in Python](/python/python_gof_designpattern.md#Iterator)
+* [Iterator in Go](/go/go_gof_design_pattern.md#Iterator)
+* [Iterator in Swift](/swift/swift_gof_designpattern.md#Iterator)
