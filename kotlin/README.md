@@ -95,7 +95,7 @@
   - [fold](#fold)
   - [coroutine](#coroutine)
   - [Null safety](#null-safety-1)
-  - [@JvmOverloads](#jvmoverloads)
+  - [`@JvmOverloads`](#jvmoverloads)
   - [`@JvmStatic` vs Companion](#jvmstatic-vs-companion)
 - [Stule Guide](#stule-guide)
 - [Refactoring](#refactoring)
@@ -2507,22 +2507,33 @@ fun main(args: Array<String>) {
 
 `?.`
 
-## @JvmOverloads
+## `@JvmOverloads`
 
 * [JvmOverloads @ kotlin](https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.jvm/-jvm-overloads/)
 * [Learn in 2 minutes: @JvmOverloads in Kotlin.](https://medium.com/android-news/demystifying-the-jvmoverloads-in-kotlin-10dd098e6f72)
 * [Creating multiple constructors for Data classes in Kotlin](https://proandroiddev.com/creating-multiple-constructors-for-data-classes-in-kotlin-32ad27e58cac)
 
-constructor 혹은 method 에 @JvmOverloads 를 사용하면 multiple overload methods 가 생성된다.
+constructor 혹은 method 에 `@JvmOverloads` 를 사용하면 multiple overload methods
+가 생성된다.
 
-N 개의 인자를 받는 method 가 있다고 하자. 그 중 M 개가 default value 를 갖고 있다고 하자. @JvmOverloads 를 method 에 추가하면 M 개의 overloads 가 생성된다.
+`N` 개의 인자를 받는 method 가 있다고 하자. 그 중 `M` 개가 default value 를 갖고
+있다고 하자. `@JvmOverloads` 를 method 에 추가하면 M 개의 overloads 가 생성된다.
 
 ```kotlin
-@JvmOverloads fun bar(a: Int = 0, b: Double = 0.0, c: String = "default value"){
+@JvmOverloads
+fun bar(
+    a: Int = 0,
+    b: Double = 0.0,
+    c: String = "default value"
+) {
     println("a=$a , b=$b ,c = $c")
 }
 
-data class Event @JvmOverloads constructor (var name: String? = "", var date: Date? = Date(), var isPrivate: Boolean = false)
+data class Event @JvmOverloads constructor (
+    var name: String? = "",
+    var date: Date? = Date(),
+    var isPrivate: Boolean = false
+)
 ```
 
 ## `@JvmStatic` vs Companion

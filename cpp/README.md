@@ -703,9 +703,11 @@ int main() {
 
 ----
 
-resource 생성이 곧 초기화이다 라는 의미이다. scope 을 벗어나면 자동으로 초기화되도록 구현하는 것이다. 
+resource 생성이 곧 초기화이다 라는 의미이다. scope 을 벗어나면 자동으로
+초기화되도록 구현하는 것이다. 
 
-c++ 는 finally 가 없다. RAII 때문이다. C++의 아버지이자 RAII 라는 용어를 처음 만든 Bjarne Stroustrub 는 "RAII가 있는데 굳이 있을 필요가 없다." 라고 말했다.
+c++ 는 finally 가 없다. RAII 때문이다. C++의 아버지이자 RAII 라는 용어를 처음
+만든 Bjarne Stroustrub 는 "RAII가 있는데 굳이 있을 필요가 없다." 라고 말했다.
 
 아래는 `unique_ptr` 를 이용하여 RAII 을 구현한 예이다.
 

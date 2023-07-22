@@ -23,11 +23,11 @@
 - [Algorithm vs Member Function](#algorithm-vs-member-function)
 - [Modifying In A Container](#modifying-in-a-container)
 - [Removing In A Container](#removing-in-a-container)
-- [shared_ptr](#shared_ptr)
-- [weak_ptr](#weak_ptr)
-- [unique_ptr](#unique_ptr)
+- [shared\_ptr](#shared_ptr)
+- [weak\_ptr](#weak_ptr)
+- [unique\_ptr](#unique_ptr)
 - [input output stream](#input-output-stream)
-- [random_device](#random_device)
+- [random\_device](#random_device)
 
 ----
 
@@ -1787,88 +1787,56 @@ int main ()
 
 ## unique_ptr
 
-단 하나의 주인만 허용하는 똑똑한 포인터이다. `unique_ptr` 가 `scope` 를 벗어나면 객체를 파괴한다.
+`unique_ptr` is a smart pointer class template provided by the C++ Standard
+Library in the `<memory>` header. It represents a single ownership of an object
+while managing its lifetime automatically. When the `unique_ptr` goes out of
+scope, it ensures the owned object is properly deleted. There can be only one
+`unique_ptr` that owns the managed object, as it does not allow copy,
+copy-assignment, or sharing of the object. However, you can transfer the
+ownership through move semantics.
 
-```cpp
-// Unique Pointers: exclusive owenership
+```c++
+#include <iostream>
+#include <memory>
 
-class Dog {
-  //Bone* pB;
-  unique_ptr<Bone> pB;  // This prevents memory leak even constructor fails.
- public:
-  string m_name;
-  void bark() { 
-    cout << "Dog " << m_name << " rules!" << endl; 
-  }
-  Dog() { 
-    pB = new Bone(); 
-    cout << "Nameless dog created." << endl; m_name = "nameless"; 
-  }
-  Dog(string name) { 
-    cout << "Dog is created: " << name << endl; m_name = name; 
-  }
-  ~Dog() { 
-    delete pB; 
-    cout << "dog is destroyed: " << m_name << endl; 
-  }
+class MyClass {
+public:
+    MyClass() {
+        std::cout << "MyClass Constructor" << std::endl;
+    }
+    ~MyClass() {
+        std::cout << "MyClass Destructor" << std::endl;
+    }
 };
 
-void test() {    
-  //Dog* pD = new Dog("Gunner");
-  unique_ptr<Dog> pD(new Dog("Gunner"));
+int main() {
+    {
+        std::unique_ptr<MyClass> ptr1(new MyClass());
+        
+        MyClass *raw_ptr = new MyClass();
+        // Reset ptr1 and delete its old managed object, 
+        // ownership of raw_ptr is transferred to ptr1
+        ptr1.reset(raw_ptr); 
 
-  pD->bark();
-  /*pD does a bunch of different things*/
+        // std::unique_ptr<MyClass> ptr2(ptr1); 
+        // Error: 'unique_ptr' does not allow copy construction
+        // std::unique_ptr<MyClass> ptr2 = ptr1; 
+        // Error: 'unique_ptr' does not allow copy assignment
 
-  //Dog* p = pD.release();
-  pD = nullptr;
-  //pD.reset(new Dog("Smokey"));
+        // Transfers ownership from ptr1 to ptr3, ptr1 now holds nullptr
+        std::unique_ptr<MyClass> ptr3 = std::move(ptr1);
+        ptr3.reset(); // Releases managed object and calls its destructor
+    } // ptr1 and ptr3 go out of scope, their managed objects (if any) are deleted
+    std::cout << "End of scope" << std::endl;
 
-  if (!pD) {
-    cout << "pD is empty.\n";
-  }
-//delete pD;   
+    return 0;
 }
-
-void f(unique_ptr<Dog> p) {
-  p->bark();
-}
-
-unique_ptr<Dog> getDog() {
-  unique_ptr<Dog> p(new Dog("Smokey"));
-  return p;
-}
-
-void test2() {
-   unique_ptr<Dog> pD(new Dog("Gunner"));
-   unique_ptr<Dog> pD2(new Dog("Smokey"));
-   pD2 = move(pD);
-   // 1. Smokey is destroyed
-   // 2. pD becomes empty.
-   // 3. pD2 owns Gunner.
-
-   pD2->bark();
-   //    f(move(pD));
-   //    if (!pD) {
-   //        cout << "pD is empty.\n";
-   //    }
-   //    
-   //    unique_ptr<Dog> pD2 = getDog();
-   //    pD2->bark();
-
-   unique_ptr<Dog[]> dogs(new Dog[3]);
-   dogs[1].bark();
-   //(*dogs).bark(); // * is not defined
-}
-
-void test3() {
-    // prevent resource leak even when constructor fails
-}
-
-int main ()
-{
-    test2();
-}
+// Output:
+// MyClass Constructor
+// MyClass Constructor
+// MyClass Destructor
+// MyClass Destructor
+// End of scope
 ```
 
 ## input output stream
