@@ -1,3 +1,4 @@
+- [References](#references)
 - [Materials](#materials)
 - [Creational Pattern](#creational-pattern)
   - [Abstract Factory](#abstract-factory)
@@ -27,6 +28,10 @@
   - [Visitor](#visitor)
 
 ----
+
+# References
+
+* [GOF Design Pattern](/designpattern/README.md#gof-pattern)
 
 # Materials
 

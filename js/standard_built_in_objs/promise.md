@@ -3,7 +3,7 @@
 
 ----
 
-비동기를 구현하기 위한 object 이다. `Promise` 는 `pending, fullfield (resolved),
+비동기를 구현하기 위한 object 이다. `Promise` 는 `pending, fulfilled (resolved),
 rejected` 와 같이 3 가지 상태를 갖는다. 
 
 `Promise` 는 다음과 같이 선언한다. `Promise constructor` 의 arg 를 `executor`
@@ -21,12 +21,12 @@ let promise = new Promise(function(resolve, reject) {
 ![](img/2023-06-09-11-25-30.png)
 
 `executor()` 의 arg 인 `resolve(), reject()` 는 모두 함수이다. `resolve(1)` 를
-호출하면 `Promise` object 의 `status` 는 `fullfield (resolved)`, `result` 는 `1`
+호출하면 `Promise` object 의 `status` 는 `fulfilled (resolved)`, `result` 는 `1`
 이 된다. `reject(2)` 를 호출하면 `Promise` object 의 `status` 는 `rejected`,
 `result` 는 `2` 가 된다.
 
 다음은 `executor` 에서 `resolve` 를 실행한 예이다. `1s` 뒤에
-`resolve("done")` 이 호출된다. `promise.status == fullfield` 이고
+`resolve("done")` 이 호출된다. `promise.status == fulfilled` 이고
 `promise.result == "done"` 이다.   
 
 ```js
@@ -252,6 +252,7 @@ new Promise((resolve, reject) => {
 다음은 [2776. Convert Callback Based Function to Promise Based Function | leetcode](https://leetcode.com/problems/convert-callback-based-function-to-promise-based-function/) 의 해답이다. async function 과 promise 의 동작원리를 이해할 수 있다.
 
 ```js
+// fn 은 'callback => callback(42)` 이다.
 var promisify = function(fn) {
     return async function(...args) {
         return new Promise((resolve, reject) => {
@@ -267,6 +268,20 @@ var promisify = function(fn) {
     }
 };
 
+// asyncFunc 는 async function 이다. 사용하기 위해서는 호출해야 한다.
 const asyncFunc = promisify(callback => callback(42));
+// `asyncFunc()` 를 실행했으니 Promise object 가 생성되어 리턴된다.
+// executor 가 즉시 실행된다. 즉, fn 이 호출된다.
+// fn 에 handler 가 argument 로 전달된다. 
+// `handler => handler(42)` 가 실행된다.
+// 즉, resolve(42) 가 호출된다.
+//
+// then 은 onFulfilled, onRejected 를 argument 로 받는다.
+// console.log 가 onFulfilled 와 같다.
+// promise object 의 result 가 fulfilled 일 때 
+// console.log 가 호출된다.
+// console.log 의 argument 로 resolve 로 넘겨진 argument 가 전해진다.
+// 즉, 42 가 전해진다.
 asyncFunc().then(console.log); // 42
 ```
+
