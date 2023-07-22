@@ -48,6 +48,7 @@
 - [STL](#stl)
 - [C++11](#c11)
 - [Style Guide](#style-guide)
+- [Refactoring](#refactoring)
 - [Effective CPP](#effective-cpp)
 - [Design Pattern](#design-pattern)
 - [Architecture](#architecture)
@@ -1752,15 +1753,19 @@ class Demonstration {
 
 # Style Guide
 
-* [C++ Style Guide | google](https://google.github.io/styleguide/cppguide.html)
+[C++ Style Guide](cpp_style_guide.md)
+
+# Refactoring
+
+[Refactoring Cpp](refactoring_cpp.md)
 
 # Effective CPP
 
-* [Effective Cpp](cpp_effective.md)
+[Effective Cpp](effective_cpp.md)
 
 # Design Pattern
 
-* [c++ design pattern | reactoring.guru](https://refactoring.guru/design-patterns/cpp)
+[C++ Design Pattern](cpp_gof_designpattern.md)
 
 # Architecture
 

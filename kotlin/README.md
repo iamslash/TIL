@@ -97,7 +97,7 @@
   - [Null safety](#null-safety-1)
   - [`@JvmOverloads`](#jvmoverloads)
   - [`@JvmStatic` vs Companion](#jvmstatic-vs-companion)
-- [Stule Guide](#stule-guide)
+- [Style Guide](#style-guide)
 - [Refactoring](#refactoring)
 - [Effective Kotlin](#effective-kotlin)
 - [Design Pattern](#design-pattern)
@@ -2584,21 +2584,21 @@ Java 에서 Kotlin class 의 static method 를 호출한다고 하자. Kotlin cl
 method 에 `@JvmStatic` 을 사용하자. Companion class 가 만들어지지 않아서
 효율적이다.
 
-# Stule Guide
+# Style Guide
 
-* [Coding conventions | Kotlin](https://kotlinlang.org/docs/coding-conventions.html)
+[Kotlin Style Guide](kotlin_style_guide.md)
 
 # Refactoring
 
-[Refactoring Kotlin](effective_kotlin.md)
+[Refactoring Kotlin](refactoring_kotlin.md)
 
 # Effective Kotlin
 
-* [Effective Kotlin](effective_kotlin.md)
+[Effective Kotlin](effective_kotlin.md)
 
 # Design Pattern
 
-* [Kotlin Design Pattern](/kotlin/kotlin_design_pattern.md)
+[Kotlin Design Pattern](kotlin_gof_design_pattern.md)
 
 # Architecture
 

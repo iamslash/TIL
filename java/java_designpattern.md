@@ -165,7 +165,9 @@
 
 # Abstract
 
-[Java Design Patterns](http://java-design-patterns.com/) 을 정리한다. 대부분의 pattern 들이 예제와 함께 제공된다. 용어를 정리하는 정도로 해두자. 이해가 가지 않는 부분은 예제코드를 분석한다.
+[Java Design Patterns](http://java-design-patterns.com/) 을 정리한다. 대부분의
+pattern 들이 예제와 함께 제공된다. 용어를 정리하는 정도로 해두자. 이해가 가지
+않는 부분은 예제코드를 분석한다.
 
 # Materials
 
