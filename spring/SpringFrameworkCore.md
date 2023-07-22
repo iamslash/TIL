@@ -690,7 +690,8 @@ public class AppRunner implements ApplicationRunner {
 
 ## ApplicationEventPublisher
 
-`ApplicationContext` 는 `ApplicationEventPublisher` 를 구현한다. `ApplicationContext` 가 field 로 DI 되면 event 를 보내고 처리할 수 있다. 
+`ApplicationContext` 는 `ApplicationEventPublisher` 를 구현한다.
+`ApplicationContext` 가 field 로 DI 되면 event 를 보내고 처리할 수 있다. 
 
 ```java
 // MyEvent.java

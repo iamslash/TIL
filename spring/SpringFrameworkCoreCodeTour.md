@@ -311,9 +311,11 @@ class AnnotationConfigApplicationContext extends GenericApplicationContext imple
 
 # Registering Bean Definition
 
-* `DefaultListableBeanFactory.registerBeanDefinition` register bean-name, bean-definition to `Map<String, BeanDefinition>`.
+* `DefaultListableBeanFactory.registerBeanDefinition` register bean-name,
+  bean-definition to `Map<String, BeanDefinition>`.
 
-[Registering Bean Flow](SpringAnnotationsCodeTour.md#registering-bean-flow) 참고.
+[Registering Bean Flow](SpringAnnotationsCodeTour.md#registering-bean-flow)
+참고.
 
 * [A process of Spring Bean from scratch](https://programming.vip/docs/a-process-of-spring-bean-from-scratch.html)
 

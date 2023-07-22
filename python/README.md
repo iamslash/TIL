@@ -3051,8 +3051,7 @@ $ pip install --global-option=build_ext --global-option="-I/usr/local/opt/openss
 
 # Style Guide
 
-* [PEP 8 Style Guide](https://peps.python.org/pep-0008/)
-* [Python Style Guide | google](https://google.github.io/styleguide/pyguide.html)
+[Python Style Guide](python_style_guide.md)
 
 # Refactoring
 

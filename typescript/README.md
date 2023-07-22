@@ -637,7 +637,7 @@ let foo: BooleanLikeHeterogeneousEnum.No;
 
 ## Generics
 
-* [Generics](typescript_handbook.md#generics)
+* [Generics](ts_handbook.md#generics)
 
 ```ts
 // generic functions
@@ -1053,19 +1053,19 @@ the property name colon.
 
 # Style Guide
 
-* [TypeScript Style Guide | google](https://google.github.io/styleguide/tsguide.html)
+[TypeScript Style Guide](ts_style_guide.md)
 
 # Refactoring
 
-[Refactoring TypeScript](refactoring_typescript.md)
+[Refactoring TypeScript](refactoring_ts.md)
 
 # Effective
 
-[Effective TypeScript](effective_typescript.md)
+[Effective TypeScript](effective_ts.md)
 
 # Design Pattern
 
-[TypeScript Design Pattern](typescript_designpattern.md)
+[TypeScript Design Pattern](ts_gof_design_pattern.md)
 
 # Architecture
 

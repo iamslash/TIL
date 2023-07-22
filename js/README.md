@@ -89,6 +89,7 @@
   - [Duplicate Property Names](#duplicate-property-names)
   - [Decorator](#decorator)
 - [Style Guide](#style-guide)
+- [Refactoring](#refactoring)
 - [Effective JavaScript](#effective-javascript)
 - [Design Pattern](#design-pattern)
 - [Architecutre](#architecutre)
@@ -2588,16 +2589,19 @@ export default class MyApp extends React.Component {
 
 # Style Guide
 
-* [Google JavaScript Style Guide](https://google.github.io/styleguide/jsguide.html)
+[JavaScript Style Guide](js_style_guide.md)
+
+# Refactoring
+
+[Refactoring JavaScript](refactoring_js.md)
 
 # Effective JavaScript
 
-* [Effective JavaScript](http://effectivejs.com/)
-  * [src](https://github.com/effectivejs/code)
+[Effective JavaScript](effective_js.md)
 
 # Design Pattern
 
-* [TypeScript Design Pattern | refactoring.guru](https://refactoring.guru/design-patterns/typescript)
+[JavaScript GOF Design Pattern](js_gof_design_pattern.md)
 
 # Architecutre
 

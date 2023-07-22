@@ -22,17 +22,17 @@
   - [Test of `@ConfigurationProperties`](#test-of-configurationproperties)
   - [Filter vs Interceptor](#filter-vs-interceptor)
   - [Http requests logging](#http-requests-logging)
-  - [Http responses logging](#http-responses-logging)
+  - [Http Responses Logging](#http-responses-logging)
   - [Slf4J logging](#slf4j-logging)
   - [Sprint Boot Test with JUnit](#sprint-boot-test-with-junit)
   - [Spring Boot Test with Spock](#spring-boot-test-with-spock)
   - [Spring Boot Exception Handling](#spring-boot-exception-handling)
   - [Spring WebMvcConfigure](#spring-webmvcconfigure)
   - [Transactional](#transactional)
-  - [Spring with flyway](#spring-with-flyway)
+  - [Spring Flyway](#spring-flyway)
   - [Custom Data Binder in Spring MVC](#custom-data-binder-in-spring-mvc)
   - [Caching in spring boot](#caching-in-spring-boot)
-  - [Transaction Propagation and suspend function](#transaction-propagation-and-suspend-function)
+  - [Transaction Propagation and Suspend Function](#transaction-propagation-and-suspend-function)
 - [Spring Libraries](#spring-libraries)
   - [Problem](#problem)
   - [Spring Retry](#spring-retry)
@@ -56,11 +56,14 @@ spring framework 에 대해 정리한다.
   * [스프링 핵심 원리 - 고급편](https://www.inflearn.com/course/%EC%8A%A4%ED%94%84%EB%A7%81-%ED%95%B5%EC%8B%AC-%EC%9B%90%EB%A6%AC-%EA%B3%A0%EA%B8%89%ED%8E%B8)
   * 실전! 스프링 부트 (출시 예정)
 * [김영한의 스프링 부트와 JPA 실무 완전 정복 로드맵 | inflearn](https://www.inflearn.com/roadmaps/149)
-  * **활용편 1** - 먼저 활용편 1을 쭉 따라 치며 전체 기술과 백엔드 서비스 개발의 감을 익힙니다. (이해가 좀 부족해도 우선 진행하시길 권장합니다.)
+  * **활용편 1** - 먼저 활용편 1을 쭉 따라 치며 전체 기술과 백엔드 서비스 개발의
+    감을 익힙니다. (이해가 좀 부족해도 우선 진행하시길 권장합니다.)
   * **JPA 기본편** - JPA 기본 내공을 다집니다.
   * **활용편 1 복습** - 이미 기본편을 학습한 상태이기 때문에 처음부터 다시 쭉 따라하다 보면 JPA의 깊이있는 내용을 이해할 수 있습니다.
-  * **활용편 2** - 실전에서 JPA를 개발하고, JPA 성능 최적화를 어떻게 하는지 이해합니다.
-  * **스프링 데이터 JPA** - 실무에서 필요한 기능 위주로 스프링 데이터 JPA를 학습합니다.
+  * **활용편 2** - 실전에서 JPA를 개발하고, JPA 성능 최적화를 어떻게 하는지
+    이해합니다.
+  * **스프링 데이터 JPA** - 실무에서 필요한 기능 위주로 스프링 데이터 JPA를
+    학습합니다.
   * **Querydsl** - 복잡한 쿼리와 동적쿼리 문제를 해결합니다.
 * [Spring Framework Documentation](https://docs.spring.io/spring/docs/current/spring-framework-reference/)
   
@@ -108,7 +111,11 @@ object 를 내가 생성하지 않고 Spring Container 가 생성해서 주입�
 
 ---
 
-반복되는 코드를 분리해서 모듈화하는 프로그래밍 기법이다. 반복되는 코드를 `cross-cutting`, 분리된 모듈을 `aspect` 라고 한다. 따라서 AOP 를 적용하면 반복되는 코드를 줄일 수 있다. 이때 반복되는 코드와 같이 해야할 일들을 `advice`, 어디에 적용해야 하는지를 `pointcut`, 적용해야할 class 를 `target`, method 를 호출할 때 aspect 를 삽입하는 지점을 `joinpoint` 라고 한다. 
+반복되는 코드를 분리해서 모듈화하는 프로그래밍 기법이다. 반복되는 코드를
+`cross-cutting`, 분리된 모듈을 `aspect` 라고 한다. 따라서 AOP 를 적용하면
+반복되는 코드를 줄일 수 있다. 이때 반복되는 코드와 같이 해야할 일들을 `advice`,
+어디에 적용해야 하는지를 `pointcut`, 적용해야할 class 를 `target`, method 를
+호출할 때 aspect 를 삽입하는 지점을 `joinpoint` 라고 한다. 
 
 ```java
 
@@ -164,19 +171,30 @@ public class TransactionService {
 }
 ```
 
-AOP 는 언어별로 다양한 구현체가 있다. java 는 주로 AspectJ 를 사용한다. 또한 AOP 는 compile, load, run time 에 적용 가능하다. 만약 Foo 라는 class 에 A 라는 aspect 를 적용한다고 해보자. 
+AOP 는 언어별로 다양한 구현체가 있다. java 는 주로 AspectJ 를 사용한다. 또한 AOP
+는 compile, load, run time 에 적용 가능하다. 만약 Foo 라는 class 에 A 라는
+aspect 를 적용한다고 해보자. 
 
-* **compile time** 에 AOP 를 적용한다면 Foo 의 compile time 에 aspect 가 적용된 byte 코드를 생성한다. 그러나 compile time 이 느려진다.
-* **load time** 에 AOP 를 적용한다면 VM 이 Foo 를 load 할 때 aspect 가 적용된 Foo 를 메모리에 로드한다. 이것을 **AOP weaving** 이라고 한다. AOP weaving 을 위해서는 agent 를 포함하여 복잡한 설정을 해야 한다.
-* **rum time** 에 AOP 를 적용한다면 VM 이 Foo 를 실행할 때 aspect 를 적용한다. 수행성능은 load time 과 비슷할 것이다. 대신 복잡한 설정이 필요없다.
+* **compile time** 에 AOP 를 적용한다면 Foo 의 compile time 에 aspect 가 적용된
+  byte 코드를 생성한다. 그러나 compile time 이 느려진다.
+* **load time** 에 AOP 를 적용한다면 VM 이 Foo 를 load 할 때 aspect 가 적용된
+  Foo 를 메모리에 로드한다. 이것을 **AOP weaving** 이라고 한다. AOP weaving 을
+  위해서는 agent 를 포함하여 복잡한 설정을 해야 한다.
+* **rum time** 에 AOP 를 적용한다면 VM 이 Foo 를 실행할 때 aspect 를 적용한다.
+  수행성능은 load time 과 비슷할 것이다. 대신 복잡한 설정이 필요없다.
 
 ### PSA (Portable Service Abstraction)
 
 annotation 을 사용하여 service 와 loosely coupled 한 코드를 만들 수 있다.
 
-예를 들어 `@Controller, @RequestMapping` 을 사용한 코드는 tomcat, jetty, netty, undertow 와 같은 servlet container 중 어느 것을 사용해도 많은 수정을 할 필요 없다. 즉, 여러 Spring Web MVC 들을 추상화했다고 할 수 있다.
+예를 들어 `@Controller, @RequestMapping` 을 사용한 코드는 tomcat, jetty, netty,
+undertow 와 같은 servlet container 중 어느 것을 사용해도 많은 수정을 할 필요
+없다. 즉, 여러 Spring Web MVC 들을 추상화했다고 할 수 있다.
 
-또한 `@Transactional` 을 사용한 코드는 `JpaTransactionManager, DatasourceTransactionManager, HibernateTransactionManager` 중 어느 것을 사용해도 많은 수정을 할 필요 없다. 즉, 여러 Transaction Manager 들을 추상화했다고 할 수 있다.
+또한 `@Transactional` 을 사용한 코드는 `JpaTransactionManager`,
+`DatasourceTransactionManager`, `HibernateTransactionManager` 중 어느 것을
+사용해도 많은 수정을 할 필요 없다. 즉, 여러 Transaction Manager 들을
+추상화했다고 할 수 있다.
 
 ## Spring Framework Core
 
@@ -231,7 +249,8 @@ Spring application 을 시작할 때 JVM option 으로 profile 을 선택할 수
 
 ## Test Active profile
 
-test class 를 작성할 때 `application.yml` 대신 `application-test.yml` 을 사용하고 싶다면 다음과 같이 `@ActiveProfiles("test")` 를 사용한다.
+Test class 를 작성할 때 `application.yml` 대신 `application-test.yml` 을
+사용하고 싶다면 다음과 같이 `@ActiveProfiles("test")` 를 사용한다.
 
 ```java
 @RunWith(SpringRunner.class)
@@ -406,7 +425,7 @@ logging:
 #    org.springframework.boot.autoconfigure: DEBUG
 ```
 
-## Http responses logging
+## Http Responses Logging
 
 * [Logging Spring WebClient Calls](https://www.baeldung.com/spring-log-webclient-calls)
 
@@ -937,7 +956,7 @@ public class WebMvcProperties {
   * 지정한 시간내에 메소드 수행이 완료되지 않으면 rollback 을 수행한다. (Default = -1)
   * `@Transactional(timeout=10)`
 
-## Spring with flyway
+## Spring Flyway
 
 * [spring-examples/exflyway](https://github.com/iamslash/spring-examples/exflyway)
 * [Flyway](/flyway/README.md)
@@ -1081,14 +1100,17 @@ public ResponseEntity getVersion(
 * `@Cacheable`
 * `@CacheConfig`
 
-## Transaction Propagation and suspend function
+## Transaction Propagation and Suspend Function
 
 * [Spring @Transactional on suspend function](https://www.androidbugfix.com/2021/12/spring-transactional-on-suspend-function.html)
 * [Spring @Transactional on suspend function | stackoverflow](https://stackoverflow.com/questions/68590209/spring-transactional-on-suspend-function)
 
 ----
 
-suspend function 에 `@Transactional` 을 부착했다고 Transaction Propagation 이 제대로 동작하는 것은 아니다. Transaction 은 Thread Local Stack 을 이용한다. 다음과 같이 R2DBC 와 같은 Reactive Implementation 를 사용하지 않은 경우를 살펴보자. suspend function 이 같은 Transaction 으로 묶이지 않는다.
+suspend function 에 `@Transactional` 을 부착했다고 Transaction Propagation 이
+제대로 동작하는 것은 아니다. Transaction 은 Thread Local Stack 을 이용한다.
+다음과 같이 R2DBC 와 같은 Reactive Implementation 를 사용하지 않은 경우를
+살펴보자. suspend function 이 같은 Transaction 으로 묶이지 않는다.
 
 ```java
 @Service

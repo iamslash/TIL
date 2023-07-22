@@ -285,8 +285,8 @@ public class HelloAdvice {
 없다. `@Import` 를 이용하여  `@Configuration` Class 를 Bean 으로 등록할 수 있다.
 
 `@Configuration` Class 에서 또 다른 `@Configuration` Class 를 bean 으로 등록할
-수 있다. 예를 들어 다음과 같이 `AppConfig` Class 를 bean 으로 등록하면 `DataSource` 도
-bean 으로 등록된다. 
+수 있다. 예를 들어 다음과 같이 `AppConfig` Class 를 bean 으로 등록하면
+`DataSource` 도 bean 으로 등록된다. 
 
 ```java
 @Configuration
