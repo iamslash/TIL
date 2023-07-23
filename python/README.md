@@ -304,7 +304,6 @@ timeit.timeit("""name = "Eric" ... age = 74 ... f'{name} is {age}.'""", number =
 # 0.0024820892040722242
 ```
 
-
 ## Object Introspection
 
 * `dir`

@@ -794,7 +794,7 @@ print(MyClass.attr.name)  # "attr"
 
 ## Prefer Class Decorators Over Metaclasses for Composable Class Extensions
 
-Use class decorators instead of metaclasses for extending classes in a
+Use **class decorators** instead of **metaclasses** for extending classes in a
 composable way.
 
 ```py
@@ -817,50 +817,622 @@ obj = MyClass()  # "Before creating instance" and "After creating instance"
 # Chapter 7: Concurrency and Parallelism
 
 ## Use subprocess to Manage Child Processes
+
+The `subprocess` module in Python enables you to spawn new processes, and
+connect to their input/output/error pipes, as well as obtain their return codes.
+
+```py
+import subprocess
+
+result = subprocess.run(['echo', 'Hello, World!'], stdout=subprocess.PIPE, text=True)
+print(result.stdout)
+```
+
 ## Use Threads for Blocking I/O, Avoid for Parallelism
+
+In Python, using threads can help in handling blocking I/O tasks concurrently,
+but not for achieving true parallelism due to the **Global Interpreter Lock
+(GIL)**.
+
+```py
+from threading import Thread
+
+def print_hello():
+    print("Hello, World!")
+
+thread = Thread(target=print_hello)
+thread.start()
+thread.join()
+```
+
 ## Use Lock to Prevent Data Races in Threads
+
+Locks can be used to prevent data races when multiple threads are accessing
+shared data.
+
+```py
+from threading import Thread, Lock
+
+lock = Lock()
+data = []
+
+def append_data():
+    with lock:
+        data.append("Hello, World!")
+
+threads = [Thread(target=append_data) for _ in range(10)]
+
+for thread in threads:
+    thread.start()
+
+for thread in threads:
+    thread.join()
+
+print(data)
+```
+
 ## Use Queue to Coordinate Work Between Threads
+
+Using `queue.Queue` can make it easier to manage and coordinate work among
+threads.
+
+```py
+from threading import Thread
+from queue import Queue
+
+q = Queue()
+
+def producer():
+    for i in range(5):
+        q.put(i)
+
+def consumer():
+    while True:
+        item = q.get()
+        if item is None:
+            break
+        print(item)
+
+producer_thread = Thread(target=producer)
+consumer_thread = Thread(target=consumer)
+
+producer_thread.start()
+consumer_thread.start()
+
+producer_thread.join()
+q.put(None)
+consumer_thread.join()
+```
+
 ## Know How to Recognize When Concurrency Is Necessary
+
+Concurrency should be considered when the existing program has I/O-bound
+operations, waiting for network communication or external processes, or when
+multiple tasks can be performed concurrently without affecting the program's
+correctness.
+
 ## Avoid Creating New Thread Instances for On-demand Fan-out
+
+Creating new thread instances for on-demand fan-out can lead to resource
+contention or thread exhaustion. Instead, use thread pools or other alternatives
+such as `concurrent.futures.ThreadPoolExecutor` or `asyncio`.
+
+```py
+from concurrent.futures import ThreadPoolExecutor
+
+def task(n):
+    print(f"Processing {n}")
+
+with ThreadPoolExecutor(max_workers=5) as executor:
+    for i in range(5):
+        executor.submit(task, i)
+```
+
 ## Understand How Using Queue for Concurrency Requires Refactoring
+
+When refactoring a program to use `Queue` for concurrency, ensure proper
+division of labor among **producer** and **consumer** functions, make sure to
+handle the termination of threads correctly, and follow good practices for
+concurrent programming.
+
 ## Consider ThreadPoolExecutor When Threads Are Necessary for Concurrency
+
+`ThreadPoolExecutor` from the `concurrent.futures` module is a preferred option
+for managing threads while dealing with concurrency, as it automatically handles
+thread creation, reuse, and termination.
+
+```py
+from concurrent.futures import ThreadPoolExecutor
+
+def print_hello():
+    print("Hello, World!")
+
+with ThreadPoolExecutor(max_workers=5) as executor:
+    future = executor.submit(print_hello)
+```
+
 ## Achieve Highly Concurrent I/O with Coroutines
+
+Coroutines and the `asyncio` module can be used to achieve highly concurrent I/O
+operations in Python.
+
+```py
+import asyncio
+
+async def print_hello():
+    print("Hello, World!")
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(print_hello())
+loop.close()
+```
+
 ## Know How to Port Threaded I/O to asyncio
+
+When shifting from threaded I/O to `asyncio`, remember to refactor blocking
+functions as asynchronous coroutines, use `asyncio`-compatible libraries, and
+modify the way exceptions are handled in asynchronous code.
+
 ## Mix Threads and Coroutines to Ease the Transition to asyncio
+
+Threads and coroutines can be mixed temporarily to ease the transition to
+`asyncio`. Use `loop.run_in_executor` to run synchronous functions in parallel
+to asynchronous coroutines.
+
+```py
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+
+def synchronous_function():
+    return "Hello, World!"
+
+async def main():
+    loop = asyncio.get_event_loop()
+    executor = ThreadPoolExecutor()
+
+    result = await loop.run_in_executor(executor, synchronous_function)
+    print(result)
+
+asyncio.run(main())
+```
+
 ## Avoid Blocking the asyncio Event Loop to Maximize Responsiveness
+
+To avoid blocking the `asyncio` event loop, ensure that all blocking functions
+or I/O operations are either refactored as asynchronous coroutines or run in
+separate threads using `loop.run_in_executor()`.
+
 ## Consider concurrent.futures for True Parallelism
+
+For achieving true parallelism, consider the `concurrent.futures` module, which
+provides a `ProcessPoolExecutor` class for running Python functions in parallel
+using multiple processes.
+
+```py
+from concurrent.futures import ProcessPoolExecutor
+
+def compute_result(x):
+    return x ** 2
+
+with ProcessPoolExecutor() as executor:
+    results = list(executor.map(compute_result, range(5)))
+
+print(results)
+```
 
 # Chapter 8: Robustness and Performance
 
 ## Take Advantage of Each Block in try/except/else/finally
+
+These blocks help in organizing error handling and cleanup in your code. Use
+'try' for actions that might raise exceptions, 'except' for handling the raised
+exceptions, 'else' for code that should run only when no exceptions were raised,
+and 'finally' for code that must run irrespective of whether exceptions were
+raised or not.
+
+```py
+try:
+   result = perform_operation()
+except ValueError:
+   handle_value_error()
+else:
+   process_result(result)
+finally:
+   cleanup()
+```
+
 ## Consider contextlib and with Statements for Reusable try/finally Behavior
+
+The 'with' statement combined with contextlib allows you to reuse try/finally
+patterns. You can create your own context managers using the contextlib module.
+
+```py
+import contextlib
+
+@contextlib.contextmanager
+def my_context_manager():
+   setup()
+   try:
+       yield
+   finally:
+       cleanup()
+
+with my_context_manager():
+   perform_operation()
+```
+
 ## Use datetime Instead of time for Local Clocks
+
+The `datetime` module provides more functionality and better handling of local
+time compared to the time module.
+
+```py
+from datetime import datetime
+
+now = datetime.now()
+```
+
 ## Make pickle Reliable with copyreg
+
+When using the pickle module for serialization, use copyreg to define functions
+that help in serializing and deserializing custom objects for better
+reliability.
+
+```py
+import pickle
+import copyreg
+
+class CustomObject:
+   pass
+
+def serialize_custom_object(obj):
+   return CustomObject, ()
+
+def deserialize_custom_object(*args):
+   return CustomObject()
+
+copyreg.pickle(CustomObject, serialize_custom_object, deserialize_custom_object)
+serialized = pickle.dumps(CustomObject())
+```
+
 ## Use decimal When Precision Is Paramount
+
+For situations where precision is important, use the decimal module, which
+provides a Decimal class for handling fixed-point and floating-point arithmetic.
+
+```py
+from decimal import Decimal
+
+result = Decimal('0.01') + Decimal('0.02')
+```
+
 ## Profile Before Optimizing
+
+Before optimizing code, use profiling tools such as the cProfile module to
+identify performance bottlenecks.
+
+```py
+import cProfile
+
+def my_function():
+   pass
+
+cProfile.run("my_function()")
+```
+
 ## Prefer deque for Producer–Consumer Queues
+
+Use `collections.deque` for implementing efficient, thread-safe producer-consumer
+queues.
+
+```py
+from collections import deque
+
+queue = deque()
+queue.append(producer())
+consumer(queue.popleft())
+```
+
 ## Consider Searching Sorted Sequences with bisect
+
+The `bisect` module provides functions for searching and inserting elements in
+sorted sequences efficiently.
+
+```py
+from bisect import bisect_left
+
+sorted_sequence = [1, 3, 4, 4, 6, 8]
+index = bisect_left(sorted_sequence, 4)
+```
+
 ## Know How to Use heapq for Priority Queues
+
+The `heapq` module provides functions for working with priority queues.
+
+```py
+import heapq
+
+heap = [4, 2, 6, 1, 7, 3]
+heapq.heapify(heap)
+smallest = heapq.heappop(heap)
+```
+
 ## Consider memoryview and bytearray for Zero-Copy Interactions with bytes
+
+Use memoryview in combination with bytearray for efficient, zero-copy slicing of
+byte sequences.
+
+```py
+my_array = bytearray(b'some_data')
+my_view = memoryview(my_array)
+sliced_view = my_view[3:7]
+```
 
 # Chapter 9: Testing and Debugging
 
 ## Use repr Strings for Debugging Output
+
+Use the built-in 'repr' function to create a string representation of an object
+to display debugging information. This provides a more readable output than the
+standard 'str' function.
+
+```py
+class MyClass:
+    def __init__(self, value):
+        self.value = value
+
+    def __repr__(self):
+        return f"MyClass(value={self.value})"
+
+obj = MyClass(2)
+print(repr(obj))  # Output: MyClass(value=2)
+```
+
 ## Verify Related Behaviors in TestCase Subclasses
+
+Organize related unit tests within the same 'TestCase' subclass to improve
+readability and maintainability of your test code.
+
+```py
+import unittest
+
+class TestMyClass(unittest.TestCase):
+    def test_init(self):
+        obj = MyClass(2)
+        self.assertEqual(obj.value, 2)
+
+    def test_add(self):
+        obj = MyClass(2)
+        obj.add(3)
+        self.assertEqual(obj.value, 5)
+```
+
 ## Isolate Tests from Each Other with setUp, tearDown, setUpModule, and tearDownModule
+
+Use 'setUp' and 'tearDown' methods in your 'TestCase' subclasses to prepare and
+clean up the environment for each test, ensuring that tests run independently.
+Similarly, use 'setUpModule' and 'tearDownModule' for module-level setup and
+cleanup.
+
+```py
+class TestMyClass(unittest.TestCase):
+    def setUp(self):
+        self.obj = MyClass(2)
+
+    def tearDown(self):
+        del self.obj
+
+    def test_init(self):
+        self.assertEqual(self.obj.value, 2)
+```
+
 ## Use Mocks to Test Code with Complex Dependencies
+
+Use 'unittest.mock' module to create mock objects for replacing real objects in
+your test cases, ensuring that you can test your code independently from its
+dependencies.
+
+```py
+from unittest.mock import MagicMock
+
+class TestMyClass(unittest.TestCase):
+    def test_call_api(self):
+        api = MagicMock(return_value=42)
+        result = MyClass(api).call_api()
+        self.assertEqual(result, 42)
+        api.assert_called_once()
+```
+
 ## Encapsulate Dependencies to Facilitate Mocking and Testing
+
+Encapsulate external dependencies of your code in separate functions or classes,
+making it easier to replace them with mock objects during testing.
+
+```py
+class Api:
+    def get_data(self):
+        pass  # External API call
+
+class MyClass:
+    def __init__(self, api):
+        self.api = api
+
+    def process_data(self):
+        data = self.api.get_data()
+        # Process and return the data
+```
+
 ## Consider Interactive Debugging with pdb
+
+Use the built-in 'pdb' (Python Debugger) module for interactive debugging. You
+can set breakpoints, step through your code, and inspect variables.
+
+```py
+import pdb
+
+def my_function():
+    x = 2
+    pdb.set_trace()  # Set breakpoint
+    y = x + 3
+    return y
+
+result = my_function()
+```
+
 ## Use tracemalloc to Understand Memory Usage and Leaks
+
+Use the 'tracemalloc' module to trace memory allocations in your Python program,
+helping you identify memory leaks and memory usage issues.
+
+```py
+import tracemalloc
+
+def allocate_memory():
+    data = b'x' * (10 ** 6)  # Allocate 1 MB
+
+tracemalloc.start()
+allocate_memory()
+current, peak = tracemalloc.get_traced_memory()
+print(f"Current memory usage: {current} bytes, Peak: {peak} bytes")
+tracemalloc.stop()
+```
 
 # Chapter 10: Collaboration
 
 ## Know Where to Find Community-Built Modules
+
+Python has a rich ecosystem of community-built modules that can be easily
+installed using package managers like pip. To search for modules, visit the
+Python Package Index (PyPI) at https://pypi.org. Always check the credibility,
+documentation, and compatibility of any module you're considering using in your
+project.
+
+```bash
+pip install requests
+```
+
 ## Use Virtual Environments for Isolated and Reproducible Dependencies
+
+Virtual environments allow you to manage project dependencies in an isolated
+environment. This way, different projects can have their own set of
+dependencies, avoiding conflicts. Use "venv" or "virtualenv" for creating
+virtual environments.
+
+```bash
+python -m venv my_project_env
+source my_project_env/bin/activate
+```
+
 ## Write Docstrings for Every Function, Class, and Module
+
+Docstrings are used to document your code, letting others easily understand the
+purpose and usage of functions, classes, and modules. They should be written
+using triple quotes (""") and adhere to a standard format, e.g. Google Python
+Style Guide or NumPy style.
+
+```py
+def add_numbers(a, b):
+    """
+    Adds two numbers and returns the result.
+    
+    Args:
+        a (int): The first number.
+        b (int): The second number.
+
+    Returns:
+        int: The sum of a and b.
+    """
+    return a + b
+```
+
 ## Use Packages to Organize Modules and Provide Stable APIs
+
+Organize your code into packages to make it more maintainable and easy to
+understand. A package is a collection of related modules, grouped under a common
+namespace. Use the "init.py" file to manage package exports.
+
+```bash
+my_package/
+    __init__.py
+    module1.py
+    module2.py
+```
+
 ## Consider Module-Scoped Code to Configure Deployment Environments
+
+Use module-scoped code to handle different deployment environments, such as
+**development**, **staging**, and **production**. This helps in managing
+environment-specific configurations.
+
+```py
+import os
+
+DEPLOYMENT_ENV = os.environ.get('DEPLOYMENT_ENV', 'development')
+
+if DEPLOYMENT_ENV == 'production':
+    DB_URI = 'production_db_uri'
+else:
+    DB_URI = 'development_db_uri'
+```
+
 ## Define a Root Exception to Insulate Callers from APIs
+
+Create a root exception class for your package to manage package-specific
+exceptions and insulate callers from the package's API.
+
+```py
+class MyPackageError(Exception):
+    """Base class for all MyPackage exceptions"""
+
+class SpecificError(MyPackageError):
+    """Raised when a specific error occurs"""
+
+raise SpecificError("This is a specific error")
+```
+
 ## Know How to Break Circular Dependencies
+
+Circular dependencies can be avoided by refactoring code or importing modules at
+runtime. Using "importlib" can help resolve circular dependencies.
+
+```py
+# In module1.py
+import module2
+
+def foo():
+    return module2.bar()
+
+# In module2.py
+import module1
+
+def bar():
+    return module1.foo()
+```
+
 ## Consider warnings to Refactor and Migrate Usage
+
+Use the "warnings" module to mark functionality that will be deprecated or
+changed in future releases. This helps users of your code to update their usage
+without facing sudden compatibility issues.
+
+```py
+import warnings
+
+def old_function():
+    warnings.warn("old_function is deprecated, use new_function instead",
+                  DeprecationWarning)
+    # ...
+```
+
 ## Consider Static Analysis via typing to Obviate Bugs
+
+Using type annotations and type checking tools like "mypy" can help detect
+type-related issues and bugs before they become a problem. Type hints and
+annotations make your code easier to read and maintain.
+
+```py
+from typing import List
+
+def add_numbers(numbers: List[int]) -> int:
+    return sum(numbers)
+```
