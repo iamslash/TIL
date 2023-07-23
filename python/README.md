@@ -61,6 +61,7 @@
   - [gc](#gc)
   - [dependencies](#dependencies)
 - [Advanced](#advanced)
+  - [walrus operator](#walrus-operator)
   - [Pythonic Way](#pythonic-way)
   - [Open Function](#open-function)
   - [Decorator](#decorator)
@@ -2244,6 +2245,23 @@ tossi==0.0.1
 
 # Advanced 
 
+## walrus operator
+
+> [The Walrus Operator: Python 3.8 Assignment Expressions | realpython](https://realpython.com/python-walrus-operator/)
+
+```py
+# as-is
+a = [1, 2, 3, 4]
+n = len(a)
+if n > 5:
+    print(f"List is too long ({n} elements, expected <= 5)")
+
+# to-be
+a = [1, 2, 3, 4]
+if (n := len(a)) > 5:
+    print(f"List is too long ({n} elements, expected <= 5)")
+```
+
 ## Pythonic Way
 
 * [Code Style¶](https://docs.python-guide.org/writing/style/)
@@ -3051,7 +3069,8 @@ $ pip install --global-option=build_ext --global-option="-I/usr/local/opt/openss
 
 # Style Guide
 
-[Python Style Guide](python_style_guide.md)
+* [Python PEP 8 Style Guide](python_pep8_style_guide.md)
+* [Python Google Style Guide](python_google_style_guide.md)
 
 # Refactoring
 

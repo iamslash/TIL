@@ -96,6 +96,7 @@
   - [Managing Multiple go versions](#managing-multiple-go-versions)
   - [Race](#race)
 - [Style Guide](#style-guide)
+- [Refactoring](#refactoring)
 - [Effective Go](#effective-go)
 - [Design Pattern](#design-pattern)
 - [Architecture](#architecture)
@@ -2633,16 +2634,20 @@ $ go1.19 env GOROOT
 
 # Style Guide
 
-* [Go Style Guide | google](https://google.github.io/styleguide/go/)
+[Go Style Guide](go_style_guide.md)
+
+# Refactoring
+
+[Refactoring Go](refactoring_go.md)
 
 # Effective Go
 
-* [effective go](https://golang.org/doc/effective_go.html)
-  * [한글](https://gosudaweb.gitbooks.io/effective-go-in-korean/content/)
+[Effective Go](effective_go.md)
 
 # Design Pattern
 
-* [Go Design Patterns](go_design_pattern.md)
+* [Go Design Pattern](go_design_pattern.md)
+* [Go GOF Design Pattern](go_gof_design_pattern.md)
 
 # Architecture
 
