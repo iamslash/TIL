@@ -425,7 +425,7 @@ Consistency 중 하나를 추구하고 일반적인 상황일 때는 Latency 혹
 | Downtime per week  | 1m 5s               |
 | Downtime per day   | 8.6s                |
 
-## Domain name system
+## Domain Name System
 
 * [How does the Domain Name System (DNS) lookup work? | bytebytego](https://blog.bytebytego.com/p/how-does-the-domain-name-system-dns?s=r)
 
@@ -524,7 +524,7 @@ nginx, haproxy 와 같은 `reverse proxy` 는 `L7` 에서 `load balaning` 혹은
   
 ----
 
-A service mesh is a dedicated infrastructure layer for handling
+A **service mesh** is a dedicated infrastructure layer for handling
 service-to-service communication. [Istio](/istio/README.md) 는 대표적인 Service
 Mesh Solution 이다.
 
@@ -539,7 +539,7 @@ service mesh 의 주요기능은 다음과 같다.
 * Distributed Tracing
 * Metrics Collecting
 
-API Gate Way 는 Service Mesh 의 종류 중 하나이다.
+**API Gate Way** 는 Service Mesh 의 종류 중 하나이다.
 
 ### Service Discovery
 
@@ -1179,7 +1179,7 @@ There many rate limiting algorithms
 | WhatsApp       | [The WhatsApp architecture Facebook bought for $19 billion](http://highscalability.com/blog/2014/2/26/the-whatsapp-architecture-facebook-bought-for-19-billion.html) |
 | YouTube        | [YouTube scalability](https://www.youtube.com/watch?v=w5WVu624fY8) |
 
-# company engineering blog
+# Company Engineering Blog
 
 * [Airbnb Engineering](http://nerds.airbnb.com/)
 * [Atlassian Developers](https://developer.atlassian.com/blog/)
