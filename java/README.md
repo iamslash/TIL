@@ -2849,7 +2849,7 @@ $ ./gradlew bootrun --jvm-debug
 
 # Style Guide
 
-[Java Stule Guide](java_style_guide.md)
+[Java Google Style Guide](java_google_style_guide.md)
 
 # Refactoring
 

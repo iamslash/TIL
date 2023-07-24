@@ -1,7 +1,6 @@
 - [Abstract](#abstract)
 - [Essentials](#essentials)
 - [Materials](#materials)
-- [Javascript Style Guide](#javascript-style-guide)
 - [Javascript Runtime Architecture](#javascript-runtime-architecture)
 - [JavaScript Engine How to work](#javascript-engine-how-to-work)
 - [Basic](#basic)
@@ -140,10 +139,6 @@ java script 에 대해 정리한다.
 * [실행 컨텍스트](https://www.zerocho.com/category/Javascript/post/5741d96d094da4986bc950a0)
 * [Underscore.js](http://underscorejs.org/)
   * functional programming helper
-
-# Javascript Style Guide
-
-* [JavaScript Standard Style](https://standardjs.com/rules-en.html)
 
 ----
 
@@ -2589,7 +2584,8 @@ export default class MyApp extends React.Component {
 
 # Style Guide
 
-[JavaScript Style Guide](js_style_guide.md)
+* [JavaScript Standard Style](js_standard_style_guide.md)
+* [JavaScript Google Style Guide](js_google_style_guide.md)
 
 # Refactoring
 

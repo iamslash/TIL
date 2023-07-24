@@ -1053,7 +1053,7 @@ the property name colon.
 
 # Style Guide
 
-[TypeScript Style Guide](ts_style_guide.md)
+[TypeScript Google Style Guide](ts_google_style_guide.md)
 
 # Refactoring
 

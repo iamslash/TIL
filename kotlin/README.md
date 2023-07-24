@@ -2586,7 +2586,8 @@ method 에 `@JvmStatic` 을 사용하자. Companion class 가 만들어지지 �
 
 # Style Guide
 
-[Kotlin Style Guide](kotlin_style_guide.md)
+* [Kotlin Style Guide](kotlin_style_guide.md)
+* [Kotlin Android Style Guide](https://developer.android.com/kotlin/style-guide?hl=en)
 
 # Refactoring
 
