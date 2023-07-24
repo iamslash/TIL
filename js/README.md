@@ -115,7 +115,6 @@ java script 에 대해 정리한다.
   * inflearn 유료 강좌 중급
 * [JavaScript 재입문하기 (JS ​튜토리얼)](https://developer.mozilla.org/ko/docs/A_re-introduction_to_JavaScript)
   * Custom Objects (new 다음에 function) 이 어떻게 동작하는지 알 수 있다.  
-* [learn javascript in Y minutes](https://learnxinyminutes.com/docs/javascript/)
 * [javascript @ tutorialspoint](https://www.tutorialspoint.com/javascript/)
 * [JavaScript @ opentutorials](https://opentutorials.org/module/532)
   * 킹왕짱 JavaScript 기본문법
@@ -260,7 +259,7 @@ console.log(Number.MAX_VALUE) // 1.7976931348623157e+308
 console.log(Number.MIN_VALUE) // 5e-324
 ```
 
-## abs, fabs
+## Abs, Fabs
 
 ```js
 console.log(Math.abs(-23));     // 23

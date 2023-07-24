@@ -183,7 +183,7 @@
 * Vertical scaling
 * Horizontal scaling
 * Load balancing
-* Relication
+* Replication
 * Cache
 * Static assets in CDN
 * Stateless Web Servers
