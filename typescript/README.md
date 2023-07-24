@@ -1,7 +1,7 @@
 - [Materials](#materials)
 - [Basic](#basic)
   - [Build \& Run](#build--run)
-  - [Hello World](#hello-world)
+  - [Print Out](#print-out)
   - [Reserved Words](#reserved-words)
   - [min, max values](#min-max-values)
   - [abs vs fabs](#abs-vs-fabs)
@@ -79,7 +79,7 @@ $ ts-node
 2
 ```
 
-## Hello World
+## Print Out
 
 ```typescript
 function greet(person: string, date: Date) {

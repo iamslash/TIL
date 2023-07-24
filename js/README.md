@@ -1,10 +1,13 @@
 - [Abstract](#abstract)
 - [Essentials](#essentials)
 - [Materials](#materials)
-- [Javascript Runtime Architecture](#javascript-runtime-architecture)
-- [JavaScript Engine How to work](#javascript-engine-how-to-work)
 - [Basic](#basic)
+  - [Editor Configuration](#editor-configuration)
+    - [vscode](#vscode)
+  - [Javascript Runtime Architecture](#javascript-runtime-architecture)
+  - [JavaScript Engine How to work](#javascript-engine-how-to-work)
   - [Build and Run](#build-and-run)
+  - [Print Out](#print-out)
   - [Keywords](#keywords)
   - [Min, Max Values](#min-max-values)
   - [abs, fabs](#abs-fabs)
@@ -12,7 +15,7 @@
   - [String](#string)
   - [Random](#random)
   - [Integer Division](#integer-division)
-  - [Print Out](#print-out)
+  - [Formatted String](#formatted-string)
   - [Inspecting Types](#inspecting-types)
   - [Inspecting Functions](#inspecting-functions)
   - [Data types](#data-types)
@@ -140,11 +143,15 @@ java script 에 대해 정리한다.
 * [Underscore.js](http://underscorejs.org/)
   * functional programming helper
 
-----
+# Basic
+
+## Editor Configuration
+
+### vscode
 
 EditorConfig for vscode [참고](https://suyeon96.tistory.com/33)
 
-# Javascript Runtime Architecture
+## Javascript Runtime Architecture
 
 * [이벤트 루프와 매크로태스크, 마이크로태스크 | javascript.info](https://ko.javascript.info/event-loop)
 * [어쨌든 이벤트 루프는 무엇입니까? | Philip Roberts | JSConf EU @ youtube](https://www.youtube.com/watch?v=8aGhZQkoFbQ)
@@ -203,16 +210,21 @@ alert("code");
 // timeout
 ```
 
-# JavaScript Engine How to work
+## JavaScript Engine How to work
 
 * [JavaScript Visualized: the JavaScript Engine](https://dev.to/lydiahallie/javascript-visualized-the-javascript-engine-4cdf)
 
-# Basic
 
 ## Build and Run
 
 ```js
 $ node a.js
+```
+
+## Print Out
+
+```js
+console.log("Hello World");
 ```
 
 ## Keywords
@@ -380,7 +392,7 @@ console.log(3 / 2);             // 1.5
 consoel.log(Math.floor(3 / 2))  // 1
 ```
 
-## Print Out
+## Formatted String
 
 > * [Text Formatting | mdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Text_formatting)
 
