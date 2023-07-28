@@ -38,7 +38,6 @@ This is for github usage.
 * label 은 `bug, documentation, duplicate, enhancement, good first issue, help wanted, invalid, question, wontfix` 가 미리 설정되어 있다.
 * milestone 은 repository 별로 생성한다.
 
-
 # Advanced
 
 ## `ghe-governor`

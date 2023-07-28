@@ -38,7 +38,7 @@ fun preparePost(): Token {
 
 # Callbacks
 
-다음가 같은 callback 을 이용한다.
+다음과 같이 callback 을 이용한다.
 
 ```kotlin
 fun postItem(item: Item) {

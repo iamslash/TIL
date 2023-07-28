@@ -122,7 +122,7 @@ B 클래스가 A 인터페이스를 구현할 때 둘의 관계는 Realization �
 
 ## Composition
 
-A 클래스가 B 클래스를 소유하고 B 클래스는 A 클래스를 구성하는 부분이며 A 클래스가 파괴되면 B 클래스 역시 파괴될 때 둘의 관계는 Aggregation 이다. (**has-a, whole-part, ownership**)
+A 클래스가 B 클래스를 소유하고 B 클래스는 A 클래스를 구성하는 부분이며 A 클래스가 파괴되면 B 클래스 역시 파괴될 때 둘의 관계는 Composition 이다. (**has-a, whole-part, ownership**)
 
 ```cs
 public class A {
@@ -148,11 +148,11 @@ public class A {
 
 호수 클래스와 오리 클래스가 있다고 하자. 호수위에 오리가 떠있다. 그리고 오리들은
 농부의 소유물이다. 호수가 사라진다고 해서 오리가 사라지지는 않는다. 호수
-클래스와 오리 클래스는 Aggregation 관계이다.
+클래스와 오리 클래스는 **Aggregation** 관계이다.
 
-자동차와 클래스와 카뷰레터 클래스가 있다고 하자. 카뷰레터는 자동차의 부품이다.
+자동차 클래스와 카뷰레터 클래스가 있다고 하자. 카뷰레터는 자동차의 부품이다.
 자동차가 파괴되면 카뷰레터 역시 파괴된다. 자동차 클래스와 카뷰레터 클래스는
-Composition 관계이다.
+**Composition** 관계이다.
 
 ## GOF Design Pattern
 

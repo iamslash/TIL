@@ -9,6 +9,7 @@
 # Materials
 
 * [vim_robin @ github](https://github.com/iamslash/vim_robin)
+* [밤앙개의 vim 강좌 33 - vim 플러그인 01 : vim script와 plugin이란, <Leader>란? | naver](https://m.blog.naver.com/PostView.naver?isHttpsRedirect=true&blogId=nfwscho&logNo=220530572978)
 
 # Basic
 

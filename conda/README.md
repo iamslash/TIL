@@ -1,4 +1,4 @@
-# USAGES
+# Basic
 
 ```bash
 conda --help

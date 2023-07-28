@@ -1,8 +1,15 @@
+- [Materials](#materials)
+- [Basic](#basic)
+  - [Declaration](#declaration)
+  - [Designated Initializers (C99)](#designated-initializers-c99)
+
+----
+
 # Materials
 
 * [c faq kor](http://cinsk.github.io/cfaqs/html/cfaqs-ko.html)
 
-# Basic Usage
+# Basic
 
 ## Declaration
 

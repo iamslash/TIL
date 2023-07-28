@@ -1,10 +1,9 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
 - [Overview](#overview)
+- [Examples](#examples)
 
-<!-- markdown-toc end -->
+-----
+
 # Abstract
 
 게임 기획서를 잘 작성하는 방법을 정리한다.

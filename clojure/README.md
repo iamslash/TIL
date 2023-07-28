@@ -4,10 +4,10 @@
 - [Install](#install)
   - [Windows10](#windows10)
   - [osx](#osx)
-- [Basic Usages](#basic-usages)
+- [Basic](#basic)
   - [REPL](#repl)
   - [REPL on emacs](#repl-on-emacs)
-  - [Compile & Run](#compile--run)
+  - [Compile \& Run](#compile--run)
   - [Collections compared c++ container](#collections-compared-c-container)
   - [Collections](#collections)
   - [Data types](#data-types)
@@ -28,7 +28,7 @@
   - [Sequences](#sequences)
   - [Regular Expressions](#regular-expressions)
   - [Destructuring](#destructuring)
-  - [Date & Time](#date--time)
+  - [Date \& Time](#date--time)
   - [Atoms](#atoms)
   - [Metadata](#metadata)
   - [StructMaps](#structmaps)
@@ -111,7 +111,7 @@ clojure에 대해 정리한다.
 > clj a.clj
 ```
 
-# Basic Usages
+# Basic
 
 ## REPL
 

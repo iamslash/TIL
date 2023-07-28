@@ -115,7 +115,7 @@ microservices 의 대표적인 implementation 중 Spring Cloud 와 Kubernetes �
 
 * **[Transactional outbox](msa_transactional_outbox.md)**
 * **Transaction log tailing**
-  * outbox table 을 polling 하지 않고 transaction log 를 plling 하다가 message 가 삽입되면 message broker 에 전달하는 pattern
+  * outbox table 을 polling 하지 않고 transaction log 를 polling 하다가 message 가 삽입되면 message broker 에 전달하는 pattern
   * DynamoDB Streams 가 해당된다.
   * Polling publisher 와 차이는???
 * **Polling publisher**

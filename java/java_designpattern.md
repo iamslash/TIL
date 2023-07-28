@@ -4,7 +4,7 @@
   - [Architectural](#architectural)
     - [API Gateway](#api-gateway)
     - [Aggregator Microservices](#aggregator-microservices)
-    - [CQRS (command query responsibility segregation)](#cqrs-command-query-responsibility-segregation)
+    - [CQRS (Command Query Responsibility Segregation)](#cqrs-command-query-responsibility-segregation)
     - [Data Access Object](#data-access-object)
     - [Data Bus](#data-bus)
     - [Data Mapper](#data-mapper)
@@ -195,10 +195,10 @@ pattern 들이 예제와 함께 제공된다. 용어를 정리하는 정도로 �
   other microservices.
 * 여러 마이크로서비스들에 요청을 하고 응답을 모아서 넘겨준다.
 
-### CQRS (command query responsibility segregation)
+### CQRS (Command Query Responsibility Segregation)
 
-* CQRS Command Query Responsibility Segregation - Separate the query
-  side from the command side.
+* CQRS (Command Query Responsibility Segregation) - Separate the query side from
+  the command side.
 * CUD 와 R 을 구분해서 구현한다.
 
 ### Data Access Object
@@ -212,7 +212,7 @@ pattern 들이 예제와 함께 제공된다. 용어를 정리하는 정도로 �
 * Allows send of messages/events between components of an
   application without them needing to know about each other. They
   only need to know about the type of the message/event being sent.
-* 여러 마이크로서비스과 주고 받는 메시지 혹은 이벤트를 중심으로 데이터를 주고 받는다.
+* 여러 마이크로서비스와 주고 받는 메시지 혹은 이벤트를 중심으로 데이터를 주고 받는다.
 
 ### Data Mapper
 
@@ -237,7 +237,7 @@ pattern 들이 예제와 함께 제공된다. 용어를 정리하는 정도로 �
 * Event 를 중심으로 서비스하는 아키텍처이다. [msa](/msa/README.md) 의 경우
   Application 별로 Event 가 정의되야 한다. Producer 는 Event 를
   [kafka](/kafka/README.md) 에 publish 한다. Consumer 는 관심있는 Event 를
-  처리한다. Producer 와 Consumer 가 Lossely Coupled 된다. Consumer 에 장애가
+  처리한다. Producer 와 Consumer 가 Loosely Coupled 된다. Consumer 에 장애가
   발생해도 Producer 는 Service 에 지장이 없다. Consumer 가 복구되면 밀린 Event
   를 처리하기 때문에 Resilient 하다.
 * [What is an Event-Driven Architecture? @ amazon](https://aws.amazon.com/es/event-driven-architecture/)
@@ -267,14 +267,14 @@ pattern 들이 예제와 함께 제공된다. 용어를 정리하는 정도로 �
   automated test or batch scripts, and to be developed and tested in
   isolation from its eventual run-time devices and databases.
 * Port 와 Adapter 로 나누어서 구현한다.
-* [Hexagonal Architecture @ TIL](/hexagonalarchitecture/README.md)
+* [Hexagonal Architecture | TIL](/hexagonalarchitecture/README.md)
 
 ### Layers
 
 * Layers is an architectural style where software responsibilities
   are divided among the different layers of the application.
 * 여러 레이어로 구분해서 구현한다.
-* [Layered Architecture # TIL](/architecture/README.md))
+* [Layered Architecture | TIL](/architecture/README.md)
 
 ### Metadata Mapping
 
@@ -698,7 +698,7 @@ way the Controller/Presenter/ViewModel manage communication and update the View.
   want to use that. It puts all the requests in a queue and process them
   asynchronously. Gives the resource for the event when it is the next in the
   queue and in same time removes it from the queue.
-* 큐를 하나 두고 이벤트를 보낸다. 큐에서 이벤트를 꺼내거 처리한다. 큐를 통해
+* 큐를 하나 두고 이벤트를 보낸다. 큐에서 이벤트를 꺼내서 처리한다. 큐를 통해
   쓰로틀링된다. 제한된 접근을 제공하는 리소스들을 처리할 수 있다.
 
 ### Event-based Asynchronous

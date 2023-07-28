@@ -1,5 +1,7 @@
 
-
+- [Block](#block)
+- [Generate Block](#generate-block)
+- [Proof of work](#proof-of-work)
 
 ----
 

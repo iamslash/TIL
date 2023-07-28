@@ -114,11 +114,11 @@ bash 에 대해 정리한다.
 
 # References
 
-* [GitHub Enterprise Backup Utilities @ github](https://github.com/github/backup-utils)
+* [GitHub Enterprise Backup Utilities | github](https://github.com/github/backup-utils)
   * source code 를 참고할 만 하다. 
 * [Bash script](https://mug896.github.io/bash-shell/index.html)
   * 한글 가이드
-* [bash reference manual @ gnu](https://www.gnu.org/software/bash/manual/bash.html)
+* [bash reference manual | gnu](https://www.gnu.org/software/bash/manual/bash.html)
 * [Advanced Bash-Scripting Guide](http://www.tldp.org/LDP/abs/html/index.html)
 * [bash repo](https://savannah.gnu.org/git/?group=bash)
 
@@ -126,7 +126,7 @@ bash 에 대해 정리한다.
 
 metachars 는 command 와 다르게 처리되기 때문에 command line 에 포함하는 경우 escape 하거나 quote 해서 사용해야 한다.
 
-```
+```sh
  ( )   `   |   &   ;               # command substitution
  &&  ||                            # AND, OR 
  <   >   >>                        # redirection 
@@ -265,7 +265,9 @@ davidsun
 $ echo "foo"
 $ echo "$USER"
 $ echo "Now is $(date)"
+Now is 2023년 7월 25일 화요일 17시 04분 33초 KST
 $ echo "Now is `date`"
+Now is 2023년 7월 25일 화요일 17시 04분 33초 KST
 
 # "''"
 $ bash -c "/bin/echo foo 'bar'"
@@ -423,10 +425,13 @@ $ sed -i "s/foo/bar/g" a.txt
 shell 이 command 를 읽고 실행하는 과정은 다음과 같다.
 
 * commands 및 arguments 를 읽어 들인다.
-* 읽어 들인 commands 를 quoting 과 동시에 metacharaters 를 구분자로 words 와 operators 로 쪼갠다. 이때 alias expansion 이 수행된다.
+* 읽어 들인 commands 를 quoting 과 동시에 metacharaters 를 구분자로 words 와
+  operators 로 쪼갠다. 이때 alias expansion 이 수행된다.
 * 토큰들을 읽어서 simple, compound commands 를 구성한다.
-* 다양한 shell expansion 이 수행되고 expanded tokens 는 파일이름, 커맨드, 인자로 구성된다.
-* redirection 을 수행하고 redirection operators 와 operands 를 argument list 에서 제거한다.
+* 다양한 shell expansion 이 수행되고 expanded tokens 는 파일이름, 커맨드, 인자로
+  구성된다.
+* redirection 을 수행하고 redirection operators 와 operands 를 argument list
+  에서 제거한다.
 * command 를 실행한다.
 * 필요한 경우 command 가 실행 완료될 때까지 기다리고 exit status 를 수집한다.
 

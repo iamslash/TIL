@@ -1,5 +1,4 @@
-
-# usage
+# Basic
 
 - shortcut
 
@@ -42,6 +41,6 @@
 - 피벗테이블
   - 문제해결에 맞는 피벗테이블을 구성하고 피벗차트로 시각화 하자.
 
-# reference
+# References
 
 - [빅데이터의 통찰력을 키워주는 엑셀 Quick Start](https://www.inflearn.com/course/%EC%97%91%EC%85%80-%EA%B0%95%EC%A2%8C/)

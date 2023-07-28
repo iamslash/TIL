@@ -1,7 +1,7 @@
 # Abstract
 
-- 범프 매핑은 표면을 울퉁불퉁하게 표현하는 방법이다. height field,
-  normal mapping, parallax mapping, displacement mapping등이 있다.
+범프 매핑은 표면을 울퉁불퉁하게 표현하는 방법이다. height field, normal mapping,
+  parallax mapping, displacement mapping등이 있다.
 
 # normal mapping
 

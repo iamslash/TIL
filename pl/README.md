@@ -13,11 +13,11 @@
 
 # Programming Language Features
 
-## Compile, Run
+## Build, Run
 
   * 컴파일하고 실행하는 방법
 
-## Hello World
+## Print Out
 
   * 화면에 출력하는 방법
 
@@ -27,7 +27,7 @@
 
 ## Data Types
 
-## Print Formatted Text
+## Formatted Text
 
 ## Control Flows
 

@@ -1,6 +1,6 @@
 # Abstract
 
-cg는 NVIDIA와 MS가 함께 개발한 언어이다. 3.1버전을 끝으로 더이상
+cg는 NVIDIA와 MS가 함께 개발한 언어이다. 3.1 버전을 끝으로 더이상
 개발되지 않는다. 그러나 unity shaderlab에서는 cg사용을 권고하고
 있다. cg가 OpenGL과 DirectX를 동시에 지원하기 때문일 것이다.
 
