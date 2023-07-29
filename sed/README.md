@@ -1,5 +1,5 @@
 - [Abstract](#abstract)
-- [Basics](#basics)
+- [Basic](#basic)
 - [Addresses](#addresses)
 - [AND, OR](#and-or)
 - [Commands](#commands)
@@ -9,7 +9,7 @@
 - [Command line options](#command-line-options)
 - [Debugging](#debugging)
 - [References](#references)
-- [Tips](#tips)
+- [Advanced](#advanced)
   - [Replace in files](#replace-in-files)
   - [두개의 패턴 사이의 내용을 지우자.](#두개의-패턴-사이의-내용을-지우자)
 
@@ -17,14 +17,14 @@
 
 # Abstract
 
-unix 가 만들어 졌을때 적은 메모리에도 동작할 수 있는 라인 에디터가
-필요해서 `/bin/ed` 가 탄생했다. ed 는 이후 sed, ex, vi, grep 등의 기반이
-된다. `sed` 는 `ed` 의 stream 버전이다. 명령어 사용법이 같다.
+unix 가 만들어 졌을때 적은 메모리에도 동작할 수 있는 라인 에디터가 필요해서
+`/bin/ed` 가 탄생했다. ed 는 이후 `sed`, `ex`, `vi`, `grep` 등의 기반이 된다.
+`sed` 는 `ed` 의 stream 버전이다. 명령어 사용법이 같다.
 
 `ex` 는 `ed` 의 확장버전이다. `vi` 에서 `:` 를 이용한 command mode 로 사용된다.
 `ex` 의 visual mode version 이 `vi` 이다.
 
-# Basics
+# Basic
 
 sed command line 은 보통 다음과 같은 형식을 같는다.
 
@@ -107,7 +107,7 @@ EOF
 * [sed @ gnu](https://www.gnu.org/software/sed/manual/sed.html)
 * [부록 B. Sed 와 Awk 에 대한 간단한 입문서](https://wiki.kldp.org/HOWTO/html/Adv-Bash-Scr-HOWTO/sedawk.html)
 
-# Tips
+# Advanced
 
 ## Replace in files
 

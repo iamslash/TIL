@@ -9,13 +9,13 @@
 - [Functions](#functions)
 - [BEGIN, END](#begin-end)
 - [Builtin Variables](#builtin-variables)
-    - [RECORD](#record)
-    - [FIELD](#field)
-    - [FORMAT](#format)
-    - [MATCHING](#matching)
-    - [ARGUMENT](#argument)
-    - [ARRAY](#array)
-    - [ETC](#etc)
+  - [RECORD](#record)
+  - [FIELD](#field)
+  - [FORMAT](#format)
+  - [MATCHING](#matching)
+  - [ARGUMENT](#argument)
+  - [ARRAY](#array)
+  - [ETC](#etc)
 - [Record seperation](#record-seperation)
 - [Field seperation](#field-seperation)
 - [`$0=$0, $1=$1`](#00-11)
@@ -25,18 +25,18 @@
 - [Control statements](#control-statements)
 - [Operators](#operators)
 - [Builtin Functions](#builtin-functions)
-    - [Numeric Functions](#numeric-functions)
-    - [String Functions](#string-functions)
-    - [I/O Functions](#io-functions)
-    - [Time Functions](#time-functions)
-    - [Bitweise Functions](#bitweise-functions)
-    - [Type Functions](#type-functions)
-    - [I18N Functions](#i18n-functions)
+  - [Numeric Functions](#numeric-functions)
+  - [String Functions](#string-functions)
+  - [I/O Functions](#io-functions)
+  - [Time Functions](#time-functions)
+  - [Bitweise Functions](#bitweise-functions)
+  - [Type Functions](#type-functions)
+  - [I18N Functions](#i18n-functions)
 - [TCP/IP](#tcpip)
 - [Debugging](#debugging)
 - [References](#references)
 - [Tips](#tips)
-    - [필드 출력하기](#필드-출력하기)
+  - [필드 출력하기](#필드-출력하기)
 
 <!-- markdown-toc end -->
 
@@ -365,7 +365,7 @@ roundmode는 기본적으로 "N" (roundTiesToEven) 이다.
 | Round toward zero                     | roundTowardZero     | "Z" or "z" |
 | Round to nearest, ties away from zero | roundTiesToAway     | "A" or "a" |
 
-```
+```bash
 $ awk '                    
 BEGIN {
     x = -4.5
