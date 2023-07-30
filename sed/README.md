@@ -1,14 +1,15 @@
 - [Abstract](#abstract)
-- [Basic](#basic)
-- [Addresses](#addresses)
-- [AND, OR](#and-or)
-- [Commands](#commands)
-- [Branch](#branch)
-- [Multiple lines](#multiple-lines)
-- [Execute](#execute)
-- [Command line options](#command-line-options)
-- [Debugging](#debugging)
 - [References](#references)
+- [Basic](#basic)
+  - [Basic Usage](#basic-usage)
+  - [Addresses](#addresses)
+  - [AND, OR](#and-or)
+  - [Commands](#commands)
+  - [Branch](#branch)
+  - [Multiple lines](#multiple-lines)
+  - [Execute](#execute)
+  - [Command line options](#command-line-options)
+  - [Debugging](#debugging)
 - [Advanced](#advanced)
   - [Replace in files](#replace-in-files)
   - [두개의 패턴 사이의 내용을 지우자.](#두개의-패턴-사이의-내용을-지우자)
@@ -18,13 +19,23 @@
 # Abstract
 
 unix 가 만들어 졌을때 적은 메모리에도 동작할 수 있는 라인 에디터가 필요해서
-`/bin/ed` 가 탄생했다. ed 는 이후 `sed`, `ex`, `vi`, `grep` 등의 기반이 된다.
+`/bin/ed` 가 탄생했다. `ed` 는 이후 `sed`, `ex`, `vi`, `grep` 등의 기반이 된다.
 `sed` 는 `ed` 의 stream 버전이다. 명령어 사용법이 같다.
 
 `ex` 는 `ed` 의 확장버전이다. `vi` 에서 `:` 를 이용한 command mode 로 사용된다.
 `ex` 의 visual mode version 이 `vi` 이다.
 
+# References
+
+* [Sed 가이드](https://mug896.gitbooks.io/sed-script/content/)
+  * 친절한 한글
+* [Sed - An Introduction and Tutorial by Bruce Barnett](http://www.grymoire.com/Unix/Sed.html#uh-0)
+* [sed | gnu](https://www.gnu.org/software/sed/manual/sed.html)
+* [부록 B. Sed 와 Awk 에 대한 간단한 입문서](https://wiki.kldp.org/HOWTO/html/Adv-Bash-Scr-HOWTO/sedawk.html)
+
 # Basic
+
+## Basic Usage
 
 sed command line 은 보통 다음과 같은 형식을 같는다.
 
@@ -32,10 +43,10 @@ sed command line 은 보통 다음과 같은 형식을 같는다.
 sed SCRIPT INPUTFILE...
 ```
 
-sed 는 **pattern space** 와 **hold space** 라는 두가지 버퍼가 존재한다.  하나의
+sed 는 **pattern space** 와 **hold space** 라는 두가지 버퍼가 존재한다. 하나의
 줄을 읽으면 **pattern space** 에 저장하고 필요할 때마다 **hold space** 에 저장해
-둔다. **hold space** 에 저장해두면 명령어에 적용되지 않는다. 아무런 옵션이 없다면
-**pattern space** 에 저장된 줄을 출력한다.
+둔다. **hold space** 에 저장해두면 명령어에 적용되지 않는다. 아무런 옵션이
+없다면 **pattern space** 에 저장된 줄을 출력한다.
 
 ```bash
 $ seq 111 111 555 | sed ''
@@ -83,29 +94,21 @@ $ sed -f - <<\EOF datafile
 EOF
 ```
 
-# Addresses
+## Addresses
 
-# AND, OR
+## AND, OR
 
-# Commands
+## Commands
 
-# Branch
+## Branch
 
-# Multiple lines
+## Multiple lines
 
-# Execute
+## Execute
 
-# Command line options
+## Command line options
 
-# Debugging
-
-# References
-
-* [Sed 가이드](https://mug896.gitbooks.io/sed-script/content/)
-  * 친절한 한글
-* [Sed - An Introduction and Tutorial by Bruce Barnett](http://www.grymoire.com/Unix/Sed.html#uh-0)
-* [sed @ gnu](https://www.gnu.org/software/sed/manual/sed.html)
-* [부록 B. Sed 와 Awk 에 대한 간단한 입문서](https://wiki.kldp.org/HOWTO/html/Adv-Bash-Scr-HOWTO/sedawk.html)
+## Debugging
 
 # Advanced
 
@@ -142,5 +145,3 @@ sed '/PATTERN-1/,/PATTERN-2/d' a.txt
 ```bash
 sed '/PATTERN-1/,$d' a.txt
 ```
-
-

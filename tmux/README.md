@@ -1,4 +1,4 @@
-# Usages
+# Basic
 
 terminal multiplexer
 

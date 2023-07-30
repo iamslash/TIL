@@ -139,7 +139,7 @@
     - [Input and Output](#input-and-output)
     - [Background job 은 subshell 에서 실행된다.](#background-job-은-subshell-에서-실행된다)
     - [Script 파일 실행 중에 background 로 실행](#script-파일-실행-중에-background-로-실행)
-    - [SHELL 이 종료되면 background job 은 어떻게 되는가?](#shell-이-종료되면-background-job-은-어떻게-되는가)
+    - [Shell 이 종료되면 background job 은 어떻게 되는가?](#shell-이-종료되면-background-job-은-어떻게-되는가)
   - [Session and Process Group](#session-and-process-group)
     - [조회하고 신호보내기](#조회하고-신호보내기)
     - [실행중인 스크립트를 종료하는 방법](#실행중인-스크립트를-종료하는-방법)
@@ -155,7 +155,7 @@
     - [Control Keys](#control-keys)
     - [End of file](#end-of-file)
     - [Race condition](#race-condition)
-    - [SIGHUP signal](#sighup-signal)
+    - [SIGHUP Signal](#sighup-signal)
   - [Mutual Exclusion](#mutual-exclusion)
     - [flock](#flock)
     - [flock 의 직접 명령 실행](#flock-의-직접-명령-실행)
@@ -783,24 +783,102 @@ cd ~/Downloads
 Shell Parameter Expansion substitutes parameter values with their equivalent
 values.
 
+`${parameter:-word}`: If parameter is unset or null, this expansion returns the
+value of word. Otherwise, it returns the value of parameter.
+
 ```bash
-# If the variable parameter is unset or set to a null value, 
-# it will return default.
-${parameter:-default}: 
-# If the variable parameter is unset, it will return default. 
-# However, if it's set to a null value, it will return the null value.
-${parameter-default}: 
+VAR=
+DEFAULT="hello"
+echo ${VAR:-$DEFAULT}  # Output: hello
+VAR="world"
+echo ${VAR:-$DEFAULT}  # Output: world
 ```
 
+`${parameter-word}`: If parameter is unset, this expansion returns the
+value of word. Otherwise, it returns the value of parameter.
+
 ```bash
-unset PARAM_NULL
-PARAM_NULL=""
+VAR=
+DEFAULT="hello"
+echo ${VAR-$DEFAULT}  # Output:
+VAR="world"
+echo ${VAR-$DEFAULT}  # Output: world
+```
 
-echo "Using ':-': Unset value: ${PARAM_UNSET:-default}, Null value: ${PARAM_NULL:-default}"
-# Output: Using ':-': Unset value: default, Null value: default
+`${parameter:=word}`: If parameter is unset or null, this expansion assigns the
+value of word to parameter and returns the value.
 
-echo "Using '-': Unset value: ${PARAM_UNSET-default}, Null value: ${PARAM_NULL-default}"
-# Output: Using '-': Unset value: default, Null value: 
+```bash
+VAR=
+DEFAULT="hello"
+echo ${VAR:=$DEFAULT}  # Output: hello
+echo $VAR              # Output: hello
+```
+
+`${parameter:+word}`: If parameter is set, then this expansion returns the value
+of word. Otherwise, it returns an empty string.
+
+```bash
+VAR="world"
+SUFFIX="!"
+echo ${VAR:+$SUFFIX}   # Output: !
+VAR=
+echo ${VAR:+$SUFFIX}   # Output: (empty)
+```
+
+`${#parameter}`: Returns the length of the string value of parameter.
+
+```bash
+VAR="hello"
+echo ${#VAR}           # Output: 5
+```
+
+`${parameter%pattern}`: Removes the shortest suffix matching pattern from the
+value of parameter.
+
+```bash
+FILENAME="file.txt"
+echo ${FILENAME%.*}    # Output: file
+```
+
+`${parameter%%pattern}`: Removes the longest suffix matching pattern from the
+value of parameter.
+
+```bash
+FILENAME="file.tar.gz"
+echo ${FILENAME%%.*}   # Output: file
+```
+
+`${parameter#pattern}`: Removes the shortest prefix matching pattern from the
+value of parameter.
+
+```bash
+PATH="/usr/local/bin"
+echo ${PATH#*/}        # Output: usr/local/bin
+```
+
+`${parameter##pattern}`: Removes the longest prefix matching pattern from the
+value of parameter.
+
+```bash
+PATH="/usr/local/bin"
+echo ${PATH##*/}       # Output: bin
+```
+
+`${parameter/pattern/string}`: Replaces the first occurrence of pattern with
+string in the value of parameter.
+
+```bash
+VAR="hello world"
+echo ${VAR/world/universe}  # Output: hello universe
+```
+
+`${parameter//pattern/string}`: Replaces all occurrences of pattern with string
+in the value of parameter.
+
+```bash
+VAR="hello world world"
+echo ${VAR//world/universe}  # Output: hello universe universe
 ```
 
 ### Command Substitution
@@ -1335,8 +1413,8 @@ $ bash --sh
 
 # Job Control
 
-Job control is a feature in Bash that allows users to manage multiple processes
-(jobs) running concurrently.
+Job control allows users to manage multiple processes (jobs) running
+concurrently.
 
 ## Job Control Basics
 
@@ -1694,8 +1772,6 @@ Some optional features can be enabled or disabled using `configure` options, lik
 ./configure --enable-debug --disable-readline
 ```
 
--------
-
 # Job Control Advanced
 
 ## Job Control
@@ -1728,11 +1804,12 @@ hello
 $ ls | sort
 ```
 
-다음은 session, job, process 들의 상태를 그림으로 표현한 것이다. [The TTY demystified](https://www.linusakesson.net/programming/tty/) 참고
+다음은 session, job, process 들의 상태를 그림으로 표현한 것이다. [The TTY
+demystified](https://www.linusakesson.net/programming/tty/) 참고
 
 ![](img/examplediagram.png)
 
-다음은 tty driver (/dev/pts/0) 의 상태이다.
+다음은 tty driver (`/dev/pts/0`) 의 상태이다.
 
 ```
 Size: 45x13
@@ -1803,14 +1880,17 @@ $ ps axjf
 * `Ctrl c`
   * send the `SIGINT` signal to foreground job.
 * `Ctrl z`
-  * send the `SIGTSTP` signal (suspend) to foreground job and make the background job the foreground job.
+  * send the `SIGTSTP` signal (suspend) to foreground job and make the
+    background job the foreground job.
 
 ### Input and Output
 
 * Input
-  * 입력은 foreground job 에서만 가능합니다. background job 에서 입력을 받게되면 `SIGTTIN` 신호가 전달되어 suspend 된다.
+  * 입력은 foreground job 에서만 가능합니다. background job 에서 입력을 받게되면
+    `SIGTTIN` 신호가 전달되어 suspend 된다.
 * Output
-  * 출력은 현재 session 에서 실행되고 있는 모든 job 들이 공유한다. `stty tostop` 을 사용하면 background job 에서 출력이 발생했을 때 suspend 시킬 수 있다.
+  * 출력은 현재 session 에서 실행되고 있는 모든 job 들이 공유한다. `stty tostop`
+    을 사용하면 background job 에서 출력이 발생했을 때 suspend 시킬 수 있다.
 
 ### Background job 은 subshell 에서 실행된다.
 
@@ -1828,25 +1908,36 @@ $ echo $AA
 
 ### Script 파일 실행 중에 background 로 실행
 
-스크립트 파일을 실행 도중에 background 로 명령을 실행하면 실행되는 명령은 job table 에 나타나지 않고 stdin 은 `/dev/null` 에 연결된다. parent process 에 해당하는 스크립트 파일이 면저 종료하면 PPID 가 init 으로 바뀌어 실행을 계속하므로 daemon 으로 만들 수 있다.
+스크립트 파일을 실행 도중에 background 로 명령을 실행하면 실행되는 명령은 job
+table 에 나타나지 않고 stdin 은 `/dev/null` 에 연결된다. parent process 에
+해당하는 스크립트 파일이 면저 종료하면 PPID 가 init 으로 바뀌어 실행을
+계속하므로 daemon 으로 만들 수 있다.
 
-### SHELL 이 종료되면 background job 은 어떻게 되는가?
+### Shell 이 종료되면 background job 은 어떻게 되는가?
 
 * prompt 에서 exit 나 logout 으로 종료하는 경우 
   * background job 이 stopped 인 경우 
     * prompt 에 job 이 종료되었다고 알려준다.
   * background job 이 running 인 경우
     * ppid 가 init 으로 바뀐다.
-    * login shell 인 경우 `shopt -s huponexit` 가 설정되었다면 logout 했을 때 모든 running background job 들이 `SIGHUP` 을 수신하고 종료한다.
+    * login shell 인 경우 `shopt -s huponexit` 가 설정되었다면 logout 했을 때
+      모든 running background job 들이 `SIGHUP` 을 수신하고 종료한다.
 * 윈도우에서 terminal program 을 종료하거나 시스템이 종료되는 경우
-  * remote login 에서 네트웍, 모뎀 연결이 끊기거나 interactive shell 에 `kill -HUP` 신호를 주는 경우도 해당한다.
+  * remote login 에서 네트웍, 모뎀 연결이 끊기거나 interactive shell 에 `kill
+    -HUP` 신호를 주는 경우도 해당한다.
   * shell 의 stopped, running job 들이 모두 `SIGHUP` 을 받고 종료한다.
 
 ## Session and Process Group
 
-터미널을 열면 shell 이 실행된다. shell pid 는 sid (session id) 이면서 session leader 이다. 이후 자손 process 들은 모두 같은 sid 를 갖는다. shell script 가 실행되면 process group 이 만들어진다. script pid 가 pgid (process group id) 가 되며 process group leader 가 된다. 새로 생성되는 프로세스는 parent process 의 pgid 를 상속한다. 따라서 이후 script 에서 실행되는 process 들은 모두 같은 pid 를 갖는다.
+터미널을 열면 shell 이 실행된다. shell pid 는 sid (session id) 이면서 session
+leader 이다. 이후 자손 process 들은 모두 같은 sid 를 갖는다. shell script 가
+실행되면 process group 이 만들어진다. script pid 가 pgid (process group id) 가
+되며 process group leader 가 된다. 새로 생성되는 프로세스는 parent process 의
+pgid 를 상속한다. 따라서 이후 script 에서 실행되는 process 들은 모두 같은 pid 를
+갖는다.
 
-`|` 를 통해 여러 명령을 실행하는 경우도 process group 이 만들어진다. 이때 첫번째 명령의 pid 가 pgid, process group leader 가 된다.
+`|` 를 통해 여러 명령을 실행하는 경우도 process group 이 만들어진다. 이때 첫번째
+명령의 pid 가 pgid, process group leader 가 된다.
 
 ### 조회하고 신호보내기
 
@@ -1935,7 +2026,11 @@ additional information with BSD format
 > * [The TTY demystified](http://www.linusakesson.net/programming/tty/)
 > * [TTY @ mug896](https://mug896.github.io/bash-shell/tty.html)
 
-`tty` 는 **T**ele**TY**pewriter를 의미한다. 터미널을 의미하는 단어이다. 1869 년 타자기와 비슷하게 생긴 Teletype Writer 라는 장치가 있었다. 일종의 터미널이다. telex 라는 network 에 연결되어 있었다고 한다. 1970 년대에 비디오 장치가 달린 VT-100 이라는 터미널이 개발되었다. 지금은 physical teletype 혹은 video terminal 을 사용하지 않지만 linux kernel 안에 그 개념들이 숨어있다.
+`tty` 는 **T**ele**TY**pewriter를 의미한다. 터미널을 의미하는 단어이다. 1869 년
+타자기와 비슷하게 생긴 Teletype Writer 라는 장치가 있었다. 일종의 터미널이다.
+telex 라는 network 에 연결되어 있었다고 한다. 1970 년대에 비디오 장치가 달린
+VT-100 이라는 터미널이 개발되었다. 지금은 physical teletype 혹은 video terminal
+을 사용하지 않지만 linux kernel 안에 그 개념들이 숨어있다.
 
 ### 입출력 장치 사용의 구분
 
@@ -1943,63 +2038,102 @@ additional information with BSD format
 
 ![](img/case1.png)
 
-VT100 과 같은 외부 터미널 장치가 시리얼 라인을 통해 연결되는 경우이다. `getty` process 가 background 에서 line 을 모니터링하고 있다가 터미널 접속을 발견하면 login prompt 를 보여준다. `/dev/ttyS[number]` 파일이 사용된다. `UART driver` 는 bytes 를 전송하고 parity check 혹은 flow control 을 수행한다. `Line discipline` 라는 layer 를 두어서 `UART driver` 를 여러 다른 장치로 사용할 수 있다. baskspace, erase word, clear line, reprint 같은 line editing 기능을 standard line discipline 을 통해 제공한다.
+VT100 과 같은 외부 터미널 장치가 시리얼 라인을 통해 연결되는 경우이다. `getty`
+process 가 background 에서 line 을 모니터링하고 있다가 터미널 접속을 발견하면
+login prompt 를 보여준다. `/dev/ttyS[number]` 파일이 사용된다. `UART driver` 는
+bytes 를 전송하고 parity check 혹은 flow control 을 수행한다. `Line discipline`
+라는 layer 를 두어서 `UART driver` 를 여러 다른 장치로 사용할 수 있다.
+baskspace, erase word, clear line, reprint 같은 line editing 기능을 standard
+line discipline 을 통해 제공한다.
 
 ![](img/line_discipline.png)
 
-`TTY driver`  는 session management 즉 job control 기능을 한다. `Ctrl z` 를 누르면 running job 을 suspend 시키고 user input 은 foreground job 에만 전달한다. background job 이 입력을 받으면 SIGTTIN 신호를 보내 suspend 시킨다.
+`TTY driver`  는 session management 즉 job control 기능을 한다. `Ctrl z` 를
+누르면 running job 을 suspend 시키고 user input 은 foreground job 에만 전달한다.
+background job 이 입력을 받으면 SIGTTIN 신호를 보내 suspend 시킨다.
 
 > Linux Virtual Console
 
 ![](img/case2.png)
 
-OS 에서 제공하는 virtual console 이다. `Ctrl - Alt - F1 ~ F6` 으로 전환한다. kernal 에서 terminal 을 emulation 한다. `외부 터미널 장치 연결` 과 비교해서 이해하자. `/dev/tty[num]` 파일을 사용한다. Line discipline, TTY driver 의 기능은 위와같고 역시 백그라운드 `getty` 프로세스에의해 login prompt 가 제공된다. `/dev/tty[번호]` 파일이 사용된다.
+OS 에서 제공하는 virtual console 이다. `Ctrl - Alt - F1 ~ F6` 으로 전환한다.
+kernal 에서 terminal 을 emulation 한다. `외부 터미널 장치 연결` 과 비교해서
+이해하자. `/dev/tty[num]` 파일을 사용한다. Line discipline, TTY driver 의 기능은
+위와같고 역시 백그라운드 `getty` 프로세스에의해 login prompt 가 제공된다.
+`/dev/tty[번호]` 파일이 사용된다.
 
 > Pseudo TTY (xterm, gnome-terminal, telnet, ssh, etc...)
   
 ![](img/case3.png)  
 
-앞서 언급한 Linux Virtual Console 에서는 커널에서 터미널을 emulation 했다면, TTY driver 가 제공하는 session management 기능과 Line Discipline 을 그대로 사용하면서 사용자 프로그램에서 터미널을 emulation 하는것이 `PTY (Pseudo TTY)` 입니다.
+앞서 언급한 Linux Virtual Console 에서는 커널에서 터미널을 emulation 했다면, TTY
+driver 가 제공하는 session management 기능과 Line Discipline 을 그대로
+사용하면서 사용자 프로그램에서 터미널을 emulation 하는것이 `PTY (Pseudo TTY)`
+입니다.
 
-`PTY` 는 `master/slave` 로 이루어 진다. `/dev/ptmx` 파일을 open 하면 pseudo terminal master 에 해당하는 file descriptor 가 생성되고 pseudo terminal slave (PTS) 에 해당하는 device 가 `/dev/pts/` 디렉토리에 생성된다. `ptm` 과 `pts` 가 open 되면 `/dev/pts/[번호]` 는 실제 터미널과 같은 인터페이스를 프로세스에 제공합니다.
+`PTY` 는 `master/slave` 로 이루어 진다. `/dev/ptmx` 파일을 open 하면 pseudo
+terminal master 에 해당하는 file descriptor 가 생성되고 pseudo terminal slave
+(PTS) 에 해당하는 device 가 `/dev/pts/` 디렉토리에 생성된다. `ptm` 과 `pts` 가
+open 되면 `/dev/pts/[번호]` 는 실제 터미널과 같은 인터페이스를 프로세스에
+제공합니다.
 
-`ptm` 에 write 한 data 는 `pts` 의 input 으로 `pts` 에 write 한 data 는 `ptm` 의 input 으로 사용된다. kernel 이 처리하는 layer 가 중간에 들어간 named pipe 와 비슷하다.
+`ptm` 에 write 한 data 는 `pts` 의 input 으로 `pts` 에 write 한 data 는 `ptm` 의
+input 으로 사용된다. kernel 이 처리하는 layer 가 중간에 들어간 named pipe 와
+비슷하다.
 
-xterm 을 실행하거나 외부에서 ssh client 가 접속하면 `/dev/pts/` 에 device 파일이 새로 생성된다.
+xterm 을 실행하거나 외부에서 ssh client 가 접속하면 `/dev/pts/` 에 device 파일이
+새로 생성된다.
 
 ![](img/pty.png)
 
-위의 그림은 xterm 을 실행한 경우를 나타낸다. xterm 에서 ls 를 입력하면 `ptm -> line discipline -> pts` 를 거쳐서 bash shell (user process) 에 전달되고 ls 의 결과가 `pts -> line discipline -> ptm` 을 통해서 xterm 에 전달되면 xterm 은 terminal 과 같이 화면에 표시한다.
+위의 그림은 xterm 을 실행한 경우를 나타낸다. xterm 에서 ls 를 입력하면 `ptm ->
+line discipline -> pts` 를 거쳐서 bash shell (user process) 에 전달되고 ls 의
+결과가 `pts -> line discipline -> ptm` 을 통해서 xterm 에 전달되면 xterm 은
+terminal 과 같이 화면에 표시한다.
 
 ![](img/case3_1.jpg)
 
-위의 그림은 telnet 을 실행하여 Server 의 telnetd 에 접속한 경우를 나타낸다. 터미널에서 ls 명령을 실행하면 telnet 명령의 입력으로 들어가고 네트웍을 거쳐 telnetd 에 전달되면 `ptm`, `pts` 를 거쳐 bash 프로세스에 전달된다. 명령의 실행결과는 다시 `pts`, `ptm` 을 거쳐서 telnetd 에 전달되고 네트웍을 거쳐 telnet 명령에 전달되면 터미널로 출력하게 된다.
+위의 그림은 telnet 을 실행하여 Server 의 telnetd 에 접속한 경우를 나타낸다.
+터미널에서 ls 명령을 실행하면 telnet 명령의 입력으로 들어가고 네트웍을 거쳐
+telnetd 에 전달되면 `ptm`, `pts` 를 거쳐 bash 프로세스에 전달된다. 명령의
+실행결과는 다시 `pts`, `ptm` 을 거쳐서 telnetd 에 전달되고 네트웍을 거쳐 telnet
+명령에 전달되면 터미널로 출력하게 된다.
 
 ![](img/pseudo_terminal.png)
 
-위의 그림은 ssh 를 실행하여 Server 의 sshd 에 접속한 경우를 나타낸다. [Console & TTY Driver](http://jake.dothome.co.kr/tty/) 참고
+위의 그림은 ssh 를 실행하여 Server 의 sshd 에 접속한 경우를 나타낸다. [Console &
+TTY Driver](http://jake.dothome.co.kr/tty/) 참고
 
 ### Controlling Terminal
 
 ![](img/session1.png)
 
-Controlling Terminal 은 session leader 에 의해 할당되며 보통 `/dev/tty*` 혹은 `/dev/pts/*` 와 같은 terminal device 를 의미한다. 
+Controlling Terminal 은 session leader 에 의해 할당되며 보통 `/dev/tty*` 혹은
+`/dev/pts/*` 와 같은 terminal device 를 의미한다. 
 
-PID 와 SID 가 같은 프로세스를 session leader 라고 한다. session leader 만이 controlling terminal 을 획득할 수 있다. session leader 를 controlling process 라고도 한다. 하나의 session 은 하나의 controlling terminal 만 가질 수 있다. 
+PID 와 SID 가 같은 프로세스를 session leader 라고 한다. session leader 만이
+controlling terminal 을 획득할 수 있다. session leader 를 controlling process
+라고도 한다. 하나의 session 은 하나의 controlling terminal 만 가질 수 있다. 
 
-세션은 하나의 foreground process group 과 여러개의 background process groups 로 구성된다. Ctrl-c 를 누르면 SIGINT 신호가 foreground process group 에 전달된다. modem (or network) 연결이 끊기면 SIGHUP 신호가 session leader 에 전달되고 session leader 는 같은 SID 를 갖는 프로세스들에게 전달한다.
+세션은 하나의 foreground process group 과 여러개의 background process groups 로
+구성된다. `Ctrl-c` 를 누르면 `SIGINT` 신호가 foreground process group 에
+전달된다. modem (or network) 연결이 끊기면 `SIGHUP` 신호가 session leader 에
+전달되고 session leader 는 같은 SID 를 갖는 프로세스들에게 전달한다.
 
-`$ ps x` 명령을 실행하였을때 두번째 TTY 컬럼에 나오는 내용이 controlling terminal (ctty) 이다. ctty 를 갖지 않는 프로세스는 `?` 로 표시 됩니다.
+`$ ps x` 명령을 실행하였을때 두번째 TTY 컬럼에 나오는 내용이 controlling
+terminal (ctty) 이다. ctty 를 갖지 않는 프로세스는 `?` 로 표시 됩니다.
 
 ![](img/session2.png)
 
 ### `/dev/tty`
 
-`/dev/tty` 는 특수한 파일이고 process 의 controlling terminal 과 같다. 현재 ctty 가 `/dev/pts/12` 이라면 `/dev/tty` 도` /dev/pts/12` 와 같다고 할 수 있습니다
+`/dev/tty` 는 특수한 파일이고 process 의 controlling terminal 과 같다. 현재 ctty
+가 `/dev/pts/12` 이라면 `/dev/tty` 도` /dev/pts/12` 와 같다고 할 수 있습니다
 
 ### Configuring TTY device
 
-`tty` 명령으로 현재 shell 의 tty device 를 조회할수 있고, `stty` 명령을 이용해 설정값을 변경할수 있다.
+`tty` 명령으로 현재 shell 의 tty device 를 조회할수 있고, `stty` 명령을 이용해
+설정값을 변경할수 있다.
 
 ```bash
 # show current tty
@@ -2031,13 +2165,16 @@ isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt echo
 
 ### Reset Command
 
-프로그램이 비정상 종료하여 터미널 설정이 정상적으로 복구되지 않았을 경우에는 `reset` command 를 이용하여 초기화할 수 있다. reset 명령은 다음과 같은 역할을 수행한다.
+프로그램이 비정상 종료하여 터미널 설정이 정상적으로 복구되지 않았을 경우에는
+`reset` command 를 이용하여 초기화할 수 있다. reset 명령은 다음과 같은 역할을
+수행한다.
 
 * Set Cooked and Echo modes to on
 * Turn off cbreak and Raw modes
 * Turn on new-line translation
 * Restore special characters to a sensible state.
-* Any special character that is found to be NULL or -1 is reset to its default value.
+* Any special character that is found to be NULL or -1 is reset to its default
+  value.
 
 ### Control Keys
 
@@ -2071,7 +2208,7 @@ f() {
 }
 ```
 
-### SIGHUP signal
+### SIGHUP Signal
 
 terminal 이 없어졌다는 것을 의미한다. 터미널이 존재하지 않으면 명령을 입력할
 수도, 결과를 출력할 수도 없다. remote login 에서 넷트웍, 모뎀 연결이 끊기거나
@@ -2279,7 +2416,7 @@ $ kill -n 15 1111
 $ kill 1111
 ```
 
-`-` 를 이용하면 process groupd 에 signal을 보낼 수 있다.
+`-` 를 이용하면 process group 에 signal을 보낼 수 있다.
 
 ```bash
 $ kill -TERM -1111

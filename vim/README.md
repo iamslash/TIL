@@ -1,8 +1,8 @@
 - [Materials](#materials)
 - [Basic](#basic)
   - [Modes](#modes)
-  - [.vimrc](#vimrc)
-  - [Major Commands](#major-commands)
+  - [`.vimrc`](#vimrc)
+  - [Basic Commands](#basic-commands)
   - [Split windows](#split-windows)
   - [Colors](#colors)
 
@@ -27,7 +27,7 @@ Editor mode: 'i' 'a'
 Visual mode: 'v' 'V' 'CTRL-v' `CTRL-q`
 ```
 
-## .vimrc
+## `.vimrc`
 
 ```bash
 # Echo my vimrc
@@ -38,7 +38,7 @@ Visual mode: 'v' 'V' 'CTRL-v' `CTRL-q`
 :source $MYVIMRC
 ```
 
-## Major Commands
+## Basic Commands
 
 ```bash
 # Show help page

@@ -1,53 +1,59 @@
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
-
 - [Abstract](#abstract)
-- [Basic](#basic)
-- [Data Types](#data-types)
-- [Variables](#variables)
-- [Regexp](#regexp)
-- [Functions](#functions)
-- [BEGIN, END](#begin-end)
-- [Builtin Variables](#builtin-variables)
-  - [RECORD](#record)
-  - [FIELD](#field)
-  - [FORMAT](#format)
-  - [MATCHING](#matching)
-  - [ARGUMENT](#argument)
-  - [ARRAY](#array)
-  - [ETC](#etc)
-- [Record seperation](#record-seperation)
-- [Field seperation](#field-seperation)
-- [`$0=$0, $1=$1`](#00-11)
-- [Redirection](#redirection)
-- [getline](#getline)
-- [Arrays](#arrays)
-- [Control statements](#control-statements)
-- [Operators](#operators)
-- [Builtin Functions](#builtin-functions)
-  - [Numeric Functions](#numeric-functions)
-  - [String Functions](#string-functions)
-  - [I/O Functions](#io-functions)
-  - [Time Functions](#time-functions)
-  - [Bitweise Functions](#bitweise-functions)
-  - [Type Functions](#type-functions)
-  - [I18N Functions](#i18n-functions)
-- [TCP/IP](#tcpip)
-- [Debugging](#debugging)
 - [References](#references)
-- [Tips](#tips)
+- [Basic](#basic)
+  - [Basic Usage](#basic-usage)
+  - [Data Types](#data-types)
+  - [Variables](#variables)
+  - [Regexp](#regexp)
+  - [Functions](#functions)
+  - [BEGIN, END](#begin-end)
+  - [Builtin Variables](#builtin-variables)
+    - [RECORD](#record)
+    - [FIELD](#field)
+    - [FORMAT](#format)
+    - [MATCHING](#matching)
+    - [ARGUMENT](#argument)
+    - [ARRAY](#array)
+    - [ETC](#etc)
+  - [Record seperation](#record-seperation)
+  - [Field seperation](#field-seperation)
+  - [`$0=$0, $1=$1`](#00-11)
+  - [Redirection](#redirection)
+  - [getline](#getline)
+  - [Arrays](#arrays)
+  - [Control statements](#control-statements)
+  - [Operators](#operators)
+  - [Builtin Functions](#builtin-functions)
+    - [Numeric Functions](#numeric-functions)
+    - [String Functions](#string-functions)
+    - [I/O Functions](#io-functions)
+    - [Time Functions](#time-functions)
+    - [Bitweise Functions](#bitweise-functions)
+    - [Type Functions](#type-functions)
+    - [I18N Functions](#i18n-functions)
+  - [TCP/IP](#tcpip)
+  - [Debugging](#debugging)
+- [Advanced](#advanced)
   - [필드 출력하기](#필드-출력하기)
 
-<!-- markdown-toc end -->
 
--------------------------------------------------------------------------------
+-----
 
 # Abstract
 
-c문법을 연상시키는 텍스트 처리 언어이다. 로그 파일등을 읽어서 원하는
-정보를 선택하여 출력할 때 사용한다.
+c문법을 연상시키는 텍스트 처리 언어이다. 로그 파일등을 읽어서 원하는 정보를
+선택하여 출력할 때 사용한다.
+
+# References
+
+* [awk 스크립트 가이드](https://mug896.gitbooks.io/awk-script/content/)
+  * 친절한 한글
+* [awk manual | gnu](https://www.gnu.org/software/gawk/manual/gawk.html#Getting-Started)
+* [부록 B. Sed 와 Awk 에 대한 간단한 입문서](https://wiki.kldp.org/HOWTO/html/Adv-Bash-Scr-HOWTO/sedawk.html)
 
 # Basic
+
+## Basic Usage
 
 awk command line은 보통 다음과 같은 형식을 갖는다.
 
@@ -287,7 +293,7 @@ $ awk 'BEGIN { exit }'; echo $?
 0
 ```
 
-# Data Types
+## Data Types
 
 데이터타입은 숫자와 문자열이 존재한다. 사용된 곳에 따라 숫자가 문자열로 문자열이 숫자로
 취급될 수 있다.
@@ -435,7 +441,7 @@ $ echo "1.23456789" | awk '{
 1.23457
 ```
 
-# Variables
+## Variables
 
 파일별로 변수를 넘겨 보자.
 
@@ -507,7 +513,7 @@ function multiply(var, amount) {
 The answer is 42
 ```
 
-# Regexp
+## Regexp
 
 `/`와 `/`에 regexp를 표현할 때 이것을 regexp contstant라고 한다.
 
@@ -577,7 +583,7 @@ IGNORECASE = 1
 if (x ~ /ab/) ...   # success
 ```
 
-# Functions
+## Functions
 
 `awk`의 함수에서 scalar argument는 pass by value이고 array argument는
 pass by reference이다.
@@ -640,7 +646,7 @@ Im foo : 11
 Im bar : 22 33
 ```
 
-# BEGIN, END
+## BEGIN, END
 
 `BEGIN`, `BEGINFILE`, `ENDFILE`, `END` block은 다음과 같은 순서로
 실행된다.
@@ -673,9 +679,9 @@ ENDFILE c.txt
 END c.txt
 ```
 
-# Builtin Variables
+## Builtin Variables
 
-## RECORD
+### RECORD
 
 * `NR`
 * `FNR`
@@ -684,7 +690,7 @@ END c.txt
 * RT
   * Record Terminator
 
-## FIELD
+### FIELD
 
 * NF
   * Number of fields
@@ -694,30 +700,30 @@ END c.txt
 * FIELDWIDTHS
 * FPAT
 
-## FORMAT
+### FORMAT
 
 * CONVFMT
 * OFMT
 * PREC
 * ROUNDMODE
 
-## MATCHING
+### MATCHING
 
 * IGNORECASE
 * RSTART
 * RLENGTH
 
-## ARGUMENT
+### ARGUMENT
 
 * ARGC
 * ARGV
 * ARGIND
 
-## ARRAY
+### ARRAY
 
 * SUBSEP
 
-## ETC
+### ETC
 
 * BINMODE
 * ENVIRON
@@ -727,7 +733,7 @@ END c.txt
 * PROCINFO
 * TEXTDOMAIN
 
-# Record seperation
+## Record seperation
 
 RS (Record seperator)와 RT(Record terminator)를 이용하여 분리하자.
 
@@ -745,17 +751,18 @@ END{ print "===========\nNR : " NR}
 ===========
 NR : 3
 ```
-# Field seperation
 
-# `$0=$0, $1=$1`
+## Field seperation
 
-# Redirection
+## `$0=$0, $1=$1`
 
-# getline
+## Redirection
 
-# Arrays
+## getline
 
-# Control statements
+## Arrays
+
+## Control statements
 
 * next
 
@@ -843,7 +850,7 @@ Error
 * exit
 
 
-# Operators
+## Operators
 
 | Operators              | Description                                  |
 | ----------             | ------------                                 |
@@ -857,17 +864,17 @@ Error
 | `&& ||`                | Logical AND OR                               |
 | `= += -= *= /= %= ^=`  | Assignment                                   |
 
-# Builtin Functions
+## Builtin Functions
 
-## Numeric Functions
-## String Functions
-## I/O Functions
-## Time Functions
-## Bitweise Functions
-## Type Functions
-## I18N Functions
+### Numeric Functions
+### String Functions
+### I/O Functions
+### Time Functions
+### Bitweise Functions
+### Type Functions
+### I18N Functions
 
-# TCP/IP
+## TCP/IP
 
 다음은 웹서버를 구현한 것이다. webserver.awk와 cat.jpg를 복사하고
 `awk -f webserver.awk`를 실행하자.
@@ -974,10 +981,7 @@ BEGIN{
 }'
 ```
 
-
-
-
-# Debugging
+## Debugging
 
 다음과 같이 `getline`, `print`에 오타가 있는 경우도 문제 없이 실행된다.
 
@@ -1031,15 +1035,7 @@ $ awk -D -F\; -f transpose.awk matrix
 gawk> ....
 ```
 
-# References
-
-* [awk 스크립트
-  가이드](https://mug896.gitbooks.io/awk-script/content/)
-  * 친절한 한글
-* [awk manual @ gnu](https://www.gnu.org/software/gawk/manual/gawk.html#Getting-Started)
-* [부록 B. Sed 와 Awk 에 대한 간단한 입문서](https://wiki.kldp.org/HOWTO/html/Adv-Bash-Scr-HOWTO/sedawk.html)
-
-# Tips
+# Advanced
 
 ## 필드 출력하기
 
