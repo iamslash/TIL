@@ -3,7 +3,10 @@
   - [Modes](#modes)
   - [`.vimrc`](#vimrc)
   - [Basic Commands](#basic-commands)
-  - [Split windows](#split-windows)
+  - [VIM Script](#vim-script)
+  - [Plugins](#plugins)
+  - [NERDTree Plugin](#nerdtree-plugin)
+  - [Split Windows](#split-windows)
   - [Colors](#colors)
 
 -----
@@ -17,15 +20,10 @@
 
 ## Modes
 
-```
-Command mode: 'ESC'
-
-Command line mode: ':'
-
-Editor mode: 'i' 'a'
-
-Visual mode: 'v' 'V' 'CTRL-v' `CTRL-q`
-```
+* Command mode: `ESC`
+* Command line mode: `:`
+* Visual mode: `v` `V` `CTRL-v` `CTRL-q`
+* Editor mode: `i` `a`
 
 ## `.vimrc`
 
@@ -199,9 +197,233 @@ CTRL-C
 :lmap
 :omap
 
+# VIM has two options such as on/off and value option.
+# Show current options
+:set
+# Show all options
+:set all
+# Turn off option
+:set no{option}
+# Show specific option
+# :set {option}?
+:set number? 
+# Show local options
+:setlocal
+# Set number option on
+:set number
+# Set number option off
+:set nonumber
+# Set options with value
+:set clipboard=unnamed
+:set tabstop=8
 ```
 
-## Split windows
+## VIM Script
+
+`/usr/share/vim/vim90/vimrc_example.vim` 을 분석하자.
+
+Internal variables
+
+```
+v: vi predefined variable
+g: global variable
+l: local variable
+b: buffer variable
+w: window variable
+t: tab page variable
+s: script variable
+a: function argument 
+```
+
+Evaluation
+
+| | ignorecase  | case sensitive |
+|--|--|--|
+| equal | `==?` | `==#` | 
+| not equal | `!=?` | `!=#` | 
+| great | `>?` | `>#` | 
+| great equal | `>=?` | `>=#` | 
+| less | `<?` | `<#` | 
+| less equal | `<=?` | `<=#` | 
+| **regex match** | `=~?` | `=~#` | 
+| regex not match | `!~?` | `!~#` | 
+
+```bash
+:echo "evim" =~? "evim"
+1
+:echo "eVim" =~? "evim"
+1
+:echo "v:prograname"
+VIM
+
+# Has vms feature?
+:echo has("vms")
+0
+:echo has("syntax")
+1
+```
+
+Options
+
+```bash
+# Set backspace option
+# Delete indentation, end of line, start
+:set backspace=indent,eol,start
+# Create backup file which ends with ~
+:set backup
+# Set history lines
+:set history=50
+# Show line, column of the cursor
+#:set noruler
+:set ruler
+# Show not completed command
+:set showcmd
+# Show search progress
+#:set noincsearch
+:set incsearch
+# Set syntax hight on
+:syntax on
+# Show searched word
+:set hlsearch
+```
+
+Miscellaneous
+
+```bash
+# Has autocmd feature?
+:has("autocmd")
+
+# Show filetype options
+# detections:ON means executing $VIMRUNTIME/filetype.vim
+# plugin:ON means executing $VIMRUNTIME/ftplugin.vim
+# indent:ON means executing $VIMRUNTIME/indent.vim
+:filetype
+filetype detection:ON  plugin:ON  indent:ON
+# Turn off filetype detection
+:filetype off
+# Turn off filetype plugin
+:filetype plugin off
+# Turn off filetype indent
+:filetype indent off
+
+# Like ":set" but set only the value 
+# local to the current buffer or window.
+:setlocal
+
+# autocmd <event-name> <pattern> <command>
+:autocmd
+# Show autocmd event-names
+:help autocmd-events
+|BufNewFile|		starting to edit a file that does not exist
+|BufReadPre|		starting to edit a new buffer, before reading the file
+|BufRead|		starting to edit a new buffer, after reading the file
+|BufReadPost|		starting to edit a new buffer, after reading the file
+|BufReadCmd|		before starting to edit a new buffer |Cmd-event|
+# Show commands
+:command
+
+# Show augroup
+# augroup means a group of autocmd
+:augroup
+# Delete previous autocmds in this augroup
+:au!
+
+# Copy indent from current line when starting a new line (typing <CR>
+# in Insert mode or when using the "o" or "O" command).
+:set autoindent
+```
+
+## Plugins
+
+There two plugin types such as **filetype plugin**, **global plugin**.
+
+**Filetype plugin** 
+
+* Works just for the specific file type. 
+* Saved in `$VIMRUNTIME/plugin` dir.
+ 
+**Global plugin**
+* works whole files. 
+* Saved in `$VIMRUNTIME/ftplugin` dir.
+
+Can execute plugin using `<Leader>` key. `<Leader>` is a defined key in a
+`mapleader` variable. `,` is recommended.
+
+`vundle` is a plugin which is a plugin manager.
+
+This is how to install plugins. Paste these lines and Update them. This will
+install `VundleVim`, `The-NERD-tree`, `OmniCppComplete`, `csharp.vim`.
+
+```sh
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+" alternatively, pass a path where Vundle should install plugins
+"call vundle#begin('~/some/path/here')
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+Plugin 'The-NERD-tree'
+Plugin 'OmniCppComplete'
+Plugin 'csharp.vim'
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+```
+
+`:PluginInstall` will install them.
+
+Comment lines which start with `Plugin`. `:PluginClean` will uninstall them.
+
+`:PluginList` will show installed plugins.
+
+## NERDTree Plugin
+
+This is the best explorer plugin.
+
+```bash
+# Execute NERDTree plugin
+:NERDTree
+# Move the cursor
+h, j, k, l
+# Open dirs, files
+<Enter>
+# Quit
+q
+# Help
+?
+# Change the root directory
+C
+
+# Show file menu
+m
+
+# Change Directory
+:cd $HOME
+# Change NERDTREE root to current working directory  
+CD
+# Show bookmarks
+B
+# Register bookmark on the files, dirs.
+:Bookmark
+# Delete bookmarks on the bookmarks
+D
+
+# Toggle hidden files
+I
+# Change working directory on the dir
+cd
+# Change NERDTree root to current working directory  
+CD
+# Toggle extracing all nodes
+o
+# Toggle NERDTree full screen
+A
+# Refresh
+R
+```
+
+## Split Windows
 
 [How To Use VIM Split Screen](https://linuxhint.com/how-to-use-vim-split-screen/)
 
