@@ -23,7 +23,7 @@
 * Command mode: `ESC`
 * Command line mode: `:`
 * Visual mode: `v` `V` `CTRL-v` `CTRL-q`
-* Editor mode: `i` `a`
+* Insert mode: `i` `a`
 
 ## `.vimrc`
 
@@ -44,15 +44,6 @@
 
 # Show versions
 :version
-
-   system vimrc file: "$VIM/vimrc"
-     user vimrc file: "$HOME/.vimrc"
- 2nd user vimrc file: "~/.vim/vimrc"
-      user exrc file: "$HOME/.exrc"
-       defaults file: "$VIMRUNTIME/defaults.vim"
-  fall-back for $VIM: "/usr/share/vim"
-Compilation: gcc -c -I. -Iproto -DHAVE_CONFIG_H   -DMACOS_X_UNIX  -g -O2 -U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=1
-Linking: gcc   -L/usr/local/lib -o vim        -lm -lncurses  -liconv -framework Cocoa
 
 # Show envs
 :echo $HOME
@@ -96,6 +87,9 @@ CTRL-r
 n
 # Previous search
 SHIFT-n
+# Remove hilight
+:noh
+,/  # When <Leader> is ,
 
 # Next word
 w
@@ -138,6 +132,8 @@ Ctrl-w+
 CTRL-w-
 # Set windows same size
 CTRL-w=
+# Set the window max
+CTRL-w_
 
 # Goto the tag on the cursor (links)
 CTRL-]
@@ -222,7 +218,7 @@ CTRL-C
 
 `/usr/share/vim/vim90/vimrc_example.vim` 을 분석하자.
 
-Internal variables
+> Internal variables
 
 ```
 v: vi predefined variable
@@ -235,7 +231,7 @@ s: script variable
 a: function argument 
 ```
 
-Evaluation
+> Evaluation
 
 | | ignorecase  | case sensitive |
 |--|--|--|
@@ -263,7 +259,7 @@ VIM
 1
 ```
 
-Options
+> Options
 
 ```bash
 # Set backspace option
@@ -287,7 +283,7 @@ Options
 :set hlsearch
 ```
 
-Miscellaneous
+> Miscellaneous
 
 ```bash
 # Has autocmd feature?

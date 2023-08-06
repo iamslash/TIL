@@ -1,40 +1,3 @@
-- [Abstract](#abstract)
-- [References](#references)
-- [Basic](#basic)
-  - [Basic Usage](#basic-usage)
-  - [Data Types](#data-types)
-  - [Variables](#variables)
-  - [Regexp](#regexp)
-  - [Functions](#functions)
-  - [BEGIN, END](#begin-end)
-  - [Builtin Variables](#builtin-variables)
-    - [RECORD](#record)
-    - [FIELD](#field)
-    - [FORMAT](#format)
-    - [MATCHING](#matching)
-    - [ARGUMENT](#argument)
-    - [ARRAY](#array)
-    - [ETC](#etc)
-  - [Record seperation](#record-seperation)
-  - [Field seperation](#field-seperation)
-  - [`$0=$0, $1=$1`](#00-11)
-  - [Redirection](#redirection)
-  - [getline](#getline)
-  - [Arrays](#arrays)
-  - [Control statements](#control-statements)
-  - [Operators](#operators)
-  - [Builtin Functions](#builtin-functions)
-    - [Numeric Functions](#numeric-functions)
-    - [String Functions](#string-functions)
-    - [I/O Functions](#io-functions)
-    - [Time Functions](#time-functions)
-    - [Bitweise Functions](#bitweise-functions)
-    - [Type Functions](#type-functions)
-    - [I18N Functions](#i18n-functions)
-  - [TCP/IP](#tcpip)
-  - [Debugging](#debugging)
-- [Advanced](#advanced)
-  - [필드 출력하기](#필드-출력하기)
 
 
 -----
@@ -50,6 +13,268 @@ c문법을 연상시키는 텍스트 처리 언어이다. 로그 파일등을 �
   * 친절한 한글
 * [awk manual | gnu](https://www.gnu.org/software/gawk/manual/gawk.html#Getting-Started)
 * [부록 B. Sed 와 Awk 에 대한 간단한 입문서](https://wiki.kldp.org/HOWTO/html/Adv-Bash-Scr-HOWTO/sedawk.html)
+
+# The awk Language
+## Getting Started with awk
+1.1 How to Run awk Programs
+#### One-Shot Throwaway awk Programs
+#### Running awk Without Input Files
+#### Running Long Programs
+#### Executable awk Programs
+#### Comments in awk Programs
+#### Shell Quoting Issues
+##### Quoting in MS-Windows Batch Files
+1.2 Data files for the Examples
+1.3 Some Simple Examples
+1.4 An Example with Two Rules
+1.5 A More Complex Example
+1.6 awk Statements Versus Lines
+1.7 Other Features of awk
+1.8 When to Use awk
+
+## Running awk and gawk
+2.1 Invoking awk
+2.2 Command-Line Options
+2.3 Other Command-Line Arguments
+2.4 Naming Standard Input
+2.5 The Environment Variables gawk Uses
+2.5.1 The AWKPATH Environment Variable
+2.5.2 The AWKLIBPATH Environment Variable
+2.5.3 Other Environment Variables
+2.6 gawk’s Exit Status
+2.7 Including Other Files into Your Program
+2.8 Loading Dynamic Extensions into Your Program
+2.9 Obsolete Options and/or Features
+2.10 Undocumented Options and Features
+
+## Regular Expressions
+3.1 How to Use Regular Expressions
+3.2 Escape Sequences
+3.3 Regular Expression Operators
+3.3.1 Regexp Operators in awk
+3.3.2 Some Notes On Interval Expressions
+3.4 Using Bracket Expressions
+3.5 How Much Text Matches?
+3.6 Using Dynamic Regexps
+3.7 gawk-Specific Regexp Operators
+3.8 Case Sensitivity in Matching
+
+## Reading Input Files
+4.1 How Input Is Split into Records
+4.1.1 Record Splitting with Standard awk
+4.1.2 Record Splitting with gawk
+4.2 Examining Fields
+4.3 Nonconstant Field Numbers
+4.4 Changing the Contents of a Field
+4.5 Specifying How Fields Are Separated
+4.5.1 Whitespace Normally Separates Fields
+4.5.2 Using Regular Expressions to Separate Fields
+4.5.3 Making Each Character a Separate Field
+4.5.4 Setting FS from the Command Line
+4.5.5 Making the Full Line Be a Single Field
+4.5.6 Field-Splitting Summary
+4.6 Reading Fixed-Width Data
+4.6.1 Processing Fixed-Width Data
+4.6.2 Skipping Intervening Fields
+4.6.3 Capturing Optional Trailing Data
+4.6.4 Field Values With Fixed-Width Data
+4.7 Defining Fields by Content
+4.7.1 More on CSV Files
+4.7.2 FS Versus FPAT: A Subtle Difference
+4.8 Checking How gawk Is Splitting Records
+4.9 Multiple-Line Records
+4.10 Explicit Input with getline
+4.10.1 Using getline with No Arguments
+4.10.2 Using getline into a Variable
+4.10.3 Using getline from a File
+4.10.4 Using getline into a Variable from a File
+4.10.5 Using getline from a Pipe
+4.10.6 Using getline into a Variable from a Pipe
+4.10.7 Using getline from a Coprocess
+4.10.8 Using getline into a Variable from a Coprocess
+4.10.9 Points to Remember About getline
+4.10.10 Summary of getline Variants
+4.11 Reading Input with a Timeout
+4.12 Retrying Reads After Certain Input Errors
+4.13 Directories on the Command Line
+
+## Printing Output
+5.1 The print Statement
+5.2 print Statement Examples
+5.3 Output Separators
+5.4 Controlling Numeric Output with print
+5.5 Using printf Statements for Fancier Printing
+5.5.1 Introduction to the printf Statement
+5.5.2 Format-Control Letters
+5.5.3 Modifiers for printf Formats
+5.5.4 Examples Using printf
+5.6 Redirecting Output of print and printf
+5.7 Special Files for Standard Preopened Data Streams
+5.8 Special File names in gawk
+5.8.1 Accessing Other Open Files with gawk
+5.8.2 Special Files for Network Communications
+5.8.3 Special File name Caveats
+5.9 Closing Input and Output Redirections
+5.9.1 Using close()’s Return Value
+5.10 Enabling Nonfatal Output
+
+## Expressions
+6.1 Constants, Variables, and Conversions
+6.1.1 Constant Expressions
+6.1.1.1 Numeric and String Constants
+6.1.1.2 Octal and Hexadecimal Numbers
+6.1.1.3 Regular Expression Constants
+6.1.2 Using Regular Expression Constants
+6.1.2.1 Standard Regular Expression Constants
+6.1.2.2 Strongly Typed Regexp Constants
+6.1.3 Variables
+6.1.3.1 Using Variables in a Program
+6.1.3.2 Assigning Variables on the Command Line
+6.1.4 Conversion of Strings and Numbers
+6.1.4.1 How awk Converts Between Strings and Numbers
+6.1.4.2 Locales Can Influence Conversion
+6.2 Operators: Doing Something with Values
+6.2.1 Arithmetic Operators
+6.2.2 String Concatenation
+6.2.3 Assignment Expressions
+6.2.4 Increment and Decrement Operators
+6.3 Truth Values and Conditions
+6.3.1 True and False in awk
+6.3.2 Variable Typing and Comparison Expressions
+6.3.2.1 String Type versus Numeric Type
+6.3.2.2 Comparison Operators
+6.3.2.3 String Comparison Based on Locale Collating Order
+6.3.3 Boolean Expressions
+6.3.4 Conditional Expressions
+6.4 Function Calls
+6.5 Operator Precedence (How Operators Nest)
+6.6 Where You Are Makes a Difference
+
+## Patterns, Actions, and Variables
+7.1 Pattern Elements
+7.1.1 Regular Expressions as Patterns
+7.1.2 Expressions as Patterns
+7.1.3 Specifying Record Ranges with Patterns
+7.1.4 The BEGIN and END Special Patterns
+7.1.4.1 Startup and Cleanup Actions
+7.1.4.2 Input/Output from BEGIN and END Rules
+7.1.5 The BEGINFILE and ENDFILE Special Patterns
+7.1.6 The Empty Pattern
+7.2 Using Shell Variables in Programs
+7.3 Actions
+7.4 Control Statements in Actions
+7.4.1 The if-else Statement
+7.4.2 The while Statement
+7.4.3 The do-while Statement
+7.4.4 The for Statement
+7.4.5 The switch Statement
+7.4.6 The break Statement
+7.4.7 The continue Statement
+7.4.8 The next Statement
+7.4.9 The nextfile Statement
+7.4.10 The exit Statement
+7.5 Predefined Variables
+7.5.1 Built-in Variables That Control awk
+7.5.2 Built-in Variables That Convey Information
+7.5.3 Using ARGC and ARGV
+
+## Arrays in awk
+8.1 The Basics of Arrays
+8.1.1 Introduction to Arrays
+8.1.2 Referring to an Array Element
+8.1.3 Assigning Array Elements
+8.1.4 Basic Array Example
+8.1.5 Scanning All Elements of an Array
+8.1.6 Using Predefined Array Scanning Orders with gawk
+8.2 Using Numbers to Subscript Arrays
+8.3 Using Uninitialized Variables as Subscripts
+8.4 The delete Statement
+8.5 Multidimensional Arrays
+8.5.1 Scanning Multidimensional Arrays
+8.6 Arrays of Arrays
+
+## Functions
+9.1 Built-in Functions
+9.1.1 Calling Built-in Functions
+9.1.2 Generating Boolean Values
+9.1.3 Numeric Functions
+9.1.4 String-Manipulation Functions
+9.1.4.1 More about ‘\’ and ‘&’ with sub(), gsub(), and gensub()
+9.1.5 Input/Output Functions
+9.1.6 Time Functions
+9.1.7 Bit-Manipulation Functions
+9.1.8 Getting Type Information
+9.1.9 String-Translation Functions
+9.2 User-Defined Functions
+9.2.1 Function Definition Syntax
+9.2.2 Function Definition Examples
+9.2.3 Calling User-Defined Functions
+9.2.3.1 Writing a Function Call
+9.2.3.2 Controlling Variable Scope
+9.2.3.3 Passing Function Arguments by Value Or by Reference
+9.2.3.4 Other Points About Calling Functions
+9.2.4 The return Statement
+9.2.5 Functions and Their Effects on Variable Typing
+9.3 Indirect Function Calls
+
+# Problem Solving with awk
+
+## A Library of awk Functions
+10.1 Naming Library Function Global Variables
+10.2 General Programming
+10.2.1 Converting Strings to Numbers
+10.2.2 Assertions
+10.2.3 Rounding Numbers
+10.2.4 The Cliff Random Number Generator
+10.2.5 Translating Between Characters and Numbers
+10.2.6 Merging an Array into a String
+10.2.7 Managing the Time of Day
+10.2.8 Reading a Whole File at Once
+10.2.9 Quoting Strings to Pass to the Shell
+10.2.10 Checking Whether A Value Is Numeric
+10.3 Data file Management
+10.3.1 Noting Data file Boundaries
+10.3.2 Rereading the Current File
+10.3.3 Checking for Readable Data files
+10.3.4 Checking for Zero-Length Files
+10.3.5 Treating Assignments as File names
+10.4 Processing Command-Line Options
+10.5 Reading the User Database
+10.6 Reading the Group Database
+10.7 Traversing Arrays of Arrays
+
+## Practical awk Programs
+11.1 Running the Example Programs
+11.2 Reinventing Wheels for Fun and Profit
+11.2.1 Cutting Out Fields and Columns
+11.2.2 Searching for Regular Expressions in Files
+11.2.3 Printing Out User Information
+11.2.4 Splitting a Large File into Pieces
+11.2.5 Duplicating Output into Multiple Files
+11.2.6 Printing Nonduplicated Lines of Text
+11.2.7 Counting Things
+11.2.7.1 Modern Character Sets
+11.2.7.2 A Brief Introduction To Extensions
+11.2.7.3 Code for wc.awk
+11.3 A Grab Bag of awk Programs
+11.3.1 Finding Duplicated Words in a Document
+11.3.2 An Alarm Clock Program
+11.3.3 Transliterating Characters
+11.3.4 Printing Mailing Labels
+11.3.5 Generating Word-Usage Counts
+11.3.6 Removing Duplicates from Unsorted Text
+11.3.7 Extracting Programs from Texinfo Source Files
+11.3.8 A Simple Stream Editor
+11.3.9 An Easy Way to Use Library Functions
+11.3.10 Finding Anagrams from a Dictionary
+11.3.11 And Now for Something Completely Different
+
+# Advanced
+
+
+
+
+-----
 
 # Basic
 

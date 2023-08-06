@@ -2034,8 +2034,8 @@ $ sudo echo 4194304 > /proc/sys/kernel/pid_max
 
 # Cgroup
 
-* [cgroups](https://hwwwi.tistory.com/12)
-* [CGROUPS | kernel](https://www.kernel.org/doc/Documentation/cgroup-v1/cgroups.txt)
+> * [cgroups](https://hwwwi.tistory.com/12)
+> * [CGROUPS | kernel](https://www.kernel.org/doc/Documentation/cgroup-v1/cgroups.txt)
 
 프로세스들을 하나의 그룹으로 묶는다. 그리고 cpu, memory, network, device, I/O
 등등의 자원을 그룹별로 제한할 수 있다. [Docker](/docker/README.md) 와 같은
@@ -2078,10 +2078,10 @@ $ ls -al /sys/fs/cgroup/cpu/ | grep mycgroup
 
 # Slab
 
-* [slabtop @ tistory](https://ssup2.github.io/command_tool/slabtop/)
+> [slabtop | tistory](https://ssup2.github.io/command_tool/slabtop/)
 
 Slab 은 Kernel object 를 caching 한다. 다수의 slab 으로 구성된다. 하나의 slab 은
-page size (4K) 와 같다. 하나의 slab 은 여러 kernel object 들로 구성된다. 
+page size (`4K`) 와 같다. 하나의 slab 은 여러 kernel object 들로 구성된다. 
 
 다음과 같은 수식이 성립한다.
 
