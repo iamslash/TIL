@@ -341,6 +341,7 @@ sb.append("a");
 sb.deleteCharAt(sb.length()-1);
 sb.setLength(sb.length()-1);
 sb.setCharAt(0, '*');
+sb.setLength(0);  // Remove all
 
 // StringBuilder right trim
 int last = sb.length()-1;

@@ -3,6 +3,8 @@
   - [Android Application Tutorial](#android-application-tutorial)
   - [Android Libary Tutorial](#android-libary-tutorial)
   - [Android Application Release](#android-application-release)
+- [Advanced](#advanced)
+  - [Adnroid Device Connection](#adnroid-device-connection)
 
 ----
 
@@ -40,3 +42,18 @@ Android Studio 로 Application Project 를 만들어 보자.
 Android Application 을 PlayStore 에 출시해보자.
 
 [Android Application Release](androidapprelease.md)
+
+# Advanced
+
+## Adnroid Device Connection
+
+* Check developer mode in a device.
+* Check USB Debugging mode in a device.
+* Check USB cables.
+* Restart AndroidStudio.
+* Restart adb servers.
+  ```bash
+  $ adb kill-server
+  $ adb start-server
+  ``` 
+* Reboot macbook.

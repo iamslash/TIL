@@ -3,6 +3,7 @@
 - [Materials](#materials)
 - [Basic](#basic)
   - [Emacs Config](#emacs-config)
+  - [Formatter](#formatter)
   - [Play Ground](#play-ground)
   - [Build and Run](#build-and-run)
   - [Keywords](#keywords)
@@ -99,6 +100,13 @@ swift에 대해 정리한다.
 ## Emacs Config
 
 * [swift-mode | github](https://github.com/swift-emacs/swift-mode)
+
+## Formatter
+
+* [swift-format](https://github.com/apple/swift-format)
+  * apple
+* [SwiftFormat](git@github.com:nicklockwood/SwiftFormat.git)
+  * more popular than apple
 
 ## Play Ground
 
