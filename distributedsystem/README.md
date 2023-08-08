@@ -32,6 +32,7 @@ This is about Distributed System.
 
 # Materials
 
+* [Distributed systems for fun and profit](https://book.mixu.net/distsys/)
 * [6.824: Distributed Systems](https://pdos.csail.mit.edu/6.824/)
   * [schedule](https://pdos.csail.mit.edu/6.824/schedule.html)
   * [video](https://www.youtube.com/channel/UC_7WrbZTCODu1o_kfUMq88g/playlists)
