@@ -17,6 +17,7 @@ E2E Test (end to end test) 에 대해 적는다.
 
 # Materials
 
+* [뭣? 딸깍 몇 번에 웹 E2E 테스트 코드를 생성하고 수행한다고? 에러도 잡아준다고? 영상도 뽑아준다고? | naver](https://d2.naver.com/helloworld/4003712)
 * [Selenium에서 Cypress로 갈아탄 후기](https://blog.hbsmith.io/selenium%EC%97%90%EC%84%9C-cypress%EB%A1%9C-%EA%B0%88%EC%95%84%ED%83%84-%ED%9B%84%EA%B8%B0-324f224c14db)
 
 # E2E Test

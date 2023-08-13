@@ -107,6 +107,8 @@ python3 에 대해 정리한다.
 * [James Powell: So you want to be a Python expert? | PyData Seattle 2017 @ youtube](https://www.youtube.com/watch?v=cKPlPJyQrt4&list=WL&index=5&t=0s)
   * dunder method, metaclass, decorator, context manager, generator
 * [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
+* [Python Mastery](https://github.com/dabeaz-course/python-mastery)
+* [Practical Python](https://github.com/dabeaz-course/practical-python)
   
 # Materials
 
