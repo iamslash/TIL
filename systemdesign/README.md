@@ -23,7 +23,7 @@
     - [PACELC (Partitioning Availability Consistency Else Latency Consistency)](#pacelc-partitioning-availability-consistency-else-latency-consistency)
   - [Consistency patterns](#consistency-patterns)
   - [Availability patterns](#availability-patterns)
-  - [Domain name system](#domain-name-system)
+  - [Domain Name System](#domain-name-system)
   - [Content delivery network](#content-delivery-network)
   - [Load balancer](#load-balancer)
   - [Reverse proxy](#reverse-proxy)
@@ -70,7 +70,7 @@
 - [Additional System Design Interview Questions](#additional-system-design-interview-questions)
 - [Real World Architecture](#real-world-architecture)
 - [Company Architectures](#company-architectures)
-- [company engineering blog](#company-engineering-blog)
+- [Company Engineering Blog](#company-engineering-blog)
 - [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
 - [Cloud Design Patterns](#cloud-design-patterns)
 - [Enterprise Integration Patterns](#enterprise-integration-patterns)
@@ -92,6 +92,9 @@
 
 # References
 
+* [system-design | github](https://github.com/karanpratapsingh/system-design)
+  * [html](https://www.karanpratapsingh.com/courses/system-design)
+  * [ebook](https://leanpub.com/systemdesign)
 * [Machine Learning System Design | amazon](https://www.amazon.com/Machine-Learning-System-Design-Interview/dp/1736049127/ref=sr_1_1?crid=1G3JKBVICKM0Q&keywords=machine+learning+system+design&qid=1676028725&sprefix=machine+learning+system+desi%2Caps%2C475&sr=8-1)
   * [links | github](https://github.com/ByteByteGoHq/ml-bytebytego)
 * [SwirlAI Newsletter](https://swirlai.substack.com/)

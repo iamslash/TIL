@@ -66,6 +66,12 @@
 
 # Essentials
 
+- [101가지 문제로 배우는 딥러닝 허깅페이스 트랜스포머 with 파이토치](https://www.yes24.com/Product/Goods/121144395)
+  - [src](https://github.com/jasonyim2/book3)
+- ["Probabilistic machine learning": a book series by Kevin Murphy](https://github.com/probml/pml-book)
+  - ["Machine Learning: A Probabilistic Perspective" (2012)](https://probml.github.io/pml-book/book0.html)
+  - ["Probabilistic Machine Learning: An Introduction" (2022)](https://probml.github.io/pml-book/book1.html)
+  - ["Probabilistic Machine Learning: Advanced Topics" (2023)](https://probml.github.io/pml-book/book2.html)
 - [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
   - 한글로 제일 쉽게 설명하는 자료이다. 누가 뭐래도 최고. 
   - [src](https://github.com/hunkim/DeepLearningZeroToAll)
