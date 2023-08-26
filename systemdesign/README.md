@@ -2531,9 +2531,7 @@ and Spotify.
 
 # Cloud Design Patterns
 
-> [Cloud Design Patterns | TIL](clouddesignpattern.md)
-
-[MSA | TIL](/msa/README.md) 의 pattern 들과 거의 유사하다.
+[Cloud Design Patterns | TIL](clouddesignpattern.md)
 
 # Enterprise Integration Patterns
 

@@ -79,14 +79,13 @@
 
 # Abstract
 
-Enterpise Integration Pattern 에 대해 정리한다. [Patterns of Enterprise
-Application
-Architecture](https://www.amazon.com/o/asin/0321200683/ref=nosim/enterpriseint-20)
-을 요약한 것이다. 대부분 [Kafka](/kafka/README.md) 으로 구현 가능하다.
-
-Pattern Leanguage 는 책마다 모두 다르다. 주로 Alexandrian form 을 사용한다.
-Alexandrian form 은 Smalltalk Best Practice Patterns by Kent Beck 에서 처음
-소개되었다.
+Enterprise Integration Patterns (EIP) is a collection of design patterns that
+provide standardized solutions and best practices for integrating heterogeneous
+applications, systems, or services within an enterprise context. These patterns
+address the common challenges associated with distributed systems and
+asynchronous communication, offering a common vocabulary and reusable building
+blocks for designing and implementing robust, scalable, and maintainable
+integration architectures.
 
 # Materials
 
