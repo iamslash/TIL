@@ -1,3 +1,16 @@
+- [Abstraction](#abstraction)
+- [Materials](#materials)
+- [Overview](#overview)
+- [Original table](#original-table)
+- [1 NF](#1-nf)
+- [2 NF](#2-nf)
+- [3 NF](#3-nf)
+- [BCNF](#bcnf)
+- [4 NF](#4-nf)
+- [5 NF](#5-nf)
+
+-----
+
 # Abstraction
 
 정규화를 정리한다.
@@ -8,7 +21,8 @@
 
 # Overview
 
-정규화는 입력, 삭제, 수정 이상이 발생하지 않도록 테이블을 쪼개는 것이다. 다음과 같은 종류가 있다. 일반적으로 `1NF` 부터 `3NF` 까지만 적용한다. 
+정규화는 입력, 삭제, 수정 이상이 발생하지 않도록 테이블을 쪼개는 것이다. 다음과
+같은 종류가 있다. 일반적으로 `1NF` 부터 `3NF` 까지만 적용한다. 
 
 * 1 NF
   * Eliminates repeating groups

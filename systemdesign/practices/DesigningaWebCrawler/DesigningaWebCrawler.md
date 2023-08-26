@@ -12,7 +12,7 @@
   - [How to crawl ?](#how-to-crawl-)
   - [Components](#components)
 - [Extentions](#extentions)
-- [Q&A](#qa)
+- [Q\&A](#qa)
 - [Implementation](#implementation)
 - [References](#references)
 
@@ -120,5 +120,6 @@ collect(api_key,
 
 # References
 
-* [Crawler @ github](https://github.com/DreamOfTheRedChamber/system-design/blob/master/crawler.md)
-* [awesome crawler @ github](https://github.com/BruceDone/awesome-crawler)
+* [Design a web crawler | system-design-primer](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/web_crawler/README.md)
+* [Crawler | github](https://github.com/DreamOfTheRedChamber/system-design/blob/master/crawler.md)
+* [awesome crawler | github](https://github.com/BruceDone/awesome-crawler)

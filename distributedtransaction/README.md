@@ -17,12 +17,14 @@
 
 # Abstract
 
-Global transaction 은 local transaction 으로 나누어 진다. 이렇게 local transaction 으로 나누어진 transaction 들의 모음을 distributed transaction 이라고 한다. 
+Global transaction 은 local transaction 으로 나누어 진다. 이렇게 local
+transaction 으로 나누어진 transaction 들의 모음을 distributed transaction 이라고
+한다. 
 
 Distributed Transaction 은 다음과 같은 종류가 있다.
 
 * low level
-  * **2 Phase Commit**
+  * **[2 Phase Commit](/distributedsystem/README.md#2-phase-commit)**
 * high level
   * **TC/C (Try Confirm / Cancel)**
   * SAGAS
@@ -34,7 +36,8 @@ example [MySQL](/mysql/README.md) supports [XA](/mysql/README.md#xa).
 
 high level means the application should support those.
 
-**Choreography** is distributed decision making and **Orchestration** is centralized decision making. So **Orchestration** has a SPOF problem.
+**Choreography** is distributed decision making and **Orchestration** is
+centralized decision making. So **Orchestration** has a SPOF problem.
 
 # Materials
 
@@ -259,6 +262,10 @@ Chris Richardson 의 Orchestration SAGA Architecture.
 
 SAGA 가 제일 그럴듯하다. 
 
-Choreography SAGA 는 greenfield project 에 적당하다. 처음부터 project 를 시작한다면 할 만하다는 의미이다. 많은 micro service 제작자들과 local transaction 의 상태등을 포함해서 협의를 해야하기 때문이다.
+Choreography SAGA 는 greenfield project 에 적당하다. 처음부터 project 를
+시작한다면 할 만하다는 의미이다. 많은 micro service 제작자들과 local transaction
+의 상태등을 포함해서 협의를 해야하기 때문이다.
 
-Orchestration SAGA 는 brownfield project 에 적당하다. 이미 진행된 project 에 적용할 만하다. 많은 micro service 제작자들과 협의해야할 내용이 Choreography SAGA 에 비해 적다. local transaction 의 상태는 orchestrator 만 알아도 된다. 
+Orchestration SAGA 는 brownfield project 에 적당하다. 이미 진행된 project 에
+적용할 만하다. 많은 micro service 제작자들과 협의해야할 내용이 Choreography SAGA
+에 비해 적다. local transaction 의 상태는 orchestrator 만 알아도 된다. 

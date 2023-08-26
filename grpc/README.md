@@ -8,7 +8,8 @@
 
 # Abstract
 
-gRPC is an open source remote procedure call (RPC) system initially developed at Google in 2015.
+gRPC is an open source remote procedure call (RPC) system initially developed at
+Google in 2015.
 
 # Materials
 

@@ -30,6 +30,7 @@
 
 # Materials
 
+- [수학의 즐거움 채널 영상 리스트](https://docs.google.com/spreadsheets/d/1cNYx-Kk-C44CXu8P0gXWwnwTH9-5ykgnRxzoaMrbnGI/edit?fbclid=IwAR3ZoxfPcFYZotMGG7ykBsqKtQx5KNPTPcQEY_DIZWNqDhdIaGtH3eWZOpc#gid=0)
 - [수학벙커 @ naver](https://blog.naver.com/alwaysneoi)
   - 중등, 고등 수학을 포함한 수학블로그
 - [수학이야기 @ tistory](http://suhak.tistory.com/)

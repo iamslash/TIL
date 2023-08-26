@@ -66,12 +66,14 @@
 
 # Essentials
 
-- [101가지 문제로 배우는 딥러닝 허깅페이스 트랜스포머 with 파이토치](https://www.yes24.com/Product/Goods/121144395)
-  - [src](https://github.com/jasonyim2/book3)
+- [math for machine learning](https://mml-book.github.io/)
+  - 머신러닝을 위한 수학
 - ["Probabilistic machine learning": a book series by Kevin Murphy](https://github.com/probml/pml-book)
   - ["Machine Learning: A Probabilistic Perspective" (2012)](https://probml.github.io/pml-book/book0.html)
   - ["Probabilistic Machine Learning: An Introduction" (2022)](https://probml.github.io/pml-book/book1.html)
   - ["Probabilistic Machine Learning: Advanced Topics" (2023)](https://probml.github.io/pml-book/book2.html)
+- [101가지 문제로 배우는 딥러닝 허깅페이스 트랜스포머 with 파이토치](https://www.yes24.com/Product/Goods/121144395)
+  - [src](https://github.com/jasonyim2/book3)
 - [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
   - 한글로 제일 쉽게 설명하는 자료이다. 누가 뭐래도 최고. 
   - [src](https://github.com/hunkim/DeepLearningZeroToAll)
@@ -118,8 +120,6 @@
   - [ppt | github](https://github.com/jiphyeonjeon/season2/tree/main/advanced)
 - [모두를 위한 컨벡스 최적화 (Convex Optimization For All)](https://wikidocs.net/book/1896)
   - 최적화 문제를 정리한 책 
-- [math for machine learning](https://mml-book.github.io/)
-  - 머신러닝을 위한 수학 공짜책
 - [paper with code](https://paperswithcode.com/)
   - 논문과 구현
 - [machine learning at coursera](https://www.coursera.org/learn/machine-learning)
@@ -166,7 +166,6 @@
   26. RLCode와 A3C 쉽고 깊게 이해하기, 이웅원(RLCode 리더), http://tv.naver.com/v/2022271
   27. Deepmind StarCraft II AI, 송호연(Kakao, now Naver), http://tv.naver.com/v/2451300
 
-
 - [인공지능 - 이건명](http://www.kocw.net/home/search/kemView.do?kemId=1170523)
   - 인공지능의 기본 개념을 살펴보고, 탐색과 최적화 기법, 지식표현의
     다양한 방법과 추론 기법, 딥러닝을 비롯한 기계학습 방법, 계획수립
@@ -191,6 +190,7 @@
 - [TensorFlow Tutorials (Simple Examples)](https://github.com/nlintz/TensorFlow-Tutorials)
 - [Another TensorFlow Tutorials](https://github.com/pkmital/tensorflow_tutorials)
 - [TensorFlow Examples](https://github.com/aymericdamien/TensorFlow-Examples)
+- [ 개인적으로 써보는 머신러닝 공부 테크트리입니다 | clien](https://www.clien.net/service/board/cm_ai/18068521)
 
 # Precision, Recall, Accuracy, F1
 

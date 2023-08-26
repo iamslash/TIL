@@ -7,9 +7,14 @@
 
 # Abstract
 
-OpenID Connect Flow 를 정리한다. OIDC 는 너무 많은 RFC spec 이 모여있다. RFC 는 변호사를 고용하여 작성한 문서이기 때문에 법률용어가 많다. 개발자가 이해하기 힘들다. 정리된 문서, 그림을 보고 [Oauth Playground](https://www.oauth.com/playground/client-registration.html?returnto=authorization-code-with-pkce.html) 를 실습하여 이해하는 것이 좋다. [PKCE](/pkce) 도 같이 이해해야 한다.
+OpenID Connect Flow 를 정리한다. OIDC 는 너무 많은 RFC spec 이 모여있다. RFC 는
+변호사를 고용하여 작성한 문서이기 때문에 법률용어가 많다. 개발자가 이해하기
+힘들다. 정리된 문서, 그림을 보고 [Oauth
+Playground](https://www.oauth.com/playground/client-registration.html?returnto=authorization-code-with-pkce.html)
+를 실습하여 이해하는 것이 좋다. [PKCE](/pkce) 도 같이 이해해야 한다.
 
-Client 의 HTTP Request Parameters 중 `code_challenge, code_challenge_method, nonce, code, code_verifier` 는 [PKCE](/pkce/README.md) 를 위해 전달된다.
+Client 의 HTTP Request Parameters 중 `code_challenge, code_challenge_method,
+nonce, code, code_verifier` 는 [PKCE](/pkce/README.md) 를 위해 전달된다.
 
 # Okta Unauthenticated
 

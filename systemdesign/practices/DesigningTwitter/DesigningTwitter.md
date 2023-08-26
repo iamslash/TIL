@@ -17,7 +17,7 @@
   - [Cache](#cache)
   - [Replication and Fault Tolerance](#replication-and-fault-tolerance)
   - [Load Balancing](#load-balancing)
-- [Q&A](#qa)
+- [Q\&A](#qa)
 - [References](#references)
 
 -----

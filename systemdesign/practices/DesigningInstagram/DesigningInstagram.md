@@ -25,7 +25,7 @@
   - [News Feed Creation with Sharded Data](#news-feed-creation-with-sharded-data)
 - [Extention](#extention)
   - [Cache and Load Balancing](#cache-and-load-balancing)
-- [Q&A](#qa)
+- [Q\&A](#qa)
 - [References](#references)
 
 ----

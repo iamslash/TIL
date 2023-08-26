@@ -14,9 +14,13 @@
 
 # Abstract
 
-대용량 데이터를 분산 처리할 수 있는 자바 기반의 오픈 소스 프레임워크이다. 구글이 논문으로 발표한 GFS(Google File System) 과 맵리듀스(MapReduce) 를 2005 년 더그커팅이 제작한 구현체이다.
+대용량 데이터를 분산 처리할 수 있는 자바 기반의 오픈 소스 프레임워크이다. 구글이
+논문으로 발표한 GFS(Google File System) 과 맵리듀스(MapReduce) 를 2005 년
+더그커팅이 제작한 구현체이다.
 
-[네이버에서 제공하는 Cloud Hadoop](https://docs.ncloud.com/ko/hadoop/chadoop-1.html) 의 구조를 참고하면 Hadoop Echo system 을 쉽게 이해할 수 있다.
+[네이버에서 제공하는 Cloud
+Hadoop](https://docs.ncloud.com/ko/hadoop/chadoop-1.html) 의 구조를 참고하면
+Hadoop Echo system 을 쉽게 이해할 수 있다.
 
 ![](https://docs.ncloud.com/ko/hadoop/images/chadoop-1-1-01.png)
 

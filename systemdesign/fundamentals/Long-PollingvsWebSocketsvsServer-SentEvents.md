@@ -1,3 +1,16 @@
+
+- [References](#references)
+- [Ajax Polling](#ajax-polling)
+- [HTTP Long-Polling](#http-long-polling)
+- [WebSockets](#websockets)
+- [Server-Sent Events (SSEs)](#server-sent-events-sses)
+
+-----
+
+# References
+
+* [Polling vs SSE vs WebSocket— How to choose the right one](https://codeburst.io/polling-vs-sse-vs-websocket-how-to-choose-the-right-one-1859e4e13bd9)
+
 # Ajax Polling
 
 client 자주 request 한다. server 는 바로 response 한다.
@@ -144,9 +157,3 @@ app.listen(port, function() {
    console.log('Listening on', port);
 });
 ```
-
-
-
-# References
-
-* [Polling vs SSE vs WebSocket— How to choose the right one](https://codeburst.io/polling-vs-sse-vs-websocket-how-to-choose-the-right-one-1859e4e13bd9)

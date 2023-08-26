@@ -19,7 +19,7 @@
   - [Data Partitioning and Replication](#data-partitioning-and-replication)
   - [Cache and Load Balancer](#cache-and-load-balancer)
   - [Security and Permissions](#security-and-permissions)
-- [Q&A](#qa)
+- [Q\&A](#qa)
 - [References](#references)
 
 ----
@@ -171,3 +171,5 @@ Mongo DB sharding
 # Q&A
 
 # References
+
+[Design Pastebin.com (or Bit.ly)](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md)

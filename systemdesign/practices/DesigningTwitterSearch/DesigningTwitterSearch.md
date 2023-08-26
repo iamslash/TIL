@@ -10,7 +10,7 @@
   - [Cache](#cache)
   - [Load Balancing](#load-balancing)
   - [Rangking](#rangking)
-- [Q&A](#qa)
+- [Q\&A](#qa)
 - [Implementation](#implementation)
 - [References](#references)
 
@@ -95,3 +95,5 @@ returns: (JSON)
 * [scalable-twitter-search @ github](https://github.com/agconti/scalable-twitter-search)
 
 # References
+
+[Design the Twitter timeline and search | system-design-primer](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/twitter/README.md)
