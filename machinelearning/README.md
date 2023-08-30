@@ -7,7 +7,9 @@
 - [Cross Entropy](#cross-entropy)
 - [KLD (Kullback–Leibler divergence)](#kld-kullbackleibler-divergence)
 - [JSD (Jensson Shannon Divergence)](#jsd-jensson-shannon-divergence)
-- [Posterior](#posterior)
+- [Bayes' Theorem](#bayes-theorem)
+  - [Frequentist Approach vs Bayesian Approach](#frequentist-approach-vs-bayesian-approach)
+  - [Posterior](#posterior)
 - [Prior](#prior)
 - [Likelihood](#likelihood)
 - [Bayes' Rule](#bayes-rule)
@@ -39,33 +41,36 @@
 
 # Abstract
 
-- machine learning 이란 다량의 데이터를 이용하여 학습하고 예측하는 것에 대한 학문이다.
-  예를 들어서 machine learning 을 이용하면 다음과 같은 것을 할 수 있다.
-  학생들의 등교시간과 성적에 관한 데이터를 이용하여 새로 전학온 학생의 등교시간을 입력하면
-  성적을 예상 할 수 있다.
-- machine learning 은 회귀분석, 다변량분석, 군집분석, 확률분포 추정,
-  마르코프, 은닉마르토크 모델, 서포트 벡터 머신, 베이즈의법칙, 베이즈 확률론,
-  베이지언 통계등등 통계학에서 많은 부분들이 인용되었다. 
+> * [Machine Learning a Probabilistic Perspective by Kevin Murphy](machine_learning_a_probabilistic_perspective.md)
+> * [Machine Learning Glossary](mlglossary.md)
+
+- machine learning 이란 다량의 데이터를 이용하여 학습하고 예측하는 것에 대한
+  학문이다. 예를 들어서 machine learning 을 이용하면 다음과 같은 것을 할 수
+  있다. 학생들의 등교시간과 성적에 관한 데이터를 이용하여 새로 전학온 학생의
+  등교시간을 입력하면 성적을 예상 할 수 있다.
+- machine learning 은 회귀분석, 다변량분석, 군집분석, 확률분포 추정, 마르코프,
+  은닉마르토크 모델, 서포트 벡터 머신, 베이즈의법칙, 베이즈 확률론, 베이지언
+  통계등등 통계학에서 많은 부분들이 인용되었다. 
 - machine learning 의 종류는 크게 supervised learning, unsupervised learning
-  semisupervised learning, reinforcement learning 으로 분류할 수 있다.
-  다음은 위키피디아가 분류한 것들이다. supervised learning, clustering,
-  dimensionality reduction, structured prediction, anomaly detenction,
-  neural nets, reinforcement learning
-- deep learning 은 한개이상의 hidden layer 가 존재하는 neural networks 를 다루는 학문이다.
-  deep 의 의미는 hidden layer 가 많아지면 점점 깊어진다는 의미이다.
+  semisupervised learning, reinforcement learning 으로 분류할 수 있다. 다음은
+  위키피디아가 분류한 것들이다. supervised learning, clustering, dimensionality
+  reduction, structured prediction, anomaly detenction, neural nets,
+  reinforcement learning
+- deep learning 은 한개이상의 hidden layer 가 존재하는 neural networks 를 다루는
+  학문이다. deep 의 의미는 hidden layer 가 많아지면 점점 깊어진다는 의미이다.
 - 다음과 같은 용어들을 중심으로 공부해본다. linear regression with one variable,
-  hypothesis function, weight, bias, feature
-  loss, gradiant decent algorithm, epoch, cost function,
-  MSE (mean squared error), derivative, 
-  linear regression with multiple variables, 
-  logistic regression, regularization,
-  softmax regression (multinomial regression), 
-  overfitting, cross entropy, NN (Neural Networks), drop out, activation function,
-  sigmoid, ReLU, learning rate, forward propagation, back propagation,
-  CNN (Convolutional Neural Networks), RNN (Recurrent Neural Networks)
+  hypothesis function, weight, bias, feature loss, gradiant decent algorithm,
+  epoch, cost function, MSE (mean squared error), derivative, linear regression
+  with multiple variables, logistic regression, regularization, softmax
+  regression (multinomial regression), overfitting, cross entropy, NN (Neural
+  Networks), drop out, activation function, sigmoid, ReLU, learning rate,
+  forward propagation, back propagation, CNN (Convolutional Neural Networks),
+  RNN (Recurrent Neural Networks)
 
 # Essentials
 
+- [데이터 사이언스 스쿨](https://datascienceschool.net/intro.html)
+- [공돌이의 수학정리노트 (Angelo's Math Notes)](https://angeloyeo.github.io/)
 - [math for machine learning](https://mml-book.github.io/)
   - 머신러닝을 위한 수학
 - ["Probabilistic machine learning": a book series by Kevin Murphy](https://github.com/probml/pml-book)
@@ -75,7 +80,6 @@
 - [101가지 문제로 배우는 딥러닝 허깅페이스 트랜스포머 with 파이토치](https://www.yes24.com/Product/Goods/121144395)
   - [src](https://github.com/jasonyim2/book3)
 - [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
-  - 한글로 제일 쉽게 설명하는 자료이다. 누가 뭐래도 최고. 
   - [src](https://github.com/hunkim/DeepLearningZeroToAll)
 - [ML-For-Beginners](https://github.com/microsoft/ML-For-Beginners)
   - microsoft ml for beginners
@@ -90,16 +94,16 @@
   - [tensorflow](https://deeplearningzerotoall.github.io/season2/lec_tensorflow.html)
   - [pytorch](https://deeplearningzerotoall.github.io/season2/lec_pytorch.html)
   - [src](https://github.com/deeplearningzerotoall/PyTorch)
-- [(2018) 인공지능 및 기계학습 개론Ⅰ @ edwith](https://kaist.edwith.org/machinelearning1_17)
+- [(2018) 인공지능 및 기계학습 개론Ⅰ | edwith](https://kaist.edwith.org/machinelearning1_17)
   - 카이스트 산업공학과 문일철 교수 강의
-- [(2018) 인공지능 및 기계학습 개론ⅠI @ edwith](https://kaist.edwith.org/machinelearning2__17)
+- [(2018) 인공지능 및 기계학습 개론ⅠI | edwith](https://kaist.edwith.org/machinelearning2__17)
   - 카이스트 산업공학과 문일철 교수 강의
-- [(2018) 인공지능 및 기계학습 심화 @ edwith](https://kaist.edwith.org/aiml-adv)
+- [(2018) 인공지능 및 기계학습 심화 | edwith](https://kaist.edwith.org/aiml-adv)
   - 카이스트 산업공학과 문일철 교수 강의
 - [최신 논문으로 시작하는 딥러닝](http://www.edwith.org/deeplearningchoi/joinLectures/10979)
   - 최성준님의 강좌. 모두를 위한 머신러닝을 클리어 하고 학습하면 좋다.
   - [src](https://github.com/sjchoi86/dl_tutorials_10weeks)
-- [머신러닝 단기집중과정 @ google](https://developers.google.com/machine-learning/crash-course/prereqs-and-prework?hl=ko)
+- [머신러닝 단기집중과정 | google](https://developers.google.com/machine-learning/crash-course/prereqs-and-prework?hl=ko)
 - [cs229, cs230, cme102, cme106 cheatsheets](https://stanford.edu/~shervine/teaching.html)
   - machine learning, deep learning, probability, statistics cheatsheets
 - [골빈해커의 3분 딥러닝](http://www.yes24.com/24/goods/49853812?scode=032&OzSrank=1)
@@ -137,35 +141,6 @@
 - [Deep learning @ Udacity](https://www.udacity.com/course/viewer#!/c-ud730/l-6370362152/m-6379811817)
 - [Google AI course](https://ai.google/education)
   - 구글의 AI 코스웨어
-- 김훈 링크
-  1. 뽀로로QA와 심층 임베딩 메모리망, 김경민, 서울대 박사과정, http://tv.naver.com/v/2231323
-  2. Multimodal Sequential Learning for Video QA, 김은솔, 서울대 박사과정, http://tv.naver.com/v/2218642
-  3. Finding connections among images using CycleGAN, 박태성, UC Berkeley 박사과정, http://tv.naver.com/v/2203900
-  4. Learning to reason by reading text and answering questions, 서민준, Washington Univ. 박사과정, http://tv.naver.com/v/2083653
-  5. 조음 Goodness-Of-Pronunciation 자질을 이용한 영어 학습자의 조음 오류 진단, 류혁수, 서울대 박사과정, http://tv.naver.com/v/2152689
-  6. 1시간만에 GAN(Generative Adversarial Network) 완전 정복하기, 최윤제, 고려대 석사과정, http://tv.naver.com/v/1947034
-  7. Introduction of Deep Reinforcement Learning, 곽동현, (서울대 박사과정, Now Naver), http://tv.naver.com/v/2024376
-  8. Deep Learning, Where are you going?, 조경현, NYU 교수, http://tv.naver.com/v/1967400
-  9. Deepmind StarCraft II AI, 송호연(Kakao), http://tv.naver.com/v/2451300
-  10. 블록과 함께하는 케라스와 태양에서 세포까지 활용사, 김태영(인스페이스 CTO), http://tv.naver.com/v/2440383
-  11. 2017 R-Biz Challange 터틀봇3 오토레이스, 길기종(동아대학교 석사과정), http://tv.naver.com/v/2404922
-  12. Speeding Up Distributed Machine Learning Using Codes, 이강욱 (KAIST 박사 후 연구원), http://tv.naver.com/v/2389070
-  13. Recommender system for education, 서창호 (KAIST 교수), http://tv.naver.com/v/2345343
-  14. 기계학습을 이용하여 정적 분석기의 안전성을 선별적으로 조절하는 방법, 허기홍 (서울대 박사과정), http://tv.naver.com/v/2345246
-  15. 사람 뽑는 기계 만들기, 송호원(OnboardIQ), http://tv.naver.com/v/2343656
-  16. The Personal Home Service Robot that Won the RoboCup@Home League, 이범진(서울대 박사과정), http://tv.naver.com/v/2317076
-  17. 그림 그리는 AI, 이활석 (Naver Clova), http://tv.naver.com/v/2417457
-  18. Learning to Perceive the 3D World, 최봉수(Stanford University 박사 과정) http://tv.naver.com/v/2316860
-  19. Variational Autoencoded Regression of Visual Data with Generative Advers, 유영준 (서울대 박사 후 연구원, Now Naver), http://tv.naver.com/v/2290853
-  20. Learning where and how to look for weakly-supervised visual recognition, 이용재 (Yong Jae Lee, UC Davis), http://tv.naver.com/v/2261079
-  21. Contour-Constrained Superpixels for Image and Video Processing, 이세호(고려대 박사과정), http://tv.naver.com/v/2260981
-  22. Online video object segmentation via convolutional trident network, 장원동 (고려대 박사과정), http://tv.naver.com/v/2257232
-  23. Video Object Segmentation in Videos, 고영준 (고려대 박사과정), http://tv.naver.com/v/2237808
-  24. Step-by-step approach to question answering, 민세원 (서울대 학부 4학년), http://tv.naver.com/v/2152722
-  25. 알아두면 쓸 데있는 신기한 강화학습, 김태훈 (데브시스터즈), http://tv.naver.com/v/2051482
-  26. RLCode와 A3C 쉽고 깊게 이해하기, 이웅원(RLCode 리더), http://tv.naver.com/v/2022271
-  27. Deepmind StarCraft II AI, 송호연(Kakao, now Naver), http://tv.naver.com/v/2451300
-
 - [인공지능 - 이건명](http://www.kocw.net/home/search/kemView.do?kemId=1170523)
   - 인공지능의 기본 개념을 살펴보고, 탐색과 최적화 기법, 지식표현의
     다양한 방법과 추론 기법, 딥러닝을 비롯한 기계학습 방법, 계획수립
@@ -190,7 +165,7 @@
 - [TensorFlow Tutorials (Simple Examples)](https://github.com/nlintz/TensorFlow-Tutorials)
 - [Another TensorFlow Tutorials](https://github.com/pkmital/tensorflow_tutorials)
 - [TensorFlow Examples](https://github.com/aymericdamien/TensorFlow-Examples)
-- [ 개인적으로 써보는 머신러닝 공부 테크트리입니다 | clien](https://www.clien.net/service/board/cm_ai/18068521)
+- [개인적으로 써보는 머신러닝 공부 테크트리입니다 | clien](https://www.clien.net/service/board/cm_ai/18068521)
 
 # Precision, Recall, Accuracy, F1
 
@@ -213,13 +188,15 @@
 
 # Expectation Function
 
-기대값 `E(X)` 을 어떻게 구하는지 설명한다. 완벽한 세계에서 주사위를 던지는 상황을 생각해 보자. 확률변수 X 와 P(X) 는 다음과 같다.
+기대값 `E(X)` 을 어떻게 구하는지 설명한다. 완벽한 세계에서 주사위를 던지는
+상황을 생각해 보자. 확률변수 X 와 P(X) 는 다음과 같다.
 
 | X | 1 | 2 | 3 | 4 | 5 | 6 |
 |---|---|---|---|---|---|---|
 | P(X) | 1/6 | 1/6 | 1/6 | 1/6 | 1/6 | 1/6 |
 
-다음은 확률변수 X 가 Discrete Space 에 속하는 경우와 X 가 continuous Space 에 속할 때의 `E(x)` 이다.
+다음은 확률변수 X 가 Discrete Space 에 속하는 경우와 X 가 continuous Space 에
+속할 때의 `E(x)` 이다.
 
 ![](img/exp_x_discrete.png)
 
@@ -297,8 +274,9 @@ H &= \sum _{i} p_{i} I(s_{i}) \\
 * [[신경망기초] 크로스엔트로피손실함수](https://www.slideshare.net/jaepilko10/ss-91071277)
 * [참고](http://t-robotics.blogspot.com/2017/08/27-cross-entropy-kl-divergence.html)
 
-다른 사건의 확률을 곱해서 Entropy 를 계산한 것이다. negative maximum log likelihood estimation 이라고도 한다.
-예를 들어서 0 또는 1 만 가지는 확률변수 X 가 있다고 하면 Entropy 와 Cross Entropy 는 다음과 같다.
+다른 사건의 확률을 곱해서 Entropy 를 계산한 것이다. negative maximum log
+likelihood estimation 이라고도 한다. 예를 들어서 0 또는 1 만 가지는 확률변수 X
+가 있다고 하면 Entropy 와 Cross Entropy 는 다음과 같다.
 
 ![](img/cross_entropy_eq.png)
 
@@ -379,17 +357,44 @@ KLD 를 symmetric 하게 개량한 것이 JSD 이다.
 JSD(p, q) = \frac {1}{2} D_{KL} (p || \frac {p + q}{2}) + D_{KL} (q || \frac {p + q}{2})
 ```
 
-# Posterior
+# Bayes' Theorem
 
-* [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
-* [베이지안 추론 - 1편 @ brunch](https://brunch.co.kr/@chris-song/59)
+## Frequentist Approach vs Bayesian Approach
 
-물고기가 주어졌을 때 이것이 농어인지 연어인지 구분하는 문제를 살펴보자.
-피부색의 밝기를 `x` 라고 하고 물고기의 종류를 `w` 라고 하자. 물고기가 농어일
-사건을 `w = w_{1}` 연어일 사건을 `w = w_{2}` 라고 하자.
+* [역사상 가장 중요한 통계학 이론 – 베이즈 정리(Bayes’ Theorem)의 정의와 의미](http://aischool.ai/%EB%B2%A0%EC%9D%B4%EC%A6%88-%EC%A0%95%EB%A6%AC-%EC%A0%95%EC%9D%98%EC%99%80-%EC%98%88%EC%8B%9C/)
 
-그렇다면 물고기의 피부 밝기가 `0.5` 일 때 그 물고기가 농어일 확률은 다음과 
-같이 표현할 수 있다.
+**빈도주의 접근 방식 (Frequentist approach)** 과 **베이즈 접근 방식 (Bayesian Approach)**의 차이는 데이터 수집, 추론 및 예측에 있어 두 가지 서로 다른 철학과
+관점을 가지고 있다.
+
+* **빈도주의(Frequentist) 접근 방식**: 빈도주의 관점에서 확률은 특정 사건이
+  장기적으로 얼마나 자주 발생하는지를 나타낸다. 예를 들어, 동전을 던져 앞면이
+  나올 확률이 50% 라면, 이는 동전을 무한히 많이 던질 때 약 절반의 빈도로 앞면이
+  나온다는 것을 의미한다. 빈도주의자들은 고정된 모수에 대해 데이터가 얼마나 자주
+  등장하는지를 기반으로 추론한다.
+
+* **베이즈(Bayesian) 접근 방식**: 베이지안 관점에서 확률은 불확실성이나 무지에
+  대한 정도를 나타낸다. 다시 말해 확률은 주관적인 믿음이나 합리적인 믿음의
+  척도로 볼 수 있다. 예를 들어, 동전을 던져 앞면이 나올 확률이 50% 라면, 이는
+  동전의 앞면이 나왔다는 주장의 신뢰도가 50% 라고 보는 것이다. 베이지안들은
+  사전에 알고 있는 정보를 사용하여 알려지지 않은 모수에 대한 **사전확률(Prior)** 분포를 만들고, **관측된 데이터**와 **베이즈 정리(Bayes'theorem)**를 사용하여 이 **사전 확률(Prior)**을 업데이트하여 **사후확률(Posterior)** 분포를 얻는다.
+
+**베이즈 정리**를 사용하면 **관찰된 데이터**를 기반으로 **사후 확률**을
+지속적으로 업데이트할 수 있다. 머신러닝 문제는 가설을 설정하고 데이터를
+바탕으로 가설을 계속 업데이트하는 과정이므로, **베이즈 정리**를 적용할 수 있는
+많은 기법들이 사용된다. 따라서 머신러닝 전문가가 되려면 베이즈 정리에 대한
+깊은 이해가 필요하다.
+
+## Posterior
+
+> * [Bayes Rule (베이즈 룰)](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+> * [베이지안 추론 - 1편 @ brunch](https://brunch.co.kr/@chris-song/59)
+
+물고기가 주어졌을 때 이것이 농어인지 연어인지 구분하는 문제를 살펴보자. 피부색의
+밝기를 `x` 라고 하고 물고기의 종류를 `w` 라고 하자. 물고기가 농어일 사건을 `w =
+w_{1}` 연어일 사건을 `w = w_{2}` 라고 하자.
+
+그렇다면 물고기의 피부 밝기가 `0.5` 일 때 그 물고기가 농어일 확률은 다음과 같이
+표현할 수 있다.
 
 ![](img/posterior_ex.png)
 
@@ -405,68 +410,73 @@ P(w = w_{1} | x = 0.5) = P(w_{1} | x = 0.5)
 * `P(w_{1}|x) > P(w_{2}|x)` 라면 농어로 분류하자.
 * `P(w_{2}|x) > P(w_{1}|x)` 라면 연어로 분류하자.
 
-확률분포 `P(w_{i}|x)` 를 바로 사후확률 (Posterior) 라고 한다.
+확률분포 `P(w_{i}|x)` 를 바로 **사후확률 (Posterior)** 라고 한다.
 
 # Prior
 
-* [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
-* [베이지안 추론 - 1편 @ brunch](https://brunch.co.kr/@chris-song/59)
+> * [Bayes Rule (베이즈 룰)](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+> * [베이지안 추론 - 1편 @ brunch](https://brunch.co.kr/@chris-song/59)
 
 `x` 와 관계없이 애초에 농어가 잡힐 확률 `P(w_{1})`, 연어가 잡힐 확률 `P(w_{2})`
-를 사전확률 (Prior) 라고 한다. 이미 갖고 있는 사전 지식에 해당한다.
+를 **사전확률 (Prior)** 라고 한다. 이미 갖고 있는 사전 지식에 해당한다.
 
 # Likelihood
 
-* [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+> [Bayes Rule (베이즈 룰)](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
 
 물고기를 적당히 잡아서 데이터를 수집해 보자. `P(x|w_{1})` 에 해당하는 농어의
 피부밝기 분포와 `P(x|w_{2})` 에 해당하는 연어의 피부밝기 분포를 그려보자.
-이렇게 관찰을 통해 얻은 확률 분포 `P(x|w_{i})` 를 가능도 (likelihood) 라고 부른다.
+이렇게 관찰을 통해 얻은 확률 분포 `P(x|w_{i})` 를 **가능도 (likelihood)** 라고 부른다.
 
 # Bayes' Rule
 
-* [참고](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+* [Bayes Rule (베이즈 룰)](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
 * [베이지안 추론 - 1편 @ brunch](https://brunch.co.kr/@chris-song/59)
 
-우리의 목적은 Posterior `P(w_{i}|x)` 를 구하는 것이다. 이 것은 Likelihood `(P(x|w_{i})` 와 Prior `P(w_{i})` 를 이용하면 구할 수 있다.
+우리의 목적은 Posterior `P(w_{i}|x)` 를 구하는 것이다. 이 것은 **Likelihood** `P(x|w_{i})` 와 **Prior** `P(w_{i})` 를 이용하면 구할 수 있다.
 
-![](img/bayes_rule.png)
+![](img/2023-08-29-13-49-25.png)
 
 ```latex
 \begin{align*}
-P(A, B) &= P(A|B) B(B) = P(B|A) P(A) \\
-P(A| B) &= \frac {P(B|A)P(A)}{P(B)} = \frac {P(B|A)P(A)}{\sum _{A} P(B|A)P(A)} \\
+P(A,B) &= P(A|B) P(B) = P(B|A) P(A) \\
+P(A|B) &= \frac {P(B|A)P(A)}{P(B)} = \frac {P(B|A)P(A)}{\sum _{A} P(B|A)P(A)} \\
 P(w_{i} | x) &= \frac {P(x | w_{i})P(w_{i})}{\sum _{j} P(x|w_{j})P(w_{j})}
 \end{align*}
 ```
 
-좌변은 Posterior 이고 우변의 분자는 Likelihood 와 Prior 의 곱이다. 분모는 Evidence 라고 부른다. 이것 또한 Likelihood 와 Prior 들을 통해 구할 수 있다. 이러한 식을
-Bayes' Rule 또는 Bayesian Equation 등으로 부른다.
+좌변은 `Posterior` 이고 우변의 분자는 `Likelihood` 와 `Prior` 의 곱이다. 분모는
+`Evidence` 라고 부른다. 이것 또한 `Likelihood` 와 `Prior` 들을 통해 구할 수
+있다. 이러한 식을 `Bayes' Rule` 또는 `Bayesian Equation` 등으로 부른다.
+
+`Bayes' Rule` 의 `MLE (Maximum Likelihood Estimation)` 덕분에 `L2 Loss` 를
+사용하여 Linear Regression 을 할 수 있다.
 
 # MLE (Maximum Likelihood Estimation)
 
-키를 입력으로 하고 몸무게를 예측하는 모델을 생각해 보자. 
-우선 다음과 같이 실제 키(`x_{i}`) 와 실제 몸무게(`t_{i}`) 를 조사한
-Dataset D 가 있다고 해보자.
+키를 입력으로 하고 몸무게를 예측하는 모델을 생각해 보자. 우선 다음과 같이 실제
+키(`x_{i}`) 와 실제 몸무게(`t_{i}`) 를 조사한 Dataset D 가 있다고 해보자.
 
 ```
 D = {(x_{1}, t_{1}), (x_{2}, t_{2}), (x_{3}, t_{3}),... , (x_{N}, t_{N}), }
 ```
 
-parameter `w` 를 가지고 키 `x` 를 입력하면 몸무게 `y` 를 예측하는 함수 
-`y(x|w)` 를 정의하자. 모델을 잘 학습하면 함수 `y` 는 다음과 같다고 할 수 있다.
+parameter `w` 를 가지고 키 `x` 를 입력하면 몸무게 `y` 를 예측하는 함수 `y(x|w)`
+를 정의하자. 모델을 잘 학습하면 함수 `y` 는 다음과 같다고 할 수 있다.
 
 ```
 t = y(x|w)
 ```
 
-그러나 함수 `y` 의 결과가 완벽히 실제 몸무게 `t` 와 일치한다고는 할 수 없다. 그럴 가능성이
-매우 높다고 하는 것이 더욱 정확하다. 이것을 수학적으로 표현하면 실제 몸무게 `t` 는
-우리가 모르기 때문에 Random Variable 인데 모델이 예측한 몸무게 `y` 를 평균으로 하는
-Gaussian 분포를 따른다고 할 수 있다. Gaussian 분포는 평균에서 확률밀도가 가장 높기 
-때문이다.
+그러나 함수 `y` 의 결과가 완벽히 실제 몸무게 `t` 와 일치한다고는 할 수 없다.
+그럴 가능성이 매우 높다고 하는 것이 더욱 정확하다. 이것을 수학적으로 표현하면
+실제 몸무게 `t` 는 우리가 모르기 때문에 Random Variable 인데 모델이 예측한
+몸무게 `y` 를 평균으로 하는 Gaussian 분포를 따른다고 할 수 있다. Gaussian 분포는
+평균에서 확률밀도가 가장 높기 때문이다.
 
-이것을 더욱 수학적으로 표현하면 실제 몸무게 `t` 는 예측한 몸무게 `y` 를 평균 으로 하고 `σ` 를 표준편차로 하는 Gaussian Distribution 을 따른다고 할 수 있고 다음과 같이 쓸 수 있다.
+이것을 더욱 수학적으로 표현하면 실제 몸무게 `t` 는 예측한 몸무게 `y` 를 평균
+으로 하고 `σ` 를 표준편차로 하는 Gaussian Distribution 을 따른다고 할 수 있고
+다음과 같이 쓸 수 있다.
 
 ![](img/mle_t_p_eq.png)
 
@@ -479,15 +489,17 @@ p(t|x, w, \sigma) &= \frac{1}{\sqrt{2 \pi } \sigma }
 \end{align*}
 ```
 
-위의 수식에서 `p` 의 경우 `w, σ` 는 paramter 이므로 생략할 수 있다.
-`p(t|x)` 는 키가 `x` 일 때 실제 몸무게가 `t` 일 확률을 말한다.
+위의 수식에서 `p` 의 경우 `w, σ` 는 paramter 이므로 생략할 수 있다. `p(t|x)` 는
+키가 `x` 일 때 실제 몸무게가 `t` 일 확률을 말한다.
 
 ```
 D = {(x_{1}, t_{1}), (x_{2}, t_{2}), (x_{3}, t_{3}),... , (x_{N}, t_{N}), }
 ```
-Dataset 을 다시 한번 살펴보자. Dataset 이 위와 같이 구성될 확률 즉
-"키가 `x_{1}` 일 때 실제 몸무게가 `t_{1}` 이고, 키가 `x_{2}` 일 때 실제 몸무게가 `t_{2}` 이고, ..., 키가 `x_{N}` 일 때 실제 몸무게가 `t_{N}` 일 확률" 
-`p(D)` 는 확률의 곱의 법칙을 통해 다음과 같이 구할 수 있다.
+
+Dataset 을 다시 한번 살펴보자. Dataset 이 위와 같이 구성될 확률 즉 "키가 `x_{1}`
+일 때 실제 몸무게가 `t_{1}` 이고, 키가 `x_{2}` 일 때 실제 몸무게가 `t_{2}` 이고,
+..., 키가 `x_{N}` 일 때 실제 몸무게가 `t_{N}` 일 확률" `p(D)` 는 확률의 곱의
+법칙을 통해 다음과 같이 구할 수 있다.
 
 ![](img/mle_p_d_eq.png)
 
@@ -499,15 +511,18 @@ p(D)              &= \prod _{i=1}^{N} p(t_{i}|x_{i}) \\
 \end{align*}
 ```
 
-`p(D)` 는 `w` 에 따라 바뀔 수 있다. 그래서 `p(D|w)` 라고 할 수 있다. 
-이것을 Likelihood 라고 한다. `p(D|w)` 가 최대일 `w` 를 구하는 방법을
-Maximum Likelihood Estimation 이라고 한다.
+`p(D)` 는 `w` 에 따라 바뀔 수 있다. 그래서 `p(D|w)` 라고 할 수 있다. 이것을
+**Likelihood** 라고 한다. `p(D|w)` 가 최대일 `w` 를 구하는 방법을
+**Maximum Likelihood Estimation** 이라고 한다.
 
-이쯤에서 Posterior, Likelihood, Prior 를 다음과 같이 정리해 본다.
+이쯤에서 **Posterior**, **Likelihood**, **Prior** 를 다음과 같이 정리해 본다.
 
-* Posterior : 주어진 대상이 주어졌을 경우, 구하고자 하는 대상의 확률분포 `p(w|D)`
-* Likelihood : 구하고자 하는 대상을 모르지만 안다고 가정했을 경우, 주어진 대상의 분포. `p(D|w)` `w` 를 모르기 때문에 `w` 에 대한 함수형태로 나온다.
-* Prior : 주어진 대상들과 무관하게, 상식을 통해 우리가 구하고자 하는 대상에 대해 이미 알고 있는 사전 정보. 연구자의 경험을 통해 정해주어야 한다. `p(w)`
+* **Posterior** : 주어진 대상이 주어졌을 경우, 구하고자 하는 대상의 확률분포
+  `p(w|D)`
+* **Likelihood** : 구하고자 하는 대상을 모르지만 안다고 가정했을 경우, 주어진
+  대상의 분포. `p(D|w)`, `w` 를 모르기 때문에 `w` 에 대한 함수형태로 나온다.
+* **Prior** : 주어진 대상들과 무관하게, 상식을 통해 우리가 구하고자 하는 대상에
+  대해 이미 알고 있는 사전 정보. 연구자의 경험을 통해 정해주어야 한다. `p(w)`
 
 이제 MLE 를 구해보자. 먼저 likelihood 에 log 를 취한다.
 
@@ -532,26 +547,28 @@ log \  likelihood &= \log (p(D|w) \\
 \end{align*}
 ```
 
-위의 수식은 예측값과 실제 값의 차이의 제곱인 `L2 Loss` 이다. MLE 를
-이용하여 Regression 에서 `L2 Loss` 를 쓰는 이유를 증명했다.
-이것은 주어진 Dataset 으로 부터 얻은 Likelihood 를 최대화 시키기 위해
-`L2 Loss` 를 사용하는 것을 의미한다. `L2 Loss` 를 최소화 시키는 일이
-곧 Likelihood 를 최대화 시키는 일이다.
+위의 수식은 예측값과 실제 값의 차이의 제곱인 `L2 Loss` 이다. MLE 를 이용하여
+Regression 에서 `L2 Loss` 를 쓰는 이유를 증명했다. 이것은 주어진 Dataset 으로
+부터 얻은 Likelihood 를 최대화 시키기 위해 `L2 Loss` 를 사용하는 것을 의미한다.
+`L2 Loss` 를 최소화 시키는 일이 곧 Likelihood 를 최대화 시키는 일이다.
 
-Classification 문제에서는 Bernouli Distribution 을 이용하여
-비슷한 방법으로 Cross Entropy Error 를 유도할 수 있다.
+**Classification** 문제에서는 **Bernouli Distribution** 을 이용하여 비슷한
+방법으로 **Cross Entropy Error** 를 유도할 수 있다.
 
 # MAP (Maximum A Posterior)
 
-MLE 가 Likelihood 를 최대화 시키는 것이라면 MAP 는 Posterior 를 최대화 시키는 것이다. Likelihood 와 Posterior 의 차이는 Prior 가 없느냐 있느냐이다. 
-`w` 를 데이터만 이용해서 구하고자 한다면 MLE 를 이용한다. 만약 `w` 를 
-데이터와 함께 사전지식까지 이용해서 구하고자 한다면 MAP 를 이용한다.
+**MLE** 가 **Likelihood** 를 최대화 시키는 것이라면 **MAP** 는 **Posterior** 를
+최대화 시키는 것이다. **Likelihood** 와 **Posterior** 의 차이는 **Prior** 가
+없느냐 있느냐이다. `w` 를 데이터만 이용해서 구하고자 한다면 **MLE** 를 이용한다.
+만약 `w` 를 데이터와 함께 사전지식까지 이용해서 구하고자 한다면 **MAP** 를
+이용한다.
 
-Prior 를 조정해주면 고의적으로 `w` 의 분포를 조정해줄 수 있다. 예를 들어
-`w` 의 값을 0 주변에 배치하고 싶다면 0 을 중심으로 분포 되도록 `P(w)` 를 만들어 낼 수 있다. 이와 같이 Prior 를 조정하여 출력값을 조정하고 싶을 때
-MAP 를 사용한다.
+**Prior** 를 조정해주면 고의적으로 `w` 의 분포를 조정해줄 수 있다. 예를 들어 `w`
+의 값을 0 주변에 배치하고 싶다면 0 을 중심으로 분포 되도록 `P(w)` 를 만들어 낼
+수 있다. 이와 같이 Prior 를 조정하여 출력값을 조정하고 싶을 때 **MAP** 를
+사용한다.
 
-이제 MAP 를 계산해 보자. 먼저 Posterior 를 다음과 같이 표현할 수 있다.
+이제 **MAP** 를 계산해 보자. 먼저 **Posterior** 를 다음과 같이 표현할 수 있다.
 
 ![](img/mlp_eq_1.png)
 
@@ -562,8 +579,8 @@ P(w|D) &= \frac {P(D|w)P(w)}{\int P(D|w)P(w) dw} \\
 \end{align*}
 ```
 
-이제 Prior 를 설정해 보자. `w` 를 0 을 중심으로 정규분포가 되도록 `p(w)` 를 설정하면
-다음과 같다.
+이제 **Prior** 를 설정해 보자. `w` 를 0 을 중심으로 정규분포가 되도록 `p(w)` 를
+설정하면 다음과 같다.
 
 ![](img/mlp_eq_prior.png)
 
@@ -574,7 +591,7 @@ p(w) &= \frac{1}{\sqrt{2\pi} \sigma_{w} } e ^{-\frac{w^{2}}{2 \sigma _{w}^{2}}}
 \end{align*}
 ```
 
-다음은 Posterior 를 최대화 하는 `w` 를 구해보자.
+다음은 **Posterior** 를 최대화 하는 `w` 를 구해보자.
 
 ![](img/mlp_optimize_w.png)
 
@@ -587,7 +604,8 @@ w^{*}    &= argmax_{w} \{ \log p(w|D) \} \\
 \end{align*}
 ```
 
-위의 수식에서 상수항을 모두 제거 하면 Posterior 를 최대로 하는 문제는 다음의 수식을 최소로 하는 문제로 바뀐다.
+위의 수식에서 상수항을 모두 제거 하면 Posterior 를 최대로 하는 문제는 다음의
+수식을 최소로 하는 문제로 바뀐다.
 
 ![](img/mlp_eq_minimize_L.png)
 
@@ -600,7 +618,12 @@ L(w) + \frac{w^{2}}{2 \sigma_{w}^{2}} &= \sum_{i=1}^{N} (t_{i} - y(x_{i} | w))^{
 \end{align*}
 ```
 
-위의 수식은 Weight Decay (L2 Regularization) 방식을 적용한 Deep Learning 의 Loss 함수가 된다. 지금까지의 과정은 Prior 를 Gaussian Distribution 을 따르도록 하고 MAP 으로부터 Weight Decay 식을 유도한 것이다. 이것은 L2 Regularization 을 적용하는 일은 `w` 에 가우시안분포를 Prior 로 설정하는 일을 의미한다. 참고로 Prior 를 Lapacian Distribution 을 따르도록 하면 L1 Regularization 을 얻을 수 있다.
+위의 수식은 **Weight Decay (L2 Regularization)** 방식을 적용한 Deep Learning 의
+Loss 함수가 된다. 지금까지의 과정은 Prior 를 **Gaussian Distribution** 을
+따르도록 하고 **MAP** 으로부터 **Weight Decay** 식을 유도한 것이다. 이것은 **L2
+Regularization** 을 적용하는 일은 `w` 에 가우시안분포를 **Prior** 로 설정하는
+일을 의미한다. 참고로 **Prior** 를 **Laplacian Distribution** 을 따르도록 하면
+**L1 Regularization** 을 얻을 수 있다.
 
 # Supervised Learning
 
@@ -1624,11 +1647,12 @@ W := W - \alpha \frac{\partial}{\partial W} cost(W, b)
 ```
 
 - training data set 에 대해서 너무 훈련이 되있다면 test data set 에 대한
-  정확도가 낮을 수 있다. 이러한 현상을 overfitting 이라고 한다. 다음과
-  같은 방법으로 해결해 보자. 첫째 더욱 많은 training data set 을
-  확보해서 학습시켜보자.  둘째 feature 가 너무 많은 경우 줄여서
-  학습시켜 보자. 셋째 gradient descent algorithm 에 사용할 step 값을
-  다른 방법으로 구해보자. 이것을 regularization 이라고 한다.
+  정확도가 낮을 수 있다. 이러한 현상을 **overfitting** 이라고 한다. 다음과 같은
+  방법으로 해결해 보자. 
+- 첫째 더욱 많은 training data set 을 확보해서 학습시켜보자.  
+- 둘째 feature 가 너무 많은 경우 줄여서 학습시켜 보자. 
+- 셋째 gradient descent algorithm 에 사용할 step 값을 다른 방법으로 구해보자.
+  이것을 regularization 이라고 한다.
 
 ![](img/regularization.png)
 
@@ -1639,9 +1663,9 @@ cost(W, b) &= \frac{1}{m} \sum_{i=1}^{m} D(S_{i}, L_{i}) \\
 \end{align*}
 ```
   
-- 다음은 learning rate 이 다양한 경우를 구현한 것이다. learning rate 이
-  `1.5` 와 같이 너무 클때 `cost` 는 `inf` 가 되고 learning rate 이 `1e-10` 과 같이
-  너무 작을때 `cost` 는 너무 적게 변화 된다.
+- 다음은 learning rate 이 다양한 경우를 구현한 것이다. learning rate 이 `1.5` 와
+  같이 너무 클때 `cost` 는 `inf` 가 되고 learning rate 이 `1e-10` 과 같이 너무
+  작을때 `cost` 는 너무 적게 변화 된다.
 
 ```python
 # -*- coding: utf-8 -*-
@@ -2810,12 +2834,12 @@ def xavier_init(n_inputs, n_outputs, uniform=True):
     return tf.truncated_normal_initializer(stddev=stddev)
 ```
 
-- overfitting 이란 neural networks 가 training data 의 정확도는 높지만
+- **overfitting** 이란 neural networks 가 training data 의 정확도는 높지만
   predicting data 의 정확도는 낮은 현상을 말한다. 이것을 해결하기 위한 방법으로
-  regularization, dropout 등이 있다.
+  **regularization**, **dropout** 등이 있다.
   
-- regularization 은 다음과 같이 새로운 항을 `cost(W, b)` 구할때
-  더한다. `\lambda` 는 `0.001` 로 하자.
+- **regularization** 은 다음과 같이 새로운 항을 `cost(W, b)` 구할때 더한다.
+  `\lambda` 는 `0.001` 로 하자.
 
 ```python
 l2reg = 0.001 * tf.reduce_sum(tf.square(W))
