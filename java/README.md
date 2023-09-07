@@ -841,6 +841,7 @@ System.out.println(set.higher(3)) // 5
 
    String firstKey = map.firstKey();
    String lastKey = map.lastKey();
+   String higherKey = map.higherKey(firstKey);
    List<String> values = new ArrayList<>(map.values());
 
    TreeMap<Integer, Integer> map = new TreeMap<>();

@@ -1,5 +1,6 @@
 # Materials
 
+* [A curated list of awesome MLOps tools | github](https://github.com/kelvins/awesome-mlops)
 * [MLOps landscape | neptune](https://neptune.ai/blog/mlops-tools-platforms-landscape)
   * MLOps off-the-shelf solution 총 정리
 * [MLflow](https://mlflow.org/)

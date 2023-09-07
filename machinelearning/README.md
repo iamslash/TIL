@@ -8,7 +8,7 @@
 - [KLD (Kullback–Leibler divergence)](#kld-kullbackleibler-divergence)
 - [JSD (Jensson Shannon Divergence)](#jsd-jensson-shannon-divergence)
 - [Bayes' Theorem](#bayes-theorem)
-  - [Frequentist Approach vs Bayesian Approach](#frequentist-approach-vs-bayesian-approach)
+  - [Meaning Of Probability (Frequentist Approach vs Bayesian Approach)](#meaning-of-probability-frequentist-approach-vs-bayesian-approach)
   - [Posterior](#posterior)
 - [Prior](#prior)
 - [Likelihood](#likelihood)
@@ -77,6 +77,10 @@
   - ["Machine Learning: A Probabilistic Perspective" (2012)](https://probml.github.io/pml-book/book0.html)
   - ["Probabilistic Machine Learning: An Introduction" (2022)](https://probml.github.io/pml-book/book1.html)
   - ["Probabilistic Machine Learning: Advanced Topics" (2023)](https://probml.github.io/pml-book/book2.html)
+- [CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/syllabus.html)
+  - 화상인식을 위한 CNN
+- [CS224d: Deep Learning for Natural Language Processing](http://web.stanford.edu/class/cs224n/)
+  - 자연어처리를 위한 Deep Learning
 - [101가지 문제로 배우는 딥러닝 허깅페이스 트랜스포머 with 파이토치](https://www.yes24.com/Product/Goods/121144395)
   - [src](https://github.com/jasonyim2/book3)
 - [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
@@ -134,10 +138,6 @@
 - [deep learning tutorial](http://deeplearning.stanford.edu/tutorial/)
   - standford 대학의 tutorial이다. 코드와 텍스트가 가득하다.
 - [Andrej Karpathy's Youtube channel](https://www.youtube.com/channel/UCPk8m_r6fkUSYmvgCBwq-sw)
-- [CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/syllabus.html)
-  - 화상인식을 위한 CNN
-- [CS224d: Deep Learning for Natural Language Processing]()
-  - 자연어처리를 위한 Deep Learning
 - [Deep learning @ Udacity](https://www.udacity.com/course/viewer#!/c-ud730/l-6370362152/m-6379811817)
 - [Google AI course](https://ai.google/education)
   - 구글의 AI 코스웨어
@@ -359,9 +359,10 @@ JSD(p, q) = \frac {1}{2} D_{KL} (p || \frac {p + q}{2}) + D_{KL} (q || \frac {p 
 
 # Bayes' Theorem
 
-## Frequentist Approach vs Bayesian Approach
+## Meaning Of Probability (Frequentist Approach vs Bayesian Approach)
 
-* [역사상 가장 중요한 통계학 이론 – 베이즈 정리(Bayes’ Theorem)의 정의와 의미](http://aischool.ai/%EB%B2%A0%EC%9D%B4%EC%A6%88-%EC%A0%95%EB%A6%AC-%EC%A0%95%EC%9D%98%EC%99%80-%EC%98%88%EC%8B%9C/)
+> * [역사상 가장 중요한 통계학 이론 – 베이즈 정리(Bayes’ Theorem)의 정의와 의미](http://aischool.ai/%EB%B2%A0%EC%9D%B4%EC%A6%88-%EC%A0%95%EB%A6%AC-%EC%A0%95%EC%9D%98%EC%99%80-%EC%98%88%EC%8B%9C/)
+> * [확률의 의미 | datascienceschool](https://datascienceschool.net/02%20mathematics/06.02%20%ED%99%95%EB%A5%A0%EC%9D%98%20%EC%88%98%ED%95%99%EC%A0%81%20%EC%A0%95%EC%9D%98%EC%99%80%20%EC%9D%98%EB%AF%B8.html#id19)
 
 **빈도주의 접근 방식 (Frequentist approach)** 과 **베이즈 접근 방식 (Bayesian Approach)**의 차이는 데이터 수집, 추론 및 예측에 있어 두 가지 서로 다른 철학과
 관점을 가지고 있다.
@@ -408,7 +409,7 @@ P(w = w_{1} | x = 0.5) = P(w_{1} | x = 0.5)
 다음과 같은 방법을 통해 농어와 연어를 구분할 수 있다.
 
 * `P(w_{1}|x) > P(w_{2}|x)` 라면 농어로 분류하자.
-* `P(w_{2}|x) > P(w_{1}|x)` 라면 연어로 분류하자.
+* `P(w_{1}|x) < P(w_{2}|x)` 라면 연어로 분류하자.
 
 확률분포 `P(w_{i}|x)` 를 바로 **사후확률 (Posterior)** 라고 한다.
 
@@ -418,7 +419,7 @@ P(w = w_{1} | x = 0.5) = P(w_{1} | x = 0.5)
 > * [베이지안 추론 - 1편 @ brunch](https://brunch.co.kr/@chris-song/59)
 
 `x` 와 관계없이 애초에 농어가 잡힐 확률 `P(w_{1})`, 연어가 잡힐 확률 `P(w_{2})`
-를 **사전확률 (Prior)** 라고 한다. 이미 갖고 있는 사전 지식에 해당한다.
+를 **사전확률 (Prior)** 라고 한다. 이미 갖고 있는 **사전 지식**에 해당한다.
 
 # Likelihood
 
@@ -426,12 +427,18 @@ P(w = w_{1} | x = 0.5) = P(w_{1} | x = 0.5)
 
 물고기를 적당히 잡아서 데이터를 수집해 보자. `P(x|w_{1})` 에 해당하는 농어의
 피부밝기 분포와 `P(x|w_{2})` 에 해당하는 연어의 피부밝기 분포를 그려보자.
-이렇게 관찰을 통해 얻은 확률 분포 `P(x|w_{i})` 를 **가능도 (likelihood)** 라고 부른다.
+이렇게 **관찰을 통해 얻은 확률 분포** `P(x|w_{i})` 를 **가능도 (likelihood)** 라고 부른다.
 
 # Bayes' Rule
 
-* [Bayes Rule (베이즈 룰)](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
-* [베이지안 추론 - 1편 @ brunch](https://brunch.co.kr/@chris-song/59)
+> * [Bayes Rule (베이즈 룰)](https://hyeongminlee.github.io/post/bnn001_bayes_rule/)
+> * [베이지안 추론 - 1편 @ brunch](https://brunch.co.kr/@chris-song/59)
+
+**베이즈 정리**는 주어진 데이터를 바탕으로 **조건부확률 (Posterior)**을 계산하는
+공식이다. 이를 통해 **사전확률 (Prior)**값이 주어진 데이터에 따라 어떻게
+변하는지 알 수 있다. 데이터가 부족하거나 추가 데이터가 지속적으로 들어올 때
+유용하게 활용할 수 있다. 이를 통해 전체 데이터를 새로 분석하는 대신 기존 분석
+결과를 업데이트할 수 있다.
 
 우리의 목적은 Posterior `P(w_{i}|x)` 를 구하는 것이다. 이 것은 **Likelihood** `P(x|w_{i})` 와 **Prior** `P(w_{i})` 를 이용하면 구할 수 있다.
 
@@ -517,7 +524,7 @@ p(D)              &= \prod _{i=1}^{N} p(t_{i}|x_{i}) \\
 
 이쯤에서 **Posterior**, **Likelihood**, **Prior** 를 다음과 같이 정리해 본다.
 
-* **Posterior** : 주어진 대상이 주어졌을 경우, 구하고자 하는 대상의 확률분포
+* **Posterior** : 대상이 주어졌을 경우, 구하고자 하는 대상의 확률분포
   `p(w|D)`
 * **Likelihood** : 구하고자 하는 대상을 모르지만 안다고 가정했을 경우, 주어진
   대상의 분포. `p(D|w)`, `w` 를 모르기 때문에 `w` 에 대한 함수형태로 나온다.
