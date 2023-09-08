@@ -4,6 +4,8 @@
 - [확률 변수 (Random Variable)](#확률-변수-random-variable)
 - [모델 (Model)](#모델-model)
 - [모델의 종류](#모델의-종류)
+- [P(X; θ) Graph](#px-θ-graph)
+- [P(Y | X; θ) Graph](#py--x-θ-graph)
 - [Simple Use Case](#simple-use-case)
 - [Simple Linear Regression Implementation](#simple-linear-regression-implementation)
   - [최소제곱추정법(Least Squares Estimation, LSE) 구현](#최소제곱추정법least-squares-estimation-lse-구현)
@@ -158,6 +160,88 @@ Clustering 등이 있습니다.
 **랜덤 포레스트(Random Forest)**, 
 **그래디언트 부스팅(Gradient Boosting)** 등이 있습니다.
 
+# P(X; θ) Graph
+
+X 는 주사위 눈이다. `P(X; θ)` 를 시각화 해보자.
+
+```py
+import matplotlib.pyplot as plt
+
+# Dice numbers
+dice_numbers = [1, 2, 3, 4, 5, 6]
+
+# Probability for each number
+probabilities = [1/6, 1/6, 1/6, 1/6, 1/6, 1/6]
+
+plt.bar(dice_numbers, probabilities)
+plt.xlabel('Dice Number (X)')
+plt.ylabel('Probability P(X; θ)')
+plt.title('Graph of P(X; θ) for Dice Numbers')
+plt.xticks(dice_numbers)
+plt.show()
+```
+
+![](img/2023-09-08-22-41-56.png)
+
+# P(Y | X; θ) Graph
+
+X 는 키, Y 는 몸무게이다. `P(Y | X; θ)` 를 시각화 해보자.
+
+```py
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+from mpl_toolkits.mplot3d import Axes3D
+
+# Create random Height(X) and Weight(Y) data
+np.random.seed(42)
+X = np.random.randint(150, 190, size=(100, 1))
+Y = (X - 100) * 1.1 + np.random.normal(0, 3, size=(100, 1))
+
+# Train Linear Regression model
+model = LinearRegression()
+model.fit(X, Y)
+
+# Model prediction
+Y_pred = model.predict(X)
+
+# Histogram for residuals
+hist, x_edges, y_edges = np.histogram2d(X.flatten(), Y.flatten(), bins=10)
+
+# Calculate the bin width and height
+x_size = x_edges[1] - x_edges[0]
+y_size = y_edges[1] - y_edges[0]
+
+# Normalize the histogram to estimate the probability distribution
+hist = hist / (hist.sum() * x_size * y_size)
+
+# Set up the 3D plot
+fig = plt.figure(figsize=(10, 10))
+ax = fig.add_subplot(111, projection='3d')
+
+# Add bars to the 3D plot
+x_mid = (x_edges[:-1] + x_edges[1:]) / 2
+y_mid = (y_edges[:-1] + y_edges[1:]) / 2
+
+x_pos, y_pos = np.meshgrid(x_mid, y_mid, indexing="ij")
+x_pos = x_pos.ravel()
+y_pos = y_pos.ravel()
+z_pos = 0
+
+z_size = hist.ravel()
+
+ax.bar3d(x_pos, y_pos, z_pos, x_size, y_size, z_size, shade=True)
+
+ax.set_xlabel('Height (X)')
+ax.set_ylabel('Weight (Y)')
+ax.set_zlabel('Probability P(Y|X; θ)')
+ax.set_title('3D Histogram for Probability Distribution P(Y|X; θ)')
+
+plt.show()
+```
+
+![](img/2023-09-08-22-43-43.png)
+
 # Simple Use Case
 
 **키(X)를 독립 변수로하고 몸무게(Y)를 종속 변수로 하는 데이터**를 분석하는 데
@@ -289,6 +373,66 @@ plt.show()
 결과 시각화 외에 특별한 추가 단계가 없습니다.
 
 ## 베이지안 추정법(Bayesian Estimation) 구현
+
+선형 회귀란 독립 변수 X와 종속 변수 Y 사이의 관계를 선형 방정식을 사용하여
+모델링하는 것입니다. 선형 회귀에서 가장 일반적인 형태는 단순 선형 회귀입니다. 이
+경우에는 다음과 같은 방정식이 사용됩니다:
+
+```
+Y = β0 + β1 * X + ε
+```
+
+여기서 Y는 종속 변수, X는 독립 변수, β0는 절편, β1은 기울기(가중치)이고, ε은
+잔차(오차)를 나타냅니다.
+
+베이지안 선형 회귀는 이러한 선형 회귀 문제를 베이즈 정리를 사용하여 접근합니다.
+이를 위해 모델 파라미터의 사전 분포를 설정하고, 주어진 데이터에 대한 가능도를
+계산하여 사후 분포를 추정합니다. 아래는 베이지안 선형 회귀의 과정을 수식으로
+설명한 것입니다.
+
+**사전 분포 설정**: 모델 파라미터 β의 사전 분포를 정규 분포(Normal distribution)로
+가정합니다.
+
+```
+P(β) ~ N(μ₀, Σ₀)
+```
+
+여기서 `μ₀`과 `Σ₀`는 사전 분포의 평균 및 공분산 행렬을 나타냅니다.
+
+**가능도 계산**: 주어진 데이터 X와 모델 파라미터 β을 사용하여 Y의 가능도를
+계산합니다.
+
+```
+P(Y|X, β) ~ N(X * β, σ²I)
+```
+
+여기서 σ²는 데이터와 회귀 직선 사이의 잔차의 분산을 나타내는 노이즈 항입니다.
+
+**사후 분포 계산**: 사전 분포와 가능도를 결합하여 모델 파라미터에 대한 사후 확률
+분포를 추정합니다. 여기서 베이즈 정리를 사용합니다.
+
+```
+P(β|Y, X) = P(Y|X, β) * P(β) / P(Y|X)
+```
+
+구체적으로, 우리는 다음과 같은 사후 분포를 얻습니다.
+
+```
+P(β|Y, X) ~ N(μN, ΣN)
+```
+
+여기서 μN와 ΣN은 사후 분포의 평균 및 공분산 행렬입니다.
+
+**예측 수행**: 사후 분포를 사용하여 주어진 데이터에 대한 예측을 수행합니다.
+
+```
+Y_new = X_new * μN
+```
+
+결론적으로, 베이지안 선형 회귀는 모델 파라미터에 대한 확률 분포를 사용하여 선형
+회귀 문제를 해결합니다. 주어진 데이터와 사전 확률을 통해 사후 확률을 추정하고,
+이를 통해 예측을 수행합니다. 이 방식은 데이터에 대한 추가 정보를 포함하고, 모델
+파라미터에 대한 불확실성을 반영할 수 있습니다.
 
 ```py
 import numpy as np
