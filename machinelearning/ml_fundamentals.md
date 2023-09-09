@@ -2,28 +2,33 @@
 - [Chain Rule](#chain-rule)
 - [독립 변수 (Independent variable), 종속 변수 (Dependent variable)](#독립-변수-independent-variable-종속-변수-dependent-variable)
 - [확률 변수 (Random Variable)](#확률-변수-random-variable)
-- [모델 (Model)](#모델-model)
-- [모델의 종류](#모델의-종류)
-- [P(X; θ) Graph](#px-θ-graph)
-- [P(Y | X; θ) Graph](#py--x-θ-graph)
-- [Simple Use Case](#simple-use-case)
-- [Simple Linear Regression Implementation](#simple-linear-regression-implementation)
-  - [최소제곱추정법(Least Squares Estimation, LSE) 구현](#최소제곱추정법least-squares-estimation-lse-구현)
-  - [최대우도추정법(MLE) 구현](#최대우도추정법mle-구현)
-  - [베이지안 추정법(Bayesian Estimation) 구현](#베이지안-추정법bayesian-estimation-구현)
-  - [인공지능 신경망 (Artifical Neural Networks) 구현](#인공지능-신경망-artifical-neural-networks-구현)
-  - [랜덤 포레스트 (Random Forest)](#랜덤-포레스트-random-forest)
+- [확률 분포(probability distribution)](#확률-분포probability-distribution)
 - [모수 (Parameter)](#모수-parameter)
 - [모수를 추정하는 추정법 (Parameter Estimation)](#모수를-추정하는-추정법-parameter-estimation)
-- [확률 변수 (Random Variable)](#확률-변수-random-variable-1)
-- [확률 분포(probability distribution)](#확률-분포probability-distribution)
-- [p(x; μ, σ^2) 최대우도법 (Maximum Likelihood Estimation, MLE)](#px-μ-σ2-최대우도법-maximum-likelihood-estimation-mle)
-- [p(y | x; μ, σ^2) 최대우도법 (Maximum Likelihood Estimation, MLE)](#py--x-μ-σ2-최대우도법-maximum-likelihood-estimation-mle)
+- [모델 (Model)](#모델-model)
+- [모델의 종류](#모델의-종류)
+- [수식 모델 vs 비수식 모델](#수식-모델-vs-비수식-모델)
+- [수식으로 표현할 수 있는 모델](#수식으로-표현할-수-있는-모델)
+- [수식으로 표현할 수 없는 모델](#수식으로-표현할-수-없는-모델)
+- [인공 신경망의 산출물](#인공-신경망의-산출물)
+- [P(X; θ) Graph](#px-θ-graph)
+- [P(Y | X; θ) Graph](#py--x-θ-graph)
+- [Simple Data, Multiple Implementations](#simple-data-multiple-implementations)
+  - [Linear Regression, 최소제곱추정법(Least Squares Estimation, LSE)](#linear-regression-최소제곱추정법least-squares-estimation-lse)
+  - [Linear Regression, 최대우도추정법(MLE)](#linear-regression-최대우도추정법mle)
+  - [Linear Regression, 베이지안 추정법(Bayesian Estimation)](#linear-regression-베이지안-추정법bayesian-estimation)
+  - [인공지능 신경망 (Artifical Neural Networks)](#인공지능-신경망-artifical-neural-networks)
+  - [랜덤 포레스트 (Random Forest)](#랜덤-포레스트-random-forest)
+- [p(X; μ, σ^2) 최대우도법 (Maximum Likelihood Estimation, MLE)](#px-μ-σ2-최대우도법-maximum-likelihood-estimation-mle)
+- [p(Y | X; μ, σ^2) 최대우도법 (Maximum Likelihood Estimation, MLE)](#py--x-μ-σ2-최대우도법-maximum-likelihood-estimation-mle)
 - [Supervised Learning](#supervised-learning)
-- [PyTorch Simple Linear Regression and Likelihood](#pytorch-simple-linear-regression-and-likelihood)
+- [인공신경망 모델 vs 딥러닝 모델](#인공신경망-모델-vs-딥러닝-모델)
+- [인공신경망 모델의 종류](#인공신경망-모델의-종류)
+- [PyTorch Simple Linear Regression](#pytorch-simple-linear-regression)
 - [PyTorch Simple Linear Regression with Validation Data](#pytorch-simple-linear-regression-with-validation-data)
 - [PyTorch Simple Linear Regression with Test Data](#pytorch-simple-linear-regression-with-test-data)
 - [Bayesian Statistics MLE (Maximum Likelihood Estimation)](#bayesian-statistics-mle-maximum-likelihood-estimation)
+- [Precision/Recall/Threshold Visualization](#precisionrecallthreshold-visualization)
 
 -----
 
@@ -43,13 +48,13 @@
 
 # Chain Rule
 
-체인룰(Chain Rule)은 미적분학에서 합성 함수를 미분할 때 사용되는 규칙입니다.
+**체인룰(Chain Rule)**은 미적분학에서 합성 함수를 미분할 때 사용되는 규칙입니다.
 간단히 말해, 두 개 이상의 함수가 합성된 경우에 그 함수의 미분 결과를 계산하기
 위해 사용됩니다.
 
 합성 함수란 한 변수의 값을 다양한 함수를 통해 변환하는 과정으로 생성되는 최종
-출력값에 대한 함수를 의미합니다. 예를 들어, 두 개의 함수 f(x)와 g(x)가 있고, 두
-함수의 합성 h(x) = f(g(x))가 있다면, h(x)는 합성 함수입니다.
+출력값에 대한 함수를 의미합니다. 예를 들어, 두 개의 함수 `f(x)`와 `g(x)`가 있고, 두
+함수의 합성 `h(x) = f(g(x))`가 있다면, h(x)는 합성 함수입니다.
 
 체인 룰의 공식은 다음과 같습니다:
 
@@ -57,22 +62,27 @@
 (dy/dx) = (dy/du) * (du/dx)
 ```
 
-여기서 `y = f(u)`이고 `u = g(x)`입니다. 이는 `y`가 u에 의존하고, `u`가 `x`에
+여기서 `y = f(u)`이고 `u = g(x)`입니다. 이는 `y`가 `u`에 의존하고, `u`가 `x`에
 의존하므로, `x`에 대한 `y`의 변화율`(dy/dx)`을 계산하기 위해 우선 중간변수인
 `u`에 대한 `y`의 변화율`(dy/du)`과 `x`에 대한 `u`의 변화율`(du/dx)`을 각각
 구하고 곱해주는 것입니다.
 
-예를 들어, 함수 y = f(u) = u²와 u = g(x) = 2x + 3이 있다고 가정합시다. h(x) = f(g(x)) = (2x + 3)²를 구하려면 체인 룰을 적용해야 합니다.
+예를 들어, 함수 `y = f(u) = u²` 와 `u = g(x) = 2x + 3`이 있다고 가정합시다. 
+`h(x) = f(g(x)) = (2x + 3)²` 를 구하려면 체인 룰을 적용해야 합니다.
 
+```
 dy/du = 2u
 du/dx = 2
 Chain rule 적용: (dy/dx) = (dy/du) * (du/dx) = 2u * 2 = 4u = 4(2x+3)
-따라서 최종 결과는 h'(x) = 4(2x+3)가 됩니다. 이처럼 체인룰은 한 번에 여러 함수를 미분할 때 유용한 도구입니다.
+```
+
+따라서 최종 결과는 `h'(x) = 4(2x+3)`가 됩니다. 
+이처럼 체인룰은 한 번에 여러 함수를 미분할 때 유용한 도구입니다.
 
 # 독립 변수 (Independent variable), 종속 변수 (Dependent variable)
 
-독립 변수와 종속 변수는 주로 통계학과 머신러닝에서 사용되는 용어로서 변수 간의
-관계와 영향을 설명하는 데 사용됩니다.
+**독립 변수**와 **종속 변수**는 주로 통계학과 머신러닝에서 사용되는 용어로서
+변수 간의 관계와 영향을 설명하는 데 사용됩니다.
 
 **독립 변수(Independent variable)**: 독립 변수는 종속 변수에 영향을 주는
 변수로서, 입력으로 주어지는 값입니다. 독립 변수는 다른 변수에 영향을 받지
@@ -102,25 +112,125 @@ Chain rule 적용: (dy/dx) = (dy/du) * (du/dx) = 2u * 2 = 4u = 4(2x+3)
 랜덤 변수는 일반적으로 대문자 알파벳(예: X, Y, Z)으로 표기하며, 가능한 결과
 값(실현 값)은 소문자 알파벳(예: x, y, z)으로 표기합니다.
 
-독립 변수와 종속 변수는 머신러닝 및 회귀 분석과 같은 문맥에서 변수의 관계와
-영향을 나타내는 데 사용되는 용어입니다. 반면 랜덤 변수는 확률과 통계학에서
-불확실한 이벤트를 수치화하고 설명하는 데 사용되는 개념입니다.
+**독립 변수**와 **종속 변수**는 머신러닝 및 회귀 분석과 같은 문맥에서 변수의
+관계와 영향을 나타내는 데 사용되는 용어입니다. 반면 **랜덤 변수**는 확률과
+통계학에서 불확실한 이벤트를 수치화하고 설명하는 데 사용되는 개념입니다.
 
-독립 변수와 종속 변수도 어떤 상황에서는 랜덤 변수가 될 수 있습니다. 예를 들어,
-어떤 표본 데이터를 수집할 때 데이터 포인트의 선택이 무작위라면, 이 표본 데이터의
-독립 변수와 종속 변수는 랜덤 변수로 취급될 수 있습니다.
+**독립 변수**와 **종속 변수**도 어떤 상황에서는 랜덤 변수가 될 수 있습니다. 예를
+들어, 어떤 표본 데이터를 수집할 때 데이터 포인트의 선택이 무작위라면, 이 표본
+데이터의 독립 변수와 종속 변수는 랜덤 변수로 취급될 수 있습니다.
 
 즉, 랜덤 변수, 독립 변수, 종속 변수는 상황과 문맥에 따라 서로 관련이 있을 수도
 있고, 아닐 수도 있습니다. 중요한 것은, 이 용어들이 사용되는 목적과 범위를
 이해하는 것입니다.
 
+불확실한 사건(experiment)의 결과에 대응하는 숫자 값으로 정의되는 변수입니다.
+사건의 결과가 확률적으로 발생하기 때문에 확률 변수 값도 확률적으로 결정됩니다.
+확률 변수는 주로 대문자 알파벳(X, Y, Z 등)으로 표현되고, 그 값은 소문자
+알파벳(x, y, z 등)으로 나타냅니다.
+
+확률 변수는 다음 두 가지 유형으로 분류됩니다:
+
+**이산 확률 변수(Discrete random variable)**: 이산 확률 변수는 셀 수 있는(유한
+또는 무한) 개의 가능한 값들 중 하나를 가질 수 있습니다. 일반적으로 정수 값을
+가지며, 이산 확률 변수의 가능한 값들 각각에 확률을 직접 할당할 수 있습니다. 예를
+들어 주사위 던지기, 동전 던지기, 프로세스에서 발생하는 에러 개수 등이 이산 확률
+변수의 예입니다.
+
+**연속 확률 변수(Continuous random variable)**: 연속 확률 변수는 값이 하나의
+구간 내의 모든 실수 값을 가질 수 있습니다. 연속 확률 변수의 경우, 특정 값의
+확률을 정의하기보다는 값의 범위에 확률을 할당하는 것이 더 일반적입니다. 예를
+들어 온도, 길이, 시간, 중량 등이 연속 확률 변수의 예입니다.
+
+확률 변수는 실험의 결과를 수치로 표현해 줌으로써 통계적 모델링, 확률 분포의
+사용, 데이터 분석 등에 사용됩니다.
+
+# 확률 분포(probability distribution)
+
+확률 변수(random variable)의 가능한 값들과 그 값들이 나타날 가능성을 설명하는
+수학적 표현입니다. 확률 분포는 각 사건이 발생할 확률을 알려주는 것으로, 이를
+통해 데이터, 실험, 프로세스 등에서 불확실성을 처리할 수 있습니다. 확률 변수의
+성격에 따라 확률 분포는 **이산 확률 분포(discrete probability distribution)**와
+연속 **확률 분포(continuous probability distribution)**로 구분할 수 있습니다.
+
+**이산 확률 분포(Discrete probability distribution)**: 이산 확률 변수가 가질 수
+있는 가능한 값들의 확률을 나타내는 분포입니다. 
+**확률질량함수(probability mass function, PMF)**로 나타낼 수 있으며, 
+이 함수는 각 값을 확률로 매핑합니다. 이산
+확률 분포의 예로는 **베르누이 분포**, **이항 분포**, **포아송 분포** 등이 있습니다.
+
+**연속 확률 분포(Continuous probability distribution)**: 연속 확률 변수가 가질
+수 있는 가능한 값들의 확률을 나타내는 분포입니다. 
+**확률밀도함수(probability density function, PDF)**로 나타낼 수 있으며, 이 함수는 확률 변수의 값에 대한
+확률 밀도를 매핑합니다. 연속 확률 분포에서 특정 값의 확률은 PDF의 해당 영역
+아래의 면적을 통해 얻을 수 있습니다. 연속 확률 분포의 예로는 
+**정규 분포**, **균일분포**, **지수 분포**, **베타 분포** 등이 있습니다.
+
+# 모수 (Parameter)
+
+통계에서 **모수(parameter)**란 **모집단(population)**의 특성을 나타내는
+수치입니다. 이러한 모수는 모집단의 **평균**, **분산**, **상관계수** 등과 같이
+분포의 성질과 특징을 요약하여 표현한 값입니다.
+
+모수는 주어진 모집단의 확률분포를 규정하기 위해 사용되며, 모집단의 크기에 무관한
+고정된 값입니다. 통계에서 주요 목적 중 하나는 이 모수를 **추정(Estimation)**하고
+**기술통계(Descriptive statistics)**와 **추론통계(Inferential statistics)**를 이용하여
+분석하는 것입니다. 이를 통해 모집단의 전반적인 성질을 이해하고 예측 및
+의사결정에 도움이 되는 정보를 얻을 수 있습니다.
+
+모수는 표본(sample) 추출을 통해 추정할 수 있습니다. 모집단으로부터 추출된 표본
+데이터를 사용하여 모수에 대한 추정치를 계산하고, 이를 다양한 통계적 방법으로
+검증하고 분석하는 과정을 거칩니다.
+
+**인공신경망(artificial neural networks, ANN)**은 일반적으로 **모수(parametric)** 모델로
+분류됩니다. 인공 신경망은 구조적인 설정을 가지며, 다양한 활성화 함수와 학습
+파라미터들을 사용해 학습과 예측을 수행합니다. 이렇게 학습된 파라미터들은
+데이터와 레이블 간의 관계를 나타내며, 모델에 의해 학습된 가중치와 편향 값들이
+모델의 파라미터로 생각됩니다.
+
+그러나 인공신경망은 그 자체로 복잡하고 유연한 모델입니다. 따라서 모수적 방법과
+비모수적 방법 사이에서 완전한 경계가 아니라 더 연속적인 스펙트럼이 있다고 볼 수
+있습니다. 인공 신경망은 그래프 구조를 통해 비선형 관계를 포착할 수 있으므로
+비모수적 모델처럼 간주될 수 있지만, 실제로는 가중치와 편향 값들이 파라미터로
+학습되기 때문에 모수 모델로 분류됩니다.
+
+결론적으로, 인공신경망은 모수 모델로 분류되지만, 복잡한 구조와 함수 덕분에
+비모수적 모델과 유사한 유연성을 가지게 됩니다.
+
+# 모수를 추정하는 추정법 (Parameter Estimation)
+
+모수를 추정하는 추정법은 여러 가지가 있습니다. 대표적인 추정법으로는:
+
+**모멘트추정법 (Method of Moments)**: 관측 데이터의 적률과 이론적인 모델의
+적률을 같게 만드는 방식으로 모수를 추정합니다.
+
+**최대우도추정법 (Maximum Likelihood Estimation, MLE)**: 관측된 데이터가 가장
+그럴 듯한 모수를 찾아내는 방법으로, 전반적인 데이터의 우도를 최대화하는 값으로
+모수를 추정합니다.
+
+**베이즈추정법 (Bayesian Estimation)**: 사전 확률분포를 고려하며, 불확실성을
+나타내는 사후 확률분포를 통해 모수를 추정합니다. 베이즈추정법은 사전정보와 관측
+데이터를 이용하여 추정을 진행합니다.
+
+**최소제곱추정법 (Least Squares Estimation, LSE)**: 관측값과 예측값의
+차이(잔차)의 제곱합을 최소화하는 방식으로 모수를 추정합니다. LSE는 선형회귀와
+같은 모델에서 널리 사용됩니다.
+
+**최소마디오추정법 (Minimum Absolute Deviations, MAD)**: 관측값과 예측값의
+차이(잔차)의 절대값의 합을 최소화하는 방식으로 모수를 추정합니다. MAD는 이상치에
+대해 더 강인한 추정법으로 알려져 있습니다.
+
+**최소자승 추정(LASSO, Ridge Regression 등)**: 정규화(regularization) 항을
+추가하여 파라미터의 크기를 축소하는 방식으로 모수를 추정합니다. 이 방법은
+과적합(overfitting)을 방지하는 데 도움이 됩니다.
+
 # 모델 (Model)
 
-통계학에서 모델(model)은 현상이나 데이터를 설명하거나 예측하기 위해 수학적이나
-개념적 도구로 표현된 간략화된 표현입니다. 현실 세계의 현상을 단순화하고
-일반화하여 이해할 수 있게 만들어 주며, 변수 간의 관계, 패턴, 구조를 파악하거나
-미래의 데이터를 예측하는 데 사용됩니다. 모델에는 선형 회귀, 로지스틱 회귀, 확률
-모델 등 다양한 종류가 있습니다.
+통계학에서 **모델(model)**은 현상이나 데이터를 설명하거나 예측하기 위해
+수학적이나 개념적 도구로 표현된 간략화된 표현입니다. 현실 세계의 현상을
+단순화하고 일반화하여 이해할 수 있게 만들어 주며, 변수 간의 관계, 패턴, 구조를
+파악하거나 미래의 데이터를 예측하는 데 사용됩니다. 모델에는 **선형 회귀**,
+**로지스틱 회귀**, **확률 모델** 등 다양한 종류가 있습니다.
 
 # 모델의 종류
 
@@ -160,9 +270,122 @@ Clustering 등이 있습니다.
 **랜덤 포레스트(Random Forest)**, 
 **그래디언트 부스팅(Gradient Boosting)** 등이 있습니다.
 
+# 수식 모델 vs 비수식 모델
+
+일반적으로 수식으로 표현할 수 있는 모델링과 수식으로 표현할 수 없는 모델링을
+구분하기 위한 명확한 표준 용어는 없습니다. 하지만, 두 유형의 모델링을 구분하기
+위해 '**선형**'과 '**비선형**', 또는 '**매개변수 모델(parametric model)**'과
+'**비매개변수 모델(non-parametric model)**'을 사용하여 설명할 수 있습니다.
+
+**선형(linear) 모델링**: 이 방법들은 데이터 간의 선형 관계를 가정합니다. 하나의
+함수를 사용하여 입력 변수와 예측값 사이의 관계를 설명합니다. 대표적인 선형
+모델링 방법에는 **선형 회귀**, **로지스틱 회귀** 등이 있습니다. 이러한 선형
+모델은 대부분 수식으로 표현할 수 있습니다.
+
+**비선형(non-linear) 모델링**: 데이터 간의 관계가 선형이 아닌 복잡한 형태일 때
+사용되는 방법입니다. 비선형 모델링 방법에는 **인공신경망**, **랜덤포레스트**,
+**k-최근접 이웃** 등이 있습니다. 이러한 모델은 일반적으로 수식으로 표현하기
+어렵습니다.
+
+또한, 모델의 구조를 설명하는 데 다음 두 용어를 사용할 수 있습니다.
+
+**매개변수 모델(parametric model)**: 매개변수를 사용하여 추정하고 표현하는 모델링
+방법입니다. 예를 들어, **선형 회귀 분석**은 예측 변수의 계수 및 절편과 같은 매개
+변수를 사용하여 모델을 표현합니다. 매개변수 모델은 종종 수식으로 표현할 수
+있습니다.
+
+**비매개변수 모델(non-parametric model)**: 모델이 고정된 수의 매개 변수가 없고,
+데이터에 의존하여 복잡한 구조를 가지는 경우입니다. **k-최근접 이웃(KNN)**이
+대표적인 예입니다. 비매개변수 모델은 전반적으로 수식으로 표현하기 어렵습니다.
+
+그러나 이러한 구분은 완벽하게 수식 표현 여부와 일치하지는 않습니다. 경우에 따라
+선형 모델의 수식이 복잡할 수도 있고, 비선형 모델 중에서도 일부 수식으로 표현할
+수 있는 경우도 있습니다. 따라서 이 구분은 그 둘을 완벽하게 구분짓는 기준은
+아니지만, 어느 정도 설명할 수 있는 틀을 제공할 수 있습니다.
+
+# 수식으로 표현할 수 있는 모델
+
+수식으로 표현할 수 있는 모델링 방법은 여러 가지가 있습니다. 여기 주요한 몇
+가지를 나열하였습니다.
+
+**선형 회귀(Linear Regression)**: 입력 데이터 간의 선형 관계를 예측하는 모델입니다.
+일반적으로 y = wx + b와 같이 수식으로 표현할 수 있습니다.
+
+**로지스틱 회귀(Logistic Regression)**: 이진 분류 문제에 사용되는 모델로, 확률을
+계산하기 위해 로지스틱(시그모이드) 함수를 사용하여 수식을 표현합니다.
+
+**다항식 회귀(Polynomial Regression)**: 선형 회귀보다 복잡한 관계를 모델링하는
+방법으로, 계수와 차수를 포함하는 다항식 수식을 사용합니다.
+
+**라쏘 회귀(Lasso Regression)**와 릿지 **회귀(Ridge Regression)**: 선형 회귀와
+유사하지만, L1 혹은 L2 규제 항을 추가하여 수식을 표현합니다.
+
+**서포트 벡터 머신(Support Vector Machine, SVM)**: 마진을 최대화하는 초평면 혹은
+구분 경계를 찾는 SVM 알고리즘 역시 선형 혹은 커널 함수를 사용한 비선형 형태로
+수식을 표현할 수 있습니다.
+
+**가우시안 나이브 베이즈(Gaussian Naive Bayes)**: 독립 변수들간의 조건부 확률을
+가우시안 분포로 가정하여 분류 문제를 해결하는 모델로, 확률 이론과 베이즈 정리를
+사용한 수식으로 표현됩니다.
+
+**선형 판별 분석(Linear Discriminant Analysis, LDA)**: 클래스 간의 분별력을
+최대화하도록 데이터를 낮은 차원 공간으로 사영(project)하는 선형 변환으로 최적화
+문제를 해결하는데, 수식으로 표현할 수 있습니다.
+
+회귀 및 분류 문제를 위한 기타 손실 함수: 손실 함수(loss function)는 모델의
+출력과 실제 값을 비교하여 얼마나 성능이 좋은지 측정하는 데 사용되는 지표입니다.
+대표적인 손실 함수로는 평균 제곱 오차(Mean Squared Error, MSE), 교차
+엔트로피(Cross-Entropy) 등이 있으며, 수식으로 표현할 수 있습니다.
+
+# 수식으로 표현할 수 없는 모델
+
+수식으로 직접적으로 표현하기 어려운 모델의 대표적인 예를 몇 가지 제시하겠습니다.
+
+**인공 신경망 (Artificial Neural Networks)**: 입력, 은닉 및 출력층으로 구성된 신경망
+구조와 가중치를 사용하여 데이터 분석을 수행하는 딥러닝 모델입니다.
+
+**랜덤 포레스트 (Random Forest)**: 여러 개의 의사결정나무를 결합하여 처리하는 앙상블
+기반 모델로, 각 나무마다 복잡한 구조와 분기 노드에서의 결정 기준이 다릅니다.
+
+**k-최근접 이웃 (k-Nearest Neighbors, KNN)**: 입력 데이터와 가장 가까운 k 개의 이웃
+데이터를 기준으로 새로운 데이터를 분류하거나 값을 예측하는 방법으로, 거리 기반
+방식을 사용합니다.
+
+**서포트 벡터 머신 (Support Vector Machine, SVM)을 비선형 커널 함수로 확장한 경우**:
+비선형 커널 함수를 활용하는 경우, 기존의 선형 SVM보다 더 복잡한 구조를 가지며
+수식 표현이 어려울 수 있습니다.
+
+**워드 임베딩 (Word Embeddings)**: 자연어 처리에서 단어나 문장을 고정된 크기의
+벡터로 변환하는 기법이며, 대표적인 방법으로는 Word2Vec, GloVe, FastText 등이
+있습니다.
+
+이러한 복잡한 모델들은 전형적으로 일반적인 형태의 수식으로 명확하게 표현할 수
+없습니다. 대신 이들 모델은 구조, 매개 변수, 가중치 등 다른 구성 요소를 사용하여
+처리됩니다. 이런 모델들은 그 구조와 학습 방식 때문에, 종종 일반적인 수식으로
+표현되는 모델보다 데이터의 복잡한 구조와 패턴을 잘 포착하는 데 능숙합니다.
+
+# 인공 신경망의 산출물
+
+인공 신경망을 사용한 모델링의 산출물은 전통적인 수식과 달리, 신경망의 구조와
+가중치(매개 변수)로 표현됩니다. 인공 신경망은 입력층, 은닉층, 출력층으로
+구성되며, 각 층의 노드(뉴런)들 사이의 가중치들이 다양한 패턴을 학습하는 데
+사용됩니다.
+
+학습이 완료된 신경망 모델은 수식으로 표현되기 어렵습니다. 이는 신경망의 각
+노드에서 활성화 함수(ReLU, Sigmoid, Tanh 등)를 통과하며 데이터가 변환되고,
+복잡한 상호작용이 일어나기 때문입니다. 따라서, 신경망 모델의 산출물은 모델의
+**구조**와 **가중치**들로 표현되지만 일반적인 수식으로는 나타내기 어렵습니다.
+
+신경망 모델의 가중치는 학습을 통해 설정되며, 저장하거나 다른 환경에서 재사용할
+수 있습니다. 이러한 산출물이 원하는 결과를 얻기 위한 예측이나 분류 작업에 직접
+사용됩니다.
+
 # P(X; θ) Graph
 
-X 는 주사위 눈이다. `P(X; θ)` 를 시각화 해보자.
+X 는 주사위 눈이다. `P(X; θ)` 를 시각화 해보자. `θ`는 주사위의 각 숫자 나올 확률을
+나타내는 `모수(parameter)`입니다. 이 경우, `θ`는 모든 숫자에 대해 `1/6`으로
+동일합니다. 즉, 이 시각화에서 모델의 파라미터 값인 `θ`는 모든 주사위 숫자의 등장
+확률이 동일하다는 것을 의미합니다.
 
 ```py
 import matplotlib.pyplot as plt
@@ -185,95 +408,59 @@ plt.show()
 
 # P(Y | X; θ) Graph
 
-X 는 키, Y 는 몸무게이다. `P(Y | X; θ)` 를 시각화 해보자.
+X 는 키, Y 는 몸무게이다. `P(Y | X; θ)` 를 시각화 해보자. `θ`는 이 경우 선형
+회귀 모델의 파라미터를 의미합니다. 선형 회귀 모델은 `Y = aX + b + ε` 형태로
+주어지고, `θ`는 계수 `a`와 `b`를 포함합니다. 여기서 `ε`는 오차 또는 노이즈를 나타냅니다.
+이 코드에서는 `sklearn.linear_model.LinearRegression`을 사용하여 파라미터를
+학습하고 회귀 모델을 통해 주어진 `X` 값에 대한 `Y` 값의 확률 분포 `P(Y|X; θ)`를
+시각화합니다.
 
 ```py
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.linear_model import LinearRegression
 from mpl_toolkits.mplot3d import Axes3D
+from sklearn.linear_model import LinearRegression
+from scipy.stats import norm
 
-# Create random Height(X) and Weight(Y) data
-np.random.seed(42)
-X = np.random.randint(150, 190, size=(100, 1))
-Y = (X - 100) * 1.1 + np.random.normal(0, 3, size=(100, 1))
+# 가상 데이터 생성
+np.random.seed(0)
+num_samples = 100
+X = np.random.uniform(0, 10, num_samples)
+noise = np.random.normal(0, 1, num_samples)
+Y = 2 * X + 3 + noise
 
-# Train Linear Regression model
-model = LinearRegression()
-model.fit(X, Y)
+# 회귀 모델 학습
+X = X.reshape(-1, 1)
+regression_model = LinearRegression()
+regression_model.fit(X, Y)
 
-# Model prediction
-Y_pred = model.predict(X)
+# 가우시안 확률 분포를 사용해 P(Y|X; θ) 계산
+std_dev = np.std(Y - regression_model.predict(X))
+X_range = np.linspace(0, 10, 100)
+Y_range = np.linspace(np.min(Y), np.max(Y), 100)
+Z = np.array([norm.pdf(Y_range, loc=regression_model.predict(np.array([[x]])), scale=std_dev) for x in X_range])
 
-# Histogram for residuals
-hist, x_edges, y_edges = np.histogram2d(X.flatten(), Y.flatten(), bins=10)
-
-# Calculate the bin width and height
-x_size = x_edges[1] - x_edges[0]
-y_size = y_edges[1] - y_edges[0]
-
-# Normalize the histogram to estimate the probability distribution
-hist = hist / (hist.sum() * x_size * y_size)
-
-# Set up the 3D plot
-fig = plt.figure(figsize=(10, 10))
+# 3차원 확률 분포 시각화
+fig = plt.figure(figsize=(10, 8))
 ax = fig.add_subplot(111, projection='3d')
 
-# Add bars to the 3D plot
-x_mid = (x_edges[:-1] + x_edges[1:]) / 2
-y_mid = (y_edges[:-1] + y_edges[1:]) / 2
+X_grid, Y_grid = np.meshgrid(X_range, Y_range)
+ax.plot_surface(X_grid, Y_grid, Z.T, cmap='viridis', alpha=.8)
 
-x_pos, y_pos = np.meshgrid(x_mid, y_mid, indexing="ij")
-x_pos = x_pos.ravel()
-y_pos = y_pos.ravel()
-z_pos = 0
-
-z_size = hist.ravel()
-
-ax.bar3d(x_pos, y_pos, z_pos, x_size, y_size, z_size, shade=True)
-
-ax.set_xlabel('Height (X)')
-ax.set_ylabel('Weight (Y)')
-ax.set_zlabel('Probability P(Y|X; θ)')
-ax.set_title('3D Histogram for Probability Distribution P(Y|X; θ)')
-
+ax.set_xlabel('X')
+ax.set_ylabel('Y')
+ax.set_zlabel('P(Y|X; θ)')
+plt.title('3D Visualization of P(Y|X; θ) with Linear Regression Model')
 plt.show()
 ```
 
-![](img/2023-09-08-22-43-43.png)
+![](img/2023-09-08-22-57-11.png)
 
-# Simple Use Case
+# Simple Data, Multiple Implementations
 
-**키(X)를 독립 변수로하고 몸무게(Y)를 종속 변수로 하는 데이터**를 분석하는 데
-가장 적합한 통계적 모델은 **선형 회귀(Linear Regression)** 모델입니다. 키와
-몸무게 간의 관계를 선형적인 관계로 가정하고, 몸무게를 예측하는데 사용할 수 있는
-모델을 만들 수 있습니다.
+키(X)를 독립 변수로하고 몸무게(Y)를 종속 변수로 하는 데이터를 모델링해보자.
 
-선형 회귀모델은 다음과 같은 형태를 가집니다.
-
-```
-Y = w * X + b + ε
-```
-
-여기서 Y는 몸무게, X는 키, w와 b는 추정할 회귀 계수(기울기와 절편)이며, ε는
-오차입니다.
-
-선형 회귀 모델은 다양한 방법으로 추정할 수 있습니다. 가장 일반적인 방법은
-**최소제곱추정법(Least Squares Estimation, LSE)**을 사용하여 w와 b를 찾는
-것입니다. 이 방법 외에도 **최대우도추정법(MLE)**이나 
-**베이지안 추정법(Bayesian Estimation)**을 사용하여 파라미터를 추정할 수 있습니다.
-
-데이터가 선형적인 가정에 잘 부합하면, 선형 회귀 모델은 키와 몸무게 간의 관계에
-대한 통찰력있는 예측을 제공할 것입니다. 그러나 데이터가 선형 가정에 맞지 않거나
-좀 더 복잡한 관계를 가지고 있다면 비선형인 다항 회귀 모델, 스플라인 회귀, 지수
-회귀 등 다른 형태의 회귀 모델을 고려할 수 있습니다. 이러한 고급 모델은 데이터가
-가진 다양한 패턴에 더 잘 적합할 수 있습니다. 그러나 선형 회귀 모델은 주어진
-데이터에 대한 단순하고 이해하기 쉬운 출발점을 제공하며, 경험적으로 키와 몸무게
-사이에는 선형 회귀가 꽤 잘 작동한다는 것이 알려져 있습니다.
-
-# Simple Linear Regression Implementation
-
-## 최소제곱추정법(Least Squares Estimation, LSE) 구현
+## Linear Regression, 최소제곱추정법(Least Squares Estimation, LSE)
 
 키(X)와 몸무게(Y) 데이터를 사용하여 독립 변수와 종속 변수간의 선형 회귀 모델을
 만드는 Python 코드를 제공합니다. 여기서는 최소제곱추정법 (Least Squares
@@ -317,7 +504,7 @@ plt.show()
 몸무게 데이터를 제공해야 합니다. 몸무게를 예측하기 위해 구한 선형 회귀 모델에서
 파라미터 w와 b를 사용하세요.
 
-## 최대우도추정법(MLE) 구현
+## Linear Regression, 최대우도추정법(MLE)
 
 선형 회귀에서 최대우도추정법(MLE)을 구현하려면 가우시안 오차를 가정해야 합니다.
 이 경우, 최대우도추정법은 최소제곱추정법(LSE)과 동일한 결과를 도출합니다.
@@ -372,7 +559,7 @@ plt.show()
 동일한 결과를 도출하기 때문입니다. 코드에는 데이터 생성, 매개 변수 최적화 및
 결과 시각화 외에 특별한 추가 단계가 없습니다.
 
-## 베이지안 추정법(Bayesian Estimation) 구현
+## Linear Regression, 베이지안 추정법(Bayesian Estimation)
 
 선형 회귀란 독립 변수 X와 종속 변수 Y 사이의 관계를 선형 방정식을 사용하여
 모델링하는 것입니다. 선형 회귀에서 가장 일반적인 형태는 단순 선형 회귀입니다. 이
@@ -466,7 +653,7 @@ plt.show()
 
 ![](img/2023-09-07-23-42-18.png)
 
-## 인공지능 신경망 (Artifical Neural Networks) 구현 
+## 인공지능 신경망 (Artifical Neural Networks)
 
 다음은 scikit-learn의 `MLPRegressor`를 사용하여 인공 신경망 모델을 학습시키고
 키에 대한 몸무게를 예측합니다. 실제 데이터를 사용하려면 `X`와 `y`에 해당하는 값을
@@ -588,6 +775,7 @@ Scikit-learn 라이브러리의 `RandomForestRegressor`를 사용하여 랜덤 �
 
 ```py
 import numpy as np
+import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestRegressor
 
 # 키(X)와 몸무게(y) 데이터를 생성합니다. (예시 데이터)
@@ -606,96 +794,25 @@ predicted_y = random_forest.predict(new_X)
 
 print("새로운 키:", new_X)
 print("예측된 몸무게:", predicted_y)
+
+# 시각화를 위한 키 값들에 대한 몸무게 예측을 수행합니다.
+X_display = np.arange(145, 195).reshape(-1, 1)
+y_display = random_forest.predict(X_display)
+
+# 결과를 시각화합니다.
+plt.scatter(X, y, color='blue', label='Actual data points')
+plt.plot(X_display, y_display, color='green', label='Random Forest')
+plt.scatter(new_X, predicted_y, color='red', label='Prediction', marker='x', s=100)
+plt.xlabel('Height (X)')
+plt.ylabel('Weight (Y)')
+plt.legend()
+plt.title("Height vs. Weight - Random Forest Regression Modeling & Visualization")
+plt.show()
 ```
 
-# 모수 (Parameter)
+![](img/2023-09-09-14-46-44.png)
 
-통계에서 모수(parameter)란 모집단(population)의 특성을 나타내는 수치입니다.
-이러한 모수는 모집단의 **평균**, **분산**, **상관계수** 등과 같이 분포의 성질과
-특징을 요약하여 표현한 값입니다.
-
-모수는 주어진 모집단의 확률분포를 규정하기 위해 사용되며, 모집단의 크기에 무관한
-고정된 값입니다. 통계에서 주요 목적 중 하나는 이 모수를 **추정(Estimation)**하고
-**기술통계(Descriptive statistics)**와 **추론통계(Inferential statistics)**를 이용하여
-분석하는 것입니다. 이를 통해 모집단의 전반적인 성질을 이해하고 예측 및
-의사결정에 도움이 되는 정보를 얻을 수 있습니다.
-
-모수는 표본(sample) 추출을 통해 추정할 수 있습니다. 모집단으로부터 추출된 표본
-데이터를 사용하여 모수에 대한 추정치를 계산하고, 이를 다양한 통계적 방법으로
-검증하고 분석하는 과정을 거칩니다.
-
-# 모수를 추정하는 추정법 (Parameter Estimation)
-
-모수를 추정하는 추정법은 여러 가지가 있습니다. 대표적인 추정법으로는:
-
-**모멘트추정법 (Method of Moments)**: 관측 데이터의 적률과 이론적인 모델의
-적률을 같게 만드는 방식으로 모수를 추정합니다.
-
-**최대우도추정법 (Maximum Likelihood Estimation, MLE)**: 관측된 데이터가 가장
-그럴 듯한 모수를 찾아내는 방법으로, 전반적인 데이터의 우도를 최대화하는 값으로
-모수를 추정합니다.
-
-**베이즈추정법 (Bayesian Estimation)**: 사전 확률분포를 고려하며, 불확실성을
-나타내는 사후 확률분포를 통해 모수를 추정합니다. 베이즈추정법은 사전정보와 관측
-데이터를 이용하여 추정을 진행합니다.
-
-**최소제곱추정법 (Least Squares Estimation, LSE)**: 관측값과 예측값의
-차이(잔차)의 제곱합을 최소화하는 방식으로 모수를 추정합니다. LSE는 선형회귀와
-같은 모델에서 널리 사용됩니다.
-
-**최소마디오추정법 (Minimum Absolute Deviations, MAD)**: 관측값과 예측값의
-차이(잔차)의 절대값의 합을 최소화하는 방식으로 모수를 추정합니다. MAD는 이상치에
-대해 더 강인한 추정법으로 알려져 있습니다.
-
-**최소자승 추정(LASSO, Ridge Regression 등)**: 정규화(regularization) 항을
-추가하여 파라미터의 크기를 축소하는 방식으로 모수를 추정합니다. 이 방법은
-과적합(overfitting)을 방지하는 데 도움이 됩니다.
-
-# 확률 변수 (Random Variable)
-
-불확실한 사건(experiment)의 결과에 대응하는 숫자 값으로 정의되는 변수입니다.
-사건의 결과가 확률적으로 발생하기 때문에 확률 변수 값도 확률적으로 결정됩니다.
-확률 변수는 주로 대문자 알파벳(X, Y, Z 등)으로 표현되고, 그 값은 소문자
-알파벳(x, y, z 등)으로 나타냅니다.
-
-확률 변수는 다음 두 가지 유형으로 분류됩니다:
-
-**이산 확률 변수(Discrete random variable)**: 이산 확률 변수는 셀 수 있는(유한 또는
-무한) 개의 가능한 값들 중 하나를 가질 수 있습니다. 일반적으로 정수 값을 가지며,
-이산 확률 변수의 가능한 값들 각각에 확률을 직접 할당할 수 있습니다. 예를 들어
-주사위 던지기, 동전 던지기, 프로세스에서 발생하는 에러 개수 등이 이산 확률
-변수의 예입니다.
-
-**연속 확률 변수(Continuous random variable)**: 연속 확률 변수는 값이 하나의 구간
-내의 모든 실수 값을 가질 수 있습니다. 연속 확률 변수의 경우, 특정 값의 확률을
-정의하기보다는 값의 범위에 확률을 할당하는 것이 더 일반적입니다. 예를 들어 온도,
-길이, 시간, 중량 등이 연속 확률 변수의 예입니다.
-
-확률 변수는 실험의 결과를 수치로 표현해 줌으로써 통계적 모델링, 확률 분포의
-사용, 데이터 분석 등에 사용됩니다.
-
-# 확률 분포(probability distribution)
-
-확률 변수(random variable)의 가능한 값들과 그 값들이 나타날 가능성을 설명하는
-수학적 표현입니다. 확률 분포는 각 사건이 발생할 확률을 알려주는 것으로, 이를
-통해 데이터, 실험, 프로세스 등에서 불확실성을 처리할 수 있습니다. 확률 변수의
-성격에 따라 확률 분포는 **이산 확률 분포(discrete probability distribution)**와
-연속 **확률 분포(continuous probability distribution)**로 구분할 수 있습니다.
-
-**이산 확률 분포(Discrete probability distribution)**: 이산 확률 변수가 가질 수
-있는 가능한 값들의 확률을 나타내는 분포입니다. 
-**확률질량함수(probability mass function, PMF)**로 나타낼 수 있으며, 
-이 함수는 각 값을 확률로 매핑합니다. 이산
-확률 분포의 예로는 **베르누이 분포**, **이항 분포**, **포아송 분포** 등이 있습니다.
-
-**연속 확률 분포(Continuous probability distribution)**: 연속 확률 변수가 가질
-수 있는 가능한 값들의 확률을 나타내는 분포입니다. 
-**확률밀도함수(probability density function, PDF)**로 나타낼 수 있으며, 이 함수는 확률 변수의 값에 대한
-확률 밀도를 매핑합니다. 연속 확률 분포에서 특정 값의 확률은 PDF의 해당 영역
-아래의 면적을 통해 얻을 수 있습니다. 연속 확률 분포의 예로는 
-**정규 분포**, **균일분포**, **지수 분포**, **베타 분포** 등이 있습니다.
-
-# p(x; μ, σ^2) 최대우도법 (Maximum Likelihood Estimation, MLE)
+# p(X; μ, σ^2) 최대우도법 (Maximum Likelihood Estimation, MLE)
 
 **일반 정규 분포**를 따르는 확률변수 `X`가 있을 때, 확률밀도함수는 다음과 같습니다.
 
@@ -840,68 +957,124 @@ fig.colorbar(surf, shrink=0.5, aspect=10)
 plt.show()
 ```
 
-# p(y | x; μ, σ^2) 최대우도법 (Maximum Likelihood Estimation, MLE)
+# p(Y | X; μ, σ^2) 최대우도법 (Maximum Likelihood Estimation, MLE)
 
 최대우도법 (Maximum Likelihood Estimation, MLE)은 주어진 데이터를 가장 잘 설명하는 모수 (μ, σ^2)를 추정하는 방법입니다. 이 과정은 확률밀도함수의 우도(likelihood)를 최대화하는 방향으로 진행되며, 이해를 돕기 위해 다음 단계로 설명하겠습니다.
 
-데이터 수집: 먼저, 관측된 키(x)와 몸무게(y)에 대한 데이터 셋을 수집합니다.
+**데이터 수집**: 먼저, 관측된 키(x)와 몸무게(y)에 대한 데이터 셋을 수집합니다.
 
-확률밀도함수 정의: 키(x)에 대한 몸무게(y)의 확률밀도함수 p(y | x; μ, σ^2)를 정의합니다. 여기서 μ는 평균, σ^2는 분산을 나타냅니다. 일반적으로 정규분포를 가정하여 확률밀도함수를 정의합니다.
+**확률밀도함수 정의**: 키(x)에 대한 몸무게(y)의 확률밀도함수 p(y | x; μ, σ^2)를 정의합니다. 여기서 μ는 평균, σ^2는 분산을 나타냅니다. 일반적으로 정규분포를 가정하여 확률밀도함수를 정의합니다.
 
-우도함수 정의: 데이터셋의 모든 관측치에 대한 확률밀도함수의 곱으로 우도함수 L(μ, σ^2)를 정의합니다. 여기서 우리는 모수 (μ, σ^2)가 주어진 경우 데이터 셋이 얼마나 그럴듯한지를 나타내는 값을 계산하게 됩니다.
+**우도함수 정의**: 데이터셋의 모든 관측치에 대한 확률밀도함수의 곱으로 우도함수 L(μ, σ^2)를 정의합니다. 여기서 우리는 모수 (μ, σ^2)가 주어진 경우 데이터 셋이 얼마나 그럴듯한지를 나타내는 값을 계산하게 됩니다.
 
+```
 L(μ, σ^2) = Π p(y_i | x_i; μ, σ^2)
+```
 
-로그우도함수: 곱셈의 형태인 우도함수를 덧셈 형태로 바꾸기 위해 우도함수에 로그를 취해 로그우도함수를 정의합니다. 이렇게 함으로써 계산이 용이해집니다.
+**로그우도함수**: 곱셈의 형태인 우도함수를 덧셈 형태로 바꾸기 위해 우도함수에 로그를 취해 로그우도함수를 정의합니다. 이렇게 함으로써 계산이 용이해집니다.
 
+```
 log L(μ, σ^2) = Σ log p(y_i | x_i; μ, σ^2)
+```
 
-모수 추정: 로그우도함수를 최대화하는 모수 (μ, σ^2)을 찾습니다. 이를 위해 미분과 같은 최적화 기술을 사용하여 로그우도함수에 대한 모수의 최대값을 찾을 수 있습니다.
+**모수 추정**: 로그우도함수를 최대화하는 모수 (μ, σ^2)을 찾습니다. 이를 위해 미분과 같은 최적화 기술을 사용하여 로그우도함수에 대한 모수의 최대값을 찾을 수 있습니다.
 
+```
 argmax_(μ, σ^2) log L(μ, σ^2)
+```
 
 결과 해석: 추정된 최적의 모수 (μ, σ^2)를 사용하여 데이터 셋의 몸무게 분포와 관련된 통계적인 해석을 할 수 있습니다.
 
-요약하면, MLE 과정은 관측된 데이터를 가장 잘 설명하는 확률밀도함수의 모수 (μ, σ^2)를 찾기 위해 우도를 최대화하는 방식으로 진행됩니다. 이를 통해 키와 몸무게 간의 관계를 통계적으로 모형화하여 다양한 분석과 예측이 가능하게 됩니다.
+요약하면, MLE 과정은 관측된 데이터를 가장 잘 설명하는 확률밀도함수의 모수 `(μ, σ^2)`를 찾기 위해 우도를 최대화하는 방식으로 진행됩니다. 이를 통해 키와 몸무게 간의 관계를 통계적으로 모형화하여 다양한 분석과 예측이 가능하게 됩니다.
 
 # Supervised Learning
 
 키를 입력하면 몸무게를 출력하는 모델을 만들고자 하는 경우, Supervised learning
 (지도학습) 알고리즘 중 일부를 사용하여 회귀(regression) 문제를 해결할 수
-있습니다. 주어진 데이터를 바탕으로 다음과 같은 모델들을 적용해볼 수 있습니다.
+있습니다. 주어진 데이터를 바탕으로 Supervised Learning 을 통해 모델링할 수 있다.
 
-**선형 회귀 (Linear Regression)**: 키와 몸무게 간의 선형 관계를 가정하여
-가중치와 편향을 학습합니다. 이 방법은 가장 간단하고 빠르게 구현할 수 있는
-모델입니다.
+**지도학습(supervised learning)**은 
+**인공신경망(artificial neural networks, ANN)**
+뿐만 아니라 여러 종류의 머신러닝 모델에 사용되는 학습 방법입니다. 지도
+학습은 입력 변수와 관련된 출력 변수(레이블 또는 타겟)가 제공되는 학습 데이터셋을
+사용하여 모델을 학습합니다. 이러한 지도 학습 방식은 다양한 머신러닝 알고리즘에서
+사용되며 대표적인 지도 학습 알고리즘은 다음과 같습니다.
 
-**다항 회귀 (Polynomial Regression)**: 키와 몸무게 간의 비선형 관계를 포착하기
-위해 더 복잡한 다항식을 사용합니다. 이 경우 데이터를 더 잘 설명할 수 있으나,
-과적합(overfitting)의 위험이 있을 수 있습니다.
+* 선형 회귀(Linear regression)
+* 로지스틱 회귀(Logistic regression)
+* 서포트 벡터 머신(Support Vector Machines, SVM)
+* 결정 트리(Decision Trees)
+* 랜덤 포레스트(Random Forests)
+* 그래디언트 부스팅(Gradient Boosting)
+* K-최근접 이웃(K-Nearest Neighbors, KNN)
+* 인공신경망(artificial neural networks, ANN)
+* 컨볼루션 신경망 (Convolutional Neural Networks, CNN)
+* 순환 신경망(Recurrent Neural Networks, RNN)
 
-**결정 트리 (Decision Tree) 회귀**: 키 값을 기준으로 몸무게를 예측하는
-트리구조를 학습합니다. 모델의 해석이 쉽고 작업 흐름을 이해하기 쉬운 장점이
+이러한 모델들은 분류(classification), 회귀(regression), 예측(prediction) 등의
+문제를 해결하는 데 사용되며 지도 학습 방식을 따릅니다. 각 모델은 데이터의 성격,
+복잡성, 차원, 패턴 등에 따라 성능과 적합성이 다를 수 있습니다.
+
+# 인공신경망 모델 vs 딥러닝 모델
+
+딥러닝(Deep learning)은 인공신경망(artificial neural networks, ANN)의 한
+형태로서, 크게는 같은 범주 안에 속하지만 구체적인 모델 구조와 기술적 차이가
 있습니다.
 
-**랜덤 포레스트 (Random Forest) 회귀**: 여러 결정 트리를 앙상블하여 몸무게를
-예측하는 상대적으로 높은 성능의 모델입니다.
+인공신경망(ANN)은 뉴런의 연결망으로 구성된 머신러닝 모델로, 뇌의 동작 방식에서
+영감을 받은 계산 방식입니다. 인공신경망에는 퍼셉트론(Perceptron)이나 다층
+퍼셉트론(Multilayer Perceptron, MLP) 같은 간단한 네트워크 구조부터 복잡한
+네트워크 구조까지 다양한 형태가 있습니다.
 
-**서포트 벡터 머신(Support Vector Machine) 회귀**: 키와 몸무게 사이의 관계를
-가장 잘 설명하는 초평면을 찾는 알고리즘 입니다. 적절한 커널 함수를 선택하면 선형
-및 비선형 관계를 모두 캡처할 수 있습니다.
+반면, 딥러닝은 인공신경망 중 깊은 계층 구조를 가지는 (즉, 많은 hidden layer를
+가진) 모델 입니다. 딥러닝 알고리즘은 대규모 데이터를 처리하고 복잡한 패턴을
+찾아내기 위해 계층적으로 구성된 모델을 사용합니다. 딥러닝 모델에는 컨볼루션
+신경망(Convolutional Neural Networks, CNN), 순환 신경망(Recurrent Neural
+Networks, RNN), 트랜스포머(Transformer) 등과 같은 고급 인공신경망 구조가
+포함됩니다.
 
-**인공신경망(Artificial Neural Networks) 회귀**: 신경망 구조를 사용하여 몸무게를
-예측하는 딥러닝 기반 방법입니다. 높은 성능을 달성할 수 있지만, 설정 및 학습에
-많은 계산 비용이 필요할 수 있습니다.
+요약하면, 딥러닝 모델은 인공신경망 모델 중 깊은 네트워크 구조를 가진 모델로
+이해할 수 있으며, 인공신경망은 더 넓은 범주의 머신러닝 모델입니다. 따라서 모든
+딥러닝 모델은 인공신경망으로 간주될 수 있지만, 모든 인공신경망 모델이 딥러닝
+모델은 아닙니다.
 
-위의 방법 중에서 가장 적합한 모델을 선택하기 위해서는 주어진 데이터에 대한
-이해도가 중요합니다. 데이터의 분포와 특성을 알고 있는 경우, 그에 맞는 적절한
-모델과 기법을 선택할 수 있습니다. 또한 모델의 성능과 복잡성을 고려하여 적절한
-알고리즘을 선택해야 합니다. 이러한 요인들을 고려하여 여러 모델들을 실험하고
-최종적으로 가장 좋은 성능을 보이는 모델을 선택하여 사용하면 됩니다.
+# 인공신경망 모델의 종류
 
-# PyTorch Simple Linear Regression and Likelihood
+인공신경망(Artificial Neural Networks, ANN)은 다양한 네트워크 구조와 목적에 따라
+여러 가지 종류로 나뉩니다. 대표적인 인공신경망 모델들은 다음과 같습니다:
 
-> [가능도함수 | 데이터사이언스스쿨](https://datascienceschool.net/02%20mathematics/09.02%20%EC%B5%9C%EB%8C%80%EA%B0%80%EB%8A%A5%EB%8F%84%20%EC%B6%94%EC%A0%95%EB%B2%95.html#id2)
+**퍼셉트론(Perceptron)**: 가장 간단한 인공신경망 구조로, 입력값에 가중치를
+곱하고 편향을 더해 하나의 출력값을 만드는 선형 모델입니다.
+
+**다층 퍼셉트론(Multilayer Perceptron, MLP)**: 두 개 이상의 레이어로 구성된
+인공신경망으로, 중간에 하나 이상의 은닉층(hidden layers)을 포함합니다. MLP는
+비선형 활성화 함수를 사용하여 비선형 관계를 모델링할 수 있습니다.
+
+**컨볼루션 신경망(Convolutional Neural Networks, CNN)**: 이미지 인식, 분류 및
+처리를 위해 설계된 ANN 모델입니다. 컨볼루션 레이어와 풀링 레이어를 사용하여
+공간적 계층 구조를 학습합니다.
+
+**순환 신경망(Recurrent Neural Networks, RNN)**: 순차 데이터와 시계열 데이터를
+처리하기 위해 설계된 ANN 모델입니다. RNN은 각 시점의 데이터를 처리하면서 이전
+시점의 정보를 포함하는 숨겨진 상태(hidden state)를 유지합니다.
+
+**Long Short-Term Memory (LSTM) Networks**: 그래디언트 소실 문제를 극복하기 위해
+개발된 RNN의 변형입니다. LSTM은 게이트 메커니즘을 사용하여 장기 및 단기 정보를
+학습 및 저장할 수 있습니다.
+
+**Gated Recurrent Units (GRUs)**: LSTM의 간소화된 변형으로, 비슷한 게이팅 구조를
+사용하나 LSTM 보다 더 적은 연산량이 필요합니다.
+
+**트랜스포머(Transformer)**: 자연어 처리(NLP) 등의 순차적 데이터 처리를 위한
+모델로, 어텐션 메커니즘을 사용하여 멀리 떨어진 입력 간의 관계를 직접
+모델링합니다.
+
+이 외에도 인공신경망은 다양한 활성화 함수, 최적화 기법, 규제 방법 등과 함께
+사용되어 다양한 응용 분야에서 맞춤형 모델을 만드는 데 활용됩니다. 각 유형의
+인공신경망은 특정 문제나 데이터 유형에 적합한 구조를 가지며, 일반적으로 딥러닝
+기술의 근간이 됩니다.
+
+# PyTorch Simple Linear Regression
 
 다음은 PyTorch 로 구현한 Simple Linear Regression 이다.
 
@@ -943,26 +1116,6 @@ print("After training:")
 print("Weights:", model.linear.weight.item())
 print("Bias:", model.linear.bias.item())
 ```
-
-Frequentist Statistics 관점에서 가능도 함수(likelihood function)는 주어진
-데이터와 모델 파라미터가 주어졌을 때, 발생할 확률을 나타내는 함수입니다. 이
-코드에서 가능도 함수는 평균 제곱 오차(Mean Squared Error, MSE)를 최소화하는 선형
-회귀 모델의 두 파라미터(가중치와 절편, weight와 bias)를 추정하는 것입니다.
-
-이 경우 가능도 함수 L(θ)는 다음과 같이 표현할 수 있습니다.
-
-```
-L(θ) = ∏ P(Yi | Xi; θ)
-```
-
-여기서 θ는 선형 회귀 모델의 파라미터(가중치와 절편)를 나타내며, `P(Yi | Xi; θ)`는
-조건부 확률을 나타내며, 각 데이터 포인트 Yi가 주어진 입력 Xi에 대해서 파라미터
-θ를 가진 모델에 의해 생성될 확률입니다.
-
-최대 가능도 추정(Maximum Likelihood Estimation, MLE)을 통해 모델의 파라미터를
-찾을 때, 가능도 함수를 최대화하는 파라미터 값을 선택하게 됩니다. 이 경우, 가능도
-함수와 관련된 손실 함수(loss function)는 `평균 제곱 오차(MSE)`이며, 이 값을
-최소화함으로써 가능도 함수를 최대화하는 파라미터 값을 찾습니다.
 
 # PyTorch Simple Linear Regression with Validation Data
 
@@ -1041,6 +1194,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from sklearn.metrics import precision_score, recall_score
+import matplotlib.pyplot as plt
 
 # Generate toy data
 torch.manual_seed(42)
@@ -1111,6 +1265,17 @@ print("Weights:", model.linear.weight.item())
 print("Bias:", model.linear.bias.item())
 print("Precision:", precision)
 print("Recall:", recall)
+
+# Visualize precision and recall
+metrics = ["Precision", "Recall"]
+values = [precision, recall]
+
+plt.bar(metrics, values)
+plt.xlabel("Metrics")
+plt.ylabel("Values")
+plt.title("Precision and Recall")
+plt.ylim(0, 1)  # Set y-axis limits to show values between 0 and 1
+plt.show()
 ```
 
 In this modified code, I've added test data for evaluating precision and recall
@@ -1150,19 +1315,19 @@ X: 120, Y: 120
 X: 130, Y: 130
 X: 140, Y: 140
 
-데이터 이해: 키(X)와 몸무게(Y)에 대한 5개의 데이터 쌍이 있습니다.
+**데이터 이해**: 키(X)와 몸무게(Y)에 대한 5개의 데이터 쌍이 있습니다.
 
-선형 회귀 모델 정의: Simple Linear Regression을 구현하려면 y = β₀ + β₁x + ε 라는
+**선형 회귀 모델 정의**: Simple Linear Regression을 구현하려면 y = β₀ + β₁x + ε 라는
 선형 회귀 모델을 가정합니다.
 
-사전 확률 분포 선택: β₀와 β₁에 대한 사전 확률 분포를 정의합니다. 이 배포는
+**사전 확률 분포 선택**: β₀와 β₁에 대한 사전 확률 분포를 정의합니다. 이 배포는
 도메인 지식에 기반하여 선택되거나 특정 시나리오(예: 균일하거나 정규 분포)에 대한
 가정을 포함할 수 있습니다.
 
-가능도 함수 설정: 샘플 데이터가 주어진 경우 모수에 대한 가능도를 계산합니다.
+**가능도 함수 설정**: 샘플 데이터가 주어진 경우 모수에 대한 가능도를 계산합니다.
 주어진 회귀 모델을 사용하여 가능도 함수를 설정합니다.
 
-사후 확률 분포 계산: 베이즈 정리를 사용하여 사전 확률 분포와 가능도를 결합하고
+**사후 확률 분포 계산**: 베이즈 정리를 사용하여 사전 확률 분포와 가능도를 결합하고
 사후 확률 분포를 구합니다. 사후 확률 분포는 주어진 데이터에 대한 모수의
 노릇값이며, 분포 중간의 점(최대 사후 확률 추청치) 또는 평균을 사용하여 하나의
 추론을 얻을 수 있습니다.
@@ -1172,3 +1337,50 @@ X: 140, Y: 140
 예에서는 특정 사전 확률 분포가 제공되지 않았기 때문에 원하는 사전 확률 분포를
 가정한 뒤 사후 확률 분포를 계산해야 합니다. 결과적으로 얻어진 회귀 모델을
 사용하여 키(X)에 대한 몸무게(Y) 값을 예측할 수 있습니다.
+
+# Precision/Recall/Threshold Visualization
+
+이 코드는 유방암 데이터 세트에 로지스틱 회귀 분류기를 적용하고, Precision-Recall
+곡선을 시각화하며, 각 데이터 포인트에 대한 threshold 값을 추가로 표시합니다.
+
+```py
+import numpy as np
+from sklearn import datasets
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import precision_recall_curve
+import matplotlib.pyplot as plt
+
+# Load the breast_cancer dataset
+data = datasets.load_breast_cancer()
+X = data.data
+Y = data.target
+
+# Split the data into train and test sets
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2, random_state=42)
+
+# Train the logistic regression model
+logistic_clf = LogisticRegression(max_iter=5000)
+logistic_clf.fit(X_train, Y_train)
+
+# Predict the probability scores for the test set
+Y_test_probs = logistic_clf.predict_proba(X_test)[:, 1]
+
+# Calculate precision, recall, and thresholds
+precision, recall, thresholds = precision_recall_curve(Y_test, Y_test_probs)
+
+# Plot the Precision-Recall Curve with Thresholds
+plt.plot(recall, precision, marker='.')
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.title('Precision-Recall Curve with Thresholds')
+
+# Add threshold values as blue markers below the curve
+for i in range(len(thresholds)):
+    if i % 10 == 0:  # Show every 10th threshold value for better visibility
+        plt.text(recall[i], precision[i], f"{thresholds[i]:.2f}", color='blue', fontsize=8, ha="center", va="bottom")
+
+plt.show()
+```
+
+![](img/2023-09-09-15-34-36.png)
