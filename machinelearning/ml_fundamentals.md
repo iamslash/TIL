@@ -29,6 +29,7 @@
 - [PyTorch Simple Linear Regression with Test Data](#pytorch-simple-linear-regression-with-test-data)
 - [Bayesian Statistics MLE (Maximum Likelihood Estimation)](#bayesian-statistics-mle-maximum-likelihood-estimation)
 - [Precision/Recall/Threshold Visualization](#precisionrecallthreshold-visualization)
+- [Bayesian Theorem](#bayesian-theorem)
 
 -----
 
@@ -1317,8 +1318,8 @@ X: 140, Y: 140
 
 **데이터 이해**: 키(X)와 몸무게(Y)에 대한 5개의 데이터 쌍이 있습니다.
 
-**선형 회귀 모델 정의**: Simple Linear Regression을 구현하려면 y = β₀ + β₁x + ε 라는
-선형 회귀 모델을 가정합니다.
+**선형 회귀 모델 정의**: Simple Linear Regression을 구현하려면 y = β₀ + β₁x + ε
+라는 선형 회귀 모델을 가정합니다.
 
 **사전 확률 분포 선택**: β₀와 β₁에 대한 사전 확률 분포를 정의합니다. 이 배포는
 도메인 지식에 기반하여 선택되거나 특정 시나리오(예: 균일하거나 정규 분포)에 대한
@@ -1384,3 +1385,109 @@ plt.show()
 ```
 
 ![](img/2023-09-09-15-34-36.png)
+
+# Bayesian Theorem
+
+> * [베이즈 정리를 이해하는 가장 쉬운 방법 | youtube](https://www.youtube.com/watch?v=Y4ecU7NkiEI&t=39s)
+> * [[스탠코리아 StanKorea] 베이즈 통계학 소개 Introduction to Bayesian Statistics | 베이즈 정리 & 베이즈 추론 | 베이지안이 되어야 할 이유 | youtube](https://www.youtube.com/watch?v=ELSxxe6gMaQ)
+
+초콜릿을 받았을 때 호감이 있을 확률을 계산해 보자.
+
+```
+    P(A): 초콜릿을 줄 확률
+    P(B): 호감이 있을 확률
+  P(A|B): 호감이 있는 사람에게 초콜릿을 줄 확률
+ P(~A|B): 호감이 있는 사람에게 초콜릿을 안줄 확률
+ P(A|~B): 호감이 없는 사람에게 초콜릿을 줄 확률
+P(~A|~B): 호감이 없는 사람에게 초콜릿을 안줄 확률
+
+설문조사를 통해 다음을 발견
+ P(A|B): 40%
+자연스럽게
+P(~A|B): 60%
+
+설문조사를 통해 다음을 발견
+ P(A|~B): 30%
+자연스럽게
+P(~A|~B): 70%
+
+전체 사람들중에 호감이 있는 사람과 없는 사람의 비율이 각각 50% 라고 가정하자.
+이 처럼 아무런 정보가 없는 상황에서 호감있는 사람과 없는 사람의 비율을
+50% 로 가정하는 것을 이유 불충분의 원리 
+(The Principle of Insufficient reason) 라고 한다. 
+라플라스가 주장했다.
+
+원하는 것은 `초콜릿을 받았을 때 호감이 있다의 확률`이다.
+즉, P(B|A) 이다.
+우리가 아는 것은 `호감이 잇을 때 초콜릿을 줄 확률`, 
+`호감이 없을 때 초콜릿을 줄 확률`이다.
+즉, P(A|B), P(A|~B) 이다.
+
+사람이 100 명있다고 해보자.
+
+  P(A|B): 40%
+ P(~A|B): 60%
+ P(A|~B): 30%
+P(~A|~B): 70%
+
+cl cl cl cl cl cx cx cx cx cx
+cl cl cl cl cl cx cx cx cx cx
+cl cl cl cl cl cx cx cx cx cx 
+cl cl cl cl cl xx xx xx xx xx
+xl xl xl xl xl xx xx xx xx xx
+xl xl xl xl xl xx xx xx xx xx 
+xl xl xl xl xl xx xx xx xx xx
+xl xl xl xl xl xx xx xx xx xx
+xl xl xl xl xl xx xx xx xx xx
+xl xl xl xl xl xx xx xx xx xx
+
+cl: chocolate, love
+cx: chocolate, no love
+xl: no chocolate, love
+xx: no chocolate, no love
+
+초콜릿을 받지 못하는 상황은 우리의 관심사가 아니다. 
+일어나지 않는 상황은 제거하자.
+
+cl cl cl cl cl cx cx cx cx cx
+cl cl cl cl cl cx cx cx cx cx
+cl cl cl cl cl cx cx cx cx cx 
+cl cl cl cl cl 
+
+다음과 같이 원하는 것을 구한다.
+
+P(B|A) = 20 / (20 + 15) = 57%
+```
+
+상대방이 나에게 관심이 있을 확률을 50% 에서 57% 로 업데이트 했다.
+
+아무런 정보 없이 50% 라고 가정했던 값을 사전확률 (PRIOR) 이라고 한다. 상대가
+나에게 호감을 갖을 확률이다. `P(B)`
+
+초콜릿을 주었다는 새로운 정보덕분에 50% 에서 57% 라고 업데이트한 값을 사후확률
+(POSTERIOR) 라고 한다. 상대가 나에게 호감을 갖을 확률이다. `P(B|A)`
+
+Bayes theorem 이란 사전 확률을 바탕으로 사후 확률을 얻는 것이다.
+
+```
+P(B|A) = P(A|B) * P(B) / P(A)
+       = P(A|B) * P(B) / (P(A|B) * P(B) + P(A|~B) * P(~B))
+```
+
+Bayes theorem 은 복잡한 수학식 보다 다음과 같이 사각형으로 이해하는 것이 훨씬
+효율적이다.
+
+![](img/2023-09-12-16-08-27.png)
+
+우리는 어떤 사람이 나를 좋아할 확률을 50% 로 가정했다. 즉, `P(B)` 를 `50%` 로
+가정했다. 초기의 믿음이다. 상당히 주관적이다. 주관적이란 이유로 수학자로 부터
+많은 공격을 당했다. 
+
+그러나 우리는 새로운 정보와 관찰을 근거로 객관적인 확률로 점차 나아간다. **Bayes theorem** 은 data 가 많을 수록 옳바른 의사결정을 내릴 확률이 높아진다. 
+
+초콜릿을 받은 사건 뿐 아니라 단 둘이 식사를 한 사건, 단 둘이 데이트를 한
+사건등등을 바탕으로 사전확률을 지속적으로 업데이트 하는 것이다. 이 것이 
+**Bayes theorem** 의 중요한 통찰이다.
+
+현대에서 **Bayes theorem** 은 인공지능의 의사결정에 매우 강력한 도구로 활용되고
+있다.

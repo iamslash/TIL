@@ -99,6 +99,7 @@
 # Essentials
 
 - [The Database Cookbook For Developers](https://sqlfordevs.com/ebook)
+- [Explaining The Postgres Meme](https://www.avestura.dev/blog/explaining-the-postgres-meme#level-6-hadal-zone)
 - [sqlzoo](http://sqlzoo.net/)
   - tutorial 의 문제들은 필수다.
 - [database problems @ leecode](https://leetcode.com/problemset/database/) 
