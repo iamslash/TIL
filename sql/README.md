@@ -1227,10 +1227,11 @@ SELECT SUM(Quantity)
 
 ----
 
-`WHERE` 를 사용하지 못하면 COUNT, SUM 과 같은 aggregate function 에 condition 을 argument 로 전달할 수 있다. 단, `COUNT` 는 0 대신 NULL 을 사용해야한다.
+`WHERE` 를 사용하지 못하면 COUNT, SUM 과 같은 aggregate function 에 condition 을
+argument 로 전달할 수 있다. 단, `COUNT` 는 0 대신 NULL 을 사용해야한다.
 
 ```sql
--- followings are same
+-- SUM
    SELECT 'Low Salary' AS category, 
           SUM(CASE WHEN income < 20000 THEN 1 ELSE 0 END) AS accounts_count
      FROM accounts; 
@@ -1243,6 +1244,7 @@ SELECT SUM(Quantity)
           SUM(IF(income < 20000, 1, 0)) AS accounts_count
      FROM accounts;
 
+-- COUNT
    SELECT 'Low Salary' AS category, 
           COUNT(CASE WHEN income < 20000 THEN 1 ELSE NULL END) AS accounts_count
      FROM accounts; 
@@ -1255,6 +1257,17 @@ SELECT SUM(Quantity)
           COUNT(*) AS accounts_count
      FROM accounts
     WHERE income < 20000;
+
+-- MAX
++-------------+---------+ 
+| Column Name | Type    | 
++-------------+---------+ 
+| emp_name    | varchar | 
+| department  | varchar | 
+| salary      | int     |
++-------------+---------+
+   SELECT MAX(IF(department = 'Marketing', salary, 0)) AS max_salary
+     FROM Salaries; 
 ```
 
 **CASE WHEN THEN ELSE inside SUM**

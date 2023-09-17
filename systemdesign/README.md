@@ -119,6 +119,9 @@ Describe system design.
 
 # References
 
+* [Low-Latency Engineering Tech Talks | p99conf](https://www.p99conf.io/on-demand/)
+  * low-latency, high-performance distributed computing challenges
+* [neetcode System Design Courses](https://neetcode.io/courses)
 * [system-design | github](https://github.com/karanpratapsingh/system-design)
   * [html](https://www.karanpratapsingh.com/courses/system-design)
   * [ebook](https://leanpub.com/systemdesign)

@@ -29,7 +29,13 @@
 - [PyTorch Simple Linear Regression with Test Data](#pytorch-simple-linear-regression-with-test-data)
 - [Bayesian Statistics MLE (Maximum Likelihood Estimation)](#bayesian-statistics-mle-maximum-likelihood-estimation)
 - [Precision/Recall/Threshold Visualization](#precisionrecallthreshold-visualization)
-- [Bayesian Theorem](#bayesian-theorem)
+- [빈도주의 통계학에서 확률의 의미](#빈도주의-통계학에서-확률의-의미)
+- [베이지안 통계학에서 확률의 의미](#베이지안-통계학에서-확률의-의미)
+- [Bayesian Theroem](#bayesian-theroem)
+- [Bayesian Theorem By Story](#bayesian-theorem-by-story)
+- [Entropy](#entropy)
+- [KL-divergence](#kl-divergence)
+- [Eigen Value, Eigen Vector](#eigen-value-eigen-vector)
 
 -----
 
@@ -1386,7 +1392,90 @@ plt.show()
 
 ![](img/2023-09-09-15-34-36.png)
 
-# Bayesian Theorem
+# 빈도주의 통계학에서 확률의 의미
+
+확률을 다음과 같이 정의한다.
+
+```
+확률 = 상대적 빈도 (relative frequency) 의 극한 
+    = 관심있는 사건 발생 횟수
+      ------------------ 의 극한
+      전체 시행 횟수
+```
+
+예를 들어 동전 던지기, 주사위 던지기, 카드 뽑기 등이 해당된다.
+
+주사위를 던진다고 해보자. 
+
+```
+10 번 던져서 2 번 3 이 나왔다. 3 이 나올 확률은 2/10 = 0.2 이다.
+100 번 던져서 18 번 3 이 나왔다. 3 이 나올 확률은 18/100 = 0.18 이다.
+10000 번 던져서 1673 번 3 이 나왔다. 3 이 나올 확률은 1673/10000 = 0.1673 이다.
+
+더 많이 실험하면 1/6 = 0.166 에 가까워진다.
+```
+
+다음과 같은 한계가 있다.
+
+트럼프가 다음 대선에서 당선될 확률을 생각해 보자.
+
+무한 반복할 수도 없다. 따라서 빈도를 계산할 수 없다. 빈도주의 방식으로
+확률계산이 불가능하다.
+
+새로운 확률정의가 필요하다. 그래서 Bayesian 확률이 발명되었다.
+
+# 베이지안 통계학에서 확률의 의미
+
+확률은 믿음의 정도이다. (degree of belief)
+
+예를 들어, 내일 비가 올 확률은 30% 이다. 혹은 내일 A 를 받을 확률은 90% 이다. 
+
+다양한 상황에서 확률을 부여하는 믿음의 수량화를 말한다. 불확실성 측정의
+도구이다.
+
+# Bayesian Theroem
+
+```
+P(H|D) = P(D|H) * P(H)
+        --------------
+            P(D)
+
+H: Hypothesis, 병에 걸림.
+D: Data, 키트에서 양성발견.
+
+  P(H) 사전확률: 사전 지식
+P(D|H) 가능도: 가설 (H) 가 데이터 (D) 를 지지할 가능성
+P(H|D) 사후확률: 데이터로 업데이트된 확률
+  P(D) 증거: 데이터의 확률 (상수)
+
+가설 H1, H2, H3, H4 가 있다고 해보자.
+
+P(H1|D) = P(D ∩ H1)
+          ---------
+            P(D)
+P(D|H1) = P(D ∩ H1)
+          ---------
+            P(H1)
+
+P(D|H1) * P(H1) =  P(D ∩ H1)
+
+P(H1|D) = P(D|H1) * P(H1)
+          --------------
+              P(D)
+```
+
+![](img/2023-09-13-19-59-26.png)
+
+Data 가 H1 을 더 많이 지지한다. H1 이 일어날 확률이 더욱 높다.
+
+* 데이터의 획득으로 사전 확률이 어떻게 사후 확률로 업데이트 되는지에 대한 정리
+* 데이터는 가능도를 통해 사후 확률에 영향을 준다. 
+* 확률을 업데이트해 나가며 실제 현상에 대한 추론 가능
+
+어떤 불확실한 상황도 확률로 수량화가 가능하다. 우리가 베이지안 통계학을
+배워야 하는 의미이다.
+
+# Bayesian Theorem By Story
 
 > * [베이즈 정리를 이해하는 가장 쉬운 방법 | youtube](https://www.youtube.com/watch?v=Y4ecU7NkiEI&t=39s)
 > * [[스탠코리아 StanKorea] 베이즈 통계학 소개 Introduction to Bayesian Statistics | 베이즈 정리 & 베이즈 추론 | 베이지안이 되어야 할 이유 | youtube](https://www.youtube.com/watch?v=ELSxxe6gMaQ)
@@ -1491,3 +1580,15 @@ Bayes theorem 은 복잡한 수학식 보다 다음과 같이 사각형으로 �
 
 현대에서 **Bayes theorem** 은 인공지능의 의사결정에 매우 강력한 도구로 활용되고
 있다.
+
+# Entropy
+
+확률에서 엔트로피는 확률분포의 정보량 또는 확신도를 나타내는 값으로, 특정 값에
+확률이 몰려 있다면 엔트로피가 작다고 볼 수 있고, 여러 가지 값에 확률이 골고루
+퍼져 있다면 엔트로피가 크다고 할 수 있습니다. 엔트로피가 작은 경우 불확실성이
+낮아 예측하기 쉬워지며, 엔트로피가 큰 경우 불확실성이 높아 예측하기
+어려워집니다.
+
+# KL-divergence
+
+# Eigen Value, Eigen Vector
