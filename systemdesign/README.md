@@ -27,6 +27,8 @@
   - [Domain Name System](#domain-name-system)
   - [Load Balancing](#load-balancing)
   - [Cache](#cache)
+    - [Use-Cases](#use-cases)
+    - [Caching Strategies](#caching-strategies)
   - [Content Delivery Network](#content-delivery-network)
   - [Proxy](#proxy)
   - [Availability](#availability-1)
@@ -534,7 +536,7 @@ applications.
   <i><a href=http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html>Source: Scalable system design patterns</a></i>
 </p>
 
-**Use-Cases**
+### Use-Cases
 
 * Client caching
 * CDN caching
@@ -544,11 +546,16 @@ applications.
 * Caching at the database query level
 * Caching at the object level
 
-**Cache Invalidation**
+### Caching Strategies
+
+> [Top caching strategies | bytebytego](https://blog.bytebytego.com/p/top-caching-strategies)
+
+**Read**
 
 * Cache-Aside
-  * 응용프로그램이 직접 cache를 제어한다.
-
+  * 응용프로그램이 직접 cache를 제어하여 읽는다.
+  * `cache` 에 읽기 요청하고 값이 있으면 응답한다. 없으면 `SOR(System Of Record)` 
+    로 부터 읽어들인 값으로 응답한다. 그리고 `cache` 를 update 한다.
     ```python
     # reading values
     v = cache.get(k)
@@ -556,24 +563,29 @@ applications.
       v = sor.get(k)
       cache.put(k, v)
     }
+    ```
+* Read-Through
+  * `cache` 에 읽기 요청하면 `cache` 가 판단해서 자신이 가지고 있는 값 혹은
+    `SOR(system of record)` 로 부터 읽어들인 값을 응답으로 전달한다.
 
+**Write**
+
+* Write-Around
+  * 응용프로그램이 직접 cache를 제어하여 쓴다.
+  * `SOR(System Of Record)` 쓴다. 그리고 `cache` 를 update 한다.
+    ```py
     # writing values
     v = newV
     sor.put(k, v)
     cache.put(k, v)
     ```
-* Read-through
-  * `cache` 에 읽기 요청하면 `cache` 가 판단해서 자신이 가지고 있는 값 혹은
-    `SOR(system of record)` 로 부터 읽어들인 값을 응답으로 전달한다.
-
-* Write-through
+* Write-Through
   * `cache` 에 쓰기 요청하면 `cache` 가 판단해서 `SOR(system of record)` 에
     쓰고 자신을 갱신한다.
 
-* Write-behind
+* Write-Behind (Write-Back)
   * `cache` 에 쓰기 요청하면 일단 자신을 갱신하고 요청에 응답한후
     `SOR` 을 갱신한다. `SOR` 갱신이 완료되기 전에 요청에 빠르게 응답한다.
-
 
 **Cache eviction policies**
 
