@@ -51,8 +51,7 @@
   - [Update](#update)
   - [Update Join](#update-join)
   - [Delete](#delete)
-  - [Min, Max](#min-max)
-  - [Count, Avg, Sum](#count-avg-sum)
+  - [Aggregate Functions](#aggregate-functions)
   - [Conditional Aggregate Functions](#conditional-aggregate-functions)
   - [Join Basic](#join-basic)
   - [Join ON vs WHERE](#join-on-vs-where)
@@ -68,12 +67,7 @@
   - [Dates](#dates)
   - [CASE](#case)
   - [Session Variables](#session-variables)
-  - [ROW\_NUMBER() OVER()](#row_number-over)
-  - [RANK() OVER()](#rank-over)
-  - [DENSE\_RANK() OVER()](#dense_rank-over)
-  - [PERCENT\_RANK() OVER()](#percent_rank-over)
-  - [SUM() OVER()](#sum-over)
-  - [LEAD() OVER(), LAG() OVER()](#lead-over-lag-over)
+  - [Window Functions](#window-functions)
   - [Pivot](#pivot)
   - [Functions (MySQL)](#functions-mysql)
     - [String](#string)
@@ -92,7 +86,6 @@
     - [Date](#date-1)
 - [Effecive SQL](#effecive-sql)
 - [Problems](#problems)
-- [Quiz](#quiz)
 
 -----
 
@@ -1196,27 +1189,54 @@ DELETE FROM Customers;
 DELETE * FROM Customers;
 ```
 
-## Min, Max
+## Aggregate Functions
+
+> [MySQL Aggregate Functions | mysqltutorial](https://www.mysqltutorial.org/mysql-aggregate-functions.aspx)
+
+An aggregate function performs a calculation on multiple values and returns a
+single value. Aggregate functions are `MIN, MAX, COUNT, AVG, SUM`.
+
+Syntax for aggregate functions.
 
 ```sql
-SELECT MIN(Price) AS SmallestPrice
-  FROM Products;
-
-SELECT MAX(Price) AS LargestPrice
-  FROM Products;
+function_name(DISTINCT | ALL expression)
 ```
 
-## Count, Avg, Sum
+Examples.
 
 ```sql
-SELECT COUNT(ProductID)
-  FROM Products;
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(255),
+    price DECIMAL(10, 2) NOT NULL
+);
+INSERT INTO products (product_id, product_name, price)
+VALUES (1, 'Product A', 100.00),
+       (2, 'Product B', 150.00),
+       (3, 'Product C', 200.00);
 
-SELECT AVG(Price)
-  FROM Products;
+product_id | product_name | price
+-------------------------------
+1          | Product A    | 100.00
+2          | Product B    | 150.00
+3          | Product C    | 200.00
+```
 
-SELECT SUM(Quantity)
-  FROM OrderDetails;
+```sql
+SELECT MIN(price) AS SmallestPrice FROM products;
+-> SmallestPrice: 100.00
+
+SELECT MAX(price) AS LargestPrice FROM products;
+-> LargestPrice: 200.00
+
+SELECT COUNT(product_id) FROM products;
+-> COUNT(ProductID): 3
+
+SELECT AVG(price) FROM products;
+-> AVG(price): 150.00
+
+SELECT SUM(price) FROM products;
+-> SUM(price): 450.00
 ```
 
 ## Conditional Aggregate Functions
@@ -1227,88 +1247,42 @@ SELECT SUM(Quantity)
 
 ----
 
-`WHERE` 를 사용하지 못하면 COUNT, SUM 과 같은 aggregate function 에 condition 을
-argument 로 전달할 수 있다. 단, `COUNT` 는 0 대신 NULL 을 사용해야한다.
+Aggregate function 에 conditional expression 을 argument 로 전달할 수 있다.
+`COUNT` 는 `0` 대신 `NULL` 을 사용해야한다.
 
 ```sql
--- SUM
-   SELECT 'Low Salary' AS category, 
-          SUM(CASE WHEN income < 20000 THEN 1 ELSE 0 END) AS accounts_count
-     FROM accounts; 
-   
-   SELECT 'Low Salary' AS category, 
-          SUM(income < 20000) AS accounts_count
-     FROM accounts;
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(255),
+    price DECIMAL(10, 2) NOT NULL
+);
+INSERT INTO products (product_id, product_name, price)
+VALUES (1, 'Product A', 100.00),
+       (2, 'Product B', 150.00),
+       (3, 'Product C', 200.00);
 
-   SELECT 'Low Salary' AS category, 
-          SUM(IF(income < 20000, 1, 0)) AS accounts_count
-     FROM accounts;
-
--- COUNT
-   SELECT 'Low Salary' AS category, 
-          COUNT(CASE WHEN income < 20000 THEN 1 ELSE NULL END) AS accounts_count
-     FROM accounts; 
-
-   SELECT 'Low Salary' AS category, 
-          COUNT(NULLIF(income >= 20000, 1)) AS accounts_count
-     FROM accounts; 
-
-   SELECT 'Low Salary' AS category, 
-          COUNT(*) AS accounts_count
-     FROM accounts
-    WHERE income < 20000;
-
--- MAX
-+-------------+---------+ 
-| Column Name | Type    | 
-+-------------+---------+ 
-| emp_name    | varchar | 
-| department  | varchar | 
-| salary      | int     |
-+-------------+---------+
-   SELECT MAX(IF(department = 'Marketing', salary, 0)) AS max_salary
-     FROM Salaries; 
+product_id | product_name | price
+-------------------------------
+1          | Product A    | 100.00
+2          | Product B    | 150.00
+3          | Product C    | 200.00
 ```
 
-**CASE WHEN THEN ELSE inside SUM**
-
-> [League Statistics @ leetcode](https://leetcode.com/problems/league-statistics/)
-
 ```sql
-SELECT team_name, 
-       matches_played, 
-       points,
-       goal_for,
-       goal_against,
-       goal_for - goal_against AS goal_diff
-  FROM Teams t2 
-  JOIN (SELECT team_id,
-               SUM(team_id IN (away_team_id, home_team_id)) AS matches_played,
-               SUM(CASE
-                     WHEN team_id = away_team_id AND home_team_goals > away_team_goals THEN 0
-                     WHEN team_id = away_team_id AND home_team_goals < away_team_goals THEN 3
-                     WHEN team_id = home_team_id AND home_team_goals > away_team_goals THEN 3
-                     WHEN team_id = home_team_id AND home_team_goals < away_team_goals THEN 0
-                     ELSE 1
-                   END) AS points,
-               SUM(CASE
-                     WHEN team_id = away_team_id THEN away_team_goals
-                     WHEN team_id = home_team_id THEN home_team_goals
-                     ELSE 0
-                   END) AS goal_for,
-               SUM(CASE
-                     WHEN team_id = away_team_id THEN home_team_goals
-                     WHEN team_id = home_team_id THEN away_team_goals
-                     ELSE 0
-                   END) AS goal_against
-          FROM Matches m
-          JOIN Teams 
-            ON (team_id IN (away_team_id, home_team_id))
-      GROUP BY team_id
-  ) AS t1 USING(team_id)
-ORDER BY points DESC,
-         goal_diff DESC,
-         team_name ASC
+-- IF COUNT()
+SELECT COUNT(IF(price < 150, 1, NULL)) as products_less_than_150
+  FROM products;
+-- CASE COUNT()
+SELECT COUNT(CASE WHEN price < 150 THEN 1 ELSE NULL END) as products_less_than_150
+  FROM products;
+-- NULLIF COUNT()
+SELECT COUNT(NULLIF(price >= 150, 1)) as products_less_than_150
+  FROM products;
+-- LESS COUNT()
+SELECT COUNT(CASE WHEN price < 100 THEN 1 ELSE NULL END) as products_less_than_100,
+       COUNT(CASE WHEN price >= 100 AND price < 150 THEN 1 ELSE NULL END) as products_between_100_and_150,
+       COUNT(CASE WHEN price >= 150 THEN 1 ELSE NULL END) as products_greater_than_150
+  FROM products;
 ```
 
 ## Join Basic
@@ -1730,244 +1704,273 @@ SET @var1 = 1
 SELECT @var2 := 2
 ```
 
-## ROW_NUMBER() OVER()
+## Window Functions
 
-* [ROW_NUMBER() over_clause](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_row-number)
-* [12.21.2 Window Function Concepts and Syntax](https://dev.mysql.com/doc/refman/8.0/en/window-functions-usage.html)
-
-----
-
-특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 줄번호를 부여한다. `OVER()` 에 `PARTITION BY, ORDER BY` 를 사용할 수 있다.
+MySQL since version 8.0.
 
 ```sql
+CREATE TABLE sales(
+    sales_employee VARCHAR(50) NOT NULL,
+    fiscal_year INT NOT NULL,
+    sale DECIMAL(14,2) NOT NULL,
+    PRIMARY KEY(sales_employee,fiscal_year)
+);
 
-mysql> SELECT
-         year, country, product, profit,
-         ROW_NUMBER() OVER() AS row_num
-       FROM sales;
+INSERT INTO sales(sales_employee,fiscal_year,sale)
+VALUES('Bob',2016,100),
+      ('Bob',2017,150),
+      ('Bob',2018,200),
+      ('Alice',2016,150),
+      ('Alice',2017,100),
+      ('Alice',2018,200),
+       ('John',2016,200),
+      ('John',2017,150),
+      ('John',2018,250);
 
-mysql> SELECT
-         year, country, product, profit,
-         ROW_NUMBER() OVER(PARTITION BY country) AS row_num1,
-         ROW_NUMBER() OVER(PARTITION BY country ORDER BY year, product) AS row_num2
-       FROM sales;
-+------+---------+------------+--------+----------+----------+
-| year | country | product    | profit | row_num1 | row_num2 |
-+------+---------+------------+--------+----------+----------+
-| 2000 | Finland | Computer   |   1500 |        2 |        1 |
-| 2000 | Finland | Phone      |    100 |        1 |        2 |
-| 2001 | Finland | Phone      |     10 |        3 |        3 |
-| 2000 | India   | Calculator |     75 |        2 |        1 |
-| 2000 | India   | Calculator |     75 |        3 |        2 |
-| 2000 | India   | Computer   |   1200 |        1 |        3 |
-| 2000 | USA     | Calculator |     75 |        5 |        1 |
-| 2000 | USA     | Computer   |   1500 |        4 |        2 |
-| 2001 | USA     | Calculator |     50 |        2 |        3 |
-| 2001 | USA     | Computer   |   1500 |        3 |        4 |
-| 2001 | USA     | Computer   |   1200 |        7 |        5 |
-| 2001 | USA     | TV         |    150 |        1 |        6 |
-| 2001 | USA     | TV         |    100 |        6 |        7 |
-+------+---------+------------+--------+----------+----------+
+SELECT * FROM sales;
+
+sales_employee | fiscal_year | sale
+-----------------------------------
+Bob            | 2016        | 100
+Bob            | 2017        | 150
+Bob            | 2018        | 200
+Alice          | 2016        | 150
+Alice          | 2017        | 100
+Alice          | 2018        | 200
+John           | 2016        | 200
+John           | 2017        | 150
+John           | 2018        | 250
 ```
 
-## RANK() OVER()
-
-* [MySQL RANK Function](https://www.mysqltutorial.org/mysql-window-functions/mysql-rank-function/)
-* [The Most Frequently Ordered Products for Each Customer @ leetcode](https://leetcode.com/problems/the-most-frequently-ordered-products-for-each-customer/)
-  * [sol](https://github.com/iamslash/learntocode/tree/master/leetcode2/TheMostFrequentlyOrderedProductsforEachCustomer)
-
------
-
-특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 순위를 읽어온다. 순위에 공백이 있음을 주의하자. `OVER()` 에 `PARTITION BY, ORDER BY` 를 사용할 수 있다.
+Window Function 중 `SUM()` 의 간단한 예이다.
 
 ```sql
-SELECT val,
-       RANK() OVER(ORDER BY val) my_rank
-  FROM t;
-
-val     my_rank
-  1     1
-  2     2
-  2     2
-  3     4
-  4     5
-  4     5
-  5     7
+SELECT 
+    fiscal_year, 
+    sales_employee,
+    sale,
+    SUM(sale) OVER (PARTITION BY fiscal_year) total_sales
+FROM
+    sales;
+fiscal_year | sales_employee | sale | total_sales
+------------------------------------------------
+2016        | Bob            | 100  | 450
+2016        | Alice          | 150  | 450
+2016        | John           | 200  | 450
+2017        | Bob            | 150  | 400
+2017        | Alice          | 100  | 400
+2017        | John           | 150  | 400
+2018        | Bob            | 200  | 650
+2018        | Alice          | 200  | 650
+2018        | John           | 250  | 650
 ```
 
-## DENSE_RANK() OVER()
-
-* [MySQL | ROW_NUMBER(), RANK(), DENSE_RANK() 윈도우 함수](https://it-mi.tistory.com/58)
-* [Group Employees of the Same Salary @ learntocode](https://github.com/iamslash/learntocode/blob/b925ae90c1adf1c7367d6e59442e3b5ffc936561/leetcode2/GroupEmployeesoftheSameSalary/README.md)
-
-----
-
-특정 PARTITION FIELD 안에서 특정 ORDER FIELD 로 정렬하고 순위를 읽어온다.
-`RANK()` 와 달리 순위의 공백이 없다. `OVER()` 에 `PARTITION BY, ORDER BY` 를 사용할 수 있다.
+Window Function Syntax
 
 ```sql
-SELECT val,
-       DENSE_RANK() OVER(ORDER BY val) my_rank
-  FROM t;
+window_function_name(expression) OVER ( 
+   [partition_defintion]
+   [order_definition]
+   [frame_definition]
+)
+-- for empty arguments of OVER
+window_function_name(expression) OVER()
 
-val     my_rank
-  1     1
-  2     2
-  2     2
-  3     3
-  4     4
-  4     4
-  5     5
+-- partition_clause 
+PARTITION BY <expression>[{,<expression>...}]
+
+-- order_by_clause 
+ORDER BY <expression> [ASC|DESC], [{,<expression>...}]
+
+-- frame_clause 
+frame_unit {<frame_start>|<frame_between>}
+
+-- fame_start
+UNBOUNDED PRECEDING: frame starts at the first row of the partition.
+        N PRECEDING: a physical N of rows before the first current row. 
+                     N can be a literal number or an expression that
+                     evaluates to a number.
+        CURRENT ROW: the row of the current calculation
+-- frame_between
+BETWEEN frame_boundary_1 AND frame_boundary_2   
+-- frame_boundary_1, frame_boundary_2
+        frame_start: as mentioned previously.
+UNBOUNDED FOLLOWING: the frame ends at the final row in the partition.
+        N FOLLOWING: a physical N of rows after the current row.
+
+-- MySQL uses this frame_definition by default for empty fame_defintion 
+RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW        
 ```
 
-## PERCENT_RANK() OVER()
+![](img/2023-09-18-16-50-57.png)
 
-* [PERCENT_RANK() over_clause](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_percent-rank)
-
-Returns the percentage of partition values less than the value in the current row, excluding the highest value. 
-
-```
-(rank - 1) / (rows - 1)
-```
+Examples
 
 ```sql
-Input: 
-Students table:
-+------------+---------------+------+
-| student_id | department_id | mark |
-+------------+---------------+------+
-| 2          | 2             | 650  |
-| 8          | 2             | 650  |
-| 7          | 1             | 920  |
-| 1          | 1             | 610  |
-| 3          | 1             | 530  |
-+------------+---------------+------+
-Output: 
-+------------+---------------+------------+
-| student_id | department_id | percentage |
-+------------+---------------+------------+
-| 7          | 1             | 0.0        |
-| 1          | 1             | 50.0       |
-| 3          | 1             | 100.0      |
-| 2          | 2             | 0.0        |
-| 8          | 2             | 0.0        |
-+------------+---------------+------------+
+-- ROW_NUMBER 
+-- 각 fiscal_year 내에서 sale이 높은 순서대로 행 번호를 부여하는 SQL 문입니다. 
+-- 이때 ROW_NUMBER() 함수를 사용합니다.
+SELECT 
+    fiscal_year,
+    sales_employee,
+    sale,
+    ROW_NUMBER() OVER (
+        PARTITION BY fiscal_year
+        ORDER BY sale DESC
+    ) row_number
+FROM
+    sales;
+fiscal_year | sales_employee | sale | row_number
+------------------------------------------------
+2016        | John           | 200  | 1
+2016        | Alice          | 150  | 2
+2016        | Bob            | 100  | 3
+2017        | Bob            | 150  | 1
+2017        | John           | 150  | 2
+2017        | Alice          | 100  | 3
+2018        | John           | 250  | 1
+2018        | Alice          | 200  | 2
+2018        | Bob            | 200  | 3
+-- ROW_NUMBER() OVER (...) 구문을 사용하여 각 fiscal_year 기준(sales_employee별로 분리된 것)으로 
+-- sale 내림차순으로 행 번호를 할당합니다. ROW_NUMBER 함수는 중복값이 있어도 행 번호를 고유하게 할당하기 
+-- 때문에, 2017년 Bob과 John은 서로 다른 번호가 할당됩니다.
 
-SELECT student_id,
-       department_id,
-       ROUND(
-         100 * PERCENT_RANK() OVER (PARTITION BY department_id ORDER BY mark DESC)
-         , 2) AS percentage
-  FROM Students
+-- DENSE_RANK
+-- 각 fiscal_year 내에서 sale이 높은 순서대로 순위를 매기는 SQL 문입니다.
+SELECT 
+    fiscal_year, 
+    sales_employee, 
+    sale,
+    DENSE_RANK() OVER (
+        PARTITION BY fiscal_year
+        ORDER BY sale DESC
+    ) sale_rank
+FROM 
+    sales;
+fiscal_year | sales_employee | sale | sale_rank
+------------------------------------------------
+2016        | John           | 200  | 1
+2016        | Alice          | 150  | 2
+2016        | Bob            | 100  | 3
+2017        | Bob            | 150  | 1
+2017        | John           | 150  | 1
+2017        | Alice          | 100  | 2
+2018        | John           | 250  | 1
+2018        | Alice          | 200  | 2
+2018        | Bob            | 200  | 2
+-- DENSE_RANK는 중복값이 있을 때 순위에 건너뛰지 않고 차례대로 부여하므로 
+-- 2017년 Bob과 John은 모두 1등이고 Alice는 2등입니다.
+
+-- RANK
+-- 각 fiscal_year 내에서 sale이 높은 순서대로 순위를 매기는 SQL 문입니다. 
+-- 이번에는 RANK() 함수를 사용하여 순위를 매깁니다.
+SELECT 
+    fiscal_year, 
+    sales_employee, 
+    sale,
+    RANK() OVER (
+        PARTITION BY fiscal_year
+        ORDER BY sale DESC
+    ) sale_rank
+FROM 
+    sales;
+fiscal_year | sales_employee | sale | sale_rank
+------------------------------------------------
+2016        | John           | 200  | 1
+2016        | Alice          | 150  | 2
+2016        | Bob            | 100  | 3
+2017        | Bob            | 150  | 1
+2017        | John           | 150  | 1
+2017        | Alice          | 100  | 3
+2018        | John           | 250  | 1
+2018        | Alice          | 200  | 2
+2018        | Bob            | 200  | 2
+-- RANK는 중복값이 있을 때 순위에 건너뛰기를 부여하므로 2017년 Bob과 
+-- John은 모두 1등이고, Alice는 3등입니다.
+
+-- LAG
+-- 각 sales_employee 별 이전 연도(fiscal_year)의 판매량(sale)을 현재 행에 표시하는 
+-- SQL 문입니다. 이때 LAG() 함수를 사용합니다.
+SELECT 
+    fiscal_year,
+    sales_employee,
+    sale,
+    LAG(sale) OVER (
+        PARTITION BY sales_employee
+        ORDER BY fiscal_year
+    ) previous_year_sale
+FROM 
+    sales;
+fiscal_year | sales_employee | sale | previous_year_sale
+---------------------------------------------------------
+2016        | Alice          | 150  | NULL
+2017        | Alice          | 100  | 150
+2018        | Alice          | 200  | 100
+2016        | Bob            | 100  | NULL
+2017        | Bob            | 150  | 100
+2018        | Bob            | 200  | 150
+2016        | John           | 200  | NULL
+2017        | John           | 150  | 200
+2018        | John           | 250  | 150
+-- 여기서 LAG(sale) OVER (...) 구문은 각 sales_employee 별로 정렬된 
+-- fiscal_year에서 sale 값을 가져옵니다. 이전 연도의 sale 값이 없는 경우(NULL), 
+-- 예를 들어 2016년의 데이터는 없습니다.
+
+-- LEAD
+-- sales_employee 별 다음 연도(fiscal_year)의 판매량(sale)을 현재 행에 
+-- 표시하는 SQL 문입니다. 이때 LEAD() 함수를 사용합니다.
+SELECT 
+    fiscal_year,
+    sales_employee,
+    sale,
+    LEAD(sale) OVER (
+        PARTITION BY sales_employee
+        ORDER BY fiscal_year
+    ) next_year_sale
+FROM 
+    sales;
+fiscal_year | sales_employee | sale | next_year_sale
+-----------------------------------------------------
+2016        | Alice          | 150  | 100
+2017        | Alice          | 100  | 200
+2018        | Alice          | 200  | NULL
+2016        | Bob            | 100  | 150
+2017        | Bob            | 150  | 200
+2018        | Bob            | 200  | NULL
+2016        | John           | 200  | 150
+2017        | John           | 150  | 250
+2018        | John           | 250  | NULL
+-- LEAD(sale) OVER (...) 구문은 각 sales_employee 별로 정렬된 fiscal_year에서 
+-- 다음 연도의 sale 값을 가져옵니다. 다음 연도의 sale 값이 없는 경우(NULL), 
+-- 예를 들어 2018년 이후에는 없습니다.
+
+-- SUM
+-- 각 sales_employee 별로 각 연도(fiscal_year)의 판매량(sale)과 그 이전 
+-- 두 연도의 판매량의 합계를 구하는 SQL 문입니다. 
+-- 이때 ROWS BETWEEN N PRECEDING AND CURRENT ROW 절을 사용합니다.
+SELECT 
+    fiscal_year,
+    sales_employee,
+    sale,
+    SUM(sale) OVER (
+        PARTITION BY sales_employee
+        ORDER BY fiscal_year
+        ROWS BETWEEN 2 PRECEDING AND CURRENT ROW
+    ) three_year_sales_sum
+FROM 
+    sales;
+fiscal_year | sales_employee | sale | three_year_sales_sum
+-----------------------------------------------------------
+2016        | Alice          | 150  | 150
+2017        | Alice          | 100  | 250
+2018        | Alice          | 200  | 450
+2016        | Bob            | 100  | 100
+2017        | Bob            | 150  | 250
+2018        | Bob            | 200  | 450
+2016        | John           | 200  | 200
+2017        | John           | 150  | 350
+2018        | John           | 250  | 600
 ```
-
-## SUM() OVER()
-
-* [AccountBalance @ learntocode](https://github.com/iamslash/learntocode/tree/master/leetcode3/AccountBalance#readme)
-
------
-
-특정 PARTITION FIELD 로 그루핑하고 특정 ORDER FIELD 로 정렬하고 PARTITION FIELD 를 누적합산 한다.
-
-```sql
-SELECT account_id,
-       day,
-       SUM(CASE WHEN type='Deposit' THEN amount ELSE -amount END) 
-         OVER(PARTITION BY account_id ORDER BY day) AS balance
-  FROM Transactions;
-```
-
-
-## LEAD() OVER(), LAG() OVER()
-
-* [12.21.1 Window Function Descriptions @ mysql](https://dev.mysql.com/doc/refman/8.0/en/window-function-descriptions.html#function_lead)
-* [MySQL LAG Function](https://www.mysqltutorial.org/mysql-window-functions/mysql-lag-function/)
-
-----
-
-`LEAD` 는 특정 record 보다 아래에 위치하는 record 를 가져올 때 사용한다. 현재
-값이 대상 값보다 leading 하고 있을 때 대상 값을 가져온다. `LAG` 는 특정 record
-보다 위에 위치하는 record 를 가져올 때 사용한다. 현재 값이 대상 값보다 lagging
-하고 있을 때 대상 값을 가져온다.
-
-`LEAD(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 아래
-`N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
-
-```sql
-Input:
-UserVisits table:
-+---------+------------+
-| user_id | visit_date |
-+---------+------------+
-| 1       | 2020-11-28 |
-| 1       | 2020-10-20 |
-| 1       | 2020-12-3  |
-| 2       | 2020-10-5  |
-| 2       | 2020-12-9  |
-| 3       | 2020-11-11 |
-+---------+------------+
-
-Output:
-+---------+------------+------------+
-| user_id | visit_date | next_date  | 
-+---------+------------+------------+
-| 1       | 2020-11-28 | 2020-12-3  |
-| 1       | 2020-10-20 | 2020-11-28 |
-| 1       | 2020-12-3  | 2021-01-01 |
-| 2       | 2020-10-5  | 2020-12-9  |
-| 2       | 2020-12-9  | 2021-01-01 |
-| 3       | 2020-11-11 | 2021-01-01 |
-+---------+------------+------------+
-
-SELECT user_id,
-       LEAD(visit_date, 1, '2021-01-01')
-       OVER(PARTITION BY user_id ORDER BY visit_date) AS next_date
-  FROM userVisits
-```
-
-`LAG(column, N, default)` 는 window 로 묶여진 group 의 현재 record 에서 위로
-`N` 번째 record 를 가져온다. 만약 없다면 `default` 를 가져온다.
-
-```sql
-Input:
-UserVisits table:
-+---------+------------+
-| user_id | visit_date |
-+---------+------------+
-| 1       | 2020-11-28 |
-| 1       | 2020-10-20 |
-| 1       | 2020-12-3  |
-| 2       | 2020-10-5  |
-| 2       | 2020-12-9  |
-| 3       | 2020-11-11 |
-+---------+------------+
-
-Output:
-+---------+------------+------------+
-| user_id | visit_date | prev_date  | 
-+---------+------------+------------+
-| 1       | 2020-11-28 | 2020-10-20 |
-| 1       | 2020-10-20 | 2020-01-01 |
-| 1       | 2020-12-3  | 2021-11-28 |
-| 2       | 2020-10-5  | 2020-01-01 |
-| 2       | 2020-12-9  | 2021-10-5  |
-| 3       | 2020-11-11 | 2020-01-01 |
-+---------+------------+------------+
-
-SELECT user_id,
-       LAG(visit_date, 1, '2020-01-01')
-       OVER(PARTITION BY user_id ORDER BY visit_date) AS prev_date
-  FROM userVisits
-```
-
-* [BiggestWindowBetweenVisits | learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode2/BiggestWindowBetweenVisits/README.md)
-  * `LEAD() OVER()`
-
-* [Products With Three or More Orders in Two Consecutive Years | learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode3/ProductsWithThreeorMoreOrdersinTwoConsecutiveYears/README.md)
-  * `LEAD() OVER()`
-
-* [UsersWithTwoPurchasesWithinSevenDays | learntocode](https://github.com/iamslash/learntocode/blob/master/leetcode3/UsersWithTwoPurchasesWithinSevenDays/README.md)
-  * `LAG() OVER()`
 
 ## Pivot
 
@@ -3052,7 +3055,7 @@ mysql> SELECT VERSION();
 ### Arithmetic
 
 | Operator | Description |
-| :------: | :---------: |
+| :------: | :--------- |
 |    +     |     Add     |
 |    -     |     Sub     |
 |    *     |     Mul     |
@@ -3062,7 +3065,7 @@ mysql> SELECT VERSION();
 ### Bitwise
 
 | Operator | Description |
-| :------: | :---------: |
+| :------: | :--------- |
 |    &     |     AND     |
 |    \|    |      OR     |
 |    ^     |     XOR     |
@@ -3070,7 +3073,7 @@ mysql> SELECT VERSION();
 ### Comparison
 
 | Operator |      Description      |
-| :------: | :-------------------: |
+| :------: | :------------------- |
 |    =     |         Equal         |
 |    <>    |       Not Equal       |
 |    >     |     Greater than      |
@@ -3081,7 +3084,7 @@ mysql> SELECT VERSION();
 ### Compound
 
 | Operator |  Description   |
-| :------: | :------------: |
+| :------: | :------------ |
 |    +=    |   Add equals   |
 |    -=    |   Sub equals   |
 |    *=    | multiply equal |
@@ -3093,18 +3096,18 @@ mysql> SELECT VERSION();
 
 ### Logical
 
-| Operator |                         Description                          |
-| :------: | :----------------------------------------------------------: |
-|   ALL    |    TRUE if all of the subquery values meet the condition     |
-|   AND    |     TRUE if all the conditions separated by AND is TRUE      |
-|   ANY    |    TRUE if any of the subquery values meet the condition     |
-| BETWEEN  |    TRUE if the operand is within the range of comparisons    |
-|  EXISTS  |       TRUE if the subquery returns one or more records       |
-|    IN    | TRUE if the operand is equal to one of a list of expressions |
-|   LIKE   |            TRUE if the operand matches a pattern             |
-|   NOT    |      Displays a record if the condition(s) is NOT TRUE       |
-|    OR    |    TRUE if any of the conditions separated by OR is TRUE     |
-|   SOME   |    TRUE if any of the subquery values meet the condition     |
+| Operator | Description |
+| :-- | :-- |
+| `ALL` | `TRUE` if all of the subquery values meet the condition |
+| `AND` | `TRUE` if all the conditions separated by AND is TRUE |
+| `ANY` | `TRUE` if any of the subquery values meet the condition |
+| `BETWEEN` | `TRUE` if the operand is within the range of comparisons |
+| `EXISTS` | `TRUE` if the subquery returns one or more records |
+| `IN` | `TRUE` if the operand is equal to one of a list of expressions |
+| `LIKE` | `TRUE` if the operand matches a pattern |
+| `NOT` | Displays a record if the condition(s) is `NOT TRUE` |
+| `OR` | `TRUE` if any of the conditions separated by OR is TRUE |
+| `SOME` | `TRUE` if any of the subquery values meet the condition  |
 
 ## Data Types (MySQL)
 
@@ -3112,10 +3115,10 @@ mysql> SELECT VERSION();
 
 ### Text
 
-|          Data type          |                                                          storage                                                           |                                                                                                                                            Description                                                                                                                                             |
-| :-------------------------: | :------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|           CHAR(M)           | M × w bytes, 0 <= M <= 255, where w is the number of bytes required for the maximum-length character in the character set. |                                                                   Holds a fixed length string (can contain letters, numbers, and special characters). The fixed size is specified in parenthesis. Can store up to 255 characters                                                                   |
-|         VARCHAR(M)          |         L + 1 bytes if column values require 0 − 255 bytes, L + 2 bytes if values may require more than 255 bytes1         |                         Holds a variable length string (can contain letters, numbers, and special characters). The maximum size is specified in parenthesis. Can store up to 255 characters. Note: If you put a greater value than 255 it will be converted to a TEXT type                         |
+| Data type | storage | Description |
+| :- | :-- | :-- |
+| `CHAR(M)` | M × w bytes, 0 <= M <= 255, where w is the number of bytes required for the maximum-length character in the character set. | Holds a fixed length string (can contain letters, numbers, and special characters). The fixed size is specified in parenthesis. Can store up to 255 characters |
+|         VARCHAR(M)          | L + 1 bytes if column values require 0 − 255 bytes, L + 2 bytes if values may require more than 255 bytes1         | Holds a variable length string (can contain letters, numbers, and special characters). The maximum size is specified in parenthesis. Can store up to 255 characters. Note: If you put a greater value than 255 it will be converted to a TEXT type                         |
 |          TINYTEXT           |                                                 L + 1 bytes, where L < 2^8                                                 |                                                                                                                       Holds a string with a maximum length of 255 characters                                                                                                                       |
 |            TEXT             |                                                L + 2 bytes, where L < 2^16                                                 |                                                                                                                     Holds a string with a maximum length of 65,535 characters                                                                                                                      |
 |            BLOB             |                                                L + 2 bytes, where L < 2^16                                                 |                                                                                                                 For BLOBs (Binary Large OBjects). Holds up to 65,535 bytes of data                                                                                                                 |
@@ -3128,37 +3131,37 @@ mysql> SELECT VERSION();
 
 ### Number
 
-|  Data type   |                      storage                      |                                                                                                              Description                                                                                                              |
-| :----------: | :-----------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|  TINYINT(M)  |                         1                         |                                                                  -128 to 127 normal. 0 to 255 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                                  |
-| SMALLINT(M)  |                         2                         |                                                               -32768 to 32767 normal. 0 to 65535 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                               |
-| MEDIUMINT(M) |                         3                         |                                                           -8388608 to 8388607 normal. 0 to 16777215 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                            |
-|    INT(M)    |                         4                         |                                                       -2147483648 to 2147483647 normal. 0 to 4294967295 UNSIGNED. The maximum number of digits may be specified in parenthesis                                                        |
-|  BIGIINT(M)  |                         8                         |                                         -9223372036854775808 to 9223372036854775807 normal. 0 to 18446744073709551615 UNSIGNED. The maximum number of digits may be specified in parenthesis                                          |
-|  FLOAT(M,d)  | 4 bytes if 0 <= p <= 24, 8 bytes if 25 <= p <= 53 |           A small number with a floating decimal point. The maximum number of digits may be specified in the size parameter. The maximum number of digits to the right of the decimal point is specified in the d parameter           |
-| DOUBLE(M,d)  |                         8                         |           A large number with a floating decimal point. The maximum number of digits may be specified in the size parameter. The maximum number of digits to the right of the decimal point is specified in the d parameter           |
-| DECIMAL(M,d) |         total M digits, fraction d digits         | A DOUBLE stored as a string , allowing for a fixed decimal point. The maximum number of digits may be specified in the size parameter. The maximum number of digits to the right of the decimal point is specified in the d parameter |
+|  Data type | storage | Description |
+| :--: | :---: | :-- |
+|  `TINYINT(M)`  |  1 | `-128 `to `127` normal. `0 to 255` UNSIGNED. The maximum number of digits may be specified in parenthesis |
+| `SMALLINT(M)`  |                         2                         |                                                               `-32768` to `32767` normal. `0` to `65535` UNSIGNED. The maximum number of digits may be specified in parenthesis                                                               |
+| `MEDIUMINT(M)` |  3 | `-8388608` to `8388607` normal. `0` to `16777215` UNSIGNED. The maximum number of digits may be specified in parenthesis |
+|    `INT(M)`    |                         4 |                                                       `-2147483648` to `2147483647` normal. `0` to `4294967295` UNSIGNED. The maximum number of digits may be specified in parenthesis |
+|  `BIGIINT(M)`  |                         8 |                                         `-9223372036854775808` to `9223372036854775807` normal. `0` to `18446744073709551615` UNSIGNED. The maximum number of digits may be specified in parenthesis |
+|  `FLOAT(M,d)`  | `4` bytes if `0 <= p <= 24`, `8` bytes if `25 <= p <= 53` | A small number with a floating decimal point. The maximum number of digits may be specified in the size parameter. The maximum number of digits to the right of the decimal point is specified in the d parameter |
+| `DOUBLE(M,d)`  | 8 | A large number with a floating decimal point. The maximum number of digits may be specified in the size parameter. The maximum number of digits to the right of the decimal point is specified in the d parameter |
+| `DECIMAL(M,d)` | total `M` digits, fraction `d` digits | A DOUBLE stored as a string , allowing for a fixed decimal point. The maximum number of digits may be specified in the size parameter. The maximum number of digits to the right of the decimal point is specified in the d parameter |
 
-* The integer types have an extra option called UNSIGNED. Normally,
+* The integer types have an extra option called `UNSIGNED`. Normally,
   the integer goes from an negative to positive value. Adding the
-  UNSIGNED attribute will move that range up so it starts at zero
+  `UNSIGNED` attribute will move that range up so it starts at zero
   instead of a negative number.
 
 ### Date
 
-| Data type | storage |                                                                                                             Description                                                                                                             |
-| :-------: | :-----: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-|   DATE    |    3    |                                                                        A date. Format: YYYY-MM-DD, The supported range is from '1000-01-01' to '9999-12-31'                                                                         |
-| DATETIME  |    8    |                                                A date and time combination. Format: YYYY-MM-DD HH:MI:SS, The supported range is from '1000-01-01 00:00:00' to '9999-12-31 23:59:59'                                                 |
-| TIMESTAMP |    4    | A timestamp. TIMESTAMP values are stored as the number of seconds since the Unix epoch ('1970-01-01 00:00:00' UTC). Format: YYYY-MM-DD HH:MI:SS, The supported range is from '1970-01-01 00:00:01' UTC to '2038-01-09 03:14:07' UTC |
-|   TIME    |    3    |                                                                          A time. Format: HH:MI:SS, The supported range is from '-838:59:59' to '838:59:59'                                                                          |
-|   YEAR    |    1    |                          A year in two-digit or four-digit format., Values allowed in four-digit format: 1901 to 2155. Values allowed in two-digit format: 70 to 69, representing years from 1970 to 2069                           |
+| Data type | storage | Description |
+| :-------: | :-----: | :--- |
+|   DATE    |    3    | A date. Format: `YYYY-MM-DD`, The supported range is from '1000-01-01' to '9999-12-31' |
+| DATETIME  |    8    | A date and time combination. Format: `YYYY-MM-DD HH:MI:SS`, The supported range is from '`1000-01-01 00:00:00`' to '`9999-12-31 23:59:59`' |
+| TIMESTAMP |    4    | A timestamp. `TIMESTAMP` values are stored as the number of seconds since the Unix epoch ('`1970-01-01 00:00:00`' UTC). Format: `YYYY-MM-DD HH:MI:SS`, The supported range is from '`1970-01-01 00:00:01`' UTC to `'2038-01-09 03:14:07`' UTC |
+|   TIME    |    3    | A time. Format: HH:MI:SS, The supported range is from '`-838:59:59`' to '`838:59:59`' |
+|   YEAR    |    1    |                          A year in two-digit or four-digit format., Values allowed in four-digit format: `1901` to `2155`. Values allowed in two-digit format: 70 to 69, representing years from 1970 to 2069 |
 
-* Even if DATETIME and TIMESTAMP return the same format, they work
-  very differently. In an INSERT or UPDATE query, the TIMESTAMP
-  automatically set itself to the current date and time. TIMESTAMP
-  also accepts various formats, like YYYYMMDDHHMISS, YYMMDDHHMISS,
-  YYYYMMDD, or YYMMDD.
+* Even if `DATETIME` and `TIMESTAMP` return the same format, they work
+  very differently. In an `INSERT` or `UPDATE` query, the `TIMESTAMP`
+  automatically set itself to the current date and time. `TIMESTAMP`
+  also accepts various formats, like `YYYYMMDDHHMISS`, `YYMMDDHHMISS`,
+  `YYYYMMDD`, or `YYMMDD`.
 
 # Effecive SQL
 
@@ -3168,13 +3171,3 @@ mysql> SELECT VERSION();
 
 * `WHERE IN`
   * [Highest Grade For Each Student @ learntocode](https://github.com/iamslash/learntocode/tree/master/leetcode/HighestGradeForEachStudent/a.sql)
-
-# Quiz
-
-* Multiple Apartments
-* Open Requests
-* Close All Requests
-* Joins
-* Denormalization
-* Entity-Relationship Diagram
-* Design Grade Database
