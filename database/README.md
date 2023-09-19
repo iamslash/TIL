@@ -191,9 +191,9 @@ CPU 는 disk 에서 데이터를 읽어들여 memeory 로 로드해야 한다. �
 
 ![](img/2022-10-23-07-57-59.png)
 
-**Clustered Index** 는 Leaf Node 가 모든 Attribute Values 가 있다. SELECT 할 때
+**Clustered Index** 는 Leaf Node 에 모든 Attribute Values 가 있다. SELECT 할 때
 한번에 읽어 온다. 반면에 **Non-Clustered Index** 는 Leaf Node 가 **Clustered
-Index** 의 주소를 갖는다. 다시한번 **Clustered Index** 를 찾아갈 필요가 있다.
+Index** 의 주소를 갖는다. 다시한번 **Clustered Index** 를 찾아갈 필요가 있다. 추가적인 I/O 가 필요하다.
 
 Index of `Roll_no is` is a **Clustered Index**.
 
@@ -251,3 +251,14 @@ There is additional index data for `Name`. This needs record lookup.
 | Afzal |	3452 |
 | Sudhir |	5643 |
 | zoya |	9876 |
+
+일반적으로 테이블에 여러 개의 non-clustered index가 있을 때, clustered index를
+auto-increment로 생성하는 것이 좋습니다. 그 이유는 다음과 같습니다.
+
+* 인덱스 크기: auto-increment를 사용하여 생성한 clustered index는 숫자로 이루어져
+있어 인덱스 크기가 작습니다. 이는 I/O 효율과 디스크 공간 절약에 도움이 됩니다.
+* 삽입 성능: auto-increment 기반의 인덱스는 새 데이터가 인덱스 페이지 끝에
+추가되기 때문에 페이지 분할 및 재구성이 최소화됩니다. 이로 인해 인덱스 생성과
+유지에 관련된 오버헤드가 줄어들어 삽입 성능이 좋아집니다.
+* 단순성: auto-increment로 생성된 clustered index는 단일 컬럼에 기반하기 때문에
+인덱스 관리가 비교적 쉽습니다.
