@@ -59,10 +59,29 @@
     - [Compound](#compound)
     - [Logical](#logical)
 - [Tips](#tips)
-  - [Getting Row Count](#getting-row-count)
+  - [Managing Hierarchical Data in MySQL Using the Adjacency List Model](#managing-hierarchical-data-in-mysql-using-the-adjacency-list-model)
+  - [How to Get Row Count in MySQL](#how-to-get-row-count-in-mysql)
+  - [MySQL Compare Two Tables](#mysql-compare-two-tables)
+  - [How To Find Duplicate Values in MySQL](#how-to-find-duplicate-values-in-mysql)
+  - [How To Delete Duplicate Rows in MySQL](#how-to-delete-duplicate-rows-in-mysql)
+  - [UUID vs INT for Primary](#uuid-vs-int-for-primary)
+  - [MySQL Copy Table With Examples](#mysql-copy-table-with-examples)
+  - [How To Copy a MySQL Database](#how-to-copy-a-mysql-database)
+  - [MySQL Variables](#mysql-variables)
+  - [MySQL SELECT INTO Variable](#mysql-select-into-variable)
+  - [How To Compare Successive Rows Within The Same Table in MySQL](#how-to-compare-successive-rows-within-the-same-table-in-mysql)
+  - [How To Change MySQL Storage Engine](#how-to-change-mysql-storage-engine)
+  - [MySQL REGEXP: Search Based On Regular Expressions](#mysql-regexp-search-based-on-regular-expressions)
+  - [MySQL ROW\_NUMBER, This is How You Emulate It](#mysql-row_number-this-is-how-you-emulate-it)
+  - [MySQL Select Random Records](#mysql-select-random-records)
+  - [How To Select The nth Highest Record In MySQL](#how-to-select-the-nth-highest-record-in-mysql)
+  - [MySQL Reset Auto Increment Values](#mysql-reset-auto-increment-values)
+  - [MariaDB vs. MySQL](#mariadb-vs-mysql)
+  - [MySQL Interval](#mysql-interval)
+  - [MySQL NULL: The Beginner’s Guide](#mysql-null-the-beginners-guide)
+  - [How to Get MySQL Today’s Date](#how-to-get-mysql-todays-date)
   - [Mapping NULL Values to Other Values](#mapping-null-values-to-other-values)
 - [Effecive SQL](#effecive-sql)
-- [Problems](#problems)
 
 -----
 
@@ -1357,7 +1376,8 @@ ORDER BY
 
 -----
 
-You can store a value in a user-defined variable in one statement and refer to it later in another statement.
+You can store a value in a user-defined variable in one statement and refer to
+it later in another statement.
 
 ```sql
 SET @var1 = 1
@@ -3023,9 +3043,371 @@ mysql> SELECT VERSION();
 
 # Tips
 
-## Getting Row Count
+## Managing Hierarchical Data in MySQL Using the Adjacency List Model
 
+```sql
 
+/* employees */
+CREATE TABLE employees (
+  EmployeeID INT PRIMARY KEY,
+  EmployeeName VARCHAR(50),
+  ManagerID INT,
+  FOREIGN KEY (ManagerID) REFERENCES employees(EmployeeID)
+);
+INSERT INTO employees (EmployeeID, EmployeeName, ManagerID) VALUES
+(1, 'Alice', NULL),
+(2, 'Bob', 1),
+(3, 'Carol', 1),
+(4, 'Dave', 2),
+(5, 'Eve', 3),
+(6, 'Frank', 2);
+-- result
+EmployeeID | EmployeeName | ManagerID
+1          | Alice        | NULL
+2          | Bob          | 1
+3          | Carol        | 1
+4          | Dave         | 2
+5          | Eve          | 3
+6          | Frank        | 2
+
+/* Querying for the direct subordinates of a manager, 
+   let's say Alice (EmployeeID = 1) */
+SELECT * FROM employees WHERE ManagerID = 1;
+
+/* find all the subordinates of a manager, 
+   including indirect subordinates, */
+WITH RECURSIVE hierarchies AS (
+  SELECT EmployeeID, EmployeeName, ManagerID
+  FROM employees
+  WHERE ManagerID = 1
+  UNION ALL
+  SELECT e.EmployeeID, e.EmployeeName, e.ManagerID
+  FROM employees e
+  JOIN hierarchies h ON e.ManagerID = h.EmployeeID
+)
+SELECT * FROM hierarchies;
+-- result
+EmployeeID | EmployeeName | ManagerID
+2          | Bob          | 1
+3          | Carol        | 1
+4          | Dave         | 2
+6          | Frank        | 2
+5          | Eve          | 3
+```
+
+## How to Get Row Count in MySQL
+
+The `information_schema` database contains metadata about other databases and
+tables. You can query the `TABLE_ROWS` column in the `information_schema.tables`
+table to get an approximate row count for a specific table.
+
+```sql
+SELECT TABLE_ROWS 
+  FROM information_schema.tables
+ WHERE table_schema = 'my_database' AND 
+       table_name = 'employees';
+```
+
+## MySQL Compare Two Tables
+
+```sql
+/* Comparing table schemas */
+SELECT column_name, 
+       data_type, 
+       column_type, 
+       ordinal_position, 
+       is_nullable
+  FROM information_schema.columns
+ WHERE table_schema = 'your_database' AND 
+       table_name = 'table1'
+ UNION ALL
+SELECT column_name, 
+       data_type, 
+       column_type, 
+       ordinal_position, 
+       is_nullable
+  FROM information_schema.columns
+ WHERE table_schema = 'your_database' AND 
+       table_name = 'table2'
+ORDER BY column_name;
+
+/* Checking if both tables have the same content */
+-- This will return the total number of rows in both tables, 
+-- the number of common rows, the number of rows unique to table1, 
+-- and the number of rows unique to table2.
+WITH cte1 AS (
+  SELECT * FROM table1
+  UNION ALL
+  SELECT * FROM table2
+),
+cte2 AS (
+  SELECT * FROM table1
+  INTERSECT
+  SELECT * FROM table2
+),
+cte3 AS (
+  SELECT * FROM table1
+  EXCEPT
+  SELECT * FROM table2
+),
+cte4 AS (
+  SELECT * FROM table2
+  EXCEPT
+  SELECT * FROM table1
+)
+SELECT 
+  (SELECT COUNT(*) FROM cte1) AS total_rows,
+  (SELECT COUNT(*) FROM cte2) AS common_rows,
+  (SELECT COUNT(*) FROM cte3) AS table1_only,
+  (SELECT COUNT(*) FROM cte4) AS table2_only;
+
+/* Comparing specific columns in both tables */
+-- Using LEFT JOIN to find rows in table1 that do not have a match in table2
+SELECT t1.*
+  FROM table1 t1
+  LEFT JOIN table2 t2 
+    ON t1.column_name = t2.column_name
+ WHERE t2.column_name IS NULL;
+-- Using INNER JOIN to find rows that have matching values in both tables
+SELECT t1.* 
+  FROM table1 t1
+  JOIN table2 t2 
+    ON t1.column_name = t2.column_name;
+```
+
+## How To Find Duplicate Values in MySQL
+
+```sql
+/* Using GROUP BY and HAVING to identify 
+   duplicate values based on a single column */
+SELECT email, COUNT(*) as count
+  FROM employees
+ GROUP BY email
+HAVING COUNT(*) > 1;
+
+/* Using GROUP BY and HAVING for duplicate values 
+   based on multiple columns */
+SELECT email, phone, COUNT(*) as count
+  FROM employees
+ GROUP BY email, phone
+HAVING COUNT(*) > 1;
+
+/* Finding complete duplicate rows */
+SELECT *
+  FROM employees
+ WHERE (email, phone) IN (SELECT email, phone
+                            FROM employees
+                           GROUP BY email, phone
+                          HAVING COUNT(*) > 1);
+```
+
+## How To Delete Duplicate Rows in MySQL
+
+```sql
+/* Delete duplicates based on a single column, 
+   keeping one unique row */
+DELETE t1
+  FROM employees t1
+  JOIN (SELECT MIN(id) as min_id, email
+          FROM employees
+         GROUP BY email
+        HAVING COUNT(*) > 1) t2 
+    ON t1.email = t2.email AND 
+       t1.id > t2.min_id
+
+/* Delete duplicates based on multiple columns, 
+   keeping one unique row */
+DELETE t1
+  FROM employees t1
+  JOIN (SELECT MIN(id) as min_id, email, phone
+          FROM employees
+         GROUP BY email, phone
+        HAVING COUNT(*) > 1) t2 
+    ON t1.email = t2.email AND 
+       t1.phone = t2.phone AND 
+       t1.id > t2.min_id 
+```
+
+## UUID vs INT for Primary
+
+INT for Primary
+
+```sql
+CREATE TABLE employees_int (
+  EmployeeID INT AUTO_INCREMENT PRIMARY KEY,
+  EmployeeName VARCHAR(50),
+  ManagerID INT,
+  FOREIGN KEY (ManagerID) REFERENCES employees_int(EmployeeID)
+);
+INSERT INTO employees_int (EmployeeName, ManagerID) VALUES
+('Alice', NULL),
+('Bob', 1),
+('Carol', 1),
+('Dave', 2),
+('Eve', 3),
+('Frank', 2);
+SELECT * FROM employees_int WHERE ManagerID = 1;
+```
+
+UUID for Primary
+
+```sql
+CREATE TABLE employees_uuid (
+  EmployeeID CHAR(36) DEFAULT (UUID()) PRIMARY KEY,
+  EmployeeName VARCHAR(50),
+  ManagerID CHAR(36),
+  FOREIGN KEY (ManagerID) REFERENCES employees_uuid(EmployeeID)
+);
+-- Inserting the first employee (manager) with a specific UUID
+INSERT INTO employees_uuid (EmployeeID, EmployeeName, ManagerID) VALUES
+('6f1432de-7bc0-47e4-a23b-b656a41f52b4', 'Alice', NULL);
+
+-- Inserting other employees with the UUID of the manager
+INSERT INTO employees_uuid (EmployeeName, ManagerID) VALUES
+('Bob', '6f1432de-7bc0-47e4-a23b-b656a41f52b4'),
+('Carol', '6f1432de-7bc0-47e4-a23b-b656a41f52b4');
+
+-- ...add more employee records
+SELECT * FROM employees_uuid WHERE ManagerID = '6f1432de-7bc0-47e4-a23b-b656a41f52b4';
+```
+
+Advantages of UUID as Primary Key:
+
+* UUIDs are unique across different tables, databases, and even servers.
+* Inserting new data doesn't cause index fragmentation in the database.
+* UUIDs can be generated in a distributed system without the need for a
+  centralized ID generation system.
+
+Advantages of INT as Primary Key:
+
+* INTs are smaller in size (4 bytes) compared to UUIDs (16 bytes stored and 36
+  characters displayed).
+* INTs offer better performance due to smaller size in database queries and
+  indexing.
+* INTs are easier to read, understand and manage for humans compared to UUIDs.
+
+Choose between UUID and INT for primary keys based on the specific requirements
+and constraints of your applications. If you need a globally unique identifier
+that could be created on different systems without a centralized authority, UUID
+is a better choice. If your application requires better performance with simpler
+and smaller identifiers, INT is the better option.
+
+## MySQL Copy Table With Examples
+
+```sql
+/* Copy the entire table, including structure and data */
+CREATE TABLE employees_copy AS SELECT * FROM employees;
+
+/* Copy only the structure of the table, without any data */
+CREATE TABLE employees_structure_copy LIKE employees;
+
+/* Copy a table with selective data using a WHERE clause */
+CREATE TABLE employees_with_manager AS 
+SELECT * FROM employees WHERE ManagerID IS NOT NULL;
+
+/* Copy specific columns of the table */
+CREATE TABLE employee_names AS 
+SELECT EmployeeID, EmployeeName FROM employees;
+
+/* Insert all data from employees_copy table 
+   into the existing employees table */
+INSERT INTO employees SELECT * FROM employees_copy;
+```
+
+## How To Copy a MySQL Database
+
+```sql
+/* Using mysqldump command line tool */
+-- Export the source database to a dump file
+> mysqldump -u [source_username] -p [source_password] [source_database] > backup.sql
+-- Create a new database for the copy
+> mysql -u [destination_username] -p [destination_password] -e 'CREATE DATABASE [destination_database]'
+-- Import the dump file into the new database
+> mysql -u [destination_username] -p [destination_password] [destination_database] < backup.sql
+
+/* Using CREATE DATABASE and SELECT statements */
+-- Create a new database for the copy
+CREATE DATABASE destination_database;
+-- Copy each table from the source database 
+-- to the new database using the CREATE TABLE and INSERT INTO statements
+USE source_database;
+CREATE TABLE destination_database.table_name AS SELECT * FROM source_database.table_name;
+-- Repeat the above CREATE TABLE statement for each table you want to copy.
+```
+
+## MySQL Variables
+
+```sql
+/* System Variables */
+-- View the current value of max_connections
+SHOW VARIABLES LIKE 'max_connections';
+-- Change the value of max_connections for the current session
+SET SESSION max_connections = 200;
+-- Change the global value of max_connections (requires the SUPER privilege)
+SET GLOBAL max_connections = 200;
+
+/* User-defined Variables */
+-- Set a user-defined variable
+SET @name = 'John Doe';
+-- Use the user-defined variable in a SELECT statement
+SELECT * FROM users WHERE full_name = @name;
+-- Use user-defined variables to store intermediate values for calculations
+SET @tax_rate = 0.15;
+SET @price = 500.00;
+SET @tax = @price * @tax_rate;
+SET @total_amount = @price + @tax;
+SELECT @price AS Price, @tax AS Tax, @total_amount AS TotalAmount;
+
+/* Stored Program Local Variables */
+-- Declare and use a stored program local variable within a stored procedure
+DELIMITER //
+
+CREATE PROCEDURE GetEmployeeInformation(IN employee_id INT)
+BEGIN
+  -- Declare a local variable
+  DECLARE employee_name VARCHAR(255);
+  
+  -- Set the value of the local variable
+  SELECT full_name INTO employee_name
+  FROM employees
+  WHERE id = employee_id;
+  
+  -- Use the local variable in a SELECT statement
+  SELECT employee_name AS EmployeeName, department_id AS DepartmentID
+  FROM employees
+  WHERE full_name = employee_name;
+END//
+
+DELIMITER ;
+
+-- To call this stored procedure
+CALL GetEmployeeInformation(1);
+
+```
+
+## MySQL SELECT INTO Variable
+
+## How To Compare Successive Rows Within The Same Table in MySQL
+
+## How To Change MySQL Storage Engine
+
+## MySQL REGEXP: Search Based On Regular Expressions
+
+## MySQL ROW_NUMBER, This is How You Emulate It
+
+## MySQL Select Random Records
+
+## How To Select The nth Highest Record In MySQL
+
+## MySQL Reset Auto Increment Values
+
+## MariaDB vs. MySQL
+
+## MySQL Interval
+
+## MySQL NULL: The Beginner’s Guide
+
+## How to Get MySQL Today’s Date
 
 ## Mapping NULL Values to Other Values
 
@@ -3055,8 +3437,3 @@ ORDER BY country;
 # Effecive SQL
 
 * [Effective SQL](sql_effective.md)
-
-# Problems
-
-* `WHERE IN`
-  * [Highest Grade For Each Student @ learntocode](https://github.com/iamslash/learntocode/tree/master/leetcode/HighestGradeForEachStudent/a.sql)
