@@ -72,14 +72,13 @@
   - [How To Compare Successive Rows Within The Same Table in MySQL](#how-to-compare-successive-rows-within-the-same-table-in-mysql)
   - [How To Change MySQL Storage Engine](#how-to-change-mysql-storage-engine)
   - [MySQL REGEXP: Search Based On Regular Expressions](#mysql-regexp-search-based-on-regular-expressions)
-  - [MySQL ROW\_NUMBER, This is How You Emulate It](#mysql-row_number-this-is-how-you-emulate-it)
   - [MySQL Select Random Records](#mysql-select-random-records)
   - [How To Select The nth Highest Record In MySQL](#how-to-select-the-nth-highest-record-in-mysql)
   - [MySQL Reset Auto Increment Values](#mysql-reset-auto-increment-values)
   - [MariaDB vs. MySQL](#mariadb-vs-mysql)
   - [MySQL Interval](#mysql-interval)
-  - [MySQL NULL: The Beginner’s Guide](#mysql-null-the-beginners-guide)
   - [How to Get MySQL Today’s Date](#how-to-get-mysql-todays-date)
+  - [MySQL NULL: The Beginner’s Guide](#mysql-null-the-beginners-guide)
   - [Mapping NULL Values to Other Values](#mapping-null-values-to-other-values)
 - [Effecive SQL](#effecive-sql)
 
@@ -3382,32 +3381,272 @@ DELIMITER ;
 
 -- To call this stored procedure
 CALL GetEmployeeInformation(1);
-
 ```
 
 ## MySQL SELECT INTO Variable
 
+```sql
+/* SELECT INTO a single variable */
+DECLARE @employee_name VARCHAR(255);
+SELECT full_name INTO @employee_name
+  FROM employees
+ WHERE id = 1;
+SELECT @employee_name AS EmployeeName;
+
+/* SELECT INTO multiple variables */
+DECLARE @employee_name VARCHAR(255);
+DECLARE @department_id INT;
+SELECT full_name, department_id INTO @employee_name, @department_id
+  FROM employees
+ WHERE id = 1;
+SELECT @employee_name AS EmployeeName, @department_id AS DepartmentID;
+
+/*  SELECT INTO variables within a stored procedure */
+DELIMITER //
+
+CREATE PROCEDURE GetEmployeeDetails(IN employee_id INT)
+BEGIN
+  DECLARE employee_name VARCHAR(255);
+  DECLARE department_id INT;
+
+  SELECT full_name, department_id INTO employee_name, department_id
+    FROM employees
+   WHERE id = employee_id;
+
+  SELECT employee_name AS EmployeeName, department_id AS DepartmentID;
+END//
+
+DELIMITER ;
+
+-- To call this stored procedure:
+CALL GetEmployeeDetails(1);
+```
+
 ## How To Compare Successive Rows Within The Same Table in MySQL
+
+```sql
+/* Using window functions (MySQL 8.0+) */
+SELECT date, amount,
+       LAG(amount) OVER (ORDER BY date) AS previous_amount,
+       amount - LAG(amount) OVER (ORDER BY date) AS difference
+  FROM sales
+ ORDER BY date;
+
+/* Using user-defined variables */
+SET @prev_amount := NULL;
+SELECT date, amount,
+       @prev_amount AS previous_amount,
+       amount - @prev_amount AS difference,
+       @prev_amount := amount AS update_prev_amount
+  FROM sales
+ ORDER BY date;
+```
 
 ## How To Change MySQL Storage Engine
 
+```sql
+/* Changing the storage engine for an existing table */
+-- Check the current storage engine of an existing table
+SHOW CREATE TABLE table_name;
+-- Change the storage engine for the table
+ALTER TABLE employees ENGINE = InnoDB;
+
+/* Create a new table with a specific storage engine */
+CREATE TABLE orders (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  customer_id INT,
+  order_date DATE
+) ENGINE = InnoDB;
+```
+
 ## MySQL REGEXP: Search Based On Regular Expressions
 
-## MySQL ROW_NUMBER, This is How You Emulate It
+```sql
+/* Search for rows containing a specific word */
+SELECT *
+  FROM posts
+ WHERE content REGEXP '[[:<:]]apple[[:>:]]';
+
+/* Search for rows with email addresses */ 
+SELECT *
+  FROM users
+ WHERE email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$';
+
+/* Search for rows with phone numbers */
+SELECT *
+  FROM contacts
+ WHERE phone REGEXP '^\\(?[0-9]{3}[-.)]?[0-9]{3}[-.]?[0-9]{4}$';
+
+/* Search for rows containing numeric characters */
+SELECT *
+  FROM products
+ WHERE description REGEXP '\\d';
+
+/* Search for rows containing specific file extensions */
+SELECT *
+  FROM files
+ WHERE file_name REGEXP '\\.(doc|docx)$';
+```
 
 ## MySQL Select Random Records
 
+```sql
+/* Select a single random record */
+SELECT *
+  FROM employees
+ ORDER BY RAND()
+ LIMIT 1;
+
+/* Select multiple random records */
+SELECT *
+  FROM products
+ ORDER BY RAND()
+ LIMIT 10;
+
+/* Select a random record within a specific condition */
+SELECT *
+  FROM users
+ WHERE status = 'active'
+ ORDER BY RAND()
+ LIMIT 1;
+
+/* Select a random record for each category */
+SELECT p1.*
+  FROM products AS p1
+  JOIN (SELECT category_id, MIN(RAND()) AS min_rand
+          FROM products
+         GROUP BY category_id) AS p2
+    ON p1.category_id = p2.category_id AND 
+       RAND() = p2.min_rand;
+```
+
 ## How To Select The nth Highest Record In MySQL
+
+```sql
+/* Using a subquery */
+-- Select the 3rd highest unique salary
+SELECT *
+  FROM employees e1
+ WHERE (SELECT COUNT(DISTINCT e2.salary) 
+          FROM employees e2
+         WHERE e2.salary > e1.salary) = 3-1
+ORDER BY e1.salary DESC;
+
+/* Using window functions (MySQL 8.0+) */
+-- Select the 3rd highest unique salary
+WITH ranked_employees AS (SELECT *, DENSE_RANK() OVER (ORDER BY salary DESC) AS rank
+                            FROM employees)
+SELECT *
+  FROM ranked_employees
+ WHERE rank = 3;
+```
 
 ## MySQL Reset Auto Increment Values
 
+```sql
+/* Reset auto-increment value to 1 */
+ALTER TABLE users AUTO_INCREMENT = 1;
+
+/* Reset auto-increment value to the next available value */
+-- If you have deleted rows from a table and 
+-- want to reset the auto-increment value to the maximum value plus one
+SELECT MAX(id) AS max_id FROM products;
+SET @next_value = @max_id + 1;
+ALTER TABLE products AUTO_INCREMENT = @next_value;
+```
+
 ## MariaDB vs. MySQL
+
+| Feature | MariaDB | MySQL |
+|---------|---------|-------|
+| Origin | Forked from MySQL in 2009 by the original MySQL developers | Developed by Oracle Corporation |
+| License | GNU GPL v2 | GNU GPL v2 (some components have proprietary licenses) |
+| Performance | Generally faster and more optimized | Generally slower than MariaDB in some cases |
+| Storage Engines | Supports more storage engines, including Aria, ColumnStore, MyRocks, etc. | Supports fewer storage engines, mainly InnoDB and MyISAM |
+| Updates and Patches | More frequent updates and security patches | Less frequent updates and security patches |
+| Compatibility | Maintains drop-in compatibility with MySQL; MariaDB can seamlessly replace MySQL | Not fully compatible with MariaDB |
+| Encryption | Supports more encryption features, like data-at-rest and data-in-transit encryption | Supports data-at-rest encryption, but not as extensive as MariaDB |
+| JSON Support | Supports JSON functions similar to MySQL | Native JSON datatype and JSON functions available |
+| GIS Support | Improved GIS support with more spatial data types and functions | Basic GIS support with limited spatial data types and functions |
+| Galera Cluster | Built-in Galera Cluster support | Requires the separate installation of MySQL Group Replication or MySQL Cluster |
+| Community Involvement | Backed by a strong community and adopters like Google, Wikipedia, and more | Focused more on the commercial aspect and has a smaller community influence |
 
 ## MySQL Interval
 
-## MySQL NULL: The Beginner’s Guide
+```sql
+/* Adding an interval to a date */
+-- Suppose you want to add 5 days to the date '2021-09-01'.
+SELECT DATE_ADD('2021-09-01', INTERVAL 5 DAY);
+
+/* Subtracting an interval from a date */
+-- Suppose you want to subtract 3 months from the date '2021-09-01'
+SELECT DATE_SUB('2021-09-01', INTERVAL 3 MONTH);
+
+/* Adding multiple intervals to a date */
+-- Suppose you want to add 2 years, 6 months, 
+-- and 10 days to the date '2021-09-01'
+SELECT DATE_ADD('2021-09-01', INTERVAL 2 YEAR + INTERVAL 6 MONTH + INTERVAL 10 DAY);
+
+/* Using INTERVAL with NOW() function to get future or past dates */
+-- get the date and time of 7 days from now:
+SELECT DATE_ADD(NOW(), INTERVAL 7 DAY);
+-- get the date and time of 2 hours ago
+SELECT DATE_SUB(NOW(), INTERVAL 2 HOUR);
+
+/* Using INTERVAL to calculate age based on a birthdate */
+SELECT FLOOR(DATEDIFF(CURDATE(), '1995-08-11') / 365) AS Age;
+```
 
 ## How to Get MySQL Today’s Date
+
+```sql
+/* Using CURDATE() function */
+SELECT CURDATE();
+-- result
+2021-09-01
+
+/* Using CURRENT_DATE() function */
+SELECT CURRENT_DATE();
+-- result
+2021-09-01
+
+/* Using NOW() function and extracting the date part */
+SELECT DATE(NOW());
+-- result
+2021-09-01
+
+/* Using CURDATE() function within a WHERE clause */
+SELECT * FROM sales WHERE DATE(sale_date) = CURDATE();
+```
+
+## MySQL NULL: The Beginner’s Guide
+
+In MySQL, NULL is a special value that represents "no data" or "unknown value."
+It is different from an empty string or a zero value.
+
+```sql
+/* Creating a table with NULL values allowed */
+CREATE TABLE employees (
+  id INT PRIMARY KEY AUTO_INCREMENT,
+  first_name VARCHAR(50) NOT NULL,
+  last_name VARCHAR(50) NOT NULL,
+  email VARCHAR(100)
+);
+-- Inserting a record with a NULL value
+INSERT INTO employees (first_name, last_name, email) 
+VALUES ('John', 'Doe', NULL);
+-- Updating a record to set a NULL value
+UPDATE employees SET email = NULL WHERE id = 1;
+-- Using IS NULL in a WHERE clause 
+SELECT * FROM employees WHERE email IS NULL;
+-- Using IS NOT NULL in a WHERE clause
+SELECT * FROM employees WHERE email IS NOT NULL;
+-- Using NULL with aggregate functions
+SELECT AVG(discount) FROM sales WHERE discount IS NOT NULL;
+-- Using COALESCE() function to replace NULL values
+SELECT id, first_name, last_name, COALESCE(email, 'N/A') AS email 
+  FROM employees;
+```
 
 ## Mapping NULL Values to Other Values
 
