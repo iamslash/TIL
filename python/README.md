@@ -75,6 +75,7 @@
   - [typing — Support for type hints @ python3](#typing--support-for-type-hints--python3)
   - [itertools — Functions creating iterators for efficient looping](#itertools--functions-creating-iterators-for-efficient-looping)
   - [functools — Higher-order functions and operations on callable objects](#functools--higher-order-functions-and-operations-on-callable-objects)
+  - [Tracing Memory](#tracing-memory)
 - [Libraries](#libraries)
   - [regex](#regex)
   - [click](#click)
@@ -107,8 +108,11 @@ python3 에 대해 정리한다.
 * [James Powell: So you want to be a Python expert? | PyData Seattle 2017 @ youtube](https://www.youtube.com/watch?v=cKPlPJyQrt4&list=WL&index=5&t=0s)
   * dunder method, metaclass, decorator, context manager, generator
 * [Google Python Style Guide](https://google.github.io/styleguide/pyguide.html)
-* [Python Mastery](https://github.com/dabeaz-course/python-mastery)
 * [Practical Python](https://github.com/dabeaz-course/practical-python)
+  * [Practical Python Programming Contents](https://github.com/dabeaz-course/practical-python/blob/master/Notes/Contents.md)
+* [Python Mastery](https://github.com/dabeaz-course/python-mastery)
+  * [Advanced Python Mastery Exercises Index](https://github.com/dabeaz-course/python-mastery/blob/main/Exercises/index.md)
+  * [pdf](https://github.com/dabeaz-course/python-mastery/blob/main/PythonMastery.pdf)
   
 # Materials
 
@@ -2912,6 +2916,19 @@ if __name__ == "__main__":
 ## functools — Higher-order functions and operations on callable objects
 
 * [functools](functools.md)
+
+## Tracing Memory
+
+```py
+>>> import tracemalloc
+>>> tracemalloc.get_traced_memory()
+(63621, 252994)
+>>> a = []
+>>> tracemalloc.get_traced_memory()
+(89997, 252994)
+>>> tracemalloc.get_traced_memory.__doc__
+'Get the current size and peak size of memory blocks traced by tracemalloc.\n\nReturns a tuple: (current: int, peak: int).'
+```
 
 # Libraries
 

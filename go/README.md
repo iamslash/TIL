@@ -1,7 +1,7 @@
 ﻿- [Abstract](#abstract)
 - [References](#references)
 - [Materials](#materials)
-- [Articles](#articles)
+  - [General](#general)
   - [Tools](#tools)
   - [Best Practices](#best-practices)
   - [Concurrency](#concurrency)
@@ -137,6 +137,8 @@
 
 # Materials
 
+## General
+
 * [Golang Design Patterns in Kubernetes](https://aly.arriqaaq.com/golang-design-patterns/?fbclid=IwAR20DyiTILpa3cMe0wt4JwF_Ll83Dluwnq6QPQpXyA3rkvELGZEmwDxsNoA)
 * [DESIGN PATTERNS in GO](https://refactoring.guru/design-patterns/go)
 * [디스커버리 Go 언어](http://www.yes24.com/Product/Goods/24759320)
@@ -163,8 +165,6 @@
 * [Golang FAQ: Design](https://golang.org/doc/faq#Design)
 * [Golang FAQ: Types](https://golang.org/doc/faq#types)
 * [Campoy: Functional Go?](https://www.youtube.com/watch?v=ouyHp2nJl0I)
-
-# Articles
 
 ## Tools
 
