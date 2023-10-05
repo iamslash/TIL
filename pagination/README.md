@@ -8,8 +8,7 @@
 
 # Abstract
 
-Pagination has two options including offset-based, cursor-based.
-
+Pagination has two options including **offset-based**, **cursor-based**.
 
 # Offset-Based
 

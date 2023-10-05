@@ -519,6 +519,14 @@ product_id | product_name | total_sales
 2          | Product B    | 3
 3          | Product C    | 1
 
+/* GROUP BY dynamic value */
+-- https://leetcode.com/problems/calculate-orders-within-each-interval/
+SELECT (((minute - 1) div 6) + 1) interval_no,
+       SUM(order_count) total_orders
+  FROM orders
+ GROUP BY interval_no
+ ORDER BY interval_no
+
 /* HAVING */
   SELECT p.product_id, 
          p.product_name, 
@@ -3675,4 +3683,4 @@ ORDER BY country;
 
 # Effecive SQL
 
-* [Effective SQL](sql_effective.md)
+* [Effective SQL](effective_sql.md)

@@ -178,15 +178,90 @@ FSM (Free Space Map) 에 쌓여진 데이터를 지우는 것. 디스크 조각�
 
 ## CREATE TABLE
 
+```sql
+CREATE TABLE "audit_log" (
+	id serial primary key,
+	ip inet,
+	action text,
+	actor text,
+	description text,
+	created_at timestamp default NOW()
+)
+```
+
 ## SELECT, INSERT, UPDATE, DELETE
+
+```sql
+-- Select
+SELECT action, actor, description
+  FROM "audit_log"
+ WHERE ip = '127.0.0.1';
+-- Insert
+INSERT INTO "audit_log" (ip, action, actor, description) VALUES (
+    '127.0.0.1',
+    'delete user',
+    'admin',
+    'admin deleted the user x'
+);
+-- Update
+UPDATE "audit_log"
+   SET ip = '192.168.1.1'
+ WHERE id = 1;
+-- Delete
+DELETE FROM "audit_log"
+ WHERE id = 1;
+```
 
 ## ORDERY BY
 
+```sql
+-- Order by
+SELECT *
+FROM "audit_log"
+ORDER BY created_at DESC;
+-- K-neareset-neighbor Ordering
+SELECT "name", "location", "country"
+FROM "circuits"
+ORDER BY POINT(lng, lat) <-> POINT(2.349014, 48.864716)
+LIMIT 10;
+```
+
 ## LIMIT and OFFSET
+
+[Pagination](/pagination/README.md) for efficient pagination.
+
+```sql
+SELECT *
+  FROM "audit_log"
+OFFSET 100
+ LIMIT 10;
+```
 
 ## GROUP BY
 
+```sql
+CREATE TABLE student (
+    id SERIAL PRIMARY KEY,
+    class_no INTEGER,
+    grade INTEGER
+);
+-- Average grade of each class
+SELECT class_no, AVG(grade) AS class_avg
+  FROM student
+ GROUP BY class_no;
+```
+
 ## NULL
+
+`NULL` means `undefined value`, or `simply not knowing the value`. That is why `true = NULL, false = NULL, and NULL = NULL` checks all result in a `NULL`.
+
+```sql
+SELECT
+    TRUE = NULL AS a,
+    FALSE = NULL AS b,
+    NULL = NULL AS c;
+-- result= a: NULL, b: NULL, c: NULL
+```
 
 ## Indexes
 
