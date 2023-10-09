@@ -36,7 +36,7 @@ database 를 만들어 보자. [chidb](http://chi.cs.uchicago.edu/chidb/index.ht
 
 # Normalization
 
-* [normalization](/normalization/README.md)
+* [Normalization](/normalization/README.md)
 
 # Concurrency Problems In Transactions
 

@@ -17,7 +17,7 @@
 
 # Materials
 
-* [10. Data Normalization @ udemy](https://www.udemy.com/course/dynamodb/learn/lecture/10119810#overview)
+* [10. Data Normalization | udemy](https://www.udemy.com/course/dynamodb/learn/lecture/10119810#overview)
 
 # Overview
 
@@ -63,7 +63,7 @@
 
 # 2 NF
 
-2 NF 를 적용하여 redendant data 를 제거하자. 
+2 NF 를 적용하여 redundant data 를 제거하자. 
 다음은 Sutdents, Subject 테이블이다.
 
 | StudentId | DeptId | SPOC |
