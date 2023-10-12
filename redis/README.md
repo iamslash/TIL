@@ -76,13 +76,38 @@ redis 에 대해 정리한다.
 
 redis 는 REmote dIctionary System 의 약자이다. 
 
-redis 는 disk 에 데이터를 저장할 수 있다. `RDB (snapshot), AOF (append olny file)` 의 방법이 있다. `RDB` 는 한번에 메모리의 데이터를 디스크로 저장하는 방법이다. `AOF` 는 조금씩 디스크에 저장하는 방법이다. 두가지 방법을 적절히 혼합하여 사용하면 좋다. [참고](http://redisgate.kr/redis/configuration/redis_overview.php)
+redis 는 disk 에 데이터를 저장할 수 있다. `RDB (snapshot), AOF (append olny
+file)` 의 방법이 있다. `RDB` 는 한번에 메모리의 데이터를 디스크로 저장하는
+방법이다. `AOF` 는 조금씩 디스크에 저장하는 방법이다. 두가지 방법을 적절히
+혼합하여 사용하면 좋다.
+[참고](http://redisgate.kr/redis/configuration/redis_overview.php)
 
-`string, set, sorted set, hash, list` 등의 datatype 을 지원한다. `collection data type (set, sorted set, hash, list)` 의 경우 그 개수는 10,000 개 이하가 좋다.
+`string, set, sorted set, hash, list` 등의 datatype 을 지원한다. `collection
+data type (set, sorted set, hash, list)` 의 경우 그 개수는 10,000 개 이하가
+좋다.
 
-Sentinel 은 redis monitoring tool 이다. redis 의 master, slave 들을 지켜보고 있다가 장애처리를 해준다. `> redis-sentinel sentinel.conf` 와 같이 실행한다.
+Sentinel 은 redis monitoring tool 이다. redis 의 master, slave 들을 지켜보고
+있다가 장애처리를 해준다. `> redis-sentinel sentinel.conf` 와 같이 실행한다.
 
-redis 3.0 부터 cluster 기능을 지원한다. master 와 여러개의 slave 들로 read replica 구성을 할 수 있다.
+redis 3.0 부터 cluster 기능을 지원한다. master 와 여러개의 slave 들로 read
+replica 구성을 할 수 있다.
+
+| Category | Data Type | Usages |
+|--|--|--|
+| Basic Data Structures | Strings | Cache, counter, distributed locks, sessions (GET, SET, MGET, APPEND, SUBSTR, STRLEN) |
+| | Lists | Message queues (LPUSH, LPOP, LLEN, LMOVE, LTRIM) |
+| | Sets | Intersections, unions (SADD, SREM, SCARD, SISMEMBER, SINTER) |
+| | Hashes | Caches (HGET, HSET, HMGET, HINCRBY) |
+| | Sorted Sets (Zsets) | Ranking (ZADD, ZRANGE, ZREVRANGE, ZRANGEBYSCORE, ZREMRANGEBYSCORE, ZRANK) |
+| After Redis 2.2 | Streams | Append only log for event sourcing, sensor monitoring |
+| | Geospatial | Store and query coordinates |
+| | Bitmaps | Daily login status |
+| Probabilistic Data Structures for Big Data | HyperLogLog | Cardinality for big data |
+| | Bloom Filter | Checking existence of an element in a set |
+| | Cuckoo Filter | Checking existence of an element in a set |
+| | t-digest | Estimate the percentile of a data stream |
+| | Top-k | Find the most frequent items in a data stream |
+| | Count-Min Sketch | Estimate the frequency of an element in a data stream |
 
 ## Install
 
@@ -97,7 +122,6 @@ $ docker run --rm -p 6379:6379 --name my-redis -d redis
 # docker run --name my-redis -d --volumes-from some-volume-container redis redis-server --appendonly yes
 $ docker exec -it my-redis /bin/bash
 > redis-cli
-
 ```
 
 ## Sentinel
@@ -175,7 +199,7 @@ Redis Slave 의 주소를 Redis Master 의 주소로 교체한다.
 
 ### HyperL­ogLogs
 
-HyperLogLog 는 집합의 원소의 개수를 추정하는 방법으로 2.8.9 에 추가되었다.
+HyperLogLog 는 집합의 원소의 개수를 추정하는 방법으로 `2.8.9` 에 추가되었다.
 
 | Command | Description | Exapmle |
 |---------|-------------|---------|
@@ -184,7 +208,7 @@ HyperLogLog 는 집합의 원소의 개수를 추정하는 방법으로 2.8.9 �
 | `PFMERGE` | merge keys | `> PFMERGE dstkey k1 k2` |
 
 [bloom filter](/bloomfilter/README.md) 와 비슷하다. 어떤 대상을 입력하고 uniq 한
-것들이 몇개 있는지 `O(1)` 의 시간복잡도로 알 수 있다. 메모리는 약 12k btytes 가
+것들이 몇개 있는지 `O(1)` 의 시간복잡도로 알 수 있다. 메모리는 약 `12KB` 가
 소비된다고 함. 
 
 예를 들어 게시판의 게시물을 조회한 조회수를 계산해 보자. 그 게시물을 조회한 IP 를 `PFADD` 로 추가한다.
