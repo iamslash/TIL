@@ -972,10 +972,12 @@ func main() {
 
 ```go
 var a = make(map[int]struct{})
-a[1] = struct{}{}
-a[3] = struct{}{}
-a[5] = struct{}{}
-fmt.Println(len(a))
+a[1] = struct{}{}  // Add 1
+a[3] = struct{}{}  // Add 3
+a[5] = struct{}{}  // Add 5
+fmt.Println(a)
+delete(a, 5)
+fmt.Println(a)
 ```
 
 ### Nested Maps
