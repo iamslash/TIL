@@ -630,6 +630,47 @@ EXPLAIN SELECT * FROM orders WHERE payment_id = 57013925718;
 
 ## Index-Only Queries
 
+Index-only queries, also known as "covering indexes" or "covered queries," are a
+type of query in MySQL wherein all the data required to satisfy the query can be
+retrieved from the index itself, without accessing the actual table data (rows).
+
+When a query uses a covering index, the MySQL query optimizer can avoid reading
+the rows from the table, making the query execution faster and more efficient.
+This can happen when all the columns needed for the query are part of the index,
+either in the key columns or as included columns.
+
+For example, let's assume we have the following table and index:
+
+```sql
+CREATE TABLE users (
+  id INT(11) NOT NULL,
+  first_name VARCHAR(50) NOT NULL,
+  last_name VARCHAR(50) NOT NULL,
+  email VARCHAR(50) NOT NULL,
+  PRIMARY KEY (id),
+  INDEX idx_name_email (first_name, last_name, email)
+);
+```
+
+We can now run an index-only query by selecting only the columns available in
+the index:
+
+```sql
+SELECT first_name, 
+       last_name, 
+       email
+  FROM users
+ WHERE first_name = 'John' AND 
+       last_name = 'Doe';
+```
+
+This query can be executed using only the `idx_name_email` index, without
+accessing the table data, leading to faster and more efficient query execution.
+
+Index-only queries require all the necessary columns for the query to be present
+in the index. This can lead to larger index sizes, taking up more disk space and
+memory, which can negatively impact overall system performance.
+
 ## Filtering and Sorting With Joins
 
 ## Exceeding the Maximum Index Size

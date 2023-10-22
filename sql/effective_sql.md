@@ -310,6 +310,8 @@ ORDER BY firstname ASC, lastname ASC, user_id ASC
    LIMIT 30
 ```
 
+그러나 [MySQL](/mysql/README.md) Bug 때문에 Index Scan 이 되지 않는다. [Poor performance for queries with tuple comparison](https://bugs.mysql.com/bug.php?id=104128)
+
 ## Database-Backed Locks With Safety Guarantees	
 
 `SELECT ... FOR UPDATE` 를 사용하면 특정 SQL 에 대해 Serializable
