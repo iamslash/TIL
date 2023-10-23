@@ -673,7 +673,44 @@ memory, which can negatively impact overall system performance.
 
 ## Filtering and Sorting With Joins
 
+Let's say the number of tasks is 20,000 and the number of projects is 40 and the
+number of joined records is 120,000 and the the number of result is 40.
+
+```
+                20,000                40
+------> tasks ---------> projects ---------->
+<------       <---------          <----------
+   40          120,000
+```
+
+The number of filtered `tasks` should be small for better performance.
+
+```sql
+SELECT tasks.*
+  FROM tasks
+  JOIN projects USING(project_id)
+ WHERE tasks.team_id = 4 AND 
+       taks.status = 'open' AND 
+       projects.status = 'open';
+```
+
+The number of filtered `invoices` should be small for better performacne.
+
+```sql
+SELECT *
+  FROM invoices
+  JOIN invoices_metadata USING(invoice_id)
+ WHERE invoices.tenant_id = 4236
+ ORDER BY invoices_metadata.due_date
+ LIMIT 30
+```
+
 ## Exceeding the Maximum Index Size
+
+The size of index should be lower than data. Unless it will make following
+error. `The index row size of 3480 bytes exceeds the maximum size of 2712 bytes for index contacts_fullname`
+
+
 
 ## JSON Objects and Arrays
 

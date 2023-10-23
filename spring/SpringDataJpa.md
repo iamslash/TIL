@@ -2270,7 +2270,13 @@ public class PostRepositoryTest {
 
 ## Spring Data JPA: EntityGraph
 
-Fetch mode 에는 Eager 와 Lazy 가 있다. `Eager` 는 바로 가져오는 것이고 `Lazy` 는 필요할 때 가져오는 것이다. `@ManyToOne` 는 `Eager` 이다. `@OneToMany` 는 `Lazy` 이다. EntityGraph 는 Fetch mode 를 유연하게 설정할 수 있게 해준다.
+Fetch mode 에는 Eager 와 Lazy 가 있다. `Eager` 는 바로 가져오는 것이고 `Lazy` 는
+필요할 때 가져오는 것이다. `@ManyToOne` 는 `Eager` 이다. `@OneToMany` 는 `Lazy`
+이다. `@EntityGraph` 는 Fetch mode 를 유연하게 설정할 수 있게 해준다. 
+
+주로 `@ManyToOne, @OneToMany` 를 `Lazy` 로 설정해서 Entity Class 의 member
+variable 에 매달아 둔다. 그리고 Repsitory Interface 의 method 에 필요한 부분만
+`@EntityGraph` 를 Eager 로 매달아 둔다.
 
 다음은 `@ManyToOne` 을 사용했기 때문에 Post 를 `Eager` fetch 한다.
 
