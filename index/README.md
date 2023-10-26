@@ -710,10 +710,485 @@ SELECT *
 The size of index should be lower than data. Unless it will make following
 error. `The index row size of 3480 bytes exceeds the maximum size of 2712 bytes for index contacts_fullname`
 
+There are good strategy for index size optimization including **Prefix Index**, **Indexing Hash Values**, **Multiple Columns**.
 
+**Prefix Index**
+
+The main advantage of using a prefix index is that it significantly reduces the
+size of the index, which in turn can speed up search operations. This can be
+particularly beneficial when working with large volumes of text data, such as
+with VARCHAR or TEXT fields.
+
+```sql
+CREATE INDEX articles_search ON articles (type, (substring(title, 1, 20)));
+SELECT *
+  FROM articles
+ WHERE substring(title, 1, 20) = '...20 chars truncated title...' AND
+       title = '...full title...'
+```
+However, there are some drawbacks and limitations to using prefix indexes:
+
+* Prefix indexes can only be used with MyISAM and InnoDB storage engines. 
+* When using a prefix index, MySQL may not be able to use the index for certain
+  queries or operations like sorting or searching with the LIKE operator
+  (depending on the query and storage engine). 
+* Maintenance and updates to the index can be slower because it involves string
+  comparisons.
+
+```sql
+CREATE INDEX articles_search ON articles (type, title(20));
+SELECT * FROM articles WHERE title = '...full title...'
+```
+
+In this example, a prefix index named articles_search is created on the articles
+table, including both the 'type' column and the 'title' column with a length of
+20 characters. The storage engine will only index the first 20 characters of the
+'title' field, which can be beneficial for optimizing the performance of search
+queries on large VARCHAR or TEXT fields.  
+
+This approach can improve the query execution speed by utilizing the prefix
+index for efficient searching while still maintaining the accuracy of the
+results based on the full title. However, keep in mind the considerations and
+limitations of using a prefix index as mentioned in the previous response, such
+as compatibility with specific storage engines and potential impact on index
+maintenance.
+
+
+**Indexing Hash Values**
+
+An index based on hash values involves creating an index using a hash function,
+such as SHA1, applied to the indexed column values. This can be useful for
+speeding up search operations, especially for large text or binary columns.
+
+```sql
+CREATE INDEX articles_search ON articles (type, (sha1(title)));
+SELECT *
+  FROM articles
+ WHERE sha1(title) = '...hash of title...' AND 
+       title = '...full title...'
+```
+
+In the example you have provided, a hash index is created on the articles table
+named `articles_search`, including the 'type' column and an SHA1 hash of the
+'title' column. Applying the SHA1 hash function to the 'title' column values
+helps to create a fixed-length hash value (40 characters), which can be used to
+improve search performance and reduce the index size.
+
+The subsequent SELECT statement uses both the SHA1 hash value and the full title
+as search conditions in the query. The search operation first compares the SHA1
+hash value through the index, which helps to quickly narrow down the potential
+search results. Once the search is filtered based on the hash value, MySQL then
+compares the full title to find the exact match for the query.
+
+Using a hash index can improve search performance on large text columns, as the
+hash values can be compared faster than the larger original text values.
+However, there are some caveats and limitations to consider when using hash
+indexes:
+
+* In MySQL, hash index support is available only for the **MEMORY** storage engine,
+  not for **MyISAM** or **InnoDB**, which limits its general use.
+* Hash functions, such as **SHA1**, are not guaranteed to produce unique hash
+  values for unique inputs (i.e., collisions can occur), which might result in
+  false positives during the search. Including the full title comparison in the
+  WHERE clause, as demonstrated in the example, helps ensure accurate results.
+* Updates and modifications to the data may involve recalculating the hash
+  value, as well as updating the index, affecting the performance of write
+  operations.
+
+```sql
+CREATE INDEX articles_search ON articles (type, (SUBSTRING(sha1(title), 1, 20)));
+SELECT *
+  FROM articles
+ WHERE SUBSTRING(sha1(title), 1, 20)) = '...shortened hash of title...' AND 
+       title = '...full title...'
+```
+
+In this example, you are attempting to create an index on the articles table
+named articles_search by incorporating the 'type' column and a truncated hash
+value of the 'title' column. The truncation is achieved by applying the
+SUBSTRING function to the result of the SHA1 hash function on the 'title',
+reducing the hash value to a length of 20 characters. The idea behind this is to
+create smaller indexed values which would potentially reduce the index size and
+improve search performance.
+
+However, creating an index in this manner is not directly supported by MySQL for
+InnoDB or MyISAM storage engines in the way you have provided in your example.  
+
+```sql
+CREATE INDEX articles_search ON articles (type, (md5(title)::uuid));
+SELECT *
+  FROM articles
+ WHERE md5(title)::uuid = md5('...full title...')::uuid AND 
+       title = '...full title...'       
+```
+
+In this case, you are creating an index on the articles table named
+articles_search, which includes the 'type' column and the MD5 hash of the
+'title' column cast as a UUID (Universal Unique Identifier) data type. The
+purpose is to create a fixed-length indexed value (128-bit) based on the hash,
+which could potentially improve search performance. PostgreSQL supports the
+`::uuid` casting operator, unlike MySQL.
+
+However, even in PostgreSQL, there are important factors to consider when
+relying on hashed column values for indexing:
+
+* Hash collisions: Although rare, MD5 is not guaranteed to produce unique hash
+  values for unique text inputs. Including the full title comparison in the
+  WHERE clause helps to ensure the accuracy of the search results.
+* Write performance: When any change is made to the 'title' column, the hash
+  value and the index have to be updated, which may impact write performance.
+* Query planning: In some cases, PostgreSQL’s query planner might not choose the
+  index in query execution, and this could affect search performance.
+
+**Multiple Columns**
+
+Here are some key points to consider for using multiple columns for indexing
+optimization:
+
+- **Column order**: The order of columns in the index plays a crucial role, as it
+  determines the search efficiency for different query patterns. In general, you
+  should place columns with a higher level of selectivity, or columns with
+  higher cardinality (i.e., a larger number of distinct values), earlier in the
+  index.
+- **Index efficiency**: For a multi-column index to be effective, the indexed
+  WHERE, ORDER BY, or JOIN clauses. This helps in utilizing the index more
+  columns should frequently appear together in query conditions, such as in
+  efficiently, improving the performance of the query execution.
+- **Covering index**: An index that includes all the columns needed for processing a
+  query is called a covering index. When a query can be fulfilled entirely using
+  the data stored in an index, the database engine doesn't have to access the
+  underlying table, resulting in faster query execution.
+- **Index size**: Multi-column indexes may have a smaller size compared to
+  maintaining multiple single-column indexes, as the additional overhead for
+  each index is reduced. A smaller index size also means less disk and memory
+  usage, potentially improving performance.
+- **Write performance**: Keep in mind that having multiple indexes or composite
+  indexes on a table may affect the performance of INSERT, UPDATE, and DELETE
+  operations since the indexes must be updated each time a relevant modification
+  is made to the data. Finding the right balance between read performance and
+  write performance is crucial.
+
+```sql
+CREATE INDEX articles_search ON articles (type, author, title);
+```
+
+In this example, a multi-column index named articles_search is created on the
+articles table, comprising the 'type', 'author', and 'title' columns.
+
+Overall, using multiple columns in an index can be beneficial for optimizing
+size and improving query performance. However, it is important to consider the
+specific needs and query patterns of your application to determine the optimal
+index design. Be sure to analyze and monitor the index usage to continuously
+fine-tune the indexing strategy.
 
 ## JSON Objects and Arrays
 
+There 3 stretegy in JSO Object Indexing including **Virtual Columns**, 
+**Functional Indexes**, **GIN Indexes**.
+
+**Virtual Columns**
+
+```sql
+CREATE TABLE contacts (
+  id bigint PRIMARY KEY AUTO_INCREMENT,
+  attributes json NOT NULL,
+  email varchar(255)  AS (attributes->>"$.email") VIRTUAL NOT NULL,
+  INDEX contacts_email (email)
+);
+SELECT * 
+  FROM contacts 
+ WHERE attributes->>"$.email" ='admin@example.com';
+```
+
+Using virtual columns of JSON objects in MySQL provides the following advantages:
+
+* Enhances the query performance of JSON data by creating indexes on specific
+  JSON attributes using virtual columns.
+* Enables better schema flexibility and design, by allowing a combination of
+  structured and semi-structured data in one table.
+* Reduces storage space requirements since virtual column values aren't
+  physically stored and are only calculated when accessed.
+
+However, it's important to consider the balance between performance gains and
+potential computation overhead, as virtual columns are calculated at runtime. In
+most cases, the overall benefits of using virtual columns to extract and index
+JSON attributes outweigh the potential overhead.
+
+**Functional Indexes**
+
+```sql
+-- PostgreSQL
+CREATE INDEX contacts_email ON contacts ((attributes->>'email'));
+SELECT * 
+  FROM contacts 
+ WHERE attributes->>'email' = 'admin@example.com';
+
+-- MySQL
+CREATE INDEX contacts_email ON contacts ((
+  CAST(attributes->>"$.email" AS CHAR(255)) COLLATE utf8mb4_bin
+));
+SELECT * 
+  FROM contacts  
+ WHERE attributes->>"$.email" = 'admin@example.com';
+```
+
+Using a function index for JSON objects in SQL databases provides the following advantages:
+
+* Enhances query performance by speeding up searches on specific JSON attributes
+  through the use of indexes. 
+* Enables better handling of JSON data by simplifying the query conditions for
+  attribute filtering.
+* Allows for indexing and searching on computed values, making complex queries
+  more efficient. 
+  
+However, there are some potential trade-offs to consider when using function indexes:
+
+* Function indexes may have an impact on write performance, as the index needs
+  to be updated whenever there is a change in the indexed data.
+* The computation of function-based index values can create some overhead in
+  cases where the function is complex or computationally intensive.
+* Syntax and support for function indexes may vary between different SQL
+  database systems, so it is crucial to understand the specific capabilities and
+  limitations of your chosen database.
+
+**GIN Indexes**
+
+```sql
+CREATE INDEX contacts_attributes ON contacts USING gin (attributes);
+```
+
+A GIN (Generalized Inverted Index) index is a type of index available in
+**PostgreSQL** that is specifically designed to index complex data types, such
+as arrays, full-text search tsvector, and JSON/JSONB objects. GIN indexes
+provide high-performance search capabilities on such complex data fields and are
+especially useful for searching JSON data based on key-value pairs, keys, or
+values.
+
+Using GIN indexes for JSON objects in PostgreSQL provides the following advantages:
+
+* Enhances query performance for complex JSON queries, such as containment and
+  existence queries, by utilizing a high-performance search index.
+* Provides an efficient way to index key-value pairs, keys, or values in JSON
+  objects. Suits well for read-heavy workloads and infrequent writes.
+* Supports various query types and operators, making it suitable for different
+  use cases when working with JSON data.
+
+However, it's important to consider some potential trade-offs when using GIN indexes:
+
+* **GIN** indexes may have an impact on write performance since the index needs to
+  be updated whenever there's a change in the indexed data.
+* **GIN** indexes consume more storage space compared to other index types, such as
+  **B-tree** or **GiST** indexes.
+* Building a **GIN** index can be time-consuming, especially for large data sets.
+
+```sql
+-- Containment query:
+SELECT * FROM contacts WHERE attributes @> '{"email": "admin@example.com"}';
+-- This query returns all rows where the attributes JSON object contains an 
+-- 'email' key with the value "admin@example.com". The @> operator checks 
+-- if the JSON on the left contains the JSON on the right.
+
+-- Existence query:
+SELECT * FROM contacts WHERE attributes ? 'email';
+-- This query returns all rows with the 'email' key present 
+-- in the attributes JSON object. The ? operator checks if the key 
+-- on the right exists in the JSON object on the left.
+
+-- Key existence (OR) query:
+SELECT * FROM contacts WHERE attributes ?| array['email', 'phone'];
+-- This query returns all rows where either 'email' key or 'phone' key 
+-- is present in the attributes JSON object. The ?| operator checks 
+-- if any key in the array on the right exists in the JSON object on the left.
+
+-- Key existence (AND) query:
+SELECT * FROM contacts WHERE attributes ?& array['email', 'phone'];
+-- This query returns all rows where both 'email' key and 'phone' 
+-- key are present in the attributes JSON object. The ?& operator checks 
+-- if all keys in the array on the right exist in the JSON object on the left.
+
+-- JSON path query:
+SELECT * FROM contacts WHERE attributes @? '$.tags[*] ? (@.type == "note" && @.severity > 3)';
+-- This query uses the JSON path language, specified by the '@?' operator, 
+-- to filter rows based on more complex criteria. In this case, 
+-- it returns all rows where the attributes JSON data has elements 
+-- in the 'tags' array with a 'type' key equal to "note" and 
+-- a 'severity' key with a value greater than 3.
+```
+
+**JSON Arrays**
+
+```sql
+-- PostgreSQL
+CREATE INDEX products_categories ON products USING gin(categories);
+SELECT * 
+  FROM products 
+ WHERE categories @> '["printed book", "ebook"]' AND 
+       NOT categories @> '["audiobook"]';
+
+-- MySQL
+CREATE INDEX products_categories on products ((CAST(categories AS UNSIGNED ARRAY)));
+SELECT * 
+  FROM contacts 
+ WHERE JSON_CONTAINS(attributes, CAST('[17, 23]' AS JSON)) AND 
+       NOT JSON_CONTAINS(attributes, CAST('[11]' AS JSON))
+```
+
 ## Unique Indexes and Null
 
+When dealing with unique indexes, NULL values are considered distinct from each
+other. This means that a unique index allows multiple rows to have NULL values
+in the indexed column(s) without violating the uniqueness constraint.
+
+```sql
+-- PostgreSQL
+-- Creating the 'users' table
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  alternate_email VARCHAR(255)
+);
+
+-- Creating a unique index on the 'email' column
+CREATE UNIQUE INDEX users_email ON users (email);
+
+-- Creating a unique index on the 'alternate_email' column
+CREATE UNIQUE INDEX users_alternate_email ON users (alternate_email);
+
+-- Inserting data (valid)
+INSERT INTO users (email, alternate_email) VALUES ('user1@example.com', NULL);
+INSERT INTO users (email, alternate_email) VALUES ('user2@example.com', NULL);
+
+-- Inserting a duplicate value (violates unique constraint)
+-- This will fail
+INSERT INTO users (email, alternate_email) VALUES ('user1@example.com', NULL);
+```
+
+```sql
+-- MySQL
+-- Creating the 'users' table
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  alternate_email VARCHAR(255),
+  UNIQUE INDEX users_email (email),
+  UNIQUE INDEX users_alternate_email (alternate_email)
+);
+
+-- Inserting data (valid)
+INSERT INTO users (email, alternate_email) VALUES ('user1@example.com', NULL);
+INSERT INTO users (email, alternate_email) VALUES ('user2@example.com', NULL);
+
+-- Inserting a duplicate value (violates unique constraint)
+-- This will fail
+INSERT INTO users (email, alternate_email) VALUES ('user1@example.com', NULL);
+```
+
+This will fix that problem which does not suits for not null unique index.
+
+```sql
+-- Creating table
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  customer_id INT,
+  shipment_id INT
+);
+
+-- Creating a partial unique index for non-null customer_id and shipment_id
+CREATE UNIQUE INDEX uniqueness_idx_customer_shipment_not_null ON orders (
+  customer_id, shipment_id
+) WHERE customer_id IS NOT NULL AND shipment_id IS NOT NULL;
+
+-- Adding a check constraint to prevent both columns from being NULL at the same time
+ALTER TABLE orders ADD CONSTRAINT chk_customer_shipment_not_both_null CHECK (
+  customer_id IS NOT NULL OR shipment_id IS NOT NULL
+);
+```
+
+This will fix not null discint problem.
+
+```sql
+CREATE UNIQUE INDEX uniqueness_idx ON orders (
+  customer_id,
+  (CASE WHEN shipment_id IS NULL THEN -1 ELSE shipment_id END)
+);
+```
+
+However, there are several considerations when using this approach:
+
+- The solution assumes that the replaced value (-1, in this case) will never be
+  used as a valid value for the `shipment_id` column, as it might lead to unexpected
+  behavior when inserting or updating data. You need to ensure that this value is
+  not used accidentally as an actual value.
+- Replacing the `NULL` values with distinct values like this can be seen as a bit
+  "hacky" and might introduce some confusion when maintaining or debugging the
+  database schema in the future.
+
 ## Location-Based Searching With Bounding-Boxes
+
+```sql
+CREATE TABLE businesses (
+  id bigint PRIMARY KEY NOT NULL,
+  type varchar(255) NOT NULL,
+  name varchar(255) NOT NULL,
+  latitude float NOT NULL,
+  longitude float NOT NULL
+);
+CREATE INDEX search_idx ON businesses (longitude, latitude);
+
+SELECT *
+  FROM businesses
+ WHERE type = 'restaurant' longitude BETWEEN -73.9752 AND -74.0083 AND 
+       latitude BETWEEN 40.7216 AND 40.7422
+```
+
+Location-based searching with bounding boxes is a technique used to search and
+filter results based on their geographical locations. This can be useful for
+applications like restaurant finders, real estate websites, and
+geolocation-based search engines. Bounding boxes are defined as rectangular
+areas within which a search is performed, and they are typically specified by
+their top-left and bottom-right coordinates (latitude and longitude).
+
+In the example provided, we have a table called 'businesses' with columns 'id',
+'type', 'name', 'latitude', and 'longitude'. We create an index named
+'search_idx' on the 'longitude' and 'latitude' columns to improve the
+performance of location-based queries.
+
+The SQL query in the example searches for businesses with the type 'restaurant'
+located within specified longitude and latitude boundaries. The longitude
+boundaries are defined as -73.9752 (left) and -74.0083 (right), while the
+latitude boundaries are set to 40.7216 (bottom) and 40.7422 (top). This query
+will return all restaurants within the specified bounding box.
+
+To execute efficient location-based searches in SQL databases like MySQL and
+PostgreSQL, it is essential to make use of spatial indexing techniques such as
+`R-trees` or `GiST` (Generalized Search Tree) for faster retrieval of records based
+on their geographical location. Using bounding boxes is a simple but effective
+method for narrowing down results on location-based searches, allowing for
+efficient and fast retrieval of relevant information.
+
+location-based searching involves finding and filtering records based on their
+geographical locations, which is particularly useful for applications like
+restaurant finders, real estate websites, and geolocation-based search engines.
+Several methods and data structures can be used to improve the efficiency of
+location-based searches, such as:
+
+- Bounding Boxes: A simple technique where a rectangular area is defined by its
+  top-left and bottom-right coordinates, and searching is performed within that
+  area.
+- Quadtrees: A tree data structure used for partitioning a two-dimensional space
+  by recursively subdividing it into four equal quadrants or regions, enabling
+  efficient storage and retrieval of spatial data.
+- R-tree: A spatial indexing method that uses bounding rectangles with variable
+  sizes and overlaps to partition the space, improving search performance for
+  datasets with irregular spatial distribution.
+- k-d tree: A tree data structure for partitioning k-dimensional space,
+  particularly efficient for nearest neighbor and point-radius searches.
+- Geohash: A geocoding system using short alphanumeric strings to represent
+  rectangular areas on Earth, based on Z-order curve space-filling techniques,
+  useful for searching in distributed systems or big data platforms.
+- Spatial Partitioning: Dividing the dataset into pre-defined partitions or
+  zones according to geographical boundaries for more efficient search
+  performance.
+- Haversine Formula: A formula for calculating the great-circle distance between
+  two points on Earth's surface, used for filtering search results based on the
+  distance between the user's location and the records in the dataset.
