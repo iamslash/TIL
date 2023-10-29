@@ -344,11 +344,197 @@ SELECT *
 
 ## Inequality (!=)
 
+Inequality conditions (using the `!=` or `<>` operator) can also negatively
+impact index usage and performance in some cases. The reason is that inequality
+predicates do not efficiently narrow down the search space, as the database has
+to scan more entries in the index to identify rows of interest.
+
+For example, consider a table called products with columns `id`, `name`, `category`,
+and `price`. We have an index on the `category` column:
+
+```sql
+CREATE INDEX idx_products_category ON products (category);
+```
+
+Now, let's look at the following query that uses an equality condition:
+
+```sql
+SELECT * FROM products WHERE category = 'Electronics';
+```
+
+With the given index, the database can quickly filter down and identify rows
+having the exact category value of 'Electronics'.
+
+Now, let's consider an inequality condition:
+
+```sql
+SELECT * FROM products WHERE category != 'Electronics';
+```
+
+In this case, the database needs to scan more entries in the index, as it has to
+find all rows with a `category` value different from 'Electronics'. While the
+index can still help limit the result set, it is less efficient than in the case
+of equality conditions. Depending on the data distribution and the selectivity
+of the inequality condition, the database might decide to perform a full table
+scan, which will negatively impact the performance.
+
+Keep in mind that the performance impact can vary depending on the database
+management system being used, the inequality condition's selectivity, and the
+index's overall effectiveness in the specific scenario.
+
 ## Nullable Values (IS NULL and IS NOT NULL)
+
+Nullable values refer to columns in a database table that have the potential to
+contain a `NULL` value. In SQL, `NULL` is unique in that it represents the absence
+of a value or an unknown value. This distinct characteristic requires a
+different approach when handling `NULL` values in SQL queries. To specifically
+check for `NULL` or not `NULL` values, you must use the `IS NULL` and `IS NOT NULL`
+conditions, respectively.
+
+Suppose there is an employees table with the following columns:
+
+- id (integer)
+- name (varchar)
+- supervisor_id (integer, nullable)
+
+Here, the `supervisor_id` column has nullable values, meaning some employees might
+not have a supervisor.
+
+Example 1: Using the IS NULL condition
+
+Let's search for all employees with no supervisor:
+
+```sql
+SELECT * 
+  FROM employees
+ WHERE supervisor_id IS NULL;
+```
+
+This query returns all rows in the employees table where the `supervisor_id`
+column has a NULL value.
+
+Example 2: Using the IS NOT NULL condition
+
+Now, let's fetch all employees who do have a supervisor:
+
+```sql
+SELECT * 
+  FROM employees
+ WHERE supervisor_id IS NOT NULL;
+```
+
+This query returns all rows in the employees table where the `supervisor_id`
+column has a non-NULL value.
+
+When working with nullable columns, creating an index can help optimize query
+performance. For example, you could create an index on the `supervisor_id` and
+name columns:
+
+```sql
+CREATE INDEX idx_employees_supervisor_name ON employees(supervisor_id, name);
+```
+
+This index will be efficient for queries that involve both the `supervisor_id` and
+name columns. However, remember that `IS NOT NULL` conditions may not always make
+efficient use of indexes, so you should consider the specific queries and
+indexes your application uses.
+
+In conclusion, handling nullable values in SQL requires the use of `IS NULL` and
+`IS NOT NULL` conditions to properly deal with `NULL` values. Creating the right
+indexes helps improve query performance and ensures the efficiency of your SQL
+operations.
 
 ## Pattern Matching (LIKE)
 
+The use of wildcards with pattern matching (LIKE) in SQL queries can be quite
+helpful when searching for strings with similar characters or patterns. the use
+of wildcards can be internally rewritten as range conditions by the database
+system for better optimization.
+
+Consider a table called contacts with columns `id`, `type`, `firstname`, and
+`lastname`. We have a composite index on the type and `firstname` columns:
+
+```sql
+CREATE INDEX idx_contacts_type_firstname ON contacts (type, firstname);
+```
+
+Now, let's look at an example of a pattern-matching query using wildcards:
+
+```sql
+SELECT * FROM contacts WHERE type = 'customer' AND firstname LIKE 'Tobi%';
+```
+
+Here, we are looking for all customer rows whose `firstname` starts with "Tobi".
+The composite index can help optimize this query since the equality condition
+`type = 'customer'` comes before the wildcard search `firstname LIKE 'Tobi%'`.
+This order of columns is important for efficient index utilization.
+
+Internally, the database can rewrite the pattern-matching condition as a range
+condition:
+
+```sql
+firstname >= 'Tobi' AND firstname < 'Tobj'
+```
+
+This will enable the database to use the index by first filtering rows with 
+`type = 'customer'` and then perform a directional scan for matching firstname values
+within the specified range.
+
+Remember that wildcards can have an impact on performance when used
+inappropriately. For instance, if a wildcard character is used at the beginning
+of the search pattern, such as `%Tobi`, the index might not be utilized
+efficiently or at all, potentially leading to a full table scan. It's important
+to consider the location of the wildcards and the distribution of values in the
+indexed columns to ensure optimal indexing and query performance.
+
 ## Sorting Values (ORDER BY)
+
+Sorting values in a database is a crucial operation to organize and display the
+data according to specific requirements. The SQL ORDER BY clause is used to sort
+data in either ascending (ASC) or descending (DESC) order based on one or more
+columns.
+
+Consider a sample table issues with the following columns:
+
+- id (integer)
+- type (varchar)
+- severity (integer)
+- comments_num (integer)
+
+To filter out all the 'new' issues and display them ordered by the highest
+severity and the number of comments, you would use the following SQL query:
+
+```sql
+SELECT * 
+  FROM issues
+ WHERE type = 'new'
+ ORDER BY severity DESC, comments_num DESC;
+```
+
+In this example, the `ORDER BY` clause sorts the result set first by the
+`severity` column in descending order, and then by the `comments_num` column,
+also in descending order. This way, you will see the highest `severity` issues
+with the most comments at the top of the result set.
+
+Creating an index on the sorting columns will allow the database to fetch rows
+from the index more efficiently. To create an index on the `severity` and
+`comments_num` columns, you can use the following SQL statement:
+
+```sql
+CREATE INDEX idx_issues_severity_comments ON issues(severity DESC, comments_num DESC);
+```
+
+This index will avoid additional sorting steps, thus improving the performance
+of your query, especially when dealing with large datasets.
+
+If you work with MySQL, you can tweak the `sort_buffer_size` configuration to
+adjust the memory threshold for in-memory sorting. In PostgreSQL, this can be
+achieved with the `work_mem` setting.
+
+In summary, the SQL `ORDER BY` clause is an essential tool to sort and organize
+data within your database. Creating an index on sorting columns helps improve
+performance and avoid unnecessary memory usage. Adjusting memory settings like
+`sort_buffer_size` or `work_mem` can also aid in optimizing sorting operations.
 
 ## Aggregating Values (DISTINCT and GROUP BY)
 
@@ -358,25 +544,73 @@ SELECT *
 
 ## Data Manipulation (UPDATE and DELETE)
 
-Example using UPDATE:
+Data manipulation refers to the process of modifying or deleting data within a
+database using SQL queries. The two primary SQL statements used for data
+manipulation are UPDATE and `DELETE`. Although these statements are known for
+slower execution compared to `SELECT`, it's important to note that their
+performance can be optimized, especially the part that searches for matching
+rows.
+
+Imagine you have a `products` table with the following columns:
+
+- id (integer)
+- name (varchar)
+- price (integer)
+- status (varchar)
+
+Here are some examples of `UPDATE` and `DELETE` queries with corresponding `SELECT`
+queries that can be optimized:
+
+Example 1: Data Modification (UPDATE)
+
+Suppose you need to update the prices of all the items with the status 'Sale'.
+
+`UPDATE` Query:
 
 ```sql
-UPDATE employees SET salary = salary * 1.1 WHERE department_id = 10;
+UPDATE products SET price = price * 0.9 WHERE status = 'Sale';
 ```
 
-Example using DELETE:
+Converted `SELECT` Query:
 
 ```sql
-DELETE FROM employees WHERE hire_date < '2000-01-01';
+SELECT * FROM products WHERE status = 'Sale';
 ```
 
-Indexes on the `department_id` and `hire_date` columns can expedite these
-queries.
+The `SELECT` query can be optimized by creating an index based on the status
+column, which can also be used to speed up the `UPDATE` statement:
 
 ```sql
-CREATE INDEX idx_employees_department_id ON employees (department_id);
-CREATE INDEX idx_employees_hire_date ON employees (hire_date);
+CREATE INDEX idx_products_status ON products(status);
 ```
+
+Example 2: Data Deletion (DELETE)
+
+Now let's say you want to delete all the products with a price above 1000.
+
+DELETE Query:
+
+```sql
+DELETE FROM products WHERE price > 1000;
+```
+
+Converted SELECT Query:
+
+```sql
+SELECT * FROM products WHERE price > 1000;
+```
+
+The SELECT query can be optimized by creating an index on the price column,
+which can also help speed up the `DELETE` statement:
+
+```sql
+CREATE INDEX idx_products_price ON products(price);
+```
+
+In conclusion, data manipulation using `UPDATE` and `DELETE` queries can be
+optimized by considering the way they find matching rows. By rewriting these
+queries as `SELECT` statements, you can analyze and optimize them using
+appropriate indexes, thereby improving their overall performance.
 
 # Why isn't Database Using My Index?
 
