@@ -177,16 +177,168 @@ auto-increment로 생성하는 것이 좋습니다. 그 이유는 다음과 같�
 * 단순성: auto-increment로 생성된 clustered index는 단일 컬럼에 기반하기 때문에
 인덱스 관리가 비교적 쉽습니다.
 
-
 # Index Access Principles
 
 ## Principle 1: Fast Lookup
 
+The primary purpose of an index is to provide a fast and efficient lookup
+mechanism to retrieve the requested information from the database. Indexes can
+significantly speed up the query execution process. Here is an example:
+
+Consider a table employee with columns `id`, `name`, and `position`. Without an
+index on the id column, a simple SQL query like the one below would require a
+full table scan to find the desired row(s):
+
+```sql
+SELECT name, position FROM employee WHERE id = 100;
+```
+
+By creating an index on the `id` column, the database can efficiently look up the
+location wherein rows matching the given `id` value can be found:
+
+```sql
+CREATE INDEX idx_employee_id ON employee (id);
+```
+
+Now, running the same SQL query would speed up the search process as the
+database would use the index to quickly locate the desired row(s).
+
 ## Principle 2: Scan in One Direction
+
+Indexes are often stored in a sorted order (e.g., B-trees) to allow a
+one-directional scan when searching for specific values or ranges. This can
+optimize the data retrieval process. Here's an example:
+
+```sql
+SELECT name, position FROM employee WHERE id > 50 ORDER BY id;
+```
+
+By utilizing a sorted index on the `id` column, the database can quickly locate
+the first matching row `(id = 51)` and then scan in a single direction (forward)
+through the index to find and return all matching rows.
 
 ## Principle 3: From Left To Right
 
+**Indexes Are Used From Left to Right**
+
+When creating a composite index on multiple columns, it's essential to
+understand that the database scans the index from left to right, starting with
+the most significant (leftmost) column.
+
+For example, consider a table orders with columns customer_id, status, and
+order_date. If we create an index on `(customer_id, status, order_date)`, it would
+look like this:
+
+```sql
+CREATE INDEX idx_orders_customer_status_date ON orders (customer_id, status, order_date);
+```
+
+A query that filters by `customer_id` first, then the `status`, and finally the
+`order_date`, will utilize the index more efficiently:
+
+```sql
+SELECT * 
+  FROM orders 
+ WHERE customer_id = 100 AND 
+       status = 'shipped' AND 
+       order_date > '2021-01-01';
+```
+
+**The Ordering Is Important**
+
+The order of the columns in the composite index is important to optimize query
+performance. 
+
+For example, consider the table orders and queries with the following filtering
+criteria:
+
+Query A:
+
+```sql
+SELECT * FROM orders WHERE customer_id = 100 AND status = 'shipped';
+```
+
+Query B:
+
+```sql
+SELECT * FROM orders WHERE status = 'shipped' AND order_date > '2021-01-01';
+```
+
+Creating the index `(customer_id, status, order_date)` may be optimal for Query
+A but not for Query B. For Query B, the optimal index would be 
+`(status, order_date)`.
+
+```sql
+CREATE INDEX idx_orders_status_date ON orders (status, order_date);
+```
+
+**Skipping a Column**
+
+If a query filters data from a middle column of a composite index, the remaining
+rightmost columns may not be used efficiently.
+
+For example, consider the index `(customer_id, status, order_date)` for the orders
+table. A query that filters only by `status` may not use the index efficiently
+since the leftmost column `(customer_id)` is not specified.
+
+```sql
+SELECT * FROM orders WHERE status = 'shipped' AND order_date > '2021-01-01';
+```
+
+In this case, it would be better to create a separate index on the status and
+order_date columns.
+
+**Overlapping Indexes**
+
+Overlapping indexes may lead to redundancy and can unnecessarily increase
+storage and maintenance costs. If an index covers another index entirely, the
+larger index may be redundant.
+
+For example, consider the following indexes on the orders table:
+
+```sql
+CREATE INDEX idx_orders_customer_status ON orders (customer_id, status);
+CREATE INDEX idx_orders_customer_status_date ON orders (customer_id, status, order_date);
+```
+
+The index `(customer_id, status)` is entirely covered by the larger index
+`(customer_id, status, order_date)`. In most cases, it would be beneficial to
+remove the smaller index to improve storage and maintenance efficiency:
+
+```sql
+DROP INDEX idx_orders_customer_status;
+```
+
 ## Principle 4: Scan On Range Conditions
+
+The rangeable column should be last.
+
+```sql
+select * 
+  from employee 
+ WHERE country = 'US' AND married = 'yes' AND age > 28
+```
+
+As the query includes equality conditions (exact match) on the `country` and
+`married` columns and a range condition on the `age` column, the better index
+would be `(country, married, age)` instead of `(country, age, married)`:
+
+```sql
+CREATE INDEX idx_employee_country_married_age ON employee (country, married, age);
+```
+
+With this index, the database can first filter the rows by `country` and `married`
+using exact matches and then efficiently process the range condition on `age`. By
+placing the columns with equality conditions before the column with a range
+condition, the index can be utilized more efficiently.
+
+The SQL query would look like this:
+
+```sql
+SELECT * 
+  FROM employee 
+ WHERE country = 'US' AND married = 'yes' AND age > 28;
+```
 
 # Index Supported Operations
 
@@ -206,13 +358,325 @@ auto-increment로 생성하는 것이 좋습니다. 그 이유는 다음과 같�
 
 ## Data Manipulation (UPDATE and DELETE)
 
+Example using UPDATE:
+
+```sql
+UPDATE employees SET salary = salary * 1.1 WHERE department_id = 10;
+```
+
+Example using DELETE:
+
+```sql
+DELETE FROM employees WHERE hire_date < '2000-01-01';
+```
+
+Indexes on the `department_id` and `hire_date` columns can expedite these
+queries.
+
+```sql
+CREATE INDEX idx_employees_department_id ON employees (department_id);
+CREATE INDEX idx_employees_hire_date ON employees (hire_date);
+```
+
 # Why isn't Database Using My Index?
+
+Understanding query execution is crucial for determining why an index might be
+ignored. Each query undergoes a three-step process:
+
+- Parsing: The query is broken down into components to identify its intention.
+- Simple Plan Creation: An initial query plan is developed, including full-table
+  scans at this stage, ensuring there is always a viable execution method.
+- Optimization: Indexes are evaluated, and other optimizations are considered to
+  improve the query plan. If no better optimization is found, the initial plan
+  is retained.
 
 ## The Index Can’t Be Used
 
+There 4 cases including **Column Transformations**, **Incompatible Column Ordering**,
+**Operations Not Supported by the Index**, **The Index Is Invisible**.
+
+**Column Transformations**
+
+When performing transformations or applying functions to a column in a query,
+the index on that column might not be usable.
+
+```sql
+-- as-is
+-- Suppose we have an index on the 'salary' column:
+CREATE INDEX salary_idx ON employees(salary);
+
+-- The index may not be used when there is a transformation 
+-- applied to the column in the WHERE clause:
+SELECT * FROM employees WHERE SQRT(salary) > 2000;
+
+-- to-be
+CREATE INDEX salary_transformed_idx ON employees(SQRT(salary));
+```
+
+**Incompatible Column Ordering**
+
+The order of columns in an index matters. If the query does not match the order
+of columns in the index, the index might not be utilized.
+
+```sql
+-- Suppose we have an index on columns 'last_name' and 'first_name':
+CREATE INDEX name_idx ON employees(last_name, first_name);
+-- The index may not be used if the query filters only by 'first_name':
+
+SELECT * FROM employees WHERE first_name = 'John';
+
+-- In this case, consider creating an index with 'first_name' as the leading column:
+CREATE INDEX first_name_idx ON employees(first_name);
+```
+
+**Operations Not Supported by the Index**
+
+Indexes may not support certain operations or cannot be applied to specific data
+types. For example, the standard B-tree index does not support array operations
+or full-text searching.
+
+```sql
+-- Using PostgreSQL tsvector data type (text search):
+-- Creating a tsvector column and an index on that column
+ALTER TABLE articles ADD COLUMN tsv tsvector;
+CREATE INDEX articles_tsv_idx ON articles USING gin(tsv);
+
+-- A query that requires full-text search
+SELECT * FROM articles WHERE tsv @@ to_tsquery('english', 'search_term');
+-- In this case, we used a special GIN (Generalized Inverted Index) 
+-- to support full-text search operations. Standard B-tree indexes 
+-- would not work with tsvector data type and text search operations.
+```
+
+**The Index Is Invisible**
+
+In some databases (such as PostgreSQL), you can create invisible indexes to test
+their impact before making them public. An invisible index won't be used for
+queries unless explicitly specified.
+
+```sql
+-- In PostgreSQL, create an invisible index:
+CREATE INDEX employees_test_idx ON employees(salary) WHERE (salary > 5000) WITH (visible = false);
+-- To use the invisible index, we need to specify it explicitly in the query:
+
+SET enable_indexscan TO off;
+SET enable_bitmapscan TO off;
+SELECT * FROM employees WHERE salary > 5000;
+
+-- By setting enable_indexscan and enable_bitmapscan to off, we ensure that 
+-- the query will not use normal indexes. But it would still use the 
+-- invisible index in the best cases, allowing us to measure its impact.
+```
+
 ## No Index Will Be the Fastest
 
+Index is not the silver bullet.
+
+**Loading Many Rows**
+
+As a rule of thumb, if you need to fetch more than 20-30% of a table's rows, a
+full table scan might be more efficient than using an index. Keep in mind that
+this percentage can vary depending on the specific characteristics of the
+database, the table schema, and the hardware resources.
+
+However, it is important to note that using a full table scan can be
+resource-intensive, as it requires reading all the rows in the table. In
+situations where only a small percentage of rows need to be fetched, indexes are
+often more efficient because they help the database engine quickly locate and
+access the relevant data, bypassing irrelevant rows.
+
+**Small Tables**
+
+When dealing with a small number of records, an index can still be quite useful
+in optimizing data retrieval performance, especially when the queries involve
+filtering or searching on specific columns.
+
+Even if a table has a small number of rows, using an index allows the database
+engine to quickly locate the relevant data by referring to the index data
+structure rather than scanning the entire table. This can help speed up the
+query execution and reduce system resource utilization, particularly when the
+table has many columns, some of which are not needed for the query at hand.
+
+However, there might be certain situations where indexing a small table might
+not yield significant performance improvements. Indexes come with some overhead
+in terms of disk space and maintenance, such as updating the index when new
+records are inserted or deleted, and rebuilding or reorganizing index
+structures. Due to this overhead, adding an index to a very small table could
+sometimes have minimal impact on query performance.
+
+It is important to monitor and analyze the database's query performance and
+assess whether indexing specific columns in small tables yields the desired
+performance improvements. If indexing doesn't bring significant benefits, you
+may decide not to create an index for that particular small table.
+
+**Outdated Statistics**
+
+Outdated statistics might occur due to several reasons, including:
+
+- Large amounts of new data being inserted, deleted, or updated in the table.
+- The auto-update mechanism for statistics (if present) is not triggered yet or
+  configured with improper thresholds.
+- Periodic update jobs for statistics have not been scheduled, or existing jobs
+  have failed to execute.
+
+To address the issue of outdated statistics, you should consider taking the
+following steps:
+
+- Regularly update the statistics, especially after significant data
+  modifications in the table. You can use the database-specific commands for
+  updating statistics, such as `ANALYZE TABLE` in **MySQL** or `ANALYZE` in
+  **PostgreSQL**.
+- If the automatic statistics updating feature is supported and enabled in your
+  database, ensure that the auto-update thresholds are set appropriately
+  according to the data change frequency and the specific needs of your database
+  workload.
+- Schedule periodic jobs to update statistics, especially for large or
+  frequently modified tables, to ensure that the query optimizer always has the
+  most recent and accurate information.
+
+Keeping the statistics up-to-date helps the query optimizer make better
+decisions when choosing execution plans and optimizing the use of indexes, which
+in turn results in improved query performance and a more efficient utilization
+of system resources.
+
 ## Another index is faster
+
+**Multiple Conditions**
+
+Here are some SQL examples demonstrating the scenarios mentioned earlier, where
+a multi-column index can be faster and more efficient. In these examples, we'll
+be using a sample orders table with three columns: `order_id`, `customer_id`,
+and `order_date`.
+
+- Creating a multi-column index:
+
+```sql
+CREATE INDEX idx_orders_customer_date ON orders (customer_id, order_date);
+```
+
+This index combines `customer_id` and `order_date`, which can provide better
+filtering capabilities.
+
+- Query example using multi-column index for improved filtering:
+
+Suppose you want to retrieve all orders for a specific customer within a certain
+date range. A multi-column index can efficiently filter both conditions at once:
+
+```sql
+SELECT * FROM orders 
+WHERE customer_id = 42 AND order_date BETWEEN '2021-01-01' AND '2021-12-31';
+```
+
+In this case, the multi-column index `idx_orders_customer_date` can be utilized to
+quickly locate the relevant rows that match both conditions.
+
+- Query example using multi-column index for efficient sorting:
+
+When you need to retrieve orders for a specific customer and sort them by date:
+
+```sql
+SELECT * 
+  FROM orders 
+ WHERE customer_id = 42
+ ORDER BY order_date DESC;
+```
+
+The multi-column index `idx_orders_customer_date` can help speed up the sorting
+process, as the index already has the order_date sorted for each `customer_id`.
+
+- Query example of an index-covered query:
+  
+If you only need to fetch specific columns included in the index, such as the
+customer_id and order_date of all orders:
+
+```sql
+SELECT customer_id, order_date
+  FROM orders;
+```
+
+In this case, the database engine can use the `idx_orders_customer_date` index to
+retrieve the required data without accessing the actual table data, resulting in
+an index-only scan and faster query execution.
+
+Keep in mind that the effectiveness of the multi-column index depends on the
+specific data distribution, query patterns, and the order of columns in the
+index. Analyzing your database schema and workload will help you determine the
+optimal index structure for faster and more efficient queries.
+
+**Join**
+
+Here are some SQL examples demonstrating the use of indexes in optimizing join
+operations. In these examples, we'll use two sample tables: `orders` and
+`customers`. The `orders` table has the columns: `order_id`, `customer_id`, and
+`order_date`, while the `customers` table has the columns: `customer_id`,
+`name`, and `email`.
+
+- Creating an index on the customer_id columns in both tables:
+
+```sql
+CREATE INDEX idx_orders_customer_id ON orders (customer_id);
+CREATE INDEX idx_customers_customer_id ON customers (customer_id);
+```
+
+These indexes will enable faster search and retrieval of matching rows during
+join operations involving the `customer_id` column.
+
+- Query example using **INNER JOIN** with a proper index:
+
+Suppose you want to retrieve the list of orders along with customer information.
+You can use an **INNER JOIN** for this purpose:
+
+```sql
+SELECT o.order_id, o.order_date, c.customer_id, c.name, c.email
+  FROM orders o
+  JOIN customers c ON o.customer_id = c.customer_id;
+```
+
+With the indexes created on the `customer_id` column in both tables, the
+database engine can efficiently use the indexed columns to locate the relevant
+rows and perform the join operation much faster compared to a full table scan.
+
+- Query example using **LEFT JOIN** with a proper index:
+
+Imagine you want to retrieve a list of all customers, along with their order
+information if available:
+
+```sql
+   SELECT c.customer_id, c.name, c.email, o.order_id, o.order_date
+     FROM customers c
+LEFT JOIN orders o ON c.customer_id = o.customer_id;
+```
+
+In this case, the indexes on the `customer_id` column can help the database
+engine efficiently perform the **LEFT JOIN**, with improved row retrieval and
+reduced I/O operations.
+
+Keep in mind that the performance improvement and efficiency of using indexes in
+join operations depend on the specific data distribution, query patterns, and
+the columns involved in the join condition. It's crucial to analyze your
+database schema and workload to determine the optimal index structure and
+indexing strategies to ensure faster and more efficient join operations.
+
+**Ordering**
+
+Using an index with the appropriate ordering is important for performance
+optimization when executing queries with ordering conditions, such as in your
+example:
+
+```sql
+... WHERE type = 'open' ORDER BY date DESC LIMIT 10
+```
+
+To leverage the index for sorting in your example, you should create an index on
+the columns included in your query (type and date), such as:
+
+```sql
+CREATE INDEX idx_orders_type_date ON orders (type, date DESC);
+```
+
+This index will help the database engine to efficiently filter rows by the
+'open' type and quickly locate the 10 most recent rows without additional
+sorting.
 
 # Pitfalls and Tips
 
