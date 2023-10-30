@@ -538,9 +538,228 @@ performance and avoid unnecessary memory usage. Adjusting memory settings like
 
 ## Aggregating Values (DISTINCT and GROUP BY)
 
+These operations often aggregate a large number of rows, and optimizing them
+properly can have a significant impact on query performance.
+
+The `DISTINCT` keyword is used to return a result set with unique values for a
+specific column. The `GROUP BY` clause is used to group rows that have the same
+values in specified columns into groups, allowing aggregation functions like
+`COUNT`, `AVG`, etc., to be applied. They are often used together with `WHERE`
+conditions, affecting the order in which columns must appear in an index for
+optimal performance.
+
+The following examples illustrate query optimization using `DISTINCT`, `GROUP BY`,
+and `WHERE` conditions:
+
+- Basic DISTINCT example:
+
+```sql
+SELECT DISTINCT country FROM users;
+```
+
+Equivalent GROUP BY example:
+
+```sql
+SELECT country FROM users GROUP BY country;
+```
+
+- Simple GROUP BY:
+
+```sql
+SELECT is_paying, COUNT(*)
+  FROM users
+ GROUP BY is_paying;
+```
+
+- GROUP BY with multiple columns:
+
+```sql
+SELECT is_paying, gender, COUNT(*)
+  FROM users
+ GROUP BY is_paying, gender;
+```  
+
+- GROUP BY with a WHERE condition:
+
+```sql
+SELECT is_paying, gender, COUNT(*)
+  FROM users
+ WHERE onboarding = 'yes'
+ GROUP BY is_paying, gender;
+```
+
+As explained in the passage, the columns used in the WHERE part must always be
+added before the columns in the GROUP BY clause. This ensures the database can
+efficiently filter rows and perform the grouping.
+
+- GROUP BY with a range condition in the WHERE clause:
+
+```sql
+SELECT is_paying, gender, COUNT(*)
+  FROM users
+ WHERE age BETWEEN 20 AND 29
+ GROUP BY is_paying, gender;
+```
+
+In this case, the index may not be efficient for the GROUP BY operation, and a
+temporary mapping table may be required.
+
+- GROUP BY with aggregate functions:
+
+```sql
+SELECT is_paying, gender, AVG(projects_cnt)
+  FROM users
+ GROUP BY is_paying, gender;
+```
+
+To optimize for aggregate functions, the columns used in the `SELECT` clause
+should be included in the index after the filtering and grouping columns.
+
+In conclusion, when using aggregating values like `DISTINCT` and `GROUP` BY in
+SQL queries, properly optimizing indexes is crucial to ensure efficient query
+performance, especially when aggregating large numbers of rows.
+
 ## Joins
 
+Joins are a critical aspect of SQL when querying data from multiple tables. The
+major challenge with joins is to optimize their performance. To do this, it is
+essential to understand how databases execute these joins and which indexes are
+needed.
+
+Databases typically execute joins using a method called "nested-loop join,"
+which is similar to a for-each or for-in loop in a programming language. One
+table is accessed with all filters applied, and the matching rows serve as the
+iteration data for the loop. For every one of these rows, another query on a
+different table is executed using the values from the first table.
+
+For example, consider the following join query:
+
+```sql
+SELECT employee.*
+  FROM employee
+  JOIN department USING(department_id)
+ WHERE employee.salary > 100000 AND department.country = 'NR';
+```
+
+This query can be de-constructed into two independent queries:
+
+```sql
+SELECT *
+FROM employee
+WHERE salary > 100000;
+
+-- for each matching row from employee:
+SELECT *
+  FROM department
+ WHERE country = 'NR' AND 
+       department_id = :value_from_employee_table;
+```
+
+By breaking it down into separate queries, you can now create and optimize
+indexes on the `employee` and `department` tables using your existing knowledge. In
+this case, the order of columns doesn't matter since they are both equality
+checks.
+
+The strategy for optimizing a two-table join can also be applied when using
+joins with more tables. The database will simply use more nested loops for each
+additional table.
+
+It's vital to note that the join-order in SQL queries is not fixed. SQL is a
+declarative language specifying what data you want, but not how to retrieve it.
+The database optimizer is responsible for finding the fastest method to execute
+the query.
+
+For instance, considering the sample data provided, it may be more efficient to
+first search for departments in Nauru and then find employees earning more than
+`$100,000/year` in those departments, like this:
+
+```sql
+SELECT *
+  FROM department
+ WHERE country = 'NR';
+
+-- for each matching row from department:
+SELECT *
+  FROM employee
+ WHERE salary > 100000 AND department_id = :value_from_department_table;
+```
+
+This reduces the number of operations since only two queries are executed within
+the loop compared to `511` with the original approach.
+
+Always remember that the order in which you write joined tables doesn't
+determine the order in which they are executed. A different execution order can
+significantly improve query performance. The database will estimate the fastest
+approach, but it's crucial to provide the necessary indexes to allow it to make
+that choice. So always add all the indexes required for the database to execute
+joins in any possible order. If you miss an essential index, the database may
+not use the fastest join order.
+
 ## Subqueries
+
+Subqueries are often misunderstood as being slow, but the actual issue is
+usually the lack of appropriate indexes. To create suitable indexes for
+subqueries, you should optimize each subquery independently. The key is to
+understand the difference between independent and dependent subqueries because
+both types have different index requirements.
+
+Independent Subqueries:
+
+Consider the following query with an independent subquery:
+
+```sql
+SELECT *
+  FROM products
+ WHERE remaining > 500 AND category_id = (
+    SELECT category_id
+      FROM categories
+     WHERE type = 'book' AND name = 'Science fiction'
+)
+```
+
+The subquery is independent because no tables from the outer query are used
+within it. It is executed only once and the result is used in the outer query's
+condition. To create an index for the subquery, you can ignore its context
+within the more extensive query:
+
+- Create an index on the `categories` table using the `type` and `name` columns.
+- Replace the subquery in the SQL statement with the computed category_id value.
+- Create a final index for the products table using the `category_id` and
+  remaining columns.
+
+Dependent Subqueries:
+
+Now, consider a query with a dependent subquery:
+
+```sql
+SELECT *
+  FROM products
+ WHERE remaining = 0 AND EXISTS (
+    SELECT *
+      FROM sales
+     WHERE created_at >= '2023-01-01' AND product_id = products.product_id
+)
+```
+
+The subquery is dependent because it references a table from the outer query
+(i.e., `products.product_id`). To create indexes for dependent subqueries:
+
+- Execute the outer query first, creating an index on the products table for the
+  remaining column.
+- For each matching products row, execute the subquery with a different value
+  for `products.product_id`. Create an index for the `sales` table using the
+  `product_id` and `created_at` columns.
+
+In this case, the outer query's `EXISTS` condition is satisfied as soon as the
+subquery finds one matching row. You can think of it as automatically applying a
+`LIMIT 1` to the subquery. However, you still need to build the index according to
+range condition principles (Index Access Principle 4: Scan On Range Conditions)
+for optimal efficiency.
+
+In conclusion, when working with subqueries in SQL, it is crucial to understand
+the difference between independent and dependent subqueries and create
+appropriate indexes for each type. This will improve the performance of your
+queries and ensure optimal execution.
 
 ## Data Manipulation (UPDATE and DELETE)
 
