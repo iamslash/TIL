@@ -98,6 +98,8 @@
   - [Chubby](#chubby)
   - [Configuration Management Database (CMDB)](#configuration-management-database-cmdb)
   - [A/B Test](#ab-test)
+  - [Actor Model](#actor-model)
+  - [Reactor vs Proactor](#reactor-vs-proactor)
 - [System Design Interview](#system-design-interview)
 - [Real World Architecture](#real-world-architecture)
 - [Company Architectures](#company-architectures)
@@ -2357,6 +2359,186 @@ A/B testing is valuable for making data-driven decisions, optimizing user
 experiences, increasing sales or conversions, and refining marketing strategies.
 However, it requires careful planning, well-defined objectives, and proper
 statistical analysis to ensure the results are accurate and reliable.
+
+## Actor Model
+
+[Actor Model](/actormodel/README.md)
+
+## Reactor vs Proactor
+
+**Reactor** and **Proactor** patterns are design patterns used for handling
+asynchronous input/output (I/O) operations in concurrent systems. They help
+manage multiple events and I/O operations, such as requests from numerous
+clients or resource-intensive tasks. The primary difference between these two
+patterns is the way they handle I/O operations.
+
+**Reactor Pattern**:
+
+- The Reactor pattern uses event-driven, synchronous I/O operations. It uses an
+  event loop to wait for I/O events, then dispatches these events to
+  corresponding application-defined event handlers when they occur.
+- When an I/O operation (like reading or writing to a network socket) is
+  initiated, the Reactor pattern maintains a non-blocking mode, but it still
+  blocks the application code while performing the actual I/O operation.
+- Since the I/O operations are synchronous, the Reactor pattern usually requires
+  multi-threading to handle multiple tasks simultaneously without blocking the
+  entire system.
+- The Reactor pattern is typically easier to implement and understand because of
+  its synchronous I/O operations, but it can suffer from performance issues when
+  dealing with many concurrent I/O operations, especially when some I/O
+  operations take a long time to complete.
+
+**Proactor Pattern**:
+
+- The Proactor pattern uses asynchronous I/O operations to initiate potentially
+  long-lasting tasks while ensuring the application does not block.
+- In the Proactor pattern, the application posts asynchronous I/O requests to an
+  I/O subsystem that handles the operation without blocking. A completion event
+  is raised when the I/O operation is finished, and a completion handler is
+  called to process the results.
+- This pattern is well suited for systems that need to manage many concurrent
+  I/O operations without blocking or relying heavily on multi-threading.
+- However, the Proactor pattern is more complex to implement due to the
+  inherently asynchronous nature of its I/O operations.
+
+In summary, the Reactor pattern is based on synchronous event-driven I/O, while
+the Proactor pattern is based on asynchronous I/O handling. The choice between
+the two will depend on the specific requirements of your application, such as
+the number of concurrent I/O operations, their expected completion times, and
+the platforms or libraries being used.
+
+In Java, Reactor and Proactor patterns can be implemented using different APIs
+and mechanisms. The following are examples of how to implement these patterns in
+Java:
+
+**Reactor Pattern in Java**:
+
+The Reactor pattern can be implemented in Java using the java.nio package, which
+provides non-blocking I/O support. Here's a simplified example of a Reactor
+pattern using a server accepting multiple client connections:
+
+```java
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.*;
+import java.net.*;
+
+// A simple Reactor-based server
+public class ReactorServer {
+  public static void main(String[] args) throws IOException {
+    Selector selector = Selector.open();
+    ServerSocketChannel serverChannel = ServerSocketChannel.open();
+    
+    serverChannel.bind(new InetSocketAddress("localhost", 8080));
+    serverChannel.configureBlocking(false);
+    serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+    while (true) {
+      selector.select(); // Wait for I/O events
+      Iterator<SelectionKey> keys = selector.selectedKeys().iterator();
+      
+      while (keys.hasNext()) {
+        SelectionKey key = keys.next();
+        keys.remove();
+        
+        if (key.isAcceptable()) {
+          ServerSocketChannel server = (ServerSocketChannel) key.channel();
+          SocketChannel clientChannel = server.accept();
+          clientChannel.configureBlocking(false);
+          clientChannel.register(selector, SelectionKey.OP_READ);
+          System.out.println("Accepted connection from: " + clientChannel);
+        } else if (key.isReadable()) {
+          SocketChannel clientChannel = (SocketChannel) key.channel();
+          ByteBuffer buffer = ByteBuffer.allocate(1024);
+          int bytesRead = clientChannel.read(buffer);
+          
+          if (bytesRead == -1) {
+            clientChannel.close();
+          } else {
+            System.out.println("Read: " + new String(buffer.array(), 0, bytesRead));
+            buffer.flip();
+            clientChannel.write(buffer);
+            buffer.clear();
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+**Proactor Pattern in Java**:
+
+The Proactor pattern relies on asynchronous I/O operations. With Java, you can
+use the Asynchronous I/O API introduced in Java 7, which is part of the
+java.nio.channels package. Here's a simple example of a Proactor pattern using
+an asynchronous server:
+
+```java
+import java.io.IOException;
+import java.net.*;
+import java.nio.ByteBuffer;
+import java.nio.channels.*;
+import java.util.concurrent.*;
+
+// A simple Proactor-based server
+public class ProactorServer {
+  public static void main(String[] args) throws IOException {
+    AsynchronousServerSocketChannel serverChannel = AsynchronousServerSocketChannel.open();
+    serverChannel.bind(new InetSocketAddress("localhost", 8080));
+
+    CompletionHandler<AsynchronousSocketChannel, Object> handler = new CompletionHandler<>() {
+
+      @Override
+      public void completed(AsynchronousSocketChannel clientChannel, Object attachment) {
+        serverChannel.accept(null, this); // Accept next connection
+
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+        clientChannel.read(buffer, null, new CompletionHandler<>() {
+          @Override
+          public void completed(Integer bytesRead, Object attachment) {
+            if (bytesRead == -1) {
+              try {
+                clientChannel.close();
+              } catch (IOException e) {
+                e.printStackTrace();
+              }
+            } else {
+              System.out.println("Read: " + new String(buffer.array(), 0, bytesRead));
+              buffer.flip();
+              clientChannel.write(buffer);
+              buffer.clear();
+            }
+          }
+
+          @Override
+          public void failed(Throwable exc, Object attachment) {
+            exc.printStackTrace();
+          }
+        });
+      }
+
+      @Override
+      public void failed(Throwable exc, Object attachment) {
+        exc.printStackTrace();
+      }
+    };
+
+    serverChannel.accept(null, handler);
+
+    try {
+      Thread.sleep(Long.MAX_VALUE);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+}
+```
+
+This example demonstrates a simple single-threaded server implementing the
+Reactor and Proactor patterns, respectively. In real-world applications, you
+would typically have more advanced mechanisms to handle the I/O operations,
+error handling, and resource sharing, among other things.
 
 # System Design Interview
 

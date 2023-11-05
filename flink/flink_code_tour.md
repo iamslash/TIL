@@ -2,7 +2,8 @@
 - [Build on IntelliJ](#build-on-intellij)
 - [Remote JVM Debugging](#remote-jvm-debugging)
 - [Job Manager REST API Handlers](#job-manager-rest-api-handlers)
-- [Task Manager Task Handlers](#task-manager-task-handlers)
+- [Dispatching Job From Command Line](#dispatching-job-from-command-line)
+- [Execution Graph](#execution-graph)
 
 ---
 
@@ -157,6 +158,128 @@ Open http://localhost:8081/#/job/running
 
 The core class is `org.apache.flink.runtime.webmonitor.WebMonitorEndpoint`.
 
-# Task Manager Task Handlers
+# Dispatching Job From Command Line
 
-WIP...
+Run this command `./bin/flink run examples/streaming/WordCount.jar`.
+
+```java
+// org/apache/flink/runtime/rpc/pekko/PekkoRpcActor.java
+class PekkoRpcActor<T extends RpcEndpoint & RpcGateway> extends AbstractActor {
+...
+    private void handleMessage(final Object message) {
+        if (state.isRunning()) {
+            mainThreadValidator.enterMainThread();
+
+            try {
+                handleRpcMessage(message);
+            } finally {
+                mainThreadValidator.exitMainThread();
+            }
+        } else {
+            log.info(
+                    "The rpc endpoint {} has not been started yet. Discarding message {} until processing is started.",
+                    rpcEndpoint.getClass().getName(),
+                    message);
+
+            sendErrorIfSender(
+                    new EndpointNotStartedException(
+                            String.format(
+                                    "Discard message %s, because the rpc endpoint %s has not been started yet.",
+                                    message, rpcEndpoint.getAddress())));
+        }
+    }
+...
+
+// org/apache/flink/runtime/dispatcher/Dispatcher.java
+public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
+        implements DispatcherGateway {
+...
+    @Override
+    public CompletableFuture<Acknowledge> submitJob(JobGraph jobGraph, Time timeout) {
+        final JobID jobID = jobGraph.getJobID();
+        log.info("Received JobGraph submission '{}' ({}).", jobGraph.getName(), jobID);
+
+        try {
+            if (isInGloballyTerminalState(jobID)) {
+                log.warn(
+                        "Ignoring JobGraph submission '{}' ({}) because the job already reached a globally-terminal state (i.e. {}) in a previous execution.",
+                        jobGraph.getName(),
+                        jobID,
+                        Arrays.stream(JobStatus.values())
+                                .filter(JobStatus::isGloballyTerminalState)
+                                .map(JobStatus::name)
+                                .collect(Collectors.joining(", ")));
+                return FutureUtils.completedExceptionally(
+                        DuplicateJobSubmissionException.ofGloballyTerminated(jobID));
+            } else if (jobManagerRunnerRegistry.isRegistered(jobID)
+                    || submittedAndWaitingTerminationJobIDs.contains(jobID)) {
+                // job with the given jobID is not terminated, yet
+                return FutureUtils.completedExceptionally(
+                        DuplicateJobSubmissionException.of(jobID));
+            } else if (isPartialResourceConfigured(jobGraph)) {
+                return FutureUtils.completedExceptionally(
+                        new JobSubmissionException(
+                                jobID,
+                                "Currently jobs is not supported if parts of the vertices have "
+                                        + "resources configured. The limitation will be removed in future versions."));
+            } else {
+                return internalSubmitJob(jobGraph);
+            }
+        } catch (FlinkException e) {
+            return FutureUtils.completedExceptionally(e);
+        }
+    }
+```
+
+# Execution Graph
+
+```java
+//org/apache/flink/runtime/jobmaster/JobMaster.java
+    @Override
+    public CompletableFuture<Acknowledge> updateTaskExecutionState(
+            final TaskExecutionState taskExecutionState) {
+        FlinkException taskExecutionException;
+        try {
+            checkNotNull(taskExecutionState, "taskExecutionState");
+
+            if (schedulerNG.updateTaskExecutionState(taskExecutionState)) {
+                return CompletableFuture.completedFuture(Acknowledge.get());
+            } else {
+                taskExecutionException =
+                        new ExecutionGraphException(
+                                "The execution attempt "
+                                        + taskExecutionState.getID()
+                                        + " was not found.");
+            }
+        } catch (Exception e) {
+            taskExecutionException =
+                    new JobMasterException(
+                            "Could not update the state of task execution for JobMaster.", e);
+            handleJobMasterError(taskExecutionException);
+        }
+        return FutureUtils.completedExceptionally(taskExecutionException);
+    }
+
+// org/apache/flink/runtime/executiongraph/DefaultExecutionGraph.java
+    @Override
+    public boolean updateState(TaskExecutionStateTransition state) {
+        assertRunningInJobMasterMainThread();
+        final Execution attempt = currentExecutions.get(state.getID());
+
+        if (attempt != null) {
+            try {
+                final boolean stateUpdated = updateStateInternal(state, attempt);
+                maybeReleasePartitionGroupsFor(attempt);
+                return stateUpdated;
+            } catch (Throwable t) {
+                ExceptionUtils.rethrowIfFatalErrorOrOOM(t);
+
+                // failures during updates leave the ExecutionGraph inconsistent
+                failGlobal(t);
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+```
