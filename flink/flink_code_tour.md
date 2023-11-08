@@ -4,7 +4,7 @@
 - [Job Manager REST API Handlers](#job-manager-rest-api-handlers)
 - [Stand Alone Cluster Entry Point](#stand-alone-cluster-entry-point)
 - [Dispatching a Job From Command Line](#dispatching-a-job-from-command-line)
-- [Task Manaager Entry Point](#task-manaager-entry-point)
+- [Task Manager Entry Point](#task-manager-entry-point)
 - [Registering Task Manager To Resource Manager](#registering-task-manager-to-resource-manager)
 - [Registering Task Executor to Slot Manager](#registering-task-executor-to-slot-manager)
 - [Execution Graph](#execution-graph)
@@ -388,7 +388,7 @@ public abstract class Dispatcher extends FencedRpcEndpoint<DispatcherId>
     }
 ```
 
-# Task Manaager Entry Point
+# Task Manager Entry Point
 
 ```java
 // org.apache.flink.runtime.taskexecutor.TaskManagerRunner

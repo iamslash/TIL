@@ -2,9 +2,9 @@
 - [Basic](#basic)
   - [Concept](#concept)
   - [E-Commerce Akka Example](#e-commerce-akka-example)
-  - [E-Commer Akka Example For Scalability](#e-commer-akka-example-for-scalability)
-  - [E-Commer Akka Example For Faul-Tollerant](#e-commer-akka-example-for-faul-tollerant)
-  - [E-Commer Akka Example For Location Transparency](#e-commer-akka-example-for-location-transparency)
+  - [E-Commerce Akka Example For Scalability](#e-commerce-akka-example-for-scalability)
+  - [E-Commerce Akka Example For Faul-Tollerant](#e-commerce-akka-example-for-faul-tollerant)
+  - [E-Commerce Akka Example For Location Transparency](#e-commerce-akka-example-for-location-transparency)
   - [Actor Model Frameworks](#actor-model-frameworks)
 
 ------
@@ -281,7 +281,7 @@ in terms of message-passing and concurrency. Each architecture has its own
 advantages and trade-offs, and the choice depends on the desired features,
 programming model, and use case.
 
-## E-Commer Akka Example For Scalability
+## E-Commerce Akka Example For Scalability
 
 `orderActorRouter` is a kind of a gateway of `orderActors`.
 
@@ -337,7 +337,7 @@ public class EcommerceApp {
 }
 ```
 
-## E-Commer Akka Example For Faul-Tollerant
+## E-Commerce Akka Example For Faul-Tollerant
 
 ```java
 import akka.actor.AbstractActor;
@@ -449,7 +449,7 @@ a `RuntimeException`. The `SupervisorActor` detects the failure and restarts the
 affected `OrderActor`, allowing the actor system to continue processing incoming
 messages.
 
-## E-Commer Akka Example For Location Transparency
+## E-Commerce Akka Example For Location Transparency
 
 Taking advantage of the location transparency provided by Akka Clustering. As a
 reminder, it's important to note that this example requires a proper clustering
