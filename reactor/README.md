@@ -28,7 +28,38 @@
 
 # Abstract
 
-[Reactor](https://projectreactor.io/) 는 [Reactive Streams @ TIL](/reactivestreams/README.md) 의 implementation 중 하나이다. Spring Webflux 는 [Reactor](https://projectreactor.io/) 를 이용하여 구현되었다.
+The **Reactor** pattern is a design pattern used in event-driven programming,
+particularly for handling concurrent I/O operations efficiently within a
+single-threaded event loop. This pattern is commonly used to build
+high-performance network servers that can handle a large number of client
+connections simultaneously, without the need for multi-threading or
+multiprocessing.
+
+In the Reactor pattern, the central component is the "Reactor," which manages
+event **demultiplexing** and **dispatching**. The Reactor listens for events
+from multiple sources (e.g., network sockets), and when an event occurs, it
+delegates the appropriate event handling logic to corresponding "event
+handlers." These event handlers are responsible for handling specific I/O
+events, such as reading or writing data, closing connections, or handling
+errors.
+
+The main benefits of the Reactor pattern include:
+
+- **Scalability**: By handling multiple I/O operations in a single thread, the
+  Reactor pattern can efficiently manage many connections without the overhead
+  of thread creation and context switching.
+- **Maintainability**: The Reactor pattern separates concerns between event
+  **demultiplexing** and **event handling**, making it easier to understand and
+  maintain the code.
+- **Flexibility**: The pattern allows for different event sources, event types,
+  and event handlers, which can be added or removed as needed.
+
+Examples of popular libraries and frameworks that implement the Reactor pattern
+include Node.js, Twisted (Python), Netty (Java), and Boost.Asio (C++).
+
+[Reactor](https://projectreactor.io/) 는 [Reactive Streams |
+TIL](/reactivestreams/README.md) 의 implementation 중 하나이다. Spring Webflux
+는 [Reactor](https://projectreactor.io/) 를 이용하여 구현되었다.
 
 [rx.js](/rxjs/README.md) 를 먼저 이해했다면 reactor 는 쉽게 이해할 수 있다.
 
@@ -66,9 +97,14 @@
 
 * [Blocking-NonBlocking-Synchronous-Asynchronous](https://homoefficio.github.io/2017/02/19/Blocking-NonBlocking-Synchronous-Asynchronous/)
 
-Synchronous 와 Asynchronous 의 관심사는 job 이다. 즉, 어떤 A job, B job 을 수행할 때 A job 이 B job 과 시간을 맞추면서 실행하면 Synchronous 이다. 그러나 시간을 맞추지 않고 각자 수행하면 Asynchronous 이다.
+Synchronous 와 Asynchronous 의 관심사는 job 이다. 즉, 어떤 A job, B job 을
+수행할 때 A job 이 B job 과 시간을 맞추면서 실행하면 Synchronous 이다. 그러나
+시간을 맞추지 않고 각자 수행하면 Asynchronous 이다.
 
-Blocking 과 Non-blocking 의 관심사는 function 이다. 즉, A function 이 B function 을 호출할 때 B function 이 리턴할 때까지 A function 이 기다린다면 Blocking 이다. 그러나 B function 이 리턴하기 전에 A function 이 수행할 수 있다면 Non-blocking 이다.
+Blocking 과 Non-blocking 의 관심사는 function 이다. 즉, A function 이 B function
+을 호출할 때 B function 이 리턴할 때까지 A function 이 기다린다면 Blocking 이다.
+그러나 B function 이 리턴하기 전에 A function 이 수행할 수 있다면 Non-blocking
+이다.
 
 ## Overview
 
