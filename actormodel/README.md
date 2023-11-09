@@ -1,9 +1,9 @@
 - [Materials](#materials)
 - [Basic](#basic)
   - [Concept](#concept)
-  - [E-Commerce Akka Example](#e-commerce-akka-example)
+  - [E-Commerce Akka Example For Asynchronous Communication](#e-commerce-akka-example-for-asynchronous-communication)
   - [E-Commerce Akka Example For Scalability](#e-commerce-akka-example-for-scalability)
-  - [E-Commerce Akka Example For Faul-Tollerant](#e-commerce-akka-example-for-faul-tollerant)
+  - [E-Commerce Akka Example For Fault-Tolerant](#e-commerce-akka-example-for-fault-tolerant)
   - [E-Commerce Akka Example For Location Transparency](#e-commerce-akka-example-for-location-transparency)
   - [Actor Model Frameworks](#actor-model-frameworks)
 
@@ -11,22 +11,24 @@
 
 # Materials
 
-* [Actor Model Explained | youtube](https://www.youtube.com/watch?v=ELwEdb_pD0k&t=269s)
+- [Actor Model Explained | youtube](https://www.youtube.com/watch?v=ELwEdb_pD0k&t=269s)
 
 # Basic
 
 ## Concept
 
-The **Actor model** in computer science is a mathematical framework for concurrent
-and distributed computation. It was first introduced by Carl Hewitt, Peter
-Bishop, and Richard Steiger in 1973. The model simplifies the design and
+The **Actor model** in computer science is a mathematical framework for
+concurrent and distributed computation. It was first introduced by Carl Hewitt,
+Peter Bishop, and Richard Steiger in 1973. The model simplifies the design and
 implementation of concurrent and distributed systems by providing high-level
-abstractions for concurrency, communication, and synchronization.
+abstractions for **concurrency**, **communication**, and **synchronization**.
 
-The Actor Model is considered mathematical because it is a well-defined, formal model that describes concurrent and distributed computation based on a set of mathematical rules and principles.
+The **Actor Model** is considered mathematical because it is a well-defined,
+formal model that describes concurrent and distributed computation based on a
+set of mathematical rules and principles.
 
-In the Actor Model, the basic units of computation are actors. An actor is able
-to:
+In the **Actor Model**, the basic units of computation are actors. An actor is
+able to:
 
 - Receive and process messages from its mailbox.
 - Send messages to other actors.
@@ -90,7 +92,7 @@ Pony. It has been used in building highly concurrent, fault-tolerant, and
 scalable systems, such as telecommunications switches, web servers, and
 applications for big data processing.
 
-## E-Commerce Akka Example 
+## E-Commerce Akka Example For Asynchronous Communication
 
 ```java
 // Messages
@@ -337,7 +339,7 @@ public class EcommerceApp {
 }
 ```
 
-## E-Commerce Akka Example For Faul-Tollerant
+## E-Commerce Akka Example For Fault-Tolerant
 
 ```java
 import akka.actor.AbstractActor;
