@@ -103,6 +103,7 @@
   - [Data Lake](#data-lake)
   - [Data Warehouse](#data-warehouse)
   - [Data Lakehouse](#data-lakehouse)
+  - [API Security](#api-security)
 - [System Design Interview](#system-design-interview)
 - [Real World Architecture](#real-world-architecture)
 - [Company Architectures](#company-architectures)
@@ -2609,6 +2610,49 @@ and **Starburst**, among others. By using a Data Lakehouse architecture,
 organizations benefit from a single, unified system that covers all data types
 and a wide range of analytical use cases, from BI to AI, while leveraging open
 standards and technologies to avoid vendor lock-in.
+
+## API Security
+
+API security refers to the practices and measures used to protect application
+programming interfaces (APIs) from unauthorized access, misuse, or
+vulnerabilities. Ensuring API security is crucial as APIs are a key component in
+modern applications and provide a way for developers to connect software
+systems, share data, and extend functionality. The following list explains some
+important components of API security:
+
+- **Use HTTPS**: Always use HTTPS to secure the communication between the client
+  and the API server. This ensures data confidentiality and integrity by
+  encrypting the data exchanged.
+- **Use OAuth2**: OAuth2 is an industry-standard protocol for authorization that
+  provides a secure way to manage access and permissions for API users.
+- **Use WebAuthn**: WebAuthn is a web standard for secure and passwordless
+  authentication, which helps protect against phishing attacks and improve user
+  experience.
+- **Use Leveled API Keys**: Implement different levels of API keys to provide
+  varying access levels and permissions for different users and use cases. This
+  helps ensure that users only have access to the API resources they need.
+- **Authorization**: Ensure proper authorization mechanisms are in place to
+  control user access to specific API resources and data based on their roles
+  and permissions.
+- **Rate Limiting**: Implement rate limiting to prevent abuse and overload of
+  your API. This involves limiting the number of requests a user can make within
+  a given period.
+- **API Versioning**: Use API versioning to manage changes in your API in a way
+  that doesn't break existing clients.
+- **Whitelisting**: Permit access to your API only from specific trusted sources
+  by maintaining a whitelist of allowed IP addresses, domain names, or
+  applications.
+- **Check OWASP API Security Risks**: Regularly assess your API against common
+  security risks identified by the Open Web Application Security Project (OWASP)
+  to ensure it's protected from known vulnerabilities.
+- **Use API Gateway**: Implement an API gateway as a central point of access and
+  management for your APIs. This allows for easy monitoring, security
+  implementation, and traffic control.
+- **Error Handling**: Ensure that your API returns appropriate error messages
+  that do not reveal sensitive information or expose vulnerabilities.
+- **Input Validation**: Validate all input data sent to your API to prevent
+  potential attacks, such as SQL injections or cross-site scripting (XSS). This
+  includes checking for correct data types, lengths, and allowable characters.
 
 # System Design Interview
 
