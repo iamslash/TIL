@@ -1,15 +1,25 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basic](#basic)
-- [HTTP 1.1](#http-11)
-- [HTTP 2](#http-2)
+- [HTTP Versions](#http-versions)
+  - [HTTP/1.1](#http11)
+  - [HTTP/2](#http2)
+  - [HTTP/3](#http3)
 - [HTTP Flow](#http-flow)
+- [HTTP 1.1 Methods](#http-11-methods)
+  - [Examples](#examples)
 
 ----
 
 # Abstract
 
-HTTP 1.1 은 1999 년에 출시되었다. 하나의 TCP 연결에 하나의 Request, Response 를 처리한다. 속도와 성능 이슈를 가지고 있다. 따라서 HOL (Head of Line) Blocking - 특정 응답 지연, RTT (Round Trip Time) 증가, 무거운 Header 구조 (Big Cookies) 라는 문제점을 가지고 있었다. 또한 이런 문제들을 해결하기 위해 개발자들은 image sprite, domain sharding, CSS/JavaScript compression, Data URI 등을 이용하였다. 또한 google 은 SPDY 라는 프로토콜을 만들어서 HTTP 1.1 의 제약사항을 극복하려 했지만 HTTP 2 의 등장과 함께 Deprecate 되었다.
+**HTTP** stands for **HyperText Transfer Protocol**. It is a set of rules for
+transferring files, such as text, images, videos, and other multimedia elements,
+on the World Wide Web. When a user opens a web browser and types a URL (Uniform
+Resource Locator), the browser sends an HTTP request to the web server to fetch
+the information and display it on the user's screen. HTTP is an application
+layer protocol built on top of the TCP/IP suite, allowing clients and servers to
+communicate seamlessly across the internet.
 
 # Materials
 
@@ -34,90 +44,83 @@ History of HTTP
 | 2015	| 2.0 |
 | Draft (2020)	| 3.0 |
 
-# HTTP 1.1
+# HTTP Versions
 
-The request message is consisted of the following
+## HTTP/1.1
 
-* Request line
-* Request header fields
-* Empty line
-* Optional message body
+HTTP/1.1 is the first major revision of the original HTTP (HTTP/1.0). It was
+introduced in 1997 and aimed to improve the efficiency and reliability of data
+transmission over the internet. Some key features of HTTP/1.1 include:
 
-```http
-GET / HTTP/1.1
-Host: www.example.com
-```
+- **Persistent connections**: Unlike HTTP/1.0, which closed connections after
+  serving each request, HTTP/1.1 introduced persistent connections, allowing
+  multiple requests to be sent over a single connection, reducing the overhead
+  of establishing and closing connections.
+- **Pipelining**: This feature allows clients to send multiple requests without
+  waiting for each response, which reduces the latency associated with multiple
+  round-trips between the client and server.
+- **Chunked transfer encoding**: This allows servers to send responses in
+  smaller chunks, so clients can start processing data before the entire
+  response is received.
+- **Additional caching mechanisms**: HTTP/1.1 introduced more advanced caching
+  features, such as the ETag header and Cache-Control directives, to help
+  minimize network traffic and improve performance.
+- **Improved request and response headers**: HTTP/1.1 added several new headers
+  and standardized the formatting and interpretation of existing ones.
 
-This is request methods
+## HTTP/2
 
-----
+HTTP/2 is the second major version of HTTP, published in 2015, and was designed
+to address the limitations and performance issues of HTTP/1.1. Key features of
+HTTP/2 include:
 
-| HTTP method | Description |
-|--|--|
-| GET | 읽어온다 |
-| HEAD | GET방식과 동일하지만, 응답에 BODY가 없고 응답코드와 HEAD만 응답한다. |
-| POST | 생성한다 |
-| PUT | 업데이트한다 |
-| PATCH | 부분 업데이트한다 |
-| DELETE | 삭제한다 |
-| CONNECT | 동적으로 터널 모드를 교환, 프락시 기능을 요청시 사용. |
-| TRACE | 원격지 서버에 루프백 메시지 호출하기 위해 테스트용으로 사용. |
-| OPTIONS | 웹서버에서 지원되는 메소드의 종류를 확인할 경우 사용. |
+- **Multiplexing**: In HTTP/2, multiple requests and responses can be sent
+  concurrently over a single TCP connection. This reduces the overhead and
+  latency associated with managing multiple connections.
+- **Server push**: This allows the server to proactively send resources to the
+  client's cache before the client requests them, which can improve page load
+  times.
+- **Header compression**: HTTP/2 introduces the HPACK compression algorithm,
+  which reduces the size of request and response headers, resulting in less
+  bandwidth usage and faster transmissions.
+- **Binary framing**: HTTP/2 uses a binary format for data transmission, making
+  it more efficient and less error-prone compared to the text-based format used
+  in HTTP/1.1.
+- **Stream prioritization**: Clients can indicate the priority of specific
+  resources when making requests, allowing servers to send the most important
+  data first.
 
-The reponse message is consisted of the following
+## HTTP/3
 
-* Status line which includes the status code and reason message (e.g., HTTP/1.1 200 OK)
-* Response header fields (e.g., Content-Type: text/html)
-* Empty line
-* Optional message body
+HTTP/3 is the latest major version of HTTP, which is currently in the
+implementation stage. It builds on top of HTTP/2 but replaces the underlying
+transport protocol, TCP, with QUIC (Quick UDP Internet Connections). QUIC was
+primarily developed by Google to improve the performance of web applications and
+address the issues of network latency, head-of-line blocking, and connection
+reliability. Main features of HTTP/3 include:
 
-```http
-HTTP/1.1 200 OK
-Date: Mon, 23 May 2005 22:38:34 GMT
-Content-Type: text/html; charset=UTF-8
-Content-Length: 155
-Last-Modified: Wed, 08 Jan 2003 23:11:55 GMT
-Server: Apache/1.3.3.7 (Unix) (Red-Hat/Linux)
-ETag: "3f80f-1b6-3e1cb03b"
-Accept-Ranges: bytes
-Connection: close
+- **QUIC protocol**: HTTP/3 uses QUIC, a transport protocol that operates over
+  UDP instead of TCP, which provides faster connection establishment and
+  improved resilience against packet loss and network congestion.
+- **Improved multiplexing**: With QUIC, data streams are independent, so even if
+  a packet is lost or delayed in one stream, it does not affect the transmission
+  of data in other streams.
+- **Connection migration**: QUIC can seamlessly transition between different IP
+  addresses or network interfaces, offering better performance on mobile devices
+  and reducing the impact of network changes on user experience.
+- **Enhanced security**: QUIC includes built-in transport layer encryption,
+  making it more secure by default. This also eliminates the need for an
+  additional TLS (Transport Layer Security) handshake, decreasing connection
+  setup time.
 
-<html>
-  <head>
-    <title>An Example Page</title>
-  </head>
-  <body>
-    <p>Hello World, this is a very simple HTML document.</p>
-  </body>
-</html>
-```
-
-These are status codes.
-
-| Category | codes |
-|--|--|
-| Informational | 1XX |
-| Successful | 2XX |
-| Redirection | 3XX |
-| Client Error | 4XX |
-| Server Error | 5XX |
-
-# HTTP 2
-
-HTTP 2 는 속도와 성능이 개선되었다. 
-
-| Feature | description|
-|---|---|
-| **Multiplexed Streams** | HTTP 1.1 은 한번에 하나의 파일밖에 전송을 못한다. 이것을 극복하기 위해 여러개의 TCP connection 을 맺어서 여러개의 파일을 전송했다. 그러나 HTTP 2 는 하나의 connection 으로 여러개의 Request, Response 를 전송한다. | 
-| **Dedupe Headers** | 중복된 헤더를 제거한다. |
-| **Header Compression** | Header 를 HPACK 으로 압축한다. |
-| **Server Push** | Server 에서 JavaScript, CSS, Font, Image 등을 Client 으로 push 한다. |
-| **Stream Prioritization** | 웹페이지를 구성하는 파일들의 우선순위를 표기할 수 있다. |
+HTTP/3 maintains the features introduced in HTTP/2, such as server push, header
+compression, and binary framing, but improves upon them with the benefits
+provided by the QUIC protocol.
 
 # HTTP Flow
 
-* [What happens when... @ github](https://github.com/alex/what-happens-when)
-  * [...하면 생기는 일 @ github](https://github.com/SantonyChoi/what-happens-when-KR)
+* [What happens when... | github](https://github.com/alex/what-happens-when)
+  * [...하면 생기는 일 | github](https://github.com/SantonyChoi/what-happens-when-KR)
 
 ----
 
@@ -180,3 +183,183 @@ HTTP 2 는 속도와 성능이 개선되었다.
 **GPU Rendering**
 
 **Post-rendering and user-induced execution**
+
+# HTTP 1.1 Methods
+
+- HTTP GET: This method retrieves a resource from the server. It is idempotent,
+  which means that making multiple identical GET requests will yield the same
+  result each time. GET is often used to request web pages, images, and other
+  static files from a server.
+- HTTP PUT: PUT updates or creates a resource on the server. It is idempotent,
+  so multiple identical PUT requests will have the same effect as a single
+  request. This method is often used for updating data on a server, where
+  providing the complete updated record ensures consistency.
+- HTTP POST: POST is used to create new resources on the server. Unlike GET and
+  PUT, it is not idempotent, meaning that making two identical POST requests
+  will result in two duplicates of the resource being created. POST is typically
+  used for submitting forms or creating new entries in a database.
+- HTTP DELETE: DELETE is used to remove a resource from the server. Like GET and
+  PUT, it is idempotent – multiple identical DELETE requests will only remove
+  the resource once. This is frequently used to delete files, database entries,
+  or other data objects on a server.
+- HTTP PATCH: PATCH applies partial modifications to a resource on the server,
+  as opposed to PUT, which updates the entire resource. This method is useful
+  when you want to update only specific attributes of a resource without
+  affecting the other attributes.
+- HTTP HEAD: HEAD requests a response identical to a GET request, but without
+  including the response body. This method is useful for checking if a resource
+  exists or retrieving metadata, such as content-length or content-type, without
+  downloading the entire resource.
+- HTTP CONNECT: CONNECT establishes a network connection to the server
+  identified by the target resource, typically for use with network protocols
+  like SSL or TLS. This method is often used by web proxies to enable secure
+  connections between clients and servers.
+- HTTP OPTIONS: OPTIONS describes the communication options available for the
+  target resource, such as the HTTP methods supported or any custom headers that
+  may be required. This can be used by clients to discover information about a
+  server's capabilities or configuration.
+- HTTP TRACE: TRACE performs a message loop-back test along the path to the
+  target resource, returning the request/response message as the response body.
+  This can be useful for testing or debugging purposes to see the series of
+  headers and intermediaries a request passes through on its way to the server.
+
+## Examples
+
+```c
+// Example 1: HTTP GET
+Request:
+GET /index.html HTTP/1.1
+Host: www.example.com
+
+Response:
+HTTP/1.1 200 OK
+Content-Type: text/html
+
+<!DOCTYPE html> <html> <head> <title>Example Page</title> </head> <body> <h1>Welcome to www.example.com</h1> </body> </html> ```
+
+// Example 2: HTTP PUT
+Request:
+
+PUT /api/users/123 HTTP/1.1
+Host: www.example.com
+Content-Type: application/json
+
+{
+    "name": "John Doe",
+    "email": "john@example.com"
+}
+
+Response:
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "message": "User successfully updated."
+}
+
+//Example 3: HTTP POST
+Request:
+
+POST /api/users HTTP/1.1
+Host: www.example.com
+Content-Type: application/json
+
+{
+    "name": "Jane Doe",
+    "email": "jane@example.com"
+}
+Response:
+
+HTTP/1.1 201 Created
+Content-Type: application/json
+
+{
+    "id": 456,
+    "name": "Jane Doe",
+    "email": "jane@example.com"
+}
+
+//Example 4: HTTP DELETE
+Request:
+
+DELETE /api/users/123 HTTP/1.1
+Host: www.example.com
+Response:
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "message": "User successfully deleted."
+}
+
+//Example 5: HTTP HEAD
+Request:
+
+HEAD /index.html HTTP/1.1
+Host: www.example.com
+
+Response:
+
+HTTP/1.1 200 OK
+Content-Type: text/html
+
+//Example 6: HTTP PATCH
+Request:
+
+PATCH /api/users/123 HTTP/1.1
+Host: www.example.com
+Content-Type: application/json
+
+{
+    "email": "new-email@example.com"
+}
+
+Response:
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+    "message": "User email successfully updated."
+}
+
+// CONNECT example:
+Request:
+
+CONNECT www.example.com:443 HTTP/1.1
+Host: www.example.com
+Proxy-Authorization: Basic abc123xyz
+Response:
+
+HTTP/1.1 200 Connection Established
+Proxy-agent: ProxyServer/1.0
+
+// OPTIONS example:
+Request:
+
+OPTIONS /my-resource-path HTTP/1.1
+Host: www.example.com
+
+Response:
+
+HTTP/1.1 200 OK
+Allow: GET, POST, PUT, DELETE, OPTIONS
+Content-Length: 0
+
+// TRACE example:
+Request:
+
+TRACE /my-resource-path HTTP/1.1
+Host: www.example.com
+
+Response:
+
+HTTP/1.1 200 OK
+Content-Type: message/http
+Content-Length: [length of the response body]
+
+TRACE /my-resource-path HTTP/1.1
+Host: www.example.com
+```

@@ -100,6 +100,9 @@
   - [A/B Test](#ab-test)
   - [Actor Model](#actor-model)
   - [Reactor vs Proactor](#reactor-vs-proactor)
+  - [Data Lake](#data-lake)
+  - [Data Warehouse](#data-warehouse)
+  - [Data Lakehouse](#data-lakehouse)
 - [System Design Interview](#system-design-interview)
 - [Real World Architecture](#real-world-architecture)
 - [Company Architectures](#company-architectures)
@@ -2539,6 +2542,73 @@ This example demonstrates a simple single-threaded server implementing the
 Reactor and Proactor patterns, respectively. In real-world applications, you
 would typically have more advanced mechanisms to handle the I/O operations,
 error handling, and resource sharing, among other things.
+
+## Data Lake
+
+- [Frequently Asked Questions About the Data Lakehouse | databricks](https://www.databricks.com/blog/2021/08/30/frequently-asked-questions-about-the-data-lakehouse.html)
+
+A **data lake** is a low-cost, open, and durable storage system designed to
+store any data type, such as **tabular data**, **text**, **images**, **audio**,
+**video**, **JSON**, and **CSV**. The main advantage of **data lakes** is their
+ability to store vast amounts of **structured** and **unstructured data** using
+open standardized formats, typically **Apache Parquet** or **ORC**. 
+
+This approach allows a large ecosystem of tools and applications to directly
+work with the data and helps organizations avoid vendor lock-in while amassing
+large quantities of data. 
+
+Major cloud providers like AWS, Azure, and Google Cloud offer data lake
+solutions like **AWS S3**, **Azure Data Lake Storage (ADLS)**, and 
+**Google Cloud Storage (GCS)**. 
+
+However, data lakes historically suffer from issues related to security,
+quality, and performance, often requiring organizations to move subsets of data
+into data warehouses to extract value.
+
+## Data Warehouse
+
+- [Frequently Asked Questions About the Data Lakehouse | databricks](https://www.databricks.com/blog/2021/08/30/frequently-asked-questions-about-the-data-lakehouse.html)
+
+A **data warehouse** is a proprietary system designed to store, manage, and
+analyze structured or semi-structured data for SQL-based analytics and business
+intelligence. These systems are optimized for high performance, concurrency, and
+reliability but usually come at a higher cost compared to data lakes. Data
+warehouses primarily support **structured data** and have limited support for
+**unstructured data** types like **images**, **sensor data**, **documents**, or
+**videos**.
+
+As data warehouses are built for SQL-based analytics, they usually do not
+support open-source libraries and tools like TensorFlow, PyTorch, and
+Python-based libraries natively, particularly for machine learning and data
+science use cases. Organizations typically store subsets of their valuable
+business data in data warehouses for fast, concurrent SQL and BI use cases,
+while keeping larger datasets, which include unstructured data, in data lakes.
+
+## Data Lakehouse
+
+- [Frequently Asked Questions About the Data Lakehouse | databricks](https://www.databricks.com/blog/2021/08/30/frequently-asked-questions-about-the-data-lakehouse.html)
+
+A **Data Lakehouse** is a modern data architecture that combines the best
+features of **data lakes** and **data warehouses** to enable efficient and
+secure AI and Business Intelligence (BI) directly on vast amounts of data stored
+in data lakes. Data Lakehouses aim to address the challenges faced by data
+lakes, such as security, quality, and performance, while also providing the
+capabilities of data warehouses, such as optimized performance for SQL queries
+and BI-style reporting.
+
+**Data Lakehouses** allow organizations to store all data types (structured,
+semi-structured, and unstructured) in one place and perform AI and BI directly,
+without the need to move data between data lakes and data warehouses. They use
+open-source technologies like **Delta Lake**, **Hudi**, and **Iceberg** and
+provide features such as ACID transactions, fine-grained data security, low-cost
+updates and deletes, first-class SQL support, and native support for data
+science and machine learning.
+
+Vendors focusing on Data Lakehouses include **Databricks**, **AWS**, **Dremio**,
+and **Starburst**, among others. By using a Data Lakehouse architecture,
+organizations benefit from a single, unified system that covers all data types
+and a wide range of analytical use cases, from BI to AI, while leveraging open
+standards and technologies to avoid vendor lock-in.
 
 # System Design Interview
 
