@@ -42,7 +42,7 @@
   - [root 소유의 setuid, setgid 파일 검색 후 퍼미션 조정하기](#root-소유의-setuid-setgid-파일-검색-후-퍼미션-조정하기)
 - [System Monitoring](#system-monitoring-1)
   - [Load Average](#load-average)
-  - [swapin, swapout](#swapin-swapout)
+  - [Swapin, Swapout](#swapin-swapout)
   - [Memory](#memory)
 - [Network Kernel Parameters](#network-kernel-parameters)
 - [File Kernel Parameters](#file-kernel-parameters)
@@ -992,6 +992,7 @@ Expansion](/bash/README.md#shell-parameter-expansion) 참고.
     * `avgqu-sz` : The average number of requests issued to the device. 
     * `%util` : Device utilization. 
 * `free`
+  * ![](img/2023-11-17-20-42-12.png)
   * [리눅스 free 명령어로 메모리 상태 확인하기](https://www.whatap.io/ko/blog/37/)
   * [[Linux] Memory 확인 방법 및 종류별 설명 (Free, Buffer, Cache, Swap Memory)](https://m.blog.naver.com/PostView.nhn?blogId=yhsterran&logNo=221607492403&proxyReferer=https:%2F%2Fwww.google.com%2F)
   * `-/+ buffer/cache` 항목이 등장한다면 옛날 version 이다. `available` 이
@@ -1793,7 +1794,7 @@ find / -user root -perm 4000 -print
 
 [System Load](/linuxkernel/README.md#losystem-load)
 
-## swapin, swapout
+## Swapin, Swapout
 
 [An introduction to swap space on Linux systems](https://opensource.com/article/18/9/swap-space-linux-systems)
 
@@ -1820,7 +1821,9 @@ swap-in, swap-ou 의 횟수가 많다면 물리 메모리가 부족하다는 의
 
 ----
 
-`/proc` directory 는 process 들의 정보를 담고 있다. [proc @ kernel](https://www.kernel.org/doc/Documentation/filesystems/proc.txt) 참고. [The /proc Filesystem @ kernel](https://www.kernel.org/doc/html/latest/filesystems/proc.html?highlight=meminfo) 은 좀더 보기 편하다.
+![](img/2023-11-17-20-42-12.png)
+
+`/proc` directory 는 process 들의 정보를 담고 있다. [proc | kernel](https://www.kernel.org/doc/Documentation/filesystems/proc.txt) 참고. [The /proc Filesystem | kernel](https://www.kernel.org/doc/html/latest/filesystems/proc.html?highlight=meminfo) 은 좀더 보기 편하다.
 
 특히 `/proc/meminfo` 는 Linux Kernel 의 memory 정보가 저장되어 있다. `free` 를 포함한
 대부분의 메모리 조회 application 들은 `/proc/meminfo` 의 내용을 참고한다.

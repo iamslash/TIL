@@ -1,7 +1,9 @@
 - [Abstract](#abstract)
 - [Essentials](#essentials)
 - [Materials](#materials)
+- [Confusion Matrix](#confusion-matrix)
 - [Precision, Recall, Accuracy, F1](#precision-recall-accuracy-f1)
+- [AUROC, AUCROC](#auroc-aucroc)
 - [Expectation Function](#expectation-function)
 - [Entropy](#entropy)
 - [Cross Entropy](#cross-entropy)
@@ -162,6 +164,22 @@
 - [TensorFlow Examples](https://github.com/aymericdamien/TensorFlow-Examples)
 - [개인적으로 써보는 머신러닝 공부 테크트리입니다 | clien](https://www.clien.net/service/board/cm_ai/18068521)
 
+# Confusion Matrix
+
+Confusion Matrix(혼동 행렬)은 머신러닝에서 분류 모델의 성능을 평가할 때 사용되는
+표를 말합니다. 이 행렬은 모델이 예측한 클래스와 실제 클래스를 비교하여 정확도,
+정밀도, 재현율, F1 스코어 등의 성능 지표를 계산하는 데 사용됩니다.
+
+일반적으로 Confusion Matrix는 2x2 혹은 NxN 행렬로, 행은 실제 클래스를, 열은
+예측된 클래스를 나타냅니다. 2x2 혼동 행렬의 경우 다음과 같은 구성을 가집니다:
+
+- True Positive(**TP**): 양성 클래스를 정확하게 양성으로 예측한 경우
+- False Positive(**FP**): 음성 클래스를 잘못해서 양성으로 예측한 경우 (1종 오류)
+- True Negative(**TN**): 음성 클래스를 정확하게 음성으로 예측한 경우
+- False Negative(**FN**): 양성 클래스를 잘못해서 음성으로 예측한 경우 (2종 오류)
+
+이러한 값을 바탕으로 성능 지표를 계산하고 모델의 성능을 평가합니다.
+
 # Precision, Recall, Accuracy, F1
 
 > * [[BigS] 맨날 헷갈리는 모델 평가 지표! 민감도, 재현율, 특이도, 정확도, F1 Score 이해하기 + 외우기 | youtube](https://www.youtube.com/watch?v=Eyxynd-vDsQ)
@@ -173,13 +191,35 @@
 | name | formula | description | etc |
 |--|--|--|--|
 | Accuracy (정분류율) | `(TP + TN) / (TP + FN + FP + TN)` | | |
-| Error Errate(오분류율) | `(FN + FP) / (TP + TN + FN + FP)` | | |
+| Error Rate(오분류율) | `(FN + FP) / (TP + TN + FN + FP)` | | |
 | Precision (정확도) | `TP / (TP + FP)` | 내가참 중 진짜참 | 정확한 비율 |
 | Recall (민감도, 재현율) | `TP / (TP + FN)` | 진짜참 중 내가참 | 잡아챈 비율 |
 | Specificity (특이도) | `TN / (TN + FP)` |  |  |
-| F1 score | `2 * (Precision * Result) / (Precision + Result)` | | |
+| F1 score | `2 * (Precision * Recall) / (Precision + Recall)` | | |
 
 ![](img/2023-01-30-15-39-01.png)
+
+아래는 분류 모델의 주요 성능 지표들과 관련된 설명입니다.
+
+- **Accuracy** (정분류율): 모든 예측 결과 중 올바르게 예측한 비율입니다. 전체 데이터 중에서 정확하게 분류된 데이터의 비율을 나타냅니다.
+- **Error Rate** (오분류율) : 전체 예측 결과 중 잘못 예측한 비율입니다. 오분류율은 1에서 정분류율을 뺀 값과 같습니다.
+- **Precision** (정확도): 예측한 양성 샘플 중 실제 양성 샘플의 비율입니다. 모델이 양성이라고 분류한 데이터 중에서 실제로 양성인 데이터의 비율을 나타냅니다. 높은 정확도는 거짓 양성(FP)이 적다는 것을 의미합니다.
+- **Recall** (재현율, 민감도): 실제 양성 샘플 중 예측한 양성 샘플의 비율입니다. 실제 양성인 데이터 중에서 모델이 양성으로 분류한 데이터의 비율을 나타냅니다. 높은 재현율은 거짓 음성(FN)이 적다는 것을 의미합니다.
+- **Specificity** (특이도): 실제 음성 샘플 중 예측한 음성 샘플의 비율입니다. 실제 음성인 데이터 중에서 모델이 음성으로 분류한 데이터의 비율을 나타냅니다. 높은 특이도는 거짓 양성(FP)이 적다는 것을 의미합니다.
+- **F1 Score**: 정확도(Precision)과 재현율(Recall)의 조화 평균입니다. 이 지표는 정확도와 재현율의 균형을 고려한 모델 성능 측정값입니다. 불균형한 데이터셋에서 모델의 성능을 평가하는 데 특히 유용합니다.
+
+# AUROC, AUCROC
+
+- [AUROC, AUC-ROC 이해하기](https://velog.io/@zxxzx1515/AUROC-AUC-ROC-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0)
+
+AUROC, AUCROC 는 **Area Under the Receiver Operating Characteristic curve**의
+약자로, 머신러닝 모델의 성능을 평가할 때 사용되는 지표 중 하나입니다. 분류
+문제에서 양성과 음성 클래스 사이의 모델 성능을 평가하는 데 주로 사용되며, 높은
+AUROC 값은 높은 진양성률(true positive rate)과 낮은 참양성률(false positive
+rate)을 동시에 얻을 수 있는 모델을 의미합니다. AUROC가 `1`에 가까울수록 모델의
+성능이 좋으며 `0.5`에 가까울수록 무작위 분류 수준의 성능이라고 할 수 있습니다.
+
+
 
 # Expectation Function
 

@@ -13,7 +13,10 @@
   - [Number](#number)
   - [Floating Point](#floating-point)
   - [Byte Order](#byte-order)
-- [machine language](#machine-language)
+- [Machine Language](#machine-language)
+- [Interrupt](#interrupt)
+- [DMA (Direct Memory Access)](#dma-direct-memory-access)
+- [Numa](#numa)
 
 -----
 
@@ -38,7 +41,7 @@ computer system architecture 에 대해 정리한다.
   * 오래전에 출간되어 절판되었지만 한글로 된 책들중 최강이다.
 * [Write Great Code I](http://www.plantation-productions.com/Webster/www.writegreatcode.com/)
   * 킹왕짱
-* [google interview university @ github](https://github.com/jwasham/coding-interview-university)
+* [google interview university | github](https://github.com/jwasham/coding-interview-university)
   * operating system 관련된 링크를 참고하자. 쓸만한 비디오가 잘 정리되어 있다.
 
 # Computer System Architecture History 
@@ -60,13 +63,21 @@ computer system architecture 에 대해 정리한다.
 
 ## ENIAC (Electronic Numerical Integrator And Computer)
 
-최초의 디지털 컴퓨터는 1946년 완성된 ENIAC이다. 펜실베니아 대학의 전기 공학 무어 스쿨 (Moore School of Electrical Engineering) 에서 제작되었다. 높이가 18 피트, 길이가 80 피트, 무게가 30 톤 이상이었다. 그러나 프로그래밍을 위해 6,000 여개의 스위치를 조작하고 각종 케이블을 연결해야 했다.
+최초의 디지털 컴퓨터는 1946년 완성된 ENIAC이다. 펜실베니아 대학의 전기 공학 무어
+스쿨 (Moore School of Electrical Engineering) 에서 제작되었다. 높이가 18 피트,
+길이가 80 피트, 무게가 30 톤 이상이었다. 그러나 프로그래밍을 위해 6,000 여개의
+스위치를 조작하고 각종 케이블을 연결해야 했다.
 
 ## Von Neumann Architecture
 
-ENIAC 프로젝트의 고문이었던 수학자 폰 노이만 (John Von Neumann) 은 프로그램 내장 방식 (Stored-program Concept) 을 고안했다. 이것을 Von Neumann Machine 이라고 부른다. 
+ENIAC 프로젝트의 고문이었던 수학자 폰 노이만 (John Von Neumann) 은 프로그램 내장
+방식 (Stored-program Concept) 을 고안했다. 이것을 Von Neumann Machine 이라고
+부른다. 
 
-Von Neumann Machine 은 프로그램과 데이터를 실행 되기 전에 메모리에 올려 놓고 프로그램이 실행 될 때에는 프로그램의 명렁어와 데이터들을 메모리로부터 불러들이고 프로그램에 대한 저장 또는 변경 역시 기억장치에 저장되어 있는 프로그램을 변경함으로써 가능하게 한다. 현대의 컴퓨터와 거의 똑같은 모델이다.
+Von Neumann Machine 은 프로그램과 데이터를 실행 되기 전에 메모리에 올려 놓고
+프로그램이 실행 될 때에는 프로그램의 명렁어와 데이터들을 메모리로부터 불러들이고
+프로그램에 대한 저장 또는 변경 역시 기억장치에 저장되어 있는 프로그램을
+변경함으로써 가능하게 한다. 현대의 컴퓨터와 거의 똑같은 모델이다.
 
 ## IAS (Institute for Advanced Study) Machine
 
@@ -266,11 +277,11 @@ big endian
 
 ```
 
-# machine language
+# Machine Language
 
 [Encoding x86 instructions](https://www-user.tu-chemnitz.de/~heha/viewchm.php/hs/x86.chm/x86.htm) 를 기반으로 이해하자. 
 
-하나의 instruction 은 `Prefix Bytes, Opcode, Mod-Reg-r/m, Scaled Indexed Byte, Displacement, Immediate" 와 같이 총 6개의 구성요소로 이루어질 수 있다. 언급한 구성요소는 0byte 일 수 있고 1byte 이상일 수도 있다. 모든 구성요가 존재 한다면 최대 16byte 까지 가능할 것 같지만 실제로는 15byte 까지만 가능하다. 
+하나의 instruction 은 `Prefix Bytes, Opcode, Mod-Reg-r/m, Scaled Indexed Byte, Displacement, Immediate` 와 같이 총 6개의 구성요소로 이루어질 수 있다. 언급한 구성요소는 0byte 일 수 있고 1byte 이상일 수도 있다. 모든 구성요가 존재 한다면 최대 16byte 까지 가능할 것 같지만 실제로는 15byte 까지만 가능하다. 
 
 ![](x86_instruction_encoding.png)
 
@@ -282,3 +293,89 @@ general purpose registers 정도는 알아두자.
 
 ![](gp_registers.jpg)
 
+
+# Interrupt
+
+**Interrupts**
+
+- Synchronous Interrupt
+  - Fault
+  - Trap
+  - Halt
+  - Software Interrupt
+- Asynchronous Interrupt (Harware Interrupt)
+
+다음과 같은 흐름으로 Interrupt 가 처리된다.
+
+- 입출력 장치는 CPU 에 인터럽트 요청 신호를 보낸다.
+- CPU 는 실행 사이클이 끝나고 명령어를 fetch 하기 전 Flag Register 의 Interrupt Flag 를 확인한다.
+- CPU 는 Interrupt Request 를 확인하고 Interrupt Flag 를 통해 현재 Interrupt 를 받아들일 수 있는지 확인한다.
+- Interrupt 를 받아들일 수 있다면 CPU 는 context 를 backup 한다.
+- CPU 는 Interrupt Vector 를 참조하여 해당 Interrupt Service Routine 을 실행한다.
+- Interrupt Service Routine 의 실행이 끝나면 앞서 backup 되었던 context 를 restore 하고 실행을 재개한다.
+
+다음은 Flag Register 의 모양이다.
+
+```
+sign Flag | zero Flag | carry flag | overflow flag | interrupt flag | supervisor flag
+```
+
+# DMA (Direct Memory Access)
+
+DMA는 **Direct Memory Access**의 줄임말로, 컴퓨터 시스템의 기능 중 하나로서
+CPU와 별도로 직접 메모리에 접근하여 데이터를 전송하거나 읽어오는 메커니즘이다.
+DMA는 아래와 같은 이유로 유용하다.
+
+- CPU의 부담 감소: DMA를 사용하면 CPU는 데이터 전송 작업을 처리 하지 않아도
+  되므로, 다른 작업에 집중할 수 있다. 이로 인해 전체 시스템 성능이 향상된다.
+- 빠른 데이터 전송 속도: DMA 방식은 전용 하드웨어를 사용하여 데이터 전송을
+  처리하기 때문에, 프로그래밍 I/O 방식이나 인터럽트 기반의 I/O 방식보다 데이터
+  전송 속도가 빠르다.
+- 효율적인 자원 사용: DMA를 사용하면, 컴퓨터 시스템의 구성 요소들이 동시에
+  독립적으로 작동할 수 있어 전체 시스템 자원 사용의 효율성이 높아진다.
+- 데이터 정확성: DMA 방식은 CPU와 독립적으로 작동하기 때문에, CPU 성능이나
+  상태에 영향을 받지 않아 데이터 오류 확률이 낮다.
+
+다음은 DMA 입출력 과정이다.
+
+- CPU 는 DMA Controller 에 입출력장치의 주소, 수행할 연산(읽기/쓰기), 읽거나 쓸
+  메모리의 주소 등과 같은 정보로 입출력 작업을 명령한다.
+- DMA Controller 는 CPU 대신 Device Controller 와 상호작용하며 입출력 작업을
+  수행한다. 이때 DMA Controller 는 필요한 경우 메모리에 직접 접근하여 정보를
+  읽거나 쓴다.
+- 입출력 작업이 끝나면 DMA Controller 는 CPU 에 Interrupt 를 걸어 작업이
+  끝났음을 알린다.
+
+![](img/2023-11-18-15-37-31.png)
+
+# Numa
+
+**NUMA(Non-Uniform Memory Access)**는 컴퓨터 시스템의 메모리 접근 및 관리 방식 중
+하나로, 멀티프로세서 시스템에서 각 프로세서가 고유한 메모리 영역을 가지도록
+설계된 아키텍처입니다. NUMA는 멀티프로세서 및 멀티코어 시스템의 확장성과 성능을
+개선하기 위해 사용됩니다.
+
+전통적인 SMP(Symmetric Multi-Processor) 구조에서 프로세서들은 모두 동일한 메모리
+영역을 공유하며, 메모리에 대한 접근은 균일한 지연 시간을 갖습니다. 그러나
+프로세서의 수가 증가하면 메모리에 대한 동시 접근에 지연이 발생하고 시스템 성능
+저하로 이어질 수 있습니다.
+
+NUMA 구조에서는 시스템을 여러 노드로 분할하고 각 노드에 프로세서와 메모리 뱅크를
+할당합니다. 각 프로세서는 로컬 메모리 영역에 빠르게 접근할 수 있으며 다른 노드의
+메모리에는 약간의 지연 시간이 발생할 수 있습니다(비균일 메모리 액세스). 이로
+인해 프로세서와 메모리 간의 대역폭 사용이 효율적이고 프로세서별 메모리 접근
+충돌이 감소하여 전체 시스템 성능이 향상됩니다.
+
+NUMA는 큰 규모의 멀티프로세서 시스템에서 장점을 가지며, 데이터 센터, 서버 사이드
+애플리케이션 및 고성능 컴퓨팅 환경에서 주로 사용됩니다. NUMA에 대한 지원으로
+인해, 운영 체제와 하드웨어 둘 다 메모리 할당 및 스케줄링에 대한 효율성과
+확장성을 극대화할 수 있습니다.
+
+MacBook 또는 기타 대부분의 노트북 및 일반 PC 시스템에서는 NUMA 아키텍처가
+사용되지 않습니다.
+
+NUMA는 주로 대규모 멀티프로세서 서버, 데이터센터 또는 고성능 컴퓨팅 환경과 같은
+복잡한 시스템에서 메모리 및 프로세서 확장성을 개선하기 위해 사용되는
+아키텍처이기 때문입니다. 일반적인 노트북이나 PC에서는 한 개 또는 소수의
+프로세서와 상대적으로 제한된 메모리 범위를 가지고 있기 때문에, 비교적 단순한
+UMA(Uniform Memory Access) 시스템이 사용됩니다.

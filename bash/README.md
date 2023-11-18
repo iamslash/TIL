@@ -1804,7 +1804,7 @@ hello
 $ ls | sort
 ```
 
-다음은 session, job, process 들의 상태를 그림으로 표현한 것이다. [The TTY
+다음은 `session, job, process` 들의 상태를 그림으로 표현한 것이다. [The TTY
 demystified](https://www.linusakesson.net/programming/tty/) 참고
 
 ![](img/examplediagram.png)

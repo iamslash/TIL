@@ -3,10 +3,7 @@
 - [References](#references)
 - [Materials](#materials)
 - [Boot Process](#boot-process)
-- [Build and run old linux](#build-and-run-old-linux)
-  - [oldlinux 0.12 (Success)](#oldlinux-012-success)
-  - [oldlinux 0.11 (Fail)](#oldlinux-011-fail)
-  - [linux 0.01 remake](#linux-001-remake)
+- [Build Old Linux](#build-old-linux)
 - [System Information](#system-information)
   - [Kernel Infomation](#kernel-infomation)
   - [CPU Information](#cpu-information)
@@ -18,14 +15,13 @@
   - [Process Information](#process-information)
   - [Process Management](#process-management)
   - [task\_struct](#task_struct)
-  - [thread\_info](#thread_info)
+  - [`thread_info`](#thread_info)
   - [Process and Threads](#process-and-threads)
   - [Killing a Zombie](#killing-a-zombie)
-  - [priorities, schedulers and nice values](#priorities-schedulers-and-nice-values)
-  - [IPC, Sockers and Pipes](#ipc-sockers-and-pipes)
+  - [Priorities, Schedulers and Nice Values](#priorities-schedulers-and-nice-values)
+  - [IPC, Sockets and Pipes](#ipc-sockets-and-pipes)
   - [D-Bus Message](#d-bus-message)
-  - [Monitoring processes through /proc](#monitoring-processes-through-proc)
-- [Interrupt](#interrupt)
+  - [Monitoring Processes through /proc](#monitoring-processes-through-proc)
 - [Kernel Timer](#kernel-timer)
 - [Kernel Synchronization](#kernel-synchronization)
 - [System Call](#system-call)
@@ -34,7 +30,7 @@
 - [Network](#network)
 - [Memory Management](#memory-management)
 - [System Load](#system-load)
-- [fork, exec](#fork-exec)
+- [Fork, Exec](#fork-exec)
 - [Swap](#swap)
 - [Numa](#numa)
 - [TIME\_WAIT](#time_wait)
@@ -42,7 +38,6 @@
 - [TCP Retransmission and TimeOut](#tcp-retransmission-and-timeout)
 - [Dirty Page](#dirty-page)
 - [I/O Scheduler](#io-scheduler)
-- [Application Performance and Optimization](#application-performance-and-optimization)
 
 ----
 
@@ -50,7 +45,7 @@
 
 Kernel 은 OS 의 핵심이다. 주로 program 들을 지원하고 hardware (CPU, Memory, Disk, TTY) 를 관리한다.
 
-Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보다 [디버깅을 통해 배우는 리눅스 커널의 구조와 원리 1 라즈베리 파이로 따라하면서 쉽게 이해할 수 있는 리눅스 커널 @ yes24](http://www.yes24.com/Product/Goods/90085976) 를 읽고 정리한다. 저자가 강의한 [video](https://www.youtube.com/watch?v=AOmawzOYkcQ&list=PLRrUisvYoUw9-cTYgkbTbr9f9CpbGdq4F) 도 있다.
+Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보다 [디버깅을 통해 배우는 리눅스 커널의 구조와 원리 1 라즈베리 파이로 따라하면서 쉽게 이해할 수 있는 리눅스 커널 | yes24](http://www.yes24.com/Product/Goods/90085976) 를 읽고 정리한다. 저자가 강의한 [video](https://www.youtube.com/watch?v=AOmawzOYkcQ&list=PLRrUisvYoUw9-cTYgkbTbr9f9CpbGdq4F) 도 있다.
 
 다음의 부분들은 Arch 별로 구현이 다르다.
 
@@ -71,9 +66,9 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
 
 [UNIX V6](/unixv6kernel/README.md) 코드를 먼저 공부해 본다.
 
-[1st version of Linux Kernel @ github](https://github.com/kalamangga-net/linux-0.01) 와 [The old Linux kernel source ver 0.11/0.12 study. @ github](https://github.com/huawenyu/oldlinux) 를 비교해서 공부해보자.
+[1st version of Linux Kernel | github](https://github.com/kalamangga-net/linux-0.01) 와 [The old Linux kernel source ver 0.11/0.12 study. | github](https://github.com/huawenyu/oldlinux) 를 비교해서 공부해보자.
 
-[osimpl @ TIL](/osimpl/README.md) 에서 직접 구현해 보자.
+[osimpl | TIL](/osimpl/README.md) 에서 직접 구현해 보자.
 
 # References
 
@@ -112,12 +107,12 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
   * Qemu 에서 linux 를 실행하고 원격으로 gdb debugging 하는 방법
   * [Debugging the Linux Kernel with Qemu and GDB](https://pnx9.github.io/thehive/Debugging-Linux-Kernel.html)
   * [KernelBuild](https://kernelnewbies.org/KernelBuild)
-* [리눅스 커널 책 리뷰 및 가이드 @ tistory](https://pr0gr4m.tistory.com/entry/%EB%A6%AC%EB%88%85%EC%8A%A4-%EC%BB%A4%EB%84%90-%EC%B1%85-%EB%A6%AC%EB%B7%B0-%EB%B0%8F-%EA%B0%80%EC%9D%B4%EB%93%9C)
+* [리눅스 커널 책 리뷰 및 가이드 | tistory](https://pr0gr4m.tistory.com/entry/%EB%A6%AC%EB%88%85%EC%8A%A4-%EC%BB%A4%EB%84%90-%EC%B1%85-%EB%A6%AC%EB%B7%B0-%EB%B0%8F-%EA%B0%80%EC%9D%B4%EB%93%9C)
   * 킹왕짱 Linux Kernel 책 리뷰
 * videos
-  * [Linux Internals @ youtube](https://www.youtube.com/watch?v=xHu7qI1gDPA&list=PLX1h5Ah4_XcfL2NCX9Tw4Hm9RcHhC14vs)
-  * [Unix System Calls @ youtube](https://www.youtube.com/watch?v=xHu7qI1gDPA&list=PL993D01B05C47C28D)
-  * [Unix Terminals and Shells @ youtube](https://www.youtube.com/watch?v=07Q9oqNLXB4&list=PLFAC320731F539902)
+  * [Linux Internals | youtube](https://www.youtube.com/watch?v=xHu7qI1gDPA&list=PLX1h5Ah4_XcfL2NCX9Tw4Hm9RcHhC14vs)
+  * [Unix System Calls | youtube](https://www.youtube.com/watch?v=xHu7qI1gDPA&list=PL993D01B05C47C28D)
+  * [Unix Terminals and Shells | youtube](https://www.youtube.com/watch?v=07Q9oqNLXB4&list=PLFAC320731F539902)
 * [DevOps와 SE를 위한 리눅스 커널 이야기](http://www.yes24.com/Product/Goods/44376723)
   * DevOps 에게 필요한 Kernel 지식
 * [리눅스 커널 부팅과정(Linux Kernel Booting Sequence) 분석](https://kkamagui.tistory.com/817)
@@ -162,210 +157,9 @@ Linux 의 Boot Process 는 다음과 같다. [https://wogh8732.tistory.com/72](h
     - `/sbin/init` 은 `systemd` 를 실행하는 건가?
 - **systemd** 는 미리 작성된 service 들을 실행한다.
 
-# Build and run old linux
+# Build Old Linux
 
-## oldlinux 0.12 (Success)
-
-Build is ok Run with **bochs** is ok.
-
-We need 2 files to launch the linux including boot image and root image.
-
-Build with gcc 4.8.5 on Ubuntu 18.04 LTS Docker Container
-
-```bash
-$ docker run -it --name my_ubuntu_2 ubuntu bash
-> apt-get update
-> apt-get install git vim wget bin86 unzip
-> apt-get install gcc-4.8 gcc-4.8-multilib
-> update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 60
-> update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 60
-
-> cd
-> mkdir -p my/c
-> git https://github.com/huawenyu/oldlinux.git
-> cd oldlinux/linux-0.11
-
-> make
-```
-
-Install bocks 2.3.6
-
-```bash
-$ mkdir -p tmp/a
-$ cd tmp/a
-$ wget http://oldlinux.org/Linux.old/bochs/linux-0.12-080324.zip
-# Install Bochs-2.3.6.exe
-```
-
-Edit bochs config
-
-```bash
-$ mkdir my/c/oldlinux-dist-0.12
-$ cd my/c/oldlinux-dist-0.12
-# Copy root image file
-$ cp tmp/a/linux-0.12-080324/rootimage-0.12-hd .
-$ cp tmp/a/linux-0.12-080324/diskb.img .
-$ cp tmp/a/linux-0.12-080324/bochsrc-0.12-hd.bxrc .
-$ docker cp my_ubuntu_2:/root/my/c/oldlinux/linux-0.11/Image bootimage-0.12-hd
-```
-
-Run with bochs 2.3.6 on Windows 10
-
-```bash
-$ "c:\Program Files (x86)\Bochs-2.3.6\bochs.exe" -q -f bochsrc-0.12-hd.bxrc
-```
-
-## oldlinux 0.11 (Fail)
-
-Build is ok Run with **bochs** is failed.
-
-## linux 0.01 remake
-
-Build is ok Run with **qemu** is failed.
-
-[linux-0.01-remake @ github](https://github.com/issamabd/linux-0.01-remake) 는 32bit 를 기준으로 Makefile 이 작성되어 있다.
-
-다음과 같이 build option 을 수정하여 64bit ubuntu 18.02 LTS 에서 build 해보자. [Compile for 32 bit or 64 bit @ stackoverflow](https://stackoverflow.com/questions/48964745/compile-for-32-bit-or-64-bit)
-
-```makefile
-AS      =as --32
-LD      =ld -melf_i386
-CFLAGS  =-fno-stack-protector -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer -fno-stack-protector
-```
-
-gcc 는 4.8 로 downgrade 해야함. [우분투 16.04LTS의 기본 gcc 버전을 변경하자!](https://m.blog.naver.com/PostView.nhn?blogId=chandong83&logNo=220752111090&proxyReferer=https:%2F%2Fwww.google.com%2F)
-
-```bash
-$ docker run -it --name my_ubuntu_2 ubuntu bash
-> apt-get update
-> apt-get install git vim wget bin86 unzip
-> apt-get install gcc-4.8 gcc-4.8-multilib
-> update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 60
-> update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 60
-
-> cd
-> mkdir -p my/c
-> git https://github.com/issamabd/linux-0.01-remake.git
-> cd linux-0.01-remake
-
-> find . -name Makefile
-./lib/Makefile
-./mm/Makefile
-./Makefile
-./kernel/Makefile
-./fs/Makefile
-
-> vim lib/Makefile
-> vim mm/Makefile
-> vim Makefile
-> vim kernel/Makefile
-> vim fs/Makefile
-> make all
-```
-
-`lib/Makefile`
-
-```makefile
-AR      =ar
-AS      =as --32
-LD      =ld -melf_i386
-LDFLAGS =-s -x
-CC      =gcc
-CFLAGS  =-fno-stack-protector -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer \
-        -finline-functions -nostdinc -I../include
-CPP     =gcc -E -nostdinc -I../include
-...
-```
-
-`mm/Makefile`
-
-```makefile
-CC      =gcc
-CFLAGS  =-fno-stack-protector -m32 -O -Wall -fstrength-reduce  -fomit-frame-pointer -finline-functions -nostdinc -I../include
-AS      =as --32
-AR      =ar
-LD      =ld -melf_i386
-CPP     =gcc -E -nostdinc -I../include
-...
-```
-
-`Makefile`
-
-```makefile
-AS86    =as86 -0
-CC86    =cc86 -0
-LD86    =ld86 -0
-
-AS      =as --32
-LD      =ld -melf_i386
-LDFLAGS =-s -x -M -Ttext 0 -e startup_32
-CC      =gcc
-CFLAGS  =-fno-stack-protector -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer
-CPP     =gcc -E -nostdinc -Iinclude
-
-ARCHIVES=kernel/kernel.o mm/mm.o fs/fs.o
-LIBS    =lib/lib.a
-...
-```
-
-`kernel/Makefile`
-
-```makefile
-AR      =ar
-AS      =as --32
-LD      =ld -melf_i386
-LDFLAGS =-s -x
-CC      =gcc
-CFLAGS  =-fno-stack-protector -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer  \
-        -finline-functions -nostdinc -I../include
-CPP     =gcc -E -nostdinc -I../include
-...
-```
-
-`fs/Makefile`
-
-```makefile
-AR      =ar
-AS      =as --32
-CC      =gcc
-LD      =ld -melf_i386
-CFLAGS  =-fno-stack-protector -m32 -Wall -O -fstrength-reduce -fomit-frame-pointer -nostdinc -I../include
-CPP     =gcc -E -nostdinc -I../include
-...
-```
-
-몇가지 trouble shooting 이 필요함
-
-* [install as86](https://command-not-found.com/as86)
-* [-m32 옵션 컴파일시 bits/libc-header-start.h: No such file or directory 오류 발생하여 컴파일 불가능.](https://my-repo.tistory.com/12)
-
-
-build 를 성공하면 다음과 같이 qemu 를 이용하여 실행해 볼 수 있다. 이때 qemu 는 Windows, Macos 와 같이 host machine 에서 실행해야 한다. DISPLAY 가 필요하기 때문에 Docker container 에서 실행할 수 없다. Docker container 에서 DISPLAY 없이 실행하는 방법이 있을 수도 있다. [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
-
-```bash
-$ cd /tmp/a/
-
-$ docker start my_ubuntu_2
-$ docker exec -it my_ubuntu_2 bash
-$ docker cp my_ubuntu_2:/root/my/c/linux-0.01-remake/Image /tmp/a/Image
-
-$ wget http://draconux.free.fr/download/os-dev/linux0.01/Image/hd_oldlinux.img.zip
-$ unzip hd_oldlinux.img.zip
-# Fail
-$ qemu-system-i386 -fda Image -hdb hd_oldlinux.img -boot a -m 8
-# Fail
-$ qemu-system-i386 -drive format=raw,file=Image,index=0,if=floppy -hdb hd_oldlinux.img -boot a -m 8
-```
-
-그러나 다음과 같이 hang 된다. (2021.01.25)
-
-![](img/qemu_linux-0.0.1-remake.png)
-
-그래서 미리 build 된 image 를 다운로드 받아서 다시 실행해 보았다. 똑같은 현상이 발생한다. [Linux 0.01 IÃ¹age download](http://draconux.free.fr/os_dev/linux0.01_download.html)
-
-```bash
-$ qemu-system-i386 -fda linux0.01-3.5.img -hdb hd_oldlinux.img -boot a -m 8
-```
+[Build Old Linux](build_old_linux.md)
 
 # System Information
 
@@ -493,11 +287,16 @@ $ ethtool eth0
 
 [Linux Kernel: Threading vs Process - task_struct vs thread_info](https://stackoverflow.com/questions/21360524/linux-kernel-threading-vs-process-task-struct-vs-thread-info)
 
-Linux 에서 thread 는 process 와 같이 취급된다. thread 하나에 `task_struct` 그리고 그걸 가리키는 `thread_info` 가 할당된다. `thread_info` 는 thread 의 stack 의 시작주소에 위치한다.
+Linux 에서 thread 는 process 와 같이 취급된다. thread 하나에 `task_struct`
+그리고 그걸 가리키는 `thread_info` 가 할당된다. `thread_info` 는 thread 의 stack
+의 시작주소에 위치한다.
 
-`thread_info` 는 architecture 에 의존적인 것이다. 즉, ARM, X86 에 따라 모양이 다르다. 반면에 `task_struct` 는 architecture 에 독립적이다. 즉, ARM, X86 에서 같은 모양이다.
+`thread_info` 는 architecture 에 의존적인 것이다. 즉, ARM, X86 에 따라 모양이
+다르다. 반면에 `task_struct` 는 architecture 에 독립적이다. 즉, ARM, X86 에서
+같은 모양이다.
 
-다음은 Linux Kernel 에서 Single-Thread Process 와 Multi-Thread Process 의 virutal memory layout 을 나타내는 그림이다.
+다음은 Linux Kernel 에서 Single-Thread Process 와 Multi-Thread Process 의
+virutal memory layout 을 나타내는 그림이다.
 
 ![](img/single_thread_multi_thread.png)
 
@@ -687,7 +486,7 @@ struct task_struct {
   unsigned int			ptrace;
 ```
 
-## thread_info
+## `thread_info`
 
 * [[리눅스 커널의 구조와 원리] 4.9.2 thread_info 구조체 분석 @ youtube](https://www.youtube.com/watch?v=USPtSWRz9wI)
 * [struct thread_info v4.19.30 arm src](https://elixir.bootlin.com/linux/v4.19.30/source/arch/arm/include/asm/thread_info.h)
@@ -876,7 +675,7 @@ $ kill -9 525
 # It works
 ```
 
-## priorities, schedulers and nice values
+## Priorities, Schedulers and Nice Values
 
 * [Understanding priorities, schedulers and nice values | Linux Under the Hood](https://learning.oreilly.com/videos/linux-under-the/9780134663500/9780134663500-LUTH_07_04/)
 
@@ -946,7 +745,7 @@ chrt: failed to set pid 0's policy: Operation not permitted
 $ kill -9 $(pidof dd)
 ```
 
-## IPC, Sockers and Pipes
+## IPC, Sockets and Pipes
 
 > [Understanding inter-process communication, sockets, and pipes | Linux Under the Hood](https://learning.oreilly.com/videos/linux-under-the/9780134663500/9780134663500-LUTH_07_05/)
 
@@ -975,7 +774,7 @@ D-Bus 는 IPC 중 하나이다. 하나의 Machine 의 많든 Process 들이
 연결되야 한다. 그러나 D-Bus 를 사용하면 각 Process 가 D-Bus
 에만 연결하면 된다.
 
-## Monitoring processes through /proc
+## Monitoring Processes through /proc
 
 `/proc` 를 살펴보면 특정 Process 의 정보를 얻어올 수 있다.
 
@@ -990,13 +789,72 @@ $ cat oom_score
 $ less status 
 ```
 
-# Interrupt
-
-WIP...
-
 # Kernel Timer
 
-WIP...
+커널 타이머(Kernel Timer)는 리눅스 커널에서 시간 기반의 이벤트를 관리하고
+스케줄링하는 메커니즘입니다. 커널 타이머는 특정 시간 간격이나 정해진 시점에 특정
+작업을 실행하는 데 사용되며, 내부적으로 높은 우선순위와 저해상도의 타이머 큐로
+구성되어 있다. 이를 통해 시간 경과에 따른 호출이 필요한 이벤트를 처리한다.
+
+커널 타이머는 하드웨어 인터럽트와 밀접하게 관련되어 작동한다. 일반적으로
+하드웨어 클럭이 주기적으로 인터럽트를 발생시키고, 인터럽트 핸들러가 타이머
+큐에서 대기 중인 이벤트가 있는지 확인한 후 처리한다. 이 과정은 커널의 다양한
+부분에서 사용되며 다양한 시간 기반의 작업에 사용된다.
+
+리눅스 커널 타이머에 대한 관련 코드는 주로 아래 두 파일에서 찾을 수 있다:
+
+- `include/linux/timer.h`: 커널 타이머 구조체 및 관련 함수와 매크로 정의를 포함하며, 커널 타이머 작업을 초기화, 설정, 수정, 삭제하는 함수들이 정의되어 있다.
+- `kernel/time/timer.c`: 커널 타이머 시스템의 실제 구현부로, 타이머 큐에서 작업을 처리하고 관리하는 메커니즘이 구현되어 있다.
+
+리눅스 커널에서 커널 타이머를 사용하려면, 먼저 초기화 함수인 `init_timer()`를 호출하여 `timer_list` 구조체를 초기화하고, 시간 간격과 만료 시 실행할 콜백 함수를 설정한다. 그 다음, `add_timer()` 함수를 호출하여 타이머를 타이머 큐에 등록하고 실행을 예약한다. 이 프로세스를 통해 타이머가 처리되고 이벤트가 일정 시간에 실행된다.
+
+리눅스 커널에서 커널 타이머를 사용하는 간단한 예제 이다.
+
+```c
+// 핵심 헤더 파일을 포함시키고, 타이머를 설정할 콜백 함수를 정의합니다. 또한 전역 변수로 `timer_list` 구조를 선언합니다.
+#include <linux/kernel.h>
+#include <linux/module.h>
+#include <linux/timer.h>
+
+struct timer_list my_timer;
+
+void my_timer_callback(struct timer_list *t)
+{
+    pr_info("Kernel Timer expired, executing callback function\n");
+}
+
+// 이제 init 함수에서 타이머를 초기화하고, 만료 시간을 설정한 후, 타이머 큐에 등록해 보겠습니다.
+static int __init my_module_init(void)
+{
+  pr_info("Initializing Kernel Timer\n");
+
+  // timer_list 구조체를 초기화하고 콜백 함수와 데이터 지정
+  timer_setup(&my_timer, my_timer_callback, 0);
+
+  // 아래 예제에서는 현재 시간에서 5초 후에 타이머 만료 설정
+  my_timer.expires = jiffies + msecs_to_jiffies(5000);
+
+  // 타이머를 타이머 큐에 등록
+_add_timer(&my_timer);
+  return 0;
+}
+
+// 마지막으로, 모듈 해제 시 타이머를 삭제하는 함수를 정의합니다.
+static void __exit my_module_exit(void)
+{
+    pr_info("Removing Kernel Timer\n");
+
+    // 타이머 제거
+    del_timer(&my_timer);
+}
+
+module_init(my_module_init);
+module_exit(my_module_exit);
+
+MODULE_LICENSE("GPL");
+MODULE_DESCRIPTION("A simple example of a Kernel Timer");
+MODULE_AUTHOR("Your Name");
+```
 
 # Kernel Synchronization
 
@@ -1030,7 +888,54 @@ switching 의 비용은 크다. 몇 cycle 일까???
 
 # Signal
 
-WIP...
+Signal은 유닉스와 유닉스 계열 운영체제(Linux 등)에서 프로세스 간 통신을 수행하는
+방법 중 하나로, 비동기적 이벤트 또는 특별한 상황 발생 시 특정 프로세스에 정보를
+전달하는 메커니즘입니다. Signal은 실행 중인 프로세스에 예외 처리, 간단한 정보
+전달, 강제 종료 등을 요청하는 데 사용되며, 프로세스는 사전에 정의된 signal
+핸들러를 사용하여 이러한 signal을 처리할 수 있습니다.
+
+다양한 종류의 Signal이 있으며, 각각 다른 목적을 가진다. 일반적으로 사용되는
+Signal의 예는 다음과 같다.
+
+- **SIGTERM**: 프로세스에 정상적인 종료를 요청하는 signal.
+- **SIGKILL**: 프로세스를 강제로 종료시키는 signal로, OS에서 발생시키며 해당 프로세스는 signal을 처리할 수 없다.
+- **SIGINT**: 키보드 인터럽트로 주로 Ctrl+C를 누를 때 콘솔에서 발생시킨다.
+- **SIGHUP**: 프로세스에 터미널 종료 시그널을 보낸다. 주로 프로세스가 다시 시작할 것을 요청할 때 사용된다.
+- **SIGALRM**, **SIGUSR1**, **SIGUSR2** 등: 애플리케이션에서 사용자 정의 signal을 처리할 때 사용된다.
+
+다음은 Signal 사용 예제 코드이다. 이 코드는 간단한 프로세스를 생성하고, `SIGINT (Ctrl+C)`와 `SIGUSR1` 이벤트를 처리하는 Signal 핸들러를 설정합니다.
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <signal.h>
+
+void signal_handler(int signal_number)
+{
+    if (signal_number == SIGINT) {
+        printf("Received SIGINT signal.\n");
+    } else if (signal_number == SIGUSR1) {
+        printf("Received SIGUSR1 signal.\n");
+    }
+}
+
+int main()
+{
+    // Signal 핸들러 등록
+    signal(SIGINT, signal_handler);
+    signal(SIGUSR1, signal_handler);
+
+    // 프로그램 진행 중 signal 대기
+    printf("Process %d is waiting for a signal...\n", getpid());
+    
+    while (1) {
+        pause(); // 프로세스를 일시 중지하고 signal이 도착할 때까지 기다립니다.
+    }
+
+    return 0;
+}
+```
 
 # Storage
 
@@ -1078,7 +983,11 @@ Linux 는 다음과 같이 RAM 을 중심으로 데이터가 이동된다.
 * **Cache**: Fast memory that is close to CPU 
 * **Page cache**: Area where recently used memory page are stored
 
-`$ free -m` 를 이용하면 Physical Memory 의 상황을 알 수 있다. [linux | TIL](/linux/README.md#memory) 참고. `free` 는 `/proc/meminfo` 를 읽어서 Memory 상황을 표시해 준다. [procps-ng free.c | gitlab](https://gitlab.com/procps-ng/procps/-/blob/newlib/src/free.c)
+Linux 의 Physical Memory 는 `used, buff/cache, free` 로 구성된다.
+
+![](img/2023-11-17-20-45-58.png)
+
+`$ free -m` 를 이용하면 Physical Memory 의 상황을 알 수 있다. [linux memory | TIL](/linux/README.md#memory) 참고. `free` 는 `/proc/meminfo` 를 읽어서 Memory 상황을 표시해 준다. [procps-ng free.c | gitlab](https://gitlab.com/procps-ng/procps/-/blob/newlib/src/free.c)
 
 ```console
 $ docker run -it --rm --name my-ubuntu ubuntu:18.04
@@ -1288,7 +1197,7 @@ $ sar
 00:20:01       	 1     0.01      0.00      0.38       0.11     	99.48
 ```
 
-# fork, exec
+# Fork, Exec
 
 * [3강 리눅스 커널노트](https://books-and-cows.gitbook.io/-linux-kernel-lecture-note/3)
 * [Difference between fork() and exec()](https://www.geeksforgeeks.org/difference-fork-exec/)
@@ -1394,16 +1303,389 @@ int main() {
 
 # Swap
 
+스왑(**Swap**)은 컴퓨터 시스템에서 가상 메모리 기법의 일부로, 현재 활성화되지
+않은 프로세스나 메모리 페이지의 데이터를 메모리(RAM)에서 비활성 영역으로 옮기는
+것을 말합니다. 비활성 영역은 하드 디스크의 특정 파티션 또는 파일로 구성된다.
+스왑을 사용하면 물리적 메모리의 부족 현상을 완화하고, 시스템에서 더 많은
+프로세스와 메모리 요구 사항을 다룰 수 있게 된다.
+
+스왑의 주요 목적은 다음과 같습니다:
+
+- 효율성 증대: 메모리는 비교적 고가이며 제한된 공간이 있습니다. 스왑을 이용하면
+  활성화되지 않은 페이지나 프로세스를 메모리에서다른 저장 공간(보조 저장소)으로
+  이동시켜 메모리를 효율적으로 활용할 수 있습니다.
+- 메모리 가상화: 물리적 메모리 제한을 초과하는 메모리 공간이 필요한 프로세스에게
+  가상 메모리를 제공할 수 있습니다. 이를 통해 프로세스는 물리 메모리 공간을
+  초과하는 메모리를 할당받는 것처럼 작동할 수 있습니다.
+- 자원 활용 최적화: 스왑을 이용하면 실행 중인 프로세스의 일부 데이터를
+  메모리에서 비활성 영역으로 이동시키고, 필요한 경우 다시 메모리로 되돌릴 수
+  있다. 이를 통해 시스템은 실행 중인 프로세스에 온전하게 메모리를 할당하고, 대기
+  중인 프로세스의 일부 데이터를 비활성 영역에서 저장할 수 있다.
+
+스왑은 물리적 메모리가 부족한 상황에서 프로세스의 실행을 가능하게 하지만, 하드
+디스크나 SSD의 I/O 속도가 비교적 느린 경우 성능의 감소를 발생시킬 수 있다. 또한,
+RAM을 넘치도록 구성한 시스템에서도 스왑 공간을 필요로 하는 경우가 있으므로,
+시스템 관리자는 이러한 요인을 고려하여 스왑 영역을 올바르게 관리해야 한다.
+
+리눅스 커널에서의 스왑 구현은 여러 소스 파일에 걸쳐 분산되어 있습니다. 주요 관련 파일들은 다음과 같습니다.
+
+- `mm/swap.c`: 스왑 시스템의 핵심 파일로, 마크 및 스왑(dev_t)를 다루는 핵심 커널 심볼을 가져와서 처리합니다.
+- `mm/swapfile.c`: 스왑 파일 및 파티션 사용 방식에 대한 세부 사항을 담당합니다.
+- `mm/vmscan.c`: 스왑시 호출되는 페이지 대체 알고리즘을 다룹니다.
+- `include/linux/swap.h`: 스왑 관련 구조체 및 선언을 포함합니다.
+
+스왑의 가장 기본적인 프로세스는 페이지를 스왑 아웃(swap out)하고 스왑 인(swap in)하는 것입니다. 인터페이스에 더 깊이 배워보기 위해, 간단한 예제를 살펴봅시다.
+
+```c
+/* Read and write swap pages at: index << PAGE_SHIFT.
+ * This uses the current->mm->swap_token_semaphore to hold off the swapping in
+ * of a page that has just been, or is being, written.
+*/
+void swap_writepage(struct page *page, struct writeback_control *wbc)
+{
+    // ... 여기서 페이지 기록 및 처리 코드
+
+    // 실제 스왑 아웃 과정에서 페이지를 스왑 기기로 쓰는 코드
+    status = blk_end_request(rw_swap_page_base(BIO_RW, page_private(page)),
+            status, PAGE_SIZE);
+}
+
+int swap_readpage(struct file *file, struct page *page)
+{
+    // ... 여기서 페이지 읽기 및 처리 코드
+
+    // 실제로 스왑 인 과정에서 스왑 기기에서 페이지를 읽는 코드
+    rw_swap_page_async(rw_swap_page_base(__GFP_IO, _swap_count_idx(entry)),
+               page, end_swap_bio_read);
+}
+```
+
+위의 코드에서 볼 수 있듯이, `mm/swapfile.c`에 정의된 `swap_writepage()`와
+`swap_readpage()` 함수는 페이지를 스왑 장치로 쓰거나 읽기 위한 작업들을
+수행합니다.
+
+리눅스 커널 소스 코드를 확인하면 `swap.c` 및 `swapfile.c`에 구현된 것을 초기 설정,
+스왑 인 / 스왑 아웃과 관련된 세부적인 메커니즘들을 찾아볼 수 있습니다. 하지만,
+후자의 예제와 같이 스왑 작업에 대한 간단한 인터페이스가 제공되므로, 이
+인터페이스를 통해 페이지 교환 작업을 이해할 수도 있습니다. 핵심 코드만 참조로
+소개해 들었습니다. 전체 리눅스 커널 스와핑 메커니즘에 대한 정확한 이해는 직접
+소스 코드를 분석하는 것이 가장 좋습니다.
+
 # Numa
+
+> [CSA Numa](/csa/README.md#numa)
+
+리눅스 커널은 NUMA를 지원하며 구현합니다. 리눅스 커널의 버전 2.4 이후로 NUMA
+아키텍처를 지원하기 시작했습니다. 현재 리눅스 커널에서는 NUMA 시스템에 최적화된
+메모리 할당, 작업 스케줄링 및 리소스 관리 기능을 제공합니다.
+
+리눅스 커널의 주요 NUMA 관련 구성 요소에는 다음과 같은 것들이 있습니다.
+
+- **메모리 할당**: NUMA 구조에서는 로컬 노드와 최소한의 원격 노드 메모리
+  액세스를 발생시키기 위해 메모리 할당이 최적화됩니다.
+- **작업 스케줄러**: 프로세스 및 스레드를 실행하는 데 필요한 리소스와 메모리
+  대역폭을 최적화하기 위해 작업 스케줄러가 NUMA를 지원합니다.
+- **페이지 마이그레이션**: 메모리 접근 패턴 기반으로 페이지를 로컬 노드 메모리와
+  원격 노드 메모리 간에 이동합니다.
+
+리눅스 커널에서 NUMA 기능을 활성화하려면 커널 구성 파일에서 NUMA 옵션을
+활성화해야 합니다. 이를 활성화하면 리눅스 커널은 시스템이 NUMA 아키텍처인 경우에
+최적화된 리소스 관리를 수행할 수 있습니다.
+
+리눅스 커널 소스 코드에서 **NUMA(Non-Uniform Memory Access)** 관련 구현은 여러
+파일에 걸쳐 분산되어 있습니다. 주요 관련 파일들은 다음과 같습니다.
+
+- `include/linux/numa.h`: 주요 NUMA 관련 매크로, 구조체, 함수 선언이 포함되어 있습니다.
+- `mm/numa.c`: NUMA 메모리 관리 구현을 포함합니다.
+- `include/linux/mmzone.h`: NUMA의 각 메모리영역(memory zone)과 관련된 정보를 정의합니다.
+- `mm/page_alloc.c`: NUMA 기반 시스템의 메모리 할당 정책 및 기능을 구현합니다.
+
+핵심적인 코드 예제를 확인하기 전에 먼저 커널에서 주요한 NUMA 메모리 할당 정책 중
+하나인 "최소 패널티 (Min Penalty)" 정책을 이해하는 것이 중요합니다. 이 정책은
+NUMA 노드에 메모리 요청이 있을 때 로컬 또는 가장 가까운 원격 노드에서 일관되게
+메모리를 할당하는 것을 목표로 합니다.
+
+다음은 `mm/page_alloc.c` 파일에 있는 메모리 할당 관련 함수 중 하나인
+`instance_preferred_node()`의 일부입니다. 이 함수는 주어진 페이지의 인스턴스에
+가장 선호되는 노드를 리턴합니다.
+
+```c
+static inline int instance_preferred_node(struct zone *zone, struct mem_cgroup *memcg)
+{
+    return memcg_preferred_node(memcg, false);
+}
+```
+
+또한 `get_page_from_freelist()` 함수에는 메모리 할당 프로세스의 일부로 사용되는
+페이지 배치 기능이 포함되어 있습니다.
+
+```c
+static struct page *get_page_from_freelist(gfp_t gfp_mask, nodemask_t *nodemask,
+      unsigned int order, zonelist_t *zonelist, int high_zoneidx, int *preferred_zone, int migratetype, bool reserve)
+{
+    // 기본 노드 및 대안 노드 구성
+    nodemask_t *preferred_nodemask = nodemask;
+
+    // .. 각 노드 및 존에서 가용성 검사 및 페이지 가져오기 작업
+}
+```
+
+위의 코드는 단지 커널 소스에서 NUMA를 다루는 일부 함수에 대한 간략한 예시입니다.
+리눅스 커널의 NUMA 구현은 분산되어 있으며, 여러 메모리 및 프로세서 관리 기능에
+걸쳐 사용됩니다. 전체 커널 소스 코드를 살펴보고 해당 파일들을 참조하면 NUMA에
+대한 더 깊은 이해를 얻을 수 있습니다.
 
 # TIME_WAIT
 
+`TIME_WAIT`는 TCP/IP 네트워킹 프로토콜에서 연결 종료 과정의 일부로 발생하는
+소켓의 상태입니다. TCP (Transmission Control Protocol)는 전송량이 많은
+프로토콜이며, 데이터 송수신이 성공적으로 이루어진 것을 확인하고 에러를 처리하는
+기능을 포함하고 있습니다. 이 과정에서 다양한 상태 변화가 발생하는데, 이 중
+하나가 바로 `TIME_WAIT` 상태입니다.
+
+`TIME_WAIT` 상태가 되는 경우는 소켓이 연결을 먼저 종료하는 쪽(Active Close)에서
+발생합니다. 이때 소켓은 모든 데이터가 전송되었으며 상대방이 전송한 패킷들이 모두
+수신되었음을 확인할 때까지 대기합니다.
+
+`TIME_WAIT` 상태의 주요 목적은 다음과 같습니다.
+
+- **지연된 패킷 처리**: 네트워크 상태에 따라 패킷이 지연되어 도착할 수 있으며,
+  이러한 지연된 패킷을 처리하기 위해 소켓이 `TIME_WAIT` 상태에 머무릅니다.
+- **정상적인 연결 종료 보장**: TCP에서는 연결을 종료하기 전에 상대방이 종료
+  요청에 대해 확인 응답을 보냅니다. 역시 지연으로 인해 이러한 확인 응답이 몇 초
+  뒤에 도착할 수 있으므로, 소켓은 이 응답을 기다리는 동안 `TIME_WAIT` 상태에
+  있습니다.
+
+일반적으로 소켓은 `TIME_WAIT` 상태에서 몇 초 동안 대기한 후 최종적으로
+소멸됩니다. 대부분의 시나리오에서 `TIME_WAIT` 상태는 정상적이지만, 과도한 수의
+연결이 끊어지는 상황에서는 `TIME_WAIT` 상태의 소켓이 너무 많아서 시스템 리소스를
+과도하게 사용할 수 있습니다. 이러한 상황에서는 서버 구성을 최적화하거나 일부 OS
+레벨의 조정을 통해 이 문제를 완화할 수 있습니다.
+
+리눅스 커널에서 `TIME_WAIT` 상태와 관련된 구현은 주로 TCP 프로토콜 스택의 일부인
+`net/ipv4/tcp*.c` 및 관련 헤더 파일에서 처리됩니다. 주요 파일은 다음과 같습니다.
+
+- `net/ipv4/tcp.c`: 일반적인 TCP 핸들링 반복문 및 입력 출력 루틴 등을 포함합니다.
+- `net/ipv4/tcp_input.c`: 주로 TCP의 입력 처리 및 상태 변화와 관련된 코드 구현이 포함되어 있습니다.
+- `net/ipv4/tcp_output.c`: TCP 출력 처리와 관련된 코드 구현이 포함되어 있습니다.
+- `net/ipv4/tcp_timer.c`: TCP 타이머 및 연결 종료 과정에서 사용되는 구현이 포함되어 있습니다.
+
+`TIME_WAIT` 상태를 구현하는 핵심 코드 일부를 살펴보겠습니다. `tcp_timer.c `파일에서
+TCP 연결 종료 과정에 사용되는 타이머인 `tcp_tw_timer()` 함수를 찾을 수 있습니다.
+
+```c
+void tcp_tw_timer(struct timer_list *t)
+{
+	struct inet_timewait_sock *tw = from_timer(tw, t, tw_timer);
+
+	inet_twsk_put(tw);
+}
+```
+
+또한, `tcp_input.c` 파일 내의 `tcp_timewait_state_process()`에서 소켓 상태 처리를 확인할 수 있습니다.
+
+```c
+int tcp_timewait_state_process(struct inet_timewait_sock *tw, struct sock *sk,
+                                struct sk_buff *skb)
+{
+    // ...
+    if (tcp_hdr(skb)->rst)
+        goto drop;
+
+    // TIME_WAIT 상태에서 동일한 시퀀스가 있는 세그먼트가 도착하는 경우를
+```
+
 # TCP Keepalive
+
+TCP Keepalive는 TCP/IP 프로토콜을 사용하는 네트워크 연결에서 활성 상태를
+유지하기 위해 사용되는 기능입니다. 일반적으로 컴퓨터 시스템 간의 통신을 위해
+수립되는 접속은 상호 작용이 없을 때도 지속되어야 할 수 있습니다. 그런데, 일정
+시간 동안 데이터를 주고받지 않으면 연결이 끊어졌는지 확인하기 어렵습니다.
+
+TCP Keepalive 기능에서는 미리 설정된 주기마다 Keepalive 패킷을 상대방으로 보내어
+이러한 문제를 해결합니다. 이 패킷은 일반적인 데이터 전송 패킷이 아니라, 연결
+확인용 빈 패킷입니다. 상대방은 이 패킷을 받으면 응답을 보낼 것이며, 그를 통해
+연결이 유지되고 있음을 확인할 수 있습니다. 만약 상대방이 일정 시간 이내에 응답이
+없거나, 연속적으로 일정 횟수 이상 응답이 없다면 연결이 끊어진 것으로 간주하고
+해당 연결을 종료할 수 있습니다.
+
+TCP Keepalive는 서버-클라이언트 연결 과정에서 이러한 패킷 손실, 연결 끊김 등을
+감지하여 불필요한 연결을 종료시키고, 자원을 효율적으로 관리하는데 도움을 줍니다.
+하지만 Keepalive 기능이 활성화되면 서버에 추가 부하가 발생할 수 있으므로, 적절한
+설정이 필요합니다.
+
+TCP Keepalive 기능이 구현된 코드들은 Linux 커널 소스 코드 내의 `net/ipv4`
+디렉토리에서 주로 찾을 수 있습니다. 주요 파일들과 핵심 코드들은 다음과 같습니다.
+
+```c
+// `tcp.c`: 이 파일에는 TCP 프로토콜에 대한 핵심 코드들이 들어 있습니다.
+// 여기에는 Keepalive 타이머 설정에 관련된 코드들도 포함되어 있습니다.
+
+// 함수 tcp_init_sock() 내에서 Keepalive 타이머 관련 설정을 초기화합니다.
+sk->sk_keepalive_time = sysctl_tcp_keepalive_time;
+sk->sk_keepalive_intvl = sysctl_tcp_keepalive_intvl;
+sk->sk_keepalive_probes = sysctl_tcp_keepalive_probes;
+
+// 함수 tcp_parse_options() 에서 Keepalive 옵션을 파싱하고 설정을 업데이트합니다.
+case TCPOPT_WINDOW:
+    tcp_inet_parse_md5sig_option(skb, &md5);  // TCP_MD5SIG 옵션 처리
+    break;
+
+// `tcp_timer.c`: 이 파일에는 각종 TCP 타이머 처리 코드가 들어 있습니다. 여기에는
+// Keepalive 타이머를 관리하는 코드들이 포함됩니다.
+
+// 함수 tcp_write_timer_handler() 에서 Keepalive 타이머의 만료를 처리합니다.
+void tcp_write_timer_handler(struct sock *sk) {
+    /* 다양한 상황에 따른 처리 로직 (일부 생략)... */
+
+    // Keepalive 타이머 만료를 처리합니다.
+    if (tp->rx_opt.ts_recent_stamp && keepalive) {
+        tcp_send_keepalive_probe(sk, keepalive);
+    }
+}
+
+// tcp_output.c: 이 파일에는 TCP 패킷을 보내는 코드들이 들어 있습니다. 
+// 여기에는 Keepalive 패킷을 보내기 위한 코드가 포함됩니다.
+int tcp_send_keepalive_probe(struct sock *sk, u32 keepalive) {
+    struct tcp_sock *tp = tcp_sk(sk);
+
+    /* 다양한 점검 및 조건처리 로직 (일부 생략)... */
+
+    // Keepalive 패킷을 보내기 위해 ACK 플래그와 함께 tcp_send_ack() 함수를 호출합니다.
+    tcp_send_ack(sk, 1);
+}
+```
 
 # TCP Retransmission and TimeOut
 
+**TCP Retransmission**과 **TimeOut**은 TCP 규약 내에서 데이터를 안전하게
+전송하기 위해 사용되는 매커니즘입니다. TCP는 신뢰성 있는 데이터 전송을 보장하는
+프로토콜이기 때문에 패킷이 손실되거나 오류가 발생했을 때, 이를 감지하고 자동으로
+패킷을 다시 전송하여 데이터 송수신 과정에서의 오류를 최소화합니다.
+
+- **TCP Retransmission**: 패킷이 손실되면, 패킷을 재전송하는 프로세스입니다.
+  발신측은 패킷을 전송할 때마다 일정 시간 동안 ACK(확인응답)을 기다립니다. 만약
+  ACK가 시간 내에 도착하지 않으면, 발신측은 패킷이 손실되었다고 판단하여 해당
+  패킷을 다시 전송합니다. 재전송 로직은 여러 번 시도될 수 있으며, 네트워크
+  상황에 따라 재전송 간격이 작동합니다.
+- **TCP TimeOut**: 패킷 송신 후 일정 시간 동안 ACK를 받지 못 했을 때 발생하는
+  시간 초과입니다. Timer는 송신된 패킷에 대한 ACK가 도착할 때까지 대기하고
+  있습니다. 만약 제한 시간 내에 ACK가 도착하지 않으면, TimeOut가 발생하며
+  Retransmission이 진행되고, 제한 시간이 적절하게 재설정됩니다. 연속적인 TimeOut
+  발생에 따라 연결이 불안정하다고 판단되면, TCP 연결을 끊고 에러를 반환할 수
+  있습니다.
+
+**TCP Retransmission**과 **TimeOut**은 데이터의 전송 신뢰성을 확보하며, 전송
+속도와 네트워크 상황에 맞게 조절되어서 최적의 성능을 달성할 수 있도록
+도와줍니다. 하지만, 무분별한 재전송이나 시간 초과 알고리즘은 네트워크에 추가적인
+부하를 발생시킬 수 있으므로 적절한 설정 및 구현이 중요합니다.
+
+**TCP Retransmission**과 **TimeOut** 기능이 구현된 코드들은 Linux 커널 소스 코드
+내의 `net/ipv4` 디렉토리에서 주로 찾을 수 있습니다. 주요 파일들과 핵심 코드들은
+다음과 같습니다.
+
+```c
+// tcp_input.c: 이 파일에는 TCP 패킷을 수신할 때의 처리 및 상태 제어 코드들이 들어 있습니다. 
+// 여기에는 ACK 수신에 관한 로직이 포함됩니다.
+
+// 함수 tcp_ack()에서 수신한 ACK를 처리합니다.
+static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag) {
+    /* ACK 처리 및 패킷 상태에 따른 로직 (일부 생략) ... */
+
+    tcp_clean_rtx_queue(sk, prior_snd_una, prior_fackets, prior_packets); 
+}
+
+// tcp_output.c: 이 파일에는 TCP 패킷을 보내는 처리 코드와 이와 연관된 로직이 포함되어 있습니다.
+
+// 함수 tcp_retransmit_skb()에서 재전송(Retransmission) 패킷을 처리합니다.
+int tcp_retransmit_skb(struct sock *sk, struct sk_buff *skb) {
+    /* 패킷 재전송 및 관련된 처리 (일부 생략) ... */
+
+    tcp_event_new_data_sent(sk, skb);
+    return tcp_transmit_skb(sk, tcp_write_skb_clone(skb, sk), 1, 0);
+}
+
+// tcp_timer.c: 이 파일에는 각종 TCP 타이머 처리 코드가 들어 있습니다. 
+// 여기에는 Retransmission 및 TimeOut 타이머를 관리하는 코드들이 포함되어 있습니다.
+
+// 함수 tcp_write_timer_handler()에서 Retransmission 타이머의 만료 및 처리를 진행합니다.
+void tcp_write_timer_handler(struct sock *sk) {
+    /* 다양한 시나리오 처리 및 상태 변경 (일부 생략) ... */
+
+    // 일정 시간(TimeOut) 동안 ACK를 받지 못한 경우에 대한 처리를 진행합니다.
+    if (!tp->packets_out || !tcp_data_snd_test(tp)) {
+        tcp_write_timer_handler(sk);
+    }
+}
+```
+
 # Dirty Page
+
+Dirty Page는 컴퓨터 메모리 관리에서 사용되는 용어로, 주로 가상 메모리 시스템에서
+수정되었지만 아직 디스크에 쓰여지지 않은 페이지를 나타냅니다.
+
+컴퓨터 시스템에서, 메모리에 적재된 데이터는 가상 메모리의 페이지 또는 메모리
+상의 연속된 블록 단위로 관리됩니다. 프로세스가 작업 중인 데이터를 메모리에서
+읽거나 수정할 수 있으며, 이러한 수정은 메모리의 페이지가 변경되어 디스크 상의
+저장된 내용과 동기화되지 않은 상태로 남게 됩니다. 이렇게 변경된 페이지를 'Dirty
+Page'라고 합니다.
+
+Dirty Page는 주기적으로 배경 작업으로 디스크에 쓰여져야 ("flushed") 합니다. 이
+과정을 "페이지 쓰기" (page write) 또는 "디스크에 내려쓰기" (flushing to
+disk)라고도 합니다. 이렇게 함으로써, 메모리에 수정된 데이터가 디스크에도
+반영되어 데이터의 영구적인 보존을 보장할 수 있습니다.
+
+Dirty Page가 즉시 디스크에 쓰이지 않는 이유는 다음과 같습니다.
+
+- **성능 최적화**: 메모리에서의 데이터 수정 작업은 매우 빠르지만, 디스크로의
+  데이터 쓰기 작업은 상대적으로 느립니다. 따라서, 모든 변경 사항을 즉시 디스크에
+  쓰는 것은 프로세스의 성능에 부정적인 영향을 미칩니다. Dirty Page를 효과적으로
+  관리하면, 여러 변경 사항을 일괄적으로 디스크에 쓰여져 시스템 성능이
+  향상됩니다.
+- **쓰기 충돌 최소화**: 메모리 페이지가 여러 번 수정되면, 이러한 변경 사항을
+  디스크에 즉시 쓰는 것은 불필요한 I/O 작업을 발생시키고, 디스크의 소모를
+  가속화시킵니다. 따라서, Dirty Page를 주기적으로 디스크에 쓰여지도록 함으로써
+  쓰기 충돌을 최소화하고, 디스크의 수명을 연장할 수 있습니다.
+
+Dirty Page에 관련된 기능들은 Linux 커널 내의 여러 파일에서 구현되어 있습니다. 가장 중요한 파일들과 코드들은 다음과 같습니다.
+
+```c
+// mm/page-writeback.c: 이 파일에는 페이지 쓰기 백(log) 기능과 관련된 코드가 포함되어 있습니다.
+
+// 함수 __set_page_dirty()에서 페이지를 dirty 상태로 설정합니다.
+int __set_page_dirty(struct page *page, struct address_space *mapping, int warn) {
+    /* 페이지 상태 변경 및 관련된 처리 (일부 생략) ... */
+}
+
+// include/linux/mm.h: 이 헤더 파일에는 페이지 상태를 변경하는 데 사용되는 상수 및 함수가 포함되어 있습니다.
+
+// 함수 SetPageDirty()에서 page의 상태를 dirty로 설정합니다.
+static inline void SetPageDirty(struct page *page) {
+    /* 페이지 상태 변경 및 관련된 처리 (일부 생략) ... */
+}
+
+// mm/memory.c: 이 파일에는 여러 가지 메모리 관리 관련 함수들이 있으며, 페이지 쓰기 백(log) 처리와 관련된 코드들도 포함되어 있습니다.
+
+// 함수 filemap_dirty_inode()에서 해당 페이지에서 속한 인-코어 파일 시스템 inode를 dirty로 설정합니다.
+void filemap_dirty_inode(struct address_space *mapping, unsigned from) {
+    /* 인-코어 파일 시스템 inode를 dirty 상태로 변경하는 로직 (일부 생략) ... */
+
+}
+
+// fs/buffer.c: 이 파일에는 파일 시스템의 버퍼 헤드와 관련된 함수들이 포함되어 있으며, 
+// 레지스터 및 디스크를 dirty 상태로 설정하는 코드들이 포함되어 있습니다.
+
+// 함수 mark_buffer_dirty()에서 buffer_head를 dirty 상태로 설정합니다.
+void mark_buffer_dirty(struct buffer_head *bh) {
+    /* 이 buffer_head의 dirty 상태 변경 및 관련 처리 (일부 생략) ... */
+}
+```
+
+이 외에도 여러 파일에서도 Dirty Page와 관련된 처리들이 그 필요에 따라 진행되고
+있습니다. 주어진 예시 코드는 간략한 내용이며 일부 생략된 부분이 있습니다. 실제
+구현에서는 더욱 많은 처리 및 오류 처리가 포함되어 있으며, 다양한 설정 값과
+조건들에 맞추어 동작할 수 있는 구조로 되어 있습니다. 
 
 # I/O Scheduler
 
-# Application Performance and Optimization
+WIP...

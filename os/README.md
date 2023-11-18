@@ -36,6 +36,7 @@
 - [DLL (Dynamic Link Library)](#dll-dynamic-link-library)
 - [Execution file and Loader](#execution-file-and-loader)
 - [File System](#file-system)
+- [Journaling File System](#journaling-file-system)
 - [Quiz](#quiz)
 
 ----
@@ -239,7 +240,7 @@ TCHAR arr[10] => CHAR arr[10] => char arr[10]
 * `LOAD r1, 0x10`
   * Memory 의 `0x10` 주소에서 한바이트 값을 가져와서 register `r1` 에 저장한다. 이것을 direct address mode 라고 한다.
 * `LOAD r1, 0x30`
-  * MEmory 의 `0x30` 주소의 값은 `0x10` 이다. 메모리의 `0x10` 주소에서 한바이트 값을 가져와서 register `r1` 에 저장한다. 이렇게 한번도 참조해서 값을 가져오는 것을 indirect address mode 라고 한다.
+  * Memory 의 `0x30` 주소의 값은 `0x10` 이다. 메모리의 `0x10` 주소에서 한바이트 값을 가져와서 register `r1` 에 저장한다. 이렇게 한번더 참조해서 값을 가져오는 것을 indirect address mode 라고 한다.
 
 # Process
 
@@ -1403,7 +1404,9 @@ typedef struct _KMUTANT
 
 모든 프로세스들은 자신만의 독립적인 메모리 공간을 갖는다. 이것을 Virtual Memory 라 하고 Virtual Memory Address 에 의해 접근한다. Virtual Memory 는 4KB 단위로 분할하여 물리 메모리로 이동되어야 프로세스가 접근할 수 있다. 4KB 단위를 페이지라고 부른다.
 
-CPU 는 instruction 을 실행할 때 virtual memory address 를 사용한다. 이때 이것을 physical memory address 로 전환해주는 일을 OS 의 MMU (Memory Management Unit) 가 수행한다. 
+CPU 는 instruction 을 실행할 때 virtual memory address 를 사용한다. 이때 이것을
+physical memory address 로 전환해주는 일을 OS 의 
+**MMU (Memory Management Unit)** 가 수행한다. 
 
 가상 메모리의 페이지들중 물리메모리에 상주하는 것들을 working set 이라고 한다.
 
@@ -1839,6 +1842,26 @@ struct ext4_dir_entry {
 * [INODE STRUCTURE IN EXT4 FILESYSTEM](https://selvamvasu.wordpress.com/2014/08/01/inode-vs-ext4/)
 
 ![](https://selvamvasu.files.wordpress.com/2014/08/ext4.jpg)
+
+# Journaling File System
+
+저널링 파일시스템(**Journaling File System**)은 컴퓨터 시스템에서 파일 시스템의
+안정성과 데이터 무결성을 보장하기 위한 기술 중 하나로, 변경 사항을 기록하는
+저널이라는 로그를 사용하여 파일 시스템의 메타데이터를 관리한다.
+
+파일 시스템에서 파일 및 디렉터리의 구성 정보나 권한 등을 나타내는 정보를 메타데이터라고 합니다. 저널링 파일 시스템에서 발생하는 모든 메타데이터 변경 사항은 먼저 저널에 기록된 후, 실제 파일 시스템에 적용된다.
+
+저널링 파일 시스템의 주요 이점은 다음과 같다.
+
+- 데이터 무결성 유지: 시스템의 갑작스러운 전원 장애나 충돌 등으로 인해 발생할 수
+  있는 메타데이터의 손실과 데이터 무결성의 손상을 방지한다.
+- 빠른 복구 시간: 전원이 복구되거나 시스템이 재시작될 때, 저널링 파일 시스템은
+  저널에서 메타데이터의 변경 사항을 확인하여 파일 시스템 복구 과정을 빠르게
+  수행한다.
+- 데이터 일관성: 저널링 파일 시스템은 저널로의 변경 사항을 확인하는 동안
+  적용하지 못한 변경 사항이 있으면 이를 처리하여 데이터 일관성을 유지한다.
+
+주로 사용되는 저널링 파일 시스템의 예로는 Linux의 **Ext3**, **Ext4**, **XFS**, **ReiserFS** 등이 있으며, Windows의 **NTFS**와 macOS의 **HFS+**도 일종의 저널링 파일 시스템으로 간주된다. 이러한 파일 시스템들은 디스크에 저장된 데이터의 안정성과 무결성을 보장하며, 시스템의 복구 시간을 최소화하는데 도움을 준다.
 
 # Quiz
 
