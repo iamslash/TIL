@@ -1,9 +1,10 @@
 
 - [Abstract](#abstract)
+- [Linux Kernel Alpha Materials](#linux-kernel-alpha-materials)
 - [References](#references)
 - [Materials](#materials)
-- [Boot Process](#boot-process)
 - [Build Old Linux](#build-old-linux)
+- [Boot Process](#boot-process)
 - [System Information](#system-information)
   - [Kernel Infomation](#kernel-infomation)
   - [CPU Information](#cpu-information)
@@ -22,6 +23,7 @@
   - [IPC, Sockets and Pipes](#ipc-sockets-and-pipes)
   - [D-Bus Message](#d-bus-message)
   - [Monitoring Processes through /proc](#monitoring-processes-through-proc)
+  - [Process Scheduling](#process-scheduling)
 - [Kernel Timer](#kernel-timer)
 - [Kernel Synchronization](#kernel-synchronization)
 - [System Call](#system-call)
@@ -43,9 +45,8 @@
 
 # Abstract
 
-Kernel 은 OS 의 핵심이다. 주로 program 들을 지원하고 hardware (CPU, Memory, Disk, TTY) 를 관리한다.
-
-Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보다 [디버깅을 통해 배우는 리눅스 커널의 구조와 원리 1 라즈베리 파이로 따라하면서 쉽게 이해할 수 있는 리눅스 커널 | yes24](http://www.yes24.com/Product/Goods/90085976) 를 읽고 정리한다. 저자가 강의한 [video](https://www.youtube.com/watch?v=AOmawzOYkcQ&list=PLRrUisvYoUw9-cTYgkbTbr9f9CpbGdq4F) 도 있다.
+Kernel 은 OS 의 핵심이다. 주로 program 들을 지원하고 hardware (CPU, Memory, Disk, TTY) 를 관리한다. [Linux Kernel Development (3rd Edition)](https://www.amazon.com/Linux-Kernel-Development-Robert-Love/dp/0672329468)
+를 읽고 linux kernel code 와 함께 정리를 한다.
 
 다음의 부분들은 Arch 별로 구현이 다르다.
 
@@ -55,7 +56,9 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
 * 시그널핸들러 
 * 메모리관리(mmu)
 
-초기버전은 나중에 보자. 아래는 초기버전 공부에 대한 계획이다.
+# Linux Kernel Alpha Materials
+
+Linux Kernel 초기 버전 공부 계획
 
 * [Linux Kernel documentation](https://www.kernel.org/doc/)
   * 킹왕짱!!!
@@ -138,6 +141,10 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
   * [linux 0.01 commentary](https://www.academia.edu/5267870/The_Linux_Kernel_0.01_Commentary)
   * [linux 0.01 running on qemu](https://iamhjoo.tistory.com/11)
 
+# Build Old Linux
+
+[Build Old Linux](build_old_linux.md)
+
 # Boot Process
 
 * [An introduction to the Linux boot and startup processes](https://opensource.com/article/17/2/linux-boot-and-startup)
@@ -145,21 +152,20 @@ Linux Kernel 을 CPU, MEM, DISK, NETWORK 관점에서 정리해본다. 무엇보
 
 ----
 
-Linux 의 Boot Process 는 다음과 같다. [https://wogh8732.tistory.com/72](https://wogh8732.tistory.com/72)
+Linux 의 Boot Process 는 다음과 같다.
+[https://wogh8732.tistory.com/72](https://wogh8732.tistory.com/72)
 
 - **UEFI/BIOS**
-    - ROM 에 설치된 BIOS 가 Booting 에 필요한 장치들(CPU, RAM, DISK, 키보드, 마우스, etc…)의 건강을 체크한다.
+    - ROM 에 설치된 BIOS 가 Booting 에 필요한 장치들(CPU, RAM, DISK, 키보드,
+      마우스, etc…)의 건강을 체크한다.
 - **UEFI/BIOS** 가 MBR (Master Boot Record) 에 설치된 Boot Loader 를 Memory 에 로딩후 실행한다.
     - Linux 는 주로 **GRUB2** 를 Boot Loader 로 사용한다.
 - **Boot Loader** 는 Linux Kernel Image 와 RAM Disk 를 RAM 에 로딩하고 Linux Kernel 을 실행한다.
-    - RAM Disk 는 initramfs 이다. Linux Kernel 을 실행할 때 필요한 Driver, Program, Binary Files 등을 가지고 있다.
+    - RAM Disk 는 initramfs 이다. Linux Kernel 을 실행할 때 필요한 Driver,
+      Program, Binary Files 등을 가지고 있다.
 - **Linux Kernel** 은 `/sbin/init` 을 실행한다.
     - `/sbin/init` 은 `systemd` 를 실행하는 건가?
 - **systemd** 는 미리 작성된 service 들을 실행한다.
-
-# Build Old Linux
-
-[Build Old Linux](build_old_linux.md)
 
 # System Information
 
@@ -438,7 +444,9 @@ error:
 
 ## Process Management
 
-Kernel 은 Process Meta Data 를 PCB (Process Control Block) 이라는 형태로 저장한다. Linux Kernel 의 `task_struct` 에 해당한다. 다음과 같은 항목들이 존재한다.
+Kernel 은 Process Meta Data 를 **PCB (Process Control Block)** 이라는 형태로
+저장한다. Linux Kernel 의 `task_struct` 에 해당한다. 다음과 같은 항목들이
+존재한다.
 
 * PID (Process Identifier)
 * Priority
@@ -453,7 +461,99 @@ Kernel 은 Process Meta Data 를 PCB (Process Control Block) 이라는 형태로
 * parent, child process
 * execution time
 
-Process 는 CPU 로 부터 대기표를 뽑고 자기 순서를 기다린다. 기다리는 Process 들은 ready queue 에 저장된다. 역시 DIsk 로 부터 대기표를 뽑고 자기 순서를 기다린다. 기다리는 Process 들은 Disk wait queue 에 저장된다.
+Process 는 CPU 로 부터 대기표를 뽑고 자기 순서를 기다린다. 기다리는 Process 들은
+ready queue 에 저장된다. 역시 DIsk 로 부터 대기표를 뽑고 자기 순서를 기다린다.
+기다리는 Process 들은 Disk wait queue 에 저장된다.
+
+리눅스에서 프로세스 관리는 커널 내에서 발생하며 여러 소스 파일과 핵심 코드가
+관련되어 있습니다. 이러한 파일과 코드의 일부는 다음과 같습니다.
+
+```c
+// - 프로세스 정보 구조체 (task_struct) 파일: include/linux/sched.h 설명: 
+// 프로세스 정보를 저장하는 핵심 데이터 구조인 task_struct가 정의되어 있습니다. 
+// task_struct는 프로세스의 상태, 스케줄링 정보, 자식 프로세스, 부모 프로세스, 
+// 페이지 테이블 등 프로세스 관련 모든 정보를 저장합니다.
+struct task_struct {
+    ...
+    long state;               /* -1 unrunnable, 0 runnable, >0 stopped */
+    ...
+    struct list_head children;    /* list of my children */
+    struct list_head sibling;     /* linkage in my parent's children list */
+    ...
+    struct mm_struct *mm;         /* memory management info */
+    ...
+};
+
+// - 프로세스 생성 (fork) 파일: kernel/fork.c 설명: 이 파일은 프로세스 생성 시 지원하는 
+// 시스템 콜인 fork, vfork, clone에 대한 구현을 포함하고 있습니다. 프로세스 생성의 기본 함수인
+// _do_fork()를 호출하여 새로운 프로세스를 생성하고 초기화합니다.
+SYSCALL_DEFINE0(fork)
+{
+    return _do_fork(SIGCHLD, 0, 0, NULL, NULL);
+}
+...
+long _do_fork(int clone_flags, unsigned long stack_start,
+          unsigned long stack_size, int __user *parent_tidptr,
+          int __user *child_tidptr)
+{
+    ...
+    tsk = copy_process(clone_flags, stack_start, stack_size, child_tidptr,
+               NULL, trace);
+    ...
+    return tsk->pid;
+}
+
+// - 프로세스 스케줄링 파일: kernel/sched/core.c, kernel/sched/fair.c, 
+// include/linux/sched.h 등 설명: 프로세스 스케줄링은 리눅스 커널의 핵심 기능 중 하나로, 
+// 실행 가능한 프로세스 간의 자원을 공유하고 안정적으로 시스템을 유지합니다. 리눅스 스케줄러는 
+// 여러 개의 스케줄링 클래스를 지원하며, 가장 일반적이고 기본적인 클래스는 
+// Completely Fair Scheduler (CFS)입니다.
+// -- schedule() 함수는 적절한 후속 프로세스를 선택하고 실행합니다.
+void __sched schedule(void)
+{
+    struct task_struct *next;
+    ...
+    next = pick_next_task(rq, prev);
+    ...
+    context_switch(rq, prev, next);
+    ...
+}
+
+// - 스케줄링 클래스 인터페이스 정의
+struct sched_class {
+    const struct sched_class *next;
+
+    void (*enqueue_task)(...);
+    void (*dequeue_task)(...);
+    ...
+};
+
+/* Represent CFS scheduling class */
+extern const struct sched_class fair_sched_class;
+
+// - 프로세스 종료 (exit) 파일: kernel/exit.c 설명: 프로세스가 종료될 때, 
+// 리눅스 커널은 종료 프로세스에서 사용한 자원을 회수하고 부모 프로세스에 알리는 
+// 작업을 수행합니다. 프로세스 종료 작업은 do_exit 함수에 의해 처리되며, 
+// 시스템 콜 exit 및 exit_group이 호출됩니다.
+void do_exit(long code)
+{
+    ...
+    exit_mm(tsk);
+    ...
+    exit_notify(tsk, group_dead);
+    ...
+}
+
+SYSCALL_DEFINE1(exit, int, error_code)
+{
+    do_exit((error_code & 0xff) << 8);
+}
+```
+
+이러한 파일 및 코드들은 리눅스 커널에서 프로세스 관리에 관련되어 핵심적인 부분을
+나타냅니다. 프로세스의 생성, 스케줄링 및 종료에 대한 처리가 리눅스 커널의 이러한
+부분에서 이루어집니다. 반드시 모든 코드를 다루기보다는 여기서 소개한 코드를
+기반으로 구성을 탐색하시면 프로세스 관리의 전반적인 이해에 도움이 될 것입니다.
 
 ## task_struct
 
@@ -789,6 +889,79 @@ $ cat oom_score
 $ less status 
 ```
 
+## Process Scheduling
+
+리눅스 커널의 프로세스 스케줄링은 리눅스 커널의 핵심 기능 중 하나입니다. 다음은
+스케줄링과 관련한 구현 파일들과 핵심 코드를 설명한 것입니다.
+
+```c
+// - 스케줄러 자료구조 및 인터페이스 파일: include/linux/sched.h 설명: 
+// 리눅스 스케줄러는 복수의 스케줄링 클래스를 지원하며, 이러한 스케줄링 클래스에 
+// 대한 인터페이스가 정의되어 있습니다. 각 스케줄링 클래스는 특정 스케줄링 정책을
+// 구현하고 관리합니다.
+struct sched_class {
+    const struct sched_class *next;
+
+    void (*enqueue_task)(...);
+    void (*dequeue_task)(...);
+    ...
+};
+
+/* Represent CFS scheduling class */
+extern const struct sched_class fair_sched_class;
+
+// - 스케줄링 함수 및 작업 파일: kernel/sched/core.c 설명: 이 파일은 리눅스에서
+// 프로세스를수행할 때 사용되는 핵심 스케줄링 함수들을 포함하고 있습니다.
+// -- schedule() 함수는 적절한 후속 프로세스를 선택하고 실행합니다.
+void __sched schedule(void)
+{
+    struct task_struct *prev;
+    struct task_struct *next;
+    struct rq *rq;
+    ...
+    prev = rq->curr;
+    next = pick_next_task(rq, prev);
+    ...
+    context_switch(rq, prev, next);
+    ...
+}
+
+// - Completely Fair Scheduler (CFS) 파일: kernel/sched/fair.c 설명: 
+// CFS 스케줄링 클래스에 대한 구현이 이 파일에 포함되어 있습니다. 
+// Completely Fair Scheduler는 리눅스 커널에서 기본으로 사용되는 스케줄링 
+// 알고리즘입니다. 작업들이 가능한 균등하게 CPU 시간을 나눠 사용할 수 있도록
+// 처리합니다.
+// -- 다음 실행할 작업 선택 (간소화된 구현)
+static struct task_struct *
+pick_next_task_fair(struct rq *rq, struct task_struct *prev_task)
+{
+    struct cfs_rq *cfs_rq = &rq->cfs;
+    struct sched_entity *se;
+    ...
+    se = pick_next_entity(cfs_rq);
+    ...
+    next_task = task_of(se);
+    ...
+    return next_task;
+}
+```
+
+CFS 스케줄러는 레디 큐에 있는 각 프로세스의 스케줄 엔티티를 평가합니다.
+
+리눅스 스케줄링 종류 리눅스 커널은 프로세스를 제어하는 다양한 스케줄링 정책을 제공합니다.
+
+- SCHED_NORMAL, SCHED_BATCH: CFS 스케줄링 클래스에 의해 구현됩니다.
+- SCHED_FIFO, SCHED_RR: 리얼타임 스케줄링 클래스인 rt_sched_class에 의해
+  구현되며, kernel/sched/rt.c 파일에 있습니다.
+- SCHED_DEADLINE: 데드라인 기반의 스케줄링 클래스인 dl_sched_class에 의해
+  구현되며, kernel/sched/deadline.c 파일에 있습니다.
+
+이러한 파일들과 코드들은 리눅스 커널에서 프로세스 스케줄링의 주요 구성 요소를
+나타냅니다. 실행 가능한 프로세스의 CPU 자원을 공유하고 관리하는 데 필요한 핵심
+알고리즘과 구조는 이러한 부분에 구현되어 있습니다. 비록 모든 코드와 알고리즘을
+다루지는 않았지만, 이 소개 자료를 통해 프로세스 스케줄링에 대한 전반적인 이해에
+도움이 되길 바랍니다.
+
 # Kernel Timer
 
 커널 타이머(Kernel Timer)는 리눅스 커널에서 시간 기반의 이벤트를 관리하고
@@ -803,10 +976,17 @@ $ less status
 
 리눅스 커널 타이머에 대한 관련 코드는 주로 아래 두 파일에서 찾을 수 있다:
 
-- `include/linux/timer.h`: 커널 타이머 구조체 및 관련 함수와 매크로 정의를 포함하며, 커널 타이머 작업을 초기화, 설정, 수정, 삭제하는 함수들이 정의되어 있다.
-- `kernel/time/timer.c`: 커널 타이머 시스템의 실제 구현부로, 타이머 큐에서 작업을 처리하고 관리하는 메커니즘이 구현되어 있다.
+- `include/linux/timer.h`: 커널 타이머 구조체 및 관련 함수와 매크로 정의를
+  포함하며, 커널 타이머 작업을 초기화, 설정, 수정, 삭제하는 함수들이 정의되어
+  있다.
+- `kernel/time/timer.c`: 커널 타이머 시스템의 실제 구현부로, 타이머 큐에서
+  작업을 처리하고 관리하는 메커니즘이 구현되어 있다.
 
-리눅스 커널에서 커널 타이머를 사용하려면, 먼저 초기화 함수인 `init_timer()`를 호출하여 `timer_list` 구조체를 초기화하고, 시간 간격과 만료 시 실행할 콜백 함수를 설정한다. 그 다음, `add_timer()` 함수를 호출하여 타이머를 타이머 큐에 등록하고 실행을 예약한다. 이 프로세스를 통해 타이머가 처리되고 이벤트가 일정 시간에 실행된다.
+리눅스 커널에서 커널 타이머를 사용하려면, 먼저 초기화 함수인 `init_timer()`를
+호출하여 `timer_list` 구조체를 초기화하고, 시간 간격과 만료 시 실행할 콜백
+함수를 설정한다. 그 다음, `add_timer()` 함수를 호출하여 타이머를 타이머 큐에
+등록하고 실행을 예약한다. 이 프로세스를 통해 타이머가 처리되고 이벤트가 일정
+시간에 실행된다.
 
 리눅스 커널에서 커널 타이머를 사용하는 간단한 예제 이다.
 
@@ -885,6 +1065,72 @@ switching 의 비용은 크다. 몇 cycle 일까???
 * 그 번호에 맞는 system call address 즉, `sys_write()` 의 address 를 table 에서 읽어온다.
 * table 에서 읽어온 `sys_write()` address 를 실행한다.
 * 실행을 마치면 HW 의 PC 를 처음 `printf` 다음줄로 조정한다.
+
+printf 함수의 호출부터 write 시스템 콜이 실행되는 과정을 다시 설명하겠습니다.
+
+```c
+// - 사용자가 printf 함수를 호출합니다.
+#include <stdio.h>
+
+int main()
+{
+    printf("Hello, World!\n");
+    return 0;
+}
+
+// - printf 함수는 표준 C 라이브러리(glibc)에 구현되어 있으며, 
+// 문자열을 형식화하여 출력합니다. 내부적으로 가변 인수를 처리하고 vfprintf 함수를 
+// 호출하여 버퍼에 문자열을 출력하고, 그런 다음 버퍼에서 문자열을 표준 출력으로 실제로 작성합니다.
+int
+__vfprintf_internal (FILE *s, const char *format, va_list ap)
+{
+    ...
+}
+
+// - 표준 C 라이브러리는 write 시스템 콜을 호출하여 문자열을 표준 출력에 쓰게 됩니다.
+#include <unistd.h>
+
+ssize_t write(int fd, const void *buf, size_t count);
+// 여기서 fd는 STD(STDOUT_FILENO)에 대한 파일 디스크립터, 
+// buf는 출력할 문자열의 버퍼 포인터, count는 쓰기할 바이트 수입니다.
+
+// - 시스템 콜에 대한 정의 및 매핑은 리눅스 커널 소스 코드에 포함되어 있습니다. 
+// 이 경우에는 write에 대한 정의와 매핑을 찾을 수 있습니다.
+// -- syscall_table.S(예: x86_64 아키텍처) 파일에 시스템 콜 매핑:
+
+/* sys_call_table */
+...
+4 common  write  fs/read_write.c
+...
+
+// -- syscalls.h 파일에 시스템 콜 함수 정의:
+asmlinkage long sys_write(unsigned int fd, const char __user *buf, size_t count);
+
+// - 리눅스 커널에서 sys_write 함수는 fs/read_write.c 파일에 구현됩니다.
+SYSCALL_DEFINE3(write, unsigned int fd, const char __user *buf, size_t count)
+{
+    struct fd f = fdget_pos(fd);
+    ssize_t ret = -EBADF;
+
+    if (f.file) {
+        loff_t pos = file_pos_read(f.file);
+        ret = vfs_write(f.file, buf, count, &pos);
+        if (ret >= 0) {
+            file_pos_write(f.file, pos);
+        }
+    }
+
+    return ret;
+}
+
+// - `vfs_write` 함수를 호출하여 가상 파일 시스템(VFS) 계층에서 실제로 문자열을
+// 작성합니다. VFS는 다양한 파일 시스템 구현을 지원합니다. 
+```
+
+이 과정을 통해 사용자 프로그램에서 `printf` 함수를 호출하면 표준 출력에 문자열이
+출력됩니다. 이는 표준 C 라이브러리(glibc)에서 문자열 처리 및 버퍼 작성을 처리한
+다음 리눅스 커널의 `write` 시스템 콜을 사용하여 표준 출력에 문자열을 실제로
+출력하는 방식으로 작동합니다.
 
 # Signal
 
@@ -1688,4 +1934,44 @@ void mark_buffer_dirty(struct buffer_head *bh) {
 
 # I/O Scheduler
 
-WIP...
+I/O 스케줄러는 컴퓨터 시스템에서 디스크와 같은 블록 장치에 대한 입출력 요청을
+관리하고 최적화하는 커널 구성 요소입니다. I/O 스케줄러는 대기 중인 I/O 작업을
+정렬하고 조정하여 디스크 성능을 향상시키고 전체 시스템의 처리량과 대기 시간을
+개선하는 데 중요한 역할을 합니다. 다양한 I/O 스케줄링 알고리즘 중 CFQ
+(Completely Fair Queuing), deadline scheduler, noop scheduler 등이 있습니다. 각
+알고리즘은 특정 워크로드에 따라 최적화되어 있으며, 사용자에게 적합한 스케줄러를
+선택할 수 있습니다.
+
+I/O 스케줄러에 관련된 기능들은 Linux 커널 내의 block 디렉토리에서 구현되어
+있습니다. 주요 파일들과 핵심 코드들은 다음과 같습니다.
+
+```c
+// - block/elevator.c: 이 파일에는 I/O 스케줄링 프레임워크의 기본 구조와 관련된 코드가 포함되어 있습니다.
+// 함수 __elv_add_request()에서 새로운 I/O 요청을 스케줄러에 추가합니다.
+void __elv_add_request(struct request_queue *q, struct request *rq, int where) {
+    /* I/O 요청을 스케줄러의 대기열에 추가하는 처리 (일부 생략) ... */
+}
+
+// - block/deadline-iosched.c: 이 파일에는 deadline I/O 스케줄링 알고리즘이 구현되어 있습니다.
+// 함수 deadline_add_request()에서 새로운 요청을 deadline 스케줄러에 추가합니다.
+static void deadline_add_request(struct request_queue *q, struct request *rq) {
+    /* 새로운 I/O 요청을 deadline 스케줄러에 추가하는 처리 (일부 생략) ... */
+}
+
+// - block/cfq-iosched.c: 이 파일에는 CFQ (Completely Fair Queuing) I/O 스케줄링 알고리즘이 구현되어 있습니다.
+// 함수 cfq_insert_request()에서 새로운 요청을 CFQ 스케줄러에 추가합니다.
+static void cfq_insert_request(struct request_queue *q, struct request *rq) {
+    /* 새로운 I/O 요청을 CFQ 스케줄러에 추가하는 처리 (일부 생략) ... */
+}
+
+// - block/noop-iosched.c: 이 파일에는 noop I/O 스케줄링 알고리즘이 구현되어 있습니다.
+// 함수 noop_insert_request()에서 새로운 요청을 noop 스케줄러에 추가합니다.
+static void noop_insert_request(struct request_queue *q, struct request *rq) {
+    /* 새로운 I/O 요청을 noop 스케줄러에 추가하는 처리 (일부 생략) ... */
+}
+```
+
+주어진 예시 코드는 간략한 내용이며 일부 생략된 부분이 있습니다. 실제 구현에서는
+더욱 상세한 처리 및 오류 처리를 포함하고 있으며, 다양한 설정 값과 조건들에
+맞추어 동작할 수 있는 구조로 되어 있습니다. 필요하다면 Linux 커널 소스 코드를
+참고하여 자세한 내용을 확인할 수 있습니다.
