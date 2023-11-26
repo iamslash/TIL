@@ -4,6 +4,9 @@
 
 - [LLM 애플리케이션 아키텍처란? (RAG의 이해와 기술 스택 탐색) | facebook](https://www.facebook.com/aldente0630/posts/2579269092237469)
 - [Building RAG-based LLM Applications for Production](https://www.anyscale.com/blog/a-comprehensive-guide-for-building-rag-based-llm-applications-part-1)
+- [How to use Retrieval-Augmented Generation (RAG) with Llama 2](https://agi-sphere.com/retrieval-augmented-generation-llama2/)
+- [Generative AI for Beginners | microsoft](https://microsoft.github.io/generative-ai-for-beginners)
+  - [src](https://github.com/microsoft/generative-ai-for-beginners)
 
 # Basic
 
