@@ -2133,7 +2133,7 @@ String result = valueOpt.orElseThrow(CustomException::new).toUpperCase();
 ```java
 char[] src = new char[16];
 char[] dst = new char[16];
-System.arraycopy(arc, 0, dst, 0, 4);
+System.arraycopy(src, 0, dst, 0, 4);
 ```
 
 ## Integer.valueOf vs Integer.parseInt
