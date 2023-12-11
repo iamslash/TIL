@@ -1,6 +1,16 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [How To Train ChatGPT](#how-to-train-chatgpt)
+  - [Pretrained model 만들기](#pretrained-model-만들기)
+  - [Supervised Fine Tuning(SFT) model 만들기](#supervised-fine-tuningsft-model-만들기)
+  - [Reward model 만들기](#reward-model-만들기)
+- [Prompt Engineering](#prompt-engineering)
+
+-----
+
 # Abstract
 
-ChatGpt 는 어떻게 학습했는가를 정리한다.
+ChatGpt 에 대해 정리한다.
 
 # Materials
 
@@ -50,3 +60,8 @@ ChatGPT는 세 단계의 학습 과정을 거쳐 성능을 높입니다. 아래�
 합니다. 또한, 많은 데이터와 인간의 도움을 받아 세부적인 교정 및 강화학습을 통해
 지속적으로 성능을 개선합니다. 이로 인해 ChatGPT 모델은 사용자의 질문에 대해
 상황에 적합하고, 정확한 답변을 생성할 수 있는 능력을 지니게 됩니다.
+
+# Prompt Engineering
+
+- [Cognitive Prompting 정리(1zlabs Ken. Ver.231207 공유용) | GoogleSlide](https://docs.google.com/presentation/d/1kayepoiTVT838Tetk02nxeqVmmS9BDc9O7n-4OzJdL8/edit#slide=id.g26309fa4a80_0_0)
+  - [video](https://www.youtube.com/watch?v=CkCL8dV_mPk)
