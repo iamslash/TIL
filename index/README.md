@@ -39,11 +39,14 @@
 
 # Abstract
 
-Database index. Hands on with [MySQL](/mysql/README.md).
+[Indexing Beyond the Basics](https://sqlfordevs.com/ebooks/indexing) 를 읽고
+요약했다. [MySQL](/mysql/README.md) 도 참고하자.
 
 # Materials
 
-[Indexing Beyond the Basics](https://sqlfordevs.com/ebooks/indexing)
+- [chidb | github](https://github.com/iamslash/chidb)
+  - index implementation
+- [Using Database Indexes Tutorial](https://www.progress.com/tutorials/odbc/using-indexes)
 
 # Fundamentals
 

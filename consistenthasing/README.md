@@ -1,7 +1,8 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Basic](#basic)
-- [Implementation](#implementation)
+- [Easy Implementation](#easy-implementation)
+- [Difficult Implementation](#difficult-implementation)
 
 ----
 
@@ -12,10 +13,39 @@ key 가 주어졌을 때 hash ring 에 적절히 hash 가 되도록 하는 방�
 복구되더라도 데이터의 이동을 최소화 할 수 있다. sharding 과 같은 partitioning
 전략을 도입할 때 필수이다.
 
+일관된 해싱(consistent hashing)은 분산 시스템, 예를 들어 캐시 서버 또는
+데이터베이스 클러스터와 같은 여러 노드 간에 키를 효율적으로 분배하는 데 사용되는
+분산 해싱 기법이다. 일관된 해싱은 키의 안정적이고 균형잡힌 분배를 제공하면서
+동시에 노드의 추가 또는 제거에 따른 영향을 최소화하여 시스템을 유지하는 데
+필요한 키 재분배와 재해싱 작업을 줄인다.
+
+일관된 해싱은 미리 정의된 해시 함수를 사용하여 키와 노드를 원형의 고정 크기 해시
+링에 매핑하는 방식으로 작동한다. 각 키와 노드에 대해 해시가 수행되고 결과 값이
+링 상에서의 위치를 결정한다. 키는 시계 방향으로 가장 가까운 노드에 할당된다.
+
+노드가 시스템에서 추가되거나 제거될 때 모든 키를 전체 노드에 걸쳐 완전히
+재해싱하는 것이 아니라 해당 노드에 직접 연결되었던 키만 영향을 받는다. 이는
+이동해야 하는 데이터의 양을 크게 줄여 시스템을 효율적으로 확장할 수 있게 하며
+주요 중단을 일으키지 않는다.
+
+일관된 해싱의 이점은 다음과 같다:
+
+- 로드 밸런싱: 노드 간에 키를 효율적으로 분산함으로써 시스템 내 각 노드에 균형
+  잡힌 부하를 제공한다.
+- 확장성: 키 재분배를 최소화하여 시스템의 동적 성장을 더 잘 처리하고 다운타임이
+  덜 발생하도록 노드의 추가 또는 삭제 과정을 단순화한다.
+- 내결함성: 노드가 실패할 경우 키를 다른 사용 가능한 노드에 쉽게 재할당할 수
+  있어 데이터 손실과 서비스 중단을 최소화한다.
+
+일관된 해싱은 분산 캐시 (예: 아마존의 다이나모 또는 아카마이의 콘텐츠 전송
+네트워크), 분산 데이터베이스 및 로드 밸런서와 같은 분산 시스템에 일반적으로
+사용된다.
+
 # Materials
 
-* [A Fast, Minimal Memory, Consistent Hash Algorithm @ arxiv ](https://arxiv.org/pdf/1406.2294.pdf)
-  * consistent hash 를 5 줄로 구현한 논문 
+- [A Fast, Minimal Memory, Consistent Hash Algorithm @ arxiv ](https://arxiv.org/pdf/1406.2294.pdf)
+  - consistent hash 를 5 줄로 구현한 논문 
+- [Understanding and implementing consistent hashing](https://arpitbhayani.me/blogs/consistent-hashing/)
 
 # Basic
 
@@ -37,7 +67,11 @@ B 가 복구되고 클라이언트가 1 을 요청하면 B 에 할당된다. 이
 만약 B 가 죽으면 C 에게 너무 부담이 크지 않을까? 그래서 A 의 영역을 A, A+1, A+2,
 A+3 와 같이 분산한다. key 는 여러 서버에 고르게 할당될 것이다.
 
-# Implementation
+# Easy Implementation
+
+- [Consistent Hashing with Binary Search | github](https://github.com/arpitbbhayani/consistent-hashing/blob/master/consistent-hashing.ipynb)
+
+# Difficult Implementation
 
 * [Karger Consistent hash](https://www.joinc.co.kr/w/man/12/hash/consistent)
 

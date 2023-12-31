@@ -72,6 +72,8 @@ Concurrency Problems 는 다음과 같다.
 
 # ACID
 
+- [ACID Transactions](https://redis.com/glossary/acid-transactions/)
+
 Transaction 이 안전하게 수행된다는 것을 보장하기 위한 성질이다. James Nicholas
 "Jim" Gray 가 1970년대 말에 신뢰할 수 있는 트랜잭션 시스템의 특성들을 정의하고
 개발했다.

@@ -39,7 +39,7 @@
 * Extended Requirements
   * Analytics
   * provides REST APIs.
-* [Designing a URL Shortening service like TinyURL](Designing_a_URL_Shortening_service_like_TinyURL.md) 과 비슷하다.
+* [Designing a URL Shortening service like TinyURL](../DesigningUrlShorteningService/DesigningUrlShorteningService.md) 과 비슷하다.
 * What should be the limit on the amount of text user can paste at a time?
   * 10 MB 이상은 업로드 불가
 * Should we impose size limits on custom URLs?

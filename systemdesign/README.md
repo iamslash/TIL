@@ -26,24 +26,28 @@
     - [HTTP Flow](#http-flow)
   - [Domain Name System](#domain-name-system)
   - [Load Balancing](#load-balancing)
-  - [Cache](#cache)
-    - [Use-Cases](#use-cases)
-    - [Caching Strategies](#caching-strategies)
-  - [Content Delivery Network](#content-delivery-network)
+  - [Caching](#caching)
+  - [Caching Strategies](#caching-strategies)
+  - [Distributed Caching](#distributed-caching)
+  - [CDN (Content Delivery Network)](#cdn-content-delivery-network)
   - [Proxy](#proxy)
   - [Availability](#availability-1)
     - [Availability Patterns](#availability-patterns)
     - [The Nine's of availability](#the-nines-of-availability)
+  - [Failover](#failover)
+  - [Fault Tolerance](#fault-tolerance)
   - [Distributed System](#distributed-system)
   - [Software Design Principle](#software-design-principle)
   - [Read Heavy vs Write Heavy](#read-heavy-vs-write-heavy)
   - [Performance vs Scalability](#performance-vs-scalability)
   - [Latency vs Throughput](#latency-vs-throughput)
   - [Availability vs Consistency](#availability-vs-consistency)
-    - [CAP (Consistency Availability Partition tolerance)](#cap-consistency-availability-partition-tolerance)
+    - [CAP (Consistency Availability Partition tolerance) Theorem](#cap-consistency-availability-partition-tolerance-theorem)
     - [PACELC (Partitioning Availability Consistency Else Latency Consistency)](#pacelc-partitioning-availability-consistency-else-latency-consistency)
-  - [Consistency patterns](#consistency-patterns)
+  - [Consistency Patterns](#consistency-patterns)
   - [Database](#database)
+  - [ACID](#acid)
+  - [Sharding](#sharding)
   - [Application layer](#application-layer)
   - [Service Mesh](#service-mesh)
   - [Service Discovery](#service-discovery)
@@ -63,7 +67,8 @@
   - [Circuit Breaker](#circuit-breaker)
   - [Rate Limiting](#rate-limiting)
   - [Asynchronism](#asynchronism)
-  - [Message Queues VS Event Streaming Platform](#message-queues-vs-event-streaming-platform)
+  - [Message Queue](#message-queue)
+  - [Message Queue VS Event Streaming Platform](#message-queue-vs-event-streaming-platform)
   - [Security](#security)
     - [WAF (Web Application Fairewall)](#waf-web-application-fairewall)
     - [XSS (Cross Site Scripting)](#xss-cross-site-scripting)
@@ -89,12 +94,14 @@
   - [Load Test](#load-test)
   - [Incidenct](#incidenct)
   - [Consistent Hashing](#consistent-hashing)
-  - [Index](#index)
+  - [Database Index](#database-index)
   - [SQL vs NoSQL](#sql-vs-nosql)
   - [Hadoop](#hadoop)
   - [MapReduce](#mapreduce)
+  - [Consensus Algorithm](#consensus-algorithm)
   - [Paxos](#paxos)
   - [Gossip protocol](#gossip-protocol)
+  - [Raft](#raft)
   - [Chubby](#chubby)
   - [Configuration Management Database (CMDB)](#configuration-management-database-cmdb)
   - [A/B Test](#ab-test)
@@ -104,6 +111,12 @@
   - [Data Warehouse](#data-warehouse)
   - [Data Lakehouse](#data-lakehouse)
   - [API Security](#api-security)
+  - [Batch Processing vs Stream Processing](#batch-processing-vs-stream-processing)
+  - [HeartBeat](#heartbeat)
+  - [Bloom Filter](#bloom-filter)
+  - [Distributed Locking](#distributed-locking)
+  - [Distributed Tracing](#distributed-tracing)
+  - [Checksum](#checksum)
 - [System Design Interview](#system-design-interview)
 - [Real World Architecture](#real-world-architecture)
 - [Company Architectures](#company-architectures)
@@ -173,6 +186,7 @@ Describe system design.
   
 # Materials
 
+* [Awesome System Design Resources | github](https://github.com/ashishps1/awesome-system-design-resources)
 * [대규모 소프트웨어 패턴 강좌 업데이트](https://architecture101.blog/2023/02/11/welcome_2_pattern_worlds/?fbclid=IwAR2lVvRIidYW_CnAs4tTExStad1T4pq54V2ySCtMMlBS0DTfxD0_NQdGW9Y&mibextid=Zxz2cZ)
   * 아키텍처 전문 강사의 커리큘럼, POSA1, POSA2, POSA3, AOSA, Cloud+MSA
 * [System Design Resources | github](https://github.com/InterviewReady/system-design-resources)
@@ -454,10 +468,19 @@ API 대신 HTTP API 또는 WEB API 라고 한다.
 
 ## Domain Name System
 
-> * [Domain Name System (DNS)](https://www.karanpratapsingh.com/courses/system-design/domain-name-system)
-> * [How does the Domain Name System (DNS) lookup work? | bytebytego](https://blog.bytebytego.com/p/how-does-the-domain-name-system-dns?s=r)
+> - [DNS란 무엇입니까? | DNS 작동 원리 | cloudflare](https://www.cloudflare.com/ko-kr/learning/dns/what-is-dns/)
+> - [Domain Name System (DNS)](https://www.karanpratapsingh.com/courses/system-design/domain-name-system)
+> - [How does the Domain Name System (DNS) lookup work? | bytebytego](https://blog.bytebytego.com/p/how-does-the-domain-name-system-dns?s=r)
 
 ----
+
+DNS(도메인 네임 시스템)은 인터넷 전화번호부로, 웹 브라우저에서 도메인 이름을 IP
+주소로 변환하여 인터넷 자원을 로드할 수 있게 합니다. DNS 확인 과정은 호스트
+이름을 IP 주소로 변환하는 것이며, DNS 리커서, 루트 이름 서버, TLD 이름 서버,
+권한 있는 이름 서버와 같은 다양한 하드웨어 구성 요소가 포함되어 있습니다. DNS
+조회 프로세스는 통상 8단계를 거쳐 웹 브라우저가 웹 페이지를 요청할 수 있게 되며,
+이 과정에서 DNS 캐싱이 데이터를 임시 저장하여 성능과 신뢰성을 높이는 데 도움이
+됩니다. DNS 확인자는 DNS 조회의 첫 번째 중단점으로 기능합니다.
 
 DNS server 의 종류는 다음과 같이 3 가지가 있다.
 
@@ -476,12 +499,15 @@ DNS lookups on average take almost 20-120 milliseconds.
   <i><a href=http://www.slideshare.net/srikrupa5/dns-security-presentation-issa>Source: DNS security presentation</a></i>
 </p>
 
-사람이 읽을 수 있는 domain name 을 기계가 이해할 수 있는 IP address 로 번역하는 시스템이다.
+다음은 주요 DNS Record 들이다.
 
-* **NS record (name server)** - Specifies the DNS servers for your domain/subdomain.
-* **MX record (mail exchange)** - Specifies the mail servers for accepting messages.
+* **NS record (name server)** - Specifies the DNS servers for your
+  domain/subdomain.
+* **MX record (mail exchange)** - Specifies the mail servers for accepting
+  messages.
 * **A record (address)** - Points a name to an IP address.
-* **CNAME (canonical)** - Points a name to another name or `CNAME` (example.com to www.example.com) or to an `A` record.
+* **CNAME (canonical)** - Points a name to another name or `CNAME` (example.com
+  to www.example.com) or to an `A` record.
 
 | name      | type  | value      |
 | --------- | ----- | ---------- |
@@ -492,10 +518,11 @@ DNS lookups on average take almost 20-120 milliseconds.
 
 ## Load Balancing
 
-> * [Introduction to modern network load balancing and proxying](https://blog.envoyproxy.io/introduction-to-modern-network-load-balancing-and-proxying-a57f6ff80236)
-> * [What is load balancing](https://avinetworks.com/what-is-load-balancing/)
-> * [Introduction to architecting systems](https://lethain.com/introduction-to-architecting-systems-for-scale/)
-> * [Load balancing](https://en.wikipedia.org/wiki/Load_balancing_(computing))
+> - [로드 밸런싱이란 무엇인가요? | aws](https://aws.amazon.com/ko/what-is/load-balancing/)
+> - [Introduction to modern network load balancing and proxying](https://blog.envoyproxy.io/introduction-to-modern-network-load-balancing-and-proxying-a57f6ff80236)
+> - [What is load balancing](https://avinetworks.com/what-is-load-balancing/)
+> - [Introduction to architecting systems](https://lethain.com/introduction-to-architecting-systems-for-scale/)
+> - [Load balancing](https://en.wikipedia.org/wiki/Load_balancing_(computing))
 
 <p align="center">
   <img src="http://i.imgur.com/h81n9iK.png"/>
@@ -503,40 +530,39 @@ DNS lookups on average take almost 20-120 milliseconds.
   <i><a href=http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html>Source: Scalable system design patterns</a></i>
 </p>
 
-A load balancer is a networking device or software that distributes network
-traffic or workload across multiple servers or resources to optimize resource
-utilization, enhance performance, and improve reliability. By distributing
-incoming requests evenly among the available resources, a load balancer helps
-prevent any single server from becoming overwhelmed, which might otherwise lead
-to poor performance, slow response times, and even system failures.
+로드 밸런서(load balancer)는 네트워크 트래픽이나 워크로드를 여러 서버나 리소스에
+분산시켜 리소스 사용률을 최적화하고 성능을 향상시키며 신뢰성을 개선하는 네트워킹
+장치 또는 소프트웨어입니다. 들어오는 요청을 사용 가능한 리소스에 고르게
+분산함으로써 로드 밸런서는 단일 서버의 과부하를 방지하고, 성능 저하, 응답 시간
+지연 및 시스템 오류가 발생하는 것을 방지합니다.
 
-Load balancers are commonly used in environments where high availability,
-scalability, and fault tolerance are critical. There are several types and
-techniques of load balancing, including:
+로드 밸런서는 고가용성, 확장성 및 장애 허용성이 중요한 환경에서 일반적으로
+사용됩니다. 로드 밸런싱에는 여러 가지 유형과 기법이 사용되며, 다음과 같습니다:
 
-* **Round Robin**: Requests are distributed sequentially to the available
-  servers, cycling back to the first server after reaching the last.
-* **Least Connections**: Requests are sent to the server with the fewest active
-  connections, which helps in more evenly distributing the load.
-* **Weighted Distribution**: Servers are assigned different weights based on
-  their capacity, and requests are distributed proportionally to their weights.
+- **라운드 로빈(Round Robin)**: 요청이 사용 가능한 서버에 순차적으로 분산되며,
+  마지막 서버에 도달한 후에는 다시 첫 번째 서버부터 순환합니다.
+- **최소 연결(Least Connections)**: 활성 연결이 가장 적은 서버에 요청이 전송되며,
+  이는 로드를 균등하게 분배하는 데 도움이 됩니다.
+- **가중 분배(Weighted Distribution)**: 서버에는 용량에 따라 다른 가중치가 부여되며,
+  요청은 가중치에 비례하여 분배됩니다.
 
-The load balancer can operate at different levels in the OSI Model:
+로드 밸런서는 OSI 모델의 다양한 레벨에서 작동할 수 있습니다:
 
-* **Layer 4 (Transport Layer) Load Balancing**: Load balancing is done based on
-  TCP or UDP headers, distributing traffic without inspecting the content of the
-  packets. This method is faster but less flexible than Layer 7 load balancing.
-* **Layer 7 (Application Layer) Load Balancing**: Load balancing is done based
-  on the content of the request, such as the URL, cookies, or HTTP headers. This
-  method offers more flexibility and allows for advanced routing decisions, such
-  as directing requests to specific servers based on the required processing.
+- **레이어 4 (전송 계층) 로드 밸런싱**: TCP 또는 UDP 헤더를 기반으로 로드
+  밸런싱이 수행되며, 패킷의 내용을 검사하지 않고 트래픽을 분배합니다. 이 방법은
+  레이어 7 로드 밸런싱보다 빠르지만 유연성이 떨어집니다.
+- **레이어 7 (애플리케이션 계층) 로드 밸런싱**: 요청의 내용, 예를 들어 URL,
+  쿠키, HTTP 헤더 등을 기반으로 로드 밸런싱이 수행됩니다. 이 방법은 더 많은
+  유연성을 제공하며, 필요한 처리에 따라 요청을 특정 서버로 바로 보내는 고급
+  라우팅 결정이 가능해집니다.
 
-In addition to on-premises hardware and virtual appliances, cloud providers like
-Amazon Web Services (AWS), Google Cloud Platform (GCP), and Microsoft Azure
-offer managed load balancing services that can be easily integrated into your
-applications.
+온프레미스 하드웨어 및 가상 어플라이언스 외에도 Amazon Web Services(AWS), Google
+Cloud Platform(GCP), Microsoft Azure와 같은 클라우드 제공업체들은 관리되는 로드
+밸런싱 서비스를 제공하여 애플리케이션에 쉽게 통합할 수 있습니다.
 
-## Cache
+## Caching
+
+- [System Design — Caching](https://medium.com/must-know-computer-science/system-design-caching-acbd1b02ca01)
 
 <p align="center">
   <img src="http://i.imgur.com/Q6z24La.png"/>
@@ -544,7 +570,7 @@ applications.
   <i><a href=http://horicky.blogspot.com/2010/10/scalable-system-design-patterns.html>Source: Scalable system design patterns</a></i>
 </p>
 
-### Use-Cases
+**Use-Cases**
 
 * Client caching
 * CDN caching
@@ -554,9 +580,10 @@ applications.
 * Caching at the database query level
 * Caching at the object level
 
-### Caching Strategies
+## Caching Strategies
 
-> [Top caching strategies | bytebytego](https://blog.bytebytego.com/p/top-caching-strategies)
+- [Top 5 Caching Patterns](https://newsletter.systemdesign.one/p/caching-patterns)
+- [Top caching strategies | bytebytego](https://blog.bytebytego.com/p/top-caching-strategies)
 
 **Read**
 
@@ -604,7 +631,77 @@ applications.
 * Least Frequently Used (LFU)
 * Random Replacement (RR)    
 
-## Content Delivery Network
+## Distributed Caching
+
+- [Distributed Caching](https://redis.com/glossary/distributed-caching/)
+
+캐싱은 데이터 요청 속도를 높이기 위해 자주 액세스하는 데이터 또는 계산을
+저장하고 검색하는 기술입니다. 캐시에 데이터를 임시로 저장함으로써, 시스템은 원래
+소스에서 동일한 데이터를 가져오는 데 필요한 시간과 자원을 줄일 수 있으며, 성능
+향상과 지연 시간 감소를 이룰 수 있습니다.
+
+캐싱은 기본적으로 로컬 캐싱과 분산 캐싱 두 가지로 분류할 수 있습니다. 로컬
+캐싱은 단일 기계 또는 단일 응용프로그램 내에서 데이터를 저장하는 것을 의미하며,
+데이터 검색이 한 대의 기계로 제한되거나 데이터량이 상대적으로 작은 경우에
+사용됩니다. 로컬 캐싱의 예로는 브라우저 캐시나 응용 프로그램 수준 캐시가
+있습니다. 분산 캐싱은 여러 기계 또는 노드, 종종 네트워크에서 데이터를 저장하는
+것으로, 여러 서버 간에 확장되어야 하거나 지리적으로 분산되어 있는 애플리케이션에
+필수적입니다. 분산 캐싱은 원래 데이터 소스가 원격이거나 과부하가 있는 경우에도
+데이터가 필요한 곳 근처에 사용 가능하도록 합니다.
+
+예를 들어 초당 수천 개의 요청을 받는 전자 상거래 웹 사이트를 생각해 볼 때, 로컬
+캐싱에만 의존하는 경우 제품 상세 정보를 웹 사이트가 호스팅되는 서버에 저장할 수
+있습니다. 그러나 트래픽이 증가하거나 웹 사이트가 다른 지역에서 접근되는 경우
+이러한 접근 방식으로 병목 현상이 발생할 수 있습니다. 반면에 분산 캐싱을
+사용하면, 제품 상세 정보가 다른 지역에 위치한 여러 캐시 서버에 저장됩니다.
+이렇게 하면 사용자가 웹 사이트에 액세스할 때 가장 가까운 캐시 서버에서 제품
+정보를 검색하여 응답 시간을 빠르게 하고 사용자 경험을 향상시킬 수 있습니다.
+
+**분산 캐싱**은 **로컬 캐싱**의 한계를 해결하여 네트워크 내 여러 머신 또는 노드
+간에 데이터를 저장함으로써 확장성, 내결함성, 성능 향상을 제공합니다. 분산 캐싱의
+적용 예로, 전 세계 소비자들이 멀티 컨틴넌트에서 접속하는 글로벌 온라인 소매
+업체가 있습니다.
+
+분산 캐싱 시스템의 주요 구성 요소는 캐시 서버입니다. 캐시 서버는 여러 기계 또는
+노드에 걸쳐 임시 데이터를 저장하여 필요한 위치에서 데이터를 사용할 수 있도록
+합니다. 각 캐시 서버는 독립적으로 작동할 수 있으며, 서버 장애 발생 시 요청을
+다른 서버로 리디렉션하여 고 가용성과 내결함성을 보장할 수 있습니다.
+
+분산 캐싱 솔루션에는 [Redis](/redis/README.md),
+[Memcached](/memcached/README.md), Hazelcast, [Apache Ignite](/ignite/README.md)
+등이 있습니다. 이러한 솔루션은 각각 고유한 기능과 장점을 제공하며, 다양한
+애플리케이션 요구에 맞게 사용됩니다. 분산 캐싱 구현에는 적합한 캐싱 솔루션
+선택부터 분산 환경에서의 구성 및 배포에 이르기까지 여러 단계가 포함됩니다. 또한
+캐시 효율을 극대화하기 위해 적절한 캐시 삭제 정책 및 데이터 일관성 유지 등의
+캐시 관리 방법을 사용하는 것이 중요합니다.
+
+요약하면, 분산 캐싱은 고성능, 확장성 및 실시간 데이터 액세스를 요구하는 현대
+애플리케이션에 중요한 솔루션으로 부상했습니다. 분산 캐싱을 통해 자주 액세스하는
+데이터를 여러 서버에 저장하여 주 데이터 소스에 가해지는 부담을 줄임으로써 빠른
+데이터 검색 및 향상된 사용자 경험을 보장할 수 있습니다.
+
+분산 캐싱(distributed caching)과 리모트 캐싱(remote caching)은 유사한
+개념이지만, 약간의 차이가 있습니다.
+
+분산 캐싱은 여러 기계 또는 노드에 데이터를 저장하여 확장성, 고성능 및 내결함성을
+제공하는 캐싱 방식입니다. 분산 캐싱은 대규모 및 지리적으로 분산된 애플리케이션에
+적합하며, 주로 데이터를 여러 지역 또는 서버에 복제하여 처리 시간을 단축시키고
+사용자 경험을 개선합니다.
+
+반면에 리모트 캐싱은 애플리케이션 서버와 다른 위치에 있는 별도의 캐싱 서버에
+데이터를 저장하는 캐싱 방법을 지칭합니다. 리모트 캐싱은 로컬 캐싱이나
+애플리케이션 서버에 데이터를 저장하는 것보다 효율적인 경우에 사용됩니다. 리모트
+캐싱을 사용하면 애플리케이션 서버의 리소스를 절약하고 처리 시간을 단축시킬 수
+있습니다.
+
+결론적으로, 분산 캐싱은 데이터를 여러 머신이나 노드에 저장하는 캐싱 방식의
+일반적인 용어로 사용되며, 리모트 캐싱은 애플리케이션 서버와 별개의 위치에서
+데이터를 캐싱하는 방식에 가까운 개념입니다. 한편, 분산 캐싱은 리모트 캐싱의
+확장된 형태로 간주될 수도 있습니다.
+
+## CDN (Content Delivery Network)
+
+- [What is a content delivery network (CDN)? | How do CDNs work? | CloudFlare](https://www.cloudflare.com/ko-kr/learning/cdn/what-is-a-cdn/)
 
 <p align="center">
   <img src="http://i.imgur.com/h9TAuGI.jpg"/>
@@ -612,58 +709,42 @@ applications.
   <i><a href=https://www.creative-artworks.eu/why-use-a-content-delivery-network-cdn/>Source: Why use a CDN</a></i>
 </p>
 
-**Content Delivery Network (CDN)** is a system of distributed servers (also called
-edge servers or nodes) designed to deliver web content and other digital assets
-to users more efficiently. CDNs work by caching and storing content, such as
-images, videos, web pages, scripts, and stylesheets, on multiple servers located
-across different geographical locations. When a user requests a resource, the
-content is delivered from the nearest or best-performing server rather than from
-a single centralized server, ensuring faster load times, improved performance,
-and reduced bandwidth consumption.
+**콘텐츠 전송 네트워크 (CDN)**는 사용자에게 웹 콘텐츠와 기타 디지털 자산을 보다
+효율적으로 전달하기 위해 설계된 분산 서버(엣지 서버 또는 노드라고도 함)의
+시스템입니다. CDN은 이미지, 비디오, 웹 페이지, 스크립트 및 스타일시트와 같은
+콘텐츠를 다양한 지역에 위치한 여러 서버에서 캐싱 및 저장함으로써 작동합니다.
+사용자가 리소스를 요청하면, 콘텐츠는 단일 중앙 집중식 서버가 아니라 가장 가까운
+또는 최적의 성능을 가진 서버로부터 전달되어 빠른 로드 시간, 개선된 성능 및
+감소된 대역폭 사용이 보장됩니다.
 
-**Push CDN**: In a Push CDN, the content owner uploads or "pushes" the content
-to the CDN servers. The CDN servers then serve as the origin for the content,
-and they deliver it directly to the users. When there is an update or new
-content, the content owner has to push the changes to the CDN servers again.
-Push CDNs are typically suitable for scenarios where content updates are
-infrequent or need to be strictly controlled by the origin server. 
-
-**Advantages of Push CDN**:
-
-* Better control over content expiration and versioning. 
-* Reduced load on the origin server since content is pushed only once to the
-  CDN.
-
-**Disadvantages of Push CDN**:
-
-* Requires manual management of uploading and updating content on the CDN. 
-* May consume more storage on the CDN servers by storing infrequently accessed
-  content.
-
-**Pull CDN**: In a Pull CDN, the content remains on the origin server, and the
-CDN servers "pull" the content from the origin when a user requests it for the
-first time. The CDN server caches the content, and for subsequent requests, it
-serves the cached version to the users. When the cached content expires or
-becomes outdated, it is automatically pulled again from the origin server by the
-CDN. Pull CDNs are suitable for dynamic websites and applications where content
-updates are frequent.
-
-**Advantages of Pull CDN**:
-
-* Easy to set up, as it only requires a change in the URL or DNS records to
-  point to the CDN. 
-* Automatically updates and synchronizes content with the origin server.
-
-**Disadvantages of Pull CDN**:
-
-* For the first request, the user may experience slightly higher latency when
-  the content is pulled from the origin server.
-* Can increase the load on the origin server during cache misses or content
-  updates.
+- Push CDN : Push CDN에서는 콘텐츠 소유자가 콘텐츠를 CDN 서버에 업로드 또는
+  "푸시" 합니다. 이후 CDN 서버는 콘텐츠의 원본 역할을 하고 사용자에게 직접
+  콘텐츠를 전달합니다. 업데이트 또는 새로운 콘텐츠가 있을 경우, 콘텐츠 소유자는
+  다시 CDN 서버에 변경 사항을 푸시해야 합니다. 푸시(CDN)은 콘텐츠 업데이트가
+  자주 발생하지 않거나 원본 서버에서 엄격하게 제어해야하는 경우에 적합합니다.
+- Push CDN의 장점:
+  - 콘텐츠 만료 및 버전 관리에 대한 더 나은 제어
+  - CDN에 콘텐츠를 한 번만 푸시하기 때문에 원본 서버의 부하 감소
+- Push CDN의 단점:
+  - CDN에 콘텐츠를 업로드하고 업데이트하는 것에 대한 수동 관리 필요
+  - 접근 빈도가 낮은 콘텐츠를 저장함으로써 CDN 서버의 저장 공간을 더 많이 소비할 수 있음
+- Pull CDN: Pull CDN에서는 콘텐츠가 원본 서버에 남아 있고, CDN 서버는 사용자가
+  처음으로 요청할 때 원본에서 콘텐츠를 "끌어옵니다" (pull). CDN 서버는 콘텐츠를
+  캐시하고, 이후 요청에 대해 사용자에게 캐싱된 버전을 제공합니다. 캐싱된
+  콘텐츠가 만료되거나 오래된 경우, CDN에 의해 원본 서버에서 다시 자동으로
+  끌어옵니다. Pull CDN은 콘텐츠 업데이트가 자주 발생하는 동적 웹사이트 및
+  애플리케이션에 적합합니다.
+- Pull CDN의 장점:
+  - URL 또는 DNS 레코드를 CDN을 가리키도록 변경하는 것만으로 쉽게 설정 가능
+  - 원본 서버와 콘텐츠를 자동으로 업데이트하고 동기화
+- Pull CDN의 단점:
+  - 사용자가 원본 서버에서 콘텐츠를 끌어올 때 처음 요청에 대해 약간 높은 지연 시간을 경험할 수 있음
+  - 캐시 미스 또는 콘텐츠 업데이트 중 원본 서버의 부하를 증가시킬 수 있음
 
 ## Proxy
 
-* [Apache2 설치 (Ubuntu 16.04)](https://lng1982.tistory.com/288)
+- [What is a Proxy Server? How does it work?](https://www.fortinet.com/resources/cyberglossary/proxy-server)
+- [Apache2 설치 (Ubuntu 16.04)](https://lng1982.tistory.com/288)
   
 -----
 
@@ -676,38 +757,36 @@ updates are frequent.
 
 ![](img/foward_reverse_proxy.png)
 
-**Forward Proxy**: A forward proxy, also known simply as a proxy, sits between
-clients and external servers, typically on a local network. It receives requests
-from clients, accesses the requested resources on their behalf, and then
-forwards the responses back to the clients. Forward proxies are often used in
-scenarios where there is a need for internet access control, content filtering,
-or traffic monitoring.
+프록시에는 포워드 프록시 와 리버스 프록시 두 가지가 있다.
 
-Common use cases for forward proxies include:
+**포워드 프록시**
 
-* **Anonymity**: Clients can access resources on the internet without revealing
-  their IP addresses, as the proxy server's IP is used instead.
-* **Security**: Organizations can implement content filtering, URL blacklisting,
-  or monitoring to ensure compliance with internal security policies.
-* **Caching**: Forward proxies can cache frequently accessed pages and serve
-  them to multiple clients, reducing load on external servers and improving
-  response times.
+포워드 프록시는 클라이언트와 외부 서버 사이에 위치해 로컬 네트워크에서 동작한다.
+클라이언트의 요청을 받아 대신 자원을 요청한 후 응답을 클라이언트에 전달한다.
+인터넷 접근 제어, 컨텐츠 필터링, 트래픽 모니터링이 필요한 경우에 주로 사용된다.
+포워드 프록시의 일반적인 사용 사례는 다음과 같다.
 
-**Reverse Proxy**: A reverse proxy sits between external clients and internal
-servers, acting as a gateway to one or more servers, handling incoming requests
-and forwarding them to the appropriate backend server. Reverse proxies are used
-to improve the performance, security, and load balancing of backend servers.
+- 익명성: 클라이언트가 자신의 IP 주소를 드러내지 않고 인터넷 자원에 접근할 수
+  있다. 대신 프록시 서버의 IP가 사용된다.
+- 보안: 조직은 컨텐츠 필터링, URL 차단, 모니터링을 구현하여 내부 보안 정책을
+  준수할 수 있다.
+- 캐싱: 포워드 프록시는 자주 접근하는 페이지를 캐싱하여 여러 클라이언트에게
+  제공할 수 있어 외부 서버의 부하를 줄이고 응답 시간을 개선한다.
 
-Common use cases for reverse proxies include:
+**리버스 프록시**
 
-* **Load Balancing**: Distributing incoming requests across multiple backend
-  servers to balance load and ensure smooth, uninterrupted service.
-* **SSL Termination**: Handling SSL encryption and decryption at the reverse
-  proxy level, offloading tasks from backend servers for improved performance.
-* **Caching**: Storing and serving static content to clients, reducing load on
-  backend servers and improving response times.
-* **Security**: Protecting backend servers from direct exposure to external
-  clients, reducing the risk of vulnerabilities, and mitigating DDoS attacks.
+리버스 프록시는 외부 클라이언트와 내부 서버 사이에 위치하며, 하나 이상의
+서버로의 게이트웨이 역할을 한다. 들어오는 요청을 처리하고 적절한 백엔드 서버로
+전달한다. 리버스 프록시는 백엔드 서버의 성능, 보안, 로드 밸런싱 향상을 위해
+사용된다. 리버스 프록시의 주요 사용 사례로는 다음과 같다.
+
+- 로드 밸런싱: 들어오는 요청을 여러 백엔드 서버간에 분산시켜 부하를 나누어
+  효율적인 무중단 서비스를 보장한다. SSL 종료: 리버스 프록시 수준에서 SSL 암호화
+  및 복호화를 처리하여 백엔드 서버의 부담을 줄이고 성능을 개선한다.
+- 캐싱: 클라이언트에게 정적 컨텐츠를 저장하고 제공하여 백엔드 서버의 부하를
+  줄이고 응답 시간을 개선한다.
+- 보안: 백엔드 서버를 외부 클라이언트의 직접 노출로부터 보호하여 취약점의 위험을
+  줄이고 DDoS 공격을 완화한다.
 
 ## Availability
 
@@ -735,13 +814,98 @@ Common use cases for reverse proxies include:
 | 99.9% (three nines) | 8.77 hours | 43.8 minutes | 10.1 minutes |
 | 99.99% (four nines) | 52.6 minutes | 4.32 minutes | 1.01 minutes |
 
+## Failover
+
+- [Failover](https://avinetworks.com/glossary/failover/)
+
+**Failover 정의**
+
+Failover란 신뢰할 수 있는 백업 시스템으로 자동으로 전환되는 능력을 의미합니다.
+Failover는 주요 시스템 구성 요소가 실패했을 때 오류를 줄이거나 제거하며
+사용자에게 부정적인 영향을 줄이기 위해 예비 운영 모드로 전환해야 합니다.
+
+데이터베이스 서버, 시스템 또는 기타 하드웨어 구성 요소, 서버, 네크워크 등의 중복
+또는 예비를 사용하여 이전에 활성화된 버전이 비정상 종료되거나 실패했을 때 대체할
+수 있어야 합니다. Failover는 재해 복구에 필수적이기 때문에 예비 컴퓨터 서버
+시스템 및 기타 백업 기술 자체도 실패하지 않아야 합니다.
+
+Switchover는 비슷한 작업을 수행하지만, failover와 달리 자동으로 수행되지 않고
+인간의 개입이 필요합니다. 대부분의 컴퓨터 시스템은 자동 failover 솔루션에 의해
+백업됩니다.
+
+**FAQ**
+
+- Failover란 무엇인가?
+  - 서버용 failover 자동화에는 하트비트 케이블을 사용하여 서버 쌍을 연결합니다.
+    이차 서버는 하트비트 또는 펄스가 계속되는 한 휴식 상태로 있습니다. 
+  - 그러나 기본 실패 서버에서 수신하는 펄스에 변경이 있으면 이차 서버는
+    인스턴스를 시작하고 기본 작업을 인수합니다. 또한 데이터 센터 또는 기술자에게
+    메시지를 보내 기본 서버를 다시 온라인 상태로 전환하도록 요청합니다.
+  - 일부 시스템은 대신 데이터 센터 또는 기술자에게 알리고 한정된 동의 설정인
+    보조 서버로 수동 변경을 요청합니다.
+- SQL Server Failover 클러스터란 무엇인가?
+  - SQL 서버 failover 클러스터는 공유 데이터 스토리지와 NAS(네트워크 결합
+    스토리지) 또는 SAN을 통한 다중 네트워크 연결을 포함하여 잠재적 포인트가
+    없어야 합니다.
+- DHCP Failover란 무엇인가?
+  - DHCP failover 설정은 두 개 이상의 DHCP 서버를 사용하여 같은 주소 풀을
+    관리하도록 합니다. 이를 통해 네트워크 중단 시 백업 DHCP 서버가 다른 서버를
+    지원하고, 해당 풀과 관련된 임대 할당 작업을 모두 공유 할 수 있습니다.
+- DNS Failover란 무엇인가?
+  - DNS(Domain Name System)은 IP 주소와 사람이 읽을 수 있는 호스트 이름 간의
+    변환을 돕는 프로토콜입니다. DNS failover는 네트워크 서비스 또는 웹 사이트가
+    사용 중지되는 동안 작동합니다.
+- 애플리케이션 서버 Failover란 무엇인가?
+  - 응용 프로그램 서버 Failover는 여러 서버가 실행되는 애플리케이션을 보호하는
+    전략입니다. 이러한 애플리케이션 서버는 다른 서버에서 실행되어야 하지만
+    최소한 고유한 도메인 이름을 가져야 합니다. 애플리케이션 서버 로드 밸런싱은
+    종종 failover 클러스터 모범 사례에 따라 단계를 수행합니다.
+- Failover 테스트란 무엇인가?
+  - Failover 테스트는 서버의 failover 기능을 검증하는 방법입니다. 다시말해
+    시스템의 가용 리소스를 실패한 서버에서 복구로 할당할 수 있는 용량을
+    테스트합니다.
+
+## Fault Tolerance
+
+- [What is fault tolerance, and how to build fault-tolerant systems](https://www.cockroachlabs.com/blog/what-is-fault-tolerance/)
+
+2020년 11월 25일, AWS의 US-East-1 지역이 중요한 인터넷 서비스 일부가 중단된 큰
+문제를 겪었다. 이로 인해 고객들의 제품에 대한 신뢰가 침근해졌다. 이러한 사례들로
+인해 fault tolerance(결함 허용)가 현대 애플리케이션 구조의 핵심 부분이 되었다.
+
+결함 허용이란 시스템이 기능상의 손실 없이 오류와 중단을 처리할 수 있는 능력을
+말한다. 결함 허용은 여러 가지 방식으로 이루어질 수 있으며, 다음과 같은 방법들이
+일반적으로 사용된다: 동일한 작업을 수행할 수 있는 다중 하드웨어 시스템, 다중
+인스턴스의 소프트웨어, 백업 전원 공급원 등.
+
+결함 허용과 고가용성은 기술적으로 정확히 같은 것은 아니지만, 실제로 두 가지는
+밀접하게 연결되어 있으며, 결함 허용 시스템이 없으면 고가용성을 달성하기 어렵다.
+
+결함 허용 시스템 구축은 보다 복잡하고 비용이 더 많이 든다. 애플리케이션에 필요한
+결함 허용 수준을 평가하고 시스템을 그에 따라 구축해야 한다. 결함 허용 시스템
+설계시 목표는 정상 작동과 우아한 저하 두 가지로 나눌 수 있다. 정상 작동을
+목표로하는 경우, 시스템 구성 요소가 실패하거나 오프라인 상태가 되더라도
+애플리케이션이 온라인과 완전한 기능을 유지해야 한다. 우아한 저하를 목표로 하는
+경우, 오류 및 중단이 발생하여도 애플리케이션 전체가 완전히 중단되지 않도록
+기능이 저하되어 사용자 경험이 영향을 받을 수 있다.
+
+결함 허용 시스템을 구축하는 데 드는 비용도 고려해야 한다. 결함 허용 수준을 높게
+설정하려면 더 많은 비용이 발생하지만, 동시에 결함 허용 수준이 높지 않을 때
+생기는 비용 역시 고려해야 한다. 손실된 수익, 평판 훼손, 엔지니어링 시간의 손실,
+팀의 사기 저하와 인력 유지 및 채용에 대한 비용 등이 그러한 비용에 해당한다.
+
+결함 허용 구조의 예로는 클라우드 기반 다중 지역 구조를 사용하는 것이 있다.
+이러한 구조에서 애플리케이션 계층과 데이터베이스 계층 모두에서 노드, 사용 가능
+영역 또는 지역 실패가 발생하더라도 애플리케이션의 가용성을 유지할 수 있다.
+이렇게 결함 허용기능을 통해 시스템의 다양한 층에서 안정성을 확보할 수 있다.
+
 ## Distributed System
 
 [Distributed System | TIL](/distributedsystem/README.md)
 
 ## Software Design Principle
 
-* [Design Principle | TIL](/designprinciple/README.md)
+[Design Principle | TIL](/designprinciple/README.md)
 
 ## Read Heavy vs Write Heavy
 
@@ -759,51 +923,53 @@ user 는 느린 시스템을 경험할 수 있다???
 
 ## Latency vs Throughput
 
+- [처리량과 지연 시간의 차이점은 무엇인가요? | aws](https://aws.amazon.com/ko/compare/the-difference-between-throughput-and-latency/)
+
 Latency 는 어떤 action 을 수행하고 결과를 도출하는데 걸리는 시간이다. Throughput
 은 단위 시간당 수행하는 액션 혹은 결과의 수이다.
 
 ## Availability vs Consistency
 
-### CAP (Consistency Availability Partition tolerance)
+### CAP (Consistency Availability Partition tolerance) Theorem
 
-* [CAP Theorem @ medium](https://medium.com/system-design-blog/cap-theorem-1455ce5fc0a0)
-* [The CAP Theorem](https://teddyma.gitbooks.io/learncassandra/content/about/the_cap_theorem.html)
+- [CAP Theorem for Databases: Consistency, Availability & Partition Tolerance](https://www.bmc.com/blogs/cap-theorem/)
+- [CAP Theorem @ medium](https://medium.com/system-design-blog/cap-theorem-1455ce5fc0a0)
+- [The CAP Theorem](https://teddyma.gitbooks.io/learncassandra/content/about/the_cap_theorem.html)
 
 ----
 
 ![](/aws/img/1_rxTP-_STj-QRDt1X9fdVlA.jpg)
 
 Brewer's theorem 이라고도 한다. Distributed System 은
-**Consistency,Availability, Partition tolerance** 중 2 가지만 만족할 수 있다. 2
+**Consistency, Availability, Partition Tolerance** 중 2 가지만 만족할 수 있다. 2
 가지를 만족시키기 위해 1 가지를 희생해야 한다는 의미와 같다.
 
-* **Consistency**
-  * all nodes see the same data at the same time
-  * 모든 node 가 같은 시간에 같은 data 를 갖는다.
-* **Availability**
-  * a guarantee that every request receives a response about whether it was
-    successful or failed
-  * 일부 node 에 장애가 발생해도 서비스에 지장이 없다.
-* **Partition tolerance**
-  * the system continues to operate despite arbitrary message loss or failure of
-    part of the system.
-  * node 간에 네트워크가 단절되었을 때 서비스에 지장이 없다.
+CAP 이론은 분산 시스템에서 다음 중 세 가지 중 두 가지 속성만 선택할 수 있음을 말합니다:
 
-MySQL 은 Distribute System 이 아니다. CAP 를 적용할 수 없다.
+- **Consistency** (일관성): 모든 노드가 데이터의 가장 최신 버전을 갖고 있다.
+- **Availability** (가용성): 모든 노드가 항상 데이터를 읽고 쓸 수 있다.
+- **Partition tolerance** (분할 허용성): 데이터는 여러 노드에 분할되어 저장되며,
+  일부 노드가 실행되지 않거나 손상되더라도 시스템의 전체 기능에 영향을 주지
+  않는다.
 
-따라서 Distributed System 은 다음과 같이 분류할 수 있다.
+다음은 2가지를 만족하는 경우의 예이다.
 
-* **CP (Consistency and Partition Tolerance)**
-  * node1, node2, node3 이 있다. node3 이 Network Partition 되었다고 하자.
-    Consistency 를 위해 node1, node2 가 동작하지 않는다. Availability 가 떨어진다.
-  * banking 과 같이 Consistency 가 중요한 곳에 사용된다.
-* **AP (Availabiltity and Paritition Tolerance)**
-  * node1, node2, node3 가 있다. node3 가 Network Partition 되었다고 하자.
-    node1, node2 가 동작한다. node3 에 write 된 data 가 node1, node2 에 전파되지 않았다.
-    Consistency 는 떨어진다. 그러나 서비스의 지장은 없다. 즉, Availability 가 높다. node3 가 
-    Network Partition 에서 복구된다면 그 data 는 다시 동기화 된다.
-* **CA (Consistency and Partition Tolerance)**
-  * 현실세계에서 Consistency, Partition Tolerance 를 둘다 만족하는 것은 어렵다.
+- **CA** (Consistency & Availability)를 만족하는 예: 전통적인 단일 노드
+  데이터베이스는 일관성과 가용성을 만족하지만, 예를 들어 하드웨어 장애에 의해
+  전체 시스템이 다운되는 문제가 발생하면 분할 허용성에 실패할 수 있습니다.
+- **AP** (Availability & Partition tolerance)를 만족하는 예: DynamoDB,
+  Cassandra와 같은 분산 데이터베이스는 시스템을 네트워크 파티션이 발생할 때
+  가용성이 유지되고 시스템이 계속 작동할 수 있도록 설계되었습니다. 이러한
+  시스템에서 데이터는 복수의 노드에 저장되어 일정 시간 동안 일관성이 무시될 수
+  있지만, 최종적으로 데이터의 일관성이 보장됩니다.
+- **CP** (Consistency & Partition tolerance)를 만족하는 예: Google Spanner,
+  ZooKeeper 등의 시스템은 애플리케이션의 데이터 세트를 분할되든 나누어지지 않든
+  일관성을 보장하는데 초점을 두고 있습니다. 일관성과 분할 허용성을 유지하면서
+  가용성을 희생하는 경우가 발생할 수 있습니다. 예를 들어, 일부 노드에 장애가
+  발생하면 성능 손실이나 요청 거부와 같은 여러 가용성 문제가 발생할 수 있습니다.
+
+각 시스템은 적절한 필요요건에 따라 CAP 이론의 특성을 선택하며, CA, AP, CP 속성
+중 두 가지를 만족하게 됩니다.
 
 ### PACELC (Partitioning Availability Consistency Else Latency Consistency)
 
@@ -829,7 +995,10 @@ Consistency 중 하나를 추구하고 일반적인 상황일 때는 Latency 혹
   일관성은 떨어져도 데이터를 일단 보낸다. 보통의 상황일 때 역시 일관성은
   떨어져도 좋으니 일단 빨리 데이터를 보낸다.
 
-## Consistency patterns
+## Consistency Patterns
+
+- [Consistency Patterns](https://systemdesign.one/consistency-patterns/)
+- [Eventual vs Strong Consistency in Distributed Databases](https://hackernoon.com/eventual-vs-strong-consistency-in-distributed-databases-282fdad37cf7)
 
 * Weak consistency
   * write operation 후에 그 값을 read 할 수 있다고 장담할 수 없다.
@@ -888,6 +1057,38 @@ Consistency 중 하나를 추구하고 일반적인 상황일 때는 Latency 혹
   * Document DB (embedded data model, normalized data model)
     * Schema Design in MongoDB vs Schema Design in MySQL](https://www.percona.com/blog/2013/08/01/schema-design-in-mongodb-vs-schema-design-in-mysql/)
   * [RDBMS Schema Design](/rdbmsschemadesign/README.md)
+
+## ACID
+
+[ACID](/database/README.md#acid)
+
+## Sharding
+
+- [Database Sharding: Concepts and Examples](https://www.mongodb.com/features/database-sharding-explained#)
+
+애플리케이션의 성장에 따라 데이터베이스는 병목 현상의 원인이 될 수 있다. 이
+문제를 해결하기 위해 데이터베이스 샤딩(Database sharding)이라는 방법을 사용할 수
+있다. 샤딩은 하나의 데이터셋을 여러 데이터베이스에 분산시키는 방법으로, 이를
+통해 더 큰 데이터셋을 작은 덩어리로 나누어 여러 노드에 저장할 수 있다. 이는
+시스템의 총체적인 저장 용량을 늘릴 수 있는 것 외에도 여러 시스템에서 데이터를
+분산 처리하여 단일 시스템보다 많은 요청을 처리할 수 있다. 지속적으로 성장하는
+애플리케이션의 경우 샤딩은 거의 무한한 확장성을 제공하여 큰 데이터와 높은 작업
+부하를 처리할 수 있다.
+
+하지만 데이터베이스 샤딩은 구조의 복잡성과 오버헤드를 유발하므로, 샤딩 구현 전
+다음과 같은 대안들을 고려해야 한다: 수직 확장(기기 업그레이드), 특수 서비스 또는
+데이터베이스의 사용(데이터 부하를 다른 곳으로 이동), 복제(주로 읽기 작업이 많을
+경우 적합).
+
+샤딩의 장점은 읽기/쓰기 처리량의 증가, 저장 용량 증가, 신뢰성 확보이다. 그러나
+쿼리 오버헤드 발생, 관리의 복잡성, 인프라 비용 증가와 같은 단점도 있다. 샤딩
+구현을 결정하기 전에 이러한 장단점을 고려하고 적절한 샤딩 아키텍처를 선택해야
+한다. 주요 네 가지 샤딩 방법은 범위/동적 샤딩, 알고리즘/해시 샤딩, 개체/관계
+기반 샤딩, 지리 기반 샤딩이다.
+
+샤딩은 대규모 데이터 요구와 높은 읽기/쓰기 작업 부하를 처리해야 하는
+애플리케이션에 좋은 해결책이지만, 추가 복잡성 또한 동반한다. 구현 전 이점과
+비용을 고려하고 더 간단한 해결책이 있는지 확인해야 한다.
 
 ## Application layer
 
@@ -1122,6 +1323,8 @@ both read and write operations.
 
 ## API Gateway
 
+- [API Gateway | nginx](https://www.nginx.com/learn/api-gateway/)
+
 An API Gateway is a server or software component that acts as an entry point and
 mediator for API (Application Programming Interface) requests in a microservices
 architecture or distributed systems. It serves as a reverse proxy that routes
@@ -1274,6 +1477,8 @@ and performance optimizations.
 
 ## REST vs GraphQL vs gRPC
 
+- [RPC와 REST의 차이점은 무엇인가요?](https://aws.amazon.com/ko/compare/the-difference-between-rpc-and-rest/)
+
 | Feature | REST | GraphQL | gRPC |
 |-|-|-|-|
 | Coupling | Loosely-coupled (resource-based) | Loosely-coupled (flexible query-based) | More tightly-coupled (RPC-based, using procedure calls) |
@@ -1330,82 +1535,63 @@ other real-time communication methods are not supported or feasible.
 
 ## Web Socket
 
-WebSocket is a communication protocol that enables bidirectional and real-time
-communication between a client (typically a web browser) and a server over a
-single, long-lived connection. It was introduced as part of the HTML5
-specification and designed to overcome the limitations of traditional HTTP
-communication, which is unidirectional and requires multiple connections for
-continuous data exchange.
+- [What are WebSockets?](https://www.pubnub.com/guides/websockets/)
 
-WebSocket operates over the same ports as HTTP and HTTPS (ports 80 and 443,
-respectively). It starts with an HTTP or HTTPS handshake (known as WebSocket
-handshake) to establish a connection using the "Upgrade" header. Once the
-handshake is successful, the connection is upgraded to a WebSocket connection,
-allowing for low-latency communication in both directions (client-to-server and
-server-to-client) without the overhead of establishing new connections for each
-message.
+WebSocket은 클라이언트와 서버 간의 양방향 통신을 가능하게 하는 프로토콜입니다.
+실시간 채팅, 메시징 및 멀티플레이어 게임과 같이 실시간 업데이트를 필요로 하는
+애플리케이션 개발에 사용되며, 기존의 HTTP 요청-응답 모델과 달리 지속적인 연결을
+통해 효율성과 성능을 개선할 수 있습니다.
 
-Key features of WebSocket:
+그러나 브라우저 지원, 프록시 및 방화벽 제한, 확장성, 상태 정보 유지, 보안 고려
+사항 등의 단점이 있습니다. 이에 따라 WebSocket과 함께 HTTP 스트리밍 또는 롱
+폴링과 같은 대체 솔루션도 사용해야 할 수 있습니다.
 
-* **Bidirectional communication**: WebSocket enables two-way communication,
-  allowing both clients and servers to send messages to each other without
-  requiring multiple connections or polling mechanisms.
-* **Real-time communication**: As WebSocket operates over a single, long-lived
-  connection, it allows for low latency, real-time communication between clients
-  and servers.
-* **Reduced overhead**: WebSocket uses a lightweight framing system to send and
-  receive messages, which reduces the overhead associated with HTTP headers and
-  allows for efficient data transfer.
-* **Compatibility**: WebSocket is designed to work with existing web
-  infrastructure, using the same ports as HTTP and HTTPS (80 and 443) and a
-  similar handshake process to establish connections.
+WebSocket, HTTP, 웹 서버, 폴링 사이의 차이를 이해하는 것은 중요하며, 여러
+WebSocket 라이브러리를 사용하여 애플리케이션을 개발할 수 있습니다. 예를 들어
+Socket.IO, SignalR, SockJS, ws 및 Django Channels 등이 있습니다.
 
-WebSocket is commonly used in web applications to implement real-time features
-such as notifications, chat systems, live updates, and online gaming. While
-WebSocket significantly improves real-time communication in web applications
-compared to older techniques like HTTP polling or long polling, it may not be
-suitable for all cases, especially when dealing with legacy systems or network
-environments that restrict WebSocket traffic.
+실시간 통신에 대한 요구가 있는 경우 WebSockets를 고려해볼 만한 이유는 성능 향상,
+호환성, 확장성, 다양한 개방형 리소스 및 가이드 등이 있습니다. 그러나 PubNub은
+현재 대부분의 경우에는 롱 폴링이 더 나은 선택이라고 생각하며, 신뢰성, 안정성,
+확장성을 위해 롱 폴링을 사용하는 것을 권장하고 있습니다.
+
+결론적으로, WebSocket은 실시간 기능을 구현하는 데 유용한 프로토콜이지만 모든
+상황에 적합한 것은 아닙니다. WebSocket과 함께 다른 솔루션을 사용하여 더 나은,
+확장성 있는 실시간 애플리케이션을 구축할 수 있습니다. PubNub을 사용하면 사용자
+경험 개선, 개발 및 유지 관리 비용 절감, 출시 시간 단축 및 엔지니어링 및 웹 개발
+팀이 관리해야 하는 복잡성 감소 등의 이점이 있습니다.
 
 ## Server-Sent Events (SSE)
 
-Server-Sent Events (SSE) is a web standard that enables a server to push
-real-time updates to clients over a single HTTP connection. SSE is designed to
-handle unidirectional communication, where the server sends updates to clients
-without the need for clients to explicitly request those updates. This makes SSE
-particularly useful for scenarios where updates originate from the server-side,
-such as notifications, live updates, or event streaming.
+서버 전송 이벤트(Server-Sent Events, SSE)는 단일 HTTP 연결을 통해 서버가
+클라이언트에게 실시간 업데이트를 전송하는 웹 표준입니다. SSE는 서버에서
+클라이언트로 업데이트를 보내는 단방향 통신을 처리하도록 설계되어 있어, 알림,
+실시간 업데이트, 이벤트 스트리밍 같은 경우에 유용합니다.
 
-SSE uses text-based encoding for messages and relies on the standard HTTP
-protocol, which makes it more compatible with existing network infrastructure
-compared to WebSocket. The central component of SSE is the EventSource API,
-which is built into modern web browsers and provides a simple JavaScript
-interface for setting up and handling the SSE connection.
+SSE는 메시지에 텍스트 기반 인코딩을 사용하고 표준 HTTP 프로토콜에 의존하기
+때문에 WebSocket과 비교할 때 기존 네트워크 인프라와 더 호환성이 좋습니다. SSE의
+핵심 구성 요소는 현대 웹 브라우저에 내장되어 있고 SSE 연결을 설정하고 처리하는
+간단한 자바스크립트 인터페이스를 제공하는 EventSource API입니다.
 
-Key features of Server-Sent Events:
+SSE의 주요 특징:
 
-* **Unidirectional communication**: SSE is designed specifically for
-server-to-client updates, allowing the server to push real-time updates to
-connected clients efficiently. Real-time updates: As SSE operates over a single
-HTTP connection, it allows servers to send real-time updates to connected
-clients with low latency.
-* **Text-based encoding**: Server-Sent Events use text-based encoding (typically
-  UTF-8) for message payloads, which simplifies processing, debugging, and
-  compatibility across platforms.
-* **Reconnection capability**: The EventSource API handles connection losses,
-  automatically attempting to reconnect to the server and resume updates when
-  the connection is reestablished.
-* **Message structure**: SSE messages can include event types, message IDs, and
-  data payloads. This structure allows clients to handle different types of
-  events using separate event listeners and resume event streams efficiently if
-  the connection is lost.
-
-While Server-Sent Events offer some advantages over traditional **long-polling**
-techniques, they are limited to unidirectional communication. If bidirectional
-communication is required, protocols such as **WebSocket** would be more
-appropriate. Additionally, SSE is not supported in all web browsers (for
-example, it's not natively supported in Internet Explorer), requiring the use of
-polyfills or alternative methods for such cases.
+- 단방향 통신: SSE는 서버에서 클라이언트로 업데이트를 효율적으로 보내는 것을
+  목표로 설계되어 있습니다.
+- 실시간 업데이트: SSE는 단일 HTTP 연결을 통해 작동하여 서버가 연결된
+  클라이언트에게 낮은 지연 시간으로 실시간 업데이트를 전송할 수 있습니다.
+- 텍스트 기반 인코딩: SSE에서는 메시지 페이로드에 대해 일반적으로 UTF-8과 같은
+  텍스트 기반 인코딩을 사용하여 처리, 디버깅 및 플랫폼 간 호환성을 단순화합니다.
+- 재연결 기능: EventSource API는 연결 손실을 처리하고, 연결이 재개되면 서버에
+  다시 연결하여 업데이트를 계속 진행합니다.
+- 메시지 구조: SSE 메시지에는 이벤트 유형, 메시지 ID, 데이터 페이로드가 포함될
+  수 있습니다. 이 구조는 클라이언트가 별도의 이벤트 리스너를 사용하여 다양한
+  유형의 이벤트를 처리하고 연결이 끊어진 경우 이벤트 스트림을 효율적으로
+  이어받을 수 있게 합니다.
+- 서버 전송 이벤트는 기존의 롱 폴링(long-polling) 기술에 비해 일부 장점을
+  제공하지만, 단방향 통신에만 제한됩니다. 양방향 통신이 필요한 경우, WebSocket과
+  같은 프로토콜이 더 적합합니다. 또한, 모든 웹 브라우저에서 SSE를 지원하지 않아
+  (예: 기본적으로 Internet Explorer에서 지원하지 않음) 이런 경우 폴리필이나 대체
+  방법을 사용해야 할 수 있습니다.
 
 ## Long-Polling vs WebSockets vs Server-Sent Events
 
@@ -1484,91 +1670,80 @@ quadtree that address this issue to some extent.
 
 ## Circuit Breaker
 
-A circuit breaker is a design pattern used in distributed systems and
-microservices architectures to detect, prevent, and handle failures in a
-graceful manner, improving the system's resilience. The circuit breaker pattern
-is inspired by electrical circuit breakers that protect electrical circuits from
-damage due to overloads or short circuits. Similarly, in software systems, a
-circuit breaker monitors and protects services or components that could fail.
+- [Circuit Breaker Pattern (Design Patterns for Microservices)](https://medium.com/geekculture/design-patterns-for-microservices-circuit-breaker-pattern-276249ffab33)
 
-The circuit breaker pattern is typically implemented as a wrapper or middleware
-around service calls or requests, especially for remote services. It maintains
-the state and monitors the health of the service or component. The circuit
-breaker's primary purpose is to prevent further requests or operations on a
-failing or slow service to give it time to recover, and it offers fallback
-mechanisms to handle such scenarios, such as default responses, error messages,
-or cached data.
+Circuit breaker는 분산 시스템 및 마이크로서비스 아키텍쳐에서 실패를 감지하고
+예방하며, 우아하게 처리할 수 있는 디자인 패턴이다. 이는 시스템의 회복력을
+향상시킨다. 전기 회로 차단기에서 영감을 받은 회로 차단기 패턴은 소프트웨어
+시스템에서 서비스나 구성요소가 실패할 수 있음을 감지하고 보호한다.
 
-A circuit breaker has three main states in its life cycle:
+일반적으로 회로 차단기 패턴은 원격 서비스에 대한 서비스 호출이나 요청을
+래핑하거나 미들웨어로 구현된다. 회로 차단기의 주요 목적은 실패, 느린 서비스에
+대한 추가 요청이나 작업을 차단하여 관리할 수 있는 방법을 제공하는 것이다.
 
-* **Closed**: In the closed state, the circuit breaker allows requests to pass
-  through to the service. It monitors the success or failure of these requests,
-  and if the number of failures or response time exceeds a defined threshold,
-  the circuit breaker enters the "open" state.
-* **Open**: In the open state, the circuit breaker blocks further requests to
-  the failing or slow service, returning fallback responses immediately. This
-  state helps protect the service from additional load and allows it to recover.
-  After a predefined timeout, the circuit breaker enters the "half-open" state.
-* **Half-Open**: In the half-open state, the circuit breaker allows a limited
-  number or percentage of requests to pass through to the service, testing its
-  health. If these requests are successful and the service has recovered, the
-  circuit breaker returns to the "closed" state. If the failures continue, the
-  circuit breaker reverts to the "open" state.
+회로 차단기의 생애 주기에는 세 가지 주요 상태가 있다.
 
-By implementing the circuit breaker pattern, systems can prevent cascading
-failures, reduce the impact of slow or failing services, provide fallback
-mechanisms for handling errors, and improve the overall resilience and
-fault-tolerance of distributed systems and microservices architectures.
+- **Closed**: closed 상태에서 회로 차단기는 요청을 서비스로 전달한다. 요청의
+  성공여부를 모니터링하고, 실패 횟수나 응답 시간이 설정된 임계 값보다 큰 경우,
+  회로 차단기는 "open" 상태로 전환한다.
+- **Open**: open 상태에서 회로 차단기는 실패하거나 느린 서비스로의 추가 요청을
+  차단하고, 즉시 fallback 상태로 응답한다. 이 상태는 서비스로의 추가 부하를
+  방지하고 회복을 허용한다. 설정된 시간이 지나면, 회로 차단기는 "half-open"
+  상태로 전환한다.
+- **Half-Open**: half-open 상태에서 회로 차단기는 서비스의 건강 상태를 확인하기
+  위해 일정 수 또는 비율의 요청을 허용한다. 요청이 성공하고 서비스가 회복되면,
+  회로 차단기는 "closed" 상태로 되돌아온다. 실패가 계속되면, 회로 차단기는
+  "open" 상태로 되돌아간다.
+
+Circuit breaker 패턴을 구현함으로써, 시스템은 연쇄적인 실패를 방지하고, 느린
+또는 실패하는 서비스의 영향을 줄이며, 오류 처리를 위한 fallback 메커니즘을
+제공하고, 분산 시스템 및 마이크로서비스 아키텍처의 전반적인 회복력과 내결함성을
+향상시킬 수 있다.
 
 ## Rate Limiting
 
 * [Rate Limiting Fundamentals | bytebytego](https://blog.bytebytego.com/p/rate-limiting-fundamentals)
+* [Rate Limiting](https://www.imperva.com/learn/application-security/rate-limiting/)
 
 -----
 
-Rate limiting is a technique used in computer systems, APIs, and networks to
-control the rate at which requests or data packets are processed. It enforces a
-limit on the number of requests, transactions, or data allowed within a
-specified time interval. The primary goal of rate limiting is to ensure fair
-resource usage, maintain system stability, and protect services from excessive
-load, abuse, or denial-of-service attacks.
+컴퓨터 시스템, API, 그리고 네트워크에서의 rate limiting은 요청이나 데이터 패킷이
+처리되는 속도를 제어하는 기술입니다. 특정 시간 간격 내에서 허용되는 요청, 거래,
+데이터의 수에 제한을 두어 리소스의 공정한 사용을 보장하고 시스템 안정성을
+유지하며 과도한 부하, 남용, 서비스 거부 공격(DoS)으로부터 서비스를 보호하는 것이
+비롯된 목표입니다.
 
-Rate limiting can be implemented at various levels and in different components
-of a system:
+다양한 단계 및 시스템의 다른 구성 요소에서 rate limiting을 구현할 수 있습니다:
 
-* **APIs and web services**: Rate limiting can be enforced at the application
-  level to control the number of requests a client can make to an API or web
-  service within a specific time frame. Common strategies include limiting the
-  number of requests per second, per minute, or per hour, often using tokens or
-  API keys to identify and track clients.
-* **Databases and backend services**: Rate limiting can be applied to manage the
-  resources consumed by backend services, such as databases, message queues, or
-  caching systems, to prevent overloading or exhausting the available capacity.
-* **Networks**: Rate limiting can be implemented at the network level to control
-  bandwidth usage, prevent network congestion, and ensure fair distribution of
-  network resources among clients or devices.
+- API 및 웹 서비스: 응용 프로그램 수준에서 rate limiting을 적용하여 클라이언트가
+  특정 시간 동안 API 또는 웹 서비스에 보낼 수 있는 요청 수를 제어할 수 있습니다.
+  초당, 분당, 시간당 요청 수를 제한하는 것이 일반적이며, 클라이언트를 식별하고
+  추적하기 위해 토큰이나 API 키를 사용합니다.
+- 데이터베이스 및 백엔드 서비스: rate limiting을 적용하여 데이터베이스, 메시지
+  큐 또는 캐싱 시스템과 같은 백엔드 서비스에 의해 소비되는 리소스를 관리하여
+  가용 용량을 과다하게 로드하거나 소진하는 것을 방지할 수 있습니다.
+- 네트워크: 네트워크 수준에서 rate limiting을 구현하여 대역폭 사용률을 제어하고,
+  네트워크 혼잡을 방지하며, 클라이언트나 장치 간에 네트워크 리소스의 공정한
+  분배를 보장할 수 있습니다.
 
-There are several rate-limiting algorithms, such as:
+주요한 rate-limiting 알고리즘은 다음과 같습니다:
 
-* **Token Bucket**: In this approach, tokens are added to a bucket at a fixed
-  rate up to a maximum capacity. Each request or packet consumes a token from
-  the bucket. If the bucket is empty, the request is either rejected or delayed
-  until tokens are available.
-* **Leaky Bucket**: The leaky bucket algorithm uses a fixed-size buffer (the
-  bucket) that "leaks" or removes items at a constant rate. Incoming requests or
-  packets are added to the buffer if space is available; otherwise, they are
-  rejected or delayed.
-* **Fixed Window**: This algorithm divides time into fixed-sized windows or
-  intervals and tracks the number of requests or packets within each window. If
-  a window reaches its maximum allowed count, additional requests or packets are
-  rejected or delayed until the next window starts.
-* **Sliding Window**: This approach improves upon the fixed window algorithm by
-  using a dynamic time window that slides based on request timestamps, ensuring
-  better fairness and smoother rate limits.
+- **Token Bucket**: 이 방법에서는 고정된 속도로 토큰을 버킷에 추가하되 최대
+  용량까지만 추가합니다. 각 요청이나 패킷은 버킷의 토큰을 소비합니다. 버킷이
+  비어 있으면 요청이 거부되거나 토큰을 사용할 수 있을 때까지 지연됩니다.
+- **Leaky Bucket**: 이 알고리즘은 고정 크기의 버퍼(버킷)을 사용하며, 상수 속도로
+  버킷의 아이템이 제거됩니다. 공간이 있다면 들어오는 요청이나 패킷이 버퍼에
+  추가되고, 아니면 거부되거나 지연됩니다.
+- **Fixed Window**: 이 알고리즘은 시간을 고정된 크기의 창이나 간격으로 나누어 각
+  창에서의 요청이나 패킷 수를 추적합니다. 창이 최대 허용된 건수에 도달하면 추가
+  요청이나 패킷이 거부되거나 다음 창이 시작될 때까지 지연됩니다.
+- **Sliding Window**: 이 접근법은 고정 작업 창 알고리즘을 개선하여 요청
+  타임스탬프에 기 바른 서적식 시간 창을 사용함으로써 더 나은 공정성과 부드러운
+  제한률을 보장합니다.
 
-Implementing rate limiting effectively can help maintain the reliability,
-performance, and security of computer systems, APIs, and networks, while also
-promoting fair usage policies among clients, users, or devices.
+Rate limiting을 효과적으로 구현함으로써 컴퓨터 시스템, API, 네트워크의 신뢰성,
+성능, 보안을 유지할 수 있고 클라이언트, 사용자, 장치 간에 공정한 사용 정책을
+적용할 수 있습니다.
 
 ## Asynchronism
 
@@ -1585,7 +1760,26 @@ promoting fair usage policies among clients, users, or devices.
 * Back pressure
   * MQ 가 바쁘면 client 에게 503 Service Unavailable 을 줘서 시스템의 성능저하를 예방한다. 일종의 circuit breaker 같다.
 
-## Message Queues VS Event Streaming Platform
+## Message Queue
+
+- [System Design — Message Queues](https://medium.com/must-know-computer-science/system-design-message-queues-245612428a22)
+
+Message Queue(메시지 큐)를 통해 응용 프로그램은 비동기적으로 통신할 수 있습니다.
+큐를 사용하여 서로에게 메시지를 보내는 것으로, 보내는 프로그램과 받는 프로그램
+사이의 일시적 저장소를 제공해서 연결되지 않거나 바쁠 때 중단 없이 동작할 수
+있도록 합니다. 큐의 기본 구조는 프로듀서(메시지 생성자)가 메시지 큐에 전달할
+메시지를 생성하는 몇 가지 클라이언트 애플리케이션과 메시지를 처리하는 소비자
+애플리케이션이 있습니다. 큐에 배치된 메시지는 소비자가 검색할 때까지 저장됩니다.
+
+메시지 큐는 마이크로서비스 아키텍처에서도 중요한 역할을 담당합니다. 서로 다른
+서비스에서 기능이 분산되며, 전체 소프트웨어 어플리케이션을 구성하기 위해
+병합됩니다. 이때 상호 종속성이 발생하며 시스템에 서비스 간 비블록 응답 없이 서로
+연결되는 메커니즘이 필요합니다. 메시지 큐는 서비스가 비동기적으로 큐에 메시지를
+푸시하고 올바른 목적지에 전달되도록 하는 수단을 제공하여 이 목적을 달성합니다.
+서비스 간 메시지 큐를 구현하려면 메시지 브로커(예: RabbitMQ, Kafka)가
+필요합니다.
+
+## Message Queue VS Event Streaming Platform
 
 Event streaming platform 은 다음과 같은 특징을 갖는다.
 
@@ -1611,7 +1805,7 @@ Message queue 의 종류는 다음과 같다.
 * ZeroMQ
 
 그러나 Message queue, Event streaming platform 경계는 흐릿해지고 있다. Rabbit MQ
-는 Long data retention, repeated consumption 이 가능하다.
+역시 Long data retention, repeated consumption 이 가능하다.
 
 ## Security
 
@@ -1795,12 +1989,25 @@ email file 은 AWS S3 에 저장하자. email file 의 key 를 마련해야 한�
 
 ## Idempotency
 
-* [RESTful API](https://lifeisgift.tistory.com/entry/Restful-API-%EA%B0%9C%EC%9A%94)
+- [RESTful API](https://lifeisgift.tistory.com/entry/Restful-API-%EA%B0%9C%EC%9A%94)
+- [What is Idempotency?](https://blog.dreamfactory.com/what-is-idempotency/)
 
 ----
 
 한글로 멱등성이라고 한다. RESTful API 에서 같은 호출을 여러번 해도 동일한 결과를
 리턴하는 것을 말한다.
+
+멱등성에 대해 알아야 하는 주요 사실은 다음과 같습니다:
+
+- 멱등성은 연산이나 API 요청의 속성으로, 연산을 여러 번 반복해도 한 번 실행하는
+  것과 같은 결과를 생성합니다.
+- 안전한(safe) 방법은 멱등성이 있지만, 모든 멱등한 방법이 안전한 것은 아닙니다.
+- HTTP 메소드 중 **GET, HEAD, PUT, DELETE, OPTIONS, TRACE**는 멱등성이 있고, **POST**와
+  **PATCH**는 일반적으로 멱등성이 없습니다.
+- HTTP 메소드의 멱등성을 이해하고 활용하면 더욱 일관성 있고, 신뢰성 있고, 예측
+  가능한 웹 애플리케이션과 API를 만들 수 있습니다.
+- REST API에서 사용되는 대부분의 HTTP 메소드는 POST를 제외하고 모두 멱등하며,
+  REST 원칙에 따라서 멱등한 메소드를 적절하게 사용하게 됩니다.
 
 ## 80/20 rule
 
@@ -1988,139 +2195,61 @@ monitoring, logging, tracing, alerting, auditing 등을 말한다.
 
 ## Consistent Hashing
 
-> * [Consistent Hashing | TIL](/consistenthasing/README.md)
-> * [Consistent Hashing and Random Trees:](https://www.akamai.com/es/es/multimedia/documents/technical-publication/consistent-hashing-and-random-trees-distributed-caching-protocols-for-relieving-hot-spots-on-the-world-wide-web-technical-publication.pdf) 
->   * Original paper
+- [Consistent Hashing | TIL](/consistenthasing/README.md)
 
----
+## Database Index
 
-Consistent hashing is a distributed hashing technique used to efficiently
-distribute keys across multiple nodes in a distributed system, such as a cluster
-of cache servers or databases. It provides a stable and balanced distribution of
-keys while minimizing the impact of adding or removing nodes, reducing the
-number of key redistributions and rehashing operations required to maintain the
-system.
-
-Consistent hashing works by mapping keys and nodes onto a circular, fixed-size
-hash ring using a predefined hash function. Each key and node is hashed, and the
-resulting value determines its position on the ring. A key is assigned to the
-closest node in the clockwise direction.
-
-When a node is added or removed from the system, it only affects the keys that
-were directly linked to that node, rather than causing a complete rehashing of
-all keys across all nodes. This significantly reduces the amount of data that
-needs to be moved and allows the system to scale more efficiently without
-causing major disruption.
-
-Some of the benefits of consistent hashing include:
-
-* **Load balancing**: It efficiently distributes keys across the nodes, ensuring
-  a balanced load for each node in the system.
-* **Scalability**: Consistent hashing simplifies the process of adding or
-  removing nodes by minimizing the key redistributions required, leading to less
-  downtime and better handling of dynamic system growth.
-* **Fault tolerance**: When a node fails, the keys can be easily reassigned to
-  other available nodes, minimizing both data loss and service disruption.
-
-Consistent hashing is commonly used in distributed systems, such as distributed
-caches (e.g., Amazon's Dynamo or Akamai's content delivery network), distributed
-databases, and load balancers.
-
-## Index
-
-> * [chidb | github](https://github.com/iamslash/chidb)
->   * index implementation
-
-An index in a database is a data structure that improves the speed of data
-retrieval operations by providing a more efficient way to look up rows/records
-based on the values of specific columns. Just like an index in a textbook allows
-you to quickly find information without scanning the entire book, a database
-index allows for faster data lookups without scanning the entire table.
-
-Indexes can significantly improve the performance of queries by reducing the
-amount of data that the database management system (DBMS) needs to examine when
-searching for specific values or ranges of values. However, creating and
-maintaining indexes come with some overhead, as the indexes have to be updated
-whenever the data in the table changes (insertions, deletions, or updates),
-which may impact write performance.
-
-In a relational database system, two primary types of indexes are:
-
-* **Single-column index**: An index created on a single column.
-* **Multi-column index** (also known as a compound or composite index): An index
-  created on multiple columns, used when queries frequently filter or join on
-  those columns together. 
-  
-Additionally, there are several types of indexing techniques used in databases, such as:
-
-* **B-Tree index**: The most commonly used indexing method, suitable for a wide
-  variety of queries and various types of data. It is a balanced tree structure
-  that keeps the data sorted and provides fast search, insertion, and deletion
-  operations.
-* **Bitmap index**: A memory-efficient indexing technique that represents index
-  data as a series of binary values (bits), ideal for columns with low
-  cardinality (limited distinct values) and often used in data warehousing and
-  analytical systems.
-* **Hash index**: An index based on a hash function, which allows for quick and
-  direct access to data records based on their hashed values. It is useful for
-  exact match queries but not efficient for range-based queries.
-
-Choosing the right index for a database depends on factors such as the type of
-data, the nature of the queries, the frequency of reads versus writes, and the
-specific requirements of the application. Proper indexing can lead to
-significant performance improvements, but it's important to create and manage
-indexes judiciously to avoid unnecessary overhead.
+[Database Index](/index/README.md)
 
 ## SQL vs NoSQL
 
-SQL and NoSQL are two types of database management systems that cater to
-different data storage and retrieval requirements. The primary difference
-between them lies in how the data is structured, organized, and queried.
+- [SQL vs NoSQL: 5 Critical Differences](https://www.integrate.io/blog/the-sql-vs-nosql-difference/)
 
-SQL:
+SQL과 NoSQL은 데이터 저장 및 검색 요구 사항에 맞춰 다른 유형의 데이터베이스 관리
+시스템입니다. 그들 사이의 주요 차이점은 데이터가 구조화되고, 조직화되며 조회되는
+방식에 있습니다.
 
-* SQL stands for Structured Query Language, which is a standardized programming
-  language used for managing relational databases (RDBMS). Examples of SQL
-  databases include SQL Server, Oracle, and PostgreSQL.
-* SQL databases rely on a predefined, fixed schema and a structured table
-  format, where the data is stored in rows and columns.
-* They have strong support for ACID (Atomicity, Consistency, Isolation, and
-  Durability) properties, providing high data consistency and integrity.
-* SQL databases are well-suited for complex queries, multi-row transactions, and
-  joins.
-* They typically scale vertically by adding more computational resources (CPU,
-  memory) to a single server.
+**SQL**:
 
-NoSQL:
+- SQL 데이터베이스는 사전에 정의된 고정 스키마와 구조화된 테이블 형식에
+- SQL은 구조화된 질의 언어(Structured Query Language)의 약자로, 관계형
+  데이터베이스(RDBMS)를 관리하는 데 사용되는 표준화된 프로그래밍 언어입니다. SQL
+  데이터베이스의 예로는 SQL Server, Oracle, PostgreSQL이 있습니다. 의존하며,
+  데이터는 행과 열에 저장됩니다.
+- SQL은 ACID(원자성, 일관성, 고립성 및 지속성) 속성에 대한 강력한 지원을
+  제공하여 높은 데이터 일관성과 무결성을 보장합니다.
+- SQL 데이터베이스는 복잡한 질의, 다중 행 트랜잭션 및 조인에 적합합니다.
+- 일반적으로 단일 서버에 컴퓨팅 리소스(CPU, 메모리)를 추가하여 수직으로
+  확장됩니다.
 
-* NoSQL stands for "not only SQL" and refers to non-relational databases that do
-  not use the standard SQL query language. Examples of NoSQL databases include
-  **MongoDB**, **Cassandra**, and **Couchbase**.
-* NoSQL databases support various data structures, such as key-value, document,
-  column-family, and graph models, offering flexibility in data representation.
-* They are designed for **scalability**, **high availability**, and **fault
-  tolerance**, and often allow for **eventual consistency**, trading off some
-  **consistency** for better **performance** and **distribution**.
-* NoSQL databases are suitable for handling unstructured, semi-structured, or
-  hierarchical data, large volumes of data, and simple queries.
+**NoSQL**:
 
-They usually scale horizontally by distributing data and workload across
-multiple servers or clusters.
+- NoSQL은 "not only SQL"의 약자이며, 표준 SQL 질의 언어를 사용하지 않는 비관계형
+  데이터베이스를 가리킵니다. NoSQL 데이터베이스의 예로는 MongoDB, Cassandra,
+  Couchbase가 있습니다.
+- NoSQL 데이터베이스는 키-값, 문서, 컬럼-패밀리 및 그래프 모델 등 다양한 데이터
+  구조를 지원하며, 데이터 표현에 유연성을 제공합니다.
+- NoSQL은 확장성, 고 가용성 및 장애 허용을 지원하도록 설계되어 있으며, 일관성,
+  성능 및 분산을 개선하기 위해 최종적 일관성(eventual consistency)을 허용하는
+  경우가 많습니다.
+- NoSQL 데이터베이스는 비구조화, 반구조화 또는 계층형 데이터, 대용량 데이터 및
+  간단한 쿼리 처리에 적합합니다.
+- 일반적으로 데이터와 작업 부하를 여러 서버나 클러스터로 분산하여 수평으로
+  확장됩니다.
 
-Choosing between SQL and NoSQL databases largely depends on the specific
-requirements of the application, the data model, expected query complexity,
-consistency needs, and scaling requirements. SQL databases are generally
-preferred when dealing with structured data, complex transactions, and
-relationships between records, while NoSQL databases are often used for managing
-large-scale, distributed, and schema-less data structures in highly concurrent
-environments.
+SQL과 NoSQL 데이터베이스 사이에서 선택하는 것은 주로 애플리케이션의 특정 요구
+사항, 데이터 모델, 예상되는 쿼리 복잡성, 일관성 요구 사항 및 확장 요구에 따라
+달라집니다. SQL 데이터베이스는 일반적으로 구조화된 데이터, 복잡한 트랜잭션 및
+레코드 간 관계를 처리할 때 선호되는 반면, NoSQL 데이터베이스는 대규모-분산,
+스키마를 가지지 않은 데이터 구조를 높은 동시성 환경에서 관리하는데 자주
+사용됩니다.
 
-| Subject | SQL | NoSQL |
+| 항목 | SQL | NoSQL |
 |:--------|:----|:------|
-| Schema  | Strict schema | schema or schemaless |
-| Querying  | SQL | some of SQL or UnSQL (Unstructured SQL) |
-| Scalability | scale-up | scale-out |
-| Reliability or ACID Compliancy | Stric ACID | Some of ACID |
+| 스키마 | 엄격한 스키마 | 스키마 또는 스키마리스 |
+| 쿼리 | SQL | SQL의 일부 또는 UnSQL (비구조화된 SQL) |
+| 확장성 | 스케일 업 | 스케일 아웃 |
+| 신뢰성 또는 ACID 준수 | 엄격한 ACID | ACID의 일부 |
 
 ## Hadoop
 
@@ -2210,47 +2339,130 @@ semi-structured data. However, it has some limitations, such as high latency and
 lack of support for iterative algorithms or real-time processing, which have led
 to the development of alternative data-processing frameworks like Apache Spark.
 
+## Consensus Algorithm
+
+[Consensus Problems](/distributedsystem/README.md#consensus-problems)
+
 ## Paxos
 
 [Paxos](/distributedsystem/README.md#paxos)
 
 ## Gossip protocol
 
-> [Gossip protocol](http://highscalability.com/blog/2011/11/14/using-gossip-protocols-for-failure-detection-monitoring-mess.html)
+- [Gossip Protocol Explained | HighScalability](http://highscalability.com/blog/2023/7/16/gossip-protocol-explained.html)
+ 
+Gossip Protocol은 대규모 분산 시스템에서 메시지를 전송하는 분산형 P2P 통신
+기술로, 각 노드가 일정 시간마다 무작위로 선택된 다른 노드들에게 메시지를 보내는
+방식이다. 이 프로토콜은 확률적으로 전체 시스템에 특정 메시지를 받을 수 있는 높은
+확률을 제공한다. Gossip Protocol은 일반적으로 노드 멤버십 목록 유지, 합의 도달,
+장애 감지 등의 목적으로 사용된다.
 
-Gossip protocol, also known as epidemic protocol, is a distributed communication
-strategy used for disseminating information and maintaining the state of a
-distributed system in a scalable, fault-tolerant, and efficient manner. It is
-inspired by the way rumors or gossip spread in human social networks.
+주요 장점은 확장성, 내결함성, 강건성, 수렴 일관성, 분산성, 간단함, 결합가능성 및
+부하 경계이다. 단점으로는 최종 일관성, 네트워크 분할 인식 불능, 상대적으로 높은
+대역폭 소비, 높은 대기 시간, 디버깅 및 테스트의 어려움 등이 있다. 분산
+시스템에서 일치성을 선호할 때 Gossip Protocol은 다양한 애플리케이션에서
+사용되며, Aamzon Dynamo, Apache Cassandra, Consul 등의 실제 솔루션에서 사용되고
+있다.
 
-In a gossip protocol, each node in the system periodically exchanges information
-with a random or selected subset of neighbors. The exchanged information may
-include updates, new data, or the state of the system. This process of
-information exchange continues in an iterative manner, resulting in a rapid and
-robust dissemination of information across the entire network.
+다음은 Gossip 을 구현한 java code 이다.
 
-Gossip protocols have several key features that make them suitable for
-large-scale, distributed systems:
+```java
+// Node.java
+import java.util.Random;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 
-* **Scalability**: The randomized, partial communication strategy of gossip
-  protocols allows them to scale well to large numbers of nodes, without
-  overwhelming any single node or network link.
-* **Fault Tolerance**: Gossip protocols can continue to operate even when some
-  nodes fail or become unreachable, as the remaining nodes continue to exchange
-  information.
-* **Self-healing**: Gossip protocols can automatically adjust to changes in the
-  network, compensating for node failures, additions, or removals. The
-  eventually consistent nature of the information exchange helps maintain a
-  coherent global state over time.
-* **Decentralization**: Gossip protocols do not rely on a central coordinator or
-  hub, making them more resilient to targeted attacks or single points of
-  failure.
+public class Node {
+  private final String id;
+  private final Set<String> knownMessages;
+  private List<Node> neighbors;
 
-Gossip protocols are used in various distributed systems and applications, such
-as maintaining consistent state in distributed databases and caches (e.g.,
-Amazon's Dynamo), disseminating updates in peer-to-peer networks, monitoring and
-cluster membership management in datacenter infrastructures, and consensus
-algorithms in distributed ledger technologies like blockchains.
+  public Node(String id) {
+    this.id = id;
+    this.knownMessages = new HashSet<>();
+    this.neighbors = new ArrayList<>();
+  }
+
+  public void addNeighbor(Node node) {
+    neighbors.add(node);
+  }
+
+  public void receiveMessage(String message) {
+    if (!knownMessages.contains(message)) {
+      System.out.println("Node " + id + " got a new message: " + message);
+      knownMessages.add(message);
+      spreadMessageToRandomNeighbors(message);
+    }
+  }
+
+  private void spreadMessageToRandomNeighbors(String message) {
+    int randomNeighborsCount = new Random().nextInt(2) + 1; // 선택할 무작위 이웃 수 (1-2개)
+    List<Node> alreadySentTo = new ArrayList<>();
+    while (randomNeighborsCount > 0 && alreadySentTo.size() < neighbors.size()) {
+      int randomIndex = new Random().nextInt(neighbors.size());
+      Node chosenNode = neighbors.get(randomIndex);
+
+      if (!alreadySentTo.contains(chosenNode)) {
+        chosenNode.receiveMessage(message);
+        alreadySentTo.add(chosenNode);
+        randomNeighborsCount--;
+      }
+    }
+  }
+}
+
+// GossipProtocolExample.java
+public class GossipProtocolExample {
+  public static void main(String[] args) {
+    Node nodeA = new Node("A");
+    Node nodeB = new Node("B");
+    Node nodeC = new Node("C");
+    Node nodeD = new Node("D");
+    Node nodeE = new Node("E");
+
+    // 노드들 간에 이웃 관계 설정
+    nodeA.addNeighbor(nodeB);
+    nodeA.addNeighbor(nodeC);
+    nodeB.addNeighbor(nodeA);
+    nodeB.addNeighbor(nodeC);
+    nodeB.addNeighbor(nodeD);
+    nodeC.addNeighbor(nodeA);
+    nodeC.addNeighbor(nodeB);
+    nodeC.addNeighbor(nodeD);
+    nodeD.addNeighbor(nodeB);
+    nodeD.addNeighbor(nodeC);
+    nodeD.addNeighbor(nodeE);
+    nodeE.addNeighbor(nodeD);
+
+    // 최초 메시지 전달 (이 예제에서는 nodeA가 시작)
+    nodeA.receiveMessage("Hello, Gossip Protocol!");
+  }
+}
+```
+
+Gossip Protocol 은 Amazon DynamoDB 에서 다음과 같이 사용된다.
+
+- **클러스터 멤버십 관리**: Gossip Protocol은 DynamoDB가 각 노드가 클러스터의 다른
+  노드에 대한 지식을 유지하도록 돕습니다. 각 노드는 일정한 간격으로 무작위로
+  선택한 이웃 노드와 정보를 교환합니다. 곧, 모든 노드는 전체 클러스터의 상태에
+  대해 알게되며, 최신 정보를 유지할 수 있습니다.
+- **장애 감지**: Gossip Protocol은 클러스터에서 노드 장애를 감지하는 데 사용됩니다.
+  노드가 주기적으로 이웃 노드와 정보를 교환하면서 올바르게 작동하지 않거나
+  응답하지 않는 노드를 식별할 수 있습니다. 장애가 발견되면 메시지가 전체
+  클러스터로 전파됩니다. 그러면 다른 노드들은 적절한 조치를 취할 수 있습니다(예:
+  데이터 복제를 위한 새로운 노드 선택 등).
+
+Gossip Protocol을 사용함으로써 DynamoDB는 시스템 규모를 확장하고, 성능을
+향상시키며, 신속한 장애 감지와 교정을 보장할 수 있습니다. 하지만 DynamoDB는
+솔루션 전체에서 Gossip Protocol만 사용하는 것이 아니며 다른 시스템 구성 요소와
+통합하여 작동합니다. 따라서 Gossip Protocol은 DynamoDB에서 중요한 기능을
+수행하지만 전체 시스템 운영에 있어서는 한 부분에 해당합니다.
+
+## Raft
+
+[Raft](/distributedsystem/README.md#raft)
 
 ## Chubby
 
@@ -2654,6 +2866,268 @@ important components of API security:
   potential attacks, such as SQL injections or cross-site scripting (XSS). This
   includes checking for correct data types, lengths, and allowable characters.
 
+## Batch Processing vs Stream Processing
+
+- [7 Best Practices for Data Governance](https://atlan.com/batch-processing-vs-stream-processing/)
+
+대량 처리와 스트림 처리의 주요 차이점은 다음과 같습니다:
+
+- 데이터 처리의 정의 및 특성
+  - 대량 처리: 데이터를 큰 덩어리로 처리하며 일정 시간 동안 수집된 데이터를 모두
+    한 번에 처리합니다.
+  - 스트림 처리: 데이터를 실시간으로 지속적으로 처리하며, 데이터가 도착하자마자
+    처리합니다. 
+- 지연 시간 및 처리 시간
+  - 대량 처리: 일정한 배치가 완료되거나 특정 스케줄에 의해 처리가 실행될 때까지
+    데이터가 즉시 처리되지 않기 때문에 지연 시간이 높습니다.
+  - 스트림 처리: 데이터가 시스템에 도착하는 즉시 처리되므로 실시간 분석 또는
+    즉각적인 인사이트가 필요한 작업에 적합하며 지연 시간이 낮습니다.
+- 사용 사례 및 응용 프로그램
+  - 대량 처리: 즉각적인 데이터 처리가 필요하지 않은 상황에서 일반적으로
+    사용됩니다. 예를 들어 월간 급여 처리, 일일 보고서 생성, 대규모 데이터 분석
+    등이 해당됩니다.
+  - 스트림 처리: 금융 분야의 사기 감지, 전자 상거래의 실시간 추천, 실시간
+    대시보드 업데이트 등과 같이 데이터를 기반으로 한 즉각적인 조치가 필요한
+    상황에서 사용됩니다.
+- 오류 허용과 신뢰성
+  - 대량 처리: 대량 처리 작업이 실패하면 중단 된 시점에서 다시 시작하거나 전체
+    배치를 다시 처리할 수 있습니다.
+  - 스트림 처리: 더 정교한 오류 허용 메커니즘이 필요합니다. 데이터 스트림이
+    중단되면 데이터가 손실되지 않도록 시스템이 중단을 처리하는 방법이
+    필요합니다.
+- 확장성 및 성능
+  - 대량 처리: 대량의 데이터를 한 번에 처리하기 때문에 처리량이 향상됩니다. 사용
+    사례에 따라 수직(강력한 기계 추가) 또는 수평(기계 수 추가)으로 확장할 수
+    있습니다.
+  - 스트림 처리: 데이터의 다양한 속도를 처리할 수 있는 시스템이 수평으로
+    확장되어야 합니다.
+- 복잡성 및 설정
+  - 대량 처리: 실시간 처리의 복잡성을 처리할 필요가 없기 때문에 설정 및 설계가
+    더 간단할 수 있습니다.
+  - 스트림 처리: 오류 허용을 보장하고 상태를 관리하며 시간 순서가 지정되지 않은
+    데이터 이벤트와 같은 복잡한 설정이 필요합니다.
+- 도구 및 플랫폼의 예
+  - 대량 처리: Hadoop MapReduce, Apache Hive 및 Apache Spark의 대량 처리 기능이
+    대표적입니다.
+  - 스트림 처리: Apache Kafka Streams, Apache Flink 및 Apache Storm 등이 예시로
+    들 수 있습니다.
+
+## HeartBeat
+
+- [HeartBeat](https://martinfowler.com/articles/patterns-of-distributed-systems/heartbeat.html)
+
+서버의 가용성을 확인하기 위해 주기적으로 다른 서버에 메시지를 보내는 것이다.
+
+**Problem**
+
+여러 서버가 클러스터를 형성할 때, 각 서버는 사용되는 파티셔닝 및 복제 방식에
+따라 데이터의 일부를 저장하는 것이다. 서버 실패의 적시 감지는 실패한 서버에 대한
+데이터 요청을 처리하도록 다른 서버에 책임을 부여함으로써 수정 조치를 취하는 것이
+중요하다.
+
+**Solution**
+
+정기적으로 송신 서버의 살아있음을 나타내는 요청을 다른 모든 서버에 보낸다. 요청
+간격은 서버 간의 네트워크 왕복 시간보다 길게 설정해야 한다. 모든 수신 서버는
+요청 간격의 배수인 타임아웃 간격 동안 대기한다. 
+
+## Bloom Filter
+
+[Bloom Filter](/bloomfilter/README.md)
+
+## Distributed Locking
+
+- [How to do distributed locking](https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html)
+
+Redis 의 redlock 은 다음과 같은 단점이 있다.
+
+- **Fencing Tokens를 생성하지 않음**: Redlock 알고리즘이 Fencing Tokens를
+  생성하지 않으므로, 클라이언트 간의 경쟁 조건을 방지할 수 없습니다. 이로 인해
+  여러 클라이언트가 동시에 같은 리소스에 접근하는 상황에서 안전하지 않을 수
+  있습니다.
+- **타이밍 가정을 사용**: Redlock은 동기적 시스템 모델에커튼 가정을 하고 있으며,
+  이는 네트워크 지연, 프로세스 일시 중지, 클럭 오류에 대한 정확한 시간을 알 수
+  있다고 가정합니다. 그러나 실패, 네트워크 지연, 클럭 오류 같은 분산
+  시스템에서의 현실적인 문제로 인해 이러한 가정은 항상 지켜지지 않습니다.
+- **일부 타이밍 문제가 발생할 경우 안전성을 위반할 수 있음**: Redlock의 강력한
+  일관성 메커니즘이 완벽한지 확신할 수 없기 때문에, 어떠한 타이밍 문제로 인해
+  Redlock이 안전성을 위반할 수 있습니다.
+
+다음은 Redis, Redisson 을 이용하여 distributed lock 을 구현한 java code 이다.
+
+```java
+import org.redisson.Redisson;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
+
+public class RedissonExample {
+
+    public static void main(String[] args) {
+        // Redisson configuration
+        Config config = new Config();
+        config.useSingleServer().setAddress("redis://127.0.0.1:6379");
+
+        // Create the Redisson client instance
+        RedissonClient redisson = Redisson.create(config);
+
+        // Define the resource to lock (e.g., some shared file or record)
+        String resource = "myResource";
+
+        // Acquire the lock for the resource
+        RLock lock = redisson.getLock(resource);
+        lock.lock(); // Blocking call, waits until the lock is available
+
+        try {
+            // Perform actions protected by the lock
+            performProtectedActions();
+        } finally {
+            // Release the lock
+            lock.unlock();
+        }
+
+        // Shutdown the Redisson client
+        redisson.shutdown();
+    }
+
+    private static void performProtectedActions() {
+        // Insert code that requires the distributed lock here
+    }
+}
+```
+
+분산 락에 대한 강력한 일관성과 사용 안전성을 필요로 하는 경우, 대신 Apache
+ZooKeeper와 같은 합의 알고리즘을 사용하는 것이 좋습니다. ZooKeeper는 분산 락 및
+기타 분산 시스템 작업을 처리하기 위해 안전하고 일관성 있게 설계되었습니다. 이런
+경우, Redlock 대신 ZooKeeper를 사용하여 더 안전한 환경을 구현할 수 있습니다.
+
+ZooKeeper 가 Redis 보다 좋은 이유는 다음과 같다.
+
+- **안정성**: ZooKeeper는 자체 합의 프로토콜을 사용하여 특정 노드가 실패한
+  경우에도 클러스터 내 노드간 동기화를 유지합니다. 이는 클러스터의 전체 상태를
+  보다 안정적으로 만듭니다. 반면, Redisson은 Redis의 분산 락 메커니즘인
+  Redlock에 의존합니다. 위에서 논의한 바와 같이, Redlock은 클러스터 작동에
+  필요한 안정성과 상호 운용성을 제공하는 데 몇 가지 제한이 있습니다.
+- **일관성**: ZooKeeper는 분산 락 용도로 설계되었으며, 높은 가용성과 일관성을
+  제공하기 위해 설계되었습니다. ZooKeeper 클러스터의 노드들은 자체 합의
+  알고리즘을 사용하여 데이터 동기화와 클러스터 일관성을 유지하며, 일반적으로 더
+  강력한 일관성 보장이 있는데 도움이 됩니다. 반면, Redisson은 기본적으로 Redis에
+  의존합니다. Redis는 원래 캐싱 및 메시징용으로 설계되었으며, Redis 클러스터의
+  일관성보다 가용성에 중점을 두었습니다. 이로 인해 ZooKeeper가 분산 락 작업을
+  처리하는 데 더 높은 일관성을 제공할 수 있습니다.
+- **순찰 기능** (Fencing mechanisms): 위에서 언급한 바와 같이
+  ZooKeeper클라이언트는 스스로 Fencing Tokens을 생성하는 것이 가능하고 이러한
+  메커니즘은 분산 락에서 보장해야하는 격리 수준을 높여 줍니다. 이 토큰 사용을
+  통해 ZooKeeper는 동시에 다른 클라이언트가 같은 락에 액세스하는 것을 방지해
+  줍니다. 이와 반면에 Redlock은 이러한 메커니즘을 자체적으로 지원하지 않습니다.
+
+ZooKeeper는 분산 시스템에서 일관성과 락의 안정성을 더 잘 보장합니다. 반면
+Redisson은 일시적 데이터나 메시징 등 여타의 사용 사례에 더 적합할 수 있습니다.
+작업을 수행하기 전에 구체적인 사용 케이스와 요구 사항을 분석하고, 이에 따라
+적절한 도구를 선택해야 합니다.
+
+다음은 ZooKeeper, Curator 를 이용하여 distributed lock 을 구현한 java code 이다.
+
+```groovy
+// Gradle
+dependencies {
+    implementation 'org.apache.curator:curator-recipes:5.1.0'
+    implementation 'org.apache.curator:curator-framework:5.1.0'
+    ...
+}
+```
+
+```java
+//
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.recipes.locks.InterProcessMutex;
+import org.apache.curator.retry.ExponentialBackoffRetry;
+
+public class ZookeeperExample {
+
+    public static void main(String[] args) {
+        // ZooKeeper configuration
+        String zkConnectionString = "localhost:2181";
+        int baseSleepTimeMs = 1000;
+        int maxRetries = 3;
+
+        // Create the Curator client for ZooKeeper
+        CuratorFramework zookeeperClient = CuratorFrameworkFactory.newClient(
+                zkConnectionString,
+                new ExponentialBackoffRetry(baseSleepTimeMs, maxRetries)
+        );
+        zookeeperClient.start();
+
+        // Define the resource to lock (e.g., some shared file or record)
+        String lockPath = "/locks/myResource";
+
+        // Acquire the lock for the resource
+        InterProcessMutex lock = new InterProcessMutex(zookeeperClient, lockPath);
+
+        try {
+            if (lock.acquire(10, TimeUnit.SECONDS)) { // Attempt to acquire the lock within 10 seconds
+                try {
+                    // Perform actions protected by the lock
+                    performProtectedActions();
+                } finally {
+                    // Release the lock
+                    lock.release();
+                }
+            } else {
+                // Failed to acquire the lock, throw an exception or handle it in some way
+                throw new IllegalStateException("Failed to acquire lock");
+            }
+        } catch (Exception e) {
+            // Handle exceptions during lock acquisition or protected actions
+            e.printStackTrace();
+        } finally {
+            // Close the ZooKeeper client
+            zookeeperClient.close();
+        }
+    }
+
+    private static void performProtectedActions() {
+        // Insert code that requires the distributed lock here
+    }
+}
+```
+
+## Distributed Tracing
+
+- [What is distributed tracing, and why is it important?](https://www.dynatrace.com/news/blog/what-is-distributed-tracing/)
+
+분산 추적은 고유 식별자로 표시하여 분산 클라우드 환경을 통해 전파되는 요청을
+관찰하는 방법입니다. 이를 통해 사용자 경험, 애플리케이션 계층 및 인프라에 대한
+실시간 가시성을 제공하며, 애플리케이션이 복잡한 랜드스케이프에 걸쳐 더욱
+분산되면서 중요해집니다. 분산 추적은 애플리케이션 성능 향상, 서비스 수준 계약
+준수 및 내부 협업을 개선하고 탐지 및 수리까지 평균 시간을 줄입니다.
+
+모놀리식 애플리케이션은 보다 휴대성 있는 서비스로 발전하면서 복잡한 클라우드
+네이티브 아키텍처에 전통적인 모니터링 도구가 효과적으로 제공할 수 없습니다.
+대신, 분산 추적은 이러한 환경에서의 관측 가능성에 대한 필수 요소가 되었습니다.
+
+## Checksum
+
+- [What Is a Checksum?](https://www.lifewire.com/what-does-checksum-mean-2625825)
+
+-----
+
+체크섬은 데이터 조각(보통 하나의 파일)에 대해 암호화 해시 함수라는 알고리즘을
+실행한 결과입니다. 체크섬은 파일의 원본과 사용자의 버전을 비교하여 파일이
+정품이고 오류가 없는지 확인하는 데 도움이 됩니다. 체크섬은 종종 해시합계, 해시
+값, 해시 코드 또는 단순하게 해시라고도 불립니다.
+
+체크섬을 사용하는 것은 파일이 올바르게 받아졌는지 확인하는 데 도움이 됩니다.
+예를 들어, 다운로드한 파일에 대한 체크섬을 생성하고 원래 파일의 체크섬과
+비교하여 두 파일이 동일한지 확인할 수 있습니다. 체크섬이 일치하지 않으면 여러
+가지 원인이 있을 수 있고 원본 소스에서 다운로드한 파일이 올바른 파일인지
+확인하는 데 체크섬을 사용할 수 있습니다.
+
+체크섬 계산기는 체크섬을 계산하는 데 사용되는 도구로, 각기 다른 암호화 해시
+함수를 지원하는 다양한 종류의 체크섬 계산기가 있습니다. 체크섬 계산기는 파일의
+정합성을 검증하는 데 사용할 수 있는 여러 도구 중 하나입니다.
+
 # System Design Interview
 
 * [Designing A Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md)
@@ -2796,51 +3270,7 @@ important components of API security:
 
 # MSA (Micro Service Architecture)
 
-> * [Micro Service Architecture | TIL](/msa/README.md)
->   * [ftgo monolith src | github](https://github.com/microservices-patterns/ftgo-monolith)
->   * [ftgo msa src | github](https://github.com/microservices-patterns/ftgo-application)
-> * [A pattern language for microservices](https://microservices.io/patterns/index.html)
-
-Microservice architecture is a software development approach that structures an
-application as a collection of small, modular, and independently deployable
-services. Each microservice is designed to perform a single, specific function
-and can be developed, deployed, and scaled independently from the rest of the
-application. The microservices communicate with each other using lightweight
-APIs, standardized protocols, or messaging mechanisms.
-
-This architecture offers a more granular and flexible approach to building
-complex applications compared to traditional monolithic architecture, where the
-entire application is built as a single, cohesive unit.
-
-Key characteristics of microservice architecture include:
-
-* **Decentralized and modular**: Each microservice is a self-contained unit with
-  its own codebase, data storage, and infrastructure, allowing it to be
-  developed and managed independently.
-* **Domain-driven design**: Microservices are aligned with specific business
-  capabilities or domain concepts, promoting a better understanding of the
-  application's purpose and functionality.
-* **Scalability**: Each microservice can be scaled independently, enabling
-  efficient resource utilization and handling variable loads for different parts
-  of an application.
-* **Flexibility**: Different microservices can be developed using different
-  programming languages, frameworks, and tools, allowing teams to choose the
-  most suitable technology for their specific service.
-* **Resilience**: The failure or issues in one microservice are less likely to
-  impact the entire application since each service is isolated and can be
-  designed with the necessary fault tolerance and fallback mechanisms.
-
-However, microservice architecture also introduces some challenges, such as
-increased complexity in managing **inter-service communication**, **service
-discovery**, and **data consistency**. To address these challenges,
-organizations often rely on tools and techniques like **containerization**,
-**service meshes**, **API gateways**, and **distributed tracing**.
-
-Microservice architecture has become popular among organizations looking to
-build large, complex, and highly scalable applications that can be easily
-updated and maintained without causing major disruptions to the entire system.
-Examples of companies using microservice architecture include Amazon, Netflix,
-and Spotify.
+[Micro Service Architecture | TIL](/msa/README.md)
 
 # Cloud Design Patterns
 
@@ -2852,46 +3282,7 @@ and Spotify.
 
 # DDD
 
-> [DDD | TIL](/ddd/README.md)
-
-Domain-Driven Design (DDD) is a software development approach that emphasizes
-the importance of understanding and modeling the core business domain, which
-refers to the subject area or problem scope that the software is intended to
-address. DDD focuses on creating software that accurately reflects the needs,
-concepts, and rules of the real-world domain by utilizing a common language,
-models, and patterns.
-
-DDD requires close collaboration between domain experts, such as business
-stakeholders, and software developers to ensure that domain knowledge is
-effectively translated into the software design. Key aspects of DDD include:
-
-* **Ubiquitous Language**: A shared and consistent language that is used by both
-  domain experts and developers to describe the domain concepts, rules, and
-  processes. This language helps eliminate misunderstandings and improves
-  communication among team members.
-* **Bounded Context**: A logical boundary that encapsulates a specific part of
-  the domain, separating it from other parts to maintain focus, reduce
-  complexity, and ensure consistency within that context. Bounded Contexts allow
-  different teams or parts of an application to evolve independently.
-* **Entities, Value Objects, and Aggregates**: These are building blocks for
-  creating the domain model. Entities are objects with a distinct identity
-  (e.g., customer, product), while value objects are immutable and defined only
-  by their attributes (e.g., color, price). Aggregates are clusters of related
-  objects, with a single root entity acting as the entry point for interactions.
-* **Repositories and Factories**: Repositories are used to store, retrieve, and
-  manage instances of entities and aggregates, abstracting away data persistence
-  details. Factories are responsible for creating complex domain objects or
-  aggregates, encapsulating object instantiation logic.
-* **Domain Events**: Events that signify a change in the state of the domain or
-  an important occurrence in the business process, which can trigger actions or
-  side effects in other parts of the system.
-
-Domain-Driven Design is particularly useful for complex and evolving software
-systems where having a clear understanding and accurate representation of the
-domain is critical. It helps create maintainable, flexible, and business-focused
-software solutions by fostering a deep understanding of the domain, promoting
-effective communication among team members, and leveraging well-defined models
-and patterns.
+[DDD | TIL](/ddd/README.md)
 
 # Architecture
 

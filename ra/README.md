@@ -1,12 +1,34 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Overview](#overview)
+- [Basic Usages](#basic-usages)
+  - [SELECT](#select)
+  - [PROJECT](#project)
+  - [Union](#union)
+  - [Difference](#difference)
+  - [Intersection](#intersection)
+  - [Cartesian Product](#cartesian-product)
+  - [Join](#join)
+  - [Theta Join](#theta-join)
+  - [Equi Join](#equi-join)
+  - [Natural Join](#natural-join)
+  - [Left Outer Join](#left-outer-join)
+  - [Right Outer Join](#right-outer-join)
+  - [Full Outer Join](#full-outer-join)
+  - [DIVISION](#division)
+
+-----
+
 # Abstract
 
-Relational Algebra 는 relation data 를 다루는 Procedural Query Language (절차 질의 언어) 이다. Relational Algebra Operation 은 릴레이션을 입력으로 받아서 릴레이션을 출력으로 한다. 주요 operation 들을 정리해 본다.
+Relational Algebra 는 relation data 를 다루는 Procedural Query Language (절차
+질의 언어) 이다. Relational Algebra Operation 은 릴레이션을 입력으로 받아서
+릴레이션을 출력으로 한다. 주요 operation 들을 정리해 본다.
 
 # Materials
 
-* [정보처리 실기_데이터베이스08강_관계 데이터 연산 @ youtube](https://www.youtube.com/watch?v=h7AZAWfYH8k&list=PLimVTOIIZt2aP6msQIw0011mfVP-oJGab&index=9&t=0s)
+* [정보처리 실기_데이터베이스08강_관계 데이터 연산 | youtube](https://www.youtube.com/watch?v=h7AZAWfYH8k&list=PLimVTOIIZt2aP6msQIw0011mfVP-oJGab&index=9&t=0s)
   * 한글 강좌
-
 * [Relational Algebra in DBMS with Examples](https://www.guru99.com/relational-algebra-dbms.html#14)
 
 # Overview

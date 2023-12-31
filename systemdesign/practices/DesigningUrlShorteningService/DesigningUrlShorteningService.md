@@ -16,7 +16,7 @@
 - [Extention](#extention)
   - [Cache](#cache)
   - [Load Balancer (LB)](#load-balancer-lb)
-- [Q&A](#qa)
+- [Q\&A](#qa)
 - [References](#references)
 
 ----
@@ -155,6 +155,7 @@ Redis cluster is a good solution. It will cache 170 GB, 20% of daily traffics.
 
 # References
 
+- [System Design : Design a service like TinyUrl | youtube](https://www.youtube.com/watch?v=fMZMm_0ZhK4)
 * [대용량 서버 구축을 위한 Memcached와 Redis](http://www.yes24.com/Product/Goods/12465552)
 * [memcached](/memcached/README.md)
 * [redis](/redis/README.md)

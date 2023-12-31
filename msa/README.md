@@ -1,3 +1,4 @@
+- [Abstract](#abstract)
 - [Materials](#materials)
 - [History](#history)
 - [Spring Cloud VS Kubernetes](#spring-cloud-vs-kubernetes)
@@ -20,11 +21,51 @@
 
 ----
 
+# Abstract
+
+마이크로 서비스 아키텍처는 애플리케이션을 작은 크기의 모듈식 및 독립적으로 배포
+가능한 서비스들의 모음으로 구조화하는 소프트웨어 개발 방식입니다. 각
+마이크로서비스는 단일하고 구체적인 기능을 수행하도록 설계되며, 애플리케이션의
+나머지 부분에서 독립적으로 개발, 배포 및 확장할 수 있습니다.
+마이크로서비스끼리는 경량 API, 표준화된 프로토콜 또는 메시징 메커니즘을 사용하여
+통신합니다.
+
+이 아키텍처는 전통적인 모노리식 아키텍처에 비해 더 세밀하고 유연한 접근 방식을
+제공하여 복잡한 애플리케이션을 구축할 수 있습니다. 전통적인 모노리식
+아키텍처에서는 전체 애플리케이션이 하나의 연결된 단위로 구축됩니다.
+
+마이크로서비스 아키텍처의 주요 특성은 다음과 같습니다:
+
+- 분산 및 모듈식: 각 마이크로서비스는 자체 코드베이스, 데이터 저장 및 인프라를
+  갖추고 있어 독립적으로 개발 및 관리할 수 있습니다.
+- 도메인 주도 설계: 마이크로서비스는 특정 비즈니스 기능이나 도메인 개념과
+  일치하므로 애플리케이션의 목적 및 기능에 대한 이해를 촉진합니다.
+- 확장성: 각 마이크로서비스는 독립적으로 확장할 수 있어 효율적인 자원 활용 및
+  애플리케이션의 다른 부분에 대한 가변적인 부하 처리가 가능합니다.
+- 유연성: 다른 마이크로서비스는 서로 다른 프로그래밍 언어, 프레임워크, 도구를
+  사용하여 개발할 수 있어 팀이 특정 서비스에 가장 적합한 기술을 선택할 수
+  있습니다.
+- 탄력성: 각 서비스가 격리되어 있고 필요한 장애 허용 및 대체 메커니즘을 설계할
+  수 있으므로 한 마이크로서비스의 실패 또는 문제가 전체 애플리케이션에 미치는
+  영향이 줄어듭니다.
+
+그러나 마이크로 서비스 아키텍처는 서비스 간 통신, 서비스 검색, 데이터 일치성
+관리의 복잡성이 증가하는 등의 일부 도전 과제를 초래하기도 합니다. 이러한 도전
+과제에 대응하기 위해 조직들은 종종 컨테이너화, 서비스 메시, API 게이트웨이, 분산
+추적과 같은 도구와 기법에 의존합니다.
+
+마이크로서비스 아키텍처는 큰 규모의 복잡하고 고성능 애플리케이션을 구축하며 쉽게
+업데이트하고 유지 관리할 수 있는 시스템을 구축하려는 조직들에게 인기가 있습니다.
+마이크로 서비스 아키텍처를 사용하는 회사들의 예로는 아마존, 넷플릭스, 스포티파이
+등이 있습니다.
+
 # Materials
 
-* [도서 마이크로서비스 아키텍처 구축 가이드(한빛미디어)](https://m.hanbit.co.kr/store/books/book_view.html?p_code=B9403623796)
-  * [src](https://github.com/wharup/book-examples)
-* [A pattern language for microservices](https://microservices.io/patterns/index.html)
+- [The What, Why, and How of a Microservices Architecture](https://medium.com/hashmapinc/the-what-why-and-how-of-a-microservices-architecture-4179579423a9)
+- [Microservices Lessons From Netflix](https://newsletter.systemdesign.one/p/netflix-microservices)
+- [도서 마이크로서비스 아키텍처 구축 가이드(한빛미디어)](https://m.hanbit.co.kr/store/books/book_view.html?p_code=B9403623796)
+  - [src](https://github.com/wharup/book-examples)
+- [A pattern language for microservices](https://microservices.io/patterns/index.html)
   - microservices 의 기본개념
   - [ftgo-monolith src](https://github.com/microservices-patterns/ftgo-monolith)
   - [ftgo-msa src](https://github.com/microservices-patterns/ftgo-application)
@@ -35,13 +76,14 @@
     - event sourcing 을 지원하는 framework 이다. ftgo 에 사용되었다.
   - [eventuate-foundation](https://github.com/orgs/eventuate-foundation/repositories)
     - eventuate-tram 이 사용하는 library
-* [MSA 제대로 이해하기 -(1) MSA의 기본 개념](https://velog.io/@tedigom/MSA-%EC%A0%9C%EB%8C%80%EB%A1%9C-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-1-MSA%EC%9D%98-%EA%B8%B0%EB%B3%B8-%EA%B0%9C%EB%85%90-3sk28yrv0e)
-* [Microservices @ wikipedia](https://en.wikipedia.org/wiki/Microservices)
-* [[우아콘2020] 배달의민족 마이크로서비스 여행기 | youtube](https://www.youtube.com/watch?v=BnS6343GTkY) 
+- [MSA 제대로 이해하기 -(1) MSA의 기본 개념](https://velog.io/@tedigom/MSA-%EC%A0%9C%EB%8C%80%EB%A1%9C-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0-1-MSA%EC%9D%98-%EA%B8%B0%EB%B3%B8-%EA%B0%9C%EB%85%90-3sk28yrv0e)
+- [Microservices | wikipedia](https://en.wikipedia.org/wiki/Microservices)
+- [[우아콘2020] 배달의민족 마이크로서비스 여행기 | youtube](https://www.youtube.com/watch?v=BnS6343GTkY) 
 
 # History
 
-As early as 2005, Peter Rodgers introduced the term "Micro-Web-Services" during a presentation at the Web Services Edge conference.
+As early as 2005, **Peter Rodgers** introduced the term "Micro-Web-Services" during
+a presentation at the Web Services Edge conference.
 
 # Spring Cloud VS Kubernetes
 
@@ -85,9 +127,11 @@ microservices 의 대표적인 implementation 중 Spring Cloud 와 Kubernetes �
 ## Refactoring to microservices
 
 * **Strangler Application**
-  * 새로운 service 로 migration 을 위해 legacy application 을 조금씩 일부를 개선하는 pattern 을 말한다.
+  * 새로운 service 로 migration 을 위해 legacy application 을 조금씩 일부를
+    개선하는 pattern 을 말한다.
 * **Anti-corruption layer**
-  * legacy service 와 new service 에 layer 를 두어 서비스 충돌이 발생하지 않게 하는 pattern 을 말한다.
+  * legacy service 와 new service 에 layer 를 두어 서비스 충돌이 발생하지 않게
+    하는 pattern 을 말한다.
 
 ## Data management
 
@@ -97,23 +141,26 @@ microservices 의 대표적인 implementation 중 Spring Cloud 와 Kubernetes �
   * 하나의 DataBase 를 여러 application 들이 사용하는 pattern 을 말한다.
 * **Saga**
   * local transaction 들을 모아서 처리하는 pattern 을 말한다.
-  * choreography-based saga, orchestration-based saga 와 같이 2 가지가 있다.
-  * [distributedtransaction](/distributedtransaction/README.md) 참고
+  * **choreography-based saga**, **orchestration-based saga** 와 같이 2 가지가 있다.
+  * [Distributed Transaction](/distributedtransaction/README.md) 참고
 * **API Composition**
-  * 하나의 request 를 다수의 reqeust 로 나누고 결과를 합하여 response 로 돌려주는 pattern 을 말한다.
+  * 하나의 request 를 다수의 request 로 나누고 결과를 합하여 response 로
+    돌려주는 pattern 을 말한다.
 * **CQRS**
   * 쓰기와 읽기를 분리해서 구현하는 pattern 을 말한다.
-* **Domain event**
+* **Domain Event**
   * 여러개의 domain service 들 event 를 주고받도록 구현한 pattern 을 말한다.
-  * Domain event 는 [DDD](/domaindrivendesign/README.md) 에서 Business Logic 을 위해 발생한 어떤 것을 말한다.
+  * Domain event 는 [DDD](/domaindrivendesign/README.md) 에서 Business Logic 을
+    위해 발생한 어떤 것을 말한다.
 * **Event sourcing**
   * service 의 이력을 모두 event 로 만들어 저장하는 pattern 을 말한다.
-  * 예를 들어 order service 의 이력을 orderCreated, orderApproved, orderCanceled, orderShipped 와 같이 모두 event 로 만들어 저장한다. 
+  * 예를 들어 order service 의 이력을 
+    **orderCreated, orderApproved, orderCanceled, orderShipped** 와 같이 모두 event 로 만들어 저장한다. 
   * service 의 흐름을 상태별로 구분해서 구현할 수 있다.
 
 ## Transactional messaging
 
-* **[Transactional outbox](msa_transactional_outbox.md)**
+* **[Transactional Outbox](msa_transactional_outbox.md)**
 * **Transaction log tailing**
   * outbox table 을 polling 하지 않고 transaction log 를 polling 하다가 message 가 삽입되면 message broker 에 전달하는 pattern
   * DynamoDB Streams 가 해당된다.

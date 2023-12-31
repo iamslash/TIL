@@ -194,3 +194,5 @@ Instance Redis 에 저장해 둔다. 특정 user 의 점수를 보고 상위 구
 들이 있는지 알 수 있다.
 
 # References
+
+- [Leaderboard System Design](https://systemdesign.one/leaderboard-system-design/)

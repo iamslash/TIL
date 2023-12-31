@@ -1312,12 +1312,17 @@ Expansion](/bash/README.md#shell-parameter-expansion) 참고.
   * `ls | head -5`
 * `awk`
   * [awk](/awk/README.md)
+  * A versatile programming language in itself, awk scans lines for patterns and
+    can manipulate the output. It's commonly used for data extraction and
+    reporting.
   * [리눅스 awk 사용법](https://zzsza.github.io/development/2017/12/20/linux-6/)
   * `cat a.txt | awk '{print $4}'`
     * a.txt 를 읽어서 매 줄마다 4 번 째 컬럼만 출력하라
   * `cat a.txt | awk -F, '{print $2, $4}`
     * a.txt 를 읽어서 매 줄마다 `,` 를 구분자로 해서 2, 4 번 째 컬럼만 출력하라. 
 * `uniq`
+  * This utility filters out or reports repeated lines in a file. It's often
+    used in conjunction with sort to count unique lines.
   * `uniq a.txt` 유일한 라인만 출력
   * `uniq -c a.txt` 중복된 라인의 개수를 출력
   * `uniq -d a.txt` 중복된 라인들을 하나씩만 출력.
@@ -1328,6 +1333,9 @@ Expansion](/bash/README.md#shell-parameter-expansion) 참고.
   * `uniq -D -s 2 a.txt` 2 바이트는 건너띄고 중복된 라인들 모두
   * `uniq -D -f 2 a.txt` 2 필드는 건너띄고 중복된 라인들 모두
 * `sort`
+  * As the name implies, sort can order the lines of a file in a particular
+    sequence, either numerically or alphabetically, and has various options to
+    customize the output.
   * `sort a.txt > b.txt`
   * `sort -r a.txt > b.txt`
     * sort reversly
@@ -1350,6 +1358,9 @@ Expansion](/bash/README.md#shell-parameter-expansion) 참고.
   * 괜찮은 text syslog viewer
 * `journalctl`
   * [[Linux] journalctl을 이용해 systemd 로그 확인하기](https://twpower.github.io/171-journalctl-usage-and-examples)
+  * Specific to systemd, journalctl queries and displays entries from the
+    systemd journal, which is a system service for collecting and storing log
+    data.
   * systemd log 확인
   * `journalctl -u <systemd-unit-name>`
 

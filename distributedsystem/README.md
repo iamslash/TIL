@@ -220,51 +220,46 @@ consistency, reliability, and correct functioning of distributed systems.
 
 # Consensus Problems
 
-The consensus problem is a fundamental challenge in distributed computing, where
-multiple processes or nodes need to reach an agreement on a common value based
-on their individual inputs. This problem often arises in practical scenarios,
-such as distributed transactions, distributed databases, leader election, or
-state machine replication, where nodes in a distributed system need to agree on
-values or actions to maintain overall consistency and correct functioning of the
-system.
+- [Consensus in Distributed System](https://medium.com/@sourabhatta1819/consensus-in-distributed-system-ac79f8ba2b8c)
 
-A consensus algorithm aims to solve the consensus problem while satisfying the
-following crucial properties:
+분산 컴퓨팅에서 합의 문제는 여러 프로세스 또는 노드가 개별 입력에 기반하여 공통
+값을 합의해야 하는 기본적인 도전 과제입니다. 이 문제는 분산 트랜잭션, 분산
+데이터베이스, 리더 선출, 상태 머신 복제 등의 실용적인 시나리오에서 종종
+발생하며, 분산 시스템 내 노드들이 전체 일관성과 올바른 기능을 유지하기 위해
+값이나 행동에 대해 합의해야 하는 경우가 대표적입니다.
 
-* **Agreement**: All non-faulty nodes must agree on the same value.
-* **Validity**: The agreed-upon value must be the input value of one of the
-  nodes.
-* **Termination**: All non-faulty nodes must eventually decide on a value.
-* **Integrity**: A node must decide on a value at most once, and if it decides
-  on a value, it must be the value it initially proposed or received from
-  another node.
-  
-The consensus problem becomes even more challenging in the presence of faulty
-nodes that may fail, crash, or exhibit Byzantine behavior (where nodes may
-exhibit unpredictable, contradictory, or malicious behavior). **Consensus
-algorithms** need to tolerate a certain number of faulty nodes while still
-guaranteeing the desired properties.
+합의 알고리즘은 다음 중요한 속성을 만족하면서 합의 문제를 해결하는 데 목표를
+두고 있습니다.
 
-Some well-known consensus algorithms and protocols include:
+* **합의(Agreement)**: 모든 비결함 노드가 동일한 값을 합의해야 합니다.
+* **유효성(Validity)**: 합의된 값은 노드 중 하나의 입력 값이어야 합니다.
+* **종료(Termination)**: 모든 비결함 노드는 결국 값을 결정해야 합니다.
+* **무결성(Integrity)**: 노드는 최대한 한 번만 값을 결정해야 하며, 값에 결정하는
+  경우 처음에 제안했거나 다른 노드로부터 받은 값이어야 합니다.
 
-* **Paxos**: A consensus algorithm that tolerates non-Byzantine faults (such as
-  node crashes) and guarantees safety (agreement and validity) and liveness
-  (termination) in partially synchronous systems.
-* **Raft**: A consensus algorithm specifically designed for readability and
-  understandability, offering similar guarantees as Paxos, but with a more
-  straightforward approach and implementation.
-* **Byzantine fault-tolerant (BFT) protocols**: Algorithms like Practical
-  Byzantine Fault Tolerance (PBFT) and Stellar Consensus Protocol (SCP) provide
-  consensus guarantees in the presence of Byzantine faults, where nodes may
-  exhibit arbitrary or malicious behavior.
-* **Proof-of-Work (PoW) and Proof-of-Stake (PoS)**: Consensus mechanisms used in
-  cryptocurrency systems like Bitcoin and Ethereum to achieve agreement on the
-  global ledger state in a decentralized manner.
+결함이 있는 노드가 존재하는 경우 합의 문제는 더욱 어려워집니다. 이러한 노드는
+실패, 충돌 또는 비잔틴 행동(노드가 예측할 수 없거나 모순되거나 악의적인 행동을
+할 수 있는 경우)을 보일 수 있습니다. **합의 알고리즘**은 원하는 속성을 보장하는
+동시에 일정 수의 결함 노드도 용인해야 합니다.
 
-Solving the consensus problem is essential for ensuring the **accuracy**,
-**consistency**, and **reliability** of distributed systems. It allows them to
-coordinate their actions effectively despite inherent challenges such as network
-latency, node failures, and asynchrony.
+일부 잘 알려진 합의 알고리즘 및 프로토콜은 다음과 같습니다.
+
+* **Paxos**: 비잔틴 결함(노드 충돌과 같은 사례)을 용인하며, 부분적으로 동기화된
+  시스템에서 안전성(합의 및 유효성)과 활성성(종료)을 보장하는 합의
+  알고리즘입니다.
+* **Raft**: 가독성 및 이해성을 위해 특별히 설계된 합의 알고리즘으로, Paxos와
+  유사한 보장을 제공하지만 더 간결하고 직관적인 접근 방식과 구현을 제공합니다.
+* **비잔틴 장애 허용 프로토콜(Byzantine fault-tolerant, BFT, protocols)**:
+  노드가 임의로 혹은 악의적인 행동을 취할 수 있는 환경에서 합의 보장을 제공하는
+  알고리즘으로 Practical Byzantine Fault Tolerance(PBFT) 및 Stellar Consensus
+  Protocol(SCP)이 있습니다.
+* **작업 증명(Proof-of-Work, PoW), 지분 증명(Proof-of-Stake, PoS)**: 비트코인과
+  이더리움과 같은 암호화폐 시스템에서 분산 성격의 글로벌 원장 상태에 합의를
+  이루기 위해 사용되는 합의 메커니즘입니다.
+
+합의 문제를 해결하는 것은 분산 시스템의 **정확성**, **일관성**, **신뢰성**을
+보장하는 데 필수적입니다. 이를 통해 네트워크 대기 시간, 노드 실패 및 비동기 등이
+내재된 도전에도 불구하고 효과적으로 작업을 조율할 수 있습니다.
 
 # The FLP Impossibility Result
 
@@ -453,57 +448,160 @@ like **Paxos** and **Raft** address some of these limitations.
 
 > [Paxos](https://www.microsoft.com/en-us/research/uploads/prod/2016/12/paxos-simple-Copy.pdf)
 
-The **Paxos** protocol is a consensus algorithm used in distributed systems to
-ensure that a set of nodes can agree on a single value, even in the presence of
-node failures, crashes, or network latency. Paxos is designed to be
-fault-tolerant, ensuring that the consensus is reached as long as a majority of
-nodes are functioning correctly and communicating. It is commonly used in
-applications like distributed databases, state machine replication, and
-distributed transaction management, where multiple nodes need to agree on
-consistent values or operations.
+Paxos 프로토콜은 분산 시스템에서 사용되는 합의 알고리즘으로, 노드 실패, 충돌
+또는 네트워크 지연이 발생할 경우에도 노드 집합이 단일 값을 동의할 수 있는지
+확인합니다. Paxos는 과반수의 노드가 정상적으로 작동하고 통신하는 한 합의가
+이루어지도록 내결함성을 가지도록 설계되었습니다. 분산 데이터베이스, 상태 기계
+복제 및 분산 트랜잭션 관리와 같이 여러 노드가 일관된 값이나 작업에 동의해야 하는
+응용 프로그램에서 주로 사용됩니다.
 
-The key idea behind **Paxos** is that a value is considered agreed upon if a
-majority of nodes have accepted it. By selecting values in increasing order of
-proposal numbers, the protocol ensures that values are chosen by a unique
-proposer, and that this chosen value eventually becomes the agreed-upon value.
+Paxos의 핵심 개념은 노드의 과반수가 해당 값을 수용한 경우 해당 값이 합의 된
+것으로 간주된다는 것입니다. 제안 번호 순서대로 값을 선택함으로써 프로토콜은
+고유한 제안자에 의해 값이 선택되고, 이 결정된 값이 최종적으로 동의된 값이 될
+것임을 보장합니다.
 
-The Paxos protocol involves three primary roles:
+Paxos 프로토콜은 세 가지 주요 역할을 포함합니다:
 
-* **Proposers**: Nodes that initiate proposals for a value to be agreed upon.
-* **Acceptors**: Nodes voting on proposals, accepting or rejecting them based on
-  Paxos rules.
-* **Learners**: Nodes that learn about the chosen value and take appropriate
-  actions. 
-  
-Paxos operates in two main phases:
+* **Proposers**: 합의할 값에 대한 제안을 발표하는 노드입니다.
+* **Acceptors**: 제안을 투표하며, Paxos 규칙에 따라 제안을 수락하거나 거부하는 노드입니다.
+* **Learners**: 결정된 값을 알게 되어 적절한 조치를 취하는 노드입니다.
 
-* **Prepare Phase**:
-  * A proposer selects a proposal number n and sends a "prepare request" message
-    to a majority of acceptors.
-  * When an acceptor receives the prepare request, it checks if the proposal
-    number n is higher than any proposal it has seen before. If so, the acceptor
-    acknowledges the message, promising not to accept proposals with a lower
-    number than n, and sends back its highest accepted proposal (if any) to the
-    proposer.
-* **Accept Phase**:
-  * The proposer receives responses from a majority of acceptors. It selects the
-    value associated with the highest-numbered proposal from the responses (or
-    uses a new value if no previously accepted proposals exist) and sends an
-    "accept request" with the pair (n, value) to a majority of acceptors.
-  * If an acceptor receives the accept request and has not promised to ignore
-    proposals with numbers less than n, it accepts the proposal and sends an
-    "accepted" message to the proposer and learners.
+Paxos는 두 가지 주요 단계로 작동합니다:
 
-When **proposers** and **learners** receive "accepted" messages from a majority
-of **acceptors**, the value is considered chosen, and consensus is achieved.
+* **Prepare Phase**: 
+  * 제안자가 제안 번호 n을 선택하고 "준비 요청" 메시지를 과반수의 수락자에게
+    보냅니다.
+  * 수락자가 준비 요청을 받으면 제안 번호 n이 이전에 본 제안보다 높은지
+    확인합니다. 만약 그렇다면, 수락자는 메시지를 승인하고, n보다 낮은 번호의
+    제안을 받지 않겠다는 약속을 하고, 이전에 수락한 최고 제안 (있는 경우)을
+    제안자에게 다시 보냅니다.
+* **Accept Phase**: 
+  * 제안자가 수락자의 과반수로부터 응답을 받습니다. 그 후 응답으로부터 가장 높은
+    번호의 제안과 연관된 값을 선택하거나 (이전에 받아들여진 제안이 없는 경우 새
+    값을 사용)하고, (n, 값) 쌍으로 된 "수락 요청"을 과반수의 수락자에게
+    보냅니다.
+  * 수락자가 수락 요청을 받고 n 이하의 번호를 가진 제안을 무시하기로 한 약속이
+    없으면, 제안을 수락하고 "승인됨" 메시지를 제안자와 학습자에게 보냅니다.
 
-**Paxos** guarantees **safety** (ensuring that no two nodes can agree on
-different values) under all conditions and guarantees **liveness** (ensuring
-that a value is eventually agreed upon) in the absence of failures or
-asynchrony. However, the protocol can be complex to understand and implement.
-Variants like **Multi-Paxos** and other consensus algorithms like **Raft** have
-been developed to address some complexities and improve upon certain aspects of
-the basic Paxos protocol.
+**제안자**와 **학습자**가 **수락자**의 과반수로부터 "승인됨" 메시지를 받으면,
+값은 결정된 것으로 간주되며 합의가 이루어집니다.
+
+**Paxos**는 모든 조건에서 안전성(다른 값에 동의 할 수 없다는 것을 보장)을
+보장하고 실패 또는 비동기가 없는 경우 활성성(결국 값이 합의된다는 것을 보장)을
+보장합니다. 그러나 이 프로토콜은 이해하고 구현하기 복잡할 수 있습니다.
+**Multi-Paxos**와 같은 변형 및 **Raft**와 같은 다른 합의 알고리즘이 기본 Paxos
+프로토콜의 일부 복잡성과 특정 측면을 개선하기 위해 개발되었습니다.
+
+Paxos 알고리즘이 사용되는 주요 예제와 응용 프로그램은 다음과 같습니다:
+
+- 분산 데이터베이스: Paxos는 다양한 분산 데이터베이스 시스템에서 사용되어 노드
+  간의 일관된 상태를 유지합니다. 일례로, Google의 Spanner 데이터베이스 시스템은
+  Paxos 알고리즘을 사용하여 데이터베이스의 일관성을 유지하고 범위 데이터를
+  전역으로 분산합니다.
+- 분산 트랜잭션 관리: Paxos는 여러 노드에서 트랜잭션의 순서와 일관성을
+  합의하도록 지원하는 분산 트랜잭션 관리 시스템에서 사용됩니다.
+- 상태 기계 복제: 상태 기계 복제는 분산 시스템 내에서 비동기적 상태 변경을
+  처리하기 위한 핵심 기술입니다. Paxos는 상태 기계 간의 순서와 일관성을 유지하는
+  데 사용됩니다.
+- 종료 감지: Paxos는 분산 시스템에서 프로세스의 종료를 검출하고 모니터링하는 데
+  사용되는 알고리즘이기도 합니다. 이는 천명치 않은 프로세스의 종료에 의해
+  시스템의 정확한 작동이 보장되어야 하는 경우 유용합니다.
+- 리더 선출: Paxos는 리더 선출 메커니즘에서 중요한 역할을 합니다. 분산
+  시스템에서 일반적으로 리더 노드가 다른 노드들에게 결정을 내리거나 명령을
+  내리고, Paxos는 여러 노드에서 리더를 동의하여 선출하는 데 사용됩니다.
+
+기술적으로 말하면, Paxos는 수많은 분산 시스템에서 사용되지만 일부 복잡성과
+구현의 어려움 때문에 사용되는 경우 눈에 띄지 않을 수 있습니다. 많은 경우 기본
+Paxos 알고리즘이 등장하여 Multi-Paxos, EPaxos, Fast Paxos 등과 같은 개량된
+버전이 개발되었습니다.
+
+```java
+// Proposer, Acceptor, Learner Interfaces
+public interface Proposer {
+    void prepare(int proposalNumber);
+    void receivePrepareResponse(Promise promise);
+    void sendAcceptRequest();
+}
+
+public interface Acceptor {
+    Promise prepare(int proposalNumber);
+    boolean accept(Proposal proposal);
+}
+
+public interface Learner {
+    void learn(Proposal proposal);
+}
+
+// Proposer, Acceptor, Learner Implementation
+public class BasicProposer implements Proposer {
+    // Implementation details...
+}
+
+public class BasicAcceptor implements Acceptor {
+    // Implementation details...
+}
+
+public class BasicLearner implements Learner {
+    // Implementation details...
+}
+
+// Entry
+public class PaxosExample {
+    public static void main(String[] args) {
+        // Create instances of Proposer, Acceptor, and Learner
+        Proposer proposer = new BasicProposer();
+        Acceptor acceptor = new BasicAcceptor();
+        Learner learner = new BasicLearner();
+
+        // Run the Prepare phase
+        proposer.prepare(1);
+
+        // Receive a Prepare response (simulate with a Promise object)
+        Promise promise = acceptor.prepare(1);
+        proposer.receivePrepareResponse(promise);
+
+        // Send an Accept request
+        proposer.sendAcceptRequest();
+
+        // Simulate an acceptor accepting the proposal and a learner learning it
+        Proposal proposal = new Proposal(1, "Value");
+        boolean accepted = acceptor.accept(proposal);
+        if (accepted) {
+            learner.learn(proposal);
+        }
+
+        // Test Paxos
+        System.out.println("Paxos completed");
+    }
+}
+```
+
+Paxos와 Raft는 분산 시스템에서 합의를 이루는 데 사용되는 두 가지 알고리즘입니다.
+두 알고리즘의 주요 차이점은 다음과 같습니다:
+
+- 이해하기 쉬움: Raft는 Paxos보다 이해하기 쉽게 설계되었습니다. Paxos가 설명서와
+  학습 자료가 거의 없고 이해하기 어렵다면, Raft는 쉽게 접근할 수 있는 문서와
+  예제로 구성되어 있습니다. 이로 인해 Raft를 사용하여 더 빠르게 프로젝트를
+  작성하고 유지 관리할 수 있습니다.
+- 구조: Paxos는 일련의 독립적인 프로토콜로 구성되어 있어 구현이 복잡할 수
+  있습니다. 반면 Raft는 모듈화된 설계가 적용되어 있어 구현 및 학습에 장벽이
+  적습니다.
+- 리더 선출: Paxos는 리더 선출이 암시적으로 이루어지는 반면, Raft는 명시적으로
+  리더 선출 프로세스를 가지고 있습니다. 이로써 Raft에서는 중앙 집중적인 리더
+  노드가 시스템에서 모든 판단을 내리며, 이는 제어 및 디버깅을 용이하게 합니다.
+- 판결 메커니즘: Raft에서 투표는 일련의 연속적인 항목으로 구성됩니다. 이는 모든
+  노드를 연속된 항목으로 동기화할 수 있는 알고리즘을 사용합니다. 반면
+  Paxos에서는 논리적 순서에 따라 투표를 선택할 수 있고, 독립된 항목을 기반으로
+  작동합니다.
+- 안정성 및 최적화: Paxos에서는 각 단계에 대해 별도의 알고리즘을 사용하여
+  최적화를 수행할 수 있습니다. 반면에 Raft에서는 일반적으로 알고리즘 전체를
+  최적화하고 개선합니다. 이로 인해 Paxos의 성능은 경우에 따라 Raft보다 더 높을
+  수 있습니다. 그러나 Raft의 단순성으로 인해 실제 구현에서 종종 더 나은 결과를
+  얻을 수 있습니다.
+
+결론적으로, 두 알고리즘의 목적이 동일하고 한 알고리즘이 다른 것보다 좋은 성능을
+내는 것은 상황에 따라 다릅니다. 그러나 Raft의 이해하기 쉬운 구조와 명시적인 리더
+선출, 구현의 효과성으로 인해 많은 신규 프로젝트에서 선호되는 경향이 있습니다.
 
 # Raft
 
@@ -515,49 +613,183 @@ the basic Paxos protocol.
 
 ---
 
-Raft is a consensus algorithm designed for distributed systems to ensure that a
-set of nodes can agree on a single value or sequence of values, even in the
-presence of node failures, crashes, or network latency. **Raft** was designed as
-an alternative to the **Paxos** protocol, with a focus on simplicity and
-understandability, while providing similar **safety** and **liveness**
-guarantees.
+Raft와 Gossip Protocol은 분산 시스템에서 사용되는 서로 다른 유형의
+알고리즘입니다. 어떤 알고리즘이 더 좋다고 단정지을 수는 없고, 시스템의 요구
+사항에 따라 적절한 알고리즘을 선택해야 합니다.
 
-The **Raft** algorithm is primarily used for managing replicated state machines,
-distributed databases, and distributed transaction management, where multiple
-nodes need to agree on consistent values or operations.
+Raft는 분산 시스템에서 독립적인 서버들 사이에 합의를 이루고 중앙 서버가 없을 때
+데이터의 일관성을 유지하기 위한 알고리즘 입니다. Raft는 강력한 일관성(Strong
+consistency)을 제공하며, 높은 가용성 및 안정성을 지원할 수 있습니다.
 
-The main components of the Raft algorithm include:
+Gossip Protocol은 확장성이 뛰어나며 내결함성이 강한 분산 시스템에서의 메시지
+전송을 위한 프로토콜입니다. 이 프로토콜은 노드 간 원활한 정보 공유 및 가용성을
+제공하지만, 최종 일관성(Eventual consistency)을 제공할 뿐 강력한 일관성은
+보장하지 않습니다.
 
-* **Leader Election**: Raft divides time into terms, and for each term, there is
-  a single elected leader responsible for managing the system and processing
-  client requests. Nodes (also called candidates) can initiate a leader election
-  if they do not receive messages from the leader within a certain time window.
-  The election process involves sending vote requests to other nodes, and
-  eventually, a candidate becomes the leader when it receives votes from the
-  majority of nodes.
+따라서, 시스템이 강력한 일관성을 필요로 하면 Raft를 사용하는 것이 더 좋을 수
+있고, 확장성과 내결함성이 더 중요한 요구 사항일 때는 Gossip Protocol이 적합할 수
+있습니다. 결정하는 데 있어 사용 사례와 요구 사항이 주요한 역할을 합니다.
 
-* **Log Replication**: Once a leader is elected, it is responsible for managing
-  and replicating the log of operations (or commands) to other nodes (also
-  called followers). The leader appends new entries to its log and sends them to
-  followers. Followers acknowledge when they successfully append entries to
-  their logs.
+다음은 Raft 를 구현한 java code 이다.
 
-* **Log Commit**: The leader determines when an entry is considered "committed",
-  which means it has been replicated safely across a majority of nodes. A
-  committed entry is applied to the state machine, and its result is returned to
-  the client. The leader communicates the commit index to followers so they can
-  apply the committed entries locally.
+```java
+// NodeRole.java
+public enum NodeRole {
+  FOLLOWER,
+  CANDIDATE,
+  LEADER
+}
 
-* **Safety and Consistency**: Raft guarantees consistency by imposing
-  restrictions on leader election and log structure. For example, candidate
-  nodes must have at least up-to-date logs as the current nodes, and a committed
-  log entry must have the same operation and index across all nodes.
+// RaftNode.java
+import java.util.concurrent.atomic.AtomicInteger;
 
-**Raft** improves upon **Paxos** by providing a better separation of
-responsibilities and a more intuitive approach to managing the distributed
-consensus problem. It has become popular for its ease of understanding,
-implementation, and use in building distributed systems, although it may have
-some trade-offs in terms of performance and message overhead compared to Paxos.
+public class RaftNode {
+  private String id;
+  private NodeRole role;
+  private int currentTerm;
+  private AtomicInteger votesReceived;
+
+  public RaftNode(String id) {
+    this.id = id;
+    this.role = NodeRole.FOLLOWER;
+    this.currentTerm = 0;
+    this.votesReceived = new AtomicInteger();
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public NodeRole getRole() {
+    return role;
+  }
+
+  public void setRole(NodeRole role) {
+    System.out.println("Node " + id + " changed role from " + this.role + " to " + role);
+    this.role = role;
+  }
+
+  public int getCurrentTerm() {
+    return currentTerm;
+  }
+
+  public void setCurrentTerm(int term) {
+    System.out.println("Node " + id + " changed term from " + this.currentTerm + " to " + term);
+    this.currentTerm = term;
+    this.votesReceived.set(0);
+  }
+
+  public int getVotesReceived() {
+    return votesReceived.get();
+  }
+
+  public int incrementVotesReceived() {
+    return votesReceived.incrementAndGet();
+  }
+}
+
+// Election.java
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+
+public class Election {
+  private final List<RaftNode> nodes;
+
+  public Election(int numNodes) {
+    nodes = new ArrayList<>(numNodes);
+    for (int i = 1; i <= numNodes; i++) {
+      nodes.add(new RaftNode("Node" + i));
+    }
+  }
+
+  public List<RaftNode> getNodes() {
+    return nodes;
+  }
+
+  public void simulateElection() {
+    // 모든 노드를 Candidate로 설정하고 투표를 시작합니다.
+    System.out.println("Starting an election...");
+    nodes.forEach(node -> node.setRole(NodeRole.CANDIDATE));
+    
+    // 각 Candidate는 자기 자신에게 투표합니다.
+    nodes.forEach(RaftNode::incrementVotesReceived);
+
+    // 각 Follower는 임의로 선출된 후보에게 투표합니다.
+    nodes.stream()
+        .filter(node -> node.getRole() == NodeRole.FOLLOWER)
+        .forEach(follower -> {
+          int randomCandidateIndex = new Random().nextInt(nodes.size());
+          RaftNode randomCandidate = nodes.get(randomCandidateIndex);
+          randomCandidate.incrementVotesReceived();
+        });
+
+    // 득표수가 과반수를 넘은 노드 중 하나를 Leader로 선출합니다.
+    List<RaftNode> leaders = nodes.stream()
+            .filter(node -> node.getVotesReceived() > nodes.size() / 2)
+            .collect(Collectors.toList());
+    if (!leaders.isEmpty()) {
+      RaftNode newLeader = leaders.get(new Random().nextInt(leaders.size()));
+      newLeader.setRole(NodeRole.LEADER);
+    } else {
+      System.out.println("No leader selected. Trying again...");
+      simulateElection();
+    }
+  }
+}
+
+// Main.java
+public class Main {
+  public static void main(String[] args) {
+    // 클러스터의 노드 수 설정
+    int numNodes = 5;
+
+    // 선택하려는 클러스터의 노드 수로 새 선거 생성
+    Election election = new Election(numNodes);
+
+    // 선거 시뮬레이션 실행
+    election.simulateElection();
+
+    // 결과 출력
+    System.out.println("\nElection results:");
+    for (int i = 1; i <= numNodes; i++) {
+      RaftNode node = election.getNodes().get(i - 1);
+      System.out.println("Node " + i + ": " + node.getRole());
+    }
+  }
+}
+```
+
+Raft와 Gossip 알고리즘이 일관성을 관리하는 방식은 매우 다릅니다. Raft는 높은
+일관성(strong consistency)을 제공하는 반면 Gossip 알고리즘은 느슨한
+일관성(eventual consistency)을 목표로 합니다.
+
+Raft가 높은 일관성을 보장하기 위한 몇 가지 중요한 방법은 다음과 같습니다.
+
+- **리더 선출 (Leader Election)**: Raft 알고리즘은 클러스터의 모든 노드 간에 
+  **단일 리더(single leader)**을 선출하여 의사결정의 중앙 집중점이 돼 쓰기와 읽기
+  요청을 처리합니다. 이를 통해 쓰기 요청이 순차적으로 처리됩니다. 리더가
+  실패하면 다른 노드가 즉시 리더 역할을 가져옵니다.
+- **로그 복제 (Log Replication)**: 리더 노드는 모든 합의된 동작을 클러스터 내 다른
+  노드에 복제하는 로그를 유지합니다. 로그 항목은 클러스터 노드들과 일관된
+  방식으로 적용되므로 각 노드의 상태가 개별적으로 일관성있게 동기화되어 있다고
+  가정할 수 있습니다.
+- **데이터 변경에 대한 합의 (Consensus over Data Mutations)**: 데이터 변경 요청이
+  들어오면 로그 항목을 리더 노드에 추가한 다음, 리더 노드는 해당 로그 항목을
+  클러스터의 Follower 노드에 전파합니다. 리더 노드는 과반수의 노드가 로그 항목을
+  커밋했을 경우에만 해당 작업이 성공했다고 가정합니다. 이는 일관성있게
+  업데이트를 적용할 때 쿼럼(quorum)이 필요함을 보장합니다.
+
+반면 Gossip 알고리즘은 노드가 상태 정보를 주기적으로 무작위로 선택한 다른 노드와
+교환하는 방식으로 데이터를 동기화합니다. 이 과정은 특정한 순서가 없으며 특정
+시점이되면 모든 노드가 동일한 상태를 갖게 됩니다. 하지만 동시에 여러 노드에서
+발생한 업데이트의 경우 일시적인 충돌이 발생할 수 있고, 일관성이 지연되기 때문에
+최종적인 일관성(단시간 내 일관성을 보장하지 않음)을 제공합니다.
+
+요약하면, Raft는 데이터 변경에 대한 합의과정, 로그 복제, 그리고 리더 선출을 통해
+strong consistency를 보장합니다. 반면 Gossip 알고리즘은 최종적인 일관성(eventual
+consistency)을 목표로 합니다.
 
 # CRDT's (convergent replicated data types) 
 
