@@ -172,4 +172,5 @@ Mongo DB sharding
 
 # References
 
-[Design Pastebin.com (or Bit.ly)](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md)
+- [Paste bin system design | Software architecture for paste bin | youtube](https://www.youtube.com/watch?v=josjRSBqEBI)
+- [Design Pastebin.com (or Bit.ly) | github](https://github.com/donnemartin/system-design-primer/blob/master/solutions/system_design/pastebin/README.md)

@@ -12,8 +12,9 @@
   - [Write Path](#write-path)
   - [Read Path](#read-path)
 - [Extentions](#extentions)
-- [Q&A](#qa)
+- [Q\&A](#qa)
 - [Implementation](#implementation)
+- [References](#references)
 
 -----
 
@@ -94,3 +95,7 @@ data center 장애는 system 복제로 해결한다.
 # Q&A
 
 # Implementation
+
+# References
+
+- [System Design : Distributed Database System Key Value Store | youtube](https://www.youtube.com/watch?v=rnZmdmlR-2M)

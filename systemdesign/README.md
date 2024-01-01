@@ -118,6 +118,10 @@
   - [Distributed Tracing](#distributed-tracing)
   - [Checksum](#checksum)
 - [System Design Interview](#system-design-interview)
+  - [Easy](#easy)
+  - [Medium](#medium)
+  - [Hard](#hard)
+- [Scalability Articles](#scalability-articles)
 - [Real World Architecture](#real-world-architecture)
 - [Company Architectures](#company-architectures)
 - [Company Engineering Blog](#company-engineering-blog)
@@ -3130,38 +3134,82 @@ public class ZookeeperExample {
 
 # System Design Interview
 
-* [Designing A Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md)
+## Easy
+
 * [Designing Consistent Hashing](practices/DesigningConsistentHashing/DesigningConsistentHashing.md)
-* [Designing A Key-Value Store](practices/DesigningAKey-ValueStore/DesigningAKey-ValueStore.md)
 * [Designing A Uniqe ID Generator In Distributed Systems](practices/DesigningAUniqeIDGeneratorInDistributedSystems/DesigningAUniqeIDGeneratorInDistributedSystems.md)
+* [Designing Real-Time Gaming Leaderboard](practices/DesigningReal-TimeGamingLeaderboard/DesigningReal-TimeGamingLeaderboard.md)
 * [Designing A URL Shortener](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md)
-* [Designing A Web Crawler](practices/DesigningaWebCrawler/DesigningaWebCrawler.md)
-* Designing A Notification System
+* [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md)
+* [Designing CDN](practices/DesigningCDN/DesigningCDN.md)
+* [Designing Parking Garrage](practices/DesigningParkingGarrage/DesigningParkingGarrage.md)
+* [Designing Hotel Reservation System](practices/DesigningHotelReservationSystem/DesigningHotelReservationSystem.md)
+* [Designing Ticketmaster](practices/DesigningTicketmaster/DesigningTicketmaster.md)
+* [Designing Vending Machine](practices/DesigningVendingMachine/DesigningVendingMachine.md)
+* [Designing A Key-Value Store](practices/DesigningAKey-ValueStore/DesigningAKey-ValueStore.md)
+* [Designing Distributed Cache](practices/DesigningDistributedCache/DesigningDistributedCache.md)
+* [Designing Distributed Job Scheduler](practices/DesigningDistributedJobScheduler/DesigningDistributedJobScheduler.md)
+* [Designing Authentication System](practices/DesigningAuthenticationSystem/DesigningAuthenticationSystem.md)
+* [Designing Unified Payments Interface (UPI)](practices/DesigningUnifiedPaymentsInterface/DesigningUnifiedPaymentsInterface.md)
 * [Designing A News Feed System](practices/DesigningFacebooksNewsfeed/DesigningFacebooksNewsfeed.md)
+* [Designing Ad Click Event Aggregation](practices/DesigningAdClickEventAggregation/DesigningAdClickEventAggregation.md)
+* [Designing Distributed Email Service](practices/DesigningEmailService/DesigningEmailService.md)
+* [Designing Twitter Search](practices/DesigningTwitterSearch/DesigningTwitterSearch.md)
+
+## Medium
+
+* [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md)
+* [Designing Tinder](practices/DesigningTinder/DesigningTinder.md)
 * [Designing A Chat System](practices/DesigningFacebookMessenger/DesigningFacebookMessenger.md)
-* [Designing A Search Autocomplete System](practices/DesigningTypeaheadSuggestion/DesigningTypeaheadSuggestion.md)
+* [Designing Facebook](practices/DesigningFacebook/DesigningFacebook.md)
+* [Designing Twitter](practices/DesigningTwitter/DesigningTwitter.md)
+* [Designing Reddit](practices/DesigningReddit/DesigningReddit.md)
+* [Designing Netflix](practices/DesigningNetflix/DesigningNetflix.md)
 * [Designing Youtube](practices/DesigningYoutubeorNetflix/DesigningYoutubeorNetflix.md)
-* Designing Google Drive
+* [Designing Google Search](practices/DesigningGoogleSearch/DesigningGoogleSearch.md)
+* [Designing Amazon](practices/DesigningAmazon/DesigningAmazon.md)
+* [Designing Spotify](practices/DesigningSpotify/DesigningSpotify.md)
+* [Designing TikTok](practices/DesigningTikTok/DesigningTikTok.md)
+* [Designing Shopify](practices/DesigningShopify/DesigningShopify.md)
+* [Designing Airbnb](practices/DesigningAirbnb/DesigningAirbnb.md)
+* [Designing A Search Autocomplete System](practices/DesigningTypeaheadSuggestion/DesigningTypeaheadSuggestion.md)
+* [Designing A Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md)
+* [Designing Distributed Message Queue](practices/DesigningDistributedMessageQueue/DesigningDistributedMessageQueue.md)
+* [Designing Flight Booking System](practices/DesigningFlightBookingSystem/DesigningFlightBookingSystem.md)
+* [Designing Online Code Editor](practices/DesigningOnlineCodeEditor/DesigningOnlineCodeEditor.md)
+* [Designing Stock Exchange System](practices/DesigningStockExchangeSystem/DesigningStockExchangeSystem.md)
+* [Designing Metrics Monitoring and Alerting System](practices/DesigningMetricsMonitoringandAlertingSystem/DesigningMetricsMonitoringandAlertingSystem.md)
+* [Designing Notification Service](practices/DesigningNotificationService/DesigningNotificationService.md)
+* [Designing Payment System](practices/DesigningPaymentSystem/DesigningPaymentSystem.md)
+
+## Hard
+
+* [Designing Slack](practices/DesigningSlack/DesigningSlack.md)
+* [Designing Live Comments](practices/DesigningLiveComments/DesigningLiveComments.md)
+* [Designing Distributed Counter](practices/DesigningDistributedCounter/DesigningDistributedCounter.md)
 * [Designing Proximity Service](practices/DesigningProximityService/DesigningProximityService.md)
 * [Designing Nearby Friends](practices/DesigningNearbyFriends/DesigningNearbyFriends.md)
-* [Designing Google Maps](practices/DesigningGoogleMaps/DesigningGoogleMaps.md)
-* [Designing Distributed Message Queue](practices/DesigningDistributedMessageQueue/DesigningDistributedMessageQueue.md)
-* [Designing Metrics Monitoring and Alerting System](practices/DesigningMetricsMonitoringandAlertingSystem/DesigningMetricsMonitoringandAlertingSystem.md)
-* [Designing Ad Click Event Aggregation](practices/DesigningAdClickEventAggregation/DesigningAdClickEventAggregation.md)
-* [Designing Hotel Reservation System](practices/DesigningHotelReservationSystem/DesigningHotelReservationSystem.md)
-* [Designing Distributed Email Service](practices/DesigningEmailService/DesigningEmailService.md)
-* Designing S3-like Object Storage 
-* [Designing Real-Time Gaming Leaderboard](practices/DesigningReal-TimeGamingLeaderboard/DesigningReal-TimeGamingLeaderboard.md)
-* Designing Payment System
-* Designing Digital Wallet
-* Designing Stock Exchange
-* [Designing Ticketmaster](practices/DesigningTicketmaster/DesigningTicketmaster.md)
-* [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md)
-* [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md)
-* [Designing Dropbox](practices/DesigningDropbox/DesigningDropbox.md)
-* [Designing Twitter](practices/DesigningTwitter/DesigningTwitter.md)
-* [Designing Twitter Search](practices/DesigningTwitterSearch/DesigningTwitterSearch.md)
 * [Designing Uber Backend](practices/DesigningUberBackend/DesigningUberBackend.md)
+* [Designing Food Delivery App like Doordash](practices/DesigningFoodDeliveryApplikeDoordash/DesigningFoodDeliveryApplikeDoordash.md)
+* [Designing Google Docs](practices/DesigningGoogleDocs/DesigningGoogleDocs.md)
+* [Designing Google Maps](practices/DesigningGoogleMaps/DesigningGoogleMaps.md)
+* [Designing Zoom](practices/DesigningZoom/DesigningZoom.md)
+* [Designing Dropbox](practices/DesigningDropbox/DesigningDropbox.md)
+* [Designing A Web Crawler](practices/DesigningaWebCrawler/DesigningaWebCrawler.md)
+* [Designing Ticket Booking System like BookMyShow](practices/DesigningTicketBookingSystemlikeBookMyShow/DesigningTicketBookingSystemlikeBookMyShow.md)
+* [Designing Code Deployment System](practices/DesigningCodeDeploymentSystem/DesigningCodeDeploymentSystem.md)
+* [Designing Distributed Cloud Storage like S3](practices/DesigningDistributedCloudStoragelikeS3/DesigningDistributedCloudStoragelikeS3.md)
+* [Designing Distributed Locking Service](practices/DesigningDistributedLockingService/DesigningDistributedLockingService.md)
+* Designing Digital Wallet
+
+# Scalability Articles
+
+- [How Discord stores trillions of messages](https://discord.com/blog/how-discord-stores-trillions-of-messages)
+- [Building In-Video Search](https://netflixtechblog.com/building-in-video-search-936766f0017c)
+- [How Canva scaled Media uploads from Zero to 50 Million per Day](https://www.canva.dev/blog/engineering/from-zero-to-50-million-uploads-per-day-scaling-media-at-canva/)
+- [How Airbnb avoids double payments in a Distributed Payments System](https://medium.com/airbnb-engineering/avoiding-double-payments-in-a-distributed-payments-system-2981f6b070bb)
+- [Stripe’s payments APIs - The first 10 years](https://stripe.com/blog/payment-api-design)
+- [Real time messaging at Slack](https://slack.engineering/real-time-messaging/)
 
 # Real World Architecture
 

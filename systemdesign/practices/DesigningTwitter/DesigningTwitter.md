@@ -223,3 +223,5 @@ read replication because of read-heavy and fault tolerance because of replicatio
 # Q&A
 
 # References
+
+- [Twitter system design | twitter Software architecture | twitter interview questions | youtube](https://www.youtube.com/watch?v=wYk0xPP_P_8)

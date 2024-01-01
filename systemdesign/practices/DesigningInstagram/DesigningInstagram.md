@@ -40,8 +40,8 @@
 
 ## Non-Functional Requirements
 
-* Higly Available
-* Higly Reliable. All photos, videos should not be lost.
+* Highly Available
+* Highly Reliable. All photos, videos should not be lost.
 * The maximum latency is 200ms for news feed generation.
 * use cannot see a photo for a while.
 
@@ -196,4 +196,5 @@ What about using `{timestamp: 52 bits}{photo sequence: 12 bits}` ???
 
 # References
 
-* [Scaling Instagram Infrastructure @ youtube](https://www.youtube.com/watch?v=hnpzNAPiC0E)
+* [Scaling Instagram Infrastructure | youtube](https://www.youtube.com/watch?v=hnpzNAPiC0E)
+* [System Design Mock Interview: Design Instagram | youtube](https://www.youtube.com/watch?v=VJpfO6KdyWE)
