@@ -5,6 +5,14 @@
   - [Supervised Fine Tuning(SFT) model 만들기](#supervised-fine-tuningsft-model-만들기)
   - [Reward model 만들기](#reward-model-만들기)
 - [Prompt Engineering](#prompt-engineering)
+  - [구성 요소](#구성-요소)
+  - [우선 순위](#우선-순위)
+  - [Task](#task)
+  - [Context](#context)
+  - [Example](#example)
+  - [Persona](#persona)
+  - [Form](#form)
+  - [Tone](#tone)
 
 -----
 
@@ -65,3 +73,83 @@ ChatGPT는 세 단계의 학습 과정을 거쳐 성능을 높입니다. 아래�
 
 - [Cognitive Prompting 정리(1zlabs Ken. Ver.231207 공유용) | GoogleSlide](https://docs.google.com/presentation/d/1kayepoiTVT838Tetk02nxeqVmmS9BDc9O7n-4OzJdL8/edit#slide=id.g26309fa4a80_0_0)
   - [video](https://www.youtube.com/watch?v=CkCL8dV_mPk)
+- [프롬프트사용법: 가장 완벽한 GPT 프롬프트 만드는법](https://www.youtube.com/watch?v=olRqEoiWy6Q)
+
+## 구성 요소
+
+1. 작업 (Task)
+2. 맥락 (Context)
+3. 예시 (Example)
+4. 페르소나 (Persona)
+5. 형식 (Form)
+6. 어조 (Tone)
+
+## 우선 순위
+
+* Task 는 필수이다.
+* Context, Example 은 더 좋은 답에 도움이 된다.
+* Persona, Form, Tone 은 없어도 관계 없다.
+
+## Task
+
+명료하게 작성해야 한다. 
+
+```
+생성해 주세요.
+요약해 주세요.
+분석해 주세요.
+```
+
+## Context
+
+작성하기 까다롭다. 다음과 같은 3 가지 요소가 중요하다.
+
+- 배경 (나의 배경은?)
+- 목표 (이 프롬프트의 목적은?)
+- 환경 (환경적 요인은?)
+
+```
+나는 고혈압이 있고, 80 kg 의 남성이야
+20kg 의 체중을 감량하려고 해
+그러나 두변에 운동할 공간이 없어 
+나에게 맞는 다이어트 프로그램을 생성해줘
+```
+
+## Example
+
+예를 전해 주면 결과가 좋아진다.
+
+```
+다음은 입사지원서 양식의 예이다.
+```
+
+## Persona
+
+인격을 정해 주면 결과가 좋아진다. 빌게이츠, 스티브잡스 등등.
+
+```
+너는 수학 선생님이야
+너는 마케팅 전문가야
+```
+
+## Form
+
+표, 리스트, markdown 등등 출력형식을 사용할 수 있다.
+
+## Tone
+
+다음은 주요 부사들이다. 
+
+```
+착하게
+따뜻하게
+부드럽게
+강하고 명료하게
+예의바르게
+```
+
+마땅한 부사가 생각나지 않으면 ChatGpt 에게 물어봐도 좋다.
+
+```
+사직서를 작성하려고 한다. 어떤 톤으로 쓰면 좋을까?
+```
