@@ -67,6 +67,7 @@ ios application 배포 방법을 이해하기 위해서는 다음과 같은 개�
 * DeviceID
   * iPhone 마다 부여된 고유한 ID 를 말한다.
 * AppID
+  * 앱에 부여할 고유한 ID 를 말한다. (ex. `com.iamslash.awsome`)
 * Certificate
   * ios application 을 Certificate 의 비밀키로 signing 해야 App Store 에 제출할
     수 있다. 
@@ -75,7 +76,7 @@ ios application 배포 방법을 이해하기 위해서는 다음과 같은 개�
   * Enterprise Profile 을 만들면 AppID, Certificate 만 필요하다. 즉, DeviceID
     없이 ios app 을 배포할 수 있다.
 
-ios application (ipa) 배포하는 방법은 다음과 같다.
+ios application (ipa) 배포하는 방법들은 다음과 같다.
 
 * Submitting to App Store 
 * Copy ipa to specific devices
