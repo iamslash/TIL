@@ -675,10 +675,47 @@ fi
 Grouping commands can be done with `{}` or `()`.
 
 * `{}` execute commands in same shell.
-* `()` execute commands in sub shell.
+* `()` execute commands in subshell.
 
 ```bash
 $ { echo "Hello,"; echo " World!"; }
+```
+
+**child shell vs subshell**
+
+자식 쉘과 서브 쉘의 차이에 대한 요약과 예제는 다음과 같습니다.
+
+- 자식 쉘 (child shell) : 자식 쉘은 부모 쉘의 부분 복사본입니다. 예를 들어, 부모 쉘의 **환경 변수**는 복사되지만, 부모 쉘의 로컬(내보내지 않은) 변수나 별칭은 복사하지 않습니다. 새로운 자식 쉘이 실행되고 별칭이 없으며 환경 변수만 사용 가능합니다.
+  ```bash
+  $ alias
+  alias gd='pushd' alias l='ls -CF' alias pd='popd'
+  $ bash --norc
+  $ alias
+  $ echo $HOME
+  /home/smith
+  $ exit
+  ```
+- 서브 쉘 (subshell) : 서브 쉘은 부모 쉘의 완전한 복사본입니다. 부모 쉘의 모든 **변수**, **별칭**, **함수** 등을 포함하며, 괄호를 사용하여 실행합니다. 서브 쉘에서 실행된 명령은 부모 쉘의 별칭과 변수를 모두 사용할 수 있습니다.
+  ```bash
+  $ (ls -l)
+  -rw-r--r-- 1 smith smith 325 Oct 13 22:19 animals.txt
+  $ (alias)
+  alias gd='pushd' alias l='ls -CF' alias pd='popd'
+  $ (l)
+  animals.txt
+  ```
+
+서브 쉘 여부를 확인하는 방법은 `BASH_SUBSHELL` 변수를 출력하는 것입니다. 값이 0이 아닌 경우 서브 쉘입니다. BASH_SUBSHELL 값이 0이 아닌 경우(여기서는 1) 서브 쉘임을 확인할 수 있습니다.
+
+```bash
+$ echo $BASH_SUBSHELL
+0
+$ bash
+$ echo $BASH_SUBSHELL
+0
+$ exit
+$ (echo $BASH_SUBSHELL)
+1
 ```
 
 ### Coprocesses

@@ -353,7 +353,7 @@ $ yum install curl
 
 # Commands
 
-* [The Art of Command Line | github](https://github.com/jlevy/the-art-of-command-line/blob/master/README-ko.md)
+> [The Art of Command Line | github](https://github.com/jlevy/the-art-of-command-line/blob/master/README-ko.md)
 
 Application commands 와 bash builtin commands 등이 있다. 상황별로 유용한 commands 를 정리한다. bash builtin commands 의 경우 `/usr/bin/` 에 application commands 으로 존재한다. 다음은 macOS 에서 `/usr/bin/ulimit` 의 내용이다. 단지 bash builtin 으로 command 와 argument 들을 전달 하고 있다.
 
@@ -746,8 +746,7 @@ Linux에서 process 와 job의 차이는 다음과 같습니다
   * `bg % n` Places the current or specified job in the background, where n is
     the job ID
 * `CTRL-Z`
-  * `CTRL-Z` Stops the foreground job and places it in the background as a
-    stopped job
+  * `CTRL-Z` Stops the foreground job and places it in the background as a stopped job
 
 ## Process Management
 
@@ -1786,7 +1785,7 @@ function taocl() {
 
 # Performance Monitoring
 
-> [awesome performance testing @ github](https://github.com/andriisoldatenko/awesome-performance-testing)
+> [awesome performance testing | github](https://github.com/andriisoldatenko/awesome-performance-testing)
 
 * [stress](https://linux.die.net/man/1/stress)
   * `stress -c 4` Use 4 cores 100%
@@ -1806,9 +1805,7 @@ function taocl() {
 
 ## root 소유의 setuid, setgid 파일 검색 후 퍼미션 조정하기
 
-owner 가 root 인 파일들을 생각해보자. setuid 가 설정되어 있으면 실행 되었을 때
-EUID 가 root 로 변경된다. 매우 위험하다. 그러한 파일들을 찾아서 위험해 보인다면
-권한을 변경해 준다.
+owner 가 root 인 파일들을 생각해보자. setuid 가 설정되어 있으면 실행 되었을 때 EUID 가 root 로 변경된다. 매우 위험하다. 그러한 파일들을 찾아서 위험해 보인다면 권한을 변경해 준다.
 
 ```bash
 find / -user root -perm 4000 -print
@@ -1818,7 +1815,7 @@ find / -user root -perm 4000 -print
 
 ## Load Average
 
-[System Load](/linuxkernel/README.md#losystem-load)
+[System Load](/linuxkernel/README.md#system-load)
 
 ## Swapin, Swapout
 
