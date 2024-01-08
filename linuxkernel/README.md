@@ -1,4 +1,3 @@
-
 - [Abstract](#abstract)
 - [Linux Kernel Alpha Materials](#linux-kernel-alpha-materials)
 - [References](#references)

@@ -10,6 +10,7 @@
 - [Special Directories](#special-directories)
 - [Special Files](#special-files)
 - [Speicial FileSystem](#speicial-filesystem)
+- [Pipe](#pipe)
 - [Package Managers](#package-managers)
   - [apt-get](#apt-get)
   - [apt](#apt)
@@ -75,12 +76,13 @@ Linux Command 대부분을 MindMap 으로 표현했다.
 
 # Materials
 
+- [리눅스 모의고사](https://tech.osci.kr/%EC%8B%A4%EC%A0%84-linux-%EB%AA%A8%EC%9D%98%EA%B3%A0%EC%82%AC/)
 * [Site Reliability Engineer (SRE) Interview Preparation Guide](https://github.com/mxssl/sre-interview-prep-guide)
 * [리눅스 엔지니어 기술 면접 질문지](https://docs.google.com/document/u/0/d/1WE1V4uczxavqLY-nyr3qNqCxqzoOf8Vg6Z-Lf0c3DwU/mobilebasic)
-  * [리눅스 엔지니어 기술 면접 질문지 @ github](https://github.com/pjhwa/linux-engineers/wiki)
+  * [리눅스 엔지니어 기술 면접 질문지 | github](https://github.com/pjhwa/linux-engineers/wiki)
 * [리눅스 서버를 다루는 기술](https://thebook.io/006718/)
   * 최고의 ubuntu 입문서
-* [The Art of Command Line @ github](https://github.com/jlevy/the-art-of-command-line/blob/master/README-ko.md)
+* [The Art of Command Line | github](https://github.com/jlevy/the-art-of-command-line/blob/master/README-ko.md)
   * 커맨드 라인들 소개
 * [Most Important Penetration Testing commands Cheat Sheet for Linux Machine](https://techincidents.com/important-penetration-testing-cheat-sheet/)
   * 유용한 시스템 침입 테스트 커맨드들
@@ -132,39 +134,23 @@ Linux Command 대부분을 MindMap 으로 표현했다.
 chmod 4000 a.txt
 ```
 
-mode 는 8 진법으로 표기했을때 왼쪽 부터 특수권한, 유저권한, 그룹권한, 기타권한과
-같이 구성된다.  각 권한 별로 3비트가 할당된다. 특수권한의 3 비트는 왼쪽부터
-setuid, setgid, stckybit 을 의미하고 유저권한, 그룹권한, 기타권한의 3비트는
-왼쪽부터 읽기, 쓰기, 실행 권한을 의미한다.
+mode 는 8 진법으로 표기했을때 왼쪽 부터 **특수권한**, **유저권한**, **그룹권한**, **기타권한**과 같이 구성된다. 각 권한 별로 3비트가 할당된다. **특수권한**의 3 비트는 왼쪽부터 **setuid**, **setgid**, **stckybit** 을 의미하고 **유저권한**, **그룹권한**, **기타권한**의 3비트는
+왼쪽부터 **읽기**, **쓰기**, **실행** 권한을 의미한다.
 
-특수권한을 확인 하는 요령은 다음과 같다. `ls -l` 했을때 setuid 가 on 되어 있으면
-유저권한의 3 비트중 가장 오른쪽 비트가 s 혹은 S 로 보여진다. setgid 가 on 되어
-있으면 그룹권한의 3 비트중 가장 오른쪽 비트가 s 혹은 S 로 보여진다.  stickybit
-가 on 되어 있으면 기타권한의 3 비트중 가장 오른쪽 비트가 t 혹은 T 로 보여진다.
-표시되는 권한의 실행권한이 없다면 소문자로 보여지고 실행권한이 있다면 대문자로
-보여진다.
+특수권한을 확인 하는 요령은 다음과 같다. `ls -l` 했을때 setuid 가 on 되어 있으면 유저권한의 3 비트중 가장 오른쪽 비트가 `s` 혹은 `S` 로 보여진다. setgid 가 on 되어 있으면 그룹권한의 3 비트중 가장 오른쪽 비트가 `s` 혹은 `S` 로 보여진다. stickybit 가 on 되어 있으면 기타권한의 3 비트중 가장 오른쪽 비트가 `t` 혹은 `T` 로 보여진다. 표시되는 권한의 실행권한이 없다면 소문자로 보여지고 실행권한이 있다면 대문자로 보여진다.
 
 ### Setuid
 
-`setuid` 가 설정된 파일을 실행할때 다음과 같은 현상이 발생한다.  실행을 위해
-태어난 프로세스의 `EUID`(유효 사용자 아이디)가 `RUID`(실행 사용자 아이디)에서
-파일의 소유자 아이디로 변경된다.
-
-실행순간만 권한을 빌려온다고 이해하자.
+`setuid` 가 설정된 파일을 실행할때 다음과 같은 현상이 발생한다. 실행을 위해 태어난 프로세스의 `EUID`(유효 사용자 아이디)가 `RUID`(실행 사용자 아이디)에서 파일의 소유자 아이디로 변경된다. 실행순간만 권한을 빌려온다고 이해하자.
 
 ### Setgid
 
-`setgid` 가 설정된 파일을 실행할때 다음과 같은 현상이 발생한다.  실행을
-위해 태어난 프로세스의 `EGID`(유효 그룹 아이디)가 `RGID`(실행 그룹
-아이디)에서 파일의 소유 그룹 아이디로 변경된다.
-
-실행순간만 권한을 빌려온다고 이해하자.
+`setgid` 가 설정된 파일을 실행할때 다음과 같은 현상이 발생한다. 실행을 위해 태어난 프로세스의 `EGID`(유효 그룹 아이디)가 `RGID`(실행 그룹
+아이디)에서 파일의 소유 그룹 아이디로 변경된다. 실행순간만 권한을 빌려온다고 이해하자.
 
 ### Sticky Bit
 
-linux 는 파일의 sticky bit 를 무시한다. 디렉토리에 sticky bit 가 설정되어 있다면
-누구나 해당 디렉토리에서 파일을 생성할 수 있지만 삭제는 디렉토리 소유자, 파일
-소유자, 슈퍼 유저만 할 수 있다. 그래서 sticky bit 를 공유모드라고 한다.
+linux 는 파일의 sticky bit 를 무시한다. 디렉토리에 sticky bit 가 설정되어 있다면 누구나 해당 디렉토리에서 파일을 생성할 수 있지만 삭제는 디렉토리 소유자, 파일 소유자, 슈퍼 유저만 할 수 있다. 그래서 sticky bit 를 공유모드라고 한다.
 
 # Special Directories
 
@@ -231,11 +217,35 @@ tmpfs          1000M     0 1000M   0% /sys/firmware
 ```
 
 | file system | DESCRIPTION                                                                                                     |
-| ----------- | --------------------------------------------------------------------------------------------------------------- |
-| `tmpfs`     | Virtual filesystem located in RAM                                                                               |
+| ----------- | -- |
+| `tmpfs`     | Virtual filesystem located in RAM |
 | `udev`      | Virtual filesystem related to the devices files, aka the interface between actual physical device and the user. |
-| `/dev/sda1` | Device file                                                                                                     |
-| `/dev/sdb`  | Device file                                                                                                     |
+| `/dev/sda1` | Device file |
+| `/dev/sdb`  | Device file |
+
+# Pipe
+
+Bash의 파이프(pipe)는 한 명령의 출력을 다른 명령의 입력으로 전달하는 방법입니다. 이를 통해 여러 명령어를 결합하여 강력한 기능을 수행하고, 프로세스 간 데이터의 흐름을 연결할 수 있습니다. 파이프는 '|' 기호를 사용하여 표시됩니다.
+
+예시:
+
+두 명령어를 결합하기:
+
+```bash
+$ ls | sort
+```
+
+이 명령은 'ls' 명령의 출력을 'sort' 명령의 입력으로 전달합니다. 따라서 현재 디렉토리의 파일 목록이 사전식으로 정렬되어 출력됩니다.
+
+여러 명령어를 파이프를 사용하여 결합하기:
+
+```bash
+$ cat some_file.txt | grep "search_term" | wc -l
+```
+
+이 명령은 'cat some_file.txt' 명령의 출력을 'grep "search_term"' 명령의 입력으롷 전달합니다. 'grep' 명령은 주어진 검색어에 해당하는 줄들만 출력합니다. 그리고 그 출력은 'wc -l' 명령의 입력으로 전달되어, 결과적으로 검색어에 해당하는 줄의 개수가 출력됩니다.
+
+파이프를 사용하면 명령어의 결과를 쉽게 체이닝(chain)하여 프로세스 간의 데이터 통신을 구현할 수 있으며, 작업을 간소화할 수 있습니다.
 
 # Package Managers
 
@@ -312,9 +322,7 @@ $ apt policy
 ## dpkg
 
 * [apt 와 dpkg 의 차이점](https://sung-studynote.tistory.com/78)
-* `dpkg` 는 package 의 dependency 를 처리하지 않는다. 그러나 `apt-get` 은
-  pakcage 의 dependency 를 처리하여 관련된 package 를 모두 설치하고 환경변수
-  또한 설정한다. 또한 `apt-get` 은 내부적으로 `dpkg` 를 사용한다. 
+* `dpkg` 는 package 의 dependency 를 처리하지 않는다. 그러나 `apt-get` 은 pakcage 의 dependency 를 처리하여 관련된 package 를 모두 설치하고 환경변수 또한 설정한다. 또한 `apt-get` 은 내부적으로 `dpkg` 를 사용한다. 
 
 -----
 
@@ -347,20 +355,14 @@ $ yum install curl
 
 * [The Art of Command Line | github](https://github.com/jlevy/the-art-of-command-line/blob/master/README-ko.md)
 
-Application commands 와 bash builtin commands 등이 있다.  상황별로 유용한
-commands 를 정리한다. bash builtin commands 의 경우 `/usr/bin/` 에 application
-commands 으로 존재한다. 다음은 macOS 에서 `/usr/bin/ulimit` 의 내용이다. 단지
-bash builtin 으로 command 와 argument 들을 전달 하고 있다.
+Application commands 와 bash builtin commands 등이 있다. 상황별로 유용한 commands 를 정리한다. bash builtin commands 의 경우 `/usr/bin/` 에 application commands 으로 존재한다. 다음은 macOS 에서 `/usr/bin/ulimit` 의 내용이다. 단지 bash builtin 으로 command 와 argument 들을 전달 하고 있다.
 
 ```bash
 builtin `echo ${0##*/} | tr \[:upper:] \[:lower:]` ${1+"$@"}
 ```
 
-`echo ${0##*/}` 는 `${0}` 에서 마지막 `/` 이후 application name 을 제외하고 모두
-지운다. [Bash Shell Parameter
-Expansion](/bash/README.md#shell-parameter-expansion) 참고.
-
-`${1+"$@"}` 는 1-th arg 를 포함한 모든 args 를 의미한다.
+- `echo ${0##*/}` 는 `${0}` 에서 마지막 `/` 이후 application name 을 제외하고 모두 지운다. [Bash Shell Parameter Expansion](/bash/README.md#shell-parameter-expansion) 참고.
+- `${1+"$@"}` 는 1-th arg 를 포함한 모든 args 를 의미한다.
 
 ## Manual
 
@@ -718,7 +720,22 @@ Expansion](/bash/README.md#shell-parameter-expansion) 참고.
 
 > [Understanding the job control commands in Linux – bg, fg and CTRL+Z](https://www.thegeekdiary.com/understanding-the-job-control-commands-in-linux-bg-fg-and-ctrlz/)
 
-----
+Linux에서 process 와 job의 차이는 다음과 같습니다
+
+- 프로세스(Process):
+  - 자체적인 주소 공간, 메모리, 데이터 및 연산을 가진 운영체제에서 실행되는 독립적인 프로그램 인스턴스입니다.
+  - 각 프로세스에는 고유한 프로세스 ID (PID)가 할당됩니다.
+  - 프로세서(CPU)에서 실행되며, 다른 프로세스와 통신을 위해 Inter-Process Communication (IPC) 메커니즘을 사용합니다.
+  - 부모-자식 구조를 사용하여 생성(parent process)과 종료(child process)가 가능합니다.
+- 잡(Job):
+  - 실행 중인 셸(Bash and others)의 하위 프로세스입니다.
+  - 프로세스가 터미널에서 실행되는 경우 배경(background) 또는 전경(foreground)에서 작업으로 간주할 수 있습니다.
+  - Job Control은 사용자가 셸로 돌아와 이전에 수행되었던 일을 다시 시작할 수 있게 해줍니다.
+  - 각 잡에는 고유한 잡 ID (JID)가 할당되며, 프로세스 ID (PID)와 다릅니다.
+  - 잡들은 그룹화되어 있는 프로세스입니다. 예를 들어 파이프(pipe) 명령어를 사용하여 여러 명령을 함께 연결할 때 프로세스들이 잡으로 그룹화됩니다.
+  - 잡은 완료, 중단, 다시 시작 및 터미널에서의 작업 이동을 허용하는 작업 관리 기능을 제공합니다.
+
+요약하면, 프로세스는 실행 중인 프로그램 인스턴스로, 일반적인 그룹화나 관리가 필요하지 않습니다. 잡은 셸에서 실행되는 프로세스의 그룹으로, 사용자가 살펴보고 관리할 수 있는 작업 관리 기능을 제공합니다.
 
 * `jobs`
   * `jobs` list all jobs
@@ -1019,8 +1036,7 @@ Expansion](/bash/README.md#shell-parameter-expansion) 참고.
     * `cache` : For the page cache and slabs, used by file systems, saves file
       data to reduce I/O. slab is a memory block managed by kernel and it is a
       part of the page cache.
-    * `available` : 새로운 application 이 실행될 때 swapping 없이 사용할 수 있는
-      Physical memory 를 말한다. 
+    * `available` : 새로운 application 이 실행될 때 swapping 없이 사용할 수 있는 Physical memory 를 말한다. 
       * `available` : `MemFree + SReclaimable + the file LRU lists + the low watermarks in each zone` 
       * 시스템이 예측해서 계산한 것이다. 정확하다고 볼 수 없다.
       * `available` 이 부족하면 System 은 OOM (Out Of Memory) 상황이다.
@@ -1618,7 +1634,6 @@ Expansion](/bash/README.md#shell-parameter-expansion) 참고.
     * `$ cat /var/log/cron`
   * view crontab
     * `$ cat /var/spool/cron/crontab/root`
-
 * `systemd`
   * [systemd](/systemd/README.md)
 

@@ -2,18 +2,20 @@
 - [Abstract](#abstract)
 - [Materials](#materials)
 - [Computer System Architecture Overview](#computer-system-architecture-overview)
+- [The Operating System](#the-operating-system)
+- [The Kernel](#the-kernel)
 - [Stored Program Concept](#stored-program-concept)
 - [Bus Overview](#bus-overview)
 - [문자셋의 종류와 특징](#문자셋의-종류와-특징)
 - [MBCS, WBCS 동시 지원](#mbcs-wbcs-동시-지원)
 - [32Bit vs 64Bit](#32bit-vs-64bit)
-- [Design minimal CPU instruction set](#design-minimal-cpu-instruction-set)
+- [Design Minimal CPU Instruction Set](#design-minimal-cpu-instruction-set)
 - [Direct Address Mode and Indirect Address Mode](#direct-address-mode-and-indirect-address-mode)
 - [Process](#process)
 - [Scheduler](#scheduler)
 - [Process Status](#process-status)
-- [Procedure and Stack](#procedure-and-stack)
-- [Process and Thread](#process-and-thread)
+- [Procedure And Stack](#procedure-and-stack)
+- [Process And Thread](#process-and-thread)
 - [User Level Thread vs Kernel Level Thread](#user-level-thread-vs-kernel-level-thread)
 - [Thread Scheduling](#thread-scheduling)
   - [Thread Status](#thread-status)
@@ -47,6 +49,8 @@
 
 # Materials
 
+- [Dive into Systems](https://diveintosystems.org/)
+  - 킹왕짱 Computer System Architecture, Operating System 책
 * [Kernel of Linux | OLC](https://olc.kr/course/course_online_view.jsp?id=35&s_keyword=Kernel&x=0&y=0)
   * 고건 교수 동영상 강좌 
   * 가장 깊이 있는 한글 동영상 강좌
@@ -54,8 +58,9 @@
 * [혼자 공부하는 컴퓨터구조 + 운영체제](https://github.com/kangtegong/self-learning-cs)
   * [src](https://github.com/kangtegong/self-learning-cs)
   * [video](https://www.youtube.com/playlist?list=PLVsNizTWUw7FCS83JhC1vflK8OcLRG0Hl)
-* [뇌를 자극하는 윈도우즈 시스템 프로그래밍 @ youtube](https://www.youtube.com/playlist?list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc)
-  * 쉽게 설명하는 동영상 강좌 
+* [뇌를 자극하는 윈도우즈 시스템 프로그래밍 | youtube](https://www.youtube.com/playlist?list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc)
+  * [book | yes24](https://www.yes24.com/Product/Goods/2502445)
+  * 이해가 쉬운 동영상 강좌 
 * [linux 0.01](https://github.com/zavg/linux-0.01)
   * 토발즈가 릴리즈한 최초 리눅스 커널
   * gcc 1.x 에서 빌드가 된다.
@@ -90,11 +95,11 @@
 * [Understanding the Linux Virtual Memory Manager](https://www.amazon.com/Understanding-Linux-Virtual-Memory-Manager/dp/0131453483)
   * 리눅스 커널 추천 도서
 * [Intel 80386 Reference Programmer's Manual](https://pdos.csail.mit.edu/6.828/2005/readings/i386/toc.htm)
-* [Paging and Segmentation @ youtube](https://www.youtube.com/watch?v=5ioo7ezWn1U&list=PLWi7UcbOD_0uhZqGfWbpQ_Ym30ehQCeyq)
+* [Paging and Segmentation | youtube](https://www.youtube.com/watch?v=5ioo7ezWn1U&list=PLWi7UcbOD_0uhZqGfWbpQ_Ym30ehQCeyq)
   *  virtual address to physical address translation 은 설명이 좋다.
 * [Memory Management : Segmentation 2](http://anster.egloos.com/2138204)
   * 메모리 관리를 잘 정리한 블로그
-* [High Performance Computer Architecture @ udacity](https://www.udacity.com/course/high-performance-computer-architecture--ud007)
+* [High Performance Computer Architecture | udacity](https://www.udacity.com/course/high-performance-computer-architecture--ud007)
   * 체계적인 인강 그러나 virtual address to physical address translation 은 설명이 부족하다.
 * [Introduction to Operating Systems](https://classroom.udacity.com/courses/ud923)
   * Kernel. vs User-level threads 가 정말 좋았음
@@ -110,11 +115,27 @@
 
 ![](computerhwsystem.png)
 
+# The Operating System
+
+- [13. The Operating System | DiveIntoSystems](https://diveintosystems.org/book/C13-OS/index.html)
+
+운영체제(Operating System, OS)는 컴퓨터 시스템에서 하드웨어와 소프트웨어 리소스를 관리하고, 사용자와 컴퓨터 사이의 인터페이스 역할을 하는 시스템 소프트웨어입니다. 운영체제의 주요 목적은 사용자가 컴퓨터와 편리하게 상호 작용할 수 있도록 하드웨어 리소스를 효과적으로 관리하는 것입니다.
+
+![](img/2024-01-07-16-39-45.png)
+
+# The Kernel
+
+- [13. The Operating System | DiveIntoSystems](https://diveintosystems.org/book/C13-OS/index.html)
+
+커널(Kernel)은 운영체제의 핵심 구성 요소로, 하드웨어와 소프트웨어 사이에서 가장 기본적이면서 핵심적인 기능들을 수행하는 중요한 부분입니다. 커널은 시스템의 성능, 안정성 및 보안을 담당하며, 컴퓨터 하드웨어와 상호 작용하여 프로세스, 메모리, 파일 시스템, 입출력 장치 등의 자원을 효과적으로 관리하는 역할을 합니다.
+
+![](img/2024-01-07-16-41-30.png)
+
 # Stored Program Concept
 
 ![](storedprogramconcept.png)
 
-[Von Neumann Architecture](/csa/README.md) 라고도 한다. fetch, decode, execute 과정으로 프로그램을 실행한다.
+[Von Neumann Architecture](/csa/README.md#von-neumann-architecture) 라고도 한다. fetch, decode, execute 과정으로 프로그램을 실행한다.
 
 * fetch
   * CPU 내부로 명령어 이동
@@ -129,7 +150,7 @@
 
 ![](busoverview.png)
 
-Bus 의 종류는 Data Bus, Address Bus, Control Bus 가 있다.
+Bus 의 종류는 **Data Bus**, **Address Bus**, **Control Bus** 가 있다.
 
 * Data Bus
   * 데이터 이동
@@ -228,7 +249,7 @@ TCHAR arr[10] => CHAR arr[10] => char arr[10]
 | LLP64 / IL32P64 | 2     | 4   | 4    | 8         | 8       | x86_64: Windows                       |
 | LP64 / I32LP64  | 2     | 4   | 8    | 8         | 8       | x86_64: UNIX, Linux, SUN OS, BSD, OSX |
 
-# Design minimal CPU instruction set
+# Design Minimal CPU Instruction Set
 
 * 사칙연산을 위한 `ADD, SUB, MUL, DIV`
   * 피연산자는 register 뿐 이다. memory 를 접근할 instruction 이 필요하다.
@@ -250,19 +271,21 @@ TCHAR arr[10] => CHAR arr[10] => char arr[10]
 
 둘 이상의 프로세스가 적절히 실행되도록 컨트롤하는 소프트웨어이다. OS 의 부분 요소이다.
 
-General OS 는 preemptive (선점형) 방식으로 scheduling 한다. time slice 가 길다. 프로세스가
+**General OS** 는 preemptive (선점형) 방식으로 scheduling 한다. time slice 가 길다. 프로세스가
 생성될 때 마다 priority 를 봐서 기존의 것보다 높으면 새로운 프로세스의 상태를 running 으로 바꾼다.
 
-Realtime OS 는 non-preemptive (비선점형) 방식으로 scheduling 한다. time slice 가 짧다. 프로세스가
+**Realtime OS** 는 non-preemptive (비선점형) 방식으로 scheduling 한다. time slice 가 짧다. 프로세스가
 생성되더라도 기존의 프로세스가 모두 끝날 때까지 기다린다.
 
 # Process Status
 
+- [13.2. Processes](https://diveintosystems.org/book/C13-OS/processes.html)
+
 Process 는 Scheduler 에 의해 다음과 같이 상태가 변화한다. Blocked 은 I/O 처리를 위해 잠을 자야하는 상태이다.
 
-![](processstatus.png)
+![](img/2024-01-07-16-44-14.png)
 
-# Procedure and Stack
+# Procedure And Stack
 
 쓰레드가 태어나면 Virtual Memory 에 stack 을 위한 공간이 마련된다. 함수가 호출되면 그 함수의 parameter 들이 오른쪽에서 왼쪽으로 stack 에 저장된다. 이후 return address, old EBP 등이 stack 에 저장된다. 
 
@@ -288,7 +311,7 @@ compiler 는 linker 에게 산출물을 전달할 때 함수, 변수 등의 이�
 |                   |                         | `rdx, rcx, r8`          | `C`                      | `Caller`         |
 |                   |                         | `r9, xmm0-7`            | `C`                      | `Caller`         |
 
-# Process and Thread
+# Process And Thread
 
 윈도우즈의 유저레벨 프로세스는 다음과 같이 EPROCESS 구조체로 구현한다. [참고](https://www.nirsoft.net/kernel_struct/vista/EPROCESS.html)
 
@@ -872,7 +895,7 @@ typedef struct _KTHREAD
 
 # User Level Thread vs Kernel Level Thread
 
-* [11장. 커널 레벨 쓰레드와 유저 레벨 쓰레드 @ youtube](https://www.youtube.com/watch?v=sOt80Kw0Ols&list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc&index=30)
+* [11장. 커널 레벨 쓰레드와 유저 레벨 쓰레드 | youtube](https://www.youtube.com/watch?v=sOt80Kw0Ols&list=PLVsNizTWUw7E2KrfnsyEjTqo-6uKiQoxc&index=30)
 * [Lesson 3: 11. OS Protection Boundary](https://classroom.udacity.com/courses/ud923/lessons/3014898657/concepts/30606385900923)
 * [Lesson 3: 12. OS System Call Flowchart](https://classroom.udacity.com/courses/ud923/lessons/3014898657/concepts/34183989490923)
 * [Lesson 3: 13. Crossing the OS Boundary](https://classroom.udacity.com/courses/ud923/lessons/3014898657/concepts/34183989500923)
@@ -885,9 +908,9 @@ kernel level thread 는 kernel level 에서 scheduling 된다. 따라서 하나�
 
 user level thread 는 user level 에서 scheduling 된다. kernel 은 user level thread 를 포함한 process 단위로 scheduling 한다. kernel 은 user level thread 를 알 수 없다. 따라서 user level thread 중 하나가 I/O 블록이 되면 kernel 은 그 thread 를 소유한 process 의 상태를 running 에서 ready 로 바꾼다. user level thread 는 context switching 될 때 O/S 가 user level 에서 kernel level 로 전환할 필요가 없다. 따라서 user level thread 는 context switching 이 kernel level thread 보다 빠르다.
 
-multithreading model 은 user level thread 와 kernel level thread 의 mapping 방법에 따라 `1:1`, `N:1`, `N:M` 방법이 있다. c++ 의 pthread, JVM 은 `1:1` 이다??? goroutine 은 `N:M` 이다??? [참고](https://classroom.udacity.com/courses/ud923/lessons/3065538763/concepts/34341886380923)
+multithreading model 은 user level thread 와 kernel level thread 의 mapping 방법에 따라 `1:1`, `N:1`, `N:M` 방법이 있다. c++ 의 pthread, JVM 은 `1:1` 이다. goroutine 은 `N:M` 이다. [참고](https://classroom.udacity.com/courses/ud923/lessons/3065538763/concepts/34341886380923)
 
-Linux kernel 은 2.6 이전에 process 단위로 scheduling 되었다. [참고](https://en.wikipedia.org/wiki/Native_POSIX_Thread_Library). pthread 는 NPTL (Native Posix Thread Library) 이다. 따라서 1:1 thread library 이고 `pthread_create` 을 통해서 kernel level thread 를 만들어 낼 수 있다.
+Linux kernel 은 2.6 이전에 process 단위로 scheduling 되었다. [참고](https://en.wikipedia.org/wiki/Native_POSIX_Thread_Library). pthread 는 NPTL (Native Posix Thread Library) 이다. 따라서 `1:1 thread library` 이고 `pthread_create` 을 통해서 kernel level thread 를 만들어 낼 수 있다.
 
 # Thread Scheduling
 
