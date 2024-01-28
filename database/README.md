@@ -79,8 +79,8 @@ Transaction 이 안전하게 수행된다는 것을 보장하기 위한 성질�
 개발했다.
 
 * **Atomicity** (원자성)
-  * Transaction 은 완전히 실행되거나 실행되지 않는 성질을 말한다. all-or-nothing
-    이라고 한다.
+  * all-or-nothing
+  * Transaction 은 완전히 실행되거나 실행되지 않는 성질을 말한다. 
 * **Consistency** (일관성)
   * Transaction 이 완료되면 일관성 있는 데이터베이스 상태로 유지하는 것을
     의미한다. 모든 계좌는 잔고가 있어야 하는 무결성 제약이 있다면 이를 위반하는
@@ -98,10 +98,10 @@ Transaction 이 안전하게 수행된다는 것을 보장하기 위한 성질�
     | Repeatable Read | X          | X                   | O            |
     | Serializable    | X          | X                   | X            |
 * **Durability** (영구성)
-  * 성공적으로 수행된 Transaction 영원히 반영되어야 한다. 장애가
-    발생했을 때 data 를 recover 할 수 있다. Transaction 은 logging 된다. 따라서
-    Transaction 은 replay 될 수 있다. DataBase 가 제대로 backup 되고 있다면
-    언제든지 recover 할 수 있다.
+  * 성공적으로 수행된 Transaction 영원히 반영되어야 한다. 장애가 발생했을 때
+    data 를 recover 할 수 있다. Transaction 은 logging 된다. 따라서 Transaction
+    은 replay 될 수 있다. DataBase 가 제대로 backup 되고 있다면 언제든지 recover
+    할 수 있다.
 
 [Isolation](/isolation/README.md) 에서 MySQL 실습을 확인할 수 있다.
 

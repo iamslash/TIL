@@ -469,7 +469,6 @@ API 대신 HTTP API 또는 WEB API 라고 한다.
 
 * [HTTP Flow | TIL](/HTTP/README.md#http-flow)
 
-
 ## Domain Name System
 
 > - [DNS란 무엇입니까? | DNS 작동 원리 | cloudflare](https://www.cloudflare.com/ko-kr/learning/dns/what-is-dns/)
@@ -2691,7 +2690,7 @@ public class ReactorServer {
 
 The Proactor pattern relies on asynchronous I/O operations. With Java, you can
 use the Asynchronous I/O API introduced in Java 7, which is part of the
-java.nio.channels package. Here's a simple example of a Proactor pattern using
+`java.nio.channels` package. Here's a simple example of a Proactor pattern using
 an asynchronous server:
 
 ```java
@@ -3334,4 +3333,4 @@ public class ZookeeperExample {
 
 # Architecture
 
-* [Architecture | TIL](/architecture/README.md)
+[Architecture | TIL](/architecture/README.md)

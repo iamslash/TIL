@@ -71,6 +71,7 @@ ChatGPT는 세 단계의 학습 과정을 거쳐 성능을 높입니다. 아래�
 
 # Prompt Engineering
 
+- [Awesome ChatGPT Prompts | github](https://github.com/f/awesome-chatgpt-prompts)
 - [Cognitive Prompting 정리(1zlabs Ken. Ver.231207 공유용) | GoogleSlide](https://docs.google.com/presentation/d/1kayepoiTVT838Tetk02nxeqVmmS9BDc9O7n-4OzJdL8/edit#slide=id.g26309fa4a80_0_0)
   - [video](https://www.youtube.com/watch?v=CkCL8dV_mPk)
 - [프롬프트사용법: 가장 완벽한 GPT 프롬프트 만드는법](https://www.youtube.com/watch?v=olRqEoiWy6Q)
