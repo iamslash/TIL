@@ -66,6 +66,7 @@
 
 # Essentials
 
+- [Understanding Deep Learning](https://udlbook.github.io/udlbook/)
 - [데이터 사이언스 스쿨](https://datascienceschool.net/intro.html)
 - [공돌이의 수학정리노트 (Angelo's Math Notes)](https://angeloyeo.github.io/)
 - [math for machine learning](https://mml-book.github.io/)
@@ -218,8 +219,6 @@ AUROC, AUCROC 는 **Area Under the Receiver Operating Characteristic curve**의
 AUROC 값은 높은 진양성률(true positive rate)과 낮은 참양성률(false positive
 rate)을 동시에 얻을 수 있는 모델을 의미합니다. AUROC가 `1`에 가까울수록 모델의
 성능이 좋으며 `0.5`에 가까울수록 무작위 분류 수준의 성능이라고 할 수 있습니다.
-
-
 
 # Expectation Function
 

@@ -35,7 +35,23 @@
 - [Bayesian Theorem By Story](#bayesian-theorem-by-story)
 - [Entropy](#entropy)
 - [KL-divergence](#kl-divergence)
+- [Determinant](#determinant)
 - [Eigen Value, Eigen Vector](#eigen-value-eigen-vector)
+- [MLE vs MAP](#mle-vs-map)
+- [Bayesian Neural Networks (BNN) vs Deep Neural Networks (DNN)](#bayesian-neural-networks-bnn-vs-deep-neural-networks-dnn)
+- [Predictions](#predictions)
+  - [Generalized Linear Models (GLMs)](#generalized-linear-models-glms)
+  - [Deep Neural Networks (DNNs)](#deep-neural-networks-dnns)
+  - [Bayesian Neural Networks (BNNs)](#bayesian-neural-networks-bnns)
+  - [Gaussian Processes (GPs)](#gaussian-processes-gps)
+- [Overfitting](#overfitting)
+- [Regularization](#regularization)
+- [Drop Out](#drop-out)
+- [Auto Encoder](#auto-encoder)
+- [Transformer](#transformer)
+- [MobileNetV3](#mobilenetv3)
+- [Principal components analysis (PCA)](#principal-components-analysis-pca)
+- [SVD (Singular Value Decomposition)](#svd-singular-value-decomposition)
 
 -----
 
@@ -511,6 +527,24 @@ plt.show()
 매개 변수를 찾고 그래프로 결과를 시각화합니다. 이 코드에서 X와 Y 배열에 키와
 몸무게 데이터를 제공해야 합니다. 몸무게를 예측하기 위해 구한 선형 회귀 모델에서
 파라미터 w와 b를 사용하세요.
+
+**loss.backward()에 해당하는 부분:**
+
+```py
+w_gradient = (-2 / n) * np.sum(X * R)
+b_gradient = (-2 / n) * np.sum(R)
+```
+
+이 부분에서는 손실 함수(Loss Function)의 기울기를 수동으로 계산합니다. Y_pred = w * X + b 식으로 모델의 예측을 계산한 후, 실제 값 Y와의 차이(R = Y - Y_pred)를 이용해 가중치 w와 절편 b에 대한 기울기를 구합니다. 이 과정은 loss.backward() 호출이 자동으로 수행하는 역전파 과정(backpropagation)과 같은 역할을 합니다. 즉, 모델의 출력과 실제 값 사이의 오차를 바탕으로, 모델의 매개변수를 어떻게 조정해야 오차를 줄일 수 있는지를 계산하는 과정입니다.
+
+**optimizer.step()에 해당하는 부분:**
+
+```py
+w = w - alpha * w_gradient
+b = b - alpha * b_gradient
+```
+
+여기서는 계산된 기울기와 학습률 alpha를 사용하여 모델의 매개변수인 w와 b를 업데이트합니다. 이는 optimizer.step()이 수행하는 작업과 동일합니다. 즉, 계산된 기울기 방향으로 가중치를 조정하여 모델의 성능을 개선하는 과정입니다. 학습률 alpha는 이동할 단계의 크기를 결정하며, 기울기가 가리키는 방향으로 가중치를 조정하여 손실 함수의 값을 최소화합니다.
 
 ## Linear Regression, 최대우도추정법(MLE)
 
@@ -1592,4 +1626,578 @@ Bayes theorem 은 복잡한 수학식 보다 다음과 같이 사각형으로 �
 
 # KL-divergence
 
+KL-Divergence(Kullback-Leibler Divergence)는 확률 분포 간의 차이를 측정하는 데 사용되는 함수입니다. 통계학과 정보 이론에서 주로 사용되며, 두 확률 분포의 유사도를 비교하는 데 도움을 줍니다. 일반적으로, 두 확률분포 P(x)와 Q(x) 간의 차이를 측정할 때 사용됩니다.
+
+Kullback-Leibler Divergence는 정보 손실을 함축하는 측정치로, P(x)에서 Q(x)로 분포를 근사화하는 경우 발생하는 예상 정보 손실을 나타냅니다.
+
+KL-Divergence의 정의는 다음과 같습니다.
+
+```c
+KL(P || Q) = ∑ P(x) * log(P(x) / Q(x))
+```
+
+여기서 P(x)와 Q(x)는 각각 두 확률 분포에서 x라는 사건에 대한 확률을 의미합니다.
+
+두 가지 주요 특징에 유의해야 합니다:
+
+- 비대칭성: `KL(P || Q)와 KL(Q || P)` 다를 수 있습니다. 즉, 두 분포 사이의 거리를 나타내지만, 기존의 거리와 같이 대칭적이지 않습니다.
+- 항상 0 이상: 두 확률 분포 P와 Q가 완전히 동일한 경우, KL-Divergence 값은 0이 됩니다. 그러나 P와 Q가 다양할수록 KL-Divergence는 커집니다.
+
+머신 러닝 및 딥 러닝에서 KL-Divergence는 모델의 예측 분포와 실제 데이터의 분포 사이의 차이를 최소화하는 방향으로 학습을 수행하기 위해 목적 함수의 일부로 사용되는 경우가 많습니다.
+
+# Determinant
+
+행렬식(Determinant)은 정사각 행렬(square matrix)에 대한 중요한 값으로, 행렬의 특정 선형 변환 이후 변화하는 공간의 부피(scale factor)를 나타내며, 특정 조건에서 행렬의 가역성(invertibility)에 대한 정보를 제공합니다.
+
+행렬식은 다음과 같은 성질을 가집니다:
+
+- 스칼라 값: 행렬식은 숫자(스칼라)입니다. 이는 행렬에 관한 숫자 계산을 수행할 수 있게 해주므로 여러 분야에서 유용합니다.
+- 부피 변화: 행렬식은 해당 행렬이 표현하는 선형 변환에 의한 공간의 부피 변화를 나타냅니다. 이는 면적 변화나 척도(scale) 변화로 이해될 수도 있습니다.
+- 가역성: 행렬식이 0이 아닌 경우, 해당 행렬은 가역성(invertible)이 있습니다. 즉, 역행렬(inverse matrix)이 존재하고, 선형 시스템을 풀 수 있습니다. 행렬식이 0인 경우, 행렬이 비가역성(singular)이며 역행렬이 존재하지 않습니다.
+
+행렬식의 계산은 크래머의 법칙(Cramer's rule), 루프 공식(Laplace expansion), 또는 행렬의 대각 원소의 곱으로부터 구할 수 있습니다. 이러한 계산 방법들은 주어진 행렬의 크기에 따라 다르게 적용될 수 있습니다.
+
 # Eigen Value, Eigen Vector
+
+Eigenvalue와 Eigenvector는 선형대수학에서 행렬의 중요한 성질을 설명하는 개념입니다. Eigenvalue(고유허수)와 그에 상응하는 Eigenvector(고유벡터)는 고유벡터 방향에 대해 행렬이 선형변환시 스케일링 정도를 나타냅니다. 일반적으로, 행렬 A에 대한 eigenvector 'v'와 해당 eigenvalue 'λ'는 다음과 같은 관계를 가집니다:
+
+```
+A * v = λ * v
+```
+
+여기서 `A`는 정사각 행렬이며, `𝑣 ≠ 0` 입니다.
+
+- Eigenvalue (고유허수): 행렬 A에 대해, 그에 상응하는 eigenvector를 스케일링하는 인수입니다. 이것은 선형 변환후 방향이 유지되는 벡터에 적용되는 스케일 변화의 정도를 나타냅니다.
+- Eigenvector (고유벡터): 행렬 A에 대해, 선형 변환 후에도 방향이 변하지 않고 오직 스케일이 변화하는 벡터입니다. 다시 말해, 이 벡터의 방행렬에 의해 선형 변환이 이루어졌을 때, 방향은 유지되고 크기만 변합니다. 이때 그 크기 변화 정도는 해당하는 eigenvalue에 의해 결정된다.
+
+Eigenvalue와 eigenvector는 여러 분야에서 활용되는데, 그 중 하나가 머신러닝입니다. 예를 들어 PCA(주성분 분석)라는 차원 축소 기법에서 공분산 행렬의 eigenvector와 eigenvalue를 사용해 공간의 주요 축을 찾습니다. 이를 통해 데이터 주요 패턴을 효율적으로 표현하고 노이즈가 있는 고차원 데이터를 간소화하여 사용합니다.
+
+# MLE vs MAP
+
+MLE (Maximum Likelihood Estimation)과 MAP (Maximum A Posteriori)는 머신 러닝과 통계학에서 모델의 파라미터를 추정하는 데 사용되는 관련된 기법이지만, 중요한 차이가 있습니다.
+
+MLE (Maximum Likelihood Estimation): MLE는 주어진 데이터에 대해 가장 가능성이 높은 모델의 파라미터를 찾는 방법입니다. MLE는 파라미터를 선택할 때 오직 데이터를 고려하며, 파라미터에 대한 사전 정보를 고려하지 않습니다. 이 방법은 관측된 데이터의 동시 확률을 최대화 하도록 파라미터를 조절하여 주어진 데이터에서 가장 가능성이 높은 파라미터 세트를 찾는 것이 목표입니다.
+
+MAP (Maximum A Posteriori): MAP는 MLE와 유사하지만, 이 방법은 파라미터에 대한 사전 정보를 고려하는 것이 주요 차이점입니다. MAP는 주어진 데이터와 사전 확률 정보를 모두 고려하여 파라미터를 추정합니다. 즉, 사후 확률을 최대화하도록 파라미터를 선택하여 데이터가 발생할 가능성과 사전 정보의 조합을 최적화합니다.
+
+요약하면, MLE는 데이터만 고려하여 파라미터 추정에 접근하는 반면, MAP는 사전 정보와 데이터를 모두 고려하여 더 정교한 추정을 할 수 있는 기법입니다.
+
+MAP를 구하기 위해 MLE를 명시적으로 먼저 구할 필요는 없습니다. 그러나 MLE와 MAP 모두 데이터를 기반으로 모델의 파라미터를 추정하는 방법론이며, 이 두 방법 사이에는 밀접한 관련이 있습니다. 사전 분포의 영향력에 따라 MAP 추정치는 MLE 추정치에 수렴할 수도 있습니다.
+
+MAP를 구하기 위해서는 베이즈 정리를 적용하고 사전 확률(prior)와 가능도(likelihood)를 조합합니다.
+
+```c
+MAP(θ) = argmax P(θ|X) = argmax [P(X|θ) * P(θ)]
+```
+
+여기서 `θ`는 파라미터, `X`는 데이터입니다. `P(θ|X)`는 사후 확률, `P(X|θ)`는 가능도, `P(θ)`는 사전 확률입니다.
+
+반면에, MLE는 데이터의 가능도와 연관되어 있습니다.
+
+```
+MLE(θ) = argmax P(X|θ)
+```
+
+그러므로 MAP 추정은 MLE 추정에 사전 확률을 곱한 값을 최대화하는 것으로 볼 수 있습니다. 이 둘의 관계가 깊지만, MAP를 구하는 과정에서 MLE를 명시적으로 구할 필요는 없습니다.
+
+# Bayesian Neural Networks (BNN) vs Deep Neural Networks (DNN)
+
+Bayesian Neural Networks (BNNs)와 Deep Neural Networks (DNNs)는 머신러닝의 두 가지 다른 패러다임입니다. 그들 사이의 주요 차이점은 근본적으로 어떻게 불확실성을 처리할 것인지와 학습 속도입니다.
+
+Bayesian Neural Networks (BNNs):
+
+불확실성 처리: BNN은 가중치와 관련된 불확실성을 고려하여 예측합니다. 각 가중치는 확률 분포를 갖습니다. 이러한 확률 분포를 사용하여 모델의 불확실성을 추정할 수 있습니다.
+학습 속도: BNN은 일반적으로 매개변수를 업데이트하는 데에 더 오랜 시간이 걸립니다. 이는 불확실성을 결합한 복잡한 확률 계산 때문입니다.
+매개변수 추정: BNN은 베이지안 공식을 사용하여 매개변수를 학습합니다.
+정규화 효과: BNN은 모델의 복잡성에 대하여 자동으로 정규화 효과를 가집니다.
+일반적인 사용 사례: BNN은 작은 데이터 세트에서나 불확실성 추정이 중요한 경우 효과적입니다.
+
+Deep Neural Networks (DNNs):
+
+불확실성 처리: DNN은 가중치와 관련된 불확실성을 처리하지 않습니다. 가중치는 일반적으로 고정된 값을 갖습니다.
+학습 속도: BNN에 비해 DNN은 매개변수를 업데이트하는 시간이 빠릅니다. 이는 주로 그래디언트 기반 최적화로 인해 가능합니다.
+매개변수 추정: DNN은 경사하강법 (예: 확률적 경사 하강법(SGD), Adam 최적화기)과 같은 최적화 알고리즘을 사용하여 매개변수를 학습합니다.
+정규화 효과: DNN에서 정규화는 일반적으로 추가적인 기술 (예: 드롭아웃, L1/L2 정규화)을 사용하여 이루어집니다.
+일반적인 사용 사례: DNN은 특히 대규모 데이터 세트와 복잡한 문제에서 높은 성능을 발휘합니다.
+요약하자면, BNN은 불확실성을 사용하여 모델의 예측에 대한 신뢰성을 추정하는 데 도움이 되지만, DNN은 빠른 속도로 모델을 훈련하고 복잡한 문제에서 높은 성능을 달성합니다.
+
+# Predictions
+
+키를 `X`, 몸무게를 `Y` 로 하는 data 가 있다. 이 것을 다음과 같은 방법으로 구현해 보자.
+
+- Generalized Linear Models (GLMs)
+- Deep Neural Networks (DNNs)
+- Bayesian Neural Networks (BNNs)
+- Gaussian Processes (GPs)
+
+## Generalized Linear Models (GLMs)
+
+일반화 선형 모델은 선형 회귀 모델을 확장한 것으로, 종속 변수와 독립 변수 간의 선형 관계를 모델링합니다. PyTorch에서는 이를 간단한 선형 레이어로 구현할 수 있습니다.
+
+```py
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+class GLM(nn.Module):
+    def __init__(self):
+        super(GLM, self).__init__()
+        self.linear = nn.Linear(1, 1)  # 하나의 입력(키)과 출력(몸무게)을 가짐
+
+    def forward(self, x):
+        return self.linear(x)
+
+# 예시 데이터
+X = torch.randn(100, 1)  # 100개의 키 데이터
+Y = torch.randn(100, 1)  # 해당하는 몸무게 데이터
+
+# 모델, 손실 함수, 최적화 방법 정의
+model = GLM()
+criterion = nn.MSELoss()
+optimizer = optim.SGD(model.parameters(), lr=0.01)
+
+# 학습 과정
+for epoch in range(1000):
+    optimizer.zero_grad()
+    outputs = model(X)
+    loss = criterion(outputs, Y)
+    loss.backward()
+    optimizer.step()
+```
+
+## Deep Neural Networks (DNNs)
+
+깊은 신경망은 여러 개의 숨겨진 레이어를 통해 복잡한 비선형 관계를 학습할 수 있는 모델입니다.
+
+```python
+class DNN(nn.Module):
+    def __init__(self):
+        super(DNN, self).__init__()
+        self.fc1 = nn.Linear(1, 10)  # 입력 레이어
+        self.relu = nn.ReLU()
+        self.fc2 = nn.Linear(10, 10) # 숨겨진 레이어
+        self.fc3 = nn.Linear(10, 1)  # 출력 레이어
+
+    def forward(self, x):
+        x = self.relu(self.fc1(x))
+        x = self.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+# 나머지 코드는 GLM 예시와 유사
+```
+
+## Bayesian Neural Networks (BNNs)
+
+베이지안 신경망은 불확실성을 고려하여 예측을 하는 모델입니다. PyTorch에서는 이를 구현하기 위해 특수한 라이브러리나 기법이 필요합니다. 예를 들어, Pyro를 사용할 수 있습니다.
+
+```py
+import pyro
+from pyro.nn import PyroSample, PyroModule
+from pyro.infer import SVI, Trace_ELBO
+from pyro.optim import Adam
+
+class BNN(PyroModule):
+    def __init__(self):
+        super(BNN, self).__init__()
+        self.fc1 = PyroModule[nn.Linear](1, 10)
+        self.fc1.weight = PyroSample(dist.Normal(0, 1).expand([10, 1]).to_event(2))
+        self.fc1.bias = PyroSample(dist.Normal(0, 10).expand([10]).to_event(1))
+        self.fc2 = PyroModule[nn.Linear](10, 1)
+        self.fc2.weight = PyroSample(dist.Normal(0, 1).expand([1, 10]).to_event(2))
+        self.fc2.bias = PyroSample(dist.Normal(0, 10).expand([1]).to_event(1))
+
+    def forward(self, x, y=None):
+        x = torch.relu(self.fc1(x))
+        mean = self.fc2(x).squeeze(-1)
+        with pyro.plate("data", x.shape[0]):
+            obs = pyro.sample("obs", dist.Normal(mean, 1), obs=y)
+        return mean
+
+# 베이지안 학습 과정은 일반적인 딥러닝 학습과 상이하므로 추가적인 설정이 필요
+```
+
+## Gaussian Processes (GPs)
+
+가우시안 프로세스는 비모수적 방법으로 데이터를 모델링하며, GPyTorch와 같은 라이브러리를 사용하여 구현할 수 있습니다.
+
+```py
+import gpytorch
+from gpytorch.models import ExactGP
+from gpytorch.means import ConstantMean
+from gpytorch.kernels import ScaleKernel, RBFKernel
+from gpytorch.distributions import MultivariateNormal
+
+class GPModel(ExactGP):
+    def __init__(self, train_x, train_y, likelihood):
+        super(GPModel, self).__init__(train_x, train_y, likelihood)
+        self.mean_module = ConstantMean()
+        self.covar_module = ScaleKernel(RBFKernel())
+
+    def forward(self, x):
+        mean_x = self.mean_module(x)
+        covar_x = self.covar_module(x)
+        return MultivariateNormal(mean_x, covar_x)
+
+# 가우시안 프로세스 학습 과정도 특수하게 설정되어야 함
+```
+
+# Overfitting
+
+오버피팅(overfitting)이란, 머신러닝 모델이 학습 데이터에 너무 과도하게 적응해버려서, 실제 새로운 데이터(테스트 데이터)에 대한 예측 성능이 떨어지는 현상을 의미한다. 쉽게 말하자면, 공부를 할 때 모의고사 문제만 외워서 실제 시험에서 새로운 문제를 잘 푸는 능력이 떨어지는 것과 비슷하다.
+
+오버피팅을 줄이기 위한 방법 중 하나는 정규화(regularization)이다. 정규화는 모델의 가중치가 너무 큰 값을 갖지 않도록 제한하는 방법이다. 
+
+```py
+# 먼저, 필요한 라이브러리들을 불러와서 간단한 신경망을 정의해보자:
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import torchvision.datasets as datasets
+import torchvision.transforms as transforms
+
+# 간단한 신경망
+class SimpleNN(nn.Module):
+    def __init__(self):
+        super(SimpleNN, self).__init__()
+        self.fc1 = nn.Linear(28 * 28, 128)
+        self.fc2 = nn.Linear(128, 64)
+        self.fc3 = nn.Linear(64, 10)
+    
+    def forward(self, x):
+        x = x.view(-1, 28 * 28)
+        x = torch.relu(self.fc1(x))
+        x = torch.relu(self.fc2(x))
+        x = self.fc3(x)
+        return x
+
+model = SimpleNN()
+
+# MNIST 데이터셋을 사용해서 학습 데이터와 테스트 데이터를 로드하고 전처리를 적용해주자:
+transform = transforms.Compose([transforms.ToTensor(),
+                                transforms.Normalize((0.1307,), (0.3081,))])
+
+train_dataset = datasets.MNIST(root='./data', train=True, transform=transform, download=True)
+test_dataset = datasets.MNIST(root='./data', train=False, transform=transform, download=True)
+
+train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=64, shuffle=True)
+test_loader = torch.utils.data.DataLoader(test_dataset, batch_size=64, shuffle=True)
+
+# 이제 오버피팅을 줄이기 위해 L2 정규화를 적용한 옵티마이저를 설정할 차례야. 
+# 여기서 weight_decay 매개변수가 L2 정규화의 강도를 결정해줘:
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(model.parameters(), lr=0.01, weight_decay=1e-5)
+
+# 마지막으로 신경망을 학습시키는 코드를 작성하고, 테스트 데이터셋에서의 성능을 확인하자:
+num_epochs = 10
+
+# 신경망 학습하기
+for epoch in range(num_epochs):
+    model.train()
+    for batch_idx, (data, target) in enumerate(train_loader):
+        optimizer.zero_grad()
+        output = model(data)
+        loss = criterion(output, target)
+        loss.backward()
+        optimizer.step()
+    
+    # 성능 확인
+    model.eval()
+    correct = 0
+    total = 0
+    with torch.no_grad():
+        for data, target in test_loader:
+            output = model(data)
+            _, predicted = torch.max(output.data, 1)
+            total += target.size(0)
+            correct += (predicted == target).sum().item()
+
+    print(f"Epoch {epoch+1} - Test Accuracy: {100 * correct / total}%")
+# 위 코드를 실행하면 오버피팅을 줄이기 위해 정규화를 적용한 신경망이 학습되고, 테스트 데이터셋에서의 성능을 확인할 수 있다.
+```
+
+# Regularization
+
+L1 정규화와 L2 정규화는 머신러닝에서 모델의 복잡도를 제어하여 과적합(overfitting)을 방지하는 기법입니다. 이 기법들은 모델이 훈련 데이터에 너무 정확하게 맞추어져 일반화 능력이 떨어지는 것을 막기 위해 사용됩니다.
+
+**L1 Regularization (Lasso Regularization)**
+
+L1 정규화는 모델의 가중치(weights)에 대한 손실 함수(loss function)에 가중치의 절대값의 합을 더합니다. 이는 일부 가중치를 정확히 0으로 만들어, 결과적으로 모델이 더 단순해지게 하며, 이로 인해 중요하지 않은 특성(feature)이 제거됩니다. 이를 통해 모델의 해석이 용이해지고, 중요한 특성만을 사용하여 예측을 수행하게 됩니다.
+
+**L2 Regularization (Ridge Regularization)**
+
+L2 정규화는 손실 함수에 가중치의 제곱의 합을 더합니다. 이는 가중치의 크기를 감소시켜 모든 특성이 예측에 미치는 영향을 비교적 균등하게 만듭니다. L2 정규화는 가중치를 완전히 0으로 만들지는 않지만, 과적합을 방지하는 데 효과적입니다.
+
+**Weight Decay**
+
+Weight Decay는 L2 정규화와 직접적인 관계가 있습니다. 실제로, Weight Decay는 L2 정규화의 다른 이름으로써 머신러닝 커뮤니티에서 널리 사용됩니다. Weight Decay는 학습 과정에서 가중치의 크기를 줄이는 것을 목표로 하며, 이는 과적합을 방지하고 모델의 일반화 능력을 향상시킵니다.
+
+아래는 PyTorch에서 L1 정규화, L2 정규화를 적용하는 방법의 예시 코드입니다. PyTorch에서는 L2 정규화를 weight_decay 파라미터를 통해 쉽게 적용할 수 있습니다. L1 정규화는 직접 손실 함수에 추가해야 합니다.
+
+```py
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# 가상의 데이터셋과 모델
+X = torch.randn(100, 3)
+y = torch.randn(100, 1)
+model = nn.Linear(3, 1)
+
+# L1 정규화 적용
+l1_lambda = 0.01
+def l1_penalty(weights):
+    return l1_lambda * weights.abs().sum()
+
+optimizer = optim.SGD(model.parameters(), lr=0.001)
+
+# 훈련 루프
+for epoch in range(100):
+    optimizer.zero_grad()
+    output = model(X)
+    loss = nn.MSELoss()(output, y)
+    l1_loss = sum(l1_penalty(param) for param in model.parameters())
+    total_loss = loss + l1_loss
+    total_loss.backward()
+    optimizer.step()
+```
+
+```py
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# 가상의 데이터셋 생성
+X = torch.randn(100, 3)
+y = torch.randn(100, 1)
+
+# 모델 정의 (여기서는 간단한 선형 모델)
+model = nn.Linear(3, 1)
+
+# 손실 함수 정의
+criterion = nn.MSELoss()
+
+# 옵티마이저 정의 (L2 정규화 적용)
+l2_lambda = 0.01
+optimizer = optim.SGD(model.parameters(), lr=0.001, weight_decay=l2_lambda)
+
+# 훈련 루프
+for epoch in range(100):
+    optimizer.zero_grad()   # 매 반복마다 기울기를 0으로 초기화
+    outputs = model(X)      # 모델을 통해 예측값 계산
+    loss = criterion(outputs, y)  # 손실 계산
+    loss.backward()         # 역전파를 통해 기울기 계산
+    optimizer.step()        # 옵티마이저를 사용하여 파라미터 업데이트
+
+    if epoch % 10 == 0:
+        print(f'Epoch {epoch+1}, Loss: {loss.item()}')
+```
+
+매 반복마다 기울기를 0으로 초기화하는 이유는 이전 반복에서 계산된 기울기 값들이 새로운 기울기 계산에 영향을 미치지 않도록 하기 위함입니다. 기울기(gradient)는 모델의 가중치에 대한 손실 함수의 미분값이며, 이를 통해 가중치를 업데이트하여 모델을 학습시킵니다.
+
+파이토치(PyTorch)와 같은 딥러닝 프레임워크에서는 기울기 계산 시 .backward() 메소드를 호출하여 자동으로 기울기를 계산하고, 이 기울기는 각 파라미터(가중치)에 대해 누적됩니다. 만약 기울기를 0으로 초기화하지 않고 새로운 기울기 값을 계산한다면, 이전 기울기 값에 새로운 값이 더해지게 되어 정확한 기울기 계산이 이루어지지 않습니다. 이는 가중치 업데이트가 잘못되어 모델 학습에 부정적인 영향을 미칠 수 있습니다.
+
+따라서, 매 학습 반복 시작 전에 optimizer.zero_grad() (또는 model.zero_grad()를 사용한 경우)를 호출하여 모든 파라미터의 기울기를 0으로 초기화함으로써, 각 반복에서 독립적으로 기울기 계산을 수행할 수 있도록 합니다. 이 과정을 통해 모델 학습이 올바르게 진행되어 최적의 가중치를 찾아갈 수 있습니다.
+
+# Drop Out
+
+Dropout은 신경망을 훈련시킬 때 과적합을 방지하는 간단하면서도 효과적인 기법입니다. 과적합은 모델이 훈련 데이터에 너무 잘 맞춰져 있어서 새로운 데이터에 대해서는 잘 작동하지 않는 상태를 말합니다. Dropout은 이 문제를 해결하기 위해, 훈련 과정에서 신경망의 일부 연결을 임의로 끊는 방식으로 작동합니다.
+
+**Dropout의 동작 방식**
+
+상상해보세요, 당신이 팀 프로젝트를 하고 있는데, 팀의 모든 멤버가 매번 모든 회의에 참석한다고 합니다. 이 경우, 특정 멤버들이 특정 업무에 너무 의존하게 될 수 있습니다. 하지만, 만약 매 회의마다 랜덤하게 몇 명의 팀 멤버들만 참석한다면, 팀은 더 유연해지고, 모든 멤버가 프로젝트의 다양한 부분을 이해하고 처리할 수 있게 됩니다.
+
+Dropout은 비슷한 아이디어를 따릅니다. 훈련 중에 신경망의 각 레이어에서 뉴런(또는 노드)의 일부를 임의로 활성화하지 않음으로써(즉, 출력을 0으로 설정함으로써), 네트워크가 더 견고해지도록 합니다. 이렇게 하면 네트워크가 더 일반화되고, 새로운 데이터에 대해 더 잘 예측할 수 있게 됩니다.
+
+PyTorch에서는 nn.Dropout 레이어를 사용하여 네트워크에 Dropout을 적용할 수 있습니다. 다음은 간단한 신경망 모델에 Dropout을 적용하는 예시 코드입니다.
+
+```py
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+class Net(nn.Module):
+    def __init__(self):
+        super(Net, self).__init__()
+        self.fc1 = nn.Linear(16, 32)  # 첫 번째 레이어
+        self.dropout = nn.Dropout(0.5)  # Dropout 레이어, 50% 뉴런을 끈다
+        self.fc2 = nn.Linear(32, 16)  # 두 번째 레이어
+
+    def forward(self, x):
+        x = F.relu(self.fc1(x))
+        x = self.dropout(x)  # 활성화 함수 적용 후 Dropout 적용
+        x = self.fc2(x)
+        return x
+
+# 모델 생성
+model = Net()
+print(model)
+
+# 임의의 입력 데이터
+input_data = torch.randn(1, 16)
+
+# 모델을 통해 입력 데이터 전달
+output = model(input_data)
+print(output)
+```
+
+이 코드에서, nn.Dropout(0.5)는 레이어의 출력 중 50%를 랜덤하게 선택하여 0으로 설정합니다. Dropout 비율은 일반적으로 0.2에서 0.5 사이를 사용하며, 이는 실험을 통해 최적의 값을 찾아야 합니다. Dropout은 모델이 훈련 모드에 있을 때만 적용되며, 평가 모드에서는 모든 뉴런이 활성화됩니다(model.eval()를 호출하여 설정). 이는 모델이 학습할 때는 과적합을 방지하고, 모델을 평가할 때는 전체 모델의 성능을 최대로 활용하기 위함입니다.
+
+# Auto Encoder
+
+Auto Encoder는 데이터를 효율적으로 압축하고 복원하는 머신러닝 모델입니다. 간단히 말해, 우리가 가진 데이터의 '요약'을 만들어내고, 그 요약으로부터 다시 원본 데이터와 유사한 데이터를 복원하는 과정을 학습합니다. 이 과정에서 Auto Encoder는 데이터의 중요한 특징을 배우게 됩니다.
+
+Auto Encoder는 크게 두 부분으로 나뉩니다:
+
+- Encoder: 데이터를 입력받아 중요한 정보를 담은 더 작은 형태의 데이터로 변환합니다. 이 과정을 '인코딩'이라고 하며, 결과물을 'latent space representation' 또는 간단히 'code'라고 합니다.
+- Decoder: Encoder에서 만들어진 code를 입력받아, 원본 데이터와 유사한 데이터를 생성합니다. 이 과정을 '디코딩'이라고 합니다.
+이 모델의 핵심 아이디어는 원본 데이터를 잘 복원하는 것입니다. 즉, Encoder와 Decoder를 통해 데이터를 압축했다가 복원했을 때, 원본과 최대한 유사하도록 학습하는 것입니다.
+
+PyTorch로 간단한 Auto Encoder 모델을 구현해 보겠습니다. 여기서는 이미지 데이터를 처리하는 가장 기본적인 형태의 Auto Encoder를 다룹니다.
+
+```py
+import torch
+import torch.nn as nn
+import torch.optim as optim
+from torchvision import datasets, transforms
+from torch.utils.data import DataLoader
+
+# 데이터 전처리 방식 설정
+transform = transforms.Compose([
+    transforms.ToTensor(),  # 이미지를 PyTorch 텐서로 변환
+    transforms.Normalize((0.5,), (0.5,))  # 이미지를 [-1, 1] 범위로 정규화
+])
+
+# MNIST 데이터셋 로드
+train_dataset = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
+train_loader = DataLoader(train_dataset, batch_size=64, shuffle=True)
+
+# Auto Encoder 모델 정의
+class AutoEncoder(nn.Module):
+    def __init__(self):
+        super(AutoEncoder, self).__init__()
+        self.encoder = nn.Sequential(
+            nn.Linear(28*28, 128),
+            nn.ReLU(),
+            nn.Linear(128, 64),
+            nn.ReLU(),
+            nn.Linear(64, 12),
+            nn.ReLU(),
+            nn.Linear(12, 3)  # 최종 code의 크기는 3
+        )
+        self.decoder = nn.Sequential(
+            nn.Linear(3, 12),
+            nn.ReLU(),
+            nn.Linear(12, 64),
+            nn.ReLU(),
+            nn.Linear(64, 128),
+            nn.ReLU(),
+            nn.Linear(128, 28*28),
+            nn.Tanh()  # 출력을 [-1, 1] 범위로 맞춤
+        )
+
+    def forward(self, x):
+        x = self.encoder(x.view(-1, 28*28))
+        x = self.decoder(x)
+        return x.view(-1, 1, 28, 28)
+
+# 모델, 손실 함수, 최적화 알고리즘 설정
+model = AutoEncoder()
+criterion = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=1e-3)
+
+# 학습 시작
+for epoch in range(1, 11):  # 총 10 에폭 학습
+    for data, _ in train_loader:
+        optimizer.zero_grad()  # 기울기 초기화
+        output = model(data)  # 모델에 데이터를 입력하여 출력을 얻음
+        loss = criterion(output, data)  # 출력과 원본 데이터 사이의 손실 계산
+        loss.backward()  # 손실에 대한 기울기 계산
+        optimizer.step()  # 모델의 가중치 업데이트
+    print(f'Epoch {epoch}, Loss: {loss.item()}')  # 에폭마다 손실 출력
+```
+
+# Transformer
+
+[transformer](/transformer/README.md)
+
+# MobileNetV3
+
+[mobilenetv3](/mobilenetv3/README.md)
+
+# Principal components analysis (PCA)
+
+Principal Component Analysis (PCA)는 머신러닝에서 데이터의 차원을 줄이기 위해 사용되는 방법 중 하나입니다. 복잡한 데이터에서 가장 중요한 특성을 찾아내어, 데이터를 더 간단하게 이해하고 처리할 수 있게 도와줍니다. 18살이라면 고등학생 정도이니, 간단한 예시와 함께 설명하겠습니다.
+
+**PCA 설명**
+
+상상해 보세요, 여러분이 사진을 찍었는데, 이 사진에는 많은 정보가 담겨 있습니다: 색상, 크기, 위치 등등. 하지만 여러분이 정말 중요하게 생각하는 것은 사진 속의 사람들의 표정일 수 있습니다. PCA는 이러한 상황에서 사진 속의 '표정' 같은 중요한 정보만을 추출해 내는 방법과 비슷합니다.
+
+데이터에는 많은 변수들이 있지만, 모든 변수가 유용한 정보를 제공하는 것은 아닙니다. PCA는 이 중요한 정보를 담고 있는 몇 가지 '주성분'으로 데이터를 요약해 줍니다. 이 과정에서 원본 데이터의 차원이 줄어들며, 계산량도 감소하고, 데이터를 이해하기도 더 쉬워집니다.
+
+- 변수들 간의 관계 파악: PCA는 데이터의 변수들 사이에서 가장 강한 패턴을 찾습니다. 이 패턴은 데이터의 분산(변수들이 얼마나 퍼져 있는가)을 최대로 하는 방향을 찾는 것으로 시작합니다.
+- 주성분 찾기: 첫 번째 주성분을 찾은 후, 그 다음으로 중요한 패턴을 찾기 위해 두 번째 주성분을 찾습니다. 이 과정은 원하는 차원의 수만큼 반복됩니다.
+- 차원 축소: 이렇게 찾은 주성분들을 사용하여 원본 데이터를 새로운 차원으로 투영합니다. 이 새로운 차원은 원본 데이터에 비해 훨씬 적은 차원을 가지며, 중요한 정보를 최대한 보존합니다.
+
+PyTorch를 사용하여 PCA를 구현하는 예제 코드를 제공하겠습니다. 이 코드는 PyTorch의 텐서 연산과 SVD(특이값 분해) 기능을 사용하여 PCA를 수행합니다.
+
+```py
+import torch
+import numpy as np
+
+# 예제 데이터 생성
+np.random.seed(0)
+X = np.random.rand(100, 10)  # 100개의 샘플과 10개의 특성을 가진 데이터
+X_centered = X - np.mean(X, axis=0)  # 데이터 중심화
+
+# PyTorch 텐서로 변환
+X_centered_tensor = torch.tensor(X_centered, dtype=torch.float32)
+
+# SVD 수행
+U, S, V = torch.svd(X_centered_tensor)
+
+# 첫 2개의 주성분을 사용하여 데이터를 투영
+k = 2  # 사용할 주성분의 수
+principal_components = V[:, :k]
+
+# 투영된 데이터 계산
+X_projected = torch.mm(X_centered_tensor, principal_components)
+
+# 결과 확인
+print("원본 데이터의 차원:", X_centered_tensor.shape)
+print("차원 축소된 데이터의 차원:", X_projected.shape)
+
+```
+
+이 코드는 먼저 데이터를 생성하고 중심화합니다. 그 다음 PyTorch의 torch.svd 함수를 사용하여 SVD를 수행합니다. SVD의 결과인 V 행렬의 첫 k 열을 사용하여 데이터를 새로운 차원으로 투영합니다. 여기서 k는 우리가 선택한 주성분의 수입니다. 이렇게 하면 데이터의 차원이 줄어들면서도 중요한 정보는 최대한 보존됩니다.
+
+PCA를 통해 데이터를 분석하고 이해하는 능력은 머신러닝 분야에서 매우 중요합니다. 이 방법을 사용함으로써, 우리는 데이터에서 중요한 패턴을 찾아내고, 복잡한 문제를 더 간단하게 해결할 수 있게 됩니다.
+
+# SVD (Singular Value Decomposition)
+
+SVD(특이값 분해, Singular Value Decomposition)는 선형대수에서 매우 중요한 개념입니다. 이는 임의의 `m×n` 크기의 행렬 `A`를 세 개의 특별한 행렬의 곱으로 분해하는 방법을 말합니다. 이 세 행렬은 다음과 같습니다:
+
+- `U`: 크기가 `m×m`인 행렬로, A의 왼쪽 특이 벡터들을 열로 가지며, U는 직교 행렬입니다.
+- `Σ`: 대각선 상에 특이값이 위치하고, 그 외의 요소는 모두 0인 m×n 크기의 직사각 대각 행렬입니다. 특이값은 A의 비대각 요소의 크기(즉, `A`의 '힘')를 나타냅니다.
+- `V^T`: 크기가 n×n인 행렬로, A의 오른쪽 특이 벡터들을 행으로 가지며, V 역시 직교 행렬입니다.
+
+SVD의 수식은 다음과 같습니다:
+
+```
+A = UΣV^T
+```
+ 
+**SVD의 중요성과 응용**
+
+SVD는 다음과 같은 여러 가지 중요한 이유로 널리 사용됩니다:
+
+- 데이터 압축 및 차원 축소: SVD를 통해 데이터의 중요한 특성을 추출할 수 있으며, 이를 통해 데이터를 압축하고, 계산 효율성을 높일 수 있습니다.
+- 잡음 제거: 데이터에서 잡음이나 불필요한 정보를 제거하는 데 사용될 수 있습니다. 이는 데이터의 특이값을 분석하여,중요한 정보만을 남기고 나머지를 제거함으로써 이루어집니다.
+- 이미지 처리: 이미지의 특징을 추출하거나 이미지 압축에 사용됩니다. 이미지를 행렬로 간주하고 SVD를 적용함으로써 효율적으로 처리할 수 있습니다.
+- 추천 시스템: 사용자와 항목 간의 관계를 나타내는 행렬에 SVD를 적용하여, 사용자의 선호도를 예측하는 데 사용됩니다.
+
+**예제: 이미지 압축**
+
+SVD를 사용한 이미지 압축의 간단한 예를 들어보겠습니다. 이미지를 행렬 A로 간주하고 SVD를 수행하여, Σ의 상위 몇 개의 특이값만을 사용하여 이미지를 재구성합니다. 이때, 상위 k개의 특이값과 관련된 U와 V^T 의 열만을 사용하면, 원본 이미지에 가까운 근사치를 얻을 수 있으며, 이 과정에서 데이터의 크기를 상당히 줄일 수 있습니다.
+
+SVD는 이러한 방법으로 데이터의 본질적인 특성을 파악하고, 데이터를 더 효율적으로 다룰 수 있게 해주는 강력한 도구입니다.
