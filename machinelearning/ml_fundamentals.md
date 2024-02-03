@@ -52,6 +52,16 @@
 - [MobileNetV3](#mobilenetv3)
 - [Principal components analysis (PCA)](#principal-components-analysis-pca)
 - [SVD (Singular Value Decomposition)](#svd-singular-value-decomposition)
+- [Confusion Matrix](#confusion-matrix)
+- [Precision, Recall, Accuracy, F1](#precision-recall-accuracy-f1)
+- [AUROC, AUCROC](#auroc-aucroc)
+- [Expectation Function](#expectation-function)
+- [Entropy](#entropy-1)
+- [Cross Entropy](#cross-entropy)
+- [KLD (Kullback–Leibler divergence)](#kld-kullbackleibler-divergence)
+- [JSD (Jensson Shannon Divergence)](#jsd-jensson-shannon-divergence)
+- [MLE (Maximum Likelihood Estimation)](#mle-maximum-likelihood-estimation)
+- [MAP (Maximum A Posterior)](#map-maximum-a-posterior)
 
 -----
 
@@ -600,6 +610,16 @@ plt.show()
 위 코드는 LSE 예제와 거의 동일합니다. 그 이유는 선형 회귀 문제에서 LSE와 MLE가
 동일한 결과를 도출하기 때문입니다. 코드에는 데이터 생성, 매개 변수 최적화 및
 결과 시각화 외에 특별한 추가 단계가 없습니다.
+
+Back Propagation의 구현 방식은 다음과 같습니다:
+
+- 예측과 실제 값의 차이 계산: 코드는 먼저 예측된 `Y` 값을 `Y_pred = w * X + b`를 사용하여 계산합니다. 여기서 w는 가중치(기울기), b는 편향(절편)입니다. 그런 다음, 예측된 값과 실제 값 사이의 차이(잔차) `R = Y - Y_pred`를 계산합니다.
+- 손실 함수에 대한 그라디언트 계산: 손실 함수(여기서는 제곱 오차의 합)에 대한 w와 b의 그라디언트를 계산합니다. 이 과정에서, `w_gradient = (-2 / n) * np.sum(X * R)`와 `b_gradient = (-2 / n) * np.sum(R)`을 통해 각 매개변수에 대한 손실 함수의 미분값을 구합니다. 이는 각 매개 변수에 대한 손실의 변화율을 나타냅니다.
+- 매개 변수 업데이트: 계산된 그라디언트를 사용하여 매개 변수 w와 b를 업데이트합니다. 여기서 `w = w - alpha * w_gradient`와 `b = b - alpha * b_gradient`는 경사 하강법의 업데이트 규칙을 따릅니다. `alpha`는 학습률이며, 이 값은 매개 변수가 업데이트되는 속도를 결정합니다.
+
+이 과정을 epochs 횟수만큼 반복하여, 매개 변수 `w`와 `b`를 데이터에 가장 잘 맞도록 조정합니다. 이는 기본적으로 역전파(Back Propagation) 과정에 해당합니다. 역전파는 신경망에서 사용되는 용어로, 손실 함수의 그라디언트를 네트워크의 각 가중치에 대해 계산하고, 이를 사용하여 가중치를 업데이트하는 과정을 의미합니다. 여기서는 선형 회귀 문제에 적용된 비교적 단순한 형태의 역전파입니다.
+
+코드에서 볼 수 있듯이, 이 방법은 선형 회귀 모델을 학습시키기 위해 필요한 기본적인 역전파 메커니즘을 구현합니다. 그라디언트 계산 및 매개 변수 업데이트는 네트워크를 통한 오류의 역전파와 매우 유사한 형태로, 모델의 성능을 점차 개선해 나가는 방식으로 작동합니다.
 
 ## Linear Regression, 베이지안 추정법(Bayesian Estimation)
 
@@ -2201,3 +2221,403 @@ SVD는 다음과 같은 여러 가지 중요한 이유로 널리 사용됩니다
 SVD를 사용한 이미지 압축의 간단한 예를 들어보겠습니다. 이미지를 행렬 A로 간주하고 SVD를 수행하여, Σ의 상위 몇 개의 특이값만을 사용하여 이미지를 재구성합니다. 이때, 상위 k개의 특이값과 관련된 U와 V^T 의 열만을 사용하면, 원본 이미지에 가까운 근사치를 얻을 수 있으며, 이 과정에서 데이터의 크기를 상당히 줄일 수 있습니다.
 
 SVD는 이러한 방법으로 데이터의 본질적인 특성을 파악하고, 데이터를 더 효율적으로 다룰 수 있게 해주는 강력한 도구입니다.
+
+
+# Confusion Matrix
+
+Confusion Matrix(혼동 행렬)은 머신러닝에서 분류 모델의 성능을 평가할 때 사용되는
+표를 말합니다. 이 행렬은 모델이 예측한 클래스와 실제 클래스를 비교하여 정확도,
+정밀도, 재현율, F1 스코어 등의 성능 지표를 계산하는 데 사용됩니다.
+
+일반적으로 Confusion Matrix는 2x2 혹은 NxN 행렬로, 행은 실제 클래스를, 열은
+예측된 클래스를 나타냅니다. 2x2 혼동 행렬의 경우 다음과 같은 구성을 가집니다:
+
+- True Positive(**TP**): 양성 클래스를 정확하게 양성으로 예측한 경우
+- False Positive(**FP**): 음성 클래스를 잘못해서 양성으로 예측한 경우 (1종 오류)
+- True Negative(**TN**): 음성 클래스를 정확하게 음성으로 예측한 경우
+- False Negative(**FN**): 양성 클래스를 잘못해서 음성으로 예측한 경우 (2종 오류)
+
+이러한 값을 바탕으로 성능 지표를 계산하고 모델의 성능을 평가합니다.
+
+# Precision, Recall, Accuracy, F1
+
+> * [[BigS] 맨날 헷갈리는 모델 평가 지표! 민감도, 재현율, 특이도, 정확도, F1 Score 이해하기 + 외우기 | youtube](https://www.youtube.com/watch?v=Eyxynd-vDsQ)
+> * [[머신러닝] 다중 분류 모델 성능 측정 (accuracy, f1 score, precision, recall on multiclass classification)](https://www.youtube.com/watch?v=8DbC39cvvis)
+----
+
+![](img/2023-01-30-17-14-23.png)
+
+| name | formula | description | etc |
+|--|--|--|--|
+| Accuracy (정분류율) | `(TP + TN) / (TP + FN + FP + TN)` | | |
+| Error Rate(오분류율) | `(FN + FP) / (TP + TN + FN + FP)` | | |
+| Precision (정확도) | `TP / (TP + FP)` | 내가참 중 진짜참 | 정확한 비율 |
+| Recall (민감도, 재현율) | `TP / (TP + FN)` | 진짜참 중 내가참 | 잡아챈 비율 |
+| Specificity (특이도) | `TN / (TN + FP)` |  |  |
+| F1 score | `2 * (Precision * Recall) / (Precision + Recall)` | | |
+
+![](img/2023-01-30-15-39-01.png)
+
+아래는 분류 모델의 주요 성능 지표들과 관련된 설명입니다.
+
+- **Accuracy** (정분류율): 모든 예측 결과 중 올바르게 예측한 비율입니다. 전체 데이터 중에서 정확하게 분류된 데이터의 비율을 나타냅니다.
+- **Error Rate** (오분류율) : 전체 예측 결과 중 잘못 예측한 비율입니다. 오분류율은 1에서 정분류율을 뺀 값과 같습니다.
+- **Precision** (정확도): 예측한 양성 샘플 중 실제 양성 샘플의 비율입니다. 모델이 양성이라고 분류한 데이터 중에서 실제로 양성인 데이터의 비율을 나타냅니다. 높은 정확도는 거짓 양성(FP)이 적다는 것을 의미합니다.
+- **Recall** (재현율, 민감도): 실제 양성 샘플 중 예측한 양성 샘플의 비율입니다. 실제 양성인 데이터 중에서 모델이 양성으로 분류한 데이터의 비율을 나타냅니다. 높은 재현율은 거짓 음성(FN)이 적다는 것을 의미합니다.
+- **Specificity** (특이도): 실제 음성 샘플 중 예측한 음성 샘플의 비율입니다. 실제 음성인 데이터 중에서 모델이 음성으로 분류한 데이터의 비율을 나타냅니다. 높은 특이도는 거짓 양성(FP)이 적다는 것을 의미합니다.
+- **F1 Score**: 정확도(Precision)과 재현율(Recall)의 조화 평균입니다. 이 지표는 정확도와 재현율의 균형을 고려한 모델 성능 측정값입니다. 불균형한 데이터셋에서 모델의 성능을 평가하는 데 특히 유용합니다.
+
+# AUROC, AUCROC
+
+- [AUROC, AUC-ROC 이해하기](https://velog.io/@zxxzx1515/AUROC-AUC-ROC-%EC%9D%B4%ED%95%B4%ED%95%98%EA%B8%B0)
+
+AUROC, AUCROC 는 **Area Under the Receiver Operating Characteristic curve**의
+약자로, 머신러닝 모델의 성능을 평가할 때 사용되는 지표 중 하나입니다. 분류
+문제에서 양성과 음성 클래스 사이의 모델 성능을 평가하는 데 주로 사용되며, 높은
+AUROC 값은 높은 진양성률(true positive rate)과 낮은 참양성률(false positive
+rate)을 동시에 얻을 수 있는 모델을 의미합니다. AUROC가 `1`에 가까울수록 모델의
+성능이 좋으며 `0.5`에 가까울수록 무작위 분류 수준의 성능이라고 할 수 있습니다.
+
+# Expectation Function
+
+기대값 `E(X)` 을 어떻게 구하는지 설명한다. 완벽한 세계에서 주사위를 던지는
+상황을 생각해 보자. 확률변수 X 와 P(X) 는 다음과 같다.
+
+| X | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| P(X) | 1/6 | 1/6 | 1/6 | 1/6 | 1/6 | 1/6 |
+
+다음은 확률변수 X 가 Discrete Space 에 속하는 경우와 X 가 continuous Space 에
+속할 때의 `E(x)` 이다.
+
+![](img/exp_x_discrete.png)
+
+```latex
+\begin{align*}
+E_{x \sim  p(x)} [X] &= \sum _x p(x) X \\
+                     &= \int _x p(x) X dx
+\end{align*}
+```
+
+확률변수 `X` 가 함수 일수도 있다. 확률변수가 `f(x)` 라고 하면 `E(f(x))` 는 다음과 같다.
+
+![](img/exp_func_discrete.png)
+
+```latex
+\begin{align*}
+E_{x \sim  p(x)} [f(x)] &= \sum _x p(x) f(x) \\
+                        &= \int _x p(x) f(x) dx
+\end{align*}
+```
+
+# Entropy
+
+* [참고](http://t-robotics.blogspot.com/2017/08/26-entropy.html)
+* [Entropy & Information Theory](https://hyeongminlee.github.io/post/prob001_information_theory/)
+* [Information Theory 1편 @ brunch](https://brunch.co.kr/@chris-song/68)
+
+정보를 최적으로 인코딩하기 위해 필요한 bit 의 수를 말한다.
+
+예를 들어서 오늘이 무슨 요일인지 bit 로 표현해보자. 요일의 개수가
+모두 7개이니까 3비트가 필요하다. `(log_{2}7 = 2.8073)`
+
+```
+월 : 000
+화 : 001
+수 : 010
+...
+```
+
+만약 표현할 정보가 나타날 확률이 다르다고 해보자. 예를 들어
+40 개의 문자 (A, B, C, D, ..., Z, 1, 2, 3, ..., 14) 를
+bit 로 표현해보자. 40 개이기 때문에 6 bit 가 필요하다. (log_{2}40 = 5.3219)
+
+그런데 A, B, C, D 가 발생할 확률이 각각 22.5% 라고 해보자.
+모두 합하면 90% 확률이다. 6개의 비트를 모두 사용할 필요가 없다.
+
+첫번째 비트를 A, B, C, D 인지 아닌지를 표현하도록 하자. 만약 첫번째 비트가
+1 이면 추가로 2 비트만 있으면 A, B, C, D 를 구분할 수 있다. 만약 첫번째 비트가
+0 이면 추가로 6 bit 가 필요하다. (log_{2}36 = 5.17) 결과적으로 필요한 비트는 3.3 비트가 된다. 확률을 고려했을 때 평균적으로 필요한 비트의 수를 엔트로피라고 한다.
+
+```
+0.9 * 3 + 0.1 * 6 = 3.3 bit
+```
+
+Entropy 의 공식을 다음과 같이 정리할 수 있다.
+
+![](img/entropy_eq.png)
+
+```latex
+\begin{align*}
+H &= \sum _{i} p_{i} I(s_{i}) \\
+  &= \sum _{i} p_{i} \log _{2} (\frac {1}{p_{i}}) \\
+  &= - \sum _{i} p_{i} \log _{2} (p_{i})
+\end{align*}
+```
+
+`I(s_{i})` 를 information gain 이라고 할 수 있다. information gain 은 획득한 정보의 양을 얘기하는데 이것은 그 정보가 나타날 확률에 반비례한다. 예를 들어 김씨가 임씨보다 많다.
+어떤 사람이 임씨일 경우 information gain 은 김씨일 경우보다 높다. 더우 희귀한 성이기 
+때문에 그 사람에 대해 더욱 많은 정보를 획득했다고 할 수 있다.
+
+결국 Entropy 는 정보량 (information gain) 의 기대값 (expectation) 이다.
+
+# Cross Entropy
+
+* [[신경망기초] 크로스엔트로피손실함수](https://www.slideshare.net/jaepilko10/ss-91071277)
+* [참고](http://t-robotics.blogspot.com/2017/08/27-cross-entropy-kl-divergence.html)
+
+다른 사건의 확률을 곱해서 Entropy 를 계산한 것이다. negative maximum log
+likelihood estimation 이라고도 한다. 예를 들어서 0 또는 1 만 가지는 확률변수 X
+가 있다고 하면 Entropy 와 Cross Entropy 는 다음과 같다.
+
+![](img/cross_entropy_eq.png)
+
+```latex
+\begin{align*}
+Entropy       &= -p(X=0) \log (p(X=0)) -p(X=1)\log(p(X=1)) \\
+Cross-Entropy &= -p(X=1) \log (p(X=0)) -p(X=0)\log(p(X=1))
+\end{align*}
+```
+
+위의 수식을 보면 Coss-Entropy 는 Entropy 의 `P(X=0)` 과 `P(X=1)` 을 교차한 것과 같다.
+
+예를 들어서 0 또는 1 만 가지는 확률변수 X 를 가정해보자. Cross-Entropy 는 `-p(0)log(p(1))-p(1)log(p(0))` 과 같고 그래프의 모양은 아래로 볼록하다. 그래프는 미분 가능하고 최소값을 구할 수 있다. Cross-Entropy 에 -1 을 곱하면 `p(0)log(p(1))+p(1)log(p(0))` 과 같고 그래프의 모양은 위로 볼록하다. 그래프는 미분 가능하고 최대값을 구할 수 있다.
+
+신경망의 출력이 `[0, 1]` 일 때 Loss 함수로 사용할 수 있다.
+
+![](img/cross_entropy_loss_eq.png)
+
+```latex
+\begin{align*}
+\begin{align*}
+Squared \  Loss \  E(w)          &= \frac{1}{2} \sum _{d \in D} (y_{d} - \hat {y} _{d} ) ^{2} \\
+Mean \  Squared \  Loss \  E(w)  &= \frac{1}{2} \frac{1}{\left | D \right |} \sum _{d \in D} (y_{d} - \hat {y} _{d} ) ^{2} \\
+Cross-Entropy \ Loss \  E(w)     &= \frac{1}{\left | D \right |} \sum _{d \in D} (-y_{d} \log (\hat {y} _{d}) - (1 - y_{d}) \log (1 - \hat {y} _{d}))
+\end{align*}
+```
+
+# KLD (Kullback–Leibler divergence)
+
+* [참고](http://t-robotics.blogspot.com/2017/08/27-cross-entropy-kl-divergence.html)
+* [Kullback-Leibler Divergence & Jensen-Shannon Divergence](https://hyeongminlee.github.io/post/prob002_kld_jsd/)
+* [KL-Divergence @ brunch](https://brunch.co.kr/@chris-song/69)
+
+우리가 데이터의 분포를 추정했을 때 얼마나 잘 추정한 것인지 측정하는
+방법이 필요하다. KLD 는 서로 다른 확률분포의 차이를 측정하는 척도이다. 
+KLD 가 작다면 좋은 추정이라 할 수 있다.
+
+먼저 아이템 `s_{i}` 가 갖는 information gain 은 다음과 같다.
+
+![](img/kld_information_gain.png)
+
+```latex
+I_{i} = - \log (p_{i})
+```
+
+원본 확률 분포 p 와 근사된 분포 q 에 대하여 i 번째 아이템이
+가진 정보량 (information gain) 의 차이 (정보손실량) 은 다음과 같다.
+
+![](img/kld_information_gain_delta.png)
+
+```latex
+\Delta I_{i} = - \log (p_{i}) - \log (q_{i})
+```
+
+p 에 대하여 이러한 정보 손실량의 기대값을 구한 것이 바로 KLD 이다.
+
+![](img/kld_eq.png)
+
+```latex
+\begin{align*}
+D_{KL}(p||q) &= E[\log(p_{i}) - \log(q_{i})] \\
+             &= \sum _{i} p_{i} \log \frac {p_{i}}{q_{i}}
+\end{align*}
+```
+
+그러나 KLD 는 symmetric 하지 않다. 즉 `D_{KL}(P||q) != D_{KL}(q||p)` 이다.
+
+# JSD (Jensson Shannon Divergence)
+
+* [참고](https://hyeongminlee.github.io/post/prob002_kld_jsd/)
+
+KLD 는 symmetric 하지 않다. 즉 `D_{KL}(P||q) != D_{KL}(q||p)` 이다.
+KLD 를 symmetric 하게 개량한 것이 JSD 이다.
+
+![](img/jsd_eq.png)
+
+```latex
+JSD(p, q) = \frac {1}{2} D_{KL} (p || \frac {p + q}{2}) + D_{KL} (q || \frac {p + q}{2})
+```
+
+# MLE (Maximum Likelihood Estimation)
+
+키를 입력으로 하고 몸무게를 예측하는 모델을 생각해 보자. 우선 다음과 같이 실제
+키(`x_{i}`) 와 실제 몸무게(`t_{i}`) 를 조사한 Dataset D 가 있다고 해보자.
+
+```
+D = {(x_{1}, t_{1}), (x_{2}, t_{2}), (x_{3}, t_{3}),... , (x_{N}, t_{N}), }
+```
+
+parameter `w` 를 가지고 키 `x` 를 입력하면 몸무게 `y` 를 예측하는 함수 `y(x|w)`
+를 정의하자. 모델을 잘 학습하면 함수 `y` 는 다음과 같다고 할 수 있다.
+
+```
+t = y(x|w)
+```
+
+그러나 함수 `y` 의 결과가 완벽히 실제 몸무게 `t` 와 일치한다고는 할 수 없다.
+그럴 가능성이 매우 높다고 하는 것이 더욱 정확하다. 이것을 수학적으로 표현하면
+실제 몸무게 `t` 는 우리가 모르기 때문에 Random Variable 인데 모델이 예측한
+몸무게 `y` 를 평균으로 하는 Gaussian 분포를 따른다고 할 수 있다. Gaussian 분포는
+평균에서 확률밀도가 가장 높기 때문이다.
+
+이것을 더욱 수학적으로 표현하면 실제 몸무게 `t` 는 예측한 몸무게 `y` 를 평균
+으로 하고 `σ` 를 표준편차로 하는 Gaussian Distribution 을 따른다고 할 수 있고
+다음과 같이 쓸 수 있다.
+
+![](img/mle_t_p_eq.png)
+
+```latex
+\begin{align*}
+t                 &\sim  N(y(x|w), \sigma^{2}) \\
+p(t|x, w, \sigma) &= \frac{1}{\sqrt{2 \pi } \sigma } 
+                       e ^{-\frac{(t - y(x|w) )^{2}}{2 \sigma^{2} }}
+
+\end{align*}
+```
+
+위의 수식에서 `p` 의 경우 `w, σ` 는 paramter 이므로 생략할 수 있다. `p(t|x)` 는
+키가 `x` 일 때 실제 몸무게가 `t` 일 확률을 말한다.
+
+```
+D = {(x_{1}, t_{1}), (x_{2}, t_{2}), (x_{3}, t_{3}),... , (x_{N}, t_{N}), }
+```
+
+Dataset 을 다시 한번 살펴보자. Dataset 이 위와 같이 구성될 확률 즉 "키가 `x_{1}`
+일 때 실제 몸무게가 `t_{1}` 이고, 키가 `x_{2}` 일 때 실제 몸무게가 `t_{2}` 이고,
+..., 키가 `x_{N}` 일 때 실제 몸무게가 `t_{N}` 일 확률" `p(D)` 는 확률의 곱의
+법칙을 통해 다음과 같이 구할 수 있다.
+
+![](img/mle_p_d_eq.png)
+
+```latex
+\begin{align*}
+p(D)              &= \prod _{i=1}^{N} p(t_{i}|x_{i}) \\
+                  &= \prod _{i=1}^{N} \frac{1}{\sqrt{2 \pi } \sigma } 
+                       e ^{-\frac{(t - y(x|w) )^{2}}{2 \sigma^{2} }}
+\end{align*}
+```
+
+`p(D)` 는 `w` 에 따라 바뀔 수 있다. 그래서 `p(D|w)` 라고 할 수 있다. 이것을
+**Likelihood** 라고 한다. `p(D|w)` 가 최대일 `w` 를 구하는 방법을
+**Maximum Likelihood Estimation** 이라고 한다.
+
+이쯤에서 **Posterior**, **Likelihood**, **Prior** 를 다음과 같이 정리해 본다.
+
+* **Posterior** : 대상이 주어졌을 경우, 구하고자 하는 대상의 확률분포
+  `p(w|D)`
+* **Likelihood** : 구하고자 하는 대상을 모르지만 안다고 가정했을 경우, 주어진
+  대상의 분포. `p(D|w)`, `w` 를 모르기 때문에 `w` 에 대한 함수형태로 나온다.
+* **Prior** : 주어진 대상들과 무관하게, 상식을 통해 우리가 구하고자 하는 대상에
+  대해 이미 알고 있는 사전 정보. 연구자의 경험을 통해 정해주어야 한다. `p(w)`
+
+이제 MLE 를 구해보자. 먼저 likelihood 에 log 를 취한다.
+
+![](img/mle_log_likelihood.png)
+
+```latex
+\begin{align*}
+log \  likelihood &= \log (p(D|w) \\
+                  &= \sum _{i = 1} ^{N} \{ -\log(\sqrt{2 \pi })
+                     - \frac{(t_{i} - y(x_{i}|w) )^{2}}{2 \sigma^{2} } \}
+\end{align*}
+```
+
+위의 수식에서 `w, σ` 는 상수이므로 최대값에 영향을 주지 않기 때문에 제거한다.
+그리고 음의 부호도 제거하면 다음과 같다.
+
+![](img/mle_l2_loss.png)
+
+```latex
+\begin{align*}
+\sum _{i=1} ^{N} (t_{i} - y(x_{i}|w))^{2}
+\end{align*}
+```
+
+위의 수식은 예측값과 실제 값의 차이의 제곱인 `L2 Loss` 이다. MLE 를 이용하여
+Regression 에서 `L2 Loss` 를 쓰는 이유를 증명했다. 이것은 주어진 Dataset 으로
+부터 얻은 Likelihood 를 최대화 시키기 위해 `L2 Loss` 를 사용하는 것을 의미한다.
+`L2 Loss` 를 최소화 시키는 일이 곧 Likelihood 를 최대화 시키는 일이다.
+
+**Classification** 문제에서는 **Bernouli Distribution** 을 이용하여 비슷한
+방법으로 **Cross Entropy Error** 를 유도할 수 있다.
+
+# MAP (Maximum A Posterior)
+
+**MLE** 가 **Likelihood** 를 최대화 시키는 것이라면 **MAP** 는 **Posterior** 를
+최대화 시키는 것이다. **Likelihood** 와 **Posterior** 의 차이는 **Prior** 가
+없느냐 있느냐이다. `w` 를 데이터만 이용해서 구하고자 한다면 **MLE** 를 이용한다.
+만약 `w` 를 데이터와 함께 사전지식까지 이용해서 구하고자 한다면 **MAP** 를
+이용한다.
+
+**Prior** 를 조정해주면 고의적으로 `w` 의 분포를 조정해줄 수 있다. 예를 들어 `w`
+의 값을 0 주변에 배치하고 싶다면 0 을 중심으로 분포 되도록 `P(w)` 를 만들어 낼
+수 있다. 이와 같이 Prior 를 조정하여 출력값을 조정하고 싶을 때 **MAP** 를
+사용한다.
+
+이제 **MAP** 를 계산해 보자. 먼저 **Posterior** 를 다음과 같이 표현할 수 있다.
+
+![](img/mlp_eq_1.png)
+
+```latex
+\begin{align*}
+P(w|D) &= \frac {P(D|w)P(w)}{\int P(D|w)P(w) dw} \\
+       &= \eta P(D|w)P(w)
+\end{align*}
+```
+
+이제 **Prior** 를 설정해 보자. `w` 를 0 을 중심으로 정규분포가 되도록 `p(w)` 를
+설정하면 다음과 같다.
+
+![](img/mlp_eq_prior.png)
+
+```latex
+\begin{align*}
+w    & \sim N(0, \sigma _{w}^{2}) \\
+p(w) &= \frac{1}{\sqrt{2\pi} \sigma_{w} } e ^{-\frac{w^{2}}{2 \sigma _{w}^{2}}}
+\end{align*}
+```
+
+다음은 **Posterior** 를 최대화 하는 `w` 를 구해보자.
+
+![](img/mlp_optimize_w.png)
+
+```latex
+\begin{align*}
+w^{*}    &= argmax_{w} \{ \log p(w|D) \} \\
+         &= argmax_{w} \{ \log \eta + \log p(D|w) + \log p(w) \} \\
+         &= argmax_{w} \{ \log \eta + L(w) + \log p(w) \} \\
+         &= argmax_{w} \{ \log \eta + L(w) - \log ({\sqrt{2 \pi}} \sigma_{w}) \} - \frac{w^{2}}{2 \sigma_{w}^{2}} \\
+\end{align*}
+```
+
+위의 수식에서 상수항을 모두 제거 하면 Posterior 를 최대로 하는 문제는 다음의
+수식을 최소로 하는 문제로 바뀐다.
+
+![](img/mlp_eq_minimize_L.png)
+
+```latex
+\begin{align*}
+L(w) + \frac{w^{2}}{2 \sigma_{w}^{2}} &= \sum_{i=1}^{N} (t_{i} - y(x_{i} | w))^{2}
+                                          + \frac{w^{2}}{2 \sigma_{2}^{2}} \\
+                                      &= \sum_{i=1}^{N} (t_{i} - y(x_{i} | w))^{2}
+                                          + \frac{w^{2}}{\alpha}
+\end{align*}
+```
+
+위의 수식은 **Weight Decay (L2 Regularization)** 방식을 적용한 Deep Learning 의
+Loss 함수가 된다. 지금까지의 과정은 Prior 를 **Gaussian Distribution** 을
+따르도록 하고 **MAP** 으로부터 **Weight Decay** 식을 유도한 것이다. 이것은 **L2
+Regularization** 을 적용하는 일은 `w` 에 가우시안분포를 **Prior** 로 설정하는
+일을 의미한다. 참고로 **Prior** 를 **Laplacian Distribution** 을 따르도록 하면
+**L1 Regularization** 을 얻을 수 있다.
