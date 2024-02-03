@@ -2,7 +2,7 @@
 - [Chain Rule](#chain-rule)
 - [독립 변수 (Independent variable), 종속 변수 (Dependent variable)](#독립-변수-independent-variable-종속-변수-dependent-variable)
 - [확률 변수 (Random Variable)](#확률-변수-random-variable)
-- [확률 분포(probability distribution)](#확률-분포probability-distribution)
+- [확률 분포 (probability distribution)](#확률-분포-probability-distribution)
 - [모수 (Parameter)](#모수-parameter)
 - [모수를 추정하는 추정법 (Parameter Estimation)](#모수를-추정하는-추정법-parameter-estimation)
 - [모델 (Model)](#모델-model)
@@ -179,7 +179,7 @@ Chain rule 적용: (dy/dx) = (dy/du) * (du/dx) = 2u * 2 = 4u = 4(2x+3)
 확률 변수는 실험의 결과를 수치로 표현해 줌으로써 통계적 모델링, 확률 분포의
 사용, 데이터 분석 등에 사용됩니다.
 
-# 확률 분포(probability distribution)
+# 확률 분포 (probability distribution)
 
 확률 변수(random variable)의 가능한 값들과 그 값들이 나타날 가능성을 설명하는
 수학적 표현입니다. 확률 분포는 각 사건이 발생할 확률을 알려주는 것으로, 이를
