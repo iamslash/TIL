@@ -62,6 +62,8 @@
 - [JSD (Jensson Shannon Divergence)](#jsd-jensson-shannon-divergence)
 - [MLE (Maximum Likelihood Estimation)](#mle-maximum-likelihood-estimation)
 - [MAP (Maximum A Posterior)](#map-maximum-a-posterior)
+- [K-Nearest Neighbors (KNN)](#k-nearest-neighbors-knn)
+- [Collatorative Filtering](#collatorative-filtering)
 
 -----
 
@@ -73,6 +75,7 @@
 > - [공돌이의 수학정리노트 (Angelo's Math Notes)](https://angeloyeo.github.io/)
 > - ["Probabilistic machine learning": a book series by Kevin Murphy](https://github.com/probml/pml-book)
 >   - ["Machine Learning: A Probabilistic Perspective" (2012)](https://probml.github.io/pml-book/book0.html)
+>       - [python solution](https://github.com/probml/pyprobml/)
 >   - ["Probabilistic Machine Learning: An Introduction" (2022)](https://probml.github.io/pml-book/book1.html)
 >   - ["Probabilistic Machine Learning: Advanced Topics" (2023)](https://probml.github.io/pml-book/book2.html)
 > - [CS231n: Convolutional Neural Networks for Visual Recognition](http://cs231n.stanford.edu/syllabus.html)
@@ -2621,3 +2624,159 @@ Loss 함수가 된다. 지금까지의 과정은 Prior 를 **Gaussian Distributi
 Regularization** 을 적용하는 일은 `w` 에 가우시안분포를 **Prior** 로 설정하는
 일을 의미한다. 참고로 **Prior** 를 **Laplacian Distribution** 을 따르도록 하면
 **L1 Regularization** 을 얻을 수 있다.
+
+# K-Nearest Neighbors (KNN)
+
+K-Nearest Neighbors (KNN)는 기계 학습의 가장 기본적이고 이해하기 쉬운 알고리즘 중 하나입니다. 이 알고리즘의 핵심 아이디어는 매우 간단합니다: 어떤 데이터 포인트를 분류하거나 예측하려 할 때, 그 데이터 포인트와 가장 가까운 K개의 이웃 데이터 포인트를 찾아, 그 이웃들이 어떤 클래스에 속하는지를 보고 다수결을 통해 해당 데이터 포인트의 클래스를 결정합니다.
+
+예를 들어, 소셜 네트워크에서 사람들을 '게이머' 또는 '비게이머'로 분류하고자 할 때, KNN을 사용할 수 있습니다. 이 경우, 각 사람의 특성(예: 게임에 소비하는 시간, 게임 관련 게시물 수 등)을 바탕으로, 그 사람이 '게이머'인지 '비게이머'인지를 예측합니다. 어떤 사람 A를 분류하려 할 때, A와 가장 가까운 K명의 사람들이 대부분 '게이머'라면 A도 '게이머'로 분류할 수 있습니다.
+
+KNN의 작동 원리는 간단하지만, 효율적인 K값의 선택, 거리 측정 방법의 결정(예: 유클리드 거리, 맨해튼 거리 등), 그리고 큰 데이터 세트에서의 계산 효율성 등을 고려해야 합니다.
+
+PyTorch로 간단한 KNN 구현 예시를 제공하겠습니다. PyTorch는 주로 딥러닝 모델을 위한 프레임워크이지만, 기본적인 머신 러닝 알고리즘을 구현하는 데에도 사용할 수 있습니다. 아래 예제는 PyTorch를 사용하여 KNN 알고리즘을 어떻게 구현할 수 있는지 보여줍니다. 이 코드는 데이터셋의 모든 샘플 간의 거리를 계산하고, 주어진 데이터 포인트에 대해 가장 가까운 K개의 이웃을 찾는 방법을 보여줍니다. 실제 데이터셋을 사용하기 전에 데이터를 텐서 형태로 변환해야 합니다.
+
+```python
+import torch
+import numpy as np
+
+def knn(data, query, k, distance_fn, choice_fn):
+    neighbor_distances_and_indices = []
+    
+    # 모든 데이터 포인트에 대해...
+    for index, example in enumerate(data):
+        # 거리 계산
+        distance = distance_fn(example[:-1], query)
+        
+        # (거리, 인덱스) 쌍을 저장
+        neighbor_distances_and_indices.append((distance, index))
+    
+    # 거리에 따라 정렬 후, 최상위 k개 선택
+    sorted_neighbor_distances_and_indices = sorted(neighbor_distances_and_indices)
+    
+    # 최근접 이웃의 인덱스를 선택
+    k_nearest_distances_and_indices = sorted_neighbor_distances_and_indices[:k]
+    
+    # 최근접 이웃의 클래스(또는 값을) 선택하는 함수를 사용
+    k_nearest_labels = [data[i][-1] for distance, i in k_nearest_distances_and_indices]
+    
+    return choice_fn(k_nearest_labels)
+
+# 유클리드 거리 함수
+def euclidean_distance(point1, point2):
+    point1 = torch.tensor(point1)
+    point2 = torch.tensor(point2)
+    return torch.sqrt(torch.sum((point1 - point2) ** 2))
+
+# 다수결을 통해 클래스 결정
+def majority_vote(labels):
+    label_count = Counter(labels)
+    winner, winner_count = label_count.most_common(1)[0]
+    num_winners = len([count for count in label_count.values() if count == winner_count])
+    if num_winners == 1:
+        return winner  # 단일 승자 반환
+    else:
+        return majority_vote(labels[:-1])  # 동점 상황 해결을 위해 마지막 항목 제거 후 재시도
+
+# 예제 사용
+from collections import Counter
+
+# 가상의 데이터셋 (마지막 항목은 클래스 레이블)
+data = [
+    ([1, 2], 0),
+    ([2, 3], 1),
+    ([3, 4], 0),
+    ([5, 6], 1),
+    ([6, 7], 0),
+    ([8, 9], 1),
+]
+
+# 분류하고자 하는 쿼리 포인트
+query = [4, 3]
+
+# KNN 실행
+k = 3
+label = knn(data, query, k, euclidean_distance, majority_vote)
+print(f'The predicted class for query point {query} is: {label}')
+
+```
+
+이 코드는 간단한 2차원 데이터를 사용하여 KNN을 어떻게 구현할 수 있는지 보여줍니다. data는 각각의 특성 벡터와 그에 해당하는 클래스 레이블을 포함하는 튜플의 리스트입니다. query는 분류하고자 하는 새로운 데이터 포인트의 특성 벡터입니다. knn 함수는 데이터셋, 쿼리 포인트, K값, 거리 함수, 그리고 선택 함수를 매개변수로 받아, 쿼리 포인트에 가장 가까운 K개의 이웃을 찾고, majority_vote 함수를 사용하여 가장 많은 표를 받은 클래스를 결정합니다.
+
+K-Nearest Neighbors (KNN) 알고리즘을 비모수적(non-parametric) 모델로 분류하는 이유는 여러 가지가 있습니다. 비모수적 모델은 데이터에서 직접적으로 학습되며, 고정된 수의 매개변수를 사용하지 않는 모델을 말합니다. 이러한 모델은 데이터의 분포에 대한 사전 가정을 하지 않으며, 모델의 복잡성이 데이터의 양에 따라 변할 수 있습니다. KNN이 이러한 특성을 가지고 있기 때문에 비모수적 모델로 간주됩니다.
+
+- 고정된 매개변수가 없음: KNN은 학습 과정에서 고정된 수의 매개변수를 학습하지 않습니다. 대신, 전체 학습 데이터셋을 사용하여 새로운 데이터 포인트의 클래스를 예측합니다. 즉, KNN 모델의 "학습"은 사실상 학습 데이터셋을 메모리에 저장하는 것을 의미하며, 예측 시점에 이 데이터를 사용하여 가장 가까운 이웃을 찾습니다.
+- 데이터 양에 따라 모델의 복잡성이 변함: KNN의 특성은 데이터셋의 크기에 직접적으로 의존합니다. 데이터셋이 클수록, 즉 더 많은 데이터 포인트를 포함할수록, 예측을 위해 고려해야 할 이웃의 양도 증가합니다. 이는 모델이 데이터의 양에 따라 자동으로 조정되는 비모수적 특성을 반영합니다.
+- 데이터 분포에 대한 사전 가정이 없음: KNN은 데이터가 특정 확률 분포를 따른다는 가정을 하지 않습니다. 대부분의 모수적(parametric) 모델은 특정 분포(예: 정규 분포)를 가정하지만, KNN은 이러한 가정 없이도 작동할 수 있습니다. 이는 데이터의 실제 분포가 모델의 성능에 큰 영향을 미치지 않음을 의미합니다.
+
+이러한 이유로, KNN은 유연하고 범용적인 사용이 가능한 비모수적 모델로 분류됩니다. 데이터의 양이 증가함에 따라 모델이 자동으로 조정되며, 복잡한 데이터 구조를 모델링할 수 있지만, 동시에 큰 데이터셋에서는 계산 비용이 매우 높아질 수 있다는 단점도 있습니다.
+
+# Collatorative Filtering
+
+Collaborative Filtering (협업 필터링)은 사용자의 과거 행동(예: 구매 이력, 평점, 온라인 상호작용)이나 의견(예: 리뷰)을 기반으로 사용자에게 제품이나 서비스를 추천하는 기술입니다. 이 방법은 사람들이 공유하는 취향이나 관심사를 분석하여, 한 사용자에게 다른 사용자의 선호도를 바탕으로 추천을 제공합니다. 협업 필터링은 많은 추천 시스템에서 널리 사용되며, 특히 온라인 쇼핑, 영화 또는 음악 추천 서비스 같은 곳에서 그 효용성이 입증되었습니다.
+
+협업 필터링의 주요 두 가지 유형은 다음과 같습니다:
+
+- 사용자 기반 협업 필터링(User-Based Collaborative Filtering): 이 방식은 특정 사용자와 유사한 취향 또는 평가 패턴을 보인 다른 사용자들을 찾아낸 후, 그 유사한 사용자들이 좋아하는 항목을 추천합니다. 예를 들어, 만약 두 사용자가 공통적으로 여러 영화에 비슷한 평점을 줬다면, 한 사용자가 보고 좋아한 다른 영화를 또 다른 사용자에게 추천할 수 있습니다.
+- 아이템 기반 협업 필터링(Item-Based Collaborative Filtering): 이 방식은 사용자가 평가한 아이템들 간의 유사성을 분석하여 추천을 제공합니다. 예를 들어, 만약 많은 사용자들이 A 영화와 B 영화를 함께 높게 평가했다면, A 영화를 좋아하는 사용자에게 B 영화를 추천할 수 있습니다. 아이템 간의 유사성은 주로 사용자의 평가 패턴을 기반으로 계산됩니다.
+
+협업 필터링의 장점은 사용자와 아이템에 대한 사전 지식이 필요 없다는 것입니다. 즉, 아이템의 내용(예: 영화의 장르나 감독)을 분석하지 않고도 추천을 생성할 수 있습니다. 대신, 사용자 간의 상호작용과 평가 패턴만을 사용합니다.
+
+그러나 협업 필터링에는 몇 가지 한계도 있습니다. 예를 들어, 새로운 아이템이나 새로운 사용자(콜드 스타트 문제), 충분한 평가 데이터가 없는 경우(희소성 문제), 너무 많은 아이템으로 인해 계산이 복잡해지는 경우(규모 확장성 문제) 등의 상황에서는 효과적으로 작동하기 어렵습니다. 이러한 문제를 해결하기 위해, 많은 연구자들은 협업 필터링과 다른 기술을 결합하는 하이브리드 접근 방식을 탐구하고 있습니다.
+
+이 예제에서는 가장 기본적인 형태의 협업 필터링 모델을 구현하고, 사용자와 아이템 간의 상호작용을 예측하기 위해 행렬 분해(Matrix Factorization) 기법을 사용합니다. 행렬 분해는 사용자와 아이템 행렬을 더 낮은 차원의 특성 행렬로 분해하여, 사용자의 아이템에 대한 선호도를 예측하는 방법입니다.
+
+아래의 코드는 사용자와 아이템 간의 상호작용을 예측하기 위한 간단한 협업 필터링 모델을 구현합니다:
+
+```py
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+class MatrixFactorization(nn.Module):
+    def __init__(self, num_users, num_items, embedding_size):
+        super(MatrixFactorization, self).__init__()
+        self.user_embeddings = nn.Embedding(num_users, embedding_size)
+        self.item_embeddings = nn.Embedding(num_items, embedding_size)
+        
+        # 초기화
+        self.user_embeddings.weight.data.uniform_(0, 0.05)
+        self.item_embeddings.weight.data.uniform_(0, 0.05)
+    
+    def forward(self, user, item):
+        user_embedding = self.user_embeddings(user)
+        item_embedding = self.item_embeddings(item)
+        return (user_embedding * item_embedding).sum(1)
+
+# 가정: 5명의 사용자와 10개의 아이템, 임베딩 크기는 3
+num_users = 5
+num_items = 10
+embedding_size = 3
+
+model = MatrixFactorization(num_users, num_items, embedding_size)
+
+# 예제 데이터: 사용자 ID, 아이템 ID, 평점
+user_ids = torch.LongTensor([0, 1, 2, 3])
+item_ids = torch.LongTensor([1, 2, 3, 4])
+ratings = torch.FloatTensor([5, 3, 4, 2])
+
+# 손실 함수와 옵티마이저
+criterion = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=0.01)
+
+# 학습
+for epoch in range(100):
+    optimizer.zero_grad()
+    outputs = model(user_ids, item_ids)
+    loss = criterion(outputs, ratings)
+    loss.backward()
+    optimizer.step()
+    
+    if epoch % 10 == 0:
+        print(f'Epoch {epoch}, Loss: {loss.item()}')
+
+```
+
+이 코드는 사용자 ID와 아이템 ID를 입력으로 받아, 해당 사용자가 해당 아이템에 대해 얼마나 높은 평점을 줄지 예측합니다. 모델은 사용자와 아이템의 임베딩을 학습하여, 사용자의 아이템에 대한 선호도를 나타내는 저차원 벡터를 생성합니다. 손실 함수로는 평균 제곱 오차(Mean Squared Error, MSE)를 사용하며, Adam 옵티마이저로 모델의 매개변수를 업데이트합니다.
+
+이 예제는 매우 간단한 형태의 협업 필터링을 구현한 것으로, 실제 응용에서는 더 많은 데이터 전처리, 모델의 정규화, 초매개변수 조정 등이 필요할 수 있습니다.
+
