@@ -2157,7 +2157,7 @@ for epoch in range(1, 11):  # 총 10 에폭 학습
 
 # Principal components analysis (PCA)
 
-Principal Component Analysis (PCA)는 머신러닝에서 데이터의 차원을 줄이기 위해 사용되는 방법 중 하나입니다. 복잡한 데이터에서 가장 중요한 특성을 찾아내어, 데이터를 더 간단하게 이해하고 처리할 수 있게 도와줍니다. 18살이라면 고등학생 정도이니, 간단한 예시와 함께 설명하겠습니다.
+Principal Component Analysis (PCA)는 머신러닝에서 데이터의 차원을 줄이기 위해 사용되는 방법 중 하나입니다. 복잡한 데이터에서 가장 중요한 특성을 찾아내어, 데이터를 더 간단하게 이해하고 처리할 수 있게 도와줍니다. 
 
 **PCA 설명**
 

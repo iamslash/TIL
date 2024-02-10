@@ -5,8 +5,8 @@
   - [Traffic](#traffic)
   - [Storage](#storage)
 - [High Level Design](#high-level-design)
-  - [System APIs](#system-apis)
-  - [Data Model](#data-model)
+  - [API Design](#api-design)
+  - [Data Model Design](#data-model-design)
   - [High-level Architecture](#high-level-architecture)
 - [High Level Design Deep Dive](#high-level-design-deep-dive)
 - [References](#references)
@@ -55,7 +55,7 @@
 
 # High Level Design
 
-## System APIs
+## API Design
 
 ```c
 search_movies(
@@ -83,7 +83,7 @@ reserve_seats(
 )
 ```
 
-## Data Model
+## Data Model Design
 
 ![](schema.png)
 

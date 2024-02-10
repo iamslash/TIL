@@ -4,11 +4,11 @@
   - [Estimation](#estimation)
 - [High Level Design](#high-level-design)
   - [API Design](#api-design)
-  - [Data Model](#data-model)
+  - [Data Model Design](#data-model-design)
   - [High-Level Architecture](#high-level-architecture)
 - [High Level Design Deep Dive](#high-level-design-deep-dive)
   - [Reservation By Room Type](#reservation-by-room-type)
-  - [Concurrenty Issues](#concurrenty-issues)
+  - [Concurrency Issues](#concurrency-issues)
   - [Scalability](#scalability)
   - [Data Consistency Among Services](#data-consistency-among-services)
 - [References](#references)
@@ -79,10 +79,9 @@
   * DELETE /v1/reservations/<reserve-id>
 ```
 
-## Data Model
+## Data Model Design
 
 * Hotel Service
-
   * hotel
     * hotel_id (PK)
     * name
@@ -136,11 +135,11 @@ There are **status** of **reservation** table
 
 ## Reservation By Room Type
 
-Users can make a reservation not by room_id but by room_type. We can improve the design for reservating by room type. 
+Users can make a reservation not by `room_id` but by `room_type`. We can improve the design for reservating by room type. 
 
 This is a improved API.
 
-```
+```json
 * Rservation APIs
   * POST /v1/reservations
     * Request
@@ -156,7 +155,6 @@ This is a improved API.
 These are improved database schemas.
 
 * Hotel Service
-
   * hotel
     * hotel_id (PK)
     * name
@@ -233,7 +231,7 @@ What if data is very big we can think two strategies.
 * Use **hot sorage** for recent data, **cold storage** for old data.
 * Database sharding. Shard key is hotel_id. The date will be sharded by `hash(hoteL_id) % number_of_db`.
 
-## Concurrenty Issues
+## Concurrency Issues
 
 Solutions for double booking problems of one users.
 
@@ -298,7 +296,7 @@ faster than pessimistic locking.
 
 > Cons:
 
-* When data conflicts are soften it will reduce system throughputs.
+* When data conflicts are so often it will reduce system throughputs.
 
 **Database constraints**
 
