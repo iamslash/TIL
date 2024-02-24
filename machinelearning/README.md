@@ -110,6 +110,8 @@
 
 # Materials
 
+- [deep learning by Ian goodfellow](http://www.deeplearningbook.org/)
+  - 기초수학부터 차근차근 deep learning에 대해 설명한다. 공짜
 - [Large-scale LM에 대한 얕고 넓은 지식들 (part 1) | youtube](https://www.youtube.com/watch?v=w4a-ARCEiqU)
   - [Large-scale LM에 대한 얕고 넓은 지식들(part 2) | youtube](https://www.youtube.com/watch?v=zbuD21YwLZI)
   - [ppt | github](https://github.com/jiphyeonjeon/season2/tree/main/advanced)
@@ -138,8 +140,6 @@
   - peter norvig의 교과서.
   - [한글](http://www.aladin.co.kr/shop/wproduct.aspx?ItemId=76161975)책도
     있다. 류광이 번역했기 때문에 읽어보자.
-- [deep learning by Ian goodfellow](http://www.deeplearningbook.org/)
-  - 기초수학부터 차근차근 deep learning에 대해 설명한다. 공짜
 - [PyTorch로 시작하는 딥러닝 입문 CAMP @ github](https://github.com/GunhoChoi/PyTorch-FastCampus)
   - fastcampus 유료 강좌의 강의 자료
 - [google ai experiments](https://experiments.withgoogle.com/ai)

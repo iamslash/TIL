@@ -14,6 +14,8 @@
 
 ## Major Scale
 
+[1 Oasis song, 7 modes | youtube](https://www.youtube.com/watch?v=kusm6YxcwVQ)
+
 ## Natural Minor Scale
 
 ## Harmonic Minor Scale

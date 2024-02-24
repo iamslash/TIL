@@ -1,3 +1,11 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Basic](#basic)
+  - [How to describe APIs](#how-to-describe-apis)
+  - [How to generate codes from the specification?](#how-to-generate-codes-from-the-specification)
+
+-----
+
 # Abstract
 
 openapi 는 REST API 제작을 위한 specification 이다. 예전에는 Swagger
@@ -6,11 +14,22 @@ openapi-generator CLI 로 server stubs, client libraries 를 생성할 수 있�
 
 # Materials
 
+* [Designing APIs with Swagger and OpenAPI](https://designapis.com/)
+  * [src](https://github.com/designapis)
+  * [farmstall src](git@github.com:designapis/farmstall.git)
+  * [FarmStall API landing page](https://farmstall.designapis.com  FarmStall API—https://farmstall.designapis.com/v1/reviews)
 * [What Is OpenAPI? What Is Swagger? | swagger](https://swagger.io/docs/specification/about/)
   * [Basic Structure | swagger](https://swagger.io/docs/specification/basic-structure/)
   * easier to understand than [OpenAPI 3.0 Specification](https://github.com/OAI/OpenAPI-Specification/blob/main/versions/3.0.2.md)
 
 # Basic
+
+## How to describe APIs
+
+| Metehods | URL | Query Params | Body |
+|--|--|--|--|
+| GET | `/reviews` | `maxRating (1-5)` | N/A |
+| POST | `/reviews` | N/A | `{"message": "Was good.", "rating": 5}` |
 
 ## How to generate codes from the specification?
 
