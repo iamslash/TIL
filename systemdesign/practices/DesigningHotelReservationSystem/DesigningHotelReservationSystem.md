@@ -316,7 +316,7 @@ CONSTRAINT `check_room_count` CHECK((`total_inventory - total_reserved` >= 0))
 
 > Cons:
 
-* It is similar with optimistic locking.
+* It is similar with [optimistic locking](/spring/SpringDataJpa.md#optimistic-locking).
 * Contraint is not under control of SCM such as [git](/git/README.md).
 * Not all database support constraints.
   
@@ -354,7 +354,7 @@ val: the number of available rooms for the given hotel ID, room type ID and date
 
 ## Data Consistency Among Services
 
-There are two solutions such as [2 Phase Commit](/distributedtransaction/README.md#2-phase-commit) and [SAGAS](/distributedtransaction/README.md#saga).
+There are two solutions such as [2 Phase Commit](/distributedtransaction/README.md#2-phase-commit), [TCC](/distributedtransaction/README.md#tcc-try-confirmcancel) and [SAGAS](/distributedtransaction/README.md#saga).
 
 # Questions
 
@@ -367,7 +367,7 @@ There are two solutions such as [2 Phase Commit](/distributedtransaction/README.
   - pessimistic lock
   - optimisitc lock
   - db constraint
-- What is the isolation level of RDBMS?
+- Explain about the isolation level of RDBMS.
 - What if QPS is 1,000 times higher like booking.com?
   - Sharding for write APIs
   - Caching for read APIs 

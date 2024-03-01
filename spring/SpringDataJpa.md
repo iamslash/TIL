@@ -2693,7 +2693,66 @@ JPA Cache 는 1-level Cache, 2-level Cache 가 있다.
 
 ---
 
-WIP...
+```java
+// Product.java
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Version;
+
+@Entity
+public class Product {
+    @Id
+    private Long id;
+
+    private String name;
+    private int quantity;
+
+    // getters and setters
+}
+
+// ProductRepository
+// LockModeType.PESSIMISTIC_WRITE를 사용하여 Pessimistic Lock을 적용할 메소드를 추가합니다.
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
+
+import javax.persistence.LockModeType;
+
+public interface ProductRepository extends CrudRepository<Product, Long> {
+    
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("select p from Product p where p.id = :id")
+    Product findByIdWithPessimisticLock(@Param("id") Long id);
+}
+
+// ProductService.java
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class ProductService {
+
+    private final ProductRepository productRepository;
+
+    @Autowired
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    @Transactional
+    public void updateProductQuantity(Long productId, int quantity) {
+        Product product = productRepository.findByIdWithPessimisticLock(productId);
+        if (product != null) {
+            product.setQuantity(quantity);
+            productRepository.save(product);
+        }
+    }
+}
+```
+
+이 예제에서는 `ProductService`의 `updateProductQuantity` 메소드가 `ProductRepository`의 `findByIdWithPessimisticLock` 메소드를 호출하여 특정 `Product` 인스턴스에 대한 `Pessimistic Lock`을 획득합니다. 이런 방식으로, 동시에 같은 `Product` 인스턴스를 수정하려는 다른 트랜잭션이 있다면, 이 트랜잭션이 완료될 때까지 기다려야 합니다.
 
 ### Optimistic Locking
 
@@ -2702,4 +2761,65 @@ WIP...
 
 ----
 
-WIP...
+```java
+// Product.java
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Version;
+
+@Entity
+public class Product {
+    @Id
+    private Long id;
+    private String name;
+    private int quantity;
+    @Version
+    private int version; // Optimistic Locking을 위한 버전 필드
+
+    // getters and setters
+}
+
+// ProductRepository.java
+// Spring Data JPA의 기본 CrudRepository나 JpaRepository 인터페이스를 확장하여 사용합니다. 
+// @Version 어노테이션이 달린 필드가 엔티티에 포함되어 있으므로, 
+// Spring Data JPA는 Optimistic Locking을 자동으로 처리합니다.
+import org.springframework.data.repository.CrudRepository;
+
+public interface ProductRepository extends CrudRepository<Product, Long> {
+}
+
+// ProductService.java
+// 이 코드에서는 ProductService의 updateProductQuantity 메소드를 통해 제품의 
+// 수량을 업데이트하려고 시도합니다. 만약 다른 트랜잭션이 동일한 제품을 이미 업데이트하여 
+// 버전 번호가 변경된 경우, ObjectOptimisticLockingFailureException이 발생하고, 
+// 이는 충돌이 감지되었음을 나타냅니다.
+
+Optimistic Locking은 리소스 사용량이 적고, 충돌이 자주 발생하지 않는 시나리오에서 유용합니다. 하지만, 충돌이 발생했을 때 이를 처리하는 로직을 구현해야 한다는 점을 고려해야 합니다.
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+public class ProductService {
+
+    private final ProductRepository productRepository;
+
+    @Autowired
+    public ProductService(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    @Transactional
+    public void updateProductQuantity(Long productId, int quantity) {
+        try {
+            Product product = productRepository.findById(productId).orElseThrow();
+            product.setQuantity(quantity);
+            productRepository.save(product);
+        } catch (ObjectOptimisticLockingFailureException e) {
+            // 충돌이 감지되면 여기서 처리
+            System.out.println("Optimistic locking conflict occurred");
+        }
+    }
+}
+```
