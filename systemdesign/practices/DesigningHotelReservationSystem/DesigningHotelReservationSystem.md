@@ -10,7 +10,10 @@
   - [Reservation By Room Type](#reservation-by-room-type)
   - [Concurrency Issues](#concurrency-issues)
   - [Scalability](#scalability)
+    - [Database Sharding](#database-sharding)
+    - [Caching](#caching)
   - [Data Consistency Among Services](#data-consistency-among-services)
+- [Questions](#questions)
 - [References](#references)
 
 ----
@@ -19,12 +22,12 @@
 
 ## Functional Requirement
 
-* Show the hotel related page
-* Show the hotel room-related detail page
-* Reserve a room
-* Admin console to add/remove/update hotel or room info
-* Support the overbooking
-* The price of a hotel room can be changed
+* Show the hotel related page.
+* Show the hotel room-related detail page.
+* Reserve a room.
+* Admin console to add/remove/update hotel or room info.
+* Support the overbooking.
+* The price of a hotel room can be changed.
 
 ## Non-Functional Requirement
 
@@ -298,6 +301,8 @@ faster than pessimistic locking.
 
 * When data conflicts are so often it will reduce system throughputs.
 
+The optimistic locking is a good option than Pessimistic locking when TPS is low.
+
 **Database constraints**
 
 ```sql
@@ -314,19 +319,57 @@ CONSTRAINT `check_room_count` CHECK((`total_inventory - total_reserved` >= 0))
 * It is similar with optimistic locking.
 * Contraint is not under control of SCM such as [git](/git/README.md).
 * Not all database support constraints.
+  
+The constraint is a good option than Pessimistic locking when TPS is low.
 
 ## Scalability
 
-Database Sharding
+The scalability is important when the QPS is 1,000 times higher than before like booking.com.
 
-[Redis](/redis/README.md)
+### Database Sharding
+
+Shard data by `hotel_id % shard_num`. If QPS is `30,000` and the number of shards is `16`, Each shard handles `30,000 / 16 = 1,875` QPS.
+
+- [Sharding](/systemdesign/README.md#sharding)
+
+### Caching
+
+Inventory cache is a good solution for room inventory write heavy system. [Redis](/redis/README.md) is a good solution.
+
+```
+key: hotelID_roomTypeID_{date}
+val: the number of available rooms for the given hotel ID, room type ID and date
+```
+
+[Debezium](/Debezium/README.md) is a good solution for CDC from [MySQL](/mysql/README.md) to [Redis](/redis/README.md).
+
+> Pros:
+
+- Reduced database load.
+- High Performance.
+
+> Cons:
+
+- The consistency between database and cache is difficult. We need to handle inconsistency. 
 
 ## Data Consistency Among Services
 
-There two solutions.
+There are two solutions such as [2 Phase Commit](/distributedtransaction/README.md#2-phase-commit) and [SAGAS](/distributedtransaction/README.md#saga).
 
-* [2 Phase Commit | TIL](/distributedtransaction/README.md#2-phase-commit)
-* [SAGAS | TIL](/distributedtransaction/README.md#saga)
+# Questions
+
+- Design the hotel reservation system. The write QPS is 3.
+- Design APIs.
+- Design data models.
+- How to handle conccurrency issues for the same room reservation of one user?
+- How to handle concurrency issues for the same room reservation of two users?
+- What is the isolation level of RDBMS?
+- What if QPS is 1,000 times higher like booking.com?
+  - Sharding for write APIs
+  - Caching for read APIs 
+- How to handle distributed transactions?
+  - 2 phase commit
+  - SAGAS
 
 # References
 

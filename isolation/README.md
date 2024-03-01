@@ -14,12 +14,9 @@
 
 # Abstract
 
-[mysql](/mysql/README.md) 은 [Lock](/mysql/mysql_lock.md) 이용하여
-동시성을 제어한다. Isolation Level 을 달리하여 [Concurrency Problems](/database/README.md#concurrency-problems-in-transactions) 을 해결할 수 있다. Isolation Level 이 높을 수록
-System throughput 은 낮아진다. 보통 Isolation Level 을 read committed 으로 설정한다.
+[mysql](/mysql/README.md) 은 [Lock](/mysql/mysql_lock.md) 이용하여 동시성을 제어한다. Isolation Level 을 달리하여 [Concurrency Problems](/database/README.md#concurrency-problems-in-transactions) 을 해결할 수 있다. Isolation Level 이 높을 수록 System throughput 은 낮아진다. 보통 Isolation Level 을 read committed 으로 설정한다.
 
-Isolation Level 의 동작방식을 MySQL Lock 으로 이해하고 싶다.
-[mysql](/mysql/README.md) 로 실습해 본다.
+Isolation Level 의 동작방식을 MySQL Lock 으로 이해하고 싶다. [mysql](/mysql/README.md) 로 실습해 본다.
 
 # Materials
 
@@ -117,13 +114,9 @@ gab lobck 을 사용하지 않는다. 따라서 **phantom read** 가 발생한�
 그러나 **phantom read** 는 여전히 발생한다.
 
 [Isolation Level](/isolation/README.md) 이 **serializable** 인 경우를 생각해
-보자. 기본적으로 **repeatble read** 와 같다. 단, `SELECT ...` 가 `SELECT ... FOR
-SHARE` 로 변경된다. (autocommit 이 꺼진 경우) 즉, `(S)` lock 이 걸린다.
-isolation level 이 너무 강력하여 deadlock 이 자주 발생되는 것을 주의 하자.
+보자. 기본적으로 **repeatble read** 와 같다. 단, `SELECT ...` 가 `SELECT ... FOR SHARE` 로 변경된다. (autocommit 이 꺼진 경우) 즉, `(S)` lock 이 걸린다. isolation level 이 너무 강력하여 deadlock 이 자주 발생되는 것을 주의 하자.
 
-예를 들어 다음과 같이 deadlock 을 발생시키고 확인해 보자. `update` 수행시
-`money` 를 읽어올 때는 consistent read 가 아니다. 새로운 snapshot 에서 `money`
-를 읽어온다.
+예를 들어 다음과 같이 deadlock 을 발생시키고 확인해 보자. `update` 수행시 `money` 를 읽어올 때는 consistent read 가 아니다. 새로운 snapshot 에서 `money` 를 읽어온다.
 
 ```sql
 create database foo;
@@ -211,7 +204,7 @@ Query OK, 1 row affected (21.69 sec)
   * 가장 쉽다. dead lock 이 발견되고 바로 rollback 된다. 그러나 system
     throughput 이 낮아진다.
 * `select for update`
-  * intention lock `(IS)` 이 걸린다. 두번 째 transaction 은 대기한다. 역시
+  * intention lock `(IS)` 이 걸린다. 두번 째 transaction 은 대기한다. 따라서
     system throughput 이 낮아진다.
 * `update ... where ...`
   * 다른 field 의 조건을 where 에 추가한다. 가장 합리적이다. 그러나 where 에
