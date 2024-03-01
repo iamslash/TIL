@@ -17,9 +17,7 @@
 
 # Abstract
 
-MySQL InnoDB 의 Lock 에 대해 정리한다. MySQL 은 Lock 으로 [Concurrency
-Problems](/database/README.md#concurrency-problems-in-transactions) 을 해결한다.
-즉, [Isolation Level](/isolation/README.md) 을 Lock 으로 구현한다.
+MySQL InnoDB 의 Lock 에 대해 정리한다. MySQL 은 Lock 으로 [Concurrency Problems](/database/README.md#concurrency-problems-in-transactions) 을 해결한다. 즉, [Isolation Level](/isolation/README.md) 을 Lock 으로 구현한다.
 
 # Materials
 
@@ -122,9 +120,7 @@ transaction 은 intention lock 에 대해 다음과 같이 동작한다.
 Compatible 은 lock 을 획득할 수 있다. Conflict 가 발생하면 lock 이
 release 될 때 까지 기다리고 획득한다.
 
-intention lock 은 full table lock ([LOCK TABLES ...
-WRITE](https://dev.mysql.com/doc/refman/5.7/en/lock-tables.html)) 을 제외하면
-모두 Compatible 이다.
+intention lock 은 full table lock ([LOCK TABLES ... WRITE](https://dev.mysql.com/doc/refman/5.7/en/lock-tables.html)) 을 제외하면 모두 Compatible 이다.
 
 intention lock 은 곧 특정 row 에 대해 row-level lock 이 예정되어 있다는 것을
 알려주는 것이 목적이다. 
@@ -225,17 +221,11 @@ Gap Lock 은 index record 들 사이에 걸리는 lock 이다. 즉, data table �
 -------------------          ---------
 ```
 
-`id <= 2, 4 <= id <= 6, 8 <= id` 에 해당하는 index 는 record 가 없다. 이것이
-바로 gab 을 의미한다. gap lock 은 이 gab 에 걸리는 lock 이다. gab 에는 index
-record 가 없다. 따라서 gab lock 은 다른 transaction 이 새로운 record 를 삽입할
-때 동시성을 제어할 수 있다.
+`id <= 2, 4 <= id <= 6, 8 <= id` 에 해당하는 index 는 record 가 없다. 이것이 바로 gap 을 의미한다. gap lock 은 이 gap 에 걸리는 lock 이다. gap 에는 index record 가 없다. 따라서 gap lock 은 다른 transaction 이 새로운 record 를 삽입할 때 동시성을 제어할 수 있다.
 
-예를 들어 transaction t1 에서 `SELECT c1 FROM t WHERE c1 BETWEEN 0 and 10 FOR
-UPDATE;` 를 수행하면 transaction t2 는 `t.c1 = 15` 에 해댕하는 row 를 insert 할
-수 없다. transaction t1 이 commit 혹은 roll back 을 수행하면 transaction t2 는
-새로운 row 를 insert 할 수 있다.
+예를 들어 transaction t1 에서 `SELECT c1 FROM t WHERE c1 BETWEEN 0 and 10 FOR UPDATE;` 를 수행하면 transaction t2 는 `t.c1 = 15` 에 해댕하는 row 를 insert 할 수 없다. transaction t1 이 commit 혹은 roll back 을 수행하면 transaction t2 는 새로운 row 를 insert 할 수 있다.
 
-[isolation level](/isolation/README.md) 이 read committed 이면 gap lock 이 비활성화 된다.
+[isolation level](/isolation/README.md) 이 `read committed` 이면 gap lock 이 비활성화 된다.
 
 다음은 `gap lock(X)` 의 예이다.
 
@@ -270,7 +260,7 @@ rollback;
 ```sql
 -- session 1
 begin;
-update tab set v=v+10 where k=2;
+update tab set v = v + 10 where k=2;
 
 -- session 2
 begin;
@@ -297,13 +287,12 @@ rollback;
 
 # Next-Key Locks
 
-Next-Key Lock 은 index record 에 대한 record lock 과 그 index record 의 이전
-index record 들에 대한 gab lock 을 합한 것이다.
+Next-Key Lock 은 index record 에 대한 record lock 과 그 index record 의 이전 index record 들에 대한 gap lock 을 합한 것이다.
 
 ```sql
 -- session 1
 begin;
-select * from tab where v=5;
+select * from tab where v = 5;
 -- v is not a primary key
 
 -- session 2
@@ -326,12 +315,9 @@ ORDER BY EVENT_ID;
 
 # Insert Intention Locks
 
-Insert intention lock 은 gap lock 의 종류이다. `INSERT ...` 를 실행할 때 획득한다.
-서로 다른 두 transaction 은 gap 에서 같은 위치의 record 를 삽입하지 않는다면 conflict 는
-없다.
+Insert intention lock 은 gap lock 의 종류이다. `INSERT ...` 를 실행할 때 획득한다. 서로 다른 두 transaction 은 gap 에서 같은 위치의 record 를 삽입하지 않는다면 conflict 는 없다.
 
 다음은 `insert intention lock(X)` 의 예이다.
-
 
 ```sql
 -- session 1
@@ -377,11 +363,11 @@ rollback;
 # AUTO-INC Locks
 
 An AUTO-INC lock is a special table-level lock taken by transactions inserting
-into tables with AUTO_INCREMENT columns.
+into tables with `AUTO_INCREMENT` columns.
 
 # Predicate Locks for Spatial Indexes
 
-InnoDB supports SPATIAL indexing of columns containing spatial columns???
+InnoDB supports `SPATIAL` indexing of columns containing spatial columns???
 
 # Experiment
 
@@ -459,9 +445,7 @@ ORDER BY EVENT_ID;
 > * [MySQL InnoDB lock & deadlock 이해하기](https://www.letmecompile.com/mysql-innodb-lock-deadlock/)
 > * [14.7.5.1 An InnoDB Deadlock Example @ mysql](https://dev.mysql.com/doc/refman/5.7/en/innodb-deadlock-example.html)
 
-mysql 의 innodb 는 Deadlock 을 detect 할 수 있다. 만약 mysql 이 Deadlock 을
-detect 하면 어느 한 transaction 의 lock wait 을 중지하여 Deadlock 을 해결한다.
-즉, 바로 error 를 리턴한다.
+mysql 의 innodb 는 Deadlock 을 detect 할 수 있다. 만약 mysql 이 Deadlock 을 detect 하면 어느 한 transaction 의 lock wait 을 중지하여 Deadlock 을 해결한다. 즉, 바로 error 를 리턴한다.
 
 [Deadlock](/isolation/README.md#consistent-read)
 
@@ -518,8 +502,7 @@ UPDATE theTable
 {endif}
 ```
 
-트랜잭션을 사용해서 동시성을 제어할 수도 있다. `UPDATE ... WHERE` 에서 `WHERE` 에 field 들을 추가했다.  
-[Isolation Level](/isolation/README.md#solution-of-non-repeatable-read-in-repeatable-read-isolation-level) 참고.
+트랜잭션을 사용해서 동시성을 제어할 수도 있다. `UPDATE ... WHERE` 에서 `WHERE` 에 field 들을 추가했다. [Isolation Level](/isolation/README.md#solution-of-non-repeatable-read-in-repeatable-read-isolation-level) 참고.
 
 ```sql
 SELECT iD, val1, val2

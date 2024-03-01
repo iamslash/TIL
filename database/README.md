@@ -38,37 +38,7 @@ database 를 만들어 보자. [chidb](http://chi.cs.uchicago.edu/chidb/index.ht
 
 # Concurrency Problems In Transactions
 
-* [SQL 트랜잭션 - 믿는 도끼에 발등 찍힌다](https://blog.sapzil.org/2017/04/01/do-not-trust-sql-transaction/)
-  * non-repeatable read 를 설명한다.
-
-----
-
-Concurrency Problems 는 다음과 같다.
-
-* Dirty Read
-  * A transaction 이 값을 1 에서 2 로 수정하고 아직 commit 하지 않았다. B transaction 은 값을 2 로 읽어들인다. 만약 A transaction 이 rollback 되면 B transaction 은 잘못된 값 2 을 읽게 된다.
-
-* Non-repeatable Read
-  * A transaction 이 한번 읽어온다. B transaction 이 Update 한다. A transaction 이 다시 한번 읽어온다. 이때 처음 읽었던 값과 다른 값을 읽어온다.
-  
-    ```
-    BEGIN TRAN
-      SELECT SUM(Revenue) AS Total FROM Data;
-      --another tran updates a row
-      SELECT Revenue AS Detail FROM Data;
-    COMMIT  
-    ```
-
-* Phantom Read
-  * A transaction 이 한번 읽어온다. B transaction 이 insert 한다. A transaction 이 다시 한번 읽어온다. 이때 처음 읽었던 record 들에 하나 더 추가된 혹은 하나 삭제된 record 들을 읽어온다.
-
-    ```
-    BEGIN TRAN
-      SELECT SUM(Revenue) AS Total FROM Data;
-      --another tran inserts/deletes a row
-      SELECT Revenue AS Detail FROM Data;
-    COMMIT  
-    ```
+- [Conssurrency Problems](/dbconcurrencyprob/README.md)
 
 # ACID
 

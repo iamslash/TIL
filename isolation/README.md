@@ -14,9 +14,9 @@
 
 # Abstract
 
-[mysql](/mysql/README.md) 은 [Lock](/mysql/mysql_lock.md) 이용하여 동시성을 제어한다. Isolation Level 을 달리하여 [Concurrency Problems](/database/README.md#concurrency-problems-in-transactions) 을 해결할 수 있다. Isolation Level 이 높을 수록 System throughput 은 낮아진다. 보통 Isolation Level 을 read committed 으로 설정한다.
+[MySQL](/mysql/README.md) 은 Isolation Level 을 달리하여 [Concurrency Problems](/database/README.md#concurrency-problems-in-transactions) 을 해결할 수 있다. Isolation Level 이 높을 수록 System throughput 은 낮아진다. [MySQL](/mysql/README.md) 은 내부적으로 [Lock](/mysql/mysql_lock.md) 이용하여 Isolation 을 구현했다. 보통 Isolation Level 을 `repeatable read` 으로 설정한다.
 
-Isolation Level 의 동작방식을 MySQL Lock 으로 이해하고 싶다. [mysql](/mysql/README.md) 로 실습해 본다.
+Isolation Level 의 동작방식을 MySQL Lock 으로 이해해보자.
 
 # Materials
 
@@ -88,33 +88,17 @@ insert into user (id, name) values (3, "baz");
 
 ----
 
-Consistent Read 는 특정 시점의 snapshot 에서 data 를 읽는 것을 말한다. MySQL 은
-lock 을 걸고 특정 시점의 snapshot 에서 data 를 읽지는 않는다. 이 것은 system
-throughput 을 낮추기 때문이다.
+Consistent Read 는 특정 시점의 snapshot 에서 data 를 읽는 것을 말한다. MySQL 은 lock 을 걸고 특정 시점의 snapshot 에서 data 를 읽지는 않는다. 이 것은 system throughput 을 낮추기 때문이다.
 
-특정 시점의 snapshot 에서 data 를 읽는다는 것은 무엇을 말하는 걸까?. MySQL 은
-commit log 를 기록한다. snapshot 은 특정 시점까지의 commit log 모음을 말한다.
+특정 시점의 snapshot 에서 data 를 읽는다는 것은 무엇을 말하는 걸까? MySQL 은 commit log 를 기록한다. snapshot 은 특정 시점까지의 commit log 모음을 말한다.
 
-[Isolation Level](/isolation/README.md) 이 **read uncommitted** 인 경우를 생각해
-보자. transaction 1 은 read 할 때 다른 transaction 이 commit 하지 않는 data 도
-읽어온다. **dirty read** 가 발생한다. 물론 **non-repeatable read, phantom read** 도
-발생한다.
+[Isolation Level](/isolation/README.md) 이 **read uncommitted** 인 경우를 생각해 보자. transaction 1 은 read 할 때 transaction 2 가 commit 하지 않는 data 도 읽어온다. **dirty read** 가 발생한다. 물론 **non-repeatable read, phantom read** 도 발생한다.
 
-[Isolation Level](/isolation/README.md) 이 **read committed** 인 경우를 생각해 보자.
-transaction 1 에서 read 할 때 마다 snapshot 을 기록해 둔다. transaction 2
-에서 특정 row 를 변경하고 commit 했다면 transaction 1 에서 다시 read 할 때 
-새로운 snaptshot 에서 data 를 읽기 때문에 **non-repeatable read** 가 발생한다.
+[Isolation Level](/isolation/README.md) 이 **read committed** 인 경우를 생각해 보자. transaction 1 에서 read 할 때 마다 snapshot 을 기록해 둔다. transaction 2 에서 특정 row 를 변경하고 commit 했다면 transaction 1 에서 다시 read 할 때 새로운 snaptshot 에서 data 를 읽기 때문에 **non-repeatable read** 가 발생한다. 또한 [Isolation Level](/isolation/README.md) 이 **read committed** 인 경우는 gap lock 을 사용하지 않는다. 따라서 **phantom read** 가 발생한다.
 
-또한 [Isolation Level](/isolation/README.md) 이 **read committed** 인 경우는
-gab lobck 을 사용하지 않는다. 따라서 **phantom read** 가 발생한다.
+[Isolation Level](/isolation/README.md) 이 **repeatable read** 인 경우를 생각해 보자. 처음 read 한 때의 snapshot 을 기록해 둔다. 이후 read 할 때는 처음 read 한 때의 snapshot 에서 data 를 읽어온다. 따라서 **non-repeatable read** 가 발생하지 않는다. 그러나 **phantom read** 는 여전히 발생한다.
 
-[Isolation Level](/isolation/README.md) 이 **repeatable read** 인 경우를 생각해
-보자. 처음 read 한 때의 snapshot 을 기록해 둔다. 이후 read 할 때는 처음 read 한
-때의 snapshot 에서 data 를 읽어온다. 따라서 **non-repeatable read** 가 발생하지 않는다.
-그러나 **phantom read** 는 여전히 발생한다.
-
-[Isolation Level](/isolation/README.md) 이 **serializable** 인 경우를 생각해
-보자. 기본적으로 **repeatble read** 와 같다. 단, `SELECT ...` 가 `SELECT ... FOR SHARE` 로 변경된다. (autocommit 이 꺼진 경우) 즉, `(S)` lock 이 걸린다. isolation level 이 너무 강력하여 deadlock 이 자주 발생되는 것을 주의 하자.
+[Isolation Level](/isolation/README.md) 이 **serializable** 인 경우를 생각해 보자. 기본적으로 **repeatble read** 와 같다. 단, `SELECT ...` 가 `SELECT ... FOR SHARE` 로 변경된다. (autocommit 이 꺼진 경우) 즉, `(S)` lock 이 걸린다. isolation level 이 너무 강력하여 deadlock 이 자주 발생되는 것을 주의 하자.
 
 예를 들어 다음과 같이 deadlock 을 발생시키고 확인해 보자. `update` 수행시 `money` 를 읽어올 때는 consistent read 가 아니다. 새로운 snapshot 에서 `money` 를 읽어온다.
 
@@ -159,11 +143,11 @@ Query OK, 1 row affected (21.69 sec)
 
 ----
 
-MySQL 은 기본적으로 isolation level 이 repeatable read 이다. non-repeatable read 를 해결한다.
-phantom read 도 해결된다. 왜지??
+MySQL 은 기본적으로 isolation level 이 `repeatable read` 이다. `non-repeatable read` 를 해결한다. `phantom read` 도 해결된다. InnoDB 에서는 이 격리 수준에서도 특별한 `버전 관리 시스템(MVCC, Multi-Version Concurrency Control)`을 사용하여 `Phantom Read` 문제를 방지합니다. 이는 InnoDB 의 `REPEATABLE READ` 격리 수준이 SQL 표준의 정의와 약간 다르게 동작하는 점 중 하나입니다.
 
-그러나 `update, delete` 를 수행할 때 consistent read 를 하지 않는다. 즉, 새로운
-snapshot 에서 data 를 읽어오기 때문에 non-repeatable read 의 위험이 있다.
+그러나, 특정 유형의 쿼리에서는 여전히 `Phantom Read` 현상이 관찰될 수 있습니다. 예를 들어, `REPEATABLE READ`에서는 새로 삽입된 행에 대한 고유성 검사(예: 유니크 인덱스 위반 검사)를 위해 `간격 락(Next-Key Locking)`을 사용합니다. 이러한 간격 락으로 인해, 특정 시나리오에서는 새로운 행의 삽입이 제한될 수 있으며, 이는 일종의 Phantom 방지 메커니즘으로 작동합니다. 하지만 이는 표준 SQL의 `SERIALIZABLE` 격리 수준과 유사한 동작으로, `REPEATABLE READ` 내에서만 발생하는 특수한 경우입니다.
+
+또한 `update, delete` 를 수행할 때 consistent read 를 하지 않는다. 즉, 새로운 snapshot 에서 data 를 읽어오기 때문에 lost update 의 위험이 있다.
 
 ```sql
 create database foo;
@@ -204,7 +188,7 @@ Query OK, 1 row affected (21.69 sec)
   * 가장 쉽다. dead lock 이 발견되고 바로 rollback 된다. 그러나 system
     throughput 이 낮아진다.
 * `select for update`
-  * intention lock `(IS)` 이 걸린다. 두번 째 transaction 은 대기한다. 따라서
+  * `intention lock (IS)` 이 걸린다. 두번 째 transaction 은 대기한다. 따라서
     system throughput 이 낮아진다.
 * `update ... where ...`
   * 다른 field 의 조건을 where 에 추가한다. 가장 합리적이다. 그러나 where 에
@@ -212,8 +196,7 @@ Query OK, 1 row affected (21.69 sec)
 * Optimistic Lock
   * version field 를 추가하고 optimistic lock 을 이용한다. 가장 합리적이다.
 
-`UPDATE ... WHERE ...` 으로 안되면 [Optimistic Locking](/systemdesign/README.md#optimistic-lock-vs-pessimistic-lock) 으로 해결하자. Spring Data JPA 는
-[Optimistic Locking](/spring/SpringDataJpa.md#optimistic-locking) 을 제공한다.
+`UPDATE ... WHERE ...` 으로 안되면 [Optimistic Locking](/systemdesign/README.md#optimistic-lock-vs-pessimistic-lock) 으로 해결하자. Spring Data JPA 는 [Optimistic Locking](/spring/SpringDataJpa.md#optimistic-locking) 을 제공한다.
 
 # Practice of Read Uncommitted
 
@@ -235,9 +218,9 @@ select * from user;
 set session transaction isolation level read uncommitted;
 start transaction;
 update user SET name="foofoo" where id=1;
--- session 2 acquired (IX) of the row(is=1)
+-- session 2 acquired (IX) of the row(id=1)
 insert into user (id, name) values (4, "tree");
--- session 2 acquired (IX) of the row(is=4)
+-- session 2 acquired (IX) of the row(id=4)
 
 -- session 1
 select * from user;
@@ -276,9 +259,9 @@ commit;
 > set session transaction isolation level read committed;
 > start transaction;
 > update user set name="foo" where id=1;
--- session 2 acquired (IX) of the row(is=1)
+-- session 2 acquired (IX) of the row(id=1)
 > insert into user (id, name) values(5, "bear");
--- session 2 acquired (IX) of the row(is=5)
+-- session 2 acquired (IX) of the row(id=5)
 
 -- session 1
 > select * from user;
@@ -307,7 +290,7 @@ commit;
 |    4 | tree |
 |    5 | bear |
 +------+------+
--- session 1 non-repeatable read happened
+-- session 1 non-repeatable read happened???
 commit;
 ```
 
@@ -419,14 +402,9 @@ commit;
 
 `SELECT ... FOR UPDATE` 를 언제 사용하면 좋은지 생각해 보자.
 
-session 1 이 update 를 수행한 후 session 2 가 udpate 를 수행할 때 block 된다.
-session 2 입장에서 제대로 된 값을 읽어오지 않은채 update 를 수행할 수 있다.
-이것을 개선해 보자.
+session 1 이 update 를 수행한 후 session 2 가 udpate 를 수행할 때 block 된다. session 2 입장에서 제대로 된 값을 읽어오지 않은채 update 를 수행할 수 있다. 이것을 개선해 보자.
 
-session 1 이 `select...` 대신 `select ... from update` 를 사용하면 `(IX)` 를
-획득할 것이다. 이때 session 2 가 `select ... from update` 를 실행할 때 `(IX)` 를
-획득하기 위해 block 될 것이다. session 2 가 제대로 된 값을 읽어 오고 update 를
-실행할 수 있다.
+session 1 이 `select...` 대신 `select ... from update` 를 사용하면 `(IX)` 를 획득할 것이다. 이때 session 2 가 `select ... from update` 를 실행할 때 `(IX)` 를 획득하기 위해 block 될 것이다. session 2 가 제대로 된 값을 읽어 오고 update 를 실행할 수 있다.
 
 ```sql
 -- AsIs

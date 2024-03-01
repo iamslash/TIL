@@ -361,8 +361,12 @@ There are two solutions such as [2 Phase Commit](/distributedtransaction/README.
 - Design the hotel reservation system. The write QPS is 3.
 - Design APIs.
 - Design data models.
-- How to handle conccurrency issues for the same room reservation of one user?
+- How to handle concurrency issues for the same room reservation of one user?
+  - Prohibiting double clicks.
 - How to handle concurrency issues for the same room reservation of two users?
+  - pessimistic lock
+  - optimisitc lock
+  - db constraint
 - What is the isolation level of RDBMS?
 - What if QPS is 1,000 times higher like booking.com?
   - Sharding for write APIs
