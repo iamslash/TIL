@@ -13,7 +13,7 @@
     - [Database Sharding](#database-sharding)
     - [Caching](#caching)
   - [Data Consistency Among Services](#data-consistency-among-services)
-- [Questions](#questions)
+- [Interview Questions](#interview-questions)
 - [References](#references)
 
 ----
@@ -354,9 +354,9 @@ val: the number of available rooms for the given hotel ID, room type ID and date
 
 ## Data Consistency Among Services
 
-There are two solutions such as [2 Phase Commit](/distributedtransaction/README.md#2-phase-commit), [TCC](/distributedtransaction/README.md#tcc-try-confirmcancel) and [SAGAS](/distributedtransaction/README.md#saga).
+There are good solutions such as [2 Phase Commit](/distributedtransaction/README.md#2-phase-commit), [TCC](/distributedtransaction/README.md#tcc-try-confirmcancel) and [SAGAS](/distributedtransaction/README.md#saga).
 
-# Questions
+# Interview Questions
 
 - Design the hotel reservation system. The write QPS is 3.
 - Design APIs.
@@ -368,6 +368,16 @@ There are two solutions such as [2 Phase Commit](/distributedtransaction/README.
   - optimisitc lock
   - db constraint
 - Explain about the isolation level of RDBMS.
+- Explain MySQL locks.
+  - Shared and Exclusive Locks
+  - Intention Locks
+  - Record Locks
+  - Gap Locks
+  - Next-Key Locks
+  - Insert Intention Locks
+  - AUTO-INC Locks
+  - Predicate Locks for Spatial Indexes
+- Design reservation by room types.
 - What if QPS is 1,000 times higher like booking.com?
   - Sharding for write APIs
   - Caching for read APIs 
