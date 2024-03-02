@@ -2053,7 +2053,7 @@ total data size : estimated data size = 100 : 70
 
 Database 의 isolation level 보다 융통성있는 locking 방법
 
-원리는 다음과 같다.
+Optimistic Lock 의 원리는 다음과 같다.
 
 * Table Schema 에 `version` field 가 있어야 한다.
 * A Client 가 원하는 record 를 `version` 을 포함하여 읽어온다. `version` 은 `v0` 이라고 하자. 
@@ -3138,12 +3138,12 @@ public class ZookeeperExample {
 * [Designing Consistent Hashing](practices/DesigningConsistentHashing/DesigningConsistentHashing.md)
 * [Designing A Uniqe ID Generator In Distributed Systems](practices/DesigningAUniqeIDGeneratorInDistributedSystems/DesigningAUniqeIDGeneratorInDistributedSystems.md)
 * [Designing Real-Time Gaming Leaderboard](practices/DesigningReal-TimeGamingLeaderboard/DesigningReal-TimeGamingLeaderboard.md)
-* [Designing A URL Shortener](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md)
-* [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md)
 * [Designing CDN](practices/DesigningCDN/DesigningCDN.md)
 * [Designing Parking Garrage](practices/DesigningParkingGarrage/DesigningParkingGarrage.md)
 * [Designing Hotel Reservation System](practices/DesigningHotelReservationSystem/DesigningHotelReservationSystem.md)
 * [Designing Ticketmaster](practices/DesigningTicketmaster/DesigningTicketmaster.md)
+* [Designing A URL Shortener](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md)
+* [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md)
 * [Designing Vending Machine](practices/DesigningVendingMachine/DesigningVendingMachine.md)
 * [Designing A Key-Value Store](practices/DesigningAKey-ValueStore/DesigningAKey-ValueStore.md)
 * [Designing Distributed Cache](practices/DesigningDistributedCache/DesigningDistributedCache.md)
