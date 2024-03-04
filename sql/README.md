@@ -2572,6 +2572,36 @@ fiscal_year | sales_employee | sale | three_year_sales_sum
 2016        | John           | 200  | 200
 2017        | John           | 150  | 350
 2018        | John           | 250  | 600
+
+
+-- PERCENT_RANK
+-- sales 테이블의 데이터를 이용하여 각 판매 직원(sales_employee)별로 
+-- 그들의 판매(sale)를 기준으로 내림차순으로 정렬한 뒤, 
+-- 그들의 판매량이 직원별 판매량 분포에서 어느 위치에 있는지를 백분위 순위(PERCENT_RANK)로 나타냅니다. 
+-- PERCENT_RANK() 함수는 주어진 파티션 내에서 현재 행의 상대적 순위를 계산하여, 
+-- 첫 번째 행을 0, 마지막 행을 1로 설정하며, 그 사이의 행들은 (rank - 1) / (total rows - 1) 
+-- 공식을 사용해 계산됩니다.
+SELECT 
+    fiscal_year,
+    sales_employee,
+    sale,
+    PERCENT_RANK() OVER (
+        PARTITION BY sales_employee
+        ORDER BY sale DESC
+    ) pct
+FROM 
+    sales;
+fiscal_year | sales_employee | sale | pct
+-----------------------------------------
+2018        | Bob            | 200  | 0
+2017        | Bob            | 150  | 0.5
+2016        | Bob            | 100  | 1
+2018        | Alice          | 200  | 0
+2016        | Alice          | 150  | 0.5
+2017        | Alice          | 100  | 1
+2018        | John           | 250  | 0
+2016        | John           | 200  | 0.5
+2017        | John           | 150  | 1
 ```
 
 ## Number Functions
