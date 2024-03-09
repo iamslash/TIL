@@ -1117,6 +1117,25 @@ Species.cat
 
 sort() modify the object but sorted() create the new one.
 
+> bisect
+
+```py
+# The list should be sorted for bisect
+>>> l.sort()
+>>> l = [1, 3, 5, 7, 9]
+# insort_left: bisect_left, insert
+>>> bisect.insort_left(l, 2)
+>>> l
+[1, 2, 3, 5, 7, 9]
+# insort_right: bisect_right, insert
+>>> bisect.insort_right(l, 4)
+>>> l
+[1, 2, 3, 4, 5, 7, 9]
+>>> bisect.insort(l, 6)
+>>> l
+[1, 2, 3, 4, 5, 6, 7, 9]
+```
+
 ## Search
 
 > * `bisect_left`: Locate the left most insertion point for x in a to maintain sorted order.
@@ -1125,6 +1144,12 @@ sort() modify the object but sorted() create the new one.
 ```py
 # binary search
 from bisect import *
+
+# bisect.bisect_left(a, x, lo=0, hi=len(a))
+# a는 검색할 정렬된 배열입니다.
+# x는 배열에 삽입하려는 값입니다.
+# lo는 검색을 시작할 최소 인덱스이며 기본값은 0입니다.
+# hi는 검색을 종료할 최대 인덱스이며 기본값은 배열의 길이입니다.
 
 a = [2, 4, 6, 8]
 >>> bisect_left(a, 4)
