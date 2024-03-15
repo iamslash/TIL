@@ -25,34 +25,45 @@ Data Base Concurrency Problem 의 종류는 다음과 같다.
 
 # Dirty Read
 
+- Rollback 후 잘못된 값을 읽는다.
 - A transaction 이 값을 1 에서 2 로 수정하고 아직 commit 하지 않았다. B transaction 은 값을 2 로 읽어들인다. 만약 A transaction 이 rollback 되면 B transaction 은 잘못된 값 2 을 읽게 된다.
 
-```sql
--- Transaction A
-BEGIN; -- 트랜잭션 시작
-UPDATE accounts SET balance = 2 WHERE id = 1; -- 아직 커밋하지 않음
+    ```sql
+    -- Transaction A
+    SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+    BEGIN;
+    UPDATE accounts SET balance = 2 WHERE id = 1;
+    -- 아직 커밋하지 않음
 
--- Transaction B
-SELECT balance FROM accounts WHERE id = 1; -- 2를 읽음, 하지만 A가 롤백될 경우 잘못된 값
+    -- Transaction B
+    SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+    -- 2를 읽음, 하지만 A가 롤백될 경우 잘못된 값
+    SELECT balance FROM accounts WHERE id = 1; 
 
--- Transaction A
--- 롤백되는 경우를 가정
-ROLLBACK; -- 변경 사항을 롤백
-```
+    -- Transaction A
+    -- 롤백되는 경우를 가정
+    ROLLBACK; -- 변경 사항을 롤백
 
-- Rollback 후 잘못된 값을 읽는다.
+    -- Transaction B
+    -- 1를 읽음, A가 롤백되었다.
+    SELECT balance FROM accounts WHERE id = 1; 
+    ```
+
 - Dirty read 문제를 해결하기 위해서는 트랜잭션의 격리 수준(Isolation Level)을 조정할 수 있습니다. 대부분의 데이터베이스 시스템에서는 다음과 같은 격리 수준을 제공합니다: `Read Uncommitted, Read Committed, Repeatable Read, Serializable`. Dirty read를 방지하기 위해서는 최소한 `Read Committed` 격리 수준을 사용해야 합니다.
 
-```sql
--- Read Committed Isolation Level 설정 예시 (PostgreSQL):
-SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
-BEGIN;
-SELECT balance FROM accounts WHERE id = 1; -- A가 커밋하지 않았다면, 변경 전 값을 읽음
-COMMIT;
-```
+    ```sql
+    -- Transaction A
+    -- Read Committed Isolation Level 설정 예시 (PostgreSQL):
+    SET TRANSACTION ISOLATION LEVEL READ COMMITTED;
+    BEGIN;
+    -- Transaction B 가 커밋하지 않았다면, 변경 전 값을 읽음
+    SELECT balance FROM accounts WHERE id = 1; 
+    COMMIT;
+    ```
 
 # Non-repeatable Read
 
+- 다시 읽을 때 잘못된 값을 읽는다.
 - A transaction 이 한번 읽어온다. B transaction 이 Update 한다. A transaction 이 다시 한번 읽어온다. 이때 처음 읽었던 값과 다른 값을 읽어온다.
   
     ```sql
@@ -63,22 +74,22 @@ COMMIT;
     COMMIT  
     ```
 
-- 다시 읽을 때 잘못된 값을 읽는다.
 - Non-repeatable read 문제를 해결하기 위해, 데이터베이스 트랜잭션의 격리 수준(Isolation Level)을 조정하여, 한 트랜잭션에서 조회한 데이터가 다른 트랜잭션에 의해 변경되는 것을 방지할 수 있습니다. 이를 위해 `Repeatable Read` 이상의 격리 수준을 사용하면 됩니다.
 
-```sql
--- Repeatable Read Isolation Level 설정 예시 (PostgreSQL):
+    ```sql
+    -- Repeatable Read Isolation Level 설정 예시 (PostgreSQL):
 
-SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
-BEGIN;
-SELECT SUM(Revenue) AS Total FROM Data; -- 첫 번째 조회
--- 다른 트랜잭션의 업데이트는 이 트랜잭션에 영향을 주지 않음
-SELECT SUM(Revenue) AS Total FROM Data; -- 두 번째 조회, 첫 번째 조회와 동일한 결과 보장
-COMMIT;
-```
+    SET TRANSACTION ISOLATION LEVEL REPEATABLE READ;
+    BEGIN;
+    SELECT SUM(Revenue) AS Total FROM Data; -- 첫 번째 조회
+    -- 다른 트랜잭션의 업데이트는 이 트랜잭션에 영향을 주지 않음
+    SELECT SUM(Revenue) AS Total FROM Data; -- 두 번째 조회, 첫 번째 조회와 동일한 결과 보장
+    COMMIT;
+    ```
 
 # Phantom Read
 
+- record 가 도깨비 처럼 나타나던가 없어진다.
 - A transaction 이 한번 읽어온다. B transaction 이 insert 한다. A transaction 이 다시 한번 읽어온다. 이때 처음 읽었던 record 들에 하나 더 추가된 혹은 하나 삭제된 record 들을 읽어온다.
 
     ```sql
@@ -88,7 +99,6 @@ COMMIT;
       SELECT Revenue AS Detail FROM Data;
     COMMIT  
     ```
-- record 가 도깨비 처럼 나타나던가 없어진다.
 - Phantom read 문제를 해결하기 위해, 데이터베이스 트랜잭션의 격리 수준(Isolation Level)을 조정하여, 한 트랜잭션에서 조회한 결과 범위 내에 새로운 데이터가 삽입되거나 삭제되는 것을 방지할 수 있습니다. 이를 위해 `Serializable` 격리 수준을 사용하면 됩니다. 그러나 MySQL 은 isolation level 을 repeatable read 로 하더라도 phantom read 를 해결한다. [Repeatable Read Isolation Level In MySQL](/isolation/README.md#practice-of-repeatable-read)
 
     ```sql
