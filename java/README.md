@@ -8,6 +8,7 @@
   - [min, max values](#min-max-values)
   - [abs, fabs](#abs-fabs)
   - [Bit Manipulation](#bit-manipulation)
+  - [Character](#character)
   - [String](#string)
   - [Random](#random)
   - [Formatted Strings](#formatted-strings)
@@ -318,6 +319,17 @@ c = a & b;  // 0000 0101
 c = a | b;  // 0000 0111
 c = a ^ b;  // 0000 0010
 c = ~a;     // 1111 1010
+```
+
+## Character
+
+```java
+System.out.println(Character.isLetterOrDigit('1')); // true
+System.out.println(Character.isLetterOrDigit('a')); // true
+System.out.println(Character.isLetterOrDigit('A')); // true
+System.out.println(Character.isLetterOrDigit(':')); // false
+System.out.println(Character.toUpperCase('a')); // A
+System.out.println(Character.toLowerCase('A')); // a
 ```
 
 ## String

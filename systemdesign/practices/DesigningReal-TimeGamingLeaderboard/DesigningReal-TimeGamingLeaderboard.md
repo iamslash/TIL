@@ -12,7 +12,7 @@
 - [Extension](#extension)
   - [Faster Retrieval and Breaking Tie](#faster-retrieval-and-breaking-tie)
   - [System Failure Recovery](#system-failure-recovery)
-- [Q\&A](#qa)
+- [Interview Questions](#interview-questions)
   - [How To Deal with 5B users](#how-to-deal-with-5b-users)
 - [References](#references)
 
@@ -161,7 +161,7 @@ When two users' score are same old one's score is higher than new one's score.
 
 We can recover Redis with restoring data from RDBMS.
 
-# Q&A
+# Interview Questions
 
 ## How To Deal with 5B users
 

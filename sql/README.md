@@ -2286,6 +2286,8 @@ SELECT SUBSTRING('Sakila', -5, 3);
 SELECT SUBSTRING('Sakila' FROM -4 FOR 2);
 -- 'ki'
 
+-- SUBSTRING_INDEX returns a substring not number 
+-- before the number of occurences.
 SELECT SUBSTRING_INDEX('www.mysql.com', '.', 2);
 -- 'www.mysql'
 SELECT SUBSTRING_INDEX('www.mysql.com', '.', -2);

@@ -4,9 +4,10 @@
 - [High Level Design](#high-level-design)
   - [High Level Architecture](#high-level-architecture)
   - [System APIs](#system-apis)
-- [Low Level Design](#low-level-design)
+- [High Level Design Deep Dive](#high-level-design-deep-dive)
   - [UUID](#uuid)
   - [Snow Flake](#snow-flake)
+- [Interview Questions](#interview-questions)
 
 ----
 
@@ -37,7 +38,7 @@ There are application servers which are synchronized with the
 GET /v1/ids
 ```
 
-# Low Level Design
+# High Level Design Deep Dive
 
 ## UUID
 
@@ -55,3 +56,5 @@ twitter invented [snow flake](https://github.com/twitter-archive/snowflake/relea
  5 bit machine ID         2^5 = 32            covers 32 machines 
 12 bit seq number        2^12 = 4096          covers 4096 numbers at the same millisecond
 ```
+
+# Interview Questions
