@@ -125,4 +125,4 @@ int rdbSaveBackground(char *filename, rdbSaveInfo *rsi) {
 
 ---
 
-Redis 의 ZSETS 는 Skip List 를 이용하여 구현함. WIP...
+Redis 의 ZSETS 는 [skip list](https://github.com/iamslash/learntocode/blob/master/fundamentals/list/skiplist/README.md) 를 이용하여 구현함.

@@ -144,6 +144,7 @@ Describe system design.
 
 # References
 
+* [systemdesignone archive](https://newsletter.systemdesign.one/archive)
 * [system-design-101 | github](https://github.com/ByteByteGoHq/system-design-101)
   * System design one page
 * [Low-Latency Engineering Tech Talks | p99conf](https://www.p99conf.io/on-demand/)

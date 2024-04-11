@@ -512,7 +512,7 @@ Application Server 들은 어떤 [Redis](/redis/README.md) 에 저장 혹은 읽
 
 ## How To Debug
 
-* [Set up vscode debug](#set-up-vscode-debug)
+* [Set up vscode debug](redis_code_tour.md#set-up-vscode-debug)
 
 ## Redis Clients
 
@@ -528,7 +528,7 @@ Application Server 들은 어떤 [Redis](/redis/README.md) 에 저장 혹은 읽
 > * [Redis nodes and shards](https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/CacheNodes.NodeGroups.html)
 
 ElastiCache for Redis 는 cluster mode enabled 이면 downtime 없이 resharding 을 할 수 있다.
-즉, **Scale out , Scale in, Rebalance** 이 가능하다.
+즉, **Scale out, Scale in, Rebalance** 이 가능하다.
 
 Shards 는 `Primary Node + Replication Nodes` 를 말한다.
 

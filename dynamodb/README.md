@@ -24,7 +24,7 @@
       - [UsersLeaderboard](#usersleaderboard)
       - [FriendsLeaderboard](#friendsleaderboard)
       - [Query](#query-1)
-- [DynamoDB Data Modeling & Best Practices](#dynamodb-data-modeling--best-practices)
+- [DynamoDB Data Modeling \& Best Practices](#dynamodb-data-modeling--best-practices)
   - [Architecture](#architecture)
   - [Partition in Depth](#partition-in-depth)
   - [Efficient Key Design](#efficient-key-design)
@@ -77,7 +77,7 @@
 
 # Abstract
 
-dynamoDB 는 10 밀리초 미만의 성능을 제공하는 key-value document DB 이다. 하루에 10 조개 이상의 요청을 처리할 수 있고, 초당 2,000 만개 이상의 피크 요청을 지원한다.
+DynamoDB 는 10 밀리초 미만의 성능을 제공하는 key-value document DB 이다. 하루에 10 조개 이상의 요청을 처리할 수 있고, 초당 2,000 만개 이상의 피크 요청을 지원한다.
 
 Transaction 을 지원한다???
 
@@ -136,7 +136,7 @@ $ docker run --rm -p 8000:8000 -d amazon/dynamodb-local -jar DynamoDBLocal.jar -
 
 ## Basics of NoSQL Databases
 
-* [SQL vs NoSQL @ TIL](/systemdesign/practices/SQLvsNoSQL.md)
+* [SQL vs NoSQL](/systemdesign/README.md#sql-vs-nosql)
 
 ----
 
@@ -161,7 +161,7 @@ $ docker run --rm -p 8000:8000 -d amazon/dynamodb-local -jar DynamoDBLocal.jar -
     * Unstructured data
     * Different records can have different number of columns
 
-* ACID Behavior [ACID Behavior @ TIL](/database/README.md#acid-behavior)
+* ACID Behavior [ACID](/database/README.md#acid)
   * Atomicity
   * Consistency
   * Isolation
@@ -191,10 +191,10 @@ $ docker run --rm -p 8000:8000 -d amazon/dynamodb-local -jar DynamoDBLocal.jar -
 
 ## Types of NoSQL DataBases
 
-* Wide-Column Databases : Cassandra, HBase
-* Key-Value Stores : Redis, Voldemort, **DynamoDB**
+* Wide-Column Databases : [Cassandra](/cassandra/README.md), [HBase](/hbase/README.md)
+* Key-Value Stores : [Redis](/redis/README.md), Voldemort, **DynamoDB**
 * Graph Databases : Neo4J, InfiniteGraph
-* Document Databases : CouchDB, MongoDB, **DynamoDB**
+* Document Databases : CouchDB, [MongoDB](/mongodb/README.md), **DynamoDB**
 
 # Basics
 
@@ -255,7 +255,7 @@ DynamoDB provides 2 kinds of consistency.
 
 ### Capacity Units
 
-* [Read/Write Capacity Mode @ DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadWriteCapacityMode.html)
+* [Read/Write Capacity Mode | DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadWriteCapacityMode.html)
 
 ----
 

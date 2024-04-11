@@ -281,7 +281,6 @@ f093c80dde814da99c5cf72a7dd01590792b783b 127.0.0.1:7006 slave 3c3a0c74aae0b56170
 2938205e12de373867bf38f1ca29d31d0ddb3e46 127.0.0.1:7002 slave 3c3a0c74aae0b56170ccb03a76b60cfe7dc1912e 0 1385543617198 3 connected
 ```
 
-
 ## Removing a node
 
 node 를 제거하기 전에 반드시 그 node 는 비어 있어야 한다. 그렇지 않다면 resharding 
