@@ -9,7 +9,7 @@
     - [RDBMS](#rdbms)
     - [Redis](#redis)
     - [NOSQL](#nosql)
-- [High Level Design Deep Dive](#high-level-design-deep-dive)
+- [Design Deep Dive](#design-deep-dive)
   - [Build On The Cloud](#build-on-the-cloud)
   - [Scaling Redis](#scaling-redis)
   - [Redis Manual Sharding](#redis-manual-sharding)
@@ -255,7 +255,6 @@ classDiagram
     }
     Players : Hash
     Leaderboards : Sorted Set
-
 ```
 
 Followings are the access patterns.
@@ -455,7 +454,7 @@ graph TD;
 - sorting the score can be relatively expensive
 - not write optimized due to B-Trees managing data
 
-# High Level Design Deep Dive
+# Design Deep Dive
 
 ## Build On The Cloud
 

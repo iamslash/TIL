@@ -3,7 +3,7 @@
 - [Materials](#materials)
 - [Articles](#articles)
 - [Design Tools](#design-tools)
-- [System Extentions](#system-extentions)
+- [System Design Takeaways](#system-design-takeaways)
 - [Estimations](#estimations)
   - [Major Items](#major-items)
   - [Numbers](#numbers)
@@ -191,6 +191,7 @@ Describe system design.
   
 # Materials
 
+- [System Design Roadmap | roadmap.sh](https://roadmap.sh/system-design)
 * [Awesome System Design Resources | github](https://github.com/ashishps1/awesome-system-design-resources)
 * [대규모 소프트웨어 패턴 강좌 업데이트](https://architecture101.blog/2023/02/11/welcome_2_pattern_worlds/?fbclid=IwAR2lVvRIidYW_CnAs4tTExStad1T4pq54V2ySCtMMlBS0DTfxD0_NQdGW9Y&mibextid=Zxz2cZ)
   * 아키텍처 전문 강사의 커리큘럼, POSA1, POSA2, POSA3, AOSA, Cloud+MSA
@@ -208,7 +209,7 @@ Describe system design.
 * [Here are some of the favorite posts on HighScalability...](http://highscalability.com/all-time-favorites/)
   * great case studies
 * [FullStack cafe](https://www.fullstack.cafe/)
-* [AWS @ TIL](/aws/README.md)
+* [AWS | TIL](/aws/README.md)
 * [Mastering Chaos - A Netflix Guide to Microservices](https://www.youtube.com/watch?v=CZ3wIuvmHeM)
 * [cracking the coding interview](http://www.crackingthecodinginterview.com/)
 * [Designing Data-Intensive Applications](https://dataintensive.net/)
@@ -234,24 +235,104 @@ Describe system design.
 * [webwhiteboard](https://www.webwhiteboard.com/)
   * web white board for system design interview 
 
-# System Extentions
+# System Design Takeaways
 
-System extention factors:
+- [System Design Template](https://systemdesign.one/system-design-interview-cheatsheet/#system-design-template)
 
-* RDBMS, NoSQL
-* Vertical scaling
-* Horizontal scaling
-* Load balancing
-* Replication
-* Cache
-* Static assets in CDN
-* Stateless Web Servers
-* Multiple data centers
-* Asynchronism, message queue
-* logging, metric
-* Sharding, Parititioning
-* Micro Services
-* CI/CD
+| Category          | Topic                        | Sub-Topic                    |
+| ----------------- | ---------------------------- | ---------------------------- |
+| **Requirements**  | Functional Requirements      |                              |
+|                   | Non-Functional Requirements  |                              |
+|                   | Daily Active Users           |                              |
+|                   | Read-to-Write Ratio          |                              |
+|                   | Usage Patterns               |                              |
+|                   | Peak and Seasonal Events     |                              |
+| **Database**      | Data Model                   |                              |
+|                   | Entity Relationship Diagram  |                              |
+|                   | SQL                          |                              |
+|                   | Type of Database             |                              |
+| **API Design**    | HTTP Verb                    |                              |
+|                   | Request-Response Headers     |                              |
+|                   | Request-Response Contract    |                              |
+|                   | Data format                  | JSON                         |
+|                   |                              | XML                          |
+|                   |                              | Protocol Buffer              |
+| **Capacity Planning** | Query Per Second (Read-Write) |                        |
+|                   | Bandwidth (Read-Write)       |                              |
+|                   | Storage                      |                              |
+|                   | Memory                       | Cache (80-20 Rule)           |
+| **High Level Design** | Basic Algorithm          |                              |
+|                   | Data Flow                    | Read-Write Scenario          |
+|                   | Tradeoffs                    |                              |
+|                   | Alternatives                 |                              |
+|                   | Network Protocols            | TCP                          |
+|                   |                              | UDP                          |
+|                   |                              | REST                         |
+|                   |                              | RPC                          |
+|                   |                              | WebSocket                    |
+|                   |                              | SSE                          |
+|                   |                              | Long Polling                 |
+|                   | Cloud Patterns               | CQRS                         |
+|                   |                              | Publish-Subscribe            |
+|                   | Serverless Functions         |                              |
+|                   | Data Structures              | CRDT (conflict-free replicated data type) |
+|                   |                              | Trie                         |
+| **Design Deep Dive** | Single Point of Failures  |                              |
+|                   | Bottlenecks (Hot spots)      |                              |
+|                   | Concurrency                  |                              |
+|                   | Distributed Transactions     | Two-Phase Commit             |
+|                   |                              | Sagas                        |
+|                   | Probabilistic Data Structures | Bloom Filter                |
+|                   |                              | HyperLogLog                  |
+|                   |                              | Count-Min Sketch             |
+|                   | Coordination Service         | Zookeeper                    |
+|                   | Logging                      |                              |
+|                   | Monitoring                   |                              |
+|                   | Alerting                     |                              |
+|                   | Tracing                      |                              |
+|                   | Deployment                   |                              |
+|                   | Security                     | Authorization                |
+|                   |                              | Authentication               |
+|                   | Consensus Algorithms         | Raft                         |
+|                   |                              | Paxos                        |
+| **Components**    | DNS                          |                              |
+|                   | CDN                          |                              |
+|                   | Load Balancer                | Push-Pull                    |
+|                   |                              | Layer 4-7                    |
+|                   | Reverse Proxy                |                              |
+|                   | Application Layer            | Microservice-Monolith        |
+|                   |                              | Service Discovery            |
+|                   |                              | Leader-Follower              |
+|                   |                              | Leader-Leader                |
+|                   | SQL Data Store               | Indexing                     |
+|                   |                              | Federation                   |
+|                   |                              | Sharding                     |
+|                   |                              | Denormalization              |
+|                   |                              | SQL Tuning                   |
+|                   | NoSQL Data Store             | Graph                        |
+|                   |                              | Document                     |
+|                   |                              | Key-Value                    |
+|                   |                              | Wide-Column                  |
+|                   | Message Queue                |                              |
+|                   | Task Queue                   |                              |
+|                   | Cache                        | Query-Object Level           |
+|                   |                              | Client                       |
+|                   |                              | CDN                          |
+|                   |                              | Webserver                    |
+|                   |                              | Database                     |
+|                   |                              | Application                  |
+|                   | Cache Update Pattern         | Cache Aside                  |
+|                   |                              | Read Through                 |
+|                   |                              | Write Through                |
+|                   |                              | Write Behind                 |
+|                   |                              | Refresh Ahead                |
+|                   | Cache Eviction Policy        | LRU                          |
+|                   |                              | LFU                          |
+|                   |                              | FIFO                         |
+|                   | Clocks                       | Physical clock               |
+|                   |                              | Lamport clock (logical)      |
+|                   |                              | Vector clock                 |
+
 
 # Estimations
 

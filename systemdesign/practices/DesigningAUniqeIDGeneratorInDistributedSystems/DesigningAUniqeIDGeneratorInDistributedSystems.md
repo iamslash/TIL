@@ -4,7 +4,7 @@
 - [High Level Design](#high-level-design)
   - [High Level Architecture](#high-level-architecture)
   - [System APIs](#system-apis)
-- [High Level Design Deep Dive](#high-level-design-deep-dive)
+- [Design Deep Dive](#design-deep-dive)
   - [UUID](#uuid)
   - [Snow Flake](#snow-flake)
 - [Interview Questions](#interview-questions)
@@ -38,7 +38,7 @@ There are application servers which are synchronized with the
 GET /v1/ids
 ```
 
-# High Level Design Deep Dive
+# Design Deep Dive
 
 ## UUID
 

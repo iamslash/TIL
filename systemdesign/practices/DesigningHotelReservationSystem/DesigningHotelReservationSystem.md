@@ -6,7 +6,7 @@
   - [API Design](#api-design)
   - [Data Model Design](#data-model-design)
   - [High-Level Architecture](#high-level-architecture)
-- [High Level Design Deep Dive](#high-level-design-deep-dive)
+- [Design Deep Dive](#design-deep-dive)
   - [Reservation By Room Type](#reservation-by-room-type)
   - [Concurrency Issues](#concurrency-issues)
   - [Scalability](#scalability)
@@ -56,10 +56,10 @@
 
 ```json
 * Hotel APIs
-  * GET /v1/hotels/<id>
+  * GET /v1/hotels/<hotel-id>
   * POST /v1/hotels
-  * PUT /v1/hotels/<id>
-  * DELETE /v1/hotels/<id>
+  * PUT /v1/hotels/<hotel-id>
+  * DELETE /v1/hotels/<hotel-id>
 
 * Room APIs
   * GET /v1/hotels/<hotel-id>/rooms/<room-id>
@@ -130,11 +130,58 @@ There are **status** of **reservation** table
 * rejected
 * refunded
 
+![](img/2024-04-14-21-46-55.png)
+
+```
+erDiagram
+    HOTEL ||--o{ ROOM : "contains"
+    HOTEL {
+        string hotel_id PK
+        string name
+        string address
+        string location
+    }
+    ROOM ||--|| HOTEL : "located in"
+    ROOM {
+        string room_id PK
+        string room_type_id FK
+        string floor
+        string number
+        string hotel_id FK
+        string name
+        boolean is_available
+    }
+    ROOM_TYPE_RATE ||--|| HOTEL : "applies to"
+    ROOM_TYPE_RATE {
+        string hotel_id PK
+        date date PK
+        decimal rate
+    }
+    RESERVATION }|--|| HOTEL : "booked in"
+    RESERVATION }|--|| ROOM : "booked for"
+    RESERVATION }|--|| GUEST : "booked by"
+    RESERVATION {
+        string reservation_id PK
+        string hotel_id FK
+        string room_id FK
+        date start_date
+        date end_date
+        string status
+        string guest_id FK
+    }
+    GUEST {
+        string guest_id PK
+        string first_name
+        string last_name
+        string email
+    }
+```
+
 ## High-Level Architecture
 
 ![](img/2023-05-12-21-48-40.png)
 
-# High Level Design Deep Dive
+# Design Deep Dive
 
 ## Reservation By Room Type
 
@@ -201,6 +248,59 @@ These are improved database schemas.
     * last_name
     * email
 
+![](img/2024-04-14-21-51-21.png)
+
+```
+erDiagram
+    HOTEL ||--|| ROOM : "has"
+    HOTEL {
+        string hotel_id PK
+        string name
+        string address
+        string location
+    }
+    ROOM {
+        string room_id PK
+        string room_type_id FK
+        string floor
+        string number
+        string hotel_id FK
+        string name
+        boolean is_available
+    }
+    ROOM ||--o{ RESERVATION : "reserved by"
+    ROOM_TYPE_RATE ||--|| HOTEL : "applies to"
+    ROOM_TYPE_RATE {
+        string hotel_id PK
+        date date PK
+        decimal rate
+    }
+    ROOM_TYPE_INVENTORY ||--|| HOTEL : "tracks inventory for"
+    ROOM_TYPE_INVENTORY {
+        string hotel_id FK
+        string room_type_id FK
+        date date
+        int total_inventory
+        int total_reserved
+    }
+    RESERVATION ||--|| GUEST : "made by"
+    RESERVATION {
+        string reservation_id PK
+        string hotel_id FK
+        string room_id FK
+        date start_date
+        date end_date
+        string status
+        string guest_id FK
+    }
+    GUEST {
+        string guest_id PK
+        string first_name
+        string last_name
+        string email
+    }
+```
+
 These are access patterns.
 
 Select rows within a date range.
@@ -232,7 +332,7 @@ if ((total_reserved + ${numberOfRoomsToReserve}) <= 110 % * total_inventory)
 What if data is very big we can think two strategies.
 
 * Use **hot sorage** for recent data, **cold storage** for old data.
-* Database sharding. Shard key is hotel_id. The date will be sharded by `hash(hoteL_id) % number_of_db`.
+* Database sharding. Shard key is `hotel_id`. The date will be sharded by `hash(hoteL_id) % number_of_db`.
 
 ## Concurrency Issues
 
@@ -316,7 +416,7 @@ CONSTRAINT `check_room_count` CHECK((`total_inventory - total_reserved` >= 0))
 
 > Cons:
 
-* It is similar with [optimistic locking](/spring/SpringDataJpa.md#optimistic-locking).
+* It is similar with [Optimistic Locking](/spring/SpringDataJpa.md#optimistic-locking).
 * Contraint is not under control of SCM such as [git](/git/README.md).
 * Not all database support constraints.
   
@@ -324,7 +424,7 @@ The constraint is a good option than Pessimistic locking when TPS is low.
 
 ## Scalability
 
-The scalability is important when the QPS is 1,000 times higher than before like booking.com.
+The scalability is important when the QPS is `1,000` times higher than before like booking.com.
 
 ### Database Sharding
 
@@ -384,6 +484,26 @@ There are good solutions such as [2 Phase Commit](/distributedtransaction/README
 - How to handle distributed transactions?
   - 2 phase commit
   - SAGAS
+- How does your system design handle high concurrency, specifically when multiple users attempt to book the same room?
+  - The system utilizes optimistic and pessimistic locking mechanisms to manage concurrency. Optimistic locking is preferred when transaction conflicts are less frequent, whereas pessimistic locking can be used for high-conflict scenarios, ensuring that once a booking process begins, others cannot book until the transaction is complete.
+- What strategies have you implemented in your API design to prevent overbooking in the system?
+  - The system checks current reservations against total inventory and only allows a booking to proceed if it adheres to predefined limits, using database constraints or application logic to ensure no overbooking beyond a certain threshold (e.g., 110% of inventory).
+- Can you describe the database sharding strategy used in this system? How does it help scale the application?
+  - Database sharding is applied by dividing data among multiple databases using a hash of the hotel_id. This distributes the load and helps the system scale horizontally, allowing each shard to handle a portion of the traffic, thus enhancing performance.
+- What caching mechanisms are employed to enhance system performance?
+  - The system uses a caching layer, likely implemented with Redis, to store room availability information, which decreases the load on the primary database and provides faster access to data, improving response times for end-users.
+- How do you ensure data consistency across services in a distributed architecture?
+  - The system could employ techniques like the Two-Phase Commit protocol, TCC (Try-Confirm/Cancel), or SAGAs for managing distributed transactions, ensuring consistency across different services by coordinating transactions that span multiple services.
+- Explain the role of room type inventory in your database schema. How does it facilitate the booking process?
+  - The room type inventory table tracks available and reserved rooms by date and room type, allowing the system to query and update inventory efficiently. This is crucial for allowing bookings by room type rather than individual room, simplifying the reservation process for users.
+- Discuss the API design changes proposed for allowing reservations by room type instead of specific room IDs.
+  - The modified API design lets users book rooms based on type, providing more flexibility. This involves checking aggregated inventory for a room type rather than individual rooms, which can streamline the user experience and improve backend efficiencies.
+- How would you handle a sudden spike in traffic, say 1,000 times the normal load, as seen on platforms like Booking.com?
+  - To manage such a spike, sharding and caching would be critical. Sharding ensures that the database load is distributed, while caching reduces the number of queries hitting the database directly, handling high read demands effectively.
+- What are the potential downsides of using database constraints to manage room reservations?
+  - While database constraints ensure that overbooking doesn't occur, they are not flexible, hard to manage as part of application deployment, and not supported by all database systems. They can also lead to frequent transaction rollbacks if conflicts are common.
+- If two users simultaneously try to book the last available room of a particular type, how does your system resolve this conflict?
+  - The system could use either optimistic or pessimistic locking to manage this. With optimistic locking, both users may attempt to book, but the final commit checks will ensure only one succeeds. Pessimistic locking would lock the booking for the first user until their transaction completes, preventing the second user from booking until the lock is released.
 
 # References
 
