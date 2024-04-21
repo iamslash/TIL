@@ -122,7 +122,7 @@ recvMessage(msg, from_user)
 4. AuthN 서버가 주 데이터베이스(Main DB)에 접근하여 사용자 정보를 읽어옵니다
 5. 백엔드 서버가 캐싱 서버인 Redis에 데이터를 저장하거나 조회합니다.
 6. 백엔드 서버가 asynchronous job (building chat messages search index) 처리를 위해 메시지 큐인 Kafka로 메시지를 전송합니다.
-   1. Zookeeper 에 물어봐서 Web Socket Server 들 중 가장 적당한 것을 얻어옵니다.
+   1. Redis 에 물어봐서 Web Socket Server 들 중 가장 적당한 것을 얻어옵니다.
 7. 사용자 A가 웹소켓 연결을 통해 실시간 통신을 위한 웹소켓 서버에 연결합니다.
 8. 웹소켓 서버가 채팅 서버 A로 메시지를 라우팅합니다.
 9.  채팅 서버 A가 메시지를 Kafka의 Pub/Sub 시스템에 전달합니다.
@@ -139,7 +139,7 @@ recvMessage(msg, from_user)
 
 ## Service Discovery
 
-Apache [Zookeeper](/zookeeper/README.md) is a good solution for discovering chat servers.
+[Redis](/redis/README.md) is a good solution for discovering chat servers to find a specific user.
 
 ## How many chat server we need?
 
@@ -226,10 +226,6 @@ NoSQL such [Cassandra](/cassandra/), [DynamoDB](/dynamodb/README.md) are good so
   - 장애 격리: 특정 서버 인스턴스에 문제가 발생했을 때, ALB가 자동으로 건강한 인스턴스로 트래픽을 리디렉션함으로써 장애를 격리하고 서비스 중단을 방지합니다.
   - 보안: ALB는 SSL/TLS 종료와 같은 보안 기능을 제공함으로써 보안 향상에 기여할 수 있습니다. 이는 보안 인증서 관리를 중앙화하고, 서버 자체의 부하를 줄일 수 있습니다.
   - WebSocket 연결 상태 유지: 일부 ALB는 스티키 세션(sticky sessions) 기능을 제공하여 클라이언트의 연결 상태를 유지할 수 있습니다.
-- Client 와 Websocket Server 사이에 ALB 를 사용했을 때 단점은?
-  - 비용: ALB를 사용하면 추가 비용이 발생할 수 있습니다. 이는 특히 트래픽이 많은 경우 더욱 중요한 고려사항이 될 수 있습니다.
-  - 복잡성 증가: 인프라의 복잡성이 증가하고 관리해야 할 또 다른 구성 요소가 추가됩니다.
-  - WebSocket 특화 기능 부재: 일부 ALB는 WebSocket의 특정 기능이나 세밀한 튜닝을 지원하지 않을 수 있습니다.
 
 # References
 
