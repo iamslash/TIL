@@ -15,6 +15,7 @@ jvm 에 대해 적는다.
 
 # Materials
 
+* [JVM 밑바닥까지 파헤치기 자동 메모리 관리, 실행 서브시스템, 컴파일, 동시성 | yes24](https://www.yes24.com/Product/Goods/126114513)
 * [더 자바, 코드를 조작하는 다양한 방법 by 백기선](https://www.inflearn.com/course/the-java-code-manipulation/dashboard)
 * [The JVM Architecture Explained](https://dzone.com/articles/jvm-architecture-explained)
 * [The Java® Virtual Machine Specification
