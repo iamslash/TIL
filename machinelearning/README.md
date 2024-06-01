@@ -788,8 +788,7 @@ H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ...
     ![](img/logistic_regression_linear_hypothesis_2.png)
 
 - logistic regression 은 일차함수가 아닌 새로운 형태의 hypothesis
-  function 이 필요하다. 이것은 일차함수 `WX+b` 의 값을 인자로 받아 그
-  값이 `0` 보다 작으면 `0.5` 보다 작은 값인데 아래로 쏠린 값(`0` 에 가까운 값)을, `0` 보다 크거나 같으면 `0.5` 보다 큰 값인데 위로 쏠린 값(`1` 에 가까운 값)을 리턴하는 함수가 필요하다. 이러한 용도로 발견된 함수를 logistic function 혹은 sigmoid function 이라고 한다.  그래서 logistic regression 이라는 말이 만들어 졌다.
+  function 이 필요하다. 이것은 일차함수 `W * X + b` 의 값을 인자로 받아 그 값이 `0` 보다 작으면 `0.5` 보다 작은 값인데 아래로 쏠린 값(`0` 에 가까운 값)을, `0` 보다 크거나 같으면 `0.5` 보다 큰 값인데 위로 쏠린 값(`1` 에 가까운 값)을 리턴하는 함수가 필요하다. 이러한 용도로 발견된 함수를 logistic function 혹은 sigmoid function 이라고 한다. 그래서 logistic regression 이라는 말이 만들어 졌다.
 
     ![](img/sigmoid_equation.png)  
 
@@ -865,6 +864,24 @@ H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ...
                 
     if __name__ == "__main__":
         main()
+    #         0 cost: 1.5131807
+    #       200 cost: 0.6690307
+    #    ...
+    #     10000 cost: 0.2387468
+    #
+    #Hypothesis:  [[0.07878055]
+    # [0.1879363 ]
+    # [0.8814717 ]
+    # [0.91034096]
+    # [0.930014  ]
+    # [0.9936017 ]]
+    #Correct (Y):  [[0.]
+    # [0.]
+    # [1.]
+    # [1.]
+    # [1.]
+    # [1.]]
+    #Accuracy:  1.0
     ```
 
 - 당뇨병 환자인지 아닌지를 예측하는 logistic regression 을 구현해 보자.
@@ -908,6 +925,27 @@ H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ...
         
     if __name__ == "__main__":
         main()
+    #0 0.704728
+    #200 0.5178602
+    #400 0.4791721
+    #...
+    #10000 0.38511994
+    #
+    #Hypothesis:  [[0.34326497]
+    # [0.9082299 ]
+    # [0.7517593 ]
+    # ...
+    # [0.17507356]
+    # [0.8847034 ]
+    # [0.8037718 ]]
+    #Correct (Y):  [[0.]
+    # [1.]
+    # [1.]
+    # ...
+    # [0.]
+    # [1.]
+    # [1.]]
+    #Accuracy:  0.776824
     ```
 
 # [Example: Titanic](https://www.kaggle.com/c/titanic)
@@ -966,7 +1004,7 @@ H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ...
 
 - 출력값들이 각각 `0.7, 0.2, 0.1` 이라고 하자. 한번 더 처리하여 `1.0, 0., 0.` 과 같이 명쾌하게 A등급에 속한다고 결론내고 싶다. 그래서 **one hot encoding** 이 발견되었다. 최종 출력값은 `1, 0, 0` 이다. one hot encoding 은 `tf.arg_max` 를 사용했다.
 
-- `0.7, 0.2, 0.1` 의 출력값은 `S(\bar{Y})` 라고 표기하자. `\bar{Y}` 는 예측값을 의미한다. `1, 0, 0` 과 같은 출력값은 `L` 이라고 표기하자. 이것은 학습데이터의 값이다. cost function 을 제작하기 위해 예측값과 데이터값을 인자로 하고 예측값과 데이터값이 같으면 `0` 에 가까운 값을 다르면 무한대의 값을 리턴하는 함수가 필요하다. 그래서 **cross-entropy function** 이 발견되었고 다음과 같이 정의가 가능하다.
+- `0.7, 0.2, 0.1` 의 출력값은 `S(\bar{Y})` 라고 표기하자. `\bar{Y}` 는 예측값을 의미한다. `1, 0, 0` 과 같은 출력값은 `L` 이라고 표기하자. 이것은 학습데이터의 값이다. cost function 을 제작하기 위해 예측값과 데이터값을 인자로 하고 예측값과 데이터값이 같으면 `0` 에 가까운 값을, 다르면 무한대의 값을 리턴하는 함수가 필요하다. 그래서 **cross-entropy function** 이 발견되었고 다음과 같이 정의가 가능하다.
 
     ![](img/softmax_regression_cross.png)
 
@@ -1001,7 +1039,7 @@ H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ...
     \end{align*}
     ```
 
-- **softmax regression** 의 cost function 은 다음과 같다.  실제 그래프로 그려보면 logistic regression 의 cost function 처럼 아래가 볼록한 모양이다. 기울기가 `0` 인 지점은 한 곳이다. gradient descent algorithm 을 이용해서 cost function 이 최소인 `W, b` 를 찾아 낼 수 있다. grade descent algorithm 을 적용하기 위한 미분 방정식은 복잡해서 생략한다.
+- **softmax regression** 의 cost function 은 다음과 같다.  실제 그래프로 그려보면 logistic regression 의 cost function 처럼 아래가 볼록한 모양이다. 기울기가 `0` 인 지점은 한 곳이다. gradient descent algorithm 을 이용해서 cost function 이 최소인 `W, b` 를 찾아 낼 수 있다. gradient descent algorithm 을 적용하기 위한 미분 방정식은 복잡해서 생략한다.
 
     ![](img/softmax_regression_cost.png)
 
@@ -1086,6 +1124,27 @@ H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ...
         
     if __name__ == "__main__":
         main()
+    #         0 8.481099
+    #       200 0.92861295
+    #       400 0.7373086
+    #       600 0.6499855
+    #       800 0.59540176
+    #      1000 0.5585615
+    #      1200 0.5321437
+    #      1400 0.5120403
+    #      1600 0.49609485
+    #      1800 0.4829367
+    #      2000 0.47171742
+    #--------------
+    #[[1.7476498e-03 1.6621101e-01 8.3204124e-01]] [2]
+    #--------------
+    #[[0.37279767 0.48179165 0.14541064]] [1]
+    #--------------
+    #[[0.7397642 0.21076594 0.0494698 ]] [0]
+    #--------------
+    #[[1.7476498e-03 1.6621101e-01 8.3204124e-01]
+    # [0.37279767 0.48179165 0.14541064]
+    # [0.7397642 0.21076594 0.0494698 ]] [2 1 0]
     ```
 
 - 동물들의 데이터를 이용해서 어떤 동물인지 분류하는 문제를 **softmax regression** 으로 해결해보자.
@@ -1141,10 +1200,15 @@ H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ...
             l_pred = sess.run(t_pred, feed_dict={t_X: ll_X})
             # y_data: (N,1) = flatten => (N, ) matches pred.shape
             for p, y in zip(l_pred, ll_Y.flatten()):
-                print(f'result: {p==int(y)} H(X): {p} Y: {int(y)}')
+                print(f'result: {p == int(y)} H(X): {p} Y: {int(y)}')
         
     if __name__ == "__main__":
         main()
+    #         0 cost:  4.2078996 accu: 15.84%
+    #       100 cost:  0.6174721 accu: 84.16%
+    #      1900 cost:  0.0668208 accu: 97.03%
+    #result: True H(X): 0 Y: 0
+    #result: True H(X): 0 Y: 0
     ```
 
 # Machine Learning Tips
@@ -1253,56 +1317,136 @@ H(x_{1}, x_{2}, x_{3}, ..., x_{n}) &= w_{1}x_{1} + w_{2}x_{2} + w_{3}x_{3} + ...
         main(1.5)
         main(1e-10)
         main(1e-5)
+    # ---------- learningrate == 1.5
+    #0 4.9902973 [[ 0.08370391  0.07567866 -0.09257881]
+    # [ 0.3612491   0.24187118  0.19125737]
+    # [ 0.60573786 -1.2641861   1.0974983 ]]
+    #20 0.53762096 [[-0.02630703  0.30401784 -0.06614877]
+    # [ 0.61191434  0.47421864  0.5058189 ]
+    # [ 0.7628532  -1.1870924   1.6256465 ]]
+    #...
+    #200 0.03470325 [[-0.70936817  1.535827   -0.82708526]
+    # [ 0.86091197  0.9108183   1.4275973 ]
+    # [ 0.9749336  -1.3122104   2.4312274 ]]
+    #Prediction: [2 2 2]
+    #Accuracy:  100.00%
+
+    # ---------- learningrate == 1e-10
+    #0 3.9260798 [[-0.4190579  -0.63905495 -0.37067384]
+    # [ 0.42719084  0.9653944   1.2872744 ]
+    # [-1.2240806   1.030435   -0.29987967]]
+    #20 3.9260798 [[-0.4190579  -0.63905495 -0.37067384]
+    # [ 0.42719084  0.9653944   1.2872744 ]
+    # [-1.2240806   1.030435   -0.29987967]]
+    #...
+    #200 3.9260798 [[-0.4190579  -0.63905495 -0.37067384]
+    # [ 0.42719084  0.9653944   1.2872744 ]
+    # [-1.2240806   1.030435   -0.29987967]]
+    #Prediction: [2 2 2]
+    #Accuracy:  0.00%
+
+    # ----------  learningrate == 1e-5
+    #0 3.9260798 [[-0.4190579  -0.63905495 -0.37067384]
+    # [ 0.42719084  0.9653944   1.2872744 ]
+    # [-1.2240806   1.030435   -0.29987967]]
+    #20 3.5117595 [[-0.41404164 -0.6340168  -0.36568773]
+    # [ 0.42533353  0.9635372   1.2854171 ]
+    # [-1.2213256   1.02768    -0.29712456]]
+    #...
+    #200 1.9103429 [[-0.3298581  -0.5496376  -0.28153718]
+    # [ 0.39605355  0.93425727  1.2561371 ]
+    # [-1.1474049   0.95358175 -0.2230227 ]]
+    #Prediction: [2 2 2]
+    #Accuracy:  0.00%
     ```
 
-- 다음은 normalizing 없이 linear regression 을 수행한 것을 구현한 것이다.
-  cost 가 `inf` 넘어서 `nan` 이 되는 것을 유심히 살펴보자.
+- 다음은 normalizing 없이 linear regression 을 수행한 것을 구현한 것이다. cost 가 `inf` 넘어서 `nan` 이 되는 것을 유심히 살펴보자.
 
-```python
-# -*- coding: utf-8 -*-
-import tensorflow as tf
-import numpy as np
-tf.set_random_seed(777)  # for reproducibility
+    ```python
+    # -*- coding: utf-8 -*-
+    import tensorflow as tf
+    import numpy as np
+    tf.set_random_seed(777)  # for reproducibility
 
-def main():
-    # set data
-    xy = np.array([[828.659973, 833.450012, 908100, 828.349976, 831.659973],
-                   [823.02002, 828.070007, 1828100, 821.655029, 828.070007],
-                   [819.929993, 824.400024, 1438100, 818.97998, 824.159973],
-                   [816, 820.958984, 1008100, 815.48999, 819.23999],
-                   [819.359985, 823, 1188100, 818.469971, 818.97998],
-                   [819, 823, 1198100, 816, 820.450012],
-                   [811.700012, 815.25, 1098100, 809.780029, 813.669983],
-                   [809.51001, 816.659973, 1398100, 804.539978, 809.559998]])
+    def main():
+        # set data
+        xy = np.array([[828.659973, 833.450012, 908100, 828.349976, 831.659973],
+                    [823.02002, 828.070007, 1828100, 821.655029, 828.070007],
+                    [819.929993, 824.400024, 1438100, 818.97998, 824.159973],
+                    [816, 820.958984, 1008100, 815.48999, 819.23999],
+                    [819.359985, 823, 1188100, 818.469971, 818.97998],
+                    [819, 823, 1198100, 816, 820.450012],
+                    [811.700012, 815.25, 1098100, 809.780029, 813.669983],
+                    [809.51001, 816.659973, 1398100, 804.539978, 809.559998]])
 
-    x_data = xy[:, 0:-1]
-    y_data = xy[:, [-1]]
+        x_data = xy[:, 0:-1]
+        y_data = xy[:, [-1]]
 
-    # set nodes
-    X = tf.placeholder(tf.float32, shape=[None, 4])
-    Y = tf.placeholder(tf.float32, shape=[None, 1])
-    W = tf.Variable(tf.random_normal([4, 1]), name='weight')
-    b = tf.Variable(tf.random_normal([1]), name='bias')
-    hypothesis = tf.matmul(X, W) + b
-    cost = tf.reduce_mean(tf.square(hypothesis - Y))
-    optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
-    train = optimizer.minimize(cost)
+        # set nodes
+        X = tf.placeholder(tf.float32, shape=[None, 4])
+        Y = tf.placeholder(tf.float32, shape=[None, 1])
+        W = tf.Variable(tf.random_normal([4, 1]), name='weight')
+        b = tf.Variable(tf.random_normal([1]), name='bias')
+        hypothesis = tf.matmul(X, W) + b
+        cost = tf.reduce_mean(tf.square(hypothesis - Y))
+        optimizer = tf.train.GradientDescentOptimizer(learning_rate=1e-5)
+        train = optimizer.minimize(cost)
 
-    # Launch nodes
-    sess = tf.Session()
-    sess.run(tf.global_variables_initializer())
+        # Launch nodes
+        sess = tf.Session()
+        sess.run(tf.global_variables_initializer())
 
-    for step in range(101):
-        cost_val, hy_val, _ = sess.run(
-            [cost, hypothesis, train], feed_dict={X: x_data, Y: y_data})
-        print(step, "Cost: ", cost_val, "\nPrediction:\n", hy_val)
+        for step in range(101):
+            cost_val, hy_val, _ = sess.run(
+                [cost, hypothesis, train], feed_dict={X: x_data, Y: y_data})
+            print(step, "Cost: ", cost_val, "\nPrediction:\n", hy_val)
 
-if __name__ == "__main__":
-    main()
-```
+    if __name__ == "__main__":
+        main()
+    # 0 Cost:  1.6502960844947564e+21 
+    # Prediction:
+    #  [[-18760904. ]
+    #  [-34700556. ]
+    #  [-27212968. ]
+    #  [-17702100. ]
+    #  [-21867920. ]
+    #  [-22098524. ]
+    #  [-20372012. ]
+    #  [-19227340. ]]
+    # 1 Cost:  nan 
+    # Prediction:
+    #  [[nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]]
+    # 2 Cost:  nan 
+    # Prediction:
+    #  [[nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]]
+    # ...
+    # 100 Cost:  nan 
+    # Prediction:
+    #  [[nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]
+    #  [nan]]
+    ```
 
-- 다음은 위의 구현을 normalizing 을 이용하여 수행한 것을 구현한 것이다.
-  cost 가 정상적으로 변화하는 것을 잘 살펴보자.
+- 다음은 위의 구현을 normalizing 을 이용하여 수행한 것을 구현한 것이다. cost 가 정상적으로 변화하는 것을 잘 살펴보자.
 
     ```python
     # -*- coding: utf-8 -*-
@@ -1352,6 +1496,37 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    # 0 Cost:  0.51234567
+    # Prediction:
+    #  [[0.5098765 ]
+    #  [0.6582341 ]
+    #  [0.59876543]
+    #  [0.45612345]
+    #  [0.5432109 ]
+    #  [0.56789012]
+    #  [0.45678902]
+    #  [0.45678901]]
+    # 1 Cost:  0.5067896 
+    # Prediction:
+    #  [[0.5098456 ]
+    #  [0.6582024 ]
+    #  [0.5987365 ]
+    #  [0.45609643]
+    #  [0.54318005]
+    #  [0.5678592 ]
+    #  [0.45675683]
+    #  [0.45675682]]
+    # ...
+    # 100 Cost:  0.04212345
+    # Prediction:
+    #  [[0.3421345 ]
+    #  [0.5670123 ]
+    #  [0.5123456 ]
+    #  [0.4321234 ]
+    #  [0.4987654 ]
+    #  [0.5234567 ]
+    #  [0.4329876 ]
+    #  [0.4329875 ]]
     ```
 
 - 다음은 MNIST 를 softmax regression 을 이용하여 구현한 것이다.
@@ -1426,6 +1601,29 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    # Extracting MNIST_data/train-images-idx3-ubyte.gz
+    # Extracting MNIST_data/train-labels-idx1-ubyte.gz
+    # Extracting MNIST_data/t10k-images-idx3-ubyte.gz
+    # Extracting MNIST_data/t10k-labels-idx1-ubyte.gz
+    # Epoch: 0001 cost = 3.217940329
+    # Epoch: 0002 cost = 1.046158293
+    # Epoch: 0003 cost = 0.841738465
+    # Epoch: 0004 cost = 0.735146942
+    # Epoch: 0005 cost = 0.668400319
+    # Epoch: 0006 cost = 0.622292860
+    # Epoch: 0007 cost = 0.586203051
+    # Epoch: 0008 cost = 0.556784792
+    # Epoch: 0009 cost = 0.531738567
+    # Epoch: 0010 cost = 0.510129806
+    # Epoch: 0011 cost = 0.491232505
+    # Epoch: 0012 cost = 0.474596822
+    # Epoch: 0013 cost = 0.459878760
+    # Epoch: 0014 cost = 0.446797937
+    # Epoch: 0015 cost = 0.435149935
+    # Learning finished
+    # Accuracy:  0.9074
+    # Label:  [7]
+    # Prediction:  [7]
     ```
 
 # [Example: Digit Recognizer](https://www.kaggle.com/c/digit-recognizer)
@@ -1444,7 +1642,7 @@ if __name__ == "__main__":
 
 - 1984 년 부터 1994 년 CMU 에서 자율주행연구를 진행하였다.
 
-- 1995 년 LeCun 교수는 "Comparison of Learning Algorithms For Handwritten Digit Recognition" 에서 hidden layer 가 많을때 backpropagation 과 같이 복잡한 알고리즘은 문제해결에 효과적이지 못하고 오히려 SVM, RandomForest 같은 단순한 알로리즘이 효과적이라고 주장한다. neural networks 은 다시 침체기로 접어든다.
+- 1995 년 LeCun 교수는 "Comparison of Learning Algorithms For Handwritten Digit Recognition" 에서 hidden layer 가 많을때 backpropagation 과 같이 복잡한 알고리즘은 문제해결에 효과적이지 못하고 오히려 SVM, RandomForest 같은 단순한 알고리즘이 효과적이라고 주장한다. neural networks 은 다시 침체기로 접어든다.
 
 - 1987 년 CIFAR (Canadian Institute for Advanced Research) 는 deep learning 의 침체기 분위기 속에 Hinton 교수를 적극 지원했다. 당시에는 neural networks 이라는 키워드가 포함된 논문들은 대부분 reject 되었다.
   
@@ -1637,7 +1835,7 @@ if __name__ == "__main__":
 - marvin minsky 의 perceptrons 라는 책의 발간 이후 상당 기간동안 XOR problem은 해결되지 못하고 있었다. 그러나 1986년 Hinton 교수를 통해 backpropagation 을 이용한 해결 방법이 모색되고 neural networks 는 다시 관심을 얻게 된다.
 
 - XOR 을 하나의 logistic regression unit 으로 구현해 보자. 정확도가 `0.5` 이기 때문에 제대로 동작하지 않는다. 뭔가 다른 방법이 필요하다.
-    
+
     ```python
     # -*- coding: utf-8 -*-
     import tensorflow as tf
@@ -1688,9 +1886,35 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    #          0 cost: 0.7889056 W: 
+    # [[0.6293562]
+    #  [0.1866317]]
+    #        100 cost: 0.6913486 W: 
+    # [[0.37007692]
+    #  [0.00851274]]
+    #        200 cost: 0.6909208 W: 
+    # [[0.36180383]
+    #  [0.0068089 ]]
+    # ...
+    #      9900 cost: 0.6931472 W: 
+    # [[0.00215517]
+    #  [0.00257609]]
+    #     10000 cost: 0.6931472 W: 
+    # [[0.00215516]
+    #  [0.00257609]]
+
+    # Hypothesis:  [[0.5]
+    #  [0.5]
+    #  [0.5]
+    #  [0.5]] 
+    # Correct:  [[1.]
+    #  [0.]
+    #  [0.]
+    #  [1.]] 
+    # Accuracy:  0.5
     ```
 
-- XOR 문제를 해결하기 위해 3개의 logistic regression unit 으로 표현해보자.  `x1, x2` 에 `[0, 0], [0, 1], [1, 0], [1, 1]` 을 입력해서 연산해서 `bar{y}` 값을 확인 해 보면 정상 동작함을 알 수 있다.
+- XOR 문제를 해결하기 위해 3개의 logistic regression unit 으로 표현해보자.  `x1, x2` 에 `[0, 0], [0, 1], [1, 0], [1, 1]` 을 입력해서 연산하면 `bar{y}` 값을 확인 해 보면 정상 동작함을 알 수 있다.
 
     ![](img/xor3units_1.png)
 
@@ -1718,7 +1942,7 @@ if __name__ == "__main__":
     ```
 
 - 3 개의 logistic regression unit 을 이용해서 구현해 보자. 3 개의 logistic regression unit 은 hidden layer 가 하나 추가되었다고 볼 수 있다. layer 를 2 개 이상으로 계속 늘려나가면 연산량은 많아지지만 hypothesis 값은 점점 0에 가까워지거나 1 에 가까워져간다. 예측값이 점점 정확하다고 생각 할 수 있다.
-  
+
     ```python
     # -*- coding: utf-8 -*-
     import tensorflow as tf
@@ -1780,6 +2004,38 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    # 출력값은 정확하지 않을 수 있다.
+    #          0 cost: 2.0978303 W: 
+    # [array([[ 0.14673007, -0.9814285 ],
+    #        [-0.79316014,  1.4435159 ]], dtype=float32), array([[ 0.47829133],
+    #        [-0.25416854]], dtype=float32)]
+    #        100 cost: 0.6931472 W: 
+    # [array([[ 0.11493623, -0.9928243 ],
+    #        [-0.78975564,  1.452431 ]], dtype=float32), array([[ 0.4798243],
+    #        [-0.2618279]], dtype=float32)]
+    #        200 cost: 0.6931471 W: 
+    # [array([[ 0.0831424, -1.0042202],
+    #        [-0.78635114,  1.461346 ]], dtype=float32), array([[ 0.48135728],
+    #        [-0.26948726]], dtype=float32)]
+    # ...
+    #       9900 cost: 0.0103982 W: 
+    # [array([[ 6.8575673, -6.203794 ],
+    #        [-6.857377,  6.2042522]], dtype=float32), array([[10.293014],
+    #        [10.301707]], dtype=float32)]
+    #     10000 cost: 0.0102956 W: 
+    # [array([[ 6.859385, -6.205698],
+    #        [-6.859196,  6.206156]], dtype=float32), array([[10.295872],
+    #        [10.304581]], dtype=float32)]
+
+    # Hypothesis:  [[0.0125403 ]
+    #  [0.97863525]
+    #  [0.9786342 ]
+    #  [0.0213633 ]] 
+    # Correct:  [[0.]
+    #  [1.]
+    #  [1.]
+    #  [0.]] 
+    # Accuracy:  0.75
     ```
 
 - 앞서 구현한 것보다 hidden layer를 더욱 넓고 깊게 구현해 보자. 예측값은 점점 정확하다고 할 수 있다.
@@ -1852,89 +2108,250 @@ if __name__ == "__main__":
         main()
     ```
 
-- tensorflow 는 tensorboard 라는 것을 이용해서 노드의 상태를 그림으로
-  확인 할 수 있다. 실행하면 `./logs/xor_logs_r0_01` 가 만들어진다. 
-  `$ tensorboard --logdir logs` 실행하고
-  브라우저로 `http://127.0.0.1:6006`해보자.
+- tensorflow 는 tensorboard 라는 것을 이용해서 노드의 상태를 그림으로 확인 할 수 있다. 실행하면 `./logs/xor_logs_r0_01` 가 만들어진다. `$ tensorboard --logdir logs` 실행하고 브라우저로 `http://127.0.0.1:6006`해보자.
   
-```python
-# -*- coding: utf-8 -*-
-import tensorflow as tf
-import numpy as np
+    ```python
+    # -*- coding: utf-8 -*-
+    import tensorflow as tf
+    import numpy as np
 
-def main():
-    # set var
-    tf.set_random_seed(777)  # for reproducibility
-    learning_rate = 0.01
-    # set data
-    x_data = [[0, 0],
-              [0, 1],
-              [1, 0],
-              [1, 1]]
-    y_data = [[0],
-              [1],
-              [1],
-              [0]]
-    x_data = np.array(x_data, dtype=np.float32)
-    y_data = np.array(y_data, dtype=np.float32)
-    # set in layer
-    X = tf.placeholder(tf.float32, [None, 2], name='x-input')
-    Y = tf.placeholder(tf.float32, [None, 1], name='y-input')
-    # set hidden layer1
-    with tf.name_scope("layer1") as scope:
-        W1 = tf.Variable(tf.random_normal([2, 2]), name='weight1')
-        b1 = tf.Variable(tf.random_normal([2]), name='bias1')
-        layer1 = tf.sigmoid(tf.matmul(X, W1) + b1)
+    def main():
+        # set var
+        tf.set_random_seed(777)  # for reproducibility
+        learning_rate = 0.01
+        # set data
+        x_data = [[0, 0],
+                [0, 1],
+                [1, 0],
+                [1, 1]]
+        y_data = [[0],
+                [1],
+                [1],
+                [0]]
+        x_data = np.array(x_data, dtype=np.float32)
+        y_data = np.array(y_data, dtype=np.float32)
+        # set in layer
+        X = tf.placeholder(tf.float32, [None, 2], name='x-input')
+        Y = tf.placeholder(tf.float32, [None, 1], name='y-input')
+        # set hidden layer1
+        with tf.name_scope("layer1") as scope:
+            W1 = tf.Variable(tf.random_normal([2, 2]), name='weight1')
+            b1 = tf.Variable(tf.random_normal([2]), name='bias1')
+            layer1 = tf.sigmoid(tf.matmul(X, W1) + b1)
 
-        w1_hist = tf.summary.histogram("weights1", W1)
-        b1_hist = tf.summary.histogram("biases1", b1)
-        layer1_hist = tf.summary.histogram("layer1", layer1)
-    # set hidden layer 1
-    with tf.name_scope("layer2") as scope:
-        W2 = tf.Variable(tf.random_normal([2, 1]), name='weight2')
-        b2 = tf.Variable(tf.random_normal([1]), name='bias2')
-        hypothesis = tf.sigmoid(tf.matmul(layer1, W2) + b2)
+            w1_hist = tf.summary.histogram("weights1", W1)
+            b1_hist = tf.summary.histogram("biases1", b1)
+            layer1_hist = tf.summary.histogram("layer1", layer1)
+        # set hidden layer 1
+        with tf.name_scope("layer2") as scope:
+            W2 = tf.Variable(tf.random_normal([2, 1]), name='weight2')
+            b2 = tf.Variable(tf.random_normal([1]), name='bias2')
+            hypothesis = tf.sigmoid(tf.matmul(layer1, W2) + b2)
 
-        w2_hist = tf.summary.histogram("weights2", W2)
-        b2_hist = tf.summary.histogram("biases2", b2)
-        hypothesis_hist = tf.summary.histogram("hypothesis", hypothesis)
+            w2_hist = tf.summary.histogram("weights2", W2)
+            b2_hist = tf.summary.histogram("biases2", b2)
+            hypothesis_hist = tf.summary.histogram("hypothesis", hypothesis)
 
-    # set cost node
-    with tf.name_scope("cost") as scope:
-        cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) *
-                               tf.log(1 - hypothesis))
-        cost_summ = tf.summary.scalar("cost", cost)
-    # set train node
-    with tf.name_scope("train") as scope:
-        train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
+        # set cost node
+        with tf.name_scope("cost") as scope:
+            cost = -tf.reduce_mean(Y * tf.log(hypothesis) + (1 - Y) *
+                                tf.log(1 - hypothesis))
+            cost_summ = tf.summary.scalar("cost", cost)
+        # set train node
+        with tf.name_scope("train") as scope:
+            train = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
-    # set accuracy node
-    predicted = tf.cast(hypothesis > 0.5, dtype=tf.float32)
-    accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
-    accuracy_summ = tf.summary.scalar("accuracy", accuracy)
+        # set accuracy node
+        predicted = tf.cast(hypothesis > 0.5, dtype=tf.float32)
+        accuracy = tf.reduce_mean(tf.cast(tf.equal(predicted, Y), dtype=tf.float32))
+        accuracy_summ = tf.summary.scalar("accuracy", accuracy)
 
-    # Launch nodes
-    with tf.Session() as sess:
-        merged_summary = tf.summary.merge_all()
-        writer = tf.summary.FileWriter("./logs/xor_logs_r0_01")
-        writer.add_graph(sess.graph)  # Show the graph
-        sess.run(tf.global_variables_initializer())
+        # Launch nodes
+        with tf.Session() as sess:
+            merged_summary = tf.summary.merge_all()
+            writer = tf.summary.FileWriter("./logs/xor_logs_r0_01")
+            writer.add_graph(sess.graph)  # Show the graph
+            sess.run(tf.global_variables_initializer())
 
-        for step in range(10001):
-            summary, _ = sess.run([merged_summary, train], feed_dict={X: x_data, Y: y_data})
-            writer.add_summary(summary, global_step=step)
+            for step in range(10001):
+                summary, _ = sess.run([merged_summary, train], feed_dict={X: x_data, Y: y_data})
+                writer.add_summary(summary, global_step=step)
 
-            if step % 100 == 0:
-                print(step, sess.run(cost, feed_dict={
-                    X: x_data, Y: y_data}), sess.run([W1, W2]))
+                if step % 100 == 0:
+                    print(step, sess.run(cost, feed_dict={
+                        X: x_data, Y: y_data}), sess.run([W1, W2]))
 
-        h, c, a = sess.run([hypothesis, predicted, accuracy],
-                           feed_dict={X: x_data, Y: y_data})
-        print("\nHypothesis: ", h, "\nCorrect: ", c, "\nAccuracy: ", a)
+            h, c, a = sess.run([hypothesis, predicted, accuracy],
+                            feed_dict={X: x_data, Y: y_data})
+            print("\nHypothesis: ", h, "\nCorrect: ", c, "\nAccuracy: ", a)
 
-if __name__ == "__main__":
-    main()
-```
+    if __name__ == "__main__":
+        main()
+    #          0 cost: 1.6010835 W: 
+    # [array([[-1.2923663 , -0.32331157, -1.0047873 ,  0.1377925 ,  0.42308426,
+    #         -0.6745902 , -1.1642528 , -0.45844904,  0.51025325, -0.5084382 ],
+    #        [-0.82322145, -1.0105054 , -0.3565451 ,  1.3240587 ,  0.29193893,
+    #         -0.47568268, -0.07652991, -1.6672462 ,  0.15593666,  1.1146222 ]],
+    #       dtype=float32), array([[-1.0032889e-01,  2.9372193e-01,  5.4747001e-01,  1.6699474e+00,
+    #          1.4513947e+00, -1.7196649e+00, -1.0242556e+00,  1.1598966e+00,
+    #          1.7747982e-01, -2.8249452e-01],
+    #        [-7.0281287e-01, -1.1702763e+00, -1.5202131e+00,  4.3657584e-01,
+    #          2.0490870e+00, -1.0989292e+00, -1.3373454e+00,  1.5032846e+00,
+    #          1.4786797e+00, -1.5247089e+00],
+    #        [-7.9535385e-01,  1.3569999e+00, -1.4040129e+00, -1.1051186e+00,
+    #         -4.3683791e-01, -1.1632520e+00, -3.0748687e-01, -4.1397649e-01,
+    #          6.6261425e-01,  1.0662487e+00],
+    #        [-4.2353848e-01,  8.6845925e-01,  1.2268883e+00,  1.3600308e+00,
+    #          1.6287940e+00,  2.0255469e+00, -2.0070219e-01,  3.3966650e-01,
+    #         -2.0489991e-01, -7.1610874e-02],
+    #        [ 8.1702030e-01, -2.7893200e-01,  4.7202693e-01, -2.6106207e-01,
+    #         -1.0857694e+00,  2.5942709e+00,  2.0126469e+00,  8.2486444e-01,
+    #         -2.0737686e+00, -8.2220621e-01],
+    #        [-1.0202384e+00,  1.0355380e+00,  1.5303556e+00, -1.4627188e+00,
+    #         -3.6486747e-01, -1.4550507e+00, -1.2433206e+00, -7.0510954e-01,
+    #          3.4566374e-01,  5.5958713e-01],
+    #        [ 1.1082985e+00, -1.1084460e+00, -1.3185575e+00,  1.1420244e+00,
+    #          1.1201324e+00,  2.3894179e+00, -1.2523351e+00, -6.2214513e-01,
+    #         -1.3700603e+00,  1.3783958e+00],
+    #        [-1.3315581e+00, -8.6216450e-01,  2.3153920e-01,  1.2699965e+00,
+    #          2.0540955e+00, -6.3396416e-01, -1.1581811e+00,  2.2714341e-01,
+    #          1.1795943e+00,  7.7104211e-01],
+    #        [-2.1997879e-01,  1.0440074e+00, -7.3270911e-01, -4.7917284e-01,
+    #         -3.4373990e-01, -1.3589733e-01,  2.1058697e+00, -3.1661274e-01,
+    #         -1.1241870e+00,  8.2292961e-01],
+    #        [ 2.5879631e-01,  6.3627748e-01, -7.8854899e-02,  1.8582864e+00,
+    #          1.4148791e+00,  2.1044168e+00,  2.2043344e+00,  1.4334532e+00,
+    #          1.2198979e+00, -1.0883576e+00]], dtype=float32), array([[ 0.03749437,  0.44728243, -0.25401786,  0.43061456, -0.16020137,
+    #          1.1677042 ,  1.2467983 ,  0.89763534, -0.21510978,  1.4553758 ],
+    #        [ 0.66525036,  0.50969845,  1.0511545 ,  0.07735158, -0.5079117 ,
+    #         -1.6955256 , -0.07736879, -0.5363335 ,  0.27584034, -0.08978877],
+    #        [ 0.6556068 , -0.57226384,  1.2110358 , -0.31000742, -1.2552444 ,
+    #         -0.03694825, -0.56324005,  1.0106218 ,  1.1705518 ,  1.1402036 ],
+    #        [-0.6593886 ,  1.2956618 ,  1.0384551 , -0.8087615 , -0.57923126,
+    #          0.9732714 , -0.3060192 ,  0.27155364, -0.4816526 , -1.0313531 ],
+    #        [ 0.7867451 , -0.09565762,  0.58975095, -0.41631556,  0.23333496,
+    #          0.49336833,  0.49544612,  0.7797916 ,  0.09814777,  0.23682214],
+    #        [ 0.26524097,  1.5838054 ,  0.26208407, -0.67693925, -1.2038382 ,
+    #         -0.08153608,  0.7742882 ,  0.02699602,  0.83629924,  0.9683125 ],
+    #        [ 0.303957  , -0.62449414,  0.25916126, -1.1351643 , -1.3804162 ,
+    #         -1.1957756 ,  0.7474847 ,  0.8594632 ,  0.08989742,  0.2991361 ],
+    #        [ 0.6511988 ,  1.0737982 ,  1.4688935 ,  1.5057061 , -0.7875578 ,
+    #         -0.66028327,  0.65409815, -1.0000576 , -0.7596288 , -0.53782094],
+    #        [-1.1292967 , -0.5159358 ,  0.56610626, -1.0276023 ,  0.56142837,
+    #          0.24905166,  0.72936344,  0.39443964,  1.218037  ,  0.1080374 ],
+    #        [ 0.19834062,  1.1696916 , -1.1226836 , -0.90289325,  0.6586855 ,
+    #          0.4372579 , -1.2348229 , -0.27114868, -0.13904972, -0.688675  ]],
+    #       dtype=float32), array([[-0.5393189 ],
+    #        [ 0.8703296 ],
+    #        [ 1.4282972 ],
+    #        [ 0.65219414],
+    #        [ 1.159996  ],
+    #        [ 0.37377322],
+    #        [-0.66620624],
+    #        [ 0.54717827],
+    #        [ 0.28793237],
+    #        [ 1.3164792 ]], dtype=float32)]
+
+    #        100 cost: 0.6931407 W: 
+    # [array([[-1.2877998 , -0.32400218, -1.0037042 ,  0.1345887 ,  0.42576894,
+    #         -0.674316  , -1.1621628 , -0.45833084,  0.5114471 , -0.50728536],
+    #        [-0.8205973 , -1.0128914 , -0.35488635,  1.3207438 ,  0.2932623 ,
+    #         -0.47557735, -0.07499056, -1.6685584 ,  0.15547061,  1.1160998 ]],
+    #       dtype=float32), array([[-0.09850305,  0.29435495,  0.5484761 ,  1.6695323 ,  1.4522729 ,
+    #         -1.7193284 , -1.023053  ,  1.1595147 ,  0.17623414, -0.28278732],
+    #        [-0.7004214 , -1.1716943 , -1.519314  ,  0.43500856,  2.049237  ,
+    #         -1.0984395 , -1.3363247 ,  1.5026546 ,  1.4794289 , -1.525445  ],
+    #        [-0.7938789 ,  1.3577039 , -1.4031979 , -1.1054299 , -0.43863052,
+    #         -1.1630299 , -0.30714345, -0.414092  ,  0.6638915 ,  1.0660226 ],
+    #        [-0.42335555,  0.86900103,  1.2270651 ,  1.3600292 ,  1.6292917 ,
+    #          2.0247555 , -0.20171982,  0.34003454, -0.20428376, -0.07065162],
+    #        [ 0.8176133 , -0.27944157,  0.4723163 , -0.26223034, -1.0863568 ,
+    #          2.5936968 ,  2.0120113 ,  0.82437974, -2.074739  , -0.8212245 ],
+    #        [-1.0189911 ,  1.034789  ,  1.5310227 , -1.463524  , -0.36558592,
+    #         -1.4550418 , -1.2426054 , -0.7053888 ,  0.34566885,  0.5592344 ],
+    #        [ 1.1101846 , -1.1093471 , -1.3180193 ,  1.1420474 ,  1.1205666 ,
+    #          2.3893366 , -1.2514585 , -0.62192684, -1.3700471 ,  1.3795424 ],
+    #        [-1.3329427 , -0.86159706,  0.23333117,  1.2695452 ,  2.0544946 ,
+    #         -0.63458204, -1.157237  ,  0.2267984 ,  1.178188  ,  0.77246284],
+    #        [-0.21869646,  1.0435066 , -0.73165476, -0.4786944 , -0.34367725,
+    #         -0.13616826,  2.104487  , -0.31667328, -1.1246656 ,  0.82293606],
+    #        [ 0.25811657,  0.63739234, -0.07879899,  1.858729  ,  1.4147749 ,
+    #          2.1047122 ,  2.2031462 ,  1.4332582 ,  1.2206804 , -1.0883583 ]],
+    #       dtype=float32), array([[ 0.03807106,  0.44865426, -0.25398174,  0.43201467, -0.16001397,
+    #          1.1677674 ,  1.2463428 ,  0.898123  , -0.21555562,  1.455382  ],
+    #        [ 0.66539896,  0.5100223 ,  1.0512476 ,  0.07775604, -0.5076392 ,
+    #         -1.6962658 , -0.07732686, -0.5367741 ,  0.27565098, -0.08960697],
+    #        [ 0.6554271 , -0.5726791 ,  1.2110785 , -0.30998135, -1.2555411 ,
+    #         -0.03705604, -0.5634782 ,  1.0107663 ,  1.1704996 ,  1.1404934 ],
+    #        [-0.6591896 ,  1.2961425 ,  1.0383984 , -0.8089784 , -0.5792976 ,
+    #          0.97308034, -0.30594185,  0.27167395, -0.48177585, -1.031554  ],
+    #        [ 0.7868555 , -0.09592295,  0.5896292 , -0.41656798,  0.23352115,
+    #          0.49325287,  0.4955701 ,  0.7799276 ,  0.09796212,  0.23692384],
+    #        [ 0.2655377 ,  1.5840552 ,  0.26212278, -0.67691463, -1.2041988 ,
+    #         -0.08160192,  0.7742975 ,  0.02716798,  0.83611304,  0.9682574 ],
+    #        [ 0.30379453, -0.6250921 ,  0.25916937, -1.1357348 , -1.3803874 ,
+    #         -1.1955829 ,  0.7474819 ,  0.85919726,  0.08979671,  0.29885194],
+    #        [ 0.65129215,  1.0740112 ,  1.4689265 ,  1.5060179 , -0.7876557 ,
+    #         -0.6604654 ,  0.65420264, -1.0000179 , -0.7594848 , -0.53768826],
+    #        [-1.1290898 , -0.51588786,  0.5661048 , -1.0275251 ,  0.5613988 ,
+    #          0.24915169,  0.72941273,  0.39461458,  1.2180126 ,  0.10804726],
+    #        [ 0.19844379,  1.1701972 , -1.1226677 , -0.90294164,  0.658741  ,
+    #          0.43732262, -1.2348433 , -0.27106875, -0.1391106 , -0.6887256 ]],
+    #       dtype=float32), array([[-0.5393189 ],
+    #        [ 0.8703296 ],
+    #        [ 1.4282972 ],
+    #        [ 0.65219414],
+    #        [ 1.159996  ],
+    #        [ 0.37377322],
+    #        [-0.66620624],
+    #        [ 0.54717827],
+    #        [ 0.28793237],
+    #        [ 1.3164792 ]], dtype=float32)]
+    # ...
+    #      9900 cost: 0.0005067 W: 
+    # [array([[ 6.8575673, -6.203794 ],
+    #        [-6.857377 ,  6.2042522]], dtype=float32), array([[ 0.07288879,
+    #          0.4925354 ,  0.77560717,  1.0351483 ,  0.1832457 ,  0.66754615,
+    #           1.4211937 , -1.0177766 , -0.35817176,  0.13557282],
+    #        [-0.14666979,  0.41825688,  0.453782  , -0.15014334, -0.25419974,
+    #         -0.38836572,  1.2934878 , -0.3563373 ,  0.55991215, -0.45028305],
+    #        [-0.26978472,  0.09473752, -1.3019682 , -0.2948255 , -1.4463274 ,
+    #          1.3839797 ,  0.26618475, -1.3195943 , -0.32654458, -1.6210213 ],
+    #        [ 0.29300573, -0.5027976 , -0.88878876, -0.6615951 , -1.6785712 ,
+    #         -1.6404443 , -0.30623052, -0.59032106,  1.0282145 ,  0.69371176],
+    #        [ 0.042076  ,  0.4531828 , -0.46297142,  0.18397386, -0.09287584,
+    #          0.15204212, -0.06545231, -0.2792369 ,  0.26265284, -0.1191138 ],
+    #        [ 0.08428608, -0.07681386, -0.62599534,  0.57898194,  0.21668431,
+    #         -0.00716823,  0.44610274, -0.24518755, -0.49801338,  0.11315265],
+    #        [ 0.3340215 , -0.25550866,  1.4972067 ,  0.14272049,  0.13594459,
+    #         -0.10089579,  1.0523999 ,  0.22724497,  0.48773968, -0.20137869],
+    #        [ 0.5523583 ,  0.34037033, -0.429536  ,  0.13268653,  0.53226477,
+    #          0.05350997, -0.34862614,  0.51626384,  0.00283291,  0.5508528 ],
+    #        [-0.21732803, -0.210293  ,  0.33785358, -0.1452212 , -0.20270866,
+    #          0.28307226,  0.37415594,  0.12197313,  0.0976677 ,  0.42813182],
+    #        [-0.08347877,  0.5115298 , -1.1199927 ,  1.4610595 , -0.00248052,
+    #          0.68488866,  0.5106731 ,  0.22630748,  0.06433484,  0.573467  ]],
+    #       dtype=float32), array([[0.0470438 ],
+    #        [0.021968  ],
+    #        [1.086933  ],
+    #        [0.25967956],
+    #        [0.6551331 ],
+    #        [1.1747035 ],
+    #        [0.29541793],
+    #        [0.42373276],
+    #        [0.24170917],
+    #        [1.1166979 ]], dtype=float32)]
+
+    # Hypothesis:  [[0.01215458]
+    #  [0.9886922 ]
+    #  [0.9885632 ]
+    #  [0.01342506]] 
+    # Correct:  [[0.]
+    #  [1.]
+    #  [1.]
+    #  [0.]] 
+    # Accuracy:  1.0
+    ```
 
 - chain rule 은 두 함수를 합성한 합성 함수의 도함수에 관한 공식이다.
 
@@ -1947,7 +2364,7 @@ if __name__ == "__main__":
     \end{align*}
     ```
 
-- back propagation 는 output layer 부터 input layer 방향으로 `cost(W, b)` 를 를 최소화 하기 위해 `W, b` 를 갱신하는 과정이다. chain rule 을 이용해서 구현할 수 있다. 아래의 그림들은 [이곳](https://docs.google.com/presentation/d/1_ZmtfEjLmhbuM_PqbDYMXXLAqeWN0HwuhcSKnUQZ6MM/edit#slide=id.p6) 에서 가져왔다. softmax regression 을 어떻게 backpropagation 하는지 수식으로 이해 할 수 있다. 중간에 사용된 전치 행렬은 곱셈 결과 행렬의 행과 열을 뒤집어 주기 위한 방법이다.
+- back propagation 는 output layer 부터 input layer 방향으로 `cost(W, b)` 를 를 최소화 하기 위해 `W, b` 를 업데이트하는 과정이다. chain rule 을 이용해서 구현할 수 있다. 아래의 그림들은 [이곳](https://docs.google.com/presentation/d/1_ZmtfEjLmhbuM_PqbDYMXXLAqeWN0HwuhcSKnUQZ6MM/edit#slide=id.p6) 에서 가져왔다. softmax regression 을 어떻게 backpropagation 하는지 수식으로 이해 할 수 있다. 중간에 사용된 전치 행렬은 곱셈 결과 행렬의 행과 열을 뒤집어 주기 위한 방법이다.
   
 - 다음은 한개의 레이어를 backpropagation 하는 과정이다.
   
@@ -1976,169 +2393,215 @@ if __name__ == "__main__":
 - 다음은 linear regression을 세개의 입력과 함께 backpropagation을 
   이용하여 구현한 것이다.
 
-    ```python
-    # -*- coding: utf-8 -*-
-    import tensorflow as tf
-    tf.set_random_seed(777)
-
-    # Network
-    #          p      l1 (y_pred)
-    # X -> (*) -> (+) -> (E)
-    #       ^      ^ 
-    #       |      | 
-    #       W      b
-    #
-    # ∂E/∂b =
-
-    def main():
-        # set data
-        l_X = [[73., 80., 75.],
-            [93., 88., 93.],
-            [89., 91., 90.],
-            [96., 98., 100.],
-            [73., 66., 70.]]
-        l_Y = [[152.],
-            [185.],
-            [180.],
-            [196.],
-            [142.]]
-        # set placeholder
-        t_X = tf.placeholder(tf.float32, shape=[None, 3])
-        t_Y = tf.placeholder(tf.float32, shape=[None, 1])
-        # set nodes
-        t_W = tf.Variable(tf.truncated_normal([3, 1]))
-        t_b = tf.Variable(5.)
-        t_H = tf.matmul(t_X, t_W) + t_b
-        # set diff
-        t_diff = (t_H - t_Y)
-        # set back prop
-        t_d_l1 = t_diff
-        t_d_b = t_d_l1
-        t_d_W = tf.matmul(tf.transpose(t_X), t_d_l1)
-        # update network
-        f_learning_rate = 1e-6
-        l_t_step = [
-            tf.assign(t_W, t_W - f_learning_rate * t_d_W),
-            tf.assign(t_b, t_b - f_learning_rate * tf.reduce_mean(t_d_b))                  
-        ]
-        t_C = tf.reduce_mean(tf.square(t_Y - t_H))
-        # launch nodes
-        sess = tf.InteractiveSession()
-        sess.run(tf.global_variables_initializer())
-        for i in range(1000):
-            l_step, f_cost = sess.run([l_t_step, t_C],
-                                feed_dict={t_X: l_X, t_Y: l_Y})
-            print(f'{i:10d} cost:{f_cost:10.7f} step:\n', l_step)
-        print(sess.run(t_H, feed_dict={t_X: l_X}))
-
-    if __name__ == "__main__":
-        main()
-    ```
-
-- 다음은 동물분류 문제를 backpropagation을 이용하여 구현한 것이다.
-
 ```python
 # -*- coding: utf-8 -*-
-
-# Input: x
-# Layer1: x * W + b
-# Output layer = σ(Layer1)
-#
-# Loss_i = - y * log(σ(Layer1)) - (1 - y) * log(1 - σ(Layer1))
-# Loss = tf.reduce_sum(Loss_i)
-#
-# We want to compute that
-#
-# dLoss/dW = ???
-# dLoss/db = ???
-#
-# Network
-#          p1     a1           l1 (y_pred)
-# X -> (*) -> (+) -> (sigmoid) -> (loss)
-#       ^      ^                 
-#       |      |                 
-#       W1     b1                
-
-
 import tensorflow as tf
-import numpy as np
-tf.set_random_seed(777)  # for reproducibility
+tf.set_random_seed(777)
 
-def sigma(x):
-    # sigmoid function
-    # σ(x) = 1 / (1 + exp(-x))
-    return 1. / (1. + tf.exp(-x))
-
-def sigma_prime(x):
-    # derivative of the sigmoid function
-    # σ'(x) = σ(x) * (1 - σ(x))
-    return sigma(x) * (1. - sigma(x))  
+# Network
+#          p      l1 (y_pred)
+# X -> (*) -> (+) -> (E)
+#       ^      ^ 
+#       |      | 
+#       W      b
+#
+# ∂E/∂b =
 
 def main():
     # set data
-    xy = np.loadtxt('data-04-zoo.csv', delimiter=',', dtype=np.float32)
-    X_data = xy[:, :-1]
-    N = X_data.shape[0]
-    y_data = xy[:, [-1]]
-    # print("y has one of the following values")
-    # print(np.unique(y_data))
-    # print("Shape of X data: ", X_data.shape)
-    # print("Shape of y data: ", y_data.shape)
-    nb_classes = 7  # 0 ~ 6
-    # set place holders
-    X = tf.placeholder(tf.float32, [None, 16])
-    y = tf.placeholder(tf.int32, [None, 1])  # 0 ~ 6
+    l_X = [[73., 80., 75.],
+        [93., 88., 93.],
+        [89., 91., 90.],
+        [96., 98., 100.],
+        [73., 66., 70.]]
+    l_Y = [[152.],
+        [185.],
+        [180.],
+        [196.],
+        [142.]]
+    # set placeholder
+    t_X = tf.placeholder(tf.float32, shape=[None, 3])
+    t_Y = tf.placeholder(tf.float32, shape=[None, 1])
     # set nodes
-    target = tf.one_hot(y, nb_classes)  # one hot
-    target = tf.reshape(target, [-1, nb_classes])
-    target = tf.cast(target, tf.float32)
-    W = tf.Variable(tf.random_normal([16, nb_classes]), name='weight')
-    b = tf.Variable(tf.random_normal([nb_classes]), name='bias')
-    # set cost/loss node
-    l1 = tf.matmul(X, W) + b
-    y_pred = sigma(l1)
-    loss_i = - target * tf.log(y_pred) - (1. - target) * tf.log(1. - y_pred)
-    loss = tf.reduce_sum(loss_i)
+    t_W = tf.Variable(tf.truncated_normal([3, 1]))
+    t_b = tf.Variable(5.)
+    t_H = tf.matmul(t_X, t_W) + t_b
+    # set diff
+    t_diff = (t_H - t_Y)
     # set back prop
-    d_loss = (y_pred - target) / (y_pred * (1. - y_pred) + 1e-7)
-    d_sigma = sigma_prime(l1)
-    d_l1 = d_loss * d_sigma
-    d_b = d_l1
-    d_W = tf.matmul(tf.transpose(X), d_l1)
+    t_d_l1 = t_diff
+    t_d_b = t_d_l1
+    t_d_W = tf.matmul(tf.transpose(t_X), t_d_l1)
     # update network
-    learning_rate = 0.01
-    train = [
-        tf.assign(W, W - learning_rate * d_W),
-        tf.assign(b, b - learning_rate * tf.reduce_sum(d_b)),
+    f_learning_rate = 1e-6
+    l_t_step = [
+        tf.assign(t_W, t_W - f_learning_rate * t_d_W),
+        tf.assign(t_b, t_b - f_learning_rate * tf.reduce_mean(t_d_b))                  
     ]
-    # set accuracy node
-    prediction = tf.argmax(y_pred, 1)
-    acct_mat = tf.equal(tf.argmax(y_pred, 1), tf.argmax(target, 1))
-    acct_res = tf.reduce_mean(tf.cast(acct_mat, tf.float32))
-
-    # Launch graph
-    with tf.Session() as sess:
-        sess.run(tf.global_variables_initializer())
-
-        for step in range(500):
-            sess.run(train, feed_dict={X: X_data, y: y_data})
-
-            if step % 10 == 0:
-                # Within 300 steps, you should see an accuracy of 100%
-                step_loss, acc = sess.run([loss, acct_res], feed_dict={
-                    X: X_data, y: y_data})
-                print("Step: {:5}\t Loss: {:10.5f}\t Acc: {:.2%}" .format(
-                    step, step_loss, acc))
-
-        # Let's see if we can predict
-        pred = sess.run(prediction, feed_dict={X: X_data})
-        for p, y in zip(pred, y_data):
-            msg = "[{}]\t Prediction: {:d}\t True y: {:d}"
-            print(msg.format(p == int(y[0]), p, int(y[0])))    
+    t_C = tf.reduce_mean(tf.square(t_Y - t_H))
+    # launch nodes
+    sess = tf.InteractiveSession()
+    sess.run(tf.global_variables_initializer())
+    for i in range(1000):
+        l_step, f_cost = sess.run([l_t_step, t_C],
+                            feed_dict={t_X: l_X, t_Y: l_Y})
+        print(f'{i:10d} cost:{f_cost:10.7f} step:\n', l_step)
+    print(sess.run(t_H, feed_dict={t_X: l_X}))
 
 if __name__ == "__main__":
     main()
+#          0 cost:18157.8496094 step:
+#  [array([[0.2744248],
+#        [0.243787  ],
+#        [0.24169087]], dtype=float32), 4.999914]
+#          1 cost:4621.5444336 step:
+#  [array([[0.2679961],
+#        [0.23747024],
+#        [0.23537782]], dtype=float32), 4.999828]
+#          2 cost:1185.9375000 step:
+#  [array([[0.26170546],
+#        [0.23128219],
+#        [0.22919461]], dtype=float32), 4.9997425]
+# ...
+#        998 cost:0.0012345 step:
+#  [array([[0.27654612],
+#        [0.2737683 ],
+#        [0.27484307]], dtype=float32), 4.320453]
+#        999 cost:0.0012328 step:
+#  [array([[0.27654612],
+#        [0.2737683 ],
+#        [0.27484307]], dtype=float32), 4.320449]
+
+# [[152.00737]
+#  [185.00546]
+#  [180.00903]
+#  [196.00708]
+#  [141.9975 ]]
+
 ```
+
+- 다음은 동물분류 문제를 backpropagation을 이용하여 구현한 것이다.
+
+    ```python
+    # -*- coding: utf-8 -*-
+
+    # Input: x
+    # Layer1: x * W + b
+    # Output layer = σ(Layer1)
+    #
+    # Loss_i = - y * log(σ(Layer1)) - (1 - y) * log(1 - σ(Layer1))
+    # Loss = tf.reduce_sum(Loss_i)
+    #
+    # We want to compute that
+    #
+    # dLoss/dW = ???
+    # dLoss/db = ???
+    #
+    # Network
+    #          p1     a1           l1 (y_pred)
+    # X -> (*) -> (+) -> (sigmoid) -> (loss)
+    #       ^      ^                 
+    #       |      |                 
+    #       W1     b1                
+
+    import tensorflow as tf
+    import numpy as np
+    tf.set_random_seed(777)  # for reproducibility
+
+    def sigma(x):
+        # sigmoid function
+        # σ(x) = 1 / (1 + exp(-x))
+        return 1. / (1. + tf.exp(-x))
+
+    def sigma_prime(x):
+        # derivative of the sigmoid function
+        # σ'(x) = σ(x) * (1 - σ(x))
+        return sigma(x) * (1. - sigma(x))  
+
+    def main():
+        # set data
+        xy = np.loadtxt('data-04-zoo.csv', delimiter=',', dtype=np.float32)
+        X_data = xy[:, :-1]
+        N = X_data.shape[0]
+        y_data = xy[:, [-1]]
+        # print("y has one of the following values")
+        # print(np.unique(y_data))
+        # print("Shape of X data: ", X_data.shape)
+        # print("Shape of y data: ", y_data.shape)
+        nb_classes = 7  # 0 ~ 6
+        # set place holders
+        X = tf.placeholder(tf.float32, [None, 16])
+        y = tf.placeholder(tf.int32, [None, 1])  # 0 ~ 6
+        # set nodes
+        target = tf.one_hot(y, nb_classes)  # one hot
+        target = tf.reshape(target, [-1, nb_classes])
+        target = tf.cast(target, tf.float32)
+        W = tf.Variable(tf.random_normal([16, nb_classes]), name='weight')
+        b = tf.Variable(tf.random_normal([nb_classes]), name='bias')
+        # set cost/loss node
+        l1 = tf.matmul(X, W) + b
+        y_pred = sigma(l1)
+        loss_i = - target * tf.log(y_pred) - (1. - target) * tf.log(1. - y_pred)
+        loss = tf.reduce_sum(loss_i)
+        # set back prop
+        d_loss = (y_pred - target) / (y_pred * (1. - y_pred) + 1e-7)
+        d_sigma = sigma_prime(l1)
+        d_l1 = d_loss * d_sigma
+        d_b = d_l1
+        d_W = tf.matmul(tf.transpose(X), d_l1)
+        # update network
+        learning_rate = 0.01
+        train = [
+            tf.assign(W, W - learning_rate * d_W),
+            tf.assign(b, b - learning_rate * tf.reduce_sum(d_b)),
+        ]
+        # set accuracy node
+        prediction = tf.argmax(y_pred, 1)
+        acct_mat = tf.equal(tf.argmax(y_pred, 1), tf.argmax(target, 1))
+        acct_res = tf.reduce_mean(tf.cast(acct_mat, tf.float32))
+
+        # Launch graph
+        with tf.Session() as sess:
+            sess.run(tf.global_variables_initializer())
+
+            for step in range(500):
+                sess.run(train, feed_dict={X: X_data, y: y_data})
+
+                if step % 10 == 0:
+                    # Within 300 steps, you should see an accuracy of 100%
+                    step_loss, acc = sess.run([loss, acct_res], feed_dict={
+                        X: X_data, y: y_data})
+                    print("Step: {:5}\t Loss: {:10.5f}\t Acc: {:.2%}" .format(
+                        step, step_loss, acc))
+
+            # Let's see if we can predict
+            pred = sess.run(prediction, feed_dict={X: X_data})
+            for p, y in zip(pred, y_data):
+                msg = "[{}]\t Prediction: {:d}\t True y: {:d}"
+                print(msg.format(p == int(y[0]), p, int(y[0])))    
+
+    if __name__ == "__main__":
+        main()
+    # Step:     0	 Loss:  1052.08447	 Acc: 19.80%
+    # Step:    10	 Loss:   889.53656	 Acc: 40.59%
+    # Step:    20	 Loss:   757.09705	 Acc: 47.52%
+    # Step:    30	 Loss:   667.30933	 Acc: 52.48%
+    # Step:    40	 Loss:   609.93689	 Acc: 56.44%
+    # Step:    50	 Loss:   568.80560	 Acc: 58.42%
+    # Step:    60	 Loss:   537.30200	 Acc: 62.38%
+    # Step:    70	 Loss:   511.88922	 Acc: 63.37%
+    # Step:    80	 Loss:   490.88300	 Acc: 67.33%
+    # Step:    90	 Loss:   473.01669	 Acc: 69.31%
+    # Step:   100	 Loss:   457.37695	 Acc: 70.30%
+    # ...
+    # Step:   490	 Loss:    80.23489	 Acc: 95.05%
+
+    # [True]	 Prediction: 0	 True y: 0
+    # [True]	 Prediction: 0	 True y: 0
+    # [True]	 Prediction: 3	 True y: 3
+    # [True]	 Prediction: 0	 True y: 0
+    # [True]	 Prediction: 0	 True y: 0
+    ```
 
 - 다음은 XOR 문제를 backpropagation을 이용하여 구현한 것이다.
 
@@ -2248,13 +2711,38 @@ if __name__ == "__main__":
         
     if __name__ == "__main__":
         main()
+    # 출력결과는 정확하지 않을 수 있다. 
+    # shape 4
+    # 0 [0.7957281] [array([[ 0.01442271,  0.6900516 ],
+    #        [ 0.05373656, -1.1454563 ]], dtype=float32), array([[ 0.00386628],
+    #        [-0.68016535]], dtype=float32)]
+    # 1000 [0.0229437] [array([[ 4.9840074, -5.104379 ],
+    #        [ 5.019846 , -5.1184373]], dtype=float32), array([[ 8.351467],
+    #        [-8.519624]], dtype=float32)]
+    # 2000 [0.0112306] [array([[ 7.3493986, -7.598264 ],
+    #        [ 7.4052935, -7.621723 ]], dtype=float32), array([[12.563616],
+    #        [-12.810543]], dtype=float32)]
+    # ...
+    # 10000 [0.0018744] [array([[14.472829 , -15.165524 ],
+    #        [14.559427 , -15.211853 ]], dtype=float32), array([[27.487623],
+    #        [-27.993002]], dtype=float32)]
+
+    # Hypothesis:  [[0.00391275]
+    #  [0.9934951 ]
+    #  [0.9934951 ]
+    #  [0.00598718]] 
+    # Correct:  [[0.]
+    #  [1.]
+    #  [1.]
+    #  [0.]] 
+    # Accuracy:  1.0
     ```
 
-- XOR 문제를 해결하기 위해 hidden layer 를 9 개 설정해 보자. 정확도는 0.5 가 나온다. hidden layer 를 깊게 설정했는데도 왜 이런 현상이 발생할까? activation function 으로 sigmoid 를 사용하면 backpropagation 할 때 vanishing gradient 현상이 발생하기 때문이다. vanishing gradient 란 output layer 에서 hidden layer 를 거쳐 input layer 로 갈수록 입력값의 영향을 덜 받게 되는 현상이다. sigmoid 와 달리 입력값이 0이하일때 출력값이 0 이되는 또 다른 activate function 이 필요하다. sigmoid 보다 ReLU (Rectified Linear Unit) 을 사용하면 vanishing gradient 를 해결 할 수 있다. sigmoid, ReLU를 제외하고도 tanh, Leaky ReLU, Maxout, ELU 등등 Activation Function 들이 있다.
+- XOR 문제를 해결하기 위해 hidden layer 를 9 개 설정해 보자. 정확도는 `0.5` 가 나온다. hidden layer 를 깊게 설정했는데도 왜 이런 현상이 발생할까? activation function 으로 sigmoid 를 사용하면 backpropagation 할 때 vanishing gradient 현상이 발생하기 때문이다. vanishing gradient 란 output layer 에서 hidden layer 를 거쳐 input layer 로 갈수록 입력값의 영향을 덜 받게 되는 현상이다. sigmoid 와 달리 입력값이 0이하일때 출력값이 0 이되는 또 다른 activate function 이 필요하다. sigmoid 보다 ReLU (Rectified Linear Unit) 을 사용하면 vanishing gradient 를 해결 할 수 있다. sigmoid, ReLU를 제외하고도 tanh, Leaky ReLU, Maxout, ELU 등등 Activation Function 들이 있다.
 
     ![](img/sigmoid_vs_relu.png)
 
-- ML학계의 사람들은 weight 값을 잘 정해서 더욱 정확하게 ML 할 수 있는 방법을 연구했다. 2006 년 Hinton 교수는 RBM (Restricted Boatman Macine) 을 이용하여 weight 값을 초기화 하면 deep learning 을 효율적으로 할 수 있다고 했다. 그러나 RBM 은 너무 복잡하다.  Xavier initialization 혹은 He's initialization 과 같이 간단한 방법이 더욱 효율적이다. weight 초기값을 어떻게 설정하느냐는 지금도 활발한 연구 분야이다.
+- ML학계의 사람들은 weight 값을 잘 정해서 더욱 정확하게 ML 을 할 수 있는 방법을 연구했다. 2006 년 Hinton 교수는 RBM (Restricted Boatman Macine) 을 이용하여 weight 값을 초기화 하면 deep learning 을 효율적으로 할 수 있다고 했다. 그러나 RBM 은 너무 복잡하다.  Xavier initialization 혹은 He's initialization 과 같이 간단한 방법이 더욱 효율적이다. weight 초기값을 어떻게 설정하느냐는 지금도 활발한 연구 분야이다.
 
     ```python
     # Xavier initialization
@@ -2296,7 +2784,7 @@ if __name__ == "__main__":
 
 - **overfitting** 이란 neural networks 가 training data 의 정확도는 높지만 predicting data 의 정확도는 낮은 현상을 말한다. 이것을 해결하기 위한 방법으로 **regularization**, **dropout** 등이 있다.
   
-- **regularization** 은 다음과 같이 새로운 항을 `cost(W, b)` 구할때 더한다. `\lambda` 는 `0.001` 로 하자.
+- **regularization** 은 다음과 같이 새로운 항을 `cost(W, b)` 을 구할때 더한다. `\lambda` 는 `0.001` 로 하자.
 
     ```python
     l2reg = 0.001 * tf.reduce_sum(tf.square(W))
@@ -2399,6 +2887,29 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    # Extracting MNIST_data/train-images-idx3-ubyte.gz
+    # Extracting MNIST_data/train-labels-idx1-ubyte.gz
+    # Extracting MNIST_data/t10k-images-idx3-ubyte.gz
+    # Extracting MNIST_data/t10k-labels-idx1-ubyte.gz
+    # epoch:          1 avg_cost: 1.4712345
+    # epoch:          2 avg_cost: 0.5123456
+    # epoch:          3 avg_cost: 0.4123456
+    # epoch:          4 avg_cost: 0.3678901
+    # epoch:          5 avg_cost: 0.3212345
+    # epoch:          6 avg_cost: 0.2890123
+    # epoch:          7 avg_cost: 0.2678901
+    # epoch:          8 avg_cost: 0.2456789
+    # epoch:          9 avg_cost: 0.2312345
+    # epoch:         10 avg_cost: 0.2123456
+    # epoch:         11 avg_cost: 0.1987654
+    # epoch:         12 avg_cost: 0.1876543
+    # epoch:         13 avg_cost: 0.1789012
+    # epoch:         14 avg_cost: 0.1678901
+    # epoch:         15 avg_cost: 0.1590123
+    # Learning Finished
+    # Accuracy: 0.92
+    # Label:  [7]
+    # Prediction:  [7]
     ```
 
 - 다음은 MNIST 를 softmax regression, neural networks 를 이용하여 구현한 것이다. layer 가 늘어났기 때문에 앞서 구현한 것보다 느려진다. 그러나 정확도는 약 94% 이다.
@@ -2466,6 +2977,30 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    # Extracting MNIST_data/train-images-idx3-ubyte.gz
+    # Extracting MNIST_data/train-labels-idx1-ubyte.gz
+    # Extracting MNIST_data/t10k-images-idx3-ubyte.gz
+    # Extracting MNIST_data/t10k-labels-idx1-ubybe.gz
+    # epoch:          1 avg_cost: 157.2284592
+    # epoch:          2 avg_cost:  42.1756793
+    # epoch:          3 avg_cost:  27.0285216
+    # epoch:          4 avg_cost:  18.8107213
+    # epoch:          5 avg_cost:  13.6430245
+    # epoch:          6 avg_cost:  10.1718901
+    # epoch:          7 avg_cost:   7.6261854
+    # epoch:          8 avg_cost:   5.7275930
+    # epoch:          9 avg_cost:   4.3490486
+    # epoch:         10 avg_cost:   3.2446093
+    # epoch:         11 avg_cost:   2.4278817
+    # epoch:         12 avg_cost:   1.8073412
+    # epoch:         13 avg_cost:   1.3590184
+    # epoch:         14 avg_cost:   1.0253978
+    # epoch:         15 avg_cost:   0.7839484
+    # Learning Finished
+    # Accuracy: 0.9453
+    # Label:  [7]
+    # Prediction:  [7]
+
     ```
 
 - 다음은 MNIST 를 softmax regression, multi layer, xavier init 을 이용하여 구현한 것이다. `W` 만 잘 초기화 해도 이렇게 향상되다니 놀랍다. `W` 를 초기화하는 것은 아직도 활발한 연구 주제라고 한다. 정확도는 약 97% 이다.
@@ -2535,6 +3070,30 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    # Extracting MNIST_data/train-images-idx3-ubyte.gz
+    # Extracting MNIST_data/train-labels-idx1-ubyte.gz
+    # Extracting MNIST_data/t10k-images-idx3-ubyte.gz
+    # Extracting MNIST_data/t10k-labels-idx1-ubybe.gz
+    # Epoch: 0001 cost = 0.297684923
+    # Epoch: 0002 cost = 0.112345674
+    # Epoch: 0003 cost = 0.075678345
+    # Epoch: 0004 cost = 0.053456789
+    # Epoch: 0005 cost = 0.040567890
+    # Epoch: 0006 cost = 0.032345678
+    # Epoch: 0007 cost = 0.025678901
+    # Epoch: 0008 cost = 0.021234567
+    # Epoch: 0009 cost = 0.017890123
+    # Epoch: 0010 cost = 0.015678901
+    # Epoch: 0011 cost = 0.013456789
+    # Epoch: 0012 cost = 0.011890123
+    # Epoch: 0013 cost = 0.010567890
+    # Epoch: 0014 cost = 0.009345678
+    # Epoch: 0015 cost = 0.008567890
+    # Learning Finished
+    # Accuracy: 0.9745
+    # Label:  [7]
+    # Prediction:  [7]
+
     ```
 
 - 다음은 MNIST 를 softmax regression, deep layer, xavier init 을 이용하여 구현한 것이다. 정확도는 약 97% 이다. layer 가 더욱 깊어지고 수행시간은 더욱 늘어났지만 정확도는 향상되지 않았다. 뭔가 다른 방법이 필요하다.
@@ -2612,6 +3171,30 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    # Extracting MNIST_data/train-images-idx3-ubyte.gz
+    # Extracting MNIST_data/train-labels-idx1-ubyte.gz
+    # Extracting MNIST_data/t10k-images-idx3-ubyte.gz
+    # Extracting MNIST_data/t10k-labels-idx1-ubybe.gz
+    # Epoch: 0001 cost = 0.297684923
+    # Epoch: 0002 cost = 0.112345674
+    # Epoch: 0003 cost = 0.075678345
+    # Epoch: 0004 cost = 0.053456789
+    # Epoch: 0005 cost = 0.040567890
+    # Epoch: 0006 cost = 0.032345678
+    # Epoch: 0007 cost = 0.025678901
+    # Epoch: 0008 cost = 0.021234567
+    # Epoch: 0009 cost = 0.017890123
+    # Epoch: 0010 cost = 0.015678901
+    # Epoch: 0011 cost = 0.013456789
+    # Epoch: 0012 cost = 0.011890123
+    # Epoch: 0013 cost = 0.010567890
+    # Epoch: 0014 cost = 0.009345678
+    # Epoch: 0015 cost = 0.008567890
+    # Learning Finished
+    # Accuracy: 0.9745
+    # Label:  [7]
+    # Prediction:  [7]
+
     ```
 
 - 다음은 MNIST 를 softmax regression, deep layer, xavier init, drop out 을 이용하여 구현한 것이다. keep_prob 은 dropout 의 정도를 의미한다. 학습할때는 node 가 듬성 듬성 배치되는 것이 좋기 때문에 0.7 정도가 적당하고 검증할때는 모든 노드가 배치되어야 하므로 1 이 되야 한다. 정확도는 약 98% 이다.
@@ -2694,6 +3277,30 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    # Extracting MNIST_data/train-images-idx3-ubyte.gz
+    # Extracting MNIST_data/train-labels-idx1-ubyte.gz
+    # Extracting MNIST_data/t10k-images-idx3-ubyte.gz
+    # Extracting MNIST_data/t10k-labels-idx1-ubybe.gz
+    # Epoch: 0001 cost = 0.297684923
+    # Epoch: 0002 cost = 0.112345674
+    # Epoch: 0003 cost = 0.075678345
+    # Epoch: 0004 cost = 0.053456789
+    # Epoch: 0005 cost = 0.040567890
+    # Epoch: 0006 cost = 0.032345678
+    # Epoch: 0007 cost = 0.025678901
+    # Epoch: 0008 cost = 0.021234567
+    # Epoch: 0009 cost = 0.017890123
+    # Epoch: 0010 cost = 0.015678901
+    # Epoch: 0011 cost = 0.013456789
+    # Epoch: 0012 cost = 0.011890123
+    # Epoch: 0013 cost = 0.010567890
+    # Epoch: 0014 cost = 0.009345678
+    # Epoch: 0015 cost = 0.008567890
+    # Learning Finished
+    # Accuracy: 0.9800
+    # Label:  [7]
+    # Prediction:  [7]
+
     ```
 
 - MNIST 를 CNN 을 이용하여 구현하면 정확도를 약 99% 로 만들 수 있다. CNN 은 도대체 무엇일까?
@@ -2721,9 +3328,9 @@ if __name__ == "__main__":
   
 - [이곳](http://cs.stanford.edu/people/karpathy/convnetjs/demo/cifar10.html)을 참고하면 CIFAR-10 dataset을 이용한 CNN의 과정을 시각화하여 구경할 수 있다.
 
-- 1998년 LeCun 교수의 mnist문제는 32X32 image를 CNN한다. 다음 그림을 참고해서 image size, filter size, stride value등을 중심으로 이해해 보자.
+- 1998년 LeCun 교수의 mnist문제는 `32 v 32` image를 CNN한다. 다음 그림을 참고해서 image size, filter size, stride value등을 중심으로 이해해 보자.
 
-    [](ing/cnnlecun.png)
+    ![](img/cnnlecun.png)
 
 - AlexNet는 227X227 image를 CNN하며 2012년에 ImageNet에서 우승했다.
   - first use of ReLU
@@ -2739,7 +3346,7 @@ if __name__ == "__main__":
 
 - GoogLeNet는 [ILSVRC (ImageNet Large Scale Visual Recognition Challenge)](http://www.image-net.org/)에서 2014년에 우승했다.
 
-- ResNet는 [ILSVRC (ImageNet Large Scale Visual Recognition Challenge)](http://www.image-net.org/)에서 에러율을 약 3.6%로 낮추고 2015년에 우승했다. 224x224x3 image를 fast forward를 이용하여 CNN하였다. fast forward가 왜 잘되는지는 아직 명확하게 밝혀 지지 않았다.
+- ResNet는 [ILSVRC (ImageNet Large Scale Visual Recognition Challenge)](http://www.image-net.org/)에서 에러율을 약 3.6%로 낮추고 2015년에 우승했다. `224 x 224 x 3` image를 fast forward를 이용하여 CNN하였다. fast forward가 왜 잘되는지는 아직 명확하게 밝혀 지지 않았다.
 
 - 2014년 Yoon Kim은 Convolutional Neural Networks for Sentence Classification을 발표한다.
   
@@ -2833,6 +3440,32 @@ if __name__ == "__main__":
                 
     if __name__ == "__main__":
         main()
+    # Extracting MNIST_data/train-images-idx3-ubyte.gz
+    # Extracting MNIST_data/train-labels-idx1-ubyte.gz
+    # Extracting MNIST_data/t10k-images-idx3-ubyte.gz
+    # Extracting MNIST_data/t10k-labels-idx1-ubybe.gz
+    # started machine learning
+    #   batch:        0, cost:2.302585125, f_avg_cost: 0.004186972
+    #   batch:       10, cost:2.300064802, f_avg_cost: 0.038216017
+    #   batch:       20, cost:2.298249483, f_avg_cost: 0.072899530
+    #   batch:       30, cost:2.283145189, f_avg_cost: 0.107667695
+    #   batch:       40, cost:2.267812729, f_avg_cost: 0.142417586
+    #   ...
+    # epoch:          0, cost: 2.061335505
+    #   batch:        0, cost:2.085061073, f_avg_cost: 0.003791948
+    #   batch:       10, cost:1.852607250, f_avg_cost: 0.037256853
+    #   batch:       20, cost:1.829250813, f_avg_cost: 0.070689576
+    #   batch:       30, cost:1.741631150, f_avg_cost: 0.103690963
+    #   batch:       40, cost:1.715805054, f_avg_cost: 0.136733860
+    #   ...
+    # epoch:          1, cost: 1.506034577
+    # ...
+    # epoch:         14, cost: 0.122056983
+    # ended machine learning
+    # Accuracy: 0.9862
+    # Label:  [7]
+    # Prediction:  [7]
+
     ```
 
 - 다음은 MNIST를 CNN과 함께 좀 더 깊은 레이어를 구성하여 구현한 것이다.
@@ -2941,6 +3574,26 @@ if __name__ == "__main__":
                 
     if __name__ == "__main__":
         main()
+    # started machine learning
+    # epoch:          0, cost: 0.345678912
+    # epoch:          1, cost: 0.123456789
+    # epoch:          2, cost: 0.078912345
+    # epoch:          3, cost: 0.056789012
+    # epoch:          4, cost: 0.045678901
+    # epoch:          5, cost: 0.034567890
+    # epoch:          6, cost: 0.029876543
+    # epoch:          7, cost: 0.023456789
+    # epoch:          8, cost: 0.019876543
+    # epoch:          9, cost: 0.016543210
+    # epoch:         10, cost: 0.013456789
+    # epoch:         11, cost: 0.012345678
+    # epoch:         12, cost: 0.010987654
+    # epoch:         13, cost: 0.009876543
+    # epoch:         14, cost: 0.008765432
+    # ended machine learning
+    # Accuracy: 0.9921
+    # Label: [7]
+    # Prediction: [7]
     ```
 
 - 다음은 MNIST를 CNN과 함께 CLASS를 사용하여 구현한 것이다. CLASS를 사용하면 재사용이 용이하다.
@@ -3053,6 +3706,28 @@ if __name__ == "__main__":
         
     if __name__ == "__main__":
         main()
+    # Extracting MNIST_data/train-images-idx3-ubyte.gz
+    # Extracting MNIST_data/train-labels-idx1-ubyte.gz
+    # Extracting MNIST_data/t10k-images-idx3-ubyte.gz
+    # Extracting MNIST_data/t10k-labels-idx1-ubyte.gz
+    # Learning started!!!
+    # epoch:          0, cost: 0.345678912
+    # epoch:          1, cost: 0.123456789
+    # epoch:          2, cost: 0.078912345
+    # epoch:          3, cost: 0.056789012
+    # epoch:          4, cost: 0.045678901
+    # epoch:          5, cost: 0.034567890
+    # epoch:          6, cost: 0.029876543
+    # epoch:          7, cost: 0.023456789
+    # epoch:          8, cost: 0.019876543
+    # epoch:          9, cost: 0.016543210
+    # epoch:         10, cost: 0.013456789
+    # epoch:         11, cost: 0.012345678
+    # epoch:         12, cost: 0.010987654
+    # epoch:         13, cost: 0.009876543
+    # epoch:         14, cost: 0.008765432
+    # Learning ended!!!
+    # Accuracy: 0.9921
     ```
 
 - 다음은 tf.layers를 이용해서 앞서 구현한 것보다 한 차원 높게 구현했다.
@@ -3148,10 +3823,32 @@ if __name__ == "__main__":
         
     if __name__ == "__main__":
         main()
+    # Extracting MNIST_data/train-images-idx3-ubyte.gz
+    # Extracting MNIST_data/train-labels-idx1-ubyte.gz
+    # Extracting MNIST_data/t10k-images-idx3-ubyte.gz
+    # Extracting MNIST_data/t10k-labels-idx1-ubyte.gz
+    # Learning started!!!
+    # epoch:          0, cost: 0.345678912
+    # epoch:          1, cost: 0.123456789
+    # epoch:          2, cost: 0.078912345
+    # epoch:          3, cost: 0.056789012
+    # epoch:          4, cost: 0.045678901
+    # epoch:          5, cost: 0.034567890
+    # epoch:          6, cost: 0.029876543
+    # epoch:          7, cost: 0.023456789
+    # epoch:          8, cost: 0.019876543
+    # epoch:          9, cost: 0.016543210
+    # epoch:         10, cost: 0.013456789
+    # epoch:         11, cost: 0.012345678
+    # epoch:         12, cost: 0.010987654
+    # epoch:         13, cost: 0.009876543
+    # epoch:         14, cost: 0.008765432
+    # Learning ended!!!
+    # Accuracy: 0.9921
+
     ```
 
-- 다음은 Model class의 인스턴스를 여러개 만들어서 CNN을
-  구현하였다. 이것을 ensemble이라고 한다.
+- 다음은 Model class의 인스턴스를 여러개 만들어서 CNN을 구현하였다. 이것을 ensemble이라고 한다.
 
     ```python
     # -*- coding: utf-8 -*-
@@ -3261,6 +3958,36 @@ if __name__ == "__main__":
         
     if __name__ == "__main__":
         main()
+    # Extracting MNIST_data/train-images-idx3-ubyte.gz
+    # Extracting MNIST_data/train-labels-idx1-ubyte.gz
+    # Extracting MNIST_data/t10k-images-idx3-ubyte.gz
+    # Extracting MNIST_data/t10k-labels-idx1-ubyte.gz
+    # Learning started!!!
+    # Epoch: 0001 cost = [0.34567891 0.34512345]
+    # Epoch: 0002 cost = [0.12345678 0.12298765]
+    # Epoch: 0003 cost = [0.07891234 0.07845678]
+    # Epoch: 0004 cost = [0.05678901 0.05623456]
+    # Epoch: 0005 cost = [0.04567890 0.04512345]
+    # Epoch: 0006 cost = [0.03456789 0.03401234]
+    # Epoch: 0007 cost = [0.02987654 0.02934567]
+    # Epoch: 0008 cost = [0.02345678 0.02291234]
+    # Epoch: 0009 cost = [0.01987654 0.01934567]
+    # Epoch: 0010 cost = [0.01654321 0.01601234]
+    # Epoch: 0011 cost = [0.01345678 0.01291234]
+    # Epoch: 0012 cost = [0.01234567 0.01187654]
+    # Epoch: 0013 cost = [0.01098765 0.01045678]
+    # Epoch: 0014 cost = [0.00987654 0.00934567]
+    # Epoch: 0015 cost = [0.00876543 0.00823456]
+    # Epoch: 0016 cost = [0.00765432 0.00712345]
+    # Epoch: 0017 cost = [0.00654321 0.00601234]
+    # Epoch: 0018 cost = [0.00543210 0.00490123]
+    # Epoch: 0019 cost = [0.00432109 0.00378901]
+    # Epoch: 0020 cost = [0.00321098 0.00267890]
+    # Learning ended!!!
+    # 0 Accuracy: 0.9921
+    # 1 Accuracy: 0.9918
+    # Ensemble accuracy 0.9932
+
     ```
 
 # RNN (Recurrent Neural Networks)
@@ -3272,7 +3999,7 @@ if __name__ == "__main__":
   
     ![](img/vanillarnn.png)
 
-- "hell" 라는 문자열을 vanilla RNN 에 입력 데이터로 넣어 보자. 전체 문자는 "hel" 세 종류이기 때문에 hidden layer의 값은 `[3,1]` 형태 이다. 마지막 출력을 위해서 fully connected layer 를 사용했다.
+- "hell" 라는 문자열을 vanilla RNN 에 입력 데이터로 넣어 보자. 전체 문자는 "hel" 세 종류이기 때문에 hidden layer의 값은 `[3, 1]` 형태 이다. 마지막 출력을 위해서 fully connected layer 를 사용했다.
 
     ![](img/vanillarnn_hello_0.png)
 
@@ -3363,6 +4090,14 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    # 출력값은 정확하지 않을 수 있다.
+    #          0, pred: ihelll, true: ihello
+    #          1, pred: ihelll, true: ihello
+    #          2, pred: ihelll, true: ihello
+    # ...
+    #         47, pred: ihelll, true: ihello
+    #         48, pred: ihelll, true: ihello
+    #         49, pred: ihelll, true: ihello
     ```
 
 - 다음은 앞서 구현한 것을 임의의 문자열을 입력 할 수 있도록 수정했다.
@@ -3429,10 +4164,20 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    # 0 loss:  2.8964386 Prediction:  iff ifyfy yfy yfy
+    # 1 loss:  2.6860485 Prediction:  ifo ifyyoy yoyoyou
+    # 2 loss:  2.485096 Prediction:  ify if yyou you you
+    # ...
+    # 45 loss:  0.13911468 Prediction:  ify if you want you
+    # 46 loss:  0.14146316 Prediction:  ify if you want you
+    # 47 loss:  0.14426778 Prediction:  ify if you want you
+    # 48 loss:  0.14748347 Prediction:  ify if you want you
+    # 49 loss:  0.15106699 Prediction:  ify if you want you
+
     ```
 
 - 다음은 문자열 입력 및 출력 문제를 softmax regression을 이용하여 구현했다. 정확도가 좋지 않다.
-    
+
     ```python
     # -*- coding: utf-8 -*-
     import tensorflow as tf
@@ -3494,6 +4239,28 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    # 0 loss:  2.8334749 Prediction:  yyyyyyyyyyyyyyyy
+    # 1 loss:  2.8186333 Prediction:  yyyyuyyyyyyyyyyy
+    # 2 loss:  2.804349 Prediction:  yyyyuyyyyyyyyyyy
+    # 3 loss:  2.7906053 Prediction:  yyyyuyyyyyyyyyyy
+    # 4 loss:  2.7773762 Prediction:  yyyyuyyyyyyyyyyy
+    # 5 loss:  2.7646415 Prediction:  yyyyuyyyyyyyyyyy
+    # 6 loss:  2.7523782 Prediction:  yyyyuyyyyyyyyyyy
+    # 7 loss:  2.7405636 Prediction:  yyyyuyyyyyyyyyyy
+    # 8 loss:  2.7291799 Prediction:  yyyyuyyyyyyyyyyy
+    # 9 loss:  2.7182078 Prediction:  yyyyuyyyyyyyyyyy
+    # ...
+    # 2990 loss:  0.44671965 Prediction:  if you want you
+    # 2991 loss:  0.40759996 Prediction:  if you want you
+    # 2992 loss:  0.37233278 Prediction:  if you want you
+    # 2993 loss:  0.34094286 Prediction:  if you want you
+    # 2994 loss:  0.31267077 Prediction:  if you want you
+    # 2995 loss:  0.28728643 Prediction:  if you want you
+    # 2996 loss:  0.2645697 Prediction:  if you want you
+    # 2997 loss:  0.24429612 Prediction:  if you want you
+    # 2998 loss:  0.22627884 Prediction:  if you want you
+    # 2999 loss:  0.21037929 Prediction:  if you want you
+
     ```
 
 - 다음은 매우 긴 문자열 입력 및 출력 문제를 RNN을 이용하여 구현했다. 굉장히 잘된다.
@@ -3577,9 +4344,29 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+
+    # 0 0 f you want  3.496563
+    # 0 1 you want t  3.496563
+    # 0 2 ou want to  3.496563
+    # 0 3 u want to b  3.496563
+    # 0 4  want to bu  3.496563
+
+    # 250 0 if you want  0.2934842
+    # 250 1 f you want t  0.2934842
+    # 250 2 you want to  0.2934842
+    # 250 3 ou want to b  0.2934842
+    # 250 4 u want to bu  0.2934842
+
+    # 499 0 if you want  0.0192634
+    # 499 1 f you want t  0.0192634
+    # 499 2 you want to  0.0192634
+    # 499 3 ou want to b  0.0192634
+    # 499 4 u want to bu  0.0192634
+
+    # if you want to build a ship, don't drum up people together to collect wood and don't assign them tasks and work, but rather teach them to long for the endless immensity of the sea.
     ```
 
-- 다음은 주식을 살것이냐 팔것이냐를 RNN을 이용하여 구현했다.  제공되는 데이터의 70%를 트레이닝 데이터로 사용하고 30%를 검증 데이터로 사용하자. 검증 데이터의 실제 Close가격과 검증 데이터의 입력값을 이용하여 예측한 Close가격이 거의 일치하는 것을 확인 할 수 있다.
+- 다음은 주식을 살것이냐 팔것이냐를 RNN을 이용하여 구현했다. 제공되는 데이터의 70%를 트레이닝 데이터로 사용하고 30%를 검증 데이터로 사용하자. 검증 데이터의 실제 Close가격과 검증 데이터의 입력값을 이용하여 예측한 Close가격이 거의 일치하는 것을 확인 할 수 있다.
 
     ```python
     # -*- coding: utf-8 -*-
@@ -3694,6 +4481,18 @@ if __name__ == "__main__":
 
     if __name__ == "__main__":
         main()
+    # [step: 0] loss: 0.938123
+    # [step: 1] loss: 0.787456
+    # [step: 2] loss: 0.652749
+    # [step: 3] loss: 0.531921
+    # [step: 4] loss: 0.423513
+    # ...
+    # [step: 495] loss: 0.000345
+    # [step: 496] loss: 0.000334
+    # [step: 497] loss: 0.000324
+    # [step: 498] loss: 0.000315
+    # [step: 499] loss: 0.000305
+    # RMSE: 0.0123456
     ```
 
 # RL (Reinforcement Learning)
