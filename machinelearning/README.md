@@ -27,9 +27,6 @@
 
 # Abstract
 
-> * [Machine Learning a Probabilistic Perspective by Kevin Murphy](machine_learning_a_probabilistic_perspective.md)
-> * [Machine Learning Glossary](mlglossary.md)
-
 - machine learning 이란 다량의 데이터를 이용하여 학습하고 예측하는 것에 대한
   학문이다. 예를 들어서 machine learning 을 이용하면 다음과 같은 것을 할 수
   있다. 학생들의 등교시간과 성적에 관한 데이터를 이용하여 새로 전학온 학생의
@@ -52,6 +49,11 @@
   Networks), drop out, activation function, sigmoid, ReLU, learning rate,
   forward propagation, back propagation, CNN (Convolutional Neural Networks),
   RNN (Recurrent Neural Networks)
+
+- [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/) 은 가장 눈높이가 낮다.
+- [Practical Deep Learning for Coders](https://course.fast.ai/) 는 가장 engineer 에게 practical 하다.
+- [데이터 사이언스 스쿨](https://datascienceschool.net/intro.html) 는 fundamental 을 이해할 수 있다. 수학편 머신러닝편과 같이 두가지로 구분되어 있다.
+- [공돌이의 수학정리노트 (Angelo's Math Notes)](https://angeloyeo.github.io/) 은 좀더 깊은 수학을 설명한다.
 
 # Essentials
 

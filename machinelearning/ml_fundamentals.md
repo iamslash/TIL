@@ -77,10 +77,18 @@
 
 # References
 
+> - [Hacker's guide to Neural Networks](https://karpathy.github.io/neuralnets/)
+>   - Neural Networks Deep Dive
+> - [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
+> - [Practical Deep Learning for Coders](https://course.fast.ai/)
+> - [데이터 사이언스 스쿨](https://datascienceschool.net/intro.html)
+> - [공돌이의 수학정리노트 (Angelo's Math Notes)](https://angeloyeo.github.io/)
+
+----
+
 > - [통계 기초 개념과 공식을 3시간만에 끝내드립니다ㅣ 고려대 통계학과 x AI연구원 강의 ㅣ표본, 기대값, 정규분포, 카이제곱, 모평균, t분포, 포아송분포, 조건부 확률 등](https://www.youtube.com/watch?v=YaCQrJCgbqg)
 > - [데이터 사이언스 스쿨](https://datascienceschool.net/intro.html)
 >   - [src](https://www.hanbit.co.kr/media/books/book_view.html?p_code=B3111220544)
-> - [공돌이의 수학정리노트 (Angelo's Math Notes)](https://angeloyeo.github.io/)
 > - ["Probabilistic machine learning": a book series by Kevin Murphy](https://github.com/probml/pml-book)
 >   - ["Machine Learning: A Probabilistic Perspective" (2012)](https://probml.github.io/pml-book/book0.html)
 >       - [python solution](https://github.com/probml/pyprobml/)
