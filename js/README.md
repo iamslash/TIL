@@ -10,7 +10,7 @@
   - [Print Out](#print-out)
   - [Keywords](#keywords)
   - [Min, Max Values](#min-max-values)
-  - [abs, fabs](#abs-fabs)
+  - [Abs, Fabs](#abs-fabs)
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
@@ -77,6 +77,7 @@
   - [Cookies](#cookies)
   - [HTML DOM](#html-dom)
 - [Advanced](#advanced)
+  - [Destructuring assignment](#destructuring-assignment)
   - [apply vs call](#apply-vs-call)
   - [Map vs Object](#map-vs-object)
   - [Computed property names](#computed-property-names)
@@ -2042,6 +2043,48 @@ document.cookie = "key1 = value1;key2 = value2;expires = date";
 ![](https://www.tutorialspoint.com/javascript/images/html-dom.jpg)
 
 # Advanced
+
+## Destructuring assignment
+
+```js
+// Array Destructuring
+const numbers = [1, 2, 3];
+const [first, second, third] = numbers;
+console.log(first, second, third);  // 1 2 3
+
+// Object Destructuring
+const person = { name: 'John', age: 30 };
+const { name, age } = person;
+console.log(name, age);  // John 30
+
+// Default values
+const [a = 10, b = 5] = [1];
+console.log(a);  // 1
+console.log(b);  // 5
+
+// Nested Destructuring
+const nested = { foo: { bar: 42 } };
+const { foo: { bar } } = nested;
+console.log(bar);  // 42
+
+// Rest syntax
+const [x, ...rest] = [10, 20, 30, 40];
+console.log(x);  // 10
+console.log(rest);  // [20, 30, 40]
+
+// Swapping variables
+let p = 1, q = 2;
+[p, q] = [q, p];
+console.log(p);  // 2
+console.log(q);  // 1
+
+// Function parameter destructuring
+const user = { id: 42, isVerified: true };
+function printUserInfo({ id, isVerified }) {
+  console.log(`ID: ${id}, Verified: ${isVerified}`);
+}
+printUserInfo(user);  // ID: 42, Verified: true
+```
 
 ## apply vs call
 
