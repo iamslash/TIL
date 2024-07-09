@@ -46,12 +46,9 @@
 
 react.js 는 view library 이다. redux 는 state management library 이다. 
 
-props 는 function parameter 와 유사하다. immutable 이다. state 는 local variable
-of function 과 같다. mutable 이다. [[React] Props와  State의
-차이](https://singa-korean.tistory.com/37) 참고.
+props 는 function parameter 와 유사하다. immutable 이다. state 는 local variable of function 과 같다. mutable 이다. [[React] Props와  State의 차이](https://singa-korean.tistory.com/37) 참고.
 
-react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다.
-[https://reactjs.org/docs/getting-started.html](https://reactjs.org/docs/getting-started.html) 
+react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다. [https://reactjs.org/docs/getting-started.html](https://reactjs.org/docs/getting-started.html) 
 
 # Templates
 
@@ -101,11 +98,7 @@ react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다.
 
 ## Create React App
 
-[Webpack](https://webpack.js.org/) 은 ES6 를 browser 가 이해할 수 있는 code 로
-transpile 한다.
-
-create-react-app 으로 startup-repo 를 생성할 수 있다. create-react-app 은
-Webpack, babel 을 포함한다.
+React 애플리케이션을 빠르게 시작하기 위해 Create React App 도구를 사용합니다. 다음 명령어를 통해 설치 및 프로젝트 생성이 가능합니다:
 
 ```bash
 $ brew install node.js
@@ -479,14 +472,13 @@ class App extends Component {
 
 ## SetState Caveats
 
+```js
   // Render:  -> render() -> componentDidMount()
   //
   // Update: componentWillReceiveProps() -> shouldComponentUpdate() -> 
   //         componentWillUpate() -> render() -> componentDidUpdate()
-
-setState 를 component lifecycle event handler (`render, componentWillMount,
-componentWillReceiveProps, shouldComponentUpdate, componentWillUpate,
-componentDidUpdate`) 에서 호출할 때 주의해야 한다.
+```
+setState 를 component lifecycle event handler (`render, componentWillMount, componentWillReceiveProps, shouldComponentUpdate, componentWillUpate, componentDidUpdate`) 에서 호출할 때 주의해야 한다.
 
 * [React setState usage and gotchas](https://itnext.io/react-setstate-usage-and-gotchas-ac10b4e03d60)
   * [Boost your React with State Machines](https://www.freecodecamp.org/news/boost-your-react-with-state-machines-1e9641b0aa43/)
