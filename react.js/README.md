@@ -1,29 +1,29 @@
 - [Abstract](#abstract)
 - [Templates](#templates)
 - [Materials](#materials)
-- [Basic](#basic)
+- [Movie Tutorial](#movie-tutorial)
   - [Create React App](#create-react-app)
   - [Create React Components with JSX](#create-react-components-with-jsx)
   - [Data flow with Props](#data-flow-with-props)
-  - [Lists with .maps](#lists-with-maps)
-  - [Validating Props with Prop Types](#validating-props-with-prop-types)
+  - [Lists With `.maps`](#lists-with-maps)
+  - [Validating Props With Prop Types](#validating-props-with-prop-types)
   - [Component Lifecycle](#component-lifecycle)
   - [Thinking in React Component State](#thinking-in-react-component-state)
   - [Practicing this setState](#practicing-this-setstate)
   - [SetState Caveats](#setstate-caveats)
   - [Loading States](#loading-states)
-  - [Smart vs Dumb](#smart-vs-dumb)
   - [AJAX on React](#ajax-on-react)
   - [Promises](#promises)
   - [Async Await](#async-await)
   - [Updating Movie](#updating-movie)
   - [CSS for Movie](#css-for-movie)
   - [Building for Production](#building-for-production)
+- [Advanced](#advanced)
   - [Redux](#redux)
   - [To Do List with redux](#to-do-list-with-redux)
   - [react-redux](#react-redux)
   - [rendering Sequences](#rendering-sequences)
-- [Advanced](#advanced)
+  - [Smart vs Dumb](#smart-vs-dumb)
   - [redux-toolkit](#redux-toolkit)
   - [redux](#redux-1)
     - [`function combineReducers<S>(reducers: ReducersMapObject): Reducer<S>`](#function-combinereducerssreducers-reducersmapobject-reducers)
@@ -38,6 +38,7 @@
   - [Ant Design](#ant-design)
   - [redux-saga](#redux-saga)
   - [Redux Debugger in Chrome](#redux-debugger-in-chrome)
+  - [Don't Use `useEffect`](#dont-use-useeffect)
 - [Architectures](#architectures)
 
 ----
@@ -94,87 +95,108 @@ react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다. [https:/
   * [Getting Started with Redux](https://egghead.io/courses/getting-started-with-redux)
   * [Building React Applications with Idiomatic Redux](https://egghead.io/courses/building-react-applications-with-idiomatic-redux)
 
-# Basic
+# Movie Tutorial
 
 ## Create React App
 
 React 애플리케이션을 빠르게 시작하기 위해 Create React App 도구를 사용합니다. 다음 명령어를 통해 설치 및 프로젝트 생성이 가능합니다:
 
 ```bash
-$ brew install node.js
-$ npm install -g create-react-app
+# nvm 설치 (이미 설치된 경우 생략 가능)
+$ brew install nvm
+
+# nvm 설정
+$ mkdir ~/.nvm
+$ export NVM_DIR="$HOME/.nvm"
+$ [ -s "/usr/local/opt/nvm/nvm.sh" ] && \. "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+$ [ -s "/usr/local/opt/nvm/etc/bash_completion" ] && \. "/usr/local/opt/nvm/etc/bash_completion"  # This loads nvm bash_completion
+
+# nvm을 사용하여 Node.js 17.0.0 설치 및 사용
+$ nvm install 17.0.0
+$ nvm use 17.0.0
+
+# yarn 설치
+$ npm install -g yarn
+
+# create-react-app 설치
+$ yarn global add create-react-app
+
+# React 애플리케이션 생성
 $ create-react-app my-app
+
+# 생성한 애플리케이션 디렉토리로 이동
 $ cd my-app
-$ npm start
+
+# 애플리케이션 실행
+$ yarn start
 ```
 
 ## Create React Components with JSX
 
-* [Create React App, Creating lists with .map @ src](https://github.com/nomadcoders/movie_app/commit/98dab5bb5e881c43fc2fc16f8dbc395632a715b3)
-* [Create React Components with JSX @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/64003c94750148411d308e6fd2d295d34eead9b3)
-
-------
-
-`public/index.html` 에 `id="root"` 인 `div` 가 있다.
-
-```html
-<div id="root"></div>
-```
-
-`src/index.js` 는 `App` component 를 `id="root"` 인 `div` 에 rendering 하고
-있다. `<App />` 는 JSX 이다. JSX 는 pure javascript 로 transpile 된다.
-
 ```js
+////////////////////////////////////////////////////////////////////////////////
+// public/index.html:
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>React App</title>
+  </head>
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
+</html>
+
+////////////////////////////////////////////////////////////////////////////////
+// src/index.js:
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+import './index.css';
+
 ReactDOM.render(<App />, document.getElementById('root'));
-```
 
-`src/App.js` 는 `App` component 가 정의되어 있다.
-
-```js
-import React, {Component} from 'react';
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React from 'react';
 import './App.css';
 import Movie from './Movie';
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <Movie />
-        <Movie />
-      </div>
-    );
-  }
+// App 컴포넌트는 Movie 컴포넌트를 렌더링합니다.
+function App() {
+  return (
+    <div className="App">
+      <Movie />
+      <Movie />
+    </div>
+  );
 }
 
 export default App;
-```
 
-`src/App.js` 는 `Movie` component 를 rendering 하고 있다. `Movie` component 는
-다시 `MoviePoster` component 를 rendering 하고 있다.
-
-`src/Movie.js` 는 `Movie, MoviePoster` component 가 정의되어 있다.
-
-```js
-import React, {Component} from 'react';
+////////////////////////////////////////////////////////////////////////////////
+// src/Movie.js:
+import React from 'react';
 import './Movie.css';
 
-class Movie extends Component {
-  render() {
-    return (
-      <div>
-        <MoviePoster />
-        <h1>Hello This is a movie</h1>
-      </div>
-    )
-  }
+// Movie 컴포넌트는 MoviePoster 컴포넌트를 렌더링합니다.
+function Movie() {
+  return (
+    <div>
+      <MoviePoster />
+      <h1>Hello This is a movie</h1>
+    </div>
+  );
 }
 
-class MoviePoster extends Component {
-  render() {
-    return (
-      <img src='http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg'/>
-    )
-  }
+// MoviePoster 컴포넌트는 이미지를 렌더링합니다.
+function MoviePoster() {
+  return (
+    <img src='http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg' alt="Movie Poster" />
+  );
 }
 
 export default Movie;
@@ -182,16 +204,16 @@ export default Movie;
 
 ## Data flow with Props
 
-[Data flow with Props @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/6f48b1beba844107a6c785d6c954ff55c7bf75be)
-
-------
-
 ![](https://miro.medium.com/max/1540/0*NLC2HyJRjh0_3r0e.)
 
 data 를 `src/App.js` 에 선언해 보자. 그리고 `Movie` component 에게 props 형태로 전달한다.
 
 ```js
-...
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React from 'react';
+import Movie from './Movie';
+
 const movieTitles = [
   "Matrix",
   "Full Metal Jacket",
@@ -206,58 +228,199 @@ const movieImages = [
   'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
 ]
 
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <Movie title={movieTitles[0]} poster={movieImages[0]}/>
-        <Movie title={movieTitles[1]} poster={movieImages[1]}/>
-        <Movie title={movieTitles[2]} poster={movieImages[2]}/>
-        <Movie title={movieTitles[3]} poster={movieImages[3]}/>
-      </div>
-    );
-  }
+function App() {
+  return (
+    <div className="App">
+      <Movie title={movieTitles[0]} poster={movieImages[0]} />
+      <Movie title={movieTitles[1]} poster={movieImages[1]} />
+      <Movie title={movieTitles[2]} poster={movieImages[2]} />
+      <Movie title={movieTitles[3]} poster={movieImages[3]} />
+    </div>
+  );
 }
-...
+
+export default App;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/Movie.js:
+import React from 'react';
+import PropTypes from 'prop-types';
+import './Movie.css';
+
+function Movie({ title, poster }) {
+  return (
+    <div>
+      <MoviePoster poster={poster} />
+      <h1>{title}</h1>
+    </div>
+  );
+}
+
+function MoviePoster({ poster }) {
+  return (
+    <img src={poster} alt="Movie Poster" />
+  );
+}
+
+Movie.propTypes = {
+  title: PropTypes.string.isRequired,
+  poster: PropTypes.string.isRequired
+};
+
+MoviePoster.propTypes = {
+  poster: PropTypes.string.isRequired
+};
+
+export default Movie;
 ```
 
-`Movie` component 는 props 의 일부를 다시 `MoviePoster` component 에게 전달한다.
+## Lists With `.maps`
 
 ```js
-...
-class Movie extends Component {
-  render() {
-    console.log(this.props);
-    return (
-      <div>
-        <MoviePoster poster={this.props.poster}/>
-        <h1>{this.props.title}</h1>
-      </div>
-    )
-  }
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React from 'react';
+import Movie from './Movie';
+
+const movies = [
+  {
+    title: "Matrix",
+    poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
+  },
+  {
+    title: "Full Metal Jacket",
+    poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778470_STD.jpg',
+  },
+  {
+    title: "Oldboy",
+    poster: 'https://cdn1.thr.com/sites/default/files/imagecache/768x433/2017/06/143289-1496932680-mm_2012_047_italy_57_-_h_2017.jpg',
+  },
+  {
+    title: "Star wars",
+    poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
+  },
+]
+
+function App() {
+  return (
+    <div className="App">
+      {movies.map(movie => (
+        <Movie title={movie.title} poster={movie.poster} />
+      ))}
+    </div>
+  );
 }
 
-class MoviePoster extends Component {
-  render() {
-    return (
-      <img src={this.props.poster}/>
-    )
-  }
-}
-...
+export default App;
 ```
 
-JSX 를 이용하여 각 component 의 props 를 rendering 한다. 
+## Validating Props With Prop Types
 
-## Lists with .maps
-
-[Lists with .maps @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/bbf7905c5affb019a19bf8076ed685325574ee9a)
-
-----
-
-`movies` 배열을 만들고 `App` component 를 `.map` function 을 활용하여 구현해보자.
+`static propTypes` 를 선언하여 props 의 값을 제어할 수 있다. 이때 PropTypes module 이 설치되어야 한다. `yarn add PropTypes`
 
 ```js
+////////////////////////////////////////////////////////////////////////////////
+// src/Movie.js:
+import React from 'react';
+import PropTypes from 'prop-types';
+import './Movie.css';
+
+function Movie({ title, poster }) {
+  return (
+    <div>
+      <MoviePoster poster={poster} />
+      <h1>{title}</h1>
+    </div>
+  );
+}
+
+function MoviePoster({ poster }) {
+  return (
+    <img src={poster} alt="Movie Poster" />
+  );
+}
+
+Movie.propTypes = {
+  title: PropTypes.string.isRequired,
+  poster: PropTypes.string.isRequired
+};
+
+MoviePoster.propTypes = {
+  poster: PropTypes.string.isRequired
+};
+
+export default Movie;
+```
+
+## Component Lifecycle
+
+하나의 component 는 다음과 같은 순서로 `Render, Update` 가 수행된다. Override
+function 의 순서를 주의하자.
+
+```js
+  // Render: componentWillMount() -> render() -> componentDidMount()
+  //
+  // Update: componentWillReceiveProps() -> shouldComponentUpdate() -> 
+  //         componentWillUpate() -> render() -> componentDidUpdate()
+```
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React, { useEffect } from 'react';
+import Movie from './Movie';
+
+const movies = [
+  {
+    title: "Matrix",
+    poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
+  },
+  {
+    title: "Full Metal Jacket",
+    poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778470_STD.jpg',
+  },
+  {
+    title: "Oldboy",
+    poster: 'https://cdn1.thr.com/sites/default/files/imagecache/768x433/2017/06/143289-1496932680-mm_2012_047_italy_57_-_h_2017.jpg',
+  },
+  {
+    title: "Star wars",
+    poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
+  },
+]
+
+const App = () => {
+  useEffect(() => {
+    console.log("componentWillMount");
+    console.log("componentDidMount");
+  }, []);
+
+  console.log("render");
+
+  return (
+    <div className="App">
+      {movies.map((movie, index) => (
+        <Movie title={movie.title} poster={movie.poster} key={index} />
+      ))}
+    </div>
+  );
+}
+
+export default App;
+```
+
+## Thinking in React Component State
+
+`App` component 에 `state` 를 선언하고 `componentDidMount()` 에서 바꿔보자. `this.setState()` 함수를 호출하면 `render()` 가 호출된다. `state` 를 바꾸고 `this.setState()` 를 호출하여 화면을 업데이트한다. 여기서 언급한 `state` 는 redux 의 `state` 과는 다르다는 것을 주의하자. [React State vs. Redux State: When and Why?](https://spin.atomicobject.com/2017/06/07/react-state-vs-redux-state/)
+
+다음은 smart component 예이다.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React, { Component } from 'react';
+import Movie from './Movie';
+
 const movies = [
   {
     title: "Matrix",
@@ -278,115 +441,11 @@ const movies = [
 ]
 
 class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        {movies.map(movie => {
-          return <Movie title={movie.title} poster={movie.poster} />
-        })}
-      </div>
-    );
-  }
-}
-```
-
-## Validating Props with Prop Types
-
-[Validating Props with Prop Types @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/07162e660791bd182794261743cf62057d4d988f)
-
-----
-
-`static propTypes` 를 선언하여 props 의 값을 제어할 수 있다. 이때 PropTypes module 이 설치되어야 한다. `yarn add PropTypes`
-
-```js
-import React, {Component} from 'react';
-import PropTypes from 'prop-types';
-import './Movie.css';
-
-class Movie extends Component {
-  static propTypes = {
-    title: PropTypes.string.isRequired,
-    poster: PropTypes.string.isRequired
-  }
-  render() {
-    console.log(this.props);
-    return (
-      <div>
-        <MoviePoster poster={this.props.poster}/>
-        <h1>{this.props.title}</h1>
-      </div>
-    )
-  }
-}
-
-class MoviePoster extends Component {
-  static propTypes = {
-    poster: PropTypes.string.isRequired
-  }
-  render() {
-    return (
-      <img src={this.props.poster}/>
-    )
-  }
-}
-
-export default Movie;
-```
-
-## Component Lifecycle
-
-[Component Lifecycle @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/05b83c5c2b9d778fdf0194a602524076d735ecf0)
-
-----
-
-하나의 component 는 다음과 같은 순서로 `Render, Update` 가 수행된다. Override
-function 의 순서를 주의하자.
-
-```js
-class App extends Component {
-  // Render: componentWillMount() -> render() -> componentDidMount()
-  //
-  // Update: componentWillReceiveProps() -> shouldComponentUpdate() -> 
-  //         componentWillUpate() -> render() -> componentDidUpdate()
-  componentWillMount() {
-    console.log("componentWillMount");
-  }
-  componentDidMount() {
-    console.log("componentDidMount");
-  }
-  render() {
-    console.log("render");
-    return (
-      <div className="App">
-        {movies.map((movie, index) => {
-          return <Movie title={movie.title} poster={movie.poster} key={index} />
-        })}
-      </div>
-    );
-  }
-}
-```
-
-## Thinking in React Component State
-
-* [Thinking in React Component State @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/8915cfe21228044db9c9c1a43b0ffd0465694c58)
-
-----
-
-`App` component 에 `state` 를 선언하고 `componentDidMount()` 에서 바꿔보자.
-`this.setState()` 함수를 호출하면 `render()` 가 호출된다. `state` 를 바꾸고
-`this.setState()` 를 호출하여 화면을 업데이트한다. 여기서 언급한 `state` 는
-redux 의 `state` 과는 다르다는 것을 주의하자. [React State vs. Redux State: When
-and Why?](https://spin.atomicobject.com/2017/06/07/react-state-vs-redux-state/)
-
-```js
-class App extends Component {
   state = {
     greeting: 'Hello'
   }
   componentDidMount() {
     setTimeout(() => {
-      //this.state.greeting = 'something'
       this.setState({
         greeting: 'Hello Again'
       })
@@ -397,28 +456,80 @@ class App extends Component {
     return (
       <div className="App">
         {this.state.greeting}
-        {movies.map((movie, index) => {
-          return <Movie title={movie.title} poster={movie.poster} key={index} />
-        })}
+        {movies.map((movie, index) => (
+          <Movie title={movie.title} poster={movie.poster} key={index} />
+        ))}
       </div>
     );
   }
 }
+
+export default App;
+```
+
+다음은 functional component 예이다.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React, { useEffect } from 'react';
+import Movie from './Movie';
+
+const movies = [
+  {
+    title: "Matrix",
+    poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
+  },
+  {
+    title: "Full Metal Jacket",
+    poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778470_STD.jpg',
+  },
+  {
+    title: "Oldboy",
+    poster: 'https://cdn1.thr.com/sites/default/files/imagecache/768x433/2017/06/143289-1496932680-mm_2012_047_italy_57_-_h_2017.jpg',
+  },
+  {
+    title: "Star wars",
+    poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
+  },
+]
+
+// 함수형 컴포넌트로 App 정의
+const App = () => {
+  // useEffect 훅을 사용하여 componentWillMount 및 componentDidMount 대체
+  useEffect(() => {
+    console.log("componentWillMount");
+    console.log("componentDidMount");
+  }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
+
+  console.log("render"); // 렌더링 시마다 출력
+
+  return (
+    <div className="App">
+      {movies.map((movie, index) => (
+        // Movie 컴포넌트에 title과 poster props 전달
+        <Movie title={movie.title} poster={movie.poster} key={index} />
+      ))}
+    </div>
+  );
+}
+
+export default App;
 ```
 
 ## Practicing this setState
 
-* [Practicing this setState @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/f0137ac872a477e0aff88a633e863831a9f2e7d3)
+`App` component 의 `state` 으로 title, poster 를 옮기자. 그리고 일정 시간 이후에 `state` 을 변경해 보자. `...this.state.movies` 를 이용하면 기존의 array 에 `this.state.movies` 를 unwind 해서 추가할 수 있다. 이 방법을 이용하면 스크롤을 아래로 내렸을 때 infinite scroll 을 구현할 수 있다.
 
-----
-
-`App` component 의 `state` 으로 title, poster 를 옮기자. 그리고 일정 시간 이후에
-`state` 을 변경해 보자. `...this.state.movies` 를 이용하면 기존의 array 에
-`this.state.movies` 를 unwind 해서 추가할 수 있다.
+다음은 smart component 의 예이다.
 
 ```js
-class App extends Component {
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React, { Component } from 'react';
+import Movie from './Movie';
 
+class App extends Component {
   state = {
     greeting: 'Hello World',
     movies: [
@@ -439,18 +550,17 @@ class App extends Component {
         poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
       },
     ]    
-  }  
+  }
   componentDidMount() {
     setTimeout(() => {
-      //this.state.greeting = 'something'
       this.setState({
         movies: [
-        ...this.state.movies,
-        {
-          tilte: "Trainspotting",
-          poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
-        }
-      ]
+          ...this.state.movies,
+          {
+            title: "Trainspotting",
+            poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
+          }
+        ]
       })
     }, 2000)
   }
@@ -459,16 +569,77 @@ class App extends Component {
     return (
       <div className="App">
         {this.state.greeting}
-        {this.state.movies.map((movie, index) => {
-          return <Movie title={movie.title} poster={movie.poster} key={index} />
-        })}
+        {this.state.movies.map((movie, index) => (
+          <Movie title={movie.title} poster={movie.poster} key={index} />
+        ))}
       </div>
     );
   }
 }
+
+export default App;
 ```
 
-이 방법을 이용하면 스크롤을 아래로 내렸을 때 infinite scroll 을 구현할 수 있다.
+다음은 functional component 예이다.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React, { useState, useEffect } from 'react';
+import Movie from './Movie';
+
+const App = () => {
+  // greeting 상태 정의
+  const [greeting, setGreeting] = useState('Hello World');
+  // movies 상태 정의
+  const [movies, setMovies] = useState([
+    {
+      title: "Matrix",
+      poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
+    },
+    {
+      title: "Full Metal Jacket",
+      poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778470_STD.jpg',
+    },
+    {
+      title: "Oldboy",
+      poster: 'https://cdn1.thr.com/sites/default/files/imagecache/768x433/2017/06/143289-1496932680-mm_2012_047_italy_57_-_h_2017.jpg',
+    },
+    {
+      title: "Star wars",
+      poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
+    },
+  ]);
+
+  // useEffect 훅을 사용하여 componentDidMount 대체
+  useEffect(() => {
+    setTimeout(() => {
+      // 이전 상태를 복사하여 새로운 영화 데이터를 추가
+      setMovies((prevMovies) => [
+        ...prevMovies,
+        {
+          title: "Trainspotting",
+          poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
+        }
+      ]);
+    }, 2000);
+  }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
+
+  console.log("render"); // 렌더링 시마다 출력
+
+  return (
+    <div className="App">
+      {greeting}
+      {movies.map((movie, index) => (
+        // Movie 컴포넌트에 title과 poster props 전달
+        <Movie title={movie.title} poster={movie.poster} key={index} />
+      ))}
+    </div>
+  );
+}
+
+export default App;
+```
 
 ## SetState Caveats
 
@@ -478,30 +649,142 @@ class App extends Component {
   // Update: componentWillReceiveProps() -> shouldComponentUpdate() -> 
   //         componentWillUpate() -> render() -> componentDidUpdate()
 ```
-setState 를 component lifecycle event handler (`render, componentWillMount, componentWillReceiveProps, shouldComponentUpdate, componentWillUpate, componentDidUpdate`) 에서 호출할 때 주의해야 한다.
+
+`setState` 를 component lifecycle event handler (`render, componentWillMount, componentWillReceiveProps, shouldComponentUpdate, componentWillUpate, componentDidUpdate`) 에서 호출할 때 주의해야 한다.
 
 * [React setState usage and gotchas](https://itnext.io/react-setstate-usage-and-gotchas-ac10b4e03d60)
   * [Boost your React with State Machines](https://www.freecodecamp.org/news/boost-your-react-with-state-machines-1e9641b0aa43/)
 
-## Loading States
-
-[Loading states @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/c822239549b2ea678195536b213d4fa54e1f149b)
-
-----
-
-loading screen 을 구현해 보자. `App` component 에 rendering 을 시작하자 마자
-`Loading...` 을 출력하고 일정 시간이 지나면 state 을 업데이트하여 movies 가
-rendering 되도록 해보자.
+다음은 smart component 예이다.
 
 ```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React, { Component } from 'react';
+import Movie from './Movie';
+
+class App extends Component {
+  state = {
+    movies: []
+  }
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({
+        movies: [
+          {
+            title: "Matrix",
+            poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
+          },
+          {
+            title: "Full Metal Jacket",
+            poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778470_STD.jpg',
+          },
+          {
+            title: "Oldboy",
+            poster: 'https://cdn1.thr.com/sites/default/files/imagecache/768x433/2017/06/143289-1496932680-mm_2012_047_italy_57_-_h_2017.jpg',
+          },
+          {
+            title: "Star wars",
+            poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
+          },
+        ]
+      })
+    }, 2000)
+  }
+  render() {
+    console.log("render");
+    return (
+      <div className="App">
+        {this.state.movies.length > 0 ? (
+          this.state.movies.map((movie, index) => (
+            <Movie title={movie.title} poster={movie.poster} key={index} />
+          ))
+        ) : (
+          'Loading...'
+        )}
+      </div>
+    );
+  }
+}
+
+export default App;
+```
+
+다음은 functional component 예이다.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React, { useState, useEffect } from 'react';
+import Movie from './Movie';
+
+const App = () => {
+  // movies 상태 정의, 초기값은 빈 배열
+  const [movies, setMovies] = useState([]);
+
+  // useEffect 훅을 사용하여 componentDidMount 대체
+  useEffect(() => {
+    setTimeout(() => {
+      // setMovies 함수를 사용하여 movies 상태 업데이트
+      setMovies([
+        {
+          title: "Matrix",
+          poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
+        },
+        {
+          title: "Full Metal Jacket",
+          poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778470_STD.jpg',
+        },
+        {
+          title: "Oldboy",
+          poster: 'https://cdn1.thr.com/sites/default/files/imagecache/768x433/2017/06/143289-1496932680-mm_2012_047_italy_57_-_h_2017.jpg',
+        },
+        {
+          title: "Star wars",
+          poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
+        },
+      ]);
+    }, 2000);
+  }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
+
+  console.log("render"); // 렌더링 시마다 출력
+
+  return (
+    <div className="App">
+      {movies.length > 0 ? (
+        movies.map((movie, index) => (
+          // Movie 컴포넌트에 title과 poster props 전달
+          <Movie title={movie.title} poster={movie.poster} key={index} />
+        ))
+      ) : (
+        'Loading...' // movies 배열이 비어 있을 때 표시할 로딩 메시지
+      )}
+    </div>
+  );
+}
+
+export default App;
+```
+
+## Loading States
+
+loading screen 을 구현해 보자. `App` component 에 rendering 을 시작하자 마자 `Loading...` 을 출력하고 일정 시간이 지나면 state 을 업데이트하여 movies 가 rendering 되도록 해보자.
+
+다음은 smart component 예이다.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React, { Component } from 'react';
+import Movie from './Movie';
+
 class App extends Component {
   state = {
     greeting: 'Hello World',
-  }  
+    movies: null,
+  }
   componentDidMount() {
     setTimeout(() => {
-      console.log("change state...")
-      //this.state.greeting = 'something'
       this.setState({
         movies: [
           {
@@ -525,9 +808,9 @@ class App extends Component {
     }, 2000)
   }
   _renderMovies = () => {
-    const movies = this.state.movies.map((movie, index) => {
-      return <Movie title={movie.title} poster={movie.poster} key={index} />
-    })
+    const movies = this.state.movies.map((movie, index) => (
+      <Movie title={movie.title} poster={movie.poster} key={index} />
+    ));
     return movies;
   }
   render() {
@@ -539,52 +822,67 @@ class App extends Component {
     );
   }
 }
+
+export default App;
 ```
 
-## Smart vs Dumb
-
-* [Loading states + Smart vs Dumb Components @ src](https://github.com/nomadcoders/movie_app/commit/9cc9cf90d3c21dfea9c04c455f59aab7440018c4)
-
--------
-
-Smart component 는 state 이 있는 component 이다. Dumb component 는 state 이 없는 component 이다. props 만 있다.
-Dumb component 를 stateless 혹은 functional component 라고도 한다. Dumb component 는 state 가 필요없을 때 간결한 코드를 만들기 위해 사용한다.
-그러나 state 가 없기도 하고 componentDidMount, componentWillMount 와 같은 함수들을 사용할 수 없다.
-
-다음은 `Movie, MoviePoster` component 를 Dumb component 로 수정한 것이다.
+다음은 functional component 예이다.
 
 ```js
-function Movie({title, poster}) {
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React, { useState, useEffect } from 'react';
+import Movie from './Movie';
+
+const App = () => {
+  // greeting 상태 정의, 초기값은 'Hello World'
+  const [greeting, setGreeting] = useState('Hello World');
+  // movies 상태 정의, 초기값은 null
+  const [movies, setMovies] = useState(null);
+
+  // useEffect 훅을 사용하여 componentDidMount 대체
+  useEffect(() => {
+    setTimeout(() => {
+      // setMovies 함수를 사용하여 movies 상태 업데이트
+      setMovies([
+        {
+          title: "Matrix",
+          poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
+        },
+        {
+          title: "Full Metal Jacket",
+          poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778470_STD.jpg',
+        },
+        {
+          title: "Oldboy",
+          poster: 'https://cdn1.thr.com/sites/default/files/imagecache/768x433/2017/06/143289-1496932680-mm_2012_047_italy_57_-_h_2017.jpg',
+        },
+        {
+          title: "Star wars",
+          poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
+        },
+      ]);
+    }, 2000);
+  }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
+
+  // _renderMovies 메서드를 함수형 컴포넌트 내에 정의
+  const renderMovies = () => {
+    return movies.map((movie, index) => (
+      // Movie 컴포넌트에 title과 poster props 전달
+      <Movie title={movie.title} poster={movie.poster} key={index} />
+    ));
+  };
+
+  console.log("render"); // 렌더링 시마다 출력
+
   return (
-    <div>
-      <MoviePoster poster={poster}/>
-      <h1>{title}</h1>
+    <div className="App">
+      {movies ? renderMovies() : 'Loading...'} {/* movies 상태가 null이 아니면 영화 목록 렌더링, 그렇지 않으면 'Loading...' 표시 */}
     </div>
   );
-}
-Movie.propTypes = {
-  title: PropTypes.string.isRequired,
-  poster: PropTypes.string.isRequired
-}
+};
 
-// class MoviePoster extends Component {
-//   static propTypes = {
-//     poster: PropTypes.string.isRequired
-//   }
-//   render() {
-//     return (
-//       <img src={this.props.poster} alt="Movie Poster"/>
-//     )
-//   }
-// }
-function MoviePoster({poster}) {
-  return (
-    <img src={poster} alt="Movie Poster"/>
-  );
-}
-MoviePoster.propTypes = {
-  poster: PropTypes.string.isRequired
-}
+export default App;
 ```
 
 ## AJAX on React
@@ -593,20 +891,33 @@ MoviePoster.propTypes = {
 
 ----
 
-AJAX 는 Asynchrous JavaScript and XML 이다. 그러나 XML 은 사용하지 않고 JSON 을
-사용한다. AJAJ 로 바뀌어야 한다??? 다음은 fetch 함수를 이용하여 XHR (XML HTTP
-Request) 를 실행한 것이다.
+AJAX 는 **Asynchrous JavaScript and XML** 의 약자이다. 그러나 XML 은 사용하지 않고 JSON 을 사용한다. AJAJ 로 바뀌어야 한다??? 다음은 fetch 함수를 이용하여 XHR (XML HTTP Request) 를 실행한 것이다.
+
+다음은 smart component 예이다.
 
 ```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React, { Component } from 'react';
+import Movie from './Movie';
+
 class App extends Component {
-  state = {};
+  state = {
+    movies: null
+  };
   componentDidMount() {
     fetch('https://yts.ag/api/v2/list_movies.json?sort_by=rating')
+      .then(potato => potato.json())
+      .then(json => {
+        this.setState({
+          movies: json.data.movies
+        });
+      });
   }
   _renderMovies = () => {
-    const movies = this.state.movies.map((movie, index) => {
-      return <Movie title={movie.title} poster={movie.poster} key={index} />
-    })
+    const movies = this.state.movies.map((movie, index) => (
+      <Movie title={movie.title} poster={movie.medium_cover_image} key={index} />
+    ));
     return movies;
   }
   render() {
@@ -618,29 +929,76 @@ class App extends Component {
     );
   }
 }
+
+export default App;
+```
+
+다음은 functional component 예이다.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.js:
+import React, { useState, useEffect } from 'react';
+import Movie from './Movie';
+
+const App = () => {
+  // movies 상태 정의, 초기값은 null
+  const [movies, setMovies] = useState(null);
+
+  // useEffect 훅을 사용하여 componentDidMount 대체
+  useEffect(() => {
+    fetch('https://yts.ag/api/v2/list_movies.json?sort_by=rating')
+      .then(potato => potato.json())
+      .then(json => {
+        setMovies(json.data.movies);
+      });
+  }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
+
+  // _renderMovies 메서드를 함수형 컴포넌트 내에 정의
+  const renderMovies = () => {
+    return movies.map((movie, index) => (
+      // Movie 컴포넌트에 title과 poster props 전달
+      <Movie title={movie.title} poster={movie.medium_cover_image} key={index} />
+    ));
+  };
+
+  console.log("render"); // 렌더링 시마다 출력
+
+  return (
+    <div className="App">
+      {movies ? renderMovies() : 'Loading...'} {/* movies 상태가 null이 아니면 영화 목록 렌더링, 그렇지 않으면 'Loading...' 표시 */}
+    </div>
+  );
+};
+
+export default App;
 ```
 
 ## Promises
 
-* [Async Await / Promises / Ajax / <Movie /> extended @ src](https://github.com/nomadcoders/movie_app/commit/8a8761cbf54382f791807018c2dfadb3c1545759)
-
-----
-
 [javascript proxy](/js/README.md#promise) 를 참고하여 이해하자. 다음은 앞서 작성한 XHR 의 handler 를 추가한 것이다.
 
 ```js
+////////////////////////////////////////////////////////////////////////////////
+// Smart Component
+// src/App.js:
+import React, { Component } from 'react';
+import Movie from './Movie';
+
 class App extends Component {
-  state = {};
+  state = {
+    movies: null
+  };
   componentDidMount() {
     fetch('https://yts.ag/api/v2/list_movies.json?sort_by=rating')
-    .then(potato => potato.json())
-    .then(json => console.log(json))
-    .catch(err => console.log(err));
+      .then(potato => potato.json())
+      .then(json => this.setState({ movies: json.data.movies }))
+      .catch(err => console.log(err));
   }
   _renderMovies = () => {
-    const movies = this.state.movies.map((movie, index) => {
-      return <Movie title={movie.title} poster={movie.poster} key={index} />
-    })
+    const movies = this.state.movies.map((movie, index) => (
+      <Movie title={movie.title} poster={movie.medium_cover_image} key={index} />
+    ));
     return movies;
   }
   render() {
@@ -652,12 +1010,53 @@ class App extends Component {
     );
   }
 }
+
+export default App;
+
+////////////////////////////////////////////////////////////////////////////////
+// Functional Component
+// src/App.js:
+import React, { useState, useEffect } from 'react';
+import Movie from './Movie';
+
+const App = () => {
+  // movies 상태 정의, 초기값은 null
+  const [movies, setMovies] = useState(null);
+
+  // useEffect 훅을 사용하여 componentDidMount 대체
+  useEffect(() => {
+    fetch('https://yts.ag/api/v2/list_movies.json?sort_by=rating')
+      .then(potato => potato.json())
+      .then(json => setMovies(json.data.movies))
+      .catch(err => console.log(err)); // 에러 처리
+  }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
+
+  // _renderMovies 메서드를 함수형 컴포넌트 내에 정의
+  const renderMovies = () => {
+    return movies.map((movie, index) => (
+      // Movie 컴포넌트에 title과 poster props 전달
+      <Movie title={movie.title} poster={movie.medium_cover_image} key={index} />
+    ));
+  };
+
+  console.log("render"); // 렌더링 시마다 출력
+
+  return (
+    <div className="App">
+      {movies ? renderMovies() : 'Loading...'} {/* movies 상태가 null이 아니면 영화 목록 렌더링, 그렇지 않으면 'Loading...' 표시 */}
+    </div>
+  );
+};
+
+export default App;
 ```
 
 그러나 CORS 설정이 되어 있지 않아서 error 가 발생한다. 다음과 같이 proxy 를 설정하면 해결할 수 있다.
 
 ```js
-
+////////////////////////////////////////////////////////////////////////////////
+// Smart Component
+// src/App.js:
 class App extends Component {
   state = {};
   componentDidMount() {
@@ -683,21 +1082,62 @@ class App extends Component {
     );
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Functional Component
+// src/App.js:
+import React, { useState, useEffect } from 'react';
+import Movie from './Movie';
+
+const App = () => {
+  // movies 상태 정의, 초기값은 null
+  const [movies, setMovies] = useState(null);
+
+  // useEffect 훅을 사용하여 componentDidMount 대체
+  useEffect(() => {
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    const url = 'https://yts.ag/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
+    fetch(proxyurl + url)
+      .then((resp) => resp.json())
+      .then(json => {
+        console.log(json); // 데이터 확인
+        setMovies(json.data.movies); // movies 상태 업데이트
+      })
+      .catch(err => console.log(err)); // 에러 처리
+  }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
+
+  // _renderMovies 메서드를 함수형 컴포넌트 내에 정의
+  const renderMovies = () => {
+    return movies.map((movie, index) => (
+      // Movie 컴포넌트에 title과 poster props 전달
+      <Movie title={movie.title} poster={movie.poster} key={index} />
+    ));
+  };
+
+  console.log("render"); // 렌더링 시마다 출력
+
+  return (
+    <div className="App">
+      {movies ? renderMovies() : 'Loading...'} {/* movies 상태가 null이 아니면 영화 목록 렌더링, 그렇지 않으면 'Loading...' 표시 */}
+    </div>
+  );
+};
+
+export default App;
 ```
 
-그러나 promise 는 then() 을 무수히 만들어 낸다. 이것을 Callback Hell 이라고 한다. Async Await 을 이용하면 Callback Hell 을 탈출할 수 있다.
+그러나 promise 는 `then()` 을 무수히 만들어 낸다. 이것을 **Callback Hell** 이라고 한다. `Async Await` 을 이용하면 **Callback Hell** 을 탈출할 수 있다.
 
 ## Async Await
 
-* [Async Await @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/57f9424c781fc54b710d3ba950e03f6376609792)
-
-----
-
-[JavaScript async](/js/README.md#async) 를 참고하여 이해하자. promise 는 then() 의 남용으로 Call Back 함수가 많아져서 code 의 readability 를 떨어뜨린다. async, await 을 이용하면 call back functions 을 줄일 수 있고 code 의 readability 를 끌어 올릴 수 있다.
+[JavaScript async](/js/README.md#async) 를 참고하여 이해하자. promise 는 then() 의 남용으로 Call Back 함수가 많아져서 code 의 readability 를 떨어뜨린다. `async, await` 을 이용하면 call back functions 을 줄일 수 있고 code 의 readability 를 끌어 올릴 수 있다.
 
 `async` 로 function 을 선언하면 function 안에서 `await` 로 기다릴 수 있다. `await` 로 기다리는 것은 `promise` 이다.
 
 ```js
+////////////////////////////////////////////////////////////////////////////////
+// Smart Component
+// src/App.js:
 class App extends Component {
   state = {};
   componentDidMount() {
@@ -732,18 +1172,66 @@ class App extends Component {
     );
   }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// Functional Component
+// src/App.js:
+import React, { useState, useEffect } from 'react';
+import Movie from './Movie';
+
+const App = () => {
+  // movies 상태 정의, 초기값은 null
+  const [movies, setMovies] = useState(null);
+
+  // useEffect 훅을 사용하여 componentDidMount 대체
+  useEffect(() => {
+    getMovies();
+  }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
+
+  // 영화 데이터를 가져오는 비동기 함수 정의
+  const getMovies = async () => {
+    const movies = await callApi();
+    setMovies(movies); // movies 상태 업데이트
+  }
+
+  // API 호출 함수 정의
+  const callApi = () => {
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    const url = 'https://yts.ag/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
+    return fetch(proxyurl + url)
+      .then((resp) => resp.json())
+      .then(json => json.data.movies)
+      .catch(err => console.log(err)); // 에러 처리
+  }
+
+  // renderMovies 함수 정의
+  const renderMovies = () => {
+    return movies.map((movie, index) => (
+      // Movie 컴포넌트에 title과 poster props 전달
+      <Movie title={movie.title} poster={movie.large_cover_image} key={index} />
+    ));
+  };
+
+  console.log("render"); // 렌더링 시마다 출력
+
+  return (
+    <div className="App">
+      {movies ? renderMovies() : 'Loading...'} {/* movies 상태가 null이 아니면 영화 목록 렌더링, 그렇지 않으면 'Loading...' 표시 */}
+    </div>
+  );
+};
+
+export default App;
 ```
 
 ## Updating Movie
 
-* [Updated URL @ src](https://github.com/nomadcoders/movie_app/commit/33f4c4029c714a37c1226ffd4298283191eb87a5)
-* [Updating Movie @ examplesofweb](https://github.com/iamslash/examplesofweb/commit/196217c3322ad7648cede13b5e1571f7d5b89155)
-
-----
-
 이제 XHR 을 통해 얻어온 json 데이터를 화면에서 업데이트해 보자.
 
 ```js
+////////////////////////////////////////////////////////////////////////////////
+// Smart Component
+// src/App.js:
 class App extends Component {
   state = {};
   componentDidMount() {
@@ -760,39 +1248,161 @@ class App extends Component {
     })
     return movies;
   }
-...
-```
-
-```js
-function Movie({title, poster}) {
-  return (
-    <div>
-      <MoviePoster poster={poster}/>
-      <h1>{title}</h1>
-    </div>
-  );
+  _getMovies = async () => {
+    const movies = await this._callApi();
+    this.setState({
+      movies
+    });
+  }
+  _callApi = () => {
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    const url = 'https://yts.ag/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
+    return fetch(proxyurl + url)
+    .then((resp) => resp.json())
+    .then(json => json.data.movies)
+    .catch(err => console.log(err));
+  }
+  render() {
+    console.log("render");
+    return (
+      <div className="App">
+        {this.state.movies ? this._renderMovies() : 'Loading...'}
+      </div>
+    );
+  }
 }
-Movie.propTypes = {
-  title: PropTypes.string.isRequired,
-  poster: PropTypes.string.isRequired,
-  key: PropTypes.string.isRequired,
-  genres: PropTypes.string.isRequired,
-  synopsis: PropTypes.string.isRequired,
-}
-```
 
-이제 `Movie` component 에 XHR 을 통하여 얻은 데이터 `title, poster, key, genres, synopsis` 를 표시해 보자.
-
-```js
-import React, {Component} from 'react';
+////////////////////////////////////////////////////////////////////////////////
+// Smart Component
+// src/Movie.js:
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './Movie.css';
 
-function Movie({title, poster, genres, synopsis}) {
+// Movie 컴포넌트는 MoviePoster 컴포넌트를 렌더링합니다.
+class Movie extends Component {
+  render() {
+    const { title, poster, genres, synopsis } = this.props;
+    return (
+      <div className="Movie">
+        <div className="Movie__Columns">
+          <MoviePoster poster={poster} alt={title} />
+        </div>
+        <div className="Movie__Columns">
+          <h1>{title}</h1>
+          <div className="Movie__Genre">
+            {genres.map((genre, index) => (
+              <MovieGenre genre={genre} key={index} />
+            ))}
+          </div>
+          <p className="Movie__Synopsis">{synopsis}</p>
+        </div>
+      </div>
+    );
+  }
+}
+
+class MoviePoster extends Component {
+  render() {
+    const { poster, alt } = this.props;
+    return <img src={poster} alt={alt} title={alt} className="Movie__Poster" />;
+  }
+}
+
+class MovieGenre extends Component {
+  render() {
+    const { genre } = this.props;
+    return <span className="Movie__Genre">{genre}</span>;
+  }
+}
+
+Movie.propTypes = {
+  title: PropTypes.string.isRequired,
+  poster: PropTypes.string.isRequired,
+  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
+  synopsis: PropTypes.string.isRequired,
+};
+
+MoviePoster.propTypes = {
+  poster: PropTypes.string.isRequired,
+  alt: PropTypes.string.isRequired,
+};
+
+MovieGenre.propTypes = {
+  genre: PropTypes.string.isRequired,
+};
+
+export default Movie;
+
+////////////////////////////////////////////////////////////////////////////////
+// Functional Component
+// src/App.js:
+import React, { useState, useEffect } from 'react';
+import Movie from './Movie';
+
+const App = () => {
+  // movies 상태 정의, 초기값은 null
+  const [movies, setMovies] = useState(null);
+
+  // useEffect 훅을 사용하여 componentDidMount 대체
+  useEffect(() => {
+    getMovies();
+  }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
+
+  // 영화 데이터를 가져오는 비동기 함수 정의
+  const getMovies = async () => {
+    const movies = await callApi();
+    setMovies(movies); // movies 상태 업데이트
+  }
+
+  // API 호출 함수 정의
+  const callApi = () => {
+    const proxyurl = "https://cors-anywhere.herokuapp.com/";
+    const url = 'https://yts.ag/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
+    return fetch(proxyurl + url)
+      .then((resp) => resp.json())
+      .then(json => json.data.movies)
+      .catch(err => console.log(err)); // 에러 처리
+  }
+
+  // renderMovies 함수 정의
+  const renderMovies = () => {
+    return movies.map((movie, index) => (
+      // Movie 컴포넌트에 title, poster, genres, synopsis props 전달
+      <Movie 
+        title={movie.title_english} 
+        poster={movie.medium_cover_image}       
+        key={index} 
+        genres={movie.genres}
+        synopsis={movie.synopsis}
+      />
+    ));
+  };
+
+  console.log("render"); // 렌더링 시마다 출력
+
   return (
-    <div clasName="Movie">
+    <div className="App">
+      {movies ? renderMovies() : 'Loading...'} {/* movies 상태가 null이 아니면 영화 목록 렌더링, 그렇지 않으면 'Loading...' 표시 */}
+    </div>
+  );
+};
+
+export default App;
+
+////////////////////////////////////////////////////////////////////////////////
+// Functional Component
+// src/Movie.js:
+import React from 'react';
+import PropTypes from 'prop-types';
+import './Movie.css';
+
+// Movie 컴포넌트는 MoviePoster 컴포넌트를 렌더링합니다.
+function Movie({ title, poster, genres, synopsis }) {
+  return (
+    <div className="Movie">
       <div className="Movie__Columns">
-      <MoviePoster poster={poster} alt={title}/>
+        <MoviePoster poster={poster} alt={title} />
       </div>
       <div className="Movie__Columns">
         <h1>{title}</h1>
@@ -806,28 +1416,32 @@ function Movie({title, poster, genres, synopsis}) {
     </div>
   );
 }
-function MoviePoster({poster, alt}) {
+
+function MoviePoster({ poster, alt }) {
   return (
     <img src={poster} alt={alt} title={alt} className="Movie__Poster" />
   );
 }
-function MovieGenre({genre}) {
+
+function MovieGenre({ genre }) {
   return (
     <span className="Movie__Genre">{genre}</span>
   );
 }
+
 Movie.propTypes = {
   title: PropTypes.string.isRequired,
   poster: PropTypes.string.isRequired,
-  key: PropTypes.string.isRequired,
-  genres: PropTypes.string.isRequired,
+  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
   synopsis: PropTypes.string.isRequired,
 }
+
 MoviePoster.propTypes = {
   poster: PropTypes.string.isRequired,
   alt: PropTypes.string.isRequired,
 }
-MovieGenre.proptype = {
+
+MovieGenre.propTypes = {
   genre: PropTypes.string.isRequired,
 }
 
@@ -838,7 +1452,7 @@ export default Movie;
 
 [react.js fundamentals src 2019 update](https://github.com/nomadcoders/movie_app_2019)
 
-[kakao-clone-v2 @ github](git@github.com:nomadcoders/kakao-clone-v2.git) 를 통해 css 를 더욱 배울 수 있다.
+[kakao-clone-v2 | github](git@github.com:nomadcoders/kakao-clone-v2.git) 를 통해 css 를 더욱 배울 수 있다.
 
 ## Building for Production
 
@@ -877,6 +1491,8 @@ $ yarn add --dev gh-pages
 ```bash
 $ yarn run deploy
 ```
+
+# Advanced
 
 ## Redux
 
@@ -1245,15 +1861,55 @@ export default store;
 
 Component 가 rendering 되는 경우들을 생각해 보자. 
 
-먼저 부모 Component 가 rendering 될때 자식 Component 의 render function 이 props
-와 함께 호출되는 경우가 있다.
+먼저 부모 Component 가 rendering 될때 자식 Component 의 render function 이 props 와 함께 호출되는 경우가 있다.
 
-또한  Component 의 user event 혹은 timer event 에 의해 dispatch function 이
-호출된다. reducer 는 변경된 state 를 리턴한다. 그리고 그 component 의 render
-function 이 호출된다. redner function 에서 props 를 통해 state 를 접근할 수
-있다.
+또한  Component 의 user event 혹은 timer event 에 의해 dispatch function 이 호출된다. reducer 는 변경된 state 를 리턴한다. 그리고 그 component 의 render function 이 호출된다. redner function 에서 props 를 통해 state 를 접근할 수 있다.
 
-# Advanced
+## Smart vs Dumb
+
+* [Loading states + Smart vs Dumb Components @ src](https://github.com/nomadcoders/movie_app/commit/9cc9cf90d3c21dfea9c04c455f59aab7440018c4)
+
+-------
+
+Smart component 는 state 이 있는 component 이다. Dumb component 는 state 이 없는 component 이다. props 만 있다.
+Dumb component 를 stateless 혹은 functional component 라고도 한다. Dumb component 는 state 가 필요없을 때 간결한 코드를 만들기 위해 사용한다.
+그러나 state 가 없기도 하고 componentDidMount, componentWillMount 와 같은 함수들을 사용할 수 없다.
+
+다음은 `Movie, MoviePoster` component 를 Dumb component 로 수정한 것이다.
+
+```js
+function Movie({title, poster}) {
+  return (
+    <div>
+      <MoviePoster poster={poster}/>
+      <h1>{title}</h1>
+    </div>
+  );
+}
+Movie.propTypes = {
+  title: PropTypes.string.isRequired,
+  poster: PropTypes.string.isRequired
+}
+
+// class MoviePoster extends Component {
+//   static propTypes = {
+//     poster: PropTypes.string.isRequired
+//   }
+//   render() {
+//     return (
+//       <img src={this.props.poster} alt="Movie Poster"/>
+//     )
+//   }
+// }
+function MoviePoster({poster}) {
+  return (
+    <img src={poster} alt="Movie Poster"/>
+  );
+}
+MoviePoster.propTypes = {
+  poster: PropTypes.string.isRequired
+}
+```
 
 ## redux-toolkit
 
@@ -1436,6 +2092,10 @@ const store = createStore(
   composeWithDevTools(applyMiddleware(logger, ReduxThunk, sagaMiddleware))
 );
 ```
+
+## Don't Use `useEffect`
+
+- [You Might Not Need an Effect | react.js](https://react.dev/learn/you-might-not-need-an-effect)
 
 # Architectures
 
