@@ -1,11 +1,15 @@
 - [Abstract](#abstract)
-- [Templates](#templates)
 - [Materials](#materials)
+- [Templates](#templates)
+- [Tech Stacks](#tech-stacks)
 - [Movie Tutorial](#movie-tutorial)
+  - [Overview](#overview)
+  - [Debugging tools](#debugging-tools)
   - [Create React App](#create-react-app)
+  - [npx vs npm](#npx-vs-npm)
   - [Create React Components with JSX](#create-react-components-with-jsx)
-  - [Data flow with Props](#data-flow-with-props)
-  - [Lists With `.maps`](#lists-with-maps)
+  - [Propagate Props](#propagate-props)
+  - [Show The List With `.map()`](#show-the-list-with-map)
   - [Validating Props With Prop Types](#validating-props-with-prop-types)
   - [Component Lifecycle](#component-lifecycle)
   - [Thinking in React Component State](#thinking-in-react-component-state)
@@ -17,6 +21,12 @@
   - [Async Await](#async-await)
   - [Updating Movie](#updating-movie)
   - [CSS for Movie](#css-for-movie)
+  - [Handling Errors](#handling-errors)
+  - [API Mocking](#api-mocking)
+  - [Profiles](#profiles)
+  - [react-hook-form, zod](#react-hook-form-zod)
+  - [Unit Test](#unit-test)
+  - [E2E Test](#e2e-test)
   - [Building for Production](#building-for-production)
 - [Advanced](#advanced)
   - [Redux](#redux)
@@ -45,19 +55,9 @@
 
 # Abstract
 
-react.js 는 view library 이다. redux 는 state management library 이다. 
+최신 [Tech Stack](#tech-stacks) 을 참고해서 react.js tutorial 을 업데이트한다. react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다. [https://reactjs.org/docs/getting-started.html](https://reactjs.org/docs/getting-started.html) 
 
-props 는 function parameter 와 유사하다. immutable 이다. state 는 local variable of function 과 같다. mutable 이다. [[React] Props와  State의 차이](https://singa-korean.tistory.com/37) 참고.
-
-react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다. [https://reactjs.org/docs/getting-started.html](https://reactjs.org/docs/getting-started.html) 
-
-# Templates
-
-* [gogo-react](https://gogo-react-docs.coloredstrategies.com/docs/gettingstarted/introduction)
-* [react-admin](https://github.com/marmelab/react-admin)
-  * An enterprise-class UI design language and React UI library
-* [ant-design](https://github.com/ant-design/ant-design)
-* [coreui](https://coreui.io/react/)
+react.js 는 view library 이다. redux 는 state management library 이다. props 는 function parameter 와 유사하다. immutable 이다. state 는 local variable of function 과 같다. mutable 이다. [[React] Props와  State의 차이](https://singa-korean.tistory.com/37) 참고.
 
 # Materials
 
@@ -95,7 +95,64 @@ react.js 의 문서는 완성도가 높다. 모두 읽어봐야 한다. [https:/
   * [Getting Started with Redux](https://egghead.io/courses/getting-started-with-redux)
   * [Building React Applications with Idiomatic Redux](https://egghead.io/courses/building-react-applications-with-idiomatic-redux)
 
+# Templates
+
+* [gogo-react](https://gogo-react-docs.coloredstrategies.com/docs/gettingstarted/introduction)
+* [react-admin](https://github.com/marmelab/react-admin)
+  * An enterprise-class UI design language and React UI library
+* [ant-design](https://github.com/ant-design/ant-design)
+* [coreui](https://coreui.io/react/)
+
+# Tech Stacks
+
+- Essential
+    - react
+    - react-dom
+    - react-router, react-router-dom
+    - typescript
+- Formatting
+    - eslint (airbnb)
+    - prettier
+- Styling
+    - @emotion/react
+    - @emotion/styled
+    - MUI (Material UI)
+- Http Client
+    - axios
+- Client State Management
+    - Zustand 
+    - Jotai
+    - Redux, Redux-saga
+    - Recoil
+- Server State Management
+    - @tanstack/react-query
+- Form State Management & Validation
+    - react-hook-form
+    - zod
+- Unit & Integration testing
+    - jest
+    - @testing-library/jest-dom
+    - @testing-library/react
+    - @testing-library/user-event
+- Api Mocking
+    - msw
+- Authentication
+    - @okta/okta-auth-js
+    - @okta/okta-react
+- e2e testing
+    - cypress
+
 # Movie Tutorial
+
+## Overview
+
+[movie_app](https://github.com/nomadcoders/movie_app/tree) 를 from the scratch 해보자.
+
+## Debugging tools
+
+- [React Developer Tools | chromewebstore](https://chromewebstore.google.com/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi)
+  - Components
+  - Profiler
 
 ## Create React App
 
@@ -122,14 +179,56 @@ $ npm install -g yarn
 $ yarn global add create-react-app
 
 # React 애플리케이션 생성
-$ create-react-app my-app
+$ create-react-app movie-app --template typescript
 
 # 생성한 애플리케이션 디렉토리로 이동
-$ cd my-app
+$ cd movie-app
 
 # 애플리케이션 실행
 $ yarn start
+
+$ tree movie-app -l 2 --gitignore node_module
+movie-app
+├── README.md
+├── package-lock.json
+├── package.json
+├── public
+│   ├── favicon.ico
+│   ├── index.html
+│   ├── logo192.png
+│   ├── logo512.png
+│   ├── manifest.json
+│   └── robots.txt
+├── src
+│   ├── App.css
+│   ├── App.test.tsx
+│   ├── App.tsx
+│   ├── index.css
+│   ├── index.tsx
+│   ├── logo.svg
+│   ├── react-app-env.d.ts
+│   ├── reportWebVitals.ts
+│   └── setupTests.ts
+└── tsconfig.json
 ```
+
+## npx vs npm
+
+- npm (Node Package Manager)
+  - 주된 기능: Node.js 패키지를 설치, 관리, 삭제하는 도구.
+  - 사용법: 일반적으로 `npm install <패키지명>` 명령어를 사용하여 패키지를 설치합니다.
+  - 설치 위치: 패키지를 전역(-g 옵션) 또는 프로젝트 로컬(node_modules 디렉토리)에 설치할 수 있습니다.
+  - 스크립트 실행: 프로젝트 내의 package.json 파일에 정의된 스크립트를 실행하는 데 사용됩니다. 예를 들어, `npm run start`는 package.json에 정의된 start 스크립트를 실행합니다.
+
+- npx (Node Package Execute)
+  - 주된 기능: Node.js 패키지를 일시적으로 실행하는 도구.
+  - 사용법: `npx <명령어>` 형식으로 사용하며, 패키지가 설치되어 있지 않으면 자동으로 설치한 후 실행합니다.
+  - 즉시 실행: npx는 명령어를 실행할 때마다 필요한 패키지를 일시적으로 다운로드하고 실행합니다. 따라서 특정 패키지를 한 번만 사용해야 할 때 유용합니다.
+  - 편리함: 전역 설치 없이도 명령어를 실행할 수 있기 때문에 환경 설정이 간편해집니다.
+
+- 사용 예시
+  - npm: `npm install -g typescript`로 TypeScript를 전역 설치하고 tsc 명령어를 사용합니다.
+  - npx: `npx create-react-app my-app`으로 React 앱을 생성합니다. 이 경우 `create-react-app` 패키지가 자동으로 설치되고 실행된 후, 설치된 패키지는 삭제됩니다.
 
 ## Create React Components with JSX
 
@@ -151,66 +250,69 @@ $ yarn start
 </html>
 
 ////////////////////////////////////////////////////////////////////////////////
-// src/index.js:
+// src/index.tsx:
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 import './index.css';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(<App />, document.getElementById('root') as HTMLElement);
 
 ////////////////////////////////////////////////////////////////////////////////
-// src/App.js:
+// src/App.tsx:
 import React from 'react';
 import './App.css';
 import Movie from './Movie';
 
-// App 컴포넌트는 Movie 컴포넌트를 렌더링합니다.
-function App() {
+const App: React.FC = () => {
   return (
     <div className="App">
       <Movie />
       <Movie />
     </div>
   );
-}
+};
 
 export default App;
 
 ////////////////////////////////////////////////////////////////////////////////
-// src/Movie.js:
+// src/Movie.tsx:
 import React from 'react';
 import './Movie.css';
 
-// Movie 컴포넌트는 MoviePoster 컴포넌트를 렌더링합니다.
-function Movie() {
+const Movie: React.FC = () => {
   return (
     <div>
       <MoviePoster />
       <h1>Hello This is a movie</h1>
     </div>
   );
-}
+};
 
-// MoviePoster 컴포넌트는 이미지를 렌더링합니다.
-function MoviePoster() {
+const MoviePoster: React.FC = () => {
   return (
     <img src='http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg' alt="Movie Poster" />
   );
-}
+};
 
 export default Movie;
 ```
 
-## Data flow with Props
+## Propagate Props
 
 ![](https://miro.medium.com/max/1540/0*NLC2HyJRjh0_3r0e.)
 
-data 를 `src/App.js` 에 선언해 보자. 그리고 `Movie` component 에게 props 형태로 전달한다.
+PropTypes를 사용하여 props가 필수인지 확인하는 것은 JavaScript에서 컴포넌트의 props 타입을 검사하는 일반적인 방법입니다. 그러나 TypeScript를 사용하면 더 강력하고 유지보수하기 쉬운 타입 시스템을 활용할 수 있습니다.
+
+이 접근 방식의 장점:
+
+- 정적 타입 검사: 컴파일 타임에 타입을 검사하여 런타임 오류를 줄일 수 있습니다.
+- IDE 지원: TypeScript는 많은 IDE에서 더 나은 자동 완성, 리팩토링 지원, 코드 네비게이션을 제공합니다.
+- 유지보수 용이성: 타입이 명시적으로 정의되어 있어 코드의 의도를 더 쉽게 이해할 수 있습니다.
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
-// src/App.js:
+// src/App.tsx:
 import React from 'react';
 import Movie from './Movie';
 
@@ -219,16 +321,16 @@ const movieTitles = [
   "Full Metal Jacket",
   "Oldboy",
   "Star wars"
-]
+];
 
 const movieImages = [
   'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
   'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778470_STD.jpg',
   'https://cdn1.thr.com/sites/default/files/imagecache/768x433/2017/06/143289-1496932680-mm_2012_047_italy_57_-_h_2017.jpg',
   'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
-]
+];
 
-function App() {
+const App: React.FC = () => {
   return (
     <div className="App">
       <Movie title={movieTitles[0]} poster={movieImages[0]} />
@@ -242,47 +344,51 @@ function App() {
 export default App;
 
 ////////////////////////////////////////////////////////////////////////////////
-// src/Movie.js:
+// src/Movie.tsx:
 import React from 'react';
-import PropTypes from 'prop-types';
 import './Movie.css';
 
-function Movie({ title, poster }) {
+interface MovieProps {
+  title: string;
+  poster: string;
+}
+
+interface MoviePosterProps {
+  poster: string;
+}
+
+const Movie: React.FC<MovieProps> = ({ title, poster }) => {
   return (
     <div>
       <MoviePoster poster={poster} />
       <h1>{title}</h1>
     </div>
   );
-}
+};
 
-function MoviePoster({ poster }) {
+const MoviePoster: React.FC<MoviePosterProps> = ({ poster }) => {
   return (
     <img src={poster} alt="Movie Poster" />
   );
-}
-
-Movie.propTypes = {
-  title: PropTypes.string.isRequired,
-  poster: PropTypes.string.isRequired
-};
-
-MoviePoster.propTypes = {
-  poster: PropTypes.string.isRequired
 };
 
 export default Movie;
 ```
 
-## Lists With `.maps`
+## Show The List With `.map()`
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
-// src/App.js:
+// src/App.tsx:
 import React from 'react';
 import Movie from './Movie';
 
-const movies = [
+interface MovieType {
+  title: string;
+  poster: string;
+}
+
+const movies: MovieType[] = [
   {
     title: "Matrix",
     poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
@@ -299,17 +405,17 @@ const movies = [
     title: "Star wars",
     poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
   },
-]
+];
 
-function App() {
+const App: React.FC = () => {
   return (
     <div className="App">
-      {movies.map(movie => (
-        <Movie title={movie.title} poster={movie.poster} />
+      {movies.map((movie, index) => (
+        <Movie key={index} title={movie.title} poster={movie.poster} />
       ))}
     </div>
   );
-}
+};
 
 export default App;
 ```
@@ -320,7 +426,7 @@ export default App;
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
-// src/Movie.js:
+// src/Movie.tsx:
 import React from 'react';
 import PropTypes from 'prop-types';
 import './Movie.css';
@@ -1453,6 +1559,18 @@ export default Movie;
 [react.js fundamentals src 2019 update](https://github.com/nomadcoders/movie_app_2019)
 
 [kakao-clone-v2 | github](git@github.com:nomadcoders/kakao-clone-v2.git) 를 통해 css 를 더욱 배울 수 있다.
+
+## Handling Errors
+
+## API Mocking
+
+## Profiles
+
+## react-hook-form, zod
+
+## Unit Test
+
+## E2E Test
 
 ## Building for Production
 
