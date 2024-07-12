@@ -10,24 +10,28 @@
   - [Create React Components with JSX](#create-react-components-with-jsx)
   - [Propagate Props](#propagate-props)
   - [Show The List With `.map()`](#show-the-list-with-map)
-  - [Validating Props With Prop Types](#validating-props-with-prop-types)
   - [Component Lifecycle](#component-lifecycle)
-  - [Thinking in React Component State](#thinking-in-react-component-state)
-  - [Practicing this setState](#practicing-this-setstate)
-  - [SetState Caveats](#setstate-caveats)
+  - [Thinking In React Component State](#thinking-in-react-component-state)
+  - [Practicing `this.setState`](#practicing-thissetstate)
+  - [`setState` Caveats](#setstate-caveats)
   - [Loading States](#loading-states)
   - [AJAX on React](#ajax-on-react)
-  - [Promises](#promises)
+  - [CORS](#cors)
   - [Async Await](#async-await)
   - [Updating Movie](#updating-movie)
   - [CSS for Movie](#css-for-movie)
+  - [Form Input](#form-input)
+  - [Form Validation](#form-validation)
+  - [Form Management (react-hook-form, Zod)](#form-management-react-hook-form-zod)
+  - [Server State Management (react-query)](#server-state-management-react-query)
+  - [Client State Management (Zustand)](#client-state-management-zustand)
   - [Handling Errors](#handling-errors)
-  - [API Mocking](#api-mocking)
+  - [API Mocking (msw)](#api-mocking-msw)
   - [Profiles](#profiles)
-  - [react-hook-form, zod](#react-hook-form-zod)
   - [Unit Test](#unit-test)
   - [E2E Test](#e2e-test)
-  - [Building for Production](#building-for-production)
+  - [Directory Structures](#directory-structures)
+  - [Build, Deploy To GitHub Pages](#build-deploy-to-github-pages)
 - [Advanced](#advanced)
   - [Redux](#redux)
   - [To Do List with redux](#to-do-list-with-redux)
@@ -49,7 +53,6 @@
   - [redux-saga](#redux-saga)
   - [Redux Debugger in Chrome](#redux-debugger-in-chrome)
   - [Don't Use `useEffect`](#dont-use-useeffect)
-- [Architectures](#architectures)
 
 ----
 
@@ -420,59 +423,26 @@ const App: React.FC = () => {
 export default App;
 ```
 
-## Validating Props With Prop Types
-
-`static propTypes` 를 선언하여 props 의 값을 제어할 수 있다. 이때 PropTypes module 이 설치되어야 한다. `yarn add PropTypes`
-
-```js
-////////////////////////////////////////////////////////////////////////////////
-// src/Movie.tsx:
-import React from 'react';
-import PropTypes from 'prop-types';
-import './Movie.css';
-
-function Movie({ title, poster }) {
-  return (
-    <div>
-      <MoviePoster poster={poster} />
-      <h1>{title}</h1>
-    </div>
-  );
-}
-
-function MoviePoster({ poster }) {
-  return (
-    <img src={poster} alt="Movie Poster" />
-  );
-}
-
-Movie.propTypes = {
-  title: PropTypes.string.isRequired,
-  poster: PropTypes.string.isRequired
-};
-
-MoviePoster.propTypes = {
-  poster: PropTypes.string.isRequired
-};
-
-export default Movie;
-```
-
 ## Component Lifecycle
 
-하나의 component 는 다음과 같은 순서로 `Render, Update` 가 수행된다. Override
-function 의 순서를 주의하자.
+Functional Component Rendering and Lifecycle:
 
-```js
-  // Render: componentWillMount() -> render() -> componentDidMount()
-  //
-  // Update: componentWillReceiveProps() -> shouldComponentUpdate() -> 
-  //         componentWillUpate() -> render() -> componentDidUpdate()
-```
+- Initial Render:
+  - `render()`: Functional component의 본문이 실행됩니다.
+  - `useEffect(() => { ... }, [])`: 이 hook은 마운트 후에 실행됩니다. 클래스형 컴포넌트의 componentDidMount에 해당합니다.
+- Update:
+  - `render()`: State나 props가 변경되면 컴포넌트가 다시 렌더링됩니다.
+  - `useEffect(() => { ... })`: 이 hook은 디펜던시 배열이 변경될 때마다 실행됩니다. 클래스형 컴포넌트의 componentDidUpdate에 해당합니다.
+  - `useEffect(() => { return () => { ... } }, [])`: 이 훅의 클린업 함수는 컴포넌트가 언마운트되기 직전에 실행됩니다. 클래스형 컴포넌트의 componentWillUnmount에 해당합니다.
+- Unmount:
+  - `useEffect(() => { return () => { ... } }, [])`: 컴포넌트가 언마운트될 때 클린업 함수가 호출됩니다.
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
-// src/App.js:
+// src/App.tsx:
+// Initial Render: render() -> useEffect(() => { /* componentDidMount */ }, [])
+// Update: render() -> useEffect(() => { /* componentDidUpdate */ })
+//
 import React, { useEffect } from 'react';
 import Movie from './Movie';
 
@@ -493,14 +463,20 @@ const movies = [
     title: "Star wars",
     poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
   },
-]
+];
 
-const App = () => {
+const App: React.FC = () => {
   useEffect(() => {
-    console.log("componentWillMount");
+    // componentDidMount
     console.log("componentDidMount");
+
+    return () => {
+      // componentWillUnmount
+      console.log("componentWillUnmount");
+    };
   }, []);
 
+  // render
   console.log("render");
 
   return (
@@ -515,73 +491,22 @@ const App = () => {
 export default App;
 ```
 
-## Thinking in React Component State
+## Thinking In React Component State
 
-`App` component 에 `state` 를 선언하고 `componentDidMount()` 에서 바꿔보자. `this.setState()` 함수를 호출하면 `render()` 가 호출된다. `state` 를 바꾸고 `this.setState()` 를 호출하여 화면을 업데이트한다. 여기서 언급한 `state` 는 redux 의 `state` 과는 다르다는 것을 주의하자. [React State vs. Redux State: When and Why?](https://spin.atomicobject.com/2017/06/07/react-state-vs-redux-state/)
-
-다음은 smart component 예이다.
+`App` 컴포넌트에 `state`를 선언하고 `useEffect` 훅에서 상태를 변경한다. 상태를 변경하기 위해 `setMovies` 함수를 호출하면 컴포넌트는 다시 렌더링된다. 이 코드는 상태를 변경하고 렌더링을 업데이트하는 과정을 보여준다. React의 `state`와 Redux의 `state`는 서로 다르며, 각각의 사용 목적과 상황에 맞게 사용해야 한다. [React State vs. Redux State: When and Why?](https://spin.atomicobject.com/2017/06/07/react-state-vs-redux-state/)에서 더 자세히 알아볼 수 있다.
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
-// src/App.js:
-import React, { Component } from 'react';
+// src/App.tsx:
+import React, { useState, useEffect } from 'react';
 import Movie from './Movie';
 
-const movies = [
-  {
-    title: "Matrix",
-    poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
-  },
-  {
-    title: "Full Metal Jacket",
-    poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778470_STD.jpg',
-  },
-  {
-    title: "Oldboy",
-    poster: 'https://cdn1.thr.com/sites/default/files/imagecache/768x433/2017/06/143289-1496932680-mm_2012_047_italy_57_-_h_2017.jpg',
-  },
-  {
-    title: "Star wars",
-    poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
-  },
-]
-
-class App extends Component {
-  state = {
-    greeting: 'Hello'
-  }
-  componentDidMount() {
-    setTimeout(() => {
-      this.setState({
-        greeting: 'Hello Again'
-      })
-    }, 2000)
-  }
-  render() {
-    console.log("render");
-    return (
-      <div className="App">
-        {this.state.greeting}
-        {movies.map((movie, index) => (
-          <Movie title={movie.title} poster={movie.poster} key={index} />
-        ))}
-      </div>
-    );
-  }
+interface MovieType {
+  title: string;
+  poster: string;
 }
 
-export default App;
-```
-
-다음은 functional component 예이다.
-
-```js
-////////////////////////////////////////////////////////////////////////////////
-// src/App.js:
-import React, { useEffect } from 'react';
-import Movie from './Movie';
-
-const movies = [
+const initialMovies: MovieType[] = [
   {
     title: "Matrix",
     poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
@@ -598,14 +523,16 @@ const movies = [
     title: "Star wars",
     poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
   },
-]
+];
 
 // 함수형 컴포넌트로 App 정의
-const App = () => {
-  // useEffect 훅을 사용하여 componentWillMount 및 componentDidMount 대체
+const App: React.FC = () => {
+  const [movies, setMovies] = useState<MovieType[]>([]);
+
+  // useEffect 훅을 사용하여 componentDidMount 대체
   useEffect(() => {
-    console.log("componentWillMount");
     console.log("componentDidMount");
+    setMovies(initialMovies); // state 변경
   }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
 
   console.log("render"); // 렌더링 시마다 출력
@@ -621,84 +548,59 @@ const App = () => {
 }
 
 export default App;
-```
 
-## Practicing this setState
-
-`App` component 의 `state` 으로 title, poster 를 옮기자. 그리고 일정 시간 이후에 `state` 을 변경해 보자. `...this.state.movies` 를 이용하면 기존의 array 에 `this.state.movies` 를 unwind 해서 추가할 수 있다. 이 방법을 이용하면 스크롤을 아래로 내렸을 때 infinite scroll 을 구현할 수 있다.
-
-다음은 smart component 의 예이다.
-
-```js
 ////////////////////////////////////////////////////////////////////////////////
-// src/App.js:
-import React, { Component } from 'react';
-import Movie from './Movie';
+// src/Movie.tsx:
+import React from 'react';
+import './Movie.css';
 
-class App extends Component {
-  state = {
-    greeting: 'Hello World',
-    movies: [
-      {
-        title: "Matrix",
-        poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
-      },
-      {
-        title: "Full Metal Jacket",
-        poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778470_STD.jpg',
-      },
-      {
-        title: "Oldboy",
-        poster: 'https://cdn1.thr.com/sites/default/files/imagecache/768x433/2017/06/143289-1496932680-mm_2012_047_italy_57_-_h_2017.jpg',
-      },
-      {
-        title: "Star wars",
-        poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
-      },
-    ]    
-  }
-  componentDidMount() {
-    setTimeout(() => {
-      this.setState({
-        movies: [
-          ...this.state.movies,
-          {
-            title: "Trainspotting",
-            poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
-          }
-        ]
-      })
-    }, 2000)
-  }
-  render() {
-    console.log("render");
-    return (
-      <div className="App">
-        {this.state.greeting}
-        {this.state.movies.map((movie, index) => (
-          <Movie title={movie.title} poster={movie.poster} key={index} />
-        ))}
-      </div>
-    );
-  }
+interface MovieProps {
+  title: string;
+  poster: string;
 }
 
-export default App;
+const Movie: React.FC<MovieProps> = ({ title, poster }) => {
+  return (
+    <div>
+      <MoviePoster poster={poster} />
+      <h1>{title}</h1>
+    </div>
+  );
+};
+
+interface MoviePosterProps {
+  poster: string;
+}
+
+const MoviePoster: React.FC<MoviePosterProps> = ({ poster }) => {
+  return (
+    <img src={poster} alt="Movie Poster" />
+  );
+};
+
+export default Movie;
 ```
 
-다음은 functional component 예이다.
+## Practicing `this.setState`
+
+App 컴포넌트의 `state`로 `title`과 `poster`를 관리하고, 일정 시간 후에 새로운 영화를 추가하여 상태를 변경합니다. `setMovies` 함수를 사용하여 이전 상태를 복사하고 새로운 영화를 추가합니다. 이를 통해 컴포넌트가 다시 렌더링되어 업데이트된 상태를 반영합니다. 이 방법은 무한 스크롤과 같은 기능을 구현할 때 유용합니다. `...prevMovies`를 사용하면 기존 배열을 펼쳐서 새로운 요소를 추가할 수 있습니다. 
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
-// src/App.js:
+// src/App.tsx:
 import React, { useState, useEffect } from 'react';
 import Movie from './Movie';
 
-const App = () => {
+interface MovieType {
+  title: string;
+  poster: string;
+}
+
+const App: React.FC = () => {
   // greeting 상태 정의
-  const [greeting, setGreeting] = useState('Hello World');
+  const [greeting, setGreeting] = useState<string>('Hello World');
   // movies 상태 정의
-  const [movies, setMovies] = useState([
+  const [movies, setMovies] = useState<MovieType[]>([
     {
       title: "Matrix",
       poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
@@ -747,90 +649,36 @@ const App = () => {
 export default App;
 ```
 
-## SetState Caveats
-
-```js
-  // Render:  -> render() -> componentDidMount()
-  //
-  // Update: componentWillReceiveProps() -> shouldComponentUpdate() -> 
-  //         componentWillUpate() -> render() -> componentDidUpdate()
-```
-
-`setState` 를 component lifecycle event handler (`render, componentWillMount, componentWillReceiveProps, shouldComponentUpdate, componentWillUpate, componentDidUpdate`) 에서 호출할 때 주의해야 한다.
+## `setState` Caveats
 
 * [React setState usage and gotchas](https://itnext.io/react-setstate-usage-and-gotchas-ac10b4e03d60)
   * [Boost your React with State Machines](https://www.freecodecamp.org/news/boost-your-react-with-state-machines-1e9641b0aa43/)
 
-다음은 smart component 예이다.
+`useEffect`에서 `setState`를 호출할 때 주의사항:
+
+- 의존성 배열 사용: `useEffect` 훅의 두 번째 인수로 의존성 배열을 전달하여 `componentDidMount`와 동일한 효과를 낼 수 있다. 만약 의존성 배열을 빈 배열로 지정하면, 해당 useEffect 훅은 컴포넌트가 마운트될 때 한 번만 실행된다.
+- 클린업 함수 사용: `useEffect` 훅 내에서 반환되는 함수는 컴포넌트가 언마운트될 때 호출된다. 이를 통해 타이머나 이벤트 리스너 등을 정리할 수 있다. 예를 들어, setTimeout을 사용한 경우, 컴포넌트가 언마운트되기 전에 타이머를 정리하여 메모리 누수를 방지할 수 있다.
+- 비동기 작업 주의: 비동기 작업이 완료된 후 `setState`를 호출하는 경우, 컴포넌트가 이미 언마운트된 상태일 수 있으므로, 이를 방지하기 위해 컴포넌트가 여전히 마운트된 상태인지 확인해야 한다. 이는 클린업 함수를 통해 해결할 수 있다.
+- 불필요한 상태 업데이트 방지: `setState`를 호출하면 컴포넌트가 다시 렌더링되므로, 불필요한 상태 업데이트를 피해야 한다. 필요한 경우에만 상태를 업데이트하도록 조건을 설정할 수 있다.
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
-// src/App.js:
-import React, { Component } from 'react';
-import Movie from './Movie';
-
-class App extends Component {
-  state = {
-    movies: []
-  }
-  componentDidMount() {
-    setTimeout(() => {
-      this.setState({
-        movies: [
-          {
-            title: "Matrix",
-            poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
-          },
-          {
-            title: "Full Metal Jacket",
-            poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778470_STD.jpg',
-          },
-          {
-            title: "Oldboy",
-            poster: 'https://cdn1.thr.com/sites/default/files/imagecache/768x433/2017/06/143289-1496932680-mm_2012_047_italy_57_-_h_2017.jpg',
-          },
-          {
-            title: "Star wars",
-            poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
-          },
-        ]
-      })
-    }, 2000)
-  }
-  render() {
-    console.log("render");
-    return (
-      <div className="App">
-        {this.state.movies.length > 0 ? (
-          this.state.movies.map((movie, index) => (
-            <Movie title={movie.title} poster={movie.poster} key={index} />
-          ))
-        ) : (
-          'Loading...'
-        )}
-      </div>
-    );
-  }
-}
-
-export default App;
-```
-
-다음은 functional component 예이다.
-
-```js
-////////////////////////////////////////////////////////////////////////////////
-// src/App.js:
+// src/App.tsx:
 import React, { useState, useEffect } from 'react';
 import Movie from './Movie';
 
-const App = () => {
+interface MovieType {
+  title: string;
+  poster: string;
+}
+
+const App: React.FC = () => {
   // movies 상태 정의, 초기값은 빈 배열
-  const [movies, setMovies] = useState([]);
+  const [movies, setMovies] = useState<MovieType[]>([]);
 
   // useEffect 훅을 사용하여 componentDidMount 대체
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       // setMovies 함수를 사용하여 movies 상태 업데이트
       setMovies([
         {
@@ -851,6 +699,9 @@ const App = () => {
         },
       ]);
     }, 2000);
+
+    // Cleanup function to clear the timeout if the component unmounts
+    return () => clearTimeout(timer);
   }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
 
   console.log("render"); // 렌더링 시마다 출력
@@ -874,65 +725,7 @@ export default App;
 
 ## Loading States
 
-loading screen 을 구현해 보자. `App` component 에 rendering 을 시작하자 마자 `Loading...` 을 출력하고 일정 시간이 지나면 state 을 업데이트하여 movies 가 rendering 되도록 해보자.
-
-다음은 smart component 예이다.
-
-```js
-////////////////////////////////////////////////////////////////////////////////
-// src/App.js:
-import React, { Component } from 'react';
-import Movie from './Movie';
-
-class App extends Component {
-  state = {
-    greeting: 'Hello World',
-    movies: null,
-  }
-  componentDidMount() {
-    setTimeout(() => {
-      this.setState({
-        movies: [
-          {
-            title: "Matrix",
-            poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778581_STD.jpg',
-          },
-          {
-            title: "Full Metal Jacket",
-            poster: 'http://ojsfile.ohmynews.com/STD_IMG_FILE/2014/1202/IE001778470_STD.jpg',
-          },
-          {
-            title: "Oldboy",
-            poster: 'https://cdn1.thr.com/sites/default/files/imagecache/768x433/2017/06/143289-1496932680-mm_2012_047_italy_57_-_h_2017.jpg',
-          },
-          {
-            title: "Star wars",
-            poster: 'https://cdn1.thr.com/sites/default/files/2017/06/143226-1496932903-mm_2012_047_italy_11_-_embed_2018.jpg',
-          },
-        ]    
-      })
-    }, 2000)
-  }
-  _renderMovies = () => {
-    const movies = this.state.movies.map((movie, index) => (
-      <Movie title={movie.title} poster={movie.poster} key={index} />
-    ));
-    return movies;
-  }
-  render() {
-    console.log("render");
-    return (
-      <div className="App">
-        {this.state.movies ? this._renderMovies() : 'Loading...'}
-      </div>
-    );
-  }
-}
-
-export default App;
-```
-
-다음은 functional component 예이다.
+이 코드에서는 `useState`를 사용하여 `movies` 상태를 관리합니다. 초기값은 `null`로 설정되어 있으며, `useEffect`를 사용하여 컴포넌트가 마운트될 때 2초 후에 `movies` 상태를 업데이트합니다. 상태가 `null`인 동안에는 'Loading...' 메시지를 표시하고, 상태가 업데이트되면 영화 목록을 렌더링합니다.
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
@@ -940,15 +733,20 @@ export default App;
 import React, { useState, useEffect } from 'react';
 import Movie from './Movie';
 
-const App = () => {
+interface MovieType {
+  title: string;
+  poster: string;
+}
+
+const App: React.FC = () => {
   // greeting 상태 정의, 초기값은 'Hello World'
-  const [greeting, setGreeting] = useState('Hello World');
+  const [greeting, setGreeting] = useState<string>('Hello World');
   // movies 상태 정의, 초기값은 null
-  const [movies, setMovies] = useState(null);
+  const [movies, setMovies] = useState<MovieType[] | null>(null);
 
   // useEffect 훅을 사용하여 componentDidMount 대체
   useEffect(() => {
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       // setMovies 함수를 사용하여 movies 상태 업데이트
       setMovies([
         {
@@ -969,11 +767,14 @@ const App = () => {
         },
       ]);
     }, 2000);
+
+    // Cleanup function to clear the timeout if the component unmounts
+    return () => clearTimeout(timer);
   }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
 
-  // _renderMovies 메서드를 함수형 컴포넌트 내에 정의
+  // renderMovies 메서드를 함수형 컴포넌트 내에 정의
   const renderMovies = () => {
-    return movies.map((movie, index) => (
+    return movies!.map((movie, index) => (
       // Movie 컴포넌트에 title과 poster props 전달
       <Movie title={movie.title} poster={movie.poster} key={index} />
     ));
@@ -993,76 +794,34 @@ export default App;
 
 ## AJAX on React
 
-* [Added CORS to Fetch Request @ src](https://github.com/nomadcoders/movie_app/commit/a5e045ecee069b2cb332892cb60061e8b5b22bd5)
-
-----
-
 AJAX 는 **Asynchrous JavaScript and XML** 의 약자이다. 그러나 XML 은 사용하지 않고 JSON 을 사용한다. AJAJ 로 바뀌어야 한다??? 다음은 fetch 함수를 이용하여 XHR (XML HTTP Request) 를 실행한 것이다.
 
-다음은 smart component 예이다.
-
-```js
-////////////////////////////////////////////////////////////////////////////////
-// src/App.js:
-import React, { Component } from 'react';
-import Movie from './Movie';
-
-class App extends Component {
-  state = {
-    movies: null
-  };
-  componentDidMount() {
-    fetch('https://yts.ag/api/v2/list_movies.json?sort_by=rating')
-      .then(potato => potato.json())
-      .then(json => {
-        this.setState({
-          movies: json.data.movies
-        });
-      });
-  }
-  _renderMovies = () => {
-    const movies = this.state.movies.map((movie, index) => (
-      <Movie title={movie.title} poster={movie.medium_cover_image} key={index} />
-    ));
-    return movies;
-  }
-  render() {
-    console.log("render");
-    return (
-      <div className="App">
-        {this.state.movies ? this._renderMovies() : 'Loading...'}
-      </div>
-    );
-  }
-}
-
-export default App;
-```
-
-다음은 functional component 예이다.
-
 ```js
 ////////////////////////////////////////////////////////////////////////////////
 // src/App.js:
 import React, { useState, useEffect } from 'react';
 import Movie from './Movie';
 
-const App = () => {
+interface MovieType {
+  title: string;
+  medium_cover_image: string;
+}
+
+const App: React.FC = () => {
   // movies 상태 정의, 초기값은 null
-  const [movies, setMovies] = useState(null);
+  const [movies, setMovies] = useState<MovieType[] | null>(null);
 
   // useEffect 훅을 사용하여 componentDidMount 대체
   useEffect(() => {
-    fetch('https://yts.ag/api/v2/list_movies.json?sort_by=rating')
-      .then(potato => potato.json())
-      .then(json => {
-        setMovies(json.data.movies);
-      });
+    fetch('https://yts.mx/api/v2/list_movies.json?sort_by=rating')
+      .then(response => response.json())
+      .then(json => { setMovies(json.data.movies) })
+      .catch(error => { console.error('Error fetching movies:', error) });
   }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
 
-  // _renderMovies 메서드를 함수형 컴포넌트 내에 정의
+  // renderMovies 메서드를 함수형 컴포넌트 내에 정의
   const renderMovies = () => {
-    return movies.map((movie, index) => (
+    return movies!.map((movie, index) => (
       // Movie 컴포넌트에 title과 poster props 전달
       <Movie title={movie.title} poster={movie.medium_cover_image} key={index} />
     ));
@@ -1080,141 +839,45 @@ const App = () => {
 export default App;
 ```
 
-## Promises
+Promise 는 [JavaScript Promise](/js/README.md#async-await) 를 참고하여 이해하자. 그러나 promise 는 `then()` 을 무수히 만들어 낸다. 이것을 **Callback Hell** 이라고 한다. `Async Await` 을 이용하면 **Callback Hell** 을 탈출할 수 있다.
 
-[javascript proxy](/js/README.md#promise) 를 참고하여 이해하자. 다음은 앞서 작성한 XHR 의 handler 를 추가한 것이다.
+## CORS
 
-```js
-////////////////////////////////////////////////////////////////////////////////
-// Smart Component
-// src/App.js:
-import React, { Component } from 'react';
-import Movie from './Movie';
+[CORS](/cors/README.md) 를 참고하자.
 
-class App extends Component {
-  state = {
-    movies: null
-  };
-  componentDidMount() {
-    fetch('https://yts.ag/api/v2/list_movies.json?sort_by=rating')
-      .then(potato => potato.json())
-      .then(json => this.setState({ movies: json.data.movies }))
-      .catch(err => console.log(err));
-  }
-  _renderMovies = () => {
-    const movies = this.state.movies.map((movie, index) => (
-      <Movie title={movie.title} poster={movie.medium_cover_image} key={index} />
-    ));
-    return movies;
-  }
-  render() {
-    console.log("render");
-    return (
-      <div className="App">
-        {this.state.movies ? this._renderMovies() : 'Loading...'}
-      </div>
-    );
-  }
-}
-
-export default App;
-
-////////////////////////////////////////////////////////////////////////////////
-// Functional Component
-// src/App.js:
-import React, { useState, useEffect } from 'react';
-import Movie from './Movie';
-
-const App = () => {
-  // movies 상태 정의, 초기값은 null
-  const [movies, setMovies] = useState(null);
-
-  // useEffect 훅을 사용하여 componentDidMount 대체
-  useEffect(() => {
-    fetch('https://yts.ag/api/v2/list_movies.json?sort_by=rating')
-      .then(potato => potato.json())
-      .then(json => setMovies(json.data.movies))
-      .catch(err => console.log(err)); // 에러 처리
-  }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
-
-  // _renderMovies 메서드를 함수형 컴포넌트 내에 정의
-  const renderMovies = () => {
-    return movies.map((movie, index) => (
-      // Movie 컴포넌트에 title과 poster props 전달
-      <Movie title={movie.title} poster={movie.medium_cover_image} key={index} />
-    ));
-  };
-
-  console.log("render"); // 렌더링 시마다 출력
-
-  return (
-    <div className="App">
-      {movies ? renderMovies() : 'Loading...'} {/* movies 상태가 null이 아니면 영화 목록 렌더링, 그렇지 않으면 'Loading...' 표시 */}
-    </div>
-  );
-};
-
-export default App;
-```
-
-그러나 CORS 설정이 되어 있지 않아서 error 가 발생한다. 다음과 같이 proxy 를 설정하면 해결할 수 있다.
+만약 CORS 설정이 되어 있지 않아서 error 가 발생한다면 다음과 같이 proxy 를 설정하여 해결한다. 그런데 잘 안된다. (2024.07.12)
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
-// Smart Component
-// src/App.js:
-class App extends Component {
-  state = {};
-  componentDidMount() {
-    const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const url = 'https://yts.ag/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
-    fetch(proxyurl + url)
-    .then((resp) => resp.json())
-    .then(json => console.log(json))
-    .catch(err => console.log(err));
-  }
-  _renderMovies = () => {
-    const movies = this.state.movies.map((movie, index) => {
-      return <Movie title={movie.title} poster={movie.poster} key={index} />
-    })
-    return movies;
-  }
-  render() {
-    console.log("render");
-    return (
-      <div className="App">
-        {this.state.movies ? this._renderMovies() : 'Loading...'}
-      </div>
-    );
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Functional Component
-// src/App.js:
+// src/App.tsx:
 import React, { useState, useEffect } from 'react';
 import Movie from './Movie';
 
-const App = () => {
+interface MovieType {
+  title: string;
+  poster: string;
+}
+
+const App: React.FC = () => {
   // movies 상태 정의, 초기값은 null
-  const [movies, setMovies] = useState(null);
+  const [movies, setMovies] = useState<MovieType[] | null>(null);
 
   // useEffect 훅을 사용하여 componentDidMount 대체
   useEffect(() => {
     const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const url = 'https://yts.ag/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
+    const url = 'https://yts.mx/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
     fetch(proxyurl + url)
       .then((resp) => resp.json())
       .then(json => {
         console.log(json); // 데이터 확인
         setMovies(json.data.movies); // movies 상태 업데이트
       })
-      .catch(err => console.log(err)); // 에러 처리
+      .catch(err => console.error('Error fetching movies:', err)); // 에러 처리
   }, []); // 빈 배열을 두 번째 인수로 주어 componentDidMount와 동일한 효과
 
-  // _renderMovies 메서드를 함수형 컴포넌트 내에 정의
+  // renderMovies 메서드를 함수형 컴포넌트 내에 정의
   const renderMovies = () => {
-    return movies.map((movie, index) => (
+    return movies!.map((movie, index) => (
       // Movie 컴포넌트에 title과 poster props 전달
       <Movie title={movie.title} poster={movie.poster} key={index} />
     ));
@@ -1232,62 +895,26 @@ const App = () => {
 export default App;
 ```
 
-그러나 promise 는 `then()` 을 무수히 만들어 낸다. 이것을 **Callback Hell** 이라고 한다. `Async Await` 을 이용하면 **Callback Hell** 을 탈출할 수 있다.
-
 ## Async Await
 
-[JavaScript async](/js/README.md#async) 를 참고하여 이해하자. promise 는 then() 의 남용으로 Call Back 함수가 많아져서 code 의 readability 를 떨어뜨린다. `async, await` 을 이용하면 call back functions 을 줄일 수 있고 code 의 readability 를 끌어 올릴 수 있다.
+[JavaScript Async & Await](/js/README.md#async-await) 를 참고하여 이해하자. Promise 는 `then()` 의 남용으로 Call Back 함수가 많아져서 code 의 readability 를 떨어뜨린다. `async, await` 을 이용하면 call back functions 을 줄일 수 있고 code 의 readability 를 끌어 올릴 수 있다.
 
 `async` 로 function 을 선언하면 function 안에서 `await` 로 기다릴 수 있다. `await` 로 기다리는 것은 `promise` 이다.
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
-// Smart Component
-// src/App.js:
-class App extends Component {
-  state = {};
-  componentDidMount() {
-    this._getMovies();
-  }
-  _renderMovies = () => {
-    const movies = this.state.movies.map((movie, index) => {
-      return <Movie title={movie.title} poster={movie.large_cover_image} key={index} />
-    })
-    return movies;
-  }
-  _getMovies = async () => {
-    const movies = await this._callApi();
-    this.setState({
-      movies
-    });
-  }
-  _callApi = () => {
-    const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const url = 'https://yts.ag/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
-    return fetch(proxyurl + url)
-    .then((resp) => resp.json())
-    .then(json => json.data.movies)
-    .catch(err => console.log(err));
-  }
-  render() {
-    console.log("render");
-    return (
-      <div className="App">
-        {this.state.movies ? this._renderMovies() : 'Loading...'}
-      </div>
-    );
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Functional Component
-// src/App.js:
+// src/App.tsx:
 import React, { useState, useEffect } from 'react';
 import Movie from './Movie';
 
-const App = () => {
+interface MovieType {
+  title: string;
+  large_cover_image: string;
+}
+
+const App: React.FC = () => {
   // movies 상태 정의, 초기값은 null
-  const [movies, setMovies] = useState(null);
+  const [movies, setMovies] = useState<MovieType[] | null>(null);
 
   // useEffect 훅을 사용하여 componentDidMount 대체
   useEffect(() => {
@@ -1301,18 +928,21 @@ const App = () => {
   }
 
   // API 호출 함수 정의
-  const callApi = () => {
-    const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const url = 'https://yts.ag/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
-    return fetch(proxyurl + url)
-      .then((resp) => resp.json())
-      .then(json => json.data.movies)
-      .catch(err => console.log(err)); // 에러 처리
+  const callApi = async (): Promise<MovieType[]> => {
+    const url = 'https://yts.mx/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
+    try {
+      const response = await fetch(url);
+      const json = await response.json();
+      return json.data.movies;
+    } catch (err) {
+      console.error('Error fetching movies:', err);
+      return [];
+    }
   }
 
   // renderMovies 함수 정의
   const renderMovies = () => {
-    return movies.map((movie, index) => (
+    return movies!.map((movie, index) => (
       // Movie 컴포넌트에 title과 poster props 전달
       <Movie title={movie.title} poster={movie.large_cover_image} key={index} />
     ));
@@ -1336,119 +966,20 @@ export default App;
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
-// Smart Component
-// src/App.js:
-class App extends Component {
-  state = {};
-  componentDidMount() {
-    this._getMovies();
-  }
-  _renderMovies = () => {
-    const movies = this.state.movies.map((movie, index) => {
-      return <Movie title={movie.title_english} 
-      poster={movie.medium_cover_image}       
-      key={index} 
-      genres={movie.generes}
-      synopsis={movie.synopsis}
-      />
-    })
-    return movies;
-  }
-  _getMovies = async () => {
-    const movies = await this._callApi();
-    this.setState({
-      movies
-    });
-  }
-  _callApi = () => {
-    const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const url = 'https://yts.ag/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
-    return fetch(proxyurl + url)
-    .then((resp) => resp.json())
-    .then(json => json.data.movies)
-    .catch(err => console.log(err));
-  }
-  render() {
-    console.log("render");
-    return (
-      <div className="App">
-        {this.state.movies ? this._renderMovies() : 'Loading...'}
-      </div>
-    );
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// Smart Component
-// src/Movie.js:
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import './Movie.css';
-
-// Movie 컴포넌트는 MoviePoster 컴포넌트를 렌더링합니다.
-class Movie extends Component {
-  render() {
-    const { title, poster, genres, synopsis } = this.props;
-    return (
-      <div className="Movie">
-        <div className="Movie__Columns">
-          <MoviePoster poster={poster} alt={title} />
-        </div>
-        <div className="Movie__Columns">
-          <h1>{title}</h1>
-          <div className="Movie__Genre">
-            {genres.map((genre, index) => (
-              <MovieGenre genre={genre} key={index} />
-            ))}
-          </div>
-          <p className="Movie__Synopsis">{synopsis}</p>
-        </div>
-      </div>
-    );
-  }
-}
-
-class MoviePoster extends Component {
-  render() {
-    const { poster, alt } = this.props;
-    return <img src={poster} alt={alt} title={alt} className="Movie__Poster" />;
-  }
-}
-
-class MovieGenre extends Component {
-  render() {
-    const { genre } = this.props;
-    return <span className="Movie__Genre">{genre}</span>;
-  }
-}
-
-Movie.propTypes = {
-  title: PropTypes.string.isRequired,
-  poster: PropTypes.string.isRequired,
-  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
-  synopsis: PropTypes.string.isRequired,
-};
-
-MoviePoster.propTypes = {
-  poster: PropTypes.string.isRequired,
-  alt: PropTypes.string.isRequired,
-};
-
-MovieGenre.propTypes = {
-  genre: PropTypes.string.isRequired,
-};
-
-export default Movie;
-
-////////////////////////////////////////////////////////////////////////////////
-// Functional Component
-// src/App.js:
+// src/App.tsx:
 import React, { useState, useEffect } from 'react';
 import Movie from './Movie';
 
-const App = () => {
+interface MovieType {
+  title_english: string;
+  medium_cover_image: string;
+  genres: string[];
+  synopsis: string;
+}
+
+const App: React.FC = () => {
   // movies 상태 정의, 초기값은 null
-  const [movies, setMovies] = useState(null);
+  const [movies, setMovies] = useState<MovieType[] | null>(null);
 
   // useEffect 훅을 사용하여 componentDidMount 대체
   useEffect(() => {
@@ -1462,18 +993,21 @@ const App = () => {
   }
 
   // API 호출 함수 정의
-  const callApi = () => {
-    const proxyurl = "https://cors-anywhere.herokuapp.com/";
-    const url = 'https://yts.ag/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
-    return fetch(proxyurl + url)
-      .then((resp) => resp.json())
-      .then(json => json.data.movies)
-      .catch(err => console.log(err)); // 에러 처리
+  const callApi = async (): Promise<MovieType[]> => {
+    const url = 'https://yts.mx/api/v2/list_movies.json?sort_by=rating'; // site that doesn’t send Access-Control-*
+    try {
+      const response = await fetch(url);
+      const json = await response.json();
+      return json.data.movies;
+    } catch (err) {
+      console.error('Error fetching movies:', err);
+      return [];
+    }
   }
 
   // renderMovies 함수 정의
   const renderMovies = () => {
-    return movies.map((movie, index) => (
+    return movies!.map((movie, index) => (
       // Movie 컴포넌트에 title, poster, genres, synopsis props 전달
       <Movie 
         title={movie.title_english} 
@@ -1497,14 +1031,18 @@ const App = () => {
 export default App;
 
 ////////////////////////////////////////////////////////////////////////////////
-// Functional Component
-// src/Movie.js:
+// src/Movie.tsx:
 import React from 'react';
-import PropTypes from 'prop-types';
 import './Movie.css';
 
-// Movie 컴포넌트는 MoviePoster 컴포넌트를 렌더링합니다.
-function Movie({ title, poster, genres, synopsis }) {
+interface MovieProps {
+  title: string;
+  poster: string;
+  genres: string[];
+  synopsis: string;
+}
+
+const Movie: React.FC<MovieProps> = ({ title, poster, genres, synopsis }) => {
   return (
     <div className="Movie">
       <div className="Movie__Columns">
@@ -1521,58 +1059,366 @@ function Movie({ title, poster, genres, synopsis }) {
       </div>
     </div>
   );
+};
+
+interface MoviePosterProps {
+  poster: string;
+  alt: string;
 }
 
-function MoviePoster({ poster, alt }) {
+const MoviePoster: React.FC<MoviePosterProps> = ({ poster, alt }) => {
   return (
     <img src={poster} alt={alt} title={alt} className="Movie__Poster" />
   );
+};
+
+interface MovieGenreProps {
+  genre: string;
 }
 
-function MovieGenre({ genre }) {
+const MovieGenre: React.FC<MovieGenreProps> = ({ genre }) => {
   return (
     <span className="Movie__Genre">{genre}</span>
   );
-}
-
-Movie.propTypes = {
-  title: PropTypes.string.isRequired,
-  poster: PropTypes.string.isRequired,
-  genres: PropTypes.arrayOf(PropTypes.string).isRequired,
-  synopsis: PropTypes.string.isRequired,
-}
-
-MoviePoster.propTypes = {
-  poster: PropTypes.string.isRequired,
-  alt: PropTypes.string.isRequired,
-}
-
-MovieGenre.propTypes = {
-  genre: PropTypes.string.isRequired,
-}
+};
 
 export default Movie;
 ```
 
 ## CSS for Movie
 
-[react.js fundamentals src 2019 update](https://github.com/nomadcoders/movie_app_2019)
+[CSS](/css/README.md), [react.js fundamentals src 2019 update](https://github.com/nomadcoders/movie_app_2019), [kakao-clone-v2 | github](https://github.com/nomadcoders/kakao-clone-v2) 를 통해 css 를 더욱 배울 수 있다.
 
-[kakao-clone-v2 | github](git@github.com:nomadcoders/kakao-clone-v2.git) 를 통해 css 를 더욱 배울 수 있다.
+```css
+.Movie{
+    background-color:white;
+    width:40%;
+    display: flex;
+    justify-content: space-between;
+    align-items:flex-start;
+    flex-wrap:wrap;
+    margin-bottom:50px;
+    text-overflow: ellipsis;
+    padding:0 20px;
+    box-shadow: 0 8px 38px rgba(133, 133, 133, 0.3), 0 5px 12px rgba(133, 133, 133,0.22);
+}
+
+.Movie__Column{
+    width:30%;
+    box-sizing:border-box;
+    text-overflow: ellipsis;
+}
+
+.Movie__Column:last-child{
+    padding:20px 0;
+    width:60%;
+}
+
+.Movie h1{
+    font-size:20px;
+    font-weight: 600;
+}
+
+.Movie .Movie__Genres{
+    display: flex;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+}
+
+.Movie__Genres .Movie__Genre{
+    margin-right:10px;
+    color:#B4B5BD;
+}
+
+.Movie .Movie__Synopsis {
+    text-overflow: ellipsis;
+    color:#B4B5BD;
+    overflow: hidden;
+}
+
+.Movie .Movie__Poster{
+    max-width: 100%;
+    position: relative;
+    top:-20px;
+    box-shadow: -10px 19px 38px rgba(83, 83, 83, 0.3), 10px 15px 12px rgba(80,80,80,0.22);
+}
+
+@media screen and (min-width:320px) and (max-width:667px){
+    .Movie{
+        width:100%;
+    }
+}
+
+@media screen and (min-width:320px) and (max-width:667px) and (orientation: portrait){
+    .Movie{
+        width:100%;
+        flex-direction: column;
+    }
+    .Movie__Poster{
+        top:0;
+        left:0;
+        width:100%;
+    }
+    .Movie__Column{
+        width:100%!important;
+    }
+}
+```
+
+## Form Input
+
+`url` 을 form 으로 입력받고 영화를 다운로드 하자.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// App.tsx
+import React, { useState, useEffect } from 'react';
+import Movie from './Movie';
+import MovieForm from './MovieForm';
+
+interface MovieType {
+    title_english: string;
+    medium_cover_image: string;
+    genres: string[];
+    synopsis: string;
+}
+
+const App: React.FC = () => {
+    // movies 상태 정의, 초기값은 null
+    const [movies, setMovies] = useState<MovieType[] | null>(null);
+    // downloadUrl 상태 정의, 초기값은 빈 문자열
+    const [downloadUrl, setDownloadUrl] = useState<string>('');
+
+    // useEffect 훅을 사용하여 componentDidMount 대체
+    useEffect(() => {
+        if (downloadUrl) {
+            getMovies();
+        }
+    }, [downloadUrl]); // downloadUrl이 변경될 때마다 실행
+
+    // 영화 데이터를 가져오는 비동기 함수 정의
+    const getMovies = async () => {
+        const movies = await callApi();
+        setMovies(movies); // movies 상태 업데이트
+    };
+
+    // API 호출 함수 정의
+    const callApi = async (): Promise<MovieType[]> => {
+        try {
+            const response = await fetch(downloadUrl);
+            const json = await response.json();
+            return json.data.movies;
+        } catch (err) {
+            console.error('Error fetching movies:', err);
+            return [];
+        }
+    };
+
+    // renderMovies 함수 정의
+    const renderMovies = () => {
+        return movies!.map((movie, index) => (
+            // Movie 컴포넌트에 title, poster, genres, synopsis props 전달
+            <Movie
+                title={movie.title_english}
+                poster={movie.medium_cover_image}
+                key={index}
+                genres={movie.genres}
+                synopsis={movie.synopsis}
+            />
+        ));
+    };
+
+    console.log('render'); // 렌더링 시마다 출력
+
+    return (
+        <div className="App">
+            <div>
+                <MovieForm onSubmit={setDownloadUrl} />
+            </div>
+            <div style={{ marginTop: '20px' }}>
+                {movies ? renderMovies() : 'Loading...'} {/* movies 상태가 null이 아니면 영화 목록 렌더링, 그렇지 않으면 'Loading...' 표시 */}
+            </div>
+        </div>
+    );
+};
+
+export default App;
+
+////////////////////////////////////////////////////////////////////////////////
+// MovieForm.tsx
+import React, { useState } from 'react';
+
+interface MovieFormProps {
+    onSubmit: (url: string) => void;
+}
+
+const MovieForm: React.FC<MovieFormProps> = ({ onSubmit }) => {
+    const [url, setUrl] = useState<string>('https://yts.mx/api/v2/list_movies.json?sort_by=rating');
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUrl(e.target.value);
+    };
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        onSubmit(url);
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input
+                type="text"
+                placeholder="Enter download URL"
+                value={url}
+                onChange={handleChange}
+            />
+            <button type="submit">Download Movies</button>
+        </form>
+    );
+};
+
+export default MovieForm;
+```
+
+## Form Validation
+
+`url` 을 regex 으로 검증해보자.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// MovieForm
+import React, { useState } from 'react';
+
+interface MovieFormProps {
+    onSubmit: (url: string) => void;
+}
+
+const MovieForm: React.FC<MovieFormProps> = ({ onSubmit }) => {
+    const [url, setUrl] = useState<string>('https://yts.mx/api/v2/list_movies.json?sort_by=rating');
+    const [isValidUrl, setIsValidUrl] = useState<boolean>(true);
+
+    const validateUrl = (url: string): boolean => {
+        const urlRegex = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/;
+        return urlRegex.test(url);
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const inputUrl = e.target.value;
+        setUrl(inputUrl);
+        setIsValidUrl(validateUrl(inputUrl));
+    };
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (isValidUrl) {
+            onSubmit(url);
+        } else {
+            alert('Please enter a valid URL');
+        }
+    };
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input
+                type="text"
+                placeholder="Enter download URL"
+                value={url}
+                onChange={handleChange}
+            />
+            <button type="submit" disabled={!isValidUrl}>Download Movies</button>
+            {!isValidUrl && <p style={{ color: 'red' }}>Please enter a valid URL.</p>}
+        </form>
+    );
+};
+
+export default MovieForm;
+```
+
+## Form Management (react-hook-form, Zod)
+
+## Server State Management (react-query)
+
+## Client State Management (Zustand)
 
 ## Handling Errors
 
-## API Mocking
+## API Mocking (msw)
 
 ## Profiles
-
-## react-hook-form, zod
 
 ## Unit Test
 
 ## E2E Test
 
-## Building for Production
+## Directory Structures
+
+* [Optimize React apps using a multi-layered structure](https://blog.logrocket.com/optimize-react-apps-using-a-multi-layered-structure/)
+
+```py
+public/
+src/
+	__mocks__/ # mocking dir
+		api/
+			[dir]/
+				fixtures/ # dir to store json
+				handlers/ # dir to handle api
+	__tests__/ # test dir
+	pages/ # pages dir
+		[dir]/
+			index.tsx 
+	features/ # dir to be used in pages
+		[dir]/
+			api/ # dir to manage apis
+			components/ # dir to manage components
+			constants/ # dir to manage constants
+			hooks/ # dir to manage hooks
+			queries/ # dir to manage react-query's useQuery hooks
+			mutations/ # dir to manage react-query's useMutation hooks
+			types/ # dir to manage types
+			utils/ # dir to manage utility functions
+	openapi/ # dir to manage openapi
+	shared/ # dir to manage project-wide shared items
+		components/
+		constants/
+		hooks/
+		utils/
+		types/
+```
+
+- `public/`:
+  - 정적 파일들을 저장하는 폴더입니다. 예를 들어, index.html, 이미지 파일 등이 여기에 포함될 수 있습니다.
+- `src/`:
+  - 소스 코드의 루트 디렉토리입니다.
+- `__mocks__/`:
+  - 테스트를 위한 mocking 데이터를 저장하는 폴더입니다.
+- `fixtures/`: 테스트용 JSON 데이터를 저장합니다.
+- `handlers/`: Mock API 처리 로직을 관리합니다.
+- `__tests__/`:
+  - 모든 테스트 파일을 저장하는 폴더입니다. 테스트 파일이 각 기능별로 분산되지 않고 한 곳에 모아져 있어 관리하기 쉽습니다.
+- `pages/`:
+  - 각 페이지별 컴포넌트를 관리하는 폴더입니다.
+  - `[dir]/index.tsx`: 각 페이지의 진입점 파일입니다.
+- `features/`:
+  - 페이지에서 사용할 기능별 모듈을 관리하는 폴더입니다.
+  - `api/`: API 호출 로직을 관리합니다.
+  - `components/`: 해당 기능에서 사용하는 컴포넌트를 관리합니다.
+  - `constants/`: 기능별 상수를 관리합니다.
+  - `hooks/`: 기능별 훅을 관리합니다.
+  - `queries/`: React Query의 useQuery 훅을 관리합니다.
+  - `mutations/`: React Query의 useMutation 훅을 관리합니다.
+  - `types/`: 타입스크립트 타입 정의를 관리합니다.
+  - `utils/`: 유틸리티 함수들을 관리합니다.
+- `openapi/`:
+  - OpenAPI 스펙을 관리하는 폴더입니다. API 문서화 및 클라이언트 코드 생성을 위해 사용됩니다.
+- `shared/`:
+  - 프로젝트 전반적으로 사용되는 공통 모듈을 관리하는 폴더입니다.
+  - `components/`: 공통 컴포넌트를 관리합니다.
+  - `constants/`: 전역 상수를 관리합니다.
+  - `hooks/`: 공통 훅을 관리합니다.
+  - `utils/`: 공통 유틸리티 함수들을 관리합니다.
+  - `types/`: 전역 타입 정의를 관리합니다.
+
+## Build, Deploy To GitHub Pages
 
 지금까지 제작한 react.js app 을 `github` 에 publishing 해보자.
 
@@ -2214,7 +2060,3 @@ const store = createStore(
 ## Don't Use `useEffect`
 
 - [You Might Not Need an Effect | react.js](https://react.dev/learn/you-might-not-need-an-effect)
-
-# Architectures
-
-* [Optimize React apps using a multi-layered structure](https://blog.logrocket.com/optimize-react-apps-using-a-multi-layered-structure/)
