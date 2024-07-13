@@ -1,3 +1,19 @@
+- [Materials](#materials)
+- [Practice Routine](#practice-routine)
+  - [Circle Of Fifth](#circle-of-fifth)
+  - [Major Scale](#major-scale)
+  - [Natural Minor Scale](#natural-minor-scale)
+  - [Harmonic Minor Scale](#harmonic-minor-scale)
+  - [Melodic Minor Scale](#melodic-minor-scale)
+  - [Chords On 1, 2, 3, 4 Strings](#chords-on-1-2-3-4-strings)
+  - [Chords Based On 5, 6 String](#chords-based-on-5-6-string)
+  - [IIm7 - V7 - IM7](#iim7---v7---im7)
+  - [Up and Down On 5 Patterns](#up-and-down-on-5-patterns)
+  - [Major Modes on 5 Patterns](#major-modes-on-5-patterns)
+  - [Pentatonic Scales on 5 Patterns](#pentatonic-scales-on-5-patterns)
+
+-----
+
 # Materials
 
 * [경음악 편곡법(책 강의) | youtube](https://www.youtube.com/playlist?list=PLCkXM0YNCVjSPkgf613a6-CVIG3wqVH5J)
@@ -23,20 +39,6 @@
 
 ## Melodic Minor Scale
 
-## Major Scale Modes
-
-* Ionian
-* Dorian
-* Phrysian
-* Lydian
-* Mixolydian
-* Aeolian
-* Locrian
-
-## Major Penta Tonic Scale
-
-## Minor Penta Tonic Scale
-
 ## Chords On 1, 2, 3, 4 Strings
 
 ## Chords Based On 5, 6 String
@@ -45,3 +47,26 @@
 * B type
 
 ## IIm7 - V7 - IM7
+
+## Up and Down On 5 Patterns
+
+* 5, 1 pattern
+* 3, 4 pattern
+* 1, 2 pattern
+* 4, 5 pattern
+* 2, 3 pattern
+
+## Major Modes on 5 Patterns
+
+* 5, 3, 1, 4, 2 pattern
+  * Ionian
+  * Dorian
+  * Lydian
+  * Mixolydian
+  * Aeolian
+
+## Pentatonic Scales on 5 Patterns
+
+* 5, 3, 1, 4, 2 pattern
+  * Major Pentatonic
+  * Minor Pentatonic

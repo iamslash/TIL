@@ -20,14 +20,16 @@
   - [Async Await](#async-await)
   - [Updating Movie](#updating-movie)
   - [CSS for Movie](#css-for-movie)
-  - [Form Input](#form-input)
-  - [Form Validation](#form-validation)
-  - [Form Management (react-hook-form, Zod)](#form-management-react-hook-form-zod)
   - [Server State Management (react-query)](#server-state-management-react-query)
-  - [Client State Management (Zustand)](#client-state-management-zustand)
+  - [Form Input](#form-input)
+  - [Optimize Callback Definition With `useCallback()`](#optimize-callback-definition-with-usecallback)
+  - [Form Validation](#form-validation)
+  - [Form Management With react-hook-form, zod](#form-management-with-react-hook-form-zod)
+  - [Routes](#routes)
   - [Handling Errors](#handling-errors)
   - [API Mocking (msw)](#api-mocking-msw)
   - [Profiles](#profiles)
+  - [Client State Management (Zustand)](#client-state-management-zustand)
   - [Unit Test](#unit-test)
   - [E2E Test](#e2e-test)
   - [Directory Structures](#directory-structures)
@@ -1165,16 +1167,47 @@ export default Movie;
 }
 ```
 
-## Form Input
+## Server State Management (react-query)
 
-`url` 을 form 으로 입력받고 영화를 다운로드 하자.
+- react-query 사용:
+  - useQuery 훅을 사용하여 영화 데이터를 비동기적으로 가져옵니다. fetchMovies 함수는 fetch를 사용하여 데이터를 가져오고, useQuery는 이 함수를 호출하여 데이터를 캐싱하고 상태를 관리합니다.
+- query key:
+  - useQuery 훅의 첫 번째 인수로 `['movies', downloadUrl]` 배열을 사용합니다. 이 배열은 쿼리의 키 역할을 하며, downloadUrl이 변경될 때마다 새로운 쿼리를 트리거합니다.
+- 조건부 실행:
+  - enabled 옵션을 사용하여 downloadUrl이 설정되었을 때만 쿼리가 실행되도록 합니다.
+- 상태 관리:
+  - isLoading과 error 상태를 사용하여 로딩 상태와 에러 상태를 처리합니다.
+- MovieForm 컴포넌트:
+  - react-hook-form과 Zod를 사용하여 폼 데이터를 관리하고 URL 검증을 수행합니다. 폼 제출 시 onSubmit 함수를 호출하여 부모 컴포넌트에 URL을 전달합니다.
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
-// App.tsx
-import React, { useState, useEffect } from 'react';
+// src/index.tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import './index.css';
+import App from './App';
+
+const queryClient = new QueryClient();
+
+const root = ReactDOM.createRoot(
+    document.getElementById('root') as HTMLElement
+);
+root.render(
+    <React.StrictMode>
+        <QueryClientProvider client={queryClient}>
+            <App />
+        </QueryClientProvider>
+    </React.StrictMode>
+);
+
+////////////////////////////////////////////////////////////////////////////////
+// src/App.tsx
+import React from 'react';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
 import Movie from './Movie';
-import MovieForm from './MovieForm';
 
 interface MovieType {
     title_english: string;
@@ -1183,41 +1216,23 @@ interface MovieType {
     synopsis: string;
 }
 
+const fetchMovies = async (url: string): Promise<MovieType[]> => {
+    const response = await axios.get(url);
+    // console.log(response);
+    return response.data.data.movies;
+};
+
 const App: React.FC = () => {
-    // movies 상태 정의, 초기값은 null
-    const [movies, setMovies] = useState<MovieType[] | null>(null);
-    // downloadUrl 상태 정의, 초기값은 빈 문자열
-    const [downloadUrl, setDownloadUrl] = useState<string>('');
+    const downloadUrl = 'https://yts.mx/api/v2/list_movies.json?sort_by=rating';
 
-    // useEffect 훅을 사용하여 componentDidMount 대체
-    useEffect(() => {
-        if (downloadUrl) {
-            getMovies();
-        }
-    }, [downloadUrl]); // downloadUrl이 변경될 때마다 실행
+    const { data: movies, error, isLoading } = useQuery({
+        queryKey: ['movies', downloadUrl],
+        queryFn: () => fetchMovies(downloadUrl),
+        enabled: !!downloadUrl, // Only run the query if downloadUrl is not empty
+    });
 
-    // 영화 데이터를 가져오는 비동기 함수 정의
-    const getMovies = async () => {
-        const movies = await callApi();
-        setMovies(movies); // movies 상태 업데이트
-    };
-
-    // API 호출 함수 정의
-    const callApi = async (): Promise<MovieType[]> => {
-        try {
-            const response = await fetch(downloadUrl);
-            const json = await response.json();
-            return json.data.movies;
-        } catch (err) {
-            console.error('Error fetching movies:', err);
-            return [];
-        }
-    };
-
-    // renderMovies 함수 정의
     const renderMovies = () => {
-        return movies!.map((movie, index) => (
-            // Movie 컴포넌트에 title, poster, genres, synopsis props 전달
+        return movies?.map((movie, index) => (
             <Movie
                 title={movie.title_english}
                 poster={movie.medium_cover_image}
@@ -1228,15 +1243,94 @@ const App: React.FC = () => {
         ));
     };
 
-    console.log('render'); // 렌더링 시마다 출력
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+    
+    if (error) {
+        return <div>Error fetching movies</div>;
+    }
+
+    return (
+        <div className="App">
+            <div style={{ marginTop: '20px' }}>
+                {movies ? renderMovies() : 'No movies available'}
+            </div>
+        </div>
+    );
+};
+
+export default App;
+```
+
+## Form Input
+
+`url` 을 form 으로 입력받고 영화를 다운로드 하자.
+
+- `preventDefault()`가 필요한 이유:
+  - 페이지 새로 고침 방지: 폼 제출 시 페이지가 새로 고침되는 것을 방지합니다. SPA에서는 서버로 전송하지 않고, 클라이언트 측에서 데이터를 처리하고 필요한 작업을 수행합니다.
+  - 비동기 처리: 폼 제출을 비동기적으로 처리하여 서버와의 통신을 통해 페이지를 다시 로드하지 않고 데이터를 업데이트합니다.
+  - 커스텀 동작: 폼이나 다른 요소에 대해 기본 동작 대신 사용자 정의 동작을 지정할 수 있습니다. 예를 들어, 클릭 이벤트에서 링크의 기본 동작을 막고 다른 작업을 수행할 수 있습니다.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// App.tsx
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import Movie from './Movie';
+import MovieForm from './MovieForm';
+
+interface MovieType {
+    title_english: string;
+    medium_cover_image: string;
+    genres: string[];
+    synopsis: string;
+}
+
+const fetchMovies = async (url: string): Promise<MovieType[]> => {
+    const response = await axios.get(url);
+    return response.data.data.movies;
+};
+
+const App: React.FC = () => {
+    const [downloadUrl, setDownloadUrl] = useState<string>('');
+
+    const { data: movies, error, isLoading, refetch } = useQuery({
+        queryKey: ['movies', downloadUrl],
+        queryFn: () => fetchMovies(downloadUrl),
+        enabled: !!downloadUrl, // Do not run the query automatically
+        retry: false, // Don't retry automatically
+        refetchOnWindowFocus: false, // Don't refetch on window focus
+    });
+
+    const handleUrlSubmit = (url: string) => {
+        console.log('handleUrlSubmit: ', url);
+        setDownloadUrl(url);
+        refetch();
+    };
+
+    const renderMovies = () => {
+        return movies?.map((movie, index) => (
+            <Movie
+                title={movie.title_english}
+                poster={movie.medium_cover_image}
+                key={index}
+                genres={movie.genres}
+                synopsis={movie.synopsis}
+            />
+        ));
+    };
 
     return (
         <div className="App">
             <div>
-                <MovieForm onSubmit={setDownloadUrl} />
+                <MovieForm onSubmit={handleUrlSubmit} />
             </div>
             <div style={{ marginTop: '20px' }}>
-                {movies ? renderMovies() : 'Loading...'} {/* movies 상태가 null이 아니면 영화 목록 렌더링, 그렇지 않으면 'Loading...' 표시 */}
+                {isLoading && <div>Loading...</div>}
+                {error && <div>Error fetching movies</div>}
+                {movies ? renderMovies() : 'No movies available'}
             </div>
         </div>
     );
@@ -1249,19 +1343,20 @@ export default App;
 import React, { useState } from 'react';
 
 interface MovieFormProps {
+    url: string;
     onSubmit: (url: string) => void;
 }
 
-const MovieForm: React.FC<MovieFormProps> = ({ onSubmit }) => {
-    const [url, setUrl] = useState<string>('https://yts.mx/api/v2/list_movies.json?sort_by=rating');
+const MovieForm: React.FC<MovieFormProps> = ({ url, onSubmit }) => {
+    const [inputUrl, setInputUrl] = useState<string>(url);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUrl(e.target.value);
+        setInputUrl(e.target.value);
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        onSubmit(url);
+        onSubmit(inputUrl);
     };
 
     return (
@@ -1269,7 +1364,56 @@ const MovieForm: React.FC<MovieFormProps> = ({ onSubmit }) => {
             <input
                 type="text"
                 placeholder="Enter download URL"
-                value={url}
+                value={inputUrl}
+                onChange={handleChange}
+            />
+            <button type="submit">Download Movies</button>
+        </form>
+    );
+};
+
+export default MovieForm;
+```
+
+## Optimize Callback Definition With `useCallback()`
+
+`useCallback()` 을 사용하면 `handleChange`와 `handleSubmit` 함수가 렌더링될 때마다 새로 정의되지 않으므로, 성능을 최적화할 수 있습니다. `handleChange`와 `handleSubmit` 함수를 `useCallback` 훅으로 감싸서 메모이제이션합니다. 이는 함수가 의존성 배열의 값이 변경되지 않는 한 동일한 참조를 유지하게 합니다.
+
+- 의존성 배열:
+  - `handleChange` 함수는 의존성이 없으므로 빈 배열을 사용합니다.
+  - `handleSubmit` 함수는 `inputUrl`과 `onSubmit`에 의존합니다. 따라서 이 값들이 변경될 때만 새로운 함수가 생성됩니다.
+- 성능 최적화의 이점:
+  - 함수 재사용: `useCallback`을 사용하여 함수를 메모이제이션하면, 컴포넌트가 다시 렌더링될 때마다 새로운 함수를 생성하지 않고 동일한 함수를 재사용합니다. 이는 특히 함수가 자주 재정의되는 경우 성능에 긍정적인 영향을 미칩니다.
+  - 불필요한 렌더링 방지: 메모이제이션된 함수는 자식 컴포넌트에 전달될 때 참조가 변경되지 않으므로, 자식 컴포넌트가 불필요하게 다시 렌더링되는 것을 방지할 수 있습니다.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// MovieForm.tsx
+import React, { useState, useCallback } from 'react';
+
+interface MovieFormProps {
+    url: string;
+    onSubmit: (url: string) => void;
+}
+
+const MovieForm: React.FC<MovieFormProps> = ({ url, onSubmit }) => {
+    const [inputUrl, setInputUrl] = useState<string>(url);
+
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputUrl(e.target.value);
+    }, []);
+
+    const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        onSubmit(inputUrl);
+    }, [inputUrl, onSubmit]);
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <input
+                type="text"
+                placeholder="Enter download URL"
+                value={inputUrl}
                 onChange={handleChange}
             />
             <button type="submit">Download Movies</button>
@@ -1282,7 +1426,16 @@ export default MovieForm;
 
 ## Form Validation
 
-`url` 을 regex 으로 검증해보자.
+- URL 검증 함수 추가:
+  - isValidUrl 함수는 정규 표현식을 사용하여 입력된 URL이 유효한지 검증합니다. https, http, 및 chrome로 시작하는 URL을 허용합니다.
+- 상태 관리:
+  - inputUrl 상태를 관리하여 사용자가 입력한 URL을 저장합니다.
+  - errorMessage 상태를 추가하여 URL이 유효하지 않은 경우 에러 메시지를 표시합니다.
+- handleSubmit 함수 수정:
+  - handleSubmit 함수는 URL이 유효한지 검증하고, 유효한 경우에만 onSubmit 함수를 호출합니다.
+  - 유효하지 않은 URL이 입력되면 에러 메시지를 설정하여 사용자에게 표시합니다.
+- 에러 메시지 표시:
+  - 유효하지 않은 URL이 입력된 경우, 에러 메시지를 빨간색 텍스트로 표시합니다.
 
 ```js
 ////////////////////////////////////////////////////////////////////////////////
@@ -1294,27 +1447,26 @@ interface MovieFormProps {
 }
 
 const MovieForm: React.FC<MovieFormProps> = ({ onSubmit }) => {
-    const [url, setUrl] = useState<string>('https://yts.mx/api/v2/list_movies.json?sort_by=rating');
-    const [isValidUrl, setIsValidUrl] = useState<boolean>(true);
-
-    const validateUrl = (url: string): boolean => {
-        const urlRegex = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/;
-        return urlRegex.test(url);
-    };
+    const [inputUrl, setInputUrl] = useState<string>('https://yts.mx/api/v2/list_movies.json?sort_by=rating');
+    const [errorMessage, setErrorMessage] = useState<string>('');
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const inputUrl = e.target.value;
-        setUrl(inputUrl);
-        setIsValidUrl(validateUrl(inputUrl));
+        setInputUrl(e.target.value);
     };
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        if (isValidUrl) {
-            onSubmit(url);
+        if (isValidUrl(inputUrl)) {
+            setErrorMessage('');
+            onSubmit(inputUrl);
         } else {
-            alert('Please enter a valid URL');
+            setErrorMessage('Please enter a valid URL.');
         }
+    };
+
+    const isValidUrl = (url: string) => {
+        const urlRegex = /^(https?|chrome):\/\/[^\s$.?#].[^\s]*$/;
+        return urlRegex.test(url);
     };
 
     return (
@@ -1322,11 +1474,11 @@ const MovieForm: React.FC<MovieFormProps> = ({ onSubmit }) => {
             <input
                 type="text"
                 placeholder="Enter download URL"
-                value={url}
+                value={inputUrl}
                 onChange={handleChange}
             />
-            <button type="submit" disabled={!isValidUrl}>Download Movies</button>
-            {!isValidUrl && <p style={{ color: 'red' }}>Please enter a valid URL.</p>}
+            <button type="submit">Download Movies</button>
+            {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
         </form>
     );
 };
@@ -1334,17 +1486,65 @@ const MovieForm: React.FC<MovieFormProps> = ({ onSubmit }) => {
 export default MovieForm;
 ```
 
-## Form Management (react-hook-form, Zod)
+## Form Management With react-hook-form, zod
 
-## Server State Management (react-query)
+react-hook-form, zod 를 이용해 form management 를 간단히 구현한다.
 
-## Client State Management (Zustand)
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/MovieForm.tsx
+import React from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const urlSchema = z.object({
+    url: z.string().url({ message: "Please enter a valid URL" }),
+});
+
+type UrlFormInputs = z.infer<typeof urlSchema>;
+
+interface MovieFormProps {
+    onSubmit: (url: string) => void;
+}
+
+const MovieForm: React.FC<MovieFormProps> = ({ onSubmit }) => {
+    const { register, handleSubmit, formState: { errors } } = useForm<UrlFormInputs>({
+        resolver: zodResolver(urlSchema),
+        defaultValues: {
+            url: 'https://yts.mx/api/v2/list_movies.json?sort_by=rating',
+        },
+    });
+
+    const onSubmitHandler: SubmitHandler<UrlFormInputs> = (data) => {
+        onSubmit(data.url);
+    };
+
+    return (
+        <form onSubmit={handleSubmit(onSubmitHandler)}>
+            <input
+                type="text"
+                placeholder="Enter download URL"
+                {...register('url')}
+            />
+            <button type="submit">Download Movies</button>
+            {errors.url && <p style={{ color: 'red' }}>{errors.url.message}</p>}
+        </form>
+    );
+};
+
+export default MovieForm;
+```
+
+## Routes
 
 ## Handling Errors
 
 ## API Mocking (msw)
 
 ## Profiles
+
+## Client State Management (Zustand)
 
 ## Unit Test
 

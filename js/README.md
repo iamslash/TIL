@@ -1071,6 +1071,13 @@ var b = "String";
 
 console.log(`(typeof a => ${typeof a == "string" ? "String" : "Numeric")}`); // Numeric
 console.log(`(typeof b => ${typeof b == "string" ? "String" : "Numeric")}`); // String
+
+//// !!
+// !! 연산자는 JavaScript에서 불리언 형식으로 값을 변환하는 데 사용됩니다. 
+// 첫 번째 !는 값의 논리 부정을 수행합니다. 즉, truthy 값을 false로, falsy 값을 true로 변환합니다.
+// 두 번째 !는 다시 그 값을 부정하여 원래의 불리언 값으로 되돌립니다.
+const value = "hello";
+const booleanValue = !!value; // true
 ```
 
 ## Control Flow
