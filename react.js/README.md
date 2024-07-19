@@ -25,35 +25,20 @@
   - [Optimize Callback Definition With `useCallback()`](#optimize-callback-definition-with-usecallback)
   - [Form Validation](#form-validation)
   - [Form Management With react-hook-form, zod](#form-management-with-react-hook-form-zod)
-  - [Routes](#routes)
-  - [Handling Errors](#handling-errors)
-  - [API Mocking (msw)](#api-mocking-msw)
-  - [Profiles](#profiles)
+  - [Routes, Pages](#routes-pages)
+  - [Layouts](#layouts)
+  - [Dark, Light mode](#dark-light-mode)
   - [Client State Management (Zustand)](#client-state-management-zustand)
-  - [Unit Test](#unit-test)
-  - [E2E Test](#e2e-test)
+  - [Props Drilling](#props-drilling)
+  - [Profiles](#profiles)
+  - [Unit Test (jest)](#unit-test-jest)
+  - [Integration Test (msw)](#integration-test-msw)
+  - [E2E Test (cypress)](#e2e-test-cypress)
   - [Directory Structures](#directory-structures)
   - [Build, Deploy To GitHub Pages](#build-deploy-to-github-pages)
 - [Advanced](#advanced)
-  - [Redux](#redux)
-  - [To Do List with redux](#to-do-list-with-redux)
-  - [react-redux](#react-redux)
-  - [rendering Sequences](#rendering-sequences)
-  - [Smart vs Dumb](#smart-vs-dumb)
-  - [redux-toolkit](#redux-toolkit)
-  - [redux](#redux-1)
-    - [`function combineReducers<S>(reducers: ReducersMapObject): Reducer<S>`](#function-combinereducerssreducers-reducersmapobject-reducers)
-    - [`function applyMiddleware(...middlewares: Middleware[]): GenericStoreEnhancer`](#function-applymiddlewaremiddlewares-middleware-genericstoreenhancer)
-    - [`createStore()`](#createstore)
-  - [react-redux](#react-redux-1)
-  - [redux-actions](#redux-actions)
-    - [`function createActions(actionsMap)`](#function-createactionsactionsmap)
-    - [`function combineActions(...types)`](#function-combineactionstypes)
-    - [`function handleActions(handlers, defaultState)`](#function-handleactionshandlers-defaultstate)
-  - [react-router](#react-router)
+  - [Smart vs Dumb Components](#smart-vs-dumb-components)
   - [Ant Design](#ant-design)
-  - [redux-saga](#redux-saga)
-  - [Redux Debugger in Chrome](#redux-debugger-in-chrome)
   - [Don't Use `useEffect`](#dont-use-useeffect)
 
 ----
@@ -1170,7 +1155,7 @@ export default Movie;
 ## Server State Management (react-query)
 
 - react-query 사용:
-  - useQuery 훅을 사용하여 영화 데이터를 비동기적으로 가져옵니다. fetchMovies 함수는 fetch를 사용하여 데이터를 가져오고, useQuery는 이 함수를 호출하여 데이터를 캐싱하고 상태를 관리합니다.
+  - useQuery 훅을 사용하여 영화 데이터를 비동기적으로 가져옵니다. fetchMovies 함수는 fetch를 사용하여 데이터를 가져오고, useQuery는 이 함수를 호출하여 데이터를 캐싱하고 상태를 관리합니다. `useQuery()` 가 돌려준 값중 일부를 `movies` 에 저장하고 `movies` 를 JSX 에서 사용합니다. `movies` 가 변경되면 re-rendering 됩니다. react-query 가 상태관리를 해줍니다.
 - query key:
   - useQuery 훅의 첫 번째 인수로 `['movies', downloadUrl]` 배열을 사용합니다. 이 배열은 쿼리의 키 역할을 하며, downloadUrl이 변경될 때마다 새로운 쿼리를 트리거합니다.
 - 조건부 실행:
@@ -1265,8 +1250,8 @@ export default App;
 
 ## Form Input
 
-`url` 을 form 으로 입력받고 영화를 다운로드 하자.
-
+- `url` 을 form 으로 입력받고 영화를 다운로드 하자. `downloadUrl` 가 변경되면 re-rendering 이 되어야 한다. `useState()` 로 상태관리를 한다.
+- `MoveForm` 은 `onSubmit` 을 부모 Component `App` 로 부터 prop 으로 전달 받는다. `onSubmit` 을 호출하면 부모 Component `App` 에 data 를 전달할 수 있다.
 - `preventDefault()`가 필요한 이유:
   - 페이지 새로 고침 방지: 폼 제출 시 페이지가 새로 고침되는 것을 방지합니다. SPA에서는 서버로 전송하지 않고, 클라이언트 측에서 데이터를 처리하고 필요한 작업을 수행합니다.
   - 비동기 처리: 폼 제출을 비동기적으로 처리하여 서버와의 통신을 통해 페이지를 다시 로드하지 않고 데이터를 업데이트합니다.
@@ -1377,7 +1362,7 @@ export default MovieForm;
 
 ## Optimize Callback Definition With `useCallback()`
 
-`useCallback()` 을 사용하면 `handleChange`와 `handleSubmit` 함수가 렌더링될 때마다 새로 정의되지 않으므로, 성능을 최적화할 수 있습니다. `handleChange`와 `handleSubmit` 함수를 `useCallback` 훅으로 감싸서 메모이제이션합니다. 이는 함수가 의존성 배열의 값이 변경되지 않는 한 동일한 참조를 유지하게 합니다.
+`useCallback()` 을 사용하면 `handleChange`와 `handleSubmit` 함수가 렌더링될 때마다 새로 정의되지 않으므로, 성능을 최적화할 수 있습니다. `handleChange`와 `handleSubmit` 함수를 `useCallback` 훅으로 감싸서 메모이제이션합니다. 이는 함수가 의존성 배열의 값이 변경되지 않는 한 동일한 참조를 유지하게 합니다. 그런데 실효성이 떨어진다고 한다. 굳이 사용할 필요가 없다?
 
 - 의존성 배열:
   - `handleChange` 함수는 의존성이 없으므로 빈 배열을 사용합니다.
@@ -1490,6 +1475,12 @@ export default MovieForm;
 
 react-hook-form, zod 를 이용해 form management 를 간단히 구현한다.
 
+- useForm Hook: useForm 훅을 사용하여 폼을 설정합니다. register를 통해 입력 필드를 등록하고, handleSubmit을 통해 폼 제출을 처리합니다.
+- Validation: register 함수에 유효성 검사 규칙을 정의할 수 있습니다. 여기서는 URL 형식을 검사하고, 유효하지 않으면 오류 메시지를 표시합니다.
+- Error Handling: formState.errors를 사용하여 유효성 검사 오류를 처리하고, 오류가 있을 경우 사용자에게 피드백을 제공합니다.
+
+React Hook Form을 사용하면 폼 상태와 유효성 검사를 더욱 간결하고 효율적으로 관리할 수 있습니다. useState를 사용하지 않고도 폼 필드의 상태를 관리할 수 있으며, 성능 최적화에도 도움이 됩니다.
+
 ```js
 ////////////////////////////////////////////////////////////////////////////////
 // src/MovieForm.tsx
@@ -1536,19 +1527,736 @@ const MovieForm: React.FC<MovieFormProps> = ({ onSubmit }) => {
 export default MovieForm;
 ```
 
-## Routes
+## Routes, Pages
 
-## Handling Errors
+```
+npm install react-router-dom
+```
 
-## API Mocking (msw)
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.tsx
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import MoviePage from './pages/MoviePage';
+import NotFoundPage from './pages/NotFoundPage';
 
-## Profiles
+const App = () => {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/movies" element={<MoviePage />} />
+                <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+        </Router>
+    );
+};
+
+export default App;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/pages/HomePage.tsx
+import React from 'react';
+
+const HomePage = () => {
+    return (
+        <div>
+            <h1>Home Page</h1>
+            <p>Welcome to the Home Page!</p>
+        </div>
+    );
+};
+
+export default HomePage;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/pages/MoviePage.tsx
+import React, { useState } from 'react';
+import axios from 'axios';
+import { useQuery } from '@tanstack/react-query';
+import Movie from '../Movie';
+import MovieForm from '../MovieForm';
+
+interface MovieType {
+    title_english: string;
+    medium_cover_image: string;
+    genres: string[];
+    synopsis: string;
+}
+
+const fetchMovies = async (url: string): Promise<MovieType[]> => {
+    const response = await axios.get(url);
+    return response.data.data.movies;
+};
+
+const MoviePage: React.FC = () => {
+    const [downloadUrl, setDownloadUrl] = useState<string>('');
+
+    const { data: movies, error, isLoading, refetch } = useQuery({
+        queryKey: ['movies', downloadUrl],
+        queryFn: () => fetchMovies(downloadUrl),
+        enabled: !!downloadUrl, // Do not run the query automatically
+        retry: false, // Don't retry automatically
+        refetchOnWindowFocus: false, // Don't refetch on window focus
+    });
+
+    const handleUrlSubmit = (url: string) => {
+        console.log('handleUrlSubmit: ', url);
+        setDownloadUrl(url);
+        refetch();
+    };
+
+    const renderMovies = () => {
+        return movies?.map((movie, index) => (
+            <Movie
+                title={movie.title_english}
+                poster={movie.medium_cover_image}
+                key={index}
+                genres={movie.genres}
+                synopsis={movie.synopsis}
+            />
+        ));
+    };
+
+    return (
+        <div className="App">
+            <div>
+                <MovieForm onSubmit={handleUrlSubmit} />
+            </div>
+            <div style={{ marginTop: '20px' }}>
+                {isLoading && <div>Loading...</div>}
+                {error && <div>Error fetching movies</div>}
+                {movies ? renderMovies() : 'No movies available'}
+            </div>
+        </div>
+    );
+};
+
+export default MoviePage;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/pages/NotFoundPage.tsx
+import React from 'react';
+
+const NotFoundPage: React.FC = () => {
+    return (
+        <div>
+            <h1>404 - Page Not Found</h1>
+            <p>The page you are looking for does not exist.</p>
+        </div>
+    );
+};
+
+export default NotFoundPage;
+
+```
+
+## Layouts
+
+- `layouts` 디렉토리를 만들고 `TopBar, SideBar, MainLayout` 컴포넌트를 구현했습니다.
+- `MainLayout` 컴포넌트는 `TopBar`와 `SideBar`를 항상 렌더링하고, `<Outlet>`을 통해 변경되는 메인 콘텐츠를 표시합니다.
+- `App.tsx`와 `index.tsx` 파일을 수정하여 라우팅과 레이아웃을 구성했습니다.
+- `TopBar`와 `SideBar`가 항상 표시되고, `HomePage, MoviePage, NotFoundPage` 등의 메인 콘텐츠가 경로에 따라 변경되는 구조를 구현할 수 있습니다.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/laouts/TopBar.tsx
+// src/layouts/TopBar.tsx
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const TopBar: React.FC = () => {
+    return (
+        <div style={{ height: '50px', background: '#333', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+            <h1>TopBar</h1>
+            <nav>
+                <Link to="/" style={{ color: '#fff', textDecoration: 'none', margin: '0 10px' }}>Home</Link>
+                <Link to="/movies" style={{ color: '#fff', textDecoration: 'none', margin: '0 10px' }}>Movies</Link>
+            </nav>
+        </div>
+    );
+};
+
+export default TopBar;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/laouts/SideBar.tsx
+// src/layouts/SideBar.tsx
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const SideBar: React.FC = () => {
+    return (
+        <div style={{ width: '200px', background: '#444', color: '#fff', height: '100vh', padding: '20px' }}>
+            <h2>SideBar</h2>
+            <nav>
+                <ul style={{ listStyle: 'none', padding: 0 }}>
+                    <li style={{ margin: '10px 0' }}>
+                        <Link to="/" style={{ color: '#fff', textDecoration: 'none' }}>Home</Link>
+                    </li>
+                    <li style={{ margin: '10px 0' }}>
+                        <Link to="/movies" style={{ color: '#fff', textDecoration: 'none' }}>Movies</Link>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+    );
+};
+
+export default SideBar;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/laouts/MainLayout.tsx
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import TopBar from './TopBar';
+import SideBar from './SideBar';
+
+const MainLayout: React.FC = () => {
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+            <TopBar />
+            <div style={{ display: 'flex', flexGrow: 1 }}>
+                <SideBar />
+                <div style={{ flexGrow: 1, padding: '20px' }}>
+                    <Outlet />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default MainLayout;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/laouts/App.tsx
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import MoviePage from './pages/MoviePage';
+import NotFoundPage from './pages/NotFoundPage';
+import MainLayout from './layouts/MainLayout';
+
+const App = () => {
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<MainLayout />}>
+                    <Route index element={<HomePage />} />
+                    <Route path="movies" element={<MoviePage />} />
+                    <Route path="*" element={<NotFoundPage />} />
+                </Route>
+            </Routes>
+        </Router>
+    );
+};
+
+export default App;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/laouts/Index.tsx
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import './index.css';
+import App from './App';
+
+const queryClient = new QueryClient();
+
+const root = ReactDOM.createRoot(
+    document.getElementById('root') as HTMLElement
+);
+
+root.render(
+    <React.StrictMode>
+        <QueryClientProvider client={queryClient}>
+            <App />
+        </QueryClientProvider>
+    </React.StrictMode>
+);
+```
+
+## Dark, Light mode
+
+- `App.tsx`에서 `theme` 상태를 관리하고 이를 `MainLayout`에 전달합니다.
+- `MainLayout`에서 `theme`과 `setTheme`을 받아 `TopBar`에 전달합니다.
+- `TopBar`에서 선택 상자를 통해 테마를 변경할 수 있도록 합니다.
+- `index.css`에 다크 모드와 라이트 모드 스타일을 추가합니다.
+- `TopBar`에서 선택 상자를 통해 다크 모드와 라이트 모드를 변경할 수 있습니다.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.tsx
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import MoviePage from './pages/MoviePage';
+import NotFoundPage from './pages/NotFoundPage';
+import MainLayout from './layouts/MainLayout';
+
+const App: React.FC = () => {
+    const [theme, setTheme] = useState('light');
+
+    useEffect(() => {
+        document.body.className = theme;
+    }, [theme]);
+
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<MainLayout theme={theme} setTheme={setTheme} />}>
+                    <Route index element={<HomePage />} />
+                    <Route path="movies" element={<MoviePage />} />
+                    <Route path="*" element={<NotFoundPage />} />
+                </Route>
+            </Routes>
+        </Router>
+    );
+};
+
+export default App;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/laouts/MainLayout.tsx
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import TopBar from './TopBar';
+import SideBar from './SideBar';
+
+interface MainLayoutProps {
+    theme: string;
+    setTheme: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const MainLayout: React.FC<MainLayoutProps> = ({ theme, setTheme }) => {
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+            <TopBar theme={theme} setTheme={setTheme} />
+            <div style={{ display: 'flex', flexGrow: 1 }}>
+                <SideBar />
+                <div style={{ flexGrow: 1, padding: '20px' }}>
+                    <Outlet />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default MainLayout;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/laouts/TopBar.tsx
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+interface TopBarProps {
+    theme: string;
+    setTheme: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const TopBar: React.FC<TopBarProps> = ({ theme, setTheme }) => {
+    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setTheme(event.target.value);
+    };
+
+    return (
+        <div style={{ height: '50px', background: '#333', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+            <h1>TopBar</h1>
+            <nav>
+                <Link to="/" style={{ color: '#fff', textDecoration: 'none', margin: '0 10px' }}>Home</Link>
+                <Link to="/movies" style={{ color: '#fff', textDecoration: 'none', margin: '0 10px' }}>Movies</Link>
+            </nav>
+            <select value={theme} onChange={handleChange} style={{ marginLeft: '20px' }}>
+                <option value="light">Light Mode</option>
+                <option value="dark">Dark Mode</option>
+            </select>
+        </div>
+    );
+};
+
+export default TopBar;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/index.css
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+body.light {
+  background-color: white;
+  color: black;
+}
+
+body.dark {
+  background-color: black;
+  color: white;
+}
+```
 
 ## Client State Management (Zustand)
 
-## Unit Test
+- `zustand`를 설치하고 상태 관리를 위한 스토어를 생성했습니다.
+- `App.tsx`에서 `zustand` 스토어를 사용하여 테마 상태를 관리하고 이를 반영했습니다.
+- `MainLayout`과 `TopBar` 컴포넌트를 수정하여 `zustand` 스토어에서 테마 상태를 가져오고 변경할 수 있도록 했습니다.
+- `index.css`에 다크 모드와 라이트 모드 스타일을 추가했습니다.
+- 이렇게 하면 `TopBar`에서 선택 상자를 통해 다크 모드와 라이트 모드를 변경할 수 있습니다.
 
-## E2E Test
+```bash
+$ npm install zustand
+```
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.tsx
+import React, { useEffect } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import HomePage from './pages/HomePage';
+import MoviePage from './pages/MoviePage';
+import NotFoundPage from './pages/NotFoundPage';
+import MainLayout from './layouts/MainLayout';
+import { useThemeStore } from './store/useThemeStore';
+
+const App: React.FC = () => {
+    const theme = useThemeStore((state: { theme: string; }) => state.theme);
+
+    useEffect(() => {
+        document.body.className = theme;
+    }, [theme]);
+
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<MainLayout />}>
+                    <Route index element={<HomePage />} />
+                    <Route path="movies" element={<MoviePage />} />
+                    <Route path="*" element={<NotFoundPage />} />
+                </Route>
+            </Routes>
+        </Router>
+    );
+};
+
+export default App;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/layouts/MainLayout.tsx
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+import TopBar from './TopBar';
+import SideBar from './SideBar';
+
+const MainLayout: React.FC = () => {
+    return (
+        <div style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
+            <TopBar />
+            <div style={{ display: 'flex', flexGrow: 1 }}>
+                <SideBar />
+                <div style={{ flexGrow: 1, padding: '20px' }}>
+                    <Outlet />
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default MainLayout;
+
+////////////////////////////////////////////////////////////////////////////////
+// src/layouts/TopBar.tsx
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useThemeStore } from '../store/useThemeStore';
+
+const TopBar: React.FC = () => {
+    const theme = useThemeStore((state) => state.theme);
+    const setTheme = useThemeStore((state) => state.setTheme);
+
+    const handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        setTheme(event.target.value);
+    };
+
+    return (
+        <div style={{ height: '50px', background: '#333', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
+            <h1>TopBar</h1>
+            <nav>
+                <Link to="/" style={{ color: '#fff', textDecoration: 'none', margin: '0 10px' }}>Home</Link>
+                <Link to="/movies" style={{ color: '#fff', textDecoration: 'none', margin: '0 10px' }}>Movies</Link>
+            </nav>
+            <select value={theme} onChange={handleChange} style={{ marginLeft: '20px' }}>
+                <option value="light">Light Mode</option>
+                <option value="dark">Dark Mode</option>
+            </select>
+        </div>
+    );
+};
+
+export default TopBar;
+
+
+////////////////////////////////////////////////////////////////////////////////
+// src/store/useThemStore.ts
+import create from 'zustand';
+
+interface ThemeStore {
+    theme: string;
+    setTheme: (theme: string) => void;
+}
+
+export const useThemeStore = create<ThemeStore>((set) => ({
+    theme: 'light',
+    setTheme: (theme) => set({ theme }),
+}));
+```
+
+## Props Drilling
+
+Props Drilling은 React 컴포넌트 계층 구조에서, 상위 컴포넌트가 하위 컴포넌트에 데이터를 전달하기 위해 중간에 있는 모든 컴포넌트를 거쳐 props를 전달하는 과정을 말합니다. 이는 계층 구조가 깊어질수록 관리가 어려워지고 코드가 복잡해질 수 있습니다.
+
+다음과 같은 방법으로 해결하자.
+
+- Composition (children 사용)
+- Context API 사용
+- 전역 상태관리 라이브러리 사용 (redux, zustand)
+
+**Composition (children 사용)**
+
+Composition은 props를 통해 데이터를 직접 전달하는 대신, 컴포넌트의 자식(children)으로 다른 컴포넌트를 전달하여 데이터를 공유하는 방식입니다. 이를 통해 코드의 재사용성을 높이고, 중간 컴포넌트의 개입을 최소화할 수 있습니다.
+
+```jsx
+const Parent = ({ children }) => {
+  return <div>{children}</div>;
+};
+
+const Child = ({ message }) => {
+  return <p>{message}</p>;
+};
+
+// 사용 예
+<Parent>
+  <Child message="Hello, World!" />
+</Parent>
+```
+
+**Context API 사용**
+
+Context API는 React에서 전역 상태를 쉽게 관리할 수 있도록 도와주는 도구입니다. Provider를 통해 데이터를 전역으로 제공하고, Consumer를 통해 필요한 곳에서만 데이터를 사용할 수 있습니다. 이를 통해 props drilling 문제를 해결할 수 있습니다.
+
+```jsx
+import React, { createContext, useContext } from 'react';
+
+const ThemeContext = createContext();
+
+const Parent = () => {
+  const theme = 'dark';
+  return (
+    <ThemeContext.Provider value={theme}>
+      <Child />
+    </ThemeContext.Provider>
+  );
+};
+
+const Child = () => {
+  const theme = useContext(ThemeContext);
+  return <p>Current theme: {theme}</p>;
+};
+```
+
+**전역 상태관리 라이브러리 사용 (redux, mobx, recoil, jotai, zustand)**
+
+전역 상태관리 라이브러리는 애플리케이션의 상태를 전역적으로 관리하기 위해 사용됩니다. 이러한 라이브러리는 복잡한 상태 관리를 단순화하고, 컴포넌트 간의 상태 공유를 쉽게 만들어 props drilling 문제를 해결합니다.
+
+Redux 예제:
+
+```jsx
+import { createStore } from 'redux';
+import { Provider, useSelector, useDispatch } from 'react-redux';
+
+const initialState = { theme: 'light' };
+
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case 'SET_THEME':
+      return { ...state, theme: action.theme };
+    default:
+      return state;
+  }
+};
+
+const store = createStore(reducer);
+
+const Parent = () => (
+  <Provider store={store}>
+    <Child />
+  </Provider>
+);
+
+const Child = () => {
+  const theme = useSelector((state) => state.theme);
+  const dispatch = useDispatch();
+
+  return (
+    <div>
+      <p>Current theme: {theme}</p>
+      <button onClick={() => dispatch({ type: 'SET_THEME', theme: 'dark' })}>
+        Set Dark Theme
+      </button>
+    </div>
+  );
+};
+```
+
+## Profiles
+
+- `MovieForm.tsx`에서 현재 프로파일에 따라 기본 URL을 설정합니다.
+- `.env.sample` 을 참고하여 `.env.qa, .env.stage, .env.prod` 파일을 제작한다.
+- profile 별로 실행할 수 있다.
+    ```bash
+    $ npm run start:prod
+    ```
+- 각 프로파일별로 다른 URL을 사용하여 영화 데이터를 다운로드할 수 있고, 사용자도 입력한 URL을 통해 데이터를 가져올 수 있습니다.
+
+```
+$ touch .env.sample .env.qa .env.stage .env.prod
+$ npm install env-cmd --save-dev
+```
+
+```bash
+# .env.sample
+REACT_APP_MOVIE_URL=https://yts.mx/api/v2/list_movies.json?sort_by=rating
+```
+
+```jsx
+////////////////////////////////////////////////////////////////////////////////
+// package.json
+{
+  "name": "movie-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@hookform/resolvers": "^3.9.0",
+    "@tanstack/react-query": "^5.51.1",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.101",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "axios": "^1.7.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.52.1",
+    "react-router-dom": "^6.24.1",
+    "react-scripts": "^5.0.1",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4",
+    "zod": "^3.23.8",
+    "zustand": "^4.5.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "start:qa": "env-cmd -f .env.qa react-scripts start",
+    "start:stage": "env-cmd -f .env.stage react-scripts start",
+    "start:prod": "env-cmd -f .env.prod react-scripts start"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.16.1",
+    "@typescript-eslint/parser": "^7.16.1",
+    "env-cmd": "^10.1.0"
+  }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// src/MovieForm.tsx
+import React from 'react';
+import { useForm, SubmitHandler } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+const urlSchema = z.object({
+    url: z.string().url({ message: "Please enter a valid URL" }),
+});
+
+type UrlFormInputs = z.infer<typeof urlSchema>;
+
+interface MovieFormProps {
+    onSubmit: (url: string) => void;
+}
+
+const MovieForm: React.FC<MovieFormProps> = ({ onSubmit }) => {
+    const defaultUrl = process.env.REACT_APP_MOVIE_URL || '';
+
+    const { register, handleSubmit, formState: { errors } } = useForm<UrlFormInputs>({
+        resolver: zodResolver(urlSchema),
+        defaultValues: {
+            url: defaultUrl,
+        },
+    });
+
+    const onSubmitHandler: SubmitHandler<UrlFormInputs> = (data) => {
+        onSubmit(data.url);
+    };
+
+    return (
+        <form onSubmit={handleSubmit(onSubmitHandler)}>
+            <input
+                type="text"
+                placeholder="Enter download URL"
+                {...register('url')}
+            />
+            <button type="submit">Download Movies</button>
+            {errors.url && <p style={{ color: 'red' }}>{errors.url.message}</p>}
+        </form>
+    );
+};
+
+export default MovieForm;
+```
+
+## Unit Test (jest)
+
+WIP...
+
+## Integration Test (msw)
+
+WIP...
+
+## E2E Test (cypress)
+
+WIP...
 
 ## Directory Structures
 
@@ -1566,6 +2274,8 @@ src/
 	pages/ # pages dir
 		[dir]/
 			index.tsx 
+    layouts/ # layout dir     
+    stores/ # client state management   
 	features/ # dir to be used in pages
 		[dir]/
 			api/ # dir to manage apis
@@ -1658,386 +2368,13 @@ $ yarn run deploy
 
 # Advanced
 
-## Redux
-
-* [초보자를 위한 리덕스 101](https://academy.nomadcoders.co/courses/235420/lectures/13817530)
-  * [src](https://github.com/nomadcoders/vanilla-redux)
-
-Redux 는 state 를 관리하기 위한 거대한 event loop 이다. 여기서 말하는 state 는
-redux state 혹은 global state 이다. React Component 의 component state 혹은
-local state 와는 다르다.
-
-Action 은 event 를 말하고 Reducer 는 event handler 이다. 즉, Reducer 는 함수이고
-변경된 redux state 를 return 한다. 변경된 redux state 가 return 되면 react
-component 에게 props 형태로 전달되고 react component 의 render() 가 호출된다.
-즉, rendering 된다. Reducer 의 첫번째 argument 는 state 이고 두번째 argument 는
-action 이다.
-
-Store 는 Application 의 state 이다. Store 를 생성하기 위해서는 Reducer 가
-필요하다. Store instance 의 `getState()` 를 호출하면 현재 state 를 얻어올 수
-있다. Store instance 의 `dispatch()` 를 특정 `action` 과 함께 호출하면 Store
-instance 에 등록된 Reducer 가 그 action 을 두번째 argument 로 호출된다. 
-
-또한 Store instance 의 `subscribe()` 를 함수와 함께 호출하면 Store 가 변경될 때
-마다 그 함수가 호출된다. 그 함수에서 Store instance 의 `getState()` 를 호출하면
-변경된 state 를 얻어올 수 있다.
-
-[리덕스(Redux)란 무엇인가?](https://voidsatisfaction.github.io/2017/02/24/what-is-redux/)
-
-Redux 는 다음과 같은 흐름으로 처리된다.
-
-* Store 에 Component 를 subscribe 한다.
-* User 가 button 을 click 하면 Store 의 dispatch 함수가 특정 action 을 argument
-  로 호출된다.
-* Store 에 등록된 Reducer 가 호출된다. 
-* Reducer 는 redux state 를 변경하여 return 한다.
-* Store 에 미리 subscribe 된 Component 에게 변경된 redux state 가 props 형태로
-  전달된다.
-* Component 는 props 에서 변경된 redux state 를 이용하여 rendering 한다.
-
-```js
-import { createStore } from "redux";
-
-const add = document.getElementById("add");
-const minus = document.getElementById("minus");
-const number = document.querySelector("span");
-
-number.innerText = 0;
-
-const ADD = "ADD";
-const MINUS = "MINUS";
-
-const countModifier = (count = 0, action) => {
-  switch (action.type) {
-    case ADD:
-      return count + 1;
-    case MINUS:
-      return count - 1;
-    default:
-      return count;
-  }
-};
-
-const countStore = createStore(countModifier);
-
-const onChange = () => {
-  number.innerText = countStore.getState();
-};
-
-countStore.subscribe(onChange);
-
-const handleAdd = () => {
-  countStore.dispatch({ type: ADD });
-};
-
-const handleMinus = () => {
-  countStore.dispatch({ type: MINUS });
-};
-
-add.addEventListener("click", handleAdd);
-minus.addEventListener("click", handleMinus);
-```
-
-## To Do List with redux
-
-Redux 를 이용하여 간단한 To Do list 를 구현해 본다.
-
-* [Vanilla-redux To Do List by nomad coders @ src](https://github.com/nomadcoders/vanilla-redux/blob/794f2a3eb7d169de7ca240b163e481a22653f7bd/src/index.js)
-
-```js
-import { createStore } from "redux";
-const form = document.querySelector("form");
-const input = document.querySelector("input");
-const ul = document.querySelector("ul");
-
-const ADD_TODO = "ADD_TODO";
-const DELETE_TODO = "DELETE_TODO";
-
-const addToDo = text => {
-  return {
-    type: ADD_TODO,
-    text
-  };
-};
-
-const deleteToDo = id => {
-  return {
-    type: DELETE_TODO,
-    id
-  };
-};
-
-const reducer = (state = [], action) => {
-  switch (action.type) {
-    case ADD_TODO:
-      const newToDoObj = { text: action.text, id: Date.now() };
-      return [newToDoObj, ...state];
-    case DELETE_TODO:
-      const cleaned = state.filter(toDo => toDo.id !== action.id);
-      return cleaned;
-    default:
-      return state;
-  }
-};
-
-const store = createStore(reducer);
-
-store.subscribe(() => console.log(store.getState()));
-
-const dispatchAddToDo = text => {
-  store.dispatch(addToDo(text));
-};
-
-const dispatchDeleteToDo = e => {
-  const id = parseInt(e.target.parentNode.id);
-  store.dispatch(deleteToDo(id));
-};
-
-const paintToDos = () => {
-  const toDos = store.getState();
-  ul.innerHTML = "";
-  toDos.forEach(toDo => {
-    const li = document.createElement("li");
-    const btn = document.createElement("button");
-    btn.innerText = "DEL";
-    btn.addEventListener("click", dispatchDeleteToDo);
-    li.id = toDo.id;
-    li.innerText = toDo.text;
-    li.appendChild(btn);
-    ul.appendChild(li);
-  });
-};
-
-store.subscribe(paintToDos);
-
-const onSubmit = e => {
-  e.preventDefault();
-  const toDo = input.value;
-  input.value = "";
-  dispatchAddToDo(toDo);
-};
-
-form.addEventListener("submit", onSubmit);
-```
-
-## react-redux
-
-앞서 제작한 To Do List App 을 React Redux 를 사용하여 더욱 효율적으로 구현해보자.
-
-* [Vanilla-redux react-redux by nomad coders @ src](https://github.com/nomadcoders/vanilla-redux/tree/ccaa1acd081f27239f2cc8ad3c571bd0a9923f73/src)
-
-React-Router 는 url path 에 따라 routing 기능을 지원하는 library 이다. url `/` 은 `Home` component, `/:id` 는 `Detail` component 로 routing 된다.
-
-```js
-import React from "react";
-import { HashRouter as Router, Route } from "react-router-dom";
-import Home from "../routes/Home";
-import Detail from "../routes/Detail";
-
-function App() {
-  return (
-    <Router>
-      <Route path="/" exact component={Home}></Route>
-      <Route path="/:id" component={Detail}></Route>
-    </Router>
-  );
-}
-
-export default App;
-```
-
-react-redux 의 Provider 는 state 변경사항을 자손에게 전달할 수 있게 해준다.
-
-```js
-import React from "react";
-import ReactDOM from "react-dom";
-import App from "./components/App";
-import { Provider } from "react-redux";
-import store from "./store";
-
-ReactDOM.render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById("root")
-);
-```
-
-`connect` 를 호출하여 `mapStateToProps` 와 함께 특정 Component 를 연결할 수
-있다. `mapStateToProps` 는 state 가 주어지면 state 를 포함한 props 를 리턴하는
-함수이다. 즉, state 가 변경되면 `mapStateToProps` 가 호출된다. 그리고
-`mapStateToProps` 는 state 가 포함된 props 를 리턴한다. 리턴된 props 는
-component 의 render 함수로 전달된다. 렌더 함수안에서 props 를 통해서 변경된
-state 를 읽어올 수 있다. 
-
-```js
-import React, { useState } from "react";
-import { connect } from "react-redux";
-
-function Home({ toDos }) {
-  const [text, setText] = useState("");
-  function onChange(e) {
-    setText(e.target.value);
-  }
-  function onSubmit(e) {
-    e.preventDefault();
-    setText("");
-  }
-  return (
-    <>
-      <h1>To Do</h1>
-      <form onSubmit={onSubmit}>
-        <input type="text" value={text} onChange={onChange} />
-        <button>Add</button>
-      </form>
-      <ul>{JSON.stringify(toDos)}</ul>
-    </>
-  );
-}
-
-function mapStateToProps(state) {
-  return { toDos: state };
-}
-
-export default connect(mapStateToProps)(Home);
-```
-
-`connect` 를 호출하여 `mapDispatchToProps` 와 함께 특정 Component 를 연결할 수
-있다. `mapDispatchToProps` 는 dispatch function 이 주어지면 dispatch function 을
-포함한 props 를 리턴하는 함수이다. 리턴된 props 는 `connect` 에 연결된 component
-의 render 함수로 전달된다. render 함수안에서 props 를 통해 dispatch function 을
-읽어올 수 있다. 특정 dispatch function 을 호출하면 특정 reducer 를 호출할 수
-있다.
-
-```js
-import React, { useState } from "react";
-import { connect } from "react-redux";
-import { actionCreators } from "../store";
-
-function Home({ toDos, addToDo }) {
-  const [text, setText] = useState("");
-  function onChange(e) {
-    setText(e.target.value);
-  }
-  function onSubmit(e) {
-    e.preventDefault();
-    addToDo(text);
-    setText("");
-  }
-  return (
-    <>
-      <h1>To Do</h1>
-      <form onSubmit={onSubmit}>
-        <input type="text" value={text} onChange={onChange} />
-        <button>Add</button>
-      </form>
-      <ul>{JSON.stringify(toDos)}</ul>
-    </>
-  );
-}
-
-function mapStateToProps(state) {
-  return { toDos: state };
-}
-
-function mapDispatchToProps(dispatch) {
-  return {
-    addToDo: text => dispatch(actionCreators.addToDo(text))
-  };
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home);
-```
-
-다음은 `connect` 에 두번째 argument 로 `mapDispatchToProps` 를 전달하고 `ToDo`
-component 와 연결한다. `ToDo` component 의 button 이 click 되면 `ToDo` component
-에 전달된 props 의 두번째 요소인 dispatch function 이 호출된다. dispatch
-function 에 해당하는 `onBtnClick` 이 호출되면 `DELETE` action 이 발생하고
-Reducer 가 호출된다. reducer 는 변경된 state 를 리턴하고 `ToDo` component 의
-render function 이 변경된 state argument 와 함께 호출된다.
-
-```js
-import React from "react";
-import { connect } from "react-redux";
-import { actionCreators } from "../store";
-
-function ToDo({ text, onBtnClick }) {
-  return (
-    <li>
-      {text} <button onClick={onBtnClick}>DEL</button>
-    </li>
-  );
-}
-
-function mapDispatchToProps(dispatch, ownProps) {
-  return {
-    onBtnClick: () => dispatch(actionCreators.deleteToDo(ownProps.id))
-  };
-}
-
-export default connect(null, mapDispatchToProps)(ToDo);
-```
-
-`Reducer` 에서 `DELETE` 을 처리한다. `filter` 를 이용하여 특정 id 를 제거한 목록을 변경된 state 로 리턴한다.
-
-```js
-import { createStore } from "redux";
-
-const ADD = "ADD";
-const DELETE = "DELETE";
-
-const addToDo = text => {
-  return {
-    type: ADD,
-    text
-  };
-};
-
-const deleteToDo = id => {
-  return {
-    type: DELETE,
-    id: parseInt(id)
-  };
-};
-
-const reducer = (state = [], action) => {
-  switch (action.type) {
-    case ADD:
-      return [{ text: action.text, id: Date.now() }, ...state];
-    case DELETE:
-      return state.filter(toDo => toDo.id !== action.id);
-    default:
-      return state;
-  }
-};
-
-const store = createStore(reducer);
-
-export const actionCreators = {
-  addToDo,
-  deleteToDo
-};
-
-export default store;
-```
-
-## rendering Sequences
-
-Component 가 rendering 되는 경우들을 생각해 보자. 
-
-먼저 부모 Component 가 rendering 될때 자식 Component 의 render function 이 props 와 함께 호출되는 경우가 있다.
-
-또한  Component 의 user event 혹은 timer event 에 의해 dispatch function 이 호출된다. reducer 는 변경된 state 를 리턴한다. 그리고 그 component 의 render function 이 호출된다. redner function 에서 props 를 통해 state 를 접근할 수 있다.
-
-## Smart vs Dumb
+## Smart vs Dumb Components
 
 * [Loading states + Smart vs Dumb Components @ src](https://github.com/nomadcoders/movie_app/commit/9cc9cf90d3c21dfea9c04c455f59aab7440018c4)
 
 -------
 
-Smart component 는 state 이 있는 component 이다. Dumb component 는 state 이 없는 component 이다. props 만 있다.
-Dumb component 를 stateless 혹은 functional component 라고도 한다. Dumb component 는 state 가 필요없을 때 간결한 코드를 만들기 위해 사용한다.
-그러나 state 가 없기도 하고 componentDidMount, componentWillMount 와 같은 함수들을 사용할 수 없다.
+Smart component 는 state 이 있는 component 이다. Dumb component 는 state 이 없는 component 이다. props 만 있다. Dumb component 를 stateless 혹은 functional component 라고도 한다. Dumb component 는 state 가 필요없을 때 간결한 코드를 만들기 위해 사용한다. 그러나 state 가 없기도 하고 componentDidMount, componentWillMount 와 같은 함수들을 사용할 수 없다.
 
 다음은 `Movie, MoviePoster` component 를 Dumb component 로 수정한 것이다.
 
@@ -2075,157 +2412,6 @@ MoviePoster.propTypes = {
 }
 ```
 
-## redux-toolkit
-
-* [createAction @ redux](https://redux-toolkit.js.org/api/createAction)
-* [createReducer @ redux](https://redux-toolkit.js.org/api/createReducer)
-* [configureStore @ redux](https://redux-toolkit.js.org/api/configureStore)
-* [createSlice @ redux](https://redux-toolkit.js.org/api/createSlice)
-
-## redux
-
-### `function combineReducers<S>(reducers: ReducersMapObject): Reducer<S>`
-
-* [combineReducers(reducers) @ redux](https://redux.js.org/api/combinereducers)
-
-----
-
-The combineReducers helper function turns an object whose values are different
-reducing functions into a single reducing function you can pass to createStore.
-
-### `function applyMiddleware(...middlewares: Middleware[]): GenericStoreEnhancer`
-
-* [applyMiddleware(...middleware)](https://redux.js.org/api/applymiddleware)
-
-----
-
-Middleware is the suggested way to extend Redux with custom functionality.
-Middleware lets you wrap the store's dispatch method for fun and profit. 
-
-This is an example of custom log middleware.
-
-```js
-import { createStore, applyMiddleware } from 'redux'
-import todos from './reducers'
-
-function logger({ getState }) {
-  return next => action => {
-    console.log('will dispatch', action)
-
-    // Call the next dispatch method in the middleware chain.
-    const returnValue = next(action)
-
-    console.log('state after dispatch', getState())
-
-    // This will likely be the action itself, unless
-    // a middleware further in chain changed it.
-    return returnValue
-  }
-}
-
-const store = createStore(todos, ['Use Redux'], applyMiddleware(logger))
-
-store.dispatch({
-  type: 'ADD_TODO',
-  text: 'Understand the middleware'
-})
-// (These lines will be logged by the middleware:)
-// will dispatch: { type: 'ADD_TODO', text: 'Understand the middleware' }
-// state after dispatch: [ 'Use Redux', 'Understand the middleware' ]
-```
-
-### `createStore()`
-
-* [createStore(reducer, [preloadedState], [enhancer])](https://redux.js.org/api/createstore)
-
-----
-
-Creates a Redux store that holds the complete state tree of your app. There
-should only be a single store in your app.
-
-## react-redux
-
-* [What's the '@' (at symbol) in the Redux @connect decorator?](https://stackoverflow.com/questions/32646920/whats-the-at-symbol-in-the-redux-connect-decorator)
-
------
-
-`@connect` 는 decorator 이다. 다음의 두 코드는 같다.
-
-```js
-import React from 'react';
-import * as actionCreators from './actionCreators';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-
-function mapStateToProps(state) {
-  return { todos: state.todos };
-}
-
-function mapDispatchToProps(dispatch) {
-  return { actions: bindActionCreators(actionCreators, dispatch) };
-}
-
-class MyApp extends React.Component {
-  // ...define your main app here
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MyApp);
-```
-
-```js
-import React from 'react';
-import * as actionCreators from './actionCreators';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-
-function mapStateToProps(state) {
-  return { todos: state.todos };
-}
-
-function mapDispatchToProps(dispatch) {
-  return { actions: bindActionCreators(actionCreators, dispatch) };
-}
-
-@connect(mapStateToProps, mapDispatchToProps)
-export default class MyApp extends React.Component {
-  // ...define your main app here
-}
-```
-
-## redux-actions
-
-### `function createActions(actionsMap)`
-
-* [createAction(s) @ redux-actions](https://redux-actions.js.org/api/createaction) 
-
-----
-
-Returns an object mapping action types to action creators. 
-
-### `function combineActions(...types)`
-
-* [createAction(s) @ redux-actions](https://redux-actions.js.org/api/createaction) 
-
-----
-
-Combine any number of action types or action creators. 
-
-### `function handleActions(handlers, defaultState)`
-
-* [handleAction(s) @ redux-actions](https://redux-actions.js.org/api/handleaction) 
-
-----
-
-Creates multiple reducers using handleAction() and combines them into a single reducer that handles multiple actions.
-
-## react-router
-
-* [REACT ROUTER](https://reactrouter.com/)
-  * [React Router Introduction @ youtube](https://www.youtube.com/watch?time_continue=542&v=cKnc8gXn80Q&feature=emb_logo)
------
-
-navigational components
-
 ## Ant Design
 
 * [Ant Design](https://ant.design/components/overview/)
@@ -2234,28 +2420,6 @@ navigational components
 -----
 
 React ui library
-
-## redux-saga
-
-* [redux-saga](https://github.com/redux-saga/redux-saga)
-  * [한글](https://mskims.github.io/redux-saga-in-korean/)
-* [redux-saga에서 비동기 처리 싸움](https://qiita.com/kuy/items/716affc808ebb3e1e8ac)
-
-## Redux Debugger in Chrome
-
-* [React Redux Tutorials - 24 - Redux Devtool Extension @ youtube](https://www.youtube.com/watch?v=IlM7497j6LY)
-* [#4.3 configureStore @ nomad](https://academy.nomadcoders.co/courses/235420/lectures/14735315)
-
-----
-
-```js
-import { composeWithDevTools } from 'redux-devtools-extension';
-...
-const store = createStore(
-  rootReducer,
-  composeWithDevTools(applyMiddleware(logger, ReduxThunk, sagaMiddleware))
-);
-```
 
 ## Don't Use `useEffect`
 
