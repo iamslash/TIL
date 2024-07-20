@@ -34,6 +34,7 @@
   - [Unit Test (jest)](#unit-test-jest)
   - [Integration Test (msw)](#integration-test-msw)
   - [E2E Test (cypress)](#e2e-test-cypress)
+  - [eslint, prettier](#eslint-prettier)
   - [Directory Structures](#directory-structures)
   - [Build, Deploy To GitHub Pages](#build-deploy-to-github-pages)
 - [Advanced](#advanced)
@@ -2248,13 +2249,314 @@ export default MovieForm;
 
 ## Unit Test (jest)
 
-WIP...
+jest 로 다음과 같은 것들을 할 수 있다.
+
+- 유닛 테스트 (Unit Testing):
+  - 개별 함수나 모듈을 테스트하여 올바르게 동작하는지 확인합니다.
+  - 빠르고 독립적인 테스트가 가능하며, 주로 작은 코드 단위를 검증합니다.
+- 통합 테스트 (Integration Testing):
+  - 여러 모듈이 함께 작동하는 방식을 테스트합니다.
+  - 데이터베이스와의 상호작용, API 호출 등 외부 시스템과의 통합을 검증합니다.
+  - msw와 같은 라이브러리를 사용하여 API를 모킹할 수 있습니다.
+- 엔드 투 엔드 테스트 (End-to-End Testing):
+  - 애플리케이션의 전체 플로우를 테스트합니다.
+  - 브라우저 환경에서 실제 사용자와 유사한 상호작용을 테스트합니다.
+  - 일반적으로 Cypress나 Puppeteer와 같은 도구를 사용하여 수행됩니다.
+- 스냅샷 테스트 (Snapshot Testing):
+  - 컴포넌트의 렌더링 결과를 스냅샷으로 저장하고, 이후 테스트에서 변경된 부분이 있는지 확인합니다.
+  - 주로 React 컴포넌트의 UI 변화를 감지하는 데 사용됩니다.
+- 모킹 (Mocking):
+  - 종속성을 모킹하여 테스트 환경을 제어할 수 있습니다.
+  - jest.mock을 사용하여 모듈을 모킹하거나, msw를 사용하여 API 호출을 모킹할 수 있습니다.
+- 비동기 코드 테스트:
+  - 비동기 함수를 테스트하고, 프로미스가 올바르게 해결되거나 거부되는지 확인합니다.
+  - async/await 또는 done 콜백을 사용하여 비동기 코드를 테스트할 수 있습니다.
+- 타임 트래블 (Time Travel):
+  - 타이머 함수를 모킹하고, 특정 시간에 대한 테스트를 수행할 수 있습니다.
+  - jest.useFakeTimers와 jest.advanceTimersByTime을 사용하여 타이머를 제어할 수 있습니다.
+- 코드 커버리지 (Code Coverage):
+  - 테스트된 코드의 비율을 측정하고, 커버리지 리포트를 생성합니다.
+  - `jest --coverage` 명령을 사용하여 코드 커버리지 정보를 확인할 수 있습니다.
+
+다음은 `typescript, jest` 를 사용할 수 있는 `package.json` 이다.
+
+```js
+{
+  "name": "movie-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@hookform/resolvers": "^3.9.0",
+    "@tanstack/react-query": "^5.51.1",
+    "@types/node": "^16.18.101",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "axios": "^1.7.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-hook-form": "^7.52.1",
+    "react-router-dom": "^6.24.1",
+    "react-scripts": "^5.0.1",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4",
+    "zod": "^3.23.8",
+    "zustand": "^4.5.4"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "jest",
+    "eject": "react-scripts eject",
+    "start:qa": "env-cmd -f .env.qa react-scripts start",
+    "start:stage": "env-cmd -f .env.stage react-scripts start",
+    "start:prod": "env-cmd -f .env.prod react-scripts start"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.3",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/jest": "^29.5.4",
+    "@typescript-eslint/eslint-plugin": "^7.16.1",
+    "@typescript-eslint/parser": "^7.16.1",
+    "env-cmd": "^10.1.0",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.6.4",
+    "jest-environment-jsdom": "^29.6.4",
+    "jest-stare": "^2.5.1",
+    "ts-jest": "^29.1.1",
+    "ts-node": "^10.9.1",
+    "typescript": "5.2.2"
+  }
+}
+```
+
+다음은 jest configuration 을 작성한 `jest.config.ts, jest.setup.ts` 이다.
+
+```ts
+////////////////////////////////////////////////////////////////////////////////
+// jest.config.ts
+import type { Config } from 'jest';
+
+const config: Config = {
+    /**
+     * 테스트 실행 결과를 출력할 때, 상세한 정보를 보여준다.
+     */
+    verbose: true,
+
+    /**
+     * 테스트를 실행할 파일을 지정한다.
+     */
+    testMatch: ['<rootDir>/src/**/?(*.)+(spec|test).[jt]s?(x)'],
+
+    /**
+     * transform
+     * Jest가 테스트 파일을 실행하기 전에 TypeScript를 JavaScript로 변환한다.
+     */
+    transform: {
+        // 이 설정은 .ts와 .tsx 파일을 변환합니다.
+        '^.+\\.tsx?$': ['ts-jest', { tsconfig: 'tsconfig.test.json' }],
+    },
+
+    transformIgnorePatterns: ['node_modules'],
+
+    /**
+     * 테스트 코드 커버리지를 수집한다.
+     * 코드의 어느 부분이 테스트되지 않았는지 확인할 수 있다.
+     */
+    collectCoverage: true,
+
+    /**
+     * 테스트 코드 커버리지를 수집할 파일을 지정한다.
+     */
+    collectCoverageFrom: ['src/**/*.[jt]s?(x)'],
+
+    /**
+     * 테스트 코드 커버리지를 수집한 결과를 저장할 디렉토리를 지정한다.
+     */
+    coverageDirectory: 'coverage',
+
+    /**
+     * Jest가 TypeScript를 이해할 수 있도록 설정한다.
+     */
+    preset: 'ts-jest',
+
+    /**
+     * Jest가 테스트를 실행할 환경을 설정한다.
+     */
+    testEnvironment: 'jsdom',
+
+    /**
+     * Jest가 테스트를 실행하기 전에 실행할 코드를 설정한다.
+     */
+    setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+
+    /**
+     * 모듈 이름 매핑
+     * CSS, Less, SCSS 파일을 모킹하도록 설정
+     */
+    moduleNameMapper: {
+        '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
+    },
+};
+
+export default config;
+
+////////////////////////////////////////////////////////////////////////////////
+// jest.setup.ts
+import '@testing-library/jest-dom';
+```
+
+다음과 같은 commandline 으로 `jest` 를 실행할 수 있다.
+
+```
+$ jest
+```
+
+jest 는 기본적으로 `src/__tests__` 의 파일들을 테스트한다. 그러나 설명의 편의를 위해 디렉토리 이동없이 `App.test.tsx, calculator.test.ts` 를 만들어 jest 를 실행해 보자.
+
+```js
+////////////////////////////////////////////////////////////////////////////////
+// src/App.test.tsx
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import App from './App';
+
+test('renders TopBar text', () => {
+  render(<App />);
+  const topBarElement = screen.getByText(/TopBar/i);
+  expect(topBarElement).toBeInTheDocument();
+});
+
+////////////////////////////////////////////////////////////////////////////////
+// src/shared/utils/calculator.ts
+// shared/utils/calculator.ts
+
+/**
+ * 두 숫자를 더하는 함수
+ * @param a 첫 번째 숫자
+ * @param b 두 번째 숫자
+ * @returns 두 숫자의 합
+ */
+export const add = (a: number, b: number): number => {
+    return a + b;
+};
+
+/**
+ * 두 숫자를 빼는 함수
+ * @param a 첫 번째 숫자
+ * @param b 두 번째 숫자
+ * @returns 두 숫자의 차
+ */
+export const subtract = (a: number, b: number): number => {
+    return a - b;
+};
+
+/**
+ * 두 숫자를 곱하는 함수
+ * @param a 첫 번째 숫자
+ * @param b 두 번째 숫자
+ * @returns 두 숫자의 곱
+ */
+export const multiply = (a: number, b: number): number => {
+    return a * b;
+};
+
+/**
+ * 두 숫자를 나누는 함수
+ * @param a 첫 번째 숫자
+ * @param b 두 번째 숫자
+ * @returns 두 숫자의 몫
+ */
+export const divide = (a: number, b: number): number => {
+    if (b === 0) {
+        throw new Error("0으로 나눌 수 없습니다.");
+    }
+    return a / b;
+};
+
+/**
+ * 두 숫자의 나머지를 구하는 함수
+ * @param a 첫 번째 숫자
+ * @param b 두 번째 숫자
+ * @returns 두 숫자의 나머지
+ */
+export const modulo = (a: number, b: number): number => {
+    if (b === 0) {
+        throw new Error("0으로 나눌 수 없습니다.");
+    }
+    return a % b;
+};
+
+////////////////////////////////////////////////////////////////////////////////
+// src/shared/utils/calculator.test.ts
+import { add, subtract, multiply, divide, modulo } from './calculator';
+
+describe('calculator 함수 테스트', () => {
+    test('덧셈 테스트', () => {
+        expect(add(1, 2)).toBe(3);
+        expect(add(-1, -2)).toBe(-3);
+        expect(add(1, -2)).toBe(-1);
+        expect(add(0, 0)).toBe(0);
+    });
+
+    test('뺄셈 테스트', () => {
+        expect(subtract(5, 3)).toBe(2);
+        expect(subtract(-1, -2)).toBe(1);
+        expect(subtract(1, -2)).toBe(3);
+        expect(subtract(0, 0)).toBe(0);
+    });
+
+    test('곱셈 테스트', () => {
+        expect(multiply(2, 3)).toBe(6);
+        expect(multiply(-1, -2)).toBe(2);
+        expect(multiply(1, -2)).toBe(-2);
+        expect(multiply(0, 5)).toBe(0);
+    });
+
+    test('나눗셈 테스트', () => {
+        expect(divide(6, 3)).toBe(2);
+        expect(divide(-6, -2)).toBe(3);
+        expect(divide(6, -2)).toBe(-3);
+        expect(() => divide(6, 0)).toThrow("0으로 나눌 수 없습니다.");
+    });
+
+    test('나머지 테스트', () => {
+        expect(modulo(5, 2)).toBe(1);
+        expect(modulo(-5, -2)).toBe(-1);
+        expect(modulo(5, -2)).toBe(1);
+        expect(() => modulo(5, 0)).toThrow("0으로 나눌 수 없습니다.");
+    });
+});
+```
 
 ## Integration Test (msw)
 
 WIP...
 
 ## E2E Test (cypress)
+
+WIP...
+
+## eslint, prettier
 
 WIP...
 
@@ -2275,7 +2577,6 @@ src/
 		[dir]/
 			index.tsx 
     layouts/ # layout dir     
-    stores/ # client state management   
 	features/ # dir to be used in pages
 		[dir]/
 			api/ # dir to manage apis
@@ -2291,6 +2592,7 @@ src/
 		components/
 		constants/
 		hooks/
+        stores/ # client state management   
 		utils/
 		types/
 ```
@@ -2301,8 +2603,8 @@ src/
   - 소스 코드의 루트 디렉토리입니다.
 - `__mocks__/`:
   - 테스트를 위한 mocking 데이터를 저장하는 폴더입니다.
-- `fixtures/`: 테스트용 JSON 데이터를 저장합니다.
-- `handlers/`: Mock API 처리 로직을 관리합니다.
+  - `fixtures/`: 테스트용 JSON 데이터를 저장합니다.
+  - `handlers/`: Mock API 처리 로직을 관리합니다.
 - `__tests__/`:
   - 모든 테스트 파일을 저장하는 폴더입니다. 테스트 파일이 각 기능별로 분산되지 않고 한 곳에 모아져 있어 관리하기 쉽습니다.
 - `pages/`:
