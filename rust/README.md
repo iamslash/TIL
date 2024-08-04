@@ -43,6 +43,9 @@ Rust 에 대해 정리한다.
 
 # References
 
+* [Command-Line Rust | oreilly](https://www.oreilly.com/library/view/command-line-rust/9781098109424/)
+  * clone coding for command lines such as `echo, cat, head, wc, uniq, find, cut, grep, comm, tail, fortune, cal, ls`.
+  * [src](https://github.com/kyclark/command-line-rust)
 * [Comprehensive Rust](https://google.github.io/comprehensive-rust/welcome.html)
   * [kor](https://google.github.io/comprehensive-rust/ko/welcome.html)
 * [Awesome Rust @ github](https://github.com/rust-unofficial/awesome-rust)

@@ -12,8 +12,9 @@
 
 # Abstract
 
-database 를 만들어 보자. [chidb](http://chi.cs.uchicago.edu/chidb/index.html),
-[sqlite @ github](https://github.com/smparkes/sqlite) 분석부터 시작해 본다.
+[Let's Build a Simple Database](https://cstack.github.io/db_tutorial/) 를 읽고 정리한다.
+
+[chidb](http://chi.cs.uchicago.edu/chidb/index.html), [sqlite | github](https://github.com/smparkes/sqlite) 도 나쁘지 않다.
 
 # Material
 
