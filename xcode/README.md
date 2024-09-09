@@ -1,10 +1,22 @@
+- [Materials](#materials)
+- [Basic](#basic)
+  - [Install](#install)
+  - [Shorcuts](#shorcuts)
+  - [Terms](#terms)
+  - [Show File Extensions](#show-file-extensions)
+  - [Find References](#find-references)
+  - [How to make a iOS app with cocoapods](#how-to-make-a-ios-app-with-cocoapods)
+  - [How to make a iOS library with cocoapods](#how-to-make-a-ios-library-with-cocoapods)
+
+-----
+
 # Materials
 
 * [xcode | apple](https://developer.apple.com/documentation/xcode)
-* [awesome ios @ github ](https://github.com/vsouza/awesome-ios)
-* [awesome ios ui @ github](https://github.com/cjwirth/awesome-ios-ui)
-* [iOS-Sample-Code @ github](https://github.com/xcatsan/iOS-Sample-Code)
-* [ios-sample-apps @ github](https://github.com/ooyala/ios-sample-apps)
+* [awesome ios | github ](https://github.com/vsouza/awesome-ios)
+* [awesome ios ui | github](https://github.com/cjwirth/awesome-ios-ui)
+* [iOS-Sample-Code | github](https://github.com/xcatsan/iOS-Sample-Code)
+* [ios-sample-apps | github](https://github.com/ooyala/ios-sample-apps)
 
 # Basic
 

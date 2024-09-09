@@ -5,6 +5,8 @@
   - [Android Application Release](#android-application-release)
 - [Advanced](#advanced)
   - [Adnroid Device Connection](#adnroid-device-connection)
+  - [Android UI Debugging](#android-ui-debugging)
+  - [Android Device Screen Mirroring](#android-device-screen-mirroring)
 
 ----
 
@@ -57,3 +59,11 @@ Android Application 을 PlayStore 에 출시해보자.
   $ adb start-server
   ``` 
 * Reboot macbook.
+
+## Android UI Debugging
+
+- [Flipper](https://github.com/facebook/flipper)
+
+## Android Device Screen Mirroring
+
+- [scrcpy](https://github.com/Genymobile/scrcpy)

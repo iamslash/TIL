@@ -9,6 +9,8 @@
   - [Distribution](#distribution)
 - [Advanced](#advanced)
   - [Background Tasks](#background-tasks)
+  - [Modular Architecture](#modular-architecture)
+  - [Dynamic Library vs Staic Library](#dynamic-library-vs-staic-library)
 
 ----
 
@@ -129,3 +131,25 @@ LLDB> e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTa
 
 LLDB> e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateExpirationForTaskWithIdentifier:@"TASK_IDENTIFIER"]
 ```
+
+## Modular Architecture
+
+- [Modular Architecture on iOS and macOS | github](https://github.com/CyrilCermak/modular_architecture_on_ios/tree/master)
+  - `Modular Architecture on iOS and macOS` ebook src 
+
+## Dynamic Library vs Staic Library
+
+Apple의 생태계에서 라이브러리는 크게 두 가지 방식으로 만들 수 있습니다: **정적 링크 라이브러리(Static Library)**와 **동적 링크 라이브러리(Dynamic Library)**입니다. 동적 링크 라이브러리는 이전에 Cocoa Touch Framework로 불렸지만, 이제는 단순히 Framework로 불립니다.
+
+Swift 생태계에서 사용되는 Swift Package와 **Swift Package Manager(SPM)**도 주목할 필요가 있습니다. SPM은 주로 소스 코드를 공유하는 데 사용되며, 정적 링크를 기본으로 하지만 개발자가 선택하면 동적 링크도 가능합니다. 또한, SPM을 통해 XCFramework를 공유하는 것도 일반적이며, 이 경우 SPM은 컴파일된 바이너리를 감싸는 역할을 합니다.
+
+1. 동적 링크 라이브러리
+- Dylib: Mach-O 형식의 바이너리를 가지는 동적 라이브러리 (`.dylib`).
+- Framework: 바이너리와 실행 중에 필요한 추가 리소스를 포함하는 번들 (`.framework`).
+- TBDs: 텍스트 기반의 동적 라이브러리 스텁으로, 기기의 시스템에 존재하는 바이너리를 참조하며, 가벼운 SDK로 제공됨 (`.tbd`).
+- XCFramework: Xcode 11부터 도입된 라이브러리로, macOS, iOS, iOS 시뮬레이터, watchOS 등 여러 플랫폼용 프레임워크를 묶을 수 있음 (`.xcframework`).
+
+1. 정적 링크 라이브러리
+- Archive: 컴파일된 객체 파일을 포함하는 정적 아카이브 (`.a`).
+- Framework: 정적 바이너리 또는 정적 아카이브와 필요한 리소스를 포함하는 프레임워크 (`.framework`).
+- XCFramework: 동적 링크와 동일하게 정적 링크에서도 XCFramework를 사용할 수 있음 (`.xcframework`).
