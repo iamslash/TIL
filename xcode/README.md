@@ -7,6 +7,10 @@
   - [Find References](#find-references)
   - [How to make a iOS app with cocoapods](#how-to-make-a-ios-app-with-cocoapods)
   - [How to make a iOS library with cocoapods](#how-to-make-a-ios-library-with-cocoapods)
+- [Advanced](#advanced)
+  - [Navigate to the file](#navigate-to-the-file)
+  - [Debug Hierarchy View](#debug-hierarchy-view)
+  - [`Show Callers` Short Cut](#show-callers-short-cut)
 
 -----
 
@@ -46,6 +50,7 @@ $ xcodes install --latest
 | `^ ⌘ <-` | Back |
 | `^ ⌘ ->` | Forward |
 | `^ ⌘ J` | Jump to definition |
+| `⇧ ⌘ J` | Reveal in project navigator |
 | `^ ⇧ ⌘ F` | Find selected symbol in workspace |
 | `^ ⇧ ⌘ H` | Find call hierarchy |
 | `⌘ 0` | Show/Hide Navigator |
@@ -106,3 +111,27 @@ Project View 의 File Extension 을 보이게 하자.
 ## How to make a iOS library with cocoapods
 
 [cocoapods create library](/cocoapods/README.md#using-pod-lib-create)
+
+# Advanced
+
+## Navigate to the file
+
+- 자동 파일 탐색 설정:
+  - Xcode에는 현재 열려 있는 파일을 네비게이터에서 자동으로 선택하도록 설정하는 기능이 있습니다.
+  - 메뉴에서 File > Project Settings 또는 Preferences > Navigation으로 이동합니다.
+  - "Navigation" 탭에서 Automatically Select Currently Edited File 옵션을 활성화합니다.
+- 단축키 사용:
+  - `Command + Shift + J`: 현재 열려 있는 파일을 네비게이터 창에서 자동으로 선택하여 강조 표시합니다. Jump to Definition으로 이동한 후, 이 단축키를 누르면 파일이 워크스페이스에서 선택됩니다.
+
+## Debug Hierarchy View
+
+- app 을 실행후 Debug Hierarchy View 를 선택하면 UI Hierarchy 를 쉽게 파악할 수 있다.
+
+![](img/2024-09-13-08-01-42.png)
+
+![](img/2024-09-13-08-03-24.png)
+
+## `Show Callers` Short Cut
+
+- Show Callers 는 자주사용하는 기능이지만 기본 단축키가 없다.
+- `Settings... | Key Bingins` 에서 `^ ⇧ C` 로 설정한다.

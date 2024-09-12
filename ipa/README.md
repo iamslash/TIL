@@ -1,3 +1,11 @@
+- [Abstract](#abstract)
+- [Materials](#materials)
+- [Developer Certificate](#developer-certificate)
+- [Mobile Provisioning Profile](#mobile-provisioning-profile)
+- [Mach-O](#mach-o)
+
+-----
+
 # Abstract
 
 `ipa, Mach-O` 의 구조를 코드 서명의 관점에서 기술한다.
@@ -8,9 +16,7 @@
 
 # Developer Certificate
 
-ios app 을 xcode 로 빌드하기 위해서 개발자 인증서가 필요하다. Developer Certificate 은 `
-iOS Development` 와 `
-iOS Distribution` 의 두가지 type 이 있다.
+ios app 을 xcode 로 빌드하기 위해서 개발자 인증서가 필요하다. Developer Certificate 은 `iOS Development` 와 `iOS Distribution` 의 두가지 type 이 있다.
 
 `iOS Distribution` type 의 Developer Cerificate 은 apple appstore 에서 판매할 app 을 빌드할 때 필요하다. 
 
@@ -92,11 +98,11 @@ Ad Hoc 등 모든 기기에서 실행 가능한 앱의 Mobile Provisioning Profi
 
 # Mach-O 
 
-`a.ipa` 의 압축을 풀면 `~/Payload/a.app/Info.plist` 가 존재한다. `Excecutable file` 의 값이 실행할 `Mac-O` binary 파일이다. 다음은 `mach-o` 의 대강의 구조이다. 자세한 구조는 [macho101.pdf @ github](https://github.com/corkami/pics/blob/master/binary/macho101/macho101.pdf) 를 참고한다.
+`a.ipa` 의 압축을 풀면 `~/Payload/a.app/Info.plist` 가 존재한다. `Excecutable file` 의 값이 실행할 `Mac-O` binary 파일이다. 다음은 `mach-o` 의 대강의 구조이다. 자세한 구조는 [macho101.pdf | github](https://github.com/corkami/pics/blob/master/binary/macho101/macho101.pdf) 를 참고한다.
 
 ![](mach-o_structure.png)
 
-[machoview @ sourceforge](https://sourceforge.net/projects/machoview/) 는 `Mach-O` 뷰어이다.
+[machoview | sourceforge](https://sourceforge.net/projects/machoview/) 는 `Mach-O` 뷰어이다.
 
 `Mach-O` 는 크게 `mach header, load commands, Data` 로 구분된다. 
 
@@ -119,7 +125,6 @@ $ otool -l Payload/a.app/a | grep LC_CODE_SIGNATURE -A3
 ```
 
 ![](LC_CODE_SIGNATURE.png)
-
 
 * `LC_CODE_SIGNATURE` 가 가리키는 `Code Signature` 의 중요 항목은 `CodeDirectory, Entitlement, Requirements, BlobWrapper` 등이 있다. 다음은 `CodeSignature` 의 대강의 구조이다.
 
