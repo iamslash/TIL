@@ -2246,6 +2246,36 @@ someAny = sub
 if let someReadable: Readable = someAny as? Readable {
     someReadable.read()
 } // read
+
+//MARK:- Protocol Composition
+// Swift의 프로토콜 합성(Protocol Composition)은 하나의 타입이 여러 프로토콜을
+// 준수하도록 만들 때 사용됩니다. & 연산자를 사용하여 여러 프로토콜을 하나의 타입에 
+// 결합할 수 있습니다.
+protocol Drivable {
+    func drive()
+}
+
+protocol Flyable {
+    func fly()
+}
+
+struct FlyingCar: Drivable & Flyable {
+    func drive() {
+        print("차가 도로를 달립니다.")
+    }
+    
+    func fly() {
+        print("차가 하늘을 납니다.")
+    }
+}
+
+func performAction(vehicle: Drivable & Flyable) {
+    vehicle.drive()
+    vehicle.fly()
+}
+
+let myFlyingCar = FlyingCar()
+performAction(vehicle: myFlyingCar)
 ```
 
 ## Extension
