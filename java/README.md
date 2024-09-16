@@ -392,6 +392,10 @@ int[] cells = new int[]{0,0,1,1};
 System.out.println(String.valueOf(cells));  // [I@59f95c5d
 System.out.println(Arrays.toString(cells)); // [0, 0, 1, 1]
 System.out.println(String.valueOf(chars));  // HELLO
+
+// convert to binary string
+String yearStr = "2080";
+System.out.println(Integer.toBinaryString(Integer.parseInt(yearStr)));  // 100000100000
 ```
 
 ## Random
