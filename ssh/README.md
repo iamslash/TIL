@@ -4,7 +4,23 @@
 
 # Usages
 
-* `.ssh/config`
+- private key 등록
+
+```bash
+# Show list of registered keys
+# The order is important.
+$ ssh-add -l
+
+# Delete registered keys
+$ ssh-add -D
+
+# Add private keys
+# The order is important.
+$ ssh-add --apple-use-keychain ~/.ssh/id_rsa.iamslash.ppk
+$ ssh-add --apple-use-keychain ~/.ssh/id_rsa.david.s.ppk
+```
+
+- `.ssh/config`
 
 ```
 Host gitlab
@@ -33,13 +49,13 @@ Host *
     IdentityFile ~/.ssh/id_rsa
 ```
 
-* check
+- check
 
 ```bash
 $ ssh -vvv -T github
 ```
 
-* clone with host
+- clone with host
 
 ```bash
 $ git clone my-dev:iamslash/helloworld.git
