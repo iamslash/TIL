@@ -19,6 +19,10 @@
 - [Computer System Components](#computer-system-components)
 - [Parts of Program Memory](#parts-of-program-memory)
 - [Machine Language](#machine-language)
+- [False Sharing](#false-sharing)
+    - [개념 이해](#개념-이해)
+    - [False Sharing의 동작 원리](#false-sharing의-동작-원리)
+    - [False Sharing 방지 방법](#false-sharing-방지-방법)
 - [Interrupt](#interrupt)
 - [DMA (Direct Memory Access)](#dma-direct-memory-access)
 - [Numa](#numa)
@@ -412,6 +416,232 @@ general purpose registers 정도는 알아두자.
 
 ![](gp_registers.jpg)
 
+# False Sharing
+
+[C++ false sharing이란?(거짓 공유) | tistory](https://hwan-shell.tistory.com/230)
+
+**False Sharing**은 멀티스레드 환경에서 성능 저하를 일으키는 문제입니다. 서로 다른 스레드가 각각 독립적인 변수에 접근하더라도, 이 변수들이 같은 캐시 라인에 존재할 경우 **캐시 무효화**가 발생하여 성능이 저하될 수 있습니다.
+
+### 개념 이해
+캐시는 데이터를 메모리보다 빠르게 접근하기 위해 사용하는 메모리 계층입니다. CPU는 데이터를 캐시 라인이라는 단위로 읽고 저장하며, 보통 캐시 라인은 64바이트로 구성됩니다. False Sharing은 두 개 이상의 스레드가 다른 데이터(예: 변수)라도 같은 캐시 라인에 위치한 데이터를 동시에 읽고 수정할 때 발생합니다.
+
+### False Sharing의 동작 원리
+
+1. **캐시 라인 공유**: 예를 들어, 스레드 A와 스레드 B가 각각 `var1`과 `var2`라는 변수를 사용한다고 할 때, 이 두 변수가 동일한 캐시 라인에 위치하고 있다고 가정합니다.
+2. **스레드 간의 캐시 무효화**: 스레드 A가 `var1`을 수정하면 CPU는 스레드 A의 캐시에 있는 캐시 라인을 업데이트합니다. 이때 스레드 B의 캐시에서 동일한 캐시 라인이 **무효화**됩니다.
+3. **캐시 재로드**: 이후 스레드 B가 `var2`에 접근하려고 하면, 무효화된 캐시 라인을 다시 로드해야 합니다. 따라서, A와 B는 별개의 변수에 접근하는데도 불구하고 캐시 무효화로 인해 성능이 떨어집니다.
+
+### False Sharing 방지 방법
+
+- **패딩 사용**: 변수 사이에 더미 데이터를 넣어 변수를 서로 다른 캐시 라인에 위치하게 합니다.
+- **캐시 라인 간격 조정**: 성능에 민감한 데이터를 다룰 때는 변수가 다른 캐시 라인에 놓이도록 메모리 배치를 최적화합니다.
+
+False Sharing은 멀티스레드 프로그래밍에서 성능을 예기치 않게 저하시키는 원인이 되므로, 이를 방지하면 프로그램 성능을 크게 향상시킬 수 있습니다.
+
+다음은 c++ 로 구현한 as-is, to-be 이다.
+
+```c++
+////////////////////////////////////////////////////////////////////////////////
+// as-is
+// std::atomic<int> counters[NUM_THREADS] 배열에서 각 스레드는 
+// 동일한 캐시 라인을 공유할 수 있어 False Sharing이 발생할 가능성이 있습니다.
+#include <iostream>
+#include <thread>
+#include <vector>
+#include <atomic>
+
+constexpr int NUM_THREADS = 4;
+constexpr int NUM_ITERATIONS = 1000000;
+
+struct SharedData {
+    std::atomic<int> counters[NUM_THREADS];  // 각 스레드의 카운터를 동일한 배열에 저장
+};
+
+void increment(SharedData& data, int thread_id) {
+    for (int i = 0; i < NUM_ITERATIONS; ++i) {
+        data.counters[thread_id]++;
+    }
+}
+
+int main() {
+    SharedData data;
+    std::vector<std::thread> threads;
+
+    for (int i = 0; i < NUM_THREADS; ++i) {
+        threads.emplace_back(increment, std::ref(data), i);
+    }
+
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    int total = 0;
+    for (int i = 0; i < NUM_THREADS; ++i) {
+        total += data.counters[i];
+    }
+
+    std::cout << "Total count: " << total << std::endl;
+    return 0;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// to-be
+// PaddedData 구조체에 캐시 라인 크기에 맞춰 패딩을 추가하여 각 스레드의 counter가 서로 다른 
+// 캐시 라인에 위치하도록 합니다. alignas(CACHE_LINE_SIZE)와 패딩을 통해 False Sharing을 방지합니다.
+#include <iostream>
+#include <thread>
+#include <vector>
+#include <atomic>
+
+constexpr int NUM_THREADS = 4;
+constexpr int NUM_ITERATIONS = 1000000;
+constexpr int CACHE_LINE_SIZE = 64;
+
+struct PaddedData {
+    alignas(CACHE_LINE_SIZE) std::atomic<int> counter;  // 캐시 라인 패딩 적용
+    char padding[CACHE_LINE_SIZE - sizeof(std::atomic<int>)]; // 패딩으로 분리
+};
+
+struct SharedData {
+    PaddedData counters[NUM_THREADS];
+};
+
+void increment(SharedData& data, int thread_id) {
+    for (int i = 0; i < NUM_ITERATIONS; ++i) {
+        data.counters[thread_id].counter++;
+    }
+}
+
+int main() {
+    SharedData data;
+    std::vector<std::thread> threads;
+
+    for (int i = 0; i < NUM_THREADS; ++i) {
+        threads.emplace_back(increment, std::ref(data), i);
+    }
+
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    int total = 0;
+    for (int i = 0; i < NUM_THREADS; ++i) {
+        total += data.counters[i].counter;
+    }
+
+    std::cout << "Total count: " << total << std::endl;
+    return 0;
+}
+```
+
+다음은 java 로 구현한 as-is, to-be 이다.
+
+```java
+////////////////////////////////////////////////////////////////////////////////
+// as-is
+// AtomicInteger[] counters 배열은 각 스레드가 독립적으로 사용하는 카운터들을 
+// 하나의 배열에 저장하여, False Sharing이 발생할 가능성이 큽니다. 각 스레드가 
+// 다른 카운터에 접근하더라도 같은 캐시 라인에 위치할 수 있습니다.
+import java.util.concurrent.atomic.AtomicInteger;
+
+public class FalseSharingExample {
+    private static final int NUM_THREADS = 4;
+    private static final int NUM_ITERATIONS = 1_000_000;
+
+    // 각 스레드의 카운터를 배열로 저장
+    private static final AtomicInteger[] counters = new AtomicInteger[NUM_THREADS];
+
+    static {
+        for (int i = 0; i < NUM_THREADS; i++) {
+            counters[i] = new AtomicInteger();
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread[] threads = new Thread[NUM_THREADS];
+
+        for (int i = 0; i < NUM_THREADS; i++) {
+            final int index = i;
+            threads[i] = new Thread(() -> {
+                for (int j = 0; j < NUM_ITERATIONS; j++) {
+                    counters[index].incrementAndGet();
+                }
+            });
+            threads[i].start();
+        }
+
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        int total = 0;
+        for (int i = 0; i < NUM_THREADS; i++) {
+            total += counters[i].get();
+        }
+        
+        System.out.println("Total count: " + total);
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+// to-be
+// @Contended 애너테이션을 counter 필드에 적용하는 방식으로 코드를 변경할 수 있습니다. 
+// @Contended는 해당 필드를 독립적인 캐시 라인에 배치하므로, 패딩을 추가하지 않고도 
+// 동일한 효과를 얻을 수 있습니다.
+// 다만, @Contended를 사용하기 위해서는 JVM에 -XX:-RestrictContended 옵션을 활성화해야 합니다.
+import sun.misc.Contended;
+
+public class FalseSharingOptimized {
+    private static final int NUM_THREADS = 4;
+    private static final int NUM_ITERATIONS = 1_000_000;
+
+    private static class PaddedAtomicInteger {
+        @Contended // 캐시 라인 분리를 위해 적용
+        private final AtomicInteger counter = new AtomicInteger();
+
+        public void increment() {
+            counter.incrementAndGet();
+        }
+
+        public int get() {
+            return counter.get();
+        }
+    }
+
+    private static final PaddedAtomicInteger[] counters = new PaddedAtomicInteger[NUM_THREADS];
+
+    static {
+        for (int i = 0; i < NUM_THREADS; i++) {
+            counters[i] = new PaddedAtomicInteger();
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        Thread[] threads = new Thread[NUM_THREADS];
+
+        for (int i = 0; i < NUM_THREADS; i++) {
+            final int index = i;
+            threads[i] = new Thread(() -> {
+                for (int j = 0; j < NUM_ITERATIONS; j++) {
+                    counters[index].increment();
+                }
+            });
+            threads[i].start();
+        }
+
+        for (Thread thread : threads) {
+            thread.join();
+        }
+
+        int total = 0;
+        for (int i = 0; i < NUM_THREADS; i++) {
+            total += counters[i].get();
+        }
+
+        System.out.println("Total count: " + total);
+    }
+}
+```
 
 # Interrupt
 
