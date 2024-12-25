@@ -475,6 +475,80 @@ console.log(fruits.slice(1, 2));  // ['Banana']
 
 // Init array with one value
 let prevIdxs = new Array<Number>().fill(-1);
+
+// map
+// `map`은 배열의 각 요소에 대해 변환 작업을 수행하고 새로운 배열을 반환합니다.
+const numbers = [1, 2, 3, 4];
+const doubled = numbers.map(num => num * 2);
+console.log(doubled); // [2, 4, 6, 8]
+
+// reduce
+// `reduce`는 배열을 순회하며 단일 값으로 축약합니다.
+const sum = numbers.reduce((acc, cur) => acc + cur, 0);
+console.log(sum); // 10
+
+// filter
+// `filter`는 조건에 맞는 요소만 걸러서 새로운 배열을 반환합니다.
+const evenNumbers = numbers.filter(num => num % 2 === 0);
+console.log(evenNumbers); // [2, 4]
+
+// sort
+// 배열의 요소를 정렬합니다.
+const unsortedNumbers = [3, 1, 4, 2];
+unsortedNumbers.sort((a, b) => a - b);
+console.log(unsortedNumbers); // [1, 2, 3, 4]
+
+// every and some
+// - `every`: 배열의 모든 요소가 조건을 만족하면 `true`를 반환.
+// - `some`: 배열의 일부 요소가 조건을 만족하면 `true`를 반환.
+const allEven = numbers.every(num => num % 2 === 0); // true
+const hasOdd = numbers.some(num => num % 2 !== 0); // false
+console.log(allEven, hasOdd); // true, false
+
+// find and findIndex
+// - `find`: 조건에 맞는 첫 번째 요소를 반환.
+// - `findIndex`: 조건에 맞는 첫 번째 요소의 인덱스를 반환.
+const firstEven = numbers.find(num => num % 2 === 0); // 2
+const indexOfFirstEven = numbers.findIndex(num => num % 2 === 0); // 1
+console.log(firstEven, indexOfFirstEven); // 2, 1
+
+// includes
+// 특정 값이 배열에 포함되어 있는지 확인합니다.
+const hasThree = numbers.includes(3); // true
+console.log(hasThree); // true
+
+// flat and flatMap
+// - `flat`: 다차원 배열을 평탄화합니다.
+// - `flatMap`: `map` 후 평탄화를 동시에 수행합니다.
+const nested = [1, [2, 3], [4, [5]]];
+const flatArray = nested.flat(2);
+console.log(flatArray); // [1, 2, 3, 4, 5]
+
+const strings = ["hello", "world"];
+const charArray = strings.flatMap(str => str.split(''));
+console.log(charArray); // ['h', 'e', 'l', 'l', 'o', 'w', 'o', 'r', 'l', 'd']
+
+// splice
+// 배열에서 요소를 추가/삭제/대체합니다.
+const mutableNumbers = [1, 2, 3, 4];
+mutableNumbers.splice(1, 2, 99); // 1번 인덱스부터 2개 제거 후 99 추가
+console.log(mutableNumbers); // [1, 99, 4]
+
+// - **`reverse`**: 배열 요소의 순서를 뒤집습니다.
+const reversedNumbers = [...mutableNumbers].reverse();
+console.log(reversedNumbers); // [4, 99, 1]
+
+// - **`push` / `pop`**: 배열 끝에 요소를 추가하거나 제거합니다.
+const stack = [1, 2];
+stack.push(3); // [1, 2, 3]
+stack.pop(); // [1, 2]
+console.log(stack); // [1, 2]
+
+// - **`shift` / `unshift`**: 배열 시작에 요소를 추가하거나 제거합니다.
+const queue = [1, 2];
+queue.unshift(0); // [0, 1, 2]
+queue.shift(); // [1, 2]
+console.log(queue); // [1, 2]
 ```
 
 ### set
