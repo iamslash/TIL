@@ -319,6 +319,10 @@ c = a & b;  // 0000 0101
 c = a | b;  // 0000 0111
 c = a ^ b;  // 0000 0010
 c = ~a;     // 1111 1010
+
+System.out.println(Integer.bitCount(3)); // 2
+system.out.println(Integer.toBinaryString(3)) // 11
+System.out.println(Integer.parseInt("11", 2)) // 3
 ```
 
 ## Character
