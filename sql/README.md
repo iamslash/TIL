@@ -2604,6 +2604,32 @@ fiscal_year | sales_employee | sale | pct
 2018        | John           | 250  | 0
 2016        | John           | 200  | 0.5
 2017        | John           | 150  | 1
+
+
+-- FIRST_VALUE
+-- 각 sales_employee 별로 첫 번째 fiscal_year에서의 판매량(sale)을 가져오는 SQL 문입니다.
+-- 이때 FIRST_VALUE() 함수를 사용합니다.
+SELECT 
+    fiscal_year,
+    sales_employee,
+    sale,
+    FIRST_VALUE(sale) OVER (
+        PARTITION BY sales_employee
+        ORDER BY fiscal_year
+    ) first_year_sale
+FROM 
+    sales;
+| fiscal_year | sales_employee | sale | first_year_sale |
+|-------------|----------------|------|-----------------|
+| 2016        | Alice          | 150  | 150             |
+| 2017        | Alice          | 100  | 150             |
+| 2018        | Alice          | 200  | 150             |
+| 2016        | Bob            | 100  | 100             |
+| 2017        | Bob            | 150  | 100             |
+| 2018        | Bob            | 200  | 100             |
+| 2016        | John           | 200  | 200             |
+| 2017        | John           | 150  | 200             |
+| 2018        | John           | 250  | 200             |
 ```
 
 ## Number Functions
