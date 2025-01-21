@@ -23,6 +23,20 @@
   - [Grouping Data](#grouping-data)
   - [Subqueries](#subqueries)
   - [Common Table Expressions (CTE)](#common-table-expressions-cte)
+    - [1. 기본 CTE](#1-기본-cte)
+      - [예제 설명](#예제-설명)
+      - [코드](#코드)
+      - [결과](#결과)
+    - [2. 다중 CTE](#2-다중-cte)
+      - [예제 설명](#예제-설명-1)
+      - [코드](#코드-1)
+      - [결과](#결과-1)
+    - [3. 재귀 CTE](#3-재귀-cte)
+      - [예제 설명](#예제-설명-2)
+      - [테이블 생성 및 데이터 삽입](#테이블-생성-및-데이터-삽입)
+      - [테이블 데이터](#테이블-데이터)
+      - [재귀 CTE 코드](#재귀-cte-코드)
+      - [결과](#결과-2)
   - [Set Operators](#set-operators)
   - [Updating Data](#updating-data)
   - [Insert On Duplicate Key Update](#insert-on-duplicate-key-update)
@@ -613,8 +627,17 @@ customer_id | customer_name | email
 
 ## Common Table Expressions (CTE)
 
+CTE(Common Table Expression)는 SQL에서 일시적인 이름을 가진 결과 집합으로, 복잡한 쿼리를 구조적으로 정리하거나, 가독성을 높이기 위해 사용됩니다. 
+
+---
+
+### 1. 기본 CTE
+
+#### 예제 설명
+특정 고객의 총 구매 금액(sales amount)을 계산한 후, 구매 금액을 기준으로 내림차순 정렬하는 예제입니다.
+
+#### 코드
 ```sql
-/* CTE */
 WITH customer_sales AS (
     SELECT c.customer_id, 
            c.customer_name, 
@@ -624,27 +647,76 @@ WITH customer_sales AS (
       JOIN products p ON s.product_id = p.product_id
   GROUP BY c.customer_id, c.customer_name
 )
-  SELECT cs.customer_id, 
-         cs.customer_name, 
-         cs.sales_amount
-    FROM customer_sales cs
+SELECT cs.customer_id, 
+       cs.customer_name, 
+       cs.sales_amount
+  FROM customer_sales cs
 ORDER BY cs.sales_amount DESC;
+```
 
--- result
-customer_id | customer_name | sales_amount
--------------------------------------------
-1           | John Doe      | 700.00
-2           | Jane Smith    | 450.00
-3           | Alice Johnson | 200.00
+#### 결과
+| customer_id | customer_name | sales_amount |
+|-------------|---------------|--------------|
+| 1           | John Doe      | 700.00       |
+| 2           | Jane Smith    | 450.00       |
+| 3           | Alice Johnson | 200.00       |
 
-/* RECURSIVE CTE */
-/* employees table */
+---
+
+### 2. 다중 CTE
+
+#### 예제 설명
+다중 CTE를 사용하여 여러 단계로 데이터를 처리하는 예제입니다. 첫 번째 CTE에서 매출 데이터를 계산하고, 두 번째 CTE에서 해당 데이터를 활용해 매출 순위(rank)를 계산합니다.
+
+#### 코드
+```sql
+WITH customer_sales AS (
+    SELECT c.customer_id, 
+           c.customer_name, 
+           SUM(s.quantity * p.price) as sales_amount
+      FROM customers c
+      JOIN sales s ON c.customer_id = s.customer_id
+      JOIN products p ON s.product_id = p.product_id
+  GROUP BY c.customer_id, c.customer_name
+),
+sales_ranking AS (
+    SELECT customer_id, 
+           customer_name, 
+           sales_amount, 
+           RANK() OVER (ORDER BY sales_amount DESC) as sales_rank
+      FROM customer_sales
+)
+SELECT customer_id, 
+       customer_name, 
+       sales_amount, 
+       sales_rank
+  FROM sales_ranking;
+```
+
+#### 결과
+| customer_id | customer_name | sales_amount | sales_rank |
+|-------------|---------------|--------------|------------|
+| 1           | John Doe      | 700.00       | 1          |
+| 2           | Jane Smith    | 450.00       | 2          |
+| 3           | Alice Johnson | 200.00       | 3          |
+
+---
+
+### 3. 재귀 CTE
+
+#### 예제 설명
+직원과 관리자 관계를 계층적으로 표현하는 예제입니다. `employee_hierarchy`라는 재귀 CTE를 사용해 조직의 계층 구조를 생성합니다.
+
+#### 테이블 생성 및 데이터 삽입
+
+```sql
 CREATE TABLE employees (
     employee_id INT PRIMARY KEY,
     employee_name VARCHAR(255) NOT NULL,
     manager_id INT,
     FOREIGN KEY (manager_id) REFERENCES employees(employee_id)
 );
+
 INSERT INTO employees (employee_id, employee_name, manager_id)
 VALUES (1, 'CEO', NULL),
        (2, 'Manager A', 1),
@@ -652,57 +724,58 @@ VALUES (1, 'CEO', NULL),
        (4, 'Employee A', 2),
        (5, 'Employee B', 2),
        (6, 'Employee C', 3);
--- result
-employee_id | employee_name | manager_id
-1           | CEO           | NULL
-2           | Manager A     | 1
-3           | Manager B     | 1
-4           | Employee A    | 2
-5           | Employee B    | 2
-6           | Employee C    | 3
-
-/* recursive CTE */
--- a recursive CTE named employee_hierarchy is created to generate 
--- a hierarchical structure of employees and their managers. 
--- The CTE starts with the base query (top of the hierarchy) and then 
--- recursively appends rows containing employees that report to 
--- the managers in the current hierarchy level. The result shows 
--- a hierarchy of employees and managers with their associated hierarchy levels.
-WITH RECURSIVE employee_hierarchy AS (
-  -- Base query: Select all employees at the top of the hierarchy (in this case, the CEO)
-  SELECT employee_id, 
-         employee_name, 
-         manager_id, 
-         0 as hierarchy_level
-    FROM employees
-   WHERE manager_id IS NULL
-   UNION ALL
-  -- Recursive query: Select employees who report to those already in the hierarchy
-  SELECT e.employee_id, 
-         e.employee_name, 
-         e.manager_id, 
-         eh.hierarchy_level + 1
-    FROM employees e
-    JOIN employee_hierarchy eh 
-      ON e.manager_id = eh.employee_id
-)
-  SELECT employee_id, 
-         employee_name, 
-         manager_id, 
-         hierarchy_level
-    FROM employee_hierarchy
-ORDER BY hierarchy_level, employee_id;
-
--- result
-employee_id | employee_name | manager_id | hierarchy_level
------------------------------------------------------------
-1           | CEO           | NULL       | 0
-2           | Manager A     | 1          | 1
-3           | Manager B     | 1          | 1
-4           | Employee A    | 2          | 2
-5           | Employee B    | 2          | 2
-6           | Employee C    | 3          | 2
 ```
+
+#### 테이블 데이터
+| employee_id | employee_name | manager_id |
+|-------------|---------------|------------|
+| 1           | CEO           | NULL       |
+| 2           | Manager A     | 1          |
+| 3           | Manager B     | 1          |
+| 4           | Employee A    | 2          |
+| 5           | Employee B    | 2          |
+| 6           | Employee C    | 3          |
+
+---
+
+#### 재귀 CTE 코드
+
+```sql
+WITH RECURSIVE employee_hierarchy AS (
+    -- 기본 계층 (CEO)
+    SELECT employee_id, 
+           employee_name, 
+           manager_id, 
+           0 as hierarchy_level
+      FROM employees
+     WHERE manager_id IS NULL
+    UNION ALL
+    -- 재귀적으로 하위 직원 찾기
+    SELECT e.employee_id, 
+           e.employee_name, 
+           e.manager_id, 
+           eh.hierarchy_level + 1
+      FROM employees e
+      JOIN employee_hierarchy eh 
+        ON e.manager_id = eh.employee_id
+)
+SELECT employee_id, 
+       employee_name, 
+       manager_id, 
+       hierarchy_level
+  FROM employee_hierarchy
+ORDER BY hierarchy_level, employee_id;
+```
+
+#### 결과
+| employee_id | employee_name | manager_id | hierarchy_level |
+|-------------|---------------|------------|-----------------|
+| 1           | CEO           | NULL       | 0               |
+| 2           | Manager A     | 1          | 1               |
+| 3           | Manager B     | 1          | 1               |
+| 4           | Employee A    | 2          | 2               |
+| 5           | Employee B    | 2          | 2               |
+| 6           | Employee C    | 3          | 2               |
 
 ## Set Operators
 
