@@ -1,22 +1,10 @@
-- [Materials](#materials)
-- [Special Pattern Characters](#special-pattern-characters)
-- [Quantifiers](#quantifiers)
-- [Groups](#groups)
-- [Assertions](#assertions)
-- [Alternatives](#alternatives)
-- [Character Classes](#character-classes)
-  - [Individual Characters](#individual-characters)
-  - [Ranges](#ranges)
-  - [POSIX-like Classes](#posix-like-classes)
-  - [Escape Characters](#escape-characters)
-- [Useful Regex Examples](#useful-regex-examples)
-  - [URL Parsing](#url-parsing)
-  - [Phone Number Formatting](#phone-number-formatting)
-  - [Add Commas to Numbers](#add-commas-to-numbers)
-  - [Validate Email](#validate-email)
-  - [Validate Password](#validate-password)
-  - [Remove HTML Tags](#remove-html-tags)
-  - [Validate IP Addresses](#validate-ip-addresses)
+- [Basic](#basic)
+  - [**POSIX 정규 표현식 (POSIX ERE, Extended Regular Expressions)**](#posix-정규-표현식-posix-ere-extended-regular-expressions)
+  - [**Perl 호환 정규 표현식 (PCRE, Perl-Compatible Regular Expressions)**](#perl-호환-정규-표현식-pcre-perl-compatible-regular-expressions)
+  - [**ECMAScript 정규 표현식 (JavaScript)**](#ecmascript-정규-표현식-javascript)
+  - [**.NET 정규 표현식 (C#)**](#net-정규-표현식-c)
+  - [**Python 정규 표현식 (`re` 모듈)**](#python-정규-표현식-re-모듈)
+  - [**비교 요약**](#비교-요약)
 
 ---
 
@@ -26,146 +14,133 @@
 
 ---
 
-## Special Pattern Characters
+# Basic
 
-| Character         | Description                                   | Example                                                                 |
-| ----------------- | --------------------------------------------- | ----------------------------------------------------------------------- |
-| `.`               | Matches any character except newline         | `a.c` matches `abc`, `aXc`, but not `ac`.                              |
-| `\t`             | Horizontal tab (HT)                          | Matches a tab character.                                               |
-| `\n`             | Newline (LF)                                 | Matches a line feed character.                                         |
-| `\r`             | Carriage return (CR)                         | Matches a carriage return character.                                   |
-| `\d`             | Digit (0-9)                                  | Equivalent to `[0-9]`. Matches `1`, `5`, etc.                          |
-| `\D`             | Not a digit                                  | Equivalent to `[^0-9]`. Matches `a`, `#`, etc.                         |
-| `\s`             | Whitespace                                   | Matches spaces, tabs, line breaks, etc.                                |
-| `\S`             | Not whitespace                               | Matches non-space characters.                                          |
-| `\w`             | Word character                               | Equivalent to `[A-Za-z0-9_]`. Matches `a`, `9`, `_`.                   |
-| `\W`             | Not a word character                         | Matches any character not in `[A-Za-z0-9_]`.                           |
-| `[abc]`           | Character set                                | Matches `a`, `b`, or `c`.                                              |
-| `[^abc]`          | Negated character set                        | Matches anything except `a`, `b`, or `c`.                              |
-| `\`<character>   | Escape special characters like `^`, `$`, etc. | Example: `\.` matches a literal period.                               |
+##  **POSIX 정규 표현식 (POSIX ERE, Extended Regular Expressions)**
+**특징**  
+- 비교적 **오래된 정규 표현식 표준**으로, Unix 계열 시스템에서 사용됨.
+- **MySQL, awk, grep, sed, POSIX C 라이브러리**에서 사용됨.
+- `\w`, `\d`, `\s` 등의 **단축 문자 클래스**를 지원하지 않음.
+- `|`, `+`, `?`, `()` 등의 연산자를 지원하는 **ERE(Extended Regular Expression)** 버전이 있음.
+- **비교적 속도가 빠르고 가로운** 반면, 유용성이 복잡함.
+
+**주요 문법**
+| 기능        | POSIX ERE 표현식 |
+|------------|----------------|
+| 숫자        | `[0-9]`       |
+| 문자        | `[a-zA-Z]`    |
+| 단어 문자    | `[a-zA-Z0-9_]` (PCRE의 `\w` 대처) |
+| 공백 문자    | `[[:space:]]` (PCRE의 `\s` 대처) |
+| 이메일 예제 | `[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}` |
+
+**사용 예제 (MySQL, grep)**
+```sql
+SELECT * FROM users WHERE email REGEXP '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$';
+```
+```sh
+echo "hello123" | grep -E '[[:digit:]]+'
+```
 
 ---
 
-## Quantifiers
+##  **Perl 호환 정규 표현식 (PCRE, Perl-Compatible Regular Expressions)**
 
-| Character         | Description                                   | Example                                        |
-| ----------------- | --------------------------------------------- | ---------------------------------------------- |
-| `*`               | 0 or more repetitions                        | `a*` matches `", `a`, `aaaa`.                |
-| `+`               | 1 or more repetitions                        | `a+` matches `a`, `aaa`, but not "".         |
-| `?`               | 0 or 1 repetition                            | `a?` matches `a` or "".                      |
-| `{n}`             | Exactly `n` repetitions                      | `a{3}` matches `aaa`.                         |
-| `{n,}`            | At least `n` repetitions                     | `a{3,}` matches `aaa`, `aaaa`.                |
-| `{n,m}`           | Between `n` and `m` repetitions              | `a{2,4}` matches `aa`, `aaa`, or `aaaa`.      |
+**특징**  
+- Perl 언어에서 파제된 정규 표현식 문법으로, **매우 강력한 기능**을 제공.
+- **PostgreSQL, PHP, Python(re 모듈), JavaScript, .NET, Java, Ruby** 등에서 사용됨.
+- `\w`, `\d`, `\s`, `\b` 같은 단축 문자를 지원.
+- **Lookahead(전방 탐색) 및 Lookbehind(후방 탐색)** 같은 고급 기능을 지원.
+
+**주요 문법**
+| 기능        | PCRE 표현식 |
+|------------|-------------|
+| 숫자        | `\d`       |
+| 문자        | `[a-zA-Z]` |
+| 단어 문자    | `\w` (`[a-zA-Z0-9_]` 대처) |
+| 공백 문자    | `\s` |
+| Lookahead  | `(?=pattern)` |
+| Lookbehind | `(?<=pattern)` |
+| 이메일 예제 | `^\w+@\w+\.\w{2,}$` |
+
+**사용 예제 (PostgreSQL, Python, JavaScript)**
+
+```sql
+SELECT * FROM users WHERE email ~ '^\w+@\w+\.\w{2,}$';
+```
+
+```python
+import re
+re.match(r'^\w+@\w+\.\w{2,}$', 'user@example.com')
+```
+
+```javascript
+const regex = /^\w+@\w+\.\w{2,}$/;
+console.log(regex.test("user@example.com"));
+```
 
 ---
 
-## Groups
+## **ECMAScript 정규 표현식 (JavaScript)**
 
-| Character         | Description                                   | Example                                        |
-| ----------------- | --------------------------------------------- | ---------------------------------------------- |
-| `(pattern)`       | Capturing group                              | `(ab)+` matches `abab`. Captures `ab`.        |
-| `(?:pattern)`     | Non-capturing group                          | `(?:ab)+` matches `abab` but does not capture.|
-| `\1`             | Backreference to first capturing group       | `(\w)\1` matches `aa` or `bb`.              |
+**특징**  
+- **JavaScript에서 사용되는 정규 표현식**으로, PCRE와 유사하지만 일부 차이가 존재.
+- `new RegExp()` 또는 `/pattern/` 형태로 사용.
+- Lookbehind `(?<=...)` 지원이 부적합한 경우가 있음(최신 브라우저에서 지원).
+
+**사용 예제 (JavaScript)**
+
+```javascript
+const regex = /^\w+@\w+\.\w{2,}$/;
+console.log(regex.test("user@example.com")); // true
+```
 
 ---
 
-## Assertions
+##  **.NET 정규 표현식 (C#)**
 
-| Character         | Description                                   | Example                                        |
-| ----------------- | --------------------------------------------- | ---------------------------------------------- |
-| `^`               | Start of string or line                      | `^abc` matches `abc` at the start of a string.|
-| `$`               | End of string or line                        | `abc$` matches `abc` at the end of a string.  |
-| `\b`             | Word boundary                                | `\bword\b` matches `word`, but not `wordy`. |
-| `\B`             | Not a word boundary                          | `\Bword` matches `sword`.                    |
-| `(?=pattern)`     | Positive lookahead                           | `a(?=b)` matches `a` in `ab`, but not `ac`.   |
-| `(?!pattern)`     | Negative lookahead                           | `a(?!b)` matches `a` in `ac`, but not `ab`.   |
+**특징**  
+
+- **PCRE와 유사하지만 일부 기능이 다름.**
+- C#에서 `Regex` 클래스를 통해 사용.
+
+**사용 예제 (C#)**
+
+```csharp
+using System.Text.RegularExpressions;
+
+string pattern = @"^\w+@\w+\.\w{2,}$";
+bool isMatch = Regex.IsMatch("user@example.com", pattern);
+Console.WriteLine(isMatch); // true
+```
 
 ---
 
-## Alternatives
+##  **Python 정규 표현식 (`re` 모듈)**
 
-| Character         | Description                                   | Example                                        |
-| ----------------- | --------------------------------------------- | ---------------------------------------------- |
-| `a|b`             | Matches `a` or `b`                           | `a|b` matches `a` or `b`.                     |
+**특징**  
+
+- **PCRE 기반이지만 일부 차이가 있음.**
+- `re` 모듈에서 `re.compile()`, `re.match()`, `re.search()` 등을 제공.
+
+**사용 예제 (Python)**
+```python
+import re
+pattern = r'^\w+@\w+\.\w{2,}$'
+match = re.match(pattern, 'user@example.com')
+print(bool(match))  # True
+```
 
 ---
 
-## Character Classes
+## **비교 요약**
 
-### Individual Characters
-| Example         | Description                                    |
-| --------------- | --------------------------------------------- |
-| `[abc]`         | Matches `a`, `b`, or `c`.                    |
-| `[^abc]`        | Matches any character except `a`, `b`, or `c`|
-
-### Ranges
-| Example         | Description                                    |
-| --------------- | --------------------------------------------- |
-| `[a-z]`         | Matches lowercase letters.                    |
-| `[A-Za-z]`      | Matches uppercase and lowercase letters.      |
-
-### POSIX-like Classes
-| Class           | Description                                   |
-| --------------- | --------------------------------------------- |
-| `[:alnum:]`     | Alphanumeric characters                      |
-| `[:digit:]`     | Digits                                       |
-| `[:space:]`     | Whitespace characters                        |
-
-### Escape Characters
-| Example         | Description                                   |
-| --------------- | --------------------------------------------- |
-| `\b`           | Backspace (inside character classes only)     |
+| 정규식 엔진 | 사용 환경 | 특징 |
+|------------|-------------|------|
+| **POSIX ERE** | MySQL, grep, sed | 기본적인 기능만 제공, `\w` 미지원 |
+| **PCRE** | PostgreSQL, PHP, Python, JavaScript | 가장 강력한 기능, `\w`, `\d`, `\s` 지원 |
+| **ECMAScript** | JavaScript | PCRE 기반이지만 일부 기능 제한 |
+| **.NET Regex** | C# (Regex 클래스) | PCRE 유사, C# 특화 기능 추가 |
+| **Python `re`** | Python | PCRE 기반이지만 일부 차이 |
+| **RE2** | Go (regexp 패키지) | 메모리 폭발 방지, Lookbehind 미지원 |
 
 ---
-
-## Useful Regex Examples
-
-### URL Parsing
-```regex
-/^((\w+):)?(\/\/((\w+)?(:(\w+))?@)?([^\/\?:]+)(:(\d+))?)?(\/([^\/?#][^?#]*)?)?(\?([^#]+))?(#(\w*))?/g
-```
-**Test String:**
-`https://user:pass@abcd.domain.com:8080/first?a=1#hash`
-
-### Phone Number Formatting
-```js
-"01012345678".replace(/(\d{3})(\d{4})(\d{4})/, "$1-$2-$3");
-```
-**Test String:**
-`01012345678`
-**Output:**
-`010-1234-5678`
-
-### Add Commas to Numbers
-```js
-number.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-```
-
-### Validate Email
-```regex
-/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-```
-
-### Validate Password
-```regex
-/^.*(?=.{8,10})(?=.*[a-zA-Z])(?=.*?[A-Z])(?=.*\d)(?=.+?[\W|_])[a-zA-Z0-9!@#$%^&*()\-_=+{}\|\\/]+$/
-```
-
-### Remove HTML Tags
-```regex
-/<[^>]*>/g
-```
-**Test String:**
-`<div>Hello World</div>`
-**Output:**
-`Hello World`
-
-### Validate IP Addresses
-```regex
-/^(?!.*\.$)((?!0\d)(1?\d?\d|25[0-5]|2[0-4]\d)(\.|$)){4}$/
-```
-**Test String:**
-`123.255.0.1`
-
----
-
