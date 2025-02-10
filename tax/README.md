@@ -2,6 +2,7 @@
 
 - [소득세 종류 총정리! 근로소득세부터 양도소득세까지 알아봤어요 | kbthink](https://kbthink.com/main/asset-management/wealth-manage-tip/kbthink-original/202408/income-tax.html)
 - [세액계산 흐름도 | 국세청](https://www.nts.go.kr/nts/cm/cntnts/cntntsView.do?mi=2226&cntntsId=7666)
+- [연봉 올리기보다 쉬운 '세금 줄이기' 上 편 - DB형 DC형 퇴직연금, IRP, 연금저축 완벽 정리](https://www.kbam.co.kr/board/view/335?&boardCode=03&contentType=0&topYn=N)
 
 미국에서 세금 보고와 관련된 주요 서류에는 **1099** 시리즈 외에도 다양한 양식이 존재합니다. 특히 해외 금융 계좌, 자산, 소득 등을 신고해야 하는 경우 추가적인 서류 제출이 필요할 수도 있습니다. 
 
