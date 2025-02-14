@@ -229,6 +229,7 @@ NoSQL such [Cassandra](/cassandra/), [DynamoDB](/dynamodb/README.md) are good so
 
 # References
 
+- [대규모 채팅 아키텍처는 C10K 문제를 어떻게 해결할까?](https://catchdream.tistory.com/m/249)
 - [WHATSAPP System Design: Chat Messaging Systems for Interviews | youtube](https://www.youtube.com/watch?v=vvhC64hQZMk)
 * [소개 - 슬랙이 수백만 메시지를 실시간으로 보내는 방법 (슬랙 메시징 구조) | youtube](https://www.youtube.com/watch?v=36F35JZXFKo)
 * [01. 2200만 사용자를 위한 채팅 시스템 아키텍처](https://www.youtube.com/watch?v=lCxgddyxDyg)
