@@ -6,6 +6,7 @@
 
 # Materials
 
+- [The Illustrated Transformer](https://nlpinkorean.github.io/illustrated-transformer/)
 * [Transformer 모델 (Attention is all you need)](https://gaussian37.github.io/dl-concept-transformer/)
   * [Attention 메커니즘의 이해](https://gaussian37.github.io/dl-concept-attention/)
 * [[딥러닝 기계 번역] Transformer: Attention Is All You Need (꼼꼼한 딥러닝 논문 리뷰와 코드 실습) | youtube](https://www.youtube.com/watch?v=AA621UofTUA)
