@@ -1,4 +1,6 @@
 - [Materials](#materials)
+- [Basic](#basic)
+  - [squeeze, unsqueeze](#squeeze-unsqueeze)
 - [Image Classification Implementation](#image-classification-implementation)
   - [Simple Image Classification Training](#simple-image-classification-training)
   - [Simple Image Classification Training With Checkpoints](#simple-image-classification-training-with-checkpoints)
@@ -11,6 +13,49 @@
 # Materials
 
 - [PyTorch 강좌](https://076923.github.io/posts/Python-pytorch-1/)
+
+# Basic
+
+## squeeze, unsqueeze
+
+`torch.squeeze()` 함수는 텐서에서 크기가 1인 차원을 제거합니다.
+
+```py
+import torch
+
+# 크기가 (1, 2, 1, 3)인 텐서 생성
+x = torch.rand(1, 2, 1, 3)
+print("원본 텐서 크기:", x.size())
+
+# squeeze() 적용
+y = torch.squeeze(x)
+print("squeeze 후 텐서 크기:", y.size())
+
+# 원본 텐서 크기: torch.Size([1, 2, 1, 3])
+# squeeze 후 텐서 크기: torch.Size([2, 3])
+```
+
+`torch.unsqueeze()` 함수는 지정된 위치에 크기가 1인 새로운 차원을 추가합니다.
+
+```py
+import torch
+
+# 1차원 텐서 생성
+x = torch.tensor([1, 2, 3, 4])
+print("원본 텐서 크기:", x.size())
+
+# 0번 차원에 unsqueeze 적용
+y = torch.unsqueeze(x, 0)
+print("unsqueeze(0) 후 텐서 크기:", y.size())
+
+# 1번 차원에 unsqueeze 적용
+z = torch.unsqueeze(x, 1)
+print("unsqueeze(1) 후 텐서 크기:", z.size())
+
+# 원본 텐서 크기: torch.Size([4])
+# unsqueeze(0) 후 텐서 크기: torch.Size([1, 4])
+# unsqueeze(1) 후 텐서 크기: torch.Size([4, 1])
+```
 
 # Image Classification Implementation
 
