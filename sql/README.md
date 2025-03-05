@@ -54,6 +54,24 @@
   - [Importing, Exporting CSV](#importing-exporting-csv)
   - [Natural Sorting](#natural-sorting)
   - [Session Variables](#session-variables)
+  - [MySQL Regular Expressions](#mysql-regular-expressions)
+    - [**MySQL 정규 표현식(Regular Expression) 개요 및 함수 비교**](#mysql-정규-표현식regular-expression-개요-및-함수-비교)
+    - [**1. 정규 표현식 함수 개요 및 차이점**](#1-정규-표현식-함수-개요-및-차이점)
+      - [**REGEXP / RLIKE**](#regexp--rlike)
+        - [**예제**](#예제)
+      - [**NOT REGEXP**](#not-regexp)
+        - [**예제**](#예제-1)
+      - [**REGEXP\_LIKE()**](#regexp_like)
+        - [**예제**](#예제-2)
+      - [**REGEXP\_INSTR()**](#regexp_instr)
+        - [**예제**](#예제-3)
+      - [**REGEXP\_SUBSTR()**](#regexp_substr)
+        - [**예제**](#예제-4)
+      - [**REGEXP\_REPLACE()**](#regexp_replace)
+        - [**예제**](#예제-5)
+    - [**2. MySQL 정규 표현식의 특징**](#2-mysql-정규-표현식의-특징)
+    - [**3. MySQL 정규 표현식 함수 요약**](#3-mysql-정규-표현식-함수-요약)
+      - [**결론**](#결론)
 - [Advanced](#advanced)
   - [Indexes](#indexes)
   - [Pivot](#pivot)
@@ -91,8 +109,8 @@
   - [MySQL Reset Auto Increment Values](#mysql-reset-auto-increment-values)
   - [MariaDB vs. MySQL](#mariadb-vs-mysql)
   - [MySQL Interval](#mysql-interval)
-  - [How to Get MySQL Today’s Date](#how-to-get-mysql-todays-date)
-  - [MySQL NULL: The Beginner’s Guide](#mysql-null-the-beginners-guide)
+  - [How to Get MySQL Today's Date](#how-to-get-mysql-todays-date)
+  - [MySQL NULL: The Beginner's Guide](#mysql-null-the-beginners-guide)
   - [Mapping NULL Values to Other Values](#mapping-null-values-to-other-values)
 - [Effecive SQL](#effecive-sql)
 
@@ -289,56 +307,77 @@ AND age <= 30; /* This comment explains the conditions */
 ### Select
 
 ```sql
+--[ MySQL ]-----------------------------------------------------------
 -- Select From
 SELECT * FROM products;
-
 -- WHERE
 SELECT * FROM products WHERE price > 150.00;
-
 -- DISTINCT
 SELECT DISTINCT price FROM products;
-
 -- COUNT(DISTINCT)
 SELECT COUNT(DISTINCT price) FROM products;
-
 -- AND
 SELECT * FROM products WHERE price > 100.00 AND price < 200.00;
-
 -- OR
 SELECT * FROM products WHERE product_id = 1 OR price = 150.00;
-
 -- IN
 SELECT * FROM products WHERE product_id IN (1, 3);
-
 -- NOT IN
 SELECT * FROM products WHERE product_id NOT IN (1, 3);
-
 -- BETWEEN
 SELECT * FROM products WHERE price BETWEEN 100.00 AND 200.00;
-
 -- LIKE
 SELECT * FROM products WHERE product_name LIKE 'Product%';
-
 -- LIMIT
 SELECT * FROM products LIMIT 2;
-
 -- IS NULL
 SELECT * FROM products WHERE product_name IS NULL;
-
 -- IFNULL
 SELECT product_id, IFNULL(product_name, 'N/A') as product_name, price FROM products;
-
 -- NOT
 SELECT * FROM products WHERE NOT price = 150.00;
-
 -- Wildcards
 SELECT * FROM products WHERE product_name LIKE '%A%';
-
 -- Alias
 SELECT product_id AS 'ID', product_name AS 'Name', price AS 'Cost' FROM products;
-
 -- Select Year-Month
 SELECT LEFT(order_date, 7) AS month FROM Orders;
+
+--[ PostgreSQL ]------------------------------------------------------
+-- Select From
+SELECT * FROM products;
+-- WHERE
+SELECT * FROM products WHERE price > 150.00;
+-- DISTINCT
+SELECT DISTINCT price FROM products;
+-- COUNT(DISTINCT)
+SELECT COUNT(DISTINCT price) FROM products;
+-- AND
+SELECT * FROM products WHERE price > 100.00 AND price < 200.00;
+-- OR
+SELECT * FROM products WHERE product_id = 1 OR price = 150.00;
+-- IN
+SELECT * FROM products WHERE product_id IN (1, 3);
+-- NOT IN
+SELECT * FROM products WHERE product_id NOT IN (1, 3);
+-- BETWEEN
+SELECT * FROM products WHERE price BETWEEN 100.00 AND 200.00;
+-- LIKE
+SELECT * FROM products WHERE product_name LIKE 'Product%';
+-- LIMIT
+SELECT * FROM products LIMIT 2;
+-- IS NULL
+SELECT * FROM products WHERE product_name IS NULL;
+-- COALESCE
+SELECT product_id, COALESCE(product_name, 'N/A') as product_name, price FROM products;
+-- NOT
+SELECT * FROM products WHERE NOT price = 150.00;
+-- Wildcards
+SELECT * FROM products WHERE product_name LIKE '%A%';
+-- Alias
+SELECT product_id AS "ID", product_name AS "Name", price AS "Cost" FROM products;
+-- Select Year-Month
+SELECT TO_CHAR(order_date, 'YYYY-MM') AS month FROM Orders;
 ```
 
 ### Where Operators
@@ -362,30 +401,32 @@ SELECT LEFT(order_date, 7) AS month FROM Orders;
   * `_` - The underscore represents a single character
 
 ```sql
+--[ MySQL, PostgreSQL ]-----------------------------------------------
+-- Starts with 'A'
 SELECT * 
   FROM products
  WHERE product_name LIKE 'A%';
-
+-- Ends with 'A'
 SELECT * 
   FROM products
  WHERE product_name LIKE '%A';
-
+-- Contains 'ct'
 SELECT * 
   FROM products
  WHERE product_name LIKE '%ct%';
-
+-- Second character is 'r'
 SELECT * 
   FROM products
  WHERE product_name LIKE '_r%';
-
+-- Starts with 'A' and at least 3 characters
 SELECT * 
   FROM products
  WHERE product_name LIKE 'A_%_%';
-
+-- Starts with 'A' and ends with 'o'
 SELECT * 
   FROM products
  WHERE product_name LIKE 'A%o';
-
+-- Does not start with 'A'
 SELECT * 
   FROM products
  WHERE product_name NOT LIKE 'A%';
@@ -398,21 +439,41 @@ SELECT *
   * [^charlist] or [!charlist] - Defines sets and ranges of characters NOT to match
 
 ```sql
+--[ MySQL ]-----------------------------------------------------------
+-- Starts with B or S or P
 SELECT * 
   FROM products
  WHERE product_name REGEXP '^[BSP].*';
-
+-- Starts with a or b or c
 SELECT * 
   FROM products
  WHERE product_name REGEXP '^[a-c].*';
-
+-- Does not start with B or S or P
 SELECT * 
   FROM products
  WHERE product_name REGEXP '^[^BSP].*';
-
+-- Does not start with B or S or P (alternative)
 SELECT * 
   FROM products
  WHERE product_name NOT REGEXP '^[BSP].*';
+
+--[ PostgreSQL ]------------------------------------------------------
+-- Starts with B or S or P
+SELECT * 
+  FROM products
+ WHERE product_name ~ '^[BSP].*';
+-- Starts with a or b or c
+SELECT * 
+  FROM products
+ WHERE product_name ~ '^[a-c].*';
+-- Does not start with B or S or P
+SELECT * 
+  FROM products
+ WHERE product_name ~ '^[^BSP].*';
+-- Does not start with B or S or P (alternative)
+SELECT * 
+  FROM products
+ WHERE product_name !~ '^[BSP].*';
 ```
 
 ## Sorting Data
@@ -420,10 +481,23 @@ SELECT *
 ### Order By
 
 ```sql
-SELECT * FROM products ORDER BY price;
-SELECT * FROM products ORDER BY price DESC;
-SELECT * FROM products ORDER BY product_name, price;
-SELECT * FROM products ORDER BY product_name ASC, price DESC;
+--[ MySQL, PostgreSQL ]-----------------------------------------------
+-- Order by price (ascending)
+SELECT * 
+  FROM products 
+ ORDER BY price;
+-- Order by price (descending)
+SELECT * 
+  FROM products 
+ ORDER BY price DESC;
+-- Order by multiple columns
+SELECT * 
+  FROM products 
+ ORDER BY product_name, price;
+-- Order by multiple columns with different directions
+SELECT * 
+  FROM products 
+ ORDER BY product_name ASC, price DESC;
 ```
 
 ## Joning Tables
@@ -435,53 +509,96 @@ SELECT * FROM products ORDER BY product_name ASC, price DESC;
 - [The JOIN operation @ sqlzoo](https://sqlzoo.net/wiki/The_JOIN_operation) 에서 연습하자.
 
 ```sql
-SELECT * FROM customers, orders;
-SELECT * FROM customers JOIN orders;
-SELECT * FROM customers INNER JOIN orders ON customers.id = orders.customer_id;
+--[ MySQL ]-----------------------------------------------------------
+-- Cross Join
+SELECT * 
+  FROM customers, orders;
 
--- LEFT OUTER JOIN, NULL for right empty data
+-- Simple Join
+SELECT * 
+  FROM customers JOIN orders;
+
+-- Inner Join
+SELECT * 
+  FROM customers INNER JOIN orders 
+    ON customers.id = orders.customer_id;
+
+-- Left Outer Join
 SELECT * 
   FROM customers LEFT OUTER JOIN orders
     ON customers.id = orders.customer_id;
 
--- RIGHT OUTER JOIN, NULL for left empty data
+-- Right Outer Join
+SELECT * 
+  FROM customers RIGHT OUTER JOIN orders
+    ON customers.id = orders.customer_id;
 
-/* MySQL */
-SELECT *
-FROM customers RIGHT OUTER JOIN orders
-  ON customers.id = orders.customer_id;
+-- Full Outer Join (MySQL doesn't support FULL OUTER JOIN directly)
+SELECT * FROM customers LEFT OUTER JOIN orders ON customers.id = orders.customer_id
+UNION
+SELECT * FROM customers RIGHT OUTER JOIN orders ON customers.id = orders.customer_id;
 
-/* For databases that do not support RIGHT OUTER JOIN syntax, use the following equivalent with LEFT OUTER JOIN */
-SELECT orders.id AS order_id, orders.customer_id, customers.id, customers.name
-FROM orders LEFT OUTER JOIN customers
-  ON customers.id = orders.customer_id;
+-- Self Join
+SELECT A.name AS customer_name1, 
+       B.name AS customer_name2, 
+       A.city
+  FROM customers A, customers B
+ WHERE A.id <> B.id 
+   AND A.city = B.city 
+ ORDER BY A.city;
 
--- Full Join
-  SELECT customers.name AS customer_name, 
-         orders.id AS order_id
-    FROM customers FULL OUTER JOIN orders 
-      ON customers.id = orders.customer_id
-ORDER BY customers.name;
+--[ PostgreSQL ]------------------------------------------------------
+-- Cross Join
+SELECT * 
+  FROM customers, orders;
 
--- SElf Join
-  SELECT A.name AS customer_name1, 
-         B.name AS customer_name2, A.city
-    FROM customers A, customers B
-   WHERE A.id <> B.id AND 
-         A.city = B.city 
-ORDER BY A.city;
-```
+-- Simple Join
+SELECT * 
+  FROM customers JOIN orders;
+
+-- Inner Join
+SELECT * 
+  FROM customers INNER JOIN orders 
+    ON customers.id = orders.customer_id;
+
+-- Left Outer Join
+SELECT * 
+  FROM customers LEFT OUTER JOIN orders
+    ON customers.id = orders.customer_id;
+
+-- Right Outer Join
+SELECT * 
+  FROM customers RIGHT OUTER JOIN orders
+    ON customers.id = orders.customer_id;
+
+-- Full Outer Join
+SELECT * 
+  FROM customers FULL OUTER JOIN orders 
+    ON customers.id = orders.customer_id;
+
+-- Self Join
+SELECT A.name AS customer_name1, 
+       B.name AS customer_name2, 
+       A.city
+  FROM customers A, customers B
+ WHERE A.id <> B.id 
+   AND A.city = B.city 
+ ORDER BY A.city;
+ ```
 
 ### Join ON vs WHERE
 
 - `ON` 은 `JOIN` 이 실행되기 전에 적용되고 `WHERE` 는 `JOIN` 이 실행되고 난 다음에 적용된다.
 
 ```sql
+--[ MySQL, PostgreSQL ]-----------------------------------------------
+-- LEFT JOIN with filter in ON clause (keeps all left rows, applies condition during join)
 SELECT * 
   FROM customers a LEFT JOIN orders b 
     ON a.id = b.id AND 
        b.customer_id = 1;
 
+-- LEFT JOIN with filter in WHERE clause (filters after join, removes null rows)
 SELECT * 
   FROM customers a LEFT JOIN orders b 
     ON (a.id = b.id) 
@@ -493,136 +610,264 @@ SELECT *
 * [Calculate the Influence of Each Salesperson | leetcode](https://leetcode.com/problems/calculate-the-influence-of-each-salesperson/)
 
 ```sql
-  SELECT s.sale_id, 
-         p.product_name, 
-         c.customer_name, 
-         s.sale_date, 
-         s.quantity, 
-         p.price, 
-         (s.quantity * p.price) as total_sale_price
-    FROM sales s
-    JOIN products p 
-      ON s.product_id = p.product_id
-    JOIN customers c 
-      ON s.customer_id = c.customer_id
-ORDER BY s.sale_id;
+--[ MySQL, PostgreSQL ]-----------------------------------------------
+-- Multiple JOIN with calculated column
+SELECT s.sale_id, 
+       p.product_name, 
+       c.customer_name, 
+       s.sale_date, 
+       s.quantity, 
+       p.price, 
+       (s.quantity * p.price) as total_sale_price
+  FROM sales s
+  JOIN products p 
+    ON s.product_id = p.product_id
+  JOIN customers c 
+    ON s.customer_id = c.customer_id
+ ORDER BY s.sale_id;
 
--- result
-sale_id | product_name | customer_name | sale_date  | quantity | price | total_sale_price
---------------------------------------------------------------------------------------------
-1       | Product A    | John Doe      | 2022-01-01 | 5        | 100.00 | 500.00
-2       | Product B    | Jane Smith    | 2022-01-01 | 3        | 150.00 | 450.00
-3       | Product A    | Alice Johnson | 2022-01-02 | 2        | 100.00 | 200.00
-4       | Product C    | John Doe      | 2022-01-03 | 1        | 200.00 | 200.00
+-- Result:
+-- sale_id | product_name | customer_name | sale_date  | quantity | price  | total_sale_price
+-- -----------------------------------------------------------------------------------------
+-- 1       | Product A    | John Doe      | 2022-01-01 | 5        | 100.00 | 500.00
+-- 2       | Product B    | Jane Smith    | 2022-01-01 | 3        | 150.00 | 450.00
+-- 3       | Product A    | Alice Johnson | 2022-01-02 | 2        | 100.00 | 200.00
+-- 4       | Product C    | John Doe      | 2022-01-03 | 1        | 200.00 | 200.00
 ```
 
 ## Grouping Data
 
 ```sql
-/* GROUP BY */
-  SELECT p.product_id, 
-         p.product_name, 
-         SUM(s.quantity) AS total_sales
-    FROM products p JOIN sales s 
-      ON p.product_id = s.product_id
-GROUP BY p.product_id, p.product_name;
--- result
-product_id | product_name | total_sales
----------------------------------------
-1          | Product A    | 7
-2          | Product B    | 3
-3          | Product C    | 1
+--[ MySQL ]-----
+/* Basic GROUP BY */
+SELECT 
+    customername,
+    country,
+    COUNT(*) as order_count
+FROM 
+    customers c 
+    JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY 
+    customername, country;
 
-/* GROUP BY dynamic value */
--- https://leetcode.com/problems/calculate-orders-within-each-interval/
-SELECT (((minute - 1) div 6) + 1) interval_no,
-       SUM(order_count) total_orders
-  FROM orders
- GROUP BY interval_no
- ORDER BY interval_no
+/* GROUP BY with ROLLUP */
+SELECT 
+    IFNULL(customername, 'Total') as customername,
+    IFNULL(country, 'All Countries') as country,
+    COUNT(*) as order_count
+FROM 
+    customers c 
+    JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY 
+    customername, country WITH ROLLUP;
 
-/* HAVING */
-  SELECT p.product_id, 
-         p.product_name, 
-         SUM(s.quantity) AS total_sales
-    FROM products p JOIN sales s 
-      ON p.product_id = s.product_id
-GROUP BY p.product_id, p.product_name
-  HAVING total_sales > 5;
--- result
-product_id | product_name | total_sales
----------------------------------------
-1          | Product A    | 7  
+/* String concatenation in GROUP BY */
+SELECT 
+    category_id,
+    GROUP_CONCAT(product_name ORDER BY product_name ASC SEPARATOR ', ') as products
+FROM 
+    products
+GROUP BY 
+    category_id;
 
-/* ROLLUP */
--- produce a summary of the sales table grouped by 
--- both product_id and sale_date, as well as 
--- additional summary rows for totals along each grouping
-  SELECT p.product_id, 
-         p.product_name, 
-         s.sale_date, 
-         SUM(s.quantity) AS total_sales
-    FROM products p JOIN sales s 
-      ON p.product_id = s.product_id
-GROUP BY ROLLUP (p.product_id, p.product_name, s.sale_date);
--- result
-product_id | product_name | sale_date  | total_sales
-----------------------------------------------------
-1          | Product A    | 2022-01-01 | 5
-1          | Product A    | 2022-01-02 | 2
-1          | Product A    | NULL       | 7
-2          | Product B    | 2022-01-01 | 3
-2          | Product B    | NULL       | 3
-3          | Product C    | 2022-01-03 | 1
-3          | Product C    | NULL       | 1
-NULL       | NULL         | NULL       | 11
+/* HAVING with subquery */
+SELECT 
+    customername,
+    country,
+    COUNT(*) as order_count
+FROM 
+    customers c 
+    JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY 
+    customername, country
+HAVING 
+    COUNT(*) > (SELECT AVG(order_count) 
+                FROM (SELECT customer_id, COUNT(*) as order_count 
+                      FROM orders 
+                      GROUP BY customer_id) t);
+
+/* Multiple aggregations */
+SELECT 
+    category_name,
+    COUNT(DISTINCT p.product_id) as product_count,
+    AVG(price) as avg_price,
+    SUM(quantity * price) as total_sales
+FROM 
+    categories c
+    JOIN products p ON c.category_id = p.category_id
+    JOIN order_details od ON p.product_id = od.product_id
+GROUP BY 
+    category_name;
+
+--[ PostgreSQL ]-----
+/* Basic GROUP BY */
+SELECT 
+    customername,
+    country,
+    COUNT(*) as order_count
+FROM 
+    customers c 
+    JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY 
+    customername, country;
+
+/* GROUP BY with ROLLUP */
+SELECT 
+    COALESCE(customername, 'Total') as customername,
+    COALESCE(country, 'All Countries') as country,
+    COUNT(*) as order_count
+FROM 
+    customers c 
+    JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY ROLLUP
+    (customername, country);
+
+/* String aggregation in GROUP BY */
+SELECT 
+    category_id,
+    STRING_AGG(product_name, ', ' ORDER BY product_name) as products
+FROM 
+    products
+GROUP BY 
+    category_id;
+
+/* HAVING with subquery */
+SELECT 
+    customername,
+    country,
+    COUNT(*) as order_count
+FROM 
+    customers c 
+    JOIN orders o ON c.customer_id = o.customer_id
+GROUP BY 
+    customername, country
+HAVING 
+    COUNT(*) > (SELECT AVG(order_count) 
+                FROM (SELECT customer_id, COUNT(*) as order_count 
+                      FROM orders 
+                      GROUP BY customer_id) t);
+
+/* Multiple aggregations */
+SELECT 
+    category_name,
+    COUNT(DISTINCT p.product_id) as product_count,
+    AVG(price) as avg_price,
+    SUM(quantity * price) as total_sales
+FROM 
+    categories c
+    JOIN products p ON c.category_id = p.category_id
+    JOIN order_details od ON p.product_id = od.product_id
+GROUP BY 
+    category_name;
+
+/* Window functions with GROUP BY */
+SELECT 
+    category_name,
+    DATE_TRUNC('month', order_date) as month,
+    SUM(quantity * price) as monthly_sales,
+    SUM(SUM(quantity * price)) OVER (
+        PARTITION BY category_name 
+        ORDER BY DATE_TRUNC('month', order_date)
+    ) as running_total
+FROM 
+    categories c
+    JOIN products p ON c.category_id = p.category_id
+    JOIN order_details od ON p.product_id = od.product_id
+    JOIN orders o ON od.order_id = o.order_id
+GROUP BY 
+    category_name, month;
 ```
 
 ## Subqueries
 
 ```sql
-/* Subquery */
-SELECT product_id, product_name, price
-  FROM products
- WHERE price > (SELECT AVG(price) as average_price
-                  FROM products);
--- result
-product_id | product_name | price
------------------------------------
-2          | Product B    | 150.00
-3          | Product C    | 200.00
+-- [MySQL] --------------------
+/* Basic Subquery */
+SELECT 
+    customername, 
+    country,
+    total_orders
+FROM customers c
+WHERE total_orders > (SELECT AVG(total_orders) 
+                     FROM customer_summary);
 
-/* Derived Table */
--- a derived table d is created using a subquery that 
--- selects all columns from the products table.
-SELECT d.product_id, d.product_name, d.price
-  FROM (SELECT product_id, product_name, price
-          FROM products) d
- WHERE d.price > (SELECT AVG(price)
-                    FROM products);
--- result
-product_id | product_name | price
--------------------------------
-2          | Product B    | 150.00
-3          | Product C    | 200.00
+/* Date-based Subquery */
+SELECT 
+    p.product_name,
+    (SELECT SUM(quantity)
+     FROM orders o
+     WHERE o.product_id = p.product_id
+     AND o.order_date >= DATE_SUB(CURRENT_DATE, INTERVAL 30 DAY)) as monthly_sales
+FROM products p
+HAVING monthly_sales > 100;
 
-/* EXISTS */
--- the EXISTS operator checks if there is at least 
--- one sale of 'Product A' made by the customer. 
--- If such a sale exists, the customer is included in the result set.
-SELECT c.customer_id, c.customer_name, c.email
-  FROM customers c
- WHERE EXISTS (SELECT 1
-                 FROM sales s
-                 JOIN products p 
-                   ON s.product_id = p.product_id
-                WHERE s.customer_id = c.customer_id AND 
-                      p.product_name = 'Product A');
--- result
-customer_id | customer_name | email
----------------------------------------------
-1           | John Doe      | john.doe@example.com
-3           | Alice Johnson | alice.johnson@example.com
+/* Window Functions with Subquery */
+WITH monthly_sales AS (
+    SELECT 
+        product_id,
+        DATE_FORMAT(order_date, '%Y-%m') as order_month,
+        SUM(quantity) as total_qty
+    FROM orders
+    GROUP BY product_id, DATE_FORMAT(order_date, '%Y-%m')
+)
+SELECT 
+    ms.*,
+    SUM(total_qty) OVER (
+        PARTITION BY product_id 
+        ORDER BY order_month
+    ) as running_total
+FROM monthly_sales ms;
+
+-- [PostgreSQL] --------------------
+/* Basic Subquery */
+SELECT 
+    customername, 
+    country,
+    total_orders
+FROM customers c
+WHERE total_orders > (SELECT AVG(total_orders) 
+                     FROM customer_summary);
+
+/* Date-based Subquery */
+SELECT 
+    p.product_name,
+    (SELECT SUM(quantity)
+     FROM orders o
+     WHERE o.product_id = p.product_id
+     AND o.order_date >= CURRENT_DATE - INTERVAL '30 days') as monthly_sales
+FROM products p
+HAVING monthly_sales > 100;
+
+/* Window Functions with Subquery */
+WITH monthly_sales AS (
+    SELECT 
+        product_id,
+        TO_CHAR(order_date, 'YYYY-MM') as order_month,
+        SUM(quantity) as total_qty
+    FROM orders
+    GROUP BY product_id, TO_CHAR(order_date, 'YYYY-MM')
+)
+SELECT 
+    ms.*,
+    SUM(total_qty) OVER (
+        PARTITION BY product_id 
+        ORDER BY order_month
+    ) as running_total
+FROM monthly_sales ms;
+
+-- Example Results:
+/*
+product_name | monthly_sales
+---------------------------
+Coffee       | 150
+Tea         | 120
+
+product_id | order_month | total_qty | running_total
+------------------------------------------------
+1          | 2024-01     | 100      | 100
+1          | 2024-02     | 150      | 250
+2          | 2024-01     | 80       | 80
+*/
 ```
 
 ## Common Table Expressions (CTE)
@@ -634,34 +879,135 @@ CTE(Common Table Expression)는 SQL에서 일시적인 이름을 가진 결과 �
 ### 1. 기본 CTE
 
 #### 예제 설명
+
 특정 고객의 총 구매 금액(sales amount)을 계산한 후, 구매 금액을 기준으로 내림차순 정렬하는 예제입니다.
 
 #### 코드
+
 ```sql
-WITH customer_sales AS (
-    SELECT c.customer_id, 
-           c.customer_name, 
-           SUM(s.quantity * p.price) as sales_amount
-      FROM customers c
-      JOIN sales s ON c.customer_id = s.customer_id
-      JOIN products p ON s.product_id = p.product_id
-  GROUP BY c.customer_id, c.customer_name
+-- [MySQL] --------------------
+/* Basic CTE */
+WITH monthly_sales AS (
+    SELECT 
+        c.customer_id,
+        c.customername,
+        DATE_FORMAT(o.order_date, '%Y-%m') as order_month,
+        SUM(o.amount) as total_amount
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY 
+        c.customer_id,
+        c.customername,
+        DATE_FORMAT(o.order_date, '%Y-%m')
 )
-SELECT cs.customer_id, 
-       cs.customer_name, 
-       cs.sales_amount
-  FROM customer_sales cs
-ORDER BY cs.sales_amount DESC;
+SELECT 
+    customername,
+    order_month,
+    total_amount
+FROM monthly_sales
+ORDER BY order_month, total_amount DESC;
+
+/* Multiple CTEs */
+WITH customer_totals AS (
+    SELECT 
+        customer_id,
+        COUNT(*) as order_count,
+        SUM(amount) as total_spent
+    FROM orders
+    GROUP BY customer_id
+),
+customer_categories AS (
+    SELECT 
+        customer_id,
+        CASE 
+            WHEN total_spent > 10000 THEN 'Premium'
+            WHEN total_spent > 5000 THEN 'Gold'
+            ELSE 'Regular'
+        END as category
+    FROM customer_totals
+)
+SELECT 
+    c.customername,
+    ct.order_count,
+    ct.total_spent,
+    cc.category
+FROM customers c
+JOIN customer_totals ct ON c.customer_id = ct.customer_id
+JOIN customer_categories cc ON c.customer_id = cc.customer_id;
+
+-- [PostgreSQL] --------------------
+/* Basic CTE */
+WITH monthly_sales AS (
+    SELECT 
+        c.customer_id,
+        c.customername,
+        TO_CHAR(o.order_date, 'YYYY-MM') as order_month,
+        SUM(o.amount) as total_amount
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY 
+        c.customer_id,
+        c.customername,
+        TO_CHAR(o.order_date, 'YYYY-MM')
+)
+SELECT 
+    customername,
+    order_month,
+    total_amount
+FROM monthly_sales
+ORDER BY order_month, total_amount DESC;
+
+/* Multiple CTEs with Window Function */
+WITH customer_totals AS (
+    SELECT 
+        customer_id,
+        COUNT(*) as order_count,
+        SUM(amount) as total_spent
+    FROM orders
+    GROUP BY customer_id
+),
+customer_rankings AS (
+    SELECT 
+        customer_id,
+        total_spent,
+        RANK() OVER (ORDER BY total_spent DESC) as spending_rank
+    FROM customer_totals
+)
+SELECT 
+    c.customername,
+    ct.order_count,
+    ct.total_spent,
+    cr.spending_rank
+FROM customers c
+JOIN customer_totals ct ON c.customer_id = ct.customer_id
+JOIN customer_rankings cr ON c.customer_id = cr.customer_id;
+
+-- Example Results:
+/*
+Basic CTE Result:
+customername  | order_month | total_amount
+----------------------------------------
+John Doe      | 2024-01     | 1500.00
+Alice Johnson | 2024-01     | 1200.00
+Bob Wilson    | 2024-01     | 800.00
+
+Multiple CTEs Result:
+customername  | order_count | total_spent | category/rank
+------------------------------------------------
+John Doe      | 15          | 12000.00    | Premium/1
+Alice Johnson | 10          | 8000.00     | Gold/2
+Bob Wilson    | 5           | 3000.00     | Regular/3
+*/
 ```
 
 #### 결과
+```
 | customer_id | customer_name | sales_amount |
 |-------------|---------------|--------------|
 | 1           | John Doe      | 700.00       |
 | 2           | Jane Smith    | 450.00       |
 | 3           | Alice Johnson | 200.00       |
-
----
+```
 
 ### 2. 다중 CTE
 
@@ -670,41 +1016,98 @@ ORDER BY cs.sales_amount DESC;
 
 #### 코드
 ```sql
-WITH customer_sales AS (
-    SELECT c.customer_id, 
-           c.customer_name, 
-           SUM(s.quantity * p.price) as sales_amount
-      FROM customers c
-      JOIN sales s ON c.customer_id = s.customer_id
-      JOIN products p ON s.product_id = p.product_id
-  GROUP BY c.customer_id, c.customer_name
+-- [MySQL] --------------------
+WITH order_summary AS (
+    SELECT 
+        c.customer_id,
+        c.customername,
+        SUM(o.amount) as total_amount
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY 
+        c.customer_id,
+        c.customername
 ),
-sales_ranking AS (
-    SELECT customer_id, 
-           customer_name, 
-           sales_amount, 
-           RANK() OVER (ORDER BY sales_amount DESC) as sales_rank
-      FROM customer_sales
+customer_ranking AS (
+    SELECT 
+        customer_id,
+        customername,
+        total_amount,
+        RANK() OVER (ORDER BY total_amount DESC) as amount_rank
+    FROM order_summary
 )
-SELECT customer_id, 
-       customer_name, 
-       sales_amount, 
-       sales_rank
-  FROM sales_ranking;
+SELECT 
+    customer_id,
+    customername,
+    total_amount,
+    amount_rank
+FROM customer_ranking;
+
+-- [PostgreSQL] --------------------
+WITH order_summary AS (
+    SELECT 
+        c.customer_id,
+        c.customername,
+        SUM(o.amount) as total_amount,
+        COUNT(*) as order_count
+    FROM customers c
+    JOIN orders o ON c.customer_id = o.customer_id
+    GROUP BY 
+        c.customer_id,
+        c.customername
+),
+customer_ranking AS (
+    SELECT 
+        customer_id,
+        customername,
+        total_amount,
+        order_count,
+        RANK() OVER (ORDER BY total_amount DESC) as amount_rank,
+        DENSE_RANK() OVER (ORDER BY order_count DESC) as order_rank
+    FROM order_summary
+)
+SELECT 
+    customer_id,
+    customername,
+    total_amount,
+    order_count,
+    amount_rank,
+    order_rank
+FROM customer_ranking;
+
+-- Example Results:
+/*
+MySQL Result:
+customer_id | customername  | total_amount | amount_rank
+------------------------------------------------
+1          | John Doe      | 15000.00     | 1
+2          | Alice Johnson | 12000.00     | 2
+3          | Bob Wilson    | 8000.00      | 3
+
+PostgreSQL Result:
+customer_id | customername  | total_amount | order_count | amount_rank | order_rank
+----------------------------------------------------------------------------
+1          | John Doe      | 15000.00     | 25          | 1           | 1
+2          | Alice Johnson | 12000.00     | 20          | 2           | 2
+3          | Bob Wilson    | 8000.00      | 15          | 3           | 3
+*/
 ```
 
 #### 결과
+
+```
 | customer_id | customer_name | sales_amount | sales_rank |
 |-------------|---------------|--------------|------------|
 | 1           | John Doe      | 700.00       | 1          |
 | 2           | Jane Smith    | 450.00       | 2          |
 | 3           | Alice Johnson | 200.00       | 3          |
-
+```
 ---
 
 ### 3. 재귀 CTE
 
 #### 예제 설명
+
 직원과 관리자 관계를 계층적으로 표현하는 예제입니다. `employee_hierarchy`라는 재귀 CTE를 사용해 조직의 계층 구조를 생성합니다.
 
 #### 테이블 생성 및 데이터 삽입
@@ -984,7 +1387,7 @@ One?](https://www.cockroachlabs.com/blog/sql-upsert/)
 ```sql
 UPSERT INTO employees 
             (id, name, email) 
-     VALUES (2, ‘Dennis’, ‘dennisp@weyland.corp’);
+     VALUES (2, 'Dennis', 'dennisp@weyland.corp');
 ```
 
 `ON DUPLICATE KEY UDATE...` 의 `VALUES()` 는 `INSERT INTO` 로 제공된 column 을
@@ -1463,6 +1866,114 @@ it later in another statement.
 SET @var1 = 1
 SELECT @var2 := 2
 ```
+
+## MySQL Regular Expressions
+
+### **MySQL 정규 표현식(Regular Expression) 개요 및 함수 비교**
+
+MySQL에서는 정규 표현식을 활용하여 문자열을 검색하거나 변환하는 다양한 기능을 제공합니다. MySQL 8.4에서는 **ICU(International Components for Unicode)** 기반의 정규 표현식을 지원하며, 다중 바이트 문자와 유니코드를 완벽하게 처리할 수 있습니다.
+
+---
+
+### **1. 정규 표현식 함수 개요 및 차이점**
+| **함수** | **설명** |
+|----------|---------|
+| **REGEXP / RLIKE** | 문자열이 특정 정규 표현식 패턴과 일치하는지 확인 |
+| **NOT REGEXP** | REGEXP의 부정(NOT) 연산, 즉 패턴이 일치하지 않는 경우 1 반환 |
+| **REGEXP_LIKE()** | REGEXP와 동일한 기능을 수행하며 추가적인 옵션(`match_type`) 제공 |
+| **REGEXP_INSTR()** | 정규 표현식과 일치하는 부분 문자열의 시작 인덱스를 반환 |
+| **REGEXP_SUBSTR()** | 정규 표현식과 일치하는 부분 문자열 자체를 반환 |
+| **REGEXP_REPLACE()** | 정규 표현식과 일치하는 부분을 다른 문자열로 치환 |
+
+#### **REGEXP / RLIKE**
+- REGEXP와 RLIKE는 동일한 기능을 하며, 특정 패턴과 문자열이 일치하는지 확인하는 데 사용됩니다.
+- **반환값**: 일치하면 `1`, 그렇지 않으면 `0`, `NULL` 값이 포함되면 `NULL` 반환.
+
+##### **예제**
+```sql
+SELECT 'Michael!' REGEXP '.*';  -- 1 (모든 문자열을 의미하는 `.*`과 일치)
+SELECT 'abc' REGEXP '^[a-z]+$'; -- 1 (소문자 알파벳만 있는지 확인)
+SELECT '123' REGEXP '^[a-z]+$'; -- 0 (숫자는 포함되지 않음)
+```
+
+#### **NOT REGEXP**
+- REGEXP의 부정(NOT) 연산을 수행하며, 패턴이 일치하지 않을 경우 `1`, 일치하면 `0`을 반환.
+
+##### **예제**
+```sql
+SELECT 'abc' NOT REGEXP '^[a-z]+$'; -- 0 (일치하므로 `false`)
+SELECT '123' NOT REGEXP '^[a-z]+$'; -- 1 (일치하지 않으므로 `true`)
+```
+
+#### **REGEXP_LIKE()**
+- REGEXP와 동일한 기능을 수행하지만, **match_type** 옵션을 추가로 제공.
+- **match_type** 옵션:
+  - `c`: 대소문자 구분
+  - `i`: 대소문자 구분 없음
+  - `m`: 다중 라인 모드 (`^`와 `$`가 줄 바꿈 문자 기준으로 작동)
+  - `n`: `.`이 줄 바꿈 문자를 포함하도록 설정
+  - `u`: 유닉스 스타일 줄 끝(`\n`만 줄 끝으로 인식)
+
+##### **예제**
+```sql
+SELECT REGEXP_LIKE('CamelCase', 'CAMELCASE', 'i'); -- 1 (대소문자 무시)
+SELECT REGEXP_LIKE('CamelCase', 'CAMELCASE', 'c'); -- 0 (대소문자 구분)
+```
+
+#### **REGEXP_INSTR()**
+- 정규 표현식 패턴과 일치하는 문자열의 **시작 위치**를 반환 (`1`부터 시작).
+
+##### **예제**
+```sql
+SELECT REGEXP_INSTR('dog cat dog', 'dog'); -- 1 (첫 번째 'dog'의 시작 위치)
+SELECT REGEXP_INSTR('dog cat dog', 'dog', 2); -- 9 (두 번째 'dog'의 시작 위치)
+```
+
+#### **REGEXP_SUBSTR()**
+- 정규 표현식과 **일치하는 부분 문자열**을 반환.
+
+##### **예제**
+```sql
+SELECT REGEXP_SUBSTR('abc def ghi', '[a-z]+'); -- 'abc' (첫 번째 단어 반환)
+SELECT REGEXP_SUBSTR('abc def ghi', '[a-z]+', 1, 3); -- 'ghi' (세 번째 단어 반환)
+```
+
+#### **REGEXP_REPLACE()**
+- 정규 표현식과 일치하는 부분 문자열을 **다른 문자열로 변경**.
+
+##### **예제**
+```sql
+SELECT REGEXP_REPLACE('a b c', 'b', 'X'); -- 'a X c' ('b'를 'X'로 변경)
+SELECT REGEXP_REPLACE('abc def ghi', '[a-z]+', 'X', 1, 3); -- 'abc def X' (세 번째 단어만 변경)
+```
+
+---
+
+### **2. MySQL 정규 표현식의 특징**
+- **ICU 기반 정규 표현식**을 사용하여 다국어 및 다중 바이트 문자열을 지원.
+- **`\`를 두 번 사용해야 함** (`\\` → `\`).
+- **유닉스 스타일 줄 끝(`\n`)과 다중 라인 모드(`m`) 지원**.
+- **일치 여부뿐만 아니라 위치 검색, 부분 문자열 추출, 문자열 치환 등의 기능 제공**.
+
+---
+
+### **3. MySQL 정규 표현식 함수 요약**
+| **함수** | **기능** | **반환값** |
+|----------|---------|-----------|
+| `REGEXP / RLIKE` | 문자열이 정규 표현식과 일치하는지 검사 | `1`(일치), `0`(불일치) |
+| `NOT REGEXP` | 정규 표현식과 일치하지 않는 경우 `1` 반환 | `1`(불일치), `0`(일치) |
+| `REGEXP_LIKE()` | `REGEXP`와 동일하지만 `match_type` 옵션 제공 | `1`(일치), `0`(불일치) |
+| `REGEXP_INSTR()` | 일치하는 문자열의 시작 위치 반환 | 정수(위치) |
+| `REGEXP_SUBSTR()` | 정규 표현식과 일치하는 부분 문자열 반환 | 문자열 |
+| `REGEXP_REPLACE()` | 정규 표현식과 일치하는 부분을 다른 문자열로 치환 | 변경된 문자열 |
+
+---
+
+#### **결론**
+- **일치 여부 검사**: `REGEXP`, `NOT REGEXP`, `REGEXP_LIKE()`
+- **위치 검색**: `REGEXP_INSTR()`
+- **부분 문자열 추출**: `REGEXP_SUBSTR()`
+- **문자열 변경**: `REGEXP_REPLACE()`
 
 # Advanced
 
@@ -3364,7 +3875,7 @@ DELETE t1
     ON t1.email = t2.email AND 
        t1.phone = t2.phone AND 
        t1.id > t2.min_id 
-```
+ ```
 
 ## UUID vs INT for Primary
 
@@ -3736,7 +4247,7 @@ SELECT DATE_SUB(NOW(), INTERVAL 2 HOUR);
 SELECT FLOOR(DATEDIFF(CURDATE(), '1995-08-11') / 365) AS Age;
 ```
 
-## How to Get MySQL Today’s Date
+## How to Get MySQL Today's Date
 
 ```sql
 /* Using CURDATE() function */
@@ -3758,7 +4269,7 @@ SELECT DATE(NOW());
 SELECT * FROM sales WHERE DATE(sale_date) = CURDATE();
 ```
 
-## MySQL NULL: The Beginner’s Guide
+## MySQL NULL: The Beginner's Guide
 
 In MySQL, NULL is a special value that represents "no data" or "unknown value."
 It is different from an empty string or a zero value.

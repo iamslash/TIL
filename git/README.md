@@ -34,6 +34,7 @@
 
 # Materials
 
+- [How Core Git Developers Configure Git](https://blog.gitbutler.com/how-git-core-devs-configure-git/)
 * [누구나 쉽게 이해할 수 있는 Git입문](https://backlog.com/git-tutorial/kr/)
   * 킹왕짱 튜토리얼
 * [progit](https://git-scm.com/book/ko/v2)
