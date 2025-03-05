@@ -1102,7 +1102,6 @@ customer_id | customername  | total_amount | order_count | amount_rank | order_r
 | 2           | Jane Smith    | 450.00       | 2          |
 | 3           | Alice Johnson | 200.00       | 3          |
 ```
----
 
 ### 3. 재귀 CTE
 
@@ -1113,254 +1112,449 @@ customer_id | customername  | total_amount | order_count | amount_rank | order_r
 #### 테이블 생성 및 데이터 삽입
 
 ```sql
+-- [MySQL] --------------------
 CREATE TABLE employees (
     employee_id INT PRIMARY KEY,
     employee_name VARCHAR(255) NOT NULL,
     manager_id INT,
+    salary DECIMAL(10,2),
+    hire_date DATE,
+    FOREIGN KEY (manager_id) REFERENCES employees(employee_id)
+) ENGINE=InnoDB;
+
+INSERT INTO employees 
+    (employee_id, employee_name, manager_id, salary, hire_date)
+VALUES 
+    (1, 'CEO', NULL, 200000.00, '2020-01-01'),
+    (2, 'Manager A', 1, 120000.00, '2020-03-15'),
+    (3, 'Manager B', 1, 125000.00, '2020-02-01'),
+    (4, 'Employee A', 2, 75000.00, '2021-01-10'),
+    (5, 'Employee B', 2, 70000.00, '2021-04-20'),
+    (6, 'Employee C', 3, 72000.00, '2021-03-01');
+
+-- [PostgreSQL] --------------------
+CREATE TABLE employees (
+    employee_id SERIAL PRIMARY KEY,
+    employee_name VARCHAR(255) NOT NULL,
+    manager_id INTEGER,
+    salary NUMERIC(10,2),
+    hire_date DATE,
     FOREIGN KEY (manager_id) REFERENCES employees(employee_id)
 );
 
-INSERT INTO employees (employee_id, employee_name, manager_id)
-VALUES (1, 'CEO', NULL),
-       (2, 'Manager A', 1),
-       (3, 'Manager B', 1),
-       (4, 'Employee A', 2),
-       (5, 'Employee B', 2),
-       (6, 'Employee C', 3);
+INSERT INTO employees 
+    (employee_id, employee_name, manager_id, salary, hire_date)
+VALUES 
+    (1, 'CEO', NULL, 200000.00, '2020-01-01'),
+    (2, 'Manager A', 1, 120000.00, '2020-03-15'),
+    (3, 'Manager B', 1, 125000.00, '2020-02-01'),
+    (4, 'Employee A', 2, 75000.00, '2021-01-10'),
+    (5, 'Employee B', 2, 70000.00, '2021-04-20'),
+    (6, 'Employee C', 3, 72000.00, '2021-03-01');
+
+-- Example Results:
+/*
+employee_id | employee_name | manager_id | salary    | hire_date
+------------------------------------------------------------------
+1           | CEO          | NULL       | 200000.00 | 2020-01-01
+2           | Manager A    | 1          | 120000.00 | 2020-03-15
+3           | Manager B    | 1          | 125000.00 | 2020-02-01
+4           | Employee A   | 2          | 75000.00  | 2021-01-10
+5           | Employee B   | 2          | 70000.00  | 2021-04-20
+6           | Employee C   | 3          | 72000.00  | 2021-03-01
+*/
 ```
-
-#### 테이블 데이터
-| employee_id | employee_name | manager_id |
-|-------------|---------------|------------|
-| 1           | CEO           | NULL       |
-| 2           | Manager A     | 1          |
-| 3           | Manager B     | 1          |
-| 4           | Employee A    | 2          |
-| 5           | Employee B    | 2          |
-| 6           | Employee C    | 3          |
-
----
 
 #### 재귀 CTE 코드
 
 ```sql
-WITH RECURSIVE employee_hierarchy AS (
-    -- 기본 계층 (CEO)
-    SELECT employee_id, 
-           employee_name, 
-           manager_id, 
-           0 as hierarchy_level
-      FROM employees
-     WHERE manager_id IS NULL
+-- [MySQL] --------------------
+WITH RECURSIVE emp_hierarchy AS (
+    -- Base case: CEO level
+    SELECT 
+        employee_id,
+        employee_name,
+        manager_id,
+        salary,
+        0 as level,
+        employee_name as path
+    FROM employees
+    WHERE manager_id IS NULL
+    
     UNION ALL
-    -- 재귀적으로 하위 직원 찾기
-    SELECT e.employee_id, 
-           e.employee_name, 
-           e.manager_id, 
-           eh.hierarchy_level + 1
-      FROM employees e
-      JOIN employee_hierarchy eh 
-        ON e.manager_id = eh.employee_id
+    
+    -- Recursive case: find subordinates
+    SELECT 
+        e.employee_id,
+        e.employee_name,
+        e.manager_id,
+        e.salary,
+        h.level + 1,
+        CONCAT(h.path, ' > ', e.employee_name)
+    FROM employees e
+    JOIN emp_hierarchy h ON e.manager_id = h.employee_id
 )
-SELECT employee_id, 
-       employee_name, 
-       manager_id, 
-       hierarchy_level
-  FROM employee_hierarchy
-ORDER BY hierarchy_level, employee_id;
-```
+SELECT 
+    employee_id,
+    employee_name,
+    manager_id,
+    salary,
+    level,
+    path
+FROM emp_hierarchy
+ORDER BY level, employee_id;
 
-#### 결과
-| employee_id | employee_name | manager_id | hierarchy_level |
-|-------------|---------------|------------|-----------------|
-| 1           | CEO           | NULL       | 0               |
-| 2           | Manager A     | 1          | 1               |
-| 3           | Manager B     | 1          | 1               |
-| 4           | Employee A    | 2          | 2               |
-| 5           | Employee B    | 2          | 2               |
-| 6           | Employee C    | 3          | 2               |
+-- [PostgreSQL] --------------------
+WITH RECURSIVE emp_hierarchy AS (
+    -- Base case: CEO level
+    SELECT 
+        employee_id,
+        employee_name,
+        manager_id,
+        salary,
+        0 as level,
+        ARRAY[employee_name] as path_array,
+        employee_name::text as path
+    FROM employees
+    WHERE manager_id IS NULL
+    
+    UNION ALL
+    
+    -- Recursive case: find subordinates
+    SELECT 
+        e.employee_id,
+        e.employee_name,
+        e.manager_id,
+        e.salary,
+        h.level + 1,
+        h.path_array || e.employee_name,
+        (h.path || ' > ' || e.employee_name)
+    FROM employees e
+    JOIN emp_hierarchy h ON e.manager_id = h.employee_id
+)
+SELECT 
+    employee_id,
+    employee_name,
+    manager_id,
+    salary,
+    level,
+    path
+FROM emp_hierarchy
+ORDER BY level, employee_id;
+
+-- Example Results:
+/*
+employee_id | employee_name | manager_id | salary    | level | path
+--------------------------------------------------------------------------------
+1           | CEO          | NULL       | 200000.00 | 0     | CEO
+2           | Manager A    | 1          | 120000.00 | 1     | CEO > Manager A
+3           | Manager B    | 1          | 125000.00 | 1     | CEO > Manager B
+4           | Employee A   | 2          | 75000.00  | 2     | CEO > Manager A > Employee A
+5           | Employee B   | 2          | 70000.00  | 2     | CEO > Manager A > Employee B
+6           | Employee C   | 3          | 72000.00  | 2     | CEO > Manager B > Employee C
+*/
+```
 
 ## Set Operators
 
 ```sql
-CREATE TABLE table_A (
-    id INT,
-    value VARCHAR(255)
+-- [MySQL] --------------------
+CREATE TABLE products_2023 (
+    product_id INT,
+    product_name VARCHAR(100),
+    price DECIMAL(10,2)
+) ENGINE=InnoDB;
+
+CREATE TABLE products_2024 (
+    product_id INT,
+    product_name VARCHAR(100),
+    price DECIMAL(10,2)
+) ENGINE=InnoDB;
+
+INSERT INTO products_2023 (product_id, product_name, price)
+VALUES 
+    (1, 'Tea', 5.99),
+    (2, 'Coffee', 7.99),
+    (3, 'Cookies', 4.99);
+
+INSERT INTO products_2024 (product_id, product_name, price)
+VALUES 
+    (2, 'Coffee', 7.99),
+    (3, 'Cookies', 4.99),
+    (4, 'Cake', 12.99);
+
+-- products_2023:
+-- product_id | product_name | price
+-- -------------------------------
+-- 1          | Tea         | 5.99
+-- 2          | Coffee      | 7.99
+-- 3          | Cookies     | 4.99
+
+-- products_2024:
+-- product_id | product_name | price
+-- -------------------------------
+-- 2          | Coffee      | 7.99
+-- 3          | Cookies     | 4.99
+-- 4          | Cake        | 12.99
+
+/* UNION - distinct products from both years */
+SELECT product_id, product_name, price 
+FROM products_2023
+UNION
+SELECT product_id, product_name, price 
+FROM products_2024
+ORDER BY product_id;
+
+-- Result:
+-- product_id | product_name | price
+-- -------------------------------
+-- 1          | Tea         | 5.99
+-- 2          | Coffee      | 7.99
+-- 3          | Cookies     | 4.99
+-- 4          | Cake        | 12.99
+
+/* UNION ALL - all products including duplicates */
+SELECT product_id, product_name, price 
+FROM products_2023
+UNION ALL
+SELECT product_id, product_name, price 
+FROM products_2024
+ORDER BY product_id;
+
+-- Result:
+-- product_id | product_name | price
+-- -------------------------------
+-- 1          | Tea         | 5.99
+-- 2          | Coffee      | 7.99
+-- 2          | Coffee      | 7.99
+-- 3          | Cookies     | 4.99
+-- 3          | Cookies     | 4.99
+-- 4          | Cake        | 12.99
+
+/* INTERSECT equivalent - products in both years */
+SELECT p23.* 
+FROM products_2023 p23
+INNER JOIN products_2024 p24
+ON p23.product_id = p24.product_id
+AND p23.product_name = p24.product_name
+AND p23.price = p24.price;
+
+-- Result:
+-- product_id | product_name | price
+-- -------------------------------
+-- 2          | Coffee      | 7.99
+-- 3          | Cookies     | 4.99
+
+/* EXCEPT equivalent - products only in 2023 */
+SELECT p23.* 
+FROM products_2023 p23
+LEFT JOIN products_2024 p24
+ON p23.product_id = p24.product_id
+AND p23.product_name = p24.product_name
+AND p23.price = p24.price
+WHERE p24.product_id IS NULL;
+
+-- Result:
+-- product_id | product_name | price
+-- -------------------------------
+-- 1          | Tea         | 5.99
+
+-- [PostgreSQL] --------------------
+CREATE TABLE products_2023 (
+    product_id INTEGER,
+    product_name VARCHAR(100),
+    price NUMERIC(10,2)
 );
-INSERT INTO table_A (id, value)
-VALUES (1, 'A'), (2, 'B'), (3, 'C');
 
-CREATE TABLE table_B (
-    id INT,
-    value VARCHAR(255)
+CREATE TABLE products_2024 (
+    product_id INTEGER,
+    product_name VARCHAR(100),
+    price NUMERIC(10,2)
 );
-INSERT INTO table_B (id, value)
-VALUES (2, 'B'), (3, 'C'), (4, 'D');
 
--- Table_A:
-id | value
-1  | A
-2  | B
-3  | C
+INSERT INTO products_2023 (product_id, product_name, price)
+VALUES 
+    (1, 'Tea', 5.99),
+    (2, 'Coffee', 7.99),
+    (3, 'Cookies', 4.99);
 
--- Table_B:
-id | value
-2  | B
-3  | C
-4  | D
-```
+INSERT INTO products_2024 (product_id, product_name, price)
+VALUES 
+    (2, 'Coffee', 7.99),
+    (3, 'Cookies', 4.99),
+    (4, 'Cake', 12.99);
 
-```sql
-/* UNION */
-  SELECT id, value 
-    FROM table_A
-   UNION
-  SELECT id, value 
-    FROM table_B
-ORDER BY id;
--- result
-id | value
-1  | A
-2  | B
-3  | C
-4  | D
+-- products_2023:
+-- product_id | product_name | price
+-- -------------------------------
+-- 1          | Tea         | 5.99
+-- 2          | Coffee      | 7.99
+-- 3          | Cookies     | 4.99
 
-/* UNION ALL */
-  SELECT id, value 
-    FROM table_A
-   UNION ALL
-  SELECT id, value 
-    FROM table_B
-ORDER BY id;
--- result
-id | value
-1  | A
-2  | B
-3  | C
-2  | B
-3  | C
-4  | D
+-- products_2024:
+-- product_id | product_name | price
+-- -------------------------------
+-- 2          | Coffee      | 7.99
+-- 3          | Cookies     | 4.99
+-- 4          | Cake        | 12.99
 
-/* INTERSECT */
-   SELECT id, value 
-     FROM table_A
+/* UNION - distinct products from both years */
+SELECT product_id, product_name, price 
+FROM products_2023
+UNION
+SELECT product_id, product_name, price 
+FROM products_2024
+ORDER BY product_id;
+
+-- Result:
+-- product_id | product_name | price
+-- -------------------------------
+-- 1          | Tea         | 5.99
+-- 2          | Coffee      | 7.99
+-- 3          | Cookies     | 4.99
+-- 4          | Cake        | 12.99
+
+/* INTERSECT - products in both years */
+SELECT product_id, product_name, price 
+FROM products_2023
 INTERSECT
-   SELECT id, value 
-     FROM table_B
- ORDER BY id;
--- result
-id | value
-2  | B
-3  | C
+SELECT product_id, product_name, price 
+FROM products_2024;
 
-/* MINUS */
--- PostgreSQL, SQL Server, and SQLite use EXCEPT
-  SELECT id, value 
-    FROM table_A
-  EXCEPT
-  SELECT id, value 
-    FROM table_B
-ORDER BY id;
+-- Result:
+-- product_id | product_name | price
+-- -------------------------------
+-- 2          | Coffee      | 7.99
+-- 3          | Cookies     | 4.99
 
--- Oracle and MySQL do not support EXCEPT or MINUS, 
--- you can achieve the result with LEFT JOIN
-   SELECT ta.id, ta.value 
-     FROM table_A ta
-LEFT JOIN table_B tb 
-       ON ta.id = tb.id AND 
-          ta.value = tb.value
-    WHERE tb.id IS NULL
- ORDER BY ta.id;
--- result
-id | value
-1  | A
+/* EXCEPT - products only in 2023 */
+SELECT product_id, product_name, price 
+FROM products_2023
+EXCEPT
+SELECT product_id, product_name, price 
+FROM products_2024;
+
+-- Result:
+-- product_id | product_name | price
+-- -------------------------------
+-- 1          | Tea         | 5.99
 ```
 
 ## Updating Data
 
 ```sql
-CREATE TABLE students (
-    id INT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL,
-    age INT NOT NULL,
-    email VARCHAR(255)
-);
+-- [MySQL] --------------------
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY,
+    emp_name VARCHAR(255) NOT NULL,
+    salary DECIMAL(10,2),
+    dept_id INT,
+    hire_date DATE
+) ENGINE=InnoDB;
 
-/* INSERT */
-INSERT INTO students (id, name, age, email)
-VALUES (1, 'John Doe', 25, 'john.doe@example.com');
+/* Basic INSERT */
+INSERT INTO employees (emp_id, emp_name, salary, dept_id, hire_date)
+VALUES (1, 'John Doe', 50000.00, 1, '2024-01-01');
 
-/* INSERT Multiple Rows */
-INSERT INTO students (id, name, age, email)
-VALUES (2, 'Jane Smith', 30, 'jane.smith@example.com'),
-       (3, 'Alice Johnson', 28, 'alice.johnson@example.com');
+/* Multiple Row INSERT */
+INSERT INTO employees (emp_id, emp_name, salary, dept_id, hire_date)
+VALUES 
+    (2, 'Jane Smith', 55000.00, 1, '2024-01-15'),
+    (3, 'Bob Wilson', 52000.00, 2, '2024-02-01');
 
-/* INSERT INTO SELECT */
--- Insert rows from another table or result set.
--- Assuming we have another table called 'new_students'
-INSERT INTO students (id, name, age, email)
-SELECT id, name, age, email FROM new_students;
+-- Result after INSERTs:
+-- emp_id | emp_name    | salary   | dept_id | hire_date
+-- --------------------------------------------------
+-- 1      | John Doe    | 50000.00 | 1       | 2024-01-01
+-- 2      | Jane Smith  | 55000.00 | 1       | 2024-01-15
+-- 3      | Bob Wilson  | 52000.00 | 2       | 2024-02-01
 
 /* INSERT IGNORE */
--- Insert a row and ignore any errors (MySQL-specific).
-INSERT IGNORE INTO students (id, name, age, email)
-VALUES (1, 'John Doe', 25, 'john.doe@example.com');
-
-/* UPDATE */
-UPDATE students
-   SET age = 26, 
-       email = 'john.doe.new@example.com'
- WHERE id = 1;
-
-/* UPDATE JOIN */
--- Updates rows in a table based on a join condition.
--- Assuming we have a 'student_scores' table with student ids and scores
-UPDATE students s
-  JOIN student_scores ss 
-    ON s.id = ss.student_id
-   SET s.age = s.age + 1
- WHERE ss.score >= 50;
-
-/* DELETE */
-DELETE FROM students
- WHERE id = 1;
-
-/* ON DELETE CASCADE */
--- For when initially creating a table with a foreign key dependency
-CREATE TABLE student_classes (
-    student_id INT,
-    class_id INT,
-    PRIMARY KEY (student_id, class_id),
-    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE
-);
-
-/* DELETE JOIN */
--- Delete rows from a table based on a join condition.
--- Assuming we have a 'student_classes' table with student ids and class ids
-DELETE s FROM students s
-  JOIN student_classes sc ON s.id = sc.student_id
- WHERE sc.class_id = 101;
+INSERT IGNORE INTO employees (emp_id, emp_name, salary, dept_id, hire_date)
+VALUES (1, 'John Doe', 50000.00, 1, '2024-01-01');
+-- No error, row ignored due to duplicate key
 
 /* REPLACE */
--- Insert a row or replace it if it already exists (MySQL-specific).
-REPLACE INTO students (id, name, age, email)
- VALUES (1, 'John Doe', 25, 'john.doe@example.com');
+REPLACE INTO employees (emp_id, emp_name, salary, dept_id, hire_date)
+VALUES (1, 'John Doe', 60000.00, 1, '2024-01-01');
+
+-- Result after REPLACE:
+-- emp_id | emp_name    | salary   | dept_id | hire_date
+-- --------------------------------------------------
+-- 1      | John Doe    | 60000.00 | 1       | 2024-01-01
+-- 2      | Jane Smith  | 55000.00 | 1       | 2024-01-15
+-- 3      | Bob Wilson  | 52000.00 | 2       | 2024-02-01
+
+/* UPDATE */
+UPDATE employees 
+SET salary = salary * 1.1
+WHERE dept_id = 1;
+
+-- Result after UPDATE:
+-- emp_id | emp_name    | salary   | dept_id | hire_date
+-- --------------------------------------------------
+-- 1      | John Doe    | 66000.00 | 1       | 2024-01-01
+-- 2      | Jane Smith  | 60500.00 | 1       | 2024-01-15
+-- 3      | Bob Wilson  | 52000.00 | 2       | 2024-02-01
 
 /* Prepared Statement */
--- Prepare a statement to be executed multiple times with different
--- Example using MySQL
-PREPARE update_student_age FROM
-    'UPDATE students SET age = ? WHERE id = ?';
--- Update student with id 1's age to 26
-SET @new_age = 26;
-SET @student_id = 1;
-EXECUTE update_student_age USING @new_age, @student_id;
--- Update student with id 2's age to 31
-SET @new_age = 31;
-SET @student_id = 2;
-EXECUTE update_student_age USING @new_age, @student_id;
--- Cleanup
-DEALLOCATE PREPARE update_student_age;
+PREPARE salary_update FROM 
+    'UPDATE employees SET salary = ? WHERE emp_id = ?';
+
+SET @new_salary = 70000.00;
+SET @target_emp = 1;
+EXECUTE salary_update USING @new_salary, @target_emp;
+
+-- [PostgreSQL] --------------------
+CREATE TABLE employees (
+    emp_id SERIAL PRIMARY KEY,
+    emp_name VARCHAR(255) NOT NULL,
+    salary NUMERIC(10,2),
+    dept_id INTEGER,
+    hire_date DATE
+);
+
+/* Basic INSERT */
+INSERT INTO employees (emp_id, emp_name, salary, dept_id, hire_date)
+VALUES (1, 'John Doe', 50000.00, 1, '2024-01-01');
+
+/* Multiple Row INSERT */
+INSERT INTO employees (emp_id, emp_name, salary, dept_id, hire_date)
+VALUES 
+    (2, 'Jane Smith', 55000.00, 1, '2024-01-15'),
+    (3, 'Bob Wilson', 52000.00, 2, '2024-02-01');
+
+-- Result after INSERTs:
+-- emp_id | emp_name    | salary   | dept_id | hire_date
+-- --------------------------------------------------
+-- 1      | John Doe    | 50000.00 | 1       | 2024-01-01
+-- 2      | Jane Smith  | 55000.00 | 1       | 2024-01-15
+-- 3      | Bob Wilson  | 52000.00 | 2       | 2024-02-01
+
+/* INSERT ON CONFLICT DO NOTHING (similar to MySQL's INSERT IGNORE) */
+INSERT INTO employees (emp_id, emp_name, salary, dept_id, hire_date)
+VALUES (1, 'John Doe', 50000.00, 1, '2024-01-01')
+ON CONFLICT (emp_id) DO NOTHING;
+
+/* UPSERT (similar to MySQL's REPLACE) */
+INSERT INTO employees (emp_id, emp_name, salary, dept_id, hire_date)
+VALUES (1, 'John Doe', 60000.00, 1, '2024-01-01')
+ON CONFLICT (emp_id) DO UPDATE 
+SET salary = EXCLUDED.salary;
+
+-- Result after UPSERT:
+-- emp_id | emp_name    | salary   | dept_id | hire_date
+-- --------------------------------------------------
+-- 1      | John Doe    | 60000.00 | 1       | 2024-01-01
+-- 2      | Jane Smith  | 55000.00 | 1       | 2024-01-15
+-- 3      | Bob Wilson  | 52000.00 | 2       | 2024-02-01
+
+/* Prepared Statement */
+PREPARE salary_update(numeric, integer) AS
+    UPDATE employees SET salary = $1 WHERE emp_id = $2;
+
+EXECUTE salary_update(70000.00, 1);
+DEALLOCATE salary_update;
 ```
 
 ## Insert On Duplicate Key Update
@@ -1370,11 +1564,67 @@ DEALLOCATE PREPARE update_student_age;
 Primary key columns 가 없으면 삽입하고 있으면 가공해서 수정하라.
 
 ```sql
-INSERT INTO t1 (a,b,c) VALUES (1,2,3)
-  ON DUPLICATE KEY UPDATE c = c + 1;
+-- [MySQL] --------------------
+CREATE TABLE products (
+    product_id INT PRIMARY KEY,
+    product_name VARCHAR(100),
+    stock_count INT,
+    last_updated TIMESTAMP
+) ENGINE=InnoDB;
 
--- Same with above one when the recoard exists
-UPDATE t1 SET c = c + 1 WHERE a = 1;
+/* Basic INSERT ON DUPLICATE KEY UPDATE */
+INSERT INTO products (product_id, product_name, stock_count)
+VALUES (1, 'Coffee', 100)
+ON DUPLICATE KEY UPDATE 
+    stock_count = stock_count + VALUES(stock_count),
+    last_updated = CURRENT_TIMESTAMP;
+
+-- Same as above when record exists:
+UPDATE products 
+SET stock_count = stock_count + 100,
+    last_updated = CURRENT_TIMESTAMP
+WHERE product_id = 1;
+
+-- Result after first insert:
+-- product_id | product_name | stock_count | last_updated
+-- --------------------------------------------------------
+-- 1          | Coffee       | 100         | 2024-03-15 10:00:00
+
+-- Result after second insert (duplicate):
+-- product_id | product_name | stock_count | last_updated
+-- --------------------------------------------------------
+-- 1          | Coffee       | 200         | 2024-03-15 10:01:00
+
+-- [PostgreSQL] --------------------
+CREATE TABLE products (
+    product_id INTEGER PRIMARY KEY,
+    product_name VARCHAR(100),
+    stock_count INTEGER,
+    last_updated TIMESTAMP
+);
+
+/* INSERT ON CONFLICT DO UPDATE */
+INSERT INTO products (product_id, product_name, stock_count)
+VALUES (1, 'Coffee', 100)
+ON CONFLICT (product_id) DO UPDATE 
+SET stock_count = products.stock_count + EXCLUDED.stock_count,
+    last_updated = CURRENT_TIMESTAMP;
+
+-- Same as above when record exists:
+UPDATE products 
+SET stock_count = stock_count + 100,
+    last_updated = CURRENT_TIMESTAMP
+WHERE product_id = 1;
+
+-- Result after first insert:
+-- product_id | product_name | stock_count | last_updated
+-- --------------------------------------------------------
+-- 1          | Coffee       | 100         | 2024-03-15 10:00:00
+
+-- Result after second insert (conflict):
+-- product_id | product_name | stock_count | last_updated
+-- --------------------------------------------------------
+-- 1          | Coffee       | 200         | 2024-03-15 10:01:00
 ```
 
 Upsert 와는 다르다. Upsert 는 없으면 삽입하고 있으면 제공된 값으로 수정하라는
@@ -1382,7 +1632,7 @@ Upsert 와는 다르다. Upsert 는 없으면 삽입하고 있으면 제공된 �
 `c = 3` 만 지원한다. [Upsert in SQL: What is an Upsert, and When Should You Use
 One?](https://www.cockroachlabs.com/blog/sql-upsert/)
 
-다음은 DockroachDB Upsert 의 예이다.
+다음은 CockroachDB Upsert 의 예이다.
 
 ```sql
 UPSERT INTO employees 
@@ -1422,83 +1672,206 @@ INSERT INTO t1 (a,b,c) VALUES (1,2,3),(4,5,6) AS new(m,n,p)
 ## Transactions
 
 ```sql
-/* COMMIT */
-BEGIN; -- Start a new transaction
-INSERT INTO students (id, name, age, email)
-VALUES (1, 'John Doe', 25, 'john.doe@example.com');
--- Save the changes made by the transaction
+-- [MySQL] --------------------
+/* Basic Transaction */
+BEGIN;
+INSERT INTO orders (order_id, customer_id, amount)
+VALUES (1001, 1, 500.00);
+UPDATE customers 
+SET total_orders = total_orders + 1 
+WHERE customer_id = 1;
 COMMIT;
 
-/* ROLLBACK */
-BEGIN; -- Start a new transaction
-INSERT INTO students (id, name, age, email)
-VALUES (2, 'Jane Smith', 30, 'jane.smith@example.com');
--- Undo the changes made by the transaction
+-- Result after COMMIT:
+-- orders:
+-- order_id | customer_id | amount
+-- ------------------------------
+-- 1001     | 1          | 500.00
+--
+-- customers:
+-- customer_id | total_orders
+-- --------------------------
+-- 1           | 6
+
+/* ROLLBACK Example */
+BEGIN;
+INSERT INTO orders (order_id, customer_id, amount)
+VALUES (1002, 2, 700.00);
+-- Oops, wrong amount!
 ROLLBACK;
 
-/* Table Locking - PostreSQL*/
-BEGIN; -- Start a new transaction
--- Lock the 'students' table for this transaction
-LOCK TABLE students IN EXCLUSIVE MODE;
--- Perform an operation on the locked table
-UPDATE students SET age = age + 1 WHERE id = 1;
--- Save the changes and release the lock
+-- Result after ROLLBACK (no changes):
+-- orders:
+-- order_id | customer_id | amount
+-- ------------------------------
+-- 1001     | 1          | 500.00
+
+/* Table Locking */
+BEGIN;
+LOCK TABLES 
+    orders WRITE,
+    customers WRITE;
+
+UPDATE orders 
+SET amount = amount * 1.1 
+WHERE order_id = 1001;
+
+UPDATE customers 
+SET total_spent = total_spent + 50 
+WHERE customer_id = 1;
+
+COMMIT;
+UNLOCK TABLES;
+
+-- [PostgreSQL] --------------------
+/* Basic Transaction */
+BEGIN;
+INSERT INTO orders (order_id, customer_id, amount)
+VALUES (1001, 1, 500.00);
+UPDATE customers 
+SET total_orders = total_orders + 1 
+WHERE customer_id = 1;
 COMMIT;
 
-/* Table Locking - MySQL*/
-BEGIN; -- Start a new transaction
--- Lock the 'students' table for WRITE operations for this transaction
-LOCK TABLES students WRITE;
--- Perform an operation on the locked table
-UPDATE students SET age = age + 1 WHERE id = 1;
--- Save the changes
+-- Result after COMMIT:
+-- orders:
+-- order_id | customer_id | amount
+-- ------------------------------
+-- 1001     | 1          | 500.00
+--
+-- customers:
+-- customer_id | total_orders
+-- --------------------------
+-- 1           | 6
+
+/* ROLLBACK Example */
+BEGIN;
+INSERT INTO orders (order_id, customer_id, amount)
+VALUES (1002, 2, 700.00);
+-- Oops, wrong amount!
+ROLLBACK;
+
+/* Table Locking */
+BEGIN;
+LOCK TABLE orders IN EXCLUSIVE MODE;
+LOCK TABLE customers IN EXCLUSIVE MODE;
+
+UPDATE orders 
+SET amount = amount * 1.1 
+WHERE order_id = 1001;
+
+UPDATE customers 
+SET total_spent = total_spent + 50 
+WHERE customer_id = 1;
+
 COMMIT;
--- Release the lock
-UNLOCK TABLES;
+
+/* Row-Level Locking (PostgreSQL specific) */
+BEGIN;
+SELECT * FROM orders 
+WHERE order_id = 1001 
+FOR UPDATE;  -- Locks only this specific row
+
+UPDATE orders 
+SET amount = amount * 1.1 
+WHERE order_id = 1001;
+
+COMMIT;
+
+-- Result after lock and update:
+-- orders:
+-- order_id | customer_id | amount
+-- ------------------------------
+-- 1001     | 1          | 550.00
 ```
 
 ## Managing Databases
 
 ```sql
-/* Selecting DB */
-USE myDatabase;
-/* Create DB */
-CREATE DATABASE newDatabase;
-/* Drop DB */
-DROP DATABASE unwantedDatabase;
+-- [MySQL] --------------------
+/* Database Operations */
+CREATE DATABASE ecommerce_db;
+USE ecommerce_db;
+DROP DATABASE old_ecommerce_db;
+
+/* Create with Charset */
+CREATE DATABASE ecommerce_db
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
+
+/* Show Database Info */
+SHOW DATABASES;
+-- Result:
+-- Database
+-- --------------------
+-- ecommerce_db
+-- information_schema
+-- mysql
+-- performance_schema
+
+SHOW CREATE DATABASE ecommerce_db;
+-- Result:
+-- Database     | Create Database
+-- --------------------------------------------------
+-- ecommerce_db | CREATE DATABASE `ecommerce_db` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */
+
+-- [PostgreSQL] --------------------
+/* Database Operations */
+CREATE DATABASE ecommerce_db;
+\c              ecommerce_db;     -- Connect to database
+DROP DATABASE   old_ecommerce_db;
+
+/* Create with Encoding */
+CREATE DATABASE ecommerce_db
+    WITH ENCODING = 'UTF8'
+    LC_COLLATE = 'en_US.UTF-8'
+    LC_CTYPE = 'en_US.UTF-8';
+
+/* Show Database Info */
+\l                               -- List all databases
+-- Result:
+-- Name          | Owner   | Encoding | Collate      | Ctype
+-- --------------------------------------------------------
+-- ecommerce_db  | postgres| UTF8     | en_US.UTF-8  | en_US.UTF-8
+-- postgres      | postgres| UTF8     | en_US.UTF-8  | en_US.UTF-8
+-- template0     | postgres| UTF8     | en_US.UTF-8  | en_US.UTF-8
+-- template1     | postgres| UTF8     | en_US.UTF-8  | en_US.UTF-8
+
+\d                               -- List relations in current database
 ```
 
 ## Managing Tables
 
 ```sql
-/* MySQL storage engines */
+-- [MySQL] --------------------
+/* Storage Engine Specification */
 CREATE TABLE employees_innodb (
-    employee_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    birth_date DATE,
-    hire_date DATE
+    employee_id    INT AUTO_INCREMENT PRIMARY KEY,
+    first_name     VARCHAR(50),
+    last_name      VARCHAR(50),
+    birth_date     DATE,
+    hire_date      DATE
 ) ENGINE=InnoDB;
 
 /* CREATE TABLE */
 CREATE TABLE employees (
-    employee_id INT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    birth_date DATE,
-    hire_date DATE
+    employee_id    INT PRIMARY KEY,
+    first_name     VARCHAR(50),
+    last_name      VARCHAR(50),
+    birth_date     DATE,
+    hire_date      DATE
 );
 
 /* AUTO_INCREMENT */
 CREATE TABLE products (
-    product_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100),
-    price DECIMAL(10,2)
+    product_id     INT AUTO_INCREMENT PRIMARY KEY,
+    name           VARCHAR(100),
+    price          DECIMAL(10,2)
 );
 
 /* ALTER TABLE */
 ALTER TABLE employees
-ADD COLUMN email VARCHAR(100) UNIQUE;
+  ADD COLUMN email VARCHAR(100) UNIQUE;
 
 /* Renaming tables */
 RENAME TABLE old_table_name TO new_table_name;
@@ -1516,9 +1889,9 @@ DROP TABLE table_name;
 
 /* Temporal table */
 CREATE TEMPORARY TABLE temp_employees (
-    employee_id INT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50)
+    employee_id    INT PRIMARY KEY,
+    first_name     VARCHAR(50),
+    last_name      VARCHAR(50)
 );
 
 /* TRUNCATE TABLE */
@@ -1533,15 +1906,80 @@ TRUNCATE TABLE table_name;
 
 /* Generated columns */
 -- full_name is generated by CONCAT expression.
--- he STORED keyword means the resulting value will be 
+-- The STORED keyword means the resulting value will be 
 -- physically stored in the table, rather than being computed 
 -- on-the-fly when queried.
 CREATE TABLE students (
-    student_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    full_name VARCHAR(100) GENERATED ALWAYS AS (CONCAT(first_name, ' ', last_name)) STORED
+    student_id     INT AUTO_INCREMENT PRIMARY KEY,
+    first_name     VARCHAR(50),
+    last_name      VARCHAR(50),
+    full_name      VARCHAR(100) GENERATED ALWAYS AS 
+                   (CONCAT(first_name, ' ', last_name)) STORED
 );
+
+-- [PostgreSQL] --------------------
+/* CREATE TABLE */
+CREATE TABLE employees (
+    employee_id    SERIAL PRIMARY KEY,
+    first_name     VARCHAR(50),
+    last_name      VARCHAR(50),
+    birth_date     DATE,
+    hire_date      DATE
+);
+
+/* Identity Column (Auto Increment) */
+CREATE TABLE products (
+    product_id     INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    name           VARCHAR(100),
+    price          NUMERIC(10,2)
+);
+
+/* ALTER TABLE */
+ALTER TABLE employees
+  ADD COLUMN email VARCHAR(100) UNIQUE;
+
+/* Renaming tables */
+ALTER TABLE old_table_name RENAME TO new_table_name;
+
+/* Adding a new column to a table */
+ALTER TABLE employees
+  ADD COLUMN phone_number VARCHAR(15);
+
+/* Dropping a new column to a table */
+ALTER TABLE employees
+ DROP COLUMN email;
+
+/* DROP TABLE */
+DROP TABLE table_name;
+
+/* Temporal table */
+CREATE TEMPORARY TABLE temp_employees (
+    employee_id    INTEGER PRIMARY KEY,
+    first_name     VARCHAR(50),
+    last_name      VARCHAR(50)
+);
+
+/* TRUNCATE TABLE */
+-- The TRUNCATE TABLE statement is a Data Definition 
+-- Language (DDL) command used in SQL to delete all rows 
+-- from a table quickly and more efficiently compared to 
+-- the DELETE statement. When you execute the TRUNCATE 
+-- TABLE command, it removes all data from the table but 
+-- retains its structure (columns, constraints, etc.) for 
+-- future use.
+TRUNCATE TABLE table_name;
+
+/* Generated columns */
+-- full_name is generated by concatenation expression.
+-- The STORED keyword means the resulting value will be 
+-- physically stored in the table, rather than being computed 
+-- on-the-fly when queried.
+CREATE TABLE students (
+    student_id     INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    first_name     VARCHAR(50),
+    last_name      VARCHAR(50),
+    full_name      VARCHAR(100) GENERATED ALWAYS AS 
+                   (first_name ||
 ```
 
 ## Data Types (MySQL)
@@ -1601,25 +2039,26 @@ CREATE TABLE students (
 ## Constraints
 
 ```sql
+-- [MySQL] --------------------
 /* NOT NULL */
 CREATE TABLE customers (
-    customer_id INT AUTO_INCREMENT PRIMARY KEY,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL
+    customer_id    INT AUTO_INCREMENT PRIMARY KEY,
+    first_name     VARCHAR(50) NOT NULL,
+    last_name      VARCHAR(50) NOT NULL
 );
 
 /* Primary key */
 CREATE TABLE orders (
-    order_id INT AUTO_INCREMENT PRIMARY KEY,
-    customer_id INT,
-    order_date DATE
+    order_id       INT AUTO_INCREMENT PRIMARY KEY,
+    customer_id    INT,
+    order_date     DATE
 );
 
 /* Foreign key */
 CREATE TABLE order_items (
-    order_item_id INT AUTO_INCREMENT PRIMARY KEY,
-    order_id INT,
-    product_id INT,
+    order_item_id  INT AUTO_INCREMENT PRIMARY KEY,
+    order_id       INT,
+    product_id     INT,
     FOREIGN KEY (order_id) REFERENCES orders(order_id)
 );
 
@@ -1630,61 +2069,153 @@ SET FOREIGN_KEY_CHECKS=1;
 
 /* UNIQUE constraint */ 
 CREATE TABLE users (
-    user_id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) UNIQUE,
-    email VARCHAR(100) UNIQUE
+    user_id        INT AUTO_INCREMENT PRIMARY KEY,
+    username       VARCHAR(50) UNIQUE,
+    email          VARCHAR(100) UNIQUE
 );
 
 /* CHECK constraint */
 -- MySQL 8.0.16 and later versions
 CREATE TABLE employees (
-    employee_id INT PRIMARY KEY,
-    birth_date DATE,
-    hire_date DATE CHECK (hire_date > birth_date)
+    employee_id    INT PRIMARY KEY,
+    birth_date     DATE,
+    hire_date      DATE CHECK (hire_date > birth_date)
 );
 
 /* DEFAULT */
 CREATE TABLE products (
-    product_id INT AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(100),
-    price DECIMAL(10,2) DEFAULT 0.00
+    product_id     INT AUTO_INCREMENT PRIMARY KEY,
+    name           VARCHAR(100),
+    price          DECIMAL(10,2) DEFAULT 0.00
+);
+
+-- [PostgreSQL] --------------------
+/* NOT NULL */
+CREATE TABLE customers (
+    customer_id    SERIAL PRIMARY KEY,
+    first_name     VARCHAR(50) NOT NULL,
+    last_name      VARCHAR(50) NOT NULL
+);
+
+/* Primary key */
+CREATE TABLE orders (
+    order_id       SERIAL PRIMARY KEY,
+    customer_id    INTEGER,
+    order_date     DATE
+);
+
+/* Foreign key */
+CREATE TABLE order_items (
+    order_item_id  SERIAL PRIMARY KEY,
+    order_id       INTEGER,
+    product_id     INTEGER,
+    FOREIGN KEY (order_id) REFERENCES orders(order_id)
+);
+
+/* Disable foreign key checks */
+SET session_replication_role = 'replica';
+-- Do some actions here that require disabling foreign key checks
+SET session_replication_role = 'origin';
+
+/* UNIQUE constraint */ 
+CREATE TABLE users (
+    user_id        SERIAL PRIMARY KEY,
+    username       VARCHAR(50) UNIQUE,
+    email          VARCHAR(100) UNIQUE
+);
+
+/* CHECK constraint */
+CREATE TABLE employees (
+    employee_id    INTEGER PRIMARY KEY,
+    birth_date     DATE,
+    hire_date      DATE CHECK (hire_date > birth_date)
+);
+
+/* DEFAULT */
+CREATE TABLE products (
+    product_id     SERIAL PRIMARY KEY,
+    name           VARCHAR(100),
+    price          NUMERIC(10,2) DEFAULT 0.00
 );
 ```
 
 ## Globalization
 
 ```sql
+-- [MySQL] --------------------
 /* Set character set and collation for a database */
 CREATE DATABASE my_database 
     CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
+    COLLATE     utf8mb4_unicode_ci;
 
 /* Set character set and collation for a table */
 CREATE TABLE my_table (
-    column1 VARCHAR(50),
-    column2 VARCHAR(50)
+    column1       VARCHAR(50),
+    column2       VARCHAR(50)
 ) CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
+  COLLATE     utf8mb4_unicode_ci;
 
 /* Set character set and collation for a column */
 CREATE TABLE my_table (
-    column1 VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
-    column2 VARCHAR(50)
+    column1       VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+    column2       VARCHAR(50)
 );
 
 /* Alter the character set and collation of a database */
 ALTER DATABASE my_database
     CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
+    COLLATE     utf8mb4_unicode_ci;
 
 /* Alter character set and collation for a table */
 ALTER TABLE my_table
     CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
+    COLLATE     utf8mb4_unicode_ci;
 
 /* Alter character set and collation for a column */
 ALTER TABLE my_table
-    MODIFY column1 VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    MODIFY column1 VARCHAR(50) 
+    CHARACTER SET utf8mb4 
+    COLLATE     utf8mb4_unicode_ci;
+
+-- [PostgreSQL] --------------------
+/* Set encoding and collation for a database */
+CREATE DATABASE my_database
+    WITH ENCODING = 'UTF8'
+    LC_COLLATE = 'en_US.UTF-8'
+    LC_CTYPE   = 'en_US.UTF-8'
+    TEMPLATE   = template0;
+
+/* Set collation for a table column */
+CREATE TABLE my_table (
+    column1       VARCHAR(50) COLLATE "en_US.utf8",
+    column2       VARCHAR(50)
+);
+
+/* Create a custom collation */
+CREATE COLLATION my_custom_collation (
+    PROVIDER    = icu,
+    LOCALE      = 'en-US-x-icu',
+    DETERMINISTIC = true
+);
+
+/* Alter column collation */
+ALTER TABLE my_table
+    ALTER COLUMN column1 
+    SET DATA TYPE VARCHAR(50) 
+    COLLATE "en_US.utf8";
+
+/* Show database encoding and collation */
+SELECT datname, 
+       pg_encoding_to_char(encoding),
+       datcollate,
+       datctype
+FROM pg_database
+WHERE datname = 'my_database';
+
+-- Result:
+-- datname     | encoding | datcollate  | datctype
+-- ---------------------------------------------
+-- my_database | UTF8     | en_US.UTF-8 | en_US.UTF-8
 ```
 
 ### CHARACTER SET
@@ -1750,30 +2281,71 @@ on the performance of your queries.
 ## Importing, Exporting CSV
 
 ```sql
-/* Importing */
+-- [MySQL] --------------------
+/* Create table for import */
 CREATE TABLE employees (
-    employee_id INT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    birth_date DATE,
-    hire_date DATE
+    employee_id    INT PRIMARY KEY,
+    first_name     VARCHAR(50),
+    last_name      VARCHAR(50),
+    birth_date     DATE,
+    hire_date      DATE
 );
- LOAD DATA INFILE 'path/to/your/csvfile.csv'
-INTO TABLE employees IGNORE 1 ROWS
+
+/* Importing CSV */
+LOAD DATA INFILE 'path/to/your/csvfile.csv'
+INTO TABLE employees 
+IGNORE 1 ROWS
     FIELDS TERMINATED BY ',' 
   ENCLOSED BY '"' 
      LINES TERMINATED BY '\n'
-(employee_id, first_name, last_name, birth_date, hire_date); -- set the relevant column names here
-```
+(employee_id, first_name, last_name, birth_date, hire_date);
 
-```sql
-/* Exporting */
-  SELECT * 
-    FROM employees
-    INTO OUTFILE 'path/to/your/outputfile.csv'
-  FIELDS TERMINATED BY ',' 
-ENCLOSED BY '"' 
-   LINES TERMINATED BY '\n';
+/* Exporting CSV */
+SELECT * 
+  FROM employees
+  INTO OUTFILE 'path/to/your/outputfile.csv'
+    FIELDS TERMINATED BY ',' 
+  ENCLOSED BY '"' 
+     LINES TERMINATED BY '\n';
+
+-- [PostgreSQL] --------------------
+/* Create table for import */
+CREATE TABLE employees (
+    employee_id    INTEGER PRIMARY KEY,
+    first_name     VARCHAR(50),
+    last_name      VARCHAR(50),
+    birth_date     DATE,
+    hire_date      DATE
+);
+
+/* Importing CSV */
+COPY employees
+FROM '/path/to/your/csvfile.csv'
+WITH (
+    FORMAT CSV,
+    HEADER,
+    DELIMITER ',',
+    QUOTE '"'
+);
+
+/* Exporting CSV */
+COPY employees 
+  TO '/path/to/your/outputfile.csv'
+WITH (
+    FORMAT CSV,
+    HEADER,
+    DELIMITER ',',
+    QUOTE '"'
+);
+
+/* Using \copy meta command (client-side) */
+\copy employees FROM 'path/to/your/csvfile.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',', QUOTE '"');
+\copy employees TO 'path/to/your/outputfile.csv' WITH (FORMAT CSV, HEADER, DELIMITER ',', QUOTE '"');
+
+-- Example CSV format:
+-- employee_id,first_name,last_name,birth_date,hire_date
+-- 1,John,Doe,1990-01-15,2020-03-01
+-- 2,Jane,Smith,1985-05-20,2019-11-15
 ```
 
 ## Natural Sorting
@@ -1797,10 +2369,13 @@ Version2.0
 ```
 
 ```sql
+-- [MySQL] --------------------
+/* Create and populate version table */
 CREATE TABLE software_versions (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    version_name VARCHAR(50)
+    id              INT AUTO_INCREMENT PRIMARY KEY,
+    version_name    VARCHAR(50)
 );
+
 INSERT INTO software_versions (version_name)
 VALUES ('Version1.1'), 
        ('Version1.10'), 
@@ -1808,30 +2383,29 @@ VALUES ('Version1.1'),
        ('Version1.21'), 
        ('Version1.3'), 
        ('Version2.0');
-+----+-------------+
-| id | version_name|
-+----+-------------+
-|  1 | Version1.1  |
-|  2 | Version1.10 |
-|  3 | Version1.2  |
-|  4 | Version1.21 |
-|  5 | Version1.3  |
-|  6 | Version2.0  |
-+----+-------------+       
-```
 
-```sql
--- SUBSTRING_INDEX
+-- Initial table content:
+-- +----+-------------+
+-- | id | version_name|
+-- +----+-------------+
+-- |  1 | Version1.1  |
+-- |  2 | Version1.10 |
+-- |  3 | Version1.2  |
+-- |  4 | Version1.21 |
+-- |  5 | Version1.3  |
+-- |  6 | Version2.0  |
+-- +----+-------------+       
+
+/* String Function Examples */
+-- SUBSTRING_INDEX example
 SELECT SUBSTRING_INDEX("www.w3schools.com", ".", 1);
--- result
-www
+-- Result: www
 
--- SUBSTRING
+-- SUBSTRING example
 SELECT SUBSTRING("SQL Tutorial", 5, 3) AS ExtractString;
--- result
-Tut
+-- Result: Tut
 
--- Natural sorting using a combination of SUBSTRING_INDEX and CAST functions:
+/* Natural Version Sorting */
 SELECT *
 FROM software_versions
 ORDER BY
@@ -1839,17 +2413,63 @@ ORDER BY
     CAST(SUBSTRING_INDEX(version_name, '.', 1) AS UNSIGNED),       
     -- sort by the second part (after the dot) as a number
     CAST(SUBSTRING_INDEX(version_name, '.', -1) AS UNSIGNED);
--- result
-+----+-------------+
-| id | version_name|
-+----+-------------+
-|  1 | Version1.1  |
-|  3 | Version1.2  |
-|  5 | Version1.3  |
-|  2 | Version1.10 |
-|  4 | Version1.21 |
-|  6 | Version2.0  |
-+----+-------------+    
+
+-- Result after natural sorting:
+-- +----+-------------+
+-- | id | version_name|
+-- +----+-------------+
+-- |  1 | Version1.1  |
+-- |  3 | Version1.2  |
+-- |  5 | Version1.3  |
+-- |  2 | Version1.10 |
+-- |  4 | Version1.21 |
+-- |  6 | Version2.0  |
+-- +----+-------------+    
+
+-- [PostgreSQL] --------------------
+/* Create and populate version table */
+CREATE TABLE software_versions (
+    id              SERIAL PRIMARY KEY,
+    version_name    VARCHAR(50)
+);
+
+INSERT INTO software_versions (version_name)
+VALUES ('Version1.1'), 
+       ('Version1.10'), 
+       ('Version1.2'), 
+       ('Version1.21'), 
+       ('Version1.3'), 
+       ('Version2.0');
+
+/* String Function Examples */
+-- SPLIT_PART example (similar to SUBSTRING_INDEX)
+SELECT SPLIT_PART('www.w3schools.com', '.', 1);
+-- Result: www
+
+-- SUBSTRING example
+SELECT SUBSTRING('SQL Tutorial' FROM 5 FOR 3) AS ExtractString;
+-- Result: Tut
+
+/* Natural Version Sorting */
+SELECT *
+FROM software_versions
+ORDER BY
+    -- sort by the first part (before the dot) as a number
+    CAST(SPLIT_PART(version_name, '.', 1) AS INTEGER),       
+    -- sort by the second part (after the dot) as a number
+    CAST(SPLIT_PART(version_name, '.', 2) AS INTEGER);
+
+-- Result after natural sorting:
+-- +----+-------------+
+-- | id | version_name|
+-- +----+-------------+
+-- |  1 | Version1.1  |
+-- |  3 | Version1.2  |
+-- |  5 | Version1.3  |
+-- |  2 | Version1.10 |
+-- |  4 | Version1.21 |
+-- |  6 | Version2.0  |
+-- +----+-------------+
 ```
 
 ## Session Variables
