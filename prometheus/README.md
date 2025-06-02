@@ -31,12 +31,32 @@
     - [Expression queries](#expression-queries)
       - [Instance queries](#instance-queries)
       - [Range queries](#range-queries)
-  - [Histogram](#histogram)
     - [prometheus http request duration seconds](#prometheus-http-request-duration-seconds)
     - [grpc server handling seconds](#grpc-server-handling-seconds)
-  - [Summary](#summary)
   - [Summary vs Histogram](#summary-vs-histogram)
+  - [1. 메트릭 타입 개념](#1-메트릭-타입-개념)
+    - [**Histogram**](#histogram)
+    - [**Summary**](#summary)
+  - [2. Go 코드 예시 (구조체)](#2-go-코드-예시-구조체)
+    - [**Histogram 구조체 예시**](#histogram-구조체-예시)
+      - [예시 데이터 (5개의 버킷)](#예시-데이터-5개의-버킷)
+    - [**Summary 구조체 예시**](#summary-구조체-예시)
+      - [예시 데이터 (p90, p99만 기록)](#예시-데이터-p90-p99만-기록)
+  - [3. Prometheus에 저장되는 시계열 차이](#3-prometheus에-저장되는-시계열-차이)
+    - [Histogram](#histogram-1)
+    - [Summary](#summary-1)
+  - [4. 쿼리 측면의 차이](#4-쿼리-측면의-차이)
+  - [5. 요약](#5-요약)
   - [irate vs rate](#irate-vs-rate)
+  - [1. irate(redis\_operation\_seconds\_bucket\[5m\])](#1-irateredis_operation_seconds_bucket5m)
+  - [2. rate(redis\_operation\_seconds\_bucket\[5m\])](#2-rateredis_operation_seconds_bucket5m)
+  - [3. 예시 (15초마다 데이터가 저장되는 상황)](#3-예시-15초마다-데이터가-저장되는-상황)
+    - [**정리**](#정리)
+  - [rate deep dive](#rate-deep-dive)
+  - [예시로 설명](#예시로-설명)
+    - [상황1. 정상적으로 값이 계속 증가하는 경우](#상황1-정상적으로-값이-계속-증가하는-경우)
+    - [상황2. 카운터가 중간에 리셋(값이 0으로 떨어짐)된 경우](#상황2-카운터가-중간에-리셋값이-0으로-떨어짐된-경우)
+    - [요약](#요약)
   - [incrase vs rate](#incrase-vs-rate)
 - [Metric Types](#metric-types)
 - [How to Develop Prometheus Client](#how-to-develop-prometheus-client)
@@ -541,18 +561,6 @@ $ curl 'http://localhost:9090/api/v1/query_range?query=up&start=2015-07-01T20:10
 }
 ```
 
-## Histogram
-
-* [Prometheus monitoring for your gRPC Go servers.](https://github.com/grpc-ecosystem/go-grpc-prometheus)
-* [How does a Prometheus Histogram work?](https://www.robustperception.io/how-does-a-prometheus-histogram-work)
-
-----
-
-`*_bucket` 는 값의 영역 개수를 의미한다. `*_sum` 은 값을 모두 더한 것을 의미한다. `*_count` 는
-값의 개수를 의미한다.
-
-Usually measure the latency. Can adjust time period when make the range vector. But Summary can't.
-
 ### prometheus http request duration seconds
 
 * data
@@ -626,42 +634,223 @@ Usually measure the latency. Can adjust time period when make the range vector. 
 * percentage of slow unary queries (>250ms)
   * `100.0 - (sum(rate(grpc_server_handling_seconds_bucket{job="foo",grpc_type="unary",le="0.25"}[5m])) by (grpc_service) / sum(rate(grpc_server_handling_seconds_count{job="foo",grpc_type="unary"}[5m])) by (grpc_service)) * 100.0`
 
-## Summary
-
-* [How does a Prometheus Summary work?](https://www.robustperception.io/how-does-a-prometheus-summary-work)
-
-----
-
-`*{quantile="*"}` 는 분위수별 값을 의미한다. `*_sum` 은 값을 모두 더한 것을 의미한다. `*_count` 는
-값의 개수를 의미한다.
-
-* data
-
-  ```json
-  # HELP prometheus_rule_evaluation_duration_seconds The duration for a rule to execute.
-  # TYPE prometheus_rule_evaluation_duration_seconds summary
-  prometheus_rule_evaluation_duration_seconds{quantile="0.5"} 6.4853e-05
-  prometheus_rule_evaluation_duration_seconds{quantile="0.9"} 0.00010102
-  prometheus_rule_evaluation_duration_seconds{quantile="0.99"} 0.000177367
-  prometheus_rule_evaluation_duration_seconds_sum 1.623860968846092e+06
-  prometheus_rule_evaluation_duration_seconds_count 1.112293682e+09
-  ```
-
-* the number of observations per second over the last five minutes on average
-  * `rate(prometheus_rule_evaluation_duration_seconds_count[5m])`
-* how long they took per second on average  
-  * `rate(prometheus_rule_evaluation_duration_seconds_sum[5m])`
-* the average duration of one observation  
-  * `rate(prometheus_rule_evaluation_duration_seconds_sum[5m] / rate(prometheus_rule_evaluation_duration_seconds_count[5m])`
-  
 ## Summary vs Histogram
 
-* Histogram 은 Server 에서 Quantile 별 집계를 수행함.
-* Summary 는 Client 에서 Quantile 별 집계를 수행함. 미리 정해진 Quantile 만 사용할 수 있음.
+## 1. 메트릭 타입 개념
+
+### **Histogram**
+- 값의 분포(분포 구간별 개수)를 여러 **버킷(bucket)**에 나눠 기록
+- sum, count, 각 버킷별 누적 개수를 기록
+- **쿼리 시점에 원하는 분위수(p90, p99 등)를 자유롭게 계산**할 수 있음
+
+### **Summary**
+- 애플리케이션이 직접 분위수(p90, p99 등)를 계산해서 기록
+- sum, count, 그리고 미리 정한 분위수 값만 기록
+- **추가적인 분위수는 쿼리에서 뽑을 수 없음**
+
+---
+
+## 2. Go 코드 예시 (구조체)
+
+### **Histogram 구조체 예시**
+```go
+type Histogram struct {
+    Buckets map[float64]uint64 // 버킷 경계값(le)별 누적 카운트
+    Count   uint64             // 전체 샘플 개수
+    Sum     float64            // 전체 값의 합
+}
+```
+#### 예시 데이터 (5개의 버킷)
+```go
+hist := Histogram{
+    Buckets: map[float64]uint64{
+        0.1:  3,  // 0.1초 이하 값이 3개
+        0.5:  7,  // 0.5초 이하 값이 7개
+        1.0:  10, // 1초 이하 값이 10개
+        2.0:  12, // 2초 이하 값이 12개
+        +Inf: 15, // 전체 값 15개
+    },
+    Count: 15,
+    Sum:   8.3,
+}
+```
+- Prometheus는 **각 버킷별 시계열**과 sum, count를 저장합니다.
+- 쿼리에서는 이런 데이터를 조합해 **원하는 분위수(예: p95, p99 등)를 자유롭게 계산**할 수 있습니다.
+
+---
+
+### **Summary 구조체 예시**
+```go
+type Summary struct {
+    Count     uint64              // 전체 샘플 개수
+    Sum       float64             // 전체 값의 합
+    Quantiles map[float64]float64 // 미리 정한 분위수 값(예: 0.9, 0.99 등)
+}
+```
+#### 예시 데이터 (p90, p99만 기록)
+```go
+summary := Summary{
+    Count: 15,
+    Sum:   8.3,
+    Quantiles: map[float64]float64{
+        0.90: 0.85,  // 90% 분위수 값
+        0.99: 1.8,   // 99% 분위수 값
+    },
+}
+```
+- Prometheus는 **sum, count, quantile별 시계열**을 저장합니다.
+- **애플리케이션에서 미리 정한 분위수만 기록**하므로,  
+  쿼리에서 새로운 분위수를 계산할 수 없습니다.
+
+---
+
+## 3. Prometheus에 저장되는 시계열 차이
+
+### Histogram
+```text
+redis_query_seconds_bucket{le="0.1"}  3
+redis_query_seconds_bucket{le="0.5"}  7
+redis_query_seconds_bucket{le="1.0"}  10
+redis_query_seconds_bucket{le="2.0"}  12
+redis_query_seconds_bucket{le="+Inf"} 15
+redis_query_seconds_sum               8.3
+redis_query_seconds_count             15
+```
+- **여러 버킷** + sum + count → 다양한 분위수 계산 가능
+
+### Summary
+```text
+redis_query_seconds{quantile="0.9"}  0.85
+redis_query_seconds{quantile="0.99"} 1.8
+redis_query_seconds_sum              8.3
+redis_query_seconds_count            15
+```
+- **미리 정한 분위수만** 기록 → 쿼리에서 추가 분위수 불가
+
+---
+
+## 4. 쿼리 측면의 차이
+
+- **Histogram:**  
+  `histogram_quantile(0.95, sum(rate(redis_query_seconds_bucket[5m])) by (le))` 처럼  
+  원하는 분위수를 쿼리에서 지정해 계산 가능
+
+- **Summary:**  
+  `redis_query_seconds{quantile="0.99"}`  
+  → 미리 정한 분위수 값만 조회 가능
+
+---
+
+## 5. 요약
+
+| 구분        | Histogram                        | Summary                               |
+|-------------|----------------------------------|---------------------------------------|
+| 저장 데이터 | 여러 버킷, sum, count             | quantile(미리 정함), sum, count       |
+| 분위수      | 쿼리에서 자유롭게 계산 가능       | 미리 정한 값만 사용 가능              |
+| 집계        | 레이블 집계(aggregate) 가능      | 집계 불가(합산하면 분위수 의미 없음)  |
 
 ## irate vs rate
 
-* [Why irate from Prometheus doesn't capture spikes](https://valyala.medium.com/why-irate-from-prometheus-doesnt-capture-spikes-45f9896d7832)
+## 1. irate(redis_operation_seconds_bucket[5m])
+- **의미:**  
+  지정된 5분 구간 안에서 **가장 최근 두 개의 데이터 포인트**만 사용해서 변화율을 계산합니다.
+- **계산 방식:**  
+  ```
+  (가장 최근 값 - 그 전 값) / (두 값의 시간 차이)
+  ```
+  즉, 거의 "순간 변화율(instantaneous rate)"을 구합니다.
+- **특징:**  
+  - 최근 값 두 개로만 계산하므로, 데이터가 자주 저장된다면 거의 실시간 변화량을 반영합니다.
+  - 노이즈가 심할 수 있음(최근 두 점의 변화만 반영).
+
+---
+
+## 2. rate(redis_operation_seconds_bucket[5m])
+- **의미:**  
+  지정된 5분 구간 안에 **포함된 모든 데이터 포인트**를 이용해서 평균 변화율을 계산합니다.
+- **계산 방식:**  
+  ```
+  (5분 구간 내의 마지막 값 - 처음 값) / (두 값의 시간 차이)
+  ```
+  즉, 5분 동안의 "평균 변화율"을 구합니다.
+- **특징:**  
+  - 구간 전체의 변화를 평균내므로 값이 더 부드럽고 안정적임.
+  - 갑작스런 변화(스파이크)는 완만하게 반영됨.
+
+---
+
+## 3. 예시 (15초마다 데이터가 저장되는 상황)
+- 5분 동안 약 20개 데이터 포인트가 있음.
+- **irate**는 그 중 마지막 2개만 사용 → 최신 변화만 반영, 노이즈에 민감.
+- **rate**는 5분 전체를 사용 → 전체 평균, 값이 부드럽고 트렌드 파악에 유리.
+
+---
+
+### **정리**
+| 함수   | 사용 데이터 포인트            | 결과 성격      | 용도                        |
+|--------|------------------------------|----------------|-----------------------------|
+| irate  | 최근 2개                     | 순간 변화율    | 실시간 변화 감지, 알람 등   |
+| rate   | 5분 내 모든 데이터           | 평균 변화율    | 트렌드, 그래프, 리포트 등   |
+
+## rate deep dive
+
+"구간 내 모든 데이터 포인트를 활용한다"는 말은, Prometheus의 `rate()` 함수가 단순히 처음과 끝 값만 사용하는 것이 아니라,  
+**구간 내에 있는 모든 값(데이터 포인트)**을 보고 **카운터의 리셋(값이 갑자기 0으로 떨어지는 경우)** 등 특별한 상황을 처리한다는 뜻입니다.
+
+---
+
+## 예시로 설명
+
+### 상황1. 정상적으로 값이 계속 증가하는 경우
+
+구간: `[5m]`  
+샘플 데이터(시간, 값):
+
+| 시간      | 값  |
+|-----------|-----|
+| 10:00:00  | 100 |
+| 10:01:00  | 120 |
+| 10:02:00  | 140 |
+| 10:03:00  | 160 |
+| 10:04:00  | 180 |
+
+- **rate(metric[5m])**을 계산하면:
+  ```
+  (180 - 100) / (10:04:00 - 10:00:00)
+  = 80 / 240초
+  = 0.333.../sec
+  ```
+- 여기서, "처음과 끝 값"만 써도 결과는 맞음.
+
+---
+
+### 상황2. 카운터가 중간에 리셋(값이 0으로 떨어짐)된 경우
+
+| 시간      | 값  |
+|-----------|-----|
+| 10:00:00  | 100 |
+| 10:01:00  | 120 |
+| 10:02:00  | 10  |  ← 리셋!
+| 10:03:00  | 30  |
+| 10:04:00  | 50  |
+
+- 단순히 `50 - 100`으로 계산하면 -50이 되어버림. (잘못된 값!)
+- **Prometheus의 rate()는**  
+  1. 중간에 값이 갑자기 줄어드는(리셋되는) 경우를 감지  
+  2. **리셋 전까지 증가분:** 120 - 100 = 20  
+  3. **리셋 후 증가분:** 50 - 10 = 40  
+  4. **총 증가량:** 20 + 40 = 60  
+  5. **총 시간:** 10:04:00 - 10:00:00 = 240초  
+  6. **rate:** 60 / 240 = 0.25/sec
+
+**이렇게 "구간 내 모든 데이터 포인트"를 살펴야 리셋/이상치가 있어도 정확한 변화량을 구할 수 있습니다.**
+
+---
+
+### 요약
+- 값이 정상적으로 증가만 하면 처음과 끝 값만 써도 문제 없음.
+- **하지만 중간에 리셋, 이상치가 있으면 모든 데이터 포인트를 다 살펴야 한다.**
+- Prometheus의 `rate()` 함수는 이런 상황을 자동으로 처리해줍니다.
 
 ## incrase vs rate
 

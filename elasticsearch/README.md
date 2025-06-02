@@ -4,12 +4,22 @@
 - [Sample Data](#sample-data)
 - [Integration with Spring](#integration-with-spring)
 - [Basic](#basic)
-  - [Elastic _cat api](#elastic-_cat-api)
+  - [Elastic \_cat api](#elastic-_cat-api)
   - [Elastic Search vs RDBMS](#elastic-search-vs-rdbms)
   - [CRUD](#crud)
   - [Update](#update)
   - [Bulk](#bulk)
   - [Mapping](#mapping)
+  - [Elasticsearch 쿼리 전체 종류 (기본적인 분류)](#elasticsearch-쿼리-전체-종류-기본적인-분류)
+    - [1. **Term-Level Queries** (정확한 값 일치)](#1-term-level-queries-정확한-값-일치)
+    - [2. **Full-Text Queries** (자연어 검색용, 분석기 적용)](#2-full-text-queries-자연어-검색용-분석기-적용)
+    - [3. **Compound Queries** (복합 쿼리 - 쿼리들을 조합)](#3-compound-queries-복합-쿼리---쿼리들을-조합)
+    - [4. **Span Queries** (고급 문장 내 위치 기반 검색)](#4-span-queries-고급-문장-내-위치-기반-검색)
+    - [5. **Joining Queries** (관계형 구조 흉내)](#5-joining-queries-관계형-구조-흉내)
+    - [6. **Geo Queries** (위치 기반)](#6-geo-queries-위치-기반)
+    - [7. **Specialized / Other Queries**](#7-specialized--other-queries)
+  - [🎯 실무에서 가장 자주 쓰는 조합](#-실무에서-가장-자주-쓰는-조합)
+  - [Examples](#examples)
   - [Search](#search)
   - [Metric Aggregation](#metric-aggregation)
   - [Bucket Aggregation](#bucket-aggregation)
@@ -17,7 +27,6 @@
   - [Pipeline Aggregation](#pipeline-aggregation)
 - [Plugins](#plugins)
   - [kopf](#kopf)
-  - [* 킹왕짱 web admin](#-킹왕짱-web-admin)
 - [Advanced](#advanced)
   - [Cluster settings for concurrent rebalance](#cluster-settings-for-concurrent-rebalance)
   - [Delete old indices](#delete-old-indices)
@@ -26,6 +35,7 @@
   - [Rolling Upgrade](#rolling-upgrade)
   - [Open vs close Index](#open-vs-close-index)
   - [Reindex](#reindex)
+  - [`refresh_interval` from Index Setting](#refresh_interval-from-index-setting)
 
 ----
 
@@ -398,6 +408,119 @@ $ curl -H 'Content-type: application/json' -XPUT 'http://localhost:9200/classes/
 # }
 ```
 
+## Elasticsearch 쿼리 전체 종류 (기본적인 분류)
+
+### 1. **Term-Level Queries** (정확한 값 일치)
+: 분석기 없이 **정확하게 매칭**
+
+| 쿼리 타입 | 설명 |
+|-----------|------|
+| `term`        | 정확히 일치하는 하나의 값 |
+| `terms`       | 여러 값 중 하나와 일치 |
+| `range`       | 범위 검색 (`gt`, `lt`, `gte`, `lte`) |
+| `exists`      | 필드가 존재하는 문서 |
+| `prefix`      | 접두사 검색 |
+| `wildcard`    | 와일드카드 (`?`, `*`) 사용 |
+| `regexp`      | 정규표현식 검색 |
+| `fuzzy`       | 오타 허용 검색 (편집 거리 기반) |
+| `ids`         | 문서 ID로 검색 |
+
+---
+
+### 2. **Full-Text Queries** (자연어 검색용, 분석기 적용)
+
+| 쿼리 타입 | 설명 |
+|-----------|------|
+| `match`          | 일반적인 텍스트 검색 (분석기 적용) |
+| `match_phrase`   | 문장 그대로 일치 (순서 포함) |
+| `match_phrase_prefix` | 문장 접두사까지 일치 |
+| `multi_match`    | 여러 필드 대상 `match` |
+| `common_terms`   | 자주 나오는 단어 무시하고 검색 |
+| `query_string`   | Lucene 문법으로 복잡한 검색 |
+| `simple_query_string` | 안전한 query_string (오류 덜 발생) |
+
+---
+
+### 3. **Compound Queries** (복합 쿼리 - 쿼리들을 조합)
+
+| 쿼리 타입 | 설명 |
+|-----------|------|
+| `bool`         | `must`, `should`, `must_not`, `filter` 등 조합 |
+| `constant_score` | 점수를 고정 (필터처럼 동작) |
+| `dis_max`      | 여러 쿼리 중 점수 가장 높은 문서 |
+| `function_score` | 커스텀 점수 함수로 랭킹 |
+
+---
+
+### 4. **Span Queries** (고급 문장 내 위치 기반 검색)
+
+| 쿼리 타입 | 설명 |
+|-----------|------|
+| `span_term`         | 정확한 term (위치 기반) |
+| `span_near`         | 가까운 위치에 있는 단어 |
+| `span_or`           | 여러 span 중 하나 |
+| `span_not`          | 특정 span 제외 |
+| `span_containing`   | 하나가 다른 span을 포함 |
+| `span_within`       | 하나가 다른 span 안에 있음 |
+
+※ 주로 고급 문서 검색에서 사용
+
+---
+
+### 5. **Joining Queries** (관계형 구조 흉내)
+
+| 쿼리 타입 | 설명 |
+|-----------|------|
+| `nested`       | `nested` 타입의 객체 검색 |
+| `has_child`    | 특정 조건의 child 문서가 있는 parent 검색 |
+| `has_parent`   | 특정 조건의 parent 문서를 가진 child 검색 |
+| `parent_id`    | parent ID 기준 검색 |
+
+---
+
+### 6. **Geo Queries** (위치 기반)
+
+| 쿼리 타입 | 설명 |
+|-----------|------|
+| `geo_bounding_box`  | 직사각형 범위 내 검색 |
+| `geo_distance`      | 특정 좌표에서 일정 거리 이내 |
+| `geo_polygon`       | 다각형 범위 내 |
+| `geo_shape`         | 복잡한 형태 검색 |
+
+---
+
+### 7. **Specialized / Other Queries**
+
+| 쿼리 타입 | 설명 |
+|-----------|------|
+| `script`            | 스크립트를 통한 커스텀 조건 |
+| `percolate`         | 쿼리를 저장해두고 문서에 매치 |
+| `intervals`         | 정밀한 문장 구성 검색 |
+| `knn`               | `dense_vector` 유사도 기반 검색 (8.x+) |
+| `more_like_this`    | 비슷한 문서 찾기 |
+| `rank_feature`      | ML ranking을 위한 피처 조건 |
+| `distance_feature`  | 시간, 거리 등의 점수 기반 정렬에 사용 |
+
+---
+
+## 🎯 실무에서 가장 자주 쓰는 조합
+
+| 목적 | 사용 예시 |
+|------|-----------|
+| 정확한 값 필터 | `term`, `terms`, `bool` + `filter` |
+| 텍스트 검색 | `match`, `multi_match`, `match_phrase` |
+| 날짜/숫자 범위 검색 | `range` |
+| 필드 존재 여부 | `exists` |
+| 복잡한 조건 조합 | `bool` 쿼리 |
+| 추천/유사 검색 | `more_like_this`, `dense_vector` + `knn` |
+| 사용자 맞춤 랭킹 | `function_score`, `rank_feature` |
+
+## Examples
+
+```
+
+```
+
 ## Search
 
 ```bash
@@ -709,3 +832,46 @@ curl -X POST "localhost:9200/_reindex?pretty" -H 'Content-Type: application/json
 }
 '
 ```
+
+## `refresh_interval` from Index Setting
+
+✅ 정의
+
+`"refresh_interval": "1s"`
+
+이 설정은 Elasticsearch가 세그먼트를 디스크에 반영하고 검색 가능 상태로 전환하는 시간 간격을 의미합니다.
+
+기본값은 "1s" (1초마다 refresh가 수행됨)
+
+✅ 어떻게 동작하나?
+
+문서를 색인 (index)하면, 그 문서는 바로 검색 가능한 것은 아님 refresh_interval이 지나고 나면, Lucene 세그먼트가 flush되고, 문서가 검색 대상에 포함됨.
+
+✅ 예시
+
+`refresh_interval: 1s`
+
+→ 문서를 색인하고 약 1초 후 검색 가능
+
+`refresh_interval: 30s`
+
+→ 색인 후 30초가 지나야 검색 가능
+
+`refresh_interval: -1`
+
+→ 자동 refresh를 끄고, 수동으로 `POST /<index>/_refresh` 요청해야만 검색 가능
+
+✅ 실무 팁
+
+| 상황	| 추천 설정 |
+|--|--|
+| 실시간 검색이 필요한 경우 (예: 채팅, 검색엔진) |	`1s` (기본값 유지) |
+|대량 색인 작업 중 (성능 최적화)	| `"refresh_interval": "-1"` 후 일괄 색인 후 `_refresh` 호출 |
+| 색인 지연이 허용되는 경우 (예: 로그 저장)	| `30s` 이상으로 설정 가능 |
+
+✅ 참고 사항
+
+refresh는 리소스를 사용하는 작업입니다 (디스크/메모리).
+
+너무 짧게 설정하면 성능에 영향을 줄 수 있고,
+너무 길게 설정하면 검색 지연이 발생할 수 있습니다.

@@ -41,6 +41,21 @@ Gradle 은 task runner 이다. Gradle 은 maven 보다 성능이 좋다. 먼저 
 
 # Basic
 
+Usual Commands
+
+```bash
+$./gradlew --help
+
+# projects - Displays the sub-projects of root project 'events.sdk'.
+$ ./gradlew projects
+
+# properties - Displays the properties of root project 'events.sdk'.
+$ ./gradlew properties
+
+# tasks - Displays the tasks runnable from root project 'events.sdk' (some of the displayed tasks may belong to subprojects).
+$ ./gradlew tasks
+```
+
 * [2. Gradle의 기본 구조 살펴보기](https://gmind.tistory.com/entry/Gradle%EC%9D%98-%EA%B8%B0%EB%B3%B8-%EA%B8%B0%EB%8A%A5-%EB%A7%9B%EB%B3%B4%EA%B8%B0?category=655027)
 
 ```console
