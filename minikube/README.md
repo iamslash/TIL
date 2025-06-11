@@ -12,8 +12,12 @@ minikube is local Kubernetes, focusing on making it easy to learn and develop fo
 ## Commands
 
 ```bash
+# Install minikube
+$ brew install minikube
+
 # Start your cluster
 $ minikube start
+$ minikube start --kubernetes-version=v1.27.3 --memory=4096 --cpus=4 --driver=docker
 
 # Pause Kubernetes without impacting deployed applications:
 $ minikube pause
