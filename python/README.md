@@ -2493,38 +2493,65 @@ def baz():
 
 ## Virtual Environment
 
-다음은 python 2.x, 3.x 에서 virtualenv 사용법이다. [Python virtualenv 정리
-(Linux/Windows)](https://dgkim5360.tistory.com/entry/python-virtualenv-on-linux-ubuntu-and-windows)
-
 ```bash
-# python 2 
-$ python -m virtualenv venv 
-$ virtualenv venv --python=python 
-$ virtualenv venv --python=python2.7 
-$ source venv/activate
-$ deactivate
+# 🐍 Python venv 실전 명령어 모음
+# 프로젝트별 가상 환경을 만들고 관리하기 위한 기본 커맨드 정리
 
-# python 3 
-$ python3 -m virtualenv venv 
-$ virtualenv venv --python=python3 
-$ virtualenv venv --python=python3.5
-$ source venv/activate
-$ deactivate
-```
+# 1. 가상 환경 생성 (현재 디렉터리에 `.venv` 폴더 생성)
+python3 -m venv .venv
 
-You can create virtual environment with specific python.
+# 2. 가상 환경 활성화
+# macOS / Linux
+source .venv/bin/activate
 
-```console
-$ cd ~/my/py
-$ virtualenv -p /usr/local/Cellar/python/3.7.6_1/bin/python3 venv3.7
-$ source venv3.7/bin/activate
-$ deactivate
-```
+# Windows (cmd)
+.venv\Scripts\activate.bat
 
-만약 virtual env 가 system site package 에 접근하길 원한다면 다음과 같이 하자.
+# Windows (PowerShell)
+.venv\Scripts\Activate.ps1
 
-```bash
-$ virtualenv --system-site-packages mycoolproject
+# 3. 가상 환경 비활성화
+deactivate
+
+# 4. 패키지 설치 (예: requests)
+pip install requests
+
+# 5. 현재 가상환경의 패키지 목록 저장
+pip freeze > requirements.txt
+
+# 6. 다른 사람이 동일한 환경을 만들 수 있게 requirements.txt로 설치
+pip install -r requirements.txt
+
+# 7. 설치된 패키지 목록 확인
+pip list
+
+# 8. 특정 패키지 정보 보기
+pip show flask
+
+# 9. 패키지 제거
+pip uninstall flask
+
+# 10. 현재 Python 버전 확인
+python --version
+
+# 11. 현재 사용 중인 Python 실행 파일 경로 확인
+which python        # macOS / Linux
+where python        # Windows
+
+# 12. 가상 환경 삭제
+# (비활성화 후 폴더 자체를 삭제)
+deactivate
+rm -rf .venv
+
+# 13. .gitignore 예시 (.venv 폴더는 Git에 커밋하지 않음)
+# .gitignore 파일에 다음 줄을 추가:
+# .venv/
+
+# 14. Makefile 예시 (선택: 자동화용)
+# 아래 내용을 Makefile로 저장하고 `make setup`으로 실행
+# setup:
+# 	python3 -m venv .venv
+# 	source .venv/bin/activate && pip install -r requirements.txt
 ```
 
 ## one-liners
