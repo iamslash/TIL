@@ -39,7 +39,7 @@ $ xcodes install --latest
 | ShortCut | Description |
 |:--------|:---------|
 | `^ L Click` | Quick Help |
-| `⇧ ⌘ O` | Open Quickly |
+| `⇧ ⌘ O` | **Open Quickly** |
 | `^ ⌥ ⌘ Enter` | Assistant View on storyboard |
 | `⌥ ⌘ Enter` | Canvas View on SwiftUI |
 | `⇧ ⌥ ⌘ Enter` | Enable Code Review on storyboard |
@@ -47,10 +47,10 @@ $ xcodes install --latest
 | `^ ⇧ ⌘ M` | Show/Hide Minimap |
 | `⌘ B` | Build |
 | `⌘ R` | Run |
-| `^ ⌘ <-` | Back |
-| `^ ⌘ ->` | Forward |
-| `^ ⌘ J` | Jump to definition |
-| `⇧ ⌘ J` | Reveal in project navigator |
+| `^ ⌘ <-` | **Back** |
+| `^ ⌘ ->` | **Forward** |
+| `^ ⌘ J` | **Jump to definition** |
+| `⇧ ⌘ J` | **Reveal in project navigator** |
 | `^ ⇧ ⌘ F` | Find selected symbol in workspace |
 | `^ ⇧ ⌘ H` | Find call hierarchy |
 | `⌘ 0` | Show/Hide Navigator |
