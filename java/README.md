@@ -2211,51 +2211,9 @@ System.arraycopy(src, 0, dst, 0, 4);
 
 ## Exception
 
-* [Java - 예외 (11/12) : checked와 unchecked @ 생활코딩](https://edu.goorm.io/learn/lecture/41/%EB%B0%94%EB%A1%9C%EC%8B%A4%EC%8A%B5-%EC%83%9D%ED%99%9C%EC%BD%94%EB%94%A9-%EC%9E%90%EB%B0%94-java/lesson/39411/%EC%98%88%EC%99%B8%EC%9D%98-%EC%84%A0%EC%A1%B0-throwable)
-* [Checked and Unchecked Exceptions in Java](https://www.baeldung.com/java-checked-unchecked-exceptions)
-* [TIL-19: Checked vs Unchecked Exceptions @ medium](https://medium.com/@recepinancc/til-19-checked-vs-unchecked-exceptions-731c10ce4ec2)
-
-----
-
 ![](img/exceptions.png)
 
-The **Throwable** class is the superclass of all errors and exceptions in the Java language. 
-
-`Throwable` 은 `String getMessage(), void printStackTrace(), String toString()` 를 Method 로 가지고 있다. [Throwable @ jdk8](https://docs.oracle.com/javase/8/docs/api/java/lang/Throwable.html)
-
-모든 예외 클래스들은 `Throwable` 을 부모로 하고 `Error, Exception` 이 존재한다. 
-
-`Error` 의 자식들은 application 과는 관계 없이 JVM 에서 발생하는 예외들이다. 예를 들어 `OutOfMemoryError, StackOverflowError` 등이 해당된다. 
-
-`Exception` 의 자식들은 Checked Exception 과 UnChecked Exception 으로 구분된다. UnChecked Exception 은 `RuntimeException` 을 상속받은 클래스들이다.
-
-Checked Exception 은 반드시 복구되어야 하는 예외들이다. 주로 application 외부에 원인이 있다. UnChecked Exception 은 복구되지 않아도 되는 예외들이다. 주로 application 내부에 원인이 있다. 
-
-한편 Checked Exception 이 catch 되지 않는다면 Java Compile Time 에 error 가 발생된다.
-
-다음은 JDK 의 권고사항이다.
-
-If a client can reasonably be expected to recover from an exception, make it a checked exception. If a client cannot do anything to recover from the exception, make it an unchecked exception.
-
-예를 들어 다음과 같은 경우를 살펴보자. `fileName` 이 옳바르지 않은 경우 유저가 잘못 입력한 것이다. application 외부에 오류가 발생된 것이다. client 가 반드시 복구해주길 원한다면 `IncorrectFileNameException` 을 Checked Exception 으로 정의하여 throw 한다.
-
-```java
-if (!isCorrectFileName(fileName)) {
-    throw new IncorrectFileNameException("Incorrect filename : " + fileName );
-}
-```
-
-또한 다음과 같은 경우를 살펴보자. `fileName` 이 `null` 이거나 `isEmpty()` 라면 application 내부에 오류가 발생된 것이다. UnChecked Exception 인 `NullOrEmptyException` 을 throw 한다. client 는 recover 해도 좋고 안해도 좋다.
-
-```java
-if (fileName == null || fileName.isEmpty())  {
-    throw new NullOrEmptyException("The filename is null or empty.");
-}
-```
-
-![](img/java_arithmetic_exception.png)
-
-`java.lang.ArithmeticException` 은 `RuntimeException` 이다.
+[Java Exception](java-exception.md)
 
 ## Dynamic Proxy
 
