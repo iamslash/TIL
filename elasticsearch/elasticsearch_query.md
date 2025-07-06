@@ -1,6 +1,108 @@
-
-
-
+- [🧱 1. Top-level Query Clause란?](#-1-top-level-query-clause란)
+- [Top-level Query Clauses — 전체 목록과 설명](#top-level-query-clauses--전체-목록과-설명)
+  - [1. match](#1-match)
+  - [2. match\_phrase](#2-match_phrase)
+  - [3. term](#3-term)
+  - [4. terms](#4-terms)
+  - [5. range](#5-range)
+  - [6. bool](#6-bool)
+  - [7. constant\_score](#7-constant_score)
+  - [8. function\_score](#8-function_score)
+  - [9. script\_score](#9-script_score)
+  - [10. match\_all](#10-match_all)
+  - [11. match\_none](#11-match_none)
+  - [12. exists](#12-exists)
+  - [13. prefix](#13-prefix)
+  - [14. wildcard](#14-wildcard)
+  - [15. fuzzy](#15-fuzzy)
+  - [16. multi\_match](#16-multi_match)
+  - [17. dis\_max](#17-dis_max)
+  - [18. query\_string](#18-query_string)
+  - [19. simple\_query\_string](#19-simple_query_string)
+- [FAQ](#faq)
+  - [How gauss makes scores?](#how-gauss-makes-scores)
+    - [가우시안 함수의 수식](#가우시안-함수의-수식)
+    - [매개변수 설명](#매개변수-설명)
+    - [실제 계산 예시](#실제-계산-예시)
+    - [시각적 그래프](#시각적-그래프)
+  - [match\_all is mandatory of script\_score?](#match_all-is-mandatory-of-script_score)
+    - [오류 발생 예시](#오류-발생-예시)
+    - [script\_score의 동작 원리](#script_score의-동작-원리)
+    - [다른 query 예시들](#다른-query-예시들)
+      - [특정 조건 문서만 점수 계산](#특정-조건-문서만-점수-계산)
+      - [복합 조건](#복합-조건)
+  - [How boost\_mode makes scores?](#how-boost_mode-makes-scores)
+    - [function\_score 점수 계산 과정](#function_score-점수-계산-과정)
+    - [boost\_mode 옵션들](#boost_mode-옵션들)
+      - [1. `multiply` (예제에서 사용)](#1-multiply-예제에서-사용)
+      - [2. `sum`](#2-sum)
+      - [3. `avg`](#3-avg)
+      - [4. `max`](#4-max)
+      - [5. `min`](#5-min)
+      - [6. `replace`](#6-replace)
+    - [구체적인 계산 예시](#구체적인-계산-예시)
+    - [boost\_mode별 결과 비교](#boost_mode별-결과-비교)
+  - [function\_score vs script\_score?](#function_score-vs-script_score)
+    - [주요 차이점](#주요-차이점)
+    - [1. function\_score - 구조화된 접근](#1-function_score---구조화된-접근)
+    - [2. script\_score - 자유로운 로직](#2-script_score---자유로운-로직)
+    - [언제 어떤 것을 사용할까?](#언제-어떤-것을-사용할까)
+      - [function\_score 사용 권장](#function_score-사용-권장)
+      - [script\_score 사용 권장](#script_score-사용-권장)
+    - [성능 비교](#성능-비교)
+  - [How tie\_breaker makes scores?](#how-tie_breaker-makes-scores)
+    - [dis\_max의 기본 동작](#dis_max의-기본-동작)
+    - [tie\_breaker의 역할](#tie_breaker의-역할)
+    - [계산 공식](#계산-공식)
+      - [예제 계산](#예제-계산)
+    - [tie\_breaker 값에 따른 차이](#tie_breaker-값에-따른-차이)
+    - [실제 사용 시나리오](#실제-사용-시나리오)
+      - [1. 제목 우선, 본문 보조 고려](#1-제목-우선-본문-보조-고려)
+      - [2. 여러 필드 검색에서 균형 조정](#2-여러-필드-검색에서-균형-조정)
+    - [tie\_breaker vs bool should 비교](#tie_breaker-vs-bool-should-비교)
+      - [dis\_max (tie\_breaker=0.3)](#dis_max-tie_breaker03)
+      - [bool should](#bool-should)
+- [현실적인 시나리오를 기반으로 한 실습 예제](#현실적인-시나리오를-기반으로-한-실습-예제)
+  - [1. `match` – 사용자가 입력한 검색어로 블로그 제목 찾기](#1-match--사용자가-입력한-검색어로-블로그-제목-찾기)
+  - [2. `term` – 특정 상태인 상품 검색](#2-term--특정-상태인-상품-검색)
+  - [3. `terms` – 특정 카테고리에 속한 게시물들 찾기](#3-terms--특정-카테고리에-속한-게시물들-찾기)
+  - [4. `range` – 특정 가격대 상품 검색](#4-range--특정-가격대-상품-검색)
+  - [5. `bool` – 여러 조건을 조합](#5-bool--여러-조건을-조합)
+  - [6. `constant_score` – 점수 무시하고 단순 필터](#6-constant_score--점수-무시하고-단순-필터)
+  - [7. `function_score` – 최근 접속 시간과 활동 점수로 사용자 순위 결정](#7-function_score--최근-접속-시간과-활동-점수로-사용자-순위-결정)
+  - [8. `script_score` – 사용자 맞춤 점수 계산](#8-script_score--사용자-맞춤-점수-계산)
+  - [9. `match_phrase` – 정확한 문장 포함 검색](#9-match_phrase--정확한-문장-포함-검색)
+  - [10. `exists` – 특정 필드가 존재하는 문서만 필터링](#10-exists--특정-필드가-존재하는-문서만-필터링)
+  - [11. `prefix` – 문자열 시작 조건 검색](#11-prefix--문자열-시작-조건-검색)
+  - [12. `wildcard` – 유연한 패턴 검색](#12-wildcard--유연한-패턴-검색)
+  - [13. `fuzzy` – 오타 허용 검색](#13-fuzzy--오타-허용-검색)
+  - [14. `multi_match` – 여러 필드에서 키워드 검색](#14-multi_match--여러-필드에서-키워드-검색)
+  - [15. `dis_max` – 여러 쿼리 중 최고 점수만 사용](#15-dis_max--여러-쿼리-중-최고-점수만-사용)
+  - [16. `query_string` – 복잡한 수식 검색](#16-query_string--복잡한-수식-검색)
+  - [17. `simple_query_string` – 안전한 수식 검색](#17-simple_query_string--안전한-수식-검색)
+  - [18. `match_all` – 전체 문서 조회](#18-match_all--전체-문서-조회)
+  - [19. `match_none` – 조건에 따라 결과가 없어야 하는 경우](#19-match_none--조건에-따라-결과가-없어야-하는-경우)
+- [좀더 복잡한 시나리오를 기반으로 한 실습 예제](#좀더-복잡한-시나리오를-기반으로-한-실습-예제)
+  - [시나리오 1: 사용자의 선호 장르 기반 영화 추천](#시나리오-1-사용자의-선호-장르-기반-영화-추천)
+    - [1-1. 기본 terms 필터링](#1-1-기본-terms-필터링)
+    - [1-2. genre + 최신 개봉일 순 정렬](#1-2-genre--최신-개봉일-순-정렬)
+    - [1-3. genre 필터 + 평점 기반 가중치 부여](#1-3-genre-필터--평점-기반-가중치-부여)
+  - [## 시나리오 2: 사용자 위치 기반 근처 이벤트 추천](#-시나리오-2-사용자-위치-기반-근처-이벤트-추천)
+    - [### 2-1. 반경 10km 이벤트 필터](#-2-1-반경-10km-이벤트-필터)
+    - [### 2-2. 가까운 거리일수록 높은 점수 (gauss 사용)](#-2-2-가까운-거리일수록-높은-점수-gauss-사용)
+    - [### 2-3. 거리 + 인기 점수 조합](#-2-3-거리--인기-점수-조합)
+  - [## 시나리오 3: 최근 접속 사용자 우선 추천](#-시나리오-3-최근-접속-사용자-우선-추천)
+    - [### 3-1. 최근 7일 내 접속 필터](#-3-1-최근-7일-내-접속-필터)
+    - [### 3-2. 최근 접속일이 가까울수록 점수 높임 (gauss)](#-3-2-최근-접속일이-가까울수록-점수-높임-gauss)
+    - [### 3-3. 최근 접속 + 활동점수 조합](#-3-3-최근-접속--활동점수-조합)
+  - [## 시나리오 4: 활동 점수 기반 정렬](#-시나리오-4-활동-점수-기반-정렬)
+    - [### 4-1. 단순한 `activity_score` 기준 정렬](#-4-1-단순한-activity_score-기준-정렬)
+    - [### 4-2. 점수 없을 경우 기본값 부여](#-4-2-점수-없을-경우-기본값-부여)
+    - [### 4-3. 활동 점수 + 평판 점수 스크립트 기반 조합](#-4-3-활동-점수--평판-점수-스크립트-기반-조합)
+  - [## 시나리오 5: 사용자 태그와 아이템 태그 매칭](#-시나리오-5-사용자-태그와-아이템-태그-매칭)
+    - [### 5-1. 사용자 선호 태그와 일치하는 태그 검색](#-5-1-사용자-선호-태그와-일치하는-태그-검색)
+    - [### 5-2. 일치 개수에 따라 점수 증가 (스크립트)](#-5-2-일치-개수에-따라-점수-증가-스크립트)
+    - [### 5-3. 태그 일치 수 + 평점 조합 점수](#-5-3-태그-일치-수--평점-조합-점수)
 
 ---
 
@@ -1223,9 +1325,11 @@ script_score:   느림 ⚡
 
 ---
 
-# 시나리오 1: 사용자의 선호 장르 기반 영화 추천
+# 좀더 복잡한 시나리오를 기반으로 한 실습 예제
 
-## 1-1. 기본 terms 필터링
+## 시나리오 1: 사용자의 선호 장르 기반 영화 추천
+
+### 1-1. 기본 terms 필터링
 
 ```json
 {
@@ -1237,7 +1341,7 @@ script_score:   느림 ⚡
 }
 ```
 
-## 1-2. genre + 최신 개봉일 순 정렬
+### 1-2. genre + 최신 개봉일 순 정렬
 
 ```json
 {
@@ -1254,7 +1358,7 @@ script_score:   느림 ⚡
 }
 ```
 
-## 1-3. genre 필터 + 평점 기반 가중치 부여
+### 1-3. genre 필터 + 평점 기반 가중치 부여
 
 ```json
 {
@@ -1283,9 +1387,9 @@ script_score:   느림 ⚡
 
 ---
 
-# 시나리오 2: 사용자 위치 기반 근처 이벤트 추천
+## ## 시나리오 2: 사용자 위치 기반 근처 이벤트 추천
 
-## 2-1. 반경 10km 이벤트 필터
+### ### 2-1. 반경 10km 이벤트 필터
 
 ```json
 {
@@ -1301,7 +1405,7 @@ script_score:   느림 ⚡
 }
 ```
 
-## 2-2. 가까운 거리일수록 높은 점수 (gauss 사용)
+### ### 2-2. 가까운 거리일수록 높은 점수 (gauss 사용)
 
 ```json
 {
@@ -1332,7 +1436,7 @@ script_score:   느림 ⚡
 }
 ```
 
-## 2-3. 거리 + 인기 점수 조합
+### ### 2-3. 거리 + 인기 점수 조합
 
 ```json
 {
@@ -1373,9 +1477,9 @@ script_score:   느림 ⚡
 
 ---
 
-# 시나리오 3: 최근 접속 사용자 우선 추천
+## ## 시나리오 3: 최근 접속 사용자 우선 추천
 
-## 3-1. 최근 7일 내 접속 필터
+### ### 3-1. 최근 7일 내 접속 필터
 
 ```json
 {
@@ -1389,7 +1493,7 @@ script_score:   느림 ⚡
 }
 ```
 
-## 3-2. 최근 접속일이 가까울수록 점수 높임 (gauss)
+### ### 3-2. 최근 접속일이 가까울수록 점수 높임 (gauss)
 
 ```json
 {
@@ -1414,7 +1518,7 @@ script_score:   느림 ⚡
 }
 ```
 
-## 3-3. 최근 접속 + 활동점수 조합
+### ### 3-3. 최근 접속 + 활동점수 조합
 
 ```json
 {
@@ -1449,9 +1553,9 @@ script_score:   느림 ⚡
 
 ---
 
-# 시나리오 4: 활동 점수 기반 정렬
+## ## 시나리오 4: 활동 점수 기반 정렬
 
-## 4-1. 단순한 `activity_score` 기준 정렬
+### ### 4-1. 단순한 `activity_score` 기준 정렬
 
 ```json
 {
@@ -1464,7 +1568,7 @@ script_score:   느림 ⚡
 }
 ```
 
-## 4-2. 점수 없을 경우 기본값 부여
+### ### 4-2. 점수 없을 경우 기본값 부여
 
 ```json
 {
@@ -1486,7 +1590,7 @@ script_score:   느림 ⚡
 }
 ```
 
-## 4-3. 활동 점수 + 평판 점수 스크립트 기반 조합
+### ### 4-3. 활동 점수 + 평판 점수 스크립트 기반 조합
 
 ```json
 {
@@ -1505,9 +1609,9 @@ script_score:   느림 ⚡
 
 ---
 
-# 시나리오 5: 사용자 태그와 아이템 태그 매칭
+## ## 시나리오 5: 사용자 태그와 아이템 태그 매칭
 
-## 5-1. 사용자 선호 태그와 일치하는 태그 검색
+### ### 5-1. 사용자 선호 태그와 일치하는 태그 검색
 
 ```json
 {
@@ -1519,7 +1623,7 @@ script_score:   느림 ⚡
 }
 ```
 
-## 5-2. 일치 개수에 따라 점수 증가 (스크립트)
+### ### 5-2. 일치 개수에 따라 점수 증가 (스크립트)
 
 ```json
 {
@@ -1549,7 +1653,7 @@ script_score:   느림 ⚡
 }
 ```
 
-## 5-3. 태그 일치 수 + 평점 조합 점수
+### ### 5-3. 태그 일치 수 + 평점 조합 점수
 
 ```json
 {
@@ -1579,323 +1683,4 @@ script_score:   느림 ⚡
 }
 ```
 
----
 
-# 시나리오 1: 사용자 프로필 기반 상대 매칭
-
-**상황**
-사용자 A는 다음과 같은 프로필을 가짐:
-
-* 성별: 남성
-* 관심 성별: 여성
-* 나이: 30세
-* 선호 나이대: 25\~35세
-* 위치: 서울
-
-이 정보를 기반으로 조건에 맞는 사용자(상대)를 찾고 점수화.
-
-## 1-1. 기본 필터 기반 매칭
-
-```json
-{
-  "query": {
-    "bool": {
-      "must": [
-        { "term": { "gender": "female" } },
-        { "range": { "age": { "gte": 25, "lte": 35 } } },
-        {
-          "geo_distance": {
-            "distance": "50km",
-            "location": {
-              "lat": 37.5665,
-              "lon": 126.9780
-            }
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
-## 1-2. 여기에 최근 접속 시간 가중치 추가
-
-```json
-{
-  "query": {
-    "function_score": {
-      "query": {
-        "bool": {
-          "must": [
-            { "term": { "gender": "female" } },
-            { "range": { "age": { "gte": 25, "lte": 35 } } }
-          ]
-        }
-      },
-      "functions": [
-        {
-          "gauss": {
-            "last_active": {
-              "origin": "now",
-              "scale": "3d"
-            }
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
-## 1-3. 프로필 유사도 기반 스크립트 점수화
-
-```json
-{
-  "query": {
-    "script_score": {
-      "query": {
-        "bool": {
-          "must": [
-            { "term": { "gender": "female" } }
-          ]
-        }
-      },
-      "script": {
-        "source": """
-          double age_score = 1 - Math.abs(doc['age'].value - params.user_age) / 10.0;
-          return age_score * doc['activity_score'].value;
-        """,
-        "params": {
-          "user_age": 30
-        }
-      }
-    }
-  }
-}
-```
-
----
-
-# 시나리오 2: 실시간 A/B 추천 실험 (예: 알고리즘 버전 테스트)
-
-**상황**
-A/B 실험에서 서로 다른 추천 알고리즘 버전을 테스트하려고 함.
-각 사용자에게 실험 그룹을 랜덤 부여하고 추천 결과를 다르게 구성.
-
-## 2-1. 그룹 A에게는 단순 평점 기반 추천
-
-```json
-{
-  "query": {
-    "function_score": {
-      "query": {
-        "term": { "experiment_group": "A" }
-      },
-      "functions": [
-        {
-          "field_value_factor": {
-            "field": "rating"
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
-## 2-2. 그룹 B는 활동 점수 + 최근성 가중치 조합
-
-```json
-{
-  "query": {
-    "function_score": {
-      "query": {
-        "term": { "experiment_group": "B" }
-      },
-      "functions": [
-        {
-          "gauss": {
-            "last_active": {
-              "origin": "now",
-              "scale": "5d"
-            }
-          }
-        },
-        {
-          "field_value_factor": {
-            "field": "activity_score"
-          }
-        }
-      ],
-      "score_mode": "sum"
-    }
-  }
-}
-```
-
-## 2-3. 실험 그룹을 다르게 처리하고, 실험 이름으로 구분
-
-```json
-{
-  "query": {
-    "bool": {
-      "filter": [
-        { "term": { "experiment_name": "rec_algo_test" } },
-        {
-          "terms": {
-            "experiment_group": ["A", "B"]
-          }
-        }
-      ]
-    }
-  }
-}
-```
-
-> 참고: 실험 로그는 Elasticsearch 외부에서 수집 및 분석 (예: BigQuery, Redshift, 로그 분석 플랫폼 등)
-
----
-
-# 시나리오 3: 관심사 벡터 기반 유사도 필터링 (Cosine similarity 등)
-
-**상황**
-사용자와 아이템 모두 고차원 관심사 벡터 (예: `dense_vector`)를 보유.
-두 벡터 간 cosine similarity를 계산해 유사도 높은 아이템 추천.
-
-## 3-1. dense\_vector 필드를 이용한 cosine similarity 기반 정렬
-
-```json
-{
-  "query": {
-    "script_score": {
-      "query": {
-        "match_all": {}
-      },
-      "script": {
-        "source": "cosineSimilarity(params.query_vector, 'item_vector') + 1.0",
-        "params": {
-          "query_vector": [0.1, 0.2, 0.3, 0.4]
-        }
-      }
-    }
-  }
-}
-```
-
-## 3-2. 유사도 + 인기도 점수 조합
-
-```json
-{
-  "query": {
-    "script_score": {
-      "query": {
-        "match_all": {}
-      },
-      "script": {
-        "source": """
-          double sim = cosineSimilarity(params.query_vector, 'item_vector') + 1.0;
-          return sim * doc['popularity'].value;
-        """,
-        "params": {
-          "query_vector": [0.1, 0.2, 0.3, 0.4]
-        }
-      }
-    }
-  }
-}
-```
-
-## 3-3. 유사도 임계값 필터링
-
-```json
-{
-  "query": {
-    "script_score": {
-      "query": {
-        "match_all": {}
-      },
-      "script": {
-        "source": """
-          double sim = cosineSimilarity(params.query_vector, 'item_vector');
-          return sim > 0.7 ? sim : 0;
-        """,
-        "params": {
-          "query_vector": [0.1, 0.2, 0.3, 0.4]
-        }
-      }
-    }
-  }
-}
-```
-
-> `dense_vector` 필드 사용을 위해서는 `index: false`, `similarity: cosine` 설정이 필요합니다.
-
----
-
-# 시나리오 4: 인기 사용자 자동 노출 제어
-
-**상황**
-너무 자주 노출되는 인기 사용자의 노출 빈도를 제어하거나 제한하고 싶음.
-
-## 4-1. 인기 사용자만 노출 (기본 점수)
-
-```json
-{
-  "query": {
-    "range": {
-      "popularity": {
-        "gte": 80
-      }
-    }
-  }
-}
-```
-
-## 4-2. 인기 사용자일수록 점수를 의도적으로 감소시킴
-
-```json
-{
-  "query": {
-    "script_score": {
-      "query": {
-        "range": {
-          "popularity": {
-            "gte": 50
-          }
-        }
-      },
-      "script": {
-        "source": "1 / Math.pow(doc['popularity'].value, 0.5)"
-      }
-    }
-  }
-}
-```
-
-## 4-3. 사용자별로 노출 횟수 기반 점수 조정 (데이터에 노출 카운트가 저장된 경우)
-
-```json
-{
-  "query": {
-    "script_score": {
-      "query": {
-        "match_all": {}
-      },
-      "script": {
-        "source": """
-          double base_score = doc['rating'].value;
-          double penalty = Math.log(1 + doc['exposure_count'].value);
-          return base_score / penalty;
-        """
-      }
-    }
-  }
-}
-```
-
-> 노출 횟수 기반 노멀라이징을 통해 자주 노출된 사용자는 점수를 낮추고 새로운 사용자를 위로 올릴 수 있음.
-
----
-
-이 시나리오들은 모두 Elasticsearch를 기반으로 **실시간 사용자 맞춤형 추천을 구현하는 데 필수적인 전략들**입니다.
-특정 환경 (Tinder, Netflix, 전자상거래 등)에 맞춰 튜닝된 예제를 원하신다면 도메인과 데이터를 기준으로 더욱 구체화해드릴 수 있습니다. 원하시는 방향이 있을까요?

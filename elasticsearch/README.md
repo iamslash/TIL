@@ -4,22 +4,13 @@
 - [Sample Data](#sample-data)
 - [Integration with Spring](#integration-with-spring)
 - [Basic](#basic)
+  - [Elasticsearch 쿼리 전체 종류 (기본적인 분류)](#elasticsearch-쿼리-전체-종류-기본적인-분류)
   - [Elastic \_cat api](#elastic-_cat-api)
   - [Elastic Search vs RDBMS](#elastic-search-vs-rdbms)
   - [CRUD](#crud)
   - [Update](#update)
   - [Bulk](#bulk)
   - [Mapping](#mapping)
-  - [Elasticsearch 쿼리 전체 종류 (기본적인 분류)](#elasticsearch-쿼리-전체-종류-기본적인-분류)
-    - [1. **Term-Level Queries** (정확한 값 일치)](#1-term-level-queries-정확한-값-일치)
-    - [2. **Full-Text Queries** (자연어 검색용, 분석기 적용)](#2-full-text-queries-자연어-검색용-분석기-적용)
-    - [3. **Compound Queries** (복합 쿼리 - 쿼리들을 조합)](#3-compound-queries-복합-쿼리---쿼리들을-조합)
-    - [4. **Span Queries** (고급 문장 내 위치 기반 검색)](#4-span-queries-고급-문장-내-위치-기반-검색)
-    - [5. **Joining Queries** (관계형 구조 흉내)](#5-joining-queries-관계형-구조-흉내)
-    - [6. **Geo Queries** (위치 기반)](#6-geo-queries-위치-기반)
-    - [7. **Specialized / Other Queries**](#7-specialized--other-queries)
-  - [🎯 실무에서 가장 자주 쓰는 조합](#-실무에서-가장-자주-쓰는-조합)
-  - [Examples](#examples)
   - [Search](#search)
   - [Metric Aggregation](#metric-aggregation)
   - [Bucket Aggregation](#bucket-aggregation)
@@ -101,6 +92,10 @@ curl -H 'Content-Type: application/x-ndjson' -XPOST 'localhost:9200/_bulk?pretty
 * [spring-examples/exelasticsearch @ github](https://github.com/iamslash/spring-examples/blob/master/exelasticsearch/README.md)
 
 # Basic
+
+## Elasticsearch 쿼리 전체 종류 (기본적인 분류)
+
+[ElasticSearch Query](elasticsearch_query.md)
 
 ## Elastic _cat api
 
@@ -407,10 +402,6 @@ $ curl -H 'Content-type: application/json' -XPUT 'http://localhost:9200/classes/
 #   "status" : 400
 # }
 ```
-
-## Elasticsearch 쿼리 전체 종류 (기본적인 분류)
-
-[ElasticSearch Query](elasticsearch_query.md)
 
 ## Search
 
