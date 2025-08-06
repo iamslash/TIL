@@ -83,6 +83,75 @@
   - [5. FMB vs 다른 방법들](#5-fmb-vs-다른-방법들)
     - [FMB vs DeepFM](#fmb-vs-deepfm)
     - [FMB vs DCN (Deep \& Cross Network)](#fmb-vs-dcn-deep--cross-network)
+- [LCB](#lcb)
+  - [1. LCB의 기본 개념](#1-lcb의-기본-개념)
+    - [LCB의 역할](#lcb의-역할)
+    - [기본 구조](#기본-구조)
+  - [2. LCB의 동작 원리](#2-lcb의-동작-원리)
+    - [단계별 처리 과정](#단계별-처리-과정-1)
+  - [3. LCB의 장점](#3-lcb의-장점)
+    - [1) 계산 효율성](#1-계산-효율성)
+    - [2) 메모리 효율성](#2-메모리-효율성)
+    - [3) 학습 안정성](#3-학습-안정성)
+  - [4. LCB vs 다른 압축 방법들](#4-lcb-vs-다른-압축-방법들)
+    - [LCB vs PCA (Principal Component Analysis)](#lcb-vs-pca-principal-component-analysis)
+    - [LCB vs Autoencoder](#lcb-vs-autoencoder)
+    - [LCB vs Attention](#lcb-vs-attention)
+  - [5. 실제 추천 시스템에서의 활용](#5-실제-추천-시스템에서의-활용)
+    - [특성 압축 예제](#특성-압축-예제)
+    - [가중치 학습 예제](#가중치-학습-예제)
+  - [6. LCB의 한계점](#6-lcb의-한계점)
+    - [1) 선형성 제약](#1-선형성-제약)
+    - [2) 정보 손실](#2-정보-손실)
+  - [7. 결론](#7-결론)
+- [Residual Projection](#residual-projection)
+  - [1. Residual Connection의 기본 개념](#1-residual-connection의-기본-개념)
+    - [기존 신경망의 문제점](#기존-신경망의-문제점)
+    - [Residual Connection의 해결책](#residual-connection의-해결책)
+  - [2. ResidualProjection의 역할](#2-residualprojection의-역할)
+    - [기본 구조](#기본-구조-1)
+    - [동작 원리](#동작-원리)
+  - [3. 구체적인 예제](#3-구체적인-예제-1)
+    - [입력 데이터](#입력-데이터-1)
+    - [ResidualProjection 처리 과정](#residualprojection-처리-과정)
+  - [4. Wukong에서의 활용](#4-wukong에서의-활용)
+    - [WukongLayer에서의 사용](#wukonglayer에서의-사용)
+    - [차원 불일치 해결](#차원-불일치-해결)
+  - [5. Residual Connection의 장점](#5-residual-connection의-장점)
+    - [1) Gradient Flow 개선](#1-gradient-flow-개선)
+    - [2) 학습 안정성](#2-학습-안정성)
+    - [3) 표현력 향상](#3-표현력-향상)
+  - [6. 다른 Residual Connection 방법들](#6-다른-residual-connection-방법들)
+    - [1) Identity Residual](#1-identity-residual)
+    - [2) Projection Residual](#2-projection-residual)
+    - [3) Bottleneck Residual](#3-bottleneck-residual)
+  - [7. 실제 추천 시스템 예제](#7-실제-추천-시스템-예제)
+    - [특성 확장 시나리오](#특성-확장-시나리오)
+    - [학습 과정](#학습-과정)
+  - [8. 결론](#8-결론)
+- [nn.LayerNorm](#nnlayernorm)
+  - [1. Layer Normalization의 기본 개념](#1-layer-normalization의-기본-개념)
+    - [정규화의 필요성](#정규화의-필요성)
+    - [LayerNorm의 해결책](#layernorm의-해결책)
+  - [2. LayerNorm의 수학적 정의](#2-layernorm의-수학적-정의)
+    - [정규화 공식](#정규화-공식)
+  - [3. 구체적인 예제](#3-구체적인-예제-2)
+    - [입력 데이터](#입력-데이터-2)
+    - [LayerNorm 처리 과정](#layernorm-처리-과정)
+  - [4. LayerNorm의 장점](#4-layernorm의-장점)
+    - [1) 학습 안정성](#1-학습-안정성)
+    - [2) 빠른 수렴](#2-빠른-수렴)
+    - [3) 일반화 성능 향상](#3-일반화-성능-향상)
+  - [5. 다른 정규화 방법들과의 비교](#5-다른-정규화-방법들과의-비교)
+    - [LayerNorm vs BatchNorm](#layernorm-vs-batchnorm)
+    - [LayerNorm vs InstanceNorm](#layernorm-vs-instancenorm)
+  - [6. Wukong에서의 활용](#6-wukong에서의-활용)
+    - [WukongLayer에서의 사용](#wukonglayer에서의-사용-1)
+    - [정규화의 효과](#정규화의-효과)
+  - [7. 실제 추천 시스템 예제](#7-실제-추천-시스템-예제-1)
+    - [특성 스케일 문제](#특성-스케일-문제)
+    - [학습 안정성 향상](#학습-안정성-향상)
+  - [8. 결론](#8-결론-1)
 
 -----
 
@@ -1008,3 +1077,702 @@ features = {
 ```
 
 FMB는 Factorization Machine의 핵심 아이디어를 현대적으로 구현한 것으로, 추천 시스템에서 특성 간 상호작용을 효율적으로 학습할 수 있게 해주는 중요한 아키텍처입니다.
+
+
+# LCB
+
+LCB (Linear Compression Block)는 Wukong 논문에서 제안된 비교적 새로운 기술입니다. 고전적인 기술은 아니지만, 선형 변환의 아이디어를 기반으로 합니다.
+
+## 1. LCB의 기본 개념
+
+### LCB의 역할
+```python
+# LCB는 특성 수를 줄이는 "압축" 블록
+# 입력: 많은 특성 → 출력: 적은 특성
+# 목적: 계산 효율성 향상 + 중요한 특성만 유지
+```
+
+### 기본 구조
+```python
+class LinearCompressBlock(nn.Module):
+    def __init__(self, num_emb_in: int, num_emb_out: int):
+        # num_emb_in: 입력 특성 수 (예: 12개)
+        # num_emb_out: 출력 특성 수 (예: 8개)
+        self.weight = nn.Parameter(torch.empty((num_emb_in, num_emb_out)))
+```
+
+## 2. LCB의 동작 원리
+
+### 단계별 처리 과정
+
+**입력 데이터 예제**:
+```python
+# 배치 크기 2, 특성 수 12, 임베딩 차원 24
+inputs = torch.tensor([
+    # 첫 번째 샘플
+    [[0.1, 0.2, ..., 0.24],  # 특성1
+     [0.5, 0.6, ..., 0.48],  # 특성2
+     [0.3, 0.4, ..., 0.72],  # 특성3
+     [0.7, 0.8, ..., 0.96],  # 특성4
+     [0.9, 1.0, ..., 1.20],  # 특성5
+     [0.5, 0.6, ..., 0.96],  # 특성6
+     [1.3, 1.4, ..., 1.68],  # 특성7
+     [2.1, 2.2, ..., 2.40],  # 특성8
+     [2.9, 3.0, ..., 3.12],  # 특성9
+     [3.7, 3.8, ..., 3.84],  # 특성10
+     [4.5, 4.6, ..., 4.56],  # 특성11
+     [5.3, 5.4, ..., 5.28]], # 특성12
+    # 두 번째 샘플...
+])
+# shape: [2, 12, 24]
+```
+
+**1단계: 차원 변환**
+```python
+# (bs, num_emb_in, dim_emb) -> (bs, dim_emb, num_emb_in)
+outputs = inputs.permute(0, 2, 1)
+# shape: [2, 24, 12] - 임베딩 차원과 특성 차원을 바꿈
+```
+
+**2단계: 선형 변환**
+```python
+# weight.shape: [num_emb_in, num_emb_out] = [12, 8]
+weight = torch.tensor([
+    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8],  # 특성1의 가중치
+    [0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6],  # 특성2의 가중치
+    [1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4],  # 특성3의 가중치
+    [2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.2],  # 특성4의 가중치
+    [3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4.0],  # 특성5의 가중치
+    [4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8],  # 특성6의 가중치
+    [4.9, 5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6],  # 특성7의 가중치
+    [5.7, 5.8, 5.9, 6.0, 6.1, 6.2, 6.3, 6.4],  # 특성8의 가중치
+    [6.5, 6.6, 6.7, 6.8, 6.9, 7.0, 7.1, 7.2],  # 특성9의 가중치
+    [7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 8.0],  # 특성10의 가중치
+    [8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8],  # 특성11의 가중치
+    [8.9, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.6]  # 특성12의 가중치
+])
+
+# (bs, dim_emb, num_emb_in) @ (num_emb_in, num_emb_out) -> (bs, dim_emb, num_emb_out)
+outputs = outputs @ weight
+# shape: [2, 24, 8] - 12개 특성이 8개로 압축됨
+```
+
+**3단계: 차원 복원**
+```python
+# (bs, dim_emb, num_emb_out) -> (bs, num_emb_out, dim_emb)
+outputs = outputs.permute(0, 2, 1)
+# shape: [2, 8, 24] - 원래 형태로 복원
+```
+
+## 3. LCB의 장점
+
+### 1) 계산 효율성
+```python
+# 압축 전: 12개 특성
+# 압축 후: 8개 특성
+# 계산량 감소: 12² → 8² = 144 → 64 (55% 감소)
+
+# 다음 레이어에서의 계산량도 크게 감소
+```
+
+### 2) 메모리 효율성
+```python
+# 특성 수가 줄어들면 메모리 사용량도 감소
+# GPU 메모리 절약 → 더 큰 배치 크기 가능
+```
+
+### 3) 학습 안정성
+```python
+# 불필요한 특성 제거로 과적합 방지
+# 중요한 특성만 유지하여 모델 안정성 향상
+```
+
+## 4. LCB vs 다른 압축 방법들
+
+### LCB vs PCA (Principal Component Analysis)
+```python
+# PCA: 통계적 방법, 데이터 분산 기반
+# LCB: 학습 가능한 방법, 태스크에 최적화
+
+# PCA: 고정된 변환
+# LCB: 데이터에 맞게 학습됨
+```
+
+### LCB vs Autoencoder
+```python
+# Autoencoder: 비선형 압축
+# LCB: 선형 압축 (더 빠름)
+
+# Autoencoder: 복잡한 패턴 학습
+# LCB: 단순하고 효율적
+```
+
+### LCB vs Attention
+```python
+# Attention: 동적 가중치 계산
+# LCB: 고정된 가중치 (더 빠름)
+
+# Attention: 모든 특성 간 관계 고려
+# LCB: 선형 조합만 사용
+```
+
+## 5. 실제 추천 시스템에서의 활용
+
+### 특성 압축 예제
+```python
+# 입력 특성들 (12개)
+input_features = [
+    'user_age', 'user_gender', 'user_location',
+    'item_price', 'item_category', 'item_brand',
+    'hour', 'day_of_week', 'season',
+    'user_rating', 'item_popularity', 'discount'
+]
+
+# LCB 압축 후 (8개)
+compressed_features = [
+    'user_profile',      # 나이+성별+지역 통합
+    'item_profile',      # 가격+카테고리+브랜드 통합
+    'time_context',      # 시간+요일+계절 통합
+    'engagement',        # 평점+인기도+할인 통합
+    'feature_5', 'feature_6', 'feature_7', 'feature_8'  # 추가 특성들
+]
+```
+
+### 가중치 학습 예제
+```python
+# 학습된 가중치 예시
+weight = torch.tensor([
+    # user_profile = 0.8×age + 0.1×gender + 0.1×location
+    [0.8, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    
+    # item_profile = 0.5×price + 0.3×category + 0.2×brand
+    [0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.2, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+    
+    # time_context = 0.4×hour + 0.3×day + 0.3×season
+    [0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0],
+    
+    # engagement = 0.4×rating + 0.4×popularity + 0.2×discount
+    [0.0, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0, 0.4, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.0, 0.0, 0.2, 0.0, 0.0, 0.0, 0.0]
+])
+```
+
+## 6. LCB의 한계점
+
+### 1) 선형성 제약
+```python
+# 비선형 관계는 포착하지 못함
+# 예: 나이와 가격의 복잡한 상호작용
+
+# 해결책: FMB와 함께 사용하여 상호작용 학습
+```
+
+### 2) 정보 손실
+```python
+# 압축 과정에서 일부 정보 손실
+# 중요한 특성 조합이 누락될 수 있음
+
+# 해결책: 적절한 압축 비율 선택
+```
+
+## 7. 결론
+
+LCB는 **새로운 기술**이지만, 기존의 선형 변환 아이디어를 기반으로 합니다:
+
+- **새로운 점**: 추천 시스템에 특화된 효율적인 압축 방법
+- **기존 아이디어**: 선형 변환, 차원 축소
+- **장점**: 계산 효율성, 메모리 절약, 학습 안정성
+- **단점**: 선형성 제약, 정보 손실
+
+Wukong에서는 LCB와 FMB를 조합하여 **효율성과 표현력을 모두 확보**하는 것이 핵심입니다!
+
+# Residual Projection
+
+ResidualProjection은 **Residual Connection (잔차 연결)**의 한 형태로, 비교적 현대적인 딥러닝 기술입니다. 2015년 ResNet 논문에서 처음 제안된 이후 널리 사용되고 있습니다.
+
+## 1. Residual Connection의 기본 개념
+
+### 기존 신경망의 문제점
+```python
+# 깊은 신경망에서 발생하는 문제들
+# 1. Gradient Vanishing (기울기 소실)
+# 2. 학습 어려움
+# 3. 성능 저하
+
+# 예시: 10층 신경망
+def traditional_network(x):
+    for i in range(10):
+        x = layer_i(x)  # 각 층을 통과할 때마다 정보 손실
+    return x
+```
+
+### Residual Connection의 해결책
+```python
+# 입력을 출력에 더해주는 방식
+def residual_network(x):
+    for i in range(10):
+        residual = x  # 입력 저장
+        x = layer_i(x)  # 변환
+        x = x + residual  # 원본 입력을 더함
+    return x
+```
+
+## 2. ResidualProjection의 역할
+
+### 기본 구조
+```python
+class ResidualProjection(nn.Module):
+    def __init__(self, num_emb_in: int, num_emb_out: int):
+        # num_emb_in: 입력 특성 수 (예: 12개)
+        # num_emb_out: 출력 특성 수 (예: 16개)
+        self.weight = nn.Parameter(torch.empty((num_emb_in, num_emb_out)))
+```
+
+### 동작 원리
+```python
+# 입력과 출력의 차원이 다를 때 사용
+# 입력: 12개 특성 → 출력: 16개 특성
+# 단순히 더하는 것이 아니라, 차원을 맞춰서 더함
+```
+
+## 3. 구체적인 예제
+
+### 입력 데이터
+```python
+# 배치 크기 2, 특성 수 12, 임베딩 차원 24
+inputs = torch.tensor([
+    # 첫 번째 샘플
+    [[0.1, 0.2, ..., 0.24],  # 특성1
+     [0.5, 0.6, ..., 0.48],  # 특성2
+     [0.3, 0.4, ..., 0.72],  # 특성3
+     [0.7, 0.8, ..., 0.96],  # 특성4
+     [0.9, 1.0, ..., 1.20],  # 특성5
+     [0.5, 0.6, ..., 0.96],  # 특성6
+     [1.3, 1.4, ..., 1.68],  # 특성7
+     [2.1, 2.2, ..., 2.40],  # 특성8
+     [2.9, 3.0, ..., 3.12],  # 특성9
+     [3.7, 3.8, ..., 3.84],  # 특성10
+     [4.5, 4.6, ..., 4.56],  # 특성11
+     [5.3, 5.4, ..., 5.28]], # 특성12
+    # 두 번째 샘플...
+])
+# shape: [2, 12, 24]
+```
+
+### ResidualProjection 처리 과정
+
+**1단계: 차원 변환**
+```python
+# (bs, num_emb_in, dim_emb) -> (bs, dim_emb, num_emb_in)
+outputs = inputs.permute(0, 2, 1)
+# shape: [2, 24, 12] - 임베딩 차원과 특성 차원을 바꿈
+```
+
+**2단계: 선형 변환**
+```python
+# weight.shape: [num_emb_in, num_emb_out] = [12, 16]
+weight = torch.tensor([
+    [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5, 1.6],  # 특성1
+    [1.7, 1.8, 1.9, 2.0, 2.1, 2.2, 2.3, 2.4, 2.5, 2.6, 2.7, 2.8, 2.9, 3.0, 3.1, 3.2],  # 특성2
+    [3.3, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 4.0, 4.1, 4.2, 4.3, 4.4, 4.5, 4.6, 4.7, 4.8],  # 특성3
+    [4.9, 5.0, 5.1, 5.2, 5.3, 5.4, 5.5, 5.6, 5.7, 5.8, 5.9, 6.0, 6.1, 6.2, 6.3, 6.4],  # 특성4
+    [6.5, 6.6, 6.7, 6.8, 6.9, 7.0, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 8.0],  # 특성5
+    [8.1, 8.2, 8.3, 8.4, 8.5, 8.6, 8.7, 8.8, 8.9, 9.0, 9.1, 9.2, 9.3, 9.4, 9.5, 9.6],  # 특성6
+    [9.7, 9.8, 9.9, 10.0, 10.1, 10.2, 10.3, 10.4, 10.5, 10.6, 10.7, 10.8, 10.9, 11.0, 11.1, 11.2],  # 특성7
+    [11.3, 11.4, 11.5, 11.6, 11.7, 11.8, 11.9, 12.0, 12.1, 12.2, 12.3, 12.4, 12.5, 12.6, 12.7, 12.8],  # 특성8
+    [12.9, 13.0, 13.1, 13.2, 13.3, 13.4, 13.5, 13.6, 13.7, 13.8, 13.9, 14.0, 14.1, 14.2, 14.3, 14.4],  # 특성9
+    [14.5, 14.6, 14.7, 14.8, 14.9, 15.0, 15.1, 15.2, 15.3, 15.4, 15.5, 15.6, 15.7, 15.8, 15.9, 16.0],  # 특성10
+    [16.1, 16.2, 16.3, 16.4, 16.5, 16.6, 16.7, 16.8, 16.9, 17.0, 17.1, 17.2, 17.3, 17.4, 17.5, 17.6],  # 특성11
+    [17.7, 17.8, 17.9, 18.0, 18.1, 18.2, 18.3, 18.4, 18.5, 18.6, 18.7, 18.8, 18.9, 19.0, 19.1, 19.2]  # 특성12
+])
+
+# (bs, dim_emb, num_emb_in) @ (num_emb_in, num_emb_out) -> (bs, dim_emb, num_emb_out)
+outputs = outputs @ weight
+# shape: [2, 24, 16] - 12개 특성이 16개로 확장됨
+```
+
+**3단계: 차원 복원**
+```python
+# (bs, dim_emb, num_emb_out) -> (bs, num_emb_out, dim_emb)
+outputs = outputs.permute(0, 2, 1)
+# shape: [2, 16, 24] - 원래 형태로 복원
+```
+
+## 4. Wukong에서의 활용
+
+### WukongLayer에서의 사용
+```python
+class WukongLayer(nn.Module):
+    def forward(self, inputs: Tensor) -> Tensor:
+        # LCB와 FMB 처리
+        lcb = self.lcb(inputs)  # [2, 8, 24]
+        fmb = self.fmb(inputs)  # [2, 8, 24]
+        
+        # 결합
+        outputs = torch.concat((fmb, lcb), dim=1)  # [2, 16, 24]
+        
+        # Residual Connection
+        if num_emb_in != num_emb_lcb + num_emb_fmb:
+            residual = self.residual_projection(inputs)  # [2, 16, 24]
+            outputs = outputs + residual  # 잔차 연결
+        
+        return outputs
+```
+
+### 차원 불일치 해결
+```python
+# 입력: [2, 12, 24] (12개 특성)
+# 출력: [2, 16, 24] (16개 특성)
+
+# 단순히 더할 수 없음 (차원 불일치)
+# ResidualProjection으로 차원을 맞춰서 더함
+```
+
+## 5. Residual Connection의 장점
+
+### 1) Gradient Flow 개선
+```python
+# 기존: 깊은 네트워크에서 기울기 소실
+# Residual: 입력이 직접 전달되어 기울기 흐름 개선
+
+# 예시:
+# 기존: ∂L/∂x₁ = ∂L/∂x₁₀ × ∂x₁₀/∂x₉ × ... × ∂x₂/∂x₁ (기울기 소실)
+# Residual: ∂L/∂x₁ = ∂L/∂x₁₀ × (1 + ∂F/∂x₁) (기울기 보존)
+```
+
+### 2) 학습 안정성
+```python
+# 입력 정보가 보존되어 학습이 안정적
+# 깊은 네트워크도 쉽게 학습 가능
+
+# 예시:
+# 입력: [0.1, 0.2, 0.3]
+# 변환: [0.2, 0.4, 0.6]
+# 출력: [0.3, 0.6, 0.9] (입력 + 변환)
+```
+
+### 3) 표현력 향상
+```python
+# Identity Mapping이 가능
+# 네트워크가 필요에 따라 입력을 그대로 전달 가능
+
+# 예시:
+# 학습 초기: 출력 ≈ 입력 (기본 정보 보존)
+# 학습 후기: 출력 = 입력 + 복잡한 변환 (고차 정보 추가)
+```
+
+## 6. 다른 Residual Connection 방법들
+
+### 1) Identity Residual
+```python
+# 가장 간단한 형태
+def identity_residual(x):
+    return x + layer(x)
+```
+
+### 2) Projection Residual
+```python
+# 차원이 다를 때 사용 (현재 사용하는 방법)
+def projection_residual(x):
+    return layer(x) + projection(x)
+```
+
+### 3) Bottleneck Residual
+```python
+# 1x1 컨볼루션으로 차원 조정
+def bottleneck_residual(x):
+    return conv3x3(conv1x1(x)) + conv1x1(x)
+```
+
+## 7. 실제 추천 시스템 예제
+
+### 특성 확장 시나리오
+```python
+# 입력 특성들 (12개)
+input_features = [
+    'user_age', 'user_gender', 'user_location',
+    'item_price', 'item_category', 'item_brand',
+    'hour', 'day_of_week', 'season',
+    'user_rating', 'item_popularity', 'discount'
+]
+
+# 출력 특성들 (16개) - 더 세분화된 특성들
+output_features = [
+    'user_profile', 'user_preference', 'user_behavior',
+    'item_profile', 'item_quality', 'item_trend',
+    'time_context', 'time_pattern', 'time_season',
+    'engagement_level', 'popularity_score', 'discount_impact',
+    'feature_13', 'feature_14', 'feature_15', 'feature_16'
+]
+
+# ResidualProjection이 12개 → 16개로 확장
+```
+
+### 학습 과정
+```python
+# 1단계: 기본 정보 보존
+# residual ≈ input (기본 특성 정보 유지)
+
+# 2단계: 세분화 학습
+# output = residual + detailed_features
+# (기본 정보) + (세분화된 정보)
+
+# 3단계: 최적화
+# 중요한 특성은 residual로 보존
+# 추가 정보는 변환으로 학습
+```
+
+## 8. 결론
+
+ResidualProjection은 **현대적인 딥러닝 기술**입니다:
+
+- **기원**: 2015년 ResNet 논문
+- **목적**: 차원이 다른 경우의 Residual Connection
+- **장점**: 기울기 흐름 개선, 학습 안정성, 표현력 향상
+- **특징**: 입력 정보 보존하면서 차원 변환 가능
+
+Wukong에서는 **LCB와 FMB의 출력을 결합할 때 차원 불일치를 해결**하는 중요한 역할을 합니다!
+
+# nn.LayerNorm
+
+`nn.LayerNorm(dim_emb)`는 **Layer Normalization**을 수행하는 레이어입니다. 2016년에 제안된 현대적인 딥러닝 기술로, 학습 안정성을 크게 향상시킵니다.
+
+## 1. Layer Normalization의 기본 개념
+
+### 정규화의 필요성
+```python
+# 딥러닝에서 자주 발생하는 문제들:
+# 1. Internal Covariate Shift: 레이어별 입력 분포 변화
+# 2. 학습 불안정성: 특정 뉴런의 활성화 값이 너무 크거나 작음
+# 3. 기울기 소실/폭발: 극단적인 값들로 인한 학습 문제
+```
+
+### LayerNorm의 해결책
+```python
+# 각 샘플의 특성 차원에서 정규화 수행
+# 평균을 0, 분산을 1로 정규화
+# 학습 가능한 스케일과 시프트 파라미터 추가
+```
+
+## 2. LayerNorm의 수학적 정의
+
+### 정규화 공식
+```python
+# 입력: x = [x₁, x₂, ..., xₙ]
+# 평균: μ = (x₁ + x₂ + ... + xₙ) / n
+# 분산: σ² = ((x₁-μ)² + (x₂-μ)² + ... + (xₙ-μ)²) / n
+# 정규화: x̂ᵢ = (xᵢ - μ) / √(σ² + ε)
+# 출력: yᵢ = γ × x̂ᵢ + β
+
+# γ, β: 학습 가능한 파라미터 (스케일, 시프트)
+# ε: 수치 안정성을 위한 작은 값 (보통 1e-5)
+```
+
+## 3. 구체적인 예제
+
+### 입력 데이터
+```python
+# 배치 크기 2, 특성 수 4, 임베딩 차원 3
+inputs = torch.tensor([
+    # 첫 번째 샘플
+    [[1.0, 2.0, 3.0],  # 특성1
+     [4.0, 5.0, 6.0],  # 특성2
+     [7.0, 8.0, 9.0],  # 특성3
+     [10.0, 11.0, 12.0]], # 특성4
+    # 두 번째 샘플
+    [[13.0, 14.0, 15.0],  # 특성1
+     [16.0, 17.0, 18.0],  # 특성2
+     [19.0, 20.0, 21.0],  # 특성3
+     [22.0, 23.0, 24.0]]  # 특성4
+])
+# shape: [2, 4, 3]
+```
+
+### LayerNorm 처리 과정
+
+**1단계: 차원 확인**
+```python
+# nn.LayerNorm(dim_emb)에서 dim_emb = 3
+# 정규화 차원: 마지막 차원 (임베딩 차원)
+# 각 특성의 3차원 임베딩을 개별적으로 정규화
+```
+
+**2단계: 첫 번째 샘플의 첫 번째 특성 정규화**
+```python
+# 입력: [1.0, 2.0, 3.0]
+# 평균: μ = (1.0 + 2.0 + 3.0) / 3 = 2.0
+# 분산: σ² = ((1.0-2.0)² + (2.0-2.0)² + (3.0-2.0)²) / 3 = 0.67
+# 정규화: x̂ = (x - 2.0) / √0.67
+# 결과: [-1.22, 0.0, 1.22]
+
+# 학습된 파라미터 (예시)
+γ = [0.5, 0.8, 1.2]  # 스케일
+β = [0.1, 0.2, 0.3]  # 시프트
+
+# 최종 출력: γ × x̂ + β
+# 결과: [0.5×(-1.22)+0.1, 0.8×0.0+0.2, 1.2×1.22+0.3]
+# 결과: [-0.51, 0.2, 1.76]
+```
+
+**3단계: 전체 배치 처리**
+```python
+# 모든 샘플의 모든 특성에 대해 동일한 과정 적용
+# 각 특성의 3차원 임베딩을 개별적으로 정규화
+
+# 결과 예시:
+normalized_outputs = torch.tensor([
+    # 첫 번째 샘플
+    [[-0.51, 0.2, 1.76],   # 특성1 정규화
+     [-0.45, 0.15, 1.65],  # 특성2 정규화
+     [-0.42, 0.12, 1.58],  # 특성3 정규화
+     [-0.38, 0.08, 1.52]], # 특성4 정규화
+    # 두 번째 샘플
+    [[-0.35, 0.05, 1.45],  # 특성1 정규화
+     [-0.32, 0.02, 1.38],  # 특성2 정규화
+     [-0.28, -0.02, 1.32], # 특성3 정규화
+     [-0.25, -0.05, 1.25]] # 특성4 정규화
+])
+# shape: [2, 4, 3]
+```
+
+## 4. LayerNorm의 장점
+
+### 1) 학습 안정성
+```python
+# 정규화 전: 값들이 매우 다양함
+# [1.0, 2.0, 3.0] vs [100.0, 200.0, 300.0]
+
+# 정규화 후: 일정한 범위
+# [-1.22, 0.0, 1.22] vs [-1.22, 0.0, 1.22]
+
+# 결과: 기울기 소실/폭발 방지
+```
+
+### 2) 빠른 수렴
+```python
+# 정규화로 인해 학습률을 더 크게 설정 가능
+# 더 빠른 수렴과 안정적인 학습
+
+# 예시:
+# 정규화 전: learning_rate = 0.001 (작게 설정)
+# 정규화 후: learning_rate = 0.01 (크게 설정 가능)
+```
+
+### 3) 일반화 성능 향상
+```python
+# 정규화로 인해 과적합 방지
+# 더 안정적인 테스트 성능
+
+# 예시:
+# 정규화 전: train_acc=95%, test_acc=85% (과적합)
+# 정규화 후: train_acc=92%, test_acc=90% (안정적)
+```
+
+## 5. 다른 정규화 방법들과의 비교
+
+### LayerNorm vs BatchNorm
+```python
+# BatchNorm: 배치 차원에서 정규화
+# LayerNorm: 특성 차원에서 정규화
+
+# BatchNorm: 배치 크기에 의존적
+# LayerNorm: 배치 크기와 무관
+
+# 예시:
+# BatchNorm: [batch, features, dim] → 배치 전체에서 정규화
+# LayerNorm: [batch, features, dim] → 각 샘플별로 정규화
+```
+
+### LayerNorm vs InstanceNorm
+```python
+# InstanceNorm: 각 샘플의 각 채널별 정규화
+# LayerNorm: 각 샘플의 모든 차원 정규화
+
+# 예시:
+# InstanceNorm: [batch, channels, height, width] → 채널별
+# LayerNorm: [batch, features, dim] → 특성별
+```
+
+## 6. Wukong에서의 활용
+
+### WukongLayer에서의 사용
+```python
+class WukongLayer(nn.Module):
+    def forward(self, inputs: Tensor) -> Tensor:
+        # LCB와 FMB 처리
+        lcb = self.lcb(inputs)  # [2, 8, 24]
+        fmb = self.fmb(inputs)  # [2, 8, 24]
+        
+        # 결합
+        outputs = torch.concat((fmb, lcb), dim=1)  # [2, 16, 24]
+        
+        # Residual Connection
+        if num_emb_in != num_emb_lcb + num_emb_fmb:
+            residual = self.residual_projection(inputs)  # [2, 16, 24]
+            outputs = outputs + residual  # 잔차 연결
+        
+        # Layer Normalization
+        outputs = self.norm(outputs)  # [2, 16, 24] - 각 특성의 24차원 정규화
+        
+        return outputs
+```
+
+### 정규화의 효과
+```python
+# 정규화 전: 특성별로 매우 다른 스케일
+# [0.1, 0.2, ..., 0.24] vs [10.1, 10.2, ..., 10.24]
+
+# 정규화 후: 일정한 스케일
+# [-1.2, -0.8, ..., 1.2] vs [-1.2, -0.8, ..., 1.2]
+
+# 결과: 다음 레이어에서 안정적인 학습
+```
+
+## 7. 실제 추천 시스템 예제
+
+### 특성 스케일 문제
+```python
+# 입력 특성들의 스케일이 매우 다름
+features = {
+    'user_age': [25, 32, 45],           # 0-100 범위
+    'item_price': [100, 200, 50],       # 0-10000 범위
+    'user_rating': [4.5, 3.2, 4.8],     # 0-5 범위
+    'discount': [0.1, 0.2, 0.05]        # 0-1 범위
+}
+
+# LayerNorm 적용 후
+normalized_features = {
+    'user_age': [-0.5, 0.2, 1.1],      # 정규화된 범위
+    'item_price': [-0.8, 0.1, 1.2],    # 정규화된 범위
+    'user_rating': [-0.3, 0.0, 0.9],   # 정규화된 범위
+    'discount': [-0.6, 0.4, 1.0]       # 정규화된 범위
+}
+```
+
+### 학습 안정성 향상
+```python
+# 정규화 전: 특성별로 다른 학습 속도
+# 가격 특성: 큰 값으로 인해 기울기 폭발
+# 나이 특성: 작은 값으로 인해 기울기 소실
+
+# 정규화 후: 균등한 학습 속도
+# 모든 특성이 동일한 스케일로 학습
+```
+
+## 8. 결론
+
+`nn.LayerNorm(dim_emb)`는 **현대적인 딥러닝의 핵심 기술**입니다:
+
+- **목적**: 학습 안정성 향상, 빠른 수렴, 일반화 성능 개선
+- **동작**: 각 특성의 임베딩 차원을 정규화
+- **장점**: 기울기 소실/폭발 방지, 과적합 방지
+- **특징**: 배치 크기와 무관, 학습 가능한 파라미터 포함
+
+Wukong에서는 **깊은 네트워크의 안정적인 학습**을 위해 중요한 역할을 합니다!
