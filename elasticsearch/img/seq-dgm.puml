@@ -1,0 +1,114 @@
+@startuml
+!theme plain
+autonumber
+
+participant "RestClient" as Client
+participant "TransportSearchAction" as Transport
+participant "MatchQueryBuilder" as QueryBuilder
+participant "MatchQueryParser" as QueryParser
+participant "SearchService" as SearchSvc
+participant "QueryPhase" as QPhase
+participant "ContextIndexSearcher" as Searcher
+participant "Weight" as Weight
+participant "Scorer" as Scorer
+participant "BulkScorer" as BulkScorer
+participant "Collector" as Collector
+
+note over Client, Collector: Match Query: {"query": {"match": {"title": "machine learning"}}}
+
+Client -> Transport: **POST /_search**\n{"query": {"match": {"title": "machine learning"}}}
+activate Transport
+
+Transport -> QueryBuilder: **fromXContent**(parser)
+activate QueryBuilder
+note over QueryBuilder: Parse JSON:\n- fieldName: "title"\n- value: "machine learning"\n- operator: OR (default)
+QueryBuilder --> Transport: MatchQueryBuilder instance
+deactivate QueryBuilder
+
+Transport -> QueryBuilder: **doToQuery**(context)
+activate QueryBuilder
+QueryBuilder -> QueryParser: **new MatchQueryParser**(context)
+activate QueryParser
+QueryParser --> QueryBuilder: parser instance
+deactivate QueryParser
+
+QueryBuilder -> QueryParser: **parse**(Type.BOOLEAN, "title", "machine learning")
+activate QueryParser
+
+note over QueryParser: 1. Get field type from context\n2. Get analyzer (standard analyzer)\n3. Create MatchQueryBuilder (inner class)
+
+QueryParser -> QueryParser: **createBooleanQuery**("title", "machine learning", SHOULD)
+note over QueryParser: 4. Analyze text: "machine learning"\n→ tokens: ["machine", "learning"]\n5. Create BooleanQuery with OR operator
+
+QueryParser --> QueryBuilder: BooleanQuery(title:machine OR title:learning)
+deactivate QueryParser
+QueryBuilder --> Transport: Lucene Query
+deactivate QueryBuilder
+
+Transport -> SearchSvc: **executeQueryPhase**(request, task, listener)
+activate SearchSvc
+
+SearchSvc -> QPhase: **execute**(context)
+activate QPhase
+
+QPhase -> Searcher: **search**(query, collectorManager)
+activate Searcher
+
+Searcher -> Searcher: **rewrite**(query)
+note over Searcher: Query optimization and rewriting
+
+Searcher -> Weight: **createWeight**(query, ScoreMode.COMPLETE, 1.0f)
+activate Weight
+Weight --> Searcher: Weight instance
+deactivate Weight
+
+loop for each index segment
+    Searcher -> Weight: **scorer**(leafReaderContext)
+    activate Weight
+    Weight -> Scorer: create scorer for segment
+    activate Scorer
+    Weight --> Searcher: Scorer instance
+    deactivate Weight
+    
+    Searcher -> Weight: **bulkScorer**(leafReaderContext)
+    activate Weight
+    Weight -> BulkScorer: create bulk scorer
+    activate BulkScorer
+    Weight --> Searcher: BulkScorer instance
+    deactivate Weight
+    
+    Searcher -> BulkScorer: **score**(collector, liveDocs, 0, maxDoc)
+    activate BulkScorer
+    
+    loop for each matching document
+        BulkScorer -> Scorer: **score**()
+        activate Scorer
+        note over Scorer: Calculate TF-IDF score\nfor "machine" OR "learning"
+        Scorer --> BulkScorer: document score
+        deactivate Scorer
+        
+        BulkScorer -> Collector: **collect**(docId, score)
+        activate Collector
+        note over Collector: Collect top-k results
+        Collector --> BulkScorer: continue
+        deactivate Collector
+    end
+    
+    BulkScorer --> Searcher: segment results
+    deactivate BulkScorer
+    deactivate Scorer
+end
+
+Searcher --> QPhase: search results
+deactivate Searcher
+
+QPhase --> SearchSvc: QuerySearchResult
+deactivate QPhase
+
+SearchSvc --> Transport: SearchPhaseResult
+deactivate SearchSvc
+
+Transport --> Client: **SearchResponse**\n{"hits": {"total": 42, "hits": [...]}}
+deactivate Transport
+
+@enduml

@@ -1,0 +1,259 @@
+@startuml
+!theme plain
+
+package "ElasticSearch Core" {
+    class TransportSearchAction {
+        -SearchService searchService
+        -SearchTransportService searchTransportService
+        -SearchPhaseController searchPhaseController
+        +doExecute(task: Task, request: SearchRequest, listener: ActionListener)
+        +executeSearch(task: SearchTask, request: SearchRequest, ...)
+    }
+
+    class SearchRequest {
+        -SearchSourceBuilder source
+        -String[] indices
+        -SearchType searchType
+        -Boolean requestCache
+        +source(): SearchSourceBuilder
+        +indices(): String[]
+        +searchType(): SearchType
+    }
+
+    class SearchSourceBuilder {
+        -QueryBuilder queryBuilder
+        -List<AggregationBuilder> aggregations
+        -List<SortBuilder> sorts
+        -int from
+        -int size
+        +query(): QueryBuilder
+        +query(queryBuilder: QueryBuilder): SearchSourceBuilder
+        +from(): int
+        +size(): int
+    }
+
+    class SearchResponse {
+        -SearchHits hits
+        -Aggregations aggregations
+        -Suggest suggest
+        -int totalShards
+        -int successfulShards
+        +getHits(): SearchHits
+        +getAggregations(): Aggregations
+        +getTotalShards(): int
+    }
+}
+
+package "Query Building" {
+    abstract class AbstractQueryBuilder {
+        -float boost
+        -String queryName
+        +toQuery(context: SearchExecutionContext): Query
+        +{abstract} doToQuery(context: SearchExecutionContext): Query
+        +boost(): float
+        +queryName(): String
+    }
+
+    class MatchQueryBuilder {
+        -String fieldName
+        -Object value
+        -Operator operator
+        -String analyzer
+        -Fuzziness fuzziness
+        +doToQuery(context: SearchExecutionContext): Query
+        +{static} fromXContent(parser: XContentParser): MatchQueryBuilder
+        +fieldName(): String
+        +value(): Object
+    }
+
+    class MatchQueryParser {
+        -SearchExecutionContext context
+        -Analyzer analyzer
+        -BooleanClause.Occur occur
+        -boolean lenient
+        +parse(type: Type, field: String, value: Object): Query
+        +setAnalyzer(analyzer: Analyzer)
+        +setOccur(occur: BooleanClause.Occur)
+    }
+
+    class SearchExecutionContext {
+        -IndexService indexService
+        -MappedFieldType fieldType
+        -IndexAnalyzers indexAnalyzers
+        -QueryShardContext queryShardContext
+        +getFieldType(name: String): MappedFieldType
+        +getIndexAnalyzers(): IndexAnalyzers
+        +nowInMillis(): long
+    }
+}
+
+package "Search Execution" {
+    class SearchService {
+        -ThreadPool threadPool
+        -ClusterService clusterService
+        -IndicesService indicesService
+        -FetchPhase fetchPhase
+        +executeQueryPhase(request: ShardSearchRequest, task: SearchShardTask, listener: ActionListener)
+        +executeDfsPhase(request: ShardSearchRequest, task: SearchShardTask, listener: ActionListener)
+        +executeFetchPhase(request: ShardFetchRequest, task: SearchShardTask, listener: ActionListener)
+    }
+
+    class QueryPhase {
+        +{static} execute(context: SearchContext)
+        +{static} executeQuery(context: SearchContext)
+        +{static} executeRank(context: SearchContext)
+        -{static} addCollectorsAndSearch(context: SearchContext)
+    }
+
+    abstract class SearchContext {
+        -ParsedQuery parsedQuery
+        -SearchExecutionContext searchExecutionContext
+        -ContextIndexSearcher searcher
+        -QuerySearchResult queryResult
+        +parsedQuery(): ParsedQuery
+        +searcher(): ContextIndexSearcher
+        +queryResult(): QuerySearchResult
+        +{abstract} request(): ShardSearchRequest
+    }
+
+    class DefaultSearchContext {
+        -ReaderContext readerContext
+        -ShardSearchRequest request
+        -SearchShardTarget shardTarget
+        -ContextIndexSearcher searcher
+        -QuerySearchResult queryResult
+        +request(): ShardSearchRequest
+        +shardTarget(): SearchShardTarget
+    }
+
+    class QuerySearchResult {
+        -TopDocsAndMaxScore topDocs
+        -SearchShardTarget shardTarget
+        -long serviceTimeEWMA
+        -int nodeQueueSize
+        +topDocs(): TopDocsAndMaxScore
+        +shardTarget(): SearchShardTarget
+        +setRescoreDocIds(rescoreDocIds: RescoreDocIds)
+    }
+}
+
+package "Lucene Integration" {
+    class ContextIndexSearcher {
+        -AggregatedDfs aggregatedDfs
+        -QueryProfiler profiler
+        -MutableQueryTimeout cancellable
+        -boolean hasExecutor
+        +search(query: Query, collectorManager: CollectorManager): T
+        +createWeight(query: Query, scoreMode: ScoreMode, boost: float): Weight
+        +setProfiler(profiler: QueryProfiler)
+    }
+
+    class IndexSearcher <<lucene>> {
+        -IndexReader reader
+        -Similarity similarity
+        -QueryCache queryCache
+        +search(query: Query, collector: Collector)
+        +createWeight(query: Query, scoreMode: ScoreMode, boost: float): Weight
+        +rewrite(query: Query): Query
+    }
+}
+
+package "Lucene Query Objects" {
+    abstract class Query <<lucene>> {
+        +{abstract} createWeight(searcher: IndexSearcher, scoreMode: ScoreMode, boost: float): Weight
+        +rewrite(reader: IndexReader): Query
+        +toString(field: String): String
+    }
+
+    class BooleanQuery <<lucene>> {
+        -List<BooleanClause> clauses
+        -int minimumNumberShouldMatch
+        +createWeight(searcher: IndexSearcher, scoreMode: ScoreMode, boost: float): Weight
+        +rewrite(reader: IndexReader): Query
+        +clauses(): List<BooleanClause>
+    }
+
+    class TermQuery <<lucene>> {
+        -Term term
+        +createWeight(searcher: IndexSearcher, scoreMode: ScoreMode, boost: float): Weight
+        +getTerm(): Term
+    }
+}
+
+package "Lucene Scoring" {
+    abstract class Weight <<lucene>> {
+        -Query query
+        +{abstract} scorer(context: LeafReaderContext): Scorer
+        +{abstract} bulkScorer(context: LeafReaderContext): BulkScorer
+        +{abstract} explain(context: LeafReaderContext, doc: int): Explanation
+    }
+
+    class BooleanWeight <<lucene>> {
+        -List<Weight> weights
+        +scorer(context: LeafReaderContext): Scorer
+        +bulkScorer(context: LeafReaderContext): BulkScorer
+    }
+
+    class TermWeight <<lucene>> {
+        -Term term
+        -TermStates termStates
+        +scorer(context: LeafReaderContext): Scorer
+        +explain(context: LeafReaderContext, doc: int): Explanation
+    }
+
+    abstract class Scorer <<lucene>> {
+        -Weight weight
+        +{abstract} score(): float
+        +{abstract} docID(): int
+        +{abstract} iterator(): DocIdSetIterator
+    }
+
+    abstract class BulkScorer <<lucene>> {
+        +{abstract} score(collector: LeafCollector, acceptDocs: Bits): int
+        +{abstract} score(collector: LeafCollector, acceptDocs: Bits, min: int, max: int): int
+        +{abstract} cost(): long
+    }
+
+    abstract class Collector <<lucene>> {
+        +{abstract} getLeafCollector(context: LeafReaderContext): LeafCollector
+        +{abstract} scoreMode(): ScoreMode
+    }
+
+    class TopScoreDocCollector <<lucene>> {
+        -PriorityQueue<ScoreDoc> pq
+        -int totalHits
+        +getLeafCollector(context: LeafReaderContext): LeafCollector
+        +topDocs(): TopDocs
+    }
+}
+
+' Relationships
+TransportSearchAction --> SearchRequest : receives
+TransportSearchAction --> SearchResponse : returns
+TransportSearchAction --> SearchService : uses
+SearchRequest --> SearchSourceBuilder : contains
+SearchSourceBuilder --> MatchQueryBuilder : contains
+MatchQueryBuilder --|> AbstractQueryBuilder : extends
+MatchQueryBuilder --> MatchQueryParser : uses
+MatchQueryBuilder --> SearchExecutionContext : uses
+MatchQueryParser --> BooleanQuery : creates
+MatchQueryParser --> TermQuery : creates
+SearchService --> QueryPhase : uses
+QueryPhase --> SearchContext : uses
+SearchContext --> ContextIndexSearcher : contains
+SearchContext --> QuerySearchResult : contains
+DefaultSearchContext --|> SearchContext : implements
+ContextIndexSearcher --|> IndexSearcher : extends
+ContextIndexSearcher --> Query : processes
+BooleanQuery --|> Query : extends
+TermQuery --|> Query : extends
+Query --> Weight : creates
+BooleanQuery --> BooleanWeight : creates
+TermQuery --> TermWeight : creates
+BooleanWeight --|> Weight : extends
+TermWeight --|> Weight : extends
+Weight --> Scorer : creates
+Weight --> BulkScorer : creates
+TopScoreDocCollector --|> Collector : extends
+
+@enduml
