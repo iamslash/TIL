@@ -2,6 +2,7 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Basic](#basic)
+  - [Install](#install)
   - [Build And Run](#build-and-run)
   - [Hello World](#hello-world)
   - [Reserved Words](#reserved-words)
@@ -128,6 +129,12 @@ python3 에 대해 정리한다.
   * library검색이 용이하다.
 
 # Basic
+
+## Install
+
+```
+
+```
 
 ## Build And Run
 
