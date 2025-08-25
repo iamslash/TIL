@@ -2,7 +2,7 @@
 - [Essentials](#essentials)
 - [Materials](#materials)
 - [Basic](#basic)
-  - [Install](#install)
+  - [Install with pyenv on MAC](#install-with-pyenv-on-mac)
   - [Build And Run](#build-and-run)
   - [Hello World](#hello-world)
   - [Reserved Words](#reserved-words)
@@ -130,11 +130,20 @@ python3 에 대해 정리한다.
 
 # Basic
 
-## Install
+## Install with pyenv on MAC
 
 ```
-
+brew install pyenv
+pyenv install 3.13.7
+pyenv global 3.13.7
+echo 'export PATH="$HOME/.pyenv/shims:$PATH"' >> ~/.zshrc
+source ~/.zshrc
+python --version
 ```
+
+- `shims = pyenv`가 설치하는 가짜 실행 파일 모음
+- `PATH` 맨 앞에 위치해서, 사용자의 명령을 가로채고 올바른 Python 버전으로 라우팅
+- 덕분에 시스템 Python 건드리지 않고 여러 버전을 자유롭게 쓸 수 있음
 
 ## Build And Run
 
