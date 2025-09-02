@@ -1,11 +1,17 @@
 - [Abstract](#abstract)
 - [Material](#material)
 - [Programming Language Features](#programming-language-features)
+  - [Install](#install)
+  - [Hello World](#hello-world)
   - [Build, Run](#build-run)
-  - [Print Out](#print-out)
-  - [Formatted Text](#formatted-text)
   - [Reserved Words](#reserved-words)
   - [Data Types](#data-types)
+  - [Min Max Values](#min-max-values)
+  - [Abs FAbs](#abs-fabs)
+  - [Bit Manipulation](#bit-manipulation)
+  - [Random](#random)
+  - [String](#string)
+  - [Formatted String](#formatted-string)
   - [Enumerations](#enumerations)
   - [Multidimensional Array](#multidimensional-array)
   - [Control Flows](#control-flows)
@@ -14,6 +20,7 @@
   - [Collections compared to c++ containers](#collections-compared-to-c-containers)
   - [Collections](#collections)
   - [Functions](#functions)
+  - [Type Conversions](#type-conversions)
   - [Struct, Class, Interface, AbstractClass](#struct-class-interface-abstractclass)
   - [Closure](#closure)
   - [Lambda](#lambda)
@@ -44,26 +51,20 @@
 
 # Programming Language Features
 
+## Install
+
+  * Install
+
+## Hello World
+
+  * Print out "Hello World"
+
 ## Build, Run
 
   * 컴파일하고 실행하는 방법
   * 빌드 도구 (make, cmake, gradle, maven 등)
   * 패키지 매니저 (npm, pip, cargo 등)
   * IDE 설정 및 실행 환경
-
-## Print Out
-
-  * 화면에 출력하는 방법
-  * 표준 출력 (stdout, stderr)
-  * 포맷팅 (printf, format string)
-  * 로깅 시스템
-
-## Formatted Text
-
-  * 문자열 처리
-  * 정규표현식
-  * 텍스트 파싱
-  * 인코딩 (UTF-8, ASCII 등)
 
 ## Reserved Words
 
@@ -79,6 +80,23 @@
   * 타입 시스템 (정적/동적 타입)
   * 타입 추론
   * 제네릭/템플릿
+
+## Min Max Values
+
+## Abs FAbs
+
+## Bit Manipulation
+
+## Random
+
+## String
+
+## Formatted String
+
+  * 문자열 처리
+  * 정규표현식
+  * 텍스트 파싱
+  * 인코딩 (UTF-8, ASCII 등)
 
 ## Enumerations
 
@@ -149,6 +167,12 @@
   * 가변 인수
   * 고차 함수
 
+## Type Conversions
+
+  * integer to string
+  * string to integer
+  * integer to float
+
 ## Struct, Class, Interface, AbstractClass
 
   * 구조체와 클래스
@@ -160,11 +184,7 @@
 
 ## Closure
 
-* [Function closures @ A Tour of Go](https://go.dev/tour/moretypes/25)
-
-----
-
- A closure is a function value that references variables from outside its body.
+A closure is a function value that references variables from outside its body.
 
   * 렉시컬 스코프
   * 자유 변수

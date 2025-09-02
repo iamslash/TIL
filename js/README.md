@@ -6,19 +6,49 @@
     - [vscode](#vscode)
   - [Javascript Runtime Architecture](#javascript-runtime-architecture)
   - [JavaScript Engine How to work](#javascript-engine-how-to-work)
+  - [Install](#install)
+  - [Hello World](#hello-world)
   - [Build and Run](#build-and-run)
-  - [Print Out](#print-out)
-  - [Keywords](#keywords)
+  - [Reserved Words](#reserved-words)
+  - [Data Types](#data-types)
   - [Min, Max Values](#min-max-values)
   - [Abs, Fabs](#abs-fabs)
   - [Bit Manipulation](#bit-manipulation)
-  - [String](#string)
   - [Random](#random)
+  - [String](#string)
   - [Integer Division](#integer-division)
   - [Formatted String](#formatted-string)
+  - [Enumerations](#enumerations)
+  - [Multidimensional Array](#multidimensional-array)
+  - [Control Flows](#control-flows)
+  - [Loops](#loops)
+  - [Collections compared c++ container](#collections-compared-c-container)
+  - [Collections](#collections)
+    - [Object](#object)
+    - [Array](#array)
+    - [TypedArray](#typedarray)
+    - [Set](#set)
+    - [Map](#map)
+    - [WeakSet](#weakset)
+    - [WeakMap](#weakmap)
+  - [Operators](#operators)
+  - [Functions](#functions)
+    - [curly braces](#curly-braces)
+    - [parenthese](#parenthese)
+    - [anonymous function](#anonymous-function)
+    - [named function](#named-function)
+    - [closure](#closure)
+    - [IIFE(Immediately-invoked function expression)](#iifeimmediately-invoked-function-expression)
+    - [arrow function (ES6)](#arrow-function-es6)
+  - [Method](#method)
+  - [Type Conversions](#type-conversions)
+  - [Class](#class)
+  - [Closure](#closure-1)
+  - [Lambda](#lambda)
+  - [Exception](#exception)
+  - [Concurrency](#concurrency)
   - [Inspecting Types](#inspecting-types)
   - [Inspecting Functions](#inspecting-functions)
-  - [Data types](#data-types)
   - [Truthy Falthy](#truthy-falthy)
   - [Standard built-in objects (global objects) by category](#standard-built-in-objects-global-objects-by-category)
     - [Value properties](#value-properties)
@@ -35,40 +65,16 @@
     - [Internationalization](#internationalization)
     - [WebAssembly](#webassembly)
     - [Other](#other)
-  - [Collections compared c++ container](#collections-compared-c-container)
-  - [Collections](#collections)
-    - [Object](#object)
-    - [Array](#array)
-    - [TypedArray](#typedarray)
-    - [Set](#set)
-    - [Map](#map)
-    - [WeakSet](#weakset)
-    - [WeakMap](#weakmap)
-  - [Multidimensional Array](#multidimensional-array)
   - [template literals (template strings in ECMA 2015)](#template-literals-template-strings-in-ecma-2015)
   - [Tagged Template Literals (ES6)](#tagged-template-literals-es6)
   - [Sort](#sort)
   - [Variables](#variables)
-  - [Operators](#operators)
-  - [Control Flow](#control-flow)
-  - [Loops](#loops)
-  - [Functions](#functions)
-    - [curly braces](#curly-braces)
-    - [parenthese](#parenthese)
-    - [anonymous function](#anonymous-function)
-    - [named function](#named-function)
-    - [closure](#closure)
-    - [IIFE(Immediately-invoked function expression)](#iifeimmediately-invoked-function-expression)
-    - [arrow function (ES6)](#arrow-function-es6)
-  - [Method](#method)
-  - [Exception](#exception)
-  - [scope](#scope)
+  - [Scope](#scope)
   - [Hoisting](#hoisting)
   - [TDZ (Temporal Dead Zone)](#tdz-temporal-dead-zone)
   - [this](#this)
   - [execution context](#execution-context)
   - [Prototype](#prototype)
-  - [Class](#class)
   - [Expressions \& Operators](#expressions--operators)
   - [event loop](#event-loop)
   - [background](#background)
@@ -76,6 +82,11 @@
   - [micro task](#micro-task)
   - [Cookies](#cookies)
   - [HTML DOM](#html-dom)
+  - [Style Guide](#style-guide)
+  - [Refactoring](#refactoring)
+  - [Effective JavaScript](#effective-javascript)
+  - [Design Pattern](#design-pattern)
+  - [Architecutre](#architecutre)
 - [Advanced](#advanced)
   - [Destructuring assignment](#destructuring-assignment)
   - [apply vs call](#apply-vs-call)
@@ -91,11 +102,6 @@
   - [Shorthand property names](#shorthand-property-names)
   - [Duplicate Property Names](#duplicate-property-names)
   - [Decorator](#decorator)
-- [Style Guide](#style-guide)
-- [Refactoring](#refactoring)
-- [Effective JavaScript](#effective-javascript)
-- [Design Pattern](#design-pattern)
-- [Architecutre](#architecutre)
 
 -------------------------------------------------------------------------------
 
@@ -215,19 +221,49 @@ alert("code");
 * [JavaScript Visualized: the JavaScript Engine](https://dev.to/lydiahallie/javascript-visualized-the-javascript-engine-4cdf)
 
 
+## Install
+
+```bash
+# https://github.com/nvm-sh/nvm?tab=readme-ov-file#installing-and-updating
+source ~/.zshrc
+
+# 최신 LTS 버전 설치
+nvm install --lts
+
+# 설치된 모든 버전 확인
+nvm list
+
+# 현재 사용 중인 버전 확인
+nvm current
+
+# 특정 버전으로 전환
+nvm use 20.5.0
+# LTS 버전으로 전환
+nvm use --lts
+# 최신 버전으로 전환
+nvm use node
+
+# nvm 버전 확인
+nvm --version
+
+# Node.js 버전 확인
+node --version
+npm --version
+```
+
+## Hello World
+
+```js
+console.log("Hello World");
+```
+
 ## Build and Run
 
 ```js
 $ node a.js
 ```
 
-## Print Out
-
-```js
-console.log("Hello World");
-```
-
-## Keywords
+## Reserved Words
 
 > * [JavaScript Reserved Words](https://www.w3schools.com/js/js_reserved.asp)
 > * [Reserved keywords in ES6 with example usage](https://medium.com/@wlodarczyk_j/reserved-keywords-in-es6-with-example-usage-ea0036f63fab)
@@ -248,6 +284,59 @@ default    if          return       volatile
 delete     implements  short        while
 do         import      static       with
 double     in          super
+```
+
+## Data Types
+
+javascript 는 다음과 같은 타입들을 가지고 있다.
+
+* Number
+* String
+* Boolean
+* Symbol
+* Object
+  * Function
+  * Array
+  * Date
+  * RegExp
+* Null
+* Undefined
+
+```js
+// Boolean
+var a = true; 
+
+// Null
+var b = null;
+
+// Undefined
+// 값을 할당하지 않은 변수
+var c = undefined
+
+// Numbers
+var n = 123;
+var f = 120.50;
+
+// Strings
+var s = "hello world";
+
+// Symbol
+// Symbol 은 ECMAScript 6 에서 추가되었다. Symbol은 유일하고 변경 불가능한 (immutable) 기본값 (primitive value) 이다.
+const symbol1 = Symbol();
+const symbol2 = Symbol(42);
+const symbol3 = Symbol('foo');
+
+console.log(typeof symbol1);
+// expected output: "symbol"
+console.log(symbol3.toString());
+// expected output: "Symbol(foo)"
+console.log(Symbol('foo') === Symbol('foo'));
+// expected output: false
+
+// parseInt to make int
+console.log(3/4);  // 0.75
+console.log(parseInt(3/4)) // 0
+console.log(parseInt(100, 2)) // 4, number whose base is 2
 ```
 
 ## Min, Max Values
@@ -282,6 +371,27 @@ a & b;  // 0000 0101
 a | b;  // 0000 0111
 a ^ b;  // 0000 0010
 ~a;     // 1111 1010
+```
+
+## Random
+
+```js
+// get random float between 0 and 1
+console.log(Math.random())
+
+// get random float from min, max
+function getRandomArbitrary(min, max) {
+  return Math.random() * (max - min) + min;
+}
+console.log(getRandomArbitrary(1, 10))
+
+// get random int from min, max
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min; 
+}
+console.log(getRandomInt(1, 10))
 ```
 
 ## String
@@ -364,27 +474,6 @@ parseFloat("09");                  // 9
 parseFloat("0x35");              // 0
 ```
 
-## Random
-
-```js
-// get random float between 0 and 1
-console.log(Math.random())
-
-// get random float from min, max
-function getRandomArbitrary(min, max) {
-  return Math.random() * (max - min) + min;
-}
-console.log(getRandomArbitrary(1, 10))
-
-// get random int from min, max
-function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min; 
-}
-console.log(getRandomInt(1, 10))
-```
-
 ## Integer Division
 
 ```js
@@ -426,6 +515,1551 @@ console.log("Hello, {0}!".format("World"))
 parseInt("deadbeef", 16); // from base 16: 3735928559
 ```
 
+## Enumerations
+
+```js
+// 1. 기본 Object 기반 Enum
+const Status = {
+  PENDING: 'pending',
+  APPROVED: 'approved',
+  REJECTED: 'rejected'
+};
+
+// 2. Object.freeze()로 불변 Enum
+const Color = Object.freeze({
+  RED: 'red',
+  GREEN: 'green',
+  BLUE: 'blue'
+});
+
+// 3. 숫자 기반 Enum
+const Priority = Object.freeze({
+  LOW: 1,
+  MEDIUM: 2,
+  HIGH: 3,
+  URGENT: 4
+});
+
+// 4. Symbol 기반 Enum (고유성 보장)
+const Direction = Object.freeze({
+  UP: Symbol('up'),
+  DOWN: Symbol('down'),
+  LEFT: Symbol('left'),
+  RIGHT: Symbol('right')
+});
+
+// 5. Class 기반 Enum
+class UserRole {
+  static ADMIN = new UserRole('admin', '관리자');
+  static USER = new UserRole('user', '사용자');
+  static GUEST = new UserRole('guest', '게스트');
+
+  constructor(value, label) {
+    this.value = value;
+    this.label = label;
+  }
+
+  toString() {
+    return this.label;
+  }
+}
+
+// 6. Map 기반 Enum
+const HttpStatus = new Map([
+  ['OK', 200],
+  ['CREATED', 201],
+  ['BAD_REQUEST', 400],
+  ['NOT_FOUND', 404]
+]);
+
+// 7. 메서드가 있는 Enum
+const FileType = Object.freeze({
+  IMAGE: {
+    value: 'image',
+    extensions: ['.jpg', '.png', '.gif'],
+    maxSize: 5 * 1024 * 1024,
+    isValidExtension(ext) {
+      return this.extensions.includes(ext.toLowerCase());
+    }
+  },
+  DOCUMENT: {
+    value: 'document',
+    extensions: ['.pdf', '.doc', '.docx'],
+    maxSize: 10 * 1024 * 1024,
+    isValidExtension(ext) {
+      return this.extensions.includes(ext.toLowerCase());
+    }
+  }
+});
+
+// 사용 예시들
+console.log('=== 기본 사용 예시 ===');
+
+// Status enum 사용
+function processRequest(status) {
+  switch (status) {
+    case Status.PENDING:
+      return '요청 대기 중...';
+    case Status.APPROVED:
+      return '요청 승인됨';
+    case Status.REJECTED:
+      return '요청 거부됨';
+    default:
+      return '알 수 없는 상태';
+  }
+}
+
+console.log(processRequest(Status.PENDING)); // "요청 대기 중..."
+
+// Color enum 사용
+function getColorCode(color) {
+  const colorMap = {
+    [Color.RED]: '#FF0000',
+    [Color.GREEN]: '#00FF00',
+    [Color.BLUE]: '#0000FF'
+  };
+  return colorMap[color] || '#000000';
+}
+
+console.log(getColorCode(Color.RED)); // "#FF0000"
+
+// Priority enum 사용
+function setTaskPriority(priority) {
+  if (priority >= Priority.HIGH) {
+    return '높은 우선순위 작업';
+  } else if (priority >= Priority.MEDIUM) {
+    return '중간 우선순위 작업';
+  } else {
+    return '낮은 우선순위 작업';
+  }
+}
+
+console.log(setTaskPriority(Priority.HIGH)); // "높은 우선순위 작업"
+
+// Direction enum 사용
+function movePlayer(direction) {
+  switch (direction) {
+    case Direction.UP:
+      return { x: 0, y: -1 };
+    case Direction.DOWN:
+      return { x: 0, y: 1 };
+    case Direction.LEFT:
+      return { x: -1, y: 0 };
+    case Direction.RIGHT:
+      return { x: 1, y: 0 };
+    default:
+      throw new Error('잘못된 방향');
+  }
+}
+
+console.log(movePlayer(Direction.UP)); // { x: 0, y: -1 }
+
+// UserRole enum 사용
+function checkPermission(role) {
+  switch (role) {
+    case UserRole.ADMIN:
+      return '모든 권한';
+    case UserRole.USER:
+      return '일반 권한';
+    case UserRole.GUEST:
+      return '읽기 전용';
+    default:
+      return '권한 없음';
+  }
+}
+
+console.log(checkPermission(UserRole.ADMIN)); // "모든 권한"
+console.log(UserRole.ADMIN.toString()); // "관리자"
+
+// HttpStatus enum 사용
+function getStatusMessage(statusCode) {
+  for (const [name, code] of HttpStatus) {
+    if (code === statusCode) {
+      return `${name}: ${code}`;
+    }
+  }
+  return '알 수 없는 상태 코드';
+}
+
+console.log(getStatusMessage(200)); // "OK: 200"
+console.log(HttpStatus.get('NOT_FOUND')); // 404
+
+// FileType enum 사용
+function validateFile(file) {
+  const fileType = FileType.IMAGE;
+  if (!fileType.isValidExtension(file.extension)) {
+    throw new Error('지원하지 않는 파일 확장자');
+  }
+  return true;
+}
+
+const testFile = { extension: '.jpg' };
+console.log(validateFile(testFile)); // true
+
+// Enum 유틸리티 함수
+const EnumUtils = {
+  values(enumObj) {
+    return Object.values(enumObj);
+  },
+  keys(enumObj) {
+    return Object.keys(enumObj);
+  },
+  hasValue(enumObj, value) {
+    return Object.values(enumObj).includes(value);
+  }
+};
+
+console.log('=== Enum 유틸리티 ===');
+console.log(EnumUtils.values(Status)); // ['pending', 'approved', 'rejected']
+console.log(EnumUtils.keys(Status)); // ['PENDING', 'APPROVED', 'REJECTED']
+console.log(EnumUtils.hasValue(Status, 'pending')); // true
+```
+
+## Multidimensional Array
+
+* [How to create multidimensional array](https://stackoverflow.com/questions/7545641/how-to-create-multidimensional-array)
+
+----
+
+```js
+let a = Array.from(Array(2), x => Array(2).fill(0))
+console.log(a)
+// [ [ 0, 0 ], [ 0, 0 ] ]
+a[1][1] = 1
+console.log(a)
+// [ [ 0, 0 ], [ 0, 1 ] ]
+```
+
+
+## Control Flows
+
+```js
+//// if else if
+var book = "maths";
+if ( book == "history") {
+   document.write("<b>History Book</b>");
+} else if( book == "maths" ) {
+   document.write("<b>Maths Book</b>");
+} else if( book == "economics" ) {
+   document.write("<b>Economics Book</b>");
+} else {
+   document.write("<b>Unknown Book</b>");
+}
+//// switch
+var grade = 'A';
+document.write("Entering switch block<br />");
+switch (grade) {
+  case 'A': document.write("Good job<br />");
+  break;
+
+  case 'B': document.write("Pretty good<br />");
+  break;
+
+  case 'C': document.write("Passed<br />");
+  break;
+
+  case 'D': document.write("Not so good<br />");
+  break;
+
+  case 'F': document.write("Failed<br />");
+  break;
+
+  default:  document.write("Unknown grade<br />")
+}
+document.write("Exiting switch block");
+// Entering switch block
+// Good job
+// Exiting switch block         
+```
+
+## Loops
+
+```js
+//// while
+var count = 0;
+document.write("Starting Loop ");
+
+while (count < 10) {
+  document.write("Current Count : " + count + "<br />");
+  count++;
+}
+
+document.write("Loop stopped!");
+// Starting Loop
+// Current Count : 0
+// Current Count : 1
+// Current Count : 2
+// Current Count : 3
+// Current Count : 4
+// Current Count : 5
+// Current Count : 6
+// Current Count : 7
+// Current Count : 8
+// Current Count : 9
+// Loop stopped!
+
+//// do while
+var count = 0;
+
+document.write("Starting Loop" + "<br />");
+do {
+   document.write("Current Count : " + count + "<br />");
+   count++;
+}
+
+while (count < 5);
+document.write ("Loop stopped!");
+// Starting Loop
+// Current Count : 0 
+// Current Count : 1 
+// Current Count : 2 
+// Current Count : 3 
+// Current Count : 4
+// Loop Stopped!       
+
+//// for 
+var count;
+document.write("Starting Loop" + "<br />");
+
+for(count = 0; count < 10; count++){
+   document.write("Current Count : " + count );
+   document.write("<br />");
+}
+
+document.write("Loop stopped!");
+
+//// for in
+var aProperty;
+document.write("Navigator Object Properties<br /> ");        
+for (aProperty in navigator) {
+   document.write(aProperty);
+   document.write("<br />");
+}
+document.write ("Exiting from the loop!");
+```
+
+## Collections compared c++ container
+
+| c++                  | js           |
+|:---------------------|:-------------|
+| `if, else`           | `if, else`   |
+| `for, while`         | `for, while` |
+| `array`              | `Array`      |
+| `vector`             | `Array`      |
+| `deque`              | `Array`      |
+| `forward_list`       | `Array`      |
+| `list`               | `Array`      |
+| `stack`              | `Array`      |
+| `queue`              | `Array`      |
+| `priority_queue`     | `Array`      |
+| `set`                | `Set`        |
+| `multiset`           | `Array`      |
+| `map`                | `Object`     |
+| `multimap`           | `Array`      |
+| `unordered_set`      | `Set`        |
+| `unordered_multiset` | `Array`      |
+| `unordered_map`      | `Map`        |
+| `unordered_multimap` | `Array`      |
+
+## Collections
+
+* [JavaScript Collections](https://velog.io/@yesdoing/JavaScript-Collections)
+* Object, Array, Typed Array, Set, Map, WeakSet, WeakMap
+  
+----
+
+### Object
+
+```js
+a = new Object()
+a.foo = 1; a.bar = 2; a.baz = 3
+
+console.log(a)  
+// { foo: 1, bar: 2, baz: 3 }
+
+console.log(Object.entries(a));
+// [ [ 'foo', 1 ], [ 'bar', 2 ], [ 'baz', 3 ] ]
+
+console.log(Object.values(a));
+// [ 1, 2, 3 ]
+```
+
+### Array
+
+> * [Array @ MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
+> * [Array.from() @ MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/from)
+
+```js
+// Create an Array
+var fruits = ['사과', '바나나'];
+console.log(fruits.length); // 2
+// Create 10 undefined elements
+var a = new Array(10);
+console.log(typeof(a[0]))
+// Update 10 elements with 1
+a.fill(1);
+// Loop over an Array
+fruits.forEach(function(item, index, array) {
+  console.log(item, index);
+});
+// Add an item to the end of an Array
+let b = fruits.push('Orange');
+// Remove an item from the end of an Array
+let last = fruits.pop();
+// Remove an item from the beginning of an Array
+let first = fruits.shift();  
+// Add an item to the beginning of an Array
+let newLength = fruits.unshift('Strawberry');  
+// Find the index of an item in the Array
+fruits.push('Mango');
+let pos = fruits.indexOf('Strawberry');
+// Remove an item by index position
+let removedItem = fruits.splice(pos, 1);
+// Remove items from an index position
+let vegetables = ['Cabbage', 'Turnip', 'Radish', 'Carrot'];
+console.log(vegetables);
+let pos = 1, let n = 2;
+let removedItems = vegetables.splice(pos, n);
+console.log(vegetables);
+console.log(removeditems);
+// Copy an Array
+let shallowCopy = fruits.slice(0;)
+
+// Array.from
+console.log(Array.from('foo'));
+// expected output: Array ["f", "o", "o"]
+console.log(Array.from([1, 2, 3], x => x + x));
+// expected output: Array [2, 4, 6]
+let a = Array.from(Array(10), x => Array(10))
+a[3][3] = 1
+console.log(a)
+```
+
+### TypedArray
+
+```js
+Int8Array();
+Uint8Array();
+Uint8ClampedArray();
+Int16Array();
+Uint16Array();
+Int32Array();
+Uint32Array();
+Float32Array();
+Float64Array();
+```
+
+### Set
+
+```js
+var s = new Set();
+s.add(1);
+s.add("some text");
+s.add("foo");
+
+s.has(1); // true
+s.delete("foo");
+s.size; // 2
+
+for (let e of s) console.log(e);
+// 1
+// "some text"
+```
+
+### Map
+
+```js
+var m = new Map();
+m.set("dog", "woof");
+m.set("cat", "meow");
+m.set("elephant", "toot");
+m.size; // 3
+m.get("fox"); // undefined
+m.has("bird"); // false
+m.delete("dog");
+
+for (var [key, val] of m) {
+  console.log(key + " goes " + val);
+}
+// "cat goes meow"
+// "elephant goes toot"
+```
+
+### WeakSet
+
+```js
+const ws = new WeakSet(); 
+const age = {}; 
+ws.add(age);
+ws.has(age); // True
+ws.delete(age)
+```
+
+### WeakMap
+
+```js
+const wm = new WeakMap(); 
+const age = {}; 
+const job = {}; 
+
+wm.set(age, 11111); 
+wm.set(job, 'air'); 
+wm.has(job); // True
+wm.delete(job)  
+```
+
+## Operators
+
+```js
+//// Arithmetic Operators
+var a = 33;
+var b = 10;
+var c = "Test";
+
+console.log(`a + b = ${a + b}`); // 43
+console.log(`a - b = ${a + b}`); // 23
+console.log(`a / b = ${a + b}`); // 3.3
+console.log(`a % b = ${a + b}`); // 3
+console.log(`a + b + c = ${a + b + c}`); // 43Test
+console.log(`++a = ${++a}`); // 34
+console.log(`++a = ${--b}`); // 9
+
+//// comparison operator with value, type
+//
+// undefined == null => true
+// undefined === null => false
+
+//// Comparison Operators
+var a = 10;
+var b = 20;
+
+console.log(`(a == b) => ${a == b}`); // false
+console.log(`(a < b) => ${a < b}`); // true
+console.log(`(a > b) => ${a > b}`); // false
+console.log(`(a != b) => ${a != b}`); // true
+console.log(`(a >= b) => ${a >= b}`); // false
+console.log(`(a <= b) => ${a <>= b}`); // true
+
+//// Logical Operators
+var a = true;
+var b = false;
+
+console.log(`(a && b) => ${a && b}`); // false
+console.log(`(a || b) => ${a || b}`); // true
+console.log(`!(a && b) => ${!(a && b)}`); // true
+
+//// Bitwise Operators
+var a = 2; // Bit presentation 10
+var b = 3; // Bit presentation 11
+
+console.log(`(a & b) => ${a & b}`); // 2
+console.log(`(a | b) => ${a | b}`); // 3
+console.log(`(a ^ b) => ${a ^ b}`); // 1
+console.log(`(~b) => ${~b}`); // -4
+console.log(`(a << b) => ${a << b}`); // 16
+console.log(`(a >> b) => ${a >> b}`); // 0
+
+//// Assignment Operators
+var a = 33;
+var b = 10;
+
+console.log(`(a = b) => ${a = b}`); // 10
+console.log(`(a += b) => ${a += b}`); // 20
+console.log(`(a -= b) => ${a -= b}`); // 10
+console.log(`(a *= b) => ${a *= b}`); // 100
+console.log(`(a /= b) => ${a /= b}`); // 10
+console.log(`(a %= b) => ${a %= b}`); // 0
+
+//// Miscellaneous Operators
+var a = 10;
+var b = 20;
+
+console.log(`(a > b) ? 100 : 200) => ${(a > b) ? 100 : 200)}`); // 200
+console.log(`(a < b) ? 100 : 200) => ${(a < b) ? 100 : 200)}`); // 100
+
+//// typeof Operators
+var a = 10;
+var b = "String";
+
+console.log(`(typeof a => ${typeof a == "string" ? "String" : "Numeric")}`); // Numeric
+console.log(`(typeof b => ${typeof b == "string" ? "String" : "Numeric")}`); // String
+
+//// !!
+// !! 연산자는 JavaScript에서 불리언 형식으로 값을 변환하는 데 사용됩니다. 
+// 첫 번째 !는 값의 논리 부정을 수행합니다. 즉, truthy 값을 false로, falsy 값을 true로 변환합니다.
+// 두 번째 !는 다시 그 값을 부정하여 원래의 불리언 값으로 되돌립니다.
+const value = "hello";
+const booleanValue = !!value; // true
+```
+
+## Functions
+
+### curly braces
+
+코드가 실행된다.
+
+```js
+var a = function(a, b) {
+    return a + b;
+}
+```
+
+### parenthese
+
+함수를 정의한다.
+
+```js
+var a = function(a, b) {
+    return a + b;
+}
+```
+
+함수를 실행한다. execution context 가 만들어 진다.
+
+```js
+(function(a, b) {
+    return a + b;
+})(1, 2);
+```
+
+코드가 실행된다.
+
+```js
+var a;
+if (a = 5)
+    console.log(a);
+```
+
+### anonymous function
+
+```js
+var a = function(a, b) {
+    return a + b;
+}
+```
+
+### named function
+
+
+```js
+var a = function f(a, b) {
+    return a + b;
+}
+```
+
+### closure
+
+함수와 함수가 선언된 환경의 조합
+
+A closure is the combination of a function and the lexical environment within which that function was declared.
+
+```js
+var counter = function() {
+  var count = 0;
+  function changeCount(number) {
+    count += number;
+  }
+  return {
+    increase: function() {
+      changeCount(1);
+    },
+    decrease: function() {
+      changeCount(-1);
+    },
+    show: function() {
+      console.log(count);
+    }
+  }
+};
+var counterClosure = counter();
+counterClosure.increase();
+counterClosure.show(); // 1
+counterClosure.decrease();
+counterClosure.show(); // 0
+```
+
+### IIFE(Immediately-invoked function expression)
+
+```js
+(function(a, b) {
+    return a + b;
+})(1, 2);
+```
+
+### arrow function (ES6)
+
+```js
+var a = (a, b) => a + b;
+var b = (a, b) => {
+    var result = a + b;
+    return result;
+}
+```
+
+`=> ()` is same with `=> {return()}`. [Arrow functions and the use of parentheses () or {} or ({})](https://stackoverflow.com/questions/49425755/arrow-functions-and-the-use-of-parentheses-or-or)
+
+```js
+const FilterLink = ({ filter, children }) => ( // <-- implicit return 
+  <NavLink
+    to={filter === 'SHOW_ALL' ? '/' : `/${ filter }`}
+    activeStyle={ {
+      textDecoration: 'none',
+      color: 'black'
+    }}
+  >
+    {children}
+  </NavLink>
+)
+
+const FilterLink = ({ filter, children }) => {
+   return (
+      <NavLink
+        to={filter === 'SHOW_ALL' ? '/' : `/${ filter }`}
+        activeStyle={ {
+          textDecoration: 'none',
+          color: 'black'
+        }}
+      >
+        {children}
+      </NavLink>
+    )
+}
+```
+
+## Method
+
+`.` 뒤의 함수는 method 이다.
+
+```js
+var obj = {
+  a: 1,
+  b: function foo() {
+    console.log(this);
+  };
+  c: function() {
+    console.log(this.a);
+  }
+}
+obj.b(); // b is a method
+obj.c(); // c is a method
+```
+
+## Type Conversions
+
+```js
+// Number to String 변환
+const num = 123;
+const numStr1 = num.toString();        // "123"
+const numStr2 = String(num);           // "123"
+const numStr3 = num + "";              // "123" (문자열 연결)
+const numStr4 = `${num}`;              // "123" (템플릿 리터럴)
+
+// String to Number 변환
+const str = "456";
+const strNum1 = parseInt(str);         // 456
+const strNum2 = parseFloat(str);       // 456
+const strNum3 = Number(str);           // 456
+const strNum4 = +str;                  // 456 (단항 연산자)
+const strNum5 = str * 1;               // 456 (산술 연산)
+
+// Boolean 변환
+const bool1 = Boolean(1);              // true
+const bool2 = !!1;                     // true (이중 부정)
+const bool3 = Boolean("");             // false
+const bool4 = !!"";                    // false
+
+// Array 변환
+const arr1 = Array.from("hello");      // ["h", "e", "l", "l", "o"]
+const arr2 = [..."hello"];             // ["h", "e", "l", "l", "o"]
+const arr3 = "hello".split("");        // ["h", "e", "l", "l", "o"]
+
+// Object 변환
+const obj1 = Object.assign({}, arr1);  // {0: "h", 1: "e", 2: "l", 3: "l", 4: "o"}
+const obj2 = {...arr1};                // {0: "h", 1: "e", 2: "l", 3: "l", 4: "o"}
+
+// JSON 변환
+const jsonStr = JSON.stringify({name: "John", age: 30}); // '{"name":"John","age":30}'
+const jsonObj = JSON.parse(jsonStr);   // {name: "John", age: 30}
+
+// Date 변환
+const date1 = new Date();              // 현재 날짜/시간
+const date2 = new Date("2023-12-25");  // 특정 날짜
+const dateStr = date1.toString();      // "Mon Dec 25 2023 10:30:00 GMT+0900 (KST)"
+const timestamp = date1.getTime();     // 1703478600000 (밀리초)
+
+// BigInt 변환
+const bigInt1 = BigInt(123);           // 123n
+const bigInt2 = BigInt("123");         // 123n
+const bigIntStr = bigInt1.toString();  // "123"
+
+// Symbol 변환
+const sym1 = Symbol("description");    // Symbol(description)
+const symStr = sym1.toString();        // "Symbol(description)"
+
+// 예외 처리
+try {
+  const invalidNum = Number("abc");    // NaN
+  const invalidParse = parseInt("abc"); // NaN
+  const invalidJson = JSON.parse("invalid json"); // SyntaxError
+} catch (error) {
+  console.error("변환 오류:", error);
+}
+
+// 타입 체크
+console.log(typeof numStr1);           // "string"
+console.log(typeof strNum1);           // "number"
+console.log(Array.isArray(arr1));      // true
+console.log(obj1 instanceof Object);   // true
+console.log(date1 instanceof Date);    // true
+console.log(Number.isNaN(invalidNum)); // true
+console.log(Number.isFinite(strNum1)); // true
+```
+
+## Class
+
+Array 는 class 이다. Array 를 new 연산자를 이용하여 생성한 `[1, 2, 3]` 은 instance 이다. Array 는 다음과 같이 static methods, static properties, methods 로 구성된다.
+
+```js
+Array.from()                -- static methods
+     .isArray()             -- static methods
+     .of()                  -- static methods
+
+     .arguments             -- static properties
+     .length                -- static properties
+     .name                  -- static properties
+     
+     .prototype.concat()    -- prototype methods
+               .filter()    -- prototype methods
+               .forEach()   -- prototype methods
+               .map()       -- prototype methods
+               .push()      -- prototype methods
+               .pop()       -- prototype methods
+```
+
+다음과 같이 Person 을 정의해 보자.
+
+```js
+function Person(n, a) {
+  this._name = n;
+  this._age = a;
+}
+// static methods
+Person.getInformations = function(instance) {
+  return {
+    name: instance._name;
+    age: instance._age;
+  }
+}
+// prototype method
+Person.prototype.getName = function() {
+  return this._name;
+}
+// prototype method
+Person.prototype.getAge = function() {
+  return this._age;
+}
+```
+
+다음은 prototype chaining 을 활용하여 Person, Employee  의 상속을 구현한 것이다.
+
+```js
+function Person(n, a) {
+  this.name = n || 'noname';
+  this.age = a || 'unknown';
+}
+Person.prototype.getName = function() {
+  return this.name;
+}
+Person.prototype.getAge = function() {
+  return this.age;
+}
+function Employee(n, a, p) {
+  this.name = n || 'noname';
+  this.age = a || 'unknown';
+  this.position = p || 'unknown';
+}
+// 다음은 상속 구현의 핵심이다.
+Employee.prototype = new Person();
+Employee.prototype.constructor = Employee;
+Employee.prototype.getPosition = function() {
+  return this.position;
+}
+
+var foo = new Employee('Foo', 30, 'CEO');
+console.dir(foo);
+```
+
+그러나 `Person.prototype` 은 `name, age` prototype 을 갖고 있다. 이것을 `Bridge` constructor 를 만들어서 해결해보자.
+
+```js
+function Person(n, a) {
+  this.name = n || 'noname';
+  this.age = a || 'unknown';
+}
+Person.prototype.getName = function() {
+  return this.name;
+}
+Person.prototype.getAge = function() {
+  return this.age;
+}
+function Employee(n, a, p) {
+  this.name = n || 'noname';
+  this.age = a || 'unknown';
+  this.position = p || 'unknown';
+}
+function Bridge() {}
+Bridge.prototype = Person.prototype;
+Employee.prototype = new Bridge();
+Employee.prototype.constructor = Employee;
+Employee.prototype.getPosition = function() {
+  return this.position;
+}
+```
+
+위의 방법은 ES5 에서 자주 등장한다. 더글라스는 extendClass 함수를 사용하여 재활용할 것을 제안했다.
+
+```js
+var extendClass = (function() {
+  function Bridge(){}
+  return function(Parent, Child) {
+    Bridge.prototype = Parent.prototype;
+    Child.protype = new Bridge();
+    Child.prototype.constructor = Child;
+  }
+})();
+extendClass(Person, Employee);
+Employee.prototype.getPosition = function() {
+  return this.position;
+}
+```
+
+이번에는 superClass 를 이용하여 `name, age` 의 duplicates 를 해결해 보자.
+
+```js
+function Person(n, a) {
+  this.name = n || 'noname';
+  this.age = a || 'unknown';
+}
+Person.prototype.getName = function() {
+  return this.name;
+}
+Person.prototype.getAge = function() {
+  return this.age;
+}
+function Employee(n, a, p) {
+  this.superClass(n, a); // ***
+  this.position = p || 'unknown';
+}
+function Bridge() {}
+Bridge.prototype = Person.prototype;
+Employee.prototype = new Bridge();
+Employee.prototype.constructor = Employee;
+Employee.prototype.getPosition = function() {
+  return this.position;
+}
+var extendClass = (function() {
+  function Bridge(){}
+  return function(Parent, Child) {
+    Bridge.prototype = Parent.prototype;
+    Child.protype = new Bridge();
+    Child.prototype.constructor = Child;
+    Child.prototype.superClass = Parent; // ***
+  }
+})();
+extendClass(Person, Employee);
+Employee.prototype.getPosition = function() {
+  return this.position;
+}
+```
+
+그러나 ECMA6 에서는 extends 를 활용하여 더욱 간단히 상속을 구현할 수 있다.
+
+```js
+class Person {
+  constuctor(n, a) {
+    this.name = n || 'noname';
+    this.age = a || 'unknown';
+  }
+  getName() {
+    return this.name;
+  }
+  getAge() {
+    return this.age;
+  }
+}
+class Employee extends Person {
+  constructor(n, a, p) {
+    super(n, a);
+    this.position = p || 'noposition';
+  }
+  getPosition() {
+    return this.position;
+  }
+}
+```
+
+## Closure
+
+```js
+// 1. 기본 클로저 예제
+function outerFunction(x) {
+  // 외부 함수의 변수
+  const outerVariable = x;
+  
+  // 내부 함수 (클로저)
+  function innerFunction(y) {
+    return outerVariable + y; // 외부 변수에 접근
+  }
+  
+  return innerFunction;
+}
+
+// 클로저 사용
+const addFive = outerFunction(5);
+console.log(addFive(3)); // 8 (5 + 3)
+console.log(addFive(10)); // 15 (5 + 10)
+
+// 2. 카운터 클로저
+function createCounter() {
+  let count = 0;
+  
+  return {
+    increment: function() {
+      count++;
+      return count;
+    },
+    decrement: function() {
+      count--;
+      return count;
+    },
+    getCount: function() {
+      return count;
+    }
+  };
+}
+
+const counter1 = createCounter();
+const counter2 = createCounter();
+
+console.log(counter1.increment()); // 1
+console.log(counter1.increment()); // 2
+console.log(counter2.increment()); // 1 (독립적인 카운터)
+console.log(counter1.getCount()); // 2
+
+// 3. 메모이제이션 클로저
+function createMemoizedFunction(fn) {
+  const cache = {};
+  
+  return function(...args) {
+    const key = JSON.stringify(args);
+    
+    if (cache[key]) {
+      console.log('캐시에서 반환:', cache[key]);
+      return cache[key];
+    }
+    
+    const result = fn(...args);
+    cache[key] = result;
+    console.log('계산 후 캐시 저장:', result);
+    return result;
+  };
+}
+
+// 피보나치 함수
+function fibonacci(n) {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+const memoizedFibonacci = createMemoizedFunction(fibonacci);
+console.log(memoizedFibonacci(10)); // 계산 후 캐시 저장: 55
+console.log(memoizedFibonacci(10)); // 캐시에서 반환: 55
+
+// 4. 모듈 패턴 클로저
+const calculator = (function() {
+  let result = 0;
+  
+  return {
+    add: function(x) {
+      result += x;
+      return this;
+    },
+    subtract: function(x) {
+      result -= x;
+      return this;
+    },
+    multiply: function(x) {
+      result *= x;
+      return this;
+    },
+    divide: function(x) {
+      result /= x;
+      return this;
+    },
+    getResult: function() {
+      return result;
+    },
+    reset: function() {
+      result = 0;
+      return this;
+    }
+  };
+})();
+
+// 메서드 체이닝
+const finalResult = calculator
+  .add(10)
+  .multiply(2)
+  .subtract(5)
+  .getResult();
+
+console.log(finalResult); // 15
+
+// 5. 이벤트 핸들러 클로저
+function createButtonHandler(buttonName) {
+  return function() {
+    console.log(`${buttonName} 버튼이 클릭되었습니다!`);
+  };
+}
+
+const button1Handler = createButtonHandler("저장");
+const button2Handler = createButtonHandler("삭제");
+
+button1Handler(); // "저장 버튼이 클릭되었습니다!"
+button2Handler(); // "삭제 버튼이 클릭되었습니다!"
+
+// 6. 비동기 클로저
+function createAsyncCounter() {
+  let count = 0;
+  
+  return {
+    async increment() {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          count++;
+          resolve(count);
+        }, 1000);
+      });
+    },
+    getCount() {
+      return count;
+    }
+  };
+}
+
+const asyncCounter = createAsyncCounter();
+asyncCounter.increment().then(count => {
+  console.log('비동기 카운터:', count); // 1
+});
+```
+
+## Lambda
+
+```js
+// 1. 기본 화살표 함수
+const add = (a, b) => a + b;
+console.log(add(5, 3)); // 8
+
+// 2. 매개변수가 하나일 때 괄호 생략 가능
+const square = x => x * x;
+console.log(square(4)); // 16
+
+// 3. 매개변수가 없을 때
+const sayHello = () => "Hello, World!";
+console.log(sayHello()); // "Hello, World!"
+
+// 4. 객체 반환 (괄호 필요)
+const createPerson = (name, age) => ({ name, age });
+const person = createPerson("김철수", 25);
+console.log(person); // { name: "김철수", age: 25 }
+
+// 5. 배열 메서드와 함께 사용
+const numbers = [1, 2, 3, 4, 5];
+
+// map
+const doubled = numbers.map(n => n * 2);
+console.log(doubled); // [2, 4, 6, 8, 10]
+
+// filter
+const evens = numbers.filter(n => n % 2 === 0);
+console.log(evens); // [2, 4]
+
+// reduce
+const sum = numbers.reduce((acc, n) => acc + n, 0);
+console.log(sum); // 15
+
+// 6. this 바인딩 차이
+class Person {
+  constructor(name) {
+    this.name = name;
+  }
+  
+  // 일반 함수 (this 바인딩됨)
+  greetRegular() {
+    setTimeout(function() {
+      console.log(`안녕하세요, ${this.name}입니다.`); // undefined
+    }, 1000);
+  }
+  
+  // 화살표 함수 (this 바인딩 안됨, 상위 스코프의 this 사용)
+  greetArrow() {
+    setTimeout(() => {
+      console.log(`안녕하세요, ${this.name}입니다.`); // "김철수"
+    }, 1000);
+  }
+}
+
+const person = new Person("김철수");
+person.greetRegular(); // "안녕하세요, undefined입니다."
+person.greetArrow(); // "안녕하세요, 김철수입니다."
+
+// 7. 고차 함수 (Higher-Order Function)
+const createMultiplier = (factor) => (number) => number * factor;
+
+const double = createMultiplier(2);
+const triple = createMultiplier(3);
+
+console.log(double(5)); // 10
+console.log(triple(5)); // 15
+
+// 8. 배열의 고차 함수들
+const students = [
+  { name: "김철수", grade: 85 },
+  { name: "이영희", grade: 92 },
+  { name: "박민수", grade: 78 },
+  { name: "최지영", grade: 95 }
+];
+
+// 고득점자 필터링
+const highScorers = students.filter(student => student.grade >= 90);
+console.log(highScorers);
+
+// 이름만 추출
+const names = students.map(student => student.name);
+console.log(names); // ["김철수", "이영희", "박민수", "최지영"]
+
+// 평균 점수 계산
+const averageGrade = students.reduce((sum, student) => sum + student.grade, 0) / students.length;
+console.log(averageGrade); // 87.5
+
+// 9. 비동기 화살표 함수
+const fetchData = async (url) => {
+  try {
+    const response = await fetch(url);
+    return await response.json();
+  } catch (error) {
+    console.error('데이터 가져오기 실패:', error);
+  }
+};
+
+// 10. 이벤트 핸들러
+const button = document.createElement('button');
+button.textContent = '클릭하세요';
+
+// 화살표 함수로 이벤트 핸들러
+button.addEventListener('click', () => {
+  console.log('버튼이 클릭되었습니다!');
+});
+
+// 11. 함수형 프로그래밍 패턴
+const pipe = (...fns) => (value) => fns.reduce((acc, fn) => fn(acc), value);
+
+const addOne = x => x + 1;
+const multiplyByTwo = x => x * 2;
+const subtractThree = x => x - 3;
+
+const transform = pipe(addOne, multiplyByTwo, subtractThree);
+console.log(transform(5)); // 9 ((5 + 1) * 2 - 3)
+
+// 12. 조건부 화살표 함수
+const getGreeting = (time) => 
+  time < 12 ? "좋은 아침입니다!" : 
+  time < 18 ? "좋은 오후입니다!" : 
+  "좋은 저녁입니다!";
+
+console.log(getGreeting(9)); // "좋은 아침입니다!"
+console.log(getGreeting(15)); // "좋은 오후입니다!"
+console.log(getGreeting(20)); // "좋은 저녁입니다!"
+```
+
+## Exception
+
+> [throw | mdn](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Statements/throw)
+
+```js
+function getRectArea(width, height) {
+  if (isNaN(width) || isNaN(height)) {
+    throw new Error('Parameter is not a number!');
+  }
+}
+
+try {
+  getRectArea(3, 'A');
+} catch (e) {
+  console.error(e);
+  // Expected output: Error: Parameter is not a number!
+}
+```
+
+## Concurrency
+
+```js
+// 1. 기본 비동기 처리 (Promise)
+console.log("시작");
+
+// Promise를 사용한 비동기 작업
+const fetchUserData = () => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve({ name: "김철수", age: 25 });
+    }, 2000);
+  });
+};
+
+fetchUserData().then(user => {
+  console.log("사용자 데이터:", user);
+});
+
+console.log("끝"); // "시작" -> "끝" -> "사용자 데이터" 순서로 출력
+
+// 2. async/await 사용
+async function processData() {
+  console.log("데이터 처리 시작");
+  
+  try {
+    const user = await fetchUserData();
+    console.log("받은 데이터:", user);
+  } catch (error) {
+    console.error("오류 발생:", error);
+  }
+  
+  console.log("데이터 처리 완료");
+}
+
+processData();
+
+// 3. 동시에 여러 작업 실행 (Promise.all)
+const fetchData1 = () => new Promise(resolve => 
+  setTimeout(() => resolve("데이터 1"), 1000)
+);
+
+const fetchData2 = () => new Promise(resolve => 
+  setTimeout(() => resolve("데이터 2"), 1500)
+);
+
+const fetchData3 = () => new Promise(resolve => 
+  setTimeout(() => resolve("데이터 3"), 800)
+);
+
+// 모든 작업이 완료될 때까지 기다림
+Promise.all([fetchData1(), fetchData2(), fetchData3()])
+  .then(results => {
+    console.log("모든 데이터:", results); // ["데이터 1", "데이터 2", "데이터 3"]
+  });
+
+// 4. 가장 빠른 작업만 기다림 (Promise.race)
+Promise.race([fetchData1(), fetchData2(), fetchData3()])
+  .then(result => {
+    console.log("가장 빠른 결과:", result); // "데이터 3" (800ms)
+  });
+
+// 5. 타이머와 함께 동시성 시뮬레이션
+function simulateWork(name, duration) {
+  return new Promise(resolve => {
+    console.log(`${name} 작업 시작`);
+    setTimeout(() => {
+      console.log(`${name} 작업 완료 (${duration}ms)`);
+      resolve(`${name} 결과`);
+    }, duration);
+  });
+}
+
+// 순차 실행 (하나씩)
+async function sequentialExecution() {
+  console.log("=== 순차 실행 ===");
+  const start = Date.now();
+  
+  await simulateWork("작업1", 1000);
+  await simulateWork("작업2", 1000);
+  await simulateWork("작업3", 1000);
+  
+  const end = Date.now();
+  console.log(`순차 실행 시간: ${end - start}ms`); // 약 3000ms
+}
+
+// 동시 실행 (병렬)
+async function parallelExecution() {
+  console.log("=== 동시 실행 ===");
+  const start = Date.now();
+  
+  await Promise.all([
+    simulateWork("작업1", 1000),
+    simulateWork("작업2", 1000),
+    simulateWork("작업3", 1000)
+  ]);
+  
+  const end = Date.now();
+  console.log(`동시 실행 시간: ${end - start}ms`); // 약 1000ms
+}
+
+// 실행
+sequentialExecution();
+setTimeout(() => parallelExecution(), 4000);
+
+// 6. Web Workers 시뮬레이션 (메인 스레드 블로킹 방지)
+function heavyCalculation(n) {
+  let result = 0;
+  for (let i = 0; i < n; i++) {
+    result += Math.sqrt(i);
+  }
+  return result;
+}
+
+// 동기적 실행 (UI 블로킹)
+function syncCalculation() {
+  console.log("동기 계산 시작");
+  const result = heavyCalculation(1000000);
+  console.log("동기 계산 완료:", result);
+}
+
+// 비동기적 실행 (UI 블로킹 없음)
+function asyncCalculation() {
+  console.log("비동기 계산 시작");
+  
+  return new Promise(resolve => {
+    setTimeout(() => {
+      const result = heavyCalculation(1000000);
+      console.log("비동기 계산 완료:", result);
+      resolve(result);
+    }, 0);
+  });
+}
+
+// 7. 이벤트 루프 시뮬레이션
+console.log("=== 이벤트 루프 시뮬레이션 ===");
+
+console.log("1. 동기 코드");
+
+setTimeout(() => console.log("2. setTimeout (0ms)"), 0);
+setTimeout(() => console.log("3. setTimeout (100ms)"), 100);
+
+Promise.resolve().then(() => console.log("4. Promise.then"));
+
+console.log("5. 동기 코드 끝");
+
+// 출력 순서: 1 -> 5 -> 4 -> 2 -> 3
+
+// 8. 동시성 제어 (Semaphore 패턴)
+class Semaphore {
+  constructor(maxConcurrent) {
+    this.maxConcurrent = maxConcurrent;
+    this.current = 0;
+    this.queue = [];
+  }
+  
+  async acquire() {
+    return new Promise(resolve => {
+      if (this.current < this.maxConcurrent) {
+        this.current++;
+        resolve();
+      } else {
+        this.queue.push(resolve);
+      }
+    });
+  }
+  
+  release() {
+    this.current--;
+    if (this.queue.length > 0) {
+      const next = this.queue.shift();
+      this.current++;
+      next();
+    }
+  }
+}
+
+// 동시 실행 제한 (최대 2개)
+const semaphore = new Semaphore(2);
+
+async function limitedWork(name, duration) {
+  await semaphore.acquire();
+  console.log(`${name} 시작 (현재 실행 중: ${semaphore.current})`);
+  
+  try {
+    await new Promise(resolve => setTimeout(resolve, duration));
+    console.log(`${name} 완료`);
+  } finally {
+    semaphore.release();
+  }
+}
+
+// 5개 작업을 동시에 실행하지만 최대 2개만 동시 실행
+Promise.all([
+  limitedWork("작업1", 1000),
+  limitedWork("작업2", 1000),
+  limitedWork("작업3", 1000),
+  limitedWork("작업4", 1000),
+  limitedWork("작업5", 1000)
+]);
+
+// 9. 실제 API 호출 시뮬레이션
+const apiCall = (endpoint, delay) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      if (Math.random() > 0.1) { // 90% 성공률
+        resolve({ endpoint, data: `데이터 from ${endpoint}` });
+      } else {
+        reject(new Error(`${endpoint} 요청 실패`));
+      }
+    }, delay);
+  });
+};
+
+// 여러 API 동시 호출
+async function fetchMultipleAPIs() {
+  const apis = [
+    apiCall("/users", 1000),
+    apiCall("/posts", 1200),
+    apiCall("/comments", 800)
+  ];
+  
+  try {
+    const results = await Promise.allSettled(apis);
+    results.forEach((result, index) => {
+      if (result.status === 'fulfilled') {
+        console.log(`API ${index + 1} 성공:`, result.value);
+      } else {
+        console.log(`API ${index + 1} 실패:`, result.reason.message);
+      }
+    });
+  } catch (error) {
+    console.error("전체 API 호출 실패:", error);
+  }
+}
+
+fetchMultipleAPIs();
+
+// 10. 스트림 처리 시뮬레이션
+async function* dataStream() {
+  for (let i = 1; i <= 5; i++) {
+    await new Promise(resolve => setTimeout(resolve, 500));
+    yield `데이터 청크 ${i}`;
+  }
+}
+
+async function processStream() {
+  console.log("스트림 처리 시작");
+  
+  for await (const chunk of dataStream()) {
+    console.log("처리 중:", chunk);
+  }
+  
+  console.log("스트림 처리 완료");
+}
+
+processStream();
+```
+
 ## Inspecting Types
 
 > [typeof | mdn](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof)
@@ -464,59 +2098,6 @@ null”](https://2ality.com/2013/10/typeof-null.html), It is a historical bug.
 ```console
 > node
 > console. <TAB>
-```
-
-## Data types
-
-javascript 는 다음과 같은 타입들을 가지고 있다.
-
-* Number
-* String
-* Boolean
-* Symbol
-* Object
-  * Function
-  * Array
-  * Date
-  * RegExp
-* Null
-* Undefined
-
-```js
-// Boolean
-var a = true; 
-
-// Null
-var b = null;
-
-// Undefined
-// 값을 할당하지 않은 변수
-var c = undefined
-
-// Numbers
-var n = 123;
-var f = 120.50;
-
-// Strings
-var s = "hello world";
-
-// Symbol
-// Symbol 은 ECMAScript 6 에서 추가되었다. Symbol은 유일하고 변경 불가능한 (immutable) 기본값 (primitive value) 이다.
-const symbol1 = Symbol();
-const symbol2 = Symbol(42);
-const symbol3 = Symbol('foo');
-
-console.log(typeof symbol1);
-// expected output: "symbol"
-console.log(symbol3.toString());
-// expected output: "Symbol(foo)"
-console.log(Symbol('foo') === Symbol('foo'));
-// expected output: false
-
-// parseInt to make int
-console.log(3/4);  // 0.75
-console.log(parseInt(3/4)) // 0
-console.log(parseInt(100, 2)) // 4, number whose base is 2
 ```
 
 ## Truthy Falthy
@@ -696,192 +2277,6 @@ global scope.
 
 * arguments
 
-## Collections compared c++ container
-
-| c++                  | js           |
-|:---------------------|:-------------|
-| `if, else`           | `if, else`   |
-| `for, while`         | `for, while` |
-| `array`              | ``           |
-| `vector`             | `Array`      |
-| `deque`              | ``           |
-| `forward_list`       | ``           |
-| `list`               | ``           |
-| `stack`              | ``           |
-| `queue`              | ``           |
-| `priority_queue`     | ``           |
-| `set`                | ``           |
-| `multiset`           | ``           |
-| `map`                | ``           |
-| `multimap`           | ``           |
-| `unordered_set`      | `Set`        |
-| `unordered_multiset` | ``           |
-| `unordered_map`      | `Map`        |
-| `unordered_multimap` | ``           |
-
-
-## Collections
-
-* [JavaScript Collections](https://velog.io/@yesdoing/JavaScript-Collections)
-* Object, Array, Typed Array, Set, Map, WeakSet, WeakMap
-  
-----
-
-### Object
-
-```js
-a = new Object()
-a.foo = 1; a.bar = 2; a.baz = 3
-
-console.log(a)  
-// { foo: 1, bar: 2, baz: 3 }
-
-console.log(Object.entries(a));
-// [ [ 'foo', 1 ], [ 'bar', 2 ], [ 'baz', 3 ] ]
-
-console.log(Object.values(a));
-// [ 1, 2, 3 ]
-```
-
-### Array
-
-> * [Array @ MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array)
-> * [Array.from() @ MDN](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Array/from)
-
-```js
-// Create an Array
-var fruits = ['사과', '바나나'];
-console.log(fruits.length); // 2
-// Create 10 undefined elements
-var a = new Array(10);
-console.log(typeof(a[0]))
-// Update 10 elements with 1
-a.fill(1);
-// Loop over an Array
-fruits.forEach(function(item, index, array) {
-  console.log(item, index);
-});
-// Add an item to the end of an Array
-let b = fruits.push('Orange');
-// Remove an item from the end of an Array
-let last = fruits.pop();
-// Remove an item from the beginning of an Array
-let first = fruits.shift();  
-// Add an item to the beginning of an Array
-let newLength = fruits.unshift('Strawberry');  
-// Find the index of an item in the Array
-fruits.push('Mango');
-let pos = fruits.indexOf('Strawberry');
-// Remove an item by index position
-let removedItem = fruits.splice(pos, 1);
-// Remove items from an index position
-let vegetables = ['Cabbage', 'Turnip', 'Radish', 'Carrot'];
-console.log(vegetables);
-let pos = 1, let n = 2;
-let removedItems = vegetables.splice(pos, n);
-console.log(vegetables);
-console.log(removeditems);
-// Copy an Array
-let shallowCopy = fruits.slice(0;)
-
-// Array.from
-console.log(Array.from('foo'));
-// expected output: Array ["f", "o", "o"]
-console.log(Array.from([1, 2, 3], x => x + x));
-// expected output: Array [2, 4, 6]
-let a = Array.from(Array(10), x => Array(10))
-a[3][3] = 1
-console.log(a)
-```
-
-### TypedArray
-
-```js
-Int8Array();
-Uint8Array();
-Uint8ClampedArray();
-Int16Array();
-Uint16Array();
-Int32Array();
-Uint32Array();
-Float32Array();
-Float64Array();
-```
-
-### Set
-
-```js
-var s = new Set();
-s.add(1);
-s.add("some text");
-s.add("foo");
-
-s.has(1); // true
-s.delete("foo");
-s.size; // 2
-
-for (let e of s) console.log(e);
-// 1
-// "some text"
-```
-
-### Map
-
-```js
-var m = new Map();
-m.set("dog", "woof");
-m.set("cat", "meow");
-m.set("elephant", "toot");
-m.size; // 3
-m.get("fox"); // undefined
-m.has("bird"); // false
-m.delete("dog");
-
-for (var [key, val] of m) {
-  console.log(key + " goes " + val);
-}
-// "cat goes meow"
-// "elephant goes toot"
-```
-
-### WeakSet
-
-```js
-const ws = new WeakSet(); 
-const age = {}; 
-ws.add(age);
-ws.has(age); // True
-ws.delete(age)
-```
-
-### WeakMap
-
-```js
-const wm = new WeakMap(); 
-const age = {}; 
-const job = {}; 
-
-wm.set(age, 11111); 
-wm.set(job, 'air'); 
-wm.has(job); // True
-wm.delete(job)  
-```
-
-## Multidimensional Array
-
-* [How to create multidimensional array](https://stackoverflow.com/questions/7545641/how-to-create-multidimensional-array)
-
-----
-
-```js
-let a = Array.from(Array(2), x => Array(2).fill(0))
-console.log(a)
-// [ [ 0, 0 ], [ 0, 0 ] ]
-a[1][1] = 1
-console.log(a)
-// [ [ 0, 0 ], [ 0, 1 ] ]
-```
-
 ## template literals (template strings in ECMA 2015)
 
 > * [Template literals](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Template_literals)
@@ -996,369 +2391,7 @@ for (var i = 0; i < 5; i++) {
 // i 는 여기에서 접근가능.
 ```
 
-## Operators
-
-```js
-//// Arithmetic Operators
-var a = 33;
-var b = 10;
-var c = "Test";
-
-console.log(`a + b = ${a + b}`); // 43
-console.log(`a - b = ${a + b}`); // 23
-console.log(`a / b = ${a + b}`); // 3.3
-console.log(`a % b = ${a + b}`); // 3
-console.log(`a + b + c = ${a + b + c}`); // 43Test
-console.log(`++a = ${++a}`); // 34
-console.log(`++a = ${--b}`); // 9
-
-//// comparison operator with value, type
-//
-// undefined == null => true
-// undefined === null => false
-
-//// Comparison Operators
-var a = 10;
-var b = 20;
-
-console.log(`(a == b) => ${a == b}`); // false
-console.log(`(a < b) => ${a < b}`); // true
-console.log(`(a > b) => ${a > b}`); // false
-console.log(`(a != b) => ${a != b}`); // true
-console.log(`(a >= b) => ${a >= b}`); // false
-console.log(`(a <= b) => ${a <>= b}`); // true
-
-//// Logical Operators
-var a = true;
-var b = false;
-
-console.log(`(a && b) => ${a && b}`); // false
-console.log(`(a || b) => ${a || b}`); // true
-console.log(`!(a && b) => ${!(a && b)}`); // true
-
-//// Bitwise Operators
-var a = 2; // Bit presentation 10
-var b = 3; // Bit presentation 11
-
-console.log(`(a & b) => ${a & b}`); // 2
-console.log(`(a | b) => ${a | b}`); // 3
-console.log(`(a ^ b) => ${a ^ b}`); // 1
-console.log(`(~b) => ${~b}`); // -4
-console.log(`(a << b) => ${a << b}`); // 16
-console.log(`(a >> b) => ${a >> b}`); // 0
-
-//// Assignment Operators
-var a = 33;
-var b = 10;
-
-console.log(`(a = b) => ${a = b}`); // 10
-console.log(`(a += b) => ${a += b}`); // 20
-console.log(`(a -= b) => ${a -= b}`); // 10
-console.log(`(a *= b) => ${a *= b}`); // 100
-console.log(`(a /= b) => ${a /= b}`); // 10
-console.log(`(a %= b) => ${a %= b}`); // 0
-
-//// Miscellaneous Operators
-var a = 10;
-var b = 20;
-
-console.log(`(a > b) ? 100 : 200) => ${(a > b) ? 100 : 200)}`); // 200
-console.log(`(a < b) ? 100 : 200) => ${(a < b) ? 100 : 200)}`); // 100
-
-//// typeof Operators
-var a = 10;
-var b = "String";
-
-console.log(`(typeof a => ${typeof a == "string" ? "String" : "Numeric")}`); // Numeric
-console.log(`(typeof b => ${typeof b == "string" ? "String" : "Numeric")}`); // String
-
-//// !!
-// !! 연산자는 JavaScript에서 불리언 형식으로 값을 변환하는 데 사용됩니다. 
-// 첫 번째 !는 값의 논리 부정을 수행합니다. 즉, truthy 값을 false로, falsy 값을 true로 변환합니다.
-// 두 번째 !는 다시 그 값을 부정하여 원래의 불리언 값으로 되돌립니다.
-const value = "hello";
-const booleanValue = !!value; // true
-```
-
-## Control Flow
-
-```js
-//// if else if
-var book = "maths";
-if( book == "history" ) {
-   document.write("<b>History Book</b>");
-} else if( book == "maths" ) {
-   document.write("<b>Maths Book</b>");
-} else if( book == "economics" ) {
-   document.write("<b>Economics Book</b>");
-} else {
-   document.write("<b>Unknown Book</b>");
-}
-//// switch
-var grade = 'A';
-document.write("Entering switch block<br />");
-switch (grade) {
-  case 'A': document.write("Good job<br />");
-  break;
-
-  case 'B': document.write("Pretty good<br />");
-  break;
-
-  case 'C': document.write("Passed<br />");
-  break;
-
-  case 'D': document.write("Not so good<br />");
-  break;
-
-  case 'F': document.write("Failed<br />");
-  break;
-
-  default:  document.write("Unknown grade<br />")
-}
-document.write("Exiting switch block");
-// Entering switch block
-// Good job
-// Exiting switch block         
-```
-
-## Loops
-
-```js
-//// while
-var count = 0;
-document.write("Starting Loop ");
-
-while (count < 10) {
-  document.write("Current Count : " + count + "<br />");
-  count++;
-}
-
-document.write("Loop stopped!");
-// Starting Loop
-// Current Count : 0
-// Current Count : 1
-// Current Count : 2
-// Current Count : 3
-// Current Count : 4
-// Current Count : 5
-// Current Count : 6
-// Current Count : 7
-// Current Count : 8
-// Current Count : 9
-// Loop stopped!
-
-//// do while
-var count = 0;
-
-document.write("Starting Loop" + "<br />");
-do {
-   document.write("Current Count : " + count + "<br />");
-   count++;
-}
-
-while (count < 5);
-document.write ("Loop stopped!");
-// Starting Loop
-// Current Count : 0 
-// Current Count : 1 
-// Current Count : 2 
-// Current Count : 3 
-// Current Count : 4
-// Loop Stopped!       
-
-//// for 
-var count;
-document.write("Starting Loop" + "<br />");
-
-for(count = 0; count < 10; count++){
-   document.write("Current Count : " + count );
-   document.write("<br />");
-}
-
-document.write("Loop stopped!");
-
-//// for in
-var aProperty;
-document.write("Navigator Object Properties<br /> ");        
-for (aProperty in navigator) {
-   document.write(aProperty);
-   document.write("<br />");
-}
-document.write ("Exiting from the loop!");
-```
-
-## Functions
-
-### curly braces
-
-코드가 실행된다.
-
-```js
-var a = function(a, b) {
-    return a + b;
-}
-```
-
-### parenthese
-
-함수를 정의한다.
-
-```js
-var a = function(a, b) {
-    return a + b;
-}
-```
-
-함수를 실행한다. execution context 가 만들어 진다.
-
-```js
-(function(a, b) {
-    return a + b;
-})(1, 2);
-```
-
-코드가 실행된다.
-
-```js
-var a;
-if (a = 5)
-    console.log(a);
-```
-
-### anonymous function
-
-```js
-var a = function(a, b) {
-    return a + b;
-}
-```
-
-### named function
-
-
-```js
-var a = function f(a, b) {
-    return a + b;
-}
-```
-
-### closure
-
-함수와 함수가 선언된 환경의 조합
-
-A closure is the combination of a function and the lexical environment within which that function was declared.
-
-```js
-var counter = function() {
-  var count = 0;
-  function changeCount(number) {
-    count += number;
-  }
-  return {
-    increase: function() {
-      changeCount(1);
-    },
-    decrease: function() {
-      changeCount(-1);
-    },
-    show: function() {
-      console.log(count);
-    }
-  }
-};
-var counterClosure = counter();
-counterClosure.increase();
-counterClosure.show(); // 1
-counterClosure.decrease();
-counterClosure.show(); // 0
-```
-
-### IIFE(Immediately-invoked function expression)
-
-```js
-(function(a, b) {
-    return a + b;
-})(1, 2);
-```
-
-### arrow function (ES6)
-
-```js
-var a = (a, b) => a + b;
-var b = (a, b) => {
-    var result = a + b;
-    return result;
-}
-```
-
-`=> ()` is same with `=> {return()}`. [Arrow functions and the use of parentheses () or {} or ({})](https://stackoverflow.com/questions/49425755/arrow-functions-and-the-use-of-parentheses-or-or)
-
-```js
-const FilterLink = ({ filter, children }) => ( // <-- implicit return 
-  <NavLink
-    to={filter === 'SHOW_ALL' ? '/' : `/${ filter }`}
-    activeStyle={ {
-      textDecoration: 'none',
-      color: 'black'
-    }}
-  >
-    {children}
-  </NavLink>
-)
-
-const FilterLink = ({ filter, children }) => {
-   return (
-      <NavLink
-        to={filter === 'SHOW_ALL' ? '/' : `/${ filter }`}
-        activeStyle={ {
-          textDecoration: 'none',
-          color: 'black'
-        }}
-      >
-        {children}
-      </NavLink>
-    )
-}
-```
-
-## Method
-
-`.` 뒤의 함수는 method 이다.
-
-```js
-var obj = {
-  a: 1,
-  b: function foo() {
-    console.log(this);
-  };
-  c: function() {
-    console.log(this.a);
-  }
-}
-obj.b(); // b is a method
-obj.c(); // c is a method
-```
-
-## Exception
-
-> [throw | mdn](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Statements/throw)
-
-```js
-function getRectArea(width, height) {
-  if (isNaN(width) || isNaN(height)) {
-    throw new Error('Parameter is not a number!');
-  }
-}
-
-try {
-  getRectArea(3, 'A');
-} catch (e) {
-  console.error(e);
-  // Expected output: Error: Parameter is not a number!
-}
-```
-
-## scope
+## Scope
 
 변수의 유효범위를 말한다. 함수가 정의 되면 scope 가 만들어진다. ES6 부터는 block 역시 scope 를 생성한다.
 
@@ -1387,7 +2420,6 @@ function wrapper() {
 }
 wrapper(); // zero
 ```
-
 
 ## Hoisting
 
@@ -1646,191 +2678,6 @@ console.log(arr.__proto__.__proto__.toString.call(arr));
 // [object Array]
 ```
 
-## Class
-
-Array 는 class 이다. Array 를 new 연산자를 이용하여 생성한 `[1, 2, 3]` 은
-instance 이다. Array 는 다음과 같이 static methods, static properties, methods
-로 구성된다.
-
-```
-Array.from()                -- static methods
-     .isArray()             -- static methods
-     .of()                  -- static methods
-
-     .arguments             -- static properties
-     .length                -- static properties
-     .name                  -- static properties
-     
-     .prototype.concat()    -- prototype methods
-               .filter()    -- prototype methods
-               .forEach()   -- prototype methods
-               .map()       -- prototype methods
-               .push()      -- prototype methods
-               .pop()       -- prototype methods
-```
-
-다음과 같이 Person 을 정의해 보자.
-
-```js
-function Person(n, a) {
-  this._name = n;
-  this._age = a;
-}
-// static methods
-Person.getInformations = function(instance) {
-  return {
-    name: instance._name;
-    age: instance._age;
-  }
-}
-// prototype method
-Person.prototype.getName = function() {
-  return this._name;
-}
-// prototype method
-Person.prototype.getAge = function() {
-  return this._age;
-}
-```
-
-다음은 prototype chaining 을 활용하여 Person, Employee  의 상속을 구현한 것이다.
-
-```js
-function Person(n, a) {
-  this.name = n || 'noname';
-  this.age = a || 'unknown';
-}
-Person.prototype.getName = function() {
-  return this.name;
-}
-Person.prototype.getAge = function() {
-  return this.age;
-}
-function Employee(n, a, p) {
-  this.name = n || 'noname';
-  this.age = a || 'unknown';
-  this.position = p || 'unknown';
-}
-// 다음은 상속 구현의 핵심이다.
-Employee.prototype = new Person();
-Employee.prototype.constructor = Employee;
-Employee.prototype.getPosition = function() {
-  return this.position;
-}
-
-var foo = new Employee('Foo', 30, 'CEO');
-console.dir(foo);
-```
-
-그러나 `Person.prototype` 은 `name, age` prototype 을 갖고 있다. 이것을 `Bridge` constructor 를 만들어서 해결해보자.
-
-```js
-function Person(n, a) {
-  this.name = n || 'noname';
-  this.age = a || 'unknown';
-}
-Person.prototype.getName = function() {
-  return this.name;
-}
-Person.prototype.getAge = function() {
-  return this.age;
-}
-function Employee(n, a, p) {
-  this.name = n || 'noname';
-  this.age = a || 'unknown';
-  this.position = p || 'unknown';
-}
-function Bridge() {}
-Bridge.prototype = Person.prototype;
-Employee.prototype = new Bridge();
-Employee.prototype.constructor = Employee;
-Employee.prototype.getPosition = function() {
-  return this.position;
-}
-```
-
-위의 방법은 ES5 에서 자주 등장한다. 더글라스는 extendClass 함수를 사용하여 재활용할 것을 제안했다.
-
-```js
-var extendClass = (function() {
-  function Bridge(){}
-  return function(Parent, Child) {
-    Bridge.prototype = Parent.prototype;
-    Child.protype = new Bridge();
-    Child.prototype.constructor = Child;
-  }
-})();
-extendClass(Person, Employee);
-Employee.prototype.getPosition = function() {
-  return this.position;
-}
-```
-
-이번에는 superClass 를 이용하여 `name, age` 의 duplicates 를 해결해 보자.
-
-```js
-function Person(n, a) {
-  this.name = n || 'noname';
-  this.age = a || 'unknown';
-}
-Person.prototype.getName = function() {
-  return this.name;
-}
-Person.prototype.getAge = function() {
-  return this.age;
-}
-function Employee(n, a, p) {
-  this.superClass(n, a); // ***
-  this.position = p || 'unknown';
-}
-function Bridge() {}
-Bridge.prototype = Person.prototype;
-Employee.prototype = new Bridge();
-Employee.prototype.constructor = Employee;
-Employee.prototype.getPosition = function() {
-  return this.position;
-}
-var extendClass = (function() {
-  function Bridge(){}
-  return function(Parent, Child) {
-    Bridge.prototype = Parent.prototype;
-    Child.protype = new Bridge();
-    Child.prototype.constructor = Child;
-    Child.prototype.superClass = Parent; // ***
-  }
-})();
-extendClass(Person, Employee);
-Employee.prototype.getPosition = function() {
-  return this.position;
-}
-```
-
-그러나 ECMA6 에서는 extends 를 활용하여 더욱 간단히 상속을 구현할 수 있다.
-
-```js
-class Person {
-  constuctor(n, a) {
-    this.name = n || 'noname';
-    this.age = a || 'unknown';
-  }
-  getName() {
-    return this.name;
-  }
-  getAge() {
-    return this.age;
-  }
-}
-class Employee extends Person {
-  constructor(n, a, p) {
-    super(n, a);
-    this.position = p || 'noposition';
-  }
-  getPosition() {
-    return this.position;
-  }
-}
-```
-
 ## Expressions & Operators
 
 ```js
@@ -2048,6 +2895,28 @@ document.cookie = "key1 = value1;key2 = value2;expires = date";
 다음은 DOM 의 구조를 표현한 그림이다.
 
 ![](https://www.tutorialspoint.com/javascript/images/html-dom.jpg)
+
+## Style Guide
+
+* [JavaScript Standard Style](js_standard_style_guide.md)
+* [JavaScript Google Style Guide](js_google_style_guide.md)
+
+## Refactoring
+
+[Refactoring JavaScript](refactoring_js.md)
+
+## Effective JavaScript
+
+[Effective JavaScript](effective_js.md)
+
+## Design Pattern
+
+[JavaScript GOF Design Pattern](js_gof_design_pattern.md)
+
+## Architecutre
+
+JavaScript 는 주로 [React.js](/react.js/README.md) 와 함께 사용한다. [React.js
+Architecture](/React.js/README.md#architectures) 를 참고하자.
 
 # Advanced
 
@@ -2642,25 +3511,3 @@ export default class MyApp extends React.Component {
   // ...define your main app here
 }
 ```
-
-# Style Guide
-
-* [JavaScript Standard Style](js_standard_style_guide.md)
-* [JavaScript Google Style Guide](js_google_style_guide.md)
-
-# Refactoring
-
-[Refactoring JavaScript](refactoring_js.md)
-
-# Effective JavaScript
-
-[Effective JavaScript](effective_js.md)
-
-# Design Pattern
-
-[JavaScript GOF Design Pattern](js_gof_design_pattern.md)
-
-# Architecutre
-
-JavaScript 는 주로 [React.js](/react.js/README.md) 와 함께 사용한다. [React.js
-Architecture](/React.js/README.md#architectures) 를 참고하자.

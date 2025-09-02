@@ -15,11 +15,11 @@
   - [Encoding, JSON](#encoding-json)
   - [Profile](#profile)
 - [Basic](#basic)
-  - [Build and Run](#build-and-run)
   - [Hello World](#hello-world)
+  - [Build and Run](#build-and-run)
   - [Reserved Words](#reserved-words)
-  - [min, max values](#min-max-values)
-  - [abs, fabs](#abs-fabs)
+  - [Min, Max values](#min-max-values)
+  - [Abs, Fabs](#abs-fabs)
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
   - [Random](#random)
@@ -32,7 +32,7 @@
       - [if](#if)
       - [switch](#switch)
       - [select](#select)
-    - [Looping Statements](#looping-statements)
+  - [Looping Statements](#looping-statements)
   - [Operators](#operators)
     - [Arithmetic](#arithmetic)
     - [Comparison](#comparison)
@@ -103,7 +103,8 @@
   - [IntelliJ IDEA](#intellij-idea)
   - [Managing Multiple go versions](#managing-multiple-go-versions)
   - [Race](#race)
--------------------------------------------------------------------------------
+
+-----
 
 # Abstract
 
@@ -253,26 +254,39 @@
 
 # Basic
 
-## Build and Run
-
-```bash
-$ go build a.go
-$ go build ./cmd/basic/...
-$ go run a.go
-$ go run ./cmd/basic/...
-```
-
 ## Hello World
 
 * a.go
 
 ```go
 package main
+
 import "fmt"
+
 func main() {
     fmt.Println("Hello World")
 }
 // go run a.go
+```
+
+## Build and Run
+
+```bash
+# Build a.go
+$ go build a.go
+$ go build ./cmd/basic/...
+
+# Run a.go
+$ go run a.go
+$ go run ./cmd/basic/...
+
+# Format a.go
+$ gofmt a.go
+# Format and write a.go
+$ gofmt -w a.go
+
+# Sort imports
+$ goimport a.go
 ```
 
 ## Reserved Words
@@ -285,7 +299,7 @@ const    fallthrough if     range     type
 continue for         import return    var
 ```
 
-## min, max values
+## Min, Max values
 
 ```go
 // math package
@@ -326,7 +340,7 @@ const MaxInt = int(MaxUint >> 1)
 const MinInt = -MaxInt - 1
 ```
 
-## abs, fabs
+## Abs, Fabs
 
 ```go
 // Abs for int
@@ -656,7 +670,7 @@ func main() {
 }  
 ```
 
-### Looping Statements
+## Looping Statements
 
 ```go
 // There's only `for`, no `while`, no `until`
@@ -2260,26 +2274,26 @@ func operation2(ctx context.Context) {
 
 ## Style Guide
 
-[Go Style Guide](go_style_guide.md)
+- [Go Style Guide](go_style_guide.md)
 
 ## Refactoring
 
-[Refactoring Go](refactoring_go.md)
+- [Refactoring Go](refactoring_go.md)
 
 ## Effective Go
 
-[Effective Go](effective_go.md)
+- [Effective Go](effective_go.md)
 
 ## Design Pattern
 
-* [Go Design Pattern](go_design_pattern.md)
-* [Go GOF Design Pattern](go_gof_design_pattern.md)
+- [Go Design Pattern](go_design_pattern.md)
+- [Go GOF Design Pattern](go_gof_design_pattern.md)
 
 ## Structure Of Project (Architecture)
 
-* [upspin @ github](https://github.com/upspin/upspin)
+- [upspin | github](https://github.com/upspin/upspin)
   * Rob Pike 의 repo 이다. 배울 것이 많다.
-* [wtf | github](https://github.com/benbjohnson/wtf.git)
+- [wtf | github](https://github.com/benbjohnson/wtf.git)
   * Layered architecture example application by go
 
 # Advanced
