@@ -26,6 +26,7 @@
   - [Formatted Strings](#formatted-strings)
   - [Declarations](#declarations)
   - [Data Types](#data-types)
+  - [Multidimensional Array](#multidimensional-array)
   - [Control Flow Statements](#control-flow-statements)
     - [Decision Making Statements](#decision-making-statements)
       - [if](#if)
@@ -49,7 +50,6 @@
     - [ring](#ring)
     - [sort](#sort)
     - [search](#search)
-  - [Multidimensional Array](#multidimensional-array)
   - [Enums](#enums)
   - [Constants](#constants)
   - [Functions](#functions)
@@ -67,13 +67,21 @@
   - [Interfaces](#interfaces)
   - [Embedding](#embedding)
   - [Errors](#errors)
-  - [Goroutines](#goroutines)
+  - [Goroutine](#goroutine)
   - [Channels](#channels)
     - [Channel Axioms](#channel-axioms)
   - [Type Assertion](#type-assertion)
   - [Define Multiple Variables On The Same Line](#define-multiple-variables-on-the-same-line)
   - [Context](#context)
   - [module](#module)
+  - [Memory Layout](#memory-layout)
+  - [Go Runtime](#go-runtime)
+  - [Go GC](#go-gc)
+  - [Style Guide](#style-guide)
+  - [Refactoring](#refactoring)
+  - [Effective Go](#effective-go)
+  - [Design Pattern](#design-pattern)
+  - [Structure Of Project (Architecture)](#structure-of-project-architecture)
 - [Advanced](#advanced)
   - [Go memory ballast](#go-memory-ballast)
   - [go commands](#go-commands)
@@ -95,11 +103,6 @@
   - [IntelliJ IDEA](#intellij-idea)
   - [Managing Multiple go versions](#managing-multiple-go-versions)
   - [Race](#race)
-- [Style Guide](#style-guide)
-- [Refactoring](#refactoring)
-- [Effective Go](#effective-go)
-- [Design Pattern](#design-pattern)
-- [Architecture](#architecture)
 -------------------------------------------------------------------------------
 
 # Abstract
@@ -505,6 +508,49 @@ rune // alias for int32 ~= a character (Unicode code point) - very Viking
 float32 float64
 
 complex64 complex128
+```
+
+## Multidimensional Array
+
+* [How is two dimensional array's memory representation @ stackoverflow](https://stackoverflow.com/questions/39561140/how-is-two-dimensional-arrays-memory-representation)
+* [Arrays, slices (and strings): The mechanics of 'append'](https://blog.golang.org/slices)
+
+----
+
+```go
+//// 2d slice
+var n = len(s)
+var C = make([][]int, n+1)
+for i := range C {
+  C[i] = make([]int, n+1) 
+}
+
+a := [][]uint8{
+    {0, 1, 2, 3},
+    {4, 5, 6, 7},
+}
+fmt.Println(a) // Output is [[0 1 2 3] [4 5 6 7]]
+
+//// partial initialization
+b := []uint{10: 1, 2}
+fmt.Println(b) // Prints [0 0 0 0 0 0 0 0 0 0 1 2]
+
+//// 2d array
+c := [5][5]uint8{}
+fmt.Println(c)
+// [[0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]]
+
+//// 2d array initialization partially
+var n = len("DID")
+var C = make([][]int, n+1)
+for i := range C {
+  C[i] = make([]int, n+1) 
+}
+for i := range C[0] {
+  C[0][i] = 1
+}
+fmt.Println(C)
+// [[1 1 1 1] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
 ```
 
 ## Control Flow Statements
@@ -1423,49 +1469,6 @@ fmt.Println(sort.SearchInts(A, 4)) // 2
 fmt.Println(sort.SearchInts(A, 7)) // 4
 ```
 
-## Multidimensional Array
-
-* [How is two dimensional array's memory representation @ stackoverflow](https://stackoverflow.com/questions/39561140/how-is-two-dimensional-arrays-memory-representation)
-* [Arrays, slices (and strings): The mechanics of 'append'](https://blog.golang.org/slices)
-
-----
-
-```go
-//// 2d slice
-var n = len(s)
-var C = make([][]int, n+1)
-for i := range C {
-  C[i] = make([]int, n+1) 
-}
-
-a := [][]uint8{
-    {0, 1, 2, 3},
-    {4, 5, 6, 7},
-}
-fmt.Println(a) // Output is [[0 1 2 3] [4 5 6 7]]
-
-//// partial initialization
-b := []uint{10: 1, 2}
-fmt.Println(b) // Prints [0 0 0 0 0 0 0 0 0 0 1 2]
-
-//// 2d array
-c := [5][5]uint8{}
-fmt.Println(c)
-// [[0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0] [0 0 0 0 0]]
-
-//// 2d array initialization partially
-var n = len("DID")
-var C = make([][]int, n+1)
-for i := range C {
-  C[i] = make([]int, n+1) 
-}
-for i := range C[0] {
-  C[0][i] = 1
-}
-fmt.Println(C)
-// [[1 1 1 1] [0 0 0 0] [0 0 0 0] [0 0 0 0]]
-```
-
 ## Enums
 
 go 는 enum 이 없다. const 를 이용하여 enum 을 구현하자.
@@ -1997,25 +2000,9 @@ func main() {
 }
 ```
 
-## Goroutines
+## Goroutine
 
-Goroutines are lightweight threads (managed by Go, not OS threads). `go f(a, b)` starts a new goroutine which runs `f` (given `f` is a function).
-
-```go
-// just a function (which can be later started as a goroutine)
-func doStuff(s string) {
-}
-
-func main() {
-    // using a named function in a goroutine
-    go doStuff("foobar")
-
-    // using an anonymous inner function in a goroutine
-    go func (x int) {
-        // function body goes here
-    }(42)
-}
-```
+- [Goroutine](go-goroutine.md)
 
 ## Channels
 
@@ -2258,6 +2245,42 @@ func operation2(ctx context.Context) {
 ## module
 
 * [go module @ TIL](go_module.md)
+
+## Memory Layout
+
+- [Go Memory Layout](go-memory-layout.md)
+
+## Go Runtime
+
+- [Go Runtime](go-runtime.md)
+
+## Go GC
+
+- [Go GC](go-gc.md)
+
+## Style Guide
+
+[Go Style Guide](go_style_guide.md)
+
+## Refactoring
+
+[Refactoring Go](refactoring_go.md)
+
+## Effective Go
+
+[Effective Go](effective_go.md)
+
+## Design Pattern
+
+* [Go Design Pattern](go_design_pattern.md)
+* [Go GOF Design Pattern](go_gof_design_pattern.md)
+
+## Structure Of Project (Architecture)
+
+* [upspin @ github](https://github.com/upspin/upspin)
+  * Rob Pike 의 repo 이다. 배울 것이 많다.
+* [wtf | github](https://github.com/benbjohnson/wtf.git)
+  * Layered architecture example application by go
 
 # Advanced
 
@@ -2633,27 +2656,3 @@ $ go1.19 env GOROOT
 * [Data Race Patterns in Go](https://eng.uber.com/data-race-patterns-in-go/)
   * uber 가 모은 실수 패턴
   * [Data Race Patterns in Go (uber.com) | ycombinator](https://news.ycombinator.com/item?id=31698503)
-
-# Style Guide
-
-[Go Style Guide](go_style_guide.md)
-
-# Refactoring
-
-[Refactoring Go](refactoring_go.md)
-
-# Effective Go
-
-[Effective Go](effective_go.md)
-
-# Design Pattern
-
-* [Go Design Pattern](go_design_pattern.md)
-* [Go GOF Design Pattern](go_gof_design_pattern.md)
-
-# Architecture
-
-* [upspin @ github](https://github.com/upspin/upspin)
-  * Rob Pike 의 repo 이다. 배울 것이 많다.
-* [wtf | github](https://github.com/benbjohnson/wtf.git)
-  * Layered architecture example application by go

@@ -3,9 +3,11 @@
 - [Programming Language Features](#programming-language-features)
   - [Build, Run](#build-run)
   - [Print Out](#print-out)
+  - [Formatted Text](#formatted-text)
   - [Reserved Words](#reserved-words)
   - [Data Types](#data-types)
-  - [Formatted Text](#formatted-text)
+  - [Enumerations](#enumerations)
+  - [Multidimensional Array](#multidimensional-array)
   - [Control Flows](#control-flows)
   - [Loops](#loops)
   - [Operators](#operators)
@@ -17,11 +19,13 @@
   - [Lambda](#lambda)
   - [Exception](#exception)
   - [Concurrency](#concurrency)
-  - [Structure of Project](#structure-of-project)
+  - [Memory Layout](#memory-layout)
+  - [Runtime](#runtime)
   - [Style Guide](#style-guide)
   - [Refactoring](#refactoring)
   - [Effective](#effective)
   - [Design Pattern](#design-pattern)
+  - [Structure of Project (Architecture)](#structure-of-project-architecture)
 
 ----
 
@@ -54,6 +58,13 @@
   * 포맷팅 (printf, format string)
   * 로깅 시스템
 
+## Formatted Text
+
+  * 문자열 처리
+  * 정규표현식
+  * 텍스트 파싱
+  * 인코딩 (UTF-8, ASCII 등)
+
 ## Reserved Words
 
   * 예약어
@@ -69,12 +80,12 @@
   * 타입 추론
   * 제네릭/템플릿
 
-## Formatted Text
+## Enumerations
 
-  * 문자열 처리
-  * 정규표현식
-  * 텍스트 파싱
-  * 인코딩 (UTF-8, ASCII 등)
+## Multidimensional Array
+
+  * 2d array
+  * 3d array
 
 ## Control Flows
 
@@ -184,13 +195,14 @@
   * 코루틴과 async/await
   * 동시성 제어 패턴
 
-## Structure of Project
+## Memory Layout
 
-  * 프로젝트 구조
-  * 모듈과 패키지
-  * 의존성 관리
-  * 빌드 시스템
-  * 테스트 구조
+  * os memory layout
+  * application memory layout
+
+## Runtime
+
+  * runtime logic
 
 ## Style Guide
 
@@ -222,3 +234,12 @@
   * 행동 패턴 (Observer, Strategy 등)
   * 아키텍처 패턴 (MVC, MVP 등)
   * 안티 패턴과 해결책
+
+## Structure of Project (Architecture)
+
+  * 프로젝트 구조
+  * 모듈과 패키지
+  * 의존성 관리
+  * 빌드 시스템
+  * 테스트 구조
+  
