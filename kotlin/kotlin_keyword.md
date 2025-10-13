@@ -41,6 +41,9 @@ fun main() {
         else -> false
     }
     println(b) // true
+
+    // out = Output = 생산자 = 읽기 전용 = 공변성
+    // in = Input = 소비자 = 쓰기 전용 = 반공변성
     class Foo<out T>
 	class Bar<in T>
     
@@ -111,9 +114,9 @@ fun main() {
     val d = Derived(b)
     d.print()
 
-    delegate???    
-    field, annotation use-site target
-    file,annotation use-site target
+    //delegate???    
+    //field, annotation use-site target
+    //file,annotation use-site target
 
     // get
     class Foo() {
@@ -126,11 +129,12 @@ fun main() {
     foo.a = "Hello"
     println(foo.a)
     
-    import
-    init
-    param, annotation use-site target
-    property, annotation use-site target
-    receiver, annotation use-site target
+    // import
+    // init
+    // param, annotation use-site target
+    // property, annotation use-site target
+    // receiver, annotation use-site target
+    
     // set
     class Example {
     	@set:[Inject VisibleForTesting]

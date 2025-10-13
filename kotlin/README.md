@@ -9,21 +9,23 @@
   - [Basic Syntax](#basic-syntax)
   - [Idioms](#idioms)
   - [Reserved Words](#reserved-words)
-  - [min max values](#min-max-values)
-  - [min max](#min-max)
-  - [abs, fabs](#abs-fabs)
+  - [Data Types](#data-types)
+  - [Min Max Values](#min-max-values)
+  - [Min Max](#min-max)
+  - [Abs, Fabs](#abs-fabs)
   - [Bit Manipulation](#bit-manipulation)
-  - [String](#string)
   - [Random](#random)
   - [Formatted String](#formatted-string)
-  - [Data Types](#data-types)
-  - [Control Flow Statements](#control-flow-statements)
-    - [Decision Making Statements](#decision-making-statements)
-      - [When](#when)
-      - [Equality Checks](#equality-checks)
-    - [Looping Statements](#looping-statements)
-      - [for, while, do](#for-while-do)
-      - [Ranges](#ranges)
+  - [String](#string)
+  - [Enumerations](#enumerations)
+  - [Multi Dimensional Array](#multi-dimensional-array)
+  - [Control Flows](#control-flows)
+    - [When](#when)
+    - [Equality Checks](#equality-checks)
+  - [Loops](#loops)
+    - [for, while, do](#for-while-do)
+    - [Ranges](#ranges)
+  - [Operators](#operators)
   - [Collections compared to c++](#collections-compared-to-c)
   - [Collections](#collections)
     - [List](#list)
@@ -45,10 +47,9 @@
     - [zip](#zip)
     - [getOrElse](#getorelse)
   - [Collection APIs](#collection-apis)
-  - [Collection Conversions](#collection-conversions)
+  - [Type Conversions](#type-conversions)
   - [Sort](#sort)
   - [Search](#search)
-  - [Multi Dimensional Array](#multi-dimensional-array)
   - [Init Array](#init-array)
   - [Define Multiple Variables On The Same Line](#define-multiple-variables-on-the-same-line)
   - [Type Assertions](#type-assertions)
@@ -56,18 +57,23 @@
   - [Int vs Int?](#int-vs-int)
   - [Any, Unit, Nothing](#any-unit-nothing)
   - [Null safety](#null-safety)
-  - [Scope Functions](#scope-functions)
-    - [let](#let)
-    - [run](#run)
-    - [with](#with)
-    - [apply](#apply)
-    - [also](#also)
-  - [Infix Functions](#infix-functions)
-  - [Operator Functions](#operator-functions)
-  - [Functions with vararg Parameters](#functions-with-vararg-parameters)
+  - [Functions](#functions)
+    - [Higher-Order Functions](#higher-order-functions)
+    - [Lambda Functions](#lambda-functions)
+    - [Anonymous Functions](#anonymous-functions)
+    - [Inline Functions](#inline-functions)
+    - [Extension Functions and Properties](#extension-functions-and-properties)
+    - [Scope Functions](#scope-functions)
+      - [let](#let)
+      - [run](#run)
+      - [with](#with)
+      - [apply](#apply)
+      - [also](#also)
+    - [Infix Functions](#infix-functions)
+    - [Functions with vararg Parameters](#functions-with-vararg-parameters)
   - [Classes](#classes)
   - [Generics](#generics)
-  - [Generics in,out,\*](#generics-inout)
+  - [Generics in, out, \*](#generics-in-out-)
   - [Notation for platform types](#notation-for-platform-types)
   - [Inheritance](#inheritance)
   - [Special Classes](#special-classes)
@@ -75,17 +81,12 @@
     - [Enum classes](#enum-classes)
     - [Sealed Classes](#sealed-classes)
     - [Object Keyword](#object-keyword)
-  - [Functional](#functional)
-    - [Higher-Order Functions](#higher-order-functions)
-    - [Lambda Functions](#lambda-functions)
-    - [Anonymous Functions](#anonymous-functions)
-    - [Inline Functions](#inline-functions)
-    - [Extension Functions and Properties](#extension-functions-and-properties)
   - [Delegation](#delegation)
     - [Delegation Pattern](#delegation-pattern)
     - [Delegated Properties](#delegated-properties)
   - [Lazy Initialization (lateinit vs by lazy)](#lazy-initialization-lateinit-vs-by-lazy)
 - [Advanced](#advanced)
+  - [data class vs value class](#data-class-vs-value-class)
   - [Show kotlin decompile](#show-kotlin-decompile)
   - [Smart casts](#smart-casts)
   - [Parameter vs Argument](#parameter-vs-argument)
@@ -93,7 +94,7 @@
   - [Passing trailing lambdas](#passing-trailing-lambdas)
   - [map vs flatmap](#map-vs-flatmap)
   - [fold](#fold)
-  - [coroutine](#coroutine)
+  - [Coroutine](#coroutine)
   - [Null safety](#null-safety-1)
   - [`@JvmOverloads`](#jvmoverloads)
   - [`@JvmStatic` vs Companion](#jvmstatic-vs-companion)
@@ -109,7 +110,7 @@
 # Abstract
 
 kotlin 에 대해 정리한다. kotlin 은 종합백화점같다. 없는게 없다. Documentation,  [Coding conventions](https://kotlinlang.org/docs/coding-conventions.html), 
-[Effective Kotlin](kotlin_effective.md), [Design Pattern](kotlin_design_pattern.md), [stdlib](kotlin_stdlib.md) 을 차례로 공부하자.
+[Effective Kotlin](kotlin_effective.md), [Design Pattern](kotlin_gof_design_pattern.md), [stdlib](kotlin_stdlib.md) 을 차례로 공부하자.
 
 # References
 
@@ -167,7 +168,9 @@ $ kotlinc a.kt
 $ kotlin AKt
 
 # REPL
-$ kotlinc
+# 보안 및 안정성문제로 kotlinc 는 repl 을 지원하지 않는다.
+# 대신 kotlinc -Xrepl 을 사용해야 한다.
+$ kotlinc -Xrepl
 > val a = "333"
 > val b = a.toLong()
 > b
@@ -196,7 +199,7 @@ fun main() {
 
 ----
 
-[Kotlin Keywords @ TIL](KotlinKeyword.md)
+[Kotlin Keywords](kotlin_keyword.md)
 
 ```java
 // Hard keywords
@@ -319,7 +322,33 @@ $
 _
 ```
 
-## min max values
+## Data Types
+
+* [Basic types](https://kotlinlang.org/docs/basic-types.html)
+
+----
+
+```kotlin
+// Char
+val c: Char = 'a'
+println(c.javaClass.name) // char
+
+// Byte, Short, Int, Long
+val one = 1 // Int
+val threeBillion = 3000000000 // Long
+val oneLong = 1L // Long
+val oneByte: Byte = 1
+
+// Float, Double
+val pi = 3.14 // Double
+// val one: Double = 1 // Error: type mismatch
+val oneDouble = 1.0 // Double
+
+val e = 2.7182818284 // Double
+val eFloat = 2.7182818284f // Float, actual value is 2.7182817
+```
+
+## Min Max Values
 
 ```kotlin
 // int
@@ -333,7 +362,7 @@ println(Float.MIN_VALUE);
 println(Float.MAX_VALUE);
 ```
 
-## min max
+## Min Max
 
 * [Kotlin pi, 절댓값, 대소 비교 - PI, abs, max, min](https://notepad96.tistory.com/entry/Kotlin-pi-%EC%A0%88%EB%8C%93%EA%B0%92-%EB%8C%80%EC%86%8C-%EB%B9%84%EA%B5%90-PI-abs-max-min)
 
@@ -351,7 +380,7 @@ fun main(args : Array<String>) {
 }
 ```
 
-## abs, fabs
+## Abs, Fabs
 
 ```java
 println(kotlin.math.abs(-3))    // 3
@@ -360,7 +389,7 @@ println(kotlin.math.abs(-3.0))  // 3.0
 
 ## Bit Manipulation
 
-```
+```kotlin
 // https://www.programiz.com/kotlin-programming/bitwise
 
 val a = 12   // 0000 1100
@@ -388,25 +417,6 @@ c = b shr 1  // 1111 1101    -3
 c = b ushr 1 // 0111 1101    2147483645
 ```
 
-## String
-
-```kotlin
-// StringBuilder
-val sb: StringBuilder() = StringBuilder()
-sb.append('a' + 1) // OK
-sb.append(1 + 'a') // ERROR
-
-// Interpolated string
-val foo = 3
-val bar = "Hello"
-println("foo: ${foo}, bar: ${bar}")
-
-// get char from string
-val s = "abcdefg"
-val c = s.get(0)  // a
-val i = c - 'a'   // 0
-```
-
 ## Random
 
 ```kotlin
@@ -431,37 +441,80 @@ val msg = "Hello World"
 println("${String.format("%10s", name)}: Sending Message= $msg")
 ```
 
-## Data Types
-
-* [Basic types](https://kotlinlang.org/docs/basic-types.html)
-
-----
+## String
 
 ```kotlin
-// Char
-val c: Char = 'a'
-println(c.javaClass.name) // char
+// StringBuilder
+val sb: StringBuilder() = StringBuilder()
+sb.append('a' + 1) // OK
+sb.append(1 + 'a') // ERROR
 
-// Byte, Short, Int, Long
-val one = 1 // Int
-val threeBillion = 3000000000 // Long
-val oneLong = 1L // Long
-val oneByte: Byte = 1
+// Interpolated string
+val foo = 3
+val bar = "Hello"
+println("foo: ${foo}, bar: ${bar}")
 
-// Float, Double
-val pi = 3.14 // Double
-// val one: Double = 1 // Error: type mismatch
-val oneDouble = 1.0 // Double
-
-val e = 2.7182818284 // Double
-val eFloat = 2.7182818284f // Float, actual value is 2.7182817
+// get char from string
+val s = "abcdefg"
+val c = s.get(0)  // a
+val i = c - 'a'   // 0
 ```
 
-## Control Flow Statements
+## Enumerations
 
-### Decision Making Statements
+[Enum Classes](#enum-classes)
 
-#### When
+
+## Multi Dimensional Array
+
+* `Array<Int>` is same with `Integer[]` of java.
+* `IntArray` is same with `int[]` of java.
+
+```kotlin
+    // 1d array
+    val a = Array(3, {i -> 0})
+    val b = Array(3, {0})
+    val c = IntArray(3, {i -> 0})
+    val d = IntArray(3, {0})
+    val e = arrayOf(1, 2, 3)
+    val f = intArrayOf(1, 2, 3)
+    // late initialization
+    val h = arrayOfNulls<Number>(3)
+    for (i in h.indices) {
+        h[i] = i * i
+    }
+    println(f.contentToString())
+
+    // 2d array
+    val aa = Array(3, {Array(3, {i -> 0})})
+    val bb = Array(3, {Array(3, {0})})
+    val cc = Array(3, {IntArray(3, {i -> 0})})
+    val dd = Array(3, {IntArray(3, {0})})
+    val ee = Array(3, {arrayOf(1, 2, 3)})
+    val ff = Array(3, {intArrayOf(1, 2, 3)})
+    // late initialization
+    val hh = Array(3, {arrayOfNulls<Number>(3)})
+    for (i in hh.indices) {
+        for (j in hh[0].indices) {
+            hh[i][j] = i * j
+        }
+    }
+    for (i in 0 until 3) {
+        for (j in 0 until 3) {
+            hh[i][j] = i * j
+        }
+    }
+    hh.forEach { println(it.contentToString()) }
+
+    // 3d array
+    // thanks to type infer
+    val aaa = Array(3, {Array(3, {Array(3, {i -> 0})})})
+    val bbb = Array(3, {Array(3, {IntArray(3, {i -> 0})})})
+```
+
+## Control Flows
+
+### When
 
 ```kotlin
 fun main() {
@@ -502,22 +555,30 @@ fun whenAssign(obj: Any): Any {
 class MyClass
 ```
 
-#### Equality Checks
+### Equality Checks
 
 * `==` for structural comparison
-  * `if (a == null) b == null else a.equals(b)`
 * `===` for referential comparison
 
 ```kotlin
-val authors = setOf("Shakespeare", "Hemingway", "Twain")
-val writers = setOf("Twain", "Shakespeare", "Hemingway")
-println(authors == writers)   // true
-println(authors === writers)  // false
+val aSet = setOf("a", "b")
+val bSet = setOf("a", "b")
+println(aSet == bSet)   // true
+println(aSet === bSet)  // false
+
+// 같은 참조
+val cSet = aSet
+println(aSet === cSet)  // true (같은 객체를 가리킴)
+
+// null 비교
+val dSet: Set<String>? = null
+println(dSet == null)   // true
+println(dSet === null)  // true
 ```
 
-### Looping Statements
+## Loops
 
-#### for, while, do
+### for, while, do
 
 ```kotlin
 // for
@@ -557,7 +618,7 @@ fun main() {
 }
 ```
 
-#### Ranges
+### Ranges
 
 ```kotlin
 // int ranges
@@ -599,28 +660,45 @@ if (x !in 6..10) {
 }
 ```
 
+## Operators
+
+* [concepts.DSL.Operator overloading](https://kotlinlang.org/docs/operator-overloading.html)
+
+-----
+
+Unity operations, Binary opertaions 들을 functions 으로 overloading 할 수 있다. overloading 은 function 의 이름은 같고 protoype 을 다르게 해서 정의하는 것이다.
+
+```kotlin
+operator fun Int.times(str: String) = str.repeat(this)       // 1
+println(2 * "Bye ")                                          // 2
+
+operator fun String.get(range: IntRange) = substring(range)  // 3
+val str = "Always forgive your enemies; nothing annoys them so much."
+println(str[0..14])
+```
+
 ## Collections compared to c++
 
-| c++                  | java                                   |
+| c++                  | kotlin                                 |
 | :------------------- | :------------------------------------- |
 | `if, else`           | `if, else`                             |
 | `for, while`         | `for, while`                           |
-| `array`              | `Collections.unmodifiableList`         |
-| `vector`             | `java.util.Vector, java.util.ArrayList` |
-| `deque`              | `java.util.Deque, java.util.ArrayDeque` |
-| `forward_list`       | ``                                     |
-| `list`               | `List, MutableList, java.util.LinkedList` |
-| `stack`              | `java.util.Stack, java.util.Deque, java.util.ArrayDeque, java.util.LinkedList` |
-| `queue`              | `java.util.Queue, java.util.LinkedList` |
-| `priority_queue`     | `java.util.Queue, java.util.PriorityQueue` |
-| `set`                | `java.util.SortedSet, java.util.TreeSet` |
-| `multiset`           | ``                                     |
-| `map`                | `java.util.SortedMap, java.util.TreeMap` |
-| `multimap`           | ``                                     |
-| `unordered_set`      | `Set, MutableSet, java.util.HashSet`  |
-| `unordered_multiset` | ``                                     |
-| `unordered_map`      | `Map, MutableMap, java.util.HashMap` |
-| `unordered_multimap` | ``                                     |
+| `array`              | `Array<T>, IntArray, listOf()`         |
+| `vector`             | `MutableList, ArrayList`               |
+| `deque`              | `ArrayDeque`                           |
+| `forward_list`       | `List`                  |
+| `list`               | `List, MutableList, LinkedList`        |
+| `stack`              | `ArrayDeque` (스택으로 사용)             |
+| `queue`              | `ArrayDeque` (큐로 사용)                |
+| `priority_queue`     | `PriorityQueue` (java.util)            |
+| `set`                | `sortedSetOf()` (TreeSet)              |
+| `multiset`           | `List` (중복 허용) or Guava Multiset    |
+| `map`                | `sortedMapOf()` (TreeMap)              |
+| `multimap`           | `Map<K, List<V>>` or Guava Multimap    |
+| `unordered_set`      | `Set, MutableSet, HashSet`             |
+| `unordered_multiset` | `List` (중복 허용) or Guava Multiset    |
+| `unordered_map`      | `Map, MutableMap, HashMap`             |
+| `unordered_multimap` | `Map<K, List<V>>` or Guava Multimap    |
 
 ## Collections
 
@@ -1178,7 +1256,7 @@ println(listOf(1, 2, 3, 4)
 // Getting used to new style
 ```
 
-## Collection Conversions
+## Type Conversions
 
 ```kotlin
 // Convert Set to List
@@ -1307,54 +1385,6 @@ list.add(actualInsertionPoint, 'd')
 println(list) // [a, b, c, d, e]
 ```
 
-## Multi Dimensional Array
-
-* `Array<Int>` is same with `Integer[]` of java.
-* `IntArray` is same with `int[]` of java.
-
-```kotlin
-    
-    // 1d array
-    val a = Array(3, {i -> 0})
-    val b = Array(3, {0})
-    val c = IntArray(3, {i -> 0})
-    val d = IntArray(3, {0})
-    val e = arrayOf(1, 2, 3)
-    val f = intArrayOf(1, 2, 3)
-    // late initialization
-    val h = arrayOfNulls<Number>(3)
-    for (i in h.indices) {
-        h[i] = i * i
-    }
-    println(f.contentToString())
-
-    // 2d array
-    val aa = Array(3, {Array(3, {i -> 0})})
-    val bb = Array(3, {Array(3, {0})})
-    val cc = Array(3, {IntArray(3, {i -> 0})})
-    val dd = Array(3, {IntArray(3, {0})})
-    val ee = Array(3, {arrayOf(1, 2, 3)})
-    val ff = Array(3, {intArrayOf(1, 2, 3)})
-    // late initialization
-    val hh = Array(3, {arrayOfNulls<Number>(3)})
-    for (i in hh.indices) {
-        for (j in hh[0].indices) {
-            hh[i][j] = i * j
-        }
-    }
-    for (i in 0 until 3) {
-        for (j in 0 until 3) {
-            hh[i][j] = i * j
-        }
-    }
-    hh.forEach { println(it.contentToString()) }
-
-    // 3d array
-    // thanks to type infer
-    val aaa = Array(3, {Array(3, {Array(3, {i -> 0})})})
-    val bbb = Array(3, {Array(3, {IntArray(3, {i -> 0})})})
-```
-
 ## Init Array
 
 * [Initializing Arrays in Kotlin](https://www.baeldung.com/kotlin/initialize-array)
@@ -1476,11 +1506,178 @@ val nullablelist: List<Int?> = listOf(1, 2, null, 5)
 val intList: List<Int> = nullableList.filterNotNull()
 ```
 
-## Scope Functions
+## Functions
+
+### Higher-Order Functions
+
+* [Concepts.Functions.High-order functions and lambdas](https://kotlinlang.org/docs/lambdas.html)
+
+----
+
+higer-order function 은 다른 function 을 argument 로 받거나 다른 function 을 리턴하는 함수이다.
+
+```kotlin
+// Taking Functions as Parameters
+fun calculate(x: Int, y: Int, operation: (Int, Int) -> Int): Int {
+    return operation(x, y)
+}
+fun sum(x: Int, y: Int) = x + y                          
+fun main() {
+    val sumResult = calculate(4, 5, ::sum)
+    val mulResult = calculate(4, 5) { a, b -> a * b }               
+    println("sumResult $sumResult, mulResult $mulResult")
+}
+
+// Returning Functions
+fun operation(): (Int) -> Int {
+    return ::square
+}
+fun square(x: Int) = x * x
+fun main() {
+    val func = operation()
+    println(func(2))
+}
+```
+
+### Lambda Functions
+
+* [Concepts.Functions.High-order functions and lambdas](https://kotlinlang.org/docs/lambdas.html)
+
+-----
+
+lambda function 은 **type inference** 와 **it** 덕분에 다양한 방법으로 간결히 표현할 수 있다.
+
+```kotlin
+val upperCase1: (String) -> String = { str: String -> str.toUpperCase() } 
+val upperCase2: (String) -> String = { str -> str.toUpperCase() }         
+val upperCase3 = { str: String -> str.toUpperCase() }
+// val upperCase4 = { str -> str.toUpperCase() }
+val upperCase5: (String) -> String = { it.toUpperCase() }
+val upperCase6: (String) -> String = String::toUpperCase
+println(upperCase1("hello"))
+println(upperCase2("hello"))
+println(upperCase3("hello"))
+println(upperCase5("hello"))
+println(upperCase6("hello"))
+```
+
+### Anonymous Functions
+
+* [Lambdas | Anonymous functions @ kotlin.io](https://kotlinlang.org/docs/lambdas.html#anonymous-functions)
+
+Anonymous Function 은 return type 표기가 가능하다. 한편 Lambda 는 return type 을 표기할 수 없다.
+
+```kotlin
+val a = { x: Int, y: Int -> x + y }
+val b = fun(x: Int, y: Int) -> Int {
+    return x + y
+}
+```
+
+### Inline Functions
+
+> [[Kotlin] inline에 대하여 - inline, noinline, crossinline, reified](https://leveloper.tistory.com/171)
+
+----
+
+함수를 인자로 받는 함수를 Higher-order function 이라고 한다. Higher-order function 은 runtime 에 희생이 따른다. 인자로 넘겨받는 함수때문에 Function interface object 를 생성하고 closure 도 캡처한다. runtime 에 memory 를 많이 사용한다. closure 는 function body 에서 접근하는 function body 밖의 변수를 말한다. 
+
+이때 Higher-order function 에 inline 을 추가하면 runtime overhead 를 제거할 수 있다. 
+
+```kotlin
+inline fun <T> lock(lock: Lock, body: () -> T): T { ... }
+
+l.lock()
+try {
+    foo()
+} finally {
+    l.unlock()
+}
+```
+
+만약 inline function 의 function argument 중 inline 을 원하지 않는 function argument 가 있다면 **noinline** 을 사용하자.
+
+```kotlin
+inline fun foo(inlined: () -> Unit, noinline notInlined: () -> Unit) { ... }
+```
+
+한편 inline function 의 function argument 를 inline function body 안의 local object 혹은 nested function 에서 호출하는 것은 허락되지 않는다. crossline 을 사용하면 허락된다.
+
+```kotlin
+inline fun f(crossline body: () -> Unit) {
+    val g = object: Runnable {
+        override fun run() = body()
+    }
+}
+```
+
+또한 type parameter 를 inline function body 에서 사용하고 싶다면 type parameter 에 **reified** 를 추가한다.
+
+```kotlin
+// clazz 는 굳이 필요하지 않다.
+fun <T> TreeNode.findParentOfType(clazz: Class<T>): T? {
+    var p = parent
+    while (p != null && !clazz.isInstance(p)) {
+        p = p.parent
+    }
+    @Suppress("UNCHECKED_CAST")
+    return p as T?
+}
+
+// 이렇게 호출해야 한다.
+treeNode.findParentOfType(MyTreeNode::class.java)
+
+// 이렇게 호출하고 싶다. type parameter 를 이용해서 findParentOfType 을 
+// refactoring 해보자. 
+treeNode.findParentOfType<MyTreeNode>()
+
+// T 에 reified 를 추가해야 한다.
+inline fun <reified T> TreeNode.findParentOfType(): T? {
+    var p = parent
+    while (p != null && p !is T) {
+        p = p.parent
+    }
+    return p as T?
+}
+
+// 이번에는 type paremeter T 를 이용하여 reflection 해보자.
+inline fun <reified T> membersOf() = T::class.members
+
+fun main(s: Array<String>) {
+    println(membersOf<StringBuilder>().joinToString("\n"))
+}
+```
+
+### Extension Functions and Properties
+
+* [Concepts.Functions.Extensions](https://kotlinlang.org/docs/extensions.html)
+
+-----
+
+임의의 class 에 extension function 혹은 extension property 를 추가할 수 있다. 
+
+```kotlin
+data class Item(val name: String, val price: Float)                                         
+data class Order(val items: Collection<Item>)  
+// extension functions
+fun Order.maxPricedItemValue(): Float = this.items.maxByOrNull { it.price }?.price ?: 0F 
+fun Order.maxPricedItemName() = this.items.maxByOrNull { it.price }?.name ?: "NO_PRODUCTS"
+// extension properties
+val Order.commaDelimitedItemNames: String
+    get() = items.map { it.name }.joinToString()
+fun main() {
+    val order = Order(listOf(Item("Bread", 25.0F), Item("Wine", 29.0F), Item("Water", 12.0F)))
+    println("Max priced item name: ${order.maxPricedItemName()}")
+    println("Max priced item value: ${order.maxPricedItemValue()}")
+    println("Items: ${order.commaDelimitedItemNames}")
+}
+```
+
+### Scope Functions
 
 Scope functions 는 code block 을 실행하는 함수이다.
 
-### let
+#### let
 
 * [Concepts.Standard library.Scope functions.let](https://kotlinlang.org/docs/scope-functions.html#let)
 
@@ -1516,7 +1713,7 @@ printNonNull("my string")
 printIfBothNonNull("First","Second") 
 ```
 
-### run
+#### run
 
 * [Concepts.Standard library.Scope functions.run](https://kotlinlang.org/docs/scope-functions.html#run)
 
@@ -1537,7 +1734,7 @@ getNullableLength("")
 getNullableLength("some string with Kotlin")
 ```
 
-### with
+#### with
 
 * [Concepts.Standard library.Scope functions.with](https://kotlinlang.org/docs/scope-functions.html#with)
 
@@ -1553,7 +1750,7 @@ with(configuration) {
 println("${configuration.host}:${configuration.port}")  
 ```
 
-### apply
+#### apply
 
 * [Concepts.Standard library.Scope functions.apply](https://kotlinlang.org/docs/scope-functions.html#apply)
 
@@ -1570,7 +1767,7 @@ val stringDescription = jake.apply {
 }.toString()                        
 ```
 
-### also
+#### also
 
 * [Concepts.Standard library.Scope functions.also](https://kotlinlang.org/docs/scope-functions.html#also)
 
@@ -1585,7 +1782,7 @@ val jake = Person("Jake", 30, "Android developer")
     }
 ```
 
-## Infix Functions
+### Infix Functions
 
 * [Concepts.functions.Functions.Functions usage.infix notation](https://kotlinlang.org/docs/functions.html#infix-notation)
 
@@ -1617,24 +1814,7 @@ class Person(val name: String) {
 }
 ```
 
-## Operator Functions
-
-* [concepts.DSL.Operator overloading](https://kotlinlang.org/docs/operator-overloading.html)
-
------
-
-Unity operations, Binary opertaions 들을 functions 으로 overloading 할 수 있다. overloading 은 function 의 이름은 같고 protoype 을 다르게 해서 정의하는 것이다.
-
-```kotlin
-operator fun Int.times(str: String) = str.repeat(this)       // 1
-println(2 * "Bye ")                                          // 2
-
-operator fun String.get(range: IntRange) = substring(range)  // 3
-val str = "Always forgive your enemies; nothing annoys them so much."
-println(str[0..14])
-```
-
-## Functions with vararg Parameters
+### Functions with vararg Parameters
 
 * [Concepts.functions.Functions.Functions usage.Variable number of arguments (Varargs)](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs)
 
@@ -1693,8 +1873,7 @@ fun main() {
 
 -----
 
-Generic classes, functions 를 이용하면 특정 type 에 종속적이지 않는 code 를
-만들어 낼 수 있다.
+Generic classes, functions 를 이용하면 특정 type 에 종속적이지 않는 code 를 만들어 낼 수 있다.
 
 ```kotlin
 // Generic classes
@@ -1717,14 +1896,13 @@ fun main() {
 }
 ```
 
-## Generics in,out,*
+## Generics in, out, *
 
 * [[Kotlin] in/out 키워드 및 .. 연산자와 범위 표현식](https://csjung.tistory.com/239)
 
 ----
 
-variance 는 invariant, covariant, contravariant 가 있다. 다음의
-그림을 참고하여 이해하자. up-casting 은 자연스러워 보이고 down-casting 은 위험해 보인다.
+variance 는 invariant, covariant, contravariant 가 있다. 다음의 그림을 참고하여 이해하자. up-casting 은 자연스러워 보이고 down-casting 은 위험해 보인다.
 
 ![](img/kotlin_variance.png)
 
@@ -1991,177 +2169,6 @@ fun main() {
 }
 ```
 
-## Functional
-
-### Higher-Order Functions
-
-* [Concepts.Functions.High-order functions and lambdas](https://kotlinlang.org/docs/lambdas.html)
-
-----
-
-higer-order function 은 다른 function 을 argument 로 받거나 다른 function 을 리턴하는 함수이다.
-
-```kotlin
-// Taking Functions as Parameters
-fun calculate(x: Int, y: Int, operation: (Int, Int) -> Int): Int {
-    return operation(x, y)
-}
-fun sum(x: Int, y: Int) = x + y                          
-fun main() {
-    val sumResult = calculate(4, 5, ::sum)
-    val mulResult = calculate(4, 5) { a, b -> a * b }               
-    println("sumResult $sumResult, mulResult $mulResult")
-}
-
-// Returning Functions
-fun operation(): (Int) -> Int {
-    return ::square
-}
-fun square(x: Int) = x * x
-fun main() {
-    val func = operation()
-    println(func(2))
-}
-```
-
-### Lambda Functions
-
-* [Concepts.Functions.High-order functions and lambdas](https://kotlinlang.org/docs/lambdas.html)
-
------
-
-lambda function 은 **type inference** 와 **it** 덕분에 다양한 방법으로 간결히 표현할 수 있다.
-
-```kotlin
-val upperCase1: (String) -> String = { str: String -> str.toUpperCase() } 
-val upperCase2: (String) -> String = { str -> str.toUpperCase() }         
-val upperCase3 = { str: String -> str.toUpperCase() }
-// val upperCase4 = { str -> str.toUpperCase() }
-val upperCase5: (String) -> String = { it.toUpperCase() }
-val upperCase6: (String) -> String = String::toUpperCase
-println(upperCase1("hello"))
-println(upperCase2("hello"))
-println(upperCase3("hello"))
-println(upperCase5("hello"))
-println(upperCase6("hello"))
-```
-
-### Anonymous Functions
-
-* [Lambdas | Anonymous functions @ kotlin.io](https://kotlinlang.org/docs/lambdas.html#anonymous-functions)
-
-Anonymous Function 은 return type 표기가 가능하다. 한편 Lambda 는 return type 을 표기할 수 없다.
-
-```kotlin
-val a = { x: Int, y: Int -> x + y }
-val b = fun(x: Int, y: Int) -> Int {
-    return x + y
-}
-```
-
-### Inline Functions
-
-> [[Kotlin] inline에 대하여 - inline, noinline, crossinline, reified](https://leveloper.tistory.com/171)
-
-----
-
-함수를 인자로 받는 함수를 Higher-order function 이라고 한다. Higher-order
-function 은 runtime 에 희생이 따른다. 인자로 넘겨받는 함수때문에 Function
-interface object 를 생성하고 closure 도 캡처한다. runtime 에 memory 를 많이
-사용한다. closure 는 function body 에서 접근하는 function body 밖의 변수를
-말한다. 
-
-이때 Higher-order function 에 inline 을 추가하면 runtime overhead 를 제거할 수 있다. 
-
-```kotlin
-inline fun <T> lock(lock: Lock, body: () -> T): T { ... }
-
-l.lock()
-try {
-    foo()
-} finally {
-    l.unlock()
-}
-```
-
-만약 inline function 의 function argument 중 inline 을 원하지 않는 function argument 가 있다면 **noinline** 을 사용하자.
-
-```kotlin
-inline fun foo(inlined: () -> Unit, noinline notInlined: () -> Unit) { ... }
-```
-
-한편 inline function 의 function argument 를 inline function body 안의 local object 혹은 nested function 에서 호출하는 것은 허락되지 않는다. crossline 을 사용하면 허락된다.
-
-```kotlin
-inline fun f(crossline body: () -> Unit) {
-    val g = object: Runnable {
-        override fun run() = body()
-    }
-}
-```
-
-또한 type parameter 를 inline function body 에서 사용하고 싶다면 type parameter 에 **reified** 를 추가한다.
-
-```kotlin
-// clazz 는 굳이 필요하지 않다.
-fun <T> TreeNode.findParentOfType(clazz: Class<T>): T? {
-    var p = parent
-    while (p != null && !clazz.isInstance(p)) {
-        p = p.parent
-    }
-    @Suppress("UNCHECKED_CAST")
-    return p as T?
-}
-
-// 이렇게 호출해야 한다.
-treeNode.findParentOfType(MyTreeNode::class.java)
-
-// 이렇게 호출하고 싶다. type parameter 를 이용해서 findParentOfType 을 
-// refactoring 해보자. 
-treeNode.findParentOfType<MyTreeNode>()
-
-// T 에 reified 를 추가해야 한다.
-inline fun <reified T> TreeNode.findParentOfType(): T? {
-    var p = parent
-    while (p != null && p !is T) {
-        p = p.parent
-    }
-    return p as T?
-}
-
-// 이번에는 type paremeter T 를 이용하여 reflection 해보자.
-inline fun <reified T> membersOf() = T::class.members
-
-fun main(s: Array<String>) {
-    println(membersOf<StringBuilder>().joinToString("\n"))
-}
-```
-
-### Extension Functions and Properties
-
-* [Concepts.Functions.Extensions](https://kotlinlang.org/docs/extensions.html)
-
------
-
-임의의 class 에 extension function 혹은 extension property 를 추가할 수 있다. 
-
-```kotlin
-data class Item(val name: String, val price: Float)                                         
-data class Order(val items: Collection<Item>)  
-// extension functions
-fun Order.maxPricedItemValue(): Float = this.items.maxByOrNull { it.price }?.price ?: 0F 
-fun Order.maxPricedItemName() = this.items.maxByOrNull { it.price }?.name ?: "NO_PRODUCTS"
-// extension properties
-val Order.commaDelimitedItemNames: String
-    get() = items.map { it.name }.joinToString()
-fun main() {
-    val order = Order(listOf(Item("Bread", 25.0F), Item("Wine", 29.0F), Item("Water", 12.0F)))
-    println("Max priced item name: ${order.maxPricedItemName()}")
-    println("Max priced item value: ${order.maxPricedItemValue()}")
-    println("Items: ${order.commaDelimitedItemNames}")
-}
-```
-
 ## Delegation
 
 ### Delegation Pattern
@@ -2282,6 +2289,37 @@ println(q)
 
 # Advanced
 
+## data class vs value class
+
+```kotlin
+// data class: 여러 데이터를 묶는 컨테이너 (객체 생성됨)
+data class User(val name: String, val age: Int, val email: String)
+
+val user1 = User("John", 25, "john@example.com")  // 힙에 객체 생성
+val user2 = user1.copy(age = 26)  // copy() 가능
+val (name, age, _) = user1  // 구조 분해 가능
+
+// value class: 단일 값을 감싸는 타입 안전 래퍼 (인라인 최적화, 객체 생성 안됨)
+@JvmInline
+value class UserId(val id: Long)  // 하나의 프로퍼티만 가능
+
+@JvmInline
+value class OrderId(val id: Long)
+
+val userId = UserId(123)  // 런타임에는 123만 존재 (최적화됨)
+// val copy = userId.copy(id = 456)  // ❌ copy() 없음
+// val (id) = userId  // ❌ 구조 분해 불가
+
+// 타입 안정성 예시
+fun getUser(id: UserId) { }
+fun getOrder(id: OrderId) { }
+
+getUser(userId)  // ✅
+getUser(OrderId(123))  // ❌ 컴파일 에러! 타입이 다름
+
+// 성능: value class는 오버헤드 없음, data class는 객체 생성 비용 있음
+```
+
 ## Show kotlin decompile
 
 kotlin 의 code 를 java 의 code 로 transpile 해보는 습관을 갖자. kotlin syntax 를 보다 명확히 이해할 수 있다. "show kotlin Bytecode | Decompile"
@@ -2290,9 +2328,7 @@ kotlin 의 code 를 java 의 code 로 transpile 해보는 습관을 갖자. kotl
 
 ## Smart casts
 
-다음과 같이 type 을 check 하고 나서 그 type 으로 casting 되는 것을 [Smart
-casts](https://kotlinlang.org/docs/typecasts.html#smart-casts) 이라고 한다.
-주로 `if, when` 에서 가능함.
+다음과 같이 type 을 check 하고 나서 그 type 으로 casting 되는 것을 [Smart casts](https://kotlinlang.org/docs/typecasts.html#smart-casts) 이라고 한다. 주로 `if, when` 에서 가능함.
 
 ```kotlin
 // smart casts in if
@@ -2311,8 +2347,7 @@ when (x) {
 
 ## Parameter vs Argument
 
-**parameter** 는 함수로 전달되는 입력의 변수이름이다. **argument** 는 실제로 전달되는
-값이다. 
+**parameter** 는 함수로 전달되는 입력의 변수이름이다. **argument** 는 실제로 전달되는 값이다. 
 
 예를 들어 다음의 경우 `length` 가 **parameter** 이고 `10` 이 **argument** 이다.
 
@@ -2442,7 +2477,7 @@ public final class Kotlin20Kt {
 
 if the last parameter of a function is a function, then a lambda expression passed as the corresponding argument can be placed outside the parentheses:
 
-```kt
+```kotlin
 val product = items.fold(1) { acc, e -> acc * e }
 ```
 
@@ -2450,7 +2485,7 @@ Such syntax is also known as trailing lambda.
 
 If the lambda is the only argument to that call, the parentheses can be omitted entirely:
 
-```kt
+```kotlin
 run { println("...") }
 ```
 
@@ -2458,7 +2493,7 @@ run { println("...") }
 
 flatMap 의 argument 인 lambda 는 return value 가 iteratable 해야 한다.
 
-```kt
+```kotlin
 val A  = listOf("A", "B", "C")
 val AA = A.map{ "$it!" }
 println(AA) // [A!, B!, C!]
@@ -2472,7 +2507,7 @@ println(AA) // [A, !, B, !, C, !]
 
 fold is similar with accumulate from cpp.
 
-```kt
+```kotlin
 package com.bezkoder.kotlin.fold
 
 fun main(args: Array<String>) {
@@ -2499,13 +2534,49 @@ fun main(args: Array<String>) {
 }
 ```
 
-## coroutine
+## Coroutine
 
-* [kotlin coroutine](/kotlin/kotlincoroutine.md)
+* [Kotlin Coroutine](kotlin_coroutine.md)
 
 ## Null safety
 
-`?.`
+```kotlin
+// Safe call operator (?.)
+val name: String? = null
+println(name?.length)  // null (NullPointerException 발생 안함)
+
+val str: String? = "Hello"
+println(str?.length)  // 5
+
+// Elvis operator (?:)
+val length = name?.length ?: 0  // name이 null이면 0
+println(length)  // 0
+
+// Not-null assertion (!!)
+val str2: String? = "Kotlin"
+println(str2!!.length)  // 6 (null이면 NullPointerException 발생)
+
+// Safe cast (as?)
+val obj: Any = "String"
+val num: Int? = obj as? Int  // 변환 실패시 null
+println(num)  // null
+
+// let with safe call
+val text: String? = "Hello"
+text?.let {
+    println("Length: ${it.length}")  // null이 아닐 때만 실행
+}
+
+// Safe call chaining
+data class Person(val name: String?, val address: Address?)
+data class Address(val city: String?)
+
+val person: Person? = Person("John", Address("Seoul"))
+println(person?.address?.city)  // Seoul
+
+val person2: Person? = null
+println(person2?.address?.city)  // null (중간에 null이면 전체가 null)
+```
 
 ## `@JvmOverloads`
 
@@ -2513,11 +2584,9 @@ fun main(args: Array<String>) {
 * [Learn in 2 minutes: @JvmOverloads in Kotlin.](https://medium.com/android-news/demystifying-the-jvmoverloads-in-kotlin-10dd098e6f72)
 * [Creating multiple constructors for Data classes in Kotlin](https://proandroiddev.com/creating-multiple-constructors-for-data-classes-in-kotlin-32ad27e58cac)
 
-constructor 혹은 method 에 `@JvmOverloads` 를 사용하면 multiple overload methods
-가 생성된다.
+constructor 혹은 method 에 `@JvmOverloads` 를 사용하면 multiple overload methods 가 생성된다.
 
-`N` 개의 인자를 받는 method 가 있다고 하자. 그 중 `M` 개가 default value 를 갖고
-있다고 하자. `@JvmOverloads` 를 method 에 추가하면 M 개의 overloads 가 생성된다.
+`N` 개의 인자를 받는 method 가 있다고 하자. 그 중 `M` 개가 default value 를 갖고 있다고 하자. `@JvmOverloads` 를 method 에 추가하면 M 개의 overloads 가 생성된다.
 
 ```kotlin
 @JvmOverloads
@@ -2580,9 +2649,7 @@ public final class DemoClass {
 }
 ```
 
-Java 에서 Kotlin class 의 static method 를 호출한다고 하자. Kotlin class 의
-method 에 `@JvmStatic` 을 사용하자. Companion class 가 만들어지지 않아서
-효율적이다.
+Java 에서 Kotlin class 의 static method 를 호출한다고 하자. Kotlin class 의 method 에 `@JvmStatic` 을 사용하자. Companion class 가 만들어지지 않아서 효율적이다.
 
 # Style Guide
 

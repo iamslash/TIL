@@ -7,6 +7,7 @@
   - [Reserved Words](#reserved-words)
   - [Data Types](#data-types)
   - [Min Max Values](#min-max-values)
+  - [Min Max](#min-max)
   - [Abs FAbs](#abs-fabs)
   - [Bit Manipulation](#bit-manipulation)
   - [Random](#random)
@@ -21,6 +22,8 @@
   - [Collections](#collections)
   - [Functions](#functions)
   - [Type Conversions](#type-conversions)
+  - [Sort](#sort)
+  - [Search](#search)
   - [Struct, Class, Interface, AbstractClass](#struct-class-interface-abstractclass)
   - [Closure](#closure)
   - [Lambda](#lambda)
@@ -82,6 +85,8 @@
   * 제네릭/템플릿
 
 ## Min Max Values
+
+## Min Max
 
 ## Abs FAbs
 
@@ -172,6 +177,10 @@
   * integer to string
   * string to integer
   * integer to float
+
+## Sort
+
+## Search
 
 ## Struct, Class, Interface, AbstractClass
 

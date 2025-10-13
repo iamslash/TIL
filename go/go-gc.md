@@ -64,7 +64,7 @@ runtime.GC()            // <- 데모용 강제 GC
 
 마킹이 진행되는 동안에도 사용자 코드(뮤테이터)가 포인터를 바꿀 수 있으므로, 컴파일러가 삽입한 write barrier가 정확성을 보장합니다. 런타임 `mbarrier.go`의 주석/유사코드가 **Go의 하이브리드 배리어**(Yuasa 삭제 + Dijkstra 삽입)를 명확히 설명합니다:
 
-```
+```go
 writePointer(slot, ptr):
     shade(*slot)            // 삭제 배리어: 기존 대상 음영화
     if current stack is grey:

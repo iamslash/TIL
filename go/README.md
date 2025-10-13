@@ -18,7 +18,7 @@
   - [Hello World](#hello-world)
   - [Build and Run](#build-and-run)
   - [Reserved Words](#reserved-words)
-  - [Min, Max values](#min-max-values)
+  - [Min, Max Values](#min-max-values)
   - [Abs, Fabs](#abs-fabs)
   - [Bit Manipulation](#bit-manipulation)
   - [String](#string)
@@ -73,7 +73,7 @@
   - [Type Assertion](#type-assertion)
   - [Define Multiple Variables On The Same Line](#define-multiple-variables-on-the-same-line)
   - [Context](#context)
-  - [module](#module)
+  - [Module](#module)
   - [Memory Layout](#memory-layout)
   - [Go Runtime](#go-runtime)
   - [Go GC](#go-gc)
@@ -299,7 +299,7 @@ const    fallthrough if     range     type
 continue for         import return    var
 ```
 
-## Min, Max values
+## Min, Max Values
 
 ```go
 // math package
@@ -2256,7 +2256,7 @@ func operation2(ctx context.Context) {
 }
 ```
 
-## module
+## Module
 
 * [go module @ TIL](go_module.md)
 
