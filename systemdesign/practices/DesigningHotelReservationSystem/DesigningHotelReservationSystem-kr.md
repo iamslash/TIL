@@ -659,11 +659,14 @@ SELECT date, total_inventory, total_reserved
 
 각 날짜에 대해 오버부킹 제한 체크:
 
-```python
-for row in results:
-    if (row.total_reserved + numberOfRooms) > (row.total_inventory * 1.1):
-        return "Not available"
-return "Available"
+```java
+// 각 날짜별 재고 결과를 확인하여 오버부킹 제한 체크
+for (InventoryRow row : results) {
+    if ((row.getTotalReserved() + numberOfRooms) > (row.getTotalInventory() * 1.1)) {
+        return "Not available";
+    }
+}
+return "Available";
 ```
 
 ### 재고 업데이트
@@ -756,33 +759,37 @@ UPDATE reservation
 3. 관리자가 수동 할당
 
 **로직:**
-```python
-def assign_room(reservation_id):
-    reservation = get_reservation(reservation_id)
+```java
+public void assignRoom(String reservationId) {
+    Reservation reservation = getReservation(reservationId);
 
-    # Special requests 고려
-    preferences = parse_special_requests(reservation.special_requests)
-    # 예: "High floor", "Quiet room", "Near elevator"
+    // Special requests 고려
+    Preferences preferences = parseSpecialRequests(reservation.getSpecialRequests());
+    // 예: "High floor", "Quiet room", "Near elevator"
 
-    # 가용 객실 찾기 (선호도 순)
-    available_rooms = find_available_rooms(
-        hotel_id=reservation.hotel_id,
-        room_type_id=reservation.room_type_id,
-        check_in=reservation.check_in_date,
-        check_out=reservation.check_out_date,
-        preferences=preferences
-    )
+    // 가용 객실 찾기 (선호도 순)
+    List<Room> availableRooms = findAvailableRooms(
+        reservation.getHotelId(),
+        reservation.getRoomTypeId(),
+        reservation.getCheckInDate(),
+        reservation.getCheckOutDate(),
+        preferences
+    );
 
-    if not available_rooms:
-        # Overbooking 발생: 업그레이드 또는 대체 호텔 제안
-        handle_overbooking(reservation)
-        return
+    if (availableRooms.isEmpty()) {
+        // Overbooking 발생: 업그레이드 또는 대체 호텔 제안
+        handleOverbooking(reservation);
+        return;
+    }
 
-    # 첫 번째 매칭되는 객실 할당
-    assign_room_to_reservation(reservation_id, available_rooms[0].room_id)
+    // 첫 번째 매칭되는 객실 할당
+    Room assignedRoom = availableRooms.get(0);
+    assignRoomToReservation(reservationId, assignedRoom.getRoomId());
 
-    # 고객에게 알림
-    send_notification(reservation.guest_id, "Room assigned: #" + available_rooms[0].room_number)
+    // 고객에게 알림
+    sendNotification(reservation.getGuestId(),
+        "Room assigned: #" + assignedRoom.getRoomNumber());
+}
 ```
 
 ### 장단점
@@ -971,13 +978,17 @@ COMMIT;
 | 프로토타입/MVP | DB Constraint | 빠른 구현 |
 
 **하이브리드 접근:**
-```python
-if inventory.total_reserved / inventory.total_inventory > 0.9:
-    # 재고 10% 이하 남음 → Pessimistic locking
-    use_pessimistic_locking()
-else:
-    # 재고 충분 → Optimistic locking
-    use_optimistic_locking()
+```java
+// 재고 상황에 따라 동적으로 락 전략 선택
+double occupancyRate = (double) inventory.getTotalReserved() / inventory.getTotalInventory();
+
+if (occupancyRate > 0.9) {
+    // 재고 10% 이하 남음 → Pessimistic locking
+    usePessimisticLocking();
+} else {
+    // 재고 충분 → Optimistic locking
+    useOptimisticLocking();
+}
 ```
 
 ## 결제 통합
@@ -1024,23 +1035,30 @@ else:
 
 **해결: Timeout + Cleanup Job**
 
-```python
-# 예약 생성 시
-reservation.created_at = now()
-reservation.status = 'pending'
+```java
+// 예약 생성 시
+reservation.setCreatedAt(LocalDateTime.now());
+reservation.setStatus("pending");
 
-# Cleanup Job (매 5분 실행)
-old_pending_reservations = db.query(
-    "SELECT * FROM reservation "
-    "WHERE status = 'pending' AND created_at < NOW() - INTERVAL 15 MINUTE"
-)
+// Cleanup Job (매 5분 실행) - @Scheduled 어노테이션 사용
+@Scheduled(fixedRate = 300000) // 5분마다 실행
+public void cleanupPendingReservations() {
+    String query = "SELECT * FROM reservation " +
+                   "WHERE status = 'pending' AND created_at < NOW() - INTERVAL 15 MINUTE";
 
-for reservation in old_pending_reservations:
-    # 재고 복원
-    restore_inventory(reservation)
-    # 예약 취소
-    reservation.status = 'canceled'
-    db.save(reservation)
+    List<Reservation> oldPendingReservations = jdbcTemplate.query(
+        query,
+        new BeanPropertyRowMapper<>(Reservation.class)
+    );
+
+    for (Reservation reservation : oldPendingReservations) {
+        // 재고 복원
+        restoreInventory(reservation);
+        // 예약 취소
+        reservation.setStatus("canceled");
+        reservationRepository.save(reservation);
+    }
+}
 ```
 
 **TTL 설정:**
@@ -1050,39 +1068,52 @@ for reservation in old_pending_reservations:
 
 ### 환불 처리
 
-```python
-def process_refund(reservation_id):
-    reservation = get_reservation(reservation_id)
+```java
+public RefundResponse processRefund(String reservationId) {
+    Reservation reservation = getReservation(reservationId);
 
-    if reservation.status != 'paid':
-        raise InvalidStateError()
+    if (!"paid".equals(reservation.getStatus())) {
+        throw new InvalidStateException("Reservation must be paid to process refund");
+    }
 
-    # 환불 정책 체크
-    days_until_checkin = (reservation.check_in_date - today()).days
+    // 환불 정책 체크
+    long daysUntilCheckin = ChronoUnit.DAYS.between(
+        LocalDate.now(),
+        reservation.getCheckInDate()
+    );
 
-    if days_until_checkin < 1:
-        refund_amount = 0  # No refund for same-day cancellation
-    elif days_until_checkin < 7:
-        refund_amount = reservation.total_price * 0.5  # 50% refund
-    else:
-        refund_amount = reservation.total_price  # Full refund
+    double refundAmount;
+    if (daysUntilCheckin < 1) {
+        refundAmount = 0.0;  // 당일 취소 시 환불 없음
+    } else if (daysUntilCheckin < 7) {
+        refundAmount = reservation.getTotalPrice() * 0.5;  // 50% 환불
+    } else {
+        refundAmount = reservation.getTotalPrice();  // 전액 환불
+    }
 
-    # 결제 게이트웨이 환불 요청
-    payment = get_payment(reservation_id)
-    refund_response = stripe.refund(payment.transaction_id, refund_amount)
+    // 결제 게이트웨이 환불 요청
+    Payment payment = getPayment(reservationId);
+    RefundResponse refundResponse = stripeClient.refund(
+        payment.getTransactionId(),
+        refundAmount
+    );
 
-    if refund_response.success:
-        # 재고 복원
-        restore_inventory(reservation)
+    if (refundResponse.isSuccess()) {
+        // 재고 복원
+        restoreInventory(reservation);
 
-        # 상태 업데이트
-        reservation.status = 'refunded'
-        payment.status = 'refunded'
+        // 상태 업데이트
+        reservation.setStatus("refunded");
+        payment.setStatus("refunded");
+        reservationRepository.save(reservation);
+        paymentRepository.save(payment);
 
-        # 알림 발송
-        send_refund_notification(reservation.guest_id, refund_amount)
+        // 알림 발송
+        sendRefundNotification(reservation.getGuestId(), refundAmount);
+    }
 
-    return refund_response
+    return refundResponse;
+}
 ```
 
 ### PCI DSS Compliance
@@ -1112,9 +1143,12 @@ shard_id = hash(hotel_id) % num_shards
 ```
 
 예: 16개 샤드, hotel_id = "hotel-333"
-```python
-shard_id = crc32("hotel-333") % 16  # → 5
-# 5번 샤드에 저장
+```java
+// CRC32를 사용한 샤드 ID 계산
+CRC32 crc32 = new CRC32();
+crc32.update("hotel-333".getBytes());
+int shardId = (int) (crc32.getValue() % 16);  // → 5
+// 5번 샤드에 저장
 ```
 
 **성능 향상:**
@@ -1191,43 +1225,64 @@ shard_id = crc32("hotel-333") % 16  # → 5
 
 **Cache-Aside (Lazy Loading):**
 
-```python
-def get_inventory(hotel_id, room_type_id, date):
-    cache_key = f"inventory:{hotel_id}:{room_type_id}:{date}"
+```java
+public Inventory getInventory(String hotelId, String roomTypeId, LocalDate date) {
+    String cacheKey = String.format("inventory:%s:%s:%s", hotelId, roomTypeId, date);
 
-    # 1. 캐시 확인
-    cached = redis.get(cache_key)
-    if cached:
-        return json.loads(cached)
+    // 1. 캐시 확인
+    String cached = redisTemplate.opsForValue().get(cacheKey);
+    if (cached != null) {
+        return objectMapper.readValue(cached, Inventory.class);
+    }
 
-    # 2. DB 조회
-    inventory = db.query(
-        "SELECT * FROM room_type_inventory "
-        "WHERE hotel_id = ? AND room_type_id = ? AND date = ?",
-        hotel_id, room_type_id, date
-    )
+    // 2. DB 조회
+    String query = "SELECT * FROM room_type_inventory " +
+                   "WHERE hotel_id = ? AND room_type_id = ? AND date = ?";
+    Inventory inventory = jdbcTemplate.queryForObject(
+        query,
+        new BeanPropertyRowMapper<>(Inventory.class),
+        hotelId, roomTypeId, date
+    );
 
-    # 3. 캐시 저장
-    redis.setex(cache_key, 60, json.dumps(inventory))
+    // 3. 캐시 저장 (TTL: 60초)
+    redisTemplate.opsForValue().set(
+        cacheKey,
+        objectMapper.writeValueAsString(inventory),
+        60,
+        TimeUnit.SECONDS
+    );
 
-    return inventory
+    return inventory;
+}
 ```
 
 **Write-Through (예약 생성 시):**
 
-```python
-def create_reservation(reservation_data):
-    # 1. DB 업데이트
-    db.execute(
-        "UPDATE room_type_inventory SET total_reserved = total_reserved + 1 ..."
-    )
+```java
+@Transactional
+public void createReservation(ReservationData reservationData) {
+    // 1. DB 업데이트
+    String updateQuery = "UPDATE room_type_inventory " +
+                         "SET total_reserved = total_reserved + 1 " +
+                         "WHERE hotel_id = ? AND room_type_id = ? AND date = ?";
+    jdbcTemplate.update(
+        updateQuery,
+        reservationData.getHotelId(),
+        reservationData.getRoomTypeId(),
+        reservationData.getDate()
+    );
 
-    # 2. 캐시 업데이트
-    cache_key = f"inventory:{hotel_id}:{room_type_id}:{date}"
-    redis.delete(cache_key)  # 또는 값 직접 업데이트
+    // 2. 캐시 무효화 (또는 값 직접 업데이트)
+    String cacheKey = String.format("inventory:%s:%s:%s",
+        reservationData.getHotelId(),
+        reservationData.getRoomTypeId(),
+        reservationData.getDate()
+    );
+    redisTemplate.delete(cacheKey);
 
-    # 3. 예약 레코드 생성
-    db.insert_reservation(reservation_data)
+    // 3. 예약 레코드 생성
+    reservationRepository.save(reservationData);
+}
 ```
 
 **Cache Invalidation 전략:**
@@ -1241,28 +1296,55 @@ def create_reservation(reservation_data):
 문제: 인기 호텔 캐시 만료 시 동시에 수백 개 DB 쿼리
 
 해결책:
-```python
-import redis_lock
+```java
+public Inventory getInventorySafe(String hotelId, String roomTypeId, LocalDate date) {
+    String cacheKey = String.format("inventory:%s:%s:%s", hotelId, roomTypeId, date);
+    String lockKey = "lock:" + cacheKey;
 
-def get_inventory_safe(hotel_id, room_type_id, date):
-    cache_key = f"inventory:{hotel_id}:{room_type_id}:{date}"
-    lock_key = f"lock:{cache_key}"
+    // 먼저 캐시 확인
+    String cached = redisTemplate.opsForValue().get(cacheKey);
+    if (cached != null) {
+        return objectMapper.readValue(cached, Inventory.class);
+    }
 
-    cached = redis.get(cache_key)
-    if cached:
-        return json.loads(cached)
+    // Redisson을 사용한 분산 락 획득
+    RLock lock = redisson.getLock(lockKey);
+    try {
+        // 5초 타임아웃으로 락 획득 시도
+        if (lock.tryLock(5, TimeUnit.SECONDS)) {
+            try {
+                // 락 획득 후 다시 한번 캐시 확인 (다른 스레드가 채웠을 수 있음)
+                cached = redisTemplate.opsForValue().get(cacheKey);
+                if (cached != null) {
+                    return objectMapper.readValue(cached, Inventory.class);
+                }
 
-    # 락 획득 시도
-    with redis_lock.Lock(redis, lock_key, expire=5):
-        # 락 획득 후 다시 한번 캐시 확인 (다른 스레드가 채웠을 수 있음)
-        cached = redis.get(cache_key)
-        if cached:
-            return json.loads(cached)
+                // DB 조회 (하나의 스레드만 실행)
+                Inventory inventory = jdbcTemplate.queryForObject(
+                    "SELECT * FROM room_type_inventory WHERE ...",
+                    new BeanPropertyRowMapper<>(Inventory.class)
+                );
 
-        # DB 조회 (하나의 스레드만 실행)
-        inventory = db.query(...)
-        redis.setex(cache_key, 60, json.dumps(inventory))
-        return inventory
+                // 캐시 저장
+                redisTemplate.opsForValue().set(
+                    cacheKey,
+                    objectMapper.writeValueAsString(inventory),
+                    60,
+                    TimeUnit.SECONDS
+                );
+                return inventory;
+            } finally {
+                lock.unlock();
+            }
+        }
+    } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
+        throw new RuntimeException("Failed to acquire lock", e);
+    }
+
+    // 락 획득 실패 시 DB에서 직접 조회
+    return queryInventoryFromDb(hotelId, roomTypeId, date);
+}
 ```
 
 **DB-Cache 불일치 처리:**
@@ -1330,79 +1412,110 @@ MySQL binlog → Debezium → Kafka → Cache Updater Service → Redis
 
 **구현 예시:**
 
-```python
-# Reservation Service
-def create_reservation(data):
-    # 로컬 트랜잭션 1: 재고 차감 + 예약 생성
-    with db.transaction():
-        update_inventory(data)
-        reservation = insert_reservation(data)
-        reservation.status = 'pending'
+```java
+// Reservation Service
+@Service
+public class ReservationService {
 
-    # 이벤트 발행
-    kafka.publish('reservation-events', {
-        'type': 'ReservationCreated',
-        'reservationID': reservation.id,
-        'amount': reservation.total_price,
-        'guestID': reservation.guest_id
-    })
+    @Transactional
+    public Reservation createReservation(ReservationData data) {
+        // 로컬 트랜잭션 1: 재고 차감 + 예약 생성
+        updateInventory(data);
+        Reservation reservation = insertReservation(data);
+        reservation.setStatus("pending");
+        reservationRepository.save(reservation);
 
-    return reservation
+        // 이벤트 발행
+        ReservationCreatedEvent event = ReservationCreatedEvent.builder()
+            .type("ReservationCreated")
+            .reservationId(reservation.getId())
+            .amount(reservation.getTotalPrice())
+            .guestId(reservation.getGuestId())
+            .build();
 
-# 보상 트랜잭션 (결제 실패 시)
-@kafka.subscribe('payment-events')
-def handle_payment_failed(event):
-    if event['type'] == 'PaymentFailed':
-        reservation_id = event['reservationID']
+        kafkaTemplate.send("reservation-events", event);
 
-        with db.transaction():
-            # 재고 복원
-            restore_inventory(reservation_id)
-            # 예약 취소
-            update_reservation_status(reservation_id, 'canceled')
+        return reservation;
+    }
 
-        # 사용자 알림
-        send_notification(event['guestID'], "Payment failed, reservation canceled")
+    // 보상 트랜잭션 (결제 실패 시)
+    @KafkaListener(topics = "payment-events")
+    @Transactional
+    public void handlePaymentFailed(PaymentEvent event) {
+        if ("PaymentFailed".equals(event.getType())) {
+            String reservationId = event.getReservationId();
+
+            // 재고 복원
+            restoreInventory(reservationId);
+
+            // 예약 취소
+            updateReservationStatus(reservationId, "canceled");
+
+            // 사용자 알림
+            notificationService.sendNotification(
+                event.getGuestId(),
+                "Payment failed, reservation canceled"
+            );
+        }
+    }
+}
 ```
 
-```python
-# Payment Service
-@kafka.subscribe('reservation-events')
-def handle_reservation_created(event):
-    if event['type'] == 'ReservationCreated':
-        reservation_id = event['reservationID']
-        amount = event['amount']
+```java
+// Payment Service
+@Service
+public class PaymentService {
 
-        try:
-            # 로컬 트랜잭션 2: 결제 시도
-            payment_result = stripe.charge(amount, ...)
+    @KafkaListener(topics = "reservation-events")
+    @Transactional
+    public void handleReservationCreated(ReservationEvent event) {
+        if ("ReservationCreated".equals(event.getType())) {
+            String reservationId = event.getReservationId();
+            double amount = event.getAmount();
 
-            with db.transaction():
-                insert_payment(reservation_id, payment_result)
+            try {
+                // 로컬 트랜잭션 2: 결제 시도
+                PaymentResult paymentResult = stripeClient.charge(amount);
 
-            # 성공 이벤트 발행
-            kafka.publish('payment-events', {
-                'type': 'PaymentCompleted',
-                'reservationID': reservation_id,
-                'paymentID': payment_result.id
-            })
+                insertPayment(reservationId, paymentResult);
 
-        except PaymentError as e:
-            # 실패 이벤트 발행
-            kafka.publish('payment-events', {
-                'type': 'PaymentFailed',
-                'reservationID': reservation_id,
-                'reason': str(e)
-            })
+                // 성공 이벤트 발행
+                PaymentCompletedEvent successEvent = PaymentCompletedEvent.builder()
+                    .type("PaymentCompleted")
+                    .reservationId(reservationId)
+                    .paymentId(paymentResult.getId())
+                    .build();
+
+                kafkaTemplate.send("payment-events", successEvent);
+
+            } catch (PaymentException e) {
+                // 실패 이벤트 발행
+                PaymentFailedEvent failureEvent = PaymentFailedEvent.builder()
+                    .type("PaymentFailed")
+                    .reservationId(reservationId)
+                    .reason(e.getMessage())
+                    .build();
+
+                kafkaTemplate.send("payment-events", failureEvent);
+            }
+        }
+    }
+}
 ```
 
-```python
-# Notification Service
-@kafka.subscribe('payment-events')
-def handle_payment_completed(event):
-    if event['type'] == 'PaymentCompleted':
-        reservation = get_reservation(event['reservationID'])
-        send_confirmation_email(reservation.guest_id, reservation)
+```java
+// Notification Service
+@Service
+public class NotificationService {
+
+    @KafkaListener(topics = "payment-events")
+    public void handlePaymentCompleted(PaymentEvent event) {
+        if ("PaymentCompleted".equals(event.getType())) {
+            Reservation reservation = getReservation(event.getReservationId());
+            sendConfirmationEmail(reservation.getGuestId(), reservation);
+        }
+    }
+}
 ```
 
 **장점:**
@@ -1433,54 +1546,87 @@ def handle_payment_completed(event):
 
 **구현 예시:**
 
-```python
-# Saga Orchestrator
-class BookingOrchestrator:
-    def execute_booking_saga(self, booking_data):
-        saga_state = {
-            'step': 0,
-            'reservation_id': None,
-            'payment_id': None
+```java
+// Saga Orchestrator
+@Service
+public class BookingOrchestrator {
+
+    @Autowired
+    private ReservationService reservationService;
+    @Autowired
+    private PaymentService paymentService;
+    @Autowired
+    private NotificationService notificationService;
+
+    public BookingResult executeBookingSaga(BookingData bookingData) {
+        SagaState sagaState = SagaState.builder()
+            .step(0)
+            .build();
+
+        try {
+            // Step 1: 예약 생성
+            sagaState.setStep(1);
+            Reservation reservation = reservationService.create(bookingData);
+            sagaState.setReservationId(reservation.getId());
+
+            // Step 2: 결제 처리
+            sagaState.setStep(2);
+            Payment payment = paymentService.charge(
+                reservation.getId(),
+                reservation.getTotalPrice()
+            );
+            sagaState.setPaymentId(payment.getId());
+
+            // Step 3: 예약 확정
+            sagaState.setStep(3);
+            reservationService.confirm(reservation.getId());
+
+            // Step 4: 알림 발송
+            sagaState.setStep(4);
+            notificationService.sendConfirmation(
+                reservation.getGuestId(),
+                reservation
+            );
+
+            return BookingResult.builder()
+                .status("success")
+                .reservationId(reservation.getId())
+                .build();
+
+        } catch (Exception e) {
+            // 보상 트랜잭션 실행
+            compensate(sagaState, e);
+            return BookingResult.builder()
+                .status("failed")
+                .reason(e.getMessage())
+                .build();
+        }
+    }
+
+    private void compensate(SagaState sagaState, Exception error) {
+        // 역순으로 보상 트랜잭션 실행
+        if (sagaState.getStep() >= 2) {
+            // 결제 환불
+            try {
+                paymentService.refund(sagaState.getPaymentId());
+            } catch (Exception e) {
+                log.error("Failed to refund payment", e);
+            }
         }
 
-        try:
-            # Step 1: 예약 생성
-            saga_state['step'] = 1
-            reservation = reservation_service.create(booking_data)
-            saga_state['reservation_id'] = reservation.id
+        if (sagaState.getStep() >= 1) {
+            // 예약 취소 + 재고 복원
+            try {
+                reservationService.cancel(sagaState.getReservationId());
+            } catch (Exception e) {
+                log.error("Failed to cancel reservation", e);
+            }
+        }
 
-            # Step 2: 결제 처리
-            saga_state['step'] = 2
-            payment = payment_service.charge(reservation.id, reservation.total_price)
-            saga_state['payment_id'] = payment.id
-
-            # Step 3: 예약 확정
-            saga_state['step'] = 3
-            reservation_service.confirm(reservation.id)
-
-            # Step 4: 알림 발송
-            saga_state['step'] = 4
-            notification_service.send_confirmation(reservation.guest_id, reservation)
-
-            return {'status': 'success', 'reservation_id': reservation.id}
-
-        except Exception as e:
-            # 보상 트랜잭션 실행
-            self.compensate(saga_state, e)
-            return {'status': 'failed', 'reason': str(e)}
-
-    def compensate(self, saga_state, error):
-        """역순으로 보상 트랜잭션 실행"""
-        if saga_state['step'] >= 2:
-            # 결제 환불
-            payment_service.refund(saga_state['payment_id'])
-
-        if saga_state['step'] >= 1:
-            # 예약 취소 + 재고 복원
-            reservation_service.cancel(saga_state['reservation_id'])
-
-        # 실패 알림
-        notification_service.send_failure_notification(...)
+        // 실패 알림
+        notificationService.sendFailureNotification(sagaState, error);
+    }
+}
 ```
 
 **장점:**
@@ -1557,60 +1703,81 @@ class BookingOrchestrator:
 
 ### 상태 전이 규칙
 
-```python
-ALLOWED_TRANSITIONS = {
-    'pending': ['paid', 'canceled'],
-    'paid': ['checked_in', 'canceled'],
-    'checked_in': ['checked_out'],
-    'checked_out': [],  # 종료 상태
-    'canceled': ['refunded'],
-    'refunded': []  # 종료 상태
+```java
+@Service
+public class ReservationStatusService {
+
+    private static final Map<String, List<String>> ALLOWED_TRANSITIONS = Map.of(
+        "pending", List.of("paid", "canceled"),
+        "paid", List.of("checked_in", "canceled"),
+        "checked_in", List.of("checked_out"),
+        "checked_out", List.of(),  // 종료 상태
+        "canceled", List.of("refunded"),
+        "refunded", List.of()  // 종료 상태
+    );
+
+    @Transactional
+    public void updateReservationStatus(String reservationId, String newStatus) {
+        Reservation reservation = getReservation(reservationId);
+        String oldStatus = reservation.getStatus();
+
+        // 유효한 상태 전이 확인
+        if (!ALLOWED_TRANSITIONS.get(oldStatus).contains(newStatus)) {
+            throw new InvalidStateTransitionException(
+                String.format("Cannot transition from %s to %s", oldStatus, newStatus)
+            );
+        }
+
+        // 상태별 후처리
+        if ("canceled".equals(newStatus)) {
+            restoreInventory(reservation);
+        } else if ("refunded".equals(newStatus)) {
+            processRefund(reservation);
+        }
+
+        reservation.setStatus(newStatus);
+        reservation.setUpdatedAt(LocalDateTime.now());
+        reservationRepository.save(reservation);
+
+        // 이벤트 발행
+        ReservationStatusChangedEvent event = ReservationStatusChangedEvent.builder()
+            .type("ReservationStatusChanged")
+            .reservationId(reservationId)
+            .oldStatus(oldStatus)
+            .newStatus(newStatus)
+            .build();
+
+        kafkaTemplate.send("reservation-events", event);
+    }
 }
-
-def update_reservation_status(reservation_id, new_status):
-    reservation = get_reservation(reservation_id)
-
-    if new_status not in ALLOWED_TRANSITIONS[reservation.status]:
-        raise InvalidStateTransitionError(
-            f"Cannot transition from {reservation.status} to {new_status}"
-        )
-
-    # 상태별 후처리
-    if new_status == 'canceled':
-        restore_inventory(reservation)
-    elif new_status == 'refunded':
-        process_refund(reservation)
-
-    reservation.status = new_status
-    reservation.updated_at = now()
-    db.save(reservation)
-
-    # 이벤트 발행
-    kafka.publish('reservation-events', {
-        'type': 'ReservationStatusChanged',
-        'reservationID': reservation_id,
-        'oldStatus': reservation.status,
-        'newStatus': new_status
-    })
 ```
 
 ### Pending 예약 자동 정리
 
-```python
-# Cron Job: 매 5분 실행
-def cleanup_expired_pending_reservations():
-    expired = db.query(
-        "SELECT reservation_id FROM reservation "
-        "WHERE status = 'pending' "
-        "AND created_at < NOW() - INTERVAL 15 MINUTE"
-    )
+```java
+// Cron Job: 매 5분 실행
+@Service
+public class ReservationCleanupService {
 
-    for reservation_id in expired:
-        try:
-            update_reservation_status(reservation_id, 'canceled')
-            logger.info(f"Canceled expired reservation: {reservation_id}")
-        except Exception as e:
-            logger.error(f"Failed to cancel {reservation_id}: {e}")
+    @Scheduled(fixedRate = 300000) // 5분마다 실행
+    @Transactional
+    public void cleanupExpiredPendingReservations() {
+        String query = "SELECT reservation_id FROM reservation " +
+                       "WHERE status = 'pending' " +
+                       "AND created_at < NOW() - INTERVAL 15 MINUTE";
+
+        List<String> expired = jdbcTemplate.queryForList(query, String.class);
+
+        for (String reservationId : expired) {
+            try {
+                updateReservationStatus(reservationId, "canceled");
+                log.info("Canceled expired reservation: {}", reservationId);
+            } catch (Exception e) {
+                log.error("Failed to cancel {}: {}", reservationId, e.getMessage());
+            }
+        }
+    }
+}
 ```
 
 ## 모니터링 및 관찰성
@@ -1643,56 +1810,75 @@ def cleanup_expired_pending_reservations():
 
 **구조화된 로깅 (JSON):**
 
-```python
-import logging
-import json
+```java
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
-logger = logging.getLogger(__name__)
+@Service
+public class ReservationService {
 
-def create_reservation(data):
-    request_id = generate_request_id()
+    private static final Logger log = LoggerFactory.getLogger(ReservationService.class);
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    logger.info(json.dumps({
-        'event': 'reservation_creation_started',
-        'request_id': request_id,
-        'hotel_id': data['hotelID'],
-        'room_type_id': data['roomTypeID'],
-        'guest_id': data['guestID'],
-        'check_in': data['checkInDate'],
-        'check_out': data['checkOutDate']
-    }))
+    public Reservation createReservation(ReservationData data) {
+        String requestId = generateRequestId();
+        MDC.put("requestId", requestId);
 
-    try:
-        reservation = _create_reservation_internal(data)
+        long startTime = System.currentTimeMillis();
 
-        logger.info(json.dumps({
-            'event': 'reservation_created',
-            'request_id': request_id,
-            'reservation_id': reservation.id,
-            'status': reservation.status,
-            'duration_ms': get_duration()
-        }))
+        try {
+            Map<String, Object> logData = Map.of(
+                "event", "reservation_creation_started",
+                "request_id", requestId,
+                "hotel_id", data.getHotelId(),
+                "room_type_id", data.getRoomTypeId(),
+                "guest_id", data.getGuestId(),
+                "check_in", data.getCheckInDate(),
+                "check_out", data.getCheckOutDate()
+            );
+            log.info(objectMapper.writeValueAsString(logData));
 
-        return reservation
+            Reservation reservation = createReservationInternal(data);
 
-    except InventoryUnavailableError as e:
-        logger.warning(json.dumps({
-            'event': 'reservation_failed',
-            'request_id': request_id,
-            'reason': 'inventory_unavailable',
-            'hotel_id': data['hotelID'],
-            'room_type_id': data['roomTypeID']
-        }))
-        raise
+            Map<String, Object> successLog = Map.of(
+                "event", "reservation_created",
+                "request_id", requestId,
+                "reservation_id", reservation.getId(),
+                "status", reservation.getStatus(),
+                "duration_ms", System.currentTimeMillis() - startTime
+            );
+            log.info(objectMapper.writeValueAsString(successLog));
 
-    except Exception as e:
-        logger.error(json.dumps({
-            'event': 'reservation_error',
-            'request_id': request_id,
-            'error': str(e),
-            'traceback': traceback.format_exc()
-        }))
-        raise
+            return reservation;
+
+        } catch (InventoryUnavailableException e) {
+            Map<String, Object> warningLog = Map.of(
+                "event", "reservation_failed",
+                "request_id", requestId,
+                "reason", "inventory_unavailable",
+                "hotel_id", data.getHotelId(),
+                "room_type_id", data.getRoomTypeId()
+            );
+            log.warn(objectMapper.writeValueAsString(warningLog));
+            throw e;
+
+        } catch (Exception e) {
+            Map<String, Object> errorLog = Map.of(
+                "event", "reservation_error",
+                "request_id", requestId,
+                "error", e.getMessage(),
+                "exception_class", e.getClass().getName()
+            );
+            log.error(objectMapper.writeValueAsString(errorLog), e);
+            throw e;
+
+        } finally {
+            MDC.clear();
+        }
+    }
+}
 ```
 
 **로그 레벨:**
@@ -1703,40 +1889,74 @@ def create_reservation(data):
 
 **민감 정보 마스킹:**
 
-```python
-def mask_sensitive_data(data):
-    if 'cardNumber' in data:
-        data['cardNumber'] = '**** **** **** ' + data['cardNumber'][-4:]
-    if 'cvv' in data:
-        data['cvv'] = '***'
-    return data
+```java
+public Map<String, Object> maskSensitiveData(Map<String, Object> data) {
+    if (data.containsKey("cardNumber")) {
+        String cardNumber = (String) data.get("cardNumber");
+        if (cardNumber.length() >= 4) {
+            data.put("cardNumber", "**** **** **** " + cardNumber.substring(cardNumber.length() - 4));
+        }
+    }
+    if (data.containsKey("cvv")) {
+        data.put("cvv", "***");
+    }
+    return data;
+}
 ```
 
 ### 분산 추적 (Distributed Tracing)
 
 **OpenTelemetry/Jaeger 사용:**
 
-```python
-from opentelemetry import trace
+```java
+import io.opentelemetry.api.trace.Span;
+import io.opentelemetry.api.trace.Tracer;
+import io.opentelemetry.context.Scope;
 
-tracer = trace.get_tracer(__name__)
+@Service
+public class ReservationService {
 
-@tracer.start_as_current_span("create_reservation")
-def create_reservation(data):
-    span = trace.get_current_span()
-    span.set_attribute("hotel_id", data['hotelID'])
-    span.set_attribute("room_type_id", data['roomTypeID'])
+    @Autowired
+    private Tracer tracer;
 
-    with tracer.start_as_current_span("check_inventory"):
-        inventory = check_inventory(data)
+    public Reservation createReservation(ReservationData data) {
+        Span span = tracer.spanBuilder("create_reservation").startSpan();
 
-    with tracer.start_as_current_span("update_inventory"):
-        update_inventory(data)
+        try (Scope scope = span.makeCurrent()) {
+            span.setAttribute("hotel_id", data.getHotelId());
+            span.setAttribute("room_type_id", data.getRoomTypeId());
 
-    with tracer.start_as_current_span("create_reservation_record"):
-        reservation = insert_reservation(data)
+            // 재고 확인
+            Span inventoryCheckSpan = tracer.spanBuilder("check_inventory").startSpan();
+            try (Scope inventoryScope = inventoryCheckSpan.makeCurrent()) {
+                Inventory inventory = checkInventory(data);
+            } finally {
+                inventoryCheckSpan.end();
+            }
 
-    return reservation
+            // 재고 업데이트
+            Span updateSpan = tracer.spanBuilder("update_inventory").startSpan();
+            try (Scope updateScope = updateSpan.makeCurrent()) {
+                updateInventory(data);
+            } finally {
+                updateSpan.end();
+            }
+
+            // 예약 레코드 생성
+            Span createSpan = tracer.spanBuilder("create_reservation_record").startSpan();
+            Reservation reservation;
+            try (Scope createScope = createSpan.makeCurrent()) {
+                reservation = insertReservation(data);
+            } finally {
+                createSpan.end();
+            }
+
+            return reservation;
+        } finally {
+            span.end();
+        }
+    }
+}
 ```
 
 **트레이스 예시:**
@@ -1789,30 +2009,57 @@ def create_reservation(data):
 
 **JWT 기반 인증:**
 
-```python
-# 로그인 시 JWT 발급
-def login(email, password):
-    user = authenticate(email, password)
-    if not user:
-        raise AuthenticationError()
+```java
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.Claims;
 
-    token = jwt.encode({
-        'user_id': user.id,
-        'email': user.email,
-        'role': user.role,  # 'guest' or 'admin'
-        'exp': datetime.utcnow() + timedelta(hours=24)
-    }, SECRET_KEY, algorithm='HS256')
+@Service
+public class AuthService {
 
-    return token
+    @Value("${jwt.secret}")
+    private String SECRET_KEY;
 
-# API Gateway에서 토큰 검증
-@require_auth
-def create_reservation(request):
-    token = request.headers.get('Authorization').split('Bearer ')[1]
-    payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
+    // 로그인 시 JWT 발급
+    public String login(String email, String password) {
+        User user = authenticate(email, password);
+        if (user == null) {
+            throw new AuthenticationException("Invalid credentials");
+        }
 
-    user_id = payload['user_id']
-    # ... 예약 생성 로직
+        Date expiryDate = Date.from(
+            Instant.now().plus(24, ChronoUnit.HOURS)
+        );
+
+        String token = Jwts.builder()
+            .claim("user_id", user.getId())
+            .claim("email", user.getEmail())
+            .claim("role", user.getRole())  // 'guest' or 'admin'
+            .setExpiration(expiryDate)
+            .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+            .compact();
+
+        return token;
+    }
+
+    // API Gateway에서 토큰 검증
+    public Claims validateToken(String token) {
+        return Jwts.parser()
+            .setSigningKey(SECRET_KEY)
+            .parseClaimsJws(token)
+            .getBody();
+    }
+
+    public Reservation createReservation(HttpServletRequest request, ReservationData data) {
+        String authHeader = request.getHeader("Authorization");
+        String token = authHeader.substring("Bearer ".length());
+        Claims payload = validateToken(token);
+
+        String userId = payload.get("user_id", String.class);
+        // ... 예약 생성 로직
+        return null;
+    }
+}
 ```
 
 **권한 제어 (RBAC):**
@@ -1823,50 +2070,83 @@ def create_reservation(request):
 | Admin | 모든 예약 조회, 호텔/객실 CRUD |
 | Hotel Manager | 자신의 호텔 예약 조회, 객실 관리 |
 
-```python
-@require_role('admin')
-def delete_hotel(hotel_id):
-    # 관리자만 실행 가능
-    pass
+```java
+@Service
+public class HotelService {
 
-def cancel_reservation(reservation_id, user_id):
-    reservation = get_reservation(reservation_id)
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteHotel(String hotelId) {
+        // 관리자만 실행 가능
+        hotelRepository.deleteById(hotelId);
+    }
+}
 
-    # 본인 예약만 취소 가능
-    if reservation.guest_id != user_id:
-        raise PermissionDeniedError()
+@Service
+public class ReservationService {
 
-    # ... 취소 로직
+    public void cancelReservation(String reservationId, String userId) {
+        Reservation reservation = getReservation(reservationId);
+
+        // 본인 예약만 취소 가능
+        if (!reservation.getGuestId().equals(userId)) {
+            throw new PermissionDeniedException("Not authorized to cancel this reservation");
+        }
+
+        // ... 취소 로직
+        reservation.setStatus("canceled");
+        reservationRepository.save(reservation);
+    }
+}
 ```
 
 ### Rate Limiting
 
 **API Gateway에서 Rate Limiting:**
 
-```python
-from redis import Redis
-from datetime import timedelta
+```java
+@Component
+public class RateLimiter {
 
-redis_client = Redis()
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
 
-def rate_limit(user_id, limit=100, window=60):
-    """사용자당 분당 100 요청 제한"""
-    key = f"rate_limit:{user_id}"
+    /**
+     * 사용자당 분당 100 요청 제한
+     */
+    public int rateLimit(String userId, int limit, int windowSeconds) {
+        String key = "rate_limit:" + userId;
 
-    current = redis_client.incr(key)
+        Long current = redisTemplate.opsForValue().increment(key);
 
-    if current == 1:
-        redis_client.expire(key, window)
+        if (current == null || current == 1) {
+            redisTemplate.expire(key, windowSeconds, TimeUnit.SECONDS);
+        }
 
-    if current > limit:
-        raise RateLimitExceededError(f"Too many requests. Limit: {limit}/min")
+        if (current != null && current > limit) {
+            throw new RateLimitExceededException(
+                String.format("Too many requests. Limit: %d/min", limit)
+            );
+        }
 
-    return current
+        return current != null ? current.intValue() : 0;
+    }
+}
 
-@app.before_request
-def check_rate_limit():
-    user_id = get_current_user_id()
-    rate_limit(user_id)
+@Component
+public class RateLimitInterceptor implements HandlerInterceptor {
+
+    @Autowired
+    private RateLimiter rateLimiter;
+
+    @Override
+    public boolean preHandle(HttpServletRequest request,
+                            HttpServletResponse response,
+                            Object handler) throws Exception {
+        String userId = getCurrentUserId(request);
+        rateLimiter.rateLimit(userId, 100, 60);
+        return true;
+    }
+}
 ```
 
 **Tiered Rate Limiting:**
@@ -1898,21 +2178,49 @@ def check_rate_limit():
 
 **개인정보 마스킹 (GDPR 준수):**
 
-```python
-def get_reservation_details(reservation_id, requester_user_id):
-    reservation = db.get_reservation(reservation_id)
+```java
+@Service
+public class ReservationService {
 
-    # 본인 또는 관리자만 전체 정보 조회
-    if requester_user_id != reservation.guest_id and not is_admin(requester_user_id):
-        reservation.guest_email = mask_email(reservation.guest_email)
-        reservation.guest_phone = mask_phone(reservation.guest_phone)
+    public Reservation getReservationDetails(String reservationId, String requesterUserId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+            .orElseThrow(() -> new ResourceNotFoundException("Reservation not found"));
 
-    return reservation
+        // 본인 또는 관리자만 전체 정보 조회
+        if (!requesterUserId.equals(reservation.getGuestId()) &&
+            !isAdmin(requesterUserId)) {
+            reservation.setGuestEmail(maskEmail(reservation.getGuestEmail()));
+            reservation.setGuestPhone(maskPhone(reservation.getGuestPhone()));
+        }
 
-def mask_email(email):
-    # john.doe@example.com → j***e@example.com
-    local, domain = email.split('@')
-    return f"{local[0]}***{local[-1]}@{domain}"
+        return reservation;
+    }
+
+    private String maskEmail(String email) {
+        // john.doe@example.com → j***e@example.com
+        String[] parts = email.split("@");
+        if (parts.length != 2 || parts[0].length() < 2) {
+            return email;
+        }
+
+        String local = parts[0];
+        String domain = parts[1];
+        return String.format("%s***%s@%s",
+            local.charAt(0),
+            local.charAt(local.length() - 1),
+            domain
+        );
+    }
+
+    private String maskPhone(String phone) {
+        // +1-555-123-4567 → +1-***-***-4567
+        if (phone.length() < 4) {
+            return phone;
+        }
+        return phone.substring(0, phone.length() - 4).replaceAll("\\d", "*") +
+               phone.substring(phone.length() - 4);
+    }
+}
 ```
 
 ## 장애 처리 및 복구
@@ -1921,34 +2229,62 @@ def mask_email(email):
 
 외부 서비스 (Payment Gateway) 장애 시 cascading failure 방지:
 
-```python
-from pybreaker import CircuitBreaker
+```java
+import io.github.resilience4j.circuitbreaker.CircuitBreaker;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig;
+import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;
 
-# Circuit Breaker 설정
-payment_breaker = CircuitBreaker(
-    fail_max=5,        # 5번 실패 시 OPEN
-    timeout_duration=60  # 60초 후 HALF_OPEN
-)
+@Service
+public class PaymentService {
 
-@payment_breaker
-def charge_payment(amount, payment_details):
-    response = stripe_api.charge(amount, payment_details)
-    if response.status_code != 200:
-        raise PaymentError()
-    return response
+    private final CircuitBreaker circuitBreaker;
 
-# Circuit OPEN 시 Fallback
-def create_reservation_with_fallback(data):
-    try:
-        reservation = create_reservation(data)
-        payment = charge_payment(reservation.total_price, data['paymentDetails'])
-        return reservation
-    except CircuitBreakerError:
-        # Payment Service가 다운 → 예약은 생성하되 결제는 나중에
-        reservation = create_reservation(data)
-        reservation.status = 'pending_payment'
-        send_payment_link(reservation.guest_id, reservation.id)
-        return reservation
+    public PaymentService() {
+        // Circuit Breaker 설정
+        CircuitBreakerConfig config = CircuitBreakerConfig.custom()
+            .failureRateThreshold(50)  // 실패율 50% 초과 시 OPEN
+            .slidingWindowSize(10)     // 최근 10개 요청 기준
+            .waitDurationInOpenState(Duration.ofSeconds(60))  // 60초 후 HALF_OPEN
+            .permittedNumberOfCallsInHalfOpenState(3)
+            .build();
+
+        CircuitBreakerRegistry registry = CircuitBreakerRegistry.of(config);
+        this.circuitBreaker = registry.circuitBreaker("paymentBreaker");
+    }
+
+    public PaymentResponse chargePayment(double amount, PaymentDetails paymentDetails) {
+        return circuitBreaker.executeSupplier(() -> {
+            PaymentResponse response = stripeApi.charge(amount, paymentDetails);
+            if (response.getStatusCode() != 200) {
+                throw new PaymentException("Payment failed");
+            }
+            return response;
+        });
+    }
+}
+
+// Circuit OPEN 시 Fallback
+@Service
+public class ReservationService {
+
+    public Reservation createReservationWithFallback(ReservationData data) {
+        try {
+            Reservation reservation = createReservation(data);
+            PaymentResponse payment = paymentService.chargePayment(
+                reservation.getTotalPrice(),
+                data.getPaymentDetails()
+            );
+            return reservation;
+
+        } catch (CircuitBreakerOpenException e) {
+            // Payment Service가 다운 → 예약은 생성하되 결제는 나중에
+            Reservation reservation = createReservation(data);
+            reservation.setStatus("pending_payment");
+            sendPaymentLink(reservation.getGuestId(), reservation.getId());
+            return reservation;
+        }
+    }
+}
 ```
 
 **상태:**
@@ -1960,62 +2296,89 @@ def create_reservation_with_fallback(data):
 
 핵심 기능은 유지하고 부가 기능 축소:
 
-```python
-def search_hotels(location, check_in, check_out):
-    try:
-        # Elasticsearch로 검색 (최적)
-        return elasticsearch.search(location, check_in, check_out)
-    except ElasticsearchError:
-        # Elasticsearch 다운 → MySQL로 폴백 (느리지만 작동)
-        logger.warning("Elasticsearch down, using MySQL fallback")
-        return mysql_search_fallback(location, check_in, check_out)
+```java
+@Service
+public class HotelSearchService {
 
-def get_hotel_details(hotel_id):
-    details = db.get_hotel(hotel_id)
+    public List<Hotel> searchHotels(String location, LocalDate checkIn, LocalDate checkOut) {
+        try {
+            // Elasticsearch로 검색 (최적)
+            return elasticsearchClient.search(location, checkIn, checkOut);
+        } catch (ElasticsearchException e) {
+            // Elasticsearch 다운 → MySQL로 폴백 (느리지만 작동)
+            log.warn("Elasticsearch down, using MySQL fallback");
+            return mysqlSearchFallback(location, checkIn, checkOut);
+        }
+    }
 
-    try:
-        # 리뷰 데이터 추가 (외부 서비스)
-        details['reviews'] = review_service.get_reviews(hotel_id, timeout=2)
-    except (Timeout, ServiceUnavailableError):
-        # 리뷰 서비스 다운 → 리뷰 없이 반환
-        details['reviews'] = []
-        logger.warning(f"Review service unavailable for hotel {hotel_id}")
+    public HotelDetails getHotelDetails(String hotelId) {
+        HotelDetails details = hotelRepository.findById(hotelId)
+            .orElseThrow(() -> new ResourceNotFoundException("Hotel not found"));
 
-    return details
+        try {
+            // 리뷰 데이터 추가 (외부 서비스, 타임아웃 2초)
+            List<Review> reviews = reviewService.getReviews(hotelId, 2000);
+            details.setReviews(reviews);
+        } catch (TimeoutException | ServiceUnavailableException e) {
+            // 리뷰 서비스 다운 → 리뷰 없이 반환
+            details.setReviews(new ArrayList<>());
+            log.warn("Review service unavailable for hotel {}", hotelId);
+        }
+
+        return details;
+    }
+}
 ```
 
 ### Retry 전략
 
 **Exponential Backoff with Jitter:**
 
-```python
-import time
-import random
+```java
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
-def call_external_service_with_retry(func, max_retries=3):
-    for attempt in range(max_retries):
-        try:
-            return func()
-        except TransientError as e:
-            if attempt == max_retries - 1:
-                raise
+@Service
+public class RetryService {
 
-            # Exponential backoff: 1초, 2초, 4초
-            backoff = (2 ** attempt) + random.uniform(0, 1)
-            logger.warning(f"Retry {attempt + 1}/{max_retries} after {backoff}s")
-            time.sleep(backoff)
+    private static final Random random = new Random();
+
+    public <T> T callExternalServiceWithRetry(Supplier<T> func, int maxRetries) {
+        for (int attempt = 0; attempt < maxRetries; attempt++) {
+            try {
+                return func.get();
+            } catch (TransientException e) {
+                if (attempt == maxRetries - 1) {
+                    throw e;
+                }
+
+                // Exponential backoff: 1초, 2초, 4초
+                double backoff = Math.pow(2, attempt) + random.nextDouble();
+                log.warn("Retry {}/{} after {}s", attempt + 1, maxRetries, backoff);
+
+                try {
+                    TimeUnit.MILLISECONDS.sleep((long) (backoff * 1000));
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    throw new RuntimeException("Retry interrupted", ie);
+                }
+            }
+        }
+        throw new IllegalStateException("Should not reach here");
+    }
+}
 ```
 
 **Idempotency (재시도 안전성):**
 
 모든 쓰기 작업은 멱등성 보장:
 
-```python
+```http
 POST /v1/reservations
 Headers:
   Idempotency-Key: uuid-12345
 
-# 서버: 동일한 Idempotency-Key로 중복 요청 시 이전 결과 반환
+// 서버: 동일한 Idempotency-Key로 중복 요청 시 이전 결과 반환
 ```
 
 ### Database Failover
@@ -2039,20 +2402,38 @@ Read:  Slaves (Round-robin)
 
 **Replication Lag 처리:**
 
-```python
-def get_reservation_after_creation(reservation_id):
-    # 방금 생성한 예약 조회 → Master에서 읽기 (Read-Your-Writes)
-    return db.query_master(
-        "SELECT * FROM reservation WHERE reservation_id = ?",
-        reservation_id
-    )
+```java
+@Service
+public class ReservationQueryService {
 
-def list_reservations(user_id):
-    # 목록 조회 → Slave에서 읽기 (약간의 지연 허용)
-    return db.query_slave(
-        "SELECT * FROM reservation WHERE guest_id = ?",
-        user_id
-    )
+    @Autowired
+    @Qualifier("masterDataSource")
+    private JdbcTemplate masterJdbcTemplate;
+
+    @Autowired
+    @Qualifier("slaveDataSource")
+    private JdbcTemplate slaveJdbcTemplate;
+
+    public Reservation getReservationAfterCreation(String reservationId) {
+        // 방금 생성한 예약 조회 → Master에서 읽기 (Read-Your-Writes)
+        String query = "SELECT * FROM reservation WHERE reservation_id = ?";
+        return masterJdbcTemplate.queryForObject(
+            query,
+            new BeanPropertyRowMapper<>(Reservation.class),
+            reservationId
+        );
+    }
+
+    public List<Reservation> listReservations(String userId) {
+        // 목록 조회 → Slave에서 읽기 (약간의 지연 허용)
+        String query = "SELECT * FROM reservation WHERE guest_id = ?";
+        return slaveJdbcTemplate.query(
+            query,
+            new BeanPropertyRowMapper<>(Reservation.class),
+            userId
+        );
+    }
+}
 ```
 
 ### Backup 및 Disaster Recovery
@@ -2084,19 +2465,22 @@ def list_reservations(user_id):
 - 호텔마다 `timezone` 필드 (예: "America/New_York")
 - 체크인/체크아웃 시간은 호텔 로컬 시간으로 표시
 
-```python
-from datetime import datetime
-import pytz
+```java
+import java.time.*;
 
-def calculate_checkin_time(hotel_id, date):
-    hotel = get_hotel(hotel_id)
-    hotel_tz = pytz.timezone(hotel.timezone)
+public class TimeZoneService {
 
-    # UTC 날짜 → 호텔 로컬 시간
-    checkin_time = datetime.combine(date, time(15, 0))  # 3 PM
-    localized = hotel_tz.localize(checkin_time)
+    public ZonedDateTime calculateCheckinTime(String hotelId, LocalDate date) {
+        Hotel hotel = getHotel(hotelId);
+        ZoneId hotelZone = ZoneId.of(hotel.getTimezone());
 
-    return localized.astimezone(pytz.UTC)  # 저장은 UTC
+        // UTC 날짜 → 호텔 로컬 시간
+        LocalTime checkinTime = LocalTime.of(15, 0);  // 3 PM
+        ZonedDateTime localized = ZonedDateTime.of(date, checkinTime, hotelZone);
+
+        return localized.withZoneSameInstant(ZoneOffset.UTC);  // 저장은 UTC
+    }
+}
 ```
 
 ### 2. 당일 예약 (Same-Day Booking)
@@ -2107,15 +2491,19 @@ def calculate_checkin_time(hotel_id, date):
 - 체크인 시간까지 예약 가능 (예: 오후 3시까지만)
 - 빠른 확인 필요 (호텔에 즉시 알림)
 
-```python
-def validate_checkin_date(hotel_id, checkin_date):
-    hotel = get_hotel(hotel_id)
-    now_hotel_time = datetime.now(pytz.timezone(hotel.timezone))
+```java
+public void validateCheckinDate(String hotelId, LocalDate checkinDate) {
+    Hotel hotel = getHotel(hotelId);
+    ZoneId hotelZone = ZoneId.of(hotel.getTimezone());
+    ZonedDateTime nowHotelTime = ZonedDateTime.now(hotelZone);
 
-    if checkin_date == now_hotel_time.date():
-        # 당일 예약
-        if now_hotel_time.hour >= 15:  # 3 PM 이후
-            raise ValidationError("Same-day booking not available after 3 PM")
+    if (checkinDate.equals(nowHotelTime.toLocalDate())) {
+        // 당일 예약
+        if (nowHotelTime.getHour() >= 15) {  // 3 PM 이후
+            throw new ValidationException("Same-day booking not available after 3 PM");
+        }
+    }
+}
 ```
 
 ### 3. 다중 객실 예약
@@ -2155,34 +2543,36 @@ else:
 **문제**: 날짜 변경 시 재고 처리
 
 **해결책:**
-```python
-def modify_reservation_dates(reservation_id, new_checkin, new_checkout):
-    reservation = get_reservation(reservation_id)
+```java
+@Transactional
+public void modifyReservationDates(String reservationId,
+                                   LocalDate newCheckin,
+                                   LocalDate newCheckout) {
+    Reservation reservation = getReservation(reservationId);
 
-    # 트랜잭션 시작
-    with db.transaction():
-        # 1. 기존 날짜 재고 복원
-        restore_inventory(
-            reservation.hotel_id,
-            reservation.room_type_id,
-            reservation.check_in_date,
-            reservation.check_out_date,
-            reservation.number_of_rooms
-        )
+    // 1. 기존 날짜 재고 복원
+    restoreInventory(
+        reservation.getHotelId(),
+        reservation.getRoomTypeId(),
+        reservation.getCheckInDate(),
+        reservation.getCheckOutDate(),
+        reservation.getNumberOfRooms()
+    );
 
-        # 2. 새 날짜 재고 차감
-        reserve_inventory(
-            reservation.hotel_id,
-            reservation.room_type_id,
-            new_checkin,
-            new_checkout,
-            reservation.number_of_rooms
-        )
+    // 2. 새 날짜 재고 차감
+    reserveInventory(
+        reservation.getHotelId(),
+        reservation.getRoomTypeId(),
+        newCheckin,
+        newCheckout,
+        reservation.getNumberOfRooms()
+    );
 
-        # 3. 예약 업데이트
-        reservation.check_in_date = new_checkin
-        reservation.check_out_date = new_checkout
-        db.save(reservation)
+    // 3. 예약 업데이트
+    reservation.setCheckInDate(newCheckin);
+    reservation.setCheckOutDate(newCheckout);
+    reservationRepository.save(reservation);
+}
 ```
 
 ### 5. 호텔 유지보수/폐업
@@ -2194,23 +2584,29 @@ def modify_reservation_dates(reservation_id, new_checkin, new_checkout):
 - 기존 예약은 유지, 새 예약은 차단
 - 영향받는 고객에게 알림 + 대체 호텔 제안
 
-```python
-def deactivate_hotel(hotel_id, reason):
-    hotel = get_hotel(hotel_id)
-    hotel.status = 'inactive'
-    hotel.deactivation_reason = reason
-    db.save(hotel)
+```java
+@Transactional
+public void deactivateHotel(String hotelId, String reason) {
+    Hotel hotel = getHotel(hotelId);
+    hotel.setStatus("inactive");
+    hotel.setDeactivationReason(reason);
+    hotelRepository.save(hotel);
 
-    # 미래 예약 확인
-    future_reservations = db.query(
-        "SELECT * FROM reservation "
-        "WHERE hotel_id = ? AND check_in_date > NOW() AND status = 'paid'",
-        hotel_id
-    )
+    // 미래 예약 확인
+    String query = "SELECT * FROM reservation " +
+                   "WHERE hotel_id = ? AND check_in_date > NOW() AND status = 'paid'";
 
-    for reservation in future_reservations:
-        # 고객에게 알림 + 환불 또는 대체 호텔 제안
-        send_hotel_closure_notification(reservation)
+    List<Reservation> futureReservations = jdbcTemplate.query(
+        query,
+        new BeanPropertyRowMapper<>(Reservation.class),
+        hotelId
+    );
+
+    for (Reservation reservation : futureReservations) {
+        // 고객에게 알림 + 환불 또는 대체 호텔 제안
+        sendHotelClosureNotification(reservation);
+    }
+}
 ```
 
 ### 6. VIP 고객 / 우선순위
@@ -2219,32 +2615,36 @@ def deactivate_hotel(hotel_id, reason):
 
 **해결책:**
 
-```python
-def assign_room_with_priority(reservation_id):
-    reservation = get_reservation(reservation_id)
-    guest = get_guest(reservation.guest_id)
+```java
+public void assignRoomWithPriority(String reservationId) {
+    Reservation reservation = getReservation(reservationId);
+    Guest guest = getGuest(reservation.getGuestId());
 
-    # VIP 레벨에 따라 우선순위
-    priority = get_guest_priority(guest)  # 1 (VIP) ~ 5 (Regular)
+    // VIP 레벨에 따라 우선순위
+    int priority = getGuestPriority(guest);  // 1 (VIP) ~ 5 (Regular)
 
-    available_rooms = find_available_rooms(
-        hotel_id=reservation.hotel_id,
-        room_type_id=reservation.room_type_id,
-        check_in=reservation.check_in_date,
-        check_out=reservation.check_out_date
-    )
+    List<Room> availableRooms = findAvailableRooms(
+        reservation.getHotelId(),
+        reservation.getRoomTypeId(),
+        reservation.getCheckInDate(),
+        reservation.getCheckOutDate()
+    );
 
-    # 객실 점수 계산 (층수, 뷰, 크기 등)
-    scored_rooms = score_rooms(available_rooms, guest.preferences)
+    // 객실 점수 계산 (층수, 뷰, 크기 등)
+    List<ScoredRoom> scoredRooms = scoreRooms(availableRooms, guest.getPreferences());
 
-    if priority <= 2:  # VIP
-        # 최상의 객실 할당
-        best_room = scored_rooms[0]
-    else:
-        # 랜덤 할당
-        best_room = random.choice(scored_rooms)
+    Room bestRoom;
+    if (priority <= 2) {  // VIP
+        // 최상의 객실 할당
+        bestRoom = scoredRooms.get(0).getRoom();
+    } else {
+        // 랜덤 할당
+        Random random = new Random();
+        bestRoom = scoredRooms.get(random.nextInt(scoredRooms.size())).getRoom();
+    }
 
-    assign_room_to_reservation(reservation_id, best_room.room_id)
+    assignRoomToReservation(reservationId, bestRoom.getRoomId());
+}
 ```
 
 # 완전한 예약 플로우

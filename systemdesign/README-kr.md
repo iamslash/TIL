@@ -61,6 +61,7 @@
     - [인덱싱 전략](#인덱싱-전략)
     - [Replication Lag 처리](#replication-lag-처리)
     - [Database Connection Pooling](#database-connection-pooling)
+    - [Bloom Filter](#bloom-filter)
   - [분산 시스템 (Distributed Systems)](#분산-시스템-distributed-systems)
     - [CAP Theorem (일관성, 가용성, 분할 허용)](#cap-theorem-일관성-가용성-분할-허용)
     - [PACELC Theorem](#pacelc-theorem)
@@ -70,11 +71,19 @@
     - [Outbox Pattern](#outbox-pattern)
     - [Distributed Primary Key](#distributed-primary-key)
     - [Consistent Hashing](#consistent-hashing)
-    - [Consensus Algorithm](#consensus-algorithm)
+    - [합의 알고리즘 (Consensus Algorithm)](#합의-알고리즘-consensus-algorithm)
     - [Paxos](#paxos)
-    - [Gossip protocol](#gossip-protocol)
+    - [Gossip Protocol](#gossip-protocol)
     - [Raft](#raft)
     - [Chubby](#chubby)
+    - [Distributed Locking](#distributed-locking)
+      - [Redis Redlock의 한계](#redis-redlock의-한계)
+      - [Redis Redisson 구현 예제](#redis-redisson-구현-예제)
+      - [ZooKeeper를 사용한 안전한 분산 락](#zookeeper를-사용한-안전한-분산-락)
+      - [ZooKeeper Curator 구현 예제](#zookeeper-curator-구현-예제)
+    - [Distributed Tracing](#distributed-tracing)
+      - [개요](#개요)
+      - [필요성](#필요성)
   - [낙관적 락 vs 비관적 락 (Optimistic Lock vs Pessimistic Lock)](#낙관적-락-vs-비관적-락-optimistic-lock-vs-pessimistic-lock)
     - [개념](#개념)
     - [비교](#비교)
@@ -112,6 +121,7 @@
     - [DR 체크리스트](#dr-체크리스트)
     - [비용 최적화 전략](#비용-최적화-전략)
     - [주요 클라우드 DR 서비스](#주요-클라우드-dr-서비스)
+  - [구성 관리 데이터베이스 (Configuration Management Database, CMDB)](#구성-관리-데이터베이스-configuration-management-database-cmdb)
   - [보안 (Security)](#보안-security)
     - [Security Overview](#security-overview)
     - [Web Application Firewall (WAF)](#web-application-firewall-waf)
@@ -127,6 +137,23 @@
     - [OIDC 구현 예제](#oidc-구현-예제)
     - [Single Sign-On (SSO)](#single-sign-on-sso)
     - [SSO 구현 예제](#sso-구현-예제)
+    - [API 보안 (API Security)](#api-보안-api-security)
+      - [API 보안 핵심 구성 요소](#api-보안-핵심-구성-요소)
+      - [1. HTTPS 사용](#1-https-사용)
+      - [2. OAuth2 사용](#2-oauth2-사용)
+      - [3. WebAuthn 사용](#3-webauthn-사용)
+      - [4. 레벨별 API 키 사용](#4-레벨별-api-키-사용)
+      - [5. 인가 (Authorization)](#5-인가-authorization)
+      - [6. Rate Limiting (속도 제한)](#6-rate-limiting-속도-제한)
+      - [7. API 버전 관리](#7-api-버전-관리)
+      - [8. 화이트리스트 (Whitelisting)](#8-화이트리스트-whitelisting)
+      - [9. OWASP API 보안 위험 점검](#9-owasp-api-보안-위험-점검)
+      - [10. API Gateway 사용](#10-api-gateway-사용)
+      - [11. 오류 처리 (Error Handling)](#11-오류-처리-error-handling)
+      - [12. 입력 검증 (Input Validation)](#12-입력-검증-input-validation)
+      - [API 보안 체크리스트](#api-보안-체크리스트)
+      - [모니터링 및 감사](#모니터링-및-감사)
+      - [결론](#결론)
   - [Big Data](#big-data)
     - [Hadoop](#hadoop)
       - [Hadoop 핵심 구성요소](#hadoop-핵심-구성요소)
@@ -141,11 +168,62 @@
       - [MapReduce 장단점](#mapreduce-장단점)
       - [MapReduce vs Spark](#mapreduce-vs-spark)
       - [언제 MapReduce를 사용할까?](#언제-mapreduce를-사용할까)
+    - [Data Lake (데이터 레이크)](#data-lake-데이터-레이크)
+      - [주요 장점](#주요-장점)
+      - [한계점](#한계점)
+    - [Data Warehouse (데이터 웨어하우스)](#data-warehouse-데이터-웨어하우스)
+      - [주요 특징](#주요-특징)
+      - [일반적인 사용 패턴](#일반적인-사용-패턴)
+    - [Data Lakehouse (데이터 레이크하우스)](#data-lakehouse-데이터-레이크하우스)
+      - [핵심 목표](#핵심-목표)
+      - [주요 기능](#주요-기능)
+      - [오픈소스 기술](#오픈소스-기술)
+      - [주요 벤더](#주요-벤더)
+      - [장점](#장점)
+      - [사용 사례](#사용-사례)
+      - [아키텍처 비교](#아키텍처-비교)
+      - [결론](#결론-1)
+  - [A/B 테스트 (A/B Testing)](#ab-테스트-ab-testing)
+  - [Actor Model](#actor-model)
+  - [Reactor vs Proactor](#reactor-vs-proactor)
+  - [배치 처리 vs 스트림 처리 (Batch Processing vs Stream Processing)](#배치-처리-vs-스트림-처리-batch-processing-vs-stream-processing)
+    - [아키텍처 비교](#아키텍처-비교-1)
+    - [1. 데이터 처리 방식](#1-데이터-처리-방식)
+      - [배치 처리 (Batch Processing)](#배치-처리-batch-processing)
+      - [스트림 처리 (Stream Processing)](#스트림-처리-stream-processing)
+    - [2. 지연 시간 (Latency)](#2-지연-시간-latency)
+    - [3. 사용 사례](#3-사용-사례)
+      - [배치 처리 사용 사례](#배치-처리-사용-사례)
+      - [스트림 처리 사용 사례](#스트림-처리-사용-사례)
+    - [4. 장애 허용성 및 신뢰성](#4-장애-허용성-및-신뢰성)
+      - [배치 처리](#배치-처리)
+      - [스트림 처리](#스트림-처리)
+    - [5. 확장성 및 성능](#5-확장성-및-성능)
+    - [6. 복잡성](#6-복잡성)
+      - [배치 처리](#배치-처리-1)
+      - [스트림 처리](#스트림-처리-1)
+    - [7. 도구 및 플랫폼](#7-도구-및-플랫폼)
+      - [배치 처리 도구](#배치-처리-도구)
+      - [스트림 처리 도구](#스트림-처리-도구)
+    - [8. 하이브리드 접근: Lambda \& Kappa 아키텍처](#8-하이브리드-접근-lambda--kappa-아키텍처)
+      - [Lambda 아키텍처](#lambda-아키텍처)
+      - [Kappa 아키텍처 (단순화)](#kappa-아키텍처-단순화)
+    - [비교 요약](#비교-요약)
+    - [선택 가이드](#선택-가이드-2)
+  - [Checksum](#checksum)
+    - [개념](#개념-4)
+    - [사용 목적](#사용-목적)
+    - [체크섬 계산기](#체크섬-계산기)
+  - [MSA (Micro Service Architecture)](#msa-micro-service-architecture)
+  - [Cloud Design Patterns](#cloud-design-patterns)
+  - [Enterprise Integration Patterns](#enterprise-integration-patterns)
+  - [DDD](#ddd)
+  - [Architecture](#architecture)
 - [최신 기술 트렌드](#최신-기술-트렌드)
   - [Serverless Architecture](#serverless-architecture)
   - [Container Orchestration - Kubernetes](#container-orchestration---kubernetes)
   - [Control Plane vs Data Plane vs Management Plane](#control-plane-vs-data-plane-vs-management-plane)
-    - [개념](#개념-4)
+    - [개념](#개념-5)
     - [상세 설명](#상세-설명)
     - [아키텍처 다이어그램](#아키텍처-다이어그램)
     - [실제 예시](#실제-예시)
@@ -166,9 +244,6 @@
     - [Instagram](#instagram)
     - [Netflix](#netflix)
     - [Uber](#uber)
-  - [회사별 엔지니어링 블로그](#회사별-엔지니어링-블로그)
-    - [국내](#국내)
-    - [해외](#해외)
 - [추가 학습 리소스](#추가-학습-리소스)
   - [데이터베이스 특화](#데이터베이스-특화)
     - [Database Sharding 전략](#database-sharding-전략)
@@ -177,12 +252,15 @@
     - [Backend 최적화](#backend-최적화)
     - [Frontend 최적화](#frontend-최적화)
     - [Infrastructure 최적화](#infrastructure-최적화)
-- [마치며](#마치며)
-  - [학습 로드맵](#학습-로드맵)
-    - [초급 (1-2개월)](#초급-1-2개월)
-    - [중급 (2-3개월)](#중급-2-3개월)
-    - [고급 (3-6개월)](#고급-3-6개월)
   - [추가 학습 자료](#추가-학습-자료)
+- [System Design Interview](#system-design-interview)
+  - [Easy](#easy-1)
+  - [Medium](#medium-1)
+  - [Hard](#hard-1)
+- [Scalability Articles](#scalability-articles)
+- [Real World Architecture](#real-world-architecture)
+- [Company Architectures](#company-architectures)
+- [Company Engineering Blog](#company-engineering-blog)
 
 ----
 
@@ -5639,7 +5717,9 @@ with engine.connect() as conn:
     result = conn.execute("SELECT * FROM users")
 ```
 
+### Bloom Filter
 
+- [Bloom Filter](/bloomfilter/README-kr.md)
 
 ## 분산 시스템 (Distributed Systems)
 
@@ -7362,6 +7442,169 @@ public class ConfigurationManagementExample {
 | **성능** | 높음 | 높음 | 매우 높음 |
 
 Chubby는 Google 내부용으로 공개되지 않았지만, Apache ZooKeeper와 etcd는 Chubby에서 영감을 받아 분산 시스템 조정 기능을 제공하는 오픈소스 대안이다.
+
+### Distributed Locking
+
+- [How to do distributed locking](https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html)
+
+#### Redis Redlock의 한계
+
+Redis의 Redlock 알고리즘은 다음과 같은 단점이 있습니다:
+
+- **Fencing Tokens 미지원**: Redlock은 Fencing Tokens를 생성하지 않아 클라이언트 간 경쟁 조건을 방지할 수 없습니다. 여러 클라이언트가 동시에 같은 리소스에 접근할 때 안전성을 보장하지 못합니다.
+
+- **타이밍 가정의 문제**: Redlock은 동기적 시스템 모델을 가정합니다. 네트워크 지연, 프로세스 일시 중지, 클럭 오류에 대한 정확한 시간을 알 수 있다고 가정하지만, 실제 분산 시스템에서는 이러한 가정이 항상 지켜지지 않습니다.
+
+- **안전성 위반 가능성**: 타이밍 문제가 발생할 경우 Redlock의 일관성 메커니즘이 안전성을 위반할 수 있습니다.
+
+#### Redis Redisson 구현 예제
+
+다음은 Redis와 Redisson을 이용한 분산 락 구현입니다:
+
+```java
+import org.redisson.Redisson;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
+
+public class RedissonExample {
+
+    public static void main(String[] args) {
+        // Redisson 설정
+        Config config = new Config();
+        config.useSingleServer().setAddress("redis://127.0.0.1:6379");
+
+        // Redisson 클라이언트 생성
+        RedissonClient redisson = Redisson.create(config);
+
+        // 락을 획득할 리소스 정의
+        String resource = "myResource";
+
+        // 리소스에 대한 락 획득
+        RLock lock = redisson.getLock(resource);
+        lock.lock(); // 블로킹 호출, 락을 획득할 때까지 대기
+
+        try {
+            // 락으로 보호되는 작업 수행
+            performProtectedActions();
+        } finally {
+            // 락 해제
+            lock.unlock();
+        }
+
+        // Redisson 클라이언트 종료
+        redisson.shutdown();
+    }
+
+    private static void performProtectedActions() {
+        // 분산 락이 필요한 코드 작성
+    }
+}
+```
+
+#### ZooKeeper를 사용한 안전한 분산 락
+
+강력한 일관성과 안전성이 필요한 분산 락의 경우, Apache ZooKeeper와 같은 합의 알고리즘 기반 솔루션을 사용하는 것이 좋습니다. ZooKeeper는 분산 락 및 분산 시스템 조정 작업을 안전하고 일관성 있게 처리하도록 설계되었습니다.
+
+**ZooKeeper가 Redis보다 나은 이유:**
+
+- **안정성**: ZooKeeper는 자체 합의 프로토콜(ZAB)을 사용하여 특정 노드가 실패해도 클러스터 내 노드 간 동기화를 유지합니다. 반면 Redlock은 클러스터 작동에 필요한 안정성과 상호 운용성 제공에 한계가 있습니다.
+
+- **강력한 일관성**: ZooKeeper는 분산 락 전용으로 설계되어 높은 가용성과 일관성을 제공합니다. Redis는 원래 캐싱과 메시징용으로 설계되어 일관성보다 가용성에 중점을 두었습니다.
+
+- **Fencing 메커니즘**: ZooKeeper 클라이언트는 Fencing Tokens을 생성하여 분산 락의 격리 수준을 높입니다. 이 토큰을 통해 동시에 여러 클라이언트가 같은 락에 접근하는 것을 방지합니다. Redlock은 이를 자체적으로 지원하지 않습니다.
+
+**선택 가이드:**
+- **ZooKeeper**: 금융, 재고 관리 등 강력한 일관성이 필요한 경우
+- **Redis (Redisson)**: 일시적 데이터나 메시징 등 상대적으로 덜 중요한 경우
+
+#### ZooKeeper Curator 구현 예제
+
+다음은 ZooKeeper와 Curator를 이용한 분산 락 구현입니다:
+
+```groovy
+// Gradle
+dependencies {
+    implementation 'org.apache.curator:curator-recipes:5.1.0'
+    implementation 'org.apache.curator:curator-framework:5.1.0'
+    ...
+}
+```
+
+```java
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.recipes.locks.InterProcessMutex;
+import org.apache.curator.retry.ExponentialBackoffRetry;
+import java.util.concurrent.TimeUnit;
+
+public class ZookeeperExample {
+
+    public static void main(String[] args) {
+        // ZooKeeper 설정
+        String zkConnectionString = "localhost:2181";
+        int baseSleepTimeMs = 1000;
+        int maxRetries = 3;
+
+        // ZooKeeper용 Curator 클라이언트 생성
+        CuratorFramework zookeeperClient = CuratorFrameworkFactory.newClient(
+                zkConnectionString,
+                new ExponentialBackoffRetry(baseSleepTimeMs, maxRetries)
+        );
+        zookeeperClient.start();
+
+        // 락을 획득할 리소스 정의
+        String lockPath = "/locks/myResource";
+
+        // 리소스에 대한 락 획득
+        InterProcessMutex lock = new InterProcessMutex(zookeeperClient, lockPath);
+
+        try {
+            // 10초 내에 락 획득 시도
+            if (lock.acquire(10, TimeUnit.SECONDS)) {
+                try {
+                    // 락으로 보호되는 작업 수행
+                    performProtectedActions();
+                } finally {
+                    // 락 해제
+                    lock.release();
+                }
+            } else {
+                // 락 획득 실패 시 예외 발생 또는 처리
+                throw new IllegalStateException("락 획득 실패");
+            }
+        } catch (Exception e) {
+            // 락 획득 또는 보호된 작업 중 예외 처리
+            e.printStackTrace();
+        } finally {
+            // ZooKeeper 클라이언트 종료
+            zookeeperClient.close();
+        }
+    }
+
+    private static void performProtectedActions() {
+        // 분산 락이 필요한 코드 작성
+    }
+}
+```
+
+### Distributed Tracing
+
+- [What is distributed tracing, and why is it important?](https://www.dynatrace.com/news/blog/what-is-distributed-tracing/)
+
+#### 개요
+
+분산 추적(Distributed Tracing)은 고유 식별자를 사용하여 분산 클라우드 환경을 통해 전파되는 요청을 관찰하는 방법입니다. 이를 통해 다음을 제공합니다:
+
+- 사용자 경험, 애플리케이션 계층, 인프라에 대한 실시간 가시성
+- 애플리케이션 성능 향상
+- 서비스 수준 계약(SLA) 준수
+- 내부 협업 개선
+- 평균 탐지 시간(MTTD) 및 평균 수리 시간(MTTR) 감소
+
+#### 필요성
+
+모놀리식 애플리케이션이 마이크로서비스 아키텍처로 발전하면서, 복잡한 클라우드 네이티브 환경에서는 전통적인 모니터링 도구만으로는 효과적인 관측이 어렵습니다. 분산 추적은 이러한 환경에서 관측 가능성(Observability)을 확보하기 위한 필수 요소가 되었습니다.
 
 ## 낙관적 락 vs 비관적 락 (Optimistic Lock vs Pessimistic Lock)
 
@@ -9581,6 +9824,579 @@ public class DRTestService {
 - Persistent Disk Snapshots: 증분 스냅샷
 - Global Load Balancing: 멀티 리전 트래픽 분산
 
+## 구성 관리 데이터베이스 (Configuration Management Database, CMDB)
+
+CMDB(Configuration Management Database)는 IT 환경 내의 하드웨어 및 소프트웨어 구성 요소(Configuration Items, CIs)와 이들 간의 관계 정보를 저장하는 중앙 저장소다. CMDB는 IT 서비스 관리(ITSM) 프로세스에서 핵심적인 역할을 수행하며, 인시던트 관리, 문제 관리, 변경 관리, 자산 관리 등에 활용된다.
+
+**CMDB의 목적**:
+
+CMDB는 모든 IT 구성 요소에 대한 정확하고 최신의 인벤토리를 유지하여 인프라에 대한 가시성과 이해도를 향상시킨다. CI(Configuration Item) 간의 상호 의존성을 문서화함으로써 다양한 IT 프로세스와 의사 결정을 효율화한다.
+
+**CMDB의 핵심 가치**:
+
+**1. IT 리소스 최적화**:
+- 리소스 활용도를 추적하고 분석하여 활용도가 낮거나 높은 구성 요소 식별
+- 리소스를 보다 효과적으로 할당하고 재배치
+- 비용 절감 및 성능 최적화
+
+**2. 인시던트 및 문제 관리 강화**:
+- 영향을 받는 CI 간의 관계와 의존성을 시각화하여 문제를 빠르게 식별
+- 장애 발생 시 영향 범위를 신속하게 파악
+- 평균 복구 시간(MTTR) 단축
+
+**3. 변경 관리 리스크 완화**:
+- 상호 연결된 시스템에 대한 변경의 잠재적 영향 이해
+- 변경 구현 전 정보에 기반한 의사 결정 가능
+- 변경으로 인한 장애 예방
+
+**4. 효과적인 자산 관리 지원**:
+- IT 자산에 대한 최신의 중앙 집중식 저장소 유지
+- 라이선스, 구매, 유지보수, 수명 종료(EOL) 계획 지원
+- 자산 수명 주기 관리 최적화
+
+**5. 규정 준수 관리 지원**:
+- IT 인프라에 대한 포괄적인 가시성 확보
+- 규제 요구사항 및 조직 정책 준수 보장
+- 감사 및 컴플라이언스 보고 간소화
+
+**CMDB 데이터 모델**:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    CMDB Core Model                      │
+└─────────────────────────────────────────────────────────┘
+
+Configuration Items (CIs):
+├── Infrastructure CIs
+│   ├── Servers (Physical, Virtual)
+│   ├── Network Devices (Routers, Switches, Firewalls)
+│   ├── Storage Systems
+│   └── Data Centers
+│
+├── Application CIs
+│   ├── Applications
+│   ├── Microservices
+│   ├── Databases
+│   └── Middleware
+│
+├── Service CIs
+│   ├── Business Services
+│   ├── Technical Services
+│   └── APIs
+│
+└── Supporting CIs
+    ├── Documentation
+    ├── Licenses
+    ├── Contracts
+    └── Personnel
+
+Relationships:
+- Depends On: CI A depends on CI B
+- Hosts: Physical server hosts virtual machine
+- Communicates With: Application A calls API B
+- Owned By: CI is owned by department/person
+- Part Of: Component is part of larger system
+```
+
+**CMDB 구현 예제 (Java)**:
+
+```java
+// ConfigurationItem.java
+import java.time.LocalDateTime;
+import java.util.*;
+
+public abstract class ConfigurationItem {
+    private String id;
+    private String name;
+    private String type;
+    private String status; // Active, Retired, Planned, Under Maintenance
+    private String owner;
+    private LocalDateTime createdDate;
+    private LocalDateTime lastModified;
+    private Map<String, String> attributes;
+    private List<Relationship> relationships;
+
+    public ConfigurationItem(String id, String name, String type) {
+        this.id = id;
+        this.name = name;
+        this.type = type;
+        this.status = "Active";
+        this.createdDate = LocalDateTime.now();
+        this.lastModified = LocalDateTime.now();
+        this.attributes = new HashMap<>();
+        this.relationships = new ArrayList<>();
+    }
+
+    public void addRelationship(Relationship relationship) {
+        this.relationships.add(relationship);
+        this.lastModified = LocalDateTime.now();
+    }
+
+    public List<ConfigurationItem> getDependencies() {
+        return relationships.stream()
+            .filter(r -> r.getType().equals("DEPENDS_ON"))
+            .map(Relationship::getTarget)
+            .toList();
+    }
+
+    // Getters and setters
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public String getType() { return type; }
+    public String getStatus() { return status; }
+    public List<Relationship> getRelationships() { return relationships; }
+    public void setStatus(String status) {
+        this.status = status;
+        this.lastModified = LocalDateTime.now();
+    }
+}
+
+// Relationship.java
+class Relationship {
+    private String type; // DEPENDS_ON, HOSTS, COMMUNICATES_WITH, OWNED_BY, PART_OF
+    private ConfigurationItem source;
+    private ConfigurationItem target;
+    private Map<String, String> properties;
+
+    public Relationship(String type, ConfigurationItem source, ConfigurationItem target) {
+        this.type = type;
+        this.source = source;
+        this.target = target;
+        this.properties = new HashMap<>();
+    }
+
+    public String getType() { return type; }
+    public ConfigurationItem getTarget() { return target; }
+}
+
+// ServerCI.java
+class ServerCI extends ConfigurationItem {
+    private String ipAddress;
+    private String osType;
+    private int cpu;
+    private int memory;
+    private String location;
+
+    public ServerCI(String id, String name, String ipAddress, String osType) {
+        super(id, name, "Server");
+        this.ipAddress = ipAddress;
+        this.osType = osType;
+    }
+
+    public String getIpAddress() { return ipAddress; }
+    public String getOsType() { return osType; }
+}
+
+// ApplicationCI.java
+class ApplicationCI extends ConfigurationItem {
+    private String version;
+    private String environment; // Production, Staging, Development
+    private List<String> dependencies;
+
+    public ApplicationCI(String id, String name, String version) {
+        super(id, name, "Application");
+        this.version = version;
+        this.dependencies = new ArrayList<>();
+    }
+
+    public String getVersion() { return version; }
+    public String getEnvironment() { return environment; }
+}
+
+// DatabaseCI.java
+class DatabaseCI extends ConfigurationItem {
+    private String dbType; // MySQL, PostgreSQL, MongoDB, etc.
+    private String version;
+    private int port;
+    private long storageSize;
+
+    public DatabaseCI(String id, String name, String dbType) {
+        super(id, name, "Database");
+        this.dbType = dbType;
+    }
+
+    public String getDbType() { return dbType; }
+}
+
+// CMDBService.java
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class CMDBService {
+    private Map<String, ConfigurationItem> configurationItems;
+
+    public CMDBService() {
+        this.configurationItems = new HashMap<>();
+    }
+
+    // CI 추가
+    public void addCI(ConfigurationItem ci) {
+        configurationItems.put(ci.getId(), ci);
+        System.out.println("Added CI: " + ci.getName() + " (ID: " + ci.getId() + ")");
+    }
+
+    // CI 조회
+    public ConfigurationItem getCI(String id) {
+        return configurationItems.get(id);
+    }
+
+    // 관계 생성
+    public void createRelationship(String sourceId, String targetId, String relationshipType) {
+        ConfigurationItem source = configurationItems.get(sourceId);
+        ConfigurationItem target = configurationItems.get(targetId);
+
+        if (source != null && target != null) {
+            Relationship relationship = new Relationship(relationshipType, source, target);
+            source.addRelationship(relationship);
+            System.out.println("Created relationship: " + source.getName() + " " +
+                             relationshipType + " " + target.getName());
+        }
+    }
+
+    // 영향 분석: 특정 CI가 장애 시 영향받는 CI 목록
+    public List<ConfigurationItem> getImpactAnalysis(String ciId) {
+        Set<ConfigurationItem> impactedCIs = new HashSet<>();
+        ConfigurationItem startCI = configurationItems.get(ciId);
+
+        if (startCI == null) {
+            return Collections.emptyList();
+        }
+
+        // BFS로 의존 그래프 탐색
+        Queue<ConfigurationItem> queue = new LinkedList<>();
+        queue.offer(startCI);
+        Set<String> visited = new HashSet<>();
+        visited.add(ciId);
+
+        while (!queue.isEmpty()) {
+            ConfigurationItem current = queue.poll();
+
+            // 현재 CI에 의존하는 모든 CI 찾기
+            for (ConfigurationItem ci : configurationItems.values()) {
+                if (!visited.contains(ci.getId())) {
+                    List<ConfigurationItem> dependencies = ci.getDependencies();
+                    if (dependencies.contains(current)) {
+                        impactedCIs.add(ci);
+                        queue.offer(ci);
+                        visited.add(ci.getId());
+                    }
+                }
+            }
+        }
+
+        return new ArrayList<>(impactedCIs);
+    }
+
+    // 특정 타입의 CI 조회
+    public List<ConfigurationItem> getCIsByType(String type) {
+        return configurationItems.values().stream()
+            .filter(ci -> ci.getType().equals(type))
+            .collect(Collectors.toList());
+    }
+
+    // 특정 상태의 CI 조회
+    public List<ConfigurationItem> getCIsByStatus(String status) {
+        return configurationItems.values().stream()
+            .filter(ci -> ci.getStatus().equals(status))
+            .collect(Collectors.toList());
+    }
+
+    // CI 의존성 트리 출력
+    public void printDependencyTree(String ciId, int depth) {
+        ConfigurationItem ci = configurationItems.get(ciId);
+        if (ci == null) return;
+
+        String indent = "  ".repeat(depth);
+        System.out.println(indent + "- " + ci.getName() + " (" + ci.getType() + ")");
+
+        List<ConfigurationItem> dependencies = ci.getDependencies();
+        for (ConfigurationItem dep : dependencies) {
+            printDependencyTree(dep.getId(), depth + 1);
+        }
+    }
+
+    // 변경 영향 평가
+    public ChangeImpactReport assessChangeImpact(String ciId) {
+        ConfigurationItem ci = configurationItems.get(ciId);
+        if (ci == null) {
+            return null;
+        }
+
+        List<ConfigurationItem> impactedCIs = getImpactAnalysis(ciId);
+        List<ConfigurationItem> dependencies = ci.getDependencies();
+
+        return new ChangeImpactReport(ci, impactedCIs, dependencies);
+    }
+}
+
+// ChangeImpactReport.java
+class ChangeImpactReport {
+    private ConfigurationItem targetCI;
+    private List<ConfigurationItem> impactedCIs;
+    private List<ConfigurationItem> dependencies;
+    private String riskLevel;
+
+    public ChangeImpactReport(ConfigurationItem targetCI,
+                             List<ConfigurationItem> impactedCIs,
+                             List<ConfigurationItem> dependencies) {
+        this.targetCI = targetCI;
+        this.impactedCIs = impactedCIs;
+        this.dependencies = dependencies;
+        this.riskLevel = calculateRiskLevel();
+    }
+
+    private String calculateRiskLevel() {
+        int totalImpact = impactedCIs.size();
+        if (totalImpact == 0) return "LOW";
+        if (totalImpact <= 5) return "MEDIUM";
+        if (totalImpact <= 10) return "HIGH";
+        return "CRITICAL";
+    }
+
+    public void printReport() {
+        System.out.println("\n=== Change Impact Report ===");
+        System.out.println("Target CI: " + targetCI.getName());
+        System.out.println("Risk Level: " + riskLevel);
+        System.out.println("\nDependencies (" + dependencies.size() + "):");
+        dependencies.forEach(ci -> System.out.println("  - " + ci.getName()));
+        System.out.println("\nImpacted CIs (" + impactedCIs.size() + "):");
+        impactedCIs.forEach(ci -> System.out.println("  - " + ci.getName()));
+    }
+}
+
+// CMDBExample.java
+public class CMDBExample {
+    public static void main(String[] args) {
+        CMDBService cmdb = new CMDBService();
+
+        // 서버 CI 생성
+        ServerCI webServer = new ServerCI("SRV001", "Web-Server-01", "10.0.1.10", "Ubuntu 22.04");
+        ServerCI appServer = new ServerCI("SRV002", "App-Server-01", "10.0.1.20", "CentOS 8");
+        ServerCI dbServer = new ServerCI("SRV003", "DB-Server-01", "10.0.1.30", "RedHat 8");
+
+        // 애플리케이션 CI 생성
+        ApplicationCI webApp = new ApplicationCI("APP001", "E-Commerce-Web", "2.5.0");
+        ApplicationCI apiService = new ApplicationCI("APP002", "Order-API-Service", "1.3.2");
+
+        // 데이터베이스 CI 생성
+        DatabaseCI orderDB = new DatabaseCI("DB001", "Order-Database", "PostgreSQL");
+
+        // CMDB에 CI 추가
+        cmdb.addCI(webServer);
+        cmdb.addCI(appServer);
+        cmdb.addCI(dbServer);
+        cmdb.addCI(webApp);
+        cmdb.addCI(apiService);
+        cmdb.addCI(orderDB);
+
+        // 관계 설정
+        System.out.println("\n=== Creating Relationships ===");
+        cmdb.createRelationship("APP001", "SRV001", "HOSTS"); // Web App hosted on Web Server
+        cmdb.createRelationship("APP002", "SRV002", "HOSTS"); // API Service hosted on App Server
+        cmdb.createRelationship("DB001", "SRV003", "HOSTS");  // Database hosted on DB Server
+        cmdb.createRelationship("APP001", "APP002", "DEPENDS_ON"); // Web App depends on API
+        cmdb.createRelationship("APP002", "DB001", "DEPENDS_ON");  // API depends on Database
+
+        // 의존성 트리 출력
+        System.out.println("\n=== Dependency Tree for Web Application ===");
+        cmdb.printDependencyTree("APP001", 0);
+
+        // 영향 분석: Database가 장애 시 영향받는 CI
+        System.out.println("\n=== Impact Analysis: If Database fails ===");
+        List<ConfigurationItem> impacted = cmdb.getImpactAnalysis("DB001");
+        impacted.forEach(ci -> System.out.println("  - " + ci.getName() + " will be impacted"));
+
+        // 변경 영향 평가
+        System.out.println("\n=== Change Impact Assessment ===");
+        ChangeImpactReport report = cmdb.assessChangeImpact("DB001");
+        if (report != null) {
+            report.printReport();
+        }
+
+        // 특정 타입의 CI 조회
+        System.out.println("\n=== All Server CIs ===");
+        List<ConfigurationItem> servers = cmdb.getCIsByType("Server");
+        servers.forEach(ci -> System.out.println("  - " + ci.getName()));
+    }
+}
+```
+
+**CMDB 통합 및 자동화**:
+
+```java
+// CMDBAutoDiscoveryService.java
+import java.util.*;
+
+public class CMDBAutoDiscoveryService {
+    private CMDBService cmdb;
+
+    public CMDBAutoDiscoveryService(CMDBService cmdb) {
+        this.cmdb = cmdb;
+    }
+
+    // 네트워크 스캔을 통한 자동 검색
+    public void discoverInfrastructure() {
+        System.out.println("Starting infrastructure auto-discovery...");
+
+        // 네트워크 스캔 (실제로는 nmap, Ansible 등 사용)
+        List<ServerCI> discoveredServers = scanNetwork();
+
+        for (ServerCI server : discoveredServers) {
+            cmdb.addCI(server);
+            // 서버에서 실행 중인 애플리케이션 검색
+            discoverApplicationsOnServer(server);
+        }
+
+        System.out.println("Auto-discovery completed.");
+    }
+
+    private List<ServerCI> scanNetwork() {
+        // 실제 구현에서는 네트워크 스캔 도구 사용
+        List<ServerCI> servers = new ArrayList<>();
+        servers.add(new ServerCI("SRV100", "Discovered-Server-1", "10.0.2.10", "Ubuntu"));
+        servers.add(new ServerCI("SRV101", "Discovered-Server-2", "10.0.2.11", "CentOS"));
+        return servers;
+    }
+
+    private void discoverApplicationsOnServer(ServerCI server) {
+        // 실제 구현에서는 SSH/WMI를 통해 서버의 프로세스 목록 조회
+        System.out.println("Discovering applications on " + server.getName());
+    }
+
+    // 모니터링 도구와 통합
+    public void syncWithMonitoring() {
+        System.out.println("Syncing with monitoring tools (Prometheus, Datadog, etc.)...");
+        // 모니터링 도구에서 CI 상태 업데이트
+    }
+
+    // APM 도구와 통합하여 애플리케이션 의존성 자동 발견
+    public void discoverApplicationDependencies() {
+        System.out.println("Discovering application dependencies from APM tools...");
+        // APM (Dynatrace, New Relic 등)에서 호출 관계 파악
+    }
+}
+
+// CMDBIntegrationService.java
+public class CMDBIntegrationService {
+    private CMDBService cmdb;
+
+    public CMDBIntegrationService(CMDBService cmdb) {
+        this.cmdb = cmdb;
+    }
+
+    // ITSM 도구와 통합 (ServiceNow, Jira Service Management 등)
+    public void syncWithITSM(String incidentId) {
+        System.out.println("Fetching incident " + incidentId + " from ITSM...");
+
+        // 인시던트와 관련된 CI 조회
+        String affectedCiId = "SRV001"; // ITSM에서 가져온 정보
+        ConfigurationItem ci = cmdb.getCI(affectedCiId);
+
+        if (ci != null) {
+            // 영향 분석 수행
+            List<ConfigurationItem> impacted = cmdb.getImpactAnalysis(affectedCiId);
+            System.out.println("Incident affects " + impacted.size() + " CIs");
+
+            // ITSM으로 정보 전송
+            sendImpactToITSM(incidentId, impacted);
+        }
+    }
+
+    private void sendImpactToITSM(String incidentId, List<ConfigurationItem> impacted) {
+        // ITSM API를 통해 영향 범위 업데이트
+        System.out.println("Updating incident " + incidentId + " with impact analysis");
+    }
+
+    // 클라우드 자산 관리 통합 (AWS Config, Azure Resource Graph 등)
+    public void syncWithCloudProvider() {
+        System.out.println("Syncing with cloud provider APIs...");
+
+        // AWS 예시
+        syncAWSResources();
+
+        // Azure 예시
+        syncAzureResources();
+    }
+
+    private void syncAWSResources() {
+        // AWS SDK를 사용하여 EC2, RDS, ELB 등의 리소스 정보 수집
+        System.out.println("Fetching AWS resources...");
+
+        // 예시: EC2 인스턴스 정보를 CMDB에 추가
+        ServerCI awsInstance = new ServerCI(
+            "AWS-EC2-001",
+            "prod-web-server",
+            "10.0.5.10",
+            "Amazon Linux 2"
+        );
+        cmdb.addCI(awsInstance);
+    }
+
+    private void syncAzureResources() {
+        // Azure SDK를 사용하여 VM, Database 등의 리소스 정보 수집
+        System.out.println("Fetching Azure resources...");
+    }
+}
+```
+
+**CMDB 모범 사례**:
+
+**1. 데이터 품질 유지**:
+- 정기적인 데이터 정확성 검증
+- 자동화된 검색 도구 활용
+- 데이터 소유자 지정 및 책임 명확화
+
+**2. 적절한 세부 수준**:
+- 과도하게 상세한 정보는 유지보수 부담 증가
+- 비즈니스 가치에 따라 CI 세부 수준 결정
+- 중요한 관계에 집중
+
+**3. 프로세스 통합**:
+- ITSM 프로세스와 긴밀한 통합
+- 변경 관리 워크플로우에 CMDB 활용
+- 인시던트 해결 시 영향 분석 자동화
+
+**4. 자동화 및 통합**:
+- 자동 검색 도구 구현
+- 모니터링 및 APM 도구와 통합
+- 클라우드 API를 통한 실시간 동기화
+- CI/CD 파이프라인과 연계
+
+**5. 거버넌스**:
+- 명확한 데이터 소유권 정의
+- 변경 승인 프로세스 수립
+- 정기적인 감사 및 검증
+
+**CMDB 구현 시 도전 과제**:
+
+**1. 데이터 정확성 유지**:
+- IT 시스템의 동적인 특성으로 인한 데이터 불일치
+- 해결책: 자동화된 검색 및 지속적인 동기화
+
+**2. 초기 구축 비용**:
+- 모든 CI와 관계 정보 수집에 시간 소요
+- 해결책: 점진적 구축, 중요 시스템부터 시작
+
+**3. 조직 문화**:
+- 데이터 입력 및 유지보수에 대한 저항
+- 해결책: 자동화 최대화, 명확한 가치 제시
+
+**4. 도구 통합**:
+- 다양한 IT 관리 도구와의 통합 복잡성
+- 해결책: 표준 API 사용, 통합 플랫폼 활용
+
+**주요 CMDB 솔루션**:
+
+| 솔루션 | 타입 | 주요 특징 |
+|--------|------|----------|
+| **ServiceNow CMDB** | 상용 | ITSM과 완전 통합, 강력한 자동 검색 |
+| **BMC Helix CMDB** | 상용 | AI 기반 분석, 클라우드 최적화 |
+| **Device42** | 상용 | 자동 검색 특화, 데이터센터 관리 |
+| **Ralph** | 오픈소스 | 자산 관리 중심, 데이터센터 관리 |
+| **iTop** | 오픈소스 | ITIL 기반, 커스터마이징 용이 |
+
+CMDB는 복잡한 IT 환경을 관리하는 데 매우 유용한 도구지만, 구현과 유지보수에는 지속적인 노력이 필요하다. 자동화된 검색, 구성 및 모니터링 도구와의 통합을 통해 시간이 지나도 CMDB의 정확성과 효과를 유지할 수 있다.
+
 ## 보안 (Security)
 
 ### Security Overview
@@ -10948,6 +11764,851 @@ public class SSOController {
 | **Single Logout** | 모든 앱에서 세션 무효화 |
 | **감사 로그** | 모든 인증 이벤트 기록 |
 
+### API 보안 (API Security)
+
+**API 보안**은 애플리케이션 프로그래밍 인터페이스(API)를 무단 접근, 오용, 취약점으로부터 보호하기 위한 관행과 조치를 의미합니다. API는 현대 애플리케이션의 핵심 구성 요소로서 소프트웨어 시스템을 연결하고, 데이터를 공유하며, 기능을 확장하는 방법을 제공하므로 API 보안은 매우 중요합니다.
+
+#### API 보안 핵심 구성 요소
+
+```
+┌─────────────────────────────────────┐
+│         API 보안 계층                │
+├─────────────────────────────────────┤
+│  인증 (Authentication)               │
+│  • OAuth2, WebAuthn                 │
+│  • API Keys (레벨별)                 │
+├─────────────────────────────────────┤
+│  인가 (Authorization)                │
+│  • 역할 기반 접근 제어 (RBAC)         │
+│  • 리소스 수준 권한                   │
+├─────────────────────────────────────┤
+│  통신 보안                            │
+│  • HTTPS/TLS 암호화                  │
+│  • 인증서 검증                        │
+├─────────────────────────────────────┤
+│  요청 제어                            │
+│  • Rate Limiting                    │
+│  • Throttling                       │
+│  • IP Whitelisting                  │
+├─────────────────────────────────────┤
+│  데이터 보호                          │
+│  • Input Validation                 │
+│  • Output Encoding                  │
+│  • Error Handling                   │
+└─────────────────────────────────────┘
+```
+
+#### 1. HTTPS 사용
+
+**목적**: 클라이언트와 API 서버 간의 통신 보안
+
+**특징**:
+- 전송 중인 데이터 암호화
+- 데이터 기밀성 및 무결성 보장
+- 중간자 공격(MITM) 방지
+
+**구현 예제**:
+```java
+// Spring Boot에서 HTTPS 강제
+@Configuration
+public class SecurityConfig {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http)
+            throws Exception {
+        http
+            .requiresChannel(channel ->
+                channel.anyRequest().requiresSecure()  // 모든 요청 HTTPS
+            )
+            .headers(headers ->
+                headers.httpStrictTransportSecurity(hsts ->
+                    hsts.maxAgeInSeconds(31536000)  // HSTS 1년
+                        .includeSubDomains(true)
+                )
+            );
+        return http.build();
+    }
+}
+```
+
+#### 2. OAuth2 사용
+
+**목적**: 표준화된 인가 프로토콜
+
+**특징**:
+- 액세스 토큰 기반 인증
+- 제한된 권한 부여 (Scope)
+- 토큰 갱신 메커니즘
+
+**구현 예제**:
+```java
+// OAuth2 Resource Server 설정
+@Configuration
+@EnableResourceServer
+public class OAuth2ResourceServerConfig {
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http)
+            throws Exception {
+        http
+            .oauth2ResourceServer(oauth2 ->
+                oauth2.jwt(jwt ->
+                    jwt.decoder(jwtDecoder())
+                )
+            )
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/public/**").permitAll()
+                .requestMatchers("/api/admin/**")
+                    .hasAuthority("SCOPE_admin")
+                .anyRequest().authenticated()
+            );
+        return http.build();
+    }
+
+    @Bean
+    public JwtDecoder jwtDecoder() {
+        return JwtDecoders.fromIssuerLocation(
+            "https://auth-server.com"
+        );
+    }
+}
+
+// API 엔드포인트
+@RestController
+@RequestMapping("/api")
+public class SecureApiController {
+
+    @GetMapping("/profile")
+    public UserProfile getProfile(
+            @AuthenticationPrincipal Jwt jwt) {
+        String userId = jwt.getSubject();
+        List<String> scopes = jwt.getClaimAsStringList("scope");
+
+        return userService.getProfile(userId);
+    }
+}
+```
+
+#### 3. WebAuthn 사용
+
+**목적**: 비밀번호 없는 안전한 인증
+
+**특징**:
+- 피싱 공격 방지
+- 생체 인증 지원
+- 하드웨어 보안 키 사용
+
+**구현 예제**:
+```java
+// WebAuthn 등록
+@RestController
+@RequestMapping("/api/webauthn")
+public class WebAuthnController {
+
+    @PostMapping("/register/start")
+    public PublicKeyCredentialCreationOptions startRegistration(
+            @RequestParam String username) {
+
+        return PublicKeyCredentialCreationOptions.builder()
+            .rp(RelyingPartyIdentity.builder()
+                .name("My App")
+                .id("example.com")
+                .build())
+            .user(UserIdentity.builder()
+                .name(username)
+                .displayName(username)
+                .id(generateUserId())
+                .build())
+            .challenge(generateChallenge())
+            .pubKeyCredParams(Arrays.asList(
+                PublicKeyCredentialParameters.ES256,
+                PublicKeyCredentialParameters.RS256
+            ))
+            .timeout(60000L)
+            .build();
+    }
+
+    @PostMapping("/register/finish")
+    public RegistrationResult finishRegistration(
+            @RequestBody PublicKeyCredential credential) {
+        // 자격 증명 검증 및 저장
+        return registrationService.verify(credential);
+    }
+}
+```
+
+#### 4. 레벨별 API 키 사용
+
+**목적**: 사용자 및 사용 사례별 차등 접근 제어
+
+**구현 예제**:
+```java
+// API Key 레벨 정의
+public enum ApiKeyLevel {
+    FREE(100, Arrays.asList("read")),           // 시간당 100회
+    BASIC(1000, Arrays.asList("read", "write")), // 시간당 1000회
+    PREMIUM(10000, Arrays.asList("read", "write", "admin")); // 시간당 10000회
+
+    private final int rateLimit;
+    private final List<String> permissions;
+
+    ApiKeyLevel(int rateLimit, List<String> permissions) {
+        this.rateLimit = rateLimit;
+        this.permissions = permissions;
+    }
+}
+
+// API Key 검증 필터
+@Component
+public class ApiKeyFilter extends OncePerRequestFilter {
+
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
+
+        String apiKey = request.getHeader("X-API-Key");
+
+        if (apiKey == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                "API Key 누락");
+            return;
+        }
+
+        // API Key 검증
+        ApiKeyInfo keyInfo = apiKeyService.validate(apiKey);
+        if (keyInfo == null) {
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                "유효하지 않은 API Key");
+            return;
+        }
+
+        // Rate Limit 확인
+        if (!rateLimiter.tryAcquire(apiKey, keyInfo.getLevel())) {
+            response.sendError(HttpServletResponse.SC_TOO_MANY_REQUESTS,
+                "Rate Limit 초과");
+            return;
+        }
+
+        // 요청 컨텍스트에 API Key 정보 저장
+        request.setAttribute("apiKeyInfo", keyInfo);
+
+        filterChain.doFilter(request, response);
+    }
+}
+```
+
+#### 5. 인가 (Authorization)
+
+**목적**: 역할 및 권한 기반 리소스 접근 제어
+
+**구현 예제**:
+```java
+// 역할 기반 접근 제어
+@RestController
+@RequestMapping("/api/resources")
+public class ResourceController {
+
+    @GetMapping("/{id}")
+    @PreAuthorize("hasPermission(#id, 'Resource', 'read')")
+    public Resource getResource(@PathVariable Long id) {
+        return resourceService.findById(id);
+    }
+
+    @PutMapping("/{id}")
+    @PreAuthorize("hasPermission(#id, 'Resource', 'write')")
+    public Resource updateResource(
+            @PathVariable Long id,
+            @RequestBody Resource resource) {
+        return resourceService.update(id, resource);
+    }
+
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN') or @resourceService.isOwner(#id, principal)")
+    public void deleteResource(@PathVariable Long id) {
+        resourceService.delete(id);
+    }
+}
+
+// 커스텀 Permission Evaluator
+@Component
+public class CustomPermissionEvaluator implements PermissionEvaluator {
+
+    @Override
+    public boolean hasPermission(
+            Authentication authentication,
+            Object targetDomainObject,
+            Object permission) {
+
+        if (authentication == null || !(permission instanceof String)) {
+            return false;
+        }
+
+        String targetType = targetDomainObject.getClass().getSimpleName();
+        return hasPrivilege(authentication,
+            targetType.toUpperCase(),
+            permission.toString().toUpperCase());
+    }
+
+    private boolean hasPrivilege(
+            Authentication auth,
+            String targetType,
+            String permission) {
+        // 권한 확인 로직
+        return auth.getAuthorities().stream()
+            .anyMatch(grantedAuth ->
+                grantedAuth.getAuthority()
+                    .equals(targetType + "_" + permission)
+            );
+    }
+}
+```
+
+#### 6. Rate Limiting (속도 제한)
+
+**목적**: API 남용 및 과부하 방지
+
+**구현 예제**:
+```java
+// Token Bucket 알고리즘을 사용한 Rate Limiter
+@Component
+public class RateLimiter {
+    private final Cache<String, AtomicInteger> requestCounts;
+
+    public RateLimiter() {
+        this.requestCounts = Caffeine.newBuilder()
+            .expireAfterWrite(1, TimeUnit.HOURS)
+            .build();
+    }
+
+    public boolean tryAcquire(String apiKey, ApiKeyLevel level) {
+        AtomicInteger count = requestCounts.get(apiKey,
+            k -> new AtomicInteger(0));
+
+        int currentCount = count.incrementAndGet();
+        return currentCount <= level.getRateLimit();
+    }
+}
+
+// Spring Cloud Gateway Rate Limiter
+@Configuration
+public class GatewayRateLimitConfig {
+
+    @Bean
+    public RouteLocator customRouteLocator(
+            RouteLocatorBuilder builder) {
+        return builder.routes()
+            .route("api_route", r -> r
+                .path("/api/**")
+                .filters(f -> f
+                    .requestRateLimiter(config -> config
+                        .setRateLimiter(redisRateLimiter())
+                        .setKeyResolver(userKeyResolver())
+                    )
+                )
+                .uri("http://localhost:8080")
+            )
+            .build();
+    }
+
+    @Bean
+    public RedisRateLimiter redisRateLimiter() {
+        return new RedisRateLimiter(10, 20);  // 초당 10개, 버스트 20개
+    }
+
+    @Bean
+    public KeyResolver userKeyResolver() {
+        return exchange -> Mono.just(
+            exchange.getRequest()
+                .getHeaders()
+                .getFirst("X-API-Key")
+        );
+    }
+}
+```
+
+#### 7. API 버전 관리
+
+**목적**: 기존 클라이언트를 손상시키지 않고 API 변경 관리
+
+**구현 예제**:
+```java
+// URL 기반 버전 관리
+@RestController
+@RequestMapping("/api/v1/users")
+public class UserControllerV1 {
+
+    @GetMapping("/{id}")
+    public UserV1 getUser(@PathVariable Long id) {
+        return userService.getUserV1(id);
+    }
+}
+
+@RestController
+@RequestMapping("/api/v2/users")
+public class UserControllerV2 {
+
+    @GetMapping("/{id}")
+    public UserV2 getUser(@PathVariable Long id) {
+        // V2에서는 추가 필드 포함
+        return userService.getUserV2(id);
+    }
+}
+
+// 헤더 기반 버전 관리
+@RestController
+@RequestMapping("/api/users")
+public class UserController {
+
+    @GetMapping(value = "/{id}", headers = "API-Version=1")
+    public UserV1 getUserV1(@PathVariable Long id) {
+        return userService.getUserV1(id);
+    }
+
+    @GetMapping(value = "/{id}", headers = "API-Version=2")
+    public UserV2 getUserV2(@PathVariable Long id) {
+        return userService.getUserV2(id);
+    }
+}
+```
+
+#### 8. 화이트리스트 (Whitelisting)
+
+**목적**: 신뢰할 수 있는 소스에서만 API 접근 허용
+
+**구현 예제**:
+```java
+// IP 화이트리스트 필터
+@Component
+public class IpWhitelistFilter extends OncePerRequestFilter {
+
+    @Value("${api.whitelist.ips}")
+    private List<String> whitelistedIps;
+
+    @Override
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain) throws ServletException, IOException {
+
+        String clientIp = getClientIp(request);
+
+        if (!isWhitelisted(clientIp)) {
+            response.sendError(HttpServletResponse.SC_FORBIDDEN,
+                "접근이 거부되었습니다: IP " + clientIp);
+            return;
+        }
+
+        filterChain.doFilter(request, response);
+    }
+
+    private boolean isWhitelisted(String ip) {
+        return whitelistedIps.stream()
+            .anyMatch(whitelistedIp ->
+                matchesIpPattern(ip, whitelistedIp)
+            );
+    }
+
+    private String getClientIp(HttpServletRequest request) {
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty()) {
+            ip = request.getRemoteAddr();
+        }
+        return ip;
+    }
+}
+
+// CORS 화이트리스트
+@Configuration
+public class CorsConfig {
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source =
+            new UrlBasedCorsConfigurationSource();
+
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowCredentials(true);
+        config.setAllowedOrigins(Arrays.asList(
+            "https://trusted-domain1.com",
+            "https://trusted-domain2.com"
+        ));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
+        config.setAllowedHeaders(Arrays.asList("*"));
+
+        source.registerCorsConfiguration("/api/**", config);
+        return new CorsFilter(source);
+    }
+}
+```
+
+#### 9. OWASP API 보안 위험 점검
+
+**OWASP API Security Top 10 (2023)**:
+
+1. **API1:2023 - Broken Object Level Authorization (BOLA)**
+   - 객체 수준 인가 취약점
+
+2. **API2:2023 - Broken Authentication**
+   - 인증 메커니즘 취약점
+
+3. **API3:2023 - Broken Object Property Level Authorization**
+   - 속성 수준 인가 취약점
+
+4. **API4:2023 - Unrestricted Resource Consumption**
+   - 무제한 리소스 소비
+
+5. **API5:2023 - Broken Function Level Authorization**
+   - 기능 수준 인가 취약점
+
+6. **API6:2023 - Unrestricted Access to Sensitive Business Flows**
+   - 민감한 비즈니스 플로우에 대한 무제한 접근
+
+7. **API7:2023 - Server Side Request Forgery (SSRF)**
+   - 서버 측 요청 위조
+
+8. **API8:2023 - Security Misconfiguration**
+   - 보안 설정 오류
+
+9. **API9:2023 - Improper Inventory Management**
+   - 부적절한 인벤토리 관리
+
+10. **API10:2023 - Unsafe Consumption of APIs**
+    - 안전하지 않은 API 사용
+
+**점검 예제**:
+```java
+// BOLA 방어 - 리소스 소유권 확인
+@RestController
+@RequestMapping("/api/orders")
+public class OrderController {
+
+    @GetMapping("/{orderId}")
+    public Order getOrder(
+            @PathVariable Long orderId,
+            @AuthenticationPrincipal User user) {
+
+        Order order = orderService.findById(orderId);
+
+        // BOLA 방어: 소유권 확인
+        if (!order.getUserId().equals(user.getId())
+                && !user.hasRole("ADMIN")) {
+            throw new AccessDeniedException(
+                "이 주문에 접근할 권한이 없습니다"
+            );
+        }
+
+        return order;
+    }
+}
+```
+
+#### 10. API Gateway 사용
+
+**목적**: API에 대한 중앙 집중식 접근 및 관리 지점
+
+**구현 예제**:
+```java
+// Spring Cloud Gateway
+@Configuration
+public class ApiGatewayConfig {
+
+    @Bean
+    public RouteLocator customRouteLocator(
+            RouteLocatorBuilder builder) {
+        return builder.routes()
+            .route("user_service", r -> r
+                .path("/api/users/**")
+                .filters(f -> f
+                    .circuitBreaker(config -> config
+                        .setName("userServiceCircuitBreaker")
+                        .setFallbackUri("forward:/fallback/users")
+                    )
+                    .retry(config -> config
+                        .setRetries(3)
+                        .setStatuses(HttpStatus.SERVICE_UNAVAILABLE)
+                    )
+                    .requestRateLimiter(config -> config
+                        .setRateLimiter(redisRateLimiter())
+                    )
+                )
+                .uri("lb://user-service")
+            )
+            .route("order_service", r -> r
+                .path("/api/orders/**")
+                .filters(f -> f
+                    .addRequestHeader("X-Gateway-Timestamp",
+                        String.valueOf(System.currentTimeMillis()))
+                )
+                .uri("lb://order-service")
+            )
+            .build();
+    }
+}
+
+// API Gateway 필터
+@Component
+public class LoggingGlobalFilter implements GlobalFilter, Ordered {
+
+    @Override
+    public Mono<Void> filter(
+            ServerWebExchange exchange,
+            GatewayFilterChain chain) {
+
+        ServerHttpRequest request = exchange.getRequest();
+
+        // 요청 로깅
+        log.info("API Gateway 요청: {} {} from {}",
+            request.getMethod(),
+            request.getPath(),
+            request.getRemoteAddress()
+        );
+
+        return chain.filter(exchange).then(Mono.fromRunnable(() -> {
+            // 응답 로깅
+            ServerHttpResponse response = exchange.getResponse();
+            log.info("API Gateway 응답: {} with status {}",
+                request.getPath(),
+                response.getStatusCode()
+            );
+        }));
+    }
+
+    @Override
+    public int getOrder() {
+        return -1;  // 가장 먼저 실행
+    }
+}
+```
+
+#### 11. 오류 처리 (Error Handling)
+
+**목적**: 민감한 정보를 노출하지 않는 적절한 오류 메시지 반환
+
+**구현 예제**:
+```java
+// 전역 예외 핸들러
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(
+            ResourceNotFoundException ex) {
+
+        ErrorResponse error = ErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.NOT_FOUND.value())
+            .error("Not Found")
+            .message("요청한 리소스를 찾을 수 없습니다")
+            .path(getCurrentRequest().getRequestURI())
+            .build();
+
+        // 민감한 정보(스택 트레이스 등) 제외
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            AccessDeniedException ex) {
+
+        ErrorResponse error = ErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.FORBIDDEN.value())
+            .error("Forbidden")
+            .message("이 리소스에 접근할 권한이 없습니다")
+            .build();
+
+        // 구체적인 권한 정보는 로그에만 기록
+        log.warn("Access denied: {}", ex.getMessage());
+
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneral(Exception ex) {
+
+        // 일반적인 오류 메시지만 반환
+        ErrorResponse error = ErrorResponse.builder()
+            .timestamp(LocalDateTime.now())
+            .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+            .error("Internal Server Error")
+            .message("요청을 처리하는 중 오류가 발생했습니다")
+            .build();
+
+        // 상세 오류는 서버 로그에만 기록
+        log.error("Unexpected error", ex);
+
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(error);
+    }
+}
+
+@Data
+@Builder
+class ErrorResponse {
+    private LocalDateTime timestamp;
+    private int status;
+    private String error;
+    private String message;
+    private String path;
+    // 스택 트레이스, 내부 오류 세부사항 등은 포함하지 않음
+}
+```
+
+#### 12. 입력 검증 (Input Validation)
+
+**목적**: SQL 인젝션, XSS 등의 공격 방지
+
+**구현 예제**:
+```java
+// Bean Validation을 사용한 입력 검증
+@RestController
+@RequestMapping("/api/users")
+@Validated
+public class UserController {
+
+    @PostMapping
+    public User createUser(@Valid @RequestBody CreateUserRequest request) {
+        return userService.create(request);
+    }
+}
+
+@Data
+class CreateUserRequest {
+
+    @NotBlank(message = "사용자 이름은 필수입니다")
+    @Size(min = 3, max = 50, message = "사용자 이름은 3-50자 사이여야 합니다")
+    @Pattern(regexp = "^[a-zA-Z0-9_]+$",
+        message = "사용자 이름은 영문자, 숫자, 언더스코어만 포함할 수 있습니다")
+    private String username;
+
+    @NotBlank(message = "이메일은 필수입니다")
+    @Email(message = "유효한 이메일 형식이 아닙니다")
+    private String email;
+
+    @NotBlank(message = "비밀번호는 필수입니다")
+    @Size(min = 8, max = 100, message = "비밀번호는 8-100자 사이여야 합니다")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$",
+        message = "비밀번호는 대소문자, 숫자, 특수문자를 포함해야 합니다")
+    private String password;
+
+    @Min(value = 18, message = "나이는 18세 이상이어야 합니다")
+    @Max(value = 150, message = "나이는 150세 이하여야 합니다")
+    private Integer age;
+}
+
+// 커스텀 검증 애노테이션
+@Target({ElementType.FIELD, ElementType.PARAMETER})
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = SafeHtmlValidator.class)
+public @interface SafeHtml {
+    String message() default "안전하지 않은 HTML이 포함되어 있습니다";
+    Class<?>[] groups() default {};
+    Class<? extends Payload>[] payload() default {};
+}
+
+public class SafeHtmlValidator
+        implements ConstraintValidator<SafeHtml, String> {
+
+    private final PolicyFactory policy = Sanitizers.FORMATTING
+        .and(Sanitizers.LINKS);
+
+    @Override
+    public boolean isValid(String value,
+            ConstraintValidatorContext context) {
+        if (value == null) {
+            return true;
+        }
+
+        // XSS 방어: HTML 새니타이징
+        String sanitized = policy.sanitize(value);
+        return value.equals(sanitized);
+    }
+}
+
+// SQL 인젝션 방어 - Prepared Statement 사용
+@Repository
+public class UserRepository {
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
+    public User findByUsername(String username) {
+        // 안전: Prepared Statement 사용
+        String sql = "SELECT * FROM users WHERE username = ?";
+        return jdbcTemplate.queryForObject(
+            sql,
+            new Object[]{username},
+            new UserRowMapper()
+        );
+    }
+
+    // 위험: 문자열 연결 (사용 금지)
+    // String sql = "SELECT * FROM users WHERE username = '" + username + "'";
+}
+```
+
+#### API 보안 체크리스트
+
+| 보안 영역 | 구현 사항 | 우선순위 |
+|----------|-----------|----------|
+| **전송 보안** | HTTPS 강제, TLS 1.2+ | 🔴 높음 |
+| **인증** | OAuth2, JWT, WebAuthn | 🔴 높음 |
+| **인가** | RBAC, 리소스 수준 권한 | 🔴 높음 |
+| **Rate Limiting** | Token Bucket, Sliding Window | 🟡 중간 |
+| **입력 검증** | Bean Validation, Sanitization | 🔴 높음 |
+| **API Gateway** | 중앙 집중식 보안 정책 | 🟡 중간 |
+| **모니터링** | 로깅, 알림, 감사 추적 | 🟡 중간 |
+| **버전 관리** | URL/헤더 기반 버전 관리 | 🟢 낮음 |
+| **CORS** | 화이트리스트 기반 제어 | 🟡 중간 |
+| **오류 처리** | 민감 정보 노출 방지 | 🔴 높음 |
+
+#### 모니터링 및 감사
+
+```java
+// API 감사 로깅
+@Aspect
+@Component
+public class ApiAuditAspect {
+
+    @Around("@annotation(org.springframework.web.bind.annotation.RequestMapping)")
+    public Object auditApiCall(ProceedingJoinPoint joinPoint)
+            throws Throwable {
+
+        ServletRequestAttributes attributes =
+            (ServletRequestAttributes) RequestContextHolder
+                .currentRequestAttributes();
+        HttpServletRequest request = attributes.getRequest();
+
+        AuditLog auditLog = AuditLog.builder()
+            .timestamp(LocalDateTime.now())
+            .method(request.getMethod())
+            .path(request.getRequestURI())
+            .ipAddress(request.getRemoteAddr())
+            .userAgent(request.getHeader("User-Agent"))
+            .apiKey(request.getHeader("X-API-Key"))
+            .build();
+
+        try {
+            Object result = joinPoint.proceed();
+            auditLog.setStatus("SUCCESS");
+            return result;
+        } catch (Exception e) {
+            auditLog.setStatus("FAILURE");
+            auditLog.setErrorMessage(e.getMessage());
+            throw e;
+        } finally {
+            auditLogRepository.save(auditLog);
+        }
+    }
+}
+```
+
+#### 결론
+
+API 보안은 다층 방어(Defense in Depth) 전략을 통해 구현되어야 합니다. 각 보안 계층이 독립적으로 작동하면서도 함께 작동하여 강력한 보안 체계를 만들어야 합니다. 정기적인 보안 감사와 OWASP API Security Top 10에 대한 점검을 통해 지속적으로 보안 수준을 유지하고 개선해야 합니다.
+
 ## Big Data
 
 ### Hadoop
@@ -11434,6 +13095,2094 @@ public class UserActivityMapper extends Mapper<LongWritable, Text, Text, IntWrit
 - 대화형 데이터 분석
 - 복잡한 데이터 파이프라인
 
+
+### Data Lake (데이터 레이크)
+
+- [Frequently Asked Questions About the Data Lakehouse | databricks](https://www.databricks.com/blog/2021/08/30/frequently-asked-questions-about-the-data-lakehouse.html)
+
+**데이터 레이크(Data Lake)**는 모든 유형의 데이터를 저장하도록 설계된 저비용, 개방형, 내구성 있는 스토리지 시스템입니다. **테이블 데이터**, **텍스트**, **이미지**, **오디오**, **비디오**, **JSON**, **CSV** 등 다양한 형식의 데이터를 저장할 수 있습니다.
+
+#### 주요 장점
+
+1. **유연한 데이터 저장**
+   - **구조화된 데이터**와 **비구조화된 데이터** 모두 저장 가능
+   - 일반적으로 **Apache Parquet** 또는 **ORC** 같은 개방형 표준 포맷 사용
+   - 대량의 데이터를 저비용으로 저장
+
+2. **개방성 및 생태계**
+   - 다양한 도구와 애플리케이션이 직접 데이터에 접근 가능
+   - 특정 벤더 종속(Vendor Lock-in)을 피할 수 있음
+   - 대규모 데이터 축적 가능
+
+3. **주요 클라우드 제공자 솔루션**
+   - **AWS S3** (Amazon Web Services)
+   - **Azure Data Lake Storage (ADLS)** (Microsoft Azure)
+   - **Google Cloud Storage (GCS)** (Google Cloud)
+
+#### 한계점
+
+데이터 레이크는 역사적으로 다음과 같은 문제점을 가지고 있습니다:
+- **보안(Security)** - 세밀한 접근 제어 부족
+- **품질(Quality)** - 데이터 일관성 및 신뢰성 문제
+- **성능(Performance)** - SQL 쿼리 성능 제한
+
+이러한 한계로 인해 조직은 종종 데이터의 일부를 데이터 웨어하우스로 이동하여 가치를 추출해야 합니다.
+
+### Data Warehouse (데이터 웨어하우스)
+
+- [Frequently Asked Questions About the Data Lakehouse | databricks](https://www.databricks.com/blog/2021/08/30/frequently-asked-questions-about-the-data-lakehouse.html)
+
+**데이터 웨어하우스(Data Warehouse)**는 SQL 기반 분석 및 비즈니스 인텔리전스(BI)를 위해 구조화되거나 반구조화된 데이터를 저장, 관리, 분석하도록 설계된 전용 시스템입니다.
+
+#### 주요 특징
+
+1. **최적화된 성능**
+   - 높은 성능, 동시성, 신뢰성에 최적화
+   - 빠른 SQL 쿼리 처리
+   - 동시 다중 사용자 지원
+
+2. **데이터 타입 지원**
+   - 주로 **구조화된 데이터** 지원
+   - **비구조화된 데이터**에 대한 제한적 지원
+     - **이미지**, **센서 데이터**, **문서**, **비디오** 등
+
+3. **비용 및 제약사항**
+   - 데이터 레이크에 비해 높은 비용
+   - 오픈소스 라이브러리 및 도구 지원 제한
+     - **TensorFlow**, **PyTorch**, **Python 기반 라이브러리** 등
+   - 머신러닝 및 데이터 사이언스 사용 사례에 제약
+
+#### 일반적인 사용 패턴
+
+조직은 일반적으로 다음과 같이 데이터를 분리하여 관리합니다:
+- **데이터 웨어하우스**: 빠른 동시 SQL 및 BI 사용 사례를 위한 핵심 비즈니스 데이터
+- **데이터 레이크**: 비구조화된 데이터를 포함한 대규모 데이터셋
+
+### Data Lakehouse (데이터 레이크하우스)
+
+- [Frequently Asked Questions About the Data Lakehouse | databricks](https://www.databricks.com/blog/2021/08/30/frequently-asked-questions-about-the-data-lakehouse.html)
+
+**데이터 레이크하우스(Data Lakehouse)**는 **데이터 레이크**와 **데이터 웨어하우스**의 장점을 결합한 현대적인 데이터 아키텍처입니다. 데이터 레이크에 저장된 대량의 데이터에 대해 효율적이고 안전한 AI 및 비즈니스 인텔리전스(BI)를 직접 수행할 수 있도록 합니다.
+
+#### 핵심 목표
+
+1. **데이터 레이크의 문제 해결**
+   - 보안(Security) 강화
+   - 품질(Quality) 개선
+   - 성능(Performance) 향상
+
+2. **데이터 웨어하우스의 기능 제공**
+   - SQL 쿼리 최적화된 성능
+   - BI 스타일 리포팅
+
+#### 주요 기능
+
+```
+┌─────────────────────────────────────────┐
+│      Data Lakehouse 아키텍처             │
+├─────────────────────────────────────────┤
+│  AI/ML       BI/Analytics    Real-time  │
+│  ┌─────┐     ┌─────┐        ┌─────┐    │
+│  │Python│    │ SQL │        │Stream│    │
+│  └─────┘     └─────┘        └─────┘    │
+├─────────────────────────────────────────┤
+│  메타데이터 레이어 (Delta Lake/Iceberg) │
+│  - ACID 트랜잭션                        │
+│  - 스키마 관리                          │
+│  - 타임 트래블                          │
+├─────────────────────────────────────────┤
+│  스토리지 (S3, ADLS, GCS)               │
+│  - Parquet/ORC 파일                     │
+│  - 모든 데이터 타입 지원                │
+└─────────────────────────────────────────┘
+```
+
+**1. 통합 스토리지**
+- 모든 데이터 타입을 한 곳에 저장
+  - 구조화된 데이터 (Structured)
+  - 반구조화된 데이터 (Semi-structured)
+  - 비구조화된 데이터 (Unstructured)
+- 데이터 이동 불필요
+
+**2. ACID 트랜잭션**
+- 데이터 일관성 보장
+- 동시 읽기/쓰기 지원
+- 데이터 품질 향상
+
+**3. 세밀한 데이터 보안**
+- 행/열 수준 접근 제어
+- 역할 기반 권한 관리
+- 감사 로깅
+
+**4. 저비용 업데이트 및 삭제**
+- 효율적인 데이터 수정
+- 증분 업데이트 지원
+- 스토리지 비용 최적화
+
+**5. SQL 및 데이터 사이언스 네이티브 지원**
+- 완전한 SQL 지원
+- Python, R, Scala 네이티브 통합
+- TensorFlow, PyTorch 등 ML 프레임워크 지원
+
+#### 오픈소스 기술
+
+주요 데이터 레이크하우스 기술:
+
+| 기술 | 특징 | 주요 기능 |
+|------|------|-----------|
+| **Delta Lake** | Databricks 주도 | - ACID 트랜잭션<br>- 타임 트래블<br>- 스키마 진화 |
+| **Apache Hudi** | Uber 개발 | - 증분 처리<br>- 업서트 최적화<br>- 스트리밍 통합 |
+| **Apache Iceberg** | Netflix 개발 | - 스냅샷 격리<br>- 숨겨진 파티셔닝<br>- 스키마 진화 |
+
+#### 주요 벤더
+
+- **Databricks** - Delta Lake 기반 통합 플랫폼
+- **AWS** - Lake Formation, Redshift Spectrum
+- **Dremio** - 데이터 가상화 및 쿼리 가속
+- **Starburst** - Trino 기반 분산 쿼리 엔진
+
+#### 장점
+
+1. **단일 통합 시스템**
+   - 모든 데이터 타입 커버
+   - BI부터 AI까지 광범위한 분석 사용 사례
+
+2. **개방형 표준**
+   - 벤더 종속 회피
+   - 다양한 도구 생태계 활용
+
+3. **비용 효율성**
+   - 데이터 이동 제거
+   - 저비용 스토리지 활용
+   - 중복 스토리지 불필요
+
+4. **성능 및 확장성**
+   - 대규모 데이터 처리
+   - SQL 쿼리 최적화
+   - 동시 사용자 지원
+
+#### 사용 사례
+
+```java
+// Delta Lake 예제 (Spark 기반)
+import org.apache.spark.sql.SparkSession;
+import io.delta.tables.*;
+
+public class DataLakehouseExample {
+    public static void main(String[] args) {
+        SparkSession spark = SparkSession.builder()
+            .appName("Lakehouse Example")
+            .config("spark.sql.extensions",
+                "io.delta.sql.DeltaSparkSessionExtension")
+            .config("spark.sql.catalog.spark_catalog",
+                "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+            .getOrCreate();
+
+        // 1. 데이터 레이크하우스에 데이터 쓰기 (ACID 보장)
+        spark.range(0, 10000)
+            .write()
+            .format("delta")
+            .mode("overwrite")
+            .save("s3://my-lakehouse/orders");
+
+        // 2. ACID 트랜잭션으로 업데이트
+        DeltaTable orders = DeltaTable.forPath(spark,
+            "s3://my-lakehouse/orders");
+
+        orders.update(
+            "id < 100",
+            Map.of("status", lit("processed"))
+        );
+
+        // 3. 타임 트래블 - 과거 버전 조회
+        spark.read()
+            .format("delta")
+            .option("versionAsOf", "2")  // 버전 2로 롤백
+            .load("s3://my-lakehouse/orders")
+            .show();
+
+        // 4. SQL로 분석 (BI 사용 사례)
+        spark.sql("""
+            SELECT
+                date_trunc('day', order_date) as day,
+                count(*) as order_count,
+                sum(amount) as total_amount
+            FROM delta.`s3://my-lakehouse/orders`
+            WHERE status = 'completed'
+            GROUP BY day
+            ORDER BY day DESC
+        """).show();
+
+        // 5. 머신러닝 데이터 준비 (AI 사용 사례)
+        Dataset<Row> mlData = spark.read()
+            .format("delta")
+            .load("s3://my-lakehouse/orders")
+            .selectExpr("features", "label");
+
+        // TensorFlow, PyTorch 등과 통합 가능
+        spark.stop();
+    }
+}
+```
+
+#### 아키텍처 비교
+
+| 특징 | Data Lake | Data Warehouse | Data Lakehouse |
+|------|-----------|----------------|----------------|
+| **데이터 타입** | 모든 타입 | 주로 구조화 | 모든 타입 |
+| **비용** | 낮음 | 높음 | 낮음~중간 |
+| **SQL 성능** | 낮음 | 높음 | 높음 |
+| **ACID** | ❌ | ✅ | ✅ |
+| **ML/AI 지원** | ✅ | ❌ | ✅ |
+| **BI 지원** | 제한적 | ✅ | ✅ |
+| **스키마** | Schema-on-read | Schema-on-write | 유연함 |
+| **데이터 품질** | 낮음 | 높음 | 높음 |
+
+#### 결론
+
+데이터 레이크하우스는 데이터 레이크의 유연성과 저비용, 데이터 웨어하우스의 성능과 신뢰성을 결합하여 조직이 단일 플랫폼에서 모든 분석 워크로드(BI, AI, 실시간 분석)를 수행할 수 있게 합니다.
+
+
+## A/B 테스트 (A/B Testing)
+
+A/B 테스트(A/B Testing)는 분할 테스트(Split Testing) 또는 버킷 테스트(Bucket Testing)로도 알려져 있으며, 제품, 기능, 콘텐츠의 둘 이상의 변형(variant)을 비교하여 특정 지표를 기준으로 어느 것이 더 나은 성과를 내는지 판단하는 통제된 실험 방법이다. 웹사이트 및 앱 디자인, 온라인 마케팅, 광고, 사용자 경험 최적화 등에 널리 사용된다.
+
+**A/B 테스트의 작동 원리**:
+
+A/B 테스트에서는 대상 사용자를 무작위로 두 개 이상의 그룹으로 나누고, 각 그룹에 서로 다른 변형(A, B 또는 그 이상)을 제공한다. 변형은 디자인, 헤드라인, 행동 유도 버튼(CTA), 페이지 레이아웃, 마케팅 메시지 등 사용자 행동에 영향을 줄 수 있는 모든 요소가 될 수 있다. 사용자의 행동이나 반응을 측정하여 그룹 간 비교함으로써 전환율, 클릭률, 사용자 참여도, 페이지 체류 시간 등 사전 정의된 지표에서 최상의 결과를 산출하는 변형을 결정한다.
+
+**A/B 테스트 프로세스**:
+
+**1. 목표 정의 (Define the Objective)**:
+- 테스트를 통해 개선하고자 하는 구체적인 목표나 지표를 결정
+- 예: 전환율 5% 향상, 이탈률 10% 감소
+
+**2. 가설 수립 (Develop Hypotheses)**:
+- 사용자 선호도와 행동에 대한 가정과 데이터를 기반으로 대안 버전 생성
+- 예: "버튼 색상을 빨간색에서 녹색으로 변경하면 클릭률이 증가할 것이다"
+
+**3. 테스트 변형 생성 (Create Test Variants)**:
+- 가설에 따라 요소를 수정하여 테스트할 다양한 버전 생성
+- 변형 A (Control): 기존 버전
+- 변형 B (Treatment): 새로운 버전
+
+**4. 사용자 무작위 분할 (Randomly Split the Audience)**:
+- 사용자를 무작위로 다른 그룹에 할당
+- 각 그룹이 하나의 변형을 받도록 보장
+- 일반적으로 50/50 또는 다른 비율로 분할
+
+**5. 테스트 실행 (Run the Test)**:
+- 사전 정의된 기간 동안 또는 통계적으로 유의미한 샘플 크기에 도달할 때까지 실험 수행
+- 외부 변수 최소화, 동일한 조건 유지
+
+**6. 결과 분석 (Analyze the Results)**:
+- 정의된 지표를 기반으로 각 변형의 성과 비교
+- 통계적 유의성 검증
+- 우승 변형 결정
+
+**A/B 테스트 주요 지표**:
+
+| 지표 | 설명 | 계산 방법 |
+|------|------|----------|
+| **전환율 (Conversion Rate)** | 원하는 행동을 수행한 사용자 비율 | (전환 수 / 총 방문자 수) × 100% |
+| **클릭률 (Click-Through Rate, CTR)** | 링크나 버튼을 클릭한 사용자 비율 | (클릭 수 / 노출 수) × 100% |
+| **이탈률 (Bounce Rate)** | 한 페이지만 보고 떠난 사용자 비율 | (단일 페이지 세션 / 총 세션) × 100% |
+| **평균 세션 시간** | 사용자가 사이트에 머문 평균 시간 | 총 세션 시간 / 총 세션 수 |
+| **페이지당 조회수** | 세션당 평균 페이지 조회수 | 총 페이지뷰 / 총 세션 수 |
+
+**A/B 테스트 구현 예제 (Java)**:
+
+```java
+// Variant.java
+public class Variant {
+    private String id;
+    private String name;
+    private String description;
+    private int impressions;
+    private int conversions;
+    private int clicks;
+
+    public Variant(String id, String name, String description) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.impressions = 0;
+        this.conversions = 0;
+        this.clicks = 0;
+    }
+
+    public synchronized void recordImpression() {
+        impressions++;
+    }
+
+    public synchronized void recordClick() {
+        clicks++;
+    }
+
+    public synchronized void recordConversion() {
+        conversions++;
+    }
+
+    public double getConversionRate() {
+        return impressions > 0 ? (double) conversions / impressions : 0.0;
+    }
+
+    public double getClickThroughRate() {
+        return impressions > 0 ? (double) clicks / impressions : 0.0;
+    }
+
+    // Getters
+    public String getId() { return id; }
+    public String getName() { return name; }
+    public int getImpressions() { return impressions; }
+    public int getConversions() { return conversions; }
+    public int getClicks() { return clicks; }
+}
+
+// ABTest.java
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class ABTest {
+    private String testId;
+    private String testName;
+    private List<Variant> variants;
+    private Map<String, String> userAssignments; // userId -> variantId
+    private Random random;
+    private boolean isActive;
+
+    public ABTest(String testId, String testName) {
+        this.testId = testId;
+        this.testName = testName;
+        this.variants = new ArrayList<>();
+        this.userAssignments = new ConcurrentHashMap<>();
+        this.random = new Random();
+        this.isActive = true;
+    }
+
+    public void addVariant(Variant variant) {
+        variants.add(variant);
+    }
+
+    // 사용자를 변형에 할당 (Consistent Hashing 사용)
+    public Variant assignUser(String userId) {
+        // 이미 할당된 사용자는 동일한 변형 반환
+        if (userAssignments.containsKey(userId)) {
+            String variantId = userAssignments.get(userId);
+            return variants.stream()
+                .filter(v -> v.getId().equals(variantId))
+                .findFirst()
+                .orElse(null);
+        }
+
+        // 새로운 사용자는 무작위로 할당
+        Variant assignedVariant = variants.get(random.nextInt(variants.size()));
+        userAssignments.put(userId, assignedVariant.getId());
+
+        return assignedVariant;
+    }
+
+    // 해시 기반 일관된 할당 (동일한 userId는 항상 동일한 변형)
+    public Variant assignUserConsistently(String userId) {
+        if (userAssignments.containsKey(userId)) {
+            String variantId = userAssignments.get(userId);
+            return variants.stream()
+                .filter(v -> v.getId().equals(variantId))
+                .findFirst()
+                .orElse(null);
+        }
+
+        // userId의 해시값을 사용하여 일관된 할당
+        int hash = Math.abs(userId.hashCode());
+        int index = hash % variants.size();
+        Variant assignedVariant = variants.get(index);
+        userAssignments.put(userId, assignedVariant.getId());
+
+        return assignedVariant;
+    }
+
+    public void recordImpression(String userId) {
+        Variant variant = assignUser(userId);
+        if (variant != null && isActive) {
+            variant.recordImpression();
+        }
+    }
+
+    public void recordClick(String userId) {
+        String variantId = userAssignments.get(userId);
+        if (variantId != null && isActive) {
+            variants.stream()
+                .filter(v -> v.getId().equals(variantId))
+                .findFirst()
+                .ifPresent(Variant::recordClick);
+        }
+    }
+
+    public void recordConversion(String userId) {
+        String variantId = userAssignments.get(userId);
+        if (variantId != null && isActive) {
+            variants.stream()
+                .filter(v -> v.getId().equals(variantId))
+                .findFirst()
+                .ifPresent(Variant::recordConversion);
+        }
+    }
+
+    public ABTestResult getTestResults() {
+        return new ABTestResult(testId, testName, variants);
+    }
+
+    public void stopTest() {
+        isActive = false;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public List<Variant> getVariants() {
+        return new ArrayList<>(variants);
+    }
+}
+
+// ABTestResult.java
+import java.util.*;
+
+public class ABTestResult {
+    private String testId;
+    private String testName;
+    private List<Variant> variants;
+
+    public ABTestResult(String testId, String testName, List<Variant> variants) {
+        this.testId = testId;
+        this.testName = testName;
+        this.variants = new ArrayList<>(variants);
+    }
+
+    // 통계적 유의성 계산 (Z-test)
+    public boolean isStatisticallySignificant(Variant variantA, Variant variantB) {
+        double p1 = variantA.getConversionRate();
+        double p2 = variantB.getConversionRate();
+        int n1 = variantA.getImpressions();
+        int n2 = variantB.getImpressions();
+
+        // 샘플 크기가 너무 작으면 유의성 검증 불가
+        if (n1 < 30 || n2 < 30) {
+            return false;
+        }
+
+        // 풀링된 비율
+        double pooledP = ((double) (variantA.getConversions() + variantB.getConversions())) / (n1 + n2);
+
+        // 표준 오차
+        double se = Math.sqrt(pooledP * (1 - pooledP) * (1.0/n1 + 1.0/n2));
+
+        // Z-score 계산
+        double zScore = Math.abs(p1 - p2) / se;
+
+        // 95% 신뢰 수준 (Z > 1.96)
+        return zScore > 1.96;
+    }
+
+    // 우승 변형 결정
+    public Variant getWinner() {
+        return variants.stream()
+            .max(Comparator.comparingDouble(Variant::getConversionRate))
+            .orElse(null);
+    }
+
+    // 결과 리포트 출력
+    public void printReport() {
+        System.out.println("\n=== A/B Test Results ===");
+        System.out.println("Test ID: " + testId);
+        System.out.println("Test Name: " + testName);
+        System.out.println("\nVariant Performance:");
+
+        for (Variant variant : variants) {
+            System.out.println("\n" + variant.getName() + " (ID: " + variant.getId() + ")");
+            System.out.println("  Impressions: " + variant.getImpressions());
+            System.out.println("  Clicks: " + variant.getClicks());
+            System.out.println("  Conversions: " + variant.getConversions());
+            System.out.println("  CTR: " + String.format("%.2f%%", variant.getClickThroughRate() * 100));
+            System.out.println("  Conversion Rate: " + String.format("%.2f%%", variant.getConversionRate() * 100));
+        }
+
+        if (variants.size() >= 2) {
+            boolean significant = isStatisticallySignificant(variants.get(0), variants.get(1));
+            System.out.println("\nStatistically Significant: " + (significant ? "YES" : "NO"));
+
+            Variant winner = getWinner();
+            if (winner != null && significant) {
+                System.out.println("Winner: " + winner.getName());
+            }
+        }
+    }
+
+    // 신뢰 구간 계산
+    public double[] getConfidenceInterval(Variant variant, double confidenceLevel) {
+        double p = variant.getConversionRate();
+        int n = variant.getImpressions();
+
+        // Z-score (95% 신뢰 수준 = 1.96)
+        double z = 1.96;
+        if (confidenceLevel == 0.99) {
+            z = 2.576;
+        } else if (confidenceLevel == 0.90) {
+            z = 1.645;
+        }
+
+        double se = Math.sqrt((p * (1 - p)) / n);
+        double marginOfError = z * se;
+
+        return new double[] {
+            Math.max(0, p - marginOfError),
+            Math.min(1, p + marginOfError)
+        };
+    }
+}
+
+// ABTestService.java
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class ABTestService {
+    private Map<String, ABTest> activeTests;
+
+    public ABTestService() {
+        this.activeTests = new ConcurrentHashMap<>();
+    }
+
+    public ABTest createTest(String testId, String testName) {
+        ABTest test = new ABTest(testId, testName);
+        activeTests.put(testId, test);
+        return test;
+    }
+
+    public ABTest getTest(String testId) {
+        return activeTests.get(testId);
+    }
+
+    public void stopTest(String testId) {
+        ABTest test = activeTests.get(testId);
+        if (test != null) {
+            test.stopTest();
+        }
+    }
+
+    public List<ABTest> getActiveTests() {
+        return activeTests.values().stream()
+            .filter(ABTest::isActive)
+            .toList();
+    }
+}
+
+// ABTestExample.java
+public class ABTestExample {
+    public static void main(String[] args) {
+        ABTestService service = new ABTestService();
+
+        // A/B 테스트 생성: 체크아웃 버튼 색상 테스트
+        ABTest checkoutButtonTest = service.createTest(
+            "checkout-button-color",
+            "Checkout Button Color Test"
+        );
+
+        // 변형 추가
+        Variant variantA = new Variant("variant-a", "Control (Blue Button)", "Original blue checkout button");
+        Variant variantB = new Variant("variant-b", "Treatment (Green Button)", "New green checkout button");
+
+        checkoutButtonTest.addVariant(variantA);
+        checkoutButtonTest.addVariant(variantB);
+
+        // 사용자 시뮬레이션
+        System.out.println("=== Simulating User Interactions ===");
+        Random random = new Random();
+
+        for (int i = 1; i <= 1000; i++) {
+            String userId = "user-" + i;
+
+            // 사용자에게 페이지 노출
+            checkoutButtonTest.recordImpression(userId);
+
+            // 70% 확률로 클릭
+            if (random.nextDouble() < 0.7) {
+                checkoutButtonTest.recordClick(userId);
+
+                // 변형 B는 10% 더 높은 전환율
+                Variant assignedVariant = checkoutButtonTest.assignUser(userId);
+                double conversionProbability = assignedVariant.getId().equals("variant-a") ? 0.15 : 0.25;
+
+                if (random.nextDouble() < conversionProbability) {
+                    checkoutButtonTest.recordConversion(userId);
+                }
+            }
+        }
+
+        // 결과 분석
+        ABTestResult results = checkoutButtonTest.getTestResults();
+        results.printReport();
+
+        // 신뢰 구간 출력
+        System.out.println("\n=== Confidence Intervals (95%) ===");
+        for (Variant variant : checkoutButtonTest.getVariants()) {
+            double[] ci = results.getConfidenceInterval(variant, 0.95);
+            System.out.println(variant.getName() + ": [" +
+                String.format("%.2f%%", ci[0] * 100) + ", " +
+                String.format("%.2f%%", ci[1] * 100) + "]");
+        }
+
+        // 테스트 중지
+        checkoutButtonTest.stopTest();
+    }
+}
+```
+
+**A/B 테스트 고급 기법**:
+
+```java
+// MultiVariateTest.java (다변량 테스트)
+public class MultiVariateTest {
+    private String testId;
+    private Map<String, List<String>> factors; // factor -> [option1, option2, ...]
+    private Map<String, Variant> variants;
+
+    public MultiVariateTest(String testId) {
+        this.testId = testId;
+        this.factors = new HashMap<>();
+        this.variants = new HashMap<>();
+    }
+
+    // 팩터 추가 (예: 버튼 색상, 텍스트, 위치)
+    public void addFactor(String factorName, List<String> options) {
+        factors.put(factorName, options);
+        generateVariants();
+    }
+
+    // 모든 조합의 변형 생성
+    private void generateVariants() {
+        variants.clear();
+        List<String> factorNames = new ArrayList<>(factors.keySet());
+        generateVariantsRecursive(factorNames, 0, new HashMap<>());
+    }
+
+    private void generateVariantsRecursive(List<String> factorNames, int index,
+                                          Map<String, String> currentCombination) {
+        if (index == factorNames.size()) {
+            String variantId = generateVariantId(currentCombination);
+            String variantName = generateVariantName(currentCombination);
+            variants.put(variantId, new Variant(variantId, variantName, ""));
+            return;
+        }
+
+        String factorName = factorNames.get(index);
+        List<String> options = factors.get(factorName);
+
+        for (String option : options) {
+            currentCombination.put(factorName, option);
+            generateVariantsRecursive(factorNames, index + 1, new HashMap<>(currentCombination));
+        }
+    }
+
+    private String generateVariantId(Map<String, String> combination) {
+        return String.join("-", combination.values());
+    }
+
+    private String generateVariantName(Map<String, String> combination) {
+        StringBuilder sb = new StringBuilder();
+        combination.forEach((factor, option) ->
+            sb.append(factor).append(":").append(option).append(", ")
+        );
+        return sb.toString();
+    }
+}
+
+// BanditAlgorithm.java (Multi-Armed Bandit)
+public class BanditAlgorithm {
+    private List<Variant> variants;
+    private double epsilon; // 탐색 비율
+
+    public BanditAlgorithm(List<Variant> variants, double epsilon) {
+        this.variants = variants;
+        this.epsilon = epsilon;
+    }
+
+    // Epsilon-Greedy 알고리즘
+    public Variant selectVariant() {
+        Random random = new Random();
+
+        // epsilon 확률로 무작위 탐색
+        if (random.nextDouble() < epsilon) {
+            return variants.get(random.nextInt(variants.size()));
+        }
+
+        // (1-epsilon) 확률로 최고 성과 변형 활용
+        return variants.stream()
+            .max(Comparator.comparingDouble(Variant::getConversionRate))
+            .orElse(variants.get(0));
+    }
+
+    // Thompson Sampling (베이지안 접근)
+    public Variant selectVariantThompsonSampling() {
+        Random random = new Random();
+        double maxSample = Double.NEGATIVE_INFINITY;
+        Variant bestVariant = null;
+
+        for (Variant variant : variants) {
+            int successes = variant.getConversions();
+            int failures = variant.getImpressions() - variant.getConversions();
+
+            // 베타 분포에서 샘플링
+            double sample = sampleBeta(successes + 1, failures + 1, random);
+
+            if (sample > maxSample) {
+                maxSample = sample;
+                bestVariant = variant;
+            }
+        }
+
+        return bestVariant;
+    }
+
+    private double sampleBeta(int alpha, int beta, Random random) {
+        // 간단한 베타 분포 샘플링 (실제로는 Apache Commons Math 사용 권장)
+        double x = sampleGamma(alpha, 1, random);
+        double y = sampleGamma(beta, 1, random);
+        return x / (x + y);
+    }
+
+    private double sampleGamma(double shape, double scale, Random random) {
+        // 간단한 감마 분포 샘플링
+        if (shape < 1) {
+            return sampleGamma(shape + 1, scale, random) * Math.pow(random.nextDouble(), 1.0 / shape);
+        }
+
+        double d = shape - 1.0 / 3.0;
+        double c = 1.0 / Math.sqrt(9.0 * d);
+
+        while (true) {
+            double x, v;
+            do {
+                x = random.nextGaussian();
+                v = 1.0 + c * x;
+            } while (v <= 0);
+
+            v = v * v * v;
+            x = x * x;
+
+            double u = random.nextDouble();
+            if (u < 1 - 0.0331 * x * x) {
+                return scale * d * v;
+            }
+
+            if (Math.log(u) < 0.5 * x + d * (1 - v + Math.log(v))) {
+                return scale * d * v;
+            }
+        }
+    }
+}
+```
+
+**A/B 테스트 모범 사례**:
+
+**1. 충분한 샘플 크기**:
+- 통계적 유의성을 확보하기 위해 최소 1,000명 이상의 사용자
+- 전환율이 낮을수록 더 많은 샘플 필요
+
+**2. 테스트 기간**:
+- 최소 1-2주 동안 실행하여 요일 효과 제거
+- 계절성이나 특별 이벤트 고려
+
+**3. 한 번에 하나씩 테스트**:
+- 여러 요소를 동시에 변경하지 말 것
+- 명확한 인과관계 파악
+
+**4. 사전 가설 수립**:
+- 테스트 전에 명확한 가설 정의
+- 데이터 기반 의사결정
+
+**5. 일관된 할당**:
+- 동일한 사용자는 항상 동일한 변형 제공
+- 쿠키나 사용자 ID 기반 할당
+
+**A/B 테스트 사용 사례**:
+
+| 분야 | 테스트 요소 | 측정 지표 |
+|------|------------|----------|
+| **이커머스** | 체크아웃 버튼 색상, 제품 이미지 | 전환율, 평균 주문 금액 |
+| **SaaS** | 가격 페이지 레이아웃, 무료 체험 기간 | 가입률, 유료 전환율 |
+| **콘텐츠** | 헤드라인, 썸네일 이미지 | 클릭률, 페이지 체류 시간 |
+| **모바일 앱** | 온보딩 플로우, 푸시 알림 문구 | 활성 사용자, 리텐션 |
+| **이메일** | 제목, 발송 시간, CTA 문구 | 오픈율, 클릭률 |
+
+A/B 테스트는 데이터 기반 의사결정, 사용자 경험 최적화, 매출 또는 전환율 증가, 마케팅 전략 개선에 매우 유용하다. 그러나 신중한 계획, 명확한 목표 설정, 적절한 통계 분석이 필요하며, 결과의 정확성과 신뢰성을 보장해야 한다.
+
+## Actor Model
+
+- [Actor Model](/actormodel/README-kr.md)
+- Actor Model은 **동시성 컴퓨팅**을 위한 수학적 모델이자 설계 패턴입니다. 1973년 Carl Hewitt에 의해 제안된 이 모델은 "Actor"라는 기본 단위를 통해 병렬 및 분산 시스템을 구축합니다.
+- Reactor/Proactor: 저수준 I/O 이벤트 처리 메커니즘
+- Actor Model: 고수준 동시성 및 분산 시스템 패턴
+- 관계: Actor Model은 내부적으로 Reactor/Proactor를 사용하여 I/O를 처리하지만, 개발자에게는 메시지 기반의 고수준 추상화를 제공
+- 장점:
+  - Reactor/Proactor의 효율적인 I/O 처리
+  - Actor Model의 간단한 동시성 관리
+  - 분산 시스템으로의 자연스러운 확장
+- Actor Model을 사용하면 Reactor/Proactor의 복잡한 콜백 지옥에서 벗어나 메시지 기반의 직관적인 코드를 작성할 수 있습니다.
+
+## Reactor vs Proactor
+
+**Reactor**와 **Proactor** 패턴은 동시성 시스템에서 비동기 입출력(I/O) 작업을 처리하기 위한 디자인 패턴이다. 이들은 다수의 클라이언트 요청이나 리소스 집약적인 작업과 같은 여러 이벤트와 I/O 작업을 관리하는 데 도움을 준다. 두 패턴의 주요 차이점은 I/O 작업을 처리하는 방식이다.
+
+**패턴 비교**:
+
+| 특징 | Reactor 패턴 | Proactor 패턴 |
+|------|-------------|--------------|
+| **I/O 모델** | 동기 논블로킹 I/O | 비동기 I/O |
+| **이벤트 처리** | I/O 준비 완료 이벤트 | I/O 완료 이벤트 |
+| **처리 방식** | 애플리케이션이 직접 I/O 수행 | OS가 I/O 수행, 결과만 전달 |
+| **멀티스레딩** | 일반적으로 필요 | 선택적 |
+| **구현 복잡도** | 상대적으로 간단 | 상대적으로 복잡 |
+| **성능** | 많은 동시 연결 시 제한적 | 높은 동시성 지원 |
+| **Java API** | java.nio (NIO) | java.nio.channels (AIO) |
+
+**Reactor 패턴의 동작 방식**:
+
+```
+1. 애플리케이션이 I/O 작업 등록
+2. Reactor가 이벤트 루프에서 I/O 준비 상태 대기
+3. I/O가 준비되면 이벤트 발생
+4. 애플리케이션의 핸들러가 직접 I/O 수행
+5. 결과 처리
+```
+
+**장점**:
+- 이해하고 구현하기 쉬움
+- 동기식 I/O 작업으로 디버깅 용이
+- 널리 사용되는 패턴 (Node.js, Redis, Nginx)
+
+**단점**:
+- I/O 작업 수행 시 애플리케이션 코드가 블록됨
+- 많은 동시 I/O 작업 처리 시 성능 저하
+- 긴 시간이 걸리는 I/O 작업에 취약
+
+**Proactor 패턴의 동작 방식**:
+
+```
+1. 애플리케이션이 비동기 I/O 요청 제출
+2. OS가 백그라운드에서 I/O 작업 수행
+3. I/O 작업 완료 시 완료 이벤트 발생
+4. 완료 핸들러(Completion Handler)가 결과 처리
+5. 애플리케이션은 블록되지 않음
+```
+
+**장점**:
+- 완전한 비동기 I/O로 애플리케이션 블록 없음
+- 높은 동시성 처리 가능
+- 멀티스레딩에 대한 의존도 낮음
+- 높은 처리량과 확장성
+
+**단점**:
+- 구현이 복잡함
+- 비동기 프로그래밍 모델의 학습 곡선
+- OS 레벨 지원 필요 (Windows IOCP, Linux AIO)
+- 디버깅과 에러 처리가 어려움
+
+**Reactor 패턴 구현 (Java NIO)**:
+
+```java
+// ReactorServer.java
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.*;
+import java.util.*;
+
+public class ReactorServer {
+    private final Selector selector;
+    private final ServerSocketChannel serverChannel;
+
+    public ReactorServer(int port) throws IOException {
+        selector = Selector.open();
+        serverChannel = ServerSocketChannel.open();
+        serverChannel.bind(new InetSocketAddress("localhost", port));
+        serverChannel.configureBlocking(false);
+        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+
+        System.out.println("Reactor Server started on port " + port);
+    }
+
+    public void run() throws IOException {
+        while (true) {
+            // I/O 준비 완료 이벤트 대기 (블로킹)
+            selector.select();
+
+            // 준비된 이벤트 처리
+            Set<SelectionKey> selectedKeys = selector.selectedKeys();
+            Iterator<SelectionKey> iterator = selectedKeys.iterator();
+
+            while (iterator.hasNext()) {
+                SelectionKey key = iterator.next();
+                iterator.remove();
+
+                try {
+                    if (!key.isValid()) {
+                        continue;
+                    }
+
+                    if (key.isAcceptable()) {
+                        handleAccept(key);
+                    } else if (key.isReadable()) {
+                        handleRead(key);
+                    } else if (key.isWritable()) {
+                        handleWrite(key);
+                    }
+                } catch (IOException e) {
+                    System.err.println("Error handling key: " + e.getMessage());
+                    key.cancel();
+                    key.channel().close();
+                }
+            }
+        }
+    }
+
+    // 새 연결 수락
+    private void handleAccept(SelectionKey key) throws IOException {
+        ServerSocketChannel serverChannel = (ServerSocketChannel) key.channel();
+        SocketChannel clientChannel = serverChannel.accept();
+
+        if (clientChannel != null) {
+            clientChannel.configureBlocking(false);
+            clientChannel.register(selector, SelectionKey.OP_READ);
+            System.out.println("Accepted connection from: " + clientChannel.getRemoteAddress());
+        }
+    }
+
+    // 데이터 읽기 (동기적으로 수행)
+    private void handleRead(SelectionKey key) throws IOException {
+        SocketChannel clientChannel = (SocketChannel) key.channel();
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+
+        int bytesRead = clientChannel.read(buffer);
+
+        if (bytesRead == -1) {
+            System.out.println("Client closed connection: " + clientChannel.getRemoteAddress());
+            clientChannel.close();
+            key.cancel();
+            return;
+        }
+
+        if (bytesRead > 0) {
+            buffer.flip();
+            byte[] data = new byte[buffer.remaining()];
+            buffer.get(data);
+            String message = new String(data).trim();
+
+            System.out.println("Received: " + message + " from " + clientChannel.getRemoteAddress());
+
+            // 응답 준비
+            String response = "Echo: " + message;
+            key.attach(ByteBuffer.wrap(response.getBytes()));
+            key.interestOps(SelectionKey.OP_WRITE);
+        }
+    }
+
+    // 데이터 쓰기 (동기적으로 수행)
+    private void handleWrite(SelectionKey key) throws IOException {
+        SocketChannel clientChannel = (SocketChannel) key.channel();
+        ByteBuffer buffer = (ByteBuffer) key.attachment();
+
+        if (buffer != null && buffer.hasRemaining()) {
+            clientChannel.write(buffer);
+        }
+
+        if (buffer == null || !buffer.hasRemaining()) {
+            key.interestOps(SelectionKey.OP_READ);
+            key.attach(null);
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            ReactorServer server = new ReactorServer(8080);
+            server.run();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+// ReactorClient.java (테스트용 클라이언트)
+import java.io.*;
+import java.net.*;
+
+public class ReactorClient {
+    public static void main(String[] args) {
+        try (Socket socket = new Socket("localhost", 8080);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+
+            // 메시지 전송
+            String message = "Hello Reactor!";
+            System.out.println("Sending: " + message);
+            out.println(message);
+
+            // 응답 수신
+            String response = in.readLine();
+            System.out.println("Received: " + response);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+**Proactor 패턴 구현 (Java AIO)**:
+
+```java
+// ProactorServer.java
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.*;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
+
+public class ProactorServer {
+    private final AsynchronousServerSocketChannel serverChannel;
+    private final int port;
+
+    public ProactorServer(int port) throws IOException {
+        this.port = port;
+        this.serverChannel = AsynchronousServerSocketChannel.open();
+        this.serverChannel.bind(new InetSocketAddress("localhost", port));
+
+        System.out.println("Proactor Server started on port " + port);
+    }
+
+    public void start() {
+        // 비동기로 연결 수락 (논블로킹)
+        serverChannel.accept(null, new AcceptCompletionHandler(serverChannel));
+    }
+
+    // 연결 수락 완료 핸들러
+    private static class AcceptCompletionHandler
+            implements CompletionHandler<AsynchronousSocketChannel, Void> {
+
+        private final AsynchronousServerSocketChannel serverChannel;
+
+        public AcceptCompletionHandler(AsynchronousServerSocketChannel serverChannel) {
+            this.serverChannel = serverChannel;
+        }
+
+        @Override
+        public void completed(AsynchronousSocketChannel clientChannel, Void attachment) {
+            // 다음 연결을 위해 다시 accept 호출
+            serverChannel.accept(null, this);
+
+            try {
+                System.out.println("Accepted connection from: " +
+                    clientChannel.getRemoteAddress());
+
+                // 비동기 읽기 시작
+                ByteBuffer buffer = ByteBuffer.allocate(1024);
+                clientChannel.read(buffer, buffer,
+                    new ReadCompletionHandler(clientChannel));
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void failed(Throwable exc, Void attachment) {
+            System.err.println("Failed to accept connection: " + exc.getMessage());
+        }
+    }
+
+    // 읽기 완료 핸들러
+    private static class ReadCompletionHandler
+            implements CompletionHandler<Integer, ByteBuffer> {
+
+        private final AsynchronousSocketChannel clientChannel;
+
+        public ReadCompletionHandler(AsynchronousSocketChannel clientChannel) {
+            this.clientChannel = clientChannel;
+        }
+
+        @Override
+        public void completed(Integer bytesRead, ByteBuffer buffer) {
+            if (bytesRead == -1) {
+                // 연결 종료
+                try {
+                    System.out.println("Client closed connection: " +
+                        clientChannel.getRemoteAddress());
+                    clientChannel.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return;
+            }
+
+            // 읽은 데이터 처리
+            buffer.flip();
+            byte[] data = new byte[buffer.remaining()];
+            buffer.get(data);
+            String message = new String(data, StandardCharsets.UTF_8).trim();
+
+            try {
+                System.out.println("Received: " + message + " from " +
+                    clientChannel.getRemoteAddress());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // 응답 준비 및 비동기 쓰기
+            String response = "Echo: " + message;
+            ByteBuffer responseBuffer = ByteBuffer.wrap(response.getBytes(StandardCharsets.UTF_8));
+
+            clientChannel.write(responseBuffer, responseBuffer,
+                new WriteCompletionHandler(clientChannel));
+        }
+
+        @Override
+        public void failed(Throwable exc, ByteBuffer buffer) {
+            System.err.println("Failed to read: " + exc.getMessage());
+            try {
+                clientChannel.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    // 쓰기 완료 핸들러
+    private static class WriteCompletionHandler
+            implements CompletionHandler<Integer, ByteBuffer> {
+
+        private final AsynchronousSocketChannel clientChannel;
+
+        public WriteCompletionHandler(AsynchronousSocketChannel clientChannel) {
+            this.clientChannel = clientChannel;
+        }
+
+        @Override
+        public void completed(Integer bytesWritten, ByteBuffer buffer) {
+            if (buffer.hasRemaining()) {
+                // 버퍼에 남은 데이터가 있으면 계속 쓰기
+                clientChannel.write(buffer, buffer, this);
+            } else {
+                // 쓰기 완료, 다음 읽기 대기
+                ByteBuffer readBuffer = ByteBuffer.allocate(1024);
+                clientChannel.read(readBuffer, readBuffer,
+                    new ReadCompletionHandler(clientChannel));
+            }
+        }
+
+        @Override
+        public void failed(Throwable exc, ByteBuffer buffer) {
+            System.err.println("Failed to write: " + exc.getMessage());
+            try {
+                clientChannel.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        try {
+            ProactorServer server = new ProactorServer(8081);
+            server.start();
+
+            // 메인 스레드가 종료되지 않도록 대기
+            System.out.println("Server is running. Press Ctrl+C to stop.");
+            TimeUnit.DAYS.sleep(1);
+
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+// ProactorClient.java (테스트용 비동기 클라이언트)
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.nio.ByteBuffer;
+import java.nio.channels.*;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.*;
+
+public class ProactorClient {
+    public static void main(String[] args) {
+        try {
+            AsynchronousSocketChannel clientChannel = AsynchronousSocketChannel.open();
+
+            // 비동기 연결
+            Future<Void> connectFuture = clientChannel.connect(
+                new InetSocketAddress("localhost", 8081));
+            connectFuture.get(); // 연결 완료 대기
+
+            System.out.println("Connected to server");
+
+            // 메시지 전송
+            String message = "Hello Proactor!";
+            ByteBuffer writeBuffer = ByteBuffer.wrap(message.getBytes(StandardCharsets.UTF_8));
+
+            Future<Integer> writeFuture = clientChannel.write(writeBuffer);
+            writeFuture.get(); // 쓰기 완료 대기
+            System.out.println("Sent: " + message);
+
+            // 응답 수신
+            ByteBuffer readBuffer = ByteBuffer.allocate(1024);
+            Future<Integer> readFuture = clientChannel.read(readBuffer);
+            int bytesRead = readFuture.get(5, TimeUnit.SECONDS); // 5초 타임아웃
+
+            readBuffer.flip();
+            byte[] data = new byte[bytesRead];
+            readBuffer.get(data);
+            String response = new String(data, StandardCharsets.UTF_8);
+            System.out.println("Received: " + response);
+
+            clientChannel.close();
+
+        } catch (IOException | InterruptedException | ExecutionException | TimeoutException e) {
+            e.printStackTrace();
+        }
+    }
+}
+```
+
+**실제 사용 사례**:
+
+**Reactor 패턴 사용**:
+- **Node.js**: Event Loop 기반 아키텍처
+- **Redis**: 단일 스레드 이벤트 루프
+- **Nginx**: 이벤트 기반 웹 서버
+- **Netty**: 고성능 네트워크 프레임워크 (Reactor 기반)
+
+**Proactor 패턴 사용**:
+- **Windows IOCP (I/O Completion Ports)**: Windows 비동기 I/O
+- **Boost.Asio**: C++ 비동기 I/O 라이브러리
+- **Proactor Framework**: ACE (Adaptive Communication Environment)
+
+**Reactor vs Proactor 선택 기준**:
+
+| 상황 | 권장 패턴 |
+|------|----------|
+| **적은 수의 동시 연결** | Reactor (간단한 구현) |
+| **많은 동시 연결 (10,000+)** | Proactor (높은 확장성) |
+| **빠른 I/O 작업** | Reactor (오버헤드 적음) |
+| **긴 시간의 I/O 작업** | Proactor (블로킹 없음) |
+| **단순한 프로토콜** | Reactor (디버깅 용이) |
+| **복잡한 비동기 흐름** | Proactor (비동기 체인) |
+| **Linux/Unix 환경** | Reactor (epoll, kqueue 지원) |
+| **Windows 환경** | Proactor (IOCP 지원) |
+
+**요약**:
+
+Reactor 패턴은 동기 이벤트 기반 I/O를 사용하며, Proactor 패턴은 비동기 I/O 처리를 기반으로 한다. 두 패턴 간의 선택은 애플리케이션의 특정 요구사항에 따라 결정되어야 하며, 동시 I/O 작업의 수, 예상 완료 시간, 사용 중인 플랫폼이나 라이브러리 등을 고려해야 한다. 실제 프로덕션 애플리케이션에서는 더 고급 메커니즘을 사용하여 I/O 작업, 에러 처리, 리소스 공유 등을 처리해야 한다.
+
+## 배치 처리 vs 스트림 처리 (Batch Processing vs Stream Processing)
+
+- [7 Best Practices for Data Governance](https://atlan.com/batch-processing-vs-stream-processing/)
+
+**배치 처리(Batch Processing)**와 **스트림 처리(Stream Processing)**는 대규모 데이터를 처리하는 두 가지 주요 패러다임입니다. 각각의 특성과 사용 사례에 따라 적절한 방식을 선택해야 합니다.
+
+### 아키텍처 비교
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                   배치 처리 (Batch)                      │
+├─────────────────────────────────────────────────────────┤
+│  데이터 수집 (1시간/1일)                                  │
+│       ↓                                                  │
+│  [========== 대량 데이터 ==========]                     │
+│       ↓                                                  │
+│  배치 작업 실행 (MapReduce/Spark)                        │
+│       ↓                                                  │
+│  결과 저장 (HDFS/S3)                                     │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│                   스트림 처리 (Stream)                    │
+├─────────────────────────────────────────────────────────┤
+│  데이터 스트림 (실시간)                                   │
+│    ↓    ↓    ↓    ↓    ↓    ↓                           │
+│  [이벤트1][이벤트2][이벤트3]...                           │
+│    ↓    ↓    ↓    ↓    ↓    ↓                           │
+│  실시간 처리 (Kafka/Flink)                               │
+│    ↓    ↓    ↓    ↓    ↓    ↓                           │
+│  즉시 결과 출력                                           │
+└─────────────────────────────────────────────────────────┘
+```
+
+### 1. 데이터 처리 방식
+
+#### 배치 처리 (Batch Processing)
+
+**정의**: 일정 시간 동안 수집된 데이터를 모아서 한 번에 처리하는 방식
+
+**특징**:
+- 데이터를 큰 블록(chunk)으로 묶어서 처리
+- 정해진 스케줄에 따라 실행 (예: 매일 자정, 매시간)
+- 높은 처리량(Throughput) 중심
+- 완료 후 일괄 결과 산출
+
+**예제 - Hadoop MapReduce**:
+```java
+// 일일 로그 분석 배치 작업
+public class DailyLogAnalysisMapper
+        extends Mapper<LongWritable, Text, Text, IntWritable> {
+
+    private final static IntWritable one = new IntWritable(1);
+    private Text errorType = new Text();
+
+    @Override
+    public void map(LongWritable key, Text value, Context context)
+            throws IOException, InterruptedException {
+
+        String line = value.toString();
+        // 로그 파싱: [2024-01-15 10:23:45] ERROR: Database connection failed
+        if (line.contains("ERROR")) {
+            String[] parts = line.split(":");
+            if (parts.length >= 2) {
+                errorType.set(parts[1].trim());
+                context.write(errorType, one);
+            }
+        }
+    }
+}
+
+public class DailyLogAnalysisReducer
+        extends Reducer<Text, IntWritable, Text, IntWritable> {
+
+    @Override
+    public void reduce(Text key, Iterable<IntWritable> values,
+            Context context) throws IOException, InterruptedException {
+
+        int sum = 0;
+        for (IntWritable val : values) {
+            sum += val.get();
+        }
+
+        context.write(key, new IntWritable(sum));
+    }
+}
+
+// 실행: 하루에 한 번 자정에 실행
+// 결과: Database connection failed: 1523건
+//       Network timeout: 342건
+//       Out of memory: 89건
+```
+
+#### 스트림 처리 (Stream Processing)
+
+**정의**: 데이터가 도착하는 즉시 실시간으로 처리하는 방식
+
+**특징**:
+- 연속적인 데이터 스트림 처리
+- 밀리초~초 단위의 낮은 지연시간(Latency)
+- 이벤트 기반 처리
+- 지속적인 결과 산출
+
+**예제 - Apache Kafka Streams**:
+```java
+// 실시간 주문 처리 스트림
+public class RealTimeOrderProcessor {
+
+    public static void main(String[] args) {
+        Properties props = new Properties();
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG,
+            "realtime-order-processor");
+        props.put(StreamsConfig.BOOTSTRAP_SERVERS_CONFIG,
+            "localhost:9092");
+
+        StreamsBuilder builder = new StreamsBuilder();
+
+        // 주문 스트림 읽기
+        KStream<String, Order> orders = builder.stream("orders",
+            Consumed.with(Serdes.String(), new OrderSerde()));
+
+        // 실시간 처리: 고액 주문 감지
+        KStream<String, Order> highValueOrders = orders
+            .filter((orderId, order) ->
+                order.getAmount() > 10000
+            )
+            .peek((orderId, order) ->
+                System.out.println("고액 주문 감지: " + orderId +
+                    " - $" + order.getAmount())
+            );
+
+        // 1분 윈도우로 집계
+        KTable<Windowed<String>, Long> orderCounts = orders
+            .groupBy((orderId, order) -> order.getCustomerId())
+            .windowedBy(TimeWindows.of(Duration.ofMinutes(1)))
+            .count();
+
+        // 실시간 사기 감지
+        KStream<String, Alert> fraudAlerts = orders
+            .filter((orderId, order) -> {
+                // 1분 내 동일 고객의 주문 수 확인
+                Long count = getCustomerOrderCount(
+                    order.getCustomerId()
+                );
+                return count != null && count > 5;
+            })
+            .mapValues(order ->
+                new Alert(order.getCustomerId(),
+                    "의심스러운 활동 감지: 1분 내 5건 이상 주문")
+            );
+
+        // 알림 토픽으로 전송
+        fraudAlerts.to("fraud-alerts",
+            Produced.with(Serdes.String(), new AlertSerde()));
+
+        KafkaStreams streams = new KafkaStreams(
+            builder.build(), props
+        );
+        streams.start();
+
+        // 결과: 주문이 들어오는 즉시 처리 및 알림
+        // 지연시간: < 100ms
+    }
+}
+```
+
+### 2. 지연 시간 (Latency)
+
+| 측면 | 배치 처리 | 스트림 처리 |
+|------|-----------|-------------|
+| **처리 시점** | 스케줄된 시간 | 데이터 도착 즉시 |
+| **지연 시간** | 분~시간 단위 | 밀리초~초 단위 |
+| **데이터 신선도** | 오래된 데이터 | 최신 데이터 |
+| **결과 가용성** | 배치 완료 후 | 실시간 |
+
+**배치 처리 타임라인**:
+```
+시간축: 0:00 -------- 1:00 -------- 2:00 -------- 3:00
+        [데이터 수집1시간] [처리 30분] [결과]
+        ↓ 지연시간: 1.5시간
+```
+
+**스트림 처리 타임라인**:
+```
+시간축: 0:00:00.000 -- 0:00:00.100 -- 0:00:00.200
+        [이벤트] → [처리] → [결과]
+        ↓ 지연시간: < 100ms
+```
+
+### 3. 사용 사례
+
+#### 배치 처리 사용 사례
+
+**1. 일일 리포트 생성**
+```java
+// 매일 자정 실행: 일일 매출 리포트
+@Scheduled(cron = "0 0 0 * * *")
+public void generateDailySalesReport() {
+    LocalDate yesterday = LocalDate.now().minusDays(1);
+
+    // 전날 데이터 조회
+    List<Order> orders = orderRepository
+        .findByOrderDateBetween(
+            yesterday.atStartOfDay(),
+            yesterday.plusDays(1).atStartOfDay()
+        );
+
+    // 집계
+    BigDecimal totalSales = orders.stream()
+        .map(Order::getAmount)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+    // 리포트 생성
+    DailyReport report = DailyReport.builder()
+        .date(yesterday)
+        .totalOrders(orders.size())
+        .totalSales(totalSales)
+        .build();
+
+    reportRepository.save(report);
+    emailService.sendDailyReport(report);
+}
+```
+
+**2. ETL 작업**
+```java
+// 데이터 웨어하우스로 일괄 로드
+public class ETLBatchJob {
+
+    @Scheduled(cron = "0 0 2 * * *")  // 매일 오전 2시
+    public void runETL() {
+        // Extract: 운영 DB에서 추출
+        List<Transaction> transactions =
+            extractTransactionsFromOperationalDB();
+
+        // Transform: 데이터 변환
+        List<FactTransaction> facts = transactions.stream()
+            .map(this::transformToFact)
+            .collect(Collectors.toList());
+
+        // Load: 데이터 웨어하우스로 적재
+        dataWarehouseRepository.batchInsert(facts);
+
+        // 통계 업데이트
+        updateAggregatedTables();
+    }
+}
+```
+
+**3. 월간 급여 처리**
+- 즉시 처리 불필요
+- 정확성이 속도보다 중요
+- 대량의 복잡한 계산
+
+#### 스트림 처리 사용 사례
+
+**1. 실시간 사기 감지**
+```java
+// 실시간 신용카드 거래 모니터링
+public class FraudDetectionStream {
+
+    public void processTransactionStream() {
+        StreamsBuilder builder = new StreamsBuilder();
+
+        KStream<String, Transaction> transactions =
+            builder.stream("card-transactions");
+
+        // 실시간 패턴 분석
+        KStream<String, FraudAlert> frauds = transactions
+            .groupByKey()
+            .windowedBy(TimeWindows.of(Duration.ofMinutes(5)))
+            .aggregate(
+                TransactionStats::new,
+                (cardId, transaction, stats) -> {
+                    stats.addTransaction(transaction);
+
+                    // 의심스러운 패턴 감지
+                    if (stats.getTotalAmount() > 5000 ||
+                        stats.getTransactionCount() > 10 ||
+                        stats.hasInternationalTransaction()) {
+                        return stats.markAsFraud();
+                    }
+                    return stats;
+                },
+                Materialized.with(Serdes.String(),
+                    new TransactionStatsSerde())
+            )
+            .toStream()
+            .filter((windowed, stats) -> stats.isFraud())
+            .mapValues(stats ->
+                new FraudAlert(stats.getCardId(),
+                    "의심스러운 거래 패턴 감지",
+                    stats.getTotalAmount())
+            );
+
+        // 즉시 카드 차단
+        frauds.foreach((cardId, alert) -> {
+            cardService.blockCard(alert.getCardId());
+            notificationService.sendAlert(alert);
+        });
+
+        // 지연시간: < 100ms (거래 후 즉시 차단)
+    }
+}
+```
+
+**2. 실시간 추천 시스템**
+```java
+// 사용자 행동 기반 실시간 추천
+public class RealtimeRecommendationStream {
+
+    public void processUserBehavior() {
+        StreamsBuilder builder = new StreamsBuilder();
+
+        KStream<String, UserEvent> events =
+            builder.stream("user-events");
+
+        // 실시간 프로필 업데이트
+        KTable<String, UserProfile> profiles = events
+            .groupBy((userId, event) -> userId)
+            .aggregate(
+                UserProfile::new,
+                (userId, event, profile) -> {
+                    profile.updateWithEvent(event);
+                    return profile;
+                },
+                Materialized.with(Serdes.String(),
+                    new UserProfileSerde())
+            );
+
+        // 실시간 추천 생성
+        KStream<String, Recommendation> recommendations = events
+            .join(profiles,
+                (event, profile) ->
+                    recommendationEngine.generate(event, profile),
+                JoinWindows.of(Duration.ofSeconds(10))
+            );
+
+        // 즉시 사용자에게 푸시
+        recommendations.foreach((userId, rec) -> {
+            pushService.sendRecommendation(userId, rec);
+        });
+
+        // 결과: 사용자가 상품을 클릭하면 즉시 관련 추천 표시
+    }
+}
+```
+
+**3. 실시간 대시보드**
+```java
+// IoT 센서 데이터 실시간 모니터링
+public class IoTMonitoringStream {
+
+    public void processS
+ensorData() {
+        StreamsBuilder builder = new StreamsBuilder();
+
+        KStream<String, SensorReading> readings =
+            builder.stream("sensor-data");
+
+        // 실시간 이상 감지
+        KStream<String, Alert> alerts = readings
+            .filter((sensorId, reading) ->
+                reading.getTemperature() > 80 ||  // 온도 임계값
+                reading.getPressure() < 10         // 압력 임계값
+            )
+            .mapValues(reading ->
+                new Alert(reading.getSensorId(),
+                    "임계값 초과",
+                    reading.getTimestamp())
+            );
+
+        // 즉시 알림 전송
+        alerts.foreach((sensorId, alert) -> {
+            alertService.sendUrgentAlert(alert);
+            controlSystem.shutdown(sensorId);  // 자동 차단
+        });
+
+        // 1초 윈도우로 집계하여 대시보드 업데이트
+        KTable<Windowed<String>, Double> avgReadings = readings
+            .groupByKey()
+            .windowedBy(TimeWindows.of(Duration.ofSeconds(1)))
+            .aggregate(
+                () -> new AverageCalculator(),
+                (sensorId, reading, avg) -> {
+                    avg.add(reading.getValue());
+                    return avg;
+                },
+                Materialized.with(Serdes.String(),
+                    new AverageCalculatorSerde())
+            )
+            .mapValues(avg -> avg.getAverage());
+
+        // WebSocket으로 대시보드 실시간 업데이트
+        avgReadings.toStream().foreach((windowed, avg) -> {
+            dashboardService.updateMetric(
+                windowed.key(),
+                avg
+            );
+        });
+    }
+}
+```
+
+### 4. 장애 허용성 및 신뢰성
+
+#### 배치 처리
+
+**특징**:
+- 재시작 가능: 체크포인트에서 재실행
+- 멱등성(Idempotency) 보장 용이
+- 전체 재처리 가능
+
+**예제**:
+```java
+// 배치 작업 재시작 메커니즘
+@Component
+public class ResumableBatchJob {
+
+    @Autowired
+    private JobRepository jobRepository;
+
+    public void runBatchWithCheckpoint() {
+        String jobId = UUID.randomUUID().toString();
+        JobExecution execution = jobRepository.createJobExecution(
+            "daily-sales-job", jobId
+        );
+
+        try {
+            // 마지막 체크포인트 조회
+            Long lastProcessedId = execution.getLastProcessedId();
+
+            // 체크포인트 이후 데이터 처리
+            List<Order> orders = orderRepository
+                .findByIdGreaterThan(lastProcessedId);
+
+            for (int i = 0; i < orders.size(); i += 1000) {
+                List<Order> batch = orders.subList(
+                    i, Math.min(i + 1000, orders.size())
+                );
+
+                processBatch(batch);
+
+                // 체크포인트 저장
+                execution.updateCheckpoint(
+                    batch.get(batch.size() - 1).getId()
+                );
+            }
+
+            execution.complete();
+
+        } catch (Exception e) {
+            execution.fail(e);
+            // 다음 실행 시 마지막 체크포인트부터 재시작
+        }
+    }
+}
+```
+
+#### 스트림 처리
+
+**특징**:
+- Exactly-once 처리 보장 필요
+- 상태 관리 복잡
+- 워터마크(Watermark) 처리
+
+**예제**:
+```java
+// Kafka Streams Exactly-Once 처리
+public class ExactlyOnceProcessor {
+
+    public void configureExactlyOnce() {
+        Properties props = new Properties();
+
+        // Exactly-Once 시맨틱 활성화
+        props.put(StreamsConfig.PROCESSING_GUARANTEE_CONFIG,
+            StreamsConfig.EXACTLY_ONCE_V2);
+
+        // 트랜잭션 타임아웃
+        props.put(StreamsConfig.COMMIT_INTERVAL_MS_CONFIG, 1000);
+
+        StreamsBuilder builder = new StreamsBuilder();
+
+        KStream<String, Payment> payments =
+            builder.stream("payments");
+
+        // 상태 저장소 (장애 복구 가능)
+        payments
+            .groupByKey()
+            .aggregate(
+                () -> new AccountBalance(),
+                (accountId, payment, balance) -> {
+                    balance.add(payment.getAmount());
+                    return balance;
+                },
+                Materialized.<String, AccountBalance>as(
+                    Stores.persistentKeyValueStore("balances")
+                )
+                .withKeySerde(Serdes.String())
+                .withValueSerde(new AccountBalanceSerde())
+            );
+
+        // 장애 발생 시 자동 복구
+        // - 마지막 커밋된 오프셋부터 재처리
+        // - 상태 저장소에서 이전 상태 복원
+        // - 중복 처리 방지
+    }
+}
+```
+
+### 5. 확장성 및 성능
+
+| 측면 | 배치 처리 | 스트림 처리 |
+|------|-----------|-------------|
+| **확장 방식** | 수직/수평 모두 가능 | 주로 수평 확장 |
+| **처리량** | 매우 높음 (TB~PB) | 높음 (GB~TB/시간) |
+| **리소스 활용** | 주기적 피크 | 지속적 사용 |
+| **병렬화** | 데이터 파티셔닝 | 파티션/샤딩 |
+
+**배치 처리 확장**:
+```java
+// Spark를 사용한 대규모 배치 처리
+SparkConf conf = new SparkConf()
+    .setAppName("Large Scale Batch")
+    .set("spark.executor.instances", "100")    // 100개 실행자
+    .set("spark.executor.memory", "8g")        // 각 8GB 메모리
+    .set("spark.executor.cores", "4");         // 각 4코어
+
+JavaSparkContext sc = new JavaSparkContext(conf);
+
+// 대규모 데이터 처리 (수 TB)
+JavaRDD<String> logs = sc.textFile("hdfs://logs/2024/*");
+
+// 400개 파티션으로 병렬 처리
+JavaPairRDD<String, Integer> errors = logs
+    .filter(line -> line.contains("ERROR"))
+    .mapToPair(line -> new Tuple2<>(extractError(line), 1))
+    .reduceByKey((a, b) -> a + b, 400);  // 400개 태스크로 분산
+
+errors.saveAsTextFile("hdfs://results/error-counts");
+
+// 처리량: 10TB 데이터를 1시간 내 처리
+```
+
+**스트림 처리 확장**:
+```java
+// Kafka 파티션을 통한 수평 확장
+public class ScalableStreamProcessor {
+
+    public void setupScalableStream() {
+        Properties props = new Properties();
+
+        // 여러 인스턴스가 파티션 분할 처리
+        props.put(StreamsConfig.APPLICATION_ID_CONFIG,
+            "scalable-processor");
+        props.put(StreamsConfig.NUM_STREAM_THREADS_CONFIG, 4);
+
+        // 입력 토픽: 32개 파티션
+        // 인스턴스 8개 × 스레드 4개 = 32개 병렬 처리
+
+        StreamsBuilder builder = new StreamsBuilder();
+
+        KStream<String, Order> orders = builder.stream("orders");
+
+        orders
+            .filter((id, order) -> order.getAmount() > 100)
+            .to("high-value-orders");
+
+        // 동적 확장: 인스턴스 추가 시 자동 리밸런싱
+        // 처리량: 초당 10만 이벤트 이상
+    }
+}
+```
+
+### 6. 복잡성
+
+#### 배치 처리
+- 설정 및 운영이 상대적으로 단순
+- 디버깅 용이
+- 멱등성 보장 쉬움
+
+#### 스트림 처리
+- 상태 관리 복잡
+- 시간 순서 처리 (Out-of-order events)
+- 워터마크 관리
+- Windowing 전략
+
+**시간 순서 문제 해결**:
+```java
+// 늦게 도착하는 이벤트 처리
+public class LateArrivalHandler {
+
+    public void handleLateEvents() {
+        StreamsBuilder builder = new StreamsBuilder();
+
+        KStream<String, Event> events = builder.stream("events");
+
+        // 워터마크: 5분까지 늦게 도착한 이벤트 허용
+        KTable<Windowed<String>, Long> counts = events
+            .groupByKey()
+            .windowedBy(
+                TimeWindows.of(Duration.ofMinutes(1))
+                    .grace(Duration.ofMinutes(5))  // 지연 허용
+            )
+            .count();
+
+        // 늦게 도착한 이벤트도 올바른 윈도우에 포함
+    }
+}
+```
+
+### 7. 도구 및 플랫폼
+
+#### 배치 처리 도구
+
+| 도구 | 특징 | 사용 사례 |
+|------|------|-----------|
+| **Hadoop MapReduce** | 초기 빅데이터 프레임워크 | 로그 분석, ETL |
+| **Apache Spark** | 인메모리 처리, 빠른 속도 | 데이터 웨어하우스, ML |
+| **Apache Hive** | SQL 기반 배치 처리 | 데이터 웨어하우징 |
+
+#### 스트림 처리 도구
+
+| 도구 | 특징 | 사용 사례 |
+|------|------|-----------|
+| **Apache Kafka Streams** | 경량, Kafka 통합 | 이벤트 처리, 마이크로서비스 |
+| **Apache Flink** | 진정한 스트리밍, 상태 관리 | 복잡한 이벤트 처리 |
+| **Apache Storm** | 초기 스트림 처리 프레임워크 | 실시간 분석 |
+| **Spark Streaming** | 마이크로 배치 방식 | 하이브리드 워크로드 |
+
+### 8. 하이브리드 접근: Lambda & Kappa 아키텍처
+
+#### Lambda 아키텍처
+
+```
+┌─────────────────────────────────────────┐
+│            데이터 소스                   │
+└────────┬────────────────┬───────────────┘
+         │                │
+    ┌────▼─────┐    ┌────▼─────┐
+    │  배치 계층  │    │ 속도 계층  │
+    │ (Spark)   │    │ (Kafka)  │
+    │ 정확한 결과│    │ 빠른 결과 │
+    └────┬─────┘    └────┬─────┘
+         │                │
+         └────────┬───────┘
+                  │
+           ┌──────▼──────┐
+           │   서빙 계층   │
+           │  (병합 결과) │
+           └─────────────┘
+```
+
+**구현 예제**:
+```java
+// Lambda 아키텍처 - 배치 + 스트림
+public class LambdaArchitecture {
+
+    // 배치 계층: 정확한 계산 (1시간마다)
+    @Scheduled(cron = "0 0 * * * *")
+    public void batchLayer() {
+        // 지난 1시간 데이터로 정확한 통계 계산
+        Statistics accurate = calculateAccurate(
+            lastHourData
+        );
+        batchResultStore.save(accurate);
+    }
+
+    // 속도 계층: 빠른 근사치 (실시간)
+    public void speedLayer() {
+        KStream<String, Event> stream = ...;
+
+        KTable<String, ApproxStats> approx = stream
+            .groupByKey()
+            .aggregate(
+                ApproxStats::new,
+                (key, event, stats) -> {
+                    stats.update(event);
+                    return stats;
+                }
+            );
+
+        // 실시간 근사 결과
+    }
+
+    // 서빙 계층: 결과 병합
+    public Statistics query(String key) {
+        // 배치 결과 + 최근 실시간 결과 병합
+        Statistics batch = batchResultStore.get(key);
+        Statistics speed = speedResultStore.get(key);
+        return merge(batch, speed);
+    }
+}
+```
+
+#### Kappa 아키텍처 (단순화)
+
+```
+┌─────────────────────────────────────────┐
+│            데이터 소스                   │
+└────────────────┬───────────────────────┘
+                 │
+         ┌───────▼────────┐
+         │  스트림 계층     │
+         │  (Kafka/Flink) │
+         │  (재처리 가능)   │
+         └───────┬────────┘
+                 │
+         ┌───────▼────────┐
+         │   서빙 계층      │
+         └────────────────┘
+```
+
+### 비교 요약
+
+| 기준 | 배치 처리 | 스트림 처리 |
+|------|-----------|-------------|
+| **지연시간** | 분~시간 | 밀리초~초 |
+| **처리량** | 매우 높음 | 높음 |
+| **복잡성** | 낮음 | 높음 |
+| **정확성** | 매우 높음 | 높음 (근사치 가능) |
+| **비용** | 저렴 (주기적 실행) | 비쌈 (지속 실행) |
+| **사용 사례** | 리포트, ETL, 분석 | 모니터링, 알림, 대시보드 |
+| **장애 복구** | 쉬움 (재실행) | 복잡 (상태 복원) |
+
+### 선택 가이드
+
+**배치 처리를 선택해야 할 때**:
+- 실시간 응답이 필요 없는 경우
+- 대량의 히스토리 데이터 처리
+- 높은 정확성이 요구되는 경우
+- 복잡한 집계 및 분석
+
+**스트림 처리를 선택해야 할 때**:
+- 밀리초~초 단위 응답 필요
+- 실시간 의사결정 (사기 감지, 추천)
+- 연속적인 데이터 모니터링
+- 이벤트 기반 아키텍처
+
+**하이브리드 (Lambda/Kappa)를 선택해야 할 때**:
+- 실시간성과 정확성 모두 중요
+- 대규모 데이터 + 실시간 분석
+- 재처리 및 수정이 빈번한 경우
+
+## Checksum
+
+- [What Is a Checksum?](https://www.lifewire.com/what-does-checksum-mean-2625825)
+
+-----
+
+### 개념
+
+체크섬(Checksum)은 데이터(주로 파일)에 대해 암호화 해시 함수 알고리즘을 실행한 결과값입니다. 파일의 원본과 사용자 버전을 비교하여 파일의 무결성과 정품 여부를 확인하는 데 사용됩니다.
+
+**다른 이름:**
+- 해시합계(Hash Sum)
+- 해시 값(Hash Value)
+- 해시 코드(Hash Code)
+- 해시(Hash)
+
+### 사용 목적
+
+체크섬은 파일이 올바르게 전송되었는지 확인하는 데 사용됩니다:
+
+1. **파일 무결성 검증**
+   - 다운로드한 파일의 체크섬 생성
+   - 원본 파일의 체크섬과 비교
+   - 두 값이 일치하면 파일이 손상되지 않았음을 확인
+
+2. **변조 탐지**
+   - 체크섬이 일치하지 않으면 파일이 손상되었거나 변조되었을 가능성
+   - 원본 소스에서 다운로드한 파일이 올바른지 확인 가능
+
+### 체크섬 계산기
+
+체크섬 계산기는 체크섬을 생성하는 도구로, 다양한 암호화 해시 함수를 지원합니다:
+
+- **주요 해시 알고리즘**: MD5, SHA-1, SHA-256, CRC32 등
+- **용도**: 파일 무결성 검증, 데이터 전송 오류 탐지
+- **활용 예**: 소프트웨어 다운로드 검증, 백업 파일 확인, 네트워크 전송 데이터 검증
+
+## MSA (Micro Service Architecture)
+
+[Micro Service Architecture](/msa/README.md)
+
+## Cloud Design Patterns
+
+[Cloud Design Patterns](clouddesignpattern.md)
+
+## Enterprise Integration Patterns
+
+[Enterprise Integration Patterns](/eip/README.md)
+
+## DDD
+
+[DDD](/ddd/README.md)
+
+## Architecture
+
+[Architecture](/architecture/README.md)
 
 # 최신 기술 트렌드
 
@@ -13113,30 +16862,6 @@ class RideMatchingSystem:
         return scored_drivers[0][0]
 ```
 
-## 회사별 엔지니어링 블로그
-
-### 국내
-
-- **배달의민족**: [techblog.woowahan.com](https://techblog.woowahan.com/)
-- **카카오**: [tech.kakao.com](https://tech.kakao.com/)
-- **네이버**: [d2.naver.com](https://d2.naver.com/)
-- **라인**: [engineering.linecorp.com](https://engineering.linecorp.com/ko/blog/)
-- **토스**: [toss.tech](https://toss.tech/)
-- **당근마켓**: [medium.com/daangn](https://medium.com/daangn)
-
-### 해외
-
-- **Netflix**: [netflixtechblog.com](https://netflixtechblog.com/)
-- **Uber**: [eng.uber.com](https://eng.uber.com/)
-- **Airbnb**: [medium.com/airbnb-engineering](https://medium.com/airbnb-engineering)
-- **Facebook/Meta**: [engineering.fb.com](https://engineering.fb.com/)
-- **Google**: [developers.googleblog.com](https://developers.googleblog.com/)
-- **Amazon**: [aws.amazon.com/blogs](https://aws.amazon.com/blogs/)
-- **LinkedIn**: [engineering.linkedin.com](https://engineering.linkedin.com/blog)
-- **Twitter**: [blog.twitter.com/engineering](https://blog.twitter.com/engineering)
-- **Spotify**: [engineering.atspotify.com](https://engineering.atspotify.com/)
-- **Pinterest**: [medium.com/@Pinterest_Engineering](https://medium.com/@Pinterest_Engineering)
-
 # 추가 학습 리소스
 
 ## 데이터베이스 특화
@@ -13332,27 +17057,6 @@ class SocialMediaFeed:
   - 로그 수집 (ELK Stack)
   - 메트릭 모니터링 (Prometheus, Grafana)
 
-# 마치며
-
-이 문서는 시스템 디자인의 핵심 개념부터 실전 예제까지 포괄적으로 다루고 있습니다.
-
-## 학습 로드맵
-
-### 초급 (1-2개월)
-1. 기본 개념 이해 (Load Balancing, Caching, Database)
-2. 간단한 시스템 디자인 (URL Shortener, Rate Limiter)
-3. 추정 계산 연습
-
-### 중급 (2-3개월)
-4. 분산 시스템 개념 (CAP, PACELC, Consensus)
-5. Message Queue, Event Streaming
-6. 중급 시스템 디자인 (News Feed, Chat System)
-
-### 고급 (3-6개월)
-7. 고급 분산 패턴 (Saga, CQRS, Event Sourcing)
-8. 최신 기술 (Kubernetes, Service Mesh, Serverless)
-9. 대규모 시스템 디자인 (Netflix, Uber 수준)
-
 ## 추가 학습 자료
 
 - **책**: "System Design Interview" by Alex Xu
@@ -13360,4 +17064,186 @@ class SocialMediaFeed:
 - **유튜브**: [System Design Interview Channel](https://www.youtube.com/@SystemDesignInterview)
 - **실습**: [GitHub - System Design Examples](https://github.com/donnemartin/system-design-primer)
 
-더 상세한 내용이나 특정 주제에 대한 추가 설명이 필요하시면 말씀해주세요!
+# System Design Interview
+
+## Easy
+
+* [Designing Consistent Hashing](practices/DesigningConsistentHashing/DesigningConsistentHashing.md)
+* [Designing A Uniqe ID Generator In Distributed Systems](practices/DesigningAUniqeIDGeneratorInDistributedSystems/DesigningAUniqeIDGeneratorInDistributedSystems.md)
+* [Designing Real-Time Gaming Leaderboard](practices/DesigningReal-TimeGamingLeaderboard/DesigningReal-TimeGamingLeaderboard.md)
+* [Designing CDN](practices/DesigningCDN/DesigningCDN.md)
+* [Designing Parking Garrage](practices/DesigningParkingGarrage/DesigningParkingGarrage.md)
+* [Designing Hotel Reservation System](practices/DesigningHotelReservationSystem/DesigningHotelReservationSystem-kr.md)
+* [Designing Ticketmaster](practices/DesigningTicketmaster/DesigningTicketmaster.md)
+* [Designing A URL Shortener](practices/DesigningUrlShorteningService/DesigningUrlShorteningService.md)
+* [Designing Pastebin](practices/DesigningPastebin/DesigningPastebin.md)
+* [Designing Vending Machine](practices/DesigningVendingMachine/DesigningVendingMachine.md)
+* [Designing A Key-Value Store](practices/DesigningAKey-ValueStore/DesigningAKey-ValueStore.md)
+* [Designing Distributed Cache](practices/DesigningDistributedCache/DesigningDistributedCache.md)
+* [Designing Distributed Job Scheduler](practices/DesigningDistributedJobScheduler/DesigningDistributedJobScheduler.md)
+* [Designing Authentication System](practices/DesigningAuthenticationSystem/DesigningAuthenticationSystem.md)
+* [Designing Unified Payments Interface (UPI)](practices/DesigningUnifiedPaymentsInterface/DesigningUnifiedPaymentsInterface.md)
+* [Designing A News Feed System](practices/DesigningFacebooksNewsfeed/DesigningFacebooksNewsfeed.md)
+* [Designing Ad Click Event Aggregation](practices/DesigningAdClickEventAggregation/DesigningAdClickEventAggregation.md)
+* [Designing Distributed Email Service](practices/DesigningEmailService/DesigningEmailService.md)
+* [Designing Twitter Search](practices/DesigningTwitterSearch/DesigningTwitterSearch.md)
+
+## Medium
+
+* [Designing Instagram](practices/DesigningInstagram/DesigningInstagram.md)
+* [Designing Tinder](practices/DesigningTinder/DesigningTinder.md)
+* [Designing A Chat System](practices/DesigningFacebookMessenger/DesigningFacebookMessenger.md)
+* [Designing Facebook](practices/DesigningFacebook/DesigningFacebook.md)
+* [Designing Twitter](practices/DesigningTwitter/DesigningTwitter.md)
+* [Designing Reddit](practices/DesigningReddit/DesigningReddit.md)
+* [Designing Netflix](practices/DesigningNetflix/DesigningNetflix.md)
+* [Designing Youtube](practices/DesigningYoutubeorNetflix/DesigningYoutubeorNetflix.md)
+* [Designing Google Search](practices/DesigningGoogleSearch/DesigningGoogleSearch.md)
+* [Designing Amazon](practices/DesigningAmazon/DesigningAmazon.md)
+* [Designing Spotify](practices/DesigningSpotify/DesigningSpotify.md)
+* [Designing TikTok](practices/DesigningTikTok/DesigningTikTok.md)
+* [Designing Shopify](practices/DesigningShopify/DesigningShopify.md)
+* [Designing Airbnb](practices/DesigningAirbnb/DesigningAirbnb.md)
+* [Designing A Search Autocomplete System](practices/DesigningTypeaheadSuggestion/DesigningTypeaheadSuggestion.md)
+* [Designing A Rate Limiter](practices/DesigningAnApiRateLimiter/DesigningAnApiRateLimiter.md)
+* [Designing Distributed Message Queue](practices/DesigningDistributedMessageQueue/DesigningDistributedMessageQueue.md)
+* [Designing Flight Booking System](practices/DesigningFlightBookingSystem/DesigningFlightBookingSystem.md)
+* [Designing Online Code Editor](practices/DesigningOnlineCodeEditor/DesigningOnlineCodeEditor.md)
+* [Designing Stock Exchange System](practices/DesigningStockExchangeSystem/DesigningStockExchangeSystem.md)
+* [Designing Metrics Monitoring and Alerting System](practices/DesigningMetricsMonitoringandAlertingSystem/DesigningMetricsMonitoringandAlertingSystem.md)
+* [Designing Notification Service](practices/DesigningNotificationService/DesigningNotificationService.md)
+* [Designing Payment System](practices/DesigningPaymentSystem/DesigningPaymentSystem.md)
+
+## Hard
+
+* [Designing Slack](practices/DesigningSlack/DesigningSlack.md)
+* [Designing Live Comments](practices/DesigningLiveComments/DesigningLiveComments.md)
+* [Designing Distributed Counter](practices/DesigningDistributedCounter/DesigningDistributedCounter.md)
+* [Designing Proximity Service](practices/DesigningProximityService/DesigningProximityService.md)
+* [Designing Nearby Friends](practices/DesigningNearbyFriends/DesigningNearbyFriends.md)
+* [Designing Uber Backend](practices/DesigningUberBackend/DesigningUberBackend.md)
+* [Designing Food Delivery App like Doordash](practices/DesigningFoodDeliveryApplikeDoordash/DesigningFoodDeliveryApplikeDoordash.md)
+* [Designing Google Docs](practices/DesigningGoogleDocs/DesigningGoogleDocs.md)
+* [Designing Google Maps](practices/DesigningGoogleMaps/DesigningGoogleMaps.md)
+* [Designing Zoom](practices/DesigningZoom/DesigningZoom.md)
+* [Designing Dropbox](practices/DesigningDropbox/DesigningDropbox.md)
+* [Designing A Web Crawler](practices/DesigningaWebCrawler/DesigningaWebCrawler.md)
+* [Designing Ticket Booking System like BookMyShow](practices/DesigningTicketBookingSystemlikeBookMyShow/DesigningTicketBookingSystemlikeBookMyShow.md)
+* [Designing Code Deployment System](practices/DesigningCodeDeploymentSystem/DesigningCodeDeploymentSystem.md)
+* [Designing Distributed Cloud Storage like S3](practices/DesigningDistributedCloudStoragelikeS3/DesigningDistributedCloudStoragelikeS3.md)
+* [Designing Distributed Locking Service](practices/DesigningDistributedLockingService/DesigningDistributedLockingService.md)
+* Designing Digital Wallet
+
+# Scalability Articles
+
+- [How Discord stores trillions of messages](https://discord.com/blog/how-discord-stores-trillions-of-messages)
+- [Building In-Video Search](https://netflixtechblog.com/building-in-video-search-936766f0017c)
+- [How Canva scaled Media uploads from Zero to 50 Million per Day](https://www.canva.dev/blog/engineering/from-zero-to-50-million-uploads-per-day-scaling-media-at-canva/)
+- [How Airbnb avoids double payments in a Distributed Payments System](https://medium.com/airbnb-engineering/avoiding-double-payments-in-a-distributed-payments-system-2981f6b070bb)
+- [Stripe’s payments APIs - The first 10 years](https://stripe.com/blog/payment-api-design)
+- [Real time messaging at Slack](https://slack.engineering/real-time-messaging/)
+
+# Real World Architecture
+
+| Type | System | Reference(s) |
+| -- | -- | -- |
+| Data processing | **MapReduce** - Distributed data processing from Google | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/mapreduce-osdi04.pdf) |
+|  | **Spark** - Distributed data processing from Databricks | [slideshare.net](http://www.slideshare.net/AGrishchenko/apache-spark-architecture) |
+|  | **Storm** - Distributed data processing from Twitter | [slideshare.net](http://www.slideshare.net/previa/storm-16094009) |
+| Data store      | **Bigtable** - Distributed column-oriented database from Google | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/chang06bigtable.pdf) |
+|       | **HBase** - Open source implementation of Bigtable | [slideshare.net](http://www.slideshare.net/alexbaranau/intro-to-hbase) |
+|       | **[Cassandra](/cassandra/README.md)** - Distributed column-oriented database from Facebook | [slideshare.net](http://www.slideshare.net/planetcassandra/cassandra-introduction-features-30103666) |
+|       | **[DynamoDB](/dynamodb/README.md)** - Document-oriented database from Amazon | [harvard.edu](http://www.read.seas.harvard.edu/~kohler/class/cs239-w08/decandia07dynamo.pdf) |
+|       | **[MongoDB](/mongodb/README.md)** - Document-oriented database | [slideshare.net](http://www.slideshare.net/mdirolf/introduction-to-mongodb) |
+|       | **Spanner** - Globally-distributed database from Google | [research.google.com](http://research.google.com/archive/spanner-osdi2012.pdf) |
+|       | **[Memcached](/memcached/README.md)** - Distributed memory caching system | [slideshare.net](http://www.slideshare.net/oemebamo/introduction-to-memcached) |
+|       | **[Redis](/redis/README.md)** - Distributed memory caching system with persistence and value types | [slideshare.net](http://www.slideshare.net/dvirsky/introduction-to-redis) |
+|       | **Couchbase** - an open-source, distributed multi-model NoSQL document-oriented database | [couchbase.com](https://www.couchbase.com/) |
+|       | **[Elasticsearch](/elasticsearch/README.md)** | [Elasticsearch @ TIL](/elasticsearch/README.md) |
+| File system     | **Google File System (GFS)** - Distributed file system | [research.google.com](http://static.googleusercontent.com/media/research.google.com/zh-CN/us/archive/gfs-sosp2003.pdf) |
+|      | **[Hadoop File System (HDFS)](/hadoop/README.md)** - Open source implementation of GFS | [apache.org](https://hadoop.apache.org/docs/r1.2.1/hdfs_design.html) |
+|      | **GlusterFS** - Distributed File System | [GlusterFS](/GlusterFS/README.md) |
+| Monitoring      | **[Graylog](/graylog/README.md)** | [Graylog @ TIL](/graylog/README.md) |
+|       | **Prometheus** | [Prometheus @ TIL](/prometheus/README.md) |
+|       | **[Grafana](/grafana/README.md)** | [Grafana @ TIL](/grafana/README.md) |
+| CI/CD           | **[Jenkins](/jenkins/README.md)** | [Jenkins @ TIL](/jenkins/README.md) |
+| Misc            | **Chubby** - Lock service for loosely-coupled distributed systems from Google | [research.google.com](http://static.googleusercontent.com/external_content/untrusted_dlcp/research.google.com/en/us/archive/chubby-osdi06.pdf) |
+|             | **Dapper** - Distributed systems tracing infrastructure | [research.google.com](http://static.googleusercontent.com/media/research.google.com/en//pubs/archive/36356.pdf) |
+|             | **[Kafka](/kafka/README.md)** - Pub/sub message queue from LinkedIn | [slideshare.net](http://www.slideshare.net/mumrah/kafka-talk-tri-hug) |
+|             | **[Zookeeper](/zookeeper/README.md)** - Centralized infrastructure and services enabling synchronization | [slideshare.net](http://www.slideshare.net/sauravhaloi/introduction-to-apache-zookeeper) |
+|             | **ØMQ** - a high-performance asynchronous messaging library, aimed at use in distributed or concurrent applications. | [zeromq.org](http://zeromq.org/) |
+|             | **[etcd](/etcd/README.md)** - A distributed, reliable key-value store for the most critical data of a distributed system. | [etcd docs](https://coreos.com/etcd/docs/latest/) |
+|             | **Mosquitto** - An open source MQTT broker. [MQTT](/mqtt/README.md) is a Standard for IoT Messaging |  |
+|             | **Netty** - Netty is a NIO client server framework. | |
+
+# Company Architectures
+
+| Company        | Reference(s) |
+| -------------- | -- |
+| 배달의 민족 | [배달의민족 msa](wooahan_msa.md) |
+| Amazon         | [Amazon architecture](http://highscalability.com/amazon-architecture) |
+| Cinchcast      | [Producing 1,500 hours of audio every day](http://highscalability.com/blog/2012/7/16/cinchcast-architecture-producing-1500-hours-of-audio-every-d.html) |
+| DataSift       | [Realtime datamining At 120,000 tweets per second](http://highscalability.com/blog/2011/11/29/datasift-architecture-realtime-datamining-at-120000-tweets-p.html)|
+| DropBox        | [How we've scaled Dropbox](https://www.youtube.com/watch?v=PE4gwstWhmc) |
+| ESPN           | [Operating At 100,000 duh nuh nuhs per second](http://highscalability.com/blog/2013/11/4/espns-architecture-at-scale-operating-at-100000-duh-nuh-nuhs.html) |
+| Google         | [Google architecture](http://highscalability.com/google-architecture) |
+| Instagram      | [14 million users, terabytes of photos](http://highscalability.com/blog/2011/12/6/instagram-architecture-14-million-users-terabytes-of-photos.html)<br/>[What powers Instagram](http://instagram-engineering.tumblr.com/post/13649370142/what-powers-instagram-hundreds-of-instances) |
+| Justin.tv      | [Justin.Tv's live video broadcasting architecture](http://highscalability.com/blog/2010/3/16/justintvs-live-video-broadcasting-architecture.html) |
+| Facebook       | [Scaling memcached at Facebook](https://cs.uwaterloo.ca/~brecht/courses/854-Emerging-2014/readings/key-value/fb-memcached-nsdi-2013.pdf)<br/>[TAO: Facebook’s distributed data store for the social graph](https://cs.uwaterloo.ca/~brecht/courses/854-Emerging-2014/readings/data-store/tao-facebook-distributed-datastore-atc-2013.pdf)<br/>[Facebook’s photo storage](https://www.usenix.org/legacy/event/osdi10/tech/full_papers/Beaver.pdf) |
+| Flickr         | [Flickr architecture](http://highscalability.com/flickr-architecture) |
+| Mailbox        | [From 0 to one million users in 6 weeks](http://highscalability.com/blog/2013/6/18/scaling-mailbox-from-0-to-one-million-users-in-6-weeks-and-1.html) |
+| Pinterest      | [From 0 To 10s of billions of page views a month](http://highscalability.com/blog/2013/4/15/scaling-pinterest-from-0-to-10s-of-billions-of-page-views-a.html)<br/>[18 million visitors, 10x growth, 12 employees](http://highscalability.com/blog/2012/5/21/pinterest-architecture-update-18-million-visitors-10x-growth.html) |
+| Playfish       | [50 million monthly users and growing](http://highscalability.com/blog/2010/9/21/playfishs-social-gaming-architecture-50-million-monthly-user.html) |
+| PlentyOfFish   | [PlentyOfFish architecture](http://highscalability.com/plentyoffish-architecture) |
+| Salesforce     | [How they handle 1.3 billion transactions a day](http://highscalability.com/blog/2013/9/23/salesforce-architecture-how-they-handle-13-billion-transacti.html) |
+| Stack Overflow | [Stack Overflow architecture](http://highscalability.com/blog/2009/8/5/stack-overflow-architecture.html) |
+| TripAdvisor    | [40M visitors, 200M dynamic page views, 30TB data](http://highscalability.com/blog/2011/6/27/tripadvisor-architecture-40m-visitors-200m-dynamic-page-view.html) |
+| Tumblr         | [15 billion page views a month](http://highscalability.com/blog/2012/2/13/tumblr-architecture-15-billion-page-views-a-month-and-harder.html) |
+| Twitter        | [Making Twitter 10000 percent faster](http://highscalability.com/scaling-twitter-making-twitter-10000-percent-faster)<br/>[Storing 250 million tweets a day using MySQL](http://highscalability.com/blog/2011/12/19/how-twitter-stores-250-million-tweets-a-day-using-mysql.html)<br/>[150M active users, 300K QPS, a 22 MB/S firehose](http://highscalability.com/blog/2013/7/8/the-architecture-twitter-uses-to-deal-with-150m-active-users.html)<br/>[Timelines at scale](https://www.infoq.com/presentations/Twitter-Timeline-Scalability)<br/>[Big and small data at Twitter](https://www.youtube.com/watch?v=5cKTP36HVgI)<br/>[Operations at Twitter: scaling beyond 100 million users](https://www.youtube.com/watch?v=z8LU0Cj6BOU) |
+| Uber           | [How Uber scales their real-time market platform](http://highscalability.com/blog/2015/9/14/how-uber-scales-their-real-time-market-platform.html) |
+| WhatsApp       | [The WhatsApp architecture Facebook bought for $19 billion](http://highscalability.com/blog/2014/2/26/the-whatsapp-architecture-facebook-bought-for-19-billion.html) |
+| YouTube        | [YouTube scalability](https://www.youtube.com/watch?v=w5WVu624fY8) |
+
+# Company Engineering Blog
+
+* [Airbnb Engineering](http://nerds.airbnb.com/)
+* [Atlassian Developers](https://developer.atlassian.com/blog/)
+* [Autodesk Engineering](http://cloudengineering.autodesk.com/blog/)
+* [AWS Blog](https://aws.amazon.com/blogs/aws/)
+* [Bitly Engineering Blog](http://word.bitly.com/)
+* [Box Blogs](https://www.box.com/blog/engineering/)
+* [Cloudera Developer Blog](http://blog.cloudera.com/blog/)
+* [Dropbox Tech Blog](https://tech.dropbox.com/)
+* [Engineering at Quora](http://engineering.quora.com/)
+* [Ebay Tech Blog](http://www.ebaytechblog.com/)
+* [Evernote Tech Blog](https://blog.evernote.com/tech/)
+* [Etsy Code as Craft](http://codeascraft.com/)
+* [Facebook Engineering](https://www.facebook.com/Engineering)
+* [Flickr Code](http://code.flickr.net/)
+* [Foursquare Engineering Blog](http://engineering.foursquare.com/)
+* [GitHub Engineering Blog](http://githubengineering.com/)
+* [Google Research Blog](http://googleresearch.blogspot.com/)
+* [Groupon Engineering Blog](https://engineering.groupon.com/)
+* [Heroku Engineering Blog](https://engineering.heroku.com/)
+* [Hubspot Engineering Blog](http://product.hubspot.com/blog/topic/engineering)
+* [High Scalability](http://highscalability.com/)
+* [Instagram Engineering](http://instagram-engineering.tumblr.com/)
+* [Intel Software Blog](https://software.intel.com/en-us/blogs/)
+* [Jane Street Tech Blog](https://blogs.janestreet.com/category/ocaml/)
+* [LinkedIn Engineering](http://engineering.linkedin.com/blog)
+* [Microsoft Engineering](https://engineering.microsoft.com/)
+* [Microsoft Python Engineering](https://blogs.msdn.microsoft.com/pythonengineering/)
+* [Netflix Tech Blog](http://techblog.netflix.com/)
+* [Paypal Developer Blog](https://devblog.paypal.com/category/engineering/)
+* [Pinterest Engineering Blog](http://engineering.pinterest.com/)
+* [Quora Engineering](https://engineering.quora.com/)
+* [Reddit Blog](http://www.redditblog.com/)
+* [Salesforce Engineering Blog](https://developer.salesforce.com/blogs/engineering/)
+* [Slack Engineering Blog](https://slack.engineering/)
+* [Spotify Labs](https://labs.spotify.com/)
+* [Twilio Engineering Blog](http://www.twilio.com/engineering)
+* [Twitter Engineering](https://engineering.twitter.com/)
+* [Uber Engineering Blog](http://eng.uber.com/)
+* [Yahoo Engineering Blog](http://yahooeng.tumblr.com/)
+* [Yelp Engineering Blog](http://engineeringblog.yelp.com/)
+* [Zynga Engineering Blog](https://www.zynga.com/blogs/engineering)
