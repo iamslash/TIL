@@ -35,10 +35,22 @@
     - [iOS 26 최적화된 Photo Processing](#ios-26-최적화된-photo-processing)
   - [버전별 분기 처리](#버전별-분기-처리)
   - [System Monitor (배터리 \& 열 관리)](#system-monitor-배터리--열-관리)
+  - [iOS 26 BGContinuedProcessingTask 구현](#ios-26-bgcontinuedprocessingtask-구현)
+    - [BGContinuedProcessingTask 특징](#bgcontinuedprocessingtask-특징)
+    - [1. Info.plist 및 Entitlements 설정](#1-infoplist-및-entitlements-설정)
+    - [2. Live Activity 정의](#2-live-activity-정의)
+    - [3. Live Activity Widget](#3-live-activity-widget)
+    - [4. BGContinuedProcessingTask Service](#4-bgcontinuedprocessingtask-service)
+    - [5. SwiftUI Integration for iOS 26](#5-swiftui-integration-for-ios-26)
+    - [6. AppDelegate 설정](#6-appdelegate-설정)
+    - [사용 방법](#사용-방법)
   - [성능 비교표](#성능-비교표)
   - [최종 권장사항](#최종-권장사항)
-    - [iOS 18](#ios-18)
-    - [iOS 26](#ios-26)
+    - [iOS 18 (BGProcessingTask)](#ios-18-bgprocessingtask)
+    - [iOS 26 (BGProcessingTask)](#ios-26-bgprocessingtask)
+    - [iOS 26 (BGContinuedProcessingTask) ⭐ 추천](#ios-26-bgcontinuedprocessingtask--추천)
+    - [앱별 추천 방식](#앱별-추천-방식)
+
 
 -----
 

@@ -217,12 +217,12 @@ A closure is a function value that references variables from outside its body.
 
 ## Concurrency
 
-  * 스레드와 프로세스
-  * 동기화 (mutex, semaphore)
-  * 데드락과 경쟁 상태
-  * 비동기 프로그래밍
-  * 코루틴과 async/await
-  * 동시성 제어 패턴
+  * [스레드와 프로세스](pl-thread-process-kr.md)
+  * [동기화 (mutex, semaphore)](pl-synchronization-kr.md)
+  * [데드락과 경쟁 상태](pl-deadlock-racecondition-kr.md)
+  * [비동기 프로그래밍](pl-async-programming-kr.md)
+  * [coroutine](pl-coroutine-kr.md)
+  * [동시성 제어 패턴](pl-concurrency-patterns-kr.md)
 
 ## Memory Layout
 
