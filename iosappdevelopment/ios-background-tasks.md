@@ -12,9 +12,10 @@
   - [Background Task 유형별 상세 설명](#background-task-유형별-상세-설명)
     - [1. Background App Refresh (BGAppRefreshTask)](#1-background-app-refresh-bgapprefreshtask)
     - [2. Background Processing Task (BGProcessingTask)](#2-background-processing-task-bgprocessingtask)
-    - [3. URLSession Background Transfer](#3-urlsession-background-transfer)
-    - [4. Background Task Completion (Legacy)](#4-background-task-completion-legacy)
-    - [5. Silent Push Notifications](#5-silent-push-notifications)
+    - [3. Continued Processing Task (BGContinuedProcessingTask) (iOS 26+)](#3-continued-processing-task-bgcontinuedprocessingtask-ios-26)
+    - [4. URLSession Background Transfer](#4-urlsession-background-transfer)
+    - [5. Background Task Completion (Legacy)](#5-background-task-completion-legacy)
+    - [6. Silent Push Notifications](#6-silent-push-notifications)
   - [AppDelegate 통합 설정](#appdelegate-통합-설정)
   - [Info.plist 설정](#infoplist-설정)
 - [실전 예제: 대량 사진 Moderation \& Upload](#실전-예제-대량-사진-moderation--upload)
@@ -65,31 +66,21 @@
 
 # Overview
 
-iOS 는 `Background Task Completion` 을 제공한다. iOS 13 이전에도 있었던 것 같다.
-foreground 의 app 이 background 로 바뀌면 하던 일을 마무리할 수 있다. foreground
-에서 background 로 바뀔 때 background 에서 한번 실행된다.
+iOS 는 `Background Task Completion` 을 제공한다. iOS 13 이전에도 있었던 것 같다. foreground 의 app 이 background 로 바뀌면 하던 일을 마무리할 수 있다. foreground 에서 background 로 바뀔 때 background 에서 한번 실행된다.
 
 iOS 13 부터 `BGAppRefreshTask`, `BGProcessingTask` 를 제공한다. 
 
-`BGAppRefreshTask` - 비교적 가벼운 logic 이 적당하다. app 이 다음 번에
-foreground 가 되었을 때 UI 를 미리 업데이트하는 logic 에 적당하다. 예를 들어
-user 가 획득한 점수를 원격으로부터 받아오는 것이 해당된다.
+`BGAppRefreshTask` - 비교적 가벼운 logic 이 적당하다. app 이 다음 번에 foreground 가 되었을 때 UI 를 미리 업데이트하는 logic 에 적당하다. 예를 들어 user 가 획득한 점수를 원격으로부터 받아오는 것이 해당된다.
 
-`BGProcessingTask` - 비교적 무거운 logic 이 적당하다. 예를 들어 아주 긴 파일을
-다운로드하는 것이 해당된다. 
+`BGProcessingTask` - 비교적 무거운 logic 이 적당하다. 예를 들어 아주 긴 파일을 다운로드하는 것이 해당된다. 
 
-두 가지 방식에 대해 cancel 조건이 다를 것이다. iOS 가 언제 background task 를
-취소할지 예측할 수 없다. 언제 실행될지도 예측할 수 없다. UX 를 신경써야 한다.
+두 가지 방식에 대해 cancel 조건이 다를 것이다. iOS 가 언제 background task 를 취소할지 예측할 수 없다. 언제 실행될지도 예측할 수 없다. UX 를 신경써야 한다.
 
-테스트 방법은 [Starting and Terminating Tasks During Development |
-apple](https://developer.apple.com/documentation/backgroundtasks/starting_and_terminating_tasks_during_development)
-을 참고한다. 
+테스트 방법은 [Starting and Terminating Tasks During Development | apple](https://developer.apple.com/documentation/backgroundtasks/starting_and_terminating_tasks_during_development) 을 참고한다. 
 
-`BGTaskScheduler.shared.submit()` 에 break point 를 설정한다. app 의 실행이 멈출
-때 LLDB prompt 에 다음과 같은 command line 을 입력하여 background task 를 시작
-혹은 종료할 수 있다. test 를 위해 AppStore 제출과 관계없는 code 를 작성할 필요가 있다.
+`BGTaskScheduler.shared.submit()` 에 break point 를 설정한다. app 의 실행이 멈출 때 LLDB prompt 에 다음과 같은 command line 을 입력하여 background task 를 시작 혹은 종료할 수 있다. test 를 위해 AppStore 제출과 관계없는 code 를 작성할 필요가 있다.
 
-```
+```bash
 LLDB> e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateLaunchForTaskWithIdentifier:@"TASK_IDENTIFIER"]
 
 LLDB> e -l objc -- (void)[[BGTaskScheduler sharedScheduler] _simulateExpirationForTaskWithIdentifier:@"TASK_IDENTIFIER"]
@@ -334,7 +325,415 @@ class ProcessingOperation: Operation {
 }
 ```
 
-### 3. URLSession Background Transfer
+### 3. Continued Processing Task (BGContinuedProcessingTask) (iOS 26+)
+
+**특징:**
+- **iOS 26+ 전용** - 최신 iOS에서만 사용 가능
+- **사용자 주도 작업** - Foreground에서 시작하여 Background로 자연스럽게 전환
+- **Live Activity 지원** - Lock Screen과 Dynamic Island에 실시간 진행 상황 표시
+- **사용자 취소 가능** - Live Activity에서 언제든 작업 취소 가능
+- **GPU 접근 가능** - Background GPU Access entitlement로 백그라운드에서 GPU 사용
+- **ProgressReporting 필수** - Progress 객체를 통해 진행률 정확히 보고
+- **실행 시간**: 수 분 ~ 수십 분 (작업 완료까지)
+- **용도**: 사용자가 시작하는 긴 작업 (대량 사진 처리, 비디오 변환, ML 추론 등)
+- **실행 조건**: 사용자가 앱에서 직접 시작, 앱이 Background로 전환되어도 계속 실행
+
+**BGProcessingTask vs BGContinuedProcessingTask 비교:**
+
+| 항목 | BGProcessingTask | BGContinuedProcessingTask |
+|------|------------------|---------------------------|
+| 시작 방법 | 시스템이 스케줄링 | 사용자가 Foreground에서 시작 |
+| 실행 시점 | 시스템이 최적 시간 선택 | 사용자가 시작한 즉시 |
+| Live Activity | ❌ | ✅ |
+| 사용자 취소 | ❌ | ✅ |
+| 진행 상황 표시 | ❌ | ✅ Real-time |
+| GPU 백그라운드 | ✅ (iOS 26+) | ✅ (iOS 26+) |
+| 사용 사례 | 자동 동기화, 야간 배치 | 사용자 주도 긴 작업 |
+
+**구현 예제:**
+
+```swift
+import BackgroundTasks
+import ActivityKit
+import Foundation
+
+@available(iOS 26.0, *)
+class ContinuedProcessingTaskManager {
+    static let shared = ContinuedProcessingTaskManager()
+    static let taskIdentifier = "com.yourapp.continued.processing"
+    
+    private var currentTask: BGContinuedProcessingTask?
+    private var activity: Activity<PhotoProcessingAttributes>?
+    private var isCancelled = false
+    
+    // Live Activity Attributes 정의
+    struct PhotoProcessingAttributes: ActivityAttributes {
+        public struct ContentState: Codable, Hashable {
+            var totalPhotos: Int
+            var processedPhotos: Int
+            var uploadedPhotos: Int
+            var filteredPhotos: Int
+            var currentPhase: ProcessingPhase
+            var estimatedTimeRemaining: TimeInterval
+            
+            var progress: Double {
+                guard totalPhotos > 0 else { return 0 }
+                return Double(processedPhotos) / Double(totalPhotos)
+            }
+        }
+        
+        var startTime: Date
+    }
+    
+    enum ProcessingPhase: String, Codable {
+        case analyzing = "Analyzing Photos"
+        case moderating = "Moderating Content"
+        case uploading = "Uploading Photos"
+        case completed = "Completed"
+        case cancelled = "Cancelled"
+    }
+    
+    func registerTask() {
+        BGTaskScheduler.shared.register(
+            forTaskWithIdentifier: Self.taskIdentifier,
+            using: nil
+        ) { task in
+            // 시스템이 앱을 종료한 후 재시작할 때 호출될 수 있음
+            print("⚠️ BGContinuedProcessingTask resumed by system")
+            if let continuedTask = task as? BGContinuedProcessingTask {
+                self.currentTask = continuedTask
+                // 진행 중이던 작업 재개
+                Task {
+                    await self.resumeProcessing(task: continuedTask)
+                }
+            }
+        }
+    }
+    
+    func startProcessing(totalPhotos: Int) async throws {
+        // 1. Live Activity 생성
+        let initialState = PhotoProcessingAttributes.ContentState(
+            totalPhotos: totalPhotos,
+            processedPhotos: 0,
+            uploadedPhotos: 0,
+            filteredPhotos: 0,
+            currentPhase: .analyzing,
+            estimatedTimeRemaining: Double(totalPhotos) * 0.72 // 예상 시간
+        )
+        
+        let attributes = PhotoProcessingAttributes(startTime: Date())
+        
+        do {
+            activity = try Activity<PhotoProcessingAttributes>.request(
+                attributes: attributes,
+                content: .init(state: initialState, staleDate: nil),
+                pushType: nil
+            )
+            print("✅ Live Activity started")
+        } catch {
+            print("❌ Failed to start Live Activity: \(error)")
+            throw error
+        }
+        
+        // 2. Progress 객체 생성
+        let progress = Progress(totalUnitCount: Int64(totalPhotos))
+        
+        // 3. BGContinuedProcessingTask 생성
+        currentTask = BGContinuedProcessingTask(
+            identifier: Self.taskIdentifier,
+            using: progress
+        )
+        
+        guard let task = currentTask else {
+            throw ProcessingError.taskCreationFailed
+        }
+        
+        // 4. 취소 핸들러 설정
+        NotificationCenter.default.addObserver(
+            forName: NSNotification.Name("CancelPhotoProcessing"),
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.isCancelled = true
+            task.cancel()
+        }
+        
+        // 5. 작업 시작
+        try await processPhotosWithProgress(task: task, totalPhotos: totalPhotos)
+    }
+    
+    private func processPhotosWithProgress(
+        task: BGContinuedProcessingTask,
+        totalPhotos: Int
+    ) async throws {
+        let startTime = Date()
+        var stats = ProcessingStats()
+        stats.total = totalPhotos
+        
+        // 사진 가져오기
+        await updateLiveActivity(
+            stats: stats,
+            phase: .analyzing,
+            startTime: startTime
+        )
+        
+        let photos = await fetchAllPhotos()
+        
+        // 처리 시작
+        await updateLiveActivity(
+            stats: stats,
+            phase: .moderating,
+            startTime: startTime
+        )
+        
+        // 각 사진 처리
+        for (index, photo) in photos.enumerated() {
+            // 취소 확인
+            guard !isCancelled else {
+                print("⚠️ Processing cancelled by user")
+                await updateLiveActivity(
+                    stats: stats,
+                    phase: .cancelled,
+                    startTime: startTime
+                )
+                await endActivity()
+                throw ProcessingError.cancelled
+            }
+            
+            // 사진 처리
+            let result = await processSinglePhoto(photo)
+            
+            // 통계 업데이트
+            stats.processed += 1
+            switch result {
+            case .uploaded:
+                stats.uploaded += 1
+            case .filtered:
+                stats.filtered += 1
+            case .failed:
+                stats.failed += 1
+            }
+            
+            // Progress 업데이트
+            task.progress.completedUnitCount = Int64(index + 1)
+            
+            // Live Activity 업데이트 (10장마다 또는 마지막)
+            if index % 10 == 0 || index == photos.count - 1 {
+                await updateLiveActivity(
+                    stats: stats,
+                    phase: .moderating,
+                    startTime: startTime
+                )
+            }
+        }
+        
+        // 업로드 완료 대기
+        await updateLiveActivity(
+            stats: stats,
+            phase: .uploading,
+            startTime: startTime
+        )
+        
+        try await waitForUploadsToComplete()
+        
+        // 완료
+        await updateLiveActivity(
+            stats: stats,
+            phase: .completed,
+            startTime: startTime
+        )
+        
+        // Live Activity 5초 후 종료
+        try await Task.sleep(nanoseconds: 5_000_000_000)
+        await endActivity()
+        
+        print("✅ Processing completed successfully")
+    }
+    
+    private func updateLiveActivity(
+        stats: ProcessingStats,
+        phase: ProcessingPhase,
+        startTime: Date
+    ) async {
+        guard let activity = activity else { return }
+        
+        let elapsed = Date().timeIntervalSince(startTime)
+        let remaining = estimateTimeRemaining(stats: stats, elapsed: elapsed)
+        
+        let newState = PhotoProcessingAttributes.ContentState(
+            totalPhotos: stats.total,
+            processedPhotos: stats.processed,
+            uploadedPhotos: stats.uploaded,
+            filteredPhotos: stats.filtered,
+            currentPhase: phase,
+            estimatedTimeRemaining: remaining
+        )
+        
+        await activity.update(
+            ActivityContent(state: newState, staleDate: nil)
+        )
+    }
+    
+    private func estimateTimeRemaining(
+        stats: ProcessingStats,
+        elapsed: TimeInterval
+    ) -> TimeInterval {
+        guard stats.processed > 0 else {
+            return Double(stats.total) * 0.72
+        }
+        
+        let timePerPhoto = elapsed / Double(stats.processed)
+        let remaining = Double(stats.total - stats.processed) * timePerPhoto
+        return remaining
+    }
+    
+    private func endActivity() async {
+        guard let activity = activity else { return }
+        
+        await activity.end(
+            ActivityContent(
+                state: activity.content.state,
+                staleDate: Date()
+            ),
+            dismissalPolicy: .after(.now + 5)
+        )
+        
+        self.activity = nil
+    }
+    
+    private func fetchAllPhotos() async -> [PHAsset] {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                let fetchOptions = PHFetchOptions()
+                fetchOptions.sortDescriptors = [
+                    NSSortDescriptor(key: "creationDate", ascending: false)
+                ]
+                
+                let allPhotos = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+                var photos: [PHAsset] = []
+                
+                allPhotos.enumerateObjects { asset, _, _ in
+                    photos.append(asset)
+                }
+                
+                continuation.resume(returning: photos)
+            }
+        }
+    }
+    
+    private func processSinglePhoto(_ photo: PHAsset) async -> PhotoProcessingResult {
+        await withCheckedContinuation { continuation in
+            PhotoProcessingService.shared.processPhoto(photo) { result in
+                continuation.resume(returning: result)
+            }
+        }
+    }
+    
+    private func waitForUploadsToComplete() async throws {
+        try await Task.sleep(nanoseconds: 1_000_000_000)
+    }
+    
+    private func resumeProcessing(task: BGContinuedProcessingTask) async {
+        // 앱이 종료된 후 재시작된 경우 진행 중이던 작업 재개
+        // 캐시에서 진행 상태 복원
+        print("🔄 Resuming interrupted processing")
+        // 구현 생략...
+    }
+}
+
+enum ProcessingError: Error {
+    case taskCreationFailed
+    case cancelled
+}
+
+enum PhotoProcessingResult {
+    case uploaded
+    case filtered
+    case failed
+}
+
+struct ProcessingStats {
+    var total: Int = 0
+    var processed: Int = 0
+    var uploaded: Int = 0
+    var filtered: Int = 0
+    var failed: Int = 0
+}
+```
+
+**Info.plist 설정:**
+
+```xml
+<key>BGTaskSchedulerPermittedIdentifiers</key>
+<array>
+    <string>com.yourapp.continued.processing</string>
+</array>
+
+<key>UIBackgroundModes</key>
+<array>
+    <string>processing</string>
+</array>
+
+<key>NSSupportsLiveActivities</key>
+<true/>
+```
+
+**Entitlements 설정:**
+
+```xml
+<key>com.apple.developer.background-processing.gpu-access</key>
+<true/>
+```
+
+**사용 예제:**
+
+```swift
+@available(iOS 26.0, *)
+class PhotoProcessingViewModel: ObservableObject {
+    @Published var isProcessing = false
+    @Published var error: String?
+    
+    func startProcessing() async {
+        isProcessing = true
+        error = nil
+        
+        do {
+            // 사진 권한 확인
+            let status = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+            guard status == .authorized else {
+                error = "Photo library access denied"
+                isProcessing = false
+                return
+            }
+            
+            // 총 사진 수 가져오기
+            let fetchOptions = PHFetchOptions()
+            let totalPhotos = PHAsset.fetchAssets(with: .image, options: fetchOptions).count
+            
+            // BGContinuedProcessingTask 시작
+            try await ContinuedProcessingTaskManager.shared.startProcessing(
+                totalPhotos: totalPhotos
+            )
+            
+            isProcessing = false
+        } catch {
+            self.error = error.localizedDescription
+            isProcessing = false
+            print("❌ Processing failed: \(error)")
+        }
+    }
+}
+```
+
+**주요 차이점 요약:**
+
+1. **시작 방법**: `BGProcessingTask`는 시스템이 스케줄링하지만, `BGContinuedProcessingTask`는 사용자가 앱에서 직접 시작
+2. **Live Activity**: `BGContinuedProcessingTask`만 Lock Screen과 Dynamic Island에 진행 상황 표시
+3. **사용자 제어**: `BGContinuedProcessingTask`는 사용자가 언제든 취소 가능
+4. **진행률 보고**: `Progress` 객체를 통해 정확한 진행률 보고 필수
+5. **사용 사례**: 사용자가 시작하는 긴 작업에 최적화
+
+### 4. URLSession Background Transfer
 
 **특징:**
 - 앱이 종료되어도 다운로드/업로드 계속 진행
@@ -422,7 +821,7 @@ extension BackgroundUploadService: URLSessionDelegate, URLSessionTaskDelegate, U
 }
 ```
 
-### 4. Background Task Completion (Legacy)
+### 5. Background Task Completion (Legacy)
 
 **특징:**
 - iOS 13 이전부터 사용
@@ -459,7 +858,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 ```
 
-### 5. Silent Push Notifications
+### 6. Silent Push Notifications
 
 **특징:**
 - 서버에서 트리거
@@ -537,6 +936,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Background Tasks 등록
         BackgroundTaskManager.shared.registerBackgroundTasks()
         BackgroundTaskManager.shared.registerProcessingTask()
+        
+        // iOS 26+ BGContinuedProcessingTask 등록
+        if #available(iOS 26.0, *) {
+            ContinuedProcessingTaskManager.shared.registerTask()
+        }
 
         return true
     }
@@ -545,6 +949,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Background Tasks 스케줄링
         BackgroundTaskManager.shared.scheduleAppRefresh()
         BackgroundTaskManager.shared.scheduleProcessing()
+        
+        // BGContinuedProcessingTask는 사용자가 직접 시작하므로 여기서 스케줄링하지 않음
     }
 
     // Background URLSession 완료 핸들러
@@ -570,6 +976,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     <array>
         <string>com.yourapp.refresh</string>
         <string>com.yourapp.processing</string>
+        <string>com.yourapp.continued.processing</string>
     </array>
 
     <!-- Background Modes -->
@@ -722,6 +1129,12 @@ struct CategoryScore {
 
 ## 2. Photo Processing Service
 
+**UI 업데이트 주의사항:**
+- ❌ **불가능**: `processingQueue.async()` 내부에서 직접 UI 업데이트
+  - 백그라운드 스레드에서는 UI 접근 시 크래시 발생 가능
+- ✅ **가능**: `DispatchQueue.main.async`를 사용하여 메인 스레드로 전환 후 UI 업데이트
+  - 모든 UI 업데이트는 반드시 메인 스레드에서 수행해야 함
+
 ```swift
 import Photos
 import UIKit
@@ -729,6 +1142,11 @@ import UIKit
 class PhotoProcessingService {
     static let shared = PhotoProcessingService()
 
+    // 백그라운드 작업을 위한 DispatchQueue
+    // - qos: .utility - 사용자에게 보이지 않는 백그라운드 작업에 적합
+    // - attributes: .concurrent - 여러 작업을 동시에 병렬 처리 가능
+    // ⚠️ 주의: 이 큐는 백그라운드 스레드이므로 UI 업데이트 불가능
+    //          UI 업데이트는 반드시 DispatchQueue.main.async 사용 필요
     private let processingQueue = DispatchQueue(
         label: "com.yourapp.photoprocessing",
         qos: .utility,
@@ -804,6 +1222,11 @@ class PhotoProcessingService {
             group.enter()
             semaphore.wait()
 
+            // processingQueue.async: 백그라운드 스레드에서 비동기적으로 클로저(람다 함수) 실행
+            // - processingQueue: DispatchQueue로 정의된 백그라운드 작업 큐 (qos: .utility, attributes: .concurrent)
+            // - async: 비동기 실행 메서드로, 현재 스레드를 블로킹하지 않고 클로저를 큐에 추가
+            // - 클로저 내부의 코드는 백그라운드 스레드에서 실행되어 메인 스레드가 블로킹되지 않음
+            // - Swift의 클로저는 다른 언어의 lambda function과 유사한 개념
             self.processingQueue.async {
                 self.processPhoto(asset) { result in
                     lock.lock()
@@ -823,6 +1246,10 @@ class PhotoProcessingService {
                     let progress = stats.toProgress()
                     lock.unlock()
 
+                    // ⚠️ 중요: UI 업데이트는 반드시 메인 스레드에서 수행해야 함
+                    // - processingQueue.async()는 백그라운드 스레드에서 실행되므로 직접 UI 업데이트 불가능
+                    // - DispatchQueue.main.async를 사용하여 메인 스레드로 전환 후 UI 업데이트
+                    // - 백그라운드 스레드에서 직접 UI 접근 시 크래시 발생 가능
                     DispatchQueue.main.async {
                         progressHandler(progress)
                     }
