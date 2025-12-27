@@ -87,6 +87,10 @@
 
 ## API 설계
 
+### HTTP Response Structure
+
+- [JSend + Google JSON Guide 결합](#jsend--google-json-guide-결합)
+
 ### Hotel APIs
 
 ```
