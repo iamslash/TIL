@@ -52,9 +52,55 @@
 
 ## 1. 전체 모델 구조: Encoder–Decoder 아키텍처
 
-Transformer는 **Encoder**와 **Decoder**로 구성된 모델입니다.  
-- **Encoder**는 입력 문장을 연속적인(hidden) 표현(z₁, …, zₙ)으로 인코딩합니다.  
-- **Decoder**는 인코딩된 표현을 바탕으로, 한 번에 한 단어씩 출력(y₁, …, yₘ)을 생성합니다.
+Transformer는 **Encoder**와 **Decoder**로 구성된 모델입니다.
+
+**일상 비유: 통역사**
+
+```
+[Encoder: 듣기 전문가]                [Decoder: 말하기 전문가]
+영어 문장 듣기                        한국어 문장 말하기
+↓                                    ↓
+"I love cats"                        "나는"
+↓                                    ↓
+뇌에서 의미 이해                       "고양이를"
+↓                                    ↓
+[의미 표현 저장]  ----전달---->         "사랑해"
+```
+
+- **Encoder**: 입력 문장을 "의미 표현"으로 변환
+  - "I love cats" → [벡터들의 시퀀스]
+  - 각 단어의 의미 + 문맥 정보를 숫자로 표현
+
+- **Decoder**: 의미 표현을 보고 한 단어씩 생성
+  - [벡터들] → "나는" → "고양이를" → "사랑해"
+  - 이전에 생성한 단어와 Encoder 정보를 참고
+
+**구체적인 흐름:**
+
+```
+입력: "I love cats"
+
+1. 단어 임베딩 + 위치 정보
+   I(0) → [0.1, 0.5, ...]
+   love(1) → [0.8, 0.3, ...]
+   cats(2) → [0.2, 0.9, ...]
+
+2. Encoder (6개 층)
+   각 층마다:
+   - Self-Attention: 단어들 간의 관계 파악
+   - Feed-Forward: 정보 변환
+   최종 출력: "문장 전체의 의미 표현"
+
+3. Decoder (6개 층)
+   각 층마다:
+   - Self-Attention: 지금까지 생성한 단어들 간 관계
+   - Encoder-Decoder Attention: Encoder 정보 참조
+   - Feed-Forward: 정보 변환
+
+4. Generator
+   최종 벡터 → 단어 확률 분포
+   [0.01, 0.85, 0.02, ...] → "고양이를" 선택
+```
 
 이러한 구조를 반영한 기본 클래스는 다음과 같습니다:
 
@@ -70,35 +116,172 @@ class EncoderDecoder(nn.Module):
     encoder, decoder, src와 tgt 임베딩, 그리고 최종 출력(softmax)을 위한 generator를 포함합니다.
     """
     def __init__(self, encoder, decoder, src_embed, tgt_embed, generator):
+        """
+        매개변수:
+            encoder (Encoder): 입력 문장을 처리하는 인코더 모듈
+                예: Encoder(EncoderLayer(...), N=6)
+            decoder (Decoder): 출력 문장을 생성하는 디코더 모듈
+                예: Decoder(DecoderLayer(...), N=6)
+            src_embed (nn.Sequential): 입력 단어 임베딩 + 위치 인코딩
+                예: nn.Sequential(Embeddings(512, 10000), PositionalEncoding(512, 0.1))
+            tgt_embed (nn.Sequential): 출력 단어 임베딩 + 위치 인코딩
+                예: nn.Sequential(Embeddings(512, 10000), PositionalEncoding(512, 0.1))
+            generator (Generator): 최종 단어 확률 계산기
+                예: Generator(d_model=512, vocab=10000)
+        """
         super(EncoderDecoder, self).__init__()
-        self.encoder = encoder        # 입력 시퀀스를 처리하는 인코더
-        self.decoder = decoder        # 인코딩된 정보를 기반으로 출력 시퀀스를 생성하는 디코더
-        self.src_embed = src_embed    # 입력 단어를 임베딩하는 레이어
-        self.tgt_embed = tgt_embed    # 출력 단어를 임베딩하는 레이어
-        self.generator = generator    # 최종 선형 변환 및 softmax
+        self.encoder = encoder
+        self.decoder = decoder
+        self.src_embed = src_embed
+        self.tgt_embed = tgt_embed
+        self.generator = generator
 
     def forward(self, src, tgt, src_mask, tgt_mask):
-        "마스킹된 src와 tgt 시퀀스를 입력받아 인코딩 후 디코딩합니다."
+        """
+        순전파 연산
+
+        매개변수:
+            src (Tensor): 입력 문장의 단어 인덱스
+                shape: (batch_size, src_seq_len)
+                예: tensor([[1, 234, 56, 789, 2]])  # [시작토큰, I, love, cats, 종료토큰]
+            tgt (Tensor): 출력 문장의 단어 인덱스
+                shape: (batch_size, tgt_seq_len)
+                예: tensor([[1, 45, 678, 90, 2]])  # [시작토큰, 나는, 고양이를, 사랑해, 종료토큰]
+            src_mask (Tensor): 입력 문장의 패딩 마스크
+                shape: (batch_size, 1, src_seq_len)
+                예: tensor([[[1, 1, 1, 1, 1]]])  # 모두 실제 단어 (1=사용, 0=패딩)
+            tgt_mask (Tensor): 출력 문장의 미래 단어 + 패딩 마스크
+                shape: (batch_size, tgt_seq_len, tgt_seq_len)
+                예: tensor([[[1, 0, 0],
+                           [1, 1, 0],
+                           [1, 1, 1]]])  # 하삼각 행렬 (미래 보기 방지)
+
+        반환값:
+            output (Tensor): 각 위치의 다음 단어 확률 분포
+                shape: (batch_size, tgt_seq_len, vocab_size)
+                예: shape (1, 5, 10000)  # 배치1, 길이5, 어휘10000
+        """
         return self.decode(self.encode(src, src_mask), src_mask, tgt, tgt_mask)
 
     def encode(self, src, src_mask):
+        """
+        입력 문장을 의미 벡터로 인코딩
+
+        매개변수:
+            src (Tensor): 입력 단어 인덱스, shape: (batch, src_len)
+            src_mask (Tensor): 패딩 마스크, shape: (batch, 1, src_len)
+
+        반환값:
+            memory (Tensor): 인코딩된 문장 표현
+                shape: (batch, src_len, d_model)
+                예: shape (1, 5, 512)  # 5개 단어, 각 512차원 벡터
+        """
         return self.encoder(self.src_embed(src), src_mask)
 
     def decode(self, memory, src_mask, tgt, tgt_mask):
+        """
+        인코딩된 정보를 바탕으로 출력 문장 생성
+
+        매개변수:
+            memory (Tensor): 인코더 출력, shape: (batch, src_len, d_model)
+                예: shape (1, 5, 512)
+            src_mask (Tensor): 입력 마스크, shape: (batch, 1, src_len)
+            tgt (Tensor): 출력 단어 인덱스, shape: (batch, tgt_len)
+                예: tensor([[1, 45, 678, 90]])
+            tgt_mask (Tensor): 출력 마스크, shape: (batch, tgt_len, tgt_len)
+
+        반환값:
+            output (Tensor): 디코더 출력 벡터
+                shape: (batch, tgt_len, d_model)
+                예: shape (1, 4, 512)
+        """
         return self.decoder(self.tgt_embed(tgt), memory, src_mask, tgt_mask)
 
 class Generator(nn.Module):
-    "출력 임베딩을 선형 변환한 후 softmax를 적용하는 모듈입니다."
+    "디코더 출력을 단어 확률 분포로 변환하는 모듈"
+
     def __init__(self, d_model, vocab):
+        """
+        매개변수:
+            d_model (int): 모델의 hidden dimension 크기
+                예: 512 (Transformer 원 논문 기준)
+            vocab (int): 어휘 사전 크기 (가능한 단어 개수)
+                예: 10000 (영어 단어 10,000개)
+                예: 32000 (BPE 토크나이저 사용 시)
+        """
         super(Generator, self).__init__()
+        # 선형 변환: (batch, seq_len, 512) → (batch, seq_len, 10000)
         self.proj = nn.Linear(d_model, vocab)
 
     def forward(self, x):
+        """
+        hidden vector를 단어 확률로 변환
+
+        매개변수:
+            x (Tensor): 디코더의 출력 벡터
+                shape: (batch, seq_len, d_model)
+                예: shape (2, 10, 512)  # 배치 2, 길이 10, 차원 512
+                예: tensor([[[0.2, 0.5, -0.1, ...],    # 위치 0의 벡터
+                           [0.8, -0.3, 0.4, ...],   # 위치 1의 벡터
+                           ...]])
+
+        반환값:
+            probs (Tensor): 각 단어의 로그 확률
+                shape: (batch, seq_len, vocab)
+                예: shape (2, 10, 10000)
+                예: tensor([[[-8.5, -2.3, -0.1, ...],  # 위치 0: 각 단어 확률
+                           [-7.2, -1.5, -0.05, ...], # 위치 1: 각 단어 확률
+                           ...]])
+                설명: 값이 클수록 해당 단어일 확률이 높음
+                     log_softmax이므로 실제 확률은 exp(값)
+
+        예시:
+            >>> x = torch.randn(1, 3, 512)  # 배치1, 길이3, 차원512
+            >>> generator = Generator(512, 10000)
+            >>> output = generator(x)
+            >>> output.shape
+            torch.Size([1, 3, 10000])
+
+            >>> # 가장 확률 높은 단어 찾기
+            >>> next_word = output[0, -1].argmax()  # 마지막 위치의 예측 단어
+            >>> print(next_word)  # 예: tensor(234) → "cats"
+        """
         return F.log_softmax(self.proj(x), dim=-1)
 ```
 
-> **설명:**  
-> 위 코드는 전체 모델의 뼈대를 구성합니다. `EncoderDecoder` 클래스는 인코더, 디코더, 임베딩, 그리고 최종 출력 생성기(generator)를 연결합니다. `forward` 메서드에서는 먼저 입력(src)을 임베딩하고 인코딩한 후, 디코더에서 tgt를 임베딩하여 최종 출력을 생성합니다.
+> **설명:**
+>
+> **EncoderDecoder 클래스:**
+> - 전체 Transformer 모델의 뼈대
+> - encoder, decoder, 임베딩, generator를 하나로 연결
+> - `forward()`: 입력 문장 → 출력 확률 분포 (end-to-end)
+> - `encode()`: 입력 → 의미 벡터 (memory)
+> - `decode()`: 의미 벡터 + 이전 출력 → 다음 단어 벡터
+>
+> **Generator 클래스:**
+> - 디코더의 512차원 벡터를 10000차원 단어 확률로 변환
+> - Linear(512, 10000): 각 단어에 대한 점수 계산
+> - log_softmax: 점수를 로그 확률로 변환 (학습 시 수치 안정성)
+>
+> **실제 사용 예시:**
+> ```python
+> # 모델 생성
+> model = EncoderDecoder(encoder, decoder, src_embed, tgt_embed, generator)
+>
+> # 번역: "I love cats" → "나는 고양이를 사랑해"
+> src = torch.LongTensor([[1, 234, 56, 789, 2]])  # [BOS, I, love, cats, EOS]
+> tgt = torch.LongTensor([[1, 45, 678, 90]])      # [BOS, 나는, 고양이를, 사랑해]
+> src_mask = (src != 0).unsqueeze(-2)              # 패딩 마스크
+> tgt_mask = subsequent_mask(tgt.size(1))          # 미래 마스킹
+>
+> # 순전파
+> output = model(src, tgt, src_mask, tgt_mask)     # shape: (1, 4, 10000)
+>
+> # 다음 단어 예측
+> next_word_probs = output[0, -1]                  # 마지막 위치의 확률
+> next_word_id = next_word_probs.argmax()          # 가장 높은 확률 단어
+> print(f"다음 단어 ID: {next_word_id}")           # 예: 2 (EOS 토큰)
+> ```
 
 ---
 
@@ -252,12 +435,41 @@ class Decoder(nn.Module):
 
 디코더에서 자기 주의(self-attention)를 할 때, 미래의 단어(아직 생성되지 않은 단어)를 보지 못하도록 마스킹합니다.
 
+**왜 마스킹이 필요한가요?**
+
+시험 중에 답안지를 미리 보는 것을 방지하는 것과 같습니다.
+
+```
+번역 중: "I love cats" → "나는 고양이를 사랑해"
+
+생성 과정:
+1단계: "나는" 생성 - "I", "love", "cats" 참조 가능
+2단계: "고양이를" 생성 - "나는"까지만 참조 가능 (미래인 "사랑해"를 보면 안 됨!)
+3단계: "사랑해" 생성 - "나는", "고양이를"까지만 참조 가능
+
+만약 미래를 볼 수 있다면?
+- 학습: 답을 보고 풀기 = 부정행위
+- 추론: 아직 생성 안 한 단어는 존재하지 않음 → 에러
+```
+
+**마스크 행렬 시각화:**
+
+```
+문장: "나는 고양이를 사랑해"
+
+Attention 가능 여부 (1=가능, 0=불가능):
+           나는  고양이를  사랑해
+나는    [  1      0       0   ]  ← "나는"는 자기 자신만 참조
+고양이를 [  1      1       0   ]  ← "고양이를"은 자기와 이전 단어 참조
+사랑해  [  1      1       1   ]  ← "사랑해"는 모든 이전 단어 참조
+```
+
 ```python
 import numpy as np
 import matplotlib.pyplot as plt
 
 def subsequent_mask(size):
-    "미래 단어들을 마스킹합니다. (upper-triangular matrix)"
+    "미래 단어들을 마스킹합니다. (lower-triangular matrix)"
     attn_shape = (1, size, size)
     # k=1부터 상삼각행렬 생성 -> 미래 단어에 해당하는 부분은 0
     subsequent_mask = np.triu(np.ones(attn_shape), k=1).astype('uint8')
@@ -270,46 +482,197 @@ plt.title("Subsequent Mask")
 plt.show()
 ```
 
-> **설명:**  
-> 이 마스크는 디코더의 자기 주의에서 각 단어가 자기 자신보다 이후에 위치한 단어들을 참조하지 못하도록 만듭니다. 학습 시 디코더가 올바른 auto-regressive(순차적) 생성을 하게끔 돕습니다.
+> **설명:**
+>
+> **구체적인 예시:**
+> ```python
+> # 길이 4인 시퀀스의 마스크
+> mask = subsequent_mask(4)
+> print(mask[0])
+> # 결과:
+> # [[1, 0, 0, 0],   ← 위치 0: 자기 자신만
+> #  [1, 1, 0, 0],   ← 위치 1: 0, 1 참조 가능
+> #  [1, 1, 1, 0],   ← 위치 2: 0, 1, 2 참조 가능
+> #  [1, 1, 1, 1]]   ← 위치 3: 모든 이전 단어 참조 가능
+> ```
+>
+> 이 마스크는 attention 계산 시 미래 단어에 해당하는 점수를 -∞로 만들어서, softmax 후 확률이 0이 되게 합니다. 학습 시 디코더가 올바른 auto-regressive(순차적) 생성을 하게끔 돕습니다.
 
 ---
 
 ## 4. Attention 메커니즘
 
-Transformer의 핵심은 **Scaled Dot-Product Attention**입니다.  
-- 주어진 query, key, value 텐서를 사용해 각 query마다 관련된 value들을 가중합하여 출력합니다.  
-- dot-product 값이 커지는 문제를 완화하기 위해 \( \frac{1}{\sqrt{d_k}} \)로 스케일 조정합니다.
+Transformer의 핵심은 **Scaled Dot-Product Attention**입니다.
+
+### 4-0. Query, Key, Value (Q, K, V)란 무엇인가?
+
+**도서관 검색 시스템으로 이해하기:**
+
+Attention을 이해하려면 먼저 Query, Key, Value의 의미를 알아야 합니다. 도서관에서 책을 찾는 상황으로 비유해보겠습니다.
+
+```
+도서관 상황:
+- Query (검색어): "딥러닝 입문서"라고 검색합니다
+- Key (책 제목/태그): 각 책마다 붙어있는 제목이나 태그
+- Value (책 내용): 실제 책의 내용
+```
+
+**어떻게 작동하나요?**
+
+1. **검색 (Query와 Key 비교)**
+   - 당신의 검색어 "딥러닝 입문서"(Query)와 각 책의 제목/태그(Key)를 비교
+   - "딥러닝 기초" 책 → 유사도 0.9 (매우 유사)
+   - "머신러닝 실전" 책 → 유사도 0.7 (조금 유사)
+   - "요리 레시피" 책 → 유사도 0.1 (거의 무관)
+
+2. **가중치 계산 (Softmax)**
+   - 유사도를 확률로 변환: [0.5, 0.4, 0.1]
+   - 가장 관련 있는 책에 높은 가중치 부여
+
+3. **정보 추출 (Value 가중합)**
+   - 각 책의 내용(Value)을 가중치만큼 섞어서 가져옵니다
+   - 결과 = 0.5 × "딥러닝 기초" 내용 + 0.4 × "머신러닝 실전" 내용 + 0.1 × "요리 레시피" 내용
+
+**Transformer에서의 Q, K, V:**
+
+```python
+# 예시: "I love cats" 문장을 번역할 때
+문장: ["I", "love", "cats"]
+
+# "love"라는 단어를 처리할 때
+Query (love):  "내가 지금 집중하고 싶은 정보는?"
+Key (I):       "나는 주어입니다"
+Key (love):    "나는 동사입니다"
+Key (cats):    "나는 목적어입니다"
+Value (I):     [주어의 실제 의미 벡터]
+Value (love):  [동사의 실제 의미 벡터]
+Value (cats):  [목적어의 실제 의미 벡터]
+
+# Attention 계산
+1. Query(love)와 각 Key를 비교 → 유사도 계산
+2. cats와 관련성이 높으면 가중치 ↑
+3. 가중치로 Value들을 섞어서 최종 표현 생성
+```
+
+**왜 Query, Key, Value로 나누나요?**
+
+- **유연성**: 같은 단어라도 문맥에 따라 다른 역할
+  - Key로서는 "나는 명사야"
+  - Value로서는 [실제 의미 정보]
+  - Query로서는 "나와 관련된 단어를 찾아줘"
+
+- **효율성**: 한 번 계산한 Key와 Value는 재사용 가능
+
+**구체적인 숫자 예시:**
+
+```python
+# 문장: "The cat sat on the mat"에서 "sat"를 처리
+
+Query(sat) = [0.2, 0.8, 0.1, ...]  # "앉다"라는 동작에 대한 검색 벡터
+
+Key(The)   = [0.1, 0.1, 0.9, ...]
+Key(cat)   = [0.9, 0.2, 0.1, ...]  # 주어와 관련
+Key(sat)   = [0.2, 0.8, 0.1, ...]
+Key(on)    = [0.1, 0.7, 0.3, ...]
+Key(the)   = [0.1, 0.1, 0.9, ...]
+Key(mat)   = [0.3, 0.6, 0.2, ...]  # 장소와 관련
+
+# 1단계: Query와 각 Key의 유사도 계산 (내적)
+similarity(Query, cat) = 0.2×0.9 + 0.8×0.2 + ... = 0.5  # 주어니까 중요!
+similarity(Query, mat) = 0.2×0.3 + 0.8×0.6 + ... = 0.7  # 장소니까 더 중요!
+
+# 2단계: Softmax로 확률로 변환
+weights = [0.05, 0.25, 0.15, 0.08, 0.05, 0.42]  # mat이 가장 높음
+
+# 3단계: Value들을 가중합
+output = 0.05×Value(The) + 0.25×Value(cat) + ... + 0.42×Value(mat)
+```
 
 ### 4-1. Scaled Dot-Product Attention
+
+이제 위 개념을 코드로 구현합니다.
 
 ```python
 def attention(query, key, value, mask=None, dropout=None):
     "Scaled Dot Product Attention을 계산합니다."
     d_k = query.size(-1)
-    # query와 key의 내적 후 스케일 조정
+
+    # 1단계: Query와 Key의 유사도 계산 (내적)
+    # 예: query가 "앉다", key가 "고양이", "매트"일 때 각각 얼마나 관련있는지 계산
     scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(d_k)
-    
-    # 마스크가 주어지면, 마스크가 0인 부분은 매우 작은 값(-1e9)으로 채웁니다.
+
+    # 2단계: 마스킹 적용 (선택적)
+    # 미래 단어를 보지 못하게 하거나, 패딩을 무시하기 위함
     if mask is not None:
         scores = scores.masked_fill(mask == 0, -1e9)
-    
-    # softmax를 적용하여 가중치 생성
+
+    # 3단계: Softmax로 확률로 변환
+    # scores [2.1, 0.3, 3.5] → p_attn [0.25, 0.05, 0.70]
     p_attn = F.softmax(scores, dim=-1)
-    
+
     if dropout is not None:
         p_attn = dropout(p_attn)
-    
-    # attention 가중치를 value에 곱해 최종 출력 생성
+
+    # 4단계: 확률 가중치로 Value를 가중합
+    # 0.25×Value(cat) + 0.05×Value(on) + 0.70×Value(mat)
     return torch.matmul(p_attn, value), p_attn
 ```
 
-> **설명:**  
-> 각 query에 대해 모든 key와의 내적을 수행한 후, softmax를 통해 중요도를 구하고 그 가중치로 value들을 합산합니다. 여기서 스케일링을 통해 gradient vanishing 문제를 완화합니다.
+> **설명:**
+>
+> **전체 프로세스:**
+> 1. **유사도 계산**: Query와 Key를 내적하여 얼마나 관련있는지 점수 계산
+> 2. **스케일링**: `sqrt(d_k)`로 나누는 이유는 벡터 차원이 클수록 내적 값이 커져서 softmax가 한쪽으로 치우치는 문제 방지
+> 3. **Softmax**: 점수를 0~1 사이 확률로 변환 (전체 합은 1)
+> 4. **가중합**: 확률을 가중치로 Value들을 섞어서 최종 출력 생성
+>
+> **왜 `sqrt(d_k)`로 나누나요?**
+> - d_k=64일 때, 두 랜덤 벡터의 내적은 평균적으로 0, 분산은 64
+> - 분산이 크면 softmax 결과가 [0.001, 0.001, 0.998]처럼 극단적으로 됨
+> - `sqrt(64)=8`로 나누면 분산이 1이 되어 [0.2, 0.3, 0.5]처럼 부드러운 분포 유지
+> - 부드러운 분포 → 여러 단어에 attention 분산 → 더 풍부한 정보 학습
 
 ### 4-2. Multi-Head Attention
 
-Multi-head attention은 여러 개의 attention “head”를 사용하여 서로 다른 표현 하위 공간에서 정보를 병렬로 추출합니다.
+Multi-head attention은 여러 개의 attention "head"를 사용하여 서로 다른 표현 하위 공간에서 정보를 병렬로 추출합니다.
+
+**왜 Multi-Head가 필요한가요?**
+
+하나의 attention만 사용하면 한 가지 관점만 볼 수 있습니다. 여러 head를 사용하면 다양한 관점에서 문장을 이해할 수 있습니다.
+
+**일상 비유: 영화 감상**
+- **Head 1 (스토리 전문가)**: 줄거리의 흐름에 집중
+- **Head 2 (연기 평론가)**: 배우들의 연기에 집중
+- **Head 3 (촬영 감독)**: 카메라 워크와 구도에 집중
+- **Head 4 (음악 감독)**: 배경음악과 음향에 집중
+
+각 전문가가 다른 관점에서 영화를 보고, 최종적으로 모든 의견을 종합하여 종합 평가를 내립니다.
+
+**Transformer에서의 Multi-Head:**
+
+```python
+# 예: "The cat sat on the mat" 문장 처리
+
+Head 1: 문법적 관계에 집중
+  - "sat"와 주어 "cat"의 관계 강조
+  - attention weights: cat(0.7), sat(0.2), mat(0.1)
+
+Head 2: 의미적 관계에 집중
+  - "sat"와 장소 "mat"의 관계 강조
+  - attention weights: cat(0.2), sat(0.1), mat(0.7)
+
+Head 3: 품사 관계에 집중
+  - 동사와 전치사 "on"의 관계
+  - attention weights: on(0.6), sat(0.3), the(0.1)
+
+최종 출력: 세 Head의 결과를 합쳐서 풍부한 표현 생성
+```
+
+**구체적인 작동 방식:**
+
+1. **입력 분할**: 512차원 벡터를 8개 head로 나누면 각 head는 64차원 처리
+2. **병렬 처리**: 각 head가 독립적으로 attention 계산
+3. **결합**: 8개 head의 출력을 concat하여 다시 512차원으로 복원
 
 ```python
 class MultiHeadedAttention(nn.Module):
@@ -317,36 +680,57 @@ class MultiHeadedAttention(nn.Module):
         "모델 차원(d_model)과 head의 개수 h를 입력받습니다. (d_k = d_model // h)"
         super(MultiHeadedAttention, self).__init__()
         assert d_model % h == 0  # d_model은 h로 나누어 떨어져야 합니다.
+
+        # 예: d_model=512, h=8 → d_k=64 (각 head가 처리할 차원)
         self.d_k = d_model // h
         self.h = h
-        # query, key, value, 그리고 마지막 선형 변환을 위한 4개의 Linear layer 생성
+
+        # query, key, value 변환용 3개 + 최종 출력용 1개 = 총 4개의 Linear layer
         self.linears = clones(nn.Linear(d_model, d_model), 4)
         self.attn = None
         self.dropout = nn.Dropout(p=dropout)
-        
+
     def forward(self, query, key, value, mask=None):
-        "그림 2를 참고하여 multi-head attention을 구현합니다."
         if mask is not None:
             # 동일한 마스크를 모든 head에 적용
             mask = mask.unsqueeze(1)
         nbatches = query.size(0)
-        
-        # 1) 각 선형 변환을 적용한 후, (batch, h, seq_len, d_k) 형태로 변환합니다.
+
+        # 1) Q, K, V를 각 head용으로 분할
+        # (batch, seq_len, 512) → (batch, seq_len, 8, 64) → (batch, 8, seq_len, 64)
+        # 이렇게 하면 8개 head가 동시에 독립적으로 attention 계산 가능
         query, key, value = [
             l(x).view(nbatches, -1, self.h, self.d_k).transpose(1, 2)
             for l, x in zip(self.linears, (query, key, value))
         ]
-        
-        # 2) 모든 head에 대해 attention 적용
+
+        # 2) 모든 head에 대해 병렬로 attention 적용
+        # 각 head는 64차원에서 독립적으로 attention 계산
         x, self.attn = attention(query, key, value, mask=mask, dropout=self.dropout)
-        
-        # 3) head들을 concat한 후 최종 선형 변환
+
+        # 3) head들을 다시 합치기 (concat)
+        # (batch, 8, seq_len, 64) → (batch, seq_len, 8, 64) → (batch, seq_len, 512)
         x = x.transpose(1, 2).contiguous().view(nbatches, -1, self.h * self.d_k)
+
+        # 4) 최종 선형 변환으로 출력 생성
         return self.linears[-1](x)
 ```
 
-> **설명:**  
-> Multi-head attention은 각 head마다 선형 변환을 수행하여 낮은 차원으로 변환한 후 attention을 적용하고, 마지막에 다시 concat하여 전체 차원으로 복원합니다. 이를 통해 모델이 다양한 관점에서 입력을 바라볼 수 있게 합니다.
+> **설명:**
+>
+> **전체 프로세스 (d_model=512, h=8 예시):**
+> 1. **선형 변환 + 분할**:
+>    - 입력 (batch, seq_len, 512)를 선형 변환
+>    - 8개 head로 분할: (batch, 8, seq_len, 64)
+> 2. **병렬 Attention**:
+>    - 각 head가 64차원에서 독립적으로 attention 계산
+>    - Head 1은 문법 관계, Head 2는 의미 관계 등 다른 패턴 학습
+> 3. **Concatenation**:
+>    - 8개 head 결과를 합침: (batch, seq_len, 512)
+> 4. **최종 변환**:
+>    - 선형 변환으로 정보 통합
+>
+> **핵심 아이디어**: 하나의 512차원 attention보다, 8개의 64차원 attention이 더 다양한 패턴을 학습할 수 있습니다!
 
 ---
 
@@ -374,7 +758,24 @@ class PositionwiseFeedForward(nn.Module):
 
 ## 6. 임베딩과 Positional Encoding
 
-Transformer는 RNN이나 CNN과 달리 순서를 인식하는 구조가 없으므로, 단어 임베딩에 **위치 정보(positional encoding)**를 추가해 단어 순서를 모델에 주입합니다.
+**왜 Positional Encoding이 필요한가요?**
+
+Transformer는 RNN이나 CNN과 달리 단어를 한 번에 모두 처리합니다. 따라서 단어의 순서 정보가 없으면 "고양이가 쥐를 잡았다"와 "쥐가 고양이를 잡았다"를 구분할 수 없습니다.
+
+**비유: 셔플된 사진 앨범**
+```
+원본 순서: [사진1: 아기] → [사진2: 어린이] → [사진3: 청년] → [사진4: 노인]
+셔플 후:   [사진3], [사진1], [사진4], [사진2]
+
+문제: 사진들을 동시에 보면 시간 순서를 알 수 없음
+해결: 각 사진에 타임스탬프를 추가
+     - 사진1: "1990년 출생"
+     - 사진2: "2000년 10살"
+     - 사진3: "2010년 20살"
+     - 사진4: "2050년 60살"
+```
+
+Positional Encoding은 각 단어에 "위치 타임스탬프"를 추가하는 것입니다.
 
 ### 6-1. Embeddings
 
@@ -398,26 +799,69 @@ class PositionalEncoding(nn.Module):
     def __init__(self, d_model, dropout, max_len=5000):
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(p=dropout)
-        
+
         # max_len x d_model 크기의 positional encoding 행렬 생성
         pe = torch.zeros(max_len, d_model)
-        position = torch.arange(0, max_len).unsqueeze(1)
+        position = torch.arange(0, max_len).unsqueeze(1)  # [0, 1, 2, 3, ...]
+
         # 주파수를 로그 스케일로 분포시키기 위한 term
         div_term = torch.exp(torch.arange(0, d_model, 2) *
                              -(math.log(10000.0) / d_model))
-        pe[:, 0::2] = torch.sin(position * div_term)  # 짝수 인덱스
-        pe[:, 1::2] = torch.cos(position * div_term)  # 홀수 인덱스
+
+        # 짝수 인덱스: sin 함수 사용
+        pe[:, 0::2] = torch.sin(position * div_term)
+        # 홀수 인덱스: cos 함수 사용
+        pe[:, 1::2] = torch.cos(position * div_term)
+
         pe = pe.unsqueeze(0)  # 배치 차원을 위해 확장
         self.register_buffer('pe', pe)
-        
+
     def forward(self, x):
         # 입력 임베딩에 positional encoding을 더한 후 드롭아웃 적용
         x = x + self.pe[:, :x.size(1)]
         return self.dropout(x)
 ```
 
-> **설명:**  
-> 각 단어의 임베딩에 위치 정보를 더해주면, 모델은 단어 순서를 인지할 수 있습니다. sine과 cosine을 사용하는 이유는 모델이 학습하지 않아도 자연스럽게 일반화할 수 있는 패턴을 제공하기 때문입니다.
+> **설명:**
+>
+> **왜 Sin/Cos 함수를 사용하나요?**
+>
+> 1. **고정된 패턴**: 학습 없이도 위치 정보 제공
+>    ```python
+>    위치 0: [sin(0), cos(0), sin(0), cos(0), ...] = [0, 1, 0, 1, ...]
+>    위치 1: [sin(1), cos(1), sin(1), cos(1), ...] = [0.84, 0.54, ...]
+>    위치 2: [sin(2), cos(2), sin(2), cos(2), ...] = [0.91, -0.42, ...]
+>    ```
+>    각 위치마다 고유한 "지문(fingerprint)" 생성
+>
+> 2. **상대적 위치 학습**:
+>    - Sin/Cos의 수학적 성질로 "k칸 떨어진 단어" 관계 쉽게 학습
+>    - PE(pos+k)를 PE(pos)의 선형 결합으로 표현 가능
+>
+> 3. **외삽 가능**: 학습 때 본 적 없는 긴 문장도 처리 가능
+>    - 학습: 최대 100 단어
+>    - 테스트: 150 단어 → Sin/Cos 패턴이 자동으로 확장됨
+>
+> **구체적인 예시:**
+> ```python
+> # 문장: "The cat sat"
+> 단어 임베딩:
+> "The" → [0.2, 0.5, 0.1, ...]  # 임베딩만
+> "cat" → [0.8, 0.3, 0.9, ...]
+> "sat" → [0.1, 0.7, 0.4, ...]
+>
+> + Positional Encoding:
+> 위치0 → [0.0, 1.0, 0.0, ...]
+> 위치1 → [0.8, 0.5, 0.0, ...]
+> 위치2 → [0.9, -0.4, 0.0, ...]
+>
+> = 최종:
+> "The"(위치0) → [0.2, 1.5, 0.1, ...]
+> "cat"(위치1) → [1.6, 0.8, 0.9, ...]
+> "sat"(위치2) → [1.0, 0.3, 0.4, ...]
+> ```
+>
+> 이제 모델은 같은 단어도 위치에 따라 다른 표현을 가지므로 순서를 구분할 수 있습니다!
 
 ---
 
@@ -605,14 +1049,81 @@ print(result)
 
 지금까지 Transformer의 주요 구성요소—Encoder, Decoder, Attention 메커니즘, Feed-Forward 네트워크, 임베딩 및 Positional Encoding, 그리고 학습 및 추론 관련 구성요소—를 하나씩 살펴보고, 각 부분에 해당하는 PyTorch 코드를 추가하며 설명했습니다.
 
-전체 코드의 흐름은 아래와 같이 요약할 수 있습니다:
+### 전체 흐름 요약
 
-1. **입력 임베딩**에 positional encoding을 더해 입력을 준비  
-2. **Encoder**가 입력 시퀀스를 여러 레이어를 통해 인코딩  
-3. **Decoder**는 이전에 생성된 단어들과 encoder의 출력을 바탕으로 다음 단어를 예측  
-4. **Attention 메커니즘**을 통해 각 단어 간의 관계를 효과적으로 학습  
-5. **학습** 시에는 마스킹, label smoothing, 그리고 특별한 학습률 스케줄러를 사용하여 안정적인 학습을 수행  
-6. **Greedy Decoding** (혹은 Beam Search 등)을 통해 실제 번역이나 텍스트 생성 수행
+```
+입력 → 임베딩 + 위치정보 → Encoder → Decoder → 출력
+
+각 단계별 역할:
+1. 임베딩: 단어를 벡터로 변환
+2. 위치 인코딩: 단어 순서 정보 추가
+3. Encoder: 입력 문장의 의미 파악 (Self-Attention + FFN)
+4. Decoder: 한 단어씩 생성 (Self-Attention + Enc-Dec Attention + FFN)
+5. Generator: 다음 단어 확률 계산
+```
+
+### 핵심 개념 정리
+
+**Query, Key, Value (가장 중요!)**
+- Query: "무엇을 찾고 싶은가?"
+- Key: "나는 이런 정보를 가지고 있어"
+- Value: "실제 정보 내용"
+- 프로세스: Query로 관련있는 Key 찾기 → 해당 Value 가져오기
+
+**Multi-Head Attention**
+- 하나의 attention보다 여러 관점에서 보는 게 더 풍부
+- 8개 head = 8명의 전문가가 각자 다른 관점에서 분석
+
+**Positional Encoding**
+- Transformer는 순서를 모름 → Sin/Cos로 위치 정보 추가
+- 학습 없이 고정된 패턴 사용
+
+**Masking**
+- 미래 단어를 보지 못하게 함 (부정행위 방지)
+- 학습과 추론의 일관성 유지
+
+### 실용 팁
+
+**성능 최적화:**
+- Warmup 중요: 초기 학습률을 천천히 올려서 안정화
+- Label Smoothing: 과적합 방지
+- Dropout: Attention과 Residual 연결 모두에 적용
+- Batch Size: GPU 메모리 허용하는 최대로
+
+**흔한 오류 해결:**
+1. Shape 오류: Mask 차원 확인 (특히 batch 차원)
+2. NaN 발생: 학습률 낮추기, Warmup 늘리기
+3. 느린 수렴: Positional encoding 제대로 추가했는지 확인
+4. 메모리 부족: Gradient accumulation 사용
+
+**디버깅 체크리스트:**
+```python
+# 1. Attention weights 확인
+print(model.encoder.layers[0].self_attn.attn)  # 합이 1인지 확인
+
+# 2. Gradient 확인
+for name, param in model.named_parameters():
+    if param.grad is not None:
+        print(f"{name}: {param.grad.norm()}")  # 너무 크거나 작으면 문제
+
+# 3. 출력 분포 확인
+probs = F.softmax(output, dim=-1)
+print(probs.max())  # 0.99 이상이면 너무 confident (label smoothing 필요)
+```
+
+### 추가 학습 자료
+
+**시각화 도구:**
+- [BertViz](https://github.com/jessevig/bertviz): Attention 패턴 시각화
+- [Tensor2Tensor Visualization](https://github.com/tensorflow/tensor2tensor): 모델 내부 동작 확인
+
+**실전 구현:**
+- [Hugging Face Transformers](https://huggingface.co/transformers/): 사전 학습된 모델 사용
+- [fairseq](https://github.com/pytorch/fairseq): Facebook의 Seq2Seq 라이브러리
+
+**논문 읽기:**
+- 원 논문: "Attention is All You Need" (2017)
+- 개선 버전: BERT, GPT, T5 등
 
 ## Colab PyTorch Code
 

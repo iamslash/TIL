@@ -394,8 +394,8 @@ INDEX idx_email (email)
         v                              v                                v
   [Search Service]              [Hotel Service]                [Reservation Service]
   - Elasticsearch               - Hotel CRUD                    - 예약 생성/조회
-  - 호텔/객실 검색              - Room CRUD                     - 재고 관리
-  - 필터링/정렬                 - Room Type CRUD                - 동시성 제어
+  - 호텔/객실 검색                 - Room CRUD                     - 재고 관리
+  - 필터링/정렬                    - Room Type CRUD                - 동시성 제어
         |                              |                                |
         |                              v                                v
         |                        [Rate Service]                  [Payment Service]
@@ -409,9 +409,9 @@ INDEX idx_email (email)
                         v                              v
                   [Message Queue]                [Cache Layer]
                   (Kafka/RabbitMQ)               (Redis Cluster)
-                  - 이벤트 발행                  - 재고 캐시
-                  - 비동기 처리                  - 세션 캐시
-                        |                              - Rate 캐시
+                  - 이벤트 발행                      - 재고 캐시
+                  - 비동기 처리                      - 세션 캐시
+                        |                         - Rate 캐시
                         v
                 [Notification Service]
                 - 이메일/SMS 발송
