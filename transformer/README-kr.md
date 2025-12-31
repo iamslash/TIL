@@ -1,5 +1,14 @@
 - [Materials](#materials)
 - [Basic](#basic)
+  - [바깥쪽에서 안쪽으로: Transformer 이해하기](#바깥쪽에서-안쪽으로-transformer-이해하기)
+    - [Level 1: Transformer는 번역기입니다](#level-1-transformer는-번역기입니다)
+    - [Level 2: 두 개의 큰 블록 - Encoder와 Decoder](#level-2-두-개의-큰-블록---encoder와-decoder)
+    - [Level 3: 6개의 층으로 쌓아올림](#level-3-6개의-층으로-쌓아올림)
+    - [Level 4: 핵심 메커니즘 - Attention (주의 집중)](#level-4-핵심-메커니즘---attention-주의-집중)
+    - [Level 5: 위치 정보와 Masking](#level-5-위치-정보와-masking)
+    - [Level 6: 구체적인 숫자 예시](#level-6-구체적인-숫자-예시)
+    - [전체 흐름 다이어그램](#전체-흐름-다이어그램)
+    - [핵심 개념 5가지 요약](#핵심-개념-5가지-요약)
   - [1. 전체 모델 구조: Encoder–Decoder 아키텍처](#1-전체-모델-구조-encoderdecoder-아키텍처)
   - [2. Encoder – 여러 층의 인코딩 레이어](#2-encoder--여러-층의-인코딩-레이어)
     - [2-1. 동일한 레이어 복제: `clones`](#2-1-동일한-레이어-복제-clones)
@@ -12,6 +21,7 @@
     - [3-2. 전체 Decoder](#3-2-전체-decoder)
     - [3-3. 미래 단어 마스킹: `subsequent_mask`](#3-3-미래-단어-마스킹-subsequent_mask)
   - [4. Attention 메커니즘](#4-attention-메커니즘)
+    - [4-0. Query, Key, Value (Q, K, V)란 무엇인가?](#4-0-query-key-value-q-k-v란-무엇인가)
     - [4-1. Scaled Dot-Product Attention](#4-1-scaled-dot-product-attention)
     - [4-2. Multi-Head Attention](#4-2-multi-head-attention)
   - [5. Position-wise Feed-Forward Network](#5-position-wise-feed-forward-network)
@@ -25,6 +35,10 @@
     - [8-3. 학습률 스케줄러 (NoamOpt)](#8-3-학습률-스케줄러-noamopt)
   - [9. Greedy Decoding (추론)](#9-greedy-decoding-추론)
   - [10. 결론](#10-결론)
+    - [전체 흐름 요약](#전체-흐름-요약)
+    - [핵심 개념 정리](#핵심-개념-정리)
+    - [실용 팁](#실용-팁)
+    - [추가 학습 자료](#추가-학습-자료)
   - [Colab PyTorch Code](#colab-pytorch-code)
 
 ----
@@ -570,7 +584,25 @@ Transformer의 인코더는 동일한 구조의 **N**개의 레이어를 쌓아 
 
 ```python
 def clones(module, N):
-    "주어진 모듈을 N번 복제하여 ModuleList로 반환합니다."
+    """
+    주어진 모듈을 N번 복제하여 ModuleList로 반환합니다.
+
+    매개변수:
+        module (nn.Module): 복제할 PyTorch 모듈
+            예: EncoderLayer(d_model=512, ...)
+        N (int): 복제할 횟수
+            예: 6 (Transformer 기본 레이어 수)
+
+    반환값:
+        nn.ModuleList: N개의 독립적인 모듈 복사본
+            각 모듈은 독립적인 파라미터를 가짐 (deep copy)
+
+    예시:
+        >>> layer = EncoderLayer(512, self_attn, ff, 0.1)
+        >>> layers = clones(layer, 6)
+        >>> # 6개의 독립적인 EncoderLayer 생성
+        >>> # layers[0]와 layers[1]은 서로 다른 파라미터
+    """
     return nn.ModuleList([copy.deepcopy(module) for _ in range(N)])
 ```
 
@@ -580,14 +612,49 @@ Residual 연결과 함께 각 서브 레이어의 출력을 정규화하기 위�
 
 ```python
 class LayerNorm(nn.Module):
-    "Layer Normalization 모듈."
+    """
+    Layer Normalization 모듈.
+    각 샘플을 독립적으로 정규화하여 학습을 안정화합니다.
+    """
     def __init__(self, features, eps=1e-6):
+        """
+        매개변수:
+            features (int): 정규화할 feature 차원 크기
+                예: 512 (d_model)
+            eps (float): 0으로 나누는 것을 방지하기 위한 작은 값
+                예: 1e-6
+        """
         super(LayerNorm, self).__init__()
-        self.a_2 = nn.Parameter(torch.ones(features))   # 스케일 파라미터
-        self.b_2 = nn.Parameter(torch.zeros(features))  # shift 파라미터
+        self.a_2 = nn.Parameter(torch.ones(features))   # 스케일 파라미터 γ
+        self.b_2 = nn.Parameter(torch.zeros(features))  # shift 파라미터 β
         self.eps = eps
 
     def forward(self, x):
+        """
+        Layer Normalization 적용
+
+        매개변수:
+            x (Tensor): 입력 텐서
+                shape: (batch, seq_len, features)
+                예: (32, 10, 512) - 배치 32, 길이 10, 차원 512
+
+        반환값:
+            normalized (Tensor): 정규화된 텐서
+                shape: 입력과 동일
+                예: (32, 10, 512)
+
+        동작 원리:
+            1. 평균 계산: mean = x.mean(dim=-1)  # 각 위치별 평균
+            2. 표준편차 계산: std = x.std(dim=-1)
+            3. 정규화: (x - mean) / (std + eps)
+            4. 스케일 & 시프트: γ * normalized + β
+
+        예시:
+            >>> ln = LayerNorm(512)
+            >>> x = torch.randn(32, 10, 512)  # 배치 32, 길이 10
+            >>> output = ln(x)  # shape: (32, 10, 512)
+            >>> # 각 샘플의 각 위치가 평균 0, 분산 1로 정규화됨
+        """
         mean = x.mean(-1, keepdim=True)
         std  = x.std(-1, keepdim=True)
         return self.a_2 * (x - mean) / (std + self.eps) + self.b_2
@@ -604,12 +671,48 @@ class SublayerConnection(nn.Module):
     (코드 단순화를 위해 먼저 정규화를 수행한 뒤 sublayer를 적용합니다.)
     """
     def __init__(self, size, dropout):
+        """
+        매개변수:
+            size (int): Layer Normalization 크기 (d_model)
+                예: 512
+            dropout (float): 드롭아웃 비율
+                예: 0.1 (10% 드롭아웃)
+        """
         super(SublayerConnection, self).__init__()
         self.norm = LayerNorm(size)
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x, sublayer):
-        "같은 차원의 sublayer에 residual 연결을 적용합니다."
+        """
+        Residual 연결 적용: output = x + sublayer(norm(x))
+
+        매개변수:
+            x (Tensor): 입력 텐서
+                shape: (batch, seq_len, d_model)
+                예: (32, 10, 512)
+            sublayer (callable): 적용할 서브레이어 함수
+                예: lambda x: self.self_attn(x, x, x, mask)
+                입력 shape: (batch, seq_len, d_model)
+                출력 shape: (batch, seq_len, d_model)
+
+        반환값:
+            output (Tensor): Residual 연결 + 정규화된 출력
+                shape: (batch, seq_len, d_model)
+                예: (32, 10, 512)
+
+        동작 순서:
+            1. norm(x):           입력 정규화
+            2. sublayer(norm(x)): 서브레이어 적용 (attention 또는 FF)
+            3. dropout(...):      드롭아웃 적용
+            4. x + dropout(...):  Residual 연결
+
+        예시:
+            >>> sub_conn = SublayerConnection(512, 0.1)
+            >>> x = torch.randn(32, 10, 512)
+            >>> # Self-attention 적용
+            >>> output = sub_conn(x, lambda x: self_attn(x, x, x, mask))
+            >>> output.shape  # (32, 10, 512)
+        """
         return x + self.dropout(sublayer(self.norm(x)))
 ```
 
@@ -619,8 +722,21 @@ class SublayerConnection(nn.Module):
 
 ```python
 class EncoderLayer(nn.Module):
-    "인코더 한 층: self-attention과 feed-forward로 구성됩니다."
+    """
+    인코더 한 층: self-attention과 feed-forward로 구성됩니다.
+    """
     def __init__(self, size, self_attn, feed_forward, dropout):
+        """
+        매개변수:
+            size (int): 모델의 차원 (d_model)
+                예: 512
+            self_attn (MultiHeadedAttention): Self-attention 모듈
+                예: MultiHeadedAttention(h=8, d_model=512)
+            feed_forward (PositionwiseFeedForward): Feed-forward 네트워크
+                예: PositionwiseFeedForward(d_model=512, d_ff=2048)
+            dropout (float): 드롭아웃 비율
+                예: 0.1
+        """
         super(EncoderLayer, self).__init__()
         self.self_attn = self_attn              # self-attention 서브 레이어
         self.feed_forward = feed_forward        # 피드포워드 네트워크
@@ -629,7 +745,28 @@ class EncoderLayer(nn.Module):
         self.size = size
 
     def forward(self, x, mask):
-        "입력 x에 대해 self-attention과 feed-forward를 순차적으로 적용합니다."
+        """
+        입력에 대해 self-attention과 feed-forward를 순차적으로 적용
+
+        매개변수:
+            x (Tensor): 입력 텐서
+                shape: (batch, seq_len, d_model)
+                예: (32, 10, 512)
+            mask (Tensor): Padding 마스크
+                shape: (batch, 1, seq_len)
+                예: (32, 1, 10)
+
+        반환값:
+            output (Tensor): 인코더 레이어 출력
+                shape: (batch, seq_len, d_model)
+                예: (32, 10, 512)
+
+        동작 순서:
+            1. Self-Attention: 문장 내 단어들 간의 관계 학습
+               x = sublayer[0](x, self_attn(x, x, x, mask))
+            2. Feed-Forward: 각 위치별로 독립적으로 변환
+               x = sublayer[1](x, feed_forward(x))
+        """
         x = self.sublayer[0](x, lambda x: self.self_attn(x, x, x, mask))
         return self.sublayer[1](x, self.feed_forward)
 ```
@@ -640,14 +777,51 @@ class EncoderLayer(nn.Module):
 
 ```python
 class Encoder(nn.Module):
-    "N개의 인코더 레이어로 구성된 전체 인코더."
+    """
+    N개의 인코더 레이어로 구성된 전체 인코더.
+    """
     def __init__(self, layer, N):
+        """
+        매개변수:
+            layer (EncoderLayer): 복제할 인코더 레이어
+                예: EncoderLayer(size=512, self_attn=..., feed_forward=..., dropout=0.1)
+            N (int): 레이어 개수
+                예: 6 (Transformer 원 논문 기준)
+        """
         super(Encoder, self).__init__()
         self.layers = clones(layer, N)
         self.norm = LayerNorm(layer.size)
-        
+
     def forward(self, x, mask):
-        "입력 x와 마스크를 각 레이어에 순차적으로 적용한 후 정규화합니다."
+        """
+        입력을 N개의 레이어에 순차적으로 통과시킨 후 정규화
+
+        매개변수:
+            x (Tensor): 입력 임베딩
+                shape: (batch, seq_len, d_model)
+                예: (32, 10, 512)
+            mask (Tensor): Padding 마스크
+                shape: (batch, 1, seq_len)
+                예: (32, 1, 10)
+
+        반환값:
+            output (Tensor): 인코더 최종 출력
+                shape: (batch, seq_len, d_model)
+                예: (32, 10, 512)
+
+        동작 과정:
+            1. Layer 1 통과: x = layer_1(x, mask)
+            2. Layer 2 통과: x = layer_2(x, mask)
+            ...
+            6. Layer 6 통과: x = layer_6(x, mask)
+            7. 최종 정규화: x = norm(x)
+
+        예시:
+            >>> encoder = Encoder(EncoderLayer(...), N=6)
+            >>> x = torch.randn(32, 10, 512)  # 배치 32, 길이 10
+            >>> mask = torch.ones(32, 1, 10)  # 모두 유효한 단어
+            >>> output = encoder(x, mask)  # shape: (32, 10, 512)
+        """
         for layer in self.layers:
             x = layer(x, mask)
         return self.norm(x)
@@ -670,8 +844,23 @@ class Encoder(nn.Module):
 
 ```python
 class DecoderLayer(nn.Module):
-    "디코더 한 층: self-attention, src-attention, 그리고 feed-forward로 구성됩니다."
+    """
+    디코더 한 층: self-attention, src-attention, 그리고 feed-forward로 구성됩니다.
+    """
     def __init__(self, size, self_attn, src_attn, feed_forward, dropout):
+        """
+        매개변수:
+            size (int): 모델의 차원 (d_model)
+                예: 512
+            self_attn (MultiHeadedAttention): Decoder self-attention
+                예: MultiHeadedAttention(h=8, d_model=512)
+            src_attn (MultiHeadedAttention): Encoder-Decoder attention
+                예: MultiHeadedAttention(h=8, d_model=512)
+            feed_forward (PositionwiseFeedForward): Feed-forward 네트워크
+                예: PositionwiseFeedForward(d_model=512, d_ff=2048)
+            dropout (float): 드롭아웃 비율
+                예: 0.1
+        """
         super(DecoderLayer, self).__init__()
         self.size = size
         self.self_attn = self_attn         # 디코더 자기 주의
@@ -679,9 +868,37 @@ class DecoderLayer(nn.Module):
         self.feed_forward = feed_forward   # 피드포워드 네트워크
         # 3개의 SublayerConnection을 사용
         self.sublayer = clones(SublayerConnection(size, dropout), 3)
- 
+
     def forward(self, x, memory, src_mask, tgt_mask):
-        "그림 1 (오른쪽)과 같이 순서대로 적용합니다."
+        """
+        Decoder layer의 순전파
+
+        매개변수:
+            x (Tensor): Decoder 입력 (이전 출력 임베딩)
+                shape: (batch, tgt_len, d_model)
+                예: (32, 10, 512)
+            memory (Tensor): Encoder 출력
+                shape: (batch, src_len, d_model)
+                예: (32, 15, 512)
+            src_mask (Tensor): 입력 문장 padding 마스크
+                shape: (batch, 1, src_len)
+                예: (32, 1, 15)
+            tgt_mask (Tensor): 출력 문장 subsequent + padding 마스크
+                shape: (batch, tgt_len, tgt_len)
+                예: (32, 10, 10)
+
+        반환값:
+            output (Tensor): Decoder layer 출력
+                shape: (batch, tgt_len, d_model)
+                예: (32, 10, 512)
+
+        동작 순서:
+            1. Self-Attention: 지금까지 생성한 단어들 간 관계
+               - tgt_mask로 미래 단어 차단
+            2. Encoder-Decoder Attention: 입력 문장 참조
+               - memory와 attention 수행
+            3. Feed-Forward: 각 위치별 독립 변환
+        """
         m = memory
         # 1) 디코더 자기 주의 (미래 단어를 보지 못하도록 tgt_mask 사용)
         x = self.sublayer[0](x, lambda x: self.self_attn(x, x, x, tgt_mask))
@@ -695,13 +912,58 @@ class DecoderLayer(nn.Module):
 
 ```python
 class Decoder(nn.Module):
-    "N개의 디코더 레이어로 구성된 전체 디코더."
+    """
+    N개의 디코더 레이어로 구성된 전체 디코더.
+    """
     def __init__(self, layer, N):
+        """
+        매개변수:
+            layer (DecoderLayer): 복제할 디코더 레이어
+                예: DecoderLayer(size=512, self_attn=..., src_attn=..., feed_forward=..., dropout=0.1)
+            N (int): 레이어 개수
+                예: 6 (Transformer 원 논문 기준)
+        """
         super(Decoder, self).__init__()
         self.layers = clones(layer, N)
         self.norm = LayerNorm(layer.size)
-        
+
     def forward(self, x, memory, src_mask, tgt_mask):
+        """
+        Decoder의 순전파
+
+        매개변수:
+            x (Tensor): Decoder 입력 (출력 임베딩)
+                shape: (batch, tgt_len, d_model)
+                예: (32, 10, 512)
+            memory (Tensor): Encoder 출력
+                shape: (batch, src_len, d_model)
+                예: (32, 15, 512)
+            src_mask (Tensor): 입력 padding 마스크
+                shape: (batch, 1, src_len)
+                예: (32, 1, 15)
+            tgt_mask (Tensor): 출력 subsequent + padding 마스크
+                shape: (batch, tgt_len, tgt_len)
+                예: (32, 10, 10)
+
+        반환값:
+            output (Tensor): Decoder 최종 출력
+                shape: (batch, tgt_len, d_model)
+                예: (32, 10, 512)
+
+        동작 과정:
+            1. Layer 1 통과: x = layer_1(x, memory, src_mask, tgt_mask)
+            2. Layer 2 통과: x = layer_2(x, memory, src_mask, tgt_mask)
+            ...
+            6. Layer 6 통과: x = layer_6(x, memory, src_mask, tgt_mask)
+            7. 최종 정규화: x = norm(x)
+
+        예시:
+            >>> decoder = Decoder(DecoderLayer(...), N=6)
+            >>> x = torch.randn(32, 10, 512)      # target 임베딩
+            >>> memory = torch.randn(32, 15, 512) # encoder 출력
+            >>> output = decoder(x, memory, src_mask, tgt_mask)
+            >>> output.shape  # (32, 10, 512)
+        """
         for layer in self.layers:
             x = layer(x, memory, src_mask, tgt_mask)
         return self.norm(x)
@@ -745,7 +1007,36 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 def subsequent_mask(size):
-    "미래 단어들을 마스킹합니다. (lower-triangular matrix)"
+    """
+    미래 단어들을 마스킹합니다. (lower-triangular matrix)
+
+    매개변수:
+        size (int): 시퀀스 길이
+            예: 10
+
+    반환값:
+        mask (Tensor): 하삼각 마스크
+            shape: (1, size, size)
+            예: (1, 10, 10)
+            값: True (볼 수 있음), False (차단)
+
+    동작 원리:
+        1. np.triu로 상삼각 행렬 생성 (k=1: 대각선 위)
+        2. == 0으로 변환 → 하삼각만 True
+
+    예시:
+        >>> mask = subsequent_mask(4)
+        >>> print(mask[0])
+        tensor([[ True, False, False, False],   # 위치 0: 자기만
+                [ True,  True, False, False],   # 위치 1: 0, 1
+                [ True,  True,  True, False],   # 위치 2: 0, 1, 2
+                [ True,  True,  True,  True]])  # 위치 3: 모두
+
+    용도:
+        Decoder self-attention에서 사용
+        - 위치 i는 위치 0~i까지만 참조 가능
+        - 미래 단어(i+1, i+2, ...)는 차단
+    """
     attn_shape = (1, size, size)
     # k=1부터 상삼각행렬 생성 -> 미래 단어에 해당하는 부분은 0
     subsequent_mask = np.triu(np.ones(attn_shape), k=1).astype('uint8')
@@ -870,20 +1161,54 @@ output = 0.05×Value(The) + 0.25×Value(cat) + ... + 0.42×Value(mat)
 
 ```python
 def attention(query, key, value, mask=None, dropout=None):
-    "Scaled Dot Product Attention을 계산합니다."
+    """
+    Scaled Dot Product Attention을 계산합니다.
+
+    매개변수:
+        query (Tensor): Query 행렬
+            shape: (batch, h, seq_len_q, d_k)
+            예: (1, 8, 10, 64) - 배치 1개, 8개 head, 10개 단어, 64차원
+        key (Tensor): Key 행렬
+            shape: (batch, h, seq_len_k, d_k)
+            예: (1, 8, 10, 64)
+        value (Tensor): Value 행렬
+            shape: (batch, h, seq_len_v, d_k)
+            예: (1, 8, 10, 64)
+            주의: seq_len_k == seq_len_v (항상 같음)
+        mask (Tensor, optional): 마스크 행렬
+            shape: (batch, 1, 1, seq_len) 또는 (batch, 1, seq_len, seq_len)
+            예: (1, 1, 1, 10) - padding mask
+            예: (1, 1, 10, 10) - subsequent mask
+        dropout (nn.Dropout, optional): 드롭아웃 레이어
+
+    반환값:
+        output (Tensor): Attention 적용 결과
+            shape: (batch, h, seq_len_q, d_k)
+            예: (1, 8, 10, 64)
+        p_attn (Tensor): Attention 가중치 (확률 분포)
+            shape: (batch, h, seq_len_q, seq_len_k)
+            예: (1, 8, 10, 10)
+    """
     d_k = query.size(-1)
 
     # 1단계: Query와 Key의 유사도 계산 (내적)
     # 예: query가 "앉다", key가 "고양이", "매트"일 때 각각 얼마나 관련있는지 계산
+    # query: (batch, h, seq_len_q, d_k) = (1, 8, 10, 64)
+    # key.transpose(-2, -1): (batch, h, d_k, seq_len_k) = (1, 8, 64, 10)
+    # scores: (batch, h, seq_len_q, seq_len_k) = (1, 8, 10, 10)
     scores = torch.matmul(query, key.transpose(-2, -1)) / math.sqrt(d_k)
 
     # 2단계: 마스킹 적용 (선택적)
     # 미래 단어를 보지 못하게 하거나, 패딩을 무시하기 위함
+    # mask: (batch, 1, 1, seq_len) 또는 (batch, 1, seq_len, seq_len)
+    # scores: (batch, h, seq_len_q, seq_len_k) - mask==0인 위치를 -1e9로 설정
     if mask is not None:
         scores = scores.masked_fill(mask == 0, -1e9)
 
     # 3단계: Softmax로 확률로 변환
     # scores [2.1, 0.3, 3.5] → p_attn [0.25, 0.05, 0.70]
+    # p_attn: (batch, h, seq_len_q, seq_len_k) = (1, 8, 10, 10)
+    # 각 query 단어마다 모든 key 단어에 대한 확률 분포
     p_attn = F.softmax(scores, dim=-1)
 
     if dropout is not None:
@@ -891,6 +1216,9 @@ def attention(query, key, value, mask=None, dropout=None):
 
     # 4단계: 확률 가중치로 Value를 가중합
     # 0.25×Value(cat) + 0.05×Value(on) + 0.70×Value(mat)
+    # p_attn: (batch, h, seq_len_q, seq_len_k) = (1, 8, 10, 10)
+    # value: (batch, h, seq_len_v, d_k) = (1, 8, 10, 64)
+    # output: (batch, h, seq_len_q, d_k) = (1, 8, 10, 64)
     return torch.matmul(p_attn, value), p_attn
 ```
 
@@ -953,7 +1281,17 @@ Head 3: 품사 관계에 집중
 ```python
 class MultiHeadedAttention(nn.Module):
     def __init__(self, h, d_model, dropout=0.1):
-        "모델 차원(d_model)과 head의 개수 h를 입력받습니다. (d_k = d_model // h)"
+        """
+        Multi-Head Attention 모듈
+
+        매개변수:
+            h (int): Head 개수
+                예: 8
+            d_model (int): 모델 차원
+                예: 512
+            dropout (float): 드롭아웃 비율
+                예: 0.1
+        """
         super(MultiHeadedAttention, self).__init__()
         assert d_model % h == 0  # d_model은 h로 나누어 떨어져야 합니다.
 
@@ -967,6 +1305,41 @@ class MultiHeadedAttention(nn.Module):
         self.dropout = nn.Dropout(p=dropout)
 
     def forward(self, query, key, value, mask=None):
+        """
+        Multi-Head Attention 계산
+
+        매개변수:
+            query (Tensor): Query 텐서
+                shape: (batch, seq_len_q, d_model)
+                예: (32, 10, 512)
+            key (Tensor): Key 텐서
+                shape: (batch, seq_len_k, d_model)
+                예: (32, 15, 512)
+            value (Tensor): Value 텐서
+                shape: (batch, seq_len_v, d_model)
+                예: (32, 15, 512)
+            mask (Tensor, optional): 마스크
+                shape: (batch, 1, seq_len) 또는 (batch, seq_len, seq_len)
+                예: (32, 1, 15)
+
+        반환값:
+            output (Tensor): Multi-head attention 출력
+                shape: (batch, seq_len_q, d_model)
+                예: (32, 10, 512)
+
+        동작 과정:
+            1. Linear 변환 + Head 분할:
+               (batch, seq_len, 512) → (batch, 8, seq_len, 64)
+            2. 각 Head에서 Attention 계산 (병렬)
+            3. Head 결합: (batch, 8, seq_len, 64) → (batch, seq_len, 512)
+            4. 최종 Linear 변환
+
+        예시:
+            >>> mha = MultiHeadedAttention(h=8, d_model=512)
+            >>> q = torch.randn(32, 10, 512)
+            >>> k = v = torch.randn(32, 15, 512)
+            >>> output = mha(q, k, v)  # shape: (32, 10, 512)
+        """
         if mask is not None:
             # 동일한 마스크를 모든 head에 적용
             mask = mask.unsqueeze(1)
@@ -1016,14 +1389,55 @@ class MultiHeadedAttention(nn.Module):
 
 ```python
 class PositionwiseFeedForward(nn.Module):
-    "두 개의 선형 레이어와 ReLU를 사용한 피드포워드 네트워크."
+    """
+    Position-wise Feed-Forward Network
+    각 위치에 독립적으로 적용되는 2층 신경망
+    """
     def __init__(self, d_model, d_ff, dropout=0.1):
+        """
+        매개변수:
+            d_model (int): 입력/출력 차원
+                예: 512
+            d_ff (int): 중간 은닉층 차원
+                예: 2048 (보통 d_model의 4배)
+            dropout (float): 드롭아웃 비율
+                예: 0.1
+        """
         super(PositionwiseFeedForward, self).__init__()
         self.w_1 = nn.Linear(d_model, d_ff)  # 차원 확장 (예: 512 -> 2048)
         self.w_2 = nn.Linear(d_ff, d_model)  # 원래 차원으로 축소
         self.dropout = nn.Dropout(dropout)
 
     def forward(self, x):
+        """
+        Feed-Forward 계산: FFN(x) = W_2(dropout(ReLU(W_1(x))))
+
+        매개변수:
+            x (Tensor): 입력 텐서
+                shape: (batch, seq_len, d_model)
+                예: (32, 10, 512)
+
+        반환값:
+            output (Tensor): Feed-forward 출력
+                shape: (batch, seq_len, d_model)
+                예: (32, 10, 512)
+
+        동작 순서:
+            1. W_1: (batch, seq_len, 512) → (batch, seq_len, 2048)
+            2. ReLU: 음수 값을 0으로
+            3. Dropout: 일부 뉴런 비활성화
+            4. W_2: (batch, seq_len, 2048) → (batch, seq_len, 512)
+
+        특징:
+            - 각 위치(단어)마다 독립적으로 적용
+            - 모든 위치에 동일한 가중치 사용
+            - 차원 확장 후 축소로 비선형 변환 수행
+
+        예시:
+            >>> ff = PositionwiseFeedForward(d_model=512, d_ff=2048)
+            >>> x = torch.randn(32, 10, 512)
+            >>> output = ff(x)  # shape: (32, 10, 512)
+        """
         return self.w_2(self.dropout(F.relu(self.w_1(x))))
 ```
 
@@ -1057,12 +1471,50 @@ Positional Encoding은 각 단어에 "위치 타임스탬프"를 추가하는 �
 
 ```python
 class Embeddings(nn.Module):
+    """
+    단어 인덱스를 벡터로 변환하는 Embedding Layer
+    """
     def __init__(self, d_model, vocab):
+        """
+        매개변수:
+            d_model (int): 임베딩 벡터 차원
+                예: 512
+            vocab (int): 어휘 사전 크기
+                예: 10000
+        """
         super(Embeddings, self).__init__()
-        self.lut = nn.Embedding(vocab, d_model)
+        self.lut = nn.Embedding(vocab, d_model)  # Lookup Table
         self.d_model = d_model
 
     def forward(self, x):
+        """
+        단어 인덱스를 임베딩 벡터로 변환
+
+        매개변수:
+            x (Tensor): 단어 인덱스
+                shape: (batch, seq_len)
+                예: tensor([[1, 234, 56, 789, 2]])
+                값: 각 위치의 단어 ID
+
+        반환값:
+            embeddings (Tensor): 임베딩 벡터
+                shape: (batch, seq_len, d_model)
+                예: (1, 5, 512)
+
+        동작:
+            1. Lookup: 각 단어 ID → d_model 차원 벡터
+            2. Scaling: sqrt(d_model) 곱하기
+
+        왜 sqrt(d_model)을 곱하나?
+            - Positional Encoding과 스케일 맞추기 위함
+            - 임베딩 값의 분산을 조절하여 학습 안정화
+
+        예시:
+            >>> emb = Embeddings(d_model=512, vocab=10000)
+            >>> x = torch.LongTensor([[1, 234, 56]])  # 3개 단어
+            >>> output = emb(x)  # shape: (1, 3, 512)
+            >>> # 단어 1 → 512차원 벡터 × sqrt(512)
+        """
         # 임베딩 값에 sqrt(d_model)을 곱하여 스케일을 맞춰줍니다.
         return self.lut(x) * math.sqrt(self.d_model)
 ```
@@ -1071,28 +1523,76 @@ class Embeddings(nn.Module):
 
 ```python
 class PositionalEncoding(nn.Module):
-    "위치 정보를 sine과 cosine 함수를 이용해 생성합니다."
+    """
+    위치 정보를 sine과 cosine 함수를 이용해 생성합니다.
+    """
     def __init__(self, d_model, dropout, max_len=5000):
+        """
+        매개변수:
+            d_model (int): 모델 차원
+                예: 512
+            dropout (float): 드롭아웃 비율
+                예: 0.1
+            max_len (int): 최대 시퀀스 길이
+                예: 5000
+        """
         super(PositionalEncoding, self).__init__()
         self.dropout = nn.Dropout(p=dropout)
 
         # max_len x d_model 크기의 positional encoding 행렬 생성
         pe = torch.zeros(max_len, d_model)
         position = torch.arange(0, max_len).unsqueeze(1)  # [0, 1, 2, 3, ...]
+        # shape: (max_len, 1) = (5000, 1)
 
         # 주파수를 로그 스케일로 분포시키기 위한 term
+        # div_term = exp(-log(10000) * [0, 2, 4, ...] / d_model)
         div_term = torch.exp(torch.arange(0, d_model, 2) *
                              -(math.log(10000.0) / d_model))
+        # shape: (d_model/2,) = (256,)
 
         # 짝수 인덱스: sin 함수 사용
+        # PE(pos, 2i) = sin(pos / 10000^(2i/d_model))
         pe[:, 0::2] = torch.sin(position * div_term)
+
         # 홀수 인덱스: cos 함수 사용
+        # PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))
         pe[:, 1::2] = torch.cos(position * div_term)
 
         pe = pe.unsqueeze(0)  # 배치 차원을 위해 확장
-        self.register_buffer('pe', pe)
+        # shape: (1, max_len, d_model) = (1, 5000, 512)
+        self.register_buffer('pe', pe)  # 학습하지 않는 파라미터로 등록
 
     def forward(self, x):
+        """
+        임베딩에 위치 인코딩 추가
+
+        매개변수:
+            x (Tensor): 단어 임베딩
+                shape: (batch, seq_len, d_model)
+                예: (32, 10, 512)
+
+        반환값:
+            output (Tensor): 위치 정보가 추가된 임베딩
+                shape: (batch, seq_len, d_model)
+                예: (32, 10, 512)
+
+        동작:
+            1. x + pe[:, :seq_len]: 임베딩 + 위치 인코딩
+            2. dropout: 일부 값 무작위로 0으로
+
+        예시:
+            >>> pe = PositionalEncoding(d_model=512, dropout=0.1)
+            >>> x = torch.randn(32, 10, 512)  # 임베딩
+            >>> output = pe(x)  # shape: (32, 10, 512)
+            >>> # 각 위치에 고유한 sine/cosine 패턴 추가됨
+
+        위치 인코딩 값 예시:
+            위치 0: [sin(0/1), cos(0/1), sin(0/100), cos(0/100), ...]
+            위치 1: [sin(1/1), cos(1/1), sin(1/100), cos(1/100), ...]
+            위치 2: [sin(2/1), cos(2/1), sin(2/100), cos(2/100), ...]
+            ...
+            → 각 위치마다 고유한 패턴 생성
+        """
         # 입력 임베딩에 positional encoding을 더한 후 드롭아웃 적용
         x = x + self.pe[:, :x.size(1)]
         return self.dropout(x)
@@ -1146,9 +1646,70 @@ class PositionalEncoding(nn.Module):
 지금까지 구성한 각 구성요소들을 하나의 Transformer 모델로 조립하는 함수입니다.
 
 ```python
-def make_model(src_vocab, tgt_vocab, N=6, 
+def make_model(src_vocab, tgt_vocab, N=6,
                d_model=512, d_ff=2048, h=8, dropout=0.1):
-    "하이퍼파라미터를 받아 Transformer 모델을 생성합니다."
+    """
+    하이퍼파라미터를 받아 완전한 Transformer 모델을 생성합니다.
+
+    이 함수는 Encoder, Decoder, Embeddings, Generator 등 모든 구성요소를
+    조립하여 번역 작업에 사용할 수 있는 완전한 모델을 반환합니다.
+
+    매개변수:
+        src_vocab (int): 소스 언어 어휘 크기
+            예: 10000 (소스 언어의 고유 토큰 수)
+        tgt_vocab (int): 타겟 언어 어휘 크기
+            예: 8000 (타겟 언어의 고유 토큰 수)
+        N (int): Encoder와 Decoder의 레이어 수 (기본값: 6)
+            예: 6 (원본 논문의 표준 설정)
+        d_model (int): 모델의 임베딩 차원 (기본값: 512)
+            예: 512 (모든 레이어에서 사용되는 벡터 차원)
+        d_ff (int): Feed-Forward 네트워크의 내부 차원 (기본값: 2048)
+            예: 2048 (FFN의 은닉층 차원, d_model의 4배)
+        h (int): Multi-Head Attention의 head 수 (기본값: 8)
+            예: 8 (d_model=512를 8개로 나누면 각 head는 64차원)
+        dropout (float): Dropout 비율 (기본값: 0.1)
+            예: 0.1 (10%의 뉴런을 무작위로 제거하여 과적합 방지)
+
+    반환값:
+        model (EncoderDecoder): 초기화된 완전한 Transformer 모델
+            - 모든 파라미터는 Xavier 초기화됨
+            - 즉시 훈련 또는 추론에 사용 가능
+
+    동작 과정:
+        1. 공유할 구성요소 생성:
+           - MultiHeadedAttention (h=8 heads)
+           - PositionwiseFeedForward (d_ff=2048)
+           - PositionalEncoding
+
+        2. Encoder 조립:
+           - N개의 EncoderLayer 스택
+           - 각 레이어: Self-Attention + Feed-Forward
+
+        3. Decoder 조립:
+           - N개의 DecoderLayer 스택
+           - 각 레이어: Self-Attention + Cross-Attention + Feed-Forward
+
+        4. Embeddings 연결:
+           - 소스: Embeddings → PositionalEncoding
+           - 타겟: Embeddings → PositionalEncoding
+
+        5. Generator 연결:
+           - Linear(d_model → tgt_vocab) + Softmax
+
+        6. 파라미터 초기화:
+           - 2차원 이상 파라미터에 Xavier uniform 초기화 적용
+
+    사용 예시:
+        # 영어→한국어 번역 모델 (어휘: 30000, 20000)
+        model = make_model(30000, 20000, N=6, d_model=512)
+
+        # 작은 실험용 모델
+        small_model = make_model(100, 100, N=2, d_model=128, h=4)
+
+    참고:
+        - copy.deepcopy를 사용하여 각 레이어가 독립적인 파라미터를 갖도록 함
+        - 같은 attention/ff 객체를 재사용하면 파라미터가 공유되므로 복사 필요
+    """
     c = copy.deepcopy
     attn = MultiHeadedAttention(h, d_model, dropout)
     ff = PositionwiseFeedForward(d_model, d_ff, dropout)
@@ -1188,7 +1749,67 @@ print(tmp_model)
 
 ```python
 class Batch:
-    "마스킹 정보를 포함한 데이터 배치를 처리합니다."
+    """
+    마스킹 정보를 포함한 데이터 배치를 처리합니다.
+
+    학습 시 배치 데이터를 처리하면서 패딩 마스크와 미래 단어 마스크를
+    자동으로 생성합니다. Teacher Forcing을 위해 타겟 시퀀스를 입력과
+    정답으로 분리합니다.
+
+    매개변수:
+        src (Tensor): 소스 시퀀스 (Encoder 입력)
+            shape: (batch, src_len)
+            예: (32, 10) - 배치 32, 길이 10
+            값 예: [[5, 12, 8, 0, 0], [7, 3, 15, 21, 0], ...]
+                   (0은 패딩 토큰)
+        trg (Tensor, optional): 타겟 시퀀스 (Decoder 입력 및 정답)
+            shape: (batch, tgt_len)
+            예: (32, 12) - 배치 32, 길이 12
+            값 예: [[1, 4, 9, 13, 2, 0], ...] (1: <START>, 2: <END>)
+            추론 시에는 None
+        pad (int): 패딩 토큰의 인덱스 (기본값: 0)
+            예: 0
+
+    속성:
+        src (Tensor): 소스 시퀀스
+            shape: (batch, src_len)
+        src_mask (Tensor): 소스 패딩 마스크
+            shape: (batch, 1, src_len)
+            예: [[1, 1, 1, 0, 0]] → 앞 3개는 실제 단어, 뒤 2개는 패딩
+        trg (Tensor): 디코더 입력 (원본에서 마지막 토큰 제거)
+            shape: (batch, tgt_len-1)
+            예: [1, 4, 9, 13] (원본이 [1, 4, 9, 13, 2]인 경우)
+        trg_y (Tensor): 디코더 정답 (원본에서 첫 토큰 제거)
+            shape: (batch, tgt_len-1)
+            예: [4, 9, 13, 2] (원본이 [1, 4, 9, 13, 2]인 경우)
+        trg_mask (Tensor): 타겟 마스크 (패딩 + 미래 단어)
+            shape: (batch, tgt_len-1, tgt_len-1)
+            예: [[1, 0, 0, 0],
+                 [1, 1, 0, 0],
+                 [1, 1, 1, 0],
+                 [1, 1, 1, 1]]
+            → 각 위치는 자신과 이전 단어만 볼 수 있음
+        ntokens (int): 배치 내 실제 토큰 수 (패딩 제외)
+            예: 156 (32개 문장에서 패딩을 제외한 토큰 수)
+
+    동작 예시:
+        # 학습 시
+        src = torch.tensor([[5, 12, 8, 0, 0]])  # 길이 5 (패딩 2개)
+        trg = torch.tensor([[1, 4, 9, 13, 2]])  # <START> ... <END>
+
+        batch = Batch(src, trg, pad=0)
+        # batch.src = [[5, 12, 8, 0, 0]]
+        # batch.src_mask = [[[1, 1, 1, 0, 0]]]
+        # batch.trg = [[1, 4, 9, 13]]  (마지막 토큰 2 제거)
+        # batch.trg_y = [[4, 9, 13, 2]]  (첫 토큰 1 제거)
+        # batch.ntokens = 4
+
+        # 추론 시 (타겟 없음)
+        batch = Batch(src, trg=None, pad=0)
+        # batch.src = [[5, 12, 8, 0, 0]]
+        # batch.src_mask = [[[1, 1, 1, 0, 0]]]
+        # batch.trg, batch.trg_y, batch.trg_mask는 존재하지 않음
+    """
     def __init__(self, src, trg=None, pad=0):
         self.src = src
         # src의 패딩 위치는 mask 처리 (1: 실제 token, 0: 패딩)
@@ -1203,7 +1824,57 @@ class Batch:
 
     @staticmethod
     def make_std_mask(tgt, pad):
-        "패딩과 미래 단어들을 마스킹하는 표준 mask 생성"
+        """
+        패딩과 미래 단어들을 마스킹하는 표준 mask를 생성합니다.
+
+        Decoder의 Self-Attention에서 사용되는 마스크로, 두 가지를 동시에 처리합니다:
+        1. 패딩 토큰 마스킹: 패딩 위치는 attention하지 않음
+        2. 미래 단어 마스킹: 현재 위치보다 뒤의 단어는 볼 수 없음 (Causal Mask)
+
+        매개변수:
+            tgt (Tensor): 타겟 시퀀스
+                shape: (batch, tgt_len)
+                예: (32, 10) - 배치 32, 길이 10
+                값 예: [[1, 4, 9, 13, 2, 0, 0, 0, 0, 0]]
+                       (0: 패딩, 2: <END>)
+            pad (int): 패딩 토큰 인덱스
+                예: 0
+
+        반환값:
+            tgt_mask (Tensor): 결합된 마스크
+                shape: (batch, tgt_len, tgt_len)
+                예: (32, 10, 10)
+                값 예 (tgt_len=5, 패딩 2개):
+                [[1, 0, 0, 0, 0],    # 위치 0: 자신만 볼 수 있음
+                 [1, 1, 0, 0, 0],    # 위치 1: 0~1 볼 수 있음
+                 [1, 1, 1, 0, 0],    # 위치 2: 0~2 볼 수 있음
+                 [0, 0, 0, 0, 0],    # 위치 3: 패딩이므로 모두 0
+                 [0, 0, 0, 0, 0]]    # 위치 4: 패딩이므로 모두 0
+
+        동작 과정:
+            1. 패딩 마스크 생성:
+               (tgt != pad) → [1, 1, 1, 1, 1, 0, 0, ...] (True/False)
+               .unsqueeze(-2) → (batch, 1, tgt_len)
+
+            2. 미래 단어 마스크 생성:
+               subsequent_mask(tgt_len) →
+               [[1, 0, 0, 0],
+                [1, 1, 0, 0],
+                [1, 1, 1, 0],
+                [1, 1, 1, 1]]
+
+            3. AND 연산으로 결합:
+               패딩 마스크 & 미래 마스크 → 최종 마스크
+
+        사용 예시:
+            tgt = torch.tensor([[1, 4, 9, 0, 0]])  # 실제 단어 3개, 패딩 2개
+            mask = Batch.make_std_mask(tgt, pad=0)
+            # mask[0] = [[1, 0, 0, 0, 0],
+            #            [1, 1, 0, 0, 0],
+            #            [1, 1, 1, 0, 0],
+            #            [0, 0, 0, 0, 0],  # 패딩
+            #            [0, 0, 0, 0, 0]]  # 패딩
+        """
         tgt_mask = (tgt != pad).unsqueeze(-2)
         tgt_mask = tgt_mask & subsequent_mask(tgt.size(-1)).type_as(tgt_mask.data)
         return tgt_mask
@@ -1218,7 +1889,37 @@ Label Smoothing은 모델이 너무 자신감(confident)하게 예측하지 않�
 
 ```python
 class LabelSmoothing(nn.Module):
-    "Label Smoothing을 구현합니다."
+    """
+    Label Smoothing을 구현합니다.
+
+    정답 레이블에만 1.0을 주는 대신, 정답에 높은 확률을 주고
+    나머지 클래스에도 작은 확률을 분산시켜 모델이 과도하게
+    자신감 있게 예측하는 것을 방지합니다. 이는 일반화 성능을 향상시킵니다.
+
+    매개변수:
+        size (int): 전체 어휘 크기
+            예: 10000 (타겟 vocab 크기)
+        padding_idx (int): 패딩 토큰의 인덱스
+            예: 0 (패딩 토큰은 loss 계산에서 제외)
+        smoothing (float): Smoothing 정도 (기본값: 0.0)
+            예: 0.1 (정답에 0.9, 나머지에 0.1 분산)
+            0.0이면 일반 Cross-Entropy와 동일
+
+    속성:
+        criterion (nn.KLDivLoss): KL Divergence loss 함수
+        confidence (float): 정답 토큰에 할당할 확률
+            예: 0.9 (smoothing=0.1일 때)
+        true_dist (Tensor): 계산된 실제 확률 분포 (디버깅용)
+
+    동작 예시 (size=5, smoothing=0.1, 정답=2):
+        일반 One-hot:     [0.0, 0.0, 1.0, 0.0, 0.0]
+        Label Smoothing:  [0.025, 0.025, 0.9, 0.025, 0.025]
+                          (정답: 0.9, 나머지: 0.1/4=0.025)
+
+    참고:
+        - size-2를 사용하는 이유: 패딩과 정답을 제외한 나머지에 분산
+        - KL Divergence를 사용하여 부드러운 타겟 분포와의 차이를 최소화
+    """
     def __init__(self, size, padding_idx, smoothing=0.0):
         super(LabelSmoothing, self).__init__()
         self.criterion = nn.KLDivLoss(reduction='sum')
@@ -1227,8 +1928,60 @@ class LabelSmoothing(nn.Module):
         self.smoothing = smoothing
         self.size = size
         self.true_dist = None
-        
+
     def forward(self, x, target):
+        """
+        Label Smoothing이 적용된 loss를 계산합니다.
+
+        매개변수:
+            x (Tensor): 모델의 출력 (log-probabilities)
+                shape: (batch, vocab_size)
+                예: (32, 10000) - 배치 32, 어휘 10000
+                값: log_softmax 결과 (음수 값)
+            target (Tensor): 정답 토큰 인덱스
+                shape: (batch,)
+                예: (32,)
+                값 예: [5, 12, 8, 3, ...]
+
+        반환값:
+            loss (Tensor): KL Divergence loss (스칼라)
+                예: 245.67 (배치 전체의 loss 합)
+
+        동작 과정:
+            1. 기본 분포 생성 (모든 클래스에 균등 분산):
+               true_dist = [0.025, 0.025, ..., 0.025]  # size-2개로 나눔
+
+            2. 정답 위치에 높은 확률 할당:
+               true_dist[target] = 0.9  # confidence
+
+            3. 패딩 위치는 0으로 설정:
+               true_dist[padding_idx] = 0.0
+               target이 padding인 경우 해당 샘플 전체를 0으로
+
+            4. KL Divergence 계산:
+               loss = KL(true_dist || x)
+
+        사용 예시:
+            # 어휘 크기 10000, smoothing=0.1
+            criterion = LabelSmoothing(10000, padding_idx=0, smoothing=0.1)
+
+            # 모델 출력 (log-probabilities)
+            x = model.generator(decoder_output)  # (32, 10000)
+
+            # 정답 레이블
+            target = batch.trg_y.view(-1)  # (32,)
+
+            # Loss 계산
+            loss = criterion(x, target)  # 스칼라
+
+        비교 예시 (vocab_size=5, 정답=2):
+            일반 Cross-Entropy 타겟:
+            [0.0, 0.0, 1.0, 0.0, 0.0]
+
+            Label Smoothing 타겟 (smoothing=0.1):
+            [0.033, 0.033, 0.9, 0.033, 0.0]  # 패딩은 0.0
+            → 정답: 0.9, 나머지 2개: 0.1/3≈0.033
+        """
         assert x.size(1) == self.size
         true_dist = x.data.clone()
         true_dist.fill_(self.smoothing / (self.size - 2))
@@ -1250,7 +2003,46 @@ Transformer 논문에서는 학습 초기에는 학습률을 선형으로 증가
 
 ```python
 class NoamOpt:
-    "Noam 학습률 스케줄러. 매 step마다 학습률을 업데이트합니다."
+    """
+    Noam 학습률 스케줄러 (Transformer 논문의 학습률 스케줄).
+
+    학습 초기에는 학습률을 선형으로 증가시키고 (warmup),
+    이후에는 역제곱근으로 감소시키는 방식입니다.
+    이는 학습 초기의 불안정성을 방지하고 점진적으로 수렴하도록 합니다.
+
+    매개변수:
+        model_size (int): 모델의 차원 (d_model)
+            예: 512 (Transformer base)
+            학습률 스케일링에 사용됨
+        factor (float): 학습률 배율 조정 인자
+            예: 2.0 (논문의 기본값)
+            최종 학습률 = factor × 계산된 학습률
+        warmup (int): Warmup 스텝 수
+            예: 4000 (논문의 기본값)
+            이 스텝까지는 학습률을 선형으로 증가
+        optimizer (torch.optim.Optimizer): PyTorch optimizer
+            예: Adam(model.parameters(), lr=0, betas=(0.9, 0.98))
+
+    속성:
+        _step (int): 현재 학습 스텝 (0부터 시작)
+        _rate (float): 현재 학습률
+
+    학습률 변화 예시 (model_size=512, factor=2, warmup=4000):
+        Step 1:     lr ≈ 0.0001  (매우 작은 값으로 시작)
+        Step 1000:  lr ≈ 0.00025 (선형 증가)
+        Step 4000:  lr ≈ 0.001   (최대값 도달)
+        Step 8000:  lr ≈ 0.0007  (감소 시작)
+        Step 16000: lr ≈ 0.0005  (계속 감소)
+
+    동작 원리:
+        lr = factor × d_model^(-0.5) × min(step^(-0.5), step × warmup^(-1.5))
+
+        1. step < warmup: step × warmup^(-1.5)
+           → 선형 증가 (step이 증가하면 lr 증가)
+
+        2. step >= warmup: step^(-0.5)
+           → 역제곱근 감소 (step이 증가하면 lr 감소)
+    """
     def __init__(self, model_size, factor, warmup, optimizer):
         self.optimizer = optimizer
         self._step = 0
@@ -1258,24 +2050,116 @@ class NoamOpt:
         self.factor = factor
         self.model_size = model_size
         self._rate = 0
-        
+
     def step(self):
-        "파라미터 업데이트와 함께 학습률을 갱신합니다."
+        """
+        파라미터를 업데이트하고 학습률을 갱신합니다.
+
+        매 학습 스텝마다 호출되어야 하며, optimizer.step() 대신 사용합니다.
+
+        동작 과정:
+            1. 스텝 카운터 증가
+            2. 현재 스텝에 맞는 학습률 계산
+            3. Optimizer의 모든 param_groups에 학습률 적용
+            4. Optimizer의 파라미터 업데이트 실행
+
+        사용 예시:
+            optimizer_wrapper = NoamOpt(512, 2, 4000,
+                                       torch.optim.Adam(model.parameters()))
+
+            for batch in train_loader:
+                loss = compute_loss(batch)
+                loss.backward()
+                optimizer_wrapper.step()  # optimizer.step() 대신 사용
+                optimizer_wrapper.optimizer.zero_grad()
+        """
         self._step += 1
         rate = self.rate()
         for p in self.optimizer.param_groups:
             p['lr'] = rate
         self._rate = rate
         self.optimizer.step()
-        
+
     def rate(self, step=None):
-        "학습률을 업데이트하는 공식: lr = factor * (model_size^(-0.5) * min(step^(-0.5), step * warmup^(-1.5)))"
+        """
+        현재 스텝에 대한 학습률을 계산합니다.
+
+        매개변수:
+            step (int, optional): 특정 스텝의 학습률을 계산 (기본값: 현재 스텝)
+                예: 1000 (1000번째 스텝의 학습률 확인)
+
+        반환값:
+            lr (float): 계산된 학습률
+                예: 0.0008
+
+        공식:
+            lr = factor × model_size^(-0.5) × min(step^(-0.5), step × warmup^(-1.5))
+
+        수식 분해 (model_size=512, factor=2, warmup=4000):
+            기본 스케일: 2 × 512^(-0.5) = 2 × 0.044 = 0.088
+
+            Warmup 구간 (step < 4000):
+                step=1000: 0.088 × min(0.032, 1000×4000^(-1.5))
+                         = 0.088 × 0.00395 = 0.00035
+
+            학습 구간 (step >= 4000):
+                step=8000: 0.088 × min(0.011, 8000×4000^(-1.5))
+                         = 0.088 × 0.011 = 0.00097
+
+        참고:
+            - Warmup 구간: step × warmup^(-1.5) 항이 작아서 선형 증가
+            - 이후 구간: step^(-0.5) 항이 작아서 역제곱근 감소
+        """
         if step is None:
             step = self._step
         return self.factor * (self.model_size ** (-0.5) *
                               min(step ** (-0.5), step * self.warmup ** (-1.5)))
 
 def get_std_opt(model):
+    """
+    표준 Transformer 학습 설정을 위한 optimizer를 생성합니다.
+
+    Transformer 논문에서 제안한 하이퍼파라미터를 사용하여
+    NoamOpt 스케줄러와 Adam optimizer를 결합합니다.
+
+    매개변수:
+        model (EncoderDecoder): 학습할 Transformer 모델
+            예: make_model(10000, 8000, N=6)로 생성된 모델
+
+    반환값:
+        optimizer (NoamOpt): 설정된 optimizer wrapper
+            - Learning rate scheduler: Noam 방식
+            - Base optimizer: Adam
+            - 모델의 모든 파라미터를 최적화 대상으로 포함
+
+    설정된 하이퍼파라미터:
+        - model_size: model.src_embed[0].d_model (예: 512)
+        - factor: 2.0 (학습률 배율)
+        - warmup: 4000 (warmup 스텝 수)
+        - optimizer: Adam
+          - lr: 0 (NoamOpt가 동적으로 설정)
+          - betas: (0.9, 0.98) (논문의 설정, 일반적인 0.999 대신 0.98)
+          - eps: 1e-9 (수치 안정성)
+
+    사용 예시:
+        # 모델 생성
+        model = make_model(30000, 20000, N=6, d_model=512)
+
+        # 표준 optimizer 생성
+        optimizer = get_std_opt(model)
+
+        # 학습 루프
+        for batch in train_loader:
+            loss = compute_loss(model, batch)
+            loss.backward()
+            optimizer.step()  # 학습률 자동 조정 + 파라미터 업데이트
+            optimizer.optimizer.zero_grad()
+
+    참고:
+        - Adam의 beta2가 0.98인 이유: 더 빠른 적응을 위함
+        - 초기 lr=0: NoamOpt가 warmup부터 시작하여 점진적으로 증가
+        - model.src_embed[0]: Sequential(Embeddings, PositionalEncoding)의 첫 번째 요소
+    """
     return NoamOpt(model.src_embed[0].d_model, 2, 4000,
                    torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9))
 ```
@@ -1291,15 +2175,97 @@ def get_std_opt(model):
 
 ```python
 def greedy_decode(model, src, src_mask, max_len, start_symbol):
-    "Greedy 방식으로 문장을 생성합니다."
+    """
+    Greedy 방식으로 문장을 생성합니다 (추론/번역).
+
+    각 스텝마다 가장 높은 확률의 단어를 선택하는 단순하지만 효과적인
+    디코딩 방법입니다. Beam Search보다 빠르지만 정확도는 다소 낮을 수 있습니다.
+
+    매개변수:
+        model (EncoderDecoder): 학습된 Transformer 모델
+            예: make_model(10000, 8000)로 생성 후 학습 완료된 모델
+        src (Tensor): 소스 문장 (Encoder 입력)
+            shape: (1, src_len) - 배치는 항상 1 (단일 문장 번역)
+            예: [[5, 12, 8, 3, 2]] (토큰 인덱스)
+        src_mask (Tensor): 소스 마스크 (패딩 처리)
+            shape: (1, 1, src_len)
+            예: [[[1, 1, 1, 1, 1]]] (모두 실제 토큰)
+        max_len (int): 생성할 최대 문장 길이
+            예: 100 (최대 100개 토큰까지 생성)
+        start_symbol (int): 시작 토큰 인덱스
+            예: 1 (보통 <START> 또는 <BOS> 토큰)
+
+    반환값:
+        ys (Tensor): 생성된 타겟 문장
+            shape: (1, generated_len)
+            예: [[1, 4, 9, 13, 2]] (<START> ... <END>)
+            generated_len: 실제 생성된 길이 (max_len 이하)
+
+    동작 과정:
+        1. Encoder 실행:
+           src → Encoder → memory
+           memory: (1, src_len, d_model)
+
+        2. Decoder 초기화:
+           ys = [start_symbol]  # 예: [1] (<START>)
+
+        3. 반복 생성 (max_len-1번):
+           a. 현재까지 생성된 ys를 Decoder에 입력
+              ys → Decoder → out (1, ys_len, d_model)
+
+           b. 마지막 위치의 출력만 사용:
+              out[:, -1] → Generator → prob (1, vocab_size)
+
+           c. 가장 높은 확률의 단어 선택:
+              next_word = argmax(prob)
+
+           d. 생성된 단어를 ys에 추가:
+              ys = [ys, next_word]
+
+        4. 최종 문장 반환
+
+    생성 예시:
+        입력 (영어): "I love you"  → src = [5, 12, 8, 3, 2]
+
+        Step 0: ys = [1]                  → 예측: 4 → ys = [1, 4]
+        Step 1: ys = [1, 4]               → 예측: 9 → ys = [1, 4, 9]
+        Step 2: ys = [1, 4, 9]            → 예측: 13 → ys = [1, 4, 9, 13]
+        Step 3: ys = [1, 4, 9, 13]        → 예측: 2 → ys = [1, 4, 9, 13, 2]
+
+        출력 (한국어): [1, 4, 9, 13, 2]  → "나는 너를 사랑해"
+
+    사용 예시:
+        # 모델과 소스 문장 준비
+        model = make_model(10000, 8000)
+        # ... 학습 완료 ...
+
+        # 번역할 문장
+        src = torch.LongTensor([[5, 12, 8, 3, 2]])  # "I love you"
+        src_mask = (src != 0).unsqueeze(-2)
+
+        # Greedy Decoding으로 번역
+        model.eval()
+        with torch.no_grad():
+            translation = greedy_decode(model, src, src_mask,
+                                       max_len=50, start_symbol=1)
+
+        # 결과: translation = [[1, 4, 9, 13, 2]]
+        # 토큰 → 텍스트 변환으로 최종 번역 출력
+
+    참고:
+        - Greedy: 매 스텝 최고 확률만 선택 (빠르지만 최적 경로는 아닐 수 있음)
+        - Beam Search: 여러 후보를 동시에 탐색 (느리지만 더 정확)
+        - 배치 크기가 1인 이유: 추론 시 한 문장씩 처리하는 것이 일반적
+        - max_len에 도달하거나 <END> 토큰 생성 시 종료 (현재는 max_len만 체크)
+    """
     # encoder의 출력을 메모리(memory)로 얻습니다.
     memory = model.encode(src, src_mask)
     # 디코더 입력을 시작 기호로 초기화 (배치 크기 1)
     ys = torch.ones(1, 1).fill_(start_symbol).type_as(src.data)
-    
+
     for i in range(max_len - 1):
         # 현재까지 생성된 문장을 디코더에 입력하고, 다음 단어 확률을 계산합니다.
-        out = model.decode(memory, src_mask, ys, 
+        out = model.decode(memory, src_mask, ys,
                            subsequent_mask(ys.size(1)).type_as(src.data))
         prob = model.generator(out[:, -1])
         # 가장 확률 높은 단어 선택
@@ -1311,7 +2277,15 @@ def greedy_decode(model, src, src_mask, max_len, start_symbol):
 
 # 예시: 모델 평가 시
 src = torch.LongTensor([[1,2,3,4,5,6,7,8,9,10]])
+# src shape: (1, 10) - batch=1, seq_len=10
+
 src_mask = (src != 0).unsqueeze(-2)
+# (src != 0): [[True, True, True, True, True, True, True, True, True, True]]
+#   shape: (1, 10)
+# unsqueeze(-2): [[[True, True, True, True, True, True, True, True, True, True]]]
+#   shape: (1, 1, 10)
+# 모든 위치가 True: 패딩이 없으므로 모든 단어를 참조 가능
+
 result = greedy_decode(tmp_model, src, src_mask, max_len=10, start_symbol=1)
 print(result)
 ```
@@ -1711,6 +2685,50 @@ class NoamOpt:
                               min(step ** (-0.5), step * self.warmup ** (-1.5)))
 
 def get_std_opt(model):
+    """
+    표준 Transformer 학습 설정을 위한 optimizer를 생성합니다.
+
+    Transformer 논문에서 제안한 하이퍼파라미터를 사용하여
+    NoamOpt 스케줄러와 Adam optimizer를 결합합니다.
+
+    매개변수:
+        model (EncoderDecoder): 학습할 Transformer 모델
+            예: make_model(10000, 8000, N=6)로 생성된 모델
+
+    반환값:
+        optimizer (NoamOpt): 설정된 optimizer wrapper
+            - Learning rate scheduler: Noam 방식
+            - Base optimizer: Adam
+            - 모델의 모든 파라미터를 최적화 대상으로 포함
+
+    설정된 하이퍼파라미터:
+        - model_size: model.src_embed[0].d_model (예: 512)
+        - factor: 2.0 (학습률 배율)
+        - warmup: 4000 (warmup 스텝 수)
+        - optimizer: Adam
+          - lr: 0 (NoamOpt가 동적으로 설정)
+          - betas: (0.9, 0.98) (논문의 설정, 일반적인 0.999 대신 0.98)
+          - eps: 1e-9 (수치 안정성)
+
+    사용 예시:
+        # 모델 생성
+        model = make_model(30000, 20000, N=6, d_model=512)
+
+        # 표준 optimizer 생성
+        optimizer = get_std_opt(model)
+
+        # 학습 루프
+        for batch in train_loader:
+            loss = compute_loss(model, batch)
+            loss.backward()
+            optimizer.step()  # 학습률 자동 조정 + 파라미터 업데이트
+            optimizer.optimizer.zero_grad()
+
+    참고:
+        - Adam의 beta2가 0.98인 이유: 더 빠른 적응을 위함
+        - 초기 lr=0: NoamOpt가 warmup부터 시작하여 점진적으로 증가
+        - model.src_embed[0]: Sequential(Embeddings, PositionalEncoding)의 첫 번째 요소
+    """
     return NoamOpt(model.src_embed[0].d_model, 2, 4000,
                    torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9))
 
