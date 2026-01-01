@@ -40,11 +40,25 @@
     - [실용 팁](#실용-팁)
     - [추가 학습 자료](#추가-학습-자료)
   - [Colab PyTorch Code](#colab-pytorch-code)
+- [학습 (Training) PyTorch Example](#학습-training-pytorch-example)
+  - [Copy Task 데이터 생성](#copy-task-데이터-생성)
+  - [기본 학습 루프](#기본-학습-루프)
+  - [실전 학습 코드](#실전-학습-코드)
+- [추론 (Inference) PyTorch Example](#추론-inference-pytorch-example)
+  - [Greedy Decoding (탐욕적 디코딩)](#greedy-decoding-탐욕적-디코딩)
+  - [Beam Search (빔 서치)](#beam-search-빔-서치)
+  - [배치 추론 (Batch Inference)](#배치-추론-batch-inference)
+- [평가 (Evaluation) PyTorch Example](#평가-evaluation-pytorch-example)
+  - [정확도 계산 (Accuracy)](#정확도-계산-accuracy)
+  - [Perplexity 계산](#perplexity-계산)
+  - [BLEU Score 계산](#bleu-score-계산)
+  - [종합 평가 함수](#종합-평가-함수)
 
 ----
 
 # Materials
 
+- [[Deep Learning 101] 트랜스포머, 스텝 바이 스텝 | youtube](https://www.youtube.com/watch?v=p216tTVxues)
 - [The Illustrated Transformer](https://nlpinkorean.github.io/illustrated-transformer/)
 * [Transformer 모델 (Attention is all you need)](https://gaussian37.github.io/dl-concept-transformer/)
   * [Attention 메커니즘의 이해](https://gaussian37.github.io/dl-concept-attention/)
@@ -63,6 +77,18 @@
 ## 바깥쪽에서 안쪽으로: Transformer 이해하기
 
 이 섹션은 Transformer를 큰 그림부터 세부사항까지 단계적으로 설명합니다. Junior Software Engineer도 이해할 수 있도록 구체적인 비유와 예시를 사용합니다.
+
+![](https://upload.wikimedia.org/wikipedia/commons/3/34/Transformer%2C_full_architecture.png)
+
+- Encoder 의 바깥쪽 실선은 EncoderLayer 를 의미하고 안쪽 점선은 SublayerConnection 를 의미한다.
+- EncoderLayer 는 6 개이다. 각 EncoderLayer 안의 SublayerConnection 은 2개이다.
+- EncoderLayer 안의 첫번째 SublayerConnection 은 MultiHeadedAttention 이다. self attention 을 의미한다.
+- EncoderLayer 안의 두번째 SublayerConnection 은 PositionwiseFeedForward 이다.
+- Dencoder 의 바깥쪽 실선은 DecoderLayer 를 의미하고 안쪽 점선은 SublayerConnection 를 의미한다.
+- DecoderLayer 는 6 개이다. 각 DecoderLayer 안의 SublayerConnection 은 3개이다.
+- DecoderLayer 안의 첫번째 SublayerConnection 은 MultiHeadedAttention 이다. self attention 을 의미한다.
+- DecoderLayer 안의 두번째 SublayerConnection 은 PositionwiseFeedForward 이다.
+- DecoderLayer 안의 세번째 SublayerConnection 은 MultiHeadedAttention 이다. src attention 을 의미한다.
 
 ### Level 1: Transformer는 번역기입니다
 
@@ -2769,4 +2795,1263 @@ result = greedy_decode(tmp_model, src, src_mask, max_len=10, start_symbol=1)
 print("Greedy Decoding 결과:", result)
 
 ```
+
+# 학습 (Training) PyTorch Example
+
+## Copy Task 데이터 생성
+
+Copy Task는 입력 시퀀스를 그대로 출력하는 간단한 작업으로, Transformer 모델의 학습 및 테스트에 자주 사용됩니다.
+
+```python
+def data_gen(V, batch, nbatches):
+    """
+    Copy Task를 위한 무작위 데이터 생성 함수
+
+    Copy Task는 입력 시퀀스를 그대로 출력으로 복사하는 작업입니다.
+    예: 입력 [1, 3, 5, 7, 9] → 출력 [1, 3, 5, 7, 9]
+
+    매개변수:
+        V (int): 어휘 크기 (vocabulary size)
+            예: V=11이면 토큰 인덱스 0~10 사용 가능
+            0은 패딩용으로 예약, 실제 사용은 1~10
+        batch (int): 배치 크기
+            예: batch=32이면 한 번에 32개의 시퀀스 생성
+        nbatches (int): 생성할 배치 수
+            예: nbatches=20이면 총 20개 배치 생성
+
+    생성값:
+        Batch 객체를 yield하는 generator
+            - src: 소스 시퀀스 [batch, seq_len]
+            - tgt: 타겟 시퀀스 [batch, seq_len] (src와 동일)
+            - src_mask: 소스 마스크
+            - tgt_mask: 타겟 마스크
+
+    동작 과정:
+        1. 무작위 정수 배열 생성 (1~V-1 범위)
+        2. 첫 번째 토큰을 1로 고정 (시작 토큰)
+        3. src와 tgt를 동일하게 설정 (복사 작업)
+        4. Batch 객체로 wrapping하여 yield
+
+    사용 예시:
+        # 어휘 크기 11, 배치 30, 20개 배치 생성
+        for batch in data_gen(V=11, batch=30, nbatches=20):
+            # batch.src: [30, 10] - 30개의 길이 10 시퀀스
+            # batch.tgt: [30, 10] - src와 동일
+            output = model(batch.src, batch.tgt, batch.src_mask, batch.tgt_mask)
+    """
+    for i in range(nbatches):
+        # 무작위 정수 생성: 1부터 V-1까지 (0은 패딩용)
+        # 크기: [batch, 10] - 10은 시퀀스 길이
+        data = torch.from_numpy(np.random.randint(1, V, size=(batch, 10)))
+
+        # 첫 번째 토큰을 1로 설정 (시작 심볼)
+        # 모든 시퀀스가 동일한 시작 토큰으로 시작하도록 보장
+        data[:, 0] = 1
+
+        # Variable로 변환 (requires_grad=False: 입력 데이터는 그래디언트 불필요)
+        src = Variable(data, requires_grad=False)
+        tgt = Variable(data, requires_grad=False)
+
+        # Batch 객체 생성 (pad=0은 패딩 토큰 인덱스)
+        # Batch 클래스가 자동으로 마스크 생성
+        yield Batch(src, tgt, 0)
+
+```
+
+## 기본 학습 루프
+
+```python
+def run_epoch(data_iter, model, loss_compute):
+    """
+    한 에폭(epoch) 동안 모델을 학습시키는 함수
+
+    에폭이란 전체 학습 데이터를 한 번 순회하는 것을 의미합니다.
+    이 함수는 데이터 배치들을 순회하며 forward → backward → 파라미터 업데이트를 수행합니다.
+
+    매개변수:
+        data_iter: 데이터 생성 iterator
+            예: data_gen(V=11, batch=30, nbatches=20)
+            각 iteration마다 Batch 객체 반환
+        model (EncoderDecoder): 학습할 Transformer 모델
+            forward() 메서드로 예측값 생성
+        loss_compute: 손실 계산 및 최적화 객체
+            SimpleLossCompute 또는 MultiGPULossCompute
+            __call__ 메서드로 loss 계산 및 backward 수행
+
+    반환값:
+        float: 에폭 전체의 평균 손실값
+            total_loss / total_tokens로 계산
+            토큰 단위 평균이므로 배치 크기에 무관
+
+    동작 과정:
+        1. 각 배치에 대해:
+           a. Forward pass: 모델이 예측 생성
+           b. Loss 계산: 예측과 정답 비교
+           c. Backward pass: 그래디언트 계산
+           d. 파라미터 업데이트: optimizer.step()
+        2. 손실과 토큰 수 누적
+        3. 주기적으로 진행 상황 출력 (50배치마다)
+
+    사용 예시:
+        # 학습 데이터로 모델 학습
+        train_loss = run_epoch(
+            data_gen(V=11, batch=30, nbatches=20),
+            model,
+            SimpleLossCompute(model.generator, criterion, optimizer)
+        )
+        print(f"Train Loss: {train_loss:.4f}")
+
+        # 검증 데이터로 평가 (optimizer=None이면 파라미터 업데이트 안함)
+        model.eval()
+        with torch.no_grad():
+            val_loss = run_epoch(
+                data_gen(V=11, batch=30, nbatches=5),
+                model,
+                SimpleLossCompute(model.generator, criterion, None)
+            )
+        print(f"Validation Loss: {val_loss:.4f}")
+    """
+    start = time.time()
+    total_tokens = 0  # 처리한 전체 토큰 수
+    total_loss = 0.   # 누적 손실
+    tokens = 0        # 현재 구간의 토큰 수 (출력용)
+
+    for i, batch in enumerate(data_iter):
+        # Forward pass: 모델이 입력을 받아 출력 생성
+        # out: [batch, seq_len, d_model] - 각 위치의 hidden state
+        out = model.forward(batch.src, batch.trg,
+                           batch.src_mask, batch.trg_mask)
+
+        # Loss 계산 및 backward pass
+        # loss_compute가 내부적으로 다음을 수행:
+        # 1. generator로 logits 생성: [batch, seq_len, vocab_size]
+        # 2. criterion으로 loss 계산 (cross entropy)
+        # 3. loss.backward()로 그래디언트 계산
+        # 4. optimizer.step()으로 파라미터 업데이트 (optimizer가 있는 경우)
+        loss = loss_compute(out, batch.trg_y, batch.ntokens)
+
+        # 통계 업데이트
+        total_loss += loss          # 배치의 총 손실 누적
+        total_tokens += batch.ntokens  # 배치의 토큰 수 누적
+        tokens += batch.ntokens     # 출력용 토큰 카운터
+
+        # 50배치마다 진행 상황 출력
+        if i % 50 == 1:
+            # 초당 처리 토큰 수 계산
+            elapsed = time.time() - start
+            tokens_per_sec = tokens / elapsed
+
+            print(f"Epoch Step: {i} "
+                  f"Loss: {loss / batch.ntokens:.4f} "
+                  f"Tokens per Sec: {tokens_per_sec:.1f}")
+
+            # 다음 구간을 위해 리셋
+            start = time.time()
+            tokens = 0
+
+    # 전체 에폭의 평균 손실 반환 (토큰 단위)
+    return total_loss / total_tokens
+
+```
+
+## 실전 학습 코드
+
+```python
+def train_model(V=11, N=2, d_model=512, d_ff=2048, h=8, dropout=0.1,
+                batch_size=30, num_epochs=10, num_batches=20):
+    """
+    Transformer 모델을 Copy Task로 학습시키는 완전한 예제
+
+    이 함수는 모델 생성부터 학습, 검증까지 전체 파이프라인을 구현합니다.
+    실전에서는 이 템플릿을 기반으로 데이터셋과 task를 변경하여 사용할 수 있습니다.
+
+    매개변수:
+        V (int): 어휘 크기 (vocabulary size)
+            Default: 11 (토큰 0~10, 0은 패딩용)
+        N (int): Encoder/Decoder 레이어 수
+            Default: 2 (빠른 실험용, 실전에서는 6 이상)
+        d_model (int): 모델 차원
+            Default: 512 (Transformer 논문 기준)
+        d_ff (int): Feed-forward 내부 차원
+            Default: 2048 (d_model의 4배)
+        h (int): Attention head 수
+            Default: 8
+        dropout (float): Dropout 비율
+            Default: 0.1
+        batch_size (int): 배치 크기
+            Default: 30
+        num_epochs (int): 학습 에폭 수
+            Default: 10
+        num_batches (int): 에폭당 배치 수
+            Default: 20
+
+    반환값:
+        model (EncoderDecoder): 학습된 모델
+        train_losses (list): 에폭별 학습 손실
+        val_losses (list): 에폭별 검증 손실
+
+    사용 예시:
+        # 기본 설정으로 학습
+        model, train_losses, val_losses = train_model()
+
+        # 커스텀 설정으로 학습
+        model, train_losses, val_losses = train_model(
+            V=50,           # 어휘 크기 증가
+            N=6,            # 레이어 수 증가
+            num_epochs=50,  # 더 오래 학습
+            batch_size=64   # 배치 크기 증가
+        )
+
+        # 학습 곡선 시각화
+        plt.plot(train_losses, label='Train Loss')
+        plt.plot(val_losses, label='Val Loss')
+        plt.xlabel('Epoch')
+        plt.ylabel('Loss')
+        plt.legend()
+        plt.show()
+    """
+    print("=" * 80)
+    print("Transformer 모델 학습 시작")
+    print("=" * 80)
+
+    # 1. 모델 생성
+    print(f"\n[1단계] 모델 생성 중...")
+    print(f"  - 어휘 크기: {V}")
+    print(f"  - 레이어 수: {N}")
+    print(f"  - 모델 차원: {d_model}")
+    print(f"  - Attention heads: {h}")
+
+    model = make_model(V, V, N=N, d_model=d_model, d_ff=d_ff, h=h, dropout=dropout)
+    model.train()  # 학습 모드 설정 (dropout, batch norm 활성화)
+
+    # 파라미터 수 계산
+    total_params = sum(p.numel() for p in model.parameters())
+    print(f"  - 전체 파라미터 수: {total_params:,}")
+
+    # 2. Loss function 설정
+    print(f"\n[2단계] Loss function 설정 중...")
+    # Label Smoothing을 적용한 KL Divergence Loss
+    # smoothing=0.1: 정답 라벨에 0.9, 나머지에 0.1/V의 확률 부여
+    # 이는 모델이 과도하게 확신하는 것을 방지하여 일반화 성능 향상
+    criterion = LabelSmoothing(size=V, padding_idx=0, smoothing=0.1)
+    print(f"  - Loss: KL Divergence with Label Smoothing (0.1)")
+
+    # 3. Optimizer 설정
+    print(f"\n[3단계] Optimizer 설정 중...")
+    # Noam Learning Rate Scheduler + Adam
+    # - Warmup: 4000 스텝 동안 학습률 선형 증가
+    # - 이후: 스텝의 inverse square root에 비례하여 감소
+    optimizer = get_std_opt(model)
+    print(f"  - Optimizer: Adam with Noam LR Scheduler")
+    print(f"  - Warmup steps: 4000")
+    print(f"  - Factor: 2.0")
+
+    # 4. Loss Compute 객체 생성
+    # SimpleLossCompute: forward → loss 계산 → backward를 한 번에 수행
+    loss_compute = SimpleLossCompute(model.generator, criterion, optimizer)
+
+    # 5. 학습 루프
+    print(f"\n[4단계] 학습 시작")
+    print(f"  - 에폭 수: {num_epochs}")
+    print(f"  - 배치 크기: {batch_size}")
+    print(f"  - 에폭당 배치 수: {num_batches}")
+    print(f"  - 총 학습 샘플: {num_epochs * num_batches * batch_size:,}")
+    print("-" * 80)
+
+    train_losses = []
+    val_losses = []
+
+    for epoch in range(num_epochs):
+        print(f"\n=== Epoch {epoch + 1}/{num_epochs} ===")
+
+        # 학습
+        model.train()
+        train_loss = run_epoch(
+            data_gen(V, batch_size, num_batches),
+            model,
+            loss_compute
+        )
+        train_losses.append(train_loss)
+
+        # 검증 (파라미터 업데이트 없음)
+        model.eval()
+        with torch.no_grad():
+            # 검증은 5개 배치만 사용 (빠른 평가)
+            val_loss_compute = SimpleLossCompute(model.generator, criterion, None)
+            val_loss = run_epoch(
+                data_gen(V, batch_size, 5),
+                model,
+                val_loss_compute
+            )
+            val_losses.append(val_loss)
+
+        print(f"Epoch {epoch + 1} 완료 - Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}")
+
+        # Early stopping 체크 (optional)
+        if epoch > 0 and val_loss > val_losses[-2]:
+            print("  ⚠️  검증 손실 증가 - Overfitting 주의")
+
+    print("\n" + "=" * 80)
+    print("학습 완료!")
+    print("=" * 80)
+    print(f"최종 Train Loss: {train_losses[-1]:.4f}")
+    print(f"최종 Val Loss: {val_losses[-1]:.4f}")
+    print(f"최저 Val Loss: {min(val_losses):.4f} (Epoch {val_losses.index(min(val_losses)) + 1})")
+
+    return model, train_losses, val_losses
+
+
+# 학습 실행 예시
+if __name__ == "__main__":
+    # 작은 모델로 빠른 테스트
+    model, train_losses, val_losses = train_model(
+        V=11,
+        N=2,
+        d_model=512,
+        num_epochs=10,
+        batch_size=30,
+        num_batches=20
+    )
+
+    # 모델 저장
+    torch.save({
+        'model_state_dict': model.state_dict(),
+        'train_losses': train_losses,
+        'val_losses': val_losses,
+    }, 'transformer_copy_task.pt')
+    print("\n모델 저장 완료: transformer_copy_task.pt")
+
+```
+
+# 추론 (Inference) PyTorch Example
+
+## Greedy Decoding (탐욕적 디코딩)
+
+```python
+def greedy_decode_with_comments(model, src, src_mask, max_len, start_symbol):
+    """
+    Greedy Decoding으로 시퀀스를 생성하는 함수 (상세 주석 버전)
+
+    Greedy Decoding은 각 time step에서 가장 확률이 높은 토큰을 선택하는 방법입니다.
+    장점: 빠르고 구현이 간단
+    단점: 지역 최적해에 빠질 수 있음 (전역 최적해를 찾지 못함)
+
+    매개변수:
+        model (EncoderDecoder): 학습된 Transformer 모델
+        src (LongTensor): 소스 시퀀스 [1, src_len]
+            예: [[1, 3, 5, 7, 9, 2]]
+        src_mask (BoolTensor): 소스 마스크 [1, 1, src_len]
+            패딩 위치는 False, 실제 토큰은 True
+        max_len (int): 생성할 최대 시퀀스 길이
+            예: 20이면 최대 20개 토큰 생성
+        start_symbol (int): 시작 토큰의 인덱스
+            예: 1 (보통 <SOS> 토큰)
+
+    반환값:
+        ys (LongTensor): 생성된 시퀀스 [1, generated_len]
+            start_symbol부터 시작하여 토큰들이 순차적으로 추가됨
+
+    동작 과정:
+        1. Encoder로 소스 시퀀스 인코딩
+        2. 시작 토큰으로 디코더 입력 초기화
+        3. 반복 (max_len-1번):
+           a. 현재까지 생성된 시퀀스로 디코더 실행
+           b. 마지막 위치의 확률 분포 계산
+           c. argmax로 가장 확률 높은 토큰 선택
+           d. 선택된 토큰을 시퀀스에 추가
+        4. 생성된 전체 시퀀스 반환
+
+    사용 예시:
+        model.eval()
+        src = torch.LongTensor([[1, 3, 5, 7, 9]])
+        src_mask = (src != 0).unsqueeze(-2)
+
+        output = greedy_decode_with_comments(
+            model, src, src_mask,
+            max_len=10,
+            start_symbol=1
+        )
+        print("생성된 시퀀스:", output)
+        # 출력 예시: tensor([[1, 3, 5, 7, 9, 2, 0, 0, 0, 0]])
+    """
+    # 1단계: Encoder - 소스 시퀀스를 인코딩
+    # memory: [1, src_len, d_model] - 각 소스 토큰의 contextual representation
+    memory = model.encode(src, src_mask)
+
+    # 2단계: 디코더 입력 초기화
+    # ys: [1, 1] - 시작 토큰만 포함
+    # type_as(src.data): src와 같은 데이터 타입(Long) 및 디바이스(CPU/GPU) 사용
+    ys = torch.ones(1, 1).fill_(start_symbol).type_as(src.data)
+
+    # 3단계: Auto-regressive 생성 루프
+    # max_len-1번 반복 (시작 토큰 이미 있으므로)
+    for i in range(max_len - 1):
+        # 3-1. Subsequent mask 생성
+        # 현재 위치가 이후 위치를 보지 못하도록 마스킹
+        # [1, ys_len, ys_len] - 하삼각 행렬 형태
+        tgt_mask = subsequent_mask(ys.size(1)).type_as(src.data)
+
+        # 3-2. Decoder 실행
+        # out: [1, ys_len, d_model]
+        # 각 위치의 hidden state 생성
+        out = model.decode(memory, src_mask, ys, tgt_mask)
+
+        # 3-3. 마지막 위치의 확률 분포 계산
+        # out[:, -1]: [1, d_model] - 마지막 위치의 hidden state
+        # prob: [1, vocab_size] - 각 토큰의 확률 (log softmax 적용됨)
+        prob = model.generator(out[:, -1])
+
+        # 3-4. 가장 높은 확률의 토큰 선택 (Greedy)
+        # torch.max: (values, indices) 반환
+        # dim=1: vocab_size 차원에서 최대값 찾기
+        _, next_word = torch.max(prob, dim=1)
+        next_word = next_word.item()  # tensor → Python int
+
+        # 3-5. 선택된 토큰을 시퀀스에 추가
+        # torch.cat: [1, ys_len] + [1, 1] → [1, ys_len+1]
+        next_word_tensor = torch.ones(1, 1).type_as(src.data).fill_(next_word)
+        ys = torch.cat([ys, next_word_tensor], dim=1)
+
+        # (Optional) EOS 토큰 만나면 조기 종료
+        # if next_word == EOS_TOKEN:
+        #     break
+
+    return ys
+
+
+def test_greedy_decoding():
+    """
+    Greedy Decoding 테스트 함수
+
+    학습된 모델로 Copy Task를 수행하여 결과를 확인합니다.
+    """
+    print("=" * 80)
+    print("Greedy Decoding 테스트")
+    print("=" * 80)
+
+    # 1. 모델 로드 (학습된 모델이 있다고 가정)
+    V = 11
+    model = make_model(V, V, N=2)
+
+    # 학습된 가중치 로드 (있는 경우)
+    try:
+        checkpoint = torch.load('transformer_copy_task.pt')
+        model.load_state_dict(checkpoint['model_state_dict'])
+        print("✅ 학습된 모델 로드 성공")
+    except:
+        print("⚠️  학습된 모델 없음 - 무작위 가중치 사용")
+
+    model.eval()
+
+    # 2. 테스트 입력 준비
+    test_cases = [
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        [1, 3, 5, 7, 9],
+        [1, 2, 2, 3, 3, 3],
+    ]
+
+    print("\n" + "-" * 80)
+    for idx, test_input in enumerate(test_cases, 1):
+        src = torch.LongTensor([test_input])
+        src_mask = (src != 0).unsqueeze(-2)
+
+        print(f"\n테스트 케이스 {idx}:")
+        print(f"  입력:  {test_input}")
+
+        # 3. Greedy Decoding 수행
+        with torch.no_grad():
+            output = greedy_decode_with_comments(
+                model, src, src_mask,
+                max_len=len(test_input) + 2,
+                start_symbol=1
+            )
+
+        output_list = output[0].tolist()
+        print(f"  출력:  {output_list}")
+
+        # 4. 정확도 체크
+        if output_list[:len(test_input)] == test_input:
+            print(f"  결과:  ✅ 정확히 복사됨!")
+        else:
+            print(f"  결과:  ❌ 복사 실패")
+
+    print("\n" + "=" * 80)
+
+
+# 실행
+if __name__ == "__main__":
+    test_greedy_decoding()
+
+```
+
+## Beam Search (빔 서치)
+
+```python
+def beam_search(model, src, src_mask, max_len, start_symbol, beam_width=5, alpha=0.7):
+    """
+    Beam Search로 시퀀스를 생성하는 함수
+
+    Beam Search는 각 time step에서 상위 k개의 후보를 유지하며 탐색하는 방법입니다.
+    Greedy보다 더 나은 전역 해를 찾을 가능성이 높습니다.
+
+    매개변수:
+        model (EncoderDecoder): 학습된 Transformer 모델
+        src (LongTensor): 소스 시퀀스 [1, src_len]
+        src_mask (BoolTensor): 소스 마스크 [1, 1, src_len]
+        max_len (int): 생성할 최대 시퀀스 길이
+        start_symbol (int): 시작 토큰 인덱스
+        beam_width (int): 유지할 후보 시퀀스 수
+            Default: 5 (일반적으로 5~10 사용)
+            클수록 더 나은 결과, 하지만 계산량 증가
+        alpha (float): 길이 정규화 계수
+            Default: 0.7
+            0이면 정규화 없음, 1이면 완전 정규화
+            짧은 시퀀스 선호를 방지
+
+    반환값:
+        best_sequence (LongTensor): 가장 높은 점수의 시퀀스 [1, seq_len]
+        best_score (float): 해당 시퀀스의 정규화된 점수
+
+    동작 과정:
+        1. Encoder로 소스 인코딩
+        2. beam_width개의 후보 시퀀스 유지
+        3. 각 time step에서:
+           a. 모든 후보에서 vocab_size개 확장 시도
+           b. 상위 beam_width개 선택
+           c. 완료된 시퀀스는 따로 저장
+        4. 최종적으로 가장 점수 높은 시퀀스 반환
+
+    사용 예시:
+        model.eval()
+        src = torch.LongTensor([[1, 3, 5, 7, 9]])
+        src_mask = (src != 0).unsqueeze(-2)
+
+        best_seq, best_score = beam_search(
+            model, src, src_mask,
+            max_len=10,
+            start_symbol=1,
+            beam_width=5
+        )
+        print(f"Best sequence: {best_seq}")
+        print(f"Score: {best_score:.4f}")
+    """
+    # 1단계: Encoder
+    memory = model.encode(src, src_mask)
+
+    # 2단계: 초기화
+    # beams: 현재 유지 중인 후보들
+    # 각 beam은 (시퀀스, 누적 로그 확률) 튜플
+    beams = [(torch.ones(1, 1).fill_(start_symbol).type_as(src.data).long(), 0.0)]
+    completed = []  # 완료된 시퀀스들 (EOS 만난 경우)
+
+    # 3단계: Beam Search 루프
+    for step in range(max_len - 1):
+        all_candidates = []  # 이번 스텝의 모든 확장 후보
+
+        # 3-1. 각 beam을 확장
+        for seq, score in beams:
+            # EOS 토큰 만난 경우 확장하지 않음 (가정: EOS=2)
+            # if seq[0, -1].item() == 2:
+            #     completed.append((seq, score))
+            #     continue
+
+            # 현재 시퀀스에 대한 subsequent mask
+            tgt_mask = subsequent_mask(seq.size(1)).type_as(src.data)
+
+            # Decoder 실행
+            out = model.decode(memory, src_mask, seq, tgt_mask)
+
+            # 마지막 위치의 로그 확률 분포
+            # log_prob: [1, vocab_size]
+            log_prob = model.generator(out[:, -1])
+
+            # 3-2. 모든 가능한 다음 토큰에 대해 점수 계산
+            # topk로 상위 beam_width개만 고려 (효율성)
+            topk_log_probs, topk_indices = torch.topk(log_prob, beam_width, dim=1)
+
+            for i in range(beam_width):
+                next_token = topk_indices[0, i].item()
+                token_log_prob = topk_log_probs[0, i].item()
+
+                # 새 시퀀스 생성
+                new_seq = torch.cat([
+                    seq,
+                    torch.ones(1, 1).type_as(src.data).fill_(next_token).long()
+                ], dim=1)
+
+                # 누적 로그 확률 계산
+                new_score = score + token_log_prob
+
+                all_candidates.append((new_seq, new_score))
+
+        # 3-3. 상위 beam_width개 선택
+        # 길이 정규화 적용: score / (length ^ alpha)
+        # 짧은 시퀀스가 유리한 것을 보정
+        ordered = sorted(all_candidates,
+                        key=lambda x: x[1] / (x[0].size(1) ** alpha),
+                        reverse=True)
+        beams = ordered[:beam_width]
+
+    # 4단계: 최종 후보 중 최선 선택
+    # 완료된 시퀀스가 있으면 그 중에서, 없으면 beam에서 선택
+    if completed:
+        ordered = sorted(completed,
+                        key=lambda x: x[1] / (x[0].size(1) ** alpha),
+                        reverse=True)
+        best_sequence, best_score = ordered[0]
+    else:
+        best_sequence, best_score = beams[0]
+
+    return best_sequence, best_score
+
+
+def compare_greedy_vs_beam():
+    """
+    Greedy Decoding과 Beam Search 비교 테스트
+    """
+    print("=" * 80)
+    print("Greedy Decoding vs Beam Search 비교")
+    print("=" * 80)
+
+    # 모델 준비
+    V = 11
+    model = make_model(V, V, N=2)
+
+    try:
+        checkpoint = torch.load('transformer_copy_task.pt')
+        model.load_state_dict(checkpoint['model_state_dict'])
+        print("✅ 학습된 모델 로드 성공\n")
+    except:
+        print("⚠️  학습된 모델 없음 - 무작위 가중치 사용\n")
+
+    model.eval()
+
+    # 테스트
+    src = torch.LongTensor([[1, 3, 5, 7, 9]])
+    src_mask = (src != 0).unsqueeze(-2)
+
+    print(f"입력 시퀀스: {src[0].tolist()}\n")
+    print("-" * 80)
+
+    # Greedy Decoding
+    print("\n[Greedy Decoding]")
+    with torch.no_grad():
+        greedy_output = greedy_decode_with_comments(
+            model, src, src_mask, max_len=10, start_symbol=1
+        )
+    print(f"출력: {greedy_output[0].tolist()}")
+
+    # Beam Search (beam_width=3)
+    print("\n[Beam Search - Width 3]")
+    with torch.no_grad():
+        beam_output_3, beam_score_3 = beam_search(
+            model, src, src_mask, max_len=10, start_symbol=1, beam_width=3
+        )
+    print(f"출력: {beam_output_3[0].tolist()}")
+    print(f"점수: {beam_score_3:.4f}")
+
+    # Beam Search (beam_width=5)
+    print("\n[Beam Search - Width 5]")
+    with torch.no_grad():
+        beam_output_5, beam_score_5 = beam_search(
+            model, src, src_mask, max_len=10, start_symbol=1, beam_width=5
+        )
+    print(f"출력: {beam_output_5[0].tolist()}")
+    print(f"점수: {beam_score_5:.4f}")
+
+    print("\n" + "=" * 80)
+    print("비교 결과:")
+    print(f"  - Greedy: 빠름, 간단, 지역 최적해 가능")
+    print(f"  - Beam Search: 느림, 더 나은 전역 해 탐색")
+    print(f"  - Beam Width ↑: 품질 ↑, 계산량 ↑")
+    print("=" * 80)
+
+
+# 실행
+if __name__ == "__main__":
+    compare_greedy_vs_beam()
+
+```
+
+## 배치 추론 (Batch Inference)
+
+```python
+def batch_greedy_decode(model, src_batch, src_mask_batch, max_len, start_symbol):
+    """
+    여러 소스 시퀀스를 배치로 동시에 디코딩
+
+    실전에서는 한 번에 여러 문장을 번역/생성해야 하는 경우가 많습니다.
+    배치 처리를 통해 GPU 활용률을 높이고 처리 속도를 개선할 수 있습니다.
+
+    매개변수:
+        model (EncoderDecoder): 학습된 모델
+        src_batch (LongTensor): 소스 배치 [batch_size, src_len]
+        src_mask_batch (BoolTensor): 소스 마스크 [batch_size, 1, src_len]
+        max_len (int): 최대 생성 길이
+        start_symbol (int): 시작 토큰
+
+    반환값:
+        ys_batch (LongTensor): 생성된 배치 [batch_size, generated_len]
+
+    사용 예시:
+        # 10개 문장 동시 처리
+        src_batch = torch.LongTensor([
+            [1, 2, 3, 4, 5],
+            [1, 6, 7, 8, 0],  # 길이가 다른 경우 패딩
+            # ... 8개 더
+        ])
+        src_mask_batch = (src_batch != 0).unsqueeze(1)
+
+        outputs = batch_greedy_decode(
+            model, src_batch, src_mask_batch,
+            max_len=10, start_symbol=1
+        )
+
+        for i, output in enumerate(outputs):
+            print(f"입력 {i}: {src_batch[i].tolist()}")
+            print(f"출력 {i}: {output.tolist()}")
+    """
+    batch_size = src_batch.size(0)
+
+    # 1. 배치 전체를 한 번에 인코딩
+    # memory: [batch_size, src_len, d_model]
+    memory = model.encode(src_batch, src_mask_batch)
+
+    # 2. 디코더 입력 초기화 (배치 전체)
+    # ys: [batch_size, 1]
+    ys = torch.ones(batch_size, 1).fill_(start_symbol).type_as(src_batch.data).long()
+
+    # 3. Auto-regressive 생성 (배치 병렬 처리)
+    for i in range(max_len - 1):
+        # Subsequent mask (모든 샘플에 동일 적용)
+        tgt_mask = subsequent_mask(ys.size(1)).type_as(src_batch.data)
+
+        # 배치 전체 디코딩
+        # out: [batch_size, ys_len, d_model]
+        out = model.decode(memory, src_mask_batch, ys, tgt_mask)
+
+        # 각 샘플의 마지막 위치에서 다음 토큰 예측
+        # prob: [batch_size, vocab_size]
+        prob = model.generator(out[:, -1])
+
+        # Greedy selection
+        # next_words: [batch_size]
+        _, next_words = torch.max(prob, dim=1)
+
+        # 배치 전체에 다음 토큰 추가
+        # [batch_size, ys_len] → [batch_size, ys_len+1]
+        ys = torch.cat([ys, next_words.unsqueeze(1)], dim=1)
+
+    return ys
+
+
+def test_batch_inference():
+    """
+    배치 추론 테스트
+    """
+    print("=" * 80)
+    print("배치 추론 테스트")
+    print("=" * 80)
+
+    V = 11
+    model = make_model(V, V, N=2)
+
+    try:
+        checkpoint = torch.load('transformer_copy_task.pt')
+        model.load_state_dict(checkpoint['model_state_dict'])
+        print("✅ 학습된 모델 로드 성공\n")
+    except:
+        print("⚠️  학습된 모델 없음 - 무작위 가중치 사용\n")
+
+    model.eval()
+
+    # 배치 데이터 준비 (길이가 다른 시퀀스들)
+    src_batch = torch.LongTensor([
+        [1, 2, 3, 4, 5, 0, 0, 0],  # 길이 5
+        [1, 6, 7, 8, 9, 10, 0, 0], # 길이 6
+        [1, 2, 2, 3, 3, 3, 4, 4],  # 길이 8
+    ])
+    src_mask_batch = (src_batch != 0).unsqueeze(1)
+
+    print("입력 배치:")
+    for i, src in enumerate(src_batch):
+        # 패딩 제외하고 출력
+        actual_src = src[src != 0].tolist()
+        print(f"  샘플 {i+1}: {actual_src}")
+
+    print("\n추론 중...")
+
+    # 배치 추론 수행
+    import time
+    start_time = time.time()
+
+    with torch.no_grad():
+        outputs = batch_greedy_decode(
+            model, src_batch, src_mask_batch,
+            max_len=10, start_symbol=1
+        )
+
+    elapsed = time.time() - start_time
+
+    print("\n출력 배치:")
+    for i, output in enumerate(outputs):
+        # 패딩 제외하고 출력
+        actual_output = output[output != 0].tolist()
+        print(f"  샘플 {i+1}: {actual_output}")
+
+    print(f"\n처리 시간: {elapsed*1000:.2f}ms")
+    print(f"샘플당: {elapsed*1000/len(src_batch):.2f}ms")
+
+    print("\n" + "=" * 80)
+    print("배치 추론의 장점:")
+    print("  ✅ GPU 병렬 처리로 속도 향상")
+    print("  ✅ 여러 샘플을 한 번에 처리")
+    print("  ✅ 실전 서비스에 필수적")
+    print("=" * 80)
+
+
+# 실행
+if __name__ == "__main__":
+    test_batch_inference()
+
+```
+
+# 평가 (Evaluation) PyTorch Example
+
+## 정확도 계산 (Accuracy)
+
+```python
+def compute_accuracy(model, data_iter, verbose=True):
+    """
+    모델의 토큰 단위 정확도를 계산하는 함수
+
+    정확도(Accuracy)는 모델이 예측한 토큰 중 정답과 일치하는 비율입니다.
+    Copy Task의 경우 높은 정확도(90% 이상)를 기대할 수 있습니다.
+
+    매개변수:
+        model (EncoderDecoder): 평가할 모델
+        data_iter: 평가 데이터 iterator
+            예: data_gen(V=11, batch=30, nbatches=10)
+        verbose (bool): 상세 출력 여부
+            True면 배치별 정확도 출력
+
+    반환값:
+        accuracy (float): 전체 정확도 (0.0 ~ 1.0)
+            예: 0.95 → 95% 정확도
+
+    계산 방법:
+        accuracy = (정확히 예측한 토큰 수) / (전체 토큰 수)
+        * 패딩 토큰(0)은 제외하고 계산
+
+    사용 예시:
+        model.eval()
+        test_acc = compute_accuracy(
+            model,
+            data_gen(V=11, batch=30, nbatches=20),
+            verbose=True
+        )
+        print(f"Test Accuracy: {test_acc*100:.2f}%")
+    """
+    model.eval()  # 평가 모드 (dropout 비활성화)
+
+    total_correct = 0  # 정확히 예측한 토큰 수
+    total_tokens = 0   # 전체 토큰 수 (패딩 제외)
+
+    if verbose:
+        print("=" * 80)
+        print("정확도 계산 중...")
+        print("=" * 80)
+
+    with torch.no_grad():  # 그래디언트 계산 비활성화 (메모리 절약)
+        for batch_idx, batch in enumerate(data_iter):
+            # Forward pass
+            # out: [batch, seq_len, d_model]
+            out = model.forward(batch.src, batch.trg,
+                               batch.src_mask, batch.trg_mask)
+
+            # 로짓 생성 및 예측
+            # logits: [batch, seq_len, vocab_size]
+            # pred: [batch, seq_len] - 각 위치의 예측 토큰 인덱스
+            logits = model.generator(out)
+            pred = logits.argmax(dim=-1)
+
+            # 패딩 마스크 생성 (0이 아닌 위치만 평가)
+            # mask: [batch, seq_len] - True는 실제 토큰, False는 패딩
+            mask = (batch.trg_y != 0)
+
+            # 정답과 비교
+            # correct: [batch, seq_len] - True는 정확한 예측
+            correct = (pred == batch.trg_y) & mask
+
+            # 카운팅
+            batch_correct = correct.sum().item()
+            batch_total = mask.sum().item()
+
+            total_correct += batch_correct
+            total_tokens += batch_total
+
+            # 배치별 정확도 출력
+            if verbose and (batch_idx + 1) % 5 == 0:
+                batch_acc = batch_correct / batch_total if batch_total > 0 else 0
+                print(f"  Batch {batch_idx + 1}: {batch_acc*100:.2f}% "
+                      f"({batch_correct}/{batch_total})")
+
+    # 전체 정확도 계산
+    accuracy = total_correct / total_tokens if total_tokens > 0 else 0.0
+
+    if verbose:
+        print("-" * 80)
+        print(f"전체 정확도: {accuracy*100:.2f}% ({total_correct}/{total_tokens})")
+        print("=" * 80)
+
+    return accuracy
+
+```
+
+## Perplexity 계산
+
+```python
+def compute_perplexity(model, data_iter, criterion=None, verbose=True):
+    """
+    모델의 Perplexity를 계산하는 함수
+
+    Perplexity는 언어 모델의 불확실성을 측정하는 지표입니다.
+    낮을수록 좋으며, exp(loss) = exp(cross_entropy)로 계산됩니다.
+
+    직관적 해석:
+        - Perplexity = 10: 매 예측마다 평균 10개 토큰 중 고민
+        - Perplexity = 2: 매우 확신 있는 예측 (거의 binary choice)
+        - Perplexity = 1000: 매우 불확실한 예측
+
+    매개변수:
+        model (EncoderDecoder): 평가할 모델
+        data_iter: 평가 데이터 iterator
+        criterion: Loss function (None이면 기본 CrossEntropy 사용)
+        verbose (bool): 상세 출력 여부
+
+    반환값:
+        perplexity (float): Perplexity 값
+            예: 5.2 → 평균적으로 5.2개 선택지 중 고민
+        avg_loss (float): 평균 loss (cross entropy)
+
+    수식:
+        perplexity = exp(average_cross_entropy)
+                   = exp(sum(loss) / total_tokens)
+
+    사용 예시:
+        model.eval()
+        ppl, loss = compute_perplexity(
+            model,
+            data_gen(V=11, batch=30, nbatches=20)
+        )
+        print(f"Perplexity: {ppl:.2f}")
+        print(f"Average Loss: {loss:.4f}")
+    """
+    model.eval()
+
+    # Criterion 설정 (제공되지 않으면 기본 사용)
+    if criterion is None:
+        criterion = nn.CrossEntropyLoss(ignore_index=0, reduction='sum')
+
+    total_loss = 0.0
+    total_tokens = 0
+
+    if verbose:
+        print("=" * 80)
+        print("Perplexity 계산 중...")
+        print("=" * 80)
+
+    with torch.no_grad():
+        for batch_idx, batch in enumerate(data_iter):
+            # Forward pass
+            out = model.forward(batch.src, batch.trg,
+                               batch.src_mask, batch.trg_mask)
+
+            # 로짓 생성
+            # logits: [batch, seq_len, vocab_size]
+            logits = model.generator(out)
+
+            # Loss 계산
+            # logits를 [batch*seq_len, vocab_size]로 reshape
+            # targets를 [batch*seq_len]로 reshape
+            batch_size, seq_len, vocab_size = logits.shape
+            logits_flat = logits.contiguous().view(-1, vocab_size)
+            targets_flat = batch.trg_y.contiguous().view(-1)
+
+            # Cross entropy loss 계산
+            # reduction='sum': 배치 내 모든 토큰의 loss 합계
+            loss = criterion(logits_flat, targets_flat)
+
+            total_loss += loss.item()
+            total_tokens += batch.ntokens  # 패딩 제외한 토큰 수
+
+            if verbose and (batch_idx + 1) % 5 == 0:
+                # 현재까지의 평균
+                current_avg_loss = total_loss / total_tokens
+                current_ppl = math.exp(current_avg_loss)
+                print(f"  Batch {batch_idx + 1}: PPL = {current_ppl:.2f}, "
+                      f"Loss = {current_avg_loss:.4f}")
+
+    # 평균 loss 및 perplexity 계산
+    avg_loss = total_loss / total_tokens
+    perplexity = math.exp(avg_loss)
+
+    if verbose:
+        print("-" * 80)
+        print(f"평균 Loss: {avg_loss:.4f}")
+        print(f"Perplexity: {perplexity:.2f}")
+        print("=" * 80)
+        print("\nPerplexity 해석:")
+        if perplexity < 5:
+            print("  ✅ 매우 좋음 - 모델이 확신 있게 예측")
+        elif perplexity < 20:
+            print("  ✅ 좋음 - 적절한 수준의 확신")
+        elif perplexity < 100:
+            print("  ⚠️  보통 - 개선 여지 있음")
+        else:
+            print("  ❌ 나쁨 - 모델이 매우 불확실")
+        print("=" * 80)
+
+    return perplexity, avg_loss
+
+```
+
+## BLEU Score 계산
+
+```python
+def compute_bleu_score(model, test_data, max_len=10, start_symbol=1):
+    """
+    BLEU (Bilingual Evaluation Understudy) Score 계산
+
+    BLEU는 기계 번역 품질을 평가하는 표준 지표입니다.
+    생성된 시퀀스와 참조 시퀀스 간의 n-gram 겹침을 측정합니다.
+
+    점수 범위: 0.0 ~ 1.0 (또는 0 ~ 100)
+        - 1.0 (100): 완벽한 일치
+        - 0.7+: 매우 좋은 품질
+        - 0.5+: 괜찮은 품질
+        - 0.3+: 이해 가능한 수준
+        - 0.0: 매우 나쁨
+
+    매개변수:
+        model (EncoderDecoder): 평가할 모델
+        test_data (list): 테스트 데이터 리스트
+            각 항목: (src_tokens, ref_tokens) 튜플
+            예: [([1,2,3], [1,2,3]), ([1,4,5], [1,4,5])]
+        max_len (int): 최대 생성 길이
+        start_symbol (int): 시작 토큰
+
+    반환값:
+        bleu_score (float): BLEU score (0.0 ~ 1.0)
+
+    사용 예시:
+        # 테스트 데이터 준비
+        test_data = [
+            ([1, 2, 3, 4, 5], [1, 2, 3, 4, 5]),
+            ([1, 6, 7, 8, 9], [1, 6, 7, 8, 9]),
+            # ... 더 많은 샘플
+        ]
+
+        bleu = compute_bleu_score(model, test_data)
+        print(f"BLEU Score: {bleu*100:.2f}")
+    """
+    from nltk.translate.bleu_score import corpus_bleu, SmoothingFunction
+
+    model.eval()
+
+    references = []  # 참조 번역들
+    hypotheses = []  # 모델 예측들
+
+    print("=" * 80)
+    print("BLEU Score 계산 중...")
+    print("=" * 80)
+
+    with torch.no_grad():
+        for idx, (src_tokens, ref_tokens) in enumerate(test_data):
+            # 소스 시퀀스 준비
+            src = torch.LongTensor([src_tokens])
+            src_mask = (src != 0).unsqueeze(-2)
+
+            # Greedy Decoding
+            output = greedy_decode(model, src, src_mask, max_len, start_symbol)
+            output_tokens = output[0].tolist()
+
+            # 패딩 및 특수 토큰 제거
+            # 실전에서는 <EOS> 이후 제거 등 추가 처리 필요
+            output_tokens = [t for t in output_tokens if t != 0]
+            ref_tokens_clean = [t for t in ref_tokens if t != 0]
+
+            # BLEU 계산용 데이터 추가
+            references.append([ref_tokens_clean])  # 이중 리스트: 참조 번역이 여러 개일 수 있음
+            hypotheses.append(output_tokens)
+
+            # 샘플 출력
+            if idx < 5:  # 처음 5개만 출력
+                print(f"\n샘플 {idx + 1}:")
+                print(f"  입력:  {src_tokens}")
+                print(f"  참조:  {ref_tokens_clean}")
+                print(f"  예측:  {output_tokens}")
+                match = "✅" if output_tokens[:len(ref_tokens_clean)] == ref_tokens_clean else "❌"
+                print(f"  일치:  {match}")
+
+    # BLEU Score 계산
+    # smoothing_function: 짧은 시퀀스에서 0점 방지
+    smoothie = SmoothingFunction().method4
+    bleu_score = corpus_bleu(references, hypotheses, smoothing_function=smoothie)
+
+    print("\n" + "-" * 80)
+    print(f"전체 BLEU Score: {bleu_score*100:.2f}")
+    print("=" * 80)
+    print("\nBLEU Score 해석:")
+    if bleu_score > 0.7:
+        print("  ✅ 매우 좋음 - 거의 완벽한 번역")
+    elif bleu_score > 0.5:
+        print("  ✅ 좋음 - 대부분 정확한 번역")
+    elif bleu_score > 0.3:
+        print("  ⚠️  보통 - 이해 가능하나 개선 필요")
+    else:
+        print("  ❌ 나쁨 - 번역 품질 낮음")
+    print("=" * 80)
+
+    return bleu_score
+
+```
+
+## 종합 평가 함수
+
+```python
+def comprehensive_evaluation(model, test_data_iter, test_pairs, criterion=None):
+    """
+    모델에 대한 종합적인 평가를 수행하는 함수
+
+    세 가지 주요 지표를 한 번에 계산합니다:
+        1. Accuracy: 토큰 단위 정확도
+        2. Perplexity: 모델의 불확실성
+        3. BLEU Score: 번역 품질
+
+    매개변수:
+        model (EncoderDecoder): 평가할 모델
+        test_data_iter: Accuracy와 Perplexity 계산용 iterator
+            예: data_gen(V=11, batch=30, nbatches=20)
+        test_pairs (list): BLEU 계산용 (src, ref) 쌍들
+            예: [([1,2,3], [1,2,3]), ...]
+        criterion: Loss function (None이면 기본 사용)
+
+    반환값:
+        dict: 평가 결과
+            {
+                'accuracy': float,
+                'perplexity': float,
+                'avg_loss': float,
+                'bleu_score': float
+            }
+
+    사용 예시:
+        # 평가 데이터 준비
+        test_iter = data_gen(V=11, batch=30, nbatches=20)
+        test_pairs = [([1,2,3,4,5], [1,2,3,4,5]) for _ in range(100)]
+
+        # 종합 평가 수행
+        results = comprehensive_evaluation(model, test_iter, test_pairs)
+
+        print(f"Accuracy: {results['accuracy']*100:.2f}%")
+        print(f"Perplexity: {results['perplexity']:.2f}")
+        print(f"BLEU: {results['bleu_score']*100:.2f}")
+    """
+    print("\n" + "=" * 80)
+    print("🔍 종합 평가 시작")
+    print("=" * 80)
+
+    results = {}
+
+    # 1. Accuracy 계산
+    print("\n[1/3] Accuracy 계산")
+    print("-" * 80)
+    accuracy = compute_accuracy(model, test_data_iter, verbose=True)
+    results['accuracy'] = accuracy
+
+    # 2. Perplexity 계산
+    # data_iter를 재생성해야 함 (iterator는 한 번만 사용 가능)
+    print("\n[2/3] Perplexity 계산")
+    print("-" * 80)
+    perplexity, avg_loss = compute_perplexity(model, test_data_iter, criterion, verbose=True)
+    results['perplexity'] = perplexity
+    results['avg_loss'] = avg_loss
+
+    # 3. BLEU Score 계산
+    print("\n[3/3] BLEU Score 계산")
+    print("-" * 80)
+    bleu_score = compute_bleu_score(model, test_pairs, max_len=10, start_symbol=1)
+    results['bleu_score'] = bleu_score
+
+    # 최종 요약
+    print("\n" + "=" * 80)
+    print("📊 평가 결과 요약")
+    print("=" * 80)
+    print(f"  ✓ Accuracy:   {results['accuracy']*100:6.2f}%")
+    print(f"  ✓ Perplexity: {results['perplexity']:6.2f}")
+    print(f"  ✓ Avg Loss:   {results['avg_loss']:6.4f}")
+    print(f"  ✓ BLEU Score: {results['bleu_score']*100:6.2f}")
+    print("=" * 80)
+
+    return results
+
+
+def evaluation_example():
+    """
+    평가 함수 사용 예시
+    """
+    print("Transformer 모델 평가 예제\n")
+
+    # 1. 모델 로드
+    V = 11
+    model = make_model(V, V, N=2)
+
+    try:
+        checkpoint = torch.load('transformer_copy_task.pt')
+        model.load_state_dict(checkpoint['model_state_dict'])
+        print("✅ 학습된 모델 로드 성공\n")
+    except:
+        print("⚠️  학습된 모델 없음 - 무작위 가중치 사용\n")
+        print("💡 먼저 train_model()을 실행하여 모델을 학습하세요.\n")
+
+    model.eval()
+
+    # 2. 평가 데이터 준비
+    # Iterator (Accuracy, Perplexity용)
+    test_iter = data_gen(V=11, batch=30, nbatches=20)
+
+    # Pairs (BLEU용)
+    import numpy as np
+    np.random.seed(42)
+    test_pairs = []
+    for _ in range(100):
+        seq = np.random.randint(1, V, size=10).tolist()
+        seq[0] = 1  # 시작 토큰
+        test_pairs.append((seq, seq))  # Copy task이므로 입력=출력
+
+    # 3. 종합 평가 실행
+    results = comprehensive_evaluation(
+        model,
+        test_iter,
+        test_pairs,
+        criterion=nn.CrossEntropyLoss(ignore_index=0, reduction='sum')
+    )
+
+    # 4. 결과 저장 (optional)
+    results_file = 'evaluation_results.json'
+    import json
+    with open(results_file, 'w') as f:
+        json.dump(results, f, indent=2)
+    print(f"\n💾 결과 저장: {results_file}")
+
+    return results
+
+
+# 실행
+if __name__ == "__main__":
+    results = evaluation_example()
+
+```
+
 

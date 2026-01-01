@@ -92,6 +92,7 @@
 
 # Materials
 
+- [CME 295](https://cme295.stanford.edu/syllabus/)
 - [slide](https://cme295.stanford.edu/slides/fall25-cme295-lecture1.pdf)
 - [video](https://www.youtube.com/watch?v=Ub3GoFaUcds&list=PLoROMvodv4rOCXd21gf0CF4xr35yINeOy&index=2)
 
