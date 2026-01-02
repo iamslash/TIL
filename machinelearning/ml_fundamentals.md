@@ -352,9 +352,7 @@ Chain rule 적용: (dy/dx) = (dy/du) * (du/dx) = 2u * 2 = 4u = 4(2x+3)
 구분 경계를 찾는 SVM 알고리즘 역시 선형 혹은 커널 함수를 사용한 비선형 형태로
 수식을 표현할 수 있습니다.
 
-**가우시안 나이브 베이즈(Gaussian Naive Bayes)**: 독립 변수들간의 조건부 확률을
-가우시안 분포로 가정하여 분류 문제를 해결하는 모델로, 확률 이론과 베이즈 정리를
-사용한 수식으로 표현됩니다.
+**가우시안 나이브 베이즈(Gaussian Naive Bayes)**: 독립 변수들간의 조건부 확률을 가우시안 분포로 가정하여 분류 문제를 해결하는 모델로, 확률 이론과 베이즈 정리를 사용한 수식으로 표현됩니다. [Naive Bayes Classification](/naivebayesclassification/README-kr.md)
 
 **선형 판별 분석(Linear Discriminant Analysis, LDA)**: 클래스 간의 분별력을
 최대화하도록 데이터를 낮은 차원 공간으로 사영(project)하는 선형 변환으로 최적화
