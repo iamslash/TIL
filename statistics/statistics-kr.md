@@ -368,3 +368,173 @@ H₁ 채택 ("효과가 있다")
 α = 0.05 기준은 Type I Error (위양성)를 5% 이하로 제한
 "잘못된 발견"을 최소화하기 위한 안전장치
 ```
+
+
+# Advanced
+
+## 통계학 계층도
+
+```
+통계학 (Statistics)
+│
+├─ 📊 기술통계학 (Descriptive Statistics)
+│  ├─ 중심경향 측도
+│  │  ├─ 평균 (Mean)
+│  │  ├─ 중앙값 (Median)
+│  │  └─ 최빈값 (Mode)
+│  │
+│  ├─ 산포도 측도
+│  │  ├─ 분산 (Variance)
+│  │  ├─ 표준편차 (Standard Deviation)
+│  │  ├─ 범위 (Range)
+│  │  └─ 사분위수 (Quartiles)
+│  │
+│  └─ 분포 특성
+│     ├─ 정규분포 (Normal Distribution)
+│     ├─ 왜도 (Skewness)
+│     └─ 첨도 (Kurtosis)
+│
+├─ 🔬 추론통계학 (Inferential Statistics)
+│  ├─ 가설검정 (Hypothesis Testing)
+│  │  ├─ t-test
+│  │  ├─ ANOVA (Analysis of Variance)
+│  │  ├─ Chi-square test
+│  │  ├─ p-value
+│  │  └─ 신뢰구간 (Confidence Interval)
+│  │
+│  ├─ 표본이론 (Sampling Theory)
+│  │  ├─ 표본추출 방법
+│  │  ├─ 표본분포
+│  │  └─ 중심극한정리
+│  │
+│  └─ 추정 (Estimation)
+│     ├─ 점추정 (Point Estimation)
+│     └─ 구간추정 (Interval Estimation)
+│
+├─ 📈 상관 및 회귀분석 (Correlation & Regression)
+│  ├─ 상관분석 (Correlation Analysis)
+│  │  ├─ Pearson 상관계수
+│  │  ├─ Spearman 상관계수
+│  │  └─ ⚠️ 상관관계 ≠ 인과관계
+│  │
+│  └─ 회귀분석 (Regression Analysis)
+│     ├─ 단순 선형회귀 (Simple Linear Regression)
+│     ├─ 다중 회귀 (Multiple Regression)
+│     ├─ 로지스틱 회귀 (Logistic Regression)
+│     ├─ 다항 회귀 (Polynomial Regression)
+│     └─ 비선형 회귀 (Nonlinear Regression)
+│
+├─ ⏱️ 시계열 분석 (Time Series Analysis)
+│  ├─ ARIMA 모델
+│  ├─ 지수평활법 (Exponential Smoothing)
+│  ├─ 계절성 분석
+│  └─ 예측 (Forecasting)
+│
+├─ 🎲 확률론 (Probability Theory)
+│  ├─ 확률분포
+│  │  ├─ 이산분포 (Binomial, Poisson 등)
+│  │  └─ 연속분포 (Normal, Exponential 등)
+│  │
+│  ├─ 조건부 확률
+│  ├─ 베이즈 정리
+│  └─ 확률변수
+│
+├─ 🔀 다변량 분석 (Multivariate Analysis)
+│  ├─ 주성분 분석 (PCA)
+│  ├─ 요인분석 (Factor Analysis)
+│  ├─ 판별분석 (Discriminant Analysis)
+│  ├─ 군집분석 (Cluster Analysis)
+│  └─ 다차원척도법 (MDS)
+│
+├─ 📊 베이지안 통계학 (Bayesian Statistics)
+│  ├─ 사전확률 (Prior)
+│  ├─ 사후확률 (Posterior)
+│  ├─ 베이즈 추론
+│  └─ MCMC 방법
+│
+├─ 🎯 실험계획법 (Design of Experiments)
+│  ├─ 완전무작위 설계
+│  ├─ 블록 설계
+│  ├─ 요인 설계
+│  └─ 반응표면 방법론
+│
+├─ 📉 비모수 통계학 (Nonparametric Statistics)
+│  ├─ Mann-Whitney U test
+│  ├─ Wilcoxon test
+│  ├─ Kruskal-Wallis test
+│  └─ Bootstrap 방법
+│
+├─ 🤖 예측 모델링 (Predictive Modeling)
+│  ├─ 머신러닝 (Machine Learning)
+│  │  ├─ 지도학습 (Supervised Learning)
+│  │  ├─ 비지도학습 (Unsupervised Learning)
+│  │  └─ 강화학습 (Reinforcement Learning)
+│  │
+│  ├─ 데이터 마이닝 (Data Mining)
+│  └─ 앙상블 방법 (Ensemble Methods)
+│
+├─ 🔍 생존분석 (Survival Analysis)
+│  ├─ Kaplan-Meier 추정
+│  ├─ Cox 비례위험 모델
+│  └─ 생존함수
+│
+└─ 🎯 인과 추론 (Causal Inference) ⭐
+   │
+   ├─ 실험적 방법 (Experimental Methods)
+   │  └─ RCT (Randomized Controlled Trials) 🏆
+   │
+   └─ 관찰적 방법 (Observational Methods)
+      ├─ 매칭 방법 (Matching)
+      │  ├─ Propensity Score Matching (PSM)
+      │  ├─ Exact Matching
+      │  └─ Coarsened Exact Matching (CEM)
+      │
+      ├─ 차분 방법 (Difference Methods)
+      │  ├─ Difference-in-Differences (DiD)
+      │  └─ Triple Differences (DDD)
+      │
+      ├─ 도구변수 (Instrumental Variables, IV)
+      │
+      ├─ 회귀 불연속 설계 (Regression Discontinuity, RDD)
+      │
+      ├─ 합성 통제법 (Synthetic Control Method)
+      │
+      ├─ 인과 그래프 모델 (Causal Graphical Models)
+      │  ├─ DAG (Directed Acyclic Graphs)
+      │  ├─ Structural Causal Models (SCM)
+      │  └─ Mediation Analysis
+      │
+      ├─ 처치 효과 추정 (Treatment Effect Estimation)
+      │  ├─ ATE (Average Treatment Effect)
+      │  ├─ ATT (Average Treatment Effect on Treated)
+      │  ├─ CATE (Conditional ATE)
+      │  └─ Uplift Modeling (ITE) 💡
+      │
+      ├─ 패널 데이터 방법 (Panel Data Methods)
+      │  ├─ Fixed Effects Model
+      │  └─ Random Effects Model
+      │
+      └─ 기타 고급 방법
+         ├─ Meta-Analysis
+         ├─ Bayesian Causal Inference
+         └─ Machine Learning for Causal Inference
+            ├─ Causal Forests
+            ├─ Double/Debiased ML
+            └─ Neural Causal Models
+```
+
+**핵심 경로:**
+```
+통계학 → 추론통계학 (가설검정)
+      → 상관/회귀분석 (관계 찾기)
+      → 인과 추론 (원인 찾기) ⭐
+```
+
+**3가지 핵심 질문:**
+```
+1. 기술통계학: "데이터가 어떻게 생겼나?"
+2. 추론통계학: "모집단에 대해 뭘 말할 수 있나?"
+3. 인과 추론:   "A가 B를 일으키는가?" ⭐
+```
+
+
