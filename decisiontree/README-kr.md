@@ -20,7 +20,7 @@ Decision Tree(의사 결정 나무)는 머신 러닝에서 가장 직관적이�
 - [Scikit-learn Decision Tree Documentation](https://scikit-learn.org/stable/modules/tree.html)
 - [Scikit-learn Random Forest Documentation](https://scikit-learn.org/stable/modules/ensemble.html#forest)
 - [StatQuest: Decision Trees](https://www.youtube.com/watch?v=7VeUPuFGJHk)
-- [신박AI: 의사결정 나무와 랜덤 포레스트](https://www.youtube.com)
+- [[인공지능을 위한 머신러닝 101] 의사결정나무와 랜덤포레스트를 알아보자 | youtube](https://www.youtube.com/watch?v=vutU-SLTZ-A)
 
 # Basic
 

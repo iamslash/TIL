@@ -287,14 +287,14 @@ Chain rule 적용: (dy/dx) = (dy/du) * (du/dx) = 2u * 2 = 4u = 4(2x+3)
 
 **나이브 베이즈(Naive Bayes)**: 베이즈 정리를 기반으로 하며, 각 특성이 독립적임을 가정하는 확률 모델입니다. 분류 작업에 사용됩니다.
 
-**서포트 벡터 머신(Support Vector Machines, SVM)**: 최적의 결정 경계를 찾기 위해 마진을 최대화하는 알고리즘을 사용하는 모델로, 분류 및 회귀 문제에 사용됩니다.
+**서포트 벡터 머신(Support Vector Machines, SVM)**: 최적의 결정 경계를 찾기 위해 마진을 최대화하는 알고리즘을 사용하는 모델로, 분류 및 회귀 문제에 사용됩니다. [Support Vector Machines, SVM](/svm/README-kr.md)
 
 **신경망(Neural Networks)**: 인간의 뇌 구조를 모방한 인공 뉴런을 기반으로 한
 복잡한 모델입니다. 분류, 회귀, 이미지 인식, 자연어 처리 등 다양한 분야에
 적용됩니다.
 
 **클러스터링 모델(Clustering Models)**: 비지도 학습 기법으로, 데이터 세트에서 구조,
-관계, 패턴을 발견하기 위해 사용되는 모델입니다. K-Means, DBSCAN, Hierarchical Clustering 등이 있습니다.
+관계, 패턴을 발견하기 위해 사용되는 모델입니다. [K-Means](/k-means/README-kr.md), DBSCAN, Hierarchical Clustering 등이 있습니다.
 
 **앙상블 모델(Ensemble Models)**: 여러 개의 기본 모델을 조합하여 성능을 향상시키는 모델입니다. **배깅(Bagging)**, **부스팅(Boosting)**, **[랜덤 포레스트(Random Forest)](/decisiontree/README-kr.md#advanced-random-forest)**, **그래디언트 부스팅(Gradient Boosting)** 등이 있습니다.
 
@@ -323,7 +323,7 @@ Chain rule 적용: (dy/dx) = (dy/du) * (du/dx) = 2u * 2 = 4u = 4(2x+3)
 
 - **비매개변수 모델(non-parametric model)**: 모델이 고정된 수의 매개 변수가
   없고, 데이터에 의존하여 복잡한 구조를 가지는 경우입니다. 
-  **k-최근접이웃(KNN)**이 대표적인 예입니다. 비매개변수 모델은 전반적으로 수식으로
+  **[k-최근접이웃(KNN)](/knn/README-kr.md)**이 대표적인 예입니다. 비매개변수 모델은 전반적으로 수식으로
   표현하기 어렵습니다.
 
 그러나 이러한 구분은 완벽하게 수식 표현 여부와 일치하지는 않습니다. 경우에 따라
