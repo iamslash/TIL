@@ -1,4 +1,5 @@
 - [References](#references)
+- [ML 학습 지도](#ml-학습-지도)
 - [Chain Rule](#chain-rule)
 - [독립 변수 (Independent variable), 종속 변수 (Dependent variable)](#독립-변수-independent-variable-종속-변수-dependent-variable)
 - [확률 변수 (Random Variable)](#확률-변수-random-variable)
@@ -77,6 +78,8 @@
 
 # References
 
+> - [쉽게 배우는 데이터와 AI | 찹쓰 | 통계 딥러닝 | youtube](https://www.youtube.com/@data_chopsticks/videos)
+> - [[인공지능을 위한 머신러닝101] 머신러닝을 위한 기초통계개념들을 소개합니다 | youtube](https://www.youtube.com/watch?v=q8wCazJhhKo)
 > - [Hacker's guide to Neural Networks](https://karpathy.github.io/neuralnets/)
 >   - Neural Networks Deep Dive
 > - [모두를 위한 머신러닝/딥러닝 강의](http://hunkim.github.io/ml/)
@@ -98,6 +101,189 @@
 >   - 화상인식을 위한 CNN
 > - [CS224d: Deep Learning for Natural Language Processing](http://web.stanford.edu/class/cs224n/)
 >   - 자연어처리를 위한 Deep Learning
+
+# ML 학습 지도
+
+```
+머신러닝 (Machine Learning)
+│
+├─ 🎓 지도학습 (Supervised Learning)
+│  ├─ 회귀 (Regression)
+│  │  ├─ 선형 회귀 (Linear Regression)
+│  │  ├─ 다항 회귀 (Polynomial Regression)
+│  │  ├─ Ridge / Lasso Regression
+│  │  ├─ ElasticNet Regression
+│  │  ├─ SVR (Support Vector Regression)
+│  │  └─ 신경망 회귀 (Neural Network Regression)
+│  │
+│  └─ 분류 (Classification)
+│     ├─ 로지스틱 회귀 (Logistic Regression)
+│     ├─ K-최근접 이웃 (K-Nearest Neighbors, KNN)
+│     ├─ 나이브 베이즈 (Naive Bayes)
+│     ├─ 의사결정나무 (Decision Tree)
+│     ├─ SVM (Support Vector Machine)
+│     └─ 신경망 분류 (Neural Network Classification)
+│
+├─ 🔍 비지도학습 (Unsupervised Learning)
+│  ├─ 군집화 (Clustering)
+│  │  ├─ K-평균 (K-Means)
+│  │  ├─ 계층적 군집화 (Hierarchical Clustering)
+│  │  ├─ DBSCAN
+│  │  ├─ Mean Shift
+│  │  └─ Gaussian Mixture Model (GMM)
+│  │
+│  ├─ 차원 축소 (Dimensionality Reduction)
+│  │  ├─ PCA (Principal Component Analysis)
+│  │  ├─ t-SNE
+│  │  ├─ LDA (Linear Discriminant Analysis)
+│  │  ├─ SVD (Singular Value Decomposition)
+│  │  └─ Autoencoder
+│  │
+│  └─ 이상 탐지 (Anomaly Detection)
+│     ├─ Isolation Forest
+│     ├─ One-Class SVM
+│     └─ Local Outlier Factor (LOF)
+│
+├─ 🎮 강화학습 (Reinforcement Learning)
+│  ├─ 모델 기반 (Model-Based)
+│  │  ├─ 동적 프로그래밍 (Dynamic Programming)
+│  │  └─ Monte Carlo Tree Search (MCTS)
+│  │
+│  ├─ 모델 프리 (Model-Free)
+│  │  ├─ 가치 기반 (Value-Based)
+│  │  │  ├─ Q-Learning
+│  │  │  ├─ SARSA
+│  │  │  └─ DQN (Deep Q-Network)
+│  │  │
+│  │  ├─ 정책 기반 (Policy-Based)
+│  │  │  ├─ Policy Gradient
+│  │  │  └─ REINFORCE
+│  │  │
+│  │  └─ Actor-Critic
+│  │     ├─ A3C (Asynchronous Advantage Actor-Critic)
+│  │     ├─ PPO (Proximal Policy Optimization)
+│  │     └─ DDPG (Deep Deterministic Policy Gradient)
+│  │
+│  └─ 멀티 에이전트 강화학습 (Multi-Agent RL)
+│
+├─ 🔄 준지도학습 (Semi-Supervised Learning)
+│  ├─ Self-Training
+│  ├─ Co-Training
+│  ├─ Graph-Based Methods
+│  └─ Generative Models
+│
+├─ 🤝 앙상블 학습 (Ensemble Learning)
+│  ├─ Bagging
+│  │  ├─ Random Forest
+│  │  └─ Extra Trees
+│  │
+│  ├─ Boosting
+│  │  ├─ AdaBoost
+│  │  ├─ Gradient Boosting (GBM)
+│  │  ├─ XGBoost
+│  │  ├─ LightGBM
+│  │  └─ CatBoost
+│  │
+│  └─ Stacking
+│
+├─ 🧠 딥러닝 (Deep Learning)
+│  ├─ 기본 신경망
+│  │  ├─ MLP (Multi-Layer Perceptron)
+│  │  ├─ Feedforward Neural Network
+│  │  └─ Backpropagation
+│  │
+│  ├─ CNN (Convolutional Neural Network)
+│  │  ├─ LeNet
+│  │  ├─ AlexNet
+│  │  ├─ VGG
+│  │  ├─ ResNet
+│  │  ├─ Inception
+│  │  └─ EfficientNet
+│  │
+│  ├─ RNN (Recurrent Neural Network)
+│  │  ├─ Vanilla RNN
+│  │  ├─ LSTM (Long Short-Term Memory)
+│  │  ├─ GRU (Gated Recurrent Unit)
+│  │  └─ Bidirectional RNN
+│  │
+│  ├─ Transformer
+│  │  ├─ Attention Mechanism
+│  │  ├─ Self-Attention
+│  │  ├─ Multi-Head Attention
+│  │  ├─ BERT
+│  │  ├─ GPT (GPT-2, GPT-3, GPT-4)
+│  │  ├─ T5
+│  │  └─ Vision Transformer (ViT)
+│  │
+│  ├─ GAN (Generative Adversarial Network)
+│  │  ├─ Vanilla GAN
+│  │  ├─ DCGAN
+│  │  ├─ StyleGAN
+│  │  ├─ CycleGAN
+│  │  └─ Pix2Pix
+│  │
+│  ├─ VAE (Variational Autoencoder)
+│  │
+│  └─ Diffusion Models
+│     ├─ DDPM
+│     └─ Stable Diffusion
+│
+├─ 🔀 전이학습 (Transfer Learning)
+│  ├─ Fine-tuning
+│  ├─ Feature Extraction
+│  ├─ Domain Adaptation
+│  └─ Few-Shot Learning
+│     ├─ One-Shot Learning
+│     └─ Zero-Shot Learning
+│
+├─ 📊 온라인 학습 (Online Learning)
+│  ├─ Incremental Learning
+│  ├─ Active Learning
+│  └─ Continual Learning
+│
+├─ 🎯 메타학습 (Meta-Learning)
+│  ├─ Learning to Learn
+│  ├─ MAML (Model-Agnostic Meta-Learning)
+│  └─ Neural Architecture Search (NAS)
+│
+├─ 🔐 자기지도학습 (Self-Supervised Learning)
+│  ├─ Contrastive Learning
+│  │  ├─ SimCLR
+│  │  ├─ MoCo
+│  │  └─ BYOL
+│  │
+│  ├─ Masked Language Modeling
+│  └─ Pretext Tasks
+│
+├─ 🌐 그래프 신경망 (Graph Neural Network)
+│  ├─ GCN (Graph Convolutional Network)
+│  ├─ GraphSAGE
+│  ├─ GAT (Graph Attention Network)
+│  └─ Message Passing Neural Network
+│
+└─ 🎨 생성 모델 (Generative Models)
+   ├─ Autoregressive Models
+   ├─ Flow-Based Models
+   ├─ Energy-Based Models
+   └─ Diffusion Models
+```
+
+**학습 방식별 핵심 질문:**
+```
+지도학습:       "정답을 알려주면서 학습" (labeled data)
+비지도학습:     "정답 없이 패턴 찾기" (unlabeled data)
+강화학습:       "시행착오로 보상 최대화" (reward signal)
+준지도학습:     "일부 정답으로 학습" (partially labeled)
+앙상블학습:     "여러 모델 결합" (model combination)
+전이학습:       "기존 지식 활용" (knowledge transfer)
+```
+
+**발전 경로:**
+```
+전통적 ML → 앙상블 → 딥러닝 → Transformer → 생성 AI
+   ↓          ↓         ↓          ↓           ↓
+ 통계기반   모델결합   신경망     어텐션     창작능력
+```
 
 # Chain Rule
 
