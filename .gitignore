@@ -7,3 +7,5 @@ MNIST_data
 .metals
 **/.DS_Store
 .DS_Store
+.omc
+.claude
