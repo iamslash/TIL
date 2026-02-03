@@ -7,39 +7,74 @@
   - [Tools](#tools)
   - [Build and Run](#build-and-run)
   - [Hello World](#hello-world)
-  - [Useful Keywords](#useful-keywords)
-  - [Ownership](#ownership)
+  - [Reserved Words](#reserved-words)
+  - [Data Types](#data-types)
+  - [Variables and Mutability](#variables-and-mutability)
+  - [Ownership and Borrowing](#ownership-and-borrowing)
   - [Copy vs Clone](#copy-vs-clone)
-  - [Crate](#crate)
-  - [Module](#module)
+  - [Lifetime](#lifetime)
+  - [References and Pointers](#references-and-pointers)
   - [Control Flows](#control-flows)
-  - [Struct](#struct)
-  - [Enum](#enum)
-  - [Box](#box)
-  - [Generic](#generic)
-  - [Trait](#trait)
-  - [Tuple](#tuple)
-  - [Match](#match)
-  - [Array](#array)
-  - [Formatted Print](#formatted-print)
-  - [Custom Errors](#custom-errors)
-  - [Advanced Error Handling](#advanced-error-handling)
+  - [Pattern Matching](#pattern-matching)
+  - [Collections](#collections)
+  - [String Types](#string-types)
   - [String Conversions](#string-conversions)
   - [String Loops](#string-loops)
-  - [if let](#if-let)
-  - [Lifetime](#lifetime)
+  - [Formatted Print](#formatted-print)
+  - [Struct](#struct)
+  - [Enum](#enum)
+  - [Tuple](#tuple)
+  - [Array](#array)
+  - [Functions](#functions)
+  - [Closures](#closures)
+  - [Generic](#generic)
+  - [Trait](#trait)
+  - [Box and Smart Pointers](#box-and-smart-pointers)
+  - [Module System](#module-system)
+  - [Crate](#crate)
+  - [Error Handling](#error-handling)
   - [Attributes](#attributes)
-  - [Copy, Clone](#copy-clone)
-  - [Dispatch](#dispatch)
-  - [Evnironment Variables](#evnironment-variables)
+  - [Environment Variables](#environment-variables)
 - [Advanced](#advanced)
+  - [Dispatch](#dispatch)
+  - [Macros](#macros)
+  - [Unsafe Rust](#unsafe-rust)
+  - [Concurrency](#concurrency)
+  - [Async Programming](#async-programming)
   - [Tokio](#tokio)
+  - [Memory Management](#memory-management)
+  - [Performance Optimization](#performance-optimization)
+- [Style Guide](#style-guide)
+  - [Rust Naming Conventions](#rust-naming-conventions)
+  - [Code Organization](#code-organization)
+  - [Best Practices](#best-practices)
+- [Refactoring](#refactoring)
+  - [Common Refactoring Patterns](#common-refactoring-patterns)
+  - [Refactoring Tools](#refactoring-tools)
+- [Effective Rust](#effective-rust)
+  - [Ownership and Borrowing](#ownership-and-borrowing)
+  - [Error Handling](#error-handling)
+  - [Performance](#performance)
+  - [API Design](#api-design)
+  - [Testing](#testing)
+- [Rust Design Patterns](#rust-design-patterns)
+  - [Creational Patterns](#creational-patterns)
+  - [Structural Patterns](#structural-patterns)
+  - [Behavioral Patterns](#behavioral-patterns)
+- [Rust Architecture](#rust-architecture)
+  - [Project Structure](#project-structure)
+  - [Layered Architecture](#layered-architecture)
+  - [Hexagonal Architecture](#hexagonal-architecture-ports--adapters)
+  - [Async Architecture](#async-architecture)
+  - [Microservices](#microservices)
 
 ----
 
 # Abstract
 
-Rust 에 대해 정리한다.
+Rust is a systems programming language that focuses on safety, speed, and concurrency. It achieves memory safety without garbage collection through its unique ownership system. This document provides a comprehensive guide to Rust programming language features, patterns, and best practices.
+
+**Korean version**: See [README-kr.md](README-kr.md) for Korean language documentation.
 
 # References
 
@@ -122,7 +157,7 @@ fn main() {
 }
 ```
 
-## Useful Keywords
+## Reserved Words
 
 ```rs
 as - perform primitive casting, disambiguate the specific trait containing an item, or rename items in use and extern crate statements
@@ -189,15 +224,11 @@ Here are some of the types that implement Copy:
 
 ## Crate
 
-create 은 build 된 binary 의 단위이다. 실행파일 혹은 라이브러리로 구분할 수
-있다. 
+A crate is the unit of a built binary. It can be classified as either an executable or a library.
 
-## Module
+## Module System
 
-module 은 code 의 logical unit 이다. 관련된 code 들이 한덩이 모여있는 것이다.
-다음과 같이 `mod` 를 사용하여 module 을 정의한다. 또한 `use` 를 사용하여 다른
-module 의 function 등을 import 한다. module function 은 기본적으로 prviate 이다.
-`pub` 을 사용하여 public 으로 바꿀 수 있다.
+A module is a logical unit of code. It's a collection of related code grouped together. You define modules using `mod` and import functions from other modules using `use`. Module functions are private by default, but you can make them public using `pub`.
 
 ```rs
 mod print_things {
@@ -211,15 +242,9 @@ mod print_things {
 fn main() {}
 ```
 
-또한 module 을 별도의 파일로 분리할 수 있다. 예를 들어 다음과 같이 **http**
-module 을 만들어 보자. 반드시 분리된 module directory 에 `mod.rs` 가 있어야
-한다. `mod.rs` 에 module tree 에 포함할 파일들의 이름을 `mod` 를 이용하여
-선언해야 한다. 그래야 해당파일들이 module tree 에 포함되고 `mod.rs` 가 compile
-될 때 함께 compile 된다.
+Modules can be separated into different files. For example, let's create an **http** module. The separated module directory must have a `mod.rs` file. In `mod.rs`, you need to declare the names of files to include in the module tree using `mod`. This way, those files are included in the module tree and compiled together when `mod.rs` is compiled.
 
-또한 http module 은 `main.rs` 에 `mod http;` 로 선언되야 한다. 그래야 http
-module 의 file 들이 root module tree 에 포함된다. 그리고 rustc 가 main.rs 를
-compile 할 때 **http** module 을 compile 할 것이다. 
+Additionally, the http module must be declared in `main.rs` as `mod http;`. This includes the http module's files in the root module tree, and rustc will compile the **http** module when compiling main.rs. 
 
 ```bash
 .
@@ -291,7 +316,7 @@ fn main() {
 }
 ```
 
-`use crate::server::Server;` 의 `crate` 는 root module 을 말한다.
+`use crate::server::Server;` - here `crate` refers to the root module.
 
 ## Control Flows
 
@@ -311,9 +336,7 @@ if, let-if, loop, while, for
 
 ## Struct
 
-golang 의 struct 와 같다. `struct` 로 정의하고 `impl` 로 구현한다. **instant
-function** 은 첫번째 arguement 가 self 이다. **associate function** (static
-function) 은 첫번째 arguement 가 self 가 아니다. 
+Similar to structs in Go. Define with `struct` and implement with `impl`. **Instance methods** take `self` as the first argument. **Associated functions** (static functions) do not take `self` as the first argument. 
 
 ```rs
 // server.rs
@@ -338,8 +361,7 @@ impl Server {
 
 ----
 
-enumrations 을 `enum` 으로 정의한다. **enum** 의 member 를 **variant** 라고
-한다. 다음은 간단한 **enum** 의 예이다.
+Enumerations are defined with `enum`. Members of an **enum** are called **variants**. Here is a simple **enum** example.
 
 ```rs
 // main.rs
@@ -351,7 +373,7 @@ enum Job {
 fn main() {}
 ```
 
-varriant 는 다음과 같이 data 를 가질 수 있다.
+Variants can hold data as shown below.
 
 ```rs
 // main.rs
@@ -380,7 +402,7 @@ fn main() {
 }
 ```
 
-`use Job::*;` 를 선언하면 `Job::` 은 typing 하지 않아도 된다.
+By declaring `use Job::*;`, you don't need to type `Job::`.
 
 ```rs
 // main.rs
@@ -411,14 +433,11 @@ fn main() {
 }
 ```
 
-## Box
+## Box and Smart Pointers
 
-* [Box<T>는 힙에 있는 데이터를 가리키고 알려진 크기를 갖습니다](https://rinthel.github.io/rust-lang-book-ko/ch15-01-box.html)
+* [Box<T> Points to Data on the Heap and Has a Known Size](https://doc.rust-lang.org/book/ch15-01-box.html)
 
-----
-
-Box 는 특정 데이터를 heap 에 보관하고 싶을 때 쓴다. 크기가 큰 데이터가 stack 에
-보관되는 경우 ownership 이 옮겨질 때 데이터의 이동시간이 길 수 있다.
+Box is used when you want to store data on the heap. When large data is stored on the stack, moving data during ownership transfer can be time-consuming.
 
 ```rs
 fn main() {
@@ -602,7 +621,7 @@ if let Some(i) = path.find('?') {
 
 ## Lifetime
 
-Lifetime 의 목적은 dangling reference 를 방지하는 것이다.
+The purpose of lifetimes is to prevent dangling references.
 
 ## Attributes
 
@@ -621,7 +640,7 @@ There are 2 kinds of dispatch such as dynamic, static.
 
 We use `dyn` for dynamic dispatch and `impl` for static dispatch. static dispatch is slow and makes larger binary.
 
-## Evnironment Variables
+## Environment Variables
 
 ```rs
 // env! get env variable value at compile time.
@@ -638,6 +657,308 @@ let default_path = format!("{}/public", env!("CARGO_MANIFEST_DIR"));
 * [tokio @ github](https://github.com/tokio-rs/tokio)
 * [Making the Tokio scheduler 10x faster](https://tokio.rs/blog/2019-10-scheduler)
 
------
+Tokio is Rust's asynchronous runtime framework. It provides the building blocks for writing asynchronous applications with async/await syntax.
 
-Tokio 는 Rust 의 Asynchronous Framework 이다.
+# Style Guide
+
+## Rust Naming Conventions
+
+* **Modules**: Use snake_case (e.g., `my_module`)
+* **Types**: Use UpperCamelCase (e.g., `MyStruct`)
+* **Functions**: Use snake_case (e.g., `my_function`)
+* **Constants**: Use SCREAMING_SNAKE_CASE (e.g., `MY_CONSTANT`)
+* **Lifetimes**: Use short lowercase names (e.g., `'a`, `'b`)
+
+## Code Organization
+
+* Keep modules focused and cohesive
+* Use `mod.rs` or module files for organization
+* Export public APIs carefully with `pub`
+* Document public APIs with `///` doc comments
+
+## Best Practices
+
+* Prefer immutability by default
+* Use `Result` and `Option` instead of panicking
+* Handle errors explicitly with `?` operator
+* Use iterators and functional patterns where appropriate
+* Avoid unnecessary clones
+
+# Refactoring
+
+## Common Refactoring Patterns
+
+### Extract Method
+Break down large functions into smaller, focused ones.
+
+### Replace Clone with References
+Use borrowing instead of cloning when possible.
+
+### Introduce Type Parameter
+Replace concrete types with generics for reusability.
+
+### Extract Trait
+Create traits to abstract common behavior.
+
+### Replace Error Handling
+Migrate from `unwrap()` to proper error propagation with `?`.
+
+## Refactoring Tools
+
+* **rustfmt**: Automatic code formatting
+* **clippy**: Linting and suggestions
+* **rust-analyzer**: IDE support with refactoring actions
+
+# Effective Rust
+
+## Ownership and Borrowing
+
+1. **Prefer borrowing over ownership transfer** when you don't need ownership
+2. **Use lifetimes explicitly** when references are involved
+3. **Avoid unnecessary clones** - use references and slices
+4. **Return owned values** from functions when necessary
+
+## Error Handling
+
+1. **Use `Result<T, E>`** for recoverable errors
+2. **Use `panic!`** only for unrecoverable errors
+3. **Implement `From` trait** for error conversions
+4. **Use `thiserror`** or `anyhow`** crates for better error handling
+
+## Performance
+
+1. **Prefer iterators** over loops for better optimization
+2. **Use `&str` instead of `String`** when possible
+3. **Avoid allocations** in hot paths
+4. **Use `Vec::with_capacity`** when size is known
+5. **Profile before optimizing** with tools like `cargo flamegraph`
+
+## API Design
+
+1. **Return `impl Trait`** for flexibility
+2. **Use builder pattern** for complex constructors
+3. **Implement standard traits** (`Debug`, `Display`, `Clone`, etc.)
+4. **Use `Cow<str>`** for flexible string APIs
+
+## Testing
+
+1. **Write unit tests** with `#[test]`
+2. **Use `#[cfg(test)]`** modules for test code
+3. **Write integration tests** in `tests/` directory
+4. **Use `cargo test`** for running tests
+5. **Document examples** that also serve as tests
+
+# Rust Design Patterns
+
+## Creational Patterns
+
+### Builder Pattern
+```rs
+pub struct Config {
+    host: String,
+    port: u16,
+    timeout: u64,
+}
+
+impl Config {
+    pub fn builder() -> ConfigBuilder {
+        ConfigBuilder::default()
+    }
+}
+
+pub struct ConfigBuilder {
+    host: String,
+    port: u16,
+    timeout: u64,
+}
+
+impl ConfigBuilder {
+    pub fn host(mut self, host: String) -> Self {
+        self.host = host;
+        self
+    }
+
+    pub fn port(mut self, port: u16) -> Self {
+        self.port = port;
+        self
+    }
+
+    pub fn build(self) -> Config {
+        Config {
+            host: self.host,
+            port: self.port,
+            timeout: self.timeout,
+        }
+    }
+}
+```
+
+### Factory Pattern
+Use associated functions (static methods) as factories.
+
+```rs
+impl Widget {
+    pub fn new_button() -> Self { /* ... */ }
+    pub fn new_label() -> Self { /* ... */ }
+}
+```
+
+## Structural Patterns
+
+### Newtype Pattern
+Wrap existing types to add type safety.
+
+```rs
+struct UserId(u64);
+struct ProductId(u64);
+```
+
+### Type State Pattern
+Use types to represent states.
+
+```rs
+struct Locked;
+struct Unlocked;
+
+struct Door<State> {
+    state: PhantomData<State>,
+}
+
+impl Door<Locked> {
+    fn unlock(self) -> Door<Unlocked> { /* ... */ }
+}
+
+impl Door<Unlocked> {
+    fn lock(self) -> Door<Locked> { /* ... */ }
+}
+```
+
+## Behavioral Patterns
+
+### Strategy Pattern
+Use trait objects or generics for different strategies.
+
+```rs
+trait CompressionStrategy {
+    fn compress(&self, data: &[u8]) -> Vec<u8>;
+}
+
+struct Gzip;
+impl CompressionStrategy for Gzip { /* ... */ }
+
+struct Zlib;
+impl CompressionStrategy for Zlib { /* ... */ }
+```
+
+### Visitor Pattern
+Use traits to separate algorithms from data structures.
+
+### RAII Pattern
+Resource Acquisition Is Initialization - automatic cleanup.
+
+```rs
+struct File {
+    handle: FileHandle,
+}
+
+impl Drop for File {
+    fn drop(&mut self) {
+        // Cleanup happens automatically
+        self.handle.close();
+    }
+}
+```
+
+# Rust Architecture
+
+## Project Structure
+
+```
+my_project/
+├── Cargo.toml          # Package manifest
+├── Cargo.lock          # Dependency lock file
+├── src/
+│   ├── main.rs         # Binary entry point
+│   ├── lib.rs          # Library entry point
+│   ├── module1.rs      # Module file
+│   └── module2/        # Module directory
+│       ├── mod.rs      # Module declaration
+│       └── submod.rs   # Submodule
+├── tests/              # Integration tests
+│   └── integration_test.rs
+├── benches/            # Benchmarks
+│   └── benchmark.rs
+└── examples/           # Example binaries
+    └── example.rs
+```
+
+## Layered Architecture
+
+### Domain Layer
+Core business logic with no external dependencies.
+
+```rs
+// domain/user.rs
+pub struct User {
+    id: UserId,
+    email: Email,
+}
+```
+
+### Application Layer
+Use cases and application services.
+
+```rs
+// application/user_service.rs
+pub struct UserService {
+    repo: Box<dyn UserRepository>,
+}
+```
+
+### Infrastructure Layer
+External dependencies (database, HTTP, etc.).
+
+```rs
+// infrastructure/postgres_user_repo.rs
+pub struct PostgresUserRepository {
+    pool: PgPool,
+}
+```
+
+## Hexagonal Architecture (Ports & Adapters)
+
+Define traits (ports) for external dependencies and implement adapters.
+
+```rs
+// ports
+trait UserRepository {
+    fn find(&self, id: UserId) -> Result<User>;
+    fn save(&self, user: &User) -> Result<()>;
+}
+
+// adapters
+struct PostgresUserRepository;
+impl UserRepository for PostgresUserRepository { /* ... */ }
+
+struct InMemoryUserRepository;
+impl UserRepository for InMemoryUserRepository { /* ... */ }
+```
+
+## Async Architecture
+
+Use Tokio or async-std for asynchronous applications.
+
+```rs
+#[tokio::main]
+async fn main() {
+    let server = Server::new();
+    server.run().await;
+}
+```
+
+## Microservices
+
+* Use **tonic** for gRPC services
+* Use **actix-web** or **axum** for REST APIs
+* Use **rdkafka** for Kafka integration
+* Use **redis** for caching
