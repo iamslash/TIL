@@ -39,6 +39,7 @@
   - [`declare`](#declare)
   - [인터페이스를 사용한 함수 정의](#인터페이스를-사용한-함수-정의)
   - [Interface vs Type](#interface-vs-type)
+  - [Optional (선택적 매개변수와 속성)](#optional-선택적-매개변수와-속성)
 - [스타일 가이드](#스타일-가이드)
 - [리팩토링](#리팩토링)
 - [효율적인 TypeScript](#효율적인-typescript)
@@ -1125,6 +1126,87 @@ TypeScript 인터페이스는 함수 시그니처를 보장하여 함수 타입�
     const foo: t2 = { a: 1, b: 2 } // 에러
 }
 ```
+
+## Optional (선택적 매개변수와 속성)
+
+TypeScript에서 `?`를 이름 뒤에 붙이면 **"있어도 되고 없어도 된다"** 는 의미입니다. 크게 3가지 용법이 있습니다.
+
+### Optional Parameter (선택적 매개변수)
+
+함수의 매개변수에 `?`를 붙이면 호출할 때 생략할 수 있습니다.
+
+```ts
+// name은 필수, greeting은 선택
+function greet(name: string, greeting?: string): string {
+  return `${greeting ?? "Hello"}, ${name}!`;
+}
+
+console.log(greet("David"));            // "Hello, David!"
+console.log(greet("David", "Hi"));      // "Hi, David!"
+```
+
+옵션 객체 패턴에서도 많이 사용합니다.
+
+```ts
+// 두 번째 매개변수 자체가 선택적
+async function fetchData(url: string, options?: { timeout?: number; retries?: number }) {
+  const timeout = options?.timeout ?? 3000;
+  const retries = options?.retries ?? 1;
+  console.log(`url=${url}, timeout=${timeout}, retries=${retries}`);
+}
+
+await fetchData("/api/users");                          // options 생략 OK
+await fetchData("/api/users", { timeout: 5000 });       // retries 생략 OK
+await fetchData("/api/users", { timeout: 5000, retries: 3 }); // 둘 다 전달 OK
+```
+
+### Optional Property (선택적 속성)
+
+인터페이스나 타입의 속성에 `?`를 붙이면 그 속성은 없어도 됩니다.
+
+```ts
+interface User {
+  name: string;       // 필수
+  age?: number;       // 선택
+  email?: string;     // 선택
+}
+
+const user1: User = { name: "David" };                     // OK
+const user2: User = { name: "David", age: 30 };            // OK
+const user3: User = { name: "David", age: 30, email: "a@b.com" }; // OK
+// const user4: User = { age: 30 };                        // ERROR: name이 없음
+```
+
+### Optional Chaining (선택적 체이닝)
+
+객체의 속성에 접근할 때 `?.`를 사용하면, 값이 `null` 또는 `undefined`일 때 에러 없이 `undefined`를 반환합니다.
+
+```ts
+interface Company {
+  name: string;
+  address?: {
+    city?: string;
+    zipCode?: string;
+  };
+}
+
+const company: Company = { name: "Foo Inc." };
+
+// ?. 없이 접근하면 런타임 에러 발생
+// console.log(company.address.city);   // ERROR: Cannot read property 'city' of undefined
+
+// ?. 를 사용하면 안전하게 접근
+console.log(company.address?.city);     // undefined (에러 없음)
+console.log(company.address?.zipCode);  // undefined (에러 없음)
+```
+
+### 정리
+
+| 용법 | 문법 | 의미 |
+|------|------|------|
+| Optional Parameter | `function foo(x?: string)` | 매개변수를 안 넘겨도 됨 |
+| Optional Property | `{ name?: string }` | 속성이 없어도 됨 |
+| Optional Chaining | `obj?.prop` | null/undefined면 에러 대신 undefined 반환 |
 
 # 스타일 가이드
 

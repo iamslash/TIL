@@ -3360,6 +3360,112 @@ public class SseClient {
 - 실시간 대시보드
 - 로그 스트리밍
 - 진행률 표시
+- LLM API 스트리밍 응답 (ChatGPT, Claude 등)
+
+**LLM API 스트리밍에서의 SSE 활용:**
+
+LLM(대규모 언어 모델)은 토큰을 하나씩 생성하므로, SSE를 사용하면 전체 응답이 완성될
+때까지 기다리지 않고 생성되는 즉시 토큰을 전송할 수 있습니다. ChatGPT, Claude 등의
+API가 이 방식을 사용합니다.
+
+일반 HTTP 요청과 SSE 요청의 차이:
+
+```
+일반 HTTP 요청:
+  POST /v1/chat/completions
+  Content-Type: application/json
+
+  {"model": "gpt-4", "messages": [...]}
+
+  → 응답: 전체 텍스트가 한 번에 도착
+
+SSE 요청:
+  POST /v1/chat/completions
+  Content-Type: application/json
+  Accept: text/event-stream              ← 헤더 추가
+
+  {"model": "gpt-4", "messages": [...], "stream": true}
+                                                   ↑ 필드 추가
+  → 응답: 토큰 단위로 조각이 하나씩 도착
+```
+
+SSE 스트리밍 응답 형식 (OpenAI API 기준):
+
+```
+data: {"choices":[{"delta":{"content":"현재"}}]}
+
+data: {"choices":[{"delta":{"content":" 서울의"}}]}
+
+data: {"choices":[{"delta":{"content":" 날씨는"}}]}
+
+data: {"choices":[{"delta":{"content":" 맑습니다."}}]}
+
+data: [DONE]
+```
+
+일반 응답에서는 `message` 필드로 전체 텍스트가 오지만, SSE 응답에서는 `delta` 필드로
+변화분(조각)이 옵니다.
+
+**TypeScript LLM SSE 클라이언트 (fetch API):**
+
+```typescript
+// 일반 요청 - 전체 응답을 한 번에 받음
+async function chatNormal(prompt: string): Promise<string> {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer YOUR_API_KEY",
+    },
+    body: JSON.stringify({
+      model: "gpt-4",
+      messages: [{ role: "user", content: prompt }],
+    }),
+  });
+  const data = await response.json();
+  return data.choices[0].message.content;  // 전체 텍스트
+}
+
+// SSE 요청 - 토큰을 하나씩 스트리밍으로 받음
+async function chatStream(prompt: string): Promise<void> {
+  const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer YOUR_API_KEY",
+      "Accept": "text/event-stream",         // SSE 헤더
+    },
+    body: JSON.stringify({
+      model: "gpt-4",
+      messages: [{ role: "user", content: prompt }],
+      stream: true,                           // 스트리밍 활성화
+    }),
+  });
+
+  const reader = response.body!.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    const chunk = decoder.decode(value);
+    // chunk 예시: "data: {\"choices\":[{\"delta\":{\"content\":\"안녕\"}}]}\n\n"
+
+    for (const line of chunk.split("\n")) {
+      if (!line.startsWith("data: ")) continue;
+      const data = line.slice(6);             // "data: " 제거
+      if (data === "[DONE]") return;          // 스트리밍 종료
+
+      const parsed = JSON.parse(data);
+      const token = parsed.choices[0]?.delta?.content;
+      if (token) {
+        process.stdout.write(token);          // 토큰 단위로 즉시 출력
+      }
+    }
+  }
+}
+```
 
 **Long Polling vs WebSocket vs SSE 비교:**
 
@@ -3369,6 +3475,7 @@ public class SseClient {
 | 알림 시스템 | SSE | 서버→클라이언트 단방향 |
 | 멀티플레이어 게임 | WebSocket | 낮은 레이턴시, 양방향 |
 | 주식 시세 | SSE | 서버 푸시, 텍스트 데이터 |
+| LLM 스트리밍 응답 | SSE | 서버→클라이언트 단방향, 토큰 단위 전송 |
 | 레거시 브라우저 지원 | Long Polling | 가장 넓은 호환성 |
 | 실시간 협업 도구 | WebSocket | 양방향 + 낮은 레이턴시 |
 
