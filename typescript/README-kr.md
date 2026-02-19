@@ -783,20 +783,24 @@ arr.includes(3);            // true      — 존재 여부만
 ## 다차원 배열 (Multidimensional Array)
 
 ```ts
-let aa: number[][] = [[1, 2, 3],[23, 24, 25]]
-for (let i = 0; i < aa.length; i++) {
-    for (let j = 0; j < aa[0].length; j++) {
-        console.log(aa[i][j]);
+// 선언 및 순회
+let grid: number[][] = [
+    [1, 2, 3],
+    [4, 5, 6]
+];
+
+for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[0].length; j++) {
+        console.log(grid[i][j]);
     }
 }
-// 출력:
-// 1
-// 2
-// 3
-// 23
-// 24
-// 25
+// 출력: 1, 2, 3, 4, 5, 6
+
+// 초기화: 3x4 배열을 0으로 채우기
+let matrix: number[][] = Array.from({length: 3}, () => new Array(4).fill(0));
 ```
+
+> **함정:** `new Array(3).fill(new Array(4).fill(0))`은 모든 행이 **같은 참조**를 공유합니다. `matrix[0][0] = 1`로 바꾸면 모든 행의 0번이 바뀝니다. 반드시 `Array.from()`을 쓰세요.
 
 ## 열거형 (Enum)
 
