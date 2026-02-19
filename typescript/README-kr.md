@@ -15,34 +15,27 @@
   - [포맷된 문자열 (Formatted String)](#포맷된-문자열-formatted-string)
   - [검사하기 (Inspect)](#검사하기-inspect)
   - [데이터 타입 (Data Types)](#데이터-타입-data-types)
-    - [undefined vs unknown vs any vs never 비교](#undefined-vs-unknown-vs-any-vs-never-비교)
   - [제어 흐름문 (Control Flow)](#제어-흐름문-control-flow)
-    - [조건문 (Conditionals)](#조건문-conditionals)
-    - [반복문 (Loops)](#반복문-loops)
-    - [for...of vs for...in](#forof-vs-forin)
-    - [var vs let 스코프 (Scope)](#var-vs-let-스코프-scope)
   - [컬렉션 (Collections)](#컬렉션-collections)
-    - [튜플 (Tuple)](#튜플-tuple)
-    - [배열 (Array)](#배열-array)
-    - [집합 (Set)](#집합-set)
-    - [맵 (Map)](#맵-map)
   - [컬렉션 변환 (Collection Conversion)](#컬렉션-변환-collection-conversion)
   - [정렬 (Sort)](#정렬-sort)
   - [검색 (Search)](#검색-search)
   - [다차원 배열 (Multidimensional Array)](#다차원-배열-multidimensional-array)
   - [열거형 (Enum)](#열거형-enum)
-  - [제네릭 (Generics)](#제네릭-generics)
   - [같은 줄에 여러 변수 정의하기 (Multiple Variables)](#같은-줄에-여러-변수-정의하기-multiple-variables)
-- [고급 (Advanced)](#고급-advanced)
-  - [Map vs Record](#map-vs-record)
-  - [유틸리티 타입 (Utility Types)](#유틸리티-타입-utility-types)
   - [삼중 점 연산자 (Spread/Rest Operator)](#삼중-점-연산자-spreadrest-operator)
   - [널 병합 연산자 (||), 이중 물음표 (??) (Nullish Coalescing)](#널-병합-연산자--이중-물음표--nullish-coalescing)
   - [export와 import (Export & Import)](#export와-import-export--import)
-  - [`declare`](#declare)
-  - [인터페이스를 사용한 함수 정의 (Function Types with Interface)](#인터페이스를-사용한-함수-정의-function-types-with-interface)
+- [Core Concepts (핵심 개념)](#core-concepts-핵심-개념)
+  - [undefined vs unknown vs any vs never 비교](#undefined-vs-unknown-vs-any-vs-never-비교)
+  - [제네릭 (Generics)](#제네릭-generics)
+  - [유틸리티 타입 (Utility Types)](#유틸리티-타입-utility-types)
   - [Interface vs Type](#interface-vs-type)
   - [Optional (선택적 매개변수와 속성)](#optional-선택적-매개변수와-속성)
+  - [`declare`](#declare)
+  - [인터페이스를 사용한 함수 정의 (Function Types with Interface)](#인터페이스를-사용한-함수-정의-function-types-with-interface)
+- [고급 (Advanced)](#고급-advanced)
+  - [Map vs Record](#map-vs-record)
 - [스타일 가이드 (Style Guide)](#스타일-가이드-style-guide)
 - [리팩토링 (Refactoring)](#리팩토링-refactoring)
 - [효율적인 TypeScript (Effective TypeScript)](#효율적인-typescript-effective-typescript)
@@ -336,98 +329,6 @@ create(undefined);
 let someValue: unknown = "This is a string";
 let strLength: number = (someValue as string).length;
 let strLength2: number = (<string>someValue).length;
-```
-
-### undefined vs unknown vs any vs never 비교
-
-이 네 가지 특수 타입은 역할이 명확히 다릅니다.
-
-| 타입 | 한 줄 요약 | 핵심 |
-|------|-----------|------|
-| `undefined` | 값이 **아직 없다** | 빈 상태를 나타내는 JavaScript 기본값 |
-| `unknown` | 값이 **뭔지 모른다** (확인하고 써라) | `any`의 안전한 버전 |
-| `any` | 값이 **뭐든 상관없다** (검사 포기) | 타입 안전성 없음, 비추천 |
-| `never` | 값이 **존재할 수 없다** | 함수가 절대 정상 반환하지 않음 |
-
-#### undefined — "아직 안 넣었어"
-
-```ts
-let name: string;
-console.log(name);          // undefined — 값을 안 넣었으니까
-
-function greet(name?: string) {
-    console.log(name);      // 안 넘기면 undefined
-}
-greet();                    // undefined
-
-const arr = [1, 2, 3];
-console.log(arr[10]);       // undefined — 범위 밖
-```
-
-#### unknown — "뭔지 모르니까 확인하고 써라"
-
-`any`처럼 아무 값이나 담을 수 있지만, **타입 확인 전에는 사용 불가**합니다.
-외부 API 응답, `JSON.parse`, `catch`의 error 처리에 적합합니다.
-
-```ts
-let value: unknown = "hello";
-
-value.toUpperCase();            // ❌ 컴파일 에러 — 바로 못 씀
-(value as string).toUpperCase(); // ✅ 타입 단언 후 OK
-
-if (typeof value === "string") {
-    value.toUpperCase();        // ✅ typeof 확인 후 자동 OK
-}
-
-// 실전: catch에서 error 처리
-try {
-    something();
-} catch (err: unknown) {
-    // err.message;              // ❌ 바로 못 씀
-    if (err instanceof Error) {
-        console.log(err.message); // ✅ 확인 후 사용
-    }
-}
-```
-
-#### any vs unknown
-
-```ts
-// any: 아무거나 해도 에러 안 남 (위험!)
-let a: any = "hello";
-a.foo.bar.baz;          // ✅ 컴파일 통과 — 런타임에 터짐 💥
-
-// unknown: 확인 전엔 아무것도 못 함 (안전!)
-let b: unknown = "hello";
-b.foo.bar.baz;          // ❌ 컴파일 에러 — 런타임 전에 잡아줌
-```
-
-> **`any`를 쓰고 싶다면 `unknown`을 쓰세요.** `any`는 타입 검사를 완전히 무력화합니다.
-
-#### never — "이런 상황은 절대 발생하지 않는다"
-
-함수가 절대 정상 반환하지 않거나, 모든 케이스를 처리했는지 검증할 때 사용합니다.
-
-```ts
-// 1. 항상 예외를 던지는 함수
-function fail(msg: string): never {
-    throw new Error(msg);
-}
-
-// 2. Exhaustive check — 케이스 빠뜨림을 컴파일 타임에 방지
-type Shape = "circle" | "square" | "triangle";
-
-function getArea(shape: Shape): number {
-    switch (shape) {
-        case "circle":   return 3.14 * 10 * 10;
-        case "square":   return 10 * 10;
-        case "triangle": return (10 * 5) / 2;
-        default:
-            const _exhaustive: never = shape;  // 모든 케이스 처리 시 여기 도달 불가
-            throw new Error(`Unknown shape: ${_exhaustive}`);
-    }
-}
-// 나중에 "pentagon"을 Shape에 추가하면, case를 안 넣으면 컴파일 에러 발생!
 ```
 
 ## 제어 흐름문 (Control Flow)
@@ -848,190 +749,10 @@ if (user.status === Status.Active) { ... }  // ✅ 안전
 > type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";  // 더 간결
 > ```
 
-## 제네릭 (Generics)
-
-* [Generics](ts_handbook.md#generics)
-
-**타입을 매개변수처럼 넘기는 것**입니다. "어떤 타입이든 받되, 일관성을 유지해라"가 핵심입니다.
-
-```ts
-// 제네릭 없이 — any를 쓰면 타입 정보를 잃음
-function identity(arg: any): any {
-    return arg;
-}
-let result = identity("hello");  // result 타입: any (string 아님!)
-
-// 제네릭으로 — 타입 정보 유지
-function identity<T>(arg: T): T {
-    return arg;
-}
-let result = identity("hello");  // result 타입: string ✅
-let num = identity(42);          // num 타입: number ✅
-```
-
-**실전 패턴:**
-
-```ts
-// 제네릭 함수
-function firstElement<T>(arr: T[]): T | undefined {
-    return arr[0];
-}
-firstElement([1, 2, 3]);      // number
-firstElement(["a", "b"]);     // string
-
-// 제네릭 클래스
-class Box<T> {
-    content: T;
-    constructor(value: T) { this.content = value; }
-}
-let numBox = new Box(42);       // Box<number>
-let strBox = new Box("hello");  // Box<string>
-```
-
-> 제네릭의 `<T>`는 "나중에 알려줄 타입"이라는 **플레이스홀더**입니다. `any`와 달리 타입 안전성을 유지합니다.
-
 ## 같은 줄에 여러 변수 정의하기 (Multiple Variables)
 
 ```ts
 let i = 0, j = 0, n = s.length
-```
-
-# 고급 (Advanced)
-
-## Map vs Record
-
-* [map vs object | TIL](/js/README.md#map-vs-object)
-
-```ts
-// Record — 키가 "고정"된 객체 타입 (컴파일 타임)
-type UserScores = Record<string, number>;
-let scores: UserScores = { David: 100, John: 85 };
-
-// Map — 키가 "동적"으로 변하는 컬렉션 (런타임 객체)
-let scoreMap = new Map<string, number>();
-scoreMap.set("David", 100);
-```
-
-| | `Record<K, V>` | `Map<K, V>` |
-|---|---|---|
-| 본질 | **타입** (컴파일 타임) | **클래스** (런타임 객체) |
-| 키 타입 | string / number / symbol | **아무 타입** |
-| 용도 | 객체 형태 정의 | 동적 키-값 저장 |
-| 순회 | `Object.keys()` | `for...of`, `forEach` |
-| 크기 | `Object.keys(obj).length` | `map.size` |
-
-> **판단:** 구조가 미리 정해져 있으면 `Record`, 런타임에 키가 추가/삭제되면 `Map`.
-
-## 유틸리티 타입 (Utility Types)
-
-> * [Utility Types | typescript](https://www.typescriptlang.org/ko/docs/handbook/utility-types.html)
-> * [[Typescript] 유틸리티 타입 - Parameters, ReturnType, Required](https://www.morolog.dev/entry/Typscript-%EC%9C%A0%ED%8B%B8%EB%A6%AC%ED%8B%B0-%ED%83%80%EC%9E%85-Parameters-ReturnType-Required)
-
-기존 타입을 **변형**해서 새 타입을 만드는 내장 도구입니다. 가장 자주 쓰는 것들:
-
-| 유틸리티 | 하는 일 | 예시 |
-|----------|---------|------|
-| `ReturnType<T>` | 함수 **반환** 타입 추출 | `ReturnType<typeof getUser>` |
-| `Parameters<T>` | 함수 **매개변수** 타입 추출 | `Parameters<typeof login>` |
-| `Required<T>` | 모든 `?` 제거 → 필수 | `Required<Props>` |
-| `Partial<T>` | 모든 속성에 `?` 추가 → 선택 | `Partial<User>` |
-| `Record<K,V>` | 키-값 타입 정의 | `Record<string, number>` |
-| `Pick<T,K>` | 특정 속성만 **골라냄** | `Pick<User, 'name'>` |
-| `Omit<T,K>` | 특정 속성만 **제외** | `Omit<User, 'password'>` |
-| `keyof T` | 키를 유니온 타입으로 | `keyof Point` → `"x" \| "y"` |
-
-```ts
-// ReturnType<T>
-// 함수의 반환 타입을 생성합니다.
-declare function foo(): Foo
-type fooResult = ReturnType<typeof foo>;
-
-type F = (...p: any[]) => any
-function debounce(fn: F, t: number): F {
-    return function(...args) {
-        let timeout: ReturnType<typeof setTimeout>
-        return (...args) => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => fn(...args), t);
-        }
-    }
-};
-
-// Parameters<T>
-// 함수의 매개변수 타입을 생성합니다.
-declare function foo(foo: {name: string, mobile: number}): void
-type fooParams = Parameters<typeof foo>;
-
-// Required<T>
-// 모든 필드를 필수로 만드는 타입을 생성합니다.
-interface Props {
-  a?: number;
-  b?: string;
-}
-
-// OK
-const obj: Props = { a: 5 };
-// 에러: Property 'b' is missing in type '{ a: number; }'
-// but required in type 'Required<Props>'.
-const obj2: Required<Props> = { a: 5 };
-
-// Record<Keys, Type>
-// 프로퍼티 키가 Keys이고 프로퍼티 값이 Type인 객체 타입을 생성합니다.
-// https://developer-talk.tistory.com/296
-
-// personType이라는 객체 타입을 정의합니다.
-// 인덱스 시그니처를 사용합니다.
-type personType = {
-    [name: string]: number
-}
-let person: personType = {
-    'foo': 10,
-    'bar': 20,
-    'baz': 30
-}
-// 이것을 Record 타입으로 바꿔봅시다.
-// 장점이 뭘까요?
-type personType = Record<string, number>;
-let person: personType = {
-    'foo': 10,
-    'bar': 20,
-    'baz': 30
-}
-// 인덱스 시그니처로 해결되지 않는 경우가 있습니다.
-// 에러:
-// An index signature parameter type cannot be a
-// literal type or generic type. Consider using a mapped
-// object type instead.
-type personType = {
-    [name: 'foo' | 'bar' | 'baz']: number
-}
-// 이렇게 해결합니다.
-type names = 'foo' | 'bar' | 'baz';
-type personType = Record<names, number>;
-let person: personType = {
-    'foo': 10,
-    'bar': 20,
-    'baz': 30
-}
-
-// keyof
-// keyof 연산자는 객체 타입을 받아서 그 키들의
-// 문자열 또는 숫자 리터럴 유니온을 생성합니다.
-type Point = { x: number; y: number };
-type P = keyof Point;
-
-// keyof, Record 타입
-type personType = {
-    name: string;
-    age: number;
-    addr: string;
-}
-type personRecordType = Record<keyof personType, string>
-let person: personRecordType = {
-    name: "iamslash",
-    age: "18",
-    addr: "USA"
-}
 ```
 
 ## 삼중 점 연산자 (Spread/Rest Operator)
@@ -1183,46 +904,253 @@ import * as bar from 'bar';
 import bar from 'bar';
 ```
 
-## `declare`
+# Core Concepts (핵심 개념)
 
-* [Purpose of declare keyword in TypeScript | stackoverflow](https://stackoverflow.com/questions/43335962/purpose-of-declare-keyword-in-typescript)
-  * [한글](https://jjnooys.medium.com/typescript-declare-cd163acb9f)
+TypeScript만의 고유한 타입 시스템 개념들입니다. JavaScript에는 없는 것들이며, TypeScript를 제대로 활용하려면 반드시 이해해야 합니다.
 
-"이 타입/변수는 **다른 곳에 이미 존재**하니까 컴파일러야 믿어라"라는 의미입니다. JavaScript로 변환되지 않습니다.
+## undefined vs unknown vs any vs never 비교
+
+이 네 가지 특수 타입은 역할이 명확히 다릅니다.
+
+| 타입 | 한 줄 요약 | 핵심 |
+|------|-----------|------|
+| `undefined` | 값이 **아직 없다** | 빈 상태를 나타내는 JavaScript 기본값 |
+| `unknown` | 값이 **뭔지 모른다** (확인하고 써라) | `any`의 안전한 버전 |
+| `any` | 값이 **뭐든 상관없다** (검사 포기) | 타입 안전성 없음, 비추천 |
+| `never` | 값이 **존재할 수 없다** | 함수가 절대 정상 반환하지 않음 |
+
+### undefined — "아직 안 넣었어"
 
 ```ts
-// jQuery가 <script>로 이미 로드된 상태
-declare var $: any;
-$(".btn").click();  // 컴파일 에러 없이 사용 가능
+let name: string;
+console.log(name);          // undefined — 값을 안 넣었으니까
 
-// declare 없이 vs 있을 때
-        type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
-declare type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
+function greet(name?: string) {
+    console.log(name);      // 안 넘기면 undefined
+}
+greet();                    // undefined
+
+const arr = [1, 2, 3];
+console.log(arr[10]);       // undefined — 범위 밖
 ```
 
-> `.d.ts` 파일은 전부 `declare`의 집합입니다. 실제 코드 없이 타입 정보만 제공합니다.
+### unknown — "뭔지 모르니까 확인하고 써라"
 
-## 인터페이스를 사용한 함수 정의 (Function Types with Interface)
-
-* [TypeScript Interface](https://www.softwaretestinghelp.com/typescript-interface/)
-
-함수에 **속성을 추가**할 수 있는 패턴입니다. React의 `FunctionComponent`가 대표적 예입니다. 프로퍼티 이름 앞에 물음표를 사용하여 선택적 프로퍼티를 사용합니다.
-
-> 함수이면서 동시에 속성을 가진 객체가 필요할 때 씁니다. 일반적인 함수 타입은 화살표(`(x: string) => void`)로 충분합니다.
+`any`처럼 아무 값이나 담을 수 있지만, **타입 확인 전에는 사용 불가**합니다.
+외부 API 응답, `JSON.parse`, `catch`의 error 처리에 적합합니다.
 
 ```ts
-{
-    interface FunctionComponent {
-        (): string;
-        displayName?: string;
-    }
-    const foo: FunctionComponent = () => "Hello Foo";
-    foo.displayName = "Hello Foo";
-    console.log(foo);
+let value: unknown = "hello";
 
-    const bar = () => "Hello Bar";
-    bar.displayName = "Hello Bar";
-    console.log(bar);
+value.toUpperCase();            // ❌ 컴파일 에러 — 바로 못 씀
+(value as string).toUpperCase(); // ✅ 타입 단언 후 OK
+
+if (typeof value === "string") {
+    value.toUpperCase();        // ✅ typeof 확인 후 자동 OK
+}
+
+// 실전: catch에서 error 처리
+try {
+    something();
+} catch (err: unknown) {
+    // err.message;              // ❌ 바로 못 씀
+    if (err instanceof Error) {
+        console.log(err.message); // ✅ 확인 후 사용
+    }
+}
+```
+
+### any vs unknown
+
+```ts
+// any: 아무거나 해도 에러 안 남 (위험!)
+let a: any = "hello";
+a.foo.bar.baz;          // ✅ 컴파일 통과 — 런타임에 터짐 💥
+
+// unknown: 확인 전엔 아무것도 못 함 (안전!)
+let b: unknown = "hello";
+b.foo.bar.baz;          // ❌ 컴파일 에러 — 런타임 전에 잡아줌
+```
+
+> **`any`를 쓰고 싶다면 `unknown`을 쓰세요.** `any`는 타입 검사를 완전히 무력화합니다.
+
+### never — "이런 상황은 절대 발생하지 않는다"
+
+함수가 절대 정상 반환하지 않거나, 모든 케이스를 처리했는지 검증할 때 사용합니다.
+
+```ts
+// 1. 항상 예외를 던지는 함수
+function fail(msg: string): never {
+    throw new Error(msg);
+}
+
+// 2. Exhaustive check — 케이스 빠뜨림을 컴파일 타임에 방지
+type Shape = "circle" | "square" | "triangle";
+
+function getArea(shape: Shape): number {
+    switch (shape) {
+        case "circle":   return 3.14 * 10 * 10;
+        case "square":   return 10 * 10;
+        case "triangle": return (10 * 5) / 2;
+        default:
+            const _exhaustive: never = shape;  // 모든 케이스 처리 시 여기 도달 불가
+            throw new Error(`Unknown shape: ${_exhaustive}`);
+    }
+}
+// 나중에 "pentagon"을 Shape에 추가하면, case를 안 넣으면 컴파일 에러 발생!
+```
+
+## 제네릭 (Generics)
+
+* [Generics](ts_handbook.md#generics)
+
+**타입을 매개변수처럼 넘기는 것**입니다. "어떤 타입이든 받되, 일관성을 유지해라"가 핵심입니다.
+
+```ts
+// 제네릭 없이 — any를 쓰면 타입 정보를 잃음
+function identity(arg: any): any {
+    return arg;
+}
+let result = identity("hello");  // result 타입: any (string 아님!)
+
+// 제네릭으로 — 타입 정보 유지
+function identity<T>(arg: T): T {
+    return arg;
+}
+let result = identity("hello");  // result 타입: string ✅
+let num = identity(42);          // num 타입: number ✅
+```
+
+**실전 패턴:**
+
+```ts
+// 제네릭 함수
+function firstElement<T>(arr: T[]): T | undefined {
+    return arr[0];
+}
+firstElement([1, 2, 3]);      // number
+firstElement(["a", "b"]);     // string
+
+// 제네릭 클래스
+class Box<T> {
+    content: T;
+    constructor(value: T) { this.content = value; }
+}
+let numBox = new Box(42);       // Box<number>
+let strBox = new Box("hello");  // Box<string>
+```
+
+> 제네릭의 `<T>`는 "나중에 알려줄 타입"이라는 **플레이스홀더**입니다. `any`와 달리 타입 안전성을 유지합니다.
+
+## 유틸리티 타입 (Utility Types)
+
+> * [Utility Types | typescript](https://www.typescriptlang.org/ko/docs/handbook/utility-types.html)
+> * [[Typescript] 유틸리티 타입 - Parameters, ReturnType, Required](https://www.morolog.dev/entry/Typscript-%EC%9C%A0%ED%8B%B8%EB%A6%AC%ED%8B%B0-%ED%83%80%EC%9E%85-Parameters-ReturnType-Required)
+
+기존 타입을 **변형**해서 새 타입을 만드는 내장 도구입니다. 가장 자주 쓰는 것들:
+
+| 유틸리티 | 하는 일 | 예시 |
+|----------|---------|------|
+| `ReturnType<T>` | 함수 **반환** 타입 추출 | `ReturnType<typeof getUser>` |
+| `Parameters<T>` | 함수 **매개변수** 타입 추출 | `Parameters<typeof login>` |
+| `Required<T>` | 모든 `?` 제거 → 필수 | `Required<Props>` |
+| `Partial<T>` | 모든 속성에 `?` 추가 → 선택 | `Partial<User>` |
+| `Record<K,V>` | 키-값 타입 정의 | `Record<string, number>` |
+| `Pick<T,K>` | 특정 속성만 **골라냄** | `Pick<User, 'name'>` |
+| `Omit<T,K>` | 특정 속성만 **제외** | `Omit<User, 'password'>` |
+| `keyof T` | 키를 유니온 타입으로 | `keyof Point` → `"x" \| "y"` |
+
+```ts
+// ReturnType<T>
+// 함수의 반환 타입을 생성합니다.
+declare function foo(): Foo
+type fooResult = ReturnType<typeof foo>;
+
+type F = (...p: any[]) => any
+function debounce(fn: F, t: number): F {
+    return function(...args) {
+        let timeout: ReturnType<typeof setTimeout>
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fn(...args), t);
+        }
+    }
+};
+
+// Parameters<T>
+// 함수의 매개변수 타입을 생성합니다.
+declare function foo(foo: {name: string, mobile: number}): void
+type fooParams = Parameters<typeof foo>;
+
+// Required<T>
+// 모든 필드를 필수로 만드는 타입을 생성합니다.
+interface Props {
+  a?: number;
+  b?: string;
+}
+
+// OK
+const obj: Props = { a: 5 };
+// 에러: Property 'b' is missing in type '{ a: number; }'
+// but required in type 'Required<Props>'.
+const obj2: Required<Props> = { a: 5 };
+
+// Record<Keys, Type>
+// 프로퍼티 키가 Keys이고 프로퍼티 값이 Type인 객체 타입을 생성합니다.
+// https://developer-talk.tistory.com/296
+
+// personType이라는 객체 타입을 정의합니다.
+// 인덱스 시그니처를 사용합니다.
+type personType = {
+    [name: string]: number
+}
+let person: personType = {
+    'foo': 10,
+    'bar': 20,
+    'baz': 30
+}
+// 이것을 Record 타입으로 바꿔봅시다.
+// 장점이 뭘까요?
+type personType = Record<string, number>;
+let person: personType = {
+    'foo': 10,
+    'bar': 20,
+    'baz': 30
+}
+// 인덱스 시그니처로 해결되지 않는 경우가 있습니다.
+// 에러:
+// An index signature parameter type cannot be a
+// literal type or generic type. Consider using a mapped
+// object type instead.
+type personType = {
+    [name: 'foo' | 'bar' | 'baz']: number
+}
+// 이렇게 해결합니다.
+type names = 'foo' | 'bar' | 'baz';
+type personType = Record<names, number>;
+let person: personType = {
+    'foo': 10,
+    'bar': 20,
+    'baz': 30
+}
+
+// keyof
+// keyof 연산자는 객체 타입을 받아서 그 키들의
+// 문자열 또는 숫자 리터럴 유니온을 생성합니다.
+type Point = { x: number; y: number };
+type P = keyof Point;
+
+// keyof, Record 타입
+type personType = {
+    name: string;
+    age: number;
+    addr: string;
+}
+type personRecordType = Record<keyof personType, string>
+let person: personRecordType = {
+    name: "iamslash",
+    age: "18",
+    addr: "USA"
 }
 ```
 
@@ -1431,6 +1359,75 @@ console.log(company.address?.zipCode);  // undefined (에러 없음)
 | Optional Parameter | `function foo(x?: string)` | 매개변수를 안 넘겨도 됨 |
 | Optional Property | `{ name?: string }` | 속성이 없어도 됨 |
 | Optional Chaining | `obj?.prop` | null/undefined면 에러 대신 undefined 반환 |
+
+## `declare`
+
+* [Purpose of declare keyword in TypeScript | stackoverflow](https://stackoverflow.com/questions/43335962/purpose-of-declare-keyword-in-typescript)
+  * [한글](https://jjnooys.medium.com/typescript-declare-cd163acb9f)
+
+"이 타입/변수는 **다른 곳에 이미 존재**하니까 컴파일러야 믿어라"라는 의미입니다. JavaScript로 변환되지 않습니다.
+
+```ts
+// jQuery가 <script>로 이미 로드된 상태
+declare var $: any;
+$(".btn").click();  // 컴파일 에러 없이 사용 가능
+
+// declare 없이 vs 있을 때
+        type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
+declare type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
+```
+
+> `.d.ts` 파일은 전부 `declare`의 집합입니다. 실제 코드 없이 타입 정보만 제공합니다.
+
+## 인터페이스를 사용한 함수 정의 (Function Types with Interface)
+
+* [TypeScript Interface](https://www.softwaretestinghelp.com/typescript-interface/)
+
+함수에 **속성을 추가**할 수 있는 패턴입니다. React의 `FunctionComponent`가 대표적 예입니다. 프로퍼티 이름 앞에 물음표를 사용하여 선택적 프로퍼티를 사용합니다.
+
+> 함수이면서 동시에 속성을 가진 객체가 필요할 때 씁니다. 일반적인 함수 타입은 화살표(`(x: string) => void`)로 충분합니다.
+
+```ts
+{
+    interface FunctionComponent {
+        (): string;
+        displayName?: string;
+    }
+    const foo: FunctionComponent = () => "Hello Foo";
+    foo.displayName = "Hello Foo";
+    console.log(foo);
+
+    const bar = () => "Hello Bar";
+    bar.displayName = "Hello Bar";
+    console.log(bar);
+}
+```
+
+# 고급 (Advanced)
+
+## Map vs Record
+
+* [map vs object | TIL](/js/README.md#map-vs-object)
+
+```ts
+// Record — 키가 "고정"된 객체 타입 (컴파일 타임)
+type UserScores = Record<string, number>;
+let scores: UserScores = { David: 100, John: 85 };
+
+// Map — 키가 "동적"으로 변하는 컬렉션 (런타임 객체)
+let scoreMap = new Map<string, number>();
+scoreMap.set("David", 100);
+```
+
+| | `Record<K, V>` | `Map<K, V>` |
+|---|---|---|
+| 본질 | **타입** (컴파일 타임) | **클래스** (런타임 객체) |
+| 키 타입 | string / number / symbol | **아무 타입** |
+| 용도 | 객체 형태 정의 | 동적 키-값 저장 |
+| 순회 | `Object.keys()` | `for...of`, `forEach` |
+| 크기 | `Object.keys(obj).length` | `map.size` |
+
+> **판단:** 구조가 미리 정해져 있으면 `Record`, 런타임에 키가 추가/삭제되면 `Map`.
 
 # 스타일 가이드 (Style Guide)
 
