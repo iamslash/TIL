@@ -104,10 +104,16 @@ Rust는 안전성, 속도, 동시성에 초점을 맞춘 시스템 프로그래�
 
 ## Features
 
-* Exception이 없음
-* OOP가 없음
-* Garbage Collector가 없음
-* Dangling Reference가 없음
+Rust는 **"없는 것"**으로 정의되는 언어입니다:
+
+| 없는 것 | 대신 있는 것 | 왜? |
+|---------|-------------|-----|
+| Exception | `Result<T, E>`, `Option<T>` | 에러를 무시할 수 없게 강제 |
+| OOP (클래스 상속) | `struct` + `trait` | 상속 대신 합성(composition) |
+| Garbage Collector | 소유권 시스템 | 컴파일 타임에 메모리 해제 결정 |
+| Dangling Reference | 라이프타임 검사 | 컴파일러가 죽은 참조를 원천 차단 |
+
+> TypeScript/Java에서 오면 가장 충격적인 점: **변수에 값을 넘기면 원래 변수를 더 이상 쓸 수 없습니다** (소유권 이동).
 
 ## Install
 
