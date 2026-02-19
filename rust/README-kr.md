@@ -228,47 +228,56 @@ Rust는 정적 타입 언어입니다. 주요 데이터 타입은 다음과 같�
 
 ## Variables and Mutability
 
+Rust는 **기본이 불변**입니다. TypeScript의 `const`가 기본인 셈입니다.
+
 ```rs
-// 불변 변수 (기본값)
+let x = 5;          // 불변 (기본값) — 값 변경 불가
+let mut y = 10;     // mut 붙여야 변경 가능
+y = 15;             // ✅ OK
+
+const MAX_POINTS: u32 = 100_000;  // 상수 — 컴파일 타임에 확정, 타입 필수
+
+// 섀도잉 — 같은 이름으로 새 변수 생성 (타입도 바꿀 수 있음)
 let x = 5;
-
-// 가변 변수
-let mut y = 10;
-y = 15;
-
-// 상수
-const MAX_POINTS: u32 = 100_000;
-
-// 섀도잉
-let x = 5;
-let x = x + 1;  // 새로운 변수 생성
+let x = x + 1;      // x = 6, 새 변수
+let x = "hello";    // 타입까지 변경 가능!
 ```
+
+| | `let` | `let mut` | `const` |
+|---|---|---|---|
+| 변경 가능 | ❌ | ✅ | ❌ |
+| 섀도잉 가능 | ✅ | ✅ | ❌ |
+| 타입 추론 | ✅ | ✅ | ❌ (명시 필수) |
 
 ## Ownership and Borrowing
 
-**소유권 규칙**
+**Rust의 가장 핵심 개념**입니다. 다른 언어에는 없는 개념이라 처음에 어렵습니다.
 
-* Rust의 각 값에는 소유자라고 불리는 변수가 있습니다.
-* 한 번에 하나의 소유자만 있을 수 있습니다.
-* 소유자가 스코프를 벗어나면 값이 삭제됩니다.
+### 소유권 규칙 (3가지만 기억)
 
-**차용 규칙**
-
-* 불변 참조는 여러 개 가능: `&T`
-* 가변 참조는 하나만 가능: `&mut T`
-* 불변과 가변 참조를 동시에 가질 수 없음
+1. 모든 값에는 **소유자**(변수)가 딱 하나
+2. 소유자가 스코프를 벗어나면 값이 **자동 삭제**
+3. 값을 다른 변수에 넘기면 **소유권이 이동** → 원래 변수 사용 불가
 
 ```rs
-fn main() {
-    let s = String::from("hello");
+let s1 = String::from("hello");
+let s2 = s1;          // 소유권이 s2로 이동
+// println!("{}", s1);  // ❌ 에러! s1은 이미 죽었음
+println!("{}", s2);    // ✅ OK
+```
 
-    // 불변 차용
-    let len = calculate_length(&s);
+### 차용 (Borrowing) — 소유권 안 넘기고 빌려주기
 
-    // 가변 차용
-    let mut s2 = String::from("hello");
-    change(&mut s2);
-}
+```rs
+let s = String::from("hello");
+
+// 불변 차용 — &s = "빌려줄게, 읽기만 해"
+let len = calculate_length(&s);
+println!("{}", s);                // ✅ 아직 쓸 수 있음
+
+// 가변 차용 — &mut s2 = "빌려줄게, 수정해도 돼"
+let mut s2 = String::from("hello");
+change(&mut s2);
 
 fn calculate_length(s: &String) -> usize {
     s.len()
@@ -279,9 +288,35 @@ fn change(s: &mut String) {
 }
 ```
 
+| | 불변 참조 `&T` | 가변 참조 `&mut T` |
+|---|---|---|
+| 동시에 몇 개? | **여러 개** OK | **하나만** |
+| 읽기 | ✅ | ✅ |
+| 쓰기 | ❌ | ✅ |
+| 불변+가변 동시 | ❌ 불가 | ❌ 불가 |
+
+> TypeScript에서는 `const obj = {a: 1}; obj.a = 2;`가 됩니다. Rust에서는 `let`이면 내부 값도 변경 불가. `let mut`이어야 합니다.
+
 ## Copy vs Clone
 
-**Copy trait**은 얕은 복사를, **Clone trait**은 깊은 복사를 의미합니다.
+```rs
+// Copy — 스택에 있는 작은 값은 자동 복사 (정수, bool, char 등)
+let x = 5;
+let y = x;        // x가 복사됨, 둘 다 사용 가능
+println!("{} {}", x, y);  // ✅ OK
+
+// Clone — 힙 데이터는 명시적으로 깊은 복사해야 함
+let s1 = String::from("hello");
+// let s2 = s1;         // 소유권 이동! s1 사용 불가
+let s2 = s1.clone();    // 명시적 복사
+println!("{} {}", s1, s2);  // ✅ 둘 다 OK
+```
+
+| | Copy | Clone |
+|---|---|---|
+| 방식 | 자동 (암묵적) | 명시적 `.clone()` |
+| 비용 | 저렴 (스택 복사) | 비쌈 (힙 복사 가능) |
+| 대상 | `i32, bool, char, f64` 등 | `String, Vec` 등 |
 
 Copy를 구현하는 타입들:
 
@@ -289,13 +324,14 @@ Copy를 구현하는 타입들:
 * Boolean 타입: `bool`
 * 모든 부동 소수점 타입: `f64` 등
 * 문자 타입: `char`
-* **튜플**: Copy를 구현하는 타입만 포함하는 경우. 예: `(i32, i32)`는 Copy를 구현하지만 `(i32, String)`은 구현하지 않음
+* **튜플**: Copy 타입만 포함하는 경우. `(i32, i32)`는 Copy, `(i32, String)`은 아님
 
 ## Lifetime
 
-라이프타임의 목적은 댕글링 참조를 방지하는 것입니다.
+"이 참조가 **얼마나 오래 유효한지**" 컴파일러에게 알려주는 것입니다. 목적은 댕글링 참조를 방지하는 것입니다.
 
 ```rs
+// 'a = "x와 y 중 짧은 쪽의 수명만큼 반환값이 유효하다"
 fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
     if x.len() > y.len() {
         x
@@ -304,6 +340,8 @@ fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
     }
 }
 ```
+
+> 대부분의 경우 컴파일러가 자동 추론합니다. 직접 쓸 일은 "함수가 참조를 받아서 참조를 반환할 때"뿐입니다.
 
 ## References and Pointers
 
