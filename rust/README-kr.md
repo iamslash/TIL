@@ -14,17 +14,21 @@
   - [Copy vs Clone](#copy-vs-clone)
   - [Lifetime](#lifetime)
   - [References and Pointers](#references-and-pointers)
-  - [Control Flows](#control-flows)
-  - [Pattern Matching](#pattern-matching)
-  - [Collections](#collections)
   - [String Types](#string-types)
   - [String Conversions](#string-conversions)
   - [String Loops](#string-loops)
   - [Formatted Print](#formatted-print)
-  - [Struct](#struct)
-  - [Enum](#enum)
+  - [Control Flows](#control-flows)
+  - [Pattern Matching](#pattern-matching)
+  - [Collections](#collections)
+  - [Collection Conversions](#collection-conversions)
+  - [Sort](#sort)
+  - [Search](#search)
+  - [Multi Dimensional Array](#multi-dimensional-array)
   - [Tuple](#tuple)
   - [Array](#array)
+  - [Struct](#struct)
+  - [Enum](#enum)
   - [Functions](#functions)
   - [Closures](#closures)
   - [Generic](#generic)
@@ -349,93 +353,6 @@ fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
 * **Raw 포인터**: `*const T`, `*mut T` (unsafe 블록에서 사용)
 * **스마트 포인터**: `Box<T>`, `Rc<T>`, `Arc<T>`, `RefCell<T>`
 
-## Control Flows
-
-Rust의 제어 흐름에서 특이한 점: **`if`는 표현식**이라 값을 반환합니다 (삼항 연산자가 없는 대신).
-
-```rs
-// if 표현식 — 값을 반환
-let x = if number < 10 { "smaller" } else { "bigger" };
-
-// 루프 4종류
-for i in 0..5 { println!("{}", i); }       // 범위 순회
-for item in vec { println!("{}", item); }  // 컬렉션 순회
-while count < 10 { count += 1; }           // 조건 반복
-loop { break; }                            // 무한 반복 (break로 탈출)
-
-// match — 모든 케이스를 처리해야 함 (exhaustive)
-match number {
-    1 => println!("one"),
-    2 | 3 => println!("two or three"),   // OR 패턴
-    4..=10 => println!("four to ten"),   // 범위 패턴
-    _ => println!("something else"),     // 나머지 (default)
-}
-
-// if let — Option이나 enum에서 하나의 패턴만 처리할 때 match 대신 간결하게
-if let Some(value) = optional_value {
-    println!("{}", value);
-}
-```
-
-| 루프 | 용도 | TypeScript 대응 |
-|------|------|----------------|
-| `for i in 0..5` | 범위 순회 | `for (let i=0; i<5; i++)` |
-| `for item in vec` | 컬렉션 순회 | `for (const item of arr)` |
-| `while cond` | 조건 반복 | `while (cond)` |
-| `loop` | 무한 반복 (break로 탈출) | `while (true)` |
-
-## Pattern Matching
-
-`match`는 단순 값 비교를 넘어 **구조를 분해**할 수 있습니다. TypeScript의 `never`로 exhaustive check하던 것이 Rust에서는 **기본 동작**입니다.
-
-```rs
-enum Coin {
-    Penny,
-    Nickel,
-    Dime,
-    Quarter,
-}
-
-fn value_in_cents(coin: Coin) -> u8 {
-    match coin {
-        Coin::Penny => 1,
-        Coin::Nickel => 5,
-        Coin::Dime => 10,
-        Coin::Quarter => 25,
-    }
-    // 모든 variant를 처리해야 함! 하나라도 빠지면 컴파일 에러
-}
-```
-
-## Collections
-
-Rust의 3대 컬렉션:
-
-| 컬렉션 | 타입 | TypeScript 대응 | 용도 |
-|--------|------|----------------|------|
-| **Vector** | `Vec<T>` | `Array` | 동적 배열 |
-| **String** | `String` | `string` | UTF-8 문자열 |
-| **HashMap** | `HashMap<K, V>` | `Map` | 키-값 저장 |
-
-```rs
-// Vector — 가장 많이 쓰는 컬렉션
-let mut v = Vec::new();
-v.push(1);
-let vec = vec![1, 2, 3];       // 매크로로 초기화
-let first = &vec[0];            // 인덱스 접근 (패닉 가능)
-let first = vec.get(0);         // Option 반환 (안전)
-
-// String
-let mut s = String::from("Hello");
-s.push_str(", world!");
-
-// HashMap
-use std::collections::HashMap;
-let mut map = HashMap::new();
-map.insert("key", "value");
-let val = map.get("key");       // Option<&&str>
-```
-
 ## String Types
 
 Rust에서 가장 혼란스러운 부분 중 하나입니다. 두 가지만 기억하세요:
@@ -507,6 +424,314 @@ println!("{:x}", 255);  // 16진수: ff
 println!("{:.2}", 3.14159);  // 3.14
 ```
 
+## Control Flows
+
+Rust의 제어 흐름에서 특이한 점: **`if`는 표현식**이라 값을 반환합니다 (삼항 연산자가 없는 대신).
+
+```rs
+// if 표현식 — 값을 반환
+let x = if number < 10 { "smaller" } else { "bigger" };
+
+// 루프 4종류
+for i in 0..5 { println!("{}", i); }       // 범위 순회
+for item in vec { println!("{}", item); }  // 컬렉션 순회
+while count < 10 { count += 1; }           // 조건 반복
+loop { break; }                            // 무한 반복 (break로 탈출)
+
+// match — 모든 케이스를 처리해야 함 (exhaustive)
+match number {
+    1 => println!("one"),
+    2 | 3 => println!("two or three"),   // OR 패턴
+    4..=10 => println!("four to ten"),   // 범위 패턴
+    _ => println!("something else"),     // 나머지 (default)
+}
+
+// if let — Option이나 enum에서 하나의 패턴만 처리할 때 match 대신 간결하게
+if let Some(value) = optional_value {
+    println!("{}", value);
+}
+```
+
+| 루프 | 용도 | TypeScript 대응 |
+|------|------|----------------|
+| `for i in 0..5` | 범위 순회 | `for (let i=0; i<5; i++)` |
+| `for item in vec` | 컬렉션 순회 | `for (const item of arr)` |
+| `while cond` | 조건 반복 | `while (cond)` |
+| `loop` | 무한 반복 (break로 탈출) | `while (true)` |
+
+## Pattern Matching
+
+`match`는 단순 값 비교를 넘어 **구조를 분해**할 수 있습니다. TypeScript의 `never`로 exhaustive check하던 것이 Rust에서는 **기본 동작**입니다.
+
+```rs
+enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter,
+}
+
+fn value_in_cents(coin: Coin) -> u8 {
+    match coin {
+        Coin::Penny => 1,
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter => 25,
+    }
+    // 모든 variant를 처리해야 함! 하나라도 빠지면 컴파일 에러
+}
+```
+
+## Collections
+
+Rust의 3대 컬렉션:
+
+| 컬렉션 | 타입 | TypeScript 대응 | 용도 |
+|--------|------|----------------|------|
+| **Vector** | `Vec<T>` | `Array` | 동적 배열 |
+| **String** | `String` | `string` | UTF-8 문자열 |
+| **HashMap** | `HashMap<K, V>` | `Map` | 키-값 저장 |
+
+### Vec
+
+```rs
+let mut v: Vec<i32> = Vec::new();
+v.push(1);
+v.push(2);
+let vec = vec![1, 2, 3];       // 매크로로 초기화
+
+// 접근
+let first = &vec[0];            // 패닉 가능
+let first = vec.get(0);         // Option 반환 (안전)
+
+// 순회
+for val in &vec {
+    println!("{}", val);
+}
+
+// 유용한 메서드
+vec.len();                       // 길이
+vec.is_empty();                  // 비어있는지
+vec.contains(&2);                // 포함 여부
+vec.iter().position(|&x| x == 2); // 인덱스 검색
+vec.retain(|&x| x > 1);         // 조건에 맞는 것만 유지
+vec.dedup();                     // 연속 중복 제거
+
+// 슬라이스
+let slice = &vec[1..3];         // &[i32]
+```
+
+### HashMap
+
+```rs
+use std::collections::HashMap;
+
+let mut map = HashMap::new();
+map.insert("key", 1);
+
+// 접근
+let val = map.get("key");          // Option<&V>
+let val = map["key"];               // 패닉 가능
+
+// 없으면 삽입
+map.entry("key").or_insert(0);
+*map.entry("key").or_insert(0) += 1;  // 카운터 패턴
+
+// 순회
+for (key, val) in &map {
+    println!("{}: {}", key, val);
+}
+
+// 유용한 메서드
+map.len();
+map.contains_key("key");
+map.remove("key");
+```
+
+### HashSet
+
+```rs
+use std::collections::HashSet;
+
+let mut set = HashSet::new();
+set.insert(1);
+set.insert(2);
+set.insert(2);                     // 중복 무시
+println!("{}", set.len());          // 2
+
+set.contains(&1);                   // true
+set.remove(&1);
+
+// 집합 연산
+let a: HashSet<_> = [1, 2, 3].iter().collect();
+let b: HashSet<_> = [2, 3, 4].iter().collect();
+let union: HashSet<_> = a.union(&b).collect();
+let intersection: HashSet<_> = a.intersection(&b).collect();
+let diff: HashSet<_> = a.difference(&b).collect();
+```
+
+### BTreeMap / BTreeSet
+
+정렬된 순서를 유지하는 컬렉션입니다. Java의 `TreeMap`/`TreeSet`에 대응합니다.
+
+```rs
+use std::collections::BTreeMap;
+
+let mut map = BTreeMap::new();
+map.insert(3, "c");
+map.insert(1, "a");
+map.insert(2, "b");
+
+// 항상 키 순서대로 순회
+for (k, v) in &map {
+    println!("{}: {}", k, v);  // 1: a, 2: b, 3: c
+}
+```
+
+### VecDeque
+
+양쪽 끝에서 추가/제거할 수 있는 덱(deque)입니다. Java의 `ArrayDeque`에 대응합니다.
+
+```rs
+use std::collections::VecDeque;
+
+let mut deque = VecDeque::new();
+deque.push_back(1);      // 뒤에 추가
+deque.push_front(0);     // 앞에 추가
+deque.pop_back();        // 뒤에서 제거
+deque.pop_front();       // 앞에서 제거
+```
+
+| Rust 컬렉션 | Java 대응 | TypeScript 대응 | 순서 보장 |
+|-------------|----------|----------------|----------|
+| `Vec<T>` | `ArrayList` | `Array` | 삽입 순서 |
+| `HashMap<K,V>` | `HashMap` | `Map` | ❌ |
+| `HashSet<T>` | `HashSet` | `Set` | ❌ |
+| `BTreeMap<K,V>` | `TreeMap` | - | 키 정렬 |
+| `BTreeSet<T>` | `TreeSet` | - | 값 정렬 |
+| `VecDeque<T>` | `ArrayDeque` | - | 삽입 순서 |
+
+## Collection Conversions
+
+```rs
+// Vec → HashSet
+let vec = vec![1, 2, 2, 3];
+let set: HashSet<_> = vec.into_iter().collect();
+
+// HashSet → Vec
+let set: HashSet<i32> = [1, 2, 3].iter().cloned().collect();
+let vec: Vec<_> = set.into_iter().collect();
+
+// Vec<&str> → Vec<String>
+let strs = vec!["hello", "world"];
+let strings: Vec<String> = strs.iter().map(|s| s.to_string()).collect();
+
+// Iterator → Vec
+let vec: Vec<i32> = (0..5).collect();                    // [0, 1, 2, 3, 4]
+let vec: Vec<i32> = (0..5).filter(|x| x % 2 == 0).collect(); // [0, 2, 4]
+```
+
+> `collect()`는 Rust의 만능 변환기입니다. 대부분의 컬렉션 변환은 `.iter()` + 변환 + `.collect()`로 처리합니다.
+
+## Sort
+
+```rs
+// Vec 정렬
+let mut vec = vec![3, 1, 4, 1, 5];
+vec.sort();                          // [1, 1, 3, 4, 5] — 오름차순
+vec.sort_by(|a, b| b.cmp(a));       // [5, 4, 3, 1, 1] — 내림차순
+
+// 키로 정렬
+let mut people = vec![("Bob", 30), ("Alice", 25), ("Charlie", 35)];
+people.sort_by_key(|p| p.1);        // 나이 오름차순
+
+// 안정 정렬 vs 불안정 정렬
+vec.sort();             // 안정 정렬 (같은 값의 순서 유지)
+vec.sort_unstable();    // 불안정 정렬 (더 빠름)
+
+// f64 정렬 (f64는 Ord가 아님 — NaN 때문)
+let mut floats = vec![3.1, 1.2, 4.5];
+floats.sort_by(|a, b| a.partial_cmp(b).unwrap());
+```
+
+> `sort()`는 **원본을 변경**합니다. 원본 유지하려면 `let sorted = { let mut v = vec.clone(); v.sort(); v };`
+
+## Search
+
+```rs
+let vec = vec![1, 2, 3, 4, 5];
+
+// 선형 검색
+vec.contains(&3);                       // true
+vec.iter().find(|&&x| x > 3);          // Some(&4)
+vec.iter().position(|&x| x > 3);       // Some(3) — 인덱스
+
+// 이진 검색 (정렬된 배열에서)
+let sorted = vec![1, 2, 3, 4, 5];
+sorted.binary_search(&3);              // Ok(2)  — 인덱스
+sorted.binary_search(&6);              // Err(5) — 삽입 위치
+```
+
+| 메서드 | 반환값 | 용도 |
+|--------|--------|------|
+| `contains(&val)` | `bool` | 존재 여부만 |
+| `iter().find(fn)` | `Option<&T>` | 조건으로 검색 |
+| `iter().position(fn)` | `Option<usize>` | 조건으로 인덱스 |
+| `binary_search(&val)` | `Result<usize, usize>` | 정렬된 배열에서 이진 검색 |
+
+## Multi Dimensional Array
+
+```rs
+// 2D Vec 초기화
+let rows = 3;
+let cols = 4;
+let grid = vec![vec![0; cols]; rows];  // 3x4 배열, 0으로 채움
+
+// 순회
+for i in 0..rows {
+    for j in 0..cols {
+        print!("{} ", grid[i][j]);
+    }
+    println!();
+}
+
+// 값이 있는 2D 초기화
+let matrix = vec![
+    vec![1, 2, 3],
+    vec![4, 5, 6],
+];
+```
+
+> Rust의 `vec![vec![0; cols]; rows]`는 TypeScript의 `Array.from()` 패턴처럼 각 행이 **독립적인 Vec**입니다 (참조 공유 문제 없음).
+
+## Tuple
+
+```rs
+let tup: (i32, f64, u8) = (500, 6.4, 1);
+let (x, y, z) = tup;  // 구조 분해
+let first = tup.0;    // 인덱스 접근
+```
+
+## Array
+
+```rs
+// [u8]는 크기를 알 수 없는 u8 배열
+fn foo(a: [u8]) {}
+
+// [u8; 5]는 크기가 5인 u8 배열
+fn foo(a: [u8; 5]) {}
+
+// &[u8]는 크기를 알 수 없는 u8 배열 참조
+fn foo(a: &[u8]) {}
+
+// 배열 참조는 슬라이스
+let a = [1, 2, 3, 4, 5];
+foo(&a[1..3]);
+
+// 값 0으로 1024 바이트 배열
+let mut buf = [0; 1024];
+```
+
 ## Struct
 
 데이터를 **묶는** 구조입니다 (AND). `struct`로 정의하고 `impl`로 메서드를 구현합니다. **인스턴스 메서드**는 첫 번째 인자가 `self`입니다. **연관 함수**(정적 함수)는 첫 번째 인자가 `self`가 아닙니다.
@@ -566,34 +791,6 @@ impl Message {
 ```
 
 `use Message::*;`를 선언하면 `Message::`를 타이핑하지 않아도 됩니다.
-
-## Tuple
-
-```rs
-let tup: (i32, f64, u8) = (500, 6.4, 1);
-let (x, y, z) = tup;  // 구조 분해
-let first = tup.0;    // 인덱스 접근
-```
-
-## Array
-
-```rs
-// [u8]는 크기를 알 수 없는 u8 배열
-fn foo(a: [u8]) {}
-
-// [u8; 5]는 크기가 5인 u8 배열
-fn foo(a: [u8; 5]) {}
-
-// &[u8]는 크기를 알 수 없는 u8 배열 참조
-fn foo(a: &[u8]) {}
-
-// 배열 참조는 슬라이스
-let a = [1, 2, 3, 4, 5];
-foo(&a[1..3]);
-
-// 값 0으로 1024 바이트 배열
-let mut buf = [0; 1024];
-```
 
 ## Functions
 
