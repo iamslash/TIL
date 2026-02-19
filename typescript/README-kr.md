@@ -15,6 +15,7 @@
   - [포맷된 문자열](#포맷된-문자열)
   - [검사하기](#검사하기)
   - [데이터 타입](#데이터-타입)
+    - [undefined vs unknown vs any vs never 비교](#undefined-vs-unknown-vs-any-vs-never-비교)
   - [제어 흐름문](#제어-흐름문)
     - [조건문](#조건문)
     - [반복문](#반복문)
@@ -333,6 +334,98 @@ create(undefined);
 let someValue: unknown = "This is a string";
 let strLength: number = (someValue as string).length;
 let strLength2: number = (<string>someValue).length;
+```
+
+### undefined vs unknown vs any vs never 비교
+
+이 네 가지 특수 타입은 역할이 명확히 다릅니다.
+
+| 타입 | 한 줄 요약 | 핵심 |
+|------|-----------|------|
+| `undefined` | 값이 **아직 없다** | 빈 상태를 나타내는 JavaScript 기본값 |
+| `unknown` | 값이 **뭔지 모른다** (확인하고 써라) | `any`의 안전한 버전 |
+| `any` | 값이 **뭐든 상관없다** (검사 포기) | 타입 안전성 없음, 비추천 |
+| `never` | 값이 **존재할 수 없다** | 함수가 절대 정상 반환하지 않음 |
+
+#### undefined — "아직 안 넣었어"
+
+```ts
+let name: string;
+console.log(name);          // undefined — 값을 안 넣었으니까
+
+function greet(name?: string) {
+    console.log(name);      // 안 넘기면 undefined
+}
+greet();                    // undefined
+
+const arr = [1, 2, 3];
+console.log(arr[10]);       // undefined — 범위 밖
+```
+
+#### unknown — "뭔지 모르니까 확인하고 써라"
+
+`any`처럼 아무 값이나 담을 수 있지만, **타입 확인 전에는 사용 불가**합니다.
+외부 API 응답, `JSON.parse`, `catch`의 error 처리에 적합합니다.
+
+```ts
+let value: unknown = "hello";
+
+value.toUpperCase();            // ❌ 컴파일 에러 — 바로 못 씀
+(value as string).toUpperCase(); // ✅ 타입 단언 후 OK
+
+if (typeof value === "string") {
+    value.toUpperCase();        // ✅ typeof 확인 후 자동 OK
+}
+
+// 실전: catch에서 error 처리
+try {
+    something();
+} catch (err: unknown) {
+    // err.message;              // ❌ 바로 못 씀
+    if (err instanceof Error) {
+        console.log(err.message); // ✅ 확인 후 사용
+    }
+}
+```
+
+#### any vs unknown
+
+```ts
+// any: 아무거나 해도 에러 안 남 (위험!)
+let a: any = "hello";
+a.foo.bar.baz;          // ✅ 컴파일 통과 — 런타임에 터짐 💥
+
+// unknown: 확인 전엔 아무것도 못 함 (안전!)
+let b: unknown = "hello";
+b.foo.bar.baz;          // ❌ 컴파일 에러 — 런타임 전에 잡아줌
+```
+
+> **`any`를 쓰고 싶다면 `unknown`을 쓰세요.** `any`는 타입 검사를 완전히 무력화합니다.
+
+#### never — "이런 상황은 절대 발생하지 않는다"
+
+함수가 절대 정상 반환하지 않거나, 모든 케이스를 처리했는지 검증할 때 사용합니다.
+
+```ts
+// 1. 항상 예외를 던지는 함수
+function fail(msg: string): never {
+    throw new Error(msg);
+}
+
+// 2. Exhaustive check — 케이스 빠뜨림을 컴파일 타임에 방지
+type Shape = "circle" | "square" | "triangle";
+
+function getArea(shape: Shape): number {
+    switch (shape) {
+        case "circle":   return 3.14 * 10 * 10;
+        case "square":   return 10 * 10;
+        case "triangle": return (10 * 5) / 2;
+        default:
+            const _exhaustive: never = shape;  // 모든 케이스 처리 시 여기 도달 불가
+            throw new Error(`Unknown shape: ${_exhaustive}`);
+    }
+}
+// 나중에 "pentagon"을 Shape에 추가하면, case를 안 넣으면 컴파일 에러 발생!
 ```
 
 ## 제어 흐름문
