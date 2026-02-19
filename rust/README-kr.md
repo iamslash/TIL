@@ -786,8 +786,15 @@ Crate는 빌드된 바이너리의 단위입니다. 실행 파일 또는 라이�
 
 ## Attributes
 
+`#[]`는 **Attribute(속성)**이라고 부릅니다. Java의 `@Annotation`, TypeScript의 데코레이터(`@decorator`)와 비슷한 역할입니다.
+
+| 문법 | 이름 | 적용 범위 |
+|------|------|----------|
+| `#[...]` | Outer Attribute (외부 속성) | 바로 **아래** 아이템 |
+| `#![...]` | Inner Attribute (내부 속성) | 자신을 **포함하는** 모듈/crate 전체 |
+
 ```rs
-// Derive 속성
+// #[derive(...)] — struct에 기능 자동 구현 (가장 많이 씀)
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 struct Point {
     x: i32,
@@ -807,7 +814,24 @@ fn test_add() {
 // Deprecated
 #[deprecated(since = "1.0.0", note = "Use new_function instead")]
 fn old_function() {}
+
+// Inner Attribute — crate 전체에 적용
+#![allow(unused)]
 ```
+
+**자주 쓰는 derive 모음:**
+
+| derive | 해주는 것 | 언제 필요? |
+|--------|----------|-----------|
+| `Debug` | `{:?}` 출력 | 디버깅, 로깅 |
+| `Clone` | `.clone()` 복사 | 값을 복제할 때 |
+| `Copy` | 자동 복사 (clone 없이) | 작은 값 타입 |
+| `PartialEq` | `==`, `!=` 비교 | 값 비교할 때 |
+| `Eq` | 완전 동등성 | `HashMap` 키로 쓸 때 |
+| `Hash` | 해시값 계산 | `HashMap`/`HashSet`에 넣을 때 |
+| `Default` | `::default()` 기본값 | 기본값이 필요할 때 |
+
+> TypeScript에서는 `console.log`, `===`, `{...obj}`가 그냥 됩니다. Rust에서는 **struct가 기본적으로 아무것도 못 합니다** — 출력, 비교, 복사 모두 명시적으로 derive해야 합니다.
 
 ## Environment Variables
 
@@ -1044,26 +1068,50 @@ fn find_user(id: u32) -> Option<User> {
 
 ## Dispatch
 
-디스패치에는 동적(dynamic)과 정적(static) 두 가지 종류가 있습니다.
+"함수 호출 시 **어떤 구현을 실행할지** 언제 결정하느냐"의 문제입니다.
 
 ```rs
-// 동적 디스패치 (dyn 키워드)
-fn process(item: &dyn Summary) {
+// 정적 디스패치 — 컴파일 타임에 결정 (빠름, 바이너리 큼)
+fn process(item: &impl Summary) {
     println!("{}", item.summarize());
 }
 
-// 정적 디스패치 (impl 키워드)
-fn process(item: &impl Summary) {
+// 동적 디스패치 — 런타임에 결정 (유연함, 약간 느림)
+fn process(item: &dyn Summary) {
     println!("{}", item.summarize());
 }
 ```
 
-정적 디스패치는 컴파일 타임에 구체적인 타입이 결정되어 더 빠르지만 바이너리 크기가 커집니다. 동적 디스패치는 런타임에 결정되어 유연하지만 약간 느립니다.
+| | 정적 `impl Trait` | 동적 `dyn Trait` |
+|---|---|---|
+| 결정 시점 | **컴파일 타임** | **런타임** |
+| 속도 | 빠름 (인라인 가능) | vtable 조회 오버헤드 |
+| 바이너리 크기 | 큼 (타입마다 코드 복사) | 작음 |
+| 유연성 | 타입이 고정 | 여러 타입을 섞을 수 있음 |
+
+> **기본은 `impl Trait`(정적)을 쓰고**, `Vec<Box<dyn Trait>>`처럼 여러 타입을 한 컬렉션에 담아야 할 때만 `dyn`을 쓰세요.
 
 ## Macros
 
+"코드를 생성하는 코드"입니다. `vec![1,2,3]`이 대표적인 매크로입니다.
+
+| 종류 | 문법 | 용도 |
+|------|------|------|
+| 선언적 | `macro_rules!` | 반복 패턴 코드 생성 |
+| derive | `#[derive(...)]` | trait 자동 구현 |
+| 속성 | `#[my_macro]` | 커스텀 어트리뷰트 |
+| 함수형 | `my_macro!(...)` | 커스텀 DSL |
+
 ```rs
-// 선언적 매크로
+// 선언적 매크로 (macro_rules!) — 패턴 매칭으로 코드 생성
+macro_rules! say_hello {
+    () => { println!("Hello!") };
+    ($name:expr) => { println!("Hello, {}!", $name) };
+}
+say_hello!();          // Hello!
+say_hello!("David");   // Hello, David!
+
+// vec! 매크로의 내부 구현
 macro_rules! vec {
     ( $( $x:expr ),* ) => {
         {
@@ -1076,12 +1124,21 @@ macro_rules! vec {
     };
 }
 
-// 절차적 매크로 (derive)
-#[derive(Debug)]
-struct MyStruct;
+// 절차적 매크로 (derive) — 가장 많이 쓰는 형태
+#[derive(Debug, Clone, PartialEq)]
+struct Point { x: f64, y: f64 }
 ```
 
+> 처음에는 `#[derive(Debug, Clone)]`만 알면 됩니다. `macro_rules!`는 나중에 필요할 때 배우세요.
+
 ## Unsafe Rust
+
+Rust의 안전성 보장을 **일시적으로 해제**하는 것입니다. `unsafe` 블록 안에서만 4가지가 허용됩니다:
+
+1. Raw 포인터 역참조
+2. Unsafe 함수 호출
+3. 가변 전역 변수 접근
+4. Unsafe trait 구현
 
 ```rs
 unsafe {
@@ -1089,7 +1146,6 @@ unsafe {
     let mut num = 5;
     let r1 = &num as *const i32;
     let r2 = &mut num as *mut i32;
-
     println!("r1: {}", *r1);
 
     // Unsafe 함수 호출
@@ -1098,7 +1154,18 @@ unsafe {
 }
 ```
 
+> **99%의 Rust 코드에서 `unsafe`는 필요 없습니다.** FFI(C 라이브러리 호출)나 극한 성능 최적화에서만 씁니다.
+
 ## Concurrency
+
+Rust의 동시성은 **"두려움 없는 동시성(fearless concurrency)"**이 슬로건입니다. 소유권 시스템이 데이터 경쟁을 컴파일 타임에 방지합니다.
+
+| 도구 | 용도 | TypeScript 대응 |
+|------|------|----------------|
+| `thread::spawn` | 스레드 생성 | `new Worker()` |
+| `Arc<T>` | 스레드 간 소유권 공유 | 해당 없음 |
+| `Mutex<T>` | 상호 배제 잠금 | 해당 없음 (JS는 단일 스레드) |
+| `channel` | 스레드 간 메시지 전달 | `postMessage` |
 
 ```rs
 use std::thread;
@@ -1134,6 +1201,15 @@ fn main() {
 ```
 
 ## Async Programming
+
+TypeScript의 `async/await`와 **문법은 비슷**하지만, Rust에서는 **런타임이 별도**입니다.
+
+| | TypeScript | Rust |
+|---|---|---|
+| 런타임 | V8에 내장 | **별도 설치** (Tokio, async-std) |
+| `async fn` | Promise 반환 | Future 반환 |
+| `.await` | 동일 | 동일 |
+| 이벤트 루프 | 자동 | `#[tokio::main]` 필요 |
 
 ```rs
 async fn fetch_data() -> Result<String, Error> {
@@ -1190,10 +1266,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ## Memory Management
 
-Rust는 소유권 시스템을 통해 컴파일 타임에 메모리 안전성을 보장합니다.
+Rust는 소유권 시스템을 통해 컴파일 타임에 메모리 안전성을 보장합니다. GC가 없지만 **소유권 시스템이 스코프 종료 시 자동으로 `drop()`을 호출**합니다.
 
-* **스택**: 고정 크기 데이터 (정수, 부울, 고정 배열 등)
-* **힙**: 동적 크기 데이터 (String, Vec, Box 등)
+| | 스택 (Stack) | 힙 (Heap) |
+|---|---|---|
+| 할당/해제 | 자동, 매우 빠름 | 상대적으로 느림 |
+| 크기 | 컴파일 타임에 고정 | 런타임에 동적 |
+| 대상 | `i32`, `bool`, `[u8; 5]` | `String`, `Vec`, `Box` |
+| 해제 시점 | 스코프 종료 시 | 소유자가 스코프를 벗어날 때 |
 
 ```rs
 fn main() {
@@ -1209,11 +1289,15 @@ fn main() {
 
 ## Performance Optimization
 
-* **제로 비용 추상화**: 추상화가 런타임 비용을 추가하지 않음
-* **반복자 사용**: 루프보다 반복자가 더 잘 최적화됨
-* **인라인화**: `#[inline]` 속성 사용
-* **프로파일링**: `cargo flamegraph`, `perf` 등 사용
-* **벤치마킹**: `criterion` crate 사용
+| 팁 | 설명 |
+|-----|------|
+| 반복자 선호 | `for` 루프보다 `.iter().map().filter()` 체인이 최적화 잘 됨 |
+| `&str` 사용 | 가능하면 `String` 대신 — 힙 할당 피함 |
+| `Vec::with_capacity` | 크기를 알 때 미리 할당 — 재할당 피함 |
+| `#[inline]` | 핫 패스 함수에 인라인 힌트 |
+| 프로파일링 먼저 | `cargo flamegraph`, `criterion` 으로 측정 후 최적화 |
+
+> **"추측하지 말고 측정하라."** `cargo flamegraph`로 병목을 찾은 뒤 최적화하세요.
 
 ```rs
 // 반복자 체인 (최적화됨)
