@@ -10,10 +10,6 @@
   - [Reserved Words](#reserved-words)
   - [Data Types](#data-types)
   - [Variables and Mutability](#variables-and-mutability)
-  - [Ownership and Borrowing](#ownership-and-borrowing)
-  - [Copy vs Clone](#copy-vs-clone)
-  - [Lifetime](#lifetime)
-  - [References and Pointers](#references-and-pointers)
   - [String Types](#string-types)
   - [String Conversions](#string-conversions)
   - [String Loops](#string-loops)
@@ -32,13 +28,18 @@
   - [Functions](#functions)
   - [Closures](#closures)
   - [Generic](#generic)
-  - [Trait](#trait)
-  - [Box and Smart Pointers](#box-and-smart-pointers)
   - [Module System](#module-system)
   - [Crate](#crate)
-  - [Error Handling](#error-handling)
   - [Attributes](#attributes)
   - [Environment Variables](#environment-variables)
+- [Core Concepts (핵심 개념)](#core-concepts-핵심-개념)
+  - [Ownership and Borrowing](#ownership-and-borrowing)
+  - [Copy vs Clone](#copy-vs-clone)
+  - [Lifetime](#lifetime)
+  - [References and Pointers](#references-and-pointers)
+  - [Trait](#trait)
+  - [Box and Smart Pointers](#box-and-smart-pointers)
+  - [Error Handling](#error-handling)
 - [Advanced](#advanced)
   - [Dispatch](#dispatch)
   - [Macros](#macros)
@@ -252,106 +253,6 @@ let x = "hello";    // 타입까지 변경 가능!
 | 변경 가능 | ❌ | ✅ | ❌ |
 | 섀도잉 가능 | ✅ | ✅ | ❌ |
 | 타입 추론 | ✅ | ✅ | ❌ (명시 필수) |
-
-## Ownership and Borrowing
-
-**Rust의 가장 핵심 개념**입니다. 다른 언어에는 없는 개념이라 처음에 어렵습니다.
-
-### 소유권 규칙 (3가지만 기억)
-
-1. 모든 값에는 **소유자**(변수)가 딱 하나
-2. 소유자가 스코프를 벗어나면 값이 **자동 삭제**
-3. 값을 다른 변수에 넘기면 **소유권이 이동** → 원래 변수 사용 불가
-
-```rs
-let s1 = String::from("hello");
-let s2 = s1;          // 소유권이 s2로 이동
-// println!("{}", s1);  // ❌ 에러! s1은 이미 죽었음
-println!("{}", s2);    // ✅ OK
-```
-
-### 차용 (Borrowing) — 소유권 안 넘기고 빌려주기
-
-```rs
-let s = String::from("hello");
-
-// 불변 차용 — &s = "빌려줄게, 읽기만 해"
-let len = calculate_length(&s);
-println!("{}", s);                // ✅ 아직 쓸 수 있음
-
-// 가변 차용 — &mut s2 = "빌려줄게, 수정해도 돼"
-let mut s2 = String::from("hello");
-change(&mut s2);
-
-fn calculate_length(s: &String) -> usize {
-    s.len()
-}
-
-fn change(s: &mut String) {
-    s.push_str(", world");
-}
-```
-
-| | 불변 참조 `&T` | 가변 참조 `&mut T` |
-|---|---|---|
-| 동시에 몇 개? | **여러 개** OK | **하나만** |
-| 읽기 | ✅ | ✅ |
-| 쓰기 | ❌ | ✅ |
-| 불변+가변 동시 | ❌ 불가 | ❌ 불가 |
-
-> TypeScript에서는 `const obj = {a: 1}; obj.a = 2;`가 됩니다. Rust에서는 `let`이면 내부 값도 변경 불가. `let mut`이어야 합니다.
-
-## Copy vs Clone
-
-```rs
-// Copy — 스택에 있는 작은 값은 자동 복사 (정수, bool, char 등)
-let x = 5;
-let y = x;        // x가 복사됨, 둘 다 사용 가능
-println!("{} {}", x, y);  // ✅ OK
-
-// Clone — 힙 데이터는 명시적으로 깊은 복사해야 함
-let s1 = String::from("hello");
-// let s2 = s1;         // 소유권 이동! s1 사용 불가
-let s2 = s1.clone();    // 명시적 복사
-println!("{} {}", s1, s2);  // ✅ 둘 다 OK
-```
-
-| | Copy | Clone |
-|---|---|---|
-| 방식 | 자동 (암묵적) | 명시적 `.clone()` |
-| 비용 | 저렴 (스택 복사) | 비쌈 (힙 복사 가능) |
-| 대상 | `i32, bool, char, f64` 등 | `String, Vec` 등 |
-
-Copy를 구현하는 타입들:
-
-* 모든 정수 타입: `u32` 등
-* Boolean 타입: `bool`
-* 모든 부동 소수점 타입: `f64` 등
-* 문자 타입: `char`
-* **튜플**: Copy 타입만 포함하는 경우. `(i32, i32)`는 Copy, `(i32, String)`은 아님
-
-## Lifetime
-
-"이 참조가 **얼마나 오래 유효한지**" 컴파일러에게 알려주는 것입니다. 목적은 댕글링 참조를 방지하는 것입니다.
-
-```rs
-// 'a = "x와 y 중 짧은 쪽의 수명만큼 반환값이 유효하다"
-fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
-    if x.len() > y.len() {
-        x
-    } else {
-        y
-    }
-}
-```
-
-> 대부분의 경우 컴파일러가 자동 추론합니다. 직접 쓸 일은 "함수가 참조를 받아서 참조를 반환할 때"뿐입니다.
-
-## References and Pointers
-
-* **참조**: `&T`, `&mut T`
-* **Raw 포인터**: `*const T`, `*mut T` (unsafe 블록에서 사용)
-* **스마트 포인터**: `Box<T>`, `Rc<T>`, `Arc<T>`, `RefCell<T>`
 
 ## String Types
 
@@ -856,6 +757,194 @@ struct Point2<T, U> {
 }
 ```
 
+## Module System
+
+모듈은 코드의 논리적 단위입니다. 관련된 코드들이 한 덩이로 모여있는 것입니다. `mod`를 사용하여 모듈을 정의하고, `use`를 사용하여 다른 모듈의 함수 등을 import합니다. 모듈 함수는 기본적으로 private입니다. `pub`을 사용하여 public으로 바꿀 수 있습니다.
+
+```rs
+mod sound {
+    pub mod instrument {
+        pub fn clarinet() {
+            println!("clarinet");
+        }
+    }
+}
+
+fn main() {
+    // 절대 경로
+    crate::sound::instrument::clarinet();
+
+    // use로 가져오기
+    use crate::sound::instrument;
+    instrument::clarinet();
+}
+```
+
+모듈을 별도의 파일로 분리할 수 있습니다:
+
+```bash
+.
+├── lib.rs
+└── sound/
+    ├── mod.rs
+    └── instrument.rs
+```
+
+## Crate
+
+Crate는 빌드된 바이너리의 단위입니다. 실행 파일 또는 라이브러리로 구분할 수 있습니다.
+
+* **바이너리 crate**: 실행 파일을 생성 (`main.rs`)
+* **라이브러리 crate**: 라이브러리를 생성 (`lib.rs`)
+
+## Attributes
+
+```rs
+// Derive 속성
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+struct Point {
+    x: i32,
+    y: i32,
+}
+
+// 조건부 컴파일
+#[cfg(target_os = "linux")]
+fn linux_only() {}
+
+// 테스트
+#[test]
+fn test_add() {
+    assert_eq!(2 + 2, 4);
+}
+
+// Deprecated
+#[deprecated(since = "1.0.0", note = "Use new_function instead")]
+fn old_function() {}
+```
+
+## Environment Variables
+
+```rs
+use std::env;
+
+// 컴파일 타임에 환경 변수 가져오기
+// 환경 변수가 없으면 빌드 실패
+let cargo_dir = env!("CARGO_MANIFEST_DIR");
+
+// 런타임에 환경 변수 가져오기
+match env::var("HOME") {
+    Ok(val) => println!("HOME: {}", val),
+    Err(e) => println!("Error: {}", e),
+}
+
+// 기본값과 함께
+let path = env::var("PATH").unwrap_or_else(|_| String::from("/usr/bin"));
+```
+
+# Core Concepts (핵심 개념)
+
+Rust만의 고유한 개념들입니다. 다른 언어에는 없는 것들이라 처음에 어렵지만, 이것들을 이해하면 나머지는 수월합니다.
+
+## Ownership and Borrowing
+
+**Rust의 가장 핵심 개념**입니다. 다른 언어에는 없는 개념이라 처음에 어렵습니다.
+
+### 소유권 규칙 (3가지만 기억)
+
+1. 모든 값에는 **소유자**(변수)가 딱 하나
+2. 소유자가 스코프를 벗어나면 값이 **자동 삭제**
+3. 값을 다른 변수에 넘기면 **소유권이 이동** → 원래 변수 사용 불가
+
+```rs
+let s1 = String::from("hello");
+let s2 = s1;          // 소유권이 s2로 이동
+// println!("{}", s1);  // ❌ 에러! s1은 이미 죽었음
+println!("{}", s2);    // ✅ OK
+```
+
+### 차용 (Borrowing) — 소유권 안 넘기고 빌려주기
+
+```rs
+let s = String::from("hello");
+
+// 불변 차용 — &s = "빌려줄게, 읽기만 해"
+let len = calculate_length(&s);
+println!("{}", s);                // ✅ 아직 쓸 수 있음
+
+// 가변 차용 — &mut s2 = "빌려줄게, 수정해도 돼"
+let mut s2 = String::from("hello");
+change(&mut s2);
+
+fn calculate_length(s: &String) -> usize {
+    s.len()
+}
+
+fn change(s: &mut String) {
+    s.push_str(", world");
+}
+```
+
+| | 불변 참조 `&T` | 가변 참조 `&mut T` |
+|---|---|---|
+| 동시에 몇 개? | **여러 개** OK | **하나만** |
+| 읽기 | ✅ | ✅ |
+| 쓰기 | ❌ | ✅ |
+| 불변+가변 동시 | ❌ 불가 | ❌ 불가 |
+
+> TypeScript에서는 `const obj = {a: 1}; obj.a = 2;`가 됩니다. Rust에서는 `let`이면 내부 값도 변경 불가. `let mut`이어야 합니다.
+
+## Copy vs Clone
+
+```rs
+// Copy — 스택에 있는 작은 값은 자동 복사 (정수, bool, char 등)
+let x = 5;
+let y = x;        // x가 복사됨, 둘 다 사용 가능
+println!("{} {}", x, y);  // ✅ OK
+
+// Clone — 힙 데이터는 명시적으로 깊은 복사해야 함
+let s1 = String::from("hello");
+// let s2 = s1;         // 소유권 이동! s1 사용 불가
+let s2 = s1.clone();    // 명시적 복사
+println!("{} {}", s1, s2);  // ✅ 둘 다 OK
+```
+
+| | Copy | Clone |
+|---|---|---|
+| 방식 | 자동 (암묵적) | 명시적 `.clone()` |
+| 비용 | 저렴 (스택 복사) | 비쌈 (힙 복사 가능) |
+| 대상 | `i32, bool, char, f64` 등 | `String, Vec` 등 |
+
+Copy를 구현하는 타입들:
+
+* 모든 정수 타입: `u32` 등
+* Boolean 타입: `bool`
+* 모든 부동 소수점 타입: `f64` 등
+* 문자 타입: `char`
+* **튜플**: Copy 타입만 포함하는 경우. `(i32, i32)`는 Copy, `(i32, String)`은 아님
+
+## Lifetime
+
+"이 참조가 **얼마나 오래 유효한지**" 컴파일러에게 알려주는 것입니다. 목적은 댕글링 참조를 방지하는 것입니다.
+
+```rs
+// 'a = "x와 y 중 짧은 쪽의 수명만큼 반환값이 유효하다"
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() {
+        x
+    } else {
+        y
+    }
+}
+```
+
+> 대부분의 경우 컴파일러가 자동 추론합니다. 직접 쓸 일은 "함수가 참조를 받아서 참조를 반환할 때"뿐입니다.
+
+## References and Pointers
+
+* **참조**: `&T`, `&mut T`
+* **Raw 포인터**: `*const T`, `*mut T` (unsafe 블록에서 사용)
+* **스마트 포인터**: `Box<T>`, `Rc<T>`, `Arc<T>`, `RefCell<T>`
+
 ## Trait
 
 TypeScript의 `interface`와 비슷하지만, **기존 타입에 나중에 구현 가능**합니다. `PartialOrd + Copy`는 **trait bound**입니다.
@@ -926,46 +1015,6 @@ enum List {
 * **RefCell<T>**: 런타임 차용 규칙 검사
 * **Mutex<T>**: 뮤텍스를 통한 데이터 보호
 
-## Module System
-
-모듈은 코드의 논리적 단위입니다. 관련된 코드들이 한 덩이로 모여있는 것입니다. `mod`를 사용하여 모듈을 정의하고, `use`를 사용하여 다른 모듈의 함수 등을 import합니다. 모듈 함수는 기본적으로 private입니다. `pub`을 사용하여 public으로 바꿀 수 있습니다.
-
-```rs
-mod sound {
-    pub mod instrument {
-        pub fn clarinet() {
-            println!("clarinet");
-        }
-    }
-}
-
-fn main() {
-    // 절대 경로
-    crate::sound::instrument::clarinet();
-
-    // use로 가져오기
-    use crate::sound::instrument;
-    instrument::clarinet();
-}
-```
-
-모듈을 별도의 파일로 분리할 수 있습니다:
-
-```bash
-.
-├── lib.rs
-└── sound/
-    ├── mod.rs
-    └── instrument.rs
-```
-
-## Crate
-
-Crate는 빌드된 바이너리의 단위입니다. 실행 파일 또는 라이브러리로 구분할 수 있습니다.
-
-* **바이너리 crate**: 실행 파일을 생성 (`main.rs`)
-* **라이브러리 crate**: 라이브러리를 생성 (`lib.rs`)
-
 ## Error Handling
 
 Rust에는 `try/catch`가 **없습니다**. 대신 `Result`와 `Option`을 씁니다.
@@ -1002,50 +1051,6 @@ fn divide(a: i32, b: i32) -> i32 {
 fn find_user(id: u32) -> Option<User> {
     // Some(user) 또는 None 반환
 }
-```
-
-## Attributes
-
-```rs
-// Derive 속성
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-struct Point {
-    x: i32,
-    y: i32,
-}
-
-// 조건부 컴파일
-#[cfg(target_os = "linux")]
-fn linux_only() {}
-
-// 테스트
-#[test]
-fn test_add() {
-    assert_eq!(2 + 2, 4);
-}
-
-// Deprecated
-#[deprecated(since = "1.0.0", note = "Use new_function instead")]
-fn old_function() {}
-```
-
-## Environment Variables
-
-```rs
-use std::env;
-
-// 컴파일 타임에 환경 변수 가져오기
-// 환경 변수가 없으면 빌드 실패
-let cargo_dir = env!("CARGO_MANIFEST_DIR");
-
-// 런타임에 환경 변수 가져오기
-match env::var("HOME") {
-    Ok(val) => println!("HOME: {}", val),
-    Err(e) => println!("Error: {}", e),
-}
-
-// 기본값과 함께
-let path = env::var("PATH").unwrap_or_else(|_| String::from("/usr/bin"));
 ```
 
 # Advanced
