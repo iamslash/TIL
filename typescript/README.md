@@ -1,61 +1,62 @@
-- [Materials](#materials)
-- [Basic](#basic)
-  - [Build \& Run](#build--run)
-  - [Print Out](#print-out)
+# TypeScript
+
+**Korean version**: See [README-kr.md](README-kr.md) for Korean language documentation.
+
+- [Resources](#resources)
+- [Basics](#basics)
+  - [Build & Run](#build--run)
+  - [Print](#print)
   - [Reserved Words](#reserved-words)
-  - [min, max values](#min-max-values)
+  - [Min, Max](#min-max)
   - [abs vs fabs](#abs-vs-fabs)
-  - [Bit Manipulation](#bit-manipulation)
+  - [Bitwise Operations](#bitwise-operations)
   - [String](#string)
   - [Random](#random)
-  - [Formatted Strings](#formatted-strings)
-  - [Inspecting](#inspecting)
+  - [Formatted String](#formatted-string)
+  - [Inspect](#inspect)
   - [Data Types](#data-types)
-  - [Control Flow Statements](#control-flow-statements)
-    - [Decision Making Statements](#decision-making-statements)
-    - [Looping Statements](#looping-statements)
+  - [Control Flow](#control-flow)
   - [Collections](#collections)
-    - [tutple](#tutple)
-    - [array](#array)
-    - [set](#set)
-    - [map](#map)
-  - [Collection Conversions](#collection-conversions)
+  - [Collection Conversion](#collection-conversion)
   - [Sort](#sort)
   - [Search](#search)
-  - [Multi Dimensional Arrays](#multi-dimensional-arrays)
+  - [Multidimensional Array](#multidimensional-array)
   - [Enum](#enum)
+  - [Multiple Variables](#multiple-variables)
+  - [Spread/Rest Operator](#spreadrest-operator)
+  - [Nullish Coalescing (||) and Double Question Mark (??)](#nullish-coalescing--and-double-question-mark-)
+  - [Export & Import](#export--import)
+- [Core Concepts](#core-concepts)
+  - [undefined vs unknown vs any vs never Comparison](#undefined-vs-unknown-vs-any-vs-never-comparison)
   - [Generics](#generics)
-  - [Define Multiple Variables On The Same Line](#define-multiple-variables-on-the-same-line)
+  - [Utility Types](#utility-types)
+  - [Interface vs Type](#interface-vs-type)
+  - [Optional (Optional Parameters and Properties)](#optional-optional-parameters-and-properties)
+  - [`declare`](#declare)
+  - [Function Types with Interface](#function-types-with-interface)
 - [Advanced](#advanced)
   - [Map vs Record](#map-vs-record)
-  - [Utility Types](#utility-types)
-  - [Triple Dots](#triple-dots)
-  - [Nullish Coalescing Operator (||), Double Question Marks (??)](#nullish-coalescing-operator--double-question-marks-)
-  - [export and import](#export-and-import)
-  - [`declare`](#declare)
-  - [Function Definition With Interfaces](#function-definition-with-interfaces)
-  - [Interface vs Type](#interface-vs-type)
 - [Style Guide](#style-guide)
 - [Refactoring](#refactoring)
-- [Effective](#effective)
-- [Design Pattern](#design-pattern)
+- [Effective TypeScript](#effective-typescript)
+- [Design Patterns](#design-patterns)
 - [Architecture](#architecture)
 
 ----
 
-# Materials
+# Resources
 
-* [한눈에 보는 타입스크립트(updated)](https://heropy.blog/2020/01/27/typescript/)
+* [TypeScript at a Glance (updated)](https://heropy.blog/2020/01/27/typescript/)
 * [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
-  * Should read this.
-  * [TypeScript Handbook kor](https://typescript-kr.github.io/)
-* [8장. 리액트 프로젝트에서 타입스크립트 사용하기](https://react.vlpt.us/using-typescript/)
-* [TypeScript 환경에서 Redux를 프로처럼 사용하기 @ velog](https://velog.io/@velopert/use-typescript-and-redux-like-a-pro) 
+  * Essential official documentation
+  * [TypeScript Handbook Korean](https://typescript-kr.github.io/)
+* [Chapter 8. Using TypeScript in React Projects](https://react.vlpt.us/using-typescript/)
+* [Using TypeScript and Redux Like a Pro @ velog](https://velog.io/@velopert/use-typescript-and-redux-like-a-pro)
 * [playcode](https://playcode.io/)
-  * typescript play ground
-* [TypeScript의 소개와 개발 환경 구축](https://poiemaweb.com/typescript-introduction)
+  * TypeScript playground
+* [Introduction to TypeScript and Setting Up the Development Environment](https://poiemaweb.com/typescript-introduction)
 
-# Basic
+# Basics
 
 ## Build & Run
 
@@ -67,7 +68,7 @@ $ tsc a.ts
 # Run with node
 $ node a.js
 
-# Install ts-node 
+# Install ts-node
 $ npm install -g ts-node
 # Run with ts-node
 $ ts-node a.ts
@@ -79,13 +80,13 @@ $ ts-node
 2
 ```
 
-## Print Out
+## Print
 
 ```typescript
 function greet(person: string, date: Date) {
   console.log(`Hello ${person}, today is ${date.toDateString()}!`);
 }
- 
+
 greet("Maddison", new Date());
 ```
 
@@ -113,7 +114,7 @@ module require number set string symbol
 type from of
 ```
 
-## min, max values
+## Min, Max
 
 ```ts
 console.log(Number.MAX_SAFE_INTEGER);   // 9007199254740991
@@ -133,34 +134,34 @@ function difference(a, b) {
   return Math.abs(a - b);
 }
 console.log(difference(3, 5));
-// expected output: 2
+// Expected output: 2
 console.log(difference(5, 3));
-// expected output: 2
+// Expected output: 2
 console.log(difference(1.23456, 7.89012));
-// expected output: 6.6555599999999995
+// Expected output: 6.6555599999999995
 ```
 
-## Bit Manipulation
+## Bitwise Operations
 
 ```ts
 var a: number = 2;  // 10
 var b: number = 3;  // 11
 var result;
 
-// (a & b) =>  2 
+// (a & b) =>  2
 console.log("(a & b) => ", a & b);
-          
-// (a | b) =>  3 
-console.log("(a | b) => ", a | b);  
 
-// (a ^ b) =>  1 
+// (a | b) =>  3
+console.log("(a | b) => ", a | b);
+
+// (a ^ b) =>  1
 console.log("(a ^ b) => ", a ^ b);
- 
-// (~b) =>  -4 
+
+// (~b) =>  -4
 console.log("(~b) => ", ~b);
 
-// (a << b) =>  16 
-console.log("(a << b) => ", a << b); 
+// (a << b) =>  16
+console.log("(a << b) => ", a << b);
 
 // (a >> b) =>  0
 console.log("(a >> b) => ", a >> b);
@@ -174,39 +175,39 @@ type World = "world";
 type Greeting = `hello ${World}`;
 console.log(Greeting);  // hello world
 
-// Loop string
-let s = "hello world'
+// String iteration
+let s = "hello world"
 let n = s.length
 for (let i = 0; i < n; ++i) {
     let c = s.charAt(i);
     console.log(c);
 }
 
-// Convert letters, number in string
+// Convert character to number and number to character
 // https://stackoverflow.com/questions/22624379/how-to-convert-letters-to-numbers-with-javascript
 let s = "abcdefg";
-let c = s.charAt(0);   // c is string, "a"
-// 97 means "a"
+let c = s.charAt(0);   // c is a string, "a"
+// 97 represents "a"
 let i = c.charCodeAt(0) - 97;  // 0
-let d = string.fromCharCode(97 + i) // "a"
+let d = String.fromCharCode(97 + i) // "a"
 ```
 
 ## Random
 
 * [Math.random() | mdn](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Math/random)
 
-`[0..1]` 의 값을 생성한다.
+Generates a value in the range `[0..1]`.
 
 ```ts
 console.log(Math.random());
 console.log(Math.random());
 ```
 
-## Formatted Strings
+## Formatted String
 
 * [util.format | node.js](https://nodejs.org/api/util.html#utilformatformat-args)
 
-typescript 의 primary type 은 `boolean, number, string` 임을 기억하자.
+Remember that the basic types in TypeScript are `boolean, number, string`.
 
 ```ts
 import util from "util";
@@ -218,7 +219,7 @@ process.stdout.write(`i: ${i}, diff: ${diff} has: ${numMap.has(diff)} `);
 console.log(numMap);
 ```
 
-## Inspecting 
+## Inspect
 
 * [util.inspect | node.js](https://nodejs.org/api/util.html#utilinspectobject-options)
 
@@ -274,9 +275,9 @@ let color: string = "blue";
 color = 'red';
 
 // Array
-// Arrays of values
+// Array of values
 let list1: number[] = [1, 2, 3];
-// Generic Array
+// Generic array
 let list2: Array<number> = [1, 2, 3];
 
 // Tuple
@@ -289,7 +290,7 @@ enum Color {
 }
 let c: Color = Color.Green;
 
-// Unkonwn
+// Unknown
 let notSure: unknown = 4;
 notSure = "Maybe a string instead";
 notSure = false;
@@ -324,19 +325,19 @@ create({ prop: 0 });
 create(null);
 create(undefined);
 
-// Type assertions
+// Type Assertion
 let someValue: unknown = "This is a string";
 let strLength: number = (someValue as string).length;
 let strLength2: number = (<string>someValue).length;
 ```
 
-## Control Flow Statements
+## Control Flow
 
-### Decision Making Statements
+### Conditionals
 
 ```ts
 // if ... else if ... else
-var num: number = 1
+let num: number = 1;
 if (num > 0) {
     console.log("positive");
 } else if (num < 0) {
@@ -345,7 +346,8 @@ if (num > 0) {
     console.log("zero");
 }
 
-var grade: string = "A";
+// switch
+let grade: string = "A";
 switch (grade) {
     case "A": {
         console.log("Excellent");
@@ -362,270 +364,271 @@ switch (grade) {
 }
 ```
 
-### Looping Statements
+### Loops
 
 ```ts
 // for
 for (let i = 0; i < 3; i++) {
-    console.log(i);
+    console.log(i);  // 0, 1, 2
 }
-// Output:
-// 0
-// 1
-// 2
 
-// for ... of return value
-let arr = [1, 2, 3];
-for (var val of arr) {
-    console.log(val);
+// while
+let i = 0;
+while (i < 3) {
+    console.log(i);  // 0, 1, 2
+    i++;
 }
-// Output:
-// 1
-// 2
-// 3
-let srr = "Hello";
-for (var chr of str) {
-    console.log(chr);
-}
-// Output:
-// H
-// e
-// l
-// l
-// o
-
-// for ... of return index
-let arr = [1, 2, 3];
-for (var idx in arr) {
-    console.log(idx);
-}
-// Output:
-// 0
-// 1
-// 2
-
-// var vs let in for loop
-// var can be accessed outside loop
-let arr = [1, 2, 3];
-for (var idx1 in arr) {
-    console.log(idx1);
-}
-console.log(idx1);
-for (let idx2 in arr) {
-    console.log(idx2);
-}
-console.log(idx2);  // ERROR
 ```
+
+### for...of vs for...in
+
+This is one of the most commonly confused topics.
+
+```ts
+let arr = [10, 20, 30];
+
+// for...of -> extracts "values"
+for (let val of arr) {
+    console.log(val);   // 10, 20, 30
+}
+
+// for...in -> extracts "indices (keys)"
+for (let idx in arr) {
+    console.log(idx);   // "0", "1", "2"  (strings!)
+}
+
+// for...of also works with strings
+for (let chr of "Hello") {
+    console.log(chr);   // H, e, l, l, o
+}
+```
+
+| | `for...of` | `for...in` |
+|---|---|---|
+| Extracts | **Values** | **Keys (indices)** |
+| With arrays | `10, 20, 30` | `"0", "1", "2"` |
+| Type | Original type | **Always string** |
+
+> For array iteration, **use `for...of`.** Use `for...in` when iterating over object keys.
+
+### var vs let Scope
+
+```ts
+// var: survives outside the loop (function scope)
+for (var i in [1, 2, 3]) {}
+console.log(i);   // "2" -- accessible!
+
+// let: exists only inside the loop (block scope)
+for (let j in [1, 2, 3]) {}
+console.log(j);   // Error -- not accessible
+```
+
+> **Always use `let`.** `var` can cause bugs by keeping variables alive unintentionally.
 
 ## Collections
 
-### tutple
+### Tuple
+
+Looks like an array, but **each position has a fixed type**.
 
 ```ts
-var employee: [number, string] = [1, 'David'];
-var person: [number, string, boolean] = [1, 'David', true];
-var user: [number, string, boolean, number, string];
-user = [1, 'David', true, 10, 'admin'];
-var employees: [number, string][];
-employees = [[1, 'David'], [2, 'Tom']];
+let employee: [number, string] = [1, 'David'];
+employee[0] = "hello";  // Error -- index 0 must be number
+employee[1] = 42;        // Error -- index 1 must be string
 
-console.log(employee[0], employee[1]);  // 1 'David'
+let person: [number, string, boolean] = [1, 'David', true];
+let employees: [number, string][] = [[1, 'David'], [2, 'Tom']];
 
+// push/pop also work
 employee.push(2, 'John');
 console.log(employee);  // [1, 'David', 2, 'John']
-employee.pop();
-console.log(employee);  // [1, 'David', 2]
-employee[1] = employee[1].concat(' Sun');
-console.log(employee);  // [1, 'David Sun', 2]
 ```
 
-### array
+**When to use?** Useful when returning multiple values from a function:
 
 ```ts
-let fruits: Array<string>;
-fruits = ['Apple', 'Orange', 'Banana'];
-let vals: (string | number)[] = ['Apple', 2, 'Orange', 3, 4, 'Banana']; 
-let vals: Array<string | number> = ['Apple', 2, 'Orange', 3, 4, 'Banana']; 
-console.log(vals[0]);  // 'Apple'
-
-for (var idx in fruits) {
-    console.log(fruits[idx]);
+function getUser(): [number, string] {
+    return [1, "David"];
 }
-// Output:
-// 0
-// 1
-// 2
-for (var i = 0; i < fruits.length; i++) {
-    console.log(fruits[i]);
-}
-// Output:
-// 'Apple'
-// 'Orange'
-// 'Banana'
+const [id, name] = getUser();  // Clean destructuring
+```
 
-fruits.sort();
-console.log(fruits);  // ['Apple', 'Banana', 'Orange']
-console.log(fruits.pop()); // 'Orange'
-fruits.push('Papaya');  
-console.log(fruits);  // ['Apple', 'Banana', 'Papaya']
-fruits = fruits.concat(['Fig', 'Mango']); 
-console.log(fruits); //output: ['Apple', 'Banana', 'Papaya', 'Fig', 'Mango'] 
-console.log(fruits.indexOf('Papaya'));  // 2
-console.log(fruits.slice(1, 2));  // ['Banana']
+> For 3 or more elements, **interfaces/objects** are more readable than tuples.
 
-// Init array with one value
-let prevIdxs = new Array<Number>().fill(-1);
+**Tuple vs Array -- Same values, different type declarations**
 
-// map
-// `map`은 배열의 각 요소에 대해 변환 작업을 수행하고 새로운 배열을 반환합니다.
+The values themselves look exactly the same. At runtime (JavaScript), **both are just arrays**. The difference only exists when the TypeScript compiler checks types.
+
+```ts
+// Array -- "any number" of the same type
+let arr: number[]         = [1, 2];       // Any number of numbers OK
+arr.push(3);       // OK
+arr = [1];         // OK
+
+// Tuple -- fixed type and "count" for each position
+let tup: [number, string] = [1, "David"]; // Exactly number, string in order
+tup = [1];         // Error -- string is missing
+tup = [1, 2];      // Error -- second element must be string
+
+// At runtime, they are completely identical
+console.log(Array.isArray(tup));  // true -- tuple is also an array!
+```
+
+| | Type Declaration | Value Appearance | Runtime |
+|---|---|---|---|
+| Array | `number[]` | `[1, 2, 3]` | Array |
+| Tuple | `[number, string]` | `[1, "David"]` | Array (same!) |
+
+> Think of a tuple as "an array where the compiler enforces types per position."
+
+### Array
+
+```ts
+// Declaration
+let fruits: Array<string> = ['Apple', 'Orange', 'Banana'];
+let numbers: number[] = [1, 2, 3, 4];
+let vals: (string | number)[] = ['Apple', 2, 'Orange', 3];
+
+// Initialization
+let filled = new Array<number>(5).fill(-1);  // [-1, -1, -1, -1, -1]
+```
+
+Array methods are easier to remember when organized by purpose:
+
+| Purpose | Method | Mutates Original? |
+|---------|--------|-------------------|
+| **Transform** | `map`, `flatMap` | No (new array) |
+| **Filter** | `filter` | No (new array) |
+| **Reduce** | `reduce` | No (single value) |
+| **Search** | `find`, `findIndex`, `indexOf`, `includes` | No |
+| **Validate** | `every`, `some` | No |
+| **Sort** | `sort`, `reverse` | **Yes (mutates!)** |
+| **Add/Remove (end)** | `push`, `pop` | Yes |
+| **Add/Remove (front)** | `unshift`, `shift` | Yes |
+| **Cut** | `splice` | Yes |
+| **Copy & Cut** | `slice` | No (new array) |
+
+```ts
 const numbers = [1, 2, 3, 4];
-const doubled = numbers.map(num => num * 2);
-console.log(doubled); // [2, 4, 6, 8]
 
-// reduce
-// `reduce`는 배열을 순회하며 단일 값으로 축약합니다.
-const sum = numbers.reduce((acc, cur) => acc + cur, 0);
-console.log(sum); // 10
+// Transform: map -- transforms each element and returns a new array
+numbers.map(n => n * 2);                    // [2, 4, 6, 8]
 
-// filter
-// `filter`는 조건에 맞는 요소만 걸러서 새로운 배열을 반환합니다.
-const evenNumbers = numbers.filter(num => num % 2 === 0);
-console.log(evenNumbers); // [2, 4]
+// Filter: filter -- collects only elements matching the condition into a new array
+numbers.filter(n => n % 2 === 0);           // [2, 4]
 
-// sort
-// 배열의 요소를 정렬합니다.
-const unsortedNumbers = [3, 1, 4, 2];
-unsortedNumbers.sort((a, b) => a - b);
-console.log(unsortedNumbers); // [1, 2, 3, 4]
+// Reduce: reduce -- reduces the array to a single value
+numbers.reduce((acc, cur) => acc + cur, 0); // 10
 
-// every and some
-// - `every`: 배열의 모든 요소가 조건을 만족하면 `true`를 반환.
-// - `some`: 배열의 일부 요소가 조건을 만족하면 `true`를 반환.
-const allEven = numbers.every(num => num % 2 === 0); // true
-const hasOdd = numbers.some(num => num % 2 !== 0); // false
-console.log(allEven, hasOdd); // true, false
+// Search: find, findIndex, includes
+numbers.find(n => n > 2);                   // 3
+numbers.findIndex(n => n > 2);              // 2
+numbers.includes(3);                        // true
 
-// find and findIndex
-// - `find`: 조건에 맞는 첫 번째 요소를 반환.
-// - `findIndex`: 조건에 맞는 첫 번째 요소의 인덱스를 반환.
-const firstEven = numbers.find(num => num % 2 === 0); // 2
-const indexOfFirstEven = numbers.findIndex(num => num % 2 === 0); // 1
-console.log(firstEven, indexOfFirstEven); // 2, 1
+// Validate: every, some
+numbers.every(n => n % 2 === 0);            // false (all even?)
+numbers.some(n => n % 2 !== 0);             // true  (any odd?)
 
-// includes
-// 특정 값이 배열에 포함되어 있는지 확인합니다.
-const hasThree = numbers.includes(3); // true
-console.log(hasThree); // true
-
-// flat and flatMap
-// - `flat`: 다차원 배열을 평탄화합니다.
-// - `flatMap`: `map` 후 평탄화를 동시에 수행합니다.
-const nested = [1, [2, 3], [4, [5]]];
-const flatArray = nested.flat(2);
-console.log(flatArray); // [1, 2, 3, 4, 5]
-
-const strings = ["hello", "world"];
-const charArray = strings.flatMap(str => str.split(''));
-console.log(charArray); // ['h', 'e', 'l', 'l', 'o', 'w', 'o', 'r', 'l', 'd']
-
-// splice
-// 배열에서 요소를 추가/삭제/대체합니다.
-const mutableNumbers = [1, 2, 3, 4];
-mutableNumbers.splice(1, 2, 99); // 1번 인덱스부터 2개 제거 후 99 추가
-console.log(mutableNumbers); // [1, 99, 4]
-
-// - **`reverse`**: 배열 요소의 순서를 뒤집습니다.
-const reversedNumbers = [...mutableNumbers].reverse();
-console.log(reversedNumbers); // [4, 99, 1]
-
-// - **`push` / `pop`**: 배열 끝에 요소를 추가하거나 제거합니다.
-const stack = [1, 2];
-stack.push(3); // [1, 2, 3]
-stack.pop(); // [1, 2]
-console.log(stack); // [1, 2]
-
-// - **`shift` / `unshift`**: 배열 시작에 요소를 추가하거나 제거합니다.
-const queue = [1, 2];
-queue.unshift(0); // [0, 1, 2]
-queue.shift(); // [1, 2]
-console.log(queue); // [1, 2]
+// flat, flatMap -- flatten multidimensional arrays
+[1, [2, 3], [4, [5]]].flat(2);             // [1, 2, 3, 4, 5]
+["hello", "world"].flatMap(s => s.split('')); // ['h','e','l','l','o','w','o','r','l','d']
 ```
 
-### set
+**Commonly confused methods:**
 
 ```ts
-let dirs = new Set<string>();
-let dirs = new Set<string>(['east', 'west']);
-dirs.add('east');
-dirs.add('north');
-dirs.add('south');
-console.log(dirs);      // Set(4) { 'east', 'west', 'north', 'south' }
-console.log(dirs.has('east'));  // true
-console.log(dirs.size);         // 4
+// splice vs slice
+const arr = [1, 2, 3, 4, 5];
+arr.slice(1, 3);     // [2, 3]        -- original unchanged, returns copy
+arr.splice(1, 2);    // [2, 3] removed -- original becomes [1, 4, 5]!
 
-console.log(dirs.delete('east')); // true
-console.log(dirs);                // Set(3) { 'west', 'north', 'south' }
+// sort caution! Default is "lexicographic"
+[1, 10, 2].sort();                // [1, 10, 2] -- string comparison!
+[1, 10, 2].sort((a, b) => a - b); // [1, 2, 10] -- numeric comparison
+
+// push/pop (end) vs unshift/shift (front)
+const stack = [1, 2];
+stack.push(3);    // [1, 2, 3]  -- add to end
+stack.pop();      // [1, 2]     -- remove from end
+stack.unshift(0); // [0, 1, 2]  -- add to front
+stack.shift();    // [1, 2]     -- remove from front
+
+// reverse -- mutates original! Use spread to copy
+const reversed = [...stack].reverse();  // stack remains unchanged
+```
+
+### Set
+
+A collection of **unique** values. `has()` lookup is `O(1)`, faster than array's `includes()`.
+
+```ts
+let dirs = new Set<string>(['east', 'west']);
+dirs.add('north');
+dirs.add('east');          // Duplicate ignored
+console.log(dirs.size);    // 3 (east, west, north)
+console.log(dirs.has('east'));   // true
+dirs.delete('east');       // true
+dirs.clear();              // Delete all
+
+// Iteration
 for (let dir of dirs) {
     console.log(dir);
 }
-// Output:
-// west
-// north
-// south
-
-console.log(dirs.clear()); // undefined
-console.log(dirs);         // Set(0) {}
 ```
 
-### map
+**Practical pattern: Remove duplicates from array**
 
 ```ts
-let fooMap = new Map<string, number>();
-let barMap = new Map<string, string>([
-    ['key1', 'val1'],
-    ['key2', 'val2']
+const arr = [1, 2, 2, 3, 3, 3];
+const unique = [...new Set(arr)];  // [1, 2, 3]
+```
+
+> **Array vs Set decision:** Use **Set** when frequently checking "does this value exist?", use **Array** when order/index matters.
+
+### Map
+
+Stores key-value pairs. Similar to plain objects `{}` but with differences.
+
+```ts
+let map = new Map<string, number>();
+map.set('David', 10);
+map.set('John', 20);
+
+console.log(map.get('David'));      // 10
+console.log(map.get('Tom'));        // undefined
+console.log(map.get('Tom') || 0);   // 0 (default value pattern)
+console.log(map.has('David'));      // true
+console.log(map.size);              // 2
+map.delete('John');
+
+// Create with initialization
+let config = new Map<string, string>([
+    ['host', 'localhost'],
+    ['port', '3000']
 ]);
 
-fooMap.set('David', 10);
-fooMap.set('John', 20);
-fooMap.set('Raj', 30);
-console.log(fooMap.get('David'));   // 10
-// default value
-console.log(fooMap.get('Tom') || 0) // 0
-console.log(fooMap.has('David'));  // true
-console.log(fooMap.has('Tom'));    // false
-console.log(fooMap.size);          // 3
-console.log(fooMap.delete('Raj')); // true
-
-for (let key of fooMap.keys()) {
-    console.log(key);
-}
-// Output:
-// David
-// John
-for (let val of fooMap.values()) {
-    console.log(val);
-}
-// Output:
-// 10
-// 20
-for (let entry of fooMap.entries()) {
-    console.log(entry[0], entry[1]);
-}
-// Output:
-// "David" 10
-// "John" 20
-for (let [key, val] of fooMap) {
+// Iteration
+for (let [key, val] of map) {
     console.log(key, val);
 }
-
-fooMap.celar();
+// for...of with keys(), values(), entries() is also available
 ```
 
-## Collection Conversions
+**Map vs Plain Object `{}`:**
+
+| | `Map` | `{}` (Object) |
+|---|---|---|
+| Key type | **Any type** (objects, functions OK) | string / symbol only |
+| Order guaranteed | Insertion order guaranteed | Partially guaranteed in ES2015+ |
+| Size check | `map.size` | `Object.keys(obj).length` |
+| Performance | **Faster** with frequent add/delete | Faster with fixed structure |
+
+> **Decision:** Use **Map** when keys change dynamically, use **object/interface** when the structure is fixed.
+
+## Collection Conversion
 
 ```ts
-// tuple to set
+// Tuple to Set
 let arr = [11, 22, 33];
 let set = new Set(arr);
 console.log(set);  // Set(3) { 11, 22, 33 }
@@ -635,227 +638,133 @@ console.log(set);  // Set(3) { 11, 22, 33 }
 
 ```ts
 let arr: number[] = [1, 10, 2, 5, 3];
-console.log(arr);  // [1, 10, 2, 5, 3]
 
-// sort lexicographically
+// Warning: sort() without a comparator sorts "lexicographically"!
 arr.sort();
-console.log(arr);  // [1, 10, 2, 3, 5]
+console.log(arr);  // [1, 10, 2, 3, 5] -- 10 comes before 2!
 
-// sort asencding
-arr.sort((a: number, b: number) => a - b);
+// Ascending -- always provide a comparator for number arrays
+arr.sort((a, b) => a - b);
 console.log(arr);  // [1, 2, 3, 5, 10]
 
-// sort descending
-arr.sort((a: number, b: number) => b - a);
+// Descending
+arr.sort((a, b) => b - a);
 console.log(arr);  // [10, 5, 3, 2, 1]
+
+// String arrays are safe with default sort()
+let fruits = ['Banana', 'Apple', 'Cherry'];
+fruits.sort();
+console.log(fruits);  // ['Apple', 'Banana', 'Cherry']
 ```
+
+> **`sort()` mutates the original array.** To preserve the original, use `[...arr].sort()`.
 
 ## Search
 
-built-in binary search function 없는 건
+TypeScript has **no built-in binary search.** Only linear search is provided.
 
 ```ts
 let arr = [1, 2, 3, 4, 5];
-console.log(arr.find(a => a > 3));  // 4
-console.log(arr.indexOf(2));        // 1 
+
+arr.find(a => a > 3);       // 4         -- first "value" matching the condition
+arr.findIndex(a => a > 3);  // 3         -- first "index" matching the condition
+arr.indexOf(2);             // 1         -- "index" of the exact value
+arr.includes(3);            // true      -- existence check only
 ```
 
-## Multi Dimensional Arrays
+| Method | Return Value | Use Case |
+|--------|-------------|----------|
+| `find(fn)` | Value or `undefined` | Search by condition |
+| `findIndex(fn)` | Index or `-1` | Find position by condition |
+| `indexOf(val)` | Index or `-1` | Find position by exact value |
+| `includes(val)` | `boolean` | Check existence only |
+
+> If you need binary search, implement it yourself or use a library.
+
+## Multidimensional Array
 
 ```ts
-let aa: number[][] = [[1, 2, 3],[23, 24, 25]]  
-for (let i = 0; i < aa.length; i++) {
-    for (let j = 0; j < aa[0].length; j++) {
-        console.log(aa[i][j]);
+// Declaration and iteration
+let grid: number[][] = [
+    [1, 2, 3],
+    [4, 5, 6]
+];
+
+for (let i = 0; i < grid.length; i++) {
+    for (let j = 0; j < grid[0].length; j++) {
+        console.log(grid[i][j]);
     }
 }
-// Output:
-// 1
-// 2
-// 3
-// 23
-// 24
-// 25
+// Output: 1, 2, 3, 4, 5, 6
+
+// Initialization: fill a 3x4 array with 0
+let matrix: number[][] = Array.from({length: 3}, () => new Array(4).fill(0));
 ```
+
+> **Pitfall:** `new Array(3).fill(new Array(4).fill(0))` makes all rows **share the same reference**. Changing `matrix[0][0] = 1` will change index 0 of every row. Always use `Array.from()`.
 
 ## Enum
 
 * [Enum | typescript](https://www.typescriptlang.org/docs/handbook/enums.html#handbook-content)
 
+Used to group related constants together. There are 3 kinds.
+
 ```ts
-// numeric enums
+// 1. Numeric enum -- auto-incrementing
 enum Direction {
-  Up = 1,
-  Down,
-  Left,
-  Right,
+  Up = 1,    // 1
+  Down,      // 2 (auto)
+  Left,      // 3
+  Right,     // 4
 }
 
-// string enums
-enum Direction {
-  Up = "UP",
-  Down = "DOWN",
-  Left = "LEFT",
-  Right = "RIGHT",
+// 2. String enum -- values must be explicit
+enum Status {
+  Active = "ACTIVE",
+  Inactive = "INACTIVE",
+  Pending = "PENDING",
 }
 
-// heterogeneous enums
+// 3. Heterogeneous enum -- mixed number+string (not recommended)
 enum BooleanLikeHeterogeneousEnum {
   No = 0,
   Yes = "YES",
 }
 
 let dir: Direction = Direction.Up;
-let foo: BooleanLikeHeterogeneousEnum.No;
 ```
 
-## Generics
-
-* [Generics](ts_handbook.md#generics)
+**When to use?** When replacing magic strings with type-safe values:
 
 ```ts
-// generic functions
-function identity<type>(arg: Type): Type {
-    return arg;
-}
+// before -- no error even with typos
+if (user.status === "ACTVE") { ... }  // Typo! Bug at runtime
 
-// generic classes
-class GenericNumber<NumType> {
-    zeroValue: NumType;
-    add: (x: NumType, y: NumType) => NumType;
-}
-let a = new GenericNumber<number>();
-a.zeroValue = 0;
-a.add = function(x, y) {
-    return x + y;
-}
+// after -- compile error on typo with enum
+if (user.status === Status.Active) { ... }  // Safe
 ```
 
-## Define Multiple Variables On The Same Line
+> Recently, **union types** are preferred over enums:
+> ```ts
+> type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";  // More concise
+> ```
+
+## Multiple Variables
 
 ```ts
 let i = 0, j = 0, n = s.length
 ```
 
-# Advanced
+## Spread/Rest Operator
 
-## Map vs Record
+> * [JavaScript | What is ... (spread/rest) in JS?](https://dinn.github.io/javascript/js-dotdotdot/)
 
-* [map vs object | TIL](/js/README.md#map-vs-object)
+`...` serves two roles: **Spread** and **Rest**. Distinguish them by **position**:
 
-Map vs Object 와 같다.
-
-## Utility Types
-
-> * [Utility Types | typescript](https://www.typescriptlang.org/ko/docs/handbook/utility-types.html)
-> * [[Typescript] 유틸리티 타입 - Parameters, ReturnType, Required](https://www.morolog.dev/entry/Typscript-%EC%9C%A0%ED%8B%B8%EB%A6%AC%ED%8B%B0-%ED%83%80%EC%9E%85-Parameters-ReturnType-Required)
-
-```ts
-// ReturnType<T>
-// It creates a type return of the function.
-declare function foo(): Foo
-type fooResult = ReturnType<typeof foo>;
-
-type F = (...p: any[]) => any
-function debounce(fn: F, t: number): F {
-    return function(...args) {
-        let timeout: ReturnType<typeof setTimeout>
-        return (...args) => {
-            clearTimeout(timeout);
-            timeout = setTimeout(() => fn(...args), t);
-        }
-    }
-};
-
-// Paremeters<T>
-// It creates a type parameter of the function.
-declare function foo(foo: {name: string, mobile: number}): void
-type fooParams = Parameters<typeof foo>;
-
-// Required<T>
-// It creates a type every fields are required. 
-interface Props {
-  a?: number;
-  b?: string;
-}
-
-// OK
-const obj: Props = { a: 5 };
-// ERROR: Property 'b' is missing in type '{ a: number; }' 
-// but required in type 'Required<Props>'.
-const obj2: Required<Props> = { a: 5 };  
-
-// Record<Keys, Type>
-// Constructs an object type whose property keys are Keys and 
-// whose property values are Type.  
-// https://developer-talk.tistory.com/296
-
-// personType 이라는 object type 을 정의하자.
-// index signature 를 사용함.
-type personType = {
-    [name: string]: number
-}
-let person: personType = {
-    'foo': 10,
-    'bar': 20,
-    'baz': 30
-}
-// 이 것을 Record type 으로 바꾸어 보자.
-// 장점이 뭐냐?
-type personType = Record<string, number>;
-let person: personType = {
-    'foo': 10,
-    'bar': 20,
-    'baz': 30
-}
-// index signature 로 해결안되는 경우가 있다.
-// ERROR:
-// An index signature parameter type cannot be a
-// literal type or generic type. Consider using a mapped
-// object type intead.
-type personType = {
-    [name: 'foo' | 'bar' | 'baz']: number
-}
-// 이렇게 해결하자.
-type = names = 'foo' | 'bar' | 'bar';
-type personType = Record<names, number>;
-let person: personType = {
-    'foo': 10,
-    'bar': 20,
-    'baz': 30
-}
-
-// keyof
-// The keyof operator takes an object type and 
-// produces a string or numeric literal union of its keys.
-type Point = { x: number; y: number };
-type P = keyof Point;
-
-// keyof, Record type
-type personType = {
-    name: string;
-    age: number;
-    addr: string;
-}
-type personRecordType = Record<keyof personType, string>
-let person: personRecordType = {
-    name: "iamslash",
-    age: "18",
-    addr: "USA"
-}
-```
-
-## Triple Dots
-
-> * [JavaScript | JS에서 점점점(…)은 무엇일까?](https://dinn.github.io/javascript/js-dotdotdot/)
->
-
-Triple dot are one of these.
-
-* rest parameter 
-* spread operator
-* rest property
-* spread property 
+| Position | Role | Name |
+|----------|------|------|
+| **Receiving side** (parameter, destructuring) | **Gathers** the rest into an array/object | Rest |
+| **Sending side** (function call, literal) | **Spreads** array/object into individual values | Spread |
 
 ```ts
 // Rest parameter
@@ -893,7 +802,7 @@ let {a, b, ...c} = foo;
 console.log(a);  // 1
 console.log(b);  // 2
 console.log(c);  // {x: 3, y: 4}
-let {a, ...c, y} = foo;  // ERROR: Uncaught SyntaxError: Rest element must be last element
+let {a, ...c, y} = foo;  // Error: Uncaught SyntaxError: Rest element must be last element
 
 // Spread property
 let a = 1;
@@ -909,50 +818,64 @@ let spreadObj = {...foo, ...bar};               // {a: 1, b: 2, c: 3, d: 4}
 console.log(JSON.stringify(assignedObj) === JSON.stringify(spreadObj);) // true
 ```
 
-## Nullish Coalescing Operator (||), Double Question Marks (??)
+## Nullish Coalescing (||) and Double Question Mark (??)
 
-> * [null 값을 처리하는 명령의 비교(How To Use Double Question Marks: ??)](https://ksrae.github.io/angular/double-question-marks/)
+> * [Comparison of Null Handling Operators (How To Use Double Question Marks: ??)](https://ksrae.github.io/angular/double-question-marks/)
+
+Both are used for "providing default values", but they differ in **what they consider falsy**.
+
+| | `\|\|` | `??` |
+|---|---|---|
+| Filtered values | `undefined, null, false, 0, ""` | `undefined, null` only |
+| Risk | `0` or `""` disappear when they are valid values | None |
+
+> **Use `??`.** `||` can cause bugs when `0` or empty string are valid values.
 
 ```ts
-// if for checking undefined or null
+// if statement for undefined or null check
 if (val !== undefined || val != null) {
     console.log("ok");
 }
-// tri operator for checking undefined or null
+// Ternary operator for undefined or null check
 val = val !== undefined || val !== null ? val : '';
-// Nullish Coalescing Operator for checking undefined or null
+// Logical OR for undefined or null check
 val = val || '';
-// Nullish Coalescing Operator can check falsy
+// Logical OR can check falsy values
 console.log(undefined || "falsy");  // falsy
 console.log(null || "falsy");       // falsy
 console.log(false || "falsy");      // falsy
 console.log(0 || "falsy");          // falsy
 console.log('' || "falsy");         // falsy
 
-// Double Question Marks since typescript 3.7
+// Double question mark since TypeScript 3.7
 console.log(undefined ?? "falsy");  // falsy
 console.log(null ?? "falsy");       // falsy
 console.log(false ?? "falsy");      // false
 console.log(0 ?? "falsy");          // 0
-console.log('' ?? "falsy");         // 
+console.log('' ?? "falsy");         //
 ```
 
-## export and import
+## Export & Import
 
-* [한눈에 보는 타입스크립트(updated) - 내보내기(export)와 가져오기(import)](https://heropy.blog/2020/01/27/typescript/)
+* [TypeScript at a Glance (updated) - Export and Import](https://heropy.blog/2020/01/27/typescript/)
+
+This is the module system. It shares types/functions/variables between files.
+
+| | Named Export | Default Export |
+|---|---|---|
+| Syntax | `export { A, B }` | `export default A` |
+| Import | `import { A, B }` (name must match) | `import Anything` (any name) |
+| Per file | Multiple | One only |
 
 ```ts
-// foo.ts
-// export interface
+// foo.ts -- Named Export (export multiple)
 export interface UserType {
     name: string,
     mobile: number
 }
-// export type
 export type UserIDType = string | number;
 
-// bar.ts
-// import interface, type
+// bar.ts -- Named Import (name must match)
 import { UserType, UserIDType } from './foo';
 const user: UserType = {
     name: 'David',
@@ -961,64 +884,295 @@ const user: UserType = {
 const userid: UserIDType = "111";
 ```
 
-typescript supports `export = bar;`, `export bar = require('bar');` for
-`CommonJS/AMD/UMD` modules. This is same with `export default` which exports one
-object in one module from ES6.
+```ts
+// Button.ts -- Default Export (one representative export per file)
+export default function Button() { ... }
+
+// App.ts -- Default Import (any name, no curly braces)
+import Button from './Button';
+import MyButton from './Button';  // Different name also OK
+```
+
+TypeScript supports `export = bar;` and `export bar = require('bar');` for `CommonJS/AMD/UMD` modules. This is equivalent to ES6's `export default`.
 
 ```ts
-// import from bar CommonJS/AMD/UMD module
+// Import from CommonJS/AMD/UMD module bar
 import bar = require('bar');
 // or
 import * as bar from 'bar';
-// or "esModuleInterop": true
+// or with "esModuleInterop": true
 import bar from 'bar';
 ```
 
-## `declare`
+# Core Concepts
 
-* [Purpose of declare keyword in TypeScript | stackoverflow](https://stackoverflow.com/questions/43335962/purpose-of-declare-keyword-in-typescript)
-  * [kor](https://jjnooys.medium.com/typescript-declare-cd163acb9f)
+These are type system concepts unique to TypeScript. They do not exist in JavaScript, and you must understand them to use TypeScript effectively.
 
-declare 로 선언한 type 은 compile 의 대상이 아니다. compile time 에 이렇게 생겼으니 믿고 넘어가주세요 라는 의미이다.
+## undefined vs unknown vs any vs never Comparison
+
+These four special types have clearly different roles.
+
+| Type | One-line Summary | Key Point |
+|------|-----------------|-----------|
+| `undefined` | Value **not yet assigned** | JavaScript default for empty state |
+| `unknown` | Value is **unknown** (check before using) | Safe version of `any` |
+| `any` | Value can be **anything** (skip checking) | No type safety, not recommended |
+| `never` | Value **cannot exist** | Function never returns normally |
+
+### undefined -- "Not assigned yet"
 
 ```ts
-        type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
-declare type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
+let name: string;
+console.log(name);          // undefined -- no value assigned
+
+function greet(name?: string) {
+    console.log(name);      // undefined if not passed
+}
+greet();                    // undefined
+
+const arr = [1, 2, 3];
+console.log(arr[10]);       // undefined -- out of bounds
 ```
 
-## Function Definition With Interfaces 
+### unknown -- "Unknown, so check before using"
 
-* [](https://www.softwaretestinghelp.com/typescript-interface/)
-
-TypeScript Interface can be used to define a function type by ensuring a
-function signature. We use the optional property using a question mark before
-the property name colon.
+Like `any`, it can hold any value, but **cannot be used without type checking**.
+Suitable for external API responses, `JSON.parse`, and `catch` error handling.
 
 ```ts
-{
-    interface FunctionComponent {
-        (): string;
-        displayName?: string;
-    }
-    const foo: FunctionComponent = () => "Hello Foo";
-    foo.displayName = "Hello Foo";
-    console.log(foo);
+let value: unknown = "hello";
 
-    const bar = () => "Hello Bar";
-    bar.displayName = "Hello Bar";
-    console.log(bar);
+value.toUpperCase();            // Compile error -- cannot use directly
+(value as string).toUpperCase(); // OK after type assertion
+
+if (typeof value === "string") {
+    value.toUpperCase();        // OK after typeof check (auto-narrowed)
+}
+
+// Practical: error handling in catch
+try {
+    something();
+} catch (err: unknown) {
+    // err.message;              // Cannot use directly
+    if (err instanceof Error) {
+        console.log(err.message); // OK after check
+    }
+}
+```
+
+### any vs unknown
+
+```ts
+// any: anything goes without error (dangerous!)
+let a: any = "hello";
+a.foo.bar.baz;          // Compiles fine -- crashes at runtime
+
+// unknown: nothing allowed without checking (safe!)
+let b: unknown = "hello";
+b.foo.bar.baz;          // Compile error -- caught before runtime
+```
+
+> **If you want to use `any`, use `unknown` instead.** `any` completely disables type checking.
+
+### never -- "This situation can never occur"
+
+Used when a function never returns normally, or to verify all cases are handled.
+
+```ts
+// 1. Function that always throws
+function fail(msg: string): never {
+    throw new Error(msg);
+}
+
+// 2. Exhaustive check -- prevent missing cases at compile time
+type Shape = "circle" | "square" | "triangle";
+
+function getArea(shape: Shape): number {
+    switch (shape) {
+        case "circle":   return 3.14 * 10 * 10;
+        case "square":   return 10 * 10;
+        case "triangle": return (10 * 5) / 2;
+        default:
+            const _exhaustive: never = shape;  // Unreachable if all cases handled
+            throw new Error(`Unknown shape: ${_exhaustive}`);
+    }
+}
+// If you later add "pentagon" to Shape without adding a case, you get a compile error!
+```
+
+## Generics
+
+* [Generics](ts_handbook.md#generics)
+
+**Passing types as parameters.** The key idea is "accept any type, but maintain consistency."
+
+```ts
+// Without generics -- using any loses type information
+function identity(arg: any): any {
+    return arg;
+}
+let result = identity("hello");  // result type: any (not string!)
+
+// With generics -- type information preserved
+function identity<T>(arg: T): T {
+    return arg;
+}
+let result = identity("hello");  // result type: string
+let num = identity(42);          // num type: number
+```
+
+**Practical patterns:**
+
+```ts
+// Generic function
+function firstElement<T>(arr: T[]): T | undefined {
+    return arr[0];
+}
+firstElement([1, 2, 3]);      // number
+firstElement(["a", "b"]);     // string
+
+// Generic class
+class Box<T> {
+    content: T;
+    constructor(value: T) { this.content = value; }
+}
+let numBox = new Box(42);       // Box<number>
+let strBox = new Box("hello");  // Box<string>
+```
+
+> `<T>` in generics is a **placeholder** for "a type to be specified later." Unlike `any`, it maintains type safety.
+
+## Utility Types
+
+> * [Utility Types | typescript](https://www.typescriptlang.org/ko/docs/handbook/utility-types.html)
+> * [Typescript Utility Types - Parameters, ReturnType, Required](https://www.morolog.dev/entry/Typscript-%EC%9C%A0%ED%8B%B8%EB%A6%AC%ED%8B%B0-%ED%83%80%EC%9E%85-Parameters-ReturnType-Required)
+
+Built-in tools that **transform** existing types to create new ones. The most commonly used:
+
+| Utility | What it does | Example |
+|---------|-------------|---------|
+| `ReturnType<T>` | Extract function **return** type | `ReturnType<typeof getUser>` |
+| `Parameters<T>` | Extract function **parameter** types | `Parameters<typeof login>` |
+| `Required<T>` | Remove all `?` -> make required | `Required<Props>` |
+| `Partial<T>` | Add `?` to all properties -> make optional | `Partial<User>` |
+| `Record<K,V>` | Define key-value type | `Record<string, number>` |
+| `Pick<T,K>` | **Pick** specific properties only | `Pick<User, 'name'>` |
+| `Omit<T,K>` | **Exclude** specific properties | `Omit<User, 'password'>` |
+| `keyof T` | Keys as union type | `keyof Point` -> `"x" \| "y"` |
+
+```ts
+// ReturnType<T>
+// Creates the return type of a function.
+declare function foo(): Foo
+type fooResult = ReturnType<typeof foo>;
+
+type F = (...p: any[]) => any
+function debounce(fn: F, t: number): F {
+    return function(...args) {
+        let timeout: ReturnType<typeof setTimeout>
+        return (...args) => {
+            clearTimeout(timeout);
+            timeout = setTimeout(() => fn(...args), t);
+        }
+    }
+};
+
+// Parameters<T>
+// Creates the parameter types of a function.
+declare function foo(foo: {name: string, mobile: number}): void
+type fooParams = Parameters<typeof foo>;
+
+// Required<T>
+// Creates a type with all fields required.
+interface Props {
+  a?: number;
+  b?: string;
+}
+
+// OK
+const obj: Props = { a: 5 };
+// Error: Property 'b' is missing in type '{ a: number; }'
+// but required in type 'Required<Props>'.
+const obj2: Required<Props> = { a: 5 };
+
+// Record<Keys, Type>
+// Creates an object type whose property keys are Keys and property values are Type.
+// https://developer-talk.tistory.com/296
+
+// Define an object type called personType.
+// Using index signature.
+type personType = {
+    [name: string]: number
+}
+let person: personType = {
+    'foo': 10,
+    'bar': 20,
+    'baz': 30
+}
+// Let's convert this to a Record type.
+// What are the advantages?
+type personType = Record<string, number>;
+let person: personType = {
+    'foo': 10,
+    'bar': 20,
+    'baz': 30
+}
+// There are cases where index signatures don't work.
+// Error:
+// An index signature parameter type cannot be a
+// literal type or generic type. Consider using a mapped
+// object type instead.
+type personType = {
+    [name: 'foo' | 'bar' | 'baz']: number
+}
+// Solve it like this.
+type names = 'foo' | 'bar' | 'baz';
+type personType = Record<names, number>;
+let person: personType = {
+    'foo': 10,
+    'bar': 20,
+    'baz': 30
+}
+
+// keyof
+// The keyof operator takes an object type and produces
+// a string or numeric literal union of its keys.
+type Point = { x: number; y: number };
+type P = keyof Point;
+
+// keyof with Record type
+type personType = {
+    name: string;
+    age: number;
+    addr: string;
+}
+type personRecordType = Record<keyof personType, string>
+let person: personRecordType = {
+    name: "iamslash",
+    age: "18",
+    addr: "USA"
 }
 ```
 
 ## Interface vs Type
 
-* [typescript type과 interface의 차이 | tistory](https://bny9164.tistory.com/48)
+* [Difference between TypeScript type and interface | tistory](https://bny9164.tistory.com/48)
 
 ---
 
-`type` 보다는 `interface` 를 추천한다. type 은 runtime 에 recursive 하게 transpile 한다. compile time 오래 걸리기 때문에 performance 가 좋지 않다.
+`interface` is recommended over `type`. Types are recursively transpiled at runtime. This results in poor performance due to longer compile times.
 
-`type` 은 `interface` 에 비해 아래와 같은 단점들이 있다.
+| | `interface` | `type` |
+|---|---|---|
+| `extends` (inheritance) | Yes | No (use `&` instead) |
+| Declaration merging (same name declared twice) | Yes | No, error |
+| Computed keys `[key in ...]` | No | Yes |
+| Union type `string \| number` | No | Yes |
+| Performance | **Fast** | Slow (recursive transpilation) |
+
+> **Default to `interface`; use `type` when you need unions or computed keys.**
+
+`type` has the following disadvantages compared to `interface`:
 
 ```ts
 //////////////////////////////////////////////////////////////////////
@@ -1051,19 +1205,19 @@ the property name colon.
     console.log(pointColor);
 }
 {
-    // extends does not work for type
+    // extends does not work with type
     type Point = {
         x: number;
         y: number;
     }
-    // // ERROR: Could not use type with extends
+    // // Error: Cannot use extends with type
     // type PointColor extends Point {
     //     c: number;
     // }
 }
-// merged declaration
+// Merged declarations
 {
-    // merged declaration works for interface
+    // Merged declarations work with interface
     interface PointColor {
         x: number;
         y: number;
@@ -1075,7 +1229,7 @@ the property name colon.
     console.log(pointColor);
 }
 {
-    // // ERROR: mergedd declaration does not work for type
+    // // Error: Merged declarations do not work with type
     // type PointColor = {
     //     x: number;
     //     y: number;
@@ -1084,16 +1238,16 @@ the property name colon.
     //     c: number;
     // }
 }
-// computed value
+// Computed values
 {
-    // computed value does not work for interface
+    // Computed values do not work with interface
     type coords = 'x' | 'y';
     interface CoordTypes {
         [key in coords]: string
     }
 }
 {
-    // computed value works for type
+    // Computed values work with type
     type coords = 'x' | 'y';
     type CoordTypes = {
         [CoordTypes in coords]: string;
@@ -1101,17 +1255,17 @@ the property name colon.
     const point: CoordTypes = { x: '3', y: '3' };
     console.log(point);
 }
-// type could be resolved to never type
-// You should be careful
+// type can be resolved to never type
+// Be careful
 {
-    type goodType = { a: 1 } & { b: 2 } // good
-    type neverType = { a: 1; b: 2 } & { b: 3 } // resolved to `never`
+    type goodType = { a: 1 } & { b: 2 } // Good
+    type neverType = { a: 1; b: 2 } & { b: 3 } // Resolved to `never`
 
-    const foo: goodType = { a: 1, b: 2 } // good
-    // ERROR: Type 'number' is not assignable to type 'never'.(2322)
-    const bar: neverType = { a: 1, b: 3 } 
-    // ERROR: Type 'number' is not assignable to type 'never'.(2322)
-    const baz: neverType = { a: 1, b: 2 } 
+    const foo: goodType = { a: 1, b: 2 } // Good
+    // Error: Type 'number' is not assignable to type 'never'.(2322)
+    const bar: neverType = { a: 1, b: 3 }
+    // Error: Type 'number' is not assignable to type 'never'.(2322)
+    const baz: neverType = { a: 1, b: 2 }
 }
 {
     type t1 = {
@@ -1120,35 +1274,185 @@ the property name colon.
     type t2 = t1 & {
         b: string
     }
-    
-    const foo: t2 = { a: 1, b: 2 } // ERROR
+
+    const foo: t2 = { a: 1, b: 2 } // Error
 }
 ```
 
+## Optional (Optional Parameters and Properties)
+
+In TypeScript, adding `?` after a name means **"it can be present or absent."** There are 3 main usages.
+
+### Optional Parameter
+
+Adding `?` to a function parameter allows it to be omitted when calling.
+
+```ts
+// name is required, greeting is optional
+function greet(name: string, greeting?: string): string {
+  return `${greeting ?? "Hello"}, ${name}!`;
+}
+
+console.log(greet("David"));            // "Hello, David!"
+console.log(greet("David", "Hi"));      // "Hi, David!"
+```
+
+Also commonly used with the options object pattern.
+
+```ts
+// The second parameter itself is optional
+async function fetchData(url: string, options?: { timeout?: number; retries?: number }) {
+  const timeout = options?.timeout ?? 3000;
+  const retries = options?.retries ?? 1;
+  console.log(`url=${url}, timeout=${timeout}, retries=${retries}`);
+}
+
+await fetchData("/api/users");                          // options omitted OK
+await fetchData("/api/users", { timeout: 5000 });       // retries omitted OK
+await fetchData("/api/users", { timeout: 5000, retries: 3 }); // Both provided OK
+```
+
+### Optional Property
+
+Adding `?` to an interface or type property makes that property optional.
+
+```ts
+interface User {
+  name: string;       // Required
+  age?: number;       // Optional
+  email?: string;     // Optional
+}
+
+const user1: User = { name: "David" };                     // OK
+const user2: User = { name: "David", age: 30 };            // OK
+const user3: User = { name: "David", age: 30, email: "a@b.com" }; // OK
+// const user4: User = { age: 30 };                        // ERROR: name is missing
+```
+
+### Optional Chaining
+
+Using `?.` when accessing object properties safely returns `undefined` instead of throwing an error when the value is `null` or `undefined`.
+
+```ts
+interface Company {
+  name: string;
+  address?: {
+    city?: string;
+    zipCode?: string;
+  };
+}
+
+const company: Company = { name: "Foo Inc." };
+
+// Accessing without ?. causes a runtime error
+// console.log(company.address.city);   // ERROR: Cannot read property 'city' of undefined
+
+// Using ?. for safe access
+console.log(company.address?.city);     // undefined (no error)
+console.log(company.address?.zipCode);  // undefined (no error)
+```
+
+### Summary
+
+| Usage | Syntax | Meaning |
+|-------|--------|---------|
+| Optional Parameter | `function foo(x?: string)` | Parameter can be omitted |
+| Optional Property | `{ name?: string }` | Property can be absent |
+| Optional Chaining | `obj?.prop` | Returns undefined instead of error for null/undefined |
+
+## `declare`
+
+* [Purpose of declare keyword in TypeScript | stackoverflow](https://stackoverflow.com/questions/43335962/purpose-of-declare-keyword-in-typescript)
+  * [Korean](https://jjnooys.medium.com/typescript-declare-cd163acb9f)
+
+It means "this type/variable **already exists elsewhere**, so trust me, compiler." It is not converted to JavaScript.
+
+```ts
+// jQuery is already loaded via <script>
+declare var $: any;
+$(".btn").click();  // No compile error
+
+// Without declare vs with declare
+        type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
+declare type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
+```
+
+> `.d.ts` files are entirely collections of `declare` statements. They provide only type information without actual code.
+
+## Function Types with Interface
+
+* [TypeScript Interface](https://www.softwaretestinghelp.com/typescript-interface/)
+
+A pattern that allows **adding properties to functions**. React's `FunctionComponent` is a representative example. Use a question mark before the property name for optional properties.
+
+> Use this when you need an object that is both a function and has properties. For regular function types, arrow syntax (`(x: string) => void`) is sufficient.
+
+```ts
+{
+    interface FunctionComponent {
+        (): string;
+        displayName?: string;
+    }
+    const foo: FunctionComponent = () => "Hello Foo";
+    foo.displayName = "Hello Foo";
+    console.log(foo);
+
+    const bar = () => "Hello Bar";
+    bar.displayName = "Hello Bar";
+    console.log(bar);
+}
+```
+
+# Advanced
+
+## Map vs Record
+
+* [map vs object | TIL](/js/README.md#map-vs-object)
+
+```ts
+// Record -- object type with "fixed" keys (compile time)
+type UserScores = Record<string, number>;
+let scores: UserScores = { David: 100, John: 85 };
+
+// Map -- collection with "dynamic" keys (runtime object)
+let scoreMap = new Map<string, number>();
+scoreMap.set("David", 100);
+```
+
+| | `Record<K, V>` | `Map<K, V>` |
+|---|---|---|
+| Nature | **Type** (compile time) | **Class** (runtime object) |
+| Key type | string / number / symbol | **Any type** |
+| Use case | Define object shape | Dynamic key-value storage |
+| Iteration | `Object.keys()` | `for...of`, `forEach` |
+| Size | `Object.keys(obj).length` | `map.size` |
+
+> **Decision:** Use `Record` when the structure is predetermined, use `Map` when keys are added/removed at runtime.
+
 # Style Guide
 
-[TypeScript Google Style Guide](ts_google_style_guide.md)
+[TypeScript Style Guide](ts_google_style_guide.md)
 
 # Refactoring
 
 [Refactoring TypeScript](refactoring_ts.md)
 
-# Effective
+# Effective TypeScript
 
 [Effective TypeScript](effective_ts.md)
 
-# Design Pattern
+# Design Patterns
 
 [TypeScript Design Pattern](ts_gof_design_pattern.md)
 
 # Architecture
 
 * [Typescript Clean Architecture | github](https://github.com/pvarentsov/typescript-clean-architecture)
-  * java 의 Clean Architecture 와는 조금 다른 듯?
+  * Slightly different from Java's Clean Architecture
 * [A TypeScript Stab at Clean Architecture](https://www.freecodecamp.org/news/a-typescript-stab-at-clean-architecture-b51fbb16a304/)
 * [Evolution of a React folder structure and why to group by features right away](https://profy.dev/article/react-folder-structure)
 * [React Folder Structure in 5 Steps [2022]](https://www.robinwieruch.de/react-folder-structure/)
-  * 단순한 구조부터 복잡한 구조까지 단계별로 설명
+  * Step-by-step explanation from simple to complex structures
 * [bulletproof-react/docs/project-structure.md](https://github.com/alan2207/bulletproof-react/blob/master/docs/project-structure.md)
 * [4 folder structures to organize your React & React Native project](https://reboot.studio/blog/folder-structures-to-organize-react-project/)
 * [Project structure | Frontend Handbook](https://infinum.com/handbook/frontend/react/project-structure)
