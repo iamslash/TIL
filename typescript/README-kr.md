@@ -16,14 +16,16 @@
   - [검사하기](#검사하기)
   - [데이터 타입](#데이터-타입)
     - [undefined vs unknown vs any vs never 비교](#undefined-vs-unknown-vs-any-vs-never-비교)
-  - [제어 흐름문](#제어-흐름문)
-    - [조건문](#조건문)
-    - [반복문](#반복문)
-  - [컬렉션](#컬렉션)
-    - [튜플](#튜플)
-    - [배열](#배열)
-    - [집합](#집합)
-    - [맵](#맵)
+  - [제어 흐름문 (Control Flow)](#제어-흐름문-control-flow)
+    - [조건문 (Conditionals)](#조건문-conditionals)
+    - [반복문 (Loops)](#반복문-loops)
+    - [for...of vs for...in](#forof-vs-forin)
+    - [var vs let 스코프 (Scope)](#var-vs-let-스코프-scope)
+  - [컬렉션 (Collections)](#컬렉션-collections)
+    - [튜플 (Tuple)](#튜플-tuple)
+    - [배열 (Array)](#배열-array)
+    - [집합 (Set)](#집합-set)
+    - [맵 (Map)](#맵-map)
   - [컬렉션 변환](#컬렉션-변환)
   - [정렬](#정렬)
   - [검색](#검색)
@@ -428,13 +430,13 @@ function getArea(shape: Shape): number {
 // 나중에 "pentagon"을 Shape에 추가하면, case를 안 넣으면 컴파일 에러 발생!
 ```
 
-## 제어 흐름문
+## 제어 흐름문 (Control Flow)
 
-### 조건문
+### 조건문 (Conditionals)
 
 ```ts
 // if ... else if ... else
-var num: number = 1
+let num: number = 1;
 if (num > 0) {
     console.log("positive");
 } else if (num < 0) {
@@ -443,7 +445,8 @@ if (num > 0) {
     console.log("zero");
 }
 
-var grade: string = "A";
+// switch
+let grade: string = "A";
 switch (grade) {
     case "A": {
         console.log("Excellent");
@@ -460,268 +463,240 @@ switch (grade) {
 }
 ```
 
-### 반복문
+### 반복문 (Loops)
 
 ```ts
 // for
 for (let i = 0; i < 3; i++) {
-    console.log(i);
+    console.log(i);  // 0, 1, 2
 }
-// 출력:
-// 0
-// 1
-// 2
 
-// for ... of는 값을 반환
-let arr = [1, 2, 3];
-for (var val of arr) {
-    console.log(val);
+// while
+let i = 0;
+while (i < 3) {
+    console.log(i);  // 0, 1, 2
+    i++;
 }
-// 출력:
-// 1
-// 2
-// 3
-let str = "Hello";
-for (var chr of str) {
-    console.log(chr);
-}
-// 출력:
-// H
-// e
-// l
-// l
-// o
-
-// for ... in은 인덱스를 반환
-let arr = [1, 2, 3];
-for (var idx in arr) {
-    console.log(idx);
-}
-// 출력:
-// 0
-// 1
-// 2
-
-// for 루프에서 var vs let
-// var는 루프 밖에서 접근 가능
-let arr = [1, 2, 3];
-for (var idx1 in arr) {
-    console.log(idx1);
-}
-console.log(idx1);
-for (let idx2 in arr) {
-    console.log(idx2);
-}
-console.log(idx2);  // 에러
 ```
 
-## 컬렉션
+### for...of vs for...in
 
-### 튜플
+가장 많이 헷갈리는 부분입니다.
 
 ```ts
-var employee: [number, string] = [1, 'David'];
-var person: [number, string, boolean] = [1, 'David', true];
-var user: [number, string, boolean, number, string];
-user = [1, 'David', true, 10, 'admin'];
-var employees: [number, string][];
-employees = [[1, 'David'], [2, 'Tom']];
+let arr = [10, 20, 30];
 
-console.log(employee[0], employee[1]);  // 1 'David'
+// for...of → "값"을 꺼냄
+for (let val of arr) {
+    console.log(val);   // 10, 20, 30
+}
 
+// for...in → "인덱스(키)"를 꺼냄
+for (let idx in arr) {
+    console.log(idx);   // "0", "1", "2"  (문자열!)
+}
+
+// 문자열에도 for...of 사용 가능
+for (let chr of "Hello") {
+    console.log(chr);   // H, e, l, l, o
+}
+```
+
+| | `for...of` | `for...in` |
+|---|---|---|
+| 꺼내는 것 | **값** | **키(인덱스)** |
+| 배열에 쓰면 | `10, 20, 30` | `"0", "1", "2"` |
+| 타입 | 원래 타입 | **항상 string** |
+
+> 배열 순회에는 **`for...of`를 쓰세요.** `for...in`은 객체의 키를 순회할 때 씁니다.
+
+### var vs let 스코프 (Scope)
+
+```ts
+// var: 루프 밖에서도 살아있음 (function scope)
+for (var i in [1, 2, 3]) {}
+console.log(i);   // "2" — 접근 가능!
+
+// let: 루프 안에서만 존재 (block scope)
+for (let j in [1, 2, 3]) {}
+console.log(j);   // ❌ 에러 — 접근 불가
+```
+
+> **항상 `let`을 쓰세요.** `var`는 의도치 않게 변수가 살아남아 버그를 만듭니다.
+
+## 컬렉션 (Collections)
+
+### 튜플 (Tuple)
+
+배열처럼 생겼지만 **각 위치의 타입이 고정**됩니다.
+
+```ts
+let employee: [number, string] = [1, 'David'];
+employee[0] = "hello";  // ❌ 에러 — 0번은 number여야 함
+employee[1] = 42;        // ❌ 에러 — 1번은 string이어야 함
+
+let person: [number, string, boolean] = [1, 'David', true];
+let employees: [number, string][] = [[1, 'David'], [2, 'Tom']];
+
+// push/pop도 가능
 employee.push(2, 'John');
 console.log(employee);  // [1, 'David', 2, 'John']
-employee.pop();
-console.log(employee);  // [1, 'David', 2]
-employee[1] = employee[1].concat(' Sun');
-console.log(employee);  // [1, 'David Sun', 2]
 ```
 
-### 배열
+**언제 쓰나?** 함수에서 여러 값을 반환할 때 유용합니다:
 
 ```ts
-let fruits: Array<string>;
-fruits = ['Apple', 'Orange', 'Banana'];
-let vals: (string | number)[] = ['Apple', 2, 'Orange', 3, 4, 'Banana'];
-let vals: Array<string | number> = ['Apple', 2, 'Orange', 3, 4, 'Banana'];
-console.log(vals[0]);  // 'Apple'
-
-for (var idx in fruits) {
-    console.log(fruits[idx]);
+function getUser(): [number, string] {
+    return [1, "David"];
 }
-// 출력:
-// 0
-// 1
-// 2
-for (var i = 0; i < fruits.length; i++) {
-    console.log(fruits[i]);
-}
-// 출력:
-// 'Apple'
-// 'Orange'
-// 'Banana'
+const [id, name] = getUser();  // 구조 분해로 깔끔하게 받기
+```
 
-fruits.sort();
-console.log(fruits);  // ['Apple', 'Banana', 'Orange']
-console.log(fruits.pop()); // 'Orange'
-fruits.push('Papaya');
-console.log(fruits);  // ['Apple', 'Banana', 'Papaya']
-fruits = fruits.concat(['Fig', 'Mango']);
-console.log(fruits); // 출력: ['Apple', 'Banana', 'Papaya', 'Fig', 'Mango']
-console.log(fruits.indexOf('Papaya'));  // 2
-console.log(fruits.slice(1, 2));  // ['Banana']
+> 3개 이상이면 튜플보다 **인터페이스/객체**가 읽기 좋습니다.
 
-// 하나의 값으로 배열 초기화
-let prevIdxs = new Array<Number>().fill(-1);
+### 배열 (Array)
 
-// map
-// `map`은 배열의 각 요소에 대해 변환 작업을 수행하고 새로운 배열을 반환합니다.
+```ts
+// 선언
+let fruits: Array<string> = ['Apple', 'Orange', 'Banana'];
+let numbers: number[] = [1, 2, 3, 4];
+let vals: (string | number)[] = ['Apple', 2, 'Orange', 3];
+
+// 초기화
+let filled = new Array<number>(5).fill(-1);  // [-1, -1, -1, -1, -1]
+```
+
+배열 메서드를 용도별로 정리하면 외우기 쉽습니다:
+
+| 목적 | 메서드 | 원본 변경? |
+|------|--------|-----------|
+| **변환** | `map`, `flatMap` | No (새 배열) |
+| **필터** | `filter` | No (새 배열) |
+| **축약** | `reduce` | No (단일 값) |
+| **검색** | `find`, `findIndex`, `indexOf`, `includes` | No |
+| **검증** | `every`, `some` | No |
+| **정렬** | `sort`, `reverse` | **Yes (원본 변경!)** |
+| **추가/제거 (뒤)** | `push`, `pop` | Yes |
+| **추가/제거 (앞)** | `unshift`, `shift` | Yes |
+| **잘라내기** | `splice` | Yes |
+| **복사해서 자르기** | `slice` | No (새 배열) |
+
+```ts
 const numbers = [1, 2, 3, 4];
-const doubled = numbers.map(num => num * 2);
-console.log(doubled); // [2, 4, 6, 8]
 
-// reduce
-// `reduce`는 배열을 순회하며 단일 값으로 축약합니다.
-const sum = numbers.reduce((acc, cur) => acc + cur, 0);
-console.log(sum); // 10
+// 변환: map — 각 요소를 변환해서 새 배열 반환
+numbers.map(n => n * 2);                    // [2, 4, 6, 8]
 
-// filter
-// `filter`는 조건에 맞는 요소만 걸러서 새로운 배열을 반환합니다.
-const evenNumbers = numbers.filter(num => num % 2 === 0);
-console.log(evenNumbers); // [2, 4]
+// 필터: filter — 조건에 맞는 요소만 모아 새 배열 반환
+numbers.filter(n => n % 2 === 0);           // [2, 4]
 
-// sort
-// 배열의 요소를 정렬합니다.
-const unsortedNumbers = [3, 1, 4, 2];
-unsortedNumbers.sort((a, b) => a - b);
-console.log(unsortedNumbers); // [1, 2, 3, 4]
+// 축약: reduce — 배열을 단일 값으로 축약
+numbers.reduce((acc, cur) => acc + cur, 0); // 10
 
-// every와 some
-// - `every`: 배열의 모든 요소가 조건을 만족하면 `true`를 반환.
-// - `some`: 배열의 일부 요소가 조건을 만족하면 `true`를 반환.
-const allEven = numbers.every(num => num % 2 === 0); // false
-const hasOdd = numbers.some(num => num % 2 !== 0); // true
-console.log(allEven, hasOdd); // false, true
+// 검색: find, findIndex, includes
+numbers.find(n => n > 2);                   // 3
+numbers.findIndex(n => n > 2);              // 2
+numbers.includes(3);                        // true
 
-// find와 findIndex
-// - `find`: 조건에 맞는 첫 번째 요소를 반환.
-// - `findIndex`: 조건에 맞는 첫 번째 요소의 인덱스를 반환.
-const firstEven = numbers.find(num => num % 2 === 0); // 2
-const indexOfFirstEven = numbers.findIndex(num => num % 2 === 0); // 1
-console.log(firstEven, indexOfFirstEven); // 2, 1
+// 검증: every, some
+numbers.every(n => n % 2 === 0);            // false (전부 짝수?)
+numbers.some(n => n % 2 !== 0);             // true  (홀수 있나?)
 
-// includes
-// 특정 값이 배열에 포함되어 있는지 확인합니다.
-const hasThree = numbers.includes(3); // true
-console.log(hasThree); // true
-
-// flat과 flatMap
-// - `flat`: 다차원 배열을 평탄화합니다.
-// - `flatMap`: `map` 후 평탄화를 동시에 수행합니다.
-const nested = [1, [2, 3], [4, [5]]];
-const flatArray = nested.flat(2);
-console.log(flatArray); // [1, 2, 3, 4, 5]
-
-const strings = ["hello", "world"];
-const charArray = strings.flatMap(str => str.split(''));
-console.log(charArray); // ['h', 'e', 'l', 'l', 'o', 'w', 'o', 'r', 'l', 'd']
-
-// splice
-// 배열에서 요소를 추가/삭제/대체합니다.
-const mutableNumbers = [1, 2, 3, 4];
-mutableNumbers.splice(1, 2, 99); // 1번 인덱스부터 2개 제거 후 99 추가
-console.log(mutableNumbers); // [1, 99, 4]
-
-// reverse
-// 배열 요소의 순서를 뒤집습니다.
-const reversedNumbers = [...mutableNumbers].reverse();
-console.log(reversedNumbers); // [4, 99, 1]
-
-// push와 pop
-// 배열 끝에 요소를 추가하거나 제거합니다.
-const stack = [1, 2];
-stack.push(3); // [1, 2, 3]
-stack.pop(); // [1, 2]
-console.log(stack); // [1, 2]
-
-// shift와 unshift
-// 배열 시작에 요소를 추가하거나 제거합니다.
-const queue = [1, 2];
-queue.unshift(0); // [0, 1, 2]
-queue.shift(); // [1, 2]
-console.log(queue); // [1, 2]
+// flat, flatMap — 다차원 배열 평탄화
+[1, [2, 3], [4, [5]]].flat(2);             // [1, 2, 3, 4, 5]
+["hello", "world"].flatMap(s => s.split('')); // ['h','e','l','l','o','w','o','r','l','d']
 ```
 
-### 집합
+**헷갈리기 쉬운 메서드:**
 
 ```ts
-let dirs = new Set<string>();
-let dirs = new Set<string>(['east', 'west']);
-dirs.add('east');
-dirs.add('north');
-dirs.add('south');
-console.log(dirs);      // Set(4) { 'east', 'west', 'north', 'south' }
-console.log(dirs.has('east'));  // true
-console.log(dirs.size);         // 4
+// splice vs slice
+const arr = [1, 2, 3, 4, 5];
+arr.slice(1, 3);     // [2, 3]        — 원본 그대로, 복사본 반환
+arr.splice(1, 2);    // [2, 3] 제거됨  — 원본이 [1, 4, 5]로 변경!
 
-console.log(dirs.delete('east')); // true
-console.log(dirs);                // Set(3) { 'west', 'north', 'south' }
+// sort 주의! 기본은 "사전순"
+[1, 10, 2].sort();                // [1, 10, 2] — 문자열 비교!
+[1, 10, 2].sort((a, b) => a - b); // [1, 2, 10] — 숫자 비교
+
+// push/pop (뒤) vs unshift/shift (앞)
+const stack = [1, 2];
+stack.push(3);    // [1, 2, 3]  — 뒤에 추가
+stack.pop();      // [1, 2]     — 뒤에서 제거
+stack.unshift(0); // [0, 1, 2]  — 앞에 추가
+stack.shift();    // [1, 2]     — 앞에서 제거
+
+// reverse — 원본 변경! 복사하려면 spread
+const reversed = [...stack].reverse();  // stack은 그대로
+```
+
+### 집합 (Set)
+
+**중복 없는** 값의 모음입니다. `has()` 검색이 `O(1)`로 배열의 `includes()`보다 빠릅니다.
+
+```ts
+let dirs = new Set<string>(['east', 'west']);
+dirs.add('north');
+dirs.add('east');          // 중복 무시
+console.log(dirs.size);    // 3 (east, west, north)
+console.log(dirs.has('east'));   // true
+dirs.delete('east');       // true
+dirs.clear();              // 전부 삭제
+
+// 순회
 for (let dir of dirs) {
     console.log(dir);
 }
-// 출력:
-// west
-// north
-// south
-
-console.log(dirs.clear()); // undefined
-console.log(dirs);         // Set(0) {}
 ```
 
-### 맵
+**실전 패턴: 배열 중복 제거**
 
 ```ts
-let fooMap = new Map<string, number>();
-let barMap = new Map<string, string>([
-    ['key1', 'val1'],
-    ['key2', 'val2']
+const arr = [1, 2, 2, 3, 3, 3];
+const unique = [...new Set(arr)];  // [1, 2, 3]
+```
+
+> **배열 vs Set 판단 기준:** "이 값이 있나?" 검색이 잦으면 **Set**, 순서/인덱스가 중요하면 **배열**.
+
+### 맵 (Map)
+
+키-값 쌍 저장. 일반 객체 `{}`와 비슷하지만 차이가 있습니다.
+
+```ts
+let map = new Map<string, number>();
+map.set('David', 10);
+map.set('John', 20);
+
+console.log(map.get('David'));      // 10
+console.log(map.get('Tom'));        // undefined
+console.log(map.get('Tom') || 0);   // 0 (기본값 패턴)
+console.log(map.has('David'));      // true
+console.log(map.size);              // 2
+map.delete('John');
+
+// 초기화와 동시에 생성
+let config = new Map<string, string>([
+    ['host', 'localhost'],
+    ['port', '3000']
 ]);
 
-fooMap.set('David', 10);
-fooMap.set('John', 20);
-fooMap.set('Raj', 30);
-console.log(fooMap.get('David'));   // 10
-// 기본값
-console.log(fooMap.get('Tom') || 0) // 0
-console.log(fooMap.has('David'));  // true
-console.log(fooMap.has('Tom'));    // false
-console.log(fooMap.size);          // 3
-console.log(fooMap.delete('Raj')); // true
-
-for (let key of fooMap.keys()) {
-    console.log(key);
-}
-// 출력:
-// David
-// John
-for (let val of fooMap.values()) {
-    console.log(val);
-}
-// 출력:
-// 10
-// 20
-for (let entry of fooMap.entries()) {
-    console.log(entry[0], entry[1]);
-}
-// 출력:
-// "David" 10
-// "John" 20
-for (let [key, val] of fooMap) {
+// 순회
+for (let [key, val] of map) {
     console.log(key, val);
 }
-
-fooMap.clear();
+// for...of로 keys(), values(), entries() 도 사용 가능
 ```
+
+**Map vs 일반 객체 `{}`:**
+
+| | `Map` | `{}` (객체) |
+|---|---|---|
+| 키 타입 | **아무 타입** (객체, 함수도 OK) | string / symbol만 |
+| 순서 보장 | 삽입 순서 보장 | ES2015+ 부분 보장 |
+| 크기 확인 | `map.size` | `Object.keys(obj).length` |
+| 성능 | 추가/삭제 잦으면 **빠름** | 고정 구조면 빠름 |
+
+> **판단 기준:** 키가 동적으로 바뀌면 **Map**, 구조가 고정이면 **객체/인터페이스**.
 
 ## 컬렉션 변환
 
