@@ -2,19 +2,19 @@
 
 **영문 버전**: 영문 문서는 [README.md](README.md)를 참조하세요.
 
-- [학습 자료](#학습-자료)
-- [기초](#기초)
-  - [빌드 및 실행](#빌드-및-실행)
-  - [출력하기](#출력하기)
-  - [예약어](#예약어)
-  - [최소값, 최대값](#최소값-최대값)
+- [학습 자료 (Resources)](#학습-자료-resources)
+- [기초 (Basics)](#기초-basics)
+  - [빌드 및 실행 (Build & Run)](#빌드-및-실행-build--run)
+  - [출력하기 (Print)](#출력하기-print)
+  - [예약어 (Reserved Words)](#예약어-reserved-words)
+  - [최소값, 최대값 (Min, Max)](#최소값-최대값-min-max)
   - [abs vs fabs](#abs-vs-fabs)
-  - [비트 연산](#비트-연산)
-  - [문자열](#문자열)
-  - [난수 생성](#난수-생성)
-  - [포맷된 문자열](#포맷된-문자열)
-  - [검사하기](#검사하기)
-  - [데이터 타입](#데이터-타입)
+  - [비트 연산 (Bitwise Operations)](#비트-연산-bitwise-operations)
+  - [문자열 (String)](#문자열-string)
+  - [난수 생성 (Random)](#난수-생성-random)
+  - [포맷된 문자열 (Formatted String)](#포맷된-문자열-formatted-string)
+  - [검사하기 (Inspect)](#검사하기-inspect)
+  - [데이터 타입 (Data Types)](#데이터-타입-data-types)
     - [undefined vs unknown vs any vs never 비교](#undefined-vs-unknown-vs-any-vs-never-비교)
   - [제어 흐름문 (Control Flow)](#제어-흐름문-control-flow)
     - [조건문 (Conditionals)](#조건문-conditionals)
@@ -26,32 +26,32 @@
     - [배열 (Array)](#배열-array)
     - [집합 (Set)](#집합-set)
     - [맵 (Map)](#맵-map)
-  - [컬렉션 변환](#컬렉션-변환)
-  - [정렬](#정렬)
-  - [검색](#검색)
-  - [다차원 배열](#다차원-배열)
-  - [열거형](#열거형)
-  - [제네릭](#제네릭)
-  - [같은 줄에 여러 변수 정의하기](#같은-줄에-여러-변수-정의하기)
-- [고급](#고급)
+  - [컬렉션 변환 (Collection Conversion)](#컬렉션-변환-collection-conversion)
+  - [정렬 (Sort)](#정렬-sort)
+  - [검색 (Search)](#검색-search)
+  - [다차원 배열 (Multidimensional Array)](#다차원-배열-multidimensional-array)
+  - [열거형 (Enum)](#열거형-enum)
+  - [제네릭 (Generics)](#제네릭-generics)
+  - [같은 줄에 여러 변수 정의하기 (Multiple Variables)](#같은-줄에-여러-변수-정의하기-multiple-variables)
+- [고급 (Advanced)](#고급-advanced)
   - [Map vs Record](#map-vs-record)
-  - [유틸리티 타입](#유틸리티-타입)
-  - [삼중 점 연산자](#삼중-점-연산자)
-  - [널 병합 연산자 (||), 이중 물음표 (??)](#널-병합-연산자--이중-물음표-)
-  - [export와 import](#export와-import)
+  - [유틸리티 타입 (Utility Types)](#유틸리티-타입-utility-types)
+  - [삼중 점 연산자 (Spread/Rest Operator)](#삼중-점-연산자-spreadrest-operator)
+  - [널 병합 연산자 (||), 이중 물음표 (??) (Nullish Coalescing)](#널-병합-연산자--이중-물음표--nullish-coalescing)
+  - [export와 import (Export & Import)](#export와-import-export--import)
   - [`declare`](#declare)
-  - [인터페이스를 사용한 함수 정의](#인터페이스를-사용한-함수-정의)
+  - [인터페이스를 사용한 함수 정의 (Function Types with Interface)](#인터페이스를-사용한-함수-정의-function-types-with-interface)
   - [Interface vs Type](#interface-vs-type)
   - [Optional (선택적 매개변수와 속성)](#optional-선택적-매개변수와-속성)
-- [스타일 가이드](#스타일-가이드)
-- [리팩토링](#리팩토링)
-- [효율적인 TypeScript](#효율적인-typescript)
-- [디자인 패턴](#디자인-패턴)
-- [아키텍처](#아키텍처)
+- [스타일 가이드 (Style Guide)](#스타일-가이드-style-guide)
+- [리팩토링 (Refactoring)](#리팩토링-refactoring)
+- [효율적인 TypeScript (Effective TypeScript)](#효율적인-typescript-effective-typescript)
+- [디자인 패턴 (Design Patterns)](#디자인-패턴-design-patterns)
+- [아키텍처 (Architecture)](#아키텍처-architecture)
 
 ----
 
-# 학습 자료
+# 학습 자료 (Resources)
 
 * [한눈에 보는 타입스크립트(updated)](https://heropy.blog/2020/01/27/typescript/)
 * [TypeScript Handbook](https://www.typescriptlang.org/docs/handbook/intro.html)
@@ -63,9 +63,9 @@
   * TypeScript 플레이그라운드
 * [TypeScript의 소개와 개발 환경 구축](https://poiemaweb.com/typescript-introduction)
 
-# 기초
+# 기초 (Basics)
 
-## 빌드 및 실행
+## 빌드 및 실행 (Build & Run)
 
 ```bash
 # tsc 설치
@@ -87,7 +87,7 @@ $ ts-node
 2
 ```
 
-## 출력하기
+## 출력하기 (Print)
 
 ```typescript
 function greet(person: string, date: Date) {
@@ -97,7 +97,7 @@ function greet(person: string, date: Date) {
 greet("Maddison", new Date());
 ```
 
-## 예약어
+## 예약어 (Reserved Words)
 
 * [types.ts | github](https://github.com/Microsoft/TypeScript/blob/fad889283e710ee947e8412e173d2c050107a3c1/src/compiler/types.ts#L87)
 
@@ -121,7 +121,7 @@ module require number set string symbol
 type from of
 ```
 
-## 최소값, 최대값
+## 최소값, 최대값 (Min, Max)
 
 ```ts
 console.log(Number.MAX_SAFE_INTEGER);   // 9007199254740991
@@ -148,7 +148,7 @@ console.log(difference(1.23456, 7.89012));
 // 예상 출력: 6.6555599999999995
 ```
 
-## 비트 연산
+## 비트 연산 (Bitwise Operations)
 
 ```ts
 var a: number = 2;  // 10
@@ -174,7 +174,7 @@ console.log("(a << b) => ", a << b);
 console.log("(a >> b) => ", a >> b);
 ```
 
-## 문자열
+## 문자열 (String)
 
 ```ts
 // 보간된 문자열
@@ -199,7 +199,7 @@ let i = c.charCodeAt(0) - 97;  // 0
 let d = String.fromCharCode(97 + i) // "a"
 ```
 
-## 난수 생성
+## 난수 생성 (Random)
 
 * [Math.random() | mdn](https://developer.mozilla.org/ko/docs/Web/JavaScript/Reference/Global_Objects/Math/random)
 
@@ -210,7 +210,7 @@ console.log(Math.random());
 console.log(Math.random());
 ```
 
-## 포맷된 문자열
+## 포맷된 문자열 (Formatted String)
 
 * [util.format | node.js](https://nodejs.org/api/util.html#utilformatformat-args)
 
@@ -226,7 +226,7 @@ process.stdout.write(`i: ${i}, diff: ${diff} has: ${numMap.has(diff)} `);
 console.log(numMap);
 ```
 
-## 검사하기
+## 검사하기 (Inspect)
 
 * [util.inspect | node.js](https://nodejs.org/api/util.html#utilinspectobject-options)
 
@@ -250,7 +250,7 @@ $ ts-node
 > console. <TAB>
 ```
 
-## 데이터 타입
+## 데이터 타입 (Data Types)
 
 ```ts
 boolean
@@ -724,7 +724,7 @@ for (let [key, val] of map) {
 
 > **판단 기준:** 키가 동적으로 바뀌면 **Map**, 구조가 고정이면 **객체/인터페이스**.
 
-## 컬렉션 변환
+## 컬렉션 변환 (Collection Conversion)
 
 ```ts
 // 튜플을 집합으로
@@ -733,7 +733,7 @@ let set = new Set(arr);
 console.log(set);  // Set(3) { 11, 22, 33 }
 ```
 
-## 정렬
+## 정렬 (Sort)
 
 ```ts
 let arr: number[] = [1, 10, 2, 5, 3];
@@ -752,7 +752,7 @@ arr.sort((a: number, b: number) => b - a);
 console.log(arr);  // [10, 5, 3, 2, 1]
 ```
 
-## 검색
+## 검색 (Search)
 
 내장 이진 검색 함수는 없습니다.
 
@@ -762,7 +762,7 @@ console.log(arr.find(a => a > 3));  // 4
 console.log(arr.indexOf(2));        // 1
 ```
 
-## 다차원 배열
+## 다차원 배열 (Multidimensional Array)
 
 ```ts
 let aa: number[][] = [[1, 2, 3],[23, 24, 25]]
@@ -780,7 +780,7 @@ for (let i = 0; i < aa.length; i++) {
 // 25
 ```
 
-## 열거형
+## 열거형 (Enum)
 
 * [Enum | typescript](https://www.typescriptlang.org/docs/handbook/enums.html#handbook-content)
 
@@ -811,7 +811,7 @@ let dir: Direction = Direction.Up;
 let foo: BooleanLikeHeterogeneousEnum.No;
 ```
 
-## 제네릭
+## 제네릭 (Generics)
 
 * [Generics](ts_handbook.md#generics)
 
@@ -833,13 +833,13 @@ a.add = function(x, y) {
 }
 ```
 
-## 같은 줄에 여러 변수 정의하기
+## 같은 줄에 여러 변수 정의하기 (Multiple Variables)
 
 ```ts
 let i = 0, j = 0, n = s.length
 ```
 
-# 고급
+# 고급 (Advanced)
 
 ## Map vs Record
 
@@ -847,7 +847,7 @@ let i = 0, j = 0, n = s.length
 
 Map vs Object와 같습니다.
 
-## 유틸리티 타입
+## 유틸리티 타입 (Utility Types)
 
 > * [Utility Types | typescript](https://www.typescriptlang.org/ko/docs/handbook/utility-types.html)
 > * [[Typescript] 유틸리티 타입 - Parameters, ReturnType, Required](https://www.morolog.dev/entry/Typscript-%EC%9C%A0%ED%8B%B8%EB%A6%AC%ED%8B%B0-%ED%83%80%EC%9E%85-Parameters-ReturnType-Required)
@@ -946,7 +946,7 @@ let person: personRecordType = {
 }
 ```
 
-## 삼중 점 연산자
+## 삼중 점 연산자 (Spread/Rest Operator)
 
 > * [JavaScript | JS에서 점점점(…)은 무엇일까?](https://dinn.github.io/javascript/js-dotdotdot/)
 
@@ -1009,7 +1009,7 @@ let spreadObj = {...foo, ...bar};               // {a: 1, b: 2, c: 3, d: 4}
 console.log(JSON.stringify(assignedObj) === JSON.stringify(spreadObj);) // true
 ```
 
-## 널 병합 연산자 (||), 이중 물음표 (??)
+## 널 병합 연산자 (||), 이중 물음표 (??) (Nullish Coalescing)
 
 > * [null 값을 처리하는 명령의 비교(How To Use Double Question Marks: ??)](https://ksrae.github.io/angular/double-question-marks/)
 
@@ -1037,7 +1037,7 @@ console.log(0 ?? "falsy");          // 0
 console.log('' ?? "falsy");         //
 ```
 
-## export와 import
+## export와 import (Export & Import)
 
 * [한눈에 보는 타입스크립트(updated) - 내보내기(export)와 가져오기(import)](https://heropy.blog/2020/01/27/typescript/)
 
@@ -1084,7 +1084,7 @@ declare로 선언한 타입은 컴파일의 대상이 아닙니다. 컴파일 �
 declare type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
 ```
 
-## 인터페이스를 사용한 함수 정의
+## 인터페이스를 사용한 함수 정의 (Function Types with Interface)
 
 * [TypeScript Interface](https://www.softwaretestinghelp.com/typescript-interface/)
 
@@ -1302,23 +1302,23 @@ console.log(company.address?.zipCode);  // undefined (에러 없음)
 | Optional Property | `{ name?: string }` | 속성이 없어도 됨 |
 | Optional Chaining | `obj?.prop` | null/undefined면 에러 대신 undefined 반환 |
 
-# 스타일 가이드
+# 스타일 가이드 (Style Guide)
 
 [TypeScript Google Style Guide](ts_google_style_guide.md)
 
-# 리팩토링
+# 리팩토링 (Refactoring)
 
 [Refactoring TypeScript](refactoring_ts.md)
 
-# 효율적인 TypeScript
+# 효율적인 TypeScript (Effective TypeScript)
 
 [Effective TypeScript](effective_ts.md)
 
-# 디자인 패턴
+# 디자인 패턴 (Design Patterns)
 
 [TypeScript Design Pattern](ts_gof_design_pattern.md)
 
-# 아키텍처
+# 아키텍처 (Architecture)
 
 * [Typescript Clean Architecture | github](https://github.com/pvarentsov/typescript-clean-architecture)
   * Java의 Clean Architecture와는 조금 다릅니다
