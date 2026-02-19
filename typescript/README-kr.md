@@ -815,23 +815,43 @@ let foo: BooleanLikeHeterogeneousEnum.No;
 
 * [Generics](ts_handbook.md#generics)
 
+**타입을 매개변수처럼 넘기는 것**입니다. "어떤 타입이든 받되, 일관성을 유지해라"가 핵심입니다.
+
 ```ts
-// 제네릭 함수
-function identity<Type>(arg: Type): Type {
+// 제네릭 없이 — any를 쓰면 타입 정보를 잃음
+function identity(arg: any): any {
     return arg;
 }
+let result = identity("hello");  // result 타입: any (string 아님!)
+
+// 제네릭으로 — 타입 정보 유지
+function identity<T>(arg: T): T {
+    return arg;
+}
+let result = identity("hello");  // result 타입: string ✅
+let num = identity(42);          // num 타입: number ✅
+```
+
+**실전 패턴:**
+
+```ts
+// 제네릭 함수
+function firstElement<T>(arr: T[]): T | undefined {
+    return arr[0];
+}
+firstElement([1, 2, 3]);      // number
+firstElement(["a", "b"]);     // string
 
 // 제네릭 클래스
-class GenericNumber<NumType> {
-    zeroValue: NumType;
-    add: (x: NumType, y: NumType) => NumType;
+class Box<T> {
+    content: T;
+    constructor(value: T) { this.content = value; }
 }
-let a = new GenericNumber<number>();
-a.zeroValue = 0;
-a.add = function(x, y) {
-    return x + y;
-}
+let numBox = new Box(42);       // Box<number>
+let strBox = new Box("hello");  // Box<string>
 ```
+
+> 제네릭의 `<T>`는 "나중에 알려줄 타입"이라는 **플레이스홀더**입니다. `any`와 달리 타입 안전성을 유지합니다.
 
 ## 같은 줄에 여러 변수 정의하기 (Multiple Variables)
 
