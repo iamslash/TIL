@@ -865,12 +865,43 @@ let i = 0, j = 0, n = s.length
 
 * [map vs object | TIL](/js/README.md#map-vs-object)
 
-Map vs Object와 같습니다.
+```ts
+// Record — 키가 "고정"된 객체 타입 (컴파일 타임)
+type UserScores = Record<string, number>;
+let scores: UserScores = { David: 100, John: 85 };
+
+// Map — 키가 "동적"으로 변하는 컬렉션 (런타임 객체)
+let scoreMap = new Map<string, number>();
+scoreMap.set("David", 100);
+```
+
+| | `Record<K, V>` | `Map<K, V>` |
+|---|---|---|
+| 본질 | **타입** (컴파일 타임) | **클래스** (런타임 객체) |
+| 키 타입 | string / number / symbol | **아무 타입** |
+| 용도 | 객체 형태 정의 | 동적 키-값 저장 |
+| 순회 | `Object.keys()` | `for...of`, `forEach` |
+| 크기 | `Object.keys(obj).length` | `map.size` |
+
+> **판단:** 구조가 미리 정해져 있으면 `Record`, 런타임에 키가 추가/삭제되면 `Map`.
 
 ## 유틸리티 타입 (Utility Types)
 
 > * [Utility Types | typescript](https://www.typescriptlang.org/ko/docs/handbook/utility-types.html)
 > * [[Typescript] 유틸리티 타입 - Parameters, ReturnType, Required](https://www.morolog.dev/entry/Typscript-%EC%9C%A0%ED%8B%B8%EB%A6%AC%ED%8B%B0-%ED%83%80%EC%9E%85-Parameters-ReturnType-Required)
+
+기존 타입을 **변형**해서 새 타입을 만드는 내장 도구입니다. 가장 자주 쓰는 것들:
+
+| 유틸리티 | 하는 일 | 예시 |
+|----------|---------|------|
+| `ReturnType<T>` | 함수 **반환** 타입 추출 | `ReturnType<typeof getUser>` |
+| `Parameters<T>` | 함수 **매개변수** 타입 추출 | `Parameters<typeof login>` |
+| `Required<T>` | 모든 `?` 제거 → 필수 | `Required<Props>` |
+| `Partial<T>` | 모든 속성에 `?` 추가 → 선택 | `Partial<User>` |
+| `Record<K,V>` | 키-값 타입 정의 | `Record<string, number>` |
+| `Pick<T,K>` | 특정 속성만 **골라냄** | `Pick<User, 'name'>` |
+| `Omit<T,K>` | 특정 속성만 **제외** | `Omit<User, 'password'>` |
+| `keyof T` | 키를 유니온 타입으로 | `keyof Point` → `"x" \| "y"` |
 
 ```ts
 // ReturnType<T>
@@ -970,12 +1001,12 @@ let person: personRecordType = {
 
 > * [JavaScript | JS에서 점점점(…)은 무엇일까?](https://dinn.github.io/javascript/js-dotdotdot/)
 
-삼중 점은 다음 중 하나입니다.
+`...`은 **퍼뜨리기(Spread)**와 **모으기(Rest)** 두 가지 역할을 합니다. **위치**로 구별합니다:
 
-* rest parameter
-* spread operator
-* rest property
-* spread property
+| 위치 | 역할 | 이름 |
+|------|------|------|
+| **받는 쪽** (매개변수, 구조분해) | 나머지를 **모아서** 배열/객체로 | Rest |
+| **보내는 쪽** (함수 호출, 리터럴) | 배열/객체를 **펼쳐서** 개별 값으로 | Spread |
 
 ```ts
 // Rest parameter
@@ -1033,6 +1064,15 @@ console.log(JSON.stringify(assignedObj) === JSON.stringify(spreadObj);) // true
 
 > * [null 값을 처리하는 명령의 비교(How To Use Double Question Marks: ??)](https://ksrae.github.io/angular/double-question-marks/)
 
+둘 다 "기본값 넣기"에 쓰지만, **무엇을 falsy로 보느냐**가 다릅니다.
+
+| | `\|\|` | `??` |
+|---|---|---|
+| 걸러내는 값 | `undefined, null, false, 0, ""` | `undefined, null`만 |
+| 위험 | `0`이나 `""`가 유효한 값일 때 사라짐 | 없음 |
+
+> **`??`를 쓰세요.** `||`는 `0`이나 빈 문자열이 유효한 값일 때 버그를 만듭니다.
+
 ```ts
 // undefined 또는 null 체크를 위한 if문
 if (val !== undefined || val != null) {
@@ -1061,18 +1101,23 @@ console.log('' ?? "falsy");         //
 
 * [한눈에 보는 타입스크립트(updated) - 내보내기(export)와 가져오기(import)](https://heropy.blog/2020/01/27/typescript/)
 
+모듈 시스템입니다. 파일 간에 타입/함수/변수를 공유합니다.
+
+| | Named Export | Default Export |
+|---|---|---|
+| 문법 | `export { A, B }` | `export default A` |
+| Import | `import { A, B }` (이름 일치 필수) | `import Anything` (이름 자유) |
+| 파일당 개수 | 여러 개 | 하나만 |
+
 ```ts
-// foo.ts
-// 인터페이스 내보내기
+// foo.ts — Named Export (여러 개 내보내기)
 export interface UserType {
     name: string,
     mobile: number
 }
-// 타입 내보내기
 export type UserIDType = string | number;
 
-// bar.ts
-// 인터페이스, 타입 가져오기
+// bar.ts — Named Import (이름 일치 필수)
 import { UserType, UserIDType } from './foo';
 const user: UserType = {
     name: 'David',
@@ -1081,7 +1126,16 @@ const user: UserType = {
 const userid: UserIDType = "111";
 ```
 
-TypeScript는 `CommonJS/AMD/UMD` 모듈을 위해 `export = bar;`, `export bar = require('bar');`를 지원합니다. 이것은 ES6의 하나의 모듈에서 하나의 객체를 내보내는 `export default`와 같습니다.
+```ts
+// Button.ts — Default Export (파일당 하나의 대표 내보내기)
+export default function Button() { ... }
+
+// App.ts — Default Import (이름 자유, 중괄호 없음)
+import Button from './Button';
+import MyButton from './Button';  // 다른 이름도 OK
+```
+
+TypeScript는 `CommonJS/AMD/UMD` 모듈을 위해 `export = bar;`, `export bar = require('bar');`를 지원합니다. 이것은 ES6의 `export default`와 같습니다.
 
 ```ts
 // bar CommonJS/AMD/UMD 모듈에서 가져오기
@@ -1097,18 +1151,27 @@ import bar from 'bar';
 * [Purpose of declare keyword in TypeScript | stackoverflow](https://stackoverflow.com/questions/43335962/purpose-of-declare-keyword-in-typescript)
   * [한글](https://jjnooys.medium.com/typescript-declare-cd163acb9f)
 
-declare로 선언한 타입은 컴파일의 대상이 아닙니다. 컴파일 타임에 이렇게 생겼으니 믿고 넘어가주세요라는 의미입니다.
+"이 타입/변수는 **다른 곳에 이미 존재**하니까 컴파일러야 믿어라"라는 의미입니다. JavaScript로 변환되지 않습니다.
 
 ```ts
+// jQuery가 <script>로 이미 로드된 상태
+declare var $: any;
+$(".btn").click();  // 컴파일 에러 없이 사용 가능
+
+// declare 없이 vs 있을 때
         type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
 declare type Callback = (err: Error | String, data: Array<CalledBackData>) => void;
 ```
+
+> `.d.ts` 파일은 전부 `declare`의 집합입니다. 실제 코드 없이 타입 정보만 제공합니다.
 
 ## 인터페이스를 사용한 함수 정의 (Function Types with Interface)
 
 * [TypeScript Interface](https://www.softwaretestinghelp.com/typescript-interface/)
 
-TypeScript 인터페이스는 함수 시그니처를 보장하여 함수 타입을 정의하는 데 사용할 수 있습니다. 프로퍼티 이름 앞에 물음표를 사용하여 선택적 프로퍼티를 사용합니다.
+함수에 **속성을 추가**할 수 있는 패턴입니다. React의 `FunctionComponent`가 대표적 예입니다. 프로퍼티 이름 앞에 물음표를 사용하여 선택적 프로퍼티를 사용합니다.
+
+> 함수이면서 동시에 속성을 가진 객체가 필요할 때 씁니다. 일반적인 함수 타입은 화살표(`(x: string) => void`)로 충분합니다.
 
 ```ts
 {
@@ -1133,6 +1196,16 @@ TypeScript 인터페이스는 함수 시그니처를 보장하여 함수 타입�
 ---
 
 `type`보다는 `interface`를 추천합니다. type은 런타임에 재귀적으로 트랜스파일됩니다. 컴파일 타임이 오래 걸리기 때문에 성능이 좋지 않습니다.
+
+| | `interface` | `type` |
+|---|---|---|
+| `extends` (상속) | ✅ | ❌ (`&`로 대체) |
+| 선언 병합 (같은 이름 2번 선언) | ✅ | ❌ 에러 |
+| 계산된 키 `[key in ...]` | ❌ | ✅ |
+| 유니온 타입 `string \| number` | ❌ | ✅ |
+| 성능 | **빠름** | 느림 (재귀 트랜스파일) |
+
+> **기본은 `interface`, 유니온이나 계산된 키가 필요하면 `type`.**
 
 `type`은 `interface`에 비해 아래와 같은 단점들이 있습니다.
 
