@@ -351,46 +351,42 @@ fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
 
 ## Control Flows
 
+Rust의 제어 흐름에서 특이한 점: **`if`는 표현식**이라 값을 반환합니다 (삼항 연산자가 없는 대신).
+
 ```rs
-// if 표현식
-let number = 5;
-if number < 10 {
-    println!("smaller");
-} else {
-    println!("bigger");
+// if 표현식 — 값을 반환
+let x = if number < 10 { "smaller" } else { "bigger" };
+
+// 루프 4종류
+for i in 0..5 { println!("{}", i); }       // 범위 순회
+for item in vec { println!("{}", item); }  // 컬렉션 순회
+while count < 10 { count += 1; }           // 조건 반복
+loop { break; }                            // 무한 반복 (break로 탈출)
+
+// match — 모든 케이스를 처리해야 함 (exhaustive)
+match number {
+    1 => println!("one"),
+    2 | 3 => println!("two or three"),   // OR 패턴
+    4..=10 => println!("four to ten"),   // 범위 패턴
+    _ => println!("something else"),     // 나머지 (default)
 }
 
-// if let
+// if let — Option이나 enum에서 하나의 패턴만 처리할 때 match 대신 간결하게
 if let Some(value) = optional_value {
     println!("{}", value);
 }
-
-// loop
-loop {
-    println!("forever");
-    break;  // 탈출
-}
-
-// while
-while count < 10 {
-    count += 1;
-}
-
-// for
-for i in 0..5 {
-    println!("{}", i);
-}
-
-// match
-match number {
-    1 => println!("one"),
-    2 | 3 => println!("two or three"),
-    4..=10 => println!("four to ten"),
-    _ => println!("something else"),
-}
 ```
 
+| 루프 | 용도 | TypeScript 대응 |
+|------|------|----------------|
+| `for i in 0..5` | 범위 순회 | `for (let i=0; i<5; i++)` |
+| `for item in vec` | 컬렉션 순회 | `for (const item of arr)` |
+| `while cond` | 조건 반복 | `while (cond)` |
+| `loop` | 무한 반복 (break로 탈출) | `while (true)` |
+
 ## Pattern Matching
+
+`match`는 단순 값 비교를 넘어 **구조를 분해**할 수 있습니다. TypeScript의 `never`로 exhaustive check하던 것이 Rust에서는 **기본 동작**입니다.
 
 ```rs
 enum Coin {
@@ -407,20 +403,27 @@ fn value_in_cents(coin: Coin) -> u8 {
         Coin::Dime => 10,
         Coin::Quarter => 25,
     }
+    // 모든 variant를 처리해야 함! 하나라도 빠지면 컴파일 에러
 }
 ```
 
 ## Collections
 
-* **Vector**: `Vec<T>` - 동적 배열
-* **String**: `String` - UTF-8 문자열
-* **HashMap**: `HashMap<K, V>` - 해시맵
+Rust의 3대 컬렉션:
+
+| 컬렉션 | 타입 | TypeScript 대응 | 용도 |
+|--------|------|----------------|------|
+| **Vector** | `Vec<T>` | `Array` | 동적 배열 |
+| **String** | `String` | `string` | UTF-8 문자열 |
+| **HashMap** | `HashMap<K, V>` | `Map` | 키-값 저장 |
 
 ```rs
-// Vector
+// Vector — 가장 많이 쓰는 컬렉션
 let mut v = Vec::new();
 v.push(1);
-let vec = vec![1, 2, 3];
+let vec = vec![1, 2, 3];       // 매크로로 초기화
+let first = &vec[0];            // 인덱스 접근 (패닉 가능)
+let first = vec.get(0);         // Option 반환 (안전)
 
 // String
 let mut s = String::from("Hello");
@@ -430,19 +433,27 @@ s.push_str(", world!");
 use std::collections::HashMap;
 let mut map = HashMap::new();
 map.insert("key", "value");
+let val = map.get("key");       // Option<&&str>
 ```
 
 ## String Types
 
-* **String**: 소유된, 가변, UTF-8 문자열
-* **&str**: 문자열 슬라이스, 불변 참조
-* **str**: 크기를 알 수 없는 문자열 타입 (거의 사용되지 않음)
+Rust에서 가장 혼란스러운 부분 중 하나입니다. 두 가지만 기억하세요:
+
+| | `String` | `&str` |
+|---|---|---|
+| 소유권 | **소유** (힙에 할당) | **빌림** (참조) |
+| 가변 | `let mut s` 이면 ✅ | ❌ 항상 불변 |
+| 생성 | `String::from("hello")` | `"hello"` (리터럴) |
+| 함수 매개변수 | 소유권 필요할 때 | **대부분 이걸 쓰세요** |
 
 ```rs
-let s1: String = String::from("hello");
-let s2: &str = "world";
-let s3: &str = &s1[0..2];  // 슬라이스
+let s1: String = String::from("hello");  // 힙에 소유
+let s2: &str = "world";                  // 스택의 참조
+let s3: &str = &s1[0..2];               // String의 슬라이스 → &str
 ```
+
+> **함수 매개변수에는 `&str`을 쓰세요.** `String`도 `&str`도 둘 다 받을 수 있습니다.
 
 ## String Conversions
 
@@ -498,7 +509,7 @@ println!("{:.2}", 3.14159);  // 3.14
 
 ## Struct
 
-Go의 struct와 유사합니다. `struct`로 정의하고 `impl`로 구현합니다. **인스턴스 메서드**는 첫 번째 인자가 self입니다. **연관 함수**(정적 함수)는 첫 번째 인자가 self가 아닙니다.
+데이터를 **묶는** 구조입니다 (AND). `struct`로 정의하고 `impl`로 메서드를 구현합니다. **인스턴스 메서드**는 첫 번째 인자가 `self`입니다. **연관 함수**(정적 함수)는 첫 번째 인자가 `self`가 아닙니다.
 
 ```rs
 pub struct Rectangle {
@@ -526,7 +537,13 @@ fn main() {
 
 ## Enum
 
-열거형을 `enum`으로 정의합니다. **enum**의 멤버를 **variant**라고 합니다.
+여러 가능성 중 **하나**를 나타냅니다 (OR). **enum**의 멤버를 **variant**라고 합니다. TypeScript의 `enum`과 달리, Rust의 `enum`은 **variant마다 다른 데이터**를 담을 수 있어 훨씬 강력합니다.
+
+| | `struct` | `enum` |
+|---|---|---|
+| 역할 | 데이터 **묶기** (AND) | 여러 가능성 중 **하나** (OR) |
+| TypeScript 대응 | `interface` | `\| (union type)` |
+| 메서드 | `impl`로 추가 | `impl`로 추가 |
 
 ```rs
 enum Message {
@@ -582,7 +599,7 @@ let mut buf = [0; 1024];
 
 ```rs
 fn add(x: i32, y: i32) -> i32 {
-    x + y  // 표현식은 세미콜론 없음
+    x + y       // 마지막 표현식이 반환값 (세미콜론 없음!)
 }
 
 // 제네릭 함수
@@ -599,20 +616,26 @@ fn largest<T: PartialOrd>(list: &[T]) -> &T {
 
 ## Closures
 
+| | 함수 `fn` | 클로저 `\|\|` |
+|---|---|---|
+| 타입 명시 | 필수 | 추론 가능 |
+| 환경 캡처 | ❌ | ✅ 주변 변수 캡처 |
+| `move` | 해당 없음 | 소유권 이동 가능 |
+
 ```rs
 // 클로저 문법
 let add_one = |x| x + 1;
+let add_typed = |x: i32, y: i32| -> i32 { x + y };
 
-// 타입 명시
-let add_one = |x: i32| -> i32 { x + 1 };
-
-// 환경 캡처
+// 환경 캡처 — 함수와의 핵심 차이
 let x = 10;
-let equal_to_x = |z| z == x;
+let equal_to_x = |z| z == x;   // x를 캡처
+println!("{}", equal_to_x(10)); // true
 
-// move 키워드로 소유권 이동
+// move — 소유권을 클로저 안으로 이동 (스레드에서 필수)
 let s = String::from("hello");
 let closure = move || println!("{}", s);
+// println!("{}", s);  // ❌ s는 클로저로 이동됨
 ```
 
 ## Generic
@@ -638,7 +661,13 @@ struct Point2<T, U> {
 
 ## Trait
 
-Java의 인터페이스와 유사합니다. `PartialOrd + Copy`는 **trait bound**입니다.
+TypeScript의 `interface`와 비슷하지만, **기존 타입에 나중에 구현 가능**합니다. `PartialOrd + Copy`는 **trait bound**입니다.
+
+| | TypeScript `interface` | Rust `trait` |
+|---|---|---|
+| 기존 타입에 추가 구현 | ❌ | ✅ |
+| 기본 구현 | ❌ | ✅ |
+| 제네릭 제약 | `<T extends I>` | `<T: Trait>` |
 
 ```rs
 trait Summary {
@@ -742,7 +771,14 @@ Crate는 빌드된 바이너리의 단위입니다. 실행 파일 또는 라이�
 
 ## Error Handling
 
-Rust는 복구 가능한 에러와 복구 불가능한 에러를 구분합니다.
+Rust에는 `try/catch`가 **없습니다**. 대신 `Result`와 `Option`을 씁니다.
+
+| 타입 | 의미 | TypeScript 대응 |
+|------|------|----------------|
+| `Result<T, E>` | 성공(`Ok(T)`) 또는 실패(`Err(E)`) | `Promise<T>` (resolve/reject) |
+| `Option<T>` | 값 있음(`Some(T)`) 또는 없음(`None`) | `T \| undefined` |
+
+> `?`는 "에러면 바로 return Err, 성공이면 값을 꺼내라"의 축약입니다. `unwrap()`은 프로덕션에서 쓰지 마세요 (패닉 발생).
 
 ```rs
 // Result로 복구 가능한 에러 처리
