@@ -737,30 +737,48 @@ console.log(set);  // Set(3) { 11, 22, 33 }
 
 ```ts
 let arr: number[] = [1, 10, 2, 5, 3];
-console.log(arr);  // [1, 10, 2, 5, 3]
 
-// 사전순 정렬
+// ⚠️ 함정: 비교 함수 없이 sort()하면 "사전순" 정렬!
 arr.sort();
-console.log(arr);  // [1, 10, 2, 3, 5]
+console.log(arr);  // [1, 10, 2, 3, 5] — 10이 2보다 앞에!
 
-// 오름차순 정렬
-arr.sort((a: number, b: number) => a - b);
+// 오름차순 — 숫자 배열은 반드시 비교 함수를 넣을 것
+arr.sort((a, b) => a - b);
 console.log(arr);  // [1, 2, 3, 5, 10]
 
-// 내림차순 정렬
-arr.sort((a: number, b: number) => b - a);
+// 내림차순
+arr.sort((a, b) => b - a);
 console.log(arr);  // [10, 5, 3, 2, 1]
+
+// 문자열 배열은 기본 sort()가 안전
+let fruits = ['Banana', 'Apple', 'Cherry'];
+fruits.sort();
+console.log(fruits);  // ['Apple', 'Banana', 'Cherry']
 ```
+
+> **`sort()`는 원본 배열을 변경합니다.** 원본을 유지하려면 `[...arr].sort()`를 쓰세요.
 
 ## 검색 (Search)
 
-내장 이진 검색 함수는 없습니다.
+TypeScript에는 **내장 이진 검색이 없습니다.** 선형 검색만 제공합니다.
 
 ```ts
 let arr = [1, 2, 3, 4, 5];
-console.log(arr.find(a => a > 3));  // 4
-console.log(arr.indexOf(2));        // 1
+
+arr.find(a => a > 3);       // 4         — 조건에 맞는 첫 번째 "값"
+arr.findIndex(a => a > 3);  // 3         — 조건에 맞는 첫 번째 "인덱스"
+arr.indexOf(2);             // 1         — 정확한 값의 "인덱스"
+arr.includes(3);            // true      — 존재 여부만
 ```
+
+| 메서드 | 반환값 | 용도 |
+|--------|--------|------|
+| `find(fn)` | 값 또는 `undefined` | 조건으로 검색 |
+| `findIndex(fn)` | 인덱스 또는 `-1` | 조건으로 위치 검색 |
+| `indexOf(val)` | 인덱스 또는 `-1` | 정확한 값으로 위치 검색 |
+| `includes(val)` | `boolean` | 있는지 없는지만 |
+
+> 이진 검색이 필요하면 직접 구현하거나 라이브러리를 쓰세요.
 
 ## 다차원 배열 (Multidimensional Array)
 
@@ -784,32 +802,47 @@ for (let i = 0; i < aa.length; i++) {
 
 * [Enum | typescript](https://www.typescriptlang.org/docs/handbook/enums.html#handbook-content)
 
+관련 있는 상수들을 그룹으로 묶을 때 사용합니다. 3가지 종류가 있습니다.
+
 ```ts
-// 숫자 열거형
+// 1. 숫자 열거형 — 자동 증가
 enum Direction {
-  Up = 1,
-  Down,
-  Left,
-  Right,
+  Up = 1,    // 1
+  Down,      // 2 (자동)
+  Left,      // 3
+  Right,     // 4
 }
 
-// 문자열 열거형
-enum Direction {
-  Up = "UP",
-  Down = "DOWN",
-  Left = "LEFT",
-  Right = "RIGHT",
+// 2. 문자열 열거형 — 값을 명시해야 함
+enum Status {
+  Active = "ACTIVE",
+  Inactive = "INACTIVE",
+  Pending = "PENDING",
 }
 
-// 이종 열거형
+// 3. 이종 열거형 — 숫자+문자열 혼합 (비추천)
 enum BooleanLikeHeterogeneousEnum {
   No = 0,
   Yes = "YES",
 }
 
 let dir: Direction = Direction.Up;
-let foo: BooleanLikeHeterogeneousEnum.No;
 ```
+
+**언제 쓰나?** 매직 스트링을 타입 안전하게 바꿀 때:
+
+```ts
+// before — 오타가 나도 에러 없음
+if (user.status === "ACTVE") { ... }  // 오타! 런타임에 버그
+
+// after — enum으로 오타 시 컴파일 에러
+if (user.status === Status.Active) { ... }  // ✅ 안전
+```
+
+> 최근에는 enum 대신 **union type**을 쓰는 추세입니다:
+> ```ts
+> type Direction = "UP" | "DOWN" | "LEFT" | "RIGHT";  // 더 간결
+> ```
 
 ## 제네릭 (Generics)
 
