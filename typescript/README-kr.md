@@ -554,6 +554,32 @@ const [id, name] = getUser();  // 구조 분해로 깔끔하게 받기
 
 > 3개 이상이면 튜플보다 **인터페이스/객체**가 읽기 좋습니다.
 
+**튜플 vs 배열 — 값은 똑같고, 타입 선언만 다르다**
+
+값 자체는 완전히 똑같이 생겼습니다. 런타임(JavaScript)에서는 **둘 다 그냥 배열**입니다. 차이는 오직 TypeScript 컴파일러가 타입을 검사할 때만 존재합니다.
+
+```ts
+// 배열 — 같은 타입의 "임의 개수"
+let arr: number[]         = [1, 2];       // number가 몇 개든 OK
+arr.push(3);       // ✅ OK
+arr = [1];         // ✅ OK
+
+// 튜플 — 각 위치의 타입과 "개수가 고정"
+let tup: [number, string] = [1, "David"]; // 정확히 number, string 순서
+tup = [1];         // ❌ 에러 — string이 빠짐
+tup = [1, 2];      // ❌ 에러 — 두 번째는 string이어야 함
+
+// 런타임에서는 완전히 동일
+console.log(Array.isArray(tup));  // true — 튜플도 배열!
+```
+
+| | 타입 선언 | 값 모습 | 런타임 |
+|---|---|---|---|
+| 배열 | `number[]` | `[1, 2, 3]` | Array |
+| 튜플 | `[number, string]` | `[1, "David"]` | Array (동일!) |
+
+> 튜플은 "위치별 타입을 컴파일러가 강제하는 배열"이라고 생각하면 됩니다.
+
 ### 배열 (Array)
 
 ```ts
