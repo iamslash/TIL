@@ -161,6 +161,99 @@ Sender                            Receiver
 | Window 크기 | OS가 동적 조절 (수십 KB ~ 수 MB) | 초기 64KB (RFC 7540 기본값, `SETTINGS_INITIAL_WINDOW_SIZE`로 조절 가능) |
 | 프레임 | TCP ACK + Window Size | `WINDOW_UPDATE` 프레임 |
 
+**Envoy Flow Control 메트릭 (Service Mesh 모니터링):**
+
+| 메트릭 | 설명 |
+|--------|------|
+| `envoy_cluster_upstream_flow_control_backed_up_total` | Connection-level window 소진으로 완전 차단된 횟수 |
+| `envoy_cluster_upstream_flow_control_paused_reading_total` | Window 소진으로 읽기 일시 중지된 횟수 |
+| `envoy_cluster_upstream_flow_control_resumed_reading_total` | Window 복구 후 읽기 재개된 횟수 |
+
+모니터링 시 `rate(...[5m])`으로 초당 발생 빈도(ops/s)를 확인한다. `sum()`은
+모든 pod 합계이므로, pod별 상황은 `by (pod)` 또는 `avg()`로 분리해서 봐야 한다.
+
+**패널 간 정상 관계:**
+
+| 관계 | 설명 |
+|------|------|
+| Paused ≈ Resumed | Pause가 발생하면 반드시 Resume이 뒤따르므로 rate가 거의 일치해야 정상 |
+| Backed Up ≤ Paused | Backed Up은 connection-level 소진이라 더 심각한 상태. Paused보다 같거나 낮아야 정상 |
+| Backed Up ≈ Paused | 거의 매번 connection-level까지 막히는 상태. 심각한 backpressure |
+| 모두 0 | 정상. Flow control 이슈 없음 |
+
+**Backed Up 발생 시 트러블슈팅:**
+
+1단계 - 어디서 발생하는지 좁히기:
+
+```promql
+-- pod별 확인: 특정 pod에 집중되는지
+sort_desc(rate(envoy_cluster_upstream_flow_control_backed_up_total{namespace="$source"}[5m]))
+
+-- upstream cluster별 확인: 어떤 destination 서비스로 가는 트래픽인지
+sum by (envoy_cluster_name)(rate(envoy_cluster_upstream_flow_control_backed_up_total{namespace="$source"}[5m]))
+```
+
+2단계 - 근본 원인 파악:
+
+| 원인 | 확인 방법 | 해결 |
+|------|----------|------|
+| 수신자가 느림 | upstream 서비스의 CPU/메모리/GC 확인, latency P99 급등 여부 | 서비스 스케일업/아웃, GC 튜닝, 코드 최적화 |
+| HTTP/2 window가 너무 작음 | 대용량 payload를 주고받는 서비스인지 확인 | Envoy window 크기 증가 |
+| 한 연결에 스트림 과다 | `envoy_cluster_upstream_cx_active`, `envoy_cluster_upstream_rq_active` 확인 | `max_concurrent_streams` 제한, 연결 수 늘리기 |
+| 네트워크 지연 | pod 간 RTT 확인, 다른 AZ로 가는 트래픽인지 확인 | locality-aware routing 적용 |
+
+3단계 - Envoy 설정 튜닝 (HTTP/2 window 크기 증가):
+
+```yaml
+# Envoy cluster 설정
+clusters:
+- name: upstream_service
+  http2_protocol_options:
+    initial_stream_window_size: 1048576     # 1MB (기본 64KB)
+    initial_connection_window_size: 1048576  # 1MB (기본 64KB)
+```
+
+Istio 환경이라면 DestinationRule로 설정:
+
+```yaml
+apiVersion: networking.istio.io/v1beta1
+kind: DestinationRule
+metadata:
+  name: upstream-service
+spec:
+  host: upstream-service.namespace.svc.cluster.local
+  trafficPolicy:
+    connectionPool:
+      http:
+        h2UpgradePolicy: UPGRADE
+        maxRequestsPerConnection: 1000  # 연결당 요청 수 제한
+      tcp:
+        maxConnections: 100             # 연결 수 늘리기
+```
+
+함께 확인할 메트릭:
+
+| 메트릭 | 목적 |
+|--------|------|
+| `envoy_cluster_upstream_cx_active` | 활성 연결 수 |
+| `envoy_cluster_upstream_rq_active` | 활성 요청 수 |
+| `envoy_cluster_upstream_rq_time` | upstream 응답 시간 |
+| `envoy_cluster_upstream_cx_rx_bytes_total` | 수신 바이트 (대용량 payload 여부) |
+| `container_cpu_usage_seconds_total` | upstream pod CPU 사용량 |
+| `container_memory_working_set_bytes` | upstream pod 메모리 사용량 |
+
+트러블슈팅 우선순위:
+
+```
+1. 수신자(upstream) 서비스가 느린가?  → 서비스 자체 최적화/스케일링
+2. payload가 큰가?                    → window 크기 증가
+3. 연결당 스트림이 너무 많은가?        → 연결 수 늘리기
+4. 네트워크 문제인가?                  → locality routing
+```
+
+대부분의 경우 1번(upstream 서비스 성능)이 근본 원인이고, 2번(window 크기 증가)이
+가장 빠른 임시 완화책이다.
+
 **참고:**
 - [RFC 7540 Section 5.2 - Flow Control](https://tools.ietf.org/html/rfc7540#section-5.2)
 - [Envoy HTTP/2 Flow Control Documentation](https://www.envoyproxy.io/docs/envoy/latest/configuration/best_practices/edge)
