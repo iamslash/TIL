@@ -4,6 +4,7 @@
 - [HTTP Versions](#http-versions)
   - [HTTP/1.1](#http11)
   - [HTTP/2](#http2)
+    - [HTTP/2 Flow Control](#http2-flow-control)
   - [HTTP/3](#http3)
 - [HTTP Flow](#http-flow)
 - [HTTP 1.1 Methods](#http-11-methods)
@@ -89,6 +90,80 @@ HTTP/2 include:
 - **Stream prioritization**: Clients can indicate the priority of specific
   resources when making requests, allowing servers to send the most important
   data first.
+
+### HTTP/2 Flow Control
+
+HTTP/2는 하나의 TCP 연결 위에 여러 스트림을 멀티플렉싱한다. 이때 한 스트림이
+대역폭을 독점하지 못하도록 **애플리케이션 레벨의 flow control**이 존재한다. 이것은
+TCP flow control (L4, OS 커널 관리)과는 별개의 메커니즘이다.
+
+```
+┌─────────────────────────────────┐
+│  Application (gRPC, HTTP API)   │
+├─────────────────────────────────┤
+│  HTTP/2 Flow Control            │  L7, 초기 window 64KB (RFC 7540)
+├─────────────────────────────────┤
+│  TLS                            │
+├─────────────────────────────────┤
+│  TCP Flow Control               │  L4, OS 커널 관리 (rwnd)
+├─────────────────────────────────┤
+│  IP                             │
+└─────────────────────────────────┘
+```
+
+**두 가지 Window:**
+
+- **Stream-level window**: 개별 스트림(요청/응답)당 초기 64KB
+- **Connection-level window**: 연결 전체에 대해 초기 64KB
+
+수신자가 DATA 프레임을 받으면 window 크기가 줄어들고, 데이터를 처리한 후
+`WINDOW_UPDATE` 프레임을 보내야 window가 복구된다.
+
+```
+Sender                            Receiver
+    │                                 │
+    │── DATA (16KB) ──────────────▶  │  window: 64KB → 48KB
+    │── DATA (16KB) ──────────────▶  │  window: 48KB → 32KB
+    │── DATA (16KB) ──────────────▶  │  window: 32KB → 16KB
+    │── DATA (16KB) ──────────────▶  │  window: 16KB → 0KB
+    │                                 │
+    │   (window 소진, 전송 중단)       │
+    │                                 │
+    │◀── WINDOW_UPDATE (64KB) ──── │  수신자가 처리 완료 후 window 복구
+    │                                 │  window: 0KB → 64KB
+    │── DATA (계속 전송) ─────────▶  │
+```
+
+**Flow Control 상태 (Envoy 기준):**
+
+| 상태 | 설명 |
+|------|------|
+| **Backed Up** | Connection-level window가 소진되어 upstream 전송 완전 차단. Downstream 읽기도 일시 중지 (backpressure 전파) |
+| **Paused Reading** | Window 소진으로 downstream 읽기 일시 중지 |
+| **Resumed Reading** | Window 복구 후 읽기 재개 |
+
+**주요 발생 원인:**
+
+| 원인 | 설명 |
+|------|------|
+| 수신자 처리 지연 | 목적지 서비스가 데이터를 빠르게 소비하지 못함 (CPU 부족, GC 등) |
+| 초기 window 크기 제약 | 64KB는 고대역폭 환경에서 금방 소진됨 |
+| WINDOW_UPDATE 지연 | 수신자가 WINDOW_UPDATE를 늦게 보냄 |
+| 멀티플렉싱 과다 | 한 연결에 너무 많은 스트림이 몰림 |
+
+**TCP Flow Control 과의 차이:**
+
+| 구분 | TCP Flow Control | HTTP/2 Flow Control |
+|------|-----------------|-------------------|
+| 계층 | L4 (Transport) | L7 (Application) |
+| 관리 주체 | OS 커널 | 애플리케이션 (Envoy, nginx 등) |
+| 단위 | 바이트 스트림 | 스트림 / 연결 |
+| Window 크기 | OS가 동적 조절 (수십 KB ~ 수 MB) | 초기 64KB (RFC 7540 기본값, `SETTINGS_INITIAL_WINDOW_SIZE`로 조절 가능) |
+| 프레임 | TCP ACK + Window Size | `WINDOW_UPDATE` 프레임 |
+
+**참고:**
+- [RFC 7540 Section 5.2 - Flow Control](https://tools.ietf.org/html/rfc7540#section-5.2)
+- [Envoy HTTP/2 Flow Control Documentation](https://www.envoyproxy.io/docs/envoy/latest/configuration/best_practices/edge)
 
 ## HTTP/3
 
