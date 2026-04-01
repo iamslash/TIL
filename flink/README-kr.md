@@ -664,3 +664,4 @@ Graceful Shutdown 순서:
 | [flink-coding-basics-kr.md](./flink-coding-basics-kr.md) | Flink 코딩 가이드 기초편 (프로젝트 설정, Source, 변환, Sink, Word Count) |
 | [flink-coding-intermediate-kr.md](./flink-coding-intermediate-kr.md) | Flink 코딩 가이드 중급편 (Window, Time, State, Timer, 스트림 합치기) |
 | [flink-coding-advanced-kr.md](./flink-coding-advanced-kr.md) | Flink 코딩 가이드 고급편 (CEP, Async I/O, Side Output, 테스트, 성능 최적화) |
+| [flink-code-tour-kr.md](./flink-code-tour-kr.md) | Flink 소스 코드 투어 (클러스터 시작, TaskManager 등록, Job 제출, 핵심 클래스) |
