@@ -336,3 +336,4 @@ SELECT COUNT(*) FROM dist_events;  -- 빠름
 - [SQL 기초](clickhouse-sql-basics-kr.md) — 쿼리 문법과 예제
 - [Kafka 통합](clickhouse-kafka-integration-kr.md) — 실시간 데이터 수집
 - [데이터 모델링](clickhouse-data-modeling-kr.md) — OLAP 설계 패턴
+- [대안 솔루션 비교](clickhouse-vs-alternatives-kr.md) — ClickHouse vs Druid/Pinot/Redshift/BigQuery/ScyllaDB
