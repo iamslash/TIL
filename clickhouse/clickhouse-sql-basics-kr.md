@@ -439,6 +439,62 @@ order_id | user_id | amount | prev_amount | next_amount
 
 Materialized View 자체는 데이터를 갖고 있지 않다. 결과가 저장되는 곳은 `TO` 뒤의 목적지 테이블이다. Materialized View 는 그 사이의 **자동화된 파이프**일 뿐이다.
 
+### MV 의 정체: 테이블 + 자동 INSERT 트리거
+
+MV 를 만들면 ClickHouse 는 내부적으로 **실제 테이블**을 만든다.
+
+```
+CREATE MATERIALIZED VIEW daily_stats ENGINE = SummingMergeTree() ...
+
+ClickHouse 가 내부적으로 하는 일:
+  1. ".inner.daily_stats" 라는 실제 테이블을 만든다
+  2. 원본 테이블에 INSERT 가 올 때마다 → SELECT 실행 → 결과를 .inner 테이블에 INSERT
+```
+
+즉 **MV = 테이블 + 자동 INSERT 트리거**의 합성어다.
+
+`TO` 를 쓰면 숨겨진 테이블 대신 직접 지정한 테이블을 쓰고, `TO` 를 안 쓰면 ClickHouse 가 알아서 만들어 주는 것일 뿐이다.
+
+PostgreSQL 의 trigger 와 비교하면 이해가 쉽다:
+
+```
+PostgreSQL 방식 (수동 3단계):
+  1. 집계 테이블 CREATE
+  2. 트리거 함수 작성
+  3. CREATE TRIGGER ... AFTER INSERT ON orders ...
+
+ClickHouse 방식 (한 문장):
+  CREATE MATERIALIZED VIEW ... AS SELECT ...
+  → 테이블 생성 + 트리거 등록이 한번에 끝남
+```
+
+### MV 에 SELECT 할 수 있는가
+
+**할 수 있다.** 단, `TO` 사용 여부에 따라 다르다.
+
+```sql
+-- 방식 1: TO 없이 — MV 자체에 SELECT 가능
+CREATE MATERIALIZED VIEW events_daily_stats
+ENGINE = SummingMergeTree() ORDER BY (date, event_type) AS
+SELECT toDate(created_at) AS date, event_type, count() AS cnt
+FROM events GROUP BY date, event_type;
+
+SELECT * FROM events_daily_stats;  -- OK (내부 .inner 테이블을 읽는다)
+```
+
+```sql
+-- 방식 2: TO 명시 — 목적지 테이블에 SELECT
+CREATE TABLE daily_stats_table (...) ENGINE = SummingMergeTree() ORDER BY day;
+CREATE MATERIALIZED VIEW events_to_daily TO daily_stats_table AS SELECT ...;
+
+SELECT * FROM daily_stats_table;   -- OK (목적지 테이블에서 직접 조회)
+```
+
+| 방식 | MV 이름으로 SELECT | 목적지 테이블로 SELECT |
+|------|-------------------|---------------------|
+| `TO` 없이 | O (내부 테이블 자동 생성) | 숨겨진 `.inner.*` 테이블 |
+| `TO` 명시 | X | O (목적지 테이블에서 조회) |
+
 ### 일반 View vs Materialized View
 
 ```sql
