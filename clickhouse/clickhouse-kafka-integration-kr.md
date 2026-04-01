@@ -454,15 +454,90 @@ ORDER BY event_count DESC;
 
 **Bronze/Silver/Gold**는 Databricks Medallion Architecture에서 나온 패턴. ClickHouse에서도 적용 가능하다.
 
+### 비유로 이해하기
+
+데이팅 서비스의 데이터 엔지니어라고 상상하자. 유저가 앱에서 행동할 때마다 이벤트가 Kafka 로 들어온다. 정상 데이터와 버그로 생긴 쓰레기 데이터가 섞여서 초당 수천 건 들어온다.
+
+```json
+{"user_id": 42, "action": "swipe_right", "product_id": 7, "created_at": "2026-04-01 10:05:23"}
+{"user_id": 0, "action": "", "product_id": 0, "created_at": "2026-04-01 10:05:24"}
+{"user_id": 99, "action": "purchase", "product_id": 3, "created_at": "2026-04-01 10:05:25"}
+```
+
+이 데이터를 세 단계로 처리한다:
+
+- **Bronze = 창고**: 택배가 도착하면 내용물을 확인하지 않고 일단 전부 넣는다
+- **Silver = 검수대**: 창고에서 꺼내 망가진 건 버리고, 라벨을 통일하고, 분류 태그를 붙인다
+- **Gold = 진열대**: 검수된 물건을 조합해서 바로 팔 수 있는 완성품(대시보드용 집계)을 만든다
+
 ### 3단계 구조
 
 ```
-Bronze (원본 데이터 저장소)
-    ↓
-Silver (정제 & 표준화)
-    ↓
-Gold (분석 완료)
+Kafka (초당 수천 건의 원시 이벤트)
+  │
+  ▼
+Bronze (원본 보존, 필터링 없음)        ← 창고
+  │
+  ▼ MV: 유효성 검증, 컬럼 정규화
+Silver (정제된 데이터)                 ← 검수 완료
+  │
+  ▼ MV: GROUP BY 집계
+Gold (대시보드용 요약)                 ← 진열대
 ```
+
+각 단계가 MV 로 연결되어 있으므로 **Kafka 에 이벤트가 들어오면 Bronze → Silver → Gold 가 자동으로 연쇄 업데이트**된다. 배치 작업을 돌릴 필요가 없다.
+
+### 왜 Bronze 에 쓰레기 데이터를 남기는가?
+
+Silver 에서 `user_id=0` 같은 쓰레기를 걸러내지만, Bronze 에는 원본이 그대로 남는다. 이것은 의도된 것이다:
+
+- **정제 로직 버그 대응** — Silver MV 의 WHERE 조건이 잘못되어 정상 데이터를 버렸다면? Bronze 에 원본이 있으니 MV 를 고치고 Silver 를 재생성하면 된다
+- **요구사항 변경** — "user_id=0 인 이벤트도 분석해야 해" 라는 요청이 나중에 올 수 있다
+- **감사/디버깅** — "3월 15일에 이상한 이벤트가 뭐였지?" 할 때 Bronze 를 조회
+
+> Bronze 는 **보험**이다. 공간은 좀 더 쓰지만, 원본을 버리면 되돌릴 수 없다.
+
+### Gold 의 SummingMergeTree 동작
+
+Gold 에 같은 날, 같은 action 의 이벤트가 들어오면 최종적으로 1행으로 합산된다. 단, 즉시 1행은 아니다:
+
+```
+Silver 에 100건 INSERT (같은 날, 같은 action)
+  → MV 가 GROUP BY → Gold 에 1행 INSERT (count=100)
+
+또 50건 INSERT
+  → MV 가 GROUP BY → Gold 에 1행 INSERT (count=50)
+
+이 시점에 Gold 에 2행 존재:
+  (2026-04-01, swipe_right, 100)
+  (2026-04-01, swipe_right, 50)
+
+SummingMergeTree 백그라운드 머지 후 → 1행:
+  (2026-04-01, swipe_right, 150)
+```
+
+머지 전에 정확한 값이 필요하면 `FINAL` 또는 `SUM()` 을 사용한다.
+
+### MV 체인이 없다면?
+
+```
+MV 체인 없이:
+  Kafka → Go/Python Consumer → Bronze INSERT
+  cron 매 5분 → Bronze SELECT → 정제 → Silver INSERT
+  cron 매 5분 → Silver SELECT → 집계 → Gold INSERT
+
+MV 체인으로:
+  Kafka → Bronze → Silver → Gold (자동, 코드 없음)
+```
+
+| 항목 | MV 체인 | 직접 코드 |
+|------|---------|----------|
+| **코드량** | SQL 만 | Consumer + cron + 정제 + 집계 로직 |
+| **지연** | 거의 실시간 (INSERT 즉시 전파) | cron 주기만큼 지연 (5분~1시간) |
+| **장애 포인트** | ClickHouse 하나 | Consumer, cron, 네트워크 등 여러 곳 |
+| **운영** | DDL 만 관리 | 코드 배포, 모니터링, 재시작 필요 |
+
+> MV 체인의 장점: **SQL 선언만으로 실시간 파이프라인이 완성**된다.
 
 ### 실전 구현
 
