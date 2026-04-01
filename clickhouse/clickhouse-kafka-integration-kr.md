@@ -282,6 +282,57 @@ SETTINGS
 | `kafka_group_id` | Consumer Group ID (같은 그룹끼리 offset 공유) |
 | `kafka_format` | 메시지 포맷 (`JSONEachRow`, `CSV`, `Avro` 등) |
 | `kafka_skip_broken_messages` | 잘못된 메시지 스킵 (1 = 스킵, 0 = 에러 발생) |
+| `kafka_num_consumers` | Consumer 스레드 수 (기본 1). Kafka 파티션 수 이하로 설정 |
+| `kafka_thread_per_consumer` | 1 이면 Consumer 마다 독립 스레드. 0(기본)이면 하나의 스레드가 번갈아 처리 |
+| `kafka_max_block_size` | 한 번에 가져오는 최대 메시지 수 (기본 65536) |
+| `kafka_poll_timeout_ms` | poll 대기 시간 ms (기본 500) |
+
+### Consumer 스레드 튜닝
+
+처리량을 높이려면 `kafka_num_consumers` 를 올린다. Flink 의 병렬도와 같은 원리다 — **Kafka 파티션 수 이하**로 설정해야 의미가 있다.
+
+```
+파티션 6개, Consumer 3개 → 각 Consumer 가 2개씩 담당 (효율적)
+파티션 6개, Consumer 6개 → 1:1 매핑 (최대 처리량)
+파티션 3개, Consumer 6개 → 3개는 놀고 있음 (낭비)
+```
+
+```sql
+CREATE TABLE kafka_user_events (...)
+ENGINE = Kafka
+SETTINGS
+    kafka_broker_list = 'kafka:9092',
+    kafka_topic_list = 'user_events',
+    kafka_group_id = 'clickhouse_consumer',
+    kafka_format = 'JSONEachRow',
+    kafka_num_consumers = 6,             -- Consumer 6개
+    kafka_thread_per_consumer = 1;       -- 각각 독립 스레드로 동작
+```
+
+> `kafka_thread_per_consumer = 1` 을 함께 설정해야 각 Consumer 가 진짜 독립 스레드로 동작한다. 기본값(0)이면 하나의 스레드가 여러 Consumer 를 번갈아 처리하므로 병렬 효과가 제한된다.
+
+### Kafka Connect 가 필요 없다
+
+일반적으로 Kafka → DB 파이프라인을 구축하려면 **Kafka Connect** 라는 별도 컴포넌트가 필요하다. 하지만 ClickHouse 는 Kafka Engine 을 내장하고 있어서 Kafka Connect 없이 직접 Consumer 역할을 한다.
+
+```
+일반적인 구성:
+  Kafka → Kafka Connect (JDBC Sink Connector) → PostgreSQL/MySQL
+  Kafka → Kafka Connect (ClickHouse Sink Connector) → ClickHouse
+  → 별도 프로세스 운영 필요, 커넥터 설정/모니터링 부담
+
+ClickHouse 구성:
+  Kafka → ClickHouse (Kafka Engine + MV)
+  → SQL 만으로 완성, 별도 프로세스 불필요
+```
+
+| 항목 | Kafka Connect | ClickHouse Kafka Engine |
+|------|--------------|------------------------|
+| **추가 프로세스** | 필요 (Connect 클러스터) | 불필요 |
+| **설정 방식** | JSON/REST API | SQL DDL |
+| **변환 로직** | SMT (Single Message Transform) | MV 의 SELECT 쿼리 |
+| **모니터링** | Connect REST API | ClickHouse system 테이블 |
+| **스키마 관리** | Schema Registry 권장 | ClickHouse 테이블 스키마로 관리 |
 
 ### 실제 ClickHouse 쿼리에서
 
