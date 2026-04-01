@@ -9,6 +9,9 @@
   - [MergeTree 엔진](#mergetree-엔진)
   - [파티션과 샤딩](#파티션과-샤딩)
   - [Materialized View](#materialized-view)
+    - [MV 내부 동작 원리](#mv-내부-동작-원리)
+    - [머지 전 중복 행 주의](#머지-전-중복-행-주의)
+    - [MV 와 DELETE: 불일치 문제와 대처](#mv-와-delete-불일치-문제와-대처)
   - [압축과 성능](#압축과-성능)
 - [아키텍처](#아키텍처)
   - [단일 노드](#단일-노드)
@@ -170,9 +173,32 @@ INSERT 직후:  [part_1] [part_2] [part_3]
 
 ## 파티션과 샤딩
 
+### Partition vs Shard 핵심 차이
+
+| | Partition | Shard |
+|---|---|---|
+| **분할 대상** | 하나의 테이블 안의 데이터 | 테이블 전체를 여러 노드로 |
+| **위치** | **같은 노드** 안에서 나뉨 | **다른 노드**로 나뉨 |
+| **기준** | 보통 날짜 (`PARTITION BY toYYYYMM(date)`) | 보통 키 해시 (`user_id % shard_count`) |
+| **목적** | 오래된 데이터 삭제, 쿼리 범위 축소 | 처리량 확장 (수평 스케일링) |
+
+```
+노드 A (Shard 1)
+├── Partition 2026-01  ← 1월 데이터 (디스크에 별도 디렉토리)
+├── Partition 2026-02  ← 2월 데이터
+└── Partition 2026-03  ← 3월 데이터
+
+노드 B (Shard 2)
+├── Partition 2026-01
+├── Partition 2026-02
+└── Partition 2026-03
+```
+
+> "Partition = 논리적, Shard = 물리적" 이라고 단순화할 수도 있지만, **Partition 도 물리적으로 분리된다.** 각 Partition 은 디스크에 별도의 디렉토리(Part)로 저장되며, `DROP PARTITION` 하면 해당 디렉토리가 통째로 삭제된다. 더 정확하게는: **Partition = 같은 노드 안에서 조건 기준으로 물리 분리 (관리 편의)**, **Shard = 여러 노드에 데이터 분산 (성능 확장)** 이다.
+
 ### 파티션 (Partition)
 
-같은 테이블을 논리적으로 나누는 방식. 보통 **날짜 기준**으로 나눈다:
+같은 노드 안에서 테이블 데이터를 조건(보통 날짜) 기준으로 나누는 방식이다. 각 파티션은 디스크에 별도의 디렉토리로 저장된다.
 
 ```clickhouse
 CREATE TABLE sales (
@@ -186,9 +212,10 @@ PARTITION BY date;  -- 날짜별로 파티션
 
 메리트:
 
-- 오래된 파티션 삭제가 빠름 (예: 6개월 이상 된 데이터 삭제)
+- 오래된 파티션 삭제가 빠름 (`ALTER TABLE sales DROP PARTITION '2025-01-01'` — 즉시 삭제)
 - 파티션별로 독립적으로 최적화
 - 백업/복구가 쉬움
+- 쿼리 시 불필요한 파티션을 건너뜀 (Partition Pruning)
 
 ### 샤딩 (Sharding)
 
@@ -200,6 +227,10 @@ Shard 2 (Node B):  user_id % 2 == 1 인 데이터
 
 SELECT SUM(amount) FROM dist_table  -- 자동으로 두 샤드에서 읽고 병합
 ```
+
+Flink 로 비유하면:
+- **Partition** ≈ RocksDB 안에서 키 범위별로 SST 파일이 나뉘는 것
+- **Shard** ≈ `keyBy()` 로 데이터가 다른 Slot(다른 TaskManager)으로 가는 것
 
 ## Materialized View
 
@@ -229,6 +260,106 @@ GROUP BY date, category;
 -- 거의 즉시 반환
 SELECT * FROM daily_summary WHERE date >= '2024-01-01' LIMIT 10;
 ```
+
+### MV 내부 동작 원리
+
+MV 는 전체 테이블을 다시 계산하지 않는다. **새로 INSERT 된 행에만** SELECT 를 적용하여 내부 테이블에 저장한다.
+
+```
+events 테이블에 INSERT 발생
+  │
+  ▼
+새로 INSERT 된 행만 SELECT 쿼리에 통과
+  │
+  ▼
+결과를 MV 의 내부 테이블 (.inner.daily_summary) 에 INSERT
+  │
+  ▼
+SummingMergeTree 가 백그라운드에서 같은 (date, category) 키의 행을 합산
+```
+
+```
+events 에 100만 행이 이미 있고 10행을 INSERT 하면:
+  → MV 는 새 10행에 대해서만 집계
+  → 기존 100만 행은 건드리지 않음
+  → 이것이 실시간 처리가 가능한 이유
+```
+
+내부 테이블은 자동 생성된다:
+
+```sql
+SHOW TABLES LIKE '.inner%';
+-- → .inner.daily_summary (독립적인 SummingMergeTree 테이블)
+```
+
+### 머지 전 중복 행 주의
+
+SummingMergeTree 는 **백그라운드 머지** 시점에 합산한다. 머지 전에는 같은 키의 행이 여러 개 존재할 수 있다.
+
+```sql
+-- 머지 전: 중복 행이 보일 수 있음
+SELECT * FROM daily_summary;
+-- (2026-04-01, shoes, 3, 150.00)  ← 첫 번째 INSERT 분
+-- (2026-04-01, shoes, 2, 80.00)   ← 두 번째 INSERT 분
+
+-- 정확한 결과를 원하면 FINAL 또는 SUM 사용
+SELECT * FROM daily_summary FINAL;
+-- (2026-04-01, shoes, 5, 230.00)
+
+-- 또는 직접 합산
+SELECT date, category, SUM(event_count), SUM(total_amount)
+FROM daily_summary
+GROUP BY date, category;
+```
+
+### MV 와 DELETE: 불일치 문제와 대처
+
+**MV 는 INSERT 에만 반응한다. UPDATE/DELETE 는 반영되지 않는다.**
+
+```
+INSERT INTO events → MV 트리거 됨
+UPDATE events     → MV 트리거 안 됨
+DELETE events     → MV 트리거 안 됨
+```
+
+이것은 버그가 아니라 **설계 철학**이다. ClickHouse 는 append-only 분석 엔진이므로 DELETE 가 거의 발생하지 않는 것이 전제이다.
+
+| 상황 | 해결 방법 | MV 불일치? |
+|------|----------|-----------|
+| **오래된 데이터 정리** | `DROP PARTITION` (MV 도 함께 DROP) | 없음 |
+| **잘못된 데이터 수정** | 보정 이벤트를 INSERT (음수 값) | 없음 |
+| **GDPR 개인정보 삭제** | `ALTER TABLE DELETE` + MV 재생성 | 있음 (재생성 필요) |
+
+**패턴 1: DROP PARTITION (가장 흔함)**
+
+```sql
+-- 원본과 MV 모두 같은 파티션 기준이면 함께 삭제
+ALTER TABLE events DROP PARTITION '202601';
+ALTER TABLE `.inner.daily_summary` DROP PARTITION '202601';
+```
+
+**패턴 2: 보정 이벤트 (Compensating Event)**
+
+```sql
+-- 원래: shoes 100원 구매
+INSERT INTO events VALUES ('2026-04-01 10:00:00', 'shoes', 1, 100);
+-- MV: (2026-04-01, shoes, 1, 100)
+
+-- 취소: DELETE 대신 음수 값을 INSERT
+INSERT INTO events VALUES ('2026-04-01 10:05:00', 'shoes', -1, -100);
+-- MV 머지 후: (2026-04-01, shoes, 0, 0)  ← SummingMergeTree 가 자동 상쇄
+```
+
+**패턴 3: GDPR 삭제 (드문 경우)**
+
+```sql
+-- 원본에서 삭제
+ALTER TABLE events DELETE WHERE user_id = 12345;
+-- MV 에는 user_id 가 집계되어 사라졌으므로 특정 유저 기여분을 뺄 수 없음
+-- → MV 를 DROP 하고 재생성하는 수밖에 없음
+```
+
+> 핵심: ClickHouse 는 **"삭제하지 않는다"** 가 기본 전제이다. 오래된 데이터는 TTL/DROP PARTITION 으로, 잘못된 데이터는 보정 이벤트로 처리한다. DELETE 가 필요한 GDPR 같은 경우만 MV 재생성을 감수한다.
 
 ## 압축과 성능
 
