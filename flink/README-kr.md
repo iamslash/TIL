@@ -657,6 +657,7 @@ Graceful Shutdown 순서:
 
 | 문서 | 설명 |
 |------|------|
+| [flink-quickstart-kr.md](./flink-quickstart-kr.md) | 빠른 시작 (로컬 클러스터, Docker Compose, SQL Client, Kafka 연동) |
 | [go-vs-flink-patterns-kr.md](./go-vs-flink-patterns-kr.md) | 10가지 실시간 처리 패턴별 Go vs Flink 코드 비교 |
 | [flink-operations-kr.md](./flink-operations-kr.md) | Flink 운영 가이드 (Kubernetes, 체크포인트, 모니터링, 장애 복구) |
 | [when-to-adopt-flink-kr.md](./when-to-adopt-flink-kr.md) | Flink 도입 시점 판단 가이드 및 단계적 전환 전략 |
