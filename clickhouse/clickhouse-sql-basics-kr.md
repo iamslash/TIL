@@ -433,7 +433,52 @@ order_id | user_id | amount | prev_amount | next_amount
 
 ## Materialized View
 
-Materialized View는 **자동으로 업데이트되는 저장된 쿼리**다.
+### Materialized View 가 뭔가
+
+한마디로: **"A 테이블에 데이터가 들어오면 → 변환해서 → B 테이블에 자동 INSERT 해줘"**
+
+Materialized View 자체는 데이터를 갖고 있지 않다. 결과가 저장되는 곳은 `TO` 뒤의 목적지 테이블이다. Materialized View 는 그 사이의 **자동화된 파이프**일 뿐이다.
+
+### 일반 View vs Materialized View
+
+```sql
+-- 일반 View: 쿼리할 때마다 매번 원본 테이블을 전체 스캔
+CREATE VIEW daily_sales AS
+SELECT toDate(created_at) AS day, sum(amount) AS total
+FROM orders GROUP BY day;
+
+SELECT * FROM daily_sales;  -- 매번 orders 전체를 스캔한다 (느림)
+```
+
+```sql
+-- Materialized View: 데이터가 INSERT 될 때 자동으로 미리 계산해서 저장
+CREATE TABLE daily_sales_table (day Date, total UInt64)
+ENGINE = SummingMergeTree() ORDER BY day;
+
+CREATE MATERIALIZED VIEW orders_to_daily TO daily_sales_table AS
+SELECT toDate(created_at) AS day, sum(amount) AS total
+FROM orders GROUP BY day;
+
+SELECT * FROM daily_sales_table;  -- 이미 계산된 결과를 바로 읽는다 (빠름)
+```
+
+### 일반 테이블 2개 vs Materialized View
+
+일반 테이블만 쓰면 INSERT 를 2번 해야 한다:
+
+```sql
+-- 수동: 개발자가 직접 2번 INSERT
+INSERT INTO orders VALUES ('user-1', 10000, now());
+INSERT INTO daily_sales_table VALUES (today(), 10000);  -- 빼먹으면 집계가 틀림
+```
+
+Materialized View 를 쓰면 1번만 INSERT 하면 된다:
+
+```sql
+-- 자동: 1번만 INSERT 하면 daily_sales_table 에도 자동으로 들어감
+INSERT INTO orders VALUES ('user-1', 10000, now());
+-- daily_sales_table 에는 Materialized View 가 알아서 넣어준다
+```
 
 ### 기본 구조
 
